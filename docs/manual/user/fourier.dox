@@ -5,18 +5,35 @@
 <BR>
 
 This page describes the different numerical representations used in
-the pscf_pc and pscf_pg programs describe fields (functions of position)
-with the periodicity of a Bravais lattice. We will also consider a
-symmetry-adapted Fourier expansion appropriate for periodic fields
-that are also known to be invariant under all symmetry operations
-of a specified space group.  Throughout these notes, let \f$ D \f$
-denote the number of directions in which the field of interest are
-taken to be periodic, which is the dimensionality of the space in
-which these fields are defined. Allowed values of \f$ D \f$ are
-\f$ D = 1 \f$ for lamellar structures, \f$ D = 2 \f$ for structures
-such as those involving two-dimensionally periodic arrangements of
-cylinders (e.g., hexagonally packed cylinders), and \f$ D = 3 \f$
-for crystals with full three-dimensional periodicity (e.g.,
+the pscf_pc and pscf_pg programs to describe fields (functions of 
+position) with the periodicity of a Bravais lattice. In a 
+\ref user_basis_page "subsequent appendix", we also 
+consider a symmetry-adapted Fourier expansion appropriate for periodic 
+fields that are also known to be invariant under all symmetry operations
+of a specified space group.  
+
+Below, we give succinct descriptions of Bravais lattices and reciprocal
+lattices, with emphasis on the aspects that pertain to the PSCF software.
+The descriptions below may not be sufficient for readers who have not yet
+encountered these ideas elsewhere. For a more general overview of these 
+and other related topics pertaining to symmetry, we recommend the book 
+*Structure of Materials: An Introduction to Crystallography, Diffraction 
+and Symmetry* by Marc De Graef and Michael E. McHenry. We also provide a 
+similarly succinct overview of Fourier series, Fourier transforms, and 
+aliasing below, with emphasis on aspects relevant to this software. For 
+a more comprehensive introduction to these topics and a summary of the
+numerical benefits of solving differential equations in reciprocal
+space (sometimes called "spectral accuracy"), we recommend the first 
+four chapters of the book *Spectral Methods in MATLAB* by Lloyd N. 
+Trefethen.
+
+Throughout these notes, let \f$ D \f$ denote the number of directions 
+in which the fields of interest are taken to be periodic, which is the 
+dimensionality of the space in which these fields are defined. Allowed 
+values of \f$ D \f$ are \f$ D = 1 \f$ for lamellar structures, \f$ D = 
+2 \f$ for structures such as those involving two-dimensionally periodic 
+arrangements of cylinders (e.g., hexagonally packed cylinders), and 
+\f$ D = 3 \f$ for crystals with full three-dimensional periodicity (e.g.,
 arrangements of spheres and 3D network structures).
 
 \section user_fourier_bravais_sec Bravais Lattice
@@ -42,6 +59,7 @@ vector \f$ {\bf R} \f$ that belongs to the Bravais lattice.
 
 Let \f$ {\bf b}_{0}, \ldots, {\bf b}_{D-1} \f$ denote \f$ D \f$ 
 reciprocal lattice basis vectors that are defined such that
+\anchor user_fourier_biorthogonality_eqn
 \f[
   {\bf a}_{\alpha} \cdot {\bf b}_{\beta} = 2\pi \delta_{\alpha \beta}
 \f]
@@ -78,11 +96,11 @@ with wavevector \f$ {\bf G} \f$.  The Fourier coefficient
   e^{-i {\bf G} \cdot {\bf r}} f({\bf r}) \quad,
 \f]
 in which the integral is a D-dimensional integral over one unit cell,
-and \f$ V_{\rm cell} \f$ is the generalzed volume of the unit cell 
+and \f$ V_{\rm cell} \f$ is the generalized volume of the unit cell 
 (i.e., the unit cell length for D=1, area for D=2, or volume for D=3).
 
 The type of Fourier series defined above can be used to expand either 
-real- or complex valued periodic functions of position. If \f$ f \f$ is 
+real- or complex-valued periodic functions of position. If \f$ f \f$ is 
 a real-valued function, then its Fourier coefficients must satisfy the 
 condition
 \f[
@@ -111,7 +129,7 @@ which \f$ 0 \leq r_{\alpha} < 1 \f$ for all \f$ \alpha = 0, \ldots, D-1 \f$.
 This corresponds to a unit domain in the space of reduced coordinates that
 is give by the domain \f$ [0,1) \f$ for D=1, a unit square for D=2 or a
 unit cube for D=3.  This maps onto a unit cell in Cartesian coordinates
-that is a parallelogram for D=2 or a parallelopiped for D=3, and for
+that is a parallelogram for D=2 or a parallelepiped for D=3, and for
 which the vectors connecting neighboring corners are Bravais lattice
 basis vectors.
 
@@ -137,7 +155,8 @@ by addition of arbitrary integer.  That is, for any periodic function
 for arbitrary integer values of \f$ k_{0}, \ldots, k_{D-1} \f$.
 
 Using the above expressions for \f$ {\bf r}(r_{0}, \ldots, r_{D-1}) \f$ and
-\f$ {\bf G}(n_{0}, \ldots, n_{D-1}) \f$ and the bi-orthogonality relation
+\f$ {\bf G}(n_{0}, \ldots, n_{D-1}) \f$ and the 
+\ref user_fourier_biorthogonality_eqn "bi-orthogonality relation"
 for Bravais and reciprocal basis vectors, it is straightforward to show
 that
 \f[
@@ -170,7 +189,7 @@ such that
 \f]
 for the wavevector \f$ {\bf G}(n_{0}, \ldots, n_{D-1}) \f$ with integer
 components \f$n_{0}, \ldots, n_{D-1}\f$.
-This form of the Fourier series is also special case of the general 
+This form of the Fourier series is also a special case of the general 
 Fourier expansion of a periodic function, as applied here to a function 
 \f$ F(r_{0}, \ldots, r_{D-1}) \f$ that has the periodicity of a generalized 
 cubic lattice with orthogonal Bravais lattice basis vectors of unit 
@@ -185,7 +204,7 @@ Let \f$ M_{\alpha} \f$ denote the number of mesh points per unit cell
 along direction \f$ \alpha \f$ for each integer direction index
 \f$ \alpha = 0, \ldots, D-1 \f$.
 The values of \f$ M_{0}, \ldots, M_{D-1} \f$ are specified in the
-paramter file for a pscf_pc or pscf_pg program as values for elements
+parameter file for a pscf_pc or pscf_pg program as values for elements
 of the parameter "mesh", whose value is a vector with integer-valued
 elements.  Nodes on this mesh correspond to points at which each reduced
 coordinate \f$ r_{\alpha} \f$ with \f$ \alpha \in [0, \ldots, D-1]\f$
@@ -304,7 +323,7 @@ are also said to be aliases of one another.
 Reciprocal lattice vectors that are aliases of one another yield values
 for the complex exponential \f$ \exp( i {\bf G}\cdots {\bf r} ) \f$ that
 are equal for any position vector \f$ {\bf r} \f$ that is a node of the
-relevant mesh, but that would generally unequal if evaluated for values 
+relevant mesh, but that are generally unequal if evaluated for values 
 of \f$ {\bf r} \f$ that do not lie on this mesh.  Wavevectors that are 
 aliases of one another are thus treated as equivalent within forward and 
 inverse DFT operations, in which values of the underlying field are 
@@ -339,7 +358,7 @@ The indices obtained using this convention are referred to in parts
 of the PSCF source code as "Brillouin zone" indices because the
 underlying geometrical construction is analogous to that used to
 define the first Brillouin zone for crystal wavevectors in band
-theories electronic state in crystalline solids.
+theories of electronic states in crystalline solids.
 
 If two or more equivalent choices of indices for a wavevector yield
 wavevector aliases for which \f$ |{\bf G}| \f$ is equal to its minimum

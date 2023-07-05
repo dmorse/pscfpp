@@ -9,7 +9,7 @@ concentration fields using an expansion in basis functions in which
 each basis function is an eigenfunction of the Laplacian that is
 invariant under all symmetry operations of a specified space group.
 We refer to the resulting basis as a symmetry-adapted Fourier basis,
-and the expansion as a symmetry-adapated Fourier series. This page
+and the expansion as a symmetry-adapted Fourier series. This page
 discusses the mathematics underlying the construction of such a basis.
 The discussion of symmetry-adapted basis functions given here uses 
 concepts and notation introduced in a separate appendix about
@@ -17,11 +17,11 @@ concepts and notation introduced in a separate appendix about
 before this page.
 
 The discussion given here uses a notation appropriate to periodic 
-fields that continuous functions of position within a D-dimensional
-vector space. We discuss below how all of the main results can also
-be be interpreted so as to apply to symmetry-adapted basis functions 
-that are defined on the nodes of a regular mesh, subject to a few 
-restrictions that we discuss.
+fields that are continuous functions of position within a 
+D-dimensional vector space. We discuss below how all of the main 
+results can also be interpreted so as to apply to symmetry-adapted 
+basis functions that are defined on the nodes of a regular mesh, 
+subject to a few restrictions that we discuss.
 
 \section user_basis_mesh_sec Continuous vs. Discretized Functions
 
@@ -34,15 +34,15 @@ by discrete Fourier transforms.
 For simplicity, the discussion given here is presented using a notation
 that is appropriate to fields that are continuous functions of position
 in a D-dimensional space. All of the concepts, definitions and theorems
-presented here are, however, can be shown to be equally applicable to
-functions that are defined in on the node of a regular mesh if the
+presented here, however, can be shown to be equally applicable to
+functions that are defined only on the nodes of a regular mesh if the
 following assumptions and constraints are understood to apply:
 
    - The mesh on which functions are defined must be invariant
      under all elements of the space group of interest, in the
      sense defined \ref user_symmetry_invariant_def "here". This
      is necessary to allow us to unambigously define the effect
-     of crystal symmetry operation upon a discretized function.
+     of crystal symmetry operations upon a discretized function.
 
    - Values of functions of position must be understood to only be
      defined for positions that lie on nodes of the mesh. In this
@@ -68,9 +68,9 @@ following assumptions and constraints are understood to apply:
    - The norm \f$ |{\bf G} |\f$ of a reciprocal lattice wavevector
      \f$ {\bf G} \f$, when needed, is defined to be the norm of
      a \ref user_fourier_minindex_sub "minimal image" of
-     \f$ {\bf G} \f$, i.e., the norm an alias with integer components
-     chosen so as to minimize the usual definition of the norm as
-     \f$ |{\bf G}| = \sqrt{{\bf G}\cdot{\bf G}} \f$.
+     \f$ {\bf G} \f$, i.e., the norm of an alias with integer 
+     components chosen so as to minimize the usual definition of the 
+     norm as \f$ |{\bf G}| = \sqrt{{\bf G}\cdot{\bf G}} \f$.
 
    - Some expressions that involve an integral over a unit cell of
      a crystal, e.g., to define orthogonality, must be replaced by
@@ -92,16 +92,16 @@ of a mesh used to simulate a cubic crystal.  The existence of symmetry
 operations that involve translations by fractions of a unit cell imposes 
 other constraints that can require the number of grid points along some
 directions to be multiples of some small integer. For example, a mesh 
-for a BCC crystal must use equal even number of grid points in all 
+for a BCC crystal must use equal even numbers of grid points in all 
 directions in order to correctly represent operations that map the 
-origin to the face centered point.  These constraints on mesh dimensions 
+origin to the body-centered point.  These constraints on mesh dimensions 
 are discussed in somewhat more detail \ref user_symmetry_invariant_def 
 "here".
 
 The algorithm that PSCF uses to construct symmetry-adapted basis functions
-will fail if parameter file contains a list of mesh dimensions and a space
-group identifier that are incompatible, because the mesh would not be
-invariant under all operations of the chosen space group.
+will fail if the parameter file contains a list of mesh dimensions and a 
+space group identifier that are incompatible, because the mesh would not 
+be invariant under all operations of the chosen space group.
 If the mesh dimensions and space group are found to be incompatible, the 
 pscf_pc and pscf_pg programs will write a message to the log file that 
 explains the nature of the error, and then halt execution. 
@@ -248,12 +248,12 @@ a nonzero function \f$ \phi({\bf r}) \f$ that is symmetric under
 \anchor user_basis_starfunc_eqn
 \f[
    \phi(\textbf{r}) =
-   \sum_{i=0}^{M-1} c_{i} e^{i\textbf{G}_{i} \cdot \textbf{r}}
+   \sum_{j=0}^{M-1} c_{j} e^{i\textbf{G}_{j} \cdot \textbf{r}}
 \f]
 of waves with wavevectors in \f$ T \f$, with complex coefficients
-\f$ c_{0}, \ldots, c_{M-1} \f$. The constant \f$ c_{i} \f$ in such
+\f$ c_{0}, \ldots, c_{M-1} \f$. The constant \f$ c_{j} \f$ in such
 a sum is referred to as the coefficient associated wtih wavevector
-\f$ {\bf G}_{i} \f$.
+\f$ {\bf G}_{j} \f$.
 
 Some properties of star functions follow immediately from the their
 definitions as superpositions of waves with wavevectors that belong
@@ -304,27 +304,27 @@ under the specified space group.
 Suppose that \f$ \phi({\bf r}) \f$ is a star function associated with a
 star \f$ T = \{ {\bf G}_{0}, \ldots, {\bf G}_{M-1} \} \f$ of space group
 \f$ S \f$ that contains \f$ M \f$ wavevectors.
-Suppose \f$ {\bf G}_{i} \f$  and \f$ {\bf G}_{j} \f$ are wavevectors in
+Suppose \f$ {\bf G}_{j} \f$  and \f$ {\bf G}_{k} \f$ are wavevectors in
 \f$ T \f$ and that \f$ A = (R, {\bf t}) \f$ is a symmetry operation
 in \f$ S \f$, for which
 \f[
-   {\bf G}_{j} = {\bf G}_{i}A \quad.
+   {\bf G}_{k} = {\bf G}_{j}A \quad.
 \f]
-The coefficients for the waves associated with wavectors
-\f$ {\bf G}_{i} \f$ and \f$ {\bf G}_{j} \f$ must satisfy
+The coefficients for the waves associated with wavevectors
+\f$ {\bf G}_{j} \f$ and \f$ {\bf G}_{k} \f$ must satisfy
 \anchor user_basis_phase_eqn
 \f[
-   c_{j} = c_{i} e^{ i{\bf G}_{i}\cdot{\bf t} } \quad.
+   c_{k} = c_{j} e^{ i{\bf G}_{j}\cdot{\bf t} } \quad.
 \f]
-where \f$ c_{i} \f$ denotes the coefficient of the wave with wavevector
-\f$ {\bf G}_{i} \f$ in the superposition of the form given in the above
+where \f$ c_{j} \f$ denotes the coefficient of the wave with wavevector
+\f$ {\bf G}_{j} \f$ in the superposition of the form given in the above
 \ref user_basis_starfunc_def "definition of a star function".
 
-<em>Proof</em>: Suppose
+<em>Proof</em>:
 Suppose that
 \f[
    \phi(\textbf{r}) =
-   \sum_{i=1}^{M} c_{i} e^{i\textbf{G}_{i} \cdot \textbf{r}}
+   \sum_{j=1}^{M} c_{j} e^{i\textbf{G}_{j} \cdot \textbf{r}}
 \f]
 is a star function associated with star \f$ T \f$ of a space group that
 \f$ S \f$ that contains a symmetry element \f$ A = (R,{\bf t}) \f$.
@@ -332,16 +332,16 @@ The transformed star function \f$ \phi A \f$ can be expressed as a
 superposition
 \f[
    \phi(A({\bf r})) =
-   \phi( R{\bf r} + {\bf t} ) = \sum_{i=0}^{M-1} c_{i}
-   e^{ i\textbf{G}_{i}R \cdot \textbf{r}}
-   e^{i{\bf G} \cdot {\bf t}}
+   \phi( R{\bf r} + {\bf t} ) = \sum_{j=0}^{M-1} c_{j}
+   e^{ i\textbf{G}_{j}R \cdot \textbf{r}}
+   e^{i{\bf G}_{j} \cdot {\bf t}}
    \quad.
 \f]
-The equation relating \f$ c_{i} \f$ and \f$ c_{j} \f$ follows from the
+The equation relating \f$ c_{j} \f$ and \f$ c_{k} \f$ follows from the
 requirement that coefficients of corresponding waves be equal in the
 expansions of \f$ \phi \f$ and \f$ \phi A \f$.
 
-<b> Corollary: </b> The relatiohships among coefficients obtained
+<b> Corollary: </b> The relationships among coefficients obtained
 in \ref user_basis_starfunc_phase_thrm "Theorem D.6" imply that the
 coefficients associated with different waves in a star function must
 all have equal absolute magnitude,
@@ -378,7 +378,7 @@ related by symmetry operations \f$ A, B, C \in S\f$ such that
 where
 \f$ A = (R_{A}, {\bf t}_{A}) \f$,
 \f$ B = (R_{B}, {\bf t}_{B}) \f$,
-and \f$ C = AB = (R_{C}, {\bf t})_{C} \f$.
+and \f$ C = AB = (R_{C}, {\bf t}_{C}) \f$.
 The phase factor generated by applying \f$ C \f$ to \f$ {\bf G} \f$ is
 given by the product
 \f[
@@ -389,16 +389,18 @@ given by the product
 \f]
 of the phase factor \f$e^{i {\bf G}\cdot{\bf t}_{A}} \f$ generated
 by applying \f$ A \f$ to \f$ {\bf G} \f$ and
-the factor \f$ {\bf G}'\cdot{\bf t}_{B} \f$ generated by applying
+the factor \f$ e^{i {\bf G}'\cdot{\bf t}_{B}} \f$ generated by applying
 \f$ B \f$ to \f$ {\bf G}' \f$.
 
 <em>Proof</em>: Recall that, for \f$ C = AB \f$,
-\f$ R_{C} =  R_{A}R_{B} \f$ and
-\f$ {\bf t}_{C} = {\bf t}_{A} + R_{A}{\bf t}_{B} \f$.
-Also observe that
+\f$ R_{C} =  R_{A}R_{B} \f$ and 
+\f$ {\bf t}_{C} = {\bf t}_{A} + R_{A}{\bf t}_{B} \f$. 
+Using the fact that \f$ {\bf G}A = R_{A}^{\dagger}{\bf G} \f$, where 
+\f$ R_{A}^{\dagger} \f$ is the \ref user_symmetry_adjoint_def_eqn 
+"adjoint" of \f$ R_{A} \f$, observe that
 \f[
    {\bf G}'\cdot {\bf t}_{B}
-   = ({\bf G}R_{A}) \cdot {\bf t}_{B}
+   = (R_{A}^{\dagger}{\bf G}) \cdot {\bf t}_{B}
    = {\bf G}\cdot R_{A} {\bf t}_{B} \quad.
 \f]
 Combining these relationships yields
@@ -432,10 +434,10 @@ for which the coefficients of all waves are zero.
 The stars of a space group that are cancelled are the same as the ones
 for which systematic cancellations of scattering intensities are observed
 in scattering experiments.  Nonzero star functions do not exist for
-cancelled stars The Fourier series expansion of periodic functions with
+cancelled stars. The Fourier series expansion of periodic functions with
 a specified space group symmetry in a basis of star functions thus uses
 only star functions that are associated with uncancelled stars (i.e.,
-those that are not cancelled)
+those that are not cancelled).
 
 <em> Centered Lattices </em>:
 The simplest reason for cancellation of stars in PSCF occurs in the
@@ -450,7 +452,7 @@ a body-centered-cubic lattice can be described by a simple cubic
 Bravais lattice and space group that includes a centering operation
 \f$(I, {\bf t})\f$ with \f${\bf t} = (1/2, 1/2, 1/2)\f$. This sort of
 description, which is used by default by PSCF, leads to cancellation
-of stars of wavectors that belong to the reciprocal lattice of the
+of stars of wavevectors that belong to the reciprocal lattice of the
 lattice with a non-primitive unit cell (e.g., simple cubic) but that
 actually do not belong to the reciprocal lattice of the centered
 lattice.
@@ -552,7 +554,7 @@ generates an inconsistency if and only if
 Observe that this is equivalent to the criterion for the existence
 of a pairwise contradiction involving wavevectors \f$ {\bf G} \f$
 and \f$ {\bf G}' \f$. Existence of a binary contradiction for
-\f${\bf G} \f$ and \f${\bf G}\f$ thus implies the existence of a
+\f${\bf G} \f$ and \f${\bf G}'\f$ thus implies the existence of a
 unary contradiction for either \f${\bf G}\f$ or \f${\bf G}'\f$.
 By theorem D.8, existence of a binary contradiction thus implies
 the existence of a unary contradiction for every wavevector in
@@ -568,10 +570,10 @@ the existence of unary contradictions for any wave in the star.
 If \f$ T \f$ is a star of space group \f$ S \f$ that contains \f$ M \f$
 wavevectors, and the phase relationships among wavevectors in \f$ T \f$
 do not contain any unary contradictions, than the star is not cancelled,
-and phase relationships among wavectors in \f$ T \f$ form a homogeneous
+and phase relationships among wavevectors in \f$ T \f$ form a homogeneous
 system of \f$ M - 1 \f$ independent linear equations for the coefficients
 of waves in an associated star function.  A full set of independent
-phase relationships is provided by the phase relatonships between any
+phase relationships is provided by the phase relationships between any
 one wavevector in \f$ T \f$ and the other \f$ M - 1 \f$ wavevectors in
 \f$ T \f$.
 
@@ -582,15 +584,15 @@ Let \f$ {\bf G}_{0}, {\bf G}_{1}, \ldots, {\bf G}_{M-1} \f$ denote the
 wavevectors in \f$ T \f$, listed in some arbitrarily chosen order. Let
 \f$ c_{i} \f$ denote the coefficient of the wave with wavevector
 \f$ {\bf G}_{i} \f$ in the definition of an associated star function.
-For each \f$ i = 1, \ldots, M-1 \f$, there must exist a symmetry
-operation \f$ A_{i} = (R_{i}, {\bf t}_{i}) \f$ such that
+For each \f$ j = 1, \ldots, M-1 \f$, there must exist a symmetry
+operation \f$ A_{j} = (R_{j}, {\bf t}_{j}) \f$ such that
 \f[
-   {\bf G}_{i} = {\bf G}_{0} A_{i}  \quad.
+   {\bf G}_{j} = {\bf G}_{0} A_{j}  \quad.
 \f]
 If the number of symmetry operations in \f$ S \f$ is greater than
 \f$ M \f$, then there may exist two or more symmetry operations that
-generate the same wavevector \f$ {\bf G}_{i} \f$ when applied to
-\f$ {\bf G}_{0} \f$. If so, we may define \f$ {\bf A}_{i} \f$ to be any
+generate the same wavevector \f$ {\bf G}_{j} \f$ when applied to
+\f$ {\bf G}_{0} \f$. If so, we may define \f$ {\bf A}_{j} \f$ to be any
 one of these operations, and the assumption that there are no binary
 contradictions implies that different choices will lead to equivalent
 phase relationships. The phase relationships between \f$ {\bf G}_{0} \f$
@@ -598,29 +600,29 @@ and the other vectors in \f$ T \f$ gives a set of \f$ M - 1 \f$
 independent linear homogeneous equations for the coefficients, each
 of which is an equation of the form
 \f[
-   c_{i} = c_{0}e^{i{\bf G}_{0}\cdot{\bf t}_{i}}
+   c_{j} = c_{0}e^{i{\bf G}_{0}\cdot{\bf t}_{j}}
 \f]
-for some \f$ i > 0 \f$. Suppose that \f$ {\bf G}_{i} \f$ and
-\f$ {\bf G}_{j} \f$ are two wavevectors in \f$ T \f$, with
-\f$ i \neq 0 \f$ and \f$ j \neq 0 \f$. We may identify a symmetry
+for some \f$ i > 0 \f$. Suppose that \f$ {\bf G}_{j} \f$ and
+\f$ {\bf G}_{k} \f$ are two wavevectors in \f$ T \f$, with
+\f$ j \neq 0 \f$ and \f$ k \neq 0 \f$. We may identify a symmetry
 relationship between these two vectors by noting that
 \f[
-   {\bf G}_{j} = {\bf G}_{i} A^{-1}_{i}A_{j} \quad.
+   {\bf G}_{k} = {\bf G}_{j} A^{-1}_{j}A_{k} \quad.
 \f]
 This symmetry relationship yields a corresponding phase relationship
 \f[
-    c_{j} = c_{i} e^{-i{\bf G}_{0}\cdot {\bf t}_{i}}
-                  e^{i{\bf G}_{0}\cdot {\bf t}_{j}}
-          = c_{0} e^{i{\bf G}_{0}\cdot {\bf t}_{j}}
+    c_{k} = c_{j} e^{-i{\bf G}_{0}\cdot {\bf t}_{j}}
+                  e^{i{\bf G}_{0}\cdot {\bf t}_{k}}
+          = c_{0} e^{i{\bf G}_{0}\cdot {\bf t}_{k}}
 \f]
 that is equivalent to a combination of the phase relationships between
-\f${\bf G}_{0}\f$ and \f${\bf G}_{i}\f$ and \f${\bf G}_{j} \f$.
+\f${\bf G}_{0}\f$ and \f${\bf G}_{j}\f$ and \f${\bf G}_{k} \f$.
 Expanding the system of \f$M-1\f$ binary phase relationships that
 involve the coefficient \f$ c_{0} \f$ by adding additional phase
 relationships that do not involve \f$ c_{0} \f$ is thus found to
 leave the dimension or rank of the system of equations unchanged.
 In a star with no unary or binary contradictions, the set of all
-phase relationships thus form a system of exactly \f$ M - 1\f$
+phase relationships thus forms a system of exactly \f$ M - 1\f$
 independent homogeneous linear equations for \f$ M \f$ coefficients.
 The resulting system of equations always has a non-empty set of
 nontrivial solutions, and is thus not cancelled.
@@ -641,7 +643,7 @@ the phase relationships of an an uncancelled star form a system of
 \f$ M -1 \f$ homogeneous equations for \f$ M \f$ unknown coefficients.
 The set of solutions for the resulting set of equations is thus a vector
 space with dimension 1. This corresponds to a set of solutions that
-can all be expressed as \f$ c f({\bf f}) \f$, in which \f$ c \f$ is a
+can all be expressed as \f$ c f({\bf r}) \f$, in which \f$ c \f$ is a
 complex constant and \f$ f({\bf r}) \f$ is any single nonzero solution.
 
 \section user_basis_closed_sec Closed Stars
@@ -675,7 +677,8 @@ imaginary number.
 If \f$ u({\bf r}) \neq 0 \f$ and \f$ v({\bf r}) \neq 0\f$, then
 \f$ u \f$ and \f$ v \f$ are two functions that are superpositions of
 waves in star \f$ T \f$ and symmetric under space group \f$ S \f$.
-Because the set of such functions is a vector space of dimension 1,
+Because the set of such functions is a vector space of dimension 1
+(see \ref user_basis_starfunc_uniqueness_thrm "Theorem D.11" above),
 this implies that there exists a real constant \f$ d \f$ such that
 \f$ v({\bf r}) = d u({\bf r}) \f$ for all \f$ {\bf r} \f$, giving
 \f$ \phi({\bf r}) = (1+id)u({\bf r}) \f$. In this case
@@ -687,7 +690,7 @@ this implies that there exists a real constant \f$ d \f$ such that
 \f$ T \f$ is <em>open</em> under inversion if, for every wavevector
 \f$ {\bf G} \in T\f$, \f$ -{\bf G} \notin T \f$.
 
-Note that this definition does <em> not </em> define set of wavevectors
+Note that this definition does <em> not </em> define a set of wavevectors
 to be open under inversion if and only if it is not closed. The above
 definition is more restrictive: A set \f$ T \f$ is open only if, for
 <em> every </em> wavevector \f$ {\bf G} \in T\f$, \f$ -{\bf G} \notin T\f$.
@@ -708,19 +711,21 @@ wavevector \f$ {\bf G} \f$, then \f$ T \f$ is closed under inversion if
 If a star \f$ T \f$ contains exactly two wavevectors,
 \f$ T = \{ {\bf G}, {\bf G}' \} \f$, then both wavevectors must be
 nonzero vectors of equal magnitude, and \f$ T \f$ is closed under
-inversion of \f$ {\bf G}' = -{\bf G} \f$ and open otherwise. Now
+inversion if \f$ {\bf G}' = -{\bf G} \f$ and open otherwise. Now
 consider the case of a star that contains three or more nonzero
 wavevectors.  Suppose that a star \f$ T \f$ of space group \f$ S \f$
-contains three or more nonzero wavectors, and that is not open, so
-that there exists at least one wavevector \f$ {\bf G} \in T \f$ for
-which \f$ -{\bf G} \in T \f$.  Let \f$ {\bf G}' \f$ be any other
+contains three or more nonzero wavevectors, and that \f$ T \f$ is not 
+open, so that there exists at least one wavevector \f$ {\bf G} \in T \f$ 
+for which \f$ -{\bf G} \in T \f$.  Let \f$ {\bf G}' \f$ be any other
 wavevector in \f$ T \f$, for which \f$ {\bf G}' \neq {\bf G} \f$ and
 \f$ {\bf G}' \neq -{\bf G} \f$. There must exist a symmetry operation
 \f$ A = (R, {\bf t}) \f$ in \f$ S \f$ such that
-\f$ {\bf G}' = R^{T}{\bf G} \f$ .
+\f$ {\bf G}' = R^{\dagger}{\bf G} \f$ (where \f$ R^{\dagger} \f$ is the 
+\ref user_symmetry_adjoint_def_eqn "adjoint" of \f$ R \f$ and 
+\f$ {\bf G}A = R^{\dagger}{\bf G} \f$). 
 Closure of the star under symmetry operations then implies that
 \f$ - {\bf G}' \f$ is also in \f$ T \f$, because
-\f$ -{\bf G}' = R_{A}^{T}(-{\bf G}) \f$. This implies that a star
+\f$ -{\bf G}' = R^{\dagger}(-{\bf G}) \f$. This implies that a star
 that is not open must be closed, completing the proof.
 
 <b> Definition (Inverse of a Set of Wavevectors) </b>:
@@ -745,7 +750,7 @@ We next prove connectivity: Suppose \f$ {\bf G} \f$ and \f$ {\bf G}' \f$
 are both nonzero wavevectors that belong an open star \f$ T \f$ of space
 group \f$ S \f$, for which there must exist a symmetry operation
 \f$ A = ( R, {\bf t}) \f$ in \f$ S \f$ such that
-\f$ {\bf G}' = R^{T}{\bf G} \f$. This also implies that
+\f$ {\bf G}' = R^{\dagger}{\bf G} \f$. This also implies that
 \f$ -{\bf G}' = -{\bf G}A \f$, thus implying that any two vectors
 \f$-{\bf G}\f$ and \f$-{\bf G}'\f$ in the inverse of \f$ T \f$ are
 related by a space
@@ -764,12 +769,12 @@ is a non-cancelled open star of space group \f$ S \f$ that contains
 Suppose that \f$ \phi({\bf r}) \f$ is an associated star function,
 given by a superposition
 \f[
-   \phi({\bf r}) = \sum_{i=0}^{M} c_{i} e^{i{\bf G}_{i}\cdot{\bf r}}
+   \phi({\bf r}) = \sum_{j=0}^{M} c_{j} e^{i{\bf G}_{j}\cdot{\bf r}}
    \quad.
 \f]
 The complex conjugate \f$ \phi^{*}({\bf r}) \f$ is given by a sum
 \f[
-   \phi^{*}({\bf r}) = \sum_{i=0}^{M} c_{i}^{*} e^{-i{\bf G}_{i}\cdot{\bf r}}
+   \phi^{*}({\bf r}) = \sum_{j=0}^{M} c_{j}^{*} e^{-i{\bf G}_{j}\cdot{\bf r}}
    \quad,
 \f]
 which is a superposition of waves with wavevectors that belong to a
@@ -786,7 +791,7 @@ associated with \f$ T '\f$, the inverse of star \f$ T \f$.
 <b> Definition (Centrosymmetric Groups) </b>: A space group is
 centro-symmetric if it contains an operation that represents inversion
 through some inversion center. Inversion through an inversion center
-located at position \f$ {\bf c} \f$ is explicitly by
+located at position \f$ {\bf c} \f$ is given explicitly by
 \f[
    i = (-I, 2 {\bf c})
 \f]
@@ -809,13 +814,13 @@ with inversion center \f$ {\bf c} \f$ transforms every wavevector
 \f[
   {\bf G}i = -I{\bf G} = -{\bf G} \quad,
 \f]
-where we have used the fact that \f$ (-I)^{T} = -I \f$.
+where we have used the fact that \f$ (-I)^{\dagger} = -I \f$.
 This implies that, for any centrosymmetric group, if a wavevector
 \f$ {\bf G} \f$ is in a star, then \f$ -{\bf G} \f$ is in the same
 star, and thus that every star must be closed under inversion.
-By \ref user_basis_closed_real_thrm "Theorem D.6", this implies
-that, a real star function can be defined for every star of any
-centro-symmetric group,
+By \ref user_basis_closed_real_thrm "Theorem D.12", this implies
+that a real star function can be defined for every star of any
+centro-symmetric group.
 
 \anchor user_basis_centro_origin_thrm
 <b> Theorem D.17 (Star Functions of Groups with with an Inversion Center at the Origin) </b>: 
@@ -825,7 +830,7 @@ which the coefficients of all waves are real, and in which coefficients of
 waves with wavevectors \f${\bf G}\f$ and \f$-{\bf G}\f$ are equal.
 
 <em>Proof</em>: If the group has an inversion center at the origin, it 
-has an symmetry operation \f$ i = (-I,0) \f$ that relates an vector 
+has a symmetry operation \f$ i = (-I,0) \f$ that relates an vector 
 \f${\bf G}\f$ to \f$-{\bf G} = {\bf G}i\f$. The associated phase 
 relationship requires that the coefficients of the two associated waves 
 must be equal. By Theorem D.16, it is always possible to define a real 
