@@ -56,10 +56,12 @@ the root directory before running or rerunning the setup script.
      install executables named "pscf_pg1", "pscf_pg2" and "pscf_pg3"
      in the pscfpp/bin directory.
 
-The "make all-cpu" and "make pspg" commands will each also create a large
-number of intermediate object (*.o), dependency (*.d) and library (*.a)
-files in subdirectories of the pscfpp/bld directory (which is the default
-build directory).
+It is also possible to compile all CPU and GPU-enabled programs with the 
+single command "make all" on machines that are configured to compile CUDA 
+programs.  The "make all-cpu" and "make pspg" or "make all" commands will 
+each create a large number of intermediate object (*.o), dependency (*.d) 
+and library (*.a) files in subdirectories of the pscfpp/bld directory 
+(which is the default build directory).
 
 Each of the above steps is discussed in more detail in the following pages.
 

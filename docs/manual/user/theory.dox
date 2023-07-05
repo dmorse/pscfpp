@@ -4,9 +4,32 @@
 \ref user_fourier_page  (Next)
 <BR>
 
-PSCF solves self-consistent field theory (SCFT) equations for an
-incompressible mixture of any number of block polymer species and
-point-like solvent molecular species.
+Below, we describe the self-consistent field theory (SCFT) equations 
+that are solved by PSCF, giving a complete overview of the mathematical
+system of equations that are solved by the software and summarizing 
+their connection to corresponding physical properties. This is not 
+intended to be an introduction to the field theory itself, and we do 
+not provide a derivation of the SCFT equations. We assume readers are 
+familiar with the principles of polymer physics and statistical mechanics.
+
+For readers looking to better understand the underlying theory and its 
+applications to polymer science, we recommend the following references:
+ - Fredrickson, Glenn H. *The Equilibrium Theory of Inhomogeneous 
+Polymers*, Oxford University Press, **2006**.
+ - Arora, A., *et al.* "Broadly Accessible Self-Consistent Field Theory
+for Block Polymer Materials Discovery," *Macromolecules*, **2016**, 
+<i>49</i>, 4675. 
+ - Matsen, M. W. "The standard Gaussian model for block copolymer 
+melts," *J. Phys.: Condens. Matter*, **2001**, <i>14</i>, R21. 
+ - Shi, A.-C. "Self-Consistent Field Theory of Inhomogeneous Polymeric
+Systems: A Variational Derivation," *Adv. Theory Simul.*, **2019**, 
+<i>2</i>, 1800188. 
+
+\section user_theory_setup_sec Setup
+
+PSCF solves the SCFT equations for an incompressible mixture of any 
+number of block polymer species and point-like solvent molecular 
+species.
 
 In what follows, we consider a system with \f$ C \f$ distinct monomer
 types, \f$ P \f$ block polymer species, \f$ S\f$ solvent species. We use
@@ -59,14 +82,14 @@ approximation, this potential represents a free energy cost for
 placing a monomer of a specified type at a specified position, due 
 to interactions among monomers within an inhomogeneous structure. 
 
-In SCFT, the monomer chemical potential fields (or "w fields")
-\f$ w_{0}, \ldots, w_{C-1} \f$ assumed to depend upon volume fraction
+In SCFT, the monomer chemical potential fields (or "w fields") \f$
+w_{0}, \ldots, w_{C-1} \f$ are assumed to depend upon volume fraction
 fields in a manner that reflects the effects of interaction among
 species in the mixture. PSCF currently uses a simple approximation
 for this dependence that is based on an inhomogeneous generalization
 of the parameterization of excess free energy used in the Flory-Huggins
 theory of homogeneous polymer mixtures. In this approximation, a
-solution to the SCFT problem is required to satisfy a self-consistent
+solution to the SCFT problem is required to satisfy the self-consistent
 field (SCF) equations \anchor user_theory_scf_eqn
 \f[
    w_{\alpha}({\bf r})
@@ -114,9 +137,9 @@ theorem of graph theory aserts that any connected acyclic graph with
 nodes. An acyclic block polymer with \f$ B_{i} \f$ blocks thus always has
 exactly \f$B_{i} + 1\f$ vertices (i.e., junctions and free chain ends).
 For example, a linear triblock terpolymer with three blocks in a row 
-has 4 vertices (3 free ends and two junctions), and so does a star 
+has four vertices (two free ends and two junctions), and so does a star 
 triblock copolymer with three blocks that meet at a central junction 
-(3 free ends and one junction). 
+(three free ends and one junction). 
 
 PSCF assigns each block within a polymer species \f$i\f$ with \f$ B_{i} \f$
 blocks an integer index in the range \f$ [0, \ldots, B_{i}-1 ]\f$, and
@@ -324,7 +347,7 @@ to prove the following series of theorems about products of incoming
 propagators associated with any vertex in a polymer.
 
 \anchor user_theory_theorem1
-<b> Theorem 1 </b> :
+<b> Theorem A.1 </b> :
 Suppose \f$ q({\bf r}, s) q^{\dagger}({\bf r},L-s)\f$ is the product
 of two propagators defined within a single block of length \f$ L \f$.
 The value of this product at \f$ s = 0 \f$, corresponding to its value
@@ -357,7 +380,7 @@ at \f$ s = L \f$ may be obtained by completely analogous reasoning,
 with the roles of \f$ q \f$ and \f$ q^{\dagger} \f$ reversed. 
 
 \anchor user_theory_theorem2
-<b> Theorem 2 </b>: Let \f$ I(s) \f$ represent the spatial integral
+<b> Theorem A.2 </b>: Let \f$ I(s) \f$ represent the spatial integral
 \f[
    I(s) \equiv
    \int d\textbf{r} \; q (\textbf{r},s) q^{\dagger}(\textbf{r},L-s)
@@ -367,9 +390,9 @@ of length \f$ L \f$, where \f$ s \f$ is the contour variable for a
 point within that block.
 If the propagators \f$ q \f$ and \f$ q^{\dagger} \f$ obey a modified
 diffusion equation within some domain, subject to periodic, Dirichlet,
-von Neumann or Robin boundary conditions, then the quantity
-\f$I(s)\f$ is independent of the contour coordinate
-\f$ s \f$ for \f$ s \in [0,L] \f$.
+von Neumann or Robin boundary conditions, then the value of 
+\f$I(s)\f$ is independent of contour coordinate \f$ s \f$ for all
+\f$ s \in [0,L] \f$.
 
 <em> Proof </em>:
 Note that
@@ -412,33 +435,33 @@ for all \f$ s \in [0,L] \f$, implying that \f$ I(s) \f$ is independent
 of \f$ s \f$ within each block.  
 
 \anchor user_theory_theorem3
-<b> Theorem 3 </b>: The value of the spatial integral of the product
+<b> Theorem A.3 </b>: The value of the spatial integral of the product
 of incoming propagators associated with a vertex of an acyclic branched
 polymer has the same value for every vertex in the polymer, including
 any virtual 2-fold vertex inserted into any block of the polymer.
 
-<em> Proof </em>: \ref user_theory_theorem2 "Theorem 2" shows that the value
-of the spatial integral \f$ I(s) \f$ of the product of incoming propagators
-associated with a virtual 2-fold vertex inserted into any block of a polymer
-is independent of the coordinate \f$ s \f$ within the block. Combining this
-with \ref user_theory_theorem1 "theorem 1", we may show that the integral 
-of the product of incoming propagators must have the same value for any 
-vertices that are directly connected by a block.  Because all vertices in 
-a polymer are connected by some sequence of blocks, this implies that the 
-value of this spatial integral must be the same for every vertex in any 
-acyclic branched polymer, including virtual vertices that we insert at 
-any point within any block.
+<em> Proof </em>: \ref user_theory_theorem2 "Theorem A.2" shows that the 
+value of the spatial integral \f$ I(s) \f$ of the product of incoming 
+propagators associated with a virtual 2-fold vertex inserted into any 
+block of a polymer is independent of the coordinate \f$ s \f$ within the 
+block. Combining this with \ref user_theory_theorem1 "theorem 1", we may 
+show that the integral of the product of incoming propagators must have 
+the same value for any vertices that are directly connected by a block.  
+Because all vertices in a polymer are connected by some sequence of blocks, 
+this implies that the value of this spatial integral must be the same for 
+every vertex in any acyclic branched polymer, including virtual vertices 
+that we insert at any point within any block.
 
 \subsection user_theory_bigQ_sub Molecular Partition Function
 
 Let \f$ Q_{i} \f$ denote a normalized single-chain partition function
 for a polymer molecule of species \f$ i \f$ within an ideal gas reference
-system tht is subjected to a specified set of monomer potential fields.
+system that is subjected to a specified set of monomer potential fields.
 We define the value of \f$ Q_{i} \f$ to be equal to the spatial average
 (i.e., the integral over the entire spatial domain of the problem
 divided by the volume of this domain) of the product of the values of
 the incoming propagators evaluated at any vertex of the polymer. The
-statement of theorem 3 implies that we should get the same value for
+statement of theorem A.3 implies that we should get the same value for
 \f$ Q_{i} \f$ by evaluating it using any vertex in a polymer of species
 \f$ i \f$. Different values for \f$ Q_{i} \f$ are, however, generally
 obtained for different species within a mixture.
@@ -463,13 +486,13 @@ cell in a 1D lamellar phase).
 Another potentially useful expression for \f$ Q_{i} \f$ may be obtained
 by considering a virtual 2-fold vertex inserted at contour coordinate
 \f$ s \f$ within any block \f$ a \f$ of length \f$ L_{ia} \f$ of a
-polymer species of \f$ i \f$ and using the result of theorem 3 to show
+polymer species of \f$ i \f$ and using the result of theorem A.3 to show
 that \anchor user_theory_Q2vertex
 \f[
    Q_{i} = \frac{1}{V}
    \int d\textbf{r} \; q (\textbf{r},s) q^{\dagger}(\textbf{r},L-s)
 \f]
-where \f$ L \f$ is the length of the chosen block, and where theorem 3
+where \f$ L \f$ is the length of the chosen block, and where theorem A.3
 guarantees that the value of the RHS of this equation is actually
 independent of the choice of values for \f$ s \f$ and block index
 \f$ a \f$.
@@ -494,11 +517,11 @@ density over the problem domain must equal unity, we find that
 in which \f$ q \f$ and \f$ q^{\dagger} \f$ are the two propagators
 associated with the block of interest, \f$ L_{ia} \f$ is the length of
 this block, and \f$ I_{ia}(s) \f$ is the spatial integral defined in
-the statement of \ref user_theory_theorem2 "theorem 2", defined here
+the statement of \ref user_theory_theorem2 "theorem A.2", defined here
 for monomer with contour coordinate \f$ s \f$ within block \f$ a \f$
 of polymer species \f$ i \f$.
 Using the expression given \ref user_theory_Q2vertex "above" to relate
-\f$Q_{i}\f$ a and \f$ I_{ia}(s) \f$, we find that
+\f$Q_{i}\f$ and \f$ I_{ia}(s) \f$, we find that
 \anchor user_theory_rhoia_eqn
 \f[
    \rho_{ia} ({\bf r}, s) = \frac{1}{V Q_{i}}
@@ -533,12 +556,12 @@ where \f$ M_{i} \f$ is the total number of chains of species \f$ i \f$
 and \f$ L_{ia} \f$ is the length of the relevant block.  Rewriting
 \f$ v M_{i} \f$ in terms of \f$ \overline{\phi}_{i} \f$ then yields
 \f[
-   \phi_{a i}(\textbf{r}) =
+   \phi_{ia}(\textbf{r}) =
    \frac{\overline{\phi}_{i}}{L_{i}Q_{i}}
    \int\limits_{0}^{L_{ia}} \! ds \;
     q(\textbf{r},s) q^{\dagger}(\textbf{r},s)
 \f]
-where \f$ L_{i} \f$ is the total contour lengths of all of the blocks
+where \f$ L_{i} \f$ is the total contour length of all of the blocks
 of polymer species \f$ i \f$.
 
 The total volume fraction \f$ \phi_{\alpha}(\textbf{r}) \f$ for each
@@ -549,10 +572,10 @@ monomer type index \f$ \alpha\f$ .
 \section user_theory_solvent_sec Solvent Species
 
 Each solvent species \f$ i\f$ is associated with a specific monomer type
-\f$ \alpha\f$ and a dimensionaless "size" parameter. The size parameter
+\f$ \alpha\f$ and a dimensionless "size" parameter. The size parameter
 for a solvent is a measure of volume closely analogous to the length
 parameter for a block in a block polymer, and is equal to the ratio of
-the volume per molecule occupied by the solvent to the monomomer reference
+the volume per molecule occupied by the solvent to the monomer reference
 volume. In light of this analogy, we denote the "size" of solvent \f$ i\f$
 here by \f$ L_{i} \f$.
 
@@ -591,25 +614,26 @@ user to enter a value for either the overall volume fraction for
 that species, denoted here by \f$ \overline{\phi}_{i} \f$, or a
 value for the chemical potential, denoted here by \f$ \mu_{i} \f$.
 
-To use an open ensemble for a particular species SCFT, one uses an
+To use an open ensemble for a particular species in SCFT, one uses an
 open (i.e., grand-canonical) ensemble to treat the behavior of that
 species when considering the hypothetical ideal gas of non-interacting
-molecules subjected to a potential. Use of a of grand-canonical
+molecules subjected to a potential. Use of a grand-canonical
 ensemble to describe to a gas of molecules of species \f$ i \f$
 yields an overall concentration for that species and a corresponding
 overall volume fraction \f$ \overline{\phi}_{i} \f$ that are both
-proportional to the product \f$ e^{\beta\mu_{i}} Q_{i} \f$. The value
-of the constants of proportionality in the expressions depends upon
-arbitrary choices of convention for normalizing volume used to relate
-the configurational integral for a single chain to a dimensionless
-partition function and a choice of reference state used to define
-the chemical potential. In the equations used in PSCF, we set
+proportional to the product \f$ e^{\mu_{i}/k_{B} T} Q_{i} \f$. The 
+value of the constants of proportionality in the expressions depends 
+upon arbitrary choices of convention for normalizing volume used to 
+relate the configurational integral for a single chain to a 
+dimensionless partition function and a choice of reference state used 
+to define the chemical potential. In the equations used in PSCF, we 
+set
 \f[
    \overline{\phi}_{i} = e^{\mu_{i}/k_{B} T} Q_{i} \quad,
 \f]
 as a matter of convention.
 
-Calculations of the local volume fractions for monomers with a
+Calculations of the local volume fractions for monomers within a
 specific block of a block copolymer and for the local volume fraction
 of a solvent species are thus performed for molecular species that
 are treated in an open ensemble, by simply replacing the parameter
@@ -646,7 +670,7 @@ configurational entropy, and \f$ F_{\rm int} \f$ is an "interaction"
 contribution that arises directly from excess free energy of interaction
 that is characterized here in terms of binary interaction parameters.
 The ideal and interaction contributions to the free energy per monomer
-reference volume \f$ F v /k_{B}T \f$, as reported in output files, are
+reference volume \f$ F v / V k_{B} T \f$, as reported in output files, are
 given by
 \f{eqnarray*}
     \frac{F_{\rm id} v}{Vk_{B}T}
@@ -681,9 +705,10 @@ in which \f$ F / V \f$ is the Helmholtz free energy density and
 of species \f$ i \f$ per unit volume. The value given in the output file
 is the dimensionless value \f$ Pv/k_{B}T \f$ .
 
-In grand-canonical and mixed ensembles, values for the Lagrange multplier
-field \f$ \xi(\textbf{r}) \f$ and the macroscopic pressure \f$ P\f$ are
-uniquely determined by the values for the chemical potentials.
+In grand-canonical and mixed ensembles, values for the Lagrange 
+multiplier field \f$ \xi(\textbf{r}) \f$ and the macroscopic pressure 
+\f$ P\f$ are uniquely determined by the values for the chemical 
+potentials.
 
 In the special case of canonical ensemble, however, the value of the
 Lagrange multplier field \f$ \xi(\textbf{r}) \f$ is not uniquely
@@ -703,7 +728,7 @@ When a calculation is performed in canonical ensemble (by providing
 values of volume fractions for all species in the parameter file), PSCF
 outputs values for the pressure, chemical potentials, and \f$ w \f$
 fields that are all consistent with this arbitrary convention used
-to define a unique solution for \f$ \xi \f$.  Results for the Hemholtz
+to define a unique solution for \f$ \xi \f$.  Results for the Helmholtz
 free energy density and volume fraction fields can, however, be shown
 to be independent of changes in the value of \f$ \xi \f$ by a
 homogeneous constant, and are thus independent of this choice of

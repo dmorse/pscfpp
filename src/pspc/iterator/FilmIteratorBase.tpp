@@ -87,7 +87,7 @@ namespace Pspc
          UTIL_THROW("wallThickness and interfaceThickness must be >0");
       }
 
-      // Allocate chiBottom_ and chiTop_ and set to zero before optionally 
+      // Allocate chiBottom_ and chiTop_ and set to zero before 
       // reading them in
       int nm = system().mixture().nMonomer();
       chiBottom_.allocate(nm);
@@ -96,8 +96,8 @@ namespace Pspc
          chiBottom_[i] = 0.0;
          chiTop_[i] = 0.0;
       }
-      readOptionalDArray(in, "chiBottom", chiBottom_, nm);
-      readOptionalDArray(in, "chiTop", chiTop_, nm);
+      readDArray(in, "chiBottom", chiBottom_, nm);
+      readDArray(in, "chiTop", chiTop_, nm);
 
       // If lattice parameters are flexible, determine which parameters
       // are allowed to vary, store them in this object, and pass them
@@ -308,9 +308,9 @@ namespace Pspc
       // Get length L of the lattice basis vector normal to the walls
       RealVec<D> a;
       a = system().domain().unitCell().rBasis(normalVecId_);
-      double norm_sqd; // norm squared
+      double norm_sqd(0.0); // norm squared
       for (int i = 0; i < D; i++) {
-         norm_sqd = a[i]*a[i];
+         norm_sqd += a[i]*a[i];
       }
       double L(sqrt(norm_sqd));
 

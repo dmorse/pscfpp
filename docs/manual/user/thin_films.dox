@@ -99,7 +99,7 @@ System{
    }
    Domain{
       unitCell         tetragonal    2.0    4.3
-      mesh             32  32  68
+      mesh             32  32  128
       groupName        P_4%m_m_m
    }
    AmIteratorFilm{
@@ -185,10 +185,9 @@ equal to *L--T*, or 4.0. If we expect that the bcc structure will have a
 cubic lattice parameter of ~2.0, then we are effectively targeting a film 
 that is two unit cells thick. 
 
-Next, there are optional input arrays `chiBottom` and `chiTop`. These 
+Next, there are required input arrays `chiBottom` and `chiTop`. These 
 allow the user to define a Flory-Huggins-like interaction parameter 
-between each monomer species and the walls. If the arrays are not specified, 
-then all values are set to zero (an athermal wall). For a system with `n`
+between each monomer species and the walls. For a system with `n`
 monomer species, the chi arrays will contain `n` entries each. Each entry 
 corresponds to a single monomer species, in the same order that they are 
 listed in the `monomers[` block. `chiBottom` defines the interaction 
@@ -239,6 +238,15 @@ representing wall-monomer interactions is defined to be
 (<i>&chi;</i><sub>&alpha;,bot</sub><i>&rho;</i><sub>w,bot</sub>(<b>r</b>)) + 
 (<i>&chi;</i><sub>&alpha;,top</sub><i>&rho;</i><sub>w,top</sub>(<b>r</b>)).
 
+The wall chi parameters are computational analogs to the physical property
+of interfacial tension. The interfacial tension between a given monomer 
+species and the wall can be related to the corresponding wall chi parameter
+using a procedure outlined in the following reference from Hur and 
+coworkers:
+
+- Hur, S.-M., Garcia-Cervera, C. J., & Fredrickson, G. H. (2012). 
+*Macromolecules*, **45**, 2905.
+
 ## Sweep block
 
 We also briefly draw your attention to the Sweep block at the bottom of the 
@@ -252,6 +260,9 @@ change in this parameter over the entire sweep. Note that `i` refers to the
 index of the parameter in the array that is input in the `unitCell` line of 
 the parameter file. So, in the example above, `i` can only be 0 or 1 because 
 there are only 2 lattice parameters specified on the `unitCell` line.
+Note that the lattice parameter being swept should be held rigid during the 
+calculation, or else the iterator will allow that parameter to relax
+back to it's most optimal value at each step of the sweep.
 
 The second and third sweep parameters for thin films are `chi_bottom` and 
 `chi_top`, which allow the user to sweep any of the values in the 
@@ -301,22 +312,25 @@ When walls are added into the system, the user can still choose whether to
 fix the unit cell parameters or allow some or all of them to vary, but the 
 implementation is slightly different. Specifically, we require that the 
 length of the lattice basis vector that is orthogonal to the wall (4.3 in 
-the example above) is fixed, in order to force the thin film to maintain a 
+the example above) is fixed regardless of the inputs provided in `isFlexible` 
+and `flexibleParams`, in order to force the thin film to maintain a 
 constant thickness throughout the iteration process. Furthermore, we require 
 that the other lattice basis vector(s) remain parallel to the walls. This 
 implies the following:
 - In 1D, the size of the unit cell is always fixed.
 - In 2D, the length of the lattice basis vector parallel to the walls 
 (either **a** or **b**) may vary, but the angle *&gamma;* between **a** and 
-**b** is fixed at 90&deg;.
+**b** is always fixed at 90&deg;. The lattice basis vector perpendicular to 
+the walls is fixed.
 - In 3D, the lengths of the lattice basis vectors that are parallel to the 
 walls may vary, as can the angle between them. The two vectors in question 
 depend on the choice of `normalVecId`. The length of the lattice basis vector 
 that is normal to the wall (the vector indicated by `normalVecId`) is held 
 fixed, and the remaining two angles are fixed at 90&deg;. 
-This behavior is implemented automatically. If the user specifies that 
-lattice parameters may vary, then the software will decide which lattice 
-parameters are actually allowed to vary based on `normalVecId` and 
+
+This behavior is implemented automatically. If the user specifies that some 
+or all lattice parameters may vary, then the software will decide which 
+lattice parameters are actually allowed to vary based on `normalVecId` and 
 `unitCell`. If the user tries to define a unit cell that is incompatible 
 with the rules above (*e.g.,* a 2D unit cell with <i>&alpha;</i> &ne; 
 90&deg;), the software will throw an error.

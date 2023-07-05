@@ -58,6 +58,104 @@ namespace Pscf
    }
 
    /*
+   * Check if a mesh is compatible with this space group.
+   */
+   template <int D>
+   void SpaceGroup<D>::checkMeshDimensions(IntVec<D> const & dimensions)
+   const
+   {
+
+      // ---------------------------------------------------------------
+      // Check compatibility of mesh dimensions & translations
+      // ---------------------------------------------------------------
+
+      // Identify required divisor of mesh dimension in each direction
+      int numerator, denominator;
+      IntVec<D> divisors;
+      for (int i = 0; i < D; ++i) {
+         // Find maximum denominator
+         divisors[i] = 1;
+         for (int j = 0; j < size(); ++j) {
+            numerator = (*this)[j].t(i).num();
+            denominator = (*this)[j].t(i).den();
+            if (numerator != 0) {
+               UTIL_CHECK(denominator > 0);
+               if (denominator > divisors[i]) {
+                  divisors[i] = denominator;
+               } 
+            }
+         }
+         // Make sure each divisor is a multiple of all denominators
+         for (int j = 0; j < size(); ++j) {
+            numerator = (*this)[j].t(i).num();
+            denominator = (*this)[j].t(i).den();
+            if (numerator != 0) {
+               if (denominator < divisors[i]) {
+                  if (divisors[i]%denominator != 0) {
+                     divisors[i] = divisors[i]*denominator;
+                  }
+               }
+            }
+         }
+      }
+
+      // Check that mesh dimensions are multiples of required divisor
+      for (int i = 1; i < D; ++i) {
+         if (dimensions[i]%divisors[i] != 0) {
+            Log::file() 
+               << "\n"
+               << "Mesh dimensions incompatible with the space group:\n" 
+               << "  dimensions[" << i << "] = " << dimensions[i] << "\n"
+               << "  This dimension must be a multiple of " << divisors[i] 
+               << "\n\n";
+               UTIL_THROW("Error: Mesh not incompatible with space group");
+         }
+      }
+
+      // ---------------------------------------------------------------
+      // Check compatibility of mesh dimensions & point group operations
+      // ---------------------------------------------------------------
+
+      // Identify pairs of directions that are related by point group ops
+      FMatrix<bool, D, D> areRelated;
+      for (int i = 0; i < D; ++i) {
+         for (int j = 0; j < D; ++j) {
+            areRelated(i, j) = false;
+         }
+         areRelated(i, i) = true;
+      }
+      for (int k = 0; k < size(); ++k) {
+         for (int i = 0; i < D; ++i) {
+            for (int j = 0; j < D; ++j) {
+               if (i != j) {
+                  if ( (*this)[k].R(i,j) != 0) {
+                     areRelated(i, j) = true;
+                     areRelated(j, i) = true;
+                  }
+               }
+            }
+         }
+      }
+
+      // Check if mesh dimensions are equal for related directions
+      for (int i = 0; i < D; ++i) {
+         for (int j = 0; j < i; ++j) {
+            if (areRelated(i,j) && (dimensions[i] != dimensions[j])) {
+               Log::file() 
+                 << "\n"
+                 << "Mesh dimensions incompatible with the space group - \n"
+                 << "Unequal dimensions for related directions:\n"
+                 << "  dimensions[" << i << "] = " << dimensions[i] << "\n"
+                 << "  dimensions[" << j << "] = " << dimensions[j] 
+                 << "\n\n";
+               UTIL_THROW("Error: Mesh not incompatible with space group");
+            }
+         }
+      }
+      
+   }
+
+   /*
    * Read a group from file
    */
    template <int D>

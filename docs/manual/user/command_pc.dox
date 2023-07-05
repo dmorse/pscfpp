@@ -66,7 +66,7 @@ executes a sweep operation.
 \section user_command_pc_commands_sec Commands
 
 The following table shows a list of available commands for the pscf_pc.
-Clickable command names link to a more detailed discussions of that
+Each clickable command name links to a more detailed discussion of that
 command or a group of closely related commands.
 <table>
   <tr>

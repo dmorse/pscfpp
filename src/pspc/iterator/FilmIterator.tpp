@@ -45,7 +45,7 @@ namespace Pspc
       params.append(false); // parameter is not flexible
 
       if (iterator().flexibleParams()[0]) {
-         Log::file() << std::endl 
+         Log::file() 
             << "Warning - The lattice parameter is not allowed "
             << "to be flexible for a 1D thin film system."
             << std::endl;
@@ -122,9 +122,9 @@ namespace Pspc
       // Before updating iterator_.flexibleParams_, check if the number
       // of flexible lattice parameters has changed during this function.
       if (nFlexibleParams() < iterator().nFlexibleParams()) {
-         Log::file() << std::endl 
-            << "Notice - Some lattice parameters will be held constant\n"
-            << "to comply with the thin film constraint."
+         Log::file() 
+            << "***Notice - Some lattice parameters will be held constant\n"
+            << "to comply with the thin film constraint.***"
             << std::endl;
       }
 
@@ -247,9 +247,9 @@ namespace Pspc
       // Before updating iterator_.flexibleParams_, check if the number
       // of flexible lattice parameters has changed during this function.
       if (nFlexibleParams() < iterator().nFlexibleParams()) {
-         Log::file() << std::endl 
-            << "Notice - Some lattice parameters will be held constant\n"
-            << "to comply with the thin film constraint."
+         Log::file() 
+            << "***Notice - Some lattice parameters will be held constant\n"
+            << "to comply with the thin film constraint.***"
             << std::endl;
       }
 

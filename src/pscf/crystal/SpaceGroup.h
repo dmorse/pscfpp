@@ -32,7 +32,7 @@ namespace Pscf
    public:
 
       /**
-      * Determines if a symmetric structure has an inversion center.
+      * Determines if this space group has an inversion center.
       *
       * Returns true if an inversion center exists, and false otherwise.
       * If an inversion center exists, its location is returned as the
@@ -57,6 +57,38 @@ namespace Pscf
       */
       void 
       shiftOrigin(typename SpaceSymmetry<D>::Translation const & origin);
+
+      /**
+      * Check if input mesh dimensions are compatible with space group.
+      *
+      * This function checks if a mesh with the specified dimensions is
+      * invariant under all operations of this space group, i.e., whether
+      * each crystal symmetry operation maps the position of every node 
+      * of the mesh onto the position of another node. It is only possible
+      * define how a symmetry operation transforms a function that is 
+      * defined only on the nodes of mesh if the mesh is invariant under 
+      * the symmetry operation, in this sense. An invariant mesh must thus 
+      * be used necessary to describe a function whose values on the mesh 
+      * nodes are invariant under all operations in the space group. 
+      *
+      * If the mesh is not invariant under all operations of the space
+      * group, an explanatory error message is printed and an Exception 
+      * is thrown to halt execution.
+      *
+      * The mesh for a unit cell within a Bravais lattice is assumed to 
+      * be a regular orthogonal mesh in a space of reduced coordinates, 
+      * which are the components of position defined using a Bravais
+      * basis (i.e., a basis of Bravais lattice basis vectors). Each
+      * element of the dimensions vector is equal to the number of grid 
+      * points along a direction corresponding to a Bravais lattice vector.
+      * A Bravais basis is also used to define elements of the matrix 
+      * representation of the point group operation and the translation
+      * vector in the representation of a crystal symmetry operation as
+      * an instance of class Pscf::SpaceSymmetry<D>. 
+      *
+      * \param dimensions vector of mesh dimensions
+      */
+      void checkMeshDimensions(IntVec<D> const & dimensions) const;
 
       // Using declarations for some inherited functions
       using SymmetryGroup< SpaceSymmetry <D> >::size;

@@ -69,6 +69,9 @@ namespace Pscf {
                             UnitCell<D> const & unitCell,
                             SpaceGroup<D> const & group)
    {
+      // Precondition: Check compatibility of mesh with space group
+      group.checkMeshDimensions(mesh.dimensions());
+
       // Save pointers to mesh and unit cell
       meshPtr_ = &mesh;
       unitCellPtr_ = &unitCell;

@@ -65,10 +65,11 @@ in which:
 
    - starInvert is a integer that can have allowed values of 0, 1, -1.
      A value starInvert = 0 indicates that the star is closed under
-     inversion. Value of starInvert = +1 or -1 indicates that the 
-     star is the first or second star, respectively, in a pair of
-     open stars that are related to one another by inversion.
-     
+     inversion. A value of starInvert = +1 or -1 indicates that the 
+     star is the first star (for starInvert = 1) or the second star 
+     (for starInvert = -1) in a pair of open stars that are related 
+     to one another by inversion. 
+ 
    - wave[D] is a vector of D integer wave components of a
      characteristic wave that belongs to the star, which can
      be used as an identifier for the star.
@@ -78,6 +79,12 @@ of all waves, including those that belong to cancelled stars, in which
 the waves that belong to a particular star are listed as a consecutive 
 block with indices beginId, ...., endId - 1. Only non-cancelled stars 
 are listed in this file format.
+
+Stars are listed in this file output in order of increasing starId.
+Pairs of open stars that are related to each other by inversion are
+always assigned sequential values for the starId, and thus always
+appear sequentially in this format, with the star with starInvert = +1
+listed first.
 
 \section user_command_pc_star_gyroid_sec Example (Double Gyroid) 
 

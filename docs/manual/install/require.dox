@@ -136,7 +136,7 @@ A python interpreter should be available from the command line in any
 common linux distribution (e.g., Fedora or Ubuntu) or in Mac OS X after
 installation of the command line tools package.
 
-\section install_require_compiler_serial C++ compiler
+\section install_require_compiler_cpp C++ compiler
 
 By default, the PSCF build system invokes a C++ compiler using the
 compiler commnd name "g++". On linux systems, this command normally
@@ -213,11 +213,11 @@ brew install doxygen
 \endcode
 
 Mac users should be aware that homebrew installs files in different
-locations on newer Macs that use Apple silicon than the locations used on
-macs that use Intel cpus:
+locations on newer Macs that use Apple silicon than the file locations 
+used by homebrew on older Macs that use Intel cpus:
 
-On Macs with Intel cpus, homebrew installed links to required header and
-library files in subdirectories of the /usr/local directory.
+On Macs with Intel cpus, homebrew installed links to required header 
+and library files in subdirectories of the /usr/local directory.
 Because /usr/local is  one of the standard directories in which a unix
 shell normally looks for such files, PSCF can be installed on such
 machines using a default configuration for the makefile system that is

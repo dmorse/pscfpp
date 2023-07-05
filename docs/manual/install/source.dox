@@ -43,7 +43,7 @@ user/developers should instead:
   their github user account</li>
 <li> 
   Clone their personal fork of the pscfpp repository to a computer on 
-  which they can compile and edit the code, using the --recursive option 
+  which they can compile and edit the code, using the "--recursive" option 
   as described above. 
 </li>
 </ul>

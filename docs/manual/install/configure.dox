@@ -47,7 +47,7 @@ so must be invoked before compiling any relevant source code.
 The -q command line option of the configure script may be used to query
 what optional features are currently set to be enabled or disabled the
 next time the code is compiled.  To see how this works, changed
-directory (cd) to the bld/serial directory and then enter
+directory (cd) to the pscfpp/bld/ directory and then enter
 \code
 ./configure -q
 \endcode
