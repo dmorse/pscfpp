@@ -239,7 +239,7 @@ namespace Pspc
       using Iterator<D>::isFlexible_;
       using ParamComposite::read;
       using ParamComposite::readOptional;
-      using ParamComposite::readOptionalDArray;
+      using ParamComposite::readDArray;
       using ParamComposite::setParent;
       using ParamComposite::addComponent;
 

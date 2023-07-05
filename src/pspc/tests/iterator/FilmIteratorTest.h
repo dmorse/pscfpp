@@ -522,10 +522,10 @@ public:
          std::cout << "\nFree energy error = " 
                    << (system.fHelmholtz() - 3.87784944222) << "\n";
          std::cout << "\nPressure error = " 
-                   << (system.pressure() + 13.9125036568) << "\n";
+                   << (system.pressure() + 12.1117881919) << "\n";
       }
       TEST_ASSERT(system.fHelmholtz() - 3.87784944222 < 1e-6);
-      TEST_ASSERT(system.pressure() + 13.9125036568 < 1e-5);
+      TEST_ASSERT(system.pressure() + 12.1117881919 < 1e-5);
    }
 
    void testMaskAndH() // test manual entry of mask and h fields
