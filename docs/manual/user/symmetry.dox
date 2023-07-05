@@ -4,7 +4,6 @@
 \ref user_basis_page   (Next) &nbsp; &nbsp; &nbsp; &nbsp;
 <BR>
 
-
 The space group of a crystal is a set of symmetry operations under which
 the structure is invariant. Crystal symmetry operations, also known as
 space group operations, can generally involve combinations of point 
@@ -14,14 +13,12 @@ as inversion through the origin, reflection through a plane, or rotation
 around a symmetry axis by some fraction of a full rotation. Point group
 operations may be represented explicitly by matrices. 
 
-Below, we give succinct descriptions of space group symmetry, with 
-emphasis on their mathematical representation and on their qualities
-that are used in the PSCF software. The descriptions below may not be 
-sufficient for readers who have not yet encountered these ideas elsewhere. 
-For a more general overview of these and other related topics pertaining 
-to symmetry, we recommend the book *Structure of Materials: An 
-Introduction to Crystallography, Diffraction and Symmetry* by Marc De 
-Graef and Michael E. McHenry. 
+Below, we give a succinct discussion of space group symmetry, with an
+emphasis on aspects used in the PSCF software. Readers who have not 
+encountered these ideas elsewhere may find it useful to also consult 
+a textbook, for which we recommend the book *Structure of Materials: 
+An Introduction to Crystallography, Diffraction and Symmetry* by Marc 
+De Graef and Michael E. McHenry. 
 
 \section user_symmetry_ops_sec Crystal Symmetry Operations
 

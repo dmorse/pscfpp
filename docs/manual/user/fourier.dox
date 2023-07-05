@@ -4,28 +4,28 @@
 \ref user_symmetry_page  (Next)
 <BR>
 
-This page describes the different numerical representations used in
-the pscf_pc and pscf_pg programs to describe fields (functions of 
-position) with the periodicity of a Bravais lattice. In a 
-\ref user_basis_page "subsequent appendix", we also 
-consider a symmetry-adapted Fourier expansion appropriate for periodic 
-fields that are also known to be invariant under all symmetry operations
-of a specified space group.  
+This page describes the different numerical representations used in the 
+pscf_pc and pscf_pg programs to describe fields (functions of position) 
+that have the periodicity of a Bravais lattice. In a 
+\ref user_basis_page "subsequent appendix", we also consider a type of
+symmetry-adapted Fourier expansion appropriate for periodic fields that 
+are known to be invariant under all symmetry operations of a specified 
+space group.  
 
 Below, we give succinct descriptions of Bravais lattices and reciprocal
-lattices, with emphasis on the aspects that pertain to the PSCF software.
-The descriptions below may not be sufficient for readers who have not yet
-encountered these ideas elsewhere. For a more general overview of these 
-and other related topics pertaining to symmetry, we recommend the book 
-*Structure of Materials: An Introduction to Crystallography, Diffraction 
-and Symmetry* by Marc De Graef and Michael E. McHenry. We also provide a 
-similarly succinct overview of Fourier series, Fourier transforms, and 
-aliasing below, with emphasis on aspects relevant to this software. For 
-a more comprehensive introduction to these topics and a summary of the
-numerical benefits of solving differential equations in reciprocal
-space (sometimes called "spectral accuracy"), we recommend the first 
-four chapters of the book *Spectral Methods in MATLAB* by Lloyd N. 
-Trefethen.
+lattices, emphasizing aspects that are relevant to the PSCF software.
+We also briefly review the use of Fourier series for continuous periodic 
+fields, the discrete Fourier transform (DFT) of periodic fields that are 
+defined on the nodes of a mesh, and the notion of wavevector aliasing.
+Readers who have not previously encountered some of these topics may 
+find it useful to also consult more detailed treatments. For a general 
+overview of topics related to periodic structures and crystal symmetry, 
+we recommend the book *Structure of Materials: An Introduction to 
+Crystallography, Diffraction and Symmetry* by Marc De Graef and Michael 
+E. McHenry.  For a discussion of Fourier methods and a summary of the 
+numerical benefits of solving differential equations in reciprocal space 
+(sometimes called "spectral accuracy"), we recommend the first four 
+chapters of the book *Spectral Methods in MATLAB* by Lloyd N. Trefethen.
 
 Throughout these notes, let \f$ D \f$ denote the number of directions 
 in which the fields of interest are taken to be periodic, which is the 
