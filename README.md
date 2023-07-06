@@ -330,32 +330,38 @@ Subdirectory examples/pg contains examples for the pscf_pg programs for
 periodic structures. Subdirectories are organized in a manner similar 
 to that used for the examples/pc directory tree.
 
-We refer to a directory that contains all of the input files for a 
-single example or a set of very closely related examples as an 
-example directory.  Each such example directory contains at least one 
-parameter file (usually named "param"), at least one command file 
-(usually named "command"), and an input chemical potential field 
-(w field) file.  
+We refer to a directory that contains all of the input files for a single 
+example or a set of very closely related examples as an example directory.  
+Each such example directory contains at least one parameter file (usually 
+named "param"), at least one command file (usually named "command"), and 
+an input chemical potential field (w field) file. Example directories 
+that contain input files for two or more examples usually contain a single
+file that contains an initial guess for the chemical potential field, but 
+may contain different parameter or command files for use in different 
+examples.
 
-Most example directories also contain a shell script named "run" or 
-something similar that can be executed to run the example using the
-supplied input files and appropriate command line options.  The simplest 
-way to run such an example is thus to change directory (cd) to the 
-relevant example directory and enter "./run" from within that directory 
-(Note the use of the prefix "./", which tells the operating system to 
-look for the run script in the current working directory).  Users may 
-also inspect the text of the run script to see the command used to run 
-the example.
+Example directories that contain files for a single example usually
+contain a shell script named "run" that can be executed to run the 
+example using the supplied input files.  The simplest way to run such an 
+example is thus to change directory (cd) to the relevant example directory 
+and enter "./run" from within that directory. (Note the use of the 
+prefix "./", which tells the operating system to look for the run script 
+in the current working directory).  Users may also inspect the text of 
+such a run script to see the exact command used to run the example. 
+Example directories that contain input files for two or more closely 
+related examples may contain several such scripts with names that are 
+variants of "run", each of which can be execute to run a specific 
+example. 
 
-Almost all example directories also contain a script named "clean" that 
+Each example directory also usually contains a script named "clean" that 
 can be executed to remove all output files that are created by running 
 the example.
 
 ## License
 
 The C++/CUDA version of PSCF is free, open source software. It is
-distributed under the terms of the GNU General Public License as (GPL)
-published by the Free Software Foundation, either version 3 of the
+distributed under the terms of the GNU General Public License (GPL)
+as published by the Free Software Foundation, either version 3 of the
 License or (at your option) any later version.  PSCF is distributed
 without any warranty, without even the implied warranty of merchantability
 or fitness for a particular purpose.  See the LICENSE file or the

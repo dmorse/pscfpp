@@ -11,9 +11,6 @@ latex:
 	doxygen Doxyfile_latex
 	cd latex; make
 
-all:    
-	doxygen Doxyfile
-
 clean:
 	-rm -fr html/* latex/*
 
