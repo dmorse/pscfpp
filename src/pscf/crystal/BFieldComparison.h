@@ -18,7 +18,7 @@ namespace Pscf {
    /**
    * Comparator for fields in symmetry-adapted basis format.
    * 
-   * \ingroup Pspc_Field_Module
+   * \ingroup Pscf_Crystal_Module
    */
    class BFieldComparison : public FieldComparison< DArray<double> >
    {

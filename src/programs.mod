@@ -2,8 +2,6 @@
 
 /**
 * \defgroup Programs_Module Programs
-*
-* Executable programs.
 */
 
 /**

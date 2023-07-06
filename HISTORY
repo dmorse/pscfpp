@@ -152,8 +152,8 @@ Remaining known bugs
 * Incorrect treatment of non-centrosymmetric groups in pscf_pg (pg)
 
 
-=========================
 Version 0.7  (11/11/2021)
+=========================
 
 First tagged version that includes GPU code, as described in:
 
