@@ -7,9 +7,9 @@ namespace Pscf
    namespace Pspg {
 
       /**
-      * \defgroup Pscf_Pspg_Module Periodic Pseudo-Spectral (GPU)
+      * \defgroup Pscf_Pspg_Module Periodic (GPU)
       *
-      * Pseudo-spectral SCFT for periodic structures on a GPU.
+      * Pseudo-spectral SCFT for periodic structures (GPU), namespace Pscf::Pspg
       *
       * \ingroup Pscf_NS_Module
       */

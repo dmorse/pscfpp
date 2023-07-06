@@ -2,7 +2,8 @@ This src/ directory contains all C++ and CUDA source code for the PSCF
 package.  Each of the subdirectories util/, pscf/, fd1d/, pspc/, and pspg/ 
 contain source code from a particular C++ namespace.  Subdirectories util/ 
 and test/ are maintained as separate github repositories that are installed 
-as submodules of the pscfpp respository.
+as submodules of the pscfpp respository. All CUDA code is contained with
+the pspg/ directory.
 
 Subdirectories:
   util/  general utilities for scientific computation (namespace Util)

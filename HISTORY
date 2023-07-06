@@ -13,21 +13,30 @@ programs are affected by specific changes:
   fd  - CPU finite difference code for 1D problems (pscf_fd)
   all - all programs (fd, pc, and pg)
 
-Pscf++ v1.0.2 (Patch)
-==============
+
+Version 1.0.3  (7/6/2023)
+=========================
+
+* Fixed bug in formulation of open ensembles for thin films (pc)
+* Added test for compatbility of mesh and space group (pc, pg)
+* Added discussion of mesh - space group compatibility to web manual
+
+
+Version 1.0.2  (3/15/2023)
+==========================
 
 * Corrected errors in web documentation
 
-Pscf++ v1.0.1 (Patch)
-==============
+
+Version 1.0.1  (3/11/2023)
+==========================
 
 * Fixed bug in ESTIMATE_W_FROM_C command (pc, pg)
 * Commented out code allowing use of unitCell in parameter file (pc, pg)
 
-Pscf++ v1.0.0
-==============
 
-Released March 4, 2023
+Version 1.0.0  (3/4/2023)
+=========================
 
 User-visible features
 ---------------------
@@ -50,7 +59,7 @@ Documentation
 * New appendix summarizing SCFT working equations for branched polymers
 * New appendices on periodic fields, symmetry, basis
 * More complete documentation of parameter file block formats
-* More complete documentation of commands (fd and pc)
+* More complete documentation of commands 
 * Documentation of wave, star, and group output formats
 
 Developer-visible changes
@@ -60,15 +69,14 @@ Developer-visible changes
 * Delay construction of Basis until a field file is read (pc and pg)
 * Moved auxiliary quantities used for AM residual out of Interaction (all)
 
-Pscf++ v0.9.0
-==============
 
-Released Sept. 26, 2022
+Version 0.9.0  (9/26/2022)
+==========================
 
 User-visible features
 ---------------------
-* Sweep feature in Pspg
-* Symmetry preserving iterator AmIteratorBasis add to pscf_pg (pg)
+* Sweep feature in pscf_pg (pg)
+* Symmetry preserving iterator AmIteratorBasis added to pscf_pg (pg)
 * FilmIterator for simulating ordering in thin films (pc)
 * Commands to write full MDE solutions to file (pc)
 * Simple relaxation iterator added to pscf_fd (fd)
@@ -97,15 +105,15 @@ Developer-visible changes
 -------------------------
 * Improved encapsulation of fields in Pspg::System
 
-Pscf++ v0.8.1
+Version 0.8.1
 ==============
 
 - Bugfix: Fixed an error in manual instructions for modifying PYTHONPATH 
   environment variable (github issue #64)
 
 
-Pscf++ v0.8.0
-==============
+Version 0.8.0  (3/11/2022)
+==========================
 
 Released March 11, 2022
 
@@ -141,14 +149,13 @@ Developer-visible changes
 
 Remaining known bugs
 --------------------
-* Incorrect treatment of non-centrosymmetric groups in Pspg (pg)
+* Incorrect treatment of non-centrosymmetric groups in pscf_pg (pg)
 
-Pscf++ 0.7
-==========
 
-Released Nov. 11, 2021
+Version 0.7  (11/11/2021)
+=========================
 
-First tagged version that includes Pspg GPU code, as described in:
+First tagged version that includes GPU code, as described in:
 
 Cheong, Chawla, Morse, and Dorfman, 
 European Physical Journal E. 43, 15 (2020).
