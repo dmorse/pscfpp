@@ -43,7 +43,7 @@ namespace Pspc
    public:
 
       /// \name Construction and Destruction
-      //@{
+      ///@{
 
       /**
       * Default constructor.
@@ -71,9 +71,9 @@ namespace Pspc
       */
       void setSystem(System<D>& system);
 
-      //@}
+      ///@}
       /// \name Accessors
-      //@{
+      ///@{
 
       /**
       * Get array of all fields by const reference.
@@ -113,7 +113,7 @@ namespace Pspc
       */
       UnitCell<D>& unitCell();
 
-      //@}
+      ///@}
 
    protected:
 
