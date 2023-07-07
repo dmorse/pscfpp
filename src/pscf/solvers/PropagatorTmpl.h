@@ -83,7 +83,7 @@ namespace Pscf
       PropagatorTmpl();
 
       /// \name Mutators
-      //@{
+      ///@{
  
       /**
       * Associate this propagator with a direction index.
@@ -118,9 +118,9 @@ namespace Pscf
       */
       void setIsSolved(bool isSolved);
  
-      //@}
+      ///@}
       /// \name Accessors
-      //@{
+      ///@{
 
       /**
       * Get a source propagator.
@@ -159,7 +159,7 @@ namespace Pscf
       */
       bool isReady() const;
  
-      //@}
+      ///@}
 
    private:
   

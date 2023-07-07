@@ -59,7 +59,7 @@ namespace Pscf
       virtual void readParameters(std::istream& in);
 
       /// \name Accessors (by non-const reference)
-      //@{
+      ///@{
  
       /**
       * Get a Monomer type descriptor (const reference).
@@ -96,9 +96,9 @@ namespace Pscf
       */
       Solvent const & solvent(int id) const;
 
-      //@}
+      ///@}
       /// \name Accessors (by value)
-      //@{
+      ///@{
  
       /**
       * Get number of monomer types.
@@ -125,7 +125,7 @@ namespace Pscf
       */
       double vMonomer() const;
 
-      //@}
+      ///@}
 
    protected:
 
