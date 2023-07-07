@@ -1,30 +1,46 @@
-# ------------------------------------------------------------------------
+# -----------------------------------------------------------------------
 #   This module provides tools to parse the PSCF parameter file and store 
 #   all values within it in a single object. Users can access and modify 
-#   the stored values of the parameters after parsing by using specific 
-#   statements (commands). 
+#   the stored values of the properties after parsing by using specific 
+#   statements (commands), and can write the object (or any of its 
+#   sub-objects) to a file in the proper parameter file format. 
 #
 #   Parsing a parameter file:
 #
-#       A Composite object represents any block of the parameter file that 
-#       is identified by opening and closing curly brackets ('{' and '}').
-#       The name of a Composite object is given by the identifier on the
-#       first line, preceding the opening curly bracket.  A Composite 
-#       python object stores all the entries within such a block in a 
+#       A Composite object represents any block of the parameter file 
+#       that is identified by opening and closing curly brackets ('{' and
+#       '}'). The name of a Composite object is given by the identifier 
+#       on the first line, preceding the opening curly bracket. A 
+#       Composite object stores all the entries within such a block in a 
 #       form that allows each element within it to be accessed and 
 #       modified. 
 #
-#       A PSCF parameter file always contains a main parameter composite 
-#       named 'System' with nested sub-elements. Users may parse such a 
-#       file by calling the readParamFile function, passing the name of 
-#       parameter file as an argument. This function parses the file and
-#       returns a Composite object that contains its contents. 
+#       A PSCF parameter file always contains a main parameter Composite 
+#       named 'System' with nested subelements. Users may parse such a 
+#       file by creating a Composite object, passing the name of 
+#       parameter file as an argument. This constructor parses the file 
+#       and returns a Composite object that contains its contents. 
 #
-#       Example: To read and parse ae parameter file with name 'param',
+#       Example: To read and parse a parameter file with name 'param',
 #       execute the following code within a python3 interpreter:
 #
 #           from pscfpp.param import *
-#           p = readParamFile('param')
+#           p = Composite('param')
+#
+#       Alternatively, a Composite object can be read from an open Python
+#       file object. In this case, it is assumed that the first line of
+#       the Composite has already been read (in order to identify the 
+#       Composite by it's opening curly bracket '{'), and the name of
+#       the composite must be passed in along with the open file object.
+#       Note that the file object is not closed by this constructor.
+#
+#       Example:
+#
+#           f = open('param')
+#           line = f.readline().strip()
+#           if line[-1] == "{":
+#              p = Composite(f,line[:-1])
+#           f.close()
 #
 #       A Composite object can be written to a file by calling the 
 #       writeOut() method, passing in the string of the file name to 
@@ -34,27 +50,26 @@
 #
 #   Accessing elements:
 #
-#       After calling the readParamFile() function, users can retrieve 
+#       After creating a Composite object, users can retrieve 
 #       the values of any element by name, using a dot notation for 
 #       subelements of a Composite.  There are four different types of 
 #       objects that are stored within a Composite.  These are listed 
 #       below, along with a summary of what is returned when they are 
-#       accessed, and an example python expression that would access 
+#       accessed, and an example Python expression that would access 
 #       this type of object in a typical parameter file:
 #
-#           1. Composite: If an element of Composite is another 
+#           1. Composite: if an element of Composite is another 
 #           Composite (identified by curly braces '{' and '}') with
 #           that is unique within its parent object, accessing this
 #           accessing this entry will return the child Composite 
-#           itself; use square bracket 
-#           indexing starting with 0 to access blocks that have the 
-#           same name.
+#           itself; use square bracket indexing starting with 0 to 
+#           access blocks that have the same name.
 #           Example: p.Mixture    or    
 #                    p.Mixture.Polymer[1]
 #
-#           2. Parameter: If an element is a single parameter, it 
+#           2. Parameter: if an element is a single parameter, it 
 #           contains a label followed by one or more values on a single
-#           line.  Accessing a Parameter returns the value of the 
+#           line. Accessing a Parameter returns the value of the 
 #           parameter, which can be a string, an integer, a float, or 
 #           a Python list. The value of a parameter is stored as a list 
 #           if the corresponding line in the parameter file contains
@@ -62,7 +77,7 @@
 #           Example: p.Mixture.nMonomer    or     
 #                    p.Domain.mesh
 #
-#           3. Array: if an entry is an Array, it is identified by 
+#           3. Array: if an element is an Array, it is identified by 
 #           square brackets '[' and ']'. Accessing an Array returns a 
 #           Python list of Parameters where each entry of the list 
 #           represents one row or element of the Array; a specific 
@@ -70,7 +85,7 @@
 #           Example: p.Mixture.monomers    or
 #                    p.Mixture.monomers[0]
 #
-#           4. Matrix: if an entry is a Matrix, it is identified by 
+#           4. Matrix: if an element is a Matrix, it is identified by 
 #           parentheses '(' and ')'. Accessing a Matrix returns a list 
 #           of lists that represents a square, symmetric matrix; specific 
 #           values within the Matrix can be accessed by two separate 
@@ -82,7 +97,7 @@
 #       preset formats for particular types of objects with equal sign 
 #       operator ('='), which are listed below: 
 #
-#           1. Parameter: A Parameter with a single value can be modified 
+#           1. Parameter: a Parameter with a single value can be modified 
 #           by Python arithmetic operators. A parameter that contains
 #           multiple values on a single line is stored as a Python 
 #           list, which can only be modified by reassigning a new 
@@ -108,22 +123,19 @@
 #
 # Module Contents:
 #
-#   class Element:
-#           The Element class is the base class of all types of elements 
-#           in the parameter file. It has four subclasses: Composite, 
-#           Parameter, Array and Matrix.
-#
-#   class Composite(Element):
+#   class Composite:
 #           A Composite object can be identified by opening and closing 
 #           curly brackets ('{' and '}'). A composite contains one or
 #           more enclosed elements, each of which may be a Composite, 
-#           a Parameter, and Array or a Matrix.
+#           a Parameter, and Array or a Matrix. A Composite can be read 
+#           from a file by calling Composite(filename), and can also be a
+#           subelement of a parent Composite.
 #
-#   class Parameter(Element):
+#   class Parameter:
 #           A Parameter object contains a parameter label and its 
 #           value for the labelled parameter contained in a single line.
 #
-#   class Array(Element):
+#   class Array:
 #           An Array object represents a one-dimensional array of values.
 #           An array appears in a parameter file format in multi-line 
 #           with one element value per line, delimited by square brackets.
@@ -132,7 +144,7 @@
 #           bracket. Elements of the array appear between these lines in
 #           order of increasing array index, starting from 0.
 #
-#   class Matrix(Element):
+#   class Matrix:
 #           A Matrix object represents a two-dimensional array or matrix
 #           of values. A matrix appears in a parameter file in a multi-line
 #           format in which each element appears on a separate line, 
@@ -147,80 +159,180 @@
 #           variable (and integer, floating point number or string) that 
 #           represents all or part of the value of a parameter. The type 
 #           is inferred from the string format - strings that can be 
-#           intepreted as integers are stored as integers, others that 
+#           interpreted as integers are stored as integers, others that 
 #           can represent floating point numbers are stored as floats,
 #           and all others are stored as literal strings. 
 #
-#
-#   function readParamFile(filename)
-#           This function takes the name of a parameter file as an
-#           argument and returns a ParamComposite object containing
-#           the contents of the file.
-#
-# --------------------------------------------------------------------------
+# -----------------------------------------------------------------------
 
-class Element:
+
+class Composite:
    '''
-   Purpose: 
-      Base class of all types of elements of a parameter block.
-      This base class has four concrete subclasses:
-         Composite: 
-            Parameter block delimited by curly brackets ('{' and '}')
-         Parameter: 
-            Single value parameter within a single line
-         Array: 
-            1D array of values delimited by square brackets ('[' and ']')
-         Matrix:
-            Matrix of values delimited by parentheses
+   Purpose:
+      The class represents the Composite element of the parameter file
    Instance variables:
-      label: label string for the elemente
-      parent: The parent of the element, default to None
+      label: the label of the Composite element 
+      children: 
+         the children items of the Composite in the parameter file, 
+         default to be an empty dictionary
    Methods:
-      __init__(self, label, openFile=None, parent=None, val=None):
-         Constructor, with four arguments: 
-            label, label string for this Element
-            openFile, file name of a parameter file (default to None)
-            parent, the parent of the Element (default to None)
-            val, the value of the Element (default to None)
-      getLabel(self): 
-         return the label of the Element
+      __init__(self, file=None, label=None):
+         constructor, with two arguments: 
+            file:
+               the variable represents a filename or a open file, default
+               to be None
+            label: the label of the Composite, default to be None
+      read(self, openFile):
+         method to read the open parameter file, openFile as the argument, 
+         line by line and update the read items into the children variable; 
+         reading stop when '}' is read
+      addChild(self, child):
+         method to add the single item, argument child, into the children 
+         variable
+      getChildren(self):
+         return the children variable
+      __repr__(self):
+         return the string of children variable, in the dictionary format 
+         string
+      __getattr__(self, attr):
+         return the value stored in children with the specific key, 
+         argument attr
+      writeOut(self, filename):
+         method to write out the Composite object to a specific txt file 
+         with name of the argument filename
+      writeOutString(self, depth):
+         return the string for writing out with argument depth, the string 
+         of spaces that represents the level of the Composite element
       returnData(self):
-         pass for the base class
-      writeOutString(self, depth=''):
-         pass for the base class
+         return the Composite object itself
+      __setattr__(self, label, val):
+         set the new value, argument val, to the specific child of the 
+         Composite in the children dictionary, with the name of argument 
+         label
    '''
-
-   def __init__(self, label, openFile=None, parent=None, val=None):
+   
+   def __init__(self, file=None, label=None):
       self.label = label
-      self.parent = parent
+      self.children = {} 
+      
+      if file != None:
+         if type(file) == str:
+            with open(file) as f:
+               firstLine = f.readline()
+               fl = firstLine.split()
+               if fl[0][-1] != '{':
+                  raise Exception('This is not a valid parameter file.')
+               else:
+                  self.label = fl[0][:-1]
+                  self.read(f)
+         else:
+            self.read(file)
 
-   def getLabel(self):
-      return self.label
+   def read(self, openFile):
+      line = openFile.readline()
+      l = line.split()
+      while line != '':
+         if l[0][-1] == '{':
+            if len(l) == 1:
+               p = Composite(openFile, l[0][:-1])
+            else:
+               raise Exception('Not valid syntax for Composite element.')
+         elif l[0][-1] == '[':
+            if len(l) == 1:
+               p = Array(l[0][:-1], openFile, None)
+            else:
+               val = []
+               if l[-1] == ']':
+                  for i in range(1, len(l)-1):
+                     val.append(Value(l[i]))
+                  p = Array(l[0][:-1], None, val)
+               else:
+                  for i in range(1,len(l)):
+                     val.append(Value(l[i]))
+                  p = Array(l[0][:-1], openFile, val)   
+         elif l[0][-1] == '(':
+            if len(l) == 1:
+               p = Matrix(l[0][:-1], openFile)
+            else:
+               raise Exception('Not valid syntax for Matrix element.')
+         elif l[0] == '}':
+            break
+         else:
+            if len(l) == 2:
+               p = Parameter(l[0], l[1])
+            else:
+               val = []
+               for i in range(1, len(l)):
+                  val.append(Value(l[i]))
+               p = Parameter(l[0], val)
+         self.addChild(p)   
+         line = openFile.readline()
+         l = line.split()
 
-   def returnData(self):
-      pass
+   def addChild(self, child):
+      label = child.label
+      if label in self.children:
+         self.children[label] = [self.children[label]]
+         self.children[label].append(child)
+      else:
+         self.children[label] = child
+
+   def getChildren(self):
+      return self.children
+
+   def __repr__(self):
+      return self.writeOutString()
+
+   def __getattr__(self, attr):
+      if attr =='children':
+         return {}
+      if attr in self.children:
+         if type(self.children[attr]) is list:
+            return self.children[attr]
+         else:
+            return self.children[attr].returnData()
+      else:
+         return self.attr
+
+   def writeOut(self, filename):
+      with open(filename, 'w') as f:
+         f.write(self.writeOutString())
 
    def writeOutString(self, depth=''):
-      pass
+      s = depth + self.label + '{' + '\n'
+      for item in self.children.values():
+         if type(item) is list:
+            for i in range(len(item)):
+               s += item[i].writeOutString(depth+'  ')
+         else:
+            s += item.writeOutString(depth+'  ')
+      s += depth + '}\n'
+      return s
 
-# End class Element -------------------------------------------------------
+   def returnData(self):
+      return self
+      
+   def __setattr__(self, label, val):
+      if label in self.children:
+         self.children[label].setValue(val)
+      else:
+         self.__dict__[label] = val
+
+# End class Composite ---------------------------------------------------
 
 
-class Parameter(Element):
+class Parameter:
    '''
    Purpose: 
       An individual parameter element of a parameter composite
    Instance variables:
       label: the label of the individual Parameter element 
-      parent: the parent of the current individual Parameter element 
       val: the value of the individual Parameter element 
    Methods:
-      __init__(self, label, openFile=None, parent=None, value=None):
-         Constructor, with four arguments: 
-            label, label string for this Parameter (required)
-            openFile, an open parameter file (default to None)
-            parent, parent Element of this Parameter (default to None)
-            val, value of this Parameter;
+      __init__(self, label, val):
+         constructor, with two arguments: 
+            label: label string for this Parameter, required
+            val: value of this Parameter, required
       getValue(self): 
          Return the parameter value and print its type
       setValue(self, val):
@@ -236,8 +348,8 @@ class Parameter(Element):
          return the Parameter value as an int, float, string, or list
    '''
 
-   def __init__(self, label, openFile=None, parent=None, val=None):
-      super().__init__(label, openFile, parent, val)
+   def __init__(self, label, val):
+      self.label = label
       if type(val) is list:
          self.val = val
       else:
@@ -295,42 +407,36 @@ class Parameter(Element):
 # End class Parameter ----------------------------------------------------
 
 
-class Array(Element):
+class Array:
    '''
    Purpose:
-      The class represents the Array element of the parameter file, which
-      is a subclass of the Element class
+      The class represents the Array element of the parameter file
    Instance variables:
       label: the label of the Array element
-      parent: the parent of the current Array element
-      value: the value of the Array element, defult to be an empty list
+      value: the value of the Array element, default to be an empty list
    Methods:
-      __inti__(self, label, openFile=None, parent=None, val=None):
-         the constructor of the Array object for initiation, with four 
-         arguments: 
-            label, the label of the Array; 
-            openFile, the opened parameter file;
-            parent, the parent of the current Array, defult to be None;
-            val, the value of the Array, defult to be None;
-         that initiate the label and the parent of the Array object, and 
-         pass in the open file for reading
+      __inti__(self, label, openFile, val=None):
+         constructor, with three arguments: 
+            label: the label of the Array, required
+            openFile: the opened parameter file, required
+            val: the value of the Array, default to be None
       read(self, openFile):
-         method to read the open parameter file, openFile as the argement, line 
-         by line and update the value variable according to the read lines;
-         reading stop when ']' is read
+         method to read the open parameter file, openFile as the argument, 
+         line by line and update the value variable according to the read 
+         lines; reading stop when ']' is read
       __repr__(self):
          return the string of the value variable, in the list format string 
       writeOutString(self, depth):
-         return the string for writting out with argument depth, the string of 
-         spaces that represents the level of the Array element
+         return the string for writing out with argument depth, the string 
+         of spaces that represents the level of the Array element
       returnData(self):
          return the list of exact value of the Array object stored as the 
          Value object
       setValue(self, val):
-         set new value to the val variable with argement val
+         set new value to the val variable with argument val
    '''
-   def __init__(self, label, openFile=None, parent=None, val=None):
-      super().__init__(label, openFile, parent, val)
+   def __init__(self, label, openFile, val=None):
+      self.label = label
       if val == None:
          self.val = []
       else:
@@ -432,43 +538,37 @@ class Array(Element):
 # End class Array ------------------------------------------------------
 
 
-class Matrix(Element):
+class Matrix:
    '''
    Purpose:
-      The class represents the Matrix element of the parameter file, which
-      is a subclass of the Element class
+      The class represents the Matrix element of the parameter file
    Instance variables:
       label: the label of the Matrix element
-      parent: the parent of the current Matrix element
-      value: the value of the Matrix element, defult to be an empty list
+      value: the value of the Matrix element, default to be an empty list
    Methods:
-      __inti__(self, label, openFile=None, parent=None, value=None):
-         the constructor of the Matrix object for initiation, with four 
-         arguments: 
-            label, the label of the Matrix; 
-            openFile, the opened parameter file;
-            parent, the parent of the current Matrix, defult to be None;
-            value, the value of the Matrix, defult to be None;
-         that initiate the label and the parent of the Matrix object, and 
-         pass in the open file for reading
+      __init__(self, label, openFile):
+         constructor, with two arguments: 
+            label: the label of the Matrix, required
+            openFile: the opened parameter file, required
       read(self, openFile):
-         method to read the open parameter file, openFile as the argement, line 
-         by line and update the value variable according to the read lines;
-         reading stop when ')' is read
+         method to read the open parameter file, openFile as the argument, 
+         line by line and update the value variable according to the read 
+         lines; reading stop when ')' is read
       __repr__(self):
-         return the string of the value variable, in the list format string 
+         return the string of the value variable, in the list format 
+         string 
       writeOutString(self, depth):
-         return the string for writting out with argument depth, the string of 
-         spaces that represents the level of the Matrix element
+         return the string for writing out with argument depth, the 
+         string of spaces that represents the level of the Matrix element
       returnData(self):
-         return the list of exact value of the Matrix object stored as the 
-         Value object
+         return the list of exact value of the Matrix object stored as 
+         the Value object
       setValue(self, val):
-         set new value to the val variable with argement val
+         set new value to the val variable with argument val
    '''
 
-   def __init__(self, label, openFile=None, parent=None, val=None):
-      super().__init__(label, openFile, parent, val)
+   def __init__(self, label, openFile):
+      self.label = label
       self.val = []
       self.read(openFile)
 
@@ -551,147 +651,7 @@ class Matrix(Element):
 # End class Matrix ---------------------------------------------------
 
 
-class Composite(Element):
-   '''
-   Purpose:
-      The class represents the Copmosite element of the parameter file, which
-      is a subclass of the Element class
-   Instance variables:
-      label: the label of the Composite element 
-      parent: the parent of the current Composite element 
-      children: 
-         the children items of the Composite in the parameter file, defult 
-         to be an empty dictionary
-   Methods:
-      __init__(self, label, openFile=None, parent=None, val=None):
-         the constructor of the Composite object for initiation, with four 
-         arguments: 
-            label, the label of the Composite; 
-            openFile, the open parameter file;
-            parent, the parent of the current Composite, defult to be None;
-            val, the value of the Composite, defult to be None;
-         that initiate the label and the parent of the Composite object, and 
-         pass in the open file for reading
-      read(self, openFile):
-         method to read the open parameter file, openFile as the argement, line 
-         by line and update the read items into the children variable; reading 
-         stop when '}' is read
-      addChild(self, child):
-         method to add the single item, argument child, into the children variable
-      getChildren(self):
-         return the children variable
-      __repr__(self):
-         return the string of children variable, in the dictionary format string
-      __getattr__(self, attr):
-         return the value stored in children with the specific key, argument attr
-      writeOut(self, filename):
-         method to write out the Composite element to a specific txt file with name
-         of the argument filename
-      writeOutString(self, depth):
-         return the string for writting out with argument depth, the string of 
-         spaces that represents the level of the Composite element
-      returnData(self):
-         return the Composite object itself
-      __setattr__(self, label, val):
-         set the new value, argument val, to the specific child of the Composite in
-         the children dictionary, with the name of argument label
-   '''
-   def __init__(self, label, openFile, parent=None, val=None):
-      super().__init__(label, openFile, parent, val)
-      self.children = {} 
-      self.read(openFile)
 
-   def read(self, openFile):
-      line = openFile.readline()
-      l = line.split()
-      while line != '':
-         if l[0][-1] == '{':
-            if len(l) == 1:
-               p = Composite(l[0][:-1], openFile, self, None)
-            else:
-               raise Exception('Not valid syntax for Composite element.')
-         elif l[0][-1] == '[':
-            if len(l) == 1:
-               p = Array(l[0][:-1], openFile, self, None)
-            else:
-               val = []
-               if l[-1] == ']':
-                  for i in range(1, len(l)-1):
-                     val.append(Value(l[i]))
-                  p = Array(l[0][:-1], None, self, val)
-               else:
-                  for i in range(1,len(l)):
-                     val.append(Value(l[i]))
-                  p = Array(l[0][:-1], openFile, self, val)   
-         elif l[0][-1] == '(':
-            if len(l) == 1:
-               p = Matrix(l[0][:-1], openFile, self, None)
-            else:
-               raise Exception('Not valid syntax for Matrix element.')
-         elif l[0] == '}':
-            break
-         else:
-            if len(l) == 2:
-               p = Parameter(l[0], None, self, l[1])
-            else:
-               val = []
-               for i in range(1, len(l)):
-                  val.append(Value(l[i]))
-               p = Parameter(l[0], None, self, val)
-         self.addChild(p)   
-         line = openFile.readline()
-         l = line.split()
-
-   def addChild(self, child):
-      label = child.getLabel()
-      if label in self.children:
-         self.children[label] = [self.children[label]]
-         self.children[label].append(child)
-      else:
-         self.children[label] = child
-
-   def getChildren(self):
-      return self.children
-
-   def __repr__(self):
-      return self.writeOutString()
-
-   def __getattr__(self, attr):
-      if attr =='children':
-         return {}
-      if attr in self.children:
-         if type(self.children[attr]) is list:
-            return self.children[attr]
-         else:
-            return self.children[attr].returnData()
-      else:
-         return self.attr
-
-   def writeOut(self, filename):
-      with open(filename, 'w') as f:
-         f.write(self.writeOutString())
-
-   def writeOutString(self, depth=''):
-      s = depth + self.label + '{' + '\n'
-      for item in self.children.values():
-         if type(item) is list:
-            for i in range(len(item)):
-               s += item[i].writeOutString(depth+'  ')
-         else:
-            s += item.writeOutString(depth+'  ')
-      s += depth + '}\n'
-      return s
-
-   def returnData(self):
-      return self
-      
-   def __setattr__(self, label, val):
-      if label in self.children:
-         self.children[label].setValue(val)
-      else:
-         self.__dict__[label] = val
-
-# End class Composite ---------------------------------------------------
 
 class Value:
    '''
@@ -702,8 +662,9 @@ class Value:
       type: the type of the value, either integer, floating point or string
    Methods:
       __init__(self, val):
-         Constructor, with argument val that is the string representation 
-         of the value. The constructor automatically determines the type.
+         constructor, with argument:
+            val: a string representation of the value, required
+         The constructor automatically determines the type.
       getType(self): return the type of stored value
       getValue(self): return the value of stored value
    Note:
@@ -732,30 +693,3 @@ class Value:
       return self.val
 
 # End class Value  -------------------------------------------------------
-
-
-def readParamFile(filename):
-   '''
-   Argument:
-      filename: string, name of the parameter file to be read
-   Return:
-      the 'System' ParamComposite 
-   Note:
-      If the first line does not begin with 'System{', this function
-      will print the error message 'This is not a valid parameter file'
-      and return None.
-   '''
-   with open(filename) as f:
-      firstLine = f.readline()
-      # print(firstLine, end='')
-      if firstLine != "System{"+'\n':
-         p = None
-         raise Exception('This is not a valid parameter file.')
-      else:
-         # line = f.readline()
-         # l = line.split()
-         # p = Composite(l[0][:-1], f, None, None)
-         p = Composite('System', f, None, None)
-   return p
-
-# End function readFileName --------------------------------------------
