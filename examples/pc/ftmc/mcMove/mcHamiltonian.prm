@@ -1,5 +1,0 @@
-      McHamiltonianAnalyzer{
-        interval                               2
-        outputFileName             mcHamiltonian
-        nSamplePerBlock                        2
-      }
