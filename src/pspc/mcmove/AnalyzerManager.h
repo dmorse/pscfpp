@@ -3,11 +3,16 @@
 
 #include "Analyzer.h"                  // template parameter
 #include <util/param/Manager.h>        // base class template
+#include <util/param/ParamComposite.h>
 
 namespace Pscf {
 namespace Pspc {
 
    using namespace Util;
+   
+   template <int D> class System;
+   template <int D> class McSimulator;
+
 
    /**
    * Manager for a list of Analyzer objects.
@@ -25,8 +30,11 @@ namespace Pspc {
 
       /**
       * Constructor.
+      *
+      * \param mcSimulator parent McSimulator
+      * \param system parent System
       */
-      AnalyzerManager();
+      AnalyzerManager(McSimulator<D>& mcSimulator, System<D>& system);
 
       /**
       * Destructor.
@@ -39,7 +47,8 @@ namespace Pspc {
       * \param in input parameter file stream.
       */
       virtual void readParameters(std::istream &in);
-
+      
+      #if 0
       /**
       * Load state from an archive.
       *
@@ -53,7 +62,9 @@ namespace Pspc {
       * \param ar saving (output) archive.
       */
       virtual void save(Serializable::OArchive& ar);
-
+      
+      #endif
+      
       /**
       * Call initialize method of each Analyzer.
       * 
@@ -89,6 +100,23 @@ namespace Pspc {
 
       using ParamComposite::setClassName;
       using ParamComposite::read;
+   
+   private:
+      /**
+       * Pointer to parent Simulator
+       */
+      McSimulator<D>* mcSimulatorPtr_;
+      
+      /**
+      * Pointer to parent System.
+      */
+      System<D>* systemPtr_;
+
+
+      /**
+      * Return pointer to a new AnalyzerFactory.
+      */
+      virtual Factory< Analyzer<D> >* newDefaultFactory() const;
 
    };
 
