@@ -48,7 +48,6 @@ namespace Pspg
    *    - a Domain (a description of the unit cell and discretization)
    *    - a container of monomer chemical potential fields (w fields)
    *    - a container of monomer concentration fields (c fields)
-   *    - an Iterator
    *
    * A System may also optionally contain Iterator and Sweep objects.
    *
@@ -74,7 +73,7 @@ namespace Pspg
    public:
 
       /// \name Construction and Destruction
-      //@{
+      ///@{
 
       /**
       * Constructor.
@@ -86,9 +85,9 @@ namespace Pspg
       */
       ~System();
 
-      //@}
+      ///@}
       /// \name Lifetime (Actions)
-      //@{
+      ///@{
 
       /**
       * Process command line options.
@@ -140,9 +139,9 @@ namespace Pspg
       */
       void readCommands();
 
-      //@}
+      ///@}
       /// \name W Field Modifiers 
-      //@{
+      ///@{
 
       /**
       * Read chemical potential fields in symmetry adapted basis format.
@@ -237,9 +236,9 @@ namespace Pspg
       */
       void estimateWfromC(const std::string& filename);
    
-      //@}
+      ///@}
       /// \name Unit Cell Modifiers 
-      //@{
+      ///@{
 
       /**
       * Set parameters of the associated unit cell.
@@ -274,9 +273,9 @@ namespace Pspg
       */
       void setUnitCell(FSArray<double, 6> const & parameters);
 
-      //@}
+      ///@}
       /// \name Primary SCFT Computations
-      //@{
+      ///@{
 
       /**
       * Solve the modified diffusion equation once, without iteration.
@@ -341,9 +340,9 @@ namespace Pspg
       */
       void sweep();
 
-      //@}
+      ///@}
       /// \name Thermodynamic Properties
-      //@{
+      ///@{
 
       /**
       * Compute free energy density and pressure for current fields.
@@ -373,9 +372,9 @@ namespace Pspg
       */
       double pressure() const;
 
-      //@}
+      ///@}
       /// \name Thermodynamic Data Output 
-      //@{
+      ///@{
 
       /**
       * Write parameter file to an ostream, omitting the sweep block.
@@ -405,9 +404,9 @@ namespace Pspg
       */
       void writeThermo(std::ostream& out);
 
-      //@}
+      ///@}
       /// \name Field Output 
-      //@{
+      ///@{
 
       /**
       * Write chemical potential fields in symmetry adapted basis format.
@@ -449,9 +448,9 @@ namespace Pspg
       */
       void writeBlockCRGrid(const std::string & filename) const;
 
-      //@}
+      ///@}
       /// \name Propagator Output 
-      //@{
+      ///@{
 
       /**
       * Write specified slice of a propagator at fixed s in r-grid format.
@@ -508,9 +507,9 @@ namespace Pspg
       */
       void writeQAll(std::string const & basename);
 
-      //@}
+      ///@}
       /// \name Crystallographic Data Output 
-      //@{
+      ///@{
 
       /**
       * Output information about stars and symmetrized basis functions.
@@ -539,9 +538,9 @@ namespace Pspg
       */
       void writeGroup(std::string const & filename) const;
 
-      //@}
+      ///@}
       /// \name Field File Operations
-      //@{
+      ///@{
 
       /**
       * Convert a field from symmetry-adapted basis to r-grid format.
@@ -615,9 +614,9 @@ namespace Pspg
       void basisToKGrid(const std::string & inFileName, 
                         const std::string & outFileName);
   
-      //@}
-      /// \name Member Accessors
-      //@{
+      ///@}
+      /// \name Member Object Accessors
+      ///@{
 
       /**
       * Get container of chemical potential fields.
@@ -688,6 +687,10 @@ namespace Pspg
       * Get FileMaster by reference.
       */
       FileMaster& fileMaster();
+
+      ///@}
+      /// \name Queries
+      ///@{
 
       /**
       * Have monomer concentration fields (c fields) been computed?

@@ -19,9 +19,8 @@ AmIteratorFilm{
    normalVecId         int (0, 1, or 2)   
    interfaceThickness  float  
    wallThickness       float 
-   chi*                array[ float float ] (default is an array of zeros)
-   wallBasisOutFile*   string
-   wallRGridOutFile*   string
+   chiBottom           Array [ float ] (nMonomer elements)
+   chiTop              Array [ float ] (nMonomer elements)
 }
 \endcode
 Here, as elsewhere, labels followed by an asterisk (*) represent optional 
@@ -101,30 +100,28 @@ Parameters and subblocks are described below:
          interfaceThickness value. </td>
   </tr>
   <tr>
-    <td> chi* </td>
-    <td> Array of values representing the relative strength of chemical 
-         interactions between the walls and the monomer species in the 
-         system, in the form of a Flory-Huggins-like chi value. Each row 
-         of the array corresponds to one monomer species in the system, 
-         and contains two values: the first represents the interaction 
-         between wall 1 and the monomer species (where wall 1 is the 
-         wall that contains the origin), and the second represents the 
-         interaction with wall 2. This array will have n_monomer rows 
-         and 2 columns.  Large values represent unfavorable interactions. 
+    <td> chiBottom </td>
+    <td> Array of values representing the relative strengths of chemical 
+         interactions between the bottom wall and each monomer species in  
+         the system, in the form of a Flory-Huggins-like chi value. Each  
+         entry of the array gives the chi value that defines the chemical
+         interactions of one monomer species with the wall. This array has
+         nMonomer entries. Large values represent unfavorable 
+         interactions. The "bottom wall" here is defined as the wall that
+         contains the origin. 
     </td>
   </tr>
   <tr>
-    <td> wallBasisOutFile* </td>
-    <td> Optional filename to which a field file in symmetry-adapted 
-         basis format will be written representing the volume fraction 
-         of the wall (the mask imposed upon the iterator) throughout 
-         the unit cell. </td>
-  </tr>
-  <tr>
-    <td> wallRGridOutFile* </td>
-    <td> Optional filename to which an r-grid file will be written containing
-         the volume fraction of the wall (the mask imposed upon the iterator)
-         at each gridpoint. </td>
+    <td> chiTop </td>
+    <td> Array of values representing the relative strengths of chemical 
+         interactions between the top wall and each monomer species in  
+         the system, in the form of a Flory-Huggins-like chi value. Each  
+         entry of the array gives the chi value that defines the chemical
+         interactions of one monomer species with the wall. This array has
+         nMonomer entries. Large values represent unfavorable 
+         interactions. The "top wall" here is defined as the wall that
+         does not contain the origin. 
+    </td>
   </tr>
 </table>
 

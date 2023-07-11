@@ -1,6 +1,6 @@
 RGRID_TO_KGRID     in/c.rf   in/c.kf
 RGRID_TO_BASIS     in/c.rf   in/c.bf
-ESTIMATE_W_FROM_C  in/c.bf   in/w.bf
+ESTIMATE_W_FROM_C  in/c.bf   
 WRITE_W_RGRID      in/w.rf
 ITERATE
 WRITE_W_BASIS      out/w.bf

@@ -98,7 +98,7 @@ namespace Pscf
       virtual void solve(double phiTot = 1.0);
  
       /// \name Accessors (objects, by reference)
-      //@{
+      ///@{
 
       /**
       * Get a specified Block.
@@ -159,9 +159,9 @@ namespace Pscf
       */
       const Pair<int>& propagatorId(int id) const;
 
-      //@}
+      ///@}
       /// \name Accessors (by value)
-      //@{
+      ///@{
 
       /**
       * Number of blocks.
@@ -186,7 +186,7 @@ namespace Pscf
       */
       double length() const;
 
-      //@}
+      ///@}
 
    protected:
 

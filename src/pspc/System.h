@@ -85,7 +85,7 @@ namespace Pspc
    public:
 
       /// \name Construction and Destruction
-      //@{
+      ///@{
 
       /**
       * Constructor.
@@ -97,9 +97,9 @@ namespace Pspc
       */
       ~System();
 
-      //@}
+      ///@}
       /// \name Lifetime (Actions)
-      //@{
+      ///@{
 
       /**
       * Process command line options.
@@ -151,9 +151,9 @@ namespace Pspc
       */
       void readCommands();
 
-      //@}
+      ///@}
       /// \name W Field Modifiers
-      //@{
+      ///@{
 
       /**
       * Read chemical potential fields in symmetry adapted basis format.
@@ -226,9 +226,9 @@ namespace Pspc
       */
       void estimateWfromC(const std::string& filename);
 
-      //@}
+      ///@}
       /// \name Unit Cell Modifiers
-      //@{
+      ///@{
 
       /**
       * Set parameters of the associated unit cell.
@@ -262,9 +262,9 @@ namespace Pspc
       */
       void setUnitCell(FSArray<double, 6> const & parameters);
 
-      //@}
+      ///@}
       /// \name Primary Field Theory Computations
-      //@{
+      ///@{
 
       /**
       * Solve the modified diffusion equation once, without iteration.
@@ -339,9 +339,9 @@ namespace Pspc
       */
       void simulate(int nStep);
 
-      //@}
+      ///@}
       /// \name Thermodynamic Properties
-      //@{
+      ///@{
 
       /**
       * Compute free energy density and pressure for current fields.
@@ -369,9 +369,9 @@ namespace Pspc
       */
       double pressure() const;
 
-      //@}
+      ///@}
       /// \name Thermodynamic Data Output 
-      //@{
+      ///@{
 
       /**
       * Write parameter file to an ostream, omitting any sweep block.
@@ -403,9 +403,9 @@ namespace Pspc
       */
       void writeThermo(std::ostream& out);
 
-      //@}
+      ///@}
       /// \name Field Output 
-      //@{
+      ///@{
 
       /**
       * Write chemical potential fields in symmetrized basis format.
@@ -448,9 +448,9 @@ namespace Pspc
       */
       void writeBlockCRGrid(const std::string & filename) const;
 
-      //@}
+      ///@}
       /// \name Propagator Output 
-      //@{
+      ///@{
 
       /**
       * Write slice of a propagator at fixed s in r-grid format.
@@ -507,9 +507,9 @@ namespace Pspc
       */
       void writeQAll(std::string const & basename);
 
-      //@}
+      ///@}
       /// \name Crystallographic Information
-      //@{
+      ///@{
 
       /**
       * Output information about stars and symmetrized basis functions.
@@ -538,9 +538,9 @@ namespace Pspc
       */
       void writeGroup(std::string const & filename) const;
 
-      //@}
+      ///@}
       /// \name Field File Manipulations 
-      //@{
+      ///@{
 
       /**
       * Convert a field from symmetrized basis format to r-grid format.
@@ -652,9 +652,9 @@ namespace Pspc
       bool checkRGridFieldSymmetry(const std::string & inFileName,
                                    double epsilon = 1.0E-8);
 
-      //@}
-      /// \name Member Accessors
-      //@{
+      ///@}
+      /// \name Field Accessors
+      ///@{
 
       /**
       * Get all of the chemical potential fields (const reference).
@@ -672,15 +672,23 @@ namespace Pspc
       WFieldContainer<D>& h();
 
       /**
-      * Get the mask (the field to which the total density is constrained) 
-      * (reference).
+      * Get the mask (field to which total density is constrained). 
       */
       Mask<D>& mask();
 
+      ///@}
+      /// \name Member Object Accessors
+      ///@{
+
       /**
-      * Get the Mixture by reference.
+      * Get the Mixture by non-const reference.
       */
       Mixture<D>& mixture();
+
+      /**
+      * Get the Mixture by const reference.
+      */
+      Mixture<D> const & mixture() const;
 
       /**
       * Get Interaction (excess free energy model) by reference.
@@ -708,27 +716,22 @@ namespace Pspc
       Mesh<D> const & mesh() const;
 
       /**
-      * Get associated Basis object by reference.
+      * Get the Basis by const reference.
       */
       Basis<D> const & basis() const;
 
       /**
-      * Get associated FFT object.
+      * Get associated FFT object by const reference.
       */
       FFT<D> const & fft() const;
 
       /**
-      * Get associated FieldIo object.
+      * Get associated FieldIo object by const reference.
       */
       FieldIo<D> const & fieldIo() const;
 
       /**
-      * Get the Mixture by const reference.
-      */
-      Mixture<D> const & mixture() const;
-
-      /**
-      * Get the iterator by reference.
+      * Get the iterator.
       */
       Iterator<D>& iterator();
 
@@ -758,12 +761,14 @@ namespace Pspc
       McSimulator<D>& mcSimulator();
 
       /**
-      * Get FileMaster by reference.
+      * Get the FileMaster.
+      *
+      * Access by non-const reference is used in some unit tests.
       */
       FileMaster& fileMaster();
 
       /**
-      * Get FileMaster by const reference.
+      * Get the FileMaster by const reference.
       */
       FileMaster const & fileMaster() const;
 
@@ -777,36 +782,14 @@ namespace Pspc
       */
       std::string groupName() const;
 
+      ///@}
+      /// \name Queries
+      ///@{
+
       /**
       * Does this system have an Iterator object?
       */
       bool hasIterator() const;
-
-      /**
-      * Does this system have a Sweep object?
-      */
-      bool hasSweep() const;
-
-      /**
-      * Does this system have external potential fields?
-      */
-      bool hasExternalFields() const;
-
-      /**
-      * Does this system have a mask (field to which the total density 
-      * is constrained)?
-      */
-      bool hasMask() const;
-
-      /**
-      * Does this system have a Compressor object?
-      */
-      bool hasCompressor() const;
-
-      /**
-      * Does this system have an initialized McSimulator?
-      */
-      bool hasMcSimulator() const;
 
       /**
       * Have c fields been computed from the current w fields?
@@ -817,6 +800,31 @@ namespace Pspc
       * Has the free energy been computed from the current w fields?
       */
       bool hasFreeEnergy() const;
+
+      /**
+      * Does this system have external potential fields?
+      */
+      bool hasExternalFields() const;
+
+      /**
+      * Does this system have a mask (inhomogeneous density constraint)
+      */
+      bool hasMask() const;
+
+      /**
+      * Does this system have a Sweep object?
+      */
+      bool hasSweep() const;
+
+      /**
+      * Does this system have a Compressor object?
+      */
+      bool hasCompressor() const;
+
+      /**
+      * Does this system have an initialized McSimulator?
+      */
+      bool hasMcSimulator() const;
 
       ///@}
 
@@ -1056,47 +1064,47 @@ namespace Pspc
 
    // Inline member functions
 
-   // Get the Domain<D> object.
-   template <int D>
-   inline Domain<D> const & System<D>::domain() const
-   { return domain_; }
-
-   // Get the UnitCell<D> object.
-   template <int D>
-   inline UnitCell<D> const & System<D>::unitCell() const
-   { return domain_.unitCell(); }
-
-   // Get the Mesh<D> object.
-   template <int D>
-   inline Mesh<D> const & System<D>::mesh() const
-   { return domain_.mesh(); }
-
-   // Get the associated Mixture object.
+   // Get the Mixture object.
    template <int D>
    inline Mixture<D>& System<D>::mixture()
    { return mixture_; }
 
-   // Get the associated const Mixture object.
+   // Get the Mixture by const reference.
    template <int D>
    inline Mixture<D> const & System<D>::mixture() const
    { return mixture_; }
+
+   // Get the Domain by const reference.
+   template <int D>
+   inline Domain<D> const & System<D>::domain() const
+   { return domain_; }
+
+   // Get the UnitCell by const reference.
+   template <int D>
+   inline UnitCell<D> const & System<D>::unitCell() const
+   { return domain_.unitCell(); }
+
+   // Get the Mesh by const reference.
+   template <int D>
+   inline Mesh<D> const & System<D>::mesh() const
+   { return domain_.mesh(); }
 
    // Get the Basis<D> object.
    template <int D>
    inline Basis<D> const & System<D>::basis() const
    {  return domain_.basis(); }
 
-   // Get the FFT<D> object.
+   // Get the FFT object by const reference.
    template <int D>
    inline FFT<D> const & System<D>::fft() const
    {  return domain_.fft(); }
 
-   // Get the FieldIo<D> object.
+   // Get the FieldIo<D> by const reference.
    template <int D>
    inline FieldIo<D> const & System<D>::fieldIo() const
    {  return domain_.fieldIo(); }
 
-   // Get the groupName string.
+   // Get the groupName string by value.
    template <int D>
    inline std::string System<D>::groupName() const
    { return domain_.groupName(); }
@@ -1106,12 +1114,12 @@ namespace Pspc
    inline McSimulator<D>& System<D>::mcSimulator()
    {  return mcSimulator_; }
 
-   // Get the FileMaster.
+   // Get the FileMaster by non-const reference.
    template <int D>
    inline FileMaster& System<D>::fileMaster()
    {  return fileMaster_; }
 
-   // Get the const FileMaster.
+   // Get the FileMaster by const reference.
    template <int D>
    inline FileMaster const & System<D>::fileMaster() const
    {  return fileMaster_; }
@@ -1139,7 +1147,7 @@ namespace Pspc
       return *interactionPtr_;
    }
 
-   // Get the const Interaction (excess free energy model).
+   // Get the Interaction by const reference.
    template <int D>
    inline Interaction const & System<D>::interaction() const
    {
@@ -1155,7 +1163,7 @@ namespace Pspc
       return *iteratorPtr_;
    }
 
-   // Get the const Iterator.
+   // Get the Iterator by const reference.
    template <int D>
    inline Iterator<D> const & System<D>::iterator() const
    {

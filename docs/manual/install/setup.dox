@@ -72,10 +72,10 @@ the compiler.
 
 The hardware used for a Mac OS system is relevant when using homebrew
 because the homebrew project decided to use the introduction of new
-hardware (apple silicon vs Intel) as an opportunity to introduce new 
-conventions for paths without breaking backwards compatibility on 
-existing computers. As a result, homebrew actually uses different path 
-conventions on Intel and Apple-Si Macs.
+CPU hardware (apple silicon vs Intel chips) as an opportunity to introduce 
+new conventions for paths without breaking backwards compatibility on 
+existing computers. As a result, homebrew actually uses completely 
+different path conventions on Intel and Apple-Si Macs.
 
 \section install_setup_local_file_sec Customized configuration
 
@@ -86,9 +86,9 @@ fragments.  The compiler configuration file is relatively short makefile
 fragment that contains definitions of makefile variables that define 
 compiler names, compiler options and paths to external libraries. 
 
-When the "setup" script is invoked with no argument, as indicated above, 
-the setup script uses a file named pscfpp/make/compiler/default for this
-purpose. This file contains a default configuration appropriate for a 
+When the "setup" script is invoked with no argument, the setup script 
+uses a file named pscfpp/make/compiler/default for this purpose. This 
+file contains a default configuration appropriate for a generic linux-like
 system in which the g++ command is used to invoke the gnu C++ compiler 
 to compile C++ files, the nvcc command is used to invoke the NVIDIA 
 compiler is used to compile CUDA files, and paths to the gsl and fftw 
@@ -101,17 +101,18 @@ command "./setup mac-si-homebrew" causes the script system to read and
 use the contents of the file pscfpp/make/compiler/mac-si-homebrew.  The 
 command "./setup", with no argument, is equivalent to "./setup default". 
 
-Users can create customized compiler configuration files to adapt 
-compiler options to their own computer. For example, suppose that a 
-user created a file named pscfpp/make/compiler/local by making a copy 
-of default file with that new name and then editing the variable 
-definitions in that file. Invoking the command
+Users can create additional customized compiler configuration files to 
+adapt compiler options to the environment existing on their own computer. 
+For example, suppose that a user created a file named 
+pscfpp/make/compiler/local by making a copy of the "default" file from
+the same directory, and edited the variable definitions in that file. 
+Invoking the command
 \code
 ./setup local
 \endcode
 would then cause the setup script to create config.mk configuration 
-files in the src/ and bld/ directories that both include the contents 
-of the new file make/compiler/local. 
+files in both the src/ and bld/ directories that both include the 
+contents of the new file make/compiler/local. 
 
 In order to create a customized compiler configuration file, a user
 will need to understand the meanings of some of the variables defined 
@@ -120,12 +121,13 @@ setup script with no argument and then read the comments in the file
 bld/config.mk that is created by the setup script. These comments 
 briefly explain the meaning and use of each of the makefile variables. 
 If you compare the resulting file to the file make/compiler/default, 
-you will see that the "default" compiler setup file will have simply 
-been copied into the middle part of the bld/config.mk file. For most
-users, the first step in creating a custom configuration file will be
-to copy either the default or mac-si-homebrew file in the make/compiler
-directory to another file with a different name in the same directory, 
-and use this copied file as a starting point for modifications.
+you will see that the contents of "default" compiler setup file will 
+have simply been copied verbatim into the middle part of the resulting
+bld/config.mk file. For most users, the first step in creating a custom 
+configuration file, if needed, will thus be to copy either the default 
+or mac-si-homebrew file in the make/compiler directory to another file 
+with a different name in the same directory, and use this copy as a 
+starting point for customization.
 
 Users can change values of variables defined in the main config.mk
 configuration files either by creating a customized compiler setup file 
@@ -139,9 +141,10 @@ making changes by creating a custom compiler setup file are that:
      will thus be used in both in-source and out-of-source builds.
 
    - The files src/config.mk and bld/config.mk will be erased if you 
-     invoke "make veryclean" to start over with a fresh configuration, 
-     but setup files in the make/compiler directory are not erased by 
-     the "veryclean" target. 
+     ever invoke the command "make veryclean" to start over with a 
+     fresh configuration. Setup configuration files stored in the 
+     make/compiler directory are, however, not erased by the 
+     "veryclean" makefile target. 
 
 <BR>
 \ref install_environment_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 

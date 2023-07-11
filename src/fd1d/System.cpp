@@ -637,17 +637,17 @@ namespace Fd1d
    void System::writeThermo(std::ostream& out)
    {
       out << std::endl;
-      out << "fHelmholtz = " << Dbl(fHelmholtz(), 18, 11) << std::endl;
-      out << "pressure   = " << Dbl(pressure(), 18, 11) << std::endl;
+      out << "fHelmholtz    " << Dbl(fHelmholtz(), 18, 11) << std::endl;
+      out << "pressure      " << Dbl(pressure(), 18, 11) << std::endl;
       out << std::endl;
 
       // Polymers
       int np = mixture().nPolymer();
       if (np > 0) {
          out << "Polymers:" << std::endl;
-         out << "    i"
-             << "        phi[i]      "
-             << "        mu[i]       " 
+         out << "     "
+             << "        phi         "
+             << "        mu          " 
              << std::endl;
          for (int i = 0; i < np; ++i) {
             out << Int(i, 5) 
@@ -662,9 +662,9 @@ namespace Fd1d
       int ns = mixture().nSolvent();
       if (ns > 0) {
          out << "Solvents:" << std::endl;
-         out << "    i"
-             << "        phi[i]      "
-             << "        mu[i]       " 
+         out << "     "
+             << "        phi         "
+             << "        mu          " 
              << std::endl;
          for (int i = 0; i < ns; ++i) {
             out << Int(i, 5) 

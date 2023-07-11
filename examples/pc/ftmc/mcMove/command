@@ -1,9 +1,7 @@
-READ_W_RGRID     in/w_rf
+READ_W_RGRID     in/w.rf
 COMPRESS
-SIMULATE 50
-WRITE_W_RGRID    out/w_out
-WRITE_C_RGRID    out/c_out
-
-
+SIMULATE         50
+WRITE_W_RGRID    out/w.rf
+WRITE_C_RGRID    out/c.rf
 FINISH
 

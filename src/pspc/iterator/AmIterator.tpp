@@ -297,11 +297,10 @@ namespace Pspc{
 
       // If not canonical, account for incompressibility
       if (!system().mixture().isCanonical()) {
-         // Fraction of unit cell occupied by polymers (1 if no mask present)
-         double phiTot = system().mask().phiTot();
-
-         for (int i = 0; i < nMonomer; ++i) {
-            resid[i*nBasis] -= phiTot / interaction_.sumChiInverse();
+         if (!system().hasMask()) {
+            for (int i = 0; i < nMonomer; ++i) {
+               resid[i*nBasis] -= 1.0 / interaction_.sumChiInverse();
+            }
          }
       } else {
          // Explicitly set homogeneous residual components
@@ -363,6 +362,12 @@ namespace Pspc{
             for (int j = 0; j < nMonomer; ++j) {
                chi = interaction_.chi(i,j);
                wField[i][0] += chi * system().c().basis(j)[0];
+            }
+         }
+         // If iterator has external fields, include them in homogeneous field
+         if (system().hasExternalFields()) {
+            for (int i = 0; i < nMonomer; ++i) {
+               wField[i][0] += system().h().basis(i)[0];
             }
          }
       }
