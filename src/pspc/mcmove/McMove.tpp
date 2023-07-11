@@ -74,7 +74,7 @@ namespace Pspc {
 
       // Get current Hamiltonian
       double oldHamiltonian = mcSimulator().mcHamiltonian();
-
+     
       // Save current state 
       mcSimulator().saveMcState();
 
@@ -88,7 +88,7 @@ namespace Pspc {
       mcSimulator().computeWC();
       mcSimulator().computeMcHamiltonian();
       double newHamiltonian = mcSimulator().mcHamiltonian();
-      //Log::file() << "newHamiltonian" << newHamiltonian << "\n";
+     // Log::file() << "newHamiltonian" << newHamiltonian << "\n";
       //Log::file() << "oldHamiltonian" << oldHamiltonian << "\n";
       // Accept or reject move
       bool accept = false;
@@ -101,7 +101,9 @@ namespace Pspc {
       } else {
           mcSimulator().restoreMcState();
       }
-
+     /// Log::file() << "newFieldHamiltonian" << mcSimulator().mcFieldHamiltonian() << "\n";
+      // Log::file() << "newidealHamiltonian" << mcSimulator().mcIdealHamiltonian() << "\n";
+      // Log::file() << "accept" << accept << "\n";
       return accept;
    }
 
