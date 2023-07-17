@@ -11,7 +11,7 @@
 #include "McSimulator.h"
 #include <pspc/System.h>
 #include <pspc/mcmove/McMoveFactory.h>
-#include <pspc/mcmove/AnalyzerFactory.h>
+#include <pspc/simulate/analyzer/AnalyzerFactory.h>
 
 #include <util/misc/Timer.h>
 #include <util/random/Random.h>

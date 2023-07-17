@@ -3,12 +3,6 @@ pspc_mcmove_= \
   pspc/mcmove/McState.cpp \
   pspc/mcmove/McMoveFactory.cpp \
   pspc/mcmove/McMoveManager.cpp \
-  pspc/mcmove/Analyzer.cpp \
-  pspc/mcmove/AverageListAnalyzer.cpp \
-  pspc/mcmove/AnalyzerManager.cpp \
-  pspc/mcmove/AnalyzerFactory.cpp \
-  pspc/mcmove/TrajectoryWriter.cpp \
-  pspc/mcmove/McHamiltonianAnalyzer.cpp \
   pspc/mcmove/McSimulator.cpp \
   pspc/mcmove/RealMove.cpp 
   

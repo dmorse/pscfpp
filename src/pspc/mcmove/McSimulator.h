@@ -10,7 +10,7 @@
 
 #include "McState.h"                     // member
 #include "McMoveManager.h"               // member
-#include "AnalyzerManager.h"               // member
+#include <pspc/simulate/analyzer/AnalyzerManager.h>  
 #include <util/param/Manager.h>          // base class template
 #include <util/param/ParamComposite.h>   // base class
 #include <util/random/Random.h>          // member

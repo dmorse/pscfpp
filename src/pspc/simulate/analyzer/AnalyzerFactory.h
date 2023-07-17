@@ -9,7 +9,7 @@
 */
 
 #include <util/param/Factory.h>  
-#include <pspc/mcmove/Analyzer.h>
+#include <pspc/simulate/analyzer/Analyzer.h>
 #include <pspc/System.h>
 #include <pspc/mcmove/McSimulator.h>
 #include <string>

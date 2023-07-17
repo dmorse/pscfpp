@@ -9,7 +9,7 @@
 */
 
 #include "McHamiltonianAnalyzer.h"
-#include "McSimulator.h"
+#include <pspc/mcmove/McSimulator.h>
 #include <pspc/System.h>
 #include <util/accumulators/Average.h>
 

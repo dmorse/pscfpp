@@ -3,7 +3,7 @@
 
 #include "AnalyzerManager.h" 
 #include "Analyzer.h" 
-#include <pspc/mcmove/AnalyzerFactory.h>
+#include "AnalyzerFactory.h"
 #include <util/archives/Serializable_includes.h>
 
 namespace Pscf {
