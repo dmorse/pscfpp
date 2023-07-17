@@ -11,7 +11,7 @@
 
 #include <util/param/ParamComposite.h>     // base class
 
-#include <pspc/mcmove/McSimulator.h>     // member
+#include <pspc/simulate/McSimulator.h>     // member
 
 #include <pspc/solvers/Mixture.h>          // member
 #include <pspc/field/Domain.h>             // member

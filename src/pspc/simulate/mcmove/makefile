@@ -8,13 +8,13 @@ include $(SRC_DIR)/pspc/include.mk
 #--------------------------------------------------------------------
 # Main targets 
 
-all: $(pspc_mcmove_OBJS) 
+all: $(pspc_simulate_mcmove_OBJS) 
 
 includes:
 	echo $(INCLUDES)
 
 clean:
-	rm -f $(pspc_mcmove_OBJS) $(pspc_mcmove_OBJS:.o=.d) 
+	rm -f $(pspc_simulate_mcmove_OBJS) $(pspc_simulate_mcmove_OBJS:.o=.d) 
 
 #--------------------------------------------------------------------
 # Include dependency files

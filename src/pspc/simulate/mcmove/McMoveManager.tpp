@@ -9,9 +9,9 @@
 */
 
 #include <util/global.h>
-#include <pspc/mcmove/McMoveManager.h>
-#include <pspc/mcmove/McMoveFactory.h>
-#include <pspc/mcmove/McSimulator.h>
+#include <pspc/simulate/mcmove/McMoveManager.h>
+#include <pspc/simulate/mcmove/McMoveFactory.h>
+#include <pspc/simulate/McSimulator.h>
 
 #include <util/random/Random.h>
 

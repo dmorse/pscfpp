@@ -9,8 +9,8 @@
 */
 
 #include <util/param/Factory.h>  
-#include <pspc/mcmove/McMove.h>
-#include <pspc/mcmove/McSimulator.h>
+#include <pspc/simulate/mcmove/McMove.h>
+#include <pspc/simulate/McSimulator.h>
 
 #include <string>
 

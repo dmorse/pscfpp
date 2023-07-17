@@ -1,8 +1,13 @@
 # Include source files lists from subdirectories
 include $(SRC_DIR)/pspc/simulate/analyzer/sources.mk
+include $(SRC_DIR)/pspc/simulate/mcmove/sources.mk
 
 pspc_simulate_= \
-  $(pspc_simulate_analyzer_) 
+  $(pspc_simulate_analyzer_) \
+  $(pspc_simulate_mcmove_) \
+  pspc/simulate/McSimulator.cpp \
+  pspc/simulate/McState.cpp \
+  
   
 pspc_simulate_SRCS=\
      $(addprefix $(SRC_DIR)/, $(pspc_simulate_))
