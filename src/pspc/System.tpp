@@ -353,6 +353,16 @@ namespace Pspc
             Log::file() << "   "  << nStep << "\n";
             simulate(nStep);
          } else
+         if (command == "ANALYZE_TRAJECTORY") {
+            int min;
+            in >> min;
+            int max;
+            in >> max;
+            std::string classname;
+            readEcho(in, classname);
+            readEcho(in, filename);
+            mcSimulator_.analyzeTrajectory(min, max, classname, filename);
+         }else
          if (command == "COMPRESS") {
             // Impose incompressibility
             UTIL_CHECK(hasCompressor());

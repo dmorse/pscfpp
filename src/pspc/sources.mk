@@ -3,7 +3,8 @@ include $(SRC_DIR)/pspc/solvers/sources.mk
 include $(SRC_DIR)/pspc/iterator/sources.mk
 include $(SRC_DIR)/pspc/sweep/sources.mk
 include $(SRC_DIR)/pspc/compressor/sources.mk
-include $(SRC_DIR)/pspc/mcmove/sources.mk
+include $(SRC_DIR)/pspc/simulate/sources.mk
+
 
 pspc_= \
   $(pspc_field_) \
@@ -11,7 +12,7 @@ pspc_= \
   $(pspc_iterator_) \
   $(pspc_sweep_) \
   $(pspc_compressor_) \
-  $(pspc_mcmove_) \
+  $(pspc_simulate_) \
   pspc/System.cpp 
 
 pspc_SRCS=\
