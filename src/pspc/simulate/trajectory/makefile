@@ -8,13 +8,13 @@ include $(SRC_DIR)/pspc/include.mk
 #--------------------------------------------------------------------
 # Main targets 
 
-all: $(pspc_simulate_trajectory_OBJS) 
+all: $(pspc_trajectory_OBJS) 
 
 includes:
 	echo $(INCLUDES)
 
 clean:
-	rm -f $(pspc_simulate_trajectory_OBJS) $(pspc_simulate_trajectory_OBJS:.o=.d) 
+	rm -f $(pspc_trajectory_OBJS) $(pspc_trajectory_OBJS:.o=.d) 
 
 #--------------------------------------------------------------------
 # Include dependency files

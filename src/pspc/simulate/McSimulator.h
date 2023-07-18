@@ -24,6 +24,8 @@ namespace Pspc {
 
    template <int D> class System;
    template <int D> class McMove;
+   template <int D> class TrajectoryReader;
+   template <int D> class TrajectoryReaderFactory;
 
    /**
    * Resources for a Monte-Carlo simulation of system.
@@ -156,6 +158,22 @@ namespace Pspc {
       {   return wc_[i]; }
 
       /**
+      * Read and analyze a trajectory file.
+      * 
+      * This function uses an instance of the TrajectoryReader class
+      * specified by the "classname" argument to read a trajectory 
+      * file. 
+      *
+      * \param min  start at this frame number
+      * \param max  end at this frame number
+      * \param classname  name of the TrajectoryReader class to use
+      * \param filename  name of the trajectory file
+      */
+      void analyzeTrajectory(int min, int max,
+                             std::string classname,
+                             std::string filename);
+      
+      /**
       * Get parent system by reference.
       */
       System<D>& system();
@@ -168,7 +186,12 @@ namespace Pspc {
       /**
       * Get McMoveManger
       */
-      McMoveManager<D>& mcMoveManager();     
+      McMoveManager<D>& mcMoveManager();    
+
+      /**
+      * Get the trajectory reader factory by reference.
+      */
+      Factory<TrajectoryReader<D>>& trajectoryReaderFactory(); 
       
       /**
       * Get random number generator by reference.
@@ -203,7 +226,13 @@ namespace Pspc {
       /**
       * Manger for Monte Carlo Analyzer.
       */
-      AnalyzerManager<D> analyzerManager_;        
+      AnalyzerManager<D> analyzerManager_;    
+      
+      /**
+      * Pointer to a trajectory reader/writer factory.
+      */
+      Factory<TrajectoryReader<D>>* trajectoryReaderFactoryPtr_;
+    
       /**
       * Random number generator
       */
@@ -329,13 +358,20 @@ namespace Pspc {
       UTIL_CHECK(hasMcHamiltonian_);
       return mcFieldHamiltonian_; 
    }
+   
+   // Get the TrajectoryReaderfactory 
+   template <int D>
+   inline Factory<TrajectoryReader<D>> & McSimulator<D>::trajectoryReaderFactory() 
+   {
+      UTIL_ASSERT(trajectoryReaderFactoryPtr_);
+      return *trajectoryReaderFactoryPtr_;
+   }
 
    template <int D>
    inline long McSimulator<D>::iStep() 
    {  
       return iStep_; 
    }
-   
    
    #ifndef PSPC_MC_SIMULATOR_TPP
    // Suppress implicit instantiation

@@ -12,7 +12,8 @@
 #include <pspc/System.h>
 #include <pspc/simulate/mcmove/McMoveFactory.h>
 #include <pspc/simulate/analyzer/AnalyzerFactory.h>
-
+#include <pspc/simulate/trajectory/TrajectoryReader.h>
+#include <pspc/simulate/trajectory/TrajectoryReaderFactory.h>
 #include <util/misc/Timer.h>
 #include <util/random/Random.h>
 #include <util/global.h>
@@ -31,10 +32,14 @@ namespace Pspc {
    McSimulator<D>::McSimulator(System<D>& system)
    : mcMoveManager_(*this, system),
      analyzerManager_(*this, system),
+     trajectoryReaderFactoryPtr_(0),
      random_(),
      systemPtr_(&system),
      hasMcHamiltonian_(false)
-   {  setClassName("McSimulator"); }
+   { 
+      setClassName("McSimulator");   
+      trajectoryReaderFactoryPtr_ = new TrajectoryReaderFactory<D>(system);
+   }
 
    /*
    * Destructor.
@@ -507,6 +512,68 @@ namespace Pspc {
 
 
    }
+   
+   /*
+   * Open, read and analyze a trajectory file
+   */
+   template <int D>
+   void McSimulator<D>::analyzeTrajectory(int min, int max,
+                                          std::string classname,
+                                          std::string filename)
+   {
+      // Preconditions
+      if (min < 0) UTIL_THROW("min < 0");
+      if (max < 0) UTIL_THROW("max < 0");
+      if (max < min) UTIL_THROW("max < min!");
+      UTIL_CHECK(Analyzer<D>::baseInterval);
+      UTIL_CHECK(analyzerManager_.size() > 0);
+      
+      // Construct TrajectoryReader
+      TrajectoryReader<D>* trajectoryReaderPtr;
+      trajectoryReaderPtr = trajectoryReaderFactory().factory(classname);
+      if (!trajectoryReaderPtr) {
+         std::string message;
+         message = "Invalid TrajectoryReader class name " + classname;
+         UTIL_THROW(message.c_str());
+      }
+      // Open trajectory file
+      Log::file() << "Reading " << filename << std::endl;
+      trajectoryReaderPtr->open(filename);
+      trajectoryReaderPtr->readHeader();
+      // Read Header
+      // Main loop over trajectory frames
+      Timer timer;
+      Log::file() << "Begin main loop" << std::endl;
+      bool hasFrame = true;
+      timer.start();
+      for (iStep_ = 0; iStep_ <= max && hasFrame; ++iStep_) {
+         hasFrame = trajectoryReaderPtr->readFrame();
+         if (hasFrame) {
+            // Initialize analyzers 
+            if (iStep_ == min) analyzerManager_.setup();
+            // Sample property values only for iStep >= min
+            if (iStep_ >= min) analyzerManager_.sample(iStep_);
+         }
+      }
+      timer.stop();
+      Log::file() << "end main loop" << std::endl;
+      int nFrames = iStep_ - min;
+      trajectoryReaderPtr->close();
+      delete trajectoryReaderPtr;
+      // Output results of all analyzers to output files
+      analyzerManager_.output();
+      // Output time 
+      Log::file() << std::endl;
+      Log::file() << "# of frames   " << nFrames << std::endl;
+      Log::file() << "run time      " << timer.time() 
+                  << "  sec" << std::endl;
+      Log::file() << "time / frame " << timer.time()/double(nFrames) 
+                  << "  sec" << std::endl;
+      Log::file() << std::endl;
+   }
+
+   
+   
 
 }
 }

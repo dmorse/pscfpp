@@ -53,9 +53,7 @@ namespace Pspc
    template <int D>
    void FieldConfigReader<D>::open(std::string filename)
    {
-      Log::file() << "1" << "\n";
       system().fileMaster().open(filename, inputfile_);
-      Log::file() << "2" << "\n";
       allocate();
    }
  
@@ -68,11 +66,6 @@ namespace Pspc
       }
       Log::file()<<"ReadHeader" << "\n";
       
-      #if 0
-      int nMonomer = system().mixture().nMonomer();
-      Domain<D>& domain = system().domain();
-      system().domain().fieldIo().readFieldHeader(inputfile_, nMonomer, domain.unitCell());
-      #endif
    }
    /*
    * Read frame, return false if end-of-file
