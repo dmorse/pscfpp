@@ -102,15 +102,9 @@ namespace Pspc
          UTIL_THROW("EOF reading ITEM: NUMBER OF Mesh");
       }
       notEnd = getNextLine(inputfile_, line);
-
-      // Load field into wField_ vector, indexed by id.
-      Log::file()<< "nMonomer_" <<wField_.capacity() <<"\n";
-      Log::file()<< "Grid" <<wField_[0].capacity() <<"\n";
       
       readFieldsRGrid(inputfile_, wField_);
       system().setWRGrid(wField_);
-      Log::file()<< "Field" <<wField_[0][1] <<"\n";
-      Log::file()<< "system Field" <<system().w().rgrid(0)[1] <<"\n";
 
       return true;
    }
