@@ -73,6 +73,9 @@ namespace Pspc
       */
       void close();
       
+      /**
+      * Read header of trajectory file.
+      */
       void readHeader();
       
       void readFieldsRGrid(std::istream &in, DArray<RField<D> >& fields);

@@ -64,7 +64,7 @@ namespace Pspc
       for (int i = 0; i < 13; ++i){
          inputfile_.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
       }
-      Log::file()<<"ReadHeader" << "\n";
+      Log::file()<<"Read Header" << "\n";
       
    }
    /*
@@ -90,14 +90,17 @@ namespace Pspc
       // Process ITEM: TIMESTEP
       checkString(line, "i");
       checkString(line, "=");
+      #if 0
       std::string value;
       line >> value;
       int step;
       step = std::stoi(value);
       Log::file()<< "step "<< step <<"\n";
+      #endif
+      
+      // Read ITEM: NUMBER OF Mesh
       notEnd = getNextLine(inputfile_, line);
       checkString(line, "mesh");
-      // Read ITEM: NUMBER OF Mesh
       if (!notEnd) {
          UTIL_THROW("EOF reading ITEM: NUMBER OF Mesh");
       }
