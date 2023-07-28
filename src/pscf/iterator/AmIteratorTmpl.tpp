@@ -209,6 +209,8 @@ namespace Pscf
                Log::file() << "\n";
             }
 
+            Log::file() << " Total Iteration " << Int(itr_,5)<< std::endl;
+            totalItr_ = itr_;
             // Successful completion (i.e., converged within tolerance)
             return 0;
 
@@ -235,7 +237,8 @@ namespace Pscf
          }
 
       }
-
+      
+      
       // Failure: iteration counter itr reached maxItr without converging
       timerTotal.stop();
 

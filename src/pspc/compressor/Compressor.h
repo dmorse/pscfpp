@@ -54,6 +54,8 @@ namespace Pspc
       * \return error code: 0 for success, 1 for failure.
       */
       virtual int compress() = 0;
+      
+      virtual int counterMDE() = 0;
 
       /**
       * Return const reference to parent system.
@@ -94,7 +96,7 @@ namespace Pspc
    template <int D>
    Compressor<D>::~Compressor()
    {}
-
+   
 } // namespace Pspc
 } // namespace Pscf
 #endif
