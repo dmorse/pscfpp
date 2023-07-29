@@ -60,12 +60,18 @@ namespace Pspc
    template <int D>
    void FieldConfigReader<D>::readHeader()
    { 
+      #if 0
       //Skip the header
       for (int i = 0; i < 13; ++i){
          inputfile_.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
       }
+      #endif
+      // Read Header
+      int nMonomer = system().mixture().nMonomer();
+      Domain<D> & domain = system().domain();
+      UnitCell<D> & unitcell = domain.unitCell();
+      system().domain().fieldIo().readFieldHeader(inputfile_, nMonomer, unitcell);
       Log::file()<<"Read Header" << "\n";
-      
    }
    /*
    * Read frame, return false if end-of-file
@@ -105,8 +111,10 @@ namespace Pspc
          UTIL_THROW("EOF reading ITEM: NUMBER OF Mesh");
       }
       notEnd = getNextLine(inputfile_, line);
-      
-      readFieldsRGrid(inputfile_, wField_);
+      int nMonomer = system().mixture().nMonomer();
+      // Read a single real-space grid field frame from trajectory file
+      system().domain().fieldIo().readFieldRGridData(inputfile_, wField_, nMonomer);
+      // Update system real-space grid field 
       system().setWRGrid(wField_);
 
       return true;
@@ -119,94 +127,6 @@ namespace Pspc
    void FieldConfigReader<D>::close()
    {  inputfile_.close();}
    
-   /*
-   * read Frame of fields
-   */
-   
-   template <int D>
-   void FieldConfigReader<D>::readFieldsRGrid(std::istream &in,
-                                              DArray<RField<D> >& fields)
-   {
-      const int nMonomer = system().mixture().nMonomer();
-      IntVec<D> dimensions = system().domain().mesh().dimensions();
-      // Setup temporary workspace array.
-      DArray<RField<D> > temp;
-      temp.allocate(nMonomer);
-      for (int i = 0; i < nMonomer; ++i) {
-         temp[i].allocate(dimensions);
-      }
-
-      // Read Fields;
-      MeshIterator<D> itr(dimensions);
-      for (itr.begin(); !itr.atEnd(); ++itr) {
-         for (int i = 0; i < nMonomer; ++i) {
-            in  >> std::setprecision(15) >> temp[i][itr.rank()];
-         }
-      }
-
-      int p = 0;
-      int q = 0;
-      int r = 0;
-      int s = 0;
-      int n1 = 0;
-      int n2 = 0;
-      int n3 = 0;
-
-      if (D==3) {
-         while (n1 < system().domain().mesh().dimension(0)) {
-            q = p;
-            n2 = 0;
-            while (n2 < system().domain().mesh().dimension(1)) {
-               r = q;
-               n3 = 0;
-               while (n3 < system().domain().mesh().dimension(2)) {
-                  for (int i = 0; i < nMonomer; ++i) {
-                     fields[i][s] = temp[i][r];
-                  }
-                  r = r + (system().domain().mesh().dimension(0) * system().domain().mesh().dimension(1));
-                  ++s;
-                  ++n3;              
-               } 
-               q = q + system().domain().mesh().dimension(0);
-               ++n2;
-            } 
-            ++n1;
-            ++p;
-         }
-      }
-
-      else if (D==2) {
-         while (n1 < system().domain().mesh().dimension(0)) {
-            r =q; 
-            n2 = 0;
-            while (n2 < system().domain().mesh().dimension(1)) {
-               for (int i = 0; i < nMonomer; ++i) {
-                  fields[i][s] = temp[i][r];
-               }   
-               r = r + (system().domain().mesh().dimension(0));
-               ++s;
-               ++n2;    
-            }   
-            ++q;
-            ++n1;
-         }   
-      } 
-
-      else if (D==1) {
-
-         while (n1 < system().domain().mesh().dimension(0)) {
-            for (int i = 0; i < nMonomer; ++i) {
-               fields[i][s] = temp[i][r];
-            }
-            ++r;
-            ++s;
-            ++n1;    
-         }   
-      } 
-
-   }
-
-
 } 
 }
 #endif
