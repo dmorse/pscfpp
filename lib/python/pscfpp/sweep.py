@@ -142,6 +142,7 @@ class Sweep:
          for x,y in p.children.items():
             if x.rfind('Sweep') != -1:
                nd = old_cwd + '/' + y.baseFileName
+               break
          try:
             os.chdir(nd)
          except:
