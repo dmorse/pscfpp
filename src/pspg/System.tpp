@@ -9,6 +9,8 @@
 */
 
 #include "System.h"
+#include <pspg/compressor/Compressor.h>
+#include <pspg/compressor/CompressorFactory.h>
 #include <pspg/sweep/Sweep.h>
 #include <pspg/sweep/SweepFactory.h>
 #include <pspg/iterator/Iterator.h>
@@ -50,6 +52,8 @@ namespace Pspg
       iteratorFactoryPtr_(0),
       sweepPtr_(0),
       sweepFactoryPtr_(0),
+      compressorPtr_(0),
+      compressorFactoryPtr_(0),
       w_(),
       c_(),
       fHelmholtz_(0.0),
@@ -66,7 +70,7 @@ namespace Pspg
       interactionPtr_ = new Interaction();
       iteratorFactoryPtr_ = new IteratorFactory<D>(*this);
       sweepFactoryPtr_ = new SweepFactory<D>(*this);
-
+      compressorFactoryPtr_ = new CompressorFactory<D>(*this);
       BracketPolicy::set(BracketPolicy::Optional);
       ThreadGrid::init();
    }
@@ -91,6 +95,12 @@ namespace Pspg
       }
       if (sweepFactoryPtr_) {
          delete sweepFactoryPtr_;
+      }
+      if (compressorPtr_) {
+         delete compressorPtr_;
+      }
+      if (compressorFactoryPtr_) {
+         delete compressorFactoryPtr_;
       }
    }
 
@@ -239,7 +249,7 @@ namespace Pspg
          iteratorFactoryPtr_->readObjectOptional(in, *this, className, 
                                                  isEnd);
       if (!iteratorPtr_) {
-         Log::file() << "Notification: No iterator was constructed\n";
+         Log::file() << indent() << "  [Iterator{} absent]\n";
       }
 
       // Optionally instantiate a Sweep object (if an iterator exists)
@@ -247,27 +257,19 @@ namespace Pspg
          sweepPtr_ = 
             sweepFactoryPtr_->readObjectOptional(in, *this, className, 
                                                  isEnd);
+         if (!sweepPtr_ && ParamComponent::echo()) {
+            Log::file() << indent() << "  Sweep{ [absent] }\n";
+         }
       }
-
-      #if 0
-      // Initialize iterator
-      std::string className;
-      bool isEnd;
-      iteratorPtr_
-          = iteratorFactoryPtr_->readObject(in, *this, className, isEnd);
-      if (!iteratorPtr_) {
-         std::string msg = "Unrecognized Iterator subclass name ";
-         msg += className;
-         UTIL_THROW(msg.c_str());
+      
+      // Optionally instantiate a Compressor object
+      compressorPtr_ = 
+         compressorFactoryPtr_->readObjectOptional(in, *this, className, 
+                                                   isEnd);
+      if (!compressorPtr_ && ParamComponent::echo()) {
+         Log::file() << indent() << "  Compressor{ [absent] }\n";
       }
-
-      // Optionally instantiate a Sweep object
-      sweepPtr_ =
-         sweepFactoryPtr_->readObjectOptional(in, *this, className, isEnd);
-      if (sweepPtr_) {
-         sweepPtr_->setSystem(*this);
-      }
-      #endif
+      
 
       // Initialize homogeneous object
       homogeneous_.setNMolecule(np+ns);
@@ -334,6 +336,11 @@ namespace Pspg
             // Attempt to solve a sequence of SCFT problems along a path
             // through parameter space
             sweep();
+         } else
+         if (command == "COMPRESS") {
+            // Impose incompressibility
+            UTIL_CHECK(hasCompressor());
+            compressor().compress();
          } else
          if (command == "WRITE_PARAM") {
             readEcho(in, filename);
