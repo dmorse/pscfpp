@@ -14,7 +14,7 @@
 #include <util/global.h>
 
 namespace Pscf {
-namespace Pspg{
+namespace Pspg {
 
    using namespace Util;
 
@@ -22,7 +22,6 @@ namespace Pspg{
    template <int D>
    AmCompressor<D>::AmCompressor(System<D>& system)
    : Compressor<D>(system),
-     counter_(0),
      isAllocated_(false)
    { setClassName("AmCompressor"); }
 
@@ -63,7 +62,9 @@ namespace Pspg{
       }
       
       // Store value of initial guess chemical potential fields
-      
+      // GPU resources
+      int nBlocks, nThreads;
+      ThreadGrid::setThreadsLogical(meshSize, nBlocks, nThreads);
       // Pointer to fields on system
       DArray<RDField<D>> const * currSys = &system().w().rgrid();
       for (int i = 0; i < nMonomer; ++i) {
@@ -77,13 +78,13 @@ namespace Pspg{
    int AmCompressor<D>::compress()
    {
       int solve = AmIteratorTmpl<Compressor<D>, DField<cudaReal> >::solve();
-      counter_ += AmIteratorTmpl<Compressor<D>, DArray<double>>::totalItr(); 
+      //counter_ += AmIteratorTmpl<Compressor<D>, DField<cudaReal>>::totalItr(); 
       return solve;
    }
 
    // Assign one array to another
    template <int D>
-   void AmIteratorGrid<D>::setEqual(DField<cudaReal>& a, DField<cudaReal> const & b)
+   void AmCompressor<D>::setEqual(DField<cudaReal>& a, DField<cudaReal> const & b)
    {
       // GPU resources
       int nBlocks, nThreads;
@@ -129,9 +130,9 @@ namespace Pspg{
       int nBlocks, nThreads;
       ThreadGrid::setThreadsLogical(n, nBlocks, nThreads);
       pointWiseBinarySubtract<<<nBlocks,nThreads>>>
-            (hists[0].cDField(), hists[1].cDField(), newbasis.cDField(),n);
+            (hists[0].cDField(), hists[1].cDField(), newBasis_.cDField(),n);
 
-      basis.append(newbasis);
+      basis.append(newBasis_);
 
    }
 
@@ -154,7 +155,7 @@ namespace Pspg{
 
    template <int D>
    void AmCompressor<D>::addPredictedError(DField<cudaReal>& fieldTrial,
-                                           DField<cudaReal> & resTrial,
+                                           DField<cudaReal> const & resTrial,
                                            double lambda)
    {
       // GPU resources
@@ -216,7 +217,7 @@ namespace Pspg{
       ThreadGrid::setThreadsLogical(meshSize, nBlocks, nThreads);
       
       // Initialize residuals to -1
-      assignUniformReal<<<nBlocks, nThreads>>>(resid.cDField(), -1, n);
+      assignUniformReal<<<nBlocks, nThreads>>>(resid.cDField(), -1, meshSize);
       for (int i = 0; i < nMonomer; i++) {
          pointWiseAdd<<<nBlocks, nThreads>>>
             (resid.cDField(), system().c().rgrid(i).cDField(), meshSize);

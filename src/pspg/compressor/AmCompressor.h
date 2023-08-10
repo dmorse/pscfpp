@@ -93,7 +93,7 @@ namespace Pspg
       /**
       * Current values of the fields
       */
-      DField<cudaReal> w0_;  
+      DArray< RDField<D> > w0_;  
 
       /**
       * Has the variable been allocated?
@@ -103,7 +103,7 @@ namespace Pspg
       /**
       * Template w Field used in update function
       */
-      DField<cudaReal> wFieldTmp_;
+      DArray< RDField<D> > wFieldTmp_;
       
       /**
       * New Basis variable used in updateBasis function 
