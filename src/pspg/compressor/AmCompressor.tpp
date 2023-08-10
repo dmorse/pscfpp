@@ -243,7 +243,7 @@ namespace Pspg{
       }
       
       // set system r grid
-      setRGrid(wFieldTmp_);
+      system().setWRGrid(wFieldTmp_);
    }
 
    template<int D>
