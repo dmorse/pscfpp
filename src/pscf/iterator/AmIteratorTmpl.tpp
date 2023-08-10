@@ -208,8 +208,6 @@ namespace Pscf
                }
                Log::file() << "\n";
             }
-
-            Log::file() << " Total Iteration " << Int(itr_,5)<< std::endl;
             totalItr_ = itr_;
             // Successful completion (i.e., converged within tolerance)
             return 0;
