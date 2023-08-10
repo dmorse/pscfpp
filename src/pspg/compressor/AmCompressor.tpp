@@ -241,7 +241,12 @@ namespace Pspg{
          pointWiseBinaryAdd<<<nBlocks, nThreads>>>
             (w0_[i].cDField(), newGuess.cDField(), wFieldTmp_[i].cDField(), meshSize);
       }
-      system().setWRGrid(wFieldTmp_);
+      // set system r grid
+      for (int i = 0; i < nMonomer; i++) {
+         assignReal<<<nBlocks, nThreads>>>(system().w().rgrid.[i].cDField(), 
+                                           wFieldTmp_[i].cDField(), 
+                                           meshSize);
+      }
    }
 
    template<int D>
