@@ -230,13 +230,18 @@ namespace Pspc{
       const int nMonomer = system().mixture().nMonomer();
       const int meshSize = system().domain().mesh().size();
       
-      //New field is the w0_ + the newGuess for the Lagrange multiplier field
+      // New field is the w0_ + the newGuess for the Lagrange multiplier field
       for (int i = 0; i < nMonomer; i++){
          for (int k = 0; k < meshSize; k++){
             wFieldTmp_[i][k] = w0_[i][k] + newGuess[k];
          }
       }
-      system().setWRGrid(wFieldTmp_);
+      // set system r grid
+      for (int i = 0; i < nMonomer; i++) {
+         assignReal<<<nBlocks, nThreads>>>(system().rgrid_[i].cDField(), 
+                                           wFieldTmp_[i].cDField(), 
+                                           meshSize);
+      }
    }
 
    template<int D>
