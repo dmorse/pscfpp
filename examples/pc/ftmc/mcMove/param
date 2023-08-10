@@ -38,9 +38,18 @@ System{
   McSimulator{
     McMoveManager{
         RealMove{
-            probability     1
+            probability     0.5
             A               0.5
-      }
+        }
+        FourierMove{
+            probability     0.5
+            A               0.01
+            F*              20.990
+            tau             2.64737
+            N               1.0
+            volumeFraction  0.5
+            statisticalSegmentLength 1
+        }
     }
     AnalyzerManager{
       baseInterval    1
