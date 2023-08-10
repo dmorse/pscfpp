@@ -14,7 +14,7 @@
 #include <util/global.h>
 
 namespace Pscf {
-namespace Pspg {
+namespace Pspg{
 
    using namespace Util;
 
@@ -239,7 +239,7 @@ namespace Pspg {
       //New field is the w0_ + the newGuess for the Lagrange multiplier field
       for (int i = 0; i < nMonomer; i++){
          pointWiseBinaryAdd<<<nBlocks, nThreads>>>
-            (w0_[i].cDField(), newGuess.cDField(), wFieldTmp_[i].cDField, meshSize);
+            (w0_[i].cDField(), newGuess.cDField(), wFieldTmp_[i].cDField(), meshSize);
       }
       system().setWRGrid(wFieldTmp_);
    }
