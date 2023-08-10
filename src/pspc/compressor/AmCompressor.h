@@ -65,12 +65,16 @@ namespace Pspc
       
       
       /**
-      * compress to obtain partial saddle point w+
+      * Compress to obtain partial saddle point w+
       *
       * \return 0 for convergence, 1 for failure
       */
       int compress();    
       
+      /**
+      * Return how many times MDE has been solved.
+      */
+      int counterMDE(); 
       
       // Inherited public member functions
       using AmIteratorTmpl<Compressor<D>, DArray<double> >::setClassName;
@@ -83,9 +87,14 @@ namespace Pspc
 
    private:
       /**
+      * Count how many times MDE has been solved.
+      */
+      int counter_;
+      
+      /**
       * Current values of the fields
       */
-      DArray< RField<D> > w0;  
+      DArray< RField<D> > w0_;  
 
       /**
       * Has the variable been allocated?
@@ -200,11 +209,15 @@ namespace Pspc
       */
       void outputToLog();
       
-      
-      
-      
 
    };
+   
+   // Inline member functions
+
+   // Get the how many times MDE has been solved.
+   template <int D>
+   inline int AmCompressor<D>::counterMDE()
+   { return counter_; }
 
 } // namespace Pspc
 } // namespace Pscf

@@ -75,6 +75,7 @@ namespace Pspc
       std::string filename;
       filename_  = outputFileName();
       system().fileMaster().openOutputFile(filename_ , outputFile_);
+      writeHeader(outputFile_);
    }
 
     template <int D>
@@ -103,9 +104,6 @@ namespace Pspc
    template <int D>
    void TrajectoryWriter<D>::sample(long iStep) 
    {  
-      if (iStep ==0){
-         writeHeader(outputFile_);
-      }
       if (isAtInterval(iStep))  {
          writeFrame(outputFile_, iStep);
          ++nSample_;
