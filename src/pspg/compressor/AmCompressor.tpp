@@ -241,13 +241,9 @@ namespace Pspg{
          pointWiseBinaryAdd<<<nBlocks, nThreads>>>
             (w0_[i].cDField(), newGuess.cDField(), wFieldTmp_[i].cDField(), meshSize);
       }
-      DArray<RDField<D>>  * currSys = &system().w().rgrid();
+      
       // set system r grid
-      for (int i = 0; i < nMonomer; i++) {
-         assignReal<<<nBlocks, nThreads>>>((*currSys)[i].cDField(), 
-                                           wFieldTmp_[i].cDField(), 
-                                           meshSize);
-      }
+      setRGrid(wFieldTmp_);
    }
 
    template<int D>
