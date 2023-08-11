@@ -1,5 +1,5 @@
 /*! \page user_unitcell_page Crystal Unit Cells
-\ref user_visualize_page   (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref user_python_page   (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
 \ref user_groups_page  (Next)
 <BR>
 
@@ -232,7 +232,7 @@ systems, as discussed below:
 
 
 <BR>
-\ref user_visualize_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref user_python_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
 \ref user_page        (Up) &nbsp; &nbsp; &nbsp; &nbsp;
 \ref user_groups_page (Next)
 */

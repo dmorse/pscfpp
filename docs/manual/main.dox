@@ -31,6 +31,7 @@ materials that may contain block polymers, homopolymers and solvent.
     <li> \ref user_command_page  </li>
     <li> \ref user_example_page  </li>
     <li> \ref user_visualize_page  </li>
+    <li> \ref user_python_page  </li>
     <li> \ref user_unitcell_page  </li>
     <li> \ref user_groups_page  </li>
     <li> \ref user_thin_films_page  </li>

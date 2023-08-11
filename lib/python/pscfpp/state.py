@@ -76,7 +76,8 @@
 #
 # -----------------------------------------------------------------------
 
-import param, thermo
+import pscfpp.param
+import pscfpp.thermo
 
 class State:
    '''
@@ -103,8 +104,8 @@ class State:
          if fl[0] != 'System{':
             raise Exception('Not valid State file')
          else:
-            self.param = param.Composite(f, 'System')
-            self.thermo = thermo.Thermo()
+            self.param = pscfpp.param.Composite(f, 'System')
+            self.thermo = pscfpp.thermo.Thermo()
             self.thermo.read(f)
 
    def writeOut(self, filename):

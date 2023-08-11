@@ -104,9 +104,9 @@
 #          manage same types of properties easily.
 
 
-from param import *
-from thermo import *
-from state import *
+from pscfpp.param import *
+from pscfpp.thermo import *
+from pscfpp.state import *
 import os
 
 class Sweep:
@@ -256,4 +256,7 @@ class Sweep:
 
    def __getitem__(self, key):
       return self.sweep[key]
+
+   def __len__(self):
+      return len(self.sweep)
 
