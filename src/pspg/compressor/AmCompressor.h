@@ -1,5 +1,5 @@
-#ifndef PSPC_AM_COMPRESSOR_H
-#define PSPC_AM_COMPRESSOR_H
+#ifndef PSPG_AM_COMPRESSOR_H
+#define PSPG_AM_COMPRESSOR_H
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory
@@ -9,11 +9,13 @@
 */
 
 #include "Compressor.h"
-#include <pspc/field/RField.h>
-#include <pscf/iterator/AmIteratorTmpl.h>                 
+#include <pspg/field/DField.h>
+#include <pscf/iterator/AmIteratorTmpl.h>     
+#include <pspg/field/RDField.h>         
+#include <util/containers/DArray.h>                 
 
 namespace Pscf {
-namespace Pspc
+namespace Pspg
 {
 
    template <int D>
@@ -22,13 +24,12 @@ namespace Pspc
    using namespace Util;
 
    /**
-   * Pspc implementation of the Anderson Mixing compressor.
+   * Pspg implementation of the Anderson Mixing compressor.
    *
-   * \ingroup Pspc_Compressor_Module
+   * \ingroup Pspg_Compressor_Module
    */
    template <int D>
-   class AmCompressor 
-         : public AmIteratorTmpl<Compressor<D>, DArray<double> >
+   class AmCompressor : public AmIteratorTmpl<Compressor<D>, DField<cudaReal> >
    {
 
    public:
@@ -77,7 +78,7 @@ namespace Pspc
       int counterMDE(); 
       
       // Inherited public member functions
-      using AmIteratorTmpl<Compressor<D>, DArray<double> >::setClassName;
+      using AmIteratorTmpl<Compressor<D>,  DField<cudaReal> >::setClassName;
 
    protected:
   
@@ -94,7 +95,7 @@ namespace Pspc
       /**
       * Current values of the fields
       */
-      DArray< RField<D> > w0_;  
+      DArray< RDField<D> > w0_;  
 
       /**
       * Has the variable been allocated?
@@ -104,13 +105,12 @@ namespace Pspc
       /**
       * Template w Field used in update function
       */
-      
-      DArray< RField<D> > wFieldTmp_;
+      DArray< RDField<D> > wFieldTmp_;
       
       /**
       * New Basis variable used in updateBasis function 
       */
-      DArray<double> newBasis_;
+      DField<cudaReal> newBasis_;
 
       /**
       * Assign one field to another.
@@ -118,17 +118,17 @@ namespace Pspc
       * \param a the field to be set (lhs of assignment)
       * \param b the field for it to be set to (rhs of assigment)
       */
-      void setEqual(DArray<double>& a, DArray<double> const & b);
+      void setEqual(DField<cudaReal>& a, DField<cudaReal> const & b);
 
       /**
       * Compute the inner product of two vectors
       */
-      double dotProduct(DArray<double> const & a, DArray<double> const & b);
+      double dotProduct(DField<cudaReal> const & a, DField<cudaReal> const & b);
 
       /**
       * Find the maximum magnitude element of a residual vector.
       */
-      double maxAbs(DArray<double> const & hist);
+      double maxAbs(DField<cudaReal> const & hist);
 
       /**
       * Update the basis for residual or field vectors.
@@ -136,8 +136,8 @@ namespace Pspc
       * \param basis RingBuffer of residual or field basis vectors
       * \param hists RingBuffer of past residual or field vectors
       */
-      void updateBasis(RingBuffer<DArray<double> > & basis, 
-                       RingBuffer<DArray<double> > const & hists);
+      void updateBasis(RingBuffer<DField<cudaReal> > & basis, 
+                       RingBuffer<DField<cudaReal> > const & hists);
 
       /**
       * Add linear combination of basis vectors to trial field.
@@ -147,8 +147,8 @@ namespace Pspc
       * \param coeffs array of coefficients of basis vectors
       * \param nHist number of histories stored at this iteration
       */
-      void addHistories(DArray<double>& trial, 
-                        RingBuffer<DArray<double> > const & basis, 
+      void addHistories(DField<cudaReal>& trial, 
+                        RingBuffer<DField<cudaReal> > const & basis, 
                         DArray<double> coeffs, 
                         int nHist);
 
@@ -159,8 +159,8 @@ namespace Pspc
       * \param resTrial predicted error for current trial
       * \param lambda Anderson-Mixing mixing 
       */
-      void addPredictedError(DArray<double>& fieldTrial, 
-                             DArray<double> const & resTrial, 
+      void addPredictedError(DField<cudaReal>& fieldTrial, 
+                             DField<cudaReal> const & resTrial, 
                              double lambda);
 
       /**
@@ -180,7 +180,7 @@ namespace Pspc
       * 
       * \param curr current field vector
       */ 
-      void getCurrent(DArray<double>& curr);
+      void getCurrent(DField<cudaReal>& curr);
 
       /**
       * Have the system perform a computation using new field.
@@ -195,14 +195,14 @@ namespace Pspc
       *
       * \param resid current residual vector value
       */
-      void getResidual(DArray<double>& resid);
+      void getResidual(DField<cudaReal>& resid);
 
       /**
       * Updates the system field with the new trial field.
       *
       * \param newGuess trial field vector
       */
-      void update(DArray<double>& newGuess);
+      void update(DField<cudaReal>& newGuess);
 
       /**
       * Outputs relevant system details to the iteration log.
@@ -219,6 +219,6 @@ namespace Pspc
    inline int AmCompressor<D>::counterMDE()
    { return counter_; }
 
-} // namespace Pspc
+} // namespace Pspg
 } // namespace Pscf
 #endif

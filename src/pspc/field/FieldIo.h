@@ -253,6 +253,20 @@ namespace Pspc
       void readFieldsRGrid(std::string filename, 
                            DArray< RField<D> >& fields, 
                            UnitCell<D> & unitCell) const;
+                           
+      /**
+      * Read single RField frame (field on an r-space grid) from ftmc trajectory file.
+      *
+      * This function opens an input trajectory file with the specified filename, 
+      * reads a field frame in RField<D> real-space grid format
+      *
+      * \param filename  name of input file
+      * \param fields  array of RField fields (r-space grid)
+      * \param nMonomer
+      */
+      void readFieldRGridData(std::istream& in, 
+                              DArray< RField<D> >& fields,
+                              int nMonomer) const;
 
       /**
       * Write a single RField (field on an r-space grid) to ostream.
@@ -265,8 +279,7 @@ namespace Pspc
       void writeFieldRGrid(std::ostream &out, 
                            RField<D> const & field, 
                            UnitCell<D> const & unitCell,
-                           bool writeHeader = true) 
-      const;
+                           bool writeHeader = true) const;
 
       /**
       * Write a single RField (fields on an r-space grid) to a file.

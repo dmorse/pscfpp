@@ -1,5 +1,5 @@
-#ifndef PSPC_COMPRESSOR_H
-#define PSPC_COMPRESSOR_H
+#ifndef PSPG_COMPRESSOR_H
+#define PSPG_COMPRESSOR_H
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory
@@ -12,7 +12,7 @@
 #include <util/global.h>                  
 
 namespace Pscf {
-namespace Pspc
+namespace Pspg
 {
 
    template <int D>
@@ -23,18 +23,19 @@ namespace Pspc
    /**
    * Base class for iterators that impose incompressibility.
    *
-   * \ingroup Pspc_Compressor_Module
+   * \ingroup Pspg_Compressor_Module
    */
    template <int D>
    class Compressor : public ParamComposite
    {
 
    public:
-
+      #if 0
       /**
       * Default constructor.
       */
       Compressor();
+      #endif
 
       /**
       * Constructor.
@@ -55,7 +56,7 @@ namespace Pspc
       */
       virtual int compress() = 0;
       
-      virtual int counterMDE() = 0;
+      //virtual int counterMDE() = 0;
 
       /**
       * Return const reference to parent system.
@@ -79,12 +80,13 @@ namespace Pspc
    };
 
    // Inline member functions
-
+   #if 0
    // Default constructor
    template <int D>
    inline Compressor<D>::Compressor()
     : sysPtr_(&system)
    {  setClassName("Compressor"); }
+   #endif
 
    // Constructor
    template <int D>
@@ -97,6 +99,6 @@ namespace Pspc
    Compressor<D>::~Compressor()
    {}
    
-} // namespace Pspc
+} // namespace Pspg
 } // namespace Pscf
 #endif

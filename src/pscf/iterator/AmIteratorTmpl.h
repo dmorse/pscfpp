@@ -184,6 +184,11 @@ namespace Pscf {
       * Verbosity level, allowed values 0, 1, or 2.
       */
       int verbose() const;
+      
+      /**
+      * Return the total number of iterations needed to converge.
+      */
+      int totalItr();
 
       /**
       * Have data structures required by the AM algorithm been allocated?
@@ -211,6 +216,9 @@ namespace Pscf {
 
       /// Current iteration counter.
       int itr_;
+      
+      /// Total iteration counter.
+      int totalItr_;
 
       /// Number of elements in field or residual vectors.
       int nElem_; 
@@ -438,6 +446,13 @@ namespace Pscf {
    template <typename Iterator, typename T>
    bool AmIteratorTmpl<Iterator,T>::isAllocatedAM() const
    {  return isAllocatedAM_; }
+   
+   /*
+   * Return total iteration counter
+   */
+   template <typename Iterator, typename T>
+   int AmIteratorTmpl<Iterator,T>::totalItr() 
+   {  return totalItr_; }
 
 }
 #include "AmIteratorTmpl.tpp"

@@ -199,9 +199,15 @@ namespace Pspg
       UTIL_CHECK(fields.capacity() == nMonomer_);
 
       // Update system wFieldsRGrid
+      // GPU resources
+      int nBlocks, nThreads;
+      ThreadGrid::setThreadsLogical(meshSize_, nBlocks, nThreads);
       for (int i = 0; i < nMonomer_; ++i) {
-         UTIL_CHECK(fields[i].capacity() == nBasis_)
-         rgrid_[i] = fields[i];
+         //UTIL_CHECK(fields[i].capacity() == nBasis_)
+         assignReal<<<nBlocks, nThreads>>>(rgrid_[i].cDField(), 
+                                           fields[i].cDField(), 
+                                           meshSize_);
+         //rgrid_[i] = fields[i];
       }
 
       if (isSymmetric) {

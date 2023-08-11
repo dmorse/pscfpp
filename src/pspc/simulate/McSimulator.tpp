@@ -14,10 +14,10 @@
 #include <pspc/simulate/analyzer/AnalyzerFactory.h>
 #include <pspc/simulate/trajectory/TrajectoryReader.h>
 #include <pspc/simulate/trajectory/TrajectoryReaderFactory.h>
+#include <pspc/compressor/Compressor.h>
 #include <util/misc/Timer.h>
 #include <util/random/Random.h>
 #include <util/global.h>
-
 #include <gsl/gsl_eigen.h>
 
 namespace Pscf {
@@ -140,6 +140,11 @@ namespace Pspc {
          analyzerManager_.output();
       }
 
+      // Output how many times MDE has been solved for the simulation run
+      Log::file() << std::endl;
+      Log::file() << "MDE counter   " << system().compressor().counterMDE()<< std::endl;
+      Log::file() << std::endl;
+      
       // Output time for the simulation run
       Log::file() << std::endl;
       Log::file() << "nStep         " << nStep << std::endl;
@@ -552,7 +557,12 @@ namespace Pspc {
             // Initialize analyzers 
             if (iStep_ == min) analyzerManager_.setup();
             // Sample property values only for iStep >= min
-            if (iStep_ >= min) analyzerManager_.sample(iStep_);
+            if (iStep_ >= min) {
+               analyzerManager_.sample(iStep_);
+               if ((iStep_ % 100) == 0){
+                  Log::file() << iStep_ << std::endl;
+               }
+            }
          }
       }
       timer.stop();

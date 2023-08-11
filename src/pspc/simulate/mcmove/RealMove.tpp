@@ -46,7 +46,7 @@ namespace Pspc {
       //Read the probability
       readProbability(in);
       // attampt move range [A, -A]
-      read(in, "A", A_);
+      read(in, "A", stepSize_);
    }
    
    template <int D>
@@ -74,26 +74,24 @@ namespace Pspc {
    {
       const int nMonomer = system().mixture().nMonomer();
       const int meshSize = system().domain().mesh().size();
-      
-      #if 0
-      //attampt move with rigid field change randomly chosen from uniform distribution [-A, A] 
-      for (int i = 0; i < nMonomer; i++){
+      if (nMonomer == 2){
+         // For AB diblok copolymer
          for (int k = 0; k < meshSize; k++){
-            //Random number generator
-            double r = random().uniform(-A_,A_);
-            //Log::file() << "random change " << r << "\n";
-            wFieldTmp_[i][k] = system().w().rgrid()[i][k] + r;
+            //attampt move in real space
+            double r = random().uniform(-stepSize_,stepSize_);
+            wFieldTmp_[0][k] = system().w().rgrid()[0][k] + r;
+            wFieldTmp_[1][k] = system().w().rgrid()[1][k] - r;
+         }
+      } else {
+         // For multi-component copolymer
+         for (int i = 0; i < nMonomer; i++){
+            for (int k = 0; k < meshSize; k++){
+               //Random number generator
+               double r = random().uniform(-stepSize_,stepSize_);
+               wFieldTmp_[i][k] = system().w().rgrid()[i][k] + r;
+            }
          }
       }
-      #endif
-      
-      for (int k = 0; k < meshSize; k++){
-         double r = random().uniform(-A_,A_);
-         wFieldTmp_[0][k] = system().w().rgrid()[0][k] + r;
-         wFieldTmp_[1][k] = system().w().rgrid()[1][k] - r;
-      }
-      
-      
       system().setWRGrid(wFieldTmp_);
 
    }

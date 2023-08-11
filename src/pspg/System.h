@@ -35,6 +35,8 @@ namespace Pspg
    template <int D> class IteratorFactory;
    template <int D> class Sweep;
    template <int D> class SweepFactory;
+   template <int D> class Compressor;
+   template <int D> class CompressorFactory;
 
    using namespace Util;
 
@@ -652,6 +654,11 @@ namespace Pspg
       * Get the iterator by reference.
       */
       Iterator<D>& iterator();
+      
+      /**
+      * Get the compressor by reference.
+      */
+      Compressor<D>& compressor();
 
       /**
       * Get crystal UnitCell by const reference.
@@ -705,6 +712,11 @@ namespace Pspg
       * Does this system have an associated Sweep object?
       */
       bool hasSweep() const;
+      
+      /**
+      * Does this system have a Compressor object?
+      */
+      bool hasCompressor() const;
 
       ///@}
 
@@ -754,6 +766,16 @@ namespace Pspg
       * Pointer to SweepFactory object
       */
       SweepFactory<D>* sweepFactoryPtr_;
+      
+      /**
+      * Pointer to an compressor.
+      */
+      Compressor<D>* compressorPtr_;
+
+      /**
+      * Pointer to compressor factory object
+      */
+      CompressorFactory<D>* compressorFactoryPtr_;
 
       /**
       * Chemical potential fields.
@@ -939,6 +961,14 @@ namespace Pspg
       UTIL_ASSERT(iteratorPtr_);
       return *iteratorPtr_;
    }
+   
+   // Get the Compressor
+   template <int D>
+   inline Compressor<D>& System<D>::compressor()
+   {
+      UTIL_ASSERT(compressorPtr_);
+      return *compressorPtr_;
+   }
 
    // Get the FileMaster.
    template <int D>
@@ -982,6 +1012,11 @@ namespace Pspg
    template <int D>
    inline bool System<D>::hasSweep() const
    {  return (sweepPtr_ != 0); }
+   
+   // Does the system have a Compressor object?
+   template <int D>
+   inline bool System<D>::hasCompressor() const
+   {  return (compressorPtr_ != 0); }
 
    #ifndef PSPG_SYSTEM_TPP
    // Suppress implicit instantiation

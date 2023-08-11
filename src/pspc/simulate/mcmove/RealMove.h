@@ -22,7 +22,7 @@ namespace Pspc
    using namespace Util;
 
    /**
-   * McMove is an abstract base class for Monte Carlo moves.
+   * RealMove is a Monte Carlo move in real space
    *
    * \ingroup Pspc_McMove_Module
    */
@@ -35,7 +35,7 @@ namespace Pspc
       /**
       * Constructor.
       *
-      * \param system parent System object.
+      * \param mcSimulator parent McSimulator
       */
       RealMove(McSimulator<D>& simulator);
 
@@ -49,7 +49,6 @@ namespace Pspc
       /**
       * Read required parameters from file.
       *
-      * Empty default implementation.
       */
       void readParameters(std::istream &in);
       
@@ -89,8 +88,8 @@ namespace Pspc
 
    private:
       
-      /// Move step size is randomly selected from uniform distribution [-A, A]
-      double A_;
+      /// Move step size is randomly selected from uniform distribution [-stepSize_, stepSize_]
+      double stepSize_;
       
       /// wField after attempt McMove. local variable wFieldTmp_ used in attemptMove() function
       DArray< RField<D> > wFieldTmp_;

@@ -701,14 +701,24 @@ namespace Pspc
       Interaction const & interaction() const;
 
       /**
-      * Get Domain by const reference.
+      * Get Domain by non-const reference.
       */
       Domain<D> const & domain() const;
+      
+      /**
+      * Get Domain by const reference.
+      */
+      Domain<D> & domain();
 
       /**
       * Get UnitCell (i.e., type and parameters) by const reference.
       */
       UnitCell<D> const & unitCell() const;
+      
+      /**
+      * Get UnitCell (i.e., type and parameters) by non-const reference.
+      */
+      UnitCell<D> & unitCell();
 
       /**
       * Get the spatial discretization mesh by const reference.
@@ -1078,10 +1088,20 @@ namespace Pspc
    template <int D>
    inline Domain<D> const & System<D>::domain() const
    { return domain_; }
+   
+   // Get the Domain by nonconst reference.
+   template <int D>
+   inline Domain<D> & System<D>::domain() 
+   { return domain_; }
 
    // Get the UnitCell by const reference.
    template <int D>
    inline UnitCell<D> const & System<D>::unitCell() const
+   { return domain_.unitCell(); }
+   
+   // Get the UnitCell by const reference.
+   template <int D>
+   inline UnitCell<D> & System<D>::unitCell()
    { return domain_.unitCell(); }
 
    // Get the Mesh by const reference.

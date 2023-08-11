@@ -21,6 +21,7 @@ namespace Pspc{
    template <int D>
    AmCompressor<D>::AmCompressor(System<D>& system)
    : Compressor<D>(system),
+     counter_(0),
      isAllocated_(false)
    {  setClassName("AmCompressor"); }
 
@@ -51,10 +52,10 @@ namespace Pspc{
       // Allocate memory required by compressor if not done earlier.
       if (!isAllocated_){
          newBasis_.allocate(meshSize);
-         w0.allocate(nMonomer);
+         w0_.allocate(nMonomer);
          wFieldTmp_.allocate(nMonomer);
          for (int i = 0; i < nMonomer; ++i) {
-            w0[i].allocate(meshSize);
+            w0_[i].allocate(meshSize);
             wFieldTmp_[i].allocate(meshSize);
          }
             
@@ -64,15 +65,17 @@ namespace Pspc{
       // Store value of initial guess chemical potential fields
       for (int i = 0; i < nMonomer; ++i) {
          for (int j = 0; j< meshSize; ++j){
-            w0[i][j] = system().w().rgrid(i)[j];
+            w0_[i][j] = system().w().rgrid(i)[j];
          }
-      }      
+      }
    }
    
    template <int D>
    int AmCompressor<D>::compress()
    {
-    return AmIteratorTmpl<Compressor<D>, DArray<double> >::solve();
+      int solve = AmIteratorTmpl<Compressor<D>, DArray<double> >::solve();
+      counter_ += AmIteratorTmpl<Compressor<D>,DArray<double>>::totalItr(); 
+      return solve;
    }
 
    // Assign one array to another
@@ -184,10 +187,10 @@ namespace Pspc{
       /*
       * The field that we are adjusting is the Langrange multiplier field 
       * with number of grid pts components.The current value is the difference 
-      * between w and w0 for the first monomer (any monomer should give the same answer)
+      * between w and w0_ for the first monomer (any monomer should give the same answer)
       */
       for (int i = 0; i < meshSize; i++){
-         curr[i] = (*currSys)[0][i] - w0[0][i];
+         curr[i] = (*currSys)[0][i] - w0_[0][i];
       }   
 
    }
@@ -227,10 +230,10 @@ namespace Pspc{
       const int nMonomer = system().mixture().nMonomer();
       const int meshSize = system().domain().mesh().size();
       
-      //New field is the w0 + the newGuess for the Lagrange multiplier field
+      //New field is the w0_ + the newGuess for the Lagrange multiplier field
       for (int i = 0; i < nMonomer; i++){
          for (int k = 0; k < meshSize; k++){
-            wFieldTmp_[i][k] = w0[i][k] + newGuess[k];
+            wFieldTmp_[i][k] = w0_[i][k] + newGuess[k];
          }
       }
       system().setWRGrid(wFieldTmp_);
