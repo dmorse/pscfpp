@@ -43,10 +43,10 @@
 #           f.close()
 #
 #       A Composite object can be written to a file by calling the 
-#       writeOut() method, passing in the string of the file name to 
+#       write() method, passing in the string of the file name to 
 #       which the Composite should be written.
 #
-#           Example: p.writeOut('paramOut')
+#           Example: p.write('paramOut')
 #
 #   Accessing elements:
 #
@@ -191,18 +191,17 @@ class Composite:
          variable
       getChildren(self):
          return the children variable
-      __repr__(self):
-         return the string of children variable, in the dictionary format 
-         string
       __getattr__(self, attr):
          return the value stored in children with the specific key, 
          argument attr
-      writeOut(self, filename):
-         method to write out the Composite object to a specific txt file 
-         with name of the argument filename
-      writeOutString(self, depth):
-         return the string for writing out with argument depth, the string 
-         of spaces that represents the level of the Composite element
+      __repr__(self):
+         return the string of child attributes, in dictionary format 
+      __str__(self):
+         return un-indented string representation in param file format
+      getString(self, depth):
+         return indented string in param file format, with prefix depth
+      write(self, filename):
+         write an un-indented param file string to specified file
       returnData(self):
          return the Composite object itself
       __setattr__(self, label, val):
@@ -280,8 +279,11 @@ class Composite:
    def getChildren(self):
       return self.children
 
+   def __str__(self):
+      return self.getString()
+
    def __repr__(self):
-      return self.writeOutString()
+      return self.getString()
 
    def __getattr__(self, attr):
       if attr =='children':
@@ -294,20 +296,20 @@ class Composite:
       else:
          return self.attr
 
-   def writeOut(self, filename):
-      with open(filename, 'w') as f:
-         f.write(self.writeOutString())
-
-   def writeOutString(self, depth=''):
+   def getString(self, depth=''):
       s = depth + self.label + '{' + '\n'
       for item in self.children.values():
          if type(item) is list:
             for i in range(len(item)):
-               s += item[i].writeOutString(depth+'  ')
+               s += item[i].getString(depth+'  ')
          else:
-            s += item.writeOutString(depth+'  ')
+            s += item.getString(depth+'  ')
       s += depth + '}\n'
       return s
+
+   def write(self, filename):
+      with open(filename, 'w') as f:
+         f.write(self.getString())
 
    def returnData(self):
       return self
@@ -339,7 +341,7 @@ class Parameter:
          Reset the parameter value to argument val
       __repr___(self):
          return the string that represents the stored value
-      writeOutString(self, depth):
+      getString(self, depth):
          return the string representation of this parameter.
          Argument depth, the 
          string of spaces that represents the level of the Parameter 
@@ -378,7 +380,10 @@ class Parameter:
       else:
          return str(self.val.getValue())
 
-   def writeOutString(self, depth=''):
+   def __str__(self):
+      return self.getString()
+
+   def getString(self, depth=''):
       s = ''
       if type(self.val) is list:
          s += depth + f'{self.label:40}'
@@ -426,7 +431,7 @@ class Array:
          lines; reading stop when ']' is read
       __repr__(self):
          return the string of the value variable, in the list format string 
-      writeOutString(self, depth):
+      getString(self, depth):
          return the string for writing out with argument depth, the string 
          of spaces that represents the level of the Array element
       returnData(self):
@@ -471,7 +476,10 @@ class Array:
             v.append(self.val[i].getValue())
       return str(v)
 
-   def writeOutString(self, depth=''):
+   def __str__(self):
+      return self.getString()
+
+   def getString(self, depth=''):
       s = ''
       s += depth + self.label + '[' + '\n'
       if type(self.val[0]) != list:
@@ -557,9 +565,10 @@ class Matrix:
       __repr__(self):
          return the string of the value variable, in the list format 
          string 
-      writeOutString(self, depth):
-         return the string for writing out with argument depth, the 
-         string of spaces that represents the level of the Matrix element
+      __str__(self):
+         return an unindented string representation
+      getString(self, depth):
+         return an indented string with indentation prefix depth
       returnData(self):
          return the list of exact value of the Matrix object stored as 
          the Value object
@@ -604,7 +613,10 @@ class Matrix:
             v[i].append(self.val[i][j].getValue())
       return str(v)
 
-   def writeOutString(self, depth=''):
+   def __str__(self):
+      return self.getString()
+
+   def getString(self, depth=''):
       s = ''
       s += depth + self.label + '(\n'
       for i in range(len(self.val)):
