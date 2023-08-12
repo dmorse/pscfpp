@@ -1,24 +1,32 @@
-# -----------------------------------------------------------------------
-#   This class is a tool to store all the PSCF "state files" created by 
-#   a Sweep within a single object, where each "state file" can be
-#   accessed by corresponding indices, and a "summary" method is provided
-#   to aggregate data from the entire sweep into a single python list.
+"""! Module for parsing state files produced a sweep. """
+
+from pscfpp.param import *
+from pscfpp.thermo import *
+from pscfpp.state import *
+import os
+
+##
+#   Container for data in state files produced by a PSCF sweep.
+#
+#   A Sweep is a container for all the data contained in the PSCF state
+#   files created by a sweep. The data contained in each state file is 
+#   stored in an instance of class State (full name pscfpp.state.State). 
+#   Individual state objects within a Sweep can be accessed using a 
+#   square-bracket syntax, like elements of a python list. Methods
+#   summary and summaryString return summary reports containing values 
+#   of selected variables.
 #
 #   Creating a Sweep object:
 # 
-#      A Sweep object represents a collection of all PSCF "state files"
-#      created by a Sweep. It stores each 'state file' by a State object 
-#      within a Python list, and each 'state file' can be accessed by 
-#      the corresponding index. 
-#
-#      User may collect and store all the 'state files' created by a
-#      Sweep by creating a Sweep object, passing a param file name
-#      or a directory of the folder with all the 'state files' as an
-#      argument. The constructor reads and collects all 'state files'
-#      (which end with '.dat') and return a Sweep object.
+#      The constructor for class Sweep parses and stores the contents 
+#      of all of the the state files (which end with '.dat') produced 
+#      by a PSCF sweep. The constructor takes a single argument which 
+#      is a string that can be either the name of the parameter file
+#      used to run the sweep, or the name of the directory in which
+#      the resulting state files are located.
 #
 #      Example: 
-#      1. By passing in a param file with name 'param':
+#      1. By passing in the parameter file name 'param':
 #      
 #         from pscfpp.sweep import *
 #         s = Sweep('param')
@@ -31,17 +39,23 @@
 #
 #   Accessing elements:
 #      
-#      A Sweep object can be treated as a list of 'state files',
-#      so each state file store in a Sweep object as a State object
-#      can be accessed by corresponding index with square brackets.
+#      A Sweep object can be treated as a list of State objects, 
+#      each of which contains the contents of a corresponding state 
+#      file. Each state object can be accessed by a corresponding 
+#      index with square brackets, like an element of a list: 
+#
 #      Example: s[0]    or    
 #               s[1]
 #
-#      All elements and properties in each state file stored in a 
-#      Sweep object can be accessed by the same format as the 
-#      State object. Refer to the state class for details.
+#      All elements and properties in each such State object can
+#      be accessed using the dot notation for attributes of a State
+#      object. Refer to documentation for pscfpp.state.State for 
+#      details.
+#
 #      Example: s[0].param.Mixture.nMonomer    or    
 #               s[1].thermo.fHelmholtz
+#
+#   Summary reports:
 #
 #      Two special functions are built for a Sweep object to access
 #      the same types of properties easily:
@@ -94,45 +108,23 @@
 #               3  1.5000000e+01  2.4158122e+00
 #               4  1.6000000e+01  2.5464487e+00
 #
-# Module Contents:
-#      
-#  class Sweep:
-#          A Sweep object stores a collection of PSCF 'state files' 
-#          created by a Sweep by using State object. Each stored 
-#          'state file' can be accessed by the corresponding indices.
-#          Two special functions are built in for a Sweep object to 
-#          manage same types of properties easily.
-
-
-from pscfpp.param import *
-from pscfpp.thermo import *
-from pscfpp.state import *
-import os
-
 class Sweep:
-   '''
-   Purpose:
-      The class represents a collection of state files created by a 
-      Sweep.
-   Instance variables:
-      sweep: a list to stored all read and parsed state files
-   Methods:
-      __init__(self, d):
-         the constructor of the Sweep object for initiation, with one 
-         argument: 
-            d:
-               the directory of the folder or the name of the param
-               file, required
-      summary(self, l, index = False):
-         return a list of the same types properties from each state file
-         according to the passed-in argument, l, list of expected 
-         properties names, indices optionally
-      summaryString(self,l):
-         return the string of a table that shows the same types properties
-         from each state file according to the passed-in argument, l,
-         list of expected properties names
-   '''
+
+   ##
+   # Constructor.
+   #
+   # The input parameter d is a string that can be either the name of the
+   # directory that contains all of the data files or the name of the
+   # parameter file used to perform the sweep. If the latter, the name
+   # of the directory is extracted from the parameter file. 
+   #
+   # \param d  string that is the name of a directory or parameter file.
+   #
    def __init__(self, d):
+      '''! Constructor.
+
+      \param d the directory containing output files or name of param file
+      '''
       old_cwd = os.getcwd()
 
       if os.path.isdir(d) == True:
@@ -163,6 +155,33 @@ class Sweep:
 
       os.chdir(old_cwd)
 
+   ##
+   # Return a summary report as a string of strings.
+   #
+   # This function constructs a data structure containing the values 
+   # of a user-specified set of variables at each state in the sweep. 
+   #
+   # Specifying a list of variables:
+   #
+   # The input parameter l is a list of strings that specify the 
+   # variables of interest. Each element in this list is a string that 
+   # gives the the name of an attribute of a single State object, starting 
+   # with either 'param' or 'thermo', using a dot notation. For example
+   # "param.Mixture.nMonomer" specifies the parameter nMonomer of the 
+   # Mixture block of the parameter section of the state file. 
+   #
+   # Output format:
+   # 
+   # The return value is a list in which each element is itself a list 
+   # of values of values of the specified variables at a single state
+   # point.  If the return value is assigned to a variable named
+   # "report" then report[2] is a list of values of the chosen variables
+   # at state 2. The state index (e.g., 2) may optionally be added as
+   # the first element of this list of values.
+   #
+   # \param l list of strings that contain variable names in dot notation
+   # \param index if True, add the state index as the first variable
+   #
    def summary(self, l, index = False):
       n = len(l)
 
@@ -185,6 +204,15 @@ class Sweep:
 
       return summary
 
+   ##
+   # Return a summary report as a formatted string suitable for printing.
+   #
+   # This method produced a formatted string containing the same type 
+   # of summary report that is generated by the summary method, giving 
+   # values of selected variables for every state in a sweep.
+   #
+   # \param l list of strings that contain variable names in dot notation
+   #
    def summaryString(self, l):
       n = len(l)
 
@@ -254,9 +282,17 @@ class Sweep:
 
       return summaryString
 
+   ##
+   # Get a specific State object, specified by integer index.
+   #
+   # \param key  integer state index.
+   #
    def __getitem__(self, key):
       return self.sweep[key]
 
+   ##
+   # Get the number of states in a sweep.
+   #
    def __len__(self):
       return len(self.sweep)
 

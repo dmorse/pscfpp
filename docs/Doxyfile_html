@@ -237,7 +237,7 @@ MULTILINE_CPP_IS_BRIEF = NO
 # documentation blocks is shown as doxygen documentation.
 # The default value is: YES.
 
-PYTHON_DOCSTRING       = YES
+PYTHON_DOCSTRING       = NO
 
 # If the INHERIT_DOCS tag is set to YES then an undocumented member inherits the
 # documentation from any documented member that it re-implements.
@@ -912,7 +912,8 @@ INPUT                  = manual/main.dox \
                          ../src/fd1d \
                          ../src/pspc \
                          ../src/pspg \
-                         ../src/test 
+                         ../src/test \
+                         ../lib/python/pscfpp
 
 # This tag can be used to specify the character encoding of the source files
 # that doxygen parses. Internally doxygen uses the UTF-8 encoding. Doxygen uses
@@ -957,6 +958,7 @@ FILE_PATTERNS          = *.h \
                          *.cpp \
                          *.cu \
                          *.mod \
+                         *.py \
                          *.dox
 
 # The RECURSIVE tag can be used to specify whether or not subdirectories should
