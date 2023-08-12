@@ -16,7 +16,7 @@ import os
 #   summary and summaryString return summary reports containing values 
 #   of selected variables.
 #
-#   Creating a Sweep object:
+#   **Construction:**
 # 
 #      The constructor for class Sweep parses and stores the contents 
 #      of all of the the state files (which end with '.dat') produced 
@@ -25,88 +25,38 @@ import os
 #      used to run the sweep, or the name of the directory in which
 #      the resulting state files are located.
 #
-#      Example: 
+#      Examples: 
+#
 #      1. By passing in the parameter file name 'param':
-#      
-#         from pscfpp.sweep import *
-#         s = Sweep('param')
+#         \code
+#            from pscfpp.sweep import *
+#            s = Sweep('param')
+#         \endcode
 #
-#      2. By passing in a directory of the folder that contains all the 
-#         'state files', with name 'out/':
-#      
-#         from pscfpp.sweep import *
-#         s = Sweep('out/')
+#      2. By passing in a directory of the folder that contains all 
+#         the 'state files', with name 'out/':
+#         \code
+#            from pscfpp.sweep import *
+#            s = Sweep('out/')
+#         \endcode
 #
-#   Accessing elements:
+#   **Accessing elements:**
 #      
 #      A Sweep object can be treated as a list of State objects, 
 #      each of which contains the contents of a corresponding state 
 #      file. Each state object can be accessed by a corresponding 
-#      index with square brackets, like an element of a list: 
+#      index with square brackets, like an element of a list, such
+#      s[0] or s[1]. 
 #
-#      Example: s[0]    or    
-#               s[1]
+#      All elements and properties in each such State object can be
+#      accessed using the dot notation for attributes of a State object,
+#      such as s[0].param.Mixture.nMonomer or s[1].thermo.fHelmholtz.
+#      See the documentation for class pscfpp.state.State for details.
 #
-#      All elements and properties in each such State object can
-#      be accessed using the dot notation for attributes of a State
-#      object. Refer to documentation for pscfpp.state.State for 
-#      details.
 #
-#      Example: s[0].param.Mixture.nMonomer    or    
-#               s[1].thermo.fHelmholtz
+#  **Summary reports:** 
 #
-#   Summary reports:
-#
-#      Two special functions are built for a Sweep object to access
-#      the same types of properties easily:
-#
-#      1.summary([list of property names, as strings], index = False)
-#        User can return a python list containing a set of properties
-#        (chosen by the user) at each state point in the Sweep.
-#        The method returns a list of lists, where one list is given
-#        for each state point, containing the values of all requested
-#        properties at that state point. The properties are requested in
-#        a list of strings, provided as an input, where each string 
-#        gives the command that one would use to access that property
-#        from the State class. Optionally, the index of each state point
-#        in the sweep can be given as the first property in each list; 
-#        this is turned off by default, and can be toggled using the 
-#        'index' input parameter. 
-#        Examples: 
-#          s.summary(['param.Mixture.Polymer[0].phi','thermo.pressure'])
-#          
-#          The above command will return an array that may look something 
-#          like the following:
-#            [[0.5, 32.4415250701], [0.55, 30.6782301376], 
-#             [0.6, 28.8344576024], [0.65, 26.8019750534],
-#             [0.7, 24.5205812724]]
-#
-#                 or
-#
-#          s.summary(['param.Interaction.chi[0][1]'], index = True)
-#          
-#          The above command will return an array that may look something 
-#          like the following:
-#            [[0, 12.0], [1, 13.0], [2, 14.0], [3, 15.0], [4, 16.0]]
-#
-#      2.summaryString([list of property names, as strings]):
-#        This method performs the same task as the summary method above,
-#        but formats the resulting data into an organized data table
-#        that is stored as a single string. Printing this string gives
-#        a nice visual display of the data.
-#        Example: 
-#          print(s.summaryString(['param.Interaction.chi[0][1]',\
-#                                 'thermo.fHelmholtz']))
-#        
-#          The above command gives an output that will look something
-#          like the following:
-#          
-#            step      chi[0][1]     fHelmholtz
-#               0  1.2000000e+01  1.9256750e+00
-#               1  1.3000000e+01  2.1102042e+00
-#               2  1.4000000e+01  2.2716872e+00
-#               3  1.5000000e+01  2.4158122e+00
-#               4  1.6000000e+01  2.5464487e+00
+#     See documentation for methods summary and summaryString.
 #
 class Sweep:
 
@@ -121,10 +71,6 @@ class Sweep:
    # \param d  string that is the name of a directory or parameter file.
    #
    def __init__(self, d):
-      '''! Constructor.
-
-      \param d the directory containing output files or name of param file
-      '''
       old_cwd = os.getcwd()
 
       if os.path.isdir(d) == True:
@@ -156,28 +102,70 @@ class Sweep:
       os.chdir(old_cwd)
 
    ##
-   # Return a summary report as a string of strings.
+   # Make a summary report containing values for selected variables.
    #
    # This function constructs a data structure containing the values 
    # of a user-specified set of variables at each state in the sweep. 
    #
-   # Specifying a list of variables:
+   # Specifying a list of variable names:
    #
    # The input parameter l is a list of strings that specify the 
    # variables of interest. Each element in this list is a string that 
    # gives the the name of an attribute of a single State object, starting 
    # with either 'param' or 'thermo', using a dot notation. For example
-   # "param.Mixture.nMonomer" specifies the parameter nMonomer of the 
-   # Mixture block of the parameter section of the state file. 
+   # "param.Mixture.nMonomer" specifies the input parameter nMonomer of 
+   # the Mixture block of the parameter section of the state file, while
+   # "thermo.fHelmoltz" is the free energy per monomer reference volume.
    #
-   # Output format:
+   # Return value:
    # 
-   # The return value is a list in which each element is itself a list 
-   # of values of values of the specified variables at a single state
-   # point.  If the return value is assigned to a variable named
-   # "report" then report[2] is a list of values of the chosen variables
-   # at state 2. The state index (e.g., 2) may optionally be added as
-   # the first element of this list of values.
+   # The quantity returned by this function is a list in which each 
+   # element is itself a list of values of values of the specified 
+   # variables at a single state point.  If the return value is assigned 
+   # to a variable named "summary" then summary[2] is a list of values 
+   # of the chosen variables at state 2. 
+   #
+   # The state index (e.g., 2) may optionally be added as the first 
+   # element of this list of variable values, by setting the parameter 
+   # index to True. By default index = False, so no index numbers are
+   # included when this parameter is absent. 
+   #
+   # Example:  
+   #
+   # If s is a Sweep object representing a mixture that has been 
+   # subjected to a sweep that changes composition, then the command
+   # \code
+   #   vals = s.summary(['param.Mixture.Polymer[0].phi','thermo.pressure'])
+   # \endcode
+   # constructs list named vals of values for the volume fraction for
+   # the first polymer species and the non-dimensionalized pressure of 
+   # the system, for each state in the sweep.  In this example, the 
+   # resulting quantity vals is a list of lists something like
+   # \code
+   #            [[0.5, 32.4415250701], [0.55, 30.6782301376], 
+   #             [0.6, 28.8344576024], [0.65, 26.8019750534],
+   #             [0.7, 24.5205812724]]
+   # \endcode
+   # In this example, the vlue of vals[2] is a list of two values, given
+   # by [0.6, 28.8344576024], in which the first element (0.6) is the 
+   # volume fraction of polymer 0 and the second element (28.8344) is 
+   # the value of the pressure, both evaluated in state 2 (the third 
+   # state in the sweep). 
+   #
+   # Example:
+   #
+   # The command 
+   # \code
+   #    s.summary(['param.Interaction.chi[0][1]'], index = True)
+   # \endcode
+   # applied to a sweep that changes the indicated chi parameter will
+   # return an array that may look something like the following:
+   # \code
+   #   [[0, 12.0], [1, 13.0], [2, 14.0], [3, 15.0], [4, 16.0]]
+   # \endcode
+   # Here the first value for each state is the integer state index, and 
+   # the second is the value of the chi parameter chi[0][1] for 
+   # interactions between monomers of types 0 and 1. 
    #
    # \param l list of strings that contain variable names in dot notation
    # \param index if True, add the state index as the first variable
@@ -207,9 +195,31 @@ class Sweep:
    ##
    # Return a summary report as a formatted string suitable for printing.
    #
-   # This method produced a formatted string containing the same type 
-   # of summary report that is generated by the summary method, giving 
-   # values of selected variables for every state in a sweep.
+   # This method produced a formatted string containing the same type of
+   # summary report that is generated by the summary method, giving values
+   # of selected variables for every state in a sweep. The parameter l is
+   # a list of variable name strings formatted in dot notation, exactly as
+   # for the corresponding parameter of the Sweep.summary method. The 
+   # format includes labels for the variable names and includes a state
+   # index for each state.
+   #
+   # Example: If applied to a sweep with 5 state points, the command
+   # \code
+   #    report = s.summaryString(['param.Interaction.chi[0][1]',\
+   #                                 'thermo.fHelmholtz']))
+   #    print(report)
+   # \endcode
+   # yields an output that looks somethink like this. 
+   # 
+   # \code       
+   #        step      chi[0][1]     fHelmholtz
+   #           0  1.2000000e+01  1.9256750e+00
+   #           1  1.3000000e+01  2.1102042e+00
+   #           2  1.4000000e+01  2.2716872e+00
+   #           3  1.5000000e+01  2.4158122e+00
+   #           4  1.6000000e+01  2.5464487e+00
+   # \endcode
+   # The string returned by summaryString can also be written to a file.
    #
    # \param l list of strings that contain variable names in dot notation
    #

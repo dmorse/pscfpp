@@ -1,4 +1,4 @@
-"""! Module for processing command scripts. """
+"""! Module for processing PSCF command scripts. """
 
 from Record import *
 
@@ -47,7 +47,7 @@ class Script:
    ## 
    # Read and parse a command script. 
    #
-   # @param lines  list of strings containing lines of a command script
+   # \param lines  list of strings containing lines of a command script
    #
    def read(self, lines):
       i = 0
@@ -90,7 +90,7 @@ class Script:
    ## 
    # Get a Command using the dot syntax for an attribute.
    #
-   # @param key  label used as identifier for a Command.
+   # \param key  label used as identifier for a Command.
    #
    def __getitem__(self, key):
       return self.commands_[key]
@@ -109,7 +109,7 @@ class Command(Record):
    ##
    # Constructor.
    #
-   # @param line  string containing the command line
+   # \param line  string containing the command line
    # 
    def __init__(self, line):
       Record.__init__(self, line)
@@ -124,7 +124,7 @@ class Command(Record):
    ## 
    # Return parameter number i. 
    #
-   # @param i index of command parameter / argument
+   # \param i index of command parameter / argument
    #
    def param(self, i = 0):
       return self.fields[i+1]
@@ -132,8 +132,8 @@ class Command(Record):
    ##
    # Set the value of a specific command parameter.
    #
-   # @param value  new value for the specified command parameter
-   # @param i  index of command parameter 
+   # \param value  new value for the specified command parameter
+   # \param i  index of command parameter 
    #
    def setParam(self, value, i = 0):
       self.fields[i+1] = value
