@@ -74,7 +74,22 @@ namespace Pspc {
       * Get the Hamiltonian used in Monte-Carlo simulations.
       */
       double mcHamiltonian() const;
-
+      
+      /**
+      * Get the ideal gas contribution (lnQ) to Hamiltonian used in Monte-Carlo simulations.
+      */
+      double mcIdealHamiltonian() const;
+      
+      /**
+      * Get the ideal field contribution (HW) to Hamiltonian used in Monte-Carlo simulations.
+      */
+      double mcFieldHamiltonian() const;
+      
+      /**
+      * Has the MC Hamiltonian been computed for the current w and c fields?
+      */ 
+      bool hasMcHamiltonian() const;
+      
       /**
       * Save a copy of the Monte-Carlo state.
       *
@@ -140,11 +155,27 @@ namespace Pspc {
       */
       DMatrix<double> const & chiEvecs() const
       {  return chiEvecs_; }
-
+      
+      /**
+      * Perform eigenvalue analysis of projected chi matrix.
+      */
+      void analyzeChi();
+      
       /**
       * Compute and store the eigenvector components of the current w fields.
       */
       void computeWC();
+      
+      /**
+      * Has the eigenvector components of the current w fields been computed 
+      * for the current field?
+      */
+      bool hasWC() const;
+      
+      /**
+      * If a new move is attempted, clearHasWC() is called to clear hasWC_.
+      */
+      void clearHasWC();
 
       /**
       * Get an eigenvector component of the w fields.
@@ -198,22 +229,11 @@ namespace Pspc {
       */
       Random& random();
       
-            
       /**
       * Return the Monte Carlo step index
       */
       long iStep();
       
-      /**
-      * Get the ideal gas contribution (lnQ) to Hamiltonian used in Monte-Carlo simulations.
-      */
-      double mcIdealHamiltonian() const;
-      
-      /**
-      * Get the ideal field contribution (HW) to Hamiltonian used in Monte-Carlo simulations.
-      */
-      double mcFieldHamiltonian() const;
-
    private:
       
       // Private data members
@@ -283,6 +303,12 @@ namespace Pspc {
       * Has the MC Hamiltonian been computed for the current w and c fields?
       */ 
       bool hasMcHamiltonian_;
+      
+      /**
+      * Has the eigenvector components of the current w fields been computed 
+      * for the current field?
+      */
+      bool hasWC_;
 
       /**
       * Count Monte Carlo step 
@@ -300,12 +326,7 @@ namespace Pspc {
       double mcFieldHamiltonian_;
       
       // Private member functions
-       
-      /**
-      * Perform eigenvalue analysis of projected chi matrix.
-      */
-      void analyzeChi();
-
+      
       /**
       * Called at the beginning of the simulation member function.
       */
@@ -358,6 +379,21 @@ namespace Pspc {
       UTIL_CHECK(hasMcHamiltonian_);
       return mcFieldHamiltonian_; 
    }
+   
+   // Has the MC Hamiltonian been computed for the current w and c fields?
+   template <int D>
+   inline bool McSimulator<D>::hasMcHamiltonian() const
+   {  return hasMcHamiltonian_; }
+   
+   // Has the eigenvector components of the current w fields been computed for the current field?
+   template <int D>
+   inline bool McSimulator<D>::hasWC() const
+   {  return hasWC_; }
+   
+   // If a new move is attempted, clearHasWC() is called to clear hasWC_.
+   template <int D>
+   inline void McSimulator<D>::clearHasWC()
+   { hasWC_ = false; }
    
    // Get the TrajectoryReaderfactory 
    template <int D>
