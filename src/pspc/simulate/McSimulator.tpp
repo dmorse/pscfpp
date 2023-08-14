@@ -35,7 +35,8 @@ namespace Pspc {
      trajectoryReaderFactoryPtr_(0),
      random_(),
      systemPtr_(&system),
-     hasMcHamiltonian_(false)
+     hasMcHamiltonian_(false),
+     hasWC_(false)
    { 
       setClassName("McSimulator");   
       trajectoryReaderFactoryPtr_ = new TrajectoryReaderFactory<D>(system);
@@ -505,7 +506,8 @@ namespace Pspc {
 
          }
       }
-  
+      
+      hasWC_ = true;
       // Debugging output
       #if 0
       Log::file() << "wc " << wc_.capacity() << "\n";
@@ -514,8 +516,6 @@ namespace Pspc {
          Log::file() << "wc_2 " << wc_[1][i] << "\n";
       }
       #endif
-
-
    }
    
    /*
@@ -554,6 +554,7 @@ namespace Pspc {
       for (iStep_ = 0; iStep_ <= max && hasFrame; ++iStep_) {
          hasFrame = trajectoryReaderPtr->readFrame();
          if (hasFrame) {
+            clearHasWC();
             // Initialize analyzers 
             if (iStep_ == min) analyzerManager_.setup();
             // Sample property values only for iStep >= min

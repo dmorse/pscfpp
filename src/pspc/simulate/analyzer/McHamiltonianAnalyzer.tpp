@@ -27,6 +27,7 @@ namespace Pspc
     : AverageListAnalyzer<D>(system),
       mcSimulatorPtr_(&mcSimulator),
       systemPtr_(&(mcSimulator.system())),
+      hasAnalyzeChi_(false),
       idealId_(-1),
       fieldId_(-1),
       totalId_(-1)
@@ -61,22 +62,28 @@ namespace Pspc
    template <int D>
    void McHamiltonianAnalyzer<D>::compute() 
    {
+      if (!mcSimulator().hasWC()){
+         if (!hasAnalyzeChi_){
+            mcSimulator().analyzeChi();
+            hasAnalyzeChi_ = true;
+         }
+         system().compute();
+         mcSimulator().computeWC();
+         mcSimulator().computeMcHamiltonian();
+      }
       double ideal = mcSimulator().mcIdealHamiltonian();
-      //Log::file() << "ideal" << ideal<< "\n";
       // outputFile_ << Dbl(ideal, 20)
       setValue(idealId_, ideal);
-      
+   
       double field = mcSimulator().mcFieldHamiltonian();
       // outputFile_ << Dbl(field, 20)
       setValue(fieldId_, field);
-      //Log::file() << "field" << field<< "\n";
-      
+   
       double total = mcSimulator().mcHamiltonian();
       // outputFile_ << Dbl(total, 20) << std::endl;
       setValue(totalId_, total);
-
    }
-
+   
 }
 }
 #endif

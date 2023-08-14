@@ -101,7 +101,9 @@ namespace Pspc
       McSimulator<D>& mcSimulator();
  
    private: 
- 
+      /// Has eigenvalue analysis of projected chi matrix been performed?
+      bool hasAnalyzeChi_;
+      
       /// Array index for ideal gas contributions (lnQ) accumulator.
       int idealId_;
 

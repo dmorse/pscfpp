@@ -49,6 +49,11 @@ System{
             interval        1
             outputFileName  trajectory_read
       }
+      McHamiltonianAnalyzer{
+            interval        1
+            outputFileName  out/mcHamiltonian
+            nSamplePerBlock 2
+      }
 
     }
   }
