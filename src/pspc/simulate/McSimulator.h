@@ -173,7 +173,7 @@ namespace Pspc {
       bool hasWC() const;
       
       /**
-      * IIf a new move is attempted, clear both eigen-components of the fields and mcHamiltonian components
+      * If a new move is attempted, clear both eigen-components of the fields and mcHamiltonian components
       */
       void clearData();
 
