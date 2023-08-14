@@ -85,6 +85,8 @@ Features that are common to all of the PSCF programs include:
 
   - Examples of converged solutions and input scripts
 
+  - Python tools for data analysis
+
   - Thorough user and developer documentation provided as a web manual
 
   - Open source code written in object oriented C++

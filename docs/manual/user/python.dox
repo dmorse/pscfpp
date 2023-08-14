@@ -12,22 +12,22 @@ analysis, or to help prepare modified input files.
 
 \section user_python_modules_sec Python Source Code 
 
-All python source code files that are provided with PSCF are located 
-within the directory pscfpp/lib/python/pscfpp.  Every python file in 
-this directory defines a module that belongs to a python package 
-named "pscfpp". The full name of each such module thus begins with 
-a prefix "pscfpp" followed by a dot. 
+All python source code files that are provided with PSCF are located within 
+the directory pscfpp/lib/python/pscfpp.  Every python file in this 
+directory defines a module that belongs to a python package named "pscfpp". 
+The full name of each such module thus begins with a prefix "pscfpp" 
+followed by a dot. 
 
-The instructions for compiling the PSCF C++/CUDA code require 
-each user to add the directory pscfpp/lib/python to their python module 
-search path (i.e., to their PYTHONPATH). As long as this directory 
-is still in the user's python path, a python interpreter should be 
-able to find any module in the pscfpp package, including but not 
-limited to the parser classes that are discussed below.
+The instructions for compiling the PSCF C++/CUDA code require each user 
+to add the directory pscfpp/lib/python to their python module search 
+path (i.e., to their PYTHONPATH). As long as this directory is still in 
+the user's python path, a python interpreter should be able to find any 
+module in the pscfpp package, including the parser classes that are 
+discussed below.
 
-To use any of the python tools provided with PSCF, one must open 
-a python 3 interpreter. To open an interactive interpreter, one can 
-enter either the command
+To use any of the python tools provided with PSCF, one must open a 
+python 3 interpreter. To open an interactive interpreter, one can enter 
+either the command
 \code
    > python
 \endcode
@@ -37,37 +37,38 @@ in a system in which python version 3 is the default, or the command
 \endcode
 on a system in which python 2.7 is still the default. 
 
-To run a script file containing python source code, rather than 
-entering commands interactively, the python interpreter can also 
-be invoked with the script name as an argument, using the syntax
-"python script.py", where script.py is the name of the script file. 
+To run a script file containing python source code, rather than entering 
+commands interactively, the python interpreter can also be invoked with 
+a file name as an argument, using the syntax "python script.py", where 
+script.py is the name of a python script file. 
 
 \section user_python_doc_sec Python Documentation
 
-Detailed developer-level documentation for any python module that 
-is distributed with PSCF can be accessed within the web manual by 
-opening the "Namespaces" tab on the main page, and then opening 
-namespace "pscfpp". Within the web manual, the "pscfpp" namespace 
+Detailed API documentation for any python module that is distributed 
+with PSCF can be accessed within this PSCF web manual by opening the 
+"Namespaces" tab on the main page, and then clicking on the label for
+namespace "pscfpp".  Within the web manual, the "pscfpp" namespace 
 refers to the pscfpp python package, rather than to a C++ namespace.
-The web page for the pscfpp namespace (or package) contains a 
-clickable entry for each python module, each of which corresponds 
-to a python source code file in directory lib/python/pscfpp 
-directory. The web page for each python module then contains an 
-entry for each entity (i.e., class or function) defined in that
-module. The detailed description of each class provides an 
-overview of how to use the class.
+The web page for the pscfpp namespace (or package) contains a link
+to documentation of each python module in the package, each of which
+corresponds to a python source code file in directory lib/python/pscfpp .
+The web page for each python module then contains a link to documentation 
+for each entity (i.e., class or function) defined in that module, 
+including documentation of all function interfaces.  The remainder of 
+this web page provides a brief introductory overview of the purpose and 
+usage of all of the parser classes.
 
-* *Comment*: The fact that the Pscf and Util C++ namespaces and 
-the pscfpp python package are all referred to in the web manual as 
-"namespaces" and listed together under the Namespaces tab is a result 
-of the fact that the doxygen documentation utility that we use to 
-generate this manual treats C++ namespaces and python packages as 
-analogous concepts.  This mixing of languages and concepts is a 
-result of the fact that doxygen appears to have been designed 
-primarily to document software in which all of the code was written 
-in a single language, while providing settings that allow the user 
-to optimize the output for any of several languages, while we are 
-using it to document a package containing both C++ and python code.
+* *Comment*: The fact that the Pscf and Util C++ namespaces and the 
+pscfpp python package are all referred to in the web manual as namespaces 
+and listed together under the Namespaces browser tab is a result of the 
+fact that the <a href=http://www.doxygen.org> doxygen </a> documentation 
+utility that we use to generate this manual treats C++ namespaces and 
+python packages as equivalent concepts. Doxygen seems to have been
+designed primarily to document software in which all of the code was 
+written in a single programming language, and does not provide a better 
+way to separate documentation of source code files that were written in 
+different languages but distributed as part of the same package and 
+documented in the same manual. 
 
 \section user_python_parser_sec Parser Classes (Overview)
 
@@ -80,15 +81,13 @@ Python classes have been created to parse the following file formats:
    - Field files for periodic structures (class pscfpp.field.???)
    - Command scripts (class pscfpp.command.Script)
 
-The fully qualified name of each of such parser classes is given in 
-parentheses in the above list. 
-
-To streamline discussion, we will use short names for these classes 
-in what follows. These short names are constructed by dropping the 
-common pscfpp package prefix and dropping module names in cases in 
-which the module name is redundant or uninformative. In the remainder
-of this page, we refer to these parser classes listed above by the 
-short names:
+The fully qualified name of each of parser class is given in parentheses 
+in the above list.  To streamline discussion, we will refer to these 
+classes by short names in the remainder of this web page. These short class 
+names are constructed by dropping the common pscfpp package prefix and 
+dropping module names when the module name is redundant or uninformative. 
+In the remainder of this page, we refer to these parser classes listed by 
+the short names:
 
    - param.Composite
    - Thermo
@@ -97,33 +96,31 @@ short names:
    - Field
    - command.Script
 
-We usually retain the module names for classes param.Composite and 
-command.Script because we regard the module names as informative 
-parts of the names for these classes.
+We retain the module names param and command in the short names for
+param.Composite and command.Script because we regard these module names 
+as informative parts of the class names.
 
 ### Class param.Composite :
 
-The param.Composite class is designed to parse any file block that
-is formatted with the nested curly bracket structure characteristic 
-of a parameter file block. The C++ class that is used in PSCF to 
-parse such a file block is named ParamComposite, and the 
-corresponding python class is named param.Composite by analogy.  An 
-instance of this class can thus be used to parse either an entire 
-parameter file, which is a block in which the first line contains 
-the label "System", or any subblock within such a file. 
+The param.Composite class is designed to parse a file block that is 
+formatted with the nested curly bracket structure characteristic of 
+a parameter file block. The C++ class that is used in PSCF to parse 
+such a file block is named Util::ParamComposite, and the name of the
+corresponding python class chosen to be analogous.  An instance of 
+this class can thus be used to parse either an entire parameter file, 
+which consists of a parameter file block that begins with the string
+"System{", or any subblock within such a file that is delimited by a
+label and curly brackets.
 
 ### Class State :
 
 The format of a state file contains two blocks, the first of which 
-is a parameter file block that contains all the input parameters, 
-and the second of which has the format of a thermo file block that 
-contains all the computed values for output variables such as the
-free energy.  Each instance of class State is thus built as a 
-composite object that has one data attribute of class param.Composite 
-that parses the parameter block and another attribute of class Thermo 
-that parses the thermo block.  The discussion of the parser classes 
-given below starts with discussions of param.Composite and Thermo 
-classes.
+is a parameter file block that contains all the input parameters, and 
+the second of which is a thermo file block that contains all output 
+variables such as the free energy.  Each instance of class State is 
+is a simple composite object that has one data attribute of class 
+param.Composite that parses the parameter block and another attribute 
+of class Thermo that parses the thermo block.  
 
 ### Class Sweep :
 
@@ -134,138 +131,155 @@ all of the state files created by a sweep calculation and store the
 results in a python list in which each element is an instance of 
 class State. Each State object in this list contains all of the data 
 contained in an associated state file that describes one physical 
-state (i.e., one set of input parameters) within the path through 
-parameter space that was explored by the sweep.  This class 
-enormously simplifies analysis of the many data files produced by 
-a sweep. 
+state (i.e., one set of input parameters) within a path through 
+parameter space that was spanned by the sweep.  This is arguably
+the most useful of the parser classes, because it enormously 
+simplifies analysis of the many output files produced by a sweep.
 
 \section user_python_param_sec Parameter Files
 
-To parse a parameter file with a file name 'param', one may enter 
-the commands
+To parse a parameter file with a file name 'param', enter the commands
 \code
-  from pscfpp.param import *
-  system = Composite('param')
+  import pscfpp.param as param
+  system = param.Composite('param')
 \endcode
 from within a interactive python interpreter or a python script. 
 The constructor method for class param.Composite opens the file 
 and parses its contents and returns an instance of that class 
-that contains a parsed version of the entire contents of that 
-file.  The resulting object is assigned here to a variable named 
+that contains a parsed version of the contents of that file. The 
+resulting object is assigned here to a variable that is also named 
 "param". 
  
-After a parameter file has been parsed, as described above, 
-every parameter file that is delimited by curly brackets is
-represented internally by an instance of class param.Composite.
-Every sub-element of such a block is represented by a data 
-attribute of the associated param.Composite object. A nested 
-sub-block within such a block is represented by a data attribute 
-that is enclosed instance of param.Composite.  Each parameter
-within such a block is instead represented by either a primitive 
-variable (an int, float, or string) or a list, depending on the
-type of variable. This organization allows nested elements of a 
-parameter file to be accessed using the dot notation used in 
-python to access data attributes.
+### Accessing Parameter Values
+
+After a parameter file has been parsed, as described above, every 
+parameter file block that is delimited by curly brackets is represented 
+internally by an instance of class param.Composite.  Every sub-element 
+(i.e., sub-block or variable) within such a block is represented by a 
+data attribute of the param.Composite object whose name is the same as 
+the label associated with that subblock or variable.  A nested sub-block 
+within such a parameter file block is represented by a data attribute of 
+the parent param.Composite object that is also an instance of 
+param.Composite.  Each parameter within such a block is instead 
+represented by either a primitive variable (an int, float, or string) 
+or a python list, depending on the type of variable. 
+
+The organization of python objects described above allows nested 
+elements of a parameter file to be accessed using the dot notation 
+used to access data attributes.
 
 For example, if param is a param.Composite object that contains 
-the contents of the main System block of a parameter file, then
-param.Mixture and param.Interaction are param.Composite objects 
-that contain the contents of the Mixture and Interaction 
-sub-blocks, respectively. The quantity
+the contents of the main System block of a parameter file, then 
+param.Mixture and param.Interaction are param.Composite objects that 
+contain the contents of the Mixture and Interaction sub-blocks, 
+respectively. The quantity
 \code
     param.Mixture.nMonomer
 \endcode
-is then an integer attribute that contains the value of the 
-parameter nMonomer that appears within the Mixture block of 
-the parameter file.
+is then an integer attribute that contains the value of the parameter 
+nMonomer that appears within the Mixture block of the corresponding
+parameter file.
 
-Values of array-valued parameters are stored as python lists, 
-in which each element stores the value of one element of the
+Values of array-valued parameters are stored as python lists, in which 
+each element of the list stores the value of one element of the parameter 
 array.  For example, 
 \code
     param.Mixture.monomers[0]
 \endcode
-is a floating point number that contains the value of element 
-0 of the monomers array, which gives the statistical segment 
-length of monomer type 0.
+is a floating point number that contains the value of element 0 of the 
+monomers array, which gives the statistical segment length for monomer 
+type 0.
 
-If a parameter file block contains several sub-blocks with the 
-same label, these subblocks are assigned to elements of a 
-python list, in which the name of the list is the shared name
-of those sub-blocks. This situation arises for Polymer and/or 
-Solvent subblocks of a Mixture block that represents a mixture 
-containing two or more polymer or solvent species.  For example, 
-in a mixture that contains two or more polymer species,
+If a parameter file block contains several sub-blocks with the same 
+label, these subblocks are assigned to elements of a python list, in 
+which the name of the list is the shared name of those sub-blocks. 
+This situation arises for Polymer and/or Solvent subblocks of a 
+Mixture block that represents a mixture containing two or more polymer 
+or solvent species.  For example, in a mixture that contains two or 
+more polymer species, 
 \code
    param.Mixture.Polymer[1]
 \endcode
-is a instance of param.Composite that contains the contents of
-the second Polymer block within the Mixture block. 
+is a instance of param.Composite that contains the contents of the 
+second Polymer block within the Mixture block. 
 
-If the value of a single variable (i.e., a variable represented
-by parameter label and value on a single line), or of a single 
-element of an array valued variable, is given in the parameter 
-file as two or more strings separated by spaces on a single line, 
-then the value of the variable or array element is itself stored 
-as a python list of values.
-For example, in the case discussed above, the quantity
+If the text representation of the value of a single parameter (i.e., a 
+variable represented by a parameter label and value on a single line), 
+or of a single element of an array-valued parameter, is given in the 
+parameter file as two or more strings separated by spaces on a single 
+line, then the value of the parameter or array element is stored as
+a python list of values.  This occurs for elements of the blocks array
+within each Polymer block of a parameter file, in which the value of
+each element is given as a list of two or more values that specify
+the monomer type, block length and (for branched polymers) other 
+information. For example, in the case discussed above, 
+the quantity
 \code
    param.Mixture.Polymer[1].blocks[0]
 \endcode
-is a python list containing values of variables associated with 
-the first block of the second polymer species within a mixture.
-If this polymer uses the block format for a linear chain, then
-this list contains a monomer type index and a block length. In 
+is a python list containing values of variables associated with the 
+first block of the second polymer species within a mixture.  If this 
+polymer uses the default parameter file format for a linear chain, 
+then this list contains a monomer type index and a block length. In 
 this case, the quantity
 \code
-   s[1].param.Mixture.Polymer[1].blocks[0][1]
+   param.Mixture.Polymer[1].blocks[0][1]
 \endcode
-is thus a floating point number that gives the length of block 0
-of polymer 1 for state 1, while the Polymer[1].blocks[0][0] is 
+is a floating point number equal to the length of block 0 of polymer 
+1 (the second polymer in a mixture), while Polymer[1].blocks[0][0] is 
 the integer monomer type index for that block. 
 
 The quantity 
 \code
-   s[1].param.Interaction.chi
+   param.Interaction.chi
 \endcode
-is a list of list that stores values of element of the chi matrix
-for state 1. For example
+is a list of lists that stores values of element of the chi matrix.
+For example
 \code
-   s[1].param.Interaction.chi[0][1]
+   param.Interaction.chi[0][1]
 \endcode
 is the interaction parameter between monomer types 0 and 1.
 
-The data types associated with individual parameters is inferred
-from its text representation, by casting any value that can be
-interpreted as an integer to an integer, any other value that 
-can be interpreted as valid floating point number as a float, and 
-any other value as a verbatim strings. 
+The data type associated with each parameter value is inferred
+from its text representation. To do so, the code stores any value 
+that can be interpreted as a valid integer to an integer, any other 
+value that can be interpreted as valid floating point number as a
+float, and stores any other value as a verbatim string. 
 
-If param is an instance of param.Composite, then str(param) is the 
-string representation of that object. The string representation of 
-a param.Composite object is a multi-line string formatted in the 
-curly bracket notation used in the file from which the object was 
-created. 
+### String Representation
 
-The class param.Composite can be used to programmatically modify the
-contents of a parameter file, in order to generate a modified file.
-To do so, one must parse a parameter file, modify one or more of the 
+The string representation of a param.Composite object is a multi-line 
+string formatted in the indented curly bracket notation used in the 
+file from which the object was created. The string representation of 
+such an object is thus equivalent to the parameter file block from 
+which it was created, aside from possible differences in white space.
+The string representation of param.Composite object named param is 
+given by the expression
+\code
+   str(param)
+\endcode
+This string can also be printed to screen in multi-line form by the 
+command print(param).
+
+An instance of class param.Composite can be used to programmatically 
+modify the values of parameters in a parameter file.  To do so, one 
+must parse an existing parameter file, modify one or more of the 
 parameter values, and then write the string representation of the 
 modified object to a file. 
 
 \section user_python_thermo_sec Thermo Files
 
-Suppose that a file named 'thermo' contains the a thermo file block 
-that was generated by calling the command "OUTPUT_THERMO thermo" after 
-completion of a SCFT calculation, and that this is the only data in 
-this file.  One may parse this file by entering the python commands
+Suppose that a file named 'thermo' contains a thermo file block that 
+was generated by calling the command "OUTPUT_THERMO thermo" after 
+completion of a SCFT calculation, and that this block is the only data 
+in this file.  One may parse this file by entering the python commands
 \code
    from pscfpp.thermo import *
    thermo = Thermo('thermo')
 \endcode
 In this case, the constructor for class Thermo opens and parses the 
 contents of the file whose name is passed as an argument, and returns 
-an instance of pscfpp.Thermo that contains the contents of that file. 
+an instance of class Thermo that contains the contents of that file. 
 
 The values of output variables that are reported in a thermo file block 
 can be accessed using the dot syntax for the attributes of the Thermo 
@@ -273,26 +287,27 @@ object similar to that used for the Param object. For example
 \code
     thermo.fHelmholtz
 \endcode
-gives the value of the variable "fHelmholtz" reported in the thermo 
+is the value of the variable "fHelmholtz" reported in the thermo file
 block.  A similar syntax is used to access the attributes "pressure", 
 "fIdeal" and "fInter", each of which is stored as a corresponding 
-floating point data attribute of thermo. 
+floating point data attribute of object thermo. 
 
-The data attributes "polymers", "solvents" and "cellParams" (when 
-present) of a Thermo object are all python lists, with elements that 
-can be accessed using the square bracket syntax. Thus for example, 
-if thermo contains the contents of the thermo block produced by a 
-pscf_pc or pscf_pg simulation of a periodic system, the quantity
+A Thermo object may contain data named "polymers", "solvents" and/or
+"cellParams" when the corresponding thermo block contains corresponding
+elements. Each of these attributes, when present, is a python list,
+with elements that can be accessed using the square bracket syntax. 
+For example, if thermo contains the contents of the thermo block 
+produced by a pscf_pc or pscf_pg simulation of a periodic system, 
+the quantity
 \code
    thermo.cellParams[0]
 \endcode
-is equal to the value of the first cell parameter for the crystal 
-system of interest. The crystal system type is specified in the
-Domain section of the parameter file. 
+is equal to the value of the first cell parameter for the crystal system 
+of interest, which is specified in the input parameter file. 
 
-The polymers and solvents attributes of a Thermo object are lists in 
-which element is an instance of a class that has attributes phi and 
-mu. The quantity
+Attributes of a Thermo object named polymers or solvents are lists in 
+which element is an instance of a class that has attributes phi (volume
+fraction) and mu (chemical potential). The quantity
 \code
    thermo.polymers[0].phi
 \endcode
@@ -304,10 +319,10 @@ while
 is the corresponding chemical potential. An analogous syntax is used 
 for solvent species as elements of thermo.solvents
 
-The string representation of a Thermo is a multi-line string formatted 
-like the thermo file block from which the object was created. This 
-string representation of Thermo object named param is given by the 
-expression str(param). 
+The string representation of a Thermo object is a multi-line string 
+formatted like the thermo file block from which the object was created. 
+This string representation of Thermo object named thermo is given by the
+expression str(thermo), and can be printed to screen using print(thermo).
 
 \section user_python_state_sec State Files
 
@@ -353,30 +368,33 @@ using the dot syntax for accessing data attributes.
 
 \section user_python_sweep_sec Sweeps
 
-In what follows, we consider the following situation as an example:
-Suppose you have completed a calculation using any PSCF program to
-performed a sweep, using a parameter file that contains Sweep block 
-and command file that contains a SWEEP command. Suppose that the
-"baseFileName" parameter within the Sweep block was assigned a value
-"out/", so that all output files produced by the sweep were created 
-in the "out/" subdirectory of the directory from which the executable 
-was invoked. 
+In what follows, we consider the following situation as an example: 
+Suppose you used a PSCF program to perfom a parameter sweep, using a 
+parameter file that contains Sweep block and a command file that contains 
+a SWEEP command. Suppose that the "baseFileName" parameter within the 
+Sweep block was assigned a value "out/", so that all output files 
+produced by the sweep were created in the "out/" subdirectory of the 
+directory from which the executable was invoked.  In this case, the
+SWEEP command will have created a set of state files in the out/ 
+directory named 
+\code
+   0.dat 
+   1.dat 
+   2.dat
+    .
+    . 
+    .
+\endcode
+Each of these state files contain the input parameters and output 
+variables for an SCFT calculation peformed at a single state along 
+the specified path through parameter space. Each such file contains 
+a parameter section with input variables and a thermo section with
+output variables. 
 
-In this example, the SWEEP command will produce a set of output files
-in the out/ directory named 1.dat, 2.dat, 3.dat, etc. that we refer 
-to as state files. Each state file contain the input parameters and 
-output variables for an SCFT calculation peformed at a single state 
-point along a specified path through parameter space. Each such file 
-contains two sections with different formats. The first section has
-the format of a PSCF parameter file that contains all of the input
-parameters, while the second has the format used by PSCF for 
-thermodynamic output variables, as output by a OUTPUT_THERMO command.
 The pscfpp.sweep python module can be used to parse the contents of 
-all of these state files and store them in a form that is easily 
-manipulated within python code.  
-
-To use a Sweep object to parse all of the state files produced by a 
-sweep, one enters the commands
+all of the state files produced by a sweep and store them in a form 
+that is convenient for data analysis. To do so, in the example 
+described above, one would enter python commands
 \code
     from pscfpp.sweep import *
     s = Sweep('out/')
@@ -389,17 +407,15 @@ by the sweep.  This path prefix should be defined relative to the
 current directory of the python interpreter, which is initially set 
 to the directory from which the interpreter was opened.  
 
-
 ### Accessing State Objects and Variable Values:
 
-After successful construction of a Sweep object, the resulting
-object stores the contents of each state file in a State object.
-These State objects are stored internally in a python list, in
-elements are listed in the order in which states were treated
-within the sweep calculation.  The Sweep class overloads the 
-square bracket index operator to allow access to the elements 
-of this list.  The State objects associated with a Sweep object 
-named s are thus given by expressions
+After successful construction of a Sweep object, the resulting object 
+stores the contents of each state file in a State object.  These State 
+objects are stored internally in a python list, in the order in which 
+states were treated within the sweep.  The Sweep class overloads the 
+square bracket index operator to allow access to the elements of this 
+list.  The State objects associated with a Sweep object named s are 
+thus given by the quantities
 \code
     s[0]
     s[1]
@@ -408,31 +424,31 @@ named s are thus given by expressions
      .
     s[n-1]
 \endcode
-Here, n is the number of State objects contained in the parent
-Sweep, which can be obtained from value of the expression len(s). 
-The integer index used to access each State object corresponds to
-the integer that appears the name of the corresponding state file. 
+Here, n is the number of State objects contained in the parent Sweep, 
+which is given by the value of the expression len(s).  The integer 
+index used to access each State object corresponds to the integer 
+that appears the name of the corresponding state file. 
 
-The syntax for accessing variables stored with a State object 
-can then be applied to any state within a sweep via access to the
-param and thermo data attributes. In this example, the quantity
+The syntax for accessing variables stored with a State object can then 
+be applied to any state within a sweep via access to the param and 
+thermo data attributes. In this example, the quantity
 \code
     s[1].thermo.fHelmholtz
 \endcode
-is thus the Helmholtz free energy per monomer for state 1 (the 
-second state) within a sweep. Similarly,
+is thus the Helmholtz free energy per monomer for state 1 (the second 
+state) within a sweep. Similarly,
 \code
     s[1].param.Interaction.chi[0][1]
 \endcode
-is the chi parameter for interactions between monomer types 0 and
-1 in the same state. Values of other input and output variables 
-can be accessed similarly. 
+is the chi parameter for interactions between monomer types 0 and 1 in 
+the same state. Values of other input and output variables can be 
+accessed similarly. 
 
 ### Generating a Summary Report:
 
-The methods "summary" and "summaryString" of class Sweep can each
-be used to generate summary reports that contain a list of values 
-for selected variables at each state point of a sweep. Both of these 
+The methods "summary" and "summaryString" of class Sweep can each be 
+used to generate summary reports that contain a list of values for 
+selected variables at each state point of a sweep. Both of these 
 functions takes a list of strings as an argument, in which each string 
 in the list gives the name of a input or output variable using the 
 syntax for accessing variables stored in a State function. The two
