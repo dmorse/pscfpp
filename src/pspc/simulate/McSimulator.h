@@ -173,9 +173,9 @@ namespace Pspc {
       bool hasWC() const;
       
       /**
-      * If a new move is attempted, clearHasWC() is called to clear hasWC_.
+      * IIf a new move is attempted, clear both eigen-components of the fields and mcHamiltonian components
       */
-      void clearHasWC();
+      void clearData();
 
       /**
       * Get an eigenvector component of the w fields.
@@ -390,10 +390,13 @@ namespace Pspc {
    inline bool McSimulator<D>::hasWC() const
    {  return hasWC_; }
    
-   // If a new move is attempted, clearHasWC() is called to clear hasWC_.
+   // If a new move is attempted, clear both eigen-components of the fields and mcHamiltonian components
    template <int D>
-   inline void McSimulator<D>::clearHasWC()
-   { hasWC_ = false; }
+   inline void McSimulator<D>::clearData()
+   { 
+      hasMcHamiltonian_ = false;
+      hasWC_ = false; 
+   }
    
    // Get the TrajectoryReaderfactory 
    template <int D>

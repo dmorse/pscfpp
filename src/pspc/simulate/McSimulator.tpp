@@ -86,9 +86,7 @@ namespace Pspc {
          const IntVec<D> dimensions = system().domain().mesh().dimensions();
          mcState_.allocate(nMonomer, dimensions);
       }
-      
-      
-      
+   
       // Eigenanalysis of the projected chi matrix.
       analyzeChi();
       // Compute field components and MC Hamiltonian for initial state
@@ -247,6 +245,7 @@ namespace Pspc {
    {
       UTIL_CHECK(system().w().hasData());
       UTIL_CHECK(system().hasCFields());
+      UTIL_CHECK(hasWC());
       hasMcHamiltonian_ = false;
 
       Mixture<D> const & mixture = system().mixture();
@@ -334,6 +333,7 @@ namespace Pspc {
       mcIdealHamiltonian_ = vSystem/vMonomer * lnQ;
       mcHamiltonian_ *= vSystem/vMonomer;
       hasMcHamiltonian_ = true;
+      //Log::file()<< "computeMcHamiltonian"<< std::endl;
    }
 
    template <int D>
@@ -473,7 +473,6 @@ namespace Pspc {
          Log::file() << "]\n";
       }
       #endif
-
    }
 
    /*
@@ -554,7 +553,7 @@ namespace Pspc {
       for (iStep_ = 0; iStep_ <= max && hasFrame; ++iStep_) {
          hasFrame = trajectoryReaderPtr->readFrame();
          if (hasFrame) {
-            clearHasWC();
+            clearData();
             // Initialize analyzers 
             if (iStep_ == min) analyzerManager_.setup();
             // Sample property values only for iStep >= min
