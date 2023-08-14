@@ -561,7 +561,7 @@ namespace Pspc {
             if (iStep_ >= min) {
                analyzerManager_.sample(iStep_);
                if ((iStep_ % 100) == 0){
-                  Log::file() << iStep_ << std::endl;
+                  Log::file() << "Analyzing steps: " << iStep_ << std::endl;
                }
             }
          }
