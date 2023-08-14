@@ -114,9 +114,9 @@ namespace Pspc {
       // Main Monte Carlo loop
       Timer timer;
       timer.start();
-
       for (int iStep = 0; iStep < nStep; ++iStep) {
 
+         // Analysis (if any)
          if (Analyzer<D>::baseInterval != 0) {
             if (iStep % Analyzer<D>::baseInterval == 0) {
                if (analyzerManager_.size() > 0) {
@@ -125,9 +125,9 @@ namespace Pspc {
                }
             }
          }
+
          // Choose and attempt an McMove
          mcMoveManager_.chooseMove().move();
-         
 
       }
       timer.stop();
@@ -189,6 +189,8 @@ namespace Pspc {
    void McSimulator<D>::saveMcState()
    {
       UTIL_CHECK(system().w().hasData());
+      UTIL_CHECK(hasWC_);
+      UTIL_CHECK(hasMcHamiltonian_);
       UTIL_CHECK(mcState_.isAllocated);
       UTIL_CHECK(!mcState_.hasData);
 
@@ -222,10 +224,11 @@ namespace Pspc {
       mcHamiltonian_ = mcState_.mcHamiltonian;
       mcIdealHamiltonian_ = mcState_.mcIdealHamiltonian;
       mcFieldHamiltonian_ = mcState_.mcFieldHamiltonian;
-      mcState_.hasData = false;
       hasMcHamiltonian_ = true;
+      hasWC_ = true;
+      mcState_.hasData = false;
    }
-   
+ 
    /*
    * Clear the saved Monte-Carlo state.
    *
@@ -233,9 +236,7 @@ namespace Pspc {
    */
    template <int D>
    void McSimulator<D>::clearMcState()
-   {
-      mcState_.hasData = false;
-   }
+   {  mcState_.hasData = false; }
 
    /*
    * Compute Monte Carlo Hamiltonian.
@@ -245,7 +246,7 @@ namespace Pspc {
    {
       UTIL_CHECK(system().w().hasData());
       UTIL_CHECK(system().hasCFields());
-      UTIL_CHECK(hasWC());
+      UTIL_CHECK(hasWC_);
       hasMcHamiltonian_ = false;
 
       Mixture<D> const & mixture = system().mixture();
@@ -318,12 +319,9 @@ namespace Pspc {
          HW -= xi[i];
       }
 
-      HW /= double(meshSize);  
-      // HW now contains a value per monomer
+      // Normalize HW to equal a value per monomer
+      HW /= double(meshSize);
       
-      #if 0
-      Log::file() << "HW " << HW<< "\n";
-      #endif
       
       // Compute final MC Hamiltonian
       mcHamiltonian_ = HW - lnQ;
@@ -332,6 +330,7 @@ namespace Pspc {
       mcFieldHamiltonian_ = vSystem/vMonomer * HW;
       mcIdealHamiltonian_ = vSystem/vMonomer * lnQ;
       mcHamiltonian_ *= vSystem/vMonomer;
+
       hasMcHamiltonian_ = true;
       //Log::file()<< "computeMcHamiltonian"<< std::endl;
    }
@@ -381,7 +380,7 @@ namespace Pspc {
       // Eigenvalue calculations use data structures and 
       // functions from the Gnu Scientific Library (GSL)
 
-      // Allocate GSL matrix A to hold elements of chiP
+      // Allocate GSL matrix A that will hold a copy of chiP
       gsl_matrix* A = gsl_matrix_alloc(nMonomer, nMonomer);
 
       // Copy DMatrix<double> chiP to gsl_matrix A
@@ -506,7 +505,6 @@ namespace Pspc {
          }
       }
       
-      hasWC_ = true;
       // Debugging output
       #if 0
       Log::file() << "wc " << wc_.capacity() << "\n";
@@ -515,6 +513,8 @@ namespace Pspc {
          Log::file() << "wc_2 " << wc_[1][i] << "\n";
       }
       #endif
+
+      hasWC_ = true;
    }
    
    /*

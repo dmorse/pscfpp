@@ -23,7 +23,7 @@ namespace Pspc {
    * Constructor.
    */
    template <int D>
-   McMove<D>::McMove(McSimulator<D>& mcSimulator) 
+   McMove<D>::McMove(McSimulator<D>& mcSimulator)
     : mcSimulatorPtr_(&mcSimulator),
       systemPtr_(&(mcSimulator.system())),
       randomPtr_(&(mcSimulator.random())),
@@ -44,14 +44,14 @@ namespace Pspc {
    template <int D>
    void McMove<D>::readParameters(std::istream &in)
    {}
-   
+
    /*
    * Read the probability from file.
    */
    template <int D>
    void McMove<D>::readProbability(std::istream &in)
    {  read<double>(in, "probability", probability_); }
-  
+
    /*
    * Setup at beginning of loop.
    *
@@ -59,7 +59,7 @@ namespace Pspc {
    */
    template <int D>
    void McMove<D>::setup()
-   { 
+   {
       nAttempt_ = 0;
       nAccept_  = 0;
    }
@@ -69,18 +69,18 @@ namespace Pspc {
    */
    template <int D>
    bool McMove<D>::move()
-   { 
+   {
       incrementNAttempt();
-      
+
       // Get current Hamiltonian
       double oldHamiltonian = mcSimulator().mcHamiltonian();
-     
-      // Save current state 
+
+      // Save current state
       mcSimulator().saveMcState();
-      
-      // Clear both eigen-components of the fields and mcHamiltonian 
+
+      // Clear both eigen-components of the fields and mcHamiltonian
       mcSimulator().clearData();
-      
+
       // Attempt modification
       attemptMove();
 
@@ -91,7 +91,7 @@ namespace Pspc {
       mcSimulator().computeWC();
       mcSimulator().computeMcHamiltonian();
       double newHamiltonian = mcSimulator().mcHamiltonian();
-      
+
       // Accept or reject move
       bool accept = false;
       double weight = exp(-(newHamiltonian - oldHamiltonian));
@@ -102,7 +102,7 @@ namespace Pspc {
       } else {
           mcSimulator().restoreMcState();
       }
-      
+
       return accept;
    }
 

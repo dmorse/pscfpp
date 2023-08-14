@@ -300,6 +300,16 @@ namespace Pspc {
       double mcHamiltonian_;
 
       /**
+      * Ideal gas contributions (lnQ) to Monte-Carlo System Hamiltonian
+      */
+      double mcIdealHamiltonian_;
+      
+      /**
+      * Field contribution (HW) to Monte-Carlo System Hamiltonian
+      */
+      double mcFieldHamiltonian_;
+      
+      /**
       * Has the MC Hamiltonian been computed for the current w and c fields?
       */ 
       bool hasMcHamiltonian_;
@@ -314,16 +324,6 @@ namespace Pspc {
       * Count Monte Carlo step 
       */
       long iStep_;
-      
-      /**
-      * Ideal gas contributions (lnQ) to Monte-Carlo System Hamiltonian
-      */
-      double mcIdealHamiltonian_;
-      
-      /**
-      * Field contribution (HW) to Monte-Carlo System Hamiltonian
-      */
-      double mcFieldHamiltonian_;
       
       // Private member functions
       
@@ -351,7 +351,7 @@ namespace Pspc {
    inline Random& McSimulator<D>::random()
    {  return random_; }
    
-   // Get the parent system.
+   // Get the parent System.
    template <int D>
    inline System<D>& McSimulator<D>::system()
    {  return *systemPtr_; }
@@ -364,7 +364,7 @@ namespace Pspc {
       return mcHamiltonian_; 
    }
    
-   // Get the precomputed MC Hamiltonian
+   // Get the ideal gas component of the precomputed MC Hamiltonian
    template <int D>
    inline double McSimulator<D>::mcIdealHamiltonian() const
    {  
@@ -372,7 +372,7 @@ namespace Pspc {
       return mcIdealHamiltonian_; 
    }
    
-   // Get the precomputed MC Hamiltonian
+   // Get the field component of the precomputed MC Hamiltonian
    template <int D>
    inline double McSimulator<D>::mcFieldHamiltonian() const
    {  
@@ -380,17 +380,17 @@ namespace Pspc {
       return mcFieldHamiltonian_; 
    }
    
-   // Has the MC Hamiltonian been computed for the current w and c fields?
+   // Has the MC Hamiltonian been computed for the current w fields ?
    template <int D>
    inline bool McSimulator<D>::hasMcHamiltonian() const
    {  return hasMcHamiltonian_; }
    
-   // Has the eigenvector components of the current w fields been computed for the current field?
+   // Have eigen-components of current w fields been computed?
    template <int D>
    inline bool McSimulator<D>::hasWC() const
    {  return hasWC_; }
    
-   // If a new move is attempted, clear both eigen-components of the fields and mcHamiltonian components
+   // Clear all data (eigen-components of w field and McHamiltonian)
    template <int D>
    inline void McSimulator<D>::clearData()
    { 
