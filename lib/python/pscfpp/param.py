@@ -133,7 +133,7 @@
 #
 #   class Parameter:
 #           A Parameter object contains a parameter label and its 
-#           value for the labelled parameter contained in a single line.
+#           value for the labeled parameter contained in a single line.
 #
 #   class Array:
 #           An Array object represents a one-dimensional array of values.
@@ -154,14 +154,9 @@
 #           parenthesis.  In between, each line contains a row index, 
 #           a column index and value of a single element of the matrix.
 #
-#   class Value:
-#           A Value object stores the value of a single primitive 
-#           variable (and integer, floating point number or string) that 
-#           represents all or part of the value of a parameter. The type 
-#           is inferred from the string format - strings that can be 
-#           interpreted as integers are stored as integers, others that 
-#           can represent floating point numbers are stored as floats,
-#           and all others are stored as literal strings. 
+#   def getValue(v):
+#           A function to distinguish the correct type of the value from the 
+#           passed-in string, v, and return it with the correct type. 
 #
 # -----------------------------------------------------------------------
 
@@ -194,8 +189,6 @@ class Composite:
       __getattr__(self, attr):
          return the value stored in children with the specific key, 
          argument attr
-      __repr__(self):
-         return the string of child attributes, in dictionary format 
       __str__(self):
          return un-indented string representation in param file format
       getString(self, depth):
@@ -243,11 +236,11 @@ class Composite:
                val = []
                if l[-1] == ']':
                   for i in range(1, len(l)-1):
-                     val.append(Value(l[i]))
+                     val.append(getValue(l[i]))
                   p = Array(l[0][:-1], None, val)
                else:
                   for i in range(1,len(l)):
-                     val.append(Value(l[i]))
+                     val.append(getValue(l[i]))
                   p = Array(l[0][:-1], openFile, val)   
          elif l[0][-1] == '(':
             if len(l) == 1:
@@ -262,7 +255,7 @@ class Composite:
             else:
                val = []
                for i in range(1, len(l)):
-                  val.append(Value(l[i]))
+                  val.append(getValue(l[i]))
                p = Parameter(l[0], val)
          self.addChild(p)   
          line = openFile.readline()
@@ -280,9 +273,6 @@ class Composite:
       return self.children
 
    def __str__(self):
-      return self.getString()
-
-   def __repr__(self):
       return self.getString()
 
    def __getattr__(self, attr):
@@ -335,12 +325,10 @@ class Parameter:
          constructor, with two arguments: 
             label: label string for this Parameter, required
             val: value of this Parameter, required
-      getValue(self): 
-         Return the parameter value and print its type
       setValue(self, val):
          Reset the parameter value to argument val
-      __repr___(self):
-         return the string that represents the stored value
+      __str__(self):
+         return un-indented string representation for a parameter
       getString(self, depth):
          return the string representation of this parameter.
          Argument depth, the 
@@ -355,11 +343,7 @@ class Parameter:
       if type(val) is list:
          self.val = val
       else:
-         self.val = Value(val)
-
-   def getValue(self):
-      print(self.val.getType())
-      return self.val.getValue()
+         self.val = getValue(val)
 
    def setValue(self, val):
       if type(val) is list:
@@ -367,18 +351,9 @@ class Parameter:
             raise Exception('Not valid input for Parameter.')
          self.val = []
          for i in range(len(val)):
-            self.val.append(Value(str(val[i])))
+            self.val.append(getValue(str(val[i])))
       else:
-         self.val = Value(str(val))
-
-   def __repr__(self):
-      if type(self.val) is list:
-         v = []
-         for i in range(len(self.val)):
-            v.append(self.val[i].getValue())
-         return str(v)
-      else:
-         return str(self.val.getValue())
+         self.val = getValue(str(val))
 
    def __str__(self):
       return self.getString()
@@ -387,27 +362,21 @@ class Parameter:
       s = ''
       if type(self.val) is list:
          s += depth + f'{self.label:40}'
-         s += f'{self.val[0].getValue():>6}'
+         s += f'{self.val[0]:>6}'
          for i in range(1, len(self.val)):
-            s += f'{self.val[i].getValue():>7}'
+            s += f'{self.val[i]:>7}'
          s += '\n'
       else:
          s += depth + f'{self.label:20}'
-         if self.val.getType() is float:
-            v = f'{self.val.getValue():.12e}'
+         if type(self.val) is float:
+            v = f'{self.val:.12e}'
             s += f'{v:>20}\n'
          else:
-            s += f'{self.val.getValue():>20}\n'
+            s += f'{self.val:>20}\n'
       return s
 
    def returnData(self):
-      if type(self.val) is list:
-         v = []
-         for i in range(len(self.val)):
-            v.append(self.val[i].getValue())
-         return v
-      else:
-         return self.val.getValue()
+      return self.val
 
 # End class Parameter ----------------------------------------------------
 
@@ -420,7 +389,7 @@ class Array:
       label: the label of the Array element
       value: the value of the Array element, default to be an empty list
    Methods:
-      __inti__(self, label, openFile, val=None):
+      __init__(self, label, openFile, val=None):
          constructor, with three arguments: 
             label: the label of the Array, required
             openFile: the opened parameter file, required
@@ -429,8 +398,8 @@ class Array:
          method to read the open parameter file, openFile as the argument, 
          line by line and update the value variable according to the read 
          lines; reading stop when ']' is read
-      __repr__(self):
-         return the string of the value variable, in the list format string 
+      __str__(self):
+         return unindented string representation for an array 
       getString(self, depth):
          return the string for writing out with argument depth, the string 
          of spaces that represents the level of the Array element
@@ -454,27 +423,15 @@ class Array:
       l = line.split()
       while l[0] != ']':
          if len(l) == 1:
-            self.val.append(Value(l[0]))
+            self.val.append(getValue(l[0]))
          else:
             ls = []
             for i in range(len(l)):
-               ls.append(Value(l[i]))
+               ls.append(getValue(l[i]))
             self.val.append(ls)
 
          line = openFile.readline()
          l = line.split()
-
-   def __repr__(self):
-      v = []
-      if type(self.val[0]) is list:
-         for i in range(len(self.val)):
-            v.append([])
-            for j in range(len(self.val[0])):
-               v[i].append(self.val[i][j].getValue())
-      else:
-         for i in range(len(self.val)):
-            v.append(self.val[i].getValue())
-      return str(v)
 
    def __str__(self):
       return self.getString()
@@ -484,41 +441,32 @@ class Array:
       s += depth + self.label + '[' + '\n'
       if type(self.val[0]) != list:
          for i in range(len(self.val)):
-            v = f'{self.val[i].getValue():.12e}'
+            v = f'{self.val[i]:.12e}'
             s += depth + f'{v:>40}\n'
       else:
-         if (self.val[0][0].getType() == int) & (len(self.val[0]) == 2):
+         if (type(self.val[0][0]) == int) & (len(self.val[0]) == 2):
             for i in range(len(self.val)):
-               v = f'{self.val[i][1].getValue():.12e}'
-               s += depth + f'{self.val[i][0].getValue():>41}{v:>22}\n'
+               v = f'{self.val[i][1]:.12e}'
+               s += depth + f'{self.val[i][0]:>41}{v:>22}\n'
          else:
             for i in range(len(self.val)):
-               s += depth + f'{self.val[i][0].getValue():^20}'
+               s += depth + f'{self.val[i][0]:^20}'
                for j in range(1, len(self.val[0])):
                   if j == (len(self.val[0])-1):
-                     if self.val[i][j].getValue() < 0:
-                        v = f'{self.val[i][j].getValue():.11e}'
+                     if self.val[i][j] < 0:
+                        v = f'{self.val[i][j]:.11e}'
                      else:
-                        v = f'{self.val[i][j].getValue():.12e}'
+                        v = f'{self.val[i][j]:.12e}'
                      s += f'{v:>22}\n'
                   elif j == 1:
-                     s += f'{self.val[i][j].getValue()}'
+                     s += f'{self.val[i][j]}'
                   else:
-                     s += f'{self.val[i][j].getValue():>5}'
+                     s += f'{self.val[i][j]:>5}'
       s += depth + ']\n'
       return s
 
    def returnData(self):
-      v = []
-      if type(self.val[0]) is list:
-         for i in range(len(self.val)):
-            v.append([])
-            for j in range(len(self.val[0])):
-               v[i].append(self.val[i][j].getValue())
-      else:
-         for i in range(len(self.val)):
-            v.append(self.val[i].getValue())
-      return v
+      return self.val
 
    def setValue(self, val):
       if (type(val) is list) == False:
@@ -533,15 +481,15 @@ class Array:
                   break
             if same == True:
                for i in range(len(val)):
-                  v.append(Value(str(val[i][0])))
+                  v.append(getValue(str(val[i][0])))
             else:
                for i in range(len(val)):
                   v.append([])
                   for j in range(len(val[i])):
-                     v[i].append(Value(str(val[i][j])))
+                     v[i].append(getValue(str(val[i][j])))
          else:
             for i in range(len(val)):
-               v.append(Value(str(val[i])))
+               v.append(getValue(str(val[i])))
          self.val = v
 # End class Array ------------------------------------------------------
 
@@ -562,9 +510,6 @@ class Matrix:
          method to read the open parameter file, openFile as the argument, 
          line by line and update the value variable according to the read 
          lines; reading stop when ')' is read
-      __repr__(self):
-         return the string of the value variable, in the list format 
-         string 
       __str__(self):
          return an unindented string representation
       getString(self, depth):
@@ -600,18 +545,10 @@ class Matrix:
       for i in range(0, size):
          self.val.append([])
          for j in range(0, size):
-            self.val[i].append(Value('0'))
+            self.val[i].append(getValue('0'))
       for i in range(0, len(att)):
-         self.val[int(att[i][0])][int(att[i][1])] = Value(att[i][2])
-         self.val[int(att[i][1])][int(att[i][0])] = Value(att[i][2])
-
-   def __repr__(self):
-      v = []
-      for i in range(len(self.val)):
-         v.append([])
-         for j in range(len(self.val[0])):
-            v[i].append(self.val[i][j].getValue())
-      return str(v)
+         self.val[int(att[i][0])][int(att[i][1])] = getValue(att[i][2])
+         self.val[int(att[i][1])][int(att[i][0])] = getValue(att[i][2])
 
    def __str__(self):
       return self.getString()
@@ -621,17 +558,12 @@ class Matrix:
       s += depth + self.label + '(\n'
       for i in range(len(self.val)):
          for j in range(i+1):
-            s += depth + f'{i:>24}{j:>5}   ' + f'{self.val[i][j].getValue():.12e}\n'
+            s += depth + f'{i:>24}{j:>5}   ' + f'{self.val[i][j]:.12e}\n'
       s += depth + ')\n'
       return s
 
    def returnData(self):
-      v = []
-      for i in range(len(self.val)):
-         v.append([])
-         for j in range(len(self.val[0])):
-            v[i].append(self.val[i][j].getValue())
-      return v
+      return self.val
 
    def setValue(self, val):
       if type(val) != list:
@@ -651,57 +583,34 @@ class Matrix:
             for i in range(len(val)):
                self.val.append([])
                for j in range(len(val[0])):
-                  self.val[i].append(Value(str(val[i][j])))
+                  self.val[i].append(getValue(str(val[i][j])))
          else: # input value is a list in format: [x-index, y-index, value]
             if len(val) != 3:
                raise Exception('Not valid input format for Matrix modification.')
             elif (type(val[0]) != int) or (type(val[1]) != int) or ((type(val[-1]) != int) and (type(val[-1]) != float)):
                raise Exception('Not valid input format for Matrix modification.')
-            self.val[val[0]][val[1]] = Value(str(val[-1]))
-            self.val[val[1]][val[0]] = Value(str(val[-1]))
+            self.val[val[0]][val[1]] = getValue(str(val[-1]))
+            self.val[val[1]][val[0]] = getValue(str(val[-1]))
 
 # End class Matrix ---------------------------------------------------
 
-
-
-
-class Value:
+def getValue(v):
    '''
-   Purpose: 
-      A Value represents a primitive parameter value (int, float, or string)
-   Instance variables:
-      val: variable to store a primitive parameter value
-      type: the type of the value, either integer, floating point or string
-   Methods:
-      __init__(self, val):
-         constructor, with argument:
-            val: a string representation of the value, required
-         The constructor automatically determines the type.
-      getType(self): return the type of stored value
-      getValue(self): return the value of stored value
-   Note:
-      Debugging by the commented line to check if the constructor has the 
-      expected function of distinguishing the exact type of the value
+   Purpose:
+      Distinguishing the correct type of the value form a string
+   Argument(s):
+      v: string represents a value
+   Return:
+      return the value with the correct type
    '''
+   if (v.isdigit() == True) or (v[0] == '-' and v[1:].isdigit() == True):
+      val = int(v)  
+   else:
+      try:
+         val = float(v)
+      except ValueError:
+         val = str(v)
+   
+   return val
 
-   def __init__(self, val):
-      if val.isdigit() == True:
-         # print('int')
-         self.val = int(val)
-      else:
-         try:
-            self.val = float(val)
-            # print('float')
-         except ValueError:
-            self.val = val
-            # print('string')
-      # print(self.value)
-      self.type = type(self.val)
-
-   def getType(self):
-      return self.type
-
-   def getValue(self):
-      return self.val
-
-# End class Value  -------------------------------------------------------
+# End function getValue  -------------------------------------------------

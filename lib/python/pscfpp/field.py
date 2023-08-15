@@ -3,8 +3,8 @@
 #   all values within it in a single object. A field file contains both
 #   a block of text representing the field file header and a subsequent
 #   block of text containing all the field data. Field files for all 
-#   three types of field formats (rgrid, kgrid and basis) can be parsed 
-#   and stored by the Field object. For more detail on the three types of  
+#   types of field formats (fd1d, rgrid, kgrid and basis) can be parsed 
+#   and stored by the Field object. For more detail on the types of  
 #   field formats, please refer to the PSCFPP main documentation. Users 
 #   can access and modify the stored values of the parameters in the 
 #   header and data part after parsing by using specific statements 
@@ -35,7 +35,7 @@
 #       writeOut() method, passing in the string of the file name to 
 #       which the Field should be written.
 #
-#           Example: f.writeOut('fieldOut')
+#           Example: f.write('fieldOut')
 #
 #   Accessing elements:
 #
@@ -113,6 +113,7 @@
 #   def getValue(v):
 #           A function to distinguish the correct type of the value from the 
 #           passed-in string, v, and return it with the correct type. 
+# --------------------------------------------------------------------------
 
 class Field:
    '''
@@ -135,10 +136,10 @@ class Field:
       method to read the open Field file, openFile as the argument, line
       by line and update the read items into the data and header, and
       determine the type of the Field file
-   writeOut(self, filename):
+   write(self, filename):
       method to write out the stored Field file to a specific named file
       with the name of the argument filename
-   writeOutStirng(self):
+   __str__(self):
       return the string for writing out
    addColumn(self, index, element):
       method to add a new column to the data list, with two arguments:
@@ -166,26 +167,36 @@ class Field:
       l = line.split()
       if l[0] == 'format':
          self.header['format'] = [getValue(l[1]), getValue(l[2])]
+      elif l[0] == 'nx':
+         self.type ='fd1d'
+         self.header['nx'] = getValue(l[1])
       else:
          raise Exception('Not valid field file.')
 
-      lineCount = 1
-      while lineCount <= 15:
-         line = openFile.readline()
-         l = line.split()
-         lineCount += 1
-         if lineCount%2 == 0:
-            name = l[0]
-            if name == 'N_basis':
-               self.type = 'basis'
-         else:
-            if name == 'mesh' or name == 'ngrid' or name == 'cell_param':
-               d = []
-               for i in range(0, len(l)):
-                  d.append(getValue(l[i]))
-               self.header[name] = d
+      if self.type != 'fd1d':
+         lineCount = 1
+         while lineCount <= 15:
+            line = openFile.readline()
+            l = line.split()
+            lineCount += 1
+            if lineCount%2 == 0:
+               name = l[0]
+               if name == 'N_basis':
+                  self.type = 'basis'
             else:
-               self.header[name] = getValue(l[0])
+               if name == 'mesh' or name == 'ngrid' or name == 'cell_param':
+                  d = []
+                  for i in range(0, len(l)):
+                     d.append(getValue(l[i]))
+                  self.header[name] = d
+               else:
+                  self.header[name] = getValue(l[0])
+      else:
+            line = openFile.readline()
+            l = line.split()
+            self.header[l[0]] = getValue(l[1])
+            line = openFile.readline()
+            l = line.split()
 
       while line != '':
          d = []
@@ -194,50 +205,60 @@ class Field:
          self.data.append(d)
          line = openFile.readline()
          l = line.split()
+         
 
-      if self.type != 'basis':
+      if self.type != 'basis' and self.type != 'fd1d':
          if type(self.data[0][0]) is int:
             self.type = 'kgrid'
          else:
             self.type = 'rgrid'
 
-   def writeOut(self, filename):
+   def write(self, filename):
       with open(filename, 'w') as f:
-         f.write(self.writeOutString())
+         f.write(self.__str__())
 
-   def writeOutString(self):
+   def __str__(self):
       out = ''
       for x, y in self.header.items():
-         if x == 'format':
-            o = x + '   ' + str(y[0]) + '   ' + str(y[1]) + '\n'
+         if self.type == 'fd1d':
+            o = f'{x:<7}' + str(y) + '\n'
          else:
-            o = x + '\n'
-            if x == 'cell_param':
-               val = f'{y[0]:.10e}'
-               o += f'{val:>20}'
-               if len(y) == 1:
-                  o += '\n'
-               for i in range(1, len(y)):
-                  val = f'{y[i]:.10e}'
-                  o += f'{val:>18}'
-                  if i == len(y)-1:
-                     o += '\n'
-            elif x == 'mesh' or x == 'ngrid':
-               o += f'{y[0]:>20}'
-               if len(y) == 1:
-                  o += '\n'
-               for i in range(1, len(y)):
-                  o += f'{y[i]:>8}'
-                  if i == len(y)-1:
-                     o += '\n'
+            if x == 'format':
+               o = x + '   ' + str(y[0]) + '   ' + str(y[1]) + '\n'
             else:
-               o += f'{str(y):>20s}' + '\n'
+               o = x + '\n'
+               if x == 'cell_param':
+                  val = f'{y[0]:.10e}'
+                  o += f'{val:>20}'
+                  if len(y) == 1:
+                     o += '\n'
+                  for i in range(1, len(y)):
+                     val = f'{y[i]:.10e}'
+                     o += f'{val:>18}'
+                     if i == len(y)-1:
+                        o += '\n'
+               elif x == 'mesh' or x == 'ngrid':
+                  o += f'{y[0]:>20}'
+                  if len(y) == 1:
+                     o += '\n'
+                  for i in range(1, len(y)):
+                     o += f'{y[i]:>8}'
+                     if i == len(y)-1:
+                        o += '\n'
+               else:
+                  o += f'{str(y):>20s}' + '\n'
 
          out += o
 
       for i in range(0, len(self.data)):
          row = ''
          for j in range(0, len(self.data[0])):
+            if self.type == 'fd1d':
+               if j == 0:
+                  row += f'{self.data[i][j]:>6}'
+               else:
+                  val = f'{self.data[i][j]:.11e}'
+                  row += f'{val:>20}'
 
             if self.type == 'basis':
                if j < self.header['N_monomer']:

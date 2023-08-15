@@ -71,35 +71,14 @@ class Sweep:
    # \param d  string that is the name of a directory or parameter file.
    #
    def __init__(self, d):
-      old_cwd = os.getcwd()
-
-      if os.path.isdir(d) == True:
-         os.chdir(d)
-      elif os.path.isfile(d) == True:
-         p = Composite(d)
-         for x,y in p.children.items():
-            if x.rfind('Sweep') != -1:
-               nd = old_cwd + '/' + y.baseFileName
-               break
-         try:
-            os.chdir(nd)
-         except:
-            raise Exception('No Sweep block in the Param file')
-      else:
-         raise Exception('Not valid argument')
-
-      filenames = []
-      for file in os.listdir():
-         if file.endswith('.dat'):
-            filenames.append(file)
-      filenames.sort()
-
       self.sweep = []
-      for i in range(0, len(filenames)):
-         s = State(filenames[i])
+      num = 0
+      filename = d + str(num) + '.dat'
+      while os.path.isfile(filename) == True:
+         s = State(filename)
          self.sweep.append(s)
-
-      os.chdir(old_cwd)
+         num += 1
+         filename = d + str(num) + '.dat'
 
    ##
    # Make a summary report containing values for selected variables.
