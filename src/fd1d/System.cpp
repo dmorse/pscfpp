@@ -52,6 +52,8 @@ namespace Fd1d
       f_(),
       c_(),
       fHelmholtz_(0.0),
+      fIdeal_(0.0),
+      fInter_(0.0),
       pressure_(0.0),
       hasMixture_(0),
       hasDomain_(0),
@@ -460,7 +462,7 @@ namespace Fd1d
    // Thermodynamic properties
  
    /*
-   * Compute Helmoltz free energy and pressure
+   * Compute Helmholtz free energy and pressure
    */
    void System::computeFreeEnergy()
    {
@@ -507,6 +509,7 @@ namespace Fd1d
          fHelmholtz_ -= 
                   domain().innerProduct(wFields_[i], cFields_[i]);
       }
+      fIdeal_ = fHelmholtz_;
 
       // Add average interaction free energy density per monomer
       int nx = domain().nx();
@@ -522,6 +525,7 @@ namespace Fd1d
          f_[i] = interaction().fHelmholtz(c_);
       }
       fHelmholtz_ += domain().spatialAverage(f_);
+      fInter_ = fHelmholtz_ - fIdeal_;
 
       // Compute pressure
       pressure_ = -fHelmholtz_;
@@ -640,11 +644,14 @@ namespace Fd1d
       out << "fHelmholtz    " << Dbl(fHelmholtz(), 18, 11) << std::endl;
       out << "pressure      " << Dbl(pressure(), 18, 11) << std::endl;
       out << std::endl;
+      out << "fIdeal        " << Dbl(fIdeal_, 18, 11) << std::endl;
+      out << "fInter        " << Dbl(fInter_, 18, 11) << std::endl;
+      out << std::endl;
 
       // Polymers
       int np = mixture().nPolymer();
       if (np > 0) {
-         out << "Polymers:" << std::endl;
+         out << "polymers:" << std::endl;
          out << "     "
              << "        phi         "
              << "        mu          " 
@@ -661,7 +668,7 @@ namespace Fd1d
       // Solvents
       int ns = mixture().nSolvent();
       if (ns > 0) {
-         out << "Solvents:" << std::endl;
+         out << "solvents:" << std::endl;
          out << "     "
              << "        phi         "
              << "        mu          " 
