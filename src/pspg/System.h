@@ -797,6 +797,21 @@ namespace Pspg
       double fHelmholtz_;
 
       /**
+      * Ideal gas contribution to fHelmholtz_. 
+      * 
+      * This encompasses the internal energy and entropy of 
+      * non-interacting free chains in their corresponding 
+      * potential fields defined by w_.
+      */
+      double fIdeal_;
+
+      /**
+      * Multi-chain interaction contribution to fHelmholtz_.
+      */
+      double fInter_;
+
+
+      /**
       * Pressure times monomer volume / kT.
       */
       double pressure_;
