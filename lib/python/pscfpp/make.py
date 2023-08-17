@@ -1,12 +1,233 @@
+'''! Python scripts used by the PSCF makefile build system. '''
+
 import os
 import os.path
 import glob
 from string import *
 
-from file_util   import *
-from readLabel   import *
-from makeDepend  import *
-from TextWrapper import *
+from pscfpp.file import *
+from pscfpp.text import *
+
+##
+# Create a *.d dependency file for a C/C++ source file.
+#
+# This command uses a compiler executable to analyze the dependencies of
+# a C/C++ source file in the src directory tree and creates a dependency 
+# file with an appropriate format for make in the analogous location in 
+# the bld directory tree. The function first executes a compiler command
+# to compute dependencies and then calls python function editDepend to 
+# edit the resulting file. The most important change made during editing 
+# is the replacement of relative paths output by the g++ compiler to the
+# absolute paths used in the PSCF build system.
+#
+# \param processor  compiler command to analyze dependencies (i.e., g++)
+# \param options  string of options passed to processor
+# \param cfile  path to source file
+# \param src  path to source directory tree (SRC_DIR in makefiles)
+# \param bld  path to bulkd directory tree (BLD_DIR in makefiles)
+# \param extraDependencies  string of additional known dependencies 
+#
+def createDependencyFileCpp(processor, options, cfile, srcdir, blddir, extraDependencies=''):
+
+   # Isolate base source file name 
+   base = os.path.basename(cfile)
+   groups = base.split('.')
+   base = groups[0]
+
+   # Calculate source file directory path relative to srcdir
+   abspath = os.path.abspath(cfile)
+   relpath = os.path.relpath(abspath, srcdir)
+   reldir  = os.path.dirname(relpath)
+
+   # Construct paths to subdirectories of build and src directories
+   if (reldir != '.' and reldir != ''):
+      blddir = os.path.normpath(os.path.join(blddir, reldir))
+      srcdir = os.path.normpath(os.path.join(srcdir, reldir))
+
+   # Construct paths to dependency files
+   # pfile - temporary file created by the compiler (erased)
+   # dfile - final dependnecy file
+   pfile = os.path.normpath(os.path.join(srcdir, base)) + '.p'
+   dfile = os.path.normpath(os.path.join(blddir, base)) + '.d'
+
+   # Create and execute compiler command to calculate dependencies
+   command = processor + ' '
+   command += pfile + ' '
+   command += options + ' '
+   command += cfile
+   #print command
+   os.system(command)
+
+   #Edit dependency file
+   editDepend(pfile, dfile, blddir, extraDependencies)
+   os.remove(pfile)
+
+
+##
+# Create a *.d dependency file for a CUDA source file.
+#
+# This command uses a compiler executable to analyze the dependencies of
+# a CUDA source file in the src directory tree and creates a dependency 
+# file with an appropriate format for make in the analogous location in 
+# the bld directory tree. The function first executes a compiler command
+# to compute dependencies and then calls python function editDependLocal 
+# to edit the resulting file. The most important change made during editing
+# is the replacement of relative paths output by the nvcc compiler to the
+# absolute paths used in the PSCF build system.
+#
+# \param processor  compiler command to analyze dependencies (i.e., g++)
+# \param options  string of options passed to processor
+# \param cfile  path to source file
+# \param src  path to source directory tree (SRC_DIR in makefiles)
+# \param bld  path to build directory tree (BLD_DIR in makefiles)
+# \param extraDependencies  string of additional known dependencies 
+#
+def createDependencyFileCuda(processor, options, cfile, srcdir, blddir, extraDependencies=''):
+
+   # Store unmodified srcdir
+   srcroot = srcdir
+
+   # Isolate base source file name 
+   base = os.path.basename(cfile)
+   groups = base.split('.')
+   base = groups[0]
+
+   # Calculate source file directory path relative to srcdir
+   abspath = os.path.abspath(cfile)
+   relpath = os.path.relpath(abspath, srcdir)
+   reldir  = os.path.dirname(relpath)
+
+   # Construct paths to subdirectories of build and src directories
+   if (reldir != '.' and reldir != ''):
+      blddir = os.path.normpath(os.path.join(blddir, reldir))
+      srcdir = os.path.normpath(os.path.join(srcdir, reldir))
+
+   # Construct paths to dependency files
+   # pfile - temporary file created by the compiler (erased)
+   # dfile - final dependnecy file
+   pfile = os.path.normpath(os.path.join(srcdir, base)) + '.p'
+   dfile = os.path.normpath(os.path.join(blddir, base)) + '.d'
+
+   # Create and execute compiler command to calculate dependencies
+   command = processor + ' '
+   command += options + ' '
+   command += cfile
+   command += ' > ' + pfile
+   #print command
+   os.system(command)
+
+   # Edit dependency file and remove temporary pfile
+   editDependLocal(pfile, dfile, blddir, srcroot, extraDependencies)
+   os.remove(pfile)
+
+
+##
+# Edit the dependency file created for a C/C++ file by the compiler.
+#
+# This function edits the dependency file created by the g++ or compatible
+# compiler so as to use absolute rather than relative paths, and so as to
+# include the extraDependencies string.
+#
+# \param pfile  input dependency file name
+# \param dfile  output dependency file name
+# \param blddir  path to build directory tree (BLD_DIR in makefiles)
+# \param extraDependencies  string of additional known dependencies 
+#
+def editDepend(pfile, dfile, blddir, extraDependencies):
+   file  = open(pfile, 'r')
+   lines = file.readlines()
+   file.close()
+
+   # Extract target from first line
+   groups   = lines[0].split(":")
+   target   = groups[0]
+   lines[0] = groups[1]
+
+   # Replace target by file in build directory
+   base = os.path.basename(target)
+   target = os.path.normpath(os.path.join(blddir, base))
+
+   # Replace dependencies by absolute paths
+   text = Wrapper('\\\n', 8)
+   for i in range(len(lines)):
+       line = lines[i]
+       if line[-1] == '\n':
+           line = line[:-1]
+       if line[-1] == '\\':
+           line = line[:-1]
+       lines[i] = line
+       if i == 0:
+           text.append(target + ': ')
+       deps = line.split()
+       for dep in deps:
+           path = os.path.abspath(dep)
+           text.append(path)
+
+   # Process extraDependencies (if any)
+   if extraDependencies:
+       deps = extraDependencies.split()
+       for dep in deps:
+          path = os.path.abspath(dep)
+          text.append(path)
+
+   file  = open(dfile, 'w')
+   file.write(str(text))
+   file.close()
+
+##
+# Edit the dependency file created for a CUDA file by the compiler.
+#
+# This function edits the dependency file created by the nvcc compiler for
+# a CUDA file so as to use absolute rather than relative paths, and so as 
+# to include the extraDependencies string.
+#
+# \param pfile  input dependency file name
+# \param dfile  output dependency file name
+# \param blddir  path to build directory tree (BLD_DIR in makefiles)
+# \param extraDependencies  string of additional known dependencies 
+#
+def editDependLocal(pfile, dfile, blddir, srcroot, extraDependencies):
+   file  = open(pfile, 'r')
+   lines = file.readlines()
+   file.close()
+
+   # Extract target from first line
+   groups   = lines[0].split(":")
+   target   = groups[0]
+   lines[0] = groups[1]
+
+   # Replace target by file in build directory
+   base = os.path.basename(target)
+   target = os.path.normpath(os.path.join(blddir, base))
+
+   # Replace local dependencies by absolute paths
+   text = Wrapper('\\\n', 8)
+   for i in range(len(lines)):
+       line = lines[i]
+       if line[-1] == '\n':
+           line = line[:-1]
+       if line[-1] == '\\':
+           line = line[:-1]
+       lines[i] = line
+       if i == 0:
+           text.append(target + ': ')
+       deps = line.split()
+       for dep in deps:
+           pair = [srcroot, dep]
+           if (os.path.commonprefix(pair) == srcroot):
+              path = os.path.abspath(dep)
+              text.append(path)
+
+   # Process extraDependencies (if any)
+   if extraDependencies:
+       deps = extraDependencies.split()
+       for dep in deps:
+          path = os.path.abspath(dep)
+          text.append(path)
+
+   file  = open(dfile, 'w')
+   file.write(str(text))
+   file.close()
 
 class MakeMaker:
 
@@ -163,7 +384,7 @@ class MakeMaker:
       else:
          prefix = self.dirname + '_'
       
-      wrapper = TextWrapper('\\\n', 4)
+      wrapper = Wrapper('\\\n', 4)
 
       # Write aggregate definition for SRCS
       wrapper.clear()
@@ -288,3 +509,4 @@ class MakeMaker:
          print x
       for x in self.dirs:
          print x + os.sep
+
