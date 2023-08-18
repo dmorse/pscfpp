@@ -1,5 +1,5 @@
 /*! \page user_unitcell_page Crystal Unit Cells
-\ref user_python_page   (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref user_example_page   (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
 \ref user_groups_page  (Next)
 <BR>
 
@@ -16,13 +16,13 @@ a crystal lattice, as discussed below:
    here by D, is a positive integer that gives the number coordinates along
    which the structure is periodic, e.g., D=1 for a lamellar phase,
    D=2 for hexagonally packed cylinders, or D=3 for a three dimensional
-   crystal such a BCC lattice.
+   crystal such a BCC lattice or a gyroid network.
 
 <em> Lattice system identifier </em>: The lattice system identifier is a
    string that names one of the allowed crystallographic lattice systems
    (e.g., cubic, orthorhombic, etc) for a crystal of the specified
    dimensionality.  The set of allowed values of this string identifier
-   is different for 1, 2, and 3 dimensional crystals.
+   is different for 1, 2, and 3 dimensional crystals, as discussed below.
 
 <em> Lattice parameters </em>: Values of the lattice parameters specify
    the size and shape of the unit cell by specifying values for the
@@ -36,42 +36,43 @@ specified by giving a single parameter, which is the length of any of
 the three orthogonal basis vectors, whereas 6 parameters (3 lengths and
 three angles) are required to describe a 3D triclinic lattice.  By
 convention, the required lattice parameters for each lattice system
-type are always listed in a specific order that is described below for
-each of the possible 1, 2 and 3 dimensional lattice systems.
+type are always listed in a specific order that is described below 
+for each of the possible 1, 2 and 3 dimensional lattice systems.
 
 These three different types of information are provided to a pscf_pc or
 pscf_pg program in different ways:
 
-<em> Spatial dimension </em>: Because the PSCF package requires the user
-to use different executable programs to simulate periodic systems of
-different dimensionality, it is not necessary for the user to explicitly
-specify the spatial dimensionality D of the crystal of interest. This is
-already known from the user's choice of an executable file name, such
-pscf_pc2 for a structure such as a 2D hexagonal lattice with dimensionality
-D=2, or pscf_pc3 for a fully three dimensional crystal with D=3.
+<em> Spatial dimension </em>: The PSCF package requires the user to use 
+different executable programs to simulate periodic systems of different 
+dimensionality, in which the value of the spatial dimension D appears
+as part of the executable name. For example, one must use pscf_pc3 or 
+pscf_pg3 to simulate a fully three dimensional crystal but pscf_pc1 or 
+pscf_pg1 for a 1D (lamellar) crystal. As a result, the value of the
+spatial dimension D is known at run time from the user's choice of 
+executable, and does not need to be specified in any input file. 
 
-<em> Lattice system identifier </em> : A string identifier for a lattice
-system is a required parameter in the parameter file format for all pscf_pc
-and pscf_pg programs. This identifier is given as the value of the parameter
-with the label "lattice" within the Domain block of the parameter file.
-The choice of lattice system that is specified in the parameter file
-cannot be changed during later stages of program execution. To perform
-calculations involving several different lattice systems, one must instead
-execute the relevant program or programs several times with different
-input parameter files.
+<em> Lattice system identifier </em> : The string identifier for a 
+lattice system is a required parameter in the parameter file format for 
+all pscf_pc and pscf_pg programs. This identifier is given as the value 
+of the parameter with the label "lattice" within the Domain block of the 
+parameter file.  The choice of lattice system that is specified in the 
+parameter file cannot be changed during later stages of program execution. 
+To perform calculations involving several different lattice systems, one 
+must instead execute the relevant program or programs several times with 
+different input parameter files.
 
 <em> Lattice parameters </em>: Values for the lattice parameters
 (i.e., lengths of the edges of the unit cell and angles between them) do
-not appear in the parameter file, but are instead normally provided within
+not appear in the parameter file, but are instead usually provided within
 an input field file that is read by the program. All of the field file
 formats used by pscf_pc and pscf_pg contain a file header that contains
-lattice system identifier and a list of lattice parameters. The lattice
-system identifier in the header of any field file read by the program
-must agree with that declared in the parameter file - the program will
-halt execution with an error message if they do not.  Users can also
-explicitly set or modify lattice parameter values by executing the
-SET_LATTICE_PARAMETERS command, which takes a list of lattice parameter
-values as command arguments.
+lattice system identifier and a list of values for lattice parameters. 
+The lattice system identifier in the header of any field file read by 
+the program must agree with that declared in the parameter file - the 
+program will halt execution with an error message if they do not. Users 
+can also explicitly set or modify lattice parameter values by executing 
+the SET_LATTICE_PARAMETERS command, which takes the lattice parameter 
+values as a list of command arguments.
 
 Allowed values of the lattice system identifier and conventions for the
 meaning and conventional order of required unit cell parameters for
@@ -232,7 +233,7 @@ systems, as discussed below:
 
 
 <BR>
-\ref user_python_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref user_example_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
 \ref user_page        (Up) &nbsp; &nbsp; &nbsp; &nbsp;
 \ref user_groups_page (Next)
 */

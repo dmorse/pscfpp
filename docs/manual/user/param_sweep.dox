@@ -377,8 +377,8 @@ entry is is given for the the second index.
 </table>
 The two indices for a Flory-Huggins chi parameter refer to indices in 
 the chi matrix maintained by Interaction. Changes to element chi(i, j) 
-automatically also update chi(j, i) for i !\ j, thus maintaining the 
-symmetry of the matrix.
+automatically also update chi(j, i) for \f$ i \neq j \f$, thus preserving
+the symmetry of the matrix.
 
 Parameters of type "cell_param" are only usable in simulations of 
 periodic structure performed using a pscf_pc or pscf_pg program, for

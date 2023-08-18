@@ -136,20 +136,40 @@ table:
 Comments:
 
   - Monomer types are implicitly assigned integer type identifiers in the
-    order in which they appear in the monomers array. We thus assign an
-    index 0 to the monomer type whose statistical segment length is given
-    as the first element in this array, and index 1 to the second, and so
-    on.  These integer monomer type indices are used to elsewhere in the
-    parameter file identify the monomer types associated with each block
-    of a block polymer and each solvent type.
+    order in which they appear in the monomers array, with indices that
+    start from 0. We thus assign an index 0 to the monomer type whose 
+    statistical segment length is given as the first element in this 
+    array, and index 1 to the second, and so on.  These integer monomer 
+    type indices are used to elsewhere in the parameter file identify the 
+    monomer types associated with each block of each block polymer and 
+    with each solvent species type.
 
-  - Polymer and Solvent species are also assigned integer labels in the
-    order in which Polymer and Solvent objects appear in the parameter
-    file.  The polymer species associated with the first Polymer in block
-    in the parameter file is thus assigned an index 0, the second is
-    assigned an index 1, etc.  Similarly, the first solvent species
-    associated with the first Solvent block (if any) is assigned an
-    index 0, etc.
+  - Polymer and solvent species are also assigned integer labels in the
+    order in which Polymer and Solvent subblocks appear in the parameter
+    file.  The polymer species described by the first Polymer block in 
+    the parameter file is thus assigned an index 0, the polymer described
+    by the second block is assigned an index 1, etc.  Similarly, the 
+    solvent species described by the first Solvent subblock (if any) is 
+    assigned an index 0, etc.
+
+  - The parameter nSolvent (the number of solvent species) may be zero, 
+    and is set to zero by default if the parameter does not appear in 
+    the parameter file, as noted above. The parameter nPolymer must, 
+    however, be greater than zero.  Correspondingly, the Mixture block
+    must always contains one or more Polymer subblocks and zero or more 
+    Solvent subblocks. 
+
+  - The parameter vMonomer is an optional parameter, and is usually absent
+    from parameter files for standard SCFT calculations. The reasons that
+    it may be neglected in such calculations have been discussed 
+    \ref user_model_vMonomer_sub "elsewhere".  Users are nonethelss given 
+    the option of providing a value for vMonomer because the choice of a
+    value for vMonomer can affect SCFT predictions for some optional
+    outputs of the pscf_fd program (e.g., the total excess free energy 
+    of a spherical micelle). It is also included as an optional parameter
+    because the value of vMonomer will be a required input parameter for 
+    stochastic field-theoretic simulations that will be implemented in 
+    future versions of PSCF. 
 
 <i> Technical comments (for users who examine the source code) </i>:
 
@@ -157,26 +177,29 @@ The source code for PCSF is defined within a C++ namespace named Pscf.
 This top-level namespace contains several enclosed sub-namespaces named
 Fd1d, Pspc, and Pspg that each contain code specific to a specific
 implementation of SCFT (i.e., a specific program or family of programs).
-We refer to these as implementation level namespaces. The segregation of
-code associated with different implementations allows the same name to
-be used for analogous classes in different implementations without name
-classes. When possible, identical or similar parameter file formats are
-used for the parameter blocks associated with analogous classes used
-in different implementations.
+We refer to these as implementation-level namespaces. This segregation 
+of code associated with different SCFT implementations into corresponding
+namespaces allows the same class name to be used for analogous classes 
+in different implementations without causing name clashes or ambiguity. 
+When possible, identical or similar parameter file formats are used for 
+the parameter blocks associated with analogous classes used in different 
+SCFT implementations.
 
-Each implementation-level namespace contain  a class or class template 
-named Mixture. There is a class named Mixture in the Fd1d namespace, 
-and Mixture<D> class templates in the Pspc and Pspg namespaces, where 
-D is the integer dimensionality of space. The mixture object in the 
-pscf_pc2 program for 2D periodic structures is an object of type 
-Mixture<2>, where the dimensionality of space is defined by the template
-parameter D=2.  All of the Mixture classes and class templates are 
-derived from an instance of a class template named Pscf::MixtureTmpl. 
+Each implementation-level namespace contains a class or class template 
+named Mixture. The Fd1d namespace contains a concrete class named Mixture. 
+The Pspc and Pspg namespaces each contain a class template Mixture<int D>, 
+in which the integer dimensionality of space D is a template parameter. 
+The mixture object used in the pscf_pc2 program for 2D periodic structures 
+is thus an instance of class Pscf::Mixture<2>, where the dimensionality 
+of space is specified by the template parameter D=2.  All of the Mixture 
+classes and class templates defined in implementation level namespaces are 
+derived from instances of a base class template named Pscf::MixtureTmpl. 
 All of these Mixture classes use the same parameter file format, which 
-is described above. Most of that format is defined in the readParameters 
-member function of the Pscf::MixtureTmpl base class template.
+is described above. Most of this format is defined in the member 
+function Pscf::MixtureTmpl::readParameters of the shared base class 
+template. 
 
-The array "monomers" is implemented internally as an array of instances of
+The array "monomers" is implemented internally as an array of instances of 
 the class Pscf::Monomer, as discussed \subpage pscf_Monomer_page "here".
 
 \section user_param_polymer_sec Polymer
@@ -418,7 +441,8 @@ implementation-level namespace (i.e., in the Fd1d, Pspc and Pspg
 sub-namespaces of Pscf). These classes are all use the same parameter
 file format, which is described above, and are all subclasses of a
 common base class named Pscf::SolventDescriptor. The function
-Pscf::SolventDescriptor::readParameters defines this file format.
+Pscf::SolventDescriptor::readParameters defines most of this file 
+format.
 
 <BR>
 \ref user_param_format_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
