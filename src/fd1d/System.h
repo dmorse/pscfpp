@@ -224,6 +224,61 @@ namespace Fd1d
       * \param filename name of output file
       */
       void writeBlockC(std::string  const & filename);
+      
+      /**
+      * Write slice of a propagator at fixed s in r-grid format.
+      *
+      * \param filename  name of output file
+      * \param polymerId  integer id of the polymer
+      * \param blockId  integer id of the block within the polymer
+      * \param directionId  integer id of the direction (0 or 1)
+      * \param segmentId  integer integration step index
+      */
+      void writeQSlice(std::string const & filename,
+                       int polymerId, int blockId,
+                       int directionId, int segmentId)  const;
+
+      /**
+      * Write the final slice of a propagator in r-grid format.
+      *
+      * \param filename  name of output file
+      * \param polymerId  integer id of the polymer
+      * \param blockId  integer id of the block within the polymer
+      * \param directionId  integer id of the direction (0 or 1)
+      */
+      void writeQTail(std::string const & filename, int polymerId,
+                      int blockId, int directionId)  const;
+
+      /**
+      * Write one propagator for one block, in r-grid format.
+      *
+      * \param filename  name of output file
+      * \param polymerId  integer id of the polymer
+      * \param blockId  integer id of the block within the polymer
+      * \param directionId  integer id of the direction (0 or 1)
+      */
+      void writeQ(std::string const & filename, int polymerId,
+                  int blockId, int directionId)  const;
+
+      /**
+      * Write all propagators of all blocks, each to a separate file.
+      *
+      * Write all propagators for both directions for all blocks
+      * of all polymers, with each propagator in a separate file.
+      * The function writeQ is called internally for each propagator,
+      * and is passed an automatically generated file name.  The file
+      * name for each propagator is given by a string of the form
+      * (basename)_(ip)_(ib)_(id), where (basename) denotes the value
+      * of the std::string function parameter basename, and where
+      * (ip), (ib), and (id) denote the string representations of
+      * a polymer indiex ip, a block index ib, and direction index id,
+      * with id = 0 or 1. For example, if basename == "out/q", then
+      * the file name of the propagator for direction 1 of block 2
+      * of polymer 0 would be "out/q_0_2_1".
+      *
+      * \param basename  common prefix for output file names
+      */
+      void writeQAll(std::string const & basename);
 
       #if 0
       /**
