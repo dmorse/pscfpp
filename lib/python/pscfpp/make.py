@@ -78,8 +78,8 @@ def createDependencyFileCpp(processor, options, cfile, srcdir, blddir, extraDepe
 # \param processor  compiler command to analyze dependencies (i.e., g++)
 # \param options  string of options passed to processor
 # \param cfile  path to source file
-# \param src  path to source directory tree (SRC_DIR in makefiles)
-# \param bld  path to build directory tree (BLD_DIR in makefiles)
+# \param srcdir  path to source directory tree (SRC_DIR in makefiles)
+# \param blddir  path to build directory tree (BLD_DIR in makefiles)
 # \param extraDependencies  string of additional known dependencies 
 #
 def createDependencyFileCuda(processor, options, cfile, srcdir, blddir, extraDependencies=''):
@@ -184,6 +184,7 @@ def editDepend(pfile, dfile, blddir, extraDependencies):
 # \param pfile  input dependency file name
 # \param dfile  output dependency file name
 # \param blddir  path to build directory tree (BLD_DIR in makefiles)
+# \param srcroot  path to source directory tree (SRC_DIR in makefiles)
 # \param extraDependencies  string of additional known dependencies 
 #
 def editDependLocal(pfile, dfile, blddir, srcroot, extraDependencies):
@@ -229,8 +230,21 @@ def editDependLocal(pfile, dfile, blddir, srcroot, extraDependencies):
    file.write(str(text))
    file.close()
 
+##
+# Class to construct makefile system for a set of source files.
+# 
+#
 class MakeMaker:
 
+   ##
+   # Constructor.
+   #
+   # \param  path  path from working directory
+   # \param  pathFromSrc  path to working directory from src directory
+   # \param  pathToSrc  path to src directory 
+   # \param  parent  parent MakeMaker object (for parent directory)
+   # \param  isTest  boolean flag, perform dry run if true
+   #
    def __init__(self, path = '.', pathFromSrc = '.', pathToSrc ='.', parent = None, isTest=False):
 
       self.path          = path         # path from working directory
