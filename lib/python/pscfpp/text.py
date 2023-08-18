@@ -143,6 +143,9 @@ class Record:
 #
 class RecordEditor:
 
+   ##
+   # Constructor.
+   #
    def __init__(self):
       self.hasFilter = False
       self.hasNew    = False
@@ -175,11 +178,20 @@ class RecordEditor:
       if self.hasFilter:
          self.isReady = True
 
+   ##
+   # Set isTest flag, to decide whether to perform a dry run.
+   #
+   # \param isTest  if true, perform a dry run (no modificatin)
+   #
    def setIsTest(self, isTest):
       self.isTest = isTest
 
+   ##
+   # Open and edit the specified file of records.
+   #
+   # \param filename  name of file
+   #
    def editFile(self, filename):
-     
       if (not self.isReady):
          print "RecordEditor is not ready"
          return
@@ -218,8 +230,6 @@ class RecordEditor:
 #  \return string after label
 #   
 def readLabelledLine(file, label):
-   ''' 
-   '''
    line = file.readline()
    groups = line.strip().split('=')
    if groups[0].strip() != label:
@@ -251,11 +261,6 @@ def readLabelledLine(file, label):
 #  \return list of space-delimited sub-strings that follow label
 #   
 def readLabelledList(file, label):
-   ''' 
-   Read a line of the form "label = <string>", in which the string after
-   the = sign contains several items separated by spaces, such as 
-   'a b c', return a list of the items, such as ['a', 'b', 'c'].
-   '''
    line = readLabelledLine(file, label)
    list = []
    if line != '':
@@ -296,7 +301,7 @@ class Grep:
       self.nFilter += 1
 
    ##
-   # Clear results list.
+   # Clear results list (but not filters)
    #
    def clearResults(self):
       for i in range(self.nFilter):
@@ -323,6 +328,7 @@ class Grep:
 # Class to substitute text in one or more files.
 #
 # String attributes:
+#
 #   - filter : a regex used to filter lines for possible editing
 #   - old : a regex pattern that should be replaced in lines 
 #   - new : the string that should replace the old string
@@ -354,7 +360,11 @@ class FileEditor:
    ##
    # Set the filter string.
    #
-   # \param filter the new filter string
+   # Set the regular expression used to identify lines for
+   # possible modification - lines that match the filter are
+   # checked for a sub-string that matches the "old" string.
+   #
+   # \param filter  the new "filter" string
    #
    def setFilter(self, filter):
       self.filter    = re.compile(filter)
@@ -365,7 +375,10 @@ class FileEditor:
    ##
    # Set the old string (the string to be replaced)
    #
-   # \param filter the new filter string
+   # The "old" string is replaced by the "new" string in lines that 
+   # match the "filter" string.
+   #
+   # \param old  the "old" string, to be replaced
    #
    def setOld(self, old):
       self.old    = old
@@ -376,7 +389,7 @@ class FileEditor:
    ##
    # Set the new string (the replacement string)
    #
-   # \param filter the new filter string
+   # \param new  the "new" string that replaces the old string
    #
    def setNew(self, new):
       self.new    = new
@@ -390,6 +403,8 @@ class FileEditor:
    # If isTest is true, the edit functions only perform a dry run 
    # in which they report what changes would be made if isTest were
    # false. 
+   #
+   # \param isTest  perform a dry run (no changes) if true (boolean)
    # 
    def setIsTest(self, isTest):
       self.isTest = isTest
@@ -475,10 +490,10 @@ class FileEditor:
          newfile.close()
   
    ##
-   # Edit all files in specified directory that match a filename pattern.
+   # Edit all files in specified directory that matches a pattern.
    #
-   # \param dirName name of directory (string)
-   # \param pattern filename pattern (string)
+   # \param dirName  name of directory (string)
+   # \param pattern  filename pattern (string)
    # 
    def editFiles(self, dirName, pattern):
       if (not self.isReady):
