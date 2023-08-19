@@ -13,6 +13,17 @@ programs are affected by specific changes:
   fd  - CPU finite difference code for 1D problems (pscf_fd)
   all - all programs (fd, pc, and pg)
 
+Version 1.1.0  (10/1/2023)
+==========================
+
+User-visible features
+---------------------
+* Python tools for parsing and editing PSCF input and output files
+* Python tool to process outputs from a parameter sweep
+
+Documentation
+-------------
+* Documentation of python tools added to web manual
 
 Version 1.0.3  (7/6/2023)
 =========================

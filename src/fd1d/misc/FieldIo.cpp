@@ -89,17 +89,42 @@ namespace Fd1d
          }
       }
    }
-
-   void FieldIo::writeFields(DArray<Field> const &  fields, 
-                             std::string const & filename)
+   
+   void FieldIo::writeField(Field const &  field, 
+                             std::string const & filename, bool writeHeader) const
    {
       std::ofstream out;
       fileMaster().openOutputFile(filename, out);
-      writeFields(fields, out);
+      writeField(field, out, writeHeader);
       out.close();
    }
 
-   void FieldIo::writeFields(DArray<Field> const & fields, std::ostream& out)
+   void FieldIo::writeField(Field const & field, std::ostream& out, bool writeHeader) const
+   {
+      int nx = field.capacity();
+      UTIL_CHECK(nx == domain().nx());
+      
+      if (writeHeader){
+         out << "nx     "  <<  nx              << std::endl;
+      }
+      // Write fields
+      int i;
+      for (i = 0; i < nx; ++i) {
+         out << "  " << Dbl(field[i], 18, 11);
+         out << std::endl;
+      }
+   }
+   
+   void FieldIo::writeFields(DArray<Field> const &  fields, 
+                             std::string const & filename, bool writeHeader)
+   {
+      std::ofstream out;
+      fileMaster().openOutputFile(filename, out);
+      writeFields(fields, out, writeHeader);
+      out.close();
+   }
+
+   void FieldIo::writeFields(DArray<Field> const & fields, std::ostream& out, bool writeHeader)
    {
       int nm = fields.capacity();
       UTIL_CHECK(nm > 0);
@@ -110,9 +135,10 @@ namespace Fd1d
             UTIL_CHECK(nx == fields[i].capacity());
          }
       }
-      out << "nx     "  <<  nx              << std::endl;
-      out << "nm     "  <<  nm              << std::endl;
-
+      if (writeHeader){
+         out << "nx     "  <<  nx              << std::endl;
+         out << "nm     "  <<  nm              << std::endl;
+      }
       // Write fields
       int i, j;
       for (i = 0; i < nx; ++i) {

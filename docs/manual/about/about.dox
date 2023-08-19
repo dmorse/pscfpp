@@ -99,6 +99,8 @@ Features that are common to all of the PSCF programs include:
 
   - A variety of examples, with complete input files
 
+  - Python tools for data analysis 
+
   - Thorough user and developer documentation
 
   - Open source code written in object oriented C++

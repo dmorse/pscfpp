@@ -41,10 +41,10 @@
 #           f.close()
 #
 #       A Thermo object can be written to a file by calling the 
-#       writeOut() method, passing in the string of the file name to 
+#       write() method, passing in the string of the file name to 
 #       which the Thermo should be written.
 #
-#           Example: t.writeOut('thermoOut')
+#           Example: t.write('thermoOut')
 #
 #   Accessing properties:
 #
@@ -142,17 +142,14 @@ class Thermo:
          constructor, with one argument:
             filename:
                the filename that needed to be read, default to be None
+      __str__(self):
+         return the string representation 
       read(self, openFile):
-         method to read the open Thermo file, openFile as the argument, line
-         by line and update the read items
+         open Thermo file openFile and update attributes of self
       skipEmptyLine(self, openFile):
-         method to skip the empty line read from the file, with openFile as
-         argument
-      writeOut(self, filename):
-         method to write out the stored Thermo file to a specific txt file
-         with the name of the argument filename
-      writeOutStirng(self):
-         return the string for writing out
+         skip an empty line read from file openFile 
+      write(self, filename):
+         write self to a file 
    '''
    def __init__(self, filename=None):
       self.fHelmholtz = None
@@ -230,11 +227,11 @@ class Thermo:
          line = openFile.readline()
       return line
 
-   def writeOut(self, filename):
+   def write(self, filename):
       with open(filename, 'w') as f:
-         f.write(self.writeOutString())
+         f.write(self.__str__())
 
-   def writeOutString(self):
+   def __str__(self):
       s = ''
       s += 'fHelmholtz'
       v = f'{self.fHelmholtz:.11e}'

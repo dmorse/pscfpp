@@ -42,6 +42,7 @@
    </li>
    <li> \subpage user_example_page   </li>
    <li> \subpage user_visualize_page </li>
+   <li> \subpage user_python_page </li>
    <li> \subpage user_unitcell_page  </li>
    <li> \subpage user_groups_page    </li>
    <li> \subpage user_thin_films_page </li>

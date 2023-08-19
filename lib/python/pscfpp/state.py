@@ -29,13 +29,13 @@
 #       execute the following code within a python3 interpreter: 
 #
 #           from pscfpp.state import *
-#           s = Composite('state')
+#           s = State('state')
 #
 #       A State object can be written to a file by calling the 
-#       writeOut() method, passing in the string of the file name to 
+#       write() method, passing in the string of the file name to 
 #       which the State should be written.
 #
-#           Example: s.writeOut('stateOut')
+#           Example: s.write('stateOut')
 #
 #   Accessing elements:
 #
@@ -76,7 +76,8 @@
 #
 # -----------------------------------------------------------------------
 
-import param, thermo
+import pscfpp.param as param
+from pscfpp.thermo import Thermo
 
 class State:
    '''
@@ -90,11 +91,11 @@ class State:
          the constructor of the State object for initiation, with one 
          argument: 
             filename, the filename that needed to be read, required
-      writeOut(self, filename):
+      __str__(self):
+         return the string for writing out
+      write(self, filename):
          method to write out the State object to a specific txt file 
          with name of the argument filename
-      writeOutString(self):
-         return the string for writing out
    '''
    def __init__(self, filename):
       with open(filename) as f:
@@ -104,15 +105,15 @@ class State:
             raise Exception('Not valid State file')
          else:
             self.param = param.Composite(f, 'System')
-            self.thermo = thermo.Thermo()
+            self.thermo = Thermo()
             self.thermo.read(f)
 
-   def writeOut(self, filename):
-      with open(filename) as f:
-         f.write(self.writeOutString())
-
-   def writeOutString(self):
-      out = self.param.writeOutString() + '\n' + self.thermo.writeOutString()
+   def __str__(self):
+      out = self.param.__str__() + '\n' + self.thermo.__str__()
       return out
+
+   def write(self, filename):
+      with open(filename) as f:
+         f.write(self.__str__())
 
 # End class State -------------------------------------------------------

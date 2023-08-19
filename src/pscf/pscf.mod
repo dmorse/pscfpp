@@ -1,5 +1,5 @@
 /**
-* Classes for polymer self-consistent field theory.
+* C++ namespace for polymer self-consistent field theory (PSCF).
 */
 namespace Pscf {}
 

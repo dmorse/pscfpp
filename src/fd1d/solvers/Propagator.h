@@ -141,6 +141,16 @@ namespace Fd1d
       * Return q-field at end of block.
       */
       QField const & tail() const;
+      
+      /**
+      * Number of values of s (or slices), including head and tail.
+      *
+      * The value of ns is the number of values of s at which q(r,s) is
+      * calculated, including the end values at the terminating vertices
+      * (the head and tail).  This is one more than the number of contour 
+      * variable steps. 
+      */
+      int ns() const;
 
       /**
       * Has memory been allocated for this propagator?
@@ -207,6 +217,12 @@ namespace Fd1d
       assert(blockPtr_);  
       return *blockPtr_; 
    }
+   
+   /*
+   * Get the number of counter grid points.
+   */
+   inline int Propagator::ns() const
+   {  return ns_; }
 
    /*
    * Associate this propagator with a block and direction

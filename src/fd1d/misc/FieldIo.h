@@ -70,7 +70,30 @@ namespace Fd1d {
       * \param filename  name of input file
       */
       void readFields(DArray<Field> &  fields, std::string const & filename);
+      
+      /**
+      * Write a single field (field on an r-space grid) to ostream.
+      *
+      * \pre Stream out must be open for writing. 
+      *
+      * \param Field  field defined on r-space grid
+      * \param out  output stream 
+      */
+      void writeField(Field const & field, std::ostream& out, bool writeHeader= true) const;
 
+      /**
+      * Write a single field (fields on an r-space grid) to a file
+      *
+      * This function uses the system FileMaster to opens and close a
+      * output file named filename.
+      *
+      * \param Field  field defined on r-space grid
+      * \param filename  output filename
+      * \param writeHeader  whether write header, default is true
+      */
+      void writeField(Field const &  field, 
+                      std::string const & filename, bool writeHeader= true) const;
+      
       /**
       * Write a set of fields, one per monomer type.
       *
@@ -79,7 +102,7 @@ namespace Fd1d {
       * \param fields  set of fields to written.
       * \param out  output stream 
       */
-      void writeFields(DArray<Field> const & fields, std::ostream& out);
+      void writeFields(DArray<Field> const & fields, std::ostream& out, bool writeHeader= true);
 
       /**
       * Write a set of fields, one per monomer type.
@@ -89,9 +112,10 @@ namespace Fd1d {
       *
       * \param fields  array of fields to read, indexed by monomer id
       * \param filename  output filename
+      * \param writeHeader  whether write header, default is true
       */
       void writeFields(DArray<Field> const &  fields, 
-                       std::string const & filename);
+                       std::string const & filename, bool writeHeader= true);
 
       /**
       * Write block concentration fields for all blocks.
