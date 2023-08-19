@@ -5,4 +5,8 @@ WRITE_C              out/c
 WRITE_W              out/w
 WRITE_PARAM          out/data
 WRITE_THERMO         out/data
+WRITE_Q          out/q000.rf  0 0 0
+WRITE_Q_SLICE    out/qSlice 0 0 0 0
+WRITE_Q_TAIL     out/qTail 0 0 0
+WRITE_Q_ALL      out/q
 FINISH

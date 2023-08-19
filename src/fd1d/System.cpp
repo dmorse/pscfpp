@@ -23,6 +23,7 @@
 #include <util/format/Int.h>
 #include <util/format/Dbl.h>
 #include <util/param/BracketPolicy.h>
+#include <util/misc/ioUtil.h>
 
 #include <string>
 #include <unistd.h>
@@ -327,6 +328,46 @@ namespace Fd1d
          if (command == "WRITE_C") {
             readEcho(inBuffer, filename);
             fieldIo_.writeFields(cFields(), filename);  
+         } else
+         if (command == "WRITE_Q_SLICE") {
+            int polymerId, blockId, directionId, segmentId;
+            readEcho(inBuffer, filename);
+            inBuffer >> polymerId;
+            inBuffer >> blockId;
+            inBuffer >> directionId;
+            inBuffer >> segmentId;
+            Log::file() << Str("polymer ID  ", 21) << polymerId << "\n"
+                        << Str("block ID  ", 21) << blockId << "\n"
+                        << Str("direction ID  ", 21) << directionId << "\n"
+                        << Str("segment ID  ", 21) << segmentId << std::endl;
+            writeQSlice(filename, polymerId, blockId, directionId, 
+                                  segmentId);
+         } else
+         if (command == "WRITE_Q_TAIL") {
+            readEcho(inBuffer, filename);
+            int polymerId, blockId, directionId;
+            inBuffer >> polymerId;
+            inBuffer >> blockId;
+            inBuffer >> directionId;
+            Log::file() << Str("polymer ID  ", 21) << polymerId << "\n"
+                        << Str("block ID  ", 21) << blockId << "\n"
+                        << Str("direction ID  ", 21) << directionId << "\n";
+            writeQTail(filename, polymerId, blockId, directionId);
+         } else
+         if (command == "WRITE_Q") {
+            readEcho(inBuffer, filename);
+            int polymerId, blockId, directionId;
+            inBuffer >> polymerId;
+            inBuffer >> blockId;
+            inBuffer >> directionId;
+            Log::file() << Str("polymer ID  ", 21) << polymerId << "\n"
+                        << Str("block ID  ", 21) << blockId << "\n"
+                        << Str("direction ID  ", 21) << directionId << "\n";
+            writeQ(filename, polymerId, blockId, directionId);
+         } else
+         if (command == "WRITE_Q_ALL") {
+            readEcho(inBuffer, filename);
+            writeQAll(filename);
          } else
          if (command == "WRITE_BLOCK_C") {
             readEcho(inBuffer, filename);
@@ -706,6 +747,111 @@ namespace Fd1d
       //UTIL_CHECK(hasCFields_);
       fieldIo_.writeBlockCFields(mixture_, filename);
    }
+   
+   /*
+   * Write the last time slice of the propagator in r-grid format.
+   */
+   void System::writeQSlice(const std::string & filename, 
+                            int polymerId, int blockId, 
+                            int directionId, int segmentId) 
+   const
+   {
+      UTIL_CHECK(polymerId >= 0);
+      UTIL_CHECK(polymerId < mixture_.nPolymer());
+      Polymer const& polymer = mixture_.polymer(polymerId);
+      UTIL_CHECK(blockId >= 0);
+      UTIL_CHECK(blockId < polymer.nBlock());
+      UTIL_CHECK(directionId >= 0);
+      UTIL_CHECK(directionId <= 1);
+      Propagator const & 
+           propagator = polymer.propagator(blockId, directionId);
+      Field const& field = propagator.q(segmentId);
+      fieldIo_.writeField(field, filename);
+   }
+
+   /*
+   * Write the last time slice of the propagator in r-grid format.
+   */
+   void System::writeQTail(const std::string & filename, 
+                           int polymerId, int blockId, int directionId)
+   const
+   {
+      UTIL_CHECK(polymerId >= 0);
+      UTIL_CHECK(polymerId < mixture_.nPolymer());
+      Polymer const& polymer = mixture_.polymer(polymerId);
+      UTIL_CHECK(blockId >= 0);
+      UTIL_CHECK(blockId < polymer.nBlock());
+      UTIL_CHECK(directionId >= 0);
+      UTIL_CHECK(directionId <= 1);
+      Field const& 
+            field = polymer.propagator(blockId, directionId).tail();
+      fieldIo_.writeField(field, filename);
+   }
+
+   /*
+   * Write the propagator for a block and direction.
+   */
+   void System::writeQ(const std::string & filename, 
+                       int polymerId, int blockId, int directionId)
+   const
+   {
+      UTIL_CHECK(polymerId >= 0);
+      UTIL_CHECK(polymerId < mixture_.nPolymer());
+      Polymer const& polymer = mixture_.polymer(polymerId);
+      UTIL_CHECK(blockId >= 0);
+      UTIL_CHECK(blockId < polymer.nBlock());
+      UTIL_CHECK(directionId >= 0);
+      UTIL_CHECK(directionId <= 1);
+      Propagator const& propagator 
+                              = polymer.propagator(blockId, directionId);
+      int nslice = propagator.ns();
+      
+      // Open file
+      std::ofstream file;
+      fileMaster_.openOutputFile(filename, file);
+
+      // Write header
+      file << "ngrid" << std::endl
+           << "          " << domain_.nx() << std::endl
+           << "nslice"    << std::endl
+           << "          " << nslice << std::endl;
+
+      // Write data
+      bool hasHeader = false;
+      for (int i = 0; i < nslice; ++i) {
+          file << "slice " << i << std::endl;
+          Field const& field = propagator.q(i);
+          fieldIo_.writeField(field, file, hasHeader);
+      }
+      file.close();
+   }
+
+   /*
+   * Write propagators for all blocks of all polymers to files.
+   */
+   void System::writeQAll(std::string const & basename)
+   {
+      std::string filename;
+      int np, nb, ip, ib, id;
+      np = mixture_.nPolymer();
+      for (ip = 0; ip < np; ++ip) {
+         nb = mixture_.polymer(ip).nBlock();
+         for (ib = 0; ib < nb; ++ib) {
+            for (id = 0; id < 2; ++id) {
+               filename = basename;
+               filename += "_";
+               filename += toString(ip);
+               filename += "_";
+               filename += toString(ib);
+               filename += "_";
+               filename += toString(id);
+               filename += ".rf";
+               writeQ(filename, ip, ib, id);
+            }
+         }
+      }
+   }
+
 
 } // namespace Fd1d
 } // namespace Pscf
