@@ -1,0 +1,14 @@
+Example SCFT calculation for a gyroid phase of diblock copolymer melt
+with minority block volume fraction f_A = 0.35 and chi N = 20.0.
+
+To run the example for a gyroid phase, enter:
+
+>  ./run
+
+or
+
+> ./pscf_pc3 -e -p param -c command
+
+To remove files created by a previous run, enter:
+
+> ./clean

@@ -1,3 +1,14 @@
-Enter:
+Simulation of a BCC phase of a diblock copolymer melt with f_a = 0.25
+and chi N = 20.
 
-pscf_pc3 -e -p param -c command
+To run the simulation, enter
+
+>  ./run
+
+or
+
+>  ./pscf_pc3 -e -p param -c command
+
+To remove files created by a previous run, enter:
+
+>  ./clean

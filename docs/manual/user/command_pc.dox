@@ -408,7 +408,7 @@ in the parameter file) but does appear in the input file. It also
 ignores values for coefficients of basis functions that appear in
 the input file but that do not exist in the current basis.
 
-*Technical note* :
+* *Technical note* :
 The symmetry-adapted basis used by the pscf_pc programs is normally
 created during the process of reading the first field file that that
 the program is instructed to read.  This basis is constructed immediately

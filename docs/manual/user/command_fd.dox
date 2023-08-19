@@ -78,6 +78,7 @@ SWEEP command would in any case only output information that describes
 the solution for the final state point of the sweep, for which s=1.
 
 \section user_command_fd_commands_sec Commands
+
 The following table shows a list of available commands for pscf_fd, along 
 with descriptions of any required parameters and the action initiated by 
 each command: 
@@ -156,16 +157,52 @@ each command:
     <td> Write monomer volume fraction (c) fields to file filename  </td>
   </tr>
   <tr> 
-    <td> WRITE_C_BLOCK </td>
+    <td> WRITE_BLOCK_C </td>
     <td> filename [string] </td>
     <td> Write volume fraction fields (c fields) for all individual polymer 
          blocks and solvent species to file filename.  </td>
   </tr>
+  <tr>
+    <td colspan="3" style="text-align:center">
+      \ref user_command_fd_qout_sec "Propagator Output"
+    </td>
+  </tr>
+  <tr>
+    <td> WRITE_Q_SLICE </td>
+    <td> filename [string], ip[int], ib[int], id[int], is[int] </td>
+    <td> Write a single "slice" of a propagator at fixed contour step
+         number is, for direction id (id=0 or 1), block number ib, and
+         polymer number ip to a file named filename. 
+    </td>
+  </tr>
+  <tr>
+    <td> WRITE_Q_TAIL </td>
+    <td> filename [string], ip[int], ib[int], id[int] </td>
+    <td> Write the final slice (or "tail") of the propagator for direction
+         id (id=0 or 1), block ib, and polymer ip to file filename. 
+    </td>
+  </tr>
   <tr> 
-    <td> WRITE_VERTEX_Q </td>
+    <td> WRITE_Q_VERTEX </td>
     <td> polymerId [int], vertexId [int], filename [string] </td>
-    <td> Write propagator (q) field to a file for a specified vertex
-         (vertexId) in a specified polymer (polymerId). </td>
+    <td> Write product of incoming propagators fields for a specified 
+         vertex (vertexId) in a specified polymer (polymerId) to file
+         filename.
+    </td>
+  </tr>
+  <tr>
+    <td> WRITE_Q </td>
+    <td> filename [string], ip[int], ib[int], id[int] </td>
+    <td> Write an entire propagator (all slices) for direction id (0 or 1), 
+         block ib, and polymer ip to a file named filename.  </td>
+  </tr>
+  <tr>
+    <td> WRITE_Q_ALL </td>
+    <td> basename [string] </td>
+    <td> Write all propagators for both directions of all blocks of all
+         polymers to separate files with automatically generated filenames
+         that begin with a common prefix given by the basename parameter.
+    </td>
   </tr>
   <tr> 
     <td colspan="3" style="text-align:center"> 
@@ -202,6 +239,8 @@ greater detail:
 
 \section user_command_fd_input_sec Field Input 
 
+\anchor user_command_fd_readw_sub 
+<b> READ_W </b>:
 The first command in a command file is usually a READ_W command, which 
 takes the name of an input file as an argument. This command reads an 
 initial guess for the chemical potential fields ("w fields") from the 
@@ -211,10 +250,12 @@ to the values read from this file.
 \section user_command_fd_computation_sec Computation 
 
 The COMPUTE, ITERATE and SWEEP commands each perform a computation that 
-requires an initial guess for the w fields as an input. Each of these 
+requires an initial value for all w fields as an input. Each of these 
 commands must thus be preceded by a READ_W command that initializes the 
 w fields.
 
+\anchor user_command_fd_compute_sub 
+<b> COMPUTE </b>:
 The COMPUTE command performs a computation of the single molecule 
 partition functions and monomer concentrations for a system of 
 non-interacting molecules subjected to the current w-fields.  This 
@@ -226,6 +267,8 @@ fields (c fields) associated with polymer blocks, solvent species and
 monomer types. The resulting c fields generally do not satisfy the 
 self-consistenct field conditions.
 
+\anchor user_command_fd_iterate_sub 
+<b> ITERATE </b>:
 The ITERATE command attempts to obtain a solution to the self-consistent 
 field equations for a fixed set of parameters by iteratively adjusting 
 the w fields.  The choice of iteration algorithm is specified by the 
@@ -233,6 +276,8 @@ Iterator block of the parameter file. Each iteration usually requires at
 least one calculation similar to that performed once by the COMPUTE 
 command. 
 
+\anchor user_command_fd_sweep_sub 
+<b> SWEEP </b>:
 THE SWEEP command attempts to solve the SCFT equations at a sequence of 
 points along a path through the space of possible choices of input 
 parameters. This command can only be invoked if the parameter file 
@@ -246,12 +291,14 @@ of the input parameters and computed thermodynamic properties associated
 with a single SCFT calculation. 
 
 \anchor user_command_fd_param_sub 
+<b> WRITE_PARAM </b>:
 The WRITE_PARAM writes a slightly modified copy of the parameter 
 file to a file whose name is given as a command parameter. 
 The version of the parameter file written by this command outputs
 the current values for all parameters, and excludes any Sweep block.
 
 \anchor user_command_fd_thermo_sub 
+<b> WRITE_THERMO </b>:
 The WRITE_THERMO command outputs a report of values for thermodynamic 
 properties obtained after solution of a SCFT problem. The resulting 
 report includes values for the 
@@ -279,29 +326,42 @@ WRITE_THERMO commands.
 The following commands can be used to output information about chemical
 potential and concentration fields after solving a SCFT problem.
 
-   - **WRITE_W** : Writes the current chemical potential fields 
-     (w fields) for all monomer types to an output file whose name
-     is specified as a command parameter.
+\anchor user_command_fd_writew_sub 
+<b> WRITE_W </b>:
+Writes the current chemical potential fields 
+(w fields) for all monomer types to an output file whose name
+is specified as a command parameter.
 
-   - **WRITE_C** : Writes the current volume fraction / concentration
-     fields for all monomer types to a specified output file. 
-
-   - **WRITE_C_BLOCK** : Writes the current volume fraction / concentration
-     fields for all polymer blocks and monomer species to a single file,
-     with the field associated with each block or solvent species written
-     in a different column. 
+\anchor user_command_fd_writec_sub 
+<b> WRITE_C </b>:
+Writes the current volume fraction / concentration
+fields for all monomer types to a specified output file. 
 
 \anchor user_command_fd_writecblock_sub 
-The information provided by the WRTIE_C_BLOCK command is different 
-than and more detailed than that provided by the WRITE_C command when
-applied to systems in which the same monomer type id is assigned to 
-two or more blocks (on the same or different polymers) and/or solvent 
-species.  The file output by this command contains a header section 
-identical to that contained in any pscf_fd field file, followed by a 
-data section.  The format of the data section file is analogous to that 
-of pscf_fd field file that contains one field per monomer type, except 
-that each polymer block and solvent species is treated as a separate 
-monomer type, and thus output in a separate column of the data section.  
+<b> WRITE_C_BLOCK </b>:
+Writes the current volume fraction / concentration fields for all 
+polymer blocks and monomer species to a single file, with the field 
+associated with each block or solvent species written in a different 
+column. 
+
+The information provided by the WRITE_BLOCK_C command is generally
+different than and more detailed than that provided by the WRITE_C 
+command. The difference becomes relevant if and only if both commands
+are applied to a system in which any monomer type id is assigned to 
+two or more blocks (on the same or different polymers) and/or 
+solvent species.  In this case, the WRITE_BLOCK_C list separate
+columns for concentrations arising from different blocks and/or 
+solvent types of the same monomer type, while WRITE_C only ouputs
+the total concentration for all monomers of that type.  
+
+The format of the file created WRITE_BLOCK_C is similar to that of 
+a field file created by WRITE_C.  The file contains with a header
+section identical to that contained in any pscf_fd field file, 
+followed by a data section.  The format of the data section file is 
+analogous to that of pscf_fd field file that contains one field per 
+monomer type, except that each polymer block and solvent species is 
+treated as a separate monomer type, and thus output in a separate 
+column of the data section.  
 
 Columns associated with blocks and species are output by the WRITE_C_BLOCK 
 command are listed from left to right in the same order that they appear 
@@ -310,20 +370,151 @@ first (i.e., to the left), followed by columns associated with solvent
 species.  Columns associated with blocks of the same polymer appear 
 sequentially in order of increasing block id, while groups of columns 
 associated with different polymer species appear in order of increasing 
-polymer id.  Columns associated with solvent species appear after polymer 
-blocks, listed left to right in order of increasing polymer id. 
+polymer id.  Columns associated with solvent species appear after all
+polymer blocks, listed left to right in order of increasing solvent
+species id. 
+
+\section user_command_fd_qout_sec Propagator Output
+
+In the inner loop of a SCFT calculation, a modified diffusion equation
+(MDE) is solved within every block of every polymer to obtain a set of
+so-called propagator functions. Each polymer block has two associated
+propagator functions, each associated with one of the two directions
+in which the block can be traversed.  Each propagator function
+\f$ q({\bf r}, s) \f$ is a function of position \f$ {\bf r} \f$ and a
+contour variable \f$ s \f$ measured within a block as a contour distance
+from the vertex at which the propagator originates.  Each such propagator
+function is associated with a particular direction (identified by index
+id = 0 or 1), a particular block (block index ib), and a particular
+polymer (polymer index ip).  We refer to the function of position alone
+that is obtained by evaluating a propagator at a fixed value of \f$ s \f$
+as a "slice".  Because the MDE for each such propagator is computed
+numerically at evenly spaced values of \f$ s \f$, a computationally
+accessible slice may be identified by a integer contour step index
+\f$ is \f$ that is equal to zero at the vertex at which the propagator
+originates, and increases with increasing distance \f$ s \f$ from that
+vertex.
+
+The pscf_fd programs accept several commands that output propagators
+and propagator slices to one or more files. The names for these commands
+start with a string "WRITE_Q", followed by a suffix that describes what
+information is output by invoking the command. All of these commands take
+a filename string as a parameter, and all but one of them take values of
+several integer indices needed to identify a particular propagator or
+slice.
+
+All of these commands use file formats that report values of slices 
+on the nodes of the regular real-space grid that is used internally in
+computations, analogous to the r-grid file format for w and c fields.
+The file format always starts with a header section identical to that
+of an r-grid field file, followed by a data section in which the values
+of each slice are output in a format analogous to that of a r-grid
+field file for a system with only one monomer type, in which all values
+are output in a single column, with nodes listed in the same order as
+in an r-grid field file.
+
+\anchor user_command_fd_writeqslice_sub 
+<b> WRITE_Q_SLICE </b>:
+The command WRITE_Q_SLICE write the values of a propagator slice at
+a specified contour variable index \f$ is \f$ to an output file.
+This command named must be followed by the name of the output file,
+and values for the polymer index \f$ ip \f$, the block index \f$ ib \f$
+and the direction index \f$ id \f$, in that order.
+The data section for output by this function is the same as that of
+an r-grid field file for a system with one monomer type.
+
+\anchor user_command_fd_writeqtail_sub 
+<b> WRITE_Q_TAIL </b>:
+The command WRITE_Q_TAIL write the values of a propagator slice at a
+value of \f$ s \f$ equal to the length of the block, corresponding to
+the slice evaluated at the vertex at which the propagator terminates.
+This command named must be followed by the name of the output file, and
+values for the polymer index \f$ ip \f$ and the block index \f$ ib \f$,
+in that order.  The resulting output file has the same format as that
+used by WRITE_Q_SLICE.
+
+Users may instead output the value of slice of a propagator
+corresponding to the vertex at which it originates (i.e., the propagator
+"head" rather than "tail"), by invoking WRITE_Q_SLICE with a contour
+variable index \f$ is = 0 \f$, corresponding to a contour variable
+\f$ s = 0 \f$,
+
+\anchor user_command_fd_writeqvertex_sub 
+<b> WRITE_Q_VERTEX </b>:
+The command WRITE_Q_VERTEX writes values of the point-wise product of all 
+incoming propagators at a specific vertex of a specific polymer species. 
+This command named must be followed by the name of the output file, and 
+values for the polymer index \f$ ip \f$ and vertex index \f$ iv \f$.
+Vertex indices for a n-block linear block polymer are labelled from 0 
+from one end, with vertices 0 and n representing the chain ends. The 
+resulting output file has the same format as that used by WRITE_Q_SLICE 
+and WRITE_Q_TAIL commands.  The resulting field is proportional to the 
+probability density for the location of the specified vertex. The spatial 
+average of this field should have the same value for any vertex, within 
+numerical error, and is equal to the molecular partitition function 
+\f$ Q \f$ for a molecule of type \f$ ip \f$.
+
+\anchor user_command_fd_writeq_sub 
+<b> WRITE_Q </b>:
+The command WRITE_Q writes all slices of a specified propagator to a
+single file.  This command name must be followed by the name of the
+output file and values for the polymer index \f$ ip \f$ and block
+index \f$ ib \f$, in that order.
+
+The output file produced by this command contains a header section
+followed by a sequence of data sections, in which each data section
+contains the data for a single slice at an integer value of the countour
+variable index. Data sections are listed in order of increasing countour
+variable index. The header section is similar to that of an r-grid file,
+except for the addition of line at the end that contain the word "nslice"
+followed by the value of the number of slices.  Each data section begins
+with a line containing the word "slice" followed by value of the contour
+variable index for the slice represented by that section. The value of
+the slice index ranges from 0 for the first slice (the "head") to
+nslice - 1 for the last (the "tail"). The format of the remainder of 
+each data section is the same as that of the data section of an r-grid 
+field file for a system containing one monomer type, which consists of 
+a single column of numbers containing the values of the associated 
+propagator slice on the nodes of the regular spatial mesh used throughout 
+the computation.
+
+<em> Comment for readers who read the source code </em>: This command 
+calls the function Fd1d::System::writeQ, which defines the output 
+format, and is defined in the C++ file src/fd1d/System.cpp.
+
+\anchor user_command_fd_writeqall_sub 
+<b> WRITE_Q_ALL </b>:
+The command WRITE_Q_ALL writes all slices of every propagator of every
+polymer to a set of files, with all the slices of each propagator
+written to a single file, but different propagators output in different
+files.  This command name must be followed by the value of a string
+parameter "basename" that contains a common prefix for the names of
+the resulting file set of output files.
+
+Each of files created by this command has the same format as that of
+a file created by the \ref user_command_fd_writeq_sub "WRITE_Q" command.
+The name of the file containing the propagator associated with polymer
+ip, block ib, and direction id is given by a string of the form
+(basename)_(ip)_(ib)_(id).rf, where (basename) denotes the value of
+the basename command parameter, and where (ip), (ib), and (id) denote
+string representations of the values of the non-negative integers ip,
+ib, and id. Thus, for example, if the command is passed a basename
+parameter out/q, then the file out/q_0_2_1.rf will contain all slices
+of the propagator associated with polymer 0, block 2 and direction 1.
 
 \section user_command_fd_mesh_sec Mesh Manipulation
 
 The REMESH_W and EXTEND_W can be used to change the mesh used to 
 define a problem, by changing resolution or extending the domain.
 
+<b> REMESH_W </b>:
 The REMESH_W command allows a user to change the discretization 
 of the existing domain by writing a file that contains the current 
 w fields interpolated onto a mesh with a modified number of grid 
 points. The command takes the number nx of grid points of the new
 mesh and the name of the output file as parameters.
 
+<b> EXTEND_W </b>:
 The EXTEND_W command allows a user to extend the domain of the
 solution by adding new points with field values that are simply 
 copies of the values of w fields at the last grid point. The 
@@ -332,6 +523,7 @@ the output file as parameters.
 
 \section user_command_fd_comparison_sec Compare to Homogeneous Reference 
 
+<b> COMPARE_HOMOGENEOUS </b>:
 The COMPARE_HOMOGENEOUS command computes differences between properties 
 of an inhomogeneous system of interest, as predicted by SCFT, and those 
 of an homogeneous reference system. The command takes an integer mode 

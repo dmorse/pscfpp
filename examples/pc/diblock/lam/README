@@ -1,3 +1,14 @@
-Enter:
+Simple SCFT calculation for a lamellar phase of a slightly asymmetric
+diblock copolymer with f_A = 0.56 and chi N = 12.0
+
+To run the simulation, enter:
+
+> ./run
+
+or
 
 pscf_pc1 -e -p param -c command
+
+To remove files created by a previous run, enter:
+
+> ./clean

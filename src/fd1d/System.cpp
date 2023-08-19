@@ -311,6 +311,20 @@ namespace Fd1d
             // through parameter space.
             sweep();
          } else
+         if (command == "WRITE_PARAM") {
+            readEcho(inBuffer, filename);
+            std::ofstream file;
+            fileMaster().openOutputFile(filename, file);
+            writeParam(file);
+            file.close();
+         } else
+         if (command == "WRITE_THERMO") {
+            readEcho(inBuffer, filename);
+            std::ofstream file;
+            fileMaster().openOutputFile(filename, file, std::ios_base::app);
+            writeThermo(file);
+            file.close();
+         } else
          if (command == "COMPARE_HOMOGENEOUS") {
             int mode;
             inBuffer >> mode;
@@ -328,6 +342,10 @@ namespace Fd1d
          if (command == "WRITE_C") {
             readEcho(inBuffer, filename);
             fieldIo_.writeFields(cFields(), filename);  
+         } else
+         if (command == "WRITE_BLOCK_C") {
+            readEcho(inBuffer, filename);
+            fieldIo_.writeBlockCFields(mixture_, filename);  
          } else
          if (command == "WRITE_Q_SLICE") {
             int polymerId, blockId, directionId, segmentId;
@@ -354,6 +372,20 @@ namespace Fd1d
                         << Str("direction ID  ", 21) << directionId << "\n";
             writeQTail(filename, polymerId, blockId, directionId);
          } else
+         if (command == "WRITE_Q_VERTEX") {
+            int polymerId, vertexId;
+            inBuffer >> polymerId;
+            Log::file() << std::endl;
+            Log::file() << "polymerId = " 
+                        << Int(polymerId, 5) << std::endl;
+            inBuffer >> vertexId;
+            Log::file() << "vertexId  = " 
+                        << Int(vertexId, 5) << std::endl;
+            inBuffer >> filename;
+            Log::file() << "outfile   = " 
+                        << Str(filename, 20) << std::endl;
+            fieldIo_.writeVertexQ(mixture_, polymerId, vertexId, filename);  
+         } else
          if (command == "WRITE_Q") {
             readEcho(inBuffer, filename);
             int polymerId, blockId, directionId;
@@ -368,38 +400,6 @@ namespace Fd1d
          if (command == "WRITE_Q_ALL") {
             readEcho(inBuffer, filename);
             writeQAll(filename);
-         } else
-         if (command == "WRITE_BLOCK_C") {
-            readEcho(inBuffer, filename);
-            fieldIo_.writeBlockCFields(mixture_, filename);  
-         } else
-         if (command == "WRITE_PARAM") {
-            readEcho(inBuffer, filename);
-            std::ofstream file;
-            fileMaster().openOutputFile(filename, file);
-            writeParam(file);
-            file.close();
-         } else
-         if (command == "WRITE_THERMO") {
-            readEcho(inBuffer, filename);
-            std::ofstream file;
-            fileMaster().openOutputFile(filename, file, std::ios_base::app);
-            writeThermo(file);
-            file.close();
-         } else
-         if (command == "WRITE_VERTEX_Q") {
-            int polymerId, vertexId;
-            inBuffer >> polymerId;
-            Log::file() << std::endl;
-            Log::file() << "polymerId = " 
-                        << Int(polymerId, 5) << std::endl;
-            inBuffer >> vertexId;
-            Log::file() << "vertexId  = " 
-                        << Int(vertexId, 5) << std::endl;
-            inBuffer >> filename;
-            Log::file() << "outfile   = " 
-                        << Str(filename, 20) << std::endl;
-            fieldIo_.writeVertexQ(mixture_, polymerId, vertexId, filename);  
          } else
          if (command == "REMESH_W") {
             int nx;
@@ -845,13 +845,12 @@ namespace Fd1d
                filename += toString(ib);
                filename += "_";
                filename += toString(id);
-               filename += ".rf";
+               //filename += ".q";
                writeQ(filename, ip, ib, id);
             }
          }
       }
    }
-
 
 } // namespace Fd1d
 } // namespace Pscf

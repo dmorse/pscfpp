@@ -1,3 +1,13 @@
+Simulation of one period of a lamellar phase of a melt of symmetric
+diblock copolymers with chi N = 20.
+
+Different "run" scripts run examples that use different parameter 
+files that initialize different iterators:
+
+./run    : run scft with Anderson-Mixing iterator   (AmIterator - default)
 ./run_nr : run scft with Newton-Raphson iterator    (NrIterator)
-./run_am : run scft with Anderson-Mixing iterator   (AmIterator)
 ./run_br : run scft with simple relaxation iterator (BinaryRelaxIterator)
+
+The parameter files param_am, param_nr, and param_br are used in scripts
+run, run_nr and run_br, respectively. All three examples use the same 
+command file. 
