@@ -79,8 +79,6 @@ namespace Pspg
       */
       void readHeader();
       
-      void readFieldsRGrid(std::istream &in, DArray<RField<D> >& fields);
-
    protected:
       /**
       * Allocate memory required by trajectory reader

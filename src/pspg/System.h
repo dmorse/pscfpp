@@ -649,6 +649,11 @@ namespace Pspg
       * Get Domain by const reference.
       */
       Domain<D> const & domain() const;
+      
+      /**
+      * Get Domain by nonconst reference.
+      */
+      Domain<D> & domain();
 
       /**
       * Get the iterator by reference.
@@ -928,6 +933,11 @@ namespace Pspg
 
    template <int D>
    inline Domain<D> const & System<D>::domain() const
+   { return domain_; }
+   
+   // Get the Domain by nonconst reference.
+   template <int D>
+   inline Domain<D> & System<D>::domain() 
    { return domain_; }
 
    template <int D>
