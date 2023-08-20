@@ -56,7 +56,6 @@ namespace Pspg {
    void McSimulator<D>::readParameters(std::istream &in)
    {
       // Read block of mc move data inside
-      readParamComposite(in, mcMoveManager_);
       // Read block of analyzer
 
       // Allocate projected chi matrix chiP_ and associated arrays
@@ -120,7 +119,7 @@ namespace Pspg {
 
       // Output how many times MDE has been solved for the simulation run
       Log::file() << std::endl;
-      Log::file() << "MDE counter   " << system().compressor().counterMDE()<< std::endl;
+      //Log::file() << "MDE counter   " << system().compressor().counterMDE()<< std::endl;
       Log::file() << std::endl;
       
       // Output time for the simulation run
@@ -143,18 +142,6 @@ namespace Pspg {
            << setw(12) << right << "Accepted"
            << setw(15) << right << "AcceptRate"
            << endl;
-      int nMove = mcMoveManager_.size();
-      for (int iMove = 0; iMove < nMove; ++iMove) {
-         attempt = mcMoveManager_[iMove].nAttempt();
-         accept  = mcMoveManager_[iMove].nAccept();
-         Log::file() << setw(32) << left
-              << mcMoveManager_[iMove].className()
-              << setw(12) << right << attempt
-              << setw(12) << accept
-              << setw(15) << fixed << setprecision(6)
-              << ( attempt == 0 ? 0.0 : double(accept)/double(attempt) )
-              << endl;
-      }
       Log::file() << endl;
 
    }
@@ -292,12 +279,13 @@ namespace Pspg {
       
       // Compute field contribution HW
       double HW = 0.0;
+      double prefactor;
       // Compute quadratic field contribution to HW
-      for (j = 0; j < nMonomer - 1; ++j) {
+      for (int j = 0; j < nMonomer - 1; ++j) {
          prefactor = -0.5*double(nMonomer)/chiEvals_[j];
          double wSqure = 0;
          wSqure = (double)gpuInnerProduct(wc_[j].cDField(), wc_[j].cDField(), meshSize);
-         HW += prefactor * wSqure
+         HW += prefactor * wSqure;
       }
       
       // Subtract average of Langrange multiplier field
@@ -467,17 +455,17 @@ namespace Pspg {
    {
       const int nMonomer = system().mixture().nMonomer();
       const int meshSize = system().domain().mesh().size();
-      int i, j, k;
+      int j, k;
       // GPU resources
       int nBlocks, nThreads;
-      ThreadGrid::setThreadsLogical(nMesh, nBlocks, nThreads);
+      ThreadGrid::setThreadsLogical(meshSize, nBlocks, nThreads);
 
       DArray<RDField<D>> const * currSys = &system().w().rgrid();
       // Loop over eigenvectors (j is an eigenvector index)
       for (j = 0; j < nMonomer; ++j) {
          // Loop over grid points to zero out field wc_[j]
          RDField<D>& wc = wc_[j];
-         assignUniformReal<<<nBlocks, nThreads>>>(wc.cDField(), 0, n);
+         assignUniformReal<<<nBlocks, nThreads>>>(wc.cDField(), 0, meshSize);
          // Loop over monomer types (k is a monomer index)
          for (k = 0; k < nMonomer; ++k) {
             cudaReal vec;
@@ -490,8 +478,7 @@ namespace Pspg {
       
       // Debugging output
       std::string filename = "wc";
-      system().fieldIo.writeFieldsRGrid(filename, wc_, system().domain().UnitCell())
-
+      system().fieldIo.writeFieldsRGrid(filename, wc_, system().domain().UnitCell());
       hasWC_ = true;
    }
    
