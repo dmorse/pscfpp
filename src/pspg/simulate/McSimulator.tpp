@@ -472,7 +472,7 @@ namespace Pspg {
             vec = (cudaReal)chiEvecs_(j, k)/nMonomer;
             // Loop over grid points
             pointWiseAddScale<<<nBlocks, nThreads>>>
-               (wc.cDField(), (*currSys)[k].cDField()), vec, meshSize);
+               (wc.cDField(), (*currSys)[k].cDField(), vec, meshSize);
          }
       }
       
