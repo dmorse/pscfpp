@@ -1,4 +1,5 @@
 pspg_simulate_= \
+  pspg/simulate/McSimulator.cu \
   pspg/simulate/McState.cu 
   
   
