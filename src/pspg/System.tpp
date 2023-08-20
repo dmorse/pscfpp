@@ -383,7 +383,7 @@ namespace Pspg
             fieldIo().writeFieldsRGrid(filename, c_.rgrid(), 
                                        domain_.unitCell());
          } else
-         if (command == "WRITE_C_BLOCK_RGRID") {
+         if (command == "WRITE_BLOCK_C_RGRID") {
             readEcho(in, filename);
             writeBlockCRGrid(filename);
          } else
