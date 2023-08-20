@@ -4,7 +4,7 @@
 #include "McMoveFactory.h"  
 
 // Subclasses of McMove 
-//#include "RealMove.h"
+#include "RealMove.h"
 
 
 namespace Pscf {
@@ -32,12 +32,11 @@ namespace Pspg {
       ptr = trySubfactories(className);
       if (ptr) return ptr;
 
-      #if 0
       // Try to match classname
       if (className == "RealMove") {
          ptr = new RealMove<D>(*mcSimulatorPtr_);
       } 
-      
+      #if 0
       else if (className == "FourierMove") {
          ptr = new FourierMove<D>(*mcSimulatorPtr_);
       }
