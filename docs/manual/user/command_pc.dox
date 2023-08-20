@@ -172,7 +172,7 @@ command or a group of closely related commands.
          in r-grid format  </td>
   </tr>
   <tr>
-    <td> \ref user_command_pc_writecblock_sub "WRITE_C_BLOCK_RGRID" </td>
+    <td> \ref user_command_pc_writeblockc_sub "WRITE_BLOCK_C_RGRID" </td>
     <td> filename [string] </td>
     <td> Write volume fraction fields (c fields) for all individual polymer
          blocks and solvent species to file filename, in r-grid format. </td>
@@ -594,13 +594,13 @@ modified by iteration algorithms that maintain space group symmetry.
 Symmetry is assumed to exist for c fields only if the c fields were
 computed from w fields that are known to be symmetric.
 
-\anchor user_command_pc_writecblock_sub
-<b> WRITE_C_BLOCK_RGRID </b>:
-The WRITE_C_BLOCK_RGRID command outputs the current volume fraction
+\anchor user_command_pc_writeblockc_sub
+<b> WRITE_BLOCK_C_RGRID </b>:
+The WRITE_BLOCK_C_RGRID command outputs the current volume fraction
 fields (c-fields) for all blocks of all polymers and for all solvent
 species r-grid format as separate fields within a single file. The
 resulting file has a data section analogous to that produced by the
-\ref user_command_fd_writecblock_sub "WRITE_C_BLOCK" command of
+\ref user_command_pc_writeblockc_sub "WRITE_BLOCK_C" command of
 the pscf_fd program.  The resulting file contains a header section
 identical to that contained in any r-grid field file, followed by a
 data section.  The format of the data section is similar to that of
@@ -609,7 +609,7 @@ that each polymer block and solvent species is treated as a separate
 monomer type, and thus output in a separate column of the data
 section.  Blocks and solvent species are output in the order in which
 they appear within the parameter file, as in the output of the
-\ref user_command_fd_writecblock_sub "WRITE_C_BLOCK" command of the
+\ref user_command_fd_writeblockc_sub "WRITE_BLOCK_C" command of the
 pscf_fd program.
 
 \section user_command_pc_qout_sec Propagator Output
