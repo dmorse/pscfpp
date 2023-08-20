@@ -63,84 +63,93 @@ namespace Fd1d {
       /**
       * Read a set of fields, one per monomer type.
       *
-      * This function uses the system FileMaster to opens and close a
-      * input file named filename.
+      * This function uses the associated FileMaster to open an input
+      * file named filename before reading, and closes the file after
+      * reading.
       *
       * \param fields  array of fields to read, indexed by monomer id.
       * \param filename  name of input file
       */
-      void readFields(DArray<Field> &  fields, std::string const & filename);
+      void readFields(DArray<Field>& fields, std::string const& filename);
       
       /**
-      * Write a single field (field on an r-space grid) to ostream.
+      * Write a single field to an output stream.
       *
       * \pre Stream out must be open for writing. 
       *
-      * \param Field  field defined on r-space grid
-      * \param out  output stream 
+      * \param field  field defined on r-space grid (input)
+      * \param out  output stream
+      * \param writeHeader  write file header iff this bool is true
       */
-      void writeField(Field const & field, std::ostream& out, bool writeHeader= true) const;
+      void writeField(Field const& field, std::ostream& out, 
+                      bool writeHeader = true) const;
 
       /**
-      * Write a single field (fields on an r-space grid) to a file
+      * Write a single field to a file.
       *
-      * This function uses the system FileMaster to opens and close a
-      * output file named filename.
+      * This function uses the associated FileMaster to open an output
+      * file named filename before writing, and closes the file after
+      * writing.
       *
-      * \param Field  field defined on r-space grid
+      * \param field  field defined on r-space grid (input)
       * \param filename  output filename
-      * \param writeHeader  whether write header, default is true
+      * \param writeHeader  write file header iff this bool is true
       */
-      void writeField(Field const &  field, 
-                      std::string const & filename, bool writeHeader= true) const;
+      void writeField(Field const&  field, std::string const& filename, 
+                      bool writeHeader= true) const;
       
       /**
-      * Write a set of fields, one per monomer type.
+      * Write a set of fields, one per monomer type, to an output stream.
       *
       * \pre Stream out must be open for writing. 
       *
       * \param fields  set of fields to written.
       * \param out  output stream 
+      * \param writeHeader  write file header iff this bool is true
       */
-      void writeFields(DArray<Field> const & fields, std::ostream& out, bool writeHeader= true);
+      void writeFields(DArray<Field> const& fields, std::ostream& out, 
+                       bool writeHeader= true);
 
       /**
-      * Write a set of fields, one per monomer type.
+      * Write a set of fields, one per monomer type, to a named file.
       *
-      * This function uses the system FileMaster to opens and close a
-      * output file named filename.
+      * This function uses the associated FileMaster to open an output
+      * file named filename before writing, and closes the file after
+      * writing.
       *
       * \param fields  array of fields to read, indexed by monomer id
       * \param filename  output filename
-      * \param writeHeader  whether write header, default is true
+      * \param writeHeader  write header iff this bool is true
       */
-      void writeFields(DArray<Field> const &  fields, 
-                       std::string const & filename, bool writeHeader= true);
+      void writeFields(DArray<Field> const&  fields, 
+                       std::string const& filename, bool writeHeader= true);
 
       /**
-      * Write block concentration fields for all blocks.
+      * Write block concentration fields for all blocks to an output stream.
       *
       * \pre Stream out must be open for writing. 
       *
       * \param mixture  associated Mixture MDE solver object
       * \param out  output stream 
       */
-      void writeBlockCFields(Mixture const & mixture, std::ostream& out);
+      void writeBlockCFields(Mixture const& mixture, std::ostream& out);
 
       /**
-      * Write block concentration fields for all blocks.
+      * Write block concentration fields for all blocks to a named file.
       *
-      * This function uses the system FileMaster to opens and close a
-      * output file named filename.
+      * This function uses the associated FileMaster to open an output
+      * file named filename before writing, and closes the file after
+      * writing.
+      *
       *
       * \param mixture  associated Mixture MDE solver object
       * \param filename name of output file
       */
-      void writeBlockCFields(Mixture const & mixture,
-                             std::string const & filename);
+      void writeBlockCFields(Mixture const& mixture,
+                             std::string const& filename);
 
       /**
-      * Write incoming q fields for a specified vertex.
+      * Write product of incoming q fields for one vertex to stream.
       *
       * \pre Stream out must be open for writing. 
       *
@@ -149,7 +158,7 @@ namespace Fd1d {
       * \param vertexId  integer id of vertex (end or junction)
       * \param out  output stream 
       */
-      void writeVertexQ(Mixture const & mixture,
+      void writeVertexQ(Mixture const& mixture,
                         int polymerId, int vertexId, std::ostream& out);
 
       /**
@@ -160,18 +169,18 @@ namespace Fd1d {
       * \param vertexId integer id of vertex (end or junction)
       * \param filename name of output file
       */
-      void writeVertexQ(Mixture const & mixture,
+      void writeVertexQ(Mixture const& mixture,
                         int polymerId, int vertexId, 
-                        std::string const & filename);
+                        std::string const& filename);
 
       /**
-      * Interpolate an array of fields onto a new mesh.
+      * Interpolate an array of fields onto a new mesh and write to stream.
       *
       * \param fields  field to be remeshed
       * \param nx  number of grid points in new mesh
       * \param out  output stream for remeshed field
       */
-      void remesh(DArray<Field> const & fields, int nx, std::ostream& out);
+      void remesh(DArray<Field> const& fields, int nx, std::ostream& out);
 
       /**
       * Interpolate an array of fields onto a new mesh and write to file.
@@ -180,32 +189,38 @@ namespace Fd1d {
       * \param nx  number of grid points in new mesh
       * \param filename name of output file for remeshed field
       */
-      void remesh(DArray<Field> const & fields, int nx,
-                  std::string const & filename);
+      void remesh(DArray<Field> const& fields, int nx,
+                  std::string const& filename);
 
       /**
-      * Add points to the end of mesh
+      * Add points to the end of a field mesh and write to stream.
+      *
+      * Values at the added mesh points are taken to be the same as
+      * those at the last mesh point of the original mesh. 
       *
       * \param fields  array of fields to be extended
       * \param m  number of added grid points
       * \param out  output stream for extended field
       */
-      void extend(DArray<Field> const & fields, int m, std::ostream& out);
+      void extend(DArray<Field> const& fields, int m, std::ostream& out);
 
       /**
-      * Add points to the end of mesh
+      * Add points to the end of a field mesh and write to a file.
+      *
+      * Values at the added mesh points are taken to be the same as
+      * those at the last mesh point of the original mesh. 
       *
       * \param fields  field to be remeshed
       * \param m  number of added grid points
       * \param filename  name of output file for remeshed field
       */
-      void extend(DArray<Field> const & fields, int m, 
-                  std::string const & filename);
+      void extend(DArray<Field> const& fields, int m, 
+                  std::string const& filename);
 
    private:
 
       /// Work array (capacity = # of monomer types).
-      DArray<double> w_;
+      mutable DArray<double> w_;
 
       // Pointers to associated objects.
 
@@ -218,7 +233,7 @@ namespace Fd1d {
       // Private accessor functions:
 
       /// Get spatial discretization domain by const reference.
-      Domain const & domain() const
+      Domain const& domain() const
       {  
          UTIL_ASSERT(domainPtr_);  
          return *domainPtr_; 

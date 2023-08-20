@@ -1,27 +1,27 @@
-/*! \page user_python_page Python Data Processing Tools
+/*! \page user_python_page Python Tools
 
 \ref user_visualize_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
 \ref user_theory_page (Next)
 <BR>
 
 The PSCF repository contains several python modules that contain code
-that allows the user to parse and manipulate the contained in most 
-of the different types of input and output files used by the package. 
-These python modules can be used to process output files for data 
-analysis, or to help prepare modified input files.  
+that allows the user to parse and manipulate several of the different 
+types of input and output files used by the package.  These modules 
+can be used to simplify workflows that process and analyze output files, 
+or that prepare input files.  
 
-\section user_python_modules_sec Python Source Code 
+\section user_python_modules_sec Python Source Files
 
-All python source code files that are provided with PSCF are located within 
-the directory pscfpp/lib/python/pscfpp.  Every python file in this 
-directory defines a module that belongs to a python package named "pscfpp". 
-The full name of each such module thus begins with a prefix "pscfpp" 
-followed by a dot. 
+All python source code files that are provided with PSCF are located 
+within the directory pscfpp/lib/python/pscfpp.  Every python file in
+in this directory defines a module that belongs to a python package 
+named "pscfpp". The full name of each such module thus begins with a 
+prefix "pscfpp" followed by a dot. 
 
 The instructions for compiling the PSCF C++/CUDA code require each user 
 to add the directory pscfpp/lib/python to their python module search 
-path (i.e., to their PYTHONPATH). As long as this directory is still in 
-the user's python path, a python interpreter should be able to find any 
+path (i.e., to their PYTHONPATH). As long as this directory is in the 
+user's python path, a python interpreter should be able to find any 
 module in the pscfpp package, including the parser classes that are 
 discussed below.
 
@@ -44,7 +44,7 @@ script.py is the name of a python script file.
 
 \section user_python_doc_sec Python Documentation
 
-Detailed API documentation for any python module that is distributed 
+Detailed API documentation for all python modules that are distributed 
 with PSCF can be accessed within this PSCF web manual by opening the 
 "Namespaces" tab on the main page, and then clicking on the label for
 namespace "pscfpp".  Within the web manual, the "pscfpp" namespace 
@@ -52,8 +52,8 @@ refers to the pscfpp python package, rather than to a C++ namespace.
 The web page for the pscfpp namespace (or package) contains a link
 to documentation of each python module in the package, each of which
 corresponds to a python source code file in directory lib/python/pscfpp .
-The web page for each python module then contains a link to documentation 
-for each entity (i.e., class or function) defined in that module, 
+The web page for each python module then contains links to documentation 
+for all entities (i.e., classes or functions) defined in that module, 
 including documentation of all function interfaces.  The remainder of 
 this web page provides a brief introductory overview of the purpose and 
 usage of all of the parser classes.
@@ -106,11 +106,11 @@ The param.Composite class is designed to parse a file block that is
 formatted with the nested curly bracket structure characteristic of 
 a parameter file block. The C++ class that is used in PSCF to parse 
 such a file block is named Util::ParamComposite, and the name of the
-corresponding python class chosen to be analogous.  An instance of 
-this class can thus be used to parse either an entire parameter file, 
-which consists of a parameter file block that begins with the string
-"System{", or any subblock within such a file that is delimited by a
-label and curly brackets.
+corresponding python class was chosen to be analogous.  An instance 
+of this class can be used to parse either an entire parameter file, 
+which normally consists of a single parameter file block that begins 
+with the block label "System", or to parse any subblock within this 
+main block.
 
 ### Class State :
 
@@ -138,17 +138,18 @@ simplifies analysis of the many output files produced by a sweep.
 
 \section user_python_param_sec Parameter Files
 
-To parse a parameter file with a file name 'param', enter the commands
+To parse a parameter file with a file name 'param', one may enter
+the commands
 \code
   import pscfpp.param as param
   system = param.Composite('param')
 \endcode
 from within a interactive python interpreter or a python script. 
 The constructor method for class param.Composite opens the file 
-and parses its contents and returns an instance of that class 
-that contains a parsed version of the contents of that file. The 
-resulting object is assigned here to a variable that is also named 
-"param". 
+whose name is passed as a parameter, parses its contents, and 
+returns an instance of param.Composite that contains a parsed 
+version of the file contents. The resulting object is assigned 
+here to a python variable that is also named "param". 
  
 ### Accessing Parameter Values
 
@@ -160,19 +161,20 @@ data attribute of the param.Composite object whose name is the same as
 the label associated with that subblock or variable.  A nested sub-block 
 within such a parameter file block is represented by a data attribute of 
 the parent param.Composite object that is also an instance of 
-param.Composite.  Each parameter within such a block is instead 
+param.Composite.  Each nested parameter within such a block is instead 
 represented by either a primitive variable (an int, float, or string) 
-or a python list, depending on the type of variable. 
+or a python list, depending on the type of variable and the nature of
+its value.
 
 The organization of python objects described above allows nested 
 elements of a parameter file to be accessed using the dot notation 
-used to access data attributes.
+used to access python data attributes.
 
-For example, if param is a param.Composite object that contains 
-the contents of the main System block of a parameter file, then 
-param.Mixture and param.Interaction are param.Composite objects that 
-contain the contents of the Mixture and Interaction sub-blocks, 
-respectively. The quantity
+For example, suppose param is a param.Composite object that contains 
+the contents of the main System block of a parameter file. The data
+attributes param.Mixture and param.Interaction are then param.Composite 
+objects that contain the contents of the Mixture and Interaction 
+sub-blocks of the parameter file, respectively. The variable
 \code
     param.Mixture.nMonomer
 \endcode
@@ -180,40 +182,46 @@ is then an integer attribute that contains the value of the parameter
 nMonomer that appears within the Mixture block of the corresponding
 parameter file.
 
-Values of array-valued parameters are stored as python lists, in which 
-each element of the list stores the value of one element of the parameter 
+Array-valued parameters are stored as python lists, in which each 
+element of the list stores the value of one element of the parameter 
 array.  For example, 
+\code
+    param.Mixture.monomers
+\endcode
+is a list that contains the contents of the array-valued monomers
+parameter that appears in the Mixture block, and
 \code
     param.Mixture.monomers[0]
 \endcode
-is a floating point number that contains the value of element 0 of the 
-monomers array, which gives the statistical segment length for monomer 
+is a floating point number that contains the value of element 0 of 
+that array, which gives the statistical segment length for monomer 
 type 0.
 
 If a parameter file block contains several sub-blocks with the same 
-label, these subblocks are assigned to elements of a python list, in 
-which the name of the list is the shared name of those sub-blocks. 
+label, then these subblocks are assigned to elements of a python list, 
+in which the name of the list is the shared name of those sub-blocks. 
 This situation arises for Polymer and/or Solvent subblocks of a 
 Mixture block that represents a mixture containing two or more polymer 
-or solvent species.  For example, in a mixture that contains two or 
+or solvent species.  For example, for a mixture that contains two or 
 more polymer species, 
 \code
    param.Mixture.Polymer[1]
 \endcode
 is a instance of param.Composite that contains the contents of the 
-second Polymer block within the Mixture block. 
+second Polymer sub-block within the Mixture block. 
 
 If the text representation of the value of a single parameter (i.e., a 
 variable represented by a parameter label and value on a single line), 
 or of a single element of an array-valued parameter, is given in the 
 parameter file as two or more strings separated by spaces on a single 
 line, then the value of the parameter or array element is stored as
-a python list of values.  This occurs for elements of the blocks array
-within each Polymer block of a parameter file, in which the value of
-each element is given as a list of two or more values that specify
-the monomer type, block length and (for branched polymers) other 
-information. For example, in the case discussed above, 
-the quantity
+a python list of values.  This situation occurs, for example, for 
+elements of the blocks array within each Polymer block of a parameter 
+file. The value of each element of this array is given as a list of 
+two or more values that specify the monomer type and block length, 
+and specify other information about connectivity in the case of a 
+branched polymer. For example, in the case discussed above, the 
+quantity
 \code
    param.Mixture.Polymer[1].blocks[0]
 \endcode
@@ -240,19 +248,20 @@ For example
 \endcode
 is the interaction parameter between monomer types 0 and 1.
 
-The data type associated with each parameter value is inferred
-from its text representation. To do so, the code stores any value 
-that can be interpreted as a valid integer to an integer, any other 
-value that can be interpreted as valid floating point number as a
-float, and stores any other value as a verbatim string. 
+The data type associated with each parameter value is inferred from 
+its text representation when the parameter file is parsed. To do so, 
+the parser stores any value that can be interpreted as a valid 
+integer to an int value, stores any other value that can be 
+interpreted as valid floating point number as a float, and stores 
+any other value verbatim as a string. 
 
 ### String Representation
 
 The string representation of a param.Composite object is a multi-line 
-string formatted in the indented curly bracket notation used in the 
-file from which the object was created. The string representation of 
-such an object is thus equivalent to the parameter file block from 
-which it was created, aside from possible differences in white space.
+string that formatted in the curly bracket notation used in parameter
+files, with indentation. The string representation of such an object 
+is thus equivalent to the parameter file block from which it was 
+created, aside from possible differences in use of white space. 
 The string representation of param.Composite object named param is 
 given by the expression
 \code
@@ -263,7 +272,7 @@ command print(param).
 
 An instance of class param.Composite can be used to programmatically 
 modify the values of parameters in a parameter file.  To do so, one 
-must parse an existing parameter file, modify one or more of the 
+would parse an existing parameter file, modify one or more of the 
 parameter values, and then write the string representation of the 
 modified object to a file. 
 
