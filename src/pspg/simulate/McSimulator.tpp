@@ -478,7 +478,7 @@ namespace Pspg {
       
       // Debugging output
       std::string filename = "wc";
-      system().fieldIo.writeFieldsRGrid(filename, wc_, system().domain().unitCell());
+      system().fieldIo().writeFieldsRGrid(filename, wc_, system().domain().unitCell());
       hasWC_ = true;
    }
    
