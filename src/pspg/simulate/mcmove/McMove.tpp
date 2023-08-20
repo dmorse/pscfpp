@@ -10,6 +10,7 @@
 
 #include "McMove.h"
 #include <pspg/System.h>
+#include <pspg/simulate/McSimulator.h>
 #include <util/archives/Serializable_includes.h>
 #include <pspg/compressor/Compressor.h>
 
