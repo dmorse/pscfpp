@@ -1,8 +1,10 @@
 # Include source files lists from subdirectories
 include $(SRC_DIR)/pspg/simulate/mcmove/sources.mk
+include $(SRC_DIR)/pspg/simulate/trajectory/sources.mk
 
 pspg_simulate_= \
   $(pspg_simulate_mcmove_) \
+  $(pspg_trajectory_) \
   pspg/simulate/McSimulator.cu \
   pspg/simulate/McState.cu 
   

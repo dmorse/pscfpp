@@ -476,6 +476,73 @@ namespace Pspg
       readFieldsRGrid(file, fields, unitCell);
       file.close();
    }
+   
+   template <int D>
+   void FieldIo<D>::readFieldsRGridData(std::istream &in,
+                                        DArray< RDField<D> >& fields,
+                                        int nMonomer) const
+   {
+      // Read grid dimensions
+      std::string label;
+      in >> label;
+      if (label != "mesh" && label != "ngrid") {
+         std::string msg =  "\n";
+         msg += "Error reading field file:\n";
+         msg += "Expected mesh or ngrid, but found [";
+         msg += label;
+         msg += "]";
+         UTIL_THROW(msg.c_str());
+      }
+      IntVec<D> nGrid;
+      in >> nGrid;
+      UTIL_CHECK(nGrid == mesh().dimensions());
+
+      DArray<cudaReal*> temp_out;
+      temp_out.allocate(nMonomer);
+      for(int i = 0; i < nMonomer; ++i) {
+         temp_out[i] = new cudaReal[mesh().size()];
+      }
+
+      IntVec<D> offsets;
+      offsets[D - 1] = 1;
+      for(int i = D - 1 ; i > 0; --i ) {
+         offsets[i - 1] = offsets[i] * mesh().dimension(i);
+      }
+      IntVec<D> position;
+      for(int i = 0; i < D; ++i) {
+         position[i] = 0;
+      }
+
+      int rank = 0;
+      int positionId;
+      for(int i = 0; i < mesh().size(); i++) {
+         rank = 0;
+         for(int dim = 0; dim < D; ++dim) {
+            rank += offsets[dim] * position[dim];
+         }
+         for(int k = 0; k < nMonomer; ++k) {
+            in >> std::setprecision(15)>> temp_out[k][rank];
+         }
+         //add position
+         positionId = 0;
+         while( positionId < D) {
+            position[positionId]++;
+            if ( position[positionId] == mesh().dimension(positionId) ) {
+               position[positionId] = 0;
+               positionId++;
+               continue;
+            }
+            break;
+         }
+      }
+
+      for (int i = 0; i < nMonomer; i++) {
+         cudaMemcpy(fields[i].cDField(), temp_out[i],
+            mesh().size() * sizeof(cudaReal), cudaMemcpyHostToDevice);
+         delete[] temp_out[i];
+         temp_out[i] = nullptr;
+      }
+   }
 
    template <int D>
    void FieldIo<D>::writeFieldsRGrid(std::ostream &out,
@@ -627,7 +694,7 @@ namespace Pspg
       readFieldRGrid(file, field, unitCell);
       file.close();
    }
-
+   
    template <int D>
    void FieldIo<D>::writeFieldRGrid(std::ostream &out,
                                     RDField<D> const & field,
