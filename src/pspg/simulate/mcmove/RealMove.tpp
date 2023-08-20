@@ -67,14 +67,16 @@ namespace Pspg {
          isAllocated_ = true;
       }
       // Create pseudo-random number generator on gpu
-      CURAND_CALL(curandCreateGenerator(&gen_, CURAND_RNG_PSEUDO_DEFAULT));
+      curandStatus_t status;
+      status = curandCreateGenerator(&gen_, CURAND_RNG_PSEUDO_DEFAULT);
+      if(status != CURAND_STATUS_SUCCESS){
+         std::cout<<"Generator initialization error "<<std::endl;
+      }
       // Set seed
       unsigned long long seed;
       timeval time;
       gettimeofday(&time, NULL);
       seed = time.tv_sec + 1123*time.tv_usec;
-      //CURAND_CALL(curandSetPseudoRandomGeneratorSeed(gen_, seed));
-      curandStatus_t status;
       status = curandSetPseudoRandomGeneratorSeed(gen_, seed);
       if(status != CURAND_STATUS_SUCCESS){
          std::cout<<"Generator random number error "<<std::endl;
