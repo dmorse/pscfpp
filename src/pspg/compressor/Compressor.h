@@ -56,7 +56,7 @@ namespace Pspg
       */
       virtual int compress() = 0;
       
-      //virtual int counterMDE() = 0;
+      virtual int counterMDE() = 0;
 
       /**
       * Return const reference to parent system.
