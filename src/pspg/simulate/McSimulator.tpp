@@ -10,10 +10,10 @@
 
 #include "McSimulator.h"
 #include <pspg/System.h>
-//#include <pspg/simulate/mcmove/McMoveFactory.h>
-//#include <pspg/simulate/analyzer/AnalyzerFactory.h>
-//#include <pspg/simulate/trajectory/TrajectoryReader.h>
-//#include <pspg/simulate/trajectory/TrajectoryReaderFactory.h>
+#include <pspg/simulate/mcmove/McMoveFactory.h>
+#include <pspg/simulate/analyzer/AnalyzerFactory.h>
+#include <pspg/simulate/trajectory/TrajectoryReader.h>
+#include <pspg/simulate/trajectory/TrajectoryReaderFactory.h>
 #include <pspg/compressor/Compressor.h>
 #include <util/misc/Timer.h>
 #include <util/random/Random.h>
@@ -30,16 +30,16 @@ namespace Pspg {
    */
    template <int D>
    McSimulator<D>::McSimulator(System<D>& system)
-   : //mcMoveManager_(*this, system),
-     //analyzerManager_(*this, system),
-     //trajectoryReaderFactoryPtr_(0),
+   : mcMoveManager_(*this, system),
+     analyzerManager_(*this, system),
+     trajectoryReaderFactoryPtr_(0),
      random_(),
      systemPtr_(&system),
      hasMcHamiltonian_(false),
      hasWC_(false)
    { 
       setClassName("McSimulator");   
-      //trajectoryReaderFactoryPtr_ = new TrajectoryReaderFactory<D>(system);
+      trajectoryReaderFactoryPtr_ = new TrajectoryReaderFactory<D>(system);
    }
 
    /*
@@ -56,8 +56,10 @@ namespace Pspg {
    void McSimulator<D>::readParameters(std::istream &in)
    {
       // Read block of mc move data inside
+      readParamComposite(in, mcMoveManager_);
       // Read block of analyzer
-
+      Analyzer<D>::baseInterval = 0; // default value
+      readParamCompositeOptional(in, analyzerManager_);
       // Allocate projected chi matrix chiP_ and associated arrays
       const int nMonomer = system().mixture().nMonomer();
       chiP_.allocate(nMonomer, nMonomer);
@@ -91,8 +93,10 @@ namespace Pspg {
       system().compute();
       computeWC();
       computeMcHamiltonian();
-      //mcMoveManager_.setup();
-      
+      mcMoveManager_.setup();
+      if (analyzerManager_.size() > 0){
+         analyzerManager_.setup();
+      }
    }
 
    /*
@@ -101,7 +105,7 @@ namespace Pspg {
    template <int D>
    void McSimulator<D>::simulate(int nStep)
    {
-      //UTIL_CHECK(mcMoveManager_.size() > 0);
+      UTIL_CHECK(mcMoveManager_.size() > 0);
 
       setup();
       Log::file() << std::endl;
@@ -110,16 +114,30 @@ namespace Pspg {
       Timer timer;
       timer.start();
       for (int iStep = 0; iStep < nStep; ++iStep) {
-
+         // Analysis (if any)
+         if (Analyzer<D>::baseInterval != 0) {
+            if (iStep % Analyzer<D>::baseInterval == 0) {
+               if (analyzerManager_.size() > 0) {
+                  iStep_ = iStep;
+                  analyzerManager_.sample(iStep);
+               }
+            }
+         }
+         // Choose and attempt an McMove
+         mcMoveManager_.chooseMove().move();
       }
       timer.stop();
       double time = timer.time();
 
       // Output results of move statistics to files
-
+      mcMoveManager_.output();
+      if (Analyzer<D>::baseInterval > 0){
+         analyzerManager_.output();
+      }
+      
       // Output how many times MDE has been solved for the simulation run
       Log::file() << std::endl;
-      //Log::file() << "MDE counter   " << system().compressor().counterMDE()<< std::endl;
+      Log::file() << "MDE counter   " << system().compressor().counterMDE()<< std::endl;
       Log::file() << std::endl;
       
       // Output time for the simulation run
@@ -142,8 +160,19 @@ namespace Pspg {
            << setw(12) << right << "Accepted"
            << setw(15) << right << "AcceptRate"
            << endl;
+      int nMove = mcMoveManager_.size();
+      for (int iMove = 0; iMove < nMove; ++iMove) {
+         attempt = mcMoveManager_[iMove].nAttempt();
+         accept  = mcMoveManager_[iMove].nAccept();
+         Log::file() << setw(32) << left
+              << mcMoveManager_[iMove].className()
+              << setw(12) << right << attempt
+              << setw(12) << accept
+              << setw(15) << fixed << setprecision(6)
+              << ( attempt == 0 ? 0.0 : double(accept)/double(attempt) )
+              << endl;
+      }
       Log::file() << endl;
-
    }
 
    /*
@@ -192,10 +221,11 @@ namespace Pspg {
       int nMonomer = system().mixture().nMonomer();
       int meshSize = system().domain().mesh().size();
       
+      system().setWRGrid(mcState_.w); 
+
       // GPU resources
       int nBlocks, nThreads;
       ThreadGrid::setThreadsLogical(meshSize, nBlocks, nThreads);
-      system().setWRGrid(mcState_.w); 
       for (int i = 0; i < nMonomer; ++i) {
          assignReal<<<nBlocks, nThreads>>>
             (wc_[i].cDField(), mcState_.wc[i].cDField(), meshSize);
@@ -482,7 +512,6 @@ namespace Pspg {
       hasWC_ = true;
    }
    
-   #if 0
    /*
    * Open, read and analyze a trajectory file
    */
@@ -547,10 +576,6 @@ namespace Pspg {
                   << "  sec" << std::endl;
       Log::file() << std::endl;
    }
-   #endif
-
-   
-   
 
 }
 }

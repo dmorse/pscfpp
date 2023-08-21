@@ -11,6 +11,8 @@
 #include "McState.h"                     // member
 #include <util/param/Manager.h>          // base class template
 #include <util/param/ParamComposite.h>   // base class
+#include <pspg/simulate/mcmove/McMoveManager.h>   // member
+#include <pspg/simulate/analyzer/AnalyzerManager.h>  // member
 #include <util/random/Random.h>          // member
 #include <util/containers/DArray.h>      // member template
 #include <util/containers/DMatrix.h>     // member template
@@ -189,14 +191,40 @@ namespace Pspg {
       {   return wc_[i]; }
       
       /**
+      * Read and analyze a trajectory file.
+      * 
+      * This function uses an instance of the TrajectoryReader class
+      * specified by the "classname" argument to read a trajectory 
+      * file. 
+      *
+      * \param min  start at this frame number
+      * \param max  end at this frame number
+      * \param classname  name of the TrajectoryReader class to use
+      * \param filename  name of the trajectory file
+      */
+      void analyzeTrajectory(int min, int max,
+                             std::string classname,
+                             std::string filename);
+                             
+      /**
       * Get parent system by reference.
       */
       System<D>& system();
+      
+      /**
+      * Get AnalyzerManger
+      */
+      AnalyzerManager<D>& analyzerManager();
+      
+      /**
+      * Get McMoveManger
+      */
+      McMoveManager<D>& mcMoveManager(); 
 
       /**
       * Get the trajectory reader factory by reference.
       */
-      //Factory<TrajectoryReader<D>>& trajectoryReaderFactory(); 
+      Factory<TrajectoryReader<D>>& trajectoryReaderFactory(); 
       
       /**
       * Get random number generator by reference.
@@ -215,17 +243,17 @@ namespace Pspg {
       /**
       * Manger for Monte Carlo Move.
       */
-     // McMoveManager<D> mcMoveManager_;  
+      McMoveManager<D> mcMoveManager_;  
       
       /**
       * Manger for Monte Carlo Analyzer.
       */
-      //AnalyzerManager<D> analyzerManager_;    
+      AnalyzerManager<D> analyzerManager_;    
       
       /**
       * Pointer to a trajectory reader/writer factory.
       */
-      //Factory<TrajectoryReader<D>>* trajectoryReaderFactoryPtr_;
+      Factory<TrajectoryReader<D>>* trajectoryReaderFactoryPtr_;
     
       /**
       * Random number generator
@@ -309,7 +337,17 @@ namespace Pspg {
    };
 
    // Inline functions
+   
+   // Get the Monte-Carlo move manager.
+   template <int D>
+   inline McMoveManager<D>& McSimulator<D>::mcMoveManager()
+   {  return mcMoveManager_; }
 
+   // Get the Monte-Carlo analyzer manager.
+   template <int D>
+   inline AnalyzerManager<D>& McSimulator<D>::analyzerManager()
+   {  return analyzerManager_; }
+   
    // Get the random number generator.
    template <int D>
    inline Random& McSimulator<D>::random()
@@ -360,6 +398,14 @@ namespace Pspg {
    { 
       hasMcHamiltonian_ = false;
       hasWC_ = false; 
+   }
+   
+   // Get the TrajectoryReaderfactory 
+   template <int D>
+   inline Factory<TrajectoryReader<D>> & McSimulator<D>::trajectoryReaderFactory() 
+   {
+      UTIL_ASSERT(trajectoryReaderFactoryPtr_);
+      return *trajectoryReaderFactoryPtr_;
    }
 
    template <int D>
