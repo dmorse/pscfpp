@@ -62,7 +62,7 @@ namespace Pspg
    template <int D>
    void McHamiltonianAnalyzer<D>::compute() 
    {  
-      Log::file()<< "hasWC"<< mcSimulator().hasWC() << std::endl;
+      Log::file()<< "hasWC "<< mcSimulator().hasWC() << std::endl;
       if (!mcSimulator().hasWC()){
          if (!hasAnalyzeChi_){
             mcSimulator().analyzeChi();

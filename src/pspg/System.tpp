@@ -698,6 +698,8 @@ namespace Pspg
    template <int D>
    void System<D>::compute(bool needStress)
    {
+      UTIL_CHECK(w_.isAllocatedRGrid());
+      UTIL_CHECK(c_.isAllocatedRGrid());
       UTIL_CHECK(w_.hasData());
 
       // Solve the modified diffusion equation (without iteration)
