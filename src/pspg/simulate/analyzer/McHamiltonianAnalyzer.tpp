@@ -69,6 +69,7 @@ namespace Pspg
             Log::file()<< "analyzeChi" << std::endl;
             hasAnalyzeChi_ = true;
          }
+         Log::file()<< "hasAnalyzeChi_" <<hasAnalyzeChi_ << std::endl;
          system().compute();
          Log::file()<< "compute" << std::endl;
          mcSimulator().computeWC();
