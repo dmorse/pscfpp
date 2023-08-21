@@ -314,7 +314,10 @@ namespace Pspg {
       int i;
       for (iter.begin(); !iter.atEnd(); ++iter) {
          i = iter.rank();
-         Gsq = unitCell().ksq(wavelist().minImage(iter.rank()));
+         G = iter.position();
+         Gmin = shiftToMinimum(G, mesh().dimensions(), unitCell());
+         Gsq = unitCell().ksq(Gmin);
+         //Gsq = unitCell().ksq(wavelist().minImage(iter.rank()));
          expKsq_host[i] = exp(Gsq*factor);
          expKsq2_host[i] = exp(Gsq*factor / 2);
       }
