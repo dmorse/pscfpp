@@ -296,7 +296,9 @@ namespace Pspg {
    void Block<D>::computeExpKsq()
    {
       UTIL_CHECK(isAllocated_);
-
+      UTIL_CHECK(unitCellPtr_);
+      UTIL_CHECK(unitCellPtr_->isInitialized());
+      
       MeshIterator<D> iter;
       iter.setDimensions(kMeshDimensions_);
       IntVec<D> G, Gmin;
