@@ -74,26 +74,15 @@ namespace Pspc {
    {
       const int nMonomer = system().mixture().nMonomer();
       const int meshSize = system().domain().mesh().size();
-      if (nMonomer == 2){
-         // For AB diblok copolymer
+      // For multi-component copolymer
+      for (int i = 0; i < nMonomer; i++){
          for (int k = 0; k < meshSize; k++){
-            //attampt move in real space
+            //Random number generator
             double r = random().uniform(-stepSize_,stepSize_);
-            wFieldTmp_[0][k] = system().w().rgrid()[0][k] + r;
-            wFieldTmp_[1][k] = system().w().rgrid()[1][k] - r;
-         }
-      } else {
-         // For multi-component copolymer
-         for (int i = 0; i < nMonomer; i++){
-            for (int k = 0; k < meshSize; k++){
-               //Random number generator
-               double r = random().uniform(-stepSize_,stepSize_);
-               wFieldTmp_[i][k] = system().w().rgrid()[i][k] + r;
-            }
+            wFieldTmp_[i][k] = system().w().rgrid()[i][k] + r;
          }
       }
       system().setWRGrid(wFieldTmp_);
-
    }
 
 
