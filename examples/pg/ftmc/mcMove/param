@@ -35,6 +35,17 @@ System{
     verbose	 0
     errorType    normResid
   }
+  McSimulator{
+    McMoveManager{
+        RealMove{
+            probability     0.5
+            A               0
+        }
+    }
+    AnalyzerManager{
+      baseInterval    1
+    }
+  }
 }
 
     unitCell cubic   1.3835952906
