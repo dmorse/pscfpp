@@ -72,7 +72,6 @@ namespace Pspg
          mcSimulator().computeMcHamiltonian();
       }
       double ideal = mcSimulator().mcIdealHamiltonian();
-      Log::file()<< "ideal" << ideal<< std::endl;
       // outputFile_ << Dbl(ideal, 20)
       setValue(idealId_, ideal);
    
