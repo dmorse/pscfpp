@@ -16,6 +16,7 @@
 #include <util/archives/Serializable_includes.h>
 #include <cuda_runtime.h>
 #include <curand.h>
+#include <curand_kernel.h>
 #include <sys/time.h>
 
 
