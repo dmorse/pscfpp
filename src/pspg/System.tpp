@@ -701,11 +701,11 @@ namespace Pspg
       UTIL_CHECK(w_.isAllocatedRGrid());
       UTIL_CHECK(c_.isAllocatedRGrid());
       UTIL_CHECK(w_.hasData());
-      Log::file()<< "compute_w"<< std:endl;
+      Log::file()<< "compute_w"<< std::endl;
       // Solve the modified diffusion equation (without iteration)
       mixture().compute(w_.rgrid(), c_.rgrid());
       hasCFields_ = true;
-      Log::file()<< "compute_complete"<< std:endl;
+      Log::file()<< "compute_complete"<< std::endl;
       // Convert c fields from r-grid to basis format
       if (w_.isSymmetric()) {
          fieldIo().convertRGridToBasis(c_.rgrid(), c_.basis());
