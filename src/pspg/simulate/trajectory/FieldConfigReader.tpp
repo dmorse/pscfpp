@@ -98,7 +98,7 @@ namespace Pspg
       #endif
       
       // Read ITEM: NUMBER OF Mesh
-      notEnd = getNextLine(inputfile_, line);
+      // notEnd = getNextLine(inputfile_, line);
       int nMonomer = system().mixture().nMonomer();
       // Read a single real-space grid field frame from trajectory file
       system().domain().fieldIo().readFieldsRGridData(inputfile_, wField_, nMonomer);
