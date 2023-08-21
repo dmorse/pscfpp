@@ -62,20 +62,14 @@ namespace Pspg
    template <int D>
    void McHamiltonianAnalyzer<D>::compute() 
    {  
-      Log::file()<< "hasWC "<< mcSimulator().hasWC() << std::endl;
       if (!mcSimulator().hasWC()){
          if (!hasAnalyzeChi_){
             mcSimulator().analyzeChi();
-            Log::file()<< "analyzeChi" << std::endl;
             hasAnalyzeChi_ = true;
          }
-         Log::file()<< "hasAnalyzeChi_" <<hasAnalyzeChi_ << std::endl;
          system().compute();
-         Log::file()<< "compute" << std::endl;
          mcSimulator().computeWC();
-         Log::file()<< "computeWC" << std::endl;
          mcSimulator().computeMcHamiltonian();
-         Log::file()<< "computeMcHamiltonian" << std::endl;
       }
       double ideal = mcSimulator().mcIdealHamiltonian();
       Log::file()<< "ideal" << ideal<< std::endl;
