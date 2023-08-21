@@ -24,6 +24,7 @@ LIBS+=$(GSL_LIB)
 
 # Add paths to CUDA FFT library
 PSPG_DEFS+=-DPSPG_FFTW -DGPU_OUTER
+PSPG_CUFFT_LIB=-lcufft -lcudart -lcuda -lcurand
 INCLUDES+=$(CUFFT_INC)
 LIBS+=$(CUFFT_LIB)
 
