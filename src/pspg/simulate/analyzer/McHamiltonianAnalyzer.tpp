@@ -66,6 +66,7 @@ namespace Pspg
       if (!mcSimulator().hasWC()){
          if (!hasAnalyzeChi_){
             mcSimulator().analyzeChi();
+            Log::file()<< "analyzeChi" << std::endl;
             hasAnalyzeChi_ = true;
          }
          system().compute();
