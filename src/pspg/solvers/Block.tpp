@@ -278,6 +278,19 @@ namespace Pspg {
 
       hasExpKsq_ = false;
    }
+   
+   /*
+   * Setup data that depend on the unit cell parameters.
+   */
+   template <int D>
+   void Block<D>::setupUnitCell(const UnitCell<D>& unitCell)
+   {
+      nParams_ = unitCell.nParameter();
+
+      // store pointer to unit cell and wavelist
+      unitCellPtr_ = &unitCell;
+      hasExpKsq_ = false;
+   }
 
    template <int D>
    void Block<D>::computeExpKsq()
