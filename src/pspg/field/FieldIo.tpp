@@ -547,13 +547,15 @@ namespace Pspg
    template <int D>
    void FieldIo<D>::writeFieldsRGrid(std::ostream &out,
                                      DArray<RDField<D> > const& fields,
-                                     UnitCell<D> const & unitCell)
+                                     UnitCell<D> const & unitCell,
+                                     bool writeHeader)
    const
    {
       int nMonomer = fields.capacity();
       UTIL_CHECK(nMonomer > 0);
-
-      writeFieldHeader(out, nMonomer, unitCell);
+      if (writeHeader){
+         writeFieldHeader(out, nMonomer, unitCell);
+      }
       out << "mesh " <<  std::endl
           << "           " << mesh().dimensions() << std::endl;
 
