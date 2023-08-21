@@ -317,7 +317,6 @@ namespace Pspg {
          wSqure = (double)gpuInnerProduct(wc_[j].cDField(), wc_[j].cDField(), meshSize);
          HW += prefactor * wSqure;
       }
-      Log::file()<< "HW"<< HW<< std::endl;
       
       // Subtract average of Langrange multiplier field
       double sum_xi = (double)gpuSum(wc_[nMonomer-1].cDField(), meshSize);
@@ -325,17 +324,13 @@ namespace Pspg {
       
       // Normalize HW to equal a value per monomer
       HW /= double(meshSize);
-      Log::file()<< "HW norm"<< HW<< std::endl;
       // Compute final MC Hamiltonian
       mcHamiltonian_ = HW - lnQ;
       const double vSystem  = domain.unitCell().volume();
       const double vMonomer = mixture.vMonomer();
       mcFieldHamiltonian_ = vSystem/vMonomer * HW;
-      Log::file()<< "mcFieldHamiltonian_"<< mcFieldHamiltonian_<< std::endl;
       mcIdealHamiltonian_ = vSystem/vMonomer * lnQ;
-      Log::file()<< "mcIdealHamiltonian_"<< mcIdealHamiltonian_<< std::endl;
       mcHamiltonian_ *= vSystem/vMonomer;
-      Log::file()<< "mcHamiltonian_"<< mcHamiltonian_<< std::endl;
       hasMcHamiltonian_ = true;
       //Log::file()<< "computeMcHamiltonian"<< std::endl;
    }
@@ -509,10 +504,12 @@ namespace Pspg {
          }
       }
       
+      #if 0
       // Debugging output
       std::string filename = "wc";
       system().fieldIo().writeFieldsRGrid(filename, wc_, system().domain().unitCell());
       hasWC_ = true;
+      #endif
    }
    
    /*
