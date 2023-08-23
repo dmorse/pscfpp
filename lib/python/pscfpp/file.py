@@ -11,9 +11,9 @@ from glob import glob
 #   The paths path1 and path2 must be either absolute paths or relative
 #   paths defined relative to the same directory.
 #
-#  \param path2 path of interest
-#  \param path1 reference path
-#  \param Path for file2 relative to directory containing path1
+#  \param  path1 reference path
+#  \param  path2 path of interest
+#  \return  Path for file2 relative to directory containing path1
 #
 def relative_path(path1,path2):
     root = commonprefix([path1, path2])
@@ -37,7 +37,7 @@ def relative_path(path1,path2):
 # checks if the directory exists, and creates the directory and any
 # missing parent directories if these do not yet exist. 
 # 
-# \param dir
+# \param dir directory to change to
 #
 def chdirs(dir):
     if not exists(dir):
@@ -52,8 +52,7 @@ def chdirs(dir):
 # Similar to built-in function open(path,'w'), except that open_w
 # will create any non-existent directories in the path as needed.
 #
-# \param path path to file
-# \param file object with specified path, opened for writing
+# \param path  path for new file
 #
 def open_w(path):
     dir  = dirname(path)
@@ -69,7 +68,7 @@ def open_w(path):
 # This function exits silently, without throwing an exception or returning
 # an error code, if the file does not exist or is not a file.  
 #
-# \param path path to file
+# \param path  path to file to be removed
 #
 def rm(path):
    if os.path.exists(path):
@@ -83,8 +82,8 @@ def rm(path):
 # function will create any non-existent directories in the new path as
 # needed.
 #
-# \param old_path - path of file or directory to be renamed
-# \param new_path - new path for file or directory
+# \param old_path  path of file or directory to be renamed
+# \param new_path  new path for file or directory
 #
 def mv(old_path, new_path):
     if (not isfile(old_path)) and (not isdir(old_path) ):
@@ -98,8 +97,16 @@ def mv(old_path, new_path):
     return os.rename(old_path, new_path)
 
 
+##
+# Class that contains metadata for a file.
+#
 class File:
 
+    ##
+    # Constructor.
+    #
+    # \param path  path to file
+    # \param scan  bool flag to scan time and size
     def __init__(self, path=None, scan=1):
         self.path = path
         self.scan = scan
@@ -107,9 +114,15 @@ class File:
             self.mtime = getmtime(path)
             self.size  = getsize(path)
 
+    ##
+    # String representation of file data.
+    #
     def __str__(self):
         return self.path
 
+    ##
+    # String representation of file data.
+    #
     def __repr__(self):
         if scan:
            return '%-40s  size= %10d  mtime= %10d' \
@@ -125,26 +138,55 @@ class File:
         else:
            return indent + '<File path ="' + self.path   + '" />\n'
 
+    ##
+    # Open this file in specified mode.
+    #
+    # \param mode  mode for opening, e.g., 'w' or 'r'
+    # 
     def open(self, mode):
         return open(self.path, mode)
 
+    ##
+    # Write XML representation to a file
+    #
+    # \param filename  name of output file
+    #
     def write(self, filename):
         file = open(filename, 'w')
         file.write(self.xml())
         file.close()
 
+    ##
+    # Test for equality of files.
+    #
+    # This function returns true if this and other are equivalent.
+    #
+    # \param other  file to which to compare this one.
+    #
     def __eq__(self,other):
         if self.path  != other.path  :  return 0
         if self.size  != other.size  :  return 0
         # if self.mtime != other.mtime :  return 0
         return 1
 
+    ##
+    # Test for inequality of files.
+    #
+    # This function returns true if this and other are in-equivalent.
+    #
+    # \param other  file to which to compare this one.
+    #
     def __ne__(self,other):
         if self == other : 
            return 0
         return 1
 
 
+##
+# Class that represents a directory.
+#
+# A Directory contains a dictionary of files and subdirectories.
+#
 class Directory(File):
 
     def __init__(self, path = None, scan = 1):
@@ -172,11 +214,20 @@ class Directory(File):
                 self.files[path] = File(path)
             if isdir(path):
                 self.dirs[path]  = Directory(path)
-  
+ 
+    ##
+    # Clear all data for this Directory.
+    # 
     def clear(self):
         self.files = {}
         self.dirs  = {}
 
+    ##
+    # Find files in directory that match a pattern.
+    #
+    # \param pattern  glob pattern to match
+    # \param recursive recursive if true/1, descend subdirectories
+    #
     def filenames(self, pattern = '*', recursive = 1):
         #r = []
         r = glob( self.path + '/' + pattern)
@@ -185,6 +236,9 @@ class Directory(File):
                r.extend(self.dirs[x].filenames(pattern))
         return r
 
+    ##
+    # String representation of a directory.
+    #
     def __repr__(self):
         r = []
         r.append( self.path + '\n' ) 
@@ -194,6 +248,9 @@ class Directory(File):
             r.append( repr(self.dirs[x])  )
         return join(r,'')
 
+    ##
+    # String representation of a directory.
+    #
     def __str__(self):
         r = []
         r.append(self.path + '\n' ) 
@@ -203,6 +260,9 @@ class Directory(File):
             r.append( str(self.dirs[x]) )
         return join(r,'')
 
+    ##
+    # XML string representation of a directory.
+    #
     def xml(self,indent=''):
         r = []
         r.append( indent + '<Directory path="'+ self.path + '" >\n' )
@@ -214,17 +274,30 @@ class Directory(File):
         r.append( indent + '</Directory>'+'\n')
         return join(r,'')
 
+    ##
+    # Write XML representation to file.
+    #
+    # \param filename  name of output file
+    #
     def write(self,filename):
         file = open(filename,'w')
         file.write( self.xml() )
         file.close()
 
+    ##
+    # Print constituent file and subdirectories.
+    #
     def ls(self):
         for x in self.files.keys() :
             print x
         for x in self.dirs.keys() :
             print x + os.sep
 
+    ##
+    # Test for equality of two Directory objects.
+    #
+    # \param other  other Directory to which to compare
+    #
     def __eq__(self,other) :
         # Check files
         for x in self.files.keys():
@@ -247,11 +320,21 @@ class Directory(File):
         # Return true if all tests passed
         return 1
 
+    ##
+    # Test for inequality of two Directory objects.
+    #
+    # \param other  other Directory to which to compare
+    #
     def __ne__(self,other) :
         if self == other : 
            return 0
         return 1
 
+    ##
+    # Return string reporting difference between Directory objects.
+    #
+    # \param other  other Directory to which to compare
+    #
     def diff(self,other) :
         r = []
         # Check files

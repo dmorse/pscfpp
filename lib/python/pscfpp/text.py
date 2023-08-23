@@ -168,7 +168,7 @@ class RecordEditor:
    ##
    # Set new string.
    #
-   # \param filter regular expression string
+   # \param new    new value for field
    # \param field  index of field to be modified
    #
    def setNew(self, new, field):

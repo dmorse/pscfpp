@@ -23,8 +23,8 @@ from pscfpp.text import *
 # \param processor  compiler command to analyze dependencies (i.e., g++)
 # \param options  string of options passed to processor
 # \param cfile  path to source file
-# \param src  path to source directory tree (SRC_DIR in makefiles)
-# \param bld  path to bulkd directory tree (BLD_DIR in makefiles)
+# \param srcdir  path to source directory tree (SRC_DIR in makefiles)
+# \param blddir  path to bulkd directory tree (BLD_DIR in makefiles)
 # \param extraDependencies  string of additional known dependencies 
 #
 def createDependencyFileCpp(processor, options, cfile, srcdir, blddir, extraDependencies=''):
