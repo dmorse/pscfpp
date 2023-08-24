@@ -39,7 +39,7 @@ System{
     McMoveManager{
         RealMove{
             probability     0.5
-            A               0
+            A               0.5
         }
     }
     AnalyzerManager{
