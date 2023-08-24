@@ -45,6 +45,7 @@ namespace Pspg
    System<D>::System()
     : mixture_(),
       domain_(),
+      mcSimulator_(*this),
       fileMaster_(),
       homogeneous_(),
       interactionPtr_(0),
@@ -59,6 +60,7 @@ namespace Pspg
       fHelmholtz_(0.0),
       pressure_(0.0),
       hasMixture_(false),
+      hasMcSimulator_(false),
       isAllocatedGrid_(false),
       isAllocatedBasis_(false),
       hasCFields_(false)
@@ -232,6 +234,7 @@ namespace Pspg
       readParamComposite(in, domain_);
 
       mixture().setMesh(mesh());
+      mixture().setupUnitCell(unitCell());
       UTIL_CHECK(domain_.mesh().size() > 0);
       UTIL_CHECK(domain_.unitCell().nParameter() > 0);
       UTIL_CHECK(domain_.unitCell().lattice() != UnitCell<D>::Null);
@@ -268,6 +271,14 @@ namespace Pspg
                                                    isEnd);
       if (!compressorPtr_ && ParamComponent::echo()) {
          Log::file() << indent() << "  Compressor{ [absent] }\n";
+      }
+      
+      // Optionally read an McSimulator
+      readParamCompositeOptional(in, mcSimulator_);
+      if (mcSimulator_.isActive()) {
+         hasMcSimulator_ = true;
+      } else {
+         hasMcSimulator_ = false;
       }
       
 
@@ -341,6 +352,23 @@ namespace Pspg
             // Impose incompressibility
             UTIL_CHECK(hasCompressor());
             compressor().compress();
+         } else
+         if (command == "SIMULATE") {
+            // Perform a field theoretic MC simulation
+            int nStep;
+            in >> nStep;
+            Log::file() << "   "  << nStep << "\n";
+            simulate(nStep);
+         } else
+         if (command == "ANALYZE_TRAJECTORY") {
+            int min;
+            in >> min;
+            int max;
+            in >> max;
+            std::string classname;
+            readEcho(in, classname);
+            readEcho(in, filename);
+            mcSimulator_.analyzeTrajectory(min, max, classname, filename);
          } else
          if (command == "WRITE_PARAM") {
             readEcho(in, filename);
@@ -510,6 +538,7 @@ namespace Pspg
       domain_.waveList().computedKSq(domain_.unitCell());
       mixture_.setupUnitCell(domain_.unitCell(), domain_.waveList());
       hasCFields_ = false;
+      hasMcHamiltonian_ = false;
    }
 
    template <int D>
@@ -527,6 +556,7 @@ namespace Pspg
       domain_.waveList().computedKSq(domain_.unitCell());
       mixture_.setupUnitCell(domain_.unitCell(), domain_.waveList());
       hasCFields_ = false;
+      hasMcHamiltonian_ = false;
    }
 
    /*
@@ -537,6 +567,7 @@ namespace Pspg
    {
       w_.setBasis(fields);
       hasCFields_ = false;
+      hasMcHamiltonian_ = false;
    }
 
    /*
@@ -547,6 +578,7 @@ namespace Pspg
    {
       w_.setRGrid(fields);
       hasCFields_ = false;
+      hasMcHamiltonian_ = false;
    }
 
    /*
@@ -667,12 +699,12 @@ namespace Pspg
    template <int D>
    void System<D>::compute(bool needStress)
    {
+      UTIL_CHECK(w_.isAllocatedRGrid());
+      UTIL_CHECK(c_.isAllocatedRGrid());
       UTIL_CHECK(w_.hasData());
-
       // Solve the modified diffusion equation (without iteration)
       mixture().compute(w_.rgrid(), c_.rgrid());
       hasCFields_ = true;
-
       // Convert c fields from r-grid to basis format
       if (w_.isSymmetric()) {
          fieldIo().convertRGridToBasis(c_.rgrid(), c_.basis());
@@ -711,6 +743,7 @@ namespace Pspg
          computeFreeEnergy();
          writeThermo(Log::file());
       }
+      hasMcHamiltonian_ = false;
       return error;
    }
 
@@ -729,6 +762,17 @@ namespace Pspg
 
       // Perform sweep
       sweepPtr_->sweep();
+   }
+   
+   /*
+   * Perform a field theoretic MC simulation of nStep steps.
+   */
+   template <int D>
+   void System<D>::simulate(int nStep)
+   {
+      UTIL_CHECK(hasCompressor());
+      UTIL_CHECK(hasMcSimulator_);
+      mcSimulator_.simulate(nStep);
    }
 
    // Thermodynamic Properties
@@ -1481,7 +1525,7 @@ namespace Pspg
             homogeneous_.molecule(i).computeSize();
          }
       }
-
+      hasMcHamiltonian_ = false;
    }
 
    #if 0

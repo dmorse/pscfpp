@@ -19,7 +19,7 @@
 #include <pspg/field/RDFieldDft.h>         // member
 
 #include <pscf/homogeneous/Mixture.h>      // member
-
+#include <pspg/simulate/McSimulator.h>     // member
 #include <util/misc/FileMaster.h>          // member
 #include <util/containers/DArray.h>        // member template
 #include <util/containers/FSArray.h>       // member template
@@ -37,6 +37,8 @@ namespace Pspg
    template <int D> class SweepFactory;
    template <int D> class Compressor;
    template <int D> class CompressorFactory;
+   template <int D> class McMove;
+   template <int D> class McMoveFactory;
 
    using namespace Util;
 
@@ -341,6 +343,16 @@ namespace Pspg
       * \pre A sweep object must have been created in the parameter file.
       */
       void sweep();
+      
+      /**
+      * Perform a field theoretic Monte-Carlo simulation.
+      *
+      * Perform a field theoretic Monte-Carlo simulation using the 
+      * partial saddle-point approximation. 
+      * 
+      * \param nStep  number of Monte-Carlo steps
+      */
+      void simulate(int nStep);
 
       ///@}
       /// \name Thermodynamic Properties
@@ -649,6 +661,11 @@ namespace Pspg
       * Get Domain by const reference.
       */
       Domain<D> const & domain() const;
+      
+      /**
+      * Get Domain by nonconst reference.
+      */
+      Domain<D> & domain();
 
       /**
       * Get the iterator by reference.
@@ -659,6 +676,11 @@ namespace Pspg
       * Get the compressor by reference.
       */
       Compressor<D>& compressor();
+      
+      /**
+      * Get McSimulator container for Monte Carlo moves.
+      */
+      McSimulator<D>& mcSimulator();
 
       /**
       * Get crystal UnitCell by const reference.
@@ -717,6 +739,11 @@ namespace Pspg
       * Does this system have a Compressor object?
       */
       bool hasCompressor() const;
+      
+      /**
+      * Does this system have an initialized McSimulator?
+      */
+      bool hasMcSimulator() const;
 
       ///@}
 
@@ -731,6 +758,11 @@ namespace Pspg
       * Domain object (crystallography and mesh).
       */
       Domain<D> domain_;
+      
+      /**
+      * Container for McMove objects (Monte Carlo Moves).
+      */
+      McSimulator<D> mcSimulator_;
 
       /**
       * Filemaster (holds paths to associated I/O files).
@@ -827,6 +859,11 @@ namespace Pspg
       * Has the mixture been initialized?
       */
       bool hasMixture_;
+      
+      /**
+      * Has the McSimulator been initialized?
+      */
+      bool hasMcSimulator_;
 
       /**
       * Has memory been allocated for fields in FFT grid formats?
@@ -842,6 +879,11 @@ namespace Pspg
       * Have C fields been computed for the current w fields?
       */
       bool hasCFields_;
+      
+      /**
+      * Has the MC Hamiltonian been computed for the current w and c fields?
+      */ 
+      bool hasMcHamiltonian_;
 
       /**
       * Dimemsions of the k-grid (discrete Fourier transform grid).
@@ -929,6 +971,11 @@ namespace Pspg
    template <int D>
    inline Domain<D> const & System<D>::domain() const
    { return domain_; }
+   
+   // Get the Domain by nonconst reference.
+   template <int D>
+   inline Domain<D> & System<D>::domain() 
+   { return domain_; }
 
    template <int D>
    inline UnitCell<D> const & System<D>::unitCell() const
@@ -953,6 +1000,11 @@ namespace Pspg
    template <int D>
    inline FieldIo<D> const & System<D>::fieldIo() const
    {  return domain_.fieldIo(); }
+   
+   // Get the McSimulator.
+   template <int D>
+   inline McSimulator<D>& System<D>::mcSimulator()
+   {  return mcSimulator_; }
 
    // Get the Iterator.
    template <int D>
@@ -1017,6 +1069,11 @@ namespace Pspg
    template <int D>
    inline bool System<D>::hasCompressor() const
    {  return (compressorPtr_ != 0); }
+   
+   // Does the system have an initialized McSimulator ?
+   template <int D>
+   inline bool System<D>::hasMcSimulator() const
+   {  return (hasMcSimulator_); }
 
    #ifndef PSPG_SYSTEM_TPP
    // Suppress implicit instantiation

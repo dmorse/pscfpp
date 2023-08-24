@@ -67,6 +67,13 @@ namespace Pspg {
       */
       void setupUnitCell(UnitCell<D> const & unitCell, 
                          WaveList<D> const & waveList);
+                         
+      /**
+      * Setup parameters that depend on the unit cell.
+      *
+      * \param unitCell  unit cell, defining cell dimensions (input)
+      */
+      void setupUnitCell(UnitCell<D> const & unitCell);
 
       /**
       * Set or reset block length.

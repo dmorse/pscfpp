@@ -49,6 +49,18 @@ namespace Pspg {
          block(j).setupUnitCell(unitCell, wavelist);
       }
    }
+   
+   /*
+   * Set unit cell dimensions in all solvers.
+   */ 
+   template <int D>
+   void Polymer<D>::setupUnitCell(UnitCell<D> const & unitCell)
+   {
+      nParams_ = unitCell.nParameter();
+      for (int j = 0; j < nBlock(); ++j) {
+         block(j).setupUnitCell(unitCell);
+      }
+   }
 
    /*
    * Compute solution to MDE and concentrations.

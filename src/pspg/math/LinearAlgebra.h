@@ -39,6 +39,8 @@ __global__ void assignExp(cudaReal* exp, const cudaReal* w, double constant, int
 
 __global__ void scaleReal(cudaReal* result, double scale, int size);
 
+__global__ void mcftsScale(cudaReal* result, cudaReal scale, int size);
+
 
 /** @} */
 
