@@ -1,7 +1,7 @@
 /*! \page user_python_page Python Tools
 
 \ref user_visualize_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
-\ref user_unitcell_page (Next)
+\ref user_theory_page (Next)
 <BR>
 
 The PSCF repository contains several python modules that contain code
@@ -495,6 +495,6 @@ or written to a file.
 <BR>
 \ref user_visualize_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
 \ref user_page (Up) &nbsp; &nbsp; &nbsp; &nbsp; 
-\ref user_unitcell_page (Next)
+\ref user_theory_page (Next)
 
 */

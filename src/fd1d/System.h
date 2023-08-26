@@ -187,7 +187,7 @@ namespace Fd1d
       void computeFreeEnergy();
 
       /**
-      * Get precomputed Helmoltz free energy per monomer / kT.
+      * Get precomputed Helmholtz free energy per monomer / kT.
       *
       * The value retrieved by this function is computed by the
       * computeFreeEnergy() function.
@@ -467,6 +467,20 @@ namespace Fd1d
       * Helmholtz free energy per monomer / kT.
       */
       double fHelmholtz_;
+
+      /**
+      * Ideal gas contribution to fHelmholtz_. 
+      * 
+      * This encompasses the internal energy and entropy of 
+      * non-interacting free chains in their corresponding 
+      * potential fields defined by w_.
+      */
+      double fIdeal_;
+
+      /**
+      * Multi-chain interaction contribution to fHelmholtz_.
+      */
+      double fInter_;
 
       /**
       * Pressure times monomer volume / kT.

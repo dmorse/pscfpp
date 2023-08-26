@@ -190,7 +190,7 @@ namespace Fd1d
 
       // Write parameter file, with thermodynamic properties at end
       outFileName = fileName;
-      outFileName += ".dat";
+      outFileName += ".stt";
       fileMaster().openOutputFile(outFileName, out);
       system().writeParam(out);
       out << std::endl;
