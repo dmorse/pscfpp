@@ -1,208 +1,23 @@
-# -----------------------------------------------------------------------
-#   This module provides tools to parse the PSCF parameter file and store 
-#   all values within it in a single object. Users can access and modify 
-#   the stored values of the properties after parsing by using specific 
-#   statements (commands), and can write the object (or any of its 
-#   sub-objects) to a file in the proper parameter file format. 
-#
-#   Parsing a parameter file:
-#
-#       A Composite object represents any block of the parameter file 
-#       that is identified by opening and closing curly brackets ('{' and
-#       '}'). The name of a Composite object is given by the identifier 
-#       on the first line, preceding the opening curly bracket. A 
-#       Composite object stores all the entries within such a block in a 
-#       form that allows each element within it to be accessed and 
-#       modified. 
-#
-#       A PSCF parameter file always contains a main parameter Composite 
-#       named 'System' with nested subelements. Users may parse such a 
-#       file by creating a Composite object, passing the name of 
-#       parameter file as an argument. This constructor parses the file 
-#       and returns a Composite object that contains its contents. 
-#
-#       Example: To read and parse a parameter file with name 'param',
-#       execute the following code within a python3 interpreter:
-#
-#           from pscfpp.param import *
-#           p = Composite('param')
-#
-#       Alternatively, a Composite object can be read from an open Python
-#       file object. In this case, it is assumed that the first line of
-#       the Composite has already been read (in order to identify the 
-#       Composite by it's opening curly bracket '{'), and the name of
-#       the composite must be passed in along with the open file object.
-#       Note that the file object is not closed by this constructor.
-#
-#       Example:
-#
-#           f = open('param')
-#           line = f.readline().strip()
-#           if line[-1] == "{":
-#              p = Composite(f,line[:-1])
-#           f.close()
-#
-#       A Composite object can be written to a file by calling the 
-#       write() method, passing in the string of the file name to 
-#       which the Composite should be written.
-#
-#           Example: p.write('paramOut')
-#
-#   Accessing elements:
-#
-#       After creating a Composite object, users can retrieve 
-#       the values of any element by name, using a dot notation for 
-#       subelements of a Composite.  There are four different types of 
-#       objects that are stored within a Composite.  These are listed 
-#       below, along with a summary of what is returned when they are 
-#       accessed, and an example Python expression that would access 
-#       this type of object in a typical parameter file:
-#
-#           1. Composite: if an element of Composite is another 
-#           Composite (identified by curly braces '{' and '}') with
-#           that is unique within its parent object, accessing this
-#           accessing this entry will return the child Composite 
-#           itself; use square bracket indexing starting with 0 to 
-#           access blocks that have the same name.
-#           Example: p.Mixture    or    
-#                    p.Mixture.Polymer[1]
-#
-#           2. Parameter: if an element is a single parameter, it 
-#           contains a label followed by one or more values on a single
-#           line. Accessing a Parameter returns the value of the 
-#           parameter, which can be a string, an integer, a float, or 
-#           a Python list. The value of a parameter is stored as a list 
-#           if the corresponding line in the parameter file contains
-#           multiple values separated by spaces after the label. 
-#           Example: p.Mixture.nMonomer    or     
-#                    p.Domain.mesh
-#
-#           3. Array: if an element is an Array, it is identified by 
-#           square brackets '[' and ']'. Accessing an Array returns a 
-#           Python list of Parameters where each entry of the list 
-#           represents one row or element of the Array; a specific 
-#           element can be accessed by square bracket indexing.
-#           Example: p.Mixture.monomers    or
-#                    p.Mixture.monomers[0]
-#
-#           4. Matrix: if an element is a Matrix, it is identified by 
-#           parentheses '(' and ')'. Accessing a Matrix returns a list 
-#           of lists that represents a square, symmetric matrix; specific 
-#           values within the Matrix can be accessed by two separate 
-#           square bracket indices.
-#           Example: p.Interaction.chi    or
-#                    p.Interaction.chi[0][1]
-#
-#       The parser also allows users to modify the entries in different 
-#       preset formats for particular types of objects with equal sign 
-#       operator ('='), which are listed below: 
-#
-#           1. Parameter: a Parameter with a single value can be modified 
-#           by Python arithmetic operators. A parameter that contains
-#           multiple values on a single line is stored as a Python 
-#           list, which can only be modified by reassigning a new 
-#           Python list to the attribute.
-#           Example: p.Mixture.Polymer[1].phi *= 2    or    
-#                    p.Mixture.Polymer[0].phi = 0.8   or    
-#                    p.Domain.mesh = [72, 72, 72]
-#
-#           2. Array: change the whole Array by using a Python list
-#           Example: p.Mixture.monomers = [2.0, 2.0]
-#
-#           3. Matrix: two ways to modify
-#           Example: 1. change the whole Matrix by using a list of lists 
-#                       that represents the squared, symmetric Matrix: 
-#                       p.Interaction.chi = [[0, 1.0], [1.0, 0]]
-#                    2. change two values that are symmetric at the 
-#                       same time:
-#                       p.Interaction.chi = [0, 1, 1.0], where the 
-#                       first and second value of the list are the 
-#                       position of the values needs to be changed and 
-#                       the last value is the new value assigned to the 
-#                       corresponding positions
-#
-# Module Contents:
-#
-#   class Composite:
-#           A Composite object can be identified by opening and closing 
-#           curly brackets ('{' and '}'). A composite contains one or
-#           more enclosed elements, each of which may be a Composite, 
-#           a Parameter, and Array or a Matrix. A Composite can be read 
-#           from a file by calling Composite(filename), and can also be a
-#           subelement of a parent Composite.
-#
-#   class Parameter:
-#           A Parameter object contains a parameter label and its 
-#           value for the labeled parameter contained in a single line.
-#
-#   class Array:
-#           An Array object represents a one-dimensional array of values.
-#           An array appears in a parameter file format in multi-line 
-#           with one element value per line, delimited by square brackets.
-#           The first lines contains the array label followed immediately
-#           by an opening bracket, and the last line contains a closing
-#           bracket. Elements of the array appear between these lines in
-#           order of increasing array index, starting from 0.
-#
-#   class Matrix:
-#           A Matrix object represents a two-dimensional array or matrix
-#           of values. A matrix appears in a parameter file in a multi-line
-#           format in which each element appears on a separate line, 
-#           delimited by opening and closing parentheses. The first 
-#           line contains a label for a matrix immediately followed by 
-#           an opening parenthesis, and the last contains a closing 
-#           parenthesis.  In between, each line contains a row index, 
-#           a column index and value of a single element of the matrix.
-#
-#   def getValue(v):
-#           A function to distinguish the correct type of the value from the 
-#           passed-in string, v, and return it with the correct type. 
-#
-# -----------------------------------------------------------------------
+"""! Module for parsing param files. """
 
-
+##
+#
 class Composite:
-   '''
-   Purpose:
-      The class represents the Composite element of the parameter file
-   Instance variables:
-      label: the label of the Composite element 
-      children: 
-         the children items of the Composite in the parameter file, 
-         default to be an empty dictionary
-   Methods:
-      __init__(self, file=None, label=None):
-         constructor, with two arguments: 
-            file:
-               the variable represents a filename or a open file, default
-               to be None
-            label: the label of the Composite, default to be None
-      read(self, openFile):
-         method to read the open parameter file, openFile as the argument, 
-         line by line and update the read items into the children variable; 
-         reading stop when '}' is read
-      addChild(self, child):
-         method to add the single item, argument child, into the children 
-         variable
-      getChildren(self):
-         return the children variable
-      __getattr__(self, attr):
-         return the value stored in children with the specific key, 
-         argument attr
-      __str__(self):
-         return un-indented string representation in param file format
-      getString(self, depth):
-         return indented string in param file format, with prefix depth
-      write(self, filename):
-         write an un-indented param file string to specified file
-      returnData(self):
-         return the Composite object itself
-      __setattr__(self, label, val):
-         set the new value, argument val, to the specific child of the 
-         Composite in the children dictionary, with the name of argument 
-         label
-   '''
-   
+
+   ##
+   # Constructor.
+   #
+   # The input parameter file can be either a string that
+   # is the name of the file or a python open file object,
+   # and it is defult to be none. The other input parameter
+   # label is a string that is the label of the Composite
+   # object and it is also defult to be None. If necessary, 
+   # a defult Composite object can be created by without
+   # passing in neither file nor label parameters.
+   #
+   # \param file   a filename string or an open-file object.
+   # \param label  label string for the Composite, optional.
+   #
    def __init__(self, file=None, label=None):
       self.label = label
       self.children = {} 
@@ -220,6 +35,11 @@ class Composite:
          else:
             self.read(file)
 
+   ##
+   # Read the passed-in open-file.
+   #
+   # This function is 
+   #
    def read(self, openFile):
       line = openFile.readline()
       l = line.split()
@@ -312,7 +132,10 @@ class Composite:
 
 # End class Composite ---------------------------------------------------
 
-
+##
+# Container for data of a parameter in a parameter file.
+#
+# 
 class Parameter:
    '''
    Purpose: 
@@ -338,6 +161,11 @@ class Parameter:
          return the Parameter value as an int, float, string, or list
    '''
 
+   ##
+   # Constructor.
+   #
+   # \param label  label string for the individual parameter
+   # \param val  stored individual parameter value
    def __init__(self, label, val):
       self.label = label
       if type(val) is list:
@@ -345,6 +173,10 @@ class Parameter:
       else:
          self.val = getValue(val)
 
+   ##
+   # Reset the value of the individual parameter.
+   #
+   # \param val 
    def setValue(self, val):
       if type(val) is list:
          if val[0] is list:
@@ -355,9 +187,16 @@ class Parameter:
       else:
          self.val = getValue(str(val))
 
+   ##
+   # Unindented string representation.
+   #
+   # 
    def __str__(self):
       return self.getString()
 
+   ##
+   # 
+   # 
    def getString(self, depth=''):
       s = ''
       if type(self.val) is list:
