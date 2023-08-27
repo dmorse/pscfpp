@@ -53,6 +53,8 @@ namespace Pspg
       w_(),
       c_(),
       fHelmholtz_(0.0),
+      fIdeal_(0.0),
+      fInter_(0.0),
       pressure_(0.0),
       hasMixture_(false),
       isAllocatedGrid_(false),
@@ -790,6 +792,7 @@ namespace Pspg
          temp += gpuSum(workArray_.cDField(),nx) / double(nx);
       }
       fHelmholtz_ -= temp;
+      fIdeal_ = fHelmholtz_;
 
       // Compute excess interaction free energy
       for (int i = 0; i < nm; ++i) {
@@ -803,6 +806,7 @@ namespace Pspg
            fHelmholtz_ += gpuSum(workArray_.cDField(), nx) / double(nx);
          }
       }
+      fInter_ = fHelmholtz_ - fIdeal_;
 
       // Initialize pressure
       pressure_ = -fHelmholtz_;
@@ -864,12 +868,15 @@ namespace Pspg
       out << "fHelmholtz    " << Dbl(fHelmholtz(), 18, 11) << std::endl;
       out << "pressure      " << Dbl(pressure(), 18, 11) << std::endl;
       out << std::endl;
+      out << "fIdeal        " << Dbl(fIdeal_, 18, 11) << std::endl;
+      out << "fInter        " << Dbl(fInter_, 18, 11) << std::endl;
+      out << std::endl;
 
       int np = mixture_.nPolymer();
       int ns = mixture_.nSolvent();
 
       if (np > 0) {
-         out << "Polymers:" << std::endl;
+         out << "polymers:" << std::endl;
          out << "     "
              << "        phi         "
              << "        mu          "
@@ -884,7 +891,7 @@ namespace Pspg
       }
 
       if (ns > 0) {
-         out << "Solvents:" << std::endl;
+         out << "solvents:" << std::endl;
          out << "     "
              << "        phi         "
              << "        mu          "
@@ -898,11 +905,14 @@ namespace Pspg
          out << std::endl;
       }
    
-      out << "Lattice parameters:" << std::endl << "     ";
+      out << "cellParams:" << std::endl;
       for (int i = 0; i < unitCell().nParameter(); ++i) {
-         out << "  " << Dbl(unitCell().parameter(i), 18, 11);
+         out << Int(i, 5)
+             << "  " 
+             << Dbl(unitCell().parameter(i), 18, 11)
+             << std::endl;
       }
-      out << std::endl << std::endl;
+      out << std::endl;
    }
 
    /*
