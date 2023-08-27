@@ -4,7 +4,7 @@
 import re
 from os.path import *
 from string import *
-from file import *
+from pscfpp.file import *
 
 ##
 # Class to wrap line breaks.
@@ -193,7 +193,7 @@ class RecordEditor:
    #
    def editFile(self, filename):
       if (not self.isReady):
-         print "RecordEditor is not ready"
+         print('RecordEditor is not ready')
          return
  
       oldfile = open(filename, 'r')
@@ -233,11 +233,11 @@ def readLabelledLine(file, label):
    line = file.readline()
    groups = line.strip().split('=')
    if groups[0].strip() != label:
-      print "Error: Expected label = " + label
-      print "     : Found          = " + groups[0].strip()
+      print('Error: Expected label = ' + label)
+      print('     : Found          = ' + groups[0].strip())
       raise
    if len(groups) > 2:
-      print "Error: More than one = sign in line"
+      print('Error: More than one = sign in line')
       raise
    if len(groups) == 1:
       return ''
@@ -425,7 +425,7 @@ class FileEditor:
    def editFile(self, filename):
      
       if (not self.isReady):
-         print "FileEditor is not ready"
+         print('FileEditor is not ready')
          return
  
       oldfile = open(filename, 'r')
@@ -439,11 +439,11 @@ class FileEditor:
       for line in lines:
          if (self.filter.search(line)):
             if (not found):
-               print filename
+               print(filename)
                found = True
-            print line
+            print(line)
             line = re.sub(self.old, self.new, line);
-            print line
+            print(line)
          if (not self.isTest):
             newfile.write(line)
       if (not self.isTest): 
@@ -457,7 +457,7 @@ class FileEditor:
    def editFileBlocks(self, filename):
      
       if (not self.isReady):
-         print "FileEditor is not ready"
+         print('FileEditor is not ready')
          return
 
       oldfile = open(filename, 'r')
@@ -473,11 +473,11 @@ class FileEditor:
          block = join(lines[i:i + self.blockSize], '')
          if (self.filter.search(block)):
             if (not found):
-               print filename
+               print(filename)
                found = True
-            print block
+            print(block)
             block = re.sub(self.old, self.new, block)
-            print block
+            print(block)
             if (block[-1] == '\n'):
                block = block[0:-1]
             list  = split(block, '\n')
@@ -497,7 +497,7 @@ class FileEditor:
    # 
    def editFiles(self, dirName, pattern):
       if (not self.isReady):
-         print "FileEditor is not ready"
+         print('FileEditor is not ready')
          return
       dir = Directory(dirName)
       filenames = dir.filenames(pattern)

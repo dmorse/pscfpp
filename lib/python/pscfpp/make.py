@@ -55,7 +55,6 @@ def createDependencyFileCpp(processor, options, cfile, srcdir, blddir, extraDepe
    command += pfile + ' '
    command += options + ' '
    command += cfile
-   #print command
    os.system(command)
 
    #Edit dependency file
@@ -113,7 +112,6 @@ def createDependencyFileCuda(processor, options, cfile, srcdir, blddir, extraDep
    command += options + ' '
    command += cfile
    command += ' > ' + pfile
-   #print command
    os.system(command)
 
    # Edit dependency file and remove temporary pfile
@@ -518,9 +516,9 @@ class MakeMaker:
 
    def ls(self):
       for x in self.hdrs:
-         print x
+         print(x)
       for x in self.srcs:
-         print x
+         print(x)
       for x in self.dirs:
-         print x + os.sep
+         print(x + os.sep)
 

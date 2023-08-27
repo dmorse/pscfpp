@@ -41,7 +41,7 @@ def relative_path(path1,path2):
 #
 def chdirs(dir):
     if not exists(dir):
-       print 'Creating directory ' + dir
+       print('Creating directory ' + dir)
        os.makedirs(dir)
     os.chdir(dir)
 
@@ -58,7 +58,7 @@ def open_w(path):
     dir  = dirname(path)
     if dir:
         if not exists(dir):
-            print 'Creating directory ' + dir
+            print('Creating directory ' + dir)
             os.makedirs(dir)
     return open(path,'w')
 
@@ -87,12 +87,12 @@ def rm(path):
 #
 def mv(old_path, new_path):
     if (not isfile(old_path)) and (not isdir(old_path) ):
-        print 'Path ' + old_path + ' is not a file or directory'
+        print('Path ' + old_path + ' is not a file or directory')
         return
     new_dir = dirname(new_path)
     if new_dir:
         if not exists(new_dir):
-            print 'Creating directory ' + new_dir
+            print('Creating directory ' + new_dir)
             os.makedirs(new_dir)
     return os.rename(old_path, new_path)
 
@@ -289,9 +289,9 @@ class Directory(File):
     #
     def ls(self):
         for x in self.files.keys() :
-            print x
+            print(x)
         for x in self.dirs.keys() :
-            print x + os.sep
+            print(x + os.sep)
 
     ##
     # Test for equality of two Directory objects.
