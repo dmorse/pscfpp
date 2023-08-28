@@ -43,9 +43,10 @@ namespace Pspg {
    template <int D>
    Propagator<D>::~Propagator()
    {
-      if (temp_) {
+      if (isAllocated_) {
 	      delete[] temp_;
 	      cudaFree(d_temp_);
+         cudaFree(qFields_d);
       }
    }  
 
