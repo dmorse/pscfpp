@@ -97,7 +97,8 @@ structure.
 
 <h2> all-cpu: </h2>
 
-To compile all CPU-based programs, but not any GPU-enable programs, enter
+To compile and build all CPU-based programs, but not any GPU-enable programs, 
+enter
 \code
 make all-cpu
 \endcode
@@ -112,21 +113,28 @@ the NVCC Cuda compiler, enter
 \code
 make pspg
 \endcode
-from either the pscfpp root directory or the desired build directory. If 
-successful, this will compile code from the pspg/ subdirectory of the 
-src/ directory, place object, dependency and library files in subdirectories
-of the chosen build tree, and install executables for 1, 2, and 3 
-dimensional problems named pscf_pg1, pscf_pg2 and pscf_pg3 in the 
-pscfpp/bin directory.
+from either the pscfpp root directory or the desired build directory. 
+If successful, this will compile code from the pspg/ subdirectory of 
+the src/ directory, place object, dependency and library files in 
+subdirectories of the chosen build tree, and install executables for 
+1, 2, and 3 dimensional problems named pscf_pg1, pscf_pg2 and pscf_pg3 
+in the pscfpp/bin directory.
+
+This target does not check whether CUDA compilation has been enabled
+(by defining PSCF_CUDA), will fail if invoked on a machine that does not 
+support CUDA compilation.  
 
 <h2> all: </h2>
-To compile all CPU and GPU programs on a computer that supports compilation
-of CUDA as well as C++, enter
+To build all CPU programs and build GPU-enabled programs if and only if 
+CUDA compilation has been enabled, enter
 \code
 make all
 \endcode
-This will fail if invoked on a machine that does not support compilation 
-of CUDA code.
+The action taken this target depends on whether CUDA compilation has 
+been enabled, which can be done either by using the 
+\ref install_configure_page "configure script" or by editing a 
+configuration file. This command is equivalent to calling
+"make all-cpu" followed by "make pspg" if and only if CUDA is enabled.
 
 \section install_targets_clean_sec Clean-up 
 

@@ -17,8 +17,10 @@ the root directory before running or rerunning the setup script.
      Modify the users PATH and PYTHONPATH unix environment variables,
      as discussed \ref install_environment_page "here".
 
+
    - **Navigate to root directory:**
      Change directory (cd) to the pscfpp/ root directory.
+
 
    - **Setup:**
      Invoke the "setup" script from the pscfpp/ root directory.  To setup
@@ -27,52 +29,68 @@ the root directory before running or rerunning the setup script.
      \code
      ./setup
      \endcode
-     Alternatively, to customize compiler options, invoke the setup script
-     with a filename argument that is the name of a compiler configuration
-     file that contains non-default compiler options, as discussed
-     \ref install_setup_page "here"). An environment appropriate for
-     compiling on a Mac OS X system with Apple silicon hardware (e.g., an
-     M1 or M2 chip) in which the dependencies have been installed using
-     the homebrew package mamager can be created by entering
+     from the root directory. Note the use of the prefix "./" before
+     the name of the script, which indicates that the operating system
+     should look for this script in the present working directory.
+
+     Alternatively, to customize compiler options, one may invoke the 
+     setup script with a filename argument that is the name of a compiler 
+     configuration file that contains non-default compiler options, as 
+     discussed \ref install_setup_page "here").  An environment appropriate 
+     for compiling on a Mac OS X system with Apple silicon hardware (e.g., 
+     an M1 or M2 chip) in which the dependencies were installed using the 
+     homebrew package mamager can be created by entering
      \code
      ./setup mac-si-homebrew
      \endcode
+     from the pscfpp/ directory.
+
 
    - **Compile all CPU programs:**
-     We recommend that most users first try to compile only the code necessary
-     to build programs that do not use a GPU, and try to compile CUDA enabled
-     programs only as a second step. Compilation of CUDA code is disabled by 
-     default after the initial setup operation. To compile only CPU programs, 
-     but no CUDA code, you may simply enter
+     We recommend that users first compile only the C++ programs that do
+     not use a GPU, and then try to compile GPU enabled C++/CUDA programs 
+     as a separate step. Compilation of CUDA code is disabled by default 
+     after the initial setup operation. To compile only C++ CPU programs, 
+     but no CUDA code, you may enter
      \code
      make all
      \endcode
-     from the pscfpp/ directory.  If successful, this will install executables 
-     named "pscf_fd", "pscf_pc1", "pscf_pc2" and "pscf_pc3" in the pscfpp/bin 
-     directory. 
+     from the pscfpp/ directory immediately after running the setup script.  
+     If successful, this will install executables named "pscf_fd", "pscf_pc1", 
+     "pscf_pc2" and "pscf_pc3" in the pscfpp/bin directory.  
 
-   - **Enable compilation of GPU enabled programs:**
-     To enable compilation of CUDA code and GPU-enabled programs on a machine
+     Compiling all the PSCF C++ code using "make all" takes a little time 
+     (about 2 minutes on a 2020 Mac air laptop). It can be completed 
+     faster on a multi-core machine by using the -j option to use multiple
+     CPU cores. To do so, enter something analogous to
+     \code
+     make -j8 all 
+     \endcode
+     Here, the option -jn (with n=8 in this example) instructs the make 
+     system to use up to n CPU cores if available.
+
+   - **Enable compilation of GPU-enabled programs:**
+     To enable compilation of CUDA code for GPU-enabled programs on a machine
      with an appropriate NVIDIA GPU and CUDA compiler, enter
      \code
-     ./configure -c1 
+     ./configure -c1
      \endcode
      from the pscfpp/ root directory.  To disable compilation of CUDA code,
      instead enter
      \code
      ./configure -c0
      \endcode
-     These configuration commands must be entered after the setup script but
-     before compilation with the desired options.
+     These configuration commands must be entered after the setup script 
+     but before compiling with the specified options.
 
      To check if CUDA compilation is currently enabled, enter
      \code
      .\configure -q
      \endcode
      from the pscfpp/bld/ directory. This should yield a report indicating 
-     whether the "debugging" and "CUDA" options are currently enabled (ON)
-     or disabled (OFF) for code built in this directory (which is the 
-     default build directory).
+     whether the "debugging" and "CUDA" options are currently set to be
+     enabled (ON) or disabled (OFF) for code built in the bld/ directory 
+     (the default build directory).
 
      Usage of the configure scripts is discussed in more detail
      \ref install_configure_page "here". 
@@ -92,14 +110,13 @@ the root directory before running or rerunning the setup script.
 
 Entering "make all" from the pscfpp/ root directory, as described above, 
 will create a large number of intermediate object (*.o), dependency (*.d) 
-and library (*.a) files in subdirectories of the pscfpp/bld directory 
-(which is the default build directory).
+and library (*.a) files in subdirectories of the pscfpp/bld directory. 
 
 Each of the above steps is discussed in more detail in the following pages.
 
 <h2> Out-of-source vs. In-Source Compilation </h2>
-The above instructions will perform an "out-of-source" build in which
-intermediate files created during compilation process are left in the
+The above instructions explain how to perform an "out-of-source" build in 
+which intermediate files created during compilation process are left in the
 pscfpp/bld directory tree. It is also possible to perform an "in-source"
 build in which these files are created in the pscfpp/src directory that
 also contains all C++ and CUDA source code files. The option of in-source
