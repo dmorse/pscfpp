@@ -58,10 +58,9 @@ directory. This is true for both in-source or out-of-source compilation.
 We recommend that most users build PSCF out-of source. The overview
 of instructions given in a \ref install_overview_page "previous page"
 were instructions for performing an out-of-source build. An 
-out-of-source build will be performed if commands "make all-cpu" and
-"make pspg" or "make all" are invoked from within either the root 
-pscfpp/ directory (as recommended in those instructions) or from 
-within the pscfpp/bld directory.
+out-of-source build will be performed if commands "make all" is 
+invoked from within either the root pscfpp/ directory (as recommended 
+in those instructions) or from within the pscfpp/bld directory.
 
 \section install_inout_in In-Source Builds
 
@@ -71,12 +70,10 @@ during development. To build PSCF in-source, one simply invokes the
 make utility from within the pscfpp/src/ directory, rather than from 
 within the pscfpp/ or pscfpp/bld/ directory.  The names of the 
 makefile targets used for this purpose are the same as those used 
-to build out-of-source.  Entering the command "make all-cpu" from the 
-pscfpp/src directory will thus perform an in-source build all of CPU 
-programs in the package, and install the resulting executable files in 
-pscfpp/bin.  Entering "make pspg" from pscfpp/src on a machine with a 
-CUDA compiler will compile all GPU enabled executables, which are also 
-installed in pscfpp/bin.
+to build out-of-source.  Entering the command "make all" from the 
+pscfpp/src directory will thus perform an in-source build all of 
+relevant programs in the package, and install the resulting executable 
+files in pscfpp/bin.  
 
 When PSCF is compiled in-source, the make command can also be invoked 
 from any subdirectory of the src/ directory. Invoking "make all" from 

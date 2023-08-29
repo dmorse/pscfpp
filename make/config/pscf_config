@@ -2,16 +2,19 @@
 # This makefile fragment defines:
 #
 #   - A variable $(PSCF_DEFS) that is passed to the processor to define 
-#     preprocessor flags that effect the code in the pscf/ directory. 
+#     preprocessor flags that effect the code in the pscf/ directory
+#     and other directories that depend upon it. (Empty by default)
 #
 #   - A variable $(PSCF_SUFFIX) that indicates what other features are
 #     enabled, which is also added after PSCF_MPI_SUFFIX to the file
 #     name of pscf library. 
 #
-#   - A variable $(PSCF_LIB) that the absolute path to the pscf library 
-#     file.
+#   - A variable $(PSCF_LIB) that gives the absolute path to the pscf 
+#     library file.
 #
-# This file must be included by every makefile in the pscf directory. 
+# This file must be included by every makefile in the pscf directory,
+# and other directories that contain code that is defined in the Pscf
+# namespace.
 #-----------------------------------------------------------------------
 # Comments:
 #

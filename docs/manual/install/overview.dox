@@ -39,27 +39,59 @@ the root directory before running or rerunning the setup script.
      \endcode
 
    - **Compile all CPU programs:**
-     From the pscfpp/ directory, enter
+     We recommend that most users first try to compile only the code necessary
+     to build programs that do not use a GPU, and try to compile CUDA enabled
+     programs only as a second step. Compilation of CUDA code is disabled by 
+     default after the initial setup operation. To compile only CPU programs, 
+     but no CUDA code, you may simply enter
      \code
-     make all-cpu
+     make all
      \endcode
-     If successful, this will install executables named "pscf_fd",
-     "pscf_pc1", "pscf_pc2" and "pscf_pc3" in the pscfpp/bin directory.
+     from the pscfpp/ directory.  If successful, this will install executables 
+     named "pscf_fd", "pscf_pc1", "pscf_pc2" and "pscf_pc3" in the pscfpp/bin 
+     directory. 
 
-   - **Compile GPU-enabled programs:**
-     To compile the GPU enabled programs on a machine with an appropriate
-     NVIDIA GPU and a CUDA compiler, enter
+   - **Enable compilation of GPU enabled programs:**
+     To enable compilation of CUDA code and GPU-enabled programs on a machine
+     with an appropriate NVIDIA GPU and CUDA compiler, enter
      \code
-     make pspg
+     ./configure -c1 
+     \endcode
+     from the pscfpp/ root directory.  To disable compilation of CUDA code,
+     instead enter
+     \code
+     ./configure -c0
+     \endcode
+     These configuration commands must be entered after the setup script but
+     before compilation with the desired options.
+
+     To check if CUDA compilation is currently enabled, enter
+     \code
+     .\configure -q
+     \endcode
+     from the pscfpp/bld/ directory. This should yield a report indicating 
+     whether the "debugging" and "CUDA" options are currently enabled (ON)
+     or disabled (OFF) for code built in this directory (which is the 
+     default build directory).
+
+     Usage of the configure scripts is discussed in more detail
+     \ref install_configure_page "here". 
+     
+   - **Compile all programs (including GPU-enabled programs):**
+     To compile all programs, including GPU enabled programs, on a machine 
+     with an appropriate NVIDIA GPU and a CUDA compiler, simply enable
+     compilation of CUDA code as described above, and then again enter
+     \code
+     make all
      \endcode
      from within the pscfpp/ root directory.  If successful, this will
-     install executables named "pscf_pg1", "pscf_pg2" and "pscf_pg3"
-     in the pscfpp/bin directory.
+     install executables named "pscf_pg1", "pscf_pg2" and "pscf_pg3" in 
+     the pscfpp/bin directory in addition to the CPU programs "pscf_fd", 
+     "pspc_pc1", "pscf_pc2" and "pscf_pc3" that were created by compiling
+     only C++ code.
 
-It is also possible to compile all CPU and GPU-enabled programs with the 
-single command "make all" on machines that are configured to compile CUDA 
-programs.  The "make all-cpu" and "make pspg" or "make all" commands will 
-each create a large number of intermediate object (*.o), dependency (*.d) 
+Entering "make all" from the pscfpp/ root directory, as described above, 
+will create a large number of intermediate object (*.o), dependency (*.d) 
 and library (*.a) files in subdirectories of the pscfpp/bld directory 
 (which is the default build directory).
 
@@ -72,8 +104,8 @@ pscfpp/bld directory tree. It is also possible to perform an "in-source"
 build in which these files are created in the pscfpp/src directory that
 also contains all C++ and CUDA source code files. The option of in-source
 compilation is discussed in more detail \ref install_inout_page "here".
-We recommend the use of out-of-source compilation for package users who
-are not actively working on development. Developers may find in-source
+We recommend the use of out-of-source compilation for package users who 
+are not actively working on development. Some developers find in-source
 compilation more convenient during development.
 
 <BR>
