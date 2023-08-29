@@ -773,6 +773,7 @@ namespace Pspg
       UTIL_CHECK(hasCompressor());
       UTIL_CHECK(hasMcSimulator_);
       mcSimulator_.simulate(nStep);
+      hasCFields_ = true;
    }
 
    // Thermodynamic Properties
