@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from pscfpp.FileEditor import *
+from pscfpp.text import *
 
 editor = FileEditor()
 editor.setIsTest(False)

@@ -1,0 +1,71 @@
+The use of the word Field to describe classes has gotten to be 
+confusing and inconsistent.
+
+The Pscf::Pspc::Field template is simply a DArray in which
+allocation uses special functions provided by FFTW. This is
+subclassed by RField and RFieldDft.
+
+The Pscf::Pspg::DField template is an analog of a DArray in
+which data is on the GPU/device. This is subclassed by
+RDField and RDFieldDft, so the names are not analogous to
+those used in Pscf::Pspc. 
+
+
+Proposal:
+=========
+
+Step 1: Establish consistent names
+----------------------------------
+
+1) Make Pscf::Pspc::Field to Pscf::Pspc::DArrayFftw to make it clear 
+that is is simply a DArray that uses FFTW allocation statements to 
+obtain aligned data.
+
+2) Change DArray to make allocate, deallocate and reallocate member 
+functions virtual, with default implementations that use standard C++ 
+new and delete, and make Pscf::Pspc::DArrayFftw a subclass of DArray 
+with these functions overloaded.
+
+3) Change Pscf::Pspg::Field to Pscf::Pspg::DArrayGpu to make it clear 
+that this is an analog of DArray in which data is held on the Gpu 
+device.
+
+4) In Pspg namespace, Rename RDField to RField and RDFieldDft to 
+RFieldDft, to re-establish the analogy to the Pspc namespace.
+
+
+Step 2: Change treatment of CUDA in build system
+------------------------------------------------
+
+Change the build system so that compilation of Cuda files is controlled 
+by a makefile macro. Among other benefits, this will also allow mixing 
+of C++ and CUDA files in the same namespace level directory.
+
+Step 3: Separate out files involving periodic structures
+--------------------------------------------------------
+
+Goal: Allow re-use of files that treat periodic structures in other codes, 
+which may use a different hardware, different molecular model (e.g., 
+discrete rather than continous), different physical assumptions (compressible 
+and nonlocal vs. incompressible and local) or different algorithms.
+
+Create a director src/prdc and namespace Pscf::Prdc to hold all files that 
+are specific to periodic structures. This would have subdirectories:
+
+   prdc/
+     crystal/
+     mesh/
+     field/cpu/
+     field/gpu/
+
+Create subnamespaces Pscf::Prdc::Cpu and Pscf::Prdc::Gpu to hold analogous 
+files that are specific to CPU and GPU. 
+
+Change build system to compile the contents of this directory.
+
+Change build system of pspc/ and pspg/ to treat prdc directory as a 
+dependence.
+
+Add using namespace statements to use Pscf::Prdc and Pscf::Prdc::Cpu 
+or Pscf::Prdc::Gpu to most or all files in pspc/ and pspg/.
+

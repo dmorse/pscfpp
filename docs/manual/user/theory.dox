@@ -1,6 +1,6 @@
 /*! \page user_theory_page Appendix: Self-Consistent Field Theory
 
-\ref user_thin_films_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref user_python_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
 \ref user_fourier_page  (Next)
 <BR>
 
@@ -735,7 +735,7 @@ homogeneous constant, and are thus independent of this choice of
 convention.
 
 <BR>
-\ref user_thin_films_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref user_python_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
 \ref user_page    (Up) &nbsp; &nbsp; &nbsp; &nbsp;
 \ref user_fourier_page    (Next)
 

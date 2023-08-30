@@ -1,6 +1,7 @@
 from Record import *
 import os
-from os.path   import *
+from os.path import *
+from file import *
 
 class RecordEditor:
 
@@ -50,11 +51,11 @@ class RecordEditor:
       if (not self.isTest):
          newfile.close()
    
-   def editFiles(self, dirName, pattern):
-      if (not self.isReady):
-         print "RecordEditor is not ready"
-         return
-      dir = Directory(dirName)
-      filenames = dir.filenames(pattern)
-      for filename in filenames:
-         self.editFileBlocks(filename)
+#  def editFiles(self, dirName, pattern):
+#     if (not self.isReady):
+#        print "RecordEditor is not ready"
+#        return
+#     dir = Directory(dirName)
+#     filenames = dir.filenames(pattern)
+#     for filename in filenames:
+#        self.editFileBlocks(filename)

@@ -1,6 +1,6 @@
 """! Module for processing PSCF command scripts. """
 
-from Record import *
+from text import *
 
 ##
 # Class to parse a PSCF command script.

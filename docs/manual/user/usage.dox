@@ -90,25 +90,27 @@ options listed in the table shown below.
   <tr> 
      <td> -i </td>
      <td> prefix </td>
-     <td> Specifies a prefix string that will be prepended to the
-          names paths all input data files </td>
+     <td> Specifies a prefix string that is prepended to the
+          names (paths) of all input data files </td>
   </tr>
   <tr> 
      <td> -o </td>
      <td> prefix </td>
-     <td> Specifies a prefix string that will be prepended to the 
+     <td> Specifies a prefix string that is prepended to the 
           the names (paths) for all output data files </td>
   </tr>
 </table>
-Only the -p and -c options are required, while others may be omitted.
-The blank entry in the argument column for the -e option indicates 
-that this option does not take an argument. The "prefix" arguments of 
-the -i and -o options can be paths to directories that end in directory
-separator characters, such as "in/" or "out/", in order to place all
-input or output files in specified directories. These prefixes are
-prepended to names of input and output files whose names are given in 
-the command file, but are not added to the names of the parameter and
-command files. 
+Only the -p and -c options are required, while others may be omitted.  
+The blank entry in the argument column for the -e option indicates that 
+this option does not take an argument. 
+
+The "prefix" arguments of the -i and -o options can be used to specify
+directory for input and output files. To do so, set either of these
+arguments to the path to a directory, terminated by the directory separator
+charactor "/", giving a string such as "in/" or "out/".  These prefix
+strings are prepended verbatim to names of input and output files that 
+are specified in the command file, but are not added to the names of 
+the parameter and command files. 
 
 <em> Example </em>:
 The command
@@ -117,8 +119,9 @@ The command
 \endcode
 would run the program pscf_pc3 using a parameter file named "param" and
 a command file named "commands", while echoing the parameter file during
-initialization, and reading all input files from subdirectory "in/" and
-writing all output files to subdirectory "out/". 
+initialization, writing all output files to subdirectory "out/" of the 
+current working directory, and reading all input files other than the 
+parameter and command files from subdirectory "in/".
 
 <BR>
 \ref user_files_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp;

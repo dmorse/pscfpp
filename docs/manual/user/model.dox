@@ -435,6 +435,58 @@ The value of pressure reported by PSCF is thus \f$ -1 \f$ times the
 grand-canonical free energy per monomer reference volume, in thermal
 energy units.
 
+\subsection user_model_vMonomer_sub Irrelevance of Monomer Volume in SCFT
+
+As discussed above, the choice of a convention for the monomer reference 
+volume \f$ v \f$ determines the choice of values for several types of 
+related parameters appropriate for a specific physical system.  It turns 
+out, however, that the value of the monomer volume \f$ v \f$ itself 
+is usually not needed as an input to an SCFT calculation.  This is 
+because changes in the value of \f$ v \f$ alone, without corresponding 
+changes in the values of related parameters, can be shown mathematically 
+to have no effect on SCFT predictions for values of any of the properties 
+normally output by any PSCF program.  Specifically, changes in the value 
+of \f$ v \f$ alone can be shown to have no effect on SCFT predictions 
+for monomer volume fraction fields, species chemical potentials, or the 
+non-dimensionalized Helmholtz free energy \f$ \tilde{f} \f$ or 
+non-dimensionalized pressure \f$ \tilde{p} \f$ defined above. 
+
+When using 'experimentalist' units to model a specific experimental 
+system, a user's choice of a convention for \f$ v \f$ obviously does 
+affect their choice of input values for the block lengths, solvent 
+sizes and monomer statistical segment length parameters. Once a user 
+has computed values for these required input parameters, however, 
+PSCF programs generally do not require the value of \f$ v \f$ that 
+was used to choose these values in order to perform a SCFT 
+calculation.
+
+When using 'theorist' units to describe the simple case of a 
+one-component block polymer melt, the reference volume \f$ v \f$ is
+usually taken equal to the total volume per molecule in the melt. 
+In this case, values input for the Flory-Huggins \f$ \chi \f$ parameters 
+correspond to values of the product \f$ \chi N \f$ as defined using 
+experimentalist units, where \f$ N \f$ is the total number of monomers 
+per molecule.  With this convention, the value reported for 
+\f$ \tilde{f} \f$ is simply the the free energy per molecule in 
+thermal energy units. It may be shown that in this case, this 
+free energy only depends on a set of dimensionless state 
+parameters given by the values of \f$ \chi \f$ (or \f$ \chi N \f$), 
+the block volume fractions, and ratios of statistical segment 
+length values for different monomer types, independent of the 
+value of \f$ v \f$.
+
+The choice of a value for \f$ v \f$ does, however, affect 
+SCFT predictions for the equilibrium number of molecules in a 
+self-assembled unit such as a single unit cell of a periodic 
+structure or a spherical micelle.  SCFT predictions for the 
+equilibrium dimensions of such a 3D self-assembled structure 
+generally depend only on values of statistical segment lengths, 
+block lengths and values of \f$ \chi N \f$. The number of chains 
+that fit in the corresponding volume (e.g., the volume of a 
+unit cell or a micelle) is given by a ratio of total volume to 
+volume \f$ v \f$ per monomer, and is thus inversely proportional 
+to \f$ v \f$.
+
 <BR>
 \ref user_page       (Prev / Up) &nbsp; &nbsp; &nbsp; &nbsp;
 \ref user_files_page (Next)
