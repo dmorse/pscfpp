@@ -1,0 +1,55 @@
+namespace Pspc
+{
+
+/*! \page pspc_analyzer_AnalyzerManager_page  AnalyzerManager
+
+\section pspc_analyzer_AnalyzerManager_synopsis_sec Synopsis
+
+An AnalyzerManager is a container for an unspecifiecd number (zero or more)
+analyzer objects, i.e., of instances of subclasses of Pspc::Analyzer. 
+
+\sa Pspc::AnalyzerManager    "Developer documention for Pspc::AnalyzerManager"
+\sa \ref pspc_analyzers_page "User documentation for analyzer classes"
+
+\section pspc_analyzer_AnalyzerManager_param_sec Parameter File Format
+The parameter file format for an AnalyzerManager contains a series of 
+any number of parameter file blocks for analyzer objects, with one space
+between analyzer class blocks. Below is an example showing a parameter
+block for an AnalyzerManager with two objects that are instances of 
+fictitious analyzer classes named Analyzer1 and Analyzer2, in which 
+ellipses are used to represent the body of the parameter file format 
+for each analyzer.
+
+\code
+  AnalyzerManager{
+
+    Analyzer1{
+        ....
+    }
+
+    Analyzer2{
+        ....
+    }
+
+  }
+\endcode
+The AnalzyerManager parameter file block may contain any number of such
+blocks, or may be empty.  
+
+When an AnalyzerManager parameter block is read, the string in the 
+opening line of each analyzer subblock, without the opening bracket, is
+compared to a list of analyzer classes. This list is defined by the 
+implemenation of the associated McAnalyzerFactory (for Monte Carlo
+simulations) or MdANalyzerFactory (for molecular dynamics simulations.
+If the analyzer class name is recognized, an object of the specified 
+class is created and the body of its parameter file block is read by 
+calling the readParameters() member function of the new object. If 
+the name is not recognized, an Exception is thrown and execution 
+stops. 
+
+Links to user documention for individual analyzer classes is available
+\ref pspc_analyzers_page "here". 
+ 
+*/
+
+}

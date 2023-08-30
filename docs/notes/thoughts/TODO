@@ -1,11 +1,26 @@
 --------------------------------------------------------------------------
 v1.1
 
+Tools:
+------
+
+1) Develop python scripts to read output files and analyze sweeps.
+
+
+Documentation:
+-------------
+1) Add documentation for building on Windows Subsystem for Linux (WSL)
+
+
+--------------------------------------------------------------------------
+v1.2
+
 Pscf
 -----
 
 1) Change treatment of phases in Basis to explicitly store and manipulate
-Rational number phases, compute coefficients only at the very end.
+Rational number phases, compute floating point coefficients only at the 
+very end.
 
 2) Introducing new v2.0 field file formats for basis and rgrid. 
 Basis would contain the mesh. Rgrid would be output in convention C order.
@@ -26,16 +41,14 @@ Docs:
 2) Improve developer documentation regarding build system, Parameter IO
 
 Pspg:
+-----
 
-1) Review and clean up redundant GPU kernels (leave for v1.1?)
+1) Introduce working prototype of Field Theoretic Monte Carlo (v1.2?)
 
-Tools:
-------
-
-1) Develop python scripts to read output files and analyze sweeps
+2) Review and clean up redundant GPU kernels (leave for v1.1?)
 
 Docs
 -----
 
-1) Write a first draft of a latex algorithms and theory manual, or publish 
-as an article in a computational science oriented journal.
+1) Write a first draft of a latex algorithms and theory manual, or 
+publish as an article in a computational science oriented journal.

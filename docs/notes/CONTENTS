@@ -1,0 +1,7 @@
+This folder contains design notes and code that is not in use.
+Subdirectories are organized as follows:
+
+draft/    -  Unfinished source code designs, written as skeletal C++ / CUDA
+attic/    -  Old source code that has been removed from the current version
+thoughts/ -  Notes about design ideas, future work, etc. (not source code)
+
