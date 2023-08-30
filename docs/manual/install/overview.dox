@@ -97,16 +97,16 @@ the root directory before running or rerunning the setup script.
      
    - **Compile all programs (including GPU-enabled programs):**
      To compile all programs, including GPU enabled programs, on a machine 
-     with an appropriate NVIDIA GPU and a CUDA compiler, simply enable
-     compilation of CUDA code as described above, and then again enter
+     with an appropriate NVIDIA GPU and a CUDA compiler, you first need
+     to enable compilation of CUDA code as described above. Then enter
      \code
      make all
      \endcode
-     from within the pscfpp/ root directory.  If successful, this will
-     install executables named "pscf_pg1", "pscf_pg2" and "pscf_pg3" in 
-     the pscfpp/bin directory in addition to the CPU programs "pscf_fd", 
-     "pspc_pc1", "pscf_pc2" and "pscf_pc3" that were created by compiling
-     only C++ code.
+     from within the pscfpp/ root directory, or "make -jn all" to use n
+     CPU cores. If successful, this will install executables named 
+     "pscf_pg1", "pscf_pg2" and "pscf_pg3" in the pscfpp/bin directory 
+     in addition to the files "pscf_fd", "pspc_pc1", "pscf_pc2" and 
+     "pscf_pc3" that are created by compiling only pure C++ code.
 
 Entering "make all" from the pscfpp/ root directory, as described above, 
 will create a large number of intermediate object (*.o), dependency (*.d) 
@@ -116,13 +116,13 @@ Each of the above steps is discussed in more detail in the following pages.
 
 <h2> Out-of-source vs. In-Source Compilation </h2>
 The above instructions explain how to perform an "out-of-source" build in 
-which intermediate files created during compilation process are left in the
-pscfpp/bld directory tree. It is also possible to perform an "in-source"
-build in which these files are created in the pscfpp/src directory that
-also contains all C++ and CUDA source code files. The option of in-source
+which intermediate files created during compilation process are placed in 
+the pscfpp/bld directory tree. It is also possible to perform an "in-source"
+build in which these files are instead placed in the pscfpp/src directory 
+that also contains all C++ and CUDA source code files. The option of in-source 
 compilation is discussed in more detail \ref install_inout_page "here".
 We recommend the use of out-of-source compilation for package users who 
-are not actively working on development. Some developers find in-source
+are not actively working on development. Some developers may find in-source
 compilation more convenient during development.
 
 <BR>

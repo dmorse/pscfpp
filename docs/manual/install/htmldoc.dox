@@ -1,6 +1,6 @@
 /*! \page install_doc_page Generating Documentation
 
-\ref install_configure_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref install_targets_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
 \ref user_page (Next)
 <BR>
 
@@ -76,7 +76,7 @@ from the pscfpp/ directory or, equivalently, enter "make clean" from the
 pscfpp/docs directory.
 
 <BR>
-\ref install_configure_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref install_targets_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
 \ref install_page (Up) &nbsp; &nbsp; &nbsp; &nbsp;
 \ref user_page (Next)
 

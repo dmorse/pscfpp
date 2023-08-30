@@ -1,7 +1,7 @@
 /*! \page install_targets_page Makefile targets
 
-\ref install_inout_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
-\ref install_configure_page (Next) 
+\ref install_configure_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
+\ref install_doc_page (Next) 
 <BR>
 
 The build system for PSCF is based on unix makefiles. Individual programs
@@ -239,8 +239,8 @@ compile a list of source files whose locations are provided internally
 as absolute paths.
 
 <BR>
-\ref install_inout_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
+\ref install_configure_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
 \ref install_page   (Up) &nbsp; &nbsp; &nbsp; &nbsp; 
-\ref install_configure_page (Next) 
+\ref install_doc_page (Next) 
 
 */
