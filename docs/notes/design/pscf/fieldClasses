@@ -1,5 +1,5 @@
-The use of the word Field to describe classes has gotten
-to be confusing and inconsistent.
+The use of the word Field to describe classes has gotten to be 
+confusing and inconsistent.
 
 The Pscf::Pspc::Field template is simply a DArray in which
 allocation uses special functions provided by FFTW. This is
