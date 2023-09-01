@@ -16,8 +16,8 @@ materials that may contain block polymers, homopolymers and solvent.
     <li> \ref install_environment_page  </li>
     <li> \ref install_setup_page  </li>
     <li> \ref install_inout_page  </li>
-    <li> \ref install_targets_page  </li>
     <li> \ref install_configure_page  </li>
+    <li> \ref install_targets_page  </li>
     <li> \ref install_doc_page  </li>
     </ol>
   </li>

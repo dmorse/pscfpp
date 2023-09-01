@@ -1,65 +1,104 @@
 /*! \page install_configure_page Optional Features
 
-\ref install_targets_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
-\ref install_doc_page (Next)
+\ref install_inout_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref install_targets_page (Next)
 <BR>
 
 The PSCF build system is designed to allow users to enable or disable
-conditional compilation of optional features during compilation.
-Thus far, the only such optional feature is the "debugging" feature that
-is used to add additional run-time sanity checks (such as run-time
-checking of array index bounds) at a slight cost in performance. The
-system used to enable and disable this feature is designed to be 
-flexible enough to allow later additional of other optional features.
+conditional compilation of optional features during compilation. Thus far
+the only such optional features are "debugging" and "CUDA" features. 
+The "debugging" feature is used to add additional run-time sanity checks 
+(such as run-time checking of array index bounds) at a slight cost in 
+performance. The CUDA feature enables conditional compilation of CUDA
+code on machines that have an appropriate nVidia GPU and CUDA development
+kit. 
 
 \section install_configure_configure The "configure" script
 
 The pscfpp/src and pscfpp/bld directories are used as build directories
 for in-source and out-of source compilation, respectively. After the setup
 script has been run, each of these two standard build directories will
-contain a unix bash script named "configure". The configure script can
-be used to modify configuration files that control what features are
+contain an exectuable shell script named "configure". The configure script 
+can be used to modify configuration files that control what features are
 enabled when code is compiled.  The configure script in each build
-directory must be invoked from the directory that contains the script
-(which is the root of the src/ or bld/ directory tree) before invoking
-the "make" utility to actually compile code.
+directory may be invoked from within that directory (i.e., from the src/
+or bld/ directory) in order to modify which features will be enabled and 
+disabled in code that is subsequently compiled in that build directory. 
 
-\subsection install_configure_change_sub Enabling or disabling debugging
+The pscfpp/ root directory also contains a similar .configure script
+that can be invoked to apply identical changes in compile-time features
+to the configuration files in both the src/ and bld/ directories.
 
-The "debugging" feature is enabled or disabled by invoking configure
-script with the "-d" option with an option parameter "1" to enable
-or "0" to disable, before compiling source code.
-To enable debugging in the code built in one build directory one would
-enter
+The configure script functions by editing configuration files that are
+used by the makefile system to define what actions should be taken during
+compilation. These configuration files are installed by the setup script.
+The configure script must thus be invoked after the setup script, but
+before compiling. 
+
+\subsection install_configure_debug_sub Enabling or disabling debugging
+
+The "debugging" feature is enabled or disabled by invoking configure 
+script with the "-d" option with an option parameter "1" to enable or "0" 
+to disable, before compiling source code.  The debuggin feature is 
+disabled by default. To enable debugging checks in the code built in 
+either the src/ or bld/ directory one would enter
 \code
 ./configure -d1
 \endcode
-from the root of the relevant build directory (i.e., from src/ or bld/).
+from the pscfpp/ root directory. 
 To disable debugging before compiling, one would instead enter
 \code
 ./configure -d0
 \endcode
-These commands change the configuration used during compilation, and
-so must be invoked before compiling any relevant source code.
+The same commands can also be invoked from bld/ or src/ directory to
+enable or disable debugging only in a single build directory. 
+
+\subsection install_configure_cuda_sub Enabling or disabling CUDA compilation
+
+Compilation of CUDA code can be enabled or disabled by invoking a 
+configure script with the "-c" option, with an option parameter "1" to
+enable CUDA compilation or "0" to disable CUDA compilation. Compilation 
+of CUDA code is disabled by default. To enable compilation of CUDA source 
+files in any code compiled in either the bld/ or src/ directory, one 
+would enter
+\code
+./configure -c1
+\endcode
+from the pscfpp/ root directory.  To disable CUDA compilation, one would 
+instead enter
+\code
+./configure -c0
+\endcode
+The same commands can be invoked from a specific build directory (i.e.,
+from within the source or src/ or bld/ directory) to enable or disable
+compilation of CUDA code only in that build directory (i.e,. only in 
+code that is compiled out-of-source or in-source).  
 
 \subsection install_configure_query_sub The "query" option
 
 The -q command line option of the configure script may be used to query
-what optional features are currently set to be enabled or disabled the
-next time the code is compiled.  To see how this works, changed
-directory (cd) to the pscfpp/bld/ directory and then enter
+what optional features are currently set to be enabled or disabled 
+during compilation. To see an example, change directory (cd) to the 
+pscfpp/bld/ directory and then enter
 \code
 ./configure -q
 \endcode
 This should result in the output
 \code
 -d  OFF - debugging
+-c  OFF - CUDA compilation
 \endcode
-if debugging is disabled (the default configuration), or
+if debugging and CUDA compilation are both disabled (the default 
+configuration), or
 \code
--d  ON - debugging
+-d  OFF - debugging
+-c  ON  - CUDA compilation
 \endcode
-if debugging has been enabled.
+if debugging is disabled but CUDA compilation has been enabled. 
+
+Entering "./configure -q" from the pscfpp/ root directory instead yields 
+a report that shows which optional features are enabled in both the bld/ 
+and src/ directory.
 
 \subsection install_configure_help_sub The "help" option
 
@@ -67,40 +106,40 @@ Invoking the configure script with the -h ("help") option, by entering
 \code
 ./configure -h
 \endcode
-produces a list list of all command line options accepted by the script.
+produces a list of all command line options accepted by the script.
 
 \section install_configure_build_directories_section Build configuration files
 
 The configuration of the build system is actually defined by the contents
 of a set of files named "config.mk" in the src/ and bld/ directories.
 These files, which we refer to as build configuration files, are makefile
-fragments that are included by other makefiles during the build process. The
-configure script works by editing the build configuration files.  Users may
-also edit these files directly if they are comfortable doing so.
+fragments that are included by other makefiles during the build process. 
+The configure scripts work by editing the build configuration files.  
+Users may also edit these files directly if they are comfortable doing 
+so.  The configuration files contain comments that explain the meaning 
+and usage of all of the variables defined there. 
 
 The directories src/ and bld/ contain analogous directory structures, and
 similar sets of build configuration files.  In what follows, we will refer
 to src/ and bld/ generically as build directories. Both of these directories
 contains a set of five subdirectories named util/, pscf/, fd1d/, pscpc/, and
 pspg/ that each contain C++ source files from a single C++ namespace. We
-refer to these top-level subdirectories of bld/ and src/ as "namespace-level"
-subdirectories.
+refer to these top-level subdirectories of bld/ and src/ as 
+"namespace-level" subdirectories.
 
 After the setup script has been run, each build directory will contain 6
 build configuration files files named "config.mk", with one in the root
 of the build directory (i.e., in src/ and bld/) and one in each of the 5
-namespace-level subdirectories of that directory.
-The config.mk file in the root directory of each build directory tree
-is the main build configuration file for code built in that directory.
-This file controls the choice of compiler and general options that are
-applied to all code.  The config.mk files in the namespace level
-directories specify more specialized options that are only relevant for
-code in specific namespaces. The six config.mk files in each build
-directory together specify the configuration of any code that is
-compiled in that directory tree.
+namespace-level subdirectories of that directory.  The config.mk file in 
+the root directory of each build directory tree is the main build 
+configuration file for code built in that directory.  This file controls 
+the choice of compiler and general options that are applied to all code 
+built there.  The config.mk files in the namespace level directories 
+each specify more specialized options that are only relevant for code 
+in specific subdirectories or C++ namespaces. 
 
 <BR>
-\ref install_targets_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
-\ref install_page   (Up) &nbsp; &nbsp; &nbsp; &nbsp;
-\ref install_doc_page (Next)
+\ref install_inout_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref install_page  (Up) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref install_targets_page (Next)
 */

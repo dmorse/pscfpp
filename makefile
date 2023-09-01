@@ -67,17 +67,18 @@ clean-bin:
 	rm -f $(BIN_DIR)/pscf*
 
 # Remove user-generated documentation files
-clean-html:
+clean-docs:
 	cd docs; $(MAKE) clean
 
 # Remove almost all files that were not in the repository
 veryclean:
 	make clean-bin
 	rm -f $(BIN_DIR)/makeDep*
+	make clean-docs
 	cd bld; $(MAKE) veryclean
 	rm bld/makefile
 	cd src; $(MAKE) veryclean
-	cd docs; $(MAKE) clean
 	cd examples; ./clean
+	cd lib/python/pscfpp; rm -f *.pyc; rm -Rf __pycache__
 
 # ==========================================================================
