@@ -1,67 +1,70 @@
-# -----------------------------------------------------------------------
-#   This module provides tools to parse the PSCF "thermo file" and store 
-#   all values within it in a single object. A thermo file is output by
-#   the PSCF command WRITE_THERMO, and can either be a standalone file or
-#   can be a section of a larger data file, as is the case in the output
-#   of a Sweep operation, in which the files named *.dat contain both the
-#   parameter file data and the thermo data. Users can access and modify 
-#   the stored values of the properties after parsing by using specific 
-#   statements (commands), and can write the entire thermo object to a 
-#   file in proper format. 
+"""! Module for parsing thermo files. """
+
+##
+# Container for data in thermo files.
 #
-#   Parsing a thermo file:
+#  This module provides tools to parse the PSCF "thermo file" and store 
+#  all values within it in a single object. A thermo file is output by
+#  the PSCF command WRITE_THERMO, and can either be a standalone file or
+#  can be a section of a larger data file, as is the case in the output
+#  of a Sweep operation, in which the files named *.dat contain both the
+#  parameter file data and the thermo data. Users can access and modify 
+#  the stored values of the properties after parsing by using specific 
+#  statements (commands), and can write the entire thermo object to a 
+#  file in proper format.
 #
-#       A Thermo object represents a PSCF thermo file that is identified 
-#       by a first line that contains the value of fHelmholtz. It stores
-#       all the contents within the file in a form that allows each
-#       property within it to be accessed and modified.
+#  A Thermo object represents a PSCF thermo file that is identified 
+#  by a first line that contains the value of fHelmholtz. It stores
+#  all the contents within the file in a form that allows each
+#  property within it to be accessed and modified.
 #
-#       A PSCF thermo file always starts with the fHelmholtz value.  
-#       Users may parse such a file by creating a Thermo object, 
-#       passing the name of thermo file as an argument. This constructor 
-#       parses the file and returns a Thermo object that contains its 
-#       contents. 
+#  **Constrctions:**
 #
-#       Example: To read and parse a thermo file with name 'thermo',
-#       execute the following code within a python3 interpreter:
+#      A PSCF thermo file always starts with the fHelmholtz value.  
+#      Users may parse such a file by creating a Thermo object, 
+#      passing the name of thermo file as an argument. This constructor 
+#      parses the file and returns a Thermo object that contains its 
+#      contents.
 #
-#           from pscfpp.thermo import *
-#           t = Thermo('thermo')
+#      Example:
 #
-#       Alternatively, a Thermo object can be read from an open Python
-#       file object. In this case, the object must first be created, 
-#       and the open file object must then be passed to the read()
-#       method. Note that the file object is not closed by read().
+#      To read and parse a thermo file with name 'thermo':
+#        \code
+#         from pscfpp.thermo import *
+#         t = Thermo('thermo')
+#        \endcode
 #
-#       Example:
+#  **Writing out:**
 #
-#           f = open('thermo')
-#           t = Thermo()
-#           t.read(f)
-#           f.close()
+#      A Thermo object can be written to a file by calling the 
+#      write() method, passing in the string of the file name to 
+#      which the Thermo should be written.
 #
-#       A Thermo object can be written to a file by calling the 
-#       write() method, passing in the string of the file name to 
-#       which the Thermo should be written.
+#      Example:
+#        \code
+#           t.write('thermoOut')
+#        \endcode
 #
-#           Example: t.write('thermoOut')
-#
-#   Accessing properties:
-#
-#       After creating a Thermo object, users can retrieve the values of 
-#       any property by name, using a dot notation for properties stored
-#       within the Thermo object. There are three different types of 
-#       properties that are stored within a Thermo object. These are listed 
-#       below, along with a summary of what is returned when they are 
-#       accessed, and an example Python expression that would access this 
-#       type of property in a typical Thermo object:
+#  **Accessing properties:**
+# 
+#      After creating a Thermo object, users can retrieve the values of 
+#      any property by name, using a dot notation for properties stored
+#      within the Thermo object. There are three different types of 
+#      properties that are stored within a Thermo object. These are listed 
+#      below, along with a summary of what is returned when they are 
+#      accessed, and an example Python expression that would access this 
+#      type of property in a typical Thermo object:
 #
 #           1. Single parameter: if a property is a single parameter, it 
 #           contains a label followed by one value on a single line.  
 #           Accessing a single parameter returns the value of the 
 #           parameter, which is a float. 
-#           Example: t.fHelmholtz    or     
-#                    t.fInter
+#
+#           Example: 
+#             \code
+#                t.fHelmholtz       
+#                t.fInter
+#             \endcode
 #
 #           2. List of Species: the Thermo class has two members named
 #           Polymers and Solvents, which are each a list of Species 
@@ -73,84 +76,71 @@
 #           the phi or mu value of a Species object, a specific name of 
 #           the property is needed and it returns the corresponding value, 
 #           which is a float. 
-#           Example: t.Polymers[0].phi    or
-#                    t.Solvents[1].mu
+#
+#           Example: 
+#             \code
+#                t.Polymers[0].phi  
+#                t.Solvents[1].mu
+#             \endcode
 #
 #           3. LatticeParameters: accessing the attribute LatticeParameter 
 #           returns a list that stores values of different lattice 
 #           parameters. A specific lattice parameter can be accessed by 
 #           square bracket indexing, and returns a float.
-#           Example: t.LatticeParameters    or
-#                    t.LatticeParameters[0]
 #
-#       The parser also allows users to modify some entries in different 
-#       preset formats for particular types of properties with equal sign 
-#       operator ('='), which are listed below: 
+#           Example: 
+#             \code
+#                t.LatticeParameters   
+#                t.LatticeParameters[0]
+#             \endcode
+#
+#  **Modifying properties:**
+#
+#      The parser also allows users to modify some entries in different 
+#      preset formats for particular types of properties with equal sign 
+#      operator ('='), which are listed below: 
 #
 #           1. Single parameter: a single parameter can be modified 
 #           by Python arithmetic operators. 
-#           Example: t.fHelmholtz *= 2    or    
-#                    t.fHelmholtz = 0.8   or 
+#
+#           Example: 
+#             \code
+#                t.fHelmholtz *= 2       
+#                t.fHelmholtz = 0.8  
+#             \endcode
 #
 #           2. phi or mu value of Species object: can be modified by 
 #           Python arithmetic operators.
-#           Example: t.Polymers[0].phi += 0.3    or
-#                    t.Solvents[1].mu = 0.2
+#
+#           Example: 
+#             \code
+#                t.Polymers[0].phi += 0.3 
+#                t.Solvents[1].mu = 0.2
+#             \endcode
 #
 #           3. LatticeParameters: two ways to modify:
-#           Example: 1. change the whole list by using a Python list:
-#                    t.LatticeParameters = [0.2, 0.2]
-#                    2. change a specific value within the list:
-#                    t.LatticeParameters[0] = 0.2
 #
-# Module Contents:
+#           Example: 
 #
-#   class Thermo:
-#           A Thermo object contains the data output by WRITE_THERMO. It 
-#           parses a thermo file and stores the contents within in it in a
-#           form that allows all properties to be accessed and modified.
+#             1. change the whole list by using a Python list:
+#                \code
+#                   t.LatticeParameters = [0.2, 0.2]
+#                \endcode
+#             2. change a specific value within the list:
+#                \code
+#                   t.LatticeParameters[0] = 0.2
+#                \endcode
 #
-#   class Species:
-#           A Species object stores the phi and mu values of a single 
-#           polymer or solvent. It also stores whether it has index from 
-#           the reading.
-#
-# -----------------------------------------------------------------------
-
-
 class Thermo:
-   '''
-   Purpose:
-      The class represents the Thermo file
-   Instance variables:
-      fHelmholtz: Helmholtz free energy per monomer, unit of kT
-      pressure: 
-         nondimensionalized pressure, Pv/kT (v = monomer reference volume)
-      fIdeal: ideal gas component of free energy
-      fInter: monomer interaction component of free energy 
-      fExt: external field component of free energy
-      polymers: 
-         a list of Species objects that represent polymers 
-      solvents:
-         a list of Species objects that represent solvents
-      cellParams:
-         a list of floats represents all Lattice parameters
-      tableLabel: 
-         a string that represents the label for both Polymers and Solvents
-   Methods:
-      __init__(self, filename=None):
-         constructor, with one argument:
-            filename:
-               the filename that needed to be read, default to be None
-      __str__(self):
-         return the string representation 
-      read(self, openFile):
-         open Thermo file openFile and update attributes of self
-      skipEmptyLine(self, openFile):
-         skip an empty line read from file openFile 
-      write(self, filename):
-         write self to a file 
-   '''
+
+   ##
+   # Constructor.
+   #
+   # If necessary, a defult Thermo object can be created by 
+   # without passing in the filename parameter.
+   #
+   # \param filename  a filename string, defult to be None.
+   #
    def __init__(self, filename=None):
       self.fHelmholtz = None
       self.pressure = None
@@ -166,6 +156,16 @@ class Thermo:
          with open(filename) as f:
             self.read(f)
 
+   ##
+   # Read the passed-in open-file.
+   #
+   # This function reads the pass in open-file object line
+   # by line and update the read items into the instance 
+   # variables of the Thermo object. The reading stops when
+   # all lines in the file are read. 
+   #
+   # \param openFile  an open-file object.
+   #
    def read(self, openFile):
       line = self.skipEmptyLine(openFile)
       l = line.split()
@@ -222,16 +222,42 @@ class Thermo:
          if line == '':
             break
 
+   ##
+   # Skip empty lines in the file.
+   # 
+   # This function skips empty lines read from the file,
+   # which is a helper function of the read() function.
+   #
+   # \param openFile  an open-file object.
+   #
    def skipEmptyLine(self, openFile):
       line = openFile.readline()
       while line == '\n':
          line = openFile.readline()
       return line
 
+   ##
+   # Write out a un-intended thermo file string to a file.
+   #
+   # This function writes out the thermo file string to the 
+   # specified file with the name of the passed-in parameter, 
+   # filename.
+   #
+   # \param filename  a filename string.
+   #
    def write(self, filename):
       with open(filename, 'w') as f:
          f.write(self.__str__())
 
+   ##
+   # Return the intended thermo file string.
+   #
+   # This function returns the intended thermo file string.
+   #
+   # Return value:
+   #
+   # The intended thermo file string.
+   #
    def __str__(self):
       s = ''
       s += 'fHelmholtz'
@@ -285,22 +311,19 @@ class Thermo:
 
       return s
 
-# End class Thermo ------------------------------------------------------
-
-
+##
+# Container for data of a single species.
+#
+#  A Species object stores the phi and mu values of a single 
+#  polymer or solvent.
+#
 class Species:
-   '''
-   Purpose:
-      The class represents the object type that stores the phi and mu 
-      values for the single species.
-   Instance variables:
-      phi: float that stores the phi value of the single species
-      mu: float that stores the mu value of the single species
-   Methods:
-      __init__(self, l):
-         constructor, with one argument:
-            l: the list of the read line after splitting, required
-   '''
+   
+   ##
+   # Constructor.
+   #
+   # \param l  a list of read values in string type.
+   #
    def __init__(self, l):
       if len(l) == 3:
          self.phi = float(l[1])
@@ -309,4 +332,3 @@ class Species:
          self.phi = float(l[0])
          self.mu = float(l[1])
 
-# End class Species -----------------------------------------------------
