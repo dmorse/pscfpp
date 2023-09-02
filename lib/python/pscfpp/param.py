@@ -1,6 +1,155 @@
 """! Module for parsing param files. """
 
 ##
+#  Container for data of a Composite in a param file.
+# 
+#  This module provides tools to parse the PSCF parameter file and store 
+#  all values within it in a single object. Users can access and modify 
+#  the stored values of the properties after parsing by using specific 
+#  statements (commands), and can write the object (or any of its 
+#  sub-objects) to a file in the proper parameter file format.
+#
+#  A Composite object represents any block of the parameter file 
+#  that is identified by opening and closing curly brackets ('{' and
+#  '}'). The name of a Composite object is given by the identifier 
+#  on the first line, preceding the opening curly bracket. A 
+#  Composite object stores all the entries within such a block in a 
+#  form that allows each element within it to be accessed and 
+#  modified. 
+#
+#  **Construction:**
+#
+#      A PSCF parameter file always contains a main parameter  
+#      Composite named 'System' with nested subelements. Users may  
+#      parse such a file by creating a Composite object, passing  
+#      the name of parameter file as an argument. This constructor  
+#      parses the file and returns a Composite object that contains 
+#      its contents.
+#     
+#      Example:
+#
+#      To read and parse a parameter file with name 'param':
+#        \code
+#           from pscfpp.param import *
+#           p = Composite('param')
+#        \endcode
+#
+#  **Writing out:**
+#
+#      A Composite object can be written to a file by calling the
+#      write() method, passing in the string of the file name to 
+#      which the Composite should be written.
+#
+#      Example:
+#        \code
+#           p.write('paramOut')
+#        \endcode
+#
+#  **Accessing elements:**
+# 
+#      After creating a Composite object, users can retrieve 
+#      the values of any element by name, using a dot notation for 
+#      subelements of a Composite.  There are four different types of 
+#      objects that are stored within a Composite.  These are listed 
+#      below, along with a summary of what is returned when they are 
+#      accessed, and an example Python expression that would access 
+#      this type of object in a typical parameter file:
+#
+#           1. Composite: if an element of Composite is another 
+#           Composite (identified by curly braces '{' and '}') with
+#           that is unique within its parent object, accessing this
+#           accessing this entry will return the child Composite 
+#           itself; use square bracket indexing starting with 0 to 
+#           access blocks that have the same name.
+#
+#           Example: 
+#             \code
+#                p.Mixture    
+#                p.Mixture.Polymer[1]
+#             \endcode
+#
+#           2. Parameter: if an element is a single parameter, it 
+#           contains a label followed by one or more values on a single
+#           line. Accessing a Parameter returns the value of the 
+#           parameter, which can be a string, an integer, a float, or 
+#           a Python list. The value of a parameter is stored as a list 
+#           if the corresponding line in the parameter file contains
+#           multiple values separated by spaces after the label. 
+#
+#           Example: 
+#             \code
+#                p.Mixture.nMonomer    
+#                p.Domain.mesh
+#             \endcode
+#
+#           3. Array: if an element is an Array, it is identified by 
+#           square brackets '[' and ']'. Accessing an Array returns a 
+#           Python list of Parameters where each entry of the list 
+#           represents one row or element of the Array; a specific 
+#           element can be accessed by square bracket indexing.
+#
+#           Example: 
+#             \code
+#                p.Mixture.monomers    
+#                p.Mixture.monomers[0]
+#             \endcode
+#
+#           4. Matrix: if an element is a Matrix, it is identified by 
+#           parentheses '(' and ')'. Accessing a Matrix returns a list 
+#           of lists that represents a square, symmetric matrix; specific 
+#           values within the Matrix can be accessed by two separate 
+#           square bracket indices.
+#
+#           Example: 
+#             \code
+#                p.Interaction.chi    
+#                p.Interaction.chi[0][1]
+#             \endcode
+#
+#  **Modifying elements:**
+# 
+#    The parser also allows users to modify the entries in different 
+#    preset formats for particular types of objects with equal sign 
+#    operator ('='), which are listed below:
+#
+#           1. Parameter: a Parameter with a single value can be modified 
+#           by Python arithmetic operators. A parameter that contains
+#           multiple values on a single line is stored as a Python 
+#           list, which can only be modified by reassigning a new 
+#           Python list to the attribute.
+#
+#           Example: 
+#             \code
+#                p.Mixture.Polymer[1].phi *= 2    
+#                p.Mixture.Polymer[0].phi = 0.8    
+#                p.Domain.mesh = [72, 72, 72]
+#             \endcode
+#
+#           2. Array: change the whole Array by using a Python list.
+#
+#           Example: 
+#             \code
+#                p.Mixture.monomers = [2.0, 2.0]
+#             \endcode
+#
+#           3. Matrix: two ways to modify:
+#
+#           Example: 
+#
+#             1. change the whole Matrix by using a list of lists that 
+#                represents the squared, symmetric Matrix: 
+#                \code
+#                   p.Interaction.chi = [[0, 1.0], [1.0, 0]]
+#                \endcode
+#
+#             2. change two values that are symmetric at the same time:
+#               \code
+#                  p.Interaction.chi = [0, 1, 1.0] 
+#               \endcode
+#                where the first and second value of the list are the 
+#                position of the values needs to be changed and the last 
+#                value is the new value assigned to the corresponding 
+#                positions.
 #
 class Composite:
 
@@ -38,7 +187,11 @@ class Composite:
    ##
    # Read the passed-in open-file.
    #
-   # This function is 
+   # This function reads the pass in open-file object line
+   # by line and update the read items into the children 
+   # variable. The reading stops when "}" is read. 
+   #
+   # \param file  an open-file object.
    #
    def read(self, openFile):
       line = openFile.readline()
@@ -81,6 +234,14 @@ class Composite:
          line = openFile.readline()
          l = line.split()
 
+   ##
+   # Add the single item into the children variable.
+   #
+   # This function adds the pass in child parameter
+   # into the children variable of the Composite object.
+   # 
+   # \param child single item needs to be added
+   #
    def addChild(self, child):
       label = child.label
       if label in self.children:
@@ -89,12 +250,49 @@ class Composite:
       else:
          self.children[label] = child
 
+   ##
+   # Get the children variable of the Composite.
+   #
+   # This function return the children variable of the
+   # Composite object, as a Python dictionary.
+   #
+   # Return value:
+   #
+   # The children variable of the Composite object which
+   # is a Python dictionary.
+   #
    def getChildren(self):
       return self.children
 
+   ##
+   # Return the un-indented string of the Composite object.
+   #
+   # This function return the un-indented string
+   # representation of the Composite object in the param
+   # file format.
+   #
+   # Return value:
+   #
+   # The un-indented string representation in the param
+   # file.
+   #
    def __str__(self):
       return self.getString()
 
+   ##
+   # Return the value stored in the Composite object.
+   #
+   # The function return the value stored in the
+   # children variable of the Composite object with the 
+   # specific key, attr.
+   #
+   # Return value:
+   #
+   # The value stored in the children variable of the 
+   # Composite with the specific key.
+   #
+   # \param attr the string to specify the value returned.
+   #
    def __getattr__(self, attr):
       if attr =='children':
          return {}
@@ -106,6 +304,22 @@ class Composite:
       else:
          return self.attr
 
+   ##
+   # Indented string of the Composite object.
+   #
+   # This function return the intended string
+   # representation of the Composite object in the param
+   # file format, with prefix depth as the passed-in 
+   # parameter.
+   #
+   # Return value:
+   #
+   # The intended string representation of the 
+   # Composite object in the param file format with
+   # prefix depth.
+   #
+   # \param depth the spaces string as the prefix depth.
+   #
    def getString(self, depth=''):
       s = depth + self.label + '{' + '\n'
       for item in self.children.values():
@@ -117,55 +331,58 @@ class Composite:
       s += depth + '}\n'
       return s
 
+   ##
+   # Write out an un-intended param file string to a file.
+   #
+   # This function writes out the un-intended param
+   # string to the specified file with the name of the
+   # passed-in parameter, filename.
+   #
+   # \param filename  a filename string.
+   #
    def write(self, filename):
       with open(filename, 'w') as f:
          f.write(self.getString())
 
+   ##
+   # Return the Coposite object itself.
+   #
+   # This function returns the Composite object itself.
+   #
    def returnData(self):
       return self
       
+   ##
+   # Set new value to the specific child.
+   #
+   # This function sets new value, parameter val, to the
+   # specified child stored in the children variable of
+   # the Composite object with the name of the parameter
+   # label.
+   #
+   # \param label  a string of the child name.
+   # \param val  the expected new value.
+   #
    def __setattr__(self, label, val):
       if label in self.children:
          self.children[label].setValue(val)
       else:
          self.__dict__[label] = val
 
-# End class Composite ---------------------------------------------------
-
 ##
-# Container for data of a parameter in a parameter file.
+# Container for data of a parameter in a param file.
 #
-# 
+#  A Parameter object contains a parameter label and its 
+#  value for the labeled parameter contained in a single line.
+#
 class Parameter:
-   '''
-   Purpose: 
-      An individual parameter element of a parameter composite
-   Instance variables:
-      label: the label of the individual Parameter element 
-      val: the value of the individual Parameter element 
-   Methods:
-      __init__(self, label, val):
-         constructor, with two arguments: 
-            label: label string for this Parameter, required
-            val: value of this Parameter, required
-      setValue(self, val):
-         Reset the parameter value to argument val
-      __str__(self):
-         return un-indented string representation for a parameter
-      getString(self, depth):
-         return the string representation of this parameter.
-         Argument depth, the 
-         string of spaces that represents the level of the Parameter 
-         element
-      returnData(self):
-         return the Parameter value as an int, float, string, or list
-   '''
-
+   
    ##
    # Constructor.
    #
    # \param label  label string for the individual parameter
    # \param val  stored individual parameter value
+   #
    def __init__(self, label, val):
       self.label = label
       if type(val) is list:
@@ -174,9 +391,13 @@ class Parameter:
          self.val = getValue(val)
 
    ##
-   # Reset the value of the individual parameter.
+   # Set the new value to the Parameter object.
    #
-   # \param val 
+   # This function sets the new value, parameter val, to the
+   # Parameter object.
+   #
+   # \param val  the expected new value.
+   #
    def setValue(self, val):
       if type(val) is list:
          if val[0] is list:
@@ -188,15 +409,35 @@ class Parameter:
          self.val = getValue(str(val))
 
    ##
-   # Unindented string representation.
+   # Un-indented string of the Parameter object.
    #
+   # This function returns the un-intended string 
+   # representation for the Parameter object.
+   #
+   # Return value:
+   #
+   # The un-intended string representation for the
+   # Parameter object.
    # 
    def __str__(self):
       return self.getString()
 
    ##
-   # 
-   # 
+   # Indented string for the Parameter object.
+   #
+   # This function returns the intended string
+   # representation for the Parameter object in the param
+   # file format, with prefix depth as the passed-in 
+   # parameter.
+   #
+   # Return value:
+   #
+   # The intended string representation of the 
+   # Parameter object in the param file format with
+   # prefix depth.
+   #
+   # \param depth the spaces string as the prefix depth.
+   #
    def getString(self, depth=''):
       s = ''
       if type(self.val) is list:
@@ -214,40 +455,39 @@ class Parameter:
             s += f'{self.val:>20}\n'
       return s
 
+   ##
+   # Return the stored value.
+   #
+   # This function returns the value stored in the
+   # Parameter object.
+   #
+   # Return value:
+   #
+   # The value stored in the Parameter object.
+   #
    def returnData(self):
       return self.val
 
-# End class Parameter ----------------------------------------------------
-
-
+##
+# Container for data of an array in a param file.
+#
+#  An Array object represents a one-dimensional array of values.
+#  An array appears in a parameter file format in multi-line 
+#  with one element value per line, delimited by square brackets.
+#  The first lines contains the array label followed immediately
+#  by an opening bracket, and the last line contains a closing
+#  bracket. Elements of the array appear between these lines in
+#  order of increasing array index, starting from 0.
+#
 class Array:
-   '''
-   Purpose:
-      The class represents the Array element of the parameter file
-   Instance variables:
-      label: the label of the Array element
-      value: the value of the Array element, default to be an empty list
-   Methods:
-      __init__(self, label, openFile, val=None):
-         constructor, with three arguments: 
-            label: the label of the Array, required
-            openFile: the opened parameter file, required
-            val: the value of the Array, default to be None
-      read(self, openFile):
-         method to read the open parameter file, openFile as the argument, 
-         line by line and update the value variable according to the read 
-         lines; reading stop when ']' is read
-      __str__(self):
-         return unindented string representation for an array 
-      getString(self, depth):
-         return the string for writing out with argument depth, the string 
-         of spaces that represents the level of the Array element
-      returnData(self):
-         return the list of exact value of the Array object stored as the 
-         Value object
-      setValue(self, val):
-         set new value to the val variable with argument val
-   '''
+
+   ##
+   # Constructor.
+   #
+   # \param label  label string for the Array.
+   # \param openFile  an open-file object.
+   # \param val  stored value for the Array, defult to be None.
+   #
    def __init__(self, label, openFile, val=None):
       self.label = label
       if val == None:
@@ -257,6 +497,15 @@ class Array:
       if openFile != None:
          self.read(openFile)
 
+   ## 
+   # Read the passed-in open-file.
+   #
+   # This function reads the passed-in open-file object line
+   # by line and update the read items into the val variable. 
+   # The reading stops when "]" is read. 
+   #
+   # \param file  an open-file object.
+   #
    def read(self, openFile):
       line = openFile.readline()
       l = line.split()
@@ -272,9 +521,37 @@ class Array:
          line = openFile.readline()
          l = line.split()
 
+   ##
+   # Un-indented string of the Array object.
+   #
+   # This function return the un-indented string
+   # representation for the Array object in the param
+   # file format.
+   #
+   # Return value:
+   #
+   # The un-indented string representation in the param
+   # file.
+   #
    def __str__(self):
       return self.getString()
 
+   ##
+   # Indented string for the Array object.
+   #
+   # This function returns the intended string
+   # representation for the Array object in the param
+   # file format, with prefix depth as the passed-in 
+   # parameter.
+   #
+   # Return value:
+   #
+   # The intended string representation of the 
+   # Array object in the param file format with
+   # prefix depth.
+   #
+   # \param depth the spaces string as the prefix depth.
+   #
    def getString(self, depth=''):
       s = ''
       s += depth + self.label + '[' + '\n'
@@ -304,9 +581,27 @@ class Array:
       s += depth + ']\n'
       return s
 
+   ##
+   # Return the stored value.
+   #
+   # This function returns the value stored in the
+   # Array object.
+   #
+   # Return value:
+   #
+   # The value stored in the Array object.
+   #
    def returnData(self):
       return self.val
 
+   ##
+   # Set the new value to the Array object.
+   #
+   # This function sets the new value, parameter val, to the
+   # Array object.
+   #
+   # \param val  the expected new value.
+   #
    def setValue(self, val):
       if (type(val) is list) == False:
          raise Exception('Not valid input for Array.')
@@ -330,41 +625,40 @@ class Array:
             for i in range(len(val)):
                v.append(getValue(str(val[i])))
          self.val = v
-# End class Array ------------------------------------------------------
 
-
+##
+# Container for data of a matrix in a param file.
+#
+#  A Matrix object represents a two-dimensional array or matrix
+#  of values. A matrix appears in a parameter file in a multi-line
+#  format in which each element appears on a separate line, 
+#  delimited by opening and closing parentheses. The first 
+#  line contains a label for a matrix immediately followed by 
+#  an opening parenthesis, and the last contains a closing 
+#  parenthesis.  In between, each line contains a row index, 
+#  a column index and value of a single element of the matrix.
+#
 class Matrix:
-   '''
-   Purpose:
-      The class represents the Matrix element of the parameter file
-   Instance variables:
-      label: the label of the Matrix element
-      value: the value of the Matrix element, default to be an empty list
-   Methods:
-      __init__(self, label, openFile):
-         constructor, with two arguments: 
-            label: the label of the Matrix, required
-            openFile: the opened parameter file, required
-      read(self, openFile):
-         method to read the open parameter file, openFile as the argument, 
-         line by line and update the value variable according to the read 
-         lines; reading stop when ')' is read
-      __str__(self):
-         return an unindented string representation
-      getString(self, depth):
-         return an indented string with indentation prefix depth
-      returnData(self):
-         return the list of exact value of the Matrix object stored as 
-         the Value object
-      setValue(self, val):
-         set new value to the val variable with argument val
-   '''
-
+   ##
+   # Constructor.
+   #
+   # \param label  label string for the Matrix.
+   # \param openFile  the open-file object.
+   #
    def __init__(self, label, openFile):
       self.label = label
       self.val = []
       self.read(openFile)
 
+   ## 
+   # Read the passed-in open-file.
+   #
+   # This function reads the passed-in open-file object line
+   # by line and update the read items into the val variable. 
+   # The reading stops when ")" is read. 
+   #
+   # \param file  an open-file object.
+   #
    def read(self, openFile):
       att = []
       line = openFile.readline()
@@ -389,9 +683,37 @@ class Matrix:
          self.val[int(att[i][0])][int(att[i][1])] = getValue(att[i][2])
          self.val[int(att[i][1])][int(att[i][0])] = getValue(att[i][2])
 
+   ##
+   # Un-indented string of the Matrix object.
+   #
+   # This function return the un-indented string
+   # representation for the Matrix object in the param
+   # file format.
+   #
+   # Return value:
+   #
+   # The un-indented string representation in the param
+   # file.
+   #
    def __str__(self):
       return self.getString()
 
+   ##
+   # Indented string for the Matrix object.
+   #
+   # This function returns the intended string
+   # representation for the Matrix object in the param
+   # file format, with prefix depth as the passed-in 
+   # parameter.
+   #
+   # Return value:
+   #
+   # The intended string representation of the 
+   # Array object in the param file format with
+   # prefix depth.
+   #
+   # \param depth the spaces string as the prefix depth.
+   #
    def getString(self, depth=''):
       s = ''
       s += depth + self.label + '(\n'
@@ -401,9 +723,27 @@ class Matrix:
       s += depth + ')\n'
       return s
 
+   ##
+   # Return the stored value.
+   #
+   # This function returns the value stored in the
+   # Matrix object.
+   #
+   # Return value:
+   #
+   # The value stored in the Matrix object.
+   #
    def returnData(self):
       return self.val
 
+   ##
+   # Set the new value to the Matrix object.
+   #
+   # This function sets the new value, parameter val, to the
+   # Matrix object.
+   #
+   # \param val  the expected new value.
+   #
    def setValue(self, val):
       if type(val) != list:
          raise TypeError('This is not a valid value for Matrix.')
@@ -431,17 +771,22 @@ class Matrix:
             self.val[val[0]][val[1]] = getValue(str(val[-1]))
             self.val[val[1]][val[0]] = getValue(str(val[-1]))
 
-# End class Matrix ---------------------------------------------------
 
+##
+# Distinguish the correct type of the value from a string.
+#
+# This function is a helper function to read a open-file
+# object. It distinguishes the correct type of the value
+# from a string to either integer, float or string.
+#
+# Return value:
+#
+# The exact value with the correct type.
+#
+# \param v  a string represents a value.
+#
 def getValue(v):
-   '''
-   Purpose:
-      Distinguishing the correct type of the value form a string
-   Argument(s):
-      v: string represents a value
-   Return:
-      return the value with the correct type
-   '''
+
    if (v.isdigit() == True) or (v[0] == '-' and v[1:].isdigit() == True):
       val = int(v)  
    else:
@@ -452,4 +797,3 @@ def getValue(v):
    
    return val
 
-# End function getValue  -------------------------------------------------
