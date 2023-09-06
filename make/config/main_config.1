@@ -16,8 +16,11 @@
 #    contain absolute paths for the pscfpp/ root directory and some 
 #    of its subdirectories.
 #
-#  - A variable UTIL_DEBUG that if defined, enables compilation of
+#  - A variable UTIL_DEBUG that, if defined, enables compilation of
 #    a debugging version fo the code with additional sanity checks.
+#
+#  - A variable PSCF_CUDA that is, if defined, enables conditional
+#    compilation of CUDA code throughout the Pscf namespace.
 #
 #  - Variables that control the command name by which the compiler 
 #    is invoked and command line options passed to the compiler 
@@ -51,16 +54,31 @@ DAT_DIR=$(ROOT_DIR)/data
 # Conditional compilation of debugging.
 
 # Defining UTIL_DEBUG enables a variety of extra sanity checks, at some
-# cost in speed. Debugging is disabled (commented out) by default.
+# cost in speed. By default, debugging is disabled (commented out).
 #UTIL_DEBUG=1
 
-# Comment: After setup but before compilation, the above definitions of 
+# Comment: After setup but before compilation, the above definition of 
 # UTIL_DEBUG may be uncommented or commented out from the command line 
 # by using the "configure" script. To do so, invoke the configure script 
 # with the -g option prior to compilation from the directory that contains 
 # this main configuration file (e.g., from src/ or bld/). Specifically, 
 # invoke "./configure -g1" to enable debugging or "./configure -g0" to
 # disable debugging. 
+#
+#======================================================================
+# Conditional compilation of CUDA code
+ 
+# Defining PSCF_CUDA enables compilation and linking of CUDA code.
+# By default, CUDA compilation is disabled (commented out).
+#PSCF_CUDA=1
+ 
+# Comment: After setup but before compilation, the above definition of 
+# PSCF_CUDA may be uncommented or commented out from the command line 
+# by using the "configure" script. To do so, invoke the configure script 
+# with the -c option with an option argument of 0 or 1 prior to 
+# compilation from the root of the relevant build directory tree (e.g., 
+# from src/ or bld/). Specifically, enter "./configure -c1" to enable 
+# CUDA compilation or "./configure -c0" to disable.
 #
 #======================================================================
 # Compiler configuration variables.

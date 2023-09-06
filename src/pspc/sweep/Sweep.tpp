@@ -266,7 +266,7 @@ namespace Pspc {
       // Open parameter file, with thermodynamic properties at end
       outFileName = baseFileName_;
       outFileName += indexString;
-      outFileName += ".dat";
+      outFileName += ".stt";
       system().fileMaster().openOutputFile(outFileName, out);
 
       // Write data file, with thermodynamic properties at end

@@ -1,0 +1,97 @@
+#!/bin/bash
+
+#-----------------------------------------------------------------------
+# Name: configure
+#
+# Purpose: Globally disable or enable features prior to compiling.
+#
+# This script should be called after setup but prior to compiling in order 
+# to enable or disable particular compile time features. This version of the 
+# script must be called from the pscfpp/ root directory, and applies all 
+# changes configuration files used during compiled in both the bld/ 
+# directory (for out-of-source compilation) and code compiled in the src/ 
+# directory (for in-source compilation).  To instead apply changes only to 
+# code compiled in one build directory (i.e., only bld/ or src/), one must 
+# change directory (cd) to that directory and invoke the local configure 
+# script from there.
+#
+# This "global" version of the configure script works by simply recursively 
+# invoking the local configure scripts in the bld/ and src/ directories. 
+# It accepts all of the same  options that are accepted by the configure 
+# scripts in the src/ and bld/ directories.
+#
+# Synopsis:
+#
+#      configure [options]
+#
+# Enabling / Disabling Features: 
+#   
+# Each of the following option enables or disables a feature. Each such
+# options takes 0 or 1 as a required argument, using 1 to denote "enable"
+# and 0 to denote "disable".
+#
+#   -d (0|1)   debugging                   (defines/undefines UTIL_DEBUG)
+#   -c (0|1)   CUDA (GPU)                  (defines/undefines PSCF_CUDA)
+#
+# Other Command Line Options:
+#
+#   -q      query: prints report of options that are enabled / disabled.
+#   -h      help: prints list of available options
+#
+# Examples:
+#
+# To disable debugging and enable compilation of CUDA code:
+#
+#   >  ./configure -d0 -c1
+#
+#-----------------------------------------------------------------------
+ROOT=$PWD 
+opt=""
+OPTARG=""
+while getopts "c:d:qh" opt; do
+
+  if [[ "$opt" != "?" ]]; then
+    if [[ "$opt" != "h" ]]; then
+       cd $ROOT
+       cd bld/; 
+       echo "In build directory $PWD":
+       ./configure -"$opt" "$OPTARG"
+       cd $ROOT
+       cd src/; 
+       echo "In build directory $PWD":
+       ./configure -"$opt" "$OPTARG"
+       opt=""
+       OPTARG=""
+    else
+      echo "The configure script may be called prior to compiling to enable or"
+      echo "disable specific compile time features, to query which features are"
+      echo "currently set to be enabled (option -q) or to choose a compiler."
+      echo "This script must be called from the directory that contains the"
+      echo "script file. The copy in the pscfpp/ root directory queries and"
+      echo "applies the same changes to configurations built in the bld/"
+      echo "and src/ directories". 
+      echo " "
+      echo "Command Line Options:"
+      echo "-h           help: prints explanation of options (this command)"
+      echo "-q           query: lists options that are enabled / disabled."
+      echo " "
+      echo "Each of the following options enables or disables a feature by defining"
+      echo "or undefining a corresponding preprocessor macro. Each such option"
+      echo "takes 0 or 1 as a required argument, using 1 to enable the feature"
+      echo "or 0 to disable." 
+      echo " "
+      echo "-d (0|1)   debugging                   (undefines/defines UTIL_DEBUG)"
+      echo "-c (0|1)   CUDA code                   (undefines/defines PSCF_CUDA)"
+      echo " "
+      echo "Examples:"
+      echo " "
+      echo "To query which features are currently set to be enabled:"
+      echo ">  ./configure -q"
+      echo "To disable debugging and enable CUDA:"
+      echo ">  ./configure -d0 -c1"
+      echo "  "
+    fi
+  fi
+
+done
+

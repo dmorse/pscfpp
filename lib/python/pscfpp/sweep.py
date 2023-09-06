@@ -20,21 +20,13 @@ import os
 # 
 #      The constructor for class Sweep parses and stores the contents 
 #      of all of the the state files (which end with '.dat') produced 
-#      by a PSCF sweep. The constructor takes a single argument which 
-#      is a string that can be either the name of the parameter file
-#      used to run the sweep, or the name of the directory in which
-#      the resulting state files are located.
+#      by a PSCF sweep. The constructor takes a single argument which
+#      is the baseFileName prefix string. 
 #
 #      Examples: 
 #
-#      1. By passing in the parameter file name 'param':
-#         \code
-#            from pscfpp.sweep import *
-#            s = Sweep('param')
-#         \endcode
-#
-#      2. By passing in a directory of the folder that contains all 
-#         the 'state files', with name 'out/':
+#      To read and parse all states files produced by a Sweep with the
+#      baseFileNAme prefix string 'out/':
 #         \code
 #            from pscfpp.sweep import *
 #            s = Sweep('out/')
@@ -63,43 +55,19 @@ class Sweep:
    ##
    # Constructor.
    #
-   # The input parameter d is a string that can be either the name of the
-   # directory that contains all of the data files or the name of the
-   # parameter file used to perform the sweep. If the latter, the name
-   # of the directory is extracted from the parameter file. 
+   # The input parameter d is the baseFileName prefix string.
    #
    # \param d  string that is the name of a directory or parameter file.
    #
    def __init__(self, d):
-      old_cwd = os.getcwd()
-
-      if os.path.isdir(d) == True:
-         os.chdir(d)
-      elif os.path.isfile(d) == True:
-         p = Composite(d)
-         for x,y in p.children.items():
-            if x.rfind('Sweep') != -1:
-               nd = old_cwd + '/' + y.baseFileName
-               break
-         try:
-            os.chdir(nd)
-         except:
-            raise Exception('No Sweep block in the Param file')
-      else:
-         raise Exception('Not valid argument')
-
-      filenames = []
-      for file in os.listdir():
-         if file.endswith('.dat'):
-            filenames.append(file)
-      filenames.sort()
-
       self.sweep = []
-      for i in range(0, len(filenames)):
-         s = State(filenames[i])
+      num = 0
+      filename = d + str(num) + '.dat'
+      while os.path.isfile(filename) == True:
+         s = State(filename)
          self.sweep.append(s)
-
-      os.chdir(old_cwd)
+         num += 1
+         filename = d + str(num) + '.dat'
 
    ##
    # Make a summary report containing values for selected variables.
@@ -205,7 +173,7 @@ class Sweep:
    #
    # Example: If applied to a sweep with 5 state points, the command
    # \code
-   #    report = s.summaryString(['param.Interaction.chi[0][1]',\
+   #    report = s.summaryString(['param.Interaction.chi[0][1]',
    #                                 'thermo.fHelmholtz']))
    #    print(report)
    # \endcode

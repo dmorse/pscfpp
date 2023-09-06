@@ -1,7 +1,7 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 import sys
-from pscfpp.makeDepend import *
+from pscfpp.make import *
 
 processor = 'g++ -MM -MF'
 source = sys.argv[-1]
@@ -19,4 +19,4 @@ for arg in sys.argv[1:-1]:
    else:
       options += ' ' + arg
 
-makeDepend(processor, options, source, srcdir, blddir, alldeps)
+createDependencyFileCpp(processor, options, source, srcdir, blddir, alldeps)

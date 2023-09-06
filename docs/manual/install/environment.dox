@@ -15,27 +15,28 @@ the user should modify the following unix environment variables:
 
 Rationale: 
 
-  - By default, executables files created by the PSCF build system
-    are installed in the pscfpp/bin directory.  The directory that
-    contains these files must be added to the user's PATH variable 
-    in order to allow the unix shell to find these executable files 
-    when they are invoked by name from the command line.
+  - By default, all executables files created by the PSCF build system
+    are installed in the pscfpp/bin directory.  The path to this
+    directory must thus be added to the user's PATH variable in order 
+    to allow the unix shell to find these executable files when they 
+    are invoked by name from the command line.
 
-  - The pscfpp/lib/python directory contains a python script that is 
-    used by the build system during compilation to generate information 
-    about dependencies among C++ files. This directory must be added to 
-    the PYTHONPATH variable in order to allow the python interpreter to
-    find this script for use during compilation.
+  - The pscfpp/lib/python directory contains several python modules that 
+    are used by the PSCF build to process information about dependencies 
+    among C++ files. The path to this directory must be added to the 
+    PYTHONPATH variable in order to allow a python interpreter to find 
+    these python modules.
 
-The required changes to a users shell environment should be made in
-a manner that guarantees that these changes are automatically in place
-whenever that user is logged on. To accomplish this, commands that apply
-the required modifications to PATH and PYTHON path should be added to 
-a configuration file in the users home directory that is read and 
-executed whenever the user launches a login shell (e.g., to the .profile
-or .bash_profile file on systems that use a bash shell or the .zprofile 
-file on systems that use a zsh unix shell, as discussed in more detail
-below). An example of the required commands is shown below:
+The required changes to the user's shell environment should be made in a 
+manner that guarantees that these changes are automatically put in place
+when a user is logs on. To accomplish this, commands that modify the
+PATH and PYTHON variables should be added to a configuration file in the 
+users home directory that is read and executed whenever the user launches 
+a login shell (e.g., to the .profile or .bash_profile file on systems that 
+use a bash shell or the .zprofile file on systems that use a zsh unix 
+shell, as discussed in more detail below). 
+
+An example of the required commands is shown below:
 \code
 PSCFPP_DIR=${HOME}/pscfpp
 export PATH=${PATH}:/${PSCFPP_DIR}/bin
@@ -57,7 +58,7 @@ The bash shell is the default shell on most linux systems.
 The bash shell reads files named .profile and/or .bash_profile in the 
 users home directory, if either exists, when the user opens a login 
 shell by logging in to the system. Users who are using a bash shell
-should put these commands in one of these files. 
+should put these commands in one of these files.
 
 Recent versions of the Mac OS operating system instead use zsh (also
 known as the Z shell) by default within the Mac Terminal app. We 

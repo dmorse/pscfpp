@@ -9,7 +9,9 @@ include config.mk
 # Build all CPU and GPU programs
 all:
 	$(MAKE) all-cpu
+ifdef PSCF_CUDA
 	$(MAKE) pspg
+endif
 
 # Build all programs that uses exclusively CPU hardware
 all-cpu: 

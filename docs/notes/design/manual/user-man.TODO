@@ -6,9 +6,6 @@ pscf_fd Commands
 
     Consider adding a RESCALE command
 
-    Consider removing documentation of WRITE_Q_VERTEX command ?
-
-    Consider adding commands to output propagators?
 
 pscf_pc Commands
 ----------------

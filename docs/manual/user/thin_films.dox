@@ -1,7 +1,7 @@
 /*! \page user_thin_films_page Thin Films
 
  \ref user_groups_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
- \ref user_theory_page   (Next) 
+ \ref user_visualize_page   (Next) 
 <BR>
 
 # Overview
@@ -638,5 +638,5 @@ choices of normalVecId, the allowed space groups will likely differ.
 <BR>
  \ref user_groups_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
  \ref user_page          (Up) &nbsp; &nbsp; &nbsp; &nbsp; 
- \ref user_theory_page   (Next) 
+ \ref user_visualize_page   (Next) 
 */

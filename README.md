@@ -223,26 +223,29 @@ required dependencies:
      variable. This provides access to python scripts used by the build 
      system.
 
-   - Run the pscfpp/setup script by entering "./setup" from the pscfpp/
-     root directory, with or without an optional filename argument.
-     This script installs default versions of several files that are
-     required by the build system. The setup script usually only needs
-     to be run once, before compiling for the first time. In a linux
-     environment, it is usually sufficient to run the setup script
+   - Run the pscfpp/setup script by entering "./setup" from the pscfpp/ 
+     root directory, with or without an optional filename argument. 
+     This script installs default versions of several files that are 
+     required by the build system. The setup script usually only needs 
+     to be run once, before compiling for the first time.  In a linux 
+     environment, it is usually sufficient to run the setup script 
      without a filename argument.  See Section 2.6 of the 
      [web manual](<https://dmorse.github.io/pscfpp-man>) for more 
-     information about how to invoke the setup script on a Mac.
+     information about how to invoke the setup script for Apple OS X.
 
-   - To compile and install only CPU-based programs in the package
-     (excluding GPU-accelerated programs), enter "make all-cpu" from
-     the pscfpp/ root directory.
+   - To compile and install only CPU-based programs in the package on
+     a computer that does not have an appropriate NVIDA GPU, enter
+     "make all" from the pscfpp/ root directory immediately after 
+     running the setup script.
 
-   - To instead compile all programs, including the GPU-accelerated 
-     programs, on a machine that has a CUDA development environment 
-     installed, instead enter "make all" from the root directory.
+   - To compile all PSCF programs on a machine that has an
+     appropriate NVIDA GPU and a CUDA development kit, including
+     GPU-enabled programs, first enter "./configure -c1" from the 
+     pscfpp/ root directory to enable compilation of CUDA code, 
+     and then enter "make all" from the same directory.
 
-The "make all-cpu" and "make all" commands install all executable 
-program files in the pscfpp/bin directory.
+The "make all" command installs all resulting executable files in the 
+pscfpp/bin directory.
 
 ## Command line usage
 
@@ -267,12 +270,12 @@ parameter file, which is processed first, is a fixed-format file that
 contains parameters required to initialize the program before performing 
 any computation. The command file is a script that contains a sequence 
 of commands that are read and executed in the order that they appear, 
-thus specifying a sequence of computational and IO operations. Contents 
+thus specifying a sequence of IO operations and computations. Contents 
 and syntax for parameter and commands files are discussed in Sec. 3 of 
 the web manual. 
 
-The command file usually contains names of input and output field data 
-files as arguments to commands that read or write these files. 
+The command file usually contains names of input and output field 
+data files as arguments to commands that read or write these files. 
 Specifically, commands for a standard SCFT calculation normally specify 
 the name of a file that contains an initial guess for monomer chemical 
 potential fields, and names of files to which final chemical potential 
@@ -309,11 +312,11 @@ shared computer cluster.
 
 ## Examples
 
-To learn the syntax of the input files required by PSCF, it helps 
+To learn the syntax of the input files required by PSCF, it is useful
 to examine examples.  The directory pscfpp/examples contains many
-examples of input files for SCFT calculations.  Top level 
-subdirectories of the examples/ directory contain examples for 
-different PSCF programs or families of programs.
+examples of input files for different types of SCFT calculations.  
+Top level subdirectories of the examples/ directory contain examples 
+for different PSCF programs or families of programs.
 
 Subdirectory examples/fd contains examples for the 1D 
 finite-difference program pscf_fd. Top level subdirectories of the

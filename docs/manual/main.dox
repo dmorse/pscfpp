@@ -16,8 +16,8 @@ materials that may contain block polymers, homopolymers and solvent.
     <li> \ref install_environment_page  </li>
     <li> \ref install_setup_page  </li>
     <li> \ref install_inout_page  </li>
-    <li> \ref install_targets_page  </li>
     <li> \ref install_configure_page  </li>
+    <li> \ref install_targets_page  </li>
     <li> \ref install_doc_page  </li>
     </ol>
   </li>
@@ -30,11 +30,11 @@ materials that may contain block polymers, homopolymers and solvent.
     <li> \ref user_field_page  </li>
     <li> \ref user_command_page  </li>
     <li> \ref user_example_page  </li>
-    <li> \ref user_visualize_page  </li>
-    <li> \ref user_python_page  </li>
     <li> \ref user_unitcell_page  </li>
     <li> \ref user_groups_page  </li>
     <li> \ref user_thin_films_page  </li>
+    <li> \ref user_visualize_page  </li>
+    <li> \ref user_python_page  </li>
     <li> \ref user_theory_page  </li>
     <li> \ref user_fourier_page  </li>
     <li> \ref user_symmetry_page  </li>
