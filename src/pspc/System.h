@@ -338,6 +338,18 @@ namespace Pspc
       * \param nStep  number of Monte-Carlo steps
       */
       void simulate(int nStep);
+      
+      /**
+      * Write timer file to an ostream
+      *
+      * \param out output stream
+      */
+      void writeTimers(std::ostream& out);
+      
+      /**
+      * Clear timers 
+      */
+      void clearTimers();
 
       ///@}
       /// \name Thermodynamic Properties

@@ -53,6 +53,8 @@ namespace Pspc
 
       // Inherited public member functions
       using AmIteratorTmpl<Iterator<D>, DArray<double> >::solve;
+      using AmIteratorTmpl<Iterator<D>, DArray<double> >::outputTimers;
+      using AmIteratorTmpl<Iterator<D>, DArray<double> >::clearTimers;
       using Iterator<D>::isFlexible;
       using Iterator<D>::flexibleParams;
       using Iterator<D>::setFlexibleParams;

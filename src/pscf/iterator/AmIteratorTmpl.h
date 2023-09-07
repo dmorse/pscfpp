@@ -11,6 +11,7 @@
 #include <util/containers/DArray.h>     // member template
 #include <util/containers/DMatrix.h>    // member template
 #include <util/containers/RingBuffer.h> // member template
+#include <util/misc/Timer.h>            // member template
 
 namespace Pscf {
 
@@ -64,6 +65,16 @@ namespace Pscf {
       * \return 0 for convergence, 1 for failure
       */
       int solve(bool isContinuation = false);
+      
+      /**
+      * Log output timing results 
+      */
+      void outputTimers(std::ostream& out);
+      
+      /**
+      * Clear timers 
+      */
+      void clearTimers();
 
    protected:
 
@@ -261,6 +272,16 @@ namespace Pscf {
 
       /// Workspace for calculations
       T temp_;
+      
+      // Timers for analyzing performance
+      Timer timerMDE_;
+      Timer timerStress_;
+      Timer timerAM_;
+      Timer timerResid_;
+      Timer timerError_;
+      Timer timerCoeff_;
+      Timer timerOmega_;
+      Timer timerTotal_;
 
       // --- Non-virtual private functions (implemented here) ---- //
 

@@ -365,11 +365,21 @@ namespace Pspc
             readEcho(in, classname);
             readEcho(in, filename);
             mcSimulator_.analyzeTrajectory(min, max, classname, filename);
-         }else
+         } else
          if (command == "COMPRESS") {
             // Impose incompressibility
             UTIL_CHECK(hasCompressor());
             compressor().compress();
+         } else
+         if (command == "WRITE_TIMER") {
+            readEcho(in, filename);
+            std::ofstream file;
+            fileMaster().openOutputFile(filename, file);
+            writeTimers(file);
+            file.close();
+         } else
+         if (command == "CLEAR_TIMER") {
+            clearTimers();
          } else
          if (command == "WRITE_PARAM") {
             readEcho(in, filename);
@@ -1045,6 +1055,29 @@ namespace Pspc
    }
 
    // Output Operations
+   
+   /*
+   * Write time cost to file.
+   */
+   template <int D>
+   void System<D>::writeTimers(std::ostream& out)
+   {
+      if (iteratorPtr_) {
+         iterator().outputTimers(Log::file());
+         iterator().outputTimers(out);
+      }
+   }
+   
+   /*
+   * Clear timers.
+   */
+   template <int D>
+   void System<D>::clearTimers()
+   {
+      if (iteratorPtr_) {
+         iterator().clearTimers();
+      }
+   }
 
    /*
    * Write parameter file, omitting any sweep block.
