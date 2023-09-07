@@ -409,6 +409,17 @@ namespace Pspc{
          }
       }
    }
+   
+   template<int D>
+   void AmIterator<D>::outputTimers(std::ostream& out)
+   {
+      // Output timing results, if requested.
+      out << "\n";
+      out << "Iterator times contributions:\n";
+      AmIteratorTmpl<Iterator<D>, DArray<double> >::outputTimers(out);
+   }
+   
+   
 
 }
 }

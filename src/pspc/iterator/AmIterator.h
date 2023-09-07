@@ -50,10 +50,14 @@ namespace Pspc
       * \param in input filestream
       */
       void readParameters(std::istream& in);
+      
+      /**
+      * Return compressor times contributions.
+      */
+      void outputTimers(std::ostream& out);
 
       // Inherited public member functions
       using AmIteratorTmpl<Iterator<D>, DArray<double> >::solve;
-      using AmIteratorTmpl<Iterator<D>, DArray<double> >::outputTimers;
       using AmIteratorTmpl<Iterator<D>, DArray<double> >::clearTimers;
       using Iterator<D>::isFlexible;
       using Iterator<D>::flexibleParams;
