@@ -570,8 +570,6 @@ namespace Pscf
       // Output timing results, if requested.
       double total = timerTotal_.time();
       out << "\n";
-      out << "Iterator times contributions:\n";
-      out << "\n";
       out << "MDE solution:         "
           << Dbl(timerMDE_.time(), 9, 3)  << " s,  "
           << Dbl(timerMDE_.time()/total, 9, 3) << " %" << "\n";

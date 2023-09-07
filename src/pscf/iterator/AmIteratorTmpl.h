@@ -200,7 +200,19 @@ namespace Pscf {
       * Return the total number of iterations needed to converge.
       */
       int totalItr();
-
+      
+      /**
+      * Return timers for analyzing performance
+      */
+      double timerMDE();
+      double timerStress();
+      double timerAM();
+      double timerResid();
+      double timerError();
+      double timerCoeff();
+      double timerOmega();
+      double timerTotal();
+      
       /**
       * Have data structures required by the AM algorithm been allocated?
       */
@@ -474,7 +486,63 @@ namespace Pscf {
    template <typename Iterator, typename T>
    int AmIteratorTmpl<Iterator,T>::totalItr() 
    {  return totalItr_; }
-
+   
+   /*
+   * Return computing MDE time cost
+   */
+   template <typename Iterator, typename T>
+   double AmIteratorTmpl<Iterator,T>::timerMDE() 
+   {  return timerMDE_.time(); }
+   
+   /*
+   * Return computing Stress time cost
+   */
+   template <typename Iterator, typename T>
+   double AmIteratorTmpl<Iterator,T>::timerStress() 
+   {  return timerStress_.time(); }
+   
+   /*
+   * Return computing AM time cost
+   */
+   template <typename Iterator, typename T>
+   double AmIteratorTmpl<Iterator,T>::timerAM() 
+   {  return timerAM_.time(); }
+   
+   /*
+   * Return computing Resid time cost
+   */
+   template <typename Iterator, typename T>
+   double AmIteratorTmpl<Iterator,T>::timerResid() 
+   {  return timerResid_.time(); }
+   
+   /*
+   * Return computing Error time cost
+   */
+   template <typename Iterator, typename T>
+   double AmIteratorTmpl<Iterator,T>::timerError() 
+   {  return timerError_.time(); }
+   
+   /*
+   * Return computing Coeff time cost
+   */
+   template <typename Iterator, typename T>
+   double AmIteratorTmpl<Iterator,T>::timerCoeff() 
+   {  return timerCoeff_.time(); }
+   
+   /*
+   * Return computing Omega time cost
+   */
+   template <typename Iterator, typename T>
+   double AmIteratorTmpl<Iterator,T>::timerOmega() 
+   {  return timerOmega_.time(); }
+   
+   /*
+   * Return total time cost
+   */
+   template <typename Iterator, typename T>
+   double AmIteratorTmpl<Iterator,T>::timerTotal() 
+   {  return timerTotal_.time(); }
+   
 }
 #include "AmIteratorTmpl.tpp"
 #endif
