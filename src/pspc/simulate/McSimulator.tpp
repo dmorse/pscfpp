@@ -116,6 +116,9 @@ namespace Pspc {
       Timer analyzerTimer;
       timer.start();
       for (int iStep = 0; iStep < nStep; ++iStep) {
+         if (iStep == 0) {
+            system().compressor().compress();
+         }
          analyzerTimer.start();
          // Analysis (if any)
          if (Analyzer<D>::baseInterval != 0) {

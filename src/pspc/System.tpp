@@ -1066,6 +1066,10 @@ namespace Pspc
          iterator().outputTimers(Log::file());
          iterator().outputTimers(out);
       }
+      if (compressorPtr_){
+         compressor().outputTimers(Log::file());
+         compressor().outputTimers(out);
+      }
    }
    
    /*
@@ -1076,6 +1080,9 @@ namespace Pspc
    {
       if (iteratorPtr_) {
          iterator().clearTimers();
+      }
+      if (compressorPtr_){
+         compressor().clearTimers();
       }
    }
 
