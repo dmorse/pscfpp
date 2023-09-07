@@ -62,6 +62,7 @@ namespace Pspc {
    {
       nAttempt_ = 0;
       nAccept_  = 0;
+      clearTimers();
    }
 
    /*
@@ -70,6 +71,7 @@ namespace Pspc {
    template <int D>
    bool McMove<D>::move()
    {
+      totalTimer_.start();
       incrementNAttempt();
 
       // Get current Hamiltonian
@@ -80,19 +82,30 @@ namespace Pspc {
 
       // Clear both eigen-components of the fields and mcHamiltonian
       mcSimulator().clearData();
-
+      
       // Attempt modification
+      attemptMoveTimer_.start();
       attemptMove();
-
+      attemptMoveTimer_.stop();
+      
       // Call compressor
+      compressorTimer_.start();
       system().compressor().compress();
-
-      // Evaluate new Hamiltonian
+      compressorTimer_.stop();
+      
+      // Compute eigenvector components of the current w fields
+      computeWCTimer_.start();
       mcSimulator().computeWC();
+      computeWCTimer_.stop();
+      
+      // Evaluate new Hamiltonian
+      computeMcHamiltonianTimer_.start();
       mcSimulator().computeMcHamiltonian();
       double newHamiltonian = mcSimulator().mcHamiltonian();
+      computeMcHamiltonianTimer_.stop();
 
       // Accept or reject move
+      decisionTimer_.start();
       bool accept = false;
       double weight = exp(-(newHamiltonian - oldHamiltonian));
       accept = random().metropolis(weight);
@@ -102,7 +115,9 @@ namespace Pspc {
       } else {
           mcSimulator().restoreMcState();
       }
-
+      decisionTimer_.stop();
+      totalTimer_.stop();
+      
       return accept;
    }
 
@@ -112,6 +127,45 @@ namespace Pspc {
    template <int D>
    void McMove<D>::output()
    {}
+   
+   template<int D>
+   void McMove<D>::outputTimers(std::ostream& out)
+   {
+      // Output timing results, if requested.
+      out << "McMove times contributions:\n";
+      // Output timing results, if requested.
+      double total = totalTimer_.time();
+      out << "Attempt Move:         "
+          << Dbl(attemptMoveTimer_.time(), 9, 3)  << " s,  "
+          << Dbl(attemptMoveTimer_.time()/total, 9, 3) << " %" << "\n";
+      out << "Compressor: "
+          << Dbl(compressorTimer_.time(), 9, 3)  << " s,  "
+          << Dbl(compressorTimer_.time()/total, 9, 3) << " %" << "\n";
+      out << "Compute eigen-components of the fields:  "
+          << Dbl(computeWCTimer_.time(), 9, 3)  << " s,  "
+          << Dbl(computeWCTimer_.time()/total, 9, 3) << " %" << "\n";
+      out << "Compute Hamiltonian: "
+          << Dbl(computeMcHamiltonianTimer_.time(), 9, 3)  << " s,  "
+          << Dbl(computeMcHamiltonianTimer_.time()/total, 9, 3) << " %" << "\n";
+      out << "Make decision (accept or reject):       "
+          << Dbl(decisionTimer_.time(), 9, 3)  << " s,  "
+          << Dbl(decisionTimer_.time()/total, 9, 3) << " %" << "\n";
+      out << "total time:           "
+          << Dbl(total, 9, 3) << " s  \n";
+      out << "\n";
+   }
+   
+   template<int D>
+   void McMove<D>::clearTimers()
+   {
+      attemptMoveTimer_.clear();
+      compressorTimer_.clear();
+      computeWCTimer_.clear();
+      computeMcHamiltonianTimer_.clear();
+      decisionTimer_.clear();
+      totalTimer_.clear();
+   }
+      
 
 }
 }

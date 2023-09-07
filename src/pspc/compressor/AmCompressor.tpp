@@ -68,6 +68,8 @@ namespace Pspc{
             w0_[i][j] = system().w().rgrid(i)[j];
          }
       }
+      
+      clearTimers();
    }
    
    template <int D>

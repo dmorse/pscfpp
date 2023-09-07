@@ -1,5 +1,5 @@
 READ_W_RGRID     in/w.rf
-SIMULATE         5
+SIMULATE         25
 WRITE_W_RGRID    out/w.rf
 WRITE_C_RGRID    out/c.rf
 WRITE_TIMER 	 out/timer
