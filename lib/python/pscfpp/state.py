@@ -80,7 +80,7 @@ class State:
    ##
    # Constrctor.
    #
-   # \parame filename a filename string.
+   # \param filename a filename string.
    def __init__(self, filename):
       with open(filename) as f:
          firstline = f.readline()

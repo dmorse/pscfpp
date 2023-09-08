@@ -95,7 +95,7 @@ class Field:
    ##
    # Constructor.
    #
-   # \param filename  a filename string.
+   # \param filename  a filename string
    #
    def __init__(self, filename):
       self.data = []
@@ -105,14 +105,14 @@ class Field:
          self.read(f)
 
    ##
-   # Read the passed-in file.
+   # Read and parse the passed-in file
    # 
    # This function reads the passed-in open-file object line
    # by line and update the read items into instance
    # variables. The reading stops when all lines in file are
    # read.
    #
-   # \param file  an open-file object.
+   # \param openFile  a file object, open for reading
    #
    def read(self, openFile):
       line = openFile.readline()
@@ -166,7 +166,7 @@ class Field:
             self.type = 'rgrid'
 
    ##
-   # Write out a un-intended field file string to a file.
+   # Write out field to a file.
    #
    # This function writes out the field file string to the 
    # specified file with the name of the passed-in parameter, 
@@ -179,16 +179,10 @@ class Field:
          f.write(self.__str__())
 
    ##
-   # Return the un-indented string of the Field object.
+   # Return string representation of this Field.
    #
-   # This function return the un-indented string
-   # representation of the Field object in the field
-   # file format.
-   #
-   # Return value:
-   #
-   # The un-indented string representation in the field
-   # file.
+   # This function return the string representation of the Field object 
+   # in the appropriate field file format.
    #
    def __str__(self):
       out = ''
@@ -266,7 +260,7 @@ class Field:
    # This function adds a new column to the data list of the 
    # Field object. By passing in two parameters, index, the 
    # desired position to add the new column, and element, a 
-   # single value foe the whole column a a list of values
+   # single value for the whole column a a list of values
    # represents the whole column, the datalist of the Field
    # object can be updated with the desired position and values.
    #
@@ -277,7 +271,7 @@ class Field:
    #   \endcode
    #
    # \param index  an position integer.
-   # \param eleemnt  a single value or a list of values.
+   # \param element  a single value or a list of values.
    #
    def addColumn(self, index, element):
       if type(element) is list:

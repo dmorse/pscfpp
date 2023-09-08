@@ -572,8 +572,8 @@ class Array:
    #
    # \param file  a file object, open for reading
    #
-   def read(self, openFile):
-      line = openFile.readline()
+   def read(self, file):
+      line = file.readline()
       l = line.split()
       while l[0] != ']':
          # Process a line
@@ -587,7 +587,7 @@ class Array:
                ls.append(getValue(l[i]))
             self.val.append(ls)
          # Read and split the next line
-         line = openFile.readline()
+         line = file.readline()
          l = line.split()
 
    ##
@@ -696,15 +696,15 @@ class Matrix:
    # Constructor.
    #
    # \param label  label string for the Matrix.
-   # \param openFile  python file object, open for reading
+   # \param file  python file object, open for reading
    #
-   def __init__(self, label, openFile):
+   def __init__(self, label, file):
       self.label = label
       self.val = []
-      self.read(openFile)
+      self.read(file)
 
    ##
-   # Read the passed-in open-file.
+   # Read the a parameter block from a file.
    #
    # This function reads the elements of a Matrix from the file 
    # object that is passed as a parameter. On entry, the opening line
@@ -713,7 +713,7 @@ class Matrix:
    # the value of the first element.  Reading stops stops when the
    # closing "}" is read.
    #
-   # \param file a file object, open for reading
+   # \param file  a file object, open for reading
    #
    def read(self, file):
       att = []
