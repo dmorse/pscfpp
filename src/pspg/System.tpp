@@ -377,7 +377,7 @@ namespace Pspg
             std::ofstream file;
             fileMaster().openOutputFile(filename, file);
             writeTimers(file);
-            file.close()
+            file.close();
          } else
          if (command == "CLEAR_TIMER") {
             clearTimers();
