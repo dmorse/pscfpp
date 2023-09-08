@@ -319,6 +319,8 @@ class Composite:
    #
    def addChild(self, child):
       label = child.label
+      if (label == 'label') or (label == 'children'):
+         raise Exception('Illegal parameter file label')
       if label in self.children:
          current = self.children[label]
          if not isinstance(current, list):
@@ -371,7 +373,7 @@ class Composite:
    # \param attr the string to specify the value returned.
    #
    def __getattr__(self, attr):
-      if attr =='children':
+      if attr == 'children' :
          return {}
       if attr in self.children:
          if isinstance(self.children[attr], list):
@@ -382,11 +384,27 @@ class Composite:
          raise AttributeError     
 
    ##
+   # Set a new value for a specified child or attribute.
+   #
+   # This function sets new value, given by parameter val, to the
+   # specified a child of this Composite with name given by the
+   # parameter "label".
+   #
+   # \param label  name of a child (key string)
+   # \param val  the new value to be assigned
+   #
+   def __setattr__(self, label, val):
+      if label in self.children:
+         self.children[label].setValue(val)
+      else:
+         super(Composite, self).__setattr__(label, val)
+
+   ##
    # Get an indented string representation of this Composite.
    #
    # This function return an indented multi-line string representation
    # of this Composite object in the PSCF parameter file format, with
-   # neighboring levels of indentation offset by 3 spaces. The optional
+   # neighboring levels of indentation offset by 2 spaces. The optional
    # parameter "depth" is a string of spaces that, which is empty by
    # default, that prepended to each line, and thus is the total 
    # indentation of the first line. 
@@ -426,22 +444,6 @@ class Composite:
    #
    def returnData(self):
       return self
-
-   ##
-   # Set a new value for a specified child.
-   #
-   # This function sets new value, given by parameter val, to the
-   # specified a child of this Composite with name given by the
-   # parameter "label".
-   #
-   # \param label  name of a child (key string)
-   # \param val  the new value to be assigned
-   #
-   def __setattr__(self, label, val):
-      if label in self.children:
-         self.children[label].setValue(val)
-      else:
-         super(Composite, self).__setattr__(label, val)
 
 ##
 # A Parameter represents a single parameter in a parameter file. 
