@@ -77,27 +77,26 @@ Python classes have been created to parse the following file formats:
    - Thermo file blocks (class pscfpp.output.Thermo)
    - State files (param + thermo) (class pscfpp.output.State)
    - Sweep output files (class pscfpp.output.Sweep)
-   - Field files for periodic structures (class pscfpp.field.Field)
    - Command scripts (class pscfpp.command.Script)
+   - Field files for periodic structures (class pscfpp.field.Field)
 
 The fully qualified name of each of parser class is given in parentheses 
 in the above list.  To streamline discussion, we will refer to these 
 classes by short names in the remainder of this web page. These short class 
 names are constructed by dropping the common pscfpp package prefix and 
-dropping module names when the module name is uninformative or redundant.
-In the remainder of this page, we refer to these parser classes listed by 
-the short names:
+dropping module names in all but one case.  In the remainder of this page, 
+we refer to these parser classes listed by the short names:
 
    - param.Composite
    - Thermo
    - State
    - Sweep
+   - Script
    - Field
-   - command.Script
 
-We retain the module names param and command in the short names for
-param.Composite and command.Script because we regard these module names 
-as informative parts of the class names.
+We retain the module name param in the short name for param.Composite 
+because we regard the module name param as an informative part of this
+class name.
 
 ### Class param.Composite :
 
@@ -116,14 +115,14 @@ main block.
 The format of a state file contains two blocks, the first of which 
 is a parameter file block that contains all the input parameters, and 
 the second of which is a thermo file block that contains all output 
-variables such as the free energy.  Each instance of class State is 
-is a simple composite object that has one data attribute of class 
-param.Composite that parses the parameter block and another attribute 
-of class Thermo that parses the thermo block.  
+variables such as free energy.  Each instance of class State is a simple
+composite object that has one data attribute of class param.Composite 
+that contains the contents of the parameter block and another attribute 
+of class Thermo that contains the contents of the thermo block.  
 
 ### Class Sweep :
 
-Class Sweep is different from the other parser classes listed above 
+Class Sweep is different from the other parser classes discussed here
 in that it is designed to process many data files at once, rather 
 than a single file or file block.  This class is designed to parse 
 all of the state files created by a sweep calculation and store the 
@@ -131,9 +130,10 @@ results in a python list in which each element is an instance of
 class State. Each State object in this list contains all of the data 
 contained in an associated state file that describes one physical 
 state (i.e., one set of input parameters) within a path through 
-parameter space that was spanned by the sweep.  This is arguably
-the most useful of the parser classes, because it enormously 
-simplifies analysis of the many output files produced by a sweep.
+parameter space that was spanned by the sweep.  This is arguably the 
+most useful of the parser classes, because it enormously simplifies 
+analyses that require inspection of the many output files produced 
+by a sweep.
 
 \section user_python_param_sec Parameter Files
 
@@ -487,9 +487,66 @@ This string can then be printed to the screen using
 \endcode
 or written to a file. 
 
+\section user_python_command_sec Command Files
+
+An instance of class Script (or pscfpp.command.Script) can be used parse 
+and store the contents of a PSCF command file.  Each single-line command 
+in such a file is stored as an instance of a class Command 
+(or pscfpp.command.Command) that contains a list of the space separated 
+strings that make up the command. The first string in each command, which 
+is the command name, is stored in the label attribute of the Command object.
+  
+To parse and store the contents of a command file named 'command', 
+one could enter:
+\code
+    from pscfpp.command import *
+    s = Script('command')
+\endcode
+Individual Command objects within a Script can be accessed using the
+square bracket subscript operator using the either the integer index 
+or name of the command as a key:
+ 
+  - *Access by command index:* Command objects may be accessed 
+    using square bracket notation with an integer index that 
+    represents the position of the command within the script.  
+    Example: If s is a command Script, then s[2] is an instance 
+    of class Command that represents the 3rd command 
+    in the script. 
+ 
+  - *Access by command name:* Commands may also be accessed using 
+    square bracket notation by using the command name (or label) 
+    string as a key. If a command name is unique within the script, 
+    the corresponding Command object is returned.  If the script 
+    contains several commands with the specified name, the return 
+    value is a list containing all such Command objects, indexed 
+    in the order in which they appear in the original file.
+ 
+Values of arguments of individual Command objects be accessed or 
+modified using the param and setParam methods of class Command.
+A Script may be converted to a multi-line string using the str()
+function.
+
 \section user_python_field_sec Field Files
 
-\section user_python_command_sec Command Files
+An instance of Field (or pscfpp.field.Field) can be used to parse
+and store the contents of a field file written in any of the formats
+used by the PSCF programs. Specifically, and instance of this class 
+can store the contents of any of the 3 file formats used by the 
+pscf_pc and pscf_pg programs for fields in periodic systems, as 
+well as the simpler field file format used for one-dimensional 
+systems by the pscf_fd program. The type of field file is inferred 
+during parsing from the format. Because each program uses the same
+type or types of format for chemical potential and monomer
+concentration fields, this class can be used to read, store and
+manipulate files containing a representation of either of these
+two types of fields.
+
+Parsing can be performed by the constructor for this class, as for 
+the other python classes described above. The class provides several
+methods to manipulate data, including methods to add new columns 
+(to allow for addition of a new monomer type) and to change the order 
+of columns associated with different monomer types. Please consult
+the pscfpp.field.Field class documentation for details. 
 
 <BR>
 \ref user_visualize_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 

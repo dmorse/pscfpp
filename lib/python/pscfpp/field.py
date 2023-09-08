@@ -22,73 +22,76 @@
 #
 #  **Construction:**
 #
-#      The header part always starts with the format version number
-#      and the data part follows right after the header without any
-#      empty lines. Users may parse such a file by creating a Field 
-#      object, passing in the name of field file as an argument. The
-#      constructor parses the file and return a Field object that
-#      contains its contents.
+#  The header part always starts with the format version number
+#  and the data part follows right after the header without any
+#  empty lines. Users may parse such a file by creating a Field 
+#  object, passing in the name of field file as an argument. The
+#  constructor parses the file and return a Field object that
+#  contains its contents.
 #
-#      Example:
+#  Example:
 #
-#      To read and parse a field file with name 'field':
-#        \code
-#           from pscfpp.field import *
-#           f = Field('field')
-#        \endcode
+#  To read and parse a field file with name 'field':
+#    \code
+#       from pscfpp.field import *
+#       f = Field('field')
+#    \endcode
 #
 #  **Writing out:**
 #
-#      A Field object can be written to a file by calling the 
-#      writeOut() method, passing in the string of the file name to 
-#      which the Field should be written.
+#  A Field object can be written to a file by calling the 
+#  writeOut() method, passing in the string of the file name to 
+#  which the Field should be written.
 #
-#      Example:
-#        \code
-#           f.write('fieldOut')
-#        \endcode
+#  Example:
+#    \code
+#       f.write('fieldOut')
+#    \endcode
 #
 #  **Accessing elements:**
 #
-#      A Field object contains three members, header, data and type,
-#      corresponding to the different sections of the field file and 
-#      its field format. Users can retrieve any member by dot notation:
+#  A Field object contains three data attributes named header, data 
+#  and type. The header and data attributes contain the contents of 
+#  the header and data sections of the file. Users can retrieve any 
+#  member by dot notation:
 #
-#           1.header: the header member can be accessed by calling the
-#             'header' attribute, which returns a dictionary that stores
-#             all the properties in the header. All stored contents within 
-#             it can be accessed by the formats listed below:
+#  *header:* the header member can be accessed by calling the
+#  'header' attribute, which returns a dictionary that stores
+#  all the properties in the header. All stored contents within 
+#  it can be accessed by the formats listed below:
 #
-#             Example: 
+#  Example: Suppose f is an instance of Field that contains the
+#  contents of a field file.
 #
-#               1. accessing the whole header:
-#                  \code
-#                     f.header
-#                  \endcode 
-#               2. accessing single property in the header:
-#                  \code
-#                     f.header['format']    
-#                     f.header['N_monomer']
-#                  \endcode
+#   1. Accessing the whole header:
+#      \code
+#         f.header
+#      \endcode 
+#
+#   2. Accessing single property in the header:
+#      \code
+#         f.header['format']    
+#         f.header['N_monomer']
+#      \endcode
 #
 #  **Modifying elements:**
 #
-#      The parser also allows users to modify the properties of the header 
-#      in the preset format. Users have to modify the desired properties 
-#      with the same types of objects for the original ones, otherwise,
-#      the parser will not work as expected.
+#  The parser also allows users to modify the properties of the header 
+#  in the preset format. Users have to modify the desired properties 
+#  with the same types of objects for the original ones, otherwise,
+#  the parser will not work as expected.
 #
-#      Example: 
-#        \code
-#           f.header['dim'] = 3  
-#           f.header['cell_param'] = [2.45]   
-#           f.header['group_name'] = 'P_1'
-#        \endcode
+#  Example: 
+#  \code
+#     f.header['dim'] = 3  
+#     f.header['cell_param'] = [2.45]   
+#     f.header['group_name'] = 'P_1'
+#  \endcode
 #
-#  **Modyfying data table:**
+#  **Modifying data table:**
 #
-#      See documentationd for method addColumn, deleteColumn, and
-#      reorder.
+#  See documentationd for method addColumn, deleteColumn, and
+#  reorder.
 #
 class Field:
 
