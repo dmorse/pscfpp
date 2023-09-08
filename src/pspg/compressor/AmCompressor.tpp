@@ -256,7 +256,7 @@ namespace Pspg{
       // Output timing results, if requested.
       out << "\n";
       out << "Compressor times contributions:\n";
-      AmIteratorTmpl<Compressor<D>, DArray<double> >::outputTimers(out);
+      AmIteratorTmpl<Compressor<D>, DField<cudaReal> >::outputTimers(out);
    }
    
    

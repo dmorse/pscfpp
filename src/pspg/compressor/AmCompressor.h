@@ -83,8 +83,8 @@ namespace Pspg
       void outputTimers(std::ostream& out);
       
       // Inherited public member functions
-      using AmIteratorTmpl<Compressor<D>, DArray<double> >::clearTimers;
-      using AmIteratorTmpl<Compressor<D>,  DField<cudaReal> >::setClassName;
+      using AmIteratorTmpl<Compressor<D>, DField<cudaReal> >::clearTimers;
+      using AmIteratorTmpl<Compressor<D>, DField<cudaReal> >::setClassName;
 
    protected:
   
