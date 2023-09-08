@@ -4,83 +4,77 @@ import pscfpp.param as param
 from pscfpp.thermo import Thermo
 
 ##
-# Container for data in state files.
+# Container for data in state files produced by a sweep.
 # 
-#  This class is a tool to parse a PSCF "state file" and store 
-#  all values within it in a single object. A state file contains both
-#  a block of text representing the param file for a given system
-#  and a subsequent block of text containing the thermodynamic data
-#  for that state (from the SCFT solution). These state files are output
-#  by a PSCF Sweep with the extension ".dat", and can be output manually 
-#  by PSCF via the commands WRITE_PARAM and WRITE_THERMO. Users can 
-#  access and modify the stored values of the parameters after parsing 
-#  by using specific statements (commands), and can write the entire 
-#  object to a file in proper format.
+#  This class is a tool to parse a PSCF "state file" and store all 
+#  input parameters and property valiues within it in a single object. 
+#  A state file is comprised of a block containing param file block 
+#  for a given system, which contains most input parameters, and a
+#  subsequent block of text containing the thermodynamic data in 
+#  PSCF thermo file format.  These state files are output by PSCF
+#  Sweep operation with the extension ".stt". Users can access and 
+#  modify the stored values of the parameters after parsing by using 
+#  specific statements (commands), and can write the entire object 
+#  to a file in proper format.
 #
-#  A State object represents a PSCF state file that always contains 
-#  two parts, a param part and a thermo part. It stores all the
-#  contents within the file in a form that allows each property
-#  within it from each part to be accessed and modified.
+#  **Construction and Parsing:**
 #
-#  **Constrction:**
+#  The constructor for class State accepts the name of a state file,
+#  and parses that file and return a State object that contains the
+#  contents of the file. 
 #
-#      A PSCF state file always contains two parts, param and thermo.
-#      The param part always contains a main parameter Composite named
-#      'System' and the thermo part always starts with the fHelmholtz
-#      value. User may parse such a file by creating a State object,
-#      passing in the name of state file as an argument. The constructor
-#      parses the file and returns a State object that contains its
-#      contents.
+#  Example: To read and parse a state file with name 'state':
+#  \code
+#     from pscfpp.state import *
+#     s = State('state')
+#  \endcode
 #
-#      Example:
+#  **Acccessing stored variables:**
 #
-#      To read and parse a state file with name 'state':
-#        \code
-#          from pscfpp.state import *
-#          s = State('state')
-#        \endcode
+#  A State object contains two data attributes named param and thermo,
+#  which corresponding to param and thermo sections of the state file.
+#  The param attribute is an instance of class pscfpp.param.Composite 
+#  that stores the contents of the parameter file block of the state 
+#  file, while the thermo attribute is an instance of class 
+#  pscfpp.thermo.Thermo. Users can access either attribute or the
+#  contents of either object using dot notation. See the documenation
+#  of the param.Composite and thermo.Thermo classes for instructions
+#  on accessing values for specific variables.
 #
-#  **Acccessing elements:**
-#
-#      A State object contains two members, param and thermo,
-#      corresponding to the different sections of the state file. Users 
-#      can retrieve either member by dot notation:
-#
-#           1. param: the param member can be accessed by calling the
-#              'param' attribute, which returns a Composite object. All 
-#              stored contents within it can be accessed by the same
-#              formats listed in the param module.
-#
-#              Example: 
-#                \code
-#                   s.param   
-#                   s.param.Mixture
-#                \endcode
-#
-#           2. thermo: the thermo member can be accessed by calling the
-#              'thermo' attribute, which returns a Thermo object. All
-#              stored contents within it can be accessed by the same
-#              formats listed in the thermo module.
-#
-#              Example: 
-#                \code
-#                   s.thermo    
-#                   s.thermo.fHelmholtz
-#                \endcode
-#
-#  **Modifying elements:**
+#  In the following examples, suppose that variable s is a State object 
+#  that contains the contents of a state file. 
 # 
-#      The parser also allows users to modify the entries in different 
-#      preset formats for particular types of objects with equal sign 
-#      operator ('='). Refer to both the param and thermo modules
-#      for details.
+#  Example: The expressions
+#  \code
+#     s.param   
+#     s.param.Mixture
+#  \endcode
+#  return pscfpp.param.Composite objects that contain the contents of
+#  the entire parameter file block and of the Mixture subblock of the
+#  parameter block. 
+#
+#  Example: The expressions
+#  \code
+#      s.thermo    
+#      s.thermo.fHelmholtz
+#  \endcode
+#  return the pscfpp.thermo.Thermo object that contains the contents
+#  of the thermo block, and the value of the Helmholtz free energy
+#  per monomer, respectively. 
+#
+#  **Modifying values:**
+# 
+#  Users may also use dot notation to modify values of variables stored 
+#  in the param and thermo attributes. See documentation of classes
+#  pscfpp.param.Composite and pscfpp.thermo.Thermo for details. 
 #
 class State:
 
    ##
-   # Constrctor.
+   # Constructor.
    #
-   # \param filename a filename string.
+   # \param filename  name of a state file to be parsed (string)
+   #
    def __init__(self, filename):
       with open(filename) as f:
          firstline = f.readline()
@@ -93,29 +87,24 @@ class State:
             self.thermo.read(f)
 
    ##
-   # Return the un-intended string of the State object.
+   # Return string representation of this object in state file format.
    #
-   # This function returns the un-intended string 
-   # representation in the state file format of the
-   # state file.
-   #
-   # Return value:
-   # 
-   # The un-intended string representation in the 
-   # state file format.
+   # This function returns multi-line string containing the contents
+   # of this object in file format of a state file (i.e, as a parameter
+   # block followed by a thermo block). 
    #
    def __str__(self):
       out = self.param.__str__() + '\n' + self.thermo.__str__()
       return out
 
    ##
-   # Write out an un-intened state file string to a file.
+   # Write the contents of this object to file in state file format.
    #
-   # This function writes out un-intended state file string
-   # to a file with the name of the passed-in parameter
-   # filename.
-   # 
-   # \param filename  a filename string.
+   # This function opens a file with the specified filename and writes
+   # the string produced by the __str__ function to that file. 
+   #
+   # \param filename name of the output file (string)
+   #
    def write(self, filename):
       with open(filename) as f:
          f.write(self.__str__())

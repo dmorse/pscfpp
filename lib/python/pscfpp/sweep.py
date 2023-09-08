@@ -6,68 +6,66 @@ from pscfpp.state import *
 import os
 
 ##
-#   Container for data in state files produced by a PSCF sweep.
+#  Container for data in state files produced by a PSCF sweep.
 #
-#   A Sweep is a container for all the data contained in the PSCF state
-#   files created by a sweep. The data contained in each state file is 
-#   stored in an instance of class State (full name pscfpp.state.State). 
-#   Individual state objects within a Sweep can be accessed using a 
-#   square-bracket syntax, like elements of a python list. Methods
-#   summary and summaryString return summary reports containing values 
-#   of selected variables.
+#  A Sweep is a container for all the data contained in the PSCF state
+#  files created by a sweep. The data contained in each state file is 
+#  stored in an instance of class State (full name pscfpp.state.State). 
+#  Individual state objects within a Sweep can be accessed using a 
+#  square-bracket syntax, like elements of a python list. Methods
+#  summary and summaryString return summary reports containing values 
+#  of selected variables.
 #
-#   **Construction:**
+#  **Construction:**
 # 
-#      The constructor for class Sweep parses and stores the contents 
-#      of all of the the state files (which end with '.dat') produced 
-#      by a PSCF sweep. The constructor takes a single argument which
-#      is the baseFileName prefix string. 
+#  The constructor for class Sweep parses and stores the contents 
+#  of all of the the state files (which end with '.dat') produced 
+#  by a PSCF sweep. The constructor takes a single argument which
+#  is the baseFileName prefix string. 
 #
-#      Examples: 
+#  Example: To read and parse all states files produced by a Sweep with 
+#  the baseFileNAme prefix string 'out/':
+#  \code
+#      from pscfpp.sweep import *
+#      s = Sweep('out/')
+#  \endcode
 #
-#      To read and parse all states files produced by a Sweep with the
-#      baseFileNAme prefix string 'out/':
-#         \code
-#            from pscfpp.sweep import *
-#            s = Sweep('out/')
-#         \endcode
-#
-#   **Accessing elements:**
+#  **Accessing elements:**
 #      
-#      A Sweep object can be treated as a list of State objects, 
-#      each of which contains the contents of a corresponding state 
-#      file. Each state object can be accessed by a corresponding 
-#      index with square brackets, like an element of a list, such
-#      s[0] or s[1]. 
+#  A Sweep object can be treated as a list of State objects, 
+#  each of which contains the contents of a corresponding state 
+#  file. Each state object can be accessed by a corresponding 
+#  index with square brackets, like an element of a list, such
+#  s[0] or s[1]. 
 #
-#      All elements and properties in each such State object can be
-#      accessed using the dot notation for attributes of a State object,
-#      such as s[0].param.Mixture.nMonomer or s[1].thermo.fHelmholtz.
-#      See the documentation for class pscfpp.state.State for details.
+#  All elements and properties in each such State object can be
+#  accessed using the dot notation for attributes of a State object,
+#  such as s[0].param.Mixture.nMonomer or s[1].thermo.fHelmholtz.
+#  See the documentation for class pscfpp.state.State for details.
 #
 #
 #  **Summary reports:** 
 #
-#     See documentation for methods summary and summaryString.
+#  See documentation for methods summary and summaryString.
 #
 class Sweep:
 
    ##
    # Constructor.
    #
-   # The input parameter d is the baseFileName prefix string.
+   # The input parameter prefix is the baseFileName prefix string.
    #
-   # \param d  string that is the name of a directory or parameter file.
+   # \param prefix  string that is prefixed to all state file names
    #
-   def __init__(self, d):
+   def __init__(self, prefix):
       self.sweep = []
       num = 0
-      filename = d + str(num) + '.dat'
+      filename = prefix + str(num) + '.stt'
       while os.path.isfile(filename) == True:
          s = State(filename)
          self.sweep.append(s)
          num += 1
-         filename = d + str(num) + '.dat'
+         filename = prefix + str(num) + '.stt'
 
    ##
    # Make a summary report containing values for selected variables.
@@ -75,9 +73,9 @@ class Sweep:
    # This function constructs a data structure containing the values 
    # of a user-specified set of variables at each state in the sweep. 
    #
-   # Specifying a list of variable names:
+   # **Specifying a list of variable names:**
    #
-   # The input parameter l is a list of strings that specify the 
+   # The input parameter vars is a list of strings that specify the 
    # variables of interest. Each element in this list is a string that 
    # gives the the name of an attribute of a single State object, starting 
    # with either 'param' or 'thermo', using a dot notation. For example
@@ -85,7 +83,7 @@ class Sweep:
    # the Mixture block of the parameter section of the state file, while
    # "thermo.fHelmoltz" is the free energy per monomer reference volume.
    #
-   # Return value:
+   # **Return value:**
    # 
    # The quantity returned by this function is a list in which each 
    # element is itself a list of values of values of the specified 
@@ -94,11 +92,11 @@ class Sweep:
    # of the chosen variables at state 2. 
    #
    # The state index (e.g., 2) may optionally be added as the first 
-   # element of this list of variable values, by setting the parameter 
-   # index to True. By default index = False, so no index numbers are
-   # included when this parameter is absent. 
+   # element of this list of variable values, by setting the optional
+   # parameter index to True. By default index = False, so no index 
+   # numbers are not included when this parameter is absent. 
    #
-   # Example:  
+   # **Example:**
    #
    # If s is a Sweep object representing a mixture that has been 
    # subjected to a sweep that changes composition, then the command
@@ -114,15 +112,17 @@ class Sweep:
    #             [0.6, 28.8344576024], [0.65, 26.8019750534],
    #             [0.7, 24.5205812724]]
    # \endcode
-   # In this example, the vlue of vals[2] is a list of two values, given
-   # by [0.6, 28.8344576024], in which the first element (0.6) is the 
-   # volume fraction of polymer 0 and the second element (28.8344) is 
-   # the value of the pressure, both evaluated in state 2 (the third 
-   # state in the sweep). 
+   # In this example, the value of vals[2] is a python list of two floats,
+   # given by [0.6, 28.8344576024], in which the first element (0.6) is 
+   # the value of phi (volume fraction) for polymer 0 and the second 
+   # element (28.8344) is the value of the non-dimensionalized pressure, 
+   # both evaluated in state 2 (the third state in the sweep). 
    #
-   # Example:
+   # **Example:**
    #
-   # The command 
+   # Adding a final parameter index = True will add the state index
+   # as an additional first element of the list of values for each 
+   # state. For example, the command
    # \code
    #    s.summary(['param.Interaction.chi[0][1]'], index = True)
    # \endcode
@@ -131,15 +131,15 @@ class Sweep:
    # \code
    #   [[0, 12.0], [1, 13.0], [2, 14.0], [3, 15.0], [4, 16.0]]
    # \endcode
-   # Here the first value for each state is the integer state index, and 
-   # the second is the value of the chi parameter chi[0][1] for 
+   # Here the first value for each state is the integer state index, 
+   # and the second is the value of the chi parameter chi[0][1] for 
    # interactions between monomers of types 0 and 1. 
    #
-   # \param l list of strings that contain variable names in dot notation
-   # \param index if True, add the state index as the first variable
+   # \param vars  list of variable name strings in dot notation
+   # \param index  if True, add the state index as the first variable
    #
-   def summary(self, l, index = False):
-      n = len(l)
+   def summary(self, vars, index = False):
+      n = len(vars)
 
       summary = []
 
@@ -150,7 +150,7 @@ class Sweep:
             s = []
          for j in range(0, n):
             a = self.sweep[i]
-            string = 'a.' + l[j]
+            string = 'a.' + vars[j]
             try:
                val = eval(string)
             except RecursionError:
@@ -160,21 +160,22 @@ class Sweep:
 
       return summary
 
+
    ##
    # Return a summary report as a formatted string suitable for printing.
    #
    # This method produced a formatted string containing the same type of
    # summary report that is generated by the summary method, giving values
-   # of selected variables for every state in a sweep. The parameter l is
-   # a list of variable name strings formatted in dot notation, exactly as
-   # for the corresponding parameter of the Sweep.summary method. The 
+   # of selected variables for every state in a sweep. The parameter vars 
+   # is a list of variable name strings formatted in dot notation, exactly 
+   # as for the corresponding parameter of the Sweep.summary method. The 
    # format includes labels for the variable names and includes a state
    # index for each state.
    #
    # Example: If applied to a sweep with 5 state points, the command
    # \code
    #    report = s.summaryString(['param.Interaction.chi[0][1]',
-   #                                 'thermo.fHelmholtz']))
+   #                              'thermo.fHelmholtz']))
    #    print(report)
    # \endcode
    # yields an output that looks somethink like this. 
@@ -189,10 +190,10 @@ class Sweep:
    # \endcode
    # The string returned by summaryString can also be written to a file.
    #
-   # \param l list of strings that contain variable names in dot notation
+   # \param vars list of variable name strings in dot notation
    #
-   def summaryString(self, l):
-      n = len(l)
+   def summaryString(self, vars):
+      n = len(vars)
 
       summary = []
 
@@ -200,7 +201,7 @@ class Sweep:
          s = [i]
          for j in range(0, n):
             a = self.sweep[i]
-            string = 'a.' + l[j]
+            string = 'a.' + vars[j]
             try:
                val = eval(string)
             except RecursionError:
@@ -211,8 +212,8 @@ class Sweep:
       nl = [4]
       nameList = ['step']
       for i in range(0, n):
-         index = l[i].rfind('.')
-         name = l[i][index+1:]
+         index = vars[i].rfind('.')
+         name = vars[i][index+1:]
          nameList.append(name)
          nl.append(len(name))
 
