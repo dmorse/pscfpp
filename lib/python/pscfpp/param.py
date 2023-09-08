@@ -178,7 +178,7 @@
 #
 #  The following two attributes are created by the constructor:
 #
-#    - "children" is a dictionary of child sub-elements corresponding
+#    - "_children" is a dictionary of child sub-elements corresponding
 #       to elements of the parameter file (i.e., parameters or nested
 #       subblocks) that appear within the associated block. Values in
 #       this dictionary are all instances of Composite, Parameter, 
@@ -188,7 +188,7 @@
 #      opening curly bracket
 #
 #  The __getattr__ function is overloaded to treat the attribute
-#  name as a key in "children" dictionary and return either a
+#  name as a key in "_children" dictionary and return either a
 #  corresponding value. If the value in the dictionary is a 
 #  Composite, this function returns the Composite object. If the
 #  value is an instance of Parameter, Array or Matrix, it returns
@@ -217,7 +217,7 @@ class Composite:
    #
    def __init__(self, file=None, label=None):
       self.label = label
-      self.children = {}
+      self._children = {}
 
       if file != None:
          if isinstance(file, str):
@@ -310,7 +310,7 @@ class Composite:
    # Add a single child to this Composite.
    #
    # This function adds the child object that is passed as a parameter
-   # to the children dictionary of this Composite object. The child
+   # to the _children dictionary of this Composite object. The child
    # object should be an instance of Composite, Parameter, Array, or 
    # Matrix. The dictionary key is set equal to the label of the child
    # which must thus have been assigned before entry to this function.
@@ -319,15 +319,15 @@ class Composite:
    #
    def addChild(self, child):
       label = child.label
-      if (label == 'label') or (label == 'children'):
+      if (label == 'label') or (label == '_children'):
          raise Exception('Illegal parameter file label')
-      if label in self.children:
-         current = self.children[label]
+      if label in self._children:
+         current = self._children[label]
          if not isinstance(current, list):
-            self.children[label] = [current]
-         self.children[label].append(child)
+            self._children[label] = [current]
+         self._children[label].append(child)
       else:
-         self.children[label] = child
+         self._children[label] = child
 
    ##
    # Get the dictionary of child items.
@@ -339,16 +339,7 @@ class Composite:
    # than simply return an attribute by name.
    #
    def getChildren(self):
-      return self.children
-
-   ##
-   # Get the label of this Composite.
-   #
-   # See documentation for getChildren for an explanation of why this
-   # function is necessary.
-   #
-   def getLabel(self):
-      return self.label
+      return self._children
 
    ##
    # Return an indented string representation of this Composite.
@@ -363,23 +354,29 @@ class Composite:
    ##
    # Return the value of one child of this Composite.
    #
-   # If the attribute parameter is the name (or dictionary key) of a
-   # child of this this Composite, then this function returns the value
-   # of the corresponding item. If the specified child is a single
-   # Parameter (rather than an Array or Matrix) with only one value, 
-   # it returns the value as a primitive python variable (an int, float 
-   # or string).
+   # This function is only called when a Composite object attribute is
+   # accessed with an attribute name that is not one of the actual 
+   # object attributes. If the function is called with an attr 
+   # parameter that is instead the name (or dictionary key) of a child
+   # of this this Composite, then this function returns the value of
+   # the corresponding child. For a child Composite, the returned value 
+   # is the Composite object itself. For a Parameter or Array, the
+   # return value is either a primitive variable (int, float or string), 
+   # or a list of values. For a Matrix, the return value is always a
+   # list of lists of values.
    #
    # \param attr the string to specify the value returned.
    #
    def __getattr__(self, attr):
-      if attr == 'children' :
+      if attr == '_children' :
+         # This is needed to prevent infinite recursion before
+         # self._children has been given an initial value of {}.
          return {}
-      if attr in self.children:
-         if isinstance(self.children[attr], list):
-            return self.children[attr]
+      if attr in self._children:
+         if isinstance(self._children[attr], list):
+            return self._children[attr]
          else:
-            return self.children[attr].returnData()
+            return self._children[attr].returnData()
       else:
          raise AttributeError     
 
@@ -394,8 +391,8 @@ class Composite:
    # \param val  the new value to be assigned
    #
    def __setattr__(self, label, val):
-      if label in self.children:
-         self.children[label].setValue(val)
+      if label in self._children:
+         self._children[label].setValue(val)
       else:
          super(Composite, self).__setattr__(label, val)
 
@@ -413,7 +410,7 @@ class Composite:
    #
    def getString(self, depth=''):
       s = depth + self.label + '{' + '\n'
-      for item in self.children.values():
+      for item in self._children.values():
          if isinstance(item, list):
             for i in range(len(item)):
                s += item[i].getString(depth+'  ')
