@@ -1,5 +1,7 @@
 READ_W_RGRID     in/w.rf
-SIMULATE         25
+COMPRESS
+CLEAR_TIMER
+SIMULATE         50
 WRITE_W_RGRID    out/w.rf
 WRITE_C_RGRID    out/c.rf
 WRITE_TIMER 	 out/timer

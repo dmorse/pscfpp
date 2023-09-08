@@ -38,12 +38,12 @@ System{
   McSimulator{
     McMoveManager{
         RealMove{
-            probability     1
-            A               0.05
+            probability     0.5
+            A               0.5
         }
         FourierMove{
-            probability     0
-            A               0.00001
+            probability     0.5
+            A               0.01
             F*              20.990
             tau             2.64737
             N               1.0

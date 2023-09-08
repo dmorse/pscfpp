@@ -135,22 +135,22 @@ namespace Pspc {
       out << "McMove times contributions:\n";
       // Output timing results, if requested.
       double total = totalTimer_.time();
-      out << "Attempt Move:         "
+      out << "Attempt Move:                           "
           << Dbl(attemptMoveTimer_.time(), 9, 3)  << " s,  "
-          << Dbl(attemptMoveTimer_.time()/total, 9, 3) << " %" << "\n";
-      out << "Compressor: "
+          << Dbl(attemptMoveTimer_.time()/total*100, 9, 3) << " %" << "\n";
+      out << "Compressor:                             "
           << Dbl(compressorTimer_.time(), 9, 3)  << " s,  "
-          << Dbl(compressorTimer_.time()/total, 9, 3) << " %" << "\n";
-      out << "Compute eigen-components of the fields:  "
+          << Dbl(compressorTimer_.time()/total*100, 9, 3) << " %" << "\n";
+      out << "Compute eigen-components of the fields: "
           << Dbl(computeWCTimer_.time(), 9, 3)  << " s,  "
-          << Dbl(computeWCTimer_.time()/total, 9, 3) << " %" << "\n";
-      out << "Compute Hamiltonian: "
+          << Dbl(computeWCTimer_.time()/total*100, 9, 3) << " %" << "\n";
+      out << "Compute Hamiltonian:                    "
           << Dbl(computeMcHamiltonianTimer_.time(), 9, 3)  << " s,  "
-          << Dbl(computeMcHamiltonianTimer_.time()/total, 9, 3) << " %" << "\n";
+          << Dbl(computeMcHamiltonianTimer_.time()/total*100, 9, 3) << " %" << "\n";
       out << "Make decision (accept or reject):       "
           << Dbl(decisionTimer_.time(), 9, 3)  << " s,  "
-          << Dbl(decisionTimer_.time()/total, 9, 3) << " %" << "\n";
-      out << "total time:           "
+          << Dbl(decisionTimer_.time()/total*100, 9, 3) << " %" << "\n";
+      out << "total time:                             "
           << Dbl(total, 9, 3) << " s  \n";
       out << "\n";
    }

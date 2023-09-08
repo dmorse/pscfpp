@@ -22,6 +22,13 @@ namespace Pspc{
    AmCompressor<D>::AmCompressor(System<D>& system)
    : Compressor<D>(system),
      counter_(0),
+     timerMDE_(0),
+     timerAM_(0),
+     timerResid_(0),
+     timerError_(0),
+     timerCoeff_(0),
+     timerOmega_(0),
+     timerTotal_(0),
      isAllocated_(false)
    {  setClassName("AmCompressor"); }
 
@@ -76,7 +83,16 @@ namespace Pspc{
    int AmCompressor<D>::compress()
    {
       int solve = AmIteratorTmpl<Compressor<D>, DArray<double> >::solve();
-      counter_ += AmIteratorTmpl<Compressor<D>,DArray<double>>::totalItr(); 
+      counter_ += AmIteratorTmpl<Compressor<D>,DArray<double>>::totalItr();
+      #if 0
+      timerMDE_ += AmIteratorTmpl<Compressor<D>,DArray<double>>::timerMDE();
+      timerAM_ += AmIteratorTmpl<Compressor<D>,DArray<double>>::timerAM();
+      timerResid_ += AmIteratorTmpl<Compressor<D>,DArray<double>>::timerResid();
+      timerError_ += AmIteratorTmpl<Compressor<D>,DArray<double>>::timerError();
+      timerCoeff_ += AmIteratorTmpl<Compressor<D>,DArray<double>>::timerCoeff();
+      timerOmega_ += AmIteratorTmpl<Compressor<D>,DArray<double>>::timerOmega();
+      timerTotal_  += AmIteratorTmpl<Compressor<D>,DArray<double>>::timerTotal();
+      #endif
       return solve;
    }
 
@@ -245,6 +261,37 @@ namespace Pspc{
    void AmCompressor<D>::outputToLog()
    {}
    
+   #if 0
+   template<int D>
+   void AmCompressor<D>::outputTimers(std::ostream& out)
+   {
+      // Output timing results, if requested.
+      out << "\n";
+      out << "Compressor times contributions:\n";
+      double total = timerTotal_;
+      out << "\n";
+      out << "MDE solution:         "
+          << Dbl(timerMDE_, 9, 3)  << " s,  "
+          << Dbl(timerMDE_/total*100, 9, 3) << " %" << "\n";
+      out << "residual computation: "
+          << Dbl(timerResid_, 9, 3)  << " s,  "
+          << Dbl(timerResid_/total*100, 9, 3) << " %" << "\n";
+      out << "mixing coefficients:  "
+          << Dbl(timerCoeff_, 9, 3)  << " s,  "
+          << Dbl(timerCoeff_/total*100, 9, 3) << " %" << "\n";
+      out << "checking convergence: "
+          << Dbl(timerError_, 9, 3)  << " s,  "
+          << Dbl(timerError_/total*100, 9, 3) << " %" << "\n";
+      out << "updating guess:       "
+          << Dbl(timerOmega_, 9, 3)  << " s,  "
+          << Dbl(timerOmega_/total*100, 9, 3) << " %" << "\n";
+      out << "total time:           "
+          << Dbl(total, 9, 3) << " s  \n";
+      out << "\n";
+      
+   }
+   #endif
+   
    template<int D>
    void AmCompressor<D>::outputTimers(std::ostream& out)
    {
@@ -252,7 +299,22 @@ namespace Pspc{
       out << "\n";
       out << "Compressor times contributions:\n";
       AmIteratorTmpl<Compressor<D>, DArray<double> >::outputTimers(out);
-      
+   }
+   
+   
+   template<int D>
+   void AmCompressor<D>::clearTimers()
+   {
+      AmIteratorTmpl<Compressor<D>, DArray<double> >::clearTimers();
+      #if 0
+      timerMDE_ = 0;
+      timerAM_ = 0;
+      timerResid_ = 0;
+      timerError_ = 0;
+      timerCoeff_ = 0;
+      timerOmega_ = 0;
+      timerTotal_ = 0;
+      #endif
    }
    
 }

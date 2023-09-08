@@ -107,6 +107,7 @@ namespace Pspc {
    void McSimulator<D>::simulate(int nStep)
    {
       UTIL_CHECK(mcMoveManager_.size() > 0);
+      
 
       setup();
       Log::file() << std::endl;
@@ -116,9 +117,6 @@ namespace Pspc {
       Timer analyzerTimer;
       timer.start();
       for (int iStep = 0; iStep < nStep; ++iStep) {
-         if (iStep == 0) {
-            system().compressor().compress();
-         }
          analyzerTimer.start();
          // Analysis (if any)
          if (Analyzer<D>::baseInterval != 0) {
