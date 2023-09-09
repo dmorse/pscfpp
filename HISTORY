@@ -19,7 +19,9 @@ Version 1.1.0  (10/1/2023)
 User-visible features
 ---------------------
 * Python tools for parsing and editing PSCF input and output files
-* Python tool to process outputs from a parameter sweep
+  (for parameter, command, thermo, state, and field file formats)
+* Python tool to parse and analyze output files from a parameter sweep
+* Functions and commands to print propagator values in pscf_fd 
 
 Documentation
 -------------
