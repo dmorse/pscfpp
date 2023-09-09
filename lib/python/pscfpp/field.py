@@ -268,24 +268,25 @@ class Field:
    ##
    # Add a new column to the data list.
    #
-   # This function adds a new column to the data list of the 
-   # Field object. By passing in two parameters, index, the 
-   # desired position to add the new column, and element, a 
-   # single value for the whole column a a list of values
-   # represents the whole column, the datalist of the Field
-   # object can be updated with the desired position and values.
+   # This function adds a new column to the data list of the Field
+   # object. The index parameter is the desired position of the new
+   # column. The parameter 'element' can be either a single value
+   # that is applied to every element of the entire column, or a
+   # list of values that represents the entire column of new values.
    #
    # Example:
-   #   \code
-   #      f.addColumn(2, 1.2)    
-   #      f.addColumn(2, [list of values for the whole column])
-   #   \endcode
+   # \code
+   #    f.addColumn(2, 1.2)    
+   #    f.addColumn(2, [list of values for the whole column])
+   # \endcode
    #
-   # \param index  an position integer.
-   # \param element  a single value or a list of values.
+   # \param index  integer column index 
+   # \param element  value (float) or values (list) for elements of column
    #
    def addColumn(self, index, element):
-      if type(element) is list:
+      if isinstance(element, list):
+         if not (len(element) == len(self.data)):
+             raise Exception('Incorrect dimension for list element')
          for i in range(0, len(self.data)):
             self.data[i].insert(index, element[i])
       else:
@@ -295,17 +296,13 @@ class Field:
    ##
    # Delete an existing column from the data list.
    #
-   # This function deletes an exist column from the data list of
-   # the Field object. By passing in one parameter, index, the 
-   # desired position of the column to be deleted, the data list
-   # of the Field object can be updated without the indicated column.
+   # This function deletes an exist column from the data list of the
+   # Field object. By passing in one parameter, index, the desired
+   # values with that column index is removed from every row of the
+   # data table.
    #
-   # Example:
-   #   \code
-   #      f.deleteColumn(2)
-   #   \endcode
+   # \param index  column index, numbered from 0
    #
-   # \param index  an position integer.
    def deleteColumn(self, index):
       for i in range(0, len(self.data)):
          self.data[i].pop(index)
@@ -316,18 +313,37 @@ class Field:
    # This function reorders the data list of the Field object. By
    # passing in one parameter, order, an integer list that represents
    # the new order of the columns in the data list, the data list of
-   # the Field object can be updated with the desired order.
+   # the Field object can be updated with the desired order. The 
+   # length of the list 'order' must be equal to the total number 
+   # of columns in the data section, including any that do not 
+   # contain field component values. 
+   #
+   # Note: This function treats all columns in the file format 
+   # equivalently, whether they contain field component values or
+   # other information. Specifically, when treating a field file 
+   # in basis file format for a system with C monomer types in a 
+   # system of spatial dimension D, the field file format contains 
+   # C + D + 1 columns, in which only the first C contain field 
+   # components and the remaining D+1 contain Miller indices for
+   # a characteristic wave of each star and the number of waves in
+   # the star. To re-order columns that contain field components
+   # one must enter a permutation of the integers [0,...,D+1] in
+   # which only the first C (0,...,C-1) are re-ordered and the
+   # remaining D+1 integers appear in their original order.
    #
    # Example:
    #   \code
-   #      f.reorder([0, 3, 4, 1, 2])
+   #      f.reorder([1, 0, 2, 3, 4, 5])
    #   \endcode
    #
    # \param order  a list of position integers.
    #
    def reorder(self, order):
+      nc = len(order)
       newData = []
       for i in range(0, len(self.data)):
+         if not (nc == len(self.data[i])):
+            raise Exception('Incorrect length for permutation order')
          d = []
          for j in range(0,len(order)):
             d.append(self.data[i][order[j]])
