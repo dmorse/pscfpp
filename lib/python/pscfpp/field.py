@@ -3,95 +3,103 @@
 ##
 # Container for data in field files.
 #
-#  This class is a tool to parse a PSCF "field file" and store 
-#  all values within it in a single object. A field file contains both
-#  a block of text representing the field file header and a subsequent
-#  block of text containing all the field data. Field files for all 
-#  types of field formats (fd1d, rgrid, kgrid and basis) can be parsed 
-#  and stored by the Field object. For more detail on the types of  
-#  field formats, please refer to the PSCFPP main documentation. Users 
-#  can access and modify the stored values of the parameters in the 
-#  header and data part after parsing by using specific statements 
-#  (commands), and can write the entire object to a file in proper 
-#  format.
+#  A Field object can parse a PSCF "field file" and store its contents.
+#  A field file contains both a header section and a data section. 
+#  This class can read and parse all of the field file formats used by
+#  PSCF programs including the basis, rgrid, and kgrid formats used by
+#  the pscf_pc and pscf_pg programs to represent periodic fields, and 
+#  the simpler file format used by pscf_fd for one-dimensional fields.
+#  For detail on these file formats see the section of the web manual
+#  on \ref user_field_page "field files". Users can access and modify
+#  stored values of the parameters in the header and values in the data 
+#  section after parsing by using specific statements (commands), and 
+#  can write the entire object to a file in proper format.
 #
-#  A Field object represents a PSCF field file that always contains 
-#  two parts, a header part and a data part. It stores all the
-#  contents within the file in a form that allows each value
-#  within it from each part to be accessed and modified.
+#  Every PSCF field file format contains a header section and a data 
+#  section. The header contains globale information about the system
+#  and spatial discretization. The data section is a table of field
+#  components in which each row contains components associated with
+#  a single spatial degree of freedom, and each column contains 
+#  components associated with a single monomer type. The format 
+#  of header is different for different types of field file, which 
+#  makes it possible for the Field class to infer information about
+#  the type of a field file while parsing the header,
+#  
+#  A Field object has three attributes named 'header', 'data', and 
+#  'type'. The 'header' attribute is a dictionary that contains the
+#  contents of the header section, using the variable names or labels
+#  as dictionary keys. The 'data' attribute is a list of lists in 
+#  which each element of the outer list corresponds to one row of
+#  the data section in the field file. When accessing elements of 
+#  the data attribute using two subscripts, the first subscript (the 
+#  row index) is thus index for a spatial degree of freedom (i.e., 
+#  a grid point or basis function) and the second (the column index) 
+#  is an index for a monomer type. 
+#
+#  The 'type' attribute is a string with possible values 'fd1d', 
+#  'basis', 'rgrid' or 'kgrid'. 
 #
 #  **Construction:**
 #
-#  The header part always starts with the format version number
-#  and the data part follows right after the header without any
-#  empty lines. Users may parse such a file by creating a Field 
-#  object, passing in the name of field file as an argument. The
-#  constructor parses the file and return a Field object that
-#  contains its contents.
+#  The Field constructor can parse any PSCF field file, and infer its 
+#  type. To read and parse a field file with name 'field', one could 
+#  enter:
+#  \code
+#     from pscfpp.field import *
+#     f = Field('field')
+#  \endcode
 #
-#  Example:
+#  **Printing and writing to file:**
 #
-#  To read and parse a field file with name 'field':
-#    \code
-#       from pscfpp.field import *
-#       f = Field('field')
-#    \endcode
-#
-#  **Writing out:**
-#
-#  A Field object can be written to a file by calling the 
-#  writeOut() method, passing in the string of the file name to 
-#  which the Field should be written.
-#
-#  Example:
-#    \code
-#       f.write('fieldOut')
-#    \endcode
+#  The __str__ function can be used to convert a Field object to a
+#  multi-line string with a consistent with that of the file from which
+#  it was created. The write function can be used to write that string
+#  to a specified file. To write a field stored in a Field object named
+#  f to a file named 'out', one would enter:
+#  \code
+#     f.write('out')
+#  \endcode
 #
 #  **Accessing elements:**
 #
-#  A Field object contains three data attributes named header, data 
-#  and type. The header and data attributes contain the contents of 
-#  the header and data sections of the file. Users can retrieve any 
-#  member by dot notation:
+#  The header attribute is a Python dictionary containing
+#  the contents of the header section of the field file. One can
+#  access elements using names of header variables as dictionary
+#  keys, as in the expressions
+#  \code
+#     f.header['format']    
+#     f.header['N_monomer']
+#  \endcode
+#  The available keys are different for different file formats.
+#  Values for some quantities that are generally represented by more 
+#  than one value are stored as lists, such as the list 'cell_param' 
+#  of cell parameter values to describe the unit cell in  a periodic 
+#  system.
 #
-#  *header:* the header member can be accessed by calling the
-#  'header' attribute, which returns a dictionary that stores
-#  all the properties in the header. All stored contents within 
-#  it can be accessed by the formats listed below:
-#
-#  Example: Suppose f is an instance of Field that contains the
-#  contents of a field file.
-#
-#   1. Accessing the whole header:
-#      \code
-#         f.header
-#      \endcode 
-#
-#   2. Accessing single property in the header:
-#      \code
-#         f.header['format']    
-#         f.header['N_monomer']
-#      \endcode
-#
-#  **Modifying elements:**
-#
-#  The parser also allows users to modify the properties of the header 
-#  in the preset format. Users have to modify the desired properties 
-#  with the same types of objects for the original ones, otherwise,
-#  the parser will not work as expected.
-#
-#  Example: 
+#  The data section is a list of lists, in which elements are accessed
+#  using square brackets with integer indices.  The expressions
+#  \code
+#    f.data[10]
+#    f.data[10][1]
+#  \endcode
+#  access an entire row of the data section or a single component,
+#  respectively.
+# 
+#  Elements of the header and data section can also be modified,
+#  simply by putting corresponding expressions on the left side of 
+#  an equality (assignment) operator. For example:
 #  \code
 #     f.header['dim'] = 3  
 #     f.header['cell_param'] = [2.45]   
 #     f.header['group_name'] = 'P_1'
 #  \endcode
 #
-#  **Modifying data table:**
+#  **Modifying data table structure:**
 #
-#  See documentationd for method addColumn, deleteColumn, and
-#  reorder.
+#  See the documentation for the addColumn, deleteColumn, and
+#  reorder methods, which change the structure of the data 
+#  section by adding, deleting or reordering columns associated
+#  with different data types. 
 #
 class Field:
 
@@ -167,19 +175,6 @@ class Field:
             self.type = 'kgrid'
          else:
             self.type = 'rgrid'
-
-   ##
-   # Write out field to a file.
-   #
-   # This function writes out the field file string to the 
-   # specified file with the name of the passed-in parameter, 
-   # filename.
-   #
-   # \param filename  a filename string.
-   #
-   def write(self, filename):
-      with open(filename, 'w') as f:
-         f.write(self.__str__())
 
    ##
    # Return string representation of this Field.
@@ -258,6 +253,19 @@ class Field:
       return out
 
    ##
+   # Write out field to a file.
+   #
+   # This function writes out the field file string to the 
+   # specified file with the name of the passed-in parameter, 
+   # filename.
+   #
+   # \param filename  a filename string.
+   #
+   def write(self, filename):
+      with open(filename, 'w') as f:
+         f.write(self.__str__())
+
+   ##
    # Add a new column to the data list.
    #
    # This function adds a new column to the data list of the 
@@ -285,7 +293,7 @@ class Field:
             self.data[i].insert(index, element)
 
    ##
-   # Delete an exist column from the sata list.
+   # Delete an existing column from the data list.
    #
    # This function deletes an exist column from the data list of
    # the Field object. By passing in one parameter, index, the 
