@@ -1,0 +1,13 @@
+READ_W               in/w
+ITERATE
+COMPARE_HOMOGENEOUS  0
+WRITE_C              out/c
+WRITE_W              out/w
+WRITE_PARAM          out/data
+WRITE_THERMO         out/data
+WRITE_Q          out/q000         0 0 0
+WRITE_Q_SLICE    out/qs_0_0_0_50  0 0 0 50
+WRITE_Q_SLICE    out/qs_0_1_0_0   0 1 0 0
+WRITE_Q_TAIL     out/qt_0_0_0     0 0 0
+WRITE_Q_ALL      out/q
+FINISH

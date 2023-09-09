@@ -1,17 +1,23 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
-from ParamComposite import *
+from pscfpp.param import *
 
-p = readParamFile('in/McSimulation')
+p = Composite('in/param')
 
-print p
-print p.FileMaster.inputPrefix
-print p.SpeciesManager
+print(p)
 
-print str(p.SpeciesManager.Diblock)
-print str(p.SpeciesManager.Diblock[0])
-print str(p.SpeciesManager.Diblock[1])
-print str(p.SpeciesManager.Diblock[2])
+print('p.Mixture.Polymer[0].blocks = ')
+print(p.Mixture.Polymer[0].blocks)
 
-#print p.AnalyzerManager.VanHove
+print('p.Mixture.Polymer[2] =')
+print(p.Mixture.Polymer[2])
 
+print('p.Interaction.chi[0][1] = ')
+print(p.Interaction.chi[0][1])
+
+print('p.Interaction.chi[1][0] = ')
+print(p.Interaction.chi[1][0])
+
+p.Interaction.chi[0][1] = 17.0;
+print('p.Interaction.chi[0][1] = ')
+print(p.Interaction.chi[0][1])
