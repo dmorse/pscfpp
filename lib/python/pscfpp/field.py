@@ -1,7 +1,7 @@
 """! Module for parsing field files. """
 
 ##
-# Container for data in field files.
+# Container for data in a PSCF field file.
 #
 #  A Field object can parse a PSCF "field file" and store its contents.
 #  A field file contains both a header section and a data section. 
@@ -76,8 +76,8 @@
 #  of cell parameter values to describe the unit cell in  a periodic 
 #  system.
 #
-#  The data section is a list of lists, in which elements are accessed
-#  using square brackets with integer indices.  The expressions
+#  The data attribute is a list of lists, in which elements can be 
+#  accessed using square brackets with integer indices.  The expressions
 #  \code
 #    f.data[10]
 #    f.data[10][1]
@@ -85,21 +85,22 @@
 #  access an entire row of the data section or a single component,
 #  respectively.
 # 
-#  Elements of the header and data section can also be modified,
+#  Elements of the header and data attributes can also be modified,
 #  simply by putting corresponding expressions on the left side of 
-#  an equality (assignment) operator. For example:
+#  an equality (assignment) operator. For example, the expressions
 #  \code
 #     f.header['dim'] = 3  
 #     f.header['cell_param'] = [2.45]   
 #     f.header['group_name'] = 'P_1'
 #  \endcode
+#  modify variables defined in the header of a field file for a 
+#  periodic system.
 #
 #  **Modifying data table structure:**
 #
-#  See the documentation for the addColumn, deleteColumn, and
-#  reorder methods, which change the structure of the data 
-#  section by adding, deleting or reordering columns associated
-#  with different data types. 
+#  The methods addColumn, deleteColumn, and  reorder can change the 
+#  structure of the data section by adding, deleting or reordering 
+#  columns associated with different monomer types. 
 #
 class Field:
 
@@ -268,11 +269,13 @@ class Field:
    ##
    # Add a new column to the data list.
    #
-   # This function adds a new column to the data list of the Field
-   # object. The index parameter is the desired position of the new
-   # column. The parameter 'element' can be either a single value
-   # that is applied to every element of the entire column, or a
-   # list of values that represents the entire column of new values.
+   # This function adds a new column to the data list of this Field
+   # object. The parameter 'index' is the desired position of the new
+   # column. The parameter 'element' can be either a single value that
+   # is applied to every element of the entire column, or a list of
+   # of values that represents the entire column of new values. If a
+   # list of values is supplied, the length of the list must be equal
+   # to the number of rows in the data list. 
    #
    # Example:
    # \code
@@ -286,7 +289,7 @@ class Field:
    def addColumn(self, index, element):
       if isinstance(element, list):
          if not (len(element) == len(self.data)):
-             raise Exception('Incorrect dimension for list element')
+             raise Exception('Incorrect dimension for parameter element')
          for i in range(0, len(self.data)):
             self.data[i].insert(index, element[i])
       else:
@@ -296,10 +299,9 @@ class Field:
    ##
    # Delete an existing column from the data list.
    #
-   # This function deletes an exist column from the data list of the
-   # Field object. By passing in one parameter, index, the desired
-   # values with that column index is removed from every row of the
-   # data table.
+   # This function deletes an existing column from the data list of 
+   # this Field object. Input parameter "index" is the index of the
+   # column that should removed.
    #
    # \param index  column index, numbered from 0
    #
@@ -327,14 +329,20 @@ class Field:
    # components and the remaining D+1 contain Miller indices for
    # a characteristic wave of each star and the number of waves in
    # the star. To re-order columns that contain field components
-   # one must enter a permutation of the integers [0,...,D+1] in
-   # which only the first C (0,...,C-1) are re-ordered and the
-   # remaining D+1 integers appear in their original order.
+   # one must enter a permutation of the integers [0,...,C+D] in
+   # which only the first C columns (columsn 0,...,C-1) are 
+   # re-ordered and the remaining D+1 integers must appear in 
+   # their original order.
    #
-   # Example:
-   #   \code
-   #      f.reorder([1, 0, 2, 3, 4, 5])
-   #   \endcode
+   # Example: To re-order the field component columns for a 3D periodic
+   # system containing three monomer, one might use something like
+   # \code
+   #     f.reorder([2, 0, 1, 3, 4, 5, 6])
+   # \endcode
+   # Here, columns 0-2 represent field components, which have been
+   # re-ordered, while columns 3-6 represent information about basis
+   # functions (Miller indices and the number of waves per star)
+   # which are left in their original order.
    #
    # \param order  a list of position integers.
    #

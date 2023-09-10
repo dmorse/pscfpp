@@ -13,15 +13,20 @@ programs are affected by specific changes:
   fd  - CPU finite difference code for 1D problems (pscf_fd)
   all - all programs (fd, pc, and pg)
 
-Version 1.1.0  (10/1/2023)
-==========================
+Version 1.1.0  (ongoing, planned 10/2023)
+=========================================
 
 User-visible features
 ---------------------
 * Python tools for parsing and editing PSCF input and output files
-  (for parameter, command, thermo, state, and field file formats)
-* Python tool to parse and analyze output files from a parameter sweep
+  (for parameter, thermo, state, field, and command file formats)
+* Python tool to parse and store all state files from a parameter sweep
 * Functions and commands to print propagator values in pscf_fd 
+
+User-visible changes
+---------------------
+* Added -c option to configure script to enable/disable CUDA 
+* Reorganization of python code into fewer modules
 
 Documentation
 -------------
