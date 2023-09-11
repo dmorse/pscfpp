@@ -189,6 +189,9 @@ namespace Pspc
       /// Number of moves that have been accepted by this object.
       long  nAccept_;
       
+      /// Numver of moves that have been tried.
+      long  nMove_;
+      
       /// Timers for McMove 
       Timer attemptMoveTimer_;
       Timer compressorTimer_;

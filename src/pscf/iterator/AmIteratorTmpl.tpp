@@ -452,7 +452,6 @@ namespace Pscf
             clear();
          }
       }
-      clearTimers();
    }
 
    /*
@@ -571,24 +570,24 @@ namespace Pscf
       // Output timing results, if requested.
       double total = timerTotal_.time();
       out << "\n";
-      out << "                      ";
+      out << "                          ";
       out << "Total" << std::setw(17)<< "Fraction" << "\n";
-      out << "MDE solution:         "
+      out << "MDE solution:             "
           << Dbl(timerMDE_.time(), 9, 3)  << " s,  "
           << Dbl(timerMDE_.time()/total, 9, 3) << "\n";
-      out << "residual computation: "
+      out << "residual computation:     "
           << Dbl(timerResid_.time(), 9, 3)  << " s,  "
           << Dbl(timerResid_.time()/total, 9, 3) << "\n";
-      out << "mixing coefficients:  "
+      out << "mixing coefficients:      "
           << Dbl(timerCoeff_.time(), 9, 3)  << " s,  "
           << Dbl(timerCoeff_.time()/total, 9, 3) << "\n";
-      out << "checking convergence: "
+      out << "checking convergence:     "  
           << Dbl(timerError_.time(), 9, 3)  << " s,  "
           << Dbl(timerError_.time()/total, 9, 3) << "\n";
-      out << "updating guess:       "
+      out << "updating guess:           "
           << Dbl(timerOmega_.time(), 9, 3)  << " s,  "
           << Dbl(timerOmega_.time()/total, 9, 3)<< "\n";
-      out << "total time:           "
+      out << "total time:               "
           << Dbl(total, 9, 3) << " s  \n";
       out << "\n";
    }

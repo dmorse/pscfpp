@@ -92,21 +92,16 @@ namespace Pspc
       using Compressor<D>::system;
 
    private:
+   
+      /**
+      * How many times MDE has been solved for each mc move 
+      */
+      int itr_;
+      
       /**
       * Count how many times MDE has been solved.
       */
       int counter_;
-      
-      /**
-      * Compressor time contribution
-      */ 
-      double timerMDE_;
-      double timerAM_;
-      double timerResid_;
-      double timerError_;
-      double timerCoeff_;
-      double timerOmega_;
-      double timerTotal_;
       
       /**
       * Current values of the fields
