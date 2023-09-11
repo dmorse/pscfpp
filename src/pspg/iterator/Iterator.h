@@ -60,6 +60,16 @@ namespace Pspg
       * \return error code: 0 for success, 1 for failure.
       */
       virtual int solve(bool isContinuation) = 0;
+      
+      /**
+      * Log output timing results 
+      */
+      virtual void outputTimers(std::ostream& out) = 0;
+      
+      /**
+      * Clear timers 
+      */
+      virtual void clearTimers() = 0;
 
       /**
       * Is the unit cell flexible (true) or rigid (false).

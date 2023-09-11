@@ -84,6 +84,9 @@ namespace Pspc{
    {
       int solve = AmIteratorTmpl<Compressor<D>, DArray<double> >::solve();
       counter_ += AmIteratorTmpl<Compressor<D>,DArray<double>>::totalItr();
+      timerMDE_ += AmIteratorTmpl<Compressor<D>,DArray<double>>::timerMDE();
+      Log::file()<< AmIteratorTmpl<Compressor<D>,DArray<double>>::timerMDE()<< std::endl;
+      Log::file()<< "compressor cul"<< timerMDE_ <<std::endl;
       #if 0
       timerMDE_ += AmIteratorTmpl<Compressor<D>,DArray<double>>::timerMDE();
       timerAM_ += AmIteratorTmpl<Compressor<D>,DArray<double>>::timerAM();

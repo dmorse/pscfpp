@@ -912,6 +912,10 @@ namespace Pspg
    template <int D>
    void System<D>::writeTimers(std::ostream& out)
    {
+      if (iteratorPtr_) {
+         iterator().outputTimers(Log::file());
+         iterator().outputTimers(out);
+      }
       if (hasMcSimulator_){
          mcSimulator_.outputTimers(Log::file());
          mcSimulator_.outputTimers(out);
@@ -928,6 +932,9 @@ namespace Pspg
    template <int D>
    void System<D>::clearTimers()
    {
+      if (iteratorPtr_) {
+         iterator().clearTimers();
+      }
       if (hasMcSimulator_){
          mcSimulator_.clearTimers();
       }
