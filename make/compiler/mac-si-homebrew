@@ -41,6 +41,11 @@ TESTFLAGS= -Wall $(CXX_STD)
 # CUDA compiler command
 NVXX=nvcc
 
+# NVCC architecture identifier, argument of -arch compiler option.
+# Use sm_ followed by a numerical compute capability numberical code, 
+# e.g., use sm_35 for compute capability 3.5 (correct for a K40 GPU)
+NVARCH=sm_35
+
 # Flags always passed to cuda compiler
 NVXXFLAGS= $(CXX_STD) -O3 -arch=sm_35
 
