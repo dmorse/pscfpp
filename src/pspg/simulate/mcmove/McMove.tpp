@@ -28,8 +28,7 @@ namespace Pspg {
       systemPtr_(&(mcSimulator.system())),
       randomPtr_(&(mcSimulator.random())),
       nAttempt_(0),
-      nAccept_(0),
-      nMove_(0)
+      nAccept_(0)
    {}
 
    /*
@@ -72,7 +71,6 @@ namespace Pspg {
    template <int D>
    bool McMove<D>::move()
    { 
-      nMove_++;
       totalTimer_.start();
       incrementNAttempt();
 
@@ -146,23 +144,23 @@ namespace Pspg {
           << "Total" << std::setw(17) << "Per Move" << std::setw(14) << "Fraction" << "\n";
       out << "Attempt Move:             "
           << Dbl(attemptMoveTimer_.time(), 9, 3)  << " s,  "
-          << Dbl(attemptMoveTimer_.time()/nMove_, 9, 3)  << " s,  "
+          << Dbl(attemptMoveTimer_.time()/nAttempt_, 9, 3)  << " s,  "
           << Dbl(attemptMoveTimer_.time()/total, 9, 3) << "\n";
       out << "Compressor:               "
           << Dbl(compressorTimer_.time(), 9, 3)  << " s,  "
-          << Dbl(compressorTimer_.time()/nMove_, 9, 3)  << " s,  "
+          << Dbl(compressorTimer_.time()/nAttempt_, 9, 3)  << " s,  "
           << Dbl(compressorTimer_.time()/total, 9, 3) << "\n";
       out << "Compute eigen-components: "
           << Dbl(computeWCTimer_.time(), 9, 3)  << " s,  "
-          << Dbl(computeWCTimer_.time()/nMove_, 9, 3)  << " s,  "
+          << Dbl(computeWCTimer_.time()/nAttempt_, 9, 3)  << " s,  "
           << Dbl(computeWCTimer_.time()/total, 9, 3) << "\n";
       out << "Compute Hamiltonian:      "
           << Dbl(computeMcHamiltonianTimer_.time(), 9, 3)  << " s,  "
-          << Dbl(computeMcHamiltonianTimer_.time()/nMove_, 9, 3)  << " s,  "
+          << Dbl(computeMcHamiltonianTimer_.time()/nAttempt_, 9, 3)  << " s,  "
           << Dbl(computeMcHamiltonianTimer_.time()/total, 9, 3) << "\n";
       out << "Accept or Reject:         "
           << Dbl(decisionTimer_.time(), 9, 3)  << " s,  "
-          << Dbl(computeMcHamiltonianTimer_.time()/nMove_, 9, 3)  << " s,  "
+          << Dbl(computeMcHamiltonianTimer_.time()/nAttempt_, 9, 3)  << " s,  "
           << Dbl(decisionTimer_.time()/total, 9, 3) << "\n";
       out << "total time:               "
           << Dbl(total, 9, 3) << " s  \n";
