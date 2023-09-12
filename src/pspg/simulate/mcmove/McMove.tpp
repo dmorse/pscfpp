@@ -28,7 +28,8 @@ namespace Pspg {
       systemPtr_(&(mcSimulator.system())),
       randomPtr_(&(mcSimulator.random())),
       nAttempt_(0),
-      nAccept_(0)
+      nAccept_(0),
+      nMove_(0)
    {}
 
    /*
@@ -71,6 +72,7 @@ namespace Pspg {
    template <int D>
    bool McMove<D>::move()
    { 
+      nMove_++;
       totalTimer_.start();
       incrementNAttempt();
 
@@ -140,22 +142,29 @@ namespace Pspg {
       out << "McMove times contributions:\n";
       // Output timing results, if requested.
       double total = totalTimer_.time();
-      out << "Attempt Move:                           "
+      out << "                          "
+          << "Total" << std::setw(17) << "Per Move" << std::setw(14) << "Fraction" << "\n";
+      out << "Attempt Move:             "
           << Dbl(attemptMoveTimer_.time(), 9, 3)  << " s,  "
-          << Dbl(attemptMoveTimer_.time()/total*100, 9, 3) << " %" << "\n";
-      out << "Compressor:                             "
+          << Dbl(attemptMoveTimer_.time()/nMove_, 9, 3)  << " s,  "
+          << Dbl(attemptMoveTimer_.time()/total, 9, 3) << "\n";
+      out << "Compressor:               "
           << Dbl(compressorTimer_.time(), 9, 3)  << " s,  "
-          << Dbl(compressorTimer_.time()/total*100, 9, 3) << " %" << "\n";
-      out << "Compute eigen-components of the fields: "
+          << Dbl(compressorTimer_.time()/nMove_, 9, 3)  << " s,  "
+          << Dbl(compressorTimer_.time()/total, 9, 3) << "\n";
+      out << "Compute eigen-components: "
           << Dbl(computeWCTimer_.time(), 9, 3)  << " s,  "
-          << Dbl(computeWCTimer_.time()/total*100, 9, 3) << " %" << "\n";
-      out << "Compute Hamiltonian:                    "
+          << Dbl(computeWCTimer_.time()/nMove_, 9, 3)  << " s,  "
+          << Dbl(computeWCTimer_.time()/total, 9, 3) << "\n";
+      out << "Compute Hamiltonian:      "
           << Dbl(computeMcHamiltonianTimer_.time(), 9, 3)  << " s,  "
-          << Dbl(computeMcHamiltonianTimer_.time()/total*100, 9, 3) << " %" << "\n";
-      out << "Make decision (accept or reject):       "
+          << Dbl(computeMcHamiltonianTimer_.time()/nMove_, 9, 3)  << " s,  "
+          << Dbl(computeMcHamiltonianTimer_.time()/total, 9, 3) << "\n";
+      out << "Accept or Reject:         "
           << Dbl(decisionTimer_.time(), 9, 3)  << " s,  "
-          << Dbl(decisionTimer_.time()/total*100, 9, 3) << " %" << "\n";
-      out << "total time:                             "
+          << Dbl(computeMcHamiltonianTimer_.time()/nMove_, 9, 3)  << " s,  "
+          << Dbl(decisionTimer_.time()/total, 9, 3) << "\n";
+      out << "total time:               "
           << Dbl(total, 9, 3) << " s  \n";
       out << "\n";
    }
