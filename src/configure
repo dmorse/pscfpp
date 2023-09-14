@@ -33,9 +33,18 @@
 #   -d (0|1)   debugging           (defines/undefines UTIL_DEBUG)
 #   -c (0|1)   CUDA code           (defines/undefines PSCF_CUDA) 
 #
-# These command line options do not enable or disable features: 
+# This -a option sets an identifier for the GPU architecture to be targeted
+# by the NVIDIA cuda compiler. The identifier is a string of the form sm_NN
+# where NN is a number that gives the major and minor version number for
+# the CUDA "compute capability" for the target GPU. For example, the K40
+# GPU has a compute capability 3.5, and takes an architecture code sm_35.
 #
-#   -q           query: prints report of options that are enabled / disabled.
+#  -a [architecture code]          (defines NVARCH)
+#
+# These command line options provide information:
+#
+#   -q        query: prints report of options that are enabled / disabled.
+#   -h        help: prints a list of available options 
 #
 # Examples:
 #
@@ -48,7 +57,7 @@
 #   >  ./configure -d0 
 #
 #-----------------------------------------------------------------------
-while getopts "d:c:qh" opt; do
+while getopts "a:c:d:qh" opt; do
 
   if [ -n "$MACRO" ]; then 
     MACRO=""
@@ -58,6 +67,10 @@ while getopts "d:c:qh" opt; do
   fi
   
   case $opt in
+    a)
+      MACRO=NVARCH
+      FILE=config.mk
+      ;;
     d)
       MACRO=UTIL_DEBUG
       VALUE=1
@@ -88,16 +101,24 @@ while getopts "d:c:qh" opt; do
       echo "effects code built in the same directory tree."
       echo " "
       echo "Command Line Options:"
-      echo "-q           query: lists options that are enabled / disabled."
-      echo "-h           help: prints explanation of options (this command)"
+      echo "-q        query: lists options that are enabled / disabled."
+      echo "-h        help: prints explanation of options (this command)"
       echo " "
       echo "Each of the following options enables or disables a feature by"
       echo "defining or undefining a corresponding preprocessor macro. Each"
       echo "such option echo takes 0 or 1 as a required argument, using 1 to"
       echo "enable a feature or 0 to disable one." 
       echo " "
-      echo "-c (0|1)   CUDA code            (undefines/defines UTIL_DEBUG)"
-      echo "-d (0|1)   debugging            (undefines/defines UTIL_DEBUG)"
+      echo "-c (0|1)  CUDA code            (undefines/defines UTIL_DEBUG)"
+      echo "-d (0|1)  debugging            (undefines/defines UTIL_DEBUG)"
+      echo " "
+      echo "The -a option takes a string identifier for a GPU architecture"
+      echo "that is passed as the argument of the -arch option of the NVIDIA"
+      echo "CUDA compiler. Valid strings are of the form sm_NN, where NN "
+      echo "is a number that indicates the compute capability level of the "
+      echo "GPU, e.g., sm_35 for a K40 GPU with compute capability 3.5."
+      echo " "
+      echo "-a (GPU architecture identifier, e.g., sm_50 for level 3.5)"
       echo " "
       ;;
   esac
@@ -125,6 +146,10 @@ while getopts "d:c:qh" opt; do
          rm temp
       fi
       ;;
+    *)
+      echo "Setting $MACRO to $OPTARG in file $FILE" >&2
+      sed "s/$MACRO *=.*$/$MACRO=$OPTARG/" "$FILE" > temp
+      mv temp $FILE
     esac
   fi
 

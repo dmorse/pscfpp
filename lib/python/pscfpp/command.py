@@ -1,80 +1,109 @@
 """! Module for processing PSCF command scripts. """
 
-from text import *
+from pscfpp.text import *
 
 ##
-# Class to parse a PSCF command script.
+#  Class to parse a PSCF command script.
 #
-# The Script class can read a command script file and store its
-# contents in a form that allows particular commands to be accessed and
-# modified. 
+#  The Script class can read a command script file and store its
+#  contents in a form that allows particular commands to be accessed and
+#  modified. 
 # 
-# Usage: The command:
+#  **Construction and Parsing:**a
+# 
+#  The constructor can take the name of a command file or an open file 
+#  object as a parameter, and will read, parse and store the contents of
+#  the specified file. 
 #
-# commands = readCommandFile("commands")
-# 
-# parses a command file "commands" and returns a Script object,
-# which we have named commands.
-# 
-# Script:
-# 
-# A Script object is a container for a list of child Command 
-# objects.  Each command corresponds to one line in the command script, 
-# in which the first field is the label.  Individual commands can be 
-# accessed in either of two ways:
+#  Example: To parse a command file named 'command', one could enter
+#  \code
+#     s = Script('command')
+#  \endcode
 #
-#   - Commands may be accessed by integer index using the square bracket
-#     notation for elements of a python list. If s is a Script,
-#     then s[2] is the 3rd command in the script.
-#
-#   - Each child may be accessed as an attribute with a name given by
-#     the label of the child ParamComposite or Parameter. 
+#  **Accessing individual commands:**
 # 
-# If two or more lines in a command script have the same label (i.e,.
-# the same command name), the attribute associated with that label is
-# a list in which the first Command with this label is indexed by 0, 
-# the second by 1, etc.
+#  A Script object is a container for a list of child Command 
+#  objects.  Each command corresponds to one line in the command script, 
+#  in which the first field is the label.  Individual Command objects 
+#  within a Script object can be accessed in either of two ways:
+#
+#   - Command objects may be accessed by integer index using the square 
+#     bracket notation for elements of a python list. If s is a Script,
+#     then s[2] is the 3rd command in the script. 
+#
+#   - Commands may also be accessed using square bracket notation
+#     using the command name (or label) string as a key. If the script
+#     contains several commands with the same name, a list of Command
+#     objects is returned, listed in the order in which they appeared.
+#
+#  String representation of individual Commands objects can be printed 
+#  using the str() or print functions.  Values of arguments of 
+#  individual Command objects may then be accessed or modified using 
+#  the param and setParam methods of class Command (see below).
 # 
 class Script:
  
    ## 
    # Constructor.
    #
-   def __init__(self):
-      self.label_    = None
-      self.commands_ = []
+   # If supplied with a parameter "in" that is an open file or a file
+   # name string, this function reads and parses that command file and
+   # stores the contents in the resulting object. 
+   #
+   # If the parameter "in" is absent or equal to None, an empty object 
+   # is created and returned.
+   #
+   # \param filename  file name or open file object for input command file
+   #
+   def __init__(self, filename = None):
+      self._commands = []
+      self._indices = {}
+      if (filename != None):
+         self.read(filename)
  
    ## 
    # Read and parse a command script. 
    #
-   # \param lines  list of strings containing lines of a command script
+   # \param filename  file name string or open file for command file
    #
-   def read(self, lines):
+   def read(self, filename):
+
+      # Determine type of parameter in
+      if isinstance(filename, str):
+         file = open(filename, 'r')
+      elif isinstance(filename, file):
+         file = filename
+      else:
+         raise Exception("Invalid parameter in")
+
+      # Split file into list of line strings
+      lines = file.readlines();
+
+      # Process lines
       i = 0
       finish = False
       while i < len(lines) and not finish:
          line = lines[i]
+         if not isinstance(line, str):
+            raise Exception('Command line object is not a string')
          command = Command(line)
-         self.commands_.append(command)
-         if not hasattr(self, command.label_):
-            statement = 'self.' + command.label_ + ' = command'
-            exec statement
+
+         # Add command to list self._commands
+         self._commands.append(command)
+
+         # Add index i to dictionary self._indices
+         label = command.label
+         if label in self._indices:
+            index = self._indices[label]
+            if isinstance(index, int):
+               self._indices[label] = [index]
+            elif not instance(index, list):
+               raise Exception('Values of _indices must be int or list')
+            self._indices[label].append(i)
          else:
-            attribute = "self." + command.label_
-            statement = "isList = type(" + attribute + ") == type([])"
-            exec statement
-            if not isList:
-               statement = "old = " + attribute
-               exec statement
-               statement = attribute + " = []"
-               exec statement
-               statement = attribute + ".append(old)"
-               exec statement
-               statement = "self." + command.label_ + ".append(command)"
-               exec statement
-            else:
-               statement = "self." + command.label_ + ".append(command)"
-         if (command.label_ == 'FINISH'):
+            self._indices[label] = i
+
+         if (command.label == 'FINISH'):
             finish = True
          i += 1
 
@@ -82,27 +111,44 @@ class Script:
    # Return a string containing the command script. 
    #
    def __str__(self):
-       list = []
-       for command in self.commands_:
-          list.append(str(command))
-       return '\n'.join(list)
+      list = []
+      for command in self._commands:
+         list.append(str(command))
+      return '\n'.join(list)
 
    ## 
-   # Get a Command using the dot syntax for an attribute.
+   # Get a Command by integer index or command name
    #
-   # \param key  label used as identifier for a Command.
+   # \param key integer index or command name string
    #
    def __getitem__(self, key):
-      return self.commands_[key]
+      if isinstance(key, int):
+         return self._commands[key]
+      elif isinstance(key, str):
+         if key in self._indices:
+            index = self._indices[key]
+            if isinstance(index, int):
+               return self._commands[index]
+            elif isinstance(index, list):
+               clist = []
+               for j in index:
+                  clist.append(self._commands[j])
+               return clist
+      else:
+         raise Exception("Key must an int or a command string")
 
    ##
    # Get the number of commands in the script.
    #
    def __len__(self):
-      return len(self.commands_)
+      return len(self._commands)
 
 ##
 # A single command, with a label and zero or more parameters.
+#
+# The first string (or field) in a command is the label, and subsequent 
+# space separated strings are interpreted as command parameters. All
+# fields are stored verbatim as strings.
 #
 class Command(Record):
 
@@ -113,13 +159,13 @@ class Command(Record):
    # 
    def __init__(self, line):
       Record.__init__(self, line)
-      self.label_ = self.fields[0]
+      self.label = self.fields[0]
 
    ## 
    # Number of parameter / arguments of the command. 
    #
    def nParam(self):
-      return len(self.fields - 1)
+      return (len(self.fields) - 1)
 
    ## 
    # Return parameter number i. 
@@ -133,24 +179,9 @@ class Command(Record):
    # Set the value of a specific command parameter.
    #
    # \param value  new value for the specified command parameter
-   # \param i  index of command parameter 
+   # \param i  index of command parameter (0 by default)
    #
    def setParam(self, value, i = 0):
-      self.fields[i+1] = value
+      self.fields[i+1] = str(value)
 
-
-##
-# Open and read a command script file, return a Script.
-#
-# \param filename name of file containing a command script
-#
-def readCommandFile(filename):
-   file  = open(filename, 'r')
-   lines = file.readlines() 
-   file.close()
-
-   p = Script()
-   p.read(lines)
-
-   return p
 

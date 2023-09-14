@@ -1,23 +1,8 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
-from CommandScript import *
+from pscfpp.command import *
 
-p = readCommandFile('in/commands')
+p = Script('in/command')
 
-print p
-
-print p.RUN
-
-print p.RUN.param()
-print p.THERMALIZE.param(1)
-
-p.THERMALIZE.setParam("3.0", 1)
-
-print p
-
-#print str(p.SpeciesManager.Diblock)
-#print str(p.SpeciesManager.Diblock[0])
-#print str(p.SpeciesManager.Diblock[1])
-#print str(p.SpeciesManager.Diblock[2])
-
+print(p)
 
