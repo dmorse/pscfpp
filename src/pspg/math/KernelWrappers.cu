@@ -38,8 +38,10 @@ __host__ cudaReal gpuSum(cudaReal const * d_in, int size)
       err = tempSum - sum - tempVal;
       sum = tempSum;  
    }
-
+   delete[] temp_; 
+   cudaFree(d_temp_);
    return sum;
+   
 }
 
 __host__ cudaReal gpuInnerProduct(cudaReal const * d_a, cudaReal const * d_b, int size)
@@ -73,7 +75,8 @@ __host__ cudaReal gpuInnerProduct(cudaReal const * d_a, cudaReal const * d_b, in
       err = tempSum - sum - tempVal;
       sum = tempSum;  
    }
-
+   delete[] temp_; 
+   cudaFree(d_temp_);
    return sum;
 }
 
@@ -103,7 +106,8 @@ __host__ cudaReal gpuMax(cudaReal const * d_in, int size)
    for (int i = 0; i < nBlocks; i++) {
       if (temp_[i] > max) max = temp_[i];
    }
-
+   delete[] temp_; 
+   cudaFree(d_temp_);
    return max;
 }
 
@@ -134,7 +138,8 @@ __host__ cudaReal gpuMaxAbs(cudaReal const * d_in, int size)
    for (int i = 0; i < nBlocks; i++) {
       if (temp_[i] > max) max = temp_[i];
    }
-
+   delete[] temp_; 
+   cudaFree(d_temp_);
    return max;
 }
 
@@ -164,7 +169,8 @@ __host__ cudaReal gpuMin(cudaReal const * d_in, int size)
    for (int i = 1; i < nBlocks; i++) {
       if (temp_[i] < min) min = temp_[i];
    }
-
+   delete[] temp_; 
+   cudaFree(d_temp_);
    return min;
 }
 
@@ -194,7 +200,8 @@ __host__ cudaReal gpuMinAbs(cudaReal const * d_in, int size)
    for (int i = 1; i < nBlocks; i++) {
       if (temp_[i] < min) min = temp_[i];
    }
-
+   delete[] temp_; 
+   cudaFree(d_temp_);
    return min;
 }
 

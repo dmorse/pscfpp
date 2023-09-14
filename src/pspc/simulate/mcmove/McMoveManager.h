@@ -84,6 +84,16 @@ namespace Pspc {
       double probability(int i) const;
       
       using Manager< McMove<D> >::size;
+      
+      /**
+      * Log output timing results 
+      */
+      void outputTimers(std::ostream& out);
+      
+      /**
+      * Clear timers 
+      */
+      void clearTimers();
   
    protected:
       

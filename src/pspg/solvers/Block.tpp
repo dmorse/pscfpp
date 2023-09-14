@@ -157,15 +157,15 @@ namespace Pspg {
    */
    template <int D>
    Block<D>::~Block()
-   {
-      if (temp_) {
-         delete[] temp_;
+   {      
+      if (isAllocated_) {
+         cudaFree(qkBatched_);
+         cudaFree(qk2Batched_);
          cudaFree(d_temp_);
-      }
-      
-      if (expKsq_host) {
+         delete[] temp_;
          delete[] expKsq_host;
          delete[] expKsq2_host;
+         
       }
    }
 

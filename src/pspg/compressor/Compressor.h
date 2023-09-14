@@ -57,6 +57,16 @@ namespace Pspg
       virtual int compress() = 0;
       
       virtual int counterMDE() = 0;
+      
+      /**
+      * Log output timing results 
+      */
+      virtual void outputTimers(std::ostream& out) = 0;
+      
+      /**
+      * Clear timers 
+      */
+      virtual void clearTimers() = 0;
 
       /**
       * Return const reference to parent system.

@@ -77,8 +77,14 @@ namespace Pspg
       */
       int counterMDE(); 
       
+      /**
+      * Return compressor times contributions.
+      */
+      void outputTimers(std::ostream& out);
+      
       // Inherited public member functions
-      using AmIteratorTmpl<Compressor<D>,  DField<cudaReal> >::setClassName;
+      using AmIteratorTmpl<Compressor<D>, DField<cudaReal> >::clearTimers;
+      using AmIteratorTmpl<Compressor<D>, DField<cudaReal> >::setClassName;
 
    protected:
   

@@ -83,6 +83,16 @@ namespace Pspg {
       */
       double probability(int i) const;
       
+      /**
+      * Log output timing results 
+      */
+      void outputTimers(std::ostream& out);
+      
+      /**
+      * Clear timers 
+      */
+      void clearTimers();
+      
       using Manager< McMove<D> >::size;
   
    protected:

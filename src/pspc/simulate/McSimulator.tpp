@@ -107,15 +107,17 @@ namespace Pspc {
    void McSimulator<D>::simulate(int nStep)
    {
       UTIL_CHECK(mcMoveManager_.size() > 0);
+      
 
       setup();
       Log::file() << std::endl;
 
       // Main Monte Carlo loop
       Timer timer;
+      Timer analyzerTimer;
       timer.start();
       for (int iStep = 0; iStep < nStep; ++iStep) {
-
+         analyzerTimer.start();
          // Analysis (if any)
          if (Analyzer<D>::baseInterval != 0) {
             if (iStep % Analyzer<D>::baseInterval == 0) {
@@ -125,14 +127,14 @@ namespace Pspc {
                }
             }
          }
-
+         analyzerTimer.stop();
          // Choose and attempt an McMove
          mcMoveManager_.chooseMove().move();
 
       }
       timer.stop();
       double time = timer.time();
-
+      double analyzerTime = analyzerTimer.time();
       // Output results of move statistics to files
       mcMoveManager_.output();
       if (Analyzer<D>::baseInterval > 0){
@@ -146,11 +148,13 @@ namespace Pspc {
       
       // Output time for the simulation run
       Log::file() << std::endl;
-      Log::file() << "nStep         " << nStep << std::endl;
-      Log::file() << "run time      " << time
+      Log::file() << "nStep               " << nStep << std::endl;
+      Log::file() << "Total run time      " << time
                   << " sec" << std::endl;
       double rStep = double(nStep);
-      Log::file() << "time / nStep  " <<  time / rStep
+      Log::file() << "time / nStep        " <<  time / rStep
+                  << " sec" << std::endl;
+      Log::file() << "Analyzer run time   " << analyzerTime
                   << " sec" << std::endl;
       Log::file() << std::endl;
 
@@ -581,9 +585,22 @@ namespace Pspc {
                   << "  sec" << std::endl;
       Log::file() << std::endl;
    }
+   
+   template<int D>
+   void McSimulator<D>::outputTimers(std::ostream& out)
+   {
+      // Output timing results, if requested.
+      out << "\n";
+      out << "McSimulator times contributions:\n";
+      mcMoveManager_.outputTimers(out);
+   }
+   
+   template<int D>
+   void McSimulator<D>::clearTimers()
+   {
+      mcMoveManager_.clearTimers();
+   }
 
-   
-   
 
 }
 }

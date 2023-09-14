@@ -101,7 +101,29 @@ namespace Pspc {
          (*this)[i].output();
       }
    }
-
+   
+   /*
+   * Log output timing results 
+   */
+   template <int D>
+   void McMoveManager<D>::outputTimers(std::ostream& out)
+   {
+      for (int i=0; i< size(); i++) {
+         (*this)[i].outputTimers(out);
+      }
+   }
+   
+   /*
+   * Clear timers 
+   */
+   template <int D>
+   void McMoveManager<D>::clearTimers()
+   {
+      for (int i=0; i< size(); i++) {
+         (*this)[i].clearTimers();
+      }
+   }
+   
 }
 }
 #endif

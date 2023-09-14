@@ -12,6 +12,7 @@
 #include <util/param/ParamComposite.h>
 #include <util/random/Random.h>
 #include <util/global.h>
+#include <util/misc/Timer.h>
 
 namespace Pscf {
 namespace Pspc
@@ -90,6 +91,16 @@ namespace Pspc
       * \return true if accepted, false if rejected
       */
       virtual bool move();
+      
+      /**
+      * Log output timing results 
+      */
+      virtual void outputTimers(std::ostream& out);
+      
+      /**
+      * Clear timers 
+      */
+      virtual void clearTimers();
 
       // Accessor Functions
 
@@ -177,7 +188,14 @@ namespace Pspc
 
       /// Number of moves that have been accepted by this object.
       long  nAccept_;
-
+      
+      /// Timers for McMove 
+      Timer attemptMoveTimer_;
+      Timer compressorTimer_;
+      Timer computeWCTimer_;
+      Timer computeMcHamiltonianTimer_;
+      Timer decisionTimer_;
+      Timer totalTimer_;
    };
 
    // Public inline methods

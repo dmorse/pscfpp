@@ -78,7 +78,7 @@ namespace Pspg{
    int AmCompressor<D>::compress()
    {
       int solve = AmIteratorTmpl<Compressor<D>, DField<cudaReal> >::solve();
-      counter_ += AmIteratorTmpl<Compressor<D>, DField<cudaReal>>::totalItr(); 
+      counter_ = AmIteratorTmpl<Compressor<D>, DField<cudaReal>>::totalItr(); 
       return solve;
    }
 
@@ -249,6 +249,17 @@ namespace Pspg{
    template<int D>
    void AmCompressor<D>::outputToLog()
    {}
+   
+   template<int D>
+   void AmCompressor<D>::outputTimers(std::ostream& out)
+   {
+      // Output timing results, if requested.
+      out << "\n";
+      out << "Compressor times contributions:\n";
+      AmIteratorTmpl<Compressor<D>, DField<cudaReal> >::outputTimers(out);
+   }
+   
+   
 
 }
 }

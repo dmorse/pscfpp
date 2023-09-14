@@ -233,7 +233,9 @@ namespace Pspc
       * during calculation. This is called by generateWallFields().
       */
       void generateExternalFields();
-
+       
+      void outputTimers(std::ostream& out){};
+      void clearTimers(){};
       using Iterator<D>::system;
       using Iterator<D>::setClassName;
       using Iterator<D>::isFlexible_;
