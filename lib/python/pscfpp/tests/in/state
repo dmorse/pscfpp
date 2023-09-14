@@ -1,0 +1,64 @@
+System{
+  Mixture{
+    nMonomer                               2
+    monomers[           
+                         1.00000000e+00
+                         1.00000000e+00
+    ]
+    nPolymer                               1
+    Polymer{
+      type                              linear
+      nBlock                                 2
+      blocks[             
+                                              0    5.600000000000e-01
+                                              1    4.400000000000e-01
+      ]
+      phi                   0.700000000000e+00
+    }
+    Polymer{
+      type                              linear
+      nBlock                                 1
+      blocks[             
+                                              0    2.000000000000
+      ]
+      phi                   0.200000000000e+00
+    }
+    ds                    1.000000000000e-02
+  }
+  Interaction{
+    chi(                
+                           0    0   0.000000000000e+00
+                           1    0   1.400000000000e+01
+                           1    1   0.000000000000e+00
+    )
+  }
+  Domain{
+    mesh                                        40
+    lattice                         lamellar
+    groupName                           P_-1
+  }
+  AmIterator{
+    epsilon               1.000000000000e-12
+    maxItr                               100
+    maxHist                               10
+    verbose                                1
+    isFlexible                             1
+  }
+}
+
+
+fHelmholtz     2.27168716954e+00
+pressure       3.12851789603e+00
+
+fIdeal         1.43169273516e-01
+fInter         2.12851789603e+00
+
+polymers:
+             phi                 mu          
+    0   0.80000000000e+00   5.40020506557e+00
+    0   0.20000000000e+00   3.40020506557e+00
+
+cellParams:
+    0   1.47138814077e+00
+    1   0.80000874321e+00
+

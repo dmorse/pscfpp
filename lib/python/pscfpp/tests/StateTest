@@ -1,0 +1,11 @@
+#!/usr/bin/env python3
+
+from pscfpp.output import *
+
+s = State('in/state')
+
+print(s)
+
+print('s.thermo.polymers[1].mu = ')
+print(s.thermo.polymers[1].mu)
+
