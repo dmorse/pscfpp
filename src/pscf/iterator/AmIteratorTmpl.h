@@ -249,9 +249,6 @@ namespace Pscf {
       /// Verbosity level.
       int verbose_;
 
-      /// Output summary of timing results?
-      bool outputTime_;
-
       /// Has the allocateAM function been called.
       bool isAllocatedAM_;
 

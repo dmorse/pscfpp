@@ -35,10 +35,9 @@ namespace Pscf
       maxItr_(200),
       maxHist_(50),
       nBasis_(0),
-      itr_(0),
+      totalItr_(0),
       nElem_(0),
       verbose_(1),
-      outputTime_(false),
       isAllocatedAM_(false)
    {  setClassName("AmIteratorTmpl"); }
 
@@ -73,10 +72,6 @@ namespace Pscf
       // verbose_ = 2 => report all error measures at end
       // verbose_ = 3 => report all error measures every iteration
       readOptional(in, "verbose", verbose_);
-
-      // Flag to output timing results (true) or skip (false)
-      // Initialized to false by default in constructor
-      readOptional(in, "outputTime", outputTime_);
    }
 
    /*
@@ -171,7 +166,8 @@ namespace Pscf
                computeError(2); 
             }
 
-            totalItr_ = itr_;
+            totalItr_ += itr_;
+            
             // Successful completion (i.e., converged within tolerance)
             return 0;
 
@@ -571,24 +567,30 @@ namespace Pscf
       double total = timerTotal_.time();
       out << "\n";
       out << "                          ";
-      out << "Total" << std::setw(17)<< "Fraction" << "\n";
+      out << "Total" << std::setw(22)<< "Per Iteration" << std::setw(9) << "Fraction" << "\n";
       out << "MDE solution:             "
           << Dbl(timerMDE_.time(), 9, 3)  << " s,  "
+          << Dbl(timerMDE_.time()/totalItr_, 9, 3)  << " s,  "
           << Dbl(timerMDE_.time()/total, 9, 3) << "\n";
       out << "residual computation:     "
           << Dbl(timerResid_.time(), 9, 3)  << " s,  "
+          << Dbl(timerResid_.time()/totalItr_, 9, 3)  << " s,  "
           << Dbl(timerResid_.time()/total, 9, 3) << "\n";
       out << "mixing coefficients:      "
           << Dbl(timerCoeff_.time(), 9, 3)  << " s,  "
+          << Dbl(timerCoeff_.time()/totalItr_, 9, 3)  << " s,  "
           << Dbl(timerCoeff_.time()/total, 9, 3) << "\n";
       out << "checking convergence:     "  
           << Dbl(timerError_.time(), 9, 3)  << " s,  "
+          << Dbl(timerError_.time()/totalItr_, 9, 3)  << " s,  "
           << Dbl(timerError_.time()/total, 9, 3) << "\n";
       out << "updating guess:           "
           << Dbl(timerOmega_.time(), 9, 3)  << " s,  "
+          << Dbl(timerOmega_.time()/totalItr_, 9, 3)  << " s,  "
           << Dbl(timerOmega_.time()/total, 9, 3)<< "\n";
       out << "total time:               "
-          << Dbl(total, 9, 3) << " s  \n";
+          << Dbl(total, 9, 3) <<  " s,  "
+          << Dbl(total/totalItr_, 9, 3) << " s  \n";
       out << "\n";
    }
    
@@ -603,6 +605,7 @@ namespace Pscf
       timerCoeff_.clear();
       timerOmega_.clear();
       timerTotal_.clear();
+      totalItr_ = 0;
    }
 
 }

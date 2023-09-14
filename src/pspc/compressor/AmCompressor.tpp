@@ -74,7 +74,7 @@ namespace Pspc{
    int AmCompressor<D>::compress()
    {
       int solve = AmIteratorTmpl<Compressor<D>, DArray<double> >::solve();
-      counter_ += AmIteratorTmpl<Compressor<D>,DArray<double>>::totalItr();
+      counter_ = AmIteratorTmpl<Compressor<D>,DArray<double>>::totalItr();
       return solve;
    }
 

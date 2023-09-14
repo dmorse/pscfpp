@@ -158,7 +158,8 @@ namespace Pspc {
           << Dbl(computeMcHamiltonianTimer_.time()/nAttempt_, 9, 3)  << " s,  "
           << Dbl(decisionTimer_.time()/total, 9, 3) << "\n";
       out << "total time:               "
-          << Dbl(total, 9, 3) << " s  \n";
+          << Dbl(total, 9, 3) << " s,  "
+          << Dbl(total/nAttempt_, 9, 3) << " s  \n";
       out << "\n";
    }
    
