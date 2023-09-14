@@ -61,6 +61,8 @@ namespace Pspg
       using Iterator<D>::isFlexible_;
       using AmIteratorTmpl<Iterator<D>, DArray<double> >::setClassName;
       using AmIteratorTmpl<Iterator<D>, DArray<double> >::verbose;
+      using AmIteratorTmpl<Iterator<D>, DArray<double> >::outputTimers;
+      using AmIteratorTmpl<Iterator<D>, DArray<double> >::clearTimers;
 
       /**
       * Setup iterator just before entering iteration loop.

@@ -62,6 +62,7 @@ namespace Pspg {
    { 
       nAttempt_ = 0;
       nAccept_  = 0;
+      clearTimers();
    }
 
    /*
@@ -70,6 +71,7 @@ namespace Pspg {
    template <int D>
    bool McMove<D>::move()
    { 
+      totalTimer_.start();
       incrementNAttempt();
 
       // Get current Hamiltonian
@@ -82,18 +84,30 @@ namespace Pspg {
       mcSimulator().clearData();
 
       // Attempt modification
+      attemptMoveTimer_.start();
       attemptMove();
-
+      attemptMoveTimer_.stop();
+      
       // Call compressor
+      compressorTimer_.start();
       system().compressor().compress();
-
-      // Evaluate new Hamiltonian
+      compressorTimer_.stop();
+      
+      // Compute eigenvector components of the current w fields
+      computeWCTimer_.start();
       mcSimulator().computeWC();
+      computeWCTimer_.stop();
+      
+      // Evaluate new Hamiltonian
+      computeMcHamiltonianTimer_.start();
       mcSimulator().computeMcHamiltonian();
       double newHamiltonian = mcSimulator().mcHamiltonian();
-     // Log::file() << "newHamiltonian" << newHamiltonian << "\n";
+      computeMcHamiltonianTimer_.stop();
+      // Log::file() << "newHamiltonian" << newHamiltonian << "\n";
       //Log::file() << "oldHamiltonian" << oldHamiltonian << "\n";
       // Accept or reject move
+     
+      decisionTimer_.start();
       bool accept = false;
       double weight = exp(-(newHamiltonian - oldHamiltonian));
       //Log::file() << "weight" << weight << "\n";
@@ -107,6 +121,8 @@ namespace Pspg {
      /// Log::file() << "newFieldHamiltonian" << mcSimulator().mcFieldHamiltonian() << "\n";
       // Log::file() << "newidealHamiltonian" << mcSimulator().mcIdealHamiltonian() << "\n";
       // Log::file() << "accept" << accept << "\n";
+      decisionTimer_.stop();
+      totalTimer_.stop();
       return accept;
    }
 
@@ -116,6 +132,53 @@ namespace Pspg {
    template <int D>
    void McMove<D>::output()
    {}
+   
+   template<int D>
+   void McMove<D>::outputTimers(std::ostream& out)
+   {
+      // Output timing results, if requested.
+      out << "McMove times contributions:\n";
+      // Output timing results, if requested.
+      double total = totalTimer_.time();
+      out << "                          "
+          << "Total" << std::setw(17) << "Per Move" << std::setw(14) << "Fraction" << "\n";
+      out << "Attempt Move:             "
+          << Dbl(attemptMoveTimer_.time(), 9, 3)  << " s,  "
+          << Dbl(attemptMoveTimer_.time()/nAttempt_, 9, 3)  << " s,  "
+          << Dbl(attemptMoveTimer_.time()/total, 9, 3) << "\n";
+      out << "Compressor:               "
+          << Dbl(compressorTimer_.time(), 9, 3)  << " s,  "
+          << Dbl(compressorTimer_.time()/nAttempt_, 9, 3)  << " s,  "
+          << Dbl(compressorTimer_.time()/total, 9, 3) << "\n";
+      out << "Compute eigen-components: "
+          << Dbl(computeWCTimer_.time(), 9, 3)  << " s,  "
+          << Dbl(computeWCTimer_.time()/nAttempt_, 9, 3)  << " s,  "
+          << Dbl(computeWCTimer_.time()/total, 9, 3) << "\n";
+      out << "Compute Hamiltonian:      "
+          << Dbl(computeMcHamiltonianTimer_.time(), 9, 3)  << " s,  "
+          << Dbl(computeMcHamiltonianTimer_.time()/nAttempt_, 9, 3)  << " s,  "
+          << Dbl(computeMcHamiltonianTimer_.time()/total, 9, 3) << "\n";
+      out << "Accept or Reject:         "
+          << Dbl(decisionTimer_.time(), 9, 3)  << " s,  "
+          << Dbl(computeMcHamiltonianTimer_.time()/nAttempt_, 9, 3)  << " s,  "
+          << Dbl(decisionTimer_.time()/total, 9, 3) << "\n";
+      out << "total time:               "
+          << Dbl(total, 9, 3) << " s,  "
+          << Dbl(total/nAttempt_, 9, 3) << " s  \n";
+      out << "\n";
+   }
+   
+   template<int D>
+   void McMove<D>::clearTimers()
+   {
+      attemptMoveTimer_.clear();
+      compressorTimer_.clear();
+      computeWCTimer_.clear();
+      computeMcHamiltonianTimer_.clear();
+      decisionTimer_.clear();
+      totalTimer_.clear();
+   }
+      
 
 }
 }

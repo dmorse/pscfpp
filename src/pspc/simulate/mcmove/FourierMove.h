@@ -64,10 +64,15 @@ namespace Pspc
       */
       void setup();
       
+      /**
+      * Return fourier move times contributions.
+      */
+      void outputTimers(std::ostream& out);
       
       // Inherited public member function
       using McMove<D>::move;
       using McMove<D>::readProbability;
+      using McMove<D>::clearTimers;
       using ParamComposite::read;
       using ParamComposite::setClassName;
 

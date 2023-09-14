@@ -74,7 +74,7 @@ namespace Pspc{
    int AmCompressor<D>::compress()
    {
       int solve = AmIteratorTmpl<Compressor<D>, DArray<double> >::solve();
-      counter_ += AmIteratorTmpl<Compressor<D>,DArray<double>>::totalItr(); 
+      counter_ = AmIteratorTmpl<Compressor<D>,DArray<double>>::totalItr();
       return solve;
    }
 
@@ -242,7 +242,23 @@ namespace Pspc{
    template<int D>
    void AmCompressor<D>::outputToLog()
    {}
-
+   
+   template<int D>
+   void AmCompressor<D>::outputTimers(std::ostream& out)
+   {
+      // Output timing results, if requested.
+      out << "\n";
+      out << "Compressor times contributions:\n";
+      AmIteratorTmpl<Compressor<D>, DArray<double> >::outputTimers(out);
+   }
+   
+   
+   template<int D>
+   void AmCompressor<D>::clearTimers()
+   {
+      AmIteratorTmpl<Compressor<D>, DArray<double> >::clearTimers();
+   }
+   
 }
 }
 #endif

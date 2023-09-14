@@ -11,6 +11,7 @@
 #include <util/containers/DArray.h>     // member template
 #include <util/containers/DMatrix.h>    // member template
 #include <util/containers/RingBuffer.h> // member template
+#include <util/misc/Timer.h>            // member template
 
 namespace Pscf {
 
@@ -64,6 +65,16 @@ namespace Pscf {
       * \return 0 for convergence, 1 for failure
       */
       int solve(bool isContinuation = false);
+      
+      /**
+      * Log output timing results 
+      */
+      void outputTimers(std::ostream& out);
+      
+      /**
+      * Clear timers 
+      */
+      void clearTimers();
 
    protected:
 
@@ -189,7 +200,19 @@ namespace Pscf {
       * Return the total number of iterations needed to converge.
       */
       int totalItr();
-
+      
+      /**
+      * Return timers for analyzing performance
+      */
+      double timerMDE();
+      double timerStress();
+      double timerAM();
+      double timerResid();
+      double timerError();
+      double timerCoeff();
+      double timerOmega();
+      double timerTotal();
+      
       /**
       * Have data structures required by the AM algorithm been allocated?
       */
@@ -226,9 +249,6 @@ namespace Pscf {
       /// Verbosity level.
       int verbose_;
 
-      /// Output summary of timing results?
-      bool outputTime_;
-
       /// Has the allocateAM function been called.
       bool isAllocatedAM_;
 
@@ -261,6 +281,16 @@ namespace Pscf {
 
       /// Workspace for calculations
       T temp_;
+      
+      // Timers for analyzing performance
+      Timer timerMDE_;
+      Timer timerStress_;
+      Timer timerAM_;
+      Timer timerResid_;
+      Timer timerError_;
+      Timer timerCoeff_;
+      Timer timerOmega_;
+      Timer timerTotal_;
 
       // --- Non-virtual private functions (implemented here) ---- //
 
@@ -453,7 +483,63 @@ namespace Pscf {
    template <typename Iterator, typename T>
    int AmIteratorTmpl<Iterator,T>::totalItr() 
    {  return totalItr_; }
-
+   
+   /*
+   * Return computing MDE time cost
+   */
+   template <typename Iterator, typename T>
+   double AmIteratorTmpl<Iterator,T>::timerMDE() 
+   {  return timerMDE_.time(); }
+   
+   /*
+   * Return computing Stress time cost
+   */
+   template <typename Iterator, typename T>
+   double AmIteratorTmpl<Iterator,T>::timerStress() 
+   {  return timerStress_.time(); }
+   
+   /*
+   * Return computing AM time cost
+   */
+   template <typename Iterator, typename T>
+   double AmIteratorTmpl<Iterator,T>::timerAM() 
+   {  return timerAM_.time(); }
+   
+   /*
+   * Return computing Resid time cost
+   */
+   template <typename Iterator, typename T>
+   double AmIteratorTmpl<Iterator,T>::timerResid() 
+   {  return timerResid_.time(); }
+   
+   /*
+   * Return computing Error time cost
+   */
+   template <typename Iterator, typename T>
+   double AmIteratorTmpl<Iterator,T>::timerError() 
+   {  return timerError_.time(); }
+   
+   /*
+   * Return computing Coeff time cost
+   */
+   template <typename Iterator, typename T>
+   double AmIteratorTmpl<Iterator,T>::timerCoeff() 
+   {  return timerCoeff_.time(); }
+   
+   /*
+   * Return computing Omega time cost
+   */
+   template <typename Iterator, typename T>
+   double AmIteratorTmpl<Iterator,T>::timerOmega() 
+   {  return timerOmega_.time(); }
+   
+   /*
+   * Return total time cost
+   */
+   template <typename Iterator, typename T>
+   double AmIteratorTmpl<Iterator,T>::timerTotal() 
+   {  return timerTotal_.time(); }
+   
 }
 #include "AmIteratorTmpl.tpp"
 #endif

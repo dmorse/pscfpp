@@ -107,6 +107,7 @@ namespace Pspc {
    void McSimulator<D>::simulate(int nStep)
    {
       UTIL_CHECK(mcMoveManager_.size() > 0);
+      
 
       setup();
       Log::file() << std::endl;
@@ -584,9 +585,22 @@ namespace Pspc {
                   << "  sec" << std::endl;
       Log::file() << std::endl;
    }
+   
+   template<int D>
+   void McSimulator<D>::outputTimers(std::ostream& out)
+   {
+      // Output timing results, if requested.
+      out << "\n";
+      out << "McSimulator times contributions:\n";
+      mcMoveManager_.outputTimers(out);
+   }
+   
+   template<int D>
+   void McSimulator<D>::clearTimers()
+   {
+      mcMoveManager_.clearTimers();
+   }
 
-   
-   
 
 }
 }

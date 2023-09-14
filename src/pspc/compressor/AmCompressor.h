@@ -76,9 +76,15 @@ namespace Pspc
       */
       int counterMDE(); 
       
+      /**
+      * Return compressor times contributions.
+      */
+      void outputTimers(std::ostream& out);
+      void clearTimers();
+      
       // Inherited public member functions
       using AmIteratorTmpl<Compressor<D>, DArray<double> >::setClassName;
-
+      
    protected:
   
       // Inherited protected members 
@@ -86,6 +92,12 @@ namespace Pspc
       using Compressor<D>::system;
 
    private:
+   
+      /**
+      * How many times MDE has been solved for each mc move 
+      */
+      int itr_;
+      
       /**
       * Count how many times MDE has been solved.
       */

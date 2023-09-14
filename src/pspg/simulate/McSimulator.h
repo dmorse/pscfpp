@@ -236,6 +236,16 @@ namespace Pspg {
       */
       long iStep();
       
+      /**
+      * Log output timing results 
+      */
+      void outputTimers(std::ostream& out);
+      
+      /**
+      * Clear timers 
+      */
+      void clearTimers();
+      
    private:
       
       // Private data members

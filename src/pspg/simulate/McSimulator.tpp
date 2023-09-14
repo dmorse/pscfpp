@@ -576,6 +576,21 @@ namespace Pspg {
                   << "  sec" << std::endl;
       Log::file() << std::endl;
    }
+   
+   template<int D>
+   void McSimulator<D>::outputTimers(std::ostream& out)
+   {
+      // Output timing results, if requested.
+      out << "\n";
+      out << "McSimulator times contributions:\n";
+      mcMoveManager_.outputTimers(out);
+   }
+   
+   template<int D>
+   void McSimulator<D>::clearTimers()
+   {
+      mcMoveManager_.clearTimers();
+   }
 
 }
 }
