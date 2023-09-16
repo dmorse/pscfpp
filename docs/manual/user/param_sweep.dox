@@ -402,6 +402,44 @@ simulations of thin films performed with pscf_pc program, as discussed
 interaction parameters for interactions of a specific monomer type 
 with the top or bottom surface of a thin film. 
 
+\section user_param_sweep_output_sec Files Output by Sweep
+
+A parameter sweep will output several files for each state point in
+the sweep. All files output for a single state point will have the 
+same name with different file extensions. The name will simply be the
+integer index of that state point in the sweep; the first state point
+will have files named "0.*", the second will have files named "1.*",
+and so on. If the user specified a string for the baseFileName 
+property of the Sweep block, this will be prepended to the filename.
+
+The first type of file that is output by a parameter sweep is a 
+\ref user_thermo_state_sec "state file", which combines the input
+parameter file and the output thermodynamic properties into a single
+file that contains all relevant data for the system. This file will 
+have the extension ".stt". See the linked page on state files for more 
+information.
+
+The other files output by a parameter sweep vary depending on whether
+you are using the pscf_fd program or the pscf_pc/pscf_pg programs. 
+Let us first consider the pscf_fd program. At each state point in the
+parameter sweep, the chemical potential field will be output as a 
+\ref user_field_fd1d_page "1D field file" with extension ".w", and
+the composition profile of each monomer species will be output as a
+1D field file with extension ".c". 
+
+In pscf_pc and pscf_pg, only the chemical potential fields are
+output by default, in \ref user_field_basis_page "basis format".
+Other field files can be optionally output at each state point, 
+using the input parameters writeWRGrid, writeCBasis, and 
+writeCRGrid (described \ref user_param_sweep_linear_param_sub 
+"above").
+
+Finally, a file is output called "sweep.log" for each parameter 
+sweep, containing a small data table. The table contains one row
+for each state point in the sweep, giving the integer index for 
+that state point, the fractional position along the parameter 
+sweep (denoted "ds"), the free energy, and the pressure.
+ 
 <BR>
 \ref user_param_mixture_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
 \ref user_param_page         (Up)   &nbsp; &nbsp; &nbsp; &nbsp; 

@@ -162,7 +162,7 @@ Comments:
   - The parameter vMonomer is an optional parameter, and is usually absent
     from parameter files for standard SCFT calculations. The reasons that
     it may be neglected in such calculations have been discussed 
-    \ref user_model_vMonomer_sub "elsewhere".  Users are nonethelss given 
+    \ref user_thermo_vMonomer_sub "elsewhere".  Users are nonethelss given 
     the option of providing a value for vMonomer because the choice of a
     value for vMonomer can affect SCFT predictions for some optional
     outputs of the pscf_fd program (e.g., the total excess free energy 
