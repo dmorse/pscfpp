@@ -1,7 +1,7 @@
 /*! \page user_command_page Command Files
 
  \ref user_field_page   (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
- \ref user_example_page (Next) 
+ \ref user_thermo_page (Next) 
 <BR>
 
 For any PSCF simulation program, the parameter file is read first,
@@ -31,5 +31,5 @@ commands available for specific programs.
  <BR>
  \ref user_field_page   (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
  \ref user_page         (Up) &nbsp; &nbsp; &nbsp; &nbsp; 
- \ref user_example_page (Next) 
+ \ref user_thermo_page (Next) 
 */

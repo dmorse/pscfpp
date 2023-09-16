@@ -20,11 +20,12 @@ name of the source file. For example, to use a class or function that
 that is defined in the file 'param.py', one must import the contents
 of module pscfpp.param from within a python interpreter.
 
-The instructions for compiling the PSCF C++/CUDA code require each user
-to add the directory pscfpp/lib/python to their python module search
-path (i.e., to their PYTHONPATH environment variable). As long as
-this directory is in the python path, a python interpreter should be
-able to find any module in the pscfpp package.
+The \ref install_environment_page 
+"instructions for compiling the PSCF C++/CUDA code" require each user 
+to add the directory pscfpp/lib/python to their python module search 
+path (i.e., to their PYTHONPATH environment variable). As long as this 
+directory is in the python path, a python interpreter should be able to 
+find any module in the pscfpp package.
 
 To use any of the python tools provided with PSCF, one must open a
 python 3 interpreter. To open an interactive interpreter, one can enter
@@ -257,10 +258,10 @@ modified object to a file.
 
 \section user_python_thermo_sec Thermo Files
 
-Thermo file blocks contain output variables that are computed during
-a SCFT calculation. Such blocks may appear either as standalone files,
-which can be created by the WRITE_THERMO command, or as sections of
-other file types.
+\ref user_thermo_page "Thermo file" blocks contain output variables 
+that are computed during an SCFT calculation. Such blocks may appear 
+either as standalone files, which can be created by the WRITE_THERMO 
+command, or as sections of other file types.
 
 Suppose that a file named 'input' contains a thermo file block that
 is the only data in this file.  One may parse this file by entering
@@ -324,12 +325,13 @@ expression str(thermo), and can be printed to screen using print(thermo).
 
 \section user_python_state_sec State Files
 
-State files are designed to contain values of both input parameters
-and output variables for an SCFT calculation.  The file format for a
-state file consists of a parameter file block followed by a thermo file
-block. The parameter file block contains input variables and has the
-nested curly-bracket format of a parameter file. The thermo section
-contains output variables and has the format of a thermo file block.
+\ref user_thermo_state_sec "State files" are designed to contain values 
+of both input parameters and output variables for an SCFT calculation.  
+The file format for a state file consists of a parameter file block 
+followed by a thermo file block. The parameter file block contains input 
+variables and has the nested curly-bracket format of a parameter file. The 
+thermo section contains output variables and has the format of a thermo 
+file block.
 
 Each instance of class State (or pscfpp.output.State) is used to store the
 contents of such a state file. Each State object has two data attributes
@@ -557,8 +559,10 @@ the data section in the field file. When accessing elements of
 the data attribute using two subscripts, the first subscript (the
 row index) is thus index for a spatial degree of freedom (i.e.,
 a grid point or basis function) and the second (the column index)
-is an index for a monomer type. The 'type' attribute is a string
-identifier for the field file type.
+is an index for a monomer type, hkl index, or row index, 
+depending on the type of field file being parsed and the column
+being indexed. The 'type' attribute is a string identifier for 
+the field file type.
 
 The class provides several methods to change the format of the
 data table, including methods to add a new column (to allow for

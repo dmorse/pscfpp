@@ -1,7 +1,7 @@
 /*! \page user_command_pg_page Commands - pscf_pg 
 
  \ref user_command_pc_page     (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
- \ref user_example_page (Next) 
+ \ref user_thermo_page (Next) 
 <BR>
 
 Most of the available commands for the pscf_pg programs GPU programs 
@@ -29,5 +29,5 @@ implemented.
  <BR>
  \ref user_command_pc_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
  \ref user_command_page     (Up) &nbsp; &nbsp; &nbsp; &nbsp; 
- \ref user_example_page     (Next) 
+ \ref user_thermo_page     (Next) 
 */
