@@ -26,35 +26,44 @@
 #
 # Command Line Options: 
 #   
-# Each of the following options enables or disables a feature. Each such
-# options takes 0 or 1 as a required argument, using 1 to denote "enable"
+# The -q and -h command line options both provide information, and take
+# no argument:
+#
+#   -q     query: prints report of options that are enabled / disabled.
+#   -h     help: prints a list of available options 
+#
+# The -d and -c options each enable or disable a feature. Each such
+# option takes 0 or 1 as a required argument, using 1 to denote "enable"
 # and 0 to denote "disable".
 #
 #   -d (0|1)   debugging           (defines/undefines UTIL_DEBUG)
 #   -c (0|1)   CUDA code           (defines/undefines PSCF_CUDA) 
 #
-# This -a option sets an identifier for the GPU architecture to be targeted
-# by the NVIDIA cuda compiler. The identifier is a string of the form sm_NN
-# where NN is a number that gives the major and minor version number for
-# the CUDA "compute capability" for the target GPU. For example, the K40
-# GPU has a compute capability 3.5, and takes an architecture code sm_35.
+# This -a option sets an identifier for the NVIDIA GPU architecture to be 
+# targeted by the NVIDIA CUDA compiler. The argument of this command line 
+# option is passed as the argument of the "-arch" option of the NVIDIA 
+# C++ / CUDA compiler. Allowed values are string of the form sm_NN, where 
+# NN is a number that gives the major and minor version number for the CUDA 
+# "compute capability" for the target GPU. For example, the K40 GPU has a 
+# compute capability 3.5, and requires an architecture code sm_35.
 #
 #  -a [architecture code]          (defines NVARCH)
 #
-# These command line options provide information:
-#
-#   -q        query: prints report of options that are enabled / disabled.
-#   -h        help: prints a list of available options 
-#
 # Examples:
 #
-# To enable conditional compilation of CUDA code (disabled by default)
+# To enable debugging 
 #
-#   >  ./configure -c1
+#   >  ./configure -d1
 #
 # To disable debugging 
 #
-#   >  ./configure -d0 
+#   >  ./configure -d0
+#
+# To enable conditional compilation of CUDA code (disabled by default)
+# and set the GPU architecture option to sm_70 (compute capability 7.0,
+# appropriate for a V100 chip) one could enter
+#
+#   >  ./configure -c1  -a sm_70
 #
 #-----------------------------------------------------------------------
 while getopts "a:c:d:qh" opt; do
@@ -94,32 +103,61 @@ while getopts "a:c:d:qh" opt; do
       fi
       ;;
     h)
-      echo "The configure script may be called prior to compiling to enable"
-      echo "or disable specific compile time features, or query which features" 
-      echo "are currently set to be enabled. This script must be called from"
-      echo "the directory that contains the configure script file, and only"
-      echo "effects code built in the same directory tree."
       echo " "
-      echo "Command Line Options:"
-      echo "-q        query: lists options that are enabled / disabled."
-      echo "-h        help: prints explanation of options (this command)"
+      echo " Purpose and usage:"
+      echo " ------------------"
       echo " "
-      echo "Each of the following options enables or disables a feature by"
-      echo "defining or undefining a corresponding preprocessor macro. Each"
-      echo "such option echo takes 0 or 1 as a required argument, using 1 to"
-      echo "enable a feature or 0 to disable one." 
+      echo " The configure script may be called prior to compiling to enable"
+      echo " or disable specific compile time features, set compiler options,"
+      echo " and/or query which features are currently set to be enabled."
+      echo " This script must be called from the directory that contains the"
+      echo " script file, and only affects compiler settings for code that is"
+      echo " built in the same directory tree (i.e., in src/ or in bld/). "
       echo " "
-      echo "-c (0|1)  CUDA code            (undefines/defines UTIL_DEBUG)"
-      echo "-d (0|1)  debugging            (undefines/defines UTIL_DEBUG)"
+      echo " Command Line Options:"
+      echo " ----------------------"
+      echo "  "
+      echo " The -q and -h command line options both provide information,"
+      echo " and take no arguments:"
       echo " "
-      echo "The -a option takes a string identifier for a GPU architecture"
-      echo "that is passed as the argument of the -arch option of the NVIDIA"
-      echo "CUDA compiler. Valid strings are of the form sm_NN, where NN "
-      echo "is a number that indicates the compute capability level of the "
-      echo "GPU, e.g., sm_35 for a K40 GPU with compute capability 3.5."
+      echo "   -q   query: prints list of options that are enabled / disabled"
+      echo "   -h   help: prints a list of available options"
       echo " "
-      echo "-a (GPU architecture identifier, e.g., sm_50 for level 3.5)"
+      echo " The -d and -c options each enable or disable a feature. Each"
+      echo " such option takes 0 or 1 as a required argument, using 1 to"
+      echo " enable and 0 to disable the feature"
+      echo "  "
+      echo "   -d (0|1)   debugging           (defines/undefines UTIL_DEBUG)"
+      echo "   -c (0|1)   CUDA code           (defines/undefines PSCF_CUDA)"
       echo " "
+      echo " The -a option sets an identifier for the NVIDIA GPU architecture"
+      echo " to be targeted by the NVIDIA CUDA compiler. The argument of this"
+      echo " command line option is passed as the argument of the -arch"
+      echo " option of the C++ / CUDA compiler. Allowed values are strings"
+      echo " of the form sm_NN, where NN is a number that gives the major and"
+      echo " minor version number for the CUDA compute capability for the"
+      echo " target architecture. For example, the K40 GPU has a compute"
+      echo " compute capability 3.5, and requires an architecture code sm_35."
+      echo " "
+      echo "  -a [architecture code]          (defines NVARCH)"
+      echo " "
+      echo " Examples:"
+      echo " ---------"
+      echo " "
+      echo " To enable debugging"
+      echo " "
+      echo "   >  ./configure -d1"
+      echo " "
+      echo " To disable debugging"
+      echo " "
+      echo "   >  ./configure -d0"
+      echo " "
+      echo " To enable conditional compilation of CUDA code (disabled by"
+      echo " default) and set the GPU architecture option to sm_70 (compute"
+      echo " capability 7.0, appropriate for a V100 chip) one could enter"
+      echo " "
+      echo "   >  ./configure -c1  -a sm_70"
+      echo "  "
       ;;
   esac
 

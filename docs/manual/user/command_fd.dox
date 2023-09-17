@@ -300,15 +300,9 @@ the current values for all parameters, and excludes any Sweep block.
 \anchor user_command_fd_writethermo_sub 
 <b> WRITE_THERMO </b>:
 The WRITE_THERMO command outputs a report of values for thermodynamic 
-properties obtained after solution of a SCFT problem. The resulting 
-report includes values for the 
-\ref user_model_helmholtz_sub "Helmholtz free energy per monomer"
-\f$ \tilde{f} \f$ , denoted by "fHelmholtz" in the output file, 
-the \ref user_model_pressure_sub "nondimensionalized pressure" 
-\f$ \tilde{p} \f$, denoted by "pressure", the chemical potential and 
-volume fraction of each polymer and solvent molecular species, denoted 
-by "mu" and "phi".  All free energies, pressure and chemical potential 
-values are output using thermal energy units, in which \f$ k_{B}T = 1 \f$.
+properties obtained after solution of a SCFT problem. The details of
+the output of this command can be found on the 
+\ref user_thermo_page "Thermodynamic Properties" page.
 
 If the file whose name is passed to the WRITE_THERMO command already 
 exists, the report of thermodynamic properties will be appended to 

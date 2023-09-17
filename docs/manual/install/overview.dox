@@ -11,16 +11,25 @@ and installed all required dependencies. The descriptions assume that the
 root directory of the repository is named pscfpp/. You are free to rename 
 the root directory before running or rerunning the setup script.
 
-<h2> Instructions </h2>
+Below, have divided the instructions i a set of instructions for 
+compiling and installing the programs that use only CPU hardware, and 
+additional instructions for compiling programs that use an NVIDIA GPU.
+
+\section install_overview_setup_sec Preliminary Setup
+
+The following steps must be taken after installing required 
+dependencies but before atttempting to compile any part of PSCF:
 
    - **Set environment variables:**
-     Modify the users PATH and PYTHONPATH unix environment variables,
-     as discussed \ref install_environment_page "here".
+     Modify the users PATH and PYTHONPATH unix environment variables
+     so as to include pscfpp/bin directory in the PATH (the unix shell
+     command search path) and so as to include pscfpp/lib/python in 
+     the PYTHONPATH (the Python module search path). This is discussed 
+     in greater detail \ref install_environment_page "here".
 
 
    - **Navigate to root directory:**
      Change directory (cd) to the pscfpp/ root directory.
-
 
    - **Setup:**
      Invoke the "setup" script from the pscfpp/ root directory.  To setup
@@ -46,84 +55,133 @@ the root directory before running or rerunning the setup script.
      from the pscfpp/ directory.
 
 
-   - **Compile all CPU programs:**
-     We recommend that users first compile only the C++ programs that do
-     not use a GPU, and then try to compile GPU enabled C++/CUDA programs 
-     as a separate step. Compilation of CUDA code is disabled by default 
-     after the initial setup operation. To compile only C++ CPU programs, 
-     but no CUDA code, you may enter
-     \code
-     make all
-     \endcode
-     from the pscfpp/ directory immediately after running the setup script.  
-     If successful, this will install executables named "pscf_fd", "pscf_pc1", 
-     "pscf_pc2" and "pscf_pc3" in the pscfpp/bin directory.  
+\section install_overview_CPU_sec Compiling C++ Code (CPU Hardware)
 
-     Compiling all the PSCF C++ code using "make all" takes a little time 
-     (about 2 minutes on a 2020 Mac air laptop). It can be completed 
-     faster on a multi-core machine by using the -j option to use multiple
-     CPU cores. To do so, enter something analogous to
-     \code
-     make -j8 all 
-     \endcode
-     Here, the option -jn (with n=8 in this example) instructs the make 
-     system to use up to n CPU cores if available.
+We recommend that users first compile only the programs in PSCF that use
+standard CPU hardware, leaving compilation GPU-enabled C++/CUDA programs 
+as a separate step. 
+
+Compilation of GPU-enabled CUDA code is disabled by default after the 
+setup operation described above. To compile only C++ CPU programs, but no 
+GPU-enabled code, you may simply enter
+\code
+    make all
+\endcode
+from the pscfpp/ directory immediately after running the setup script.  
+If successful, this will install executables named "pscf_fd", "pscf_pc1", 
+"pscf_pc2" and "pscf_pc3" in the pscfpp/bin directory.  
+
+Compiling all the PSCF C++ code using "make all" takes a little time 
+(e.g., 2 to 3 minutes on a 2020 Mac air laptop with an M1 chip). This 
+can be completed more quickly on a multi-core machine by using the -j 
+option of the "make" command to use multiple CPU cores in parallel to 
+compile different C++ files.  The argument of the -j option is the 
+number of cores that should be used, if available. For example, you 
+could enter
+\code
+   make -j8 all 
+\endcode
+to use all 8 CPU cores of an 8-core computer to compile PSCF.
+
+Entering "make all" or "make -jn all" from the pscfpp/ root directory, 
+as described above, will create a large number of intermediate object 
+(*.o), dependency (*.d) and library (*.a) files in subdirectories of 
+the pscfpp/bld directory, in addition to the executable files that 
+are created in the pscfpp/bin directory.
+
+\section install_overview_GPU_sec Compiling C++/CUDA Code (GPU Hardware)
+
+The GPU-enabled C++/CUDA programs provided as part of PSCF can only be 
+compiled on computers that have an NVIDIA development kit installed, and 
+can only be run on machines that have an appropriate NVIDIA GPU and CUDA 
+driver software.  Before compiling this code, the user must enable 
+compilation of CUDA code and set the appropriate target GPU architecture,
+as described below.  The following instructions assume that you have 
+already completed the setup steps described above.
 
    - **Enable compilation of GPU-enabled programs:**
-     To enable compilation of CUDA code for GPU-enabled programs on a machine
-     with an appropriate NVIDIA GPU and CUDA compiler, enter
+     To enable compilation of CUDA code for GPU-enabled programs on a 
+     machine that is set up to allow this, enter
      \code
      ./configure -c1
      \endcode
-     from the pscfpp/ root directory.  To disable compilation of CUDA code,
-     instead enter
+     from the pscfpp/ root directory. If you later want to disable 
+     compilation of CUDA code, instead enter
      \code
      ./configure -c0
      \endcode
-     These configuration commands must be entered after the setup script 
-     but before compiling with the specified options.
+     Commands issued by the configure script set variables that 
+     affect subsequent behavior of the build system and compiler.
+     Usage of the configure script is discussed in more detail
+     \ref install_configure_page "here". 
 
-     To check if CUDA compilation is currently enabled, enter
+     To check if CUDA compilation is currently enabled, change directory
+     to the pscfpp/bld directory, and enter
      \code
      .\configure -q
      \endcode
-     from the pscfpp/bld/ directory. This should yield a report indicating 
-     whether the "debugging" and "CUDA" options are currently set to be
-     enabled (ON) or disabled (OFF) for code built in the bld/ directory 
+     from that directory. This should yield a report indicating whether 
+     the "debugging" and "CUDA" options are currently set to be enabled 
+     (ON) or disabled (OFF) for code built in the bld/ directory 
      (the default build directory).
 
-     Usage of the configure scripts is discussed in more detail
-     \ref install_configure_page "here". 
-     
-   - **Compile all programs (including GPU-enabled programs):**
-     To compile all programs, including GPU enabled programs, on a machine 
-     with an appropriate NVIDIA GPU and a CUDA compiler, you first need
-     to enable compilation of CUDA code as described above. Then enter
+   - **Set the target GPU architecture:**
+     CUDA must be compiled for a particular target GPU architecture.
+     To set the target architecture to correspond to the GPU on your 
+     computer, you must change directory to pscfpp/ root directory and 
+     issue a command of the form
      \code
-     make all
+     .\configure -a [architecture id]  
      \endcode
-     from within the pscfpp/ root directory, or "make -jn all" to use n
-     CPU cores. If successful, this will install executables named 
-     "pscf_pg1", "pscf_pg2" and "pscf_pg3" in the pscfpp/bin directory 
-     in addition to the files "pscf_fd", "pspc_pc1", "pscf_pc2" and 
-     "pscf_pc3" that are created by compiling only pure C++ code.
+     where [architecture id] denotes a string that identifies the 
+     architecture of the GPU for which you are compiling. Valid values
+     of this string have the form "sm_IJ", where IJ denotes a integer
+     string that represents the NVIDIA "compute capability" for the
+     target GPU. You can look up the compute capabability for the 
+     type of NVIDIA GPU installed on your computer by consulting the 
+     <a href="https://developer.nvidia.com/cuda-gpus">NVIDIA developer
+     documentation</a>. The compute capability for an NVIDIA GPU is a 
+     number of the form I.J in which I is an integer major version number 
+     and J is a minor version number. The architecture id required as 
+     an argument of the -a option, however, uses a string of the form 
+     sm_IJ that drops the dot between the major and minor version. For 
+     example, an NVIDIA K40 GPU has a compute capability of 3.5. To 
+     set this as the target architecture, one would enter 
+     \code
+     ./configure -a sm_35
+     \endcode
+     from the pscfpp/ directory, using "sm_35" as the architecture id.
+  
+ 
+   - **Compile all programs (including GPU-enabled programs):**
+     After enabling CUDA compilation and setting the appropriate 
+     architecture, you can compile all programs, inluding GPU enabled
+     programs, by simply re-entering "make all" or
+     \code
+     make -jn all
+     \endcode
+     from within the pscfpp/ root directory, where "n" is the number
+     of CPU cores to be used during compilation.
 
-Entering "make all" from the pscfpp/ root directory, as described above, 
-will create a large number of intermediate object (*.o), dependency (*.d) 
-and library (*.a) files in subdirectories of the pscfpp/bld directory. 
+If successful, the "make all" command will install executables files 
+named "pscf_pg1", "pscf_pg2" and "pscf_pg3" in the pscfpp/bin directory 
+in addition to the files "pscf_fd", "pspc_pc1", "pscf_pc2" and "pscf_pc3" 
+that are created by compiling only C++ code.
 
-Each of the above steps is discussed in more detail in the following pages.
+Several of the above steps is discussed in more detail in the following 
+pages.
 
-<h2> Out-of-source vs. In-Source Compilation </h2>
+\section user_overview_inout_sec Out-of-source vs. In-Source Compilation
+
 The above instructions explain how to perform an "out-of-source" build in 
 which intermediate files created during compilation process are placed in 
 the pscfpp/bld directory tree. It is also possible to perform an "in-source"
 build in which these files are instead placed in the pscfpp/src directory 
-that also contains all C++ and CUDA source code files. The option of in-source 
-compilation is discussed in more detail \ref install_inout_page "here".
-We recommend the use of out-of-source compilation for package users who 
-are not actively working on development. Some developers may find in-source
-compilation more convenient during development.
+that also contains all C++ and CUDA source code files. The option of 
+in-source compilation is discussed in more detail \ref install_inout_page 
+"here".  We recommend the use of out-of-source compilation for package users 
+who are not actively working on development. Some developers may find 
+in-source compilation more convenient during development.
 
 <BR>
 \ref install_source_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp;

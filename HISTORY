@@ -1,8 +1,8 @@
 ============================
-= PSCF (C++/Cuda) History  =
+= PSCF (C++/CUDA) History  =
 ============================
 
-This file documents changes to the C++/Cuda version of PSCF. Source code 
+This file documents changes to the C++/CUDA version of PSCF. Source code 
 for this project is in the dmorse/pscfpp github.com repository.
 
 The following labels are used below to indicate which programs or sets of
@@ -25,12 +25,14 @@ User-visible features
 
 User-visible changes
 ---------------------
-* Added -c option to configure script to enable/disable CUDA 
 * Reorganization of python code into fewer modules
+* Added -c option to configure script to enable/disable CUDA 
+* Added -a option to configure script to set target GPU architecture
 
 Documentation
 -------------
-* Documentation of python tools added to web manual
+* Documentation of python tools in web manual
+* Documentation of thermo and state output file formats
 
 Version 1.0.3  (7/6/2023)
 =========================
@@ -161,7 +163,7 @@ Developer-visible changes
 * Removed cancelled stars from array storage of basis coefficients (pc)
 * Improved encapsulation of field data in Pspc::System (pc)
 * Created unit tests for Pspg (GPU) code (pg)
-* Reorganization / clean-up of Cuda kernels (pg)
+* Reorganization / clean-up of CUDA kernels (pg)
 * Class template for Anderson-mixing iterator algorithms (pc and pg)
 * Class template for sweeps
 

@@ -93,8 +93,7 @@ Features that are common to all of the PSCF programs include:
 
 Features specific to programs for periodic structures include:
 
-  - High accuracy pseudo-spectral solution of the modified diffusion
-    equation
+  - Accurate pseudo-spectral solution of the modified diffusion equation
 
   - Ordered phases with 1, 2 or 3 dimensional periodicity
 

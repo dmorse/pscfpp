@@ -1,0 +1,299 @@
+/*! \page user_thermo_page Thermodynamic Properties
+
+\ref user_command_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref user_example_page (Next)
+<BR>
+
+The thermodynamic properties obtained for a converged SCFT solution are output
+by PSCF in a standard format that we refer to a thermo file block, or simply a
+thermo block.  A thermo block can also be written to a specified file by the
+WRITE_THERMO command.  A thermo block also appears within the log information
+that is written to standard output during execution of an ITERATE command, as
+well as within each of the \ref user_thermo_state_sec "state" files that are
+created by a SWEEP command.
+
+\section user_thermo_format_sec Thermo File Block Format
+
+An example of the thermo block format produced by an SCFT calculation for
+a periodic system is shown below:
+
+\code
+fHelmholtz    -2.75154924314e+01
+pressure       3.24415250701e+01
+
+fIdeal        -3.44570175013e+01
+fInter         6.94152506994e+00
+
+polymers:
+             phi                 mu
+    0   5.00000000000e-01   2.74031671637e+01
+
+solvents:
+             phi                 mu
+    0   5.00000000000e-01  -3.51022037728e-01
+
+cellParams:
+    0   1.62132469978e+01
+\endcode
+
+The following section discusses each of the entries in this file format,
+describing the meaning of each property and the units and conventions
+used to define its numerical value.
+
+\section user_thermo_energetic_sec Properties
+
+\subsection user_thermo_helmholtz_sub Helmholtz Free Energy
+
+The property "fHelmholtz" is a non-dimensional form of the Helmholtz free
+energy, which will be denoted here by the symbol \f$ \tilde{f} \f$.  The
+reported value is actually the free energy per monomer reference volume in
+thermal energy units. That is, the value reported for "fHelmholtz" for a
+system with a total Helmholtz free energy \f$ F \f$ and associated volume
+\f$ V \f$ is given by ratio
+\f[
+    \tilde{f} \equiv \frac{Fv}{Vk_{B}T}
+\f]
+where \f$ v \f$ is the monomer reference volume.
+
+In the special case of a one-component block polymer melt for which the
+input parameters are given using the \ref user_model_theorist_sub
+"theorists convention" that overall chain length is equal to 1.0, the
+monomer reference volume is equal to the volume per chain. In this case,
+the value reported for "fHelmholtz" is also the free energy per chain
+in thermal energy units, with \f$ k_{B}T = 1 \f$. More generally, in a
+mixture, one can obtain the free energy associated with the volume
+occupied by a molecular species by multiplying the overall contour length
+(for polymers) or size (for solvents) of the species by the value
+reported for "fHelmholtz".
+
+\subsection user_thermo_pressure_sub Pressure and Grand-Canonical Free Energy
+
+The property "pressure" reported by PSCF is a non-dimensionalized
+thermodynamic pressure that is computed from the value of the
+grand-canonical free energy density. Consider a system that contains a
+total of \f$ N_{a} \f$ molecules of molecular species \f$ a \f$, and let
+\f$ \mu_{a} \f$ denote the chemical potential of species \f$ a \f$, for
+each polymer and solvent species.  Let \f$ \Phi \f$ denote the so-called
+"grand" or "grand-canonical" free energy, defined as
+\f[
+   \Phi \equiv F - \sum_{a}\mu_{a}N_{a} \quad,
+\f]
+in which the sum is taken over all polymer and solvent molecular species
+in the system. We define a thermodynamic pressure \f$ P \f$ via the
+identity
+\f[
+    \Phi = -PV  \quad,
+\f]
+where \f$ V \f$ is total system volume. The property reported by PSCF
+as "pressure", which is denoted here by the symbol \f$ \tilde{p} \f$,
+is actually the value of the ratio
+\f[
+    \tilde{p} = \frac{Pv}{k_{B}T} = -\frac{\Phi v}{Vk_{B}T} \quad.
+\f]
+The value of pressure reported by PSCF is thus \f$ -1 \f$ times the
+grand-canonical free energy per monomer reference volume, in thermal
+energy units.
+
+\subsection user_thermo_f_components_sub Free Energy Components
+
+The next two parameters, "fIdeal" and "fInter", are individual components
+of the Helmholtz free energy. "fInter" is an interaction free energy,
+representing the contribution to the Helmholtz free energy arising from
+interactions between dissimilar monomer species. "fIdeal" is the
+contribution to the Helmholtz free energy from everything else. This can
+be thought of as the free energy of a non-interacting ideal gas of
+polymers in the self-consistent chemical potential fields.
+
+In calculations with an external field, a third term will appear here:
+"fExt". This represents the contribution to the Helmholtz free energy
+arising from interactions between the monomer species and the external
+potential fields.
+
+\subsection user_thermo_vMonomer_sub Irrelevance of Monomer Volume in SCFT
+
+As discussed \ref user_model_continuous_sec "elsewhere", the choice of
+a convention for the monomer reference volume \f$ v \f$ determines the
+choice of values for several types of related parameters appropriate for
+a specific physical system.  It turns out, however, that the value of the
+monomer volume \f$ v \f$ itself is usually not needed as an input to an
+SCFT calculation.  This is because changes in the value of \f$ v \f$
+alone, without corresponding changes in the values of related parameters,
+can be shown mathematically to have no effect on SCFT predictions for
+values of any of the properties normally output by any PSCF program.
+Specifically, changes in the value of \f$ v \f$ alone can be shown to have
+no effect on SCFT predictions for monomer volume fraction fields, species
+chemical potentials, or the non-dimensionalized Helmholtz free energy
+\f$ \tilde{f} \f$ or non-dimensionalized pressure \f$ \tilde{p} \f$
+defined above.
+
+When using 'experimentalist' units to model a specific experimental
+system, a user's choice of a convention for \f$ v \f$ obviously does
+affect their choice of input values for the block lengths, solvent
+sizes and monomer statistical segment length parameters. Once a user
+has computed values for these required input parameters, however,
+PSCF programs generally do not require the value of \f$ v \f$ that
+was used to choose these values in order to perform a SCFT
+calculation.
+
+When using 'theorist' units to describe the simple case of a
+one-component block polymer melt, the reference volume \f$ v \f$ is
+usually taken equal to the total volume per molecule in the melt.
+In this case, values input for the Flory-Huggins \f$ \chi \f$ parameters
+correspond to values of the product \f$ \chi N \f$ as defined using
+experimentalist units, where \f$ N \f$ is the total number of monomers
+per molecule.  With this convention, the value reported for
+\f$ \tilde{f} \f$ is simply the the free energy per molecule in
+thermal energy units. It may be shown that in this case, this
+free energy only depends on a set of dimensionless state
+parameters given by the values of \f$ \chi \f$ (or \f$ \chi N \f$),
+the block volume fractions, and ratios of statistical segment
+length values for different monomer types, independent of the
+value of \f$ v \f$.
+
+The choice of a value for \f$ v \f$ does, however, affect
+SCFT predictions for the equilibrium number of molecules in a
+self-assembled unit such as a single unit cell of a periodic
+structure or a spherical micelle.  SCFT predictions for the
+equilibrium dimensions of such a 3D self-assembled structure
+generally depend only on values of statistical segment lengths,
+block lengths and values of \f$ \chi N \f$. The number of chains
+that fit in the corresponding volume (e.g., the volume of a
+unit cell or a micelle) is given by a ratio of total volume to
+volume \f$ v \f$ per monomer, and is thus inversely proportional
+to \f$ v \f$.
+
+\subsection user_thermo_species_sub Polymer and Solvent Species
+
+The next two sections of the example given above are labeled "polymers"
+and "solvents". These are lists, with one row per chemical species, in
+which each row gives the species index, the overall volume fraction "phi",
+and the chemical potential "mu" of that chemical species. Note that the
+chemical potential values are in thermal energy units, so the numerical
+value reported for species \f$ a \f$ actually \f$ \mu_{a} / k_{B}T \f$.
+
+\subsection user_thermo_params_sub Lattice Parameters
+
+The final section, labeled "cellParams", lists the lattice parameters
+for the converged SCFT solution. This section appears in the output
+of SCFT calculations for periodic systems performed using pscf_pc or
+pscf_pg programs. It does not appear in the output of calculations
+for one-dimensional systems performed using pscf_fd, since the domain
+size is fixed by the user in pscf_fd calculations. In pscf_pc and pscf_pg
+calculations, some or all of the lattice parameters may be flexible, and
+are adjusted during the SCFT calculation so as to minimize the free
+energy density. In this case, the converged values of lattice parameters
+values that are allowed to vary are important output of the calculation.
+If an SCFT calculation is run with no flexible lattice parameters (i.e.,
+a rigid unit cell) this section of the thermo block simply reports the
+lattice parameters values that were used as inputs.  Input values for
+lattice parameters are normally provided within the header block of the
+file used to provide an initial guess for the monomer chemical potential
+fields (the w fields). The lattice parameters are reported in whatever
+\ref user_model_length_sec "length units" were used in the input field
+and parameter files.
+
+\section user_thermo_state_sec State Files
+
+A "state" file is a type of file that is created for each state
+(i.e., each set of input parameters) during a
+\ref user_param_sweep_page "parameter sweep" performed by a SWEEP
+command. Each such state file is comprised of a parameter file block
+followed by a thermo file block. The parameter file block contains the
+input parameters used for the SCFT calculation at that state, with the
+Sweep block excluded, formatted in the nested curly-bracket syntax of a
+PSCF parameter file. The thermo block contains thermodynamic properties
+computed for the converged solution. Each state file thus gives all of
+the input <i>and</i> output parameters for a single calculation, fully
+describing that state. Names of state files that are generated by a
+SWEEP command contain an integer index followed by the file extension
+".stt".
+
+A state file can also be generated for an individual calculation
+(as opposed to a parameter sweep) by using the command WRITE_PARAM
+followed by the command WRITE_THERMO, while using the same file name
+argument for both commands. In the command file, this might look like
+\code
+WRITE_PARAM    out/state
+WRITE_THERMO   out/state
+\endcode
+The WRITE_THERMO command is designed to append to the end of an
+existing file rather than overwrite it in order to allow both blocks
+to be written to a single file.
+
+An example of the format of a state file is shown below for a system that
+forms a lamellar phase of a diblock copolymer in a selective solvent.
+\code
+System{
+  Mixture{
+    nMonomer                               3
+    monomers[
+                         6.07000000e+00
+                         6.07000000e+00
+                         6.07000000e+00
+    ]
+    nPolymer                               1
+    nSolvent                               1
+    Polymer{
+      type                              linear
+      nBlock                                 2
+      blocks[
+                                              0    3.500000000000e-01
+                                              1    6.500000000000e-01
+      ]
+      phi                   5.000000000000e-01
+    }
+    Solvent{
+      monomerId                              2
+      size                  2.000000000000e-02
+      phi                   5.000000000000e-01
+    }
+    ds                    1.000000000000e-02
+  }
+  Interaction{
+    chi(
+                           0    0   0.000000000000e+00
+                           1    0   3.000000000000e+01
+                           1    1   0.000000000000e+00
+                           2    0   3.000000000000e+01
+                           2    1   1.000000000000e+02
+                           2    2   0.000000000000e+00
+    )
+  }
+  Domain{
+    mesh                                       100
+    lattice                         lamellar
+    groupName                           P_-1
+  }
+  AmIterator{
+    epsilon               1.000000000000e-11
+    maxItr                               200
+    maxHist                               30
+    verbose                                1
+    isFlexible                             1
+  }
+}
+
+fHelmholtz    -2.75154924314e+01
+pressure       3.24415250701e+01
+
+fIdeal        -3.44570175013e+01
+fInter         6.94152506994e+00
+
+polymers:
+             phi                 mu
+    0   5.00000000000e-01   2.74031671637e+01
+
+solvents:
+             phi                 mu
+    0   5.00000000000e-01  -3.51022037728e-01
+
+cellParams:
+    0   1.62132469978e+01
+\endcode
+
+<BR>
+\ref user_command_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref user_page (Up) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref user_example_page (Next)
+
+*/

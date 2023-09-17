@@ -74,6 +74,25 @@ from within the source or src/ or bld/ directory) to enable or disable
 compilation of CUDA code only in that build directory (i.e,. only in 
 code that is compiled out-of-source or in-source).  
 
+\subsection install_configure_arch_sub Setting a target GPU architecture
+
+Before attempting to compile CUDA code, one should use the configure
+script to set compiler to generate code for the specific type of NVIDIA
+GPU that is installed on the computer on which the program will be run.
+This is done by issuing a command of the form
+\code
+ ./configure -a [architecture id]
+\endcode
+in which [architecture id] represents a code for a particular GPU
+architecture. As also discussed \ref install_overview_GPU_sec "here",
+this architecture id is a string of the form "sm_IJ" in which I and J 
+represent the major and minor version numbers for the CUDA "compute 
+capability" of the relevant GPU. This command sets the value of the 
+variable NVARCH which is defined in file src/config.mk or bld/config.mk, 
+and which is passed as an argument of the "-arch" option to the nvcc 
+compiler. By default, NVARCH is set to "sm_35", corresponding to 
+compute capability 3.5, which is the appropriate level for a K40 GPU. 
+
 \subsection install_configure_query_sub The "query" option
 
 The -q command line option of the configure script may be used to query

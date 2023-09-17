@@ -1,6 +1,6 @@
 /*! \page user_example_page Examples
 
-\ref user_command_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
+\ref user_thermo_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
 \ref user_unitcell_page (Next)
 <BR>
 
@@ -102,7 +102,7 @@ directory, so this script normally removes all files in this
 directory.
 
 <BR>
-\ref user_command_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
+\ref user_thermo_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
 \ref user_page (Up) &nbsp; &nbsp; &nbsp; &nbsp; 
 \ref user_unitcell_page (Next)
 

@@ -40,6 +40,7 @@
        <li> \ref user_command_pg_page </li>
      </ul>
    </li>
+   <li> \subpage user_thermo_page    </li>
    <li> \subpage user_example_page   </li>
    <li> \subpage user_unitcell_page  </li>
    <li> \subpage user_groups_page    </li>
