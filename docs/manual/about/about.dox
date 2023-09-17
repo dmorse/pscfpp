@@ -122,7 +122,7 @@ include:
 
   - Availability of a companion package 
     <a href=https://github.com/kdorfmanUMN/polymer_visual/>Polymer Visual</a> 
-    for visualization of periodic structures.
+    for visualization of periodic fields and structures.
 
 Features specific to the pscf_pc CPU programs for periodic structures are:
 

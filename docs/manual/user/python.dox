@@ -4,64 +4,64 @@
 \ref user_theory_page (Next)
 <BR>
 
-The PSCF repository contains python tools that allow the user to
+The PSCF repository contains Python tools that allow the user to
 parse and edit several different types of input and output files used
 by the package.  These tools can be used to process and analyze output
 files, or to modify input files.
 
 \section user_python_modules_sec Python Source Files
 
-All python source code files that are provided with PSCF are located
-within the directory pscfpp/lib/python/pscfpp.  Every python file in
-in this directory defines a module that belongs to a python package
+All Python source code files that are provided with PSCF are located
+within the directory pscfpp/lib/python/pscfpp.  Every Python file in
+in this directory defines a module that belongs to a Python package
 named 'pscfpp'. The full name of each such module thus begins with a
 package name prefix 'pscfpp' followed by a dot, followed by the base
 name of the source file. For example, to use a class or function that
 that is defined in the file 'param.py', one must import the contents
-of module pscfpp.param from within a python interpreter.
+of module pscfpp.param from within a Python interpreter.
 
 The \ref install_environment_page 
 "instructions for compiling the PSCF C++/CUDA code" require each user 
-to add the directory pscfpp/lib/python to their python module search 
+to add the directory pscfpp/lib/python to their Python module search 
 path (i.e., to their PYTHONPATH environment variable). As long as this 
-directory is in the python path, a python interpreter should be able to 
+directory is in the Python path, a Python interpreter should be able to 
 find any module in the pscfpp package.
 
-To use any of the python tools provided with PSCF, one must open a
-python 3 interpreter. To open an interactive interpreter, one can enter
+To use any of the Python tools provided with PSCF, one must open a
+Python 3 interpreter. To open an interactive interpreter, one can enter
 either the command
 \code
    > python
 \endcode
-on a system in which python version 3 is the default, or the command
+on a system in which Python version 3 is the default, or the command
 \code
    > python3
 \endcode
-on a system in which python 2.7 is still the default.
+on a system in which Python 2.7 is still the default.
 
-To run a script file containing python source code, rather than entering
-commands interactively, the python interpreter can also be invoked with
+To run a script file containing Python source code, rather than entering
+commands interactively, the Python interpreter can also be invoked with
 a file name as an argument, using the syntax 'python script.py', where
-script.py is the name of a python script file.
+script.py is the name of a Python script file.
 
 \section user_python_doc_sec Python API Documentation
 
-Detailed API documentation for all python modules that are distributed
+Detailed API documentation for all Python modules that are distributed
 with PSCF can be accessed within the PSCF web manual by opening the
 'Namespaces' tab on the main page, and then clicking on the label for
 namespace 'pscfpp'.  Within the web manual, the pscfpp namespace
-refers to the pscfpp python package, rather than to a C++ namespace.
+refers to the pscfpp Python package, rather than to a C++ namespace.
 The web page for the pscfpp package (or namespace) contains a link to
-documentation of each python module in the package, each of which
-corresponds to a python file in directory pscfpp/lib/python/pscfpp.
-The web page for each python module contains links to a documentation
+documentation of each Python module in the package, each of which
+corresponds to a Python file in directory pscfpp/lib/python/pscfpp.
+The web page for each Python module contains links to a documentation
 page for every class and function defined in that module.
 
 * *Comment*: The fact that the Pscf and Util C++ namespaces and the
-pscfpp python package are all listed together under the Namespaces
+pscfpp Python package are all listed together under the Namespaces
 browser tab of the PSCF web manual is a result of the fact that the
 <a href=http://www.doxygen.org> doxygen </a> documentation utility
-that was used to generate this manual treats C++ namespaces and python
+that was used to generate this manual treats C++ namespaces and Python
 packages as equivalent concepts. Doxygen seems to have been designed
 primarily to document software in which all of the code was written
 in a single programming language, and does not provide a better way
@@ -106,7 +106,7 @@ for each class.
 The class param.Composite (or pscfpp.param.Composite) is designed to
 parse a parameter file block that is delimited opening and closing curly
 brackets.  The C++ class that is used in PSCF to parse such a file block
-is named Util::ParamComposite, and the name of the corresponding python
+is named Util::ParamComposite, and the name of the corresponding Python
 class was chosen to be analogous.  An instance of this class can be used
 to parse either an entire parameter file, which normally consists of a
 single parameter file block that begins with the block label 'System',
@@ -118,11 +118,11 @@ the commands
   import pscfpp.param as param
   system = param.Composite('input')
 \endcode
-from within a interactive python interpreter or a python script.  The
+from within a interactive Python interpreter or a Python script.  The
 constructor method for class param.Composite opens the file whose name
 is passed as a parameter, parses its contents, and returns an instance
 of this class that contains a parsed version of the file contents. The
-resulting object is assigned here to a python variable named 'system'.
+resulting object is assigned here to a Python variable named 'system'.
 
 ### Accessing Parameter Values
 
@@ -130,13 +130,13 @@ After a parameter file has been parsed, as described above, every
 parameter file block that is delimited by curly brackets is represented
 internally by an instance of param.Composite.  Every sub-element (i.e.,
 sub-block or parameter) within such a block can be accessed using the
-dot notation used to access attributes of a python object, using the
+dot notation used to access attributes of a Python object, using the
 label of the child item as an attribute name. Each nested sub-block
 within such a parameter file block is represented by a nested instance
 of param.Composite with a name given by the label of the sub-block.
 Each parameter within such a block is instead represented by either an
-instance of a primitive python data type (an int, float, or string) or
-a python list, depending on the type of variable and the nature of its
+instance of a primitive Python data type (an int, float, or string) or
+a Python list, depending on the type of variable and the nature of its
 value.
 
 In all of the following examples, we assume that the object 'system'
@@ -155,7 +155,7 @@ returns an integer attribute that contains the value of the parameter
 nMonomer, which appears within the Mixture block of the corresponding
 parameter file.
 
-* *Array-valued parameters:* Array-valued parameters are stored as python
+* *Array-valued parameters:* Array-valued parameters are stored as Python
 lists, in which each element of the list stores the value of one element
 of the associated array. For example,
 \code
@@ -190,7 +190,7 @@ If the text representation of the value of either a single parameter
 line), or of a single element of an array-valued parameter, is given in
 the parameter file as two or more strings separated by spaces on a single
 line, then the value of this parameter or array element will be stored
-as a python list of values.  This situation occurs, for example, for
+as a Python list of values.  This situation occurs, for example, for
 elements of the blocks array within each Polymer block of a parameter
 file. The value of each element of this array is given as a list of
 two or more values that specify (at a minimum) the monomer type and
@@ -201,7 +201,7 @@ above, the quantity
 \code
    system.Mixture.Polymer[1].blocks[0]
 \endcode
-is a python list containing values of variables associated with the
+is a Python list containing values of variables associated with the
 first block of the second polymer species within a mixture.  If this
 polymer uses the default parameter file format for a linear chain,
 then this list contains a monomer type index and a block length. In
@@ -265,7 +265,7 @@ command, or as sections of other file types.
 
 Suppose that a file named 'input' contains a thermo file block that
 is the only data in this file.  One may parse this file by entering
-the python commands
+the Python commands
 \code
    from pscfpp.output import *
    thermo = Thermo('input')
@@ -292,7 +292,7 @@ corresponding floating point data attribute of object thermo.
 A Thermo object may have attributes named 'polymers', 'solvents'
 and/or 'cellParams' if the corresponding thermo file block contains
 corresponding elements. Each of these attributes, when present, is a
-python list, with elements that can be accessed using the square bracket
+Python list, with elements that can be accessed using the square bracket
 syntax.  For example, if thermo contains the contents of the thermo
 block produced by a pscf_pc or pscf_pg simulation of a periodic system,
 the quantity
@@ -376,7 +376,7 @@ Class Sweep is different from the other parser classes discussed here
 in that it is designed to parse and store the contents of multiple data
 files, rather than a single file or file block.  This class is designed
 to parse all of the state files created by a sweep calculation and store
-their contents in a python list in which each element is an instance of
+their contents in a Python list in which each element is an instance of
 class State. Each State object in this list contains all of the data
 contained in an associated state file that describes one physical state
 (i.e., one set of input parameters) within a path through parameter
@@ -405,11 +405,11 @@ files named
 Each of these state files contain the input parameters and output
 variables for an SCFT calculation peformed at a single state along
 the specified path through parameter space. We assume in what 
-follows that a python interpreter was launched from the parent
+follows that a Python interpreter was launched from the parent
 directory of the directory 'out/' that contains these state files.
 
 To parse and store the contents of all of the numbered state files 
-produced by such a sweep, one could enter the python commands
+produced by such a sweep, one could enter the Python commands
 \code
     from pscfpp.output import *
     s = Sweep('out/')
@@ -426,7 +426,7 @@ followed by the file extension '.stt'.
 
 After successful construction of a Sweep object, the resulting object
 stores the contents of each state file in a State object.  These State
-objects are stored internally in a python list, in the order in which
+objects are stored internally in a Python list, in the order in which
 states were treated within the sweep.  The Sweep class overloads the
 square bracket index operator to allow access to the elements of this
 list.  The State objects associated with a Sweep object named 's' are
@@ -548,7 +548,7 @@ as well as the simpler field file format used for one-dimensional
 systems by the pscf_fd program. The type of field file is inferred
 during parsing from the format.  Parsing can be performed by the
 constructor for this class, by passing the constructor a filename
-argument, as for the other python classes described above.
+argument, as for the other Python classes described above.
 
 A Field object has three attributes named 'header', 'data', and
 'type'. The 'header' attribute is a dictionary that contains the
