@@ -20,7 +20,7 @@ System{
   }
   Interaction{
      chi(
-          1   0   13
+          1   0   10
      )
   }
   Domain{
@@ -54,10 +54,15 @@ System{
             outputFileName  out/mcHamiltonian
             nSamplePerBlock 2
       }
+      BinaryStructureFactorGrid{
+            interval        1
+            outputFileName  out/structureFactor
+            nSamplePerBlock 2
+      }
 
     }
   }
 
 }
 
-    unitCell cubic   1.3835952906
+    unitCell cubic   3.2

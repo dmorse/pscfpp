@@ -143,6 +143,16 @@ __global__ void mcftsScale(cudaReal* result, cudaReal scale, int size)
    }
 }
 
+__global__ void complexSquare(cudaReal* result, const cudaComplex* a, int size)
+{
+   int nThreads = blockDim.x * gridDim.x;
+   int startID = blockIdx.x * blockDim.x + threadIdx.x;
+   for (int i = startID; i < size; i += nThreads) {
+      // Calculate the squared magnitude
+      result[i] = a[i].x* a[i].x + a[i].y*a[i].y;
+   }
+}
+
 
 
 }
