@@ -526,9 +526,11 @@ particular direction that is equal to 1/4 when expressed in a Bravais
 basis, then the number of mesh points along that direction must be a 
 multiple of 4. 
 
-The algorithm used by PSCF to construct symmetry-adapted basis functions 
-can fail if the user enters a set of mesh dimensions in the parameter
-file that do not satisfy the compatibility conditions described above.
+PSCF requires that the user enter mesh dimensions that yield a mesh
+that is invariant under the space group, in the sense described above.
+If this condition is not satisfied, the function that constructs 
+symmetry-adapted basis functions will print an error message 
+indicating the nature of the problem and then halt execution.
 
 <BR>
 \ref user_fourier_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp;

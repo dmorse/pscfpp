@@ -13,7 +13,7 @@ programs are affected by specific changes:
   fd  - CPU finite difference code for 1D problems (pscf_fd)
   all - all programs (fd, pc, and pg)
 
-Version 1.1.0  (ongoing, planned 10/2023)
+Version 1.1.0  (9/19/2023)
 =========================================
 
 User-visible features

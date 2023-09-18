@@ -539,38 +539,39 @@ function.
 
 \section user_python_field_sec Field Files
 
-An instance of Field (or pscfpp.field.Field) can be used to parse
-and store the contents of a field file written in any of the formats
-used by different PSCF programs. Specifically, an instance of this
-class can store the contents of any of the 3 file formats used by
-the pscf_pc and pscf_pg programs for fields in periodic systems,
-as well as the simpler field file format used for one-dimensional
-systems by the pscf_fd program. The type of field file is inferred
-during parsing from the format.  Parsing can be performed by the
-constructor for this class, by passing the constructor a filename
-argument, as for the other Python classes described above.
+An instance of class Field (or pscfpp.field.Field) can be used to parse
+and store the contents of a field file written in any of the formats used 
+by different PSCF programs. Specifically, an instance of this class can 
+store the contents of any of the 3 file formats used by the pscf_pc and 
+pscf_pg programs for fields in periodic systems, as well as the simpler 
+field file format used for one-dimensional systems by the pscf_fd 
+program. The type of field file is inferred during parsing from the 
+file format.  Parsing can be performed by the constructor for this 
+class, by passing the constructor a filename argument, as for the other 
+Python parser classes described above.
 
-A Field object has three attributes named 'header', 'data', and
-'type'. The 'header' attribute is a dictionary that contains the
-contents of the header section, using the variable names or labels
-as dictionary keys. The 'data' attribute is a list of lists in
-which each element of the outer list corresponds to one row of
-the data section in the field file. When accessing elements of
-the data attribute using two subscripts, the first subscript (the
-row index) is thus index for a spatial degree of freedom (i.e.,
-a grid point or basis function) and the second (the column index)
-is an index for a monomer type, hkl index, or row index, 
-depending on the type of field file being parsed and the column
-being indexed. The 'type' attribute is a string identifier for 
-the field file type.
+A Field object has three attributes named 'header', 'data', and 'type'. 
+The 'header' attribute is a dictionary that contains the contents of 
+the header section, using the variable names or labels as dictionary 
+keys. The 'data' attribute is a list of lists in which each element 
+of the outer list corresponds to one row of the data section in the 
+field file. When accessing elements of the data attribute using two 
+subscripts, the first subscript (the row index) is thus an index for 
+a spatial degree of freedom (i.e., a grid point, wavevector, or basis 
+function) and the second (the column index) is an index for a column 
+that may contain a field component associated with a specific monomer 
+type, a row index, or information about a basis function, depending on 
+the type of field file being parsed and the column. The 'type' 
+attribute is a string identifier for the field file type, which has 
+allowed values "fd1d", "basis", "rgrid", and "kgrid". 
 
-The class provides several methods to change the format of the
-data table, including methods to add a new column (to allow for
-addition of a new monomer type), delete a column, or to change 
-the order of columns associated with different monomer types.
+The Field class provides several methods that can change the format of 
+the data table, including methods to add a new column (to allow for
+addition of a new monomer type), delete a column, or change the order
+of columns. 
 
-Please consult the pscfpp.field.Field class documentation for
-further details.
+Please consult the pscfpp.field.Field class documentation for further 
+details.
 
 <BR>
 \ref user_visualize_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
