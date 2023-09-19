@@ -2,6 +2,7 @@
 #define PSPG_LINEAR_ALGEBRA_H
 
 #include "GpuTypes.h"
+#include <complex>
 
 namespace Pscf {
 namespace Pspg {

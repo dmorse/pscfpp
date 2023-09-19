@@ -4,7 +4,8 @@ pspg_simulate_analyzer_= \
   pspg/simulate/analyzer/AnalyzerManager.cu \
   pspg/simulate/analyzer/AnalyzerFactory.cu \
   pspg/simulate/analyzer/TrajectoryWriter.cu \
-  pspg/simulate/analyzer/McHamiltonianAnalyzer.cu 
+  pspg/simulate/analyzer/McHamiltonianAnalyzer.cu \
+  pspg/simulate/analyzer/BinaryStructureFactorGrid.cu
   
 pspg_simulate_analyzer_SRCS=\
      $(addprefix $(SRC_DIR)/, $(pspg_simulate_analyzer_))

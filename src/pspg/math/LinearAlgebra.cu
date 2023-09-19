@@ -144,7 +144,6 @@ __global__ void mcftsScale(cudaReal* result, cudaReal scale, int size)
 }
 
 
-
 }
 }
 #endif

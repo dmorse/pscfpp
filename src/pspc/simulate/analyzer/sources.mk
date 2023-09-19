@@ -4,7 +4,8 @@ pspc_simulate_analyzer_= \
   pspc/simulate/analyzer/AnalyzerManager.cpp \
   pspc/simulate/analyzer/AnalyzerFactory.cpp \
   pspc/simulate/analyzer/TrajectoryWriter.cpp \
-  pspc/simulate/analyzer/McHamiltonianAnalyzer.cpp 
+  pspc/simulate/analyzer/McHamiltonianAnalyzer.cpp \
+  pspc/simulate/analyzer/BinaryStructureFactorGrid.cpp 
   
 pspc_simulate_analyzer_SRCS=\
      $(addprefix $(SRC_DIR)/, $(pspc_simulate_analyzer_))
