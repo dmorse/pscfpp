@@ -15,8 +15,9 @@ with open(file_path, 'r') as file:
         data = list(map(float, line.split()))
         for i in range(2):
             data_S[i].append(data[i])
-            
+plt.figure()            
 plt.plot(data_S[0], data_S[1],'-o')
 plt.xlim([0,12])
 plt.xlabel(r'$k R_0$')
 plt.ylabel(r'$\frac{S(k)}{\rho_0 N}$')
+plt.show()

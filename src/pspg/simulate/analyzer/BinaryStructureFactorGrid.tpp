@@ -122,19 +122,18 @@ namespace Pspg
       int nBlocks, nThreads;
       ThreadGrid::setThreadsLogical(wm.capacity(), nBlocks, nThreads);
       pointWiseBinarySubtract<<<nBlocks, nThreads>>>
-            (system().w().rgrid(0).cDField(), system().w().rgrid(1).cDField(), wm.cDField(), kSize_);
-      scaleReal<<<nBlocks, nThreads>>>(wm.cDField(), 0.5, kSize_);
+            (system().w().rgrid(0).cDField(), system().w().rgrid(1).cDField(), wm.cDField(), wm.capacity());
+      scaleReal<<<nBlocks, nThreads>>>(wm.cDField(), 0.5, wm.capacity());
       RDFieldDft<D> wk;
       wk.allocate(dimensions);
       system().fft().forwardTransform(wm, wk);
-      cudaReal* temp = new cudaReal[kSize_];
-      complexSquare<<<nBlocks, nThreads>>>
-            (temp, wk.cDField(), kSize_);
+      complex<double> *wkCpu; 
+      wkCpu= new complex<double>[kSize_];
+      cudaMemcpy(wkCpu, wk.cDField(), kSize_ * sizeof(cudaComplex), cudaMemcpyDeviceToHost);
       // Convert real grid to KGrid format
       for (int k=0; k< wk.capacity(); k++) {
-         accumulators_[k].sample((double)temp[k]);
+         accumulators_[k].sample(norm(wkCpu[k]));
       }
-      delete[]temp;
    }
    
    template <int D>
