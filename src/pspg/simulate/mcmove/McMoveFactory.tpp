@@ -5,7 +5,7 @@
 
 // Subclasses of McMove 
 #include "RealMove.h"
-
+#include "FourierMove.h"
 
 namespace Pscf {
 namespace Pspg {
@@ -35,12 +35,9 @@ namespace Pspg {
       // Try to match classname
       if (className == "RealMove") {
          ptr = new RealMove<D>(*mcSimulatorPtr_);
-      } 
-      #if 0
-      else if (className == "FourierMove") {
+      } else if (className == "FourierMove") {
          ptr = new FourierMove<D>(*mcSimulatorPtr_);
       }
-      #endif
 
       return ptr;
    }

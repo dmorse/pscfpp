@@ -42,6 +42,7 @@ __global__ void scaleReal(cudaReal* result, double scale, int size);
 
 __global__ void mcftsScale(cudaReal* result, cudaReal scale, int size);
 
+__global__ void fourierMove(cudaComplex* a, const cudaReal* b, const cudaReal* c, int size);
 
 /** @} */
 
