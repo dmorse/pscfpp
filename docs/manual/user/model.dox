@@ -377,6 +377,36 @@ is taken as the reference volume. In this case, the solvent size wil
 be set equal to 1.0 by convention, and the lengths for polymer blocks
 will generally be much greater than 1.
 
+\section user_model_vMonomer_sec Irrelevance of Monomer Volume in SCFT
+
+As discussed \ref user_model_continuous_sec "above", when using SCFT
+to analyze a specific experimental system, one's choice of a convention 
+for the monomer reference volume \f$ v \f$ determines the appropriate
+choice of values for several types of related parameters appropriate 
+for a specific physical system.  It turns out, however, that once the
+values of these related parameters are known, the value of the monomer 
+volume \f$ v \f$ itself is actually not needed as an independent input 
+to an SCFT calculation.  It can be shown that changes in the value of 
+\f$ v \f$ alone, without corresponding changes in the values assigned 
+to related parameters (e.g., statistical segment lengths, block lengths 
+and chi parameters) have no effect on SCFT predictions for values of 
+any of the properties normally output by the PSCF programs. 
+Specifically, changes in the value of \f$ v \f$ alone can be shown to 
+have no effect on SCFT predictions for average monomer volume fraction 
+fields, polymer or solvent chemical potential values, or the 
+non-dimensionalized Helmholtz free energy that is reported by PSCF in 
+its standard format for outputting 
+\ref user_thermo_page "thermodynamic properties", 
+which is a free energy per monomer. PSCF programs thus do not require
+the user to input a value for \f$ v \f$ as an input to an SCFT 
+calculation.
+
+The role of \f$ v \f$ in SCFT is discussed in more detail in a separate 
+discussion of the \ref user_theory_page "working equations for SCFT".
+There we show explicitly that the forms of these equations implemented 
+in PSCF simply do not require a value for \f$ v \f$ as an independent
+input parameter. 
+
 <BR>
 \ref user_page       (Prev / Up) &nbsp; &nbsp; &nbsp; &nbsp;
 \ref user_files_page (Next)
