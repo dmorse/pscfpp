@@ -75,6 +75,16 @@ namespace Pspg
       }
       hasStress_ = false;
    }
+   
+   template <int D>
+   void Mixture<D>::setupUnitCell(UnitCell<D> const & unitCell)
+   {
+      nUnitCellParams_ = unitCell.nParameter();
+      for (int i = 0; i < nPolymer(); ++i) {
+         polymer(i).setupUnitCell(unitCell);
+      }
+      hasStress_ = false;
+   }
 
    /*
    * Reset statistical segment length for one monomer type.

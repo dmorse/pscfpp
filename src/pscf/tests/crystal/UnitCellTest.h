@@ -22,10 +22,12 @@ class UnitCellTest : public UnitTest
 public:
 
    void setUp()
-   {}
+   { 
+      //setVerbose(1); 
+   }
 
    void tearDown()
-   {}
+   {  setVerbose(0);}
  
    template <int D>
    bool isValidReciprocal(UnitCell<D> const & cell, bool verbose = false)
@@ -98,6 +100,7 @@ public:
 
       TEST_ASSERT(eq(v.rBasis(0)[0], param));
       TEST_ASSERT(eq(v.kBasis(0)[0], twoPi/param));
+      TEST_ASSERT(eq(v.volume(), param));
       TEST_ASSERT(isValidReciprocal(v));
       TEST_ASSERT(isValidDerivative(v));
 
@@ -123,12 +126,14 @@ public:
       TEST_ASSERT(isValidReciprocal(u));
       TEST_ASSERT(isValidDerivative(u));
 
-      #if 0
-      std::cout.width(20);
-      std::cout.precision(6);
-      std::cout << v << std::endl ;
-      std::cout << v.rBasis(0) << std::endl;
-      std::cout << v.kBasis(0) << std::endl;
+      #if 1
+      if (verbose() > 1) {
+         std::cout.width(20);
+         std::cout.precision(6);
+         std::cout << v << std::endl ;
+         std::cout << v.rBasis(0) << std::endl;
+         std::cout << v.kBasis(0) << std::endl;
+      }
       #endif
 
    }
@@ -147,18 +152,23 @@ public:
       TEST_ASSERT(isValidReciprocal(v));
       TEST_ASSERT(isValidDerivative(v));
 
-      #if 0
-      std::cout.width(20);
-      std::cout.precision(6);
-      std::cout << v << std::endl ;
+      // Test volume
+      double param = v.parameter(0);
+      TEST_ASSERT(eq(v.volume(), param*param));
 
-      std::cout << "a(0) = " << v.rBasis(0) << std::endl;
-      std::cout << "a(1) = " << v.rBasis(1) << std::endl;
-      std::cout << "b(0) = " << v.kBasis(0) << std::endl;
-      std::cout << "b(1) = " << v.kBasis(1) << std::endl;
+      #if 1
+      if (verbose() > 0) {
+         std::cout.width(20);
+         std::cout.precision(6);
+         std::cout << v << std::endl ;
+   
+         std::cout << "a(0) = " << v.rBasis(0) << std::endl;
+         std::cout << "a(1) = " << v.rBasis(1) << std::endl;
+         std::cout << "b(0) = " << v.kBasis(0) << std::endl;
+         std::cout << "b(1) = " << v.kBasis(1) << std::endl;
+      }
       #endif
 
-      double param = v.parameter(0);
       double twoPi = 2.0*Constants::Pi;
       double b, dbb;
       int i, j, k;
@@ -212,17 +222,20 @@ public:
       TEST_ASSERT(isValidReciprocal(v));
       TEST_ASSERT(isValidDerivative(v));
 
-      #if 0
-      printEndl();
-      std::cout.width(20);
-      std::cout.precision(6);
-      std::cout << v << std::endl ;
+      if (verbose() > 0) {
+         std::cout.width(20);
+         std::cout.precision(6);
+         std::cout << v << std::endl ;
+   
+         std::cout << "a(0) = " << v.rBasis(0) << std::endl;
+         std::cout << "a(1) = " << v.rBasis(1) << std::endl;
+         std::cout << "b(0) = " << v.kBasis(0) << std::endl;
+         std::cout << "b(1) = " << v.kBasis(1) << std::endl;
+      }
 
-      std::cout << "a(0) = " << v.rBasis(0) << std::endl;
-      std::cout << "a(1) = " << v.rBasis(1) << std::endl;
-      std::cout << "b(0) = " << v.kBasis(0) << std::endl;
-      std::cout << "b(1) = " << v.kBasis(1) << std::endl;
-      #endif
+      // Test volume
+      double param = v.parameter(0);
+      TEST_ASSERT(eq(v.volume(), param*param*0.5*sqrt(3.0)));
 
       IntVec<2> d;
       d[0] = 8;
@@ -277,6 +290,11 @@ public:
       TEST_ASSERT(isValidReciprocal(v));
       TEST_ASSERT(isValidDerivative(v));
 
+      // Test volume
+      double a = v.parameter(0);
+      double b = v.parameter(1);
+      TEST_ASSERT(eq(v.volume(), a*b));
+
       // Test assignment
       UnitCell<2> u;
       u = v;
@@ -303,6 +321,11 @@ public:
       TEST_ASSERT(v.nParameter() == 2);
       TEST_ASSERT(isValidReciprocal(v));
       TEST_ASSERT(isValidDerivative(v));
+
+      // Test volume
+      double a = v.parameter(0);
+      double alpha = v.parameter(1);
+      TEST_ASSERT(eq(v.volume(), a*a*sin(alpha)));
 
       // Test assignment
       UnitCell<2> u;
@@ -340,6 +363,12 @@ public:
       TEST_ASSERT(isValidReciprocal(v));
       TEST_ASSERT(isValidDerivative(v));
 
+      // Test volume
+      double a = v.parameter(0);
+      double b = v.parameter(1);
+      double alpha = v.parameter(2);
+      TEST_ASSERT(eq(v.volume(), a*b*sin(alpha)));
+
       // Test assignment
       UnitCell<2> u;
       u = v;
@@ -376,6 +405,10 @@ public:
       TEST_ASSERT(v.nParameter() == 1);
       TEST_ASSERT(isValidReciprocal(v));
       TEST_ASSERT(isValidDerivative(v));
+
+      // Test volume
+      double a = v.parameter(0);
+      TEST_ASSERT(eq(v.volume(), a*a*a));
 
       #if 0
       std::cout.width(20);
@@ -467,6 +500,12 @@ public:
       TEST_ASSERT(isValidReciprocal(v));
       TEST_ASSERT(isValidDerivative(v));
 
+      // Test volume
+      double a = v.parameter(0);
+      double c = v.parameter(1);
+      //double alpha = v.parameter(2);
+      TEST_ASSERT(eq(v.volume(), a*a*c));
+
       // Test assignment
       UnitCell<3> u;
       u = v;
@@ -506,6 +545,12 @@ public:
       TEST_ASSERT(isValidReciprocal(v));
       TEST_ASSERT(isValidDerivative(v));
 
+      // Test volume
+      double a = v.parameter(0);
+      double b = v.parameter(1);
+      double c = v.parameter(2);
+      TEST_ASSERT(eq(v.volume(), a*b*c));
+
       #if 0
       std::cout.width(20);
       std::cout.precision(6);
@@ -519,7 +564,7 @@ public:
       std::cout << "b(2) = " << v.kBasis(2) << std::endl;
       #endif
 
-      double param, b, dbb;
+      double param, dbb;
       double twoPi = 2.0*Constants::Pi;
       int i, j, k;
       for (k = 0; k < v.nParameter(); ++k) {
@@ -587,8 +632,12 @@ public:
       bool isReciprocal = isValidReciprocal(v);          // Quiet test
       //bool isReciprocal = isValidReciprocal(v, true);  // Verbose test
       TEST_ASSERT(isReciprocal);
-
       TEST_ASSERT(isValidDerivative(v));
+
+      // Test volume
+      double a = v.parameter(0);
+      double c = v.parameter(1);
+      TEST_ASSERT(eq(v.volume(), a*a*c*0.5*sqrt(3.0)));
 
       // Test assignment
       UnitCell<3> u;
@@ -695,8 +744,14 @@ public:
       bool isReciprocal = isValidReciprocal(v);          // Quiet test
       //bool isReciprocal = isValidReciprocal(v, true);  // Verbose test
       TEST_ASSERT(isReciprocal);
-
       TEST_ASSERT(isValidDerivative(v));
+
+      // Test volume
+      double a = v.parameter(0);
+      double b = v.parameter(1);
+      double c = v.parameter(2);
+      double beta = v.parameter(3);
+      TEST_ASSERT(eq(v.volume(), a*b*c*sin(beta)));
 
       // Test assignment
       UnitCell<3> u;

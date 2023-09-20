@@ -35,10 +35,9 @@ namespace Pscf
       maxItr_(200),
       maxHist_(50),
       nBasis_(0),
-      itr_(0),
+      totalItr_(0),
       nElem_(0),
-      verbose_(0),
-      outputTime_(false),
+      verbose_(1),
       isAllocatedAM_(false)
    {  setClassName("AmIteratorTmpl"); }
 
@@ -66,16 +65,13 @@ namespace Pscf
       // Default set in constructor (50) or before calling this function
       readOptional(in, "maxHist", maxHist_);
 
-      // Verbosity level of error reporting, values 0-2 (optional)
-      // Initialized to 0 by default in constructor
-      // verbose_ = 0 => concise
-      // verbose_ = 1 => report all error measures at end
-      // verbose_ = 2 => report all error measures every iteration
+      // Verbosity level of error reporting, values 0-3 (optional)
+      // Initialized to 1 by default in constructor
+      // verbose_ = 0 => FTS
+      // verbose_ = 1 => concise
+      // verbose_ = 2 => report all error measures at end
+      // verbose_ = 3 => report all error measures every iteration
       readOptional(in, "verbose", verbose_);
-
-      // Flag to output timing results (true) or skip (false)
-      // Initialized to false by default in constructor
-      readOptional(in, "outputTime", outputTime_);
    }
 
    /*
@@ -90,24 +86,14 @@ namespace Pscf
       // Preconditions for generic Anderson-mixing (AM) algorithm.
       UTIL_CHECK(hasInitialGuess());
       UTIL_CHECK(isAllocatedAM_);
-
-      // Timers for analyzing performance
-      Timer timerMDE;
-      Timer timerStress;
-      Timer timerAM;
-      Timer timerResid;
-      Timer timerError;
-      Timer timerCoeff;
-      Timer timerOmega;
-      Timer timerTotal;
-
+      
       // Start overall timer
-      timerTotal.start();
+      timerTotal_.start();
 
       // Solve MDE for initial state
-      timerMDE.start();
+      timerMDE_.start();
       evaluate();
-      timerMDE.stop();
+      timerMDE_.stop();
 
       // Iterative loop
       nBasis_ = fieldBasis_.size();
@@ -117,12 +103,15 @@ namespace Pscf
          getCurrent(temp_);
          fieldHists_.append(temp_);
 
-         timerAM.start();
+         timerAM_.start();
 
-         if (verbose_ > 1) {
+         if (verbose_ > 2) {
             Log::file() << "------------------------------- \n";
          }
-         Log::file() << " Iteration " << Int(itr_,5);
+         
+         if (verbose_ > 0){
+            Log::file() << " Iteration " << Int(itr_,5);
+         }
 
 
          if (nBasis_ < maxHist_) {
@@ -132,15 +121,15 @@ namespace Pscf
          }
 
          // Compute residual vector
-         timerResid.start();
+         timerResid_.start();
          getResidual(temp_);
 
          // Append current residual to resHists_ ringbuffer
          resHists_.append(temp_);
-         timerResid.stop();
+         timerResid_.stop();
 
          // Compute scalar error, output report to log file.
-         timerError.start();
+         timerError_.start();
          double error;
          try {
             error = computeError(verbose_);
@@ -148,10 +137,10 @@ namespace Pscf
             Log::file() << ",  error  =             NaN" << std::endl;
             break; // Exit loop if a NanException is caught
          }
-         if (verbose_ < 2) {
+         if (verbose_ > 0 && verbose_ < 3) {
              Log::file() << ",  error  = " << Dbl(error, 15) << std::endl;
          }
-         timerError.stop();
+         timerError_.stop();
 
          // Output additional details of this iteration to the log file
          outputToLog();
@@ -160,75 +149,55 @@ namespace Pscf
          if (error < epsilon_) {
 
             // Stop timers
-            timerAM.stop();
-            timerTotal.stop();
+            timerAM_.stop();
+            timerTotal_.stop();
 
-            if (verbose_ > 1) {
+            if (verbose_ > 2) {
                Log::file() << "-------------------------------\n";
             }
-            Log::file() << " Converged\n";
+            
+            if (verbose_ > 0) {
+               Log::file() << " Converged\n";
+            }
 
             // Output error report if not done previously
-            if (verbose_ == 1) {
+            if (verbose_ == 2) {
                Log::file() << "\n";
                computeError(2); 
             }
 
-            // Output timing results, if requested.
-            if (outputTime_) {
-               double total = timerTotal.time();
-               Log::file() << "\n";
-               Log::file() << "Iterator times contributions:\n";
-               Log::file() << "\n";
-               Log::file() << "MDE solution:         "
-                           << timerMDE.time()  << " s,  "
-                           << timerMDE.time()/total << "\n";
-               Log::file() << "residual computation: "
-                           << timerResid.time()  << " s,  "
-                           << timerResid.time()/total << "\n";
-               Log::file() << "mixing coefficients:  "
-                           << timerCoeff.time()  << " s,  "
-                           << timerCoeff.time()/total << "\n";
-               Log::file() << "checking convergence: "
-                           << timerError.time()  << " s,  "
-                           << timerError.time()/total << "\n";
-               Log::file() << "updating guess:       "
-                           << timerOmega.time()  << " s,  "
-                           << timerOmega.time()/total << "\n";
-               Log::file() << "total time:           "
-                           << total << " s  \n";
-            }
-            Log::file() << "\n";
-
+            totalItr_ += itr_;
+            
             // Successful completion (i.e., converged within tolerance)
             return 0;
 
          } else {
 
             // Compute optimal coefficients for basis vectors
-            timerCoeff.start();
+            timerCoeff_.start();
             computeResidCoeff();
-            timerCoeff.stop();
+            timerCoeff_.stop();
 
             // Compute the trial updated field and update the system
-            timerOmega.start();
+            timerOmega_.start();
             updateGuess();
-            timerOmega.stop();
+            timerOmega_.stop();
 
-            timerAM.stop();
+            timerAM_.stop();
 
             // Perform the main calculation of the parent system -
             // solve MDEs, compute phi's, compute stress if needed
-            timerMDE.start();
+            timerMDE_.start();
             evaluate();
-            timerMDE.stop();
+            timerMDE_.stop();
 
          }
 
       }
-
+      
+      
       // Failure: iteration counter itr reached maxItr without converging
-      timerTotal.stop();
+      timerTotal_.stop();
 
       Log::file() << "Iterator failed to converge.\n";
       return 1;
@@ -343,7 +312,9 @@ namespace Pscf
       if (!isAllocatedAM_) return;
 
       // Clear histories and bases (ring buffers)
-      Log::file() << "Clearing ring buffers\n";
+      if (verbose_ > 0) {
+         Log::file() << "Clearing ring buffers\n";
+      }
       resHists_.clear();
       fieldHists_.clear();
       resBasis_.clear();
@@ -587,6 +558,54 @@ namespace Pscf
       }
 
       return error;
+   }
+   
+   template <typename Iterator, typename T>
+   void AmIteratorTmpl<Iterator,T>::outputTimers(std::ostream& out)
+   {
+      // Output timing results, if requested.
+      double total = timerTotal_.time();
+      out << "\n";
+      out << "                          ";
+      out << "Total" << std::setw(22)<< "Per Iteration" << std::setw(9) << "Fraction" << "\n";
+      out << "MDE solution:             "
+          << Dbl(timerMDE_.time(), 9, 3)  << " s,  "
+          << Dbl(timerMDE_.time()/totalItr_, 9, 3)  << " s,  "
+          << Dbl(timerMDE_.time()/total, 9, 3) << "\n";
+      out << "residual computation:     "
+          << Dbl(timerResid_.time(), 9, 3)  << " s,  "
+          << Dbl(timerResid_.time()/totalItr_, 9, 3)  << " s,  "
+          << Dbl(timerResid_.time()/total, 9, 3) << "\n";
+      out << "mixing coefficients:      "
+          << Dbl(timerCoeff_.time(), 9, 3)  << " s,  "
+          << Dbl(timerCoeff_.time()/totalItr_, 9, 3)  << " s,  "
+          << Dbl(timerCoeff_.time()/total, 9, 3) << "\n";
+      out << "checking convergence:     "  
+          << Dbl(timerError_.time(), 9, 3)  << " s,  "
+          << Dbl(timerError_.time()/totalItr_, 9, 3)  << " s,  "
+          << Dbl(timerError_.time()/total, 9, 3) << "\n";
+      out << "updating guess:           "
+          << Dbl(timerOmega_.time(), 9, 3)  << " s,  "
+          << Dbl(timerOmega_.time()/totalItr_, 9, 3)  << " s,  "
+          << Dbl(timerOmega_.time()/total, 9, 3)<< "\n";
+      out << "total time:               "
+          << Dbl(total, 9, 3) <<  " s,  "
+          << Dbl(total/totalItr_, 9, 3) << " s  \n";
+      out << "\n";
+   }
+   
+   template <typename Iterator, typename T>
+   void AmIteratorTmpl<Iterator,T>::clearTimers()
+   {
+      timerMDE_.clear();
+      timerStress_.clear();
+      timerAM_.clear();
+      timerResid_.clear();
+      timerError_.clear();
+      timerCoeff_.clear();
+      timerOmega_.clear();
+      timerTotal_.clear();
+      totalItr_ = 0;
    }
 
 }

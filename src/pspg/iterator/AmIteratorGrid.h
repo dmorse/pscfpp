@@ -51,7 +51,9 @@ namespace Pspg
       */
       void readParameters(std::istream& in);
 
-      using AmIteratorTmpl<Iterator<D>,FieldCUDA>::solve;
+      using AmIteratorTmpl<Iterator<D>, FieldCUDA>::solve;
+      using AmIteratorTmpl<Iterator<D>, FieldCUDA>::outputTimers;
+      using AmIteratorTmpl<Iterator<D>, FieldCUDA>::clearTimers;
       using Iterator<D>::isFlexible;
 
    protected:

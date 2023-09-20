@@ -85,6 +85,14 @@ namespace Pspg
       */
       void setupUnitCell(UnitCell<D> const & unitCell, 
                          WaveList<D> const & waveList);
+      
+      /**
+      * Set unit cell parameters used in solver.
+      * 
+      * \param unitCell crystallographic unit cell
+      * \param waveList container for wavevector data
+      */
+      void setupUnitCell(UnitCell<D> const & unitCell);
 
       /**
       * Reset statistical segment length for one monomer type.

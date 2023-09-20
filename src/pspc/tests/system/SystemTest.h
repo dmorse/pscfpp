@@ -598,6 +598,8 @@ public:
       BFieldComparison comparison(1);
       comparison.compare(system.c().basis(),systemShift.c().basis());
       double fDiff, pDiff;
+      if (!system.hasFreeEnergy()) system.computeFreeEnergy();
+      if (!systemShift.hasFreeEnergy()) systemShift.computeFreeEnergy();
       fDiff = std::abs(system.fHelmholtz() - systemShift.fHelmholtz());
       pDiff = std::abs(system.pressure() - systemShift.pressure() + shift);
       TEST_ASSERT(comparison.maxDiff() < 5.0E-8);
@@ -845,6 +847,7 @@ public:
       TEST_ASSERT(comparison.maxDiff() < 1.0E-6);
 
       // Compare Helmoltz free energies
+      if (!system.hasFreeEnergy()) system.computeFreeEnergy();
       double fHelmholtz = system.fHelmholtz();
       double fHelmholtzRef = 3.9642295402;     // from PSCF Fortran
       double fDiff = fHelmholtz - fHelmholtzRef;

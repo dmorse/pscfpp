@@ -9,6 +9,8 @@
 */
 
 #include "System.h"
+#include <pspg/compressor/Compressor.h>
+#include <pspg/compressor/CompressorFactory.h>
 #include <pspg/sweep/Sweep.h>
 #include <pspg/sweep/SweepFactory.h>
 #include <pspg/iterator/Iterator.h>
@@ -43,6 +45,7 @@ namespace Pspg
    System<D>::System()
     : mixture_(),
       domain_(),
+      mcSimulator_(*this),
       fileMaster_(),
       homogeneous_(),
       interactionPtr_(0),
@@ -50,6 +53,8 @@ namespace Pspg
       iteratorFactoryPtr_(0),
       sweepPtr_(0),
       sweepFactoryPtr_(0),
+      compressorPtr_(0),
+      compressorFactoryPtr_(0),
       w_(),
       c_(),
       fHelmholtz_(0.0),
@@ -57,6 +62,7 @@ namespace Pspg
       fInter_(0.0),
       pressure_(0.0),
       hasMixture_(false),
+      hasMcSimulator_(false),
       isAllocatedGrid_(false),
       isAllocatedBasis_(false),
       hasCFields_(false)
@@ -68,7 +74,7 @@ namespace Pspg
       interactionPtr_ = new Interaction();
       iteratorFactoryPtr_ = new IteratorFactory<D>(*this);
       sweepFactoryPtr_ = new SweepFactory<D>(*this);
-
+      compressorFactoryPtr_ = new CompressorFactory<D>(*this);
       BracketPolicy::set(BracketPolicy::Optional);
       ThreadGrid::init();
    }
@@ -93,6 +99,12 @@ namespace Pspg
       }
       if (sweepFactoryPtr_) {
          delete sweepFactoryPtr_;
+      }
+      if (compressorPtr_) {
+         delete compressorPtr_;
+      }
+      if (compressorFactoryPtr_) {
+         delete compressorFactoryPtr_;
       }
    }
 
@@ -224,6 +236,7 @@ namespace Pspg
       readParamComposite(in, domain_);
 
       mixture().setMesh(mesh());
+      mixture().setupUnitCell(unitCell());
       UTIL_CHECK(domain_.mesh().size() > 0);
       UTIL_CHECK(domain_.unitCell().nParameter() > 0);
       UTIL_CHECK(domain_.unitCell().lattice() != UnitCell<D>::Null);
@@ -241,7 +254,7 @@ namespace Pspg
          iteratorFactoryPtr_->readObjectOptional(in, *this, className, 
                                                  isEnd);
       if (!iteratorPtr_) {
-         Log::file() << "Notification: No iterator was constructed\n";
+         Log::file() << indent() << "  [Iterator{} absent]\n";
       }
 
       // Optionally instantiate a Sweep object (if an iterator exists)
@@ -249,27 +262,27 @@ namespace Pspg
          sweepPtr_ = 
             sweepFactoryPtr_->readObjectOptional(in, *this, className, 
                                                  isEnd);
+         if (!sweepPtr_ && ParamComponent::echo()) {
+            Log::file() << indent() << "  Sweep{ [absent] }\n";
+         }
       }
-
-      #if 0
-      // Initialize iterator
-      std::string className;
-      bool isEnd;
-      iteratorPtr_
-          = iteratorFactoryPtr_->readObject(in, *this, className, isEnd);
-      if (!iteratorPtr_) {
-         std::string msg = "Unrecognized Iterator subclass name ";
-         msg += className;
-         UTIL_THROW(msg.c_str());
+      
+      // Optionally instantiate a Compressor object
+      compressorPtr_ = 
+         compressorFactoryPtr_->readObjectOptional(in, *this, className, 
+                                                   isEnd);
+      if (!compressorPtr_ && ParamComponent::echo()) {
+         Log::file() << indent() << "  Compressor{ [absent] }\n";
       }
-
-      // Optionally instantiate a Sweep object
-      sweepPtr_ =
-         sweepFactoryPtr_->readObjectOptional(in, *this, className, isEnd);
-      if (sweepPtr_) {
-         sweepPtr_->setSystem(*this);
+      
+      // Optionally read an McSimulator
+      readParamCompositeOptional(in, mcSimulator_);
+      if (mcSimulator_.isActive()) {
+         hasMcSimulator_ = true;
+      } else {
+         hasMcSimulator_ = false;
       }
-      #endif
+      
 
       // Initialize homogeneous object
       homogeneous_.setNMolecule(np+ns);
@@ -336,6 +349,38 @@ namespace Pspg
             // Attempt to solve a sequence of SCFT problems along a path
             // through parameter space
             sweep();
+         } else
+         if (command == "COMPRESS") {
+            // Impose incompressibility
+            UTIL_CHECK(hasCompressor());
+            compressor().compress();
+         } else
+         if (command == "SIMULATE") {
+            // Perform a field theoretic MC simulation
+            int nStep;
+            in >> nStep;
+            Log::file() << "   "  << nStep << "\n";
+            simulate(nStep);
+         } else
+         if (command == "ANALYZE_TRAJECTORY") {
+            int min;
+            in >> min;
+            int max;
+            in >> max;
+            std::string classname;
+            readEcho(in, classname);
+            readEcho(in, filename);
+            mcSimulator_.analyzeTrajectory(min, max, classname, filename);
+         } else
+         if (command == "WRITE_TIMER") {
+            readEcho(in, filename);
+            std::ofstream file;
+            fileMaster().openOutputFile(filename, file);
+            writeTimers(file);
+            file.close();
+         } else
+         if (command == "CLEAR_TIMER") {
+            clearTimers();
          } else
          if (command == "WRITE_PARAM") {
             readEcho(in, filename);
@@ -505,6 +550,7 @@ namespace Pspg
       domain_.waveList().computedKSq(domain_.unitCell());
       mixture_.setupUnitCell(domain_.unitCell(), domain_.waveList());
       hasCFields_ = false;
+      hasMcHamiltonian_ = false;
    }
 
    template <int D>
@@ -522,6 +568,7 @@ namespace Pspg
       domain_.waveList().computedKSq(domain_.unitCell());
       mixture_.setupUnitCell(domain_.unitCell(), domain_.waveList());
       hasCFields_ = false;
+      hasMcHamiltonian_ = false;
    }
 
    /*
@@ -532,6 +579,7 @@ namespace Pspg
    {
       w_.setBasis(fields);
       hasCFields_ = false;
+      hasMcHamiltonian_ = false;
    }
 
    /*
@@ -542,6 +590,7 @@ namespace Pspg
    {
       w_.setRGrid(fields);
       hasCFields_ = false;
+      hasMcHamiltonian_ = false;
    }
 
    /*
@@ -662,12 +711,12 @@ namespace Pspg
    template <int D>
    void System<D>::compute(bool needStress)
    {
+      UTIL_CHECK(w_.isAllocatedRGrid());
+      UTIL_CHECK(c_.isAllocatedRGrid());
       UTIL_CHECK(w_.hasData());
-
       // Solve the modified diffusion equation (without iteration)
       mixture().compute(w_.rgrid(), c_.rgrid());
       hasCFields_ = true;
-
       // Convert c fields from r-grid to basis format
       if (w_.isSymmetric()) {
          fieldIo().convertRGridToBasis(c_.rgrid(), c_.basis());
@@ -706,6 +755,7 @@ namespace Pspg
          computeFreeEnergy();
          writeThermo(Log::file());
       }
+      hasMcHamiltonian_ = false;
       return error;
    }
 
@@ -724,6 +774,18 @@ namespace Pspg
 
       // Perform sweep
       sweepPtr_->sweep();
+   }
+   
+   /*
+   * Perform a field theoretic MC simulation of nStep steps.
+   */
+   template <int D>
+   void System<D>::simulate(int nStep)
+   {
+      UTIL_CHECK(hasCompressor());
+      UTIL_CHECK(hasMcSimulator_);
+      mcSimulator_.simulate(nStep);
+      hasCFields_ = true;
    }
 
    // Thermodynamic Properties
@@ -844,7 +906,42 @@ namespace Pspg
    }
 
    // Output Operations
-
+   /*
+   * Write time cost to file.
+   */
+   template <int D>
+   void System<D>::writeTimers(std::ostream& out)
+   {
+      if (iteratorPtr_) {
+         iterator().outputTimers(Log::file());
+         iterator().outputTimers(out);
+      }
+      if (hasMcSimulator_){
+         mcSimulator_.outputTimers(Log::file());
+         mcSimulator_.outputTimers(out);
+      }
+      if (compressorPtr_){
+         compressor().outputTimers(Log::file());
+         compressor().outputTimers(out);
+      }
+   }
+   
+   /*
+   * Clear timers.
+   */
+   template <int D>
+   void System<D>::clearTimers()
+   {
+      if (iteratorPtr_) {
+         iterator().clearTimers();
+      }
+      if (hasMcSimulator_){
+         mcSimulator_.clearTimers();
+      }
+      if (compressorPtr_){
+         compressor().clearTimers();
+      }
+   }
    /*
    * Write parameter file, omitting the sweep block.
    */
@@ -1484,7 +1581,7 @@ namespace Pspg
             homogeneous_.molecule(i).computeSize();
          }
       }
-
+      hasMcHamiltonian_ = false;
    }
 
    #if 0

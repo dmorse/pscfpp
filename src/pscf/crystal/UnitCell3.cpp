@@ -431,4 +431,19 @@ namespace Pscf
       setLattice();
    }
 
+   /*
+   * Get the length of the unit cell. 
+   */
+   double UnitCell<3>::volume() const
+   {
+      double v = 0.0;
+      v += rBasis_[0][0]*rBasis_[1][1]*rBasis_[2][2];
+      v -= rBasis_[0][0]*rBasis_[1][2]*rBasis_[2][1];
+      v += rBasis_[0][1]*rBasis_[1][2]*rBasis_[2][0];
+      v -= rBasis_[0][1]*rBasis_[1][0]*rBasis_[2][2];
+      v += rBasis_[0][2]*rBasis_[1][0]*rBasis_[2][1];
+      v -= rBasis_[0][2]*rBasis_[1][1]*rBasis_[2][0];
+      return v;
+   }
+
 }

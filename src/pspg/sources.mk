@@ -3,6 +3,8 @@ include $(SRC_DIR)/pspg/field/sources.mk
 include $(SRC_DIR)/pspg/solvers/sources.mk
 include $(SRC_DIR)/pspg/iterator/sources.mk
 include $(SRC_DIR)/pspg/sweep/sources.mk
+include $(SRC_DIR)/pspg/compressor/sources.mk
+include $(SRC_DIR)/pspg/simulate/sources.mk
 
 pspg_= \
   $(pspg_field_) \
@@ -10,6 +12,8 @@ pspg_= \
   $(pspg_iterator_) \
   $(pspg_math_) \
   $(pspg_sweep_) \
+  $(pspg_compressor_) \
+  $(pspg_simulate_) \
   pspg/System.cu
 
 pspg_SRCS=\

@@ -157,15 +157,15 @@ namespace Pspg {
    */
    template <int D>
    Block<D>::~Block()
-   {
-      if (temp_) {
-         delete[] temp_;
+   {      
+      if (isAllocated_) {
+         cudaFree(qkBatched_);
+         cudaFree(qk2Batched_);
          cudaFree(d_temp_);
-      }
-      
-      if (expKsq_host) {
+         delete[] temp_;
          delete[] expKsq_host;
          delete[] expKsq2_host;
+         
       }
    }
 
@@ -278,12 +278,27 @@ namespace Pspg {
 
       hasExpKsq_ = false;
    }
+   
+   /*
+   * Setup data that depend on the unit cell parameters.
+   */
+   template <int D>
+   void Block<D>::setupUnitCell(const UnitCell<D>& unitCell)
+   {
+      nParams_ = unitCell.nParameter();
+
+      // store pointer to unit cell and wavelist
+      unitCellPtr_ = &unitCell;
+      hasExpKsq_ = false;
+   }
 
    template <int D>
    void Block<D>::computeExpKsq()
    {
       UTIL_CHECK(isAllocated_);
-
+      UTIL_CHECK(unitCellPtr_);
+      UTIL_CHECK(unitCellPtr_->isInitialized());
+      
       MeshIterator<D> iter;
       iter.setDimensions(kMeshDimensions_);
       IntVec<D> G, Gmin;
@@ -299,7 +314,13 @@ namespace Pspg {
       int i;
       for (iter.begin(); !iter.atEnd(); ++iter) {
          i = iter.rank();
-         Gsq = unitCell().ksq(wavelist().minImage(iter.rank()));
+         if (waveListPtr_ == 0){
+            G = iter.position();
+            Gmin = shiftToMinimum(G, mesh().dimensions(), unitCell());
+            Gsq = unitCell().ksq(Gmin);
+         } else{
+            Gsq = unitCell().ksq(wavelist().minImage(iter.rank()));
+         }
          expKsq_host[i] = exp(Gsq*factor);
          expKsq2_host[i] = exp(Gsq*factor / 2);
       }

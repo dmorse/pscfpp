@@ -11,6 +11,8 @@
 
 #include <util/param/ParamComposite.h>     // base class
 
+#include <pspc/simulate/McSimulator.h>     // member
+
 #include <pspc/solvers/Mixture.h>          // member
 #include <pspc/field/Domain.h>             // member
 #include <pspc/field/FieldIo.h>            // member
@@ -22,6 +24,7 @@
 
 #include <pscf/homogeneous/Mixture.h>      // member
 
+#include <util/random/Random.h>            // member
 #include <util/misc/FileMaster.h>          // member
 #include <util/containers/DArray.h>        // member template
 #include <util/containers/FSArray.h>       // member template
@@ -37,6 +40,10 @@ namespace Pspc
    template <int D> class IteratorFactory;
    template <int D> class Sweep;
    template <int D> class SweepFactory;
+   template <int D> class Compressor;
+   template <int D> class CompressorFactory;
+   template <int D> class McMove;
+   template <int D> class McMoveFactory;
 
    using namespace Util;
 
@@ -256,7 +263,7 @@ namespace Pspc
       void setUnitCell(FSArray<double, 6> const & parameters);
 
       ///@}
-      /// \name Primary SCFT Computations
+      /// \name Primary Field Theory Computations
       ///@{
 
       /**
@@ -321,6 +328,28 @@ namespace Pspc
       * created (i.e., if hasSweep() == false).
       */
       void sweep();
+
+      /**
+      * Perform a field theoretic Monte-Carlo simulation.
+      *
+      * Perform a field theoretic Monte-Carlo simulation using the 
+      * partial saddle-point approximation. 
+      * 
+      * \param nStep  number of Monte-Carlo steps
+      */
+      void simulate(int nStep);
+      
+      /**
+      * Write timer file to an ostream
+      *
+      * \param out output stream
+      */
+      void writeTimers(std::ostream& out);
+      
+      /**
+      * Clear timers 
+      */
+      void clearTimers();
 
       ///@}
       /// \name Thermodynamic Properties
@@ -684,14 +713,24 @@ namespace Pspc
       Interaction const & interaction() const;
 
       /**
-      * Get Domain by const reference.
+      * Get Domain by non-const reference.
       */
       Domain<D> const & domain() const;
+      
+      /**
+      * Get Domain by const reference.
+      */
+      Domain<D> & domain();
 
       /**
       * Get UnitCell (i.e., type and parameters) by const reference.
       */
       UnitCell<D> const & unitCell() const;
+      
+      /**
+      * Get UnitCell (i.e., type and parameters) by non-const reference.
+      */
+      UnitCell<D> & unitCell();
 
       /**
       * Get the spatial discretization mesh by const reference.
@@ -724,6 +763,11 @@ namespace Pspc
       Iterator<D> const & iterator() const;
 
       /**
+      * Get the compressor by reference.
+      */
+      Compressor<D>& compressor();
+
+      /**
       * Get homogeneous mixture (for reference calculations).
       */
       Homogeneous::Mixture& homogeneous();
@@ -732,6 +776,11 @@ namespace Pspc
       * Get const homogeneous mixture (for reference calculations).
       */
       Homogeneous::Mixture const & homogeneous() const;
+
+      /**
+      * Get McSimulator container for Monte Carlo moves.
+      */
+      McSimulator<D>& mcSimulator();
 
       /**
       * Get the FileMaster.
@@ -746,6 +795,11 @@ namespace Pspc
       FileMaster const & fileMaster() const;
 
       /**
+      * Get Random object by reference.
+      */
+      Random& random();
+
+      /**
       * Get the group name string.
       */
       std::string groupName() const;
@@ -753,6 +807,11 @@ namespace Pspc
       ///@}
       /// \name Queries
       ///@{
+
+      /**
+      * Does this system have an Iterator object?
+      */
+      bool hasIterator() const;
 
       /**
       * Have c fields been computed from the current w fields?
@@ -779,6 +838,16 @@ namespace Pspc
       */
       bool hasSweep() const;
 
+      /**
+      * Does this system have a Compressor object?
+      */
+      bool hasCompressor() const;
+
+      /**
+      * Does this system have an initialized McSimulator?
+      */
+      bool hasMcSimulator() const;
+
       ///@}
 
    private:
@@ -796,9 +865,19 @@ namespace Pspc
       Domain<D> domain_;
 
       /**
+      * Container for McMove objects (Monte Carlo Moves).
+      */
+      McSimulator<D> mcSimulator_;
+
+      /**
       * Filemaster (holds paths to associated I/O files).
       */
       FileMaster fileMaster_;
+
+      /**
+      * Random number generator.
+      */
+      Random random_;
 
       /**
       * Homogeneous mixture, for reference.
@@ -829,6 +908,16 @@ namespace Pspc
       * Pointer to SweepFactory object
       */
       SweepFactory<D>* sweepFactoryPtr_;
+
+      /**
+      * Pointer to an compressor.
+      */
+      Compressor<D>* compressorPtr_;
+
+      /**
+      * Pointer to compressor factory object
+      */
+      CompressorFactory<D>* compressorFactoryPtr_;
 
       /**
       * Chemical potential fields.
@@ -909,6 +998,11 @@ namespace Pspc
       bool hasMixture_;
 
       /**
+      * Has the McSimulator been initialized?
+      */
+      bool hasMcSimulator_;
+
+      /**
       * Has memory been allocated for fields in grid format?
       */
       bool isAllocatedRGrid_;
@@ -935,6 +1029,11 @@ namespace Pspc
       * Has the free energy been computed for the current w and c fields?
       */ 
       bool hasFreeEnergy_;
+
+      /**
+      * Has the MC Hamiltonian been computed for the current w and c fields?
+      */ 
+      bool hasMcHamiltonian_;
 
       // Private member functions
 
@@ -1001,10 +1100,20 @@ namespace Pspc
    template <int D>
    inline Domain<D> const & System<D>::domain() const
    { return domain_; }
+   
+   // Get the Domain by nonconst reference.
+   template <int D>
+   inline Domain<D> & System<D>::domain() 
+   { return domain_; }
 
    // Get the UnitCell by const reference.
    template <int D>
    inline UnitCell<D> const & System<D>::unitCell() const
+   { return domain_.unitCell(); }
+   
+   // Get the UnitCell by const reference.
+   template <int D>
+   inline UnitCell<D> & System<D>::unitCell()
    { return domain_.unitCell(); }
 
    // Get the Mesh by const reference.
@@ -1032,6 +1141,11 @@ namespace Pspc
    inline std::string System<D>::groupName() const
    { return domain_.groupName(); }
 
+   // Get the McSimulator.
+   template <int D>
+   inline McSimulator<D>& System<D>::mcSimulator()
+   {  return mcSimulator_; }
+
    // Get the FileMaster by non-const reference.
    template <int D>
    inline FileMaster& System<D>::fileMaster()
@@ -1041,6 +1155,11 @@ namespace Pspc
    template <int D>
    inline FileMaster const & System<D>::fileMaster() const
    {  return fileMaster_; }
+
+   // Get the Random object.
+   template <int D>
+   inline Random& System<D>::random()
+   {  return random_; }
 
    // Get the Homogeneous::Mixture object.
    template <int D>
@@ -1084,6 +1203,14 @@ namespace Pspc
       return *iteratorPtr_;
    }
 
+   // Get the Compressor
+   template <int D>
+   inline Compressor<D>& System<D>::compressor()
+   {
+      UTIL_ASSERT(compressorPtr_);
+      return *compressorPtr_;
+   }
+
    // Get container of chemical potential fields (const reference)
    template <int D>
    inline
@@ -1106,6 +1233,11 @@ namespace Pspc
    inline Mask<D>& System<D>::mask()
    {  return mask_; }
 
+   // Does the system have an Iterator object?
+   template <int D>
+   inline bool System<D>::hasIterator() const
+   {  return (iteratorPtr_ != 0); }
+
    // Does the system have a Sweep object?
    template <int D>
    inline bool System<D>::hasSweep() const
@@ -1121,12 +1253,22 @@ namespace Pspc
    inline bool System<D>::hasMask() const
    {  return mask_.hasData(); }
 
+   // Does the system have a Compressor object?
+   template <int D>
+   inline bool System<D>::hasCompressor() const
+   {  return (compressorPtr_ != 0); }
+
+   // Does the system have an initialized McSimulator ?
+   template <int D>
+   inline bool System<D>::hasMcSimulator() const
+   {  return (hasMcSimulator_); }
+
    // Have the c fields been computed for the current w fields?
    template <int D>
    inline bool System<D>::hasCFields() const
    {  return hasCFields_; }
 
-   // Get the precomputed Helmoltz free energy per monomer / kT.
+   // Get the precomputed Helmholtz free energy per monomer / kT.
    template <int D>
    inline double System<D>::fHelmholtz() const
    {

@@ -10,6 +10,9 @@
 
 #include "System.h"
 
+#include <pspc/compressor/Compressor.h>
+#include <pspc/compressor/CompressorFactory.h>
+
 #include <pspc/sweep/Sweep.h>
 #include <pspc/sweep/SweepFactory.h>
 #include <pspc/iterator/Iterator.h>
@@ -24,6 +27,7 @@
 #include <pscf/homogeneous/Clump.h>
 
 #include <util/param/BracketPolicy.h>
+#include <util/param/ParamComponent.h>
 #include <util/format/Str.h>
 #include <util/format/Int.h>
 #include <util/format/Dbl.h>
@@ -45,6 +49,7 @@ namespace Pspc
    System<D>::System()
     : mixture_(),
       domain_(),
+      mcSimulator_(*this),
       fileMaster_(),
       homogeneous_(),
       interactionPtr_(0),
@@ -52,6 +57,8 @@ namespace Pspc
       iteratorFactoryPtr_(0),
       sweepPtr_(0),
       sweepFactoryPtr_(0),
+      compressorPtr_(0),
+      compressorFactoryPtr_(0),
       w_(),
       c_(),
       h_(),
@@ -62,6 +69,7 @@ namespace Pspc
       fExt_(0.0),
       pressure_(0.0),
       hasMixture_(false),
+      hasMcSimulator_(false),
       isAllocatedRGrid_(false),
       isAllocatedBasis_(false),
       hasCFields_(false),
@@ -75,6 +83,7 @@ namespace Pspc
       interactionPtr_ = new Interaction(); 
       iteratorFactoryPtr_ = new IteratorFactory<D>(*this); 
       sweepFactoryPtr_ = new SweepFactory<D>(*this);
+      compressorFactoryPtr_ = new CompressorFactory<D>(*this);
       BracketPolicy::set(BracketPolicy::Optional);
    }
 
@@ -98,6 +107,12 @@ namespace Pspc
       }
       if (sweepFactoryPtr_) {
          delete sweepFactoryPtr_;
+      }
+      if (compressorPtr_) {
+         delete compressorPtr_;
+      }
+      if (compressorFactoryPtr_) {
+         delete compressorFactoryPtr_;
       }
    }
 
@@ -215,7 +230,7 @@ namespace Pspc
          iteratorFactoryPtr_->readObjectOptional(in, *this, className, 
                                                  isEnd);
       if (!iteratorPtr_) {
-         Log::file() << "Notification: No iterator was constructed\n";
+         Log::file() << indent() << "  [Iterator{} absent]\n";
       }
 
       // Optionally instantiate a Sweep object
@@ -223,7 +238,31 @@ namespace Pspc
          sweepPtr_ = 
             sweepFactoryPtr_->readObjectOptional(in, *this, className, 
                                                  isEnd);
+         if (!sweepPtr_ && ParamComponent::echo()) {
+            Log::file() << indent() << "  Sweep{ [absent] }\n";
+         }
       }
+
+      // Optionally instantiate a Compressor object
+      compressorPtr_ = 
+         compressorFactoryPtr_->readObjectOptional(in, *this, className, 
+                                                   isEnd);
+      if (!compressorPtr_ && ParamComponent::echo()) {
+         Log::file() << indent() << "  Compressor{ [absent] }\n";
+      }
+
+      // Optionally read an McSimulator
+      //if (compressorPtr_) {
+
+         readParamCompositeOptional(in, mcSimulator_);
+
+         if (mcSimulator_.isActive()) {
+            hasMcSimulator_ = true;
+         } else {
+            hasMcSimulator_ = false;
+         }
+
+      //}
 
       // Initialize homogeneous object 
       // NOTE: THIS OBJECT IS NOT USED AT ALL.
@@ -309,6 +348,38 @@ namespace Pspc
             // Attempt to solve a sequence of SCFT problems along a path
             // through parameter space
             sweep();
+         } else
+         if (command == "SIMULATE") {
+            // Perform a field theoretic MC simulation
+            int nStep;
+            in >> nStep;
+            Log::file() << "   "  << nStep << "\n";
+            simulate(nStep);
+         } else
+         if (command == "ANALYZE_TRAJECTORY") {
+            int min;
+            in >> min;
+            int max;
+            in >> max;
+            std::string classname;
+            readEcho(in, classname);
+            readEcho(in, filename);
+            mcSimulator_.analyzeTrajectory(min, max, classname, filename);
+         } else
+         if (command == "COMPRESS") {
+            // Impose incompressibility
+            UTIL_CHECK(hasCompressor());
+            compressor().compress();
+         } else
+         if (command == "WRITE_TIMER") {
+            readEcho(in, filename);
+            std::ofstream file;
+            fileMaster().openOutputFile(filename, file);
+            writeTimers(file);
+            file.close();
+         } else
+         if (command == "CLEAR_TIMER") {
+            clearTimers();
          } else
          if (command == "WRITE_PARAM") {
             readEcho(in, filename);
@@ -574,6 +645,7 @@ namespace Pspc
       mixture_.setupUnitCell(domain_.unitCell());
       hasCFields_ = false;
       hasFreeEnergy_ = false;
+      hasMcHamiltonian_ = false;
    }
 
    /*
@@ -595,6 +667,7 @@ namespace Pspc
       mixture_.setupUnitCell(domain_.unitCell());
       hasCFields_ = false;
       hasFreeEnergy_ = false;
+      hasMcHamiltonian_ = false;
    }
 
    /*
@@ -608,6 +681,7 @@ namespace Pspc
       w_.setBasis(fields);
       hasCFields_ = false;
       hasFreeEnergy_ = false;
+      hasMcHamiltonian_ = false;
    }
 
    /*
@@ -620,6 +694,7 @@ namespace Pspc
       w_.setRGrid(fields);
       hasCFields_ = false;
       hasFreeEnergy_ = false;
+      hasMcHamiltonian_ = false;
    }
 
    /*
@@ -714,7 +789,7 @@ namespace Pspc
       }
    }
 
-   // Primary SCFT Computations
+   // Primary Field Theory Computations
 
    /*
    * Solve MDE for current w-fields, without iteration.
@@ -761,7 +836,6 @@ namespace Pspc
 
       // Call iterator (return 0 for convergence, 1 for failure)
       int error = iterator().solve(isContinuation);
-      hasCFields_ = true;
 
       // If converged, compute related properties
       if (!error) {   
@@ -770,6 +844,10 @@ namespace Pspc
          }
          writeThermo(Log::file());
       }
+
+      hasCFields_ = true;
+      hasFreeEnergy_ = false;
+      hasMcHamiltonian_ = false;
       return error;
    }
 
@@ -788,7 +866,18 @@ namespace Pspc
       // Perform sweep
       sweepPtr_->sweep();
    }
-   
+  
+   /*
+   * Perform a field theoretic MC simulation of nStep steps.
+   */
+   template <int D>
+   void System<D>::simulate(int nStep)
+   {
+      UTIL_CHECK(hasCompressor());
+      UTIL_CHECK(hasMcSimulator_);
+      mcSimulator_.simulate(nStep);
+   }
+
    // Thermodynamic Properties
 
    /*
@@ -844,15 +933,26 @@ namespace Pspc
       }
 
       int nm  = mixture_.nMonomer();
-      int nBasis = domain_.basis().nBasis();
 
-      double temp(0.0);
       // Compute Legendre transform subtraction
-      // Use expansion in symmetry-adapted orthonormal basis
-      for (int i = 0; i < nm; ++i) {
-         for (int k = 0; k < nBasis; ++k) {
-            temp -= w_.basis(i)[k] * c_.basis(i)[k];
+      double temp = 0.0;
+      if (w_.isSymmetric()) {
+         // Use expansion in symmetry-adapted orthonormal basis
+         const int nBasis = domain_.basis().nBasis();
+         for (int i = 0; i < nm; ++i) {
+            for (int k = 0; k < nBasis; ++k) {
+               temp -= w_.basis(i)[k] * c_.basis(i)[k];
+            }
          }
+      } else {
+         // Use summation over grid points 
+         const int meshSize = domain_.mesh().size();
+         for (int i = 0; i < nm; ++i) {
+            for (int k = 0; k < meshSize; ++k) {
+               temp -= w_.rgrid(i)[k] * c_.rgrid(i)[k];
+            }
+         }
+         temp /= double(meshSize);
       }
 
       // If the system has a mask, then the volume that should be used
@@ -868,25 +968,50 @@ namespace Pspc
       fIdeal_ += temp;
       fHelmholtz_ += fIdeal_;
 
-      // Compute contribution from external fields, if fields exist
+      // Compute contribution from external fields, if such fields exist
       if (hasExternalFields()) {
          fExt_ = 0.0;
-         for (int i = 0; i < nm; ++i) {
-            for (int k = 0; k < nBasis; ++k) {
-               fExt_ += h_.basis(i)[k] * c_.basis(i)[k];
+         if (w_.isSymmetric()) {
+            // Use expansion in symmetry-adapted orthonormal basis
+            const int nBasis = domain_.basis().nBasis();
+            for (int i = 0; i < nm; ++i) {
+               for (int k = 0; k < nBasis; ++k) {
+                  fExt_ += h_.basis(i)[k] * c_.basis(i)[k];
+               }
             }
+         } else {
+            // Use summation over grid points 
+            const int meshSize = domain_.mesh().size();
+            for (int i = 0; i < nm; ++i) {
+               for (int k = 0; k < meshSize; ++k) {
+                  fExt_ += h_.rgrid(i)[k] * c_.rgrid(i)[k];
+               }
+            }
+            fExt_ /= double(meshSize);
          }
          fExt_ /= mask().phiTot();
          fHelmholtz_ += fExt_;
       }
 
-      // Compute excess interaction free energy [ phi^{T}*chi*phi ]
-      double chi;
-      for (int i = 0; i < nm; ++i) {
-         for (int j = i + 1; j < nm; ++j) {
-            chi = interaction().chi(i,j);
-            for (int k = 0; k < nBasis; ++k) {
-               fInter_ += chi * c_.basis(i)[k] * c_.basis(j)[k];
+      // Compute excess interaction free energy [ phi^{T}*chi*phi/2 ]
+      if (w_.isSymmetric()) {
+         const int nBasis = domain_.basis().nBasis();
+         for (int i = 0; i < nm; ++i) {
+            for (int j = i + 1; j < nm; ++j) {
+               const double chi = interaction().chi(i,j);
+               for (int k = 0; k < nBasis; ++k) {
+                  fInter_ += chi * c_.basis(i)[k] * c_.basis(j)[k];
+               }
+            }
+         }
+      } else {
+         const int meshSize = domain_.mesh().size();
+         for (int i = 0; i < nm; ++i) {
+            for (int j = i + 1; j < nm; ++j) {
+               const double chi = interaction().chi(i,j);
+               for (int k = 0; k < meshSize; ++k) {
+                  fInter_ += chi * c_.rgrid(i)[k] * c_.rgrid(j)[k];
+               }
             }
          }
       }
@@ -930,6 +1055,43 @@ namespace Pspc
    }
 
    // Output Operations
+   
+   /*
+   * Write time cost to file.
+   */
+   template <int D>
+   void System<D>::writeTimers(std::ostream& out)
+   {
+      if (iteratorPtr_) {
+         iterator().outputTimers(Log::file());
+         iterator().outputTimers(out);
+      }
+      if (hasMcSimulator_){
+         mcSimulator_.outputTimers(Log::file());
+         mcSimulator_.outputTimers(out);
+      }
+      if (compressorPtr_){
+         compressor().outputTimers(Log::file());
+         compressor().outputTimers(out);
+      }
+   }
+   
+   /*
+   * Clear timers.
+   */
+   template <int D>
+   void System<D>::clearTimers()
+   {
+      if (iteratorPtr_) {
+         iterator().clearTimers();
+      }
+      if (hasMcSimulator_){
+         mcSimulator_.clearTimers();
+      }
+      if (compressorPtr_){
+         compressor().clearTimers();
+      }
+   }
 
    /*
    * Write parameter file, omitting any sweep block.
@@ -1058,7 +1220,7 @@ namespace Pspc
    void System<D>::writeCRGrid(const std::string & filename) const
    {
       UTIL_CHECK(isAllocatedRGrid_);
-      UTIL_CHECK(hasCFields_);
+      //UTIL_CHECK(hasCFields_);
       domain_.fieldIo().writeFieldsRGrid(filename, c_.rgrid(), 
                                          domain_.unitCell());
    }
@@ -1654,6 +1816,9 @@ namespace Pspc
          }
       }
 
+      hasCFields_ = false;
+      hasFreeEnergy_ = false;
+      hasMcHamiltonian_ = false;
    }
 
 } // namespace Pspc
