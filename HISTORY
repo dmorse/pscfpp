@@ -13,7 +13,7 @@ programs are affected by specific changes:
   fd  - CPU finite difference code for 1D problems (pscf_fd)
   all - all programs (fd, pc, and pg)
 
-Version 1.1.0  (9/19/2023)
+Version 1.1.0  (9/20/2023)
 =========================================
 
 User-visible features
@@ -33,6 +33,7 @@ Documentation
 -------------
 * Documentation of python tools in web manual
 * Documentation of thermo and state output file formats
+
 
 Version 1.0.3  (7/6/2023)
 =========================

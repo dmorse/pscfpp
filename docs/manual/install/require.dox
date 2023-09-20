@@ -25,7 +25,7 @@ In order to compile all of the CPU programs in the PSCF package, the
 system on which the code is compiled and run must have:
    - a git version control client
    - a C++ compiler
-   - a python interpreter
+   - a python interpreter, version 3 or greater
    - the GNU Scientific Library (GSL) (header and library)
    - the FFTW fast Fourier transform library (header and library)
 
@@ -109,7 +109,7 @@ named "git" by entering the command
 which git
 \endcode
 If the git executable is found, this should return a valid path, such
-as "/usr/bin/git".  If this command does not return a valid path, you
+as /usr/bin/git .  If this command does not return a valid path, you
 probably need to install git before proceeding.
 
 Instructions for installing git on different platforms are given in
@@ -126,15 +126,23 @@ for many other purposes.
 
 \section install_require_python Python
 
-Similarly, one can check if a python interpreter is accessible by checking
-if the command
+Similarly, one can check if a python 3 interpreter is accessible by 
+issuing the command
+\code
+python3 --version
+\endcode
+and confirming that the command works, and returns a version number 
+3.0 or greater. Alternatively, one can issue the command
 \code
 which python
 \endcode
-returns a non-empty path.
-A python interpreter should be available from the command line in any
-common linux distribution (e.g., Fedora or Ubuntu) or in Mac OS X after
-installation of the command line tools package.
+and confirm that it returns a non-empty path such as /user/bin/python3. 
+We recommend using of the command "python3" rather than "python" to
+make sure that you access a python 3 interpreter on any system in 
+which python 2.* interpreter may still also are installed. A python 3 
+interpreter should be available from the command line in any common 
+linux distribution (e.g., Fedora or Ubuntu), and should be available 
+in Mac OS X after installation of the command line tools package.
 
 \section install_require_compiler_cpp C++ compiler
 
@@ -144,22 +152,24 @@ invokes the gnu compiler collection (GCC) C++ compiler. On a MacIntosh
 running Mac OS X that is set up for C++ developent (see above), the "g++"
 command is normally a link to the Clang compiler, which is the default
 compiler for C++ development on Mac OS X. The Clang compiler accepts
-almost all the same command line options as the gnu compiler, and thus
-functions as a drop-in replacement for the gnu C++ compiler. 
+almost all the same command line options as the gnu compiler, and so
+functions as a compatible replacement for the gnu C++ compiler. 
 
 It is possible to configure the build system during the initial setup
-process so as to instead use a different C++ compiler.  When the GCC 
-or Clang compiler is not used for compilation, however, the PSCF build
-system will still invoke the "g++" command with appropriate options to
-analyse dependencies among source files. The PSCF makefile system thus
-always requires that the "g++" command be available on the build system.
+process so as to instead use a different C++ compiler, as discussed
+\ref install_setup_page "here".  Even when a different compiler command 
+is used to compile source code, however, the PSCF build system will 
+still invoke the "g++" command with appropriate options to analyse 
+dependencies among source files. The PSCF makefile system thus always 
+requires that the "g++" command be available on the build system.
 
 One can check if the command "g++" exists by entering
 \code
 which g++
 \endcode
 from a terminal command line. If the "which" utility returns a valid
-nonempty path, such as /usr/bin/g++, then the command "g++" exists.
+nonempty path, such as /usr/bin/g++, then the command g++ exists and
+can be located by the operating system.
 
 The name of the command used to invoke the compiler when compiling
 C++ files and the choices of options passed to the compiler can be
@@ -171,26 +181,31 @@ detail \ref install_setup_page "here".
 
 To compile the GPU-accelerated program, the system must also have an
 appropriate NVIDIA GPU and a CUDA development package installed. The
-NVIDIA nvcc C++/CUDA compiler is designed to integrate with the GNU
-g++ compiler, so we recommend using the GNU compiler to compile C++
-source files if you are planning to compile CUDA code for use on the
-same machine.
+NVIDIA nvcc C++/CUDA compiler is designed to integrate with the GNU g++ 
+compiler, so we recommend using the GNU compiler to compile C++ source 
+files if you are planning to compile CUDA code for use on the same 
+machine.
 
 \section install_require_ubuntu Packages: Ubuntu and other Debian-based Linux Systems
 
-The CPU-based programs in PSCF require access to development versions of the
-Gnu Scientific Library (GSL) and FFTW packages.  These may be installed on
-Ubuntu or other Debian based linux distribution later on version 16.0 or
-later using the commands:
+The CPU-based programs in PSCF require access to development versions of 
+the Gnu Scientific Library (GSL) and FFTW packages.  These may be installed
+on Ubuntu or other Debian based linux distribution later on version 16.0 
+or later using the commands:
 \code
 sudo apt install libfftw3-dev  
 sudo apt install libgsl-dev  
 \endcode
-To also install the doxygen documentation generator utility, use the command
+To also install the doxygen documentation generator utility, use the 
+command
 \code
 sudo apt install doxygen
 \endcode
-On older Debian-based systems, or as a lower level alternative, one may use the "apt-get" command rather than "apt" with the same arguments.
+Installing doxygen is not necessary to compile PSCF, but allows you to 
+generate a local copy of this web documentation.
+
+On older Debian-based systems, or as a lower level alternative, one may 
+use the "apt-get" command rather than "apt" with the same arguments.
 
 \section install_require_mac  Packages: Mac OS X
 
@@ -213,15 +228,16 @@ brew install doxygen
 \endcode
 
 Mac users should be aware that homebrew installs files in different
-locations on newer Macs that use Apple silicon than the file locations 
-used by homebrew on older Macs that use Intel cpus:
+locations on newer Macs that use Apple silicon (e.g., an M1 or M2 chip)
+than the file locations used by homebrew on older Macs that use Intel 
+cpus:
 
 On Macs with Intel cpus, homebrew installed links to required header 
 and library files in subdirectories of the /usr/local directory.
 Because /usr/local is  one of the standard directories in which a unix
 shell normally looks for such files, PSCF can be installed on such
-machines using a default configuration for the makefile system that is
-the same as the default used on linux machines.
+machines using a default configuration for the makefile system that 
+is the same as the default used on linux machines.
 
 On Macs with Apple silicon, homebrew instead installs all files in
 /opt/homebrew.  This requires users to add paths to this directory and/or

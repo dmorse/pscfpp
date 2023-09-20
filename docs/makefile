@@ -15,7 +15,7 @@ clean:
 	-rm -fr html/* latex/*
 
 clean-html:
-	-rm -fr latex/*
+	-rm -fr html/*
 
 clean-latex:
 	-rm -fr latex/*

@@ -1,7 +1,7 @@
 /*! \page install_targets_page Makefile targets
 
-\ref install_configure_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
-\ref install_doc_page (Next) 
+\ref install_configure_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref install_doc_page (Next)
 <BR>
 
 The build system for PSCF is based on unix makefiles. Individual programs
@@ -12,65 +12,86 @@ make target
 \endcode
 where "target" represents a target name such as "all-cpu" or "pspg".
 
-The make utility may be invoked from either the pscfpp/src/ or pscfpp/bld/ 
+The make utility may be invoked from either the pscfpp/src/ or pscfpp/bld/
 directories, or from the pscfpp/ root directory, using a common set of
 main target names in all three cases. Invoking make from the pscfpp/ root
-with a target that causes compilation generally has the same effect as 
+with a target that causes compilation generally has the same effect as
 invoking it from the pscfpp/bld directory with the same target, and
-initiates out-of-source compilation that creates intermediate files in 
-the pscfpp/bld/ directory tree.  Invoking make from within the pscfpp/src/ 
-directory will instead initiate an in-source compilation that creates 
-intermediate files in the src/ directory, alongside the source files. 
-Makefile targets that create executable scft programs all install the 
+initiates out-of-source compilation that creates intermediate files in
+the pscfpp/bld/ directory tree.  Invoking make from within the pscfpp/src/
+directory will instead initiate an in-source compilation that creates
+intermediate files in the src/ directory, alongside the source files.
+Makefile targets that create executable scft programs all install the
 resulting executable files in the pscfpp/bin directory, no matter where
 the make command is invoked from.
-
-On this page, we explain the most important makefile targets in more detail 
+ 
+On this page, we explain the most important makefile targets in more detail
 than was given in the \ref install_overview_page "overview of instructions".
-The following instructions assume that you have already made the required 
+The following instructions assume that you have already made the required
 changes to environment variables and run the setup script before using
-make to compile. 
+make to compile.
+ 
+\section install_targets_main_sec Compilation
 
-\section install_targets_main_sec Compilation 
+All of the makefile targets described below can be invoked either from the
+pscfpp/ or pscfpp/bld/ directory to perform out-of-source compilation, or
+from the src/ directory to perform in-source compilation.
 
-All of the makefile targets described below can be invoked either from
-the pscfpp/ or pscfpp/bld/ directory to perform out-of-source compilation, 
-or from the src/ directory to perform in-source compilation. 
+<h2> all: </h2>
+To compile all programs in the PSCF package, enter:
+\code
+make all
+\endcode
+The behavior of this command depends on whether CUDA compilation has
+been enabled. If CUDA compilation is not enabled (which is the default
+behavior), the "make all" command only compiles CPU programs pscf_fd,
+pscf_pc1, pscf_pc2, and pscf_pc3. If CUDA compilation is enabled, it
+also compiles the GPU-enabled programs pscf_pg1, pscf_pg2, and pscf_pg3.
+
+CUDA compilation can be enabled or disabled by using the -c option of
+the configure script, e.g., by entering "./configure -c1" to enable
+CUDA compilation, as discussed in more detail
+\ref install_configure_page "here".  When CUDA compilation is disabled, 
+"make all" is equivalent to "make all-cpu". When CUDA compilation is 
+enabled, it is equivalent to calling "make all-cpu" followed by 
+"make pspg". 
 
 <h2> fd1d: </h2>
 
-The fd1d target compiles the pscf_fd 1D finite difference program.  
-The only dependency of this program is the GSL library.  To compile 
-just this program, simply enter:
+The fd1d target builds the pscf_fd 1D finite difference program, and
+compiles only the source code files needed by this program.  The only
+dependency of this program is the GSL library.  To compile just the
+pscf_fd program, simply enter:
 \code
 make fd1d
 \endcode
 If entered before compiling any other code, this command will:
 
-  - Compile a large number *.cpp files in the util/, pscf/ and fd1d/ 
+  - Compile a large number *.cpp files in the util/, pscf/ and fd1d/
     namespace-level subdirectories of the src/ directory.
 
-  - Install corresponding object (*.o) and dependency (*.d) files in 
+  - Install corresponding object (*.o) and dependency (*.d) files in
     corresponding locations within the chosen build directory (i.e.,
     in either the bld/ or src/ directory)
 
-  - Create a static library (with file extension *.a) in each of these 
+  - Create a static library (with file extension *.a) in each of these
     three namespace-level subdirectories of the build directory.
 
-  - Install an executable file named pscf_fd in the pscfpp/bin 
-    directory. 
+  - Install an executable file named pscf_fd in the pscfpp/bin
+    directory.
 
 To recompile these programs after making any changes to configuration
-files (e.g., after enabling or disabling the debugging feature or 
-changing compiler command line options), simply reissue the "make fd1d" 
-command.  The build system will detect if you have changed any of the 
-relevant configuration files, and will recompile any file that might 
+files (e.g., after enabling or disabling the debugging feature or
+changing compiler command line options), simply reissue the "make fd1d"
+command.  The build system will detect if you have changed any of the
+relevant configuration files, and will recompile any file that might
 be effected by such changes.
 
 <h2> pspc: </h2>
-The pspc makefile target compiles the pscf_pc1, pscf_pc2, and pscf_pc3
-pseudo-spectral programs for periodic microstructures on a CPU. These
-programs depend on both the GSL library and the FFTW fast Fourier 
+The pspc makefile target builds the pscf_pc1, pscf_pc2, and pscf_pc3
+pseudo-spectral programs for periodic microstructures on a CPU, and
+compiles all the source code files used by these programs. These
+programs depend on both the GSL library and the FFTW fast Fourier
 transform libraries.  To compile these programs, enter:
 \code
 make pspc
@@ -78,31 +99,31 @@ make pspc
 from the pscfpp/, pscfpp/bld or pscfpp/src directory.
 This command will cause the system to:
 
-  - As needed, compile all *.cpp files in the src/util/ and src/pscf/ 
-    directories that have not been previously compiled, and, if necessary, 
+  - As needed, compile all *.cpp files in the src/util/ and src/pscf/
+    directories that have not been previously compiled, and, if necessary,
     create associated static library files in these directories.
 
   - Compile all of the *.cpp files in the src/pspc/ directory, and create
     create a corresponding static library file there.
-    
-  - Install executable program file named pscf_pc1, pscf_pc2, and 
-    pscf_pc3 in the pscfpp/bin directory. 
 
-The three resulting three programs are used for problems structures that 
-are periodic in 1, 2 and 3 dimensions, respectively. One would thus use 
-pscf_pc1 to simulate a lamellar (one-dimensional) structure, pscf_pc2 
-to simulate a hexagonal cylinder (two-dimension structure), or pscf_pc3 
-to simulate a fully three-dimensional structure such a BCC or gyroid 
+  - Install executable program file named pscf_pc1, pscf_pc2, and
+    pscf_pc3 in the pscfpp/bin directory.
+
+The three resulting three programs are used for problems structures that
+are periodic in 1, 2 and 3 dimensions, respectively. One would thus use
+pscf_pc1 to simulate a lamellar (one-dimensional) structure, pscf_pc2
+to simulate a hexagonal cylinder (two-dimension structure), or pscf_pc3
+to simulate a fully three-dimensional structure such a BCC or gyroid
 structure.
 
 <h2> all-cpu: </h2>
 
-To compile and build all CPU-based programs, but not any GPU-enable programs, 
+To compile and build all CPU-based programs, but not any GPU-enable programs,
 enter
 \code
 make all-cpu
 \endcode
-This is equivalent to entering "make fd1d" followed by "make pspc". 
+This is equivalent to entering "make fd1d" followed by "make pspc".
 
 <h2> pspg: </h2>
 
@@ -113,81 +134,79 @@ the NVCC Cuda compiler, enter
 \code
 make pspg
 \endcode
-from either the pscfpp root directory or the desired build directory. 
-If successful, this will compile code from the pspg/ subdirectory of 
-the src/ directory, place object, dependency and library files in 
-subdirectories of the chosen build tree, and install executables for 
-1, 2, and 3 dimensional problems named pscf_pg1, pscf_pg2 and pscf_pg3 
+from either the pscfpp root directory or the desired build directory.
+If successful, this will compile code from the pspg/ subdirectory of
+the src/ directory, place object, dependency and library files in
+subdirectories of the chosen build tree, and install executables for
+1, 2, and 3 dimensional problems named pscf_pg1, pscf_pg2 and pscf_pg3
 in the pscfpp/bin directory.
 
 This target does not check whether CUDA compilation has been enabled
-(by defining PSCF_CUDA), will fail if invoked on a machine that does not 
-support CUDA compilation.  
+(by defining PSCF_CUDA), will fail if invoked on a machine that does not
+support CUDA compilation.
 
-<h2> all: </h2>
-To build all CPU programs and build GPU-enabled programs if and only if 
-CUDA compilation has been enabled, enter
+\section install_targets_docs_sec Documentation
+
+To create a local copy of the html files for this web manual, enter
 \code
-make all
+make html
 \endcode
-The action taken this target depends on whether CUDA compilation has 
-been enabled, which can be done either by using the 
-\ref install_configure_page "configure script" or by editing a 
-configuration file. This command is equivalent to calling
-"make all-cpu" followed by "make pspg" if and only if CUDA is enabled.
+from either the pscfpp/ or pscfpp/docs directory. This procedure 
+requires that doxygen be installed, and is discussed greater detail 
+on the \ref install_doc_page "following page". 
 
-\section install_targets_clean_sec Clean-up 
+\section install_targets_clean_sec Clean-up
 
-The following targets remove files in order to clean up after compilation, 
+The following targets remove files in order to clean up after compilation,
 rather than creating files.
 
 <h2> clean: </h2>
-If, for any reason, you would like to clean up after compiling by 
-removing all of the object, dependency and library files that are 
+If, for any reason, you would like to clean up after compiling by
+removing all of the object, dependency and library files that are
 generated during compilation, you may enter
 \code
 make clean
 \endcode
-from either the chosen build directory or from the pscfpp/ root 
-directory.  The clean target removes all the intermediate files generated 
-by compilation, but does not remove the final executable files or the 
-configuration files that were created by the setup command.  
-If "make clean" is invoked from the pscfpp/ root directory, it removes 
-all such intermediate files in both the bld/ and src/ directory. If 
-"make clean" is invoked from the src/ or bld/ directory, it only 
+from either the chosen build directory or from the pscfpp/ root
+directory.  The clean target removes all the intermediate files generated
+by compilation, but does not remove the final executable files or the
+configuration files that were created by the setup command.
+If "make clean" is invoked from the pscfpp/ root directory, it removes
+all such intermediate files in both the bld/ and src/ directory. If
+"make clean" is invoked from the src/ or bld/ directory, it only
 removes such files from the directory from which it is invoked.
 
-The "make clean" command can also be invoked from almost any 
+The "make clean" command can also be invoked from almost any
 subdirectory of the src/ directory tree in order to remove recursively
-remove intermediate files from that directory and its subdirectories. 
-The "make clean" command can also be invoked from namespace level 
+remove intermediate files from that directory and its subdirectories.
+The "make clean" command can also be invoked from namespace level
 subdirectories of the bld/ directory, with the same effect.
 
-<h2> clean-bin: </h2> 
+<h2> clean-bin: </h2>
 The "clean-bin" command removes all of the pscf executable files
-named pscf_* that are created by compilation and normally installed 
+named pscf_* that are created by compilation and normally installed
 in the pscfpp/bin directory. It does not remove other executable
-scripts that are installed in the bin/ directory by the setup 
-script. 
+scripts that are installed in the bin/ directory by the setup
+script.
 
-<h2> clean-docs: </h2> 
-The "clean-docs" command removes any files that have been generated 
-in the docs/ directory by the doxygen documentation generation 
-utility, including all of the html files that are created in the 
+<h2> clean-docs: </h2>
+The "clean-docs" command removes any files that have been generated
+in the docs/ directory by the doxygen documentation generation
+utility, including all of the html files that are created in the
 docs/html directory.
 
 <h2> veryclean: </h2>
-The "make clean" and "make clean-bin" commands discussed above remove 
-files that are generated by compilation, but do not remove the various 
+The "make clean" and "make clean-bin" commands discussed above remove
+files that are generated by compilation, but do not remove the various
 files that are installed by the setup script, which include various
-makefile fragments and C++ files.  To remove these files in addition 
-to all of those removed by the "clean", "clean-bin" and "clean-docs" 
-targets, enter 
+makefile fragments and C++ files.  To remove these files in addition
+to all of those removed by the "clean", "clean-bin" and "clean-docs"
+targets, enter
 \code
 make veryclean
 \endcode
-from the pscfpp/ root directory. This command returns the pscfpp/ 
-directory tree to a state very similar to the state it had 
+from the pscfpp/ root directory. This command returns the pscfpp/
+directory tree to a state very similar to the state it had
 immediately after the repository was created by cloning a remote
 repository.
 
@@ -198,68 +217,68 @@ The "veryclean" target erases almost all of the files that are generated
 by the setup script, compilation, and the documentation generator. There
 are, however, a few types of files that do not exist in the repository
 but that it will not erase. Specifically, it will not erase any local
-compiler setup files files that the user may have created in the 
-make/compiler directory. After invoking "make veryclean", a user can 
+compiler setup files files that the user may have created in the
+make/compiler directory. After invoking "make veryclean", a user can
 thus invoke setup with the name of a previously created compiler setup
 file as an argument in order to recreate a similar initial configuration.
 
 \section install_targets_makeall_sec Invoking make from within src/
 
-When compiling in-source, by invoking make from within the src/ directory 
-tree, users may also invoke "make all" from a subdirectory of src/ in 
-order to compile a smaller set of source files. Invoking the command 
+When compiling in-source, by invoking make from within the src/ directory
+tree, users may also invoke "make all" from a subdirectory of src/ in
+order to compile a smaller set of source files. Invoking the command
 \code
 make all
 \endcode
-from almost any subdirectory of the src/ directory tree  will compile 
+from almost any subdirectory of the src/ directory tree  will compile
 all C++ files in the tree rooted at that subdirectory, without compiling
 any code outside of that subdirectory.
 
 Invoking "make all" from a subdirectory of a namespace level directory
-(i.e., a subdirectory of the src/util, src/pscf, src/fd1d, src/pspc, or 
-src/pspg directory) will generally compile all the *.cpp and *.cu source 
+(i.e., a subdirectory of the src/util, src/pscf, src/fd1d, src/pspc, or
+src/pspg directory) will generally compile all the *.cpp and *.cu source
 files in that directory and any nested subdirectories.
 
 Invoking "make all" from any namespace level subdirectory of src/ will
-not only compile of all the *.cpp and *.cu source files in the namespace 
-level directory tree, but will also create a static library file containing 
-all of the resulting object code, and then build and install executables 
-for any programs for which the source files are in that directory.  For 
-example, entering "make all" from src/fd1d directory will create a static 
-library named src/fd1d/libfd1d.a, and install an executable named pscf_fd 
-in the bin/ directory. 
+not only compile of all the *.cpp and *.cu source files in the namespace
+level directory tree, but will also create a static library file containing
+all of the resulting object code, and then build and install executables
+for any programs for which the source files are in that directory.  For
+example, entering "make all" from src/fd1d directory will create a static
+library named src/fd1d/libfd1d.a, and install an executable named pscf_fd
+in the bin/ directory.
 
-<em> Rationale </em>: The ability to invoke "make all" from any subdirectory 
-of src/ is designed to allow developers to use the command line to easily 
-recompile a few files from rom within the directory in which they are 
-working.  Typically, when a developer is adding a new feature or fixing 
-a bug, he or she will be usually be actively editing only a few files 
+<em> Rationale </em>: The ability to invoke "make all" from any subdirectory
+of src/ is designed to allow developers to use the command line to easily
+recompile a few files from rom within the directory in which they are
+working.  Typically, when a developer is adding a new feature or fixing
+a bug, he or she will be usually be actively editing only a few files
 within a single subdirectory of the src/ directory. Other files in the
 same subdirectory will usually be left untouched during this process.
-The system for keeping track of dependencies used by the PSCF build 
-system guarantees that invoking "make all" from the directory containing 
-the the files of immediate interest will only recompile source files that 
-have recently been modified, that include header files that have recently 
-been modified, or that have not already been compiled. A common work flow 
-during development for those who work from a command line is thus to edit 
-a file, exit the editor, then invoke "make all" from the directory 
+The system for keeping track of dependencies used by the PSCF build
+system guarantees that invoking "make all" from the directory containing
+the the files of immediate interest will only recompile source files that
+have recently been modified, that include header files that have recently
+been modified, or that have not already been compiled. A common work flow
+during development for those who work from a command line is thus to edit
+a file, exit the editor, then invoke "make all" from the directory
 containing that file to check if the modified file compiles.
 
-<em> Comment </em>: Invoking make with the name of a single file as a 
-target (e.g., with the name of a *.o object file) generally does *not* 
-work as intended, unless one uses the absolute path to the file. The 
-reason for this is that patterns and dependency files used by the pscf 
-makefile system all use absolute paths. The build system thus may not 
-recognize a relative path to a file as equivalent to the absolute paths 
-used in the files that define makefile patterns and dependencies among 
+<em> Comment </em>: Invoking make with the name of a single file as a
+target (e.g., with the name of a *.o object file) generally does *not*
+work as intended, unless one uses the absolute path to the file. The
+reason for this is that patterns and dependency files used by the pscf
+makefile system all use absolute paths. The build system thus may not
+recognize a relative path to a file as equivalent to the absolute paths
+used in the files that define makefile patterns and dependencies among
 files. Consistent use of "make all" for in-source compilation avoids
-this limitation, because "make all" causes the "make" utility to try to 
-compile a list of source files whose locations are provided internally 
+this limitation, because "make all" causes the "make" utility to try to
+compile a list of source files whose locations are provided internally
 as absolute paths.
 
 <BR>
-\ref install_configure_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
-\ref install_page   (Up) &nbsp; &nbsp; &nbsp; &nbsp; 
-\ref install_doc_page (Next) 
+\ref install_configure_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref install_page   (Up) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref install_doc_page (Next)
 
 */
