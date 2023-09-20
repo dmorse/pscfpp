@@ -143,7 +143,14 @@ __global__ void mcftsScale(cudaReal* result, cudaReal scale, int size)
    }
 }
 
-
+__global__ void fourierMove(cudaComplex* a, const cudaReal* b, const cudaReal* c, int size) {
+   int nThreads = blockDim.x * gridDim.x;
+   int startID = blockIdx.x * blockDim.x + threadIdx.x;
+   for (int i = startID; i < size; i += nThreads) {
+      a[i].x += b[i];
+      a[i].y += c[i];
+   }
+}
 
 }
 }

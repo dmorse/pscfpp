@@ -2,6 +2,7 @@
 #define PSPG_LINEAR_ALGEBRA_H
 
 #include "GpuTypes.h"
+#include <complex>
 
 namespace Pscf {
 namespace Pspg {
@@ -41,6 +42,7 @@ __global__ void scaleReal(cudaReal* result, double scale, int size);
 
 __global__ void mcftsScale(cudaReal* result, cudaReal scale, int size);
 
+__global__ void fourierMove(cudaComplex* a, const cudaReal* b, const cudaReal* c, int size);
 
 /** @} */
 

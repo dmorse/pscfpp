@@ -6,6 +6,7 @@
 // Subclasses of Analyzer 
 #include "TrajectoryWriter.h"
 #include "McHamiltonianAnalyzer.h"
+#include "BinaryStructureFactorGrid.h"
 
 namespace Pscf {
 namespace Pspc {
@@ -39,6 +40,8 @@ namespace Pspc {
          ptr = new TrajectoryWriter<D>(*mcSimulatorPtr_, *sysPtr_);
       } else if (className == "McHamiltonianAnalyzer") {
          ptr = new McHamiltonianAnalyzer<D>(*mcSimulatorPtr_, *sysPtr_);
+      } else if (className == "BinaryStructureFactorGrid") {
+         ptr = new BinaryStructureFactorGrid<D>(*mcSimulatorPtr_, *sysPtr_);
       }
 
       return ptr;
