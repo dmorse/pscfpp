@@ -47,7 +47,11 @@ namespace Pspg {
    */
    template <int D>
    McSimulator<D>::~McSimulator()
-   {}
+   {
+      if (trajectoryReaderFactoryPtr_) {
+         delete trajectoryReaderFactoryPtr_;
+      }
+   }
 
    /* 
    * Read instructions for creating objects from file.
@@ -68,7 +72,7 @@ namespace Pspg {
       wc_.allocate(nMonomer);
       const int meshSize = system().domain().mesh().size();
       for (int i = 0; i < nMonomer; ++i) {
-            wc_[i].allocate(meshSize);
+         wc_[i].allocate(meshSize);
       }
       analyzeChi();
    }
