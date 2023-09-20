@@ -15,6 +15,7 @@
 #include <pscf/crystal/shiftToMinimum.h>
 #include <vector>
 #include <unordered_map>
+#include <algorithm>
 #include <fftw3.h>
 
 namespace Pscf {
