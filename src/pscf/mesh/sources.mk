@@ -1,6 +1,7 @@
 pscf_mesh_= \
   pscf/mesh/Mesh.cpp \
-  pscf/mesh/MeshIterator.cpp 
+  pscf/mesh/MeshIterator.cpp \
+  pscf/mesh/getDimension.cpp
 
 pscf_mesh_SRCS=\
      $(addprefix $(SRC_DIR)/, $(pscf_mesh_))

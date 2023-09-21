@@ -135,8 +135,10 @@ namespace Pspc
       // Read program arguments
       int c;
       opterr = 0;
-      while ((c = getopt(argc, argv, "er:p:c:i:o:f")) != -1) {
+      while ((c = getopt(argc, argv, "ed:p:c:i:o:f")) != -1) {
          switch (c) {
+         case 'd':
+            break;
          case 'e':
             eflag = true;
             break;

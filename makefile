@@ -14,13 +14,13 @@ include src/config.mk
 # instead invoking make with the same target names from within the src/ 
 # directory.
 
-# Build all programs that runs on a conventional cpu 
-all-cpu:
-	cd bld; $(MAKE) all-cpu
-
 # Build all code, including gpu-enabled programs
 all:
 	cd bld; $(MAKE) all
+
+# Build all programs that runs on a conventional cpu 
+all-cpu:
+	cd bld; $(MAKE) all-cpu
 
 # Build the pscf_fd 1D finite element scft program
 fd1d:
