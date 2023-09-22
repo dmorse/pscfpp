@@ -280,11 +280,11 @@ The pscf_pc and pscf_pg programs require the dimensionality of the
 structure as an additional command line parameter, which specifies the 
 number 1, 2, or 3 of coordinates along which the structure is periodic.  
 This provided as an integer argument of the -d option.  The usual syntax 
-for invoking pscf_pc for a three dimensional structure (e.g., a network 
-phase or an arrangement of spheres), while also using the -e  option, 
-is thus
+for invoking pscf_pc for a three dimensionally periodic structure (e.g., 
+a network phase or an arrangement of spheres), while also using the -e  
+option, is thus
 ```
-pscf_pc -e -d 3 -p param -c command
+pscf_pc -d 3 -e -p param -c command
 ```
 The syntax for a simulation of one-dimensional lamellar phase would 
 instead use 1 as the argument of the -d option. The syntax for invoking 
@@ -292,10 +292,10 @@ pscf_pg is the same as that for pccf_pc, except for the program name.
 
 The above examples would both write log output that is produced during 
 execution to the user's screen (i.e., to standard output).  This log 
-output may also be redirected to a file by using the unix ">" standard 
-output redirection operator. For example, a command such as 
+output may instead be redirected to a file by using the unix ">" 
+standard output redirection operator. For example, a command such as 
 ```
-pscf_pc3 -e -d 3 -p param -c command > log
+pscf_pc -d 3 -e -p param -c command > log
 ```
 would redirect log output that is written during simulation of a 
 3-dimensional periodic structure to a file named "log" in the current 
@@ -308,7 +308,7 @@ To learn the syntax of the input files required by PSCF, it is useful to
 examine examples.  The directory pscfpp/examples contains many examples 
 of input files for different types of SCFT calculations.  Top level 
 subdirectories of the examples/ directory contain examples for different 
-PSCF programs or families of programs.
+PSCF programs (pscf_fd, pscf_pc, or pscf_pg). 
 
 Subdirectory examples/fd contains examples for the 1D 
 finite-difference program pscf_fd. Top level subdirectories of the
@@ -316,14 +316,14 @@ directory examples/fd contain examples for planar, cylindrical and
 spherical geometries, as indicated by the subdirectory names. One 
 or more example is given for each geometry.
 
-Subdirectory examples/pc contains examples contains examples the CPU
-based pscf_pc programs. Top level subdirectories contain solutions 
-for a particular type of physical system. For example, the directory
-examples/pc/diblock contains examples for a diblock copolymer melt.  
-Subdirectories of examples/pc/diblock contain examples for lamellar, 
-hexagonal, and BCC structures, among others.
+Subdirectory examples/pc contains examples for the pscf_pc CPU program. 
+Top level subdirectories of examples/pc contain solutions for a particular 
+type of physical system. For example, the directory examples/pc/diblock 
+contains examples for a diblock copolymer melt.  Subdirectories of 
+examples/pc/diblock contain examples for lamellar, hexagonal, and BCC 
+structures, among others.
 
-Subdirectory examples/pg contains examples for the pscf_pg programs for 
+Subdirectory examples/pg contains examples for the pscf_pg program for 
 periodic structures. Subdirectories are organized in a manner similar 
 to that used for the examples/pc directory tree.
 
