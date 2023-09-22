@@ -189,15 +189,15 @@ Each implementation-level namespace contains a class or class template
 named Mixture. The Fd1d namespace contains a concrete class named Mixture. 
 The Pspc and Pspg namespaces each contain a class template Mixture<int D>, 
 in which the integer dimensionality of space D is a template parameter. 
-The mixture object used in the pscf_pc2 program for 2D periodic structures 
-is thus an instance of class Pscf::Mixture<2>, where the dimensionality 
-of space is specified by the template parameter D=2.  All of the Mixture 
-classes and class templates defined in implementation level namespaces are 
-derived from instances of a base class template named Pscf::MixtureTmpl. 
-All of these Mixture classes use the same parameter file format, which 
-is described above. Most of this format is defined in the member 
-function Pscf::MixtureTmpl::readParameters of the shared base class 
-template. 
+The Mixture object used by the pscf_pc program to treat a 2D periodic 
+structure is thus an instance of class Pscf::Mixture<2>, where the 
+dimensionality of space is specified by the template parameter D=2.  All 
+of the Mixture classes and class templates defined in implementation level 
+namespaces are derived from instances of a base class template named 
+Pscf::MixtureTmpl.  All of these Mixture classes use the same parameter 
+file format, which is described above. Most of this format is defined 
+in the member function Pscf::MixtureTmpl::readParameters of the shared 
+base class template. 
 
 The array "monomers" is implemented internally as an array of instances of 
 the class Pscf::Monomer, as discussed \subpage pscf_Monomer_page "here".

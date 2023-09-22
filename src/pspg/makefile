@@ -12,14 +12,10 @@ include $(SRC_DIR_REL)/config.mk
 include $(SRC_DIR)/pspg/include.mk
 
 #-----------------------------------------------------------------------
-# Main program source file base names
+# Main program source file base name
 
-PSCF_PG1=$(BLD_DIR)/pspg/pscf_pg1
-PSCF_PG2=$(BLD_DIR)/pspg/pscf_pg2
-PSCF_PG3=$(BLD_DIR)/pspg/pscf_pg3
-PSCF_PGA=$(BLD_DIR)/pspg/pscf_pg
+PSCF_PG=$(BLD_DIR)/pspg/pscf_pg
 
-PSCF_PG_EXE=$(PSCF_PG3_EXE) $(PSCF_PG2_EXE) $(PSCF_PG1_EXE) $(PSCF_PGA_EXE)
 #-----------------------------------------------------------------------
 # Main targets 
 
@@ -28,10 +24,7 @@ all: $(pspg_OBJS) $(pspg_LIB) $(PSCF_PG_EXE)
 clean:
 	rm -f $(pspg_OBJS) $(pspg_OBJS:.o=.d)
 	rm -f $(pspg_LIB)
-	rm -f $(PSCF_PG1).o $(PSCF_PG1).d
-	rm -f $(PSCF_PG3).o $(PSCF_PG2).d
-	rm -f $(PSCF_PG3).o $(PSCF_PG3).d
-	rm -f $(PSCF_PGA).o $(PSCF_PGA).d
+	rm -f $(PSCF_PG).o $(PSCF_PG).d
 	rm -f *.o */*.o
 	rm -f *.d */*.d
 	cd tests; $(MAKE) clean
@@ -41,31 +34,12 @@ veryclean:
 	-rm -f lib*.a
 
 # Executable target
-
-$(PSCF_PG1_EXE): $(PSCF_PG1).o $(PSPG_LIBS)
-	$(CXX) $(LDFLAGS) -o $(PSCF_PG1_EXE) $(PSCF_PG1).o $(LIBS)
-
-$(PSCF_PG2_EXE): $(PSCF_PG2).o $(PSPG_LIBS)
-	$(CXX) $(LDFLAGS) -o $(PSCF_PG2_EXE) $(PSCF_PG2).o $(LIBS)
-
-$(PSCF_PG3_EXE): $(PSCF_PG3).o $(PSPG_LIBS)
-	$(CXX) $(LDFLAGS) -o $(PSCF_PG3_EXE) $(PSCF_PG3).o $(LIBS)
-
-$(PSCF_PGA_EXE): $(PSCF_PGA).o $(PSPG_LIBS)
-	$(CXX) $(LDFLAGS) -o $(PSCF_PGA_EXE) $(PSCF_PGA).o $(LIBS)
+$(PSCF_PG_EXE): $(PSCF_PG).o $(PSPG_LIBS)
+	$(CXX) $(LDFLAGS) -o $(PSCF_PG_EXE) $(PSCF_PG).o $(LIBS)
 
 # Short name for executable target (for convenience)
-pscf_pg1:
-	$(MAKE) $(PSCF_PG1_EXE)
-
-pscf_pg2:
-	$(MAKE) $(PSCF_PG2_EXE)
-
-pscf_pg3:
-	$(MAKE) $(PSCF_PG3_EXE)
-
 pscf_pg:
-	$(MAKE) $(PSCF_PGA_EXE)
+	$(MAKE) $(PSCF_PG_EXE)
 
 
 #-----------------------------------------------------------------------
@@ -74,6 +48,4 @@ pscf_pg:
 -include $(pspg_OBJS:.o=.d)
 -include $(pscf_OBJS:.o=.d)
 -include $(util_OBJS:.o=.d)
--include $(PSCF_PG1).d 
--include $(PSCF_PG3).d 
--include $(PSCF_PG3).d 
+-include $(PSCF_PG).d 

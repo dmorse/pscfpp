@@ -129,10 +129,10 @@ the parameter and command files.
 <em> Example </em>:
 The command
 \code
-   pscf_pc3 -e -p param -c commands -i in/ -o out/ > log
+   pscf_pc -d 3 -e -p param -c commands -i in/ -o out/ > log
 \endcode
-would run the program pscf_pc3 using a parameter file named "param" and
-a command file named "commands", while echoing the parameter file during
+would run the pscf_pc using a parameter file named "param" and a 
+command file named "commands", while echoing the parameter file during
 initialization, writing all output files to subdirectory "out/" of the 
 current working directory, and reading all input files other than the 
 parameter and command files from subdirectory "in/".

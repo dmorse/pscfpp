@@ -32,13 +32,10 @@ PSPC_SUFFIX:=
 # Path to the pspc library 
 # Note: BLD_DIR is defined in the main config.mk
 
-pspc_LIBNAME=pspc$(PSPC_SUFFIX)$(UTIL_SUFFIX)
+pspc_LIBNAME=pspc$(PSPC_SUFFIX)
 pspc_LIB=$(BLD_DIR)/pspc/lib$(pspc_LIBNAME).a
 #-----------------------------------------------------------------------
-# Paths to executable main program files
+# Paths to executable main program file
 
-PSCF_PC1_EXE=$(BIN_DIR)/pscf_pc1
-PSCF_PC2_EXE=$(BIN_DIR)/pscf_pc2
-PSCF_PC3_EXE=$(BIN_DIR)/pscf_pc3
-PSCF_PCA_EXE=$(BIN_DIR)/pscf_pc
+PSCF_PC_EXE=$(BIN_DIR)/pscf_pc$(PSPC_SUFFIX)
 #-----------------------------------------------------------------------

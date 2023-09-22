@@ -8,7 +8,7 @@ The pscf_pc and pscf_pg programs for periodic systems use nearly identical
 parameter file formats, and so are discussed together here.
 
 \section user_param_pc_example_sec Example
-An example of a parameter file for the program pscf_pc3D is shown below.
+An example of a parameter file for the program pscf_pc is shown below.
 
 \code
 System{

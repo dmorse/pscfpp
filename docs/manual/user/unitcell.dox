@@ -42,14 +42,10 @@ for each of the possible 1, 2 and 3 dimensional lattice systems.
 These three different types of information are provided to a pscf_pc or
 pscf_pg program in different ways:
 
-<em> Spatial dimension </em>: The PSCF package requires the user to use 
-different executable programs to simulate periodic systems of different 
-dimensionality, in which the value of the spatial dimension D appears
-as part of the executable name. For example, one must use pscf_pc3 or 
-pscf_pg3 to simulate a fully three dimensional crystal but pscf_pc1 or 
-pscf_pg1 for a 1D (lamellar) crystal. As a result, the value of the
-spatial dimension D is known at run time from the user's choice of 
-executable, and does not need to be specified in any input file. 
+<em> Spatial dimension </em>: The PSCF package requires the user to 
+specify the spatial dimension D of a periodic structure that will be
+treated by the pscf_pc or pscf_pg program as an argument of the -d 
+command line option for those programs. 
 
 <em> Lattice system identifier </em> : The string identifier for a 
 lattice system is a required parameter in the parameter file format for 

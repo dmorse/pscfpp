@@ -11,13 +11,13 @@ in the pscfpp/examples directory of the PSCF repository.
 
 Each top level subdirectory of the examples root directory contains 
 examples of simulations of a particular program or set of closely related 
-program. For example, the pc directory contains examples that use the 
-pscf_pc1, pscf_pc2 or pscf_pc3 CPU programs for periodic microstructres.
-The next level of subdirectory specifies a type of physical system. For 
-example, the pc/diblock/ subdirectory contains examples of computations 
-involving three-dimensional structures of diblock copolymer melts. Lower 
-level subdirectories such as pc/diblock/gyroid contain one or more
-examples for a specific crystal structure.
+program. For example, the pc/ directory contains examples that use the 
+pscf_pc CPU program for periodic microstructres.  The next level of 
+subdirectory specifies a type of physical system. For example, the 
+pc/diblock/ subdirectory contains examples of computations involving 
+periodic structures of diblock copolymer melts. Lower level subdirectories 
+such as pc/diblock/gyroid each contain input files for one or more example 
+computations for a specific crystal structure.
 
 \section examples_layout_sec Input files
 
@@ -63,22 +63,23 @@ To use a "run" script, simply issue the command
 from within the directory containing the example and the "run" script
 file. 
 
-To use pscf_pc3 to run a simple example computation with the above 
+To use pscf_pc to run a simple example computation with the above 
 directory structure, one could change directory (cd) to the directory 
 containing the example and issue the command 
 \code
- pscf_pc3 -e -p param -c command 
+ pscf_pc -d 3 -e -p param -c command 
 \endcode
-This command would send log output to the terminal.  The "run" script
-simply issues this command or something very similar to it for you.  To 
-run the calculation in background and redirect the log output to a file 
-out/log, one could instead type
+for a three dimensional periodic structure.  This command would send 
+log output to the terminal.  The "run" script simply issues this 
+command or something very similar to it for you.  To run the calculation 
+in background and redirect the log output to a file out/log, one could 
+instead enter
 \code
- pscf_pc3 -e -p param -c command > out/log &
+ pscf_pc -d 3 -e -p param -c command > out/log &
 \endcode
-A command to execute a different PSCF programs would have a similar 
-syntax except for the replacement of the executable name pscf_pc3 by 
-a different executable name, such as pscf_pc2 or pscf_fd.
+A command to execute a different PSCF program would have a similar 
+syntax except for the replacement of the executable name pscf_pc by 
+a different executable name, such as pscf_fd or pscf_pg.
 
 Note: In the above examples, we recommend issuing the command "./run"
 rather than simply "run" to execute the run script. Most users will
