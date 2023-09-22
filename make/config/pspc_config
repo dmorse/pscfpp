@@ -40,4 +40,5 @@ pspc_LIB=$(BLD_DIR)/pspc/lib$(pspc_LIBNAME).a
 PSCF_PC1_EXE=$(BIN_DIR)/pscf_pc1
 PSCF_PC2_EXE=$(BIN_DIR)/pscf_pc2
 PSCF_PC3_EXE=$(BIN_DIR)/pscf_pc3
+PSCF_PCA_EXE=$(BIN_DIR)/pscf_pc
 #-----------------------------------------------------------------------

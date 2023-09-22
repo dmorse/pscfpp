@@ -17,8 +17,9 @@ include $(SRC_DIR)/pspg/include.mk
 PSCF_PG1=$(BLD_DIR)/pspg/pscf_pg1
 PSCF_PG2=$(BLD_DIR)/pspg/pscf_pg2
 PSCF_PG3=$(BLD_DIR)/pspg/pscf_pg3
+PSCF_PGA=$(BLD_DIR)/pspg/pscf_pg
 
-PSCF_PG_EXE=$(PSCF_PG3_EXE) $(PSCF_PG2_EXE) $(PSCF_PG1_EXE)
+PSCF_PG_EXE=$(PSCF_PG3_EXE) $(PSCF_PG2_EXE) $(PSCF_PG1_EXE) $(PSCF_PGA_EXE)
 #-----------------------------------------------------------------------
 # Main targets 
 
@@ -30,6 +31,7 @@ clean:
 	rm -f $(PSCF_PG1).o $(PSCF_PG1).d
 	rm -f $(PSCF_PG3).o $(PSCF_PG2).d
 	rm -f $(PSCF_PG3).o $(PSCF_PG3).d
+	rm -f $(PSCF_PGA).o $(PSCF_PGA).d
 	rm -f *.o */*.o
 	rm -f *.d */*.d
 	cd tests; $(MAKE) clean
@@ -49,6 +51,9 @@ $(PSCF_PG2_EXE): $(PSCF_PG2).o $(PSPG_LIBS)
 $(PSCF_PG3_EXE): $(PSCF_PG3).o $(PSPG_LIBS)
 	$(CXX) $(LDFLAGS) -o $(PSCF_PG3_EXE) $(PSCF_PG3).o $(LIBS)
 
+$(PSCF_PGA_EXE): $(PSCF_PGA).o $(PSPG_LIBS)
+	$(CXX) $(LDFLAGS) -o $(PSCF_PGA_EXE) $(PSCF_PGA).o $(LIBS)
+
 # Short name for executable target (for convenience)
 pscf_pg1:
 	$(MAKE) $(PSCF_PG1_EXE)
@@ -58,6 +63,9 @@ pscf_pg2:
 
 pscf_pg3:
 	$(MAKE) $(PSCF_PG3_EXE)
+
+pscf_pg:
+	$(MAKE) $(PSCF_PGA_EXE)
 
 
 #-----------------------------------------------------------------------

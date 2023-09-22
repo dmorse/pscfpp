@@ -1,0 +1,43 @@
+/*!
+\page pscf_pg_page pscf_pg - Periodic (GPU)
+
+Polymer Self-Consistent Field Theory - 3D Periodic (GPU)
+
+\section pscf_pg_usage_section Usage
+
+    pscf_pg [-e] [-d dimension] [-p file] [-c file] [-i prefix] [-o prefix]
+
+\section pscf_pg_options_section Command Line Options
+
+Normal usage requires a value for the dimension of space (-d option), a 
+parameter file (-p option) and a command file (-c option). The -e, -i,
+and -o options are truly optional.
+
+   -e  
+
+    Enable echoing of parameter file to log file as it is read. This
+    option is often useful for debugging the parameter file.
+
+  -d dimension
+
+   Set the spatial dimension (# of periodic coordinates) of the 
+   structure of interest, given by the integer argument "dimension", 
+   which must equal 1, 2 or 3 (required).
+
+  -p file
+
+   Set the parameter file name, given by the argument "file" (required).
+
+  -c file
+
+   Set the command file name, given by the argument "file" (required).
+
+  -i prefix
+
+   Set the input file path prefix, given by the argument "prefix".
+
+  -o prefix
+
+   Set the output file path prefix, given by the argument "prefix".
+
+*/

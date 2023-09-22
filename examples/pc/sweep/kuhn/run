@@ -1,1 +1,1 @@
-pscf_pc1 -e -p param -c command > out/log
+pscf_pc -d 1  -e -p param -c command > out/log

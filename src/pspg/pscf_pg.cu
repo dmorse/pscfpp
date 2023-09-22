@@ -6,11 +6,11 @@
 */
 
 #include <pscf/mesh/getDimension.h>
-#include <pspc/System.h>
+#include <pspg/System.h>
 #include <iostream>
 
 namespace Pscf {
-namespace Pspc {
+namespace Pspg {
 
    template <int D>
    void run(int argc, char **argv) {
@@ -37,16 +37,16 @@ int main(int argc, char **argv)
    int D;
    char** argvcopy = argv;
    D = Pscf::getDimension(argc, argvcopy);
-   std::cout << "dimension   " << D << std::endl;
+   std::cout << "dimension    " << D << std::endl;
 
    if (1 == D) {
-      Pscf::Pspc::run<1>(argc, argv);
+      Pscf::Pspg::run<1>(argc, argv);
    } else
    if (2 == D) {
-      Pscf::Pspc::run<2>(argc, argv);
+      Pscf::Pspg::run<2>(argc, argv);
    } else
    if (3 == D) {
-      Pscf::Pspc::run<3>(argc, argv);
+      Pscf::Pspg::run<3>(argc, argv);
    } else {
       std::cout << " Invalid dimension = " << D << std::endl;
    }

@@ -115,6 +115,7 @@ namespace Pspg
    void System<D>::setOptions(int argc, char **argv)
    {
       bool eflag = false; // echo
+      bool dflag = false; // dimension
       bool pFlag = false; // param file
       bool cFlag = false; // command file
       bool iFlag = false; // input prefix
@@ -125,14 +126,19 @@ namespace Pspg
       char* iArg = 0;
       char* oArg = 0;
       int tArg = 0;
+      int dArg = 0;
 
       // Read program arguments
       int c;
       opterr = 0;
-      while ((c = getopt(argc, argv, "er:p:c:i:o:t:")) != -1) {
+      while ((c = getopt(argc, argv, "ed:p:c:i:o:t:")) != -1) {
          switch (c) {
          case 'e':
             eflag = true;
+            break;
+         case 'd':
+            dflag = true;
+            dArg = atoi(optarg);
             break;
          case 'p': // parameter file
             pFlag = true;

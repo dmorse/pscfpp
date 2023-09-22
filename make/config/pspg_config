@@ -39,4 +39,5 @@ pspg_LIB=$(BLD_DIR)/pspg/lib$(pspg_LIBNAME).a
 PSCF_PG1_EXE=$(BIN_DIR)/pscf_pg1$(PSPG_SUFFIX)$(UTIL_SUFFIX)
 PSCF_PG2_EXE=$(BIN_DIR)/pscf_pg2$(PSPG_SUFFIX)$(UTIL_SUFFIX)
 PSCF_PG3_EXE=$(BIN_DIR)/pscf_pg3$(PSPG_SUFFIX)$(UTIL_SUFFIX)
+PSCF_PGA_EXE=$(BIN_DIR)/pscf_pg$(PSPG_SUFFIX)$(UTIL_SUFFIX)
 #-----------------------------------------------------------------------

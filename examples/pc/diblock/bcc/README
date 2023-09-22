@@ -7,7 +7,7 @@ To run the simulation, enter
 
 or
 
->  ./pscf_pc3 -e -p param -c command
+>  ./pscf_pc -d 3 -e -p param -c command
 
 To remove files created by a previous run, enter:
 

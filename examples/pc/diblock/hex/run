@@ -1,1 +1,1 @@
-pscf_pc2 -e -p param -c command
+pscf_pc -d 2 -e -p param -c command
