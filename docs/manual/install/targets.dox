@@ -44,9 +44,9 @@ make all
 \endcode
 The behavior of this command depends on whether CUDA compilation has
 been enabled. If CUDA compilation is not enabled (which is the default
-behavior), the "make all" command only compiles CPU programs pscf_fd,
-pscf_pc1, pscf_pc2, and pscf_pc3. If CUDA compilation is enabled, it
-also compiles the GPU-enabled programs pscf_pg1, pscf_pg2, and pscf_pg3.
+behavior), the "make all" command only compiles CPU programs pscf_fd
+and pscf_pc. If CUDA compilation is enabled, it also compiles the 
+GPU-enabled program pscf_pg.
 
 CUDA compilation can be enabled or disabled by using the -c option of
 the configure script, e.g., by entering "./configure -c1" to enable
@@ -88,11 +88,10 @@ relevant configuration files, and will recompile any file that might
 be effected by such changes.
 
 <h2> pspc: </h2>
-The pspc makefile target builds the pscf_pc1, pscf_pc2, and pscf_pc3
-pseudo-spectral programs for periodic microstructures on a CPU, and
-compiles all the source code files used by these programs. These
-programs depend on both the GSL library and the FFTW fast Fourier
-transform libraries.  To compile these programs, enter:
+The pspc makefile target builds the pscf_pc CPU program for periodic
+microstructures, and compiles all the source code files used by this
+programs. This programs depends on both the GSL library and the FFTW 
+fast Fourier transform libraries.  To compile pscf_pc, enter:
 \code
 make pspc
 \endcode
@@ -106,20 +105,13 @@ This command will cause the system to:
   - Compile all of the *.cpp files in the src/pspc/ directory, and create
     create a corresponding static library file there.
 
-  - Install executable program file named pscf_pc1, pscf_pc2, and
-    pscf_pc3 in the pscfpp/bin directory.
-
-The three resulting three programs are used for problems structures that
-are periodic in 1, 2 and 3 dimensions, respectively. One would thus use
-pscf_pc1 to simulate a lamellar (one-dimensional) structure, pscf_pc2
-to simulate a hexagonal cylinder (two-dimension structure), or pscf_pc3
-to simulate a fully three-dimensional structure such a BCC or gyroid
-structure.
+  - Install an executable program file named pscf_pc in the pscfpp/bin 
+    directory.
 
 <h2> all-cpu: </h2>
 
-To compile and build all CPU-based programs, but not any GPU-enable programs,
-enter
+To compile and build the pscf_fd and pscf_pc CPU programs, but not 
+the GPU-enable pscf_pg program, enter
 \code
 make all-cpu
 \endcode
@@ -127,19 +119,17 @@ This is equivalent to entering "make fd1d" followed by "make pspc".
 
 <h2> pspg: </h2>
 
-The pspg makefile target compiles the pscf_pg1, pscf_pg2, and pscf_pg3
-GPU-enabled pseudo-spectral programs for periodic microstructures. To
-compile these programs on a computer with an appropriate NVIDIA GPU and
-the NVCC Cuda compiler, enter
+The pspg makefile target builds the pscf_pg GPU-enabled program for
+periodic microstructures. To compile this on a computer with an 
+appropriate NVIDIA GPU and development kit, enter
 \code
 make pspg
 \endcode
 from either the pscfpp root directory or the desired build directory.
 If successful, this will compile code from the pspg/ subdirectory of
 the src/ directory, place object, dependency and library files in
-subdirectories of the chosen build tree, and install executables for
-1, 2, and 3 dimensional problems named pscf_pg1, pscf_pg2 and pscf_pg3
-in the pscfpp/bin directory.
+subdirectories of the chosen build tree, and install an executable
+named pscf_pg in the pscfpp/bin directory.
 
 This target does not check whether CUDA compilation has been enabled
 (by defining PSCF_CUDA), will fail if invoked on a machine that does not

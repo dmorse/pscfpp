@@ -11,7 +11,7 @@ and installed all required dependencies. The descriptions assume that the
 root directory of the repository is named pscfpp/. You are free to rename 
 the root directory before running or rerunning the setup script.
 
-Below, have divided the instructions i a set of instructions for 
+Below, have divided the instructions into a set of instructions for 
 compiling and installing the programs that use only CPU hardware, and 
 additional instructions for compiling programs that use an NVIDIA GPU.
 
@@ -68,8 +68,8 @@ GPU-enabled code, you may simply enter
     make all
 \endcode
 from the pscfpp/ directory immediately after running the setup script.  
-If successful, this will install executables named "pscf_fd", "pscf_pc1", 
-"pscf_pc2" and "pscf_pc3" in the pscfpp/bin directory.  
+If successful, this will install executables named "pscf_fd", "pscf_pc"
+in the pscfpp/bin directory.  
 
 Compiling all the PSCF C++ code using "make all" takes a little time 
 (e.g., 2 to 3 minutes on a 2020 Mac air laptop with an M1 chip). This 
@@ -155,18 +155,17 @@ already completed the setup steps described above.
  
    - **Compile all programs (including GPU-enabled programs):**
      After enabling CUDA compilation and setting the appropriate 
-     architecture, you can compile all programs, inluding GPU enabled
-     programs, by simply re-entering "make all" or
+     architecture, you can compile all programs, inluding GPU-enabled
+     pscf_pg program, by simply re-entering "make all" or
      \code
      make -jn all
      \endcode
      from within the pscfpp/ root directory, where "n" is the number
      of CPU cores to be used during compilation.
 
-If successful, the "make all" command will install executables files 
-named "pscf_pg1", "pscf_pg2" and "pscf_pg3" in the pscfpp/bin directory 
-in addition to the files "pscf_fd", "pspc_pc1", "pscf_pc2" and "pscf_pc3" 
-that are created by compiling only C++ code.
+If successful, the "make all" command will install an executable files 
+named "pscf_pg" in the pscfpp/bin directory in addition to the files 
+"pscf_fd" and "pspc_pc" that are created by compiling only C++ code.
 
 Several of the above steps is discussed in more detail in the following 
 pages.

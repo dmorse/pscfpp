@@ -4,25 +4,24 @@
  \ref user_command_pg_page (Next)
 <BR>
 
-The pscf_pc programs accept a larger set of commands than the simpler
+The pscf_pc program accepts a larger set of commands than the simpler
 pscf_fd program, though the basic commands are similar. The number of
-commands is larger in part as a result of the fact that pscf_pc programs
-can use several different formats to read and write field files.  By
+commands is larger in part as a result of the fact that pscf_pc can 
+use several different formats to read and write field files.  By
 convention, the names of commands that read or write a field file in
 symmetry-adapted basis format end with a suffix _BASIS, while names
 of commands that read or write files in read-space grid (r-grid) format
-end with a suffic _RGRID. The pscf_pc programs also accept a set of
+end with a suffic _RGRID. The pscf_pc program also accept a set of
 commands that can be used convert between different possible field
 file formats.
 
 \section user_command_pc_scft_sec Example: SCFT Calculation
 
-Below is an example of a simple command file for any of pscf_pc programs
-for D-dimensionally periodic microstructures (i.e., for pscf_pc1, pscf_pc2,
-or pscf_pc3) for a calculation the performs a single SCFT calculation. Note
-that the names of pscf_pc commands that read or write field files include
-a string "BASIS", "RGRID" or "KGRID" that specifies which of the three
-available field formats to use:
+Below is an example of a simple command file for using pscf_pc to
+perform a single SCFT calculation. Note that the names of the pscf_pc 
+commands that read or write field files include a string "BASIS", 
+"RGRID" or "KGRID" that specifies which of the three available field 
+formats should be use:
 \code
 READ_W_BASIS    in/w.bf
 ITERATE
@@ -409,11 +408,11 @@ ignores values for coefficients of basis functions that appear in
 the input file but that do not exist in the current basis.
 
 * *Technical note* :
-The symmetry-adapted basis used by the pscf_pc programs is normally
-created during the process of reading the first field file that that
-the program is instructed to read.  This basis is constructed immediately
-after reading the header of that file, which contains a list of values
-for the unit cell parameters. Initialization of the basis is delayed until
+The symmetry-adapted basis used by pscf_pc is normally created during 
+the process of reading the first field file that that the program is 
+instructed to read.  This basis is constructed immediately after 
+reading the header of that file, which contains a list of values for 
+the unit cell parameters. Initialization of the basis is delayed until
 this point in program execution because values for unit cell parameters
 are not provided in the parameter file, and required by the algorithm
 that creates this basis. The choice of the initial values for the unit
@@ -468,19 +467,19 @@ specified space group should thus initialize the w fields using either
 the READ_W_BASIS or ESTIMATE_W_FROM_C commands, rather than READ_W_RGRID.
 The r-grid file format can represent a field with no particular space
 group symmetry. When w fields are read in r-grid format using this
-command, the pscf_pc program thus assumes that the w fields and any
-fields that are computed from them may not be symmetric under the
-elements of the space group declared in the parameter file. Because
-the existing iteration algorithms for pscf_pc programs all use an
-expansion of the fields in symmetry-adapted basis, the ITERATE and
-SWEEP command thus cannot be invoked when the current w fields
-were initialized using the READ_W_RGRID command. W fields that were
-initialize with the READ_W_RGRID command may, however, be used by
-the COMPUTE command, which uses an algorithm that does not assume
-the existence of any space group symmetry.
+command, pscf_pc thus assumes that the w fields and any fields that 
+are computed from them may not be symmetric under the elements of 
+the space group declared in the parameter file. Because the existing 
+iteration algorithms for pscf_pc all use an expansion of the fields 
+in symmetry-adapted basis, the ITERATE and SWEEP command thus cannot 
+be invoked when the current w fields were initialized using the 
+READ_W_RGRID command. W fields that were initialize with the 
+READ_W_RGRID command may, however, be used by the COMPUTE command, 
+which uses an algorithm that does not assume the existence of any 
+space group symmetry.
 
-The READ_W_RGRID command is thus currently of very limited utility in
-the pscf_pc programs. It was implemented as a starting point for later
+The READ_W_RGRID command is thus currently of very limited utility 
+in pscf_pc. It was implemented as a starting point for later 
 development of stochastic field theoretic simulation algorithms in
 which the fluctuating field generally do not exhibit any special
 symmetry.
@@ -626,7 +625,7 @@ accessible slice may be identified by a integer contour step index
 originates, and increases with increasing distance \f$ s \f$ from that
 vertex.
 
-The pscf_pc programs accept several commands that output propagators
+The pscf_pc program accepts several commands that output propagators
 and propagator slices to one or more files. The names for these commands
 start with a string "WRITE_Q", followed by a suffix that describes what
 information is output by invoking the command. All of these commands take
@@ -767,7 +766,7 @@ The format of the file created by this command is discussed
 
 \section user_command_pc_fieldops_sec Field File Manipulations
 
-The pscf_pc programs accept several commands that perform manipulations
+The pscf_pc program accepts several commands that perform manipulations
 on field files, including conversions among different formats.
 
 \subsection user_command_pc_conversion_sub Field Format Conversions
@@ -838,7 +837,7 @@ the magnitude of the differences.
 
 \section user_command_pc_external_sec External Fields
 
-The pscf_pc programs accept several commands that allow users to input
+The pscf_pc program accepts several commands that allow users to input
 and output external chemical potential fields that act on monomers of
 each type, in addition to the internally generated fields that arise
 in a self-consistent field approximation from interactions. External

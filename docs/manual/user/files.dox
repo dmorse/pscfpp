@@ -73,8 +73,8 @@ as parameters of commands within the command file.
 
 Each line of a command file starts with a capitalized command name,
 followed by zero or more arguments. A simple command file for using
-one of the pscf_pc programs to perform an SCFT calculation might look
-like this:
+the pscf_pc program to perform an SCFT calculation might look like
+this:
 \code
 READ_W_BASIS      in/w.bf
 ITERATE

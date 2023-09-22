@@ -14,24 +14,31 @@ in the command file.
 
 \section user_param_usage_example_sec Example
 
-As an example, consider use of the program pscf_pc3, which is used to
-model three-dimensional periodic microstructures.  To run this program
-using a parameter file named "param" and command file named "commands"
-that are both in the current working directory, one would enter:
+As an example, consider use of the program pscf_fd, which is used to
+simulate problems in which the fields depend on a single coordinate.
+To run this program using a parameter file named "param" and command
+file named "commands" that are both in the current working directory,
+one would enter
 \code
-   pscf_pc3 -p param -c commands
+   pscf_fd -p param -c commands
 \endcode
-The analagous command to invoke a different PSCF program would use a 
-different executable name (e.g., pscf_fd to run the program for
-one-dimensional finite-difference calculations) but identical command
-line options.
+The syntax to invoke the pscf_pc and pscf_pg programs for periodic
+microstructures is similar, but requires that parameter also pass the 
+spatial dimensionality as a parameter of the -d option. For example,
+to use pscf_pc to perform a calculation involving a three-dimensional 
+periodic microstructures, one would enter
+\code
+   pscf_pc -d 3  -p param -c commands
+\endcode
+The command line interface for pscf_pg is identical to the interface
+for pscf_pc. 
 
 During execution, some log information is written to standard output,
 which outputs to a terminal by default. This log output can be re-directed
 to a file by using the unix ">" output redirect operator. For example,
 the command
 \code
-  pscf_pc3 -p param -c commands > log
+  pscf_pc -d 3 -p param -c commands > log
 \endcode
 would direct standard output to a file named "log" in the current working
 directory.  Standard output should normally be redirected to a file when
@@ -42,10 +49,10 @@ a job is run in background or in a queue.
 All PSCF programs accept a command line option "-e" that causes the
 contents of each line of the parameter file to be echoed to standard
 output while the parameter file is being read. For example, to invoke
-the program pscf_pc3 with echoing of the parameter file to a log file,
-one could enter
+pscf_pc with echoing of the parameter file to a log file, one could 
+enter
 \code
-   pscf_pc3 -e -p param -c commands > log
+   pscf_pc -e -d 3 -p param -c commands > log
 \endcode
 The "echo" option is very useful for locating errors in the parameter 
 file.  When an error is detected while reading a parameter file, the 
@@ -78,6 +85,11 @@ options listed in the table shown below.
      <td> Activates echoing of the parameter file to standard output </td>
   </tr>
   <tr> 
+     <td> -d </td>
+     <td> dimension </td>
+     <td> spatial dimensionality 1, 2, or 3 (pscf_pc and pscf_pg only) </td>
+  </tr>
+  <tr> 
      <td> -p </td>
      <td> filename </td>
      <td> Gives the filename of the parameter file (required) </td>
@@ -100,9 +112,11 @@ options listed in the table shown below.
           the names (paths) for all output data files </td>
   </tr>
 </table>
-Only the -p and -c options are required, while others may be omitted.  
-The blank entry in the argument column for the -e option indicates that 
-this option does not take an argument. 
+The -p and -c options are always required, while the -e, -i and -o 
+options may be omitted.  The -d option only exists for the pscf_pc 
+and pscf_pg programs, and is a required option for those programs.
+The blank entry in the argument column for the -e option indicates 
+that this option does not take an argument. 
 
 The "prefix" arguments of the -i and -o options can be used to specify
 directory for input and output files. To do so, set either of these

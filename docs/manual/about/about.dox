@@ -55,30 +55,26 @@ PSCF contains the following executable programs and sets of programs:
      cylindrical or spherical copolymer micelles.  The suffix "fd" in 
      the name pscf_fd stands for "finite difference".
      
-   - **pscf_pc** : The pscf_pc programs use a pseudo-spectral algorithm 
+   - **pscf_pc** : The pscf_pc program uses a pseudo-spectral algorithm 
      to treat periodic microstructures on conventional CPU hardware.
-     These programs are closely analogous to the older PSCF Fortran 
-     program, and provide similar capabilties and performance. Different 
-     executable files named pscf_pc1, pscf_pc2 and pscf_pc3 are used to 
-     solve 1, 2 and 3 dimensionally periodic structures, respectively. 
-     The suffix "pc" in these names stands for "periodic CPU".  
+     This programs is closely analogous to the older PSCF Fortran 
+     program, and provides similar capabilties and performance. 
+     The suffix "pc" stands for "periodic CPU".  
      
-   - **pscf_pg** : The pscf_pg programs are GPU-accelerated programs for 
-     periodic structures. They are based on algorithms similar to those 
-     used in the pscf_pc CPU programs, and provide almost identical 
-     capabilities at higher performance.  The GPU-accelerated programs 
-     for solving 1, 2 and 3 dimensionally periodic structures are named 
-     pscf_pg1, pscf_pg2 and pscf_pg3, respectively, where "pg" stands 
-     for "periodic GPU".
+   - **pscf_pg** : The pscf_pg program is a GPU-accelerated programs 
+     for periodic microstructures.  It is based on algorithms similar to 
+     those used in pscf_pc, and provides almost identical features
+     at higher performance.  The suffix "pg" stands for 
+     "periodic GPU".
 
 
 \section about_features_sec Features
 
-All PSCF programs are designed to treat an incompressible mixture of one
-or more block polymers or homopolymer species with zero or more small 
-molecule (point-particle) solvent species. All polymeric species are 
-treated using the standard Gaussian model of each polymer block as a 
-continuous random walk.
+All PSCF programs are designed to treat an incompressible mixture of 
+one or more block polymers or homopolymer species with zero or more 
+small molecule (point-particle) solvent species. All polymeric species 
+are treated using the standard Gaussian model of each polymer block 
+as a continuous random walk.
 
 Features that are common to all of the PSCF programs include:
 
@@ -105,8 +101,8 @@ Features that are common to all of the PSCF programs include:
 
   - Open source code written in object oriented C++
 
-Features specific to pscf_pc and pscf_pg programs for periodic structures 
-include:
+Features specific to the pscf_pc and pscf_pg programs for periodic 
+structures include:
 
   - Accurate pseudo-spectral solution of the modified diffusion equation
 
@@ -215,7 +211,7 @@ The one-dimensional finite difference program pscf_fd requires only GSL,
 and not FFTW. The pscf_pc CPU-based programs for spatially periodic
 structures require both GSL and FFTW.
 
-The GPU-accelerated pscf_pg programs can only run on a computer with an
+The GPU-accelerated pscf_pg program can only run on a computer with an
 appropriate NVIDIA GPU. To compile or run these programs, the system must
 also have an NVIDIA CUDA development environment that provides the cuFFT
 gpu-accelerated fast Fourier transform library.

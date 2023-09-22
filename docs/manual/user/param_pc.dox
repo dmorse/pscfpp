@@ -51,9 +51,9 @@ System{
 
 \section user_param_pc_system_sec File Format
 
-The main System block of a parameter file for any of the pscf_pc and
-pscf_pg programs for has the same overall structure as that used by
-pscf_fd program, and is described by the same format skeleton:
+The main System block of a parameter file for pscf_pc or pscf_pg
+has the same overall structure as that used for pscf_fd, and is 
+described by the same format skeleton:
 \code
 System{
   Mixture{ ...  }
@@ -166,15 +166,15 @@ the order in which they are listed are described for each unit cell
 type in the documentation for \ref user_unitcell_page "unit cells".
 
 Note that values for unit cell parameters are not specified in the 
-parameter file the pscf_pc programs. These parameters values are 
-instead specified within the header of any file that describes a 
-field using a format that can be read by a pscf_pc or pscf_pg 
-program.  Values for unit cell parameters are thus normally first
- assigned values during execution of the first command in the 
-command file that causes the program to read a field from file. 
-There also exists a command named SET_UNIT_CELL that user can 
-invoke to manually set or reset the unit cell parameters at any 
-point during the processing of the command file.
+parameter file for pscf_pc. These parameters values are instead 
+specified within the header of any file that describes a field 
+using a format that can be read by either pscf_pc or pscf_pg. 
+The unit cell parameters are thus normally first assigned initial
+values during execution of the first command in the command file 
+that causes the program to read a field from file.  There also 
+exists a command named SET_UNIT_CELL that user can invoke to 
+manually set or reset the unit cell parameters at any point during 
+processing of the command file.
 
 The unit cell parameters for a crystal may be changed multiple 
 times during program execution.

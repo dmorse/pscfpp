@@ -197,15 +197,15 @@ magnitude.
 
 \section user_fourier_grid_sec Mesh Discretization
 
-All fields in the pscf_pc and pscf_pg programs are represented internally
+All periodic fields in are represented internally in pscf_pc and pscf_pg 
 using values of fields on a regular D-dimensional mesh in the space of 
 the reduced coordinates \f$ r_{0}, \ldots, r_{D-1} \f$.
 Let \f$ M_{\alpha} \f$ denote the number of mesh points per unit cell
 along direction \f$ \alpha \f$ for each integer direction index
 \f$ \alpha = 0, \ldots, D-1 \f$.
 The values of \f$ M_{0}, \ldots, M_{D-1} \f$ are specified in the
-parameter file for a pscf_pc or pscf_pg program as values for elements
-of the parameter "mesh", whose value is a vector with integer-valued
+parameter file for pscf_pc or pscf_pg as values for elements of the 
+parameter "mesh", whose value is a vector with integer-valued
 elements.  Nodes on this mesh correspond to points at which each reduced
 coordinate \f$ r_{\alpha} \f$ with \f$ \alpha \in [0, \ldots, D-1]\f$
 has a value 
@@ -268,16 +268,17 @@ a finite rather than an infinite sum.
 
 <em> Relationship to source code: </em>  The D-dimensional forward and
 inverse DFT, defined using the conventions given above, are implemented for
-the field container classes used by pscf_pc programs by the member functions
+the field container classes used by pscf_pc by the member functions
 forwardTransform and inverseTransform defined in the class Pscf::Pspc::FFT<D>,
 respectively. The class Pscf::Pspc::FFT<D> is an instantiation of the class
 template Pscf::Pspc::FFT , in which D=1, 2, or 3 is a template parameter 
 that represents the dimensionality of space.  These member functions are 
 simple wrappers around functions provided by the open source FFTW package.
+
 Equivalent operations are implemented for the field container classes used
-by the pscf_pg programs by corresponding member functions of the class 
-template Pscf::Pspg::FFT that are wrappers around functions provided by 
-the cuFFT CUDA library, which implements FFTs on a GPU.
+by pscf_pg by corresponding member functions of the class template 
+Pscf::Pspg::FFT that are wrappers around functions provided by the 
+cuFFT CUDA library, which implements FFTs on a GPU.
 
 \subsection user_fourier_dft_alias_sub Wavevector Aliasing
 
