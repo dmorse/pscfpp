@@ -122,7 +122,8 @@ namespace Pspc
    template <int D>
    void System<D>::setOptions(int argc, char **argv)
    {
-      bool eflag = false;  // echo
+      bool eFlag = false;  // echo
+      bool dFlag = false;  // spatial dimension (1,2, or 3)
       bool pFlag = false;  // param file 
       bool cFlag = false;  // command file 
       bool iFlag = false;  // input prefix
@@ -131,16 +132,19 @@ namespace Pspc
       char* cArg = 0;
       char* iArg = 0;
       char* oArg = 0;
+      int dArg;
    
       // Read program arguments
       int c;
       opterr = 0;
       while ((c = getopt(argc, argv, "ed:p:c:i:o:f")) != -1) {
          switch (c) {
-         case 'd':
-            break;
          case 'e':
-            eflag = true;
+            eFlag = true;
+            break;
+         case 'd':
+            dFlag = true;
+            dArg = atoi(optarg);
             break;
          case 'p': // parameter file
             pFlag = true;
@@ -165,18 +169,29 @@ namespace Pspc
       }
    
       // Set flag to echo parameters as they are read.
-      if (eflag) {
+      if (eFlag) {
          Util::ParamComponent::setEcho(true);
       }
 
-      // If option -p, set parameter file name
-      if (pFlag) {
-         fileMaster_.setParamFileName(std::string(pArg));
+      // Check existence and consistency of -d option
+      if (dFlag) {
+         UTIL_CHECK(D == dArg); 
+      } else {
+         UTIL_THROW("Missing required -d option");
       }
 
-      // If option -c, set command file name
+      // Check option -p, set parameter file name
+      if (pFlag) {
+         fileMaster_.setParamFileName(std::string(pArg));
+      } else {
+         UTIL_THROW("Missing required -p option - no parameter file");
+      }
+
+      // Check option -c, set command file name
       if (cFlag) {
          fileMaster_.setCommandFileName(std::string(cArg));
+      } else {
+         UTIL_THROW("Missing required -c option - no command file");
       }
 
       // If option -i, set path prefix for input files
