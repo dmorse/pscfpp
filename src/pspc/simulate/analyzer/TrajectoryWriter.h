@@ -21,9 +21,9 @@ namespace Pspc
    class System;
    
    /**
-   * Periodically write snapshots to a trajectory file
+   * Periodically write snapshots to a trajectory file.
    *
-   * \ingroup Pspc_Analyzer_Module
+   * \ingroup Pspc_Simulate_Analyzer_Module
    */
    template <int D>
    class TrajectoryWriter : public Analyzer<D>

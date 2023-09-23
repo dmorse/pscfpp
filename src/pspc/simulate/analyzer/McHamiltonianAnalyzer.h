@@ -28,7 +28,7 @@ namespace Pspc
    * Field contribution (HW)) as well as for the total, and 
    * periodically outputs block averages of each to a file.
    *
-   * \ingroup Pspc_Analyzer_Module
+   * \ingroup Pspc_Simulate_Analyzer_Module
    */
    template <int D>
    class McHamiltonianAnalyzer : public AverageListAnalyzer<D>

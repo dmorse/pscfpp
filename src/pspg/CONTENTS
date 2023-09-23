@@ -13,11 +13,9 @@ solvers/   - modified diffusion equation solvers
 sweep/     - classes to implement continuation of solutions ("sweep")
 tests/     - unit cell tests for code
 
-C++ Files:
+Source Files:
 
-pscf_pg1.cpp  - Main program for 1D problems (e.g., lamellar)
-pscf_pg2.cpp  - Main program for 2D problems (e.g., hex phase)
-pscf_pg3.cpp  - Main program for 3D problems (e.g., BCC phase)
+pscf_pg.cpp   - Main program for perodic structure on a GPU
 System.h      - System<D> class template header (main object)
 System.tpp    - System<D> class template definition
 System.cpp    - System<D> explicit instantiations for D=1,2,3
@@ -33,32 +31,5 @@ config.mk     - configuration file (installed by setup script)
 Doxygen documentation files:
 
 pspg.mod      - definition of Pspg doxygen module 
-pscf_pg1.dox  - command line interface documentation for pscf_pg1
-pscf_pg2.dox  - command line interface documentation for pscf_pg2
-pscf_pg3.dox  - command line interface documentation for pscf_pg3
-
-
-Main Program Usage:
-
-Users must invoke different executable files for problems involving 
-structures that are periodic in different numbers of dimensions.  The 
-executable programs for 1, 2 and 3 dimensionally periodic structures 
-are named pscf_pg1, and pscf_pg2 and pscf_pg3, respectively.  Examples 
-of the usage of these programs are provided in the directory 
-pscfpp/examples/pc/diblock.
-
-The usual command line usage for doing a 3D SCFT calculation (e.g., 
-the one in directory examples/pspc/diblock/bcc) is to invoke
-
-     pscf_pg3d -e -p param -c command
-
-from the directory containing the files "param" and "command". Here, 
-"param" denotes the name of a parameter file and "command" denotes 
-the name of a command file.  The -e option causes the parameter file to 
-be echoed to standard output as it is read.  To perform a 2D (e.g., a 
-hexagonal phase) or 1D calculation (a lamellar phase), one would 
-instead invoke the executable pscf_ps2d or pscf_ps1d, respectively. 
-
-See the html documentation for information about the format of the
-parameter and command files. 
+pscf_pg.dox   - command line interface documentation for pscf_pg
 

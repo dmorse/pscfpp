@@ -177,7 +177,7 @@ namespace Pspc
       std::uniform_real_distribution<double> real_dist(-stepSize_, stepSize_);
       std::uniform_real_distribution<double> imag_dist(-stepSize_, stepSize_);
       
-      /// Move step size in Fourier space \Delta_W(q) is randomly selected from 
+      /// Move step size in Fourier space Delta_W(q) is randomly selected from 
       /// uniform distribution [-stepSize_*S(q)^(1/2), stepSize_*S(q)^(1/2)]      
       double S_; 
       for (int i = 0; i < nMonomer; i++){

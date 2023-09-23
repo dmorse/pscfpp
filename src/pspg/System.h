@@ -55,18 +55,18 @@ namespace Pspg
    *
    * A System may also optionally contain Iterator and Sweep objects.
    *
-   * A minimal main program that uses this class template to implement a 
-   * program for 3-dimensional structures (D=3) looks something like this:
+   * A minimal main program for structures with spatial dimension D 
+   * looks something like this:
    * \code
-   *   int main(int argc, char **argv) {
-   *      Pscf::Pspg::System<3> system;
-   *      system.setOptions(argc, argv);
-   *      system.readParam();
-   *      system.readCommands();
-   *   }
+   *    Pscf::Pspg::System<D> system;
+   *    system.setOptions(argc, argv);
+   *    system.readParam();
+   *    system.readCommands();
    * \endcode
-   * This main program is given for D=1, 2, and 3 dimensional structures
-   * in the files pscf_pg1.cpp, pscf_pg2.cpp, and pscf_pg3.cpp
+   * where argc, and argv are parameters containing information about
+   * command line arguments that must be passed from the main program.
+   * This is implemented as function template Pscf::Pspg::run in the
+   * file src/pspg/pscf_pg.cpp.
    *
    * \ingroup Pscf_Pspg_Module
    */

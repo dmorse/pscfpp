@@ -24,7 +24,7 @@ namespace Pspc
    /**
    * RealMove is a Monte Carlo move in real space
    *
-   * \ingroup Pspc_McMove_Module
+   * \ingroup Pspc_Simulate_McMove_Module
    */
    template <int D>
    class RealMove : public McMove<D>
@@ -35,7 +35,7 @@ namespace Pspc
       /**
       * Constructor.
       *
-      * \param mcSimulator parent McSimulator
+      * \param simulator parent McSimulator
       */
       RealMove(McSimulator<D>& simulator);
 

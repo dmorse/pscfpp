@@ -22,7 +22,7 @@ namespace Pspc {
    /**
    * Factory for subclasses of Analyzer.
    *
-   * \ingroup Pspc_Analyzer_Module
+   * \ingroup Pspc_Simulate_Analyzer_Module
    */
    template <int D>
    class AnalyzerFactory : public Factory< Analyzer<D> > 
@@ -33,7 +33,8 @@ namespace Pspc {
       /**
       * Constructor.
       *
-      * \param mcSimulator parent McSimulator<D> object
+      * \param mcSimulator  parent McSimulator<D> object
+      * \param system  parent System<D> object
       */
       AnalyzerFactory(McSimulator<D>& mcSimulator, System<D>& system);
 

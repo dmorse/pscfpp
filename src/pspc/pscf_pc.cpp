@@ -12,6 +12,12 @@
 namespace Pscf {
 namespace Pspc {
 
+   /**
+   * Function template for main program in pscf_pc.
+   *
+   * \param argc  number of command line parameters
+   * \param argv  array of command line parameter strings
+   */
    template <int D>
    void run(int argc, char **argv) {
       System<D> system;
@@ -34,9 +40,7 @@ int main(int argc, char **argv)
 {
 
    // Extract the dimension of space from argument of -d option
-   int D;
-   char** argvcopy = argv;
-   D = Pscf::getDimension(argc, argvcopy);
+   int D = Pscf::getDimension(argc, argv);
    std::cout << "dimension   " << D << std::endl;
 
    if (1 == D) {

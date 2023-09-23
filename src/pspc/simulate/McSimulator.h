@@ -139,7 +139,7 @@ namespace Pspc {
       /**
       * Get an single eigenvalue of the projected chi matrix.
       *
-      * \int i index of eigenvalue (0, ... , nMonomer - 1)
+      * \param i index of eigenvalue (0, ... , nMonomer - 1)
       */
       double chiEval(int i ) const
       {  return chiEvals_[i]; }
@@ -183,7 +183,7 @@ namespace Pspc {
       * Each component is a point-wise projection of the w fields onto
       * a corresponding eigenvector of the projected chi matrix.
       *
-      * \int i eigenvector / eigenvalue index
+      * \param i eigenvector / eigenvalue index
       */
       RField<D> const & wc(int i) const
       {   return wc_[i]; }

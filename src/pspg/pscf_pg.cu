@@ -12,8 +12,16 @@
 namespace Pscf {
 namespace Pspg {
 
+   /**
+   * Function template for main program in pscf_pg.
+   *
+   * \param argc  number of command line parameters
+   * \param argv  array of command line parameter strings
+   */
    template <int D>
    void run(int argc, char **argv) {
+
+      // Construct System object for specific dimension D.
       System<D> system;
 
       // Process command line options
@@ -24,6 +32,7 @@ namespace Pspg {
 
       // Read command script to run system
       system.readCommands();
+
    }
 
 }
@@ -34,9 +43,7 @@ int main(int argc, char **argv)
 {
 
    // Extract the dimension of space from argument of -d option
-   int D;
-   char** argvcopy = argv;
-   D = Pscf::getDimension(argc, argvcopy);
+   int D = Pscf::getDimension(argc, argv);
    std::cout << "dimension    " << D << std::endl;
 
    if (1 == D) {

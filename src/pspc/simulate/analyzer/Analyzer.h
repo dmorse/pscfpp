@@ -40,7 +40,7 @@ namespace Pspc {
    * SystemAnalyzer<MdSystem> or SystemAnalyzer<MdSystem>, 
    * respectively.
    *
-   * \ingroup Pspc_Analyzer_Module
+   * \ingroup Pspc_Simulate_Analyzer_Module
    */
    template <int D>
    class Analyzer : public ParamComposite

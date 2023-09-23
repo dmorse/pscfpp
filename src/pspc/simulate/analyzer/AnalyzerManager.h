@@ -17,10 +17,7 @@ namespace Pspc {
    /**
    * Manager for a list of Analyzer objects.
    *
-   * \sa \ref pspc_analyzer_AnalyzerManager_page "parameter file format"
-   *
-   * \ingroup Pspc_Manager_Module
-   * \ingroup Pspc_Analyzer_Module
+   * \ingroup Pspc_Simulate_Analyzer_Module
    */
    template <int D>
    class AnalyzerManager : public Manager< Analyzer<D> >

@@ -28,7 +28,7 @@ namespace Pspc
    * It is intended for use as a base class for Analyzers that evaluate 
    * averages and (optionally) block averages for specific physical variables.
    *
-   * \ingroup Pspc_Analyzer_Module
+   * \ingroup Pspc_Simulate_Analyzer_Module
    */
    template <int D>
    class AverageListAnalyzer : public Analyzer<D>

@@ -6,12 +6,11 @@
 */
 
 #include "getDimension.h"
-#include <util/misc/Log.h>
 #include <util/global.h>
 
 //#include <iostream>
-#include <string.h>
-//#include <unistd.h>
+//#include <string.h>
+#include <unistd.h>
 
 using namespace Util;
 
@@ -70,8 +69,9 @@ namespace Pscf {
       UTIL_CHECK(1 == strlen(arg));
 
       // Convert arg string to integer D
-      int D;
-      std::sscanf(arg, "%d", &D);
+      // int D;
+      // std::sscanf(arg, "%d", &D);
+      int D = atoi(arg);
       UTIL_CHECK(D > 0 && D < 4);
 
       return D;

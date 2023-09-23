@@ -62,20 +62,21 @@ namespace Pspc
    * In a parameter file format, the main block is a System{...} block 
    * that contains subblocks for sub-objects.
    *
-   * A minimal main program that uses this class template to implement a 
-   * program for 3-dimensional structures (D=3) looks something like this:
+   * A minimal main program for structures with spatial dimension D 
+   * looks something like this:
    * \code
-   *   int main(int argc, char **argv) {
-   *      Pscf::Pspc::System<3> system;
-   *      system.setOptions(argc, argv);
-   *      system.readParam();
-   *      system.readCommands();
-   *   }
+   *    Pscf::Pspc::System<D> system;
+   *    system.setOptions(argc, argv);
+   *    system.readParam();
+   *    system.readCommands();
    * \endcode
-   * This main program is given for D=1, 2, and 3 dimensional structures
-   * in the files pscf_pc1.cpp, pscf_pc2.cpp, and pscf_pc3.cpp
+   * where argc, and argv are parameters containing information about
+   * command line arguments that must be passed from the main program.
+   * This is implemented as function template Pscf::Pspc::run in the
+   * file src/pspc/pscf_pc.cpp.
    *
    * \ref user_param_pc_page "Parameter File Format"
+   * \ref user_command_pc_page "Command File Format"
    * \ingroup Pscf_Pspc_Module
    */
    template <int D>

@@ -30,7 +30,7 @@ namespace Pspc
    * to accept or reject it, and update the associated System fields
    * if it is accepted.
    *
-   * \ingroup Pspc_McMove_Module
+   * \ingroup Pspc_Simulate_McMove_Module
    */
    template <int D>
    class McMove : public ParamComposite
@@ -41,7 +41,7 @@ namespace Pspc
       /**
       * Constructor.
       *
-      * \param system parent System object.
+      * \param mcSimulator  parent McSimulator object
       */
       McMove(McSimulator<D>& mcSimulator);
 

@@ -1,0 +1,46 @@
+/*!
+\page pscf_pc_page pscf_pc - Periodic (CPU)
+
+Polymer Self-Consistent Field Theory - 3D Periodic (CPU)
+
+\section pscf_pc_usage_section Usage
+
+    pscf_pc [-d dimension] [-p file] [-c file] [-i prefix] [-o prefix] [-e]
+
+\section pscf_pc_options_section Command Line Options
+
+The -d, -p and -c options are required, to provide a value for the spatial
+dimension of the structure of interest (-d option), a parameter file name 
+(-p option), and a command file name (-c option). The -i, -o, and -e 
+options are not required.
+
+  -d dimension
+
+   Set the spatial dimension (# of periodic coordinates) of the 
+   structure of interest, given by the integer argument "dimension", 
+   which must equal 1, 2 or 3. For example, set dimension equal to 1
+   for a lamellar phase, 2 for a hexagonal phase, and 3 for any fully
+   three-dimensional structure. (required)
+
+  -p file
+
+   Set the parameter file name, given by the argument "file" (required).
+
+  -c file
+
+   Set the command file name, given by the argument "file" (required).
+
+  -i prefix
+
+   Set the input file path prefix, given by the argument "prefix".
+
+  -o prefix
+
+   Set the output file path prefix, given by the argument "prefix".
+
+   -e  
+
+    Enable echoing of parameter file to log file as it is read. This
+    option is often useful for debugging the parameter file.
+
+*/

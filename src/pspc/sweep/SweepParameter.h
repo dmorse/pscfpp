@@ -9,6 +9,7 @@
 */
 
 #include <iostream>
+#include <string>
 
 namespace Pscf {
 namespace Pspc {
@@ -140,8 +141,6 @@ namespace Pspc {
       * a particular subobject or value. Different types of parameters
       * require either 1 or 2 such identifiers. The number of required
       * identifiers is denoted by private variable nID_.
-      *
-      *
       *
       * \param i array index to access
       */

@@ -10,6 +10,7 @@
 
 #include <util/containers/DArray.h>
 #include <iostream>
+#include <string>
 
 using namespace Util;
 

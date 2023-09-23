@@ -25,10 +25,7 @@ namespace Pspc {
    /**
    * Manager for a set of McMove objects.
    *
-   * \sa \ref mcMd_mcMove_McSimulator_page "parameter file format"
-   *
-   * \ingroup Pspc_Manager_Module
-   * \ingroup Pspc_McMove_Module
+   * \ingroup Pspc_Simulate_McMove_Module
    */
    template <int D>
    class McMoveManager : public Manager< McMove<D> >

@@ -32,19 +32,20 @@ namespace Pspc
    template <int D> class System;
 
    /**
-   * BinaryStructureFactorGrid evaluates AB diblock structure factors in Fourier space.
+   * BinaryStructureFactorGrid evaluates AB copolymer structure factors.
    *
-   * This class evaluates the structures factors for all wavevectors 
+   * This class evaluates the structures factors for all wavevectors within
+   * a specified region of a Fourier space grid.
    * 
    * A structure factor for a wavevector k for AB diblock defined as an 
    * expectation value
    * \f[
    *     S(k)  = n/(V \chi N)^2 <W_(k)W_(-k)> - 1/(2 \chi N)
    * \f]
-   * where, V is system volume, and \f$W_(k)\f$ is a Fourier mode of fluctuating field 
-   *
+   * where, V is system volume, and \f$W_(k)\f$ is a Fourier mode of 
+   * fluctuating field 
    * 
-   * \ingroup Pspc_mcmove_Analyzer_Module
+   * \ingroup Pspc_Simulate_Analyzer_Module
    */
    template <int D>
    class BinaryStructureFactorGrid : public Analyzer<D>

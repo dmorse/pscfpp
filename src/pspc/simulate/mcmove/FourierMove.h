@@ -26,7 +26,7 @@ namespace Pspc
    /**
    * FourierMove is a Monte Carlo move in fourier space
    *
-   * \ingroup Pspc_McMove_Module
+   * \ingroup Pspc_Simulate_McMove_Module
    */
    template <int D>
    class FourierMove : public McMove<D>
@@ -37,7 +37,7 @@ namespace Pspc
       /**
       * Constructor.
       *
-      * \param mcSimulator parent McSimulator
+      * \param simulator parent McSimulator
       */
       FourierMove(McSimulator<D>& simulator);
 
@@ -51,6 +51,7 @@ namespace Pspc
       /**
       * Read required parameters from file.
       *
+      * \param in input parameter file stream
       */
       void readParameters(std::istream &in);
       
@@ -66,6 +67,8 @@ namespace Pspc
       
       /**
       * Return fourier move times contributions.
+      *
+      * \param out  output stream for timer statistics
       */
       void outputTimers(std::ostream& out);
       
@@ -76,21 +79,19 @@ namespace Pspc
       using ParamComposite::read;
       using ParamComposite::setClassName;
 
-
    protected:
       
       using McMove<D>::system;
       using McMove<D>::random;
       
       /**
-      *  Attempt unconstrained move.
+      * Attempt unconstrained move.
       *
-      *  This function should convert system w fields from r-grid format to
-      *  RFieldDft format, modify the system w fields in fourier space,
-      *  and convert back to r-grid format, as returned by system().w().rgrid(),
-      *  in order apply an unconstrained attempted move. The compressor will 
-      *  then be applied in order to restore the density constraint.
-      *
+      * This function should convert system w fields from r-grid format to
+      * RFieldDft format, modify the system w fields in fourier space, and
+      * convert back to r-grid format, as returned by system().w().rgrid(),
+      * in order apply an unconstrained attempted move. The compressor will 
+      * then be applied in order to restore the density constraint.
       */
       void attemptMove();
 
@@ -103,17 +104,27 @@ namespace Pspc
       void computeRgSquare();
       
       /**
-      * Compute F(x,f) function. F(x,f) = g(1,x)/{g(f,x)g(1-f,x) - [g(1,x) - g(f,x) - g(1-f,x)]^2/4}
+      * Compute Leibler's F(x,f) function. 
+      * 
+      * F(x,f) = g(1,x)/{g(f,x)g(1-f,x) - [g(1,x) - g(f,x) - g(1-f,x)]^2/4}
+      *
+      * \param x nondimensionalized value of q^2 Rg^2
       */
       double computeF(double x);
       
       /**
-      * Compute Debye function, g(f,x). g(f,x) = 2[fx + exp(-fx)-1]/x^2
+      * Compute Debye function g(f,x).
+      * 
+      * Debye function: g(f,x) = 2[fx + exp(-fx)-1]/x^2
+      *
+      * \param f fraction of A block
+      * \param x nondimensionalized value of q^2 Rg^2
       */
       double computeDebye(double f, double x);
       
       /**
-      * Compute Fredrickson-Helfand structure for specific qSquare
+      * Compute Fredrickson-Helfand structure for specific qSquare.
+      *
       * For diblock copolymers,Fredrickson-Helfand structure 
       * S(q)/N = 1/(F(x,f) - F* + epsilon ) x = q^2Rg^2. 
       * q is wave vector, Rg is radius of gyration
@@ -127,8 +138,9 @@ namespace Pspc
       
       /**
       * Input variable, Move step size stepSize_.
-      * In Fourier space \Delta_W(q) is randomly selected from 
-      * uniform distribution [-stepSize_*S(q)^(1/2), stepSize_*S(q)^(1/2)].
+      *
+      * In Fourier space Delta W(q) is randomly selected from a uniform
+      * distribution [-stepSize_*S(q)^(1/2), stepSize_*S(q)^(1/2)].
       */ 
       double stepSize_;
       
@@ -136,7 +148,9 @@ namespace Pspc
       double fStar_;
       
       /**
-      * Input variable tau_. User can calculate using Equation (5.2) from reference:
+      * Input variable tau_. 
+      *
+      * User can calculate using Equation (5.2) from reference:
       * "Fluctuation effects in the theory of microphase separation in block copolymers."
       * Fredrickson, G. H., & Helfand, E. (1987).J. Chem. Phys. 87(1), 697-705.
       */
@@ -165,7 +179,6 @@ namespace Pspc
       
       /// Has the variable been allocated?
       bool isAllocated_;
-      
    
    };
       
