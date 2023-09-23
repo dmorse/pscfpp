@@ -26,7 +26,7 @@ namespace Pspc
    /**
    * Trajectory file reader.
    *
-   * \ingroup Pspc_Analyzer_Module
+   * \ingroup Pspc_Simulate_Trajectory_Module
    */
    template <int D>
    class FieldConfigReader : public TrajectoryReader<D>

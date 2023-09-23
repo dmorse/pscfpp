@@ -17,10 +17,7 @@ namespace Pspg {
    /**
    * Manager for a list of Analyzer objects.
    *
-   * \sa \ref pspg_analyzer_AnalyzerManager_page "parameter file format"
-   *
-   * \ingroup Pspg_Manager_Module
-   * \ingroup Pspg_Analyzer_Module
+   * \ingroup Pspg_Simulator_Analyzer_Module
    */
    template <int D>
    class AnalyzerManager : public Manager< Analyzer<D> >

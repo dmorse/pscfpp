@@ -27,7 +27,7 @@ namespace Pspg
    /**
    * Trajectory file reader.
    *
-   * \ingroup Pspg_Analyzer_Module
+   * \ingroup Pspg_Simulate_Trajectory_Module
    */
    template <int D>
    class FieldConfigReader : public TrajectoryReader<D>
@@ -37,6 +37,8 @@ namespace Pspg
 
       /**
       * Constructor.
+      *
+      * \param system  parent System<D> object
       */
       FieldConfigReader<D>(System<D>& system);
 

@@ -82,7 +82,6 @@ namespace Pspg {
       * Compute solution to MDE and concentrations.
       *
       * \param unitCell crystallographic unit cell (input)
-      * \param wavelist precomputed wavevector data (input)
       */ 
       void setupUnitCell(UnitCell<D> const & unitCell);
 

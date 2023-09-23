@@ -23,7 +23,7 @@ namespace Pspg {
    /**
    * Factory for subclasses of TrajectoryReader.
    *
-   * \ingroup Pspg_Analyzer_Module
+   * \ingroup Pspg_Simulate_Trajectory_Module
    */
    template <int D>
    class TrajectoryReaderFactory : public Factory< TrajectoryReader<D> > 

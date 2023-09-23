@@ -27,7 +27,7 @@ namespace Pspg
    /**
    * FourierMove is a Monte Carlo move in fourier space
    *
-   * \ingroup Pspg_McMove_Module
+   * \ingroup Pspg_Simulate_McMove_Module
    */
    template <int D>
    class FourierMove : public McMove<D>
@@ -38,7 +38,7 @@ namespace Pspg
       /**
       * Constructor.
       *
-      * \param mcSimulator parent McSimulator
+      * \param simulator parent McSimulator
       */
       FourierMove(McSimulator<D>& simulator);
 

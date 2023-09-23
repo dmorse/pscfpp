@@ -24,7 +24,7 @@ namespace Pspg
    /**
    * Periodically write snapshots to a trajectory file
    *
-   * \ingroup Pspg_Analyzer_Module
+   * \ingroup Pspg_Simulate_Analyzer_Module
    */
    template <int D>
    class TrajectoryWriter : public Analyzer<D>

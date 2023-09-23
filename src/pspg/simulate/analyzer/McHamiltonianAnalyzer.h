@@ -29,7 +29,7 @@ namespace Pspg
    * Field contribution (HW)) as well as for the total, and 
    * periodically outputs block averages of each to a file.
    *
-   * \ingroup Pspg_Analyzer_Module
+   * \ingroup Pspg_Simulate_Analyzer_Module
    */
    template <int D>
    class McHamiltonianAnalyzer : public AverageListAnalyzer<D>

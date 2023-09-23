@@ -22,7 +22,7 @@ namespace Pspg {
    /**
    * Factory for subclasses of McMove.
    *
-   * \ingroup Pspg_McMove_Module
+   * \ingroup Pspg_Simulate_McMove_Module
    */
    template <int D>
    class McMoveFactory : public Factory< McMove<D> > 

@@ -44,7 +44,7 @@ namespace Pspg
    * where, V is system volume, and \f$W_(k)\f$ is a Fourier mode of fluctuating field 
    *
    * 
-   * \ingroup Pspg_mcmove_Analyzer_Module
+   * \ingroup Pspg_Simulate_Analyzer_Module
    */
    template <int D>
    class BinaryStructureFactorGrid : public Analyzer<D>

@@ -23,7 +23,7 @@ namespace Pspc {
    /**
    * Factory for subclasses of TrajectoryReader.
    *
-   * \ingroup Pspc_Analyzer_Module
+   * \ingroup Pspc_Simulate_Trajectory_Module
    */
    template <int D>
    class TrajectoryReaderFactory : public Factory< TrajectoryReader<D> > 

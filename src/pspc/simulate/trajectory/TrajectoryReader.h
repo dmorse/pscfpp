@@ -22,9 +22,9 @@ namespace Pspc
    using namespace Util;
 
    /**
-   * Trajectory file reader.
+   * Trajectory file reader (base class).
    *
-   * \ingroup Pspc_Analyzer_Module
+   * \ingroup Pspc_Simulate_Trajectory_Module
    */
    template <int D>
    class TrajectoryReader

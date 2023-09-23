@@ -90,7 +90,6 @@ namespace Pspg
       * Set unit cell parameters used in solver.
       * 
       * \param unitCell crystallographic unit cell
-      * \param waveList container for wavevector data
       */
       void setupUnitCell(UnitCell<D> const & unitCell);
 
