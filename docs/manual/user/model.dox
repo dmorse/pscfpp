@@ -61,8 +61,8 @@ model thus includes:
     \f$ i \f$ and \f$ j \f$ for each distinct pair of monomer
     types.
 
-Other user-provided input parameters required to initialize a SCFT
-calculation include:
+Other user-provided input parameters required to initialize a SCFT or
+FTMC calculation include:
 
   -  Parameters that describe the unit cell (for periodic structures)
      or spatial domain within which the self-consistent field equations
@@ -379,33 +379,37 @@ will generally be much greater than 1.
 
 \section user_model_vMonomer_sec Irrelevance of Monomer Volume in SCFT
 
-As discussed \ref user_model_continuous_sec "above", when using SCFT
-to analyze a specific experimental system, one's choice of a convention 
-for the monomer reference volume \f$ v \f$ determines the appropriate
-choice of values for several types of related parameters appropriate 
-for a specific physical system.  It turns out, however, that once the
-values of these related parameters are known, the value of the monomer 
-volume \f$ v \f$ itself is actually not needed as an independent input 
-to an SCFT calculation.  It can be shown that changes in the value of 
-\f$ v \f$ alone, without corresponding changes in the values assigned 
-to related parameters (e.g., statistical segment lengths, block lengths 
-and chi parameters) have no effect on SCFT predictions for values of 
-any of the properties normally output by the PSCF programs. 
-Specifically, changes in the value of \f$ v \f$ alone can be shown to 
-have no effect on SCFT predictions for average monomer volume fraction 
-fields, polymer or solvent chemical potential values, or the 
-non-dimensionalized Helmholtz free energy that is reported by PSCF in 
-its standard format for outputting 
-\ref user_thermo_page "thermodynamic properties", 
-which is a free energy per monomer. PSCF programs thus do not require
-the user to input a value for \f$ v \f$ as an input to an SCFT 
-calculation.
+A value for the monomer reference volume \f$ \f$ is not required as 
+an input to a standard SCFT calculation.  As discussed 
+\ref user_model_continuous_sec "above", when using a model that idealizes 
+polymers as continuous chains to analyze a specific experimental system, 
+the choice of a convention for the monomer reference volume \f$ v \f$ 
+determines the appropriate choice of values for several types of related 
+parameters, such as the block lengths, monomer statistical segment 
+lengths, and interaction parameters. It turns out, however, that once 
+the values of these related parameters are determined, the value of 
+\f$ v \f$ itself is not needed as an additional independent input to an 
+SCFT calculation.  It can be shown that changes in the value of \f$ v \f$ 
+alone, without corresponding changes in the values assigned to related 
+parameters (e.g., statistical segment lengths, block lengths and chi 
+parameters) have no effect on SCFT predictions for values of any of 
+the properties normally output by the PSCF programs. Specifically, 
+changes in the value of \f$ v \f$ alone can be shown to have no effect 
+on SCFT predictions for average monomer volume fraction fields, polymer 
+or solvent chemical potential values, or the non-dimensionalized 
+Helmholtz free energy that is reported by PSCF in its standard format 
+for outputting \ref user_thermo_page "thermodynamic properties", which 
+is a free energy per monomer. 
 
 The role of \f$ v \f$ in SCFT is discussed in more detail in a separate 
 discussion of the \ref user_theory_page "working equations for SCFT".
 There we show explicitly that the forms of these equations implemented 
 in PSCF simply do not require a value for \f$ v \f$ as an independent
 input parameter. 
+
+A value for \f$ v \f$ is, however, always required as an independent
+input parameter for stochastic field theoretic simulation methods such 
+FTMC.
 
 <BR>
 \ref user_page       (Prev / Up) &nbsp; &nbsp; &nbsp; &nbsp;

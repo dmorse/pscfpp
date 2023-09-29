@@ -1,8 +1,9 @@
 /*! \mainpage PSCF - Polymer Self-Consistent Field Theory
 
-PSCF is a C++ package that implements the Edwards-Helfand self-consistent 
-field theory for spatially inhomgeneous equilibrium structures of polymer 
-materials that may contain block polymers, homopolymers and solvent.
+PSCF is a C++ package for field-theoretic simulation of inhomogeneous
+equilibrium structures formed by polymer liquids with components that
+tend to phase separate. The package enables both self-consistent field 
+theory calculations and field theoretic Monte-Carlo simulations.
 
 <h2>Contents:</h2>
 <ol type="1">
