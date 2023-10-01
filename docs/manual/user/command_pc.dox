@@ -49,9 +49,10 @@ for the current system to the file out/data. The command,
 converged solution to the end of the same file.  The FINISH command
 instructs the main program to finish execution and return.
 
-\section user_command_pc_sweep_sec Example: A Sweep
+\section user_command_pc_ex_sweep_sec Example: SCFT Parameter Sweep
 
-Here is a simple example of a command file to perform a sweep.
+Here is an example of a minimal command file to perform an SCFT 
+parameter sweep. 
 \code
 READ_W_BASIS    in/w.bf
 SWEEP
@@ -60,19 +61,55 @@ FINISH
 The command "READ_W_BASIS in/w.bf" reads an initial guess for the
 chemical potentials fields at the initial state of the sweep (the
 state s=0) from the file in/w.bf.  The SWEEP command actually
-executes a sweep operation.
+executes a sweep operation. The FINISH command halts execution
+of the main program. 
+
+The parameter file for a program run that performs a parameter 
+sweep must contain an Iterator block and a Sweep block. The 
+Sweep block defines the desired sequence of state points (i.e.,
+choices of parameter values), while the Iterator block 
+determines the behavior of the iteration algorithm used to
+solve the SCF equations at each state point.
+
+The minimal command file required for a sweep is somewhat simpler 
+than the corresponding command file for single SCFT calculation 
+because the former does not contain any commands to output data
+associated with the converged solution. This is possible because 
+the required data output operations are programmed to occur 
+automatically for each state in the sweep.
+
+\section user_command_pc_ex_simulate_sec Example: FTMC simulation
+
+A minimal command file for an FTMC simulation of 1,000,000 steps
+looks like this:
+\code
+READ_W_RGRID    in/w.rf
+SIMULATE        1000000
+FINISH
+\endcode
+The command READ_W_RGRID used here to read an initial guess for 
+the w fields must read an input in real-space grid format, rather 
+than in symmetrized basis format. This is because the fluctuating 
+fields in an stochastic simulation generally have no nontrivial 
+space group symmetry, and so must be input and output using a
+file format that does not impose any such symmetry.
+
+The parameter file for used for run that performs a FTMC 
+simulation must contain a Compressor block and an McSimulator
+block.
 
 \section user_command_pc_commands_sec Commands
 
-The following table shows a list of available commands for the pscf_pc.
-Each clickable command name links to a more detailed discussion of that
-command or a group of closely related commands.
+The following table shows a list of available commands for pscf_pc.
+Each clickable command name links to a more detailed discussion of 
+that command or of a group of closely related commands.
 <table>
   <tr>
     <td> <b>command     </b> </td>
     <td> <b>parameter(s)</b> </td>
     <td> <b>action </b> </td>
   </tr>
+
   <tr>
     <td colspan="3" style="text-align:center">
       \ref user_command_pc_fieldin_sec "W Field Initialization"
@@ -88,8 +125,9 @@ command or a group of closely related commands.
   <tr>
     <td> \ref user_command_pc_estimatewc_sub "ESTIMATE_W_FROM_C" </td>
     <td> filename [string] </td>
-    <td> Read c fields in symmetry-adapted basis format from file filename,
-         compute estimated w fields as initial guesses for iteration. </td>
+    <td> Read c fields in symmetry-adapted basis format from file 
+         filename, compute estimated w fields as initial guesses for 
+         iteration. </td>
   </tr>
   <tr>
     <td> \ref user_command_pc_readwrgrid_sub "READ_W_RGRID" </td>
@@ -98,6 +136,7 @@ command or a group of closely related commands.
          format. See \ref user_command_pc_readwrgrid_sub "discussion"
          for constraints on usage. </td>
   </tr>
+
   <tr>
     <td colspan="3" style="text-align:center">
       \ref user_command_pc_compute_sec "Computation"
@@ -111,15 +150,37 @@ command or a group of closely related commands.
   <tr>
     <td> \ref user_command_pc_iterate_sub "ITERATE" </td>
     <td> </td>
-    <td> Iteratively solve SCFT equations (after initializing
-         w fields) </td>
+    <td> Iteratively solve SCFT equations. </td>
   </tr>
   <tr>
     <td> \ref user_command_pc_sweep_sub "SWEEP" </td>
     <td> </td>
-    <td> Perform a sweep, as specified by the Sweep object in the param
-         file. </td>
+    <td> Perform a SCFT parameter sweep.
+         The associated parameter file must contain an Iterator block
+         and a Sweep block. </td>
   </tr>
+  <tr>
+    <td> \ref user_command_pc_simulate_sub "SIMULATE" </td>
+    <td> nStep </td>
+    <td> Perform a FTMC simulation of nStep Monte Carlo steps.  </td>
+  </tr>
+  <tr>
+    <td> \ref user_command_pc_analyze_sub "ANALYZE_TRAJECTORY" </td>
+    <td> min, max, className, filename </td>
+    <td> Postprocess a field trajectory output by looping over frames
+         of a field trajectory file output by a previous FTMC simulation. 
+         Analyze frames with frame numbers min to max from file 
+         filename, using a TrajectoryReader object that is an instance 
+         of class className.  </td>
+  </tr>
+  <tr>
+    <td> \ref user_command_pc_compress_sub "COMPRESS" </td>
+    <td> </td>
+    <td> Iteratively adjust the Lagrange multiplier pressure field
+         component of the current w fields so as to satisfy the 
+         incompressibility constraint. </td>
+  </tr>
+
   <tr>
     <td colspan="3" style="text-align:center">
      \ref user_command_pc_dataout_sec "Thermodynamic Data Output"
@@ -134,8 +195,9 @@ command or a group of closely related commands.
   <tr>
     <td> \ref user_command_pc_thermo_sub "WRITE_THERMO" </td>
     <td> filename [string] </td>
-    <td> Write thermodynamic data (free energy, pressure, phi, and mu
-         for each species) to file filename.
+    <td> Write SCFT predictions for thermodynamic data (free energy, 
+         pressure, phi and mu for each species, and unit cell parameters) 
+         to file filename.
          See \ref user_command_pc_thermo_sub "discussion"
          </td>
   </tr>
@@ -149,14 +211,14 @@ command or a group of closely related commands.
    \ref user_command_pc_fieldout_sec
     "WRITE_W_BASIS" </td>
     <td> filename [string] </td>
-    <td> Write w fields to file filename, in symmetry-adapted basis format
-         </td>
+    <td> Write current w fields to file filename, in symmetry-adapted 
+         basis format </td>
   </tr>
   <tr>
     <td> \ref user_command_pc_fieldout_sec "WRITE_W_RGRID" </td>
     <td> filename [string] </td>
-    <td> Write w fields to file filename, in real-space grid (r-grid) format
-         </td>
+    <td> Write w fields to file filename, in real-space grid (r-grid) 
+         format </td>
   </tr>
   <tr>
     <td> \ref user_command_pc_fieldout_sec "WRITE_C_BASIS" </td>
@@ -174,8 +236,10 @@ command or a group of closely related commands.
     <td> \ref user_command_pc_writeblockc_sub "WRITE_BLOCK_C_RGRID" </td>
     <td> filename [string] </td>
     <td> Write volume fraction fields (c fields) for all individual polymer
-         blocks and solvent species to file filename, in r-grid format. </td>
+         blocks and solvent species to file filename, in r-grid format
+         </td>
   </tr>
+
   <tr>
     <td colspan="3" style="text-align:center">
       \ref user_command_pc_qout_sec "Propagator Output"
@@ -211,6 +275,7 @@ command or a group of closely related commands.
          that begin with a common prefix given by the basename parameter.
      </td>
   </tr>
+
   <tr>
     <td colspan="3" style="text-align:center">
       \ref user_command_pc_crystal_sec "Crystallographic Information"
@@ -231,6 +296,7 @@ command or a group of closely related commands.
     <td> filename [string] </td>
     <td> Write all group symmetry elements to file filename. </td>
   </tr>
+
   <tr>
     <td colspan="3" style="text-align:center">
       \ref user_command_pc_fieldops_sec "Field File Operations"
@@ -299,6 +365,7 @@ command or a group of closely related commands.
          compares values at all grid nodes and writes a report
          of the magnitude of differences to the log output. </td>
   </tr>
+
   <tr>
     <td colspan="3" style="text-align:center">
     \ref user_command_pc_external_sec "External Fields"
@@ -330,10 +397,11 @@ command or a group of closely related commands.
     <td> Write external potential fields (h fields) to file filename,
          in r-grid format  </td>
   </tr>
+
   <tr>
     <td colspan="3" style="text-align:center">
     \ref user_command_pc_mask_sec
-    "Mask Field (Inhomogeneous Density Constraint)"
+    "Mask Fields (Inhomogeneous Density Constraints)"
     </td>
   </tr>
   <tr>
@@ -358,6 +426,26 @@ command or a group of closely related commands.
     <td> \ref user_command_pc_mask_sec "WRITE_MASK_RGRID" </td>
     <td> filename [string] </td>
     <td> Write mask field to file filename, in r-grid format  </td>
+  </tr>
+
+  <tr>
+    <td colspan="3" style="text-align:center">
+    \ref user_command_pc_timers_sec
+    "Timer Commands"
+    </td>
+  </tr>
+  <tr>
+    <td> \ref user_command_pc_writetimer_sub "WRITE_TIMER" </td>
+    <td> filename [string] </td>
+    <td> Write a report of computational times spent on various
+         operations in a preceding calculation or simulation. </td>
+  </tr>
+  <tr>
+    <td> \ref user_command_pc_cleartimer_sub "CLEAR_TIMER" </td>
+    <td> filename [string] </td>
+    <td> Clear the state of timers that keep track of time spent
+         on different operations, by resetting all values to zero.
+         </td>
   </tr>
 </table>
 
@@ -429,13 +517,14 @@ during creation of the basis.
 <b> ESTIMATE_W_FROM_C </b>:
 The ESTIMATE_W_FROM_C command reads a set of approximate monomer volume
 fraction fields in symmetry-adapted basis format from the file whose name
-is passed as an argument, and uses these to construct and store an
-estimate of the corresponding w fields. This is intended to allow users
-to construct an initial guess for w fields needed as an input to the
-ITERATE and SWEEP commands from an initial guess for the volume fraction
-fields for the structure of interest. The initial guess for the volume
-fraction fields does not need to be perfect, just close enough to the
-final structure to allow a chosen iteration algorithm to converge.
+is passed as a command parameter, and uses these to construct and store 
+an estimate of the corresponding w fields. This is intended to allow 
+users to construct an initial guess for w fields needed as an input to 
+the ITERATE and SWEEP commands from an initial guess for the volume 
+fraction fields for the structure of interest. The initial guess for the 
+volume fraction fields does not need to be perfect, merely close enough 
+to the final structure to allow a chosen iteration algorithm to 
+converge.
 
 The estimated w fields are computed by setting the Lagrange multiplier
 field to zero in the self-consistent field condition, giving an estimated
@@ -504,30 +593,66 @@ modify the w fields.
 \anchor user_command_pc_iterate_sub
 <b> ITERATE </b>:
 The ITERATE command attempts to iteratively solve the self
-self-consistent field equations for a fixed set of input parameters,
-and may optionally modify the unit cell parameter so as to minimize
-the Helmholtz free energy density. The choice of iteration algorithm
-and parameters for that algorithm must be declared in the parameter
-file, which is read before the command file. The parameters of the
-iteration algorithm generally include a boolean "isFlexible" flag
-that determines whether the iteration algorithm treat the unit cell
-as flexible (isFlexible == true) or rigid (isFlexible == false).
-Iteration modifies the current w fields (i.e., the fields that are
-stored in program memory), and modifies the unit cell parameters if
-and only if the unit cell is treated as flexible.  The w fields and
-unit cell parameters that are in memory on entry to iteration are
-used as initial guesses.
+self-consistent field equations for a fixed set of input parameters, and 
+may optionally modify the unit cell parameter so as to minimize the 
+Helmholtz free energy density.  The associated parameter file must 
+contain an Iterator block, which specifies the choice of SCFT iteration 
+algorithm and any parameters required by that algorithm. Parameters of
+required by the iteration algorithm generally include an error 
+tolerance "epsilon" and a boolean "isFlexible" flag that determines 
+whether the iteration algorithm treat the unit cell as flexible 
+(isFlexible == true) or rigid (isFlexible == false).  Iteration 
+modifies the current w fields (i.e., the fields that are stored in 
+program memory), and modifies the unit cell parameters if and only 
+if the unit cell is treated as flexible.  The w fields and unit cell 
+parameters that are in memory on entry to iteration are used as 
+initial guesses.
 
 \anchor user_command_pc_sweep_sub
 <b> SWEEP </b>:
 THE SWEEP command attempts to solve the SCFT equations at a sequence
 of points along a path through the space of possible choices of input
 parameters. This command may only be invoked if the parameter file
-contains a Sweep block, which defines this set of state points. The
-SWEEP command uses the current w fields and unit cell parameters as
-initial guesses for the first state point in the sequence, and then
-generates initial guesses for subsequent points by extrapolation of
-the solutions obtained at previous points.
+contains an Iteration block and Sweep block. The Sweep block defines
+the desired sequence of state points (i.e., choices of parameter 
+values). The SWEEP command uses the current w fields and unit cell 
+parameters as initial guesses for the first state point in the 
+sequence, and then generates initial guesses for subsequent points 
+by extrapolation of the solutions obtained at previous points.
+
+\anchor user_command_pc_simulate_sub
+<b> SIMULATE </b>:
+THE SIMULATE command performs a field-theoretic Monte Carlo (FTMC)
+simulation of a specified number nStep of attempted Monte-Carlo
+(MC) moves.  The associated parameter file must contain Compressor
+and McSimulator blocks.  Field trajectories may be written to file 
+by including a trajectory writer among the analyzers listed in the 
+AnalyzerManager subblock of the McSimulator block.
+
+\anchor user_command_pc_analyze_sub
+<b> ANALYZE_TRAJECTORY </b>:
+THE ANALYZE_TRAJECTORY command reads a field trajectory file that
+was written by previous FTMC simulation, and postprocesses the 
+contents of that file. The associated parameter file must contain
+an McSimulator block with an AnalyzerManager block that specifies 
+what analysis operations should be applied to the chosen frames 
+of the trajectory file.  The file is read an parsed by an 
+instance of the class specified by the className parameter, which 
+thus specifies the expected format of the trajectory file. Every 
+Analyzer in the AnalyzerManager block is applied to frames with 
+frame indices between the values specified by the min and max 
+parameters. 
+
+\anchor user_command_pc_compress_sub
+<b> COMPRESS </b>:
+The COMPRESS command applies the Compressor iterator algorithm 
+to the current w-fields.  The associated parameter file must
+contain a Compressor block. The compressor adjusts the Lagrange
+multiplier pressure component of the w fields so as to satisfy
+the incompressibility constraint without changing any of the
+difference between chemical potential fields associated with
+different monomer types. 
+
 
 \section user_command_pc_dataout_sec Data Output Commands
 
@@ -561,15 +686,16 @@ WRITE_PARAM and WRITE_THERMO with the same file name parameter.
 
 \section user_command_pc_fieldout_sec Field Output Commands
 
-<b> WRITE_(W|C)_(FORMAT) Commands </b>:
 The WRITE_W_BASIS, WRITE_W_RGRID, WRITE_C_BASIS, and WRITE_C_RGRID
 can be used to output the current w fields or c fields associated 
-with all different monomer types.  Commands with names that end in 
-BASIS output fields in basis format, and commands with names that 
-end in RGRID output fields in r-grid format.
+with all different monomer types. The suffix in these command names 
+specifies the file format: Commands with names that end in BASIS 
+output fields in basis format, and commands with names that end 
+in RGRID output fields in r-grid format. In what follows, we use 
+FORMAT to mean a suffix that has allowed values BASIS and RGRID.
 
 <b> WRITE_W_(FORMAT) </b>:
-The WRITE_W_BASIS and WRITE_W_RGRID commands output the current w
+The WRITE_W_BASIS and WRITE_W_RGRID commands output the current w 
 fields (monomer chemical potential fields) to a specified output 
 file in basis or rgrid format, respectively.
 
@@ -580,11 +706,15 @@ basis or rgrid format.
 
 Fields can be output in symmetry-adapted basis format only if those
 fields are known to have the specified space group symmetry. This
-symmetry is known to exist for w fields only if they were initialized
-using the READ_W_BASIS or ESTIMATE_W_FROM_C commands, and subsequently
-modified by iteration algorithms that maintain space group symmetry.
-Symmetry is assumed to exist for c fields only if the c fields were
-computed from w fields that are known to be symmetric.
+symmetry is known to exist for w fields if and only if they were 
+initialized using the READ_W_BASIS or ESTIMATE_W_FROM_C commands
+and subsequently modified only by iteration algorithms that 
+maintain space group symmetry.  Symmetry is assumed to exist for 
+c fields only if the c fields were computed from w fields that 
+are known to be symmetric.
+
+Fields that represent states in a FTMC simulation should be input
+and output using the RGRID format.
 
 \anchor user_command_pc_writeblockc_sub
 <b> WRITE_BLOCK_C_RGRID </b>:
@@ -916,6 +1046,20 @@ The commands
 \anchor user_command_pc_writemaskrgrid_cmd <b>WRITE_MASK_RGRID</b>
 may instead be used to write any current mask field to a file in 
 basis or r-grid format.
+
+\section user_command_pc_timers_sec Timer Commands
+
+\anchor user_command_pc_writetimer_sub <b>WRITE_TIMER</b>:
+The WRITE_TIMER command writes a report of the amounts of 
+computational time spent on different operations since the
+program was invoked, or since the last time the timers were
+cleared. The format of the report is designed for use with
+FTMC simulations.
+
+\anchor user_command_pc_cleartimer_sub <b>CLEAR_TIMER</b> 
+The CLEAR_TIMER command clears the state of all timers, by 
+resetting to zero the values for accumulated times associated 
+with different operations.
 
 \section user_command_pc_subpages_sec Contents (Subpages)
 
