@@ -24,13 +24,14 @@ theory calculations and field theoretic Monte-Carlo simulations.
   </li>
   <li> \subpage user_page 
     <ol type="1">
-    <li> \ref user_model_page     </li>
-    <li> \ref user_files_page     </li>
-    <li> \ref user_usage_page     </li>
-    <li> \ref user_param_page     </li>
+    <li> \ref user_model_page  </li>
+    <li> \ref user_files_page  </li>
+    <li> \ref user_usage_page  </li>
+    <li> \ref user_calculation_page  </li>
+    <li> \ref user_param_page  </li>
     <li> \ref user_field_page  </li>
     <li> \ref user_command_page  </li>
-    <li> \ref user_thermo_page   </li>
+    <li> \ref user_thermo_page  </li>
     <li> \ref user_example_page  </li>
     <li> \ref user_unitcell_page  </li>
     <li> \ref user_groups_page  </li>

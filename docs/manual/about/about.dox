@@ -4,147 +4,249 @@
 \ref install_page  (Next)
 <BR>
 
-\section about_pscf_sec About PSCF
-
-PSCF is software for field-theoretic simulations of inhomogeneous equilibrium 
-structures formed by polymer liquids, including structures formed by block 
-polymers. 
-
-PSCF can perform both self-consistent field theory (SCFT) calculations and 
-field-theoretic Monte-Carlo (FTMC) simulations.  The acronym PSCF stands 
-for "Polymer Self-Consistent Field", reflecting its origin as an SCFT 
-program.  The current version is written primarily in C++, supplemented by 
-CUDA code for programs use of NVIDIA graphics processing units (GPUs).  
-The PSCF source code is maintained in the github repository
+PSCF is package of software for field-theoretic simulations of
+inhomogeneous equilibrium structures formed by polymer liquids, with a
+focus on systems that contain block polymers.  The package is written
+primarily in C++, supplemented by CUDA for code that uses NVIDIA graphics
+processing units (GPUs).  PSCF is only available in source code form, and
+must be compiled from source. The source code is maintained in the github
+repository
 <a href=https://github.com/dmorse/pscfpp/>https://github.com/dmorse/pscfpp</a>.
 
-\section about_history_sec History
+\section about_pscf_sec Simulation Methods
 
-The current C++/CUDA version of PSCF is intended to supersede an older 
-Fortran SCFT program of the same name. The legacy Fortran version of PSCF,
-which is an SCFT program for liquids containing linear block polymers, is
-maintained in a separate github.com repository at
-<a href= https://github.com/dmorse/pscf/>https://github.com/dmorse/pscf</a> .
-The current C++/CUDA version of PSCF provides almost all of the 
-capabilities of the legacy Fortran program, and significant additional 
-capabilities, as discussed below.
+PSCF is a package of several programs that are designed to predict
+equilibrium properties of a inhomogeneous states of polymer liquids.
+A system described by PSCF may be either a one-component block polymer
+melt or a mixture that contains one or more polymeric species. PSCF
+allows a mixture to contain any number of block polymer, homopolymer
+and small molecule solvent species. All polymeric species are treated
+using a standard coarse-grained Gaussian model of each polymer block
+as a continuous random walk.
+
+PSCF can be used to perform either self-consistent field theory (SCFT)
+calculations or field-theoretic Monte-Carlo (FTMC) simulations of
+polymer liquids. Both methods use an approximation in which the liquid
+is treated as incompressible.
+
+<h3> Self-Consistent Field Theory (SCFT) </h3>
+
+Self-consistent field theory (SCFT) is an approximate theory for
+predicting structures and free energies of inhomogeneous equilibrium states
+formed by polymer liquids in which inhomogeneity is driven by a tendency
+for sub-units of different chemistry to phase separate. SCFT is a form
+of mean field theory in which the conformational statistics of individual
+polymers is approximated by the solution of an auxiliary single-polymer
+problem in which each molecule is acted upon by a set of monomer chemical
+potential fields (referred to in PSCF documentation as w fields) that
+represent the average effects of interactions with other molecules. The
+behavior of a single polymer in a specified set of w fields is described
+by the solution of a modified diffusion equation (MDE), which is a linear
+partial differential equation (PDE) that describes the conformational
+statistics of a random walk polymer in an inhomogeneous environment.
+A solutions of the MDE can be used to compute average concentrations
+for monomers of each type as functions of position, which are referred
+to in PSCF as monomer concentration fields, or "c fields".  The solution
+of an SCFT problem must satisfy a set of nonlinear self-consistent field
+(SCF) equations that require that the w fields be related to the
+corresponding c fields by an empirical description of the thermodynamics
+of mixing for the chosen set of monomer types.
+
+The following references are recommended as introductions to SCFT for
+polymer liquids:
+
+  - Arora, A., *et al.* "Broadly Accessible Self-Consistent Field Theory
+    for Block Polymer Materials Discovery," *Macromolecules*, **2016**,
+    <i>49</i>, 4675.
+
+  - Matsen, M. W. "The standard Gaussian model for block copolymer
+    melts," *J. Phys.: Condens. Matter*, **2001**, <i>14</i>, R21.
+
+  - Fredrickson, Glenn H. *The Equilibrium Theory of Inhomogeneous
+    Polymers*, Oxford University Press, **2006**.
+
+  - Shi, A.-C. "Self-Consistent Field Theory of Inhomogeneous Polymeric
+    Systems: A Variational Derivation," *Adv. Theory Simul.*, **2019**,
+    <i>2</i>, 1800188.
+
+The reference by Arora et al. is particularly appropriate as an
+introduction to the implementation of SCFT in PSCF because it was
+written, in part, as a description of an earlier version of the package,
+and uses notation, conventions and working equations consistent with
+those used throughout the PSCF documentation and software.
+
+<h3> Field-Theoretic Monte-Carlo (FTMC) </h3>
+
+Field-Theoretic Monte-Carlo (FTMC) is a stochastic simulation method
+in which a Monte-Carlo algorithm is used to sample an equilibrium
+ensemble of possible configurations of the w-fields, rather than
+solving for a single field configuration as in SCFT.  The theory
+underlying this method is based upon a formal transformation of the
+partition function for a system of interacting particles as an integral
+over particle positions into a functional integral over configurations
+of a set of fluctuating fields.
+
+An exact formulation of this particle-to-field transformation leads to
+a function integral in which the fields and the functional integrand
+are generally complex- rather than real-valued functions. The complex
+Langevin sampling method, which is not yet implemented in PSCF, is
+designed to sample the resulting complex functional integral.
+Complex Langevin simulations of this "fully fluctuating" field theory
+are believed to yield results that are statistically equivalent to
+those obtained by simulating a corresponding particle based model.
+
+The FTMC method that is implemented in PSCF is based on a "partial
+saddle point" approximation to this fully fluctuating field theory
+in which an imaginary field component that enforces the
+incompressibility constrained is constrained to always stay at a
+value corresponding to a partial saddle-point (i.e,. a configuration
+in which the partial functional derivative with respect to this
+field vanishes), while other field components are allowed to
+fluctuate. This approximation leads to a formulation in which all
+quantities of interest have real values, and which is substantially
+more efficient that complex Langevin sampling, at a modest cost in
+accuracy. The formulation in terms of real fields also allows the
+use of Monte-Carlo and other sampling methods that are designed
+for statistical mechanical problems with real statistical weights.
+
+We recommend the following references as introductions and reviews
+of stochastic field theoretic simulations of polymer liquids and
+of the underlying theory:
+
+
+\section about_history_sec Package History
+
+The C++/CUDA version of PSCF that is documented by this manual was 
+designed starting in 2015-2016 as a complete rewrite of an older Fortran 
+SCFT program of the same name.  The acronym PSCF stands for "Polymer
+Self-Consistent Field", reflecting the origin of the package as an SCFT
+program. The Fortran version of PSCF is maintained in a separate
+github.com repository at
+<a href= https://github.com/dmorse/pscf/>https://github.com/dmorse/pscf</a> ,
+but is no longer being actively developed. The name "pscfpp" that is
+that is used for the repository containing the current version was 
+chosen to avoid a clash with the name "pscf" that is used for the 
+repository containing the older Fortran code.
+
+The current C++/CUDA version of PSCF is intended to supersede the Fortran
+version. The current version provides almost all of the capabilities of
+the Fortran program, and some important new capabilities.  New users of 
+PSCF should use the C++/CUDA version documented here, and users of the 
+Fortran version should consider switching to the current version
+whenever they can.
 
 Differences between the current version of PSCF and the legacy Fortran
-program include:
+version include the following:
 <ul>
   <li>
   The current version is written as an extensible package that contains
   several different programs designed for use with different geometries,
-  boundary conditions, algorithms or hardware, implemented within a
-  common framework.
+  algorithms or hardware. The Fortran version is a single program 
+  designed for periodic structure and linear polymers.
   </li>
   <li>
   The current version enables simulations of mixtures containing acyclic
-  branched block polymers, in addition to the linear block polymers and 
-  linear homopolymers allowed by the Fortran PSCF code.
+  branched block polymers, in addition to the linear block polymers and
+  linear homopolymers allowed by the Fortran code.
   </li>
   <li>
-  The current version uses graphics processing units (GPUs) to 
-  dramatically accelerate some programs.
+  The current version enables the use of graphics processing units (GPUs)
+  to dramatically accelerate some applications.
   </li>
   <li>
-  The current version implements FTMC simulations as well as SCFT.
+  The current version now enables FTMC simulations as well as SCFT
+  calculations.
   </li>
 </ul>
 
 \section about_programs_sec Programs
 
-The PSCF package provides three executable programs:
+PSCF provides source code for three executable programs:
 
    - **pscf_fd** : The pscf_fd program is designed to performed SCFT
-     calculations on one-dimensional problems in Cartesian, cylindrical 
+     calculations on one-dimensional problems in Cartesian, cylindrical
      or spherical coordinates. A simple finite difference method is used
-     to solve the underlying partial differential equation (PDE) that 
-     is used to treat statistical mechanics of individual Gaussian
-     polymers, which is known as the modified diffusion equation (MDE). 
-     This program is useful for SCFT problems involving flat or curved 
-     interfaces, as well as cylindrical or spherical copolymer micelles.  
+     to solve the underlying partial differential equation that is used
+     to treat statistical mechanics of individual Gaussian polymers,
+     which is known as the modified diffusion equation (MDE). This
+     program is useful for SCFT problems involving flat or curved
+     interfaces, and spherical or cylindrical copolymer micelles.
      The suffix "fd" stands for "finite difference".
-     
+
    - **pscf_pc** : The pscf_pc program is designed to treat structures
-     that are periodic in 1, 2 or 3 dimensions on conventional CPU 
+     that are periodic in 1, 2 or 3 dimensions on conventional CPU
      hardware. A pseudo-spectral algorithm is used to solve the MDE.
-     This program provides capabilities for SCFT calculations analogous 
-     to those of the older PSCF Fortran program, as well as new tools 
-     for FTMC simulations.  The suffix "pc" stands for "periodic CPU".  
-     
-   - **pscf_pg** : The pscf_pg program is a GPU-accelerated variant 
+     This program provides capabilities for SCFT calculations analogous
+     to those of the older PSCF Fortran program, as well as new tools
+     for FTMC simulations.  The suffix "pc" stands for "periodic CPU".
+
+   - **pscf_pg** : The pscf_pg program is a GPU-accelerated variant
      of pscf_pc that also implements both SCFT and FTMC simulations
      for periodic structures.  It is based on algorithms similar to
-     those used in pscf_pc, with almost identical features, but 
-     provides higher performance for large systems. The suffix "pg" 
-     stands for "periodic GPU". 
+     those used in pscf_pc, and provides almost identical features,
+     but exhibits higher performance for large systems. The suffix
+     "pg" stands for "periodic GPU".
 
 \section about_features_sec Features
 
-All PSCF programs are designed to treat an incompressible mixture 
-containing any number of block polymers, homopolymers and small molecule 
-(point-like) solvent molecular species. All polymeric species are 
-treated using the standard Gaussian model of each polymer block as a 
-continuous random walk.
+Features that are common to all PSCF programs and are applicable to
+both SCFT and FTMC calculations include:
 
-Features that are common to all PSCF programs and apply to both SCFT 
-and FTMC calculations include:
+  - Ability to treat mixtures containing any number of block polymer 
+    and solvent molecular species. Linear homopolymers are treated 
+    as special case of block polymers with only one block.
 
-  - Ability to treat mixtures of any number of block polymers and
-    solvent species.
+  - Ability to treat acyclic branched block polymers of arbitrary
+    complexity, as well as linear block polymers
 
-  - Ability to treat acyclic branched block polymers, in addition to 
-    linear block polymers. Homopolymers are treated as a special case
-    of block polymers with a single block.
+  - Ability to use canonical, grand-canonical or mixed statistical
+    ensembles - users may specify either a volume fraction or a
+    chemical potential for each molecular species
 
-  - Canonical, grand-canonical or mixed statistical ensembles - users 
-    may specify either a volume fraction or a chemical potential for 
-    each molecular species
+  - Thorough user and developer documentation provided as an integrated
+    web manual
 
-  - Thorough user and developer documentation provided as a web manual
+  - Well documented open source code written in object oriented C++
 
-  - Open source code written in object oriented C++
+  - A library of examples of input files for many types of calculation
 
-Features for SCFT calculations that are common to all PSCF programs 
+  - Python tools for data analysis and manipulation of input files
+
+Features for SCFT calculations that are common to all PSCF programs
 include:
 
-  - Efficient Anderson-mixing iteration algorithms
+  - Efficient Anderson-mixing SCFT iteration algorithms
 
-  - Efficient SCFT calculations for sequences of parameter choices along 
-    a path in parameter space ("sweeps"), using extrapolation to 
-    construct initial guesses
+  - Efficient SCFT calculations for sequences of parameter choices along
+    a path in parameter space ("sweeps"), using extrapolation to construct
+    initial guesses
 
-  - Examples of input files for many types of SCFT solutions 
-
-  - Python tools for data analysis
-
-Features specific to the pscf_pc and pscf_pg programs for periodic 
+Features specific to the pscf_pc and pscf_pg programs for periodic
 structures include:
 
-  - Ability to perform both SCFT and FTMC calculations
+  - Implementation of both SCFT and FTMC 
 
   - Accurate pseudo-spectral solution of the modified diffusion equation
 
   - Ordered phases with 1, 2 or 3 dimensional periodicity
 
-  - All possible 2D and 3D lattice systems (i.e., orthorhombic, monoclinic,
-    etc.)
+  - Periodic unit cells with all possible 2D and 3D Bravais lattice
+    systems (i.e., cubic, orthorhombic, monoclinic, etc.)
 
-  -  optimization of unit parameters in SCFT so as to minimize 
-    free energy density
+  - Efficient algorithms to optimize unit cell parameters in SCFT so
+    as to minimize free energy density
 
-  - Imposition of any user-selected space-group symmetry in SCFT
+  - Imposition of any user-selected space-group symmetry on SCFT solutions
 
-  - Built-in database of symmetry operations for all 230 3D space groups 
+  - Built-in database of symmetry operations for all 230 3D space groups
     and 17 2D plane groups for use in SCFT
 
-  - Availability of a companion package 
+  - A companion matlab package
     [Polymer Visual](<https://github.com/kdorfmanUMN/polymer_visual/>)
     for visualization of periodic structures
 
-Features specific to SCFT calculations performed with the pscf_pc CPU 
-program are:
+Features for SCFT calculations performed with the pscf_pc CPU program
+that have not yet been ported to pscf_pg are:
 
   - Inhomogeneous density constraints (a "mask")
 
@@ -152,80 +254,82 @@ program are:
 
   - Thin polymer films
 
-The mask and external field features are used in pscf_pc to implement 
-simulations of thin films. A mask is used to constrain a polymer 
-material to a slit within a periodic supercell, and localized external 
-fields are used to represent selective interactions with the top and 
-bottom surfaces.
+The mask and external field features are used in pscf_pc to implement
+simulations of thin films. A mask is used to constrain a polymer material
+to a slit within a periodic supercell, and localized external fields are
+used to represent selective interactions with the top and bottom
+surfaces.
 
-\section about_repo_sec Cloning the Source Code
+\section about_repo_sec Getting the Source Code
 
-The PSCF package is currently only provided in source code form.
-The source code may be obtained by using a git version control system
-client to clone the github source code repository. To do so on a machine
-with a git client installed, enter the command:
+The PSCF package is currently only provided in source code form.  The 
+best way to obtain the source code is to use git version control system 
+client to clone the github source code repository. To do so on a machine 
+on which a git client has been installed, while using the git command 
+line interface, enter the command:
 \code
 git clone --recursive https://github.com/dmorse/pscfpp.git
 \endcode
-Note the use of the --recursive option to the git clone command. This is 
-necessary to clone two git submodules that are maintained in separate 
-github repositories. This command will create a new directory called 
-pscfpp/ that contains all of the source code and associated documentation, 
-including all required git submodules.
+Note the use of the --recursive option to the git clone command. This is
+necessary to clone two git submodules that are maintained in separate
+github repositories. This command will create a new directory called
+pscfpp/ that contains all of the source code and associated documentation 
+files, including all required git submodules.
 
-We do *not* recommend that users obtain the source code by instead 
-downloading a zip or tar file from the PSCF github repository. A 
-repository that is created by unpacking such a file will not contain 
-source code for the other git repositories that are automatically 
-downloaded and installed as submodules by use of the git clone 
-command with the "recursive" option.
+We do *not* recommend that users obtain the source code by instead
+downloading a zip or tar file of a release from the PSCF github 
+repository. The problem with this method is that the repository that is 
+created by unpacking such a file will not contain source code for two 
+related git repositories that are automatically downloaded and installed 
+as submodules by use of the git clone command with the "recursive" 
+option. It is possible to correct this after the fact by cloning or 
+downloading the submodules, but simpler to just follow the instructions 
+given above.
 
 \section about_documentation_sec Documentation
 
 Documentation is provided as an html web manual that contains both user 
-and developer documentation. The web manual for most recent numbered
+and developer documentation. The web manual for the most recent numbered 
 release of PSCF (currently v1.1) is available online at:
 
 <a ref=https://dmorse.github.io/pscfpp-man/>
 https://dmorse.github.io/pscfpp-man </a>.
 
-The PSCF source code repository also contains all of the files from 
-which the web manual is generated. This makes it possible for users 
-to generate a local copy of the manual on their own computer, or to 
-generate a manual containing current documentation for an unreleased 
-development branch. 
+The PSCF source code repository contains all of the files from which this
+web manual is generated. This makes it possible for users to generate a 
+local copy of the manual on their own computer, or to generate a manual 
+containing current documentation for an unreleased development branch.
 
-The web manual is created using the doxygen documentation utility. In 
-order to generate a local copy of the documentation, doxygen must be 
-installed on your computer, and the directory containing the doxygen 
-executable must be in your unix command search PATH.  
+The web manual is created using the doxygen documentation utility. In
+order to generate a local copy of the documentation, doxygen must be
+installed on your computer, and the directory containing the doxygen
+executable must be in your unix command search PATH.
 
 To generate documentation, change directory (cd) to the pscfpp/ root
 directory and then enter
 \code
    > make html
 \endcode
-This should create many html files in the docs/html directory of the
-pscfpp/ root directory.  To begin reading the documentation, point a 
-browser at the file docs/html/index.html, which contains the main page 
-of this web manual.
+This should create many html files in the pscfpp/docs/html directory.
+To begin reading the documentation, point a browser at the file 
+pscfpp/docs/html/index.html, which contains the main page of this web 
+manual.
 
-Formatting of some mathematical expressions within this web manual 
-relies on the use of a MathJax interpreter that is provided by a 
-remote server, and which thus requires an internet connection to 
-function. Mathematical expressions in local copies of this manual may 
-thus not be formatted correctly if the computer is not connected to 
-the internet.
+Formatting of some mathematical expressions within this web manual relies 
+on the use of a MathJax interpreter that is provided by a remote server, 
+and that thus requires an internet connection to function. Mathematical 
+expressions in local copies of this manual may thus not be formatted 
+correctly if the computer is not connected to the internet.
 
 \section about_dependencies_sec Dependencies
 
 The PSCF source code is written using C++ as the primary language, with
-CUDA used in some programs for GPU kernels.  The C++ version of PSCF was 
-developed on linux and and Mac OS X operating systems using standard unix 
-utilities, and is designed to be compiled and run in these or other 
-unix-like environments. 
+CUDA used in some programs for GPU kernels.  The C++ version of PSCF was
+developed on linux and and Mac OS X operating systems using standard unix
+utilities, and is designed to be compiled and run in these or other
+unix-like environments.
 
-The pscf_fd and pscf_pc CPU programs depend on the following external 
+The pscf_fd and pscf_pc CPU programs depend on the following external
 libraries:
 
 
@@ -234,11 +338,11 @@ libraries:
 
   - <a href=https://www.fftw.org/>FFTW</a> - Fast Fourier Transform library
 
-The one-dimensional finite difference program pscf_fd actually only 
+The one-dimensional finite difference program pscf_fd actually only
 requires only GSL, whereas pscf_pc requires both GSL and FFTW.
 
-The GPU-accelerated pscf_pg program can only be compiled and run on a 
-computer with an appropriate NVIDIA GPU and CUDA development kit. 
+The GPU-accelerated pscf_pg program can only be compiled and run on a
+computer with an appropriate NVIDIA GPU and CUDA development kit.
 
 Complete directions for compiling and installing PSCF are provided in
 \ref install_page "section 2" of this manual. These include instructions
@@ -257,8 +361,8 @@ or fitness for a particular purpose.  See the LICENSE file or the
 
 \section about_support_sec Support
 
-Development of PSCF is currently supported by the National Science 
-Foundation program for Cyberinfrastructure for Sustained Scientific 
+Development of PSCF is currently supported by the National Science
+Foundation program for Cyberinfrastructure for Sustained Scientific
 Development (CSSI) under Grant No. 2103627.
 
 \section about_contributors_sec Contributors

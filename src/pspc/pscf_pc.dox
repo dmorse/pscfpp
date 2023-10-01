@@ -1,16 +1,18 @@
 /*!
-\page pscf_pc_page pscf_pc - Periodic (CPU)
+\page pscf_pc_page pscf_pc - Periodic Structures (CPU)
 
-Polymer Self-Consistent Field Theory - 3D Periodic (CPU)
+Program for self-consistent field theory (SCFT) and field-theoretic 
+Monte-Carlo (FTMC) simulations of spatially periodic structures of
+polymer liquids, implemnted on a standard CPU.
 
 \section pscf_pc_usage_section Usage
 
-    pscf_pc [-d dimension] [-p file] [-c file] [-i prefix] [-o prefix] [-e]
+    pscf_pc -d dimension -p file -c file [-i prefix] [-o prefix] [-e]
 
 \section pscf_pc_options_section Command Line Options
 
 The -d, -p and -c options are required, to provide a value for the spatial
-dimension of the structure of interest (-d option), a parameter file name 
+dimension for the structure of interest (-d option), a parameter file name 
 (-p option), and a command file name (-c option). The -i, -o, and -e 
 options are not required.
 
@@ -32,15 +34,15 @@ options are not required.
 
   -i prefix
 
-   Set the input file path prefix, given by the argument "prefix".
+   Set the input file path prefix, given by the argument "prefix" (optional)
 
   -o prefix
 
-   Set the output file path prefix, given by the argument "prefix".
+   Set the output file path prefix, given by the argument "prefix" (optional)
 
-   -e  
+  -e  
 
-    Enable echoing of parameter file to log file as it is read. This
-    option is often useful for debugging the parameter file.
+   Enable echoing of parameter file to standard output as it is read. 
+   This option is useful for debugging the parameter file. (optional)
 
 */

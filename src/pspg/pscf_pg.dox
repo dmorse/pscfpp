@@ -1,25 +1,29 @@
 /*!
-\page pscf_pg_page pscf_pg - Periodic (GPU)
+\page pscf_pg_page pscf_pg - Periodic Structures (GPU)
 
-Polymer Self-Consistent Field Theory - 3D Periodic (GPU)
+GPU-accelerated program for self-consistent field theory (SCFT) and 
+field-theoretic Monte-Carlo (FTMC) simulations of spatially periodic 
+structures of polymer liquids.
+
 
 \section pscf_pg_usage_section Usage
 
-    pscf_pg [-d dimension] [-p file] [-c file] [-i prefix] [-o prefix] [-e]
+    pscf_pg -d dimension -p file -c file [-i prefix] [-o prefix] [-e]
 
 \section pscf_pg_options_section Command Line Options
 
 The -d, -p and -c options are required, to provide a value for the spatial
-dimension of the structure of interest (-d option), a parameter file name 
-(-p option), and a command file name (-c option). The -i, -o, and -e 
+dimension of the structure of interest (-d option), a parameter file name
+(-p option), and a command file name (-c option). The -i, -o, and -e
 options are not required.
 
   -d dimension
 
-   Set the spatial dimension (# of periodic coordinates) of the 
-   structure of interest, given by the integer argument "dimension", 
-   which must equal 1, 2 or 3. For example, set dimension equal to 1 for
-   for a lamellar phase, 2 for a hexagonal phase, and 3 for any fully 
+   Set the spatial dimension (# of periodic coordinates) of the structure
+   of interest, given by the integer argument "dimension", which must
+   be set to 1, 2 or 3. For example, set dimension to 1 for a lamellar
+   phase, 2 for any two-dimensional periodic arrangement of cylinders
+   (e.g., hexagonally packed cylinders), and 3 for any fully
    three-dimensional structure. (required)
 
   -p file
@@ -33,14 +37,16 @@ options are not required.
   -i prefix
 
    Set the input file path prefix, given by the argument "prefix"
+   (optional)
 
   -o prefix
 
    Set the output file path prefix, given by the argument "prefix"
+   (optional)
 
-   -e  
+   -e
 
-    Enable echoing of parameter file to log file as it is read. This
-    option is often useful for debugging the parameter file.
+   Enable echoing of the parameter file to standard output as it is read. 
+   This option is often useful for debugging the parameter file (optional)
 
 */

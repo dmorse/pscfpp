@@ -9,6 +9,7 @@
    <li> \subpage user_model_page     </li>
    <li> \subpage user_files_page     </li>
    <li> \subpage user_usage_page     </li>
+   <li> \subpage user_calculation_page     </li>
    <li> \subpage user_param_page     
      <ul>
        <li> \ref user_param_example_page  "SCFT Example" </li>

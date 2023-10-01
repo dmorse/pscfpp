@@ -1,7 +1,7 @@
 /*! \page user_usage_page Running a Program
 
 \ref user_files_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
-\ref user_param_page (Next)
+\ref user_calculation_page (Next)
 <BR>
 
 
@@ -12,7 +12,7 @@ program as arguments of the "-p" and "-c" command line options, respectively.
 Names of other input and output files are provided as arguments to commands
 in the command file.
 
-\section user_param_usage_example_sec Example
+\section user_usage_example_sec Example
 
 As an example, consider use of the program pscf_fd, which is used to
 simulate problems in which the fields depend on a single coordinate.
@@ -44,7 +44,7 @@ would direct standard output to a file named "log" in the current working
 directory.  Standard output should normally be redirected to a file when
 a job is run in background or in a queue.
 
-\section user_param_usage_echo_sec Echoing the Parameter File
+\section user_usage_echo_sec Echoing the Parameter File
 
 All PSCF programs accept a command line option "-e" that causes the
 contents of each line of the parameter file to be echoed to standard
@@ -69,20 +69,16 @@ file syntax errors output both the expected label string and the label
 string that was actually read from file. This error message is usually 
 enough to allow a user to identify and fix such an error.
 
-\section user_param_usage_options_sec Command Line Options 
+\section user_usage_options_sec Command Line Options 
 
 All PSCF programs can be invoked with any of the following command line
-options listed in the table shown below. 
+options listed in the table shown below. The parameter column is left
+empty for options that do not take a parameter.
 <table>
   <tr> 
      <td> <b> Option </b> </td>
-     <td> <b> Argument </b> </td>
+     <td> <b> Parameter </b> </td>
      <td> <b> Description </b> </td>
-  </tr>
-  <tr> 
-     <td> -e </td> 
-     <td>    </td>
-     <td> Activates echoing of the parameter file to standard output </td>
   </tr>
   <tr> 
      <td> -d </td>
@@ -111,20 +107,25 @@ options listed in the table shown below.
      <td> Specifies a prefix string that is prepended to the 
           the names (paths) for all output data files </td>
   </tr>
+  <tr> 
+     <td> -e </td> 
+     <td>    </td>
+     <td> Activates echoing of the parameter file to standard output </td>
+  </tr>
 </table>
-The -p and -c options are always required, while the -e, -i and -o 
-options may be omitted.  The -d option only exists for the pscf_pc 
-and pscf_pg programs, and is a required option for those programs.
-The blank entry in the argument column for the -e option indicates 
-that this option does not take an argument. 
+The -p and -c options are required, while the -i, -o and -e options 
+are optional.  The -d option only exists for the pscf_pc and pscf_pg 
+programs, and is required for those programs. The -e option does not
+take a parameter.
 
-The "prefix" arguments of the -i and -o options can be used to specify
-directory for input and output files. To do so, set either of these
-arguments to the path to a directory, terminated by the directory separator
-charactor "/", giving a string such as "in/" or "out/".  These prefix
-strings are prepended verbatim to names of input and output files that 
-are specified in the command file, but are not added to the names of 
-the parameter and command files. 
+The "prefix" parameters of the -i and -o options can be used to specify
+directories for input and output files. To do so, set either of these
+arguments to the path to a directory, terminated by the directory 
+separator charactor "/", giving a string such as "in/" or "out/".  
+These prefix strings are prepended verbatim to names of input and output 
+files that are specified a parameters in the command file, but are not 
+added to the names of the parameter and command files specified in the
+program command line interface.
 
 <em> Example </em>:
 The command

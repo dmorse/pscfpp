@@ -1,25 +1,16 @@
 
 /*!
-\page pscf_fd_page pscf_fd  - 1D Finite-Difference 
+\page pscf_fd_page pscf_fd  - One-dimensional SCFT (CPU)
 
-Finite-difference for one-dimensional (1D) SCFT problems
+Program for one-dimensional (1D) SCFT problems. The implementation
+uses a regular grid and finite-difference algorithm for solving the 
+modified diffusion equation.
 
 \section pscf_fd_usage_section Usage
 
-    pscf_fd [-q] [-e] [-p file] [-c file] [-i prefix] [-o prefix]
+    pscf_fd  -p file -c file [-i prefix] [-o prefix] [-e]
 
 \section pscf_fd_options_section Command Line Options
-
-   -q 
-
-    Enable echoing of list of enabled and disabled compile-time options
-    to log file, to document which version of the program was used. 
-
-   -e
-
-    Enable echoing of parameter file to log file as it is read. This
-    option is often useful for debugging the parameter file.
-
 
   -p file
 
@@ -43,6 +34,12 @@ Finite-difference for one-dimensional (1D) SCFT problems
    Set the output file path prefix, given by the argument "prefix".
    If not set here, this may also be set in the FileMaster block 
    of the parameter file.
+
+  -e
+
+   Enable echoing of parameter file to log file as it is read. This
+   option is often useful for debugging the parameter file.
+
 
 */
 
