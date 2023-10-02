@@ -20,7 +20,7 @@ jobs:
     - uses: actions/checkout@v2
       with:
         submodules: recursive
-    - run: ./setup
+    - run: ./configure
     - run: ls 
     - run: cd bld; make all-cpu
     - run: cd bld/pscf/tests; make run
