@@ -126,7 +126,7 @@ ifneq ($(BLD_DIR),$(SRC_DIR))
 	rm -f pscf/tests/makefile
 	rm -f fd1d/tests/makefile
 	rm -f pspc/tests/makefile
-	rm -f configure
+	rm -f setopts
 endif
 	rm -f config.mk
 

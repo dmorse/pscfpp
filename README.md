@@ -216,8 +216,8 @@ for some common environments are given in the web manual.
 ## Compiling
 
 The PSCF source code is written using C++ as the primary language, with
-CUDA used in pscf_pg for GPU acceleration. PSCF is only provided in 
-source file format, and so must be compiled from source.
+CUDA used in pscf_pg for GPU acceleration. PSCF is only provided in source 
+file format, and so must be compiled from source.
 
 The build system used to compile and install PSCF relies on standard unix 
 utilities that are available in any unix-like command-line environment. 
@@ -230,43 +230,60 @@ A brief summary is given below of instructions for steps that must be
 taken after cloning the git repository and installing all of the 
 required dependencies:
 
-   - Add the pscfpp/bin directory to your linux command search PATH
+   - Add the directory path pscfpp/bin to your unix command search PATH
      environment variable. This is where executables will be installed.
 
-   - Add the pscfpp/lib/python directory to your PYTHONPATH environment 
-     variable. This provides access to python scripts used by the build 
-     system.
+   - Add the directory path pscfpp/lib/python to your PYTHONPATH environment 
+     variable. This is necessary to allow a python interpreter to find 
+     python modules that are used by the build system. 
 
-   - Run the pscfpp/setup script by entering "./setup" from the pscfpp/ 
-     root directory, with or without an optional filename argument. 
+   - Run the pscfpp/configure script by entering "./configure" from the 
+     pscfpp/ root directory, with or without an optional filename argument. 
      This script installs default versions of several files that are 
-     required by the build system. The setup script usually only needs 
-     to be run once, before compiling for the first time.  In a linux 
-     environment, it is usually sufficient to run the setup script 
-     without a filename argument.  See Section 2.6 of the 
+     required by the build system. The configure script usually only 
+     needs to be run once, before compiling for the first time.  In a 
+     linux environment, it is usually sufficient to run the configure
+     script without a filename argument.  See Section 2.6 of the 
      [web manual](<https://dmorse.github.io/pscfpp-man>) for more 
-     information about how to invoke the setup script for Apple OS X.
+     information about how to invoke the configure script for Apple OS X.
 
-   - To compile and install only CPU-based programs in the package on
-     a computer that does not have an appropriate NVIDA GPU, enter
-     "make all" from the pscfpp/ root directory immediately after 
-     running the setup script.
+   - To compile and install only CPU-based programs in the package on a
+     computer that does not have an appropriate NVIDA GPU, simply enter
+     "make" from the pscfpp/ root directory immediately after 
+     running the configure script. 
 
-   - To compile all PSCF programs on a machine that has an appropriate
-     NVIDA GPU and a CUDA development kit, first enter "./configure -c1" 
-     from the pscfpp/ root directory to enable compilation of CUDA code, 
-     then use the -a option of the configure script to set the correct 
-     GPU architecture for your system, and enter "make all" to compile. 
+   - Some further configuration is required to compile all PSCF programs,
+     including GPU-enabled programs, on a machine that has an appropriate 
+     NVIDA GPU and a CUDA development kit. To do so, first enter 
+     "./setopts -c1" from the pscfpp/ directory to enable compilation of 
+     CUDA code. Then use the -a option of the same setopts script to set 
+     the correct GPU architecture for your system. For example, to 
+     compile for a V100 GPU with CUDA compute capability 7.0, one would 
+     enter "./setopts -a sm_70". Instructions for choosing the correct 
+     string parameter for the -a option for a particular GPU can be obtained 
+     by entering "./setopts -h" or by consulting the installation section 
+     of the web manual.  After these steps, enter "make all" to compile. 
 
-The "make all" command installs all resulting executable files in the 
-pscfpp/bin directory.
+The "make" command installs all resulting executable files in the 
+pscfpp/bin directory. 
+
+The procedure described above for building PSCF is similar to the standard 
+"configure; make; make install" procedure for GNU software, except that 
+it does not require a separate "make install" command. This is because 
+the PSCF "make" command is designed to create executables in the the 
+pscfpp/bin directory, and the above instructions assume that this is 
+their intended final destination.  If the pscfpp/ directory is installed 
+within a user's home directory, the above instructions do not require 
+the use of sudo or adminstrator permission, but instead require the 
+user to modify their PATH environment variable to allow the unix shell 
+to find executables installed in psfpp/bin.
 
 ## Command line usage
 
 PSCF is a package containing three different SCFT programs (pscf_fd,
 pscf_pc, and pscf_pg) that are designed for different geometries, using 
 different algorithms or different computer hardware.  To perform a
-calculation, Each of these programs must read a parameter file and a 
+calculation, each of these programs must read a parameter file and a 
 command file. The parameter file, which is processed first, is a fixed
 format file that contains parameters required to describe the physical 
 system of interest and initialize the program before performing any 
@@ -277,17 +294,17 @@ in Sec. 3 of the web manual.
 
 The command file usually contains the names of several input and output 
 field data files as arguments to commands that read or write these files. 
-Specifically, a command file to perform either a standard SCFT calculation 
-or an FTMC simulation usually contains a command to read a specific file
+Specifically, a command file to perform either a SCFT calculation or an
+FTMC simulation normally contains a command to read a specific file
 that contains an initial guess for the monomer chemical potential fields.
 A command file for an SCFT calculation normally also contains commands 
-that write final chemical potential and monomer concentration fields to 
-specific files. 
+that write converged chemical potential and monomer concentration fields
+to specific files. 
 
 The usual command line syntax for invoking the pscf_fd program for 
-one-dimensional SCFT programs is
+one-dimensional SCFT calculations is
 ```
-pscf_fd -e -p param -c command
+pscf_fd -p param -c command -e
 ```
 where "param" denotes the name of a parameter file, and "command" denotes 
 the name of a command file.  The -p and -c options are required.
@@ -295,35 +312,35 @@ the name of a command file.  The -p and -c options are required.
 The "-e" command line option in the above example is not required, but 
 causes the program to "echo" the parameter file to standard output as 
 this file is being processed. Use of this option makes it easier to 
-debug any failure arising from a syntax error in this file. 
+debug any failure arising from a syntax error in the parameter file. 
 
 The pscf_pc and pscf_pg programs require a value for the spatial 
-dimension of the structure as an additional command line parameter, 
-which specifies the number 1, 2, or 3 of coordinates along which the 
-structure is periodic.  This must be provided as an integer argument of 
-the -d option.  The usual syntax for invoking pscf_pc for a three 
-dimensionally periodic structure (e.g., a network phase or an 
+dimension of the structure as an additional command line parameter,
+which is provided as an integer parameter of the -d option. This
+parameter specifies the number 1, 2, or 3 of coordinates along which 
+the structure is periodic.  The usual syntax for invoking pscf_pc for 
+a three dimensionally periodic structure (e.g., a network phase or an 
 arrangement of spheres), while also using the -e  option, is thus
 ```
-pscf_pc -d 3 -e -p param -c command
+pscf_pc -d 3 -p param -c command -e
 ```
 The syntax for a simulation of one-dimensional lamellar phase would 
 instead use 1 as the argument of the -d option. The syntax for invoking 
-pscf_pg is the same as that for pccf_pc, except for the executable 
-program name.
+pscf_pg is the same as that for pccf_pc, except for the use of a
+different program name.
 
-Programs that are invoked as shown above would both write log output 
-that is produced during execution to the user's screen (i.e., to standard 
-output).  This log output may instead be redirected to a file by using 
-the unix ">" standard output redirection operator. For example, a 
-command such as 
+Programs that are invoked as shown in the above examples would write log 
+output that is produced during execution to the user's screen (i.e., to 
+standard output).  This log output may instead be redirected to a file 
+by using the unix ">" standard output redirection operator. For example, 
+a command such as 
 ```
-pscf_pc -d 3 -e -p param -c command > log
+pscf_pc -d 3 -p param -c command -e > log
 ```
 would redirect log output that is written during simulation of a 
 3-dimensionally periodic structure to a file named "log" in the current 
-working directory. Standard output is normally redirected to a file when
-a program is run in a queue on a shared computer cluster.
+working directory. Standard output should normally be redirected to a 
+file when a program is run in a queue on a shared resource.
 
 ## Examples
 
@@ -373,9 +390,9 @@ related examples may contain several such scripts with names that are
 variants of "run", each of which can be execute to run a specific 
 example. 
 
-Each example directory also usually contains a script named "clean" that 
-can be executed to remove all output files that are created by running 
-the example.
+Each example directory also usually contains a script named "clean" 
+that can be executed to remove all output files that are created by 
+running the example.
 
 ## License
 

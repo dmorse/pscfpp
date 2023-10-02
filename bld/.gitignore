@@ -2,4 +2,4 @@
 *.d
 makefile
 config.mk
-configure
+setopts

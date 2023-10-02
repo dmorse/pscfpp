@@ -1,7 +1,7 @@
 /*! \page install_environment_page Environment Variables
 
 \ref install_overview_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
-\ref install_setup_page (Next) 
+\ref install_configure_page (Next) 
 <BR>
 
 To compile PSCF in a unix environment, before compiling any code, 
@@ -70,6 +70,6 @@ the .zprofile file every time you open a new terminal window.
 <BR>
 \ref install_overview_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
 \ref install_page   (Up) &nbsp; &nbsp; &nbsp; &nbsp; 
-\ref install_setup_page (Next) 
+\ref install_configure_page (Next) 
 
 */

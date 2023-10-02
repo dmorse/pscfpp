@@ -1,7 +1,7 @@
 /*! \page install_inout_page Out-of-Source and In-Source Builds
 
-\ref install_setup_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
-\ref install_configure_page (Next)
+\ref install_configure_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref install_setopts_page (Next)
 <BR>
 
 \section install_inout_build Intermediate Files and Build Directories
@@ -85,7 +85,7 @@ files that have not been touched since they were last compiled. This
 usage is discussed in more detail \ref install_targets_makeall_sec "here".  
 
 <BR>
-\ref install_setup_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref install_configure_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
 \ref install_page   (Up) &nbsp; &nbsp; &nbsp; &nbsp;
-\ref install_configure_page (Next)
+\ref install_setopts_page (Next)
 */

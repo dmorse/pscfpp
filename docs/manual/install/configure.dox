@@ -1,164 +1,200 @@
-/*! \page install_configure_page Optional Features
+/*! \page install_configure_page Configure Script
 
-\ref install_inout_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
-\ref install_targets_page (Next)
+\ref install_environment_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
+\ref install_inout_page (Next) 
 <BR>
 
-The PSCF build system is designed to allow users to enable or disable
-conditional compilation of optional features during compilation. Thus far
-the only such optional features are "debugging" and "CUDA" features. 
-The "debugging" feature is used to add additional run-time sanity checks 
-(such as run-time checking of array index bounds) at a slight cost in 
-performance. The CUDA feature enables conditional compilation of CUDA
-code on machines that have an appropriate nVidia GPU and CUDA development
-kit. 
+Users must run a bash script named "configure" after installing all required
+dependencies before attempting to compile any code in the PSCF package. 
+This script is located in the pscfpp/ root directory, and must be executed 
+from this directory.  It is usually only necessary to invoke the configure 
+script once, before the first time you compile any code.
 
-\section install_configure_configure The "configure" script
+\section install_configure_purpose_sec Purpose
 
-The pscfpp/src and pscfpp/bld directories are used as build directories
-for in-source and out-of source compilation, respectively. After the setup
-script has been run, each of these two standard build directories will
-contain an exectuable shell script named "configure". The configure script 
-can be used to modify configuration files that control what features are
-enabled when code is compiled.  The configure script in each build
-directory may be invoked from within that directory (i.e., from the src/
-or bld/ directory) in order to modify which features will be enabled and 
-disabled in code that is subsequently compiled in that build directory. 
+The configure script installs several files that are needed to compile 
+pscfpp but that are not installed by cloning the github repository. Most 
+of the files installed by this script are files that the user may need to 
+modify in order to customize or extend the package. These include include 
+configuration files that a user may need to modify in order to adapt the 
+simpatico build system to a particular environment or to enable optional 
+features. 
 
-The pscfpp/ root directory also contains a similar .configure script
-that can be invoked to apply identical changes in compile-time features
-to the configuration files in both the src/ and bld/ directories.
+The most important file created by the configure script is a file named 
+config.mk that is installed in the root directory of both the pscfpp/bld 
+and pscfpp/src directory trees. This is a makefile fragment that acts as 
+the main configuration file for compilation. It assigns values to makefile 
+variables that define the compiler executable names for C++ and CUDA 
+code, command line options passed to the compilers, paths to various 
+directories used by the package during compilation or execution (e.g.,
+paths to source code, build, installation and data directories), and 
+paths for required external libraries. 
 
-The configure script functions by editing configuration files that are
-used by the makefile system to define what actions should be taken during
-compilation. These configuration files are installed by the setup script.
-The configure script must thus be invoked after the setup script, but
-before compiling. 
+The copy of the config.mk file that is installed in the the pscfpp/bld 
+directory is used as the main configuration file for an out-of-source 
+build, in which intermediate files are created in the bld/ directory 
+tree. The copy in the pscfpp/src directory is the main configuration 
+file for an in-source build.  The brief overview of directions for 
+compilation given on a previous page give instructions for an 
+out-of-source build.
 
-\subsection install_configure_debug_sub Enabling or disabling debugging
+\section install_configure_default_sec Default configuration 
 
-The "debugging" feature is enabled or disabled by invoking configure 
-script with the "-d" option with an option parameter "1" to enable or "0" 
-to disable, before compiling source code.  The debuggin feature is 
-disabled by default. To enable debugging checks in the code built in 
-either the src/ or bld/ directory one would enter
+To create a default configuration appropriate for a generic unix-like 
+environment, change directory (cd) to the pscfpp/ root directory, and 
+then enter:
 \code
-./configure -d1
+./configure
 \endcode
-from the pscfpp/ root directory. 
-To disable debugging before compiling, one would instead enter
+Note the dot and backslash ("./") before the name of the script.  These 
+must be included to tell the unix shell to look for an executable file 
+named configure in the current working directory, rather than searching 
+the directories listed in the PATH environment variable for an executable 
+with this name.
+
+The default configuration should work for most linux environments. 
+It also should work for a Mac with an Intel CPU in which the "homebrew"
+package manager was used to install GSL and FFTW.  The definitions 
+used in this default configuration are defined in a file named
+pscfpp/make/compiler/default. 
+
+\section install_configure_homebrewm1_sec Macs with Apple silicon and homebrew 
+
+To create an environment that should work correctly for a newer Mac with
+Apple silicon (i.e., the Apple M1 or M2 chip) on which homebrew was used 
+to install dependencies, enter:
 \code
-./configure -d0
+./configure mac-si-homebrew
 \endcode
-The same commands can also be invoked from bld/ or src/ directory to
-enable or disable debugging only in a single build directory. 
+This will use a compiler configuration file 
+pscfpp/make/compiler/mac-si-homebrew that was designed for such an 
+environment. This configure file adds paths to appropriate subdirectories 
+of /opt/homebrew to search paths used by the compiler to find header files 
+and libraries.
 
-\subsection install_configure_cuda_sub Enabling or disabling CUDA compilation
+The hardware used for a Mac OS system is relevant if homebrew was used
+to install dependencies because the homebrew project decided to use the 
+introduction of new CPU hardware (apple silicon vs Intel chips) as an 
+opportunity to introduce new conventions for paths without breaking 
+backwards compatibility on existing computers. As a result of this
+decision, homebrew uses completely different path conventions on Intel 
+and Apple-Si Macs. 
 
-Compilation of CUDA code can be enabled or disabled by invoking a 
-configure script with the "-c" option, with an option parameter "1" to
-enable CUDA compilation or "0" to disable CUDA compilation. Compilation 
-of CUDA code is disabled by default. To enable compilation of CUDA source 
-files in any code compiled in either the bld/ or src/ directory, one 
-would enter
+\section install_configure_local_file_sec Customized compiler configuration files
+
+The configure script creates the main config.mk files that are installed in 
+the pscfpp/bld and pscfpp/src by reading a compiler configuration file from 
+the pscfpp/make/compiler directory and concatenating the contents of that 
+file with other makefile fragments.  The compiler configuration file is a 
+relatively short makefile fragment that contains definitions of makefile 
+variables that define compiler names, a variety of compiler options and 
+paths that the compiler uses to find header and library files for 
+external packages that PSCF depends on.
+
+When the "configure" script is invoked with no argument, the configure script 
+uses a file named pscfpp/make/compiler/default for this purpose. This 
+file contains a default configuration appropriate for a generic linux-like
+system in which the "g++" command is used to invoke the gnu C++ compiler 
+to compile C++ files, the "nvcc" command is used to invoke the NVIDIA
+CUDA compiler, and paths to the gsl and fftw libraries are in standard 
+locations.
+
+When the configure script is invoked with one argument, that argument is
+interpreted as the name of a file in the pscfpp/make/compiler directory
+that should be used as the compiler configuration file. For example, the 
+command "./configure mac-si-homebrew" causes the script system to read 
+and use the contents of the file pscfpp/make/compiler/mac-si-homebrew.  
+The command "./configure", with no argument, is equivalent to 
+"./configure default". 
+
+Users can create additional customized compiler configuration files to 
+adapt compiler options to the environment that exists on a specific 
+computer. For example, suppose that a user created a file named 
+pscfpp/make/compiler/local by making a copy of the "default" file from
+the same directory, and edited the variable definitions in that file to
+account for pecularities of the user's machine. Invoking the command
 \code
-./configure -c1
+./configure local
 \endcode
-from the pscfpp/ root directory.  To disable CUDA compilation, one would 
-instead enter
+would then cause the configure script to create config.mk configuration 
+files in both the src/ and bld/ directories that both include the 
+contents of the customized file make/compiler/local. 
+
+In order to create a customized compiler configuration file, a user
+will need to understand the meanings of some of the variables defined 
+in such files. Toward this end, we recommend that users first read the
+comments in the file make/compiler/default that explain the meaning
+and use of each of the makefile variables. Users should then run the
+configure script with no argument and inspect the file bld/config.mk, 
+which is created by the configure script. If you compare the contents 
+of the files bld/config.mk and make/compiler/default, you will see that 
+the contents of the "default" compiler configuration file will have 
+been copied verbatim into the middle part of the resulting bld/config.mk 
+file. 
+
+For most users, the first step in creating a customized compiler 
+configuration file, if needed, will be to copy either the default or 
+mac-si-homebrew file in the make/compiler directory to another file with 
+a different name in the same directory (e.g., "local"), and use this copy 
+as a starting point for customization.
+
+\section install_configure_edit_config_sec Editing config.mk files
+
+Users can change values of variables defined in the main config.mk
+configuration files either by creating a customized compiler configuration 
+file in the make/compiler directory before running the configure script, 
+as described above, or by directly editing the files bld/config.mk 
+and/or src/config.mk files after running the configure script. 
+
+In order to figure out what modifications work on your system, you may 
+find it useful to first run the configure script with one of the existing 
+compiler configuration files (default or mac-si-homebrew) and then edit 
+the resulting config.mk file in the bld/ or src/ directory to try out 
+possible modifications.
+
+After you have figured out what modifications are needed by this method, 
+you can copy the modified set of definitions to a modified compiler 
+configuration file. Suppose that you have created such a file named 
+"local" and installed it in the make/compiler directory.  To use 
+this file, and test that it works as intended, first enter 
 \code
-./configure -c0
-\endcode
-The same commands can be invoked from a specific build directory (i.e.,
-from within the source or src/ or bld/ directory) to enable or disable
-compilation of CUDA code only in that build directory (i.e,. only in 
-code that is compiled out-of-source or in-source).  
+  make veryclean
+\endcode 
+from the pscfpp/ root directory to remove all the files installed 
+by the preceding configure process, including any edited config.mk 
+files. Then enter "./configure local" to repeat the configure process 
+while using use your customized compiler configuration file.
 
-\subsection install_configure_arch_sub Setting a target GPU architecture
+The advantages of putting required customizations in a modified compiler 
+configuration file are that:
 
-Before attempting to compile CUDA code, one should use the configure
-script to set compiler to generate code for the specific type of NVIDIA
-GPU that is installed on the computer on which the program will be run.
-This is done by issuing a command of the form
-\code
- ./configure -a [architecture id]
-\endcode
-in which [architecture id] represents a code for a particular GPU
-architecture. As also discussed \ref install_overview_GPU_sec "here",
-this architecture id is a string of the form "sm_IJ" in which I and J 
-represent the major and minor version numbers for the CUDA "compute 
-capability" of the relevant GPU. This command sets the value of the 
-variable NVARCH which is defined in file src/config.mk or bld/config.mk, 
-and which is passed as an argument of the "-arch" option to the nvcc 
-compiler. By default, NVARCH is set to "sm_35", corresponding to 
-compute capability 3.5, which is the appropriate level for a K40 GPU. 
+   - Changes made in a compiler configuration file will be copied to 
+     both src/config.mk and bld/config.mk by the configure script, and 
+     will thus be used in both in-source and out-of-source builds.
 
-\subsection install_configure_query_sub The "query" option
+   - The files src/config.mk and bld/config.mk will be erased if 
+     you ever invoke the command "make veryclean" again to start 
+     over.  Compiler configure files stored in the make/compiler 
+     directory, however, are not erased by this command.
 
-The -q command line option of the configure script may be used to query
-what optional features are currently set to be enabled or disabled 
-during compilation. To see an example, change directory (cd) to the 
-pscfpp/bld/ directory and then enter
-\code
-./configure -q
-\endcode
-This should result in the output
-\code
--d  OFF - debugging
--c  OFF - CUDA compilation
-\endcode
-if debugging and CUDA compilation are both disabled (the default 
-configuration), or
-\code
--d  OFF - debugging
--c  ON  - CUDA compilation
-\endcode
-if debugging is disabled but CUDA compilation has been enabled. 
+\section install_configure_moving_sec Moving the root directory
 
-Entering "./configure -q" from the pscfpp/ root directory instead yields 
-a report that shows which optional features are enabled in both the bld/ 
-and src/ directory.
+If you ever decide to rename or move the root directory for the 
+pscfpp repository, you should run "make veryclean" before moving 
+this directory, and will then need to rerun the configure script after
+moving it.  
 
-\subsection install_configure_help_sub The "help" option
-
-Invoking the configure script with the -h ("help") option, by entering
-\code
-./configure -h
-\endcode
-produces a list of all command line options accepted by the script.
-
-\section install_configure_build_directories_section Build configuration files
-
-The configuration of the build system is actually defined by the contents
-of a set of files named "config.mk" in the src/ and bld/ directories.
-These files, which we refer to as build configuration files, are makefile
-fragments that are included by other makefiles during the build process. 
-The configure scripts work by editing the build configuration files.  
-Users may also edit these files directly if they are comfortable doing 
-so.  The configuration files contain comments that explain the meaning 
-and usage of all of the variables defined there. 
-
-The directories src/ and bld/ contain analogous directory structures, and
-similar sets of build configuration files.  In what follows, we will refer
-to src/ and bld/ generically as build directories. Both of these directories
-contains a set of five subdirectories named util/, pscf/, fd1d/, pscpc/, and
-pspg/ that each contain C++ source files from a single C++ namespace. We
-refer to these top-level subdirectories of bld/ and src/ as 
-"namespace-level" subdirectories.
-
-After the setup script has been run, each build directory will contain 6
-build configuration files files named "config.mk", with one in the root
-of the build directory (i.e., in src/ and bld/) and one in each of the 5
-namespace-level subdirectories of that directory.  The config.mk file in 
-the root directory of each build directory tree is the main build 
-configuration file for code built in that directory.  This file controls 
-the choice of compiler and general options that are applied to all code 
-built there.  The config.mk files in the namespace level directories 
-each specify more specialized options that are only relevant for code 
-in specific subdirectories or C++ namespaces. 
+<em>Rationale</em>: The configure script queries the operating system 
+to identify the absolute path to the root directory that contains
+this script. This path is then stored in a variable that is used 
+as a prefix to construct absolute paths to various subdirectories 
+such as the src/, bld/, and data/ directories. The configure script 
+thus must to be rerun after the root directory is moved in order
+to update these stored path variables.
 
 <BR>
-\ref install_inout_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
-\ref install_page  (Up) &nbsp; &nbsp; &nbsp; &nbsp;
-\ref install_targets_page (Next)
+\ref install_environment_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
+\ref install_page   (Up) &nbsp; &nbsp; &nbsp; &nbsp; 
+\ref install_inout_page (Next) 
+
 */

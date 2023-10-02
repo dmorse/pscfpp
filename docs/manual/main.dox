@@ -15,9 +15,9 @@ theory calculations and field theoretic Monte-Carlo simulations.
     <li> \ref install_source_page  </li>
     <li> \ref install_overview_page  </li>
     <li> \ref install_environment_page  </li>
-    <li> \ref install_setup_page  </li>
-    <li> \ref install_inout_page  </li>
     <li> \ref install_configure_page  </li>
+    <li> \ref install_inout_page  </li>
+    <li> \ref install_setopts_page  </li>
     <li> \ref install_targets_page  </li>
     <li> \ref install_doc_page  </li>
     </ol>

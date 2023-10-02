@@ -1,28 +1,28 @@
 #!/bin/bash
 
 #-----------------------------------------------------------------------
-# Name: configure
+# Name: setopts
 #
-# Purpose: Sets macros enable or disable features prior to compiling.
+# Purpose: Sets makefile macros that control compile-time options
 #
 # This script should be called prior to compiling in order to enable or
-# disable particular compile time features. See the usage examples at the 
-# bottom of this documentation block. This version of the script must be
-# called from the root of the build directory tree in which a corresponding
-# version of the code will built (e.g., the src/ directory for in-source
+# disable particular compile time features, or to modify some settings. 
+# See the usage examples at the bottom of this documentation block. This 
+# version of the script must be called from the root of the build directory 
+# tree in the code will be compiled (e.g., the src/ directory for in-source
 # compilation or the bld/ directory for out-of-source compilation.  Each 
-# build directories contains a copy of this script.  Invoking the configure 
+# build directory contains a copy of this script.  Invoking the setopts 
 # script in a specific build directory only affects code that is built in 
 # that directory.
 #
-# The configure script works by editing the config.mk makefile fragments 
+# The setopts script works by editing the config.mk makefile fragments 
 # in the build directory from which it is called. These files control
 # which preprocessor macros are passed to the compiler for code compiled 
 # in that build directory.
 #
 # Synopsis:
 #
-#      ./configure [options]
+#      ./setopts [options]
 #
 # Command Line Options: 
 #   
@@ -53,17 +53,17 @@
 #
 # To enable debugging 
 #
-#   >  ./configure -d1
+#   >  ./setopts -d1
 #
 # To disable debugging 
 #
-#   >  ./configure -d0
+#   >  ./setopts -d0
 #
 # To enable conditional compilation of CUDA code (disabled by default)
 # and set the GPU architecture option to sm_70 (compute capability 7.0,
 # appropriate for a V100 chip) one could enter
 #
-#   >  ./configure -c1  -a sm_70
+#   >  ./setopts -c1  -a sm_70
 #
 #-----------------------------------------------------------------------
 while getopts "a:c:d:qh" opt; do
@@ -92,14 +92,14 @@ while getopts "a:c:d:qh" opt; do
       ;;
     q)
       if [ `grep "^ *UTIL_DEBUG *= *1" config.mk` ]; then
-         echo "-d ON  - debugging" >&2
+         echo "-d ON     - debugging" >&2
       else
-         echo "-d OFF - debugging" >&2
+         echo "-d OFF    - debugging" >&2
       fi
       if [ `grep "^ *PSCF_CUDA *= *1" config.mk` ]; then
-         echo "-c ON  - CUDA compilation" >&2
+         echo "-c ON     - CUDA compilation" >&2
       else
-         echo "-c OFF - CUDA compilation" >&2
+         echo "-c OFF    - CUDA compilation" >&2
       fi
       ;;
     h)
@@ -107,7 +107,7 @@ while getopts "a:c:d:qh" opt; do
       echo " Purpose and usage:"
       echo " ------------------"
       echo " "
-      echo " The configure script may be called prior to compiling to enable"
+      echo " The setopts script may be called prior to compiling to enable"
       echo " or disable specific compile time features, set compiler options,"
       echo " and/or query which features are currently set to be enabled."
       echo " This script must be called from the directory that contains the"
@@ -146,17 +146,17 @@ while getopts "a:c:d:qh" opt; do
       echo " "
       echo " To enable debugging"
       echo " "
-      echo "   >  ./configure -d1"
+      echo "   >  ./setopts -d1"
       echo " "
       echo " To disable debugging"
       echo " "
-      echo "   >  ./configure -d0"
+      echo "   >  ./setopts -d0"
       echo " "
       echo " To enable conditional compilation of CUDA code (disabled by"
       echo " default) and set the GPU architecture option to sm_70 (compute"
       echo " capability 7.0, appropriate for a V100 chip) one could enter"
       echo " "
-      echo "   >  ./configure -c1  -a sm_70"
+      echo "   >  ./setopts -c1  -a sm_70"
       echo "  "
       ;;
   esac

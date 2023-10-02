@@ -155,13 +155,13 @@ compiler for C++ development on Mac OS X. The Clang compiler accepts
 almost all the same command line options as the gnu compiler, and so
 functions as a compatible replacement for the gnu C++ compiler. 
 
-It is possible to configure the build system during the initial setup
-process so as to instead use a different C++ compiler, as discussed
-\ref install_setup_page "here".  Even when a different compiler command 
-is used to compile source code, however, the PSCF build system will 
-still invoke the "g++" command with appropriate options to analyse 
-dependencies among source files. The PSCF makefile system thus always 
-requires that the "g++" command be available on the build system.
+It is possible to configure the build system during the initial 
+configuration process so as to instead use a different C++ compiler, as 
+discussed \ref install_configure_page "here".  Even when a different 
+compiler command is used to compile source code, however, the PSCF build 
+system will still invoke the "g++" command with appropriate options to 
+analyse dependencies among source files. The PSCF makefile system thus 
+always requires that the "g++" command be available on the build system.
 
 One can check if the command "g++" exists by entering
 \code
@@ -173,9 +173,9 @@ can be located by the operating system.
 
 The name of the command used to invoke the compiler when compiling
 C++ files and the choices of options passed to the compiler can be
-changed by modifying a compiler setup file that is read during initial
-setup of the build system. The setup process is described in more
-detail \ref install_setup_page "here".
+changed by modifying a compiler configuration file that is read during 
+initial configuration of the build system. The configuration process 
+is described in more detail \ref install_configure_page "here".
 
 \section install_require_compiler_cuda CUDA compiler
 
@@ -244,7 +244,7 @@ On Macs with Apple silicon, homebrew instead installs all files in
 some of its subdirectories to the search paths used by the compiler to
 find header and library files.  A compiler configuration file that
 modifies these search paths is provided as part of PSCF, as discussed
-\ref install_setup_homebrewm1_sec "here".
+\ref install_configure_homebrewm1_sec "here".
 
 \section install_require_module Linux Software Modules
 
