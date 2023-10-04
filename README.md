@@ -1,69 +1,77 @@
 
 # PSCF - Polymer Self-Consistent Field Theory (C++/CUDA)
 
-PSCF is a package of software for field-theoretic predictions of 
-equilibrium properties of inhomogeneous polymer liquids, with a focus 
-on microstructures formed by block polymers. The package provides an 
-extensive set of tools for self-consistent field theory (SCFT) 
-calculations.  The current version is the first to also provides tools
-for field-theoretic Monte-Carlo (FTMC) simulations, which are based on 
-a partial-saddle point approximation to the formulation of the 
-partitition function of the material as a functional integral.
-The acronym PSCF stands for "Polymer Self-Consistent Field", which 
-was the original purpose of the package. The version described here 
-is written primarily in C++, with GPU accelerated code in CUDA.
+PSCF is a package of software for field-theoretic simulation of
+inhomogeneous equilibrium states of polymer liquids, with a focus
+on microstructures formed by block polymers. 
+
+PSCF can perform both self-consistent field theory (SCFT) calculations
+and field-theoretic Monte-Carlo (FTMC) simulations. The package was 
+originally designed for SCFT calculations, and provides an extensive
+set of tools for this. The formulation of FTMC in PSCF, which is new
+in this version, is based on a partial-saddle point approximation to 
+an exact formulation of the partitition function as a functional 
+integral.  The current version of PSCF is written primarily in C++, 
+supplemented by CUDA code to enable the use of a graphics processing 
+unit (GPU). 
 
 ## History
 
 This C++/CUDA version of PSCF is intended to supersede an older Fortran 
-SCFT program of the same name. The Fortran PSCF program is maintained in 
-a separate github.com repository at https://github.com/dmorse/pscf.
-This current C++/CUDA version provides almost all of the capabilities of
-the legacy Fortran program, and several important new capabilities, as
+SCFT program of the same name. The Fortran PSCF program is maintained 
+in a separate github.com repository at https://github.com/dmorse/pscf.
+The current C++/CUDA version provides almost all of the capabilities of
+the older Fortran program, and several important new capabilities, as
 discussed below.
 
 Differences between the current C++/CUDA version of PSCF and the legacy
 Fortran version include:
 
-   - The new version is an extensible package of several different 
-     programs designed for use with different geometries, boundary 
-     conditions, algorithms or hardware, implemented within a common
-     framework.
+   - The current version is an extensible package of several different 
+     programs designed for use with different types of spatial domain,
+     different algorithms or different hardware, implemented within a 
+     common framework.
 
-   - The new version enables simulations of mixtures containing both
-     linear and acyclic branched block polymers, while the Fortran PSCF 
-     code allowed only linear polymers.
+   - The current version enables simulations of mixtures containing 
+     both linear and acyclic branched block polymers, while the Fortran 
+     PSCF program allowed only linear polymers.
 
-   - The new version enables use of graphics processing units (GPUs) to
-     dramatically accelerate some programs.
+   - The current version enables use of a graphics processing unit (GPU) 
+     to dramatically accelerate some applications.
 
-   - Starting with this release, the C++/CUDA version provides tools
-     for stochastic field-theoretic Monte-Carlo (FTMC) simulations.
+   - Starting with this release, the current version can perform
+     stochastic field-theoretic Monte-Carlo (FTMC) simulations.
 
 ## Programs
 
-PSCF currently contains code for three programs:
+PSCF currently contains three programs:
 
    - **pscf_fd** : The program pscf_fd is is designed to performed SCFT
      calculations on one-dimensional problems in Cartesian, cylindrical 
-     or spherical coordinates. A simple finite difference method is used
-     to solve the underlying partial differential equation. It is useful 
-     for treating problems involving flat and curved interfaces, as well 
-     as cylindrical or spherical copolymer micelles.  The suffix "fd" 
-     stands for "finite difference".
+     or spherical coordinates. A finite difference method is used to 
+     solve the underlying partial differential equation, known as the
+     modified diffusion equation (MDE). This program is useful for 
+     treating problems involving flat and curved interfaces, as well as 
+     cylindrical or spherical copolymer micelles.  The suffix "fd" stands 
+     for "finite difference".
      
    - **pscf_pc** : The pscf_pc rogram is designed to treat structures
-     that are periodic in 1, 2 or 3 dimensions, using a pseudo-spectral
-     algorithm and conventional CPU hardware. This program provides 
-     capabilities for SCFT calculations analogous to those of the older 
-     PSCF Fortran program, as well as tools for FTMC simulations. The
-     The suffix "pc" stands for "periodic CPU".  
+     that are periodic in 1, 2 or 3 dimensions, using conventional 
+     CPU hardware. A pseudo-spectral algorithm is used to solve the
+     MDE. This program provides capabilities for SCFT calculations 
+     analogous to those of the older PSCF Fortran program, as well as 
+     code for FTMC simulations. The The suffix "pc" stands for 
+     "periodic CPU".  
      
-   - **pscf_pg** : The pscf_pg program is a GPU-accelerated variant
-     of pscf_pc that provides tools for SCFT and FTMC simulations. It 
-     is based on algorithms similar to those used in pscf_pc, with 
-     almost identical features but provides higher performance for 
-     large systems. The suffix "pg" stands for "periodic GPU". 
+   - **pscf_pg** : The pscf_pg program is a GPU-accelerated version
+     of pscf_pc that can also perform SCFT and FTMC simulations of
+     periodic systems. It is based on algorithms similar to those 
+     used in pscf_pc and provides almost identical features, but 
+     provides much higher performance for large systems. The suffix 
+     "pg" stands for "periodic GPU". 
+
+FTMC calculations are only available in the two codes designed for 
+systems with periodic boundary conditions (pscf_pc and pscf_pg). 
 
 ## Features
 
@@ -76,22 +84,28 @@ continuous random walk.
 Features that are common to all three PSCF programs that apply to both
 SCFT and FTMC calculations include:
 
-  - Ability to treat mixtures of any number of block polymers, 
-    homopolymers, and solvent species
+  - Ability to treat mixtures of any number of block polymers and
+    solvent species.
 
-  - Arbitrarily complex acyclic branched block polymers, in addition to 
-    linear block polymers
+  - Ability to treat complex acyclic branched block polymers, in addition 
+    to linear block polymers. Homopolymers are treated as a special case
+    in which all blocks are chemically similar.
 
-  - Canonical, grand-canonical or mixed statistical ensembles - users 
-    may specify either a volume fraction or a chemical potential for 
-    each molecular species
+  - Ability to use canonical, grand-canonical or mixed statistical 
+    ensembles - users may specify either a volume fraction or a chemical
+    potential for each molecular species
 
-  - Thorough user and developer documentation provided as a web manual
+  - Examples of input files for many types of calculation and structures
 
-  - Open source code written in object oriented C++
+  - Python tools for data analysis
 
-Features for SCFT calculations that are common to all three PSCF programs 
-include:
+  - Thorough user and developer documentation provided as an integrated
+    web manual
+
+  - Well documented open source code written in object oriented C++
+
+Features used in SCFT calculations that are common to all three PSCF 
+programs include:
 
   - Efficient Anderson-mixing iteration algorithms
 
@@ -99,12 +113,8 @@ include:
     a path in parameter space ("sweeps"), using extrapolation to 
     construct initial guesses
 
-  - Examples of converged SCFT solutions and input scripts
-
-  - Python tools for data analysis
-
-Features specific to the pscf_pc and pscf_pg programs for periodic 
-structures include:
+Features specific to the pscf_pc and pscf_pg programs for periodic systems 
+include:
 
   - Ability to perform both SCFT and FTMC calculations
 
@@ -112,8 +122,8 @@ structures include:
 
   - Ordered phases with 1, 2 or 3 dimensional periodicity
 
-  - All possible 2D and 3D lattice systems (i.e., orthorhombic, monoclinic,
-    etc.)
+  - Unit cells with all possible 2D and 3D Bravais lattice systems (e.g., 
+    cubic, orthorhombic, monoclinic, etc.)
 
   - Automatic optimization of unit parameters in SCFT so as to minimize 
     free energy density
@@ -137,7 +147,7 @@ program are:
   - Thin polymer films
 
 The mask and external field features are used in pscf_pc to implement 
-simulations of thin films. A mask is used to constrain a polymer 
+simulations of thin films - A mask is used to constrain a polymer 
 material to a slit within a periodic supercell, and localized external 
 fields are used to represent selective interactions with the top and 
 bottom surfaces.
@@ -165,8 +175,8 @@ downloading a zip or tar file of a tagged release from the PSCF github
 repository, because this file will not contain source code for the other 
 git repositories that are automatically downloaded and installed as 
 submodules by the above git command. It is possible to install the
-required submodules after the fact, but requires some additional 
-steps.
+required submodules after the fact, but simpler to follow the 
+instructions given above. 
 
 ## Documentation
 
@@ -216,13 +226,13 @@ for some common environments are given in the web manual.
 ## Compiling
 
 The PSCF source code is written using C++ as the primary language, with
-CUDA used in pscf_pg for GPU acceleration. PSCF is only provided in source 
-file format, and so must be compiled from source.
+CUDA used in pscf_pg for GPU acceleration. PSCF is only provided in 
+source file format, and must be compiled from source.
 
 The build system used to compile and install PSCF relies on standard unix 
 utilities that are available in any unix-like command-line environment. 
-To compile and run this or other unix software on Mac OS X, the user must 
-first install the Mac OS X unix command line tools. 
+To compile and run this or any other unix software on Mac OS X, the user 
+should first install the Mac OS X unix command line tools. 
 
 Complete directions for compiling and installing PSCF are provided in
 section 2 of the [web manual](<https://dmorse.github.io/pscfpp-man>).
@@ -233,9 +243,9 @@ required dependencies:
    - Add the directory path pscfpp/bin to your unix command search PATH
      environment variable. This is where executables will be installed.
 
-   - Add the directory path pscfpp/lib/python to your PYTHONPATH environment 
-     variable. This is necessary to allow a python interpreter to find 
-     python modules that are used by the build system. 
+   - Add the directory path pscfpp/lib/python to your PYTHONPATH 
+     environment variable. This is necessary to allow a python interpreter 
+     to find python modules that are used by the build system. 
 
    - Run the pscfpp/configure script by entering "./configure" from the 
      pscfpp/ root directory, with or without an optional filename argument. 
@@ -274,15 +284,15 @@ the PSCF "make" command is designed to create executables in the the
 pscfpp/bin directory, and the above instructions assume that this is 
 their intended final destination.  If the pscfpp/ directory is installed 
 within a user's home directory, the above instructions do not require 
-the use of sudo or adminstrator permission, but instead require the 
-user to modify their PATH environment variable to allow the unix shell 
-to find executables installed in psfpp/bin.
+the use of sudo or adminstrator permission, but instead require the user 
+to modify their PATH variable to allow the unix shell to find executables 
+installed in psfpp/bin.
 
 ## Command line usage
 
 PSCF is a package containing three different SCFT programs (pscf_fd,
-pscf_pc, and pscf_pg) that are designed for different geometries, using 
-different algorithms or different computer hardware.  To perform a
+pscf_pc, and pscf_pg) that are designed for different geometries or
+different hardware, but that have very similar interfaces. To perform a
 calculation, each of these programs must read a parameter file and a 
 command file. The parameter file, which is processed first, is a fixed
 format file that contains parameters required to describe the physical 
@@ -293,9 +303,9 @@ Contents and syntax for PSCF parameter and commands files are discussed
 in Sec. 3 of the web manual. 
 
 The command file usually contains the names of several input and output 
-field data files as arguments to commands that read or write these files. 
+data files as arguments to commands that read or write these files. 
 Specifically, a command file to perform either a SCFT calculation or an
-FTMC simulation normally contains a command to read a specific file
+FTMC simulation normally contains a command to read a specified file
 that contains an initial guess for the monomer chemical potential fields.
 A command file for an SCFT calculation normally also contains commands 
 that write converged chemical potential and monomer concentration fields
@@ -315,19 +325,20 @@ this file is being processed. Use of this option makes it easier to
 debug any failure arising from a syntax error in the parameter file. 
 
 The pscf_pc and pscf_pg programs require a value for the spatial 
-dimension of the structure as an additional command line parameter,
-which is provided as an integer parameter of the -d option. This
-parameter specifies the number 1, 2, or 3 of coordinates along which 
-the structure is periodic.  The usual syntax for invoking pscf_pc for 
-a three dimensionally periodic structure (e.g., a network phase or an 
-arrangement of spheres), while also using the -e  option, is thus
+dimension of the structure as an additional command line parameter.
+This integer with a value 1, 2 or 3 is provided as the required 
+parameter of the -d option, and specifies the number of coordinates 
+along which the structure is periodic.  The usual syntax for invoking 
+pscf_pc for a three dimensionally periodic structure (e.g., a network 
+phase or an arrangement of spheres), while also using the -e  option, 
+is thus
 ```
 pscf_pc -d 3 -p param -c command -e
 ```
-The syntax for a simulation of one-dimensional lamellar phase would 
-instead use 1 as the argument of the -d option. The syntax for invoking 
-pscf_pg is the same as that for pccf_pc, except for the use of a
-different program name.
+The syntax for a simulation of one-dimensionally periodic lamellar phase 
+would instead use 1 as the argument of the -d option. The syntax for 
+invoking pscf_pg is the same as that for pccf_pc, except for the use 
+of the different program name.
 
 Programs that are invoked as shown in the above examples would write log 
 output that is produced during execution to the user's screen (i.e., to 
