@@ -14,7 +14,7 @@
 
 # Local pscf-specific libraries needed in src/pspc
 # Variables $(pspc_LIB) etc. are defined in namespace config.mk files
-PSPC_LIBS=$(pspc_LIB) $(pscf_LIB) $(util_LIB)
+PSPC_LIBS=$(pspc_LIB) $(prdc_LIB) $(pscf_LIB) $(util_LIB)
 
 # List of all libraries needed for main programs in src/pspc
 LIBS=$(PSPC_LIBS)

@@ -2,7 +2,6 @@ include $(SRC_DIR)/pscf/chem/sources.mk
 include $(SRC_DIR)/pscf/inter/sources.mk
 include $(SRC_DIR)/pscf/math/sources.mk
 include $(SRC_DIR)/pscf/mesh/sources.mk
-include $(SRC_DIR)/pscf/crystal/sources.mk
 include $(SRC_DIR)/pscf/homogeneous/sources.mk
 include $(SRC_DIR)/pscf/iterator/sources.mk
 

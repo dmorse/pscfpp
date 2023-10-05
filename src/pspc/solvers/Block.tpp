@@ -9,10 +9,10 @@
 */
 
 #include "Block.h"
+#include <prdc/crystal/UnitCell.h>
+#include <prdc/crystal/shiftToMinimum.h>
 #include <pscf/mesh/Mesh.h>
 #include <pscf/mesh/MeshIterator.h>
-#include <pscf/crystal/UnitCell.h>
-#include <pscf/crystal/shiftToMinimum.h>
 #include <pscf/math/IntVec.h>
 #include <util/containers/DMatrix.h>
 #include <util/containers/DArray.h>
@@ -23,6 +23,7 @@ namespace Pscf {
 namespace Pspc {
 
    using namespace Util;
+   using namespace Pscf::Prdc;
 
    /*
    * Constructor.

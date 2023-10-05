@@ -18,6 +18,7 @@ all-cpu:
 	cd util; $(MAKE) all
 	cd pscf; $(MAKE) all
 	cd fd1d; $(MAKE) all
+	cd prdc; $(MAKE) all
 	cd pspc; $(MAKE) all
 
 # Build code in Util names (general scientific utilities)
@@ -39,6 +40,7 @@ fd1d:
 pspc: 
 	cd util; $(MAKE) all
 	cd pscf; $(MAKE) all
+	cd prdc; $(MAKE) all
 	cd pspc; $(MAKE) all
 
 # Build pscf_pcNd GPU code for periodic structures (install in BIN_DIR)
@@ -108,22 +110,26 @@ clean-tests:
 veryclean:
 	cd util; $(MAKE) veryclean
 	cd pscf; $(MAKE) veryclean
+	cd prdc; $(MAKE) veryclean
 	cd fd1d; $(MAKE) veryclean
 	cd pspc; $(MAKE) veryclean
 	cd pspg; $(MAKE) veryclean
 	rm -f util/config.mk
 	rm -f pscf/config.mk
+	rm -f prdc/config.mk
 	rm -f fd1d/config.mk
 	rm -f pspc/config.mk
 	rm -f pspg/config.mk
 ifneq ($(BLD_DIR),$(SRC_DIR))
 	rm -f util/makefile
 	rm -f pscf/makefile
+	rm -f prdc/makefile
 	rm -f fd1d/makefile
 	rm -f pspc/makefile
 	rm -f pspg/makefile
 	rm -f util/tests/makefile
 	rm -f pscf/tests/makefile
+	rm -f prdc/tests/makefile
 	rm -f fd1d/tests/makefile
 	rm -f pspc/tests/makefile
 	rm -f setopts

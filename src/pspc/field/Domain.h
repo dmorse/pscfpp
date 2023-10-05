@@ -13,9 +13,10 @@
 #include <pspc/field/FieldIo.h>            // member
 #include <pspc/field/FFT.h>                // member
 
-#include <pscf/crystal/Basis.h>            // member
-#include <pscf/crystal/SpaceGroup.h>       // member
-#include <pscf/crystal/UnitCell.h>         // member
+#include <prdc/crystal/Basis.h>            // member
+#include <prdc/crystal/SpaceGroup.h>       // member
+#include <prdc/crystal/UnitCell.h>         // member
+
 #include <pscf/mesh/Mesh.h>                // member
 
 #include <string>
@@ -25,6 +26,7 @@ namespace Pspc
 {
 
    using namespace Util;
+   using namespace Pscf::Prdc;
 
    /**
    * Spatial domain and spatial discretization for a periodic structure.

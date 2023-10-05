@@ -9,14 +9,15 @@
 */
 
 #include "FilmIterator.h"
-#include "pscf/crystal/UnitCell.h"
-#include "pscf/math/RealVec.h"
 #include "pspc/System.h"
+#include "prdc/crystal/UnitCell.h"
+#include "pscf/math/RealVec.h"
 
 namespace Pscf {
 namespace Pspc
 {
    using namespace Util;
+   using namespace Pscf::Prdc;
 
    // 1D Partial Specializations
 

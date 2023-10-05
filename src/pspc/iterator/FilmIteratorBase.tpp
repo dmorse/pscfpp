@@ -9,15 +9,19 @@
 */
 
 #include "FilmIteratorBase.h"
-#include "pscf/crystal/UnitCell.h"
-#include "pscf/crystal/groupFile.h"
-#include "pscf/math/RealVec.h"
-#include "pscf/crystal/SpaceGroup.h"
 #include "pspc/System.h"
 #include "pspc/field/RField.h"
 #include "pspc/field/FieldIo.h"
+
+#include "prdc/crystal/UnitCell.h"
+#include "prdc/crystal/groupFile.h"
+#include "prdc/crystal/SpaceGroup.h"
+
+#include "pscf/math/RealVec.h"
+
 #include "util/containers/FArray.h"
 #include "util/format/Dbl.h"
+
 #include <cmath>
 #include <iostream>
 
@@ -26,6 +30,7 @@ namespace Pspc
 {
 
    using namespace Util;
+   using namespace Pscf::Prdc;
 
    /*
    * Constructor.

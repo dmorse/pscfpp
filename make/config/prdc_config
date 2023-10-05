@@ -1,0 +1,44 @@
+#-----------------------------------------------------------------------
+# This makefile fragment defines:
+#
+#   - A variable $(PRDC_DEFS) that is passed to the processor to define 
+#     preprocessor flags that effect the code in the prdc/ directory
+#     and other directories that depend upon it. (Empty by default)
+#
+#   - A variable $(PRDC_SUFFIX) that indicates what other features are
+#     enabled, which is also added after PRDC_MPI_SUFFIX to the file
+#     name of prdc library. 
+#
+#   - A variable $(PRDC_LIB) that gives the absolute path to the prdc 
+#     library file.
+#
+# This file must be included by every makefile in the prdc directory,
+# and other directories that contain code that is defined in the Pscf
+# namespace.
+#-----------------------------------------------------------------------
+# Comments:
+#
+# The variable PRDC_DEFS uses the "-D" compiler option to used to pass 
+# C/C++ preprocessor definitions to the compiler. If not empty, it must 
+# consist of a list of zero or more preprocessor macro names, each 
+# preceded by the compiler flag "-D". 
+#
+# The variable PRDC_DEFS is a recursive (normal) makefile variable, and
+# may be extended using the += operator, e.g., PRDC_DEFS+=-DPRDC_THING.
+# PRDC_SUFFIX is instead a non-recursive makefile variable, which may 
+# be extended using the := operator, as PRDC_SUFFIX:=$(PRDC_SUFFIX)_g. 
+# They are defined differently because the += operator for recursive
+# variables adds a white space before an added string, which is 
+# appropriate for PRDC_DEFS, but not for PRDC_SUFFIX. 
+ 
+# Initialize macros to empty strings
+PRDC_DEFS=
+PRDC_SUFFIX:=
+
+#-----------------------------------------------------------------------
+# Path to the prdc library 
+# Note: BLD_DIR is defined in the main config.mk file in bld/ or src/
+
+prdc_LIBNAME=prdc$(PRDC_SUFFIX)$(UTIL_SUFFIX)
+prdc_LIB=$(BLD_DIR)/prdc/lib$(prdc_LIBNAME).a
+#-----------------------------------------------------------------------

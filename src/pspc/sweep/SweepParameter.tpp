@@ -14,7 +14,7 @@
 #include <pspc/iterator/AmIterator.h>
 #include <pspc/iterator/FilmIterator.h>
 #include <pspc/System.h>
-#include <pscf/crystal/UnitCell.h>
+#include <prdc/crystal/UnitCell.h>
 #include <pscf/inter/Interaction.h>
 #include <util/global.h>
 #include <util/containers/FSArray.h>
@@ -25,6 +25,7 @@ namespace Pscf {
 namespace Pspc {
 
    using namespace Util;
+   using namespace Pscf::Prdc;
 
    /*
    * Default constructor.

@@ -9,24 +9,27 @@
 */
 
 #include "Propagator.h"                   // base class argument
-#include <pscf/solvers/BlockTmpl.h>       // base class template
-#include <pscf/mesh/Mesh.h>               // member
-#include <pscf/crystal/UnitCell.h>        // member
 #include <pspc/field/RField.h>            // member
 #include <pspc/field/RFieldDft.h>         // member
 #include <pspc/field/FFT.h>               // member
+#include <prdc/crystal/UnitCell.h>        // member
+#include <pscf/solvers/BlockTmpl.h>       // base class template
+#include <pscf/mesh/Mesh.h>               // member
 #include <util/containers/FArray.h>       // member template
 #include <util/containers/DMatrix.h>      // member template
 
 namespace Pscf { 
    template <int D> class Mesh; 
-   template <int D> class UnitCell;
+   namespace Prdc{
+     template <int D> class UnitCell;
+   }
 }
 
 namespace Pscf { 
 namespace Pspc { 
 
    using namespace Util;
+   using namespace Pscf::Prdc;
 
    /**
    * Block within a branched polymer.

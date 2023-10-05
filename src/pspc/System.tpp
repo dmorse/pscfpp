@@ -37,10 +37,10 @@
 #include <unistd.h>
 
 namespace Pscf {
-namespace Pspc
-{
+namespace Pspc {
 
    using namespace Util;
+   using namespace Pscf::Prdc;
 
    /*
    * Constructor.
@@ -1413,7 +1413,7 @@ namespace Pspc
    template <int D>
    void System<D>::writeGroup(const std::string & filename) const
    {  
-      Pscf::writeGroup(filename, domain_.group()); 
+      Pscf::Prdc::writeGroup(filename, domain_.group()); 
    }
 
    // Field format conversion functions

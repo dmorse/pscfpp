@@ -13,9 +13,9 @@
 #include <util/containers/DArray.h>
 #include <pspc/field/RField.h>
 #include <pspc/field/RFieldDft.h> 
-#include <util/param/ParamComposite.h>
+#include <prdc/crystal/shiftToMinimum.h>
 #include <pscf/math/IntVec.h>
-#include <pscf/crystal/shiftToMinimum.h>
+#include <util/param/ParamComposite.h>
 
 namespace Pscf {
 namespace Pspc

@@ -8,8 +8,8 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/crystal/UnitCell.h>         // member
 #include <pspc/field/FieldIo.h>            // member
+#include <prdc/crystal/UnitCell.h>         // member
 #include <util/containers/DArray.h>        // member template
 
 namespace Pscf {
@@ -17,6 +17,7 @@ namespace Pspc
 {
 
    using namespace Util;
+   using namespace Pscf::Prdc;
 
    template <int D> class System;
 

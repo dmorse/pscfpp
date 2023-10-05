@@ -8,6 +8,7 @@ the pspg/ directory.
 Subdirectories:
   util/  general utilities for scientific computation (namespace Util)
   pscf/  shared classes for package PSCF (namespace Pscf)
+  prdc/  classes for periodic structures (namespace Pscf::Prdc)
   fd1d/  finite difference one-dimensional SCFT (namespace Pscf::Fd1d)
   pspc/  pseudo-spectral periodic SCFT on a CPU (namespace Pscf::Pspc)
   pspg/  pseudo-spectral periodic SCFT on a GPU (namespace Pscf::Pspg)

@@ -15,6 +15,7 @@ namespace Pspc
 {
 
    using namespace Util;
+   using namespace Pscf::Prdc;
 
    /*
    * Constructor.
@@ -99,7 +100,7 @@ namespace Pspc
    {
       // Read common section of standard field header
       int ver1, ver2;
-      Pscf::readFieldHeader(in, ver1, ver2, 
+      Pscf::Prdc::readFieldHeader(in, ver1, ver2, 
                            unitCell_, groupName_, nMonomer);
 
       lattice_ = unitCell_.lattice();
