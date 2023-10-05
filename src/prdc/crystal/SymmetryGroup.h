@@ -30,7 +30,7 @@ namespace Prdc {
    *  4) A method Symmetry::inverse() must return the inverse of a Symmetry. 
    *  5) A static method Symmetry::identity() must return the identity.
    *
-   * \ingroup Crystal_Module
+   * \ingroup Pscf_Prdc_Crystal_Module
    */
    template <class Symmetry>    
    class SymmetryGroup 

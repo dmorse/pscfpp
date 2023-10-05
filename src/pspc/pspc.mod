@@ -2,7 +2,7 @@ namespace Pscf
 {
 
    /**
-   * Pseudo-spectral SCFT for periodic boundary conditions.
+   * SCFT and FTMC with periodic boundary conditions.
    */
    namespace Pspc {
 

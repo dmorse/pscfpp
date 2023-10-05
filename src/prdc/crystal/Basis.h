@@ -340,7 +340,7 @@ namespace Prdc {
    * closed star is simply given by the product of the associated
    * real coefficient and this real basis function. 
    *
-   * \ingroup Pscf_Crystal_Module
+   * \ingroup Pscf_Prdc_Crystal_Module
    */
    template <int D>
    class Basis 

@@ -18,7 +18,7 @@ namespace Prdc {
    *
    * \param D dimensionality of space (D=1,2 or 3)
    * \param groupName standard name of space group
-   * \ingroup Pscf_Crystal_Module
+   * \ingroup Pscf_Prdc_Crystal_Module
    */
    std::string makeGroupFileName(int D, std::string groupName);
 

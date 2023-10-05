@@ -1,13 +1,16 @@
 namespace Pscf{
-namespace Prdc{
+
+
+
+   namespace Prdc{
 
    /**
-   * \defgroup Prdc_Module Prdc Module
+   * \defgroup Pscf_Prdc_Module Periodic Fields
    *
    * Prdc namespace, for periodic systems
    *
    * \ingroup Pscf_NS_Module
    */
 
-}
+   }
 }
