@@ -8,8 +8,8 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
+#include <prdc/cpu/RFieldDft.h>
 #include <util/containers/DArray.h>
-#include <pspc/field/RFieldDft.h>
 
 namespace Pscf {
 namespace Pspc {

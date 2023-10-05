@@ -8,8 +8,8 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pspc/field/RField.h>
-#include <pspc/field/RFieldDft.h>
+#include <prdc/cpu/RField.h>
+#include <prdc/cpu/RFieldDft.h>
 #include <pscf/math/IntVec.h>
 #include <util/global.h>
 

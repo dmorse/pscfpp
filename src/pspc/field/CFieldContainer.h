@@ -8,8 +8,8 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <util/containers/DArray.h>        // member template
-#include <pspc/field/RField.h>             // member template parameter
+#include <prdc/cpu/RField.h>             // member template parameter
+#include <util/containers/DArray.h>      // member template
 
 namespace Pscf {
 namespace Pspc {

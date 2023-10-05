@@ -22,6 +22,10 @@ LIBS=$(PRDC_LIBS)
 INCLUDES+=$(GSL_INC)
 LIBS+=$(GSL_LIB) 
 
+# Add paths to FFTW Fast Fourier transform library
+INCLUDES+=$(FFTW_INC)
+LIBS+=$(FFTW_LIB) 
+
 # Add paths to CUDA FFT library
 #PRDC_DEFS+=-DPRDC_FFTW -DGPU_OUTER
 #PRDC_CUFFT_LIB=-lcufft -lcudart -lcuda -lcurand

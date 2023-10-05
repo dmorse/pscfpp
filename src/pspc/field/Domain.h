@@ -10,9 +10,8 @@
 
 #include <util/param/ParamComposite.h>     // base class
 
-#include <pspc/field/FieldIo.h>            // member
-#include <pspc/field/FFT.h>                // member
-
+#include <prdc/cpu/FieldIo.h>              // member
+#include <prdc/cpu/FFT.h>                  // member
 #include <prdc/crystal/Basis.h>            // member
 #include <prdc/crystal/SpaceGroup.h>       // member
 #include <prdc/crystal/UnitCell.h>         // member

@@ -8,10 +8,9 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pspc/field/FFT.h>                // member
-#include <pspc/field/RField.h>             // function parameter
-#include <pspc/field/RFieldDft.h>          // function parameter
-
+#include <prdc/cpu/FFT.h>                  // member
+#include <prdc/cpu/RField.h>               // function parameter
+#include <prdc/cpu/RFieldDft.h>            // function parameter
 #include <prdc/crystal/Basis.h>            // member
 #include <prdc/crystal/SpaceGroup.h>       // member
 #include <prdc/crystal/UnitCell.h>         // member
@@ -25,6 +24,7 @@
 namespace Pscf {
 namespace Pspc
 {
+
    using namespace Util;
    using namespace Pscf;
    using namespace Pscf::Prdc;

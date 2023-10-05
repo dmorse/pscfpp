@@ -11,7 +11,7 @@
 
 #include <util/param/ParamComposite.h>     // base class
 
-#include <pspc/field/RField.h>             // member template parameter
+#include <prdc/cpu/RField.h>               // member template parameter
 #include <prdc/crystal/UnitCell.h>         // function parameter
 #include <pscf/math/IntVec.h>              // function parameter
 #include <util/containers/DArray.h>        // member template
