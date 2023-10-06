@@ -9,7 +9,7 @@
 */
 
 #include "Compressor.h"
-#include <pspc/field/RField.h>
+#include <prdc/cpu/RField.h>
 #include <pscf/iterator/AmIteratorTmpl.h>                 
 
 namespace Pscf {
@@ -20,6 +20,7 @@ namespace Pspc
    class System;
 
    using namespace Util;
+   using namespace Pscf::Prdc::Cpu;
 
    /**
    * Pspc implementation of the Anderson Mixing compressor.

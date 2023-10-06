@@ -1,5 +1,5 @@
-#ifndef PSPC_FFTW_TEST_H
-#define PSPC_FFTW_TEST_H
+#ifndef PRDC_CPU_TEST_H
+#define PRDC_CPU_TEST_H
 
 #include <test/UnitTest.h>
 #include <test/UnitTestRunner.h>

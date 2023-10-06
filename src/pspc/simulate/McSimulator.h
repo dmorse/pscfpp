@@ -18,9 +18,17 @@
 #include <util/containers/DMatrix.h>     // member template
 
 namespace Pscf {
+   namespace Prdc {
+      namespace Cpu {
+         template <int D> class RField;
+      }
+   }
+}
+namespace Pscf {
 namespace Pspc {
 
    using namespace Util;
+   using namespace Prdc::Cpu;
 
    template <int D> class System;
    template <int D> class McMove;

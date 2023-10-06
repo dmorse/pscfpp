@@ -9,19 +9,20 @@
 */
 
 #include "TrajectoryReader.h"
+#include <pspc/System.h>
+#include <prdc/cpu/RField.h>
+#include <util/containers/DArray.h>
 #include <util/global.h>
 #include <iostream>
-#include <pspc/System.h>
-#include <pspc/field/RField.h>
-#include <util/containers/DArray.h>
 
 
 namespace Pscf {
-namespace Pspc 
-{
+namespace Pspc {
 
    template <int D> class System;
+
    using namespace Util;
+   using namespace Pscf::Prdc::Cpu; 
 
    /**
    * Trajectory file reader.

@@ -4,7 +4,8 @@
 #include <test/UnitTest.h>
 #include <test/UnitTestRunner.h>
 
-#include <pspc/field/RFieldDft.h>
+#include <prdc/cpu/RFieldDft.h>
+
 #include <util/archives/MemoryOArchive.h>
 #include <util/archives/MemoryIArchive.h>
 #include <util/archives/MemoryCounter.h>
@@ -12,7 +13,7 @@
 #include <util/archives/BinaryFileIArchive.h>
 
 using namespace Util;
-using namespace Pscf::Pspc;
+using namespace Pscf::Prdc::Cpu;
 
 class RFieldDftTest : public UnitTest 
 {

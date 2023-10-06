@@ -11,8 +11,8 @@
 #include "RField.h"
 
 namespace Pscf {
-namespace Pspc
-{
+namespace Prdc {
+namespace Cpu {
 
    using namespace Util;
 
@@ -105,6 +105,7 @@ namespace Pspc
       Field<double>::allocate(size);
    }
 
+}
 }
 }
 #endif

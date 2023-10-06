@@ -4,17 +4,18 @@
 #include <test/UnitTest.h>
 #include <test/UnitTestRunner.h>
 
-#include <pspc/field/RFieldComparison.h>
-#include <pspc/field/KFieldComparison.h>
 #include <pspc/field/Domain.h>
 #include <pspc/field/FieldIo.h>
-#include <pspc/field/RField.h>
-#include <pspc/field/RFieldDft.h>
-#include <pspc/field/FFT.h>
 
-#include <pscf/crystal/BFieldComparison.h>
-#include <pscf/crystal/Basis.h>
-#include <pscf/crystal/UnitCell.h>
+#include <prdc/cpu/RField.h>
+#include <prdc/cpu/RFieldDft.h>
+#include <prdc/cpu/RFieldComparison.h>
+#include <prdc/cpu/KFieldComparison.h>
+#include <prdc/cpu/FFT.h>
+#include <prdc/crystal/BFieldComparison.h>
+#include <prdc/crystal/Basis.h>
+#include <prdc/crystal/UnitCell.h>
+
 #include <pscf/mesh/Mesh.h>
 #include <pscf/mesh/MeshIterator.h>
 
@@ -28,6 +29,8 @@
 using namespace Util;
 using namespace Pscf;
 using namespace Pscf::Pspc;
+using namespace Pscf::Prdc;
+using namespace Pscf::Prdc::Cpu;
 
 class FieldIoTest : public UnitTest 
 {

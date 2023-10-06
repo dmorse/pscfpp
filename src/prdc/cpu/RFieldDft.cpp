@@ -8,12 +8,13 @@
 #include "RFieldDft.tpp"
 
 namespace Pscf {
-namespace Pspc
-{
+namespace Prdc {
+namespace Cpu {
 
    template class RFieldDft<1>;
    template class RFieldDft<2>;
    template class RFieldDft<3>;
 
+}
 }
 }

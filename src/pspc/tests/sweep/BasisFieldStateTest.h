@@ -6,13 +6,16 @@
 
 #include <pspc/System.h>
 #include <pspc/sweep/BasisFieldState.h>
-#include <pscf/crystal/BFieldComparison.h>
+
+#include <prdc/crystal/BFieldComparison.h>
+
 #include <util/tests/LogFileUnitTest.h>
 
 #include <fstream>
 
 using namespace Util;
 using namespace Pscf;
+using namespace Pscf::Prdc;
 using namespace Pscf::Pspc;
 
 class BasisFieldStateTest : public LogFileUnitTest

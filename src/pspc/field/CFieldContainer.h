@@ -15,6 +15,8 @@ namespace Pscf {
 namespace Pspc {
 
    using namespace Util;
+   using namespace Prdc;
+   using namespace Prdc::Cpu;
 
    /**
    * A list of c fields stored in both basis and r-grid format.

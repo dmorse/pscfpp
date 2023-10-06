@@ -10,14 +10,14 @@
 
 #include "Analyzer.h"
 #include <pspc/System.h>
-#include <util/containers/DMatrix.h>             
-#include <util/containers/DArray.h>              
-#include <util/accumulators/Average.h>            // member
-#include <pspc/field/RField.h>
-#include <pspc/field/RFieldDft.h> 
+#include <prdc/cpu/RField.h>
+#include <prdc/cpu/RFieldDft.h> 
 #include <pscf/math/IntVec.h>
 #include <pscf/math/RealVec.h>
 #include <util/param/ParamComposite.h>
+#include <util/containers/DMatrix.h>             
+#include <util/containers/DArray.h>              
+#include <util/accumulators/Average.h>            // member
 #include <util/global.h>
 #include <iostream>
 #include <complex>
@@ -28,8 +28,10 @@ namespace Pscf {
 namespace Pspc 
 {
 
-   using namespace Util;
    template <int D> class System;
+
+   using namespace Util;
+   using namespace Pscf::Prdc::Cpu;
 
    /**
    * BinaryStructureFactorGrid evaluates AB copolymer structure factors.

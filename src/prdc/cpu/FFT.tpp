@@ -11,8 +11,8 @@
 #include "FFT.h"
 
 namespace Pscf {
-namespace Pspc
-{
+namespace Prdc {
+namespace Cpu {
 
    using namespace Util;
 
@@ -172,6 +172,7 @@ namespace Pspc
       inverseTransform(kFieldCopy_, rField);
    }
 
+}
 }
 }
 #endif

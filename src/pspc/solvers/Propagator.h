@@ -8,19 +8,21 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
+#include <prdc/cpu/RField.h>             // member template
 #include <pscf/solvers/PropagatorTmpl.h> // base class template
-#include <pspc/field/RField.h>           // member template
 #include <util/containers/DArray.h>      // member template
 #include <util/containers/FArray.h>      // member template
 
 namespace Pscf { template <int D> class Mesh; }
 
 namespace Pscf { 
-namespace Pspc
-{ 
+namespace Pspc { 
 
    template <int D> class Block;
+
    using namespace Util;
+   using namespace Pscf::Prdc;
+   using namespace Pscf::Prdc::Cpu;
 
    /**
    * MDE solver for one direction of one block.

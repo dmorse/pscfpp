@@ -10,9 +10,9 @@
 
 #include "FilmIteratorBase.h"
 #include "pspc/System.h"
-#include "pspc/field/RField.h"
 #include "pspc/field/FieldIo.h"
 
+#include "prdc/cpu/RField.h"
 #include "prdc/crystal/UnitCell.h"
 #include "prdc/crystal/groupFile.h"
 #include "prdc/crystal/SpaceGroup.h"
@@ -31,6 +31,7 @@ namespace Pspc
 
    using namespace Util;
    using namespace Pscf::Prdc;
+   using namespace Pscf::Prdc::Cpu;
 
    /*
    * Constructor.

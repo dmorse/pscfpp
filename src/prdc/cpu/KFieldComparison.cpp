@@ -8,11 +8,13 @@
 #include "KFieldComparison.tpp"
 
 namespace Pscf {
-namespace Pspc {
+namespace Prdc {
+namespace Cpu {
 
    template class KFieldComparison<1>;
    template class KFieldComparison<2>;
    template class KFieldComparison<3>;
 
+} // namespace Pscf::Pspc::Cpu
 } // namespace Pscf::Pspc
 } // namespace Pscf

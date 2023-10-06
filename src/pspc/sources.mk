@@ -5,7 +5,6 @@ include $(SRC_DIR)/pspc/sweep/sources.mk
 include $(SRC_DIR)/pspc/compressor/sources.mk
 include $(SRC_DIR)/pspc/simulate/sources.mk
 
-
 pspc_= \
   $(pspc_field_) \
   $(pspc_solvers_) \

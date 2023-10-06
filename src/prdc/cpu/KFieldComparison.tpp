@@ -12,7 +12,8 @@
 #include <cmath>
 
 namespace Pscf {
-namespace Pspc {
+namespace Prdc {
+namespace Cpu {
 
    // Default Constructor
    template <int D>
@@ -23,7 +24,8 @@ namespace Pspc {
 
    // Comparator for individual fields.
    template <int D>
-   double KFieldComparison<D>::compare(RFieldDft<D> const& a, RFieldDft<D> const& b)
+   double 
+   KFieldComparison<D>::compare(RFieldDft<D> const& a, RFieldDft<D> const& b)
    {
       UTIL_CHECK(a.capacity() > 0);
       UTIL_CHECK(a.capacity() == b.capacity());
@@ -95,6 +97,7 @@ namespace Pspc {
       return maxDiff_;
    }
 
+}
 }
 }
 #endif

@@ -20,11 +20,18 @@
 
 namespace Pscf { 
    template <int D> class Mesh; 
+   namespace Prdc {
+      namespace Cpu {
+         template <int D> class RField;
+      }
+   }
 }
  
 namespace Pscf {
 namespace Pspc
 {
+
+   using namespace Pscf::Prdc::Cpu;
 
    /**
    * Solver for a mixture of polymers and solvents.

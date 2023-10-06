@@ -5,17 +5,19 @@
 #include <test/CompositeTestRunner.h>
 
 #include "crystal/CrystalTestComposite.h"
+#include "cpu/CpuTestComposite.h"
 
 #include <util/param/BracketPolicy.h>
 #include <util/global.h>
 
-TEST_COMPOSITE_BEGIN(PscfNsTestComposite)
+TEST_COMPOSITE_BEGIN(PrdcTestComposite)
 addChild(new CrystalTestComposite, "crystal/");
+addChild(new CpuTestComposite, "cpu/");
 TEST_COMPOSITE_END
 
 using namespace Pscf;
-using namespace Pscf::Prdc;
-using namespace Util;
+//using namespace Pscf::Prdc;
+//using namespace Util;
 
 int main(int argc, char* argv[])
 {
@@ -24,7 +26,7 @@ int main(int argc, char* argv[])
 
    try {
    
-      PscfNsTestComposite runner;
+      PrdcTestComposite runner;
 
       if (argc > 2) {
          UTIL_THROW("Too many arguments");

@@ -23,6 +23,7 @@ namespace Pspc {
 
    using namespace Util;
    using namespace Pscf::Prdc;
+   using namespace Pscf::Prdc::Cpu;
 
    /**
    * A field to which the total density is constrained.

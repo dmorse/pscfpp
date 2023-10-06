@@ -1,0 +1,9 @@
+The src/prdc directory contains source files in namespace Pscf::Prdc that 
+can by codes that are treat systems wtih periodic boundary conditions.
+Classes src/prdc/cpu are defined in Pscf::Prdc::Cpu.
+
+Subdirectories:
+
+   crystal/     - unit cells, space groups, and symmetrized bases
+   cpu/         - classes that define fields, only used on a CPU
+

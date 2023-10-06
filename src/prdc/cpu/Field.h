@@ -11,8 +11,8 @@
 #include <util/global.h>
 
 namespace Pscf {
-namespace Pspc
-{
+namespace Prdc {
+namespace Cpu {
 
    using namespace Util;
 
@@ -211,6 +211,7 @@ namespace Pspc
       }
    }
 
+}
 }
 }
 #include "Field.tpp"

@@ -19,8 +19,9 @@
 #include <pspc/iterator/IteratorFactory.h>
 #include <pspc/solvers/Polymer.h>
 #include <pspc/solvers/Solvent.h>
-#include <pspc/field/BFieldComparison.h>
-#include <pspc/field/RFieldComparison.h>
+
+#include <prdc/cpu/RFieldComparison.h>
+#include <prdc/crystal/BFieldComparison.h>
 
 #include <pscf/inter/Interaction.h>
 #include <pscf/math/IntVec.h>
@@ -41,6 +42,7 @@ namespace Pspc {
 
    using namespace Util;
    using namespace Pscf::Prdc;
+   using namespace Pscf::Prdc::Cpu;
 
    /*
    * Constructor.

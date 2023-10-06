@@ -8,8 +8,11 @@
 #include <pspc/solvers/Polymer.h>
 #include <pspc/solvers/Block.h>
 #include <pspc/solvers/Propagator.h>
+
+//#include <prdc/cpu/RField.h>
+#include <prdc/crystal/UnitCell.h>
+
 #include <pscf/mesh/Mesh.h>
-#include <pscf/crystal/UnitCell.h>
 #include <pscf/math/IntVec.h>
 #include <util/math/Constants.h>
 
@@ -18,6 +21,8 @@
 using namespace Util;
 using namespace Pscf;
 using namespace Pscf::Pspc;
+using namespace Pscf::Prdc;
+using namespace Pscf::Prdc::Cpu;
 
 class MixtureTest : public UnitTest
 {

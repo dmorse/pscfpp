@@ -9,7 +9,7 @@
 */
 
 
-#include <pspc/field/RField.h>
+#include <prdc/cpu/RField.h>
 #include <util/containers/DArray.h>
 
 namespace Pscf {
@@ -17,6 +17,7 @@ namespace Pspc
 {
 
    using namespace Util;
+   using namespace Prdc::Cpu;
 
    /**
    * McState stores the state used by an MC simulation.

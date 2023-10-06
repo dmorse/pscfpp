@@ -15,8 +15,8 @@
 #include <fftw3.h>
 
 namespace Pscf {
-namespace Pspc
-{
+namespace Prdc {
+namespace Cpu {
 
    using namespace Util;
    using namespace Pscf;
@@ -162,6 +162,7 @@ namespace Pspc
    extern template class RFieldDft<3>;
    #endif
 
+}
 }
 }
 #endif

@@ -6,12 +6,12 @@
 
 #include <pspc/iterator/FilmIterator.h>
 #include <pspc/iterator/AmIterator.h>
-#include <pspc/field/RFieldComparison.h>
 #include <pspc/field/FieldIo.h>
 #include <pspc/System.h>
 
-#include <pscf/crystal/BFieldComparison.h>
-#include <pscf/crystal/UnitCell.h>
+#include <prdc/cpu/RFieldComparison.h>
+#include <prdc/crystal/BFieldComparison.h>
+#include <prdc/crystal/UnitCell.h>
 
 #include <util/misc/Exception.h>
 
@@ -20,6 +20,8 @@
 using namespace Util;
 using namespace Pscf;
 using namespace Pspc;
+using namespace Prdc;
+using namespace Prdc::Cpu;
 
 class FilmIteratorTest : public UnitTest
 {

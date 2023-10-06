@@ -5,14 +5,18 @@
 #include <test/UnitTestRunner.h>
 
 #include <pspc/System.h>
-#include <pspc/field/RFieldComparison.h>
-#include <pscf/crystal/BFieldComparison.h>
+
+#include <prdc/cpu/RFieldComparison.h>
+#include <prdc/crystal/BFieldComparison.h>
+
 #include <util/tests/LogFileUnitTest.h>
 
 #include <fstream>
 
 using namespace Util;
 using namespace Pscf;
+using namespace Pscf::Prdc;
+using namespace Pscf::Prdc::Cpu;
 using namespace Pscf::Pspc;
 
 class SystemTest : public LogFileUnitTest

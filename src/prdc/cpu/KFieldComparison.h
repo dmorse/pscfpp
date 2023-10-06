@@ -12,7 +12,8 @@
 #include <util/containers/DArray.h>
 
 namespace Pscf {
-namespace Pspc {
+namespace Prdc {
+namespace Cpu {
 
    using namespace Util;
 
@@ -100,6 +101,7 @@ namespace Pspc {
    #endif
 
 
+} // namespace Cpu
 } // namespace Pspc
 } // namespace Pscf
 #endif

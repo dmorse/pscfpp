@@ -11,7 +11,7 @@
 #include "FieldState.h"
 
 #include <pspc/System.h>                   
-#include <pspc/field/FFT.h>                
+#include <prdc/cpu/FFT.h>                
 #include <prdc/crystal/Basis.h>           
 #include <pscf/mesh/Mesh.h>                
 #include <util/misc/FileMaster.h>       
@@ -25,6 +25,7 @@ namespace Pspc
 {
 
    using namespace Util;
+   using namespace Prdc::Cpu;
 
    /*
    * Constructor.

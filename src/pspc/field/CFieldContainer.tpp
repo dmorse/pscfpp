@@ -15,6 +15,8 @@ namespace Pspc
 {
 
    using namespace Util;
+   using namespace Prdc;
+   using namespace Prdc::Cpu;
 
    /*
    * Constructor.

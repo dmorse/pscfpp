@@ -19,8 +19,9 @@
 #include <pspc/field/WFieldContainer.h>    // member
 #include <pspc/field/CFieldContainer.h>    // member
 #include <pspc/field/Mask.h>               // member
-#include <pspc/field/RField.h>             // member
-#include <pspc/field/RFieldDft.h>          // member
+
+#include <prdc/cpu/RField.h>               // member
+#include <prdc/cpu/RFieldDft.h>            // member
 
 #include <pscf/homogeneous/Mixture.h>      // member
 
@@ -46,6 +47,8 @@ namespace Pspc
    template <int D> class McMoveFactory;
 
    using namespace Util;
+   using namespace Prdc;
+   using namespace Prdc::Cpu;
 
    /**
    * Main class for SCFT simulation of one system.

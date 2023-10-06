@@ -16,7 +16,8 @@
 #include <fftw3.h>
 
 namespace Pscf {
-namespace Pspc {
+namespace Prdc {
+namespace Cpu {
 
    using namespace Util;
    using namespace Pscf;
@@ -173,6 +174,7 @@ namespace Pspc {
    extern template class FFT<3>;
    #endif
 
+} // namespace Pscf::Pspc::Cpu
 } // namespace Pscf::Pspc
 } // namespace Pscf
 #endif

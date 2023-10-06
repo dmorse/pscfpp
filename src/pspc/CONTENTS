@@ -5,18 +5,19 @@ analogous to those used in the older Fortran PSCF code.
 
 Subdirectories:
 
-field/     - classes to represent or manipulate fields, including FFTs
+field/     - classes to represent or manipulate fields
 iterator/  - iterative SCF equation solvers
 solvers/   - modified diffusion equation solvers
 sweep/     - classes to implement continuation of solutions ("sweep")
+simulator/ - classes to implement field-theoretic Monte Carlo (FTMC)
 tests/     - unit cell tests for code
 
 C++ Files:
 
-pscf_pc.cpp   - Main program periodic structures on CPU hardware
 System.h      - System<D> class template header (main object)
 System.tpp    - System<D> class template definition
 System.cpp    - System<D> explicit instantiations for D=1,2,3
+pscf_pc.cpp   - Main program periodic structures on CPU hardware
 
 Makefile and makefile fragments:
 

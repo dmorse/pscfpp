@@ -13,8 +13,8 @@
 #include <util/global.h>
 
 namespace Pscf {
-namespace Pspc
-{
+namespace Prdc {
+namespace Cpu {
 
    using namespace Util;
    using namespace Pscf;
@@ -119,6 +119,7 @@ namespace Pspc
    extern template class RField<3>;
    #endif
 
+}
 }
 }
 #endif

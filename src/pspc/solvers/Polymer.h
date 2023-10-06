@@ -9,12 +9,14 @@
 */
 
 #include "Block.h"
+#include <prdc/cpu/RField.h>
 #include <pscf/solvers/PolymerTmpl.h>
-#include <pspc/field/RField.h>
 #include <util/containers/FArray.h>      // member template
 
 namespace Pscf { 
 namespace Pspc { 
+
+   using namespace Pscf::Prdc::Cpu;
 
    /**
    * Descriptor and solver for one polymer species.

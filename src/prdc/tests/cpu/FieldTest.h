@@ -1,10 +1,10 @@
-#ifndef PSPC_FIELD_TEST_H
-#define PSPC_FIELD_TEST_H
+#ifndef PRDC_CPU_TEST_H
+#define PRDC_CPU_TEST_H
 
 #include <test/UnitTest.h>
 #include <test/UnitTestRunner.h>
 
-#include <pspc/field/Field.h>
+#include <prdc/cpu/Field.h>
 #include <util/archives/MemoryOArchive.h>
 #include <util/archives/MemoryIArchive.h>
 #include <util/archives/MemoryCounter.h>
@@ -12,20 +12,20 @@
 #include <util/archives/BinaryFileIArchive.h>
 
 using namespace Util;
-using namespace Pscf::Pspc;
+using namespace Pscf::Prdc::Cpu;
 
 class FieldTest : public UnitTest 
 {
+
 private:
 
    const static int capacity = 3;
 
 public:
 
-   void setUp() 
-   {  }
+   void setUp(){}
 
-   void tearDown() {}
+   void tearDown(){}
 
    void testConstructor();
    void testAllocate();

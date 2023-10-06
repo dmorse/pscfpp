@@ -11,10 +11,10 @@
 #include "McState.h"
 
 namespace Pscf {
-namespace Pspc
-{
+namespace Pspc {
 
-using namespace Util;
+   using namespace Util;
+   using namespace Pscf::Prdc::Cpu;
 
    /*
    * Constructor.

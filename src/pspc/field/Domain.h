@@ -10,7 +10,8 @@
 
 #include <util/param/ParamComposite.h>     // base class
 
-#include <prdc/cpu/FieldIo.h>              // member
+#include <pspc/field/FieldIo.h>            // member
+
 #include <prdc/cpu/FFT.h>                  // member
 #include <prdc/crystal/Basis.h>            // member
 #include <prdc/crystal/SpaceGroup.h>       // member
@@ -26,6 +27,7 @@ namespace Pspc
 
    using namespace Util;
    using namespace Pscf::Prdc;
+   using namespace Pscf::Prdc::Cpu;
 
    /**
    * Spatial domain and spatial discretization for a periodic structure.

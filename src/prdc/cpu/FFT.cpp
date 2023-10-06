@@ -8,7 +8,8 @@
 #include "FFT.tpp"
 
 namespace Pscf {
-namespace Pspc {
+namespace Prdc {
+namespace Cpu {
 
    using namespace Util;
 
@@ -51,5 +52,6 @@ namespace Pspc {
                                     flags);
    }
 
+}
 }
 }

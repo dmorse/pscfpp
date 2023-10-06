@@ -28,6 +28,7 @@ namespace Pspc
    using namespace Util;
    using namespace Pscf;
    using namespace Pscf::Prdc;
+   using namespace Pscf::Prdc::Cpu;
 
    /**
    * File input/output operations and format conversions for fields.

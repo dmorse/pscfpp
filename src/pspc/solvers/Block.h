@@ -9,9 +9,9 @@
 */
 
 #include "Propagator.h"                   // base class argument
-#include <pspc/field/RField.h>            // member
-#include <pspc/field/RFieldDft.h>         // member
-#include <pspc/field/FFT.h>               // member
+#include <prdc/cpu/FFT.h>                 // member
+#include <prdc/cpu/RField.h>              // member
+#include <prdc/cpu/RFieldDft.h>           // member
 #include <prdc/crystal/UnitCell.h>        // member
 #include <pscf/solvers/BlockTmpl.h>       // base class template
 #include <pscf/mesh/Mesh.h>               // member
@@ -30,6 +30,7 @@ namespace Pspc {
 
    using namespace Util;
    using namespace Pscf::Prdc;
+   using namespace Pscf::Prdc::Cpu;
 
    /**
    * Block within a branched polymer.

@@ -12,9 +12,11 @@
 #include "RField.h"
 
 namespace Pscf {
-namespace Pspc {
+namespace Prdc {
+namespace Cpu {
 
    using namespace Util;
+   using namespace Pscf;
 
    /**
    * Comparator for fields in real-space (r-grid) format.
@@ -31,6 +33,7 @@ namespace Pspc {
    extern template class RFieldComparison<3>;
    #endif
 
-} // namespace Pspc
+} // namespace Pscf::Prdc::Gpu
+} // namespace Pscf::Prdc
 } // namespace Pscf
 #endif

@@ -14,8 +14,8 @@
 #include <fftw3.h>
 
 namespace Pscf {
-namespace Pspc
-{
+namespace Prdc {
+namespace Cpu {
 
    using namespace Util;
 
@@ -75,6 +75,7 @@ namespace Pspc
       capacity_ = 0;
    }
 
+}
 }
 }
 #endif

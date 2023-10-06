@@ -10,7 +10,7 @@
 
 #include "Mask.h"
 #include <pspc/field/FieldIo.h>
-#include <pspc/field/RFieldDft.h>
+#include <prdc/cpu/RFieldDft.h>
 
 namespace Pscf {
 namespace Pspc
@@ -18,6 +18,7 @@ namespace Pspc
 
    using namespace Util;
    using namespace Pscf::Prdc;
+   using namespace Pscf::Prdc::Cpu;
 
    /*
    * Constructor.

@@ -5,10 +5,12 @@
 #include <test/UnitTestRunner.h>
 
 #include <pspc/solvers/Block.h>
+
+#include <prdc/crystal/UnitCell.h>
+
+#include <pscf/mesh/Mesh.h>
 #include <pscf/mesh/MeshIterator.h>
 #include <pspc/solvers/Propagator.h>
-#include <pscf/mesh/Mesh.h>
-#include <pscf/crystal/UnitCell.h>
 #include <pscf/math/IntVec.h>
 #include <util/math/Constants.h>
 
@@ -17,6 +19,7 @@
 using namespace Util;
 using namespace Pscf;
 using namespace Pscf::Pspc;
+using namespace Pscf::Prdc;
 
 class PropagatorTest : public UnitTest
 {

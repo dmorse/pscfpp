@@ -9,6 +9,7 @@
 */
 
 #include "Mixture.h"
+#include <prdc/cpu/RField.h>
 #include <pscf/mesh/Mesh.h>
 
 #include <cmath>
@@ -16,6 +17,8 @@
 namespace Pscf {
 namespace Pspc
 {
+
+   using namespace Prdc::Cpu;
 
    template <int D>
    Mixture<D>::Mixture()

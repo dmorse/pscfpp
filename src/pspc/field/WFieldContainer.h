@@ -23,6 +23,7 @@ namespace Pspc {
 
    using namespace Util;
    using namespace Pscf::Prdc;
+   using namespace Pscf::Prdc::Cpu;
 
    /**
    * A list of fields stored in both basis and r-grid format.

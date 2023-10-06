@@ -1,18 +1,19 @@
-#ifndef PSPC_FIELD_COMPARISON_TEST_H
-#define PSPC_FIELD_COMPARISON_TEST_H
+#ifndef PRDC_CPU_COMPARISON_TEST_H
+#define PRDC_CPU_COMPARISON_TEST_H
 
 #include <test/UnitTest.h>
 #include <test/UnitTestRunner.h>
 
-#include <pspc/field/RField.h>
-#include <pspc/field/RFieldDft.h>
-#include <pspc/field/RFieldComparison.h>
-#include <pspc/field/KFieldComparison.h>
+#include <prdc/cpu/RField.h>
+#include <prdc/cpu/RFieldDft.h>
+#include <prdc/cpu/RFieldComparison.h>
+#include <prdc/cpu/KFieldComparison.h>
 
 #include <util/format/Dbl.h>
 
 using namespace Util;
-using namespace Pscf::Pspc;
+using namespace Pscf::Prdc;
+using namespace Pscf::Prdc::Cpu;
 
 class FieldComparisonTest : public UnitTest 
 {

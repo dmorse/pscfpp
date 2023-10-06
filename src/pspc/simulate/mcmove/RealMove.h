@@ -9,10 +9,10 @@
 */
 
 #include "McMove.h"                          //base class
-#include <util/global.h>
+#include <prdc/cpu/RField.h>
 #include <util/containers/DArray.h>
-#include <pspc/field/RField.h>
 #include <util/param/ParamComposite.h>
+#include <util/global.h>
 
 
 namespace Pscf {
@@ -20,6 +20,7 @@ namespace Pspc
 {
 
    using namespace Util;
+   using namespace Pscf::Prdc::Cpu;
 
    /**
    * RealMove is a Monte Carlo move in real space
