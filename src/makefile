@@ -30,20 +30,25 @@ pscf:
 	cd util; $(MAKE) all
 	cd pscf; $(MAKE) all
 
+# Build common code for PSCF in Util, Pscf, and Prdc namespaces
+prdc: 
+	cd util; $(MAKE) all
+	cd pscf; $(MAKE) all
+
 # Build pscf_fd 1D finite difference program (install in BIN_DIR)
 fd1d: 
 	cd util; $(MAKE) all
 	cd pscf; $(MAKE) all
 	cd fd1d; $(MAKE) all
 
-# Build pscf_pcNd CPU code for periodic structures (install in BIN_DIR)
+# Build pscf_pc CPU code for periodic structures (install in BIN_DIR)
 pspc: 
 	cd util; $(MAKE) all
 	cd pscf; $(MAKE) all
 	cd prdc; $(MAKE) all
 	cd pspc; $(MAKE) all
 
-# Build pscf_pcNd GPU code for periodic structures (install in BIN_DIR)
+# Build pscf_pc GPU code for periodic structures (install in BIN_DIR)
 pspg:
 	cd util; $(MAKE) all
 	cd pscf; $(MAKE) all
@@ -56,11 +61,13 @@ pspg:
 test:
 	@cd util/tests; $(MAKE) all; $(MAKE) run-quiet
 	@cd pscf/tests; $(MAKE) all; $(MAKE) run-quiet
+	@cd prdc/tests; $(MAKE) all; $(MAKE) run-quiet
 	@cd fd1d/tests; $(MAKE) all; $(MAKE) run-quiet
 	@cd pspc/tests; $(MAKE) all; $(MAKE) run-quiet
 	@cd pspg/tests; $(MAKE) all; $(MAKE) run-quiet
 	@cat util/tests/count > count
 	@cat pscf/tests/count >> count
+	@cat prdc/tests/count >> count
 	@cat fd1d/tests/count >> count
 	@cat pspc/tests/count >> count
 	@cat pspg/tests/count >> count
@@ -73,10 +80,12 @@ test:
 test-cpu:
 	@cd util/tests; $(MAKE) all; $(MAKE) run-quiet
 	@cd pscf/tests; $(MAKE) all; $(MAKE) run-quiet
+	@cd prdc/tests; $(MAKE) all; $(MAKE) run-quiet
 	@cd fd1d/tests; $(MAKE) all; $(MAKE) run-quiet
 	@cd pspc/tests; $(MAKE) all; $(MAKE) run-quiet
 	@cat util/tests/count > count
 	@cat pscf/tests/count >> count
+	@cat prdc/tests/count >> count
 	@cat fd1d/tests/count >> count
 	@cat pspc/tests/count >> count
 	@echo " "

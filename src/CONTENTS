@@ -1,25 +1,27 @@
 This src/ directory contains all C++ and CUDA source code for the PSCF 
-package.  Each of the subdirectories util/, pscf/, fd1d/, pspc/, and pspg/ 
-contain source code from a particular C++ namespace.  Subdirectories util/ 
-and test/ are maintained as separate github repositories that are installed 
-as submodules of the pscfpp respository. All CUDA code is contained with
-the pspg/ directory.
+package.  Each of the subdirectories util/, pscf/, prdc/, fd1d/, pspc/, and 
+pspg/ contain source code from a particular C++ namespace.  Subdirectories 
+util/ and test/ are maintained as separate github repositories that are 
+installed as submodules of the pscfpp respository. 
 
-Subdirectories:
-  util/  general utilities for scientific computation (namespace Util)
-  pscf/  shared classes for package PSCF (namespace Pscf)
-  prdc/  classes for periodic structures (namespace Pscf::Prdc)
-  fd1d/  finite difference one-dimensional SCFT (namespace Pscf::Fd1d)
-  pspc/  pseudo-spectral periodic SCFT on a CPU (namespace Pscf::Pspc)
-  pspg/  pseudo-spectral periodic SCFT on a GPU (namespace Pscf::Pspg)
+Subdirectories (corresponding namespaces in parentheses):
+
+  util/  general utilities for scientific computation (Util)
+  pscf/  shared classes for entire package PSCF (Pscf)
+  prdc/  shared classes for periodic structures (Pscf::Prdc)
+  fd1d/  finite difference one-dimensional SCFT (Pscf::Fd1d)
+  pspc/  pseudo-spectral periodic SCFT & FTMC on CPU (Pscf::Pspc)
+  pspg/  pseudo-spectral periodic SCFT & FTMC on GPU (Pscf::Pspg)
   test/  unit testing framework (base classes)
 
-Files: 
-  makefile  - main makefile for in-source compilation
-  configure - script for managing optional features
-  config.mk - main configuration file for in-source compilation
+Files (in repository):
+
+  setopts  - script for managing compile-time options
+  makefile - main makefile for in-source compilation (build in src/)
   programs.mod - doxygen documentation of main programs
   CONTENTS - this file
 
-Note: File src/config.mk is not in the git repository, and is installed 
-by the setup script.
+Files (installed by configure script):
+
+  config.mk - main configuration file (editable)
+
