@@ -12,9 +12,10 @@
 #include <pspg/field/RDField.h>             // function parameter
 #include <pspg/field/RDFieldDft.h>          // function parameter
 
-#include <pscf/crystal/Basis.h>             // member
-#include <pscf/crystal/SpaceGroup.h>        // member
-#include <pscf/crystal/UnitCell.h>          // member
+#include <prdc/crystal/Basis.h>             // member
+#include <prdc/crystal/SpaceGroup.h>        // member
+#include <prdc/crystal/UnitCell.h>          // member
+
 #include <pscf/mesh/Mesh.h>                 // member
 
 #include <util/misc/FileMaster.h>           // member
@@ -22,10 +23,10 @@
 #include <util/containers/Array.h>          // function parameter
 
 namespace Pscf {
-namespace Pspg
-{
+namespace Pspg {
+
    using namespace Util;
-   using namespace Pscf;
+   using namespace Pscf::Prdc;
 
    /**
    * File input/output operations for fields in several file formats.

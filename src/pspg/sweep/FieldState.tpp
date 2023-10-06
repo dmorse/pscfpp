@@ -12,8 +12,8 @@
 
 #include <pspg/System.h>                   
 #include <pspg/field/FFT.h>                
+#include <prdc/crystal/Basis.h>           
 #include <pscf/mesh/Mesh.h>                
-#include <pscf/crystal/Basis.h>           
 #include <util/misc/FileMaster.h>       
 
 // #include <util/format/Str.h>
@@ -25,6 +25,7 @@ namespace Pspg
 {
 
    using namespace Util;
+   using namespace Pscf::Prdc;
 
    /*
    * Constructor.

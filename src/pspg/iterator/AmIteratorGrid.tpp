@@ -10,14 +10,19 @@
 
 #include "AmIteratorGrid.h"
 #include <pspg/System.h>
-#include <pscf/inter/Interaction.h>
 #include <pspg/field/RDField.h>
+
+#include <prdc/crystal/UnitCell.h>
+
+#include <pscf/inter/Interaction.h>
+
 #include <util/global.h>
 
 namespace Pscf {
 namespace Pspg {
 
    using namespace Util;
+   using namespace Prdc;
 
    // Constructor
    template <int D>

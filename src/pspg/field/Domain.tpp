@@ -100,8 +100,8 @@ namespace Pspg
    {
       // Read common section of standard field header
       int ver1, ver2;
-      Pscf::readFieldHeader(in, ver1, ver2, 
-                            unitCell_, groupName_, nMonomer);
+      Pscf::Prdc::readFieldHeader(in, ver1, ver2, 
+                                  unitCell_, groupName_, nMonomer);
  
       // Read grid dimensions
       std::string label;

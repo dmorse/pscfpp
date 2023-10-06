@@ -4,24 +4,30 @@
 #include "BinaryStructureFactorGrid.h"
 #include <pspg/simulate/McSimulator.h>
 #include <pspg/System.h>
-#include <util/math/Constants.h>
-#include <util/space/Dimension.h>
-#include <util/misc/FileMaster.h>
-#include <util/misc/ioUtil.h>
-#include <util/format/Int.h>
+
+#include <prdc/crystal/shiftToMinimum.h>
 #include <pscf/mesh/MeshIterator.h>
-#include <util/format/Dbl.h>
+
+#include <util/misc/FileMaster.h>
 #include <util/accumulators/Average.h>
-#include <pscf/crystal/shiftToMinimum.h>
+#include <util/misc/ioUtil.h>
+#include <util/space/Dimension.h>
+#include <util/math/Constants.h>
+#include <util/format/Dbl.h>
+#include <util/format/Int.h>
+
+#include <fftw3.h>
+
 #include <vector>
 #include <unordered_map>
-#include <fftw3.h>
 #include <algorithm>
 
 namespace Pscf {
 namespace Pspg
 {
+
    using namespace Util;
+   using namespace Pscf::Prdc;
 
    /*
    * Constructor.

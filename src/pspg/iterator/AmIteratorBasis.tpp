@@ -10,15 +10,21 @@
 
 #include "AmIteratorBasis.h"
 #include <pspg/System.h>
+#include <pspg/field/RDField.h>
+
+#include <prdc/crystal/UnitCell.h>
+#include <prdc/crystal/Basis.h>
+
 #include <pscf/inter/Interaction.h>
 #include <pscf/iterator/NanException.h>
-#include <pspg/field/RDField.h>
+
 #include <util/global.h>
 
 namespace Pscf {
 namespace Pspg{
 
    using namespace Util;
+   using namespace Prdc;
 
    // Constructor
    template <int D>

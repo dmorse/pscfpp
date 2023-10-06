@@ -7,8 +7,10 @@
 #include <pspg/solvers/Block.h>
 #include <pscf/mesh/MeshIterator.h>
 #include <pspg/solvers/Propagator.h>
+
+#include <prdc/crystal/UnitCell.h>
+
 #include <pscf/mesh/Mesh.h>
-#include <pscf/crystal/UnitCell.h>
 #include <pscf/math/IntVec.h>
 #include <util/math/Constants.h>
 
@@ -18,6 +20,7 @@
 
 using namespace Util;
 using namespace Pscf;
+using namespace Pscf::Prdc;
 using namespace Pscf::Pspg;
 
 class PropagatorTest : public UnitTest

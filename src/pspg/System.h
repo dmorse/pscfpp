@@ -17,9 +17,9 @@
 #include <pspg/field/CFieldContainer.h>    // member
 #include <pspg/field/RDField.h>            // member
 #include <pspg/field/RDFieldDft.h>         // member
+#include <pspg/simulate/McSimulator.h>     // member
 
 #include <pscf/homogeneous/Mixture.h>      // member
-#include <pspg/simulate/McSimulator.h>     // member
 #include <util/misc/FileMaster.h>          // member
 #include <util/containers/DArray.h>        // member template
 #include <util/containers/FSArray.h>       // member template
@@ -27,6 +27,10 @@
 namespace Pscf {
 
    class Interaction;
+
+   namespace Prdc {
+      template <int D> class UnitCell;
+   }
 
 namespace Pspg
 {

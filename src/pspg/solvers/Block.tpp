@@ -10,18 +10,19 @@
 
 #include "Block.h"
 #include <pspg/math/GpuResources.h>
+#include <prdc/crystal/shiftToMinimum.h>
 #include <pscf/mesh/Mesh.h>
 #include <pscf/mesh/MeshIterator.h>
-#include <pscf/crystal/shiftToMinimum.h>
-#include <util/containers/FMatrix.h>      // member template
-#include <util/containers/DArray.h>      // member template
-#include <util/containers/FArray.h>      // member template
+#include <util/containers/FMatrix.h>       // member template
+#include <util/containers/DArray.h>        // member template
+#include <util/containers/FArray.h>        // member template
 #include <sys/time.h>
-
-using namespace Util;
 
 namespace Pscf {
 namespace Pspg {
+
+   using namespace Util;
+   using namespace Pscf::Prdc;
 
    // CUDA kernels (only used in this file)
 

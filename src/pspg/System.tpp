@@ -9,6 +9,7 @@
 */
 
 #include "System.h"
+
 #include <pspg/compressor/Compressor.h>
 #include <pspg/compressor/CompressorFactory.h>
 #include <pspg/sweep/Sweep.h>
@@ -30,6 +31,7 @@
 
 #include <string>
 #include <unistd.h>
+
 //#include <getopt.h>
 
 namespace Pscf {
@@ -1249,7 +1251,7 @@ namespace Pspg
    template <int D>
    void System<D>::writeGroup(const std::string & filename) const
    {  
-      Pscf::writeGroup(filename, domain_.group()); 
+      Pscf::Prdc::writeGroup(filename, domain_.group()); 
    }
 
    // Field File Operations

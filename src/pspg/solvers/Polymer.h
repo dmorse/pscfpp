@@ -14,7 +14,17 @@
 #include <util/containers/FArray.h> 
 
 namespace Pscf { 
+
+   namespace Prdc {
+      template <int D> class UnitCell;
+   }
+
 namespace Pspg { 
+
+   template <int D> class WaveList;
+
+   using namespace Util;
+   using namespace Pscf::Prdc;
 
    /**
    * Descriptor and solver for a branched polymer species.

@@ -12,9 +12,10 @@
 #include <pspg/field/RDFieldDft.h>
 #include <pspg/field/FFT.h>
 
-#include <pscf/crystal/BFieldComparison.h>
-#include <pscf/crystal/Basis.h>
-#include <pscf/crystal/UnitCell.h>
+#include <prdc/crystal/BFieldComparison.h>
+#include <prdc/crystal/Basis.h>
+#include <prdc/crystal/UnitCell.h>
+
 #include <pscf/mesh/Mesh.h>
 #include <pscf/mesh/MeshIterator.h>
 
@@ -28,6 +29,7 @@
 
 using namespace Util;
 using namespace Pscf;
+using namespace Pscf::Prdc;
 using namespace Pscf::Pspg;
 
 class FieldIoTest : public LogFileUnitTest 

@@ -13,7 +13,7 @@
 #-----------------------------------------------------------------------
 
 # Local pscf-specific libraries needed in src/pspg
-PSPG_LIBS=$(pspg_LIB) $(pscf_LIB) $(util_LIB)
+PSPG_LIBS=$(pspg_LIB) $(prdc_LIB) $(pscf_LIB) $(util_LIB)
 
 # All libraries needed in executables built in src/pssp
 LIBS=$(PSPG_LIBS)

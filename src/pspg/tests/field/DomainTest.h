@@ -8,8 +8,9 @@
 #include <pspg/field/FieldIo.h>
 #include <pspg/field/FFT.h>
 
-#include <pscf/crystal/Basis.h>
-#include <pscf/crystal/UnitCell.h>
+#include <prdc/crystal/Basis.h>
+#include <prdc/crystal/UnitCell.h>
+
 #include <pscf/mesh/Mesh.h>
 
 #include <util/tests/LogFileUnitTest.h>

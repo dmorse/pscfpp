@@ -10,8 +10,9 @@
 
 #include "FieldIo.h"
 
-#include <pscf/crystal/shiftToMinimum.h>
-#include <pscf/crystal/UnitCell.h>
+#include <prdc/crystal/shiftToMinimum.h>
+#include <prdc/crystal/UnitCell.h>
+
 #include <pscf/mesh/MeshIterator.h>
 #include <pscf/math/IntVec.h>
 
@@ -909,7 +910,7 @@ namespace Pspg
 
       int ver1, ver2;
       std::string groupNameIn;
-      Pscf::readFieldHeader(in, ver1, ver2, unitCell, groupNameIn, nMonomer);
+      Pscf::Prdc::readFieldHeader(in, ver1, ver2, unitCell, groupNameIn, nMonomer);
       // Note:: Function definition in pscf/crystal/UnitCell.tpp
 
       // Check data from header
@@ -960,7 +961,7 @@ namespace Pspg
       int ver1, ver2;
       std::string groupNameIn;
 
-      Pscf::readFieldHeader(in, ver1, ver2, unitCell, 
+      Pscf::Prdc::readFieldHeader(in, ver1, ver2, unitCell, 
                             groupNameIn, nMonomer);
       // Note: Function definition in pscf/crystal/UnitCell.tpp
 

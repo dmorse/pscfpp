@@ -13,7 +13,8 @@
 #include <pspg/solvers/Polymer.h>
 #include <pspg/solvers/Block.h>
 
-#include <pscf/crystal/UnitCell.h>
+#include <prdc/crystal/UnitCell.h>
+
 #include <pscf/inter/Interaction.h>
 #include <util/containers/FSArray.h>
 #include <util/global.h>
@@ -25,6 +26,7 @@ namespace Pscf {
 namespace Pspg {
 
    using namespace Util;
+   using namespace Pscf::Prdc;
 
    /*
    * Default constructor.

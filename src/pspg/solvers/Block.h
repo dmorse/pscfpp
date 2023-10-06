@@ -9,15 +9,14 @@
 */
 
 #include "Propagator.h"                   // base class argument
-#include <pscf/solvers/BlockTmpl.h>       // base class template
 #include <pspg/field/RDField.h>           // member
 #include <pspg/field/RDFieldDft.h>        // member
 #include <pspg/field/FFT.h>               // member
 #include <pspg/field/FFTBatched.h>        // member
-#include <util/containers/FArray.h>
-#include <pscf/crystal/UnitCell.h>
 #include <pspg/solvers/WaveList.h>
-
+#include <prdc/crystal/UnitCell.h>
+#include <pscf/solvers/BlockTmpl.h>       // base class template
+#include <util/containers/FArray.h>
 
 namespace Pscf { 
 
@@ -26,6 +25,7 @@ namespace Pscf {
 namespace Pspg { 
 
    using namespace Util;
+   using namespace Pscf::Prdc;
 
    /**
    * Block within a branched polymer.

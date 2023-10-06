@@ -11,7 +11,7 @@
 #include "BasisFieldState.h"
 #include "FieldState.tpp"
 #include <pspg/System.h> 
-#include <pscf/crystal/Basis.h> 
+#include <prdc/crystal/Basis.h> 
 #include <util/global.h>
 
 namespace Pscf {
@@ -19,6 +19,7 @@ namespace Pspg
 {
 
    using namespace Util;
+   using namespace Pscf::Prdc;
 
    /*
    * Default constructor.

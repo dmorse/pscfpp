@@ -7,7 +7,9 @@
 #include <pspg/System.h>
 #include <pspg/sweep/SweepFactory.h>
 #include <pspg/sweep/LinearSweep.h>
-#include <pscf/crystal/BFieldComparison.h>
+
+#include <prdc/crystal/BFieldComparison.h>
+
 #include <util/tests/LogFileUnitTest.h>
 #include <util/format/Dbl.h>
 
@@ -16,7 +18,8 @@
 
 using namespace Util;
 using namespace Pscf;
-using namespace Pspg;
+using namespace Pscf::Prdc;
+using namespace Pscf::Pspg;
 
 class SweepTest : public LogFileUnitTest
 {

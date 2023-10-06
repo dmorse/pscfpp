@@ -7,22 +7,24 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/math/IntVec.h>
 #include <pspg/field/RDFieldDft.h>
 #include <pspg/field/RDField.h>
-#include <pscf/mesh/MeshIterator.h>
+
+#include <prdc/crystal/shiftToMinimum.h>
+#include <prdc/crystal/UnitCell.h>
+
 #include <pscf/mesh/Mesh.h>
-#include <pscf/crystal/shiftToMinimum.h>
-#include <pscf/crystal/UnitCell.h>
+#include <pscf/mesh/MeshIterator.h>
+#include <pscf/math/IntVec.h>
 #include <util/containers/DArray.h>
 #include <util/containers/GArray.h>
 #include <util/containers/DMatrix.h>
 
 namespace Pscf {
-namespace Pspg
-{
+namespace Pspg {
 
    using namespace Util;
+   using namespace Pscf::Prdc;
 
    /**
    * Container for wavevector data.

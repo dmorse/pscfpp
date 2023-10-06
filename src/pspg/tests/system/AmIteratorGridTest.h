@@ -7,13 +7,14 @@
 #include <pspg/System.h>
 #include <pspg/field/RDField.h>
 #include <pspg/math/GpuResources.h>
-#include <pscf/crystal/BFieldComparison.h>
+#include <prdc/crystal/BFieldComparison.h>
 #include <util/tests/LogFileUnitTest.h>
 
 #include <fstream>
 
 using namespace Util;
 using namespace Pscf;
+using namespace Pscf::Prdc;
 using namespace Pscf::Pspg;
 
 class AmIteratorGridTest : public LogFileUnitTest

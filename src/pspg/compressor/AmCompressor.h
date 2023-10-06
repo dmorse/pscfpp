@@ -10,8 +10,10 @@
 
 #include "Compressor.h"
 #include <pspg/field/DField.h>
-#include <pscf/iterator/AmIteratorTmpl.h>     
 #include <pspg/field/RDField.h>         
+
+#include <pscf/iterator/AmIteratorTmpl.h>     
+
 #include <util/containers/DArray.h>                 
 
 namespace Pscf {

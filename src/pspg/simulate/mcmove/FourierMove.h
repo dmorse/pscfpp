@@ -9,13 +9,16 @@
 */
 
 #include "McMove.h"                          //base class
-#include <util/global.h>
-#include <util/containers/DArray.h>
 #include <pspg/field/RDField.h>
 #include <pspg/field/RDFieldDft.h> 
-#include <util/param/ParamComposite.h>
+
+#include <prdc/crystal/shiftToMinimum.h>
+
 #include <pscf/math/IntVec.h>
-#include <pscf/crystal/shiftToMinimum.h>
+
+#include <util/param/ParamComposite.h>
+#include <util/containers/DArray.h>
+#include <util/global.h>
 #include <curand.h>
 
 namespace Pscf {
@@ -23,6 +26,7 @@ namespace Pspg
 {
 
    using namespace Util;
+   using namespace Pscf::Prdc;
 
    /**
    * FourierMove is a Monte Carlo move in fourier space

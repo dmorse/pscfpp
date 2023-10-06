@@ -9,11 +9,11 @@
 */
 
 
-#include <util/param/ParamComposite.h>     // base class
 
+#include <pspg/field/RDField.h>            // member template parameter
+#include <prdc/crystal/UnitCell.h>         // function parameter
 #include <pscf/math/IntVec.h>              // function parameter
-#include <pscf/crystal/UnitCell.h>         // function parameter
-#include <pspg/field/RDField.h>             // member template parameter
+#include <util/param/ParamComposite.h>     // base class
 #include <util/containers/DArray.h>        // member template
 
 namespace Pscf {
@@ -22,6 +22,7 @@ namespace Pspg {
    template <int D> class FieldIo;
 
    using namespace Util;
+   using namespace Pscf::Prdc;
 
    /**
    * A list of fields stored in both basis and r-grid format.
