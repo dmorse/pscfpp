@@ -1,5 +1,5 @@
-#ifndef PSPC_R_FIELD_DFT_TEST_H
-#define PSPC_R_FIELD_DFT_TEST_H
+#ifndef PRDC_R_FIELD_DFT_TEST_H
+#define PRDC_R_FIELD_DFT_TEST_H
 
 #include <test/UnitTest.h>
 #include <test/UnitTestRunner.h>

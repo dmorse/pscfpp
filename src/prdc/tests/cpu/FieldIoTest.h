@@ -1,5 +1,5 @@
-#ifndef PSPC_FIELD_IO_TEST_H
-#define PSPC_FIELD_IO_TEST_H
+#ifndef PRDC_FIELD_IO_TEST_H
+#define PRDC_FIELD_IO_TEST_H
 
 #include <test/UnitTest.h>
 #include <test/UnitTestRunner.h>

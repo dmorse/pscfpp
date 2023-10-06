@@ -1,5 +1,5 @@
-#ifndef PSPC_R_FIELD_DFT_H
-#define PSPC_R_FIELD_DFT_H
+#ifndef PRDC_R_FIELD_DFT_H
+#define PRDC_R_FIELD_DFT_H
 
 /*
 * PSCF Package 
@@ -24,7 +24,7 @@ namespace Cpu {
    /**
    * Fourier transform of a real field on an FFT mesh.
    *
-   * \ingroup Pspc_Field_Module
+   * \ingroup Prdc_Cpu_Module
    */
    template <int D>
    class RFieldDft : public Field<fftw_complex>
@@ -156,7 +156,7 @@ namespace Cpu {
       ar & dftDimensions_;
    }
 
-   #ifndef PSPC_R_FIELD_DFT_TPP
+   #ifndef PRDC_R_FIELD_DFT_TPP
    extern template class RFieldDft<1>;
    extern template class RFieldDft<2>;
    extern template class RFieldDft<3>;

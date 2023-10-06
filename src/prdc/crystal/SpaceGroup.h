@@ -23,7 +23,7 @@ namespace Prdc {
    /**
    * Crystallographic space group.
    *
-   * \ingroup Pscf_Prdc_Crystal_Module
+   * \ingroup Prdc_Crystal_Module
    */
    template <int D>
    class SpaceGroup : public SymmetryGroup< SpaceSymmetry<D> >
@@ -102,7 +102,7 @@ namespace Prdc {
    *
    * \param out  output stream
    * \param g  space group
-   * \ingroup Pscf_Prdc_Crystal_Module
+   * \ingroup Prdc_Crystal_Module
    */ 
    template <int D>
    std::ostream& operator << (std::ostream& out, SpaceGroup<D> const & g)
@@ -123,7 +123,7 @@ namespace Prdc {
    * \param in  input stream
    * \param g  space group
    *
-   * \ingroup Pscf_Prdc_Crystal_Module
+   * \ingroup Prdc_Crystal_Module
    */ 
    template <int D>
    std::istream& operator >> (std::istream& in, SpaceGroup<D>& g)
@@ -148,7 +148,7 @@ namespace Prdc {
    * \param groupName  name of group, or group file (input)
    * \param group  space group (output)
    *
-   * \ingroup Pscf_Prdc_Crystal_Module
+   * \ingroup Prdc_Crystal_Module
    */
    template <int D>
    void readGroup(std::string groupName, SpaceGroup<D>& group);
@@ -159,7 +159,7 @@ namespace Prdc {
    * \param filename  output file name
    * \param group  space group 
    *
-   * \ingroup Pscf_Prdc_Crystal_Module
+   * \ingroup Prdc_Crystal_Module
    */
    template <int D>
    void writeGroup(std::string filename, SpaceGroup<D> const & group);

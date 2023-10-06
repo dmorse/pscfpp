@@ -1,5 +1,5 @@
-#ifndef PSPC_FFT_H
-#define PSPC_FFT_H
+#ifndef PRDC_FFT_H
+#define PRDC_FFT_H
 
 /*
 * PSCF Package 
@@ -25,7 +25,7 @@ namespace Cpu {
    /**
    * Fourier transform wrapper for real data.
    *
-   * \ingroup Pspc_Field_Module
+   * \ingroup Prdc_Cpu_Module
    */
    template <int D>
    class FFT 
@@ -167,7 +167,7 @@ namespace Cpu {
    inline IntVec<D> const & FFT<D>::meshDimensions() const
    {  return meshDimensions_; }
 
-   #ifndef PSPC_FFT_TPP
+   #ifndef PRDC_FFT_TPP
    // Suppress implicit instantiation
    extern template class FFT<1>;
    extern template class FFT<2>;

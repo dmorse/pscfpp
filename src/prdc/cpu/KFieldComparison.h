@@ -1,5 +1,5 @@
-#ifndef PSPC_K_FIELD_COMPARISON_H
-#define PSPC_K_FIELD_COMPARISON_H
+#ifndef PRDC_K_FIELD_COMPARISON_H
+#define PRDC_K_FIELD_COMPARISON_H
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory
@@ -20,7 +20,7 @@ namespace Cpu {
    /**
    * Comparator for RFieldDft (k-grid) arrays.
    *
-   * \ingroup Pspc_Field_Module
+   * \ingroup Prdc_Cpu_Module
    */
    template <int D>
    class KFieldComparison {
@@ -93,7 +93,7 @@ namespace Cpu {
    
    };
 
-   #ifndef PSPC_K_FIELD_COMPARISON_TPP
+   #ifndef PRDC_K_FIELD_COMPARISON_TPP
    // Suppress implicit instantiation
    extern template class KFieldComparison<1>;
    extern template class KFieldComparison<2>;

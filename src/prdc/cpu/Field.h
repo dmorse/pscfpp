@@ -1,5 +1,5 @@
-#ifndef PSPC_FIELD_H
-#define PSPC_FIELD_H
+#ifndef PRDC_FIELD_H
+#define PRDC_FIELD_H
 
 /*
 * PSCF Package 
@@ -19,7 +19,7 @@ namespace Cpu {
    /**
    * Dynamic array with aligned data, for use with FFTW library.
    *
-   * \ingroup Pspc_Field_Module
+   * \ingroup Prdc_Cpu_Module
    */
    template <typename Data>
    class Field

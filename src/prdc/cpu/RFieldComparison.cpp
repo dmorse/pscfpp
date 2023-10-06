@@ -1,4 +1,4 @@
-#define PSPC_R_FIELD_COMPARISON_CPP
+#define PRDC_R_FIELD_COMPARISON_CPP
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory

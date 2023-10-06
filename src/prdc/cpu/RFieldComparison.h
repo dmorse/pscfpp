@@ -1,5 +1,5 @@
-#ifndef PSPC_R_FIELD_COMPARISON_H
-#define PSPC_R_FIELD_COMPARISON_H
+#ifndef PRDC_R_FIELD_COMPARISON_H
+#define PRDC_R_FIELD_COMPARISON_H
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory
@@ -21,13 +21,13 @@ namespace Cpu {
    /**
    * Comparator for fields in real-space (r-grid) format.
    * 
-   * \ingroup Pspc_Field_Module
+   * \ingroup Prdc_Cpu_Module
    */
    template <int D>
    class RFieldComparison : public FieldComparison< RField<D> >
    {};
 
-   #ifndef PSPC_R_FIELD_COMPARISON_CPP
+   #ifndef PRDC_R_FIELD_COMPARISON_CPP
    extern template class RFieldComparison<1>;
    extern template class RFieldComparison<2>;
    extern template class RFieldComparison<3>;

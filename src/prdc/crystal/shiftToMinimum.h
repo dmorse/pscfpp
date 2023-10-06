@@ -23,7 +23,7 @@ namespace Prdc {
    * \param v IntVec<D> containing integer indices of wavevector.
    * \param d dimensions of the discrete Fourier transform grid.
    * \param cell UnitCell
-   * \ingroup Pscf_Prdc_Crystal_Module
+   * \ingroup Prdc_Crystal_Module
    */
    template <int D>
    IntVec<D> shiftToMinimum(IntVec<D>& v, IntVec<D> d, UnitCell<D> const & cell);

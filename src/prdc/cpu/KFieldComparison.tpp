@@ -1,5 +1,5 @@
-#ifndef PSPC_K_FIELD_COMPARISON_TPP
-#define PSPC_K_FIELD_COMPARISON_TPP
+#ifndef PRDC_K_FIELD_COMPARISON_TPP
+#define PRDC_K_FIELD_COMPARISON_TPP
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory

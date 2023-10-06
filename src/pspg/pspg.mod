@@ -2,14 +2,14 @@ namespace Pscf
 {
 
    /**
-   * Classes for pseudo-spectral algorithm for periodic boundary conditions.
+   * SCFT and FTMC for periodic boundary conditions.
    */
    namespace Pspg {
 
       /**
-      * \defgroup Pscf_Pspg_Module Periodic (GPU)
+      * \defgroup Pscf_Pspg_Module SCFT Periodic (GPU)
       *
-      * Pseudo-spectral SCFT for periodic structures (GPU), namespace Pscf::Pspg
+      * SCFT and FTMC for periodic structures (GPU), namespace Pscf::Pspg
       *
       * \ingroup Pscf_NS_Module
       */

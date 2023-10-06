@@ -1,5 +1,5 @@
-#ifndef PSPC_FIELD_TPP
-#define PSPC_FIELD_TPP
+#ifndef PRDC_FIELD_TPP
+#define PRDC_FIELD_TPP
 
 /*
 * PSCF Package 

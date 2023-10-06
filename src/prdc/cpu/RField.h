@@ -1,5 +1,5 @@
-#ifndef PSPC_R_FIELD_H
-#define PSPC_R_FIELD_H
+#ifndef PRDC_R_FIELD_H
+#define PRDC_R_FIELD_H
 
 /*
 * PSCF Package 
@@ -22,7 +22,7 @@ namespace Cpu {
    /**
    * Field of real double precision values on an FFT mesh.
    * 
-   * \ingroup Pspc_Field_Module 
+   * \ingroup Prdc_Cpu_Module 
    */
    template <int D>
    class RField : public Field<double>
@@ -113,7 +113,7 @@ namespace Cpu {
       ar & meshDimensions_;
    }
 
-   #ifndef PSPC_R_FIELD_TPP
+   #ifndef PRDC_R_FIELD_TPP
    extern template class RField<1>;
    extern template class RField<2>;
    extern template class RField<3>;

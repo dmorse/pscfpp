@@ -1,5 +1,5 @@
-#ifndef PSPC_FFT_TEST_H
-#define PSPC_FFT_TEST_H
+#ifndef PRDC_FFT_TEST_H
+#define PRDC_FFT_TEST_H
 
 #include <test/UnitTest.h>
 #include <test/UnitTestRunner.h>

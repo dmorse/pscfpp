@@ -19,7 +19,7 @@ namespace Prdc {
    /**
    * Comparator for fields in symmetry-adapted basis format.
    * 
-   * \ingroup Pscf_Prdc_Crystal_Module
+   * \ingroup Prdc_Crystal_Module
    */
    class BFieldComparison : public FieldComparison< DArray<double> >
    {

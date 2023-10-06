@@ -23,7 +23,7 @@ namespace Prdc {
    /**
    * Base class template for a crystallographic unit cell.
    *
-   * \ingroup Pscf_Prdc_Crystal_Module
+   * \ingroup Prdc_Crystal_Module
    */
    template <int D>
    class UnitCellBase

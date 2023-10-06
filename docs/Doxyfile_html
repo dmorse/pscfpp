@@ -909,6 +909,7 @@ INPUT                  = manual/main.dox \
                          ../src/programs.mod \
                          ../src/util \
                          ../src/pscf \
+                         ../src/prdc \
                          ../src/fd1d \
                          ../src/pspc \
                          ../src/pspg \

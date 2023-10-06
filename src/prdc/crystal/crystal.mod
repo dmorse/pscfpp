@@ -2,7 +2,7 @@
 namespace Pscf{
 
    /**
-   * \defgroup Pscf_Prdc_Crystal_Module Crystallography
+   * \defgroup Prdc_Crystal_Module Crystallography
    *
    * Classes that describe crystallographic information.
    *
