@@ -23,32 +23,55 @@ UTIL_CXX11=1
 # Makefile Patterns and Recipes
 #
 # The makefile variables defined above are used in the makefile pattern 
-# rules that control compilation of C++ files, creation of libraries, 
-# and linking to create executables. The following sections briefly 
-# explain these rules, to provide a context for the meaning of the 
-# variables defined above.
+# rules that control compilation of C++ files, creation of libraries, and
+# linking to create executables. The following sections briefly explain
+# these rules, to provide a context for the meaning of the variables 
+# defined above.
 #
 #-----------------------------------------------------------------------
 # Compiler Pattern Rules:
 #
-# The pattern rule for compiling and linking C++ files in a particular 
-# top-level subdirectory of the src/ directory is defined in a file named
-# patterns.mk in the relevant subdirectory.  For example, the rule for
-# compiling C++ files in the src/fd1d/ directory tree, which contains 
-# all entities defined in the Pscf::Fd1d C++ namespace, is given in the 
-# file src/fd1d/patterns.mk. The rules for different namespace level
-# subdirectories of src/ are similar except for differences in which 
-# preprocessor variable definitions are passed to the compiler. For each 
-# such subdirectory of src/ namespace, the basic compiler pattern rule for 
-# C++ files is of the form:
+# The top level subdirectories of src/ named util/, pscf/, fd1d/,
+# pscf/ and pspg/ each contain the source code defined in a particular
+# namespace, and are referred to here as name-space level directories.
+# Each namespace level directory contains makefile fragments named
+# patterns.mk, sources.mk, include.mk, and config.mk. Some namespace 
+# level directories are said to depend on others: If namespace level 
+# directory A depends on directory B, this imples that C++ source code 
+# in A may use names (classes and functions) defined in B, and also that 
+# makefiles in directory A will include the config.mk and sources.mk 
+# files located in directory B. For example, subdirectory fd1d/ depends 
+# on the util/ and pscf/ directories, but not on the pscpc/ or pspg/
+# directories.  You can see what directories a particular namespace 
+# level directory depends on by inspecting the include.mk file in that
+# directory, which shows which makefile fragments will be included in
+# any makefile in that directory.
+#
+# Different makefile pattern rules for compilation of source files are 
+# used in different namespace level directories.  The file named 
+# patterns.mk in each namespace level directory of src/ is a makefile 
+# fragment that defines pattern rules used for compiling C++ and (when
+# relevant) CUDA source files in that directory.  The pattern rules
+# defined in the patterns.mk file in each namespace level directory 
+# are expressed in terms of makefile variables that may be defined in
+# in the same file, in a namespace level config.mk file for that 
+# directory or any other directory that it depends on, or in the main
+# config.mk configuration file (i.e., this file). 
+#
+# The pattern rules for different namespace level subdirectories of 
+# src/ are similar except for differences in the values of two makefile
+# variables that are assigned different values in different namespace
+# level directories.  The compiler pattern rule for C++ files for each
+# namespace level subdirectory src/ is of the form:
 # 
 # $(BLD_DIR)/%.o:$(SRC_DIR)/%.cpp
 #      $(CXX) $(CPPFLAGS) $(CXXFLAGS) $(INCLUDES) $(DEFINES) -c -o $@ $<
 #
-# This pattern compiles a *.cpp file in a subdirectory of the source 
+# This pattern compiles a *.cpp file in a subdirectory of the source
 # directory $(SRC_DIR) and creates a *.o object file in a corresponding
-# subdirectory of the build directory, $(BLD_DIR). The variables used
-# in this pattern are:
+# subdirectory of the build directory, $(BLD_DIR). The $(SRC_DIR) and
+# $(BLD_DIR) are identical in the case of in-source compilation. The
+# variables used in this pattern are:
 #
 # CXX         - C++ compiler executable name 
 # CPPFLAGS    - preprocessor options used during compilation
@@ -56,46 +79,64 @@ UTIL_CXX11=1
 # INCLUDES    - Directories to search for included header files
 # DEFINES     - compiler options that define C preprocessor macros
 #
-# Comments:
-# 
-# 1) The variable INCLUDES is a string that must include the path 
-# $(SRC_DIR) to the pscfpp/src directory, in order to allow the 
-# compiler to find header files that are part of the package.
+# Values for the variables $(CXX), $(CPPFLAGS) and $(CXXFLAGS) are
+# defined above in this main config.mk file.  The same values for these
+# variables are used in all namespace level directories.
 #
-# 2) The variable DEFINES in the above pattern is a stand-in for a 
-# variable that specifies a list of C preprocessor macro definitions. 
-# This variable is not defined in this main configuration file, and
-# is assigned different values for code in different top-level 
-# subdirectories of src/. A value of DEFINES for each such directory
-# is assigned in the corresponding pattern.mk file.  The value of 
-# $(DEFINES) for each namespace contains a string of compiler 
-# options that use the compiler "-D" option to define the set of
-# preprocessor macro definitions used to control conditional
-# compilation of optional features that are relevant in a particular 
-# namespace. Each of these preprocessor variable macros has the
-# same name as a corresponding makefile variable that must be defined
-# to enable the feature. Thus for, example, when the build system has 
-# been configured to enable debugging, the DEFINES string will include
-# a substring "-D UTIL_DEBUG" to define the UTIL_DEBUG preprocessor 
-# macro and thereby enable conditional compilation of blocks of code
-# that contain optional sanity checks.  
-#
-# 4) The variable $(CXXFLAGS) should specify all flags that are used by 
+# The variable $(CXXFLAGS) should specify all flags that are used by 
 # the compiler, rather than only the preprocessor, and that are used in
 # all namespaces. This string normally contains the $(CXX_STD) string 
 # as a substring, as well as options that specify the optimization 
 # level (e.g., -O3) and any desired compiler warnings (e.g., "-Wall").
 #
-# 5) The variable $(CPPFLAGS) is empty by default 
+# The variable $(CPPFLAGS) is empty by default 
+#
+# The INCLUDES and DEFINES variables are assigned different values 
+# in different namespace level subdirectories of src/. Values of
+# these variables are assigned in the patterns.mk file in each such
+# directory. These values are expressed in terms of values of other 
+# makefile variables that may be defined (or not) in the same 
+# patterns.mk file, in a namespace level config.mk file located in 
+# the same directory or any other namespace level directory that it 
+# depends on, or in this main config.mk file. 
+# 
+# The variable INCLUDES defines the paths used by the C++ compiler
+# to search for header files. The default value that is assigned to
+# INCLUDES in this main config.mk file sets INCLUDES to the absolute
+# path $(SRC_DIR) to the pscfpp/src directory. This path must always
+# be included to allow the compiler to find header files that are
+# part of the PSCF package.  Pattern rules for some namespace level
+# subdirectories add additional paths to directories that contain 
+# header files for relevant external libraries (e.g., FFTW, when 
+# relevant).
+#
+# The variable DEFINES is a string that is passed to the compiler
+# to define a set of C preprocessor macro definitions.  This variable 
+# is not defined in this main configuration file, and is assigned a 
+# different value in the patterns.mk file for each namespace level 
+# directory. The value of $(DEFINES) defined for each such directory
+# contains a string of compiler options that use the compiler "-D" 
+# option to define a set of C preprocessor macro definitions that 
+# are passed to the compiler. The C/C++ preprocessor macros are used to 
+# control conditional compilation of optional features. Each of these 
+# preprocessor macros has the same name as a corresponding makefile 
+# variable that must be defined to enable the feature. Thus for, 
+# example, if the makefile variable UTIL_DEBUG is defined to enable 
+# debugging, then the DEFINES string will include a substring 
+# "-DUTIL_DEBUG" that instructs the compiler to define corresponding 
+# the UTIL_DEBUG C/C++ preprocessor macro. This, in turn, enables 
+# conditional compilation of blocks of C++ code that are enclosed 
+# between "ifdef UTIL_DEBUG" and "endif" preprocessor statements.
 #
 #-----------------------------------------------------------------------
 # Archiver Recipes:
 #
 # The pscfpp build system creates a static library in each namespace
-# level subdirectory of the build directory in which code is compiled.
-# The recipe used to compile this library is defined in the sources.mk
-# file in the appropriate namespace-level directory. The rule for the
-# Pscf::Fd1d namespace, as an example, is of the form
+# level subdirectory of the build directory that contains object code
+# created by compiling all the class source files in that directory. 
+# The makefile rule to compile this library is defined in the sources.mk 
+# file in the same directory. The rule for the Pscf::Fd1d namespace, 
+# as an example, is of the form
 #
 # $(AR) rcs $(fd1d_LIB) $(fd1d_OBJS)
 #
@@ -103,40 +144,49 @@ UTIL_CXX11=1
 # $(fd1d_LIB) is an absolute path for the resulting library file and 
 # $(fd1d_OBJS) is a string that contains absolute paths for all of the
 # *.o object files created by compiling source files in the directory
-# src/pspc. Recipes for other namespaces are analogous.
+# src/fd1d. Rules for other namespace level directories are analogous.
+#
+# If a namespace level directory contains source a file or files that
+# contain the "main" function for one or more executable programs, the
+# the library created for that directory will not include the object 
+# code created by compiling such files. 
 #
 #-----------------------------------------------------------------------
 # Linker recipes:
 # 
 # Executable files are created by linking the compiled main program to
 # the required set of static libraries. Reciples for creating executables
-# are defined in namespace level makefile files. For example, the recipe
+# are defined in namespace level makefiles. For example, the recipe
 # for creating the fd1d executable is defined in the file fd1d/makefile
 # within the relevant build directory (bld/ or src/), and is of the form:
 #
-#	$(CXX) $(LDFLAGS) -o $(PSCF_FD_EXE) $(PSCF_FD).o $(LIBS)
+#    $(CXX) $(LDFLAGS) -o $(PSCF_FD_EXE) $(PSCF_FD).o $(LIBS)
 #
 # Here $(PSCF_FD_EXE) is the path to the executable, which is installed 
 # in the bin/ directory by default, $(PSCF_FD).o is the path to the 
 # object file created by compiling the src/fd1d/pscf_fd.cpp source file,
-# which contains the main program, $(LIBS) is a list of all required 
-# static libraries files, and $(LDFLAGS) is a string containing flags 
-# passed to the linker. 
+# which contains the main program. The variable $(LDFLAGS) is empty by
+# default.
 #
-# The variable $(LDFLAGS) is empty by default, but can, if necessary, be
-# used to specify non-standard paths to required external libraries.
+# The variable $(LIBS) is a list of all the static library files that
+# must be linked. For each namespace level directory, this contains
+# the library in that directory and those in all directories that it
+# depends on. For example, in the rule to compile the program fd1d,
+# $(LIBS) contains paths to libraries in the uti/, pscf/ and fd1d/
+# directories.
 #
 #=======================================================================
 # Automatic dependency generation.
  
-# Scripts invoked to compute dependencies among header files.
+# Names of scripts invoked to compute dependencies among header files.
 MAKEDEP=$(BIN_DIR)/makeDepCpp
 MAKEDEP_CUDA=$(BIN_DIR)/makeDepCuda
 
 # The file $(BIN_DIR)/makeDepCpp and $(BIN_DIR)/makeDepCuda are executable 
-# python scripts that are installed in the binary directory specified by 
-# the setup script, and that is used during compilation to analyze 
-# dependencies among C++ files. Both script import a python module named 
-# pscfpp.makeDepend that is located in the $(ROOT_DIR)/lib/python/pscfpp
-# directory. For the python interpreter to find this, the directory
-# $(ROOT_DIR)/lib/python must be in the $PYTHON_PATH environment variable.
+# python scripts that are installed in the $(BIN_DIR) specified by the
+# configure script. These scripts are used during compilation to analyze 
+# dependencies among source and header files, and create *.d dependency
+# files. Both scripts import a python module named pscfpp.make that is 
+# located in the $(ROOT_DIR)/lib/python/pscfpp directory. For the python 
+# interpreter to find this, directory $(ROOT_DIR)/lib/python must be in
+# the users $PYTHON_PATH environment variable.

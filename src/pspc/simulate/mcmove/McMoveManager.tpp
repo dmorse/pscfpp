@@ -2,9 +2,9 @@
 #define PSPC_MC_MOVE_MANAGER_TPP
 
 /*
-* Simpatico - Simulation Package for Polymeric and Molecular Liquids
+* PSCF - Polymer Self-Consistent Field 
 *
-* Copyright 2010 - 2017, The Regents of the University of Minnesota
+* Copyright 2016 - 2023, The Regents of the University of Minnesota
 * Distributed under the terms of the GNU General Public License.
 */
 

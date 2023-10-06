@@ -64,13 +64,17 @@ test:
 	@cd prdc/tests; $(MAKE) all; $(MAKE) run-quiet
 	@cd fd1d/tests; $(MAKE) all; $(MAKE) run-quiet
 	@cd pspc/tests; $(MAKE) all; $(MAKE) run-quiet
+ifdef PSCF_CUDA
 	@cd pspg/tests; $(MAKE) all; $(MAKE) run-quiet
+endif
 	@cat util/tests/count > count
 	@cat pscf/tests/count >> count
 	@cat prdc/tests/count >> count
 	@cat fd1d/tests/count >> count
 	@cat pspc/tests/count >> count
+ifdef PSCF_CUDA
 	@cat pspg/tests/count >> count
+endif
 	@echo " "
 	@echo "Summary"
 	@cat count
