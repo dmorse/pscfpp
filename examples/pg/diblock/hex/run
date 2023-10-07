@@ -1,1 +1,0 @@
-pscf_pg -d 2 -e -p param -c command

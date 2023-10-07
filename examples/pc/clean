@@ -1,6 +1,0 @@
-(cd compare; ./clean)
-(cd diblock; ./clean)
-(cd films; ./clean)
-(cd solution/lam; ./clean)
-(cd sweep; ./clean)
-(cd triblock/altGyr; ./clean)
