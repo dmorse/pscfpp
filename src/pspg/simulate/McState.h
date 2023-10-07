@@ -9,8 +9,8 @@
 */
 
 
-#include <pspg/field/RField.h>
-#include <pspg/field/Field.h>  
+#include <prdc/gpu/RField.h>
+#include <prdc/gpu/Field.h>  
 #include <util/containers/DArray.h>
 
 namespace Pscf {

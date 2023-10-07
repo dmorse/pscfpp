@@ -9,7 +9,7 @@
 */
 
 #include <util/param/ParamComposite.h>    // base class
-#include <pspg/field/Field.h>
+#include <prdc/gpu/Field.h>
 #include <util/global.h>                  
 
 namespace Pscf {

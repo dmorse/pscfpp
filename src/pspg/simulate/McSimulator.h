@@ -16,8 +16,8 @@
 #include <util/random/Random.h>          // member
 #include <util/containers/DArray.h>      // member template
 #include <util/containers/DMatrix.h>     // member template
-#include <pspg/field/RField.h>
-#include <pspg/field/Field.h>  
+#include <prdc/gpu/RField.h>
+#include <prdc/gpu/Field.h>  
 
 namespace Pscf {
 namespace Pspg {

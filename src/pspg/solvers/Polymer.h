@@ -9,7 +9,7 @@
 */
 
 #include "Block.h"
-#include <pspg/field/RField.h>
+#include <prdc/gpu/RField.h>
 #include <pscf/solvers/PolymerTmpl.h>
 #include <util/containers/FArray.h> 
 
@@ -25,6 +25,7 @@ namespace Pspg {
 
    using namespace Util;
    using namespace Pscf::Prdc;
+   using namespace Pscf::Prdc::Gpu;
 
    /**
    * Descriptor and solver for a branched polymer species.

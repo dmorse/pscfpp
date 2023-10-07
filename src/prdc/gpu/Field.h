@@ -11,8 +11,8 @@
 #include <util/global.h>
 
 namespace Pscf {
-namespace Pspg
-{
+namespace Prdc {
+namespace Gpu {
 
    using namespace Util;
 
@@ -133,6 +133,7 @@ namespace Pspg
    inline bool Field<Data>::isAllocated() const
    {  return (bool)data_; }
 
+}
 }
 }
 #include "Field.tpp"

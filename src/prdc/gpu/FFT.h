@@ -8,9 +8,10 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pspg/field/RField.h>
-#include <pspg/field/RFieldDft.h>
-#include <pspg/math/GpuResources.h>
+#include <prdc/gpu/RField.h>
+#include <prdc/gpu/RFieldDft.h>
+
+//#include <pspg/math/GpuResources.h>
 #include <pscf/math/IntVec.h>
 #include <util/global.h>
 
@@ -19,7 +20,8 @@
 #include <cuda_runtime.h>
 
 namespace Pscf {
-namespace Pspg {
+namespace Prdc {
+namespace Gpu {
 
    using namespace Util;
    using namespace Pscf;
@@ -187,18 +189,18 @@ namespace Pspg {
    extern template class FFT<3>;
    #endif
 
-static __global__ 
-void scaleRealData(cudaReal* data, cudaReal scale, int size) {
-   //write code that will scale
-   int nThreads = blockDim.x * gridDim.x;
-   int startId = blockIdx.x * blockDim.x + threadIdx.x;
-   for(int i = startId; i < size; i += nThreads ) {
-      data[i] *= scale;
+   static __global__ 
+   void scaleRealData(cudaReal* data, cudaReal scale, int size) {
+      //write code that will scale
+      int nThreads = blockDim.x * gridDim.x;
+      int startId = blockIdx.x * blockDim.x + threadIdx.x;
+      for(int i = startId; i < size; i += nThreads ) {
+         data[i] *= scale;
+      }
    }
-}
 
 }
 }
-
+}
 //#include "FFT.tpp"
 #endif

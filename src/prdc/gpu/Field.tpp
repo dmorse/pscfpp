@@ -15,8 +15,8 @@
 
 
 namespace Pscf {
-namespace Pspg
-{
+namespace Prdc {
+namespace Gpu {
 
    using namespace Util;
 
@@ -130,6 +130,7 @@ namespace Pspg
       return *this;
    }
 
+}
 }
 }
 #endif

@@ -4,7 +4,7 @@
 #include <test/UnitTest.h>
 #include <test/UnitTestRunner.h>
 
-#include <pspg/field/RField.h>
+#include <prdc/gpu/RField.h>
 #include <util/math/Constants.h>
 #include <pspg/math/GpuResources.h>
 

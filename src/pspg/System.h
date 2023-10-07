@@ -15,8 +15,8 @@
 #include <pspg/field/FieldIo.h>            // member
 #include <pspg/field/WFieldContainer.h>    // member
 #include <pspg/field/CFieldContainer.h>    // member
-#include <pspg/field/RField.h>            // member
-#include <pspg/field/RFieldDft.h>         // member
+#include <prdc/gpu/RField.h>            // member
+#include <prdc/gpu/RFieldDft.h>         // member
 #include <pspg/simulate/McSimulator.h>     // member
 
 #include <pscf/homogeneous/Mixture.h>      // member

@@ -10,7 +10,7 @@
 
 #include <pscf/chem/SolventDescriptor.h>   // base class
 #include <pspg/solvers/Propagator.h>       // typedefs
-#include <pspg/field/RField.h>
+#include <prdc/gpu/RField.h>
 
 namespace Pscf {
    template <int D> class Mesh;

@@ -15,8 +15,8 @@
 //static __global__ void scaleRealData(cudaReal* data, rtype scale, int size);
 
 namespace Pscf {
-namespace Pspg
-{
+namespace Prdc {
+namespace Gpu {
 
    using namespace Util;
 
@@ -213,18 +213,5 @@ namespace Pspg
 
 }
 }
-
-#if 0
-static __global__ void scaleRealData(cudaReal* data, cudaReal scale, int size) {
-   
-   //write code that will scale
-   int nThreads = blockDim.x * gridDim.x;
-   int startId = blockIdx.x * blockDim.x + threadIdx.x;
-   for(int i = startId; i < size; i += nThreads ) {
-      data[i] *= scale;
-   }
-   
 }
-#endif
-
 #endif

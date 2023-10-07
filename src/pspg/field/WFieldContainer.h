@@ -10,7 +10,7 @@
 
 
 
-#include <pspg/field/RField.h>            // member template parameter
+#include <prdc/gpu/RField.h>            // member template parameter
 #include <prdc/crystal/UnitCell.h>         // function parameter
 #include <pscf/math/IntVec.h>              // function parameter
 #include <util/param/ParamComposite.h>     // base class

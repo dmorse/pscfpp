@@ -8,8 +8,8 @@
 #include <pspg/field/KFieldComparison.h>
 #include <pspg/field/Domain.h>
 #include <pspg/field/FieldIo.h>
-#include <pspg/field/RField.h>
-#include <pspg/field/RFieldDft.h>
+#include <prdc/gpu/RField.h>
+#include <prdc/gpu/RFieldDft.h>
 #include <pspg/field/FFT.h>
 
 #include <prdc/crystal/BFieldComparison.h>

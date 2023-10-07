@@ -9,8 +9,8 @@
 */
 
 #include <pspg/field/FFT.h>                 // member
-#include <pspg/field/RField.h>             // function parameter
-#include <pspg/field/RFieldDft.h>          // function parameter
+#include <prdc/gpu/RField.h>             // function parameter
+#include <prdc/gpu/RFieldDft.h>          // function parameter
 
 #include <prdc/crystal/Basis.h>             // member
 #include <prdc/crystal/SpaceGroup.h>        // member

@@ -5,8 +5,8 @@
 #include <test/UnitTestRunner.h>
 
 #include <pspg/field/FFT.h>
-#include <pspg/field/RField.h>
-#include <pspg/field/RFieldDft.h>
+#include <prdc/gpu/RField.h>
+#include <prdc/gpu/RFieldDft.h>
 //#include <pspg/field/RFieldComparison.h>
 
 #include <util/math/Constants.h>

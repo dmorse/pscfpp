@@ -16,7 +16,7 @@
 #include <pspg/sweep/SweepFactory.h>
 #include <pspg/iterator/Iterator.h>
 #include <pspg/iterator/IteratorFactory.h>
-#include <pspg/field/RField.h>
+#include <prdc/gpu/RField.h>
 #include <pspg/math/GpuResources.h>
 
 #include <pscf/inter/Interaction.h>

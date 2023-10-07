@@ -9,8 +9,8 @@
 */
 
 #include "McMove.h"                          //base class
-#include <pspg/field/RField.h>
-#include <pspg/field/RFieldDft.h> 
+#include <prdc/gpu/RField.h>
+#include <prdc/gpu/RFieldDft.h> 
 
 #include <prdc/crystal/shiftToMinimum.h>
 

@@ -11,8 +11,8 @@
 #include "RField.h"
 
 namespace Pscf {
-namespace Pspg
-{
+namespace Pspg {
+namespace Gpu {
 
    using namespace Util;
 
@@ -65,6 +65,7 @@ namespace Pspg
       return *this;
    }
 
+}
 }
 }
 #endif

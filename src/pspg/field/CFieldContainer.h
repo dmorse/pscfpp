@@ -9,7 +9,7 @@
 */
 
 #include <util/containers/DArray.h>        // member template
-#include <pspg/field/RField.h>             // member template parameter
+#include <prdc/gpu/RField.h>             // member template parameter
 
 namespace Pscf {
 namespace Pspg {

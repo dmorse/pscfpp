@@ -9,8 +9,8 @@
 */
 
 #include "Compressor.h"
-#include <pspg/field/Field.h>
-#include <pspg/field/RField.h>         
+#include <prdc/gpu/Field.h>
+#include <prdc/gpu/RField.h>         
 
 #include <pscf/iterator/AmIteratorTmpl.h>     
 

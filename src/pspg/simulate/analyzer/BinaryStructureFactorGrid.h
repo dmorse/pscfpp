@@ -13,8 +13,8 @@
 #include <util/containers/DMatrix.h>             
 #include <util/containers/DArray.h>              
 #include <util/accumulators/Average.h>      
-#include <pspg/field/RFieldDft.h> 
-#include <pspg/field/RField.h> 
+#include <prdc/gpu/RFieldDft.h> 
+#include <prdc/gpu/RField.h> 
 #include <pscf/math/IntVec.h>
 #include <pscf/math/RealVec.h>
 #include <util/param/ParamComposite.h>

@@ -7,8 +7,8 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pspg/field/RFieldDft.h>
-#include <pspg/field/RField.h>
+#include <prdc/gpu/RFieldDft.h>
+#include <prdc/gpu/RField.h>
 
 #include <prdc/crystal/shiftToMinimum.h>
 #include <prdc/crystal/UnitCell.h>
