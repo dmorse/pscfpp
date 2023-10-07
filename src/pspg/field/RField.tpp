@@ -1,5 +1,5 @@
-#ifndef PSPG_R_DFIELD_TPP
-#define PSPG_R_DFIELD_TPP
+#ifndef PSPG_R_FIELD_TPP
+#define PSPG_R_FIELD_TPP
 
 /*
 * PSCF Package 
@@ -8,7 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "RDField.h"
+#include "RField.h"
 
 namespace Pscf {
 namespace Pspg
@@ -20,15 +20,15 @@ namespace Pspg
    * Default constructor.
    */
    template <int D>
-   RDField<D>::RDField()
-    : DField<cudaReal>()
+   RField<D>::RField()
+    : Field<cudaReal>()
    {}
 
    /*
    * Destructor.
    */
    template <int D>
-   RDField<D>::~RDField()
+   RField<D>::~RField()
    {}
 
    /*
@@ -39,8 +39,8 @@ namespace Pspg
    *\param other the Field to be copied.
    */
    template <int D>
-   RDField<D>::RDField(const RDField<D>& other)
-    : DField<cudaReal>(other),
+   RField<D>::RField(const RField<D>& other)
+    : Field<cudaReal>(other),
       meshDimensions_(0)
    {
       meshDimensions_ = other.meshDimensions_;
@@ -57,9 +57,9 @@ namespace Pspg
    * \param other the rhs Field
    */
    template <int D>
-   RDField<D>& RDField<D>::operator = (const RDField<D>& other)
+   RField<D>& RField<D>::operator = (const RField<D>& other)
    {
-      DField<cudaReal>::operator = (other);
+      Field<cudaReal>::operator = (other);
       meshDimensions_ = other.meshDimensions_;
 
       return *this;

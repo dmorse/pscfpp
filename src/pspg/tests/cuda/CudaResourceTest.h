@@ -4,7 +4,7 @@
 #include <test/UnitTest.h>
 #include <test/UnitTestRunner.h>
 
-#include <pspg/field/RDField.h>
+#include <pspg/field/RField.h>
 #include <util/math/Constants.h>
 #include <pspg/math/GpuResources.h>
 
@@ -270,7 +270,7 @@ public:
       ThreadGrid::setThreadsLogical(n/2, nBlocks);
 
       // Device arrays
-      DField<cudaReal> d_a, d_b;
+      Field<cudaReal> d_a, d_b;
       d_a.allocate(n);
       d_b.allocate(n);
 
@@ -283,8 +283,8 @@ public:
          a[i] = (cudaReal)(std::rand() % 10000);
          b[i] = (cudaReal)(std::rand() % 10000);
       }
-      cudaMemcpy(d_a.cDField(), a, n*sizeof(cudaReal), cudaMemcpyHostToDevice);
-      cudaMemcpy(d_b.cDField(), b, n*sizeof(cudaReal), cudaMemcpyHostToDevice);
+      cudaMemcpy(d_a.cField(), a, n*sizeof(cudaReal), cudaMemcpyHostToDevice);
+      cudaMemcpy(d_b.cField(), b, n*sizeof(cudaReal), cudaMemcpyHostToDevice);
 
       // Inner product on host
       cudaReal prodCheck = 0;
@@ -293,7 +293,7 @@ public:
       }
 
       // Inner product on device
-      cudaReal prod = gpuInnerProduct(d_a.cDField(),d_b.cDField(),n);
+      cudaReal prod = gpuInnerProduct(d_a.cField(),d_b.cField(),n);
 
       TEST_ASSERT(prodCheck==prod);
    }
@@ -314,7 +314,7 @@ public:
       ThreadGrid::setThreadsLogical(n/2, nBlocks);
 
       // Device arrays
-      DField<cudaReal> d_data;
+      Field<cudaReal> d_data;
       d_data.allocate(n);
 
       // Host arrays
@@ -324,7 +324,7 @@ public:
       for (int i = 0; i < n; i++) {
          data[i] = (cudaReal)(std::rand() % 10000);
       }
-      cudaMemcpy(d_data.cDField(), data, n*sizeof(cudaReal), cudaMemcpyHostToDevice);
+      cudaMemcpy(d_data.cField(), data, n*sizeof(cudaReal), cudaMemcpyHostToDevice);
 
       // Inner product on host
       cudaReal prodCheck = 0;
@@ -333,7 +333,7 @@ public:
       }
 
       // Inner product on device
-      cudaReal prod = gpuSum(d_data.cDField(),n);
+      cudaReal prod = gpuSum(d_data.cField(),n);
 
       TEST_ASSERT(prodCheck==prod);
    }
@@ -354,7 +354,7 @@ public:
       ThreadGrid::setThreadsLogical(n/2, nBlocks);
 
       // Device arrays
-      DField<cudaReal> d_data;
+      Field<cudaReal> d_data;
       d_data.allocate(n);
 
       // Host arrays
@@ -364,7 +364,7 @@ public:
       for (int i = 0; i < n; i++) {
          data[i] = (cudaReal)(std::rand() % 10000);
       }
-      cudaMemcpy(d_data.cDField(), data, n*sizeof(cudaReal), cudaMemcpyHostToDevice);
+      cudaMemcpy(d_data.cField(), data, n*sizeof(cudaReal), cudaMemcpyHostToDevice);
 
       // Inner product on host
       cudaReal maxCheck = 0;
@@ -373,7 +373,7 @@ public:
       }
 
       // Inner product on device
-      cudaReal max = gpuMax(d_data.cDField(),n);
+      cudaReal max = gpuMax(d_data.cField(),n);
 
       TEST_ASSERT(max==maxCheck);
    }
@@ -394,7 +394,7 @@ public:
       ThreadGrid::setThreadsLogical(n/2, nBlocks);
 
       // Device arrays
-      DField<cudaReal> d_data;
+      Field<cudaReal> d_data;
       d_data.allocate(n);
 
       // Host arrays
@@ -404,7 +404,7 @@ public:
       for (int i = 0; i < n; i++) {
          data[i] = (cudaReal)(std::rand() % 10000 - 6000);
       }
-      cudaMemcpy(d_data.cDField(), data, n*sizeof(cudaReal), cudaMemcpyHostToDevice);
+      cudaMemcpy(d_data.cField(), data, n*sizeof(cudaReal), cudaMemcpyHostToDevice);
 
       // Inner product on host
       cudaReal maxCheck = 0;
@@ -413,7 +413,7 @@ public:
       }
 
       // Inner product on device
-      cudaReal max = gpuMaxAbs(d_data.cDField(),n);
+      cudaReal max = gpuMaxAbs(d_data.cField(),n);
 
       TEST_ASSERT(max==maxCheck);
    }
@@ -434,7 +434,7 @@ public:
       ThreadGrid::setThreadsLogical(n/2, nBlocks);
 
       // Device arrays
-      DField<cudaReal> d_data;
+      Field<cudaReal> d_data;
       d_data.allocate(n);
 
       // Host arrays
@@ -444,7 +444,7 @@ public:
       for (int i = 0; i < n; i++) {
          data[i] = (cudaReal)(std::rand() % 10000);
       }
-      cudaMemcpy(d_data.cDField(), data, n*sizeof(cudaReal), cudaMemcpyHostToDevice);
+      cudaMemcpy(d_data.cField(), data, n*sizeof(cudaReal), cudaMemcpyHostToDevice);
 
       // Inner product on host
       cudaReal minCheck = 1000000;
@@ -453,7 +453,7 @@ public:
       }
 
       // Inner product on device
-      cudaReal min = gpuMin(d_data.cDField(),n);
+      cudaReal min = gpuMin(d_data.cField(),n);
 
       TEST_ASSERT(min==minCheck);
    }
@@ -474,7 +474,7 @@ public:
       ThreadGrid::setThreadsLogical(n/2, nBlocks);
 
       // Device arrays
-      DField<cudaReal> d_data;
+      Field<cudaReal> d_data;
       d_data.allocate(n);
 
       // Host arrays
@@ -484,7 +484,7 @@ public:
       for (int i = 0; i < n; i++) {
          data[i] = (cudaReal)(std::rand() % 10000 - 6000);
       }
-      cudaMemcpy(d_data.cDField(), data, n*sizeof(cudaReal), cudaMemcpyHostToDevice);
+      cudaMemcpy(d_data.cField(), data, n*sizeof(cudaReal), cudaMemcpyHostToDevice);
 
       // Inner product on host
       cudaReal minCheck = 1E300;
@@ -493,7 +493,7 @@ public:
       }
 
       // Inner product on device
-      cudaReal min = gpuMinAbs(d_data.cDField(),n);
+      cudaReal min = gpuMinAbs(d_data.cField(),n);
 
       TEST_ASSERT(min==minCheck);
    }

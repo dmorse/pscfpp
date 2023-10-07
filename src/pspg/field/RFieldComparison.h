@@ -9,7 +9,7 @@
 */
 
 #include <pscf/math/FieldComparison.h>
-#include "RDField.h"
+#include "RField.h"
 
 namespace Pscf {
 namespace Pspg {
@@ -37,7 +37,7 @@ namespace Pspg {
       * \param a first array of fields
       * \param b second array of fields
       */
-      double compare(RDField<D> const& a, RDField<D> const& b);
+      double compare(RField<D> const& a, RField<D> const& b);
 
       /**
       * Comparator for array of fields.
@@ -46,7 +46,7 @@ namespace Pspg {
       * \param b second array of fields
       */
       double 
-      compare(DArray<RDField<D>> const& a, DArray<RDField<D>> const& b);
+      compare(DArray<RField<D>> const& a, DArray<RField<D>> const& b);
 
       /**
       * Get precomputed maximum element-by-element difference.

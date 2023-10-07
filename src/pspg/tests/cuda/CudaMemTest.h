@@ -4,7 +4,7 @@
 #include <test/UnitTest.h>
 #include <test/UnitTestRunner.h>
 
-#include <pspg/field/RDField.h>
+#include <pspg/field/RField.h>
 #include <util/math/Constants.h>
 #include <pspg/math/GpuResources.h>
 
@@ -32,7 +32,7 @@ public:
       
       int nx = 10;
       // device array
-      RDField<1> d_in;
+      RField<1> d_in;
       d_in.allocate(10);
       // host arrays
       cudaReal* in = new cudaReal[nx];
@@ -45,8 +45,8 @@ public:
       }
 
       // copy round trip
-      cudaMemcpy(d_in.cDField(), in, nx*sizeof(cudaReal), cudaMemcpyHostToDevice);
-      cudaMemcpy(out, d_in.cDField(), nx*sizeof(cudaReal), cudaMemcpyDeviceToHost);
+      cudaMemcpy(d_in.cField(), in, nx*sizeof(cudaReal), cudaMemcpyHostToDevice);
+      cudaMemcpy(out, d_in.cField(), nx*sizeof(cudaReal), cudaMemcpyDeviceToHost);
 
       // compare
       double maxDiff = 0, currDiff = 0;

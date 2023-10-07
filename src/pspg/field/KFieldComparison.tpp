@@ -23,7 +23,7 @@ namespace Pspg {
 
    // Comparator for individual fields.
    template <int D>
-   double KFieldComparison<D>::compare(RDFieldDft<D> const& a, RDFieldDft<D> const& b)
+   double KFieldComparison<D>::compare(RFieldDft<D> const& a, RFieldDft<D> const& b)
    {
       UTIL_CHECK(a.capacity() > 0);
       UTIL_CHECK(a.capacity() == b.capacity());
@@ -32,8 +32,8 @@ namespace Pspg {
       int nPoints = a.capacity();
       cudaComplex* temp_a = new cudaComplex[nPoints];
       cudaComplex* temp_b = new cudaComplex[nPoints];
-      cudaMemcpy(temp_a, a.cDField(), nPoints*sizeof(cudaComplex), cudaMemcpyDeviceToHost);
-      cudaMemcpy(temp_b, b.cDField(), nPoints*sizeof(cudaComplex), cudaMemcpyDeviceToHost);
+      cudaMemcpy(temp_a, a.cField(), nPoints*sizeof(cudaComplex), cudaMemcpyDeviceToHost);
+      cudaMemcpy(temp_b, b.cField(), nPoints*sizeof(cudaComplex), cudaMemcpyDeviceToHost);
 
       double diffSq, diff, d0, d1;
       maxDiff_ = 0.0;
@@ -55,8 +55,8 @@ namespace Pspg {
 
    // Comparator for arrays of fields
    template <int D>
-   double KFieldComparison<D>::compare(DArray< RDFieldDft<D> > const & a,
-                                       DArray< RDFieldDft<D> > const & b)
+   double KFieldComparison<D>::compare(DArray< RFieldDft<D> > const & a,
+                                       DArray< RFieldDft<D> > const & b)
    {
       UTIL_CHECK(a.capacity() > 0);
       UTIL_CHECK(a.capacity() == b.capacity());
@@ -73,8 +73,8 @@ namespace Pspg {
       for (int i = 0; i < nFields; i++) {
          temp_a[i] = new cudaComplex[nPoints];
          temp_b[i] = new cudaComplex[nPoints];
-         cudaMemcpy(temp_a[i], a[i].cDField(), nPoints*sizeof(cudaComplex), cudaMemcpyDeviceToHost);
-         cudaMemcpy(temp_b[i], b[i].cDField(), nPoints*sizeof(cudaComplex), cudaMemcpyDeviceToHost);
+         cudaMemcpy(temp_a[i], a[i].cField(), nPoints*sizeof(cudaComplex), cudaMemcpyDeviceToHost);
+         cudaMemcpy(temp_b[i], b[i].cField(), nPoints*sizeof(cudaComplex), cudaMemcpyDeviceToHost);
       }      
 
       double diffSq, diff, d0, d1;

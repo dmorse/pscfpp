@@ -9,8 +9,8 @@
 */
 
 #include "Compressor.h"
-#include <pspg/field/DField.h>
-#include <pspg/field/RDField.h>         
+#include <pspg/field/Field.h>
+#include <pspg/field/RField.h>         
 
 #include <pscf/iterator/AmIteratorTmpl.h>     
 
@@ -31,7 +31,7 @@ namespace Pspg
    * \ingroup Pspg_Compressor_Module
    */
    template <int D>
-   class AmCompressor : public AmIteratorTmpl<Compressor<D>, DField<cudaReal> >
+   class AmCompressor : public AmIteratorTmpl<Compressor<D>, Field<cudaReal> >
    {
 
    public:
@@ -85,8 +85,8 @@ namespace Pspg
       void outputTimers(std::ostream& out);
       
       // Inherited public member functions
-      using AmIteratorTmpl<Compressor<D>, DField<cudaReal> >::clearTimers;
-      using AmIteratorTmpl<Compressor<D>, DField<cudaReal> >::setClassName;
+      using AmIteratorTmpl<Compressor<D>, Field<cudaReal> >::clearTimers;
+      using AmIteratorTmpl<Compressor<D>, Field<cudaReal> >::setClassName;
 
    protected:
   
@@ -103,7 +103,7 @@ namespace Pspg
       /**
       * Current values of the fields
       */
-      DArray< RDField<D> > w0_;  
+      DArray< RField<D> > w0_;  
 
       /**
       * Has the variable been allocated?
@@ -113,12 +113,12 @@ namespace Pspg
       /**
       * Template w Field used in update function
       */
-      DArray< RDField<D> > wFieldTmp_;
+      DArray< RField<D> > wFieldTmp_;
       
       /**
       * New Basis variable used in updateBasis function 
       */
-      DField<cudaReal> newBasis_;
+      Field<cudaReal> newBasis_;
 
       /**
       * Assign one field to another.
@@ -126,17 +126,17 @@ namespace Pspg
       * \param a the field to be set (lhs of assignment)
       * \param b the field for it to be set to (rhs of assigment)
       */
-      void setEqual(DField<cudaReal>& a, DField<cudaReal> const & b);
+      void setEqual(Field<cudaReal>& a, Field<cudaReal> const & b);
 
       /**
       * Compute the inner product of two vectors
       */
-      double dotProduct(DField<cudaReal> const & a, DField<cudaReal> const & b);
+      double dotProduct(Field<cudaReal> const & a, Field<cudaReal> const & b);
 
       /**
       * Find the maximum magnitude element of a residual vector.
       */
-      double maxAbs(DField<cudaReal> const & hist);
+      double maxAbs(Field<cudaReal> const & hist);
 
       /**
       * Update the basis for residual or field vectors.
@@ -144,8 +144,8 @@ namespace Pspg
       * \param basis RingBuffer of residual or field basis vectors
       * \param hists RingBuffer of past residual or field vectors
       */
-      void updateBasis(RingBuffer<DField<cudaReal> > & basis, 
-                       RingBuffer<DField<cudaReal> > const & hists);
+      void updateBasis(RingBuffer<Field<cudaReal> > & basis, 
+                       RingBuffer<Field<cudaReal> > const & hists);
 
       /**
       * Add linear combination of basis vectors to trial field.
@@ -155,8 +155,8 @@ namespace Pspg
       * \param coeffs array of coefficients of basis vectors
       * \param nHist number of histories stored at this iteration
       */
-      void addHistories(DField<cudaReal>& trial, 
-                        RingBuffer<DField<cudaReal> > const & basis, 
+      void addHistories(Field<cudaReal>& trial, 
+                        RingBuffer<Field<cudaReal> > const & basis, 
                         DArray<double> coeffs, 
                         int nHist);
 
@@ -167,8 +167,8 @@ namespace Pspg
       * \param resTrial predicted error for current trial
       * \param lambda Anderson-Mixing mixing 
       */
-      void addPredictedError(DField<cudaReal>& fieldTrial, 
-                             DField<cudaReal> const & resTrial, 
+      void addPredictedError(Field<cudaReal>& fieldTrial, 
+                             Field<cudaReal> const & resTrial, 
                              double lambda);
 
       /**
@@ -188,7 +188,7 @@ namespace Pspg
       * 
       * \param curr current field vector
       */ 
-      void getCurrent(DField<cudaReal>& curr);
+      void getCurrent(Field<cudaReal>& curr);
 
       /**
       * Have the system perform a computation using new field.
@@ -203,14 +203,14 @@ namespace Pspg
       *
       * \param resid current residual vector value
       */
-      void getResidual(DField<cudaReal>& resid);
+      void getResidual(Field<cudaReal>& resid);
 
       /**
       * Updates the system field with the new trial field.
       *
       * \param newGuess trial field vector
       */
-      void update(DField<cudaReal>& newGuess);
+      void update(Field<cudaReal>& newGuess);
 
       /**
       * Outputs relevant system details to the iteration log.

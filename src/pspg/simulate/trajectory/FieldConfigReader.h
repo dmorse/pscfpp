@@ -12,8 +12,8 @@
 #include <util/global.h>
 #include <iostream>
 #include <pspg/System.h>
-#include <pspg/field/RDField.h>
-#include <pspg/field/DField.h>  
+#include <pspg/field/RField.h>
+#include <pspg/field/Field.h>  
 #include <util/containers/DArray.h>
 
 
@@ -104,7 +104,7 @@ namespace Pspg
       std::ifstream inputfile_;
       
       // Read Grid Field configuration      
-      DArray< RDField<D> > wField_;
+      DArray< RField<D> > wField_;
       
       // Has the variable been allocated?
       bool isAllocated_;

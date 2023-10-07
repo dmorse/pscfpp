@@ -121,21 +121,21 @@ namespace Pspg
    void BinaryStructureFactorGrid<D>::updateAccumulators() 
    {
       IntVec<D> const & dimensions = system().mesh().dimensions();
-      RDField<D> wm;
+      RField<D> wm;
       wm.allocate(dimensions);
       // Compute W-
       // GPU resources
       int nBlocks, nThreads;
       ThreadGrid::setThreadsLogical(wm.capacity(), nBlocks, nThreads);
       pointWiseBinarySubtract<<<nBlocks, nThreads>>>
-            (system().w().rgrid(0).cDField(), system().w().rgrid(1).cDField(), wm.cDField(), wm.capacity());
-      scaleReal<<<nBlocks, nThreads>>>(wm.cDField(), 0.5, wm.capacity());
-      RDFieldDft<D> wk;
+            (system().w().rgrid(0).cField(), system().w().rgrid(1).cField(), wm.cField(), wm.capacity());
+      scaleReal<<<nBlocks, nThreads>>>(wm.cField(), 0.5, wm.capacity());
+      RFieldDft<D> wk;
       wk.allocate(dimensions);
       system().fft().forwardTransform(wm, wk);
       complex<double> *wkCpu; 
       wkCpu= new complex<double>[kSize_];
-      cudaMemcpy(wkCpu, wk.cDField(), kSize_ * sizeof(cudaComplex), cudaMemcpyDeviceToHost);
+      cudaMemcpy(wkCpu, wk.cField(), kSize_ * sizeof(cudaComplex), cudaMemcpyDeviceToHost);
       // Convert real grid to KGrid format
       for (int k=0; k< wk.capacity(); k++) {
          accumulators_[k].sample(norm(wkCpu[k]));

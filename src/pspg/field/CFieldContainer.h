@@ -9,7 +9,7 @@
 */
 
 #include <util/containers/DArray.h>        // member template
-#include <pspg/field/RDField.h>             // member template parameter
+#include <pspg/field/RField.h>             // member template parameter
 
 namespace Pscf {
 namespace Pspg {
@@ -28,7 +28,7 @@ namespace Pspg {
    *    format). This is accessed by the basis() and basis(int) 
    *    member functions.
    *
-   *  - A DArray of RDField<D> containers holds valus of each field on
+   *  - A DArray of RField<D> containers holds valus of each field on
    *    the nodes of a regular grid. This is accessed by the rgrid()
    *    and rgrid(int) member functions.
    *
@@ -127,13 +127,13 @@ namespace Pspg {
       /**
       * Get array of all fields in r-grid format (non-const).
       */
-      DArray< RDField<D> > & rgrid()
+      DArray< RField<D> > & rgrid()
       {  return rgrid_; }
 
       /**
       * Get array of all fields in r-grid format (const).
       */
-      DArray< RDField<D> > const & rgrid() const
+      DArray< RField<D> > const & rgrid() const
       {  return rgrid_; }
 
       /**
@@ -141,7 +141,7 @@ namespace Pspg {
       *
       * \param monomerId integer monomer type index (0,..,nMonomer-1)
       */
-      RDField<D> & rgrid(int monomerId)
+      RField<D> & rgrid(int monomerId)
       {  return rgrid_[monomerId]; }
 
       /**
@@ -149,7 +149,7 @@ namespace Pspg {
       *
       * \param monomerId integer monomer type index (0,..,nMonomer-1)
       */
-      RDField<D> const & rgrid(int monomerId) const
+      RField<D> const & rgrid(int monomerId) const
       {  return rgrid_[monomerId]; }
 
       /**
@@ -178,10 +178,10 @@ namespace Pspg {
       /*
       * Array of fields in real-space grid (r-grid) format
       *
-      * Element basis_[i] is an RDField<D> that contains values of the 
+      * Element basis_[i] is an RField<D> that contains values of the 
       * field associated with monomer i on the nodes of a regular mesh.
       */
-      DArray< RDField<D> > rgrid_;
+      DArray< RField<D> > rgrid_;
 
       /*
       * Number of monomer types.

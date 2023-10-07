@@ -1,5 +1,5 @@
-#ifndef PSPG_DFIELD_H
-#define PSPG_DFIELD_H
+#ifndef PSPG_FIELD_H
+#define PSPG_FIELD_H
 
 /*
 * PSCF Package 
@@ -26,7 +26,7 @@ namespace Pspg
    * \ingroup Pspg_Field_Module
    */
    template <typename Data>
-   class DField
+   class Field
    {
 
    public:
@@ -34,14 +34,14 @@ namespace Pspg
       /**
       * Default constructor.
       */
-      DField();
+      Field();
 
       /**
       * Destructor.
       *
       * Deletes underlying C array, if allocated previously.
       */
-      virtual ~DField();
+      virtual ~Field();
 
       /**
       * Allocate the underlying C array on the device.
@@ -74,26 +74,26 @@ namespace Pspg
       /**
       * Return pointer to underlying C array.
       */
-      Data* cDField();
+      Data* cField();
 
       /**
       * Return pointer to const to underlying C array.
       */
-      const Data* cDField() const;
+      const Data* cField() const;
 
       /**
       * Assignment operator.
       *
-      * \param other DField<Data> on rhs of assignent (input)
+      * \param other Field<Data> on rhs of assignent (input)
       */
-      virtual DField<Data>& operator = (const DField<Data>& other);
+      virtual Field<Data>& operator = (const Field<Data>& other);
 
       /**
       * Copy constructor.
       * 
-      * \param other DField<Data> to be copied (input)
+      * \param other Field<Data> to be copied (input)
       */
-      DField(const DField& other);
+      Field(const Field& other);
 
    protected:
 
@@ -109,31 +109,31 @@ namespace Pspg
    * Return allocated size.
    */
    template <typename Data>
-   inline int DField<Data>::capacity() const
+   inline int Field<Data>::capacity() const
    {  return capacity_; }
 
    /*
    * Get a pointer to the underlying C array.
    */
    template <typename Data>
-   inline Data* DField<Data>::cDField()
+   inline Data* Field<Data>::cField()
    {  return data_; }
 
    /*
    * Get a pointer to const to the underlying C array.
    */
    template <typename Data>
-   inline const Data* DField<Data>::cDField() const
+   inline const Data* Field<Data>::cField() const
    {  return data_; }
 
    /*
    * Return true if the Field has been allocated, false otherwise.
    */
    template <typename Data>
-   inline bool DField<Data>::isAllocated() const
+   inline bool Field<Data>::isAllocated() const
    {  return (bool)data_; }
 
 }
 }
-#include "DField.tpp"
+#include "Field.tpp"
 #endif

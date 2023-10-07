@@ -1,5 +1,5 @@
-#ifndef PSPG_R_DFIELD_DFT_TPP
-#define PSPG_R_DFIELD_DFT_TPP
+#ifndef PSPG_R_FIELD_DFT_TPP
+#define PSPG_R_FIELD_DFT_TPP
 
 /*
 * PSCF Package 
@@ -8,7 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "RDFieldDft.h"
+#include "RFieldDft.h"
 
 namespace Pscf {
 namespace Pspg {
@@ -19,15 +19,15 @@ namespace Pspg {
    * Default constructor.
    */
    template <int D>
-   RDFieldDft<D>::RDFieldDft()
-    : DField<cudaComplex>()
+   RFieldDft<D>::RFieldDft()
+    : Field<cudaComplex>()
    {}
 
    /*
    * Destructor.
    */
    template <int D>
-   RDFieldDft<D>::~RDFieldDft()
+   RFieldDft<D>::~RFieldDft()
    {}
 
    /*
@@ -38,8 +38,8 @@ namespace Pspg {
    *\param other the RField<D> to be copied.
    */
    template <int D>
-   RDFieldDft<D>::RDFieldDft(const RDFieldDft<D>& other)
-    : DField<cudaComplex>(other)
+   RFieldDft<D>::RFieldDft(const RFieldDft<D>& other)
+    : Field<cudaComplex>(other)
    {
       meshDimensions_ = other.meshDimensions_;
       dftDimensions_ = other.dftDimensions_;
@@ -56,10 +56,10 @@ namespace Pspg {
    * \param other the rhs Field
    */
    template <int D>
-   RDFieldDft<D>& RDFieldDft<D>::operator = (const RDFieldDft<D>& other)
+   RFieldDft<D>& RFieldDft<D>::operator = (const RFieldDft<D>& other)
    {
       
-      DField<cudaComplex>::operator = (other);
+      Field<cudaComplex>::operator = (other);
       meshDimensions_ = other.meshDimensions_;
       dftDimensions_ = other.dftDimensions_;
 

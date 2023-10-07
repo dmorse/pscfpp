@@ -20,15 +20,15 @@ namespace Pspg {
 
    // Comparator for individual fields
    template <int D>
-   double RFieldComparison<D>::compare(RDField<D> const& a, RDField<D> const& b)
+   double RFieldComparison<D>::compare(RField<D> const& a, RField<D> const& b)
    {
       // Copy data to host.
       int nPoints = a.capacity();
       cudaReal* temp_a = new cudaReal[nPoints];
       cudaReal* temp_b = new cudaReal[nPoints];
-      cudaMemcpy(temp_a, a.cDField(), nPoints*sizeof(cudaReal), 
+      cudaMemcpy(temp_a, a.cField(), nPoints*sizeof(cudaReal), 
                                       cudaMemcpyDeviceToHost);
-      cudaMemcpy(temp_b, b.cDField(), nPoints*sizeof(cudaReal), 
+      cudaMemcpy(temp_b, b.cField(), nPoints*sizeof(cudaReal), 
                                       cudaMemcpyDeviceToHost);
 
       DArray< cudaReal > h_a, h_b;
@@ -46,8 +46,8 @@ namespace Pspg {
 
    // Comparator for arrays of fields
    template <int D>
-   double RFieldComparison<D>::compare(DArray<RDField<D>> const& a, 
-                                       DArray<RDField<D>> const& b)
+   double RFieldComparison<D>::compare(DArray<RField<D>> const& a, 
+                                       DArray<RField<D>> const& b)
    {
       int nFields = a.capacity();
       int nPoints = a[0].capacity();
@@ -65,9 +65,9 @@ namespace Pspg {
       for (int i = 0; i < nFields; i++) {
          temp_a[i] = new cudaReal[nPoints];
          temp_b[i] = new cudaReal[nPoints];
-         cudaMemcpy(temp_a[i], a[i].cDField(), nPoints*sizeof(cudaReal), 
+         cudaMemcpy(temp_a[i], a[i].cField(), nPoints*sizeof(cudaReal), 
                                                cudaMemcpyDeviceToHost);
-         cudaMemcpy(temp_b[i], b[i].cDField(), nPoints*sizeof(cudaReal), 
+         cudaMemcpy(temp_b[i], b[i].cField(), nPoints*sizeof(cudaReal), 
                                                cudaMemcpyDeviceToHost);
 
          h_a[i].allocate(nPoints);

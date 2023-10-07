@@ -111,8 +111,8 @@ namespace Pspg
    * Compute concentrations (but not total free energy).
    */
    template <int D>
-   void Mixture<D>::compute(DArray< RDField<D> > const & wFields, 
-                            DArray< RDField<D> > & cFields)
+   void Mixture<D>::compute(DArray< RField<D> > const & wFields, 
+                            DArray< RField<D> > & cFields)
    {
       UTIL_CHECK(meshPtr_);
       UTIL_CHECK(mesh().size() > 0);
@@ -133,7 +133,7 @@ namespace Pspg
       for (i = 0; i < nm; ++i) {
          UTIL_CHECK(cFields[i].capacity() == nMesh);
          UTIL_CHECK(wFields[i].capacity() == nMesh);
-         assignUniformReal<<<nBlocks, nThreads>>>(cFields[i].cDField(), 
+         assignUniformReal<<<nBlocks, nThreads>>>(cFields[i].cField(), 
                                                   0.0, nMesh);
       }
 
@@ -149,11 +149,11 @@ namespace Pspg
             monomerId = polymer(i).block(j).monomerId();
             UTIL_CHECK(monomerId >= 0);
             UTIL_CHECK(monomerId < nm);
-            RDField<D>& monomerField = cFields[monomerId];
-            RDField<D>& blockField = polymer(i).block(j).cField();
+            RField<D>& monomerField = cFields[monomerId];
+            RField<D>& blockField = polymer(i).block(j).cField();
             UTIL_CHECK(blockField.capacity()==nMesh);
-            pointWiseAdd<<<nBlocks, nThreads>>>(monomerField.cDField(), 
-                                                blockField.cDField(), nMesh);
+            pointWiseAdd<<<nBlocks, nThreads>>>(monomerField.cField(), 
+                                                blockField.cField(), nMesh);
          }
       }
       
@@ -167,11 +167,11 @@ namespace Pspg
          solvent(i).compute(wFields[monomerId]);
 
          // Add solvent contribution to relevant monomer concentration
-         RDField<D>& monomerField = cFields[monomerId];
-         RDField<D> const & solventField = solvent(i).concField();
+         RField<D>& monomerField = cFields[monomerId];
+         RField<D> const & solventField = solvent(i).concField();
          UTIL_CHECK(solventField.capacity() == nMesh);
-         pointWiseAdd<<<nBlocks, nThreads>>>(monomerField.cDField(), 
-                                             solventField.cDField(), 
+         pointWiseAdd<<<nBlocks, nThreads>>>(monomerField.cField(), 
+                                             solventField.cField(), 
                                              nMesh);
 
 
@@ -229,7 +229,7 @@ namespace Pspg
    * Combine cFields for each block (and solvent) into one DArray
    */
    template <int D>
-   void Mixture<D>::createBlockCRGrid(DArray< RDField<D> > & blockCFields) 
+   void Mixture<D>::createBlockCRGrid(DArray< RField<D> > & blockCFields) 
    const
    {
       UTIL_CHECK(nMonomer() > 0);
@@ -248,7 +248,7 @@ namespace Pspg
       // Clear all monomer concentration fields, check capacities
       for (i = 0; i < np; ++i) {
          UTIL_CHECK(blockCFields[i].capacity() == nx);
-         assignUniformReal<<<nBlocks, nThreads>>>(blockCFields[i].cDField(), 0.0, nx);
+         assignUniformReal<<<nBlocks, nThreads>>>(blockCFields[i].cField(), 0.0, nx);
       }
 
       // Process polymer species
@@ -265,8 +265,8 @@ namespace Pspg
                UTIL_CHECK(sectionId < np);
                UTIL_CHECK(blockCFields[sectionId].capacity() == nx);
 
-               const cudaReal* blockField = polymer(i).block(j).cField().cDField();
-               cudaMemcpy(blockCFields[sectionId].cDField(), blockField, 
+               const cudaReal* blockField = polymer(i).block(j).cField().cField();
+               cudaMemcpy(blockCFields[sectionId].cField(), blockField, 
                           mesh().size() * sizeof(cudaReal), cudaMemcpyDeviceToDevice);
             }
          }
@@ -283,8 +283,8 @@ namespace Pspg
             UTIL_CHECK(sectionId < np);
             UTIL_CHECK(blockCFields[sectionId].capacity() == nx);
 
-            const cudaReal* solventField = solvent(i).concField().cDField();
-            cudaMemcpy(blockCFields[sectionId].cDField(), solventField, 
+            const cudaReal* solventField = solvent(i).concField().cField();
+            cudaMemcpy(blockCFields[sectionId].cField(), solventField, 
                        mesh().size() * sizeof(cudaReal), cudaMemcpyDeviceToDevice);
          }
       }

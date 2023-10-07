@@ -13,8 +13,8 @@
 #include <util/containers/DMatrix.h>             
 #include <util/containers/DArray.h>              
 #include <util/accumulators/Average.h>      
-#include <pspg/field/RDFieldDft.h> 
-#include <pspg/field/RDField.h> 
+#include <pspg/field/RFieldDft.h> 
+#include <pspg/field/RField.h> 
 #include <pscf/math/IntVec.h>
 #include <pscf/math/RealVec.h>
 #include <util/param/ParamComposite.h>
@@ -198,10 +198,10 @@ namespace Pspg
       DArray<Average> accumulators_;
       
       /// wField in real grid
-      DArray< RDField<D> > wrGrid_;
+      DArray< RField<D> > wrGrid_;
       
       /// wField in Fourier mode
-      DArray< RDFieldDft<D> > wkGrid_;
+      DArray< RFieldDft<D> > wkGrid_;
       
       /// Dimensions of wavevector mesh in real-to-complex transform
       IntVec<D> kMeshDimensions_;

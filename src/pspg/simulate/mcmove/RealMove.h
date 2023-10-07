@@ -11,8 +11,8 @@
 #include "McMove.h"                          //base class
 #include <util/global.h>
 #include <util/param/ParamComposite.h>
-#include <pspg/field/RDField.h>
-#include <pspg/field/DField.h>  
+#include <pspg/field/RField.h>
+#include <pspg/field/Field.h>  
 #include <util/containers/DArray.h>
 #include <curand.h>
 
@@ -99,10 +99,10 @@ namespace Pspg
       float stepSize_;
       
       /// Random fields between [-stepSize_, stepSize_]
-      RDField<D> randomField_;
+      RField<D> randomField_;
       
       /// wField after attempt McMove. local variable wFieldTmp_ used in attemptMove() function
-      DArray< RDField<D> > wFieldTmp_;
+      DArray< RField<D> > wFieldTmp_;
       
       /// Has the variable been allocated?
       bool isAllocated_;

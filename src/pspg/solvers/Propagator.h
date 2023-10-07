@@ -9,7 +9,7 @@
 */
 
 #include <pscf/solvers/PropagatorTmpl.h> // base class template
-#include <pspg/field/RDField.h>          // member template
+#include <pspg/field/RField.h>          // member template
 #include <util/containers/DArray.h>      // member template
 
 namespace Pscf { template <int D> class Mesh; }
@@ -53,22 +53,22 @@ namespace Pspg
       /**
       * Generic field (function of position).
       */ 
-      typedef RDField<D> Field;
+      typedef RField<D> Field;
 
       /**
       * Chemical potential field type.
       */ 
-      typedef RDField<D> WField;
+      typedef RField<D> WField;
 
       /**
       * Monomer concentration field type.
       */
-      typedef RDField<D> CField;
+      typedef RField<D> CField;
 
       /**
       * Propagator q-field type.
       */
-      typedef RDField<D> QField;
+      typedef RField<D> QField;
 
       // Member functions
 

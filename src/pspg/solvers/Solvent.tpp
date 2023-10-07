@@ -36,7 +36,7 @@ namespace Pspg {
    * Compute concentration, q, phi or mu.
    */ 
    template <int D>
-   void Solvent<D>::compute(RDField<D> const & wField)
+   void Solvent<D>::compute(RField<D> const & wField)
    {
       int nx = meshPtr_->size(); // Number of grid points
 
@@ -45,13 +45,13 @@ namespace Pspg {
       ThreadGrid::setThreadsLogical(nx, nBlocks, nThreads);
 
       // Initialize concField_ to zero
-      assignUniformReal<<<nBlocks, nThreads>>>(concField_.cDField(), 0, nx);
+      assignUniformReal<<<nBlocks, nThreads>>>(concField_.cField(), 0, nx);
 
       // Evaluate unnormalized integral and q_
       double s = size();
       q_ = 0.0;
-      assignExp<<<nBlocks, nThreads>>>(concField_.cDField(), wField.cDField(), s, nx);
-      q_ = (double)gpuSum(concField_.cDField(),nx);
+      assignExp<<<nBlocks, nThreads>>>(concField_.cField(), wField.cField(), s, nx);
+      q_ = (double)gpuSum(concField_.cField(),nx);
       q_ = q_/double(nx);
 
       // Compute mu_ or phi_ and prefactor
@@ -65,7 +65,7 @@ namespace Pspg {
       }
 
       // Normalize concentration 
-      scaleReal<<<nBlocks, nThreads>>>(concField_.cDField(), prefactor, nx);
+      scaleReal<<<nBlocks, nThreads>>>(concField_.cField(), prefactor, nx);
     
    }
 

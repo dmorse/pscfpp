@@ -1,5 +1,5 @@
-#ifndef PSPG_DFIELD_TPP
-#define PSPG_DFIELD_TPP
+#ifndef PSPG_FIELD_TPP
+#define PSPG_FIELD_TPP
 
 /*
 * PSCF Package 
@@ -8,7 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "DField.h"
+#include "Field.h"
 #include <pspg/math/GpuResources.h>
 #include <cuda_runtime.h>
 
@@ -24,7 +24,7 @@ namespace Pspg
    * Default constructor.
    */
    template <typename Data>
-   DField<Data>::DField()
+   Field<Data>::Field()
     : data_(0),
       capacity_(0)
    {}
@@ -33,7 +33,7 @@ namespace Pspg
    * Destructor.
    */
    template <typename Data>
-   DField<Data>::~DField()
+   Field<Data>::~Field()
    {
       if (isAllocated()) {
          cudaFree(data_);
@@ -49,10 +49,10 @@ namespace Pspg
    * \param capacity number of elements to allocate.
    */
    template <typename Data>
-   void DField<Data>::allocate(int capacity)
+   void Field<Data>::allocate(int capacity)
    {
       if (isAllocated()) {
-         UTIL_THROW("Attempt to re-allocate a DField");
+         UTIL_THROW("Attempt to re-allocate a Field");
       }
       if (capacity <= 0) {
          UTIL_THROW("Attempt to allocate with capacity <= 0");
@@ -67,7 +67,7 @@ namespace Pspg
    * Throw an Exception if this Field is not allocated.
    */
    template <typename Data>
-   void DField<Data>::deallocate()
+   void Field<Data>::deallocate()
    {
       if (!isAllocated()) {
          UTIL_THROW("Array is not allocated");
@@ -84,14 +84,14 @@ namespace Pspg
    *\param other the Field to be copied.
    */
    template <typename Data>
-   DField<Data>::DField(const DField<Data>& other)
+   Field<Data>::Field(const Field<Data>& other)
    {
       if (!other.isAllocated()) {
          UTIL_THROW("Other Field must be allocated.");
       }
 
       allocate(other.capacity_);
-      cudaMemcpy(data_, other.cDField(), 
+      cudaMemcpy(data_, other.cField(), 
                  capacity_ * sizeof(Data), cudaMemcpyDeviceToDevice);
 
    }
@@ -107,7 +107,7 @@ namespace Pspg
    * \param other the rhs Field
    */
    template <typename Data>
-   DField<Data>& DField<Data>::operator = (const DField<Data>& other)
+   Field<Data>& Field<Data>::operator = (const Field<Data>& other)
    {
       // Check for self assignment
       if (this == &other) return *this;
@@ -124,7 +124,7 @@ namespace Pspg
       }
 
       // Copy elements
-      cudaMemcpy(data_, other.cDField(), 
+      cudaMemcpy(data_, other.cField(), 
                  capacity_ * sizeof(Data), cudaMemcpyDeviceToDevice);
 
       return *this;

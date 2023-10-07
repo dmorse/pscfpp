@@ -180,7 +180,7 @@ namespace Pspg
             sqTemp[itr.rank()] = sqrt(S_);
          }
       }
-      cudaMemcpy(sqrtSq_.cDField(), sqTemp, meshSize * sizeof(cudaReal), cudaMemcpyHostToDevice);
+      cudaMemcpy(sqrtSq_.cField(), sqTemp, meshSize * sizeof(cudaReal), cudaMemcpyHostToDevice);
       delete[] sqTemp;
    }
    
@@ -198,7 +198,7 @@ namespace Pspg
       ThreadGrid::setThreadsLogical(meshSize, nBlocks, nThreads);
       for (int i = 0; i < nMonomer; ++i) {
          assignReal<<<nBlocks, nThreads>>>
-            (wRGrid_[i].cDField(), system().w().rgrid(i).cDField(), meshSize);
+            (wRGrid_[i].cField(), system().w().rgrid(i).cField(), meshSize);
       }
       // Convert real grid to KGrid format
       for (int i = 0; i < nMonomer; ++i) {
@@ -208,28 +208,28 @@ namespace Pspg
       for (int i = 0; i < nMonomer; ++i){
          //Generate randome number for real part
 #ifdef SINGLE_PRECISION
-      curandGenerateUniform(gen_,randomFieldR_.cDField(), meshSize);
+      curandGenerateUniform(gen_,randomFieldR_.cField(), meshSize);
 #else
-      curandGenerateUniformDouble(gen_,randomFieldR_.cDField(), meshSize);
+      curandGenerateUniformDouble(gen_,randomFieldR_.cField(), meshSize);
 #endif
          // Generate random numbers between [-stepSize_,stepSize_]
-         mcftsScale<<<nBlocks, nThreads>>>(randomFieldR_.cDField(), stepSize_, meshSize);
+         mcftsScale<<<nBlocks, nThreads>>>(randomFieldR_.cField(), stepSize_, meshSize);
          // Generate random numbers between [-stepSize_*S(q)^(1/2), stepSize_*S(q)^(1/2)]
-         inPlacePointwiseMul<<<nBlocks, nThreads>>>(randomFieldR_.cDField(), sqrtSq_.cDField(), meshSize);
+         inPlacePointwiseMul<<<nBlocks, nThreads>>>(randomFieldR_.cField(), sqrtSq_.cField(), meshSize);
          
          //Generate randome number for imagine part
 #ifdef SINGLE_PRECISION
-      curandGenerateUniform(gen_,randomFieldK_.cDField(), meshSize);
+      curandGenerateUniform(gen_,randomFieldK_.cField(), meshSize);
 #else
-      curandGenerateUniformDouble(gen_,randomFieldK_.cDField(), meshSize);
+      curandGenerateUniformDouble(gen_,randomFieldK_.cField(), meshSize);
 #endif
          // Generate random numbers between [-stepSize_,stepSize_]
-         mcftsScale<<<nBlocks, nThreads>>>(randomFieldK_.cDField(), stepSize_, meshSize);
+         mcftsScale<<<nBlocks, nThreads>>>(randomFieldK_.cField(), stepSize_, meshSize);
          // Generate random numbers between [-stepSize_*S(q)^(1/2), stepSize_*S(q)^(1/2)]
-         inPlacePointwiseMul<<<nBlocks, nThreads>>>(randomFieldK_.cDField(), sqrtSq_.cDField(), meshSize);
+         inPlacePointwiseMul<<<nBlocks, nThreads>>>(randomFieldK_.cField(), sqrtSq_.cField(), meshSize);
    
          // Attempt Move in ourier (k-grid) format
-         fourierMove<<<nBlocks, nThreads>>>(wKGrid_[i].cDField(), randomFieldR_.cDField(), randomFieldK_.cDField(), meshSize);
+         fourierMove<<<nBlocks, nThreads>>>(wKGrid_[i].cField(), randomFieldR_.cField(), randomFieldK_.cField(), meshSize);
       }
       
       // Convert Fourier (k-grid) format back to Real grid format

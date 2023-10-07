@@ -9,8 +9,8 @@
 */
 
 
-#include <pspg/field/RDField.h>
-#include <pspg/field/DField.h>  
+#include <pspg/field/RField.h>
+#include <pspg/field/Field.h>  
 #include <util/containers/DArray.h>
 
 namespace Pscf {
@@ -45,7 +45,7 @@ namespace Pspg
       /**
       * Chemical potential fields, r-grid format, indexed by monomer.
       */
-      DArray< RDField<D> > w;
+      DArray< RField<D> > w;
 
       /**
       * Chemical potential fields, r-grid format, indexed by eigenvector.
@@ -54,7 +54,7 @@ namespace Pspg
       * eigenvector of the projected chi matrix, with indices that
       * correspond to eigenvector indices.
       */
-      DArray< RDField<D> > wc;
+      DArray< RField<D> > wc;
 
       /// Monte-Carlo Hamiltonian value.
       double mcHamiltonian;

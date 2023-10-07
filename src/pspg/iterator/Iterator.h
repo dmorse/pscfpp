@@ -9,7 +9,7 @@
 */
 
 #include <util/param/ParamComposite.h>    // base class
-#include <pspg/field/DField.h>
+#include <pspg/field/Field.h>
 #include <util/global.h>                  
 
 namespace Pscf {
@@ -21,7 +21,7 @@ namespace Pspg
 
    using namespace Util;
 
-   typedef DField<cudaReal> FieldCUDA;
+   typedef Field<cudaReal> FieldCUDA;
 
    /**
    * Base class for iterative solvers for SCF equations.

@@ -57,9 +57,9 @@ namespace Pspg
       UTIL_CHECK(!isSetup_);
 
       // Create local r-grid and k-grid field objects
-      RDField<D> rField;
+      RField<D> rField;
       rField.allocate(meshDimensions);
-      RDFieldDft<D> kField;
+      RFieldDft<D> kField;
       kField.allocate(meshDimensions);
 
       setup(rField, kField);
@@ -69,7 +69,7 @@ namespace Pspg
    * Check and (if necessary) setup mesh dimensions.
    */
    template <int D>
-   void FFT<D>::setup(RDField<D>& rField, RDFieldDft<D>& kField)
+   void FFT<D>::setup(RField<D>& rField, RFieldDft<D>& kField)
    {
       // Preconditions
       UTIL_CHECK(!isSetup_);
@@ -127,7 +127,7 @@ namespace Pspg
    * Execute forward transform.
    */
    template <int D>
-   void FFT<D>::forwardTransform(RDField<D> & rField, RDFieldDft<D>& kField)
+   void FFT<D>::forwardTransform(RField<D> & rField, RFieldDft<D>& kField)
    const
    {
       // GPU resources
@@ -141,16 +141,16 @@ namespace Pspg
 
       // Rescale outputted data. 
       cudaReal scale = 1.0/cudaReal(rSize_);
-      scaleRealData<<<nBlocks, nThreads>>>(rField.cDField(), scale, rSize_);
+      scaleRealData<<<nBlocks, nThreads>>>(rField.cField(), scale, rSize_);
       
       //perform fft
       #ifdef SINGLE_PRECISION
-      if(cufftExecR2C(fPlan_, rField.cDField(), kField.cDField()) != CUFFT_SUCCESS) {
+      if(cufftExecR2C(fPlan_, rField.cField(), kField.cField()) != CUFFT_SUCCESS) {
          std::cout << "CUFFT error: forward" << std::endl;
          return;
       }
       #else
-      if(cufftExecD2Z(fPlan_, rField.cDField(), kField.cDField()) != CUFFT_SUCCESS) {
+      if(cufftExecD2Z(fPlan_, rField.cField(), kField.cField()) != CUFFT_SUCCESS) {
          std::cout << "CUFFT error: forward" << std::endl;
          return;
       }
@@ -162,7 +162,7 @@ namespace Pspg
    * Execute forward transform without destroying input.
    */
    template <int D>
-   void FFT<D>::forwardTransformSafe(RDField<D> const & rField, RDFieldDft<D>& kField)
+   void FFT<D>::forwardTransformSafe(RField<D> const & rField, RFieldDft<D>& kField)
    const
    {
       UTIL_CHECK(rFieldCopy_.capacity() == rField.capacity());
@@ -175,7 +175,7 @@ namespace Pspg
    * Execute inverse (complex-to-real) transform.
    */
    template <int D>
-   void FFT<D>::inverseTransform(RDFieldDft<D> & kField, RDField<D>& rField) 
+   void FFT<D>::inverseTransform(RFieldDft<D> & kField, RField<D>& rField) 
    const
    {
       UTIL_CHECK(isSetup_);
@@ -185,12 +185,12 @@ namespace Pspg
       UTIL_CHECK(kField.meshDimensions() == meshDimensions_);
 
       #ifdef SINGLE_PRECISION
-      if(cufftExecC2R(iPlan_, kField.cDField(), rField.cDField()) != CUFFT_SUCCESS) {
+      if(cufftExecC2R(iPlan_, kField.cField(), rField.cField()) != CUFFT_SUCCESS) {
          std::cout << "CUFFT error: inverse" << std::endl;
          return;
       }
       #else
-      if(cufftExecZ2D(iPlan_, kField.cDField(), rField.cDField()) != CUFFT_SUCCESS) {
+      if(cufftExecZ2D(iPlan_, kField.cField(), rField.cField()) != CUFFT_SUCCESS) {
          std::cout << "CUFFT error: inverse" << std::endl;
          return;
       }
@@ -202,7 +202,7 @@ namespace Pspg
    * Execute inverse (complex-to-real) transform without destroying input.
    */
    template <int D>
-   void FFT<D>::inverseTransformSafe(RDFieldDft<D> const & kField, RDField<D>& rField) 
+   void FFT<D>::inverseTransformSafe(RFieldDft<D> const & kField, RField<D>& rField) 
    const
    {
       UTIL_CHECK(kFieldCopy_.capacity()==kField.capacity());

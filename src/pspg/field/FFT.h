@@ -8,8 +8,8 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pspg/field/RDField.h>
-#include <pspg/field/RDFieldDft.h>
+#include <pspg/field/RField.h>
+#include <pspg/field/RFieldDft.h>
 #include <pspg/math/GpuResources.h>
 #include <pscf/math/IntVec.h>
 #include <util/global.h>
@@ -55,10 +55,10 @@ namespace Pspg {
       /**
       * Check and setup grid dimensions if necessary.
       *
-      * \param rDField  real data on r-space grid (device mem)
-      * \param kDField  complex data on k-space grid (device mem)
+      * \param rField  real data on r-space grid (device mem)
+      * \param kField  complex data on k-space grid (device mem)
       */
-      void setup(RDField<D>& rDField, RDFieldDft<D>& kDField);
+      void setup(RField<D>& rField, RFieldDft<D>& kField);
 
       /**
       * Compute forward (real-to-complex) discrete Fourier transform.
@@ -66,7 +66,7 @@ namespace Pspg {
       * \param rField  real values on r-space grid (input, gpu mem)
       * \param kField  complex values on k-space grid (output, gpu mem)
       */
-      void forwardTransform(RDField<D> & rField, RDFieldDft<D>& kField) 
+      void forwardTransform(RField<D> & rField, RFieldDft<D>& kField) 
       const;
 
       /**
@@ -75,8 +75,8 @@ namespace Pspg {
       * \param rField  real values on r-space grid (input, gpu mem)
       * \param kField  complex values on k-space grid (output, gpu mem)
       */
-      void forwardTransformSafe(RDField<D> const & rField, 
-                                RDFieldDft<D>& kField) const;
+      void forwardTransformSafe(RField<D> const & rField, 
+                                RFieldDft<D>& kField) const;
 
       /**
       * Compute inverse (complex-to-real) discrete Fourier transform.
@@ -84,7 +84,7 @@ namespace Pspg {
       * \param kField  complex values on k-space grid (input, gpu mem)
       * \param rField  real values on r-space grid (output, gpu mem)
       */
-      void inverseTransform(RDFieldDft<D> & kField, RDField<D>& rField) 
+      void inverseTransform(RFieldDft<D> & kField, RField<D>& rField) 
       const;
 
       /**
@@ -93,8 +93,8 @@ namespace Pspg {
       * \param kField  complex values on k-space grid (input, gpu mem)
       * \param rField  real values on r-space grid (output, gpu mem)
       */
-      void inverseTransformSafe(RDFieldDft<D> const & kField, 
-                                RDField<D>& rField) const;
+      void inverseTransformSafe(RFieldDft<D> const & kField, 
+                                RField<D>& rField) const;
 
       /**
       * Return the dimensions of the grid for which this was allocated.
@@ -122,10 +122,10 @@ namespace Pspg {
       IntVec<D> meshDimensions_;
 
       // Private r-space array for performing safe transforms.
-      mutable RDField<D> rFieldCopy_;
+      mutable RField<D> rFieldCopy_;
 
       // Private k-space array for performing safe transforms.
-      mutable RDFieldDft<D> kFieldCopy_;
+      mutable RFieldDft<D> kFieldCopy_;
 
       // Number of points in r-space grid
       int rSize_;
@@ -145,20 +145,20 @@ namespace Pspg {
       /**
       * Make FFTW plans for transform and inverse transform.
       */
-      void makePlans(RDField<D>& rDField, RDFieldDft<D>& kDField);
+      void makePlans(RField<D>& rField, RFieldDft<D>& kField);
 
    };
 
    // Declarations of explicit specializations
 
    template <>
-   void FFT<1>::makePlans(RDField<1>& rField, RDFieldDft<1>& kField);
+   void FFT<1>::makePlans(RField<1>& rField, RFieldDft<1>& kField);
 
    template <>
-   void FFT<2>::makePlans(RDField<2>& rField, RDFieldDft<2>& kField);
+   void FFT<2>::makePlans(RField<2>& rField, RFieldDft<2>& kField);
 
    template <>
-   void FFT<3>::makePlans(RDField<3>& rField, RDFieldDft<3>& kField);
+   void FFT<3>::makePlans(RField<3>& rField, RFieldDft<3>& kField);
 
    /*
    * Return the dimensions of the grid for which this was allocated.

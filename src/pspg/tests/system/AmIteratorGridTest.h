@@ -5,7 +5,7 @@
 #include <test/UnitTestRunner.h>
 
 #include <pspg/System.h>
-#include <pspg/field/RDField.h>
+#include <pspg/field/RField.h>
 #include <pspg/math/GpuResources.h>
 #include <prdc/crystal/BFieldComparison.h>
 #include <util/tests/LogFileUnitTest.h>
@@ -62,11 +62,11 @@ public:
 
       #if 0 
       // Get reference field in r-grid format
-      DArray< RDField<1> > r_wFields_check;
+      DArray< RField<1> > r_wFields_check;
       copyFieldsRGrid(r_wFields_check, system.w().rgrid());
 
       // Compare result to original in rgrid format
-      DArray< RDField<1> > r_wFields;
+      DArray< RField<1> > r_wFields;
       copyFieldsBasis(b_wFields, system.w().basis());
       BFieldComparison comparison(1);
       comparison.compare(b_wFields_check, b_wFields);
@@ -508,8 +508,8 @@ public:
 
    #if 0
    template <int D>
-   void copyFieldsRGrid(DArray< RDField<D> > & out, 
-                        DArray< RDField<D> > const & in)
+   void copyFieldsRGrid(DArray< RField<D> > & out, 
+                        DArray< RField<D> > const & in)
    {
       UTIL_CHECK(in.isAllocated());
       int nField = in.capacity();

@@ -9,8 +9,8 @@
 */
 
 #include <pspg/field/FFT.h>                 // member
-#include <pspg/field/RDField.h>             // function parameter
-#include <pspg/field/RDFieldDft.h>          // function parameter
+#include <pspg/field/RField.h>             // function parameter
+#include <pspg/field/RFieldDft.h>          // function parameter
 
 #include <prdc/crystal/Basis.h>             // member
 #include <prdc/crystal/SpaceGroup.h>        // member
@@ -144,7 +144,7 @@ namespace Pspg {
       * \param unitCell  crystallographic unit cell (output)
       */
       void readFieldsRGrid(std::istream& in, 
-                           DArray< RDField<D> >& fields,
+                           DArray< RField<D> >& fields,
                            UnitCell<D>& unitCell) const;
 
       /**
@@ -162,21 +162,21 @@ namespace Pspg {
       * \param unitCell  crystallographic unit cell (output)
       */
       void readFieldsRGrid(std::string filename, 
-                           DArray< RDField<D> >& fields,
+                           DArray< RField<D> >& fields,
                            UnitCell<D>& unitCell) const;
       
       /**
       * Read single frame (field on an r-space grid) from ftmc trajectory file.
       *
       * This function opens an input trajectory file with the specified 
-      * filename, reads a field frame in RDField<D> real-space grid format
+      * filename, reads a field frame in RField<D> real-space grid format
       *
       * \param in  input stream for trajector file
       * \param fields  array of RField fields (r-space grid)
       * \param nMonomer number of monomer types
       */
       void readFieldsRGridData(std::istream& in, 
-                               DArray< RDField<D> >& fields,
+                               DArray< RField<D> >& fields,
                                int nMonomer) const;
 
       /**
@@ -188,7 +188,7 @@ namespace Pspg {
       * \param writeHeader flag to write header part of file iff true
       */
       void writeFieldsRGrid(std::ostream& out, 
-                            DArray< RDField<D> > const& fields,
+                            DArray< RField<D> > const& fields,
                             UnitCell<D> const & unitCell, 
                             bool writeHeader = true) const;
 
@@ -204,7 +204,7 @@ namespace Pspg {
       * \param unitCell  crystallographic unit cell 
       */
       void writeFieldsRGrid(std::string filename,
-                            DArray< RDField<D> > const& fields,
+                            DArray< RField<D> > const& fields,
                             UnitCell<D> const & unitCell) const;
 
 
@@ -215,7 +215,7 @@ namespace Pspg {
       * \param field   RField field (r-space grid)
       * \param unitCell  crystallographic unit cell 
       */
-      void readFieldRGrid(std::istream& in, RDField<D> &field,
+      void readFieldRGrid(std::istream& in, RField<D> &field,
                           UnitCell<D>& unitCell) const;
 
       /**
@@ -225,7 +225,7 @@ namespace Pspg {
       * \param field   RField field (r-space grid)
       * \param unitCell  crystallographic unit cell 
       */
-      void readFieldRGrid(std::string filename, RDField<D> &field,
+      void readFieldRGrid(std::string filename, RField<D> &field,
                           UnitCell<D>& unitCell) const;
                           
       /**
@@ -237,7 +237,7 @@ namespace Pspg {
       * \param writeHeader  should a file header be written?
       */
       void writeFieldRGrid(std::ostream& out, 
-                           RDField<D> const & field,
+                           RField<D> const & field,
                            UnitCell<D> const & unitCell,
                            bool writeHeader = true) const;
 
@@ -248,26 +248,26 @@ namespace Pspg {
       * \param field   RField field (r-space grid)
       * \param unitCell  crystallographic unit cell 
       */
-      void writeFieldRGrid(std::string filename, RDField<D> const & field,
+      void writeFieldRGrid(std::string filename, RField<D> const & field,
                            UnitCell<D> const & unitCell) const;
 
       /**
-      * Read array of RDFieldDft objects (k-space fields) from file.
+      * Read array of RFieldDft objects (k-space fields) from file.
       *
       * The capacity of the array is equal to nMonomer, and element
       * fields[i] is the discrete Fourier transform of the field for 
       * monomer type i.
       * 
       * \param in  input stream (i.e., input file)
-      * \param fields  array of RDFieldDft fields (k-space grid)
+      * \param fields  array of RFieldDft fields (k-space grid)
       * \param unitCell  crystallographic unit cell (output)
       */
       void readFieldsKGrid(std::istream& in, 
-                           DArray< RDFieldDft<D> >& fields,
+                           DArray< RFieldDft<D> >& fields,
                            UnitCell<D>& unitCell) const;
 
       /**
-      * Read array of RDFieldDft objects (k-space fields) from file.
+      * Read array of RFieldDft objects (k-space fields) from file.
       *
       * This function opens a file with name filename, reads discrete
       * Fourier components (Dft) of fields from that file, and closes 
@@ -278,41 +278,41 @@ namespace Pspg {
       * monomer type i.
       * 
       * \param filename  name of input file
-      * \param fields  array of RDFieldDft fields (k-space grid)
+      * \param fields  array of RFieldDft fields (k-space grid)
       * \param unitCell  crystallographic unit cell (output)
       */
       void readFieldsKGrid(std::string filename, 
-                           DArray< RDFieldDft<D> >& fields,
+                           DArray< RFieldDft<D> >& fields,
                            UnitCell<D>& unitCell) const;
 
       /**
-      * Write array of RDFieldDft objects (k-space fields) to file.
+      * Write array of RFieldDft objects (k-space fields) to file.
       *
       * The capacity of the array fields is equal to nMonomer. Element
       * fields[i] is the discrete Fourier transform of the field for 
       * monomer type i.
       * 
       * \param out output stream (i.e., output file)
-      * \param fields array of RDFieldDft fields 
+      * \param fields array of RFieldDft fields 
       * \param unitCell  crystallographic unit cell 
       */
       void writeFieldsKGrid(std::ostream& out, 
-                            DArray< RDFieldDft<D> > const& fields,
+                            DArray< RFieldDft<D> > const& fields,
                             UnitCell<D> const & unitCell) const;
    
       /**
-      * Write array of RDFieldDft objects (k-space fields) to a file.
+      * Write array of RFieldDft objects (k-space fields) to a file.
       *
       * This function opens a file with name filename, writes discrete
       * Fourier transform components (DFT) components of fields to that 
       * file, and closes the file. 
       *
       * \param filename  name of output file.
-      * \param fields  array of RDFieldDft fields (k-space grid)
+      * \param fields  array of RFieldDft fields (k-space grid)
       * \param unitCell  crystallographic unit cell 
       */
       void writeFieldsKGrid(std::string filename, 
-                           DArray< RDFieldDft<D> > const& fields,
+                           DArray< RFieldDft<D> > const& fields,
                            UnitCell<D> const & unitCell) const;
 
       /**
@@ -347,7 +347,7 @@ namespace Pspg {
       * \param dft discrete Fourier transform of a real field
       */
       void convertBasisToKGrid(DArray<double> const& components, 
-                               RDFieldDft<D>& dft) const;
+                               RFieldDft<D>& dft) const;
    
       /**
       * Convert fields from symmetrized basis to Fourier transform (kgrid).
@@ -359,7 +359,7 @@ namespace Pspg {
       * \param out fields defined as discrete Fourier transforms (k-grid)
       */
       void convertBasisToKGrid(DArray< DArray<double> > const & in,
-                               DArray< RDFieldDft<D> >& out) const;
+                               DArray< RFieldDft<D> >& out) const;
 
       /**
       * Convert field from Fourier transform (k-grid) to symmetrized basis.
@@ -367,7 +367,7 @@ namespace Pspg {
       * \param dft complex DFT (k-grid) representation of a field.
       * \param components coefficients of symmetry-adapted basis functions.
       */
-      void convertKGridToBasis(RDFieldDft<D> const& dft, 
+      void convertKGridToBasis(RFieldDft<D> const& dft, 
                                DArray<double>& components) const;
 
       /**
@@ -379,7 +379,7 @@ namespace Pspg {
       * \param in  fields defined as discrete Fourier transforms (k-grid)
       * \param out  components of fields in symmetry adapted basis 
       */
-      void convertKGridToBasis(DArray< RDFieldDft<D> > const & in,
+      void convertKGridToBasis(DArray< RFieldDft<D> > const & in,
                                DArray< DArray<double> > & out) const;
 
       /**
@@ -389,7 +389,7 @@ namespace Pspg {
       * \param out fields defined on real-space grid
       */
       void convertBasisToRGrid(DArray< DArray<double> > const & in,
-                               DArray< RDField<D> >& out) const;
+                               DArray< RField<D> >& out) const;
 
       /**
       * Convert fields from spatial grid (rgrid) to symmetrized basis.
@@ -397,7 +397,7 @@ namespace Pspg {
       * \param in  fields defined on real-space grid
       * \param out  fields in symmetry adapted basis form
       */
-      void convertRGridToBasis(DArray< RDField<D> > const & in,
+      void convertRGridToBasis(DArray< RField<D> > const & in,
                                DArray< DArray<double> > & out) const;
 
       /**
@@ -406,8 +406,8 @@ namespace Pspg {
       * \param in  fields in discrete Fourier format (k-grid)
       * \param out  fields defined on real-space grid (r-grid)
       */
-      void convertKGridToRGrid(DArray< RDFieldDft<D> > const & in,
-                               DArray< RDField<D> > & out) const;
+      void convertKGridToRGrid(DArray< RFieldDft<D> > const & in,
+                               DArray< RField<D> > & out) const;
 
       /**
       * Convert fields from spatial grid (rgrid) to k-grid format.
@@ -415,15 +415,15 @@ namespace Pspg {
       * \param in  fields defined on real-space grid (r-grid)
       * \param out  fields in discrete Fourier format (k-grid)
       */
-      void convertRGridToKGrid(DArray< RDField<D> > const & in,
-                              DArray< RDFieldDft<D> > & out) const;
+      void convertRGridToKGrid(DArray< RField<D> > const & in,
+                              DArray< RFieldDft<D> > & out) const;
 
       //@}
 
    private:
 
       // DFT work array for two-step conversion basis <-> kgrid <-> rgrid.
-      mutable RDFieldDft<D> workDft_;
+      mutable RFieldDft<D> workDft_;
 
       // Pointers to associated objects.
 

@@ -16,7 +16,7 @@
 #include <pspg/sweep/SweepFactory.h>
 #include <pspg/iterator/Iterator.h>
 #include <pspg/iterator/IteratorFactory.h>
-#include <pspg/field/RDField.h>
+#include <pspg/field/RField.h>
 #include <pspg/math/GpuResources.h>
 
 #include <pscf/inter/Interaction.h>
@@ -605,7 +605,7 @@ namespace Pspg
    * Set new w-field values, using r-grid fields as inputs.
    */
    template <int D>
-   void System<D>::setWRGrid(DArray< RDField<D> > const & fields)
+   void System<D>::setWRGrid(DArray< RField<D> > const & fields)
    {
       w_.setRGrid(fields);
       hasCFields_ = false;
@@ -616,7 +616,7 @@ namespace Pspg
    * Set new w-field values, using unfoldeded array of r-grid fields.
    */
    template <int D>
-   void System<D>::setWRGrid(DField<cudaReal> & fields)
+   void System<D>::setWRGrid(Field<cudaReal> & fields)
    {
       w_.setRGrid(fields);
       hasCFields_ = false;
@@ -868,9 +868,9 @@ namespace Pspg
       double temp = 0.0;
       for (int i = 0; i < nm; i++) {
          pointWiseBinaryMultiply<<<nBlocks,nThreads>>>
-             (w_.rgrid(i).cDField(), c_.rgrid()[i].cDField(),
-              workArray_.cDField(), nx);
-         temp += gpuSum(workArray_.cDField(),nx) / double(nx);
+             (w_.rgrid(i).cField(), c_.rgrid()[i].cField(),
+              workArray_.cField(), nx);
+         temp += gpuSum(workArray_.cField(),nx) / double(nx);
       }
       fHelmholtz_ -= temp;
       fIdeal_ = fHelmholtz_;
@@ -879,12 +879,12 @@ namespace Pspg
       for (int i = 0; i < nm; ++i) {
          for (int j = i + 1; j < nm; ++j) {
            assignUniformReal<<<nBlocks, nThreads>>>
-               (workArray_.cDField(), interaction().chi(i, j), nx);
+               (workArray_.cField(), interaction().chi(i, j), nx);
            inPlacePointwiseMul<<<nBlocks, nThreads>>>
-               (workArray_.cDField(), c_.rgrid()[i].cDField(), nx);
+               (workArray_.cField(), c_.rgrid()[i].cField(), nx);
            inPlacePointwiseMul<<<nBlocks, nThreads>>>
-               (workArray_.cDField(), c_.rgrid()[j].cDField(), nx);
-           fHelmholtz_ += gpuSum(workArray_.cDField(), nx) / double(nx);
+               (workArray_.cField(), c_.rgrid()[j].cField(), nx);
+           fHelmholtz_ += gpuSum(workArray_.cField(), nx) / double(nx);
          }
       }
       fInter_ = fHelmholtz_ - fIdeal_;
@@ -1083,7 +1083,7 @@ namespace Pspg
       UTIL_CHECK(hasCFields_);
 
       // Create and allocate the DArray of fields to be written
-      DArray< RDField<D> > blockCFields;
+      DArray< RField<D> > blockCFields;
       blockCFields.allocate(mixture_.nSolvent() + mixture_.nBlock());
       int n = blockCFields.capacity();
       for (int i = 0; i < n; i++) {
@@ -1113,9 +1113,9 @@ namespace Pspg
       UTIL_CHECK(directionId <= 1);
       Propagator<D> const& 
           propagator = polymer.propagator(blockId, directionId);
-      RDField<D> field;
+      RField<D> field;
       field.allocate(mesh().size());
-      cudaMemcpy(field.cDField(), propagator.q(segmentId),
+      cudaMemcpy(field.cField(), propagator.q(segmentId),
                mesh().size() * sizeof(cudaReal), cudaMemcpyDeviceToDevice);
       fieldIo().writeFieldRGrid(filename, field, unitCell());
    }
@@ -1137,9 +1137,9 @@ namespace Pspg
       UTIL_CHECK(directionId <= 1);
       Propagator<D> const& 
           propagator = polymer.propagator(blockId, directionId);
-      RDField<D> field;
+      RField<D> field;
       field.allocate(mesh().size());
-      cudaMemcpy(field.cDField(), propagator.tail(),
+      cudaMemcpy(field.cField(), propagator.tail(),
                  mesh().size()*sizeof(cudaReal), 
                  cudaMemcpyDeviceToDevice);
       fieldIo().writeFieldRGrid(filename, field, unitCell());
@@ -1176,12 +1176,12 @@ namespace Pspg
            << "          " << ns << std::endl;
 
       // Write data
-      RDField<D> field;
+      RField<D> field;
       field.allocate(mesh().size());
       bool hasHeader = false;
       for (int i = 0; i < ns; ++i) {
           file << "slice " << i << std::endl;
-          cudaMemcpy(field.cDField(), propagator.q(i),
+          cudaMemcpy(field.cField(), propagator.q(i),
                      mesh().size() * sizeof(cudaReal), 
                      cudaMemcpyDeviceToDevice);
           fieldIo().writeFieldRGrid(file, field, unitCell(), hasHeader);

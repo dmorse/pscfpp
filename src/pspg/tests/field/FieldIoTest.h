@@ -8,8 +8,8 @@
 #include <pspg/field/KFieldComparison.h>
 #include <pspg/field/Domain.h>
 #include <pspg/field/FieldIo.h>
-#include <pspg/field/RDField.h>
-#include <pspg/field/RDFieldDft.h>
+#include <pspg/field/RField.h>
+#include <pspg/field/RFieldDft.h>
 #include <pspg/field/FFT.h>
 
 #include <prdc/crystal/BFieldComparison.h>
@@ -83,7 +83,7 @@ public:
    // Allocate an array of r-grid fields
    template <int D>
    void allocateFields(int nMonomer, IntVec<D> dimensions,
-                       DArray< RDField<D> >& fields)
+                       DArray< RField<D> >& fields)
    {
       fields.allocate(nMonomer);
       for (int i = 0; i < nMonomer; ++i) {   
@@ -94,7 +94,7 @@ public:
    // Allocate an array of k-grid fields
    template <int D>
    void allocateFields(int nMonomer, IntVec<D> dimensions,
-                            DArray< RDFieldDft<D> >& fields)
+                            DArray< RFieldDft<D> >& fields)
    {
       fields.allocate(nMonomer);
       for (int i = 0; i < nMonomer; ++i) {
@@ -114,7 +114,7 @@ public:
 
    template <int D>
    void readFields(std::string filename, Domain<D>& domain,
-                   DArray< RDField<D> >& fields)
+                   DArray< RField<D> >& fields)
    {
       std::ifstream in;
       openInputFile(filename, in);
@@ -124,7 +124,7 @@ public:
 
    template <int D>
    void readFields(std::string filename, Domain<D>& domain,
-                   DArray< RDFieldDft<D> >& fields)
+                   DArray< RFieldDft<D> >& fields)
    {
       std::ifstream in;
       openInputFile(filename, in);
@@ -144,7 +144,7 @@ public:
 
    template <int D>
    void writeFields(std::string filename, Domain<D>& domain,
-                   DArray< RDField<D> > const & fields)
+                   DArray< RField<D> > const & fields)
    {
       std::ofstream out;
       openOutputFile(filename, out);
@@ -154,7 +154,7 @@ public:
 
    template <int D>
    void writeFields(std::string filename, Domain<D>& domain,
-                   DArray< RDFieldDft<D> > const & fields)
+                   DArray< RFieldDft<D> > const & fields)
    {
       std::ofstream out;
       openOutputFile(filename, out);
@@ -189,10 +189,10 @@ public:
       DArray< DArray<double> > fb;
       allocateFields(nMonomer_, domain.basis().nBasis(), fb);
 
-      DArray< RDField<3> >  fr;
+      DArray< RField<3> >  fr;
       allocateFields(nMonomer_, domain.mesh().dimensions(), fr);
 
-      DArray< RDFieldDft<3> > fk;
+      DArray< RFieldDft<3> > fk;
       allocateFields(nMonomer_, domain.mesh().dimensions(), fk);
 
    }
@@ -275,9 +275,9 @@ public:
       domain.setFileMaster(fileMaster_);
       readHeader("in/w_bcc.rf", domain);
 
-      DArray< RDField<3> > d_rf_0;
+      DArray< RField<3> > d_rf_0;
       allocateFields(nMonomer_, domain.mesh().dimensions(), d_rf_0);
-      DArray< RDField<3> > d_rf_1;
+      DArray< RField<3> > d_rf_1;
       allocateFields(nMonomer_, domain.mesh().dimensions(), d_rf_1);
 
       readFields("in/w_bcc.rf", domain, d_rf_0);
@@ -309,7 +309,7 @@ public:
       allocateFields(nMonomer_, nBasis, d_bf_0);
       DArray< DArray<double> > d_bf_1;
       allocateFields(nMonomer_, nBasis, d_bf_1);
-      DArray< RDFieldDft<3> > d_kf_0;
+      DArray< RFieldDft<3> > d_kf_0;
       allocateFields(nMonomer_, domain.mesh().dimensions(), d_kf_0);
 
       readFieldsBasis("in/w_bcc.bf", domain, d_bf_0);
@@ -347,7 +347,7 @@ public:
       allocateFields(nMonomer_, nBasis, d_bf_0);
       DArray< DArray<double> > d_bf_1;
       allocateFields(nMonomer_, nBasis, d_bf_1);
-      DArray< RDField<3> > d_rf_0;
+      DArray< RField<3> > d_rf_0;
       allocateFields(nMonomer_, domain.mesh().dimensions(), d_rf_0);
 
       readFieldsBasis("in/w_bcc.bf", domain, d_bf_0);
@@ -385,7 +385,7 @@ public:
       allocateFields(nMonomer_, nBasis, d_bf_0);
       DArray< DArray<double> > d_bf_1;
       allocateFields(nMonomer_, nBasis, d_bf_1);
-      DArray< RDFieldDft<3> > d_kf_0;
+      DArray< RFieldDft<3> > d_kf_0;
       allocateFields(nMonomer_, domain.mesh().dimensions(), d_kf_0);
 
       readFieldsBasis("in/w_altG.bf", domain, d_bf_0);
@@ -423,7 +423,7 @@ public:
       allocateFields(nMonomer_, nBasis, d_bf_0);
       DArray< DArray<double> > d_bf_1;
       allocateFields(nMonomer_, nBasis, d_bf_1);
-      DArray< RDFieldDft<3> > d_kf_0;
+      DArray< RFieldDft<3> > d_kf_0;
       allocateFields(nMonomer_, domain.mesh().dimensions(), d_kf_0);
 
       readFieldsBasis("in/w_c15_1.bf", domain, d_bf_0);
@@ -458,10 +458,10 @@ public:
       DArray< DArray<double> > d_bf_0;
       allocateFields(nMonomer_, domain.basis().nBasis(), d_bf_0);
 
-      DArray< RDFieldDft<3> > d_kf_0;
+      DArray< RFieldDft<3> > d_kf_0;
       allocateFields(nMonomer_, domain.mesh().dimensions(), d_kf_0);
 
-      DArray< RDFieldDft<3> > d_kf_1;
+      DArray< RFieldDft<3> > d_kf_1;
       allocateFields(nMonomer_, domain.mesh().dimensions(), d_kf_1);
 
       readFieldsBasis("in/w_bcc.bf", domain, d_bf_0);
@@ -492,10 +492,10 @@ public:
       DArray< DArray<double> > d_bf_0;
       allocateFields(nMonomer_, domain.basis().nBasis(), d_bf_0);
 
-      DArray< RDFieldDft<3> > d_kf_0;
+      DArray< RFieldDft<3> > d_kf_0;
       allocateFields(nMonomer_, domain.mesh().dimensions(), d_kf_0);
 
-      DArray< RDFieldDft<3> > d_kf_1;
+      DArray< RFieldDft<3> > d_kf_1;
       allocateFields(nMonomer_, domain.mesh().dimensions(), d_kf_1);
 
       readFieldsBasis("in/w_altG.bf", domain, d_bf_0);
@@ -526,10 +526,10 @@ public:
       DArray< DArray<double> > d_bf_0;
       allocateFields(nMonomer_, domain.basis().nBasis(), d_bf_0);
 
-      DArray< RDFieldDft<1> > d_kf_0;
+      DArray< RFieldDft<1> > d_kf_0;
       allocateFields(nMonomer_, domain.mesh().dimensions(), d_kf_0);
 
-      DArray< RDFieldDft<1> > d_kf_1;
+      DArray< RFieldDft<1> > d_kf_1;
       allocateFields(nMonomer_, domain.mesh().dimensions(), d_kf_1);
 
       readFieldsBasis("in/w_lam.bf", domain, d_bf_0);
@@ -563,16 +563,16 @@ public:
       DArray< DArray<double> > d_bf_1;
       allocateFields(nMonomer_, domain.basis().nBasis(), d_bf_1);
 
-      DArray< RDFieldDft<3> > d_kf_0;
+      DArray< RFieldDft<3> > d_kf_0;
       allocateFields(nMonomer_, domain.mesh().dimensions(), d_kf_0);
 
-      DArray< RDFieldDft<3> > d_kf_1;
+      DArray< RFieldDft<3> > d_kf_1;
       allocateFields(nMonomer_, domain.mesh().dimensions(), d_kf_1);
 
-      DArray< RDFieldDft<3> > d_kf_2;
+      DArray< RFieldDft<3> > d_kf_2;
       allocateFields(nMonomer_, domain.mesh().dimensions(), d_kf_2);
 
-      DArray< RDField<3> > d_rf_0;
+      DArray< RField<3> > d_rf_0;
       allocateFields(nMonomer_, domain.mesh().dimensions(), d_rf_0);
 
       readFieldsBasis("in/w_bcc.bf", domain, d_bf_0);
@@ -616,16 +616,16 @@ public:
       DArray< DArray<double> > d_bf_1;
       allocateFields(nMonomer_, domain.basis().nBasis(), d_bf_1);
 
-      DArray< RDFieldDft<3> > d_kf_0;
+      DArray< RFieldDft<3> > d_kf_0;
       allocateFields(nMonomer_, domain.mesh().dimensions(), d_kf_0);
 
-      DArray< RDFieldDft<3> > d_kf_1;
+      DArray< RFieldDft<3> > d_kf_1;
       allocateFields(nMonomer_, domain.mesh().dimensions(), d_kf_1);
 
-      DArray< RDFieldDft<3> > d_kf_2;
+      DArray< RFieldDft<3> > d_kf_2;
       allocateFields(nMonomer_, domain.mesh().dimensions(), d_kf_2);
 
-      DArray< RDField<3> > d_rf_0;
+      DArray< RField<3> > d_rf_0;
       allocateFields(nMonomer_, domain.mesh().dimensions(), d_rf_0);
 
       readFieldsBasis("in/w_c15_1.bf", domain, d_bf_0);

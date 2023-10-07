@@ -125,8 +125,8 @@ namespace Pspg
       * \param cFields array of monomer concentration fields (output)
       */
       void 
-      compute(DArray< RDField<D> > const & wFields, 
-              DArray< RDField<D> > & cFields);
+      compute(DArray< RField<D> > const & wFields, 
+              DArray< RField<D> > & cFields);
 
       /**
       * Get monomer reference volume.
@@ -144,7 +144,7 @@ namespace Pspg
       * 
       * \param blockCFields empty but allocated DArray to store fields
       */
-      void createBlockCRGrid(DArray< RDField<D> >& blockCFields) const;
+      void createBlockCRGrid(DArray< RField<D> >& blockCFields) const;
 
       /**
       * Get derivative of free energy w/ respect to cell parameter.

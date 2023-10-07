@@ -192,7 +192,7 @@ namespace Pspg
    * Set new field values, using r-grid fields as inputs.
    */
    template <int D>
-   void WFieldContainer<D>::setRGrid(DArray< RDField<D> > const & fields,
+   void WFieldContainer<D>::setRGrid(DArray< RField<D> > const & fields,
                                     bool isSymmetric)
    {
       UTIL_CHECK(isAllocatedRGrid_);
@@ -204,8 +204,8 @@ namespace Pspg
       ThreadGrid::setThreadsLogical(meshSize_, nBlocks, nThreads);
       for (int i = 0; i < nMonomer_; ++i) {
          //UTIL_CHECK(fields[i].capacity() == nBasis_)
-         assignReal<<<nBlocks, nThreads>>>(rgrid_[i].cDField(), 
-                                           fields[i].cDField(), 
+         assignReal<<<nBlocks, nThreads>>>(rgrid_[i].cField(), 
+                                           fields[i].cField(), 
                                            meshSize_);
          //rgrid_[i] = fields[i];
       }
@@ -222,7 +222,7 @@ namespace Pspg
    * Set new w-field values, using unfoldeded array of r-grid fields.
    */
    template <int D>
-   void WFieldContainer<D>::setRGrid(DField<cudaReal> & fields)
+   void WFieldContainer<D>::setRGrid(Field<cudaReal> & fields)
    {
       UTIL_CHECK(isAllocatedRGrid_);
 
@@ -231,8 +231,8 @@ namespace Pspg
       ThreadGrid::setThreadsLogical(meshSize_, nBlocks, nThreads);
 
       for (int i = 0; i < nMonomer_; i++) {
-         assignReal<<<nBlocks, nThreads>>>(rgrid_[i].cDField(), 
-                                           fields.cDField() + i*meshSize_, 
+         assignReal<<<nBlocks, nThreads>>>(rgrid_[i].cField(), 
+                                           fields.cField() + i*meshSize_, 
                                            meshSize_);
       }
 

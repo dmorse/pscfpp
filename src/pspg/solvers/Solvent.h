@@ -10,7 +10,7 @@
 
 #include <pscf/chem/SolventDescriptor.h>   // base class
 #include <pspg/solvers/Propagator.h>       // typedefs
-#include <pspg/field/RDField.h>
+#include <pspg/field/RField.h>
 
 namespace Pscf {
    template <int D> class Mesh;
@@ -55,12 +55,12 @@ namespace Pspg {
       *
       * \param wField monomer chemical potential field
       */
-      void compute(RDField<D> const & wField );
+      void compute(RField<D> const & wField );
 
       /**
       * Get the monomer concentration field for this solvent.
       */
-      RDField<D> const & concField() const;
+      RField<D> const & concField() const;
   
       // Inherited public accessor functions 
       using Pscf::Species::phi;
@@ -83,7 +83,7 @@ namespace Pspg {
    private:
 
       /// Concentration field for this solvent
-      RDField<D> concField_;
+      RField<D> concField_;
  
       /// Pointer to associated mesh
       Mesh<D> const *  meshPtr_;
@@ -94,7 +94,7 @@ namespace Pspg {
    * Get monomer concentration field for this solvent.
    */
    template <int D>
-   inline RDField<D> const & Solvent<D>::concField() const
+   inline RField<D> const & Solvent<D>::concField() const
    {  return concField_;  }
 
 }

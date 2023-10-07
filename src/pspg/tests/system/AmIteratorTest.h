@@ -5,7 +5,7 @@
 #include <test/UnitTestRunner.h>
 
 #include <pspg/System.h>
-#include <pspg/field/RDField.h>
+#include <pspg/field/RField.h>
 #include <pspg/math/GpuResources.h>
 #include <prdc/crystal/BFieldComparison.h>
 #include <util/tests/LogFileUnitTest.h>
@@ -494,8 +494,8 @@ public:
 
    #if 0
    template <int D>
-   void copyFieldsRGrid(DArray< RDField<D> > & out, 
-                        DArray< RDField<D> > const & in)
+   void copyFieldsRGrid(DArray< RField<D> > & out, 
+                        DArray< RField<D> > const & in)
    {
       UTIL_CHECK(in.isAllocated());
       int nField = in.capacity();

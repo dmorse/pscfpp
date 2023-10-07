@@ -15,8 +15,8 @@
 #include <pspg/field/FieldIo.h>            // member
 #include <pspg/field/WFieldContainer.h>    // member
 #include <pspg/field/CFieldContainer.h>    // member
-#include <pspg/field/RDField.h>            // member
-#include <pspg/field/RDFieldDft.h>         // member
+#include <pspg/field/RField.h>            // member
+#include <pspg/field/RFieldDft.h>         // member
 #include <pspg/simulate/McSimulator.h>     // member
 
 #include <pscf/homogeneous/Mixture.h>      // member
@@ -205,7 +205,7 @@ namespace Pspg
       *
       * \param fields  array of new w (chemical potential) fields
       */
-      void setWRGrid(DArray< RDField<D> > const & fields);
+      void setWRGrid(DArray< RField<D> > const & fields);
 
       /**
       * Set new w fields, in unfolded real-space (r-grid) format.
@@ -219,7 +219,7 @@ namespace Pspg
       *
       * \param fields  unfolded array of new chemical potential fields
       */
-      void setWRGrid(DField<cudaReal> & fields);
+      void setWRGrid(Field<cudaReal> & fields);
 
       /**
       * Symmetrize r-grid w-fields, compute basis components.
@@ -847,14 +847,14 @@ namespace Pspg
       *
       * Indexed by monomer typeId, size = nMonomer.
       */
-      mutable DArray< RDField<D> > tmpFieldsRGrid_;
+      mutable DArray< RField<D> > tmpFieldsRGrid_;
 
       /**
       * Work array of fields on Fourier grid (k-grid).
       *
       * Indexed by monomer typeId, size = nMonomer.
       */
-      mutable DArray<RDFieldDft<D> > tmpFieldsKGrid_;
+      mutable DArray<RFieldDft<D> > tmpFieldsKGrid_;
 
       /**
       * Work array (size = # of grid points).
@@ -924,7 +924,7 @@ namespace Pspg
       /**
       * Work array for r-grid field.
       */
-      RDField<D> workArray_;
+      RField<D> workArray_;
 
       // Private member functions
       

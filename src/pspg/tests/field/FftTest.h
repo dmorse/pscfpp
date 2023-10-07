@@ -5,8 +5,8 @@
 #include <test/UnitTestRunner.h>
 
 #include <pspg/field/FFT.h>
-#include <pspg/field/RDField.h>
-#include <pspg/field/RDFieldDft.h>
+#include <pspg/field/RField.h>
+#include <pspg/field/RFieldDft.h>
 //#include <pspg/field/RFieldComparison.h>
 
 #include <util/math/Constants.h>
@@ -45,8 +45,8 @@ void FftTest::testTransform1D() {
    IntVec<1> d;
    d[0] = n;
 
-   RDField<1> d_rField;
-   RDFieldDft<1> d_kField;
+   RField<1> d_rField;
+   RFieldDft<1> d_kField;
    d_rField.allocate(d);
    d_kField.allocate(d);
 
@@ -65,20 +65,20 @@ void FftTest::testTransform1D() {
    }
 
    // Copy data to device
-   cudaMemcpy(d_rField.cDField(), in, 
+   cudaMemcpy(d_rField.cField(), in, 
             n*sizeof(cudaReal), cudaMemcpyHostToDevice);
 
    // Transform forward, r to k
    v.forwardTransform(d_rField, d_kField);
 
    // Inverse transform, k to r
-   RDField<1> d_rField_out;
+   RField<1> d_rField_out;
    d_rField_out.allocate(d);
    v.inverseTransform(d_kField, d_rField_out);
 
    // Copy to host memory
    cudaReal* out = new cudaReal[n];
-   cudaMemcpy(out, d_rField_out.cDField(), 
+   cudaMemcpy(out, d_rField_out.cField(), 
             n*sizeof(cudaReal), cudaMemcpyDeviceToHost);
 
    for (int i = 0; i < n; ++i) {
@@ -95,8 +95,8 @@ void FftTest::testTransform2D() {
    d[0] = n1;
    d[1] = n2;
 
-   RDField<2> d_rField;
-   RDFieldDft<2> d_kField;
+   RField<2> d_rField;
+   RFieldDft<2> d_kField;
    d_rField.allocate(d);
    d_kField.allocate(d);
 
@@ -123,20 +123,20 @@ void FftTest::testTransform2D() {
    }
 
    // Copy data to device
-   cudaMemcpy(d_rField.cDField(), in, 
+   cudaMemcpy(d_rField.cField(), in, 
             n1*n2*sizeof(cudaReal), cudaMemcpyHostToDevice);
 
    // Transform forward, r to k
    v.forwardTransform(d_rField, d_kField);
 
    // Inverse transform, k to r
-   RDField<2> d_rField_out;
+   RField<2> d_rField_out;
    d_rField_out.allocate(d);
    v.inverseTransform(d_kField, d_rField_out);
 
    // Copy to host memory
    cudaReal* out = new cudaReal[n1*n2];
-   cudaMemcpy(out, d_rField_out.cDField(), 
+   cudaMemcpy(out, d_rField_out.cField(), 
             n1*n2*sizeof(cudaReal), cudaMemcpyDeviceToHost);
 
    for (int i = 0; i < n1*n2; ++i) {
@@ -154,8 +154,8 @@ void FftTest::testTransform3D() {
    d[1] = n2;
    d[2] = n3;
 
-   RDField<3> d_rField;
-   RDFieldDft<3> d_kField;
+   RField<3> d_rField;
+   RFieldDft<3> d_kField;
    d_rField.allocate(d);
    d_kField.allocate(d);
 
@@ -178,20 +178,20 @@ void FftTest::testTransform3D() {
    }
 
    // Copy data to device
-   cudaMemcpy(d_rField.cDField(), in, 
+   cudaMemcpy(d_rField.cField(), in, 
             n1*n2*n3*sizeof(cudaReal), cudaMemcpyHostToDevice);
 
    // Transform forward, r to k
    v.forwardTransform(d_rField, d_kField);
 
    // Inverse transform, k to r
-   RDField<3> d_rField_out;
+   RField<3> d_rField_out;
    d_rField_out.allocate(d);
    v.inverseTransform(d_kField, d_rField_out);
 
    // Copy to host memory
    cudaReal* out = new cudaReal[n1*n2*n3];
-   cudaMemcpy(out, d_rField_out.cDField(), 
+   cudaMemcpy(out, d_rField_out.cField(), 
             n1*n2*n3*sizeof(cudaReal), cudaMemcpyDeviceToHost);
 
    for (int i = 0; i < n1*n2*n3; ++i) {

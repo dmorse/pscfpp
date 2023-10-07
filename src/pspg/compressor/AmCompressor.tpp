@@ -10,7 +10,7 @@
 
 #include "AmCompressor.h"
 #include <pspg/System.h>
-#include <pspg/field/RDField.h>
+#include <pspg/field/RField.h>
 #include <util/global.h>
 
 namespace Pscf {
@@ -35,8 +35,8 @@ namespace Pspg{
    void AmCompressor<D>::readParameters(std::istream& in)
    {
       // Call parent class readParameters
-      AmIteratorTmpl<Compressor<D>, DField<cudaReal> >::readParameters(in);
-      AmIteratorTmpl<Compressor<D>, DField<cudaReal> >::readErrorType(in);
+      AmIteratorTmpl<Compressor<D>, Field<cudaReal> >::readParameters(in);
+      AmIteratorTmpl<Compressor<D>, Field<cudaReal> >::readErrorType(in);
    }
    
       
@@ -47,7 +47,7 @@ namespace Pspg{
       const int nMonomer = system().mixture().nMonomer();
       const int meshSize = system().domain().mesh().size();
       // Allocate memory required by AM algorithm if not done earlier.
-      AmIteratorTmpl<Compressor<D>, DField<cudaReal> >::setup(isContinuation);
+      AmIteratorTmpl<Compressor<D>, Field<cudaReal> >::setup(isContinuation);
       
       // Allocate memory required by compressor if not done earlier.
       if (!isAllocated_){
@@ -66,10 +66,10 @@ namespace Pspg{
       int nBlocks, nThreads;
       ThreadGrid::setThreadsLogical(meshSize, nBlocks, nThreads);
       // Pointer to fields on system
-      DArray<RDField<D>> const * currSys = &system().w().rgrid();
+      DArray<RField<D>> const * currSys = &system().w().rgrid();
       for (int i = 0; i < nMonomer; ++i) {
-         assignReal<<<nBlocks,nThreads>>>(w0_[i].cDField(), 
-                                          (*currSys)[i].cDField(), meshSize);
+         assignReal<<<nBlocks,nThreads>>>(w0_[i].cField(), 
+                                          (*currSys)[i].cField(), meshSize);
          
       }
    }
@@ -77,48 +77,48 @@ namespace Pspg{
    template <int D>
    int AmCompressor<D>::compress()
    {
-      int solve = AmIteratorTmpl<Compressor<D>, DField<cudaReal> >::solve();
-      counter_ = AmIteratorTmpl<Compressor<D>, DField<cudaReal>>::totalItr(); 
+      int solve = AmIteratorTmpl<Compressor<D>, Field<cudaReal> >::solve();
+      counter_ = AmIteratorTmpl<Compressor<D>, Field<cudaReal>>::totalItr(); 
       return solve;
    }
 
    // Assign one array to another
    template <int D>
-   void AmCompressor<D>::setEqual(DField<cudaReal>& a, DField<cudaReal> const & b)
+   void AmCompressor<D>::setEqual(Field<cudaReal>& a, Field<cudaReal> const & b)
    {
       // GPU resources
       int nBlocks, nThreads;
       ThreadGrid::setThreadsLogical(a.capacity(), nBlocks, nThreads);
       
       UTIL_CHECK(b.capacity() == a.capacity());
-      assignReal<<<nBlocks, nThreads>>>(a.cDField(), b.cDField(), a.capacity());
+      assignReal<<<nBlocks, nThreads>>>(a.cField(), b.cField(), a.capacity());
    }
 
    // Compute and return inner product of two vectors.
    template <int D>
-   double AmCompressor<D>::dotProduct(DField<cudaReal> const & a, 
-                                      DField<cudaReal> const & b)
+   double AmCompressor<D>::dotProduct(Field<cudaReal> const & a, 
+                                      Field<cudaReal> const & b)
    {
       const int n = a.capacity();
       UTIL_CHECK(b.capacity() == n);
-      double product = (double)gpuInnerProduct(a.cDField(), b.cDField(), n);
+      double product = (double)gpuInnerProduct(a.cField(), b.cField(), n);
       return product;
    }
 
    // Compute and return maximum element of a vector.
    template <int D>
-   double AmCompressor<D>::maxAbs(DField<cudaReal> const & a)
+   double AmCompressor<D>::maxAbs(Field<cudaReal> const & a)
    {
       int n = a.capacity();
-      cudaReal max = gpuMaxAbs(a.cDField(), n);
+      cudaReal max = gpuMaxAbs(a.cField(), n);
       return (double)max;
    }
 
    // Update basis
    template <int D>
    void 
-   AmCompressor<D>::updateBasis(RingBuffer< DField<cudaReal> > & basis,
-                                RingBuffer< DField<cudaReal> > const & hists)
+   AmCompressor<D>::updateBasis(RingBuffer< Field<cudaReal> > & basis,
+                                RingBuffer< Field<cudaReal> > const & hists)
    {
       // Make sure at least two histories are stored
       UTIL_CHECK(hists.size() >= 2);
@@ -130,7 +130,7 @@ namespace Pspg{
       int nBlocks, nThreads;
       ThreadGrid::setThreadsLogical(n, nBlocks, nThreads);
       pointWiseBinarySubtract<<<nBlocks,nThreads>>>
-            (hists[0].cDField(), hists[1].cDField(), newBasis_.cDField(),n);
+            (hists[0].cField(), hists[1].cField(), newBasis_.cField(),n);
 
       basis.append(newBasis_);
 
@@ -138,8 +138,8 @@ namespace Pspg{
 
    template <int D>
    void
-   AmCompressor<D>::addHistories(DField<cudaReal>& trial,
-                                 RingBuffer<DField<cudaReal> > const & basis,
+   AmCompressor<D>::addHistories(Field<cudaReal>& trial,
+                                 RingBuffer<Field<cudaReal> > const & basis,
                                  DArray<double> coeffs,
                                  int nHist)
    {
@@ -149,13 +149,13 @@ namespace Pspg{
 
       for (int i = 0; i < nHist; i++) {
          pointWiseAddScale<<<nBlocks, nThreads>>>
-            (trial.cDField(), basis[i].cDField(), -1*coeffs[i], trial.capacity());
+            (trial.cField(), basis[i].cField(), -1*coeffs[i], trial.capacity());
       }
    }
 
    template <int D>
-   void AmCompressor<D>::addPredictedError(DField<cudaReal>& fieldTrial,
-                                           DField<cudaReal> const & resTrial,
+   void AmCompressor<D>::addPredictedError(Field<cudaReal>& fieldTrial,
+                                           Field<cudaReal> const & resTrial,
                                            double lambda)
    {
       // GPU resources
@@ -163,7 +163,7 @@ namespace Pspg{
       ThreadGrid::setThreadsLogical(fieldTrial.capacity(), nBlocks, nThreads);
 
       pointWiseAddScale<<<nBlocks, nThreads>>>
-         (fieldTrial.cDField(), resTrial.cDField(), lambda, fieldTrial.capacity());
+         (fieldTrial.cField(), resTrial.cField(), lambda, fieldTrial.capacity());
    }
 
    // Does the system have an initial field guess?
@@ -178,13 +178,13 @@ namespace Pspg{
 
    // Get the current field from the system
    template <int D>
-   void AmCompressor<D>::getCurrent(DField<cudaReal>& curr)
+   void AmCompressor<D>::getCurrent(Field<cudaReal>& curr)
    {
       // Straighten out fields into  linear arrays
       const int meshSize = system().domain().mesh().size();
    
       // Pointer to fields on system
-      DArray<RDField<D>> const * currSys = &system().w().rgrid();
+      DArray<RField<D>> const * currSys = &system().w().rgrid();
       
       // GPU resources
       int nBlocks, nThreads;
@@ -196,7 +196,7 @@ namespace Pspg{
       * between w and w0_ for the first monomer (any monomer should give the same answer)
       */
       pointWiseBinarySubtract<<<nBlocks,nThreads>>>
-            ((*currSys)[0].cDField(), w0_[0].cDField(), curr.cDField(), meshSize);  
+            ((*currSys)[0].cField(), w0_[0].cField(), curr.cField(), meshSize);  
 
    }
 
@@ -207,7 +207,7 @@ namespace Pspg{
 
    // Compute the residual for the current system state
    template <int D>
-   void AmCompressor<D>::getResidual(DField<cudaReal>& resid)
+   void AmCompressor<D>::getResidual(Field<cudaReal>& resid)
    {
       const int nMonomer = system().mixture().nMonomer();
       const int meshSize = system().domain().mesh().size();
@@ -217,16 +217,16 @@ namespace Pspg{
       ThreadGrid::setThreadsLogical(meshSize, nBlocks, nThreads);
       
       // Initialize residuals to -1
-      assignUniformReal<<<nBlocks, nThreads>>>(resid.cDField(), -1, meshSize);
+      assignUniformReal<<<nBlocks, nThreads>>>(resid.cField(), -1, meshSize);
       for (int i = 0; i < nMonomer; i++) {
          pointWiseAdd<<<nBlocks, nThreads>>>
-            (resid.cDField(), system().c().rgrid(i).cDField(), meshSize);
+            (resid.cField(), system().c().rgrid(i).cField(), meshSize);
       }
    }
 
    // Update the current system field coordinates
    template <int D>
-   void AmCompressor<D>::update(DField<cudaReal>& newGuess)
+   void AmCompressor<D>::update(Field<cudaReal>& newGuess)
    {
       // Convert back to field format
       const int nMonomer = system().mixture().nMonomer();
@@ -239,7 +239,7 @@ namespace Pspg{
       //New field is the w0_ + the newGuess for the Lagrange multiplier field
       for (int i = 0; i < nMonomer; i++){
          pointWiseBinaryAdd<<<nBlocks, nThreads>>>
-            (w0_[i].cDField(), newGuess.cDField(), wFieldTmp_[i].cDField(), meshSize);
+            (w0_[i].cField(), newGuess.cField(), wFieldTmp_[i].cField(), meshSize);
       }
       
       // set system r grid
@@ -256,7 +256,7 @@ namespace Pspg{
       // Output timing results, if requested.
       out << "\n";
       out << "Compressor times contributions:\n";
-      AmIteratorTmpl<Compressor<D>, DField<cudaReal> >::outputTimers(out);
+      AmIteratorTmpl<Compressor<D>, Field<cudaReal> >::outputTimers(out);
    }
    
    

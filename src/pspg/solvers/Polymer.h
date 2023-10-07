@@ -9,7 +9,7 @@
 */
 
 #include "Block.h"
-#include <pspg/field/RDField.h>
+#include <pspg/field/RField.h>
 #include <pscf/solvers/PolymerTmpl.h>
 #include <util/containers/FArray.h> 
 
@@ -100,7 +100,7 @@ namespace Pspg {
       *
       * \param wFields chemical potential fields for all monomers (input)
       */ 
-      void compute(DArray< RDField<D> > const & wFields);
+      void compute(DArray< RField<D> > const & wFields);
 
       /**
       * Compute stress from a polymer chain, needs a pointer to basis

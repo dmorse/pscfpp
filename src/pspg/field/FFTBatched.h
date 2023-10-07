@@ -8,8 +8,8 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pspg/field/RDField.h>
-#include <pspg/field/RDFieldDft.h>
+#include <pspg/field/RField.h>
+#include <pspg/field/RFieldDft.h>
 #include <pscf/math/IntVec.h>
 #include <util/global.h>
 
@@ -51,10 +51,10 @@ namespace Pspg {
       /**
       * Check and setup grid dimensions if necessary.
       *
-      * \param rDField real data on r-space grid (device mem)
-      * \param kDField complex data on k-space grid (device mem)
+      * \param rField real data on r-space grid (device mem)
+      * \param kField complex data on k-space grid (device mem)
       */
-      void setup(RDField<D>& rDField, RDFieldDft<D>& kDField);
+      void setup(RField<D>& rField, RFieldDft<D>& kField);
 
       void setup(const IntVec<D>& rDim,const IntVec<D>& kDim, int batchSize);
       /**
@@ -63,7 +63,7 @@ namespace Pspg {
       * \param in  array of real values on r-space grid (device mem)
       * \param out  array of complex values on k-space grid (device mem)
       */
-      void forwardTransform(RDField<D>& in, RDFieldDft<D>& out);
+      void forwardTransform(RField<D>& in, RFieldDft<D>& out);
 
       void forwardTransform(cudaReal* in, cudaComplex* out, int batchSize);
       /**
@@ -72,7 +72,7 @@ namespace Pspg {
       * \param in  array of complex values on k-space grid (device mem)
       * \param out  array of real values on r-space grid (device mem)
       */
-      void inverseTransform(RDFieldDft<D>& in, RDField<D>& out);
+      void inverseTransform(RFieldDft<D>& in, RField<D>& out);
 
       void inverseTransform(cudaComplex* in, cudaReal* out, int batchSize);
 
@@ -111,8 +111,8 @@ namespace Pspg {
       /**
       * Make FFTW plans for transform and inverse transform.
       */
-      void makePlans(RDField<D>& rDField, RDFieldDft<D>& kDField);
-      void makePlans(const IntVec<D>& rDim, const IntVec<D>& kDField, int batchSize);
+      void makePlans(RField<D>& rField, RFieldDft<D>& kField);
+      void makePlans(const IntVec<D>& rDim, const IntVec<D>& kField, int batchSize);
 
    };
 

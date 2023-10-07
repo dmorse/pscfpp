@@ -10,7 +10,7 @@
 
 
 
-#include <pspg/field/RDField.h>            // member template parameter
+#include <pspg/field/RField.h>            // member template parameter
 #include <prdc/crystal/UnitCell.h>         // function parameter
 #include <pscf/math/IntVec.h>              // function parameter
 #include <util/param/ParamComposite.h>     // base class
@@ -36,7 +36,7 @@ namespace Pspg {
    *    format). This is accessed by the basis() and basis(int) 
    *    member functions.
    *
-   *  - A DArray of RDField<D> containers holds valus of each field on
+   *  - A DArray of RField<D> containers holds valus of each field on
    *    the nodes of a regular grid. This is accessed by the rgrid()
    *    and rgrid(int) member functions.
    *
@@ -146,7 +146,7 @@ namespace Pspg {
       * \param fields  array of new fields in r-grid format
       * \param isSymmetric is this field symmetric under the space group?
       */
-      void setRGrid(DArray< RDField<D> > const & fields, 
+      void setRGrid(DArray< RField<D> > const & fields, 
                     bool isSymmetric = false);
 
       /**
@@ -157,7 +157,7 @@ namespace Pspg {
       *
       * \param fields  unfolded array of new w (chemical potential) fields
       */
-      void setRGrid(DField<cudaReal> & fields);
+      void setRGrid(Field<cudaReal> & fields);
 
       /**
       * Read field component values from input stream, in symmetrized 
@@ -278,14 +278,14 @@ namespace Pspg {
       *
       * The array capacity is equal to the number of monomer types.
       */
-      DArray< RDField<D> > const & rgrid() const;
+      DArray< RField<D> > const & rgrid() const;
 
       /**
       * Get the field for one monomer type in r-space grid format.
       *
       * \param monomerId integer monomer type index (0,..,nMonomer-1)
       */
-      RDField<D> const & rgrid(int monomerId) const;
+      RField<D> const & rgrid(int monomerId) const;
 
       /**
       * Has memory been allocated for fields in r-grid format?
@@ -328,10 +328,10 @@ namespace Pspg {
       /*
       * Array of fields in real-space grid (r-grid) format
       *
-      * Element basis_[i] is an RDField<D> that contains values of the 
+      * Element basis_[i] is an RField<D> that contains values of the 
       * field associated with monomer i on the nodes of a regular mesh.
       */
-      DArray< RDField<D> > rgrid_;
+      DArray< RField<D> > rgrid_;
 
       /*
       * Pointer to associated FieldIo object
@@ -402,14 +402,14 @@ namespace Pspg {
    // Get all fields in r-grid format (const)
    template <int D>
    inline
-   DArray< RDField<D> > const &
+   DArray< RField<D> > const &
    WFieldContainer<D>::rgrid() const
    {  return rgrid_; }
 
    // Get one field in r-grid format (const)
    template <int D>
    inline
-   RDField<D> const & WFieldContainer<D>::rgrid(int id) const
+   RField<D> const & WFieldContainer<D>::rgrid(int id) const
    {  return rgrid_[id]; }
 
    // Has memory been allocated for fields in r-grid format?

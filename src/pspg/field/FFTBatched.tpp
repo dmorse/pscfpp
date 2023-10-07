@@ -70,7 +70,7 @@ static __global__ void scaleRealData(cudaReal* data, cudaReal scale, int size) {
    * Check and (if necessary) setup mesh dimensions.
    */
    template <int D>
-   void FFTBatched<D>::setup(RDField<D>& rField, RDFieldDft<D>& kField)
+   void FFTBatched<D>::setup(RField<D>& rField, RFieldDft<D>& kField)
    {
       // Preconditions
       UTIL_CHECK(!isSetup_);
@@ -138,7 +138,7 @@ static __global__ void scaleRealData(cudaReal* data, cudaReal scale, int size) {
    * Make plans for batch size of 2
    */
    template <int D>
-   void FFTBatched<D>::makePlans(RDField<D>& rField, RDFieldDft<D>& kField)
+   void FFTBatched<D>::makePlans(RField<D>& rField, RFieldDft<D>& kField)
    {
       int n[D];
       int rdist = 1;
@@ -245,7 +245,7 @@ static __global__ void scaleRealData(cudaReal* data, cudaReal scale, int size) {
    * Execute forward transform.
    */
    template <int D>
-   void FFTBatched<D>::forwardTransform(RDField<D>& rField, RDFieldDft<D>& kField)
+   void FFTBatched<D>::forwardTransform(RField<D>& rField, RFieldDft<D>& kField)
    {
       // GPU resources
       int nBlocks, nThreads;
@@ -264,16 +264,16 @@ static __global__ void scaleRealData(cudaReal* data, cudaReal scale, int size) {
       // Copy rescaled input data prior to work array
       cudaReal scale = 1.0/cudaReal(rSize_);
       //scale for every batch
-      scaleRealData<<<nBlocks, nThreads>>>(rField.cDField(), scale, rSize_ * 2);
+      scaleRealData<<<nBlocks, nThreads>>>(rField.cField(), scale, rSize_ * 2);
       
       //perform fft
       #ifdef SINGLE_PRECISION
-      if(cufftExecR2C(fPlan_, rField.cDField(), kField.cDField()) != CUFFT_SUCCESS) {
+      if(cufftExecR2C(fPlan_, rField.cField(), kField.cField()) != CUFFT_SUCCESS) {
          std::cout<<"CUFFT error: forward"<<std::endl;
          return;
       }
       #else
-      if(cufftExecD2Z(fPlan_, rField.cDField(), kField.cDField()) != CUFFT_SUCCESS) {
+      if(cufftExecD2Z(fPlan_, rField.cField(), kField.cField()) != CUFFT_SUCCESS) {
          std::cout<<"CUFFT error: forward"<<std::endl;
          return;
       }
@@ -323,7 +323,7 @@ static __global__ void scaleRealData(cudaReal* data, cudaReal scale, int size) {
    * Execute inverse (complex-to-real) transform.
    */
    template <int D>
-   void FFTBatched<D>::inverseTransform(RDFieldDft<D>& kField, RDField<D>& rField)
+   void FFTBatched<D>::inverseTransform(RFieldDft<D>& kField, RField<D>& rField)
    {
       if (!isSetup_) {
          //UTIL_CHECK(0);
@@ -331,12 +331,12 @@ static __global__ void scaleRealData(cudaReal* data, cudaReal scale, int size) {
       }
 
       #ifdef SINGLE_PRECISION
-      if(cufftExecC2R(iPlan_, kField.cDField(), rField.cDField()) != CUFFT_SUCCESS) {
+      if(cufftExecC2R(iPlan_, kField.cField(), rField.cField()) != CUFFT_SUCCESS) {
          std::cout<<"CUFFT error: inverse"<<std::endl;
          return;
       }
       #else
-      if(cufftExecZ2D(iPlan_, kField.cDField(), rField.cDField()) != CUFFT_SUCCESS) {
+      if(cufftExecZ2D(iPlan_, kField.cField(), rField.cField()) != CUFFT_SUCCESS) {
          std::cout<<"CUFFT error: inverse"<<std::endl;
          return;
       }

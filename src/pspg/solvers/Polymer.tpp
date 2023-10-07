@@ -66,7 +66,7 @@ namespace Pspg {
    * Compute solution to MDE and concentrations.
    */ 
    template <int D>
-   void Polymer<D>::compute(DArray< RDField<D> > const & wFields)
+   void Polymer<D>::compute(DArray< RField<D> > const & wFields)
    {
       // Setup solvers for all blocks
       int monomerId;

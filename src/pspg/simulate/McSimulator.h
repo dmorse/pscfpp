@@ -16,8 +16,8 @@
 #include <util/random/Random.h>          // member
 #include <util/containers/DArray.h>      // member template
 #include <util/containers/DMatrix.h>     // member template
-#include <pspg/field/RDField.h>
-#include <pspg/field/DField.h>  
+#include <pspg/field/RField.h>
+#include <pspg/field/Field.h>  
 
 namespace Pscf {
 namespace Pspg {
@@ -190,7 +190,7 @@ namespace Pspg {
       *
       * \param i index for eigenvector / eigenvalue pair
       */
-      RDField<D> const & wc(int i) const
+      RField<D> const & wc(int i) const
       {   return wc_[i]; }
       
       /**
@@ -289,7 +289,7 @@ namespace Pspg {
       * Each field component corresponds to a point-wise projection of w 
       * onto an eigenvector of the projected chi matrix.
       */
-      DArray< RDField<D> > wc_;
+      DArray< RField<D> > wc_;
 
       /**
       * Projected chi matrix

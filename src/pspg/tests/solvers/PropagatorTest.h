@@ -156,7 +156,7 @@ public:
 
       // Setup chemical potential field
       int nx = mesh.size();
-      RDField<1> d_w;
+      RField<1> d_w;
       d_w.allocate(mesh.dimensions());
       cudaReal* w = new cudaReal[nx];
 
@@ -166,7 +166,7 @@ public:
          w[i] = 1.0;
       }
 
-      cudaMemcpy(d_w.cDField(), w, nx*sizeof(cudaReal), cudaMemcpyHostToDevice);
+      cudaMemcpy(d_w.cField(), w, nx*sizeof(cudaReal), cudaMemcpyHostToDevice);
 
       // Construct wavelist 
       WaveList<1> wavelist;
@@ -200,7 +200,7 @@ public:
 
       // Setup chemical potential field
       int nx = mesh.size();
-      RDField<2> d_w;
+      RField<2> d_w;
       d_w.allocate(mesh.dimensions());
       cudaReal* w = new cudaReal[nx];
 
@@ -210,7 +210,7 @@ public:
          w[i] = 1.0;
       }
 
-      cudaMemcpy(d_w.cDField(), w, nx*sizeof(cudaReal), cudaMemcpyHostToDevice);
+      cudaMemcpy(d_w.cField(), w, nx*sizeof(cudaReal), cudaMemcpyHostToDevice);
 
       // Construct wavelist 
       WaveList<2> wavelist;
@@ -245,7 +245,7 @@ public:
 
       // Setup chemical potential field
       int nx = mesh.size();
-      RDField<3> d_w;
+      RField<3> d_w;
       d_w.allocate(mesh.dimensions());
       cudaReal* w = new cudaReal[nx];
 
@@ -255,7 +255,7 @@ public:
          w[i] = 1.0;
       }
 
-      cudaMemcpy(d_w.cDField(), w, nx*sizeof(cudaReal), cudaMemcpyHostToDevice);
+      cudaMemcpy(d_w.cField(), w, nx*sizeof(cudaReal), cudaMemcpyHostToDevice);
 
       // Construct wavelist 
       WaveList<3> wavelist;
@@ -288,7 +288,7 @@ public:
 
       // Setup chemical potential field
       int nx = mesh.size();
-      RDField<1> d_w;
+      RField<1> d_w;
       d_w.allocate(mesh.dimensions());
       cudaReal* w = new cudaReal[nx];
 
@@ -298,7 +298,7 @@ public:
          w[i] = wc;
       }
 
-      cudaMemcpy(d_w.cDField(), w, nx*sizeof(cudaReal), cudaMemcpyHostToDevice);
+      cudaMemcpy(d_w.cField(), w, nx*sizeof(cudaReal), cudaMemcpyHostToDevice);
 
       // Construct wavelist 
       WaveList<1> wavelist;
@@ -321,10 +321,10 @@ public:
          qin[i] = cos(twoPi*double(i)/double(nx));
       }
 
-      cudaMemcpy(d_qin.cDField(), qin, nx*sizeof(cudaReal), cudaMemcpyHostToDevice);
+      cudaMemcpy(d_qin.cField(), qin, nx*sizeof(cudaReal), cudaMemcpyHostToDevice);
       block.setupFFT();
-      block.step(d_qin.cDField(), d_qout.cDField());
-      cudaMemcpy(qout, d_qout.cDField(), nx*sizeof(cudaReal), cudaMemcpyDeviceToHost);
+      block.step(d_qin.cField(), d_qout.cField());
+      cudaMemcpy(qout, d_qout.cField(), nx*sizeof(cudaReal), cudaMemcpyDeviceToHost);
 
       // Test block step output against expected output
       double a = 4.0;
@@ -379,7 +379,7 @@ public:
 
       // Setup chemical potential field
       int nx = mesh.size();
-      RDField<2> d_w;
+      RField<2> d_w;
       d_w.allocate(mesh.dimensions());
       cudaReal* w = new cudaReal[nx];
 
@@ -389,7 +389,7 @@ public:
          w[i] = wc;
       }
 
-      cudaMemcpy(d_w.cDField(), w, nx*sizeof(cudaReal), cudaMemcpyHostToDevice);
+      cudaMemcpy(d_w.cField(), w, nx*sizeof(cudaReal), cudaMemcpyHostToDevice);
 
       // Construct wavelist 
       WaveList<2> wavelist;
@@ -415,10 +415,10 @@ public:
                          double(iter.position(1))/double(mesh.dimension(1)) ) );
       }
 
-      cudaMemcpy(d_qin.cDField(), qin, nx*sizeof(cudaReal), cudaMemcpyHostToDevice);
+      cudaMemcpy(d_qin.cField(), qin, nx*sizeof(cudaReal), cudaMemcpyHostToDevice);
       block.setupFFT();
-      block.step(d_qin.cDField(), d_qout.cDField());
-      cudaMemcpy(qout, d_qout.cDField(), nx*sizeof(cudaReal), cudaMemcpyDeviceToHost);
+      block.step(d_qin.cField(), d_qout.cField());
+      cudaMemcpy(qout, d_qout.cField(), nx*sizeof(cudaReal), cudaMemcpyDeviceToHost);
 
       // Test block step output against expected output
       double b = block.kuhn();
@@ -481,7 +481,7 @@ public:
 
       // Setup chemical potential field
       int nx = mesh.size();
-      RDField<3> d_w;
+      RField<3> d_w;
       d_w.allocate(mesh.dimensions());
       cudaReal* w = new cudaReal[nx];
 
@@ -491,7 +491,7 @@ public:
          w[i] = wc;
       }
 
-      cudaMemcpy(d_w.cDField(), w, nx*sizeof(cudaReal), cudaMemcpyHostToDevice);
+      cudaMemcpy(d_w.cField(), w, nx*sizeof(cudaReal), cudaMemcpyHostToDevice);
 
       // Construct wavelist 
       WaveList<3> wavelist;
@@ -518,10 +518,10 @@ public:
                          double(iter.position(2))/double(mesh.dimension(2)) ) );
       }
 
-      cudaMemcpy(d_qin.cDField(), qin, nx*sizeof(cudaReal), cudaMemcpyHostToDevice);
+      cudaMemcpy(d_qin.cField(), qin, nx*sizeof(cudaReal), cudaMemcpyHostToDevice);
       block.setupFFT();
-      block.step(d_qin.cDField(), d_qout.cDField());
-      cudaMemcpy(qout, d_qout.cDField(), nx*sizeof(cudaReal), cudaMemcpyDeviceToHost);
+      block.step(d_qin.cField(), d_qout.cField());
+      cudaMemcpy(qout, d_qout.cField(), nx*sizeof(cudaReal), cudaMemcpyDeviceToHost);
 
       // Test block step output against expected output
       double b = block.kuhn();

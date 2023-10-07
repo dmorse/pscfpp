@@ -15,7 +15,7 @@ namespace Pspg {
    // Forward transform, explicit specializations.
    //use local mesh dimensions later
    template<>
-   void FFT<1>::makePlans(RDField<1>& rField, RDFieldDft<1>& kField)
+   void FFT<1>::makePlans(RField<1>& rField, RFieldDft<1>& kField)
    {
 #ifdef SINGLE_PRECISION
       cufftPlan1d(&fPlan_, rField.capacity(), CUFFT_R2C, 1);
@@ -27,7 +27,7 @@ namespace Pspg {
    }
 
    template <>
-   void FFT<2>::makePlans(RDField<2>& rField, RDFieldDft<2>& kField)
+   void FFT<2>::makePlans(RField<2>& rField, RFieldDft<2>& kField)
    {
 #ifdef SINGLE_PRECISION
       cufftPlan2d(&fPlan_, rField.meshDimensions()[0], rField.meshDimensions()[1], CUFFT_R2C);
@@ -40,7 +40,7 @@ namespace Pspg {
    }
 
    template <>
-   void FFT<3>::makePlans(RDField<3>& rField, RDFieldDft<3>& kField)
+   void FFT<3>::makePlans(RField<3>& rField, RFieldDft<3>& kField)
    {
 #ifdef SINGLE_PRECISION
       cufftPlan3d(&fPlan_, rField.meshDimensions()[0], rField.meshDimensions()[1],

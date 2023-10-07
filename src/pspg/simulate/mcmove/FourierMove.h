@@ -9,8 +9,8 @@
 */
 
 #include "McMove.h"                          //base class
-#include <pspg/field/RDField.h>
-#include <pspg/field/RDFieldDft.h> 
+#include <pspg/field/RField.h>
+#include <pspg/field/RFieldDft.h> 
 
 #include <prdc/crystal/shiftToMinimum.h>
 
@@ -91,7 +91,7 @@ namespace Pspg
       *  Attempt unconstrained move.
       *
       *  This function should convert system w fields from r-grid format to
-      *  RDFieldDft format, modify the system w fields in fourier space,
+      *  RFieldDft format, modify the system w fields in fourier space,
       *  and convert back to r-grid format, as returned by system().w().rgrid(),
       *  in order apply an unconstrained attempted move. The compressor will 
       *  then be applied in order to restore the density constraint.
@@ -160,22 +160,22 @@ namespace Pspg
       double rgSquare_;
       
       /// square root of the structure factor
-      RDField<D> sqrtSq_; 
+      RField<D> sqrtSq_; 
       
       /// Random fields in real grid between [-stepSize_, stepSize_]
-      RDField<D> randomFieldR_;
+      RField<D> randomFieldR_;
       
       /// Random fields in fourier space between [-stepSize_, stepSize_]
-      RDField<D> randomFieldK_;
+      RField<D> randomFieldK_;
       
       /// wField in in Real Space
-      DArray< RDField<D> > wRGrid_;
+      DArray< RField<D> > wRGrid_;
       
       /// wField in in Fourier Space
-      DArray< RDFieldDft<D> > wKGrid_;
+      DArray< RFieldDft<D> > wKGrid_;
       
       /// wField after attempt McMove in real space. Local variable wFieldTmp_ 
-      DArray< RDField<D> > wFieldTmp_;
+      DArray< RField<D> > wFieldTmp_;
       
       /// Has the variable been allocated?
       bool isAllocated_;

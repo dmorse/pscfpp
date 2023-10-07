@@ -80,8 +80,8 @@ public:
       mixture.setupUnitCell(unitCell, wavelist);
 
       int nMonomer = mixture.nMonomer();
-      DArray< RDField<1> > d_wFields;
-      DArray< RDField<1> > d_cFields;
+      DArray< RField<1> > d_wFields;
+      DArray< RField<1> > d_cFields;
       d_wFields.allocate(nMonomer);
       d_cFields.allocate(nMonomer);
       int nx = mesh.size();
@@ -99,9 +99,9 @@ public:
          wFields0[i] = 0.5 + cs;
          wFields1[i] = 0.5 - cs;
       }
-      cudaMemcpy(d_wFields[0].cDField(), wFields0, 
+      cudaMemcpy(d_wFields[0].cField(), wFields0, 
                   nx*sizeof(cudaReal), cudaMemcpyHostToDevice);
-      cudaMemcpy(d_wFields[1].cDField(), wFields1, 
+      cudaMemcpy(d_wFields[1].cField(), wFields1, 
                   nx*sizeof(cudaReal), cudaMemcpyHostToDevice);
 
       mixture.compute(d_wFields, d_cFields);
@@ -154,8 +154,8 @@ public:
       mixture.setupUnitCell(unitCell, wavelist);
 
       int nMonomer = mixture.nMonomer();
-      DArray< RDField<2> > d_wFields;
-      DArray< RDField<2> > d_cFields;
+      DArray< RField<2> > d_wFields;
+      DArray< RField<2> > d_cFields;
       d_wFields.allocate(nMonomer);
       d_cFields.allocate(nMonomer);
       int nx = mesh.size();
@@ -184,9 +184,9 @@ public:
          }
       }
 
-      cudaMemcpy(d_wFields[0].cDField(), wFields0, 
+      cudaMemcpy(d_wFields[0].cField(), wFields0, 
                   nx*sizeof(cudaReal), cudaMemcpyHostToDevice);
-      cudaMemcpy(d_wFields[1].cDField(), wFields1, 
+      cudaMemcpy(d_wFields[1].cField(), wFields1, 
                   nx*sizeof(cudaReal), cudaMemcpyHostToDevice);
 
       mixture.compute(d_wFields, d_cFields);
@@ -239,8 +239,8 @@ public:
       mixture.setupUnitCell(unitCell, wavelist);
 
       int nMonomer = mixture.nMonomer();
-      DArray< RDField<2> > d_wFields;
-      DArray< RDField<2> > d_cFields;
+      DArray< RField<2> > d_wFields;
+      DArray< RField<2> > d_cFields;
       d_wFields.allocate(nMonomer);
       d_cFields.allocate(nMonomer);
       int nx = mesh.size();
@@ -269,9 +269,9 @@ public:
          }
       }
 
-      cudaMemcpy(d_wFields[0].cDField(), wFields0, 
+      cudaMemcpy(d_wFields[0].cField(), wFields0, 
                   nx*sizeof(cudaReal), cudaMemcpyHostToDevice);
-      cudaMemcpy(d_wFields[1].cDField(), wFields1, 
+      cudaMemcpy(d_wFields[1].cField(), wFields1, 
                   nx*sizeof(cudaReal), cudaMemcpyHostToDevice);
 
       mixture.compute(d_wFields, d_cFields);
@@ -324,8 +324,8 @@ public:
       mixture.setupUnitCell(unitCell, wavelist);
 
       int nMonomer = mixture.nMonomer();
-      DArray< RDField<3> > d_wFields;
-      DArray< RDField<3> > d_cFields;
+      DArray< RField<3> > d_wFields;
+      DArray< RField<3> > d_cFields;
       d_wFields.allocate(nMonomer);
       d_cFields.allocate(nMonomer);
       int nx = mesh.size();
@@ -344,9 +344,9 @@ public:
          wFields1[i] = 0.5 - cs;
       }
 
-      cudaMemcpy(d_wFields[0].cDField(), wFields0, 
+      cudaMemcpy(d_wFields[0].cField(), wFields0, 
                   nx*sizeof(cudaReal), cudaMemcpyHostToDevice);
-      cudaMemcpy(d_wFields[1].cDField(), wFields1, 
+      cudaMemcpy(d_wFields[1].cField(), wFields1, 
                   nx*sizeof(cudaReal), cudaMemcpyHostToDevice);
 
       mixture.compute(d_wFields, d_cFields);

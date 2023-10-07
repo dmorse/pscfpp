@@ -326,9 +326,9 @@ namespace Pspg {
          expKsq2_host[i] = exp(Gsq*factor / 2);
       }
 
-      cudaMemcpy(expKsq_.cDField(), expKsq_host, 
+      cudaMemcpy(expKsq_.cField(), expKsq_host, 
                  kSize * sizeof(cudaReal), cudaMemcpyHostToDevice);
-      cudaMemcpy(expKsq2_.cDField(), expKsq2_host, 
+      cudaMemcpy(expKsq2_.cField(), expKsq2_host, 
                  kSize * sizeof(cudaReal), cudaMemcpyHostToDevice);
 
       hasExpKsq_ = true;
@@ -339,7 +339,7 @@ namespace Pspg {
    */
    template <int D>
    void
-   Block<D>::setupSolver(RDField<D> const & w)
+   Block<D>::setupSolver(RField<D> const & w)
    {
       // Preconditions
       int nx = mesh().size();
@@ -347,9 +347,9 @@ namespace Pspg {
       UTIL_CHECK(isAllocated_);
 
       // Populate expW_
-      assignExp<<<nBlocks_, nThreads_>>>(expW_.cDField(), w.cDField(), 
+      assignExp<<<nBlocks_, nThreads_>>>(expW_.cField(), w.cField(), 
                                          (double)0.5* ds_, nx);
-      assignExp<<<nBlocks_, nThreads_>>>(expW2_.cDField(), w.cDField(), 
+      assignExp<<<nBlocks_, nThreads_>>>(expW2_.cField(), w.cField(), 
                                          (double)0.25 * ds_, nx);
 
       // Compute expKsq arrays if necessary
@@ -376,28 +376,28 @@ namespace Pspg {
 
       // Initialize cField to zero at all points
       assignUniformReal<<<nBlocks_, nThreads_>>>
-              (cField().cDField(), 0.0, nx);
+              (cField().cField(), 0.0, nx);
 
       Pscf::Pspg::Propagator<D> const & p0 = propagator(0);
       Pscf::Pspg::Propagator<D> const & p1 = propagator(1);
 
       multiplyScaleQQ<<<nBlocks_, nThreads_>>>
-              (cField().cDField(), p0.q(0), p1.q(ns_ - 1), 1.0, nx);
+              (cField().cField(), p0.q(0), p1.q(ns_ - 1), 1.0, nx);
       multiplyScaleQQ<<<nBlocks_, nThreads_>>>
-              (cField().cDField(), p0.q(ns_-1), p1.q(0), 1.0, nx);
+              (cField().cField(), p0.q(ns_-1), p1.q(0), 1.0, nx);
       for (int j = 1; j < ns_ - 1; j += 2) {
          // Odd indices
          multiplyScaleQQ<<<nBlocks_, nThreads_>>>
-                (cField().cDField(), p0.q(j), p1.q(ns_ - 1 - j), 4.0, nx);
+                (cField().cField(), p0.q(j), p1.q(ns_ - 1 - j), 4.0, nx);
       }
       for (int j = 2; j < ns_ - 2; j += 2) {
           // Even indices
           multiplyScaleQQ<<<nBlocks_, nThreads_>>>
-                (cField().cDField(), p0.q(j), p1.q(ns_ - 1 - j), 2.0, nx);
+                (cField().cField(), p0.q(j), p1.q(ns_ - 1 - j), 2.0, nx);
       }
 
       scaleReal<<<nBlocks_, nThreads_>>>
-          (cField().cDField(), (prefactor * ds_/3.0), nx);
+          (cField().cField(), (prefactor * ds_/3.0), nx);
 
    }
 
@@ -432,23 +432,23 @@ namespace Pspg {
       // Apply pseudo-spectral algorithm
 
       pointwiseMulSameStart<<<nBlocks_, nThreads_>>>
-                           (q, expW_.cDField(), expW2_.cDField(), 
-                            qr_.cDField(), qr2_.cDField(), nx);
+                           (q, expW_.cField(), expW2_.cField(), 
+                            qr_.cField(), qr2_.cField(), nx);
       fft_.forwardTransform(qr_, qk_);
       fft_.forwardTransform(qr2_, qk2_);
       scaleComplexTwinned<<<nBlocks_, nThreads_>>>
-                         (qk_.cDField(), qk2_.cDField(), 
-                          expKsq_.cDField(), expKsq2_.cDField(), nk);
+                         (qk_.cField(), qk2_.cField(), 
+                          expKsq_.cField(), expKsq2_.cField(), nk);
       fft_.inverseTransform(qk_, qr_);
       fft_.inverseTransform(qk2_, q2_);
       pointwiseMulTwinned<<<nBlocks_, nThreads_>>>
-                         (qr_.cDField(), q2_.cDField(), expW_.cDField(), 
-                          q1_.cDField(), qr_.cDField(), nx);
+                         (qr_.cField(), q2_.cField(), expW_.cField(), 
+                          q1_.cField(), qr_.cField(), nx);
       fft_.forwardTransform(qr_, qk_);
-      scaleComplex<<<nBlocks_, nThreads_>>>(qk_.cDField(), expKsq2_.cDField(), nk);
+      scaleComplex<<<nBlocks_, nThreads_>>>(qk_.cField(), expKsq2_.cField(), nk);
       fft_.inverseTransform(qk_, qr_);
-      richardsonExpTwinned<<<nBlocks_, nThreads_>>>(qNew, q1_.cDField(),
-                           qr_.cDField(), expW2_.cDField(), nx);
+      richardsonExpTwinned<<<nBlocks_, nThreads_>>>(qNew, q1_.cField(),
+                           qr_.cField(), expW2_.cField(), nx);
       //remove the use of q2
 
 
@@ -486,7 +486,7 @@ namespace Pspg {
 
       fftBatched_.forwardTransform(p0.head(), qkBatched_, ns_);
       fftBatched_.forwardTransform(p1.head(), qk2Batched_, ns_);
-      cudaMemset(qr2_.cDField(), 0, mesh().size() * sizeof(cudaReal));
+      cudaMemset(qr2_.cField(), 0, mesh().size() * sizeof(cudaReal));
 
       for (int j = 0; j < ns_ ; ++j) {
 
@@ -501,12 +501,12 @@ namespace Pspg {
 
          for (int n = 0; n < nParams_ ; ++n) {
             mulDelKsq<<<nBlocks_, nThreads_ >>>
-                (qr2_.cDField(), 
+                (qr2_.cField(), 
                  qkBatched_ + (j*kSize_), 
                  qk2Batched_ + (kSize_ * (ns_ -1 -j)),
                  wavelist.dkSq(), n , kSize_, nx);
 
-            increment = gpuSum(qr2_.cDField(), mesh().size());
+            increment = gpuSum(qr2_.cField(), mesh().size());
             increment = (increment * kuhn() * kuhn() * dels)/normal;
             dQ [n] = dQ[n]-increment;
          }

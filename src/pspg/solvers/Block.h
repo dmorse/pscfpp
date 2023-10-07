@@ -9,8 +9,8 @@
 */
 
 #include "Propagator.h"                   // base class argument
-#include <pspg/field/RDField.h>           // member
-#include <pspg/field/RDFieldDft.h>        // member
+#include <pspg/field/RField.h>           // member
+#include <pspg/field/RFieldDft.h>        // member
 #include <pspg/field/FFT.h>               // member
 #include <pspg/field/FFTBatched.h>        // member
 #include <pspg/solvers/WaveList.h>
@@ -94,7 +94,7 @@ namespace Pspg {
       *
       * \param w  chemical potential field for this monomer type
       */
-      void setupSolver(RDField<D> const & w);
+      void setupSolver(RField<D> const & w);
 
       /**
       * Initialize FFT and batch FFT classes.
@@ -191,32 +191,32 @@ namespace Pspg {
       FArray<double, 6> stress_;
       
       // Array of elements containing exp(-K^2 b^2 ds/6) on k-grid
-      RDField<D> expKsq_;
+      RField<D> expKsq_;
       
       // Array of elements containing exp(-K^2 b^2 ds/12) on k-grid
-      RDField<D> expKsq2_;
+      RField<D> expKsq2_;
 
       // Array of elements containing exp(-W[i] ds/2) on r-grid
-      RDField<D> expW_;
+      RField<D> expW_;
 
       // Array of elements containing exp(-W[i] ds/4) on r-grid
-      RDField<D> expW2_; 
+      RField<D> expW2_; 
 
       // Work arrays for r-grid fields
-      RDField<D> qr_;
-      RDField<D> qr2_;
+      RField<D> qr_;
+      RField<D> qr2_;
 
       // Work arrays for wavevector space (k-grid) field
-      RDFieldDft<D> qk_;
-      RDFieldDft<D> qk2_;
+      RFieldDft<D> qk_;
+      RFieldDft<D> qk2_;
 
       // Batched FFTs of q
       cudaComplex* qkBatched_;
       cudaComplex* qk2Batched_;
 
       // Propagators on r-grid
-      RDField<D> q1_;
-      RDField<D> q2_;
+      RField<D> q1_;
+      RField<D> q2_;
 
       cudaReal* d_temp_;
       cudaReal* temp_;

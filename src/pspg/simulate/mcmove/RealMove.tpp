@@ -98,22 +98,22 @@ namespace Pspg {
       // GPU resources
       int nBlocks, nThreads;
       ThreadGrid::setThreadsLogical(meshSize, nBlocks, nThreads);
-      Array<RDField<D>> const * currSys = &system().w().rgrid();
+      Array<RField<D>> const * currSys = &system().w().rgrid();
       
       // For multi-component copolymer
       for (int i = 0; i < nMonomer; i++){
          // Generate random numbers between 0.0 and 1.0 from uniform distribution
 #ifdef SINGLE_PRECISION
-         curandStatus_t gen_error = curandGenerateUniform(gen_, randomField_.cDField(), meshSize); 
+         curandStatus_t gen_error = curandGenerateUniform(gen_, randomField_.cField(), meshSize); 
 #else
-         curandStatus_t gen_error = curandGenerateUniformDouble(gen_, randomField_.cDField(), meshSize);
+         curandStatus_t gen_error = curandGenerateUniformDouble(gen_, randomField_.cField(), meshSize);
 #endif
          // Generate random numbers between [-stepSize_,stepSize_]
-         mcftsScale<<<nBlocks, nThreads>>>(randomField_.cDField(), stepSize_, meshSize);
+         mcftsScale<<<nBlocks, nThreads>>>(randomField_.cField(), stepSize_, meshSize);
          
          // Change the w field configuration
-         pointWiseBinaryAdd<<<nBlocks, nThreads>>>((*currSys)[i].cDField(), randomField_.cDField(), 
-                                                      wFieldTmp_[i].cDField(), meshSize);
+         pointWiseBinaryAdd<<<nBlocks, nThreads>>>((*currSys)[i].cField(), randomField_.cField(), 
+                                                      wFieldTmp_[i].cField(), meshSize);
          
       }
       // set system r grid

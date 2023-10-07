@@ -201,9 +201,9 @@ namespace Pspg {
       ThreadGrid::setThreadsLogical(meshSize, nBlocks, nThreads);
       for (int i = 0; i < nMonomer; ++i) {
          assignReal<<<nBlocks, nThreads>>>
-            (mcState_.w[i].cDField(), system().w().rgrid(i).cDField(), meshSize);
+            (mcState_.w[i].cField(), system().w().rgrid(i).cField(), meshSize);
          assignReal<<<nBlocks, nThreads>>>
-            (mcState_.wc[i].cDField(), wc_[i].cDField(), meshSize);
+            (mcState_.wc[i].cField(), wc_[i].cField(), meshSize);
       }
       mcState_.mcHamiltonian  = mcHamiltonian_;
       mcState_.mcIdealHamiltonian  = mcIdealHamiltonian_;
@@ -232,7 +232,7 @@ namespace Pspg {
       ThreadGrid::setThreadsLogical(meshSize, nBlocks, nThreads);
       for (int i = 0; i < nMonomer; ++i) {
          assignReal<<<nBlocks, nThreads>>>
-            (wc_[i].cDField(), mcState_.wc[i].cDField(), meshSize);
+            (wc_[i].cField(), mcState_.wc[i].cField(), meshSize);
       }
       mcHamiltonian_ = mcState_.mcHamiltonian;
       mcIdealHamiltonian_ = mcState_.mcIdealHamiltonian;
@@ -318,12 +318,12 @@ namespace Pspg {
       for (int j = 0; j < nMonomer - 1; ++j) {
          prefactor = -0.5*double(nMonomer)/chiEvals_[j];
          double wSqure = 0;
-         wSqure = (double)gpuInnerProduct(wc_[j].cDField(), wc_[j].cDField(), meshSize);
+         wSqure = (double)gpuInnerProduct(wc_[j].cField(), wc_[j].cField(), meshSize);
          HW += prefactor * wSqure;
       }
       
       // Subtract average of Langrange multiplier field
-      double sum_xi = (double)gpuSum(wc_[nMonomer-1].cDField(), meshSize);
+      double sum_xi = (double)gpuSum(wc_[nMonomer-1].cField(), meshSize);
       HW -= sum_xi;
       
       // Normalize HW to equal a value per monomer
@@ -492,19 +492,19 @@ namespace Pspg {
       int nBlocks, nThreads;
       ThreadGrid::setThreadsLogical(meshSize, nBlocks, nThreads);
 
-      DArray<RDField<D>> const * currSys = &system().w().rgrid();
+      DArray<RField<D>> const * currSys = &system().w().rgrid();
       // Loop over eigenvectors (j is an eigenvector index)
       for (j = 0; j < nMonomer; ++j) {
          // Loop over grid points to zero out field wc_[j]
-         RDField<D>& wc = wc_[j];
-         assignUniformReal<<<nBlocks, nThreads>>>(wc.cDField(), 0, meshSize);
+         RField<D>& wc = wc_[j];
+         assignUniformReal<<<nBlocks, nThreads>>>(wc.cField(), 0, meshSize);
          // Loop over monomer types (k is a monomer index)
          for (k = 0; k < nMonomer; ++k) {
             cudaReal vec;
             vec = (cudaReal)chiEvecs_(j, k)/nMonomer;
             // Loop over grid points
             pointWiseAddScale<<<nBlocks, nThreads>>>
-               (wc.cDField(), (*currSys)[k].cDField(), vec, meshSize);
+               (wc.cField(), (*currSys)[k].cField(), vec, meshSize);
          }
       }
       

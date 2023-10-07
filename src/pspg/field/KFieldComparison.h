@@ -9,7 +9,7 @@
 */
 
 #include <util/containers/DArray.h>
-#include <pspg/field/RDFieldDft.h>
+#include <pspg/field/RFieldDft.h>
 #include <pspg/math/GpuResources.h>
 
 namespace Pscf {
@@ -18,7 +18,7 @@ namespace Pspg {
    using namespace Util;
 
    /**
-   * Comparator for RDFieldDft (k-grid) arrays.
+   * Comparator for RFieldDft (k-grid) arrays.
    *
    * \ingroup Pspg_Field_Module
    */
@@ -46,7 +46,7 @@ namespace Pspg {
       * \param b  2nd field
       * \return   maximum element-by-element difference (maxDiff)
       */ 
-      double compare(RDFieldDft<D> const& a, RDFieldDft<D> const& b);
+      double compare(RFieldDft<D> const& a, RFieldDft<D> const& b);
 
       /**
       * Compare arrays of fields associated with different monomer types.
@@ -62,8 +62,8 @@ namespace Pspg {
       * \param b  2nd DArray of field
       * \return   maximum element-by-element difference (maxDiff)
       */ 
-      double compare(DArray<RDFieldDft<D> > const& a, 
-                     DArray<RDFieldDft<D> > const& b);
+      double compare(DArray<RFieldDft<D> > const& a, 
+                     DArray<RFieldDft<D> > const& b);
 
       /**
       * Return the precomputed maximum element-by-element difference.

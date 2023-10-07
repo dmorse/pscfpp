@@ -10,7 +10,7 @@
 
 #include "AmIteratorGrid.h"
 #include <pspg/System.h>
-#include <pspg/field/RDField.h>
+#include <pspg/field/RField.h>
 
 #include <prdc/crystal/UnitCell.h>
 
@@ -75,7 +75,7 @@ namespace Pspg {
       ThreadGrid::setThreadsLogical(a.capacity(), nBlocks, nThreads);
       
       UTIL_CHECK(b.capacity() == a.capacity());
-      assignReal<<<nBlocks, nThreads>>>(a.cDField(), b.cDField(), a.capacity());
+      assignReal<<<nBlocks, nThreads>>>(a.cField(), b.cField(), a.capacity());
    }
 
    template <int D>
@@ -84,7 +84,7 @@ namespace Pspg {
    {
       const int n = a.capacity();
       UTIL_CHECK(b.capacity() == n);
-      double product = (double)gpuInnerProduct(a.cDField(), b.cDField(), n);
+      double product = (double)gpuInnerProduct(a.cField(), b.cField(), n);
       return product;
    }
 
@@ -92,7 +92,7 @@ namespace Pspg {
    double AmIteratorGrid<D>::maxAbs(FieldCUDA const & a)
    {
       int n = a.capacity();
-      cudaReal max = gpuMaxAbs(a.cDField(), n);
+      cudaReal max = gpuMaxAbs(a.cField(), n);
       return (double)max;
    }
 
@@ -112,7 +112,7 @@ namespace Pspg {
       ThreadGrid::setThreadsLogical(n, nBlocks, nThreads);
 
       pointWiseBinarySubtract<<<nBlocks,nThreads>>>
-            (hists[0].cDField(),hists[1].cDField(),newbasis.cDField(),n);
+            (hists[0].cField(),hists[1].cField(),newbasis.cField(),n);
 
       basis.append(newbasis);
    }
@@ -128,7 +128,7 @@ namespace Pspg {
 
       for (int i = 0; i < nHist; i++) {
          pointWiseAddScale<<<nBlocks, nThreads>>>
-               (trial.cDField(), basis[i].cDField(), -1*coeffs[i], trial.capacity());
+               (trial.cField(), basis[i].cField(), -1*coeffs[i], trial.capacity());
       }
    }
 
@@ -141,7 +141,7 @@ namespace Pspg {
       ThreadGrid::setThreadsLogical(fieldTrial.capacity(), nBlocks, nThreads);
 
       pointWiseAddScale<<<nBlocks, nThreads>>>
-         (fieldTrial.cDField(), resTrial.cDField(), lambda, 
+         (fieldTrial.cField(), resTrial.cField(), lambda, 
           fieldTrial.capacity());
    }
 
@@ -176,12 +176,12 @@ namespace Pspg {
       ThreadGrid::setThreadsLogical(nMesh, nBlocks, nThreads);
 
       // Pointer to fields on system
-      DArray<RDField<D>> const * currSys = &system().w().rgrid();
+      DArray<RField<D>> const * currSys = &system().w().rgrid();
 
       // Loop to unfold the system fields and store them in one long array
       for (int i = 0; i < nMonomer; i++) {
-         assignReal<<<nBlocks,nThreads>>>(curr.cDField() + i*nMesh, 
-                                          (*currSys)[i].cDField(), nMesh);
+         assignReal<<<nBlocks,nThreads>>>(curr.cField() + i*nMesh, 
+                                          (*currSys)[i].cField(), nMesh);
       }
 
       // If flexible unit cell, also store unit cell parameters
@@ -194,7 +194,7 @@ namespace Pspg {
                temp[k] = (cudaReal)scaleStress_*currParam[k];
          
          // Copy parameters to the end of the curr array
-         cudaMemcpy(curr.cDField() + nMonomer*nMesh, temp, 
+         cudaMemcpy(curr.cField() + nMonomer*nMesh, temp, 
                     nParam*sizeof(cudaReal), cudaMemcpyHostToDevice);
          delete[] temp;
       }
@@ -224,20 +224,20 @@ namespace Pspg {
       
       // Initialize residuals to zero. Kernel will take care of potential
       // additional elements (n vs nMesh).
-      assignUniformReal<<<nBlocks, nThreads>>>(resid.cDField(), 0, n);
+      assignUniformReal<<<nBlocks, nThreads>>>(resid.cField(), 0, n);
 
       // Compute SCF residuals
       for (int i = 0; i < nMonomer; i++) {
          int startIdx = i*nMesh;
          for (int j = 0; j < nMonomer; j++) {
             pointWiseAddScale<<<nBlocks, nThreads>>>
-                (resid.cDField() + startIdx,
-                 system().c().rgrid(j).cDField(),
+                (resid.cField() + startIdx,
+                 system().c().rgrid(j).cField(),
                  interaction_.chi(i, j),
                  nMesh);
             pointWiseAddScale<<<nBlocks, nThreads>>>
-                (resid.cDField() + startIdx,
-                 system().w().rgrid(j).cDField(),
+                (resid.cField() + startIdx,
+                 system().w().rgrid(j).cField(),
                  -interaction_.p(i, j),
                  nMesh);
          }
@@ -247,15 +247,15 @@ namespace Pspg {
       if (!system().mixture().isCanonical()) {
          cudaReal factor = 1/(cudaReal)interaction_.sumChiInverse();
          for (int i = 0; i < nMonomer; ++i) {
-            subtractUniform<<<nBlocks, nThreads>>>(resid.cDField() + i*nMesh,
+            subtractUniform<<<nBlocks, nThreads>>>(resid.cField() + i*nMesh,
                                                    factor, nMesh);
          }
       } else {
          for (int i = 0; i < nMonomer; i++) {
             // Find current average 
-            cudaReal average = findAverage(resid.cDField()+i*nMesh, nMesh);
+            cudaReal average = findAverage(resid.cField()+i*nMesh, nMesh);
             // subtract out average to set residual average to zero
-            subtractUniform<<<nBlocks, nThreads>>>(resid.cDField() + i*nMesh,
+            subtractUniform<<<nBlocks, nThreads>>>(resid.cField() + i*nMesh,
                                                                average, nMesh);
          }
       }
@@ -269,7 +269,7 @@ namespace Pspg {
             stress[i] = (cudaReal)(-1*scaleStress_*system().mixture().stress(i));
          }
 
-         cudaMemcpy(resid.cDField()+nMonomer*nMesh, stress, 
+         cudaMemcpy(resid.cField()+nMonomer*nMesh, stress, 
                     nParam*sizeof(cudaReal), cudaMemcpyHostToDevice);
       }
    }
@@ -289,20 +289,20 @@ namespace Pspg {
          cudaReal average, wAverage, cAverage;
          for (int i = 0; i < nMonomer; i++) {
             // Find current spatial average
-            average = findAverage(newGuess.cDField() + i*nMesh, nMesh);
+            average = findAverage(newGuess.cField() + i*nMesh, nMesh);
             
             // Subtract average from field, setting average to zero
-            subtractUniform<<<nBlocks, nThreads>>>(newGuess.cDField() + i*nMesh,
+            subtractUniform<<<nBlocks, nThreads>>>(newGuess.cField() + i*nMesh,
                                                    average, nMesh);
             
             // Compute the new average omega value, add it to all elements
             wAverage = 0;
             for (int j = 0; j < nMonomer; j++) {
                // Find average concentration for j monomers
-               cAverage = findAverage(system().c().rgrid(j).cDField(), nMesh);
+               cAverage = findAverage(system().c().rgrid(j).cField(), nMesh);
                wAverage += interaction_.chi(i,j) * cAverage;
             }
-            addUniform<<<nBlocks, nThreads>>>(newGuess.cDField() + i*nMesh, 
+            addUniform<<<nBlocks, nThreads>>>(newGuess.cField() + i*nMesh, 
                                               wAverage, nMesh); 
          }
       }
@@ -316,7 +316,7 @@ namespace Pspg {
          const int nParam = system().unitCell().nParameter();
          cudaReal* temp = new cudaReal[nParam];
 
-         cudaMemcpy(temp, newGuess.cDField() + nMonomer*nMesh, 
+         cudaMemcpy(temp, newGuess.cField() + nMonomer*nMesh, 
                     nParam*sizeof(cudaReal), cudaMemcpyDeviceToHost);
          for (int i = 0; i < nParam; i++) {
             parameters.append(1/scaleStress_ * (double)temp[i]);
