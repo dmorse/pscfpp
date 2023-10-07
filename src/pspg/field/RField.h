@@ -159,11 +159,14 @@ namespace Pspg
       ar & meshDimensions_;
    }
 
-      
-
+   #ifndef PSPG_R_FIELD_TPP
+   extern template class RField<1>;
+   extern template class RField<2>;
+   extern template class RField<3>;
+   #endif
 
 
 }
 }
-#include "RField.tpp"
+//#include "RField.tpp"
 #endif

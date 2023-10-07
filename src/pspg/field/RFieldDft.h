@@ -186,7 +186,13 @@ namespace Pspg
       ar & meshDimensions_;
    }
 
+   #ifndef PSPG_R_FIELD_DFT_TPP
+   extern template class RFieldDft<1>;
+   extern template class RFieldDft<2>;
+   extern template class RFieldDft<3>;
+   #endif
+
 }
 }
-#include "RFieldDft.tpp"
+//#include "RFieldDft.tpp"
 #endif
