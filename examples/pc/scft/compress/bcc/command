@@ -1,9 +1,5 @@
 READ_W_RGRID     in/w.rf
 COMPRESS
-READ_W_RGRID     in/w.rf
-COMPRESS
-READ_W_RGRID     in/w.rf
-COMPRESS    
 WRITE_W_RGRID   out/w_rf
 WRITE_C_RGRID    out/c_rf
 FINISH

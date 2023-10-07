@@ -1,4 +1,5 @@
 (cd compare; ./clean)
+(cd compress/bcc; ./clean)
 (cd diblock; ./clean)
 (cd films; ./clean)
 (cd solution/lam; ./clean)

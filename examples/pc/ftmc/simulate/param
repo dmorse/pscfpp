@@ -39,11 +39,11 @@ System{
     McMoveManager{
         RealMove{
             probability     0.5
-            A               0.5
+            A               0.4
         }
         FourierMove{
             probability     0.5
-            A               0.01
+            A               0.008
             F*              20.990
             tau             2.64737
             N               1.0
