@@ -1,0 +1,2 @@
+(cd scft; ./clean)
+(cd ftmc; ./clean)
