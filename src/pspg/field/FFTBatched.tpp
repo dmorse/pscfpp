@@ -9,7 +9,7 @@
 */
 
 #include "FFTBatched.h"
-#include <pspg/math/GpuResources.h>
+#include <pscf/cuda/GpuResources.h>
 
 namespace Pscf {
 namespace Pspg

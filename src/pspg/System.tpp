@@ -17,7 +17,7 @@
 #include <pspg/iterator/Iterator.h>
 #include <pspg/iterator/IteratorFactory.h>
 #include <prdc/gpu/RField.h>
-#include <pspg/math/GpuResources.h>
+#include <pscf/cuda/GpuResources.h>
 
 #include <pscf/inter/Interaction.h>
 #include <pscf/math/IntVec.h>

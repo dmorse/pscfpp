@@ -6,8 +6,6 @@ pscf_chem_= \
   pscf/chem/PolymerType.cpp \
   pscf/chem/Species.cpp 
 
-pscf_chem_SRCS=\
-     $(addprefix $(SRC_DIR)/, $(pscf_chem_))
 pscf_chem_OBJS=\
      $(addprefix $(BLD_DIR)/, $(pscf_chem_:.cpp=.o))
 

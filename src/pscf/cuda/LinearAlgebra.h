@@ -1,16 +1,14 @@
-#ifndef PSPG_LINEAR_ALGEBRA_H
-#define PSPG_LINEAR_ALGEBRA_H
+#ifndef PSCF_LINEAR_ALGEBRA_H
+#define PSCF_LINEAR_ALGEBRA_H
 
 #include "GpuTypes.h"
 #include <complex>
 
 namespace Pscf {
-namespace Pspg {
 
 /** \ingroup Pspg_Math_Module 
 * @{
 */
-
 
 __global__ void subtractUniform(cudaReal* result, cudaReal rhs, int size);
 
@@ -46,6 +44,5 @@ __global__ void fourierMove(cudaComplex* a, const cudaReal* b, const cudaReal* c
 
 /** @} */
 
-}
 }
 #endif

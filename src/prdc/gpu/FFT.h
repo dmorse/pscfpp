@@ -1,5 +1,5 @@
-#ifndef PSPG_FFT_H
-#define PSPG_FFT_H
+#ifndef PRDC_CUDA_FFT_H
+#define PRDC_CUDA_FFT_H
 
 /*
 * PSCF Package 
@@ -11,7 +11,7 @@
 #include <prdc/gpu/RField.h>
 #include <prdc/gpu/RFieldDft.h>
 
-//#include <pspg/math/GpuResources.h>
+//#include <pscf/cuda/GpuResources.h>
 #include <pscf/math/IntVec.h>
 #include <util/global.h>
 
@@ -21,7 +21,7 @@
 
 namespace Pscf {
 namespace Prdc {
-namespace Gpu {
+namespace Cuda {
 
    using namespace Util;
    using namespace Pscf;
@@ -29,7 +29,7 @@ namespace Gpu {
    /**
    * Fourier transform wrapper for real data.
    *
-   * \ingroup Pspg_Field_Module
+   * \ingroup Prdc_Cuda_Module
    */
    template <int D>
    class FFT 
@@ -182,7 +182,7 @@ namespace Gpu {
    { return iPlan_; }
 
 
-   #ifndef PSPG_FFT_TPP
+   #ifndef PRDC_CUDA_FFT_TPP
    // Suppress implicit instantiation
    extern template class FFT<1>;
    extern template class FFT<2>;
@@ -202,5 +202,4 @@ namespace Gpu {
 }
 }
 }
-//#include "FFT.tpp"
 #endif

@@ -1,5 +1,5 @@
-#ifndef PSPG_FFT_TPP
-#define PSPG_FFT_TPP
+#ifndef PRDC_CUDA_FFT_TPP
+#define PRDC_CUDA_FFT_TPP
 
 /*
 * PSCF Package 
@@ -9,14 +9,14 @@
 */
 
 #include "FFT.h"
-#include <pspg/math/GpuResources.h>
+#include <pscf/cuda/GpuResources.h>
 
 //forward declaration
 //static __global__ void scaleRealData(cudaReal* data, rtype scale, int size);
 
 namespace Pscf {
 namespace Prdc {
-namespace Gpu {
+namespace Cuda {
 
    using namespace Util;
 

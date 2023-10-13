@@ -4,7 +4,6 @@
 #include "GpuTypes.h"
 
 namespace Pscf {
-namespace Pspg {
 
 /** \ingroup Pspg_Math_Module 
 * @{
@@ -23,6 +22,5 @@ __global__ void reductionMinAbs(cudaReal* min, const cudaReal* in, int size);
 
 /** @} */
 
-}
 }
 #endif

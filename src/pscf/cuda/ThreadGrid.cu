@@ -1,5 +1,5 @@
-#ifndef PSPG_THREADGRID_CU
-#define PSPG_THREADGRID_CU
+#ifndef PSCF_THREADGRID_CU
+#define PSCF_THREADGRID_CU
 
 #include "ThreadGrid.h"
 
@@ -27,7 +27,6 @@ namespace {
 }
 
 namespace Pscf {
-namespace Pspg {
 namespace ThreadGrid {
 
    using namespace Util;
@@ -179,7 +178,6 @@ namespace ThreadGrid {
    bool hasUnusedThreads()
    { return UNUSED_THREADS; }
 
-}
 }
 }
 #endif

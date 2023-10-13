@@ -8,7 +8,8 @@
 #include "FFT.tpp"
 
 namespace Pscf {
-namespace Pspg {
+namespace Prdc {
+namespace Cuda {
 
    using namespace Util;
 
@@ -60,5 +61,6 @@ namespace Pspg {
    template class FFT<2>;
    template class FFT<3>;
 
+}
 }
 }

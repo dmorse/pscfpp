@@ -1,11 +1,10 @@
-#ifndef PSPG_THREADGRID_H
-#define PSPG_THREADGRID_H
+#ifndef PSCF_THREADGRID_H
+#define PSCF_THREADGRID_H
 
 #include "GpuTypes.h"
 #include <util/global.h>
 
 namespace Pscf {
-namespace Pspg {
 
 /**
 * Global functions and variables to control GPU thread and block counts.
@@ -111,6 +110,6 @@ namespace ThreadGrid {
   /** @} */
 
 } // namespace ThreadGrid
-} // namespace Pspg
+
 } // namespace Pscf
 #endif

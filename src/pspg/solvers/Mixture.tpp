@@ -9,7 +9,7 @@
 */
 
 #include "Mixture.h"
-#include <pspg/math/GpuResources.h>
+#include <pscf/cuda/GpuResources.h>
 
 #include <cmath>
 

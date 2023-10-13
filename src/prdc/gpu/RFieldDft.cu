@@ -1,5 +1,3 @@
-#define PSPG_R_FIELD_DFT_CU
-
 /*
 * PSCF - Polymer Self-Consistent Field Theory
 *
@@ -10,11 +8,13 @@
 #include "RFieldDft.tpp"
 
 namespace Pscf {
-namespace Pspg {
+namespace Prdc {
+namespace Cuda {
 
    template class RFieldDft<1>;
    template class RFieldDft<2>;
    template class RFieldDft<3>;
 
-} // namespace Pscf::Pspg
+} // namespace Pscf::Prdc::Cuda
+} // namespace Pscf::Prdc
 } // namespace Pscf

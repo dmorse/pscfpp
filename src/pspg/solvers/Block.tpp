@@ -9,7 +9,7 @@
 */
 
 #include "Block.h"
-#include <pspg/math/GpuResources.h>
+#include <pscf/cuda/GpuResources.h>
 #include <prdc/crystal/shiftToMinimum.h>
 #include <pscf/mesh/Mesh.h>
 #include <pscf/mesh/MeshIterator.h>

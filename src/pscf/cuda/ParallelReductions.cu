@@ -1,10 +1,9 @@
-#ifndef PSPG_PARALLEL_REDUCTIONS_CU
-#define PSPG_PARALLEL_REDUCTIONS_CU
+#ifndef PSCF_PARALLEL_REDUCTIONS_CU
+#define PSCF_PARALLEL_REDUCTIONS_CU
 
 #include "ParallelReductions.h"
 
 namespace Pscf {
-namespace Pspg {
 
 __global__ void reductionSum(cudaReal* sum, const cudaReal* in, int size)
 {
@@ -257,6 +256,5 @@ __global__ void reductionMinAbs(cudaReal* min, const cudaReal* in, int size)
    }
 }
 
-}
 }
 #endif

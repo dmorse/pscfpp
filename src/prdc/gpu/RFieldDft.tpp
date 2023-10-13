@@ -1,5 +1,5 @@
-#ifndef PSPG_R_FIELD_DFT_TPP
-#define PSPG_R_FIELD_DFT_TPP
+#ifndef PRDC_CUDA_R_FIELD_DFT_TPP
+#define PRDC_CUDA_R_FIELD_DFT_TPP
 
 /*
 * PSCF Package 
@@ -11,7 +11,8 @@
 #include "RFieldDft.h"
 
 namespace Pscf {
-namespace Pspg {
+namespace Prdc {
+namespace Cuda {
 
    using namespace Util;
 
@@ -66,6 +67,7 @@ namespace Pspg {
       return *this;
    }
 
+}
 }
 }
 #endif

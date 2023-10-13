@@ -10,7 +10,7 @@
 
 #include "WaveList.h"
 #include "cuComplex.h"
-#include <pspg/math/GpuResources.h>
+#include <pscf/cuda/GpuResources.h>
 
 namespace Pscf {
 namespace Pspg

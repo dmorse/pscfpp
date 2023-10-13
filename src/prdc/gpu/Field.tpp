@@ -1,5 +1,5 @@
-#ifndef PSPG_FIELD_TPP
-#define PSPG_FIELD_TPP
+#ifndef PRDC_CUDA_FIELD_TPP
+#define PRDC_CUDA_FIELD_TPP
 
 /*
 * PSCF Package 
@@ -9,14 +9,12 @@
 */
 
 #include "Field.h"
-#include <pspg/math/GpuResources.h>
+#include <pscf/cuda/GpuResources.h>
 #include <cuda_runtime.h>
-
-
 
 namespace Pscf {
 namespace Prdc {
-namespace Gpu {
+namespace Cuda {
 
    using namespace Util;
 

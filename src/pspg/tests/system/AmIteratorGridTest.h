@@ -6,7 +6,7 @@
 
 #include <pspg/System.h>
 #include <prdc/gpu/RField.h>
-#include <pspg/math/GpuResources.h>
+#include <pscf/cuda/GpuResources.h>
 #include <prdc/crystal/BFieldComparison.h>
 #include <util/tests/LogFileUnitTest.h>
 

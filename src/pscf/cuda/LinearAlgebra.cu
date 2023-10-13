@@ -1,10 +1,7 @@
-#ifndef PSPG_LINEAR_ALGEBRA_CU
-#define PSPG_LINEAR_ALGEBRA_CU
-
 #include "LinearAlgebra.h"
 
-namespace Pscf {
-namespace Pspg {
+namespace Pscf 
+{
 
 __global__ void subtractUniform(cudaReal* result, cudaReal rhs, int size) 
 {
@@ -153,5 +150,3 @@ __global__ void fourierMove(cudaComplex* a, const cudaReal* b, const cudaReal* c
 }
 
 }
-}
-#endif

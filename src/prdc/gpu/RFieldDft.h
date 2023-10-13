@@ -1,5 +1,5 @@
-#ifndef PSPG_R_FIELD_DFT_H
-#define PSPG_R_FIELD_DFT_H
+#ifndef PRDC_CUDA_R_FIELD_DFT_H
+#define PRDC_CUDA_R_FIELD_DFT_H
 
 /*
 * PSCF Package 
@@ -9,14 +9,14 @@
 */
 
 #include "Field.h"
-#include <pspg/math/GpuResources.h>
+#include <pscf/cuda/GpuResources.h>
 #include <pscf/math/IntVec.h>
 #include <util/global.h>
 #include <cufft.h>
 
 namespace Pscf {
 namespace Prdc {
-namespace Gpu {
+namespace Cuda {
 
    using namespace Util;
    using namespace Pscf;
@@ -28,7 +28,7 @@ namespace Gpu {
    * located in global GPU memory. All member functions are C++ functions 
    * that can be called from the host CPU. 
    *
-   * \ingroup Pspg_Field_Module
+   * \ingroup Prdc_Cuda_Module
    */
    template <int D>
    class RFieldDft : public Field<cudaComplex>
@@ -186,7 +186,7 @@ namespace Gpu {
       ar & meshDimensions_;
    }
 
-   #ifndef PSPG_R_FIELD_DFT_TPP
+   #ifndef PRDC_CUDA_R_FIELD_DFT_TPP
    extern template class RFieldDft<1>;
    extern template class RFieldDft<2>;
    extern template class RFieldDft<3>;

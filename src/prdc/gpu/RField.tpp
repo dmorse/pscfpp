@@ -1,5 +1,5 @@
-#ifndef PSPG_R_FIELD_TPP
-#define PSPG_R_FIELD_TPP
+#ifndef PRDC_CUDA_R_FIELD_TPP
+#define PRDC_CUDA_R_FIELD_TPP
 
 /*
 * PSCF Package 
@@ -11,10 +11,11 @@
 #include "RField.h"
 
 namespace Pscf {
-namespace Pspg {
-namespace Gpu {
+namespace Prdc {
+namespace Cuda {
 
    using namespace Util;
+   using namespace Pscf;
 
    /**
    * Default constructor.

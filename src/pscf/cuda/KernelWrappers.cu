@@ -1,11 +1,10 @@
-#ifndef PSPG_KERNEL_WRAPPERS_CU
-#define PSPG_KERNEL_WRAPPERS_CU
+#ifndef PSCF_KERNEL_WRAPPERS_CU
+#define PSCF_KERNEL_WRAPPERS_CU
 
 #include "KernelWrappers.h"
 #include "ThreadGrid.h"
 
 namespace Pscf {
-namespace Pspg {
 
 __host__ cudaReal gpuSum(cudaReal const * d_in, int size) 
 {
@@ -176,8 +175,9 @@ __host__ cudaReal gpuMin(cudaReal const * d_in, int size)
 
 __host__ cudaReal gpuMinAbs(cudaReal const * d_in, int size)
 {
-   // Establish GPU resources for this parallel reduction. Divided by two because
-   // of the global memory load in the kernel performing the first level of reduction!
+   // Establish GPU resources for this parallel reduction. Divided by two 
+   // because of the global memory load in the kernel performing the first 
+   // level of reduction!
    int nBlocks, nThreads;
    int halvedsize = ceil((float)size/2);
 
@@ -205,6 +205,5 @@ __host__ cudaReal gpuMinAbs(cudaReal const * d_in, int size)
    return min;
 }
 
-}
 }
 #endif

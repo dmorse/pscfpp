@@ -1,12 +1,11 @@
-#ifndef PSPG_GPU_TYPES_H
-#define PSPG_GPU_TYPES_H
+#ifndef PSCF_GPU_TYPES_H
+#define PSCF_GPU_TYPES_H
 
 #include <cufft.h>
 #include <stdio.h>
 #include <iostream>
 
 namespace Pscf {
-namespace Pspg {
 
 //#define SINGLE_PRECISION
 #define DOUBLE_PRECISION
@@ -35,6 +34,5 @@ inline void gpuAssert(cudaError_t code, const char *file, int line, bool abort=t
     }
 }
 
-}
 }
 #endif

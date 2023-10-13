@@ -1,12 +1,11 @@
-#ifndef PSPG_KERNEL_WRAPPERS_H
-#define PSPG_KERNEL_WRAPPERS_H
+#ifndef PSCF_KERNEL_WRAPPERS_H
+#define PSCF_KERNEL_WRAPPERS_H
 
 #include "ParallelReductions.h"
 #include "GpuTypes.h"
 #include "LinearAlgebra.h"
 
 namespace Pscf {
-namespace Pspg {
 
 /** \ingroup Pspg_Math_Module 
 * @{
@@ -25,6 +24,5 @@ __host__ cudaReal gpuMinAbs(cudaReal const * d_in, int size);
 
 /** @} */
 
-}
 }
 #endif

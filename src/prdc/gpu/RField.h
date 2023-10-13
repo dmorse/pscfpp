@@ -1,5 +1,5 @@
-#ifndef PSPG_R_FIELD_H
-#define PSPG_R_FIELD_H
+#ifndef PRDC_CUDA_R_FIELD_H
+#define PRDC_CUDA_R_FIELD_H
 
 /*
 * PSCF Package 
@@ -9,15 +9,15 @@
 */
 
 #include "Field.h"
+#include <pscf/cuda/GpuResources.h>
 #include <pscf/math/IntVec.h>
 #include <util/global.h>
-#include <pspg/math/GpuResources.h>
 
 #include <cufft.h>
 
 namespace Pscf {
 namespace Prdc {
-namespace Gpu {
+namespace Cuda {
 
    using namespace Util;
    using namespace Pscf;
@@ -27,7 +27,7 @@ namespace Gpu {
    *
    * cudaReal = float or double, depending on preprocessor macro.
    *
-   * \ingroup Pspg_Field_Module 
+   * \ingroup Prdc_Cuda_Module 
    */
    template <int D>
    class RField : public Field<cudaReal>
@@ -159,7 +159,7 @@ namespace Gpu {
       ar & meshDimensions_;
    }
 
-   #ifndef PSPG_R_FIELD_TPP
+   #ifndef PRDC_CUDA_R_FIELD_TPP
    extern template class RField<1>;
    extern template class RField<2>;
    extern template class RField<3>;

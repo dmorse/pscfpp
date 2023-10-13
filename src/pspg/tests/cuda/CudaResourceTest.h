@@ -6,7 +6,7 @@
 
 #include <prdc/gpu/RField.h>
 #include <util/math/Constants.h>
-#include <pspg/math/GpuResources.h>
+#include <pscf/cuda/GpuResources.h>
 
 #include <cstdlib>
 #include <cmath>

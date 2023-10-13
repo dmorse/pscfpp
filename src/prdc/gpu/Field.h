@@ -1,5 +1,5 @@
-#ifndef PSPG_FIELD_H
-#define PSPG_FIELD_H
+#ifndef PRDC_CUDA_FIELD_H
+#define PRDC_CUDA_FIELD_H
 
 /*
 * PSCF Package 
@@ -12,7 +12,7 @@
 
 namespace Pscf {
 namespace Prdc {
-namespace Gpu {
+namespace Cuda {
 
    using namespace Util;
 
@@ -23,7 +23,7 @@ namespace Gpu {
    * device. All member functions may be called from the host. As a result,
    * the class does not offer access to individual elements via operator[]
    *
-   * \ingroup Pspg_Field_Module
+   * \ingroup Prdc_Cuda_Module
    */
    template <typename Data>
    class Field
