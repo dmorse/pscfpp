@@ -1,5 +1,4 @@
 READ_W_BASIS    in/w.bf
-WRITE_W_RGRID   out/w_in.rf
 ITERATE         
 WRITE_W_BASIS   out/w.bf
 WRITE_W_RGRID   out/w.rf
