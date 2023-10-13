@@ -10,15 +10,19 @@
 
 #include "Analyzer.h"
 #include <pspg/System.h>
-#include <util/containers/DMatrix.h>             
-#include <util/containers/DArray.h>              
-#include <util/accumulators/Average.h>      
-#include <prdc/gpu/RFieldDft.h> 
-#include <prdc/gpu/RField.h> 
+
+#include <prdc/cuda/RFieldDft.h> 
+#include <prdc/cuda/RField.h> 
+
 #include <pscf/math/IntVec.h>
 #include <pscf/math/RealVec.h>
+
+#include <util/accumulators/Average.h>      
 #include <util/param/ParamComposite.h>
+#include <util/containers/DMatrix.h>             
+#include <util/containers/DArray.h>              
 #include <util/global.h>
+
 #include <iostream>
 #include <complex>
 #include <vector>
@@ -28,8 +32,11 @@ namespace Pscf {
 namespace Pspg
 {
 
-   using namespace Util;
    template <int D> class System;
+
+   using namespace Util;
+   using namespace Pscf::Prdc;
+   using namespace Pscf::Prdc::Cuda;
 
    /**
    * BinaryStructureFactorGrid evaluates AB diblock structure factors in Fourier space.

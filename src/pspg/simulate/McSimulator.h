@@ -16,18 +16,20 @@
 #include <util/random/Random.h>          // member
 #include <util/containers/DArray.h>      // member template
 #include <util/containers/DMatrix.h>     // member template
-#include <prdc/gpu/RField.h>
-#include <prdc/gpu/Field.h>  
+#include <prdc/cuda/RField.h>
+#include <prdc/cuda/Field.h>  
 
 namespace Pscf {
 namespace Pspg {
-
-   using namespace Util;
 
    template <int D> class System;
    template <int D> class McMove;
    template <int D> class TrajectoryReader;
    template <int D> class TrajectoryReaderFactory;
+
+   using namespace Util;
+   using namespace Pscf::Prdc;
+   using namespace Pscf::Prdc::Cuda;
 
    /**
    * Resources for a Monte-Carlo simulation of system.

@@ -17,9 +17,11 @@ namespace Pscf {
 namespace Pspg
 {
 
+   template <int D> class System;
+
    using namespace Util;
-   template <int D>
-   class System;
+   using namespace Pscf::Prdc;
+   using namespace Pscf::Prdc::Cuda;
    
    /**
    * Periodically write snapshots to a trajectory file

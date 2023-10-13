@@ -16,7 +16,7 @@
 #include <pspg/sweep/SweepFactory.h>
 #include <pspg/iterator/Iterator.h>
 #include <pspg/iterator/IteratorFactory.h>
-#include <prdc/gpu/RField.h>
+#include <prdc/cuda/RField.h>
 #include <pscf/cuda/GpuResources.h>
 
 #include <pscf/inter/Interaction.h>

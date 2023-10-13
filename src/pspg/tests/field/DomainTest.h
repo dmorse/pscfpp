@@ -6,7 +6,7 @@
 
 #include <pspg/field/Domain.h>
 #include <pspg/field/FieldIo.h>
-#include <pspg/field/FFT.h>
+#include <prdc/cuda/FFT.h>
 
 #include <prdc/crystal/Basis.h>
 #include <prdc/crystal/UnitCell.h>

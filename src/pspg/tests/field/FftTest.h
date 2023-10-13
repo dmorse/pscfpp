@@ -4,9 +4,9 @@
 #include <test/UnitTest.h>
 #include <test/UnitTestRunner.h>
 
-#include <pspg/field/FFT.h>
-#include <prdc/gpu/RField.h>
-#include <prdc/gpu/RFieldDft.h>
+#include <prdc/cuda/FFT.h>
+#include <prdc/cuda/RField.h>
+#include <prdc/cuda/RFieldDft.h>
 //#include <pspg/field/RFieldComparison.h>
 
 #include <util/math/Constants.h>

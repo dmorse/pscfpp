@@ -15,6 +15,7 @@
 #include <pspg/simulate/trajectory/TrajectoryReader.h>
 #include <pspg/simulate/trajectory/TrajectoryReaderFactory.h>
 #include <pspg/compressor/Compressor.h>
+
 #include <util/misc/Timer.h>
 #include <util/random/Random.h>
 #include <util/global.h>
@@ -24,6 +25,8 @@ namespace Pscf {
 namespace Pspg {
 
    using namespace Util;
+   using namespace Pscf::Prdc;
+   using namespace Pscf::Prdc::Cuda;
 
    /*
    * Constructor.

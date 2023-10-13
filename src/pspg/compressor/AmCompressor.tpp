@@ -10,7 +10,7 @@
 
 #include "AmCompressor.h"
 #include <pspg/System.h>
-#include <prdc/gpu/RField.h>
+#include <prdc/cuda/RField.h>
 #include <util/global.h>
 
 namespace Pscf {

@@ -11,7 +11,7 @@
 #include "FieldState.h"
 
 #include <pspg/System.h>                   
-#include <pspg/field/FFT.h>                
+#include <prdc/cuda/FFT.h>                
 #include <prdc/crystal/Basis.h>           
 #include <pscf/mesh/Mesh.h>                
 #include <util/misc/FileMaster.h>       

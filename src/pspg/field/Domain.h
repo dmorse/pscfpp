@@ -12,7 +12,7 @@
 
 #include <pspg/solvers/WaveList.h>         // member
 #include <pspg/field/FieldIo.h>            // member
-#include <pspg/field/FFT.h>                // member
+#include <prdc/cuda/FFT.h>                // member
 
 #include <prdc/crystal/Basis.h>            // member
 #include <prdc/crystal/SpaceGroup.h>       // member
@@ -28,6 +28,7 @@ namespace Pspg
 
    using namespace Util;
    using namespace Pscf::Prdc;
+   using namespace Pscf::Prdc::Cuda;
 
    /**
    * Spatial domain and spatial discretization for a periodic structure.

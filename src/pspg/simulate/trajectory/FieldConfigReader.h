@@ -12,8 +12,8 @@
 #include <util/global.h>
 #include <iostream>
 #include <pspg/System.h>
-#include <prdc/gpu/RField.h>
-#include <prdc/gpu/Field.h>  
+#include <prdc/cuda/RField.h>
+#include <prdc/cuda/Field.h>  
 #include <util/containers/DArray.h>
 
 

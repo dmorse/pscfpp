@@ -7,8 +7,8 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <prdc/gpu/RFieldDft.h>
-#include <prdc/gpu/RField.h>
+#include <prdc/cuda/RFieldDft.h>
+#include <prdc/cuda/RField.h>
 
 #include <prdc/crystal/shiftToMinimum.h>
 #include <prdc/crystal/UnitCell.h>
@@ -25,6 +25,7 @@ namespace Pspg {
 
    using namespace Util;
    using namespace Pscf::Prdc;
+   using namespace Pscf::Prdc::Cuda;
 
    /**
    * Container for wavevector data.

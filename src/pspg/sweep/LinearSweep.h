@@ -19,6 +19,8 @@ namespace Pspg {
    template <int D> class System;
 
    using namespace Util;
+   using namespace Pscf::Prdc;
+   using namespace Pscf::Prdc::Cuda;
 
    /**
    * Base class for a sweep in parameter space where parameters change

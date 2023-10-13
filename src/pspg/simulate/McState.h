@@ -9,8 +9,8 @@
 */
 
 
-#include <prdc/gpu/RField.h>
-#include <prdc/gpu/Field.h>  
+#include <prdc/cuda/RField.h>
+#include <prdc/cuda/Field.h>  
 #include <util/containers/DArray.h>
 
 namespace Pscf {
@@ -18,6 +18,8 @@ namespace Pspg
 {
 
    using namespace Util;
+   using namespace Pscf::Prdc;
+   using namespace Pscf::Prdc::Cuda;
 
    /**
    * McState stores the state used by an MC simulation.
@@ -33,6 +35,11 @@ namespace Pspg
       * Constructor.
       */
       McState();
+
+      /**
+      * Destructor.
+      */
+      ~McState();
 
       /**
       * Allocate memory for w fields.

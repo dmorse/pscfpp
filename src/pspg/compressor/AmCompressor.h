@@ -9,8 +9,8 @@
 */
 
 #include "Compressor.h"
-#include <prdc/gpu/Field.h>
-#include <prdc/gpu/RField.h>         
+#include <prdc/cuda/Field.h>
+#include <prdc/cuda/RField.h>         
 
 #include <pscf/iterator/AmIteratorTmpl.h>     
 
@@ -20,10 +20,11 @@ namespace Pscf {
 namespace Pspg
 {
 
-   template <int D>
-   class System;
+   template <int D> class System;
 
    using namespace Util;
+   using namespace Pscf::Prdc;
+   using namespace Pscf::Prdc::Cuda;
 
    /**
    * Pspg implementation of the Anderson Mixing compressor.

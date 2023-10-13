@@ -17,10 +17,10 @@ namespace Util { class Random; }
 namespace Pscf {
 namespace Pspg {
 
-   using namespace Util;
-
    template <int D> class System;
    template <int D> class McSimulator;
+
+   using namespace Util;
 
    /**
    * Manager for a set of McMove objects.

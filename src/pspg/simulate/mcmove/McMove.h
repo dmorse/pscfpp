@@ -8,7 +8,6 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-
 #include <util/param/ParamComposite.h>
 #include <util/random/Random.h>
 #include <util/global.h>
@@ -18,10 +17,10 @@ namespace Pscf {
 namespace Pspg
 {
 
-   using namespace Util;
-
    template <int D> class System;
    template <int D> class McSimulator;
+
+   using namespace Util;
 
    /**
    * McMove is an abstract base class for Monte Carlo moves.

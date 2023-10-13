@@ -10,7 +10,7 @@
 
 #include <pscf/chem/SolventDescriptor.h>   // base class
 #include <pspg/solvers/Propagator.h>       // typedefs
-#include <prdc/gpu/RField.h>
+#include <prdc/cuda/RField.h>
 
 namespace Pscf {
    template <int D> class Mesh;
@@ -20,6 +20,8 @@ namespace Pscf {
 namespace Pspg { 
 
    using namespace Util;
+   using namespace Pscf::Prdc;
+   using namespace Pscf::Prdc::Cuda;
 
    /**
    * Solver and descriptor for a solvent species.

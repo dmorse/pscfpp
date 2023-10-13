@@ -17,8 +17,8 @@ namespace Util{
 }
 
 namespace Pscf {
-namespace Pspg 
-{
+namespace Pspg {
+
    using namespace Util;
 
    /**

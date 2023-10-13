@@ -12,11 +12,9 @@
 #include <util/global.h>                  
 
 namespace Pscf {
-namespace Pspg
-{
+namespace Pspg {
 
-   template <int D>
-   class System;
+   template <int D> class System;
 
    using namespace Util;
 

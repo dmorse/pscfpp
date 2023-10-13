@@ -8,8 +8,8 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <prdc/gpu/RField.h>
-#include <prdc/gpu/RFieldDft.h>
+#include <prdc/cuda/RField.h>
+#include <prdc/cuda/RFieldDft.h>
 
 //#include <pscf/cuda/GpuResources.h>
 #include <pscf/math/IntVec.h>

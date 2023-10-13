@@ -9,11 +9,14 @@
 */
 
 #include "McMove.h"                          //base class
-#include <util/global.h>
+
+#include <prdc/cuda/RField.h>
+#include <prdc/cuda/Field.h>  
+
 #include <util/param/ParamComposite.h>
-#include <prdc/gpu/RField.h>
-#include <prdc/gpu/Field.h>  
 #include <util/containers/DArray.h>
+#include <util/global.h>
+
 #include <curand.h>
 
 
@@ -22,6 +25,8 @@ namespace Pspg
 {
 
    using namespace Util;
+   using namespace Pscf::Prdc;
+   using namespace Pscf::Prdc::Cuda;
 
    /**
    * RealMove is a Monte Carlo move in real space

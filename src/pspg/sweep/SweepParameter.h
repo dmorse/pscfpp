@@ -16,6 +16,9 @@ namespace Pspg {
 
    template <int D> class System;
 
+   using namespace Pscf::Prdc;
+   using namespace Pscf::Prdc::Cuda;
+
    /**
    * Class for storing data about an individual sweep parameter.
    *

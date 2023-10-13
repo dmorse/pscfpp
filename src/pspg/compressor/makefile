@@ -11,7 +11,7 @@ include $(SRC_DIR)/pspg/include.mk
 all: $(pspg_compressor_OBJS) 
 
 includes:
-	echo $(INCLUDES)
+	@echo $(INCLUDES)
 
 clean:
 	rm -f $(pspg_compressor_OBJS) $(pspg_compressor_OBJS:.o=.d) 

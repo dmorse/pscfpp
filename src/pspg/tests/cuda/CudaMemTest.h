@@ -4,7 +4,7 @@
 #include <test/UnitTest.h>
 #include <test/UnitTestRunner.h>
 
-#include <prdc/gpu/RField.h>
+#include <prdc/cuda/RField.h>
 #include <util/math/Constants.h>
 #include <pscf/cuda/GpuResources.h>
 

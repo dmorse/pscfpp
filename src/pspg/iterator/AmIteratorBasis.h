@@ -20,6 +20,8 @@ namespace Pspg
    class System;
 
    using namespace Util;
+   using namespace Pscf::Prdc;
+   using namespace Pscf::Prdc::Cuda;
 
    /**
    * Pspg implementation of the Anderson Mixing iterator.

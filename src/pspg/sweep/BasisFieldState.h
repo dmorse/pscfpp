@@ -16,6 +16,8 @@ namespace Pspg
 {
 
    using namespace Util;
+   using namespace Pscf::Prdc;
+   using namespace Pscf::Prdc::Cuda;
 
    /**
    * FieldState for fields in symmetry-adapted basis format.

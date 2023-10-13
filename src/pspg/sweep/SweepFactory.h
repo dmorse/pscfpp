@@ -17,6 +17,8 @@ namespace Pscf {
 namespace Pspg {
 
    using namespace Util;
+   using namespace Pscf::Prdc;
+   using namespace Pscf::Prdc::Cuda;
    
    /**
    * Default Factory for subclasses of Sweep.

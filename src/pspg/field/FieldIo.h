@@ -8,25 +8,26 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pspg/field/FFT.h>                 // member
-#include <prdc/gpu/RField.h>             // function parameter
-#include <prdc/gpu/RFieldDft.h>          // function parameter
+#include <prdc/cuda/FFT.h>                // member
+#include <prdc/cuda/RField.h>             // function parameter
+#include <prdc/cuda/RFieldDft.h>          // function parameter
 
-#include <prdc/crystal/Basis.h>             // member
-#include <prdc/crystal/SpaceGroup.h>        // member
-#include <prdc/crystal/UnitCell.h>          // member
+#include <prdc/crystal/Basis.h>           // member
+#include <prdc/crystal/SpaceGroup.h>      // member
+#include <prdc/crystal/UnitCell.h>        // member
 
-#include <pscf/mesh/Mesh.h>                 // member
+#include <pscf/mesh/Mesh.h>               // member
 
-#include <util/misc/FileMaster.h>           // member
-#include <util/containers/DArray.h>         // function parameter
-#include <util/containers/Array.h>          // function parameter
+#include <util/misc/FileMaster.h>         // member
+#include <util/containers/DArray.h>       // function parameter
+#include <util/containers/Array.h>        // function parameter
 
 namespace Pscf {
 namespace Pspg {
 
    using namespace Util;
    using namespace Pscf::Prdc;
+   using namespace Pscf::Prdc::Cuda;
 
    /**
    * File input/output operations for fields in several file formats.

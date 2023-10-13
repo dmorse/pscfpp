@@ -10,14 +10,15 @@
 
 #include <util/param/ParamComposite.h>     // base class
 
+#include <pspg/simulate/McSimulator.h>     // member
 #include <pspg/solvers/Mixture.h>          // member
 #include <pspg/field/Domain.h>             // member
 #include <pspg/field/FieldIo.h>            // member
 #include <pspg/field/WFieldContainer.h>    // member
 #include <pspg/field/CFieldContainer.h>    // member
-#include <prdc/gpu/RField.h>            // member
-#include <prdc/gpu/RFieldDft.h>         // member
-#include <pspg/simulate/McSimulator.h>     // member
+
+#include <prdc/cuda/RField.h>              // member
+#include <prdc/cuda/RFieldDft.h>           // member
 
 #include <pscf/homogeneous/Mixture.h>      // member
 #include <util/misc/FileMaster.h>          // member
@@ -45,6 +46,8 @@ namespace Pspg
    template <int D> class McMoveFactory;
 
    using namespace Util;
+   using namespace Pscf::Prdc;
+   using namespace Pscf::Prdc::Cuda;
 
    /**
    * Main class in SCFT simulation of one system.

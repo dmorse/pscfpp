@@ -9,17 +9,18 @@
 */
 
 #include <pscf/solvers/PropagatorTmpl.h> // base class template
-#include <prdc/gpu/RField.h>          // member template
+#include <prdc/cuda/RField.h>          // member template
 #include <util/containers/DArray.h>      // member template
 
 namespace Pscf { template <int D> class Mesh; }
 
 namespace Pscf { 
-namespace Pspg
-{ 
+namespace Pspg { 
 
    template <int D> class Block;
    using namespace Util;
+   using namespace Pscf::Prdc;
+   using namespace Pscf::Prdc::Cuda;
 
    /**
    * MDE solver for one-direction of one block.

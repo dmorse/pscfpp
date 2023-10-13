@@ -9,9 +9,9 @@
 */
 
 #include "Propagator.h"                   // base class argument
-#include <prdc/gpu/RField.h>           // member
-#include <prdc/gpu/RFieldDft.h>        // member
-#include <pspg/field/FFT.h>               // member
+#include <prdc/cuda/RField.h>           // member
+#include <prdc/cuda/RFieldDft.h>        // member
+#include <prdc/cuda/FFT.h>               // member
 #include <pspg/field/FFTBatched.h>        // member
 #include <pspg/solvers/WaveList.h>
 #include <prdc/crystal/UnitCell.h>
@@ -26,7 +26,7 @@ namespace Pspg {
 
    using namespace Util;
    using namespace Pscf::Prdc;
-   using namespace Pscf::Prdc::Gpu;
+   using namespace Pscf::Prdc::Cuda;
 
    /**
    * Block within a branched polymer.

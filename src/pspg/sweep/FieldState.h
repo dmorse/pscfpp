@@ -18,6 +18,7 @@ namespace Pspg
 
    using namespace Util;
    using namespace Pscf::Prdc;
+   using namespace Pscf::Prdc::Cuda;
 
    template <int D> class System;
 

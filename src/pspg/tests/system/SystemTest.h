@@ -5,7 +5,7 @@
 #include <test/UnitTestRunner.h>
 
 #include <pspg/System.h>
-#include <prdc/gpu/RField.h>
+#include <prdc/cuda/RField.h>
 #include <pscf/cuda/GpuResources.h>
 #include <prdc/crystal/BFieldComparison.h>
 #include <util/tests/LogFileUnitTest.h>

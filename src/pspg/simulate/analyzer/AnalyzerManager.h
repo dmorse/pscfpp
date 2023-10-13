@@ -8,11 +8,10 @@
 namespace Pscf {
 namespace Pspg {
 
-   using namespace Util;
-   
    template <int D> class System;
    template <int D> class McSimulator;
 
+   using namespace Util;
 
    /**
    * Manager for a list of Analyzer objects.

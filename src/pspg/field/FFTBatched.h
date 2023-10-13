@@ -8,8 +8,8 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <prdc/gpu/RField.h>
-#include <prdc/gpu/RFieldDft.h>
+#include <prdc/cuda/RField.h>
+#include <prdc/cuda/RFieldDft.h>
 #include <pscf/math/IntVec.h>
 #include <util/global.h>
 
@@ -26,6 +26,8 @@ namespace Pspg {
 
    using namespace Util;
    using namespace Pscf;
+   using namespace Pscf::Prdc;
+   using namespace Pscf::Prdc::Cuda;
 
    /**
    * Fourier transform wrapper for real data.

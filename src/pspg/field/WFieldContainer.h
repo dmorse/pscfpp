@@ -10,7 +10,7 @@
 
 
 
-#include <prdc/gpu/RField.h>            // member template parameter
+#include <prdc/cuda/RField.h>            // member template parameter
 #include <prdc/crystal/UnitCell.h>         // function parameter
 #include <pscf/math/IntVec.h>              // function parameter
 #include <util/param/ParamComposite.h>     // base class
@@ -23,6 +23,7 @@ namespace Pspg {
 
    using namespace Util;
    using namespace Pscf::Prdc;
+   using namespace Pscf::Prdc::Cuda;
 
    /**
    * A list of fields stored in both basis and r-grid format.

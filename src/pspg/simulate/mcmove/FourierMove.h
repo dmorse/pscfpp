@@ -9,9 +9,9 @@
 */
 
 #include "McMove.h"                          //base class
-#include <prdc/gpu/RField.h>
-#include <prdc/gpu/RFieldDft.h> 
 
+#include <prdc/cuda/RFieldDft.h> 
+#include <prdc/cuda/RField.h>
 #include <prdc/crystal/shiftToMinimum.h>
 
 #include <pscf/math/IntVec.h>
@@ -19,14 +19,15 @@
 #include <util/param/ParamComposite.h>
 #include <util/containers/DArray.h>
 #include <util/global.h>
+
 #include <curand.h>
 
 namespace Pscf {
-namespace Pspg
-{
+namespace Pspg {
 
    using namespace Util;
    using namespace Pscf::Prdc;
+   using namespace Pscf::Prdc::Cuda;
 
    /**
    * FourierMove is a Monte Carlo move in fourier space

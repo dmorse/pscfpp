@@ -13,8 +13,13 @@ include $(SRC_DIR)/prdc/include.mk
 
 #-----------------------------------------------------------------------
 # Main targets 
+ 
+.PHONE: all list clean veryclean
 
 all: $(prdc_OBJS) $(prdc_LIB) 
+
+list:
+	@echo $(prdc_OBJS)
 
 clean:
 	rm -f $(prdc_OBJS) $(prdc_OBJS:.o=.d)
@@ -33,4 +38,3 @@ veryclean:
 -include $(prdc_OBJS:.o=.d)
 -include $(pscf_OBJS:.o=.d)
 -include $(util_OBJS:.o=.d)
--include $(PSCF_PG).d 

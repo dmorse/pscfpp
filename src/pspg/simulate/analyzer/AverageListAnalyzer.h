@@ -9,16 +9,16 @@
 */
 
 #include "Analyzer.h"
-#include <util/accumulators/Average.h>           // member
 #include <pspg/System.h>
+#include <util/accumulators/Average.h>           // member
 
 namespace Pscf {
 namespace Pspg
 {
 
+   template <int D> class System;
+
    using namespace Util;
-   template <int D>
-   class System;
 
    /**
    * Analyze averages and block averages of several real variables.

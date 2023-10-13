@@ -22,6 +22,8 @@ namespace Pscf {
 namespace Pspg
 {
 
+   using namespace Pscf::Prdc;
+   using namespace Pscf::Prdc::Cuda;
 
    /**
    * Solver for a mixture of polymers and solvents.

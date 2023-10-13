@@ -8,14 +8,16 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <util/containers/DArray.h>
-#include <prdc/gpu/RFieldDft.h>
+#include <prdc/cuda/RFieldDft.h>
 #include <pscf/cuda/GpuResources.h>
+#include <util/containers/DArray.h>
 
 namespace Pscf {
 namespace Pspg {
 
    using namespace Util;
+   using namespace Pscf::Prdc;
+   using namespace Pscf::Prdc::Cuda;
 
    /**
    * Comparator for RFieldDft (k-grid) arrays.

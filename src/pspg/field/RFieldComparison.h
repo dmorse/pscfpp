@@ -9,12 +9,14 @@
 */
 
 #include <pscf/math/FieldComparison.h>
-#include "RField.h"
+#include <prdc/cuda/RField.h>
 
 namespace Pscf {
 namespace Pspg {
 
    using namespace Util;
+   using namespace Pscf::Prdc;
+   using namespace Pscf::Prdc::Cuda;
 
    /**
    * Comparator for fields in real-space (r-grid) format.

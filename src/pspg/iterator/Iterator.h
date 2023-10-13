@@ -9,7 +9,7 @@
 */
 
 #include <util/param/ParamComposite.h>    // base class
-#include <prdc/gpu/Field.h>
+#include <prdc/cuda/Field.h>
 #include <util/global.h>                  
 
 namespace Pscf {
@@ -20,6 +20,8 @@ namespace Pspg
    class System;
 
    using namespace Util;
+   using namespace Pscf::Prdc;
+   using namespace Pscf::Prdc::Cuda;
 
    typedef Field<cudaReal> FieldCUDA;
 

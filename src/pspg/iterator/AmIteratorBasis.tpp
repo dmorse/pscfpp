@@ -10,7 +10,7 @@
 
 #include "AmIteratorBasis.h"
 #include <pspg/System.h>
-#include <prdc/gpu/RField.h>
+#include <prdc/cuda/RField.h>
 
 #include <prdc/crystal/UnitCell.h>
 #include <prdc/crystal/Basis.h>

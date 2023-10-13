@@ -15,9 +15,11 @@
 namespace Pscf {
 namespace Pspg {
 
-   using namespace Util;
-
    template <int D> class System;
+
+   using namespace Util;
+   using namespace Pscf::Prdc;
+   using namespace Pscf::Prdc::Cuda;
 
    /**
    * Solve a sequence of problems along a line in parameter space.
