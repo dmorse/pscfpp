@@ -32,5 +32,5 @@ fd1d_LIB=$(BLD_DIR)/fd1d/lib$(fd1d_LIBNAME).a
 #-----------------------------------------------------------------------
 # Path to executable file
 
-PSCF_FD_EXE=$(BIN_DIR)/pscf_fd$(FD1D_SUFFIX)$(UTIL_SUFFIX)
+PSCF_FD_EXE=$(BIN_DIR)/pscf_fd
 #-----------------------------------------------------------------------

@@ -36,7 +36,7 @@ endif
 clean:
 	rm -f $(prdc_tests_OBJS) $(prdc_tests_OBJS:.o=.d)
 	rm -f $(BLD_DIR)/$(TEST) $(BLD_DIR)/$(TEST).d
-	rm -f Test.cpp
+	rm -f Test.cpp Test.p
 ifeq ($(BLD_DIR),$(SRC_DIR))
 	rm -f crystal/Test crystal/Test.o crystal/Test.d
 else

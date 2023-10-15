@@ -62,11 +62,9 @@ else
   # Make temporary copy of *.cu file with *.cpp extension, compile as C++ file
 	cp $< $(<:.cu=.cpp)
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(INCLUDES) $(DEFINES) -c -o $@ $(<:.cu=.cpp)
-  ifdef MAKEDEP
-	$(MAKEDEP) $(INCLUDES) $(DEFINES) $(MAKE_DEPS) -S$(SRC_DIR) -B$(BLD_DIR) $(<:.cu=.cpp)
-  endif
   # Remove temporary *.cpp file
 	rm $(<:.cu=.cpp)
+  # Note: No dependency file is generated, because it would include *.cpp file
 endif
 
 # Pattern rule to compile Test programs in src/prdc/tests

@@ -32,10 +32,8 @@ veryclean:
 	$(MAKE) clean
 	-rm -f lib*.a
 
-
-# Executable target
-
-$(PSCF_FD_EXE): $(PSCF_FD).o $(PSCF_LIBS)
+# Executable target (linking)
+$(PSCF_FD_EXE): $(PSCF_FD).o $(FD1D_LIBS)
 	$(CXX) $(LDFLAGS) -o $(PSCF_FD_EXE) $(PSCF_FD).o $(LIBS) 
 
 # Short name for executable target (for convenience)

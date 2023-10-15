@@ -48,11 +48,9 @@ else
   # Make temporary copy of *.cu file with *.cpp extension, compile as C++ file
 	cp $< $(<:.cu=.cpp)
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(INCLUDES) $(DEFINES) -c -o $@ $(<:.cu=.cpp)
-  ifdef MAKEDEP
-	$(MAKEDEP) $(INCLUDES) $(DEFINES) $(MAKE_DEPS) -S$(SRC_DIR) -B$(BLD_DIR) $(<:.cu=.cpp)
-  endif
   # Remove temporary *.cpp file
 	rm $(<:.cu=.cpp)
+  # Note: No *.d file is made, because it would list the missing *.cpp file
 endif
 
 # Pattern rule to compile Test programs in src/pscf/tests
