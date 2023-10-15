@@ -12,10 +12,10 @@
 #-----------------------------------------------------------------------
 
 # Local pscf-specific libraries needed in src/fd1d
-PSCF_LIBS=$(fd1d_LIB) $(pscf_LIB) $(util_LIB)
+FD1D_LIBS=$(fd1d_LIB) $(pscf_LIB) $(util_LIB)
 
 # List of all libraries needed by executables in src/fd1d
-LIBS=$(PSCF_LIBS)
+LIBS=$(FD1D_LIBS)
 
 # Add paths to Gnu scientific library (GSL)
 INCLUDES+=$(GSL_INC)
@@ -37,11 +37,7 @@ ifdef MAKEDEP
 	$(MAKEDEP) $(INCLUDES) $(DEFINES) $(MAKE_DEPS) -S$(SRC_DIR) -B$(BLD_DIR) $<
 endif
 
-# Pattern rule to compile *.cc test programs in src/fd1d/tests
-$(BLD_DIR)/% $(BLD_DIR)/%.o:$(SRC_DIR)/%.cc $(PSCF_LIBS)
-	$(CXX) $(TESTFLAGS) $(INCLUDES) $(DEFINES) -c -o $@ $<
-	$(CXX) $(LDFLAGS) $(INCLUDES) $(DEFINES) -o $(@:.o=) $@ $(LIBS)
-ifdef MAKEDEP
-	$(MAKEDEP) $(INCLUDES) $(DEFINES) $(MAKE_DEPS) -S$(SRC_DIR) -B$(BLD_DIR) $<
-endif
+# Pattern rule to compile Test programs in src/pscf/tests
+$(BLD_DIR)/%Test: $(BLD_DIR)/%Test.o $(FD1D_LIBS)
+	$(CXX) $(LDFLAGS) $(INCLUDES) $(DEFINES) -o $@ $< $(LIBS)
 

@@ -6,8 +6,6 @@ pspc_field_= \
   pspc/field/Mask.cpp 
   #pspc/field/BFieldComparison.cpp \
 
-pspc_field_SRCS=\
-     $(addprefix $(SRC_DIR)/, $(pspc_field_))
 pspc_field_OBJS=\
      $(addprefix $(BLD_DIR)/, $(pspc_field_:.cpp=.o))
 

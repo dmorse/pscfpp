@@ -13,8 +13,6 @@ fd1d_=\
   fd1d/System.cpp \
   fd1d/SystemAccess.cpp 
 
-fd1d_SRCS=\
-     $(addprefix $(SRC_DIR)/, $(fd1d_))
 fd1d_OBJS=\
      $(addprefix $(BLD_DIR)/, $(fd1d_:.cpp=.o))
 

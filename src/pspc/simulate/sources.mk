@@ -10,9 +10,6 @@ pspc_simulate_= \
   pspc/simulate/McSimulator.cpp \
   pspc/simulate/McState.cpp \
   
-  
-pspc_simulate_SRCS=\
-     $(addprefix $(SRC_DIR)/, $(pspc_simulate_))
 pspc_simulate_OBJS=\
      $(addprefix $(BLD_DIR)/, $(pspc_simulate_:.cpp=.o))
 

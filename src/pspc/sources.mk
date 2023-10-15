@@ -14,8 +14,6 @@ pspc_= \
   $(pspc_simulate_) \
   pspc/System.cpp 
 
-pspc_SRCS=\
-     $(addprefix $(SRC_DIR)/, $(pspc_))
 pspc_OBJS=\
      $(addprefix $(BLD_DIR)/, $(pspc_:.cpp=.o))
 

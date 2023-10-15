@@ -7,8 +7,6 @@ pspc_simulate_analyzer_= \
   pspc/simulate/analyzer/McHamiltonianAnalyzer.cpp \
   pspc/simulate/analyzer/BinaryStructureFactorGrid.cpp 
   
-pspc_simulate_analyzer_SRCS=\
-     $(addprefix $(SRC_DIR)/, $(pspc_simulate_analyzer_))
 pspc_simulate_analyzer_OBJS=\
      $(addprefix $(BLD_DIR)/, $(pspc_simulate_analyzer_:.cpp=.o))
 
