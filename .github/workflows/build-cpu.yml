@@ -23,7 +23,7 @@ jobs:
         submodules: recursive
     - run: ./configure
     - run: ls 
-    - run: cd bld; make all-cpu
+    - run: cd bld; make all
     - run: cd bld/pscf/tests; make run
     - run: cd bld/fd1d/tests; make run
     - run: cd bld/prdc/tests; make run
