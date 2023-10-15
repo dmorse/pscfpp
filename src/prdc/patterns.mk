@@ -52,19 +52,9 @@ endif
 
 # Pattern rule to compile *.cu class source files in src/prdc
 $(BLD_DIR)/%.o:$(SRC_DIR)/%.cu
-ifdef PSCF_CUDA
 	$(NVXX) $(CPPFLAGS) $(NVXXFLAGS) $(INCLUDES) $(DEFINES) -c -o $@ $<
-  ifdef MAKEDEP_CUDA
+ifdef MAKEDEP_CUDA
 	$(MAKEDEP_CUDA) $(INCLUDES) $(DEFINES) $(MAKE_DEPS) -S$(SRC_DIR) -B$(BLD_DIR) $<
-  endif
-else
-  # Attempt to compile *.cu files as *.cpp files ifndef PSCF_CUDA
-  # Make temporary copy of *.cu file with *.cpp extension, compile as C++ file
-	cp $< $(<:.cu=.cpp)
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(INCLUDES) $(DEFINES) -c -o $@ $(<:.cu=.cpp)
-  # Remove temporary *.cpp file
-	rm $(<:.cu=.cpp)
-  # Note: No dependency file is generated, because it would include *.cpp file
 endif
 
 # Pattern rule to compile Test programs in src/prdc/tests
