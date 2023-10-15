@@ -27,10 +27,12 @@ INCLUDES+=$(FFTW_INC)
 LIBS+=$(FFTW_LIB) 
 
 # Add paths to CUDA FFT library
-#PRDC_DEFS+=-DPRDC_FFTW -DGPU_OUTER
-#PRDC_CUFFT_LIB=-lcufft -lcudart -lcuda -lcurand
-#INCLUDES+=$(CUFFT_INC)
-#LIBS+=$(PRDC_CUFFT_LIB)
+ifdef PSCF_CUDA
+  PRDC_DEFS+=-DPRDC_FFTW -DGPU_OUTER
+  PRDC_CUFFT_LIB=-lcufft -lcudart -lcuda -lcurand
+  INCLUDES+=$(CUFFT_INC)
+  LIBS+=$(PRDC_CUFFT_LIB)
+endif
 
 # Preprocessor macro definitions needed in src/prdc
 DEFINES=$(UTIL_DEFS) $(PSCF_DEFS) $(PRDC_DEFS) 
@@ -50,11 +52,22 @@ endif
 
 # Pattern rule to compile *.cu class source files in src/prdc
 $(BLD_DIR)/%.o:$(SRC_DIR)/%.cu
+ifdef PSCF_CUDA
 	$(NVXX) $(CPPFLAGS) $(NVXXFLAGS) $(INCLUDES) $(DEFINES) -c -o $@ $<
-ifdef MAKEDEP_CUDA
+  ifdef MAKEDEP_CUDA
 	$(MAKEDEP_CUDA) $(INCLUDES) $(DEFINES) $(MAKE_DEPS) -S$(SRC_DIR) -B$(BLD_DIR) $<
+  endif
+else
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(INCLUDES) $(DEFINES) -c -o $@ $<
+  ifdef MAKEDEP
+	$(MAKEDEP) $(INCLUDES) $(DEFINES) $(MAKE_DEPS) -S$(SRC_DIR) -B$(BLD_DIR) $<
+  endif
 endif
 
 # Pattern rule to compile Test programs in src/prdc/tests
 $(BLD_DIR)/%Test: $(BLD_DIR)/%Test.o $(PRDC_LIBS)
+ifdef PSCF_CUDA
+	$(NVXX) $(LDFLAGS) $(INCLUDES) $(DEFINES) -o $@ $< $(LIBS)
+else
 	$(CXX) $(LDFLAGS) $(INCLUDES) $(DEFINES) -o $@ $< $(LIBS)
+endif

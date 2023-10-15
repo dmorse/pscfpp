@@ -1,22 +1,26 @@
-#ifndef PSPG_FFT_TEST_H
-#define PSPG_FFT_TEST_H
+#ifndef PRDC_CUDA_FFT_TEST_H
+#define PRDC_CUDA_FFT_TEST_H
 
 #include <test/UnitTest.h>
 #include <test/UnitTestRunner.h>
 
+//#include <pspg/field/RFieldComparison.h>
+
 #include <prdc/cuda/FFT.h>
 #include <prdc/cuda/RField.h>
 #include <prdc/cuda/RFieldDft.h>
-//#include <pspg/field/RFieldComparison.h>
+
+#include <pscf/math/IntVec.h>
 
 #include <util/math/Constants.h>
 #include <util/format/Dbl.h>
 
 using namespace Util;
-using namespace Pscf::Pspg;
+using namespace Pscf;
+using namespace Pscf::Prdc;
 
-class FftTest : public UnitTest 
-{
+class CudaFftTest : public UnitTest {
+
 public:
 
    void setUp() {}
@@ -29,15 +33,17 @@ public:
 
 };
 
-void FftTest::testConstructor()
+void CudaFftTest::testConstructor()
 {
    printMethod(TEST_FUNC);
    {
-      FFT<1> v;
+      using namespace Pscf::Prdc::Cuda;
+      Cuda::FFT<1> v;
    }
 } 
 
-void FftTest::testTransform1D() {
+void CudaFftTest::testTransform1D() 
+{
    printMethod(TEST_FUNC);
 
    // Data size
@@ -45,12 +51,12 @@ void FftTest::testTransform1D() {
    IntVec<1> d;
    d[0] = n;
 
-   RField<1> d_rField;
-   RFieldDft<1> d_kField;
+   Cuda::RField<1> d_rField;
+   Cuda::RFieldDft<1> d_kField;
    d_rField.allocate(d);
    d_kField.allocate(d);
 
-   FFT<1> v;
+   Cuda::FFT<1> v;
    v.setup(d_rField, d_kField);
 
    TEST_ASSERT(d_rField.capacity() == n);
@@ -72,7 +78,7 @@ void FftTest::testTransform1D() {
    v.forwardTransform(d_rField, d_kField);
 
    // Inverse transform, k to r
-   RField<1> d_rField_out;
+   Cuda::RField<1> d_rField_out;
    d_rField_out.allocate(d);
    v.inverseTransform(d_kField, d_rField_out);
 
@@ -87,7 +93,7 @@ void FftTest::testTransform1D() {
 
 }
 
-void FftTest::testTransform2D() {
+void CudaFftTest::testTransform2D() {
    printMethod(TEST_FUNC);
    
    int n1 = 3, n2 = 3;
@@ -95,12 +101,12 @@ void FftTest::testTransform2D() {
    d[0] = n1;
    d[1] = n2;
 
-   RField<2> d_rField;
-   RFieldDft<2> d_kField;
+   Cuda::RField<2> d_rField;
+   Cuda::RFieldDft<2> d_kField;
    d_rField.allocate(d);
    d_kField.allocate(d);
 
-   FFT<2> v;
+   Cuda::FFT<2> v;
    v.setup(d_rField, d_kField);
 
    TEST_ASSERT(d_rField.capacity() == n1*n2);
@@ -130,7 +136,7 @@ void FftTest::testTransform2D() {
    v.forwardTransform(d_rField, d_kField);
 
    // Inverse transform, k to r
-   RField<2> d_rField_out;
+   Cuda::RField<2> d_rField_out;
    d_rField_out.allocate(d);
    v.inverseTransform(d_kField, d_rField_out);
 
@@ -145,7 +151,7 @@ void FftTest::testTransform2D() {
 
 }
 
-void FftTest::testTransform3D() {
+void CudaFftTest::testTransform3D() {
    printMethod(TEST_FUNC);
    
    int n1 = 3, n2 = 3, n3 = 3;
@@ -154,12 +160,12 @@ void FftTest::testTransform3D() {
    d[1] = n2;
    d[2] = n3;
 
-   RField<3> d_rField;
-   RFieldDft<3> d_kField;
+   Cuda::RField<3> d_rField;
+   Cuda::RFieldDft<3> d_kField;
    d_rField.allocate(d);
    d_kField.allocate(d);
 
-   FFT<3> v;
+   Cuda::FFT<3> v;
    v.setup(d_rField, d_kField);
 
    TEST_ASSERT(d_rField.capacity() == n1*n2*n3);
@@ -185,7 +191,7 @@ void FftTest::testTransform3D() {
    v.forwardTransform(d_rField, d_kField);
 
    // Inverse transform, k to r
-   RField<3> d_rField_out;
+   Cuda::RField<3> d_rField_out;
    d_rField_out.allocate(d);
    v.inverseTransform(d_kField, d_rField_out);
 
@@ -200,11 +206,11 @@ void FftTest::testTransform3D() {
 
 }
 
-TEST_BEGIN(FftTest)
-TEST_ADD(FftTest, testConstructor)
-TEST_ADD(FftTest, testTransform1D)
-TEST_ADD(FftTest, testTransform2D)
-TEST_ADD(FftTest, testTransform3D)
-TEST_END(FftTest)
+TEST_BEGIN(CudaFftTest)
+TEST_ADD(CudaFftTest, testConstructor)
+TEST_ADD(CudaFftTest, testTransform1D)
+TEST_ADD(CudaFftTest, testTransform2D)
+TEST_ADD(CudaFftTest, testTransform3D)
+TEST_END(CudaFftTest)
 
 #endif

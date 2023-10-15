@@ -1,5 +1,5 @@
-#ifndef PRDC_R_FIELD_TEST_H
-#define PRDC_R_FIELD_TEST_H
+#ifndef PRDC_CPU_R_FIELD_TEST_H
+#define PRDC_CPU_R_FIELD_TEST_H
 
 #include <test/UnitTest.h>
 #include <test/UnitTestRunner.h>
@@ -14,10 +14,10 @@
 
 using namespace Util;
 using namespace Pscf::Prdc;
-using namespace Pscf::Prdc::Cpu;
 
-class RFieldTest : public UnitTest 
+class CpuRFieldTest : public UnitTest 
 {
+
 private:
 
    const static int capacity = 3;
@@ -45,8 +45,10 @@ public:
 };
 
 
-void RFieldTest::testConstructor()
+void CpuRFieldTest::testConstructor()
 {
+   using namespace Pscf::Prdc::Cpu;
+
    printMethod(TEST_FUNC);
    {
       RField<3> v;
@@ -55,8 +57,10 @@ void RFieldTest::testConstructor()
    }
 } 
 
-void RFieldTest::testAllocate()
+void CpuRFieldTest::testAllocate()
 {
+   using namespace Pscf::Prdc::Cpu;
+
    printMethod(TEST_FUNC);
    {
       RField<3> v;
@@ -66,8 +70,9 @@ void RFieldTest::testAllocate()
    }
 } 
 
-void RFieldTest::testAllocate3()
+void CpuRFieldTest::testAllocate3()
 {
+   using namespace Pscf::Prdc::Cpu;
    printMethod(TEST_FUNC);
    {
       IntVec<3> d;
@@ -82,8 +87,9 @@ void RFieldTest::testAllocate3()
    }
 }
  
-void RFieldTest::testSubscript()
+void CpuRFieldTest::testSubscript()
 {
+   using namespace Pscf::Prdc::Cpu;
    printMethod(TEST_FUNC);
    {
       RField<3> v;
@@ -97,8 +103,9 @@ void RFieldTest::testSubscript()
    }
 }
  
-void RFieldTest::testCopyConstructor()
+void CpuRFieldTest::testCopyConstructor()
 {
+   using namespace Pscf::Prdc::Cpu;
    printMethod(TEST_FUNC);
 
    {
@@ -125,8 +132,9 @@ void RFieldTest::testCopyConstructor()
    }
 } 
 
-void RFieldTest::testAssignment()
+void CpuRFieldTest::testAssignment()
 {
+   using namespace Pscf::Prdc::Cpu;
    printMethod(TEST_FUNC);
 
    {
@@ -155,8 +163,9 @@ void RFieldTest::testAssignment()
    }
 } 
 
-void RFieldTest::testSerialize1Memory()
+void CpuRFieldTest::testSerialize1Memory()
 {
+   using namespace Pscf::Prdc::Cpu;
    printMethod(TEST_FUNC);
    {
       RField<3> v;
@@ -236,8 +245,9 @@ void RFieldTest::testSerialize1Memory()
 
 }
 
-void RFieldTest::testSerialize2Memory()
+void CpuRFieldTest::testSerialize2Memory()
 {
+   using namespace Pscf::Prdc::Cpu;
    printMethod(TEST_FUNC);
    {
       RField<3> v;
@@ -277,8 +287,9 @@ void RFieldTest::testSerialize2Memory()
    }
 }
 
-void RFieldTest::testSerialize1File()
+void CpuRFieldTest::testSerialize1File()
 {
+   using namespace Pscf::Prdc::Cpu;
    printMethod(TEST_FUNC);
    {
       RField<3> v;
@@ -330,8 +341,9 @@ void RFieldTest::testSerialize1File()
    }
 }
 
-void RFieldTest::testSerialize2File()
+void CpuRFieldTest::testSerialize2File()
 {
+   using namespace Pscf::Prdc::Cpu;
    printMethod(TEST_FUNC);
    {
       RField<3> v;
@@ -386,17 +398,17 @@ void RFieldTest::testSerialize2File()
    }
 }
 
-TEST_BEGIN(RFieldTest)
-TEST_ADD(RFieldTest, testConstructor)
-TEST_ADD(RFieldTest, testAllocate)
-TEST_ADD(RFieldTest, testAllocate3)
-TEST_ADD(RFieldTest, testSubscript)
-TEST_ADD(RFieldTest, testCopyConstructor)
-TEST_ADD(RFieldTest, testAssignment)
-TEST_ADD(RFieldTest, testSerialize1Memory)
-TEST_ADD(RFieldTest, testSerialize2Memory)
-TEST_ADD(RFieldTest, testSerialize1File)
-TEST_ADD(RFieldTest, testSerialize2File)
-TEST_END(RFieldTest)
+TEST_BEGIN(CpuRFieldTest)
+TEST_ADD(CpuRFieldTest, testConstructor)
+TEST_ADD(CpuRFieldTest, testAllocate)
+TEST_ADD(CpuRFieldTest, testAllocate3)
+TEST_ADD(CpuRFieldTest, testSubscript)
+TEST_ADD(CpuRFieldTest, testCopyConstructor)
+TEST_ADD(CpuRFieldTest, testAssignment)
+TEST_ADD(CpuRFieldTest, testSerialize1Memory)
+TEST_ADD(CpuRFieldTest, testSerialize2Memory)
+TEST_ADD(CpuRFieldTest, testSerialize1File)
+TEST_ADD(CpuRFieldTest, testSerialize2File)
+TEST_END(CpuRFieldTest)
 
 #endif

@@ -1,10 +1,11 @@
-#ifndef PRDC_CPU_TEST_H
-#define PRDC_CPU_TEST_H
+#ifndef PRDC_CPU_FIELD_TEST_H
+#define PRDC_CPU_FIELD_TEST_H
 
 #include <test/UnitTest.h>
 #include <test/UnitTestRunner.h>
 
 #include <prdc/cpu/Field.h>
+
 #include <util/archives/MemoryOArchive.h>
 #include <util/archives/MemoryIArchive.h>
 #include <util/archives/MemoryCounter.h>
@@ -12,9 +13,9 @@
 #include <util/archives/BinaryFileIArchive.h>
 
 using namespace Util;
-using namespace Pscf::Prdc::Cpu;
+using namespace Pscf; 
 
-class FieldTest : public UnitTest 
+class CpuFieldTest : public UnitTest 
 {
 
 private:
@@ -38,8 +39,9 @@ public:
 };
 
 
-void FieldTest::testConstructor()
+void CpuFieldTest::testConstructor()
 {
+   using namespace Pscf::Prdc::Cpu;
    printMethod(TEST_FUNC);
    {
       Field<double> v;
@@ -48,8 +50,9 @@ void FieldTest::testConstructor()
    }
 } 
 
-void FieldTest::testAllocate()
+void CpuFieldTest::testAllocate()
 {
+   using namespace Pscf::Prdc::Cpu;
    printMethod(TEST_FUNC);
    {
       Field<double> v;
@@ -59,8 +62,9 @@ void FieldTest::testAllocate()
    }
 } 
 
-void FieldTest::testSubscript()
+void CpuFieldTest::testSubscript()
 {
+   using namespace Pscf::Prdc::Cpu;
    printMethod(TEST_FUNC);
    {
       Field<double> v;
@@ -74,8 +78,9 @@ void FieldTest::testSubscript()
    }
 } 
 
-void FieldTest::testSerialize1Memory()
+void CpuFieldTest::testSerialize1Memory()
 {
+   using namespace Pscf::Prdc::Cpu;
    printMethod(TEST_FUNC);
    {
       Field<double> v;
@@ -155,8 +160,9 @@ void FieldTest::testSerialize1Memory()
 
 }
 
-void FieldTest::testSerialize2Memory()
+void CpuFieldTest::testSerialize2Memory()
 {
+   using namespace Pscf::Prdc::Cpu;
    printMethod(TEST_FUNC);
    {
       Field<double> v;
@@ -196,8 +202,9 @@ void FieldTest::testSerialize2Memory()
    }
 }
 
-void FieldTest::testSerialize1File()
+void CpuFieldTest::testSerialize1File()
 {
+   using namespace Pscf::Prdc::Cpu;
    printMethod(TEST_FUNC);
    {
       Field<double> v;
@@ -249,8 +256,9 @@ void FieldTest::testSerialize1File()
    }
 }
 
-void FieldTest::testSerialize2File()
+void CpuFieldTest::testSerialize2File()
 {
+   using namespace Pscf::Prdc::Cpu;
    printMethod(TEST_FUNC);
    {
       Field<double> v;
@@ -305,14 +313,14 @@ void FieldTest::testSerialize2File()
    }
 }
 
-TEST_BEGIN(FieldTest)
-TEST_ADD(FieldTest, testConstructor)
-TEST_ADD(FieldTest, testAllocate)
-TEST_ADD(FieldTest, testSubscript)
-TEST_ADD(FieldTest, testSerialize1Memory)
-TEST_ADD(FieldTest, testSerialize2Memory)
-TEST_ADD(FieldTest, testSerialize1File)
-TEST_ADD(FieldTest, testSerialize2File)
-TEST_END(FieldTest)
+TEST_BEGIN(CpuFieldTest)
+TEST_ADD(CpuFieldTest, testConstructor)
+TEST_ADD(CpuFieldTest, testAllocate)
+TEST_ADD(CpuFieldTest, testSubscript)
+TEST_ADD(CpuFieldTest, testSerialize1Memory)
+TEST_ADD(CpuFieldTest, testSerialize2Memory)
+TEST_ADD(CpuFieldTest, testSerialize1File)
+TEST_ADD(CpuFieldTest, testSerialize2File)
+TEST_END(CpuFieldTest)
 
 #endif

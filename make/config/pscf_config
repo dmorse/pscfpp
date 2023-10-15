@@ -35,6 +35,11 @@
 PSCF_DEFS=
 PSCF_SUFFIX:=
 
+# Enable CUDA compilation
+ifdef PSCF_CUDA
+PSCF_DEFS+= -DPSCF_CUDA
+endif
+
 #-----------------------------------------------------------------------
 # Path to the pscf library 
 # Note: BLD_DIR is defined in the main config.mk file in bld/ or src/

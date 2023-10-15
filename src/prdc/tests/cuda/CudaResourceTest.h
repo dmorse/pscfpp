@@ -1,19 +1,17 @@
-#ifndef PSPG_CUDA_RESOURCE_TEST_H
-#define PSPG_CUDA_RESOURCE_TEST_H
+#ifndef PSCF_CUDA_RESOURCE_TEST_H
+#define PSCF_CUDA_RESOURCE_TEST_H
 
 #include <test/UnitTest.h>
 #include <test/UnitTestRunner.h>
 
-#include <prdc/cuda/RField.h>
-#include <util/math/Constants.h>
 #include <pscf/cuda/GpuResources.h>
+#include <util/math/Constants.h>
 
 #include <cstdlib>
 #include <cmath>
 
 using namespace Util;
 using namespace Pscf;
-using namespace Pscf::Pspg;
 
 class CudaResourceTest : public UnitTest
 {
@@ -269,6 +267,8 @@ public:
       int nBlocks;
       ThreadGrid::setThreadsLogical(n/2, nBlocks);
 
+      using namespace Pscf::Prdc::Cuda;
+
       // Device arrays
       Field<cudaReal> d_a, d_b;
       d_a.allocate(n);
@@ -313,6 +313,8 @@ public:
       int nBlocks;
       ThreadGrid::setThreadsLogical(n/2, nBlocks);
 
+      using namespace Pscf::Prdc::Cuda;
+
       // Device arrays
       Field<cudaReal> d_data;
       d_data.allocate(n);
@@ -352,6 +354,8 @@ public:
       const int n = 14*nThreads + 77;
       int nBlocks;
       ThreadGrid::setThreadsLogical(n/2, nBlocks);
+
+      using namespace Pscf::Prdc::Cuda;
 
       // Device arrays
       Field<cudaReal> d_data;
@@ -393,6 +397,8 @@ public:
       int nBlocks;
       ThreadGrid::setThreadsLogical(n/2, nBlocks);
 
+      using namespace Pscf::Prdc::Cuda;
+
       // Device arrays
       Field<cudaReal> d_data;
       d_data.allocate(n);
@@ -433,6 +439,8 @@ public:
       int nBlocks;
       ThreadGrid::setThreadsLogical(n/2, nBlocks);
 
+      using namespace Pscf::Prdc::Cuda;
+
       // Device arrays
       Field<cudaReal> d_data;
       d_data.allocate(n);
@@ -472,6 +480,8 @@ public:
       const int n = 14*nThreads + 77;
       int nBlocks;
       ThreadGrid::setThreadsLogical(n/2, nBlocks);
+
+      using namespace Pscf::Prdc::Cuda;
 
       // Device arrays
       Field<cudaReal> d_data;

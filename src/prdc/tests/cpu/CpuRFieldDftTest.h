@@ -1,5 +1,5 @@
-#ifndef PRDC_R_FIELD_DFT_TEST_H
-#define PRDC_R_FIELD_DFT_TEST_H
+#ifndef PRDC_CPU_R_FIELD_DFT_TEST_H
+#define PRDC_CPU_R_FIELD_DFT_TEST_H
 
 #include <test/UnitTest.h>
 #include <test/UnitTestRunner.h>
@@ -13,10 +13,10 @@
 #include <util/archives/BinaryFileIArchive.h>
 
 using namespace Util;
-using namespace Pscf::Prdc::Cpu;
 
-class RFieldDftTest : public UnitTest 
+class CpuRFieldDftTest : public UnitTest 
 {
+
 private:
 
    const static int capacity = 3;
@@ -25,8 +25,7 @@ private:
 
 public:
 
-   void setUp() 
-   {  }
+   void setUp() {}
 
    void tearDown() {}
 
@@ -45,8 +44,9 @@ public:
 };
 
 
-void RFieldDftTest::testConstructor()
+void CpuRFieldDftTest::testConstructor()
 {
+   using namespace Pscf::Prdc::Cpu;
    printMethod(TEST_FUNC);
    {
       RFieldDft<3> v;
@@ -55,8 +55,9 @@ void RFieldDftTest::testConstructor()
    }
 } 
 
-void RFieldDftTest::testAllocate()
+void CpuRFieldDftTest::testAllocate()
 {
+   using namespace Pscf::Prdc::Cpu;
    printMethod(TEST_FUNC);
    {
       RFieldDft<3> v;
@@ -66,8 +67,9 @@ void RFieldDftTest::testAllocate()
    }
 } 
 
-void RFieldDftTest::testAllocate1()
+void CpuRFieldDftTest::testAllocate1()
 {
+   using namespace Pscf::Prdc::Cpu;
    printMethod(TEST_FUNC);
    {
       IntVec<1> d;
@@ -80,8 +82,9 @@ void RFieldDftTest::testAllocate1()
    }
 }
  
-void RFieldDftTest::testAllocate3()
+void CpuRFieldDftTest::testAllocate3()
 {
+   using namespace Pscf::Prdc::Cpu;
    printMethod(TEST_FUNC);
    {
       IntVec<3> d;
@@ -96,8 +99,9 @@ void RFieldDftTest::testAllocate3()
    }
 }
  
-void RFieldDftTest::testSubscript()
+void CpuRFieldDftTest::testSubscript()
 {
+   using namespace Pscf::Prdc::Cpu;
    printMethod(TEST_FUNC);
    {
       RFieldDft<3> v;
@@ -116,8 +120,9 @@ void RFieldDftTest::testSubscript()
    }
 } 
 
-void RFieldDftTest::testCopyConst()
+void CpuRFieldDftTest::testCopyConst()
 {
+   using namespace Pscf::Prdc::Cpu;
    printMethod(TEST_FUNC);
    {
       IntVec<3> d;
@@ -147,8 +152,9 @@ void RFieldDftTest::testCopyConst()
    }
 }
 
-void RFieldDftTest::testAssignment()
+void CpuRFieldDftTest::testAssignment()
 {
+   using namespace Pscf::Prdc::Cpu;
    printMethod(TEST_FUNC);
 
    {
@@ -185,8 +191,9 @@ void RFieldDftTest::testAssignment()
 } 
 
 #if 0
-void RFieldDftTest::testSerialize1Memory()
+void CpuRFieldDftTest::testSerialize1Memory()
 { 
+   using namespace Pscf::Prdc::Cpu;
    printMethod(TEST_FUNC);
    {
       RFieldDft<3> v;
@@ -274,8 +281,9 @@ void RFieldDftTest::testSerialize1Memory()
 
 }
 
-void RFieldDftTest::testSerialize2Memory()
+void CpuRFieldDftTest::testSerialize2Memory()
 {
+   using namespace Pscf::Prdc::Cpu;
    printMethod(TEST_FUNC);
    {
       RFieldDft<3> v;
@@ -321,8 +329,9 @@ void RFieldDftTest::testSerialize2Memory()
    }
 }
 
-void RFieldDftTest::testSerialize1File()
+void CpuRFieldDftTest::testSerialize1File()
 {
+   using namespace Pscf::Prdc::Cpu;
    printMethod(TEST_FUNC);
    {
       RFieldDft<3> v;
@@ -375,8 +384,9 @@ void RFieldDftTest::testSerialize1File()
    }
 }
 
-void RFieldDftTest::testSerialize2File()
+void CpuRFieldDftTest::testSerialize2File()
 {
+   using namespace Pscf::Prdc::Cpu;
    printMethod(TEST_FUNC);
    {
       RFieldDft<3> v;
@@ -433,18 +443,18 @@ void RFieldDftTest::testSerialize2File()
 }
 #endif
 
-TEST_BEGIN(RFieldDftTest)
-TEST_ADD(RFieldDftTest, testConstructor)
-TEST_ADD(RFieldDftTest, testAllocate)
-TEST_ADD(RFieldDftTest, testAllocate1)
-TEST_ADD(RFieldDftTest, testAllocate3)
-TEST_ADD(RFieldDftTest, testSubscript)
-TEST_ADD(RFieldDftTest, testAssignment)
-TEST_ADD(RFieldDftTest, testCopyConst)
-//TEST_ADD(RFieldDftTest, testSerialize1Memory)
-//TEST_ADD(RFieldDftTest, testSerialize2Memory)
-//TEST_ADD(RFieldDftTest, testSerialize1File)
-//TEST_ADD(RFieldDftTest, testSerialize2File)
-TEST_END(RFieldDftTest)
+TEST_BEGIN(CpuRFieldDftTest)
+TEST_ADD(CpuRFieldDftTest, testConstructor)
+TEST_ADD(CpuRFieldDftTest, testAllocate)
+TEST_ADD(CpuRFieldDftTest, testAllocate1)
+TEST_ADD(CpuRFieldDftTest, testAllocate3)
+TEST_ADD(CpuRFieldDftTest, testSubscript)
+TEST_ADD(CpuRFieldDftTest, testAssignment)
+TEST_ADD(CpuRFieldDftTest, testCopyConst)
+//TEST_ADD(CpuRFieldDftTest, testSerialize1Memory)
+//TEST_ADD(CpuRFieldDftTest, testSerialize2Memory)
+//TEST_ADD(CpuRFieldDftTest, testSerialize1File)
+//TEST_ADD(CpuRFieldDftTest, testSerialize2File)
+TEST_END(CpuRFieldDftTest)
 
 #endif

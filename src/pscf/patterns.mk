@@ -38,14 +38,25 @@ endif
 
 # Pattern rule to compile *.cu class source files in src/pscf
 $(BLD_DIR)/%.o:$(SRC_DIR)/%.cu
+ifdef PSCF_CUDA
 	$(NVXX) $(CPPFLAGS) $(NVXXFLAGS) $(INCLUDES) $(DEFINES) -c -o $@ $<
-ifdef MAKEDEP_CUDA
+  ifdef MAKEDEP_CUDA
 	$(MAKEDEP_CUDA) $(INCLUDES) $(DEFINES) $(MAKE_DEPS) -S$(SRC_DIR) -B$(BLD_DIR) $<
+  endif
+else
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(INCLUDES) $(DEFINES) -c -o $@ $<
+  ifdef MAKEDEP
+	$(MAKEDEP) $(INCLUDES) $(DEFINES) $(MAKE_DEPS) -S$(SRC_DIR) -B$(BLD_DIR) $<
+  endif
 endif
 
 # Pattern rule to compile Test programs in src/pscf/tests
-$(BLD_DIR)/%Test: $(BLD_DIR)/%Test.o $(PSPG_LIBS)
+$(BLD_DIR)/%Test: $(BLD_DIR)/%Test.o $(PSCF_LIBS)
+ifdef PSCF_CUDA
+	$(NVXX) $(LDFLAGS) $(INCLUDES) $(DEFINES) -o $@ $< $(LIBS)
+else
 	$(CXX) $(LDFLAGS) $(INCLUDES) $(DEFINES) -o $@ $< $(LIBS)
+endif
 
 # Pattern rule to compile *.cc test programs in src/pscf/tests
 #$(BLD_DIR)/% $(BLD_DIR)/%.o: $(SRC_DIR)/%.cc $(PSCF_LIBS)

@@ -14,8 +14,6 @@
 #include <fstream>
 
 using namespace Util;
-//using namespace Pscf;
-//using namespace Pspc;
 
 class FFTWTest : public UnitTest 
 {

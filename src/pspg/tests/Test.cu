@@ -4,7 +4,6 @@
 
 #include <test/CompositeTestRunner.h>
 
-#include "cuda/CudaTestComposite.h"
 #include "field/FieldTestComposite.h"
 #include "solvers/SolverTestComposite.h"
 #include "system/SystemTestComposite.h"
@@ -12,7 +11,6 @@
 #include <util/global.h>
 
 TEST_COMPOSITE_BEGIN(PspgNsTestComposite)
-addChild(new CudaTestComposite, "cuda/");
 addChild(new FieldTestComposite, "field/");
 addChild(new SolverTestComposite, "solvers/");
 addChild(new SystemTestComposite, "system/");

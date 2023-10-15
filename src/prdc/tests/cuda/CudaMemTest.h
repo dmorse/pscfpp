@@ -1,19 +1,18 @@
-#ifndef PSPG_CUDA_MEM_TEST_H
-#define PSPG_CUDA_MEM_TEST_H
+#ifndef PSCF_CUDA_MEM_TEST_H
+#define PSCF_CUDA_MEM_TEST_H
 
 #include <test/UnitTest.h>
 #include <test/UnitTestRunner.h>
 
 #include <prdc/cuda/RField.h>
-#include <util/math/Constants.h>
 #include <pscf/cuda/GpuResources.h>
+#include <util/math/Constants.h>
 
 #include <fstream>
 #include <iomanip>
 
 using namespace Util;
 using namespace Pscf;
-using namespace Pscf::Pspg;
 
 class CudaMemTest : public UnitTest
 {
@@ -28,6 +27,7 @@ public:
 
    void testCopyRoundTrip()
    {
+      using namespace Pscf::Prdc::Cuda;
       printMethod(TEST_FUNC);
       
       int nx = 10;

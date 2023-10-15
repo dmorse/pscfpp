@@ -3,18 +3,18 @@
 
 #include <test/CompositeTestRunner.h>
 
-#include "FieldTest.h"
-#include "RFieldTest.h"
-#include "RFieldDftTest.h"
-#include "FieldComparisonTest.h"
-#include "FftTest.h"
+#include "CpuFieldTest.h"
+#include "CpuRFieldTest.h"
+#include "CpuRFieldDftTest.h"
+#include "CpuFieldComparisonTest.h"
+#include "CpuFftTest.h"
 
 TEST_COMPOSITE_BEGIN(CpuTestComposite)
-TEST_COMPOSITE_ADD_UNIT(FieldTest);
-TEST_COMPOSITE_ADD_UNIT(RFieldTest);
-TEST_COMPOSITE_ADD_UNIT(RFieldDftTest);
-TEST_COMPOSITE_ADD_UNIT(FieldComparisonTest);
-TEST_COMPOSITE_ADD_UNIT(FftTest);
+TEST_COMPOSITE_ADD_UNIT(CpuFieldTest);
+TEST_COMPOSITE_ADD_UNIT(CpuRFieldTest);
+TEST_COMPOSITE_ADD_UNIT(CpuRFieldDftTest);
+TEST_COMPOSITE_ADD_UNIT(CpuFieldComparisonTest);
+TEST_COMPOSITE_ADD_UNIT(CpuFftTest);
 TEST_COMPOSITE_END
 
 #endif

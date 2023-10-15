@@ -1,5 +1,5 @@
-#ifndef PRDC_FFT_TEST_H
-#define PRDC_FFT_TEST_H
+#ifndef PRDC_CPU_FFT_TEST_H
+#define PRDC_CPU_FFT_TEST_H
 
 #include <test/UnitTest.h>
 #include <test/UnitTestRunner.h>
@@ -14,10 +14,10 @@
 
 using namespace Util;
 using namespace Pscf::Prdc;
-using namespace Pscf::Prdc::Cpu;
 
-class FftTest : public UnitTest 
+class CpuFftTest : public UnitTest 
 {
+
 public:
 
    void setUp() {}
@@ -30,8 +30,9 @@ public:
 
 };
 
-void FftTest::testConstructor()
+void CpuFftTest::testConstructor()
 {
+   using namespace Pscf::Prdc::Cpu;
    printMethod(TEST_FUNC);
    {
       FFT<1> v;
@@ -40,7 +41,9 @@ void FftTest::testConstructor()
    }
 } 
 
-void FftTest::testTransform1D() {
+void CpuFftTest::testTransform1D() 
+{
+   using namespace Pscf::Prdc::Cpu;
    printMethod(TEST_FUNC);
    //printEndl();
 
@@ -93,8 +96,9 @@ void FftTest::testTransform1D() {
 
 }
 
-void FftTest::testTransform2D() 
+void CpuFftTest::testTransform2D() 
 {
+   using namespace Pscf::Prdc::Cpu;
    printMethod(TEST_FUNC);
    //printEndl();
 
@@ -163,7 +167,9 @@ void FftTest::testTransform2D()
 
 }
 
-void FftTest::testTransform3D() {
+void CpuFftTest::testTransform3D() 
+{
+   using namespace Pscf::Prdc::Cpu;
    printMethod(TEST_FUNC);
    //printEndl();
 
@@ -220,11 +226,11 @@ void FftTest::testTransform3D() {
 
 }
 
-TEST_BEGIN(FftTest)
-TEST_ADD(FftTest, testConstructor)
-TEST_ADD(FftTest, testTransform1D)
-TEST_ADD(FftTest, testTransform2D)
-TEST_ADD(FftTest, testTransform3D)
-TEST_END(FftTest)
+TEST_BEGIN(CpuFftTest)
+TEST_ADD(CpuFftTest, testConstructor)
+TEST_ADD(CpuFftTest, testTransform1D)
+TEST_ADD(CpuFftTest, testTransform2D)
+TEST_ADD(CpuFftTest, testTransform3D)
+TEST_END(CpuFftTest)
 
 #endif

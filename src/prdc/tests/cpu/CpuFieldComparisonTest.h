@@ -1,5 +1,5 @@
-#ifndef PRDC_CPU_COMPARISON_TEST_H
-#define PRDC_CPU_COMPARISON_TEST_H
+#ifndef PRDC_CPU_FIELD_COMPARISON_TEST_H
+#define PRDC_CPU_FIELD_COMPARISON_TEST_H
 
 #include <test/UnitTest.h>
 #include <test/UnitTestRunner.h>
@@ -13,10 +13,10 @@
 
 using namespace Util;
 using namespace Pscf::Prdc;
-using namespace Pscf::Prdc::Cpu;
 
-class FieldComparisonTest : public UnitTest 
+class CpuFieldComparisonTest : public UnitTest 
 {
+
 public:
 
    void setUp()
@@ -27,6 +27,7 @@ public:
 
    void testRFieldComparison_1D()
    {
+      using namespace Pscf::Prdc::Cpu;
       printMethod(TEST_FUNC);
 
       RField<1> rf_0, rf_1;
@@ -59,6 +60,7 @@ public:
 
    void testRFieldComparison_2D()
    {
+      using namespace Pscf::Prdc::Cpu;
       printMethod(TEST_FUNC);
 
       RField<2> rf_0, rf_1;
@@ -94,9 +96,9 @@ public:
 };
 
 
-TEST_BEGIN(FieldComparisonTest)
-TEST_ADD(FieldComparisonTest, testRFieldComparison_1D)
-TEST_ADD(FieldComparisonTest, testRFieldComparison_2D)
-TEST_END(FieldComparisonTest)
+TEST_BEGIN(CpuFieldComparisonTest)
+TEST_ADD(CpuFieldComparisonTest, testRFieldComparison_1D)
+TEST_ADD(CpuFieldComparisonTest, testRFieldComparison_2D)
+TEST_END(CpuFieldComparisonTest)
 
 #endif
