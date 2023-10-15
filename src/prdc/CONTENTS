@@ -1,8 +1,8 @@
 The src/prdc directory contains source files in namespace Pscf::Prdc that 
 can by codes that are treat systems wtih periodic boundary conditions.
 
-Classes in src/prdc/cpu are defined in nested namespace Pscf::Prdc::Cpu.
-Classes in src/prdc/cuda are defined in nested namespace Pscf::Prdc::Cuda
+  - Classes in src/prdc/cpu are in nested namespace Pscf::Prdc::Cpu
+  - Classes in src/prdc/cuda are in nested namespace Pscf::Prdc::Cuda
 
 Subdirectories:
 

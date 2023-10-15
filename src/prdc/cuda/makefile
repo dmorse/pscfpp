@@ -8,13 +8,13 @@ include $(SRC_DIR)/prdc/include.mk
 #--------------------------------------------------------------------
 # Main targets 
 
-all: $(prdc_gpu_OBJS) 
+all: $(prdc_cuda_OBJS) 
 
 includes:
 	echo $(INCLUDES)
 
 clean:
-	rm -f $(prdc_gpu_OBJS) $(prdc_gpu_OBJS:.o=.d) 
+	rm -f $(prdc_cuda_OBJS) $(prdc_cuda_OBJS:.o=.d) 
 
 #--------------------------------------------------------------------
 # Include dependency files

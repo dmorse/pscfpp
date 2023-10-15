@@ -1,5 +1,3 @@
-#define PSPG_R_FIELD_COMPARISON_CU
-
 /*
 * PSCF - Polymer Self-Consistent Field Theory
 *
@@ -10,12 +8,13 @@
 #include "RFieldComparison.tpp"
 
 namespace Pscf {
-namespace Pspg
-{
+namespace Prdc {
+namespace Cuda {
 
    template class RFieldComparison<1>;
    template class RFieldComparison<2>;
    template class RFieldComparison<3>;
 
-} // namespace Pscf::Pspg
+} // namespace Pscf::Prdc::Cuda
+} // namespace Pscf::Prdc
 } // namespace Pscf

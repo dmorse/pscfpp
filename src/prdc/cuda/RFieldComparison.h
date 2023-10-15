@@ -1,5 +1,5 @@
-#ifndef PSPG_R_FIELD_COMPARISON_H
-#define PSPG_R_FIELD_COMPARISON_H
+#ifndef PRDC_CUDA_R_FIELD_COMPARISON_H
+#define PRDC_CUDA_R_FIELD_COMPARISON_H
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory
@@ -12,7 +12,8 @@
 #include <prdc/cuda/RField.h>
 
 namespace Pscf {
-namespace Pspg {
+namespace Prdc {
+namespace Cuda {
 
    using namespace Util;
    using namespace Pscf::Prdc;
@@ -21,7 +22,7 @@ namespace Pspg {
    /**
    * Comparator for fields in real-space (r-grid) format.
    * 
-   * \ingroup Pspg_Field_Module
+   * \ingroup Prdc_Cuda_Module
    */
    template <int D>
    class RFieldComparison
@@ -72,12 +73,13 @@ namespace Pspg {
 
    };
 
-   #ifndef PSPG_R_FIELD_COMPARISON_TPP
+   #ifndef PRDC_CUDA_R_FIELD_COMPARISON_TPP
    extern template class RFieldComparison<1>;
    extern template class RFieldComparison<2>;
    extern template class RFieldComparison<3>;
    #endif
 
-} // namespace Pspg
+} // namespace Prdc::Cuda
+} // namespace Prdc
 } // namespace Pscf
 #endif

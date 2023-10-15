@@ -45,7 +45,7 @@ ifdef MAKEDEP
 endif
 
 # Pattern rule to compile *.cc test programs in src/pspc/tests
-$(BLD_DIR)/% $(BLD_DIR)/%.o:$(SRC_DIR)/%.cc $(PSPC_LIBS)
+$(BLD_DIR)/% $(BLD_DIR)/%.o:$(SRC_DIR)/%.cc $(LIBS)
 	$(CXX) $(TESTFLAGS) $(INCLUDES) $(DEFINES) -c -o $@ $<
 	$(CXX) $(LDFLAGS) $(INCLUDES) $(DEFINES) -o $(@:.o=) $@ $(LIBS)
 ifdef MAKEDEP

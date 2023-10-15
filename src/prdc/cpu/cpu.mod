@@ -1,6 +1,6 @@
 
 namespace Pscf{
-namespace Pspc{
+namespace Prdc{
 
 /**
 * Fields and FFTs for periodic boundary conditions (CPU)

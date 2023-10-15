@@ -1,5 +1,5 @@
-#ifndef PSPG_K_FIELD_COMPARISON_H
-#define PSPG_K_FIELD_COMPARISON_H
+#ifndef PRDC_CUDA_K_FIELD_COMPARISON_H
+#define PRDC_CUDA_K_FIELD_COMPARISON_H
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory
@@ -13,16 +13,15 @@
 #include <util/containers/DArray.h>
 
 namespace Pscf {
-namespace Pspg {
+namespace Prdc {
+namespace Cuda {
 
    using namespace Util;
-   using namespace Pscf::Prdc;
-   using namespace Pscf::Prdc::Cuda;
 
    /**
    * Comparator for RFieldDft (k-grid) arrays.
    *
-   * \ingroup Pspg_Field_Module
+   * \ingroup Prdc_Cuda_Module
    */
    template <int D>
    class KFieldComparison {
@@ -95,7 +94,7 @@ namespace Pspg {
    
    };
 
-   #ifndef PSPG_K_FIELD_COMPARISON_TPP
+   #ifndef PRDC_CUDA_K_FIELD_COMPARISON_TPP
    // Suppress implicit instantiation
    extern template class KFieldComparison<1>;
    extern template class KFieldComparison<2>;
@@ -103,6 +102,7 @@ namespace Pspg {
    #endif
 
 
-} // namespace Pspg
+} // namespace Prdc::Cuda
+} // namespace Prdc
 } // namespace Pscf
 #endif

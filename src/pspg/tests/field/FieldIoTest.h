@@ -4,12 +4,13 @@
 #include <test/UnitTest.h>
 #include <test/UnitTestRunner.h>
 
-#include <pspg/field/RFieldComparison.h>
-#include <pspg/field/KFieldComparison.h>
 #include <pspg/field/Domain.h>
 #include <pspg/field/FieldIo.h>
+
 #include <prdc/cuda/RField.h>
 #include <prdc/cuda/RFieldDft.h>
+#include <prdc/cuda/RFieldComparison.h>
+#include <prdc/cuda/KFieldComparison.h>
 #include <prdc/cuda/FFT.h>
 
 #include <prdc/crystal/BFieldComparison.h>
@@ -30,6 +31,7 @@
 using namespace Util;
 using namespace Pscf;
 using namespace Pscf::Prdc;
+using namespace Pscf::Prdc::Cuda;
 using namespace Pscf::Pspg;
 
 class FieldIoTest : public LogFileUnitTest 

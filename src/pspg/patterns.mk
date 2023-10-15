@@ -29,12 +29,13 @@ INCLUDES+=$(CUFFT_INC)
 LIBS+=$(PSPG_CUFFT_LIB)
 
 # Preprocessor macro definitions needed in src/pssp
-DEFINES=$(UTIL_DEFS) $(PSCF_DEFS) $(PSPG_DEFS) 
+DEFINES=$(UTIL_DEFS) $(PSCF_DEFS) $(PRDC_DEFS) $(PSPG_DEFS) 
 
 # Dependencies on build configuration files
 MAKE_DEPS= -A$(BLD_DIR)/config.mk
 MAKE_DEPS+= -A$(BLD_DIR)/util/config.mk
 MAKE_DEPS+= -A$(BLD_DIR)/pscf/config.mk
+MAKE_DEPS+= -A$(BLD_DIR)/prdc/config.mk
 MAKE_DEPS+= -A$(BLD_DIR)/pspg/config.mk
 
 # Pattern rule to compile *.cpp class source files in src/pssp
@@ -52,5 +53,5 @@ ifdef MAKEDEP_CUDA
 endif
 
 # Pattern rule to compile Test programs in src/pspg/tests
-$(BLD_DIR)/%Test: $(BLD_DIR)/%Test.o $(PSPG_LIBS)
-	$(CXX) $(LDFLAGS) $(INCLUDES) $(DEFINES) -o $@ $< $(LIBS)
+$(BLD_DIR)/%Test: $(BLD_DIR)/%Test.o  $(PSPG_LIBS)
+	$(NVXX) $(LDFLAGS) $(INCLUDES) $(DEFINES) -o $@ $< $(LIBS)

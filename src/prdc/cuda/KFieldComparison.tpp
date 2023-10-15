@@ -1,5 +1,5 @@
-#ifndef PSPG_K_FIELD_COMPARISON_TPP
-#define PSPG_K_FIELD_COMPARISON_TPP
+#ifndef PRDC_CUDA_K_FIELD_COMPARISON_TPP
+#define PRDC_CUDA_K_FIELD_COMPARISON_TPP
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory
@@ -12,7 +12,8 @@
 #include <cmath>
 
 namespace Pscf {
-namespace Pspg {
+namespace Prdc {
+namespace Cuda {
 
    // Default Constructor
    template <int D>
@@ -98,6 +99,7 @@ namespace Pspg {
       return maxDiff_;
    }
 
+}
 }
 }
 #endif

@@ -4,8 +4,6 @@
 #include <test/UnitTest.h>
 #include <test/UnitTestRunner.h>
 
-//#include <pspg/field/RFieldComparison.h>
-
 #include <prdc/cuda/FFT.h>
 #include <prdc/cuda/RField.h>
 #include <prdc/cuda/RFieldDft.h>
