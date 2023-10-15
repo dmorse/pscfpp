@@ -3,15 +3,11 @@ include $(BLD_DIR_REL)/config.mk
 include $(SRC_DIR)/prdc/include.mk
 include $(SRC_DIR)/prdc/tests/sources.mk
 
-.PHONY: all list includes run run-quiet clean-outputs clean
+.PHONY: all objs list includes run run-quiet clean-outputs clean
 
 TEST=prdc/tests/Test
 
-all:
-	make src;
-	make $(BLD_DIR)/$(TEST)
-
-src: $(prdc_tests_OBJS) 
+all: $(prdc_tests_OBJS) $(BLD_DIR)/$(TEST)
 
 list:
 	@echo $(prdc_tests_)
@@ -20,7 +16,7 @@ list:
 includes:
 	@echo $(INCLUDES)
 
-run: $(prdc_tests_OBJS) $(BLD_DIR)/$(TEST)
+run: $(BLD_DIR)/$(TEST)
 	$(BLD_DIR)/$(TEST) $(SRC_DIR)/prdc/tests/ 
 
 run-quiet: $(prdc_tests_OBJS) $(BLD_DIR)/$(TEST)

@@ -60,7 +60,7 @@ ifdef PSCF_CUDA
 else
   # Attempt to compile *.cu files as *.cpp files ifndef PSCF_CUDA
   # Make temporary copy of *.cu file with *.cpp extension, compile as C++ file
-	cp $< $(TMP) $(<:.cu=.cpp)
+	cp $< $(<:.cu=.cpp)
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(INCLUDES) $(DEFINES) -c -o $@ $(<:.cu=.cpp)
   ifdef MAKEDEP
 	$(MAKEDEP) $(INCLUDES) $(DEFINES) $(MAKE_DEPS) -S$(SRC_DIR) -B$(BLD_DIR) $(<:.cu=.cpp)
