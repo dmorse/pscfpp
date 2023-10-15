@@ -4,35 +4,30 @@
 #   - A variable $(FD1D_DEFS) that is passed to the processor to define 
 #     preprocessor flags that effect the code in the fd1d/ directory. 
 #
-#   - A variable $(FD1D_SUFFIX) that can be used to add a suffix to 
-#     the name of the fd1d library.
+#   - A variable $(FD1D_LIB) is the path to the fd1d library file.
 #
-#   - A variable $(FD1D_LIB) that the absolute path to the fd1d library 
-#     file.
+#   - A variable $(PSCF_FD_EXE) is the path to the pscf_fd executable.
 #
 # This file must be included by every makefile in the fd1d directory. 
 #-----------------------------------------------------------------------
 # Most users will not need to modify the rest of this file. 
 #-----------------------------------------------------------------------
-# Comments:
+# PSCF_DEFS:
 #
 # The variable FD1D_DEFS is used to pass preprocessor definitions to
 # the compiler, using the "-D" compiler option. If not empty, it must 
 # consist of a list of zero or more preprocessor macro names, each 
 # preceded by the compiler flag "-D".  
 #
-# The variable FD1D_SUFFIX is appended to the base name fd1d.a of the 
-# static library $(FD1D_LIB). 
  
-# Initialize macros to empty strings
+# Initialize to empty string
 FD1D_DEFS=
-FD1D_SUFFIX:=
 
 #-----------------------------------------------------------------------
 # Path to the fd1d library 
 # Note: BLD_DIR is defined in the main config.mk file in bld/ or src/
 
-fd1d_LIBNAME=fd1d$(FD1D_SUFFIX)$(UTIL_SUFFIX)
+fd1d_LIBNAME=fd1d
 fd1d_LIB=$(BLD_DIR)/fd1d/lib$(fd1d_LIBNAME).a
 #-----------------------------------------------------------------------
 # Path to executable file

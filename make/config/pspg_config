@@ -4,10 +4,9 @@
 #   - A variable $(PSPG_DEFS) that is passed to the processor to define 
 #     preprocessor flags that effect the code in the pspg/ directory. 
 #
-#   - Variable $(PSPG_SUFFIX) that can be added to the name of the
-#     pspg library. 
+#   - Variable $(pspg_LIB) is the pspg library file path.
 #
-#   - Variable $(pspg_LIB) giving the pspg library file path.
+#   - Variable $(PSCF_PG_EXE) is the path to the pscf_pg executable.
 #
 # This file must be included by every makefile in the pspg directory. 
 #-----------------------------------------------------------------------
@@ -20,21 +19,17 @@
 # of a list of zero or more preprocessor macro names, each preceded by the 
 # compiler flag "-D".  
 #
-# The variable PSPG_SUFFIX is appended to the base name pspg.a of 
-# the static library $(PSPG_LIB). It is empty by default.
- 
-# Initialize macros to empty strings
+# Initialize to empty string
 PSPG_DEFS=
-PSPG_SUFFIX:=
 
 #-----------------------------------------------------------------------
 # Path to the pssp library 
 # Note: BLD_DIR is defined in config.mk
 
-pspg_LIBNAME=pspg$(PSPG_SUFFIX)
+pspg_LIBNAME=pspg
 pspg_LIB=$(BLD_DIR)/pspg/lib$(pspg_LIBNAME).a
 #-----------------------------------------------------------------------
 # Path to executable file
 
-PSCF_PG_EXE=$(BIN_DIR)/pscf_pg$(PSPG_SUFFIX)
+PSCF_PG_EXE=$(BIN_DIR)/pscf_pg
 #-----------------------------------------------------------------------
