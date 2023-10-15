@@ -58,10 +58,15 @@ ifdef PSCF_CUDA
 	$(MAKEDEP_CUDA) $(INCLUDES) $(DEFINES) $(MAKE_DEPS) -S$(SRC_DIR) -B$(BLD_DIR) $<
   endif
 else
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(INCLUDES) $(DEFINES) -c -o $@ $<
+  # Attempt to compile *.cu files as *.cpp files ifndef PSCF_CUDA
+  # Make temporary copy of *.cu file with *.cpp extension, compile as C++ file
+	cp $< $(TMP) $(<:.cu=.cpp)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(INCLUDES) $(DEFINES) -c -o $@ $(<:.cu=.cpp)
   ifdef MAKEDEP
-	$(MAKEDEP) $(INCLUDES) $(DEFINES) $(MAKE_DEPS) -S$(SRC_DIR) -B$(BLD_DIR) $<
+	$(MAKEDEP) $(INCLUDES) $(DEFINES) $(MAKE_DEPS) -S$(SRC_DIR) -B$(BLD_DIR) $(<:.cu=.cpp)
   endif
+  # Remove temporary *.cpp file
+	rm $(<:.cu=.cpp)
 endif
 
 # Pattern rule to compile Test programs in src/prdc/tests

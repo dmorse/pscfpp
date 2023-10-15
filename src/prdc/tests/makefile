@@ -3,12 +3,22 @@ include $(BLD_DIR_REL)/config.mk
 include $(SRC_DIR)/prdc/include.mk
 include $(SRC_DIR)/prdc/tests/sources.mk
 
+.PHONY: all list includes run run-quiet clean-outputs clean
+
 TEST=prdc/tests/Test
 
-all: $(prdc_tests_OBJS) $(BLD_DIR)/$(TEST)
+all:
+	make src;
+	make $(BLD_DIR)/$(TEST)
+
+src: $(prdc_tests_OBJS) 
+
+list:
+	@echo $(prdc_tests_)
+	@echo $(prdc_tests_OBJS)
 
 includes:
-	echo $(INCLUDES)
+	@echo $(INCLUDES)
 
 run: $(prdc_tests_OBJS) $(BLD_DIR)/$(TEST)
 	$(BLD_DIR)/$(TEST) $(SRC_DIR)/prdc/tests/ 
@@ -30,6 +40,7 @@ endif
 clean:
 	rm -f $(prdc_tests_OBJS) $(prdc_tests_OBJS:.o=.d)
 	rm -f $(BLD_DIR)/$(TEST) $(BLD_DIR)/$(TEST).d
+	rm -f Test.cpp
 ifeq ($(BLD_DIR),$(SRC_DIR))
 	rm -f crystal/Test crystal/Test.o crystal/Test.d
 else
