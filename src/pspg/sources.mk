@@ -14,8 +14,6 @@ pspg_= \
   $(pspg_simulate_) \
   pspg/System.cu
 
-pspg_SRCS=\
-     $(addprefix $(SRC_DIR)/, $(pspg_))
 pspg_OBJS=\
      $(addprefix $(BLD_DIR)/, $(pspg_:.cu=.o))
 

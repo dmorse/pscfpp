@@ -10,8 +10,6 @@ prdc_crystal_= \
   prdc/crystal/groupFile.cpp \
   prdc/crystal/BFieldComparison.cpp 
 
-prdc_crystal_SRCS=\
-     $(addprefix $(SRC_DIR)/, $(prdc_crystal_))
 prdc_crystal_OBJS=\
      $(addprefix $(BLD_DIR)/, $(prdc_crystal_:.cpp=.o))
 

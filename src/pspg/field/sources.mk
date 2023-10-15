@@ -5,8 +5,6 @@ pspg_field_= \
   pspg/field/CFieldContainer.cu \
   pspg/field/Domain.cu 
 
-pspg_field_SRCS=\
-	  $(addprefix $(SRC_DIR)/, $(pspg_field_))
 pspg_field_OBJS=\
 	  $(addprefix $(BLD_DIR)/, $(pspg_field_:.cu=.o))
 
