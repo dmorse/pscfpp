@@ -13,10 +13,11 @@ namespace Pscf {
 namespace Pspg {
 
    /**
-   * Function template for main program in pscf_pg.
+   * Function template for main pscf_pg program.
    *
    * \param argc  number of command line parameters
    * \param argv  array of command line parameter strings
+   * \ingroup Pscf_Pspg_Module
    */
    template <int D>
    void run(int argc, char **argv) {
@@ -38,7 +39,13 @@ namespace Pspg {
 }
 }
 
-/// Main program
+/**
+* Main pscf_pg program.
+*
+* \param argc  number of command line arguments
+* \param argv  array of command line arguments
+* \ingroup Pscf_Pspg_Module
+*/
 int main(int argc, char **argv)
 {
 

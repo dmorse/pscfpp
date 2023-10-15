@@ -32,13 +32,16 @@ The main subdirectories of src/ are:
  - src/fd1d/ contains all code in the Pscf::Fd1d namespace, which is only
    used by the pscf_fd 1D finite element program.
 
+ - src/prdc/ contains all code in the Pscf::Prdc namespace, which is used
+   by both the pscf_pc and pscf_pg programs for periodic structures.
+
  - src/pspc/ contains all code in the Pscf::Pspc namespace, which is only
-   used by the pscf_pc C++ CPU programs for periodic structures.
+   used by the pscf_pc C++ CPU program for periodic structures.
 
  - src/pspg/ contains all code for the Pscf::Pspc namespace, which is
-   only used by the pscf_pg CUDA GPU programs for periodic structures.
+   only used by the pscf_pg CUDA GPU program for periodic structures.
 
-These five directories will be referred to in what follows as "namespace"
+These six directories will be referred to in what follows as "namespace"
 level subdirectories of src/.  The PSCF makefile system constructs a
 static library in each of these namespace level directories that contains
 compiled code for all of the classes and global functions defined in that
@@ -46,7 +49,7 @@ directory. The src/fd1d, src/pspc, and src/pspg each contain one or more
 main program source files that are also compiled and installed by the
 build system.
 
-Each of the five namespace level source directories contains a
+Each of the six namespace level source directories contains a
 subdirectory named tests/ that contains unit tests for classes defined
 in the associated name space. These unit tests are not automatically
 compiled or run by the build system that compiles the source code.
@@ -103,7 +106,7 @@ directory. The purposes of the files in this directory are:
    - configure is a bash script that can be used to enable or disable
      some features before compilation.
 
-After setup but before compilation, each of the five namespace level
+After setup but before compilation, each of the six namespace level
 subdirectories (util/, pscf/, fd1d/, pscp/, and pspg/) of each build
 directory also contains a few makefile fragments with similar names,
 of the form:
@@ -219,7 +222,12 @@ Here, SRC_DIR expands to the absolute path to the pscfpp/src directory and BLD_D
 
 \section make_patterns Pattern rules (patterns.mk files)
 
-Each namespace level subdirectory of the src/ directory has a makefile fragment named "patterns.mk". This file defines pattern rules for compiling source files in that directory or namespace. The pattern rule has the same structure in all five namespace level directories. In directories that contain C++ files, the main rule always looks like this:
+Each namespace level subdirectory of the src/ directory has a makefile 
+fragment named "patterns.mk". This file defines pattern rules for compiling 
+source files in that directory or namespace. The pattern rule has the same 
+structure in all six namespace level directories. In directories that 
+contain C++ source files, which are indicated by an extension *.cpp the 
+main rule always looks like this:
 \code
 $(BLD_DIR)/%.o:$(SRC_DIR)/%.cpp
         $(CXX) $(CPPFLAGS) $(CXXFLAGS) $(INCLUDES) $(DEFINES) -c -o $@ $<
@@ -227,9 +235,20 @@ ifdef MAKEDEP
         $(MAKEDEP) $(INCLUDES) $(DEFINES) $(MAKE_DEPS) -S$(SRC_DIR) -B$(BLD_DIR) $<
 endif
 \endcode
-This target pattern creates a rule for creating an object file with file extension *.o in a subdirectory of the build directory BLD_DIR by compiling a *.cpp source file with the same base name in the corresponding subdirectory of the source directory SRC_DIR. The first command actually compiles the source file and creates the object file. The second command, which is within an ifdef MAKEDEP .. endif block, generates a dependency file with extension *.d as a side-effect of compilation.
+In directories that contain CUDA source files, indicated by an extension 
+*.cu, the patterms file contains an analogous pattern rule for these files
+that uses the NVidia CUDA compiler rather than a C++ compiler.
+Both of the patterns creates rules for creating an object file with file 
+extension *.o in a subdirectory of the build directory $(BLD_DIR) by 
+compiling a *.cpp or *.cu source file with the same base name in the 
+corresponding subdirectory of the source directory $(SRC_DIR). The first 
+command actually compiles the source file and creates the object file. 
+The second command, which is within an ifdef MAKEDEP .. endif block, 
+generates a dependency file with extension *.d as a side-effect of 
+compilation.
 
-The following variables used in the above pattern are defined in the main config.mk file file in the build directory from which make was invoked:
+The following variables used in the above pattern are defined in the main 
+config.mk file file in the build directory from which make was invoked:
 
    - BLD_DIR: Absolute path to the build directory
    - SRC_DIR: Absolute path to the pscfpp/src directory
@@ -239,60 +258,118 @@ The following variables used in the above pattern are defined in the main config
    - INCLUDES: directories to search for C++ header files, using the -I compiler option
    - MAKEDEP:  Name of the script used to generate dependency files (bin/makeDep by default)
 
-The same values are used for the above variables in all five namespaces. Two additional variables are defined within each patterns.mk file that are assigned different values in different namespaces. These are:
+The same values are used for the above variables in all six namespace 
+level directories. Two additional variables are defined within each 
+patterns.mk file that are assigned different values in different 
+namespaces. These are:
 
-   - DEFINES: String of all relevant C++ preprocessor macro definitions, defined using the compiler "-D" option
-   - MAKE_DEPS: List of build configuration files that should  be listed as dependencies for all object files in this namespace
+   - DEFINES: String of all relevant C++ preprocessor macro definitions, 
+     defined using the compiler "-D" option
+   - MAKE_DEPS: List of build configuration files that should  be listed 
+     as dependencies for all object files in this namespace
 
-The DEFINES variable, if not empty, contains a series of preprocessor macro definitions, defined using the "-D" compiler option. Thus, for example, if debugging is enabled, the value of DEFINES within the file src/inter/patterns.mk might expand to
+The DEFINES variable, if not empty, contains a series of preprocessor 
+macro definitions, defined using the "-D" compiler option. Thus, for 
+example, if both debugging and CUDA compilation are enabled, the value of 
+DEFINES within the file src/pscf/patterns.mk might expand to 
 \code
-DEFINES=-DUTIL_DEBUG
+DEFINES=-DUTIL_DEBUG -DPSCF_CUDA
 \endcode
-The definitions of DEFINES and MAKE_DEPS within the file src/pspc/patterns.mk are shown below as an example:
+The definitions of DEFINES and MAKE_DEPS within the file 
+src/pspc/patterns.mk are shown below as an example:
 \code
 # C preprocessor macro definitions
-DEFINES=$(UTIL_DEFS) $(PSPC_DEFS)
+DEFINES=$(UTIL_DEFS) $(PSCF_DEFS) $(PRDC_DEFS) $(PSPC_DEFS)
 
 # Dependencies of source files in src/pspc on makefile fragments
 MAKE_DEPS= -A$(BLD_DIR)/config.mk
 MAKE_DEPS+= -A$(BLD_DIR)/util/config.mk
+MAKE_DEPS+= -A$(BLD_DIR)/pscf/config.mk
+MAKE_DEPS+= -A$(BLD_DIR)/prdc/config.mk
 MAKE_DEPS+= -A$(BLD_DIR)/pspc/config.mk
 \endcode
-The DEFINES variable is constructing by concatenating the NAMESPACE_DEFS variables (UTIL_DEFS, PSPC_DEFS, etc.) for this namespace (i.e., PSPC_DEFS) and for all namespaces upon which this namespace depends (i.e., UTIL_DEFS). For the Pscf::Pspc namespace, this yields a concatenation of UTIL_DEFS and PSPC_DEFS. The resulting string contains all of the preprocessor definitions that are allowed to be used by code in this namespace.
+The DEFINES variable is constructing by concatenating the NAMESPACE_DEFS 
+variables (UTIL_DEFS, PSCF_DEFS, etc.) for this namespace 
+(i.e., PSPC_DEFS) and for all namespaces upon which this namespace 
+depends (i.e., UTIL_DEFS, PSCF_DEFS, and PRDC_DEFS). The resulting string 
+contains all of the preprocessor definitions that are allowed to be used 
+by code in this namespace.
 
-The MAKE_DEPS variable contains a list of build configuration files whose contents can effect compilation of source code in this namespace. This list always contains the main config.mk file from the parent build directory, the config.mk file for the namespace of interest, and config.mk files for any namespace(s) upon which this namespace depends. For the Pscf::Pspc namespace, MAKE_DEPS thus contains paths to the config.mk files in the pspc/ and util/ subdirectories. These build configuration files are added to the list of dependencies for every object file in this namespace because changes to these config.mk files can change which preprocessor macros are defined or which compiler options are set, and thus can change the contents of the resulting object files.
+The MAKE_DEPS variable contains a list of build configuration files whose 
+contents can effect compilation of source code in this namespace. This 
+list always contains the main config.mk file from the parent build 
+directory, the config.mk file for the namespace level directory of 
+interest, and config.mk files for any namespace level directories upon 
+which this directory depends. For the src/pspc directory, the MAKE_DEPS 
+thus contains paths to the config.mk files in the pscf/, prdc/ and util/ 
+subdirectories, as well as the main config file $(BLD_DIR)/config.mk. 
+These build configuration files are added to the list of dependencies for 
+every object file in this namespace because changes to these config.mk 
+files can change which preprocessor macros are defined or which compiler 
+options are set, and thus can change the contents of the resulting object 
+files.
 
 \section make_dependency Dependency Files (*.d Files)
 
-If automatic dependency generation is not disabled, a dependency file will be generated for each source file whenever the file is compiled, as a side effect of compilation. Each dependency file defines a makefile rule for constructing the corresponding object file. This rule can be used to determine when the source file needs to be recompiled as a result of changes in header files or other files upon which it depends. The rule consists of the name of the object file target followed by a colon and list of files upon which it depends, of the form
+If automatic dependency generation is enabled, a dependency file will be 
+generated for each source file whenever the file is compiled, as a side 
+effect of compilation. Each dependency file defines a makefile rule for 
+constructing the corresponding object file that lists all dependencies. 
+This rule can be used to determine when the source file needs to be 
+recompiled as a result of changes in included header files or other files 
+upon which it depends. The rule consists of the name of the object file 
+target followed by a colon and list of files upon which it depends, of 
+the form
 \code
 
 class.o: class.cpp class.h header1.h header2.h ....
 
 \endcode
-The list of dependencies for each object (*.o) file target includes the corresponding source (*.cpp) file, all of the header files that this source file directly or indirectly includes. The end of this list also includes all of the configuration files specified by the MAKE_DEPS variable for the relevant namespace. Each such makefile rule only lists dependencies, but does not contain an explicit command, because the required compiler command is given implicitly by the appropriate pattern rule.
+The list of dependencies for each object (*.o) file target includes the 
+corresponding source (*.cpp or *.cu) file, and all of the header files 
+that this source file directly or indirectly includes. The end of this 
+list also includes a list of all of the config.mk configuration files 
+specified by the MAKE_DEPS variable for the relevant namespace level
+directory. Each such makefile rule only lists dependencies, but does 
+not contain an explicit command, because the required compiler command 
+is given implicitly by the appropriate pattern rule.
 
-Though not shown in the above example, all paths to the target and its dependencies are actually given in dependency files as absolute paths.
+Though not shown in the above example, all paths to the target and its 
+dependencies are actually given in dependency files as absolute paths.
 
-Dependency files are created by the bash script pscfpp/bin/makeDep. The pattern rules defined in the namespace level patterns.mk files apply the makeDep script to a source file whenever that file is compiled.  The "makeDep" script works by calling the gnu g++ compiler with the -MM option to determine dependencies, and using a separate python script to edit the resulting file.
+Dependency files are created by the bash script pscfpp/bin/makeDep. The 
+pattern rules defined in the namespace level patterns.mk files apply the 
+makeDep script to a source file whenever that file is compiled.  The 
+"makeDep" script works by calling the gnu g++ compiler with the -MM 
+option to determine dependencies, and using a separate python script 
+to edit the resulting file.
 
-In each makefile at the namespace level and below, all relevant dependency files are included into the makefile by a command of the form
+In each makefile at the namespace level and below, all relevant dependency 
+files are included into the makefile by a command of the form
 \code
 
 -include $([directory]_OBJS:.o=.d)
 
 \endcode
-in which [directory] represents the mangled name of the directory containing the makefile. For example, the file src/mcMd/makefile contains a line
+in which [directory] represents the mangled name of the directory 
+containing the makefile. For example, the file src/mcMd/makefile contains 
+a line
 \code
 
 -include $(mcMd_OBJS:.o=.d)
 
 \endcode
-This command attempts to include a *.d dependency file for each *.o object file in the object file list. The dash in front of "include" instructs "make" to continue quietly if no dependency file is found for any object file target.
+This command attempts to include a *.d dependency file for each *.o 
+object file in the object file list. The dash in front of "include" 
+instructs "make" to continue quietly if no dependency file is found for 
+any object file target.
 
 \section make_makefile Example: A Namespace Directory makefile
 
-As an example of how the system works, here are the essential parts of the namespace level makefile from the directory bld/serial/inter. The actual makefile also includes "clean" and "veryclean" targets that have been excluded for clarity. Corresponding makefiles in bld/parallel/inter and src/inter are identical:
+As an example of how the system works, here are the essential parts of the 
+namespace level makefile from the directory bld/fd1d. The actual makefile 
+also includes "clean" and "veryclean" targets that have been excluded for 
+clarity. Corresponding makefiles in bld/fd1d and src/fd1d are identical:
 
 \code
 BLD_DIR_REL =..

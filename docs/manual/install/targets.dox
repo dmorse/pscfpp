@@ -43,8 +43,8 @@ pscfpp/ or pscfpp/bld/ directory to perform out-of-source compilation, or
 from the src/ directory to perform in-source compilation.
 
 <h2> all: </h2>
-To compile all programs in the PSCF package, enter either "make" with
-no argument or (equivalently)
+To compile all programs in the PSCF package, enter either "make" with no 
+argument or (equivalently)
 \code
 make all
 \endcode
@@ -52,7 +52,7 @@ The behavior of this command depends on whether CUDA compilation has
 been enabled. If CUDA compilation is disabled (which is the default
 behavior), then the "make all" command only compiles the CPU programs 
 pscf_fd and pscf_pc. If CUDA compilation is enabled, this command also 
-compiles the GPU-enabled program pscf_pg.
+compiles the GPU-enabled pscf_pg program.
 
 CUDA compilation can be enabled or disabled by using the -c option of
 the setopts script, e.g., by entering "./setopts -c1" to enable CUDA 
@@ -104,9 +104,9 @@ make pspc
 from the pscfpp/, pscfpp/bld or pscfpp/src directory.
 This command will cause the system to:
 
-  - If needed, compile all *.cpp files in the src/util/ and src/pscf/
-    directories that have not been previously compiled, and, as needed,
-    create associated static library files in these directories.
+  - If needed, compile all *.cpp files in the src/util/, src/pscf/, and
+    src/prdc directories that have not been previously compiled, and, as 
+    needed, create associated static library files in these directories.
 
   - Compile all of the *.cpp files in the src/pspc/ directory, and create
     a corresponding static library file named libpspc.a there.
@@ -231,18 +231,18 @@ all C++ files in the tree rooted at that subdirectory, without compiling
 any code outside of that subdirectory.
 
 Invoking "make all" from a subdirectory of a namespace level directory
-(i.e., a subdirectory of the src/util, src/pscf, src/fd1d, src/pspc, or
-src/pspg directory) will generally compile all the *.cpp and *.cu source
-files in that directory and any nested subdirectories.
+(i.e., a subdirectory of the src/util, src/pscf, src/fd1d, src/prdc, 
+src/pspc, or src/pspg directory) will generally compile all the *.cpp 
+and (if CUDA is enabled) all *.cu source files in that directory and any 
+nested subdirectories.
 
 Invoking "make all" from any namespace level subdirectory of src/ will
-not only compile of all the *.cpp and *.cu source files in the namespace
-level directory tree, but will also create a static library file containing
-all of the resulting object code, and then build and install executables
-for any programs for which the source files are in that directory.  For
-example, entering "make all" from src/fd1d directory will create a static
-library named src/fd1d/libfd1d.a, and install an executable named pscf_fd
-in the bin/ directory.
+not only compile of all the *.cpp and (as appropriate) *.cu source files 
+in the namespace level directory tree, but will also create a static library 
+file containing all of the resulting object code, and then build and install 
+executables for any programs for which the source files are in that directory.  For example, entering "make all" from src/fd1d directory will create a 
+static library named src/fd1d/libfd1d.a, and install an executable named 
+pscf_fd in the bin/ directory.
 
 <em> Rationale </em>: The ability to invoke "make all" from a subdirectory
 of src/ is designed to allow developers to use the command line to easily

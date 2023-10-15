@@ -32,12 +32,20 @@ User-visible features
 User-visible changes
 ---------------------
 * Use -d command line option to specify spatial dimension (pc and pg)
+* Renamed "setup" to "configure" for consistency with GNU convention
+* Renamed PSCF "configure" script to "setopts"
 
 Documentation
 -------------
+* User documentation for FTPS MC commands 
 * User documentation for FTPS MC simulations (not started)
 * Documentation of theory for FTPS simulations (not started)
 
+Developer-visible changes
+-------------------------
+* Moved CUDA utility classes to src/pscf/cuda
+* Created namespace Pscf::Prdc in src/prdc 
+* Moved CPU and CUDA fields to prdc/cpu and prdc/cuda
 
 Version 1.1.0  (9/20/2023)
 =========================================

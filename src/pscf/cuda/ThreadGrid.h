@@ -12,11 +12,11 @@ namespace Pscf {
 namespace ThreadGrid {
 
   /**
-  * \defgroup Pspg_ThreadGrid_Module ThreadGrid
+  * \defgroup Pscf_Cuda_ThreadGrid_Module ThreadGrid
   *
   * Management of GPU resources and setting of execution configurations.
   *
-  * \ingroup Pscf_Pspg_Module
+  * \ingroup Pscf_Cuda_Module
   * @{
   */
  
@@ -102,14 +102,11 @@ namespace ThreadGrid {
   * Indicates whether there will be unused threads. 
   *
   * Returns true iff nThreads*nBlocks != nThreadsLogical.
-  * 
-  * \ingroup Pspg_ThreadGrid_Module 
   */
   bool hasUnusedThreads();
 
   /** @} */
 
 } // namespace ThreadGrid
-
 } // namespace Pscf
 #endif

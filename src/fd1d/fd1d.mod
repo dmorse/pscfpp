@@ -7,11 +7,13 @@ namespace Pscf
    namespace Fd1d {
 
       /**
-      * \defgroup Pscf_Fd1d_Module Finite-Difference 1D
+      * \defgroup Pscf_Fd1d_Module SCFT (1D)
       *
-      * Finite difference 1D implementation of SCFT, namespace Pscf::Fd1d
+      * Finite difference one-dimensional SCFT, namespace Pscf::Fd1d.
+      *
       * \ingroup Pscf_NS_Module
       */
 
    }
+
 }

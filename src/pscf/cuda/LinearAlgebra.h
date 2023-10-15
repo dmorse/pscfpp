@@ -6,7 +6,7 @@
 
 namespace Pscf {
 
-/** \ingroup Pspg_Math_Module 
+/** \ingroup Pscf_Cuda_Module 
 * @{
 */
 

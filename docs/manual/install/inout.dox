@@ -47,8 +47,8 @@ as the build directory tree for out-of-source builds.
 We refer to the two directories src/ and bld/ in what follows as standard
 build directories.  The bld/ directory has a directory structure analogous
 to that of the src/ directory. Both src/ and bld/ contain a set of
-subdirectories named util/, pscf/, fd1d/, pspc/, and pspg/, which we
-refer to in what follows as namespace level directories.
+subdirectories named util/, pscf/, fd1d/, prdc/, pspc/, and pspg/, which 
+we refer to in what follows as namespace level directories.
 
 By default, all executable program files are installed in the pscfpp/bin 
 directory. This is true for both in-source or out-of-source compilation.
