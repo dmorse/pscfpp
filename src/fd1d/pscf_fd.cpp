@@ -1,3 +1,5 @@
+/// \file 
+
 /*
 * PSCF - Polymer Self-Consistent Field Theory
 *
@@ -7,6 +9,13 @@
 
 #include <fd1d/System.h>
 
+/**
+* Main function for pscf_fd program.
+*
+* \param argc number of command line parameter strings
+* \param argv array of command line parameter strings
+* \ingroup Pscf_Fd1d_Module
+*/
 int main(int argc, char **argv)
 {
    Pscf::Fd1d::System system;
