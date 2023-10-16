@@ -18,7 +18,7 @@ Files (in repository):
 
   setopts  - script for managing compile-time options
   makefile - main makefile for in-source compilation (build in src/)
-  programs.mod - doxygen documentation of main programs
+  programs.mod - doxygen module for program command-line interfaces
   CONTENTS - this file
 
 Files (installed by configure script):

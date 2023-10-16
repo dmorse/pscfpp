@@ -79,7 +79,7 @@ UTIL_DEFS+= -DUTIL_CXX11
 endif
 
 #-----------------------------------------------------------------------
-# Path to the util library 
+# util_LIB: Path to the libutil.a library 
 # Note: BLD_DIR is defined in the main config.mk in bld/ or src/
 
 util_LIBNAME=util$(UTIL_MPI_SUFFIX)$(UTIL_SUFFIX)

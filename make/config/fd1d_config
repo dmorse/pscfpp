@@ -1,16 +1,16 @@
 #-----------------------------------------------------------------------
-# This makefile fragment defines:
+# This makefile fragment defines the following makefile variables:
 #
-#   - A variable $(FD1D_DEFS) that is passed to the processor to define 
+#   - A variable $(FD1D_DEFS) is passed to the processor to define 
 #     preprocessor flags that effect the code in the fd1d/ directory. 
 #
-#   - A variable $(FD1D_LIB) is the path to the fd1d library file.
+#   - A variable $(fd1d_LIB) is the path to the fd1d library file.
 #
 #   - A variable $(PSCF_FD_EXE) is the path to the pscf_fd executable.
 #
-# This file must be included by every makefile in the fd1d directory. 
-#-----------------------------------------------------------------------
-# Most users will not need to modify the rest of this file. 
+# This fragment must be included by every makefile in the fd1d directory. 
+# Note: BLD_DIR and $(BIN_DIR) are defined in the main config.mk file 
+# in bld/ or src/
 #-----------------------------------------------------------------------
 # PSCF_DEFS:
 #
@@ -18,19 +18,19 @@
 # the compiler, using the "-D" compiler option. If not empty, it must 
 # consist of a list of zero or more preprocessor macro names, each 
 # preceded by the compiler flag "-D".  
-#
  
 # Initialize to empty string
 FD1D_DEFS=
 
 #-----------------------------------------------------------------------
-# Path to the fd1d library 
-# Note: BLD_DIR is defined in the main config.mk file in bld/ or src/
+# fd1d_LIB: Absolute path to the libfd1d.a library 
 
 fd1d_LIBNAME=fd1d
 fd1d_LIB=$(BLD_DIR)/fd1d/lib$(fd1d_LIBNAME).a
+
 #-----------------------------------------------------------------------
-# Path to executable file
+# PSCF_FD: Absolute path to the pscf_fd executable file
 
 PSCF_FD_EXE=$(BIN_DIR)/pscf_fd
+
 #-----------------------------------------------------------------------

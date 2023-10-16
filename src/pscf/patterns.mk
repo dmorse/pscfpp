@@ -21,6 +21,12 @@ LIBS=$(PSCF_LIBS)
 INCLUDES+=$(GSL_INC)
 LIBS+=$(GSL_LIB) 
 
+# Conditionally add CUDA includes and libraries
+ifdef PSCF_CUDA
+INCLUDES+=$(CUDA_INC)
+LIBS+=$(CUDA_LIB) 
+endif
+
 # Preprocessor macro definitions needed in src/pscf
 DEFINES=$(PSCF_DEFS) $(UTIL_DEFS)
 
@@ -29,19 +35,21 @@ MAKE_DEPS= -A$(BLD_DIR)/config.mk
 MAKE_DEPS+= -A$(BLD_DIR)/util/config.mk
 MAKE_DEPS+= -A$(BLD_DIR)/pscf/config.mk
 
-# Pattern rule to compile *.cpp class source files in src/pscf
-$(BLD_DIR)/%.o:$(SRC_DIR)/%.cpp
+# Pattern rule to compile *.cpp C++ source files in src/pscf
+# Note: Creates a *.d dependency file as a side effect of compilation
+$(BLD_DIR)/%.o: $(SRC_DIR)/%.cpp
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(INCLUDES) $(DEFINES) -c -o $@ $<
-ifdef MAKEDEP
+   ifdef MAKEDEP
 	$(MAKEDEP) $(INCLUDES) $(DEFINES) $(MAKE_DEPS) -S$(SRC_DIR) -B$(BLD_DIR) $<
-endif
+   endif
 
-# Pattern rule to compile *.cu class source files in src/pscf
-$(BLD_DIR)/%.o:$(SRC_DIR)/%.cu
+# Pattern rule to compile *.cu CUDA source files in src/pscf
+# Note: Creates a *.d dependency file as a side effect of compilation
+$(BLD_DIR)/%.o: $(SRC_DIR)/%.cu
 	$(NVXX) $(CPPFLAGS) $(NVXXFLAGS) $(INCLUDES) $(DEFINES) -c -o $@ $<
-ifdef MAKEDEP_CUDA
+   ifdef MAKEDEP_CUDA
 	$(MAKEDEP_CUDA) $(INCLUDES) $(DEFINES) $(MAKE_DEPS) -S$(SRC_DIR) -B$(BLD_DIR) $<
-endif
+   endif
 
 # Pattern rule to compile Test programs in src/pscf/tests
 $(BLD_DIR)/%Test: $(BLD_DIR)/%Test.o $(PSCF_LIBS)

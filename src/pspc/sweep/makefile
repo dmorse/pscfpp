@@ -27,5 +27,6 @@ veryclean:
 # Include dependency files
 
 -include $(pspc_OBJS:.o=.d)
+-include $(prdc_OBJS:.o=.d)
 -include $(pscf_OBJS:.o=.d)
 -include $(util_OBJS:.o=.d)

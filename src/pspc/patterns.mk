@@ -12,7 +12,7 @@
 # defined in those configuration files.
 #-----------------------------------------------------------------------
 
-# Local pscf-specific libraries needed in src/pspc
+# Local pscf-specific libraries needed in src/pspc (the order matters)
 # Variables $(pspc_LIB) etc. are defined in namespace config.mk files
 PSPC_LIBS= $(pspc_LIB) $(prdc_LIB) $(pscf_LIB) $(util_LIB) 
 
@@ -39,13 +39,14 @@ MAKE_DEPS+= -A$(BLD_DIR)/prdc/config.mk
 MAKE_DEPS+= -A$(BLD_DIR)/pspc/config.mk
 
 # Pattern rule to compile *.cpp class source files in src/pspc
+# Note: Creates a *.d dependency file as a side effect
 $(BLD_DIR)/%.o:$(SRC_DIR)/%.cpp
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(INCLUDES) $(DEFINES) -c -o $@ $<
-ifdef MAKEDEP
+   ifdef MAKEDEP
 	$(MAKEDEP) $(INCLUDES) $(DEFINES) $(MAKE_DEPS) -S$(SRC_DIR) -B$(BLD_DIR) $<
-endif
+   endif
 
-# Pattern rule to compile Test programs in src/pscf/tests
+# Pattern rule to link executable Test programs in src/pscf/tests
 $(BLD_DIR)/%Test: $(BLD_DIR)/%Test.o $(PSPC_LIBS)
 	$(CXX) $(LDFLAGS) $(INCLUDES) $(DEFINES) -o $@ $< $(LIBS)
 

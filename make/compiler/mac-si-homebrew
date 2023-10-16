@@ -74,16 +74,12 @@ ARFLAGS=rcs
 GSL_INC=GSL_INC_AUTO
 GSL_LIB=GSL_LIB_AUTO
 
-# FFTW Fast Fourier transform library
+# FFTW Fast Fourier transform library (as installed by homebrew)
 #FFTW_INC=
 FFTW_INC=-I/opt/homebrew/include
 FFTW_LIB=-L/opt/homebrew/lib -lfftw3
 
-# CUDA libraries
-# PSSP_CUFFT_PREFIX=/usr/local/cuda
-# CUFFT_INC=-I$(PSSP_CUFFT_PREFIX)/include
-# CUFFT_LIB=-L$(PSSP_CUFFT_PREFIX)/lib -lcufft -lcudart
-# CUFFT_LIB=-lcufft -lcudart -lcuda -lcurand
+# CUDA FFT library (not usable on any Mac)
 CUFFT_INC=
-CUFFT_LIB=-lcufft -lcudart
+CUFFT_LIB=
 

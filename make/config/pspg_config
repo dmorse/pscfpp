@@ -9,6 +9,8 @@
 #   - Variable $(PSCF_PG_EXE) is the path to the pscf_pg executable.
 #
 # This file must be included by every makefile in the pspg directory. 
+# Note: BLD_DIR and BIN_DIR are defined in the config.mk file in the
+# root of the build directory tree (i.e., in src/ or bld/).
 #-----------------------------------------------------------------------
 # Flag to define preprocessor macros.
 
@@ -24,7 +26,6 @@ PSPG_DEFS=
 
 #-----------------------------------------------------------------------
 # Path to the pssp library 
-# Note: BLD_DIR is defined in config.mk
 
 pspg_LIBNAME=pspg
 pspg_LIB=$(BLD_DIR)/pspg/lib$(pspg_LIBNAME).a

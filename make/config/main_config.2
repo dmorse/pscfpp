@@ -20,10 +20,10 @@ INCLUDES= -I$(SRC_DIR)
 UTIL_CXX11=1
 
 # ======================================================================
-# Makefile Patterns and Recipes
+# Makefile Pattern Rules and Recipes
 #
-# The makefile variables defined above are used in the makefile pattern 
-# rules that control compilation of C++ files, creation of libraries, and
+# The makefile variables defined above are used in the makefile rules 
+# that control compilation of C++ files, creation of libraries, and
 # linking to create executables. The following sections briefly explain
 # these rules, to provide a context for the meaning of the variables 
 # defined above.
@@ -31,15 +31,17 @@ UTIL_CXX11=1
 #-----------------------------------------------------------------------
 # Compiler Pattern Rules:
 #
-# The top level subdirectories of src/ named util/, pscf/, fd1d/,
+# The top level subdirectories of src/ named util/, pscf/, fd1d/, prdc/,
 # pscf/ and pspg/ each contain the source code defined in a particular
 # namespace, and are referred to here as name-space level directories.
 # Each namespace level directory contains makefile fragments named
-# patterns.mk, sources.mk, include.mk, and config.mk. Some namespace 
-# level directories are said to depend on others: If namespace level 
-# directory A depends on directory B, this imples that C++ source code 
-# in A may use names (classes and functions) defined in B, and also that 
-# makefiles in directory A will include the config.mk and sources.mk 
+# patterns.mk, sources.mk, include.mk, and config.mk. 
+# 
+# Some namespace level directories are said to depend on others. 
+# Namespace level directory A is said to depends on directory B if 
+# C++ or CUDA source code in A may use names (classes and functions) 
+# defined in B. If namespace level directory A depends on directory B,
+# then the include.mk file in A will include the config.mk and sources.mk 
 # files located in directory B. For example, subdirectory fd1d/ depends 
 # on the util/ and pscf/ directories, but not on the pscpc/ or pspg/
 # directories.  You can see what directories a particular namespace 
@@ -48,21 +50,26 @@ UTIL_CXX11=1
 # any makefile in that directory.
 #
 # Different makefile pattern rules for compilation of source files are 
-# used in different namespace level directories.  The file named 
-# patterns.mk in each namespace level directory of src/ is a makefile 
+# used in different namespace level directories.  The file named
+# patterns.mk in each namespace level subdirectory of src/ is a makefile 
 # fragment that defines pattern rules used for compiling C++ and (when
 # relevant) CUDA source files in that directory.  The pattern rules
 # defined in the patterns.mk file in each namespace level directory 
 # are expressed in terms of makefile variables that may be defined in
-# in the same file, in a namespace level config.mk file for that 
-# directory or any other directory that it depends on, or in the main
-# config.mk configuration file (i.e., this file). 
+# in the same file, in a namespace level config.mk file or sources.mk
+# file for that directory or any other directory that it depends on, or
+# in this main config.mk configuration file, which is installed in the 
+# root of $(BLD_DIR), i.e., the bld/ or src/ directory tree.
 #
 # The pattern rules for different namespace level subdirectories of 
 # src/ are similar except for differences in the values of two makefile
-# variables that are assigned different values in different namespace
-# level directories.  The compiler pattern rule for C++ files for each
-# namespace level subdirectory src/ is of the form:
+# variables named INCLUDES and DEFINES that are assigned different values 
+# in different namespace level directories.  
+#
+# Compiling *.cpp C++ files:
+#
+# The compiler pattern rule for C++ files for each namespace level 
+# subdirectory src/ is of the form:
 # 
 # $(BLD_DIR)/%.o:$(SRC_DIR)/%.cpp
 #      $(CXX) $(CPPFLAGS) $(CXXFLAGS) $(INCLUDES) $(DEFINES) -c -o $@ $<
@@ -128,6 +135,22 @@ UTIL_CXX11=1
 # conditional compilation of blocks of C++ code that are enclosed 
 # between "ifdef UTIL_DEBUG" and "endif" preprocessor statements.
 #
+# Compiling CUDA (*.cu) source files:
+#
+# Source files that contain CUDA code are indicated by a file extension
+# *.cu. In namespace level directories that contain such files, the
+# patterns.mk file also contains an analogous pattern rule for 
+# compiling a *.cu file to create a corresponding *.o file. The rule
+# for compiling *.cu files is of the form:
+# 
+# $(BLD_DIR)/%.o:$(SRC_DIR)/%.cu
+#      $(NVXX) $(CPPFLAGS) $(NVXXFLAGS) $(INCLUDES) $(DEFINES) -c -o $@ $<
+#
+# which contains the two new makefile variables
+#
+# NVX         - CUDA compiler executable name (nvcc)
+# NVXXFLAGS   - compiler options used during compilation
+#
 #-----------------------------------------------------------------------
 # Archiver Recipes:
 #
@@ -146,10 +169,10 @@ UTIL_CXX11=1
 # *.o object files created by compiling source files in the directory
 # src/fd1d. Rules for other namespace level directories are analogous.
 #
-# If a namespace level directory contains source a file or files that
-# contain the "main" function for one or more executable programs, the
-# the library created for that directory will not include the object 
-# code created by compiling such files. 
+# The fd1d/, pspc/, and pspc/ namespace level directories each contain 
+# a *.cpp or *.cu source file that contain the "main" function for an 
+# associated executable programs. The libraries in these directories 
+# do not contain code created by compiling that main program file.
 #
 #-----------------------------------------------------------------------
 # Linker recipes:
@@ -183,8 +206,8 @@ MAKEDEP=$(BIN_DIR)/makeDepCpp
 MAKEDEP_CUDA=$(BIN_DIR)/makeDepCuda
 
 # The file $(BIN_DIR)/makeDepCpp and $(BIN_DIR)/makeDepCuda are executable 
-# python scripts that are installed in the $(BIN_DIR) specified by the
-# configure script. These scripts are used during compilation to analyze 
+# python scripts that are installed in the $(BIN_DIR) specified by this
+# config.mk file. These scripts are used during compilation to analyze 
 # dependencies among source and header files, and create *.d dependency
 # files. Both scripts import a python module named pscfpp.make that is 
 # located in the $(ROOT_DIR)/lib/python/pscfpp directory. For the python 

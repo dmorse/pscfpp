@@ -76,10 +76,9 @@ FFTW_INC=
 FFTW_LIB=-lfftw3
 
 # CUDA libraries
-# PSSP_CUFFT_PREFIX=/usr/local/cuda
-# CUFFT_INC=-I$(PSSP_CUFFT_PREFIX)/include
-# CUFFT_LIB=-L$(PSSP_CUFFT_PREFIX)/lib -lcufft -lcudart
-# CUFFT_LIB=-lcufft -lcudart -lcuda -lcurand
-CUFFT_INC=
-CUFFT_LIB=-lcufft -lcudart
+# CUDA_PREFIX=/usr/local/cuda
+# CUDA_INC=-I$(CUDA_PREFIX)/include
+# CUDA_LIB=-lcufft -lcudart -lcuda -lcurand
+CUDA_INC=
+CUDA_LIB=-lcufft -lcudart -lcuda -lcurand
  

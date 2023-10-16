@@ -5,7 +5,7 @@
 #     preprocessor flags that effect the code in the pscf/ directory
 #     and other directories that depend upon it. (Empty by default)
 #
-#   - A variable $(PSCF_LIB) that gives the absolute path to the pscf 
+#   - A variable $(pscf_LIB) that gives the absolute path to the pscf 
 #     library file.
 #
 # This file must be included by every makefile in the pscf directory,
@@ -19,16 +19,16 @@
 # consist of a list of zero or more preprocessor macro names, each 
 # preceded by the compiler flag "-D". 
  
-# Initialize to empty string
+# Initialize to default empty string
 PSCF_DEFS=
 
-# Enable CUDA compilation
+# Conditionally enable CUDA compilation
 ifdef PSCF_CUDA
 PSCF_DEFS+= -DPSCF_CUDA
 endif
 
 #-----------------------------------------------------------------------
-# Path to the pscf library 
+# pscf_LIB: Absolute path to the libpscf.a library 
 # Note: BLD_DIR is defined in the main config.mk file in bld/ or src/
 
 pscf_LIBNAME=pscf

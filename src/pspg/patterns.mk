@@ -1,8 +1,8 @@
 # ---------------------------------------------------------------------
-# File: src/pssp/patterns.mk
+# File: src/pspg/patterns.mk
 #
 # This makefile contains the pattern rule used to compile all sources
-# files in the directory tree rooted at the src/pssp directory, which
+# files in the directory tree rooted at the src/pspg directory, which
 # contains all source code for the PsSp namespace. It is included by
 # all "makefile" files in this directory tree. 
 #
@@ -12,10 +12,10 @@
 # defined in those configuration files.
 #-----------------------------------------------------------------------
 
-# Local pscf-specific libraries needed in src/pspg
+# Local pscf-specific libraries needed in src/pspg (the order matters)
 PSPG_LIBS=$(pspg_LIB) $(prdc_LIB) $(pscf_LIB) $(util_LIB)
 
-# All libraries needed in executables built in src/pssp
+# All libraries needed in executables built in src/pspg
 LIBS=$(PSPG_LIBS)
 
 # Add paths to Gnu scientific library (GSL)
@@ -23,12 +23,13 @@ INCLUDES+=$(GSL_INC)
 LIBS+=$(GSL_LIB) 
 
 # Add paths to CUDA FFT library
-PSPG_DEFS+=-DPSPG_FFTW -DGPU_OUTER
-PSPG_CUFFT_LIB=-lcufft -lcudart -lcuda -lcurand
 INCLUDES+=$(CUFFT_INC)
-LIBS+=$(PSPG_CUFFT_LIB)
+LIBS+=$(CUFFT_LIB)
 
-# Preprocessor macro definitions needed in src/pssp
+# Preprocessor macro definitions specific to pspg/ directory 
+PSPG_DEFS+=-DPSPG_FFTW -DGPU_OUTER
+
+# Preprocessor macro definitions needed in src/pspg
 DEFINES=$(UTIL_DEFS) $(PSCF_DEFS) $(PRDC_DEFS) $(PSPG_DEFS) 
 
 # Dependencies on build configuration files
@@ -38,20 +39,22 @@ MAKE_DEPS+= -A$(BLD_DIR)/pscf/config.mk
 MAKE_DEPS+= -A$(BLD_DIR)/prdc/config.mk
 MAKE_DEPS+= -A$(BLD_DIR)/pspg/config.mk
 
-# Pattern rule to compile *.cpp class source files in src/pssp
+# Pattern rule to compile *.cpp C++ source files in src/pspg
+# Note: Creates a *.d dependency file as a side effect 
 $(BLD_DIR)/%.o:$(SRC_DIR)/%.cpp
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(INCLUDES) $(DEFINES) -c -o $@ $<
-ifdef MAKEDEP
+   ifdef MAKEDEP
 	$(MAKEDEP) $(INCLUDES) $(DEFINES) $(MAKE_DEPS) -S$(SRC_DIR) -B$(BLD_DIR) $<
-endif
+   endif
 
-# Pattern rule to compile *.cu class source files in src/pssp
+# Pattern rule to compile *.cu CUDA source files in src/pspg
+# Note: Creates a *.d dependency file as a side effect 
 $(BLD_DIR)/%.o:$(SRC_DIR)/%.cu
 	$(NVXX) $(CPPFLAGS) $(NVXXFLAGS) $(INCLUDES) $(DEFINES) -c -o $@ $<
-ifdef MAKEDEP_CUDA
+   ifdef MAKEDEP_CUDA
 	$(MAKEDEP_CUDA) $(INCLUDES) $(DEFINES) $(MAKE_DEPS) -S$(SRC_DIR) -B$(BLD_DIR) $<
-endif
+   endif
 
-# Pattern rule to compile Test programs in src/pspg/tests
+# Pattern rule to link executable Test programs in src/pspg/tests
 $(BLD_DIR)/%Test: $(BLD_DIR)/%Test.o  $(PSPG_LIBS)
 	$(NVXX) $(LDFLAGS) $(INCLUDES) $(DEFINES) -o $@ $< $(LIBS)

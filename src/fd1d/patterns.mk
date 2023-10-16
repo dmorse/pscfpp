@@ -31,13 +31,14 @@ MAKE_DEPS+= -A$(BLD_DIR)/pscf/config.mk
 MAKE_DEPS+= -A$(BLD_DIR)/fd1d/config.mk
 
 # Pattern rule to compile *.cpp class source files in src/fd1d
-$(BLD_DIR)/%.o:$(SRC_DIR)/%.cpp
+# Note: Creates a *.d dependency file as a side effect
+$(BLD_DIR)/%.o: $(SRC_DIR)/%.cpp
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(INCLUDES) $(DEFINES) -c -o $@ $<
-ifdef MAKEDEP
+   ifdef MAKEDEP
 	$(MAKEDEP) $(INCLUDES) $(DEFINES) $(MAKE_DEPS) -S$(SRC_DIR) -B$(BLD_DIR) $<
-endif
+   endif
 
-# Pattern rule to compile Test programs in src/pscf/tests
+# Pattern rule to link Test programs in src/pscf/tests
 $(BLD_DIR)/%Test: $(BLD_DIR)/%Test.o $(FD1D_LIBS)
 	$(CXX) $(LDFLAGS) $(INCLUDES) $(DEFINES) -o $@ $< $(LIBS)
 

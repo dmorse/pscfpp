@@ -13,9 +13,10 @@ Subdirectories:
 
 Files: 
   CONTENTS  - this file
+  HISTORY   - summary package version development
   LICENSE   - GNU GPL v3 license
   README.md - brief intro to package (as displayed on github page)
-  makefile  - main makefile for out-of-source compilation and cleanup
-  setup     - script for initial set up of build system 
-  configure - script to configure optional compile-time features after setup
+  makefile  - main makefile (compiles out-of-source in bld/)
+  configure - script for initial set up of build system 
+  setopts   - script to manage compile-time options
 
