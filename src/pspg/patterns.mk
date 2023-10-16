@@ -23,8 +23,8 @@ INCLUDES+=$(GSL_INC)
 LIBS+=$(GSL_LIB) 
 
 # Add paths to CUDA FFT library
-INCLUDES+=$(CUFFT_INC)
-LIBS+=$(CUFFT_LIB)
+INCLUDES+=$(CUDA_INC)
+LIBS+=$(CUDA_LIB)
 
 # Preprocessor macro definitions specific to pspg/ directory 
 PSPG_DEFS+=-DPSPG_FFTW -DGPU_OUTER

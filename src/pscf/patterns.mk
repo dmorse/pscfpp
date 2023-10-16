@@ -11,7 +11,7 @@
 # uses makefile variables defined in those files.
 #-----------------------------------------------------------------------
 
-# List of pscf-specific libraries needed in src/pscf
+# List of pscf-specific libraries needed in src/pscf (the order matters)
 PSCF_LIBS=$(pscf_LIB) $(util_LIB) 
 
 # List of all libraries needed for executables in src/pscf
@@ -21,10 +21,10 @@ LIBS=$(PSCF_LIBS)
 INCLUDES+=$(GSL_INC)
 LIBS+=$(GSL_LIB) 
 
-# Conditionally add CUDA includes and libraries
+# Conditionally add CUDA header include and library paths
 ifdef PSCF_CUDA
-INCLUDES+=$(CUDA_INC)
-LIBS+=$(CUDA_LIB) 
+  INCLUDES+=$(CUDA_INC)
+  LIBS+=$(CUDA_LIB)
 endif
 
 # Preprocessor macro definitions needed in src/pscf
