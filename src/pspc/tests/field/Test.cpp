@@ -1,10 +1,10 @@
 /*
-* This program runs all unit tests in the pspc/tests/fftw directory.
+* This program runs all unit tests in the pspc/tests/field directory.
 */ 
 
-#include <util/global.h>
 //#include "RFieldTest.h"
 #include "FieldTestComposite.h"
+//#include <util/global.h>
 
 #include <test/TestRunner.h>
 #include <test/CompositeTestRunner.h>

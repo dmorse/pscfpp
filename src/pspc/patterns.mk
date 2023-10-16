@@ -14,7 +14,7 @@
 
 # Local pscf-specific libraries needed in src/pspc
 # Variables $(pspc_LIB) etc. are defined in namespace config.mk files
-PSPC_LIBS=$(pspc_LIB) $(prdc_LIB) $(pscf_LIB) $(util_LIB)
+PSPC_LIBS= $(pspc_LIB) $(prdc_LIB) $(pscf_LIB) $(util_LIB) 
 
 # List of all libraries needed for main programs in src/pspc
 LIBS=$(PSPC_LIBS)
@@ -35,6 +35,7 @@ DEFINES=$(UTIL_DEFS) $(PSCF_DEFS) $(PSPC_DEFS)
 MAKE_DEPS= -A$(BLD_DIR)/config.mk
 MAKE_DEPS+= -A$(BLD_DIR)/util/config.mk
 MAKE_DEPS+= -A$(BLD_DIR)/pscf/config.mk
+MAKE_DEPS+= -A$(BLD_DIR)/prdc/config.mk
 MAKE_DEPS+= -A$(BLD_DIR)/pspc/config.mk
 
 # Pattern rule to compile *.cpp class source files in src/pspc

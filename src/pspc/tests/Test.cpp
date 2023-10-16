@@ -7,21 +7,22 @@
 #include "field/FieldTestComposite.h"
 #include "solvers/SolverTestComposite.h"
 #include "system/SystemTest.h"
-#include "sweep/SweepTestComposite.h"
 #include "iterator/IteratorTestComposite.h"
+#include "sweep/SweepTestComposite.h"
+
 #include <util/param/BracketPolicy.h>
 #include <util/global.h>
 
 TEST_COMPOSITE_BEGIN(PspcNsTestComposite)
 addChild(new FieldTestComposite, "field/");
-addChild(new IteratorTestComposite, "iterator/");
 addChild(new SolverTestComposite, "solvers/");
 addChild(new TEST_RUNNER(SystemTest), "system/");
+addChild(new IteratorTestComposite, "iterator/");
 addChild(new SweepTestComposite, "sweep/");
 TEST_COMPOSITE_END
 
-using namespace Pscf;
 using namespace Util;
+using namespace Pscf;
 
 int main(int argc, char* argv[])
 {

@@ -5,10 +5,15 @@ include $(SRC_DIR)/pspc/tests/field/sources.mk
 
 TEST=pspc/tests/field/Test
 
+.PHONY: all includes defines libs run run-quiet clean-outputs clean
+
 all: $(pspc_tests_field_OBJS) $(BLD_DIR)/$(TEST)
 
 includes:
 	@echo $(INCLUDES)
+
+defines:
+	@echo $(DEFINES)
 
 libs:
 	@echo $(LIBS)
@@ -30,5 +35,5 @@ clean:
 	rm -f $(BLD_DIR)/$(TEST) $(BLD_DIR)/$(TEST).d
 	$(MAKE) clean-outputs
 
--include $(pspc_tests_field_OBJS:.o=.d)
+-include $(pspc_OBJS:.o=.d)
 -include $(pspc_tests_field_OBJS:.o=.d)

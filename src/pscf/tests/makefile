@@ -5,10 +5,15 @@ include $(SRC_DIR)/pscf/tests/sources.mk
 
 TEST=pscf/tests/Test
 
+.PHONY: all libs includes run run-quiet clean-outputs clean
+
 all: $(pscf_tests_OBJS) $(BLD_DIR)/$(TEST)
 
+libs:
+	@echo $(LIBS)
+
 includes:
-	echo $(INCLUDES)
+	@echo $(INCLUDES)
 
 run: $(pscf_tests_OBJS) $(BLD_DIR)/$(TEST)
 	$(BLD_DIR)/$(TEST) $(SRC_DIR)/pscf/tests/ 
