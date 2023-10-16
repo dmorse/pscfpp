@@ -9,11 +9,12 @@ PSCF can perform both self-consistent field theory (SCFT) calculations
 and field-theoretic Monte-Carlo (FTMC) simulations. The package was 
 originally designed for SCFT calculations, and provides an extensive
 set of tools for this. The formulation of FTMC in PSCF, which is new
-in this version, is based on a partial-saddle point approximation to 
-an exact formulation of the partitition function as a functional 
+in this version (v1.2), is based on a partial-saddle point approximation 
+to an exact formulation of the partitition function as a functional 
 integral.  The current version of PSCF is written primarily in C++, 
 supplemented by CUDA code to enable the use of a graphics processing 
-unit (GPU). 
+unit (GPU). The acronym PSCF stands for Polymer Self Consistent Field,
+reflecting the origin of the package as an SCFT program.
 
 ## History
 
@@ -39,8 +40,9 @@ Fortran version include:
    - The current version enables use of a graphics processing unit (GPU) 
      to dramatically accelerate some applications.
 
-   - Starting with this release, the current version can perform
-     stochastic field-theoretic Monte-Carlo (FTMC) simulations.
+   - Starting with this release (v1.2), the current version can perform
+     stochastic field-theoretic Monte-Carlo (FTMC) simulations in 
+     addition to SCFT calculations.
 
 ## Programs
 
@@ -60,7 +62,7 @@ PSCF currently contains three programs:
      CPU hardware. A pseudo-spectral algorithm is used to solve the
      MDE. This program provides capabilities for SCFT calculations 
      analogous to those of the older PSCF Fortran program, as well as 
-     code for FTMC simulations. The The suffix "pc" stands for 
+     code for FTMC simulations. The suffix "pc" stands for 
      "periodic CPU".  
      
    - **pscf_pg** : The pscf_pg program is a GPU-accelerated version
@@ -70,7 +72,7 @@ PSCF currently contains three programs:
      provides much higher performance for large systems. The suffix 
      "pg" stands for "periodic GPU". 
 
-FTMC calculations are only available in the two codes designed for 
+FTMC simulations are only available in the two codes designed for 
 systems with periodic boundary conditions (pscf_pc and pscf_pg). 
 
 ## Features
