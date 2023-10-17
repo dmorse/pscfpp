@@ -34,25 +34,29 @@ pscf:
 prdc: 
 	cd util; $(MAKE) all
 	cd pscf; $(MAKE) all
+	cd prdc; $(MAKE) all
 
-# Build pscf_fd 1D finite difference program (install in BIN_DIR)
-fd1d: 
+# Build pscf_fd 1D finite difference SCFT program (install in BIN_DIR)
+pscf_fd: 
 	cd util; $(MAKE) all
 	cd pscf; $(MAKE) all
 	cd fd1d; $(MAKE) all
 
 # Build pscf_pc CPU code for periodic structures (install in BIN_DIR)
-pspc: 
+pscf_pc: 
 	cd util; $(MAKE) all
 	cd pscf; $(MAKE) all
 	cd prdc; $(MAKE) all
 	cd pspc; $(MAKE) all
 
+ifdef PSCF_CUDA
 # Build pscf_pc GPU code for periodic structures (install in BIN_DIR)
-pspg:
+pscf_pg:
 	cd util; $(MAKE) all
 	cd pscf; $(MAKE) all
+	cd prdc; $(MAKE) all
 	cd pspg; $(MAKE) all
+endif
 
 # ======================================================================
 # Test targets

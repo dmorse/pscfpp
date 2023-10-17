@@ -14,7 +14,7 @@ include src/config.mk
 # instead invoking make with the same target names from within the src/ 
 # directory.
 
-# Build all code, including gpu-enabled programs
+# Compile all code, including CUDA code if possible
 all:
 	cd bld; $(MAKE) all
 
@@ -22,17 +22,19 @@ all:
 all-cpu:
 	cd bld; $(MAKE) all-cpu
 
-# Build the pscf_fd 1D finite element scft program
-fd1d:
-	cd bld; $(MAKE) fd1d
+# Build the pscf_fd 1D finite element SCFT program
+pscf_fd:
+	cd bld; $(MAKE) pscf_fd
 
-# Build the pscf_pcNd cpu programs for periodic structures (N=1,2, or 3)
-pspc:
-	cd bld; $(MAKE) pspc
+# Build the pscf_pc cpu program for periodic structures 
+pscf_pc:
+	cd bld; $(MAKE) pscf_pc
 
-# Compile the pscf_pcNd gpu programs for periodic structures (N=1,2, or 3)
-pspg:
-	cd bld; $(MAKE) pspg
+ifdef PSCF_CUDA
+# Build the pscf_pg gpu program for periodic structures
+pscf_pg:
+	cd bld; $(MAKE) pscf_pg
+endif
 
 
 # =========================================================================
