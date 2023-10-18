@@ -1,8 +1,8 @@
 # ---------------------------------------------------------------------- #
 # This file must be included by all makefiles in the src/fd1d directory. #
 # It must be included after the config.mk from the root of the build     #
-# directory (referred to by an absolute path), which defines values for  #
-# the macros $(BLD_DIR) and $(SRC_DIR) as absolute paths.                #
+# directory (referred to by a relative path), which defines values for   #
+# the macros $(BLD_DIR) and $(SRC_DIR) that are used below.              #
 # ---------------------------------------------------------------------- #
 include $(BLD_DIR)/util/config.mk
 include $(BLD_DIR)/pscf/config.mk

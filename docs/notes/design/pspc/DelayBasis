@@ -12,14 +12,14 @@ Comments on current design / history
 
 The current code is designed to allow allow a clean initialization phase
 during the reading of a (mostly) fixed format parameter file. The ideas
-as that all essential variables are set and all large blocks of memory 
+was that all essential variables are set and all large blocks of memory 
 for fields and propagators are allocated in this process, and that most 
 heap memory is allocated only once. This was motivated by a combination 
-of simplicity and safety. More flexible policies regarding the variables 
-are defined and allocation occurs require much more thorough checking of 
-preconditions throughout the code in order to avoid mysterious errors.  
-Delaying construction of a basis is one a step away from that design 
-strategy.
+of simplicity and safety. More flexible policies regarding when variables 
+are defined and when allocation occurs require much more thorough checking 
+of preconditions throughout the code in order to avoid mysterious errors.  
+Delaying construction of a Basis is one step away from that original
+design strategy.
 
 
 Possible Policies / Conventions

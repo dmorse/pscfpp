@@ -7,8 +7,8 @@
 #------------------------------------------------------------------------
 # Include makefiles
 
-SRC_DIR_REL =..
-include $(SRC_DIR_REL)/config.mk
+BLD_DIR_REL =..
+include $(BLD_DIR_REL)/config.mk
 include $(SRC_DIR)/prdc/include.mk
 
 #-----------------------------------------------------------------------

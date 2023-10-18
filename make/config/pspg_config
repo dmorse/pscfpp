@@ -25,7 +25,7 @@
 PSPG_DEFS=
 
 #-----------------------------------------------------------------------
-# Path to the pssp library 
+# Path to the libpspg.a library file
 
 pspg_LIBNAME=pspg
 pspg_LIB=$(BLD_DIR)/pspg/lib$(pspg_LIBNAME).a

@@ -1,7 +1,7 @@
 # ---------------------------------------------------------------------- #
 # This file must be included by every makefile in the pspc/ directory.   #
 # It must be included after the config.mk file located in the root of    #
-# the build  directory (referred to by an absolute path), which defines  #
+# the build  directory (referred to by a relative path), which defines   #
 # values for the macros $(BLD_DIR) and $(SRC_DIR) used below.            # 
 # ---------------------------------------------------------------------- #
 include $(BLD_DIR)/util/config.mk
