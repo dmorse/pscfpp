@@ -72,7 +72,7 @@ namespace Pspc {
       pressure_(0.0),
       hasMixture_(false),
       hasMcSimulator_(false),
-      isAllocatedRGrid_(false),
+      isAllocatedGrid_(false),
       isAllocatedBasis_(false),
       hasCFields_(false),
       hasFreeEnergy_(false)
@@ -315,7 +315,7 @@ namespace Pspc {
    template <int D>
    void System<D>::readCommands(std::istream &in) 
    {
-      UTIL_CHECK(isAllocatedRGrid_);
+      UTIL_CHECK(isAllocatedGrid_);
       std::string command, filename, inFileName, outFileName;
 
       bool readNext = true;
@@ -664,7 +664,6 @@ namespace Pspc {
       mixture_.setupUnitCell(domain_.unitCell());
       hasCFields_ = false;
       hasFreeEnergy_ = false;
-      hasMcHamiltonian_ = false;
    }
 
    /*
@@ -686,7 +685,6 @@ namespace Pspc {
       mixture_.setupUnitCell(domain_.unitCell());
       hasCFields_ = false;
       hasFreeEnergy_ = false;
-      hasMcHamiltonian_ = false;
    }
 
    /*
@@ -700,7 +698,6 @@ namespace Pspc {
       w_.setBasis(fields);
       hasCFields_ = false;
       hasFreeEnergy_ = false;
-      hasMcHamiltonian_ = false;
    }
 
    /*
@@ -709,11 +706,10 @@ namespace Pspc {
    template <int D>
    void System<D>::setWRGrid(DArray< RField<D> > const & fields)
    {
-      UTIL_CHECK(isAllocatedRGrid_);
+      UTIL_CHECK(isAllocatedGrid_);
       w_.setRGrid(fields);
       hasCFields_ = false;
       hasFreeEnergy_ = false;
-      hasMcHamiltonian_ = false;
    }
 
    /*
@@ -765,7 +761,7 @@ namespace Pspc {
       hasFreeEnergy_ = false;
    }
 
-   // Unit Cell Modifier / Setter 
+   // Unit Cell Modifiers
 
    /*
    * Set parameters of the system unit cell.
@@ -825,15 +821,15 @@ namespace Pspc {
       hasCFields_ = true;
       hasFreeEnergy_ = false;
 
-      // Compute stress if requested
-      if (needStress) {
-         mixture_.computeStress();
-      }
-
       // If w fields are symmetric, compute basis components for c-fields
       if (w_.isSymmetric()) {
          UTIL_CHECK(c_.isAllocatedBasis());
          domain_.fieldIo().convertRGridToBasis(c_.rgrid(), c_.basis(), false);
+      }
+
+      // Compute stress if needed
+      if (needStress) {
+         mixture_.computeStress();
       }
 
    }
@@ -866,7 +862,6 @@ namespace Pspc {
 
       hasCFields_ = true;
       hasFreeEnergy_ = false;
-      hasMcHamiltonian_ = false;
       return error;
    }
 
@@ -1212,7 +1207,7 @@ namespace Pspc {
    template <int D>
    void System<D>::writeWRGrid(const std::string & filename) const
    {
-      UTIL_CHECK(isAllocatedRGrid_);
+      UTIL_CHECK(isAllocatedGrid_);
       UTIL_CHECK(w_.hasData());
       domain_.fieldIo().writeFieldsRGrid(filename, w_.rgrid(), 
                                          domain_.unitCell());
@@ -1238,7 +1233,7 @@ namespace Pspc {
    template <int D>
    void System<D>::writeCRGrid(const std::string & filename) const
    {
-      UTIL_CHECK(isAllocatedRGrid_);
+      UTIL_CHECK(isAllocatedGrid_);
       //UTIL_CHECK(hasCFields_);
       domain_.fieldIo().writeFieldsRGrid(filename, c_.rgrid(), 
                                          domain_.unitCell());
@@ -1251,7 +1246,7 @@ namespace Pspc {
    template <int D>
    void System<D>::writeBlockCRGrid(const std::string & filename) const
    {
-      UTIL_CHECK(isAllocatedRGrid_);
+      UTIL_CHECK(isAllocatedGrid_);
       UTIL_CHECK(hasCFields_);
 
       // Create and allocate the DArray of fields to be written
@@ -1644,7 +1639,7 @@ namespace Pspc {
       int nMonomer = mixture_.nMonomer();
       UTIL_CHECK(nMonomer > 0);
       UTIL_CHECK(domain_.mesh().size() > 0);
-      UTIL_CHECK(!isAllocatedRGrid_);
+      UTIL_CHECK(!isAllocatedGrid_);
 
       // Alias for mesh dimensions
       IntVec<D> const & dimensions = domain_.mesh().dimensions();
@@ -1666,7 +1661,7 @@ namespace Pspc {
          tmpFieldsRGrid_[i].allocate(dimensions);
          tmpFieldsKGrid_[i].allocate(dimensions);
       }
-      isAllocatedRGrid_ = true;
+      isAllocatedGrid_ = true;
    }
 
    /*
@@ -1679,7 +1674,7 @@ namespace Pspc {
       UTIL_CHECK(hasMixture_);
       const int nMonomer = mixture_.nMonomer();
       UTIL_CHECK(nMonomer > 0);
-      UTIL_CHECK(isAllocatedRGrid_);
+      UTIL_CHECK(isAllocatedGrid_);
       UTIL_CHECK(!isAllocatedBasis_);
       UTIL_CHECK(domain_.basis().isInitialized());
       const int nBasis = domain_.basis().nBasis();
@@ -1837,7 +1832,6 @@ namespace Pspc {
 
       hasCFields_ = false;
       hasFreeEnergy_ = false;
-      hasMcHamiltonian_ = false;
    }
 
 } // namespace Pspc

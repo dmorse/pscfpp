@@ -979,8 +979,8 @@ namespace Pspc
       /**
       * Pressure times monomer volume / kT.
       * 
-      * This quantity is -1 times the grand-canonical free energy per
-      * monomer, divided by kT.
+      * This is -1 times the grand-canonical free energy per monomer,
+      * divided by kT.
       */
       double pressure_;
 
@@ -997,7 +997,7 @@ namespace Pspc
       /**
       * Has memory been allocated for fields in grid format?
       */
-      bool isAllocatedRGrid_;
+      bool isAllocatedGrid_;
 
       /**
       * Has memory been allocated for fields in symmetrized basis format?
@@ -1018,14 +1018,9 @@ namespace Pspc
       bool hasCFields_;
 
       /**
-      * Has the free energy been computed for the current w and c fields?
+      * Has fHelmholtz been computed for the current w and c fields?
       */ 
       bool hasFreeEnergy_;
-
-      /**
-      * Has the MC Hamiltonian been computed for the current w and c fields?
-      */ 
-      bool hasMcHamiltonian_;
 
       // Private member functions
 

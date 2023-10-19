@@ -171,7 +171,7 @@ namespace Pspc
    {
       UTIL_CHECK(fields.capacity() == nMonomer_);
 
-      // Update system wFields
+      // Update system w fields (array basis_)
       for (int i = 0; i < nMonomer_; ++i) {
          DArray<double> const & f = fields[i];
          DArray<double> &  w = basis_[i];
@@ -182,7 +182,7 @@ namespace Pspc
          }
       }
 
-      // Update system wFieldsRGrid
+      // Update system grid fields (array rgrid_)
       fieldIoPtr_->convertBasisToRGrid(basis_, rgrid_);
 
       hasData_ = true;
@@ -198,7 +198,7 @@ namespace Pspc
    {
       UTIL_CHECK(fields.capacity() == nMonomer_);
 
-      // Update system wFieldsRGrid
+      // Update system grid fields (array rgrid_ )
       for (int i = 0; i < nMonomer_; ++i) {
          RField<D> const & f = fields[i];
          RField<D>& w = rgrid_[i];
@@ -209,6 +209,7 @@ namespace Pspc
          }
       }
 
+      // If field isSymmetric, update basis fields
       if (isSymmetric) {
          fieldIoPtr_->convertRGridToBasis(rgrid_, basis_);
       }
