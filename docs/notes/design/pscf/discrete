@@ -93,19 +93,20 @@ has classes or class templates named:
 
 among others. The same name can be used for analogous classes or 
 class templates in different SCFT implementations without causing 
-name clashes as long as we are careful to prohibit any sharing code 
-between implementation-level sub-namespaces of PSCF.
+name clashes as long as we are careful to prohibit any sharing of
+code between implementation-level sub-namespaces of the higher 
+level Pscf namespace.
 
 Almost every source code file throughout the project contains a
 "using namespace Util" declaration in order to allow classes that 
-are defined in the Util namespace to be used without qualifying the
-name with the prefixes "Util::" or "Pscf::". 
+are defined in the Util namespace to be used without qualifying 
+the name with the prefixes "Util::" or "Pscf::". 
 
 Currently, all of the classes that are defined directly in the Pscf 
-namespace (rather than a sub-namespace) and all of the classes in the 
-Pscf::Fd1d and Pscf::Pspc enclosed namespaces can be compiled with a 
-C++ compiler, and a CUDA compiler is only required to compile the 
-code in the Pscf::Pspg namespace. 
+namespace (rather than a sub-namespace) and all of the classes in 
+the Pscf::Fd1d and Pscf::Pspc enclosed namespaces can be compiled 
+with a C++ compiler, while a CUDA compiler is only required to 
+compile the code in the Pscf::Pspg namespace. 
 
 Use of Dimension D of Space as a C++ Template Parameter
 -------------------------------------------------------

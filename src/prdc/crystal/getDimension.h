@@ -1,5 +1,5 @@
-#ifndef PSCF_GET_DIMENSION_H
-#define PSCF_GET_DIMENSION_H
+#ifndef PRDC_GET_DIMENSION_H
+#define PRDC_GET_DIMENSION_H
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory
@@ -9,6 +9,7 @@
 */
 
 namespace Pscf{
+namespace Prdc{
 
    /*
    * Get dimension of space from command line options.
@@ -19,5 +20,6 @@ namespace Pscf{
    */
    int getDimension(int argc, char **argv);
 
+}
 }
 #endif

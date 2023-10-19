@@ -5,7 +5,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/mesh/getDimension.h>
+#include <prdc/crystal/getDimension.h>
 #include <pspg/System.h>
 #include <iostream>
 
@@ -50,7 +50,7 @@ int main(int argc, char **argv)
 {
 
    // Extract the dimension of space from argument of -d option
-   int D = Pscf::getDimension(argc, argv);
+   int D = Pscf::Prdc::getDimension(argc, argv);
    std::cout << "dimension    " << D << std::endl;
 
    if (1 == D) {

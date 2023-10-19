@@ -8,7 +8,8 @@ prdc_crystal_= \
   prdc/crystal/SpaceGroup.cpp \
   prdc/crystal/Basis.cpp \
   prdc/crystal/groupFile.cpp \
-  prdc/crystal/BFieldComparison.cpp 
+  prdc/crystal/BFieldComparison.cpp \
+  prdc/crystal/getDimension.cpp 
 
 prdc_crystal_OBJS=\
      $(addprefix $(BLD_DIR)/, $(prdc_crystal_:.cpp=.o))

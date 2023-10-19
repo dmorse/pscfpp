@@ -14,6 +14,7 @@
 using namespace Util;
 
 namespace Pscf { 
+namespace Prdc { 
 
    /*
    * Extract integer argument of -d option.
@@ -95,4 +96,5 @@ namespace Pscf {
 
    }
 
+}
 }

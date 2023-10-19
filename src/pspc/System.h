@@ -8,11 +8,9 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-
 #include <util/param/ParamComposite.h>     // base class
 
 #include <pspc/simulate/McSimulator.h>     // member
-
 #include <pspc/solvers/Mixture.h>          // member
 #include <pspc/field/Domain.h>             // member
 #include <pspc/field/FieldIo.h>            // member
@@ -25,7 +23,6 @@
 
 #include <pscf/homogeneous/Mixture.h>      // member
 
-#include <util/random/Random.h>            // member
 #include <util/misc/FileMaster.h>          // member
 #include <util/containers/DArray.h>        // member template
 #include <util/containers/FSArray.h>       // member template
@@ -33,6 +30,10 @@
 namespace Pscf {
 
    class Interaction;
+
+   namespace Prdc {
+      template <int D> class UnitCell;
+   }
 
 namespace Pspc
 {
@@ -57,18 +58,15 @@ namespace Pspc
    *
    *    - a Mixture (a container for polymer and solvent solvers)
    *    - an Interaction (list of binary chi parameters)
-   *    - a Domain (description of the unit cell and discretization)
+   *    - a Domain (description of unit cell and discretization)
    *    - a container of monomer chemical potential fields 
    *    - a container of monomer concentration fields 
    *
    * A system may also optionally contain Iterator and Sweep objects.
-   * In a parameter file format, the main block is a System{...} block 
-   * that contains subblocks for sub-objects.
    *
-   * A minimal main program for structures with spatial dimension D 
-   * looks something like this:
+   * Typical usage of a System<D> object looks something like this:
    * \code
-   *    Pscf::Pspc::System<D> system;
+   *    System<D> system;
    *    system.setOptions(argc, argv);
    *    system.readParam();
    *    system.readCommands();
@@ -799,11 +797,6 @@ namespace Pspc
       FileMaster const & fileMaster() const;
 
       /**
-      * Get Random object by reference.
-      */
-      Random& random();
-
-      /**
       * Get the group name string.
       */
       std::string groupName() const;
@@ -877,11 +870,6 @@ namespace Pspc
       * Filemaster (holds paths to associated I/O files).
       */
       FileMaster fileMaster_;
-
-      /**
-      * Random number generator.
-      */
-      Random random_;
 
       /**
       * Homogeneous mixture, for reference.
@@ -1159,11 +1147,6 @@ namespace Pspc
    template <int D>
    inline FileMaster const & System<D>::fileMaster() const
    {  return fileMaster_; }
-
-   // Get the Random object.
-   template <int D>
-   inline Random& System<D>::random()
-   {  return random_; }
 
    // Get the Homogeneous::Mixture object.
    template <int D>

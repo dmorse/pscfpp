@@ -21,6 +21,7 @@
 #include <prdc/cuda/RFieldDft.h>           // member
 
 #include <pscf/homogeneous/Mixture.h>      // member
+
 #include <util/misc/FileMaster.h>          // member
 #include <util/containers/DArray.h>        // member template
 #include <util/containers/FSArray.h>       // member template
@@ -56,16 +57,15 @@ namespace Pspg
    *
    *    - a Mixture (a container for polymer and solvent solvers)
    *    - an Interaction (list of chi parameters)
-   *    - a Domain (a description of the unit cell and discretization)
+   *    - a Domain (description of unit cell and discretization)
    *    - a container of monomer chemical potential fields (w fields)
    *    - a container of monomer concentration fields (c fields)
    *
    * A System may also optionally contain Iterator and Sweep objects.
    *
-   * A minimal main program for structures with spatial dimension D 
-   * looks something like this:
+   * Typical usage of a System<D> object looks something like this:
    * \code
-   *    Pscf::Pspg::System<D> system;
+   *    System<D> system;
    *    system.setOptions(argc, argv);
    *    system.readParam();
    *    system.readCommands();
@@ -75,6 +75,8 @@ namespace Pspg
    * This is implemented as function template Pscf::Pspg::run in the
    * file src/pspg/pscf_pg.cpp.
    *
+   * \ref user_param_pg_page "Parameter File Format"
+   * \ref user_command_pc_page "Command File Format"
    * \ingroup Pscf_Pspg_Module
    */
    template <int D>
