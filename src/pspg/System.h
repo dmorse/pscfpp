@@ -862,11 +862,6 @@ namespace Pspg
       mutable DArray<RFieldDft<D> > tmpFieldsKGrid_;
 
       /**
-      * Work array (size = # of grid points).
-      */
-      mutable DArray<double> f_;
-
-      /**
       * Helmholtz free energy per monomer / kT.
       */
       double fHelmholtz_;
@@ -888,6 +883,9 @@ namespace Pspg
 
       /**
       * Pressure times monomer volume / kT.
+      *
+      * This is -1 times the grand-canonical free energy per monomer,
+      * divided by kT.
       */
       double pressure_;
 
@@ -917,9 +915,9 @@ namespace Pspg
       bool hasCFields_;
       
       /**
-      * Has the MC Hamiltonian been computed for the current w and c fields?
+      * Has fHelmholtz been computed for the current w and c fields?
       */ 
-      bool hasMcHamiltonian_;
+      bool hasFreeEnergy_;
 
       /**
       * Dimemsions of the k-grid (discrete Fourier transform grid).
@@ -1084,12 +1082,18 @@ namespace Pspg
    // Get precomputed Helmoltz free energy per monomer / kT.
    template <int D>
    inline double System<D>::fHelmholtz() const
-   {  return fHelmholtz_; }
+   {
+      UTIL_CHECK(hasFreeEnergy_);  
+      return fHelmholtz_; 
+   }
 
    // Get precomputed pressure (units of kT / monomer volume).
    template <int D>
    inline double System<D>::pressure() const
-   {  return pressure_; }
+   {
+      UTIL_CHECK(hasFreeEnergy_);  
+      return pressure_; 
+   }
 
    // Have the c fields been computed for the current w fields?
    template <int D>
