@@ -67,7 +67,8 @@ namespace Pspg
       hasMcSimulator_(false),
       isAllocatedGrid_(false),
       isAllocatedBasis_(false),
-      hasCFields_(false)
+      hasCFields_(false),
+      hasFreeEnergy_(false)
    {
       setClassName("System");
       domain_.setFileMaster(fileMaster_);
@@ -569,7 +570,7 @@ namespace Pspg
       domain_.waveList().computedKSq(domain_.unitCell());
       mixture_.setupUnitCell(domain_.unitCell(), domain_.waveList());
       hasCFields_ = false;
-      hasMcHamiltonian_ = false;
+      hasFreeEnergy_ = false;
    }
 
    template <int D>
@@ -587,7 +588,7 @@ namespace Pspg
       domain_.waveList().computedKSq(domain_.unitCell());
       mixture_.setupUnitCell(domain_.unitCell(), domain_.waveList());
       hasCFields_ = false;
-      hasMcHamiltonian_ = false;
+      hasFreeEnergy_ = false;
    }
 
    /*
@@ -596,9 +597,11 @@ namespace Pspg
    template <int D>
    void System<D>::setWBasis(DArray< DArray<double> > const & fields)
    {
+      UTIL_CHECK(domain_.basis().isInitialized());
+      UTIL_CHECK(isAllocatedBasis_);
       w_.setBasis(fields);
       hasCFields_ = false;
-      hasMcHamiltonian_ = false;
+      hasFreeEnergy_ = false;
    }
 
    /*
@@ -607,9 +610,10 @@ namespace Pspg
    template <int D>
    void System<D>::setWRGrid(DArray< RField<D> > const & fields)
    {
+      UTIL_CHECK(isAllocatedGrid_);
       w_.setRGrid(fields);
       hasCFields_ = false;
-      hasMcHamiltonian_ = false;
+      hasFreeEnergy_ = false;
    }
 
    /*
@@ -618,8 +622,10 @@ namespace Pspg
    template <int D>
    void System<D>::setWRGrid(Field<cudaReal> & fields)
    {
+      UTIL_CHECK(isAllocatedGrid_);
       w_.setRGrid(fields);
       hasCFields_ = false;
+      hasFreeEnergy_ = false;
    }
 
    /*
@@ -670,6 +676,7 @@ namespace Pspg
       w_.setBasis(tmpFieldsBasis_);
 
       hasCFields_ = false;
+      hasFreeEnergy_ = false;
    }
 
    /*
@@ -722,7 +729,7 @@ namespace Pspg
       }
    }
 
-   // Primary SCFT Computations
+   // Primary Field Theory Computations
 
    /*
    * Solve MDE for current w-fields, without iteration.
@@ -733,14 +740,19 @@ namespace Pspg
       UTIL_CHECK(w_.isAllocatedRGrid());
       UTIL_CHECK(c_.isAllocatedRGrid());
       UTIL_CHECK(w_.hasData());
+
       // Solve the modified diffusion equation (without iteration)
       mixture().compute(w_.rgrid(), c_.rgrid());
       hasCFields_ = true;
+      hasFreeEnergy_ = false;
+
       // Convert c fields from r-grid to basis format
       if (w_.isSymmetric()) {
+         UTIL_CHECK(c_.isAllocatedBasis());
          fieldIo().convertRGridToBasis(c_.rgrid(), c_.basis());
       }
 
+      // Compute stress if needed
       if (needStress) {
          mixture().computeStress(domain_.waveList());
       }
@@ -752,8 +764,10 @@ namespace Pspg
    template <int D>
    int System<D>::iterate(bool isContinuation)
    {
+      UTIL_CHECK(iteratorPtr_);
       UTIL_CHECK(w_.hasData());
       hasCFields_ = false;
+      hasFreeEnergy_ = false; 
 
       Log::file() << std::endl;
       Log::file() << std::endl;
@@ -762,6 +776,7 @@ namespace Pspg
       int error = iterator().solve(isContinuation);
 
       hasCFields_ = true;
+      hasFreeEnergy_ = false; 
 
       if (w_.isSymmetric()) {
          fieldIo().convertRGridToBasis(c_.rgrid(), c_.basis());
@@ -774,7 +789,6 @@ namespace Pspg
          computeFreeEnergy();
          writeThermo(Log::file());
       }
-      hasMcHamiltonian_ = false;
       return error;
    }
 
@@ -922,6 +936,7 @@ namespace Pspg
          }
       }
 
+      hasFreeEnergy_ = true;
    }
 
    // Output Operations
@@ -1600,7 +1615,6 @@ namespace Pspg
             homogeneous_.molecule(i).computeSize();
          }
       }
-      hasMcHamiltonian_ = false;
    }
 
    #if 0
