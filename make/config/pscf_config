@@ -27,6 +27,11 @@ ifdef PSCF_CUDA
 PSCF_DEFS+= -DPSCF_CUDA
 endif
 
+# Conditionally enable OpenMP compilation
+ifdef PSCF_OPENMP
+PSCF_DEFS+= -DPSCF_OPENMP
+endif
+
 #-----------------------------------------------------------------------
 # pscf_LIB: Absolute path to the libpscf.a library 
 # Note: BLD_DIR is defined in the main config.mk file in bld/ or src/

@@ -37,6 +37,10 @@
 #include <string>
 #include <unistd.h>
 
+#ifdef PSCF_OPENMP
+#include <omp.h>
+#endif
+
 namespace Pscf {
 namespace Pspc {
 
@@ -130,16 +134,18 @@ namespace Pspc {
       bool cFlag = false;  // command file 
       bool iFlag = false;  // input prefix
       bool oFlag = false;  // output prefix
+      bool tFlag = false;  // nThread
       char* pArg = 0;
       char* cArg = 0;
       char* iArg = 0;
       char* oArg = 0;
       int dArg;
+      int tArg;
    
       // Read program arguments
       int c;
       opterr = 0;
-      while ((c = getopt(argc, argv, "ed:p:c:i:o:f")) != -1) {
+      while ((c = getopt(argc, argv, "ed:p:c:i:o:t:")) != -1) {
          switch (c) {
          case 'e':
             eFlag = true;
@@ -163,6 +169,10 @@ namespace Pspc {
          case 'o': // output prefix
             oFlag = true;
             oArg  = optarg;
+            break;
+         case 't':
+            tFlag = true;
+            tArg = atoi(optarg);
             break;
          case '?':
            Log::file() << "Unknown option -" << optopt << std::endl;
@@ -206,6 +216,16 @@ namespace Pspc {
          fileMaster_.setOutputPrefix(std::string(oArg));
       }
 
+      if (tFlag) {
+         #if PSCF_OPENMP
+         if (tArg > 0) {
+            omp_set_num_thread_
+         }
+         #else
+         Log::file() << "Warning: Program called with option -t "
+                     <<  tArg << ", but openMP is not enabled\n";
+         #endif
+      }
    }
 
    /*
