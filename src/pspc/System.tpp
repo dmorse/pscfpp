@@ -139,8 +139,8 @@ namespace Pspc {
       char* cArg = 0;
       char* iArg = 0;
       char* oArg = 0;
-      int dArg;
-      int tArg;
+      int dArg = 0;
+      int tArg = 0;
    
       // Read program arguments
       int c;
@@ -217,15 +217,22 @@ namespace Pspc {
       }
 
       if (tFlag) {
-         #if PSCF_OPENMP
-         if (tArg > 0) {
-            omp_set_num_thread_
+         #ifdef PSCF_OPENMP
+         if (tArg <= 0) {
+            Log::file() << "Warning: Program called with non-positive"
+                        << "thread count -t " <<  tArg << "\n";
+         } else {
+            Log::file() << "Arg of -t option =" << tArg << "\n"; 
+            Log::file() << "OMP max threads  =" << omp_get_max_threads() << "\n"; 
+            Log::file() << "OMP num procs    =" << omp_get_num_procs() << "\n"; 
          }
          #else
          Log::file() << "Warning: Program called with option -t "
-                     <<  tArg << ", but openMP is not enabled\n";
+                     <<  tArg << ", but openMP is not enabled.\n"
+                     <<  "Option will be ignored.\n";
          #endif
       }
+
    }
 
    /*

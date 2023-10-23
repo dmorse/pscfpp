@@ -57,7 +57,7 @@ TESTFLAGS= -Wall $(CXX_STD)
 # ---------------------------------------------------------------
 # OpenMP flags and paths
 
-OPENMP_FLAG=-fopenmp
+OPENMP_FLAGS=-fopenmp
 OPENMP_INC=
 OPENMP_LIB=
 

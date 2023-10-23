@@ -7,6 +7,12 @@
 
 #include <prdc/crystal/getDimension.h>
 #include <pspc/System.h>
+
+#ifdef PSCF_OPENMP
+#include <pscf/openmp/getNThread.h>
+#include <omp.h>
+#endif
+
 #include <iostream>
 
 namespace Pscf {
@@ -49,6 +55,10 @@ int main(int argc, char **argv)
    // Extract the dimension of space from argument of -d option
    int D = Pscf::Prdc::getDimension(argc, argv);
    std::cout << "dimension   " << D << std::endl;
+
+   #ifdef PSCF_OPENMP
+   Pscf::getNThread(argc, argv);
+   #endif
 
    if (1 == D) {
       Pscf::Pspc::run<1>(argc, argv);

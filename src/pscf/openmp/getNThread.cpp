@@ -8,13 +8,16 @@
 #include "getNThread.h"
 #include <util/global.h>
 
+#ifdef PSCF_OPENMP
+#include <omp.h>
+#endif
+
 #include <unistd.h>
 #include <cstring>
 
 using namespace Util;
 
-namespace Pscf { 
-namespace Prdc { 
+namespace Pscf {
 
    /*
    * Extract integer argument of -d option.
@@ -30,7 +33,8 @@ namespace Prdc {
       char* option = 0;
       char* arg = 0;
 
-      bool found = false;  // Has the -d option been found
+      // Find -t option and its argument
+      bool found = false;  // Has the -t option been found
       bool done = false;   // Has a valid parameter been found
       int i = 1;
       while (!done && i < argc) {
@@ -55,12 +59,23 @@ namespace Prdc {
          }
          ++i;
       }
+
+      // If found, convert arg to integer nThread
       int nThread = 0;
       if (done) {
-         nThread = atoi(arg); 
+         nThread = atoi(arg);
       }
-      return nThread; 
+
+      // Set the number of OpenMP threads
+      if (nThread > 0) {
+         std::cout << "Nthread     " << nThread << "\n";
+         omp_set_num_threads(nThread);
+      } else {
+         std::cout << "Nthread     " << nThread << "\n";
+         std::cout << "Warning: Number of threads cannot be set\n";
+      }
+
+      return nThread;
    }
 
-}
 }
