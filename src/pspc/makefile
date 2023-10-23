@@ -13,10 +13,13 @@ include $(SRC_DIR)/pspc/include.mk
 
 #-----------------------------------------------------------------------
 # Main program Source file base name
+
 PSCF_PC=$(BLD_DIR)/pspc/pscf_pc
 
 #-----------------------------------------------------------------------
 # Main targets 
+
+.PHONY: all clean veryclean
 
 all: $(pspc_OBJS) $(pspc_LIB) $(PSCF_PC_EXE)
 
@@ -32,10 +35,13 @@ veryclean:
 	$(MAKE) clean
 	-rm -f lib*.a
 
-# Executable target
-
-$(PSCF_PC_EXE): $(PSCF_PC).o $(PSPC_LIBS)
+# Target for main pscf_pc executable 
+$(PSCF_PC_EXE): $(PSCF_PC).o $(PSCF_LIBS)
 	$(CXX) $(LDFLAGS) -o $(PSCF_PC_EXE) $(PSCF_PC).o $(LIBS)
+
+# Note: In the target for pcsf_pc, we include the list $(PSCF_LIBS) of 
+# PSCF static libraries as dependencies, but link to the list $(LIBS) 
+# of all libraries, which includes relevant external libraries.
 
 # Short name for executable target (for convenience)
 pscf_pc:

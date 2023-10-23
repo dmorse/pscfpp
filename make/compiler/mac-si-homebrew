@@ -1,22 +1,42 @@
-# ---------------------------------------------------------------
-# Default compiler configuration file (gcc and nvcc)
+# >>>>>>>> Begin inclusion of file make/compiler/mac-si-homebrew
+#
+# Compiler configuration file section:
+#
+# The block of variable definitions that follows this explanation is 
+# initialized by the configure script by copying the contents of a 
+# compiler configuration file found in the make/compiler director into
+# the main config.mk files in the src/ and bld/ directories. The file
+# "make/compiler/default" is used by default.  Users may add files 
+# to the make/compiler directory to store customized settings. If 
+# the configure script is invoked with a filename argument (e.g., as
+# "./configure local"), the file in the make/compiler directory with
+# the specified name (e.g., make/compiler/local) is used as the compiler
+# configuration file and copied into the main config.mk files.
+#
+# Variables defined in this block define the names of commands used to
+# to invoke compilers and linkers, some of the standard command line 
+# options passed to the compiler, and search paths for header files and 
+# libraries files for required external libraries.  See the section of 
+# this file entitled "Makefile Patterns and Recipes" below for a 
+# discussion of how these variables are used.
 #
 # The definitions given below are designed for use on a Mac OS X
-# running on Mac silicon (e.g., the m1 ARM chip), using the 
-# homebrew package manager. 
+# running on Mac silicon (e.g., the m1 or m2 ARM chip), using the homebrew
+# package manager to install the GSL and FFTW libraries. They assume:
 #
-#   - The command g++ is used to invoke the C++ compiler.
-#   - Header files and libraries for FFTW and other dependencies
-#     may be in the /opt/homebrew directory
-#   - The gsl-config command can be used to find the correct header
-#     and library paths for the Gnu Scientific Library (GSL)
+#   - The command g++ can be used to invoke the C++ compiler (though 
+#     g++ may be an alias for the Apple installed Clang compiler)
+#   - Header files and libraries for FFTW are in a subdirectory of the
+#     /opt/homebrew directory
+#   - The gsl-config command can be used by the configure script to
+#     find the correct header and library paths for the Gnu Scientific
+#     Library (GSL)
 #
-# Note: The default compiler configuration file can be used to
-# compile on a Mac that uses an Intel CPU and the homebrew
-# package manager, because of  a difference in how homebrew is
-# configured machines that use intel and apple CPUss: Homebrew 
-# installs in /usr/local for intel silicon on in /opt/homebrew 
-# for apple silicon.
+# Note: The default compiler configuration file can be used to compile
+# on a Mac that uses an Intel CPU and the homebrew package manager, 
+# because of  a difference in how homebrew is configured machines that 
+# use intel and apple CPUss: Homebrew installs in /usr/local for Intel 
+# silicon and in /opt/homebrew for Apple silicon.
 # ---------------------------------------------------------------
 # C++ compiler and options (*.cpp files)
 
@@ -34,6 +54,13 @@ CXXFLAGS_FAST= -Wall $(CXX_STD) -O3 -ffast-math -Winline
 
 # Compiler flags used in unit tests
 TESTFLAGS= -Wall $(CXX_STD)
+
+# ---------------------------------------------------------------
+# OpenMP flags and paths
+
+OPENMP_FLAGS=-fopenmp
+OPENMP_INC=
+OPENMP_LIB=
 
 # ---------------------------------------------------------------
 # CUDA compiler and options (*.cu files)
@@ -74,12 +101,19 @@ ARFLAGS=rcs
 GSL_INC=GSL_INC_AUTO
 GSL_LIB=GSL_LIB_AUTO
 
-# FFTW Fast Fourier transform library (as installed by homebrew)
-#FFTW_INC=
-FFTW_INC=-I/opt/homebrew/include
-FFTW_LIB=-L/opt/homebrew/lib -lfftw3
+# FFTW Fast Fourier transform library (as
+ifndef OPENMP 
+  # Paths to FFTW without OpenMP, as installed by homebrew
+  FFTW_INC=-I/opt/homebrew/include
+  FFTW_LIB=-L/opt/homebrew/lib -lfftw3
+else 
+  # Paths to FFTW with OpenMP threads enabled
+  FFTW_INC=
+  FFTW_LIB=-lfftw3
+endif
 
 # CUDA FFT library (not usable on any Mac)
 CUFFT_INC=
 CUFFT_LIB=
 
+# <<<<<<<< End inclusion of file make/compiler/mac-si-homebrew

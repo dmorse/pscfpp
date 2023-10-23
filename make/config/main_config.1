@@ -22,13 +22,10 @@
 #
 #  - A variable PSCF_OPENMP that, if defined, enables OpenMP in C++ code.
 #
-#  - A variable PSCF_CUDA that, if defined, enables conditional
-#    compilation and linking of CUDA code. This should only be enabled
-#    on machines that can compile and run CUDA code. 
+#  - A variable PSCF_CUDA that, if defined, enables building of CUDA code.
 #
-#  - Variables that control the command name by which the C++ and C++/CUDA
-#    compilers are invoked, and command line options passed to both
-#    compilers.
+#  - Variables that control the name for C++ and C++/CUDA compilers,
+#    and command line options passed to both compilers.
 # 
 #  - Variable MAKEDEP and MAKEDEP_CUDA that give names for scripts used
 #    to automatically generate dependency (*.d) files.
@@ -37,8 +34,8 @@
 # Variables that define absolute directory paths
 #
 # In the config.mk file installed in each build directory (src/ or bld/), 
-# correct values of these variables should have been set by the configure 
-# script, and should not need to be modified by users.
+# values of these variables are set by the configure script, and should
+# usually not need to be modified by users.
 
 # Absolute path to the pscfpp/ root directory
 ROOT_DIR=PWD
@@ -50,7 +47,7 @@ BLD_DIR=$(ROOT_DIR)/=OWD
 # Path to the source directory (contains C++ source code files)
 SRC_DIR=$(ROOT_DIR)/src
 
-# Installation directory for binary executable program files
+# Installation directory for executable files
 BIN_DIR=$(ROOT_DIR)/bin
 
 # Directory for shared permanent (read-only) data used by programs.
@@ -59,51 +56,28 @@ DAT_DIR=$(ROOT_DIR)/data
 #======================================================================
 # Conditional compilation of debugging.
 
-# Defining UTIL_DEBUG enables a variety of extra sanity checks (e.g.,
-# bounds checking on arrays), at some cost in speed. 
+# Defining UTIL_DEBUG enables extra run-time validity tests.
 #UTIL_DEBUG=1
 
-# Note: To use the the setopts script uncomment or comment out the above
-# definition of UTIL_DEBUG from the command line, enter "./setopts -d1" to 
-# enable debugging (uncomment) or "./setopts -d0" to disable (comment out).
-#
+# Note: The setopts script may be used to uncomment or comment out this
+# definition of UTIL_DEBUG , by entering "./setopts -d1" to enable 
+# debugging (uncomment) or "./setopts -d0" to disable (comment out).
 #======================================================================
 # Conditional compilation of C++ with OpenMP 
  
 # Defining PSCF_OPENMP enables compilation of C++ with OpenMP.
 #PSCF_OPENMP=1
  
-# Note: To use the the setopts script uncomment or comment out the above
-# definition of UTIL_OPENMP from the command line, enter "./setopts -m1" 
-# to enable (uncomment) or "./setopts -m0" to disable (comment out).
-# 
+# Note: The setopts script may be used to uncomment or comment out this
+# definition of PSCF_OPENMP, by entering "./setopts -m1" to enable OpenMP
+# (uncomment PSCF_OPENMP=1) or "./setopts -m0" to disable (comment out).
 #======================================================================
 # Conditional compilation of CUDA code
  
-# Defining PSCF_CUDA enables compilation and linking of CUDA code.
+# Defining PSCF_CUDA enables compilation of CUDA code.
 #PSCF_CUDA=1
  
-# Note: To use the the setopts script uncomment or comment out the above
-# definition of UTIL_CUDA from the command line, enter "./setopts -c1" to 
-# enable CUDA (uncomment) or "./setopts -c0" to disable (comment out).
-#
+# Note: The setopts script may be used to uncomment or comment out this
+# definition of PSCF_CUDA, by entering "./setopts -c1" to enable CUDA
+# (uncomment PSCF_CUDA=1) or "./setopts -c0" to disable (comment out).
 #======================================================================
-# Compiler configuration variables.
-#
-# The following block of variable definitions is initialized by the
-# configure script by inserting the contents of a compiler configuration 
-# file found in the make/compiler directory.  If the configure script is 
-# invoked with no argument, the file "make/compiler/default" is used by 
-# default.  Users may add files to the make/compiler directory to store 
-# customized settings. If the configure script is invoked with a filename
-# argument (e.g., "./configure local"), the file in the make/compiler
-# directory with the specified name (e.g., make/given/local) is used as
-# the compiler configuration file rather than make/compiler/default. 
-#
-# Variables defined in this block define the names of the commands used
-# to invoke compilers and linkers when compiling and linking files, some
-# of the command line options passed to the compiler, and search paths
-# for header files and libraries files for required external libraries.
-# See the section of this file entitled "Makefile Patterns and Recipes" 
-# below for a discussion of how these variables are used.
-#

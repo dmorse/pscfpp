@@ -11,11 +11,11 @@
 # uses makefile variables defined in those files.
 #-----------------------------------------------------------------------
 
-# Local pscf-specific libraries needed in src/fd1d
-FD1D_LIBS=$(fd1d_LIB) $(pscf_LIB) $(util_LIB)
+# PSCF-specific libraries needed in src/fd1d
+PSCF_LIBS=$(fd1d_LIB) $(pscf_LIB) $(util_LIB)
 
-# List of all libraries needed by executables in src/fd1d
-LIBS=$(FD1D_LIBS)
+# All libraries needed by executables in src/fd1d (including external)
+LIBS=$(PSCF_LIBS)
 
 # Add paths to Gnu scientific library (GSL)
 INCLUDES+=$(GSL_INC)
@@ -38,7 +38,10 @@ $(BLD_DIR)/%.o: $(SRC_DIR)/%.cpp
 	$(MAKEDEP) $(INCLUDES) $(DEFINES) $(MAKE_DEPS) -S$(SRC_DIR) -B$(BLD_DIR) $<
    endif
 
-# Pattern rule to link Test programs in src/pscf/tests
-$(BLD_DIR)/%Test: $(BLD_DIR)/%Test.o $(FD1D_LIBS)
+# Pattern rule to link Test programs in src/fd1d/tests
+$(BLD_DIR)/%Test: $(BLD_DIR)/%Test.o $(PSCF_LIBS)
 	$(CXX) $(LDFLAGS) $(INCLUDES) $(DEFINES) -o $@ $< $(LIBS)
 
+# Note: In the linking rule for tests, we include the list $(PSCF_LIBS) 
+# of PSCF-specific libraries as dependencies but link to list $(LIBS) of
+# libraries that includes relevant external libraries

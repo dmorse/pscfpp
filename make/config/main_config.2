@@ -37,17 +37,17 @@ UTIL_CXX11=1
 # Each namespace level directory contains makefile fragments named
 # patterns.mk, sources.mk, include.mk, and config.mk. 
 # 
-# Some namespace level directories are said to depend on others. 
-# Namespace level directory A is said to depends on directory B if 
-# C++ or CUDA source code in A may use names (classes and functions) 
+# Some namespace level directories of PSCF "depend" on others. 
+# A namespace level directory named A is said to depends on directory B 
+# if C++ or CUDA source code in A may use names (classes and functions) 
 # defined in B. If namespace level directory A depends on directory B,
 # then the include.mk file in A will include the config.mk and sources.mk 
-# files located in directory B. For example, subdirectory fd1d/ depends 
-# on the util/ and pscf/ directories, but not on the pscpc/ or pspg/
-# directories.  You can see what directories a particular namespace 
-# level directory depends on by inspecting the include.mk file in that
-# directory, which shows which makefile fragments will be included in
-# any makefile in that directory.
+# files located in directory B. For example, subdirectory fd1d/ depends on
+# the util/ and pscf/ directories, but not on the pscpc/, prdc/ or pspg/
+# directories.  You can see what directories a particular namespace level
+# directory depends on by inspecting the include.mk file in that directory,
+# which contains statements to include config.mk and sources.mk files from
+# the namespace-level directories on which that directory depends.
 #
 # Different makefile pattern rules for compilation of source files are 
 # used in different namespace level directories.  The file named
@@ -59,30 +59,30 @@ UTIL_CXX11=1
 # in the same file, in a namespace level config.mk file or sources.mk
 # file for that directory or any other directory that it depends on, or
 # in this main config.mk configuration file, which is installed in the 
-# root of $(BLD_DIR), i.e., the bld/ or src/ directory tree.
+# root of the $(BLD_DIR) directory, i.e., the bld/ or src/ directory.
 #
-# The pattern rules for different namespace level subdirectories of 
-# src/ are similar except for differences in the values of two makefile
+# The pattern rules for different namespace level subdirectories of src/
+# are similar except for differences in the values of two makefile
 # variables named INCLUDES and DEFINES that are assigned different values 
-# in different namespace level directories.  
+# in different namespace level directories. 
 #
 # Compiling *.cpp C++ files:
 #
-# The compiler pattern rule for C++ files for each namespace level 
-# subdirectory src/ is of the form:
+# The compiler pattern rule for compiling C++ files for each namespace 
+# level subdirectory src/ is of the form:
 # 
 # $(BLD_DIR)/%.o:$(SRC_DIR)/%.cpp
 #      $(CXX) $(CPPFLAGS) $(CXXFLAGS) $(INCLUDES) $(DEFINES) -c -o $@ $<
 #
 # This pattern compiles a *.cpp file in a subdirectory of the source
 # directory $(SRC_DIR) and creates a *.o object file in a corresponding
-# subdirectory of the build directory, $(BLD_DIR). The $(SRC_DIR) and
-# $(BLD_DIR) are identical in the case of in-source compilation. The
-# variables used in this pattern are:
+# location in a subdirectory of the build directory, $(BLD_DIR). The 
+# $(SRC_DIR) and $(BLD_DIR) are the same in the case of in-source 
+# compilation. The variables used in this pattern are:
 #
 # CXX         - C++ compiler executable name 
-# CPPFLAGS    - preprocessor options used during compilation
-# CXXFLAGS    - compiler options used during compilation
+# CPPFLAGS    - standard options used by the C/C++ preprocessor
+# CXXFLAGS    - standard compiler options used during compilation
 # INCLUDES    - Directories to search for included header files
 # DEFINES     - compiler options that define C preprocessor macros
 #

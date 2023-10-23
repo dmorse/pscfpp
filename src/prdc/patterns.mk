@@ -13,10 +13,10 @@
 #-----------------------------------------------------------------------
 
 # Local pscf-specific libraries needed in src/prdc
-PRDC_LIBS=$(prdc_LIB) $(pscf_LIB) $(util_LIB)
+PSCF_LIBS=$(prdc_LIB) $(pscf_LIB) $(util_LIB)
 
-# All libraries needed in executables built in src/prdc
-LIBS=$(PRDC_LIBS)
+# All libraries needed by executables in src/prdc (including external)
+LIBS=$(PSCF_LIBS)
 
 # Add paths to Gnu scientific library (GSL)
 INCLUDES+=$(GSL_INC)
@@ -30,6 +30,13 @@ LIBS+=$(FFTW_LIB)
 ifdef PSCF_CUDA
   INCLUDES+=$(CUDA_INC)
   LIBS+=$(CUDA_LIB)
+endif
+
+# Conditionally enable OpenMP
+ifdef PSCF_OPENMP
+  CXXFLAGS+=$(OPENMP_FLAGS)
+  INCLUDES+=$(OPENMP_INC)
+  LIBS+=$(OPENMP_LIB) 
 endif
 
 # Preprocessor macro definitions needed in src/prdc
@@ -58,9 +65,13 @@ $(BLD_DIR)/%.o:$(SRC_DIR)/%.cu
    endif
 
 # Pattern rule to compile Test programs in src/prdc/tests
-$(BLD_DIR)/%Test: $(BLD_DIR)/%Test.o $(PRDC_LIBS)
+$(BLD_DIR)/%Test: $(BLD_DIR)/%Test.o $(PSCF_LIBS)
 ifdef PSCF_CUDA
 	$(NVXX) $(LDFLAGS) $(INCLUDES) $(DEFINES) -o $@ $< $(LIBS)
 else
 	$(CXX) $(LDFLAGS) $(INCLUDES) $(DEFINES) -o $@ $< $(LIBS)
 endif
+
+# Note: In the linking rule for tests, we include the list $(PSCF_LIBS) 
+# of PSCF-specific libraries as dependencies but link to the list $(LIBS) 
+# of libraries that includes relevant external libraries

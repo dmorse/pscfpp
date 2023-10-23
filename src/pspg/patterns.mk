@@ -13,10 +13,10 @@
 #-----------------------------------------------------------------------
 
 # Local pscf-specific libraries needed in src/pspg (the order matters)
-PSPG_LIBS=$(pspg_LIB) $(prdc_LIB) $(pscf_LIB) $(util_LIB)
+PSCF_LIBS=$(pspg_LIB) $(prdc_LIB) $(pscf_LIB) $(util_LIB)
 
-# All libraries needed in executables built in src/pspg
-LIBS=$(PSPG_LIBS)
+# All libraries needed by executables in src/pspg (including external)
+LIBS=$(PSCF_LIBS)
 
 # Add paths to Gnu scientific library (GSL)
 INCLUDES+=$(GSL_INC)
@@ -56,5 +56,9 @@ $(BLD_DIR)/%.o:$(SRC_DIR)/%.cu
    endif
 
 # Pattern rule to link executable Test programs in src/pspg/tests
-$(BLD_DIR)/%Test: $(BLD_DIR)/%Test.o  $(PSPG_LIBS)
+$(BLD_DIR)/%Test: $(BLD_DIR)/%Test.o  $(PSCF_LIBS)
 	$(NVXX) $(LDFLAGS) $(INCLUDES) $(DEFINES) -o $@ $< $(LIBS)
+
+# Note: In the linking rule for tests, we include the list $(PSCF_LIBS) 
+# of PSCF-specific libraries as dependencies but link to the list $(LIBS) 
+# of libraries that includes relevant external libraries

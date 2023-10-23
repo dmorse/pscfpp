@@ -14,7 +14,7 @@ include $(SRC_DIR)/prdc/include.mk
 #-----------------------------------------------------------------------
 # Main targets 
  
-.PHONE: all list clean veryclean
+.PHONY: all list clean veryclean
 
 all: $(prdc_OBJS) $(prdc_LIB) 
 

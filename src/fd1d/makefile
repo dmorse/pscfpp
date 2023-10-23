@@ -12,9 +12,10 @@ include $(BLD_DIR_REL)/config.mk
 include $(SRC_DIR)/fd1d/include.mk
 
 #-----------------------------------------------------------------------
-# Variable definition
+# Paths to main pscf_fd program files
 
 PSCF_FD=$(BLD_DIR)/fd1d/pscf_fd
+PSCF_FD_EXE=$(BIN_DIR)/pscf_fd
 #-----------------------------------------------------------------------
 # Main targets 
 
@@ -33,7 +34,7 @@ veryclean:
 	-rm -f lib*.a
 
 # Executable target (linking)
-$(PSCF_FD_EXE): $(PSCF_FD).o $(FD1D_LIBS)
+$(PSCF_FD_EXE): $(PSCF_FD).o $(PSCF_LIBS)
 	$(CXX) $(LDFLAGS) -o $(PSCF_FD_EXE) $(PSCF_FD).o $(LIBS) 
 
 # Short name for executable target (for convenience)

@@ -11,10 +11,10 @@ BLD_DIR_REL =..
 include $(BLD_DIR_REL)/config.mk
 include $(SRC_DIR)/pscf/include.mk
 
-.PHONY: all list clean veryclean
-
 #-----------------------------------------------------------------------
 # Main targets 
+
+.PHONY: all list clean veryclean
 
 all: $(pscf_OBJS) $(pscf_LIB)
 

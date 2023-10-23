@@ -27,10 +27,4 @@ FD1D_DEFS=
 
 fd1d_LIBNAME=fd1d
 fd1d_LIB=$(BLD_DIR)/fd1d/lib$(fd1d_LIBNAME).a
-
-#-----------------------------------------------------------------------
-# PSCF_FD: Absolute path to the pscf_fd executable file
-
-PSCF_FD_EXE=$(BIN_DIR)/pscf_fd
-
 #-----------------------------------------------------------------------

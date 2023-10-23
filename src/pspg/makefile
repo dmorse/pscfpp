@@ -19,6 +19,8 @@ PSCF_PG=$(BLD_DIR)/pspg/pscf_pg
 #-----------------------------------------------------------------------
 # Main targets 
 
+.PHONY: all clean veryclean
+
 all: $(pspg_OBJS) $(pspg_LIB) $(PSCF_PG_EXE)
 
 clean:
@@ -33,9 +35,13 @@ veryclean:
 	$(MAKE) clean
 	-rm -f lib*.a
 
-# Executable target
-$(PSCF_PG_EXE): $(PSCF_PG).o $(PSPG_LIBS)
+# Main pscf_pg executable target
+$(PSCF_PG_EXE): $(PSCF_PG).o $(PSCF_LIBS)
 	$(CXX) $(LDFLAGS) -o $(PSCF_PG_EXE) $(PSCF_PG).o $(LIBS)
+
+# Note: In the linking rule for pscf_pg, we include the list $(PSCF_LIBS) 
+# of PSCF-specific libraries as dependencies but link to list $(LIBS) of
+# libraries that includes relevant external libraries.
 
 # Short name for executable target (for convenience)
 pscf_pg:

@@ -11,15 +11,22 @@
 # uses makefile variables defined in those files.
 #-----------------------------------------------------------------------
 
-# List of pscf-specific libraries needed in src/pscf (the order matters)
+# List of PSCF-specific libraries needed in src/pscf (the order matters)
 PSCF_LIBS=$(pscf_LIB) $(util_LIB) 
 
-# List of all libraries needed for executables in src/pscf
+# All libraries needed by executables in src/pscf (includes external)
 LIBS=$(PSCF_LIBS)
 
 # Add paths to Gnu Scientific Library (GSL)
 INCLUDES+=$(GSL_INC)
 LIBS+=$(GSL_LIB) 
+
+# Conditionally enable OpenMP
+ifdef PSCF_OPENMP
+  CXXFLAGS+=$(OPENMP_FLAGS)
+  INCLUDES+=$(OPENMP_INC)
+  LIBS+=$(OPENMP_LIB) 
+endif
 
 # Conditionally add CUDA header include and library paths
 ifdef PSCF_CUDA
@@ -59,3 +66,6 @@ else
 	$(CXX) $(LDFLAGS) $(INCLUDES) $(DEFINES) -o $@ $< $(LIBS)
 endif
 
+# Note: In the linking rule for tests, we include the list $(PSCF_LIBS) of 
+# PSCF-specific libraries as dependencies but link to the list $(LIBS) 
+# that can include external libraries
