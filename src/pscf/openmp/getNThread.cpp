@@ -69,7 +69,11 @@ namespace Pscf {
       // Set the number of OpenMP threads
       if (nThread > 0) {
          std::cout << "Nthread     " << nThread << "\n";
+         #ifdef PSCF_OPENMP
          omp_set_num_threads(nThread);
+         #else
+         std::cout << "Warning: OpenMP is not enabled. \n";
+         #endif
       } else {
          std::cout << "Nthread     " << nThread << "\n";
          std::cout << "Warning: Number of threads cannot be set\n";
