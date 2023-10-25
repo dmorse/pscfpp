@@ -80,6 +80,9 @@ NVARCH=sm_35
 # Flags always passed to cuda compiler
 NVXXFLAGS= $(CXX_STD) -O3 -arch=$(NVARCH)
 
+# Compiler command used to generate dependencies for CUDA
+MAKEDEP_CUDA_CMD="-C$(NVXX) -M"
+
 # ---------------------------------------------------------------
 # Linker / Loader 
 

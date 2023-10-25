@@ -10,10 +10,15 @@ alldeps = ''
 blddir = ''
 srcdir = ''
 for arg in sys.argv[1:-1]:
+   if arg[0] == '"' and arg[-1] == '"':
+      # Strip double quotes
+      arg = arg[1:-2]
    if arg[:2] == '-A':
       alldeps += ' ' + arg[2:]   
    elif arg[:2] == '-B':
       blddir += arg[2:]   
+   elif arg[:2] == '-C':
+      processor = arg[2:]
    elif arg[:2] == '-S':
       srcdir += arg[2:]   
    else:
