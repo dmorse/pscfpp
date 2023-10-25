@@ -31,7 +31,7 @@ namespace Cpu {
       #ifdef PSCF_OPENMP
       int nThread = omp_get_max_threads();
       if (nThread > 1) {
-         std::cout << "Planning 1D FFT with " << nThread << " threads\n";
+         // std::cout << "Planning 1D FFT with " << nThread << " threads\n";
          fftw_plan_with_nthreads(nThread);
       }
       #endif
@@ -46,7 +46,7 @@ namespace Cpu {
       #ifdef PSCF_OPENMP
       int nThread = omp_get_max_threads();
       if (nThread > 1) {
-         std::cout << "Planning 2D FFT with " << nThread << " threads\n";
+         // std::cout << "Planning 2D FFT with " << nThread << " threads\n";
          fftw_plan_with_nthreads(nThread);
       }
       #endif
@@ -63,7 +63,7 @@ namespace Cpu {
       #ifdef PSCF_OPENMP
       int nThread = omp_get_max_threads();
       if (nThread > 1) {
-         std::cout << "Planning 3D FFT with " << nThread << " threads\n";
+         // std::cout << "Planning 3D FFT with " << nThread << " threads\n";
          fftw_plan_with_nthreads(nThread);
       }
       #endif
