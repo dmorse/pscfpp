@@ -40,8 +40,11 @@
 # ---------------------------------------------------------------
 # C++ compiler and options (*.cpp files)
 
-# C++ compiler Command name
+# C++ compiler Command name 
+# Default: On OS X, g++ actually calls the Apple installed clang compiler
 CXX=g++
+# Example of a path to a homebrew-installed GNU compiler 
+# CXX=/opt/homebrew/Cellar/gcc/12.2.0/bin/c++-12
 
 # Compiler option to specify ANSI C++ 2011 standard (required)
 CXX_STD = --std=c++11
@@ -54,6 +57,9 @@ CXXFLAGS_FAST= -Wall $(CXX_STD) -O3 -ffast-math -Winline
 
 # Compiler flags used in unit tests
 TESTFLAGS= -Wall $(CXX_STD)
+
+# Compiler command used to generate dependencies
+MAKEDEP_CMD="-C$(CXX) -MM -MF"
 
 # ---------------------------------------------------------------
 # OpenMP flags and paths

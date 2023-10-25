@@ -42,18 +42,27 @@ endif
 # Preprocessor macro definitions needed in src/prdc
 DEFINES=$(UTIL_DEFS) $(PSCF_DEFS) $(PRDC_DEFS) 
 
-# Dependencies on build configuration files
-MAKE_DEPS= -A$(BLD_DIR)/config.mk
-MAKE_DEPS+= -A$(BLD_DIR)/util/config.mk
-MAKE_DEPS+= -A$(BLD_DIR)/pscf/config.mk
-MAKE_DEPS+= -A$(BLD_DIR)/prdc/config.mk
+# Arguments for MAKEDEP
+MAKEDEP_ARGS=$(INCLUDES) $(DEFINES)
+MAKEDEP_ARGS+= -A$(BLD_DIR)/config.mk
+MAKEDEP_ARGS+= -A$(BLD_DIR)/util/config.mk
+MAKEDEP_ARGS+= -A$(BLD_DIR)/pscf/config.mk
+MAKEDEP_ARGS+= -A$(BLD_DIR)/prdc/config.mk
+MAKEDEP_ARGS+= -S$(SRC_DIR)
+MAKEDEP_ARGS+= -B$(SRC_DIR)
+
+# Arguments for MAKEDEP for C++ only
+MAKEDEP_CXX_ARGS=$(MAKEDEP_ARGS)
+ifdef PSCF_OPENMP
+  MAKEDEP_CXX_ARGS+=$(OPENMP_FLAGS)
+endif
 
 # Pattern rule to compile *.cpp class source files in src/prdc
 # Note: Creates a *.d dependency file as a side effect of compilation
 $(BLD_DIR)/%.o:$(SRC_DIR)/%.cpp
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(INCLUDES) $(DEFINES) -c -o $@ $<
    ifdef MAKEDEP
-	$(MAKEDEP) $(INCLUDES) $(DEFINES) $(MAKE_DEPS) -S$(SRC_DIR) -B$(BLD_DIR) $<
+	$(MAKEDEP) $(MAKEDEP_CMD) $(MAKEDEP_CXX_ARGS) $<
    endif
 
 # Pattern rule to compile *.cu class source files in src/prdc
