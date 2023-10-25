@@ -70,7 +70,7 @@ $(BLD_DIR)/%.o:$(SRC_DIR)/%.cpp
 $(BLD_DIR)/%.o:$(SRC_DIR)/%.cu
 	$(NVXX) $(CPPFLAGS) $(NVXXFLAGS) $(INCLUDES) $(DEFINES) -c -o $@ $<
    ifdef MAKEDEP_CUDA
-	$(MAKEDEP_CUDA) $(INCLUDES) $(DEFINES) $(MAKE_DEPS) -S$(SRC_DIR) -B$(BLD_DIR) $<
+	$(MAKEDEP_CUDA) $(MAKEDEP_ARGS) $<
    endif
 
 # Pattern rule to compile Test programs in src/prdc/tests
