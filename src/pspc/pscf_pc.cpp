@@ -57,7 +57,10 @@ int main(int argc, char **argv)
    std::cout << "dimension   " << D << std::endl;
 
    #ifdef PSCF_OPENMP
-   Pscf::getNThread(argc, argv);
+   int nThread = Pscf::getNThread(argc, argv);
+   if (nThread > 0) { 
+      fftw_init_threads();
+   }
    #endif
 
    if (1 == D) {
@@ -71,5 +74,15 @@ int main(int argc, char **argv)
    } else {
       std::cout << " Invalid dimension = " << D << std::endl;
    }
+
+   #ifdef PSCF_OPENMP
+   if (nThread > 0) {
+      fftw_cleanup_threads();
+   } else {
+      fftw_cleanup();
+   }
+   #else
+   fftw_cleanup();
+   #endif
 
 }

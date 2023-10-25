@@ -68,6 +68,10 @@ OPENMP_FLAGS=-fopenmp
 OPENMP_INC=
 OPENMP_LIB=
 
+#ifdef PSCF_OPENMP
+OPENMP_LIB+=-lfftw3_omp
+#endif
+
 # ---------------------------------------------------------------
 # CUDA compiler and options (*.cu files)
 

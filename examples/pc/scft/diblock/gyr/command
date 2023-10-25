@@ -8,4 +8,5 @@ WRITE_THERMO  out/dat
 WRITE_W_BASIS out/w.bf
 WRITE_W_RGRID out/w.rf
 WRITE_C_RGRID out/c.rf
+WRITE_TIMER   out/times
 FINISH
