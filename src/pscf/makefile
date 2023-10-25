@@ -39,4 +39,3 @@ endif
 # Include dependency files
 
 -include $(pscf_OBJS:.o=.d)
--include $(pscf_cuda_OBJS:.o=.d)

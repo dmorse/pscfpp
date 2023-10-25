@@ -24,10 +24,9 @@ pscf_CPP_OBJS=\
 pscf_OBJS = $(pscf_CPP_OBJS)
 
 # CUDA source files
-
 ifdef PSCF_CUDA
   include $(SRC_DIR)/pscf/cuda/sources.mk
-  pscf_OBJS +=  $(pscf_cuda_OBJS)
+  pscf_OBJS+=$(pscf_cuda_OBJS)
 endif
 
 $(pscf_LIB): $(pscf_OBJS)
