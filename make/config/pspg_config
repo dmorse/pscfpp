@@ -30,7 +30,3 @@ PSPG_DEFS=
 pspg_LIBNAME=pspg
 pspg_LIB=$(BLD_DIR)/pspg/lib$(pspg_LIBNAME).a
 #-----------------------------------------------------------------------
-# Path to executable file
-
-PSCF_PG_EXE=$(BIN_DIR)/pscf_pg
-#-----------------------------------------------------------------------

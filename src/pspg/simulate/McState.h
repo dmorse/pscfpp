@@ -14,8 +14,7 @@
 #include <util/containers/DArray.h>
 
 namespace Pscf {
-namespace Pspg
-{
+namespace Pspg {
 
    using namespace Util;
    using namespace Pscf::Prdc;

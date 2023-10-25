@@ -14,7 +14,11 @@ include $(SRC_DIR)/pspg/include.mk
 #-----------------------------------------------------------------------
 # Main program source file base name
 
+# Base path to *.o and *.d files for pscf_pg
 PSCF_PG=$(BLD_DIR)/pspg/pscf_pg
+
+# Path to pscf_pg executable
+PSCF_PG_EXE=$(BIN_DIR)/pscf_pg
 
 #-----------------------------------------------------------------------
 # Main targets 
@@ -37,7 +41,7 @@ veryclean:
 
 # Main pscf_pg executable target
 $(PSCF_PG_EXE): $(PSCF_PG).o $(PSCF_LIBS)
-	$(CXX) $(LDFLAGS) -o $(PSCF_PG_EXE) $(PSCF_PG).o $(LIBS)
+	$(NVXX) $(LDFLAGS) -o $(PSCF_PG_EXE) $(PSCF_PG).o $(LIBS)
 
 # Note: In the linking rule for pscf_pg, we include the list $(PSCF_LIBS) 
 # of PSCF-specific libraries as dependencies but link to list $(LIBS) of
@@ -52,6 +56,7 @@ pscf_pg:
 # Include dependency files
 
 -include $(pspg_OBJS:.o=.d)
+-include $(prdc_OBJS:.o=.d)
 -include $(pscf_OBJS:.o=.d)
 -include $(util_OBJS:.o=.d)
 -include $(PSCF_PG).d 

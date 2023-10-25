@@ -13,8 +13,7 @@
 #include <util/containers/DArray.h>
 
 namespace Pscf {
-namespace Pspc
-{
+namespace Pspc {
 
    using namespace Util;
    using namespace Prdc::Cpu;
@@ -33,6 +32,11 @@ namespace Pspc
       * Constructor.
       */
       McState();
+
+      /**
+      * Destructor.
+      */
+      ~McState();
 
       /**
       * Allocate memory for w fields.

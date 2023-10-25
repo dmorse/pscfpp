@@ -11,8 +11,7 @@
 #include "McState.h"
 
 namespace Pscf {
-namespace Pspg
-{
+namespace Pspg {
 
 using namespace Util;
 

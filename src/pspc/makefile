@@ -12,9 +12,13 @@ include $(BLD_DIR_REL)/config.mk
 include $(SRC_DIR)/pspc/include.mk
 
 #-----------------------------------------------------------------------
-# Main program Source file base name
+# Main pscf_pc program files
 
+# Base path to *.o and *.d files for pscf_pc
 PSCF_PC=$(BLD_DIR)/pspc/pscf_pc
+
+# Path to pscf_pc executable file
+PSCF_PC_EXE=$(BIN_DIR)/pscf_pc
 
 #-----------------------------------------------------------------------
 # Main targets 

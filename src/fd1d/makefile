@@ -14,8 +14,12 @@ include $(SRC_DIR)/fd1d/include.mk
 #-----------------------------------------------------------------------
 # Paths to main pscf_fd program files
 
+# Path to pscf_fd *.o and *.d files for pscf_fd
 PSCF_FD=$(BLD_DIR)/fd1d/pscf_fd
+
+# Path to pscf_fd executable
 PSCF_FD_EXE=$(BIN_DIR)/pscf_fd
+
 #-----------------------------------------------------------------------
 # Main targets 
 

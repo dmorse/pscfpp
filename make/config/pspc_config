@@ -29,9 +29,4 @@ PSPC_DEFS=
 
 pspc_LIBNAME=pspc
 pspc_LIB=$(BLD_DIR)/pspc/lib$(pspc_LIBNAME).a
-
-#-----------------------------------------------------------------------
-# Path to the pscf_pc program executable
-
-PSCF_PC_EXE=$(BIN_DIR)/pscf_pc
 #-----------------------------------------------------------------------

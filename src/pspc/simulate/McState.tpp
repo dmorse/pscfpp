@@ -31,6 +31,13 @@ namespace Pspc {
    {}
 
    /*
+   * Destructor.
+   */
+   template <int D>
+   McState<D>::~McState() 
+   {}
+
+   /*
    * Allocate memory for w fields.
    */ 
    template <int D>
