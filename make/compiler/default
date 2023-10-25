@@ -54,6 +54,9 @@ CXXFLAGS_FAST= -Wall $(CXX_STD) -O3 -ffast-math -Winline
 # Compiler flags used in unit tests
 TESTFLAGS= -Wall $(CXX_STD)
 
+# Compiler command used to generate dependencies
+MAKEDEP_CMD="-C$(CXX) -MM -MF"
+
 # ---------------------------------------------------------------
 # OpenMP flags and paths
 

@@ -55,6 +55,7 @@ def createDependencyFileCpp(processor, options, cfile, srcdir, blddir, extraDepe
    command += pfile + ' '
    command += options + ' '
    command += cfile
+   #print('\n' + command + '\n')
    os.system(command)
 
    #Edit dependency file

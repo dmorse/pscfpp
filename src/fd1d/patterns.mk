@@ -24,18 +24,21 @@ LIBS+=$(GSL_LIB)
 # Preprocessor macro definitions needed in src/fd1d
 DEFINES=$(PSCF_DEFS) $(UTIL_DEFS)
 
-# Dependencies on build configuration files
-MAKE_DEPS= -A$(BLD_DIR)/config.mk
-MAKE_DEPS+= -A$(BLD_DIR)/util/config.mk
-MAKE_DEPS+= -A$(BLD_DIR)/pscf/config.mk
-MAKE_DEPS+= -A$(BLD_DIR)/fd1d/config.mk
+# Arguments for MAKEDEP script
+MAKEDEP_ARGS=$(INCLUDES) $(DEFINES)
+MAKEDEP_ARGS+= -A$(BLD_DIR)/config.mk
+MAKEDEP_ARGS+= -A$(BLD_DIR)/util/config.mk
+MAKEDEP_ARGS+= -A$(BLD_DIR)/pscf/config.mk
+MAKEDEP_ARGS+= -A$(BLD_DIR)/fd1d/config.mk
+MAKEDEP_ARGS+= -S$(SRC_DIR)
+MAKEDEP_ARGS+= -B$(SRC_DIR)
 
 # Pattern rule to compile *.cpp class source files in src/fd1d
 # Note: Creates a *.d dependency file as a side effect
 $(BLD_DIR)/%.o: $(SRC_DIR)/%.cpp
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(INCLUDES) $(DEFINES) -c -o $@ $<
    ifdef MAKEDEP
-	$(MAKEDEP) $(INCLUDES) $(DEFINES) $(MAKE_DEPS) -S$(SRC_DIR) -B$(BLD_DIR) $<
+	$(MAKEDEP) $(MAKEDEP_CMD) $(MAKEDEP_ARGS) $<
    endif
 
 # Pattern rule to link Test programs in src/fd1d/tests
