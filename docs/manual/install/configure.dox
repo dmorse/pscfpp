@@ -56,7 +56,7 @@ The default configuration should work for most linux environments.
 It also should work for a Mac with an Intel CPU in which the "homebrew"
 package manager was used to install GSL and FFTW.  The definitions 
 used in this default configuration are defined in a file named
-pscfpp/make/compiler/default. 
+pscfpp/make/compiler/linux-default. 
 
 \section install_configure_homebrewm1_sec Macs with Apple silicon and homebrew 
 
@@ -82,61 +82,66 @@ and Apple-Si Macs.
 
 \section install_configure_local_file_sec Customized compiler configuration files
 
-The configure script creates the main config.mk files that are installed in 
-the pscfpp/bld and pscfpp/src by reading a compiler configuration file from 
-the pscfpp/make/compiler directory and concatenating the contents of that 
-file with other makefile fragments.  The compiler configuration file is a 
-relatively short makefile fragment that contains definitions of makefile 
-variables that define compiler names, a variety of compiler options and 
-paths that the compiler uses to find header and library files for 
-external packages that PSCF depends on.
+The configure script creates the main config.mk files that are installed 
+in the pscfpp/bld and pscfpp/src by reading a compiler configuration file 
+from the pscfpp/make/compiler directory and concatenating the contents of 
+that file with other makefile fragments.  The compiler configuration file 
+is a relatively short makefile fragment that contains definitions of 
+makefile variables that define compiler names, a variety of compiler 
+options, and paths that the compiler uses to find header and library 
+files for external packages that PSCF depends on.
 
-When the "configure" script is invoked with no argument, the configure script 
-uses a file named pscfpp/make/compiler/default for this purpose. This 
-file contains a default configuration appropriate for a generic linux-like
-system in which the "g++" command is used to invoke the gnu C++ compiler 
-to compile C++ files, the "nvcc" command is used to invoke the NVIDIA
-CUDA compiler, and paths to the gsl and fftw libraries are in standard 
-locations.
+When the "configure" script is invoked with no argument, the script uses
+uses compiler configuration file pscfpp/make/compiler/linux-default by
+default. This file contains a default configuration appropriate for a 
+generic linux-like system in which the "g++" command is used to invoke 
+the gnu C++ compiler to compile C++ files, the "nvcc" command is used 
+to invoke the NVIDIA CUDA compiler, and the gsl and fftw header files 
+and libraries are installed in directories that are in the default 
+search paths used by the compiler (e.g., in /usr/local/include and
+/usr/local/lib). 
 
 When the configure script is invoked with one argument, that argument is
 interpreted as the name of a file in the pscfpp/make/compiler directory
 that should be used as the compiler configuration file. For example, the 
-command "./configure mac-si-homebrew" causes the script system to read 
-and use the contents of the file pscfpp/make/compiler/mac-si-homebrew.  
-The command "./configure", with no argument, is equivalent to 
-"./configure default". 
+command 
+\code
+   ./configure mac-si-homebrew
+\endcode
+causes the script system to read and use the contents of the file 
+pscfpp/make/compiler/mac-si-homebrew.  The command "./configure", with 
+no argument, is equivalent to "./configure linux-default". 
 
 Users can create additional customized compiler configuration files to 
-adapt compiler options to the environment that exists on a specific 
-computer. For example, suppose that a user created a file named 
-pscfpp/make/compiler/local by making a copy of the "default" file from
-the same directory, and edited the variable definitions in that file to
-account for pecularities of the user's machine. Invoking the command
+adapt compiler options and paths to the environment that exists on a 
+specific computer. For example, suppose that a user created a file named 
+pscfpp/make/compiler/local by making a copy of the "linux-default" file 
+from the same directory, and edited the variable definitions in that file
+to account for pecularities of that user's computer. Invoking the command
 \code
 ./configure local
 \endcode
 would then cause the configure script to create config.mk configuration 
-files in both the src/ and bld/ directories that both include the 
-contents of the customized file make/compiler/local. 
+files in both the src/ and bld/ directories that include the contents 
+of the customized file make/compiler/local. 
 
 In order to create a customized compiler configuration file, a user
-will need to understand the meanings of some of the variables defined 
-in such files. Toward this end, we recommend that users first read the
-comments in the file make/compiler/default that explain the meaning
+will need to understand the meanings of some of the variables defined in 
+such files. Toward this end, we recommend that users first read the
+comments in the file make/compiler/linux-default that explain the meaning
 and use of each of the makefile variables. Users should then run the
 configure script with no argument and inspect the file bld/config.mk, 
 which is created by the configure script. If you compare the contents 
-of the files bld/config.mk and make/compiler/default, you will see that 
-the contents of the "default" compiler configuration file will have 
-been copied verbatim into the middle part of the resulting bld/config.mk 
-file. 
+of the files bld/config.mk and make/compiler/linux-default, you will 
+see that the contents of the "default" compiler configuration file 
+will have been copied verbatim into the middle part of the resulting 
+config.mk file. 
 
 For most users, the first step in creating a customized compiler 
-configuration file, if needed, will be to copy either the default or 
-mac-si-homebrew file in the make/compiler directory to another file with 
-a different name in the same directory (e.g., "local"), and use this copy 
-as a starting point for customization.
+configuration file, if needed, will be to copy either the linux-default 
+or mac-si-homebrew file in the make/compiler directory to another file 
+with a different name in the same directory (e.g., "local"), and use 
+this copy as a starting point for customization.
 
 \section install_configure_edit_config_sec Editing config.mk files
 
@@ -148,22 +153,22 @@ and/or src/config.mk files after running the configure script.
 
 In order to figure out what modifications work on your system, you may 
 find it useful to first run the configure script with one of the existing 
-compiler configuration files (default or mac-si-homebrew) and then edit 
-the resulting config.mk file in the bld/ or src/ directory to try out 
-possible modifications.
+compiler configuration files (linux-default or mac-si-homebrew) and then 
+edit the resulting config.mk file in the bld/ or src/ directory to try out 
+possible modifications.  After you have figured out what modifications are 
+needed by this method, you may copy the modified set of definitions to a 
+modified compiler configuration file, to store the changes for future use.
 
-After you have figured out what modifications are needed by this method, 
-you can copy the modified set of definitions to a modified compiler 
-configuration file. Suppose that you have created such a file named 
-"local" and installed it in the make/compiler directory.  To use 
-this file, and test that it works as intended, first enter 
+Suppose that you have created a configuration file named "local" and 
+installed it in the make/compiler directory.  To use this file, and test 
+that it works as intended, first enter 
 \code
   make veryclean
 \endcode 
 from the pscfpp/ root directory to remove all the files installed 
-by the preceding configure process, including any edited config.mk 
-files. Then enter "./configure local" to repeat the configure process 
-while using use your customized compiler configuration file.
+by the preceding configure process.  Then enter "./configure local" to 
+repeat the configure process while using use your customized compiler 
+configuration file.
 
 The advantages of putting required customizations in a modified compiler 
 configuration file are that:
@@ -174,15 +179,14 @@ configuration file are that:
 
    - The files src/config.mk and bld/config.mk will be erased if 
      you ever invoke the command "make veryclean" again to start 
-     over.  Compiler configure files stored in the make/compiler 
-     directory, however, are not erased by this command.
+     over.  Files stored in the make/compiler directory, however, 
+     are not erased by this command.
 
 \section install_configure_moving_sec Moving the root directory
 
 If you ever decide to rename or move the root directory for the 
 pscfpp repository, you should run "make veryclean" before moving 
-this directory, and will then need to rerun the configure script after
-moving it.  
+this directory, and then rerun the configure script after moving it.  
 
 <em>Rationale</em>: The configure script queries the operating system 
 to identify the absolute path to the root directory that contains

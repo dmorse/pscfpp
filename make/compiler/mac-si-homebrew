@@ -50,10 +50,10 @@ CXX=g++
 CXX_STD = --std=c++11
 
 # Flags always passed to compiler when debugging is enabled
-CXXFLAGS_DEBUG= -Wall $(CXX_STD)
+CXXFLAGS_DEBUG= -Wall $(CXX_STD) 
 
 # Flags always passed to compiler when debugging is disabled (fast)
-CXXFLAGS_FAST= -Wall $(CXX_STD) -O3 -ffast-math -Winline
+CXXFLAGS_FAST= -Wall $(CXX_STD) -O3 -ffast-math 
 
 # Compiler flags used in unit tests
 TESTFLAGS= -Wall $(CXX_STD)

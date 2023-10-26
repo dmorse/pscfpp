@@ -403,6 +403,7 @@ namespace Pspg {
       gsl_matrix* Avecs = gsl_matrix_alloc(nMonomer, nMonomer);
       int error;
       error = gsl_eigen_symmv(A, Avals, Avecs, work);
+      UTIL_CHECK(error == 0);
 
       // Requirements: 
       // - A has exactly one zero eigenvalue, with eigenvector (1,...,1)

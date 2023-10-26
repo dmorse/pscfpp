@@ -158,13 +158,17 @@ namespace Pspc
          kSq = system().unitCell().ksq(Gmin);
          qRoList[itr.rank()] = sqrt(kSq * roSquare_);
       }
-      
-      UTIL_CHECK(qRoList.capacity() == structureFactors_.capacity());
+     
       std::map<double, double> SMap;
-      for (int i = 0; i < qRoList.capacity(); ++i) {
-        double qRo = qRoList[i];
-        double  s = structureFactors_[i];
-        SMap[qRo] += s;
+      {
+         int qRoListcapacity = (int)qRoList.capacity(); 
+         double qRo, s;
+         UTIL_CHECK(qRoListcapacity == structureFactors_.capacity());
+         for (int i = 0; i < qRoListcapacity; ++i) {
+           qRo = qRoList[i];
+           s = structureFactors_[i];
+           SMap[qRo] += s;
+         }
       }
       
       // Average structure factor with same magnitude value of qRo
