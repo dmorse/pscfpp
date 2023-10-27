@@ -35,6 +35,7 @@
 #include <util/misc/ioUtil.h>
 
 #include <string>
+#include <cmath>
 #include <unistd.h>
 
 #ifdef PSCF_OPENMP
@@ -878,17 +879,17 @@ namespace Pspc {
 
       // Call iterator (return 0 for convergence, 1 for failure)
       int error = iterator().solve(isContinuation);
+      hasCFields_ = true;
 
       // If converged, compute related properties
-      if (!error) {   
+      if (!error) {
+         computeFreeEnergy();  // Sets hasFreeEnergy_ = true
          if (!iterator().isFlexible()) {
             mixture().computeStress();
          }
          writeThermo(Log::file());
       }
 
-      hasCFields_ = true;
-      hasFreeEnergy_ = false;
       return error;
    }
 
@@ -914,9 +915,14 @@ namespace Pspc {
    template <int D>
    void System<D>::simulate(int nStep)
    {
+      UTIL_CHECK(nStep > 0);
       UTIL_CHECK(hasCompressor());
       UTIL_CHECK(hasMcSimulator_);
+      hasCFields_ = false;
+      hasFreeEnergy_ = false;
+
       mcSimulator_.simulate(nStep);
+      hasCFields_ = true;
    }
 
    // Thermodynamic Properties
@@ -929,18 +935,20 @@ namespace Pspc {
    {
       UTIL_CHECK(domain_.basis().isInitialized());
       UTIL_CHECK(w_.hasData());
-      UTIL_CHECK(w_.isSymmetric());
       UTIL_CHECK(hasCFields_);
       UTIL_CHECK(!hasFreeEnergy_);
+ 
+      int np = mixture_.nPolymer();   // Number of polymer species
+      int ns = mixture_.nSolvent();   // Number of solvent species
+      int nm  = mixture_.nMonomer();  // Number of monomer types
 
-      // Initialize to zero
+      // Initialize all free energy contributions to zero
       fHelmholtz_ = 0.0;
       fIdeal_ = 0.0;
       fInter_ = 0.0;
- 
+      fExt_ = 0.0;
+
       double phi, mu;
-      int np = mixture_.nPolymer();
-      int ns = mixture_.nSolvent();
 
       // Compute polymer ideal gas contributions to fHelhmoltz_
       if (np > 0) {
@@ -973,9 +981,18 @@ namespace Pspc {
          }
       }
 
-      int nm  = mixture_.nMonomer();
+      // Volume integrals with a mask: If the system has a mask, then the 
+      // volume that should be used in calculating free energy/pressure 
+      // is the volume available to the polymers, not the total unit cell 
+      // volume. We thus divide all terms that involve integrating over 
+      // the unit cell volume by quantity mask().phiTot(), which is the 
+      // volume fraction of the unit cell that is occupied by material.
+      // This properly scales them to the correct value. fExt_, fInter_, 
+      // and the Legendre transform component of fIdeal_ all require 
+      // this scaling. If no mask is present, mask.phiTot() = 1 and no 
+      // scaling occurs.
 
-      // Compute Legendre transform subtraction
+      // Compute Legendre transform subtraction from fIdeal_
       double temp = 0.0;
       if (w_.isSymmetric()) {
          // Use expansion in symmetry-adapted orthonormal basis
@@ -995,23 +1012,12 @@ namespace Pspc {
          }
          temp /= double(meshSize);
       }
-
-      // If the system has a mask, then the volume that should be used
-      // in calculating free energy/pressure is the volume available to
-      // the polymers, not the total unit cell volume. We thus divide
-      // all terms that involve integrating over the unit cell volume by
-      // mask().phiTot(), the volume fraction of the unit cell that is 
-      // occupied by the polymers. This properly scales them to the 
-      // correct value. fExt_, fInter_, and the Legendre transform 
-      // component of fIdeal_ all require this scaling. If no mask is 
-      // present, mask.phiTot() = 1 and no scaling occurs.
       temp /= mask().phiTot(); 
       fIdeal_ += temp;
       fHelmholtz_ += fIdeal_;
 
-      // Compute contribution from external fields, if such fields exist
+      // Compute contribution from external fields, if they exist
       if (hasExternalFields()) {
-         fExt_ = 0.0;
          if (w_.isSymmetric()) {
             // Use expansion in symmetry-adapted orthonormal basis
             const int nBasis = domain_.basis().nBasis();
@@ -1038,23 +1044,40 @@ namespace Pspc {
       if (w_.isSymmetric()) {
          const int nBasis = domain_.basis().nBasis();
          for (int i = 0; i < nm; ++i) {
-            for (int j = i + 1; j < nm; ++j) {
+            for (int j = i; j < nm; ++j) {
                const double chi = interaction().chi(i,j);
-               for (int k = 0; k < nBasis; ++k) {
-                  fInter_ += chi * c_.basis(i)[k] * c_.basis(j)[k];
+               if (abs(chi) > 1.0E-9) {
+                  double temp = 0.0;
+                  for (int k = 0; k < nBasis; ++k) {
+                     temp += c_.basis(i)[k] * c_.basis(j)[k];
+                  }
+                  if (i == j) {
+                     fInter_ += 0.5*chi*temp;
+                  } else {
+                     fInter_ += chi*temp;
+                  }
                }
             }
          }
       } else {
          const int meshSize = domain_.mesh().size();
          for (int i = 0; i < nm; ++i) {
-            for (int j = i + 1; j < nm; ++j) {
+            for (int j = i; j < nm; ++j) {
                const double chi = interaction().chi(i,j);
-               for (int k = 0; k < meshSize; ++k) {
-                  fInter_ += chi * c_.rgrid(i)[k] * c_.rgrid(j)[k];
+               if (abs(chi) > 1.0E-9) {
+                  double temp = 0.0;
+                  for (int k = 0; k < meshSize; ++k) {
+                     temp += c_.rgrid(i)[k] * c_.rgrid(j)[k];
+                  }
+                  if (i == j) {
+                     fInter_ += 0.5*chi*temp;
+                  } else {
+                     fInter_ += chi*temp;
+                  }
                }
             }
          }
+         fInter_ /= double(meshSize);
       }
       fInter_ /= mask().phiTot();
       fHelmholtz_ += fInter_;
@@ -1062,7 +1085,7 @@ namespace Pspc {
       // Initialize pressure
       pressure_ = -fHelmholtz_;
 
-      // Polymer corrections to pressure
+      // Polymer chemical potential corrections to pressure
       if (np > 0) {
          Polymer<D>* polymerPtr;
          double length;
@@ -1071,7 +1094,7 @@ namespace Pspc {
             phi = polymerPtr->phi();
             mu = polymerPtr->mu();
             length = polymerPtr->length();
-            if (phi > 1E-08) {
+            if (phi > 1.0E-08) {
                pressure_ += mu * phi /length;
             }
          }
@@ -1086,7 +1109,7 @@ namespace Pspc {
             phi = solventPtr->phi();
             mu = solventPtr->mu();
             size = solventPtr->size();
-            if (phi > 1E-08) {
+            if (phi > 1.0E-08) {
                pressure_ += mu * phi /size;
             }
          }

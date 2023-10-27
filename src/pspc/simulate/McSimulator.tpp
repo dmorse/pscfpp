@@ -57,9 +57,11 @@ namespace Pspc {
    {
       // Read block of mc move data inside
       readParamComposite(in, mcMoveManager_);
+
       // Read block of analyzer
       Analyzer<D>::baseInterval = 0; // default value
       readParamCompositeOptional(in, analyzerManager_);
+
       // Allocate projected chi matrix chiP_ and associated arrays
       const int nMonomer = system().mixture().nMonomer();
       chiP_.allocate(nMonomer, nMonomer);
@@ -80,6 +82,7 @@ namespace Pspc {
    void McSimulator<D>::setup()
    {  
       UTIL_CHECK(system().w().hasData());
+
       // Allocate mcState_, if necessary.
       if (!mcState_.isAllocated) {
          const int nMonomer = system().mixture().nMonomer();
@@ -89,6 +92,7 @@ namespace Pspc {
    
       // Eigenanalysis of the projected chi matrix.
       analyzeChi();
+
       // Compute field components and MC Hamiltonian for initial state
       system().compute();
       computeWC();
@@ -107,7 +111,6 @@ namespace Pspc {
    void McSimulator<D>::simulate(int nStep)
    {
       UTIL_CHECK(mcMoveManager_.size() > 0);
-      
 
       setup();
       Log::file() << std::endl;
@@ -135,18 +138,20 @@ namespace Pspc {
       timer.stop();
       double time = timer.time();
       double analyzerTime = analyzerTimer.time();
+
       // Output results of move statistics to files
       mcMoveManager_.output();
       if (Analyzer<D>::baseInterval > 0){
          analyzerManager_.output();
       }
 
-      // Output how many times MDE has been solved for the simulation run
+      // Output number of times MDE has been solved for the simulation run
       Log::file() << std::endl;
-      Log::file() << "MDE counter   " << system().compressor().counterMDE()<< std::endl;
+      Log::file() << "MDE counter   " 
+                  << system().compressor().counterMDE() << std::endl;
       Log::file() << std::endl;
       
-      // Output time for the simulation run
+      // Output times for the simulation run
       Log::file() << std::endl;
       Log::file() << "nStep               " << nStep << std::endl;
       Log::file() << "Total run time      " << time
@@ -185,9 +190,9 @@ namespace Pspc {
    }
 
    /*
-   * Save the current Monte-Carlo state.
+   * Save the current Monte-Carlo state prior to an attempted MC move.
    *
-   * Used before attempting a Monte-Carlo move.
+   * Invoked before each attempted Monte-Carlo move.
    */
    template <int D>
    void McSimulator<D>::saveMcState()
@@ -212,7 +217,7 @@ namespace Pspc {
    /*
    * Restore a saved Monte-Carlo state.
    *
-   * Used when an attempted Monte-Carlo move is rejected.
+   * Invoked after an attempted Monte-Carlo move is rejected.
    */
    template <int D>
    void McSimulator<D>::restoreMcState()
@@ -236,7 +241,7 @@ namespace Pspc {
    /*
    * Clear the saved Monte-Carlo state.
    *
-   * Used when an attempted Monte-Carlo move is accepted.
+   * Invoked when an attempted Monte-Carlo move is accepted.
    */
    template <int D>
    void McSimulator<D>::clearMcState()
@@ -262,9 +267,9 @@ namespace Pspc {
       const int np = mixture.nPolymer();
       const int ns = mixture.nSolvent();
       double phi, mu;
-      double lnQ = 0.0;
 
       // Compute polymer ideal gas contributions to lnQ
+      double lnQ = 0.0;
       if (np > 0) {
          Polymer<D> const * polymerPtr;
          double length;
@@ -316,7 +321,6 @@ namespace Pspc {
          }
       }
       
-      
       // Subtract average of Langrange multiplier field
       RField<D> const & xi = wc_[nMonomer-1];
       for (i = 0; i < meshSize; ++i) {
@@ -325,7 +329,6 @@ namespace Pspc {
 
       // Normalize HW to equal a value per monomer
       HW /= double(meshSize);
-      
       
       // Compute final MC Hamiltonian
       mcHamiltonian_ = HW - lnQ;
@@ -336,7 +339,6 @@ namespace Pspc {
       mcHamiltonian_ *= vSystem/vMonomer;
 
       hasMcHamiltonian_ = true;
-      //Log::file()<< "computeMcHamiltonian"<< std::endl;
    }
 
    template <int D>
@@ -531,10 +533,9 @@ namespace Pspc {
                                           std::string filename)
    {
       // Preconditions
-      if (min < 0) UTIL_THROW("min < 0");
-      if (max < 0) UTIL_THROW("max < 0");
-      if (max < min) UTIL_THROW("max < min!");
-      UTIL_CHECK(Analyzer<D>::baseInterval);
+      UTIL_CHECK(min >= 0);
+      UTIL_CHECK(max >= min);
+      UTIL_CHECK(Analyzer<D>::baseInterval > 0);
       UTIL_CHECK(analyzerManager_.size() > 0);
       
       // Construct TrajectoryReader
@@ -545,6 +546,7 @@ namespace Pspc {
          message = "Invalid TrajectoryReader class name " + classname;
          UTIL_THROW(message.c_str());
       }
+
       // Open trajectory file
       Log::file() << "Reading " << filename << std::endl;
       trajectoryReaderPtr->open(filename);
@@ -575,9 +577,11 @@ namespace Pspc {
       int nFrames = iStep_ - min;
       trajectoryReaderPtr->close();
       delete trajectoryReaderPtr;
+
       // Output results of all analyzers to output files
       analyzerManager_.output();
-      // Output time 
+
+      // Output number of frames and times
       Log::file() << std::endl;
       Log::file() << "# of frames   " << nFrames << std::endl;
       Log::file() << "run time      " << timer.time() 
@@ -585,23 +589,27 @@ namespace Pspc {
       Log::file() << "time / frame " << timer.time()/double(nFrames) 
                   << "  sec" << std::endl;
       Log::file() << std::endl;
+
    }
+
    
+   /*
+   * Output McMoveManager timer results.
+   */ 
    template<int D>
    void McSimulator<D>::outputTimers(std::ostream& out)
    {
-      // Output timing results, if requested.
       out << "\n";
       out << "McSimulator times contributions:\n";
       mcMoveManager_.outputTimers(out);
    }
-   
+  
+   /*
+   * Clear all McMoveManager timers.
+   */ 
    template<int D>
    void McSimulator<D>::clearTimers()
-   {
-      mcMoveManager_.clearTimers();
-   }
-
+   {  mcMoveManager_.clearTimers(); }
 
 }
 }

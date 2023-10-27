@@ -22,27 +22,51 @@ Clean up of kernel functions
    One possibile set of semantic units for vector operations:
 
        LHS (result):
-        vecr - real vector
-        vecc - complex vector
+       rV - real vector
+       cV - complex vector
 
        Operations:
-       Sub   -> subtract
-       Add   -> add
-       Mul   -> add
-       Div   -> divide 
+       Sub   -> subtraction
+       Add   -> addition
+       Mul   -> pointwise multiplication
+       Div   -> pointwise division
        Eq    -> assignment
 
        RHS operands:
        V     -> vector on rhs (same as LHS by default)
        Vr    -> real vector (when not same as lhs type)
-       Vc    -> complex vector (when not same as lhs type)
        R     -> real scalar 
        C     -> complex scalar 
+
+       Binary operations C = A Op B have form C_OpAB (two arguments)
+
+       Real Vector-vector addition       : rV_AddVV
+       Real Vector-vector multiplication : rV_AddVV
+       Real Vector-scalar multiplication : rV_MulVR
+
+       Increment operations A = A Op B have form A_OpB (one argument)
+       Real Vector-vector add-increment  : rV_AddV
+       Real Vector-scalar add-increment  : rV_AddR
+
+       Assignment: A = B have names A_EqB  :
+       Assign real vector to vector      : rV_EqV
+       Assign real vector to scalar      : rV_EqR
+
+       Corresponding functions that return a complex-valued vector
+       will start with vc. Arguments on the RHS side will use C for
+       complex scalar, R for real scalar, V for complex vector and
+       Vr for real vector.
+
+       Kernel functions can use names as described above, but with
+       suffix __ to indicate a kernel, e.g., rV_EqV__. 
+
+       The same name can be used for __global__ CUDA kernels (called with 
+       <<< >>> syntax) and for corresponding C++ __host__ functions.
 
    Example kernel names (called with CUDA <<< ... >>> ) syntax
 
        // Unary operations (vrOpA => v = v Op A)
-       subtractUniform          -> vecrSubR
+       subtractUniform          -> rV_SubR
        addUniform               -> vecrAddR
        pointWiseSubtract        -> vecrSubV
        pointWiseAdd             -> vecrAddV
