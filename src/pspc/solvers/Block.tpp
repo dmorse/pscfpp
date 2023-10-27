@@ -32,6 +32,7 @@ namespace Pspc {
    template <int D>
    Block<D>::Block()
     : meshPtr_(0),
+      fftPtr_(0),
       kMeshDimensions_(0),
       ds_(0.0),
       dsTarget_(0.0),
@@ -51,11 +52,14 @@ namespace Pspc {
    {}
 
    template <int D>
-   void Block<D>::setDiscretization(double ds, const Mesh<D>& mesh)
+   void Block<D>::setDiscretization(double ds, const Mesh<D>& mesh,
+                                                const FFT<D>& fft)
    {
       // Preconditions
-      UTIL_CHECK(mesh.size() > 1);
       UTIL_CHECK(ds > 0.0);
+      UTIL_CHECK(mesh.size() > 1);
+      UTIL_CHECK(fft.isSetup());
+      UTIL_CHECK(mesh.dimensions() == fft.meshDimensions());
       UTIL_CHECK(!isAllocated_);
 
       // Set contour length discretization
@@ -70,8 +74,9 @@ namespace Pspc {
 
       // Set association to mesh
       meshPtr_ = &mesh;
+      fftPtr_ = &fft;
 
-      fft_.setup(mesh.dimensions());
+      //fft_.setup(mesh.dimensions());
 
       // Compute Fourier space kMeshDimensions_
       for (int i = 0; i < D; ++i) {
@@ -285,11 +290,13 @@ namespace Pspc {
       // Preconditions
       int nx = mesh().size();
       UTIL_CHECK(nx > 0);
+      UTIL_CHECK(fft().isSetup());
+      UTIL_CHECK(mesh().dimensions() == fft().meshDimensions());
       UTIL_CHECK(ns_ > 0);
       UTIL_CHECK(ds_ > 0);
       UTIL_CHECK(propagator(0).isAllocated());
       UTIL_CHECK(propagator(1).isAllocated());
-
+      
       stress_.clear();
 
       double dels, normal, increment;
@@ -322,10 +329,10 @@ namespace Pspc {
       for (int j = 0; j < ns_ ; ++j) {
 
          qr_ = p0.q(j);
-         fft_.forwardTransform(qr_, qk_);
+         fft().forwardTransform(qr_, qk_);
 
          qr2_ = p1.q(ns_ - 1 - j);
-         fft_.forwardTransform(qr2_, qk2_);
+         fft().forwardTransform(qr2_, qk2_);
 
          dels = ds_;
 
@@ -395,11 +402,15 @@ namespace Pspc {
    template <int D>
    void Block<D>::step(RField<D> const & q, RField<D>& qNew)
    {
-      // Internal prereconditions
-      UTIL_CHECK(isAllocated_);
+      // Prereconditions on mesh and fft
       int nx = mesh().size();
-      int nk = qk_.capacity();
       UTIL_CHECK(nx > 0);
+      UTIL_CHECK(fft().isSetup());
+      UTIL_CHECK(mesh().dimensions() == fft().meshDimensions());
+
+      // Internal preconditions
+      UTIL_CHECK(isAllocated_);
+      int nk = qk_.capacity();
       UTIL_CHECK(nk > 0);
       UTIL_CHECK(qr_.capacity() == nx);
       UTIL_CHECK(expW_.capacity() == nx);
@@ -420,28 +431,28 @@ namespace Pspc {
          qr_[i] = q[i]*expW_[i];
          qr2_[i] = q[i]*expW2_[i];
       }
-      fft_.forwardTransform(qr_, qk_);
-      fft_.forwardTransform(qr2_, qk2_);
+      fft().forwardTransform(qr_, qk_);
+      fft().forwardTransform(qr2_, qk2_);
       for (i = 0; i < nk; ++i) {
          qk_[i][0] *= expKsq_[i];
          qk_[i][1] *= expKsq_[i];
          qk2_[i][0] *= expKsq2_[i];
          qk2_[i][1] *= expKsq2_[i];
       }
-      fft_.inverseTransform(qk_, qr_);
-      fft_.inverseTransform(qk2_, qr2_);
+      fft().inverseTransform(qk_, qr_);
+      fft().inverseTransform(qk2_, qr2_);
       for (i = 0; i < nx; ++i) {
          qr_[i] = qr_[i]*expW_[i];
          qr2_[i] = qr2_[i]*expW_[i];
       }
 
       // Finish second half-step for ds/2
-      fft_.forwardTransform(qr2_, qk2_);
+      fft().forwardTransform(qr2_, qk2_);
       for (i = 0; i < nk; ++i) {
          qk2_[i][0] *= expKsq2_[i];
          qk2_[i][1] *= expKsq2_[i];
       }
-      fft_.inverseTransform(qk2_, qr2_);
+      fft().inverseTransform(qk2_, qr2_);
       for (i = 0; i < nx; ++i) {
          qr2_[i] = qr2_[i]*expW2_[i];
       }

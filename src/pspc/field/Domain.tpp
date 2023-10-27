@@ -120,9 +120,11 @@ namespace Pspc
       IntVec<D> nGrid;
       in >> nGrid;
 
-      // Initialize mesh, fft 
-      mesh_.setDimensions(nGrid);
-      fft_.setup(mesh_.dimensions());
+      if (mesh_.size() == 0) {
+         // Initialize mesh, fft 
+         mesh_.setDimensions(nGrid);
+         fft_.setup(mesh_.dimensions());
+      }
 
       // Initialize group and basis
       readGroup(groupName_, group_);

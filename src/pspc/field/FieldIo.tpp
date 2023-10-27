@@ -518,7 +518,13 @@ namespace Pspc
       }
       IntVec<D> nGrid;
       in >> nGrid;
-      UTIL_CHECK(nGrid == mesh().dimensions());
+      if (nGrid != mesh().dimensions()) {
+         Log::file() 
+             << "In Pspc::FieldIo::readFieldsRGrid:\n"
+             << "mesh().dimensions() = " << mesh().dimensions() << "\n"
+             << "nGrid               = " << mesh().dimensions() << "\n";
+         UTIL_THROW("Inconsistent grid in mesh and field header");
+      }
 
       // Setup temporary workspace array.
       DArray<RField<D> > temp;

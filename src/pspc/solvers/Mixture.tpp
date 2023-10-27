@@ -44,13 +44,17 @@ namespace Pspc
    }
 
    template <int D>
-   void Mixture<D>::setMesh(Mesh<D> const& mesh)
+   void Mixture<D>::setDiscretization(Mesh<D> const & mesh,
+                                      FFT<D> const & fft)
    {
       UTIL_CHECK(nMonomer() > 0);
       UTIL_CHECK(nPolymer()+ nSolvent() > 0);
       UTIL_CHECK(ds_ > 0);
+      UTIL_CHECK(mesh.size() > 0);
+      UTIL_CHECK(fft.isSetup());
+      UTIL_CHECK(mesh.dimensions() == fft.meshDimensions());
 
-      // Save address of mesh
+      // Save addresses of mesh
       meshPtr_ = &mesh;
 
       // Set discretization in space and s for all polymer blocks
@@ -58,7 +62,7 @@ namespace Pspc
          int i, j;
          for (i = 0; i < nPolymer(); ++i) {
             for (j = 0; j < polymer(i).nBlock(); ++j) {
-               polymer(i).block(j).setDiscretization(ds_, mesh);
+               polymer(i).block(j).setDiscretization(ds_, mesh, fft);
             }
          }
       }
@@ -125,15 +129,15 @@ namespace Pspc
       UTIL_CHECK(wFields.capacity() == nMonomer());
       UTIL_CHECK(cFields.capacity() == nMonomer());
 
-      int nMesh = mesh().size();
+      int meshSize = mesh().size();
       int nm = nMonomer();
       int i, j, k;
 
       // Clear all monomer concentration fields, check capacities
       for (i = 0; i < nm; ++i) {
-         UTIL_CHECK(cFields[i].capacity() == nMesh);
-         UTIL_CHECK(wFields[i].capacity() == nMesh);
-         for (j = 0; j < nMesh; ++j) {
+         UTIL_CHECK(cFields[i].capacity() == meshSize);
+         UTIL_CHECK(wFields[i].capacity() == meshSize);
+         for (j = 0; j < meshSize; ++j) {
             cFields[i][j] = 0.0;
          }
       }
@@ -153,8 +157,8 @@ namespace Pspc
             UTIL_CHECK(monomerId < nm);
             RField<D>& monomerField = cFields[monomerId];
             RField<D> const & blockField = polymer(i).block(j).cField();
-            UTIL_CHECK(blockField.capacity() == nMesh);
-            for (k = 0; k < nMesh; ++k) {
+            UTIL_CHECK(blockField.capacity() == meshSize);
+            for (k = 0; k < meshSize; ++k) {
                monomerField[k] += blockField[k];
             }
          }
@@ -173,8 +177,8 @@ namespace Pspc
          // Add solvent contribution to relevant monomer concentration
          RField<D>& monomerField = cFields[monomerId];
          RField<D> const & solventField = solvent(i).cField();
-         UTIL_CHECK(solventField.capacity() == nMesh);
-         for (k = 0; k < nMesh; ++k) {
+         UTIL_CHECK(solventField.capacity() == meshSize);
+         for (k = 0; k < meshSize; ++k) {
             monomerField[k] += solventField[k];
          }
 

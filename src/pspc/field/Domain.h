@@ -214,12 +214,12 @@ namespace Pspc
       SpaceGroup<D> group_;
 
       /**
-      * Basis object
+      * Basis object.
       */
       Basis<D> basis_;
 
       /**
-      * FFT object to be used by iterator
+      * FFT object to be used by solvers.
       */
       FFT<D> fft_;
 
