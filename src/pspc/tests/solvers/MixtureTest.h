@@ -10,6 +10,7 @@
 #include <pspc/solvers/Propagator.h>
 
 //#include <prdc/cpu/RField.h>
+#include <prdc/cpu/FFT.h>
 #include <prdc/crystal/UnitCell.h>
 
 #include <pscf/mesh/Mesh.h>
@@ -68,7 +69,9 @@ public:
 
       Mesh<1> mesh;
       mesh.setDimensions(d);
-      mixture.setMesh(mesh);
+      FFT<1> fft;
+      fft.setup(d);
+      mixture.setDiscretization(mesh, fft);
       mixture.setupUnitCell(unitCell);
 
       #if 0
@@ -143,7 +146,9 @@ public:
 
       Mesh<2> mesh;
       mesh.setDimensions(d);
-      mixture.setMesh(mesh);
+      FFT<2> fft;
+      fft.setup(d);
+      mixture.setDiscretization(mesh, fft);
       mixture.setupUnitCell(unitCell);
 
       #if 0
@@ -238,7 +243,9 @@ public:
 
       Mesh<2> mesh;
       mesh.setDimensions(d);
-      mixture.setMesh(mesh);
+      FFT<2> fft;
+      fft.setup(d);
+      mixture.setDiscretization(mesh, fft);
       mixture.setupUnitCell(unitCell);
 
       #if 0
@@ -322,7 +329,9 @@ public:
 
       Mesh<3> mesh;
       mesh.setDimensions(d);
-      mixture.setMesh(mesh);
+      FFT<3> fft;
+      fft.setup(d);
+      mixture.setDiscretization(mesh, fft);
       mixture.setupUnitCell(unitCell);
 
       #if 0

@@ -92,7 +92,7 @@ namespace Cpu {
       void inverseTransform(RFieldDft<D>& in, RField<D>& out) const;
 
       /**
-      * Compute inverse (complex-to-real) Fourier transform without destroying input.
+      * Compute inverse (complex-to-real) transform without destroying input.
       *
       * \param in  array of complex values on k-space grid 
       * \param out  array of real values on r-space grid 

@@ -22,14 +22,14 @@ namespace Pscf {
    template <int D> class Mesh; 
    namespace Prdc {
       namespace Cpu {
+         template <int D> class FFT;
          template <int D> class RField;
       }
    }
 }
  
 namespace Pscf {
-namespace Pspc
-{
+namespace Pspc {
 
    using namespace Pscf::Prdc::Cpu;
 
@@ -89,15 +89,18 @@ namespace Pspc
       void readParameters(std::istream& in);
 
       /**
-      * Create an association with the mesh and allocate memory.
+      * Create an association with a mesh and fft, and allocate memory.
       * 
-      * The Mesh<D> object must have already been initialized, 
-      * e.g., by reading its parameters from a file, so that the
-      * mesh dimensions are known on entry.
+      * The Mesh<D> object must have already been initialized, e.g., by 
+      * reading its parameters from a file, so that the mesh dimensions 
+      * are known on entry. The FFT<D> object must have been setup with
+      * meshDimensions equal to those of the mesh.
       *
-      * \param mesh associated Mesh<D> object (stores address).
+      * \param mesh  associated Mesh<D> object (stores address).
+      * \param fft  associated FFT<D> object (stores address).
       */
-      void setMesh(Mesh<D> const & mesh);
+      void setDiscretization(Mesh<D> const & mesh,
+                             FFT<D> const & fft);
 
       /**
       * Set unit cell parameters used in solver.
@@ -219,7 +222,7 @@ namespace Pspc
       /// Pointer to associated UnitCell<D>
       UnitCell<D> const * unitCellPtr_;
 
-      /// Return associated domain by reference.
+      /// Return associated Mesh<D> by const reference.
       Mesh<D> const & mesh() const;
 
       /// Has stress been computed for current w fields?

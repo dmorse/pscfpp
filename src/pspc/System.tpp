@@ -233,7 +233,7 @@ namespace Pspc {
       // Read the Domain{ ... } block
       readParamComposite(in, domain_);
 
-      mixture_.setMesh(domain_.mesh());
+      mixture_.setDiscretization(domain_.mesh(), domain_.fft());
       mixture_.setupUnitCell(unitCell());
 
       // Allocate field array members of System

@@ -80,9 +80,11 @@ public:
       // Create and initialize mesh
       Mesh<1> mesh;
       setupMesh<1>(mesh);
+      FFT<1> fft;
+      fft.setup(mesh.dimensions());
 
       double ds = 0.02;
-      block.setDiscretization(ds, mesh);
+      block.setDiscretization(ds, mesh, fft);
       TEST_ASSERT(eq(block.length(), 2.0));
       TEST_ASSERT(eq(block.ds(), 0.02));
       TEST_ASSERT(block.ns() == 101);
@@ -100,9 +102,11 @@ public:
 
       Mesh<2> mesh;
       setupMesh<2>(mesh);
+      FFT<2> fft;
+      fft.setup(mesh.dimensions());
 
       double ds = 0.26;
-      block.setDiscretization(ds, mesh);
+      block.setDiscretization(ds, mesh, fft);
       TEST_ASSERT(eq(block.length(), 2.0));
       TEST_ASSERT(eq(block.ds(), 0.25));
       TEST_ASSERT(block.ns() == 9);
@@ -120,9 +124,11 @@ public:
 
       Mesh<3> mesh;
       setupMesh<3>(mesh);
+      FFT<3> fft;
+      fft.setup(mesh.dimensions());
 
       double ds = 0.3;
-      block.setDiscretization(ds, mesh);
+      block.setDiscretization(ds, mesh, fft);
 
       TEST_ASSERT(eq(block.length(), 2.0));
       TEST_ASSERT(block.ns() == 7);
@@ -143,9 +149,11 @@ public:
       // Create and initialize mesh
       Mesh<1> mesh;
       setupMesh<1>(mesh);
+      FFT<1> fft;
+      fft.setup(mesh.dimensions());
 
       double ds = 0.02;
-      block.setDiscretization(ds, mesh);
+      block.setDiscretization(ds, mesh, fft);
 
       UnitCell<1> unitCell;
       setupUnitCell<1>(unitCell, "in/Lamellar");
@@ -175,9 +183,11 @@ public:
       // Create and initialize mesh
       Mesh<2> mesh;
       setupMesh<2>(mesh);
+      FFT<2> fft;
+      fft.setup(mesh.dimensions());
 
       double ds = 0.02;
-      block.setDiscretization(ds, mesh);
+      block.setDiscretization(ds, mesh, fft);
 
       UnitCell<2> unitCell;
       setupUnitCell<2>(unitCell, "in/Rectangular");
@@ -208,9 +218,11 @@ public:
       // Create and initialize mesh
       Mesh<3> mesh;
       setupMesh<3>(mesh);
+      FFT<3> fft;
+      fft.setup(mesh.dimensions());
 
       double ds = 0.02;
-      block.setDiscretization(ds, mesh);
+      block.setDiscretization(ds, mesh, fft);
 
       UnitCell<3> unitCell;
       setupUnitCell<3>(unitCell, "in/Orthorhombic");
@@ -242,9 +254,11 @@ public:
       // Create and initialize mesh
       Mesh<1> mesh;
       setupMesh<1>(mesh);
+      FFT<1> fft;
+      fft.setup(mesh.dimensions());
 
       double ds = 0.02;
-      block.setDiscretization(ds, mesh);
+      block.setDiscretization(ds, mesh, fft);
 
       UnitCell<1> unitCell;
       setupUnitCell<1>(unitCell, "in/Lamellar");
@@ -310,9 +324,11 @@ public:
       // Create and initialize mesh
       Mesh<2> mesh;
       setupMesh<2>(mesh);
+      FFT<2> fft;
+      fft.setup(mesh.dimensions());
 
       double ds = 0.02;
-      block.setDiscretization(ds, mesh);
+      block.setDiscretization(ds, mesh, fft);
 
       UnitCell<2> unitCell;
       setupUnitCell<2>(unitCell, "in/Rectangular");
@@ -392,9 +408,11 @@ public:
       // Create and initialize mesh
       Mesh<3> mesh;
       setupMesh<3>(mesh);
+      FFT<3> fft;
+      fft.setup(mesh.dimensions());
 
       double ds = 0.02;
-      block.setDiscretization(ds, mesh);
+      block.setDiscretization(ds, mesh, fft);
 
       UnitCell<3> unitCell;
       setupUnitCell<3>(unitCell, "in/Orthorhombic");
