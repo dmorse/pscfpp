@@ -43,7 +43,7 @@ endif
 DEFINES=$(UTIL_DEFS) $(PSCF_DEFS) $(PRDC_DEFS) 
 
 # Arguments for MAKEDEP
-MAKEDEP_ARGS=$(INCLUDES) $(DEFINES)
+MAKEDEP_ARGS=$(CPPFLAGS) $(INCLUDES) $(DEFINES)
 MAKEDEP_ARGS+= -A$(BLD_DIR)/config.mk
 MAKEDEP_ARGS+= -A$(BLD_DIR)/util/config.mk
 MAKEDEP_ARGS+= -A$(BLD_DIR)/pscf/config.mk
@@ -76,9 +76,9 @@ $(BLD_DIR)/%.o:$(SRC_DIR)/%.cu
 # Pattern rule to compile Test programs in src/prdc/tests
 $(BLD_DIR)/%Test: $(BLD_DIR)/%Test.o $(PSCF_LIBS)
 ifdef PSCF_CUDA
-	$(NVXX) $(LDFLAGS) $(INCLUDES) $(DEFINES) -o $@ $< $(LIBS)
+	$(NVXX) $(LDFLAGS) -o $@ $< $(LIBS)
 else
-	$(CXX) $(LDFLAGS) $(INCLUDES) $(DEFINES) -o $@ $< $(LIBS)
+	$(CXX) $(LDFLAGS) -o $@ $< $(LIBS)
 endif
 
 # Note: In the linking rule for tests, we include the list $(PSCF_LIBS) 

@@ -20,12 +20,11 @@
 # this file entitled "Makefile Patterns and Recipes" below for a 
 # discussion of how these variables are used.
 #
-# The definitions given below are designed for use on a Mac OS X
-# running on Mac silicon (e.g., the m1 or m2 ARM chip), using the homebrew
-# package manager to install the GSL and FFTW libraries. They assume:
+# The definitions given below are designed for use on a Mac OS X running
+# on Mac silicon (e.g., the m1 or m2 ARM chip), using the homebrew package
+# manager to install the GSL and FFTW libraries. They assume that:
 #
-#   - The command g++ can be used to invoke the C++ compiler (though 
-#     g++ may be an alias for the Apple installed Clang compiler)
+#   - The C++ compiler command g++ can be used by default 
 #   - Header files and libraries for FFTW are in a subdirectory of the
 #     /opt/homebrew directory
 #   - The gsl-config command can be used by the configure script to
@@ -37,22 +36,25 @@
 # because of  a difference in how homebrew is configured machines that 
 # use intel and apple CPUss: Homebrew installs in /usr/local for Intel 
 # silicon and in /opt/homebrew for Apple silicon.
-# ---------------------------------------------------------------
+#-----------------------------------------------------------------------
 # C++ compiler and options (*.cpp files)
 
 # C++ compiler Command name 
-# Default: On OS X, g++ actually calls the Apple installed clang compiler
+# Default: On OS X, g++ calls the Apple installed clang compiler
 CXX=g++
-# Example of a path to a homebrew-installed GNU compiler 
+# Alternative: Example of a path to a homebrew-installed GNU compiler 
 # CXX=/opt/homebrew/Cellar/gcc/12.2.0/bin/c++-12
+
+# Flags for C/C++ preprocessor, including standard header search paths
+CPPFLAGS=-I/opt/homebrew/include
 
 # Compiler option to specify ANSI C++ 2011 standard (required)
 CXX_STD = --std=c++11
 
-# Flags always passed to compiler when debugging is enabled
+# C++ compiler options used when debugging is enabled (slower)
 CXXFLAGS_DEBUG= -Wall $(CXX_STD) 
 
-# Flags always passed to compiler when debugging is disabled (fast)
+# C++ compiler options used when debugging is disabled (fast)
 CXXFLAGS_FAST= -Wall $(CXX_STD) -O3 -ffast-math 
 
 # Compiler flags used in unit tests
@@ -61,7 +63,7 @@ TESTFLAGS= -Wall $(CXX_STD)
 # Compiler command used to generate dependencies
 MAKEDEP_CMD="-C$(CXX) -MM -MF"
 
-# ---------------------------------------------------------------
+#-----------------------------------------------------------------------
 # OpenMP flags and paths
 
 OPENMP_FLAGS=-fopenmp
@@ -72,7 +74,7 @@ OPENMP_LIB=
 OPENMP_LIB+=-lfftw3_omp
 #endif
 
-# ---------------------------------------------------------------
+#-----------------------------------------------------------------------
 # CUDA compiler and options (*.cu files)
 
 # CUDA compiler command
@@ -85,23 +87,23 @@ NVXX=nvcc
 # NVIDIA GPU)
 NVARCH=sm_35
 
-# Flags always passed to cuda compiler
+# Options passed to CUDA compiler
 NVXXFLAGS= $(CXX_STD) -O3 -arch=$(NVARCH)
 
-# ---------------------------------------------------------------
-# Linker / Loader 
-
-# Flags passed to compiler for linking and loading
-LDFLAGS=
-
-# ---------------------------------------------------------------
+#-----------------------------------------------------------------------
 # Archiver
 
-# Library archiver command (for creating static libraries)
+# Archiver command (to create static libraries)
 AR=ar
 
-# Flags (command line options) passed to archiver
+# Command line arguments passed to archiver
 ARFLAGS=rcs
+
+#-----------------------------------------------------------------------
+# Linker / Loader 
+
+# Options passed to compiler for linking 
+LDFLAGS=-L/opt/homebrew/lib
 
 #-----------------------------------------------------------------------
 # Paths to header and library files for required external libraries
@@ -112,15 +114,8 @@ GSL_INC=GSL_INC_AUTO
 GSL_LIB=GSL_LIB_AUTO
 
 # FFTW Fast Fourier transform library (as
-ifndef OPENMP 
-  # Paths to FFTW without OpenMP, as installed by homebrew
-  FFTW_INC=-I/opt/homebrew/include
-  FFTW_LIB=-L/opt/homebrew/lib -lfftw3
-else 
-  # Paths to FFTW with OpenMP threads enabled
-  FFTW_INC=
-  FFTW_LIB=-lfftw3
-endif
+FFTW_INC=
+FFTW_LIB=-lfftw3
 
 # CUDA FFT library (not usable on any Mac)
 CUFFT_INC=

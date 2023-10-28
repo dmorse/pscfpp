@@ -25,7 +25,7 @@ LIBS+=$(GSL_LIB)
 DEFINES=$(PSCF_DEFS) $(UTIL_DEFS)
 
 # Arguments for MAKEDEP script
-MAKEDEP_ARGS=$(INCLUDES) $(DEFINES)
+MAKEDEP_ARGS=$(CPPFLAGS) $(INCLUDES) $(DEFINES)
 MAKEDEP_ARGS+= -A$(BLD_DIR)/config.mk
 MAKEDEP_ARGS+= -A$(BLD_DIR)/util/config.mk
 MAKEDEP_ARGS+= -A$(BLD_DIR)/pscf/config.mk
@@ -43,7 +43,7 @@ $(BLD_DIR)/%.o: $(SRC_DIR)/%.cpp
 
 # Pattern rule to link Test programs in src/fd1d/tests
 $(BLD_DIR)/%Test: $(BLD_DIR)/%Test.o $(PSCF_LIBS)
-	$(CXX) $(LDFLAGS) $(INCLUDES) $(DEFINES) -o $@ $< $(LIBS)
+	$(CXX) $(LDFLAGS) -o $@ $< $(LIBS)
 
 # Note: In the linking rule for tests, we include the list $(PSCF_LIBS) 
 # of PSCF-specific libraries as dependencies but link to list $(LIBS) of

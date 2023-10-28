@@ -40,7 +40,7 @@ endif
 DEFINES=$(UTIL_DEFS) $(PSCF_DEFS) $(PSPC_DEFS) 
 
 # Arguments for MAKEDEP
-MAKEDEP_ARGS=$(INCLUDES) $(DEFINES)
+MAKEDEP_ARGS=$(CPPFLAGS) $(INCLUDES) $(DEFINES)
 MAKEDEP_ARGS+= -A$(BLD_DIR)/config.mk
 MAKEDEP_ARGS+= -A$(BLD_DIR)/util/config.mk
 MAKEDEP_ARGS+= -A$(BLD_DIR)/pscf/config.mk
@@ -63,8 +63,10 @@ $(BLD_DIR)/%.o:$(SRC_DIR)/%.cpp
 	$(MAKEDEP) $(MAKEDEP_CMD) $(MAKEDEP_CXX_ARGS) $<
    endif
 
-# Pattern rule to link executable Test programs in src/pscf/tests
-# Note: Only list PSCF-specific libraries as dependencies, but link all
+# Pattern rule to link executable Test programs in src/pspc/tests
 $(BLD_DIR)/%Test: $(BLD_DIR)/%Test.o $(PSCF_LIBS)
-	$(CXX) $(LDFLAGS) $(INCLUDES) $(DEFINES) -o $@ $< $(LIBS)
+	$(CXX) $(LDFLAGS) -o $@ $< $(LIBS)
 
+# Note: In the linking rule for tests, we include the list $(PSCF_LIBS) 
+# of PSCF-specific libraries as dependencies but link to the list $(LIBS) 
+# that can include external libraries

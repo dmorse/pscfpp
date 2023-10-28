@@ -24,40 +24,49 @@
 # most linux systems. They assume that:
 #
 #   - The command g++ is used to invoke the C++ compiler.
-#   - The command nvcc is used to invoke the nvidia cuda compiler (if any)
-#   - Header files and libraries for the CUDA and FFTW libraries are in
-#     directories in standard compiler search paths.
-#   - The gsl-config command can be used by the configure script to find the
-#     header and library paths for the Gnu Scientific Library (GSL).
+#
+#   - The command nvcc is used to invoke the nvidia CUDA compiler (if any)
+#
+#   - Header files and libraries for the GSL, FFTW, and CUDA libraries 
+#     are in directories within standard compiler search paths.
+#
+#   - The gsl-config command can be used by the configure script to find
+#     the header and library paths for the Gnu Scientific Library (GSL).
 #
 # These definitions also work for Mac OSX environments with an Intel CPU
 # and unix command line tools installed (for which the g++ command invokes 
 # the clang compiler) when the homebrew package manager was used to install 
-# the GSL and FFTW libraries. The installation locations used by homebrew
-# on Macs with Intel CPUs are consistent with those used by linux (while
-# the locations used by Homebrew on a Mac with Apple ARM CPUs are not).
-# -------------------------------------------------------------------
+# the GSL and FFTW libraries. The file locations used by homebrew on older
+# Macs with Intel CPUs are consistent with those used by linux, while
+# the locations used by Homebrew on a Mac with Apple Si ARM CPUs are not.
+#-----------------------------------------------------------------------
 # C++ compiler and options (for *.cpp files)
 
-# C++ compiler Command name
+# C++ compiler command name
 CXX=g++
 
 # Compiler option to specify ANSI C++ 2011 standard (required)
 CXX_STD = --std=c++11
 
-# Flags always passed to compiler when debugging is enabled
+# Options for C/C++ preprocessor - includes standard header search paths
+CPPFLAGS=
+
+# Compiler option to specify ANSI C++ 2011 standard (required)
+CXX_STD = --std=c++11
+
+# C++ compiler options used when debugging is enabled (slower)
 CXXFLAGS_DEBUG= -Wall $(CXX_STD)
 
-# Flags always passed to compiler when debugging is disabled (fast)
+# C++ compiler options used when debugging is disabled (fast)
 CXXFLAGS_FAST= -Wall $(CXX_STD) -O3 -ffast-math 
 
 # Compiler flags used in unit tests
 TESTFLAGS= -Wall $(CXX_STD)
 
-# Compiler command used to generate dependencies
+# Compiler command used to generate dependencies (in double quotes)
 MAKEDEP_CMD="-C$(CXX) -MM -MF"
 
-# ---------------------------------------------------------------
+#-----------------------------------------------------------------------
 # OpenMP flags and paths
 
 OPENMP_FLAGS=-fopenmp
@@ -68,7 +77,7 @@ OPENMP_LIB=
 OPENMP_LIB+=-lfftw3_omp
 #endif
 
-# ---------------------------------------------------------------
+#-----------------------------------------------------------------------
 # CUDA compiler and options (for *.cu files)
 
 # NVIDA CUDA compiler command
@@ -87,13 +96,7 @@ NVXXFLAGS= $(CXX_STD) -O3 -arch=$(NVARCH)
 # Compiler command used to generate dependencies for CUDA
 MAKEDEP_CUDA_CMD="-C$(NVXX) -M"
 
-# ---------------------------------------------------------------
-# Linker / Loader 
-
-# Flags passed to compiler for linking and loading
-LDFLAGS=
-
-# ---------------------------------------------------------------
+#-----------------------------------------------------------------------
 # Archiver
 
 # Library archiver command (for creating static libraries)
@@ -101,6 +104,12 @@ AR=ar
 
 # Flags (command line options) passed to archiver
 ARFLAGS=rcs
+
+#-----------------------------------------------------------------------
+# Linker / Loader 
+
+# Flags passed to compiler for linking and loading
+LDFLAGS=
 
 #-----------------------------------------------------------------------
 # Paths and flags associated with external libraries
@@ -111,21 +120,11 @@ GSL_INC=GSL_INC_AUTO
 GSL_LIB=GSL_LIB_AUTO
 
 # FFTW Fast Fourier transform library
-ifndef OPENMP 
-  # Paths to FFTW without OpenMP
-  FFTW_INC=
-  FFTW_LIB=-lfftw3
-else 
-  # Paths to FFTW with OpenMP threads enabled
-  FFTW_INC=
-  FFTW_LIB=-lfftw3
-endif
+FFTW_INC=
+FFTW_LIB=-lfftw3
 
 # CUDA libraries
-# CUDA_PREFIX=/usr/local/cuda
-# CUDA_INC=-I$(CUDA_PREFIX)/include
-# CUDA_LIB=-lcufft -lcudart -lcuda -lcurand
 CUDA_INC=
-CUDA_LIB=-lcufft -lcudart -lcuda -lcurand
+CUDA_LIB=-lcufft -lcudart -lcurand
 
 # <<<<<<< End inclusion of file make/compiler/default

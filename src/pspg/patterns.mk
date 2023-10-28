@@ -33,7 +33,7 @@ PSPG_DEFS+=-DPSPG_FFTW -DGPU_OUTER
 DEFINES=$(UTIL_DEFS) $(PSCF_DEFS) $(PRDC_DEFS) $(PSPG_DEFS) 
 
 # Arguments for MAKEDEP
-MAKEDEP_ARGS=$(INCLUDES) $(DEFINES)
+MAKEDEP_ARGS=$(CPPFLAGS) $(INCLUDES) $(DEFINES)
 MAKEDEP_ARGS+= -A$(BLD_DIR)/config.mk
 MAKEDEP_ARGS+= -A$(BLD_DIR)/util/config.mk
 MAKEDEP_ARGS+= -A$(BLD_DIR)/pscf/config.mk
@@ -60,7 +60,7 @@ $(BLD_DIR)/%.o:$(SRC_DIR)/%.cu
 
 # Pattern rule to link executable Test programs in src/pspg/tests
 $(BLD_DIR)/%Test: $(BLD_DIR)/%Test.o  $(PSCF_LIBS)
-	$(NVXX) $(LDFLAGS) $(INCLUDES) $(DEFINES) -o $@ $< $(LIBS)
+	$(NVXX) $(LDFLAGS) -o $@ $< $(LIBS)
 
 # Note: In the linking rule for tests, we include the list $(PSCF_LIBS) 
 # of PSCF-specific libraries as dependencies but link to the list 
