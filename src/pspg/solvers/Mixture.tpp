@@ -41,11 +41,14 @@ namespace Pspg
    }
 
    template <int D>
-   void Mixture<D>::setMesh(Mesh<D> const& mesh)
+   void Mixture<D>::setDiscretization(Mesh<D> const& mesh, FFT<D> const& fft)
    {
       UTIL_CHECK(nMonomer() > 0);
       UTIL_CHECK(nPolymer()+ nSolvent() > 0);
       UTIL_CHECK(ds_ > 0);
+      UTIL_CHECK(mesh.size() > 0);
+      UTIL_CHECK(fft.isSetup());
+      UTIL_CHECK(fft.meshDimensions() == mesh.dimensions());
 
       meshPtr_ = &mesh;
 
@@ -53,7 +56,7 @@ namespace Pspg
       int i, j;
       for (i = 0; i < nPolymer(); ++i) {
          for (j = 0; j < polymer(i).nBlock(); ++j) {
-            polymer(i).block(j).setDiscretization(ds_, mesh);
+            polymer(i).block(j).setDiscretization(ds_, mesh, fft);
          }
       }
 

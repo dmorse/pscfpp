@@ -16,6 +16,11 @@
 
 namespace Pscf { 
    template <int D> class Mesh; 
+   namespace Prdc {
+      namespace Cuda {
+         template <int D> class FFT; 
+      }
+   }
 }
  
 namespace Pscf {
@@ -71,13 +76,15 @@ namespace Pspg
       /**
       * Create an association with the mesh and allocate memory.
       * 
-      * The Mesh<D> object must have already been initialized, 
-      * e.g., by reading its parameters from a file, so that the
-      * mesh dimensions are known on entry.
+      * The Mesh<D> object must have already been initialized, e.g., by 
+      * reading the dimensions from a file, so that the mesh dimensions 
+      * are known on entry. The FFT<D> object must have been set up using
+      * the same mesh dimensions as those stored by the mesh. 
       *
-      * \param mesh associated Mesh<D> object (stores address).
+      * \param mesh  associated Mesh<D> object (defines spatial mesh)
+      * \param fft  associated FFT<D> object (for Fourier transforms)
       */
-      void setMesh(Mesh<D> const & mesh);
+      void setDiscretization(Mesh<D> const & mesh, FFT<D> const & fft);
 
       /**
       * Set unit cell parameters used in solver.

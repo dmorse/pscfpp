@@ -69,7 +69,9 @@ public:
 
       Mesh<1> mesh;
       mesh.setDimensions(d);
-      mixture.setMesh(mesh);
+      FFT<1> fft;
+      fft.setup(d);
+      mixture.setDiscretization(mesh, fft);
 
       // Construct wavelist 
       WaveList<1> wavelist;
@@ -143,7 +145,9 @@ public:
 
       Mesh<2> mesh;
       mesh.setDimensions(d);
-      mixture.setMesh(mesh);
+      FFT<2> fft;
+      fft.setup(d);
+      mixture.setDiscretization(mesh, fft);
 
       // Construct wavelist 
       WaveList<2> wavelist;
@@ -228,7 +232,9 @@ public:
 
       Mesh<2> mesh;
       mesh.setDimensions(d);
-      mixture.setMesh(mesh);
+      FFT<2> fft;
+      fft.setup(d);
+      mixture.setDiscretization(mesh, fft);
 
       // Construct wavelist 
       WaveList<2> wavelist;
@@ -313,7 +319,9 @@ public:
 
       Mesh<3> mesh;
       mesh.setDimensions(d);
-      mixture.setMesh(mesh);
+      FFT<3> fft;
+      fft.setup(d);
+      mixture.setDiscretization(mesh, fft);
 
       // Construct wavelist 
       WaveList<3> wavelist;

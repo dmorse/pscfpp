@@ -10,7 +10,7 @@ include config.mk
 all:
 	$(MAKE) all-cpu
 ifdef PSCF_CUDA
-	$(MAKE) pspg
+	cd pspg; $(MAKE) all
 endif
 
 # Build all programs that uses exclusively CPU hardware

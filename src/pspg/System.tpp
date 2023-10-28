@@ -255,7 +255,7 @@ namespace Pspg
       // Read the Domain{ ... } block
       readParamComposite(in, domain_);
 
-      mixture().setMesh(mesh());
+      mixture().setDiscretization(mesh(), fft());
       mixture().setupUnitCell(unitCell());
       UTIL_CHECK(domain_.mesh().size() > 0);
       UTIL_CHECK(domain_.unitCell().nParameter() > 0);
