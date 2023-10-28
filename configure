@@ -48,7 +48,7 @@ export PSCFPP_DIR
 if [ "$#" -gt 0 ]; then
   VARFILE=$1
 else
-  VARFILE="default"
+  VARFILE="linux-default"
 fi
 VARFILE="make/compiler/$VARFILE"
 echo "Using compiler settings file $VARFILE"
