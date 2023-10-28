@@ -18,11 +18,11 @@
 #include <pscf/solvers/BlockTmpl.h>       // base class template
 #include <util/containers/FArray.h>
 
-namespace Pscf { 
+namespace Pscf {
 
-   template <int D> class Mesh; 
+   template <int D> class Mesh;
 
-namespace Pspg { 
+namespace Pspg {
 
    using namespace Util;
    using namespace Pscf::Prdc;
@@ -31,7 +31,7 @@ namespace Pspg {
    /**
    * Block within a branched polymer.
    *
-   * Derived from BlockTmpl<Propagator<D>>. A BlockTmpl<Propagator<D>> 
+   * Derived from BlockTmpl<Propagator<D>>. A BlockTmpl<Propagator<D>>
    * has two Propagator<D> members and is derived from BlockDescriptor.
    *
    * \ingroup Pspg_Solvers_Module
@@ -56,9 +56,12 @@ namespace Pspg {
       * Initialize discretization and allocate required memory.
       *
       * \param ds  desired (optimal) value for contour length step
-      * \param mesh  spatial discretization mesh
+      * \param mesh  Mesh<D> object - spatial discretization mesh
+      * \param fft  FFT<D> object - Fourier transforms
       */
-      void setDiscretization(double ds, const Mesh<D>& mesh);
+      void setDiscretization(double ds,
+                             Mesh<D> const & mesh,
+                             FFT<D> const & fft);
 
       /**
       * Setup parameters that depend on the unit cell.
@@ -66,9 +69,9 @@ namespace Pspg {
       * \param unitCell  unit cell, defining cell dimensions (input)
       * \param waveList  container for properties of wavevectors (input)
       */
-      void setupUnitCell(UnitCell<D> const & unitCell, 
+      void setupUnitCell(UnitCell<D> const & unitCell,
                          WaveList<D> const & waveList);
-                         
+
       /**
       * Setup parameters that depend on the unit cell.
       *
@@ -78,14 +81,14 @@ namespace Pspg {
 
       /**
       * Set or reset block length.
-      * 
+      *
       * \param length  new block length
       */
       void setLength(double length);
 
       /**
       * Set or reset monomer statistical segment length.
-      * 
+      *
       * \param kuhn  new monomer statistical segment length.
       */
       void setKuhn(double kuhn);
@@ -113,15 +116,15 @@ namespace Pspg {
       /**
       * Compute unnormalized concentration for block by integration.
       *
-      * Upon return, grid point r of array cField() contains the 
-      * integral int ds q(r,s)q^{*}(r,L-s) times the prefactor, 
-      * where q(r,s) is the solution obtained from propagator(0), 
+      * Upon return, grid point r of array cField() contains the
+      * integral int ds q(r,s)q^{*}(r,L-s) times the prefactor,
+      * where q(r,s) is the solution obtained from propagator(0),
       * and q^{*} is the solution of propagator(1),  and s is
-      * a contour variable that is integrated over the domain 
+      * a contour variable that is integrated over the domain
       * 0 < s < length(), where length() is the block length.
       *
       * \param prefactor  constant prefactor multiplying integral
-      */ 
+      */
       void computeConcentration(double prefactor);
 
       /**
@@ -145,6 +148,11 @@ namespace Pspg {
       * Return associated spatial Mesh by const reference.
       */
       Mesh<D> const & mesh() const;
+
+      /**
+      * Return associated FFT<D> object by const reference.
+      */
+      FFT<D> const & fft() const;
 
       /**
       * Contour length step size.
@@ -182,18 +190,15 @@ namespace Pspg {
       /// Number of GPU threads per block, set in setDiscretization
       int nThreads_;
 
-      /// Fourier transform plan
-      FFT<D> fft_;
-
       /// Batched FFT, used in computeStress
       FFTBatched<D> fftBatched_;
-      
+
       /// Stress conntribution from this block
       FArray<double, 6> stress_;
-      
+
       // Array of elements containing exp(-K^2 b^2 ds/6) on k-grid
       RField<D> expKsq_;
-      
+
       // Array of elements containing exp(-K^2 b^2 ds/12) on k-grid
       RField<D> expKsq2_;
 
@@ -201,7 +206,7 @@ namespace Pspg {
       RField<D> expW_;
 
       // Array of elements containing exp(-W[i] ds/4) on r-grid
-      RField<D> expW2_; 
+      RField<D> expW2_;
 
       // Work arrays for r-grid fields
       RField<D> qr_;
@@ -228,12 +233,15 @@ namespace Pspg {
       /// Pointer to associated Mesh<D> object.
       Mesh<D> const * meshPtr_;
 
+      /// Pointer to associated FFT<D> object.
+      FFT<D> const * fftPtr_;
+
       /// Pointer to associated UnitCell<D> object.
       UnitCell<D> const* unitCellPtr_;
 
       /// Pointer to associated WaveList<D> object.
       WaveList<D> const * waveListPtr_;
-      
+
       /// Dimensions of wavevector mesh in real-to-complex transform
       IntVec<D> kMeshDimensions_;
 
@@ -253,11 +261,11 @@ namespace Pspg {
       bool hasExpKsq_;
 
       /// Get associated UnitCell<D> as const reference.
-      UnitCell<D> const & unitCell() const 
+      UnitCell<D> const & unitCell() const
       {  return *unitCellPtr_; }
 
       /// Get the Wavelist as const reference
-      WaveList<D> const & wavelist() const 
+      WaveList<D> const & wavelist() const
       {  return *waveListPtr_; }
 
       /// Number of unit cell parameters
@@ -290,9 +298,17 @@ namespace Pspg {
    /// Get Mesh by reference.
    template <int D>
    inline Mesh<D> const & Block<D>::mesh() const
-   {   
+   {
       UTIL_ASSERT(meshPtr_);
       return *meshPtr_;
+   }
+
+   /// Get FFT by reference.
+   template <int D>
+   inline FFT<D> const & Block<D>::fft() const
+   {
+      UTIL_ASSERT(fftPtr_);
+      return *fftPtr_;
    }
 
    #ifndef PSPG_BLOCK_TPP
@@ -304,5 +320,4 @@ namespace Pspg {
 
 }
 }
-//#include "Block.tpp"
 #endif

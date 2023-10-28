@@ -140,6 +140,7 @@ namespace Pspg {
    template <int D>
    Block<D>::Block()
     : meshPtr_(0),
+      fftPtr_(0),
       kMeshDimensions_(0),
       ds_(0.0),
       ns_(0),
@@ -171,17 +172,22 @@ namespace Pspg {
    }
 
    template <int D>
-   void Block<D>::setDiscretization(double ds, Mesh<D> const & mesh)
+   void Block<D>::setDiscretization(double ds, 
+                                    Mesh<D> const & mesh, 
+                                    FFT<D> const & fft)
    {
-      UTIL_CHECK(mesh.size() > 1);
       UTIL_CHECK(ds > 0.0);
       UTIL_CHECK(!isAllocated_);
+      UTIL_CHECK(mesh.size() > 1);
+      UTIL_CHECK(fft.isSetup());
+      UTIL_CHECK(mesh.dimensions() == fft.meshDimensions());
 
       // GPU Resources
-      ThreadGrid::setThreadsLogical(mesh.size(),nBlocks_,nThreads_);
+      ThreadGrid::setThreadsLogical(mesh.size(), nBlocks_, nThreads_);
 
-      // Set association to mesh
+      // Save addresses of mesh and fft
       meshPtr_ = &mesh;
+      fftPtr_ = &fft;
 
       // Set contour length discretization for this block
       int tempNs;
@@ -202,10 +208,15 @@ namespace Pspg {
          }
       }
 
+      // Compute kSize = number of wavevectors in k-grid
       kSize_ = 1;
       for(int i = 0; i < D; ++i) {
          kSize_ *= kMeshDimensions_[i];
       }
+
+      // Setup fftBatched_
+      UTIL_CHECK(!fftBatched_.isSetup());
+      fftBatched_.setup(mesh.dimensions(), kMeshDimensions_, ns_);
 
       // Allocate work arrays
       expKsq_.allocate(kMeshDimensions_);
@@ -237,7 +248,6 @@ namespace Pspg {
 
       isAllocated_ = true;
       hasExpKsq_ = false;
-      
    }
 
    /*
@@ -403,8 +413,7 @@ namespace Pspg {
 
    template <int D>
    void Block<D>::setupFFT() {
-      if (!fft_.isSetup()) {
-         fft_.setup(qr_, qk_);
+      if (!fftBatched_.isSetup()) {
          fftBatched_.setup(mesh().dimensions(), kMeshDimensions_, ns_);
       }
    }
@@ -422,6 +431,8 @@ namespace Pspg {
       // Check real-space mesh sizes
       int nx = mesh().size();
       UTIL_CHECK(nx > 0);
+      UTIL_CHECK(fft().isSetup());
+      UTIL_CHECK(fft().meshDimensions() == mesh().dimensions());
       UTIL_CHECK(qr_.capacity() == nx);
       UTIL_CHECK(expW_.capacity() == nx);
 
@@ -434,21 +445,22 @@ namespace Pspg {
       pointwiseMulSameStart<<<nBlocks_, nThreads_>>>
                            (q, expW_.cField(), expW2_.cField(), 
                             qr_.cField(), qr2_.cField(), nx);
-      fft_.forwardTransform(qr_, qk_);
-      fft_.forwardTransform(qr2_, qk2_);
+      fft().forwardTransform(qr_, qk_);
+      fft().forwardTransform(qr2_, qk2_);
       scaleComplexTwinned<<<nBlocks_, nThreads_>>>
                          (qk_.cField(), qk2_.cField(), 
                           expKsq_.cField(), expKsq2_.cField(), nk);
-      fft_.inverseTransform(qk_, qr_);
-      fft_.inverseTransform(qk2_, q2_);
+      fft().inverseTransform(qk_, qr_);
+      fft().inverseTransform(qk2_, q2_);
       pointwiseMulTwinned<<<nBlocks_, nThreads_>>>
                          (qr_.cField(), q2_.cField(), expW_.cField(), 
                           q1_.cField(), qr_.cField(), nx);
-      fft_.forwardTransform(qr_, qk_);
+      fft().forwardTransform(qr_, qk_);
       scaleComplex<<<nBlocks_, nThreads_>>>(qk_.cField(), expKsq2_.cField(), nk);
-      fft_.inverseTransform(qk_, qr_);
+      fft().inverseTransform(qk_, qr_);
       richardsonExpTwinned<<<nBlocks_, nThreads_>>>(qNew, q1_.cField(),
                            qr_.cField(), expW2_.cField(), nx);
+
       //remove the use of q2
 
 
@@ -470,6 +482,7 @@ namespace Pspg {
       UTIL_CHECK(ds_ > 0);
       UTIL_CHECK(propagator(0).isAllocated());
       UTIL_CHECK(propagator(1).isAllocated());
+      UTIL_CHECK(fftBatched_.isSetup());
 
       double dels, normal, increment;
       normal = 3.0*6.0;

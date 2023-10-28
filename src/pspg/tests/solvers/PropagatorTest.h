@@ -82,9 +82,11 @@ public:
       // Create and initialize mesh
       Mesh<1> mesh;
       setupMesh<1>(mesh);
+      FFT<1> fft;
+      fft.setup(mesh.dimensions());
 
       double ds = 0.02;
-      block.setDiscretization(ds, mesh);
+      block.setDiscretization(ds, mesh, fft);
       TEST_ASSERT(eq(block.length(), 2.0));
       TEST_ASSERT(eq(block.ds(), 0.02));
       TEST_ASSERT(block.ns() == 101);
@@ -102,9 +104,11 @@ public:
 
       Mesh<2> mesh;
       setupMesh<2>(mesh);
+      FFT<2> fft;
+      fft.setup(mesh.dimensions());
 
       double ds = 0.26;
-      block.setDiscretization(ds, mesh);
+      block.setDiscretization(ds, mesh, fft);
       TEST_ASSERT(eq(block.length(), 2.0));
       TEST_ASSERT(eq(block.ds(), 0.25));
       TEST_ASSERT(block.ns() == 9);
@@ -122,9 +126,11 @@ public:
 
       Mesh<3> mesh;
       setupMesh<3>(mesh);
+      FFT<3> fft;
+      fft.setup(mesh.dimensions());
 
       double ds = 0.3;
-      block.setDiscretization(ds, mesh);
+      block.setDiscretization(ds, mesh, fft);
 
       TEST_ASSERT(eq(block.length(), 2.0));
       TEST_ASSERT(block.ns() == 7);
@@ -145,9 +151,11 @@ public:
       // Create and initialize mesh
       Mesh<1> mesh;
       setupMesh<1>(mesh);
+      FFT<1> fft;
+      fft.setup(mesh.dimensions());
 
       double ds = 0.02;
-      block.setDiscretization(ds, mesh);
+      block.setDiscretization(ds, mesh, fft);
 
       UnitCell<1> unitCell;
       setupUnitCell<1>(unitCell, "in/Lamellar");
@@ -188,9 +196,11 @@ public:
       // Create and initialize mesh
       Mesh<2> mesh;
       setupMesh<2>(mesh);
+      FFT<2> fft;
+      fft.setup(mesh.dimensions());
 
       double ds = 0.02;
-      block.setDiscretization(ds, mesh);
+      block.setDiscretization(ds, mesh, fft);
 
       UnitCell<2> unitCell;
       setupUnitCell<2>(unitCell, "in/Rectangular");
@@ -232,9 +242,11 @@ public:
       // Create and initialize mesh
       Mesh<3> mesh;
       setupMesh<3>(mesh);
+      FFT<3> fft;
+      fft.setup(mesh.dimensions());
 
       double ds = 0.02;
-      block.setDiscretization(ds, mesh);
+      block.setDiscretization(ds, mesh, fft);
 
       UnitCell<3> unitCell;
       setupUnitCell<3>(unitCell, "in/Orthorhombic");
@@ -277,9 +289,11 @@ public:
       // Create and initialize mesh
       Mesh<1> mesh;
       setupMesh<1>(mesh);
+      FFT<1> fft;
+      fft.setup(mesh.dimensions());
 
       double ds = 0.02;
-      block.setDiscretization(ds, mesh);
+      block.setDiscretization(ds, mesh, fft);
 
       UnitCell<1> unitCell;
       setupUnitCell<1>(unitCell, "in/Lamellar");
@@ -321,10 +335,12 @@ public:
          qin[i] = cos(twoPi*double(i)/double(nx));
       }
 
-      cudaMemcpy(d_qin.cField(), qin, nx*sizeof(cudaReal), cudaMemcpyHostToDevice);
+      cudaMemcpy(d_qin.cField(), qin, nx*sizeof(cudaReal), 
+                 cudaMemcpyHostToDevice);
       block.setupFFT();
       block.step(d_qin.cField(), d_qout.cField());
-      cudaMemcpy(qout, d_qout.cField(), nx*sizeof(cudaReal), cudaMemcpyDeviceToHost);
+      cudaMemcpy(qout, d_qout.cField(), nx*sizeof(cudaReal), 
+                 cudaMemcpyDeviceToHost);
 
       // Test block step output against expected output
       double a = 4.0;
@@ -343,8 +359,10 @@ public:
       // Copy results from propagator solve
       cudaReal* propHead = new cudaReal[nx*block.ns()];
       cudaReal* propTail = new cudaReal[nx*block.ns()];
-      cudaMemcpy(propHead, block.propagator(0).head(), nx*sizeof(cudaReal), cudaMemcpyDeviceToHost);
-      cudaMemcpy(propTail, block.propagator(0).tail(), nx*sizeof(cudaReal), cudaMemcpyDeviceToHost);
+      cudaMemcpy(propHead, block.propagator(0).head(), 
+                 nx*sizeof(cudaReal), cudaMemcpyDeviceToHost);
+      cudaMemcpy(propTail, block.propagator(0).tail(), 
+                 nx*sizeof(cudaReal), cudaMemcpyDeviceToHost);
 
       for (int i = 0; i < nx; ++i) {
          TEST_ASSERT(eq(propHead[i],1.0));
@@ -354,6 +372,7 @@ public:
       for (int i = 0; i < nx; ++i) {
          TEST_ASSERT(eq(propTail[i], expected));
       }
+
    }
 
    void testSolver2D()
@@ -367,9 +386,11 @@ public:
       // Create and initialize mesh
       Mesh<2> mesh;
       setupMesh<2>(mesh);
+      FFT<2> fft;
+      fft.setup(mesh.dimensions());
 
       double ds = 0.02;
-      block.setDiscretization(ds, mesh);
+      block.setDiscretization(ds, mesh, fft);
 
       UnitCell<2> unitCell;
       setupUnitCell<2>(unitCell, "in/Rectangular");
@@ -468,9 +489,11 @@ public:
       // Create and initialize mesh
       Mesh<3> mesh;
       setupMesh<3>(mesh);
+      FFT<3> fft;
+      fft.setup(mesh.dimensions());
 
       double ds = 0.02;
-      block.setDiscretization(ds, mesh);
+      block.setDiscretization(ds, mesh, fft);
 
       UnitCell<3> unitCell;
       setupUnitCell<3>(unitCell, "in/Orthorhombic");

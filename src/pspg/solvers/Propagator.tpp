@@ -110,19 +110,17 @@ namespace Pspg {
    void Propagator<D>::solve()
    {
       UTIL_CHECK(isAllocated());
+
       computeHead();
       // Setup solver and solve
       block().setupFFT();
-      //cudaReal* qf;
-      //qf = new cudaReal;
       
       int currentIdx;
       for (int iStep = 0; iStep < ns_ - 1; ++iStep) {
          currentIdx = iStep * meshPtr_->size();
-         //block has to learn to deal with the cudaReal
-         block().step(qFields_d + currentIdx, qFields_d + currentIdx + meshPtr_->size());
+         block().step(qFields_d + currentIdx, 
+                      qFields_d + currentIdx + meshPtr_->size());
       }
-	  //delete qf;
       setIsSolved(true);
    }
 
