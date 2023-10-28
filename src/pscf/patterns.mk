@@ -24,6 +24,7 @@ LIBS+=$(GSL_LIB)
 # Conditionally enable OpenMP
 ifdef PSCF_OPENMP
   CXXFLAGS+=$(OPENMP_FLAGS)
+  LDFLAGS+=(OPENMP_FLAGS)
   INCLUDES+=$(OPENMP_INC)
   LIBS+=$(OPENMP_LIB) 
 endif

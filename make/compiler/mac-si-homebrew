@@ -39,11 +39,17 @@
 #-----------------------------------------------------------------------
 # C++ compiler and options (*.cpp files)
 
-# C++ compiler Command name 
-# Default: On OS X, g++ calls the Apple installed clang compiler
-CXX=g++
-# Alternative: Example of a path to a homebrew-installed GNU compiler 
-# CXX=/opt/homebrew/Cellar/gcc/12.2.0/bin/c++-12
+# C++ Compiler Command name 
+ifndef PSCF_OPENMP
+   # Default: On OS X, g++ calls the Apple installed clang compiler
+   # This does not support OpenMP
+   CXX=g++
+else
+   # For OpenMp, use a homebrew-installed GNU compiler 
+   GCC_VERSION=12
+   CXX=g++-$(GCC_VERSION)
+   #CXX=/opt/homebrew/Cellar/gcc/12.2.0/bin/c++-12
+endif
 
 # Flags for C/C++ preprocessor, including standard header search paths
 CPPFLAGS=-I/opt/homebrew/include
