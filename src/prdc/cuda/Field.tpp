@@ -8,7 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "Field.h"
+#include <prdc/cuda/Field.h>
 #include <pscf/cuda/GpuResources.h>
 #include <cuda_runtime.h>
 

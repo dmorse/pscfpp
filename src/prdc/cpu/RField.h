@@ -1,5 +1,5 @@
-#ifndef PRDC_R_FIELD_H
-#define PRDC_R_FIELD_H
+#ifndef PRDC_CPU_R_FIELD_H
+#define PRDC_CPU_R_FIELD_H
 
 /*
 * PSCF Package 
@@ -8,7 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "Field.h"
+#include <prdc/cpu/Field.h>
 #include <pscf/math/IntVec.h>
 #include <util/global.h>
 

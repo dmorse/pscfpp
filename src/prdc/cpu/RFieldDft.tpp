@@ -1,5 +1,5 @@
-#ifndef PRDC_R_FIELD_DFT_TPP
-#define PRDC_R_FIELD_DFT_TPP
+#ifndef PRDC_CUDA_R_FIELD_DFT_TPP
+#define PRDC_CUDA_R_FIELD_DFT_TPP
 
 /*
 * PSCF Package 
@@ -9,6 +9,7 @@
 */
 
 #include "RFieldDft.h"
+#include "Field.tpp"
 
 namespace Pscf {
 namespace Prdc {

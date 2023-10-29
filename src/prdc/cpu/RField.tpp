@@ -1,5 +1,5 @@
-#ifndef PRDC_R_FIELD_TPP
-#define PRDC_R_FIELD_TPP
+#ifndef PRDC_CPU_R_FIELD_TPP
+#define PRDC_CPU_R_FIELD_TPP
 
 /*
 * PSCF Package 
@@ -9,6 +9,7 @@
 */
 
 #include "RField.h"
+#include "Field.tpp"
 
 namespace Pscf {
 namespace Prdc {

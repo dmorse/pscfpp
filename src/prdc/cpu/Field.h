@@ -1,5 +1,5 @@
-#ifndef PRDC_FIELD_H
-#define PRDC_FIELD_H
+#ifndef PRDC_CPU_FIELD_H
+#define PRDC_CPU_FIELD_H
 
 /*
 * PSCF Package 
@@ -214,5 +214,4 @@ namespace Cpu {
 }
 }
 }
-#include "Field.tpp"
 #endif

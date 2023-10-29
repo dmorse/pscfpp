@@ -17,11 +17,12 @@ namespace Cuda {
    using namespace Util;
 
    /**
-   * Dynamic array on the GPU with alligned data.
+   * Dynamic array on the GPU with aligned data.
    *
-   * This class wraps an aligned C array with elements of type Data on the 
-   * device. All member functions may be called from the host. As a result,
-   * the class does not offer access to individual elements via operator[]
+   * This class wraps an aligned C array with elements of type Data that is
+   * allocated in device global memory.  All member functions may be called 
+   * from the host, but the class thus does not offer access to individual 
+   * elements via operator[]
    *
    * \ingroup Prdc_Cuda_Module
    */
