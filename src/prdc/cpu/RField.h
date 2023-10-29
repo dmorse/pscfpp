@@ -113,7 +113,7 @@ namespace Cpu {
       ar & meshDimensions_;
    }
 
-   #ifndef PRDC_R_FIELD_TPP
+   #ifndef PRDC_CPU_R_FIELD_TPP
    extern template class RField<1>;
    extern template class RField<2>;
    extern template class RField<3>;

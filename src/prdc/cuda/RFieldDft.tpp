@@ -8,7 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "RFieldDft.h"
+#include <prdc/cuda/RFieldDft.h>
 
 namespace Pscf {
 namespace Prdc {

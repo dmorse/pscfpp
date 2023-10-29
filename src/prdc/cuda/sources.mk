@@ -1,4 +1,5 @@
 prdc_cuda_= \
+  prdc/cuda/Field.cu \
   prdc/cuda/RField.cu \
   prdc/cuda/RFieldDft.cu \
   prdc/cuda/RFieldComparison.cu \

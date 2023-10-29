@@ -9,6 +9,7 @@
 */
 
 #include <util/global.h>
+#include <fftw3.h>
 
 namespace Pscf {
 namespace Prdc {
@@ -210,6 +211,12 @@ namespace Cpu {
          }
       }
    }
+
+   #ifndef PRDC_CPU_FIELD_TPP
+   extern template class Field<double>;
+   extern template class Field<fftw_complex>;
+   #endif
+
 
 }
 }

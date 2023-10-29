@@ -1,4 +1,5 @@
 prdc_cpu_= \
+  prdc/cpu/Field.cpp \
   prdc/cpu/RField.cpp \
   prdc/cpu/RFieldDft.cpp \
   prdc/cpu/FFT.cpp \

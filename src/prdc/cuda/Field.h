@@ -8,7 +8,9 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
+#include <pscf/cuda/GpuResources.h>
 #include <util/global.h>
+#include <cufft.h>
 
 namespace Pscf {
 namespace Prdc {
@@ -134,8 +136,12 @@ namespace Cuda {
    inline bool Field<Data>::isAllocated() const
    {  return (bool)data_; }
 
+   #ifndef PRDC_CUDA_FIELD_TPP
+   extern template class Field<cudaReal>;
+   extern template class Field<cudaComplex>;
+   #endif
+
 }
 }
 }
-#include "Field.tpp"
 #endif

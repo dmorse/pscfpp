@@ -13,8 +13,6 @@
 #include <pscf/math/IntVec.h>
 #include <util/global.h>
 
-#include <cufft.h>
-
 namespace Pscf {
 namespace Prdc {
 namespace Cuda {

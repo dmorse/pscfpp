@@ -1,5 +1,5 @@
-#ifndef PRDC_CUDA_R_FIELD_DFT_TPP
-#define PRDC_CUDA_R_FIELD_DFT_TPP
+#ifndef PRDC_CPU_R_FIELD_DFT_TPP
+#define PRDC_CPU_R_FIELD_DFT_TPP
 
 /*
 * PSCF Package 

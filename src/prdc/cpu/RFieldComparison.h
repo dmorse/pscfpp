@@ -1,5 +1,5 @@
-#ifndef PRDC_CUDA_R_FIELD_COMPARISON_H
-#define PRDC_CUDA_R_FIELD_COMPARISON_H
+#ifndef PRDC_GPU_R_FIELD_COMPARISON_H
+#define PRDC_GPU_R_FIELD_COMPARISON_H
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory
@@ -27,7 +27,7 @@ namespace Cpu {
    class RFieldComparison : public FieldComparison< RField<D> >
    {};
 
-   #ifndef PRDC_R_FIELD_COMPARISON_CPP
+   #ifndef PRDC_GPU_R_FIELD_COMPARISON_CPP
    extern template class RFieldComparison<1>;
    extern template class RFieldComparison<2>;
    extern template class RFieldComparison<3>;
