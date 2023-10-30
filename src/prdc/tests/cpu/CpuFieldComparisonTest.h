@@ -7,7 +7,7 @@
 #include <prdc/cpu/RField.h>
 #include <prdc/cpu/RFieldDft.h>
 #include <prdc/cpu/RFieldComparison.h>
-#include <prdc/cpu/KFieldComparison.h>
+#include <prdc/cpu/RFieldDftComparison.h>
 
 #include <util/format/Dbl.h>
 

@@ -23,7 +23,7 @@ namespace Cpu {
    * \ingroup Prdc_Cpu_Module
    */
    template <int D>
-   class KFieldComparison {
+   class RFieldDftComparison {
 
    public:
 
@@ -32,7 +32,7 @@ namespace Cpu {
       *
       * Initializes maxDiff and rmsDiff to zero.
       */
-      KFieldComparison();
+      RFieldDftComparison();
 
       // Use compiler defined destructor and assignment operator.
 
@@ -95,9 +95,9 @@ namespace Cpu {
 
    #ifndef PRDC_K_FIELD_COMPARISON_TPP
    // Suppress implicit instantiation
-   extern template class KFieldComparison<1>;
-   extern template class KFieldComparison<2>;
-   extern template class KFieldComparison<3>;
+   extern template class RFieldDftComparison<1>;
+   extern template class RFieldDftComparison<2>;
+   extern template class RFieldDftComparison<3>;
    #endif
 
 

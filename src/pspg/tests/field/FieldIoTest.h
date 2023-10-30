@@ -10,7 +10,7 @@
 #include <prdc/cuda/RField.h>
 #include <prdc/cuda/RFieldDft.h>
 #include <prdc/cuda/RFieldComparison.h>
-#include <prdc/cuda/KFieldComparison.h>
+#include <prdc/cuda/RFieldDftComparison.h>
 #include <prdc/cuda/FFT.h>
 
 #include <prdc/crystal/BFieldComparison.h>
@@ -472,7 +472,7 @@ public:
       writeFields("out/w_bcc.kf", domain, d_kf_0);
       readFields("out/w_bcc.kf", domain, d_kf_1);
 
-      KFieldComparison<3> comparison;
+      RFieldDftComparison<3> comparison;
       comparison.compare(d_kf_0, d_kf_1);
       TEST_ASSERT(comparison.maxDiff() < 1.0E-11);
 
@@ -506,7 +506,7 @@ public:
       writeFields("out/w_altG.kf", domain, d_kf_0);
       readFields("out/w_altG.kf", domain, d_kf_1);
 
-      KFieldComparison<3> comparison;
+      RFieldDftComparison<3> comparison;
       comparison.compare(d_kf_0, d_kf_1);
       TEST_ASSERT(comparison.maxDiff() < 1.0E-11);
 
@@ -540,7 +540,7 @@ public:
       writeFields("out/w_lam.kf", domain, d_kf_0);
       readFields("out/w_lam.kf", domain, d_kf_1);
 
-      KFieldComparison<1> comparison;
+      RFieldDftComparison<1> comparison;
       comparison.compare(d_kf_0, d_kf_1);
       TEST_ASSERT(comparison.maxDiff() < 1.0E-12);
 
@@ -585,7 +585,7 @@ public:
 
       #if 0
       // Demonstrate that input d_kf_0 is destroyed/overwritten by above
-      KFieldComparison<3> check;
+      RFieldDftComparison<3> check;
       check.compare(d_kf_2, d_kf_0);
       std::cout  << std::endl;
       std::cout  << Dbl(check.maxDiff(), 21, 13) << "\n";
@@ -594,7 +594,7 @@ public:
 
       domain.fieldIo().convertRGridToKGrid(d_rf_0, d_kf_1);
 
-      KFieldComparison<3> comparison;
+      RFieldDftComparison<3> comparison;
       comparison.compare(d_kf_2, d_kf_1);
       TEST_ASSERT(comparison.maxDiff() < 1.0E-10);
       if (verbose() > 0) {
@@ -638,7 +638,7 @@ public:
 
       #if 0
       // Demonstrate that input d_kf_0 is destroyed/overwritten by above
-      KFieldComparison<3> check;
+      RFieldDftComparison<3> check;
       check.compare(d_kf_2, d_kf_0);
       std::cout  << std::endl;
       std::cout  << Dbl(check.maxDiff(), 21, 13) << "\n";
@@ -647,7 +647,7 @@ public:
 
       domain.fieldIo().convertRGridToKGrid(d_rf_0, d_kf_1);
 
-      KFieldComparison<3> comparison;
+      RFieldDftComparison<3> comparison;
       comparison.compare(d_kf_2, d_kf_1);
       TEST_ASSERT(comparison.maxDiff() < 1.0E-10);
       if (verbose() > 0) {

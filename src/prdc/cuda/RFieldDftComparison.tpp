@@ -8,7 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "KFieldComparison.h"
+#include "RFieldDftComparison.h"
 #include <cmath>
 
 namespace Pscf {
@@ -17,14 +17,14 @@ namespace Cuda {
 
    // Default Constructor
    template <int D>
-   KFieldComparison<D>::KFieldComparison()
+   RFieldDftComparison<D>::RFieldDftComparison()
     : maxDiff_(0.0),
       rmsDiff_(0.0)
    {};
 
    // Comparator for individual fields.
    template <int D>
-   double KFieldComparison<D>::compare(RFieldDft<D> const& a, RFieldDft<D> const& b)
+   double RFieldDftComparison<D>::compare(RFieldDft<D> const& a, RFieldDft<D> const& b)
    {
       UTIL_CHECK(a.capacity() > 0);
       UTIL_CHECK(a.capacity() == b.capacity());
@@ -56,7 +56,7 @@ namespace Cuda {
 
    // Comparator for arrays of fields
    template <int D>
-   double KFieldComparison<D>::compare(DArray< RFieldDft<D> > const & a,
+   double RFieldDftComparison<D>::compare(DArray< RFieldDft<D> > const & a,
                                        DArray< RFieldDft<D> > const & b)
    {
       UTIL_CHECK(a.capacity() > 0);

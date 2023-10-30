@@ -5,16 +5,16 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "KFieldComparison.tpp"
+#include "RFieldDftComparison.tpp"
 
 namespace Pscf {
 namespace Prdc {
-namespace Cuda {
+namespace Cpu {
 
-   template class KFieldComparison<1>;
-   template class KFieldComparison<2>;
-   template class KFieldComparison<3>;
+   template class RFieldDftComparison<1>;
+   template class RFieldDftComparison<2>;
+   template class RFieldDftComparison<3>;
 
-} // namespace Pscf::Prdc::Cuda
-} // namespace Pscf::Prdc
+} // namespace Pscf::Pspc::Cpu
+} // namespace Pscf::Pspc
 } // namespace Pscf
