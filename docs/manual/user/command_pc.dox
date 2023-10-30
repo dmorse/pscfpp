@@ -5,7 +5,7 @@
 <BR>
 
 The pscf_pc program accepts a larger set of commands than the simpler
-pscf_fd program, though the basic commands are similar. The number of
+pscf_1d program, though the basic commands are similar. The number of
 commands is larger in part as a result of the fact that pscf_pc can 
 use several different formats to read and write field files.  By
 convention, the names of commands that read or write a field file in
@@ -577,7 +577,7 @@ symmetry.
 
 The COMPUTE, ITERATE and SWEEP commands perform the primary computations
 involved in a self-consistent field calculation.  Each performs the
-same operation as the analogous command for the pscf_fd program. Each
+same operation as the analogous command for the pscf_1d program. Each
 of these commands requires an initialized set of w fields and unit cell
 parameters as an input, which must have been initialized by a previous
 call to READ_W_BASIS, READ_W_RGRID, or ESTIMATE_W_FROM_C.
@@ -723,7 +723,7 @@ fields (c-fields) for all blocks of all polymers and for all solvent
 species r-grid format as separate fields within a single file. The
 resulting file has a data section analogous to that produced by the
 \ref user_command_pc_writeblockc_sub "WRITE_BLOCK_C" command of
-the pscf_fd program.  The resulting file contains a header section
+the pscf_1d program.  The resulting file contains a header section
 identical to that contained in any r-grid field file, followed by a
 data section.  The format of the data section is similar to that of
 an r-grid field file that contain one field per monomer type, except
@@ -732,7 +732,7 @@ monomer type, and thus output in a separate column of the data
 section.  Blocks and solvent species are output in the order in which
 they appear within the parameter file, as in the output of the
 \ref user_command_fd_writeblockc_sub "WRITE_BLOCK_C" command of the
-pscf_fd program.
+pscf_1d program.
 
 \section user_command_pc_qout_sec Propagator Output
 

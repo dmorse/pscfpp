@@ -12,22 +12,22 @@ include $(BLD_DIR_REL)/config.mk
 include $(SRC_DIR)/fd1d/include.mk
 
 #-----------------------------------------------------------------------
-# Paths to main pscf_fd program files
+# Paths to main pscf_1d program files
 
-# Path to pscf_fd *.o and *.d files for pscf_fd
-PSCF_FD=$(BLD_DIR)/fd1d/pscf_fd
+# Path to pscf_1d *.o and *.d files for pscf_1d
+PSCF_1D=$(BLD_DIR)/fd1d/pscf_1d
 
-# Path to pscf_fd executable
-PSCF_FD_EXE=$(BIN_DIR)/pscf_fd
+# Path to pscf_1d executable
+PSCF_1D_EXE=$(BIN_DIR)/pscf_1d
 
 #-----------------------------------------------------------------------
 # Main targets 
 
-all: $(fd1d_OBJS) $(fd1d_LIB) $(PSCF_FD_EXE)
+all: $(fd1d_OBJS) $(fd1d_LIB) $(PSCF_1D_EXE)
 
 clean:
 	rm -f $(fd1d_OBJS) $(fd1d_OBJS:.o=.d)
-	rm -f $(PSCF_FD).o $(PSCF_FD).d
+	rm -f $(PSCF_1D).o $(PSCF_1D).d
 	rm -f $(fd1d_LIB)
 	rm -f *.o */*.o
 	rm -f *.d */*.d
@@ -38,12 +38,12 @@ veryclean:
 	-rm -f lib*.a
 
 # Executable target (linking)
-$(PSCF_FD_EXE): $(PSCF_FD).o $(PSCF_LIBS)
-	$(CXX) $(LDFLAGS) -o $(PSCF_FD_EXE) $(PSCF_FD).o $(LIBS) 
+$(PSCF_1D_EXE): $(PSCF_1D).o $(PSCF_LIBS)
+	$(CXX) $(LDFLAGS) -o $(PSCF_1D_EXE) $(PSCF_1D).o $(LIBS) 
 
 # Short name for executable target (for convenience)
-pscf_fd:
-	$(MAKE) $(PSCF_FD_EXE)
+pscf_1d:
+	$(MAKE) $(PSCF_1D_EXE)
 
 #-----------------------------------------------------------------------
 # Include dependency files
@@ -51,4 +51,4 @@ pscf_fd:
 -include $(fd1d_OBJS:.o=.d)
 -include $(pscf_OBJS:.o=.d)
 -include $(util_OBJS:.o=.d)
--include $(PSCF_FD).d 
+-include $(PSCF_1D).d 

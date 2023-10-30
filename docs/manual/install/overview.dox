@@ -69,7 +69,7 @@ but no GPU-enabled code, you may simply enter
     make all
 \endcode
 from the pscfpp/ directory immediately after running the configure script.
-If successful, this will install executables named "pscf_fd" and
+If successful, this will install executables named "pscf_1d" and
  "pscf_pc" in the pscfpp/bin directory.
 
 Compiling all the PSCF C++ code using "make all" takes a little time
@@ -165,7 +165,7 @@ already completed the configuration steps described above.
 
 If successful, the "make all" command will install an executable files
 named "pscf_pg" in the pscfpp/bin directory in addition to the files
-"pscf_fd" and "pspc_pc" that are created by compiling only C++ code.
+"pscf_1d" and "pspc_pc" that are created by compiling only C++ code.
 
 Several of the above steps is discussed in more detail in the following
 pages.

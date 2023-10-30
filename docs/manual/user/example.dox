@@ -79,7 +79,7 @@ instead enter
 \endcode
 A command to execute a different PSCF program would have a similar 
 syntax except for the replacement of the executable name pscf_pc by 
-a different executable name, such as pscf_fd or pscf_pg.
+a different executable name, such as pscf_1d or pscf_pg.
 
 Note: In the above examples, we recommend issuing the command "./run"
 rather than simply "run" to execute the run script. Most users will

@@ -1,24 +1,24 @@
-/*! \page user_param_fd_page Parameter File - pscf_fd
+/*! \page user_param_fd_page Parameter File - pscf_1d
 
 \ref user_param_sweep_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
 \ref user_param_pc_page     (Next)
 <BR>
 
-The pscf_fd program allows the solution of the SCFT field equations for 
+The pscf_1d program allows the solution of the SCFT field equations for 
 problems in which all fields depend only on a single coordinate in a 
 planar planar (Cartesian), cylindrical or spherical geometry.  This
 program may be used to treat a flat interface or thin film by using
 a planar geometry, or can treat curved interfaces and a cylindrical or 
 spherical micelles by using a cylindrical or spherical coordinate by
 using a cylindrical or spherical geometry.
-An example of a parameter file for an pscf_fd program was given 
+An example of a parameter file for an pscf_1d program was given 
 \ref user_param_example_page "previously" as an example of the syntax.
 Please consult this example when looking at this discussion of the file
 format.
 
 \section user_param_fd_format_sec File Format
 
-The overall format for a pscf_fd parameter file is shown below in 
+The overall format for a pscf_1d parameter file is shown below in 
 skeleton form:
 \code
 System{
@@ -128,7 +128,7 @@ thus given by dx = (xMax - xMin)/(nx-1).
 
 <b> Boundary Conditions </b>
 
-The pscf_fd program solves the modified diffusion equation subject 
+The pscf_1d program solves the modified diffusion equation subject 
 to von Neumann boundary conditions that require derivatives of the 
 propagators and concentration fields with respect to the relevant 
 Cartesian or radial normal coordinate must vanish at the lower and 
@@ -142,7 +142,7 @@ the gradient vector is continuous at the origin.
 The Iterator block provides data required by the iterator used to solve 
 the nonlinear self-consistent field (SCF) equations.  
 
-The default iterator for pscf_fd is an Anderson-mixing algorithm that is
+The default iterator for pscf_1d is an Anderson-mixing algorithm that is
 implemented by a class named AmIterator.  Because this is the default 
 iterator, it may be chosen by including an iterator block in which the 
 first line contains either the generic label "Iterator" or the specific 
@@ -184,7 +184,7 @@ is given in the links in the table below:
 
 \section user_param_fd_sweep_sec Sweep
 
-The default sweep for pscf_fd is a linear sweep algorithm that can be
+The default sweep for pscf_1d is a linear sweep algorithm that can be
 invoked using a block that starts either with the generic label Sweep
 or the specific label LinearSweep. The required parameter file format
 has been described \ref user_param_sweep_linear_sec "here". 

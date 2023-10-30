@@ -1,0 +1,1 @@
+pscf_1d -e -p param.cs1_nr -c command.s1

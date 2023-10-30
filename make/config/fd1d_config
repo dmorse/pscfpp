@@ -6,8 +6,6 @@
 #
 #   - A variable $(fd1d_LIB) is the path to the fd1d library file.
 #
-#   - A variable $(PSCF_FD_EXE) is the path to the pscf_fd executable.
-#
 # This fragment must be included by every makefile in the fd1d directory. 
 # Note: BLD_DIR and $(BIN_DIR) are defined in the main config.mk file 
 # in bld/ or src/

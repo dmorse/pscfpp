@@ -287,7 +287,7 @@ In the pscf_pc and pscf_pg programs, the MDE for propagators in a
 periodic structure is solved within a single unit cell, subject to
 periodic boundary conditions.
 
-In the pscf_fd program, the MDE for each propagator \f$ q(x,s) \f$ is
+In the pscf_1d program, the MDE for each propagator \f$ q(x,s) \f$ is
 solved within a range of values of the single spatial coordinate
 \f$ x \f$, where \f$ x \f$ may represent either a Cartesian normal
 coordinate for a system with the geometry of a flat film or a radial
@@ -302,7 +302,7 @@ represent a point that lies deep within homogeneous region, such
 as bulk region surrounding a micelle or a bulk phase far from an
 interface. In these cases, it is also appropriate to set
 \f$ \partial q/\partial x = 0 \f$ at these boundaries. In light of
-these considerations, the pscf_fd program is designed to apply
+these considerations, the pscf_1d program is designed to apply
 von Neumann boundary conditions requiring that
 \f$ \partial q/\partial x = 0 \f$ at both upper and lower limiting
 values of \f$ x \f$.
@@ -789,7 +789,7 @@ Different conventions for this additional constraint on
 implementations of the pscf_pc and pscf_pg programs for periodic
 microstructures obtain equations with a unique solution by requiring, as
 a matter of convention, that the spatial average of \f$ \xi(\textbf{r}) \f$
-must vanish in canonical ensemble. The pscf_fd code for one-dimensional
+must vanish in canonical ensemble. The pscf_1d code for one-dimensional
 problems instead uses a convention that requires that, in canonical
 ensemble, the value of \f$ w_{\alpha}({\bf r}) \f$ must equal zero for
 the last monomer type (\f$ \alpha = C-1 \f$) at the last grid point.
@@ -904,7 +904,7 @@ for \f$ v \f$ can be used for some calculations other than
 the standard SCFT calculation described above. For example, a
 value of \f$ v \f$ is required as an input to compute the total
 excess free energy of a spherical micelle, which can be output
-by the pscf_fd program when used to simulate this geometry. A
+by the pscf_1d program when used to simulate this geometry. A
 value of \f$ v \f$ will also be required as an input for
 stochastic field theoretic simulations that are currently
 under development as a planned addition to PSCF.

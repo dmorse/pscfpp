@@ -163,7 +163,7 @@ version include the following:
 
 PSCF provides source code for three executable programs:
 
-   - **pscf_fd** : The pscf_fd program is designed to performed SCFT
+   - **pscf_1d** : The pscf_1d program is designed to performed SCFT
      calculations on one-dimensional problems in Cartesian, cylindrical
      or spherical coordinates. A simple finite difference method is used
      to solve the underlying partial differential equation that is used
@@ -329,7 +329,7 @@ developed on linux and and Mac OS X operating systems using standard unix
 utilities, and is designed to be compiled and run in these or other
 unix-like environments.
 
-The pscf_fd and pscf_pc CPU programs depend on the following external
+The pscf_1d and pscf_pc CPU programs depend on the following external
 libraries:
 
 
@@ -338,7 +338,7 @@ libraries:
 
   - <a href=https://www.fftw.org/>FFTW</a> - Fast Fourier Transform library
 
-The one-dimensional finite difference program pscf_fd actually only
+The one-dimensional finite difference program pscf_1d actually only
 requires only GSL, whereas pscf_pc requires both GSL and FFTW.
 
 The GPU-accelerated pscf_pg program can only be compiled and run on a

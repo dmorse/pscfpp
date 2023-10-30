@@ -1,10 +1,10 @@
-/*! \page user_field_fd1d_page Field File - 1D Fields (pscf_fd)
+/*! \page user_field_fd1d_page Field File - 1D Fields (pscf_1d)
 
  \ref user_field_page (Prev/Up) &nbsp; &nbsp; &nbsp; &nbsp; 
  \ref user_field_periodic_page (Next) 
 <BR>
 
-The pscf_fd program is designed for problems in which fields depend 
+The pscf_1d program is designed for problems in which fields depend 
 on only a single variable, and uses a a regular one-dimensional mesh 
 to discretize the solutions.  This program uses a simple file format 
 for w and c fields that contains a header and data section. 
@@ -61,7 +61,7 @@ nm     2
 
 \section user_field_fd1d_bc_sec Boundary Conditions:
 
-The pscf_fd program solves the underlying modified diffusion equation
+The pscf_1d program solves the underlying modified diffusion equation
 using a boundary condition that requires the 1D spatial derivative of 
 the propagator to vanish at both endpoints. 
 

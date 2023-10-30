@@ -114,7 +114,7 @@ use \f$ N_{x} \f$ to denote the number of grid points (referred to in the
 parameter file and source code as nx), and use \f$ N_{m} \f$ to denote 
 the number of monomer types (referred to elsewhere as nMonomer).
 
-The vector of residuals for a pscf_fd calculation has \f$ N_{x}N_{m} \f$ 
+The vector of residuals for a pscf_1d calculation has \f$ N_{x}N_{m} \f$ 
 (or nx * nMonomer) scalar residuals.  Let \f$ w_{ia} \f$ and 
 \f$ \phi_{ai} \f$ denote the values of the chemical potential field 
 \f$ w_{i} \f$ and volume fraction \f$ \phi_{i} \f$ for monomer type 

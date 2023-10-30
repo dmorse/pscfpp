@@ -1,6 +1,6 @@
 include config.mk
 
-.PHONY: all all-cpu util pscf fd1d pspc pspg \
+.PHONY: all all-cpu util pscf prdc fd1d pspc pspg \
         test test-cpu test-gpu \
         clean clean-tests veryclean
 # ======================================================================
@@ -36,8 +36,8 @@ prdc:
 	cd pscf; $(MAKE) all
 	cd prdc; $(MAKE) all
 
-# Build pscf_fd 1D finite difference SCFT program (install in BIN_DIR)
-pscf_fd: 
+# Build pscf_1d 1D finite difference SCFT program (install in BIN_DIR)
+pscf_1d: 
 	cd util; $(MAKE) all
 	cd pscf; $(MAKE) all
 	cd fd1d; $(MAKE) all

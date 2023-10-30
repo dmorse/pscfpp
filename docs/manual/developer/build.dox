@@ -30,7 +30,7 @@ The main subdirectories of src/ are:
    accessible to all PSCF programs.
 
  - src/fd1d/ contains all code in the Pscf::Fd1d namespace, which is only
-   used by the pscf_fd 1D finite element program.
+   used by the pscf_1d 1D finite element program.
 
  - src/prdc/ contains all code in the Pscf::Prdc namespace, which is used
    by both the pscf_pc and pscf_pg programs for periodic structures.
@@ -163,7 +163,7 @@ The makefile in each namespace level subdirectory of each build directory define
 
 The "all" target in each namespace level directory also creates a static library that contains the object files for all classes in the associated namespace.  The base name of each such library is given by a prefix "lib" followed by the namespace level directory name with a file extension ".a". Each such library is placed in the corresponding namespace level build directory. For example, the makefile in the util/ subdirectory creates a static library that (by default) is named BLD_DIR/util/libutil.a.  Executable files are built by linking main program files to these namespace level libraries.
 
-The "all" targets of the makefiles in the fd1d, pspc, and pspg namespace level subdirectories also compile main programs and install the resulting executables in the BIN_DIR directory. Entering "make all" from the BLD_DIR/fd1d directory compiles and links the main program src/fd1d/pscf_fd.cpp, in addition to compiling all of the required class files and aggregating the source files into a static library.
+The "all" targets of the makefiles in the fd1d, pspc, and pspg namespace level subdirectories also compile main programs and install the resulting executables in the BIN_DIR directory. Entering "make all" from the BLD_DIR/fd1d directory compiles and links the main program src/fd1d/pscf_1d.cpp, in addition to compiling all of the required class files and aggregating the source files into a static library.
 
 \section make_sources Source file lists (sources.mk files)
 

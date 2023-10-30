@@ -24,4 +24,3 @@ veryclean:
 -include $(fd1d_OBJS:.o=.d)
 -include $(pscf_OBJS:.o=.d)
 -include $(util_OBJS:.o=.d)
--include $(PSCF_FD).d 

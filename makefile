@@ -22,9 +22,9 @@ all:
 all-cpu:
 	cd bld; $(MAKE) all-cpu
 
-# Build the pscf_fd 1D finite element SCFT program
-pscf_fd:
-	cd bld; $(MAKE) pscf_fd
+# Build the pscf_1d 1D finite element SCFT program
+pscf_1d:
+	cd bld; $(MAKE) pscf_1d
 
 # Build the pscf_pc cpu program for periodic structures 
 pscf_pc:

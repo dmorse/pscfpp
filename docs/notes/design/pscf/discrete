@@ -17,7 +17,7 @@ create separate programs that differ may differ in, among other things:
 
 The package currently contains the following three implementations:
 
-   - pscf_fd: Finite-difference code for 1D problems
+   - pscf_1d: Finite-difference code for 1D problems
    - pscf_pc: CPU code for periodic structures, using pseudo-spectral solver
    - pscf_pg: GPU code for periodic structures, using pseudo-spectral solver
 
@@ -61,7 +61,7 @@ defined within a namespace named Pscf. A nested sub-namespace of Pscf
 is defined for each SCFT implementation. For example, the package
 currently contains namespaces:
  
-   Pscf::Fd1d - Classes for the pscf_fd finite difference 1D code
+   Pscf::Fd1d - Classes for the pscf_1d finite difference 1D code
    Pscf::Pspc - Classes for the pscf_pc periodic CPU code
    Pscf::Pspg - Classes for the pscf_pc periodic CPU code
 

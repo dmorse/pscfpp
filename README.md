@@ -48,14 +48,13 @@ Fortran version include:
 
 PSCF currently contains three programs:
 
-   - **pscf_fd** : The program pscf_fd is is designed to performed SCFT
-     calculations on one-dimensional problems in Cartesian, cylindrical 
-     or spherical coordinates. A finite difference method is used to 
-     solve the underlying partial differential equation, known as the
-     modified diffusion equation (MDE). This program is useful for 
-     treating problems involving flat and curved interfaces, as well as 
-     cylindrical or spherical copolymer micelles.  The suffix "fd" stands 
-     for "finite difference".
+   - **pscf_1d** : The program pscf_1d is is designed to performed SCFT
+     calculations on one-dimensional (1d) problems in Cartesian, 
+     cylindrical or spherical coordinates. A finite difference method is 
+     used to solve the underlying partial differential equation, known 
+     as the modified diffusion equation (MDE). This program is useful 
+     for treating problems involving flat and curved interfaces, as well 
+     as cylindrical or spherical copolymer micelles.  
      
    - **pscf_pc** : The pscf_pc rogram is designed to treat structures
      that are periodic in 1, 2 or 3 dimensions, using conventional 
@@ -208,14 +207,14 @@ the main page of the web manual.
 PSCF has been developed on both linux and and Mac OS X operating systems,
 and is designed to run on these or other unix-like systems.
 
-The pscf_fd and pscf_pc CPU programs depend on the following external 
+The pscf_1d and pscf_pc CPU programs depend on the following external 
 libraries:
 
   - [GSL](<https://www.gnu.org/software/gsl/>) - GNU Scientific Library
 
   - [FFTW](<https://www.fftw.org/>) Fast Fourier Transform library
 
-The pscf_fd one-dimensional program pscf_fd requires only GSL, while
+The pscf_1d one-dimensional program pscf_1d requires only GSL, while
 pscf_pc program relies on both GSL and FFTW.
 
 The GPU-accelerated pscf_pg program can only be compiled and run on a 
@@ -292,7 +291,7 @@ installed in psfpp/bin.
 
 ## Command line usage
 
-PSCF is a package containing three different SCFT programs (pscf_fd,
+PSCF is a package containing three different SCFT programs (pscf_1d,
 pscf_pc, and pscf_pg) that are designed for different geometries or
 different hardware, but that have very similar interfaces. To perform a
 calculation, each of these programs must read a parameter file and a 
@@ -313,10 +312,10 @@ A command file for an SCFT calculation normally also contains commands
 that write converged chemical potential and monomer concentration fields
 to specific files. 
 
-The usual command line syntax for invoking the pscf_fd program for 
+The usual command line syntax for invoking the pscf_1d program for 
 one-dimensional SCFT calculations is
 ```
-pscf_fd -p param -c command -e
+pscf_1d -p param -c command -e
 ```
 where "param" denotes the name of a parameter file, and "command" denotes 
 the name of a command file.  The -p and -c options are required.
@@ -361,10 +360,10 @@ The quickest way to learn the syntax of the PSCF parameter and command
 files is by examining examples.  The directory pscfpp/examples contains 
 examples of input files for many different types of SCFT calculations.  
 Top level subdirectories of the examples/ directory contain examples 
-for different PSCF programs (pscf_fd, pscf_pc, or pscf_pg). 
+for different PSCF programs (pscf_1d, pscf_pc, or pscf_pg). 
 
 Subdirectory examples/fd contains examples of SCFT calculations for the 
-1D finite-difference program pscf_fd. Top level subdirectories of the
+1D finite-difference program pscf_1d. Top level subdirectories of the
 directory examples/fd contain examples for planar, cylindrical and 
 spherical geometries, as indicated by the subdirectory names. One or
 more example is given for each geometry.

@@ -11,7 +11,7 @@ To illustrate common elements, we start with an example.
 \section user_param_example_file Example File
 
 Shown below is a complete parameter file for a simple 1D SCFT calculation 
-performed by program pscf_fd:
+performed by program pscf_1d:
 
 \code
 System{
@@ -249,13 +249,13 @@ line of an iterator block can either be the generic label "Iterator",
 as in this example, which is used to indicate that the user would like 
 to use the default choice for the iterator algorithm, or it can be the 
 name of the class that implements a specific algorithm.  The default 
-iterator algorithm for the pscf_fd program is an Anderson-mixing 
+iterator algorithm for the pscf_1d program is an Anderson-mixing 
 algorithm that is implemented by a class named AmIterator. This 
 algorithm can thus be invoked either using the generic label "Iterator", 
 as in the above example, or, more explicitly, by using the class name 
 "AmIterator" as the block label.
 
-Users of pscf_fd program can also choose either of two other iteration
+Users of pscf_1d program can also choose either of two other iteration
 algorithms. A Newton-Raphson algorithm is implemented by a class 
 named NrIterator, and a simple relaxation algorithm for systems with 
 only two monomer types is implemented by a class named 

@@ -1,4 +1,4 @@
-/*! \page user_command_fd_homo_page Command for pscf_fd: COMPARE_HOMOGENEOUS
+/*! \page user_command_fd_homo_page Command for pscf_1d: COMPARE_HOMOGENEOUS
 \ref user_command_fd_page  (Up/Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
 \ref user_command_pc_page  (Next) 
 <BR>
@@ -15,7 +15,7 @@ The integer mode parameter, which takes allowed values of 0, 1, and 2,
 determines the nature of the homogeneous reference system to which the
 system of interest is compared:
 
-  - In mode 0 (i.e., when mode == 0), the pscf_fd program considers a
+  - In mode 0 (i.e., when mode == 0), the pscf_1d program considers a
     homogeneous reference system with the same overall (i.e., spatial 
     average) volume fraction for each molecular species as that of the 
     actual system. 

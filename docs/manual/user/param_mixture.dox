@@ -165,7 +165,7 @@ Comments:
     \ref user_model_vMonomer_sec "elsewhere".  Users are nonetheless given 
     the option of providing a value for vMonomer because an input value
     for vMonomer is required as an input for some optional outputs of the 
-    pscf_fd program (e.g., the total excess free energy of a spherical 
+    pscf_1d program (e.g., the total excess free energy of a spherical 
     micelle). It is also included as an optional parameter because the 
     value of vMonomer will be a required input parameter for stochastic 
     field-theoretic simulations that will be implemented in future versions 

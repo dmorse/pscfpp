@@ -1,0 +1,45 @@
+
+/*!
+\page pscf_1d_page pscf_1d  - One-dimensional SCFT (CPU)
+
+Program for one-dimensional (1D) SCFT problems. The implementation
+uses a regular grid and finite-difference algorithm for solving the 
+modified diffusion equation.
+
+\section pscf_1d_usage_section Usage
+
+    pscf_1d  -p file -c file [-i prefix] [-o prefix] [-e]
+
+\section pscf_1d_options_section Command Line Options
+
+  -p file
+
+   Set the parameter file name, given by the argument "file".
+   The -p and -r options are incompatible: A simulation must be
+   initialized with either a parameter file or a restart file, 
+   but not both. 
+
+  -c file
+
+   Set the command file name, given by the argument "file". 
+
+  -i prefix
+
+   Set the input file path prefix, given by the argument "prefix".
+   If not set here, this may also be set in the FileMaster block 
+   of the parameter file.
+
+  -o prefix
+
+   Set the output file path prefix, given by the argument "prefix".
+   If not set here, this may also be set in the FileMaster block 
+   of the parameter file.
+
+  -e
+
+   Enable echoing of parameter file to log file as it is read. This
+   option is often useful for debugging the parameter file.
+
+
+*/
+

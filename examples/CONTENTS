@@ -3,11 +3,11 @@ calculations that use different PSCF programs:
 
   Directory    Program     Description
   ---------    --------    -------------
-   fd/         pscf_fd     one-dimensional (CPU)
+   1d/         pscf_1d     one-dimensional (CPU)
    pc/         pscf_pc     periodic  (CPU)
    pg/         pscf_pg     periodic  (GPU)
 
-Top level subdirectories of fd1d/, pc/, and pg/ each contain examples
+Top level subdirectories of 1d/, pc/, and pg/ each contain examples
 for different types of physical systems, e.g., subdirectory pc/diblock/ 
 contains examples for periodic phases of diblock copolymer melts. 
 

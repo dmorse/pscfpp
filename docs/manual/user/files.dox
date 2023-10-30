@@ -44,7 +44,7 @@ SCFT calculation generally contains the following 4 sections:
   discretization.
 - Iterator: Algorithmic parameters used by an iterative SCFT solver
 
-An example of a simple parameter file for the pscf_fd program is shown 
+An example of a simple parameter file for the pscf_1d program is shown 
 \ref user_param_example_page "here" .
 
 \section user_files_field_section Field file

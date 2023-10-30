@@ -1,16 +1,16 @@
-/*! \page user_command_fd_page Commands - pscf_fd
+/*! \page user_command_fd_page Commands - pscf_1d
 \ref user_command_page    (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
 \ref user_command_pc_page (Next) 
 <BR>
 
 
-This page describes the commands accepted by the pscf_fd program. 
+This page describes the commands accepted by the pscf_1d program. 
 We begin by showing simple examples of complete command files.
 
 \section user_command_fd_example_sec Example: SCFT Calculation
 
 Here is a example of a command file for a single SCFT calculation 
-performed with pscf_fd.  The example assumes the use of a convention
+performed with pscf_1d.  The example assumes the use of a convention
 for locations of input and output files in which the initial guess 
 for the w field is located in a subdirectory of the current working 
 directory named "in", and in which all outputs are written to files 
@@ -48,7 +48,7 @@ The effect of each command in this example is described below:
 
   - FINISH instructs the main program to stop execution and return.
 
-All pscf_fd that read or write field files use the same field file 
+All pscf_1d that read or write field files use the same field file 
 format, described \ref user_field_fd1d_page "here".  The last line
 in every PSCF command script must be a FINISH command. Anything that
 appears after the FINISH command will be ignored.
@@ -56,7 +56,7 @@ appears after the FINISH command will be ignored.
 \section user_command_fd_sweep_sec Example: A Sweep
 
 Here is an example of a command file to perform a sweep. The SWEEP 
-command can only be used if the parameter file that was read by pscf_fd 
+command can only be used if the parameter file that was read by pscf_1d 
 before reading this command file contains an appropriate Sweep block.
 \code
 READ_W    in/w
@@ -79,7 +79,7 @@ the solution for the final state point of the sweep, for which s=1.
 
 \section user_command_fd_commands_sec Commands
 
-The following table shows a list of available commands for pscf_fd, along 
+The following table shows a list of available commands for pscf_1d, along 
 with descriptions of any required parameters and the action initiated by 
 each command: 
 <table>
@@ -350,9 +350,9 @@ the total concentration for all monomers of that type.
 
 The format of the file created WRITE_BLOCK_C is similar to that of 
 a field file created by WRITE_C.  The file contains with a header
-section identical to that contained in any pscf_fd field file, 
+section identical to that contained in any pscf_1d field file, 
 followed by a data section.  The format of the data section file is 
-analogous to that of pscf_fd field file that contains one field per 
+analogous to that of pscf_1d field file that contains one field per 
 monomer type, except that each polymer block and solvent species is 
 treated as a separate monomer type, and thus output in a separate 
 column of the data section.  
@@ -389,7 +389,7 @@ accessible slice may be identified by a integer contour step index
 originates, and increases with increasing distance \f$ s \f$ from that
 vertex.
 
-The pscf_fd programs accept several commands that output propagators
+The pscf_1d programs accept several commands that output propagators
 and propagator slices to one or more files. The names for these commands
 start with a string "WRITE_Q", followed by a suffix that describes what
 information is output by invoking the command. All of these commands take

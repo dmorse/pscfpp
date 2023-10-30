@@ -54,7 +54,7 @@ namespace Fd1d
    *      system.readCommands();
    *   }
    * \endcode
-   * The actual main program is given in the file pscf_fd.cpp.
+   * The actual main program is given in the file pscf_1d.cpp.
    *
    * \ref user_param_fd_page "Parameter File Format"
    * \ingroup Pscf_Fd1d_Module

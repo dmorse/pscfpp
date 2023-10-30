@@ -1,16 +1,12 @@
 
-pscf_fd Commands
+pscf_1d Commands
 ----------------
-
-    V1.1 ?
 
     Consider adding a RESCALE command
 
 
-pscf_pc Commands
-----------------
-
-    V1.1
+pscf_pc and pscf_pg Commands
+---------------------------
 
     Consider adding a RESCALE command
 
@@ -18,8 +14,6 @@ pscf_pc Commands
 
 Theory
 ------
-
-    V1.1
 
     Add discussion of propagators as ratio's of partition functions
 

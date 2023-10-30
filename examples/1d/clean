@@ -1,0 +1,3 @@
+(cd planar; ./clean)
+(cd cylindrical/1; ./clean)
+(cd spherical/1; ./clean)

@@ -62,5 +62,5 @@ cyln_LIB=$(BLD_DIR)/cyln/lib$(cyln_LIBNAME).a
 #-----------------------------------------------------------------------
 # Path to executable file
 
-PSCF_PS_EXE=$(BIN_DIR)/pscf_fd$(CYLN_SUFFIX)$(UTIL_SUFFIX)
+PSCF_PS_EXE=$(BIN_DIR)/pscf_1d$(CYLN_SUFFIX)$(UTIL_SUFFIX)
 #-----------------------------------------------------------------------

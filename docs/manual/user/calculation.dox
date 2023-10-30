@@ -17,7 +17,7 @@ An SCFT parameter sweep is an operation that performs a sequence of SCFT
 calculations for slightly different choices of parameter values spaced 
 along a user-defined path through parameter space.
 Field theoretic Monte-Carlo (FTMC) simulations can be performed with the
-pscf_pc and pscf_pg programs, but not with pscf_fd. SCFT calculations and
+pscf_pc and pscf_pg programs, but not with pscf_1d. SCFT calculations and
 SCFT parameter sweeps can be performed using any PSCF program.  
 
 Each of these three types of calculation may be initiated by a specific 

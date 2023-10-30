@@ -27,7 +27,7 @@ The main subdirectories of src/ are:
    accessible to all PSCF programs.
 
  - src/fd1d/ contains all code in the Pscf::Fd1d namespace, which is only
-   used by the pscf_fd 1D finite element program.
+   used by the pscf_1d 1D finite element program.
 
  - src/pspc/ contains all code in the Pscf::Pspc namespace, which is only
    used by the pscf_pc C++ CPU programs for periodic structures.

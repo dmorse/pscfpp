@@ -124,8 +124,8 @@ The final section, labeled "cellParams", lists the lattice parameters
 for the converged SCFT solution. This section appears in the output
 of SCFT calculations for periodic systems performed using pscf_pc or
 pscf_pg programs. It does not appear in the output of calculations
-for one-dimensional systems performed using pscf_fd, since the domain
-size is fixed by the user in pscf_fd calculations. In pscf_pc and pscf_pg
+for one-dimensional systems performed using pscf_1d, since the domain
+size is fixed by the user in pscf_1d calculations. In pscf_pc and pscf_pg
 calculations, some or all of the lattice parameters may be flexible, and
 are adjusted during the SCFT calculation so as to minimize the free
 energy density. In this case, the converged values of lattice parameters

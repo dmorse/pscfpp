@@ -544,7 +544,7 @@ and store the contents of a field file written in any of the formats used
 by different PSCF programs. Specifically, an instance of this class can 
 store the contents of any of the 3 file formats used by the pscf_pc and 
 pscf_pg programs for fields in periodic systems, as well as the simpler 
-field file format used for one-dimensional systems by the pscf_fd 
+field file format used for one-dimensional systems by the pscf_1d 
 program. The type of field file is inferred during parsing from the 
 file format.  Parsing can be performed by the constructor for this 
 class, by passing the constructor a filename argument, as for the other 

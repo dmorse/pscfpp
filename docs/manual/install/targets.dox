@@ -51,7 +51,7 @@ make all
 The behavior of this command depends on whether CUDA compilation has
 been enabled. If CUDA compilation is disabled (which is the default
 behavior), then the "make all" command only compiles the CPU programs 
-pscf_fd and pscf_pc. If CUDA compilation is enabled, this command also 
+pscf_1d and pscf_pc. If CUDA compilation is enabled, this command also 
 compiles the GPU-enabled pscf_pg program.
 
 CUDA compilation can be enabled or disabled by using the -c option of
@@ -62,11 +62,11 @@ compilation, as discussed in more detail
 enabled, it is equivalent to calling "make all-cpu" followed by 
 "make pspg". 
 
-<h2> pscf_fd: </h2>
+<h2> pscf_1d: </h2>
 
-To compile only the pscf_fd program, simply enter:
+To compile only the pscf_1d program, simply enter:
 \code
-make pscf_fd
+make pscf_1d
 \endcode
 If entered before compiling any other code, this command will:
 
@@ -80,8 +80,8 @@ If entered before compiling any other code, this command will:
   - Create a static library (with file extension *.a) in each of these
     three namespace-level subdirectories of the build directory.
 
-  - Compile and link the main program file src/fd1d/pscf_fd.cpp and
-    install an executable file named pscf_fd in the pscfpp/bin
+  - Compile and link the main program file src/fd1d/pscf_1d.cpp and
+    install an executable file named pscf_1d in the pscfpp/bin
     directory.
 
 To recompile these programs after making any changes to configuration
@@ -111,12 +111,12 @@ This command will cause the system to:
 
 <h2> all-cpu: </h2>
 
-To explicitly build the pscf_fd and pscf_pc CPU programs, but not the 
+To explicitly build the pscf_1d and pscf_pc CPU programs, but not the 
 GPU-enable pscf_pg program, enter
 \code
 make all-cpu
 \endcode
-This is equivalent to entering "make pscf_fd" followed by "make pscf_pc".
+This is equivalent to entering "make pscf_1d" followed by "make pscf_pc".
 
 <h2> pscf_pg: </h2>
 
@@ -235,7 +235,7 @@ in the namespace level directory tree, but will also create a static library
 file containing all of the resulting object code, and then build and install 
 executables for any programs for which the source files are in that directory.  For example, entering "make all" from src/fd1d directory will create a 
 static library named src/fd1d/libfd1d.a, and install an executable named 
-pscf_fd in the bin/ directory.
+pscf_1d in the bin/ directory.
 
 <em> Rationale </em>: The ability to invoke "make all" from a subdirectory
 of src/ is designed to allow developers to use the command line to easily

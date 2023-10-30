@@ -16,7 +16,7 @@ elements and selectable subblocks.
 \section user_format_example1_sec Example 1
 
 As a simple first example of this sort of description, the overall syntax
-for a pscf_fd parameter file is shown below:
+for a pscf_1d parameter file is shown below:
 \code
 System{
    Mixture{ ... }
