@@ -24,7 +24,10 @@ namespace Pspc{
    template <int D>
    AmIterator<D>::AmIterator(System<D>& system)
     : Iterator<D>(system)
-   {  setClassName("AmIterator"); }
+   {
+     isFlexible_ = true;  
+     setClassName("AmIterator"); 
+   }
 
    // Destructor
    template <int D>
@@ -146,7 +149,6 @@ namespace Pspc{
       for (int i = 0; i < n; i++) {
          newbasis[i] = hists[0][i] - hists[1][i]; 
       }
-
       basis.append(newbasis);
    }
 
@@ -190,8 +192,8 @@ namespace Pspc{
    {
       const int nMonomer = system().mixture().nMonomer();
       const int nBasis = system().basis().nBasis();
-      int nEle = nMonomer*nBasis;
 
+      int nEle = nMonomer*nBasis;
       if (isFlexible()) {
          nEle += nFlexibleParams();
       }
@@ -203,31 +205,32 @@ namespace Pspc{
    template <int D>
    void AmIterator<D>::getCurrent(DArray<double>& curr)
    {
-      // Straighten out fields into linear arrays
-
       const int nMonomer = system().mixture().nMonomer();
       const int nBasis = system().basis().nBasis();
       const DArray< DArray<double> > * currSys = &system().w().basis();
 
+      // Straighten out fields into linear arrays
       for (int i = 0; i < nMonomer; i++) {
          for (int k = 0; k < nBasis; k++) {
             curr[i*nBasis+k] = (*currSys)[i][k];
          }
       }
 
-      const int nParam = system().unitCell().nParameter();
-      const FSArray<double,6> currParam = system().unitCell().parameters();
-
-      int counter = 0;
-      for (int i = 0; i < nParam; i++) {
-         if (flexibleParams_[i]) {
-            curr[nMonomer*nBasis + counter] = scaleStress_*currParam[i];
-            counter++;
+      // Add elements associated with unit cell parameters (if any)
+      if (isFlexible()) {
+         const int nParam = system().unitCell().nParameter();
+         const FSArray<double,6> currParam 
+                                  = system().unitCell().parameters();
+         int counter = 0;
+         for (int i = 0; i < nParam; i++) {
+            if (flexibleParams_[i]) {
+               curr[nMonomer*nBasis + counter] = scaleStress_*currParam[i];
+               counter++;
+            }
          }
+         UTIL_CHECK(counter == nFlexibleParams());
       }
-      UTIL_CHECK(counter == nFlexibleParams());
 
-      return;
    }
 
    // Perform the main system computation (solve the MDE)

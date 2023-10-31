@@ -27,8 +27,10 @@ namespace Pspg {
    // Constructor
    template <int D>
    AmIteratorGrid<D>::AmIteratorGrid(System<D>& system)
-   : Iterator<D>(system)
-   {}
+    : Iterator<D>(system)
+   {
+      isSymmetric_ = true;
+   }
 
    // Destructor
    template <int D>

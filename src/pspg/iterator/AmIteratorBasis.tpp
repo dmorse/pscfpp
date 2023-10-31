@@ -29,8 +29,11 @@ namespace Pspg{
    // Constructor
    template <int D>
    AmIteratorBasis<D>::AmIteratorBasis(System<D>& system)
-   : Iterator<D>(system)
-   {  setClassName("AmIteratorBasis"); }
+    : Iterator<D>(system)
+   {
+      isSymmetric_ = true;  
+      setClassName("AmIteratorBasis"); 
+   }
 
    // Destructor
    template <int D>

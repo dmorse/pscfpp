@@ -74,13 +74,26 @@ namespace Pspg
       virtual void clearTimers() = 0;
 
       /**
+      * Does this iterator use a symmetry-adapted Fourier basis?
+      */
+      bool isSymmetric() const
+      {  return (isSymmetric_); }
+
+      /**
       * Is the unit cell flexible (true) or rigid (false).
       */
       bool isFlexible() const;
 
    protected:
 
-      /// Is the unit cell flexible during iteration?
+      /**
+      * Does this iterator use a symmetry-adapted basis?
+      */
+      bool isSymmetric_;
+
+      /**
+      * Is the unit cell flexible during iteration?
+      */
       bool isFlexible_;
 
       /**
@@ -98,7 +111,8 @@ namespace Pspg
    // Constructor
    template<int D>
    inline Iterator<D>::Iterator(System<D>& system)
-   : isFlexible_(false),
+   : isSymmetric_(false),
+     isFlexible_(false),
      sysPtr_(&system)
    {  setClassName("Iterator"); }
 

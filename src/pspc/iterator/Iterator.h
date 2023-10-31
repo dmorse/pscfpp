@@ -68,6 +68,12 @@ namespace Pspc
       virtual void clearTimers() = 0;
 
       /**
+      * Does this iterator use a symmetry-adapted Fourier basis?
+      */
+      bool isSymmetric() const
+      {  return (isSymmetric_); }
+
+      /**
       * Return true iff unit cell has any flexible lattice parameters.
       */
       bool isFlexible() const
@@ -90,6 +96,16 @@ namespace Pspc
    protected:
 
       /**
+      * Does this iterator use a symmetry-adapted basis?
+      */
+      bool isSymmetric_;
+    
+      /** 
+      * Are any lattice parameters flexible during iteration?
+      */
+      bool isFlexible_;
+
+      /**
       * Get parent system by const reference.
       */
       System<D> const & system() const
@@ -100,9 +116,6 @@ namespace Pspc
       */
       System<D>& system() 
       {  return *sysPtr_; }
-
-      /// Are any lattice parameters flexible during iteration?
-      bool isFlexible_;
 
       /**
       * Set the array indicating which lattice parameters are flexible.
@@ -128,12 +141,17 @@ namespace Pspc
    // Default constructor
    template <int D>
    inline Iterator<D>::Iterator()
+    : isSymmetric_(false),
+      isFlexible_(false),
+      sysPtr_(0)
    {  setClassName("Iterator"); }
 
    // Constructor
    template <int D>
    Iterator<D>::Iterator(System<D>& system)
-    : sysPtr_(&system)
+    : isSymmetric_(false),
+      isFlexible_(false),
+      sysPtr_(&system)
    {  setClassName("Iterator"); }
 
    // Destructor
@@ -145,7 +163,7 @@ namespace Pspc
    template <int D>
    int Iterator<D>::nFlexibleParams() const
    {
-      UTIL_CHECK(flexibleParams_.size() == system().unitCell().nParameter());
+      UTIL_CHECK(flexibleParams_.size()==system().unitCell().nParameter());
       int nFlexParams = 0;
       for (int i = 0; i < flexibleParams_.size(); i++) {
          if (flexibleParams_[i]) nFlexParams++;

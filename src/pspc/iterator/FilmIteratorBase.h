@@ -143,7 +143,7 @@ namespace Pspc
       * 
       * This is the case when chiBottom is equal to chiTop.
       */
-      bool isSymmetric() const;
+      bool hasSymmetricWalls() const;
 
       /**
       * Are the walls athermal?
@@ -238,6 +238,7 @@ namespace Pspc
       void clearTimers(){};
       using Iterator<D>::system;
       using Iterator<D>::setClassName;
+      using Iterator<D>::isSymmetric_;
       using Iterator<D>::isFlexible_;
       using ParamComposite::read;
       using ParamComposite::readOptional;

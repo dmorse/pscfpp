@@ -62,6 +62,7 @@ namespace Pspg
 
       using ParamComposite::readOptional;
       using Iterator<D>::system;
+      using Iterator<D>::isSymmetric_;
       using Iterator<D>::isFlexible_;
 
       /**

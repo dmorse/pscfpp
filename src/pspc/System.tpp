@@ -870,7 +870,9 @@ namespace Pspc {
    {
       UTIL_CHECK(iteratorPtr_);
       UTIL_CHECK(w_.hasData());
-      UTIL_CHECK(w_.isSymmetric());
+      if (iterator().isSymmetric()) {
+         UTIL_CHECK(w_.isSymmetric());
+      }
       hasCFields_ = false;
       hasFreeEnergy_ = false;
 

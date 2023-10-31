@@ -50,6 +50,7 @@ namespace Pspc
       chiTopCurrent_(),
       ungenerated_(true)
    {  
+      isSymmetric_ = true;
       setClassName(iterator_.className().append("FilmBase").c_str());
       system.mask().setFieldIo(system.fieldIo());
       system.h().setFieldIo(system.fieldIo());
@@ -419,7 +420,7 @@ namespace Pspc
 
       // Make sure all symmetry operations are allowed
       int nv = normalVecId();
-      bool symmetric = isSymmetric();
+      bool symmetric = hasSymmetricWalls();
       std::string msg = "Space group contains forbidden symmetry operations";
       for (int i = 0; i < group.size(); i++) {
          for (int j = 0; j < D; j++) {
@@ -447,7 +448,7 @@ namespace Pspc
    * the chi array.
    */
    template <int D, typename IteratorType>
-   bool FilmIteratorBase<D, IteratorType>::isSymmetric() const 
+   bool FilmIteratorBase<D, IteratorType>::hasSymmetricWalls() const 
    {
       int nm = system().mixture().nMonomer();
 
