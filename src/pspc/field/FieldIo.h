@@ -22,8 +22,7 @@
 #include <util/containers/Array.h>         // function parameter
 
 namespace Pscf {
-namespace Pspc
-{
+namespace Pspc {
 
    using namespace Util;
    using namespace Pscf;
@@ -423,22 +422,26 @@ namespace Pspc
       * at termination of the function.
       * 
       * If the UnitCell object passed to this function already
-      * contains unit cell data, the function will check to ensure
-      * that the crystal system and space group in the field file 
-      * header match the data already stored. A warning will also 
-      * be printed if the lattice parameters do not match. If, 
-      * instead, the function is passed an empty UnitCell object, 
-      * we assume that the UnitCell data is unknown or that the 
-      * field file header does not need to be cross-checked with 
-      * existing data. In this case, the field file header data is 
-      * stored directly in the UnitCell object that was passed in.
+      * contains a lattice type parameter, the function will check 
+      * whether the the lattice system in the field file header match 
+      * that set previously in the UnitCell, and throw an Exception if
+      * a mismatch is detected.
+      *
+      * Presence of a group name parameter in the header is optional if 
+      * FieldIo::groupName() is true (which indicates that a group name 
+      * was declared in a parameter file block), and forbidden if 
+      * groupName() is false.  If a group name is present, it must match 
+      * FieldIo::groupName(), which is a string that is provided 
+      * externally, or an Exception is thrown.
       * 
       * \param in  input stream (i.e., input file)
-      * \param nMonomer  number of fields contained in the field file
-      * \param unitCell  associated crystallographic unit cell
+      * \param nMonomer  number of fields in the field file (output)
+      * \param unitCell  associated crystallographic unit cell (output)
+      * \param isSymmetric Is there a group name in the header? (output)
       */
       void readFieldHeader(std::istream& in, int& nMonomer, 
-                           UnitCell<D> & unitCell) const;
+                           UnitCell<D> & unitCell, bool & isSymmetric) 
+      const;
 
       /**
       * Write header for field file (fortran pscf format)
@@ -649,7 +652,7 @@ namespace Pspc
       // DFT work array for two-step conversion basis <-> kgrid <-> r-grid.
       mutable RFieldDft<D> workDft_;
 
-      // Pointers to associated objects.
+      // Pointers to associated external data
 
       /// Pointer to spatial discretization mesh.
       Mesh<D> const * meshPtr_;
@@ -661,13 +664,13 @@ namespace Pspc
       typename UnitCell<D>::LatticeSystem * latticePtr_;
 
       /// Pointer to boolean hasGroup (true if a space group is known).
-      bool * hasGroupPtr_;
+      bool const * hasGroupPtr_;
 
       /// Pointer to group name string
-      std::string * groupNamePtr_;
+      std::string const * groupNamePtr_;
 
       /// Pointer to a SpaceGroup object
-      SpaceGroup<D> * groupPtr_;
+      SpaceGroup<D> const * groupPtr_;
 
       /// Pointer to a Basis object
       Basis<D> * basisPtr_;
@@ -675,7 +678,7 @@ namespace Pspc
       /// Pointer to Filemaster (holds paths to associated I/O files).
       FileMaster const * fileMasterPtr_;
 
-      // Private accessor functions:
+      // Private accessor functions for associated external data
 
       /// Get spatial discretization mesh by const reference.
       Mesh<D> const & mesh() const
@@ -691,35 +694,42 @@ namespace Pspc
          return *fftPtr_; 
       }
 
-      /// Get group name string by const reference.
+      /// Get the lattice type enum value by const reference.
       typename UnitCell<D>::LatticeSystem & lattice() const
       {  
          UTIL_ASSERT(latticePtr_);  
          return *latticePtr_; 
       }
 
-      /// Get group name string by const reference.
-      std::string & groupName() const
-      {  
-         UTIL_ASSERT(groupNamePtr_);  
+      /// Has a group been declared externally ?
+      bool hasGroup() const
+      {
+         UTIL_ASSERT(hasGroupPtr_);
+         return *hasGroupPtr_;
+      }
+
+      /// Get associated group name string by const reference.
+      std::string const & groupName() const
+      {
+         UTIL_ASSERT(groupNamePtr_);
          return *groupNamePtr_; 
       }
 
-      /// Get SpaceGroup by const reference.
-      SpaceGroup<D> & group() const
+      /// Get associated SpaceGroup<D> by const reference.
+      SpaceGroup<D> const & group() const
       {
          UTIL_ASSERT(groupPtr_);  
          return *groupPtr_; 
       }
 
-      /// Get Basis by const reference.
+      /// Get the associated Basis by const reference.
       Basis<D> & basis() const
       {
          UTIL_ASSERT(basisPtr_);  
          return *basisPtr_; 
       }
 
-      /// Get FileMaster by reference.
+      /// Get associated FileMaster by reference.
       FileMaster const & fileMaster() const
       {  
          UTIL_ASSERT(fileMasterPtr_);  

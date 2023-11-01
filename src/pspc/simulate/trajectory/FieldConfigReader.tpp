@@ -66,13 +66,17 @@ namespace Pspc
          inputfile_.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
       }
       #endif
+
       // Read Header
       int nMonomer = system().mixture().nMonomer();
       Domain<D> & domain = system().domain();
       UnitCell<D> & unitcell = domain.unitCell();
-      system().domain().fieldIo().readFieldHeader(inputfile_, nMonomer, unitcell);
-      Log::file()<<"Read Header" << "\n";
+      FieldIo<D> & fieldIo = domain.fieldIo();
+      bool hasSymmetry;
+      fieldIo.readFieldHeader(inputfile_, nMonomer, unitcell, hasSymmetry);
+      //Log::file()<<"Read Header" << "\n";
    }
+
    /*
    * Read frame, return false if end-of-file
    */
@@ -112,8 +116,11 @@ namespace Pspc
       }
       notEnd = getNextLine(inputfile_, line);
       int nMonomer = system().mixture().nMonomer();
+
       // Read a single real-space grid field frame from trajectory file
-      system().domain().fieldIo().readFieldRGridData(inputfile_, wField_, nMonomer);
+      FieldIo<D> & fieldIo = system().domain().fieldIo();
+      fieldIo.readFieldRGridData(inputfile_, wField_, nMonomer);
+
       // Update system real-space grid field 
       system().setWRGrid(wField_);
 

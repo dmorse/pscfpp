@@ -1,0 +1,35 @@
+
+Goal: Create a system that makes it convenient to perform any of
+
+    - SCFT with an imposed space group
+    - SCFT with no imposed space group (iteration on a grid)
+    - FTMC with no imposed space group
+
+Principles:
+
+1) If you want to use a space group you have to declare it in the parameter
+file block for the Domain. If you don't, you can't do SCFT with symmetry.
+The distinction is defined by Domain::hasGroup().
+
+2) You can only attempt to read a basis field file if hasGroup == true.
+
+3) If Domain::hasGroup is true:
+
+     - You can read field files in basis format, which must have a head
+       with a space group that matches that declared in the parameter file.
+
+     - The presence of a space group in the header of an r-grid or k-grid
+       file is optional. If a space group is present, it must match that
+       declared in the parameter file. 
+
+3) If Domain::hasGroup is false:
+
+     - Files in basis format cannot be read.
+
+     - Files in r-grid and k-grid format may not contain a space group
+       in the file header.
+
+4) Possible later extension: The presence of a space group in an r-grid 
+or k-grid file is take to be a guarantee that the file actually has the
+desired space group. This would allow r-grid files to be used to initialize
+file in symmetrized format.

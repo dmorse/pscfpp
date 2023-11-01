@@ -24,8 +24,7 @@
 #include <string>
 
 namespace Pscf {
-namespace Pspc
-{
+namespace Pspc {
 
    using namespace Util;
    using namespace Pscf::Prdc;
@@ -85,10 +84,11 @@ namespace Pspc
       if (field.isAllocated()) { 
          fields.allocate(1);
          fields[0].allocate(field.capacity());
-      } // otherwise pass unallocated field into readFieldsBasis
+      } // otherwise pass unallocated fields into readFieldsBasis
 
       readFieldsBasis(in, fields, unitCell);
-      UTIL_CHECK(fields.capacity() == 1); // Check that it only read 1 field
+      // Check that it only read 1 field
+      UTIL_CHECK(fields.capacity() == 1); 
       field = fields[0];
    }
 
@@ -137,11 +137,16 @@ namespace Pspc
    template <int D>
    void FieldIo<D>::readFieldsBasis(std::istream& in, 
                                     DArray< DArray<double> >& fields,
-                                    UnitCell<D>& unitCell) 
-   const
+                                    UnitCell<D>& unitCell) const
    {
+      // Precondition
+      UTIL_CHECK(hasGroup());
+
+      // Read header of field file
       int nMonomer;
-      FieldIo<D>::readFieldHeader(in, nMonomer, unitCell);
+      bool isSymmetric;
+      FieldIo<D>::readFieldHeader(in, nMonomer, unitCell, isSymmetric);
+      UTIL_CHECK(isSymmetric);
       UTIL_CHECK(basis().isInitialized());
 
       // Read the number of stars into nStarIn
@@ -487,7 +492,8 @@ namespace Pspc
    const
    {
       int nMonomer;
-      FieldIo<D>::readFieldHeader(in, nMonomer, unitCell);
+      bool isSymmetric;
+      FieldIo<D>::readFieldHeader(in, nMonomer, unitCell, isSymmetric);
 
       // If "fields" parameter is allocated, check if dimensions match
       // those of the system's mesh.  Otherwise, allocate.
@@ -732,7 +738,8 @@ namespace Pspc
    const
    {
       int nMonomer;
-      FieldIo<D>::readFieldHeader(in, nMonomer, unitCell);
+      bool isSymmetric;
+      FieldIo<D>::readFieldHeader(in, nMonomer, unitCell, isSymmetric);
 
       // Only reading in a file with a single field.
       UTIL_CHECK(nMonomer == 1);
@@ -1044,7 +1051,8 @@ namespace Pspc
    const
    {
       int nMonomer;
-      FieldIo<D>::readFieldHeader(in, nMonomer, unitCell);
+      bool isSymmetric;
+      FieldIo<D>::readFieldHeader(in, nMonomer, unitCell, isSymmetric);
 
       // If "fields" parameter is allocated, check if dimensions match
       // those of the system's mesh.  Otherwise, allocate.
@@ -1166,12 +1174,12 @@ namespace Pspc
    template <int D>
    void FieldIo<D>::readFieldHeader(std::istream& in, 
                                     int& nMonomer,
-                                    UnitCell<D>& unitCell) 
+                                    UnitCell<D>& unitCell,
+                                    bool & isSymmetric) 
    const
    {
       // Preconditions
       UTIL_CHECK(latticePtr_);
-      UTIL_CHECK(groupNamePtr_);
       if (unitCell.lattice() == UnitCell<D>::Null) {
          UTIL_CHECK(unitCell.nParameter() == 0);
       } else {
@@ -1202,8 +1210,8 @@ namespace Pspc
       } else {
          if (lattice() != unitCell.lattice()) {
             Log::file() << std::endl 
-               << "Error - "
-               << "Mismatched lattice types, FieldIo::readFieldHeader:\n" 
+               << "Error - Mismatched lattice types " 
+               << "in function FieldIo<D>::readFieldHeader:\n" 
                << "  FieldIo::lattice  :" << lattice() << "\n"
                << "  Unit cell lattice :" << unitCell.lattice() 
                << "\n";
@@ -1211,29 +1219,42 @@ namespace Pspc
          }
       }
 
-      // Validate or initialize group name
-      if (groupName() == "") {
-         groupName() = groupNameIn;
+      // Check group name (if any)
+      isSymmetric = false;
+      if (hasGroup()) {
+         if (groupNameIn != "") {
+            isSymmetric = true;
+            UTIL_CHECK(groupNamePtr_);
+            if (groupNameIn != groupName()) {
+               Log::file() << std::endl 
+                  << "Error - Mismatched group names in "
+                  << "function FieldIo<D>::readFieldHeader:\n" 
+                  << "  FieldIo::groupName :" << groupName() << "\n"
+                  << "  Field file header  :" << groupNameIn << "\n";
+               UTIL_THROW("Mismatched group names");
+            }
+         }
       } else {
-         if (groupNameIn != groupName()) {
+         if (groupNameIn != "") {
+            isSymmetric = true;
             Log::file() << std::endl 
-               << "Error - "
-               << "Mismatched group names in FieldIo::readFieldHeader:\n" 
-               << "  FieldIo::groupName :" << groupName() << "\n"
-               << "  Field file header  :" << groupNameIn << "\n";
-            UTIL_THROW("Mismatched group names");
+                << "Error - A group name found in a field file header "
+                << "after none was declared in the parameter file.\n";
+            UTIL_THROW("Unexpected group name in field file header");
          }
       }
 
-      // Check group, read from file if necessary
+      #if 0
       UTIL_CHECK(groupPtr_);
+      // Check group, read from file if necessary
       if (group().size() == 1) {
          if (groupName() != "I") {
             readGroup(groupName(), group());
          }
       }
+      #endif
 
-      // Check basis, construct if not initialized
+      // If needed, construct basis
       UTIL_CHECK(basisPtr_);
       if (!basis().isInitialized()) {
          basisPtr_->makeBasis(mesh(), unitCell, group());

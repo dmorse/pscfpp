@@ -1758,8 +1758,9 @@ namespace Pspc {
 
       // Read field file header, and initialize basis if needed
       int nMonomer;
+      bool isSymmetric;
       domain_.fieldIo().readFieldHeader(file, nMonomer, 
-                                        domain_.unitCell());
+                                        domain_.unitCell(), isSymmetric);
       // FieldIo::readFieldHeader initializes a basis if needed
       file.close();
 
@@ -1768,8 +1769,11 @@ namespace Pspc {
       UTIL_CHECK(domain_.unitCell().nParameter() > 0);
       UTIL_CHECK(domain_.unitCell().lattice() != UnitCell<D>::Null);
       UTIL_CHECK(domain_.unitCell().isInitialized());
-      UTIL_CHECK(domain_.basis().isInitialized());
-      UTIL_CHECK(domain_.basis().nBasis() > 0);
+      if (domain_.hasGroup() && isSymmetric) {
+         UTIL_CHECK(domain_.basis().isInitialized());
+         UTIL_CHECK(domain_.basis().nBasis() > 0);
+      }
+
    }
 
    /*

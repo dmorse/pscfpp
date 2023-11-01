@@ -97,7 +97,9 @@ public:
 
       // Read header and construct basis
       openInputFile("in/w_bcc.rf", in);
-      domain.fieldIo().readFieldHeader(in, nMonomer_, domain.unitCell());
+      bool isSymmetric;
+      domain.fieldIo().readFieldHeader(in, nMonomer_, 
+                                       domain.unitCell(), isSymmetric);
       in.close();
 
       TEST_ASSERT(domain.unitCell().lattice() == UnitCell<3>::Cubic);
