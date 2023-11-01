@@ -45,8 +45,8 @@ namespace Pspc
    template <int D>
    void Domain<D>::setFileMaster(FileMaster& fileMaster)
    {
-      fieldIo_.associate(mesh_, fft_, 
-                         lattice_, groupName_, group_, basis_, 
+      fieldIo_.associate(mesh_, fft_, lattice_, 
+                         hasGroup_, groupName_, group_, basis_, 
                          fileMaster);
       hasFileMaster_ = true;
    }
@@ -60,34 +60,30 @@ namespace Pspc
       // Preconditins
       UTIL_CHECK(!isInitialized_);
       UTIL_CHECK(hasFileMaster_);
-
       bool hasUnitCell = false; 
-      // Uncomment for backwards compatibility with old format (< v1.0)
-      #if 0
-      readOptional(in, "unitCell", unitCell_);
-      if (unitCell_.lattice() != UnitCell<D>::Null) { 
-         lattice_ = unitCell_.lattice();
-         hasUnitCell = true; 
-      }
-      #endif
 
       read(in, "mesh", mesh_);
       fft_.setup(mesh_.dimensions());
 
-      // If no unit cell was read, read lattice system
-      if (lattice_ == UnitCell<D>::Null) { 
-         read(in, "lattice", lattice_);
-         unitCell_.set(lattice_);
+      read(in, "lattice", lattice_);
+      unitCell_.set(lattice_);
+
+      // Optionally read group name 
+      bool hasGroupName;
+      hasGroupName = readOptional(in, "groupName", groupName_).isActive();
+
+      if (hasGroupName) {
+
+         // Read the space group from file.
+         readGroup(groupName_, group_);
+         hasGroup_ = true;
+
+         // If unit cell parameters are known, construct a basis
+         if (hasUnitCell) { 
+            basis().makeBasis(mesh(), unitCell(), group_);
+         }
       }
 
-      // Read group name and initialized space group
-      read(in, "groupName", groupName_);
-      readGroup(groupName_, group_);
-
-      // Initialize unit cell if unit cell parameters are known
-      if (hasUnitCell) { 
-         basis().makeBasis(mesh(), unitCell(), group_);
-      }
       isInitialized_ = true;
    }
 
@@ -126,9 +122,11 @@ namespace Pspc
          fft_.setup(mesh_.dimensions());
       }
 
-      // Initialize group and basis
-      readGroup(groupName_, group_);
-      basis_.makeBasis(mesh_, unitCell_, group_);
+      if (groupName_ != "") {
+         readGroup(groupName_, group_);
+         hasGroup_ = true;
+         basis_.makeBasis(mesh_, unitCell_, group_);
+      }
       
       isInitialized_ = true;
    }
@@ -143,7 +141,9 @@ namespace Pspc
       }
       unitCell_ = unitCell;
       if (!basis_.isInitialized()) {
-         makeBasis();
+         if (hasGroup_) {
+            makeBasis();
+         }
       }
    }
 
@@ -161,7 +161,9 @@ namespace Pspc
       }
       unitCell_.set(lattice, parameters);
       if (!basis_.isInitialized()) {
-         makeBasis();
+         if (hasGroup_) {
+            makeBasis();
+         }
       }
    }
 
@@ -175,7 +177,9 @@ namespace Pspc
       UTIL_CHECK(unitCell_.nParameter() == parameters.size());
       unitCell_.setParameters(parameters);
       if (!basis_.isInitialized()) {
-         makeBasis();
+         if (hasGroup_) {
+            makeBasis();
+         }
       }
    }
 
@@ -186,11 +190,9 @@ namespace Pspc
       UTIL_CHECK(unitCell_.lattice() != UnitCell<D>::Null);
 
       // Check group, read from file if necessary
-      if (group_.size() == 1) {
-         if (groupName_ != "I") {
-            UTIL_CHECK(groupName_ != "");
-            readGroup(groupName_, group_);
-         }
+      if (!hasGroup_ && groupName_ != "") {
+         readGroup(groupName_, group_);
+         hasGroup_ = true;
       }
 
       // Check basis, construct if not initialized

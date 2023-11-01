@@ -125,11 +125,15 @@ namespace Prdc {
 
       readUnitCellHeader(in, cell);
 
+      // Optionally read groupName
       in >> label;
-      UTIL_CHECK(label == "group_name");
-      in >> groupName;
+      groupName = "";
+      if (label == "group_name") {
+         in >> groupName;
+         in >> label;
+      }
 
-      in >> label;
+      // Read nMonomer value
       UTIL_CHECK(label == "N_monomer");
       in >> nMonomer;
       UTIL_CHECK(nMonomer > 0);
@@ -149,8 +153,10 @@ namespace Prdc {
       out << "dim" <<  std::endl 
           << "          " << D << std::endl;
       writeUnitCellHeader(out, cell); 
-      out << "group_name" << std::endl 
-          << "          " << groupName <<  std::endl;
+      if (groupName != "") {
+         out << "group_name" << std::endl 
+             << "          " << groupName <<  std::endl;
+      }
       out << "N_monomer"  << std::endl 
           << "          " << nMonomer << std::endl;
    }

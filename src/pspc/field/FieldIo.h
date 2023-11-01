@@ -63,6 +63,7 @@ namespace Pspc
       * \param mesh  associated spatial discretization Mesh<D>
       * \param fft   associated FFT object for fast transforms
       * \param lattice  lattice system type (enumeration value)
+      * \param hasGroup true if a space group is declared
       * \param groupName space group name string
       * \param group  associated SpaceGroup object
       * \param basis  associated Basis object
@@ -71,6 +72,7 @@ namespace Pspc
       void associate(Mesh<D> const & mesh,
                      FFT<D> const & fft,
                      typename UnitCell<D>::LatticeSystem & lattice,
+                     bool & hasGroup,
                      std::string & groupName,
                      SpaceGroup<D> & group,
                      Basis<D> & basis,
@@ -657,6 +659,9 @@ namespace Pspc
 
       /// Pointer to lattice system.
       typename UnitCell<D>::LatticeSystem * latticePtr_;
+
+      /// Pointer to boolean hasGroup (true if a space group is known).
+      bool * hasGroupPtr_;
 
       /// Pointer to group name string
       std::string * groupNamePtr_;

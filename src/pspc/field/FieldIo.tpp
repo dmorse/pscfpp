@@ -38,6 +38,7 @@ namespace Pspc
    FieldIo<D>::FieldIo()
     : meshPtr_(0),
       fftPtr_(0),
+      hasGroupPtr_(0),
       groupNamePtr_(0),
       groupPtr_(0),
       basisPtr_(0),
@@ -59,6 +60,7 @@ namespace Pspc
    FieldIo<D>::associate(Mesh<D> const & mesh,
                          FFT<D> const & fft,
                          typename UnitCell<D>::LatticeSystem & lattice,
+                         bool & hasGroup,
                          std::string & groupName,
                          SpaceGroup<D> & group,
                          Basis<D> & basis,
@@ -67,6 +69,7 @@ namespace Pspc
       meshPtr_ = &mesh;
       fftPtr_ = &fft;
       latticePtr_ = &lattice;
+      hasGroupPtr_ = &hasGroup;
       groupNamePtr_ = &groupName;
       groupPtr_ = &group;
       basisPtr_ = &basis;
