@@ -1,4 +1,4 @@
-(cd fd; ./clean)
+(cd 1d; ./clean)
 (cd pc; ./clean)
 (cd pg; ./clean)
 rm -f */*/*/out/*

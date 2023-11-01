@@ -76,8 +76,7 @@ namespace Pspg
       /**
       * Does this iterator use a symmetry-adapted Fourier basis?
       */
-      bool isSymmetric() const
-      {  return (isSymmetric_); }
+      bool isSymmetric() const;
 
       /**
       * Is the unit cell flexible (true) or rigid (false).
@@ -121,6 +120,13 @@ namespace Pspg
    inline Iterator<D>::~Iterator()
    {}
 
+   // Does this iterator use a symmetry-adapted Fourier basis?
+   template<int D>
+   inline bool Iterator<D>::isSymmetric() const
+   {  return isSymmetric_; }
+
+
+   // Is the unit cell flexible (true) or rigid (false) ?
    template<int D>
    inline bool Iterator<D>::isFlexible() const
    {  return isFlexible_; }
