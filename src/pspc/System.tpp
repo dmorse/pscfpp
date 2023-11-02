@@ -680,10 +680,14 @@ namespace Pspc {
    template <int D>
    void System<D>::readWBasis(const std::string & filename)
    {
+      // Precondition
+      UTIL_CHECK(domain_.hasGroup());
+
       // If basis fields are not allocated, peek at field file header to 
       // get unit cell parameters, initialize basis and allocate fields.
       if (!isAllocatedBasis_) {
          readFieldHeader(filename); 
+         UTIL_CHECK(domain_.basis().isInitialized());
          allocateFieldsBasis();
       }
 
@@ -701,11 +705,15 @@ namespace Pspc {
    void System<D>::readWRGrid(const std::string & filename)
    {
 
-      // If basis fields are not allocated, peek at field file header to 
-      // get unit cell parameters, initialize basis and allocate fields.
-      if (!isAllocatedBasis_) {
-         readFieldHeader(filename); 
-         allocateFieldsBasis();
+      if (domain_.hasGroup()) {
+         // If basis fields are not allocated, peek at field file header 
+         // to get unit cell parameters, initialize basis and allocate.
+         if (!isAllocatedBasis_) {
+            readFieldHeader(filename); 
+            if (domain_.basis().isInitialized()) {
+               allocateFieldsBasis();
+            }
+         }
       }
 
       // Read w fields
@@ -721,6 +729,7 @@ namespace Pspc {
    template <int D>
    void System<D>::setWBasis(DArray< DArray<double> > const & fields)
    {
+      UTIL_CHECK(domain_.hasGroup());
       UTIL_CHECK(domain_.basis().isInitialized());
       UTIL_CHECK(isAllocatedBasis_);
       w_.setBasis(fields);
@@ -751,6 +760,7 @@ namespace Pspc {
       UTIL_CHECK(hasMixture_);
       const int nm = mixture_.nMonomer();
       UTIL_CHECK(nm > 0);
+      UTIL_CHECK(domain_.hasGroup());
 
       // If basis fields are not allocated, peek at field file header to 
       // get unit cell parameters, initialize basis and allocate fields.
@@ -792,14 +802,14 @@ namespace Pspc {
    // Unit Cell Modifiers
 
    /*
-   * Set parameters of the system unit cell.
+   * Set the system unit cell.
    */
    template <int D>
    void System<D>::setUnitCell(UnitCell<D> const & unitCell)
    {
       domain_.setUnitCell(unitCell);
       mixture_.setupUnitCell(domain_.unitCell());
-      if (!isAllocatedBasis_) {
+      if (domain_.hasGroup() && !isAllocatedBasis_) {
          allocateFieldsBasis();
       }
    }
@@ -814,7 +824,7 @@ namespace Pspc {
    {
       domain_.setUnitCell(lattice, parameters);
       mixture_.setupUnitCell(domain_.unitCell());
-      if (!isAllocatedBasis_) {
+      if (domain_.hasGroup() && !isAllocatedBasis_) {
          allocateFieldsBasis();
       }
    }
@@ -827,7 +837,7 @@ namespace Pspc {
    {
       domain_.setUnitCell(parameters);
       mixture_.setupUnitCell(domain_.unitCell());
-      if (!isAllocatedBasis_) {
+      if (domain_.hasGroup() && !isAllocatedBasis_) {
          allocateFieldsBasis();
       }
    }
@@ -1262,7 +1272,8 @@ namespace Pspc {
       UTIL_CHECK(isAllocatedGrid_);
       UTIL_CHECK(w_.hasData());
       domain_.fieldIo().writeFieldsRGrid(filename, w_.rgrid(), 
-                                         domain_.unitCell());
+                                         domain_.unitCell(),
+                                         w_.isSymmetric());
    }
 
    /*
@@ -1288,7 +1299,8 @@ namespace Pspc {
       UTIL_CHECK(isAllocatedGrid_);
       //UTIL_CHECK(hasCFields_);
       domain_.fieldIo().writeFieldsRGrid(filename, c_.rgrid(), 
-                                         domain_.unitCell());
+                                         domain_.unitCell(),
+                                         w_.isSymmetric());
    }
 
    /*
@@ -1474,6 +1486,8 @@ namespace Pspc {
    void System<D>::basisToRGrid(const std::string & inFileName,
                                 const std::string & outFileName)
    {
+      UTIL_CHECK(domain_.hasGroup());
+
       // If basis fields are not allocated, peek at field file header to 
       // get unit cell parameters, initialize basis and allocate fields.
       if (!isAllocatedBasis_) {
@@ -1496,6 +1510,8 @@ namespace Pspc {
    void System<D>::rGridToBasis(const std::string & inFileName,
                                 const std::string & outFileName) 
    {
+      UTIL_CHECK(domain_.hasGroup());
+
       // If basis fields are not allocated, peek at field file header to 
       // get unit cell parameters, initialize basis and allocate fields.
       if (!isAllocatedBasis_) {
@@ -1520,7 +1536,7 @@ namespace Pspc {
    {
       // If basis fields are not allocated, peek at field file header to 
       // get unit cell parameters, initialize basis and allocate fields.
-      if (!isAllocatedBasis_) {
+      if (domain_.hasGroup() && !isAllocatedBasis_) {
          readFieldHeader(inFileName); 
          allocateFieldsBasis();
       }
@@ -1545,7 +1561,7 @@ namespace Pspc {
    {
       // If basis fields are not allocated, peek at field file header to 
       // get unit cell parameters, initialize basis and allocate fields.
-      if (!isAllocatedBasis_) {
+      if (domain_.hasGroup() && !isAllocatedBasis_) {
          readFieldHeader(inFileName); 
          allocateFieldsBasis();
       }
@@ -1569,6 +1585,8 @@ namespace Pspc {
    void System<D>::kGridToBasis(const std::string & inFileName,
                                 const std::string& outFileName)
    {
+      UTIL_CHECK(domain_.hasGroup());
+
       // If basis fields are not allocated, peek at field file header to 
       // get unit cell parameters, initialize basis and allocate fields.
       if (!isAllocatedBasis_) {
@@ -1593,6 +1611,8 @@ namespace Pspc {
    void System<D>::basisToKGrid(const std::string & inFileName,
                                 const std::string & outFileName) 
    {
+      UTIL_CHECK(domain_.hasGroup());
+
       // If basis fields are not allocated, peek at field file header to 
       // get unit cell parameters, initialize basis and allocate fields.
       if (!isAllocatedBasis_) {
@@ -1611,12 +1631,15 @@ namespace Pspc {
    }
 
    /*
-   * Convert fields from real-space grid to symmetry-adapted basis format.
+   * Check if r-grid fields have declared space group symmetry.
    */
    template <int D>
-   bool System<D>::checkRGridFieldSymmetry(const std::string & inFileName,
-                                           double epsilon) 
+   bool 
+   System<D>::checkRGridFieldSymmetry(const std::string & inFileName,
+                                      double epsilon) 
    {
+      UTIL_CHECK(domain_.hasGroup());
+
       // If basis fields are not allocated, peek at field file header to 
       // get unit cell parameters, initialize basis and allocate fields.
       if (!isAllocatedBasis_) {
@@ -1649,6 +1672,8 @@ namespace Pspc {
    void System<D>::compare(const DArray< DArray<double> > field1, 
                            const DArray< DArray<double> > field2)
    {
+      UTIL_CHECK(domain_.hasGroup());
+
       BFieldComparison comparison(1);
       comparison.compare(field1,field2);
 
@@ -1717,7 +1742,7 @@ namespace Pspc {
    }
 
    /*
-   * Allocate memory for fields.
+   * Allocate memory for fields in basis format.
    */
    template <int D>
    void System<D>::allocateFieldsBasis()
@@ -1728,6 +1753,7 @@ namespace Pspc {
       UTIL_CHECK(nMonomer > 0);
       UTIL_CHECK(isAllocatedGrid_);
       UTIL_CHECK(!isAllocatedBasis_);
+      UTIL_CHECK(domain_.hasGroup());
       UTIL_CHECK(domain_.basis().isInitialized());
       const int nBasis = domain_.basis().nBasis();
       UTIL_CHECK(nBasis > 0);
@@ -1761,7 +1787,10 @@ namespace Pspc {
       bool isSymmetric;
       domain_.fieldIo().readFieldHeader(file, nMonomer, 
                                         domain_.unitCell(), isSymmetric);
-      // FieldIo::readFieldHeader initializes a basis if needed
+      // Function FieldIo::readFieldHeader initializes a basis if 
+      // hasGroup is true and the header contains a space group
+
+      // Close field file
       file.close();
 
       // Postconditions

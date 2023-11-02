@@ -300,11 +300,6 @@ namespace Pspc {
             }
          }
       }
-      
-      #if 0
-      Log::file() << "-lnQ " << -lnQ<< "\n";
-      #endif
-      
       // lnQ now contains a value per monomer
 
       // Compute field contribution HW
@@ -551,7 +546,7 @@ namespace Pspc {
       Log::file() << "Reading " << filename << std::endl;
       trajectoryReaderPtr->open(filename);
       trajectoryReaderPtr->readHeader();
-      // Read Header
+
       // Main loop over trajectory frames
       Timer timer;
       Log::file() << "Begin main loop" << std::endl;
@@ -561,13 +556,17 @@ namespace Pspc {
          hasFrame = trajectoryReaderPtr->readFrame();
          if (hasFrame) {
             clearData();
+
             // Initialize analyzers 
-            if (iStep_ == min) analyzerManager_.setup();
+            if (iStep_ == min) {
+               analyzerManager_.setup();
+            }
+
             // Sample property values only for iStep >= min
             if (iStep_ >= min) {
                analyzerManager_.sample(iStep_);
                if ((iStep_ % 100) == 0){
-                  Log::file() << "Analyzing steps: " << iStep_ << std::endl;
+                  Log::file() << "Step " << iStep_ << std::endl;
                }
             }
          }

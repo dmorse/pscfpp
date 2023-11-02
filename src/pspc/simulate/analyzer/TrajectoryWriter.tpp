@@ -82,8 +82,13 @@ namespace Pspc
     void TrajectoryWriter<D>::writeFrame(std::ofstream& out, long iStep)
    {  
       out << "i = " << iStep << "\n";
-      system().domain().fieldIo().writeFieldsRGrid(out, system().w().rgrid(), 
-                                        system().domain().unitCell(), false);
+      bool writeHeader = false;
+      bool isSymmetric = false;
+      Domain<D> const & domain = system().domain();
+      FieldIo<D> const & fieldIo = domain.fieldIo();
+      fieldIo.writeFieldsRGrid(out, system().w().rgrid(), 
+                               domain.unitCell(), 
+                               writeHeader, isSymmetric);
       out << "\n";
    }  
    
@@ -91,15 +96,18 @@ namespace Pspc
     template <int D>
     void TrajectoryWriter<D>::writeHeader(std::ofstream& out)
    {  
-      system().domain().fieldIo().writeFieldHeader(out, system().mixture().nMonomer(), 
-                                     system().domain().unitCell());
+      int nMonomer = system().mixture().nMonomer();
+      bool isSymmetric = false;
+      Domain<D> const & domain = system().domain();
+      FieldIo<D> const & fieldIo = domain.fieldIo();
+      fieldIo.writeFieldHeader(out, nMonomer, 
+                               domain.unitCell(), isSymmetric);
       out << "\n";
-                                       
    } 
    
    
    /*
-   * Dump configuration to file
+   * Periodically write a frame to file
    */
    template <int D>
    void TrajectoryWriter<D>::sample(long iStep) 
@@ -111,7 +119,7 @@ namespace Pspc
    }
   
    /*
-   * Read interval and outputFileName. 
+   * Close output file at end of simulation.
    */
    template <int D>
    void TrajectoryWriter<D>::output() 

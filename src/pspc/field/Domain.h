@@ -198,7 +198,7 @@ namespace Pspc
       bool hasGroup() const;
 
       /**
-      * Has a symmetry-adapted Fourier basis been created?
+      * Has a symmetry-adapted Fourier basis been initialized?
       */ 
       bool hasBasis() const;
 
@@ -343,7 +343,7 @@ namespace Pspc
    inline bool Domain<D>::hasGroup() const
    {  return hasGroup_; }
 
-   // Has a symmetry-adapated Fourier basis been constructed?
+   // Has a symmetry-adapted Fourier basis been initialized ?
    template <int D>
    inline bool Domain<D>::hasBasis() const
    {  return basis_.isInitialized(); }

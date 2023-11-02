@@ -280,11 +280,13 @@ namespace Pspc {
       * \param field  field defined on r-space grid
       * \param unitCell  associated crystallographic unit cell
       * \param writeHeader  should a file header be written?
+      * \param isSymmetric  Does the field have a space group symmetry?
       */
       void writeFieldRGrid(std::ostream &out, 
                            RField<D> const & field, 
                            UnitCell<D> const & unitCell,
-                           bool writeHeader = true) const;
+                           bool writeHeader = true,
+                           bool isSymmetric = true) const;
 
       /**
       * Write a single RField (fields on an r-space grid) to a file.
@@ -296,10 +298,12 @@ namespace Pspc {
       * \param filename  name of output file
       * \param field  field defined on r-space grid
       * \param unitCell  associated crystallographic unit cell
+      * \param isSymmetric  Does the field have a space group symmetry?
       */
       void writeFieldRGrid(std::string filename, 
                            RField<D> const & field, 
-                           UnitCell<D> const & unitCell) const;
+                           UnitCell<D> const & unitCell,
+                           bool isSymmetric = true) const;
 
       /**
       * Write array of RField objects (fields on r-space grid) to ostream.
@@ -308,11 +312,13 @@ namespace Pspc {
       * \param fields  array of RField fields (r-space grid)
       * \param unitCell  associated crystallographic unit cell
       * \param writeHeader  flag to write header of file if true
+      * \param isSymmetric  Do fields have a space group symmetry ?
       */
       void writeFieldsRGrid(std::ostream& out, 
                             DArray< RField<D> > const & fields, 
                             UnitCell<D> const & unitCell,
-                            bool writeHeader = true) const;
+                            bool writeHeader = true,
+                            bool isSymmetric = true) const;
 
       /**
       * Write array of RField objects (fields on an r-space grid) to file.
@@ -324,10 +330,12 @@ namespace Pspc {
       * \param filename  name of output file
       * \param fields  array of RField fields (r-space grid)
       * \param unitCell  associated crystallographic unit cell
+      * \param isSymmetric Do fields have a space group symmetry
       */
       void writeFieldsRGrid(std::string filename,
                             DArray< RField<D> > const & fields, 
-                            UnitCell<D> const & unitCell) const;
+                            UnitCell<D> const & unitCell,
+                            bool isSymmetric = true) const;
 
       ///@}
       /// \name Field File IO - Fourier Space (K-Space) Grid Format
@@ -380,7 +388,8 @@ namespace Pspc {
       */
       void writeFieldsKGrid(std::ostream& out, 
                             DArray< RFieldDft<D> > const & fields, 
-                            UnitCell<D> const & unitCell) const;
+                            UnitCell<D> const & unitCell,
+                            bool isSymmetric = true) const;
    
       /**
       * Write array of RFieldDft objects (k-space fields) to a file.
@@ -395,7 +404,8 @@ namespace Pspc {
       */
       void writeFieldsKGrid(std::string filename, 
                            DArray< RFieldDft<D> > const & fields, 
-                           UnitCell<D> const & unitCell) const;
+                           UnitCell<D> const & unitCell,
+                           bool isSymmetric = true) const;
 
       ///@}
       /// \name File IO Utilities
@@ -440,8 +450,8 @@ namespace Pspc {
       * \param isSymmetric Is there a group name in the header? (output)
       */
       void readFieldHeader(std::istream& in, int& nMonomer, 
-                           UnitCell<D> & unitCell, bool & isSymmetric) 
-      const;
+                           UnitCell<D> & unitCell, 
+                           bool & isSymmetric) const;
 
       /**
       * Write header for field file (fortran pscf format)
@@ -449,9 +459,11 @@ namespace Pspc {
       * \param out  output stream (i.e., output file)
       * \param nMonomer  number of monomer types or fields
       * \param unitCell  associated crystallographic unit cell
+      * \param isSymmetric Do the fields have a space group symmetry?
       */
       void writeFieldHeader(std::ostream& out, int nMonomer,
-                            UnitCell<D> const & unitCell) const;
+                            UnitCell<D> const & unitCell,
+                            bool isSymmetric = true) const;
 
       ///@}
       /// \name Field Format Conversion

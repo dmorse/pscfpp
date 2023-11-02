@@ -440,15 +440,17 @@ namespace Pspc {
    void 
    FieldIo<D>::writeFieldsBasis(std::ostream &out, 
                                 DArray<DArray<double> > const &  fields,
-                                UnitCell<D> const & unitCell)
-   const
+                                UnitCell<D> const & unitCell) const
    {
       int nMonomer = fields.capacity();
       UTIL_CHECK(nMonomer > 0);
       UTIL_CHECK(basis().isInitialized());
 
-      // Write header
-      writeFieldHeader(out, nMonomer, unitCell);
+      // Write header (common portion)
+      bool isSymmetric = true;
+      writeFieldHeader(out, nMonomer, unitCell, isSymmetric);
+
+      // Write N_Basis
       int nStar = basis().nStar();
       int nBasis = basis().nBasis();
       out << "N_basis      " << std::endl 
@@ -488,8 +490,7 @@ namespace Pspc {
    template <int D>
    void FieldIo<D>::readFieldsRGrid(std::istream &in,
                                     DArray<RField<D> >& fields,
-                                    UnitCell<D>& unitCell)
-   const
+                                    UnitCell<D>& unitCell) const
    {
       int nMonomer;
       bool isSymmetric;
@@ -632,13 +633,13 @@ namespace Pspc {
    void FieldIo<D>::writeFieldsRGrid(std::ostream &out,
                                      DArray<RField<D> > const & fields,
                                      UnitCell<D> const & unitCell,
-                                     bool writeHeader)
-   const
+                                     bool writeHeader,
+                                     bool isSymmetric) const
    {
       int nMonomer = fields.capacity();
       UTIL_CHECK(nMonomer > 0);
       if (writeHeader){
-         writeFieldHeader(out, nMonomer, unitCell);
+         writeFieldHeader(out, nMonomer, unitCell, isSymmetric);
       }
       out << "mesh " <<  std::endl
           << "           " << mesh().dimensions() << std::endl;
@@ -722,12 +723,12 @@ namespace Pspc {
    template <int D>
    void FieldIo<D>::writeFieldsRGrid(std::string filename, 
                                      DArray< RField<D> > const & fields,
-                                     UnitCell<D> const & unitCell)
-   const
+                                     UnitCell<D> const & unitCell,
+                                     bool isSymmetric) const
    {
       std::ofstream file;
       fileMaster().openOutputFile(filename, file);
-      writeFieldsRGrid(file, fields, unitCell);
+      writeFieldsRGrid(file, fields, unitCell, isSymmetric);
       file.close();
    }
 
@@ -959,11 +960,12 @@ namespace Pspc {
    void FieldIo<D>::writeFieldRGrid(std::ostream &out, 
                                     RField<D> const & field, 
                                     UnitCell<D> const & unitCell,
-                                    bool writeHeader)
+                                    bool writeHeader,
+                                    bool isSymmetric)
    const
    {
       if (writeHeader) {
-         writeFieldHeader(out, 1, unitCell);
+         writeFieldHeader(out, 1, unitCell, isSymmetric);
          out << "mesh " <<  std::endl
              << "           " << mesh().dimensions() << std::endl;
       }
@@ -1035,12 +1037,12 @@ namespace Pspc {
    template <int D>
    void FieldIo<D>::writeFieldRGrid(std::string filename, 
                                     RField<D> const & field, 
-                                    UnitCell<D> const & unitCell)
-   const
+                                    UnitCell<D> const & unitCell,
+                                    bool isSymmetric) const
    {
       std::ofstream file;
       fileMaster().openOutputFile(filename, file);
-      writeFieldRGrid(file, field, unitCell);
+      writeFieldRGrid(file, field, unitCell, isSymmetric);
       file.close();
    }
 
@@ -1124,8 +1126,8 @@ namespace Pspc {
    template <int D>
    void FieldIo<D>::writeFieldsKGrid(std::ostream &out,
                                      DArray<RFieldDft<D> > const & fields,
-                                     UnitCell<D> const & unitCell)
-   const
+                                     UnitCell<D> const & unitCell,
+                                     bool isSymmetric) const
    {
       // Inspect fields array
       int nMonomer = fields.capacity();
@@ -1135,7 +1137,7 @@ namespace Pspc {
       }
 
       // Write header
-      writeFieldHeader(out, nMonomer, unitCell);
+      writeFieldHeader(out, nMonomer, unitCell, isSymmetric);
       out << "mesh " << std::endl 
           << "               " << mesh().dimensions() << std::endl;
 
@@ -1158,12 +1160,12 @@ namespace Pspc {
    template <int D>
    void FieldIo<D>::writeFieldsKGrid(std::string filename, 
                                     DArray< RFieldDft<D> > const & fields,
-                                    UnitCell<D> const & unitCell)
-   const
+                                    UnitCell<D> const & unitCell,
+                                    bool isSymmetric) const
    {
       std::ofstream file;
       fileMaster().openOutputFile(filename, file);
-      writeFieldsKGrid(file, fields, unitCell);
+      writeFieldsKGrid(file, fields, unitCell, isSymmetric);
       file.close();
    }
 
@@ -1219,11 +1221,15 @@ namespace Pspc {
          }
       }
 
-      // Check group name (if any)
+      // Process group name (if any)
       isSymmetric = false;
       if (hasGroup()) {
+
          if (groupNameIn != "") {
+            // Field file header contains a group name
             isSymmetric = true;
+
+            // Check consistency of groupName values
             UTIL_CHECK(groupNamePtr_);
             if (groupNameIn != groupName()) {
                Log::file() << std::endl 
@@ -1233,44 +1239,45 @@ namespace Pspc {
                   << "  Field file header  :" << groupNameIn << "\n";
                UTIL_THROW("Mismatched group names");
             }
+
+            // If no basis exists, construct basis
+            UTIL_CHECK(basisPtr_);
+            if (!basis().isInitialized()) {
+               UTIL_CHECK(groupPtr_);
+               basisPtr_->makeBasis(mesh(), unitCell, group());
+            }
+            UTIL_CHECK(basis().isInitialized());
+
          }
-      } else {
+
+      } else { // if FieldIo<D>::hasGroup() == false
+
          if (groupNameIn != "") {
-            isSymmetric = true;
             Log::file() << std::endl 
                 << "Error - A group name found in a field file header "
                 << "after none was declared in the parameter file.\n";
             UTIL_THROW("Unexpected group name in field file header");
          }
+
       }
 
-      #if 0
-      UTIL_CHECK(groupPtr_);
-      // Check group, read from file if necessary
-      if (group().size() == 1) {
-         if (groupName() != "I") {
-            readGroup(groupName(), group());
-         }
-      }
-      #endif
-
-      // If needed, construct basis
-      UTIL_CHECK(basisPtr_);
-      if (!basis().isInitialized()) {
-         basisPtr_->makeBasis(mesh(), unitCell, group());
-      }
-      UTIL_CHECK(basis().isInitialized());
-      
    }
 
    template <int D>
-   void FieldIo<D>::writeFieldHeader(std::ostream &out, int nMonomer, 
-                                     UnitCell<D> const & unitCell) const
+   void FieldIo<D>::writeFieldHeader(std::ostream &out, 
+                                     int nMonomer, 
+                                     UnitCell<D> const & unitCell,
+                                     bool isSymmetric) const
    {
-      int ver1 = 1;
-      int ver2 = 0;
-      Pscf::Prdc::writeFieldHeader(out, ver1, ver2, unitCell, 
-                                   groupName(), nMonomer);
+      int v1 = 1;
+      int v2 = 0;
+      std::string gname = "";
+      if (isSymmetric) {
+         UTIL_CHECK(hasGroup());
+         gname = groupName();
+      }
+      Pscf::Prdc::writeFieldHeader(out, v1, v2, unitCell, 
+                                   gname, nMonomer);
       // Note: This function is defined in pscf/crystal/UnitCell.tpp
    }
 
