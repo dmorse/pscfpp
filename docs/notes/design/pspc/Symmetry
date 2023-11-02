@@ -5,31 +5,77 @@ Goal: Create a system that makes it convenient to perform any of
     - SCFT with no imposed space group (iteration on a grid)
     - FTMC with no imposed space group
 
-Principles:
+Behaviors:
 
-1) If you want to use a space group you have to declare it in the parameter
-file block for the Domain. If you don't, you can't do SCFT with symmetry.
-The distinction is defined by Domain::hasGroup().
+1) The groupName parameter in the Domain block of the parameter file will
+be optional. If it is present, the group symmetry operations are immediately 
+read from file and Domain::hasGroup() is set true. Any space group that is
+declared in the parameter file is immutable thereafter - you can't change
+the choice of space group after initialization.
 
-2) You can only attempt to read a basis field file if hasGroup == true.
+2) If you want to use a space group for any purpose you have to declare a
+group name in the parameter file. If the group name parameter is absent, 
+you can't do field theoretic Monte Carlo and other operations that don't
+assume the existence of symmetry, but you can't use an SCFT iterature that
+imposes symmetry. 
 
-3) If Domain::hasGroup is true:
+3) If Domain::hasGroup is true (if the parameter file has a space group name):
 
-     - You can read field files in basis format, which must have a head
-       with a space group that matches that declared in the parameter file.
+     - One can read field files in basis format. The header for each such 
+       files must contain a space group name, and that name must match the
+       one declared in the parameter file.
 
      - The presence of a space group in the header of an r-grid or k-grid
        file is optional. If a space group is present, it must match that
-       declared in the parameter file. 
+       declared in the parameter file.  Initially, any space group name
+       declared in the header of such a file will otherwise be ignored, 
+       but we may change that later (see below). 
 
-3) If Domain::hasGroup is false:
+4) If Domain::hasGroup is false:
 
-     - Files in basis format cannot be read.
+     - Files in basis format cannot be read. An Exception will be thrown
+       if you attempt to read a file in basis format after reading a
+       parameter file with no declared space group.
 
      - Files in r-grid and k-grid format may not contain a space group
        in the file header.
 
-4) Possible later extension: The presence of a space group in an r-grid 
-or k-grid file is take to be a guarantee that the file actually has the
-desired space group. This would allow r-grid files to be used to initialize
-file in symmetrized format.
+5) If a W-field file read in basis format, the WFieldContainer isSymmetric
+flag is set to true to indicate that the field has a known symmetry. C fields
+that are computed from a symmetric w-field are also assumed to be symmetric.
+Knowledge of whether of a field is symmetric is kept track of, and can be
+back to how it was input.
+
+6) Initially, any W field that is input in r-grid or k-grid format will 
+be assumed to have no symmetry (i.e., WFieldContainer::isSymmetric is 
+set false on input). We can consider changing this later by taking the 
+field to be symmetric iff the header has a declared space group. A bit
+of thought is needed to decide if we should just assume the declaration
+to be correct, or impose automatic double checks. 
+
+7) When a W or C field is written to a file in r-grid or k-grid format,
+a space group will be written to the header if and only if the field is
+known to be symmetric (i.e., if isSymmetric == true for the associated
+w field). This implies, among other things, that header files for field 
+theoretic Monte Carlo (FTMC) trajectory and configuration output files 
+will never contain a space group name. 
+
+8) Normal usage for FTMC simulations will be that there is no space group 
+name in either the parameter file or in the header of any input or output 
+field file. FTMC and symmetric SCFT simulations will not normally be 
+performed in the same command file. 
+
+9) The Pspc::Iterator and Pspg::Iterator bases classes have a protected
+boolean variable isSymmetric_ and a public function isSymmetric() that
+returns isSymmetric_. This flat is set true in Iterator classes that 
+update fields using the symmetry-adapted Fourier basis and false in 
+classes that update values on a r-grid or k-grid without imposing any 
+symmetry. The System::iterate function checks that the a symmetric iterator 
+is only applied to fields for which WFieldContainer::isSymmetric == true. 
+An iterator that does not apply symmetry exists for pscf_pg, and we could
+create one for pscf_pc if desired anyone wanted to do large unit cell
+calculations on CPU hardware. 
+
+10) When Domain::isSymmetric is false, attempting to construct an Iterator 
+that is symmetric will cause an Exception to be thrown.
+
