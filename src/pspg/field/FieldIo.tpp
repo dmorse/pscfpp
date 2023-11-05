@@ -26,10 +26,11 @@
 #include <cmath>
 
 namespace Pscf {
-namespace Pspg
-{
+namespace Pspg {
 
    using namespace Util;
+   using namespace Pscf::Prdc;
+   using namespace Pscf::Prdc::Cuda;
 
    /*
    * Constructor.
@@ -39,6 +40,7 @@ namespace Pspg
     : meshPtr_(0),
       fftPtr_(0),
       latticePtr_(0),
+      hasGroupPtr_(0),
       groupNamePtr_(0),
       groupPtr_(0),
       basisPtr_(0),
@@ -55,23 +57,27 @@ namespace Pspg
    /*
    * Get and store addresses of associated objects.
    */
-   template <int D>
-   void FieldIo<D>::associate(Mesh<D> const & mesh,
-                              FFT<D> const & fft,
-                              typename UnitCell<D>::LatticeSystem & lattice,
-                              std::string& groupName,
-                              SpaceGroup<D>& group,
-                              Basis<D>& basis,
-                              FileMaster const & fileMaster)
+   template <int D> void 
+   FieldIo<D>::associate(Mesh<D> const & mesh,
+                         FFT<D> const & fft,
+                         typename UnitCell<D>::LatticeSystem & lattice,
+                         bool const & hasGroup,
+                         std::string const & groupName,
+                         SpaceGroup<D> const & group,
+                         Basis<D>& basis,
+                         FileMaster const & fileMaster)
    {
       meshPtr_ = &mesh;
       fftPtr_ = &fft;
       latticePtr_ = &lattice;
+      hasGroupPtr_ = &hasGroup;
       groupNamePtr_ = &groupName;
       groupPtr_ = &group;
       basisPtr_ = &basis;
       fileMasterPtr_ = &fileMaster;
    }
+
+   // Symmetry-Adapted Basis Format IO
 
    template <int D>
    void FieldIo<D>::readFieldsBasis(std::istream& in,
@@ -79,11 +85,17 @@ namespace Pspg
                                     UnitCell<D>& unitCell)
    const
    {
+      // Precondition
+      UTIL_CHECK(hasGroup());
+
       // Read generic part of field file header.
       // Set nMonomer to number of field components in file
       int nMonomer;
-      FieldIo<D>::readFieldHeader(in, nMonomer, unitCell);
+      bool isSymmetric;
+      FieldIo<D>::readFieldHeader(in, nMonomer, unitCell, isSymmetric);
       UTIL_CHECK(nMonomer > 0);
+      UTIL_CHECK(isSymmetric);
+      UTIL_CHECK(basis().isInitialized());
 
       // Read number of stars from field file into StarIn
       std::string label;
@@ -326,17 +338,19 @@ namespace Pspg
 
    }
 
-
    template <int D>
    void FieldIo<D>::readFieldsBasis(std::string filename,
                                     DArray< DArray<double> >& fields,
                                     UnitCell<D>& unitCell)
    const
    {
-       std::ifstream file;
-       fileMaster().openInputFile(filename, file);
-       readFieldsBasis(file, fields, unitCell);
-       file.close();
+      // Precondition
+      UTIL_CHECK(hasGroup());
+
+      std::ifstream file;
+      fileMaster().openInputFile(filename, file);
+      readFieldsBasis(file, fields, unitCell);
+      file.close();
    }
 
    template <int D>
@@ -346,12 +360,15 @@ namespace Pspg
                                 UnitCell<D> const & unitCell)
    const
    {
+      // Precondition
       int nMonomer = fields.capacity();
       UTIL_CHECK(nMonomer > 0);
+      UTIL_CHECK(hasGroup());
       UTIL_CHECK(basis().isInitialized());
 
-      // Write header
-      writeFieldHeader(out, nMonomer, unitCell);
+      // Write header (common portion)
+      bool isSymmetric = true;
+      writeFieldHeader(out, nMonomer, unitCell, isSymmetric);
       out << "N_basis      " << std::endl
           << "             " << basis().nBasis() << std::endl;
 
@@ -383,14 +400,17 @@ namespace Pspg
    void 
    FieldIo<D>::writeFieldsBasis(std::string filename,
                                 DArray< DArray<double> > const& fields,
-                                UnitCell<D> const & unitCell)
-   const
+                                UnitCell<D> const & unitCell) const
    {
-       std::ofstream file;
-       fileMaster().openOutputFile(filename, file);
-       writeFieldsBasis(file, fields, unitCell);
-       file.close();
+      // Precondition
+      UTIL_CHECK(hasGroup());
+      std::ofstream file;
+      fileMaster().openOutputFile(filename, file);
+      writeFieldsBasis(file, fields, unitCell);
+      file.close();
    }
+
+   // R-Grid Field Format
 
    template <int D>
    void FieldIo<D>::readFieldsRGrid(std::istream &in,
@@ -400,7 +420,8 @@ namespace Pspg
 
       // Read generic part of field header
       int nMonomer;
-      FieldIo<D>::readFieldHeader(in, nMonomer, unitCell);
+      bool isSymmetric;
+      FieldIo<D>::readFieldHeader(in, nMonomer, unitCell, isSymmetric);
       UTIL_CHECK(nMonomer > 0);
       UTIL_CHECK(nMonomer == fields.capacity());
 
@@ -546,89 +567,14 @@ namespace Pspg
    }
 
    template <int D>
-   void FieldIo<D>::writeFieldsRGrid(std::ostream &out,
-                                     DArray<RField<D> > const& fields,
-                                     UnitCell<D> const & unitCell,
-                                     bool writeHeader)
-   const
-   {
-      int nMonomer = fields.capacity();
-      UTIL_CHECK(nMonomer > 0);
-      if (writeHeader){
-         writeFieldHeader(out, nMonomer, unitCell);
-      }
-      out << "mesh " <<  std::endl
-          << "           " << mesh().dimensions() << std::endl;
-
-      DArray<cudaReal*> temp_out;
-      temp_out.allocate(nMonomer);
-      for (int i = 0; i < nMonomer; ++i) {
-         temp_out[i] = new cudaReal[mesh().size()];
-         cudaMemcpy(temp_out[i], fields[i].cField(),
-                    mesh().size() * sizeof(cudaReal), cudaMemcpyDeviceToHost);
-      }
-
-      IntVec<D> offsets;
-      offsets[D - 1] = 1;
-      for(int i = D - 1 ; i > 0; --i ) {
-         offsets[i - 1] = offsets[i] * mesh().dimension(i);
-      }
-      IntVec<D> position;
-      for(int i = 0; i < D; ++i) {
-         position[i] = 0;
-      }
-
-      int rank = 0;
-      int positionId;
-      for(int i = 0; i < mesh().size(); i++) {
-         rank = 0;
-         for(int dim = 0; dim < D; ++dim) {
-            rank += offsets[dim] * position[dim];
-         }
-         for(int k = 0; k < nMonomer; ++k) {
-            out << "  " << Dbl(temp_out[k][rank], 18, 15);
-         }
-         out<<'\n';
-         //add position
-         positionId = 0;
-         while( positionId < D) {
-            position[positionId]++;
-            if ( position[positionId] == mesh().dimension(positionId) ) {
-               position[positionId] = 0;
-               positionId++;
-               continue;
-            }
-            break;
-         }
-      }
-
-      for(int i = 0; i < nMonomer; ++i) {
-         delete[] temp_out[i];
-         temp_out[i] = nullptr;
-      }
-
-   }
-
-   template <int D>
-   void FieldIo<D>::writeFieldsRGrid(std::string filename,
-                                     DArray< RField<D> > const & fields,
-                                     UnitCell<D> const & unitCell)
-   const
-   {
-      std::ofstream file;
-      fileMaster().openOutputFile(filename, file);
-      writeFieldsRGrid(file, fields, unitCell);
-      file.close();
-   }
-
-   template <int D>
    void FieldIo<D>::readFieldRGrid(std::istream &in,
                                    RField<D> &field,
                                    UnitCell<D>& unitCell)
    const
    {
       int nMonomer;
-      FieldIo<D>::readFieldHeader(in, nMonomer, unitCell);
+      bool isSymmetric;
+      FieldIo<D>::readFieldHeader(in, nMonomer, unitCell, isSymmetric);
       UTIL_CHECK(nMonomer == 1);
 
       std::string label;
@@ -697,17 +643,93 @@ namespace Pspg
       readFieldRGrid(file, field, unitCell);
       file.close();
    }
-   
+
+   template <int D>
+   void FieldIo<D>::writeFieldsRGrid(std::ostream &out,
+                                     DArray<RField<D> > const& fields,
+                                     UnitCell<D> const & unitCell,
+                                     bool writeHeader,
+                                     bool isSymmetric) const
+   {
+      int nMonomer = fields.capacity();
+      UTIL_CHECK(nMonomer > 0);
+      if (writeHeader){
+         writeFieldHeader(out, nMonomer, unitCell, isSymmetric);
+      }
+      out << "mesh " <<  std::endl
+          << "           " << mesh().dimensions() << std::endl;
+
+      DArray<cudaReal*> temp_out;
+      temp_out.allocate(nMonomer);
+      for (int i = 0; i < nMonomer; ++i) {
+         temp_out[i] = new cudaReal[mesh().size()];
+         cudaMemcpy(temp_out[i], fields[i].cField(),
+                    mesh().size() * sizeof(cudaReal), cudaMemcpyDeviceToHost);
+      }
+
+      IntVec<D> offsets;
+      offsets[D - 1] = 1;
+      for(int i = D - 1 ; i > 0; --i ) {
+         offsets[i - 1] = offsets[i] * mesh().dimension(i);
+      }
+      IntVec<D> position;
+      for(int i = 0; i < D; ++i) {
+         position[i] = 0;
+      }
+
+      int rank = 0;
+      int positionId;
+      for(int i = 0; i < mesh().size(); i++) {
+         rank = 0;
+         for(int dim = 0; dim < D; ++dim) {
+            rank += offsets[dim] * position[dim];
+         }
+         for(int k = 0; k < nMonomer; ++k) {
+            out << "  " << Dbl(temp_out[k][rank], 18, 15);
+         }
+         out<<'\n';
+         //add position
+         positionId = 0;
+         while( positionId < D) {
+            position[positionId]++;
+            if ( position[positionId] == mesh().dimension(positionId) ) {
+               position[positionId] = 0;
+               positionId++;
+               continue;
+            }
+            break;
+         }
+      }
+
+      for(int i = 0; i < nMonomer; ++i) {
+         delete[] temp_out[i];
+         temp_out[i] = nullptr;
+      }
+
+   }
+
+   template <int D>
+   void FieldIo<D>::writeFieldsRGrid(std::string filename,
+                                     DArray< RField<D> > const & fields,
+                                     UnitCell<D> const & unitCell,
+                                     bool isSymmetric) const
+   {
+      std::ofstream file;
+      fileMaster().openOutputFile(filename, file);
+      writeFieldsRGrid(file, fields, unitCell, isSymmetric);
+      file.close();
+   }
+
    template <int D>
    void FieldIo<D>::writeFieldRGrid(std::ostream &out,
                                     RField<D> const & field,
                                     UnitCell<D> const & unitCell,
-                                    bool writeHeader)
-   const
+                                    bool writeHeader,
+                                    bool isSymmetric) const
    {
 
       if (writeHeader) {
-         writeFieldHeader(out, 1, unitCell);
+         writeFieldHeader(out, 1, unitCell, isSymmetric);
          out << "mesh " <<  std::endl
              << "           " << mesh().dimensions() << std::endl;
       }
@@ -755,12 +777,13 @@ namespace Pspg
    template <int D>
    void FieldIo<D>::writeFieldRGrid(std::string filename,
                                     RField<D> const & field,
-                                    UnitCell<D> const & unitCell)
+                                    UnitCell<D> const & unitCell,
+                                    bool isSymmetric)
    const
    {
       std::ofstream file;
       fileMaster().openOutputFile(filename, file);
-      writeFieldRGrid(file, field, unitCell);
+      writeFieldRGrid(file, field, unitCell, isSymmetric);
       file.close();
    }
 
@@ -773,7 +796,8 @@ namespace Pspg
 
       // Read header
       int nMonomer;
-      readFieldHeader(in, nMonomer, unitCell);
+      bool isSymmetric;
+      FieldIo<D>::readFieldHeader(in, nMonomer, unitCell, isSymmetric);
       UTIL_CHECK(nMonomer > 0);
       UTIL_CHECK(nMonomer == fields.capacity());
       std::string label;
@@ -841,14 +865,14 @@ namespace Pspg
    template <int D>
    void FieldIo<D>::writeFieldsKGrid(std::ostream &out,
                                      DArray<RFieldDft<D> > const& fields,
-                                     UnitCell<D> const & unitCell)
-   const
+                                     UnitCell<D> const & unitCell,
+                                     bool isSymmetric) const
    {
       int nMonomer = fields.capacity();
       UTIL_CHECK(nMonomer > 0);
 
       // Write header
-      writeFieldHeader(out, nMonomer, unitCell);
+      writeFieldHeader(out, nMonomer, unitCell, isSymmetric);
       out << "mesh " << std::endl
           << "               " << mesh().dimensions() << std::endl;
 
@@ -889,149 +913,114 @@ namespace Pspg
    template <int D>
    void FieldIo<D>::writeFieldsKGrid(std::string filename,
                                      DArray< RFieldDft<D> > const & fields,
-                                     UnitCell<D> const & unitCell)
+                                     UnitCell<D> const & unitCell,
+                                     bool isSymmetric)
    const
    {
       std::ofstream file;
       fileMaster().openOutputFile(filename, file);
-      writeFieldsKGrid(file, fields, unitCell);
+      writeFieldsKGrid(file, fields, unitCell, isSymmetric);
       file.close();
    }
 
-   #if 0
-   template <int D>
-   void FieldIo<D>::readFieldHeader(std::istream& in,
-                                    int& nMonomer,
-                                    UnitCell<D>& unitCell) const
-   {
-      // Preconditions
-      UTIL_CHECK(latticePtr_);
-      UTIL_CHECK(groupNamePtr_);
-
-      int ver1, ver2;
-      std::string groupNameIn;
-      Pscf::Prdc::readFieldHeader(in, ver1, ver2, unitCell, groupNameIn, nMonomer);
-      // Note:: Function definition in pscf/crystal/UnitCell.tpp
-
-      // Check data from header
-      UTIL_CHECK(ver1 == 1);
-      UTIL_CHECK(ver2 == 0);
-      UTIL_CHECK(unitCell.isInitialized());
-      UTIL_CHECK(unitCell.lattice() != UnitCell<D>::Null);
-      UTIL_CHECK(unitCell.nParameter() > 0);
-
-      UTIL_CHECK(nMonomer > 0);
-      if (groupNameIn != groupName()) {
-         Log::file() << std::endl
-             << "Warning - "
-             << "Mismatched group names in FieldIo::readFieldHeader \n"
-             << "  FieldIo::groupName   :" << groupName() << "\n"
-             << "  Field file groupName :" << groupNameIn << "\n";
-      }
-
-   }
-   #endif
-
    /*
-   * Read common part of field header.
+   * Read common part of field header. 
    *
-   * Return the number of monomers in the file.
-   * Set the unitCell.
    * If necessary, make the Basis.
    */
    template <int D>
    void FieldIo<D>::readFieldHeader(std::istream& in, 
                                     int& nMonomer,
-                                    UnitCell<D>& unitCell) 
+                                    UnitCell<D>& unitCell,
+                                    bool& isSymmetric) 
    const
    {
       // Preconditions
       UTIL_CHECK(latticePtr_);
-      UTIL_CHECK(groupNamePtr_);
+      UTIL_CHECK(lattice() != UnitCell<D>::Null);
       if (unitCell.lattice() == UnitCell<D>::Null) {
          UTIL_CHECK(unitCell.nParameter() == 0);
       } else {
          UTIL_CHECK(unitCell.nParameter() > 0);
-         if (lattice() != UnitCell<D>::Null) {
-            UTIL_CHECK(unitCell.lattice() == lattice());
-         }
+         UTIL_CHECK(unitCell.lattice() == lattice());
       }
 
       // Read field header to set unitCell, groupNameIn, nMonomer
       int ver1, ver2;
       std::string groupNameIn;
-
-      Pscf::Prdc::readFieldHeader(in, ver1, ver2, unitCell, 
-                            groupNameIn, nMonomer);
-      // Note: Function definition in pscf/crystal/UnitCell.tpp
+      Pscf::Prdc::readFieldHeader(in, ver1, ver2, unitCell,
+                                  groupNameIn, nMonomer);
+      // Note: Function definition in prdc/crystal/UnitCell.tpp
 
       // Checks of data from header
       UTIL_CHECK(ver1 == 1);
-      UTIL_CHECK(ver2 == 0);
+      //UTIL_CHECK(ver2 == 0);
       UTIL_CHECK(unitCell.isInitialized());
-      UTIL_CHECK(unitCell.lattice() != UnitCell<D>::Null);
       UTIL_CHECK(unitCell.nParameter() > 0);
 
-      // Validate or initialize lattice type
-      if (lattice() == UnitCell<D>::Null) {
-         lattice() = unitCell.lattice();
-      } else {
-         if (lattice() != unitCell.lattice()) {
-            Log::file() << std::endl 
-               << "Error - "
-               << "Mismatched lattice types, FieldIo::readFieldHeader:\n" 
-               << "  FieldIo::lattice  :" << lattice() << "\n"
-               << "  Unit cell lattice :" << unitCell.lattice() 
-               << "\n";
-            UTIL_THROW("Mismatched lattice types");
-         }
+      // Validate lattice type
+      if (lattice() != unitCell.lattice()) {
+         Log::file() << std::endl 
+            << "Error - "
+            << "Mismatched lattice types, FieldIo::readFieldHeader:\n" 
+            << "  FieldIo::lattice  :" << lattice() << "\n"
+            << "  Unit cell lattice :" << unitCell.lattice() 
+            << "\n";
+         UTIL_THROW("Mismatched lattice types");
       }
 
-      // Validate or initialize group name
-      if (groupName() == "") {
-         groupName() = groupNameIn;
-      } else {
-         if (groupNameIn != groupName()) {
-            Log::file() << std::endl 
-               << "Error - "
-               << "Mismatched group names in FieldIo::readFieldHeader:\n" 
-               << "  FieldIo::groupName :" << groupName() << "\n"
-               << "  Field file header  :" << groupNameIn << "\n";
-            UTIL_THROW("Mismatched group names");
-         }
+      // Check for non-empty group name in header
+      isSymmetric = false;
+      if (groupNameIn != "") {
+         isSymmetric = true;
       }
 
-      // Check group, read from file if necessary
-      UTIL_CHECK(groupPtr_);
-      if (group().size() == 1) {
-         if (groupName() != "I") {
-            readGroup(groupName(), group());
-         }
-      }
+      // Validate group name, if any
+      if (hasGroup()) {
 
-      // Check basis, construct if not initialized
-      UTIL_CHECK(basisPtr_);
-      if (!basis().isInitialized()) {
-         basisPtr_->makeBasis(mesh(), unitCell, group());
-      }
-      UTIL_CHECK(basis().isInitialized());
+         if (isSymmetric) {
+
+            // Check consistency of groupName values
+            UTIL_CHECK(groupNamePtr_);
+            if (groupNameIn != groupName()) {
+               Log::file() << std::endl 
+                  << "Error - Mismatched group names in "
+                  << "function FieldIo<D>::readFieldHeader:\n" 
+                  << "  FieldIo::groupName :" << groupName() << "\n"
+                  << "  Field file header  :" << groupNameIn << "\n";
+               UTIL_THROW("Mismatched group names");
+            }
+
+            // If has group but no basis, construct the basis
+            UTIL_CHECK(basisPtr_);
+            if (!basis().isInitialized()) {
+               UTIL_CHECK(groupPtr_);
+               basisPtr_->makeBasis(mesh(), unitCell, group());
+            }
+            UTIL_CHECK(basis().isInitialized());
+
+         }
+
+      } 
       
    }
-
 
    template <int D>
    void FieldIo<D>::writeFieldHeader(std::ostream &out,
                                      int nMonomer,
-                                     UnitCell<D> const & unitCell) const
+                                     UnitCell<D> const & unitCell,
+                                     bool isSymmetric) const
    {
-      out << "format  1   0" <<  std::endl;
-      out << "dim" <<  std::endl
-          << "          " << D << std::endl;
-      writeUnitCellHeader(out, unitCell);
-      out << "group_name" << std::endl
-          << "          " << groupName() <<  std::endl;
-      out << "N_monomer"  << std::endl
-          << "          " << nMonomer << std::endl;
+      int v1 = 1;
+      int v2 = 0;
+      std::string gname = "";
+      if (isSymmetric) {
+         UTIL_CHECK(hasGroup());
+         gname = groupName();
+      }
+      Pscf::Prdc::writeFieldHeader(out, v1, v2, unitCell,
+                                   gname, nMonomer);
+      // Note: Function defined in prdc/crystal/UnitCell.tpp
    }
 
    template <int D>
@@ -1361,7 +1350,6 @@ namespace Pspg
 
       // Deallocate arrays (clean up)
       delete[] dft_in;
-
    }
 
    template <int D>

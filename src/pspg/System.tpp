@@ -255,8 +255,8 @@ namespace Pspg
       // Read the Domain{ ... } block
       readParamComposite(in, domain_);
 
-      mixture().setDiscretization(mesh(), fft());
-      mixture().setupUnitCell(unitCell());
+      mixture().setDiscretization(domain_.mesh(), fft());
+      mixture().setupUnitCell(domain_.unitCell());
       UTIL_CHECK(domain_.mesh().size() > 0);
       UTIL_CHECK(domain_.unitCell().nParameter() > 0);
       UTIL_CHECK(domain_.unitCell().lattice() != UnitCell<D>::Null);
@@ -557,6 +557,9 @@ namespace Pspg
    template <int D>
    void System<D>::readWBasis(const std::string & filename)
    {
+      // Precondition
+      UTIL_CHECK(domain_.hasGroup());
+
       // If basis fields are not allocated, peek at field file header to 
       // get unit cell parameters, initialize basis and allocate fields.
       if (!isAllocatedBasis_) {
@@ -576,11 +579,14 @@ namespace Pspg
    template <int D>
    void System<D>::readWRGrid(const std::string & filename)
    {
-      // If basis fields are not allocated, peek at field file header to 
-      // get unit cell parameters, initialize basis and allocate fields.
-      if (!isAllocatedBasis_) {
-         readFieldHeader(filename);  
-         allocateFieldsBasis();  
+      if (domain_.hasGroup()) {
+         // If basis fields are not allocated, peek at field file header 
+         // to get unit cell parameters, initialize basis and allocate.
+         if (!isAllocatedBasis_) {
+            readFieldHeader(filename);  
+            UTIL_CHECK(domain_.basis().isInitialized());
+            allocateFieldsBasis();  
+         }
       }
 
       w_.readRGrid(filename, domain_.unitCell());
@@ -597,6 +603,7 @@ namespace Pspg
    template <int D>
    void System<D>::setWBasis(DArray< DArray<double> > const & fields)
    {
+      UTIL_CHECK(domain_.hasGroup());
       UTIL_CHECK(domain_.basis().isInitialized());
       UTIL_CHECK(isAllocatedBasis_);
       w_.setBasis(fields);
@@ -639,6 +646,7 @@ namespace Pspg
       UTIL_CHECK(hasMixture_);
       const int nMonomer = mixture_.nMonomer();
       UTIL_CHECK(nMonomer > 0);
+      UTIL_CHECK(domain_.hasGroup());
 
       // If basis fields are not allocated, peek at field file header to 
       // get unit cell parameters, initialize basis and allocate fields.
@@ -696,7 +704,7 @@ namespace Pspg
    {
       domain_.setUnitCell(unitCell);
       mixture_.setupUnitCell(unitCell, domain_.waveList());
-      if (!isAllocatedBasis_) {
+      if (domain_.hasGroup() && !isAllocatedBasis_) {
          allocateFieldsBasis();
       }
    }
@@ -711,7 +719,7 @@ namespace Pspg
    {
       domain_.setUnitCell(lattice, parameters);
       mixture_.setupUnitCell(domain_.unitCell(), domain_.waveList());
-      if (!isAllocatedBasis_) {
+      if (domain_.hasGroup() && !isAllocatedBasis_) {
          allocateFieldsBasis();
       }
    }
@@ -724,7 +732,7 @@ namespace Pspg
    {
       domain_.setUnitCell(parameters);
       mixture_.setupUnitCell(domain_.unitCell(), domain_.waveList());
-      if (!isAllocatedBasis_) {
+      if (domain_.hasGroup() && !isAllocatedBasis_) {
          allocateFieldsBasis();
       }
    }
@@ -875,7 +883,7 @@ namespace Pspg
       }
 
       int nm  = mixture().nMonomer();
-      int nx = mesh().size();
+      int nx = domain_.mesh().size();
 
       // GPU resources
       int nBlocks, nThreads;
@@ -1040,10 +1048,10 @@ namespace Pspg
       }
    
       out << "cellParams:" << std::endl;
-      for (int i = 0; i < unitCell().nParameter(); ++i) {
+      for (int i = 0; i < domain_.unitCell().nParameter(); ++i) {
          out << Int(i, 5)
              << "  " 
-             << Dbl(unitCell().parameter(i), 18, 11)
+             << Dbl(domain_.unitCell().parameter(i), 18, 11)
              << std::endl;
       }
       out << std::endl;
@@ -1057,7 +1065,7 @@ namespace Pspg
    {
       UTIL_CHECK(w_.hasData());
       UTIL_CHECK(w_.isSymmetric());
-      fieldIo().writeFieldsBasis(filename, w_.basis(), unitCell());
+      fieldIo().writeFieldsBasis(filename, w_.basis(), domain_.unitCell());
    }
 
    /*
@@ -1067,7 +1075,9 @@ namespace Pspg
    void System<D>::writeWRGrid(const std::string & filename) const
    {
       UTIL_CHECK(w_.hasData());
-      fieldIo().writeFieldsRGrid(filename, w_.rgrid(), unitCell());
+      fieldIo().writeFieldsRGrid(filename, w_.rgrid(), 
+                                 domain_.unitCell(),
+                                 w_.isSymmetric());
    }
 
    /*
@@ -1078,7 +1088,7 @@ namespace Pspg
    {
       UTIL_CHECK(hasCFields_);
       UTIL_CHECK(w_.isSymmetric());
-      fieldIo().writeFieldsBasis(filename, c_.basis(), unitCell());
+      fieldIo().writeFieldsBasis(filename, c_.basis(), domain_.unitCell());
    }
 
    /*
@@ -1088,12 +1098,14 @@ namespace Pspg
    void System<D>::writeCRGrid(const std::string & filename) const
    {
       UTIL_CHECK(hasCFields_);
-      fieldIo().writeFieldsRGrid(filename, c_.rgrid(), unitCell());
+      fieldIo().writeFieldsRGrid(filename, c_.rgrid(), 
+                                 domain_.unitCell(),
+                                 w_.isSymmetric());
    }
 
    /*
-   * Write all concentration fields in real space (r-grid) format, for each
-   * block (or solvent) individually rather than for each species.
+   * Write all concentration fields in real space (r-grid) format, for 
+   * each block (or solvent) individually rather than for each species.
    */
    template <int D>
    void System<D>::writeBlockCRGrid(const std::string & filename) const
@@ -1105,12 +1117,14 @@ namespace Pspg
       blockCFields.allocate(mixture_.nSolvent() + mixture_.nBlock());
       int n = blockCFields.capacity();
       for (int i = 0; i < n; i++) {
-         blockCFields[i].allocate(mesh().dimensions());
+         blockCFields[i].allocate(domain_.mesh().dimensions());
       }
 
       // Get data from Mixture and write to file
       mixture_.createBlockCRGrid(blockCFields);
-      fieldIo().writeFieldsRGrid(filename, blockCFields, unitCell());
+      fieldIo().writeFieldsRGrid(filename, blockCFields, 
+                                 domain_.unitCell(),
+                                 w_.isSymmetric());
    }
 
    /*
@@ -1132,10 +1146,13 @@ namespace Pspg
       Propagator<D> const& 
           propagator = polymer.propagator(blockId, directionId);
       RField<D> field;
-      field.allocate(mesh().size());
+      field.allocate(domain_.mesh().size());
       cudaMemcpy(field.cField(), propagator.q(segmentId),
-               mesh().size() * sizeof(cudaReal), cudaMemcpyDeviceToDevice);
-      fieldIo().writeFieldRGrid(filename, field, unitCell());
+                 domain_.mesh().size() * sizeof(cudaReal), 
+                 cudaMemcpyDeviceToDevice);
+      fieldIo().writeFieldRGrid(filename, field, 
+                                domain_.unitCell(),
+                                w_.isSymmetric());
    }
 
    /*
@@ -1156,11 +1173,13 @@ namespace Pspg
       Propagator<D> const& 
           propagator = polymer.propagator(blockId, directionId);
       RField<D> field;
-      field.allocate(mesh().size());
+      field.allocate(domain_.mesh().size());
       cudaMemcpy(field.cField(), propagator.tail(),
-                 mesh().size()*sizeof(cudaReal), 
+                 domain_.mesh().size()*sizeof(cudaReal), 
                  cudaMemcpyDeviceToDevice);
-      fieldIo().writeFieldRGrid(filename, field, unitCell());
+      fieldIo().writeFieldRGrid(filename, field, 
+                                domain_.unitCell(),
+                                w_.isSymmetric());
    }
 
    /*
@@ -1187,22 +1206,23 @@ namespace Pspg
       fileMaster_.openOutputFile(filename, file);
 
       // Write header
-      fieldIo().writeFieldHeader(file, 1, unitCell());
+      fieldIo().writeFieldHeader(file, 1, domain_.unitCell(), w_.isSymmetric());
       file << "ngrid" << std::endl
-           << "          " << mesh().dimensions() << std::endl
+           << "          " << domain_.mesh().dimensions() << std::endl
            << "nslice"    << std::endl
            << "          " << ns << std::endl;
 
       // Write data
       RField<D> field;
-      field.allocate(mesh().size());
+      field.allocate(domain_.mesh().size());
       bool hasHeader = false;
       for (int i = 0; i < ns; ++i) {
           file << "slice " << i << std::endl;
           cudaMemcpy(field.cField(), propagator.q(i),
-                     mesh().size() * sizeof(cudaReal), 
+                     domain_.mesh().size() * sizeof(cudaReal), 
                      cudaMemcpyDeviceToDevice);
-          fieldIo().writeFieldRGrid(file, field, unitCell(), hasHeader);
+          fieldIo().writeFieldRGrid(file, field, 
+                                    domain_.unitCell(), hasHeader);
       }
    }
 
@@ -1241,11 +1261,13 @@ namespace Pspg
    template <int D>
    void System<D>::writeStars(const std::string & filename) const
    {
+      UTIL_CHECK(domain_.hasGroup());
       UTIL_CHECK(domain_.basis().isInitialized());
       std::ofstream outFile;
       fileMaster_.openOutputFile(filename, outFile);
+      bool isSymmetric = true;
       fieldIo().writeFieldHeader(outFile, mixture_.nMonomer(),
-                                 unitCell());
+                                 domain_.unitCell(), isSymmetric);
       basis().outputStars(outFile);
    }
 
@@ -1255,11 +1277,13 @@ namespace Pspg
    template <int D>
    void System<D>::writeWaves(const std::string & filename) const
    {
+      UTIL_CHECK(domain_.hasGroup());
       UTIL_CHECK(domain_.basis().isInitialized());
       std::ofstream outFile;
       fileMaster_.openOutputFile(filename, outFile);
+      bool isSymmetric = true;
       fieldIo().writeFieldHeader(outFile, mixture_.nMonomer(), 
-                                 unitCell());
+                                 domain_.unitCell(), isSymmetric);
       basis().outputWaves(outFile);
    }
 
@@ -1269,6 +1293,7 @@ namespace Pspg
    template <int D>
    void System<D>::writeGroup(const std::string & filename) const
    {  
+      UTIL_CHECK(domain_.hasGroup());
       Pscf::Prdc::writeGroup(filename, domain_.group()); 
    }
 
@@ -1281,6 +1306,9 @@ namespace Pspg
    void System<D>::basisToRGrid(const std::string & inFileName,
                                 const std::string & outFileName)
    {
+      // Precondition
+      UTIL_CHECK(domain_.hasGroup());
+
       // If basis fields are not allocated, peek at field file header to 
       // get unit cell parameters, initialize basis and allocate fields.
       if (!isAllocatedBasis_) {
@@ -1303,6 +1331,9 @@ namespace Pspg
    void System<D>::rGridToBasis(const std::string & inFileName,
                                 const std::string & outFileName)
    {
+      // Precondition
+      UTIL_CHECK(domain_.hasGroup());
+
       // If basis fields are not allocated, peek at field file header to 
       // get unit cell parameters, initialize basis and allocate fields.
       if (!isAllocatedBasis_) {
@@ -1374,6 +1405,9 @@ namespace Pspg
    void System<D>::kGridToBasis(const std::string & inFileName,
                                 const std::string& outFileName)
    {
+      // Precondition
+      UTIL_CHECK(domain_.hasGroup());
+
       // If basis fields are not allocated, peek at field file header to 
       // get unit cell parameters, initialize basis and allocate fields.
       if (!isAllocatedBasis_) {
@@ -1396,6 +1430,9 @@ namespace Pspg
    void System<D>::basisToKGrid(const std::string & inFileName,
                                 const std::string & outFileName)
    {
+      // Precondition
+      UTIL_CHECK(domain_.hasGroup());
+
       // If basis fields are not allocated, peek at field file header to 
       // get unit cell parameters, initialize basis and allocate fields.
       if (!isAllocatedBasis_) {
@@ -1445,8 +1482,8 @@ namespace Pspg
          tmpFieldsKGrid_[i].allocate(dimensions);
       }
 
-      workArray_.allocate(mesh().size());
-      ThreadGrid::setThreadsLogical(mesh().size());
+      workArray_.allocate(domain_.mesh().size());
+      ThreadGrid::setThreadsLogical(domain_.mesh().size());
 
       isAllocatedGrid_ = true;
    }
@@ -1502,8 +1539,9 @@ namespace Pspg
 
       // Read field file header, and initialize basis if needed
       int nMonomer;
+      bool isSymmetric;
       domain_.fieldIo().readFieldHeader(file, nMonomer, 
-                                        domain_.unitCell());
+                                        domain_.unitCell(), isSymmetric);
       // FieldIo::readFieldHeader initializes a basis if needed
       file.close();
 

@@ -27,7 +27,8 @@ namespace Pspg
       fft_(),
       fieldIo_(),
       lattice_(UnitCell<D>::Null),
-      groupName_(),
+      groupName_(""),
+      hasGroup_(false),
       hasFileMaster_(false),
       isInitialized_(false)
    {  setClassName("Domain"); }
@@ -43,7 +44,7 @@ namespace Pspg
    void Domain<D>::setFileMaster(FileMaster& fileMaster)
    {
       fieldIo_.associate(mesh_, fft_, 
-                         lattice_, groupName_, group_, basis_, 
+                         lattice_, hasGroup_, groupName_, group_, basis_, 
                          fileMaster);
       hasFileMaster_ = true;
    }
@@ -56,44 +57,33 @@ namespace Pspg
    {
       UTIL_CHECK(hasFileMaster_);
 
-      bool hasUnitCell = false;
-      // Uncomment for backwards compatibility for old format (<v1.0)
-      #if 0
-      // Optionally read unit cell
-      readOptional(in, "unitCell", unitCell_);
-      if (unitCell_.lattice() != UnitCell<D>::Null) {
-         lattice_ = unitCell_.lattice();
-         hasUnitCell = true;
-      }
-      #endif
-
       read(in, "mesh", mesh_);
       UTIL_CHECK(mesh().size() > 0);
       fft_.setup(mesh_.dimensions());
 
-      // If no unit cell was read, read lattice system 
-      if (!hasUnitCell) {
-         read(in, "lattice", lattice_);
-         unitCell_.set(lattice_);
-      }
+      // Read lattice system identifier (enumeration)
+      read(in, "lattice", lattice_);
+      unitCell_.set(lattice_);
       UTIL_CHECK(unitCell().lattice() != UnitCell<D>::Null);
       UTIL_CHECK(unitCell().nParameter() > 0);
 
       // Allocate memory for WaveList
       waveList().allocate(mesh(), unitCell());
 
-      // Read group name and initialize space group
-      read(in, "groupName", groupName_);
-      readGroup(groupName_, group_);
+      // Optionally read group name 
+      hasGroup_ = false;
+      bool hasGroupName = false;
+      hasGroupName = readOptional(in, "groupName", groupName_).isActive();
 
-      // Make symmetry-adapted basis
-      if (unitCell().isInitialized()) {
-          basis().makeBasis(mesh(), unitCell(), group_);
+      // If group name is found, construct the group
+      if (hasGroupName) {
+         // Read group symmetry operations from file
+         readGroup(groupName_, group_);
+         hasGroup_ = true;
       }
 
       isInitialized_ = true;
    }
-   
  
    template <int D> 
    void Domain<D>::readRGridFieldHeader(std::istream& in, int& nMonomer)
@@ -102,6 +92,8 @@ namespace Pspg
       int ver1, ver2;
       Pscf::Prdc::readFieldHeader(in, ver1, ver2, 
                                   unitCell_, groupName_, nMonomer);
+
+      lattice_ = unitCell_.lattice();
  
       // Read grid dimensions
       std::string label;
@@ -118,12 +110,18 @@ namespace Pspg
       in >> nGrid;
 
       // Initialize mesh, fft and basis
-      mesh_.setDimensions(nGrid);
-      fft_.setup(mesh_.dimensions());
+      if (mesh_.size() == 0) {
+         // Initialize mesh, fft
+         mesh_.setDimensions(nGrid);
+         fft_.setup(mesh_.dimensions());
+      }
 
       // Initialize group and basis
-      readGroup(groupName_, group_);
-      basis_.makeBasis(mesh_, unitCell_, group_);
+      if (groupName_ != "") {
+         readGroup(groupName_, group_);
+         hasGroup_ = true;
+         basis_.makeBasis(mesh_, unitCell_, group_);
+      }
       
       isInitialized_ = true;
    }
@@ -140,8 +138,10 @@ namespace Pspg
          UTIL_CHECK(lattice_ == unitCell.lattice());
       }
       unitCell_ = unitCell;
-      if (!basis_.isInitialized()) {
-         makeBasis();
+      if (hasGroup_) {
+         if (!basis_.isInitialized()) {
+            makeBasis();
+         }
       }
       waveList_.computeKSq(unitCell_);
       waveList_.computedKSq(unitCell_);
@@ -190,14 +190,7 @@ namespace Pspg
       UTIL_CHECK(unitCell_.lattice() != UnitCell<D>::Null);
       UTIL_CHECK(unitCell_.nParameter() > 0);
       UTIL_CHECK(unitCell_.isInitialized());
-
-      #if 0
-      // Check group, read from file if necessary
-      if (group_.size() == 1) {
-         UTIL_CHECK(groupName_ != "");
-         readGroup(groupName_, group_);
-      }
-      #endif
+      UTIL_CHECK(hasGroup_);
 
       // Check basis, construct if not initialized
       if (!basis().isInitialized()) {

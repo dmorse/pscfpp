@@ -83,8 +83,13 @@ namespace Pspg
     void TrajectoryWriter<D>::writeFrame(std::ofstream& out, long iStep)
    {  
       out << "i = " << iStep << "\n";
-      system().domain().fieldIo().writeFieldsRGrid(out, system().w().rgrid(), 
-                                        system().domain().unitCell(), false);
+      bool writeHeader = false;
+      bool isSymmetric = false;
+      Domain<D> const & domain = system().domain();
+      FieldIo<D> const & fieldIo = domain.fieldIo();
+      UnitCell<D> const & unitCell = domain.unitCell();
+      fieldIo.writeFieldsRGrid(out, system().w().rgrid(), unitCell,
+                               writeHeader, isSymmetric);
       out << "\n";
    }  
    
@@ -92,8 +97,11 @@ namespace Pspg
     template <int D>
     void TrajectoryWriter<D>::writeHeader(std::ofstream& out)
    {  
-      system().domain().fieldIo().writeFieldHeader(out, system().mixture().nMonomer(), 
-                                     system().domain().unitCell());
+      bool hasSymmetry = false;
+      int nMonomer = system().mixture().nMonomer();
+      FieldIo<D> const & fieldIo = system().domain().fieldIo(); 
+      fieldIo.writeFieldHeader(out, nMonomer, system().domain().unitCell(), 
+                               hasSymmetry);
       out << "\n";
                                        
    } 
