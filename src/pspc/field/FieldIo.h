@@ -410,7 +410,7 @@ namespace Pspc {
                            bool isSymmetric = true) const;
 
       ///@}
-      /// \name File IO Utilities
+      /// \name Field File IO Utilities
       ///@{
 
       /**

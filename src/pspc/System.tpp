@@ -651,7 +651,8 @@ namespace Pspc {
          if (command == "WRITE_MASK_RGRID") {
             readEcho(in, filename);
             UTIL_CHECK(mask_.hasData());
-            fieldIo().writeFieldRGrid(filename, mask_.rgrid(), unitCell());
+            fieldIo().writeFieldRGrid(filename, mask_.rgrid(), unitCell(),
+                                      mask_.isSymmetric());
          } else {
             Log::file() << "Error: Unknown command  " 
                         << command << std::endl;
@@ -704,15 +705,13 @@ namespace Pspc {
    template <int D>
    void System<D>::readWRGrid(const std::string & filename)
    {
-
       if (domain_.hasGroup()) {
          // If basis fields are not allocated, peek at field file header 
          // to get unit cell parameters, initialize basis and allocate.
          if (!isAllocatedBasis_) {
             readFieldHeader(filename); 
-            if (domain_.basis().isInitialized()) {
-               allocateFieldsBasis();
-            }
+            UTIL_CHECK(domain_.basis().isInitialized());
+            allocateFieldsBasis();
          }
       }
 
@@ -1324,7 +1323,8 @@ namespace Pspc {
       // Get data from Mixture and write to file
       mixture_.createBlockCRGrid(blockCFields);
       domain_.fieldIo().writeFieldsRGrid(filename, blockCFields, 
-                                         domain_.unitCell());
+                                         domain_.unitCell(),
+                                         w_.isSymmetric());
    }
 
    /*
@@ -1347,7 +1347,8 @@ namespace Pspc {
            propagator = polymer.propagator(blockId, directionId);
       RField<D> const& field = propagator.q(segmentId);
       domain_.fieldIo().writeFieldRGrid(filename, field, 
-                                        domain_.unitCell());
+                                        domain_.unitCell(), 
+                                        w_.isSymmetric());
    }
 
    /*
@@ -1368,7 +1369,8 @@ namespace Pspc {
       RField<D> const& 
             field = polymer.propagator(blockId, directionId).tail();
       domain_.fieldIo().writeFieldRGrid(filename, field, 
-                                        domain_.unitCell());
+                                        domain_.unitCell(),
+                                        w_.isSymmetric());
    }
 
    /*
@@ -1395,7 +1397,8 @@ namespace Pspc {
       fileMaster_.openOutputFile(filename, file);
 
       // Write header
-      fieldIo().writeFieldHeader(file, 1, domain_.unitCell());
+      fieldIo().writeFieldHeader(file, 1, domain_.unitCell(), 
+                                 w_.isSymmetric());
       file << "mesh " << std::endl
            << "          " << domain_.mesh().dimensions() << std::endl
            << "nslice"    << std::endl
@@ -1447,8 +1450,9 @@ namespace Pspc {
       UTIL_CHECK(domain_.basis().isInitialized());
       std::ofstream file;
       fileMaster_.openOutputFile(filename, file);
+      bool isSymmetric = true;
       fieldIo().writeFieldHeader(file, mixture_.nMonomer(),
-                                 domain_.unitCell());
+                                 domain_.unitCell(), isSymmetric);
       domain_.basis().outputStars(file);
       file.close();
    }
@@ -1459,11 +1463,13 @@ namespace Pspc {
    template <int D>
    void System<D>::writeWaves(std::string const & filename) const
    {
+      UTIL_CHECK(domain_.hasGroup());
       UTIL_CHECK(domain_.basis().isInitialized());
       std::ofstream file;
       fileMaster_.openOutputFile(filename, file);
+      bool isSymmetric = true;
       fieldIo().writeFieldHeader(file, mixture_.nMonomer(), 
-                                 domain_.unitCell());
+                                 domain_.unitCell(), isSymmetric);
       domain_.basis().outputWaves(file);
       file.close();
    }
@@ -1474,6 +1480,7 @@ namespace Pspc {
    template <int D>
    void System<D>::writeGroup(const std::string & filename) const
    {  
+      UTIL_CHECK(domain_.hasGroup());
       Pscf::Prdc::writeGroup(filename, domain_.group()); 
    }
 

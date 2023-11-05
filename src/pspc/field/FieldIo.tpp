@@ -76,65 +76,6 @@ namespace Pspc {
    }
   
    template <int D>
-   void FieldIo<D>::readFieldBasis(std::istream& in, DArray<double>& field,
-                                   UnitCell<D>& unitCell) 
-   const
-   {
-      DArray<DArray<double> > fields;
-      if (field.isAllocated()) { 
-         fields.allocate(1);
-         fields[0].allocate(field.capacity());
-      } // otherwise pass unallocated fields into readFieldsBasis
-
-      readFieldsBasis(in, fields, unitCell);
-      // Check that it only read 1 field
-      UTIL_CHECK(fields.capacity() == 1); 
-      field = fields[0];
-   }
-
-   template <int D>
-   void FieldIo<D>::readFieldBasis(std::string filename, 
-                                   DArray<double>& field,
-                                   UnitCell<D>& unitCell) 
-   const
-   {
-      DArray<DArray<double> > fields;
-      if (field.isAllocated()) { 
-         fields.allocate(1);
-         fields[0].allocate(field.capacity());
-      } // otherwise pass unallocated field into readFieldsBasis
-      readFieldsBasis(filename, fields, unitCell);
-      UTIL_CHECK(fields.capacity() == 1); // Check that it only read 1 field
-      field = fields[0];
-   }
-
-   template <int D>
-   void FieldIo<D>::writeFieldBasis(std::ostream& out, 
-                                    DArray<double> const & field,
-                                    UnitCell<D> const & unitCell) 
-   const
-   {
-      DArray<DArray<double> > fields;
-      fields.allocate(1);
-      fields[0].allocate(field.capacity());
-      fields[0] = field;
-      writeFieldsBasis(out, fields, unitCell);
-   }
-
-   template <int D>
-   void FieldIo<D>::writeFieldBasis(std::string filename, 
-                                    DArray<double> const & field,
-                                    UnitCell<D> const & unitCell) 
-   const
-   {
-      DArray<DArray<double> > fields;
-      fields.allocate(1);
-      fields[0].allocate(field.capacity());
-      fields[0] = field;
-      writeFieldsBasis(filename, fields, unitCell);
-   }
-
-   template <int D>
    void FieldIo<D>::readFieldsBasis(std::istream& in, 
                                     DArray< DArray<double> >& fields,
                                     UnitCell<D>& unitCell) const
@@ -437,6 +378,39 @@ namespace Pspc {
    }
 
    template <int D>
+   void FieldIo<D>::readFieldBasis(std::istream& in, DArray<double>& field,
+                                   UnitCell<D>& unitCell) 
+   const
+   {
+      DArray<DArray<double> > fields;
+      if (field.isAllocated()) { 
+         fields.allocate(1);
+         fields[0].allocate(field.capacity());
+      } // otherwise pass unallocated fields into readFieldsBasis
+
+      readFieldsBasis(in, fields, unitCell);
+      // Check that it only read 1 field
+      UTIL_CHECK(fields.capacity() == 1); 
+      field = fields[0];
+   }
+
+   template <int D>
+   void FieldIo<D>::readFieldBasis(std::string filename, 
+                                   DArray<double>& field,
+                                   UnitCell<D>& unitCell) 
+   const
+   {
+      DArray<DArray<double> > fields;
+      if (field.isAllocated()) { 
+         fields.allocate(1);
+         fields[0].allocate(field.capacity());
+      } // otherwise pass unallocated field into readFieldsBasis
+      readFieldsBasis(filename, fields, unitCell);
+      UTIL_CHECK(fields.capacity() == 1); // Check that it only read 1 field
+      field = fields[0];
+   }
+
+   template <int D>
    void 
    FieldIo<D>::writeFieldsBasis(std::ostream &out, 
                                 DArray<DArray<double> > const &  fields,
@@ -486,6 +460,34 @@ namespace Pspc {
        writeFieldsBasis(file, fields, unitCell);
        file.close();
    }
+
+   template <int D>
+   void FieldIo<D>::writeFieldBasis(std::ostream& out, 
+                                    DArray<double> const & field,
+                                    UnitCell<D> const & unitCell) 
+   const
+   {
+      DArray<DArray<double> > fields;
+      fields.allocate(1);
+      fields[0].allocate(field.capacity());
+      fields[0] = field;
+      writeFieldsBasis(out, fields, unitCell);
+   }
+
+   template <int D>
+   void FieldIo<D>::writeFieldBasis(std::string filename, 
+                                    DArray<double> const & field,
+                                    UnitCell<D> const & unitCell) 
+   const
+   {
+      DArray<DArray<double> > fields;
+      fields.allocate(1);
+      fields[0].allocate(field.capacity());
+      fields[0] = field;
+      writeFieldsBasis(filename, fields, unitCell);
+   }
+
+   // R-Grid Field Format IO
 
    template <int D>
    void FieldIo<D>::readFieldsRGrid(std::istream &in,
@@ -626,109 +628,6 @@ namespace Pspc {
       std::ifstream file;
       fileMaster().openInputFile(filename, file);
       readFieldsRGrid(file, fields, unitCell);
-      file.close();
-   }
-
-   template <int D>
-   void FieldIo<D>::writeFieldsRGrid(std::ostream &out,
-                                     DArray<RField<D> > const & fields,
-                                     UnitCell<D> const & unitCell,
-                                     bool writeHeader,
-                                     bool isSymmetric) const
-   {
-      int nMonomer = fields.capacity();
-      UTIL_CHECK(nMonomer > 0);
-      if (writeHeader){
-         writeFieldHeader(out, nMonomer, unitCell, isSymmetric);
-      }
-      out << "mesh " <<  std::endl
-          << "           " << mesh().dimensions() << std::endl;
-
-      DArray<RField<D> > temp;
-      temp.allocate(nMonomer);
-      for (int i = 0; i < nMonomer; ++i) {
-         temp[i].allocate(mesh().dimensions());
-      } 
-
-      int p = 0; 
-      int q = 0; 
-      int r = 0; 
-      int s = 0; 
-      int n1 =0;
-      int n2 =0;
-      int n3 =0;
-
-      if (D==3) {
-         while (n3 < mesh().dimension(2)) {
-            q = p; 
-            n2 = 0; 
-            while (n2 < mesh().dimension(1)) {
-               r =q;
-               n1 = 0; 
-               while (n1 < mesh().dimension(0)) {
-                  for (int i = 0; i < nMonomer; ++i) {
-                     temp[i][s] = fields[i][r];
-                  }    
-                  r = r + (mesh().dimension(1) * mesh().dimension(2));
-                  ++s; 
-                  ++n1;     
-               }    
-               q = q + mesh().dimension(2);
-               ++n2;
-            }    
-            ++n3;
-            ++p;     
-         }    
-      }
-      else if (D==2) {
-         while (n2 < mesh().dimension(1)) {
-            r =q;
-            n1 = 0;
-            while (n1 < mesh().dimension(0)) {
-               for (int i = 0; i < nMonomer; ++i) {
-                  temp[i][s] = fields[i][r];
-               }
-               r = r + (mesh().dimension(1));
-               ++s;
-               ++n1;
-            }
-            ++q;
-            ++n2;
-         }
-      }
-      else if (D==1) {
-         while (n1 < mesh().dimension(0)) {
-            for (int i = 0; i < nMonomer; ++i) {
-               temp[i][s] = fields[i][r];
-            }
-            ++r;
-            ++s;
-            ++n1;
-         }
-      } else {
-         Log::file() << "Invalid Dimensions";
-      }
-
-      // Write fields
-      MeshIterator<D> itr(mesh().dimensions());
-      for (itr.begin(); !itr.atEnd(); ++itr) {
-         for (int j = 0; j < nMonomer; ++j) {
-            out << "  " << Dbl(temp[j][itr.rank()], 18, 15);
-         }
-         out << std::endl;
-      }
-
-   }
-
-   template <int D>
-   void FieldIo<D>::writeFieldsRGrid(std::string filename, 
-                                     DArray< RField<D> > const & fields,
-                                     UnitCell<D> const & unitCell,
-                                     bool isSymmetric) const
-   {
-      std::ofstream file;
-      fileMaster().openOutputFile(filename, file);
-      writeFieldsRGrid(file, fields, unitCell, isSymmetric);
       file.close();
    }
 
@@ -955,6 +854,108 @@ namespace Pspc {
       }
    }
    
+   template <int D>
+   void FieldIo<D>::writeFieldsRGrid(std::ostream &out,
+                                     DArray<RField<D> > const & fields,
+                                     UnitCell<D> const & unitCell,
+                                     bool writeHeader,
+                                     bool isSymmetric) const
+   {
+      int nMonomer = fields.capacity();
+      UTIL_CHECK(nMonomer > 0);
+      if (writeHeader){
+         writeFieldHeader(out, nMonomer, unitCell, isSymmetric);
+      }
+      out << "mesh " <<  std::endl
+          << "           " << mesh().dimensions() << std::endl;
+
+      DArray<RField<D> > temp;
+      temp.allocate(nMonomer);
+      for (int i = 0; i < nMonomer; ++i) {
+         temp[i].allocate(mesh().dimensions());
+      } 
+
+      int p = 0; 
+      int q = 0; 
+      int r = 0; 
+      int s = 0; 
+      int n1 =0;
+      int n2 =0;
+      int n3 =0;
+
+      if (D==3) {
+         while (n3 < mesh().dimension(2)) {
+            q = p; 
+            n2 = 0; 
+            while (n2 < mesh().dimension(1)) {
+               r =q;
+               n1 = 0; 
+               while (n1 < mesh().dimension(0)) {
+                  for (int i = 0; i < nMonomer; ++i) {
+                     temp[i][s] = fields[i][r];
+                  }    
+                  r = r + (mesh().dimension(1) * mesh().dimension(2));
+                  ++s; 
+                  ++n1;     
+               }    
+               q = q + mesh().dimension(2);
+               ++n2;
+            }    
+            ++n3;
+            ++p;     
+         }    
+      }
+      else if (D==2) {
+         while (n2 < mesh().dimension(1)) {
+            r =q;
+            n1 = 0;
+            while (n1 < mesh().dimension(0)) {
+               for (int i = 0; i < nMonomer; ++i) {
+                  temp[i][s] = fields[i][r];
+               }
+               r = r + (mesh().dimension(1));
+               ++s;
+               ++n1;
+            }
+            ++q;
+            ++n2;
+         }
+      }
+      else if (D==1) {
+         while (n1 < mesh().dimension(0)) {
+            for (int i = 0; i < nMonomer; ++i) {
+               temp[i][s] = fields[i][r];
+            }
+            ++r;
+            ++s;
+            ++n1;
+         }
+      } else {
+         Log::file() << "Invalid Dimensions";
+      }
+
+      // Write fields
+      MeshIterator<D> itr(mesh().dimensions());
+      for (itr.begin(); !itr.atEnd(); ++itr) {
+         for (int j = 0; j < nMonomer; ++j) {
+            out << "  " << Dbl(temp[j][itr.rank()], 18, 15);
+         }
+         out << std::endl;
+      }
+
+   }
+
+   template <int D>
+   void FieldIo<D>::writeFieldsRGrid(std::string filename, 
+                                     DArray< RField<D> > const & fields,
+                                     UnitCell<D> const & unitCell,
+                                     bool isSymmetric) const
+   {
+      std::ofstream file;
+      fileMaster().openOutputFile(filename, file);
+      writeFieldsRGrid(file, fields, unitCell, isSymmetric);
+      file.close();
+   }
 
    template <int D>
    void FieldIo<D>::writeFieldRGrid(std::ostream &out, 
@@ -1045,6 +1046,8 @@ namespace Pspc {
       writeFieldRGrid(file, field, unitCell, isSymmetric);
       file.close();
    }
+
+   // K-Grid Field Format
 
    template <int D>
    void FieldIo<D>::readFieldsKGrid(std::istream &in,
@@ -1197,11 +1200,11 @@ namespace Pspc {
 
       Pscf::Prdc::readFieldHeader(in, ver1, ver2, unitCell, 
                                   groupNameIn, nMonomer);
-      // Note: Function definition in pscf/crystal/UnitCell.tpp
+      // Note: Function definition in prdc/crystal/UnitCell.tpp
 
       // Checks of data from header
       UTIL_CHECK(ver1 == 1);
-      UTIL_CHECK(ver2 == 0);
+      //UTIL_CHECK(ver2 == 0);
       UTIL_CHECK(unitCell.isInitialized());
       UTIL_CHECK(unitCell.lattice() != UnitCell<D>::Null);
       UTIL_CHECK(unitCell.nParameter() > 0);
@@ -1221,45 +1224,35 @@ namespace Pspc {
          }
       }
 
-      // Process group name (if any)
+      // Check for presence of group name 
       isSymmetric = false;
-      if (hasGroup()) {
-
-         if (groupNameIn != "") {
-            // Field file header contains a group name
-            isSymmetric = true;
-
-            // Check consistency of groupName values
-            UTIL_CHECK(groupNamePtr_);
-            if (groupNameIn != groupName()) {
-               Log::file() << std::endl 
-                  << "Error - Mismatched group names in "
-                  << "function FieldIo<D>::readFieldHeader:\n" 
-                  << "  FieldIo::groupName :" << groupName() << "\n"
-                  << "  Field file header  :" << groupNameIn << "\n";
-               UTIL_THROW("Mismatched group names");
-            }
-
-            // If no basis exists, construct basis
-            UTIL_CHECK(basisPtr_);
-            if (!basis().isInitialized()) {
-               UTIL_CHECK(groupPtr_);
-               basisPtr_->makeBasis(mesh(), unitCell, group());
-            }
-            UTIL_CHECK(basis().isInitialized());
-
-         }
-
-      } else { // if FieldIo<D>::hasGroup() == false
-
-         if (groupNameIn != "") {
-            Log::file() << std::endl 
-                << "Error - A group name found in a field file header "
-                << "after none was declared in the parameter file.\n";
-            UTIL_THROW("Unexpected group name in field file header");
-         }
-
+      if (groupNameIn != "") {
+         isSymmetric = true;
       }
+       
+      // Process group and basis (if any) 
+      if (hasGroup() && isSymmetric) {
+
+         // Check consistency of groupName values
+         UTIL_CHECK(groupNamePtr_);
+         if (groupNameIn != groupName()) {
+            Log::file() << std::endl 
+               << "Error - Mismatched group names in "
+               << "function FieldIo<D>::readFieldHeader:\n" 
+               << "  FieldIo::groupName :" << groupName() << "\n"
+               << "  Field file header  :" << groupNameIn << "\n";
+            UTIL_THROW("Mismatched group names");
+         }
+
+         // If no basis exists, construct basis
+         UTIL_CHECK(basisPtr_);
+         if (!basis().isInitialized()) {
+            UTIL_CHECK(groupPtr_);
+            basisPtr_->makeBasis(mesh(), unitCell, group());
+         }
+         UTIL_CHECK(basis().isInitialized());
+
+      } 
 
    }
 
@@ -1278,7 +1271,7 @@ namespace Pspc {
       }
       Pscf::Prdc::writeFieldHeader(out, v1, v2, unitCell, 
                                    gname, nMonomer);
-      // Note: This function is defined in pscf/crystal/UnitCell.tpp
+      // Note: This function is defined in prdc/crystal/UnitCell.tpp
    }
 
    template <int D>
