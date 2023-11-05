@@ -10,7 +10,9 @@
 
 #include "FieldIo.h"
 
+#include <prdc/crystal/fieldHeader.h>
 #include <prdc/crystal/shiftToMinimum.h>
+#include <prdc/crystal/UnitCell.h>
 
 #include <pscf/mesh/MeshIterator.h>
 #include <pscf/math/IntVec.h>

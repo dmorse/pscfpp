@@ -9,10 +9,10 @@
 */
 
 #include "Domain.h"
+#include <prdc/crystal/fieldHeader.h>
 
 namespace Pscf {
-namespace Pspg
-{
+namespace Pspg {
 
    using namespace Util;
 
@@ -43,8 +43,8 @@ namespace Pspg
    template <int D>
    void Domain<D>::setFileMaster(FileMaster& fileMaster)
    {
-      fieldIo_.associate(mesh_, fft_, 
-                         lattice_, hasGroup_, groupName_, group_, basis_, 
+      fieldIo_.associate(mesh_, fft_,
+                         lattice_, hasGroup_, groupName_, group_, basis_,
                          fileMaster);
       hasFileMaster_ = true;
    }
@@ -70,7 +70,7 @@ namespace Pspg
       // Allocate memory for WaveList
       waveList().allocate(mesh(), unitCell());
 
-      // Optionally read group name 
+      // Optionally read group name
       hasGroup_ = false;
       bool hasGroupName = false;
       hasGroupName = readOptional(in, "groupName", groupName_).isActive();
@@ -84,17 +84,17 @@ namespace Pspg
 
       isInitialized_ = true;
    }
- 
-   template <int D> 
+
+   template <int D>
    void Domain<D>::readRGridFieldHeader(std::istream& in, int& nMonomer)
    {
       // Read common section of standard field header
       int ver1, ver2;
-      Pscf::Prdc::readFieldHeader(in, ver1, ver2, 
+      Pscf::Prdc::readFieldHeader(in, ver1, ver2,
                                   unitCell_, groupName_, nMonomer);
 
       lattice_ = unitCell_.lattice();
- 
+
       // Read grid dimensions
       std::string label;
       in >> label;
@@ -122,7 +122,7 @@ namespace Pspg
          hasGroup_ = true;
          basis_.makeBasis(mesh_, unitCell_, group_);
       }
-      
+
       isInitialized_ = true;
    }
 
@@ -184,7 +184,7 @@ namespace Pspg
    }
 
    template <int D>
-   void Domain<D>::makeBasis() 
+   void Domain<D>::makeBasis()
    {
       UTIL_CHECK(mesh_.size() > 0);
       UTIL_CHECK(unitCell_.lattice() != UnitCell<D>::Null);

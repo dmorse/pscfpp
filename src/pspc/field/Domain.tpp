@@ -9,6 +9,7 @@
 */
 
 #include "Domain.h"
+#include <prdc/crystal/fieldHeader.h>
 
 namespace Pscf {
 namespace Pspc
