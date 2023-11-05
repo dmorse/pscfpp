@@ -29,7 +29,8 @@ namespace Pspg {
    AmIteratorGrid<D>::AmIteratorGrid(System<D>& system)
     : Iterator<D>(system)
    {
-      isSymmetric_ = true;
+      setClassName("AmIteratorGrid");
+      isSymmetric_ = false; 
    }
 
    // Destructor

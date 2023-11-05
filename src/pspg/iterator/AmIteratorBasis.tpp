@@ -21,7 +21,7 @@
 #include <util/global.h>
 
 namespace Pscf {
-namespace Pspg{
+namespace Pspg {
 
    using namespace Util;
    using namespace Prdc;

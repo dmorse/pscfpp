@@ -61,6 +61,7 @@ namespace Pspg
    protected:
 
       using ParamComposite::readOptional;
+      using ParamComposite::setClassName;
       using Iterator<D>::system;
       using Iterator<D>::isSymmetric_;
       using Iterator<D>::isFlexible_;
