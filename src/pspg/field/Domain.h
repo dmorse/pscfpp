@@ -207,6 +207,16 @@ namespace Pspg
       */  
       std::string groupName() const;
 
+      /**
+      * Has a space group been identified?
+      */ 
+      bool hasGroup() const;
+
+      /**
+      * Has a symmetry-adapted Fourier basis been initialized?
+      */ 
+      bool hasBasis() const;
+
       //@}
 
    private:
@@ -257,6 +267,11 @@ namespace Pspg
       * Group name.
       */
       std::string groupName_;
+
+      /**
+      * Has a space group been indentified?
+      */
+      bool hasGroup_;
 
       /**
       * Has a FileMaster been set?
@@ -347,6 +362,16 @@ namespace Pspg
    template <int D>
    inline std::string Domain<D>::groupName() const
    {  return groupName_; }
+
+   // Has a space group been identified?
+   template <int D>
+   inline bool Domain<D>::hasGroup() const
+   {  return hasGroup_; }
+
+   // Has a symmetry-adapted Fourier basis been initialized ?
+   template <int D>
+   inline bool Domain<D>::hasBasis() const
+   {  return basis_.isInitialized(); }
 
    #ifndef PSPG_DOMAIN_TPP
    // Suppress implicit instantiation

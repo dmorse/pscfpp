@@ -62,9 +62,11 @@ namespace Pspg
       // Read Header
       int nMonomer = system().mixture().nMonomer();
       Domain<D> & domain = system().domain();
+      FieldIo<D> & fieldIo = domain.fieldIo();
       UnitCell<D> & unitcell = domain.unitCell();
-      system().domain().fieldIo().readFieldHeader(inputfile_, nMonomer, unitcell);
-      Log::file()<<"Read Header" << "\n";
+      bool isSymmetric;
+      fieldIo.readFieldHeader(inputfile_, nMonomer, unitcell, isSymmetric);
+      Log::file() << "Read Header" << "\n";
    }
    /*
    * Read frame, return false if end-of-file

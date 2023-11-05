@@ -115,7 +115,8 @@ namespace Prdc {
 
       in >> label;
       UTIL_CHECK(label == "format");
-      in >> ver1 >> ver2;
+      in >> ver1;
+      in >> ver2;
  
       in >> label;
       UTIL_CHECK(label == "dim");

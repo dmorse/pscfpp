@@ -56,6 +56,7 @@ namespace Pspg {
       * \param mesh  associated spatial discretization Mesh<D>
       * \param fft   associated FFT object for fast transforms
       * \param lattice  lattice system type (enumeration value)
+      * \param hasGroup true if a space group is declared
       * \param groupName space group name string
       * \param group  associated space group
       * \param basis  associated Basis object
@@ -64,13 +65,14 @@ namespace Pspg {
       void associate(Mesh<D> const & mesh,
                      FFT<D> const & fft,
                      typename UnitCell<D>::LatticeSystem& lattice,
-                     std::string& groupName,
-                     SpaceGroup<D>& group,
+                     bool const & hasGroup,
+                     std::string const & groupName,
+                     SpaceGroup<D> const & group,
                      Basis<D>& basis,
                      FileMaster const & fileMaster);
 
-      /// \name Field File IO
-      //@{
+      /// \name Field File IO - Symmetry Adapted Basis Format
+      ///@{
 
       /**
       * Read concentration or chemical potential field components from file.
@@ -134,6 +136,10 @@ namespace Pspg {
                             DArray< DArray<double> > const & fields,
                             UnitCell<D> const & unitCell) const;
 
+      ///@}
+      /// \name Field File IO - Real Space Grid Format
+      ///@{
+      
       /**
       * Read array of RField objects (fields on an r-space grid) from file.
       *
@@ -181,35 +187,6 @@ namespace Pspg {
                                int nMonomer) const;
 
       /**
-      * Write array of RField objects (fields on an r-space grid) to file.
-      *
-      * \param out output stream (i.e., output file)
-      * \param fields array of RField fields (r-space grid)
-      * \param unitCell  crystallographic unit cell 
-      * \param writeHeader flag to write header part of file iff true
-      */
-      void writeFieldsRGrid(std::ostream& out, 
-                            DArray< RField<D> > const& fields,
-                            UnitCell<D> const & unitCell, 
-                            bool writeHeader = true) const;
-
-      /**
-      * Write array of RField objects (fields on an r-space grid) to file.
-      *
-      * This function opens an output file with the specified filename, 
-      * writes fields in RField<D> real-space grid format to that file, 
-      * and then closes the file.
-      *
-      * \param filename  name of output file
-      * \param fields  array of RField fields (r-space grid)
-      * \param unitCell  crystallographic unit cell 
-      */
-      void writeFieldsRGrid(std::string filename,
-                            DArray< RField<D> > const& fields,
-                            UnitCell<D> const & unitCell) const;
-
-
-      /**
       * Read a single RField objects (field on an r-space grid) from file.
       *
       * \param in  input stream
@@ -230,17 +207,51 @@ namespace Pspg {
                           UnitCell<D>& unitCell) const;
                           
       /**
+      * Write array of RField objects (fields on an r-space grid) to file.
+      *
+      * \param out output stream (i.e., output file)
+      * \param fields array of RField fields (r-space grid)
+      * \param unitCell  crystallographic unit cell 
+      * \param writeHeader flag to write header part of file iff true
+      * \param isSymmetric  Do fields have space group symmetry?
+      */
+      void writeFieldsRGrid(std::ostream& out, 
+                            DArray< RField<D> > const& fields,
+                            UnitCell<D> const & unitCell, 
+                            bool writeHeader = true,
+                            bool isSymmetric = true) const;
+
+      /**
+      * Write array of RField objects (fields on an r-space grid) to file.
+      *
+      * This function opens an output file with the specified filename, 
+      * writes fields in RField<D> real-space grid format to that file, 
+      * and then closes the file.
+      *
+      * \param filename  name of output file
+      * \param fields  array of RField fields (r-space grid)
+      * \param unitCell  crystallographic unit cell 
+      * \param isSymmetric  Do fields have space group symmetry?
+      */
+      void writeFieldsRGrid(std::string filename,
+                            DArray< RField<D> > const& fields,
+                            UnitCell<D> const & unitCell,
+                            bool isSymmetric = true) const;
+
+      /**
       * Write a single RField objects (field on an r-space grid) to file.
       *
       * \param out  output stream
       * \param field   RField field (r-space grid)
       * \param unitCell  crystallographic unit cell 
       * \param writeHeader  should a file header be written?
+      * \param isSymmetric  Does the field have space group symmetry?
       */
       void writeFieldRGrid(std::ostream& out, 
                            RField<D> const & field,
                            UnitCell<D> const & unitCell,
-                           bool writeHeader = true) const;
+                           bool writeHeader = true,
+                           bool isSymmetric = true) const;
 
       /**
       * Write a single RField objects (field on an r-space grid) to file.
@@ -248,10 +259,17 @@ namespace Pspg {
       * \param filename  name of input file
       * \param field   RField field (r-space grid)
       * \param unitCell  crystallographic unit cell 
+      * \param isSymmetric  Does the field have space group symmetry?
       */
-      void writeFieldRGrid(std::string filename, RField<D> const & field,
-                           UnitCell<D> const & unitCell) const;
+      void writeFieldRGrid(std::string filename, 
+                           RField<D> const & field,
+                           UnitCell<D> const & unitCell,
+                           bool isSymmetric = true) const;
 
+      ///@}
+      /// \name Field File IO - Fourier Space (K-Space) Grid Format
+      ///@{
+      
       /**
       * Read array of RFieldDft objects (k-space fields) from file.
       *
@@ -296,10 +314,12 @@ namespace Pspg {
       * \param out output stream (i.e., output file)
       * \param fields array of RFieldDft fields 
       * \param unitCell  crystallographic unit cell 
+      * \param isSymmetric  Do the fields have space group symmetry?
       */
       void writeFieldsKGrid(std::ostream& out, 
                             DArray< RFieldDft<D> > const& fields,
-                            UnitCell<D> const & unitCell) const;
+                            UnitCell<D> const & unitCell,
+                            bool isSymmetric = true) const;
    
       /**
       * Write array of RFieldDft objects (k-space fields) to a file.
@@ -311,10 +331,16 @@ namespace Pspg {
       * \param filename  name of output file.
       * \param fields  array of RFieldDft fields (k-space grid)
       * \param unitCell  crystallographic unit cell 
+      * \param isSymmetric  Do the fields have space group symmetry?
       */
       void writeFieldsKGrid(std::string filename, 
                            DArray< RFieldDft<D> > const& fields,
-                           UnitCell<D> const & unitCell) const;
+                           UnitCell<D> const & unitCell,
+                           bool isSymmetric = true) const;
+
+      ///@}
+      /// \name Field File IO Utilities
+      ///@{
 
       /**
       * Reader header of field file (fortran pscf format)
@@ -322,10 +348,12 @@ namespace Pspg {
       * \param in input  stream (i.e., input file)
       * \param nMonomer number of monomers read from file (output)
       * \param unitCell  crystallographic unit cell (output)
+      * \param isSymmetric  true iff header has a space group (output)
       */
       void readFieldHeader(std::istream& in,
                            int& nMonomer,
-                           UnitCell<D>& unitCell) const;
+                           UnitCell<D>& unitCell,
+                           bool& isSymmetric) const;
 
       /**
       * Write header for field file (fortran pscf format)
@@ -335,11 +363,12 @@ namespace Pspg {
       * \param unitCell  crystallographic unit cell 
       */
       void writeFieldHeader(std::ostream& out, int nMonomer,
-                           UnitCell<D> const & unitCell) const;
+                           UnitCell<D> const & unitCell,
+                           bool isSymmetric) const;
 
-      //@}
+      ///@}
       /// \name Field Format Conversion
-      //@{
+      ///@{
 
       /**
       * Convert field from symmetrized basis to Fourier transform (k-grid).
@@ -419,7 +448,7 @@ namespace Pspg {
       void convertRGridToKGrid(DArray< RField<D> > const & in,
                               DArray< RFieldDft<D> > & out) const;
 
-      //@}
+      ///@}
 
    private:
 
@@ -435,13 +464,16 @@ namespace Pspg {
       FFT<D> const * fftPtr_;
 
       /// Pointer to lattice system
-      typename UnitCell<D>::LatticeSystem * latticePtr_;
+      typename UnitCell<D>::LatticeSystem const * latticePtr_;
+
+      /// Pointer to boolean hasGroup (true if a space group is known).
+      bool const * hasGroupPtr_;
 
       /// Pointer to group name string
-      std::string * groupNamePtr_;
+      std::string const * groupNamePtr_;
 
       /// Pointer to a SpaceGroup object
-      SpaceGroup<D> * groupPtr_;
+      SpaceGroup<D> const * groupPtr_;
 
       /// Pointer to a Basis object
       Basis<D> * basisPtr_;
@@ -466,27 +498,35 @@ namespace Pspg {
       }
 
       /// Get lattice system enumeration value by reference.
-      typename UnitCell<D>::LatticeSystem & lattice() const
+      typename UnitCell<D>::LatticeSystem const & lattice() const
       {
          UTIL_ASSERT(latticePtr_);  
          return *latticePtr_; 
       }
 
+      /// Has a group been declared externally ?
+      bool hasGroup() const
+      {
+         UTIL_ASSERT(hasGroupPtr_);
+         return *hasGroupPtr_;
+      }
+
+
       /// Get group name string 
-      std::string & groupName() const
+      std::string const & groupName() const
       {  
          UTIL_ASSERT(groupNamePtr_);  
          return *groupNamePtr_; 
       }
 
-      /// Get Basis by reference.
-      SpaceGroup<D> & group() const
+      /// Get SpaceGroup by const reference.
+      SpaceGroup<D> const & group() const
       {
          UTIL_ASSERT(basisPtr_);  
          return *groupPtr_; 
       }
 
-      /// Get Basis by reference.
+      /// Get Basis by const reference.
       Basis<D> & basis() const
       {
          UTIL_ASSERT(basisPtr_);  
