@@ -10,13 +10,21 @@
 
 #include "FieldIo.h"
 
+#include <prdc/cpu/FFT.h>                
+#include <prdc/cpu/RField.h>             
+#include <prdc/cpu/RFieldDft.h>          
 #include <prdc/crystal/fieldHeader.h>
 #include <prdc/crystal/shiftToMinimum.h>
 #include <prdc/crystal/UnitCell.h>
+#include <prdc/crystal/Basis.h>         
+#include <prdc/crystal/SpaceGroup.h>     
+#include <prdc/crystal/UnitCell.h>       
 
+#include <pscf/mesh/Mesh.h>              
 #include <pscf/mesh/MeshIterator.h>
 #include <pscf/math/IntVec.h>
 
+#include <util/misc/FileMaster.h>     
 #include <util/misc/Log.h>
 #include <util/format/Str.h>
 #include <util/format/Int.h>
@@ -752,9 +760,9 @@ namespace Pspc {
    }
    
    template <int D>
-   void FieldIo<D>::readFieldRGridData(std::istream& in,
-                                       DArray< RField<D> >& fields,
-                                       int nMonomer)
+   void FieldIo<D>::readFieldsRGridData(std::istream& in,
+                                        DArray< RField<D> >& fields,
+                                        int nMonomer)
    const
    {
       // If "fields" parameter is allocated, check if mesh size match
@@ -1202,7 +1210,7 @@ namespace Pspc {
 
       Pscf::Prdc::readFieldHeader(in, ver1, ver2, unitCell, 
                                   groupNameIn, nMonomer);
-      // Note: Function definition in prdc/crystal/UnitCell.tpp
+      // Note: Function definition in prdc/crystal/fieldHeader.tpp
 
       // Checks of data from header
       UTIL_CHECK(ver1 == 1);
@@ -1273,7 +1281,7 @@ namespace Pspc {
       }
       Pscf::Prdc::writeFieldHeader(out, v1, v2, unitCell, 
                                    gname, nMonomer);
-      // Note: This function is defined in prdc/crystal/UnitCell.tpp
+      // Note: This function is defined in prdc/crystal/fieldHeader.tpp
    }
 
    template <int D>

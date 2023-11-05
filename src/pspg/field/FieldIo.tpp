@@ -951,7 +951,7 @@ namespace Pspg {
       std::string groupNameIn;
       Pscf::Prdc::readFieldHeader(in, ver1, ver2, unitCell,
                                   groupNameIn, nMonomer);
-      // Note: Function definition in prdc/crystal/UnitCell.tpp
+      // Note: Function definition in prdc/crystal/fieldHeader.tpp
 
       // Checks of data from header
       UTIL_CHECK(ver1 == 1);
@@ -1021,7 +1021,7 @@ namespace Pspg {
       }
       Pscf::Prdc::writeFieldHeader(out, v1, v2, unitCell,
                                    gname, nMonomer);
-      // Note: Function defined in prdc/crystal/UnitCell.tpp
+      // Note: Function defined in prdc/crystal/fieldHeader.tpp
    }
 
    template <int D>

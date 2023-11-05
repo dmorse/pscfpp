@@ -119,7 +119,7 @@ namespace Pspc
 
       // Read a single real-space grid field frame from trajectory file
       FieldIo<D> & fieldIo = system().domain().fieldIo();
-      fieldIo.readFieldRGridData(inputfile_, wField_, nMonomer);
+      fieldIo.readFieldsRGridData(inputfile_, wField_, nMonomer);
 
       // Update system real-space grid field 
       system().setWRGrid(wField_);

@@ -8,18 +8,25 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <prdc/cpu/FFT.h>                  // member
-#include <prdc/cpu/RField.h>               // function parameter
-#include <prdc/cpu/RFieldDft.h>            // function parameter
-#include <prdc/crystal/Basis.h>            // member
-#include <prdc/crystal/SpaceGroup.h>       // member
-#include <prdc/crystal/UnitCell.h>         // member
+#include <prdc/cpu/RFieldDft.h>            // data member
+#include <prdc/crystal/UnitCell.h>         // nested LatticeSystem enum
+#include <util/containers/DArray.h>        // nested function parameter
 
-#include <pscf/mesh/Mesh.h>                // member
-
-#include <util/misc/FileMaster.h>          // member
-#include <util/containers/DArray.h>        // function parameter
-#include <util/containers/Array.h>         // function parameter
+// Forward declarations for classes used only in references or pointers
+namespace Util {
+   class FileMaster;
+}
+namespace Pscf {
+   template <int D> class Mesh;
+   namespace Prdc {
+      template <int D> class Basis;
+      template <int D> class SpaceGroup;
+      namespace Cpu {
+         template <int D> class FFT;
+         template <int D> class RField;
+      }
+   }
+}
 
 namespace Pscf {
 namespace Pspc {
@@ -35,8 +42,8 @@ namespace Pspc {
    * This class provides functions to read and write arrays that contain
    * fields in any of three representations (symmetry-adapted basis, 
    * r-space grid, or Fourier k-space grid), and to convert among these 
-   * representations. The functions that implement IO operations define
-   * file formats for these field representations.
+   * representations. The member functions that implement IO operations 
+   * define the file formats for these field representations.
    *
    * \ingroup Pspc_Field_Module
    */
@@ -81,7 +88,7 @@ namespace Pspc {
       ///@{
 
       /**
-      * Read concentration or chemical potential field components from file.
+      * Read concentration or chemical potential fields from file.
       *
       * This function reads fields in a symmetry adapted basis from 
       * input stream in.
@@ -99,7 +106,7 @@ namespace Pspc {
                       UnitCell<D> & unitCell) const;
 
       /**
-      * Read concentration or chemical potential field components from file.
+      * Read concentration or chemical potential components from file.
       *
       * This function opens an input file with the specified filename, 
       * reads components in symmetry-adapted form from that file, and 
@@ -269,9 +276,9 @@ namespace Pspc {
       * \param fields  array of RField fields (r-space grid)
       * \param nMonomer  number of monomer types
       */
-      void readFieldRGridData(std::istream& in, 
-                              DArray< RField<D> >& fields,
-                              int nMonomer) const;
+      void readFieldsRGridData(std::istream& in, 
+                               DArray< RField<D> >& fields,
+                               int nMonomer) const;
 
       /**
       * Write array of RField objects (fields on r-space grid) to ostream.
