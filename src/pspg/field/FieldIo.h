@@ -358,13 +358,15 @@ namespace Pspg {
       /**
       * Write header for field file (fortran pscf format)
       *
-      * \param out output stream (i.e., output file)
-      * \param nMonomer number of monomer types
+      * \param out  output stream (i.e., output file)
+      * \param nMonomer  number of monomer types
       * \param unitCell  crystallographic unit cell 
+      * \param isSymmetric  true iff space group should be written
       */
-      void writeFieldHeader(std::ostream& out, int nMonomer,
-                           UnitCell<D> const & unitCell,
-                           bool isSymmetric) const;
+      void writeFieldHeader(std::ostream& out, 
+                            int nMonomer,
+                            UnitCell<D> const & unitCell,
+                            bool isSymmetric) const;
 
       ///@}
       /// \name Field Format Conversion

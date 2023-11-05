@@ -23,6 +23,7 @@ namespace Prdc {
    * If the group_name label and value are absent, then this function
    * returns an empty groupName string, groupName == "". 
    *
+   * \param in  input stream
    * \param ver1  major file format version number (output)
    * \param ver2  major file format version number (output)
    * \param cell  UnitCell<D> object (output)
@@ -41,6 +42,7 @@ namespace Prdc {
    * If the groupName parameter is an empty string (groupName == ""), 
    * then this function does not write the group_name label or value. 
    *
+   * \param out  output stream
    * \param ver1  major file format version number (input)
    * \param ver2  major file format version number (input)
    * \param cell  UnitCell<D> object (input)
