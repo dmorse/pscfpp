@@ -26,7 +26,6 @@ System{
   Domain{
     mesh           16    16    16
     lattice     cubic   
-    groupName   P_-1
   }
   AmCompressor{
     epsilon      1.0e-4
@@ -47,7 +46,7 @@ System{
         baseInterval    1
         TrajectoryWriter{
             interval        1
-            outputFileName  trajectory_read
+            outputFileName  out/trajectory_read
       }
       McHamiltonianAnalyzer{
             interval        1
@@ -61,3 +60,4 @@ System{
 }
 
     unitCell cubic   1.3835952906
+    groupName   P_-1

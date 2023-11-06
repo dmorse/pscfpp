@@ -26,7 +26,6 @@ System{
   Domain{
     mesh           16    16    16
     lattice     cubic   
-    groupName   P_-1
   }
   AmCompressor{
     epsilon      1.0e-4
@@ -67,3 +66,4 @@ System{
 }
 
     unitCell cubic   1.3835952906
+    groupName   P_-1

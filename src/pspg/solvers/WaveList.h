@@ -45,7 +45,7 @@ namespace Pspg {
       ~WaveList();
 
       /**
-      * Allocate memory for all arrays. Call in readParameters.
+      * Allocate memory for all arrays. 
       *
       * \param mesh  spatial discretization mesh (input)
       * \param unitCell  crystallographic unit cell (input)
@@ -108,9 +108,15 @@ namespace Pspg {
       */
       int kSize() const;
 
+      /**
+      *  Has memory been allocated for arrays?
+      */ 
       bool isAllocated() const
       {  return isAllocated_; }
 
+      /**
+      *  Have minimum images been computed?
+      */ 
       bool hasMinimumImages() const
       {  return hasMinimumImages_; }
 

@@ -8,10 +8,11 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
+#include <pspg/solvers/WaveList.h>        // member
+
 #include <prdc/cuda/FFT.h>                // member
 #include <prdc/cuda/RField.h>             // function parameter
 #include <prdc/cuda/RFieldDft.h>          // function parameter
-
 #include <prdc/crystal/Basis.h>           // member
 #include <prdc/crystal/SpaceGroup.h>      // member
 #include <prdc/crystal/UnitCell.h>        // member
@@ -60,6 +61,7 @@ namespace Pspg {
       * \param groupName space group name string
       * \param group  associated space group
       * \param basis  associated Basis object
+      * \param waveList  associated WaveList object
       * \param fileMaster  associated FileMaster (for file paths)
       */
       void associate(Mesh<D> const & mesh,
@@ -69,6 +71,7 @@ namespace Pspg {
                      std::string const & groupName,
                      SpaceGroup<D> const & group,
                      Basis<D>& basis,
+                     WaveList<D>& waveList,
                      FileMaster const & fileMaster);
 
       /// \name Field File IO - Symmetry Adapted Basis Format
@@ -480,6 +483,9 @@ namespace Pspg {
       /// Pointer to a Basis object
       Basis<D> * basisPtr_;
 
+      /// Pointer to WaveList object.
+      WaveList<D> * waveListPtr_;
+
       /// Pointer to Filemaster (holds paths to associated I/O files).
       FileMaster const * fileMasterPtr_;
 
@@ -533,6 +539,13 @@ namespace Pspg {
       {
          UTIL_ASSERT(basisPtr_);  
          return *basisPtr_; 
+      }
+
+      /// Get WaveList object by reference.
+      WaveList<D> & waveList() const
+      {
+         UTIL_ASSERT(waveListPtr_);  
+         return *waveListPtr_; 
       }
 
       /// Get FileMaster by const reference.

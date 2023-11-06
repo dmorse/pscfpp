@@ -66,6 +66,7 @@ namespace Pspg {
                          std::string const & groupName,
                          SpaceGroup<D> const & group,
                          Basis<D>& basis,
+                         WaveList<D>& waveList,
                          FileMaster const & fileMaster)
    {
       meshPtr_ = &mesh;
@@ -75,6 +76,7 @@ namespace Pspg {
       groupNamePtr_ = &groupName;
       groupPtr_ = &group;
       basisPtr_ = &basis;
+      waveListPtr_ = &waveList;
       fileMasterPtr_ = &fileMaster;
    }
 
@@ -945,6 +947,7 @@ namespace Pspg {
          UTIL_CHECK(unitCell.nParameter() > 0);
          UTIL_CHECK(unitCell.lattice() == lattice());
       }
+      UTIL_CHECK(waveList().isAllocated());
 
       // Read field header to set unitCell, groupNameIn, nMonomer
       int ver1, ver2;
@@ -955,7 +958,6 @@ namespace Pspg {
 
       // Checks of data from header
       UTIL_CHECK(ver1 == 1);
-      //UTIL_CHECK(ver2 == 0);
       UTIL_CHECK(unitCell.isInitialized());
       UTIL_CHECK(unitCell.nParameter() > 0);
 
@@ -970,6 +972,11 @@ namespace Pspg {
          UTIL_THROW("Mismatched lattice types");
       }
 
+      // Initialize WaveList minimum images if needed
+      if (!waveList().hasMinimumImages()) {
+         waveList().computeMinimumImages(mesh(), unitCell);
+      }
+
       // Check for non-empty group name in header
       isSymmetric = false;
       if (groupNameIn != "") {
@@ -979,9 +986,8 @@ namespace Pspg {
       // Validate group name, if any
       if (hasGroup()) {
 
+         // Check consistency of groupName values
          if (isSymmetric) {
-
-            // Check consistency of groupName values
             UTIL_CHECK(groupNamePtr_);
             if (groupNameIn != groupName()) {
                Log::file() << std::endl 
@@ -991,18 +997,16 @@ namespace Pspg {
                   << "  Field file header  :" << groupNameIn << "\n";
                UTIL_THROW("Mismatched group names");
             }
-
-            // If has group but no basis, construct the basis
-            UTIL_CHECK(basisPtr_);
-            if (!basis().isInitialized()) {
-               UTIL_CHECK(groupPtr_);
-               basisPtr_->makeBasis(mesh(), unitCell, group());
-            }
-            UTIL_CHECK(basis().isInitialized());
-
          }
 
-      } 
+         // If there is a group but no basis, construct the basis
+         UTIL_CHECK(basisPtr_);
+         if (!basis().isInitialized()) {
+            basisPtr_->makeBasis(mesh(), unitCell, group());
+         }
+         UTIL_CHECK(basis().isInitialized());
+
+      }
       
    }
 

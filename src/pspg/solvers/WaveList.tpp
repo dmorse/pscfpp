@@ -86,18 +86,7 @@ namespace Pspg
       nParams_(0),
       isAllocated_(false),
       hasMinimumImages_(false)
-   {
-      #if 0
-      minImage_d = nullptr;
-      dkSq_ = nullptr;
-      partnerIdTable = nullptr;
-      partnerIdTable_d = nullptr;
-      kSize_ = 0;
-      rSize_ = 0;
-      nParams_ = 0;
-      isAllocated_ = false;
-      #endif
-   }
+   {}
 
    template <int D>
    WaveList<D>::~WaveList() {
@@ -172,11 +161,11 @@ namespace Pspg
    void WaveList<D>::computeMinimumImages(Mesh<D> const & mesh, 
                                           UnitCell<D> const & unitCell) {
       // Precondition
-      UTIL_CHECK (isAllocated_);
-      UTIL_CHECK (mesh.size() > 0);
-      UTIL_CHECK (unitCell.nParameter() > 0);
-      UTIL_CHECK (unitCell.lattice() != UnitCell<D>::Null);
-      UTIL_CHECK (unitCell.isInitialized());
+      UTIL_CHECK(isAllocated_);
+      UTIL_CHECK(mesh.size() > 0);
+      UTIL_CHECK(unitCell.nParameter() > 0);
+      UTIL_CHECK(unitCell.lattice() != UnitCell<D>::Null);
+      UTIL_CHECK(unitCell.isInitialized());
 
       MeshIterator<D> itr(mesh.dimensions());
       IntVec<D> waveId;
@@ -289,10 +278,10 @@ namespace Pspg
       // Second to last parameter is number of stars originally
 
       // Precondition
-      UTIL_CHECK (hasMinimumImages_);
-      UTIL_CHECK (unitCell.nParameter() > 0);
-      UTIL_CHECK (unitCell.lattice() != UnitCell<D>::Null);
-      UTIL_CHECK (unitCell.isInitialized());
+      UTIL_CHECK(hasMinimumImages_);
+      UTIL_CHECK(unitCell.nParameter() > 0);
+      UTIL_CHECK(unitCell.lattice() != UnitCell<D>::Null);
+      UTIL_CHECK(unitCell.isInitialized());
 
       // GPU resources
       int nBlocks, nThreads;
@@ -311,8 +300,9 @@ namespace Pspg
       cudaMemcpy(dkkBasis_d, dkkBasis,
                  sizeof(cudaReal) * unitCell.nParameter() * D * D,
                  cudaMemcpyHostToDevice);
+      cudaMemset(dkSq_, 0, 
+                 unitCell.nParameter() * rSize_ * sizeof(cudaReal));
 
-      cudaMemset(dkSq_, 0, unitCell.nParameter() * rSize_ * sizeof(cudaReal));
       makeDksqHelperWave<<<nBlocks, nThreads>>>
          (dkSq_, minImage_d, dkkBasis_d, partnerIdTable_d,
           selfIdTable_d, implicit_d, unitCell.nParameter(), 

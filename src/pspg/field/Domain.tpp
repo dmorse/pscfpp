@@ -44,8 +44,8 @@ namespace Pspg {
    void Domain<D>::setFileMaster(FileMaster& fileMaster)
    {
       fieldIo_.associate(mesh_, fft_,
-                         lattice_, hasGroup_, groupName_, group_, basis_,
-                         fileMaster);
+                         lattice_, hasGroup_, groupName_, group_, 
+                         basis_, waveList_, fileMaster);
       hasFileMaster_ = true;
    }
 
@@ -85,6 +85,9 @@ namespace Pspg {
       isInitialized_ = true;
    }
 
+   /*
+   * Initialize domain from RGridFieldHeader (alternative to param file)
+   */
    template <int D>
    void Domain<D>::readRGridFieldHeader(std::istream& in, int& nMonomer)
    {
@@ -109,11 +112,15 @@ namespace Pspg {
       IntVec<D> nGrid;
       in >> nGrid;
 
-      // Initialize mesh, fft and basis
+      // Initialize mesh and fft
       if (mesh_.size() == 0) {
-         // Initialize mesh, fft
          mesh_.setDimensions(nGrid);
          fft_.setup(mesh_.dimensions());
+      }
+
+      // Allocate waveList
+      if (!waveList_.isAllocated()) {
+         waveList_.allocate(mesh_, unitCell_);
       }
 
       // Initialize group and basis
@@ -138,13 +145,14 @@ namespace Pspg {
          UTIL_CHECK(lattice_ == unitCell.lattice());
       }
       unitCell_ = unitCell;
-      if (hasGroup_) {
-         if (!basis_.isInitialized()) {
-            makeBasis();
-         }
+      if (!waveList_.hasMinimumImages()) {
+         waveList().computeMinimumImages(mesh_, unitCell_);
       }
       waveList_.computeKSq(unitCell_);
       waveList_.computedKSq(unitCell_);
+      if (hasGroup_ && !basis_.isInitialized()) {
+         makeBasis();
+      }
    }
 
    /*
@@ -160,11 +168,14 @@ namespace Pspg {
          UTIL_CHECK(lattice_ == lattice);
       }
       unitCell_.set(lattice, parameters);
-      if (!basis_.isInitialized()) {
-         makeBasis();
+      if (!waveList_.hasMinimumImages()) {
+         waveList().computeMinimumImages(mesh_, unitCell_);
       }
       waveList_.computeKSq(unitCell_);
       waveList_.computedKSq(unitCell_);
+      if (hasGroup_ && !basis_.isInitialized()) {
+         makeBasis();
+      }
    }
 
    /*
@@ -176,11 +187,14 @@ namespace Pspg {
       UTIL_CHECK(unitCell_.lattice() != UnitCell<D>::Null);
       UTIL_CHECK(unitCell_.nParameter() == parameters.size());
       unitCell_.setParameters(parameters);
-      if (!basis_.isInitialized()) {
-         makeBasis();
+      if (!waveList_.hasMinimumImages()) {
+         waveList().computeMinimumImages(mesh_, unitCell_);
       }
       waveList_.computeKSq(unitCell_);
       waveList_.computedKSq(unitCell_);
+      if (hasGroup_ && !basis_.isInitialized()) {
+         makeBasis();
+      }
    }
 
    template <int D>
@@ -197,13 +211,6 @@ namespace Pspg {
          basis_.makeBasis(mesh_, unitCell_, group_);
       }
       UTIL_CHECK(basis().isInitialized());
-
-      // Compute minimum images in WaveList
-      UTIL_CHECK(waveList().isAllocated());
-      if (!waveList().hasMinimumImages()) {
-         waveList().computeMinimumImages(mesh(), unitCell());
-      }
-
    }
 
 } // namespace Pspg
