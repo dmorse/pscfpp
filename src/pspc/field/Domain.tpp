@@ -59,32 +59,29 @@ namespace Pspc
    template <int D>
    void Domain<D>::readParameters(std::istream& in)
    {
-      // Preconditins
+      // Preconditions
       UTIL_CHECK(!isInitialized_);
       UTIL_CHECK(hasFileMaster_);
-      bool hasUnitCell = false; 
 
       read(in, "mesh", mesh_);
+      UTIL_CHECK(mesh().size() > 0);
       fft_.setup(mesh_.dimensions());
 
       read(in, "lattice", lattice_);
       unitCell_.set(lattice_);
+      UTIL_CHECK(unitCell().lattice() != UnitCell<D>::Null);
+      UTIL_CHECK(unitCell().nParameter() > 0);
 
       // Optionally read group name 
+      hasGroup_ = false;
       bool hasGroupName;
       hasGroupName = readOptional(in, "groupName", groupName_).isActive();
 
-      hasGroup_ = false;
+      // If group name is present, construct the group
       if (hasGroupName) {
-
-         // Read the space group from file.
+         // Read group symmetry operations from file
          readGroup(groupName_, group_);
          hasGroup_ = true;
-
-         // If unit cell parameters are known, construct a basis
-         if (hasUnitCell) { 
-            basis().makeBasis(mesh(), unitCell(), group_);
-         }
       }
 
       isInitialized_ = true;
@@ -111,6 +108,8 @@ namespace Pspc
                            unitCell_, groupName_, nMonomer);
 
       lattice_ = unitCell_.lattice();
+      UTIL_CHECK(lattice_ != UnitCell<D>::Null);
+      UTIL_CHECK(unitCell_.isInitialized());
  
       // Read grid dimensions
       std::string label;
@@ -132,6 +131,7 @@ namespace Pspc
          fft_.setup(mesh_.dimensions());
       }
 
+      // If groupName is present, construct group and basis
       if (groupName_ != "") {
          readGroup(groupName_, group_);
          hasGroup_ = true;

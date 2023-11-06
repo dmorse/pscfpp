@@ -1199,9 +1199,7 @@ namespace Pspc {
          UTIL_CHECK(unitCell.nParameter() == 0);
       } else {
          UTIL_CHECK(unitCell.nParameter() > 0);
-         if (lattice() != UnitCell<D>::Null) {
-            UTIL_CHECK(unitCell.lattice() == lattice());
-         }
+         UTIL_CHECK(unitCell.lattice() == lattice());
       }
 
       // Read field header to set unitCell, groupNameIn, nMonomer
@@ -1220,18 +1218,14 @@ namespace Pspc {
       UTIL_CHECK(unitCell.nParameter() > 0);
 
       // Validate or initialize lattice type
-      if (lattice() == UnitCell<D>::Null) {
-         lattice() = unitCell.lattice();
-      } else {
-         if (lattice() != unitCell.lattice()) {
-            Log::file() << std::endl 
+      if (lattice() != unitCell.lattice()) {
+         Log::file() << std::endl 
                << "Error - Mismatched lattice types " 
                << "in function FieldIo<D>::readFieldHeader:\n" 
                << "  FieldIo::lattice  :" << lattice() << "\n"
                << "  Unit cell lattice :" << unitCell.lattice() 
                << "\n";
-            UTIL_THROW("Mismatched lattice types");
-         }
+         UTIL_THROW("Mismatched lattice types");
       }
 
       // Check for presence of group name 
@@ -1241,23 +1235,24 @@ namespace Pspc {
       }
        
       // Process group and basis (if any) 
-      if (hasGroup() && isSymmetric) {
+      if (hasGroup()) {
 
          // Check consistency of groupName values
-         UTIL_CHECK(groupNamePtr_);
-         if (groupNameIn != groupName()) {
-            Log::file() << std::endl 
-               << "Error - Mismatched group names in "
-               << "function FieldIo<D>::readFieldHeader:\n" 
-               << "  FieldIo::groupName :" << groupName() << "\n"
-               << "  Field file header  :" << groupNameIn << "\n";
-            UTIL_THROW("Mismatched group names");
+         if (isSymmetric) {
+            UTIL_CHECK(groupNamePtr_);
+            if (groupNameIn != groupName()) {
+               Log::file() << std::endl 
+                  << "Error - Mismatched group names in "
+                  << "function FieldIo<D>::readFieldHeader:\n" 
+                  << "  FieldIo::groupName :" << groupName() << "\n"
+                  << "  Field file header  :" << groupNameIn << "\n";
+               UTIL_THROW("Mismatched group names");
+            }
          }
 
-         // If no basis exists, construct basis
+         // If there is a group but no basis, construct a basis
          UTIL_CHECK(basisPtr_);
          if (!basis().isInitialized()) {
-            UTIL_CHECK(groupPtr_);
             basisPtr_->makeBasis(mesh(), unitCell, group());
          }
          UTIL_CHECK(basis().isInitialized());

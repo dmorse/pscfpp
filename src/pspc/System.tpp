@@ -684,19 +684,22 @@ namespace Pspc {
       // Precondition
       UTIL_CHECK(domain_.hasGroup());
 
-      // If basis fields are not allocated, peek at field file header to 
-      // get unit cell parameters, initialize basis and allocate fields.
-      if (!isAllocatedBasis_) {
+      if (!domain_.unitCell().isInitialized()) {
          readFieldHeader(filename); 
-         UTIL_CHECK(domain_.basis().isInitialized());
+      }
+      UTIL_CHECK(domain_.unitCell().isInitialized());
+      UTIL_CHECK(domain_.basis().isInitialized());
+      UTIL_CHECK(domain_.basis().nBasis() > 0);
+      if (!isAllocatedBasis_) {
          allocateFieldsBasis();
       }
 
       // Read w fields
       w_.readBasis(filename, domain_.unitCell());
-      mixture_.setupUnitCell(domain_.unitCell());
       hasCFields_ = false;
       hasFreeEnergy_ = false;
+
+      mixture_.setupUnitCell(domain_.unitCell());
    }
 
    /*
@@ -705,47 +708,23 @@ namespace Pspc {
    template <int D>
    void System<D>::readWRGrid(const std::string & filename)
    {
-      if (domain_.hasGroup()) {
-         // If basis fields are not allocated, peek at field file header 
-         // to get unit cell parameters, initialize basis and allocate.
-         if (!isAllocatedBasis_) {
-            readFieldHeader(filename); 
-            UTIL_CHECK(domain_.basis().isInitialized());
-            allocateFieldsBasis();
-         }
+      if (!domain_.unitCell().isInitialized()) {
+         readFieldHeader(filename); 
+      }
+      UTIL_CHECK(domain_.unitCell().isInitialized());
+      if (domain_.hasGroup() && !isAllocatedBasis_) {
+         UTIL_CHECK(domain_.basis().isInitialized());
+         UTIL_CHECK(domain_.basis().nBasis() > 0);
+         allocateFieldsBasis();
       }
 
       // Read w fields
       w_.readRGrid(filename, domain_.unitCell());
+      hasCFields_ = false;
+      hasFreeEnergy_ = false;
+
+      // Update UnitCell in Mixture
       mixture_.setupUnitCell(domain_.unitCell());
-      hasCFields_ = false;
-      hasFreeEnergy_ = false;
-   }
-
-   /*
-   * Set new w-field values.
-   */
-   template <int D>
-   void System<D>::setWBasis(DArray< DArray<double> > const & fields)
-   {
-      UTIL_CHECK(domain_.hasGroup());
-      UTIL_CHECK(domain_.basis().isInitialized());
-      UTIL_CHECK(isAllocatedBasis_);
-      w_.setBasis(fields);
-      hasCFields_ = false;
-      hasFreeEnergy_ = false;
-   }
-
-   /*
-   * Set new w-field values, using r-grid fields as inputs.
-   */
-   template <int D>
-   void System<D>::setWRGrid(DArray< RField<D> > const & fields)
-   {
-      UTIL_CHECK(isAllocatedGrid_);
-      w_.setRGrid(fields);
-      hasCFields_ = false;
-      hasFreeEnergy_ = false;
    }
 
    /*
@@ -761,10 +740,12 @@ namespace Pspc {
       UTIL_CHECK(nm > 0);
       UTIL_CHECK(domain_.hasGroup());
 
-      // If basis fields are not allocated, peek at field file header to 
-      // get unit cell parameters, initialize basis and allocate fields.
-      if (!isAllocatedBasis_) {
+      if (!domain_.unitCell().isInitialized()) {
          readFieldHeader(filename); 
+      }
+      UTIL_CHECK(domain_.unitCell().isInitialized());
+      UTIL_CHECK(domain_.basis().isInitialized());
+      if (!isAllocatedBasis_) {
          allocateFieldsBasis();
       }
       const int nb = domain_.basis().nBasis();
@@ -793,7 +774,36 @@ namespace Pspc {
 
       // Store initial guess for w fields
       w_.setBasis(tmpFieldsBasis_);
+      hasCFields_ = false;
+      hasFreeEnergy_ = false;
 
+      // Update UnitCell in Mixture
+      mixture_.setupUnitCell(domain_.unitCell());
+   }
+
+   /*
+   * Set new w-field values.
+   */
+   template <int D>
+   void System<D>::setWBasis(DArray< DArray<double> > const & fields)
+   {
+      UTIL_CHECK(domain_.hasGroup());
+      UTIL_CHECK(domain_.basis().isInitialized());
+      UTIL_CHECK(isAllocatedGrid_);
+      UTIL_CHECK(isAllocatedBasis_);
+      w_.setBasis(fields);
+      hasCFields_ = false;
+      hasFreeEnergy_ = false;
+   }
+
+   /*
+   * Set new w-field values, using r-grid fields as inputs.
+   */
+   template <int D>
+   void System<D>::setWRGrid(DArray< RField<D> > const & fields)
+   {
+      UTIL_CHECK(isAllocatedGrid_);
+      w_.setRGrid(fields);
       hasCFields_ = false;
       hasFreeEnergy_ = false;
    }
