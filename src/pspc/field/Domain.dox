@@ -3,8 +3,13 @@ namespace Pspc{
 /*! 
 \page pspc_Domain_page Pspc::Domain
 
-A Pscf::Pspc::Domain<D> object represents a spatial domain and discretization.
-The parameter file format for a Domain is:
+Pscf::Pspc::Domain<D> and Pscf::Pspg::Domain<D> are closely analogous
+class templates that are used to represent a periodic unit cell and 
+discretization mesh for a D-dimensional periodic structure, as used 
+in the pscf_pc and pscf_pg programs, respectively. These closely 
+analogous classes use the same parameter file input format.
+
+The parameter file format for a Domain<D> object is:
 \code
 Domain{
   mesh         Array[Int]
@@ -17,37 +22,43 @@ Parameters and subblocks are described below:
   <tr>
     <td> lattice </td>
     <td> 
-      String identifieir for the lattice system (e.g., cubic, orthorhombic,
-      hexagonal, etc.). Stored as a UnitCell<D>::LatticeSype enumeration 
-      value.  A discussion of crystal system names and unit cell 
-      parameters is given \ref user_unitcell_page "here". 
-      </tr>
+    String identifier for a lattice system (e.g., cubic, orthorhombic,
+    hexagonal, etc.). The lattice system is stored internally as a 
+    UnitCell<D>::LatticeSype enum value.  A discussion of allowed
+    crystal system identifiers and associated unit cell parameters is 
+    given \ref user_unitcell_page "here".  
+    </td>
   <tr>
     <td> mesh </td>
     <td> 
-    A list of D integers on a single line, in which component i of the
-    list is the number of grid points along direction i. 
+    A list of D integers on a single line, in which component i is the 
+    number of grid points along direction (Bravais basis vector) i. 
+    </td>
   </tr>
   <tr>
-    <td> groupName </td>
+    <td> groupName* </td>
     <td> 
       String identifier for a crystallographic space group (optional).
-      A list of valid space group identifiers is given 
-      \ref user_groups_page "here".
+      A list of valid space group identifiers for each value of D is 
+      given \ref user_groups_page "here".
     </td> 
   </tr>
 </table>
 
-The optional groupName parametr must be present to enable reading and
-writing of fields in symmetry adapted basis format. The groupName
-parameter is also required to enable iterative solution of SCFT equations 
-for structures of known symmetry using an Iterator class that uses such 
-a symmetry-adapted basis to update the fields, and which thus preserves
-the specified symmetry. The groupName parameter can, however, generally 
-be left out of parameter files intended for use with field theoretic 
-Monte-Carlo (FTMC) calculations, for which the fields generally do not 
-exhbit any nontrivial symmetry, and for which fields can be input and
-outoput using the r-grid field file format.
+The optional groupName parameter must be present to enable reading 
+and writing of fields in symmetry adapted basis format, or use of any 
+algorithm that relies on that field representation. Specifically, the 
+groupName parameter must be present to enable iterative solution of SCFT 
+equations for structures of known symmetry using any Iterator class 
+that uses a symmetry-adapted basis to update the fields, and that thus 
+automatically preserves the symmetry.  The groupName parameter can, 
+however, generally be left out of parameter files intended for use 
+with field theoretic Monte-Carlo (FTMC) calculations, for which the 
+fields generally do not exhbit any nontrivial symmetry, as well as 
+for "large-cell" SCFT calculations in which no symmetry is imposed.
+Fields for simulations or SCFT calculations that do not impose a 
+space group symmetry are normally input and output using the r-grid 
+field file format.
 
 */
 }

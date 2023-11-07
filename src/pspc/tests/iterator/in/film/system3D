@@ -27,7 +27,7 @@ System{
     lattice        tetragonal
     groupName      P_4%m_m_m
   }
-  AmIteratorFilm{
+  AmIteratorBasisFilm{
     epsilon      1.0e-7
     maxItr       1000
     maxHist      50 

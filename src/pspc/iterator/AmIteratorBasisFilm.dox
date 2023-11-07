@@ -1,13 +1,14 @@
 /*! 
-\page pspc_AmIteratorFilm_page Pspc::AmIteratorFilm
+\page pspc_AmIteratorBasisFilm_page Pspc::AmIteratorBasisFilm
 
-An AmIteratorFilm is an iterator that uses an Anderson Mixing (AM) algorithm
-to solve the SCFT equations for a thin film.  For more information, see the 
-detailed summary at \ref user_thin_films_page .
+An AmIteratorBasisFilm is an iterator that uses an Anderson Mixing (AM) 
+algorithm to solve the SCFT equations for a system confined to a thin
+film, while imposing a specific space group symmetry.  See the detailed
+discussion at \ref user_thin_films_page .
 
-The parameter file format for an AmIteratorFilm object is:
+The parameter file format for an AmIteratorBasisFilm object is:
 \code
-AmIteratorFilm{
+AmIteratorBasisFilm{
    epsilon             float
    maxItr*             int (200 by default)
    maxHist*            int (50 by default) 
@@ -51,7 +52,8 @@ Parameters and subblocks are described below:
          string are "norm", "rms", "max" and "relNorm", with "relNorm"
          set by default. All error types are defined in terms of some
          sort of norm of the residual vector.  Definitions are the same
-         as for the \ref pspc_AmIterator_page "AmIterator" algorithm.
+         as for the \ref pspc_AmIteratorBasis_page "AmIteratorBasis" 
+         algorithm.
          </td>
   </tr>
   <tr>

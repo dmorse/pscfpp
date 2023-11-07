@@ -1,8 +1,9 @@
 /*! 
-\page pspc_AmIterator_page Pspc::AmIterator
+\page pspc_AmIteratorBasis_page Pspc::AmIteratorBasis
 
-The AmIterator algorithm used by the pscf_pc programs solves the SCFT 
-equations for a periodic system using the Anderson Mixing algorithm. 
+The AmIteratorBasis algorithm used by the pscf_pc programs solves 
+the SCFT equations for a periodic system using the Anderson Mixing 
+algorithm. A
 
 The variant of this algorithm implemented here is almost identical to that 
 described by Arora et al. [Arora, Morse, Bates, and Dorfman, J. Chem.
@@ -17,12 +18,12 @@ optimize some or all of the unit cell parameters of a flexible unit cell
 so as to minimize the free energy density, depending on the value of 
 "isFlexible" and "flexibleParams", as described below. 
 
-\section pspc_AmIterator_parameter_sec Parameter File
+\section pspc_AmIteratorBasis_parameter_sec Parameter File
 
 A typical example of the parameter file format for this iterator is shown
 below:
 \code
-  AmIterator{
+  AmIteratorBasis{
     epsilon      1e-8
     maxItr       100
     maxHist      50
@@ -31,7 +32,7 @@ below:
 \endcode
 The format of this block is described more formally below:
 \code
-AmIterator{
+AmIteratorBasis{
    epsilon          real 
    maxItr*          int (200 by default)
    maxHist*         int (50 by default)
@@ -113,7 +114,7 @@ or if the magnitude of the scalar error drops below epsilon.
 the scalar error, depending on the value of the identifier errorType.  
 All of them ar based on computation of different types of norm of the
 residual vector, defined as discussed 
-\ref pspc_AmIterator_residual_sec "below".
+\ref pspc_AmIteratorBasis_residual_sec "below".
 
   - If errorType == norm, then the scalar error is take to be the L2 
     norm of the residual vector (square-root of sum of squares of the
@@ -139,7 +140,7 @@ arising from errors in the SCFT equations for the w fields in a fixed
 unit cell. This variable is irrelevant if isFlexible is false, and should 
 normally be ommitted in this case. 
 
-\section pspc_AmIterator_residual_sec Residual Definition
+\section pspc_AmIteratorBasis_residual_sec Residual Definition
 
 The vector of residuals used in this algorithm is described by Eqs. 
 (10-13) of the article by Arora et al. (J. Chem. Phys. 2017).  To 
@@ -192,7 +193,7 @@ which \f$ kT = 1 \f$, while \f$S\f$ is an arbitrary prefactor
 whose value is given by the parameter scaleStress. (The factor
 \f$S\f$ is set to 10.0 by default).
 
-\section pspc_AmIterator_closed_sec Closed Systems (Canonical Ensemble)
+\section pspc_AmIteratorBasis_closed_sec Closed Systems (Canonical Ensemble)
 
 A slight modification of the residual definition is required in the case 
 case when a value of phi rather than mu is specified for every molecular 

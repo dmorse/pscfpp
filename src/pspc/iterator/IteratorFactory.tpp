@@ -4,7 +4,7 @@
 #include "IteratorFactory.h"  
 
 // Subclasses of Iterator 
-#include "AmIterator.h"
+#include "AmIteratorBasis.h"
 #include "FilmIterator.h"
 
 namespace Pscf {
@@ -33,10 +33,11 @@ namespace Pspc {
       if (ptr) return ptr;
  
       // Try to match classname
-      if (className == "Iterator" || className == "AmIterator") {
-         ptr = new AmIterator<D>(*sysPtr_);
-      } else if (className == "AmIteratorFilm") {
-         ptr = new FilmIterator<D, AmIterator<D> >(*sysPtr_);
+      if (className == "Iterator" || className == "AmIteratorBasis" 
+                                  || className == "AmIterator" ) {
+         ptr = new AmIteratorBasis<D>(*sysPtr_);
+      } else if (className == "AmIteratorBasisFilm") {
+         ptr = new FilmIterator<D, AmIteratorBasis<D> >(*sysPtr_);
       }
 
       return ptr;

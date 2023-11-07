@@ -27,7 +27,7 @@ System{
     lattice        lamellar    
     groupName      P_1
   }
-  AmIteratorFilm{
+  AmIteratorBasisFilm{
     epsilon      1.0e-10
     maxItr       2000
     maxHist      25 

@@ -6,14 +6,14 @@
 */
 
 #include "FilmIterator.tpp"
-#include "AmIterator.tpp"
+#include "AmIteratorBasis.tpp"
 
 namespace Pscf {
 namespace Pspc {
 
-   template class FilmIterator<1, AmIterator<1> >;
-   template class FilmIterator<2, AmIterator<2> >;
-   template class FilmIterator<3, AmIterator<3> >;
+   template class FilmIterator<1, AmIteratorBasis<1> >;
+   template class FilmIterator<2, AmIteratorBasis<2> >;
+   template class FilmIterator<3, AmIteratorBasis<3> >;
 
 }
 } 

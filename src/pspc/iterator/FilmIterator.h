@@ -8,6 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
+#include "AmIteratorBasis.h"
 #include "FilmIteratorBase.h"
 
 namespace Pscf {
@@ -197,6 +198,13 @@ namespace Pspc
       using Iterator<3>::setFlexibleParams;
       
    };
+
+   #ifndef PSPC_FILM_ITERATOR_TPP
+   // Suppress implicit instantiation
+   extern template class FilmIterator<1, AmIteratorBasis<1> >;
+   extern template class FilmIterator<2, AmIteratorBasis<2> >;
+   extern template class FilmIterator<3, AmIteratorBasis<3> >;
+   #endif
 
 } // namespace Pspc
 } // namespace Pscf

@@ -5,14 +5,14 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "AmIterator.tpp"
+#include "AmIteratorBasis.tpp"
 
 namespace Pscf {
 namespace Pspc {
 
-   template class AmIterator<1>;
-   template class AmIterator<2>;
-   template class AmIterator<3>;
+   template class AmIteratorBasis<1>;
+   template class AmIteratorBasis<2>;
+   template class AmIteratorBasis<3>;
 
 }
 }

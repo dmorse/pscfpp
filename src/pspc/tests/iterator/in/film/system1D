@@ -27,7 +27,7 @@ System{
     lattice        lamellar
     groupName      P_1
   }
-  AmIteratorFilm{
+  AmIteratorBasisFilm{
     epsilon      1.0e-12
     maxItr       2000
     maxHist      100 
@@ -46,6 +46,6 @@ System{
                   cell_param  0  +0.1
                   chi_bottom  0  +20.0
                   chi_top     0  -20.0
-    ]   
+    ]
   }
 }

@@ -88,7 +88,7 @@ this difference is that the magnitude of erors obtained for
 corresponding states with the same errorType flag will generally be 
 different (sometimes very different) for the AmIteratorGrid and 
 AmIteratorBasis programs. See the documentation for the Pspc
-\ref pspc_AmIterator_page "AmIterator" algorithm for the definition
-fo the residual field and some other details.
+\ref pspc_AmIteratorBasis_page "kAmIteratorBasis" algorithm for the 
+definition fo the residual field and some other details.
 
 */

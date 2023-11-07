@@ -1,5 +1,5 @@
 pspc_iterator_= \
-  pspc/iterator/AmIterator.cpp \
+  pspc/iterator/AmIteratorBasis.cpp \
   pspc/iterator/FilmIterator.cpp \
   pspc/iterator/IteratorFactory.cpp 
 

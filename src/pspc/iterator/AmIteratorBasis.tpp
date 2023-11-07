@@ -1,5 +1,5 @@
-#ifndef PSPC_AM_ITERATOR_TPP
-#define PSPC_AM_ITERATOR_TPP
+#ifndef PSPC_AM_ITERATOR_BASIS_TPP
+#define PSPC_AM_ITERATOR_BASIS_TPP
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory
@@ -8,7 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "AmIterator.h"
+#include "AmIteratorBasis.h"
 #include <pspc/System.h>
 #include <pscf/inter/Interaction.h>
 #include <pscf/iterator/NanException.h>
@@ -22,25 +22,25 @@ namespace Pspc{
 
    // Constructor
    template <int D>
-   AmIterator<D>::AmIterator(System<D>& system)
+   AmIteratorBasis<D>::AmIteratorBasis(System<D>& system)
     : Iterator<D>(system)
    {
      isFlexible_ = true;  
-     setClassName("AmIterator"); 
+     setClassName("AmIteratorBasis"); 
    }
 
    // Destructor
    template <int D>
-   AmIterator<D>::~AmIterator()
+   AmIteratorBasis<D>::~AmIteratorBasis()
    {  }
 
    // Read parameters from file
    template <int D>
-   void AmIterator<D>::readParameters(std::istream& in)
+   void AmIteratorBasis<D>::readParameters(std::istream& in)
    {
       // Call parent class readParameters
-      AmIteratorTmpl< Iterator<D>, DArray<double> >::readParameters(in);
-      AmIteratorTmpl< Iterator<D>, DArray<double> >::readErrorType(in);
+      AmIteratorTmpl<Iterator<D>, DArray<double> >::readParameters(in);
+      AmIteratorTmpl<Iterator<D>, DArray<double> >::readErrorType(in);
 
       // Allocate local modified copy of Interaction class
       interaction_.setNMonomer(system().mixture().nMonomer());
@@ -82,7 +82,7 @@ namespace Pspc{
 
    // Setup before entering iteration loop
    template <int D>
-   void AmIterator<D>::setup(bool isContinuation)
+   void AmIteratorBasis<D>::setup(bool isContinuation)
    {
       AmIteratorTmpl<Iterator<D>, DArray<double> >::setup(isContinuation);
       interaction_.update(system().interaction());
@@ -92,12 +92,12 @@ namespace Pspc{
 
    // Assign one array to another
    template <int D>
-   void AmIterator<D>::setEqual(DArray<double>& a, DArray<double> const & b)
+   void AmIteratorBasis<D>::setEqual(DArray<double>& a, DArray<double> const & b)
    {  a = b; }
 
    // Compute and return inner product of two vectors.
    template <int D>
-   double AmIterator<D>::dotProduct(DArray<double> const & a, 
+   double AmIteratorBasis<D>::dotProduct(DArray<double> const & a, 
                                     DArray<double> const & b)
    {
       const int n = a.capacity();
@@ -106,7 +106,7 @@ namespace Pspc{
       for (int i = 0; i < n; i++) {
          // if either value is NaN, throw NanException
          if (std::isnan(a[i]) || std::isnan(b[i])) { 
-            throw NanException("AmIterator::dotProduct",__FILE__,__LINE__,0);
+            throw NanException("AmIteratorBasis::dotProduct",__FILE__,__LINE__,0);
          }
          product += a[i] * b[i];
       }
@@ -115,7 +115,7 @@ namespace Pspc{
 
    // Compute and return maximum element of a vector.
    template <int D>
-   double AmIterator<D>::maxAbs(DArray<double> const & a)
+   double AmIteratorBasis<D>::maxAbs(DArray<double> const & a)
    {
       const int n = a.capacity();
       double max = 0.0;
@@ -123,7 +123,7 @@ namespace Pspc{
       for (int i = 0; i < n; i++) {
          value = a[i];
          if (std::isnan(value)) { // if value is NaN, throw NanException
-            throw NanException("AmIterator::dotProduct",__FILE__,__LINE__,0);
+            throw NanException("AmIteratorBasis::dotProduct",__FILE__,__LINE__,0);
          }
          if (fabs(value) > max) {
             max = fabs(value);
@@ -135,7 +135,7 @@ namespace Pspc{
    // Update basis
    template <int D>
    void 
-   AmIterator<D>::updateBasis(RingBuffer< DArray<double> > & basis,
+   AmIteratorBasis<D>::updateBasis(RingBuffer< DArray<double> > & basis,
                               RingBuffer< DArray<double> > const & hists)
    {
       // Make sure at least two histories are stored
@@ -154,7 +154,7 @@ namespace Pspc{
 
    template <int D>
    void
-   AmIterator<D>::addHistories(DArray<double>& trial,
+   AmIteratorBasis<D>::addHistories(DArray<double>& trial,
                                RingBuffer<DArray<double> > const & basis,
                                DArray<double> coeffs,
                                int nHist)
@@ -169,7 +169,7 @@ namespace Pspc{
    }
 
    template <int D>
-   void AmIterator<D>::addPredictedError(DArray<double>& fieldTrial,
+   void AmIteratorBasis<D>::addPredictedError(DArray<double>& fieldTrial,
                                          DArray<double> const & resTrial,
                                          double lambda)
    {
@@ -183,12 +183,12 @@ namespace Pspc{
 
    // Does the system have an initial field guess?
    template <int D>
-   bool AmIterator<D>::hasInitialGuess()
+   bool AmIteratorBasis<D>::hasInitialGuess()
    {  return system().w().hasData(); }
 
    // Compute and return number of elements in a residual vector
    template <int D>
-   int AmIterator<D>::nElements()
+   int AmIteratorBasis<D>::nElements()
    {
       const int nMonomer = system().mixture().nMonomer();
       const int nBasis = system().basis().nBasis();
@@ -203,7 +203,7 @@ namespace Pspc{
 
    // Get the current field from the system
    template <int D>
-   void AmIterator<D>::getCurrent(DArray<double>& curr)
+   void AmIteratorBasis<D>::getCurrent(DArray<double>& curr)
    {
       const int nMonomer = system().mixture().nMonomer();
       const int nBasis = system().basis().nBasis();
@@ -235,7 +235,7 @@ namespace Pspc{
 
    // Perform the main system computation (solve the MDE)
    template <int D>
-   void AmIterator<D>::evaluate()
+   void AmIteratorBasis<D>::evaluate()
    {
       // Solve MDEs for current omega field
       system().compute();
@@ -248,7 +248,7 @@ namespace Pspc{
 
    // Compute the residual for the current system state
    template <int D>
-   void AmIterator<D>::getResidual(DArray<double>& resid)
+   void AmIteratorBasis<D>::getResidual(DArray<double>& resid)
    {
       const int n = nElements();
       const int nMonomer = system().mixture().nMonomer();
@@ -340,7 +340,7 @@ namespace Pspc{
 
    // Update the current system field coordinates
    template <int D>
-   void AmIterator<D>::update(DArray<double>& newGuess)
+   void AmIteratorBasis<D>::update(DArray<double>& newGuess)
    {
       // Convert back to field format
       const int nMonomer = system().mixture().nMonomer();
@@ -396,7 +396,7 @@ namespace Pspc{
    }
 
    template<int D>
-   void AmIterator<D>::outputToLog()
+   void AmIteratorBasis<D>::outputToLog()
    {
       if (isFlexible() && verbose() > 1) {
          const int nParam = system().unitCell().nParameter();
@@ -414,7 +414,7 @@ namespace Pspc{
    }
    
    template<int D>
-   void AmIterator<D>::outputTimers(std::ostream& out)
+   void AmIteratorBasis<D>::outputTimers(std::ostream& out)
    {
       // Output timing results, if requested.
       out << "\n";

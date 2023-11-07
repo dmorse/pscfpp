@@ -11,7 +11,7 @@
 #include <pspc/solvers/Block.h>
 #include <pspc/solvers/Mixture.h>
 #include <pspc/solvers/Polymer.h>
-#include <pspc/iterator/AmIterator.h>
+#include <pspc/iterator/AmIteratorBasis.h>
 #include <pspc/iterator/FilmIterator.h>
 #include <pspc/System.h>
 #include <prdc/crystal/UnitCell.h>
@@ -192,9 +192,9 @@ namespace Pspc {
       } else if (type_ == Chi_Bottom) {
          // Note: this option is only relevant for thin film systems
          UTIL_CHECK(isFilmIterator()); 
-         if (systemPtr_->iterator().className() == "AmIteratorFilm") {
-            FilmIterator<D, AmIterator<D> >* itrPtr_(0);
-            itrPtr_ = static_cast<FilmIterator<D, AmIterator<D> >* >(&(systemPtr_->iterator()));
+         if (systemPtr_->iterator().className() == "AmIteratorBasisFilm") {
+            FilmIterator<D, AmIteratorBasis<D> >* itrPtr_(0);
+            itrPtr_ = static_cast<FilmIterator<D, AmIteratorBasis<D> >* >(&(systemPtr_->iterator()));
             return itrPtr_->chiBottom(id(0));
          } else {
             UTIL_THROW("Iterator type is not compatible with this sweep parameter.");
@@ -202,9 +202,9 @@ namespace Pspc {
       } else if (type_ == Chi_Top) {
          // Note: this option is only relevant for thin film systems
          UTIL_CHECK(isFilmIterator()); 
-         if (systemPtr_->iterator().className() == "AmIteratorFilm") {
-            FilmIterator<D, AmIterator<D> >* itrPtr_(0);
-            itrPtr_ = static_cast<FilmIterator<D, AmIterator<D> >* >(&(systemPtr_->iterator()));
+         if (systemPtr_->iterator().className() == "AmIteratorBasisFilm") {
+            FilmIterator<D, AmIteratorBasis<D> >* itrPtr_(0);
+            itrPtr_ = static_cast<FilmIterator<D, AmIteratorBasis<D> >* >(&(systemPtr_->iterator()));
             return itrPtr_->chiTop(id(0));
          } else {
             UTIL_THROW("Iterator type is not compatible with this sweep parameter.");
@@ -240,9 +240,9 @@ namespace Pspc {
       } else if (type_ == Chi_Bottom) {
          // Note: this option is only relevant for thin film systems
          UTIL_CHECK(isFilmIterator()); 
-         if (systemPtr_->iterator().className() == "AmIteratorFilm") {
-            FilmIterator<D, AmIterator<D> >* itrPtr_(0);
-            itrPtr_ = static_cast<FilmIterator<D, AmIterator<D> >* >(&(systemPtr_->iterator()));
+         if (systemPtr_->iterator().className() == "AmIteratorBasisFilm") {
+            FilmIterator<D, AmIteratorBasis<D> >* itrPtr_(0);
+            itrPtr_ = static_cast<FilmIterator<D, AmIteratorBasis<D> >* >(&(systemPtr_->iterator()));
             itrPtr_->setChiBottom(id(0), newVal);
          } else {
             UTIL_THROW("Iterator type is not compatible with this sweep parameter.");
@@ -250,9 +250,9 @@ namespace Pspc {
       } else if (type_ == Chi_Top) {
          // Note: this option is only relevant for thin film systems
          UTIL_CHECK(isFilmIterator()); 
-         if (systemPtr_->iterator().className() == "AmIteratorFilm") {
-            FilmIterator<D, AmIterator<D> >* itrPtr_(0);
-            itrPtr_ = static_cast<FilmIterator<D, AmIterator<D> >* >(&(systemPtr_->iterator()));
+         if (systemPtr_->iterator().className() == "AmIteratorBasisFilm") {
+            FilmIterator<D, AmIteratorBasis<D> >* itrPtr_(0);
+            itrPtr_ = static_cast<FilmIterator<D, AmIteratorBasis<D> >* >(&(systemPtr_->iterator()));
             itrPtr_->setChiTop(id(0), newVal);
          } else {
             UTIL_THROW("Iterator type is not compatible with this sweep parameter.");

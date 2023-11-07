@@ -1,5 +1,5 @@
-#ifndef PSPC_AM_ITERATOR_H
-#define PSPC_AM_ITERATOR_H
+#ifndef PSPC_AM_ITERATOR_BASIS_H
+#define PSPC_AM_ITERATOR_BASIS_H
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory
@@ -8,41 +8,43 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "Iterator.h"                        // base class
-#include <pscf/iterator/AmIteratorTmpl.h>    // base class template                
-#include <pscf/iterator/AmbdInteraction.h>   // member variable
+#include <pspc/iterator/Iterator.h>         // base class argument
+#include <pscf/iterator/AmIteratorTmpl.h>   // base class template
+#include <pscf/iterator/AmbdInteraction.h>  // member variable
+#include <util/containers/DArray.h>         // base class argument
+
 
 namespace Pscf {
 namespace Pspc
 {
 
-   template <int D>
-   class System;
+   template <int D> class System;
 
    using namespace Util;
 
    /**
-   * Pspc implementation of the Anderson Mixing iterator.
+   * Pspc implementation of the Anderson Mixing iterator with symmetry.
    *
    * \ingroup Pspc_Iterator_Module
    */
    template <int D>
-   class AmIterator : public AmIteratorTmpl<Iterator<D>, DArray<double> >
+   class AmIteratorBasis
+      : public AmIteratorTmpl< Iterator<D>, DArray<double> >
    {
 
    public:
 
       /**
       * Constructor.
-      * 
+      *
       * \param system System object associated with this iterator.
       */
-      AmIterator(System<D>& system);
+      AmIteratorBasis(System<D>& system);
 
       /**
       * Destructor.
       */
-      ~AmIterator();
+      ~AmIteratorBasis();
 
       /**
       * Read all parameters and initialize.
@@ -50,7 +52,7 @@ namespace Pspc
       * \param in input filestream
       */
       void readParameters(std::istream& in);
-      
+
       /**
       * Return compressor times contributions.
       */
@@ -65,8 +67,8 @@ namespace Pspc
       using Iterator<D>::nFlexibleParams;
 
    protected:
-  
-      // Inherited protected members 
+
+      // Inherited protected members
       using ParamComposite::readOptional;
       using ParamComposite::readOptionalFSArray;
       using ParamComposite::setClassName;
@@ -74,7 +76,6 @@ namespace Pspc
       using Iterator<D>::system;
       using Iterator<D>::isFlexible_;
       using Iterator<D>::flexibleParams_;
-
 
       /**
       * Setup iterator just before entering iteration loop.
@@ -84,16 +85,16 @@ namespace Pspc
       void setup(bool isContinuation);
 
    private:
-      
+
       // Local copy of interaction, adapted for use AMBD residual definition
       AmbdInteraction interaction_;
 
       /// How are stress residuals scaled in error calculation?
       double scaleStress_;
-      
+
       /**
       * Assign one field to another.
-      * 
+      *
       * \param a the field to be set (lhs of assignment)
       * \param b the field for it to be set to (rhs of assigment)
       */
@@ -111,43 +112,43 @@ namespace Pspc
 
       /**
       * Update the basis for residual or field vectors.
-      * 
+      *
       * \param basis RingBuffer of residual or field basis vectors
       * \param hists RingBuffer of past residual or field vectors
       */
-      void updateBasis(RingBuffer<DArray<double> > & basis, 
+      void updateBasis(RingBuffer<DArray<double> > & basis,
                        RingBuffer<DArray<double> > const & hists);
 
       /**
       * Add linear combination of basis vectors to trial field.
-      * 
+      *
       * \param trial trial vector (input-output)
       * \param basis RingBuffer of basis vectors
       * \param coeffs array of coefficients of basis vectors
       * \param nHist number of histories stored at this iteration
       */
-      void addHistories(DArray<double>& trial, 
-                        RingBuffer<DArray<double> > const & basis, 
-                        DArray<double> coeffs, 
+      void addHistories(DArray<double>& trial,
+                        RingBuffer<DArray<double> > const & basis,
+                        DArray<double> coeffs,
                         int nHist);
 
       /**
       * Add predicted error to field trial.
-      * 
+      *
       * \param fieldTrial trial field (in-out)
       * \param resTrial predicted error for current trial
-      * \param lambda Anderson-Mixing mixing 
+      * \param lambda Anderson-Mixing mixing
       */
-      void addPredictedError(DArray<double>& fieldTrial, 
-                             DArray<double> const & resTrial, 
+      void addPredictedError(DArray<double>& fieldTrial,
+                             DArray<double> const & resTrial,
                              double lambda);
 
       /**
       * Does the system has an initial guess for the field?
       */
       bool hasInitialGuess();
-     
-      /** 
+
+      /**
       * Compute and returns the number of elements in field vector.
       *
       * Called during allocation and then stored.
@@ -156,9 +157,9 @@ namespace Pspc
 
       /**
       * Gets the current field vector from the system.
-      * 
+      *
       * \param curr current field vector
-      */ 
+      */
       void getCurrent(DArray<double>& curr);
 
       /**
@@ -189,6 +190,13 @@ namespace Pspc
       void outputToLog();
 
    };
+
+   #ifndef PSPC_AM_ITERATOR_BASIS_TPP
+   // Suppress implicit instantiation
+   extern template class AmIteratorBasis<1>;
+   extern template class AmIteratorBasis<2>;
+   extern template class AmIteratorBasis<3>;
+   #endif
 
 } // namespace Pspc
 } // namespace Pscf

@@ -14,22 +14,28 @@ in the available iterators.
 
 \section user_param_pg_iterator_sec Iterators
 
-The default iterator for pscf_pg uses an Anderson-Mixing (AM)
-algorithm closely analogous to that used by the default AM iterator 
-for pscf_pc, \ref pspc_AmIterator_page "Pspc::AmIterator". 
-Like the pscf_pc AmIterator, this algorithm applies the Anderson mixing
-algorithm to a residual that is defined using an expansion in 
-symmetry-adapted basis functins, and updates the chemical potential 
-fields by modifying the coefficients in this expansion. This algorithm 
-may be invoked in the parameter file for pscf_pg using either the 
-generic block label "Iterator" or a specific label "AmIteratorBasis". 
+The default iterator for pscf_pg, which is implemented by class 
+Pspg::AmIteratorBasis<D>, uses an Anderson-Mixing (AM) algorithm 
+that imposes a prescribed space group symmetry, much like the closely
+analogous \ref pspc_AmIteratorBasis_page "Pspc::AmIteratorBasis" 
+iterator used by pscf_pc.  This iteration algorithm may be invoked 
+in the parameter file for pscf_pg using either the generic block label 
+"Iterator" or a specific label "AmIteratorBasis".  The parameter 
+file must contain a groupName parameter within the Domain block to 
+enable use of this iterator. The implementation of AmIteratorBasis
+uses expansion of the chemical potential fields and the residual
+as vectors with components that represent coefficients in
+symmetry-adapted Fourier expansions of the corresponding fields.
 
-The only other iterator currently provided for use with pscf_pg
-is an Anderson mixing in which the residual vector and 
-changes in the w fields are instead formulated using vectors whose 
-elements represent values of fields on the nodes of a regular spatial 
-grid, rather than coefficients in a symmetry-adapated expansion. This
-iterator is invoked using the label AmIteratorGrid.
+The only other iterator currently provided for use with pscf_pg is 
+an Anderson mixing algorithm that does not impose any space group 
+symmetry.  This iterator is invoked using the label AmIteratorGrid
+in the parameter file, and may be used with a parameter file that 
+does not contain a groupName parameter.  In the implementation of 
+AmIteratorGrid, the w fields and residual are represented
+internally as vectors whose elements represent values of fields on 
+the nodes of a regular spatial grid, rather than coefficients in 
+a symmetry-adapted Fourier expansion. 
 
 Descriptions of the parameter file formats for the available iterators
 can be found by following the links in the table below:

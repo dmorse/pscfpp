@@ -5,7 +5,7 @@
 #include <test/UnitTestRunner.h>
 
 #include <pspc/iterator/FilmIterator.h>
-#include <pspc/iterator/AmIterator.h>
+#include <pspc/iterator/AmIteratorBasis.h>
 #include <pspc/field/FieldIo.h>
 #include <pspc/System.h>
 
@@ -19,12 +19,13 @@
 
 using namespace Util;
 using namespace Pscf;
-using namespace Pspc;
-using namespace Prdc;
-using namespace Prdc::Cpu;
+using namespace Pscf::Prdc;
+using namespace Pscf::Prdc::Cpu;
+using namespace Pscf::Pspc;
 
 class FilmIteratorTest : public UnitTest
 {
+
 public:
 
    std::ofstream logFile_;
@@ -49,7 +50,7 @@ public:
    {
       printMethod(TEST_FUNC);
       System<3> system;
-      FilmIterator<3, AmIterator<3> > iterator(system);
+      FilmIterator<3, AmIteratorBasis<3> > iterator(system);
    }
 
    void testReadParameters() // test FilmIterator::readParameters()
@@ -62,7 +63,7 @@ public:
       FilmIteratorTest::setUpSystem(system, "in/film/system2D");
 
       // Set up iterator from file
-      FilmIterator<2, AmIterator<2> > iterator(system);
+      FilmIterator<2, AmIteratorBasis<2> > iterator(system);
       FilmIteratorTest::setUpFilmIterator(iterator, "in/film/film2D");
 
       // Check that everything was read in correctly
@@ -87,7 +88,7 @@ public:
       FilmIteratorTest::setUpSystem(system, "in/film/system1D");
 
       // Set up iterator from file
-      FilmIterator<1, AmIterator<1> > iterator(system);
+      FilmIterator<1, AmIteratorBasis<1> > iterator(system);
       FilmIteratorTest::setUpFilmIterator(iterator, "in/film/film1D");
 
       system.readWBasis("in/film/w_1D_ref.bf");
@@ -165,7 +166,7 @@ public:
       system1.setUnitCell(UnitCell<1>::Lamellar, parameters);
       //system1.readWBasis("in/film/w_ref.bf");
 
-      FilmIterator<1, AmIterator<1> > iterator1(system1);
+      FilmIterator<1, AmIteratorBasis<1> > iterator1(system1);
       FilmIteratorTest::setUpFilmIterator(iterator1, "in/film/film1D");
       TEST_ASSERT(FilmIteratorTest::checkCheckSpaceGroup(iterator1,false));
    }
@@ -178,7 +179,7 @@ public:
       // Set up 1D system with an incorrect space group and check it
       System<1> system2;
       FilmIteratorTest::setUpSystem(system2, "in/film/system_bad_1D");
-      FilmIterator<1, AmIterator<1> > iterator2(system2);
+      FilmIterator<1, AmIteratorBasis<1> > iterator2(system2);
 
       // Set unit cell parameter
       FSArray<double, 6> parameters;
@@ -205,7 +206,7 @@ public:
       parameters.append(2.0);
       system3.setUnitCell(UnitCell<2>::Rectangular, parameters);
 
-      FilmIterator<2, AmIterator<2> > iterator3(system3);
+      FilmIterator<2, AmIteratorBasis<2> > iterator3(system3);
 
       FilmIteratorTest::setUpFilmIterator(iterator3, "in/film/film2D");
       TEST_ASSERT(FilmIteratorTest::checkCheckSpaceGroup(iterator3,true));
@@ -219,7 +220,7 @@ public:
       // Set up 3D system with a correct space group and check it
       System<3> system4;
       FilmIteratorTest::setUpSystem(system4, "in/film/system3D");
-      FilmIterator<3, AmIterator<3> > iterator4(system4);
+      FilmIterator<3, AmIteratorBasis<3> > iterator4(system4);
       FilmIteratorTest::setUpFilmIterator(iterator4, "in/film/film3D");
 
       // Set unit cell parameter
@@ -240,7 +241,7 @@ public:
       // Set up 3D system with an incorrect space group and check it
       System<3> system5;
       FilmIteratorTest::setUpSystem(system5, "in/film/system_bad_3D_1");
-      FilmIterator<3, AmIterator<3> > iterator5(system5);
+      FilmIterator<3, AmIteratorBasis<3> > iterator5(system5);
       FilmIteratorTest::setUpFilmIterator(iterator5, "in/film/film3D");
 
       // Set unit cell parameter
@@ -254,7 +255,7 @@ public:
       // Set up another 3D system with an incorrect space group and check it
       System<3> system6;
       FilmIteratorTest::setUpSystem(system6, "in/film/system_bad_3D_2");
-      FilmIterator<3, AmIterator<3> > iterator6(system6);
+      FilmIterator<3, AmIteratorBasis<3> > iterator6(system6);
       FilmIteratorTest::setUpFilmIterator(iterator6, "in/film/film3D");
       TEST_ASSERT(FilmIteratorTest::checkCheckSpaceGroup(iterator6,true));
    }
@@ -275,7 +276,7 @@ public:
       parameters.append(1.0);
       system1.setUnitCell(UnitCell<2>::Oblique, parameters);
 
-      FilmIterator<2, AmIterator<2> > iterator1(system1);
+      FilmIterator<2, AmIteratorBasis<2> > iterator1(system1);
       FilmIteratorTest::setUpFilmIterator(iterator1, "in/film/film2D");
       try {
          iterator1.checkLatticeVectors();
@@ -293,7 +294,7 @@ public:
       parameters.append(2.0);
       parameters.append(4.2);
       system2.setUnitCell(UnitCell<3>::Tetragonal, parameters);
-      FilmIterator<3, AmIterator<3> > iterator2(system2);
+      FilmIterator<3, AmIteratorBasis<3> > iterator2(system2);
       FilmIteratorTest::setUpFilmIterator(iterator2, "in/film/film3D");
       iterator2.checkLatticeVectors(); // this should not throw an error
 
@@ -304,7 +305,7 @@ public:
       parameters.append(2.0); 
       parameters.append(1.0);
       system3.setUnitCell(UnitCell<3>::Monoclinic, parameters);
-      FilmIterator<3, AmIterator<3> > iterator3(system3);
+      FilmIterator<3, AmIteratorBasis<3> > iterator3(system3);
       FilmIteratorTest::setUpFilmIterator(iterator3, "in/film/film3D");
       try {
          iterator3.checkLatticeVectors();
@@ -324,14 +325,14 @@ public:
       // Set up 1D system and make sure flexibleParams is empty
       System<1> system1;
       FilmIteratorTest::setUpSystem(system1, "in/film/system1D");
-      FilmIterator<1, AmIterator<1> > iterator1(system1);
+      FilmIterator<1, AmIteratorBasis<1> > iterator1(system1);
       FilmIteratorTest::setUpFilmIterator(iterator1, "in/film/film1D");
       TEST_ASSERT(iterator1.nFlexibleParams() == 0);
 
       // Set up 2D system and make sure flexibleParams is correct
       System<2> system2;
       FilmIteratorTest::setUpSystem(system2, "in/film/system2D");
-      FilmIterator<2, AmIterator<2> > iterator2(system2);
+      FilmIterator<2, AmIteratorBasis<2> > iterator2(system2);
       FilmIteratorTest::setUpFilmIterator(iterator2, "in/film/film2D");
       TEST_ASSERT(iterator2.nFlexibleParams() == 1);
       TEST_ASSERT(iterator2.flexibleParams()[0]);
@@ -339,7 +340,7 @@ public:
       // Set up 3D tetragonal system, validate flexibleParams 
       System<3> system3;
       FilmIteratorTest::setUpSystem(system3, "in/film/system3D");
-      FilmIterator<3, AmIterator<3> > iterator3(system3);
+      FilmIterator<3, AmIteratorBasis<3> > iterator3(system3);
       FilmIteratorTest::setUpFilmIterator(iterator3, "in/film/film3D");
       TEST_ASSERT(iterator3.nFlexibleParams() == 1);
       TEST_ASSERT(iterator3.flexibleParams()[0]);
@@ -347,7 +348,7 @@ public:
       // Set up 3D monoclinic system (monoclinic), validate flexibleParams 
       System<3> system4;
       FilmIteratorTest::setUpSystem(system4, "in/film/system_bad_3D_2");
-      FilmIterator<3, AmIterator<3> > iterator4(system4);
+      FilmIterator<3, AmIteratorBasis<3> > iterator4(system4);
       FilmIteratorTest::setUpFilmIterator(iterator4, "in/film/film2D");
       // Using film2D here because it has normalVecId=1 which 
       // we want for this example
@@ -397,7 +398,7 @@ public:
       system.readWBasis("in/film/w_1D_in.bf");
 
       // Set up iterator from file
-      FilmIterator<1, AmIterator<1> > iterator(system);
+      FilmIterator<1, AmIteratorBasis<1> > iterator(system);
       FilmIteratorTest::setUpFilmIterator(iterator, "in/film/film1D");
 
       // Run the solve function
@@ -510,7 +511,7 @@ public:
       system.readWBasis("out/w_1D.bf");
 
       // Set up iterator
-      FilmIterator<1, AmIterator<1> > iterator(system);
+      FilmIterator<1, AmIteratorBasis<1> > iterator(system);
       FilmIteratorTest::setUpFilmIterator(iterator, "in/film/film1D");
 
       // Solve (should only take a few iterations)
@@ -592,7 +593,7 @@ public:
 
    // Read parameter file section to create a FilmIterator object
    template <int D>
-   void setUpFilmIterator(FilmIterator<D, AmIterator<D>>& iterator, 
+   void setUpFilmIterator(FilmIterator<D, AmIteratorBasis<D>>& iterator, 
                           std::string fname)
    {
       std::ifstream in;
@@ -606,7 +607,7 @@ public:
    // an error or not, and returns a boolean indicating whether the 
    // function demonstrated the expected behavior.
    template <int D>
-   bool checkCheckSpaceGroup(FilmIterator<D, AmIterator<D>>& iterator, 
+   bool checkCheckSpaceGroup(FilmIterator<D, AmIteratorBasis<D>>& iterator, 
                              bool expectError)
    {
       bool pass = true;
