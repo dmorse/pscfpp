@@ -67,21 +67,23 @@ System{
 }
 \endcode
 As for pscf_1d, the Sweep block is optional, and Iterator and Sweep blocks
-(if present) are both selectable blocks.  The purposes of these top-level
-blocks have all been discussed previously in the discussion of pscf_1d, and
-will not be repeated here.  
+(if present) are both selectable blocks.  The above skeleton includes only
+blocks that are relevant for SCFT calculations, and excludes some optional
+elements that are used for FTMC simulations. A more complete description 
+of the format for the main System block of pscf_pc parameter file is given 
+\subpage pspc_System_page "here". 
 
 Formats of the Mixture and Interaction blocks are the same for all PSCF 
-programs, and so have also been discussed previously. Below, we discuss 
-the contents of the Domain, Iterator, and Sweep blocks.
+programs, and have thus been discussed previously. Below, we discuss the 
+contents of the Domain, Iterator, and Sweep blocks.
 
 \section user_param_pc_domain_sec Domain Block
 
-The Domain block contains information required to describe both unit
-cell of the periodic structure, the regular mesh that is used to
-discretize fields within each unit cell, and (optionally) the space group 
-of the desired solution.  The parameter file format is discussed below, 
-as well as in separate page \subpage pspc_Domain_page "here".
+The Domain block contains information required to describe the unit cell 
+of a periodic structure, the regular mesh that is used to discretize 
+fields within each unit cell, and (optionally) an identifier for the space 
+group of the desired solution.  The parameter file format is discussed 
+below, as well as in separate page \subpage pspc_Domain_page "here".
 
 An example of the format of this block is shown below:
 \code
@@ -209,7 +211,7 @@ At the end of such a calculation, converged values for the optimal
 unit cell parameters are normally output within the header of a file 
 that contains the converged w-fields.
 
-\section user_param_pc_Iterator_section Iterators
+\section user_param_pc_iterator_sec Iterators
 
 The default Iterator for the pscf_pc and pscf_pg programs is based on
 an algorithm that uses an Anderson-Mixing (AM) iterator algorithm, and 

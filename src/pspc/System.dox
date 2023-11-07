@@ -1,0 +1,76 @@
+namespace Pscf{
+namespace Pspc{
+/*! 
+\page pspc_System_page Pspc::System
+
+The main object in a pscf_pc program is an instance of a class
+Pscf::Pspc::System<D>, in which the integer template parameter D is the 
+dimension of space specified by the argument of the "-d" command line 
+option. The outermost block of the parameter file for pscf_pc, which 
+encloses all of the data in the file, is a block labelled "System". The 
+parameter file format for this file block (and thus for the entire file)
+is given in skeleton form below
+\code
+System{
+  Mixture{ ... }
+  Interaction{ ... }
+  Domain{ ... }
+  Iterator#*{ ... }
+  Sweep#*{ ... }
+  Compressor#*{ ... }
+  McSimulator*{ ... }
+}
+\endcode
+Subblocks are described below:
+<table>
+  <tr>
+    <td> Mixture </td>
+    <td> 
+    The Mixture block contains a description of all of the chemical
+    species in a mixture, as described in detail 
+    \ref user_param_mixture_page "here". (required)
+    </td>
+  </tr>
+  <tr>
+    <td> Interaction </td>
+    <td> 
+    The interaction block for a system described by the "standard model" of
+    an incompressible polymer mixture contains a list of Flory-Huggins chi
+    parameters, as discussed \ref user_param_example_interaction "here".
+    (required)
+    </td>
+  </tr>
+  <tr>
+    <td> Domain </td>
+    <td>
+    The Domain block contains information about the periodic unit
+    cell and the computational mesh used to discretize fields in that 
+    cell, as described \ref pspc_Domain_page "here". (required)
+  </tr>
+  <tr>
+    <td> Iterator#* </td>
+    <td>
+    \ref user_param_pc_iterator_sec
+    </td>
+  </tr>
+  <tr>
+    <td> Sweep#* </td>
+    <td>
+    \ref user_param_sweep_page
+    </td>
+  </tr>
+  <tr>
+    <td> Compressor#* </td>
+    <td>
+    </td>
+  </tr>
+  <tr>
+    <td> McSimulator* </td>
+    <td>
+    </td>
+  </tr>
+</table>
+
+*/
+}
+}

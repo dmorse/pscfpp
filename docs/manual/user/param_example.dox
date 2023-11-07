@@ -173,6 +173,7 @@ by opening and closing parentheses.
 
 \section user_param_example_discussion_sec Overview of Example
 
+\anchor user_param_example_mixture
 <b> Mixture  </b>:
 
 The system described in the Mixture block of the above example contains
@@ -212,6 +213,7 @@ of the block, which is given as a real number.  A more complicated
 description of each block is required to describe the connectivity of a
 branched polymer, as described \ref user_param_polymer_sec "elsewhere".
 
+\anchor user_param_example_interaction
 <b> Interaction  </b>:
 
 The interaction block contains a single matrix-valued parameter named
@@ -224,6 +226,7 @@ two types of monomer and zero diagonal elements, only one nonzero chi
 parameter value is required.  The value of this parameter is given 
 here as a line containing "0  1  10.0".
 
+\anchor user_param_example_domain
 <b> Domain </b>:
 
 The simulation uses a 1D planar geometry, in which variation occurs

@@ -70,12 +70,12 @@ below, on which our implementation is largely based:
 
 In the parameter file, the thin film constraint is included by modifying 
 the iterator block. First, the word "Film" is appended to the end of the 
-iterator name (e.g., "AmIteratorFilm" instead of "AmIterator"). Inside of 
-the iterator block, the normal iterator parameters are listed first, 
-followed by several additional parameters to define the mask. For now, 
-AmIterator is the only iterator that has been implemented in the software, 
-so the only thin film iterator is AmIteratorFilm. An example is given below 
-to show how a thin film is written into the parameter file:
+iterator name (e.g., "AmIteratorBasisFilm" instead of "AmIteratorBasis"). 
+Inside of the iterator block, the normal iterator parameters are listed 
+first, followed by several additional parameters to define the mask. For 
+now, AmIteratorBasis is the only iterator that has been implemented in the 
+software, so the only thin film iterator is AmIteratorBasisFilm. An example 
+is given below to show how a thin film is written into the parameter file:
 \code
 System{
    Mixture{
@@ -102,7 +102,7 @@ System{
       mesh             32  32  128
       groupName        P_4%m_m_m
    }
-   AmIteratorFilm{
+   AmIteratorBasisFilm{
       maxItr              1000
       epsilon             1e-6
       maxHist             50 
@@ -137,7 +137,7 @@ In the example, we have constructed a parameter file that might be used to
 represent an AB diblock polymer self-assembled into a bcc structure 
 confined to a thin film that is ~2 unit cells thick. This will be 
 explained in more detail below. Also, see our parameter-level breakdown 
-of the components of an \ref pspc_AmIteratorFilm_page block.
+of the components of an \ref pspc_AmIteratorBasisFilm_page block.
 
 ## Domain Block
 
@@ -153,18 +153,18 @@ further below.
 
 ## Iterator Block
 
-Now, we proceed to the `AmIteratorFilm` block. The first four parameters 
-in this block define the AmIterator object and do not pertain to the thin 
-film constraint (from `maxItr` to `isFlexible`). Then we get to the 
-variables that define the mask. The first required variable is 
-`normalVecId`, indicating which of the 3 lattice basis vectors is oriented 
-normal to the walls. The input should be either 0, 1, or 2, corresponding 
-to the **a**, **b**, or **c** lattice vectors, respectively. In the example 
-above, the **c** vector is normal to the wall. Importantly, the two vectors 
-that are <i>not</i> normal to the wall (**a** and **b** in the example 
-above) must be parallel to the wall. So, if <b>c</b> is normal to the wall, 
-then the unit cell angles *&alpha;* and *&beta;* must both be 90&deg;. The 
-software will throw an error if this condition is not met.
+Now, we proceed to the `AmIteratorBasisFilm` block. The first four 
+parameters in this block define the AmIteratorBasis object and do not 
+pertain to the thin film constraint (from `maxItr` to `isFlexible`). Then 
+we get to the variables that define the mask. The first required variable 
+is `normalVecId`, indicating which of the 3 lattice basis vectors is 
+oriented normal to the walls. The input should be either 0, 1, or 2, 
+corresponding to the **a**, **b**, or **c** lattice vectors, respectively. 
+In the example above, the **c** vector is normal to the wall. Importantly, 
+the two vectors that are <i>not</i> normal to the wall (**a** and **b** in 
+the example above) must be parallel to the wall. So, if <b>c</b> is normal 
+to the wall, then the unit cell angles *&alpha;* and *&beta;* must both be 
+90&deg;. The software will throw an Exception if this condition is not met.
 
 The next required inputs are `interfaceThickness` and `wallThickness`,
 which correspond to *t* and *T* in the expression for 
