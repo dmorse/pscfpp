@@ -8,14 +8,14 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "McState.h"                     // member
-#include <pspc/simulate/mcmove/McMoveManager.h>   // member
+#include "McState.h"                                 // member
+#include <pspc/simulate/mcmove/McMoveManager.h>      // member
 #include <pspc/simulate/analyzer/AnalyzerManager.h>  // member
-#include <util/param/Manager.h>          // base class template
-#include <util/param/ParamComposite.h>   // base class
-#include <util/random/Random.h>          // member
-#include <util/containers/DArray.h>      // member template
-#include <util/containers/DMatrix.h>     // member template
+#include <util/param/Manager.h>                      // template param
+#include <util/param/ParamComposite.h>               // base class
+#include <util/random/Random.h>                      // member
+#include <util/containers/DArray.h>                  // member template
+#include <util/containers/DMatrix.h>                 // member template
 
 namespace Pscf {
    namespace Prdc {
@@ -24,6 +24,7 @@ namespace Pscf {
       }
    }
 }
+
 namespace Pscf {
 namespace Pspc {
 
@@ -37,6 +38,8 @@ namespace Pspc {
 
    /**
    * Resources for a Monte-Carlo simulation of system.
+   *
+   * \ingroup Pspc_Simulate_Module
    */
    template <int D>
    class McSimulator : public ParamComposite
@@ -84,17 +87,17 @@ namespace Pspc {
       double mcHamiltonian() const;
       
       /**
-      * Get the ideal gas contribution (lnQ) to Hamiltonian used in Monte-Carlo simulations.
+      * Get ideal gas contribution (lnQ) to MC Hamiltonian.
       */
       double mcIdealHamiltonian() const;
       
       /**
-      * Get the ideal field contribution (HW) to Hamiltonian used in Monte-Carlo simulations.
+      * Get the quadratci field contribution (HW) to MC Hamiltonian.
       */
       double mcFieldHamiltonian() const;
       
       /**
-      * Has the MC Hamiltonian been computed for the current w and c fields?
+      * Has the MC Hamiltonian been computed for current w and c fields?
       */ 
       bool hasMcHamiltonian() const;
       
@@ -124,9 +127,9 @@ namespace Pspc {
       /**
       * Clear the saved copy of the Monte-Carlo state.
       *
-      * This function, restoreMcState(), and saveMcState() are intended to be used 
-      * together in the implementation of Monte-Carlo moves. If an 
-      * attempted move is accepted, clearMcState() is called to
+      * This function, restoreMcState(), and saveMcState() are intended 
+      * to be used together in the implementation of Monte-Carlo moves. If 
+      * an attempted move is accepted, clearMcState() is called to clear
       * clear mcState_.hasData
       */
       void clearMcState();
@@ -181,7 +184,7 @@ namespace Pspc {
       bool hasWC() const;
       
       /**
-      * If a new move is attempted, clear both eigen-components of the fields and mcHamiltonian components
+      * Clear eigen-components of the fields and mcHamiltonian components.
       */
       void clearData();
 

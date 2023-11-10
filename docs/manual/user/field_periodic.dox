@@ -132,11 +132,13 @@ identifier, as discussed \ref user_unitcell_page "here".
 The parameter group_name is a string identifier for a crystallographic
 space group.  Allowed values of this identifier string for each
 combination of values for dim and crystal_system are listed
-\ref user_groups_page "here".
+\ref user_groups_page "here". The group_name parameter is a required
+part of the header for a file basis format, but is an optional element 
+for files written in r-grid or k-grid formats.
 
 <b> N_monomer </b>:
-The parameter N_monomer is a positive integers that gives the number
-of distinct monomer types for which fields are reported.
+The parameter N_monomer is a positive integers that gives the number of 
+distinct monomer types for which fields are reported.
 
 <b> N_basis </b>:
 The parameter N_basis is a positive integer that gives the number of
@@ -152,12 +154,12 @@ mesh dimensions used for numerical calculations, i.e., the number of
 grid points in each direction in the mesh that covers a single unit
 cell.  A label "ngrid" will also be accepted as a synonym for "mesh",
 to allow backwards compatibility with the label used by the PSCF
-Fortran program.  This list of values appears as the last
-parameter of the header for r-grid and k-grid file formats, but does
-not appear in the basis format.
+Fortran program.  This list of values appears as the last parameter 
+of the header for r-grid and k-grid file formats, but does not appear 
+in the basis format.
 
-All of these parameters except mesh and N_basis are required elements
-of the header in all three file formats.
+All of the above parameters except space_group, mesh and N_basis are 
+required elements of the header in all three file formats.
 
 \section user_field_periodic_contents_sub Contents
 

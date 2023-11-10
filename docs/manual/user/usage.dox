@@ -71,9 +71,13 @@ enough to allow a user to identify and fix such an error.
 
 \section user_usage_options_sec Command Line Options 
 
-All PSCF programs can be invoked with any of the following command line
-options listed in the table shown below. The parameter column is left
-empty for options that do not take a parameter.
+The table shown below lists all command line options accepted by PSCF
+programs. The second column, which describes the option parameter, is
+left empty for options that do not take a parameter.  All but one of 
+the options listed below can be used with any of the three PSCF programs. 
+The only exception to this is the -d option, which is a required input
+to the pscf_pc and pscf_pg programs, but is not a valid option for 
+pscf_1d.
 <table>
   <tr> 
      <td> <b> Option </b> </td>
@@ -83,34 +87,35 @@ empty for options that do not take a parameter.
   <tr> 
      <td> -d </td>
      <td> dimension </td>
-     <td> spatial dimensionality 1, 2, or 3 (pscf_pc and pscf_pg only) </td>
+     <td> spatial dimensionality 1, 2, or 3 (required for pscf_pc and pscf_pg) </td>
   </tr>
   <tr> 
      <td> -p </td>
      <td> filename </td>
-     <td> Gives the filename of the parameter file (required) </td>
+     <td> Name of the parameter file (required) </td>
   </tr>
   <tr> 
      <td> -c </td>
      <td> filename </td>
-     <td> Gives the filename of the command file  (required) </td>
+     <td> Name of the command file  (required) </td>
   </tr>
   <tr> 
      <td> -i </td>
      <td> prefix </td>
-     <td> Specifies a prefix string that is prepended to the
-          names (paths) of all input data files </td>
+     <td> string that is prepended to the paths for all input data 
+     files (optional) </td>
   </tr>
   <tr> 
      <td> -o </td>
      <td> prefix </td>
-     <td> Specifies a prefix string that is prepended to the 
-          the names (paths) for all output data files </td>
+     <td> string that is prepended to the the paths for 
+     all output data files (optional) </td>
   </tr>
   <tr> 
      <td> -e </td> 
      <td>    </td>
-     <td> Activates echoing of the parameter file to standard output </td>
+     <td> Activates echoing of parameter file to standard output (optional) 
+     </td>
   </tr>
 </table>
 The -p and -c options are required, while the -i, -o and -e options 
@@ -118,7 +123,7 @@ are optional.  The -d option only exists for the pscf_pc and pscf_pg
 programs, and is required for those programs. The -e option does not
 take a parameter.
 
-The "prefix" parameters of the -i and -o options can be used to specify
+The "prefix" parameters of the -i and -o options is often used to specify
 directories for input and output files. To do so, set either of these
 arguments to the path to a directory, terminated by the directory 
 separator charactor "/", giving a string such as "in/" or "out/".  

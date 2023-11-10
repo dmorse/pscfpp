@@ -403,7 +403,7 @@ namespace Pspc {
             Log::file() << "   "  << nStep << "\n";
             simulate(nStep);
          } else
-         if (command == "ANALYZE_TRAJECTORY") {
+         if (command == "ANALYZE_TRAJECTORY" || command == "ANALYZE") {
             int min;
             in >> min;
             int max;

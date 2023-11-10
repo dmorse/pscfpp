@@ -162,13 +162,13 @@ that command or of a group of closely related commands.
   <tr>
     <td> \ref user_command_pc_simulate_sub "SIMULATE" </td>
     <td> nStep </td>
-    <td> Perform a FTMC simulation of nStep Monte Carlo steps.  </td>
+    <td> Perform a field-theoretic simulation of nStep steps.  </td>
   </tr>
   <tr>
-    <td> \ref user_command_pc_analyze_sub "ANALYZE_TRAJECTORY" </td>
+    <td> \ref user_command_pc_analyze_sub "ANALYZE" </td>
     <td> min, max, className, filename </td>
     <td> Postprocess a field trajectory output by looping over frames
-         of a field trajectory file output by a previous FTMC simulation. 
+         of a field trajectory file output by a previous simulation. 
          Analyze frames with frame numbers min to max from file 
          filename, using a TrajectoryReader object that is an instance 
          of class className.  </td>
@@ -630,9 +630,9 @@ by including a trajectory writer among the analyzers listed in the
 AnalyzerManager subblock of the McSimulator block.
 
 \anchor user_command_pc_analyze_sub
-<b> ANALYZE_TRAJECTORY </b>:
-THE ANALYZE_TRAJECTORY command reads a field trajectory file that
-was written by previous FTMC simulation, and postprocesses the 
+<b> ANALYZE </b>:
+THE ANALYZE command reads a field trajectory file that was written 
+by a previous field-theoretic simulation, and postprocesses the 
 contents of that file. The associated parameter file must contain
 an McSimulator block with an AnalyzerManager block that specifies 
 what analysis operations should be applied to the chosen frames 

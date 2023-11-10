@@ -1,0 +1,103 @@
+
+Idea: 
+
+Create base class named Simulator from which McSimulator can be 
+derived. Derive other subclasses to implement simulation methods 
+that may require forces as well as Hamiltonian values.
+
+---------------------------------------------------------------
+Interface for Base Class
+
+Simulator {
+  
+   readParameters
+
+   // Primary Computations
+
+   simulate(int nStep) -> make pure virtual
+   analyze(int nStep) -> make pure virtual
+
+   // Projected Chi Matrix
+
+   chiEvals
+   chiEval( int i)
+   chiEvecs()
+   analyzeChi()
+   clearData
+
+   // Field Components
+
+   computeWC()
+   wc(int i)
+
+   // Hamiltonian Evaluation
+
+   computeHamiltonian (rename computeMcHamiltonian)
+   hamiltonian (rename mcHamiltonian)
+   idealHamiltonian (rename mcIdealHamiltonian)
+   fieldHamiltonian (rename mcFieldHamiltonian)
+   hasMcHamiltonian (rename hasMcHamiltonian)
+
+   // Forces 
+
+   To be written 
+ 
+   // Analysis
+
+   AnalyzerManager
+ 
+   // Timer Functions
+
+   virtual clearTimers
+   virtual outputTimers
+ 
+   // Miscellaneous
+
+   system()
+   random
+   iStep
+
+protected:
+
+   DArray< RField<D> > wc_;
+   DMatrix<double>     chiP_
+   DMatrix<double>     chiEvecs_;
+   DMatrix<double>     chiEvals_;
+
+   AnalyzerManager<D>  analyzerManager_
+   Random              random_;
+   System<D>*          systemPtr_;
+
+   double hamiltonian_
+   double idealHamiltonian_
+   double fieldHamiltonian_
+   int    iStep_
+   bool   hasWC_ 
+
+}
+
+------------------------------
+Implemented in McSimulator:
+
+McSimulator {
+
+   // Utilities for MC Moves
+
+   saveMcState
+   restoreMcState
+   clearMcState
+
+   // McSpecific Elements
+
+   mcMoveManager
+   trajectoryReaderFactory
+
+private:
+
+   McMoveManager<D> mcMoveManager_;
+
+   mutable McState<D> mcState_;
+
+   trajectoryReaderFactory* trajectoryReaderFactoryPtr_;
+
+}
