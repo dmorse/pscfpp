@@ -4,6 +4,7 @@
 #include "AnalyzerFactory.h"  
 
 // Subclasses of Analyzer 
+#include <pspc/simulate/McSimulator.h>
 #include "TrajectoryWriter.h"
 #include "HamiltonianAnalyzer.h"
 #include "BinaryStructureFactorGrid.h"

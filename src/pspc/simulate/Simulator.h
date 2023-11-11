@@ -32,7 +32,7 @@ namespace Pspc {
    template <int D> class System;
 
    /**
-   * Resources for a Monte-Carlo simulation of system.
+   * Base class for field theoretic simulators
    *
    * \ingroup Pspc_Simulate_Module
    */
@@ -190,12 +190,7 @@ namespace Pspc {
       void computeWC();
 
       /**
-      * Are eigen-components of current w fields valid ?
-      */
-      bool hasWC() const;
-
-      /**
-      * Get an eigenvector component of the w fields.
+      * Get one eigenvector component of the w fields.
       *
       * Each component is a point-wise projection of the w fields onto a
       * corresponding eigenvector of the projected chi matrix. The last
@@ -206,6 +201,11 @@ namespace Pspc {
       */
       RField<D> const & wc(int i) const
       {   return wc_[i]; }
+
+      /**
+      * Are eigen-components of current w fields valid ?
+      */
+      bool hasWC() const;
 
       /**
       * Clear w field eigen-components and hamiltonian components.
@@ -246,6 +246,38 @@ namespace Pspc {
       DArray< RField<D> > wc_;
 
       /**
+      * Monte-Carlo System Hamiltonian (extensive value).
+      */
+      double hamiltonian_;
+
+      /**
+      * Ideal gas contribution (lnQ) to Monte-Carlo System Hamiltonian
+      */
+      double idealHamiltonian_;
+
+      /**
+      * Field contribution (H_W) to Monte-Carlo System Hamiltonian
+      */
+      double fieldHamiltonian_;
+
+      /**
+      * Simulation step counter.
+      */
+      long iStep_;
+
+      /**
+      * Has the Hamiltonian been computed for the current w and c fields?
+      */
+      bool hasHamiltonian_;
+
+      /**
+      * Have eigen-components of the current w fields been computed ?
+      */
+      bool hasWC_;
+
+   private:
+
+      /**
       * Projected chi matrix
       *
       * Projected matrix chiP_ = P*chi*P, where P = I - e e^{T} / M is
@@ -268,46 +300,9 @@ namespace Pspc {
       DArray<double>  chiEvals_;
 
       /**
-      * Monte-Carlo System Hamiltonian (extensive value).
-      */
-      double hamiltonian_;
-
-      /**
-      * Ideal gas contribution (lnQ) to Monte-Carlo System Hamiltonian
-      */
-      double idealHamiltonian_;
-
-      /**
-      * Field contribution (H_W) to Monte-Carlo System Hamiltonian
-      */
-      double fieldHamiltonian_;
-
-      /**
       * Pointer to the parent system.
       */
       System<D>* systemPtr_;
-
-      /**
-      * Simulation step counter.
-      */
-      long iStep_;
-
-      /**
-      * Has the Hamiltonian been computed for the current w and c fields?
-      */
-      bool hasHamiltonian_;
-
-      /**
-      * Have eigen-components of the current w fields been computed ?
-      */
-      bool hasWC_;
-
-      // Protected member functions
-
-      /**
-      * Called at the beginning of the simulation member function.
-      */
-      virtual void setup();
 
    };
 

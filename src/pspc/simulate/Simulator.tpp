@@ -27,10 +27,10 @@ namespace Pspc {
    template <int D>
    Simulator<D>::Simulator(System<D>& system)
    : random_(),
-     systemPtr_(&system),
      iStep_(0),
      hasHamiltonian_(false),
-     hasWC_(false)
+     hasWC_(false),
+     systemPtr_(&system)
    { setClassName("Simulator"); }
 
    /*
@@ -57,23 +57,6 @@ namespace Pspc {
             wc_[i].allocate(meshSize);
       }
       analyzeChi();
-   }
-
-   /*
-   * Initialize just prior to a run.
-   */
-   template <int D>
-   void Simulator<D>::setup()
-   {  
-      UTIL_CHECK(system().w().hasData());
-
-      // Eigenanalysis of the projected chi matrix.
-      analyzeChi();
-
-      // Compute field components and MC Hamiltonian for initial state
-      system().compute();
-      computeWC();
-      computeHamiltonian();
    }
 
    /*
