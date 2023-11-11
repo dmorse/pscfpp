@@ -1,5 +1,5 @@
-#ifndef PSPC_MC_SIMULATOR_H
-#define PSPC_MC_SIMULATOR_H
+#ifndef PSPC_SIMULATOR_H
+#define PSPC_SIMULATOR_H
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory
@@ -8,9 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "McState.h"                                 // member
-#include <pspc/simulate/mcmove/McMoveManager.h>      // member
-#include <pspc/simulate/analyzer/AnalyzerManager.h>  // member
+#include <util/param/Factory.h>                      // template param
 #include <util/param/Manager.h>                      // template param
 #include <util/param/ParamComposite.h>               // base class
 #include <util/random/Random.h>                      // member
@@ -32,9 +30,6 @@ namespace Pspc {
    using namespace Prdc::Cpu;
 
    template <int D> class System;
-   template <int D> class McMove;
-   template <int D> class TrajectoryReader;
-   template <int D> class TrajectoryReaderFactory;
 
    /**
    * Resources for a Monte-Carlo simulation of system.
@@ -42,7 +37,7 @@ namespace Pspc {
    * \ingroup Pspc_Simulate_Module
    */
    template <int D>
-   class McSimulator : public ParamComposite
+   class Simulator : public ParamComposite
    {
 
    public:
@@ -52,12 +47,12 @@ namespace Pspc {
       *
       * \param system parent System
       */
-      McSimulator(System<D>& system);
+      Simulator(System<D>& system);
 
       /**
       * Destructor.
       */
-      ~McSimulator();
+      ~Simulator();
 
       /**
       * Read parameters for a MC simulation.
@@ -77,7 +72,7 @@ namespace Pspc {
       *
       * \param nStep  number of Monte-Carlo steps
       */
-      void simulate(int nStep);
+      virtual void simulate(int nStep);
 
       /**
       * Read and analyze a trajectory file.
@@ -91,24 +86,24 @@ namespace Pspc {
       * \param classname  name of the TrajectoryReader class to use
       * \param filename  name of the trajectory file
       */
-      void analyzeTrajectory(int min, int max,
+      virtual void analyzeTrajectory(int min, int max,
                              std::string classname,
                              std::string filename);
+
+      /**
+      * Output timing results
+      */
+      virtual void outputTimers(std::ostream& out);
+
+      /**
+      * Clear timers
+      */
+      virtual void clearTimers();
 
       /**
       * Return the Monte Carlo step index
       */
       long iStep();
-
-      /**
-      * Output timing results
-      */
-      void outputTimers(std::ostream& out);
-
-      /**
-      * Clear timers
-      */
-      void clearTimers();
 
       /// \name Hamiltonian Computation
       ///@{
@@ -218,48 +213,6 @@ namespace Pspc {
       void clearData();
 
       ///@}
-      /// \name Utilities for MC Moves
-      ///@{
-
-      /**
-      * Get McMoveManger
-      */
-      McMoveManager<D>& mcMoveManager();
-
-      /**
-      * Save a copy of the Monte-Carlo state.
-      *
-      * This function and restoreMcState() are intended for use in
-      * the implementation of field theoretic Monte Carlo moves. This
-      * function stores the current w fields and the corresponding
-      * Hamiltonian value.  This is normally the first step of a MC
-      * move, prior to an attempted modification of the fields stored
-      * in the system w field container.
-      */
-      void saveMcState();
-
-      /**
-      * Restore the saved copy of the Monte-Carlo state.
-      *
-      * This function  and saveMcState() are intended to be used
-      * together in the implementation of Monte-Carlo moves. If an
-      * attempted move is rejected, restoreMcState() is called to
-      * restore the fields ahd Hamiltonian value that were saved
-      * by a previous call to the function saveMcState().
-      */
-      void restoreMcState();
-
-      /**
-      * Clear the saved copy of the Monte-Carlo state.
-      *
-      * This function, restoreMcState(), and saveMcState() are intended
-      * to be used together in the implementation of Monte-Carlo moves. If
-      * an attempted move is accepted, clearMcState() is called to clear
-      * clear mcState_.hasData
-      */
-      void clearMcState();
-
-      ///@}
       /// \name Miscellaneous
       ///@{
 
@@ -273,26 +226,11 @@ namespace Pspc {
       */
       Random& random();
 
-      /**
-      * Get AnalyzerManger
-      */
-      AnalyzerManager<D>& analyzerManager();
-
-      /**
-      * Get the trajectory reader factory by reference.
-      */
-      Factory<TrajectoryReader<D>>& trajectoryReaderFactory();
-
       ///@}
 
-   private:
+   protected:
 
-      // Private data members
-
-      /**
-      * Manger for Monte Carlo Analyzer.
-      */
-      AnalyzerManager<D> analyzerManager_;
+      using Util::ParamComposite::setClassName;
 
       /**
       * Random number generator
@@ -364,57 +302,30 @@ namespace Pspc {
       */
       bool hasWC_;
 
-      // Members intended for McSimulator subclass
-
-      /**
-      * State saved during MC simulation.
-      */
-      mutable McState<D> mcState_;
-
-      /**
-      * Manger for Monte Carlo Move.
-      */
-      McMoveManager<D> mcMoveManager_;
-
-      /**
-      * Pointer to a trajectory reader/writer factory.
-      */
-      Factory<TrajectoryReader<D>>* trajectoryReaderFactoryPtr_;
-
-      // Private member functions
+      // Protected member functions
 
       /**
       * Called at the beginning of the simulation member function.
       */
-      void setup();
+      virtual void setup();
 
    };
 
    // Inline functions
 
-   // Get the Monte-Carlo move manager.
-   template <int D>
-   inline McMoveManager<D>& McSimulator<D>::mcMoveManager()
-   {  return mcMoveManager_; }
-
-   // Get the Monte-Carlo analyzer manager.
-   template <int D>
-   inline AnalyzerManager<D>& McSimulator<D>::analyzerManager()
-   {  return analyzerManager_; }
-
    // Get the random number generator.
    template <int D>
-   inline Random& McSimulator<D>::random()
+   inline Random& Simulator<D>::random()
    {  return random_; }
 
    // Get the parent System.
    template <int D>
-   inline System<D>& McSimulator<D>::system()
+   inline System<D>& Simulator<D>::system()
    {  return *systemPtr_; }
 
    // Get the precomputed Hamiltonian
    template <int D>
-   inline double McSimulator<D>::hamiltonian() const
+   inline double Simulator<D>::hamiltonian() const
    {
       UTIL_CHECK(hasHamiltonian_);
       return hamiltonian_;
@@ -422,7 +333,7 @@ namespace Pspc {
 
    // Get the ideal gas component of the precomputed Hamiltonian
    template <int D>
-   inline double McSimulator<D>::idealHamiltonian() const
+   inline double Simulator<D>::idealHamiltonian() const
    {
       UTIL_CHECK(hasHamiltonian_);
       return idealHamiltonian_;
@@ -430,7 +341,7 @@ namespace Pspc {
 
    // Get the W field component of the precomputed Hamiltonian.
    template <int D>
-   inline double McSimulator<D>::fieldHamiltonian() const
+   inline double Simulator<D>::fieldHamiltonian() const
    {
       UTIL_CHECK(hasHamiltonian_);
       return fieldHamiltonian_;
@@ -438,40 +349,31 @@ namespace Pspc {
 
    // Has the Hamiltonian been computed for the current w fields ?
    template <int D>
-   inline bool McSimulator<D>::hasHamiltonian() const
+   inline bool Simulator<D>::hasHamiltonian() const
    {  return hasHamiltonian_; }
 
    // Have eigen-components of current w fields been computed?
    template <int D>
-   inline bool McSimulator<D>::hasWC() const
+   inline bool Simulator<D>::hasWC() const
    {  return hasWC_; }
 
    // Clear all data (eigen-components of w field and Hamiltonian)
    template <int D>
-   inline void McSimulator<D>::clearData()
+   inline void Simulator<D>::clearData()
    {
       hasHamiltonian_ = false;
       hasWC_ = false;
    }
 
-   // Get the TrajectoryReaderfactory
    template <int D>
-   inline 
-   Factory<TrajectoryReader<D> >& McSimulator<D>::trajectoryReaderFactory()
-   {
-      UTIL_ASSERT(trajectoryReaderFactoryPtr_);
-      return *trajectoryReaderFactoryPtr_;
-   }
-
-   template <int D>
-   inline long McSimulator<D>::iStep()
+   inline long Simulator<D>::iStep()
    {  return iStep_; }
 
-   #ifndef PSPC_MC_SIMULATOR_TPP
+   #ifndef PSPC_SIMULATOR_TPP
    // Suppress implicit instantiation
-   extern template class McSimulator<1>;
-   extern template class McSimulator<2>;
-   extern template class McSimulator<3>;
+   extern template class Simulator<1>;
+   extern template class Simulator<2>;
+   extern template class Simulator<3>;
    #endif
 
 }

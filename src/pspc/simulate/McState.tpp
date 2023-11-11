@@ -23,9 +23,9 @@ namespace Pspc {
    McState<D>::McState() 
      : w(),
        wc(), 
-       mcHamiltonian(0.0),
-       mcIdealHamiltonian(0.0),
-       mcFieldHamiltonian(0.0), 
+       hamiltonian(0.0),
+       idealHamiltonian(0.0),
+       fieldHamiltonian(0.0), 
        hasData(false),
        isAllocated(false)
    {}

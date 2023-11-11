@@ -8,7 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "McHamiltonianAnalyzer.h"
+#include "HamiltonianAnalyzer.h"
 #include <pspc/simulate/McSimulator.h>
 #include <pspc/System.h>
 #include <util/accumulators/Average.h>
@@ -23,7 +23,7 @@ namespace Pspc
    * Constructor.
    */
    template <int D>
-   McHamiltonianAnalyzer<D>::McHamiltonianAnalyzer(McSimulator<D>& mcSimulator, System<D>& system)
+   HamiltonianAnalyzer<D>::HamiltonianAnalyzer(McSimulator<D>& mcSimulator, System<D>& system)
     : AverageListAnalyzer<D>(system),
       mcSimulatorPtr_(&mcSimulator),
       systemPtr_(&(mcSimulator.system())),
@@ -31,13 +31,13 @@ namespace Pspc
       idealId_(-1),
       fieldId_(-1),
       totalId_(-1)
-   {  setClassName("McHamiltonianAnalyzer"); }
+   {  setClassName("HamiltonianAnalyzer"); }
 
    /*
    * Read interval and outputFileName. 
    */
    template <int D>
-   void McHamiltonianAnalyzer<D>::readParameters(std::istream& in) 
+   void HamiltonianAnalyzer<D>::readParameters(std::istream& in) 
    {
       AverageListAnalyzer<D>::readParameters(in);
 
@@ -60,7 +60,7 @@ namespace Pspc
    * Output energy to file
    */
    template <int D>
-   void McHamiltonianAnalyzer<D>::compute() 
+   void HamiltonianAnalyzer<D>::compute() 
    {
       if (!mcSimulator().hasWC()){
          if (!hasAnalyzeChi_){
@@ -69,17 +69,17 @@ namespace Pspc
          }
          system().compute();
          mcSimulator().computeWC();
-         mcSimulator().computeMcHamiltonian();
+         mcSimulator().computeHamiltonian();
       }
-      double ideal = mcSimulator().mcIdealHamiltonian();
+      double ideal = mcSimulator().idealHamiltonian();
       // outputFile_ << Dbl(ideal, 20)
       setValue(idealId_, ideal);
    
-      double field = mcSimulator().mcFieldHamiltonian();
+      double field = mcSimulator().fieldHamiltonian();
       // outputFile_ << Dbl(field, 20)
       setValue(fieldId_, field);
    
-      double total = mcSimulator().mcHamiltonian();
+      double total = mcSimulator().hamiltonian();
       // outputFile_ << Dbl(total, 20) << std::endl;
       setValue(totalId_, total);
    }

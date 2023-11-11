@@ -31,7 +31,7 @@ namespace Pspc
    * \ingroup Pspc_Simulate_Analyzer_Module
    */
    template <int D>
-   class McHamiltonianAnalyzer : public AverageListAnalyzer<D>
+   class HamiltonianAnalyzer : public AverageListAnalyzer<D>
    {
 
    public:
@@ -39,12 +39,12 @@ namespace Pspc
       /**
       * Constructor.
       */
-      McHamiltonianAnalyzer(McSimulator<D>& mcSimulator, System<D>& system);
+      HamiltonianAnalyzer(McSimulator<D>& mcSimulator, System<D>& system);
    
       /**
       * Destructor.
       */
-      virtual ~McHamiltonianAnalyzer()
+      virtual ~HamiltonianAnalyzer()
       {} 
       
       /**
@@ -117,12 +117,12 @@ namespace Pspc
    
    // Get the parent system.
    template <int D>
-   inline System<D>& McHamiltonianAnalyzer<D>::system()
+   inline System<D>& HamiltonianAnalyzer<D>::system()
    {  return *systemPtr_; }
    
    //Get parent McSimulator object.
    template <int D>
-   inline McSimulator<D>& McHamiltonianAnalyzer<D>::mcSimulator()
+   inline McSimulator<D>& HamiltonianAnalyzer<D>::mcSimulator()
    {  return *mcSimulatorPtr_; }
 
 

@@ -1,5 +1,5 @@
-#ifndef PSPC_MC_SIMULATOR_TPP
-#define PSPC_MC_SIMULATOR_TPP
+#ifndef PSPC_SIMULATOR_TPP
+#define PSPC_SIMULATOR_TPP
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory
@@ -8,12 +8,8 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "McSimulator.h"
+#include "Simulator.h"
 #include <pspc/System.h>
-#include <pspc/simulate/mcmove/McMoveFactory.h>
-#include <pspc/simulate/analyzer/AnalyzerFactory.h>
-#include <pspc/simulate/trajectory/TrajectoryReader.h>
-#include <pspc/simulate/trajectory/TrajectoryReaderFactory.h>
 #include <pspc/compressor/Compressor.h>
 #include <util/misc/Timer.h>
 #include <util/random/Random.h>
@@ -29,40 +25,27 @@ namespace Pspc {
    * Constructor.
    */
    template <int D>
-   McSimulator<D>::McSimulator(System<D>& system)
-   : analyzerManager_(*this, system),
-     random_(),
+   Simulator<D>::Simulator(System<D>& system)
+   : random_(),
      systemPtr_(&system),
      iStep_(0),
      hasHamiltonian_(false),
-     hasWC_(false),
-     mcMoveManager_(*this, system),
-     trajectoryReaderFactoryPtr_(0)
-   { 
-      setClassName("McSimulator");   
-      trajectoryReaderFactoryPtr_ = new TrajectoryReaderFactory<D>(system);
-   }
+     hasWC_(false)
+   { setClassName("Simulator"); }
 
    /*
    * Destructor.
    */
    template <int D>
-   McSimulator<D>::~McSimulator()
+   Simulator<D>::~Simulator()
    {}
 
    /* 
    * Read instructions for creating objects from file.
    */
    template <int D>
-   void McSimulator<D>::readParameters(std::istream &in)
+   void Simulator<D>::readParameters(std::istream &in)
    {
-      // Read block of mc move data inside
-      readParamComposite(in, mcMoveManager_);
-
-      // Read block of analyzer
-      Analyzer<D>::baseInterval = 0; // default value
-      readParamCompositeOptional(in, analyzerManager_);
-
       // Allocate projected chi matrix chiP_ and associated arrays
       const int nMonomer = system().mixture().nMonomer();
       chiP_.allocate(nMonomer, nMonomer);
@@ -80,17 +63,10 @@ namespace Pspc {
    * Initialize just prior to a run.
    */
    template <int D>
-   void McSimulator<D>::setup()
+   void Simulator<D>::setup()
    {  
       UTIL_CHECK(system().w().hasData());
 
-      // Allocate mcState_, if necessary.
-      if (!mcState_.isAllocated) {
-         const int nMonomer = system().mixture().nMonomer();
-         const IntVec<D> dimensions = system().domain().mesh().dimensions();
-         mcState_.allocate(nMonomer, dimensions);
-      }
-   
       // Eigenanalysis of the projected chi matrix.
       analyzeChi();
 
@@ -98,161 +74,20 @@ namespace Pspc {
       system().compute();
       computeWC();
       computeHamiltonian();
-      mcMoveManager_.setup();
-      if (analyzerManager_.size() > 0){
-         analyzerManager_.setup();
-      }
-      
    }
 
    /*
    * Perform a field theoretic MC simulation of nStep steps.
    */
    template <int D>
-   void McSimulator<D>::simulate(int nStep)
-   {
-      UTIL_CHECK(mcMoveManager_.size() > 0);
-
-      setup();
-      Log::file() << std::endl;
-
-      // Main Monte Carlo loop
-      Timer timer;
-      Timer analyzerTimer;
-      timer.start();
-      for (int iStep = 0; iStep < nStep; ++iStep) {
-         analyzerTimer.start();
-         // Analysis (if any)
-         if (Analyzer<D>::baseInterval != 0) {
-            if (iStep % Analyzer<D>::baseInterval == 0) {
-               if (analyzerManager_.size() > 0) {
-                  iStep_ = iStep;
-                  analyzerManager_.sample(iStep);
-               }
-            }
-         }
-         analyzerTimer.stop();
-         // Choose and attempt an McMove
-         mcMoveManager_.chooseMove().move();
-
-      }
-      timer.stop();
-      double time = timer.time();
-      double analyzerTime = analyzerTimer.time();
-
-      // Output results of move statistics to files
-      mcMoveManager_.output();
-      if (Analyzer<D>::baseInterval > 0){
-         analyzerManager_.output();
-      }
-
-      // Output number of times MDE has been solved for the simulation run
-      Log::file() << std::endl;
-      Log::file() << "MDE counter   " 
-                  << system().compressor().counterMDE() << std::endl;
-      Log::file() << std::endl;
-      
-      // Output times for the simulation run
-      Log::file() << std::endl;
-      Log::file() << "nStep               " << nStep << std::endl;
-      Log::file() << "Total run time      " << time
-                  << " sec" << std::endl;
-      double rStep = double(nStep);
-      Log::file() << "time / nStep        " <<  time / rStep
-                  << " sec" << std::endl;
-      Log::file() << "Analyzer run time   " << analyzerTime
-                  << " sec" << std::endl;
-      Log::file() << std::endl;
-
-      // Print McMove acceptance statistics
-      long attempt;
-      long accept;
-      using namespace std;
-      Log::file() << "Move Statistics:" << endl << endl;
-      Log::file() << setw(32) << left <<  "Move Name"
-           << setw(12) << right << "Attempted"
-           << setw(12) << right << "Accepted"
-           << setw(15) << right << "AcceptRate"
-           << endl;
-      int nMove = mcMoveManager_.size();
-      for (int iMove = 0; iMove < nMove; ++iMove) {
-         attempt = mcMoveManager_[iMove].nAttempt();
-         accept  = mcMoveManager_[iMove].nAccept();
-         Log::file() << setw(32) << left
-              << mcMoveManager_[iMove].className()
-              << setw(12) << right << attempt
-              << setw(12) << accept
-              << setw(15) << fixed << setprecision(6)
-              << ( attempt == 0 ? 0.0 : double(accept)/double(attempt) )
-              << endl;
-      }
-      Log::file() << endl;
-
-   }
-
-   /*
-   * Save the current Monte-Carlo state prior to an attempted MC move.
-   *
-   * Invoked before each attempted Monte-Carlo move.
-   */
-   template <int D>
-   void McSimulator<D>::saveMcState()
-   {
-      UTIL_CHECK(system().w().hasData());
-      UTIL_CHECK(hasWC_);
-      UTIL_CHECK(hasHamiltonian_);
-      UTIL_CHECK(mcState_.isAllocated);
-      UTIL_CHECK(!mcState_.hasData);
-
-      int nMonomer = system().mixture().nMonomer();
-      for (int i = 0; i < nMonomer; ++i) {
-         mcState_.w[i] = system().w().rgrid(i);
-         mcState_.wc[i] = wc_[i];
-      }
-      mcState_.hamiltonian  = hamiltonian_;
-      mcState_.idealHamiltonian  = idealHamiltonian_;
-      mcState_.fieldHamiltonian  = fieldHamiltonian_;
-      mcState_.hasData = true;
-   }
-
-   /*
-   * Restore a saved Monte-Carlo state.
-   *
-   * Invoked after an attempted Monte-Carlo move is rejected.
-   */
-   template <int D>
-   void McSimulator<D>::restoreMcState()
-   {
-      UTIL_CHECK(mcState_.isAllocated);
-      UTIL_CHECK(mcState_.hasData);
-      const int nMonomer = system().mixture().nMonomer();
-
-      system().setWRGrid(mcState_.w); 
-      for (int i = 0; i < nMonomer; ++i) {
-         wc_[i] = mcState_.wc[i];
-      }
-      hamiltonian_ = mcState_.hamiltonian;
-      idealHamiltonian_ = mcState_.idealHamiltonian;
-      fieldHamiltonian_ = mcState_.fieldHamiltonian;
-      hasHamiltonian_ = true;
-      hasWC_ = true;
-      mcState_.hasData = false;
-   }
- 
-   /*
-   * Clear the saved Monte-Carlo state.
-   *
-   * Invoked when an attempted Monte-Carlo move is accepted.
-   */
-   template <int D>
-   void McSimulator<D>::clearMcState()
-   {  mcState_.hasData = false; }
+   void Simulator<D>::simulate(int nStep)
+   {}
 
    /*
    * Compute Monte Carlo Hamiltonian.
    */
    template <int D>
-   void McSimulator<D>::computeHamiltonian()
+   void Simulator<D>::computeHamiltonian()
    {
       UTIL_CHECK(system().w().hasData());
       UTIL_CHECK(system().hasCFields());
@@ -338,7 +173,7 @@ namespace Pspc {
    }
 
    template <int D>
-   void McSimulator<D>::analyzeChi()
+   void Simulator<D>::analyzeChi()
    {
       const int nMonomer = system().mixture().nMonomer();
       DMatrix<double> const & chi = system().interaction().chi();
@@ -482,7 +317,7 @@ namespace Pspc {
    * eigenvectors chiEvecs_ of the projected chi matrix as a basis.
    */
    template <int D>
-   void McSimulator<D>::computeWC()
+   void Simulator<D>::computeWC()
    {
       const int nMonomer = system().mixture().nMonomer();
       const int meshSize = system().domain().mesh().size();
@@ -524,92 +359,25 @@ namespace Pspc {
    * Open, read and analyze a trajectory file
    */
    template <int D>
-   void McSimulator<D>::analyzeTrajectory(int min, int max,
+   void Simulator<D>::analyzeTrajectory(int min, int max,
                                           std::string classname,
                                           std::string filename)
-   {
-      // Preconditions
-      UTIL_CHECK(min >= 0);
-      UTIL_CHECK(max >= min);
-      UTIL_CHECK(Analyzer<D>::baseInterval > 0);
-      UTIL_CHECK(analyzerManager_.size() > 0);
-      
-      // Construct TrajectoryReader
-      TrajectoryReader<D>* trajectoryReaderPtr;
-      trajectoryReaderPtr = trajectoryReaderFactory().factory(classname);
-      if (!trajectoryReaderPtr) {
-         std::string message;
-         message = "Invalid TrajectoryReader class name " + classname;
-         UTIL_THROW(message.c_str());
-      }
-
-      // Open trajectory file
-      Log::file() << "Reading " << filename << std::endl;
-      trajectoryReaderPtr->open(filename);
-      trajectoryReaderPtr->readHeader();
-
-      // Main loop over trajectory frames
-      Timer timer;
-      Log::file() << "Begin main loop" << std::endl;
-      bool hasFrame = true;
-      timer.start();
-      for (iStep_ = 0; iStep_ <= max && hasFrame; ++iStep_) {
-         hasFrame = trajectoryReaderPtr->readFrame();
-         if (hasFrame) {
-            clearData();
-
-            // Initialize analyzers 
-            if (iStep_ == min) {
-               analyzerManager_.setup();
-            }
-
-            // Sample property values only for iStep >= min
-            if (iStep_ >= min) {
-               analyzerManager_.sample(iStep_);
-               if ((iStep_ % 100) == 0){
-                  Log::file() << "Step " << iStep_ << std::endl;
-               }
-            }
-         }
-      }
-      timer.stop();
-      Log::file() << "end main loop" << std::endl;
-      int nFrames = iStep_ - min;
-      trajectoryReaderPtr->close();
-      delete trajectoryReaderPtr;
-
-      // Output results of all analyzers to output files
-      analyzerManager_.output();
-
-      // Output number of frames and times
-      Log::file() << std::endl;
-      Log::file() << "# of frames   " << nFrames << std::endl;
-      Log::file() << "run time      " << timer.time() 
-                  << "  sec" << std::endl;
-      Log::file() << "time / frame " << timer.time()/double(nFrames) 
-                  << "  sec" << std::endl;
-      Log::file() << std::endl;
-
-   }
+   {}
 
    
    /*
-   * Output McMoveManager timer results.
+   * Output all timer results.
    */ 
    template<int D>
-   void McSimulator<D>::outputTimers(std::ostream& out)
-   {
-      out << "\n";
-      out << "McSimulator times contributions:\n";
-      mcMoveManager_.outputTimers(out);
-   }
+   void Simulator<D>::outputTimers(std::ostream& out)
+   { }
   
    /*
-   * Clear all McMoveManager timers.
+   * Clear all timers.
    */ 
    template<int D>
-   void McSimulator<D>::clearTimers()
-   {  mcMoveManager_.clearTimers(); }
+   void Simulator<D>::clearTimers()
+   { }
 
 }
 }
