@@ -10,6 +10,7 @@
 
 #include "System.h"
 
+#include <pspc/simulate/McSimulator.h>
 #include <pspc/compressor/Compressor.h>
 #include <pspc/compressor/CompressorFactory.h>
 
@@ -56,7 +57,6 @@ namespace Pspc {
    System<D>::System()
     : mixture_(),
       domain_(),
-      mcSimulator_(*this),
       fileMaster_(),
       homogeneous_(),
       interactionPtr_(0),
@@ -66,6 +66,7 @@ namespace Pspc {
       sweepFactoryPtr_(0),
       compressorPtr_(0),
       compressorFactoryPtr_(0),
+      simulatorPtr_(0),
       w_(),
       c_(),
       h_(),
@@ -76,7 +77,7 @@ namespace Pspc {
       fExt_(0.0),
       pressure_(0.0),
       hasMixture_(false),
-      hasMcSimulator_(false),
+      hasSimulator_(false),
       isAllocatedGrid_(false),
       isAllocatedBasis_(false),
       hasCFields_(false),
@@ -91,6 +92,7 @@ namespace Pspc {
       iteratorFactoryPtr_ = new IteratorFactory<D>(*this); 
       sweepFactoryPtr_ = new SweepFactory<D>(*this);
       compressorFactoryPtr_ = new CompressorFactory<D>(*this);
+      simulatorPtr_ = new McSimulator<D>(*this);
       BracketPolicy::set(BracketPolicy::Optional);
    }
 
@@ -298,15 +300,15 @@ namespace Pspc {
          Log::file() << indent() << "  Compressor{ [absent] }\n";
       }
 
-      // Optionally read an McSimulator
+      // Optionally read a Simulator
       //if (compressorPtr_) {
 
-         readParamCompositeOptional(in, mcSimulator_);
+         readParamCompositeOptional(in, simulator());
 
-         if (mcSimulator_.isActive()) {
-            hasMcSimulator_ = true;
+         if (simulator().isActive()) {
+            hasSimulator_ = true;
          } else {
-            hasMcSimulator_ = false;
+            hasSimulator_ = false;
          }
 
       //}
@@ -411,7 +413,7 @@ namespace Pspc {
             std::string classname;
             readEcho(in, classname);
             readEcho(in, filename);
-            mcSimulator_.analyzeTrajectory(min, max, classname, filename);
+            simulator().analyzeTrajectory(min, max, classname, filename);
          } else
          if (command == "COMPRESS") {
             // Impose incompressibility
@@ -938,11 +940,11 @@ namespace Pspc {
    {
       UTIL_CHECK(nStep > 0);
       UTIL_CHECK(hasCompressor());
-      UTIL_CHECK(hasMcSimulator_);
+      UTIL_CHECK(hasSimulator_);
       hasCFields_ = false;
       hasFreeEnergy_ = false;
 
-      mcSimulator_.simulate(nStep);
+      simulator().simulate(nStep);
       hasCFields_ = true;
    }
 
@@ -1151,9 +1153,9 @@ namespace Pspc {
          iterator().outputTimers(Log::file());
          iterator().outputTimers(out);
       }
-      if (hasMcSimulator_){
-         mcSimulator_.outputTimers(Log::file());
-         mcSimulator_.outputTimers(out);
+      if (hasSimulator_){
+         simulator().outputTimers(Log::file());
+         simulator().outputTimers(out);
       }
       if (compressorPtr_){
          compressor().outputTimers(Log::file());
@@ -1170,8 +1172,8 @@ namespace Pspc {
       if (iteratorPtr_) {
          iterator().clearTimers();
       }
-      if (hasMcSimulator_){
-         mcSimulator_.clearTimers();
+      if (hasSimulator_){
+         simulator().clearTimers();
       }
       if (compressorPtr_){
          compressor().clearTimers();

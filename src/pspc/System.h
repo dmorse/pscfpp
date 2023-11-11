@@ -10,7 +10,6 @@
 
 #include <util/param/ParamComposite.h>     // base class
 
-#include <pspc/simulate/McSimulator.h>     // member
 #include <pspc/solvers/Mixture.h>          // member
 #include <pspc/field/Domain.h>             // member
 #include <pspc/field/FieldIo.h>            // member
@@ -30,13 +29,11 @@
 namespace Pscf {
 
    class Interaction;
-
    namespace Prdc {
       template <int D> class UnitCell;
    }
 
-namespace Pspc
-{
+namespace Pspc {
 
    template <int D> class Iterator;
    template <int D> class IteratorFactory;
@@ -44,8 +41,7 @@ namespace Pspc
    template <int D> class SweepFactory;
    template <int D> class Compressor;
    template <int D> class CompressorFactory;
-   template <int D> class McMove;
-   template <int D> class McMoveFactory;
+   template <int D> class McSimulator;
 
    using namespace Util;
    using namespace Prdc;
@@ -770,6 +766,11 @@ namespace Pspc
       Compressor<D>& compressor();
 
       /**
+      * Get Simulator for field theoretic simulation. 
+      */
+      McSimulator<D>& simulator();
+
+      /**
       * Get homogeneous mixture (for reference calculations).
       */
       Homogeneous::Mixture& homogeneous();
@@ -778,11 +779,6 @@ namespace Pspc
       * Get const homogeneous mixture (for reference calculations).
       */
       Homogeneous::Mixture const & homogeneous() const;
-
-      /**
-      * Get McSimulator container for Monte Carlo moves.
-      */
-      McSimulator<D>& mcSimulator();
 
       /**
       * Get the FileMaster.
@@ -841,9 +837,9 @@ namespace Pspc
       bool hasCompressor() const;
 
       /**
-      * Does this system have an initialized McSimulator?
+      * Does this system have an initialized Simulator?
       */
-      bool hasMcSimulator() const;
+      bool hasSimulator() const;
 
       ///@}
 
@@ -860,11 +856,6 @@ namespace Pspc
       * Domain object (unit cell, space group, mesh, and basis).
       */
       Domain<D> domain_;
-
-      /**
-      * Container for McMove objects (Monte Carlo Moves).
-      */
-      McSimulator<D> mcSimulator_;
 
       /**
       * Filemaster (holds paths to associated I/O files).
@@ -910,6 +901,11 @@ namespace Pspc
       * Pointer to compressor factory object
       */
       CompressorFactory<D>* compressorFactoryPtr_;
+
+      /**
+      * Simulator - coordinator for field theoretic simulation.
+      */
+      McSimulator<D>* simulatorPtr_;
 
       /**
       * Chemical potential fields.
@@ -990,9 +986,9 @@ namespace Pspc
       bool hasMixture_;
 
       /**
-      * Has the McSimulator been initialized?
+      * Has the Simulator been initialized?
       */
-      bool hasMcSimulator_;
+      bool hasSimulator_;
 
       /**
       * Has memory been allocated for fields in grid format?
@@ -1128,10 +1124,10 @@ namespace Pspc
    inline std::string System<D>::groupName() const
    { return domain_.groupName(); }
 
-   // Get the McSimulator.
+   // Get the Simulator.
    template <int D>
-   inline McSimulator<D>& System<D>::mcSimulator()
-   {  return mcSimulator_; }
+   inline McSimulator<D>& System<D>::simulator()
+   {  return *simulatorPtr_; }
 
    // Get the FileMaster by non-const reference.
    template <int D>
@@ -1240,10 +1236,10 @@ namespace Pspc
    inline bool System<D>::hasCompressor() const
    {  return (compressorPtr_ != 0); }
 
-   // Does the system have an initialized McSimulator ?
+   // Does the system have an initialized Simulator ?
    template <int D>
-   inline bool System<D>::hasMcSimulator() const
-   {  return (hasMcSimulator_); }
+   inline bool System<D>::hasSimulator() const
+   {  return (hasSimulator_); }
 
    // Have the c fields been computed for the current w fields?
    template <int D>

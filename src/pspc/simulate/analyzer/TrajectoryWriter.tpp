@@ -9,6 +9,7 @@
 
 #include "TrajectoryWriter.h"
 #include "Analyzer.h"
+#include <pspc/simulate/McSimulator.h>
 #include <pspc/System.h>
 #include <util/misc/FileMaster.h>
 #include <util/archives/Serializable_includes.h>

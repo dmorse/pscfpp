@@ -10,9 +10,10 @@
 
 #include "McMove.h"
 
+#include <pspc/simulate/McSimulator.h>
+#include <pspc/compressor/Compressor.h>
 #include <pspc/System.h>
 #include <util/archives/Serializable_includes.h>
-#include <pspc/compressor/Compressor.h>
 
 namespace Pscf {
 namespace Pspc {
