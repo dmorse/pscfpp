@@ -18,7 +18,7 @@ can perform SCFT calculations.  All three PSCF programs can also perform
 SCFT parameter sweeps. A \ref user_param_sweep_page "parameter sweep" is 
 an operations that performs a sequence of SCFT calculations for slightly 
 different choices of parameter values spaced along a path through 
-parameter space, as discussed in more detail \ref user_param_sweep "here".
+parameter space, as discussed \ref user_param_sweep_page "here".
 
 Each of the PSCF programs is initialized using data in a parameter file
 and then executes a series of commands specified in a command file. The 
@@ -32,7 +32,7 @@ above:
    - SIMULATE performs an FTMC simulation 
 
 The format of a parameter file contains some optional elements that are 
-required for some types of calculations but unnecessary for others.  The 
+required for some types of calculations but unnecessary for others. The 
 required format of a parameter file depends to some extent on what type 
 of commands are used in the associated command file.  
 
@@ -42,22 +42,20 @@ the ITERATE or SWEEP command. The parameter file for such a calculation
 must information that specifies a specifies a choice of SCFT iteration 
 algorithm from among several possible algorithms, and that specifies 
 values of parameters required by that algorithm. This information is 
-given in the a section of the parameter file referred to in what follows
-as an iterator block. The iterator block is an optional component of a
-PSCF parameter file that needed to initialize any sort of SCFT calculations 
-but that not is not needed for an FTMC simulation, and so may be omitted
-omitted from a parameter file that is designed to be used to initialize
-an FTMC simulation. Conversely, a parameter files that is designed to be
-an input file for an FTMC simulation must contain other sections or 
-"blocks" that specify information about algorithms that are specific 
-to FTMC simulations, such as Monte-Carlo moves, but that are not needed 
-as inputs to an SCFT calculation.
+given in a section of the parameter file that is referred to in what 
+follows as an Iterator block. The Iterator block is an optional component 
+of a PSCF parameter file that is needed to initialize any sort of SCFT 
+calculations but that not is not needed to initialize an FTMC simulation.
+Conversely, a parameter files that is used to initialize an FTMC 
+simulation must contain other specialized blocks that specify information 
+about choices for algorithms that are specific to FTMC simulations, such 
+as Monte-Carlo moves, but that are not used in SCFT calculations.
 
 The discussion of parameter files that begins on the 
 \ref user_param_page "following page" focuses specifically on describing 
-elements of a parameter file that are relevant to SCFT calculations and 
-SCFT sweeps. Input parameters and parameter file sections that are only
-relevant to FTMC calculations are discussed separately. 
+elements of a parameter file that are used in SCFT calculations and SCFT 
+parameter sweeps. Parameter file sections that provide information that 
+is only needed for FTMC calculations are discussed separately. 
 
 <BR>
 \ref user_usage_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp;

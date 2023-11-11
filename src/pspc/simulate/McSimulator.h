@@ -66,15 +66,52 @@ namespace Pspc {
       */
       virtual void readParameters(std::istream &in);
 
+      /// \name Primary Actions: Simulation and Analysis
+      ///@{
+
       /**
       * Perform a field theoretic Monte-Carlo simulation.
       *
-      * Perform a field theoretic Monte-Carlo simulation using the 
-      * partial saddle-point approximation. 
-      * 
+      * Perform a field theoretic Monte-Carlo simulation using the
+      * partial saddle-point approximation.
+      *
       * \param nStep  number of Monte-Carlo steps
       */
       void simulate(int nStep);
+
+      /**
+      * Read and analyze a trajectory file.
+      *
+      * This function uses an instance of the TrajectoryReader class
+      * specified by the "classname" argument to read a trajectory
+      * file.
+      *
+      * \param min  start at this frame number
+      * \param max  end at this frame number
+      * \param classname  name of the TrajectoryReader class to use
+      * \param filename  name of the trajectory file
+      */
+      void analyzeTrajectory(int min, int max,
+                             std::string classname,
+                             std::string filename);
+
+      /**
+      * Return the Monte Carlo step index
+      */
+      long iStep();
+
+      /**
+      * Output timing results
+      */
+      void outputTimers(std::ostream& out);
+
+      /**
+      * Clear timers
+      */
+      void clearTimers();
+
+      /// \name Hamiltonian Computation
+      ///@{
 
       /**
       * Compute the Hamiltonian used in Monte-Carlo simulations.
@@ -85,63 +122,34 @@ namespace Pspc {
       * Get the Hamiltonian used in Monte-Carlo simulations.
       */
       double mcHamiltonian() const;
-      
+
       /**
       * Get ideal gas contribution (lnQ) to MC Hamiltonian.
       */
       double mcIdealHamiltonian() const;
-      
+
       /**
       * Get the quadratci field contribution (HW) to MC Hamiltonian.
       */
       double mcFieldHamiltonian() const;
-      
+
       /**
       * Has the MC Hamiltonian been computed for current w and c fields?
-      */ 
+      */
       bool hasMcHamiltonian() const;
-      
-      /**
-      * Save a copy of the Monte-Carlo state.
-      *
-      * This function and restoreMcState() are intended for use in 
-      * the implementation of field theoretic Monte Carlo moves. This
-      * function stores the current w fields and the corresponding 
-      * Hamiltonian value.  This is normally the first step of a MC 
-      * move, prior to an attempted modification of the fields stored
-      * in the system w field container.
-      */
-      void saveMcState();
 
-      /**
-      * Restore the saved copy of the Monte-Carlo state.
-      *
-      * This function  and saveMcState() are intended to be used 
-      * together in the implementation of Monte-Carlo moves. If an 
-      * attempted move is rejected, restoreMcState() is called to
-      * restore the fields ahd Hamiltonian value that were saved 
-      * by a previous call to the function saveMcState().
-      */
-      void restoreMcState();
+      ///@}
+      /// \name Eigenanalysis of Projected Chi Matrix
+      ///@{
 
-      /**
-      * Clear the saved copy of the Monte-Carlo state.
-      *
-      * This function, restoreMcState(), and saveMcState() are intended 
-      * to be used together in the implementation of Monte-Carlo moves. If 
-      * an attempted move is accepted, clearMcState() is called to clear
-      * clear mcState_.hasData
-      */
-      void clearMcState();
-      
       /**
       * Get an array of the eigenvalues of the projected chi matrix.
       *
       * The projected chi matrix is given by the matrix product P*chi*P,
       * where P is the symmetric projection matrix that projects onto the
       * subspace perpendicular to the vector (1,1,...,1). The projected
-      * chi matrix is singular, and always has one zero eigenvalue, with 
-      * eigenvector (1,1, ... ,1). By convention, this zero value is the 
+      * chi matrix is singular, and always has one zero eigenvalue, with
+      * eigenvector (1,1, ... ,1). By convention, this zero value is the
       * last eigenvalue, with index nMonomer -  1, is zero.
       */
       DArray<double> const & chiEvals() const
@@ -158,41 +166,45 @@ namespace Pspc {
       /**
       * Get a matrix of eigenvectors of the projected chi matrix.
       *
-      * The first index of the matrix indexes the eigenvector, while 
+      * The first index of the matrix indexes the eigenvector, while
       * the second index indexes vector components. All eigenvectors
-      * have a Euclidean norm of unity. The sign of each vector is 
+      * have a Euclidean norm of unity. The sign of each vector is
       * chosen so as to make the first (0) component of each vector
       * positive.
       */
       DMatrix<double> const & chiEvecs() const
       {  return chiEvecs_; }
-      
+
       /**
       * Perform eigenvalue analysis of projected chi matrix.
       */
       void analyzeChi();
-      
+
+      ///@}
+      /// \name W Field Components
+      ///@{
+
       /**
-      * Compute and store the eigenvector components of the current w fields.
+      * Compute chi eigenvector components of the current w fields.
+      *
+      * Compute and store the components of the values of the w fields
+      * on nodes of a real-space grid (r-grid) in a basis of the
+      * eigenvectors of the projected chi matrix.
       */
       void computeWC();
-      
+
       /**
-      * Has the eigenvector components of the current w fields been computed 
-      * for the current field?
+      * Are eigen-components of current w fields valid ?
       */
       bool hasWC() const;
-      
-      /**
-      * Clear eigen-components of the fields and mcHamiltonian components.
-      */
-      void clearData();
 
       /**
       * Get an eigenvector component of the w fields.
       *
-      * Each component is a point-wise projection of the w fields onto
-      * a corresponding eigenvector of the projected chi matrix.
+      * Each component is a point-wise projection of the w fields onto a
+      * corresponding eigenvector of the projected chi matrix. The last
+      * index, i = nMonomer - 1, corresponds to the Lagrange multiplier
+      * pressure component, with associated eigenvector [1, 1, ..., 1].
       *
       * \param i eigenvector / eigenvalue index
       */
@@ -200,21 +212,51 @@ namespace Pspc {
       {   return wc_[i]; }
 
       /**
-      * Read and analyze a trajectory file.
-      * 
-      * This function uses an instance of the TrajectoryReader class
-      * specified by the "classname" argument to read a trajectory 
-      * file. 
-      *
-      * \param min  start at this frame number
-      * \param max  end at this frame number
-      * \param classname  name of the TrajectoryReader class to use
-      * \param filename  name of the trajectory file
+      * Clear w field eigen-components and mcHamiltonian components.
       */
-      void analyzeTrajectory(int min, int max,
-                             std::string classname,
-                             std::string filename);
-      
+      void clearData();
+
+      ///@}
+      /// \name Utilities for MC Moves
+      ///@{
+
+      /**
+      * Save a copy of the Monte-Carlo state.
+      *
+      * This function and restoreMcState() are intended for use in
+      * the implementation of field theoretic Monte Carlo moves. This
+      * function stores the current w fields and the corresponding
+      * Hamiltonian value.  This is normally the first step of a MC
+      * move, prior to an attempted modification of the fields stored
+      * in the system w field container.
+      */
+      void saveMcState();
+
+      /**
+      * Restore the saved copy of the Monte-Carlo state.
+      *
+      * This function  and saveMcState() are intended to be used
+      * together in the implementation of Monte-Carlo moves. If an
+      * attempted move is rejected, restoreMcState() is called to
+      * restore the fields ahd Hamiltonian value that were saved
+      * by a previous call to the function saveMcState().
+      */
+      void restoreMcState();
+
+      /**
+      * Clear the saved copy of the Monte-Carlo state.
+      *
+      * This function, restoreMcState(), and saveMcState() are intended
+      * to be used together in the implementation of Monte-Carlo moves. If
+      * an attempted move is accepted, clearMcState() is called to clear
+      * clear mcState_.hasData
+      */
+      void clearMcState();
+
+      ///@}
+      /// \name Miscellaneous
+      ///@{
+
       /**
       * Get parent system by reference.
       */
@@ -224,61 +266,48 @@ namespace Pspc {
       * Get AnalyzerManger
       */
       AnalyzerManager<D>& analyzerManager();
-      
+
       /**
       * Get McMoveManger
       */
-      McMoveManager<D>& mcMoveManager();    
+      McMoveManager<D>& mcMoveManager();
 
       /**
       * Get the trajectory reader factory by reference.
       */
-      Factory<TrajectoryReader<D>>& trajectoryReaderFactory(); 
-      
+      Factory<TrajectoryReader<D>>& trajectoryReaderFactory();
+
       /**
       * Get random number generator by reference.
       */
       Random& random();
-      
-      /**
-      * Return the Monte Carlo step index
-      */
-      long iStep();
-      
-      /**
-      * Log output timing results 
-      */
-      void outputTimers(std::ostream& out);
-      
-      /**
-      * Clear timers 
-      */
-      void clearTimers();
-      
+
+      ///@}
+
    private:
-      
+
       // Private data members
 
       /**
       * Manger for Monte Carlo Move.
       */
-      McMoveManager<D> mcMoveManager_;  
-      
+      McMoveManager<D> mcMoveManager_;
+
       /**
       * Manger for Monte Carlo Analyzer.
       */
-      AnalyzerManager<D> analyzerManager_;    
-      
+      AnalyzerManager<D> analyzerManager_;
+
       /**
       * Pointer to a trajectory reader/writer factory.
       */
       Factory<TrajectoryReader<D>>* trajectoryReaderFactoryPtr_;
-    
+
       /**
       * Random number generator
       */
       Random random_;
-      
+
       /**
       * State saved during MC simulation.
       */
@@ -287,12 +316,12 @@ namespace Pspc {
       /**
       * Pointer to the parent system.
       */
-      System<D>* systemPtr_;  
+      System<D>* systemPtr_;
 
       /**
       * Eigenvector components of w on a real space grid.
       *
-      * Each field component corresponds to a point-wise projection of w 
+      * Each field component corresponds to a point-wise projection of w
       * onto an eigenvector of the projected chi matrix.
       */
       DArray< RField<D> > wc_;
@@ -300,13 +329,17 @@ namespace Pspc {
       /**
       * Projected chi matrix
       *
-      * Projected matrix chiP_ = P*chi*P, where P is projection matrix that 
-      * projects onto the subspace orthogonal to the vector e = [1, ... , 1].
+      * Projected matrix chiP_ = P*chi*P, where P = I - e e^{T} / M is
+      * a projection matrix that projects onto the subspace orthogonal
+      * to the vector e = [1, ... , 1]^{T}, where M = nMonomer.
       */
       DMatrix<double> chiP_;
 
       /**
       * Eigenvectors of the projected chi matrix.
+      *
+      * The last eigenvector, with index nMonomer - 1, is always the
+      * vector e = [1, 1, ...., 1]^{T}.
       */
       DMatrix<double> chiEvecs_;
 
@@ -321,38 +354,37 @@ namespace Pspc {
       double mcHamiltonian_;
 
       /**
-      * Ideal gas contributions (lnQ) to Monte-Carlo System Hamiltonian
+      * Ideal gas contribution (lnQ) to Monte-Carlo System Hamiltonian
       */
       double mcIdealHamiltonian_;
-      
+
       /**
-      * Field contribution (HW) to Monte-Carlo System Hamiltonian
+      * Field contribution (H_W) to Monte-Carlo System Hamiltonian
       */
       double mcFieldHamiltonian_;
-      
+
       /**
-      * Has the MC Hamiltonian been computed for the current w and c fields?
-      */ 
+      * Has the Hamiltonian been computed for the current w and c fields?
+      */
       bool hasMcHamiltonian_;
-      
+
       /**
-      * Has the eigenvector components of the current w fields been computed 
-      * for the current field?
+      * Have eigen-components of the current w fields been computed ?
       */
       bool hasWC_;
 
       /**
-      * Count Monte Carlo step 
+      * Simulation step counter.
       */
       long iStep_;
-      
+
       // Private member functions
-      
+
       /**
       * Called at the beginning of the simulation member function.
       */
       void setup();
-      
+
    };
 
    // Inline functions
@@ -366,73 +398,72 @@ namespace Pspc {
    template <int D>
    inline AnalyzerManager<D>& McSimulator<D>::analyzerManager()
    {  return analyzerManager_; }
-   
+
    // Get the random number generator.
    template <int D>
    inline Random& McSimulator<D>::random()
    {  return random_; }
-   
+
    // Get the parent System.
    template <int D>
    inline System<D>& McSimulator<D>::system()
    {  return *systemPtr_; }
-   
-   // Get the precomputed MC Hamiltonian
+
+   // Get the precomputed Hamiltonian
    template <int D>
    inline double McSimulator<D>::mcHamiltonian() const
-   {  
+   {
       UTIL_CHECK(hasMcHamiltonian_);
-      return mcHamiltonian_; 
+      return mcHamiltonian_;
    }
-   
-   // Get the ideal gas component of the precomputed MC Hamiltonian
+
+   // Get the ideal gas component of the precomputed Hamiltonian
    template <int D>
    inline double McSimulator<D>::mcIdealHamiltonian() const
-   {  
+   {
       UTIL_CHECK(hasMcHamiltonian_);
-      return mcIdealHamiltonian_; 
+      return mcIdealHamiltonian_;
    }
-   
-   // Get the field component of the precomputed MC Hamiltonian
+
+   // Get the W field component of the precomputed Hamiltonian.
    template <int D>
    inline double McSimulator<D>::mcFieldHamiltonian() const
-   {  
+   {
       UTIL_CHECK(hasMcHamiltonian_);
-      return mcFieldHamiltonian_; 
+      return mcFieldHamiltonian_;
    }
-   
-   // Has the MC Hamiltonian been computed for the current w fields ?
+
+   // Has the Hamiltonian been computed for the current w fields ?
    template <int D>
    inline bool McSimulator<D>::hasMcHamiltonian() const
    {  return hasMcHamiltonian_; }
-   
+
    // Have eigen-components of current w fields been computed?
    template <int D>
    inline bool McSimulator<D>::hasWC() const
    {  return hasWC_; }
-   
+
    // Clear all data (eigen-components of w field and McHamiltonian)
    template <int D>
    inline void McSimulator<D>::clearData()
-   { 
+   {
       hasMcHamiltonian_ = false;
-      hasWC_ = false; 
+      hasWC_ = false;
    }
-   
-   // Get the TrajectoryReaderfactory 
+
+   // Get the TrajectoryReaderfactory
    template <int D>
-   inline Factory<TrajectoryReader<D>> & McSimulator<D>::trajectoryReaderFactory() 
+   inline 
+   Factory<TrajectoryReader<D> >& McSimulator<D>::trajectoryReaderFactory()
    {
       UTIL_ASSERT(trajectoryReaderFactoryPtr_);
       return *trajectoryReaderFactoryPtr_;
    }
 
    template <int D>
-   inline long McSimulator<D>::iStep() 
-   {  
-      return iStep_; 
-   }
-   
+   inline long McSimulator<D>::iStep()
+   {  return iStep_; }
+
    #ifndef PSPC_MC_SIMULATOR_TPP
    // Suppress implicit instantiation
    extern template class McSimulator<1>;
