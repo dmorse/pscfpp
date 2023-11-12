@@ -1,4 +1,4 @@
-/*! \page user_param_fd_page Parameter File - pscf_1d
+/*! \page user_param_1d_page Parameter File - pscf_1d
 
 \ref user_param_sweep_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
 \ref user_param_pc_page     (Next)
@@ -16,7 +16,7 @@ An example of a parameter file for an pscf_1d program was given
 Please consult this example when looking at this discussion of the file
 format.
 
-\section user_param_fd_format_sec File Format
+\section user_param_1d_format_sec File Format
 
 The overall format for a pscf_1d parameter file is shown below in 
 skeleton form:
@@ -35,7 +35,7 @@ for all PSCF programs, and have also been discussed previously.
 We thus focus below on the contents of the Domain, Iterator, and 
 Sweep blocks. 
 
-\section user_param_fd_domain_section Domain Block
+\section user_param_1d_domain_section Domain Block
 
 The domain block describes the spatial domain over which the SCFT equations 
 should be solved. The parameter file syntax is described in detail 
@@ -137,7 +137,7 @@ or spherical geometry, for which xMin = 0.0, the requirement of a
 vanishing radial derivative at x=0 is necessary to guarantee that 
 the gradient vector is continuous at the origin. 
 
-\section user_param_fd_iterator_sec Iterators
+\section user_param_1d_iterator_sec Iterators
 
 The Iterator block provides data required by the iterator used to solve 
 the nonlinear self-consistent field (SCF) equations.  
@@ -182,7 +182,7 @@ is given in the links in the table below:
 </table>
 </table>
 
-\section user_param_fd_sweep_sec Sweep
+\section user_param_1d_sweep_sec Sweep
 
 The default sweep for pscf_1d is a linear sweep algorithm that can be
 invoked using a block that starts either with the generic label Sweep

@@ -23,7 +23,7 @@ Each of the following subpages gives more detailed information about
 commands available for specific programs.
 
 <ol>
- <li> \subpage user_command_fd_page </li>
+ <li> \subpage user_command_1d_page </li>
  <li> \subpage user_command_pc_page </li>
  <li> \subpage user_command_pg_page </li>
 </ol>

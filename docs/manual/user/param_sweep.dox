@@ -1,7 +1,7 @@
 /*! \page user_param_sweep_page Parameter File - Parameter Sweeps
 
 \ref user_param_mixture_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
-\ref user_param_fd_page       (Next)
+\ref user_param_1d_page       (Next)
 <BR>
 
 Some of the PSCF programs provide capability to run a sequence of SCFT
@@ -470,6 +470,6 @@ specific class.
 <BR>
 \ref user_param_mixture_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
 \ref user_param_page         (Up)   &nbsp; &nbsp; &nbsp; &nbsp;
-\ref user_param_fd_page      (Next)
+\ref user_param_1d_page      (Next)
 
 */

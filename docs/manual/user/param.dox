@@ -26,7 +26,7 @@ files for each of the three available programs.
      <li> \subpage user_param_format_page   "Format Descriptions" </li>
      <li> \subpage user_param_mixture_page  "Mixture Block" </li>
      <li> \subpage user_param_sweep_page    "Parameter Sweeps" </li>
-     <li> \subpage user_param_fd_page </li>
+     <li> \subpage user_param_1d_page </li>
      <li> \subpage user_param_pc_page </li>
      <li> \subpage user_param_pg_page </li>
    </ol>
