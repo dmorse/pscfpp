@@ -38,7 +38,7 @@ namespace Pspg {
      trajectoryReaderFactoryPtr_(0),
      random_(),
      systemPtr_(&system),
-     hasMcHamiltonian_(false),
+     hasHamiltonian_(false),
      hasWC_(false)
    { 
       setClassName("McSimulator");   
@@ -99,7 +99,7 @@ namespace Pspg {
       // Compute field components and MC Hamiltonian for initial state
       system().compute();
       computeWC();
-      computeMcHamiltonian();
+      computeHamiltonian();
       mcMoveManager_.setup();
       if (analyzerManager_.size() > 0){
          analyzerManager_.setup();
@@ -192,7 +192,7 @@ namespace Pspg {
    {
       UTIL_CHECK(system().w().hasData());
       UTIL_CHECK(hasWC_);
-      UTIL_CHECK(hasMcHamiltonian_);
+      UTIL_CHECK(hasHamiltonian_);
       UTIL_CHECK(mcState_.isAllocated);
       UTIL_CHECK(!mcState_.hasData);
       
@@ -208,8 +208,8 @@ namespace Pspg {
          assignReal<<<nBlocks, nThreads>>>
             (mcState_.wc[i].cField(), wc_[i].cField(), meshSize);
       }
-      mcState_.mcHamiltonian  = mcHamiltonian_;
-      mcState_.mcIdealHamiltonian  = mcIdealHamiltonian_;
+      mcState_.hamiltonian  = hamiltonian_;
+      mcState_.idealHamiltonian  = idealHamiltonian_;
       mcState_.mcFieldHamiltonian  = mcFieldHamiltonian_;
       mcState_.hasData = true;
    }
@@ -237,10 +237,10 @@ namespace Pspg {
          assignReal<<<nBlocks, nThreads>>>
             (wc_[i].cField(), mcState_.wc[i].cField(), meshSize);
       }
-      mcHamiltonian_ = mcState_.mcHamiltonian;
-      mcIdealHamiltonian_ = mcState_.mcIdealHamiltonian;
+      hamiltonian_ = mcState_.hamiltonian;
+      idealHamiltonian_ = mcState_.idealHamiltonian;
       mcFieldHamiltonian_ = mcState_.mcFieldHamiltonian;
-      hasMcHamiltonian_ = true;
+      hasHamiltonian_ = true;
       hasWC_ = true;
       mcState_.hasData = false;
    }
@@ -258,12 +258,12 @@ namespace Pspg {
    * Compute Monte Carlo Hamiltonian.
    */
    template <int D>
-   void McSimulator<D>::computeMcHamiltonian()
+   void McSimulator<D>::computeHamiltonian()
    {
       UTIL_CHECK(system().w().hasData());
       UTIL_CHECK(system().hasCFields());
       UTIL_CHECK(hasWC_);
-      hasMcHamiltonian_ = false;
+      hasHamiltonian_ = false;
 
       Mixture<D> const & mixture = system().mixture();
       Domain<D> const & domain = system().domain();
@@ -332,14 +332,14 @@ namespace Pspg {
       // Normalize HW to equal a value per monomer
       HW /= double(meshSize);
       // Compute final MC Hamiltonian
-      mcHamiltonian_ = HW - lnQ;
+      hamiltonian_ = HW - lnQ;
       const double vSystem  = domain.unitCell().volume();
       const double vMonomer = mixture.vMonomer();
       mcFieldHamiltonian_ = vSystem/vMonomer * HW;
-      mcIdealHamiltonian_ = vSystem/vMonomer * lnQ;
-      mcHamiltonian_ *= vSystem/vMonomer;
-      hasMcHamiltonian_ = true;
-      //Log::file()<< "computeMcHamiltonian"<< std::endl;
+      idealHamiltonian_ = vSystem/vMonomer * lnQ;
+      hamiltonian_ *= vSystem/vMonomer;
+      hasHamiltonian_ = true;
+      //Log::file()<< "computeHamiltonian"<< std::endl;
    }
 
    template <int D>

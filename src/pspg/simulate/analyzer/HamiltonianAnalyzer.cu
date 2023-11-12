@@ -5,12 +5,12 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "McHamiltonianAnalyzer.tpp"
+#include "HamiltonianAnalyzer.tpp"
 
 namespace Pscf {
 namespace Pspg {
-   template class McHamiltonianAnalyzer<1>;
-   template class McHamiltonianAnalyzer<2>;
-   template class McHamiltonianAnalyzer<3>;
+   template class HamiltonianAnalyzer<1>;
+   template class HamiltonianAnalyzer<2>;
+   template class HamiltonianAnalyzer<3>;
 }
 }

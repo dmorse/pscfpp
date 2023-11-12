@@ -1,5 +1,5 @@
-#ifndef PSPG_MC_HAMILTONIAN_ANALYZER_H
-#define PSPG_MC_HAMILTONIAN_ANALYZER_H
+#ifndef PSPG_HAMILTONIAN_ANALYZER_H
+#define PSPG_HAMILTONIAN_ANALYZER_H
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory
@@ -10,7 +10,6 @@
 
 #include "AverageListAnalyzer.h"
 #include <pspg/System.h>
-#include <pspg/simulate/McSimulator.h>
 
 namespace Util{
    class Average;
@@ -18,6 +17,8 @@ namespace Util{
 
 namespace Pscf {
 namespace Pspg {
+
+   template <int D> class McSimulator;
 
    using namespace Util;
 
@@ -32,7 +33,7 @@ namespace Pspg {
    * \ingroup Pspg_Simulate_Analyzer_Module
    */
    template <int D>
-   class McHamiltonianAnalyzer : public AverageListAnalyzer<D>
+   class HamiltonianAnalyzer : public AverageListAnalyzer<D>
    {
 
    public:
@@ -40,12 +41,12 @@ namespace Pspg {
       /**
       * Constructor.
       */
-      McHamiltonianAnalyzer(McSimulator<D>& mcSimulator, System<D>& system);
+      HamiltonianAnalyzer(McSimulator<D>& mcSimulator, System<D>& system);
    
       /**
       * Destructor.
       */
-      virtual ~McHamiltonianAnalyzer()
+      virtual ~HamiltonianAnalyzer()
       {} 
       
       /**
@@ -75,6 +76,7 @@ namespace Pspg {
       * Pointer to parent Simulator
       */
       McSimulator<D>* mcSimulatorPtr_;     
+
       /**
       * Pointer to the parent system.
       */
@@ -118,14 +120,20 @@ namespace Pspg {
    
    // Get the parent system.
    template <int D>
-   inline System<D>& McHamiltonianAnalyzer<D>::system()
+   inline System<D>& HamiltonianAnalyzer<D>::system()
    {  return *systemPtr_; }
    
    //Get parent McSimulator object.
    template <int D>
-   inline McSimulator<D>& McHamiltonianAnalyzer<D>::mcSimulator()
+   inline McSimulator<D>& HamiltonianAnalyzer<D>::mcSimulator()
    {  return *mcSimulatorPtr_; }
 
+   #ifndef PSPG_HAMILTONIAN_ANALYZER_TPP
+   // Suppress implicit instantiation
+   extern template class HamiltonianAnalyzer<1>;
+   extern template class HamiltonianAnalyzer<2>;
+   extern template class HamiltonianAnalyzer<3>;
+   #endif
 
 }
 }

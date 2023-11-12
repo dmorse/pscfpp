@@ -191,7 +191,7 @@ namespace Pspg
       Timer attemptMoveTimer_;
       Timer compressorTimer_;
       Timer computeWCTimer_;
-      Timer computeMcHamiltonianTimer_;
+      Timer computeHamiltonianTimer_;
       Timer decisionTimer_;
       Timer totalTimer_;
 

@@ -72,17 +72,17 @@ namespace Pspg {
       /**
       * Compute the Hamiltonian used in Monte-Carlo simulations.
       */
-      void computeMcHamiltonian();
+      void computeHamiltonian();
 
       /**
       * Get the Hamiltonian used in Monte-Carlo simulations.
       */
-      double mcHamiltonian() const;
+      double hamiltonian() const;
       
       /**
       * Get the ideal gas contribution (lnQ) to Hamiltonian used in Monte-Carlo simulations.
       */
-      double mcIdealHamiltonian() const;
+      double idealHamiltonian() const;
       
       /**
       * Get the ideal field contribution (HW) to Hamiltonian used in Monte-Carlo simulations.
@@ -92,7 +92,7 @@ namespace Pspg {
       /**
       * Has the MC Hamiltonian been computed for the current w and c fields?
       */ 
-      bool hasMcHamiltonian() const;
+      bool hasHamiltonian() const;
       
       /**
       * Save a copy of the Monte-Carlo state.
@@ -180,7 +180,7 @@ namespace Pspg {
       * Clear state data stored in McSimulator.
       *
       * If a new move is attempted, clear both eigen-components of the 
-      * fields and mcHamiltonian components
+      * fields and hamiltonian components
       */
       void clearData();
       
@@ -314,12 +314,12 @@ namespace Pspg {
       /**
       * Monte-Carlo System Hamiltonian (extensive value).
       */
-      double mcHamiltonian_;
+      double hamiltonian_;
 
       /**
       * Ideal gas contributions (lnQ) to Monte-Carlo System Hamiltonian
       */
-      double mcIdealHamiltonian_;
+      double idealHamiltonian_;
       
       /**
       * Field contribution (HW) to Monte-Carlo System Hamiltonian
@@ -329,7 +329,7 @@ namespace Pspg {
       /**
       * Has the MC Hamiltonian been computed for the current w and c fields?
       */ 
-      bool hasMcHamiltonian_;
+      bool hasHamiltonian_;
       
       /**
       * Has the eigenvector components of the current w fields been computed 
@@ -375,43 +375,43 @@ namespace Pspg {
    
    // Get the precomputed MC Hamiltonian
    template <int D>
-   inline double McSimulator<D>::mcHamiltonian() const
+   inline double McSimulator<D>::hamiltonian() const
    {  
-      UTIL_CHECK(hasMcHamiltonian_);
-      return mcHamiltonian_; 
+      UTIL_CHECK(hasHamiltonian_);
+      return hamiltonian_; 
    }
    
    // Get the ideal gas component of the precomputed MC Hamiltonian
    template <int D>
-   inline double McSimulator<D>::mcIdealHamiltonian() const
+   inline double McSimulator<D>::idealHamiltonian() const
    {  
-      UTIL_CHECK(hasMcHamiltonian_);
-      return mcIdealHamiltonian_; 
+      UTIL_CHECK(hasHamiltonian_);
+      return idealHamiltonian_; 
    }
    
    // Get the field component of the precomputed MC Hamiltonian
    template <int D>
    inline double McSimulator<D>::mcFieldHamiltonian() const
    {  
-      UTIL_CHECK(hasMcHamiltonian_);
+      UTIL_CHECK(hasHamiltonian_);
       return mcFieldHamiltonian_; 
    }
    
    // Has the MC Hamiltonian been computed for the current w fields ?
    template <int D>
-   inline bool McSimulator<D>::hasMcHamiltonian() const
-   {  return hasMcHamiltonian_; }
+   inline bool McSimulator<D>::hasHamiltonian() const
+   {  return hasHamiltonian_; }
    
    // Have eigen-components of current w fields been computed?
    template <int D>
    inline bool McSimulator<D>::hasWC() const
    {  return hasWC_; }
    
-   // Clear all data (eigen-components of w field and McHamiltonian)
+   // Clear all data (eigen-components of w field and Hamiltonian)
    template <int D>
    inline void McSimulator<D>::clearData()
    { 
-      hasMcHamiltonian_ = false;
+      hasHamiltonian_ = false;
       hasWC_ = false; 
    }
    

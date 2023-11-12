@@ -43,6 +43,7 @@ namespace Pspg
    template <int D> class SweepFactory;
    template <int D> class Compressor;
    template <int D> class CompressorFactory;
+   template <int D> class McSimulator;
    template <int D> class McMove;
    template <int D> class McMoveFactory;
 
@@ -701,7 +702,7 @@ namespace Pspg
       /**
       * Get McSimulator container for Monte Carlo moves.
       */
-      McSimulator<D>& mcSimulator();
+      McSimulator<D>& simulator();
 
       /**
       * Get crystal UnitCell by const reference.
@@ -764,7 +765,7 @@ namespace Pspg
       /**
       * Does this system have an initialized McSimulator?
       */
-      bool hasMcSimulator() const;
+      bool hasSimulator() const;
 
       ///@}
 
@@ -780,11 +781,6 @@ namespace Pspg
       */
       Domain<D> domain_;
       
-      /**
-      * Container for McMove objects (Monte Carlo Moves).
-      */
-      McSimulator<D> mcSimulator_;
-
       /**
       * Filemaster (holds paths to associated I/O files).
       */
@@ -821,7 +817,7 @@ namespace Pspg
       SweepFactory<D>* sweepFactoryPtr_;
       
       /**
-      * Pointer to an compressor.
+      * Pointer to a compressor.
       */
       Compressor<D>* compressorPtr_;
 
@@ -829,6 +825,11 @@ namespace Pspg
       * Pointer to compressor factory object
       */
       CompressorFactory<D>* compressorFactoryPtr_;
+
+      /**
+      * Pointer to a simulator.
+      */
+      McSimulator<D>* simulatorPtr_;
 
       /**
       * Chemical potential fields.
@@ -895,9 +896,9 @@ namespace Pspg
       bool hasMixture_;
       
       /**
-      * Has the McSimulator been initialized?
+      * Does a Simulator exist?
       */
-      bool hasMcSimulator_;
+      bool hasSimulator_;
 
       /**
       * Has memory been allocated for fields in FFT grid formats?
@@ -1035,11 +1036,6 @@ namespace Pspg
    inline FieldIo<D> const & System<D>::fieldIo() const
    {  return domain_.fieldIo(); }
    
-   // Get the McSimulator.
-   template <int D>
-   inline McSimulator<D>& System<D>::mcSimulator()
-   {  return mcSimulator_; }
-
    // Get the Iterator.
    template <int D>
    inline Iterator<D>& System<D>::iterator()
@@ -1054,6 +1050,14 @@ namespace Pspg
    {
       UTIL_ASSERT(compressorPtr_);
       return *compressorPtr_;
+   }
+
+   // Get the McSimulator.
+   template <int D>
+   inline McSimulator<D>& System<D>::simulator()
+   {  
+      UTIL_ASSERT(simulatorPtr_);
+      return *simulatorPtr_; 
    }
 
    // Get the FileMaster.
@@ -1112,8 +1116,8 @@ namespace Pspg
    
    // Does the system have an initialized McSimulator ?
    template <int D>
-   inline bool System<D>::hasMcSimulator() const
-   {  return (hasMcSimulator_); }
+   inline bool System<D>::hasSimulator() const
+   {  return (hasSimulator_); }
 
    #ifndef PSPG_SYSTEM_TPP
    // Suppress implicit instantiation
