@@ -69,7 +69,7 @@ namespace Pspg {
       double idealHamiltonian;
       
       /// Monte-Carlo field part contribution to Hamiltonian value.
-      double mcFieldHamiltonian;
+      double fieldHamiltonian;
 
       /// Is this struct being used to store data?
       bool hasData;

@@ -75,7 +75,7 @@ namespace Pspg
       // outputFile_ << Dbl(ideal, 20)
       setValue(idealId_, ideal);
    
-      double field = mcSimulator().mcFieldHamiltonian();
+      double field = mcSimulator().fieldHamiltonian();
       // outputFile_ << Dbl(field, 20)
       setValue(fieldId_, field);
    

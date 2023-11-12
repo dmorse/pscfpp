@@ -24,7 +24,7 @@ using namespace Util;
        wc(), 
        hamiltonian(0.0),
        idealHamiltonian(0.0),
-       mcFieldHamiltonian(0.0), 
+       fieldHamiltonian(0.0), 
        hasData(false),
        isAllocated(false)
    {}

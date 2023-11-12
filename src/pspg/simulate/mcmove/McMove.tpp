@@ -118,7 +118,7 @@ namespace Pspg {
       } else {
           mcSimulator().restoreMcState();
       }
-     /// Log::file() << "newFieldHamiltonian" << mcSimulator().mcFieldHamiltonian() << "\n";
+     /// Log::file() << "newFieldHamiltonian" << mcSimulator().fieldHamiltonian() << "\n";
       // Log::file() << "newidealHamiltonian" << mcSimulator().idealHamiltonian() << "\n";
       // Log::file() << "accept" << accept << "\n";
       decisionTimer_.stop();

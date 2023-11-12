@@ -210,7 +210,7 @@ namespace Pspg {
       }
       mcState_.hamiltonian  = hamiltonian_;
       mcState_.idealHamiltonian  = idealHamiltonian_;
-      mcState_.mcFieldHamiltonian  = mcFieldHamiltonian_;
+      mcState_.fieldHamiltonian  = fieldHamiltonian_;
       mcState_.hasData = true;
    }
 
@@ -239,7 +239,7 @@ namespace Pspg {
       }
       hamiltonian_ = mcState_.hamiltonian;
       idealHamiltonian_ = mcState_.idealHamiltonian;
-      mcFieldHamiltonian_ = mcState_.mcFieldHamiltonian;
+      fieldHamiltonian_ = mcState_.fieldHamiltonian;
       hasHamiltonian_ = true;
       hasWC_ = true;
       mcState_.hasData = false;
@@ -335,7 +335,7 @@ namespace Pspg {
       hamiltonian_ = HW - lnQ;
       const double vSystem  = domain.unitCell().volume();
       const double vMonomer = mixture.vMonomer();
-      mcFieldHamiltonian_ = vSystem/vMonomer * HW;
+      fieldHamiltonian_ = vSystem/vMonomer * HW;
       idealHamiltonian_ = vSystem/vMonomer * lnQ;
       hamiltonian_ *= vSystem/vMonomer;
       hasHamiltonian_ = true;
