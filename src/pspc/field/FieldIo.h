@@ -12,7 +12,7 @@
 #include <prdc/crystal/UnitCell.h>         // nested LatticeSystem enum
 #include <util/containers/DArray.h>        // nested function parameter
 
-// Forward declarations for classes used only in references or pointers
+// Forward declarations for classes used only via references or pointers
 namespace Util {
    class FileMaster;
 }
@@ -53,6 +53,9 @@ namespace Pspc {
 
    public:
 
+      /// \name Construction, Initialization and Destruction
+      ///@{
+
       /**
       * Constructor.
       */
@@ -64,7 +67,7 @@ namespace Pspc {
       ~FieldIo();
 
       /**
-      * Get and store addresses of associated objects.
+      * Create association with other objects in parent Domain.
       *
       * \param mesh  associated spatial discretization Mesh<D>
       * \param fft   associated FFT object for fast transforms
@@ -73,17 +76,23 @@ namespace Pspc {
       * \param groupName space group name string
       * \param group  associated SpaceGroup object
       * \param basis  associated Basis object
-      * \param fileMaster  associated FileMaster (for file paths)
       */
       void associate(Mesh<D> const & mesh,
                      FFT<D> const & fft,
-                     typename UnitCell<D>::LatticeSystem & lattice,
-                     bool & hasGroup,
-                     std::string & groupName,
-                     SpaceGroup<D> & group,
-                     Basis<D> & basis,
-                     FileMaster const & fileMaster);
+                     typename UnitCell<D>::LatticeSystem const & lattice,
+                     bool const & hasGroup,
+                     std::string const & groupName,
+                     SpaceGroup<D> const & group,
+                     Basis<D> & basis);
 
+      /**
+      * Create an association with a FileMaster.
+      *
+      * \param fileMaster  associated FileMaster (for file paths)
+      */
+      void setFileMaster(FileMaster const & fileMaster);
+
+      ///@}
       /// \name Field File IO - Symmetry Adapted Basis Format
       ///@{
 
@@ -688,7 +697,7 @@ namespace Pspc {
       FFT<D> const * fftPtr_;
 
       /// Pointer to lattice system.
-      typename UnitCell<D>::LatticeSystem * latticePtr_;
+      typename UnitCell<D>::LatticeSystem const * latticePtr_;
 
       /// Pointer to boolean hasGroup (true if a space group is known).
       bool const * hasGroupPtr_;
@@ -722,7 +731,7 @@ namespace Pspc {
       }
 
       /// Get the lattice type enum value by const reference.
-      typename UnitCell<D>::LatticeSystem & lattice() const
+      typename UnitCell<D>::LatticeSystem const & lattice() const
       {  
          UTIL_ASSERT(latticePtr_);  
          return *latticePtr_; 

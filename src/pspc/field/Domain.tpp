@@ -35,7 +35,12 @@ namespace Pspc
       hasGroup_(false),
       hasFileMaster_(false),
       isInitialized_(false)
-   {  setClassName("Domain"); }
+   {
+      setClassName("Domain");
+      fieldIo_.associate(mesh_, fft_, lattice_,
+                         hasGroup_, groupName_, group_, basis_);
+
+   }
 
    /*
    * Destructor.
@@ -47,9 +52,7 @@ namespace Pspc
    template <int D>
    void Domain<D>::setFileMaster(FileMaster& fileMaster)
    {
-      fieldIo_.associate(mesh_, fft_, lattice_, 
-                         hasGroup_, groupName_, group_, basis_, 
-                         fileMaster);
+      fieldIo_.setFileMaster(fileMaster);
       hasFileMaster_ = true;
    }
 
@@ -72,7 +75,7 @@ namespace Pspc
       UTIL_CHECK(unitCell().lattice() != UnitCell<D>::Null);
       UTIL_CHECK(unitCell().nParameter() > 0);
 
-      // Optionally read group name 
+      // Optionally read group name
       hasGroup_ = false;
       bool hasGroupName;
       hasGroupName = readOptional(in, "groupName", groupName_).isActive();
@@ -91,8 +94,8 @@ namespace Pspc
    * Read header of r-grid field in order to initialize the Domain.
    *
    * Used only for unit testing.
-   */ 
-   template <int D> 
+   */
+   template <int D>
    void Domain<D>::readRGridFieldHeader(std::istream& in, int& nMonomer)
    {
       // Preconditions - confirm that nothing is initialized
@@ -104,13 +107,13 @@ namespace Pspc
 
       // Read common section of standard field header
       int ver1, ver2;
-      Pscf::Prdc::readFieldHeader(in, ver1, ver2, 
+      Pscf::Prdc::readFieldHeader(in, ver1, ver2,
                            unitCell_, groupName_, nMonomer);
 
       lattice_ = unitCell_.lattice();
       UTIL_CHECK(lattice_ != UnitCell<D>::Null);
       UTIL_CHECK(unitCell_.isInitialized());
- 
+
       // Read grid dimensions
       std::string label;
       in >> label;
@@ -126,7 +129,7 @@ namespace Pspc
       in >> nGrid;
 
       if (mesh_.size() == 0) {
-         // Initialize mesh, fft 
+         // Initialize mesh, fft
          mesh_.setDimensions(nGrid);
          fft_.setup(mesh_.dimensions());
       }
@@ -137,7 +140,7 @@ namespace Pspc
          hasGroup_ = true;
          basis_.makeBasis(mesh_, unitCell_, group_);
       }
-      
+
       isInitialized_ = true;
    }
 
@@ -194,7 +197,7 @@ namespace Pspc
    }
 
    template <int D>
-   void Domain<D>::makeBasis() 
+   void Domain<D>::makeBasis()
    {
       UTIL_CHECK(mesh_.size() > 0);
       UTIL_CHECK(unitCell_.lattice() != UnitCell<D>::Null);
