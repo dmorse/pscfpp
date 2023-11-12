@@ -1,6 +1,6 @@
 /*! \page user_command_pc_page Commands - pscf_pc
 
- \ref user_command_fd_page     (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
+ \ref user_command_1d_page     (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
  \ref user_command_pg_page (Next)
 <BR>
 
@@ -731,7 +731,7 @@ that each polymer block and solvent species is treated as a separate
 monomer type, and thus output in a separate column of the data
 section.  Blocks and solvent species are output in the order in which
 they appear within the parameter file, as in the output of the
-\ref user_command_fd_writeblockc_sub "WRITE_BLOCK_C" command of the
+\ref user_command_1d_writeblockc_sub "WRITE_BLOCK_C" command of the
 pscf_1d program.
 
 \section user_command_pc_qout_sec Propagator Output
@@ -1074,7 +1074,7 @@ referred to above in the discussion of the corresponding command.
 </ol>
 
 <BR>
- \ref user_command_fd_page   (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
+ \ref user_command_1d_page   (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
  \ref user_command_page      (Up) &nbsp; &nbsp; &nbsp; &nbsp;
  \ref user_command_pg_page   (Next)
 */

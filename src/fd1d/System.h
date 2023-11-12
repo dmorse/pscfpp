@@ -56,7 +56,7 @@ namespace Fd1d
    * \endcode
    * The actual main program is given in the file pscf_1d.cpp.
    *
-   * \ref user_param_fd_page "Parameter File Format"
+   * \ref user_param_1d_page "Parameter File Format"
    * \ingroup Pscf_Fd1d_Module
    */
    class System : public ParamComposite

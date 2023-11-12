@@ -1,5 +1,5 @@
-/*! \page user_command_fd_homo_page Command for pscf_1d: COMPARE_HOMOGENEOUS
-\ref user_command_fd_page  (Up/Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
+/*! \page user_command_1d_homo_page Command for pscf_1d: COMPARE_HOMOGENEOUS
+\ref user_command_1d_page  (Up/Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
 \ref user_command_pc_page  (Next) 
 <BR>
 
@@ -9,7 +9,7 @@ an inhomogeneous system of interest, as predicted by SCFT, and those of an
 homogeneous reference system. The command takes an integer mode parameter,
 as discussed below. 
 
-\section user_command_fd_homo_mode_sec  Mode Parameter
+\section user_command_1d_homo_mode_sec  Mode Parameter
 
 The integer mode parameter, which takes allowed values of 0, 1, and 2, 
 determines the nature of the homogeneous reference system to which the
@@ -42,7 +42,7 @@ the last grid point in the SCFT solution.  In mode 2, the initial guess
 is instead chosen so as to give a composition equal to that found at the 
 first grid point. 
 
-\section user_command_fd_homo_phi_sec  Output Data (Equal Composition)
+\section user_command_1d_homo_phi_sec  Output Data (Equal Composition)
 
 In mode 0, an output report is written to standard output that includes
 the non-dimensional free energy per monomer "f(homo)" of the homogeneous 
@@ -72,7 +72,7 @@ species are also reported as excess free energy per unit length or excess
 volume per unit length (i.e., excess area) along the axis of rotation of 
 the cylindrically symmetric system.
 
-\section user_command_fd_homo_mu_sec  Output Data (Equal Chemical Potential)
+\section user_command_1d_homo_mu_sec  Output Data (Equal Chemical Potential)
 
 In modes 1 and 2, the first part of the output report contains 
 non-dimensional values of the following overall thermodynamic properties:
@@ -111,7 +111,7 @@ per unit area, whereas in cylindrical coordintes "V(tot)" is actually
 an area, while excess properties are reported as values per unit length
 along the axis of symmetry. 
 
-\section user_command_fd_homo_micelle_sec  Micelle Properties
+\section user_command_1d_homo_micelle_sec  Micelle Properties
 
 Properties of spherical and cylindrical micelles can be computed by
 performing a SCFT calculation in spherical or cylindrical coordinates
@@ -123,7 +123,7 @@ can be computed by invoking the COMPARE_HOMOGENEOUS command 1 to obtain
 a homogeneous reference system with a composition similar to that of 
 the solvent-rich region that surrounds the micelle. 
 
-\section user_command_fd_homo_interface_sec Interfacial Properties
+\section user_command_1d_homo_interface_sec Interfacial Properties
 
 Interfacial properties can be computed by simulating a system that 
 contains two bulk-like phases separated by an interface, and using mode 
@@ -157,6 +157,6 @@ with compositions that correspond to those of the two bulk phases that are
 separated by the interface.
 
 <BR>
-\ref user_command_fd_page  (Up/Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
+\ref user_command_1d_page  (Up/Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
 \ref user_command_pc_page  (Next) 
 */

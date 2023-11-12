@@ -171,7 +171,6 @@ PSCF provides source code for three executable programs:
      which is known as the modified diffusion equation (MDE). This
      program is useful for SCFT problems involving flat or curved
      interfaces, and spherical or cylindrical copolymer micelles.
-     The suffix "fd" stands for "finite difference".
 
    - **pscf_pc** : The pscf_pc program is designed to treat structures
      that are periodic in 1, 2 or 3 dimensions on conventional CPU
