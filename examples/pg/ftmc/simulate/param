@@ -56,7 +56,7 @@ System{
             interval        1
             outputFileName  out/trajectory
       }
-      McHamiltonianAnalyzer{
+      HamiltonianAnalyzer{
             interval        1
             outputFileName  out/mcHamiltonian
             nSamplePerBlock 2

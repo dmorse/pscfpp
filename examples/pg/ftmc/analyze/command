@@ -1,5 +1,3 @@
-ANALYZE_TRAJECTORY 0 100 FieldConfigReader in/trajectory
-
-
+ANALYZE  0  100  FieldConfigReader   in/trajectory
 FINISH
 

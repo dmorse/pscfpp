@@ -381,7 +381,7 @@ namespace Pspg
             Log::file() << "   "  << nStep << "\n";
             simulate(nStep);
          } else
-         if (command == "ANALYZE_TRAJECTORY") {
+         if (command == "ANALYZE" || command == "ANALYZE_TRAJECTORY") {
             int min;
             in >> min;
             int max;
