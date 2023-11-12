@@ -1,0 +1,109 @@
+
+Strategy:
+---------
+
+PSCF will provide multiple programs, each with its own range of 
+applications:
+
+- A specific program will be implemented for a specific type of chain 
+geometry, either threads or beads. 
+
+- It may be possible for a program to allow for more than one type of 
+interaction, but it may then require different types of iterators for
+different types of interaction.
+
+- In order to generalize the Sweep module, it may be necessary for 
+the LinearSweep class to divide its responsibilities up among smaller 
+classes that allow variations of defined in the Mixture or Interaction.
+
+Different types of chain geometry
+---------------------------------
+
+Proposed division of code into subnamespaces for the "thread" model 
+(Continuous chains) and for models with discrete beads.
+
+namespace Pscf::Thread{
+     // Continuous chains, defined in terms of preferred volume.
+     chem/
+     solvers/
+}
+
+Namespace Pscf::Bead{
+     // Discrete beads, compressible, generally non-local
+     chem/
+     solvers/
+}
+
+Place these in Pscf, but use "using Pscf::Thread" or "using Pscf::Bead" 
+as needed. 
+
+Different types of chain geometry
+---------------------------------
+
+Create Interaction base class with the following flags:
+
+   - Local
+   - Linear (i.e., linear equation for w)
+   - Incompressible
+   - Flory-Huggins
+
+Iterators can then be designed for interactions with specific properties,
+and can test for these properties to ensure validity.
+
+Locality:
+
+   - W fields for local interactions can be computed in real space. 
+
+   - W fields for translationally invariant nonlocal interactions can 
+     be computed in Fourier space.
+
+   Questions: 
+
+   - Can we define an interface that allows either?
+
+   - Should local vs. nonlocal interactions be implemented in
+     entirely different programs?
+
+Linearity:
+
+   - Linear fields are relatively easily invertible. Inversion is
+     possible for either compressible or incompressible cases, but
+     applied differently. 
+
+Compressibility:
+
+   - The question of whether the code is compressible can be 
+     handled entirely within the iterator. 
+
+Sweep:
+
+   - For each type of interaction, we would have to define an
+     an interface to the linear sweep class.
+
+Iterators:
+----------
+
+Strategy: Allow for the proliferation of different types of iterators
+for specific types of interaction. 
+
+Try to make Anderson-Mixing algorithm sufficiently abstract to deal
+deal with different types of residual, field, correction step, etc.
+
+
+Sweep
+-----
+
+Try to define an interface that allows the linear Sweep class to 
+delegate responsibility for some parameters to more specialized
+classes. 
+
+Possible design: Define specialized classes associated with the 
+Mixture, Interaction, Domain, and Iterator that handle linear
+sweeping of parameters associated with these elements. Create a 
+set of Factory functions or classes that can produce the correct 
+element based on the className of the Mixture, Interaction, Domain 
+or Iterator.
+
+Develop an interface for such a class that only manipulates 
+input variables, which is separate from the code for the sweep
+that extrapolates solutions.
