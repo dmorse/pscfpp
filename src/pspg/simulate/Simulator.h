@@ -98,35 +98,6 @@ namespace Pspg {
       long iStep();
 
       ///@}
-      /// \name Hamiltonian Computation
-      ///@{
-
-      /**
-      * Compute the field theoretic Hamiltonian and its components.
-      */
-      void computeHamiltonian();
-
-      /**
-      * Get the pre-computed field theoretic Hamiltonian.
-      */
-      double hamiltonian() const;
-
-      /**
-      * Get the ideal gas Hamiltonian contribution.
-      */
-      double idealHamiltonian() const;
-
-      /**
-      * Get the quadratic field Hamiltonian contribution (H_W).
-      */
-      double fieldHamiltonian() const;
-
-      /**
-      * Has the Hamiltonian been computed for the current w and c fields?
-      */
-      bool hasHamiltonian() const;
-
-      ///@}
       /// \name Projected Chi matrix
       ///@{
 
@@ -203,6 +174,35 @@ namespace Pspg {
       * Clear w field eigen-components and Hamiltonian components.
       */
       void clearData();
+
+      ///@}
+      /// \name Hamiltonian Computation
+      ///@{
+
+      /**
+      * Compute the field theoretic Hamiltonian and its components.
+      */
+      void computeHamiltonian();
+
+      /**
+      * Get the pre-computed field theoretic Hamiltonian.
+      */
+      double hamiltonian() const;
+
+      /**
+      * Get the ideal gas Hamiltonian contribution.
+      */
+      double idealHamiltonian() const;
+
+      /**
+      * Get the quadratic field Hamiltonian contribution (H_W).
+      */
+      double fieldHamiltonian() const;
+
+      /**
+      * Has the Hamiltonian been computed for the current w and c fields?
+      */
+      bool hasHamiltonian() const;
 
       ///@}
       /// \name Miscellaneous

@@ -89,94 +89,6 @@ namespace Pspg {
    void Simulator<D>::clearTimers()
    {}
 
-   /*
-   * Compute Monte Carlo Hamiltonian.
-   */
-   template <int D>
-   void Simulator<D>::computeHamiltonian()
-   {
-      UTIL_CHECK(system().w().hasData());
-      UTIL_CHECK(system().hasCFields());
-      UTIL_CHECK(hasWC_);
-      hasHamiltonian_ = false;
-
-      Mixture<D> const & mixture = system().mixture();
-      Domain<D> const & domain = system().domain();
-
-      const int nMonomer = mixture.nMonomer();
-      const int meshSize = domain.mesh().size();
-
-      const int np = mixture.nPolymer();
-      const int ns = mixture.nSolvent();
-      double phi, mu;
-      double lnQ = 0.0;
-
-      // Compute polymer ideal gas contributions to lnQ
-      if (np > 0) {
-         Polymer<D> const * polymerPtr;
-         double length;
-         for (int i = 0; i < np; ++i) {
-            polymerPtr = &mixture.polymer(i);
-            phi = polymerPtr->phi();
-            mu = polymerPtr->mu();
-            length = polymerPtr->length();
-            // Recall: mu = ln(phi/q)
-            if (phi > 1.0E-08) {
-               lnQ += phi*( -mu + 1.0 )/length;
-            }
-         }
-      }
-
-      // Compute solvent ideal gas contributions to lnQ
-      if (ns > 0) {
-         Solvent<D> const * solventPtr;
-         double size;
-         for (int i = 0; i < ns; ++i) {
-            solventPtr = &mixture.solvent(i);
-            phi = solventPtr->phi();
-            mu = solventPtr->mu();
-            size = solventPtr->size();
-            // Recall: mu = ln(phi/q)
-            if (phi > 1.0E-8) {
-               lnQ += phi*( -mu + 1.0 )/size;
-            }
-         }
-      }
-
-      #if 0
-      Log::file() << "-lnQ " << -lnQ<< "\n";
-      #endif
-
-      // lnQ now contains a value per monomer
-
-      // Compute field contribution HW
-      double HW = 0.0;
-      double prefactor;
-      // Compute quadratic field contribution to HW
-      for (int j = 0; j < nMonomer - 1; ++j) {
-         prefactor = -0.5*double(nMonomer)/chiEvals_[j];
-         double wSqure = 0;
-         wSqure = (double)gpuInnerProduct(wc_[j].cField(), wc_[j].cField(), meshSize);
-         HW += prefactor * wSqure;
-      }
-
-      // Subtract average of Langrange multiplier field
-      double sum_xi = (double)gpuSum(wc_[nMonomer-1].cField(), meshSize);
-      HW -= sum_xi;
-
-      // Normalize HW to equal a value per monomer
-      HW /= double(meshSize);
-      // Compute final MC Hamiltonian
-      hamiltonian_ = HW - lnQ;
-      const double vSystem  = domain.unitCell().volume();
-      const double vMonomer = mixture.vMonomer();
-      fieldHamiltonian_ = vSystem/vMonomer * HW;
-      idealHamiltonian_ = vSystem/vMonomer * lnQ;
-      hamiltonian_ *= vSystem/vMonomer;
-      hasHamiltonian_ = true;
-      //Log::file()<< "computeHamiltonian"<< std::endl;
-   }
-
    template <int D>
    void Simulator<D>::analyzeChi()
    {
@@ -350,9 +262,99 @@ namespace Pspg {
       #if 0
       // Debugging output
       std::string filename = "wc";
-      system().fieldIo().writeFieldsRGrid(filename, wc_, system().domain().unitCell());
+      system().fieldIo().writeFieldsRGrid(filename, wc_, 
+                                          system().domain().unitCell());
       #endif
+
       hasWC_ = true;
+   }
+
+   /*
+   * Compute Monte Carlo Hamiltonian.
+   */
+   template <int D>
+   void Simulator<D>::computeHamiltonian()
+   {
+      UTIL_CHECK(system().w().hasData());
+      UTIL_CHECK(system().hasCFields());
+      UTIL_CHECK(hasWC_);
+      hasHamiltonian_ = false;
+
+      Mixture<D> const & mixture = system().mixture();
+      Domain<D> const & domain = system().domain();
+
+      const int nMonomer = mixture.nMonomer();
+      const int meshSize = domain.mesh().size();
+
+      const int np = mixture.nPolymer();
+      const int ns = mixture.nSolvent();
+      double phi, mu;
+      double lnQ = 0.0;
+
+      // Compute polymer ideal gas contributions to lnQ
+      if (np > 0) {
+         Polymer<D> const * polymerPtr;
+         double length;
+         for (int i = 0; i < np; ++i) {
+            polymerPtr = &mixture.polymer(i);
+            phi = polymerPtr->phi();
+            mu = polymerPtr->mu();
+            length = polymerPtr->length();
+            // Recall: mu = ln(phi/q)
+            if (phi > 1.0E-08) {
+               lnQ += phi*( -mu + 1.0 )/length;
+            }
+         }
+      }
+
+      // Compute solvent ideal gas contributions to lnQ
+      if (ns > 0) {
+         Solvent<D> const * solventPtr;
+         double size;
+         for (int i = 0; i < ns; ++i) {
+            solventPtr = &mixture.solvent(i);
+            phi = solventPtr->phi();
+            mu = solventPtr->mu();
+            size = solventPtr->size();
+            // Recall: mu = ln(phi/q)
+            if (phi > 1.0E-8) {
+               lnQ += phi*( -mu + 1.0 )/size;
+            }
+         }
+      }
+
+      #if 0
+      Log::file() << "-lnQ " << -lnQ<< "\n";
+      #endif
+
+      // lnQ now contains a value per monomer
+
+      // Compute field contribution HW
+      double HW = 0.0;
+      double prefactor;
+      // Compute quadratic field contribution to HW
+      for (int j = 0; j < nMonomer - 1; ++j) {
+         prefactor = -0.5*double(nMonomer)/chiEvals_[j];
+         double wSqure = 0;
+         wSqure = (double)gpuInnerProduct(wc_[j].cField(), wc_[j].cField(), meshSize);
+         HW += prefactor * wSqure;
+      }
+
+      // Subtract average of Langrange multiplier field
+      double sum_xi = (double)gpuSum(wc_[nMonomer-1].cField(), meshSize);
+      HW -= sum_xi;
+
+      // Normalize HW to equal a value per monomer
+      HW /= double(meshSize);
+      // Compute final MC Hamiltonian
+      hamiltonian_ = HW - lnQ;
+      const double vSystem  = domain.unitCell().volume();
+      const double vMonomer = mixture.vMonomer();
+      fieldHamiltonian_ = vSystem/vMonomer * HW;
+      idealHamiltonian_ = vSystem/vMonomer * lnQ;
+      hamiltonian_ *= vSystem/vMonomer;
+      hasHamiltonian_ = true;
+      //Log::file()<< "computeHamiltonian"<< std::endl;
    }
 
 }

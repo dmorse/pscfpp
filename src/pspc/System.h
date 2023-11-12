@@ -27,12 +27,13 @@
 #include <util/containers/FSArray.h>       // member template
 
 namespace Pscf {
-
    class Interaction;
    namespace Prdc {
       template <int D> class UnitCell;
    }
+}
 
+namespace Pscf {
 namespace Pspc {
 
    template <int D> class Iterator;

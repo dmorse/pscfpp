@@ -27,15 +27,14 @@
 #include <util/containers/FSArray.h>       // member template
 
 namespace Pscf {
-
    class Interaction;
-
    namespace Prdc {
       template <int D> class UnitCell;
    }
+}
 
-namespace Pspg
-{
+namespace Pscf {
+namespace Pspg {
 
    template <int D> class Iterator;
    template <int D> class IteratorFactory;

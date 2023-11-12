@@ -123,6 +123,9 @@ namespace Pspc {
       if (compressorFactoryPtr_) {
          delete compressorFactoryPtr_;
       }
+      if (simulatorPtr_) {
+         delete simulatorPtr_;
+      }
    }
 
    /*

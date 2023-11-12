@@ -14,14 +14,6 @@
 #include <pspc/simulate/analyzer/AnalyzerManager.h>  // member
 
 namespace Pscf {
-   namespace Prdc {
-      namespace Cpu {
-         template <int D> class RField;
-      }
-   }
-}
-
-namespace Pscf {
 namespace Pspc {
 
    using namespace Util;

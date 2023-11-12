@@ -14,8 +14,6 @@
 #include <pscf/math/RealVec.h>
 
 #include <util/param/ParamComposite.h>
-//#include <util/containers/DMatrix.h>             
-//#include <util/math/Constants.h>
 #include <util/misc/FileMaster.h>
 #include <util/misc/ioUtil.h>
 #include <util/format/Int.h>
@@ -27,9 +25,9 @@
 #include <iostream>
 #include <complex>
 #include <vector>
+#include <algorithm>
 
 //#include <unordered_map>
-//#include <algorithm>
 
 namespace Pscf {
 namespace Pspc {

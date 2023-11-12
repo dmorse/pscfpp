@@ -48,7 +48,11 @@ namespace Pspc {
    */
    template <int D>
    McSimulator<D>::~McSimulator()
-   {}
+   {
+      if (trajectoryReaderFactoryPtr_) {
+         delete trajectoryReaderFactoryPtr_;
+      }
+   }
 
    /* 
    * Read instructions for creating objects from file.
