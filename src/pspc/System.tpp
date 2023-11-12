@@ -10,6 +10,7 @@
 
 #include "System.h"
 
+#include <pspc/simulate/Simulator.h>
 #include <pspc/simulate/McSimulator.h>
 #include <pspc/compressor/Compressor.h>
 #include <pspc/compressor/CompressorFactory.h>

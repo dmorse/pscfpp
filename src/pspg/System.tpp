@@ -11,6 +11,7 @@
 #include "System.h"
 
 #include <pspg/simulate/McSimulator.h>
+#include <pspg/simulate/Simulator.h>
 #include <pspg/compressor/Compressor.h>
 #include <pspg/compressor/CompressorFactory.h>
 #include <pspg/sweep/Sweep.h>
@@ -298,7 +299,7 @@ namespace Pspg
          Log::file() << indent() << "  Compressor{ [absent] }\n";
       }
       
-      // Optionally read an McSimulator
+      // Optionally read an Simulator
       readParamCompositeOptional(in, simulator());
       if (simulator().isActive()) {
          hasSimulator_ = true;

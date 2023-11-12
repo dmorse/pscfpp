@@ -8,21 +8,15 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "Analyzer.h"
+#include "Analyzer.h"                             // base class
+
 #include <util/containers/DArray.h>               // member
 #include <util/accumulators/Average.h>            // member
 #include <prdc/cpu/RFieldDft.h>                   // member
 #include <map>                                    // member
 
-#include <prdc/cpu/RField.h>
-#include <pscf/math/IntVec.h>
-#include <pscf/math/RealVec.h>
-#include <util/param/ParamComposite.h>
-#include <util/containers/DMatrix.h>             
-#include <util/global.h>
+#include <string>
 #include <iostream>
-#include <complex>
-#include <vector>
 
 namespace Pscf {
 namespace Pspc {

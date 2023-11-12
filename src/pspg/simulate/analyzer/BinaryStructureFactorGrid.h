@@ -9,30 +9,22 @@
 */
 
 #include "Analyzer.h"
-#include <pspg/System.h>
 
 #include <prdc/cuda/RFieldDft.h> 
 #include <prdc/cuda/RField.h> 
-
 #include <pscf/math/IntVec.h>
-#include <pscf/math/RealVec.h>
-
 #include <util/accumulators/Average.h>      
-#include <util/param/ParamComposite.h>
-#include <util/containers/DMatrix.h>             
 #include <util/containers/DArray.h>              
-#include <util/global.h>
 
+#include <string>
 #include <iostream>
-#include <complex>
-#include <vector>
 #include <map>
 
 namespace Pscf {
-namespace Pspg
-{
+namespace Pspg {
 
    template <int D> class System;
+   template <int D> class McSimulator;
 
    using namespace Util;
    using namespace Pscf::Prdc;

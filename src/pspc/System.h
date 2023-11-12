@@ -42,7 +42,7 @@ namespace Pspc {
    template <int D> class SweepFactory;
    template <int D> class Compressor;
    template <int D> class CompressorFactory;
-   template <int D> class McSimulator;
+   template <int D> class Simulator;
 
    using namespace Util;
    using namespace Prdc;
@@ -769,7 +769,7 @@ namespace Pspc {
       /**
       * Get Simulator for field theoretic simulation. 
       */
-      McSimulator<D>& simulator();
+      Simulator<D>& simulator();
 
       /**
       * Get homogeneous mixture (for reference calculations).
@@ -906,7 +906,7 @@ namespace Pspc {
       /**
       * Simulator - coordinator for field theoretic simulation.
       */
-      McSimulator<D>* simulatorPtr_;
+      Simulator<D>* simulatorPtr_;
 
       /**
       * Chemical potential fields.
@@ -1127,7 +1127,7 @@ namespace Pspc {
 
    // Get the Simulator.
    template <int D>
-   inline McSimulator<D>& System<D>::simulator()
+   inline Simulator<D>& System<D>::simulator()
    {  return *simulatorPtr_; }
 
    // Get the FileMaster by non-const reference.

@@ -10,7 +10,6 @@
 
 #include <util/param/ParamComposite.h>     // base class
 
-#include <pspg/simulate/McSimulator.h>     // member
 #include <pspg/solvers/Mixture.h>          // member
 #include <pspg/field/Domain.h>             // member
 #include <pspg/field/FieldIo.h>            // member
@@ -42,7 +41,7 @@ namespace Pspg {
    template <int D> class SweepFactory;
    template <int D> class Compressor;
    template <int D> class CompressorFactory;
-   template <int D> class McSimulator;
+   template <int D> class Simulator;
    template <int D> class McMove;
    template <int D> class McMoveFactory;
 
@@ -699,9 +698,9 @@ namespace Pspg {
       Compressor<D>& compressor();
       
       /**
-      * Get McSimulator container for Monte Carlo moves.
+      * Get Simulator container for Monte Carlo moves.
       */
-      McSimulator<D>& simulator();
+      Simulator<D>& simulator();
 
       /**
       * Get crystal UnitCell by const reference.
@@ -762,7 +761,7 @@ namespace Pspg {
       bool hasCompressor() const;
       
       /**
-      * Does this system have an initialized McSimulator?
+      * Does this system have an initialized Simulator?
       */
       bool hasSimulator() const;
 
@@ -828,7 +827,7 @@ namespace Pspg {
       /**
       * Pointer to a simulator.
       */
-      McSimulator<D>* simulatorPtr_;
+      Simulator<D>* simulatorPtr_;
 
       /**
       * Chemical potential fields.
@@ -1051,9 +1050,9 @@ namespace Pspg {
       return *compressorPtr_;
    }
 
-   // Get the McSimulator.
+   // Get the Simulator.
    template <int D>
-   inline McSimulator<D>& System<D>::simulator()
+   inline Simulator<D>& System<D>::simulator()
    {  
       UTIL_ASSERT(simulatorPtr_);
       return *simulatorPtr_; 
@@ -1113,7 +1112,7 @@ namespace Pspg {
    inline bool System<D>::hasCompressor() const
    {  return (compressorPtr_ != 0); }
    
-   // Does the system have an initialized McSimulator ?
+   // Does the system have an initialized Simulator ?
    template <int D>
    inline bool System<D>::hasSimulator() const
    {  return (hasSimulator_); }
