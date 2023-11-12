@@ -8,13 +8,14 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "TrajectoryReader.h"
-#include <pspc/System.h>
-#include <prdc/cpu/RField.h>
-#include <util/containers/DArray.h>
-#include <util/global.h>
-#include <iostream>
+#include "TrajectoryReader.h"              // base class
 
+#include <prdc/cpu/RField.h>               // member
+#include <pscf/math/IntVec.h>              // member
+#include <util/containers/DArray.h>        // member
+
+#include <string>
+#include <iostream>
 
 namespace Pscf {
 namespace Pspc {
@@ -97,6 +98,7 @@ namespace Pspc {
       
       
    private:
+
       //
       IntVec<D> meshDimensions_;
       

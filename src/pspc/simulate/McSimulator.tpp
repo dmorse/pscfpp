@@ -9,15 +9,18 @@
 */
 
 #include "McSimulator.h"
+
 #include <pspc/System.h>
 #include <pspc/simulate/mcmove/McMoveFactory.h>
 #include <pspc/simulate/analyzer/AnalyzerFactory.h>
 #include <pspc/simulate/trajectory/TrajectoryReader.h>
 #include <pspc/simulate/trajectory/TrajectoryReaderFactory.h>
 #include <pspc/compressor/Compressor.h>
-#include <util/misc/Timer.h>
+
 #include <util/random/Random.h>
+#include <util/misc/Timer.h>
 #include <util/global.h>
+
 #include <gsl/gsl_eigen.h>
 
 namespace Pscf {

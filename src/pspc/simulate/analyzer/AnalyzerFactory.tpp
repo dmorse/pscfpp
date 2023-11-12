@@ -4,7 +4,6 @@
 #include "AnalyzerFactory.h"  
 
 // Subclasses of Analyzer 
-#include <pspc/simulate/McSimulator.h>
 #include "TrajectoryWriter.h"
 #include "HamiltonianAnalyzer.h"
 #include "BinaryStructureFactorGrid.h"
@@ -18,7 +17,8 @@ namespace Pspc {
    * Constructor
    */
    template <int D>
-   AnalyzerFactory<D>::AnalyzerFactory(McSimulator<D>& mcSimulator, System<D>& system)
+   AnalyzerFactory<D>::AnalyzerFactory(McSimulator<D>& mcSimulator, 
+                                       System<D>& system)
     : sysPtr_(&system),
       mcSimulatorPtr_(&mcSimulator)
    {}

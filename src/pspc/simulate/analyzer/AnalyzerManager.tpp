@@ -2,9 +2,8 @@
 #define PSPC_ANALYZER_MANAGER_TPP
 
 #include "AnalyzerManager.h" 
-#include "Analyzer.h" 
 #include "AnalyzerFactory.h"
-#include <util/archives/Serializable_includes.h>
+#include <util/param/ParamComposite.h>
 
 namespace Pscf {
 namespace Pspc {
@@ -34,6 +33,7 @@ namespace Pspc {
    template <int D>
    Factory< Analyzer<D> >* AnalyzerManager<D>::newDefaultFactory() const
    {  return new AnalyzerFactory<D>(*mcSimulatorPtr_, *systemPtr_); }
+
    /*
    * Read parameter file. 
    *

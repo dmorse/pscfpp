@@ -9,21 +9,22 @@
 */
 
 #include "HamiltonianAnalyzer.h"
-#include <pspc/simulate/McSimulator.h>
-#include <pspc/System.h>
-#include <util/accumulators/Average.h>
 
+#include <pspc/System.h>
+#include <pspc/simulate/McSimulator.h>
+//#include <util/accumulators/Average.h>
 
 namespace Pscf {
-namespace Pspc 
-{
+namespace Pspc {
+
    using namespace Util;
 
    /*
    * Constructor.
    */
    template <int D>
-   HamiltonianAnalyzer<D>::HamiltonianAnalyzer(McSimulator<D>& mcSimulator, System<D>& system)
+   HamiltonianAnalyzer<D>::HamiltonianAnalyzer(McSimulator<D>& mcSimulator, 
+                                               System<D>& system)
     : AverageListAnalyzer<D>(system),
       mcSimulatorPtr_(&mcSimulator),
       systemPtr_(&(mcSimulator.system())),

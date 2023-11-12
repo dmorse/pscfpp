@@ -13,8 +13,6 @@ namespace Pscf {
 namespace Pspc 
 {
 
-   using namespace Util;
-
    /*
    * Constructor.
    */

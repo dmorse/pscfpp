@@ -3,6 +3,8 @@
 
 #include "TrajectoryReaderFactory.h"
 
+#include <pspc/System.h>
+
 // Subclasses of ConfigIo
 #include "FieldConfigReader.h"
 

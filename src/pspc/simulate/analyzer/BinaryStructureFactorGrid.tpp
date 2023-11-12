@@ -2,25 +2,38 @@
 #define PSPC_BINARY_STRUCTURE_FACTOR_GRID_TPP
 
 #include "BinaryStructureFactorGrid.h"
+
 #include <pspc/simulate/McSimulator.h>
 #include <pspc/System.h>
+
+#include <prdc/cpu/RField.h>
 #include <prdc/crystal/shiftToMinimum.h>
-#include <util/math/Constants.h>
-#include <util/space/Dimension.h>
+
+#include <pscf/mesh/MeshIterator.h>
+#include <pscf/math/IntVec.h>
+#include <pscf/math/RealVec.h>
+
+#include <util/param/ParamComposite.h>
+//#include <util/containers/DMatrix.h>             
+//#include <util/math/Constants.h>
 #include <util/misc/FileMaster.h>
 #include <util/misc/ioUtil.h>
 #include <util/format/Int.h>
-#include <pscf/mesh/MeshIterator.h>
 #include <util/format/Dbl.h>
-#include <util/accumulators/Average.h>
-#include <vector>
-#include <unordered_map>
-#include <algorithm>
+#include <util/global.h>
+
 #include <fftw3.h>
 
+#include <iostream>
+#include <complex>
+#include <vector>
+
+//#include <unordered_map>
+//#include <algorithm>
+
 namespace Pscf {
-namespace Pspc 
-{
+namespace Pspc {
+
    using namespace Util;
    using namespace Pscf::Prdc;
 

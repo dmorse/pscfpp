@@ -2,11 +2,12 @@
 #define PSPC_ANALYZER_H
 
 #include <util/param/ParamComposite.h>      // base class
-#include <util/misc/FileMaster.h>           // member variable
 
 #include <string>
-#include <iostream>
-#include <fstream>
+
+namespace Util {
+   class FileMaster;
+}
 
 namespace Pscf {
 namespace Pspc {

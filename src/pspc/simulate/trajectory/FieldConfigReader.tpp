@@ -8,16 +8,17 @@
 */
 
 #include "FieldConfigReader.h"
+
 #include <pspc/System.h>
-#include <pscf/math/IntVec.h>
 #include <pscf/mesh/MeshIterator.h>
 #include <util/misc/ioUtil.h>
+
+#include <sstream>
 #include <iostream>
 #include <string>
 
 namespace Pscf {
-namespace Pspc 
-{
+namespace Pspc {
 
    using namespace Util;
 

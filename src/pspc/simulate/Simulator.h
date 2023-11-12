@@ -8,31 +8,23 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <util/param/Factory.h>                      // template param
-#include <util/param/Manager.h>                      // template param
-#include <util/param/ParamComposite.h>               // base class
-#include <util/random/Random.h>                      // member
-#include <util/containers/DArray.h>                  // member template
-#include <util/containers/DMatrix.h>                 // member template
+#include <util/param/ParamComposite.h>     // base class
 
-namespace Pscf {
-   namespace Prdc {
-      namespace Cpu {
-         template <int D> class RField;
-      }
-   }
-}
+#include <prdc/cpu/RField.h>               // memmber (template arg)
+#include <util/random/Random.h>            // member
+#include <util/containers/DArray.h>        // member (template)
+#include <util/containers/DMatrix.h>       // member (template)
 
 namespace Pscf {
 namespace Pspc {
 
+   template <int D> class System;
+
    using namespace Util;
    using namespace Prdc::Cpu;
 
-   template <int D> class System;
-
    /**
-   * Base class for field theoretic simulators
+   * Field theoretic simulator (base class).
    *
    * \ingroup Pspc_Simulate_Module
    */
@@ -67,10 +59,10 @@ namespace Pspc {
       /**
       * Perform a field theoretic Monte-Carlo simulation.
       *
-      * Perform a field theoretic Monte-Carlo simulation using the
+      * Perform a field theoretic simulation of nSteps using the
       * partial saddle-point approximation.
       *
-      * \param nStep  number of Monte-Carlo steps
+      * \param nStep  number of simulation steps
       */
       virtual void simulate(int nStep);
 
@@ -78,8 +70,7 @@ namespace Pspc {
       * Read and analyze a trajectory file.
       *
       * This function uses an instance of the TrajectoryReader class
-      * specified by the "classname" argument to read a trajectory
-      * file.
+      * specified by the "classname" argument to read a trajectory file.
       *
       * \param min  start at this frame number
       * \param max  end at this frame number
@@ -105,6 +96,7 @@ namespace Pspc {
       */
       long iStep();
 
+      ///@}
       /// \name Hamiltonian Computation
       ///@{
 

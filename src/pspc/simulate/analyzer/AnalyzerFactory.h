@@ -8,14 +8,14 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <util/param/Factory.h>  
 #include <pspc/simulate/analyzer/Analyzer.h>
-#include <pspc/System.h>
+#include <util/param/Factory.h>  
 #include <string>
 
 namespace Pscf {
 namespace Pspc {
 
+   template <int D> class System;
    template <int D> class McSimulator;
 
    using namespace Util;

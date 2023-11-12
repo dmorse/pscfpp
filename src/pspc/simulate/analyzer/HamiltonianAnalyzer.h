@@ -9,15 +9,13 @@
 */
 
 #include "AverageListAnalyzer.h"
-#include <pspc/System.h>
-
-namespace Util{
-   class Average;
-}
 
 namespace Pscf {
-namespace Pspc 
-{
+namespace Pspc {
+
+   template <int D> class System;
+   template <int D> class McSimulator;
+
    using namespace Util;
 
    /**
@@ -101,6 +99,7 @@ namespace Pspc
       McSimulator<D>& mcSimulator();
  
    private: 
+
       /// Has eigenvalue analysis of projected chi matrix been performed?
       bool hasAnalyzeChi_;
       

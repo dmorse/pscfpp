@@ -9,26 +9,26 @@
 */
 
 #include "Analyzer.h"
-#include <pspc/System.h>
+#include <util/containers/DArray.h>               // member
+#include <util/accumulators/Average.h>            // member
+#include <prdc/cpu/RFieldDft.h>                   // member
+#include <map>                                    // member
+
 #include <prdc/cpu/RField.h>
-#include <prdc/cpu/RFieldDft.h> 
 #include <pscf/math/IntVec.h>
 #include <pscf/math/RealVec.h>
 #include <util/param/ParamComposite.h>
 #include <util/containers/DMatrix.h>             
-#include <util/containers/DArray.h>              
-#include <util/accumulators/Average.h>            // member
 #include <util/global.h>
 #include <iostream>
 #include <complex>
 #include <vector>
-#include <map>
 
 namespace Pscf {
-namespace Pspc 
-{
+namespace Pspc {
 
    template <int D> class System;
+   template <int D> class McSimulator;
 
    using namespace Util;
    using namespace Pscf::Prdc::Cpu;
@@ -208,6 +208,7 @@ namespace Pspc
       
       /// Map key to be qsquare and value to be average structure factor over k of equal magnitude
       std::map<double, double> averageSMap_;
+
    };
    
    // Get the parent system.
