@@ -31,7 +31,12 @@ namespace Pspg {
       hasGroup_(false),
       hasFileMaster_(false),
       isInitialized_(false)
-   {  setClassName("Domain"); }
+   {  
+      setClassName("Domain"); 
+      fieldIo_.associate(mesh_, fft_,
+                         lattice_, hasGroup_, groupName_, group_, 
+                         basis_, waveList_);
+   }
 
    /*
    * Destructor.
@@ -43,9 +48,10 @@ namespace Pspg {
    template <int D>
    void Domain<D>::setFileMaster(FileMaster& fileMaster)
    {
-      fieldIo_.associate(mesh_, fft_,
-                         lattice_, hasGroup_, groupName_, group_, 
-                         basis_, waveList_, fileMaster);
+      //fieldIo_.associate(mesh_, fft_,
+      //                   lattice_, hasGroup_, groupName_, group_, 
+      //                   basis_, waveList_, fileMaster);
+      fieldIo_.setFileMaster(fileMaster);
       hasFileMaster_ = true;
    }
 

@@ -27,9 +27,9 @@
 #include <iostream>
 #include <complex>
 #include <vector>
+#include <algorithm>
 
 //#include <unordered_map>
-//#include <algorithm>
 
 namespace Pscf {
 namespace Pspc {

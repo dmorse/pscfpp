@@ -56,18 +56,18 @@ namespace Pspg {
    {}
 
    /*
-   * Get and store addresses of associated objects.
+   * Create association with other objects in parent Domain.
    */
    template <int D> void 
-   FieldIo<D>::associate(Mesh<D> const & mesh,
-                         FFT<D> const & fft,
-                         typename UnitCell<D>::LatticeSystem & lattice,
-                         bool const & hasGroup,
-                         std::string const & groupName,
-                         SpaceGroup<D> const & group,
-                         Basis<D>& basis,
-                         WaveList<D>& waveList,
-                         FileMaster const & fileMaster)
+   FieldIo<D>::associate(
+                    Mesh<D> const & mesh,
+                    FFT<D> const & fft,
+                    typename UnitCell<D>::LatticeSystem const & lattice,
+                    bool const & hasGroup,
+                    std::string const & groupName,
+                    SpaceGroup<D> const & group,
+                    Basis<D>& basis,
+                    WaveList<D>& waveList)
    {
       meshPtr_ = &mesh;
       fftPtr_ = &fft;
@@ -77,8 +77,15 @@ namespace Pspg {
       groupPtr_ = &group;
       basisPtr_ = &basis;
       waveListPtr_ = &waveList;
-      fileMasterPtr_ = &fileMaster;
    }
+
+   /*
+   * Create association with a FileMaster.
+   */
+   template <int D> void 
+   FieldIo<D>::setFileMaster(FileMaster const & fileMaster)
+   {  fileMasterPtr_ = &fileMaster; }
+
 
    // Symmetry-Adapted Basis Format IO
 
@@ -363,7 +370,7 @@ namespace Pspg {
                                 UnitCell<D> const & unitCell)
    const
    {
-      // Precondition
+      // Preconditions
       int nMonomer = fields.capacity();
       UTIL_CHECK(nMonomer > 0);
       UTIL_CHECK(hasGroup());
@@ -377,7 +384,6 @@ namespace Pspg {
 
       // Define nStar and nBasis
       int nStar = basis().nStar();
-      //int nBasis = nStar;
       int nBasis = basis().nBasis();
 
       // Write fields
@@ -415,6 +421,9 @@ namespace Pspg {
 
    // R-Grid Field Format
 
+   /*
+   * Read an array of fields in r-grid format from an input stream.
+   */
    template <int D>
    void FieldIo<D>::readFieldsRGrid(std::istream &in,
                                     DArray<RField<D> >& fields,
@@ -491,6 +500,9 @@ namespace Pspg {
 
    }
 
+   /*
+   * Open & close file, read an array of fields in r-grid format.
+   */
    template <int D>
    void FieldIo<D>::readFieldsRGrid(std::string filename,
                                     DArray< RField<D> >& fields,
@@ -501,7 +513,10 @@ namespace Pspg {
       readFieldsRGrid(file, fields, unitCell);
       file.close();
    }
-   
+  
+   /*
+   * Read data section of r-grid field format from an input stream.
+   */ 
    template <int D>
    void FieldIo<D>::readFieldsRGridData(std::istream &in,
                                         DArray< RField<D> >& fields,
@@ -569,11 +584,13 @@ namespace Pspg {
       }
    }
 
+   /*
+   * Read single field in r-grid format from input stream.
+   */
    template <int D>
    void FieldIo<D>::readFieldRGrid(std::istream &in,
                                    RField<D> &field,
-                                   UnitCell<D>& unitCell)
-   const
+                                   UnitCell<D>& unitCell) const
    {
       int nMonomer;
       bool isSymmetric;
@@ -635,11 +652,13 @@ namespace Pspg {
 
    }
 
+   /*
+   * Open & close file, read single field in r-grid format.
+   */
    template <int D>
    void FieldIo<D>::readFieldRGrid(std::string filename,
                                    RField<D> &field,
-                                   UnitCell<D>& unitCell)
-   const
+                                   UnitCell<D>& unitCell) const
    {
       std::ifstream file;
       fileMaster().openInputFile(filename, file);
@@ -647,6 +666,9 @@ namespace Pspg {
       file.close();
    }
 
+   /*
+   * Write array of fields in r-grid format to output stream.
+   */
    template <int D>
    void FieldIo<D>::writeFieldsRGrid(std::ostream &out,
                                      DArray<RField<D> > const& fields,
@@ -711,6 +733,9 @@ namespace Pspg {
 
    }
 
+   /*
+   * Open & close file, write array of fields in r-grid format.
+   */
    template <int D>
    void FieldIo<D>::writeFieldsRGrid(std::string filename,
                                      DArray< RField<D> > const & fields,
@@ -723,6 +748,9 @@ namespace Pspg {
       file.close();
    }
 
+   /*
+   * Write a single file in r-grid format to output stream.
+   */
    template <int D>
    void FieldIo<D>::writeFieldRGrid(std::ostream &out,
                                     RField<D> const & field,
@@ -777,18 +805,22 @@ namespace Pspg {
       temp_out = nullptr;
    }
 
+   /*
+   * Open & close file, write a single field in r-grid format.
+   */
    template <int D>
    void FieldIo<D>::writeFieldRGrid(std::string filename,
                                     RField<D> const & field,
                                     UnitCell<D> const & unitCell,
-                                    bool isSymmetric)
-   const
+                                    bool isSymmetric) const
    {
       std::ofstream file;
       fileMaster().openOutputFile(filename, file);
       writeFieldRGrid(file, field, unitCell, isSymmetric);
       file.close();
    }
+
+   // K-Grid Field File Format
 
    template <int D>
    void FieldIo<D>::readFieldsKGrid(std::istream &in,
