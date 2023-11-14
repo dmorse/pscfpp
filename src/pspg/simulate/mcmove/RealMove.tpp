@@ -9,16 +9,12 @@
 */
 
 #include "RealMove.h"
-#include "McMove.h" 
-#include <util/param/ParamComposite.h>
-#include <util/random/Random.h>
+#include "McMove.h"
 #include <pspg/System.h>
-#include <util/archives/Serializable_includes.h>
-#include <cuda_runtime.h>
-#include <curand.h>
-#include <curand_kernel.h>
-#include <sys/time.h>
+#include <util/param/ParamComposite.h>
 
+#include <curand.h>
+#include <sys/time.h>
 
 namespace Pscf {
 namespace Pspg {
@@ -29,7 +25,7 @@ namespace Pspg {
    * Constructor.
    */
    template <int D>
-   RealMove<D>::RealMove(McSimulator<D>& simulator) 
+   RealMove<D>::RealMove(McSimulator<D>& simulator)
     : McMove<D>(simulator),
       isAllocated_(false)
    { setClassName("RealMove"); }
@@ -47,15 +43,16 @@ namespace Pspg {
    template <int D>
    void RealMove<D>::readParameters(std::istream &in)
    {
-      //Read the probability
+      // Read the probability of this move being chosen
       readProbability(in);
-      // attampt move range [A, -A]
+
+      // Range of attempted move is [A, -A]
       read(in, "A", stepSize_);
    }
-   
+
    template <int D>
    void RealMove<D>::setup()
-   {  
+   {
       McMove<D>::setup();
       const int nMonomer = system().mixture().nMonomer();
       const int meshSize = system().domain().mesh().size();
@@ -67,12 +64,14 @@ namespace Pspg {
          }
          isAllocated_ = true;
       }
+
       // Create pseudo-random number generator on gpu
       curandStatus_t status;
       status = curandCreateGenerator(&gen_, CURAND_RNG_PSEUDO_DEFAULT);
       if(status != CURAND_STATUS_SUCCESS){
          std::cout<<"Generator initialization error "<<std::endl;
       }
+
       // Set seed
       unsigned long long seed;
       timeval time;
@@ -82,11 +81,9 @@ namespace Pspg {
       if(status != CURAND_STATUS_SUCCESS){
          std::cout<<"Generator random number error "<<std::endl;
       }
-      
+
    }
-   
-   
-   
+
    /*
    * Attempt unconstrained move
    */
@@ -95,32 +92,35 @@ namespace Pspg {
    {
       const int nMonomer = system().mixture().nMonomer();
       const int meshSize = system().domain().mesh().size();
+
       // GPU resources
       int nBlocks, nThreads;
       ThreadGrid::setThreadsLogical(meshSize, nBlocks, nThreads);
       Array<RField<D>> const * currSys = &system().w().rgrid();
-      
+
       // For multi-component copolymer
       for (int i = 0; i < nMonomer; i++){
+
          // Generate random numbers between 0.0 and 1.0 from uniform distribution
 #ifdef SINGLE_PRECISION
-         curandStatus_t gen_error = curandGenerateUniform(gen_, randomField_.cField(), meshSize); 
+         curandStatus_t gen_error = curandGenerateUniform(gen_, randomField_.cField(), meshSize);
 #else
          curandStatus_t gen_error = curandGenerateUniformDouble(gen_, randomField_.cField(), meshSize);
 #endif
+
          // Generate random numbers between [-stepSize_,stepSize_]
          mcftsScale<<<nBlocks, nThreads>>>(randomField_.cField(), stepSize_, meshSize);
-         
+
          // Change the w field configuration
-         pointWiseBinaryAdd<<<nBlocks, nThreads>>>((*currSys)[i].cField(), randomField_.cField(), 
+         pointWiseBinaryAdd<<<nBlocks, nThreads>>>((*currSys)[i].cField(), randomField_.cField(),
                                                       wFieldTmp_[i].cField(), meshSize);
-         
+
       }
+
       // set system r grid
       system().setWRGrid(wFieldTmp_);
 
    }
-
 
    /*
    * Trivial default implementation - do nothing
@@ -128,7 +128,7 @@ namespace Pspg {
    template <int D>
    void RealMove<D>::output()
    {}
-   
+
    template<int D>
    void RealMove<D>::outputTimers(std::ostream& out)
    {

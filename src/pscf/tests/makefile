@@ -3,7 +3,12 @@ include $(BLD_DIR_REL)/config.mk
 include $(SRC_DIR)/pscf/include.mk
 include $(SRC_DIR)/pscf/tests/sources.mk
 
-TEST=pscf/tests/Test
+ifdef PSCF_CUDA
+TEST=pscf/tests/cudaTest
+else
+TEST=pscf/tests/cpuTest
+endif
+
 
 .PHONY: all libs includes run run-quiet clean-outputs clean
 
