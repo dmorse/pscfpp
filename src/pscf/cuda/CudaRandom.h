@@ -48,9 +48,27 @@ namespace Pscf {
       /**
       * Return an array of uniform random floating point numbers.
       *   
-      * range 0 <= x < 1.
+      * The array data of n elements is filled with random numbers in the 
+      * range 0 < x <= 1 (zero excluded and 1 is included)
+      *  
+      * \param data pointer to first element of array
+      * \param n    number of elements in array
       */
-      double uniform(cudaReal* data, int n);
+      void uniform(cudaReal* data, int n);
+   
+      /**
+      * Return an array of normal-distributed random floating point numbers.
+      *   
+      * The array data of n elements is filled with random numbers chosen 
+      * from a normal distribution with the specified mean value and standard
+      * deviation.
+      *
+      * \param data  pointer to first element of array
+      * \param n  number of elements in array
+      * \param stddev  standard deviation (input)
+      * \param mean  mean value (input, default = 0.0)
+      */
+      void normal(cudaReal* data, int n, cudaReal stddev, cudaReal mean = 0.0);
    
       /**
       * Returns value of random seed (private member variable seed_).

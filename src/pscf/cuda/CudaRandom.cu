@@ -53,18 +53,37 @@ namespace Pscf {
    /*
    * Return uniformly distributed random number in [0,1]
    */
-   double CudaRandom::uniform(cudaReal* data, int n)
+   void CudaRandom::uniform(cudaReal* data, int n)
    {
       if (!isInitialized_) {
          setSeed(0);
       }
       #ifdef SINGLE_PRECISION
-      curandStatus_t gen_error 
+      curandStatus_t status
            = curandGenerateUniform(gen_, data, int n);
       #else
-      curandStatus_t gen_error 
+      curandStatus_t status
             = curandGenerateUniformDouble(gen_, data, n);
       #endif
+      UTIL_CHECK(status == CURAND_STATUS_SUCCESS);
+   }
+
+   /*
+   * Return uniformly distributed random number in [0,1]
+   */
+   void CudaRandom::normal(cudaReal* data, int n, cudaReal stddev, cudaReal mean)
+   {
+      if (!isInitialized_) {
+         setSeed(0);
+      }
+      #ifdef SINGLE_PRECISION
+      curandStatus_t status
+           = curandGenerateNormal(gen_, data, n, mean, stddev);
+      #else
+      curandStatus_t status
+           = curandGenerateNormalDouble(gen_, data, n, mean, stddev);
+      #endif
+      UTIL_CHECK(status == CURAND_STATUS_SUCCESS);
    }
 
 }
