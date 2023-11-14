@@ -63,8 +63,12 @@ public:
 
       std::cout << std::endl;
       for (int i = 0; i < n; ++i) {
-         std::cout << Int(i,5) << "  " 
-                   << Dbl(hostPtr_[i]) << std::endl;
+         TEST_ASSERT(hostPtr_[i] >= 0.0);
+         TEST_ASSERT(hostPtr_[i] <= 1.0);
+         if (verbose() > 0) {
+            std::cout << Int(i,5) << "  " 
+                      << Dbl(hostPtr_[i]) << std::endl;
+         }
       }
    }
 

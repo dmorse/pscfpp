@@ -9,7 +9,6 @@ else
 TEST=pscf/tests/cpuTest
 endif
 
-
 .PHONY: all libs includes run run-quiet clean-outputs clean
 
 all: $(pscf_tests_OBJS) $(BLD_DIR)/$(TEST)
@@ -46,6 +45,7 @@ else
 endif
 
 clean:
+	rm -f *Test
 	rm -f $(pscf_tests_OBJS) $(pscf_tests_OBJS:.o=.d)
 	rm -f $(BLD_DIR)/$(TEST) $(BLD_DIR)/$(TEST).d
 ifeq ($(BLD_DIR),$(SRC_DIR))

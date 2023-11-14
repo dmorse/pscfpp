@@ -23,8 +23,8 @@ clean-outputs:
 	rm -f log count 
 
 clean:
-	rm -f $(pscf_tests_homogeneous_OBJS) $(pscf_tests_homogeneous_OBJS:.o=.d)
 	rm -f $(BLD_DIR)/$(TEST) $(BLD_DIR)/$(TEST).d
+	rm -f $(pscf_tests_homogeneous_OBJS) $(pscf_tests_homogeneous_OBJS:.o=.d)
 	$(MAKE) clean-outputs
 
 -include $(pscf_tests_homogeneous_OBJS:.o=.d)
