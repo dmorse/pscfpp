@@ -1,5 +1,5 @@
-#ifndef PSPC_MC_HAMILTONIAN_ANALYZER_TPP
-#define PSPC_MC_HAMILTONIAN_ANALYZER_TPP
+#ifndef PSPC_HAMILTONIAN_ANALYZER_TPP
+#define PSPC_HAMILTONIAN_ANALYZER_TPP
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory
@@ -42,15 +42,10 @@ namespace Pspc {
    {
       AverageListAnalyzer<D>::readParameters(in);
 
-      // Count number of values
-      int id = 0;
-      idealId_ = id;
-      ++id; 
-      fieldId_ = id;
-      ++id;
-      totalId_ = id;
-      ++id; 
-      AverageListAnalyzer<D>::initializeAccumulators(id);
+      idealId_ = 0;
+      fieldId_ = 1;
+      totalId_ = 2;
+      AverageListAnalyzer<D>::initializeAccumulators(3);
  
       setName(idealId_, "ideal");
       setName(fieldId_, "field");

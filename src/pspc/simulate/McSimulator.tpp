@@ -114,22 +114,35 @@ namespace Pspc {
       Timer timer;
       Timer analyzerTimer;
       timer.start();
-      for (int iStep = 0; iStep < nStep; ++iStep) {
-         analyzerTimer.start();
+      for (iStep_ = 0; iStep_ < nStep; ++iStep_) {
+
          // Analysis (if any)
+         analyzerTimer.start();
          if (Analyzer<D>::baseInterval != 0) {
-            if (iStep % Analyzer<D>::baseInterval == 0) {
+            if (iStep_ % Analyzer<D>::baseInterval == 0) {
                if (analyzerManager_.size() > 0) {
-                  iStep_ = iStep;
-                  analyzerManager_.sample(iStep);
+                  analyzerManager_.sample(iStep_);
                }
             }
          }
          analyzerTimer.stop();
+
          // Choose and attempt an McMove
          mcMoveManager_.chooseMove().move();
 
       }
+
+      // Analysis (if any)
+      analyzerTimer.start();
+      if (Analyzer<D>::baseInterval != 0) {
+         if (iStep_ % Analyzer<D>::baseInterval == 0) {
+            if (analyzerManager_.size() > 0) {
+               analyzerManager_.sample(iStep_);
+            }
+         }
+      }
+      analyzerTimer.stop();
+
       timer.stop();
       double time = timer.time();
       double analyzerTime = analyzerTimer.time();
@@ -275,13 +288,11 @@ namespace Pspc {
       }
 
       // Open trajectory file
-      Log::file() << "Reading " << filename << std::endl;
       trajectoryReaderPtr->open(filename);
       trajectoryReaderPtr->readHeader();
 
       // Main loop over trajectory frames
       Timer timer;
-      Log::file() << "Begin main loop" << std::endl;
       bool hasFrame = true;
       timer.start();
       for (iStep_ = 0; iStep_ <= max && hasFrame; ++iStep_) {
@@ -297,9 +308,6 @@ namespace Pspc {
             // Sample property values only for iStep >= min
             if (iStep_ >= min) {
                analyzerManager_.sample(iStep_);
-               if ((iStep_ % 100) == 0){
-                  Log::file() << "Step " << iStep_ << std::endl;
-               }
             }
          }
       }

@@ -173,6 +173,13 @@ namespace Pspc {
    inline McSimulator<D>& TrajectoryWriter<D>::mcSimulator()
    {  return *mcSimulatorPtr_; }
 
+   #ifndef PSPC_TRAJECTORY_WRITER_TPP
+   // Suppress implicit instantiation
+   extern template class TrajectoryWriter<1>;
+   extern template class TrajectoryWriter<2>;
+   extern template class TrajectoryWriter<3>;
+   #endif
+
 }
 }
 #endif

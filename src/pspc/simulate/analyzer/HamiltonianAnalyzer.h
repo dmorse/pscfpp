@@ -1,5 +1,5 @@
-#ifndef PSPC_MC_HAMILTONIAN_ANALYZER_H
-#define PSPC_MC_HAMILTONIAN_ANALYZER_H
+#ifndef PSPC_HAMILTONIAN_ANALYZER_H
+#define PSPC_HAMILTONIAN_ANALYZER_H
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory
@@ -124,6 +124,12 @@ namespace Pspc {
    inline McSimulator<D>& HamiltonianAnalyzer<D>::mcSimulator()
    {  return *mcSimulatorPtr_; }
 
+   #ifndef PSPC_HAMILTONIAN_ANALYZER_TPP
+   // Suppress implicit instantiation
+   extern template class HamiltonianAnalyzer<1>;
+   extern template class HamiltonianAnalyzer<2>;
+   extern template class HamiltonianAnalyzer<3>;
+   #endif
 
 }
 }

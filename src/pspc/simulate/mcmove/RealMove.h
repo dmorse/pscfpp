@@ -8,16 +8,12 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "McMove.h"                          //base class
-#include <prdc/cpu/RField.h>
-#include <util/containers/DArray.h>
-#include <util/param/ParamComposite.h>
-#include <util/global.h>
-
+#include "McMove.h"                          // base class
+#include <prdc/cpu/RField.h>                 // member
+#include <util/containers/DArray.h>          // member
 
 namespace Pscf {
-namespace Pspc
-{
+namespace Pspc {
 
    using namespace Util;
    using namespace Pscf::Prdc::Cpu;
@@ -50,6 +46,7 @@ namespace Pspc
       /**
       * Read required parameters from file.
       *
+      * \param in input stream
       */
       void readParameters(std::istream &in);
       
@@ -75,11 +72,11 @@ namespace Pspc
       using ParamComposite::read;
       using ParamComposite::setClassName;
 
-
    protected:
       
       using McMove<D>::system;
       using McMove<D>::random;
+
       /**
       *  Attempt unconstrained move.
       *
@@ -91,23 +88,27 @@ namespace Pspc
       */
       void attemptMove();
 
-
    private:
       
-      /// Move step size is randomly selected from uniform distribution [-stepSize_, stepSize_]
+      /// Move step size, step is selected from [-stepSize_, stepSize_]
       double stepSize_;
       
-      /// wField after attempt McMove. local variable wFieldTmp_ used in attemptMove() function
+      /// wField after attempted McMove. used in attemptMove() function
       DArray< RField<D> > wFieldTmp_;
       
       /**
       * Has the variable been allocated?
       */
       bool isAllocated_;
-      
    
    };
       
+   #ifndef PSPC_REAL_MOVE_TPP
+   // Suppress implicit instantiation
+   extern template class RealMove<1>;
+   extern template class RealMove<2>;
+   extern template class RealMove<3>;
+   #endif
 
 }
 }

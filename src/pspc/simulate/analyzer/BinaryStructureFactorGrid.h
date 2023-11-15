@@ -215,6 +215,12 @@ namespace Pspc {
    inline McSimulator<D>& BinaryStructureFactorGrid<D>::mcSimulator()
    {  return *mcSimulatorPtr_; }
 
+   #ifndef PSPC_BINARY_STRUCTURE_FACTOR_GRID_TPP
+   // Suppress implicit instantiation
+   extern template class BinaryStructureFactorGrid<1>;
+   extern template class BinaryStructureFactorGrid<2>;
+   extern template class BinaryStructureFactorGrid<3>;
+   #endif
 
 }
 }

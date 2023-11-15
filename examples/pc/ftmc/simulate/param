@@ -57,14 +57,18 @@ System{
       baseInterval    1
 
       TrajectoryWriter{
-        interval        2
+        interval        10
         outputFileName  out/trajectory
       }
 
       HamiltonianAnalyzer{
-        interval        2
-        outputFileName  out/mcHamiltonian
+        interval        10
+        outputFileName  out/hamiltonian
         nSamplePerBlock 2
+      }
+
+      StepLogger{
+        interval        50
       }
 
     }

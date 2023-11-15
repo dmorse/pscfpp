@@ -7,6 +7,7 @@
 #include "TrajectoryWriter.h"
 #include "HamiltonianAnalyzer.h"
 #include "BinaryStructureFactorGrid.h"
+#include "StepLogger.h"
 
 namespace Pscf {
 namespace Pspc {
@@ -42,7 +43,10 @@ namespace Pspc {
       } else if (className == "HamiltonianAnalyzer") {
          ptr = new HamiltonianAnalyzer<D>(*mcSimulatorPtr_, *sysPtr_);
       } else if (className == "BinaryStructureFactorGrid") {
-         ptr = new BinaryStructureFactorGrid<D>(*mcSimulatorPtr_, *sysPtr_);
+         ptr 
+           = new BinaryStructureFactorGrid<D>(*mcSimulatorPtr_, *sysPtr_);
+      } else if (className == "StepLogger") {
+         ptr = new StepLogger<D>();
       }
 
       return ptr;
