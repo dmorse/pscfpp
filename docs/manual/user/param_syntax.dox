@@ -7,16 +7,18 @@
 This page gives a more complete discussion of syntactical conventions
 used in all PSCF parameter files. 
 
-PSCF parameter files are fixed format files, in which each element can
-only appear at a specific location within the file. Some flexibility
-is introduced, however, by allowing some elements to be optional or 
-selectable, as discussed greater detail below.  The format for each
-element (e.g., each block or parameter) begins with a text label that
+PSCF parameter files are structured into blocks, in which each block 
+contains a sequence of parameters and nested subblocks. Each block has
+a fixed format, in which each element within a block can only appear 
+at a specific location. Some flexibility is introduced, however, by 
+allowing some elements to be optional and/or selectable, as discussed 
+in greater detail below.  The format for each element of a block (e.g., 
+each parameter or nested subblock) begins with a text label that 
 identifies the element. When a parameter file is read, this label is
-compared to an expected label or a set of possible allowed values. 
-This allows the code that reads a parameter file to confirm its
-syntactical validity while it is being read, and to provide 
-informative error messages when an error is detected.
+compared to an expected label or a set of possible allowed values. This 
+allows the code that reads a parameter file to confirm its syntactical 
+validity while it is being read, and to provide informative error 
+messages when a syntax error is detected.
 
 \section user_param_syntax_blocks_section Blocks
 
@@ -98,56 +100,56 @@ The code required to read the parameter file block associated with a
 particular class is almost always defined in a member function of that 
 class named "readParameters". Users who are comfortable with C++ can 
 thus use knowledge of this convention to easily find the source code 
-that reads a particular parameter file block.
+that reads a particular block of a parameter file.
 
 The nesting of parameter file blocks in PSCF parameter files directly
 reflects the structure of the underlying C++ code. Nesting of blocks 
 within a parameter file generally reflects parent-child ownership 
-relationships among objects in the corresponding source code. Each 
+relationships among objects in the corresponding source code: Each 
 subblock corresponds to an object that the parent object "owns", i.e., 
 an object that is either a member of the parent object or a dynamically 
-created object that the parent object is responsible for creating and 
+allocated object that the parent object is responsible for creating and 
 destroying.  The top level object in any PSCF program is an instance of 
 a class or class temnplate named "System", and so the outermost block 
 in the parameter file is always labelled "System". 
 
-The code that reads a block of a parameter field checks the syntax of 
-the file format by checking that the label that begins each subblock and 
-parameter matches an expected value or list of possible values.  If the 
-label does not match an expected label for a required element, the 
-program halts execution after writing an error message explaining what 
-label it expected and what it actually found. When combined with echoing 
-of the parameter file (by using "-e" command line option) these error 
-messages make it relatively easy for users to understand and correct 
-most parameter file syntax errors.
+The code that reads each block of a parameter field checks the syntax 
+of the input file while it is being read by checking that the label 
+that begins each subblock or parameter matches an expected value or 
+list of possible values.  If the label does not match any allowed
+value, the program will halts execution after writing an error message 
+explaining what label it expected and what it found instead. The 
+usefulness of such error messages may be enhanced by echoing of the 
+parameter file, by using "-e" \ref user_usage_page "command line option". 
+The combination of detailed error messages and echoing provides enough
+information for most users to understand and quickly correct most 
+parameter file syntax errors.
 
 \section user_param_syntax_parameter_section Individual Parameters
 
 The simplest type of element within a parameter file block is an entry
 that represents a value for an individual parameter.  Each such entry 
-is given on single line that contains a label string that identifies 
-the name of the parameter, followed by one or more spaces, and then a 
-text representation of the parameter value.
+is given on single line that contains a label string, which gives the
+name of the parameter, followed by one or more spaces, and then a text 
+representation of the parameter value.
 
 As an example, consider the entry for the nMonomer integer parameter
 within the Mixture block. The value of nMonomer gives the number of
-distinct monomer types present within the system. The entry for a
-system with two distinct types of monomer would look like
+distinct monomer types present within the system. The parameter entry 
+for a system with two distinct types of monomer would look like
 \code
    nMonomer      2
 \endcode
 The label for each such parameter generally corresponds to a slightly 
 modified version of the name of the member variable of the relevant 
-parent class, i.e., the name of the member variable that stores the 
+parent class, i.e., of the name of the member variable that stores the 
 parameter value. 
 
 The value of any parameter that is stored in a variable of a primitive 
 C data types (e.g., an integer or floating point number) or a string 
 may be given using any standard C text representation for that data 
-type. String values are given without surrounding quotation marks, but 
-must be separated from the label by one or more spaces. Values of 
-string variables may not contain any spaces or other whitespace 
-characters.
+type. String values are given without surrounding quotation marks, and 
+may not contain any internal spaces or other whitespace characters.
 
 <i> Technical comments (for users familiar with C++): </i>
 
@@ -177,16 +179,16 @@ are defined for that data type.
 
 For example, in the example, the "type" parameter within each Polymer 
 subblock of the Mixture block is stored as an enumeration with two 
-possible values. The text representations of these values, as defined
-by overloaded ">>" and "<<" operators, are the strings "linear" or 
-"branched".  The value of the "type" parameter must thus be given in 
-the parameter file by a string that must have one of these two allowed 
-values. 
+possible values. The text representations of these allowed values, as 
+defined by overloaded ">>" and "<<" operators, are the strings "linear" 
+or "branched".  The value of the "type" parameter must thus be given 
+in the parameter file by a string that must have one of these two 
+allowed values. 
 
 \section user_param_syntax_array_section Array-Valued Parameters
 
 Values of some parameters are stored as elements of a one-dimensional 
-array.  The parameter file entry for such array is given in a multi-line 
+array. The parameter file entry for such array is given in a multi-line 
 format in which the first row contains a label that contains the name 
 of the array followed immediately by an opening square bracket (i.e., [), 
 and the last line contains a matching closing square bracket (]) on a 
@@ -212,9 +214,9 @@ used for the "monomers" array within the Mixture block, and the
 
 The number of expected elements of such an array must always be 
 specified by the value of a parameter that appears before the array 
-in the parameter file. The function that reads such an array thus
-always knows how many elements it should contain, which is passed 
-to this function as a parameter.  For example, the number of monomer 
+in the parameter file. The C++ function that reads such an array thus 
+always knows how many elements it should contain, which is passed to 
+this function as a parameter.  For example, the number of monomer 
 types is specified by parameter nMonomer that appears just before 
 the "monomers" array.
 
@@ -261,7 +263,8 @@ like this
 In this example, zero values are assigned to all diagonal elements
 by default.  If desired, nonzero values also could be assigned to 
 diagonal elements by including them in the parameter file format. 
-Entries for nonzero elements may appear in any order.
+Lines containing entries for nonzero elements may appear in any 
+order.
 
 <b> Row Format: </b>
 In the row format for a matrix-valued parameter, elements values are 
@@ -320,8 +323,8 @@ of the information given in earlier parts of the parameter file.
 
 For example, the Mixture block of any PSCF program contains an optional
 parameter nSolvent that may appear immediately after the parameter 
-nPolymer. The parameter nSolvent is assigned a default value of zero 
-if it is absent. If nSolvent is present and is assigned a nonzero value,
+nPolymer. The parameter nSolvent is assigned a default value of 0 if
+it is absent. If nSolvent is present and is assigned a nonzero value,
 then the Mixture block must contain a corresponding number of Solvent 
 blocks immediately after the Polymer blocks. Solvent blocks may not 
 appear, however, if nSolvent is set to zero either explicitly or by 
@@ -332,21 +335,23 @@ default.
 Some blocks in a PSCF parameter file are "selectable".  A selectable 
 block is one that may contain any of several blocks that are associated 
 with C++ classes that serve analogous purposes but that rely on 
-different algorithms.  As already noted, the block that represents an 
-iterator in a PSCF program is always a selectable block. The use of a 
-selectable block for the iterator allows users to specify a choice 
-from among several different available iterator algorithms. 
+different algorithms.  (See technical note below for a discussion of
+the relationship between selectable block labels and C++ subclass 
+names). As already noted, the block that represents an iterator in a 
+PSCF program is always a selectable block. The use of a selectable 
+block for the iterator allows users to specify a choice from among 
+several different available iterator algorithms. 
 
-The users choice of one of several valid options for a selectable block 
-is specified by the label used in the opening line for the block, which 
-ends with an opening curly bracket. That block label is compared to a 
-list of label strings for available options.  If the label for a 
-selectable block in the parameter files matches one such string, the 
-option corresponding to that label is selected. Different possible
-options for a selectable block generally require different parameters,
-and thus require different parameter file formats.  The format of the 
-body of a selectable block must match the format expected for the type 
-of block declared in the block label. 
+A user's choice of one of several options for a selectable block is 
+specified by the label used in the opening line of the block, before
+the opening curly bracket. That block label is compared to a list of 
+label strings for available options.  If the label for a selectable 
+block in the parameter files matches one such string, the option 
+corresponding to that label is selected. Different possible options 
+for a selectable block generally require different parameters, and 
+thus require different formats for the contents of the body of the
+block.  The format of the body of a selectable block must match the 
+format expected for the type of block declared in the block label. 
 
 A default choice is normally defined for each selectable block. The
 default choice may be selected either by using the generic name for 
@@ -359,33 +364,34 @@ block begins with the generic label "Iterator", as in the example.
 The same algorithm may also be selected, however, by using a block 
 that starts with the specific label "AmIterator".
  
-<i> Technical comments (for users familiar with C++: </i>
+<i> Technical comments (for users familiar with C++): </i>
 
 The implementation of selectable parameter file blocks in PSCF is
 based on C++ inheritance and polymorphism. The different options for 
 a selectable block are always implemented by different subclasses of 
-a common base class. The base class defines a shared C++ interface for 
-objects of the relevant type.  The generic name of the block in the
-parameter file (i.e., the name that can also be used as a label to 
-select the default option) is always the name of the relevant base 
+a common base class. The base class defines a shared C++ interface 
+for objects of the relevant type.  The generic name of the block in 
+the parameter file (i.e., the name that can also be used as a label 
+to select the default option) is always the name of the relevant base 
 class.  The parent object (e.g., the System) has a member variable 
 which is a pointer to an instance of the base class.
 
 For example, different iteration algorithms for a particular PSCF
-program are subclasses of a base class named "Iterator", which defines
-a common interface for SCFT iteration algorithms. The parent System 
-object has a private member variable of type Iterator* that can 
-point to an instance of any subclass of class Iterator.
+program are implemented by subclasses of a base class named "Iterator".
+The Iterator base class defines a common interface for SCFT iteration 
+algorithms. The parent System object has a private member variable 
+that is a pointer of type Iterator* that can point to an instance of 
+any subclass of class Iterator.
 
 If the block label input for a selectable block matches the name of 
 an available subclass of the relevant base class (e.g., a subclass
 of Iterator), then an instance of the selected subclass is constructed 
-after the opening line of the block is read and interpreted.  The address 
-of that new object is also assigned to the base class pointer owned by 
-the parent class (i.e., the Iterator* pointer variable owned by the 
-parent System).  The "readParameters" member function of the new object 
-is then invoked to read the body of the selectable block, using a block 
-format appropriate to the chosen subclass. 
+after the opening line of the block is read and interpreted.  The 
+address of that new object is then assigned to the base class pointer 
+owned by the parent class (i.e., the Iterator* pointer variable owned 
+by the parent System).  The "readParameters" member function of the 
+new object is then invoked to read the body of the selectable block, 
+using the format appropriate to the chosen subclass. 
 
 <BR>
 \ref user_param_example_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 

@@ -1,5 +1,5 @@
-#ifndef PSPG_MC_HAMILTONIAN_ANALYZER_TPP
-#define PSPG_MC_HAMILTONIAN_ANALYZER_TPP
+#ifndef PSPC_HAMILTONIAN_ANALYZER_TPP
+#define PSPC_HAMILTONIAN_ANALYZER_TPP
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory
@@ -8,22 +8,23 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "McHamiltonianAnalyzer.h"
-#include <pspg/simulate/McSimulator.h>
-#include <pspg/System.h>
-#include <util/accumulators/Average.h>
+#include "HamiltonianAnalyzer.h"
 
+#include <pspc/System.h>
+#include <pspc/simulate/McSimulator.h>
+//#include <util/accumulators/Average.h>
 
 namespace Pscf {
-namespace Pspg
-{
+namespace Pspc {
+
    using namespace Util;
 
    /*
    * Constructor.
    */
    template <int D>
-   McHamiltonianAnalyzer<D>::McHamiltonianAnalyzer(McSimulator<D>& mcSimulator, System<D>& system)
+   HamiltonianAnalyzer<D>::HamiltonianAnalyzer(McSimulator<D>& mcSimulator, 
+                                               System<D>& system)
     : AverageListAnalyzer<D>(system),
       mcSimulatorPtr_(&mcSimulator),
       systemPtr_(&(mcSimulator.system())),
@@ -31,25 +32,20 @@ namespace Pspg
       idealId_(-1),
       fieldId_(-1),
       totalId_(-1)
-   {  setClassName("McHamiltonianAnalyzer"); }
+   {  setClassName("HamiltonianAnalyzer"); }
 
    /*
    * Read interval and outputFileName. 
    */
    template <int D>
-   void McHamiltonianAnalyzer<D>::readParameters(std::istream& in) 
+   void HamiltonianAnalyzer<D>::readParameters(std::istream& in) 
    {
       AverageListAnalyzer<D>::readParameters(in);
 
-      // Count number of values
-      int id = 0;
-      idealId_ = id;
-      ++id; 
-      fieldId_ = id;
-      ++id;
-      totalId_ = id;
-      ++id; 
-      AverageListAnalyzer<D>::initializeAccumulators(id);
+      idealId_ = 0;
+      fieldId_ = 1;
+      totalId_ = 2;
+      AverageListAnalyzer<D>::initializeAccumulators(3);
  
       setName(idealId_, "ideal");
       setName(fieldId_, "field");
@@ -60,8 +56,8 @@ namespace Pspg
    * Output energy to file
    */
    template <int D>
-   void McHamiltonianAnalyzer<D>::compute() 
-   {  
+   void HamiltonianAnalyzer<D>::compute() 
+   {
       if (!mcSimulator().hasWC()){
          if (!hasAnalyzeChi_){
             mcSimulator().analyzeChi();
@@ -69,17 +65,17 @@ namespace Pspg
          }
          system().compute();
          mcSimulator().computeWC();
-         mcSimulator().computeMcHamiltonian();
+         mcSimulator().computeHamiltonian();
       }
-      double ideal = mcSimulator().mcIdealHamiltonian();
+      double ideal = mcSimulator().idealHamiltonian();
       // outputFile_ << Dbl(ideal, 20)
       setValue(idealId_, ideal);
    
-      double field = mcSimulator().mcFieldHamiltonian();
+      double field = mcSimulator().fieldHamiltonian();
       // outputFile_ << Dbl(field, 20)
       setValue(fieldId_, field);
    
-      double total = mcSimulator().mcHamiltonian();
+      double total = mcSimulator().hamiltonian();
       // outputFile_ << Dbl(total, 20) << std::endl;
       setValue(totalId_, total);
    }

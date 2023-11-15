@@ -11,13 +11,13 @@
 #include "Analyzer.h"
 #include <util/global.h>
 #include <pspg/System.h>
-#include <pspg/simulate/McSimulator.h>
 
 namespace Pscf {
 namespace Pspg
 {
 
    template <int D> class System;
+   template <int D> class McSimulator;
 
    using namespace Util;
    using namespace Pscf::Prdc;
@@ -117,6 +117,7 @@ namespace Pspg
       * Pointer to parent Simulator
       */
       McSimulator<D>* mcSimulatorPtr_;     
+
       /**
       * Pointer to the parent system.
       */

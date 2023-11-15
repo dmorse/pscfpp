@@ -33,8 +33,9 @@ in different columnns.
 
 Coefficients for different wavevectors are output in sequential
 order, using the last index (e.g., \f$n_{2}\f$ for a 3D crystal) 
-as the most rapidly varying (inner-most) loop index. This is 
-implemented by a fortran loop of the form
+as the most rapidly varying (inner-most) loop index. Reading or
+writing of the data section for a 3D field performed by a loop 
+of the form:
 \code
    for (n0 = 0; n0 < N0; ++n0) {
       for (n1 = 0; n1 < N1: ++n1) {
@@ -44,12 +45,15 @@ implemented by a fortran loop of the form
       }
    }
 \endcode
+where N0, N1, N2 are the number of grid points in directions 
+0, ..., 2. 
 
-Note that this is not the same as the way that the k-grid files
-are written in the Fortran version of PSCF, which have the number
-of gridpoints halved in the first index (`n0` in the code above)
-rather than the last index, as is the case here. This means that
-k-grid files are not compatible between the two codes.
+**Note**: The format of the data section of a k-grid file, as
+described above, is different from the format used in the older
+Fortran version of PSCF. In the Fortran version, the number of 
+gridpoints is halved in the first index (`n0` in the code above)
+rather than the last index, as is the case here. The two programs
+thus use incompatiable formats for k-grid field files. 
 
 <BR>
  \ref user_field_rgrid_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 

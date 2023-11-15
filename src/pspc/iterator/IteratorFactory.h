@@ -8,14 +8,15 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <util/param/Factory.h>  
 #include <pspc/iterator/Iterator.h>
-#include <pspc/System.h>
+#include <util/param/Factory.h>  
 
 #include <string>
 
 namespace Pscf {
 namespace Pspc {
+
+   template <int D> class System;
 
    using namespace Util;
 

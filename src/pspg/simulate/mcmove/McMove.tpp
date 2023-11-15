@@ -75,12 +75,12 @@ namespace Pspg {
       incrementNAttempt();
 
       // Get current Hamiltonian
-      double oldHamiltonian = mcSimulator().mcHamiltonian();
+      double oldHamiltonian = mcSimulator().hamiltonian();
      
       // Save current state 
       mcSimulator().saveMcState();
       
-      // Clear both eigen-components of the fields and mcHamiltonian 
+      // Clear both eigen-components of the fields and hamiltonian 
       mcSimulator().clearData();
 
       // Attempt modification
@@ -99,10 +99,10 @@ namespace Pspg {
       computeWCTimer_.stop();
       
       // Evaluate new Hamiltonian
-      computeMcHamiltonianTimer_.start();
-      mcSimulator().computeMcHamiltonian();
-      double newHamiltonian = mcSimulator().mcHamiltonian();
-      computeMcHamiltonianTimer_.stop();
+      computeHamiltonianTimer_.start();
+      mcSimulator().computeHamiltonian();
+      double newHamiltonian = mcSimulator().hamiltonian();
+      computeHamiltonianTimer_.stop();
       // Log::file() << "newHamiltonian" << newHamiltonian << "\n";
       //Log::file() << "oldHamiltonian" << oldHamiltonian << "\n";
       // Accept or reject move
@@ -118,8 +118,8 @@ namespace Pspg {
       } else {
           mcSimulator().restoreMcState();
       }
-     /// Log::file() << "newFieldHamiltonian" << mcSimulator().mcFieldHamiltonian() << "\n";
-      // Log::file() << "newidealHamiltonian" << mcSimulator().mcIdealHamiltonian() << "\n";
+     /// Log::file() << "newFieldHamiltonian" << mcSimulator().fieldHamiltonian() << "\n";
+      // Log::file() << "newidealHamiltonian" << mcSimulator().idealHamiltonian() << "\n";
       // Log::file() << "accept" << accept << "\n";
       decisionTimer_.stop();
       totalTimer_.stop();
@@ -155,12 +155,12 @@ namespace Pspg {
           << Dbl(computeWCTimer_.time()/nAttempt_, 9, 3)  << " s,  "
           << Dbl(computeWCTimer_.time()/total, 9, 3) << "\n";
       out << "Compute Hamiltonian:      "
-          << Dbl(computeMcHamiltonianTimer_.time(), 9, 3)  << " s,  "
-          << Dbl(computeMcHamiltonianTimer_.time()/nAttempt_, 9, 3)  << " s,  "
-          << Dbl(computeMcHamiltonianTimer_.time()/total, 9, 3) << "\n";
+          << Dbl(computeHamiltonianTimer_.time(), 9, 3)  << " s,  "
+          << Dbl(computeHamiltonianTimer_.time()/nAttempt_, 9, 3)  << " s,  "
+          << Dbl(computeHamiltonianTimer_.time()/total, 9, 3) << "\n";
       out << "Accept or Reject:         "
           << Dbl(decisionTimer_.time(), 9, 3)  << " s,  "
-          << Dbl(computeMcHamiltonianTimer_.time()/nAttempt_, 9, 3)  << " s,  "
+          << Dbl(computeHamiltonianTimer_.time()/nAttempt_, 9, 3)  << " s,  "
           << Dbl(decisionTimer_.time()/total, 9, 3) << "\n";
       out << "total time:               "
           << Dbl(total, 9, 3) << " s,  "
@@ -174,7 +174,7 @@ namespace Pspg {
       attemptMoveTimer_.clear();
       compressorTimer_.clear();
       computeWCTimer_.clear();
-      computeMcHamiltonianTimer_.clear();
+      computeHamiltonianTimer_.clear();
       decisionTimer_.clear();
       totalTimer_.clear();
    }

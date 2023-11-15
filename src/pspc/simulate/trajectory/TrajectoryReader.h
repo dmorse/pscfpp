@@ -8,18 +8,12 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <util/param/ParamComposite.h>    
-#include <util/global.h>
-#include <iostream>
-#include <pspc/System.h>
-
+#include <string>
 
 namespace Pscf {
-namespace Pspc 
-{
+namespace Pspc {
 
    template <int D> class System;
-   using namespace Util;
 
    /**
    * Trajectory file reader (base class).

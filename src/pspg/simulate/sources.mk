@@ -8,7 +8,8 @@ pspg_simulate_= \
   $(pspg_trajectory_) \
   $(pspg_simulate_analyzer_) \
   pspg/simulate/McSimulator.cu \
-  pspg/simulate/McState.cu 
+  pspg/simulate/McState.cu \
+  pspg/simulate/Simulator.cu 
   
 pspg_simulate_OBJS=\
      $(addprefix $(BLD_DIR)/, $(pspg_simulate_:.cu=.o))

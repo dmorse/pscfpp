@@ -53,63 +53,53 @@ Clean up of kernel functions
        Assign real vector to scalar      : rV_EqR
 
        Corresponding functions that return a complex-valued vector
-       will start with vc. Arguments on the RHS side will use C for
+       will start with cV. Arguments on the RHS side will use C for
        complex scalar, R for real scalar, V for complex vector and
-       Vr for real vector.
+       rV for real vector.
 
        Kernel functions can use names as described above, but with
        suffix __ to indicate a kernel, e.g., rV_EqV__. 
 
-       The same name can be used for __global__ CUDA kernels (called with 
-       <<< >>> syntax) and for corresponding C++ __host__ functions.
+       Analogous names can be used for __global__ CUDA kernels (called 
+       with <<< >>> syntax) and for corresponding C++ __host__ 
+       functions that act on pointers or array containers.
 
    Example kernel names (called with CUDA <<< ... >>> ) syntax
 
        // Unary operations (vrOpA => v = v Op A)
-       subtractUniform          -> rV_SubR
-       addUniform               -> vecrAddR
-       pointWiseSubtract        -> vecrSubV
-       pointWiseAdd             -> vecrAddV
-       scaleReal                -> vecrMulR
-       scaleComplex             -> veccMulR
+       subtractUniform          -> rV_SubR__
+       addUniform               -> rV_AddR__
+       pointWiseSubtract        -> rV_SubV__
+       pointWiseAdd             -> rV_AddV__
+       scaleReal                -> rV_MulR__
+       scaleComplex             -> cV_MulC__
 
        // Binary operations (vrAOpB => v = A Op B)
-       pointWiseBinarySubtract  -> vecrSubVV
-       pointWiseBinaryAdd       -> vecrAddVV
+       pointWiseBinarySubtract  -> rV_SubVV__
+       pointWiseBinaryAdd       -> rV_AddVV__
 
        // Assignment operations (LHS = 
-       assign uniform           -> vecrEqR
-       assign vector            -> vecrEqV
-       assign exp of vector     -> vecrExpV
+       assign uniform           -> rV_EqR__
+       assign vector            -> rV_EqV__
+       assign exp of vector     -> rV_ExpV__
 
        Corresponding functions that return a complex-valued vector
        will start with vc. Arguments on the RHS side will use C for
        complex scalar, R for real scalar, V for complex vector and
        Vr for real vector.
 
-       Corresponding C++ wrapper functions start with gpuVr or gpuVc.
-       These are called using conventional C++ syntax, and compute 
-       the thread grid internally. 
-
        Overloaded versions of wrapper functions will be provided for
        pointers, for which size must be provided as a parameter, and 
        for field containers, for which size is provided by container.
-
-       Rationale for "gpu" prefix on cpu functions rather than kernels: 
-       You don't need a "gpu" prefix on a kernel because the syntax 
-       makes it clear that it's a kernel in declaration, definition, 
-       and calling.  The prefix gpu on a wrapper declares that the 
-       computation is actually done on a gpu, which isn't otherwise
-       clear from the syntax.
 
        Parameter order same as in order of equation (lhs first).
 
     Example wrapper function for reductions:
 
-       gpuReduceSum
-       gpuReduceAbMax
+       reduceSum
+       reduceAbMax
 
-       Corresponding kernel names have prefix reduce rather than gpuReduce
+       Corresponding kernel names have suffix __ 
 
        Overloaded versions of wrappers for pointers and containers,
        in which thread grid is computed internally.
@@ -120,8 +110,8 @@ Clean up of kernel functions
        LinearAlgebra  -> VectorOps
        KernelWrappers -> Reductions (both kernels and C++ wrappers)
 
-       Provide overloaded operations for containers in files that
-       define containers
+       Provide overloaded operations for field containers in 
+       directories or files that define containers
 
        Move Helpers to draft/pspg ?
       

@@ -4,19 +4,19 @@
 \ref user_param_mixture_page  (Next)
 <BR>
 
-Users of PSCF require precise documentation of the required format for
-each block that can appear with a parameter file of a PSCF program.
-This page describes a representation that we use to concisely indicate
-the format of each parameter file block. This format representation is
-similar to that of the actual block, supplemented by notation to indicate
-the data types of parameter values and the use of special symbols to
-indicate syntactical elements such as array-valued parameters, optional
-elements and selectable subblocks.
+Users of PSCF require precise and complete documentation of the required 
+format for each block that can appear with a parameter file of a PSCF 
+program.  This page describes a representation that is used in the PSCF
+documentation to indicate the format of each parameter file block. This 
+format representation is similar to that of the actual block, supplemented 
+by notation to indicate data types of parameter values, and by the use of 
+special symbols to indicate syntactical elements such as array-valued 
+parameters, optional elements and selectable subblocks.
 
 \section user_format_example1_sec Example 1
 
 As a simple first example of this sort of description, the overall syntax
-for a pscf_1d parameter file is shown below:
+for a pscf_1d parameter file is shown in skeleton form below:
 \code
 System{
    Mixture{ ... }
@@ -36,7 +36,7 @@ optional (i.e., omittable).  Parameters and subblock labels that are not
 followed by an asterisk thus indicate required elements. The appearance
 of a "#" symbol after a block label indicate that the block is selectable. 
 The above description thus indicates that the Iterator and Sweep blocks 
-are both optional selectable elements.
+are both selectable optional elements.
 
 \section user_format_example2_sec Example 2
 
@@ -76,7 +76,8 @@ of parameter values, and any other required supplementary information.
 The following conventions, most of which are illustrated in the above
 examples, are used in this type of parameter file format summary:
 
- - <b> Parameters </b>: Individual parameters are indicated using the syntax
+ - <b> Parameters </b>: Individual parameters are indicated using the 
+   syntax
    \code
        label   type
    \endcode
@@ -84,42 +85,11 @@ examples, are used in this type of parameter file format summary:
    "type" is a string that identifies the data type of the parameter
    value (e.g., int, real, string, etc.).
 
- - <b> Subblocks </b>: The presence of a nested subblock is indicated using
-   the syntax
-   \code
-       Label{ ... }
-   \endcode
-   where "Label" denote the label string for the subblock.
-
- - <b> Selectable blocks </b>: Selectable subblocks are indicated by
-   adding a "#" symbol after the subblock label and before the opening
-   curly bracket, using the syntax
-   \code
-       Label#{ ... }
-   \endcode
-   for a required but selectable subblock.  The label for a selectable
-   subblock in a format description should be the generic name for the
-   subblock (e.g., "Iterator", rather than the name for a specific
-   iteration algorithm).  This generic name is also the block label that
-   can be used to select the default choice for this block.
-
- - <b> Optional elements </b>: Optional subblocks and parameters (i.e.,
-   elements that may be omitted from the file) are indicated by an
-   asterisk after the subblock or parameter label. The label for an
-   optional simple parameter is thus
-   \code
-      label*   type
-   \endcode
-   where "label" denotes the actual label string. The label for an
-   optional selectable subblock places the asterisk after the # symbol,
-   giving Label#*{ .... }.
-
- - <b> Default values </b>: Default values for optional parameters may be
-   indicated by a comment enclosed in parentheses after the label and data
-   type. The comment is often of the form "( ... by default)", where
-   ... denotes the actual default value.  The default value is the value
-   assigned to the associated variable if the parameter is omitted from
-   the parameter file.
+   The main labels used to indicate elementary data types are "int" for 
+   integer, "real" for a real (i.e., floating point) number, "bool" for
+   a boolean value, a "string" for a string.  Values of boolean variables 
+   are given as 0 for false and 1 for true.  String parameters may not 
+   contain any whitespace.
 
  - <b> Arrays </b>: Parameters that represent one-dimensional arrays are
   indicated using the syntax
@@ -127,8 +97,9 @@ examples, are used in this type of parameter file format summary:
        label  Array[ type ]
    \endcode
    where "label" is the name of the array, and "type" is a string that
-   identifies the data type of an element value as given in the
-   parameter file.
+   identifies the data type of a single element.  For example, 
+   "monomers Array[real]" indicates that monomers is a one-dimensional 
+   array in which each element is a real floating point number. 
 
  - <b> Matrices </b>: Parameters that represent two-dimensional arrays
    or matrices that must be input in element format are indicated using
@@ -137,6 +108,46 @@ examples, are used in this type of parameter file format summary:
        label Matrix ( type )
    \endcode
    where "type" is the data type for a single element.
+
+ - <b> Subblocks </b>: The presence of a nested subblock is indicated using
+   the syntax
+   \code
+       Label{ ... }
+   \endcode
+   where "Label" denote the label string for the subblock. The ...
+   is used to indicate the body of the block, the format of which
+   must be described somewhere else in the documentation.
+
+ - <b> Optional elements </b>: Optional parameters and subblocks (i.e.,
+   elements that may be omitted from the file) are indicated by an
+   asterisk after the subblock or parameter label. The label for an
+   optional simple parameter is thus
+   \code
+      label*   type
+   \endcode
+   where "label" denotes the actual label string. 
+
+ - <b> Default values </b>: Default values for optional parameters may 
+   be indicated by a comment enclosed in parentheses after the label and 
+   data type. The comment is often of the form "( ... by default)", where
+   ... denotes the actual default value.  The default value is the value
+   assigned to the associated variable if the parameter is omitted from
+   the parameter file.
+
+ - <b> Selectable subblocks </b>: Selectable subblocks are indicated by
+   adding a "#" symbol after the subblock label and before the opening
+   curly bracket, using the syntax
+   \code
+       Label#{ ... }
+   \endcode
+   for a required but selectable subblock.  The label for an selectable 
+   subblock that is also optional place an asterisk after the # symbol, 
+   giving Label#*{ .... }.  The label for a selectable subblock in a 
+   format description should be the generic name for the subblock 
+   (e.g., the generic name "Iterator", rather than the name of a 
+   class that implements a specific iterator algorithm). This generic 
+   name can also be used as a block label to select the default choice 
+   for this block.
 
 <BR>
 \ref user_param_syntax_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp;

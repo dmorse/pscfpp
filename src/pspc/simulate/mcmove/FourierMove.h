@@ -8,14 +8,14 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "McMove.h"                          //base class
-#include <prdc/cpu/RField.h>
-#include <prdc/cpu/RFieldDft.h> 
-#include <prdc/crystal/shiftToMinimum.h>
-#include <pscf/math/IntVec.h>
-#include <util/param/ParamComposite.h>
-#include <util/containers/DArray.h>
-#include <util/global.h>
+#include "McMove.h"                          // base class
+#include <prdc/cpu/RField.h>                 // member
+#include <prdc/cpu/RFieldDft.h>              // member
+#include <util/containers/DArray.h>          // member
+//#include <prdc/crystal/shiftToMinimum.h>
+//#include <pscf/math/IntVec.h>
+//#include <util/param/ParamComposite.h>
+//#include <util/global.h>
 
 namespace Pscf {
 namespace Pspc
@@ -144,16 +144,21 @@ namespace Pspc
       * distribution [-stepSize_*S(q)^(1/2), stepSize_*S(q)^(1/2)].
       */ 
       double stepSize_;
-      
-      /// Input variable, F*. Ex: at f = 0.5, F* = 20.990; at f = 0.45, F* = 21.396.
+     
+      /** 
+      * Input variable, F*. 
+      *
+      * Ex: at f = 0.5, F* = 20.990; at f = 0.45, F* = 21.396.
+      */
       double fStar_;
       
       /**
       * Input variable tau_. 
       *
       * User can calculate using Equation (5.2) from reference:
-      * "Fluctuation effects in the theory of microphase separation in block copolymers."
-      * Fredrickson, G. H., & Helfand, E. (1987).J. Chem. Phys. 87(1), 697-705.
+      * "Fluctuation effects in the theory of microphase separation
+      * in block copolymers." Fredrickson, G. H., & Helfand, E. 
+      * J. Chem. Phys. 87(1), 697-705 (1987).
       */
       double tau_;
       
@@ -175,7 +180,7 @@ namespace Pspc
       /// wField in in Fourier Space
       DArray< RFieldDft<D> > wKGrid_;
       
-      /// wField after attempt McMove in real space. Local variable wFieldTmp_ 
+      /// Local value of wField after attempt McMove.
       DArray< RField<D> > wFieldTmp_;
       
       /// Has the variable been allocated?
@@ -183,6 +188,12 @@ namespace Pspc
    
    };
       
+   #ifndef PSPC_FOURIER_MOVE_TPP
+   // Suppress implicit instantiation
+   extern template class FourierMove<1>;
+   extern template class FourierMove<2>;
+   extern template class FourierMove<3>;
+   #endif
 
 }
 }

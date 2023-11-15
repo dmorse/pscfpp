@@ -63,13 +63,13 @@ namespace Pspg {
       DArray< RField<D> > wc;
 
       /// Monte-Carlo Hamiltonian value.
-      double mcHamiltonian;
+      double hamiltonian;
       
       /// Monte-Carlo ideal gas contribution to Hamiltonian value.
-      double mcIdealHamiltonian;
+      double idealHamiltonian;
       
       /// Monte-Carlo field part contribution to Hamiltonian value.
-      double mcFieldHamiltonian;
+      double fieldHamiltonian;
 
       /// Is this struct being used to store data?
       bool hasData;

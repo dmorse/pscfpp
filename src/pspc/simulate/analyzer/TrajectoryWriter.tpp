@@ -9,12 +9,12 @@
 
 #include "TrajectoryWriter.h"
 #include "Analyzer.h"
+#include <pspc/simulate/McSimulator.h>
 #include <pspc/System.h>
 #include <util/misc/FileMaster.h>
-#include <util/archives/Serializable_includes.h>
+//#include <util/archives/Serializable_includes.h>
 #include <util/misc/ioUtil.h>
 #include <sstream>
-
 
 namespace Pscf {
 namespace Pspc 
@@ -26,7 +26,8 @@ namespace Pspc
    * Constructor.
    */
    template <int D>
-   TrajectoryWriter<D>::TrajectoryWriter(McSimulator<D>& mcSimulator, System<D>& system) 
+   TrajectoryWriter<D>::TrajectoryWriter(McSimulator<D>& mcSimulator, 
+                                         System<D>& system) 
     : Analyzer<D>(),
       nSample_(0),
       isInitialized_(false),
@@ -43,7 +44,6 @@ namespace Pspc
       Analyzer<D>::readParameters(in);
       isInitialized_ = true;
    }
-
    
    #if 0
    /*
@@ -56,7 +56,6 @@ namespace Pspc
       ar & nSample_;
       isInitialized_ = true;
    }
-   #endif
 
    /*
    * Save state to archive.
@@ -64,6 +63,7 @@ namespace Pspc
    template <int D>
    void TrajectoryWriter<D>::save(Serializable::OArchive& ar)
    { ar & *this; }
+   #endif
 
    /*
    * Read interval and outputFileName. 

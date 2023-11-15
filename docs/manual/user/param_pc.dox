@@ -1,6 +1,6 @@
 /*! \page user_param_pc_page Parameter File - pscf_pc 
 
-\ref user_param_fd_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref user_param_1d_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
 \ref user_param_pg_page  (Next)
 <BR>
 
@@ -269,7 +269,7 @@ LinearSweep.  The required parameter file format for a linear sweep is
 described in detail \ref user_param_sweep_linear_sec "here".
 
 <BR>
-\ref user_param_fd_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref user_param_1d_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
 \ref user_param_page     (Up)   &nbsp; &nbsp; &nbsp; &nbsp;
 \ref user_param_pg_page  (Next)
 

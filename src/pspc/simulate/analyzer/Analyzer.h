@@ -2,11 +2,12 @@
 #define PSPC_ANALYZER_H
 
 #include <util/param/ParamComposite.h>      // base class
-#include <util/misc/FileMaster.h>           // member variable
 
 #include <string>
-#include <iostream>
-#include <fstream>
+
+namespace Util {
+   class FileMaster;
+}
 
 namespace Pscf {
 namespace Pspc {
@@ -68,37 +69,6 @@ namespace Pspc {
       * \param in input parameter stream
       */
       virtual void readParameters(std::istream& in);
-
-      #if 0
-      /**
-      * Load parameters from archive.
-      *
-      * Default implementation, loads interval and outputFileName.
-      *
-      * \param ar input/loading archive
-      */
-      virtual void loadParameters(Serializable::IArchive& ar);
-
-      /**
-      * Load parameters to archive.
-      *
-      * Default implementation saves interval and outputFileName.
-      *
-      * \param ar loading/saving archive
-      */
-      virtual void save(Serializable::OArchive& ar);
-  
-      /**
-      * Serialize to/from an archive. 
-      *
-      * Saves interval and outputFileName.
-      * 
-      * \param ar      archive
-      * \param version archive version id
-      */
-      template <class Archive>
-      void serialize(Archive& ar, const unsigned int version);
-      #endif
 
       /**
       * Complete any required initialization.
@@ -178,22 +148,6 @@ namespace Pspc {
       */
       void readOutputFileName(std::istream &in);
 
-      #if 0
-      /**
-      * Load interval from archive, with error checking.
-      *
-      * \param ar input/loading archive
-      */
-      void loadInterval(Serializable::IArchive& ar);
-
-      /**
-      * Load output file name from archive.
-      *
-      * \param ar input/loading archive
-      */
-      void loadOutputFileName(Serializable::IArchive& ar);
-      #endif
-
       /**
       * Get the FileMaster by reference.
       *
@@ -248,18 +202,6 @@ namespace Pspc {
    {  return outputFileName_; }
 
    // Method template
-
-   #if 0
-   /*
-   * Serialize to/from an archive. 
-   */
-   template <class Archive>
-   void Analyzer<D>::serialize(Archive& ar, const unsigned int version)
-   {
-      ar & interval_;
-      ar & outputFileName_;
-   }
-   #endif
 
    #ifndef PSPC_ANALYZER_TPP
    // Suppress implicit instantiation

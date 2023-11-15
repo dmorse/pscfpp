@@ -62,17 +62,22 @@ namespace Pspg {
       * \param group  associated space group
       * \param basis  associated Basis object
       * \param waveList  associated WaveList object
-      * \param fileMaster  associated FileMaster (for file paths)
       */
       void associate(Mesh<D> const & mesh,
                      FFT<D> const & fft,
-                     typename UnitCell<D>::LatticeSystem& lattice,
+                     typename UnitCell<D>::LatticeSystem const & lattice,
                      bool const & hasGroup,
                      std::string const & groupName,
                      SpaceGroup<D> const & group,
                      Basis<D>& basis,
-                     WaveList<D>& waveList,
-                     FileMaster const & fileMaster);
+                     WaveList<D>& waveList);
+
+      /**
+      * Create association with a FileMaster.
+      *
+      * \param fileMaster  associated FileMaster (for file paths)
+      */
+      void setFileMaster(FileMaster const & fileMaster);
 
       /// \name Field File IO - Symmetry Adapted Basis Format
       ///@{
@@ -534,7 +539,7 @@ namespace Pspg {
          return *groupPtr_; 
       }
 
-      /// Get Basis by const reference.
+      /// Get Basis by non-const reference.
       Basis<D> & basis() const
       {
          UTIL_ASSERT(basisPtr_);  

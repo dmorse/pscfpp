@@ -27,7 +27,8 @@ namespace Pspg
    * Constructor.
    */
    template <int D>
-   TrajectoryWriter<D>::TrajectoryWriter(McSimulator<D>& mcSimulator, System<D>& system) 
+   TrajectoryWriter<D>::TrajectoryWriter(McSimulator<D>& mcSimulator, 
+                                         System<D>& system) 
     : Analyzer<D>(),
       nSample_(0),
       isInitialized_(false),

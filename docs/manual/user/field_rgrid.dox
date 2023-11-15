@@ -13,8 +13,8 @@ modified diffusion equation.
 
 \section user_field_rgrid_hex_sec Example: 2D Hex Phase 
 
-Here is example of a converged omega field for a hex phase of
-a diblock copolymer melt:
+Here is example of a converged omega field for a hex phase of a diblock 
+copolymer melt:
 
 \code
  format  1  0
@@ -49,15 +49,31 @@ mesh
 
 Like other field formats, this file format contains a header section 
 with crystallographic information followed by a data section.  The header 
-section is similar that for the symmetry adapted format, except that the 
-last variable is an array "mesh" of integers giving the number of grid 
-points in each direction. In this example, because it is a two-dimensional 
-crystal (dim = 2), this array contains two numbers, both equal to 24,
-indicating a grid in which there are 24 grid points along each coordinate 
-axis. To describe a hexagonal phase, we use a non-orthogonal coordinate 
+section is similar that for the symmetry adapted format, except for two
+differences:
+
+   - The last variable in the header is an array "mesh" of integers
+     giving the number of grid points in each direction. 
+
+   - The space_group parameter is optional element of the header for
+     an r-grid field file.
+     
+In this example, because it is a two-dimensional crystal (dim = 2), 
+the mesh parameter contains two numbers, both equal to 24, indicating 
+a grid in which there are 24 grid points along each coordinate axis. 
+To describe a hexagonal phase, we use a non-orthogonal coordinate 
 system in which each axis is parallel to one of the Bravais lattice 
 vectors, which in a hexagonal phase have an angle of 60 degrees between 
 them.
+
+The group_name parameter, which is present in the above example, is 
+an optional element of r-grid file. This parameter may be included to 
+document that the field is invariant under a known space group, 
+though the r-grid file format does not impose any space group symmetry.
+When a w-field in is read from an r-grid file by the READ_W_GRID
+command, however, the presence of any group_name parameter is actually
+ignored, and the field is treated as if it has no nontrivial space 
+group symmetry.
 
 The data section contains the values of fields associated with N_monomer 
 monomer types at grid points given by

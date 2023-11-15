@@ -1,5 +1,5 @@
-#ifndef PSPC_MC_HAMILTONIAN_ANALYZER_H
-#define PSPC_MC_HAMILTONIAN_ANALYZER_H
+#ifndef PSPC_HAMILTONIAN_ANALYZER_H
+#define PSPC_HAMILTONIAN_ANALYZER_H
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory
@@ -9,15 +9,13 @@
 */
 
 #include "AverageListAnalyzer.h"
-#include <pspc/System.h>
-
-namespace Util{
-   class Average;
-}
 
 namespace Pscf {
-namespace Pspc 
-{
+namespace Pspc {
+
+   template <int D> class System;
+   template <int D> class McSimulator;
+
    using namespace Util;
 
    /**
@@ -31,7 +29,7 @@ namespace Pspc
    * \ingroup Pspc_Simulate_Analyzer_Module
    */
    template <int D>
-   class McHamiltonianAnalyzer : public AverageListAnalyzer<D>
+   class HamiltonianAnalyzer : public AverageListAnalyzer<D>
    {
 
    public:
@@ -39,12 +37,12 @@ namespace Pspc
       /**
       * Constructor.
       */
-      McHamiltonianAnalyzer(McSimulator<D>& mcSimulator, System<D>& system);
+      HamiltonianAnalyzer(McSimulator<D>& mcSimulator, System<D>& system);
    
       /**
       * Destructor.
       */
-      virtual ~McHamiltonianAnalyzer()
+      virtual ~HamiltonianAnalyzer()
       {} 
       
       /**
@@ -101,6 +99,7 @@ namespace Pspc
       McSimulator<D>& mcSimulator();
  
    private: 
+
       /// Has eigenvalue analysis of projected chi matrix been performed?
       bool hasAnalyzeChi_;
       
@@ -117,14 +116,20 @@ namespace Pspc
    
    // Get the parent system.
    template <int D>
-   inline System<D>& McHamiltonianAnalyzer<D>::system()
+   inline System<D>& HamiltonianAnalyzer<D>::system()
    {  return *systemPtr_; }
    
    //Get parent McSimulator object.
    template <int D>
-   inline McSimulator<D>& McHamiltonianAnalyzer<D>::mcSimulator()
+   inline McSimulator<D>& HamiltonianAnalyzer<D>::mcSimulator()
    {  return *mcSimulatorPtr_; }
 
+   #ifndef PSPC_HAMILTONIAN_ANALYZER_TPP
+   // Suppress implicit instantiation
+   extern template class HamiltonianAnalyzer<1>;
+   extern template class HamiltonianAnalyzer<2>;
+   extern template class HamiltonianAnalyzer<3>;
+   #endif
 
 }
 }

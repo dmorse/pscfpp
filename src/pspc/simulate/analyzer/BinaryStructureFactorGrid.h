@@ -8,27 +8,21 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "Analyzer.h"
-#include <pspc/System.h>
-#include <prdc/cpu/RField.h>
-#include <prdc/cpu/RFieldDft.h> 
-#include <pscf/math/IntVec.h>
-#include <pscf/math/RealVec.h>
-#include <util/param/ParamComposite.h>
-#include <util/containers/DMatrix.h>             
-#include <util/containers/DArray.h>              
+#include "Analyzer.h"                             // base class
+
+#include <util/containers/DArray.h>               // member
 #include <util/accumulators/Average.h>            // member
-#include <util/global.h>
+#include <prdc/cpu/RFieldDft.h>                   // member
+#include <map>                                    // member
+
+#include <string>
 #include <iostream>
-#include <complex>
-#include <vector>
-#include <map>
 
 namespace Pscf {
-namespace Pspc 
-{
+namespace Pspc {
 
    template <int D> class System;
+   template <int D> class McSimulator;
 
    using namespace Util;
    using namespace Pscf::Prdc::Cpu;
@@ -208,6 +202,7 @@ namespace Pspc
       
       /// Map key to be qsquare and value to be average structure factor over k of equal magnitude
       std::map<double, double> averageSMap_;
+
    };
    
    // Get the parent system.
@@ -220,6 +215,12 @@ namespace Pspc
    inline McSimulator<D>& BinaryStructureFactorGrid<D>::mcSimulator()
    {  return *mcSimulatorPtr_; }
 
+   #ifndef PSPC_BINARY_STRUCTURE_FACTOR_GRID_TPP
+   // Suppress implicit instantiation
+   extern template class BinaryStructureFactorGrid<1>;
+   extern template class BinaryStructureFactorGrid<2>;
+   extern template class BinaryStructureFactorGrid<3>;
+   #endif
 
 }
 }

@@ -10,6 +10,8 @@
 
 #include "System.h"
 
+#include <pspg/simulate/McSimulator.h>
+#include <pspg/simulate/Simulator.h>
 #include <pspg/compressor/Compressor.h>
 #include <pspg/compressor/CompressorFactory.h>
 #include <pspg/sweep/Sweep.h>
@@ -47,7 +49,6 @@ namespace Pspg
    System<D>::System()
     : mixture_(),
       domain_(),
-      mcSimulator_(*this),
       fileMaster_(),
       homogeneous_(),
       interactionPtr_(0),
@@ -57,6 +58,7 @@ namespace Pspg
       sweepFactoryPtr_(0),
       compressorPtr_(0),
       compressorFactoryPtr_(0),
+      simulatorPtr_(0),
       w_(),
       c_(),
       fHelmholtz_(0.0),
@@ -64,7 +66,7 @@ namespace Pspg
       fInter_(0.0),
       pressure_(0.0),
       hasMixture_(false),
-      hasMcSimulator_(false),
+      hasSimulator_(false),
       isAllocatedGrid_(false),
       isAllocatedBasis_(false),
       hasCFields_(false),
@@ -78,6 +80,7 @@ namespace Pspg
       iteratorFactoryPtr_ = new IteratorFactory<D>(*this);
       sweepFactoryPtr_ = new SweepFactory<D>(*this);
       compressorFactoryPtr_ = new CompressorFactory<D>(*this);
+      simulatorPtr_ = new McSimulator<D>(*this);
       BracketPolicy::set(BracketPolicy::Optional);
       ThreadGrid::init();
    }
@@ -108,6 +111,9 @@ namespace Pspg
       }
       if (compressorFactoryPtr_) {
          delete compressorFactoryPtr_;
+      }
+      if (simulatorPtr_) {
+         delete simulatorPtr_;
       }
    }
 
@@ -293,12 +299,12 @@ namespace Pspg
          Log::file() << indent() << "  Compressor{ [absent] }\n";
       }
       
-      // Optionally read an McSimulator
-      readParamCompositeOptional(in, mcSimulator_);
-      if (mcSimulator_.isActive()) {
-         hasMcSimulator_ = true;
+      // Optionally read an Simulator
+      readParamCompositeOptional(in, simulator());
+      if (simulator().isActive()) {
+         hasSimulator_ = true;
       } else {
-         hasMcSimulator_ = false;
+         hasSimulator_ = false;
       }
 
       // Initialize homogeneous object
@@ -379,7 +385,7 @@ namespace Pspg
             Log::file() << "   "  << nStep << "\n";
             simulate(nStep);
          } else
-         if (command == "ANALYZE_TRAJECTORY") {
+         if (command == "ANALYZE" || command == "ANALYZE_TRAJECTORY") {
             int min;
             in >> min;
             int max;
@@ -387,7 +393,7 @@ namespace Pspg
             std::string classname;
             readEcho(in, classname);
             readEcho(in, filename);
-            mcSimulator_.analyzeTrajectory(min, max, classname, filename);
+            simulator().analyzeTrajectory(min, max, classname, filename);
          } else
          if (command == "WRITE_TIMER") {
             readEcho(in, filename);
@@ -839,8 +845,8 @@ namespace Pspg
    void System<D>::simulate(int nStep)
    {
       UTIL_CHECK(hasCompressor());
-      UTIL_CHECK(hasMcSimulator_);
-      mcSimulator_.simulate(nStep);
+      UTIL_CHECK(hasSimulator());
+      simulator().simulate(nStep);
       hasCFields_ = true;
    }
 
@@ -973,13 +979,13 @@ namespace Pspg
          iterator().outputTimers(Log::file());
          iterator().outputTimers(out);
       }
-      if (hasMcSimulator_){
-         mcSimulator_.outputTimers(Log::file());
-         mcSimulator_.outputTimers(out);
-      }
-      if (compressorPtr_){
+      if (hasCompressor()){
          compressor().outputTimers(Log::file());
          compressor().outputTimers(out);
+      }
+      if (hasSimulator()){
+         simulator().outputTimers(Log::file());
+         simulator().outputTimers(out);
       }
    }
    
@@ -992,11 +998,11 @@ namespace Pspg
       if (iteratorPtr_) {
          iterator().clearTimers();
       }
-      if (hasMcSimulator_){
-         mcSimulator_.clearTimers();
-      }
-      if (compressorPtr_){
+      if (hasCompressor()){
          compressor().clearTimers();
+      }
+      if (hasSimulator()){
+         simulator().clearTimers();
       }
    }
    /*

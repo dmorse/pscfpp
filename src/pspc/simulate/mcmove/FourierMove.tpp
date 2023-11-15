@@ -10,18 +10,22 @@
 
 #include "FourierMove.h"
 #include "McMove.h" 
-#include <util/param/ParamComposite.h>
 #include <pspc/System.h>      
-#include <util/archives/Serializable_includes.h>
-#include <util/random/Random.h>
-#include <pscf/math/IntVec.h>
-#include <pscf/math/RealVec.h>
-#include <util/format/Int.h>
+#include <prdc/crystal/shiftToMinimum.h>
 #include <pscf/mesh/MeshIterator.h>
+#include <pscf/math/IntVec.h>
+//#include <pscf/math/RealVec.h>
+#include <util/random/Random.h>
+#include <util/param/ParamComposite.h>
+#include <util/global.h>
+
 #include <iostream>
 #include <complex>
 #include <random>
 #include <cmath>
+
+//#include <util/archives/Serializable_includes.h>
+//#include <util/format/Int.h>
 
 namespace Pscf {
 namespace Pspc 

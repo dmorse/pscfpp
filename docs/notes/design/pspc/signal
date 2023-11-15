@@ -1,0 +1,45 @@
+Proposal: Consider using signals to keep track of changes to
+unit cell dimensions and initialization of a Basis. Changes to 
+unit cell cause changes in internal parameters in all Block objects, 
+as well as WaveList in Pspg.
+
+Domain{
+
+   basisInitialatizeSignal(...)
+   unitCellInitializeSignal()
+   unitCellModifySignal()
+
+   unitSignal_.addObserver(*this, Domain::noteUnitCellInitialization();
+
+   void unitCellInitializeAction();
+
+   void unitCellModifyAction();
+
+   void basisModifyAction();
+
+private:
+
+   Signal<>  unitCellInitializeSignal_;
+   Signal<>  unitCellModifySignal_;
+   Signal<>  basisInitializeSignal_;
+
+   void unitCellInitializeObserver();
+   void unitCellModifyObserver();
+
+}
+
+FieldIo{
+
+  setUnitCellInitializeSignal(....)
+  setUnitCellChangeSignal(....)
+  setBasisInitializeSignal(...)
+
+  readFieldFileHeader()
+  When unit cell changes
+  if (unitCellSignal) {
+     unitCellSignal_.notify();
+
+  }
+
+}
+

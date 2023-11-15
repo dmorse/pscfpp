@@ -10,9 +10,10 @@
 
 #include "McMove.h"
 
+#include <pspc/simulate/McSimulator.h>
+#include <pspc/compressor/Compressor.h>
 #include <pspc/System.h>
 #include <util/archives/Serializable_includes.h>
-#include <pspc/compressor/Compressor.h>
 
 namespace Pscf {
 namespace Pspc {
@@ -75,12 +76,12 @@ namespace Pspc {
       incrementNAttempt();
 
       // Get current Hamiltonian
-      double oldHamiltonian = mcSimulator().mcHamiltonian();
+      double oldHamiltonian = mcSimulator().hamiltonian();
 
       // Save current state
       mcSimulator().saveMcState();
 
-      // Clear both eigen-components of the fields and mcHamiltonian
+      // Clear both eigen-components of the fields and hamiltonian
       mcSimulator().clearData();
       
       // Attempt modification
@@ -99,10 +100,10 @@ namespace Pspc {
       computeWCTimer_.stop();
       
       // Evaluate new Hamiltonian
-      computeMcHamiltonianTimer_.start();
-      mcSimulator().computeMcHamiltonian();
-      double newHamiltonian = mcSimulator().mcHamiltonian();
-      computeMcHamiltonianTimer_.stop();
+      computeHamiltonianTimer_.start();
+      mcSimulator().computeHamiltonian();
+      double newHamiltonian = mcSimulator().hamiltonian();
+      computeHamiltonianTimer_.stop();
 
       // Accept or reject move
       decisionTimer_.start();
@@ -150,12 +151,12 @@ namespace Pspc {
           << Dbl(computeWCTimer_.time()/nAttempt_, 9, 3)  << " s,  "
           << Dbl(computeWCTimer_.time()/total, 9, 3) << "\n";
       out << "Compute Hamiltonian:      "
-          << Dbl(computeMcHamiltonianTimer_.time(), 9, 3)  << " s,  "
-          << Dbl(computeMcHamiltonianTimer_.time()/nAttempt_, 9, 3)  << " s,  "
-          << Dbl(computeMcHamiltonianTimer_.time()/total, 9, 3) << "\n";
+          << Dbl(computeHamiltonianTimer_.time(), 9, 3)  << " s,  "
+          << Dbl(computeHamiltonianTimer_.time()/nAttempt_, 9, 3)  << " s,  "
+          << Dbl(computeHamiltonianTimer_.time()/total, 9, 3) << "\n";
       out << "Accept or Reject:         "
           << Dbl(decisionTimer_.time(), 9, 3)  << " s,  "
-          << Dbl(computeMcHamiltonianTimer_.time()/nAttempt_, 9, 3)  << " s,  "
+          << Dbl(computeHamiltonianTimer_.time()/nAttempt_, 9, 3)  << " s,  "
           << Dbl(decisionTimer_.time()/total, 9, 3) << "\n";
       out << "total time:               "
           << Dbl(total, 9, 3) << " s,  "
@@ -169,7 +170,7 @@ namespace Pspc {
       attemptMoveTimer_.clear();
       compressorTimer_.clear();
       computeWCTimer_.clear();
-      computeMcHamiltonianTimer_.clear();
+      computeHamiltonianTimer_.clear();
       decisionTimer_.clear();
       totalTimer_.clear();
    }

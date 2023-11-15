@@ -31,7 +31,12 @@ namespace Pspg {
       hasGroup_(false),
       hasFileMaster_(false),
       isInitialized_(false)
-   {  setClassName("Domain"); }
+   {  
+      setClassName("Domain"); 
+      fieldIo_.associate(mesh_, fft_,
+                         lattice_, hasGroup_, groupName_, group_, 
+                         basis_, waveList_);
+   }
 
    /*
    * Destructor.
@@ -43,9 +48,10 @@ namespace Pspg {
    template <int D>
    void Domain<D>::setFileMaster(FileMaster& fileMaster)
    {
-      fieldIo_.associate(mesh_, fft_,
-                         lattice_, hasGroup_, groupName_, group_, 
-                         basis_, waveList_, fileMaster);
+      //fieldIo_.associate(mesh_, fft_,
+      //                   lattice_, hasGroup_, groupName_, group_, 
+      //                   basis_, waveList_, fileMaster);
+      fieldIo_.setFileMaster(fileMaster);
       hasFileMaster_ = true;
    }
 
@@ -91,12 +97,22 @@ namespace Pspg {
    template <int D>
    void Domain<D>::readRGridFieldHeader(std::istream& in, int& nMonomer)
    {
+      // Preconditions - confirm that nothing is initialized
+      UTIL_CHECK(!isInitialized_);
+      UTIL_CHECK(lattice_ == UnitCell<D>::Null);
+      UTIL_CHECK(!unitCell_.isInitialized());
+      UTIL_CHECK(!hasGroup_);
+      UTIL_CHECK(groupName_ == "");
+
       // Read common section of standard field header
       int ver1, ver2;
       Pscf::Prdc::readFieldHeader(in, ver1, ver2,
                                   unitCell_, groupName_, nMonomer);
 
+      // Set lattice_
       lattice_ = unitCell_.lattice();
+      UTIL_CHECK(lattice_ != UnitCell<D>::Null);
+      UTIL_CHECK(unitCell_.isInitialized());
 
       // Read grid dimensions
       std::string label;

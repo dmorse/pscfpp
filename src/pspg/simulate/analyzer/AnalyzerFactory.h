@@ -11,11 +11,12 @@
 #include <util/param/Factory.h>  
 #include <pspg/simulate/analyzer/Analyzer.h>
 #include <pspg/System.h>
-#include <pspg/simulate/McSimulator.h>
 #include <string>
 
 namespace Pscf {
 namespace Pspg {
+
+   template <int D> class McSimulator;
 
    using namespace Util;
 

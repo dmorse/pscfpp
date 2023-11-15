@@ -17,7 +17,7 @@
        <li> \ref user_param_format_page   "Format Descriptions" </li>
        <li> \ref user_param_mixture_page  "Mixture Block" </li>
        <li> \ref user_param_sweep_page    "Parameter Sweeps" </li>
-       <li> \ref user_param_fd_page </li>
+       <li> \ref user_param_1d_page </li>
        <li> \ref user_param_pc_page </li>
        <li> \ref user_param_pg_page </li>
      </ul>
@@ -36,7 +36,7 @@
    </li>
    <li> \subpage user_command_page   
      <ul>
-       <li> \ref user_command_fd_page </li>
+       <li> \ref user_command_1d_page </li>
        <li> \ref user_command_pc_page </li>
        <li> \ref user_command_pg_page </li>
      </ul>

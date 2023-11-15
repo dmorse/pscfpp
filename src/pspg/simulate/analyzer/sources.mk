@@ -4,8 +4,9 @@ pspg_simulate_analyzer_= \
   pspg/simulate/analyzer/AnalyzerManager.cu \
   pspg/simulate/analyzer/AnalyzerFactory.cu \
   pspg/simulate/analyzer/TrajectoryWriter.cu \
-  pspg/simulate/analyzer/McHamiltonianAnalyzer.cu \
-  pspg/simulate/analyzer/BinaryStructureFactorGrid.cu
+  pspg/simulate/analyzer/HamiltonianAnalyzer.cu \
+  pspg/simulate/analyzer/BinaryStructureFactorGrid.cu \
+  pspg/simulate/analyzer/StepLogger.cu 
   
 pspg_simulate_analyzer_OBJS=\
      $(addprefix $(BLD_DIR)/, $(pspg_simulate_analyzer_:.cu=.o))

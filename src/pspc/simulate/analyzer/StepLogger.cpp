@@ -5,12 +5,12 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "McHamiltonianAnalyzer.tpp"
+#include "StepLogger.tpp"
 
 namespace Pscf {
 namespace Pspc {
-   template class McHamiltonianAnalyzer<1>;
-   template class McHamiltonianAnalyzer<2>;
-   template class McHamiltonianAnalyzer<3>;
+   template class StepLogger<1>;
+   template class StepLogger<2>;
+   template class StepLogger<3>;
 }
 }

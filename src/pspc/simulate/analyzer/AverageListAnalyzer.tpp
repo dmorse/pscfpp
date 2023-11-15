@@ -9,6 +9,7 @@
 */
 
 #include "AverageListAnalyzer.h"
+
 #include <pspc/System.h>
 #include <util/format/Int.h>
 #include <util/format/Dbl.h>

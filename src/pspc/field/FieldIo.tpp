@@ -62,18 +62,18 @@ namespace Pspc {
    {}
 
    /*
-   * Get and store addresses of associated objects.
+   * Create associations with other members of parent Domain.
    */
    template <int D>
    void 
-   FieldIo<D>::associate(Mesh<D> const & mesh,
-                         FFT<D> const & fft,
-                         typename UnitCell<D>::LatticeSystem & lattice,
-                         bool & hasGroup,
-                         std::string & groupName,
-                         SpaceGroup<D> & group,
-                         Basis<D> & basis,
-                         FileMaster const & fileMaster)
+   FieldIo<D>::associate(
+                    Mesh<D> const & mesh,
+                    FFT<D> const & fft,
+                    typename UnitCell<D>::LatticeSystem const & lattice,
+                    bool const & hasGroup,
+                    std::string const & groupName,
+                    SpaceGroup<D> const & group,
+                    Basis<D> & basis)
    {
       meshPtr_ = &mesh;
       fftPtr_ = &fft;
@@ -82,9 +82,18 @@ namespace Pspc {
       groupNamePtr_ = &groupName;
       groupPtr_ = &group;
       basisPtr_ = &basis;
-      fileMasterPtr_ = &fileMaster;
    }
   
+   /*
+   * Create an association with a FileMaster.
+   */
+   template <int D>
+   void FieldIo<D>::setFileMaster(FileMaster const & fileMaster)
+   {  fileMasterPtr_ = &fileMaster; }
+
+   /*
+   * Read a set of fields in basis format.
+   */
    template <int D>
    void FieldIo<D>::readFieldsBasis(std::istream& in, 
                                     DArray< DArray<double> >& fields,
@@ -374,6 +383,9 @@ namespace Pspc {
 
    }
    
+   /*
+   * Open/close a file and read a set of fields in basis format.
+   */
    template <int D>
    void FieldIo<D>::readFieldsBasis(std::string filename, 
                                     DArray<DArray<double> >& fields,
@@ -387,43 +399,68 @@ namespace Pspc {
       file.close();
    }
 
+   /*
+   * Read a single fields in basis format into input stream
+   */
    template <int D>
-   void FieldIo<D>::readFieldBasis(std::istream& in, DArray<double>& field,
-                                   UnitCell<D>& unitCell) 
-   const
+   void FieldIo<D>::readFieldBasis(std::istream& in, 
+                                   DArray<double>& field,
+                                   UnitCell<D>& unitCell) const
    {
+      // Local array, of data type required by readFieldsBasis
       DArray<DArray<double> > fields;
+
+      // If field is allocated, allocate local array fields
+      // Otherwise, pass unallocated fields array to readFieldsBasis
       if (field.isAllocated()) { 
          fields.allocate(1);
          fields[0].allocate(field.capacity());
-      } // otherwise pass unallocated fields into readFieldsBasis
+      } 
 
+      // Read file containing a single field, allocate if needed.
       readFieldsBasis(in, fields, unitCell);
       // Check that it only read 1 field
       UTIL_CHECK(fields.capacity() == 1); 
+
+      // Copy data from local array to function parameter 
       field = fields[0];
    }
 
+   /*
+   * Open-close a file and read single fields in basis format.
+   */
    template <int D>
    void FieldIo<D>::readFieldBasis(std::string filename, 
                                    DArray<double>& field,
                                    UnitCell<D>& unitCell) 
    const
    {
+      // Local array, of data type required by readFieldsBasis
       DArray<DArray<double> > fields;
+
+      // If field is allocated, allocate local array fields
+      // Otherwise, pass unallocated fields array to readFieldsBasis
       if (field.isAllocated()) { 
          fields.allocate(1);
          fields[0].allocate(field.capacity());
-      } // otherwise pass unallocated field into readFieldsBasis
+      }
+ 
+      // Read file containing a single field, allocate if needed.
       readFieldsBasis(filename, fields, unitCell);
-      UTIL_CHECK(fields.capacity() == 1); // Check that it only read 1 field
+      // Check that it only read 1 field
+      UTIL_CHECK(fields.capacity() == 1); 
+
+      // Copy data from local array to function parameter 
       field = fields[0];
    }
 
+   /*
+   * Write an array of fields in basis format to an output stream.
+   */
    template <int D>
    void 
    FieldIo<D>::writeFieldsBasis(std::ostream &out, 
-                                DArray<DArray<double> > const &  fields,
+                                DArray<DArray<double> > const & fields,
                                 UnitCell<D> const & unitCell) const
    {
       int nMonomer = fields.capacity();
@@ -458,6 +495,9 @@ namespace Pspc {
 
    }
 
+   /*
+   * Open-close a file, and write an array of fields in basis format.
+   */
    template <int D>
    void 
    FieldIo<D>::writeFieldsBasis(std::string filename, 
@@ -471,34 +511,48 @@ namespace Pspc {
        file.close();
    }
 
+   /*
+   * Write a single field in basis format to an output stream.
+   */
    template <int D>
    void FieldIo<D>::writeFieldBasis(std::ostream& out, 
                                     DArray<double> const & field,
                                     UnitCell<D> const & unitCell) 
    const
    {
+      // Create local array of type required by writeFieldsBasis
       DArray<DArray<double> > fields;
       fields.allocate(1);
       fields[0].allocate(field.capacity());
+
+      // Copy data from input parameter to local array
       fields[0] = field;
+
       writeFieldsBasis(out, fields, unitCell);
    }
 
    template <int D>
-   void FieldIo<D>::writeFieldBasis(std::string filename, 
-                                    DArray<double> const & field,
-                                    UnitCell<D> const & unitCell) 
-   const
+   void 
+   FieldIo<D>::writeFieldBasis(std::string filename, 
+                               DArray<double> const & field,
+                               UnitCell<D> const & unitCell) const
    {
+      // Create local array of type required by writeFieldsBasis
       DArray<DArray<double> > fields;
       fields.allocate(1);
       fields[0].allocate(field.capacity());
+
+      // Copy data from input parameter to local array
       fields[0] = field;
+
       writeFieldsBasis(filename, fields, unitCell);
    }
 
    // R-Grid Field Format IO
 
+   /*
+   * Read an array of fields in r-grid format from an input stream.
+   */
    template <int D>
    void FieldIo<D>::readFieldsRGrid(std::istream &in,
                                     DArray<RField<D> >& fields,
@@ -518,7 +572,7 @@ namespace Pspc {
          UTIL_CHECK(nMonomerFields == nMonomer);
 
          for (int i = 0; i < nMonomer; ++i) {
-            UTIL_CHECK(fields[i].meshDimensions() == mesh().dimensions());
+            UTIL_CHECK(fields[i].meshDimensions()==mesh().dimensions());
          }
       } else {
          fields.allocate(nMonomer);

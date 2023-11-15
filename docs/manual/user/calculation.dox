@@ -4,24 +4,26 @@
 \ref user_param_page (Next)
 <BR>
 
-The PSCF package allows users to perform three primary types of field 
-theoretic calculation. These are:
+The PSCF package allows users to perform two primary types of field 
+theoretic calculation of material properties. These are:
 
-   - \ref user_calculation_SCFT_sec  "Self-Consistent Field Theory (SCFT) calculations"
+  - Self-Consistent Field Theory (SCFT)
 
-   - \ref user_calculation_Sweep_sec "SCFT parameter sweeps"
+  - Field Theoretic Monte-Carlo (FTMC) 
 
-   - \ref user_calculation_FTMC_sec  "Field Theoretic Monte-Carlo (FTMC) simulations"
+Field theoretic Monte-Carlo (FTMC) simulations can be performed with the 
+pscf_pc and pscf_pg programs for periodic systems, but not with the 
+pscf_1d program.  All three PSCF programs (pscf_1d, pscf_pc and pscf_pg) 
+can perform SCFT calculations.  All three PSCF programs can also perform 
+SCFT parameter sweeps. A \ref user_param_sweep_page "parameter sweep" is 
+an operations that performs a sequence of SCFT calculations for slightly 
+different choices of parameter values spaced along a path through 
+parameter space, as discussed \ref user_param_sweep_page "here".
 
-An SCFT parameter sweep is an operation that performs a sequence of SCFT
-calculations for slightly different choices of parameter values spaced 
-along a user-defined path through parameter space.
-Field theoretic Monte-Carlo (FTMC) simulations can be performed with the
-pscf_pc and pscf_pg programs, but not with pscf_1d. SCFT calculations and
-SCFT parameter sweeps can be performed using any PSCF program.  
-
-Each of these three types of calculation may be initiated by a specific 
-type of command in the command file:
+Each of the PSCF programs is initialized using data in a parameter file
+and then executes a series of commands specified in a command file. The 
+following commands performs one of the types of calculation described 
+above:
 
    - ITERATE performs a single SCFT calculation 
 
@@ -29,81 +31,31 @@ type of command in the command file:
 
    - SIMULATE performs an FTMC simulation 
 
-Each of these three types of calculation requires some types of 
-information from the parameter file that are not be required for other 
-types of calculation. For example SCFT calculation and SCFT parameter
-sweep requires information about a choice of iteration algorithm that 
-is not relevant for an FTMC simulation. Conversely, and FTMC simulation 
-requires information about Monte-Carlo moves that is not relevant to an 
-SCFT calculation. The required format of a PSCF parameter file thus 
-depends somewhat on what type of calculation one plans to perform, as
-dictated by commands in the command file.
+The format of a parameter file contains some optional elements that are 
+required for some types of calculations but unnecessary for others. The 
+required format of a parameter file depends to some extent on what type 
+of commands are used in the associated command file.  
 
-Each of the three primary types of calculation require an initial state 
-for the monomer chemical potential fields as an input. An ITERATE, SWEEP 
-or SIMULATE commands must thus each be preceded in the command file by 
-a command that reads an initial field configuration from a field file.
+For example, consider a parameter file that is designed to be initialize 
+an SCFT calculation, by using it together with a command file that invokes 
+the ITERATE or SWEEP command. The parameter file for such a calculation 
+must information that specifies a specifies a choice of SCFT iteration 
+algorithm from among several possible algorithms, and that specifies 
+values of parameters required by that algorithm. This information is 
+given in a section of the parameter file that is referred to in what 
+follows as an Iterator block. The Iterator block is an optional component 
+of a PSCF parameter file that is needed to initialize any sort of SCFT 
+calculations but that not is not needed to initialize an FTMC simulation.
+Conversely, a parameter files that is used to initialize an FTMC 
+simulation must contain other specialized blocks that specify information 
+about choices for algorithms that are specific to FTMC simulations, such 
+as Monte-Carlo moves, but that are not used in SCFT calculations.
 
-\section user_calculation_SCFT_sec Self-Consistent Field Theory (SCFT) Calculations
-
-The ITERATE command performs a calculation that attempts to iteratively
-solve the self-consistent field equations for a system characterized by 
-the current values for all physical parameters.  All of the required 
-inputs to an SCFT calculation are provided either in the parameter 
-file or in the field file that contains an initial guess for the monomer 
-chemical potential fields. 
-
-SCFT calculations for periodic systems, as performed by pscf_pc or
-pscf_pg, may either solve the self-consistent field equations for a
-rigid unit cell, with fixed unit cell parameters, or may iteratively 
-adjust the unit cell parameters of a flexible unit cell so as to 
-minimize the free energy density.  The choice of whether to treat the
-unit cell as rigid or flexible is determined by a boolean variable in 
-a section of the parameter file that specifies the behavior of the 
-SCFT iteration algorithm.  The field file formats used by pscf_pc and 
-pscf_pg programs to describe periodic systems contain information about 
-the crystal type (Bravais lattice system) and unit cell parameters, as
-well as field configurations.  Initial guesses for unit cell parameters 
-of a flexible unit cell, or fixed values for a rigid unit cell, are 
-thus usually obtained from the field file that contains the initial 
-field field configuration.
-
-The parameter file used with a command file that contains an ITERATE 
-command must an "Iterator" block that specifies the error threshhold
-and other input parameters for an SCFT iteration algorithm. 
-
-\section user_calculation_Sweep_sec SCFT Parameter Sweeps
-
-The SWEEP command performs a sequence of SCFT calculations for slightly 
-different choices of parameter values chosen to corresponding to points 
-along a line or path through the space of all possible parameter values. 
-A special block in the parameter file (a Sweep block) is used to define 
-the desired path through parameter space, and the spacing of points 
-along this path. A sweep can be used to define a sequence of state 
-points along which values of Flory-Huggins chi parameters, block 
-lengths, species volume fractions or any other parameter or combination 
-of parameters vary in evenly spaced steps.  An initial field 
-configuration that is read from a field file is used as an initial 
-guess for the first state in such a sequence, and initial guesses for 
-subsequent states are obtained by extrapolation of converged solutions 
-obtained at previous states. Parameter sweeps are useful as a tool for 
-mapping out SCFT predictions for regions in parameter space in which 
-different competing phases are thermodynamically stable. 
-
-The parameter file used with a command file that contains a SWEEP block
-must contain both an "Iterator" block and a "Sweep" block. The Iterator
-block controls the iteration algorithm used for each state point, as 
-for a single SCFT calculation, and the "Sweep" block specifies the 
-desired sequence of choices for parameter values. The Sweep block is
-described in more detail \ref user_param_sweep_page "here". 
-
-\section user_calculation_FTMC_sec Field-Theoretic Monte-Carlo (FTMC) Simulation
-
-To be written.
-
-The parameter file used with a command file that contains a SIMULATE 
-command must contain a "Compressor" block and an "McMoveManager" block,
-as described in more detail ....
+The discussion of parameter files that begins on the 
+\ref user_param_page "following page" focuses specifically on describing 
+elements of a parameter file that are used in SCFT calculations and SCFT 
+parameter sweeps. Parameter file sections that provide information that 
+is only needed for FTMC calculations are discussed separately. 
 
 <BR>
 \ref user_usage_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
