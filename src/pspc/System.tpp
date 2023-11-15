@@ -417,7 +417,7 @@ namespace Pspc {
             std::string classname;
             readEcho(in, classname);
             readEcho(in, filename);
-            simulator().analyzeTrajectory(min, max, classname, filename);
+            simulator().analyze(min, max, classname, filename);
          } else
          if (command == "COMPRESS") {
             // Impose incompressibility

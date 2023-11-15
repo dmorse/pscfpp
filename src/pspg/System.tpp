@@ -393,7 +393,7 @@ namespace Pspg
             std::string classname;
             readEcho(in, classname);
             readEcho(in, filename);
-            simulator().analyzeTrajectory(min, max, classname, filename);
+            simulator().analyze(min, max, classname, filename);
          } else
          if (command == "WRITE_TIMER") {
             readEcho(in, filename);

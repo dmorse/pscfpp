@@ -64,8 +64,17 @@ namespace Pspc {
    */
    template <int D>
    void Simulator<D>::simulate(int nStep)
-   {}
+   {  UTIL_THROW("Error: Unimplemented function Simulator<D>::simulate"); }
 
+   /*
+   * Open, read and analyze a trajectory file
+   */
+   template <int D>
+   void Simulator<D>::analyze(int min, int max,
+                              std::string classname,
+                              std::string filename)
+   {  UTIL_THROW("Error: Unimplemented function Simulator<D>::analyze"); }
+   
    /*
    * Compute Monte Carlo Hamiltonian.
    */
@@ -337,16 +346,6 @@ namespace Pspc {
 
       hasWC_ = true;
    }
-   
-   /*
-   * Open, read and analyze a trajectory file
-   */
-   template <int D>
-   void Simulator<D>::analyzeTrajectory(int min, int max,
-                                          std::string classname,
-                                          std::string filename)
-   {}
-
    
    /*
    * Output all timer results.

@@ -75,10 +75,9 @@ namespace Pspg {
       * \param classname  name of the TrajectoryReader class to use
       * \param filename  name of the trajectory file
       */
-      virtual
-      void analyzeTrajectory(int min, int max,
-                             std::string classname,
-                             std::string filename);
+      virtual void analyze(int min, int max,
+                           std::string classname,
+                           std::string filename);
 
       /**
       * Output timing results.

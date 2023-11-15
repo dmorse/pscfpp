@@ -268,9 +268,9 @@ namespace Pspc {
    * Open, read and analyze a trajectory file
    */
    template <int D>
-   void McSimulator<D>::analyzeTrajectory(int min, int max,
-                                          std::string classname,
-                                          std::string filename)
+   void McSimulator<D>::analyze(int min, int max,
+                                std::string classname,
+                                std::string filename)
    {
       // Preconditions
       UTIL_CHECK(min >= 0);

@@ -17,9 +17,10 @@
 #include <pspg/simulate/trajectory/TrajectoryReaderFactory.h>
 #include <pspg/compressor/Compressor.h>
 
-//#include <util/random/Random.h>
 #include <util/misc/Timer.h>
 #include <util/global.h>
+
+//#include <util/random/Random.h>
 
 #include <gsl/gsl_eigen.h>
 
@@ -192,9 +193,9 @@ namespace Pspg {
    * Open, read and analyze a trajectory file
    */
    template <int D>
-   void McSimulator<D>::analyzeTrajectory(int min, int max,
-                                          std::string classname,
-                                          std::string filename)
+   void McSimulator<D>::analyze(int min, int max,
+                                std::string classname,
+                                std::string filename)
    {
       // Preconditions
       if (min < 0) UTIL_THROW("min < 0");

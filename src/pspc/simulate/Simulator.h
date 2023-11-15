@@ -62,6 +62,9 @@ namespace Pspc {
       * Perform a field theoretic simulation of nSteps using the
       * partial saddle-point approximation.
       *
+      * The default implemention is a do-nothing placeholder that throws
+      * an error if called, and must be re-implemented by subclasses.
+      *
       * \param nStep  number of simulation steps
       */
       virtual void simulate(int nStep);
@@ -70,16 +73,22 @@ namespace Pspc {
       * Read and analyze a trajectory file.
       *
       * This function uses an instance of the TrajectoryReader class
-      * specified by the "classname" argument to read a trajectory file.
+      * specified by the "classname" argument to read a trajectory 
+      * file with the specified named "filename". The function must
+      * open file, performs the analysis, and closes the file before
+      * returning.
       *
-      * \param min  start at this frame number
-      * \param max  end at this frame number
-      * \param classname  name of the TrajectoryReader class to use
-      * \param filename  name of the trajectory file
+      * The default implemention is a do-nothing placeholder that throws
+      * an error if called, and must be re-implemented by subclasses.
+      *
+      * \param min  first frame number
+      * \param max  last frame number
+      * \param classname  name of TrajectoryReader class
+      * \param filename  name of trajectory file
       */
-      virtual void analyzeTrajectory(int min, int max,
-                             std::string classname,
-                             std::string filename);
+      virtual void analyze(int min, int max,
+                           std::string classname,
+                           std::string filename);
 
       /**
       * Output timing results
@@ -92,7 +101,7 @@ namespace Pspc {
       virtual void clearTimers();
 
       /**
-      * Return the Monte Carlo step index
+      * Return the current simulation step index.
       */
       long iStep();
 
