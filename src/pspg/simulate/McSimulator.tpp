@@ -112,14 +112,13 @@ namespace Pspg {
       // Main Monte Carlo loop
       Timer timer;
       timer.start();
-      for (int iStep = 0; iStep < nStep; ++iStep) {
+      for (iStep_ = 0; iStep_ < nStep; ++iStep_) {
 
          // Analysis (if any)
          if (Analyzer<D>::baseInterval != 0) {
-            if (iStep % Analyzer<D>::baseInterval == 0) {
+            if (iStep_ % Analyzer<D>::baseInterval == 0) {
                if (analyzerManager_.size() > 0) {
-                  iStep_ = iStep;
-                  analyzerManager_.sample(iStep);
+                  analyzerManager_.sample(iStep_);
                }
             }
          }
@@ -128,6 +127,16 @@ namespace Pspg {
          mcMoveManager_.chooseMove().move();
 
       }
+
+      // Final analysis (if any)
+      if (Analyzer<D>::baseInterval != 0) {
+         if (iStep_ % Analyzer<D>::baseInterval == 0) {
+            if (analyzerManager_.size() > 0) {
+               analyzerManager_.sample(iStep_);
+            }
+         }
+      }
+
       timer.stop();
       double time = timer.time();
 
@@ -137,10 +146,11 @@ namespace Pspg {
          analyzerManager_.output();
       }
       
-      // Output how many times MDE has been solved for the simulation run
+      // Output number of times MDE has been solved 
       Log::file() << std::endl;
       Log::file() << "MDE counter   " 
-                  << system().compressor().counterMDE() << std::endl;
+                  << system().compressor().counterMDE() 
+                  << std::endl;
       Log::file() << std::endl;
       
       // Output time for the simulation run

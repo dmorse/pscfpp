@@ -36,10 +36,12 @@ System{
   }
   McSimulator{
     McMoveManager{
+
         RealMove{
             probability     0.5
             A               0.5
         }
+
         FourierMove{
             probability     0.5
             A               0.01
@@ -49,18 +51,26 @@ System{
             volumeFraction  0.5
             statisticalSegmentLength 1
         }
+
     }
     AnalyzerManager{
-      baseInterval    1
-      TrajectoryWriter{
-            interval        1
-            outputFileName  out/trajectory
-      }
-      HamiltonianAnalyzer{
-            interval        1
-            outputFileName  out/mcHamiltonian
-            nSamplePerBlock 2
-      }
+       baseInterval    1
+
+       TrajectoryWriter{
+          interval        1
+          outputFileName  out/trajectory
+       }
+
+       HamiltonianAnalyzer{
+          interval        1
+          outputFileName  out/hamiltonian
+          nSamplePerBlock 2
+       }
+
+       StepLogger{
+          interval  50
+       }
+
     }
   }
 }

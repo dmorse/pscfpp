@@ -322,11 +322,6 @@ namespace Pspg {
             }
          }
       }
-
-      #if 0
-      Log::file() << "-lnQ " << -lnQ<< "\n";
-      #endif
-
       // lnQ now contains a value per monomer
 
       // Compute field contribution HW
@@ -336,25 +331,29 @@ namespace Pspg {
       for (int j = 0; j < nMonomer - 1; ++j) {
          prefactor = -0.5*double(nMonomer)/chiEvals_[j];
          double wSqure = 0;
-         wSqure = (double)gpuInnerProduct(wc_[j].cField(), wc_[j].cField(), meshSize);
+         wSqure = 
+              (double)gpuInnerProduct(wc_[j].cField(), 
+                                      wc_[j].cField(), meshSize);
          HW += prefactor * wSqure;
       }
 
       // Subtract average of Langrange multiplier field
-      double sum_xi = (double)gpuSum(wc_[nMonomer-1].cField(), meshSize);
+      double sum_xi = 
+           (double)gpuSum(wc_[nMonomer-1].cField(), meshSize);
       HW -= sum_xi;
 
       // Normalize HW to equal a value per monomer
       HW /= double(meshSize);
+
       // Compute final MC Hamiltonian
-      hamiltonian_ = HW - lnQ;
+      //hamiltonian_ = HW - lnQ;
       const double vSystem  = domain.unitCell().volume();
       const double vMonomer = mixture.vMonomer();
-      fieldHamiltonian_ = vSystem/vMonomer * HW;
-      idealHamiltonian_ = vSystem/vMonomer * lnQ;
-      hamiltonian_ *= vSystem/vMonomer;
+      const double nMonomerSystem = vSystem / vMonomer;
+      fieldHamiltonian_ = nMonomerSystem * HW;
+      idealHamiltonian_ = -1.0 * nMonomerSystem * lnQ;
+      hamiltonian_ = idealHamiltonian_ + fieldHamiltonian_;
       hasHamiltonian_ = true;
-      //Log::file()<< "computeHamiltonian"<< std::endl;
    }
 
 }
