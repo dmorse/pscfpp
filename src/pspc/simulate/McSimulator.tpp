@@ -326,12 +326,11 @@ namespace Pspc {
       HW /= double(meshSize);
       
       // Compute final MC Hamiltonian
-      mcHamiltonian_ = HW - lnQ;
       const double vSystem  = domain.unitCell().volume();
       const double vMonomer = mixture.vMonomer();
       mcFieldHamiltonian_ = vSystem/vMonomer * HW;
-      mcIdealHamiltonian_ = vSystem/vMonomer * lnQ;
-      mcHamiltonian_ *= vSystem/vMonomer;
+      mcIdealHamiltonian_ = -1.0 * vSystem/vMonomer * lnQ;
+      mcHamiltonian_ = mcIdealHamiltonian_ + mcFieldHamiltonian_;
 
       hasMcHamiltonian_ = true;
    }
