@@ -75,6 +75,11 @@ namespace Pscf {
       * Clear timers 
       */
       void clearTimers();
+      
+      /**
+      * Obtain error type
+      */
+      std::string errorType();
 
    protected:
 
@@ -476,6 +481,13 @@ namespace Pscf {
    template <typename Iterator, typename T>
    bool AmIteratorTmpl<Iterator,T>::isAllocatedAM() const
    {  return isAllocatedAM_; }
+   
+   /*
+   * Return error type
+   */ 
+   template <typename Iterator, typename T>
+   std::string AmIteratorTmpl<Iterator,T>::errorType() 
+   {  return errorType_; }
    
    /*
    * Return total iteration counter
