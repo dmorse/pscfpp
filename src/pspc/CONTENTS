@@ -1,16 +1,18 @@
-This directory contains code specific to a pseudo-spectral implementation 
-of SCFT for periodic structures on a single CPU.  All code in this 
-directory is defined in the namespace Pscf::Pspc.  Most algorithms are 
-analogous to those used in the older Fortran PSCF code.  
+This directory contains code specific to a pseudo-spectral 
+implementation of SCFT and field theoretic simulations (FTS) for 
+periodic structures on a single CPU.  All code in this directory is 
+defined in the namespace Pscf::Pspc.  Most algorithms are analogous 
+to those used in the older Fortran PSCF code.  
 
 Subdirectories:
 
-field/     - classes to represent or manipulate fields
-iterator/  - iterative SCF equation solvers
-solvers/   - modified diffusion equation solvers
-sweep/     - classes to implement continuation of solutions ("sweep")
-simulator/ - classes to implement field-theoretic Monte Carlo (FTMC)
-tests/     - unit cell tests for code
+compressor / - iterators that change pressure to obtain uniform density
+field/       - classes to represent or manipulate fields
+iterator/    - iterative SCF equation solvers
+solvers/     - modified diffusion equation solvers
+sweep/       - classes to implement continuation of solutions ("sweep")
+simulator/   - classes to implement field-theoretic Monte Carlo (FTMC)
+tests/       - unit tests for code in src/pspc
 
 C++ Files:
 
@@ -29,6 +31,7 @@ config.mk     - configuration file (installed by setup script)
 
 Doxygen documentation files:
 
+pscf_pc.dox   - command line interface for pscf_pc executable
 pspc.mod      - definition of Pspc doxygen module 
-pscf_pc.dox   - command line interface for pscf_pc
+System.dox    - parameter file format for main System block
 

@@ -50,23 +50,37 @@ Subblocks are described below:
   <tr>
     <td> Iterator#* </td>
     <td>
-    \ref user_param_pc_iterator_sec
+    An Iterator implements an iterative algorithm for solving the
+    self-consistent field equations. Available algorithms are listed
+    \ref user_param_pc_iterator_sec "here". An Iterator is required
+    for any SCFT calculation.
     </td>
   </tr>
   <tr>
     <td> Sweep#* </td>
     <td>
-    \ref user_param_sweep_page
+    A Sweep performs a sequence of SCFT calculations along a 
+    user-prescribed path through parameter space, as described
+    \ref user_param_sweep_page "here". The block is selectable and
+    optional, but the option that is currently provided is a
+    LinearSweep (class Pscf::Pspc::LinearSweep). 
     </td>
   </tr>
   <tr>
     <td> Compressor#* </td>
     <td>
+    A Compressor is an iterative solver that adjusts the Lagrange
+    multiplier chemical potential field in order to satisfy the 
+    incompressibility constraint, also known as a partial-saddle
+    point condition. A Compressor is required for all field theoretic
+    simulations that can be performed by pscf_pc, all of which are
+    based on a partial saddle point approximation.
     </td>
   </tr>
   <tr>
     <td> McSimulator* </td>
     <td>
+    An McSimulator performs a field theoretic Monte Carlo simulation.
     </td>
   </tr>
 </table>
