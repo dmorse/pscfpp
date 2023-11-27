@@ -5,6 +5,8 @@
 
 // Subclasses of Compressor 
 #include "AmCompressor.h"
+#include "LrCompressor.h"
+#include "LrAmCompressor.h"
 
 namespace Pscf {
 namespace Pspc {
@@ -35,7 +37,11 @@ namespace Pspc {
       // Try to match classname
       if (className == "Compressor" || className == "AmCompressor") {
          ptr = new AmCompressor<D>(*sysPtr_);
-      } 
+      } else if (className == "LrCompressor") {
+         ptr = new LrCompressor<D>(*sysPtr_);
+      } else if (className == "LrAmCompressor") {
+         ptr = new LrAmCompressor<D>(*sysPtr_);
+      }
       
       return ptr;
    }
