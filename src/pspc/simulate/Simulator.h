@@ -147,11 +147,11 @@ namespace Pspc {
       * Get an array of the eigenvalues of the projected chi matrix.
       *
       * The projected chi matrix is given by the matrix product P*chi*P,
-      * where P is the symmetric projection matrix that projects onto the
-      * subspace perpendicular to the vector e = (1,1,...,1). The projected
-      * chi matrix is singular, and always has a zero eigenvalue with
-      * associated eigenvector e. By convention, this zero eigenvalue and 
-      * eigenvector e are listed last, with index nMonomer- 1.
+      * where P is the symmetric projection matrix that projects onto 
+      * the subspace perpendicular to the vector e = (1,1,...,1). The 
+      * projected chi matrix is singular, and has a zero eigenvalue with
+      * associated eigenvector e. By convention, this zero eigenvalue 
+      * and its eigenvector e are listed last, with index nMonomer - 1.
       */
       DArray<double> const & chiEvals() const
       {  return chiEvals_; }
@@ -167,12 +167,16 @@ namespace Pspc {
       /**
       * Get a matrix of eigenvectors of the projected chi matrix.
       *
-      * The first (row) index of the matrix indexes the eigenvector, 
-      * while the second (column) index indexes vector components. All 
-      * eigenvectors have a Euclidean norm equal to nMonomer. The sign 
-      * of each vector is chosen so as to make the first (0) component 
-      * of each eigenvector positive. The last eigenvector is always
-      * the vector e = (1,1,...,1).
+      * This function returns an nMonomer x nMonomer matrix of the
+      * eigenvectors of the projected chin Matrix. The first index
+      * (row index) of the matrix identifies the eigenvector, while 
+      * the second (column) index indexes the monomer type of each
+      * eigenvector component. Each eigenvector is normalized such 
+      * that the sum of the squares of all elements is equal to 
+      * nMonomer, the number of monomer types.  The sign of each vector 
+      * is chosen so as to make the first (0) component non-negative. 
+      * The last eigenvector is always the null vector e = (1,1,...,1).
+      * For nMonomer = 2, the two eigenvectors are (1,-1) and (1,1).
       */
       DMatrix<double> const & chiEvecs() const
       {  return chiEvecs_; }
@@ -191,7 +195,7 @@ namespace Pspc {
       void computeWC();
 
       /**
-      * Get one eigenvector component of the w fields.
+      * Get one eigenvector component of the current w fields.
       *
       * Each component is a point-wise projection of the w fields onto a
       * corresponding eigenvector of the projected chi matrix. The last
@@ -200,8 +204,7 @@ namespace Pspc {
       *
       * \param i eigenvector / eigenvalue index
       */
-      RField<D> const & wc(int i) const
-      {   return wc_[i]; }
+      RField<D> const & wc(int i) const;
 
       /**
       * Are eigen-components of current w fields valid ?
@@ -347,6 +350,11 @@ namespace Pspc {
    template <int D>
    inline bool Simulator<D>::hasHamiltonian() const
    {  return hasHamiltonian_; }
+
+   // Return a single eigencomponent of the w fields.
+   template <int D>
+   inline RField<D> const & Simulator<D>::wc(int i) const
+   {  return wc_[i]; }
 
    // Have eigen-components of current w fields been computed?
    template <int D>

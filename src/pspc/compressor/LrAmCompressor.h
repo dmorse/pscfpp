@@ -284,6 +284,14 @@ namespace Pspc
 
    };
 
+   #ifndef PSPC_LR_AM_COMPRESSOR_TPP
+   // Suppress implicit instantiation
+   extern template class LrAmCompressor<1>;
+   extern template class LrAmCompressor<2>;
+   extern template class LrAmCompressor<3>;
+   #endif
+
+
 } // namespace Pspc
 } // namespace Pscf
 #endif

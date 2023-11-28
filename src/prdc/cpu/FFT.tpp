@@ -1,5 +1,5 @@
-#ifndef PRDC_FFT_TPP
-#define PRDC_FFT_TPP
+#ifndef PRDC_CPU_FFT_TPP
+#define PRDC_CPU_FFT_TPP
 
 /*
 * PSCF Package 

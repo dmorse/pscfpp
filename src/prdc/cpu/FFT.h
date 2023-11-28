@@ -1,5 +1,5 @@
-#ifndef PRDC_FFT_H
-#define PRDC_FFT_H
+#ifndef PRDC_CPU_FFT_H
+#define PRDC_CPU_FFT_H
 
 /*
 * PSCF Package 
@@ -167,7 +167,7 @@ namespace Cpu {
    inline IntVec<D> const & FFT<D>::meshDimensions() const
    {  return meshDimensions_; }
 
-   #ifndef PRDC_FFT_TPP
+   #ifndef PRDC_CPU_FFT_TPP
    // Suppress implicit instantiation
    extern template class FFT<1>;
    extern template class FFT<2>;
