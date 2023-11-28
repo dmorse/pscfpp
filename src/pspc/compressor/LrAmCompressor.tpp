@@ -23,9 +23,8 @@ namespace Pspc{
    // Constructor
    template <int D>
    LrAmCompressor<D>::LrAmCompressor(System<D>& system)
-   : Compressor<D>(system),
-     counter_(0),
-     isAllocated_(false)
+    : Compressor<D>(system),
+      isAllocated_(false)
    {  setClassName("LrAmCompressor"); }
 
    // Destructor
@@ -41,7 +40,6 @@ namespace Pspc{
       AmIteratorTmpl<Compressor<D>, DArray<double> >::readParameters(in);
       AmIteratorTmpl<Compressor<D>, DArray<double> >::readErrorType(in);
    }
-   
       
    // Initialize just before entry to iterative loop.
    template <int D>
@@ -88,12 +86,13 @@ namespace Pspc{
       
       computeIntraCorrelation();
    }
-   
+  
+   // Iterative solver (AM algorithm) 
    template <int D>
    int LrAmCompressor<D>::compress()
    {
       int solve = AmIteratorTmpl<Compressor<D>, DArray<double> >::solve();
-      counter_ = AmIteratorTmpl<Compressor<D>,DArray<double>>::totalItr();
+      mdeCounter_ = AmIteratorTmpl<Compressor<D>,DArray<double>>::totalItr();
       return solve;
    }
 
@@ -111,9 +110,10 @@ namespace Pspc{
       UTIL_CHECK(b.capacity() == n);
       double product = 0.0;
       for (int i = 0; i < n; i++) {
-         // if either value is NaN, throw NanException
+         // If either value is NaN, throw NanException
          if (std::isnan(a[i]) || std::isnan(b[i])) { 
-            throw NanException("LrAmCompressor::dotProduct",__FILE__,__LINE__,0);
+            throw NanException("LrAmCompressor::dotProduct",
+                               __FILE__,__LINE__,0);
          }
          product += a[i] * b[i];
       }
@@ -175,9 +175,10 @@ namespace Pspc{
    }
 
    template <int D>
-   void LrAmCompressor<D>::addPredictedError(DArray<double>& fieldTrial,
-                                         DArray<double> const & resTrial,
-                                         double lambda)
+   void 
+   LrAmCompressor<D>::addPredictedError(DArray<double>& fieldTrial,
+                                        DArray<double> const & resTrial,
+                                        double lambda)
    {
       int n = fieldTrial.capacity();
       for (int i = 0; i < n; i++) {
@@ -205,12 +206,12 @@ namespace Pspc{
       
       /*
       * The field that we are adjusting is the Langrange multiplier field 
-      * with number of grid pts components.The current value is the difference 
-      * between w and w0_ for the first monomer (any monomer should give the same answer)
+      * defined on a grid.  The current value is the difference between 
+      * w and w0_ for the first monomer (or any other monomer).
       */
       for (int i = 0; i < meshSize; i++){
          curr[i] = (*currSys)[0][i] - w0_[0][i];
-      }   
+      }
 
    }
 
@@ -294,6 +295,7 @@ namespace Pspc{
    void LrAmCompressor<D>::clearTimers()
    {
       AmIteratorTmpl<Compressor<D>, DArray<double> >::clearTimers();
+      mdeCounter_ = 0;
    }
    
    template<int D>
@@ -346,7 +348,8 @@ namespace Pspc{
       double Gsq;
       for (iter.begin(); !iter.atEnd(); ++iter) {
          G = iter.position();
-         Gmin = shiftToMinimum(G, system().mesh().dimensions(), system().unitCell());
+         Gmin = shiftToMinimum(G, system().mesh().dimensions(), 
+                                  system().unitCell());
          Gsq = system().unitCell().ksq(Gmin);
          intraCorrelation_[iter.rank()] = computeIntraCorrelation(Gsq);
       }

@@ -23,14 +23,13 @@ namespace Pspc{
    // Constructor
    template <int D>
    LrCompressor<D>::LrCompressor(System<D>& system)
-   : Compressor<D>(system),
-     counter_(0),
-     epsilon_(0.0),
-     itr_(0),
-     maxItr_(0),
-     errorType_("rmsResid"),
-     verbose_(0),
-     isAllocated_(false)
+    : Compressor<D>(system),
+      epsilon_(0.0),
+      itr_(0),
+      maxItr_(0),
+      errorType_("rmsResid"),
+      verbose_(0),
+      isAllocated_(false)
    {  setClassName("LrCompressor"); }
 
    // Destructor
@@ -49,12 +48,12 @@ namespace Pspc{
       readOptional(in, "verbose", verbose_);
       readOptional(in, "errorType", errorType_);
    }
-   
-      
+
+
    // Initialize just before entry to iterative loop.
    template <int D>
    void LrCompressor<D>::setup()
-   {  
+   {
       const int nMonomer = system().mixture().nMonomer();
       const int meshSize = system().domain().mesh().size();
       IntVec<D> const & dimensions = system().mesh().dimensions();
@@ -85,27 +84,28 @@ namespace Pspc{
       }
       computeIntraCorrelation();
    }
-   
+
    template <int D>
    int LrCompressor<D>::compress()
    {
       // Initialization and allocate operations on entry to loop.
       setup();
       UTIL_CHECK(isAllocated_);
+
       // Start overall timer
       timerTotal_.start();
-      
-      // Solve MDE 
+
+      // Solve MDE
       timerMDE_.start();
       system().compute();
       timerMDE_.stop();
-      
+
       // Iterative loop
       for (itr_ = 0; itr_ < maxItr_; ++itr_) {
          if (verbose_ > 2) {
             Log::file() << "------------------------------- \n";
          }
-         
+
          if (verbose_ > 0){
             Log::file() <<  std::endl;
             Log::file() << " Iteration " << Int(itr_,5) << std::endl;
@@ -119,39 +119,45 @@ namespace Pspc{
             Log::file() << ",  error  =             NaN" << std::endl;
             break; // Exit loop if a NanException is caught
          }
-         
+
          // Check for convergence
          if (error < epsilon_) {
+
+            // Successful completion (i.e., converged within tolerance)
             timerTotal_.stop();
+
             if (verbose_ > 2) {
                Log::file() << "-------------------------------\n";
             }
-            
             if (verbose_ > 0) {
                Log::file() << " Converged\n";
             }
-            // Output error report if not done previously
             if (verbose_ == 2) {
                Log::file() << "\n";
-               computeError(2); 
+               computeError(2);
             }
-            counter_ += itr_;
-            // Successful completion (i.e., converged within tolerance)
-            return 0;
+            mdeCounter_ += itr_;
+
+            return 0; // Success
+
          } else{
+
+            // Not yet converged.
             updateWFields();
             timerMDE_.start();
             system().compute();
             timerMDE_.stop();
+
          }
-         
+
       }
+
       // Failure: iteration counter itr reached maxItr without converging
       timerTotal_.stop();
 
       Log::file() << "Iterator failed to converge.\n";
       return 1;
-      
+
    }
 
    // Compute the residual for the current system state
@@ -173,13 +179,13 @@ namespace Pspc{
         }
       }
    }
-   
+
    // update system w field using linear response approximation
    template <int D>
-   void LrCompressor<D>::updateWFields(){  
+   void LrCompressor<D>::updateWFields(){
       const int nMonomer = system().mixture().nMonomer();
-      const int meshSize = system().domain().mesh().size(); 
-      const double vMonomer = system().mixture().vMonomer();   
+      const int meshSize = system().domain().mesh().size();
+      const double vMonomer = system().mixture().vMonomer();
       // Convert residual to Fourier Space
       system().fft().forwardTransform(resid_, residK_);
       MeshIterator<D> iter;
@@ -188,10 +194,10 @@ namespace Pspc{
          residK_[iter.rank()][0] *= 1.0 / (vMonomer * intraCorrelation_[iter.rank()]);
          residK_[iter.rank()][1] *= 1.0 / (vMonomer * intraCorrelation_[iter.rank()]);
       }
-      
+
       // Convert back to real Space
       system().fft().inverseTransform(residK_, resid_);
-      
+
       for (int i = 0; i < nMonomer; i++){
          for (int k = 0; k < meshSize; k++){
             wFieldTmp_[i][k] = system().w().rgrid(i)[k] + resid_[k];
@@ -203,7 +209,7 @@ namespace Pspc{
    template<int D>
    void LrCompressor<D>::outputToLog()
    {}
-   
+
    template<int D>
    void LrCompressor<D>::outputTimers(std::ostream& out)
    {
@@ -211,7 +217,7 @@ namespace Pspc{
       out << "\n";
       out << "Lr Compressor times contributions:\n";
    }
-   
+
    template<int D>
    double LrCompressor<D>::computeDebye(double x)
    {
@@ -221,7 +227,7 @@ namespace Pspc{
          return 2.0 * (std::exp(-x) - 1.0 + x) / (x * x);
       }
    }
-   
+
    template<int D>
    double LrCompressor<D>::computeIntraCorrelation(double qSquare)
    {
@@ -229,10 +235,10 @@ namespace Pspc{
       const double vMonomer = system().mixture().vMonomer();
       // Overall intramolecular correlation
       double omega = 0;
-      int monomerId; int nBlock; 
-      double kuhn; double length; double g; double rg2; 
+      int monomerId; int nBlock;
+      double kuhn; double length; double g; double rg2;
       Polymer<D> const * polymerPtr;
-      
+
       for (int i = 0; i < np; i++){
          polymerPtr = &system().mixture().polymer(i);
          nBlock = polymerPtr->nBlock();
@@ -252,7 +258,7 @@ namespace Pspc{
       }
       return omega;
    }
-   
+
    template<int D>
    void LrCompressor<D>::computeIntraCorrelation()
    {
@@ -262,19 +268,21 @@ namespace Pspc{
       double Gsq;
       for (iter.begin(); !iter.atEnd(); ++iter) {
          G = iter.position();
-         Gmin = shiftToMinimum(G, system().mesh().dimensions(), system().unitCell());
+         Gmin = shiftToMinimum(G, system().mesh().dimensions(), 
+                                  system().unitCell());
          Gsq = system().unitCell().ksq(Gmin);
          intraCorrelation_[iter.rank()] = computeIntraCorrelation(Gsq);
       }
    }
-   
-      
+
    template<int D>
    void LrCompressor<D>::clearTimers()
    {
-
+      timerTotal_.clear();
+      timerMDE_.clear();
+      mdeCounter_ = 0;
    }
-   
+
    template <int D>
    double LrCompressor<D>::maxAbs(RField<D> const & a)
    {
@@ -292,10 +300,10 @@ namespace Pspc{
       }
       return max;
    }
-   
+
    // Compute and return inner product of two vectors.
    template <int D>
-   double LrCompressor<D>::dotProduct(RField<D> const & a, 
+   double LrCompressor<D>::dotProduct(RField<D> const & a,
                                       RField<D> const & b)
    {
       const int n = a.capacity();
@@ -303,15 +311,15 @@ namespace Pspc{
       double product = 0.0;
       for (int i = 0; i < n; i++) {
          // if either value is NaN, throw NanException
-         if (std::isnan(a[i]) || std::isnan(b[i])) { 
+         if (std::isnan(a[i]) || std::isnan(b[i])) {
             throw NanException("AmCompressor::dotProduct",__FILE__,__LINE__,0);
          }
          product += a[i] * b[i];
       }
       return product;
    }
-   
-   // Compute L2 norm 
+
+   // Compute L2 norm of an RField
    template <int D>
    double LrCompressor<D>::norm(RField<D> const & a)
    {
@@ -319,13 +327,13 @@ namespace Pspc{
       return sqrt(normSq);
    }
 
-   
-   template<int D>
+   // Compute and return the scalar error
+   template <int D>
    double LrCompressor<D>::computeError(int verbose)
    {
-      const int meshSize = system().domain().mesh().size(); 
+      const int meshSize = system().domain().mesh().size();
       double error = 0;
-      
+
       // Find max residual vector element
       double maxRes  = maxAbs(resid_);
       // Find norm of residual vector
@@ -347,13 +355,13 @@ namespace Pspc{
          Log::file() << "Max Residual  = " << Dbl(maxRes,15) << "\n";
          Log::file() << "Residual Norm = " << Dbl(normRes,15) << "\n";
          Log::file() << "RMS Residual  = " << Dbl(rmsRes,15) << "\n";
-   
+
          // Check if calculation has diverged (normRes will be NaN)
          UTIL_CHECK(!std::isnan(normRes));
-      } 
-      return error; 
+      }
+      return error;
    }
-   
+
 }
 }
 #endif

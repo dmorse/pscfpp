@@ -313,7 +313,7 @@ namespace Pscf
 
       // Clear histories and bases (ring buffers)
       if (verbose_ > 0) {
-         Log::file() << "Clearing ring buffers\n";
+         Log::file() << "Clearing Anderson-mixing history.\n";
       }
       resHists_.clear();
       fieldHists_.clear();
@@ -567,7 +567,8 @@ namespace Pscf
       double total = timerTotal_.time();
       out << "\n";
       out << "                          ";
-      out << "Total" << std::setw(22)<< "Per Iteration" << std::setw(9) << "Fraction" << "\n";
+      out << "Total" << std::setw(22)<< "Per Iteration" 
+          << std::setw(9) << "Fraction" << "\n";
       out << "MDE solution:             "
           << Dbl(timerMDE_.time(), 9, 3)  << " s,  "
           << Dbl(timerMDE_.time()/totalItr_, 9, 3)  << " s,  "
@@ -598,12 +599,11 @@ namespace Pscf
    void AmIteratorTmpl<Iterator,T>::clearTimers()
    {
       timerMDE_.clear();
-      timerStress_.clear();
-      timerAM_.clear();
       timerResid_.clear();
       timerError_.clear();
       timerCoeff_.clear();
       timerOmega_.clear();
+      timerAM_.clear();
       timerTotal_.clear();
       totalItr_ = 0;
    }

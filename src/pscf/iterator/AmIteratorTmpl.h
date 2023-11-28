@@ -206,18 +206,27 @@ namespace Pscf {
       */
       int totalItr();
       
-      /**
-      * Return timers for analyzing performance
-      */
-      double timerMDE();
-      double timerStress();
-      double timerAM();
-      double timerResid();
-      double timerError();
-      double timerCoeff();
-      double timerOmega();
+      /// Get total time.
       double timerTotal();
       
+      /// Get time solving modified diffusion equation (MDE).
+      double timerMDE();
+
+      /// Get total time for AM algorithm, excluding MDE solution.
+      double timerAM();
+
+      /// Get time computing residual.
+      double timerResid();
+
+      /// Get time evaluating scalar error.
+      double timerError();
+
+      /// Get time evaluating Anderson mixing coefficients.
+      double timerCoeff();
+
+      /// Get time updating w fields.
+      double timerOmega();
+
       /**
       * Have data structures required by the AM algorithm been allocated?
       */
@@ -289,7 +298,6 @@ namespace Pscf {
       
       // Timers for analyzing performance
       Timer timerMDE_;
-      Timer timerStress_;
       Timer timerAM_;
       Timer timerResid_;
       Timer timerError_;
@@ -502,14 +510,7 @@ namespace Pscf {
    template <typename Iterator, typename T>
    double AmIteratorTmpl<Iterator,T>::timerMDE() 
    {  return timerMDE_.time(); }
-   
-   /*
-   * Return computing Stress time cost
-   */
-   template <typename Iterator, typename T>
-   double AmIteratorTmpl<Iterator,T>::timerStress() 
-   {  return timerStress_.time(); }
-   
+  
    /*
    * Return computing AM time cost
    */

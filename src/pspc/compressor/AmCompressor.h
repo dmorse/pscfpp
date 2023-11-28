@@ -73,14 +73,13 @@ namespace Pspc
       int compress();    
       
       /**
-      * Return how many times MDE has been solved.
-      */
-      int counterMDE(); 
-      
-      /**
       * Return compressor times contributions.
       */
       void outputTimers(std::ostream& out);
+
+      /**
+      * Clear all timers (reset accumulated time to zero).
+      */
       void clearTimers();
       
       // Inherited public member functions
@@ -90,7 +89,7 @@ namespace Pspc
   
       // Inherited protected members 
       using ParamComposite::readOptional;
-      using Compressor<D>::system;
+      using Compressor<D>::mdeCounter_;
 
    private:
    
@@ -98,11 +97,6 @@ namespace Pspc
       * How many times MDE has been solved for each mc move 
       */
       int itr_;
-      
-      /**
-      * Count how many times MDE has been solved.
-      */
-      int counter_;
       
       /**
       * Current values of the fields
@@ -221,17 +215,12 @@ namespace Pspc
       * Outputs relevant system details to the iteration log.
       */
       void outputToLog();
-      
+    
+      // Inherited private members 
+      using Compressor<D>::system;
 
    };
    
-   // Inline member functions
-
-   // Get the how many times MDE has been solved.
-   template <int D>
-   inline int AmCompressor<D>::counterMDE()
-   { return counter_; }
-
 } // namespace Pspc
 } // namespace Pscf
 #endif

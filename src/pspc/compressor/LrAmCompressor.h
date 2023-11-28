@@ -17,14 +17,24 @@ namespace Pscf {
 namespace Pspc
 {
 
-   template <int D>
-   class System;
+   template <int D> class System;
 
    using namespace Util;
    using namespace Pscf::Prdc::Cpu;
 
    /**
-   * Pspc implementation of the Anderson Mixing compressor.
+   * Anderson Mixing compressor with linear-response preconditioning.
+   *
+   * Class LrAmCompressor implements an Anderson mixing algorithm in
+   * which the residual is defined using a preconditioning scheme that
+   * would yield a Jacobian of unity if applied to a homogeneous system.
+   * The residual in the unpreconditioned form of Anderson mixing is a
+   * vector in which each that represents a deviations in the sum of 
+   * volume fractions from unity. In this preconditioned algorithm, each
+   * Fourier component of this deviation is multiplied by the inverse of
+   * Fourier representation of the linear response of total concentration 
+   * to changes in pressure in a homogeneous system of the same chemical
+   * composition as the system of interest.
    *
    * \ingroup Pspc_Compressor_Module
    */
@@ -74,44 +84,47 @@ namespace Pspc
       int compress();    
       
       /**
-      * Return how many times MDE has been solved.
-      */
-      int counterMDE(); 
-      
-      /**
-      * Return compressor times contributions.
+      * Write a report of time contributions used by this algorithm.
+      * 
+      * \param out  output stream to which to write
       */
       void outputTimers(std::ostream& out);
+
+      /**
+      * Reset / clear all timers.
+      */
       void clearTimers();
-      
-      // Inherited public member functions
-      using AmIteratorTmpl<Compressor<D>, DArray<double> >::setClassName;
-      
+
+      /**
+      * Compute and return the scalar error.
+      *
+      * \param verbose  verbosity level (higher is more verbose)
+      */
       double computeError(int verbose);
       
+      
+      // Inherited public member functions
+
+      using AmIteratorTmpl<Compressor<D>, DArray<double> >::setClassName;
       
    protected:
   
       // Inherited protected members 
       using ParamComposite::readOptional;
-      using Compressor<D>::system;
+      using Compressor<D>::mdeCounter_;
 
    private:
+
       /**
       * Type of error criterion used to test convergence 
       */ 
       std::string errorType_;
       
       /**
-      * How many times MDE has been solved for each mc move 
+      * How many times MDE has been solved for each mc move.
       */
       int itr_;
-      
-      /**
-      * Count how many times MDE has been solved.
-      */
-      int counter_;
-      
+  
       /**
       * Current values of the fields
       */
@@ -267,15 +280,10 @@ namespace Pspc
       */
       void computeIntraCorrelation();
       
-   };
-   
-   // Inline member functions
+      using Compressor<D>::system;
 
-   // Get the how many times MDE has been solved.
-   template <int D>
-   inline int LrAmCompressor<D>::counterMDE()
-   { return counter_; }
-   
+   };
+
 } // namespace Pspc
 } // namespace Pscf
 #endif

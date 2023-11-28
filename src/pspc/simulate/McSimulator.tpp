@@ -156,7 +156,7 @@ namespace Pspc {
       // Output number of times MDE has been solved for the simulation run
       Log::file() << std::endl;
       Log::file() << "MDE counter   " 
-                  << system().compressor().counterMDE() << std::endl;
+                  << system().compressor().mdeCounter() << std::endl;
       Log::file() << std::endl;
       
       // Output times for the simulation run

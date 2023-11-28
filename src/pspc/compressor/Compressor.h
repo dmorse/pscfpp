@@ -9,14 +9,13 @@
 */
 
 #include <util/param/ParamComposite.h>    // base class
-#include <util/global.h>                  
+#include <util/global.h>
 
 namespace Pscf {
 namespace Pspc
 {
 
-   template <int D>
-   class System;
+   template <int D> class System;
 
    using namespace Util;
 
@@ -32,13 +31,8 @@ namespace Pspc
    public:
 
       /**
-      * Default constructor.
-      */
-      Compressor();
-
-      /**
       * Constructor.
-      * 
+      *
       * \param system parent System object
       */
       Compressor(System<D>& system);
@@ -54,21 +48,25 @@ namespace Pspc
       * \return error code: 0 for success, 1 for failure.
       */
       virtual int compress() = 0;
-      
+
       /**
-      * Count how many times MDE have been computed
+      * Get the number of times the MDE has been solved.
       */
-      virtual int counterMDE() = 0;
-      
+      int mdeCounter();
+
       /**
-      * Log output timing results 
+      * Output report of timing results to stream.
+      *
+      * \param out output stream for results
       */
       virtual void outputTimers(std::ostream& out) = 0;
-      
+
       /**
-      * Clear timers 
+      * Clear timers.
       */
       virtual void clearTimers() = 0;
+
+   protected:
 
       /**
       * Return const reference to parent system.
@@ -76,13 +74,16 @@ namespace Pspc
       System<D> const & system() const
       {  return *sysPtr_;}
 
-   protected:
+      /**
+      * Return non-const reference to parent system.
+      */
+      System<D>& system()
+      {  return *sysPtr_;}
 
       /**
-      * Return reference to parent system.
+      * Count how many times MDE has been solved.
       */
-      System<D>& system() 
-      {  return *sysPtr_;}
+      int mdeCounter_;
 
    private:
 
@@ -91,25 +92,25 @@ namespace Pspc
 
    };
 
-   // Inline member functions
-
-   // Default constructor
-   template <int D>
-   inline Compressor<D>::Compressor()
-    : sysPtr_(&system)
-   {  setClassName("Compressor"); }
+   // Member functions
 
    // Constructor
    template <int D>
    Compressor<D>::Compressor(System<D>& system)
-    : sysPtr_(&system)
+    : mdeCounter_(0),
+      sysPtr_(&system)
    {  setClassName("Compressor"); }
 
    // Destructor
    template <int D>
    Compressor<D>::~Compressor()
    {}
-   
+
+   // Get number of times MDE has been solved.
+   template <int D>
+   inline int Compressor<D>::mdeCounter()
+   {  return mdeCounter_; }
+
 } // namespace Pspc
 } // namespace Pscf
 #endif

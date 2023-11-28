@@ -55,6 +55,8 @@ namespace Pspc
 
       /**
       * Return compressor times contributions.
+      *
+      * \param out  output stream for timer report
       */
       void outputTimers(std::ostream& out);
 

@@ -78,7 +78,7 @@ namespace Pspg
       /**
       * Return how many times MDE has been solved.
       */
-      int counterMDE(); 
+      int mdeCounter(); 
       
       /**
       * Return compressor times contributions.
@@ -225,7 +225,7 @@ namespace Pspg
 
    // Get the how many times MDE has been solved.
    template <int D>
-   inline int AmCompressor<D>::counterMDE()
+   inline int AmCompressor<D>::mdeCounter()
    { return counter_; }
 
 } // namespace Pspg

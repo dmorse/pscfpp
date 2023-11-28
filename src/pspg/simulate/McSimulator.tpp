@@ -150,7 +150,7 @@ namespace Pspg {
       // Output number of times MDE has been solved 
       Log::file() << std::endl;
       Log::file() << "MDE counter   " 
-                  << system().compressor().counterMDE() 
+                  << system().compressor().mdeCounter() 
                   << std::endl;
       Log::file() << std::endl;
       

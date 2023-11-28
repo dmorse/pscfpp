@@ -54,7 +54,7 @@ namespace Pspg {
       */
       virtual int compress() = 0;
       
-      virtual int counterMDE() = 0;
+      virtual int mdeCounter() = 0;
       
       /**
       * Log output timing results 

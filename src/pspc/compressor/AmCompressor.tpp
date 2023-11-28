@@ -21,7 +21,6 @@ namespace Pspc{
    template <int D>
    AmCompressor<D>::AmCompressor(System<D>& system)
    : Compressor<D>(system),
-     counter_(0),
      isAllocated_(false)
    {  setClassName("AmCompressor"); }
 
@@ -74,7 +73,7 @@ namespace Pspc{
    int AmCompressor<D>::compress()
    {
       int solve = AmIteratorTmpl<Compressor<D>, DArray<double> >::solve();
-      counter_ = AmIteratorTmpl<Compressor<D>,DArray<double>>::totalItr();
+      mdeCounter_ = AmIteratorTmpl<Compressor<D>,DArray<double>>::totalItr();
       return solve;
    }
 
@@ -252,11 +251,12 @@ namespace Pspc{
       AmIteratorTmpl<Compressor<D>, DArray<double> >::outputTimers(out);
    }
    
-   
+   // Clear timers and MDE counter 
    template<int D>
    void AmCompressor<D>::clearTimers()
    {
       AmIteratorTmpl<Compressor<D>, DArray<double> >::clearTimers();
+      mdeCounter_ = 0;
    }
    
 }
