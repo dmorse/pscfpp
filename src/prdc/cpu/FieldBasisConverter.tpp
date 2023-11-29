@@ -20,6 +20,16 @@ namespace Cpu {
    using namespace Util;
 
    /*
+   * Default constructor.
+   */
+   template <int D>
+   FieldBasisConverter<D>::FieldBasisConverter()
+    : basis_(),
+      normSq_(-1.0),
+      nMonomer_(0)
+   {}
+      
+   /*
    * Constructor.
    */
    template <int D>
@@ -59,6 +69,50 @@ namespace Cpu {
    {}
 
    /*
+   * Set the basis after construction.
+   */
+   template <int D>
+   void FieldBasisConverter<D>::setBasis(DMatrix<double> basis, 
+                                         double normSq)
+   {
+      UTIL_CHECK(basis.isAllocated());
+      UTIL_CHECK(basis.capacity1() > 1);
+      UTIL_CHECK(basis.capacity1() == basis.capacity2());
+      UTIL_CHECK(normSq > 0.0);
+
+      basis_ = basis;
+      normSq_ = normSq;
+      nMonomer_ = basis.capacity1();
+   }
+
+   template <int D> 
+   double FieldBasisConverter<D>::maxBasisError() const
+   {
+      UTIL_CHECK(nMonomer_ > 1);
+      UTIL_CHECK(normSq_ > 0.0);
+
+      double error = 0.0;
+      double maxError = 0.0;
+      int i, j, k;
+      for (i = 0; i < nMonomer_; ++i) {
+         for (j = 0; j <= i; ++j) {
+            error = 0.0;
+            for (k = 0; k < nMonomer_; ++k) {
+               error +=  basis_(i,k)*basis_(j,k);
+            }
+            if (i == j) {
+               error = error - normSq_;
+            }
+            error = std::abs(error);
+            if (error > maxError) {
+               maxError = error;
+            }
+         }
+      }
+      return maxError;
+   }
+   
+   /*
    * Compute pointwise components of r-grid fields in basis.
    */
    template <int D> 
@@ -67,6 +121,8 @@ namespace Cpu {
                                           DArray<RField<D>> & out) const
    {
       // Preconditions
+      UTIL_CHECK(nMonomer_ > 1);
+      UTIL_CHECK(normSq_ > 0.0);
       UTIL_CHECK(in.isAllocated());
       UTIL_CHECK(out.isAllocated());
       UTIL_CHECK(in.capacity() == nMonomer_);
@@ -112,6 +168,8 @@ namespace Cpu {
                                             DArray<RField<D>> & out) const
    {
       // Preconditions
+      UTIL_CHECK(nMonomer_ > 1);
+      UTIL_CHECK(normSq_ > 0.0);
       UTIL_CHECK(in.isAllocated());
       UTIL_CHECK(out.isAllocated());
       UTIL_CHECK(in.capacity() == nMonomer_);
@@ -123,6 +181,7 @@ namespace Cpu {
       }
 
       int i, j, k;
+
       // Loop over monomer types
       for (i = 0; i < nMonomer_; ++i) {
          RField<D> wo = out[i];
