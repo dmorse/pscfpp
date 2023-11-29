@@ -242,10 +242,6 @@ namespace Pspc{
       for (int i = 0; i < np; i++){
          polymerPtr = &system().mixture().polymer(i);
          nBlock = polymerPtr->nBlock();
-         double totalLength = 0;
-         for (int j = 0; j < nBlock; j++) {
-            totalLength += polymerPtr->block(j).length();
-         }
          for (int j = 0; j < nBlock; j++) {
             monomerId = polymerPtr-> block(j).monomerId();
             kuhn = system().mixture().monomer(monomerId).kuhn();
@@ -253,7 +249,7 @@ namespace Pspc{
             length = polymerPtr-> block(j).length();
             rg2 = length * kuhn* kuhn /6.0;
             g = computeDebye(qSquare*rg2);
-            omega += length/totalLength * length * g/ vMonomer;
+            omega += length * g/ vMonomer;
          }
       }
       return omega;

@@ -91,7 +91,8 @@ namespace Pspc {
       
       // Call compressor
       compressorTimer_.start();
-      system().compressor().compress();
+      int compress = system().compressor().compress();
+      UTIL_CHECK(compress == 0);
       compressorTimer_.stop();
       
       // Compute eigenvector components of the current w fields
