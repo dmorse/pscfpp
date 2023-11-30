@@ -54,7 +54,10 @@ namespace Pspg {
       */
       virtual int compress() = 0;
       
-      virtual int mdeCounter() = 0;
+      /**
+      * Get the number of times the MDE has been solved.
+      */
+      int mdeCounter();
       
       /**
       * Log output timing results 
@@ -65,20 +68,25 @@ namespace Pspg {
       * Clear timers 
       */
       virtual void clearTimers() = 0;
+      
+   protected:
 
       /**
       * Return const reference to parent system.
       */
       System<D> const & system() const
       {  return *sysPtr_;}
-
-   protected:
-
+      
       /**
       * Return reference to parent system.
       */
       System<D>& system() 
       {  return *sysPtr_;}
+      
+      /**
+      * Count how many times MDE has been solved.
+      */
+      int mdeCounter_;
 
    private:
 
@@ -106,6 +114,11 @@ namespace Pspg {
    template <int D>
    Compressor<D>::~Compressor()
    {}
+   
+   // Get number of times MDE has been solved.
+   template <int D>
+   inline int Compressor<D>::mdeCounter()
+   {  return mdeCounter_; }
    
 } // namespace Pspg
 } // namespace Pscf

@@ -28,6 +28,8 @@ __global__ void pointWiseAddScale(cudaReal* result, const cudaReal* rhs, double 
 
 __global__ void inPlacePointwiseMul(cudaReal* a, const cudaReal* b, int size);
 
+__global__ void inPlacePointwiseDivComplex(cudaComplex* a, const cudaReal* b, int size);
+
 __global__ void pointWiseBinaryMultiply(const cudaReal* a, const cudaReal* b, cudaReal* result, int size);
 
 __global__ void assignUniformReal(cudaReal* result, cudaReal uniform, int size);
@@ -37,6 +39,8 @@ __global__ void assignReal(cudaReal* result, const cudaReal* rhs, int size);
 __global__ void assignExp(cudaReal* exp, const cudaReal* w, double constant, int size);
 
 __global__ void scaleReal(cudaReal* result, double scale, int size);
+
+__global__ void scaleComplex(cudaComplex* result, double scale, int size);
 
 __global__ void mcftsScale(cudaReal* result, cudaReal scale, int size);
 

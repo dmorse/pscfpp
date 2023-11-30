@@ -78,7 +78,7 @@ namespace Pspg{
    int AmCompressor<D>::compress()
    {
       int solve = AmIteratorTmpl<Compressor<D>, Field<cudaReal> >::solve();
-      counter_ = AmIteratorTmpl<Compressor<D>, Field<cudaReal>>::totalItr(); 
+      mdeCounter_ = AmIteratorTmpl<Compressor<D>, Field<cudaReal>>::totalItr(); 
       return solve;
    }
 

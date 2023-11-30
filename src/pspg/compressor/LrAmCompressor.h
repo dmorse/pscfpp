@@ -1,5 +1,5 @@
-#ifndef PSPG_AM_COMPRESSOR_H
-#define PSPG_AM_COMPRESSOR_H
+#ifndef PSPG_LR_AM_COMPRESSOR_H
+#define PSPG_LR_AM_COMPRESSOR_H
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory
@@ -10,11 +10,10 @@
 
 #include "Compressor.h"
 #include <prdc/cuda/Field.h>
-#include <prdc/cuda/RField.h>         
-
-#include <pscf/iterator/AmIteratorTmpl.h>     
-
-#include <util/containers/DArray.h>                 
+#include <prdc/cuda/RField.h>    
+#include <prdc/cuda/RFieldDft.h> 
+#include <pscf/math/IntVec.h>
+#include <pscf/iterator/AmIteratorTmpl.h>                 
 
 namespace Pscf {
 namespace Pspg
@@ -27,12 +26,24 @@ namespace Pspg
    using namespace Pscf::Prdc::Cuda;
 
    /**
-   * Pspg implementation of the Anderson Mixing compressor.
+   * Anderson Mixing compressor with linear-response preconditioning.
+   *
+   * Class LrAmCompressor implements an Anderson mixing algorithm in
+   * which the residual is defined using a preconditioning scheme that
+   * would yield a Jacobian of unity if applied to a homogeneous system.
+   * The residual in the unpreconditioned form of Anderson mixing is a
+   * vector in which each that represents a deviations in the sum of 
+   * volume fractions from unity. In this preconditioned algorithm, each
+   * Fourier component of this deviation is multiplied by the inverse of
+   * Fourier representation of the linear response of total concentration 
+   * to changes in pressure in a homogeneous system of the same chemical
+   * composition as the system of interest.
    *
    * \ingroup Pspg_Compressor_Module
    */
    template <int D>
-   class AmCompressor : public AmIteratorTmpl<Compressor<D>, Field<cudaReal> >
+   class LrAmCompressor 
+         : public AmIteratorTmpl<Compressor<D>, Field<cudaReal> >
    {
 
    public:
@@ -42,12 +53,12 @@ namespace Pspg
       * 
       * \param system System object associated with this compressor.
       */
-      AmCompressor(System<D>& system);
+      LrAmCompressor(System<D>& system);
 
       /**
       * Destructor.
       */
-      ~AmCompressor();
+      ~LrAmCompressor();
 
       /**
       * Read all parameters and initialize.
@@ -76,19 +87,29 @@ namespace Pspg
       int compress();    
       
       /**
-      * Return how many times MDE has been solved.
-      */
-      int mdeCounter(); 
-      
-      /**
-      * Return compressor times contributions.
+      * Write a report of time contributions used by this algorithm.
+      * 
+      * \param out  output stream to which to write
       */
       void outputTimers(std::ostream& out);
+
+      /**
+      * Reset / clear all timers.
+      */
+      void clearTimers();
+
+      /**
+      * Compute and return the scalar error.
+      *
+      * \param verbose  verbosity level (higher is more verbose)
+      */
+      double computeError(int verbose);
+      
       
       // Inherited public member functions
-      using AmIteratorTmpl<Compressor<D>, Field<cudaReal> >::clearTimers;
-      using AmIteratorTmpl<Compressor<D>, Field<cudaReal> >::setClassName;
 
+      using AmIteratorTmpl<Compressor<D>,Field<cudaReal> >::setClassName;
+      
    protected:
   
       // Inherited protected members 
@@ -97,28 +118,65 @@ namespace Pspg
       using Compressor<D>::mdeCounter_;
 
    private:
+
       /**
-      * Count how many times MDE has been solved.
-      */
-      int counter_;
+      * Type of error criterion used to test convergence 
+      */ 
+      std::string errorType_;
       
       /**
-      * Current values of the fields
+      * How many times MDE has been solved for each mc move.
+      */
+      int itr_;
+  
+      /**
+      * Current values of the fields.
       */
       DArray< RField<D> > w0_;  
-
+      
+      /**
+      * Incompressibility constraint error.
+      */ 
+      RField<D> error_;
+      
+      /**
+      * Residual in real space used for linear response anderson mixing.
+      */
+      RField<D> resid_;
+      
+      /**
+      * Residual in Fourier space used for linear response anderson mixing.
+      */
+      RFieldDft<D> residK_;
+     
+      /**
+      * IntraCorrelation.
+      */
+      RField<D> intraCorrelation_;
+      
+      /**
+      * Dimensions of wavevector mesh in real-to-complex transform
+      */ 
+      IntVec<D> kMeshDimensions_;
+      
+      /**
+      * Number of points in k-space grid
+      */
+      int kSize_;
+      
       /**
       * Has the variable been allocated?
       */
       bool isAllocated_;
       
       /**
-      * Template w Field used in update function
+      * Template w Field used in update function.
       */
+      
       DArray< RField<D> > wFieldTmp_;
       
       /**
-      * New Basis variable used in updateBasis function 
+      * New Basis variable used in updateBasis function. 
       */
       Field<cudaReal> newBasis_;
 
@@ -219,9 +277,30 @@ namespace Pspg
       */
       void outputToLog();
       
-
+      /**
+      * Compute Debye function
+      */
+      double computeDebye(double x);
+      
+      /**
+      * Compute intramolecular correlation at specific sqSquare
+      */
+      double computeIntraCorrelation(double qSquare);
+      
+      /**
+      * Compute intramolecular correlation  
+      */
+      void computeIntraCorrelation();
+      
    };
    
+   #ifndef PSPG_LR_AM_COMPRESSOR_TPP
+   // Suppress implicit instantiation
+   extern template class LrAmCompressor<1>;
+   extern template class LrAmCompressor<2>;
+   extern template class LrAmCompressor<3>;
+   #endif
+
 } // namespace Pspg
 } // namespace Pscf
 #endif
