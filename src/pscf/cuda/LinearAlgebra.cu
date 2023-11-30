@@ -84,6 +84,16 @@ __global__ void inPlacePointwiseMul(cudaReal* a, const cudaReal* b, int size)
    }
 }
 
+__global__ void inPlacePointwiseDivComplex(cudaComplex* a, const cudaReal* b, int size) 
+{
+   int nThreads = blockDim.x * gridDim.x;
+   int startID = blockIdx.x * blockDim.x + threadIdx.x;
+   for (int i = startID; i < size; i += nThreads) {
+      a[i].x /= b[i];
+      a[i].y /= b[i];
+   }
+}
+
 __global__ void pointWiseBinaryMultiply(const cudaReal* a, const cudaReal* b, cudaReal* result, int size) 
 {
    int nThreads = blockDim.x * gridDim.x;
@@ -130,6 +140,15 @@ __global__ void scaleReal(cudaReal* result, double scale, int size)
    }
 }
 
+__global__ void scaleComplex(cudaComplex* result, double scale, int size){
+   int nThreads = blockDim.x * gridDim.x;
+   int startID = blockIdx.x * blockDim.x + threadIdx.x;
+   for (int i = startID; i < size; i += nThreads) {
+      result[i].x *= scale;
+      result[i].y *= scale;
+   }
+}
+
 __global__ void mcftsScale(cudaReal* result, cudaReal scale, int size)
 {
    int nThreads = blockDim.x * gridDim.x;
@@ -148,5 +167,6 @@ __global__ void fourierMove(cudaComplex* a, const cudaReal* b, const cudaReal* c
       a[i].y += c[i];
    }
 }
+
 
 }
