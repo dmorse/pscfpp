@@ -25,7 +25,6 @@ namespace Cpu {
    template <int D>
    FieldBasisConverter<D>::FieldBasisConverter()
     : basis_(),
-      normSq_(-1.0),
       nMonomer_(0)
    {}
       
@@ -33,31 +32,12 @@ namespace Cpu {
    * Constructor.
    */
    template <int D>
-   FieldBasisConverter<D>::FieldBasisConverter(DMatrix<double> basis,
-                                               double normSq)
+   FieldBasisConverter<D>::FieldBasisConverter(DMatrix<double> basis)
     : basis_(basis),
-      normSq_(normSq),
       nMonomer_(basis.capacity1())
    {
       UTIL_CHECK(basis.isAllocated());
       UTIL_CHECK(basis_.capacity1() == basis_.capacity2());
-      UTIL_CHECK(normSq_ > 0.0);
-      UTIL_CHECK(nMonomer_ > 1);
-   }
-
-   /*
-   * Constructor.
-   */
-   template <int D>
-   FieldBasisConverter<D>::FieldBasisConverter(DMatrix<double> basis,
-                                               int normSq)
-    : basis_(basis),
-      normSq_(double(normSq)),
-      nMonomer_(basis.capacity1())
-   {
-      UTIL_CHECK(basis.isAllocated());
-      UTIL_CHECK(basis_.capacity1() == basis_.capacity2());
-      UTIL_CHECK(normSq_ > 0.0);
       UTIL_CHECK(nMonomer_ > 1);
    }
 
@@ -72,24 +52,21 @@ namespace Cpu {
    * Set the basis after construction.
    */
    template <int D>
-   void FieldBasisConverter<D>::setBasis(DMatrix<double> basis, 
-                                         double normSq)
+   void FieldBasisConverter<D>::setBasis(DMatrix<double> basis)
    {
       UTIL_CHECK(basis.isAllocated());
       UTIL_CHECK(basis.capacity1() > 1);
       UTIL_CHECK(basis.capacity1() == basis.capacity2());
-      UTIL_CHECK(normSq > 0.0);
 
       basis_ = basis;
-      normSq_ = normSq;
       nMonomer_ = basis.capacity1();
    }
 
    template <int D> 
-   double FieldBasisConverter<D>::maxBasisError() const
+   double FieldBasisConverter<D>::maxBasisError(double normSq) const
    {
       UTIL_CHECK(nMonomer_ > 1);
-      UTIL_CHECK(normSq_ > 0.0);
+      UTIL_CHECK(normSq > 0.0);
 
       double error = 0.0;
       double maxError = 0.0;
@@ -101,7 +78,7 @@ namespace Cpu {
                error +=  basis_(i,k)*basis_(j,k);
             }
             if (i == j) {
-               error = error - normSq_;
+               error = error - normSq;
             }
             error = std::abs(error);
             if (error > maxError) {
@@ -117,12 +94,12 @@ namespace Cpu {
    */
    template <int D> 
    void 
-   FieldBasisConverter<D>::convertToBasis(DArray<RField<D>> const & in,
-                                          DArray<RField<D>> & out) const
+   FieldBasisConverter<D>::convertToBasis(DArray< RField<D> > const & in,
+                                          DArray< RField<D> > & out,
+                                          double prefactor) const
    {
       // Preconditions
       UTIL_CHECK(nMonomer_ > 1);
-      UTIL_CHECK(normSq_ > 0.0);
       UTIL_CHECK(in.isAllocated());
       UTIL_CHECK(out.isAllocated());
       UTIL_CHECK(in.capacity() == nMonomer_);
@@ -133,28 +110,27 @@ namespace Cpu {
          UTIL_CHECK(out[i].capacity() == meshSize);
       }
 
+      double vec;
       int i, j, k;
 
       // Loop over components in basis
       for (i = 0; i < nMonomer_; ++i) {
-         RField<D> wo = out[i];
+         RField<D>& wo = out[i];
 
          // Initialize wo = out[i] to zero
          for (k = 0; k < meshSize; ++k) {
             wo[k] = 0.0; 
          }
 
-         // Loop over monomer types
+         // Loop over monomer types and mesh points
          for (j = 0; j < nMonomer_; ++j) {
-            double vec = basis_(i, j)/normSq_;
-            RField<D> wi = in[j];
-
-            // Loop over grid points
+            vec = basis_(i, j)*prefactor;
+            RField<D> const & wi = in[j];
             for (k = 0; k < meshSize; ++k) {
                wo[k] += vec*wi[k];
             }
-
          } // for j < nMonomer_
+
       } // for i < nMonomer_
 
    }
@@ -165,11 +141,11 @@ namespace Cpu {
    template <int D> 
    void 
    FieldBasisConverter<D>::convertFromBasis(DArray<RField<D>> const & in,
-                                            DArray<RField<D>> & out) const
+                                            DArray<RField<D>> & out,
+                                            double prefactor) const
    {
       // Preconditions
       UTIL_CHECK(nMonomer_ > 1);
-      UTIL_CHECK(normSq_ > 0.0);
       UTIL_CHECK(in.isAllocated());
       UTIL_CHECK(out.isAllocated());
       UTIL_CHECK(in.capacity() == nMonomer_);
@@ -180,28 +156,28 @@ namespace Cpu {
          UTIL_CHECK(out[i].capacity() == meshSize);
       }
 
+      double vec;
       int i, j, k;
 
       // Loop over monomer types
       for (i = 0; i < nMonomer_; ++i) {
-         RField<D> wo = out[i];
+         RField<D>& wo = out[i];
 
          // Initialize wo = out[i] to zero
          for (k = 0; k < meshSize; ++k) {
             wo[k] = 0.0; 
          }
 
-         // Loop over components in basis
+         // Loop over components in basis 
          for (j = 0; j < nMonomer_; ++j) {
-            double vec = basis_(j, i);
-            RField<D> wi = in[j];
-
-            // Loop over grid points
+            vec = basis_(j, i)*prefactor;
+            RField<D> const & wi = in[j];
+            // Loop over mesh points
             for (k = 0; k < meshSize; ++k) {
                wo[k] += vec*wi[k];
             }
-
          } // for j < nMonomer_
+
       } // for i < nMonomer_
 
    }
