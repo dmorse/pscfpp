@@ -192,7 +192,7 @@ namespace Pspc
       /// Timers for McMove 
       Timer attemptMoveTimer_;
       Timer compressorTimer_;
-      Timer computeWCTimer_;
+      Timer computeWcTimer_;
       Timer computeHamiltonianTimer_;
       Timer decisionTimer_;
       Timer totalTimer_;

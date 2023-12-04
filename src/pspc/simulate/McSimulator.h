@@ -153,10 +153,11 @@ namespace Pspc {
       // Inherited public functions
 
       using Simulator<D>::system;
+      using Simulator<D>::allocate;
       using Simulator<D>::analyzeChi;
-      using Simulator<D>::computeWC;
+      using Simulator<D>::computeWc;
       using Simulator<D>::wc;
-      using Simulator<D>::hasWC;
+      using Simulator<D>::hasWc;
       using Simulator<D>::clearData;
       using Simulator<D>::computeHamiltonian;
       using Simulator<D>::hamiltonian;
@@ -175,7 +176,7 @@ namespace Pspc {
       // Inherited protected data members
 
       using Simulator<D>::wc_;
-      using Simulator<D>::hasWC_;
+      using Simulator<D>::hasWc_;
       using Simulator<D>::hamiltonian_;
       using Simulator<D>::idealHamiltonian_;
       using Simulator<D>::fieldHamiltonian_;

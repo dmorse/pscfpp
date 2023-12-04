@@ -29,9 +29,10 @@ namespace Pspc {
    : random_(),
      iStep_(0),
      hasHamiltonian_(false),
-     hasWC_(false),
+     hasWc_(false),
+     hasCc_(false),
      systemPtr_(&system)
-   { setClassName("Simulator"); }
+   {  setClassName("Simulator"); }
 
    /*
    * Destructor.
@@ -41,26 +42,45 @@ namespace Pspc {
    {}
 
    /* 
-   * Read instructions for creating objects from file.
+   * Allocate required memory.
    */
    template <int D>
-   void Simulator<D>::readParameters(std::istream &in)
+   void Simulator<D>::allocate()
    {
-      // Allocate projected chi matrix chiP_ and associated arrays
       const int nMonomer = system().mixture().nMonomer();
+
+      // Allocate projected chi matrix chiP_ and associated arrays
       chiP_.allocate(nMonomer, nMonomer);
       chiEvals_.allocate(nMonomer);
       chiEvecs_.allocate(nMonomer, nMonomer);
+      sc_.allocate(nMonomer);
+
+      // Allocate memory for eignevector components of w and c fields
       wc_.allocate(nMonomer);
+      cc_.allocate(nMonomer);
       const int meshSize = system().domain().mesh().size();
       for (int i = 0; i < nMonomer; ++i) {
-            wc_[i].allocate(meshSize);
+         wc_[i].allocate(meshSize);
+         cc_[i].allocate(meshSize);
       }
-      analyzeChi();
+
+      // Allocate memory for components of d (functional derivative)
+      dc_.allocate(nMonomer-1);
+      for (int i = 0; i < nMonomer - 1; ++i) {
+         dc_[i].allocate(meshSize);
+      }
+
    }
 
+   /* 
+   * Virtual function to read parameters - unimplemented.
+   */
+   template <int D>
+   void Simulator<D>::readParameters(std::istream &in)
+   {  UTIL_THROW("Error: Unimplemented Simulator<D>::readParameters"); } 
+
    /*
-   * Perform a field theoretic MC simulation of nStep steps.
+   * Perform a field theoretic simulation of nStep steps.
    */
    template <int D>
    void Simulator<D>::simulate(int nStep)
@@ -76,14 +96,14 @@ namespace Pspc {
    {  UTIL_THROW("Error: Unimplemented function Simulator<D>::analyze"); }
    
    /*
-   * Compute Monte Carlo Hamiltonian.
+   * Compute field theoretic Hamiltonian H[W].
    */
    template <int D>
    void Simulator<D>::computeHamiltonian()
    {
       UTIL_CHECK(system().w().hasData());
       UTIL_CHECK(system().hasCFields());
-      UTIL_CHECK(hasWC_);
+      UTIL_CHECK(hasWc_);
       hasHamiltonian_ = false;
 
       Mixture<D> const & mixture = system().mixture();
@@ -130,30 +150,35 @@ namespace Pspc {
       }
       // lnQ now contains a value per monomer
 
-      // Compute field contribution HW
-      int i, j;
-      double prefactor, w;
-      double HW = 0.0;
+      // Initialize field contribution HW
+
       // Compute quadratic field contribution to HW
+      double HW = 0.0;
+      double prefactor, w, s;
+      int i, j;
       for (j = 0; j < nMonomer - 1; ++j) {
+         RField<D> const & Wc = wc_[j];
          prefactor = -0.5*double(nMonomer)/chiEvals_[j];
-         RField<D> const & wc = wc_[j];
+         s = sc_[j];
          for (i = 0; i < meshSize; ++i) {
-            w = wc[i];
+            w = Wc[i] - s;
             HW += prefactor*w*w;
          }
       }
       
-      // Subtract average of Langrange multiplier field
-      RField<D> const & xi = wc_[nMonomer-1];
+      // Subtract average of pressure field wc_[nMonomer-1]
+      RField<D> const & Wc = wc_[nMonomer-1];
       for (i = 0; i < meshSize; ++i) {
-         HW -= xi[i];
+         HW -= Wc[i];
       }
 
       // Normalize HW to equal a value per monomer
       HW /= double(meshSize);
+
+      // Add constant term K/2
+      //HW += 0.5*s_[nMonomer_-1];
       
-      // Compute final MC Hamiltonian
+      // Compute final Hamiltonian
       const double vSystem  = domain.unitCell().volume();
       const double vMonomer = mixture.vMonomer();
       const double nMonomerSystem = vSystem / vMonomer;
@@ -172,7 +197,7 @@ namespace Pspc {
       double d = 1.0/double(nMonomer);
       int i, j, k;
 
-      // Compute projection matrix P
+      // Compute orthogonal projection matrix P
       DMatrix<double> P;
       P.allocate(nMonomer, nMonomer);
       for (i = 0; i < nMonomer; ++i) {
@@ -290,6 +315,26 @@ namespace Pspc {
          UTIL_CHECK(abs(chiEvecs_(nMonomer-1, j) - 1.0) < 1.0E-8);
       }
 
+      // Compute vector s in monomer basis
+      DArray<double> s;
+      s.allocate(nMonomer);
+      for (i = 0; i < nMonomer; ++i) {
+         s[i] = 0.0;
+         for (j = 0; j < nMonomer; ++j) {
+           s[i] += chi(i,j);
+         } 
+         s[i] = s[i]/double(nMonomer);
+      }
+
+      // Compute components of s in eigenvector basis -> sc_
+      for (i = 0; i < nMonomer; ++i) {
+         sc_[i] = 0.0;
+         for (j = 0; j < nMonomer; ++j) {
+           sc_[i] += chiEvecs_(i,j)*s[j];
+         }
+         sc_[i] = sc_[i]/double(nMonomer);
+      }
+
       #if 0
       // Debugging output
       for (i = 0; i < nMonomer; ++i) {
@@ -300,8 +345,10 @@ namespace Pspc {
             Log::file() << chiEvecs_(i, j) << "   ";
          }
          Log::file() << "]\n";
+         Log::file() << " sc[i] = " << sc_{i] << std::endl;
       }
       #endif
+
    }
 
    /*
@@ -309,7 +356,7 @@ namespace Pspc {
    * eigenvectors chiEvecs_ of the projected chi matrix as a basis.
    */
    template <int D>
-   void Simulator<D>::computeWC()
+   void Simulator<D>::computeWc()
    {
       const int nMonomer = system().mixture().nMonomer();
       const int meshSize = system().domain().mesh().size();
@@ -317,9 +364,9 @@ namespace Pspc {
       // Loop over eigenvectors (j is an eigenvector index)
       for (j = 0; j < nMonomer; ++j) {
          // Loop over grid points to zero out field wc_[j]
-         RField<D>& wc = wc_[j];
+         RField<D>& Wc = wc_[j];
          for (i = 0; i < meshSize; ++i) {
-            wc[i] = 0.0;
+            Wc[i] = 0.0;
          }
 
          // Loop over monomer types (k is a monomer index)
@@ -327,9 +374,9 @@ namespace Pspc {
             double vec = chiEvecs_(j, k)/double(nMonomer);
 
             // Loop over grid points
-            RField<D> const & w = system().w().rgrid(k);
+            RField<D> const & Wr = system().w().rgrid(k);
             for (i = 0; i < meshSize; ++i) {
-               wc[i] += vec*w[i];
+               Wc[i] += vec*Wr[i];
             }
 
          }
@@ -344,9 +391,87 @@ namespace Pspc {
       }
       #endif
 
-      hasWC_ = true;
+      hasWc_ = true;
    }
    
+   /*
+   * Compute the eigenvector components of the c-fields, using the
+   * eigenvectors chiEvecs_ of the projected chi matrix as a basis.
+   */
+   template <int D>
+   void Simulator<D>::computeCc()
+   {
+      const int nMonomer = system().mixture().nMonomer();
+      const int meshSize = system().domain().mesh().size();
+      int i, j, k;
+
+      // Loop over eigenvectors (i is an eigenvector index)
+      for (i = 0; i < nMonomer; ++i) {
+
+         // Zero out field component cc_[i]
+         RField<D>& Cc = cc_[i];
+         for (k = 0; k < meshSize; ++k) {
+            Cc[k] = 0.0;
+         }
+
+         // Loop over monomer types (k is a monomer index)
+         for (j = 0; j < nMonomer; ++j) {
+            double vec = chiEvecs_(i, j);
+
+            // Loop over grid points
+            RField<D> const & Cr = system().c().rgrid(j);
+            for (k = 0; k < meshSize; ++k) {
+               Cc[i] += vec*Cr[k];
+            }
+
+         }
+      }
+      
+      // Debugging output
+      #if 0
+      Log::file() << "cc " << cc_.capacity() << "\n";
+      for (i = 0; i < 10; ++i) {
+         Log::file() << "cc_1 " << cc_[0][i] << "\n";
+         Log::file() << "cc_2 " << cc_[1][i] << "\n";
+      }
+      #endif
+
+      hasCc_ = true;
+   }
+
+   /*
+   * Compute d fields, i.e., functional derivatives of H[W].
+   */
+   template <int D>
+   void Simulator<D>::computeDc()
+   {
+      // Preconditions
+      if (!hasWc_) computeWc();
+      if (!hasCc_) computeCc();
+
+      // Local constants and variables
+      const int meshSize = system().domain().mesh().size();
+      const int nMonomer = system().mixture().nMonomer();
+      const int vMonomer = system().mixture().vMonomer();
+      const double a = 1.0/vMonomer;
+      double b, s;
+      int i, k;
+
+      // Loop over composition eigenvectors (exclude the last)
+      for (i = 0; i < nMonomer - 1; ++i) {
+         RField<D>& Dc = dc_[i];
+         RField<D> const & Wc = wc_[i];
+         RField<D> const & Cc = cc_[i];
+         b = -1.0*double(nMonomer)/chiEvals_[i];
+         s = sc_[i];
+         // Loop over grid points
+         for (k = 0; k < meshSize; ++k) {
+            Dc[k] = a*( b*(Wc[k] - s) + Cc[k] );
+         }
+      }
+
+   }
+
    /*
    * Output all timer results.
    */ 

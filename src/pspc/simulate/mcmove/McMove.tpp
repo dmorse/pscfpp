@@ -96,9 +96,9 @@ namespace Pspc {
       compressorTimer_.stop();
       
       // Compute eigenvector components of the current w fields
-      computeWCTimer_.start();
-      mcSimulator().computeWC();
-      computeWCTimer_.stop();
+      computeWcTimer_.start();
+      mcSimulator().computeWc();
+      computeWcTimer_.stop();
       
       // Evaluate new Hamiltonian
       computeHamiltonianTimer_.start();
@@ -148,9 +148,9 @@ namespace Pspc {
           << Dbl(compressorTimer_.time()/nAttempt_, 9, 3)  << " s,  "
           << Dbl(compressorTimer_.time()/total, 9, 3) << "\n";
       out << "Compute eigen-components: "
-          << Dbl(computeWCTimer_.time(), 9, 3)  << " s,  "
-          << Dbl(computeWCTimer_.time()/nAttempt_, 9, 3)  << " s,  "
-          << Dbl(computeWCTimer_.time()/total, 9, 3) << "\n";
+          << Dbl(computeWcTimer_.time(), 9, 3)  << " s,  "
+          << Dbl(computeWcTimer_.time()/nAttempt_, 9, 3)  << " s,  "
+          << Dbl(computeWcTimer_.time()/total, 9, 3) << "\n";
       out << "Compute Hamiltonian:      "
           << Dbl(computeHamiltonianTimer_.time(), 9, 3)  << " s,  "
           << Dbl(computeHamiltonianTimer_.time()/nAttempt_, 9, 3)  << " s,  "
@@ -170,7 +170,7 @@ namespace Pspc {
    {
       attemptMoveTimer_.clear();
       compressorTimer_.clear();
-      computeWCTimer_.clear();
+      computeWcTimer_.clear();
       computeHamiltonianTimer_.clear();
       decisionTimer_.clear();
       totalTimer_.clear();

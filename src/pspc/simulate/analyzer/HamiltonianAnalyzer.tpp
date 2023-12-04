@@ -58,13 +58,13 @@ namespace Pspc {
    template <int D>
    void HamiltonianAnalyzer<D>::compute() 
    {
-      if (!mcSimulator().hasWC()){
+      if (!mcSimulator().hasWc()){
          if (!hasAnalyzeChi_){
             mcSimulator().analyzeChi();
             hasAnalyzeChi_ = true;
          }
          system().compute();
-         mcSimulator().computeWC();
+         mcSimulator().computeWc();
          mcSimulator().computeHamiltonian();
       }
       double ideal = mcSimulator().idealHamiltonian();
