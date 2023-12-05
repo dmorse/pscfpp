@@ -401,6 +401,10 @@ namespace Pspc {
    template <int D>
    void Simulator<D>::computeCc()
    {
+      // Preconditions
+      UTIL_CHECK(system().w().hasData());
+      UTIL_CHECK(system().hasCFields());
+
       const int nMonomer = system().mixture().nMonomer();
       const int meshSize = system().domain().mesh().size();
       int i, j, k;
@@ -408,18 +412,18 @@ namespace Pspc {
       // Loop over eigenvectors (i is an eigenvector index)
       for (i = 0; i < nMonomer; ++i) {
 
-         // Zero out field component cc_[i]
+         // Set cc_[i] to zero
          RField<D>& Cc = cc_[i];
          for (k = 0; k < meshSize; ++k) {
             Cc[k] = 0.0;
          }
 
-         // Loop over monomer types (k is a monomer index)
+         // Loop over monomer types 
          for (j = 0; j < nMonomer; ++j) {
+            RField<D> const & Cr = system().c().rgrid(j);
             double vec = chiEvecs_(i, j);
 
             // Loop over grid points
-            RField<D> const & Cr = system().c().rgrid(j);
             for (k = 0; k < meshSize; ++k) {
                Cc[i] += vec*Cr[k];
             }
