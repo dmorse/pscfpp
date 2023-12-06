@@ -36,6 +36,7 @@ namespace Pscf {
 namespace Pscf {
 namespace Pspc {
 
+   // Forward references in Pscf::Pspc
    template <int D> class Iterator;
    template <int D> class IteratorFactory;
    template <int D> class Sweep;
@@ -43,6 +44,7 @@ namespace Pspc {
    template <int D> class Compressor;
    template <int D> class CompressorFactory;
    template <int D> class Simulator;
+   template <int D> class SimulatorFactory;
 
    using namespace Util;
    using namespace Prdc;
@@ -59,7 +61,8 @@ namespace Pspc {
    *    - a container of monomer chemical potential fields 
    *    - a container of monomer concentration fields 
    *
-   * A system may also optionally contain Iterator and Sweep objects.
+   * A system may also optionally contain Iterator, Sweep, Compressor
+   * and Simulator objects.
    *
    * Typical usage of a System<D> object looks something like this:
    * \code
@@ -909,6 +912,11 @@ namespace Pspc {
       Simulator<D>* simulatorPtr_;
 
       /**
+      * Pointer to Simulator factory object
+      */
+      SimulatorFactory<D>* simulatorFactoryPtr_;
+
+      /**
       * Chemical potential fields.
       */
       WFieldContainer<D> w_;
@@ -985,11 +993,6 @@ namespace Pspc {
       * Has the mixture been initialized?
       */
       bool hasMixture_;
-
-      /**
-      * Has the Simulator been initialized?
-      */
-      bool hasSimulator_;
 
       /**
       * Has memory been allocated for fields in grid format?
@@ -1240,7 +1243,7 @@ namespace Pspc {
    // Does the system have an initialized Simulator ?
    template <int D>
    inline bool System<D>::hasSimulator() const
-   {  return (hasSimulator_); }
+   {  return (simulatorPtr_ != 0); }
 
    // Have the c fields been computed for the current w fields?
    template <int D>

@@ -11,10 +11,9 @@
 #include "System.h"
 
 #include <pspc/simulate/Simulator.h>
-#include <pspc/simulate/McSimulator.h>
+#include <pspc/simulate/SimulatorFactory.h>
 #include <pspc/compressor/Compressor.h>
 #include <pspc/compressor/CompressorFactory.h>
-
 #include <pspc/sweep/Sweep.h>
 #include <pspc/sweep/SweepFactory.h>
 #include <pspc/iterator/Iterator.h>
@@ -68,6 +67,7 @@ namespace Pspc {
       compressorPtr_(0),
       compressorFactoryPtr_(0),
       simulatorPtr_(0),
+      simulatorFactoryPtr_(0),
       w_(),
       c_(),
       h_(),
@@ -78,7 +78,6 @@ namespace Pspc {
       fExt_(0.0),
       pressure_(0.0),
       hasMixture_(false),
-      hasSimulator_(false),
       isAllocatedGrid_(false),
       isAllocatedBasis_(false),
       hasCFields_(false),
@@ -93,7 +92,7 @@ namespace Pspc {
       iteratorFactoryPtr_ = new IteratorFactory<D>(*this); 
       sweepFactoryPtr_ = new SweepFactory<D>(*this);
       compressorFactoryPtr_ = new CompressorFactory<D>(*this);
-      simulatorPtr_ = new McSimulator<D>(*this);
+      simulatorFactoryPtr_ = new SimulatorFactory<D>(*this);
       BracketPolicy::set(BracketPolicy::Optional);
    }
 
@@ -126,6 +125,9 @@ namespace Pspc {
       }
       if (simulatorPtr_) {
          delete simulatorPtr_;
+      }
+      if (simulatorFactoryPtr_) {
+         delete simulatorFactoryPtr_;
       }
    }
 
@@ -304,18 +306,17 @@ namespace Pspc {
          Log::file() << indent() << "  Compressor{ [absent] }\n";
       }
 
-      // Optionally read a Simulator
-      //if (compressorPtr_) {
+      // Optionally instantiate a Simulator
+      if (hasCompressor()) {
 
-         readParamCompositeOptional(in, simulator());
-
-         if (simulator().isActive()) {
-            hasSimulator_ = true;
-         } else {
-            hasSimulator_ = false;
+         simulatorPtr_ = 
+            simulatorFactoryPtr_->readObjectOptional(in, *this, 
+                                                      className, isEnd);
+         if (!simulatorPtr_ && ParamComponent::echo()) {
+            Log::file() << indent() << "  Simulator{ [absent] }\n";
          }
 
-      //}
+      }
 
       // Initialize homogeneous object 
       // NOTE: THIS OBJECT IS NOT USED AT ALL.
@@ -403,17 +404,19 @@ namespace Pspc {
             sweep();
          } else
          if (command == "SIMULATE") {
-            // Perform a field theoretic MC simulation
+            // Perform a field theoretic simulation
             int nStep;
             in >> nStep;
             Log::file() << "   "  << nStep << "\n";
             simulate(nStep);
          } else
          if (command == "ANALYZE_TRAJECTORY" || command == "ANALYZE") {
-            int min;
+            // Read and analyze a field trajectory file
+            int min, max;
             in >> min;
-            int max;
             in >> max;
+            Log::file() << "   "  << min ;
+            Log::file() << "   "  << max << "\n";
             std::string classname;
             readEcho(in, classname);
             readEcho(in, filename);
@@ -937,14 +940,14 @@ namespace Pspc {
    }
   
    /*
-   * Perform a field theoretic MC simulation of nStep steps.
+   * Perform a field theoretic simulation of nStep steps.
    */
    template <int D>
    void System<D>::simulate(int nStep)
    {
       UTIL_CHECK(nStep > 0);
       UTIL_CHECK(hasCompressor());
-      UTIL_CHECK(hasSimulator_);
+      UTIL_CHECK(hasSimulator());
       hasCFields_ = false;
       hasFreeEnergy_ = false;
 
@@ -1157,7 +1160,7 @@ namespace Pspc {
          iterator().outputTimers(Log::file());
          iterator().outputTimers(out);
       }
-      if (hasSimulator_){
+      if (hasSimulator()){
          simulator().outputTimers(Log::file());
          simulator().outputTimers(out);
       }
@@ -1176,7 +1179,7 @@ namespace Pspc {
       if (iteratorPtr_) {
          iterator().clearTimers();
       }
-      if (hasSimulator_){
+      if (hasSimulator()){
          simulator().clearTimers();
       }
       if (compressorPtr_){
