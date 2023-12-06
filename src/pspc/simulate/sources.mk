@@ -7,9 +7,10 @@ pspc_simulate_= \
   $(pspc_simulate_analyzer_) \
   $(pspc_simulate_mcmove_) \
   $(pspc_trajectory_) \
+  pspc/simulate/Simulator.cpp \
+  pspc/simulate/SimulatorFactory.cpp \
   pspc/simulate/McSimulator.cpp \
-  pspc/simulate/McState.cpp \
-  pspc/simulate/Simulator.cpp 
+  pspc/simulate/McState.cpp 
   
 pspc_simulate_OBJS=\
      $(addprefix $(BLD_DIR)/, $(pspc_simulate_:.cpp=.o))

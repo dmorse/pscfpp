@@ -1,0 +1,81 @@
+System{
+  Mixture{
+    nMonomer  2
+    monomers[
+             1.0  
+             1.0 
+    ]
+    nPolymer  1
+    Polymer{
+      type    linear
+      nBlock  2
+      blocks[
+              0   0.5
+              1   0.5
+      ]
+      phi     1.0
+    }
+    vMonomer  0.01
+    ds   0.02
+  }
+  Interaction{
+    chi(
+        1   0   13
+    )
+  }
+  Domain{
+    mesh           16    16    16
+    lattice     cubic   
+  }
+  AmCompressor{
+    epsilon      1.0e-4
+    maxItr       200
+    maxHist      30     
+    verbose	 0
+    errorType    normResid
+  }
+}
+
+
+  McSimulator{
+    McMoveManager{
+
+      RealMove{
+        probability     0.5
+        A               0.4
+      }
+
+      FourierMove{
+        probability     0.5
+        A               0.008
+        F*              20.990
+        tau             2.64737
+        N               1.0
+        volumeFraction  0.5
+        statisticalSegmentLength 1
+      }
+
+    }
+    AnalyzerManager{
+      baseInterval    1
+
+      TrajectoryWriter{
+        interval        10
+        outputFileName  out/trajectory
+      }
+
+      HamiltonianAnalyzer{
+        interval        10
+        outputFileName  out/hamiltonian
+        nSamplePerBlock 2
+      }
+
+      StepLogger{
+        interval        50
+      }
+
+    }
+  }
+
+  unitCell cubic   1.3835952906
+  groupName   P_-1
