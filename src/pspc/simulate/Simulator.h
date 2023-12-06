@@ -524,6 +524,11 @@ namespace Pspc {
       */
       System<D>* systemPtr_;
 
+      /**
+      * Has required memory been allocated?
+      */
+      bool isAllocated_;
+
    };
 
    // Inline functions

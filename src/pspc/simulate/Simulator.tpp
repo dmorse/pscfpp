@@ -31,7 +31,8 @@ namespace Pspc {
      hasHamiltonian_(false),
      hasWc_(false),
      hasCc_(false),
-     systemPtr_(&system)
+     systemPtr_(&system),
+     isAllocated_(false)
    {  setClassName("Simulator"); }
 
    /*
@@ -47,6 +48,8 @@ namespace Pspc {
    template <int D>
    void Simulator<D>::allocate()
    {
+      UTIL_CHECK(!isAllocated_);
+
       const int nMonomer = system().mixture().nMonomer();
 
       // Allocate projected chi matrix chiP_ and associated arrays
@@ -70,6 +73,7 @@ namespace Pspc {
          dc_[i].allocate(meshSize);
       }
 
+      isAllocated_ = true;
    }
 
    /* 
@@ -101,6 +105,7 @@ namespace Pspc {
    template <int D>
    void Simulator<D>::computeHamiltonian()
    {
+      UTIL_CHECK(isAllocated_);
       UTIL_CHECK(system().w().hasData());
       UTIL_CHECK(system().hasCFields());
       UTIL_CHECK(hasWc_);
@@ -192,6 +197,8 @@ namespace Pspc {
    template <int D>
    void Simulator<D>::analyzeChi()
    {
+      UTIL_CHECK(isAllocated_);
+
       const int nMonomer = system().mixture().nMonomer();
       DMatrix<double> const & chi = system().interaction().chi();
       double d = 1.0/double(nMonomer);
@@ -358,6 +365,8 @@ namespace Pspc {
    template <int D>
    void Simulator<D>::computeWc()
    {
+      UTIL_CHECK(isAllocated_);
+
       const int nMonomer = system().mixture().nMonomer();
       const int meshSize = system().domain().mesh().size();
       int i, j, k;
@@ -401,6 +410,8 @@ namespace Pspc {
    template <int D>
    void Simulator<D>::computeCc()
    {
+      UTIL_CHECK(isAllocated_);
+
       // Preconditions
       UTIL_CHECK(system().w().hasData());
       UTIL_CHECK(system().hasCFields());
@@ -449,6 +460,8 @@ namespace Pspc {
    template <int D>
    void Simulator<D>::computeDc()
    {
+      UTIL_CHECK(isAllocated_);
+
       // Preconditions
       if (!hasWc_) computeWc();
       if (!hasCc_) computeCc();
