@@ -284,7 +284,7 @@ namespace Pspc {
       iteratorPtr_ = 
          iteratorFactoryPtr_->readObjectOptional(in, *this, className, 
                                                  isEnd);
-      if (!iteratorPtr_) {
+      if (!iteratorPtr_ && ParamComponent::echo()) {
          Log::file() << indent() << "  [Iterator{} absent]\n";
       }
 
