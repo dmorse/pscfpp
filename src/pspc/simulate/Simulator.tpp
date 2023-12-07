@@ -180,13 +180,15 @@ namespace Pspc {
       // Normalize HW to equal a value per monomer
       HW /= double(meshSize);
 
-      // Add constant term K/2
-      //HW += 0.5*s_[nMonomer_-1];
-      
-      // Compute final Hamiltonian
+      // Add constant term K/2 per monomer (K=s=e^{T}chi e/M^2)
+      HW += 0.5*sc_[nMonomer - 1];
+
+      // Compute number of monomers in the system (nMonomerSystem)      
       const double vSystem  = domain.unitCell().volume();
       const double vMonomer = mixture.vMonomer();
       const double nMonomerSystem = vSystem / vMonomer;
+
+      // Compute final Hamiltonian components
       fieldHamiltonian_ = nMonomerSystem * HW;
       idealHamiltonian_ = -1.0 * nMonomerSystem * lnQ;
       hamiltonian_ = idealHamiltonian_ + fieldHamiltonian_;
@@ -337,7 +339,7 @@ namespace Pspc {
       for (i = 0; i < nMonomer; ++i) {
          sc_[i] = 0.0;
          for (j = 0; j < nMonomer; ++j) {
-           sc_[i] += chiEvecs_(i,j)*s[j];
+            sc_[i] += chiEvecs_(i,j)*s[j];
          }
          sc_[i] = sc_[i]/double(nMonomer);
       }
@@ -370,8 +372,10 @@ namespace Pspc {
       const int nMonomer = system().mixture().nMonomer();
       const int meshSize = system().domain().mesh().size();
       int i, j, k;
+
       // Loop over eigenvectors (j is an eigenvector index)
       for (j = 0; j < nMonomer; ++j) {
+
          // Loop over grid points to zero out field wc_[j]
          RField<D>& Wc = wc_[j];
          for (i = 0; i < meshSize; ++i) {
@@ -391,8 +395,8 @@ namespace Pspc {
          }
       }
       
-      // Debugging output
       #if 0
+      // Debugging output
       Log::file() << "wc " << wc_.capacity() << "\n";
       for (i = 0; i < 10; ++i) {
          Log::file() << "wc_1 " << wc_[0][i] << "\n";
@@ -410,9 +414,8 @@ namespace Pspc {
    template <int D>
    void Simulator<D>::computeCc()
    {
-      UTIL_CHECK(isAllocated_);
-
       // Preconditions
+      UTIL_CHECK(isAllocated_);
       UTIL_CHECK(system().w().hasData());
       UTIL_CHECK(system().hasCFields());
 
@@ -436,14 +439,14 @@ namespace Pspc {
 
             // Loop over grid points
             for (k = 0; k < meshSize; ++k) {
-               Cc[i] += vec*Cr[k];
+               Cc[k] += vec*Cr[k];
             }
 
          }
       }
       
-      // Debugging output
       #if 0
+      // Debugging output
       Log::file() << "cc " << cc_.capacity() << "\n";
       for (i = 0; i < 10; ++i) {
          Log::file() << "cc_1 " << cc_[0][i] << "\n";
@@ -460,16 +463,15 @@ namespace Pspc {
    template <int D>
    void Simulator<D>::computeDc()
    {
-      UTIL_CHECK(isAllocated_);
-
       // Preconditions
+      UTIL_CHECK(isAllocated_);
       if (!hasWc_) computeWc();
       if (!hasCc_) computeCc();
 
       // Local constants and variables
       const int meshSize = system().domain().mesh().size();
       const int nMonomer = system().mixture().nMonomer();
-      const int vMonomer = system().mixture().vMonomer();
+      const double vMonomer = system().mixture().vMonomer();
       const double a = 1.0/vMonomer;
       double b, s;
       int i, k;

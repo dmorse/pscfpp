@@ -963,7 +963,6 @@ namespace Pspc {
    template <int D>
    void System<D>::computeFreeEnergy()
    {
-      UTIL_CHECK(domain_.basis().isInitialized());
       UTIL_CHECK(w_.hasData());
       UTIL_CHECK(hasCFields_);
       UTIL_CHECK(!hasFreeEnergy_);

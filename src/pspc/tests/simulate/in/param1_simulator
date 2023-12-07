@@ -10,21 +10,21 @@ System{
       type    linear
       nBlock  2
       blocks[
-              0   0.5
-              1   0.5
+              0   0.35
+              1   0.65
       ]
       phi     1.0
     }
     vMonomer  0.01
-    ds   0.02
+    ds   0.01
   }
   Interaction{
     chi(
-        1   0   13
+        1   0   15
     )
   }
   Domain{
-    mesh           16    16    16
+    mesh           32    32    32
     lattice     cubic   
   }
   AmCompressor{
