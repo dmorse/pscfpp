@@ -1,2 +1,0 @@
-(cd analyze; ./clean)
-(cd simulate; ./clean)

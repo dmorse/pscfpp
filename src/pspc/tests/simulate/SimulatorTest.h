@@ -147,28 +147,42 @@ public:
       }
 
       // Test dc field
+      //double max = 0.0;
+      double diff;
       for (i = 0; i < meshSize; ++i) {
-         //std::cout << dc[0][i] << std::endl;
-         TEST_ASSERT(fabs( dc[0][i] ) < 1.0E-5);
+         diff = fabs( dc[0][i] );
+         TEST_ASSERT(diff < 1.0E-8);
+         //if (diff > max) max = diff;
       }
 
       #if 0
+      std::cout << std::endl;
+      std::cout << "Maximum derivative " << diff << std::endl;
       std::cout << std::endl;
       std::cout << system.domain().mesh().dimensions() << std::endl;
       std::cout << system.domain().mesh().size() << std::endl;
       #endif
 
-      system.computeFreeEnergy();
-      double fHelmholtz = system.fHelmholtz();
       double volume = system.domain().unitCell().volume();
       double vMonomer = system.mixture().vMonomer();
       double ratio = volume/vMonomer;
+
+      // SCFT free energy for converged solution
+      system.computeFreeEnergy();
+      double fHelmholtz = system.fHelmholtz();
+
+      // FTS Hamiltonian at saddle-point
       simulator.computeHamiltonian();
       double hamiltonian = simulator.hamiltonian();
 
-      TEST_ASSERT( fabs((hamiltonian - ratio*fHelmholtz)/hamiltonian) < 1.0E-6);
+      // Compare FTS Hamiltonian to SCFT free energy
+      diff = fabs((hamiltonian - ratio*fHelmholtz)/hamiltonian);
+      TEST_ASSERT( diff < 1.0E-8);
 
       #if 0
+      std::cout << "Hamiltonian different (fractional) = " 
+                << diff << std::endl;
+
       std::cout << "fHelmholtz = " << fHelmholtz << "  " 
                 << ratio*fHelmholtz  << std::endl;
 

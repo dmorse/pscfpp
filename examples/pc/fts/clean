@@ -1,0 +1,2 @@
+(cd analyze; ./clean)
+(cd ftmc; ./clean)
