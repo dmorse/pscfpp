@@ -22,7 +22,7 @@ namespace Pscf {
 namespace Pspc {
 
    template <int D> class System;
-   template <int D> class McSimulator;
+   template <int D> class Simulator;
 
    using namespace Util;
    using namespace Pscf::Prdc::Cpu;
@@ -52,7 +52,7 @@ namespace Pspc {
       /**
       * Constructor.
       */
-      BinaryStructureFactorGrid(McSimulator<D>& mcSimulator, System<D>& system);
+      BinaryStructureFactorGrid(Simulator<D>& simulator, System<D>& system);
 
       /**	
       * Destructor.
@@ -156,7 +156,7 @@ namespace Pspc {
       /**
       * Pointer to parent Simulator
       */
-      McSimulator<D>* mcSimulatorPtr_;     
+      Simulator<D>* simulatorPtr_;     
       
       /**
       * Pointer to the parent system.
@@ -169,9 +169,9 @@ namespace Pspc {
       System<D>& system();
       
       /** 
-      * Return reference to parent McSimulator.
+      * Return reference to parent Simulator.
       */
-      McSimulator<D>& mcSimulator();
+      Simulator<D>& simulator();
       
       using ParamComposite::setClassName;
       using ParamComposite::read;
@@ -210,10 +210,10 @@ namespace Pspc {
    inline System<D>& BinaryStructureFactorGrid<D>::system()
    {  return *systemPtr_; }
    
-   //Get parent McSimulator object.
+   //Get parent Simulator object.
    template <int D>
-   inline McSimulator<D>& BinaryStructureFactorGrid<D>::mcSimulator()
-   {  return *mcSimulatorPtr_; }
+   inline Simulator<D>& BinaryStructureFactorGrid<D>::simulator()
+   {  return *simulatorPtr_; }
 
    #ifndef PSPC_BINARY_STRUCTURE_FACTOR_GRID_TPP
    // Suppress implicit instantiation

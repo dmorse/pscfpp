@@ -3,7 +3,7 @@
 
 #include "BinaryStructureFactorGrid.h"
 
-#include <pspc/simulate/McSimulator.h>
+#include <pspc/simulate/Simulator.h>
 #include <pspc/System.h>
 
 #include <prdc/cpu/RField.h>
@@ -39,10 +39,10 @@ namespace Pspc {
    * Constructor.
    */
    template <int D>
-   BinaryStructureFactorGrid<D>::BinaryStructureFactorGrid(McSimulator<D>& mcSimulator, System<D>& system) 
+   BinaryStructureFactorGrid<D>::BinaryStructureFactorGrid(Simulator<D>& simulator, System<D>& system) 
     : Analyzer<D>(),
-      mcSimulatorPtr_(&mcSimulator),
-      systemPtr_(&(mcSimulator.system())),
+      simulatorPtr_(&simulator),
+      systemPtr_(&(simulator.system())),
       isInitialized_(false)
    {  setClassName("BinaryStructureFactorGrid"); }
 

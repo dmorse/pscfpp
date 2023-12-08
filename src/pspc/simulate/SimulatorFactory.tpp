@@ -6,6 +6,7 @@
 
 // Subclasses of Simulator 
 #include <pspc/simulate/McSimulator.h>
+#include <pspc/simulate/BdSimulator.h>
 
 namespace Pscf {
 namespace Pspc {
@@ -36,7 +37,10 @@ namespace Pspc {
       // Try to match classname
       if (className == "McSimulator" || className == "Simulator") {
          ptr = new McSimulator<D>(*systemPtr_);
-      }
+      } else
+      if (className == "BdSimulator") {
+         ptr = new BdSimulator<D>(*systemPtr_);
+      } 
 
       return ptr;
    }

@@ -14,7 +14,7 @@ namespace Pscf {
 namespace Pspc {
 
    template <int D> class System;
-   template <int D> class McSimulator;
+   template <int D> class Simulator;
 
    using namespace Util;
 
@@ -37,7 +37,7 @@ namespace Pspc {
       /**
       * Constructor.
       */
-      HamiltonianAnalyzer(McSimulator<D>& mcSimulator, System<D>& system);
+      HamiltonianAnalyzer(Simulator<D>& simulator, System<D>& system);
    
       /**
       * Destructor.
@@ -71,7 +71,7 @@ namespace Pspc {
       /**
       * Pointer to parent Simulator
       */
-      McSimulator<D>* mcSimulatorPtr_;     
+      Simulator<D>* simulatorPtr_;     
       /**
       * Pointer to the parent system.
       */
@@ -94,9 +94,9 @@ namespace Pspc {
       System<D>& system();
       
       /** 
-      * Return reference to parent McSimulator.
+      * Return reference to parent Simulator.
       */
-      McSimulator<D>& mcSimulator();
+      Simulator<D>& simulator();
  
    private: 
 
@@ -119,10 +119,10 @@ namespace Pspc {
    inline System<D>& HamiltonianAnalyzer<D>::system()
    {  return *systemPtr_; }
    
-   //Get parent McSimulator object.
+   //Get parent Simulator object.
    template <int D>
-   inline McSimulator<D>& HamiltonianAnalyzer<D>::mcSimulator()
-   {  return *mcSimulatorPtr_; }
+   inline Simulator<D>& HamiltonianAnalyzer<D>::simulator()
+   {  return *simulatorPtr_; }
 
    #ifndef PSPC_HAMILTONIAN_ANALYZER_TPP
    // Suppress implicit instantiation
