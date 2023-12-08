@@ -74,30 +74,9 @@ namespace Pspc {
       bdStepPtr_ = 
           bdStepFactoryPtr_->readObject(in, *this, className, isEnd);
 
-      // ....
-
       // Read block of analyzer
       Analyzer<D>::baseInterval = 0; // default value
       readParamCompositeOptional(in, analyzerManager_);
-
-   }
-
-   /*
-   * Initialize just prior to a run.
-   */
-   template <int D>
-   void BdSimulator<D>::setup()
-   {
-      UTIL_CHECK(system().w().hasData());
-
-      system().compute();
-      analyzeChi();
-      computeWc();
-      computeCc();
-      computeDc();
-      if (analyzerManager_.size() > 0){
-         analyzerManager_.setup();
-      }
 
    }
 
@@ -107,10 +86,21 @@ namespace Pspc {
    template <int D>
    void BdSimulator<D>::simulate(int nStep)
    {
-      setup();
+      UTIL_CHECK(system().w().hasData());
+
+      // Initial setup
+      analyzeChi();
+      system().compute();
+      computeWc();
+      computeCc();
+      computeDc();
+      stepper().setup();
+      if (analyzerManager_.size() > 0){
+         analyzerManager_.setup();
+      }
       Log::file() << std::endl;
 
-      // Main Brownian dynamics loop
+      // Main simulation loop
       Timer timer;
       Timer analyzerTimer;
       timer.start();
@@ -127,9 +117,14 @@ namespace Pspc {
          }
          analyzerTimer.stop();
 
-         // Take a step
-         // stepper().step();
+         // Take a step (modifies W fields)
+         stepper().step();
 
+         // Evaluate properties in new state
+         system().compute();
+         computeWc();
+         computeCc();
+         computeDc();
       }
 
       // Analysis (if any)
@@ -147,7 +142,7 @@ namespace Pspc {
       double time = timer.time();
       double analyzerTime = analyzerTimer.time();
 
-      // Output results of move statistics to files
+      // Output results analyzers to files
       if (Analyzer<D>::baseInterval > 0){
          analyzerManager_.output();
       }

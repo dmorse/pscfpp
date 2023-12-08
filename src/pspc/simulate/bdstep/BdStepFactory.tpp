@@ -5,7 +5,7 @@
 #include <pspc/simulate/BdSimulator.h>
 
 // Subclasses of BdStep 
-//#include "RealMove.h"
+#include "EulerBdStep.h"
 
 namespace Pscf {
 namespace Pspc {
@@ -34,9 +34,8 @@ namespace Pspc {
 
       
       // Try to match classname
-      if (className == "RealMove") {
-         //ptr = new RealMove<D>(*bdSimulatorPtr_);
-         ptr = 0;
+      if (className == "EulerBdStep") {
+         ptr = new EulerBdStep<D>(*bdSimulatorPtr_);
       }
 
       return ptr;

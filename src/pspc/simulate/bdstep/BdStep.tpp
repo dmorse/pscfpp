@@ -49,12 +49,6 @@ namespace Pspc {
    void BdStep<D>::setup()
    {}
 
-   #if 0
-   template <int D>
-   void BdStep<D>::step()
-   {}
-   #endif
-
    template <int D>
    void BdStep<D>::output()
    {}
