@@ -1,5 +1,5 @@
-#ifndef PSPC_EULER_BD_STEP_H
-#define PSPC_EULER_BD_STEP_H
+#ifndef PSPC_EXPLICIT_BD_STEP_H
+#define PSPC_EXPLICIT_BD_STEP_H
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory
@@ -29,7 +29,7 @@ namespace Pspc {
    * \ingroup Pspc_Simulate_BdStep_Module
    */
    template <int D>
-   class EulerBdStep : public BdStep<D>
+   class ExplicitBdStep : public BdStep<D>
    {
 
    public:
@@ -39,14 +39,14 @@ namespace Pspc {
       *
       * \param bdSimulator  parent BdSimulator object
       */
-      EulerBdStep(BdSimulator<D>& bdSimulator);
+      ExplicitBdStep(BdSimulator<D>& bdSimulator);
 
       /**
       * Destructor.
       *
       * Empty default implementation.
       */
-      virtual ~EulerBdStep();
+      virtual ~ExplicitBdStep();
 
       /**
       * Read required parameters from file.
@@ -85,11 +85,11 @@ namespace Pspc {
 
    };
 
-   #ifndef PSPC_EULER_BD_STEP_TPP
+   #ifndef PSPC_EXPLICIT_BD_STEP_TPP
    // Suppress implicit instantiation
-   extern template class EulerBdStep<1>;
-   extern template class EulerBdStep<2>;
-   extern template class EulerBdStep<3>;
+   extern template class ExplicitBdStep<1>;
+   extern template class ExplicitBdStep<2>;
+   extern template class ExplicitBdStep<3>;
    #endif
 
 }

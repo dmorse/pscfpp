@@ -5,12 +5,12 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "EulerBdStep.tpp"
+#include "ExplicitBdStep.tpp"
 
 namespace Pscf {
 namespace Pspc {
-   template class EulerBdStep<1>;
-   template class EulerBdStep<2>;
-   template class EulerBdStep<3>;
+   template class ExplicitBdStep<1>;
+   template class ExplicitBdStep<2>;
+   template class ExplicitBdStep<3>;
 }
 }

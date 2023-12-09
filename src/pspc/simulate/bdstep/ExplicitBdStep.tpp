@@ -1,5 +1,5 @@
-#ifndef PSPC_EULER_BD_STEP_TPP
-#define PSPC_EULER_BD_STEP_TPP
+#ifndef PSPC_EXPLICIT_BD_STEP_TPP
+#define PSPC_EXPLICIT_BD_STEP_TPP
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory
@@ -8,7 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "EulerBdStep.h"
+#include "ExplicitBdStep.h"
 
 #include <pspc/simulate/BdSimulator.h>
 #include <pspc/compressor/Compressor.h>
@@ -26,7 +26,7 @@ namespace Pspc {
    * Constructor.
    */
    template <int D>
-   EulerBdStep<D>::EulerBdStep(BdSimulator<D>& simulator)
+   ExplicitBdStep<D>::ExplicitBdStep(BdSimulator<D>& simulator)
     : BdStep<D>(simulator),
       w_(),
       dwc_(),
@@ -37,14 +37,14 @@ namespace Pspc {
    * Destructor, empty default implementation.
    */
    template <int D>
-   EulerBdStep<D>::~EulerBdStep()
+   ExplicitBdStep<D>::~ExplicitBdStep()
    {}
 
    /*
    * ReadParameters, empty default implementation.
    */
    template <int D>
-   void EulerBdStep<D>::readParameters(std::istream &in)
+   void ExplicitBdStep<D>::readParameters(std::istream &in)
    {
       read<double>(in, "mobility", mobility_);
 
@@ -60,7 +60,7 @@ namespace Pspc {
    }
 
    template <int D>
-   void EulerBdStep<D>::setup()
+   void ExplicitBdStep<D>::setup()
    {
       // Check array capacities
       int meshSize = system().domain().mesh().size();
@@ -73,7 +73,7 @@ namespace Pspc {
    }
 
    template <int D>
-   void EulerBdStep<D>::step()
+   void ExplicitBdStep<D>::step()
    {
       // Array sizes and indices
       const int nMonomer = system().mixture().nMonomer();

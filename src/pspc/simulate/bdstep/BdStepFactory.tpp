@@ -5,7 +5,7 @@
 #include <pspc/simulate/BdSimulator.h>
 
 // Subclasses of BdStep 
-#include "EulerBdStep.h"
+#include "ExplicitBdStep.h"
 
 namespace Pscf {
 namespace Pspc {
@@ -34,8 +34,8 @@ namespace Pspc {
 
       
       // Try to match classname
-      if (className == "EulerBdStep") {
-         ptr = new EulerBdStep<D>(*bdSimulatorPtr_);
+      if (className == "ExplicitBdStep" || className == "BdStep") {
+         ptr = new ExplicitBdStep<D>(*bdSimulatorPtr_);
       }
 
       return ptr;
