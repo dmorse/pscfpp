@@ -11,8 +11,10 @@
 #include "EulerBdStep.h"
 
 #include <pspc/simulate/BdSimulator.h>
+#include <pspc/compressor/Compressor.h>
 #include <pspc/System.h>
 #include <pscf/math/IntVec.h>
+#include <util/random/Random.h>
 
 namespace Pscf {
 namespace Pspc {
@@ -24,9 +26,10 @@ namespace Pspc {
    * Constructor.
    */
    template <int D>
-   EulerBdStep<D>::EulerBdStep(BdSimulator<D>& bdSimulator)
-    : BdStep<D>(bdSimulator),
+   EulerBdStep<D>::EulerBdStep(BdSimulator<D>& simulator)
+    : BdStep<D>(simulator),
       w_(),
+      dwc_(),
       mobility_(0.0)
    {}
 
@@ -45,35 +48,81 @@ namespace Pspc {
    {
       read<double>(in, "mobility", mobility_);
 
-      IntVec<D> meshDimensions = system().domain().mesh().dimensions();
+      // Allocate memory for private containers
       int nMonomer = system().mixture().nMonomer();
-
+      IntVec<D> meshDimensions = system().domain().mesh().dimensions();
       w_.allocate(nMonomer);
       for (int i=0; i < nMonomer; ++i) {
          w_[i].allocate(meshDimensions);
       }
+      dwc_.allocate(meshDimensions);
 
    }
 
    template <int D>
    void EulerBdStep<D>::setup()
    {
-       // Check capacity and dimensions of w_;
+      // Check array capacities
+      int meshSize = system().domain().mesh().size();
+      int nMonomer = system().mixture().nMonomer();
+      UTIL_CHECK(w_.capacity() == nMonomer);
+      for (int i=0; i < nMonomer; ++i) {
+         UTIL_CHECK(w_[i].capacity() == meshSize);
+      }
+      UTIL_CHECK(dwc_.capacity() == meshSize);
    }
 
    template <int D>
    void EulerBdStep<D>::step()
    {
-      // Copy W fields from system into w_
+      // Array sizes and indices
+      const int nMonomer = system().mixture().nMonomer();
+      const int meshSize = system().domain().mesh().size();
+      int i, j, k;
 
-      // Add deterministic displacement
+      // Copy current W fields from parent system into wc_
+      for (i = 0; i < nMonomer; ++i) {
+         w_[i] = system().w().rgrid(i);
+      }
 
-      // Generate random numbers
-      // Add random displacements
+      // Constants for dynamics
+      const double vSystem = system().domain().unitCell().volume();
+      const double a = -1.0*mobility_;
+      const double b = sqrt(2.0*mobility_*double(meshSize)/vSystem);
 
-      // Apply new w fields to parent system
+      // Modify local field copy wc_
+      // Loop over eigenvectors of projected chi matrix
+      double dwd, dwr, evec;
+      for (j = 0; j < nMonomer - 1; ++j) {
+         RField<D> const & dc = simulator().dc(j);
+         for (k = 0; k < meshSize; ++k) {
+            dwd = a*dc[k];
+            dwr = b*random().gaussian();
+            dwc_[k] = dwd + dwr;
+         }
+         // Loop over monomer types
+         for (i = 0; i < nMonomer; ++i) {
+            RField<D> & wn = w_[i];
+            evec = simulator().chiEvecs(j,i);
+            for (k = 0; k < meshSize; ++k) {
+               wn[k] += evec*dwc_[k];
+            }
+         }
+      }
+
+      // Set modified fields in parent system
+      system().setWRGrid(w_);
+      simulator().clearData();
+
+      // Enforce incompressibility (also solves MDE repeatedly)
+      system().compressor().compress();
+      UTIL_CHECK(system().hasCFields());
+
+      // Evaluate component properties in new state
+      simulator().computeWc();
+      simulator().computeCc();
+      simulator().computeDc();
    }
-
 
 }
 }

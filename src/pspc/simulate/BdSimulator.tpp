@@ -84,21 +84,31 @@ namespace Pspc {
    * Perform a field theoretic MC simulation of nStep steps.
    */
    template <int D>
-   void BdSimulator<D>::simulate(int nStep)
+   void BdSimulator<D>::setup()
    {
       UTIL_CHECK(system().w().hasData());
-
-      // Initial setup
       analyzeChi();
       system().compute();
       computeWc();
       computeCc();
       computeDc();
+      computeHamiltonian();
       stepper().setup();
       if (analyzerManager_.size() > 0){
          analyzerManager_.setup();
       }
-      Log::file() << std::endl;
+   }
+
+   /*
+   * Perform a field theoretic MC simulation of nStep steps.
+   */
+   template <int D>
+   void BdSimulator<D>::simulate(int nStep)
+   {
+      UTIL_CHECK(system().w().hasData());
+
+      // Initial setup
+      setup();
 
       // Main simulation loop
       Timer timer;
@@ -120,14 +130,9 @@ namespace Pspc {
          // Take a step (modifies W fields)
          stepper().step();
 
-         // Evaluate properties in new state
-         system().compute();
-         computeWc();
-         computeCc();
-         computeDc();
       }
 
-      // Analysis (if any)
+      // Analysis after final step (if any)
       analyzerTimer.start();
       if (Analyzer<D>::baseInterval != 0) {
          if (iStep_ % Analyzer<D>::baseInterval == 0) {

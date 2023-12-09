@@ -186,11 +186,11 @@ namespace Pspc {
       /**
       * Get the matrix of all eigenvectors of the projected chi matrix.
       *
-      * This function returns the nMonomer x nMonomer matrix of the
-      * eigenvectors of the projected chi matrix, in which each row
-      * is an eigenvector. The first (row) index of this matrix thus
-      * identifies an eigenvector, while the second (column) index 
-      * identifiers the monomer type of one component of such a vector. 
+      * This function returns the entire nMonomer x nMonomer matrix of the
+      * eigenvectors of the projected chi matrix, in which each row is an
+      * eigenvector. The first (row) index of this matrix thus identifies
+      * an eigenvector, while the second (column) index identifies the
+      * monomer type associated with one component of an eigen-vector. 
       *
       * Each eigenvector is normalized such that the sum of the squares 
       * of its elements is equal to nMonomer, the number of monomer types. 
@@ -202,6 +202,16 @@ namespace Pspc {
       * eigenvectors are (1,-1) and (1,1).
       */
       DMatrix<double> const & chiEvecs() const;
+
+      /**
+      * Get one element of an eigenvector of the projected chi matrix.
+      *
+      * See documentation of chiEvecs(), which returns the entire matrix.
+      *
+      * \param a  eigenvector index (0, ..., nMonomer - 1)
+      * \param i  monomoner type index (0, ..., nMonomer - 1)
+      */
+      double chiEvecs(int a, int i) const;
 
       /**
       * Get all components of the vector S.
@@ -557,6 +567,11 @@ namespace Pspc {
    template <int D>
    inline DMatrix<double> const & Simulator<D>::chiEvecs() const
    {  return chiEvecs_; }
+
+   // Return a matrix of eigenvectors of the projected chi matrix.
+   template <int D>
+   inline double Simulator<D>::chiEvecs(int a, int i) const
+   {  return chiEvecs_(a, i); }
 
    // Return array of values of vector S.
    template <int D>

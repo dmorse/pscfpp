@@ -68,12 +68,19 @@ namespace Pspc {
    protected:
 
       using BdStep<D>::system;
+      using BdStep<D>::simulator;
+      using BdStep<D>::random;
       using ParamComposite::read;
 
    private:
 
+      // Local copy of w fields
       DArray< RField<D> > w_;
 
+      // Change in one component of wc
+      RField<D> dwc_;
+
+      // Prefactor of -dc_ in deterministic drift term
       double mobility_;
 
    };

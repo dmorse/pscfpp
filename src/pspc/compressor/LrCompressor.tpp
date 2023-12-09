@@ -98,6 +98,7 @@ namespace Pspc{
       // Solve MDE
       timerMDE_.start();
       system().compute();
+      ++mdeCounter_;
       timerMDE_.stop();
 
       // Iterative loop
@@ -136,7 +137,7 @@ namespace Pspc{
                Log::file() << "\n";
                computeError(2);
             }
-            mdeCounter_ += itr_;
+            //mdeCounter_ += itr_;
 
             return 0; // Success
 
@@ -146,6 +147,7 @@ namespace Pspc{
             updateWFields();
             timerMDE_.start();
             system().compute();
+            ++mdeCounter_;
             timerMDE_.stop();
 
          }

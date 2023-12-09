@@ -58,6 +58,9 @@ namespace Pspc {
    template <int D>
    void HamiltonianAnalyzer<D>::compute() 
    {
+      UTIL_CHECK(simulator().hasWc());
+
+      #if 0
       if (!simulator().hasWc()){
          if (!hasAnalyzeChi_){
             simulator().analyzeChi();
@@ -65,18 +68,20 @@ namespace Pspc {
          }
          system().compute();
          simulator().computeWc();
+      }
+      #endif
+
+      if (!simulator().hasHamiltonian()) {
          simulator().computeHamiltonian();
       }
+
       double ideal = simulator().idealHamiltonian();
-      // outputFile_ << Dbl(ideal, 20)
       setValue(idealId_, ideal);
    
       double field = simulator().fieldHamiltonian();
-      // outputFile_ << Dbl(field, 20)
       setValue(fieldId_, field);
    
       double total = simulator().hamiltonian();
-      // outputFile_ << Dbl(total, 20) << std::endl;
       setValue(totalId_, total);
    }
    

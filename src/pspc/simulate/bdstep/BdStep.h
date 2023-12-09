@@ -37,9 +37,9 @@ namespace Pspc {
       /**
       * Constructor.
       *
-      * \param bdSimulator  parent BdSimulator object
+      * \param simulator  parent BdSimulator<D> object
       */
-      BdStep(BdSimulator<D>& bdSimulator);
+      BdStep(BdSimulator<D>& simulator);
 
       /**
       * Destructor.
@@ -92,7 +92,7 @@ namespace Pspc {
       /**
       * Get parent BdSimulator object.
       */
-      BdSimulator<D>& bdSimulator();
+      BdSimulator<D>& simulator();
 
       /**
       * Get Random number generator of parent System.
@@ -102,7 +102,7 @@ namespace Pspc {
    private:
 
       /// Pointer to parent BdSimulator object
-      BdSimulator<D>* bdSimulatorPtr_;
+      BdSimulator<D>* simulatorPtr_;
 
       /// Pointer to parent System object
       System<D>* systemPtr_;
@@ -125,8 +125,8 @@ namespace Pspc {
    * Get parent BdSimulator object.
    */
    template <int D>
-   inline BdSimulator<D>& BdStep<D>::bdSimulator()
-   {  return *bdSimulatorPtr_; }
+   inline BdSimulator<D>& BdStep<D>::simulator()
+   {  return *simulatorPtr_; }
 
    /*
    * Get Random number generator.
