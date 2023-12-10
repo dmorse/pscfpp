@@ -1,2 +1,3 @@
+(cd mc; ./clean)
+(cd bd; ./clean)
 (cd analyze; ./clean)
-(cd ftmc; ./clean)

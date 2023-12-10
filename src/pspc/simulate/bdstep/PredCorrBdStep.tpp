@@ -32,6 +32,7 @@ namespace Pspc {
       wf_(),
       eta_(),
       dwc_(),
+      dwp_(),
       mobility_(0.0)
    {}
 
@@ -64,6 +65,7 @@ namespace Pspc {
          eta_[i].allocate(meshDimensions);
       }
       dwc_.allocate(meshDimensions);
+      dwp_.allocate(meshDimensions);
 
    }
 
@@ -84,6 +86,7 @@ namespace Pspc {
          UTIL_CHECK(eta_[i].capacity() == meshSize);
       }
       UTIL_CHECK(dwc_.capacity() == meshSize);
+      UTIL_CHECK(dwp_.capacity() == meshSize);
    }
 
    template <int D>
@@ -99,6 +102,9 @@ namespace Pspc {
          wh_[i] = system().w().rgrid(i);
          wf_[i] = wh_[i];
       }
+
+      // Store initial value of pressure field
+      dwp_ = simulator().wc(nMonomer-1);
 
       // Constants for dynamics
       const double vSystem = system().domain().unitCell().volume();
@@ -143,6 +149,12 @@ namespace Pspc {
       simulator().computeCc();
       simulator().computeDc();
 
+      // Store change in pressure field
+      RField<D> const & wp = simulator().wc(nMonomer-1);
+      for (k = 0; k < meshSize; ++k) {
+         dwp_[k] = wp[k] - dwp_[k];
+      }
+
       // Full step (corrector)
       for (j = 0; j < nMonomer - 1; ++j) {
          RField<D> const & dc = simulator().dc(j);
@@ -156,6 +168,14 @@ namespace Pspc {
             for (k = 0; k < meshSize; ++k) {
                wn[k] += evec*dwc_[k];
             }
+         }
+      }
+
+      // Extrapolate pressure field
+      for (i = 0; i < nMonomer; ++i) {
+         RField<D> & wn = wf_[i];
+         for (k = 0; k < meshSize; ++k) {
+            wn[k] += 2.0*dwp_[k];
          }
       }
 

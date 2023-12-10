@@ -82,6 +82,9 @@ namespace Pspc {
       // Change in one component of wc
       RField<D> dwc_;
 
+      // Change in pressure field component 
+      RField<D> dwp_;
+
       // Prefactor of -dc_ in deterministic drift term
       double mobility_;
 

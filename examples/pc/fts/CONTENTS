@@ -1,0 +1,5 @@
+Subdirectories:
+
+ mc/      - example of field-theoretic Monte-Carlo (mc) simulation
+ bd/      - example of field-theoretic Brownian dynamics (bd) simulation
+ analyze/ - example of post-processing analysis of trajectory file

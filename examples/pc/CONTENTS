@@ -1,0 +1,7 @@
+Director examples/pc contains examples of calculations on periodic systems
+performed with the pscf_pc CPU program. 
+ 
+Subdirectories:
+
+  scf/ - examples of self-consistent field (SCF) theory calculations
+  fts/ - examples of field-theoretic simulation (FTS) calculations
