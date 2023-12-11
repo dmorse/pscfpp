@@ -8,10 +8,10 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "Simulator.h"                               // member
-#include "McState.h"                                 // member
-#include <pspc/simulate/mcmove/McMoveManager.h>      // member
-#include <pspc/simulate/analyzer/AnalyzerManager.h>  // member
+#include <pspc/simulate/Simulator.h>                   // member
+#include <pspc/simulate/mcmove/McState.h>              // member
+#include <pspc/simulate/mcmove/McMoveManager.h>        // member
+#include <pspc/simulate/analyzer/AnalyzerManager.h>    // member
 
 namespace Pscf {
 namespace Pspc {

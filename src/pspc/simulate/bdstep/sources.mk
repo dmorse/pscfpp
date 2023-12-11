@@ -1,4 +1,5 @@
 pspc_simulate_bdstep_= \
+  pspc/simulate/bdstep/BdSimulator.cpp \
   pspc/simulate/bdstep/BdStep.cpp \
   pspc/simulate/bdstep/BdStepFactory.cpp \
   pspc/simulate/bdstep/ExplicitBdStep.cpp \

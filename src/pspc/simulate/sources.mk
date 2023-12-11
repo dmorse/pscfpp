@@ -10,10 +10,7 @@ pspc_simulate_= \
   $(pspc_simulate_bdstep_) \
   $(pspc_trajectory_) \
   pspc/simulate/Simulator.cpp \
-  pspc/simulate/SimulatorFactory.cpp \
-  pspc/simulate/McSimulator.cpp \
-  pspc/simulate/McState.cpp \
-  pspc/simulate/BdSimulator.cpp 
+  pspc/simulate/SimulatorFactory.cpp 
   
 pspc_simulate_OBJS=\
      $(addprefix $(BLD_DIR)/, $(pspc_simulate_:.cpp=.o))

@@ -11,7 +11,7 @@
 #include <util/global.h>
 #include <pspc/simulate/mcmove/McMoveManager.h>
 #include <pspc/simulate/mcmove/McMoveFactory.h>
-#include <pspc/simulate/McSimulator.h>
+#include <pspc/simulate/mcmove/McSimulator.h>
 
 #include <util/random/Random.h>
 

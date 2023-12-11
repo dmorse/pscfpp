@@ -10,7 +10,7 @@
 
 #include "ExplicitBdStep.h"
 
-#include <pspc/simulate/BdSimulator.h>
+#include <pspc/simulate/bdstep/BdSimulator.h>
 #include <pspc/compressor/Compressor.h>
 #include <pspc/System.h>
 #include <pscf/math/IntVec.h>

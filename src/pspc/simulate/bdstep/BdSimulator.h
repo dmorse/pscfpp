@@ -8,7 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "Simulator.h"                               // base class
+#include <pspc/simulate/Simulator.h>                 // base class
 #include <pspc/simulate/analyzer/AnalyzerManager.h>  // member
 #include <util/param/Factory.h>                      // member template
 

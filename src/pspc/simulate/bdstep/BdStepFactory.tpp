@@ -2,7 +2,7 @@
 #define PSPC_BD_STEP_FACTORY_TPP
 
 #include "BdStepFactory.h"  
-#include <pspc/simulate/BdSimulator.h>
+#include <pspc/simulate/bdstep/BdSimulator.h>
 
 // Subclasses of BdStep 
 #include "ExplicitBdStep.h"

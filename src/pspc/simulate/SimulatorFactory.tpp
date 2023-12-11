@@ -5,8 +5,8 @@
 #include <pspc/System.h>
 
 // Subclasses of Simulator 
-#include <pspc/simulate/McSimulator.h>
-#include <pspc/simulate/BdSimulator.h>
+#include <pspc/simulate/mcmove/McSimulator.h>
+#include <pspc/simulate/bdstep/BdSimulator.h>
 
 namespace Pscf {
 namespace Pspc {

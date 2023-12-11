@@ -10,7 +10,7 @@
 
 #include "BdStep.h"
 
-#include <pspc/simulate/BdSimulator.h>
+#include <pspc/simulate/bdstep/BdSimulator.h>
 #include <pspc/System.h>
 
 namespace Pscf {
