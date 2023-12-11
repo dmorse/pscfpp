@@ -1,5 +1,10 @@
 #ifndef PSCF_AM_ITERATOR_TMPL_H
 #define PSCF_AM_ITERATOR_TMPL_H
+/*
+* Uncomment to test the contirbution of Anderson-Mixing for error reduction
+* from linear mixing step and correction step 
+*/ 
+#define PSCF_AM_TEST_H
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory
@@ -12,6 +17,7 @@
 #include <util/containers/DMatrix.h>    // member template
 #include <util/containers/RingBuffer.h> // member template
 #include <util/misc/Timer.h>            // member template
+#include <util/accumulators/Average.h>  // member template
 
 namespace Pscf {
 
@@ -185,6 +191,10 @@ namespace Pscf {
       * \return error  measure used to test for convergence.
       */
       virtual double computeError(int verbose);
+      
+      #ifdef PSCF_AM_TEST_H
+      virtual double computeError(T a);
+      #endif
 
       /**
       * Return the current residual vector by const reference.
@@ -231,11 +241,21 @@ namespace Pscf {
       * Have data structures required by the AM algorithm been allocated?
       */
       bool isAllocatedAM() const;
-
+      
    private:
-
+      
+      #ifdef PSCF_AM_TEST_H
+      double preError_{0};
+      double mixingError_{0};
+      double correctionError_{0};
+      double mixingRatio_{0};
+      double correctionRatio_{0};
+      int testCounter{0};
+      #endif
+      
       // Private member variables
-
+      /// Error
+      double error_;
       /// Error tolerance.
       double epsilon_;
 
