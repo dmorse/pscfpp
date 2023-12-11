@@ -46,7 +46,7 @@ namespace Pspc {
    template <int D>
    void ExplicitBdStep<D>::readParameters(std::istream &in)
    {
-      read<double>(in, "mobility", mobility_);
+      read(in, "mobility", mobility_);
 
       // Allocate memory for private containers
       int nMonomer = system().mixture().nMonomer();

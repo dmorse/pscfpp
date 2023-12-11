@@ -1,9 +1,9 @@
 READ_W_RGRID     in/w.rf
 COMPRESS
 CLEAR_TIMER
-SIMULATE         2000
+SIMULATE         1000
 WRITE_W_RGRID    out/w.rf
 WRITE_C_RGRID    out/c.rf
-WRITE_TIMER 	 out/timerFtbd
+WRITE_TIMER 	 out/timers
 FINISH
 

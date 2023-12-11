@@ -27,7 +27,7 @@ System{
     mesh           16    16    16
     lattice     cubic   
   }
-  AmCompressor{
+  LrAmCompressor{
     epsilon      1.0e-4
     maxItr       200
     maxHist      30     
