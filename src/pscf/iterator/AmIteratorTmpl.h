@@ -4,7 +4,7 @@
 * Uncomment to test the contirbution of Anderson-Mixing for error reduction
 * from linear mixing step and correction step 
 */ 
-#define PSCF_AM_TEST_H
+//#define PSCF_AM_TEST
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory
@@ -192,8 +192,15 @@ namespace Pscf {
       */
       virtual double computeError(int verbose);
       
-      #ifdef PSCF_AM_TEST_H
-      virtual double computeError(T a);
+      /**
+      * Set mixing parameter for second step of an Anderson Mixing Algorithm
+      *
+      * \return lambda mixing parameter
+      */
+      virtual double setLambda();
+      
+      #ifdef PSCF_AM_TEST
+      double computeError(T a);
       #endif
 
       /**
@@ -244,7 +251,7 @@ namespace Pscf {
       
    private:
       
-      #ifdef PSCF_AM_TEST_H
+      #ifdef PSCF_AM_TEST
       double preError_{0};
       double mixingError_{0};
       double correctionError_{0};

@@ -1,10 +1,5 @@
 #ifndef PSCF_AM_ITERATOR_TMPL_TPP
 #define PSCF_AM_ITERATOR_TMPL_TPP
-/*
-* Uncomment to test the contirbution of Anderson-Mixing for error reduction
-* from linear mixing step and correction step 
-*/ 
-#define PSCF_AM_TEST
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory
@@ -118,13 +113,8 @@ namespace Pscf
          if (verbose_ > 0){
             Log::file() << " Iteration " << Int(itr_,5);
          }
-
-
-         if (nBasis_ < maxHist_) {
-            lambda_ = 1.0 - pow(0.9, nBasis_ + 1);
-         } else {
-            lambda_ = 1.0;
-         }
+         
+         lambda_ = setLambda();
 
          // Compute residual vector
          timerResid_.start();
@@ -490,7 +480,23 @@ namespace Pscf
          }
       }
    }
-
+   
+   /**
+   * Set mixing parameter for second step of an Anderson Mixing Algorithm
+   * (virtual)
+   */
+   template <typename Iterator, typename T>
+   double AmIteratorTmpl<Iterator,T>::setLambda()
+   {
+      double lambda;
+      if (nBasis_ < maxHist_) {
+         lambda = 1.0 - pow(0.9, nBasis_ + 1);
+      } else {
+         lambda = 1.0;
+      }
+      return lambda;
+   }
+   
    /*
    * Compute L2 norm of a vector.
    */
@@ -619,12 +625,9 @@ namespace Pscf
          error = normRes;
       } else if (errorType_ == "rmsResid") {
          error = rmsRes;
-      } else {
-         UTIL_THROW("Invalid iterator error type in parameter file.");
-      }
+      } 
       return error; 
    }
-   
    #endif
    
    template <typename Iterator, typename T>

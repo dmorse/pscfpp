@@ -352,6 +352,12 @@ namespace Pspc{
    }
    
    template<int D>
+   double LrAmCompressor<D>::setLambda()
+   {
+      return 1.0;
+   }
+   
+   template<int D>
    double LrAmCompressor<D>::computeError(int verbose)
    {
       errorType_ = AmIteratorTmpl<Compressor<D>, DArray<double> >::errorType();
