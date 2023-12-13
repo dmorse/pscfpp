@@ -15,6 +15,7 @@
 #include <util/format/Dbl.h>
 #include <util/format/Int.h>
 #include <util/misc/Timer.h>
+#include <util/misc/FileMaster.h>  
 #include <cmath>
 
 namespace Pscf
@@ -82,7 +83,7 @@ namespace Pscf
    {
       // Initialization and allocate operations on entry to loop.
       setup(isContinuation);
-
+      
       // Preconditions for generic Anderson-mixing (AM) algorithm.
       UTIL_CHECK(hasInitialGuess());
       UTIL_CHECK(isAllocatedAM_);
@@ -98,7 +99,7 @@ namespace Pscf
       // Iterative loop
       nBasis_ = fieldBasis_.size();
       for (itr_ = 0; itr_ < maxItr_; ++itr_) {
-
+         
          // Append current field to fieldHists_ ringbuffer
          getCurrent(temp_);
          fieldHists_.append(temp_);
@@ -112,13 +113,8 @@ namespace Pscf
          if (verbose_ > 0){
             Log::file() << " Iteration " << Int(itr_,5);
          }
-
-
-         if (nBasis_ < maxHist_) {
-            lambda_ = 1.0 - pow(0.9, nBasis_ + 1);
-         } else {
-            lambda_ = 1.0;
-         }
+         
+         lambda_ = setLambda();
 
          // Compute residual vector
          timerResid_.start();
@@ -130,23 +126,45 @@ namespace Pscf
 
          // Compute scalar error, output report to log file.
          timerError_.start();
-         double error;
+         
          try {
-            error = computeError(verbose_);
+            error_ = computeError(verbose_);
          } catch (const NanException&) {
             Log::file() << ",  error  =             NaN" << std::endl;
             break; // Exit loop if a NanException is caught
          }
          if (verbose_ > 0 && verbose_ < 3) {
-             Log::file() << ",  error  = " << Dbl(error, 15) << std::endl;
+             Log::file() << ",  error  = " << Dbl(error_, 15) << std::endl;
          }
          timerError_.stop();
+         
+         // Compute the contribution of linear mixing step and correction step
+         #ifdef PSCF_AM_TEST
+         if(itr_>1){
+            mixingRatio_ += mixingError_/preError_;
+            correctionRatio_ += correctionError_/preError_;
+            testCounter ++;
+         }
+         #endif
 
          // Output additional details of this iteration to the log file
          outputToLog();
+         
+         // Debugging output
+         #if 0
+         #ifdef PSCF_AM_TEST
+         if(itr_>0){
+            Log::file() << "preError_" << preError_ << "\n";
+            Log::file() << "mixingError_" << mixingError_ << "\n";
+            Log::file() << "correctionError_" << correctionError_ << "\n";
+            Log::file() << "mixingRatio_" << mixingError_/preError_ << "\n";
+            Log::file() << "correctionRatio_" << correctionError_/preError_ << "\n";
+         }
+         #endif
+         #endif
 
          // Check for convergence
-         if (error < epsilon_) {
+         if (error_ < epsilon_) {
 
             // Stop timers
             timerAM_.stop();
@@ -172,7 +190,9 @@ namespace Pscf
             return 0;
 
          } else {
-
+            #ifdef PSCF_AM_TEST
+            preError_ = correctionError_;
+            #endif
             // Compute optimal coefficients for basis vectors
             timerCoeff_.start();
             computeResidCoeff();
@@ -190,7 +210,6 @@ namespace Pscf
             timerMDE_.start();
             evaluate();
             timerMDE_.stop();
-
          }
 
       }
@@ -422,13 +441,25 @@ namespace Pscf
          addHistories(resTrial_, resBasis_, coeffs_, nBasis_);
 
       }
+      
+      // compute the error after linear mixing step
+      #ifdef PSCF_AM_TEST
+      update(fieldTrial_);
+      evaluate();
+      getResidual(temp_);
+      mixingError_ = computeError(temp_);
+      #endif
 
       // Correct for predicted error
       addPredictedError(fieldTrial_, resTrial_,lambda_);
 
       // Update system using new trial field
       update(fieldTrial_);
-
+      #ifdef PSCF_AM_TEST
+      evaluate();
+      getResidual(temp_);
+      correctionError_ = computeError(temp_);
+      #endif
       return;
    }
 
@@ -449,7 +480,23 @@ namespace Pscf
          }
       }
    }
-
+   
+   /**
+   * Set mixing parameter for second step of an Anderson Mixing Algorithm
+   * (virtual)
+   */
+   template <typename Iterator, typename T>
+   double AmIteratorTmpl<Iterator,T>::setLambda()
+   {
+      double lambda;
+      if (nBasis_ < maxHist_) {
+         lambda = 1.0 - pow(0.9, nBasis_ + 1);
+      } else {
+         lambda = 1.0;
+      }
+      return lambda;
+   }
+   
    /*
    * Compute L2 norm of a vector.
    */
@@ -560,6 +607,29 @@ namespace Pscf
       return error;
    }
    
+   #ifdef PSCF_AM_TEST
+   template <typename Iterator, typename T>
+   double AmIteratorTmpl<Iterator,T>::computeError(T a)
+   { 
+      double error = 0;
+      
+      // Find max residual vector element
+      double maxRes  = maxAbs(a);
+      // Find norm of residual vector
+      double normRes = norm(a);
+      // Find root-mean-squared residual element value
+      double rmsRes = normRes/sqrt(nElem_);
+      if (errorType_ == "maxResid") {
+         error = maxRes;
+      } else if (errorType_ == "normResid") {
+         error = normRes;
+      } else if (errorType_ == "rmsResid") {
+         error = rmsRes;
+      } 
+      return error; 
+   }
+   #endif
+   
    template <typename Iterator, typename T>
    void AmIteratorTmpl<Iterator,T>::outputTimers(std::ostream& out)
    {
@@ -593,6 +663,13 @@ namespace Pscf
           << Dbl(total, 9, 3) <<  " s,  "
           << Dbl(total/totalItr_, 9, 3) << " s  \n";
       out << "\n";
+      
+      #ifdef PSCF_AM_TEST
+      out << "Average Mixing Step Ratio:     "
+           << Dbl(mixingRatio_/testCounter, 3, 3)<< "\n";
+      out << "Average Correction Step Ratio:     "
+           << Dbl(correctionRatio_/testCounter, 3, 3)<< "\n";
+      #endif
    }
    
    template <typename Iterator, typename T>
