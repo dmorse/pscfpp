@@ -292,6 +292,11 @@ namespace Pspg
       */
       void computeIntraCorrelation();
       
+      /**
+      * Set mixing parameter lambda
+      */
+      double setLambda();
+      
    };
    
    #ifndef PSPG_LR_AM_COMPRESSOR_TPP
