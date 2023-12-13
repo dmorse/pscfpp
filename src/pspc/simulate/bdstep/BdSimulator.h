@@ -1,5 +1,5 @@
-#ifndef PSPC_MC_SIMULATOR_H
-#define PSPC_MC_SIMULATOR_H
+#ifndef PSPC_BD_SIMULATOR_H
+#define PSPC_BD_SIMULATOR_H
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory
@@ -8,28 +8,25 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "Simulator.h"                               // member
-#include "McState.h"                                 // member
-#include <pspc/simulate/mcmove/McMoveManager.h>      // member
+#include <pspc/simulate/Simulator.h>                 // base class
 #include <pspc/simulate/analyzer/AnalyzerManager.h>  // member
+#include <util/param/Factory.h>                      // member template
 
 namespace Pscf {
 namespace Pspc {
 
    using namespace Util;
-   using namespace Prdc::Cpu;
 
-   template <int D> class McMove;
+   template <int D> class BdStep;
    template <int D> class TrajectoryReader;
-   template <int D> class TrajectoryReaderFactory;
 
    /**
-   * Monte-Carlo simulation coordinator.
+   * Brownian dynamics simulator.
    *
    * \ingroup Pspc_Simulate_Module
    */
    template <int D>
-   class McSimulator : public Simulator<D>
+   class BdSimulator : public Simulator<D>
    {
 
    public:
@@ -39,12 +36,12 @@ namespace Pspc {
       *
       * \param system parent System
       */
-      McSimulator(System<D>& system);
+      BdSimulator(System<D>& system);
 
       /**
       * Destructor.
       */
-      ~McSimulator();
+      ~BdSimulator();
 
       /**
       * Read parameters for a MC simulation.
@@ -93,50 +90,13 @@ namespace Pspc {
       virtual void clearTimers();
 
       ///@}
-      /// \name Utilities for MC Moves
-      ///@{
-
-      /**
-      * Save a copy of the Monte-Carlo state.
-      *
-      * This function and restoreMcState() are intended for use in
-      * the implementation of field theoretic Monte Carlo moves. This
-      * function stores the current w fields and the corresponding
-      * Hamiltonian value.  This is normally the first step of a MC
-      * move, prior to an attempted modification of the fields stored
-      * in the system w field container.
-      */
-      void saveMcState();
-
-      /**
-      * Restore the saved copy of the Monte-Carlo state.
-      *
-      * This function  and saveMcState() are intended to be used
-      * together in the implementation of Monte-Carlo moves. If an
-      * attempted move is rejected, restoreMcState() is called to
-      * restore the fields ahd Hamiltonian value that were saved
-      * by a previous call to the function saveMcState().
-      */
-      void restoreMcState();
-
-      /**
-      * Clear the saved copy of the Monte-Carlo state.
-      *
-      * This function, restoreMcState(), and saveMcState() are intended
-      * to be used together in the implementation of Monte-Carlo moves. If
-      * an attempted move is accepted, clearMcState() is called to clear
-      * clear mcState_.hasData
-      */
-      void clearMcState();
-
-      ///@}
       /// \name Miscellaneous
       ///@{
-
+      
       /**
-      * Get McMoveManger
+      * Get BdStep.
       */
-      McMoveManager<D>& mcMoveManager();
+      BdStep<D>& stepper();
 
       /**
       * Get AnalyzerManger
@@ -153,10 +113,18 @@ namespace Pspc {
       // Inherited public functions
 
       using Simulator<D>::system;
+      using Simulator<D>::random;
+      using Simulator<D>::allocate;
       using Simulator<D>::analyzeChi;
-      using Simulator<D>::computeWC;
+      using Simulator<D>::computeWc;
+      using Simulator<D>::computeCc;
+      using Simulator<D>::computeDc;
       using Simulator<D>::wc;
-      using Simulator<D>::hasWC;
+      using Simulator<D>::cc;
+      using Simulator<D>::dc;
+      using Simulator<D>::hasWc;
+      using Simulator<D>::hasCc;
+      using Simulator<D>::hasDc;
       using Simulator<D>::clearData;
       using Simulator<D>::computeHamiltonian;
       using Simulator<D>::hamiltonian;
@@ -175,7 +143,7 @@ namespace Pspc {
       // Inherited protected data members
 
       using Simulator<D>::wc_;
-      using Simulator<D>::hasWC_;
+      using Simulator<D>::hasWc_;
       using Simulator<D>::hamiltonian_;
       using Simulator<D>::idealHamiltonian_;
       using Simulator<D>::fieldHamiltonian_;
@@ -185,58 +153,58 @@ namespace Pspc {
    private:
 
       /**
-      * Manger for Monte Carlo Move.
-      */
-      McMoveManager<D> mcMoveManager_;
-
-      /**
-      * Manger for Monte Carlo Analyzer.
+      * Manager for Analyzer.
       */
       AnalyzerManager<D> analyzerManager_;
 
       /**
-      * State saved during MC simulation.
+      * Pointer to Brownian dynamics step algorithm.
       */
-      mutable McState<D> mcState_;
+      BdStep<D>* bdStepPtr_;
 
       /**
       * Pointer to a trajectory reader/writer factory.
       */
-      Factory<TrajectoryReader<D>>* trajectoryReaderFactoryPtr_;
+      Factory< BdStep<D> >* bdStepFactoryPtr_;
+
+      /**
+      * Pointer to a trajectory reader/writer factory.
+      */
+      Factory< TrajectoryReader<D> >* trajectoryReaderFactoryPtr_;
 
       // Private member functions
 
       /**
-      * Called at the beginning of the simulation member function.
+      * Called at the beginning of the simulation.
       */
       void setup();
 
    };
 
-   // Get the Monte-Carlo move manager.
+   // Get the Brownian dynamics stepper.
    template <int D>
-   inline McMoveManager<D>& McSimulator<D>::mcMoveManager()
-   {  return mcMoveManager_; }
+   inline BdStep<D>& BdSimulator<D>::stepper()
+   {  return *bdStepPtr_; }
 
-   // Get the Monte-Carlo analyzer manager.
+   // Get the analyzer manager.
    template <int D>
-   inline AnalyzerManager<D>& McSimulator<D>::analyzerManager()
+   inline AnalyzerManager<D>& BdSimulator<D>::analyzerManager()
    {  return analyzerManager_; }
 
    // Get the TrajectoryReaderfactory
    template <int D>
    inline 
-   Factory<TrajectoryReader<D> >& McSimulator<D>::trajectoryReaderFactory()
+   Factory<TrajectoryReader<D> >& BdSimulator<D>::trajectoryReaderFactory()
    {
       UTIL_ASSERT(trajectoryReaderFactoryPtr_);
       return *trajectoryReaderFactoryPtr_;
    }
 
-   #ifndef PSPC_MC_SIMULATOR_TPP
+   #ifndef PSPC_BD_SIMULATOR_TPP
    // Suppress implicit instantiation
-   extern template class McSimulator<1>;
-   extern template class McSimulator<2>;
-   extern template class McSimulator<3>;
+   extern template class BdSimulator<1>;
+   extern template class BdSimulator<2>;
+   extern template class BdSimulator<3>;
    #endif
 
 }

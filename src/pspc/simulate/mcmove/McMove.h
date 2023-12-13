@@ -82,11 +82,20 @@ namespace Pspc
       *
       * Implementations of this by subclasses should:
       *
-      *    - Generate a move (e.g., choose new atomic positions)
+      *    - Generate a proposed move 
       *    - Decide to accept or reject (use random::metropolis)
-      *    - Implement the move if accepted
+      *    - Restore the old system state if rejected, and update
+      *      the system state if accepted. 
       *
-      * Trivial default implemention always returns false.
+      * The default implementation provides a skeleton that calls 
+      * the virtual attemptMove() function, calls the compressor
+      * after attemptMove(), and uses a Metropolis test based on
+      * the change of Hamiltonian for acceptance or rejection. MC 
+      * moves for which this skeleton is appropriate can be 
+      * implemented by redefining the attemptMove() function and
+      * using it in this default implementation of move(). MC moves 
+      * for which this skeleton is inappropriate or inadequate can 
+      * be implemented by redefining the move function. 
       *
       * \return true if accepted, false if rejected
       */
@@ -192,7 +201,7 @@ namespace Pspc
       /// Timers for McMove 
       Timer attemptMoveTimer_;
       Timer compressorTimer_;
-      Timer computeWCTimer_;
+      Timer computeWcTimer_;
       Timer computeHamiltonianTimer_;
       Timer decisionTimer_;
       Timer totalTimer_;

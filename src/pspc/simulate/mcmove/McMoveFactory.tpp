@@ -2,7 +2,7 @@
 #define PSPC_MC_MOVE_FACTORY_TPP
 
 #include "McMoveFactory.h"  
-#include <pspc/simulate/McSimulator.h>
+#include <pspc/simulate/mcmove/McSimulator.h>
 
 // Subclasses of McMove 
 #include "RealMove.h"

@@ -59,11 +59,11 @@ namespace Pscf
       read(in, "epsilon", epsilon_);
 
       // Maximum number of iterations (optional parameter)
-      // Default set in constructor (200) or before calling this function
+      // Default set in constructor (200) or by prior call to setMaxItr
       readOptional(in, "maxItr", maxItr_);
 
       // Maximum number of previous states in history (optional)
-      // Default set in constructor (50) or before calling this function
+      // Default set in constructor (50) or by prior call to setMaxHist
       readOptional(in, "maxHist", maxHist_);
 
       // Verbosity level of error reporting, values 0-3 (optional)
@@ -87,7 +87,7 @@ namespace Pscf
       // Preconditions for generic Anderson-mixing (AM) algorithm.
       UTIL_CHECK(hasInitialGuess());
       UTIL_CHECK(isAllocatedAM_);
-      
+
       // Start overall timer
       timerTotal_.start();
 
@@ -109,7 +109,7 @@ namespace Pscf
          if (verbose_ > 2) {
             Log::file() << "------------------------------- \n";
          }
-         
+
          if (verbose_ > 0){
             Log::file() << " Iteration " << Int(itr_,5);
          }
@@ -173,7 +173,7 @@ namespace Pscf
             if (verbose_ > 2) {
                Log::file() << "-------------------------------\n";
             }
-            
+
             if (verbose_ > 0) {
                Log::file() << " Converged\n";
             }
@@ -181,11 +181,11 @@ namespace Pscf
             // Output error report if not done previously
             if (verbose_ == 2) {
                Log::file() << "\n";
-               computeError(2); 
+               computeError(2);
             }
 
             totalItr_ += itr_;
-            
+
             // Successful completion (i.e., converged within tolerance)
             return 0;
 
@@ -213,8 +213,8 @@ namespace Pscf
          }
 
       }
-      
-      
+
+
       // Failure: iteration counter itr reached maxItr without converging
       timerTotal_.stop();
 
@@ -244,8 +244,8 @@ namespace Pscf
    */
    template <typename Iterator, typename T>
    void AmIteratorTmpl<Iterator,T>::setErrorType(std::string errorType)
-   {  
-      errorType_ = errorType; 
+   {
+      errorType_ = errorType;
 
       if (!isValidErrorType()) {
          std::string msg = "Invalid iterator error type [";
@@ -289,7 +289,7 @@ namespace Pscf
             || errorType_ == "rmsResid"
             || errorType_ == "maxResid"
             || errorType_ == "relNormResid");
-      return valid; 
+      return valid;
 
    }
 
@@ -509,7 +509,7 @@ namespace Pscf
 
    // Update entire U matrix
    template <typename Iterator, typename T>
-   void 
+   void
    AmIteratorTmpl<Iterator, T> ::updateU(DMatrix<double> & U,
                             RingBuffer<T> const & resBasis,
                             int nHist)
@@ -531,7 +531,7 @@ namespace Pscf
    }
 
    template <typename Iterator, typename T>
-   void 
+   void
    AmIteratorTmpl<Iterator, T>::updateV(DArray<double> & v,
                                         T const & resCurrent,
                                         RingBuffer<T> const & resBasis,
@@ -554,11 +554,11 @@ namespace Pscf
          // Find max residual vector element
          double maxRes  = maxAbs(resHists_[0]);
          Log::file() << "Max Residual  = " << Dbl(maxRes,15) << "\n";
-   
+
          // Find norm of residual vector
          double normRes = norm(resHists_[0]);
          Log::file() << "Residual Norm = " << Dbl(normRes,15) << "\n";
-   
+
          // Find root-mean-squared residual element value
          double rmsRes = normRes/sqrt(nElem_);
          Log::file() << "RMS Residual  = " << Dbl(rmsRes,15) << "\n";
@@ -567,10 +567,10 @@ namespace Pscf
          double normField = norm(fieldHists_[0]);
          double relNormRes = normRes/normField;
          Log::file() << "Relative Norm = " << Dbl(relNormRes,15) << std::endl;
-   
+
          // Check if calculation has diverged (normRes will be NaN)
          UTIL_CHECK(!std::isnan(normRes));
-   
+
          // Set error value
          if (errorType_ == "maxResid") {
             error = maxRes;
@@ -637,7 +637,7 @@ namespace Pscf
       double total = timerTotal_.time();
       out << "\n";
       out << "                          ";
-      out << "Total" << std::setw(22)<< "Per Iteration" 
+      out << "Total" << std::setw(22)<< "Per Iteration"
           << std::setw(9) << "Fraction" << "\n";
       out << "MDE solution:             "
           << Dbl(timerMDE_.time(), 9, 3)  << " s,  "
@@ -651,7 +651,7 @@ namespace Pscf
           << Dbl(timerCoeff_.time(), 9, 3)  << " s,  "
           << Dbl(timerCoeff_.time()/totalItr_, 9, 3)  << " s,  "
           << Dbl(timerCoeff_.time()/total, 9, 3) << "\n";
-      out << "checking convergence:     "  
+      out << "checking convergence:     "
           << Dbl(timerError_.time(), 9, 3)  << " s,  "
           << Dbl(timerError_.time()/totalItr_, 9, 3)  << " s,  "
           << Dbl(timerError_.time()/total, 9, 3) << "\n";
@@ -671,7 +671,7 @@ namespace Pscf
            << Dbl(correctionRatio_/testCounter, 3, 3)<< "\n";
       #endif
    }
-   
+
    template <typename Iterator, typename T>
    void AmIteratorTmpl<Iterator,T>::clearTimers()
    {

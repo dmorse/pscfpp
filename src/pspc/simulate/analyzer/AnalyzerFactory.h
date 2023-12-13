@@ -16,7 +16,7 @@ namespace Pscf {
 namespace Pspc {
 
    template <int D> class System;
-   template <int D> class McSimulator;
+   template <int D> class Simulator;
 
    using namespace Util;
 
@@ -34,10 +34,10 @@ namespace Pspc {
       /**
       * Constructor.
       *
-      * \param mcSimulator  parent McSimulator<D> object
+      * \param simulator  parent Simulator<D> object
       * \param system  parent System<D> object
       */
-      AnalyzerFactory(McSimulator<D>& mcSimulator, System<D>& system);
+      AnalyzerFactory(Simulator<D>& simulator, System<D>& system);
 
       /**
       * Method to create any Analyzer supplied with PSCF.
@@ -54,12 +54,12 @@ namespace Pspc {
       /// Pointer to the parent system.
       System<D>* sysPtr_;
       
-      /// Pointer to the parent mcSimulator.
-      McSimulator<D>* mcSimulatorPtr_;
+      /// Pointer to the parent simulator.
+      Simulator<D>* simulatorPtr_;
 
    };
 
-   #ifndef PSPC_MC_MOVE_FACTORY_TPP
+   #ifndef PSPC_ANALYZER_FACTORY_TPP
    // Suppress implicit instantiation
    extern template class AnalyzerFactory<1>;
    extern template class AnalyzerFactory<2>;

@@ -7,9 +7,10 @@ calculations that use different PSCF programs:
    pc/         pscf_pc     periodic  (CPU)
    pg/         pscf_pg     periodic  (GPU)
 
-Top level subdirectories of 1d/, pc/, and pg/ each contain examples
-for different types of physical systems, e.g., subdirectory pc/diblock/ 
-contains examples for periodic phases of diblock copolymer melts. 
+The top level subdirectories of pc/ and pg/ each contain examples of 
+self-consistent field (scf/) or field theoretic simulation (fts/) 
+calculations. Top level subdirectories for 1d/ contain scft simulations
+for different types of system. 
 
-Most example directories contain an executable file named "run" that can 
-be used to run the example, by invoking "./run".
+Most example directories contain an executable file named "run" that 
+can be used to run the example, by invoking "./run".

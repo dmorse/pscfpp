@@ -14,9 +14,9 @@ namespace Pspc {
    * Constructor.
    */
    template <int D>
-   AnalyzerManager<D>::AnalyzerManager(McSimulator<D>& mcSimulator, System<D>& system)
+   AnalyzerManager<D>::AnalyzerManager(Simulator<D>& simulator, System<D>& system)
    : Manager< Analyzer<D> >(),
-     mcSimulatorPtr_(&mcSimulator),
+     simulatorPtr_(&simulator),
      systemPtr_(&system)
    {  setClassName("AnalyzerManager"); }
 
@@ -32,7 +32,7 @@ namespace Pspc {
    */
    template <int D>
    Factory< Analyzer<D> >* AnalyzerManager<D>::newDefaultFactory() const
-   {  return new AnalyzerFactory<D>(*mcSimulatorPtr_, *systemPtr_); }
+   {  return new AnalyzerFactory<D>(*simulatorPtr_, *systemPtr_); }
 
    /*
    * Read parameter file. 

@@ -11,7 +11,7 @@
 #include "HamiltonianAnalyzer.h"
 
 #include <pspc/System.h>
-#include <pspc/simulate/McSimulator.h>
+#include <pspc/simulate/Simulator.h>
 //#include <util/accumulators/Average.h>
 
 namespace Pscf {
@@ -23,11 +23,11 @@ namespace Pspc {
    * Constructor.
    */
    template <int D>
-   HamiltonianAnalyzer<D>::HamiltonianAnalyzer(McSimulator<D>& mcSimulator, 
+   HamiltonianAnalyzer<D>::HamiltonianAnalyzer(Simulator<D>& simulator, 
                                                System<D>& system)
     : AverageListAnalyzer<D>(system),
-      mcSimulatorPtr_(&mcSimulator),
-      systemPtr_(&(mcSimulator.system())),
+      simulatorPtr_(&simulator),
+      systemPtr_(&(simulator.system())),
       hasAnalyzeChi_(false),
       idealId_(-1),
       fieldId_(-1),
@@ -58,25 +58,30 @@ namespace Pspc {
    template <int D>
    void HamiltonianAnalyzer<D>::compute() 
    {
-      if (!mcSimulator().hasWC()){
+      UTIL_CHECK(simulator().hasWc());
+
+      #if 0
+      if (!simulator().hasWc()){
          if (!hasAnalyzeChi_){
-            mcSimulator().analyzeChi();
+            simulator().analyzeChi();
             hasAnalyzeChi_ = true;
          }
          system().compute();
-         mcSimulator().computeWC();
-         mcSimulator().computeHamiltonian();
+         simulator().computeWc();
       }
-      double ideal = mcSimulator().idealHamiltonian();
-      // outputFile_ << Dbl(ideal, 20)
+      #endif
+
+      if (!simulator().hasHamiltonian()) {
+         simulator().computeHamiltonian();
+      }
+
+      double ideal = simulator().idealHamiltonian();
       setValue(idealId_, ideal);
    
-      double field = mcSimulator().fieldHamiltonian();
-      // outputFile_ << Dbl(field, 20)
+      double field = simulator().fieldHamiltonian();
       setValue(fieldId_, field);
    
-      double total = mcSimulator().hamiltonian();
-      // outputFile_ << Dbl(total, 20) << std::endl;
+      double total = simulator().hamiltonian();
       setValue(totalId_, total);
    }
    

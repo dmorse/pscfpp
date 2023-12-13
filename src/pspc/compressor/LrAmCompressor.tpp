@@ -92,7 +92,7 @@ namespace Pspc{
    int LrAmCompressor<D>::compress()
    {
       int solve = AmIteratorTmpl<Compressor<D>, DArray<double> >::solve();
-      mdeCounter_ = AmIteratorTmpl<Compressor<D>,DArray<double>>::totalItr();
+      //mdeCounter_ = AmIteratorTmpl<Compressor<D>,DArray<double>>::totalItr();
       return solve;
    }
 
@@ -218,7 +218,10 @@ namespace Pspc{
    // Perform the main system computation (solve the MDE)
    template <int D>
    void LrAmCompressor<D>::evaluate()
-   {  system().compute(); }
+   {  
+      system().compute(); 
+      ++mdeCounter_;
+   }
 
    // Compute the residual for the current system state
    template <int D>

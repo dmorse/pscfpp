@@ -9,6 +9,7 @@
 #include "system/SystemTest.h"
 #include "iterator/IteratorTestComposite.h"
 #include "sweep/SweepTestComposite.h"
+#include "simulate/SimulatorTest.h"
 
 #include <util/param/BracketPolicy.h>
 #include <util/global.h>
@@ -19,6 +20,7 @@ addChild(new SolverTestComposite, "solvers/");
 addChild(new TEST_RUNNER(SystemTest), "system/");
 addChild(new IteratorTestComposite, "iterator/");
 addChild(new SweepTestComposite, "sweep/");
+addChild(new TEST_RUNNER(SimulatorTest), "simulate/");
 TEST_COMPOSITE_END
 
 using namespace Util;

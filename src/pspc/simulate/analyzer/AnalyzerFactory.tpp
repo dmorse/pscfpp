@@ -18,10 +18,10 @@ namespace Pspc {
    * Constructor
    */
    template <int D>
-   AnalyzerFactory<D>::AnalyzerFactory(McSimulator<D>& mcSimulator, 
+   AnalyzerFactory<D>::AnalyzerFactory(Simulator<D>& simulator, 
                                        System<D>& system)
     : sysPtr_(&system),
-      mcSimulatorPtr_(&mcSimulator)
+      simulatorPtr_(&simulator)
    {}
 
    /* 
@@ -39,12 +39,12 @@ namespace Pspc {
       
       // Try to match classname
       if (className == "TrajectoryWriter") {
-         ptr = new TrajectoryWriter<D>(*mcSimulatorPtr_, *sysPtr_);
+         ptr = new TrajectoryWriter<D>(*simulatorPtr_, *sysPtr_);
       } else if (className == "HamiltonianAnalyzer") {
-         ptr = new HamiltonianAnalyzer<D>(*mcSimulatorPtr_, *sysPtr_);
+         ptr = new HamiltonianAnalyzer<D>(*simulatorPtr_, *sysPtr_);
       } else if (className == "BinaryStructureFactorGrid") {
          ptr 
-           = new BinaryStructureFactorGrid<D>(*mcSimulatorPtr_, *sysPtr_);
+           = new BinaryStructureFactorGrid<D>(*simulatorPtr_, *sysPtr_);
       } else if (className == "StepLogger") {
          ptr = new StepLogger<D>();
       }

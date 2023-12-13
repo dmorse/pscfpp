@@ -26,6 +26,27 @@ namespace Pspc {
    /**
    * Field theoretic simulator (base class).
    *
+   * The Simulator base class provides tools needed in field-theoretic
+   * simulations that are based on a partial saddle-point approximation,
+   * including field theoretic Monte Carlo and field-theoretic Langevin 
+   * simulations.  Subclasses of this class provide algorithms and 
+   * more specialized data structures needed by specific sampling 
+   * methods.
+   *
+   * The analyzeChi() function constructs and diagonalizes the projected
+   * chi matrix. This is a singular nMonomer x nMonomer matrix defined 
+   * by evaluating the projection of the chi matrix into the subspace 
+   * of fluctuations that preserves total monomer concentration. The 
+   * eigenvalues and eigenvectors of this matrix via the chiEvals and
+   * chiEvecs functions, respectively.
+   *
+   * The functions computeWc, computeCc and computeDc compute components
+   * components of various types of multi-component fields (i.e., fields
+   * that are associated with a monomer type index) in a basis of 
+   * eigenvectors of the projected chi matrix. Names such as wc, cc and 
+   * dc that end with a suffix "c" refer to components of multi-component 
+   * fields that are defined using this eigenvector basis. 
+   *
    * \ingroup Pspc_Simulate_Module
    */
    template <int D>
@@ -47,7 +68,20 @@ namespace Pspc {
       ~Simulator();
 
       /**
-      * Read parameters for a MC simulation.
+      * Allocate required memory.
+      *
+      * Values of nMonomer and the mesh dimensions must be defined in
+      * Mixture and Domain members of the parent System on entry. This
+      * function should be called by the readParameters method of any
+      * subclass.
+      */
+      void allocate();
+
+      /**
+      * Read parameters for a simulation.
+      *
+      * The default implemention is a do-nothing placeholder that throws
+      * an error if called, and must be re-implemented by subclasses.
       *
       * \param in input parameter stream
       */
@@ -73,10 +107,9 @@ namespace Pspc {
       * Read and analyze a trajectory file.
       *
       * This function uses an instance of the TrajectoryReader class
-      * specified by the "classname" argument to read a trajectory 
-      * file with the specified named "filename". The function must
-      * open file, performs the analysis, and closes the file before
-      * returning.
+      * specified by the "classname" argument to read a trajectory file
+      * with the specified filename. The function opens the file,
+      * performs the analysis, and closes the file before returning.
       *
       * The default implemention is a do-nothing placeholder that throws
       * an error if called, and must be re-implemented by subclasses.
@@ -91,12 +124,26 @@ namespace Pspc {
                            std::string filename);
 
       /**
+      * Clear field eigen-components and hamiltonian components.
+      *
+      * Immediately calling this function, hasHamiltonian(), hasWc(), 
+      * hasCc(), and hasDc() will all return false.
+      */
+      void clearData();
+
+      /**
       * Output timing results
+      *
+      * Empty default implementation.
+      *
+      * \param out  output stream
       */
       virtual void outputTimers(std::ostream& out);
 
       /**
       * Clear timers
+      *
+      * Empty default implementation.
       */
       virtual void clearTimers();
 
@@ -106,26 +153,117 @@ namespace Pspc {
       long iStep();
 
       ///@}
-      /// \name Hamiltonian Computation
+      /// \name Projected Chi Matrix
       ///@{
 
       /**
-      * Compute the Hamiltonian used in Monte-Carlo simulations.
+      * Perform eigenvalue analysis of projected chi matrix.
+      *
+      * Uses a chi matrix obtained from the Interaction member of
+      * the parent System.
+      */
+      void analyzeChi();
+
+      /**
+      * Get an array of the eigenvalues of the projected chi matrix.
+      *
+      * The projected chi matrix is given by the matrix product P*chi*P,
+      * where P is the symmetric projection matrix that projects onto 
+      * the subspace orthogonal to the vector e = (1,1,...,1). The 
+      * projected chi matrix is singular, and has a zero eigenvalue with
+      * associated eigenvector e. By convention, this zero eigenvalue 
+      * and its eigenvector e are listed last, with index nMonomer - 1.
+      */
+      DArray<double> const & chiEvals() const;
+
+      /**
+      * Get a single eigenvalue of the projected chi matrix.
+      *
+      * \param a index of eigenvalue (0, ... , nMonomer - 1)
+      */
+      double chiEval(int a) const;
+
+      /**
+      * Get the matrix of all eigenvectors of the projected chi matrix.
+      *
+      * This function returns the entire nMonomer x nMonomer matrix of the
+      * eigenvectors of the projected chi matrix, in which each row is an
+      * eigenvector. The first (row) index of this matrix thus identifies
+      * an eigenvector, while the second (column) index identifies the
+      * monomer type associated with one component of an eigen-vector. 
+      *
+      * Each eigenvector is normalized such that the sum of the squares 
+      * of its elements is equal to nMonomer, the number of monomer types. 
+      * The sign of each vector is chosen so as to make the first (0) 
+      * component non-negative.  The last eigenvector is always the null 
+      * vector e = (1,1,...,1).
+      * 
+      * For the case nMonomer = 2 of an AB system, the resulting two 
+      * eigenvectors are (1,-1) and (1,1).
+      */
+      DMatrix<double> const & chiEvecs() const;
+
+      /**
+      * Get one element of an eigenvector of the projected chi matrix.
+      *
+      * See documentation of chiEvecs(), which returns the entire matrix.
+      *
+      * \param a  eigenvector index (0, ..., nMonomer - 1)
+      * \param i  monomoner type index (0, ..., nMonomer - 1)
+      */
+      double chiEvecs(int a, int i) const;
+
+      /**
+      * Get all components of the vector S.
+      *
+      * The value of component \f$ S_{a} \f$ may be expressed using 
+      * Einstein summation convention as
+      * \f[
+      *     S_{a} \equiv \frac{1}{M^2} v_{ai}\chi_{ij}e_{j}
+      * \f]
+      * for any \f$ a = 0, \ldots, M - 1 \f$, where M = nMonomer (the
+      * number of monomer types), \f$ e_{j} =1 \f$ for any j, and 
+      * \f$ v_{ai} \f$ is component associated with monomer type i of
+      * eigenvector a of the projected chi matrix, with the convention
+      * \f$ v_{ia} = e_{i} = 1 \f$ for a = nMonomer - 1.
+      */
+      DArray<double> const & sc() const;
+
+      /**
+      * Get a single component of the S vector.
+      *
+      * This function retrieves on component of the vector defined in
+      * the documentation for function sc().
+      * 
+      * \param a  eigenvector index (0, ..., nMonomer - 1)
+      */
+      double sc(int a) const;
+
+      ///@}
+      /// \name Field Theoretic Hamiltonian 
+      ///@{
+
+      /**
+      * Compute the Hamiltonian used in field theoretic simulations.
       */
       void computeHamiltonian();
 
       /**
-      * Get the Hamiltonian used in Monte-Carlo simulations.
+      * Get the Hamiltonian used in field theoretic simulations.
+      *
+      * This function returns the real, thermodynamically extensive
+      * Hamiltonian used in simulations based on partial saddle-point
+      * approximation.
       */
       double hamiltonian() const;
 
       /**
-      * Get ideal gas contribution (lnQ) to MC Hamiltonian.
+      * Get ideal gas contribution (-lnQ) to MC Hamiltonian.
       */
       double idealHamiltonian() const;
 
       /**
-      * Get the quadratci field contribution (HW) to MC Hamiltonian.
+      * Get the quadratic field contribution (HW) to MC Hamiltonian.
       */
       double fieldHamiltonian() const;
 
@@ -135,86 +273,135 @@ namespace Pspc {
       bool hasHamiltonian() const;
 
       ///@}
-      /// \name Projected Chi Matrix
+      /// \name Chemical Potential Field (W Field) Components
       ///@{
 
       /**
-      * Perform eigenvalue analysis of projected chi matrix.
-      */
-      void analyzeChi();
-
-      /**
-      * Get an array of the eigenvalues of the projected chi matrix.
-      *
-      * The projected chi matrix is given by the matrix product P*chi*P,
-      * where P is the symmetric projection matrix that projects onto 
-      * the subspace perpendicular to the vector e = (1,1,...,1). The 
-      * projected chi matrix is singular, and has a zero eigenvalue with
-      * associated eigenvector e. By convention, this zero eigenvalue 
-      * and its eigenvector e are listed last, with index nMonomer - 1.
-      */
-      DArray<double> const & chiEvals() const
-      {  return chiEvals_; }
-
-      /**
-      * Get an single eigenvalue of the projected chi matrix.
-      *
-      * \param i index of eigenvalue (0, ... , nMonomer - 1)
-      */
-      double chiEval(int i ) const
-      {  return chiEvals_[i]; }
-
-      /**
-      * Get a matrix of eigenvectors of the projected chi matrix.
-      *
-      * This function returns an nMonomer x nMonomer matrix of the
-      * eigenvectors of the projected chin Matrix. The first index
-      * (row index) of the matrix identifies the eigenvector, while 
-      * the second (column) index indexes the monomer type of each
-      * eigenvector component. Each eigenvector is normalized such 
-      * that the sum of the squares of all elements is equal to 
-      * nMonomer, the number of monomer types.  The sign of each vector 
-      * is chosen so as to make the first (0) component non-negative. 
-      * The last eigenvector is always the null vector e = (1,1,...,1).
-      * For nMonomer = 2, the two eigenvectors are (1,-1) and (1,1).
-      */
-      DMatrix<double> const & chiEvecs() const
-      {  return chiEvecs_; }
-
-      ///@}
-      /// \name W Field Components
-      ///@{
-
-      /**
-      * Compute chiP-eigenvector components of the current w fields.
+      * Compute eigenvector components of the current w fields.
       *
       * Compute and store the components of the values of the w fields
       * on nodes of a real-space grid (r-grid) in a basis of the
-      * eigenvectors of the projected chi matrix.
+      * eigenvectors of the projected chi matrix. The component field
+      * \f$ W_{a}({\bf r}) \f$ at grid point \f$ {\bf r} \f$ is given
+      * using Einstein summation by
+      * \f[
+      *    W_{a}({\bf r}) = 
+      *    v_{ai} w_{i}({\bf r}) / M
+      * \f]
+      * where \f$ w_{i}({\bf r}) \f$ is the w-field associated with
+      * monomer type \f$ i \f$, \f$ v_{ai} \f$ is eigenvector a of
+      * the projected chi matrix, and M = nMonomer.
       */
-      void computeWC();
+      void computeWc();
+
+      /**
+      * Get all eigenvector components of the current w fields.
+      *
+      * This function returns a DArray of fields in which each field is
+      * a chemical field component \f$ W_{a}({\bf r}) \f$ as defined in
+      * the documentation of computeWc(), for a = 0, ..., nMonomer - 1.
+      */
+      DArray< RField<D> > const & wc() const;
 
       /**
       * Get one eigenvector component of the current w fields.
       *
-      * Each component is a point-wise projection of the w fields onto a
-      * corresponding eigenvector of the projected chi matrix. The last
-      * index, i = nMonomer - 1, corresponds to the Lagrange multiplier
-      * pressure component, with associated eigenvector [1, 1, ..., 1].
+      * See documentation of functions computeWc() and wc() for details.
       *
-      * \param i eigenvector / eigenvalue index
+      * \param a eigenvector index in range 0 , ..., nMonomer -1
       */
-      RField<D> const & wc(int i) const;
+      RField<D> const & wc(int a) const;
 
       /**
       * Are eigen-components of current w fields valid ?
       */
-      bool hasWC() const;
+      bool hasWc() const;
+
+      ///@}
+      /// \name Monomer Concentration Field (C-Field) Components
+      ///@{
 
       /**
-      * Clear w field eigen-components and hamiltonian components.
+      * Compute eigenvector components of the current c fields.
+      *
+      * Compute and store the components of the values of the c fields
+      * on nodes of a real-space grid (r-grid) in a basis of the
+      * eigenvectors of the projected chi matrix. 
       */
-      void clearData();
+      void computeCc();
+
+      /**
+      * Get all eigenvector components of the current c fields.
+      *
+      * Each component \f$C_{a}({\bf r}) \f$ is a point-wise projection 
+      * of the monomer c fields onto a corresponding eigenvector of the 
+      * projected chi matrix. The resulting value \f$ C_{a}({\bf r}) \f$ 
+      * for eigen-component a at grid point \f$ {\bf r} \f$ is given 
+      * using Einstein notation as
+      * \f[
+      *    C_{a}({\bf r}) = v_{ai} c_{i}({\bf r}) 
+      * \f]
+      * where \f$ c_{i}({\bf r}) \f$ is the concentration / volume 
+      * fraction field associated with monomer type i.  
+      *
+      * Note: The above definition \f$ C_{a} \f$ uses a different 
+      * prefactor than that used to define the corresponding w-field 
+      * component \f$ W_{a} \f$ given in the documentation of the
+      * function wc(), without the prefactor of 1/nMonomer. This is 
+      * intentional, and is convenient for other aspects of the 
+      * underlying theory.
+      */
+      DArray< RField<D> > const & cc() const;
+
+      /**
+      * Get one eigenvector component of the current c fields.
+      *
+      * This returns a reference to a field \f$ C_{a}({\bf r}) \f$
+      * as defined in the documentation of function cc().
+      *
+      * \param a eigenvector / eigenvalue index
+      */
+      RField<D> const & cc(int a) const;
+
+      /**
+      * Are eigen-components of current c fields valid ?
+      */
+      bool hasCc() const;
+
+      ///@}
+      /// \name Functional Derivatives of H[W]
+      ///@{
+
+      /**
+      * Compute functional derivatives of the Hamiltonian.
+      *
+      * Compute and store the functional derivatives of the field
+      * theoretic Hamiltonian with respect to eigenvector components of 
+      * the w fields (i.e., with respect to components of wc).
+      */
+      void computeDc();
+
+      /**
+      * Get all of the current d fields.
+      *
+      * This function returns an array of fields in which element a
+      * is the functional derivative of the Hamiltonian H[W] with
+      * respect to the field component \f$ W_{a} \f$ that is returned
+      * by the function wc(a).
+      */
+      DArray< RField<D> > const & dc() const;
+
+      /**
+      * Get one eigenvector component of the current d fields.
+      *
+      * \param i eigenvector / eigenvalue index
+      */
+      RField<D> const & dc(int i) const;
+
+      /**
+      * Are the current d fields valid ?
+      */
+      bool hasDc() const;
 
       ///@}
       /// \name Miscellaneous
@@ -242,7 +429,7 @@ namespace Pspc {
       Random random_;
 
       /**
-      * Eigenvector components of w on a real space grid.
+      * Eigenvector components of w fields on a real space grid.
       *
       * Each field component corresponds to a point-wise projection of w
       * onto an eigenvector of the projected chi matrix.
@@ -250,17 +437,33 @@ namespace Pspc {
       DArray< RField<D> > wc_;
 
       /**
-      * Monte-Carlo System Hamiltonian (extensive value).
+      * Eigenvector components of c fields on a real space grid.
+      *
+      * Each field component corresponds to a point-wise projection of c
+      * onto an eigenvector of the projected chi matrix.
+      */
+      DArray< RField<D> > cc_;
+
+      /**
+      * Components of d fields on a real space grid.
+      *
+      * Each field component is the functional derivative of H[W]
+      * with respect to one eigenvector w-field component.
+      */
+      DArray< RField<D> > dc_;
+
+      /**
+      * Field theoretic Hamiltonian H[W] (extensive value).
       */
       double hamiltonian_;
 
       /**
-      * Ideal gas contribution (lnQ) to Monte-Carlo System Hamiltonian
+      * Ideal gas contribution (lnQ) to Hamiltonian H[W]
       */
       double idealHamiltonian_;
 
       /**
-      * Field contribution (H_W) to Monte-Carlo System Hamiltonian
+      * Field contribution (H_W) to Hamiltonian
       */
       double fieldHamiltonian_;
 
@@ -277,7 +480,17 @@ namespace Pspc {
       /**
       * Have eigen-components of the current w fields been computed ?
       */
-      bool hasWC_;
+      bool hasWc_;
+
+      /**
+      * Have eigen-components of the current c fields been computed ?
+      */
+      bool hasCc_;
+
+      /**
+      * Have functional derivatives of H[W] been computed ?
+      */
+      bool hasDc_;
 
    private:
 
@@ -293,20 +506,38 @@ namespace Pspc {
       /**
       * Eigenvectors of the projected chi matrix.
       *
+      * Each row (identified by first index) is an eigenvector. 
       * The last eigenvector, with index nMonomer - 1, is always the
-      * vector e = [1, 1, ...., 1]^{T}.
+      * vector e = [1, 1, ...., 1].
       */
       DMatrix<double> chiEvecs_;
 
       /**
       * Eigenvalues of the projected chi matrix.
+      *
+      * The last eigenvalue, with index nMonomer - 1, is always zero.
       */
       DArray<double>  chiEvals_;
+
+      /**
+      * Components of vector s = chi*e in a basis of eigenvectors.
+      *
+      * Component sc_[a] is given by sc_[a] = v_{a} chi e / M^2, 
+      * where e = [1 1 ... 1]^{T}, v_{a} is a row vector representation
+      * of eigenvector a of the projected chi matrix, given by row a of 
+      * chiEvecs_, and M = nMonomer.
+      */
+      DArray<double>  sc_;
 
       /**
       * Pointer to the parent system.
       */
       System<D>* systemPtr_;
+
+      /**
+      * Has required memory been allocated?
+      */
+      bool isAllocated_;
 
    };
 
@@ -321,6 +552,36 @@ namespace Pspc {
    template <int D>
    inline System<D>& Simulator<D>::system()
    {  return *systemPtr_; }
+
+   // Return an array of eigenvalues of projected chi matrix.
+   template <int D>
+   inline DArray<double> const & Simulator<D>::chiEvals() const
+   {  return chiEvals_; }
+
+   // Return an array of eigenvalues of projected chi matrix.
+   template <int D>
+   inline double Simulator<D>::chiEval(int a) const
+   {  return chiEvals_[a]; }
+
+   // Return a matrix of eigenvectors of the projected chi matrix.
+   template <int D>
+   inline DMatrix<double> const & Simulator<D>::chiEvecs() const
+   {  return chiEvecs_; }
+
+   // Return a matrix of eigenvectors of the projected chi matrix.
+   template <int D>
+   inline double Simulator<D>::chiEvecs(int a, int i) const
+   {  return chiEvecs_(a, i); }
+
+   // Return array of values of vector S.
+   template <int D>
+   inline DArray<double> const & Simulator<D>::sc() const
+   {  return sc_; }
+
+   // Return one component of vector S.
+   template <int D>
+   inline double Simulator<D>::sc(int a) const
+   {  return sc_[a]; }
 
    // Get the precomputed Hamiltonian
    template <int D>
@@ -351,22 +612,59 @@ namespace Pspc {
    inline bool Simulator<D>::hasHamiltonian() const
    {  return hasHamiltonian_; }
 
-   // Return a single eigencomponent of the w fields.
+   // Return all eigencomponents of the w fields.
    template <int D>
-   inline RField<D> const & Simulator<D>::wc(int i) const
-   {  return wc_[i]; }
+   inline DArray< RField<D> > const & Simulator<D>::wc() const
+   {  return wc_; }
 
-   // Have eigen-components of current w fields been computed?
+   // Return a single eigenvector component of the w fields.
    template <int D>
-   inline bool Simulator<D>::hasWC() const
-   {  return hasWC_; }
+   inline RField<D> const & Simulator<D>::wc(int a) const
+   {  return wc_[a]; }
+
+   // Have eigenvector components of current w fields been computed?
+   template <int D>
+   inline bool Simulator<D>::hasWc() const
+   {  return hasWc_; }
+
+   // Return all eigenvector components of the current c fields.
+   template <int D>
+   inline DArray< RField<D> > const & Simulator<D>::cc() const
+   {  return cc_; }
+
+   // Return a single eigenvector component of the current c fields.
+   template <int D>
+   inline RField<D> const & Simulator<D>::cc(int a) const
+   {  return cc_[a]; }
+
+   // Have eigenvector components of current c fields been computed?
+   template <int D>
+   inline bool Simulator<D>::hasCc() const
+   {  return hasCc_; }
+
+   // Return all eigenvector components of the current d fields.
+   template <int D>
+   inline DArray< RField<D> > const & Simulator<D>::dc() const
+   {  return dc_; }
+
+   // Return a single eigenvector component of the current d fields.
+   template <int D>
+   inline RField<D> const & Simulator<D>::dc(int a) const
+   {  return dc_[a]; }
+
+   // Have eigenvector components of current d fields been computed?
+   template <int D>
+   inline bool Simulator<D>::hasDc() const
+   {  return hasDc_; }
 
    // Clear all data (eigen-components of w field and Hamiltonian)
    template <int D>
    inline void Simulator<D>::clearData()
    {
       hasHamiltonian_ = false;
-      hasWC_ = false;
+      hasWc_ = false;
+      hasCc_ = false;
+      hasDc_ = false;
    }
 
    template <int D>

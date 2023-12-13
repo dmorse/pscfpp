@@ -15,7 +15,7 @@ namespace Pscf {
 namespace Pspc {
 
    template <int D> class System;
-   template <int D> class McSimulator;
+   template <int D> class Simulator;
 
    using namespace Util;
 
@@ -33,7 +33,7 @@ namespace Pspc {
       /**
       * Constructor.
       */
-      TrajectoryWriter(McSimulator<D>& mcSimulator, System<D>& system);
+      TrajectoryWriter(Simulator<D>& simulator, System<D>& system);
 
       /**
       * Destructor.
@@ -112,7 +112,7 @@ namespace Pspc {
       /**
       * Pointer to parent Simulator
       */
-      McSimulator<D>* mcSimulatorPtr_;
+      Simulator<D>* simulatorPtr_;
 
       /**
       * Pointer to the parent system.
@@ -144,9 +144,9 @@ namespace Pspc {
       System<D>& system();
 
       /**
-      * Return reference to parent McSimulator.
+      * Return reference to parent Simulator.
       */
-      McSimulator<D>& mcSimulator();
+      Simulator<D>& simulator();
 
 
    };
@@ -168,10 +168,10 @@ namespace Pspc {
    inline System<D>& TrajectoryWriter<D>::system()
    {  return *systemPtr_; }
 
-   //Get parent McSimulator object.
+   //Get parent Simulator object.
    template <int D>
-   inline McSimulator<D>& TrajectoryWriter<D>::mcSimulator()
-   {  return *mcSimulatorPtr_; }
+   inline Simulator<D>& TrajectoryWriter<D>::simulator()
+   {  return *simulatorPtr_; }
 
    #ifndef PSPC_TRAJECTORY_WRITER_TPP
    // Suppress implicit instantiation

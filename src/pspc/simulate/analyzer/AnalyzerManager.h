@@ -10,7 +10,7 @@ namespace Pspc {
    using namespace Util;
    
    template <int D> class System;
-   template <int D> class McSimulator;
+   template <int D> class Simulator;
 
 
    /**
@@ -27,10 +27,10 @@ namespace Pspc {
       /**
       * Constructor.
       *
-      * \param mcSimulator parent McSimulator
+      * \param simulator parent Simulator
       * \param system parent System
       */
-      AnalyzerManager(McSimulator<D>& mcSimulator, System<D>& system);
+      AnalyzerManager(Simulator<D>& simulator, System<D>& system);
 
       /**
       * Destructor.
@@ -101,7 +101,7 @@ namespace Pspc {
       /**
        * Pointer to parent Simulator
        */
-      McSimulator<D>* mcSimulatorPtr_;
+      Simulator<D>* simulatorPtr_;
       
       /**
       * Pointer to parent System.

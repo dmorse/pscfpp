@@ -60,6 +60,10 @@ namespace Pspc {
    template <int D>
    void McSimulator<D>::readParameters(std::istream &in)
    {
+      // Initialize Simulator<D> base class
+      allocate();
+      analyzeChi();
+
       // Read block of mc move data inside
       readParamComposite(in, mcMoveManager_);
 
@@ -67,7 +71,6 @@ namespace Pspc {
       Analyzer<D>::baseInterval = 0; // default value
       readParamCompositeOptional(in, analyzerManager_);
 
-      Simulator<D>::readParameters(in);
    }
 
    /*
@@ -90,7 +93,7 @@ namespace Pspc {
 
       // Compute field components and MC Hamiltonian for initial state
       system().compute();
-      computeWC();
+      computeWc();
       computeHamiltonian();
       mcMoveManager_.setup();
       if (analyzerManager_.size() > 0){
@@ -206,7 +209,7 @@ namespace Pspc {
    void McSimulator<D>::saveMcState()
    {
       UTIL_CHECK(system().w().hasData());
-      UTIL_CHECK(hasWC());
+      UTIL_CHECK(hasWc());
       UTIL_CHECK(hasHamiltonian());
       UTIL_CHECK(mcState_.isAllocated);
       UTIL_CHECK(!mcState_.hasData);
@@ -243,7 +246,7 @@ namespace Pspc {
       for (int i = 0; i < nMonomer; ++i) {
          wc_[i] = mcState_.wc[i];
       }
-      hasWC_ = true;
+      hasWc_ = true;
 
       // Restore Hamiltonian and components
       system().setWRGrid(mcState_.w); 
