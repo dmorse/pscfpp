@@ -7,6 +7,7 @@
 // Subclasses of McMove 
 #include "RealMove.h"
 #include "FourierMove.h"
+#include "ForceBiasMove.h"
 
 namespace Pscf {
 namespace Pspc {
@@ -39,6 +40,8 @@ namespace Pspc {
          ptr = new RealMove<D>(*mcSimulatorPtr_);
       } else if (className == "FourierMove") {
          ptr = new FourierMove<D>(*mcSimulatorPtr_);
+      } else if (className == "ForceBiasMove") {
+         ptr = new ForceBiasMove<D>(*mcSimulatorPtr_);
       }
 
       return ptr;

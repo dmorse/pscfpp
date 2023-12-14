@@ -94,24 +94,16 @@ namespace Pspc {
       using McMove<D>::decisionTimer_;
       using McMove<D>::totalTimer_;
 
-      /**
-      *  Attempt unconstrained move.
-      *
-      *  This function should modify the system w fields in r-grid
-      *  format, as returned by system().w().rgrid(), in order apply
-      *  an unconstrained attempted move. The compressor will then be
-      *  applied in order to restore the density constraint.
-      *
-      */
-      void attemptMove();
-
    private:
 
       /// Local copy of w fields
       DArray< RField<D> > w_;
 
-      /// Change in one component of wc
-      RField<D> dwc_;
+      /// Copy of initial dc field 
+      DArray< RField<D> > dc_;
+
+      /// Change in wc
+      DArray<RField<D> >  dwc_;
 
       /// Prefactor of -dc_ in deterministic drift term
       double mobility_;

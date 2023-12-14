@@ -59,7 +59,12 @@ namespace Pspc {
       for (int i=0; i < nMonomer; ++i) {
          w_[i].allocate(meshDimensions);
       }
-      dwc_.allocate(meshDimensions);
+      dc_.allocate(nMonomer-1);
+      dwc_.allocate(nMonomer-1);
+      for (int i=0; i < nMonomer - 1; ++i) {
+         dc_[i].allocate(meshDimensions);
+         dwc_[i].allocate(meshDimensions);
+      }
 
    }
    
@@ -73,7 +78,12 @@ namespace Pspc {
       for (int i=0; i < nMonomer; ++i) {
          UTIL_CHECK(w_[i].capacity() == meshSize);
       }
-      UTIL_CHECK(dwc_.capacity() == meshSize);
+      UTIL_CHECK(dc_.capacity() == nMonomer-1);
+      UTIL_CHECK(dwc_.capacity() == nMonomer-1);
+      for (int i=0; i < nMonomer - 1; ++i) {
+         UTIL_CHECK(dc_[i].capacity() == meshSize);
+         UTIL_CHECK(dwc_[i].capacity() == meshSize);
+      }
 
       McMove<D>::setup();
       system().compute();
@@ -92,6 +102,18 @@ namespace Pspc {
       totalTimer_.start();
       incrementNAttempt();
 
+      // Preconditions
+      UTIL_CHECK(system().hasCFields());
+      UTIL_CHECK(mcSimulator().hasWc());
+      UTIL_CHECK(mcSimulator().hasCc());
+      UTIL_CHECK(mcSimulator().hasDc());
+      UTIL_CHECK(mcSimulator().hasHamiltonian());
+
+      // Array sizes and indices
+      const int nMonomer = system().mixture().nMonomer();
+      const int meshSize = system().domain().mesh().size();
+      int i, j, k;
+
       // Get current Hamiltonian
       double oldHamiltonian = mcSimulator().hamiltonian();
 
@@ -101,9 +123,50 @@ namespace Pspc {
       // Clear both eigen-components of the fields and hamiltonian
       mcSimulator().clearData();
 
-      // Attempt modification
       attemptMoveTimer_.start();
-      attemptMove();
+      
+      // Copy current W fields from parent system into wc_
+      for (i = 0; i < nMonomer; ++i) {
+         w_[i] = system().w().rgrid(i);
+      }
+
+      // Copy current derivative fields from into member variable dc_
+      for (i = 0; i < nMonomer - 1; ++i) {
+         dc_[i] = mcSimulator().dc(i);
+      }
+
+      // Constants for dynamics
+      const double vSystem = system().domain().unitCell().volume();
+      const double vNode = vSystem/double(meshSize);
+      const double a = -1.0*mobility_;
+      const double b = sqrt(2.0*mobility_/vNode);
+
+      // Modify local variables dwc_ and wc_
+      // Loop over eigenvectors of projected chi matrix
+      double dwd, dwr, evec;
+      for (j = 0; j < nMonomer - 1; ++j) {
+         RField<D> const & dc = dc_[j];
+         RField<D> & dwc = dwc_[j];
+         for (k = 0; k < meshSize; ++k) {
+            dwd = a*dc[k];
+            dwr = b*random().gaussian();
+            dwc[k] = dwd + dwr;
+         }
+         // Loop over monomer types
+         for (i = 0; i < nMonomer; ++i) {
+            RField<D> const & dwc = dwc_[j];
+            RField<D> & wn = w_[i];
+            evec = mcSimulator().chiEvecs(j,i);
+            for (k = 0; k < meshSize; ++k) {
+               wn[k] += evec*dwc[k];
+            }
+         }
+      }
+
+      // Set modified fields in parent system
+      system().setWRGrid(w_);
+      mcSimulator().clearData();
+
       attemptMoveTimer_.stop();
 
       // Call compressor
@@ -123,14 +186,28 @@ namespace Pspc {
       computeHamiltonianTimer_.start();
       mcSimulator().computeHamiltonian();
       double newHamiltonian = mcSimulator().hamiltonian();
-      computeHamiltonianTimer_.stop();
+      double dH = newHamiltonian - oldHamiltonian;
 
-      // Compute force bias contribution to statistical weight
+      // Compute force bias 
+      double dp, dm;
+      double bias = 0.0;
+      for (j = 0; j < nMonomer - 1; ++j) {
+         RField<D> const & di = dc_[j];
+         RField<D> const & df = mcSimulator().dc(j);
+         RField<D> const & dwc = dwc_[j];
+         for (k=0; k < meshSize; ++k) {
+            dp = 0.5*(di[k] + df[k]);
+            dm = 0.5*(di[k] - df[k]);
+            bias += dp*( dwc[k] + mobility_*dm );
+         }
+      }
+      bias *= vNode;
+      computeHamiltonianTimer_.stop();
 
       // Accept or reject move
       decisionTimer_.start();
       bool accept = false;
-      double weight = exp(-(newHamiltonian - oldHamiltonian));
+      double weight = exp(bias - dH);
       accept = random().metropolis(weight);
       if (accept) {
           incrementNAccept();
@@ -145,58 +222,6 @@ namespace Pspc {
       totalTimer_.stop();
 
       return accept;
-   }
-
-   /*
-   * Attempt unconstrained Brownian dynamics move.
-   */
-   template <int D>
-   void ForceBiasMove<D>::attemptMove()
-   {
-      UTIL_CHECK(system().hasCFields());
-      UTIL_CHECK(mcSimulator().hasWc());
-      UTIL_CHECK(mcSimulator().hasCc());
-      UTIL_CHECK(mcSimulator().hasDc());
-      
-      // Array sizes and indices
-      const int nMonomer = system().mixture().nMonomer();
-      const int meshSize = system().domain().mesh().size();
-      int i, j, k;
-
-      // Copy current W fields from parent system into wc_
-      for (i = 0; i < nMonomer; ++i) {
-         w_[i] = system().w().rgrid(i);
-      }
-
-      // Constants for dynamics
-      const double vSystem = system().domain().unitCell().volume();
-      const double a = -1.0*mobility_;
-      const double b = sqrt(2.0*mobility_*double(meshSize)/vSystem);
-
-      // Modify local field copy wc_
-      // Loop over eigenvectors of projected chi matrix
-      double dwd, dwr, evec;
-      for (j = 0; j < nMonomer - 1; ++j) {
-         RField<D> const & dc = mcSimulator().dc(j);
-         for (k = 0; k < meshSize; ++k) {
-            dwd = a*dc[k];
-            dwr = b*random().gaussian();
-            dwc_[k] = dwd + dwr;
-         }
-         // Loop over monomer types
-         for (i = 0; i < nMonomer; ++i) {
-            RField<D> & wn = w_[i];
-            evec = mcSimulator().chiEvecs(j,i);
-            for (k = 0; k < meshSize; ++k) {
-               wn[k] += evec*dwc_[k];
-            }
-         }
-      }
-
-      // Set modified fields in parent system
-      system().setWRGrid(w_);
-      mcSimulator().clearData();
-
    }
 
    /*
