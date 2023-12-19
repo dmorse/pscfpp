@@ -8,6 +8,7 @@
 #include "ExplicitBdStep.h"
 #include "MidstepBdStep.h"
 #include "PredCorrBdStep.h"
+#include "LMBdStep.h"
 
 namespace Pscf {
 namespace Pspc {
@@ -44,6 +45,9 @@ namespace Pspc {
       } else
       if (className == "PredCorrBdStep") {
          ptr = new PredCorrBdStep<D>(*bdSimulatorPtr_);
+      } else
+      if (className == "LMBdStep") {
+         ptr = new LMBdStep<D>(*bdSimulatorPtr_);
       }
 
       return ptr;

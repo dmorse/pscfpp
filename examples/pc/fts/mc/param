@@ -20,7 +20,7 @@ System{
   }
   Interaction{
     chi(
-        1   0   13
+        1   0   12.0
     )
   }
   Domain{
@@ -38,13 +38,13 @@ System{
     McMoveManager{
 
       RealMove{
-        probability     0.5
-        A               0.4
+        probability     0.50
+        A               0.15
       }
 
       FourierMove{
-        probability     0.5
-        A               0.008
+        probability     0.50
+        A               0.001
         F*              20.990
         tau             2.64737
         N               1.0
@@ -55,11 +55,6 @@ System{
     }
     AnalyzerManager{
       baseInterval    1
-
-      TrajectoryWriter{
-        interval        200
-        outputFileName  out/trajectory
-      }
 
       HamiltonianAnalyzer{
         interval        10
@@ -74,6 +69,11 @@ System{
     }
   }
 }
+
+      TrajectoryWriter{
+        interval        200
+        outputFileName  out/trajectory
+      }
 
   unitCell cubic   1.3835952906
   groupName   P_-1

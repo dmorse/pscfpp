@@ -80,7 +80,7 @@ namespace Pspc {
       const int meshSize = system().domain().mesh().size();
       int i, j, k;
 
-      // Copy current W fields from parent system into wc_
+      // Copy current W fields from parent system into w_
       for (i = 0; i < nMonomer; ++i) {
          w_[i] = system().w().rgrid(i);
       }
@@ -102,10 +102,10 @@ namespace Pspc {
          }
          // Loop over monomer types
          for (i = 0; i < nMonomer; ++i) {
-            RField<D> & wn = w_[i];
+            RField<D> & w = w_[i];
             evec = simulator().chiEvecs(j,i);
             for (k = 0; k < meshSize; ++k) {
-               wn[k] += evec*dwc_[k];
+               w[k] += evec*dwc_[k];
             }
          }
       }
