@@ -6,6 +6,7 @@
 
 // Subclasses of BdStep 
 #include "ExplicitBdStep.h"
+#include "MidstepBdStep.h"
 #include "PredCorrBdStep.h"
 
 namespace Pscf {
@@ -38,9 +39,12 @@ namespace Pspc {
       if (className == "ExplicitBdStep" || className == "BdStep") {
          ptr = new ExplicitBdStep<D>(*bdSimulatorPtr_);
       } else
+      if (className == "MidstepBdStep") {
+         ptr = new MidstepBdStep<D>(*bdSimulatorPtr_);
+      } else
       if (className == "PredCorrBdStep") {
          ptr = new PredCorrBdStep<D>(*bdSimulatorPtr_);
-      } 
+      }
 
       return ptr;
    }

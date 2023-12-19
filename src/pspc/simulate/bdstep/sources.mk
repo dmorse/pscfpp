@@ -3,6 +3,7 @@ pspc_simulate_bdstep_= \
   pspc/simulate/bdstep/BdStep.cpp \
   pspc/simulate/bdstep/BdStepFactory.cpp \
   pspc/simulate/bdstep/ExplicitBdStep.cpp \
+  pspc/simulate/bdstep/MidstepBdStep.cpp \
   pspc/simulate/bdstep/PredCorrBdStep.cpp 
   
 pspc_simulate_bdstep_OBJS=\

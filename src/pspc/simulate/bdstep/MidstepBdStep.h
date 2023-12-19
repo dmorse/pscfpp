@@ -1,5 +1,5 @@
-#ifndef PSPC_PRED_CORR_BD_STEP_H
-#define PSPC_PRED_CORR_BD_STEP_H
+#ifndef PSPC_MIDSTEP_BD_STEP_H
+#define PSPC_MIDSTEP_BD_STEP_H
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory
@@ -22,12 +22,12 @@ namespace Pspc {
    using namespace Prdc::Cpu;
 
    /**
-   * Predictor-corrector Brownian dynamics stepper.
+   * Midstep predictor Brownian dynamics step.
    *
    * \ingroup Pspc_Simulate_BdStep_Module
    */
    template <int D>
-   class PredCorrBdStep : public BdStep<D>
+   class MidstepBdStep : public BdStep<D>
    {
 
    public:
@@ -37,14 +37,14 @@ namespace Pspc {
       *
       * \param bdSimulator  parent BdSimulator object
       */
-      PredCorrBdStep(BdSimulator<D>& bdSimulator);
+      MidstepBdStep(BdSimulator<D>& bdSimulator);
 
       /**
       * Destructor.
       *
       * Empty default implementation.
       */
-      virtual ~PredCorrBdStep();
+      virtual ~MidstepBdStep();
 
       /**
       * Read required parameters from file.
@@ -72,19 +72,14 @@ namespace Pspc {
 
    private:
 
-      // Predictor value of fields (monomer fields)
-      DArray< RField<D> > wp_;
-
-      // Correctd (new) values of fields (monomer fields)
+      // Local copies of w fields
+      DArray< RField<D> > wh_;
       DArray< RField<D> > wf_;
 
-      // Initial deterministic forces (components)
-      DArray< RField<D> > dci_;
-
-      // Random displacement components (components)
+      // Random displacement components
       DArray< RField<D> > eta_;
 
-      // Change in one component of wc 
+      // Change in one component of wc
       RField<D> dwc_;
 
       // Change in pressure field component 
@@ -95,11 +90,11 @@ namespace Pspc {
 
    };
 
-   #ifndef PSPC_PRED_CORR_BD_STEP_TPP
+   #ifndef PSPC_MIDSTEP_BD_STEP_TPP
    // Suppress implicit instantiation
-   extern template class PredCorrBdStep<1>;
-   extern template class PredCorrBdStep<2>;
-   extern template class PredCorrBdStep<3>;
+   extern template class MidstepBdStep<1>;
+   extern template class MidstepBdStep<2>;
+   extern template class MidstepBdStep<3>;
    #endif
 
 }
