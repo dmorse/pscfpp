@@ -1,0 +1,60 @@
+
+1. About
+
+2. Installation (Unchanged)
+
+3. User Guide: General 
+
+   1.  Model and Parameters
+   2.  Types of Calculation (move from later)
+   3.  Executable programs
+   4.  Input Files (Describe field file formats)
+   5.  Command Line Interface (Running a Calculation) 
+   6.  Parameter Files (Syntax and example)
+   7.  Command Files (Syntax and example)
+   8.  Field Files
+   9.  Examples
+   10. Visualization
+   11. Python Tools
+
+   A.  Modified Diffusion Equation
+   B.  Block Polymers
+   C.  Theorems for Propagators
+
+4. User Guide: SCFT
+
+   1.  Theory
+   2.  Operations
+   3.  Parameter Files (Full list of commands)
+         - Subheading for urc, prc, prg, with examples for each
+   4.  Parameter Sweeps
+   5.  Command Files (Full list of commands)
+   6.  Thermodynamic Properties
+   7.  Crystal Unit Cells
+   7.  Space Groups
+   8.  Thin Films
+
+   A.  SCFT
+   B.  Periodic Functions and Fourier Series
+   C.  Space Group Symmetry
+   D.  Symmetry-Adaptd Bases
+
+5. User Guide: FTS-R
+
+   1. Theory
+       - Two-Monomer Systems
+       - Multi-Monomer Systems
+   2. Sampling Algorithms: MD and BD
+   3. Analyzers
+   3. Parameter Files (unified pspc and pspg )
+   4. Trajectories and Postprocessing
+   5. Commands
+
+   A. Functional Delta Function
+   B. Hubbard-Stratonovich Transformation
+   C. Functional Integral Representation
+
+6. User Guide: FTS-C
+
+   To be written when implemented
+

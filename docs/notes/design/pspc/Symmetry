@@ -10,13 +10,14 @@ Behaviors:
 1) The groupName parameter in the Domain block of the parameter file will
 be optional. If it is present, the group symmetry operations are immediately 
 read from file and Domain::hasGroup() is set true. Any space group that is
-declared in the parameter file is immutable thereafter - you can't change
-the choice of space group after initialization.
+declared in the parameter file is immutable thereafter - you can omit the
+choice of space group, but cannot declare a space group in the parameter
+file and then change the choice of space group after initialization.
 
 2) If you want to use a space group for any purpose you have to declare a
 group name in the parameter file. If the group name parameter is absent, 
-you can't do field theoretic Monte Carlo and other operations that don't
-assume the existence of symmetry, but you can't use an SCFT iterature that
+you can perform field theoretic Monte Carlo and other operations that don't
+assume the existence of symmetry, but you cannot use an SCFT iterature that
 imposes symmetry. 
 
 3) If Domain::hasGroup is true (if the parameter file has a space group name):
@@ -41,37 +42,43 @@ imposes symmetry.
        in the file header.
 
 5) If a W-field file read in basis format, the WFieldContainer isSymmetric
-flag is set to true to indicate that the field has a known symmetry. C fields
-that are computed from a symmetric w-field are also assumed to be symmetric.
-Knowledge of whether of a field is symmetric is kept track of, and can be
-back to how it was input.
+flag is set to true to indicate that the field has a known symmetry. 
+A W field is symmetric if and only if it was input in basis format, and 
+has only been modified by an iterator that preserves symmetry. Use of an
+iterator that does not preserve symmetry or modification by a stochastic
+field theoretic simulation is assumed to destroy an symmetry.  Knowledge of 
+whether of a set of W field is symmetric is thus retained, and can be
+traced back to the type of file from which it was input. 
 
-6) Initially, any W field that is input in r-grid or k-grid format will 
-be assumed to have no symmetry (i.e., WFieldContainer::isSymmetric is 
-set false on input). We can consider changing this later by taking the 
-field to be symmetric iff the header has a declared space group. A bit
-of thought is needed to decide if we should just assume the declaration
-to be correct, or impose automatic double checks. 
+6) C fields that are computed from a symmetric w-field are also assumed to 
+be symmetric.
 
-7) When a W or C field is written to a file in r-grid or k-grid format,
-a space group will be written to the header if and only if the field is
-known to be symmetric (i.e., if isSymmetric == true for the associated
-w field). This implies, among other things, that header files for field 
-theoretic Monte Carlo (FTMC) trajectory and configuration output files 
-will never contain a space group name. 
+7) Initially, any W field that is input in r-grid or k-grid format will be 
+assumed to have no symmetry (i.e., WFieldContainer::isSymmetric is set false 
+on input). We can consider changing this later by taking the field to be 
+symmetric iff the header has a declared space group. A bit of thought is 
+needed to decide if we should just assume the declaration to be correct, 
+or impose automatic double checks. 
 
-8) Normal usage for FTMC simulations will be that there is no space group 
+8) When a W or C field is written to a file in r-grid or k-grid format, a 
+space group will be written to the header if and only if the field is known 
+to be symmetric (i.e., if isSymmetric == true for the associated w field). 
+This implies, among other things, that header files for outputs of field 
+theoretic Monte Carlo (FTMC) trajectory and configuration output files will 
+never contain a space group name. 
+
+9) Normal usage for FTMC simulations will be that there is no space group 
 name in either the parameter file or in the header of any input or output 
 field file. FTMC and symmetric SCFT simulations will not normally be 
 performed in the same command file. 
 
 9) The Pspc::Iterator and Pspg::Iterator bases classes have a protected
 boolean variable isSymmetric_ and a public function isSymmetric() that
-returns isSymmetric_. This flat is set true in Iterator classes that 
-update fields using the symmetry-adapted Fourier basis and false in 
-classes that update values on a r-grid or k-grid without imposing any 
-symmetry. The System::iterate function checks that the a symmetric iterator 
-is only applied to fields for which WFieldContainer::isSymmetric == true. 
+returns isSymmetric_. This flag is set true in Iterator classes that update 
+fields using the symmetry-adapted Fourier basis and false in classes that 
+update values on a r-grid or k-grid without imposing any symmetry. The 
+System::iterate function checks that the a symmetric iterator is only 
+applied to fields for which WFieldContainer::isSymmetric == true. 
 An iterator that does not apply symmetry exists for pscf_pg, and we could
 create one for pscf_pc if desired anyone wanted to do large unit cell
 calculations on CPU hardware. 
