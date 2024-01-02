@@ -6,6 +6,7 @@
 // Subclasses of Analyzer 
 #include "TrajectoryWriter.h"
 #include "HamiltonianAnalyzer.h"
+#include "HamiltonianAutoCorr.h"
 #include "BinaryStructureFactorGrid.h"
 #include "StepLogger.h"
 
@@ -42,6 +43,8 @@ namespace Pspc {
          ptr = new TrajectoryWriter<D>(*simulatorPtr_, *sysPtr_);
       } else if (className == "HamiltonianAnalyzer") {
          ptr = new HamiltonianAnalyzer<D>(*simulatorPtr_, *sysPtr_);
+      } else if (className == "HamiltonianAutoCorr") {
+         ptr = new HamiltonianAutoCorr<D>(*simulatorPtr_, *sysPtr_);
       } else if (className == "BinaryStructureFactorGrid") {
          ptr 
            = new BinaryStructureFactorGrid<D>(*simulatorPtr_, *sysPtr_);

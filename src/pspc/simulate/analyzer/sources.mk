@@ -5,6 +5,7 @@ pspc_simulate_analyzer_= \
   pspc/simulate/analyzer/AnalyzerFactory.cpp \
   pspc/simulate/analyzer/TrajectoryWriter.cpp \
   pspc/simulate/analyzer/HamiltonianAnalyzer.cpp \
+  pspc/simulate/analyzer/HamiltonianAutoCorr.cpp \
   pspc/simulate/analyzer/BinaryStructureFactorGrid.cpp \
   pspc/simulate/analyzer/StepLogger.cpp 
   

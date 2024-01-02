@@ -61,7 +61,10 @@ System{
         outputFileName  out/hamiltonian
         nSamplePerBlock 2
       }
-
+HamiltonianAutoCorr{
+interval        2
+outputFileName  out/hamAuto
+}
       StepLogger{
         interval        50
       }
