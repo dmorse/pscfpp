@@ -8,7 +8,8 @@
 * Distributed under the terms of the GNU General Public License.
 */
 #include "Analyzer.h"                             // base class
-#include <util/accumulators/AutoCorrelation.tpp>  // member template 
+#include <util/accumulators/AutoCorrelation.h>  // member template 
+#include <util/accumulators/Average.h>            // member template
 
 namespace Pscf {
 namespace Pspc {
@@ -103,6 +104,7 @@ namespace Pspc {
 
       /// Statistical accumulator.
       AutoCorrelation<double, double>  accumulator_;
+      Average avgAccumulator_;
  
       /// Number of samples per block average output (number of values stored in buffer)
       int  bufferCapacity_;

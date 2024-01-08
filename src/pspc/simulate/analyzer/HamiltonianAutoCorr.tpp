@@ -9,7 +9,7 @@
 */
 
 #include "HamiltonianAutoCorr.h"
-
+#include <util/accumulators/AutoCorrelation.tpp> 
 #include <pspc/System.h>
 #include <pspc/simulate/Simulator.h>
 
@@ -28,7 +28,7 @@ namespace Pspc {
       simulatorPtr_(&simulator),
       systemPtr_(&(simulator.system())),
       bufferCapacity_(64),
-      maxStageId_(0),
+      maxStageId_(10),
       blockFactor_(2),
       isInitialized_(false)
    {  setClassName("HamiltonianAutoCorr"); }
@@ -57,6 +57,7 @@ namespace Pspc {
       // Set all parameters and allocate to initialize state for autocorrelation 
       accumulator_.setParam(bufferCapacity_, maxStageId_, blockFactor_);
       accumulator_.clear();
+      avgAccumulator_.clear();
       isInitialized_ = true;
    }
    
@@ -73,6 +74,7 @@ namespace Pspc {
          }
       double hamiltonian = simulator().hamiltonian();
       accumulator_.sample(hamiltonian);
+      avgAccumulator_.sample(hamiltonian);
       }
    }
    
@@ -81,6 +83,13 @@ namespace Pspc {
    {
       system().fileMaster().openOutputFile(outputFileName(), outputFile_);
       accumulator_.output(outputFile_); 
+      outputFile_.close();
+      
+      // Write error analysis (*.aer) file
+      std::string fileName = outputFileName();
+      fileName += ".aer";
+      system().fileMaster().openOutputFile(fileName, outputFile_);
+      avgAccumulator_.output(outputFile_);
       outputFile_.close();
    } 
    

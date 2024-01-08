@@ -58,6 +58,10 @@ namespace Pspc {
    template <int D>
    void HamiltonianAnalyzer<D>::compute() 
    {
+      if (!simulator().hasWc()){
+         system().compute();
+         simulator().computeWc();
+      }
       UTIL_CHECK(simulator().hasWc());
 
       #if 0
