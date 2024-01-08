@@ -112,7 +112,7 @@ namespace Pspc {
       {   return (*etaNewPtr_)[i]; }
 
       RField<D>& etaOld(int i) 
-      {   return (*etaNewPtr_)[i]; }
+      {   return (*etaOldPtr_)[i]; }
 
       /// Generate new values for etaNew
       void generateEtaNew();
