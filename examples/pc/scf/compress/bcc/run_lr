@@ -1,0 +1,1 @@
+pscf_pc -d 3 -p param_lr -c command -e

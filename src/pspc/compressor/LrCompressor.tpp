@@ -49,7 +49,6 @@ namespace Pspc{
       readOptional(in, "errorType", errorType_);
    }
 
-
    // Initialize just before entry to iterative loop.
    template <int D>
    void LrCompressor<D>::setup()
@@ -103,14 +102,15 @@ namespace Pspc{
 
       // Iterative loop
       for (itr_ = 0; itr_ < maxItr_; ++itr_) {
+
          if (verbose_ > 2) {
             Log::file() << "------------------------------- \n";
          }
 
          if (verbose_ > 0){
-            Log::file() <<  std::endl;
-            Log::file() << " Iteration " << Int(itr_,5) << std::endl;
+            Log::file() << " Iteration " << Int(itr_,5);
          }
+
          // Compute residual vector
          getResidual();
          double error;
@@ -119,6 +119,9 @@ namespace Pspc{
          } catch (const NanException&) {
             Log::file() << ",  error  =             NaN" << std::endl;
             break; // Exit loop if a NanException is caught
+         }
+         if (verbose_ > 0) {
+            Log::file() << ",  error  = " << Dbl(error, 15) << std::endl;
          }
 
          // Check for convergence
