@@ -1,54 +1,77 @@
---------------------------------------------------------------------------
-v1.1
-
-Tools:
-------
-
-1) Develop python scripts to read output files and analyze sweeps.
-
-
-Documentation:
--------------
-1) Add documentation for building on Windows Subsystem for Linux (WSL)
-
-
---------------------------------------------------------------------------
+------------------------------------------------------------------------
 v1.2
+
+Pspc:  
+-----
+
+Field Theoretic simulation with real fields (FTS-R):
+
+  - Create AMCompressor and LrAmCompressor (done)
+  - Create Simulation classes and subclasses (done)
+  - Create Analyzer and simple subclasses (done)
+  - Add commands to System (done)
+  - Create classes to read and write trajectories (done)
+  - Create real-space and Fourier space MC moves (done)
+  - Create Explicit, PredCorr and Leimkuhler-Matthews bd steps (done)
+
+Pspg:  
+-----
+
+Field Theoretic simulation with real fields (FTS-R):
+
+  - Create AMCompressor and LrAmCompressor (done)
+  - Create Simulation classes and subclasses (nearly done, reorganizing)
+  - Create Analyzer and simple subclasses (done)
+  - Add commands to System (done)
+  - Create classes to read and write trajectories (done)
+  - Create real-space and Fourier space MC moves (done)
+  - Create Explicit, PredCorr and Leimkuhler-Matthews bd steps 
+
+Docs:
+-----
+
+Field-theoretic simulation with real fields (FTS-R)
+
+  - Write section of manual devoted to FTS simulation (real fields)
+
+  - Document underlying theory for FTS with real fields
+
+  - Document commands
+
+  - Document MC moves and Bd step algorithms
+
+Documentation for building on Windows Subsystem for Linux (WSL)
+
+Improve developer documentation for build system, Parameter IO
+
+------------------------------------------------------------------------
+v1.3
 
 Pscf
 -----
 
-1) Change treatment of phases in Basis to explicitly store and manipulate
-Rational number phases, compute floating point coefficients only at the 
-very end.
+1) Review and clean up redundant GPU kernels (leave for v1.1?)
 
-2) Introducing new v2.0 field file formats for basis and rgrid. 
-Basis would contain the mesh. Rgrid would be output in convention C order.
+2) Change treatment of phases in Basis to explicitly store and 
+manipulate Rational number phases, compute floating point coefficients 
+only at the very end.
 
-3) Introduce a convention in Basis in which pairs of related open stars 
-are always listed in the same order (this helps complete the basis field 
-API).
+3) Introduce a convention in Basis in which pairs of related open 
+stars are always listed in the same order (this helps complete the 
+basis field API).
 
-Pspc:
------
-
-1) Introduce working prototype of Field Theoretic Monte Carlo (v1.2?)
-
-Docs:
-
-1) Develop read-the-docs user manual documentation (?)
-
-2) Improve developer documentation regarding build system, Parameter IO
-
-Pspg:
------
-
-1) Introduce working prototype of Field Theoretic Monte Carlo (v1.2?)
-
-2) Review and clean up redundant GPU kernels (leave for v1.1?)
+4) Introducing new v2.0 field file formats for basis and rgrid. 
+Basis would contain the mesh. Rgrid would be output in convention C 
+order.
 
 Docs
 -----
 
 1) Write a first draft of a latex algorithms and theory manual, or 
 publish as an article in a computational science oriented journal.
+
+------------------------------------------------------------------------
+v1.4
+
+Field theoretic simulation with complex fields (FTS-C)
+

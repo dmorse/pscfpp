@@ -489,6 +489,7 @@ namespace Pspc {
          }
       }
 
+      hasDc_ = true;
    }
 
    /*

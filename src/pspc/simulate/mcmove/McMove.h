@@ -178,6 +178,14 @@ namespace Pspc
       virtual void attemptMove() 
       {};
 
+      /// Timers for McMove 
+      Timer attemptMoveTimer_;
+      Timer compressorTimer_;
+      Timer computeWcTimer_;
+      Timer computeHamiltonianTimer_;
+      Timer decisionTimer_;
+      Timer totalTimer_;
+
    private:
 
       /// Pointer to parent McSimulator object
@@ -198,13 +206,6 @@ namespace Pspc
       /// Number of moves that have been accepted by this object.
       long  nAccept_;
       
-      /// Timers for McMove 
-      Timer attemptMoveTimer_;
-      Timer compressorTimer_;
-      Timer computeWcTimer_;
-      Timer computeHamiltonianTimer_;
-      Timer decisionTimer_;
-      Timer totalTimer_;
    };
 
    // Public inline methods

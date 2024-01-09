@@ -23,14 +23,13 @@ other projects. All code in the Util namespace is in the src/util directory. The
 contents of this directory are cloned into this project as a git "submodule" by
 cloning the contents of the git dmorse/util repository into this directory.
 
-The Pscf namespace contains all code that is specfic to self-consistent field 
-theory (SCFT). Code that is specific to a specific implementation of SCFT 
-for a specific type of boundary conditions, hardware, etc is in an associated
- sub-namespace of Pscf. Classes for implementating periodic boundary conditions 
-on a CPU is in namespace Pscf:Pspc (Psuedo SPectral on a Cpu), which is all in 
-directory src/pspc. Shared classes in Pscf that can be used by two or more 
-implementations are all in the main Pscf namespace (not in a sub-namespace), and 
-are all located in the src/pscf directory.
+The Pscf namespace contains all code that is specfic to field theoretic simulations
+(FTS), including but not limited to self-consistent field theory (SCFT).  Code that 
+is specific to periodic boundary conditions but that is available for use by more
+than one programs (e.g., for CPUs or GPUs) is in namespace Pscf::Prdc.  Classes
+that are used in only one program are in separate enclosed namespaces of Pscf. For
+example, classes used by the pscf_pc program are in namespace Pscf::Pspc (Psuedo 
+SPectral on a Cpu), which is all in directory src/pspc. 
 
 3) Use of template argument D for the dimension of space: 
 

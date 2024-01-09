@@ -1,45 +1,119 @@
-Proposal: Consider using signals to keep track of changes to
-unit cell dimensions and initialization of a Basis. Changes to 
-unit cell cause changes in internal parameters in all Block objects, 
-as well as WaveList in Pspg.
 
-Domain{
+Unit Cell Modification
+----------------------
 
-   basisInitialatizeSignal(...)
-   unitCellInitializeSignal()
-   unitCellModifySignal()
+General Proposal: Consider using signals to keep track of changes to unit 
+cell dimensions, possibly other changes. 
 
-   unitSignal_.addObserver(*this, Domain::noteUnitCellInitialization();
+Changes to unit cell cause changes in internal parameters in all Block 
+objects, as well as WaveList in Pspg. Signals sent to Mixture and 
+WaveList would do the trick. The Mixture::modifyUnitCell() method could
+call 
 
-   void unitCellInitializeAction();
+Proposed approach:
 
-   void unitCellModifyAction();
+   (1) Add a Signal<> unitCellModifySignal_ object to the Domain.
 
-   void basisModifyAction();
+   (2) Give the UnitCell class a pointer to a Signal<> objects, which
+       is null by default, so that it can manage side-affects of
+       changes to its own internal state when that pointer is not null. 
 
-private:
+   (3) Behavior of the UnitCell<D> should be unchanged when the pointer
+       to the Signal<> is null, or when the associated Signal<> has no
+       observers.
 
-   Signal<>  unitCellInitializeSignal_;
-   Signal<>  unitCellModifySignal_;
-   Signal<>  basisInitializeSignal_;
+Unit Cell classes (details):
 
-   void unitCellInitializeObserver();
-   void unitCellModifyObserver();
+   - Add private member Signal<>* signalPtr_ to UnitCell
 
-}
+   - Copy construction of a UnitCell is prohibited (already true)
 
-FieldIo{
+   - Pointer signalPtr_ is NOT modified by the assignment (=) operator
 
-  setUnitCellInitializeSignal(....)
-  setUnitCellChangeSignal(....)
-  setBasisInitializeSignal(...)
+   - Signal<>::notify method is called by 
 
-  readFieldFileHeader()
-  When unit cell changes
-  if (unitCellSignal) {
-     unitCellSignal_.notify();
+          UnitCell<D>::set(UnitCell<D>::Lattice, 
+                           FSArray<double, 6> const& parameters)
 
-  }
+          UnitCell<D>::operator = (UnitCell<D> const &)
 
-}
+          // friend functions
+
+          operator >> 
+
+          readUnitCellHeader 
+
+Domain class details :
+
+   - Associate unit cell that is owned by Domain with associated Signal<>.
+     This could be done in the Domain constructor.
+
+   - Provide public member function to add observers to signal.
+
+     template <class Observer>
+     void 
+     addUnitCelllModifyObserver(Observer&, void (Observers::*methodPtr)());
+
+   - Domain does not need to provide public access to the Signal<>, or a 
+     function to explicitly call Signal<>::notify . Notification should 
+     happen if and only if the UnitCell is actually modified, which can
+     be enforced if only the UnitCell can call notify. 
+
+
+Observers:
+
+   Mixture::modifyUnitCell 
+       - Mark all blocks as dirty (invalid)
+
+   Domain::WaveList::modifyUnitCell 
+       - Mark wave magnitudes and dot products as dirty (invalid)
+
+   General Policy:
+
+       - Notification is used to mark associated data as invalid.
+       - Data is updated when needed, by checking validity before access
+
+       -> Just in time updates, avoids unnecessary or redundant updates.
+
+===========================================================================
+
+Signals to note W Field Modification (?????)
+--------------------------------------------
+
+Proposal:
+
+     1) Add a Signal<> to the WFieldContainer.
+
+     2) Make the CFieldContainer an observer of WFieldContainer.
+
+Critiques:
+
+     - Access to W and C fields is currently always provided through a pointer
+       or reference to the parent System in ways that already ensure validity.
+       The System::c() and System::w() methods only provide const references, thus 
+       giving read-only access.  The only ways for users or iterator to modify w 
+       fields through a reference to the parent system is through setWBasis,
+       setWRGrid, readWBasis or readWRGrid functions, which all set hasCFields_ 
+       to false.  System::hasCFields() allows users and algorithms to check 
+       consistency between w and c fields.  A good system to ensure validity 
+       is thus already in place.
+
+     - This would simpl moves ownership of hasCFields from the System to the 
+       CFieldContainer.  Given that access to both is currently controlled by 
+       the System, it doesn't seem like a significant improvement.
+
+     - The System and Mixture needs a method to declare that C-fields have been
+       updated. Access to whatever flag keeps track of whether C-fields are valid
+       thus needs to be strictly controlled. Having the flag controlled by the
+       System makes sense, since only the System has access to the two relevant
+       data structures, and can thus keep track of the relationship between them.
+
+     - We may want to add a method that restores old values of both W and C
+       fields, to simplify some types of MC moves. This is simpler if 
+       coordinated by the parent System.
+
+Conclusion:
+ 
+      - Recommend against the use of signals to keep track of the relationship
+        between W and C fields. 
 

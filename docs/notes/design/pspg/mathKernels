@@ -25,40 +25,64 @@ Clean up of kernel functions
        rV - real vector
        cV - complex vector
 
-       Operations:
+       Pointwise binary Operations:
        Sub   -> subtraction
        Add   -> addition
        Mul   -> pointwise multiplication
        Div   -> pointwise division
-       Eq    -> assignment
+
+       Assignment:
+       Eq     -> assignment
+       Eq(Op) -> assignment to first vector operand
 
        RHS operands:
-       V     -> vector on rhs (same as LHS by default)
-       Vr    -> real vector (when not same as lhs type)
-       R     -> real scalar 
-       C     -> complex scalar 
+       V   -> vector on rhs (same as LHS by default)
+       R   -> real vector with same value for all elements
+       C   -> complex Vector with same value for all elements
+       r   -> real prefactor multiplying all elements
+       c   -> complex prefactor multiplying all elements
+       Vr  -> Vector multiplied by real prefactor
+       Vc  -> Vector multiplied by complex prefactor
 
-       Binary operations C = A Op B have form C_OpAB (two arguments)
+       In what follows: A, B, C are vectors, while a, b are scalars 
 
-       Real Vector-vector addition       : rV_AddVV
-       Real Vector-vector multiplication : rV_AddVV
-       Real Vector-scalar multiplication : rV_MulVR
+       Simple Assignment:
 
-       Increment operations A = A Op B have form A_OpB (one argument)
-       Real Vector-vector add-increment  : rV_AddV
-       Real Vector-scalar add-increment  : rV_AddR
+       C = A        :  rV_EqV   (vector assignment)
+       C = R        :  rV_EqR   (assign all elements same value)
 
-       Assignment: A = B have names A_EqB  :
-       Assign real vector to vector      : rV_EqV
-       Assign real vector to scalar      : rV_EqR
+       Pointwise Binary operations C = A Op B have form C_OpAB (two arguments)
+
+       C = A + B    :   rV_AddVV
+       C = A - B    :   rV_SubVV
+       C = A + R    :   rV_AddVR
+       C = A - R    :   rV_SubVR
+       C = A * B    :   rV_MulVV   (element-wise multiplication)
+       C = A / B    :   rV_DivVV   (element-wise division)
+       C = Aa + Bb  :   rV_AddVrVr
+       C = A + Bb   :   rV_AddVVr
+
+       Increment operations A = A Op B have form A_EqOpB 
+       (First operand must be a vector, same address as the LHS)
+
+       A = A + B    :   rV_EqAddV
+       A = A - B    :   rV_EqSubV
+       A = A + R    :   rV_EqAddR   (pointwise add same value to all elements)
+       A = A - R    :   rV_EqSubR   (pointwise sub same value from all)
+       A = A*r      :   rV_EqMulr
+       A = A + aB   :   rV_EqAddVr
 
        Corresponding functions that return a complex-valued vector
-       will start with cV. Arguments on the RHS side will use C for
-       complex scalar, R for real scalar, V for complex vector and
-       rV for real vector.
+       will start with cV. Arguments on the RHS side will use C for a 
+       complex vector with the same value for all elements, V for a 
+       complex vector, U for a real vector, c for a complex scalar that
+       multiplies a vector, c for a complex scalar that multiplies a
+       vector.
+
+Kernel Functions
 
        Kernel functions can use names as described above, but with
-       suffix __ to indicate a kernel, e.g., rV_EqV__. 
+       prefix _ to indicate a kernel, e.g., _rV_EqV. 
 
        Analogous names can be used for __global__ CUDA kernels (called 
        with <<< >>> syntax) and for corresponding C++ __host__ 
@@ -66,17 +90,17 @@ Clean up of kernel functions
 
    Example kernel names (called with CUDA <<< ... >>> ) syntax
 
-       // Unary operations (vrOpA => v = v Op A)
-       subtractUniform          -> rV_SubR__
-       addUniform               -> rV_AddR__
-       pointWiseSubtract        -> rV_SubV__
-       pointWiseAdd             -> rV_AddV__
-       scaleReal                -> rV_MulR__
-       scaleComplex             -> cV_MulC__
-
        // Binary operations (vrAOpB => v = A Op B)
-       pointWiseBinarySubtract  -> rV_SubVV__
-       pointWiseBinaryAdd       -> rV_AddVV__
+       pointWiseBinaryAdd       -> _rV_AddVV
+       pointWiseBinarySubtract  -> _rV_SubVV
+
+       // Unary operations (vrOpA => v = v Op A)
+       subtractUniform          -> _rV_EqSubR
+       addUniform               -> _rV_EqAddR
+       pointWiseAdd             -> _rV_EqAddV
+       pointWiseSubtract        -> _rV_EqSubV
+       scaleReal                -> _rV_EqMulR
+       scaleComplex             -> _cV_EqMulC
 
        // Assignment operations (LHS = 
        assign uniform           -> rV_EqR__
@@ -113,5 +137,5 @@ Clean up of kernel functions
        Provide overloaded operations for field containers in 
        directories or files that define containers
 
-       Move Helpers to draft/pspg ?
+       Move Helpers to pscf/gpu
       

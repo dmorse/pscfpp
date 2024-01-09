@@ -1,0 +1,44 @@
+
+1) In prdc/crystal/unitCell, 
+Modify readFieldHeader and writeFieldHeader (Done, shared)
+
+Domain and FieldIo Coupling
+---------------------------
+
+2) In Domain, add hasGroup_, hasGroup(), make groupName optional
+(Done)
+
+3) Modify Field::associate to take reference to hasGroup_
+(Done)
+
+(Check unit tests)
+
+Functions to Read Fields
+-------------------------
+
+4) Modify FieldIo::readFieldHeader, add isSymmetric argument
+(Done)
+
+5) Add isSymmetric argument to function calls of readFieldHeader 
+in readFieldsBasis, readFieldsRGrid, readFieldsKGrid, etc.
+(Done)
+
+6) Add tests of hasGroup as needed
+(Done)
+
+7) Change calls to readFields in System and TrajectoryReader
+(Done)
+
+(Check unit tests)
+
+Functions to Write Fields
+--------------------------
+
+8) Modify writeFieldsHeader, add isSymmetric parameter
+
+9) Add isSymmetric parameter to function calls of writeFieldHeader
+
+10) Change calls to writeFields functions in System and TrajectoryWriter
+
+
+
