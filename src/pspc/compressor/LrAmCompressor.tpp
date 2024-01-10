@@ -40,17 +40,17 @@ namespace Pspc{
       AmIteratorTmpl<Compressor<D>, DArray<double> >::readParameters(in);
       AmIteratorTmpl<Compressor<D>, DArray<double> >::readErrorType(in);
    }
-      
+
    // Initialize just before entry to iterative loop.
    template <int D>
    void LrAmCompressor<D>::setup(bool isContinuation)
-   {  
+   {
       const int nMonomer = system().mixture().nMonomer();
       const int meshSize = system().domain().mesh().size();
       IntVec<D> const & dimensions = system().mesh().dimensions();
       // Allocate memory required by AM algorithm if not done earlier.
       AmIteratorTmpl<Compressor<D>, DArray<double> >::setup(isContinuation);
-      
+
       // Compute Fourier space kMeshDimensions_
       for (int i = 0; i < D; ++i) {
          if (i < D - 1) {
@@ -59,7 +59,7 @@ namespace Pspc{
             kMeshDimensions_[i] = dimensions[i]/2 + 1;
          }
       }
-      
+
       // Allocate memory required by compressor if not done earlier.
       if (!isAllocated_){
          newBasis_.allocate(meshSize);
@@ -73,21 +73,21 @@ namespace Pspc{
             w0_[i].allocate(meshSize);
             wFieldTmp_[i].allocate(meshSize);
          }
-            
+
          isAllocated_ = true;
       }
-      
+
       // Store value of initial guess chemical potential fields
       for (int i = 0; i < nMonomer; ++i) {
          for (int j = 0; j< meshSize; ++j){
             w0_[i][j] = system().w().rgrid(i)[j];
          }
       }
-      
+
       computeIntraCorrelation();
    }
-  
-   // Iterative solver (AM algorithm) 
+
+   // Iterative solver (AM algorithm)
    template <int D>
    int LrAmCompressor<D>::compress()
    {
@@ -103,7 +103,7 @@ namespace Pspc{
 
    // Compute and return inner product of two vectors.
    template <int D>
-   double LrAmCompressor<D>::dotProduct(DArray<double> const & a, 
+   double LrAmCompressor<D>::dotProduct(DArray<double> const & a,
                                     DArray<double> const & b)
    {
       const int n = a.capacity();
@@ -111,7 +111,7 @@ namespace Pspc{
       double product = 0.0;
       for (int i = 0; i < n; i++) {
          // If either value is NaN, throw NanException
-         if (std::isnan(a[i]) || std::isnan(b[i])) { 
+         if (std::isnan(a[i]) || std::isnan(b[i])) {
             throw NanException("LrAmCompressor::dotProduct",
                                __FILE__,__LINE__,0);
          }
@@ -141,7 +141,7 @@ namespace Pspc{
 
    // Update basis
    template <int D>
-   void 
+   void
    LrAmCompressor<D>::updateBasis(RingBuffer< DArray<double> > & basis,
                               RingBuffer< DArray<double> > const & hists)
    {
@@ -152,7 +152,7 @@ namespace Pspc{
 
       // New basis vector is difference between two most recent states
       for (int i = 0; i < n; i++) {
-         newBasis_[i] = hists[0][i] - hists[1][i]; 
+         newBasis_[i] = hists[0][i] - hists[1][i];
       }
 
       basis.append(newBasis_);
@@ -175,7 +175,7 @@ namespace Pspc{
    }
 
    template <int D>
-   void 
+   void
    LrAmCompressor<D>::addPredictedError(DArray<double>& fieldTrial,
                                         DArray<double> const & resTrial,
                                         double lambda)
@@ -203,10 +203,10 @@ namespace Pspc{
       // Straighten out fields into  linear arrays
       const int meshSize = system().domain().mesh().size();
       const DArray< RField<D> > * currSys = &system().w().rgrid();
-      
+
       /*
-      * The field that we are adjusting is the Langrange multiplier field 
-      * defined on a grid.  The current value is the difference between 
+      * The field that we are adjusting is the Langrange multiplier field
+      * defined on a grid.  The current value is the difference between
       * w and w0_ for the first monomer (or any other monomer).
       */
       for (int i = 0; i < meshSize; i++){
@@ -218,8 +218,8 @@ namespace Pspc{
    // Perform the main system computation (solve the MDE)
    template <int D>
    void LrAmCompressor<D>::evaluate()
-   {  
-      system().compute(); 
+   {
+      system().compute();
       ++mdeCounter_;
    }
 
@@ -230,8 +230,8 @@ namespace Pspc{
       const int n = nElements();
       const int nMonomer = system().mixture().nMonomer();
       const int meshSize = system().domain().mesh().size();
-      const double vMonomer = system().mixture().vMonomer();  
-      
+      const double vMonomer = system().mixture().vMonomer();
+
       // Initialize residuals
       for (int i = 0 ; i < n; ++i) {
          resid_[i] = -1.0;
@@ -243,7 +243,7 @@ namespace Pspc{
            resid_[k] += system().c().rgrid(j)[k];
         }
       }
-      
+
       // Convert residual to Fourier Space
       system().fft().forwardTransform(resid_, residK_);
       // Residual combine with Linear response factor
@@ -253,10 +253,10 @@ namespace Pspc{
          residK_[iter.rank()][0] *= 1.0 / (vMonomer * intraCorrelation_[iter.rank()]);
          residK_[iter.rank()][1] *= 1.0 / (vMonomer * intraCorrelation_[iter.rank()]);
       }
-      
+
       // Convert back to real Space
       system().fft().inverseTransform(residK_, resid_);
-      
+
       // Copy to resid
       for (int i = 0 ; i < n; ++i) {
          resid[i] = resid_[i];
@@ -270,7 +270,7 @@ namespace Pspc{
       // Convert back to field format
       const int nMonomer = system().mixture().nMonomer();
       const int meshSize = system().domain().mesh().size();
-      
+
       //New field is the w0_ + the newGuess for the Lagrange multiplier field
       for (int i = 0; i < nMonomer; i++){
          for (int k = 0; k < meshSize; k++){
@@ -283,7 +283,7 @@ namespace Pspc{
    template<int D>
    void LrAmCompressor<D>::outputToLog()
    {}
-   
+
    template<int D>
    void LrAmCompressor<D>::outputTimers(std::ostream& out)
    {
@@ -292,15 +292,15 @@ namespace Pspc{
       out << "Compressor times contributions:\n";
       AmIteratorTmpl<Compressor<D>, DArray<double> >::outputTimers(out);
    }
-   
-   
+
+
    template<int D>
    void LrAmCompressor<D>::clearTimers()
    {
       AmIteratorTmpl<Compressor<D>, DArray<double> >::clearTimers();
       mdeCounter_ = 0;
    }
-   
+
    template<int D>
    double LrAmCompressor<D>::computeDebye(double x)
    {
@@ -310,7 +310,7 @@ namespace Pspc{
          return 2.0 * (std::exp(-x) - 1.0 + x) / (x * x);
       }
    }
-   
+
    template<int D>
    double LrAmCompressor<D>::computeIntraCorrelation(double qSquare)
    {
@@ -318,10 +318,10 @@ namespace Pspc{
       const double vMonomer = system().mixture().vMonomer();
       // Overall intramolecular correlation
       double omega = 0;
-      int monomerId; int nBlock; 
-      double kuhn; double length; double g; double rg2; 
+      int monomerId; int nBlock;
+      double kuhn; double length; double g; double rg2;
       Polymer<D> const * polymerPtr;
-      
+
       for (int i = 0; i < np; i++){
          polymerPtr = &system().mixture().polymer(i);
          nBlock = polymerPtr->nBlock();
@@ -337,7 +337,7 @@ namespace Pspc{
       }
       return omega;
    }
-   
+
    template<int D>
    void LrAmCompressor<D>::computeIntraCorrelation()
    {
@@ -347,19 +347,19 @@ namespace Pspc{
       double Gsq;
       for (iter.begin(); !iter.atEnd(); ++iter) {
          G = iter.position();
-         Gmin = shiftToMinimum(G, system().mesh().dimensions(), 
+         Gmin = shiftToMinimum(G, system().mesh().dimensions(),
                                   system().unitCell());
          Gsq = system().unitCell().ksq(Gmin);
          intraCorrelation_[iter.rank()] = computeIntraCorrelation(Gsq);
       }
    }
-   
+
    template<int D>
    double LrAmCompressor<D>::setLambda()
    {
       return 1.0;
    }
-   
+
    template<int D>
    double LrAmCompressor<D>::computeError(int verbose)
    {
@@ -368,27 +368,28 @@ namespace Pspc{
       const int n = nElements();
       const int nMonomer = system().mixture().nMonomer();
       const int meshSize = system().domain().mesh().size();
-      
+
       // Initialize residuals
       for (int i = 0 ; i < n; ++i) {
          error_[i] = -1.0;
       }
 
-       // Compute SCF residual vector elements
+      // Compute SCF residual vector elements
       for (int j = 0; j < nMonomer; ++j) {
-        for (int k = 0; k < meshSize; ++k) {
-         error_[k] += system().c().rgrid(j)[k];
-        }
+         for (int k = 0; k < meshSize; ++k) {
+           error_[k] += system().c().rgrid(j)[k];
+         }
       }
-      
+
       // Find max residual vector element
       double maxRes  = maxAbs(error_);
-     
+
       // Find norm of residual vector
       double normRes = AmIteratorTmpl<Compressor<D>, DArray<double> >::norm(error_);
-      
+
       // Find root-mean-squared residual element value
       double rmsRes = normRes/sqrt(n);
+
       if (verbose > 1) {
          Log::file() << "\n";
          Log::file() << "Max Residual  = " << Dbl(maxRes,15) << "\n";
@@ -399,6 +400,7 @@ namespace Pspc{
          UTIL_CHECK(!std::isnan(normRes));
          error = normRes;
          Log::file() <<"\n";
+
          // Set error value
          if (errorType_ == "maxResid") {
             error = maxRes;
@@ -411,6 +413,7 @@ namespace Pspc{
          }
 
       } else {
+
          // Set error value
          if (errorType_ == "maxResid") {
             error = maxRes;
@@ -422,11 +425,12 @@ namespace Pspc{
             UTIL_THROW("Invalid iterator error type in parameter file.");
          }
          //Log::file() << ",  error  = " << Dbl(error, 15) << "\n";
+
       }
 
       return error;
    }
-   
+
 }
 }
 #endif

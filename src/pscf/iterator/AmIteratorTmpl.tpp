@@ -144,7 +144,7 @@ namespace Pscf
          
          #ifdef PSCF_AM_TEST
          // Compute errors and ratios used for algorithm testing
-         correctionError_ = error_;
+         correctionError_ = computeError(temp_);
          if (itr_ > 0) {
             mixingRatio_ += mixingError_/preError_;
             correctionRatio_ += correctionError_/preError_;
@@ -154,8 +154,8 @@ namespace Pscf
             //Log::file() << "   preError        = " << preError_ << "\n";
             //Log::file() << "   mixingError     = " << mixingError_ 
             //            << "\n";
-            //Log::file() << "   correctionError = " << correctionError_ 
-            //            << "\n" ;
+            Log::file() << "   correctionError = " << correctionError_ 
+                        << "\n" ;
             Log::file() << "   mixingRatio     = "
                         << mixingError_/preError_ << "\n";
             Log::file() << "   correctionRatio = " 
