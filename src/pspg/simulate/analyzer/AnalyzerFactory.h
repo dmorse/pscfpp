@@ -10,13 +10,13 @@
 
 #include <util/param/Factory.h>  
 #include <pspg/simulate/analyzer/Analyzer.h>
-#include <pspg/System.h>
 #include <string>
 
 namespace Pscf {
 namespace Pspg {
 
-   template <int D> class McSimulator;
+   template <int D> class System;
+   template <int D> class Simulator;
 
    using namespace Util;
 
@@ -31,13 +31,13 @@ namespace Pspg {
 
    public:
 
-      /**
+       /**
       * Constructor.
       *
-      * \param mcSimulator  parent McSimulator<D> object
-      * \param system  parent Systm<D> object
+      * \param simulator  parent Simulator<D> object
+      * \param system  parent System<D> object
       */
-      AnalyzerFactory(McSimulator<D>& mcSimulator, System<D>& system);
+      AnalyzerFactory(Simulator<D>& simulator, System<D>& system);
 
       /**
       * Method to create any Analyzer supplied with PSCF.
@@ -54,8 +54,8 @@ namespace Pspg {
       /// Pointer to the parent system.
       System<D>* sysPtr_;
       
-      /// Pointer to the parent mcSimulator.
-      McSimulator<D>* mcSimulatorPtr_;
+      /// Pointer to the parent simulator.
+      Simulator<D>* simulatorPtr_;
 
    };
 

@@ -6,7 +6,6 @@
 #include "AnalyzerFactory.h"
 #include <util/archives/Serializable_includes.h>
 #include <pspg/System.h>
-#include <pspg/simulate/McSimulator.h>
 
 namespace Pscf {
 namespace Pspg {
@@ -17,9 +16,9 @@ namespace Pspg {
    * Constructor.
    */
    template <int D>
-   AnalyzerManager<D>::AnalyzerManager(McSimulator<D>& mcSimulator, System<D>& system)
+   AnalyzerManager<D>::AnalyzerManager(Simulator<D>& simulator, System<D>& system)
    : Manager< Analyzer<D> >(),
-     mcSimulatorPtr_(&mcSimulator),
+     simulatorPtr_(&simulator),
      systemPtr_(&system)
    {  setClassName("AnalyzerManager"); }
 
@@ -35,7 +34,7 @@ namespace Pspg {
    */
    template <int D>
    Factory< Analyzer<D> >* AnalyzerManager<D>::newDefaultFactory() const
-   {  return new AnalyzerFactory<D>(*mcSimulatorPtr_, *systemPtr_); }
+   {  return new AnalyzerFactory<D>(*simulatorPtr_, *systemPtr_); }
    /*
    * Read parameter file. 
    *

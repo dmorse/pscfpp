@@ -23,7 +23,7 @@ namespace Pspg {
    /**
    * McState stores the state used by an MC simulation.
    *
-   * \ingroup Pspg_Simulate_Module
+   * \ingroup Pspg_McState_Module
    */
    template <int D>
    struct McState 
@@ -44,9 +44,9 @@ namespace Pspg {
       * Allocate memory for w fields.
       *
       * \param nMonomer  number of monomer types
-      * \param meshSize  number of grid points
+      * \param dimensions  dimensions of discretization grid
       */ 
-      void allocate(int nMonomer, int meshSize);
+      void allocate(int nMonomer, IntVec<D> const & dimensions);
  
       /**
       * Chemical potential fields, r-grid format, indexed by monomer.

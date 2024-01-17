@@ -85,8 +85,12 @@ namespace Pspg
       */
       void outputTimers(std::ostream& out);
       
+      /**
+      * Clear all timers (reset accumulated time to zero).
+      */
+      void clearTimers();
+      
       // Inherited public member functions
-      using AmIteratorTmpl<Compressor<D>, Field<cudaReal> >::clearTimers;
       using AmIteratorTmpl<Compressor<D>, Field<cudaReal> >::setClassName;
 
    protected:

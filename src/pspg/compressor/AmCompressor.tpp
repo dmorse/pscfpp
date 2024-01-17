@@ -78,7 +78,7 @@ namespace Pspg{
    int AmCompressor<D>::compress()
    {
       int solve = AmIteratorTmpl<Compressor<D>, Field<cudaReal> >::solve();
-      mdeCounter_ = AmIteratorTmpl<Compressor<D>, Field<cudaReal>>::totalItr(); 
+      //mdeCounter_ = AmIteratorTmpl<Compressor<D>, Field<cudaReal>>::totalItr(); 
       return solve;
    }
 
@@ -203,7 +203,10 @@ namespace Pspg{
    // Perform the main system computation (solve the MDE)
    template <int D>
    void AmCompressor<D>::evaluate()
-   {  system().compute(); }
+   {  
+      system().compute();
+      ++mdeCounter_; 
+   }
 
    // Compute the residual for the current system state
    template <int D>
@@ -259,7 +262,12 @@ namespace Pspg{
       AmIteratorTmpl<Compressor<D>, Field<cudaReal> >::outputTimers(out);
    }
    
-   
+   template<int D>
+   void AmCompressor<D>::clearTimers()
+   {
+      AmIteratorTmpl<Compressor<D>, Field<cudaReal> >::clearTimers();
+      mdeCounter_ = 0;
+   }
 
 }
 }

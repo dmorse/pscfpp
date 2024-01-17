@@ -8,6 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
+
 #include <util/param/ParamComposite.h>
 #include <util/random/Random.h>
 #include <util/global.h>
@@ -17,10 +18,10 @@ namespace Pscf {
 namespace Pspg
 {
 
+   using namespace Util;
+
    template <int D> class System;
    template <int D> class McSimulator;
-
-   using namespace Util;
 
    /**
    * McMove is an abstract base class for Monte Carlo moves.
@@ -40,7 +41,7 @@ namespace Pspg
       /**
       * Constructor.
       *
-      * \param mcSimulator parent System object.
+      * \param mcSimulator  parent McSimulator object
       */
       McMove(McSimulator<D>& mcSimulator);
 
@@ -54,6 +55,7 @@ namespace Pspg
       /**
       * Read required parameters from file.
       *
+      * Empty default implementation.
       */
       virtual void readParameters(std::istream &in);
 
@@ -80,11 +82,20 @@ namespace Pspg
       *
       * Implementations of this by subclasses should:
       *
-      *    - Generate a move (e.g., choose new atomic positions)
+      *    - Generate a proposed move 
       *    - Decide to accept or reject (use random::metropolis)
-      *    - Implement the move if accepted
+      *    - Restore the old system state if rejected, and update
+      *      the system state if accepted. 
       *
-      * Trivial default implemention always returns false.
+      * The default implementation provides a skeleton that calls 
+      * the virtual attemptMove() function, calls the compressor
+      * after attemptMove(), and uses a Metropolis test based on
+      * the change of Hamiltonian for acceptance or rejection. MC 
+      * moves for which this skeleton is appropriate can be 
+      * implemented by redefining the attemptMove() function and
+      * using it in this default implementation of move(). MC moves 
+      * for which this skeleton is inappropriate or inadequate can 
+      * be implemented by redefining the move function. 
       *
       * \return true if accepted, false if rejected
       */
@@ -167,6 +178,14 @@ namespace Pspg
       virtual void attemptMove() 
       {};
 
+      /// Timers for McMove 
+      Timer attemptMoveTimer_;
+      Timer compressorTimer_;
+      Timer computeWcTimer_;
+      Timer computeHamiltonianTimer_;
+      Timer decisionTimer_;
+      Timer totalTimer_;
+
    private:
 
       /// Pointer to parent McSimulator object
@@ -187,14 +206,6 @@ namespace Pspg
       /// Number of moves that have been accepted by this object.
       long  nAccept_;
       
-      /// Timers for McMove 
-      Timer attemptMoveTimer_;
-      Timer compressorTimer_;
-      Timer computeWCTimer_;
-      Timer computeHamiltonianTimer_;
-      Timer decisionTimer_;
-      Timer totalTimer_;
-
    };
 
    // Public inline methods

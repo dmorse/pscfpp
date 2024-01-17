@@ -3,18 +3,34 @@
 
 PSCF is a package of software for field-theoretic simulation of
 inhomogeneous equilibrium states of polymer liquids, with a focus
-on microstructures formed by block polymers. 
+on microstructures formed by block polymers.  PSCF can perform both 
+self-consistent field theory (SCFT) calculations and some types of 
+stochastic field-theoretic simulations (FTS) simulations. 
 
-PSCF can perform both self-consistent field theory (SCFT) calculations
-and field-theoretic Monte-Carlo (FTMC) simulations. The package was 
-originally designed for SCFT calculations, and provides an extensive
-set of tools for this. The formulation of FTMC in PSCF, which is new
-in this version (v1.2), is based on a partial-saddle point approximation 
-to an exact formulation of the partitition function as a functional 
-integral.  The current version of PSCF is written primarily in C++, 
-supplemented by CUDA code to enable the use of a graphics processing 
-unit (GPU). The acronym PSCF stands for Polymer Self Consistent Field,
-reflecting the origin of the package as an SCFT program.
+PSCF was originally designed for SCFT calculations, and provides an 
+extensive set of tools for this.  The acronym PSCF stands for Polymer 
+Self Consistent Field, reflecting this origin of the package.
+
+The current version of PSCF (v1.2) is the first to also provide the
+ability to perform field theoretic Monte-Carlo and Brownian dynamics 
+simulations. The types of FTS provided by the current code are all
+based on a partial-saddle point approximation to the exact 
+"fully fluctuating" formation of the partititon function of a polymer
+liquid as a functional integral. The exact fully-fluctuating formulation 
+of polymer field theory (which is not implemented in this version of 
+PSCF) requires the stochastic sampling of complex-valued fields. The 
+partial-saddle point approximation used here is an approximation for 
+incompressible models in which the Lagrange multiplier field that 
+imposes a constraint on the total monomer density in the corresponding
+fully-fluctuating theory is approximated at a mean-field or saddle-point
+level, while other fields that couple to composition fluctuations are 
+allowed to fluctuate. The resulting approximation allows the use of 
+simulation algorithms that only involve real-valued fields, and that
+share many key algorithms with SCFT, making it possible to create 
+programs that implement both types of calculation.
+
+The current version of PSCF is written primarily in C++, supplemented 
+by CUDA code to enable the use of a graphics processing unit (GPU). 
 
 ## History
 
@@ -40,9 +56,9 @@ Fortran version include:
    - The current version enables use of a graphics processing unit (GPU) 
      to dramatically accelerate some applications.
 
-   - Starting with this release (v1.2), the current version can perform
-     stochastic field-theoretic Monte-Carlo (FTMC) simulations in 
-     addition to SCFT calculations.
+   - Starting with this release (v1.2), the current version of PSCF
+     can perform some types of stochastic field-theoretic simulation 
+     (FTS) in addition to SCFT.
 
 ## Programs
 
@@ -71,8 +87,8 @@ PSCF currently contains three programs:
      provides much higher performance for large systems. The suffix 
      "pg" stands for "periodic GPU". 
 
-FTMC simulations are only available in the two codes designed for 
-systems with periodic boundary conditions (pscf_pc and pscf_pg). 
+FTMC simulations are only available in the two codes designed for use
+with periodic boundary conditions (pscf_pc and pscf_pg). 
 
 ## Features
 
@@ -82,8 +98,8 @@ containing any number of block polymers, homopolymers and small molecule
 treated using the standard Gaussian model of each polymer block as a 
 continuous random walk.
 
-Features that are common to all three PSCF programs that apply to both
-SCFT and FTMC calculations include:
+Features that are common to all three PSCF programs, all of which apply 
+to both SCFT and FTMC calculations, include:
 
   - Ability to treat mixtures of any number of block polymers and
     solvent species.
@@ -117,7 +133,7 @@ programs include:
 Features specific to the pscf_pc and pscf_pg programs for periodic systems 
 include:
 
-  - Ability to perform both SCFT and FTMC calculations
+  - Ability to perform both SCFT and FTS calculations
 
   - Accurate pseudo-spectral solution of the modified diffusion equation
 
@@ -305,12 +321,12 @@ in Sec. 3 of the web manual.
 
 The command file usually contains the names of several input and output 
 data files as arguments to commands that read or write these files. 
-Specifically, a command file to perform either a SCFT calculation or an
-FTMC simulation normally contains a command to read a specified file
-that contains an initial guess for the monomer chemical potential fields.
-A command file for an SCFT calculation normally also contains commands 
-that write converged chemical potential and monomer concentration fields
-to specific files. 
+Specifically, a command file to perform either a SCFT or FTS calculation 
+normally contains a command to read an input file that contains an 
+initial guess for the monomer chemical potential fields.  A command 
+file for an SCFT calculation normally also contains commands that write 
+converged chemical potential and monomer concentration fields to output
+files. 
 
 The usual command line syntax for invoking the pscf_1d program for 
 one-dimensional SCFT calculations is
@@ -325,14 +341,14 @@ causes the program to "echo" the parameter file to standard output as
 this file is being processed. Use of this option makes it easier to 
 debug any failure arising from a syntax error in the parameter file. 
 
-The pscf_pc and pscf_pg programs require a value for the spatial 
-dimension of the structure as an additional command line parameter.
-This integer with a value 1, 2 or 3 is provided as the required 
-parameter of the -d option, and specifies the number of coordinates 
-along which the structure is periodic.  The usual syntax for invoking 
-pscf_pc for a three dimensionally periodic structure (e.g., a network 
-phase or an arrangement of spheres), while also using the -e  option, 
-is thus
+The command line interface for the pscf_pc and pscf_pg programs requires 
+a value for the spatial dimension of the structure as an additional 
+parameter.  This is an integer with a value 1, 2 or 3, that specifies 
+the number of coordinates along which the structure is periodic, which
+must be provided as the parameter of the -d option. The usual syntax for 
+invoking pscf_pc for a three dimensionally periodic structure (e.g., a 
+network structure or an arrangement of spheres), while also using the 
+-e  option, is thus
 ```
 pscf_pc -d 3 -p param -c command -e
 ```
@@ -362,18 +378,21 @@ examples of input files for many different types of SCFT calculations.
 Top level subdirectories of the examples/ directory contain examples 
 for different PSCF programs (pscf_1d, pscf_pc, or pscf_pg). 
 
-Subdirectory examples/fd contains examples of SCFT calculations for the 
+Subdirectory examples/1d contains examples of SCFT calculations for the 
 1D finite-difference program pscf_1d. Top level subdirectories of the
 directory examples/fd contain examples for planar, cylindrical and 
 spherical geometries, as indicated by the subdirectory names. One or
 more example is given for each geometry.
 
 Subdirectory examples/pc contains examples for the pscf_pc CPU program. 
-Top level subdirectories of examples/pc contain solutions for a particular 
-type of physical system. For example, the directory examples/pc/diblock 
-contains examples for a diblock copolymer melt.  Subdirectories of 
-examples/pc/diblock contain examples for lamellar, hexagonal, and BCC 
-structures, among others.
+Top level subdirectories of examples/pc named scf/ and fts/ contain
+examples of SCFT and FTS calculations, respectively. Top level 
+subdirectories of examples/pc/scf contain examples of input files for
+SCFT calculations performed on different types of physical system.
+For example, the directory examples/pc/scf/diblock contains examples 
+for a diblock copolymer melt.  Subdirectories of examples/pc/scf/diblock 
+contain examples for lamellar, hexagonal, and BCC structures, among 
+others.
 
 Subdirectory examples/pg contains examples for the pscf_pg program for 
 periodic structures. Subdirectories are organized in a manner similar 
@@ -396,19 +415,19 @@ example is thus to change directory (cd) to the relevant example directory
 and enter "./run" from within that directory. (Note the use of the 
 prefix "./", which tells the operating system to look for the run script 
 in the current working directory).  Users may also inspect the text of 
-such a run script to see the exact command used to run the example. 
-Example directories that contain input files for two or more closely 
-related examples may contain several such scripts with names that are 
-variants of "run", each of which can be execute to run a specific 
-example. 
+such a run script to see the command and command line options used to 
+run the example.  Example directories that contain input files for two 
+or more closely related examples may contain several such scripts with 
+names that are variants of "run", each of which can be execute to run a 
+specific example. 
 
-Each example directory also usually contains a script named "clean" 
-that can be executed to remove all output files that are created by 
-running the example.
+Almost every example directory also contains a script named "clean" 
+that can be executed to remove all of the output files that are created 
+by running the example.
 
 ## License
 
-The C++/CUDA version of PSCF is free, open source software. It is
+This C++/CUDA version of PSCF is free, open source software. It is
 distributed under the terms of the GNU General Public License (GPL)
 as published by the Free Software Foundation, either version 3 of the
 License or (at your option) any later version.  PSCF is distributed

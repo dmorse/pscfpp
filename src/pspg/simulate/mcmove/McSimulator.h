@@ -8,24 +8,24 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "Simulator.h"                               // base class
-#include "McState.h"                                 // member
-#include <util/param/Manager.h>                      // member template
-#include <pspg/simulate/mcmove/McMoveManager.h>      // member
-#include <pspg/simulate/analyzer/AnalyzerManager.h>  // member
+#include <pspg/simulate/Simulator.h>                   // member
+#include <pspg/simulate/mcmove/McState.h>              // member
+#include <pspg/simulate/mcmove/McMoveManager.h>        // member
+#include <pspg/simulate/analyzer/AnalyzerManager.h>    // member
 
 namespace Pscf {
 namespace Pspg {
 
-   template <int D> class McMove;
-   template <int D> class TrajectoryReader;
-   template <int D> class TrajectoryReaderFactory;
-
    using namespace Util;
    using namespace Pscf::Prdc::Cuda;
 
+   template <int D> class McMove;
+   template <int D> class TrajectoryReader;
+
    /**
-   * Monte-Carlo simulator.
+   * Monte-Carlo simulation coordinator.
+   *
+   * \ingroup Pspg_Simulate_Module
    */
    template <int D>
    class McSimulator : public Simulator<D>
@@ -56,10 +56,10 @@ namespace Pspg {
       ///@{
 
       /**
-      * Perform a field theoretic simulation.
+      * Perform a field theoretic Monte-Carlo simulation.
       *
-      * Perform a field theoretic simulation using the partial
-      * saddle-point approximation.
+      * Perform a field theoretic Monte-Carlo simulation using the
+      * partial saddle-point approximation.
       *
       * \param nStep  number of Monte-Carlo steps
       */
@@ -77,24 +77,22 @@ namespace Pspg {
       * \param classname  name of the TrajectoryReader class to use
       * \param filename  name of the trajectory file
       */
-      void analyze(int min, int max,
-                   std::string classname,
-                   std::string filename);
+      virtual void analyze(int min, int max,
+                           std::string classname,
+                           std::string filename);
 
       /**
-      * Output timing results.
-      *
-      * \param out  output stream
+      * Output timing results
       */
-      void outputTimers(std::ostream& out);
+      virtual void outputTimers(std::ostream& out);
 
       /**
-      * Clear all timers.
+      * Clear timers
       */
-      void clearTimers();
+      virtual void clearTimers();
 
       ///@}
-      /// \name Utilities for MC simulation
+      /// \name Utilities for MC Moves
       ///@{
 
       /**
@@ -123,9 +121,9 @@ namespace Pspg {
       /**
       * Clear the saved copy of the Monte-Carlo state.
       *
-      * This function, restoreMcState(), and saveMcState() are intended 
-      * to be used together in the implementation of Monte-Carlo moves. 
-      * If an attempted move is accepted, clearMcState() is called to
+      * This function, restoreMcState(), and saveMcState() are intended
+      * to be used together in the implementation of Monte-Carlo moves. If
+      * an attempted move is accepted, clearMcState() is called to clear
       * clear mcState_.hasData
       */
       void clearMcState();
@@ -149,13 +147,16 @@ namespace Pspg {
       */
       Factory<TrajectoryReader<D>>& trajectoryReaderFactory();
 
+      ///@}
+
       // Inherited public functions
 
       using Simulator<D>::system;
+      using Simulator<D>::allocate;
       using Simulator<D>::analyzeChi;
-      using Simulator<D>::computeWC;
+      using Simulator<D>::computeWc;
       using Simulator<D>::wc;
-      using Simulator<D>::hasWC;
+      using Simulator<D>::hasWc;
       using Simulator<D>::clearData;
       using Simulator<D>::computeHamiltonian;
       using Simulator<D>::hamiltonian;
@@ -174,7 +175,7 @@ namespace Pspg {
       // Inherited protected data members
 
       using Simulator<D>::wc_;
-      using Simulator<D>::hasWC_;
+      using Simulator<D>::hasWc_;
       using Simulator<D>::hamiltonian_;
       using Simulator<D>::idealHamiltonian_;
       using Simulator<D>::fieldHamiltonian_;
@@ -182,7 +183,6 @@ namespace Pspg {
       using Simulator<D>::iStep_;
 
    private:
-
 
       /**
       * Manger for Monte Carlo Move.
@@ -202,7 +202,7 @@ namespace Pspg {
       /**
       * Pointer to a trajectory reader/writer factory.
       */
-      Factory<TrajectoryReader<D>>* trajectoryReaderFactoryPtr_;
+      Factory< TrajectoryReader<D> >* trajectoryReaderFactoryPtr_;
 
       // Private member functions
 
@@ -212,8 +212,6 @@ namespace Pspg {
       void setup();
 
    };
-
-   // Inline functions
 
    // Get the Monte-Carlo move manager.
    template <int D>
@@ -228,7 +226,7 @@ namespace Pspg {
    // Get the TrajectoryReaderfactory
    template <int D>
    inline 
-   Factory<TrajectoryReader<D>> & McSimulator<D>::trajectoryReaderFactory()
+   Factory<TrajectoryReader<D> >& McSimulator<D>::trajectoryReaderFactory()
    {
       UTIL_ASSERT(trajectoryReaderFactoryPtr_);
       return *trajectoryReaderFactoryPtr_;

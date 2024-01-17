@@ -10,8 +10,8 @@
 
 #include "System.h"
 
-#include <pspg/simulate/McSimulator.h>
 #include <pspg/simulate/Simulator.h>
+#include <pspg/simulate/SimulatorFactory.h>
 #include <pspg/compressor/Compressor.h>
 #include <pspg/compressor/CompressorFactory.h>
 #include <pspg/sweep/Sweep.h>
@@ -59,6 +59,7 @@ namespace Pspg
       compressorPtr_(0),
       compressorFactoryPtr_(0),
       simulatorPtr_(0),
+      simulatorFactoryPtr_(0),
       w_(),
       c_(),
       fHelmholtz_(0.0),
@@ -80,7 +81,7 @@ namespace Pspg
       iteratorFactoryPtr_ = new IteratorFactory<D>(*this);
       sweepFactoryPtr_ = new SweepFactory<D>(*this);
       compressorFactoryPtr_ = new CompressorFactory<D>(*this);
-      simulatorPtr_ = new McSimulator<D>(*this);
+      simulatorFactoryPtr_ = new SimulatorFactory<D>(*this);
       BracketPolicy::set(BracketPolicy::Optional);
       ThreadGrid::init();
    }
@@ -114,6 +115,9 @@ namespace Pspg
       }
       if (simulatorPtr_) {
          delete simulatorPtr_;
+      }
+      if (simulatorFactoryPtr_) {
+         delete simulatorFactoryPtr_;
       }
    }
 
@@ -299,12 +303,16 @@ namespace Pspg
          Log::file() << indent() << "  Compressor{ [absent] }\n";
       }
       
-      // Optionally read an Simulator
-      readParamCompositeOptional(in, simulator());
-      if (simulator().isActive()) {
-         hasSimulator_ = true;
-      } else {
-         hasSimulator_ = false;
+      // Optionally instantiate a Simulator
+      if (hasCompressor()) {
+
+         simulatorPtr_ = 
+            simulatorFactoryPtr_->readObjectOptional(in, *this, 
+                                                      className, isEnd);
+         if (!simulatorPtr_ && ParamComponent::echo()) {
+            Log::file() << indent() << "  Simulator{ [absent] }\n";
+         }
+
       }
 
       // Initialize homogeneous object
@@ -390,6 +398,8 @@ namespace Pspg
             in >> min;
             int max;
             in >> max;
+            Log::file() << "   "  << min ;
+            Log::file() << "   "  << max << "\n";
             std::string classname;
             readEcho(in, classname);
             readEcho(in, filename);
@@ -844,8 +854,12 @@ namespace Pspg
    template <int D>
    void System<D>::simulate(int nStep)
    {
+      UTIL_CHECK(nStep > 0);
       UTIL_CHECK(hasCompressor());
       UTIL_CHECK(hasSimulator());
+      hasCFields_ = false;
+      hasFreeEnergy_ = false;
+      
       simulator().simulate(nStep);
       hasCFields_ = true;
    }
@@ -979,13 +993,13 @@ namespace Pspg
          iterator().outputTimers(Log::file());
          iterator().outputTimers(out);
       }
-      if (hasCompressor()){
-         compressor().outputTimers(Log::file());
-         compressor().outputTimers(out);
-      }
       if (hasSimulator()){
          simulator().outputTimers(Log::file());
          simulator().outputTimers(out);
+      }
+      if (hasCompressor()){
+         compressor().outputTimers(Log::file());
+         compressor().outputTimers(out);
       }
    }
    

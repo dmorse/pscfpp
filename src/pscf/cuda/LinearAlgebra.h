@@ -38,6 +38,8 @@ __global__ void assignReal(cudaReal* result, const cudaReal* rhs, int size);
 
 __global__ void assignExp(cudaReal* exp, const cudaReal* w, double constant, int size);
 
+__global__ void assignRealSubtractDouble(cudaReal* result, const cudaReal* rhs, double constant, int size);
+
 __global__ void scaleReal(cudaReal* result, double scale, int size);
 
 __global__ void scaleComplex(cudaComplex* result, double scale, int size);
@@ -45,6 +47,10 @@ __global__ void scaleComplex(cudaComplex* result, double scale, int size);
 __global__ void mcftsScale(cudaReal* result, cudaReal scale, int size);
 
 __global__ void fourierMove(cudaComplex* a, const cudaReal* b, const cudaReal* c, int size);
+
+__global__ void computeDField(cudaReal* result, const cudaReal* Wc, const cudaReal* Cc, double a, double b, double s, int size);
+
+__global__ void computeForceBias(cudaReal* result, const cudaReal* di, const cudaReal* df, const cudaReal* dwc, double mobility, int size);
 
 /** @} */
 

@@ -11,7 +11,7 @@ include $(SRC_DIR)/pspg/include.mk
 all: $(pspg_simulate_mcmove_OBJS) 
 
 includes:
-	@echo $(INCLUDES)
+	echo $(INCLUDES)
 
 clean:
 	rm -f $(pspg_simulate_mcmove_OBJS) $(pspg_simulate_mcmove_OBJS:.o=.d) 

@@ -744,7 +744,8 @@ namespace Pspg {
    {
       std::ofstream file;
       fileMaster().openOutputFile(filename, file);
-      writeFieldsRGrid(file, fields, unitCell, isSymmetric);
+      bool writeHeader = true;
+      writeFieldsRGrid(file, fields, unitCell, writeHeader, isSymmetric);
       file.close();
    }
 
