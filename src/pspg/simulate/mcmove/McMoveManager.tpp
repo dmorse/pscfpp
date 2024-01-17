@@ -2,16 +2,16 @@
 #define PSPG_MC_MOVE_MANAGER_TPP
 
 /*
-* Simpatico - Simulation Package for Polymeric and Molecular Liquids
+* PSCF - Polymer Self-Consistent Field 
 *
-* Copyright 2010 - 2017, The Regents of the University of Minnesota
+* Copyright 2016 - 2023, The Regents of the University of Minnesota
 * Distributed under the terms of the GNU General Public License.
 */
 
 #include <util/global.h>
 #include <pspg/simulate/mcmove/McMoveManager.h>
 #include <pspg/simulate/mcmove/McMoveFactory.h>
-#include <pspg/simulate/McSimulator.h>
+#include <pspg/simulate/mcmove/McSimulator.h>
 #include <util/random/Random.h>
 
 namespace Pscf {
@@ -122,7 +122,7 @@ namespace Pspg {
          (*this)[i].clearTimers();
       }
    }
-
+   
 }
 }
 #endif

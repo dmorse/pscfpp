@@ -10,14 +10,14 @@
 
 #include <util/param/Factory.h>  
 #include <pspg/simulate/trajectory/TrajectoryReader.h>
-#include <pspg/System.h>
-#include <pspg/simulate/McSimulator.h>
 #include <string>
 
 
 namespace Pscf {
 namespace Pspg {
-
+   
+   template <int D> class System;
+   
    using namespace Util;
    
    /**

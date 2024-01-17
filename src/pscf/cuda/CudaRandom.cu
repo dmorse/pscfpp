@@ -69,7 +69,7 @@ namespace Pscf {
    }
 
    /*
-   * Return uniformly distributed random number in [0,1]
+   * Return normal-distributed random floating point numbers
    */
    void CudaRandom::normal(cudaReal* data, int n, cudaReal stddev, cudaReal mean)
    {

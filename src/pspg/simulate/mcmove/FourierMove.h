@@ -8,22 +8,16 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "McMove.h"                          //base class
-
+#include "McMove.h"                          // base class
 #include <prdc/cuda/RFieldDft.h> 
 #include <prdc/cuda/RField.h>
-#include <prdc/crystal/shiftToMinimum.h>
-
-#include <pscf/math/IntVec.h>
-
-#include <util/param/ParamComposite.h>
 #include <util/containers/DArray.h>
-#include <util/global.h>
 
 #include <curand.h>
 
 namespace Pscf {
-namespace Pspg {
+namespace Pspg
+{
 
    using namespace Util;
    using namespace Pscf::Prdc;
@@ -57,6 +51,7 @@ namespace Pspg {
       /**
       * Read required parameters from file.
       *
+      * \param in input parameter file stream
       */
       void readParameters(std::istream &in);
       
@@ -72,6 +67,8 @@ namespace Pspg {
       
       /**
       * Return fourier move times contributions.
+      *
+      * \param out  output stream for timer statistics
       */
       void outputTimers(std::ostream& out);
       
@@ -82,21 +79,19 @@ namespace Pspg {
       using ParamComposite::read;
       using ParamComposite::setClassName;
 
-
    protected:
       
       using McMove<D>::system;
       using McMove<D>::random;
       
       /**
-      *  Attempt unconstrained move.
+      * Attempt unconstrained move.
       *
-      *  This function should convert system w fields from r-grid format to
-      *  RFieldDft format, modify the system w fields in fourier space,
-      *  and convert back to r-grid format, as returned by system().w().rgrid(),
-      *  in order apply an unconstrained attempted move. The compressor will 
-      *  then be applied in order to restore the density constraint.
-      *
+      * This function should convert system w fields from r-grid format to
+      * RFieldDft format, modify the system w fields in fourier space, and
+      * convert back to r-grid format, as returned by system().w().rgrid(),
+      * in order apply an unconstrained attempted move. The compressor will 
+      * then be applied in order to restore the density constraint.
       */
       void attemptMove();
 
@@ -109,17 +104,27 @@ namespace Pspg {
       void computeRgSquare();
       
       /**
-      * Compute F(x,f) function. F(x,f) = g(1,x)/{g(f,x)g(1-f,x) - [g(1,x) - g(f,x) - g(1-f,x)]^2/4}
+      * Compute Leibler's F(x,f) function. 
+      * 
+      * F(x,f) = g(1,x)/{g(f,x)g(1-f,x) - [g(1,x) - g(f,x) - g(1-f,x)]^2/4}
+      *
+      * \param x nondimensionalized value of q^2 Rg^2
       */
       double computeF(double x);
       
       /**
-      * Compute Debye function, g(f,x). g(f,x) = 2[fx + exp(-fx)-1]/x^2
+      * Compute Debye function g(f,x).
+      * 
+      * Debye function: g(f,x) = 2[fx + exp(-fx)-1]/x^2
+      *
+      * \param f fraction of A block
+      * \param x nondimensionalized value of q^2 Rg^2
       */
       double computeDebye(double f, double x);
       
       /**
-      * Compute Fredrickson-Helfand structure for specific qSquare
+      * Compute Fredrickson-Helfand structure for specific qSquare.
+      *
       * For diblock copolymers,Fredrickson-Helfand structure 
       * S(q)/N = 1/(F(x,f) - F* + epsilon ) x = q^2Rg^2. 
       * q is wave vector, Rg is radius of gyration
@@ -133,18 +138,26 @@ namespace Pspg {
       
       /**
       * Input variable, Move step size stepSize_.
-      * In Fourier space \Delta_W(q) is randomly selected from 
-      * uniform distribution [-stepSize_*S(q)^(1/2), stepSize_*S(q)^(1/2)].
+      *
+      * In Fourier space Delta W(q) is randomly selected from a uniform
+      * distribution [-stepSize_*S(q)^(1/2), stepSize_*S(q)^(1/2)].
       */ 
       double stepSize_;
-      
-      /// Input variable, F*. Ex: at f = 0.5, F* = 20.990; at f = 0.45, F* = 21.396.
+     
+      /** 
+      * Input variable, F*. 
+      *
+      * Ex: at f = 0.5, F* = 20.990; at f = 0.45, F* = 21.396.
+      */
       double fStar_;
       
       /**
-      * Input variable tau_. User can calculate using Equation (5.2) from reference:
-      * "Fluctuation effects in the theory of microphase separation in block copolymers."
-      * Fredrickson, G. H., & Helfand, E. (1987).J. Chem. Phys. 87(1), 697-705.
+      * Input variable tau_. 
+      *
+      * User can calculate using Equation (5.2) from reference:
+      * "Fluctuation effects in the theory of microphase separation
+      * in block copolymers." Fredrickson, G. H., & Helfand, E. 
+      * J. Chem. Phys. 87(1), 697-705 (1987).
       */
       double tau_;
       
@@ -175,7 +188,7 @@ namespace Pspg {
       /// wField in in Fourier Space
       DArray< RFieldDft<D> > wKGrid_;
       
-      /// wField after attempt McMove in real space. Local variable wFieldTmp_ 
+      /// Local value of wField after attempt McMove.
       DArray< RField<D> > wFieldTmp_;
       
       /// Has the variable been allocated?
@@ -186,6 +199,12 @@ namespace Pspg {
    
    };
       
+   #ifndef PSPG_FOURIER_MOVE_TPP
+   // Suppress implicit instantiation
+   extern template class FourierMove<1>;
+   extern template class FourierMove<2>;
+   extern template class FourierMove<3>;
+   #endif
 
 }
 }

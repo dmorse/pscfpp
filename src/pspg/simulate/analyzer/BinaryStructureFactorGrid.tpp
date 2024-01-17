@@ -3,7 +3,7 @@
 
 #include "BinaryStructureFactorGrid.h"
 
-#include <pspg/simulate/McSimulator.h>
+#include <pspg/simulate/Simulator.h>
 #include <pspg/System.h>
 #include <prdc/crystal/shiftToMinimum.h>
 #include <pscf/mesh/MeshIterator.h>
@@ -28,10 +28,10 @@ namespace Pspg {
    * Constructor.
    */
    template <int D>
-   BinaryStructureFactorGrid<D>::BinaryStructureFactorGrid(McSimulator<D>& mcSimulator, System<D>& system) 
+   BinaryStructureFactorGrid<D>::BinaryStructureFactorGrid(Simulator<D>& simulator, System<D>& system) 
     : Analyzer<D>(),
-      mcSimulatorPtr_(&mcSimulator),
-      systemPtr_(&(mcSimulator.system())),
+      simulatorPtr_(&simulator),
+      systemPtr_(&(simulator.system())),
       isInitialized_(false)
    {  setClassName("BinaryStructureFactorGrid"); }
 

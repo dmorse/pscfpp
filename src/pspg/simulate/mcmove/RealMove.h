@@ -8,8 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "McMove.h"                          //base class
-
+#include "McMove.h"                          // base class
 #include <prdc/cuda/RField.h>
 #include <prdc/cuda/Field.h>  
 
@@ -19,10 +18,8 @@
 
 #include <curand.h>
 
-
 namespace Pscf {
-namespace Pspg
-{
+namespace Pspg {
 
    using namespace Util;
    using namespace Pscf::Prdc;
@@ -56,6 +53,7 @@ namespace Pspg
       /**
       * Read required parameters from file.
       *
+      * \param in input stream
       */
       void readParameters(std::istream &in);
       
@@ -80,12 +78,12 @@ namespace Pspg
       using McMove<D>::clearTimers;
       using ParamComposite::read;
       using ParamComposite::setClassName;
-      
 
    protected:
       
       using McMove<D>::system;
       using McMove<D>::random;
+
       /**
       *  Attempt unconstrained move.
       *
@@ -96,7 +94,6 @@ namespace Pspg
       *
       */
       void attemptMove();
-
 
    private:
       
@@ -114,10 +111,15 @@ namespace Pspg
       
       /// GPU random number generator
       curandGenerator_t gen_;
-      
    
    };
       
+   #ifndef PSPG_REAL_MOVE_TPP
+   // Suppress implicit instantiation
+   extern template class RealMove<1>;
+   extern template class RealMove<2>;
+   extern template class RealMove<3>;
+   #endif
 
 }
 }

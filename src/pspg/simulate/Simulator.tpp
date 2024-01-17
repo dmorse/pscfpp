@@ -1,5 +1,5 @@
-#ifndef PSPG_MC_SIMULATOR_TPP
-#define PSPG_MC_SIMULATOR_TPP
+#ifndef PSPG_SIMULATOR_TPP
+#define PSPG_SIMULATOR_TPP
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory
@@ -9,20 +9,17 @@
 */
 
 #include "Simulator.h"
-
 #include <pspg/System.h>
-
+#include <pspg/compressor/Compressor.h>
 #include <util/misc/Timer.h>
+#include <util/random/Random.h>
 #include <util/global.h>
-
 #include <gsl/gsl_eigen.h>
 
 namespace Pscf {
 namespace Pspg {
 
    using namespace Util;
-   using namespace Pscf::Prdc;
-   using namespace Pscf::Prdc::Cuda;
 
    /*
    * Constructor.
@@ -30,12 +27,14 @@ namespace Pspg {
    template <int D>
    Simulator<D>::Simulator(System<D>& system)
    : random_(),
-     systemPtr_(&system),
+     cudaRandom_(),
+     iStep_(0),
      hasHamiltonian_(false),
-     hasWC_(false)
-   {
-      setClassName("Simulator");
-   }
+     hasWc_(false),
+     hasCc_(false),
+     systemPtr_(&system),
+     isAllocated_(false)
+   { setClassName("Simulator"); }
 
    /*
    * Destructor.
@@ -44,29 +43,52 @@ namespace Pspg {
    Simulator<D>::~Simulator()
    {}
 
-   /*
-   * Read instructions for creating objects from file.
+   /* 
+   * Allocate required memory.
    */
    template <int D>
-   void Simulator<D>::readParameters(std::istream &in)
+   void Simulator<D>::allocate()
    {
-      // Allocate projected chi matrix chiP_ and associated arrays
+      UTIL_CHECK(!isAllocated_);
+
       const int nMonomer = system().mixture().nMonomer();
+
+      // Allocate projected chi matrix chiP_ and associated arrays
       chiP_.allocate(nMonomer, nMonomer);
       chiEvals_.allocate(nMonomer);
       chiEvecs_.allocate(nMonomer, nMonomer);
-      analyzeChi();
+      sc_.allocate(nMonomer);
 
-      // Allocate arrays for field components
+      // Allocate memory for eignevector components of w and c fields
       wc_.allocate(nMonomer);
+      cc_.allocate(nMonomer);
       const int meshSize = system().domain().mesh().size();
       for (int i = 0; i < nMonomer; ++i) {
          wc_[i].allocate(meshSize);
+         cc_[i].allocate(meshSize);
       }
+
+      // Allocate memory for components of d (functional derivative)
+      dc_.allocate(nMonomer-1);
+      for (int i = 0; i < nMonomer - 1; ++i) {
+         dc_[i].allocate(meshSize);
+      }
+      
+      // Allocate memory for single eignevector components of w after constant shift
+      wcs_.allocate(meshSize);
+      
+      isAllocated_ = true;
    }
 
+   /* 
+   * Virtual function to read parameters - unimplemented.
+   */
+   template <int D>
+   void Simulator<D>::readParameters(std::istream &in)
+   {  UTIL_THROW("Error: Unimplemented Simulator<D>::readParameters"); } 
+
    /*
-   * Perform a field theoretic MC simulation of nStep steps.
+   * Perform a field theoretic simulation of nStep steps.
    */
    template <int D>
    void Simulator<D>::simulate(int nStep)
@@ -80,24 +102,122 @@ namespace Pspg {
                               std::string classname,
                               std::string filename)
    {  UTIL_THROW("Error: Unimplemented function Simulator<D>::analyze"); }
+   
+   /*
+   * Compute field theoretic Hamiltonian H[W].
+   */
+   template <int D>
+   void Simulator<D>::computeHamiltonian()
+   {
+      UTIL_CHECK(isAllocated_);
+      UTIL_CHECK(system().w().hasData());
+      UTIL_CHECK(system().hasCFields());
+      UTIL_CHECK(hasWc_);
+      hasHamiltonian_ = false;
 
-   template<int D>
-   void Simulator<D>::outputTimers(std::ostream& out)
-   {}
+      Mixture<D> const & mixture = system().mixture();
+      Domain<D> const & domain = system().domain();
 
-   template<int D>
-   void Simulator<D>::clearTimers()
-   {}
+      const int nMonomer = mixture.nMonomer();
+      const int meshSize = domain.mesh().size();
+
+      const int np = mixture.nPolymer();
+      const int ns = mixture.nSolvent();
+      double phi, mu;
+
+      // Compute polymer ideal gas contributions to lnQ
+      double lnQ = 0.0;
+      if (np > 0) {
+         Polymer<D> const * polymerPtr;
+         double length;
+         for (int i = 0; i < np; ++i) {
+            polymerPtr = &mixture.polymer(i);
+            phi = polymerPtr->phi();
+            mu = polymerPtr->mu();
+            length = polymerPtr->length();
+            // Recall: mu = ln(phi/q)
+            if (phi > 1.0E-08) {
+               lnQ += phi*( -mu + 1.0 )/length;
+            }
+         }
+      }
+
+      // Compute solvent ideal gas contributions to lnQ
+      if (ns > 0) {
+         Solvent<D> const * solventPtr;
+         double size;
+         for (int i = 0; i < ns; ++i) {
+            solventPtr = &mixture.solvent(i);
+            phi = solventPtr->phi();
+            mu = solventPtr->mu();
+            size = solventPtr->size();
+            // Recall: mu = ln(phi/q)
+            if (phi > 1.0E-8) {
+               lnQ += phi*( -mu + 1.0 )/size;
+            }
+         }
+      }
+      // lnQ now contains a value per monomer
+
+      // Initialize field contribution HW
+
+      // Compute quadratic field contribution to HW
+      // GPU resources
+      int nBlocks, nThreads;
+      ThreadGrid::setThreadsLogical(meshSize, nBlocks, nThreads);
+      double HW = 0.0;
+      double prefactor, s;
+      int j;
+      for (j = 0; j < nMonomer - 1; ++j) {
+         prefactor = -0.5*double(nMonomer)/chiEvals_[j];
+         // Obtain constant shift
+         s = sc_[j];
+         // Subtract of constat shift s
+         assignRealSubtractDouble<<<nBlocks, nThreads>>>
+            (wcs_.cField(), wc_[j].cField(), s, meshSize);
+         // Compute quadratic field contribution to HW
+         double wSqure = 0;
+         wSqure = 
+              (double)gpuInnerProduct(wcs_.cField(), 
+                                      wcs_.cField(), meshSize);
+         HW += prefactor * wSqure;
+      }
+      
+      // Subtract average of pressure field wc_[nMonomer-1]
+      double sum_xi = 
+           (double)gpuSum(wc_[nMonomer-1].cField(), meshSize);
+      HW -= sum_xi;
+
+      // Normalize HW to equal a value per monomer
+      HW /= double(meshSize);
+
+      // Add constant term K/2 per monomer (K=s=e^{T}chi e/M^2)
+      HW += 0.5*sc_[nMonomer - 1];
+
+      // Compute number of monomers in the system (nMonomerSystem)      
+      const double vSystem  = domain.unitCell().volume();
+      const double vMonomer = mixture.vMonomer();
+      const double nMonomerSystem = vSystem / vMonomer;
+
+      // Compute final Hamiltonian components
+      fieldHamiltonian_ = nMonomerSystem * HW;
+      idealHamiltonian_ = -1.0 * nMonomerSystem * lnQ;
+      hamiltonian_ = idealHamiltonian_ + fieldHamiltonian_;
+
+      hasHamiltonian_ = true;
+   }
 
    template <int D>
    void Simulator<D>::analyzeChi()
    {
+      UTIL_CHECK(isAllocated_);
+
       const int nMonomer = system().mixture().nMonomer();
       DMatrix<double> const & chi = system().interaction().chi();
       double d = 1.0/double(nMonomer);
       int i, j, k;
 
-      // Compute projection matrix P
+      // Compute orthogonal projection matrix P
       DMatrix<double> P;
       P.allocate(nMonomer, nMonomer);
       for (i = 0; i < nMonomer; ++i) {
@@ -131,7 +251,7 @@ namespace Pspg {
          }
       }
 
-      // Eigenvalue calculations use data structures and
+      // Eigenvalue calculations use data structures and 
       // functions from the Gnu Scientific Library (GSL)
 
       // Allocate GSL matrix A that will hold a copy of chiP
@@ -152,7 +272,7 @@ namespace Pspg {
       error = gsl_eigen_symmv(A, Avals, Avecs, work);
       UTIL_CHECK(error == 0);
 
-      // Requirements:
+      // Requirements: 
       // - A has exactly one zero eigenvalue, with eigenvector (1,...,1)
       // - All other eigenvalues must be negative.
 
@@ -183,8 +303,8 @@ namespace Pspg {
       }
       UTIL_CHECK(nNull == 1);
       UTIL_CHECK(iNull >= 0);
-
-      // Set eigenpair with zero eigenvalue
+    
+      // Set eigenpair with zero eigenvalue 
       i = nMonomer - 1;
       chiEvals_[i] = 0.0;
       for (j = 0; j < nMonomer; ++j) {
@@ -203,11 +323,11 @@ namespace Pspg {
          for (j = 0;  j < nMonomer; ++j) {
             vec = chiEvecs_(i, j);
             norm += vec*vec;
-         }
+         } 
          prefactor = sqrt( double(nMonomer)/norm );
          for (j = 0;  j < nMonomer; ++j) {
             chiEvecs_(i, j) *= prefactor;
-         }
+         } 
       }
 
       // Check final eigenvector is (1, ..., 1)
@@ -215,18 +335,40 @@ namespace Pspg {
          UTIL_CHECK(abs(chiEvecs_(nMonomer-1, j) - 1.0) < 1.0E-8);
       }
 
+      // Compute vector s in monomer basis
+      DArray<double> s;
+      s.allocate(nMonomer);
+      for (i = 0; i < nMonomer; ++i) {
+         s[i] = 0.0;
+         for (j = 0; j < nMonomer; ++j) {
+           s[i] += chi(i,j);
+         } 
+         s[i] = s[i]/double(nMonomer);
+      }
+
+      // Compute components of s in eigenvector basis -> sc_
+      for (i = 0; i < nMonomer; ++i) {
+         sc_[i] = 0.0;
+         for (j = 0; j < nMonomer; ++j) {
+            sc_[i] += chiEvecs_(i,j)*s[j];
+         }
+         sc_[i] = sc_[i]/double(nMonomer);
+      }
+
       #if 0
       // Debugging output
       for (i = 0; i < nMonomer; ++i) {
          Log::file() << "Eigenpair " << i << "\n";
          Log::file() << "value  =  " << chiEvals_[i] << "\n";
-         Log::file() << "vector = [ ";
+         Log::file() << "vector = [ "; 
          for (j = 0; j < nMonomer; ++j) {
             Log::file() << chiEvecs_(i, j) << "   ";
          }
          Log::file() << "]\n";
+         Log::file() << " sc[i] = " << sc_{i] << std::endl;
       }
       #endif
+
    }
 
    /*
@@ -234,31 +376,36 @@ namespace Pspg {
    * eigenvectors chiEvecs_ of the projected chi matrix as a basis.
    */
    template <int D>
-   void Simulator<D>::computeWC()
+   void Simulator<D>::computeWc()
    {
+      UTIL_CHECK(isAllocated_);
+
       const int nMonomer = system().mixture().nMonomer();
       const int meshSize = system().domain().mesh().size();
-      int j, k;
+      int i,j;
       // GPU resources
       int nBlocks, nThreads;
       ThreadGrid::setThreadsLogical(meshSize, nBlocks, nThreads);
-
-      DArray<RField<D>> const * currSys = &system().w().rgrid();
+      
+      DArray<RField<D>> const * Wr = &system().w().rgrid();
       // Loop over eigenvectors (j is an eigenvector index)
-      for (j = 0; j < nMonomer; ++j) {
+      for (i = 0; i < nMonomer; ++i) {
+
          // Loop over grid points to zero out field wc_[j]
-         RField<D>& wc = wc_[j];
-         assignUniformReal<<<nBlocks, nThreads>>>(wc.cField(), 0, meshSize);
+         RField<D>& Wc = wc_[i];
+         assignUniformReal<<<nBlocks, nThreads>>>(Wc.cField(), 0, meshSize);
+
          // Loop over monomer types (k is a monomer index)
-         for (k = 0; k < nMonomer; ++k) {
+         for (j = 0; j < nMonomer; ++j) {
             cudaReal vec;
-            vec = (cudaReal)chiEvecs_(j, k)/nMonomer;
+            vec = (cudaReal) chiEvecs_(i, j)/nMonomer;
+
             // Loop over grid points
             pointWiseAddScale<<<nBlocks, nThreads>>>
-               (wc.cField(), (*currSys)[k].cField(), vec, meshSize);
+               (Wc.cField(), (*Wr)[j].cField(), vec, meshSize);
          }
       }
-
+      
       #if 0
       // Debugging output
       std::string filename = "wc";
@@ -266,95 +413,108 @@ namespace Pspg {
                                           system().domain().unitCell());
       #endif
 
-      hasWC_ = true;
+      hasWc_ = true;
+   }
+   
+   /*
+   * Compute the eigenvector components of the c-fields, using the
+   * eigenvectors chiEvecs_ of the projected chi matrix as a basis.
+   */
+   template <int D>
+   void Simulator<D>::computeCc()
+   {
+      // Preconditions
+      UTIL_CHECK(isAllocated_);
+      UTIL_CHECK(system().w().hasData());
+      UTIL_CHECK(system().hasCFields());
+
+      const int nMonomer = system().mixture().nMonomer();
+      const int meshSize = system().domain().mesh().size();
+      int i, j;
+      // GPU resources
+      int nBlocks, nThreads;
+      ThreadGrid::setThreadsLogical(meshSize, nBlocks, nThreads);
+
+      DArray<RField<D>> const * Cr = &system().c().rgrid();
+      // Loop over eigenvectors (i is an eigenvector index)
+      for (i = 0; i < nMonomer; ++i) {
+         
+         // Set cc_[i] to zero
+         RField<D>& Cc = cc_[i];
+         assignUniformReal<<<nBlocks, nThreads>>>(Cc.cField(), 0, meshSize);
+
+         // Loop over monomer types 
+         for (j = 0; j < nMonomer; ++j) {
+            cudaReal vec;
+            vec = (cudaReal)chiEvecs_(i, j);
+            
+            // Loop over grid points
+            pointWiseAddScale<<<nBlocks, nThreads>>>
+               (Cc.cField(), (*Cr)[j].cField(), vec, meshSize);
+         }
+      }
+      
+      #if 0
+      // Debugging output
+      std::string filename = "cc";
+      system().fieldIo().writeFieldsRGrid(filename, cc_, 
+                                          system().domain().unitCell());
+      #endif
+
+      hasCc_ = true;
    }
 
    /*
-   * Compute Monte Carlo Hamiltonian.
+   * Compute d fields, i.e., functional derivatives of H[W].
    */
    template <int D>
-   void Simulator<D>::computeHamiltonian()
+   void Simulator<D>::computeDc()
    {
-      UTIL_CHECK(system().w().hasData());
-      UTIL_CHECK(system().hasCFields());
-      UTIL_CHECK(hasWC_);
-      hasHamiltonian_ = false;
+      // Preconditions
+      UTIL_CHECK(isAllocated_);
+      if (!hasWc_) computeWc();
+      if (!hasCc_) computeCc();
 
-      Mixture<D> const & mixture = system().mixture();
-      Domain<D> const & domain = system().domain();
-
-      const int nMonomer = mixture.nMonomer();
-      const int meshSize = domain.mesh().size();
-
-      const int np = mixture.nPolymer();
-      const int ns = mixture.nSolvent();
-      double phi, mu;
-      double lnQ = 0.0;
-
-      // Compute polymer ideal gas contributions to lnQ
-      if (np > 0) {
-         Polymer<D> const * polymerPtr;
-         double length;
-         for (int i = 0; i < np; ++i) {
-            polymerPtr = &mixture.polymer(i);
-            phi = polymerPtr->phi();
-            mu = polymerPtr->mu();
-            length = polymerPtr->length();
-            // Recall: mu = ln(phi/q)
-            if (phi > 1.0E-08) {
-               lnQ += phi*( -mu + 1.0 )/length;
-            }
-         }
+      // Local constants and variables
+      const int meshSize = system().domain().mesh().size();
+      const int nMonomer = system().mixture().nMonomer();
+      const double vMonomer = system().mixture().vMonomer();
+      const double a = 1.0/vMonomer;
+      double b, s;
+      int i;
+      // GPU resources
+      int nBlocks, nThreads;
+      ThreadGrid::setThreadsLogical(meshSize, nBlocks, nThreads);
+      
+      // Loop over composition eigenvectors (exclude the last)
+      for (i = 0; i < nMonomer - 1; ++i) {
+         RField<D>& Dc = dc_[i];
+         RField<D> const & Wc = wc_[i];
+         RField<D> const & Cc = cc_[i];
+         b = -1.0*double(nMonomer)/chiEvals_[i];
+         s = sc_[i];
+          
+         // Loop over grid points
+         computeDField<<<nBlocks, nThreads>>>
+            (Dc.cField(), Wc.cField(), Cc.cField(), a, b, s, meshSize);
       }
 
-      // Compute solvent ideal gas contributions to lnQ
-      if (ns > 0) {
-         Solvent<D> const * solventPtr;
-         double size;
-         for (int i = 0; i < ns; ++i) {
-            solventPtr = &mixture.solvent(i);
-            phi = solventPtr->phi();
-            mu = solventPtr->mu();
-            size = solventPtr->size();
-            // Recall: mu = ln(phi/q)
-            if (phi > 1.0E-8) {
-               lnQ += phi*( -mu + 1.0 )/size;
-            }
-         }
-      }
-      // lnQ now contains a value per monomer
-
-      // Compute field contribution HW
-      double HW = 0.0;
-      double prefactor;
-      // Compute quadratic field contribution to HW
-      for (int j = 0; j < nMonomer - 1; ++j) {
-         prefactor = -0.5*double(nMonomer)/chiEvals_[j];
-         double wSqure = 0;
-         wSqure = 
-              (double)gpuInnerProduct(wc_[j].cField(), 
-                                      wc_[j].cField(), meshSize);
-         HW += prefactor * wSqure;
-      }
-
-      // Subtract average of Langrange multiplier field
-      double sum_xi = 
-           (double)gpuSum(wc_[nMonomer-1].cField(), meshSize);
-      HW -= sum_xi;
-
-      // Normalize HW to equal a value per monomer
-      HW /= double(meshSize);
-
-      // Compute final MC Hamiltonian
-      //hamiltonian_ = HW - lnQ;
-      const double vSystem  = domain.unitCell().volume();
-      const double vMonomer = mixture.vMonomer();
-      const double nMonomerSystem = vSystem / vMonomer;
-      fieldHamiltonian_ = nMonomerSystem * HW;
-      idealHamiltonian_ = -1.0 * nMonomerSystem * lnQ;
-      hamiltonian_ = idealHamiltonian_ + fieldHamiltonian_;
-      hasHamiltonian_ = true;
+      hasDc_ = true;
    }
+
+   /*
+   * Output all timer results.
+   */ 
+   template<int D>
+   void Simulator<D>::outputTimers(std::ostream& out)
+   { }
+  
+   /*
+   * Clear all timers.
+   */ 
+   template<int D>
+   void Simulator<D>::clearTimers()
+   { }
 
 }
 }

@@ -2,10 +2,12 @@
 #define PSPG_MC_MOVE_FACTORY_TPP
 
 #include "McMoveFactory.h"  
+#include <pspg/simulate/mcmove/McSimulator.h>
 
 // Subclasses of McMove 
 #include "RealMove.h"
 #include "FourierMove.h"
+#include "ForceBiasMove.h"
 
 namespace Pscf {
 namespace Pspg {
@@ -32,11 +34,14 @@ namespace Pspg {
       ptr = trySubfactories(className);
       if (ptr) return ptr;
 
+      
       // Try to match classname
       if (className == "RealMove") {
          ptr = new RealMove<D>(*mcSimulatorPtr_);
       } else if (className == "FourierMove") {
          ptr = new FourierMove<D>(*mcSimulatorPtr_);
+      } else if (className == "ForceBiasMove") {
+         ptr = new ForceBiasMove<D>(*mcSimulatorPtr_);
       }
 
       return ptr;

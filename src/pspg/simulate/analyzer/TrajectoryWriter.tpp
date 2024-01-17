@@ -10,9 +10,9 @@
 #include "TrajectoryWriter.h"
 #include "Analyzer.h"
 #include <pspg/System.h>
-#include <pspg/simulate/McSimulator.h>
+#include <pspg/simulate/Simulator.h>
 #include <util/misc/FileMaster.h>
-#include <util/archives/Serializable_includes.h>
+//#include <util/archives/Serializable_includes.h>
 #include <util/misc/ioUtil.h>
 #include <sstream>
 
@@ -27,13 +27,13 @@ namespace Pspg
    * Constructor.
    */
    template <int D>
-   TrajectoryWriter<D>::TrajectoryWriter(McSimulator<D>& mcSimulator, 
+   TrajectoryWriter<D>::TrajectoryWriter(Simulator<D>& simulator, 
                                          System<D>& system) 
     : Analyzer<D>(),
       nSample_(0),
       isInitialized_(false),
-      mcSimulatorPtr_(&mcSimulator),
-      systemPtr_(&(mcSimulator.system()))
+      simulatorPtr_(&simulator),
+      systemPtr_(&(simulator.system()))
    {  setClassName("TrajectoryWriter"); }
 
    /*

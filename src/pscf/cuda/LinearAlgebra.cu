@@ -130,6 +130,15 @@ __global__ void assignExp(cudaReal* out, const cudaReal* w, double constant, int
    }
 }
 
+__global__ void assignRealSubtractDouble(cudaReal* result, const cudaReal* rhs, double constant, int size)
+{
+   int nThreads = blockDim.x * gridDim.x;
+   int startID = blockIdx.x * blockDim.x + threadIdx.x;
+   for(int i = startID; i < size; i += nThreads) {
+      result[i] = rhs[i] - constant;
+   }
+}
+
 __global__ void scaleReal(cudaReal* result, double scale, int size) 
 {
    int nThreads = blockDim.x * gridDim.x;
@@ -165,6 +174,24 @@ __global__ void fourierMove(cudaComplex* a, const cudaReal* b, const cudaReal* c
    for (int i = startID; i < size; i += nThreads) {
       a[i].x += b[i];
       a[i].y += c[i];
+   }
+}
+
+__global__ void computeDField(cudaReal* result, const cudaReal* Wc, const cudaReal* Cc, double a, double b, double s, int size)
+{
+   int nThreads = blockDim.x * gridDim.x;
+   int startID = blockIdx.x * blockDim.x + threadIdx.x;
+   for (int i = startID; i < size; i += nThreads) {
+      result[i] = a*( b*(Wc[i] - s) + Cc[i] );
+   }
+}
+
+__global__ void computeForceBias(cudaReal* result, const cudaReal* di, const cudaReal* df, const cudaReal* dwc, double mobility, int size)
+{
+   int nThreads = blockDim.x * gridDim.x;
+   int startID = blockIdx.x * blockDim.x + threadIdx.x;
+   for (int i = startID; i < size; i += nThreads) {
+      result[i] = 0.5*(di[i] + df[i]) * (dwc[i] + mobility* (0.5*(di[i] - df[i])));
    }
 }
 

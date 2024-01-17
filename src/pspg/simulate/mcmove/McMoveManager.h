@@ -17,10 +17,10 @@ namespace Util { class Random; }
 namespace Pscf {
 namespace Pspg {
 
+   using namespace Util;
+
    template <int D> class System;
    template <int D> class McSimulator;
-
-   using namespace Util;
 
    /**
    * Manager for a set of McMove objects.
@@ -80,6 +80,8 @@ namespace Pspg {
       */
       double probability(int i) const;
       
+      using Manager< McMove<D> >::size;
+      
       /**
       * Log output timing results 
       */
@@ -89,8 +91,6 @@ namespace Pspg {
       * Clear timers 
       */
       void clearTimers();
-      
-      using Manager< McMove<D> >::size;
   
    protected:
       

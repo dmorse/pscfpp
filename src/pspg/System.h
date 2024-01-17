@@ -42,8 +42,7 @@ namespace Pspg {
    template <int D> class Compressor;
    template <int D> class CompressorFactory;
    template <int D> class Simulator;
-   template <int D> class McMove;
-   template <int D> class McMoveFactory;
+   template <int D> class SimulatorFactory;
 
    using namespace Util;
    using namespace Pscf::Prdc;
@@ -828,6 +827,11 @@ namespace Pspg {
       * Pointer to a simulator.
       */
       Simulator<D>* simulatorPtr_;
+      
+      /**
+      * Pointer to Simulator factory object
+      */
+      SimulatorFactory<D>* simulatorFactoryPtr_;
 
       /**
       * Chemical potential fields.
@@ -1115,7 +1119,7 @@ namespace Pspg {
    // Does the system have an initialized Simulator ?
    template <int D>
    inline bool System<D>::hasSimulator() const
-   {  return (hasSimulator_); }
+   {  return (simulatorPtr_ != 0); }
 
    #ifndef PSPG_SYSTEM_TPP
    // Suppress implicit instantiation

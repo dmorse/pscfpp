@@ -9,12 +9,13 @@
 */
 
 #include "RealMove.h"
-#include "McMove.h"
-#include <pspg/System.h>
+#include "McMove.h" 
 #include <util/param/ParamComposite.h>
+#include <pspg/System.h>
 
 #include <curand.h>
 #include <sys/time.h>
+
 
 namespace Pscf {
 namespace Pspg {
@@ -25,7 +26,7 @@ namespace Pspg {
    * Constructor.
    */
    template <int D>
-   RealMove<D>::RealMove(McSimulator<D>& simulator)
+   RealMove<D>::RealMove(McSimulator<D>& simulator) 
     : McMove<D>(simulator),
       isAllocated_(false)
    { setClassName("RealMove"); }
@@ -43,12 +44,12 @@ namespace Pspg {
    template <int D>
    void RealMove<D>::readParameters(std::istream &in)
    {
-      // Read the probability of this move being chosen
+      //Read the probability
       readProbability(in);
-
-      // Range of attempted move is [A, -A]
+      // attampt move range [A, -A]
       read(in, "A", stepSize_);
    }
+   
 
    template <int D>
    void RealMove<D>::setup()
@@ -83,7 +84,7 @@ namespace Pspg {
       }
 
    }
-
+   
    /*
    * Attempt unconstrained move
    */
@@ -122,13 +123,14 @@ namespace Pspg {
 
    }
 
+
    /*
    * Trivial default implementation - do nothing
    */
    template <int D>
    void RealMove<D>::output()
    {}
-
+   
    template<int D>
    void RealMove<D>::outputTimers(std::ostream& out)
    {

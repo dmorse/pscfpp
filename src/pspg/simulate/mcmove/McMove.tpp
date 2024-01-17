@@ -9,10 +9,10 @@
 */
 
 #include "McMove.h"
-#include <pspg/System.h>
-#include <pspg/simulate/McSimulator.h>
-#include <util/archives/Serializable_includes.h>
+
+#include <pspg/simulate/mcmove/McSimulator.h>
 #include <pspg/compressor/Compressor.h>
+#include <pspg/System.h>
 
 namespace Pscf {
 namespace Pspg {
@@ -23,7 +23,7 @@ namespace Pspg {
    * Constructor.
    */
    template <int D>
-   McMove<D>::McMove(McSimulator<D>& mcSimulator) 
+   McMove<D>::McMove(McSimulator<D>& mcSimulator)
     : mcSimulatorPtr_(&mcSimulator),
       systemPtr_(&(mcSimulator.system())),
       randomPtr_(&(mcSimulator.random())),
@@ -44,14 +44,14 @@ namespace Pspg {
    template <int D>
    void McMove<D>::readParameters(std::istream &in)
    {}
-   
+
    /*
    * Read the probability from file.
    */
    template <int D>
    void McMove<D>::readProbability(std::istream &in)
    {  read<double>(in, "probability", probability_); }
-  
+
    /*
    * Setup at beginning of loop.
    *
@@ -59,7 +59,7 @@ namespace Pspg {
    */
    template <int D>
    void McMove<D>::setup()
-   { 
+   {
       nAttempt_ = 0;
       nAccept_  = 0;
       clearTimers();
@@ -70,19 +70,19 @@ namespace Pspg {
    */
    template <int D>
    bool McMove<D>::move()
-   { 
+   {
       totalTimer_.start();
       incrementNAttempt();
 
       // Get current Hamiltonian
       double oldHamiltonian = mcSimulator().hamiltonian();
-     
-      // Save current state 
-      mcSimulator().saveMcState();
-      
-      // Clear both eigen-components of the fields and hamiltonian 
-      mcSimulator().clearData();
 
+      // Save current state
+      mcSimulator().saveMcState();
+
+      // Clear both eigen-components of the fields and hamiltonian
+      mcSimulator().clearData();
+      
       // Attempt modification
       attemptMoveTimer_.start();
       attemptMove();
@@ -95,23 +95,20 @@ namespace Pspg {
       compressorTimer_.stop();
       
       // Compute eigenvector components of the current w fields
-      computeWCTimer_.start();
-      mcSimulator().computeWC();
-      computeWCTimer_.stop();
+      computeWcTimer_.start();
+      mcSimulator().computeWc();
+      computeWcTimer_.stop();
       
       // Evaluate new Hamiltonian
       computeHamiltonianTimer_.start();
       mcSimulator().computeHamiltonian();
       double newHamiltonian = mcSimulator().hamiltonian();
       computeHamiltonianTimer_.stop();
-      // Log::file() << "newHamiltonian" << newHamiltonian << "\n";
-      //Log::file() << "oldHamiltonian" << oldHamiltonian << "\n";
+
       // Accept or reject move
-     
       decisionTimer_.start();
       bool accept = false;
       double weight = exp(-(newHamiltonian - oldHamiltonian));
-      //Log::file() << "weight" << weight << "\n";
       accept = random().metropolis(weight);
       if (accept) {
           incrementNAccept();
@@ -119,11 +116,9 @@ namespace Pspg {
       } else {
           mcSimulator().restoreMcState();
       }
-     /// Log::file() << "newFieldHamiltonian" << mcSimulator().fieldHamiltonian() << "\n";
-      // Log::file() << "newidealHamiltonian" << mcSimulator().idealHamiltonian() << "\n";
-      // Log::file() << "accept" << accept << "\n";
       decisionTimer_.stop();
       totalTimer_.stop();
+      
       return accept;
    }
 
@@ -138,8 +133,6 @@ namespace Pspg {
    void McMove<D>::outputTimers(std::ostream& out)
    {
       // Output timing results, if requested.
-      out << "McMove times contributions:\n";
-      // Output timing results, if requested.
       double total = totalTimer_.time();
       out << "                          "
           << "Total" << std::setw(17) << "Per Move" << std::setw(14) << "Fraction" << "\n";
@@ -152,9 +145,9 @@ namespace Pspg {
           << Dbl(compressorTimer_.time()/nAttempt_, 9, 3)  << " s,  "
           << Dbl(compressorTimer_.time()/total, 9, 3) << "\n";
       out << "Compute eigen-components: "
-          << Dbl(computeWCTimer_.time(), 9, 3)  << " s,  "
-          << Dbl(computeWCTimer_.time()/nAttempt_, 9, 3)  << " s,  "
-          << Dbl(computeWCTimer_.time()/total, 9, 3) << "\n";
+          << Dbl(computeWcTimer_.time(), 9, 3)  << " s,  "
+          << Dbl(computeWcTimer_.time()/nAttempt_, 9, 3)  << " s,  "
+          << Dbl(computeWcTimer_.time()/total, 9, 3) << "\n";
       out << "Compute Hamiltonian:      "
           << Dbl(computeHamiltonianTimer_.time(), 9, 3)  << " s,  "
           << Dbl(computeHamiltonianTimer_.time()/nAttempt_, 9, 3)  << " s,  "
@@ -174,7 +167,7 @@ namespace Pspg {
    {
       attemptMoveTimer_.clear();
       compressorTimer_.clear();
-      computeWCTimer_.clear();
+      computeWcTimer_.clear();
       computeHamiltonianTimer_.clear();
       decisionTimer_.clear();
       totalTimer_.clear();

@@ -9,7 +9,7 @@ namespace Pscf {
 namespace Pspg {
 
    template <int D> class System;
-   template <int D> class McSimulator;
+   template <int D> class Simulator;
 
    using namespace Util;
 
@@ -30,7 +30,7 @@ namespace Pspg {
       * \param mcSimulator parent McSimulator
       * \param system parent System
       */
-      AnalyzerManager(McSimulator<D>& mcSimulator, System<D>& system);
+      AnalyzerManager(Simulator<D>& simulator, System<D>& system);
 
       /**
       * Destructor.
@@ -99,9 +99,9 @@ namespace Pspg {
    
    private:
       /**
-       * Pointer to parent Simulator
-       */
-      McSimulator<D>* mcSimulatorPtr_;
+      * Pointer to parent Simulator
+      */
+      Simulator<D>* simulatorPtr_;
       
       /**
       * Pointer to parent System.

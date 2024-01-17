@@ -10,14 +10,14 @@
 
 #include "FourierMove.h"
 #include "McMove.h" 
-#include <util/param/ParamComposite.h>
 #include <pspg/System.h>      
-#include <util/archives/Serializable_includes.h>
-#include <util/random/Random.h>
-#include <pscf/math/IntVec.h>
-#include <pscf/math/RealVec.h>
-#include <util/format/Int.h>
+#include <prdc/crystal/shiftToMinimum.h>
 #include <pscf/mesh/MeshIterator.h>
+#include <pscf/math/IntVec.h>
+#include <util/random/Random.h>
+#include <util/param/ParamComposite.h>
+#include <util/global.h>
+
 #include <iostream>
 #include <complex>
 #include <random>
@@ -28,7 +28,7 @@
 #include <sys/time.h>
 
 namespace Pscf {
-namespace Pspg
+namespace Pspg 
 {
 
    using namespace Util;
@@ -239,6 +239,7 @@ namespace Pspg
       // Update attemptMove
       system().setWRGrid(wFieldTmp_);
    }
+
 
    /*
    * Trivial default implementation - do nothing

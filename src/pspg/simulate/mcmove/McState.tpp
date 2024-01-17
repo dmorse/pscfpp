@@ -13,7 +13,7 @@
 namespace Pscf {
 namespace Pspg {
 
-using namespace Util;
+   using namespace Util;
 
    /*
    * Constructor.
@@ -40,13 +40,13 @@ using namespace Util;
    * Allocate memory for w fields.
    */ 
    template <int D>
-   void McState<D>::allocate(int nMonomer, int meshSize)
+   void McState<D>::allocate(int nMonomer, IntVec<D> const & dimensions)
    {
       w.allocate(nMonomer);
       wc.allocate(nMonomer);
       for (int i = 0; i < nMonomer; ++i) {
-         w[i].allocate(meshSize);
-         wc[i].allocate(meshSize);
+         w[i].allocate(dimensions);
+         wc[i].allocate(dimensions);
       }
       isAllocated = true;
    }

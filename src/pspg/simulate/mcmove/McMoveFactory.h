@@ -10,19 +10,20 @@
 
 #include <util/param/Factory.h>  
 #include <pspg/simulate/mcmove/McMove.h>
-#include <pspg/simulate/McSimulator.h>
 
 #include <string>
 
 namespace Pscf {
 namespace Pspg {
 
+   template <int D> class McSimulator;
+
    using namespace Util;
 
    /**
    * Factory for subclasses of McMove.
    *
-   * \ingroup Pspg_Simulate_McMove_Module
+   * \ingroup Pspg_McMove_Module
    */
    template <int D>
    class McMoveFactory : public Factory< McMove<D> > 
