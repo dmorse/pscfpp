@@ -1,60 +1,68 @@
+To be written (v1.2):
+
+   - Sec. 4.1 SCFT (Theory) and modify appendix
+   - Sec. 5 (FTS user doc - all of it)
+
 
 1. About
 
-2. Installation (Unchanged)
+2. Installation 
 
 3. User Guide: General 
 
-   1.  Model and Parameters
-   2.  Types of Calculation (move from later)
+   1.  Model and Parameters  
+   2.  Types of Calculation (SCFT vs. FTS-PS)
    3.  Executable programs
-   4.  Input Files (Describe field file formats)
+   4.  Input Files Types 
    5.  Command Line Interface (Running a Calculation) 
-   6.  Parameter Files (Syntax and example)
-   7.  Command Files (Syntax and example)
+   6.  Parameter Files (Syntax and one example)
+   7.  Command Files (Syntax and one example)
    8.  Field Files
    9.  Examples
    10. Visualization
    11. Python Tools
 
-   A.  Modified Diffusion Equation
-   B.  Block Polymers
-   C.  Theorems for Propagators
+   A.  Modified Diffusion Equation   (v1.3)
+   B.  Block Polymers                (v1.3)
+   C.  Theorems for Propagators      (v1.3)
 
-4. User Guide: SCFT
+4. User Guide: Self-Consistent Field Theory
 
-   1.  Theory
-   2.  Operations
-   3.  Parameter Files (Full list of commands)
-         - Subheading for urc, prc, prg, with examples for each
+   1.  Theory (Modify from current appendix)    <= To be written
+         - Modified diffusion equation
+         - SCFT equations
+         - Unit Cell Parameters
+   2.  Operations: ITERATE vs. SWEEP
+   3.  Parameter Files (Full listing for 1d, pc, pg)
+         - Subheading for 1d, pc, pg, with examples for each
    4.  Parameter Sweeps
-   5.  Command Files (Full list of commands)
+   5.  Command Files (Full lists for 1d, pc, pg)
    6.  Thermodynamic Properties
    7.  Crystal Unit Cells
-   7.  Space Groups
-   8.  Thin Films
+   8.  Space Groups
+   9.  Thin Films
 
    A.  SCFT
    B.  Periodic Functions and Fourier Series
    C.  Space Group Symmetry
-   D.  Symmetry-Adaptd Bases
+   D.  Symmetry-Adapted Bases
 
-5. User Guide: FTS-R
+5. User Guide: Field-Theoretic Simulation, Self-Consistent Presssure
 
-   1. Theory
-       - Two-Monomer Systems
-       - Multi-Monomer Systems
-   2. Sampling Algorithms: MD and BD
-   3. Analyzers
-   3. Parameter Files (unified pspc and pspg )
-   4. Trajectories and Postprocessing
-   5. Commands
+   1. Field Theoretic Simulation
+       - Two-Monomer Systems (nMonomer = 2)
+       - General (nMonomer >= 2)
+       - Compressor
+   2. Example (Parameter File and Command File)
+   3. Sampling Algorithms (MC and BD)
+   4. Parameter Files (unified pspc and pspg )
+   5. Commpressor Algorithms
+   6. Analyzers
+   7. Trajectories and Postprocessing
+   8. Commands
 
-   A. Functional Delta Function
-   B. Hubbard-Stratonovich Transformation
-   C. Functional Integral Representation
+   A. Functional Delta Function (v1.3)
+   B. Hubbard-Stratonovich Transformation  (v1.3)
+   C. Functional Integral Representation of Q  (v1.3)
 
-6. User Guide: FTS-C
-
-   To be written when implemented
-
+6. Developer Guide
