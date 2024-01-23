@@ -1,0 +1,60 @@
+/*! \page about_history_page Package History
+
+\ref about_methods_page  (Prev)   &nbsp; &nbsp; &nbsp; &nbsp;
+\ref about_programs_page (Next)
+<BR>
+
+The C++/CUDA version of PSCF that is described in this manual was 
+initially designed starting in 2015-2016 as a complete rewrite of an 
+older Fortran program of the same name.  The Fortran version of PSCF
+is an SCFT program for incompressible liquids containing one or more
+species of linear block polymers and (optionally) one or more small 
+molecule solvents.  The acronym PSCF stands for 
+"Polymer Self-Consistent Field", reflecting this origin of the package 
+as an SCFT program. 
+
+The Fortran version of PSCF is maintained in a separate github.com 
+repository at
+<a href= https://github.com/dmorse/pscf/>https://github.com/dmorse/pscf</a> ,
+but is no longer being actively developed. The name "pscfpp" that is
+that is used for the repository containing the current version was 
+chosen to avoid a clash with the name "pscf" that is used for the 
+repository containing the older Fortran code.
+
+The current C++/CUDA version of PSCF is intended to supersede the Fortran
+version. The current version provides almost all of the capabilities of
+the Fortran program, and some important new capabilities. New users of 
+PSCF should use the C++/CUDA version documented here, and users of the 
+Fortran version should consider switching to the current version
+whenever they can.
+
+Differences between the current version of PSCF and the legacy Fortran
+version include the following:
+<ul>
+  <li>
+  The current version is written as an extensible package that contains
+  several different programs designed for use with different geometries,
+  algorithms or hardware. The Fortran version is a single program 
+  designed for periodic structure and linear polymers.
+  </li>
+  <li>
+  The current version enables simulations of mixtures containing acyclic
+  branched block polymers, in addition to the linear block polymers and
+  linear homopolymers allowed by the Fortran code.
+  </li>
+  <li>
+  The current version enables the use of graphics processing units (GPUs)
+  to dramatically accelerate some applications.
+  </li>
+  <li>
+  The current version enables field theoretic simulations that are based 
+  on a partial-saddle point approximation as well as SCFT calculations.
+  </li>
+</ul>
+
+<BR>
+\ref about_methods_page   (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref about_page           (Up)   &nbsp; &nbsp; &nbsp; &nbsp;
+\ref about_programs_page  (Next)
+
+*/

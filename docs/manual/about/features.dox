@@ -1,0 +1,96 @@
+/*! \page about_features_page Features
+
+\ref about_programs_page  (Prev)   &nbsp; &nbsp; &nbsp; &nbsp;
+\ref about_source_page    (Next)
+<BR>
+
+Features that are common to all three PSCF programs and that are 
+applicable to both SCFT and FTS calculations include:
+
+  - Ability to treat mixtures containing any number of block polymer 
+    and solvent molecular species. Linear homopolymers are treated 
+    as special case of block polymers with only one block
+
+  - Ability to treat acyclic branched block polymers of arbitrary
+    complexity, as well as linear block polymers
+
+  - Ability to use canonical, grand-canonical or mixed statistical
+    ensembles - users specify either a volume fraction or a chemical
+    potential value for each molecular species
+
+  - Thorough user and developer documentation is provided via an 
+    integrated web manual
+
+  - Well documented open source code written in object oriented C++
+
+  - A library of examples of input files for many types of calculation
+
+  - Python tools for data analysis and manipulation of input files
+
+Features for SCFT calculations that are common to all PSCF programs
+include:
+
+  - Efficient Anderson-mixing SCFT iteration algorithms
+
+  - Efficient SCFT calculations for sequences of parameter choices along
+    a path in parameter space ("sweeps"), using extrapolation to construct
+    initial guesses
+
+The pscf_pc and pscf_pg programs provide very similar features and 
+are both designed to perform either SCFT calculations or FTS calculations 
+that use a partial saddle-point approximation 
+for systems with periodic boundary conditions. In SCFT calculations of
+a periodic ordered phase, the periodic simulation unit cell is usually
+used to represent a single crystallographic unit cell of the ordered 
+structure. In FTS simulations, the simulation unit cell is often taken
+to represent a larger region that, in an ordered phase, may contain 
+multiple crystallographic unit cells.  
+
+Features of the pscf_pc and pscf_pg programs that are relevant to both 
+SCFT and FTS calculations include:
+
+  - Accurate pseudo-spectral solution of the modified diffusion equation
+    using an algorithm that is accurate to 4th order in the contour
+    length step size
+
+  - Periodic unit cells with 1, 2 or 3 dimensional periodicity
+
+  - Unit cells with all possible 2D and 3D Bravais lattice systems 
+    (i.e., cubic, orthorhombic, monoclinic, etc.) 
+
+  - A companion matlab package
+    [Polymer Visual](<https://github.com/kdorfmanUMN/polymer_visual/>)
+    for visualization of structures
+
+Features for SCFT calculations that are common to the pscf_pc and pscf_pg 
+programs include:
+
+  - Efficient algorithms to optimize unit cell parameters in SCFT so
+    as to minimize free energy density
+
+  - Imposition of any user-selected space-group symmetry on SCFT solutions
+
+  - Built-in database of symmetry operations for all 230 3D space groups
+    and 17 2D plane groups for use in SCFT
+
+Features for SCFT calculations performed with the pscf_pc CPU program
+that have not yet been ported to pscf_pg are:
+
+  - Inhomogeneous density constraints (a "mask")
+
+  - External fields
+
+  - Thin polymer films
+
+The mask and external field features are used in pscf_pc to implement
+simulations of thin films. A mask is used to constrain a polymer material
+to a slit within a periodic supercell, and localized external fields are
+used to represent selective interactions with the top and bottom
+surfaces.
+
+<BR>
+\ref about_programs_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref about_page           (Up)  &nbsp; &nbsp; &nbsp; &nbsp;
+\ref about_source_page    (Next)
+
+*/

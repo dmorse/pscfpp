@@ -1,0 +1,41 @@
+
+/*! \page about_programs_page Programs 
+
+\ref about_history_page  (Prev)   &nbsp; &nbsp; &nbsp; &nbsp;
+\ref about_features_page (Next)
+<BR>
+
+The PSCF package contains source code for three executable programs
+named pscf_1d, pscf_pc and pscf_pg. The intended purpose and basic 
+capabilties of each program is described below;
+
+   - **pscf_1d** : The pscf_1d program is designed to performed SCFT
+     calculations on one-dimensional problems in Cartesian, cylindrical
+     or spherical coordinates. A simple finite difference method is used
+     to solve the underlying modified diffusion equation (the partial 
+     differential equation that is used to treat statistical mechanics 
+     of individual Gaussian polymers).  This program is useful for SCFT 
+     problems involving flat or curved interfaces, and spherical or 
+     cylindrical copolymer micelles.
+
+   - **pscf_pc** : The pscf_pc program is designed to treat structures
+     that are periodic in 1, 2 or 3 dimensions on conventional CPU
+     hardware. A pseudo-spectral algorithm is used to solve the MDE.
+     This program provides capabilities for SCFT calculations analogous
+     to those of the older PSCF Fortran program, as well as for FTS
+     calculations based on the partial saddle-point approximation. 
+     The suffix "pc" stands for "periodic CPU".
+
+   - **pscf_pg** : The pscf_pg program is a GPU-accelerated variant
+     of pscf_pc that also implements both SCFT and FTS for periodic 
+     structures.  It is based on algorithms similar to
+     those used in pscf_pc, and provides almost identical features,
+     but exhibits substantially higher performance for large systems. 
+     The suffix "pg" stands for "periodic GPU".
+
+<BR>
+\ref about_history_page   (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref about_page           (Up)  &nbsp; &nbsp; &nbsp; &nbsp;
+\ref about_features_page  (Next)
+
+*/
