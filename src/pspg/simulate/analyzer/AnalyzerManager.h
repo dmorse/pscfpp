@@ -27,7 +27,7 @@ namespace Pspg {
       /**
       * Constructor.
       *
-      * \param mcSimulator parent McSimulator
+      * \param simulator parent McSimulator
       * \param system parent System
       */
       AnalyzerManager(Simulator<D>& simulator, System<D>& system);

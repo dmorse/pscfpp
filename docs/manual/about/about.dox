@@ -6,36 +6,37 @@
 
 PSCF is package of software for field-theoretic simulations of
 inhomogeneous equilibrium structures formed by polymer liquids, with a
-focus on systems that contain block polymers.  The package is written
-primarily in C++, supplemented by CUDA for code that uses NVIDIA graphics
-processing units (GPUs).  PSCF is only available in source code form, and
-must be compiled from source. The source code is maintained in the github
-repository
+focus on systems that contain block polymers.  The package can be used
+to perform either self-consistent field (SCFT) or some types of stochastic 
+field theoretic simulation (FTS). 
+
+The PSCF package is comprised of several programs that are all designed 
+to predict equilibrium properties of polymer liquids using a standard type 
+of coarse-grained model that treat polymer conformations as continuous 
+random walks.  Systems modeled by PSCF may be either one-component block 
+polymer melts or mixtures that contains one or more polymeric species. 
+PSCF allows a mixture to contain any number of block polymer, homopolymer 
+and small molecule solvent species, and treats the liquid as effectively 
+incompressible. 
+
+The current version of PSCF is written primarily in C++, supplemented by 
+CUDA for code that uses NVIDIA graphics processing units (GPUs).  PSCF 
+is only available in source code form, and must be compiled from source. 
+The source code is maintained in the github repository
 <a href=https://github.com/dmorse/pscfpp/>https://github.com/dmorse/pscfpp</a>.
 
 \section about_pscf_sec Simulation Methods
 
-PSCF is a package of several programs that are designed to predict
-equilibrium properties of a inhomogeneous states of polymer liquids.
-A system described by PSCF may be either a one-component block polymer
-melt or a mixture that contains one or more polymeric species. PSCF
-allows a mixture to contain any number of block polymer, homopolymer
-and small molecule solvent species. All polymeric species are treated
-using a standard coarse-grained Gaussian model of each polymer block
-as a continuous random walk.
-
 PSCF can be used to perform either self-consistent field theory (SCFT)
-calculations or field-theoretic Monte-Carlo (FTMC) simulations of
-polymer liquids. Both methods use an approximation in which the liquid
-is treated as incompressible.
+calculations or stochastic field-theoretic simulation (FTS) simulations.
 
 <h3> Self-Consistent Field Theory (SCFT) </h3>
 
 Self-consistent field theory (SCFT) is an approximate theory for
 predicting structures and free energies of inhomogeneous equilibrium states
-formed by polymer liquids in which inhomogeneity is driven by a tendency
-for sub-units of different chemistry to phase separate. SCFT is a form
-of mean field theory in which the conformational statistics of individual
+of polymer liquids in which inhomogeneity is driven by a tendency for 
+sub-units of different chemistry to phase separate. SCFT is a form of 
+mean field theory in which the conformational statistics of individual
 polymers is approximated by the solution of an auxiliary single-polymer
 problem in which each molecule is acted upon by a set of monomer chemical
 potential fields (referred to in PSCF documentation as w fields) that
@@ -52,18 +53,15 @@ of an SCFT problem must satisfy a set of nonlinear self-consistent field
 corresponding c fields by an empirical description of the thermodynamics
 of mixing for the chosen set of monomer types.
 
-The following references are recommended as introductions to SCFT for
-polymer liquids:
-
-  - Arora, A., *et al.* "Broadly Accessible Self-Consistent Field Theory
-    for Block Polymer Materials Discovery," *Macromolecules*, **2016**,
-    <i>49</i>, 4675.
+The following references provide introductions to the SCFT of polymer 
+liquids:
 
   - Matsen, M. W. "The standard Gaussian model for block copolymer
     melts," *J. Phys.: Condens. Matter*, **2001**, <i>14</i>, R21.
 
-  - Fredrickson, Glenn H. *The Equilibrium Theory of Inhomogeneous
-    Polymers*, Oxford University Press, **2006**.
+  - Arora, A., *et al.* "Broadly Accessible Self-Consistent Field Theory
+    for Block Polymer Materials Discovery," *Macromolecules*, **2016**,
+    <i>49</i>, 4675.
 
   - Shi, A.-C. "Self-Consistent Field Theory of Inhomogeneous Polymeric
     Systems: A Variational Derivation," *Adv. Theory Simul.*, **2019**,
@@ -73,46 +71,76 @@ The reference by Arora et al. is particularly appropriate as an
 introduction to the implementation of SCFT in PSCF because it was
 written, in part, as a description of an earlier version of the package,
 and uses notation, conventions and working equations consistent with
-those used throughout the PSCF documentation and software.
+those used throughout the PSCF documentation and source code.
 
-<h3> Field-Theoretic Monte-Carlo (FTMC) </h3>
+<h3> Field-Theoretic Simulations </h3>
 
-Field-Theoretic Monte-Carlo (FTMC) is a stochastic simulation method
-in which a Monte-Carlo algorithm is used to sample an equilibrium
-ensemble of possible configurations of the w-fields, rather than
-solving for a single field configuration as in SCFT.  The theory
-underlying this method is based upon a formal transformation of the
-partition function for a system of interacting particles as an integral
-over particle positions into a functional integral over configurations
-of a set of fluctuating fields.
+Field-theoretic simulation (FTS) methods are a family of closely related
+stochastic simulation methods that sample an equilibrium ensemble of 
+possible configurations of fluctuating chemical potential fields 
+(w fielsd), rather than solving for a single field configuration as 
+in SCFT.  The theory underlying these methods relies upon an exact 
+formal transformation of the partition function for a system of 
+interacting particles from an integral over particle positions into a 
+functional integral over configurations of a set of fluctuating fields. 
+There are two distinct classes of FTS methods, which are discussed 
+separately below:
 
-An exact formulation of this particle-to-field transformation leads to
-a function integral in which the fields and the functional integrand
-are generally complex- rather than real-valued functions. The complex
-Langevin sampling method, which is not yet implemented in PSCF, is
-designed to sample the resulting complex functional integral.
+<i> Fully Fluctuating Simulations: </i>
+The exact formulation of this particle-to-field transformation leads 
+to a formalism in which the fields and the integrand of the resulting
+functional integral are all generally complex-valued rather than 
+real-valued functions. The complex Langevin sampling method, which is 
+not yet implemented in PSCF, is designed to sample the resulting 
+complex functional integral.
 Complex Langevin simulations of this "fully fluctuating" field theory
 are believed to yield results that are statistically equivalent to
 those obtained by simulating a corresponding particle based model.
 
-The FTMC method that is implemented in PSCF is based on a "partial
-saddle point" approximation to this fully fluctuating field theory
-in which an imaginary field component that enforces the
-incompressibility constrained is constrained to always stay at a
-value corresponding to a partial saddle-point (i.e,. a configuration
-in which the partial functional derivative with respect to this
-field vanishes), while other field components are allowed to
-fluctuate. This approximation leads to a formulation in which all
-quantities of interest have real values, and which is substantially
-more efficient that complex Langevin sampling, at a modest cost in
-accuracy. The formulation in terms of real fields also allows the
-use of Monte-Carlo and other sampling methods that are designed
-for statistical mechanical problems with real statistical weights.
+The following discuss the transformation of the partition function
+into a functional integral, and the formulation of "fully fluctuating" 
+simulations that are based directly on the resulting formulation:
 
-We recommend the following references as introductions and reviews
-of stochastic field theoretic simulations of polymer liquids and
-of the underlying theory:
+  - Fredrickson, G. H. and Ganesan, V. and Drolet, F., "Field-theoretic
+    computer simulations methods for polymers and complex fluids,"
+    *Macromolecules* **2002**, <i>35</i>, 16-39.
 
+  - Fredrickson, G. H. "The Equilibrium Theory of Inhomogeneous Polymers",
+    Oxford University Press, **2006**.
+
+  - Delaney, K.T. and Fredrickson, G.H., "Recent Developments in 
+    Fully Fluctuating Field-Theoretic Simulations of Polymer Melts
+    and Solutions", *J. Phys. Chem. B* **2016**, <i>120</i> 7615.
+
+<i> Partial-Saddle Point Approximation: </i>
+The FTS methods that are currently implemented in PSCF are instead
+all based on a so-called "partial saddle point" approximation to this 
+fully fluctuating field theory. This is an approximation in which
+the field component component that enforces the incompressibility,
+sometimes referred to as a "pressure" field, is treated at a 
+self-consistent field level, while all other field components are 
+allowed to fluctuate. The use of a self-consistent field for the
+pressure field is mathematically equivalent to approximating this field 
+by its value at a partial saddle-point, which is a field configuration 
+in which the partial functional derivative with respect to this field
+vanishes. This approximation cannot be applied to as wide a range
+of different types of systems as the fully fluctuating system, and 
+has thus far been applied only to systems with two monomer types. 
+When this approximation is applicable, however, it leads to a 
+formulation in which all of quantities of interest have real (rather 
+than complex) values. When applicable, it also generally substantially
+more efficient than complex Langevin sampling, at a modest cost in
+accuracy. PSCF currently implements both Monte-Carlo and Brownian
+dynamics algorithms for sampling the ensemble defined by the
+partial saddle-point approximation. 
+
+The following reference provides a good overview of simulations based 
+on the partial saddle-point approximation up to 2021, with references 
+to earlier work:
+
+  - M.W. Matsen and T.M. Beardsley, "Field Theoretic Simulations for Block
+    Copolymer Melts Using the Partial Saddle-Point Approximation",
+    *Polymers*, **2021**, <i>13</i>, 2437.
 
 \section about_history_sec Package History
 
@@ -154,8 +182,8 @@ version include the following:
   to dramatically accelerate some applications.
   </li>
   <li>
-  The current version now enables FTMC simulations as well as SCFT
-  calculations.
+  The current version enables field theoretic simulations that are based 
+  on a partial-saddle point approximation as well as SCFT calculations.
   </li>
 </ul>
 
@@ -177,11 +205,12 @@ PSCF provides source code for three executable programs:
      hardware. A pseudo-spectral algorithm is used to solve the MDE.
      This program provides capabilities for SCFT calculations analogous
      to those of the older PSCF Fortran program, as well as new tools
-     for FTMC simulations.  The suffix "pc" stands for "periodic CPU".
+     for some types of field theoretic simulations.  The suffix "pc" 
+     stands for "periodic CPU".
 
    - **pscf_pg** : The pscf_pg program is a GPU-accelerated variant
-     of pscf_pc that also implements both SCFT and FTMC simulations
-     for periodic structures.  It is based on algorithms similar to
+     of pscf_pc that also implements both SCFT and FTS for periodic 
+     structures.  It is based on algorithms similar to
      those used in pscf_pc, and provides almost identical features,
      but exhibits higher performance for large systems. The suffix
      "pg" stands for "periodic GPU".
@@ -189,7 +218,7 @@ PSCF provides source code for three executable programs:
 \section about_features_sec Features
 
 Features that are common to all PSCF programs and are applicable to
-both SCFT and FTMC calculations include:
+both SCFT and FTS calculations include:
 
   - Ability to treat mixtures containing any number of block polymer 
     and solvent molecular species. Linear homopolymers are treated 
@@ -220,17 +249,17 @@ include:
     a path in parameter space ("sweeps"), using extrapolation to construct
     initial guesses
 
-Features specific to the pscf_pc and pscf_pg programs for periodic
-structures include:
+Features specific to the pscf_pc and pscf_pg programs for systems with
+periodic boundary conditions:
 
-  - Implementation of both SCFT and FTMC 
+  - Implementation of both SCFT and FTS calculations
 
   - Accurate pseudo-spectral solution of the modified diffusion equation
 
   - Ordered phases with 1, 2 or 3 dimensional periodicity
 
   - Periodic unit cells with all possible 2D and 3D Bravais lattice
-    systems (i.e., cubic, orthorhombic, monoclinic, etc.)
+    systems (i.e., cubic, orthorhombic, monoclinic, etc.) 
 
   - Efficient algorithms to optimize unit cell parameters in SCFT so
     as to minimize free energy density
@@ -330,7 +359,6 @@ unix-like environments.
 
 The pscf_1d and pscf_pc CPU programs depend on the following external
 libraries:
-
 
   - <a href=https://www.gnu.org/software/gsl/>GSL</a> -
     GNU Scientific Library
