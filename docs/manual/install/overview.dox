@@ -119,7 +119,7 @@ already completed the configuration steps described above.
      To check if CUDA compilation is currently enabled, change directory
      to the pscfpp/bld directory, and enter
      \code
-     .\setopts -q
+     ./setopts -q
      \endcode
      from that directory. This should yield a report indicating whether
      the "debugging" and "CUDA" options are currently set to be enabled
@@ -132,7 +132,7 @@ already completed the configuration steps described above.
      computer, you must change directory to pscfpp/ root directory and
      issue a command of the form
      \code
-     .\setops -a [architecture id]
+     ./setopts -a [architecture id]
      \endcode
      where [architecture id] denotes a string that identifies the
      architecture of the GPU for which you are compiling. Valid values

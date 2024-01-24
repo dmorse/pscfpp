@@ -1,5 +1,5 @@
 
-/*! \page about_methods_page Simulation Methods
+/*! \page about_methods_page Computational Methods
 
 \ref about_history_page  (Next)
 <BR>
@@ -75,10 +75,10 @@ to a formalism in which the fields and the integrand of the resulting
 functional integral are all generally complex-valued rather than 
 real-valued functions. The complex Langevin sampling method, which is 
 not yet implemented in PSCF, is designed to sample the resulting 
-complex functional integral.
-Complex Langevin simulations of this "fully fluctuating" field theory
-are believed to yield results that are statistically equivalent to
-those obtained by simulating a corresponding particle based model.
+complex functional integral.  Complex Langevin simulations of this 
+"fully fluctuating" field theory are believed to yield results that 
+are statistically equivalent to those obtained from simulations of 
+the corresponding particle based model. 
 
 The following discuss the transformation of the partition function
 into a functional integral, and the formulation of "fully fluctuating" 
@@ -100,38 +100,40 @@ for fully fluctuating complex Langevin simulations.
 
 <b> Partial-Saddle Point Approximation: </b>
 
-The FTS methods that are implemented in PSCF v.12 are instead all 
-based on a so-called "partial saddle point" approximation to the
-fully fluctuating field theory. This is an approximation in which
-a field component component that enforces the incompressibility
-constraint, sometimes referred to as a "pressure" field, is treated 
-at a self-consistent field level, while the other field component 
-or components are allowed to fluctuate. The use of a self-consistent 
-field for the pressure field is mathematically equivalent to approximating 
-this field by its value at a partial saddle-point, which is a field 
-configuration in which the partial functional derivative with respect 
-to this field vanishes. 
+The FTS methods that are implemented in PSCF v.12 are instead all based 
+on a so-called "partial saddle point" approximation to the fully 
+fluctuating field theory. This is an approximation in which a field 
+component component that enforces the incompressibility constraint, 
+sometimes referred to as a "pressure" field, is treated at a 
+self-consistent field level, while the other field component or components 
+are allowed to fluctuate. The use of a self-consistent field for the 
+pressure field is mathematically equivalent to approximating this field 
+by its value at a partial saddle-point, which is a field configuration 
+in which the partial functional derivative with respect to this field 
+vanishes. 
 
-The partial saddle point approximation cannot be applied to as 
-wide a range of different types of systems as the fully fluctuating 
-system. It has previously been applied in published work only 
-to systems with only two monomer types (AB systems) with a positive
-Flory-Huggins parameter. The implemention of partial-saddle point
-simulations in PSCF allows application to a slightly wider range of 
-systems, including some systems with three monomer types. 
+The partial saddle point approximation cannot be applied to as wide a 
+range of different types of systems as the fully fluctuating system. 
+It has previously been applied in published work only to systems with 
+only two monomer types (AB systems) with a positive Flory-Huggins 
+interaction parameter. The implemention of partial-saddle point approximation 
+that is used in PSCF allows application to a somewhat wider range of 
+systems, including some systems with three monomer types, but also 
+requires imposes some constraints on the allowed values of interaction
+parameters.
 
-When the partial saddle-point approximation is applicable, it leads 
-to a formulation in which all of quantities of interest have real 
-(rather than complex) values.  When applicable, simulations that 
-rely on the partial-saddle point approximation also seem to generally 
-be substantially more efficient than complex Langevin simulations, 
-at a modest cost in accuracy.  PSCF v1.2 implements both Monte-Carlo 
-and Brownian dynamics algorithms for sampling the ensemble defined 
-by the partial saddle-point approximation. 
+When the partial saddle-point approximation is applicable, it leads to
+an expression for the partition function as a functional integral
+in which all of quantities of interest have real (rather than complex) 
+values.  Simulations that rely on the partial-saddle point approximation 
+also seem thus far to be substantially more efficient than complex 
+Langevin simulations, at a modest cost in accuracy.  PSCF v1.2 implements 
+a variety of both Monte-Carlo and Brownian dynamics algorithms for sampling 
+the ensemble defined by the partial saddle-point approximation. 
 
-The following reference provides a good overview of simulations based 
-on the partial saddle-point approximation up to 2021, with references 
-to earlier work:
+The following reference provides a good overview of simulations based on 
+the partial saddle-point approximation up to 2021, with references to 
+earlier work:
 
   - M.W. Matsen and T.M. Beardsley, "Field Theoretic Simulations for Block
     Copolymer Melts Using the Partial Saddle-Point Approximation",

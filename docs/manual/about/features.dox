@@ -27,8 +27,7 @@ applicable to both SCFT and FTS calculations include:
 
   - Python tools for data analysis and manipulation of input files
 
-Features for SCFT calculations that are common to all PSCF programs
-include:
+Features for SCFT calculations that are common to all PSCF programs:
 
   - Efficient Anderson-mixing SCFT iteration algorithms
 
@@ -36,18 +35,18 @@ include:
     a path in parameter space ("sweeps"), using extrapolation to construct
     initial guesses
 
-The pscf_pc and pscf_pg programs provide very similar features and 
-are both designed to perform either SCFT calculations or FTS calculations 
-that use a partial saddle-point approximation 
-for systems with periodic boundary conditions. In SCFT calculations of
+The pscf_pc and pscf_pg programs are designed for systems with periodic
+boundary conditions and provide very similar feature sets. Both of these
+programs can perform either SCFT calculations or FTS calculations that 
+rely on a partial saddle-point approximation. In SCFT calculations of
 a periodic ordered phase, the periodic simulation unit cell is usually
 used to represent a single crystallographic unit cell of the ordered 
-structure. In FTS simulations, the simulation unit cell is often taken
-to represent a larger region that, in an ordered phase, may contain 
-multiple crystallographic unit cells.  
+structure. In FTS simulations, the simulation unit cell is usually taken
+to represent a larger region that, for simulations of ordered phases, may 
+contain multiple crystallographic unit cells.  
 
 Features of the pscf_pc and pscf_pg programs that are relevant to both 
-SCFT and FTS calculations include:
+SCFT and FTS calculation:
 
   - Accurate pseudo-spectral solution of the modified diffusion equation
     using an algorithm that is accurate to 4th order in the contour
@@ -62,16 +61,32 @@ SCFT and FTS calculations include:
     [Polymer Visual](<https://github.com/kdorfmanUMN/polymer_visual/>)
     for visualization of structures
 
-Features for SCFT calculations that are common to the pscf_pc and pscf_pg 
-programs include:
+Special features for SCFT calculations that are available in both the 
+pscf_pc and pscf_pg:
 
-  - Efficient algorithms to optimize unit cell parameters in SCFT so
-    as to minimize free energy density
+  - Efficient algorithms to optimize unit cell parameters in SCFT so as
+    to minimize free energy density
 
   - Imposition of any user-selected space-group symmetry on SCFT solutions
 
   - Built-in database of symmetry operations for all 230 3D space groups
     and 17 2D plane groups for use in SCFT
+
+Special features for field-theoretic simulations that are available in 
+both the pscf_pc and pscf_pg:
+
+  - Implementation of both Monte Carlo (MC) and Brownian dynamics (BD) 
+    sampling algorithms, 
+
+  - Several efficient algorithms for adjusting the pressure field so as
+    to find a partial saddle-point (i.e., to impose incompressibility).
+
+  - MC moves: real-space, Fourier-space, and "smart"/force-bias moves 
+
+  - BD algorithms: predictor corrector and Leimkuhler-Matthews steppers
+
+Features for SCFT calculations that are available in pscf_pc but have
+not yet been ported to pscf_pg:
 
 Features for SCFT calculations performed with the pscf_pc CPU program
 that have not yet been ported to pscf_pg are:
