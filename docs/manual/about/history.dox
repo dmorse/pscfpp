@@ -28,8 +28,10 @@ PSCF should use the C++/CUDA version documented here, and users of the
 Fortran version should consider switching to the current version
 whenever they can.
 
-Differences between the current version of PSCF and the legacy Fortran
-version include the following:
+<b> Features and Advantages of Current C++ Version </b>:
+
+Features of the current version of PSCF that distinguish it from the
+legacy Fortran version include the following:
 <ul>
   <li>
   The current version is written as an extensible package that contains
@@ -51,6 +53,42 @@ version include the following:
   on a partial-saddle point approximation as well as SCFT calculations.
   </li>
 </ul>
+
+<b> Features Unique to the Legacy Fortran Program </b>:
+
+The following features of the legacy Fortran program have not been ported 
+to the C++/CUDA version:
+<ul>
+  <li> The Fortran PSCF program can perform RPA-like linear-reponse 
+       calculations for ordered structures, 
+  </li>
+  <li> The Fortran PSCF program provides a quasi-Newton-Broyden SCFT
+       algorithm that works very well for smaller problems.
+  </li>
+</ul>
+These two features are described in more detail below;
+
+The Fortran PSCF program has the ability to perform RPA-like calculations 
+to compute the self-consistent linear response of a periodic structure to 
+an infinitesimal inhomogeneous external field. Because this algorithm has 
+not been ported to the new version, users who are interested in doing this 
+type of calculation should consider using the Fortran program, which will 
+remain available.  The required algorithm and its application are described 
+in the following reference: 
+
+Ranjan, A. and Qin, J. and Morse, D.C., "Linear Response and Stability of 
+Ordered Phases of Block Copolymers", **2008** *Macromolecules* <i>41</i>, 942.  
+
+The Fortran PSCF program also provided a unique quasi-Newton/Broyden SCFT 
+iteration algorithm that was based on a physically motivated initial
+approximation for the inverse Jacobian that is iteratively improved via
+a Broyden algorithm.  This evolved into an excellent algorithm for the 
+problems of moderate size for which it was originally designed. It was 
+abandoned in the new version in favor of Anderson-mixing algorithms 
+because the amount of memory required by the older algorithm increases 
+quadratically with the number of spatial degrees of freedom (i.e., number 
+of basis functions), and this prevented the algorithm from being applied 
+to larger problems.
 
 <BR>
 \ref about_methods_page   (Prev) &nbsp; &nbsp; &nbsp; &nbsp;

@@ -85,11 +85,8 @@ both the pscf_pc and pscf_pg:
 
   - BD algorithms: predictor corrector and Leimkuhler-Matthews steppers
 
-Features for SCFT calculations that are available in pscf_pc but have
-not yet been ported to pscf_pg:
-
-Features for SCFT calculations performed with the pscf_pc CPU program
-that have not yet been ported to pscf_pg are:
+Features for SCFT calculations that are available in pscf_pc but that
+have not yet been ported to pscf_pg:
 
   - Inhomogeneous density constraints (a "mask")
 

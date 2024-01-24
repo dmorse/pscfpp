@@ -65,7 +65,7 @@ system environments using several common package managers.
 
 Documentation is provided as an html web manual that contains both user 
 and developer documentation. The web manual for the most recent numbered 
-release of PSCF (currently v1.1) is available online at:
+release of PSCF (currently v1.2) is available online at:
 
 <a ref=https://dmorse.github.io/pscfpp-man/>
 https://dmorse.github.io/pscfpp-man </a>.
