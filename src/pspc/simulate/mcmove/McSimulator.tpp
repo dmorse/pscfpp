@@ -36,7 +36,8 @@ namespace Pspc {
     : Simulator<D>(system),
       mcMoveManager_(*this, system),
       analyzerManager_(*this, system),
-      trajectoryReaderFactoryPtr_(0)
+      trajectoryReaderFactoryPtr_(0),
+      seed_(0)
    { 
       setClassName("McSimulator");   
       trajectoryReaderFactoryPtr_ 
@@ -60,6 +61,11 @@ namespace Pspc {
    template <int D>
    void McSimulator<D>::readParameters(std::istream &in)
    {
+      // Read random seed. Default is seed_(0), taken from the clock time
+      readOptional(in, "seed", seed_);
+      // Set random seed
+      random().setSeed(seed_);
+      
       // Initialize Simulator<D> base class
       allocate();
       analyzeChi();

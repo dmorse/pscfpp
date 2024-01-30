@@ -27,6 +27,7 @@ namespace Pspg {
     : mcSimulatorPtr_(&mcSimulator),
       systemPtr_(&(mcSimulator.system())),
       randomPtr_(&(mcSimulator.random())),
+      cudaRandomPtr_(&(mcSimulator.cudaRandom())),
       nAttempt_(0),
       nAccept_(0)
    {}

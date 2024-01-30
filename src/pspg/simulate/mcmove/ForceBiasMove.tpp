@@ -15,7 +15,7 @@
 #include <pspg/System.h>
 #include <util/param/ParamComposite.h>
 #include <util/random/Random.h>
-
+#include <pscf/cuda/CudaRandom.h>
 
 namespace Pscf {
 namespace Pspg {
@@ -93,7 +93,6 @@ namespace Pspg {
       biasField_.allocate(meshSize);
       dwd_.allocate(meshSize);
       gaussianField_.allocate(meshSize);
-      cudaRandom_.setSeed(0);
    }
  
    /*
@@ -161,7 +160,7 @@ namespace Pspg {
          RField<D> & dwc = dwc_[j];
          
          // Generagte normal distributed random floating point numbers
-         cudaRandom_.normal(gaussianField_.cField(), meshSize, (cudaReal)stddev, (cudaReal)mean);
+         cudaRandom().normal(gaussianField_.cField(), meshSize, (cudaReal)stddev, (cudaReal)mean);
          // dwr
          scaleReal<<<nBlocks, nThreads>>>(gaussianField_.cField(), b, meshSize);
          // dwd

@@ -139,6 +139,7 @@ namespace Pspc {
       using ParamComposite::setClassName;
       using ParamComposite::readParamComposite;
       using ParamComposite::readParamCompositeOptional;
+      using ParamComposite::readOptional;
 
       // Inherited protected data members
 
@@ -171,6 +172,11 @@ namespace Pspc {
       * Pointer to a trajectory reader/writer factory.
       */
       Factory< TrajectoryReader<D> >* trajectoryReaderFactoryPtr_;
+      
+      /**
+      * Seed value of random generator. 
+      */
+      long seed_;
 
       // Private member functions
 

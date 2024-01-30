@@ -115,6 +115,7 @@ namespace Pspg {
 
       using Simulator<D>::system;
       using Simulator<D>::random;
+      using Simulator<D>::cudaRandom;
       using Simulator<D>::allocate;
       using Simulator<D>::analyzeChi;
       using Simulator<D>::computeWc;
@@ -140,6 +141,7 @@ namespace Pspg {
       using ParamComposite::setClassName;
       using ParamComposite::readParamComposite;
       using ParamComposite::readParamCompositeOptional;
+      using ParamComposite::readOptional;
 
       // Inherited protected data members
 
@@ -172,6 +174,11 @@ namespace Pspg {
       * Pointer to a trajectory reader/writer factory.
       */
       Factory< TrajectoryReader<D> >* trajectoryReaderFactoryPtr_;
+      
+      /**
+      * Seed value of random generator. 
+      */
+      long seed_;
 
       // Private member functions
 

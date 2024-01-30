@@ -18,6 +18,7 @@
 #include <pspg/compressor/Compressor.h>
 
 #include <util/random/Random.h>
+#include <pscf/cuda/CudaRandom.h>
 #include <util/misc/Timer.h>
 #include <util/global.h>
 
@@ -37,7 +38,8 @@ namespace Pspg {
     : Simulator<D>(system),
       mcMoveManager_(*this, system),
       analyzerManager_(*this, system),
-      trajectoryReaderFactoryPtr_(0)
+      trajectoryReaderFactoryPtr_(0),
+      seed_(0)
    { 
       setClassName("McSimulator");   
       trajectoryReaderFactoryPtr_ 
@@ -61,6 +63,12 @@ namespace Pspg {
    template <int D>
    void McSimulator<D>::readParameters(std::istream &in)
    {
+      // Read random seed. Default is seed_(0), taken from the clock time
+      readOptional(in, "seed", seed_);
+      // Set random seed
+      random().setSeed(seed_);
+      cudaRandom().setSeed(seed_);
+      
       // Initialize Simulator<D> base class
       allocate();
       analyzeChi();

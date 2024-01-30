@@ -16,8 +16,6 @@
 #include <util/containers/DArray.h>
 #include <util/global.h>
 
-#include <curand.h>
-
 namespace Pscf {
 namespace Pspg {
 
@@ -83,6 +81,7 @@ namespace Pspg {
       
       using McMove<D>::system;
       using McMove<D>::random;
+      using McMove<D>::cudaRandom;
 
       /**
       *  Attempt unconstrained move.
@@ -109,9 +108,6 @@ namespace Pspg {
       /// Has the variable been allocated?
       bool isAllocated_;
       
-      /// GPU random number generator
-      curandGenerator_t gen_;
-   
    };
       
    #ifndef PSPG_REAL_MOVE_TPP
