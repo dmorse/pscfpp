@@ -8,6 +8,14 @@ theory calculations and field theoretic Monte-Carlo simulations.
 <h2>Contents:</h2>
 <ol type="1">
  <li> \subpage about_page 
+    <ol type="1">
+    <li> \ref about_methods_page  </li>
+    <li> \ref about_history_page  </li>
+    <li> \ref about_programs_page  </li>
+    <li> \ref about_features_page  </li>
+    <li> \ref about_source_page  </li>
+    <li> \ref about_contributors_page  </li>
+    </ol>
  </li>
  <li> \subpage install_page
     <ol type="1">

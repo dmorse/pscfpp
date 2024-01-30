@@ -6,21 +6,28 @@ To be written (v1.2):
 
 1. About
 
-2. Installation 
+   Simulation Methods
+       SCFT
+       FTS
+         [ To do: Add references ]
+   Package History
+   Programs
+   Features
+
+2. Installation  (Unchanged)
 
 3. User Guide: General 
 
-   1.  Model and Parameters  
-   2.  Types of Calculation (SCFT vs. FTS-PS)
-   3.  Executable programs
-   4.  Input Files Types 
-   5.  Command Line Interface (Running a Calculation) 
-   6.  Parameter Files (Syntax and one example)
-   7.  Command Files (Syntax and one example)
-   8.  Field Files
-   9.  Examples
-   10. Visualization
-   11. Python Tools
+   1.  Model and Parameters  (unchanged from 3.1)
+   2.  Input Files  (unchanged from 3.2)
+   3.  Running a program (unchanged)
+   4.  Types of calculation (largely unchanged)
+   5.  Parameter Files (Syntax and one example) (shorten and divide)
+   6.  Field Files (unchanged)
+   7.  Command Files (Syntax and one example) (shorten and divide)
+   8.  Examples (unchanged)    [skip thermo properties, current 3.8]
+   9. Visualization (unchanged) [current 3.13 skip cells, space groups, films]
+   10. Python Tools
 
    A.  Modified Diffusion Equation   (v1.3)
    B.  Block Polymers                (v1.3)
@@ -32,11 +39,11 @@ To be written (v1.2):
          - Modified diffusion equation
          - SCFT equations
          - Unit Cell Parameters
-   2.  Operations: ITERATE vs. SWEEP
+   2.  Operations: ITERATE vs. SWEEP  ( <= To be written)
    3.  Parameter Files (Full listing for 1d, pc, pg)
          - Subheading for 1d, pc, pg, with examples for each
-   4.  Parameter Sweeps
-   5.  Command Files (Full lists for 1d, pc, pg)
+         - Parameter file block for sweeps
+   5.  Command Files (Full lists for 1d, pc, pg) [
    6.  Thermodynamic Properties
    7.  Crystal Unit Cells
    8.  Space Groups
@@ -56,7 +63,7 @@ To be written (v1.2):
    2. Example (Parameter File and Command File)
    3. Sampling Algorithms (MC and BD)
    4. Parameter Files (unified pspc and pspg )
-   5. Commpressor Algorithms
+   5. Compressor Algorithms
    6. Analyzers
    7. Trajectories and Postprocessing
    8. Commands

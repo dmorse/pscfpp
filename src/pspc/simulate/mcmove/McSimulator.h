@@ -152,6 +152,7 @@ namespace Pspc {
       // Inherited public functions
 
       using Simulator<D>::system;
+      using Simulator<D>::random;
       using Simulator<D>::allocate;
       using Simulator<D>::analyzeChi;
       using Simulator<D>::computeWc;
@@ -171,6 +172,7 @@ namespace Pspc {
       using ParamComposite::setClassName;
       using ParamComposite::readParamComposite;
       using ParamComposite::readParamCompositeOptional;
+      using ParamComposite::readOptional;
 
       // Inherited protected data members
 
@@ -204,6 +206,11 @@ namespace Pspc {
       */
       Factory< TrajectoryReader<D> >* trajectoryReaderFactoryPtr_;
 
+      /**
+      * Seed value of random generator. 
+      */
+      long seed_;
+      
       // Private member functions
 
       /**

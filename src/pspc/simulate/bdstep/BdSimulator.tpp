@@ -36,7 +36,8 @@ namespace Pspc {
       analyzerManager_(*this, system),
       bdStepPtr_(0),
       bdStepFactoryPtr_(0),
-      trajectoryReaderFactoryPtr_(0)
+      trajectoryReaderFactoryPtr_(0),
+      seed_(0)
    {
       setClassName("BdSimulator");
       bdStepFactoryPtr_ = new BdStepFactory<D>(*this);
@@ -64,6 +65,11 @@ namespace Pspc {
    template <int D>
    void BdSimulator<D>::readParameters(std::istream &in)
    {
+      // Read random seed. Default is seed_(0), taken from the clock time
+      readOptional(in, "seed", seed_);
+      // Set random seed
+      random().setSeed(seed_);
+      
       // Initialize Simulator<D> base class
       allocate();
       analyzeChi();
@@ -251,7 +257,7 @@ namespace Pspc {
    */
    template<int D>
    void BdSimulator<D>::clearTimers()
-   { }
+   {}
 
 }
 }

@@ -15,6 +15,7 @@
 #include <pscf/mesh/MeshIterator.h>
 #include <pscf/math/IntVec.h>
 #include <util/random/Random.h>
+#include <pscf/cuda/CudaRandom.h>
 #include <util/param/ParamComposite.h>
 #include <util/global.h>
 
@@ -22,10 +23,6 @@
 #include <complex>
 #include <random>
 #include <cmath>
-#include <cuda_runtime.h>
-#include <curand.h>
-#include <curand_kernel.h>
-#include <sys/time.h>
 
 namespace Pscf {
 namespace Pspg 
@@ -90,22 +87,6 @@ namespace Pspg
       }
       computeRgSquare();
       computeStructureFactor();
-      
-      // Create pseudo-random number generator on gpu
-      curandStatus_t status;
-      status = curandCreateGenerator(&gen_, CURAND_RNG_PSEUDO_DEFAULT);
-      if(status != CURAND_STATUS_SUCCESS){
-         std::cout<<"Generator initialization error "<<std::endl;
-      }
-      // Set seed
-      unsigned long long seed;
-      timeval time;
-      gettimeofday(&time, NULL);
-      seed = time.tv_sec + 1123*time.tv_usec;
-      status = curandSetPseudoRandomGeneratorSeed(gen_, seed);
-      if(status != CURAND_STATUS_SUCCESS){
-         std::cout<<"Generator random number error "<<std::endl;
-      }
    }
    
    /**
@@ -207,22 +188,14 @@ namespace Pspg
       
       for (int i = 0; i < nMonomer; ++i){
          //Generate randome number for real part
-#ifdef SINGLE_PRECISION
-      curandGenerateUniform(gen_,randomFieldR_.cField(), meshSize);
-#else
-      curandGenerateUniformDouble(gen_,randomFieldR_.cField(), meshSize);
-#endif
+         cudaRandom().uniform(randomFieldR_.cField(), meshSize);
          // Generate random numbers between [-stepSize_,stepSize_]
          mcftsScale<<<nBlocks, nThreads>>>(randomFieldR_.cField(), stepSize_, meshSize);
          // Generate random numbers between [-stepSize_*S(q)^(1/2), stepSize_*S(q)^(1/2)]
          inPlacePointwiseMul<<<nBlocks, nThreads>>>(randomFieldR_.cField(), sqrtSq_.cField(), meshSize);
          
          //Generate randome number for imagine part
-#ifdef SINGLE_PRECISION
-      curandGenerateUniform(gen_,randomFieldK_.cField(), meshSize);
-#else
-      curandGenerateUniformDouble(gen_,randomFieldK_.cField(), meshSize);
-#endif
+         cudaRandom().uniform(randomFieldK_.cField(), meshSize);
          // Generate random numbers between [-stepSize_,stepSize_]
          mcftsScale<<<nBlocks, nThreads>>>(randomFieldK_.cField(), stepSize_, meshSize);
          // Generate random numbers between [-stepSize_*S(q)^(1/2), stepSize_*S(q)^(1/2)]

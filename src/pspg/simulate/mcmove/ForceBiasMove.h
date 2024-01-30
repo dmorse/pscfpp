@@ -11,7 +11,6 @@
 #include "McMove.h"                          // base class
 #include <prdc/cuda/RField.h>
 #include <util/containers/DArray.h> 
-#include <pscf/cuda/CudaRandom.h>
 
 namespace Pscf {
 namespace Pspg {
@@ -86,6 +85,7 @@ namespace Pspg {
       using McMove<D>::system;
       using McMove<D>::mcSimulator;
       using McMove<D>::random;
+      using McMove<D>::cudaRandom;
       using McMove<D>::incrementNAttempt;
       using McMove<D>::incrementNAccept;
 
@@ -118,9 +118,6 @@ namespace Pspg {
       /// Prefactor of -dc_ in deterministic drift term
       double mobility_;
       
-      /// GPU random number generator
-      CudaRandom cudaRandom_;
-
    };
 
    #ifndef PSPG_FORCE_BIAS_MOVE_TPP

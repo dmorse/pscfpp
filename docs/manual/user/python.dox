@@ -124,7 +124,7 @@ is passed as a parameter, parses its contents, and returns an instance
 of this class that contains a parsed version of the file contents. The
 resulting object is assigned here to a Python variable named 'system'.
 
-### Accessing Parameter Values
+<b> Accessing Parameter Values: </b>
 
 After a parameter file has been parsed, as described above, every
 parameter file block that is delimited by curly brackets is represented
@@ -235,7 +235,7 @@ integer as an int value, stores any other value that can be
 interpreted as valid floating point number as a float, and stores
 any value that is not an int or float verbatim as a string.
 
-### String Representation
+<b> String Representation </b>
 
 The string representation of a param.Composite object is a multi-line
 string that is formatted in the curly bracket notation used in parameter
@@ -422,7 +422,7 @@ created by the sweep, which is used here to specify files in the
 of files with names given by this prefix, followed by an integer,
 followed by the file extension '.stt'. 
 
-### Accessing State Objects and Variable Values:
+<b> Accessing State Objects and Variable Values: </b>
 
 After successful construction of a Sweep object, the resulting object
 stores the contents of each state file in a State object.  These State
@@ -458,7 +458,7 @@ is the chi parameter for interactions between monomer types 0 and 1
 in the same state. Values of other input and output variables can be
 accessed similarly.
 
-### Generating a Summary Report:
+<b> Generating a Summary Report: </b>
 
 The methods 'summary' and 'summaryString' of class Sweep can be 
 used to generate summary reports that contain a list of values for

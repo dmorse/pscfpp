@@ -11,6 +11,7 @@
 
 #include <util/param/ParamComposite.h>
 #include <util/random/Random.h>
+#include <pscf/cuda/CudaRandom.h>
 #include <util/global.h>
 #include <util/misc/Timer.h>
 
@@ -159,7 +160,12 @@ namespace Pspg
       * Get Random number generator of parent System.
       */
       Random& random();
-
+      
+      /**
+      * Get cuda random number generator by reference.
+      */
+      CudaRandom& cudaRandom();
+      
       /**
       * Read the probability from file.
       */
@@ -196,6 +202,9 @@ namespace Pspg
 
       /// Pointer to random number generator
       Random  *randomPtr_;
+      
+      /// Pointer to cudaRandom number generator
+      CudaRandom  *cudaRandomPtr_;
 
       /// Probability of choosing this move
       double  probability_;
@@ -261,6 +270,13 @@ namespace Pspg
    inline Random& McMove<D>::random()
    {  return *randomPtr_; }
 
+   /*
+   * Get CudaRandom number generator.
+   */
+   template <int D>
+   inline CudaRandom& McMove<D>::cudaRandom()
+   {  return *cudaRandomPtr_; }
+   
    /*
    * Get the probability.
    */

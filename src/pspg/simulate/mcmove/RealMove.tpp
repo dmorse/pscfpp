@@ -13,10 +13,6 @@
 #include <util/param/ParamComposite.h>
 #include <pspg/System.h>
 
-#include <curand.h>
-#include <sys/time.h>
-
-
 namespace Pscf {
 namespace Pspg {
 
@@ -65,24 +61,6 @@ namespace Pspg {
          }
          isAllocated_ = true;
       }
-
-      // Create pseudo-random number generator on gpu
-      curandStatus_t status;
-      status = curandCreateGenerator(&gen_, CURAND_RNG_PSEUDO_DEFAULT);
-      if(status != CURAND_STATUS_SUCCESS){
-         std::cout<<"Generator initialization error "<<std::endl;
-      }
-
-      // Set seed
-      unsigned long long seed;
-      timeval time;
-      gettimeofday(&time, NULL);
-      seed = time.tv_sec + 1123*time.tv_usec;
-      status = curandSetPseudoRandomGeneratorSeed(gen_, seed);
-      if(status != CURAND_STATUS_SUCCESS){
-         std::cout<<"Generator random number error "<<std::endl;
-      }
-
    }
    
    /*
@@ -103,11 +81,7 @@ namespace Pspg {
       for (int i = 0; i < nMonomer; i++){
 
          // Generate random numbers between 0.0 and 1.0 from uniform distribution
-#ifdef SINGLE_PRECISION
-         curandStatus_t gen_error = curandGenerateUniform(gen_, randomField_.cField(), meshSize);
-#else
-         curandStatus_t gen_error = curandGenerateUniformDouble(gen_, randomField_.cField(), meshSize);
-#endif
+         cudaRandom().uniform(randomField_.cField(), meshSize);
 
          // Generate random numbers between [-stepSize_,stepSize_]
          mcftsScale<<<nBlocks, nThreads>>>(randomField_.cField(), stepSize_, meshSize);
