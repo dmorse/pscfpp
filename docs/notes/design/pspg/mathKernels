@@ -1,23 +1,28 @@
 TODO (pspg GPU code):
 
-Clean up of kernel functions
--------------------------------------------------------------------------
+Clean up of simple vector linear algebra kernel functions
+----------------------------------------------------------
 
-1) Comment out (first) then erase (second) unused kernels.
+1) Create a new public branch vector in which to do clean up.
+   Submit partial but functional changes to that.
+
+2) Comment out (first) then erase (second) unused kernels.
    Some are found in solvers/Block.tpp and (possibly?) math/Helpers.cu
    (From Ryan: definitely some in math/Helpers.cu!)
 
-2) Replace scaleRealData in fieldFFT.tpp by function from linearAlgebra
+3) Analyze what operations in the current pspg code are or should be 
+   implemented by calling a standard linear algebra operation like
+   one of those described below. That will give a list of operations
+   that are needed immediately, and may identify some possible 
+   operations that we actually don't need immediately. 
 
-3) Consider moving FFTBatched.tpp/scaleComplexData to linearAlgebra
+4) Establish more consistent function name conventions for a new
+   set of functions in pscf/cuda/LinearAlgebra files.
 
-4) Consider moving some pointwise multiplication functions from Block
-   to LinearAlgebra, including those that operate on complex data.
-
-5) Move parallel reduction kernels to private namespace in implementation
-   of kernel wrappers, so not publically visible. 
-
-6) Establish more consistent function name conventions.
+   Proposal: One way to do this would be to write and test copies 
+   with new names and/or new interfaces, and then just start 
+   replacing function calls to refer to the new functions. Comment 
+   out and remove old ones only after all calls have been changed
 
    One possibile set of semantic units for vector operations:
 
@@ -73,65 +78,102 @@ Clean up of kernel functions
        A = A + aB   :   rV_EqAddVr
 
        Corresponding functions that return a complex-valued vector
-       will start with cV. Arguments on the RHS side will use C for a 
-       complex vector with the same value for all elements, V for a 
-       complex vector, U for a real vector, c for a complex scalar that
-       multiplies a vector, c for a complex scalar that multiplies a
-       vector.
+       will start with cV. Arguments on the RHS side will use V for
+       a complex vector, c for a complex scalar that multiplies a
+       vector, r for a real scalar that multiplies a vector, C for 
+       a complex vector with the same value for all elements, R for 
+       a real vector with the same value for all elements. If we 
+       need a symbol for a real valued vector (which we may not)
+       use U. 
 
-Kernel Functions
+       Possibility: We could consider creating a sub namespace of Pscf::Gpu 
+       such as Pscf::Gpu::LinAlg if we thought that the extra name qualifier
+       would improve clarity. CPU and GPU implementations of analogous 
+       functions would already be segregated into Pscf::Gpu and Pscf::Cpu,
+       so we wouldn't need it for that purpose. 
 
-       Kernel functions can use names as described above, but with
-       prefix _ to indicate a kernel, e.g., _rV_EqV. 
+5) Kernels vs. C++ Wrapper functions
 
-       Analogous names can be used for __global__ CUDA kernels (called 
-       with <<< >>> syntax) and for corresponding C++ __host__ 
-       functions that act on pointers or array containers.
+       For many required operations, we will probably want three types of 
+       closely related function:
 
-   Example kernel names (called with CUDA <<< ... >>> ) syntax
+       1. A global cuda kernel like the existing kernels, in which the Block 
+         and Thread counts have to be passed explicitly. This could be defined
+         in pscf/gpu/LinearAlgebra
 
-       // Binary operations (vrAOpB => v = A Op B)
-       pointWiseBinaryAdd       -> _rV_AddVV
-       pointWiseBinarySubtract  -> _rV_SubVV
+       2. A C++ function in which a ThreadGrid is passed as an argument, along
+         with bare C pointers to memory on the GPU, and an array dimension.
+         This would call a kernel internally. The presence of a ThreadGrid
+         in the argument would distinguish the interface from that of an
+         analogous kernel, so the name could be the same. This could also be
+         defined in pscf/gpu/LinearAlgebra
 
-       // Unary operations (vrOpA => v = v Op A)
-       subtractUniform          -> _rV_EqSubR
-       addUniform               -> _rV_EqAddR
-       pointWiseAdd             -> _rV_EqAddV
-       pointWiseSubtract        -> _rV_EqSubV
-       scaleReal                -> _rV_EqMulR
-       scaleComplex             -> _cV_EqMulC
+       3. A C++ function that takes RField or RFieldDft containers.
+         This would calls the C++ pointer version internally. This could take 
+         a ThreadGrid as an argument or create one internally from knowledge
+         of field array dimensions. The interface would be distinguished from
+         that of the other two function types by the appearance of container
+         types rather than pointers. This would have to be defined in a file
+         in prdc/gpu, since that is where the containers are defined.
 
-       // Assignment operations (LHS = 
-       assign uniform           -> rV_EqR__
-       assign vector            -> rV_EqV__
-       assign exp of vector     -> rV_ExpV__
+       - Proposal: Order of the first few parameters would be the same as in 
+         order of equation, with the LHS vector listed first.  Array size 
+         (if any) would be after arguments, and the ThreadGrid (if any) after 
+         that.
 
-       Corresponding functions that return a complex-valued vector
-       will start with vc. Arguments on the RHS side will use C for
-       complex scalar, R for real scalar, V for complex vector and
-       Vr for real vector.
+       - Even the existing pspg code might be able to use some functions that 
+         act on complex-valued data in order to operator on RFieldDft 
+         containers.  We'd have to think about something that operates on 
+         RFieldDft containers could use the same underlying kernels as 
+         something that operates on a CField container (not yet created). 
+         It depends in part on what data types cudaFFT is using for these 
+         two types of data.
 
-       Overloaded versions of wrapper functions will be provided for
-       pointers, for which size must be provided as a parameter, and 
-       for field containers, for which size is provided by container.
+       - Field containers CField and (possibly) CFieldDft would be created
+         in prdc/gpu and prdc/cpu
 
-       Parameter order same as in order of equation (lhs first).
+       - We would later add functions that act on complex data to 
+         pscf/gpu/linearAlgebra, and analogous functions that act on CField
+         containers to prdc/gpu
+
+       - We need thorough unit tests to be written for all functions during
+         development of these functions. These are simple, but humans still
+         make mistakes, and its a lot of minor changes at once. 
+
+6) Find locally defined kernels and replace them one-by-one with ones defined 
+   in pscf/gpu or prdc/gpu:
+
+     - Replace scaleRealData in fieldFFT.tpp 
+
+     - Consider replacing some pointwise multiplication functions defined 
+       in Block.
+
+     - Consider replacing FFTBatched.tpp/scaleComplexData 
+
+--------------------------------------------------------------------------
+Parallel Reductions:
+
+   After cleaning up operations that create or modify vectors, we could
+   try to clean up parallel reduction kernels and wrappers.
+
+1) Move parallel reduction kernels to private namespace in implementation
+   of kernel wrappers, so not publically visible. 
 
     Example wrapper function for reductions:
 
        reduceSum
-       reduceAbMax
-
-       Corresponding kernel names have suffix __ 
+       reduceAbsMax
 
        Overloaded versions of wrappers for pointers and containers,
-       in which thread grid is computed internally.
-       Versions for pointers take the size as a parameter.
+       as for vector operations. Pointer versions should take a 
+       ThreadGrid as an argument.
 
-6) Rename files:
+       Some convention will be need to distinguish names of kernels
+       from analogous C++ wrapper. The use of a ThreadGrid argument
+       to the C++ wrapper may be enough, if done consistently. 
 
-       LinearAlgebra  -> VectorOps
+2) Rename some files:
+
        KernelWrappers -> Reductions (both kernels and C++ wrappers)
 
        Provide overloaded operations for field containers in 
