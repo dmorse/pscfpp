@@ -33,7 +33,7 @@ namespace Prdc {
    IntVec<2> shiftToMinimum(IntVec<2>& v, IntVec<2> d, UnitCell<2> const & cell)
    {
       // Initialize minimum to input value
-      const double epsilon = 1.0E-6;
+      const double epsilon = 1.0E-8;
       double Gsq = cell.ksq(v);
       double Gsq_min_lo = Gsq - epsilon;
       double Gsq_min_hi = Gsq + epsilon;
@@ -64,7 +64,7 @@ namespace Prdc {
    IntVec<3> shiftToMinimum(IntVec<3>& v, IntVec<3> d, UnitCell<3> const & cell)
    {
       // Initialize minimum to input value
-      const double epsilon = 1.0E-6;
+      const double epsilon = 1.0E-8;
       double Gsq = cell.ksq(v);
       double Gsq_min_lo = Gsq - epsilon;
       double Gsq_min_hi = Gsq + epsilon;
