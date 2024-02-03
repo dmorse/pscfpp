@@ -181,6 +181,7 @@ namespace Prdc {
       const double epsilon = 1.0E-8;
       IntVec<D> meshDimensions = mesh().dimensions();
       IntVec<D> rootVecBz;   // BZ indices for root of this star
+      IntVec<D> rootVecDft;  // DFT indices for root of this star
       IntVec<D> vec;         // Indices of temporary wavevector
       IntVec<D> nVec;        // Indices of negation of a wavevector
       int listId = 0;        // id for this list
@@ -392,6 +393,7 @@ namespace Prdc {
             while (list.size() > 0) {
 
                rootVecBz = rootItr->indicesBz;
+               rootVecDft = rootItr->indicesDft;
                Gsq = rootItr->sqNorm;
                cancel = false;
                star.clear();
@@ -434,7 +436,7 @@ namespace Prdc {
                   // vector equivalent to the root vector but with a 
                   // nonzero phase, creating a contradiction.
 
-                  if (wave.indicesDft == rootItr->indicesDft) {
+                  if (wave.indicesDft == rootVecDft) {
                      if (std::abs(wave.phase) > 1.0E-6) {
                         cancel = true;
                      }
@@ -565,7 +567,7 @@ namespace Prdc {
                            break;
                         }
                      }
-                     // If negationFound, then rootItr->indicesDft = nVec
+                     // If negationFound, then rootVecDft = nVec
 
                      // Failure to find the negation here is an error:
                      // It must be either in this star or remaining list
@@ -573,9 +575,9 @@ namespace Prdc {
                      if (!negationFound) {
                         std::cout << "Negation not found for: " << "\n";
                         std::cout << " vec (ft):" 
-                                  << rootItr->indicesDft <<"\n"; 
+                                  << rootVecDft <<"\n"; 
                         std::cout << " vec (bz):" 
-                                  << rootItr->indicesBz <<"\n"; 
+                                  << rootVecBz <<"\n"; 
                         std::cout << "-vec (dft):" << nVec << "\n";
                         UTIL_CHECK(negationFound);
                      }
