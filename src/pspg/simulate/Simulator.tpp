@@ -120,6 +120,10 @@ namespace Pspg {
 
       const int nMonomer = mixture.nMonomer();
       const int meshSize = domain.mesh().size();
+      
+      // GPU resources
+      int nBlocks, nThreads;
+      ThreadGrid::setThreadsLogical(meshSize, nBlocks, nThreads);
 
       const int np = mixture.nPolymer();
       const int ns = mixture.nSolvent();
@@ -157,14 +161,17 @@ namespace Pspg {
             }
          }
       }
+      
+      // Add average of pressure field wc_[nMonomer-1] to lnQ
+      double sum_xi = 
+           (double)gpuSum(wc_[nMonomer-1].cField(), meshSize);
+      lnQ += sum_xi/double(meshSize);
+      
       // lnQ now contains a value per monomer
 
       // Initialize field contribution HW
 
       // Compute quadratic field contribution to HW
-      // GPU resources
-      int nBlocks, nThreads;
-      ThreadGrid::setThreadsLogical(meshSize, nBlocks, nThreads);
       double HW = 0.0;
       double prefactor, s;
       int j;
@@ -183,11 +190,6 @@ namespace Pspg {
          HW += prefactor * wSqure;
       }
       
-      // Subtract average of pressure field wc_[nMonomer-1]
-      double sum_xi = 
-           (double)gpuSum(wc_[nMonomer-1].cField(), meshSize);
-      HW -= sum_xi;
-
       // Normalize HW to equal a value per monomer
       HW /= double(meshSize);
 

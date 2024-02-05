@@ -153,6 +153,12 @@ namespace Pspc {
             }
          }
       }
+      
+      // Subtract average of pressure field wc_[nMonomer-1]
+      RField<D> const & Wc = wc_[nMonomer-1];
+      for (int i = 0; i < meshSize; ++i) {
+         lnQ += Wc[i]/double(meshSize);
+      }
       // lnQ now contains a value per monomer
 
       // Initialize field contribution HW
@@ -171,12 +177,6 @@ namespace Pspc {
          }
       }
       
-      // Subtract average of pressure field wc_[nMonomer-1]
-      RField<D> const & Wc = wc_[nMonomer-1];
-      for (i = 0; i < meshSize; ++i) {
-         HW -= Wc[i];
-      }
-
       // Normalize HW to equal a value per monomer
       HW /= double(meshSize);
 
