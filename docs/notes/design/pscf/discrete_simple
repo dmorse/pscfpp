@@ -1,0 +1,38 @@
+Question: Is there a simple way of coding discrete chains within the
+context of the current code, perhaps with some simple assumptions or
+restrictions?
+
+Possible model:
+
+ - Create a step algorithm flag that is a static variable of the 
+   Propagator class for each implementation. Within a given calculation,
+   the same step algorithm thus must be used for all propagators on all
+   chains.
+
+ - Treat junctions as geometrical points that do not interact with fields.
+   Junctions would be connected to beads by bonds that are half as long
+   as those associated with normal bead-bead connections. 
+
+ - Require different rules for initial conditions and final conditions
+   for chain ends and vertices. 
+
+ - Take the head of the propagator to always refer to the first bead.
+
+ - For propagators that end at a junction, take the tail to refer to the
+   weight at the junction.  For propagators that end at a chain end, the
+   tail is the weight associated with the final bead.
+
+ - End beads would be given a full statistical weight associated with a
+   bead of the type of the attached block. For propagators that start at
+   a chain end, the compute head function would apply the full weight 
+   e(-W(r)).
+
+ - For propagators that begin at a junction, the computeHead function
+   would apply one-half bond followed by a full statistical weight.
+
+ - Define step function that applies a bond convolution, followed by a
+   full weight exp(-W(r)).
+
+ - computeConcentration would be obtained from a sum over beads, excluding
+   the tail for propagators that end at a junction.
+

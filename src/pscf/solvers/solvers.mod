@@ -8,13 +8,18 @@ namespace Pscf{
    *
    * The templates defined in this module are designed to be used 
    * as base classes for classes that define a variety of different
-   * implementations of self-consistent field theory (SCFT), in 
-   * which each implementation uses a particular set of algorithms
-   * to solve the modified diffusion equation (MDE) in a particular
-   * type of geometry.
+   * implementations of polymer field theory. Different implementations
+   * may be designed for different geometries or boundary conditions
+   * or for different hardware (e.g., CPU vs. GPU), and may use 
+   * different algorithms to solve the modified diffusion equation.  
+   * Source code specific to each such implementation is defined in 
+   * a different enclosed namespace of Pscf, thus allowing the use 
+   * of identical names for analogous classes in different 
+   * implementations without causing name clashes or ambiguities.
    *
-   * To define an implementation of SCFT, one must define the 
-   * following set of solver classes derived from these templates:
+   * To define an implementation of polymer field theory, one must 
+   * define the following set of solver classes derived from these 
+   * solver templates:
    *
    *  - A Propagator class, derived from PropagatorTmpl
    *  - A Block class, derived from BlockTmpl<Propagator>

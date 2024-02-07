@@ -30,8 +30,8 @@ namespace Pscf
    * 
    * Each implementation of self-consistent field theory (SCFT) is defined
    * in a different sub-namespace of Pscf. Each such implementation defines
-   * a concrete propagator class and a concrete block class, which ar 
-   * named Propagator and Block by convention.The Block class in each 
+   * a concrete propagator class and a concrete Block class that are named
+   * Propagator and Block by convention. The Block class in each 
    * implementation is derived from BlockTmpl<Propagator>, using the 
    * following syntax:
    * \code
@@ -42,46 +42,63 @@ namespace Pscf
    *    }
    *
    * \endcode
-   * The algorithms for taking one step of integration of the modified
-   * diffusion equation and for computing the monomer concentration field
-   * arising from monomers in one block must be implemented in the Block
-   * class. These algorithms must be implemented in member functions of
-   * the concrete Block class with the following interfaces:
+   *
+   * Design notes:
+   *
+   * The Block class of a polymer field theory implementation has
+   * member variables that specify all the data that is needed to
+   * describe the block. This includes but is not limited to the
+   * monomer type and Kuhn length that are defined in this base class
+   * template. In addition, subclasses may define a variety of member 
+   * variables that define the numerical discretization of the block 
+   * and any related parameters need by the algorithm that solves the 
+   * modified diffusion equation. 
+   *   
+   * The Block class will normally define one or more public 
+   * functions that can be called repeatedly by the Propagator::solve() 
+   * function in order to implement individual steps of the stepping
+   * algorithm used to solve the MDE. 
+   *  
+   * The Block class also normally provides a void function named 
+   * computeConcentration() that integrates the product of the two
+   * associated propagators with respect to contour length in order
+   * to compute the monomer concentration field associated with the
+   * block.  This is normally called within the implementation of
+   * solve() function of the associated Polymer class, within a loop 
+   * over all blocks of the molecule that is called after solution of 
+   * the modified diffusion equation for all propagators.
+   *  
+   * Here is an example of a simple interface of the Block class for an
+   * implementation that is designed for self-consistent field theory:
    * \code
    *
    *   
-   *   // ---------------------------------------------------------------
-   *   // Take one step of integration of the modified diffusion equation.
-   *   // ---------------------------------------------------------------
+   *   // -------------------------------------------------------------
+   *   // One step of integration of the modified diffusion equation.
+   *   //
+   *   // \param in   input q-field from previous step
+   *   // \param out  output q-field at next step
+   *   // -------------------------------------------------------------
    *   void step(Propagator::QField const & in, Propagator::QField& out);
    *
-   *   // ---------------------------------------------------------------
+   *   // -------------------------------------------------------------
    *   // Compute monomer concentration field for this block.
    *   // 
    *   // \param prefactor  numerical prefactor of phi/(Q*length)
-   *   // ---------------------------------------------------------------
+   *   // -------------------------------------------------------------
    *   void computeConcentration(double prefactor);
    *
    * \endcode
-   * These core algorithms are implemented in the Block class, rather than 
-   * the Propagator class, because the data required to implement these 
-   * algorithms generally depends on the monomer type and contour length 
-   * step size ds of a particular block, and can thus be shared by the two 
-   * propagators associated with a particular block. The data required 
-   * to implement these algorithms cannot, however, be shared among 
-   * propagators in different blocks of the same monomer type because the 
-   * requirement that the length of each block be divided into an integer 
-   * number of contour length steps implies that different blocks of 
-   * arbitrary user-specified length must generally be assumed to have 
-   * slightly different values for the step size ds.
-   * 
-   * The step() function is called in the implementation of the 
-   * PropagatorTmpl::solve() member function, within a loop over steps.
-   * The computeConcentration() function is called in the implementation
-   * of the PolymerTmpl::solve() member function, within a loop over all
-   * blocks of the molecule that is called after solution of the modified
-   * diffusion equation for all propagators.
    *
+   * The step and computeConcentration functions both use private
+   * variables that depend on the monomer type and contour length of 
+   * a particular block, and that apply to both of the two associated 
+   * propagators.  Parameters that depend upon the step size used to
+   * discretize the MDE for a particular block generally cannot, however, 
+   * be re-used by other blocks, because the MDE solver algorithm may 
+   * use slightly different step sizes in different blocks in order to 
+   * divide each block into an integer number of steps of equal length. 
+   * 
    * \ingroup Pscf_Solver_Module
    */
    template <class TP>
