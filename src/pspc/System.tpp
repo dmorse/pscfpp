@@ -289,7 +289,7 @@ namespace Pspc {
       }
 
       // Optionally instantiate a Sweep object
-      if (iteratorPtr_) {
+      if (iteratorPtr_ && !isEnd) {
          sweepPtr_ = 
             sweepFactoryPtr_->readObjectOptional(in, *this, className, 
                                                  isEnd);
@@ -299,23 +299,23 @@ namespace Pspc {
       }
 
       // Optionally instantiate a Compressor object
-      compressorPtr_ = 
-         compressorFactoryPtr_->readObjectOptional(in, *this, className, 
-                                                   isEnd);
-      if (!compressorPtr_ && ParamComponent::echo()) {
-         Log::file() << indent() << "  Compressor{ [absent] }\n";
+      if (!isEnd) {
+         compressorPtr_ = 
+            compressorFactoryPtr_->readObjectOptional(in, *this, className, 
+                                                      isEnd);
+         if (!compressorPtr_ && ParamComponent::echo()) {
+            Log::file() << indent() << "  Compressor{ [absent] }\n";
+         }
       }
 
       // Optionally instantiate a Simulator
-      if (hasCompressor()) {
-
+      if (hasCompressor() && !isEnd) {
          simulatorPtr_ = 
             simulatorFactoryPtr_->readObjectOptional(in, *this, 
                                                       className, isEnd);
          if (!simulatorPtr_ && ParamComponent::echo()) {
             Log::file() << indent() << "  Simulator{ [absent] }\n";
          }
-
       }
 
       // Initialize homogeneous object 

@@ -15,6 +15,8 @@
 #include <pspc/simulate/analyzer/AnalyzerFactory.h>
 #include <pspc/simulate/trajectory/TrajectoryReader.h>
 #include <pspc/simulate/trajectory/TrajectoryReaderFactory.h>
+#include <pspc/simulate/perturbation/PerturbationFactory.h>
+#include <pspc/simulate/perturbation/Perturbation.h>
 #include <pspc/compressor/Compressor.h>
 #include <pspc/System.h>
 
@@ -65,24 +67,41 @@ namespace Pspc {
    template <int D>
    void BdSimulator<D>::readParameters(std::istream &in)
    {
-      // Read random seed. Default is seed_(0), taken from the clock time
+      // Optionally read random seed. 
+      // For default value seed_ = 0, seed is taken from the clock time
+      seed_ = 0;
       readOptional(in, "seed", seed_);
-      // Set random seed
       random().setSeed(seed_);
       
       // Initialize Simulator<D> base class
       allocate();
       analyzeChi();
 
-      // Instantiate an BdStep object
       std::string className;
-      bool isEnd;
+      bool isEnd = false;
+
+      // Optionally read and instantiate a Perturbation object
+      Perturbation<D>* perturbationPtr = 0;
+      perturbationPtr = 
+         perturbationFactory().readObjectOptional(in, *this, 
+                                                  className, isEnd);
+      UTIL_CHECK(!isEnd);
+      if (perturbationPtr) {
+         Simulator<D>::setPerturbation(perturbationPtr);
+      } else
+      if (ParamComponent::echo()) {
+         Log::file() << indent() << "  [Perturbation{} absent]\n";
+      }
+
+      // Instantiate an BdStep object (mandatory)
       bdStepPtr_ = 
           bdStepFactoryPtr_->readObject(in, *this, className, isEnd);
 
-      // Read block of analyzer
-      Analyzer<D>::baseInterval = 0; // default value
-      readParamCompositeOptional(in, analyzerManager_);
+      // Read analyzer block (optional)
+      if (!isEnd) {
+         Analyzer<D>::baseInterval = 0; // default value
+         readParamCompositeOptional(in, analyzerManager_);
+      }
 
    }
 

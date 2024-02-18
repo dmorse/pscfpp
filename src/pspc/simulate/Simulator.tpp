@@ -9,11 +9,16 @@
 */
 
 #include "Simulator.h"
+
 #include <pspc/System.h>
 #include <pspc/compressor/Compressor.h>
+#include <pspc/simulate/perturbation/Perturbation.h>
+#include <pspc/simulate/perturbation/PerturbationFactory.h>
+
 #include <util/misc/Timer.h>
 #include <util/random/Random.h>
 #include <util/global.h>
+
 #include <gsl/gsl_eigen.h>
 
 namespace Pscf {
@@ -32,15 +37,27 @@ namespace Pspc {
      hasWc_(false),
      hasCc_(false),
      systemPtr_(&system),
+     perturbationFactoryPtr_(0),
+     perturbationPtr_(0),
      isAllocated_(false)
-   {  setClassName("Simulator"); }
+   {  
+     setClassName("Simulator"); 
+     perturbationFactoryPtr_ = new PerturbationFactory<D>(*this);
+   }
 
    /*
    * Destructor.
    */
    template <int D>
    Simulator<D>::~Simulator()
-   {}
+   {
+      if (perturbationFactoryPtr_) {
+         delete perturbationFactoryPtr_;
+      }
+      if (perturbationPtr_) {
+         delete perturbationPtr_;
+      }
+   }
 
    /* 
    * Allocate required memory.
@@ -74,6 +91,16 @@ namespace Pspc {
       }
 
       isAllocated_ = true;
+   }
+
+   /*
+   * Set the associated Perturbation<D> object.
+   */ 
+   template<int D>
+   void Simulator<D>::setPerturbation(Perturbation<D>* ptr)
+   {
+      UTIL_CHECK(ptr != 0);
+      perturbationPtr_ = ptr; 
    }
 
    /* 
@@ -192,6 +219,12 @@ namespace Pspc {
       fieldHamiltonian_ = nMonomerSystem * HW;
       idealHamiltonian_ = -1.0 * nMonomerSystem * lnQ;
       hamiltonian_ = idealHamiltonian_ + fieldHamiltonian_;
+
+      if (hasPerturbation()) {
+        double perturbationHamiltonian;
+        perturbationHamiltonian = perturbation().hamiltonian();
+        hamiltonian_ += perturbationHamiltonian;
+      }
 
       hasHamiltonian_ = true;
    }
@@ -476,6 +509,7 @@ namespace Pspc {
       double b, s;
       int i, k;
 
+      // Compute derivatives for standard Hamiltonian
       // Loop over composition eigenvectors (exclude the last)
       for (i = 0; i < nMonomer - 1; ++i) {
          RField<D>& Dc = dc_[i];
@@ -487,6 +521,11 @@ namespace Pspc {
          for (k = 0; k < meshSize; ++k) {
             Dc[k] = a*( b*(Wc[k] - s) + Cc[k] );
          }
+      }
+
+      // Add derivatives arising from a perturbation (if any).
+      if (hasPerturbation()) {
+         perturbation().incrementDc(dc_);
       }
 
       hasDc_ = true;

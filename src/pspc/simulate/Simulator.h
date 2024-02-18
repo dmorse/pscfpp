@@ -19,6 +19,8 @@ namespace Pscf {
 namespace Pspc {
 
    template <int D> class System;
+   template <int D> class Perturbation;
+   template <int D> class PerturbationFactory;
 
    using namespace Util;
    using namespace Prdc::Cpu;
@@ -258,12 +260,12 @@ namespace Pspc {
       double hamiltonian() const;
 
       /**
-      * Get ideal gas contribution (-lnQ) to MC Hamiltonian.
+      * Get ideal gas contribution to the Hamiltonian.
       */
       double idealHamiltonian() const;
 
       /**
-      * Get the quadratic field contribution (HW) to MC Hamiltonian.
+      * Get the quadratic field contribution to the MC Hamiltonian.
       */
       double fieldHamiltonian() const;
 
@@ -417,11 +419,42 @@ namespace Pspc {
       */
       Random& random();
 
+      /**
+      * Get the perturbation factory by const reference.
+      */
+      Perturbation<D> const & perturbation() const;
+
+      /**
+      * Does this Simulator have a Perturbation?
+      */
+      bool hasPerturbation() const;
+
       ///@}
 
    protected:
 
+      // Protected member functions
+
       using Util::ParamComposite::setClassName;
+
+      /**
+      * Get the perturbation factory by non-const reference.
+      */
+      Perturbation<D>& perturbation();
+
+      /**
+      * Get the perturbation factory by reference.
+      */
+      PerturbationFactory<D>& perturbationFactory();
+
+      /**
+      * Set the associated perturbation.
+      *
+      * \param ptr pointer to a new Perturbation<D> object.
+      */
+      void setPerturbation(Perturbation<D>* ptr);
+
+      // Protected data members
 
       /**
       * Random number generator
@@ -535,6 +568,16 @@ namespace Pspc {
       System<D>* systemPtr_;
 
       /**
+      * Pointer to the perturbation Factory.
+      */
+      PerturbationFactory<D>* perturbationFactoryPtr_;
+
+      /**
+      * Pointer to the perturbation (if any)
+      */
+      Perturbation<D>* perturbationPtr_;
+
+      /**
       * Has required memory been allocated?
       */
       bool isAllocated_;
@@ -543,15 +586,42 @@ namespace Pspc {
 
    // Inline functions
 
+   // Get the parent System.
+   template <int D>
+   inline System<D>& Simulator<D>::system()
+   {
+      assert(systemPtr_);  
+      return *systemPtr_; 
+   }
+
    // Get the random number generator.
    template <int D>
    inline Random& Simulator<D>::random()
    {  return random_; }
 
-   // Get the parent System.
+   // Get the perturbation (if any) by const reference.
    template <int D>
-   inline System<D>& Simulator<D>::system()
-   {  return *systemPtr_; }
+   inline Perturbation<D> const & Simulator<D>::perturbation() const
+   {
+      UTIL_CHECK(perturbationPtr_);  
+      return *perturbationPtr_; 
+   }
+
+   // Get the perturbation (if any) by non-const reference.
+   template <int D>
+   inline Perturbation<D>& Simulator<D>::perturbation()
+   {
+      UTIL_CHECK(perturbationPtr_);  
+      return *perturbationPtr_; 
+   }
+
+   // Get the perturbation factory.
+   template <int D>
+   inline PerturbationFactory<D>& Simulator<D>::perturbationFactory()
+   {
+      UTIL_CHECK(perturbationFactoryPtr_);  
+      return *perturbationFactoryPtr_; 
+   }
 
    // Return an array of eigenvalues of projected chi matrix.
    template <int D>
@@ -656,6 +726,11 @@ namespace Pspc {
    template <int D>
    inline bool Simulator<D>::hasDc() const
    {  return hasDc_; }
+
+   // Have eigenvector components of current d fields been computed?
+   template <int D>
+   inline bool Simulator<D>::hasPerturbation() const
+   {  return (perturbationPtr_ != 0); }
 
    // Clear all data (eigen-components of w field and Hamiltonian)
    template <int D>

@@ -131,15 +131,20 @@ namespace Pspc {
       using Simulator<D>::idealHamiltonian;
       using Simulator<D>::fieldHamiltonian;
       using Simulator<D>::hasHamiltonian;
+      using Simulator<D>::hasPerturbation;
 
    protected:
 
       // Inherited protected functions
 
+      using ParamComponent::indent;
       using ParamComposite::setClassName;
       using ParamComposite::readParamComposite;
       using ParamComposite::readParamCompositeOptional;
       using ParamComposite::readOptional;
+      using Simulator<D>::perturbation;
+      using Simulator<D>::perturbationFactory;
+      using Simulator<D>::setPerturbation;
 
       // Inherited protected data members
 
@@ -150,6 +155,7 @@ namespace Pspc {
       using Simulator<D>::fieldHamiltonian_;
       using Simulator<D>::hasHamiltonian_;
       using Simulator<D>::iStep_;
+
 
    private:
 
