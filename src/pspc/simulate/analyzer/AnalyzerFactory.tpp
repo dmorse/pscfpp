@@ -1,5 +1,5 @@
-#ifndef PSPC_MC_MOVE_FACTORY_TPP
-#define PSPC_MC_MOVE_FACTORY_TPP
+#ifndef PSPC_ANALYZER_FACTORY_TPP
+#define PSPC_ANALYZER_FACTORY_TPP
 
 #include "AnalyzerFactory.h"  
 
