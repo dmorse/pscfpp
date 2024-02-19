@@ -89,7 +89,7 @@ rm src/temp
 cp make/config/util_config src/util/config.mk
 cp make/config/pscf_config src/pscf/config.mk
 cp make/config/prdc_config src/prdc/config.mk
-cp make/config/fd1d_config src/fd1d/config.mk
+cp make/config/r1d_config src/r1d/config.mk
 cp make/config/rpc_config src/rpc/config.mk
 cp make/config/pspg_config src/pspg/config.mk
 
@@ -113,7 +113,7 @@ rm make/temp
 cp src/util/config.mk bld/util/config.mk
 cp src/pscf/config.mk bld/pscf/config.mk
 cp src/prdc/config.mk bld/prdc/config.mk
-cp src/fd1d/config.mk bld/fd1d/config.mk
+cp src/r1d/config.mk bld/r1d/config.mk
 cp src/rpc/config.mk bld/rpc/config.mk
 cp src/pspg/config.mk bld/pspg/config.mk
 
@@ -122,7 +122,7 @@ cp src/makefile bld/makefile
 cp src/util/makefile bld/util/makefile
 cp src/pscf/makefile bld/pscf/makefile
 cp src/prdc/makefile bld/prdc/makefile
-cp src/fd1d/makefile bld/fd1d/makefile
+cp src/r1d/makefile bld/r1d/makefile
 cp src/rpc/makefile bld/rpc/makefile
 cp src/pspg/makefile bld/pspg/makefile
 
@@ -130,7 +130,7 @@ cp src/pspg/makefile bld/pspg/makefile
 cp src/util/tests/makefile bld/util/tests/makefile
 cp src/pscf/tests/makefile bld/pscf/tests/makefile
 cp src/prdc/tests/makefile bld/prdc/tests/makefile
-cp src/fd1d/tests/makefile bld/fd1d/tests/makefile
+cp src/r1d/tests/makefile bld/r1d/tests/makefile
 cp src/rpc/tests/makefile bld/rpc/tests/makefile
 cp src/pspg/tests/makefile bld/pspg/tests/makefile
 
