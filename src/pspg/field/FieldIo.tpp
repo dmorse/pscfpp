@@ -1504,6 +1504,6 @@ namespace Pspg {
       }
    }
 
-} // namespace Pspc
+} // namespace Rpc
 } // namespace Pscf
 #endif

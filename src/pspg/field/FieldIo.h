@@ -573,6 +573,6 @@ namespace Pspg {
    extern template class FieldIo<3>;
    #endif
 
-} // namespace Pspc
+} // namespace Rpc
 } // namespace Pscf
 #endif
