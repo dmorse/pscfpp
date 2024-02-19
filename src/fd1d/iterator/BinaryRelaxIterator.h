@@ -1,5 +1,5 @@
-#ifndef FD1D_BINARY_RELAX_ITERATOR_H
-#define FD1D_BINARY_RELAX_ITERATOR_H
+#ifndef R1D_BINARY_RELAX_ITERATOR_H
+#define R1D_BINARY_RELAX_ITERATOR_H
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory
@@ -17,7 +17,7 @@
 
 
 namespace Pscf {
-namespace Fd1d
+namespace R1d
 {
 
    using namespace Util;
@@ -32,7 +32,7 @@ namespace Fd1d
    * Reference:
    * F. Drolet & G.H. Fredrickson, Phys. Rev. Lett. vol. 83, 4317 (1999).
    *
-   * \ingroup Fd1d_Iterator_Module
+   * \ingroup R1d_Iterator_Module
    */
    class BinaryRelaxIterator : public Iterator
    {
@@ -157,6 +157,6 @@ namespace Fd1d
                          
    };
 
-} // namespace Fd1d
+} // namespace R1d
 } // namespace Pscf
 #endif

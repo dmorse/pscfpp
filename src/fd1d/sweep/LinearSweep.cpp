@@ -10,7 +10,7 @@
 #include <cstdio>
 
 namespace Pscf {
-namespace Fd1d {
+namespace R1d {
 
    using namespace Util;
 

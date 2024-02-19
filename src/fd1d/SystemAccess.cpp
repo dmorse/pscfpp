@@ -8,7 +8,7 @@
 #include "SystemAccess.h"                        // header
 
 namespace Pscf {
-namespace Fd1d {
+namespace R1d {
 
    using namespace Util;
 
@@ -38,5 +38,5 @@ namespace Fd1d {
    void SystemAccess::setSystem(System& system)
    {  systemPtr_ = &system; }
 
-} // namespace Fd1d
+} // namespace R1d
 } // namespace Pscf

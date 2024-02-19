@@ -1,5 +1,5 @@
-#ifndef FD1D_PROPAGATOR_H
-#define FD1D_PROPAGATOR_H
+#ifndef R1D_PROPAGATOR_H
+#define R1D_PROPAGATOR_H
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory
@@ -12,7 +12,7 @@
 #include <util/containers/DArray.h>      // member template
 
 namespace Pscf { 
-namespace Fd1d
+namespace R1d
 { 
 
    class Block;
@@ -21,7 +21,7 @@ namespace Fd1d
    /**
    * MDE solver for one-direction of one block.
    *
-   * \ingroup Fd1d_Solver_Module
+   * \ingroup R1d_Solver_Module
    */
    class Propagator : public PropagatorTmpl<Propagator>
    {

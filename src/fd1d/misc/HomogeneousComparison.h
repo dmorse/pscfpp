@@ -1,5 +1,5 @@
-#ifndef FD1D_HOMOGENEOUS_COMPARISON_H
-#define FD1D_HOMOGENEOUS_COMPARISON_H
+#ifndef R1D_HOMOGENEOUS_COMPARISON_H
+#define R1D_HOMOGENEOUS_COMPARISON_H
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory
@@ -11,12 +11,12 @@
 #include <fd1d/SystemAccess.h>             // base class
 
 namespace Pscf {
-namespace Fd1d {
+namespace R1d {
 
    /**
    * Command to compute properties of homogeneous reference system.
    *
-   * \ingroup Pscf_Fd1d_Module
+   * \ingroup Pscf_R1d_Module
    */
    class HomogeneousComparison : public SystemAccess
    {
@@ -100,6 +100,6 @@ namespace Fd1d {
 
    };
 
-} // namespace Fd1d
+} // namespace R1d
 } // namespace Pscf
 #endif

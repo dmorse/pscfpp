@@ -1,5 +1,5 @@
-#ifndef FD1D_FIELD_IO_H
-#define FD1D_FIELD_IO_H
+#ifndef R1D_FIELD_IO_H
+#define R1D_FIELD_IO_H
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory
@@ -13,7 +13,7 @@
 namespace Util { class FileMaster; }
 
 namespace Pscf {
-namespace Fd1d {
+namespace R1d {
 
    class Domain;
    class Mixture;
@@ -22,7 +22,7 @@ namespace Fd1d {
    /**
    * Read and write fields to file.
    *
-   * \ingroup Pscf_Fd1d_Module
+   * \ingroup Pscf_R1d_Module
    */
    class FieldIo 
    {
@@ -249,6 +249,6 @@ namespace Fd1d {
    };
 
 
-} // namespace Fd1d
+} // namespace R1d
 } // namespace Pscf
 #endif

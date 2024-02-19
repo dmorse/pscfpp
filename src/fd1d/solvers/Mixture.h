@@ -1,5 +1,5 @@
-#ifndef FD1D_MIXTURE_H
-#define FD1D_MIXTURE_H
+#ifndef R1D_MIXTURE_H
+#define R1D_MIXTURE_H
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory
@@ -15,7 +15,7 @@
 #include <util/containers/DArray.h>
 
 namespace Pscf {
-namespace Fd1d
+namespace R1d
 {
 
    class Domain;
@@ -37,7 +37,7 @@ namespace Fd1d
    * problem.
    *
    * \ref user_param_mixture_page "Parameter File Format"
-   * \ingroup Fd1d_Solver_Module
+   * \ingroup R1d_Solver_Module
    */
    class Mixture : public MixtureTmpl<Polymer, Solvent>
    {
@@ -166,6 +166,6 @@ namespace Fd1d
       return *domainPtr_;
    }
 
-} // namespace Fd1d
+} // namespace R1d
 } // namespace Pscf
 #endif

@@ -1,5 +1,5 @@
-#ifndef FD1D_SWEEP_PARAMETER_H
-#define FD1D_SWEEP_PARAMETER_H
+#ifndef R1D_SWEEP_PARAMETER_H
+#define R1D_SWEEP_PARAMETER_H
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory
@@ -15,7 +15,7 @@
 using namespace Util;
 
 namespace Pscf {
-namespace Fd1d {
+namespace R1d {
 
    class System;
 
@@ -78,7 +78,7 @@ namespace Fd1d {
    * value. The corresponding format for a parameter that requires two 
    * indices (e.g., block or chi) is instead: "type id(0) id(1) change".
    *
-   * \ingroup Fd1d_Sweep_Module
+   * \ingroup R1d_Sweep_Module
    */
    class SweepParameter
    {

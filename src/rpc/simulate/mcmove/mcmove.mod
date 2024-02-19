@@ -1,14 +1,14 @@
 
 namespace Pscf{
-namespace Pspc{
+namespace Rpc{
 
    /**
-   * \defgroup Pspc_Simulate_McMove_Module Monte Carlo Moves
+   * \defgroup Rpc_Simulate_McMove_Module Monte Carlo Moves
    *
    * Classes that implement Monte Carlo (MC) moves for field theoretic MC
    * simulations in a partial saddle-point approximation. 
    *
-   * \ingroup Pspc_Simulate_Module
+   * \ingroup Rpc_Simulate_Module
    */
 
 }

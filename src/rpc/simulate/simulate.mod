@@ -1,14 +1,14 @@
 
 namespace Pscf{
-namespace Pspc{
+namespace Rpc{
 
    /**
-   * \defgroup Pspc_Simulate_Module Field Theoretic Simulation
+   * \defgroup Rpc_Simulate_Module Field Theoretic Simulation
    *
    * Classes for performing field theoretic simulations in a partial
    * saddle-point approximation. 
    *
-   * \ingroup Pscf_Pspc_Module
+   * \ingroup Pscf_Rpc_Module
    */
 
 }

@@ -1,5 +1,5 @@
-#ifndef FD1D_SWEEP_H
-#define FD1D_SWEEP_H
+#ifndef R1D_SWEEP_H
+#define R1D_SWEEP_H
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory
@@ -17,7 +17,7 @@
 #include <util/global.h>
 
 namespace Pscf {
-namespace Fd1d
+namespace R1d
 {
 
    using namespace Util;
@@ -25,7 +25,7 @@ namespace Fd1d
    /**
    * Solve a sequence of problems along a line in parameter space.
    *
-   * \ingroup Fd1d_Sweep_Module
+   * \ingroup R1d_Sweep_Module
    */
    class Sweep : public SweepTmpl< DArray<System::WField> >, 
                  public SystemAccess
@@ -146,6 +146,6 @@ namespace Fd1d
 
    };
 
-} // namespace Fd1d
+} // namespace R1d
 } // namespace Pscf
 #endif

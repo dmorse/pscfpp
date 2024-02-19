@@ -5,11 +5,11 @@
 #include <util/global.h>
 #include <util/param/BracketPolicy.h>
 
-#include "Fd1dTestComposite.h"
+#include "R1dTestComposite.h"
 
 #include <test/CompositeTestRunner.h>
 
-using namespace Fd1d;
+using namespace R1d;
 using namespace Util;
 
 int main(int argc, char* argv[])
@@ -19,7 +19,7 @@ int main(int argc, char* argv[])
 
    try {
 
-      Fd1dTestComposite runner;
+      R1dTestComposite runner;
   
       // Optionally add file prefix given as command line argument 
       if (argc > 2) {

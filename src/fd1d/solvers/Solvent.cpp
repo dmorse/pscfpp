@@ -1,5 +1,5 @@
-#ifndef FD1D_SOLVENT_TPP
-#define FD1D_SOLVENT_TPP
+#ifndef R1D_SOLVENT_TPP
+#define R1D_SOLVENT_TPP
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory
@@ -12,7 +12,7 @@
 #include <fd1d/domain/Domain.h>
 
 namespace Pscf {
-namespace Fd1d { 
+namespace R1d { 
 
    Solvent::Solvent() 
     : SolventDescriptor()  

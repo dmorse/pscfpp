@@ -1,13 +1,13 @@
 
 namespace Pscf{
-namespace Pspc{
+namespace Rpc{
 
    /**
-   * \defgroup Pspc_Field_Module Fields
+   * \defgroup Rpc_Field_Module Fields
    *
    * Fields and FFT plan for use with pseudo-spectral solver algorithms.
    *
-   * \ingroup Pscf_Pspc_Module
+   * \ingroup Pscf_Rpc_Module
    */
 
 }

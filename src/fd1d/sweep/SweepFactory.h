@@ -1,5 +1,5 @@
-#ifndef FD1D_SWEEP_FACTORY_H
-#define FD1D_SWEEP_FACTORY_H
+#ifndef R1D_SWEEP_FACTORY_H
+#define R1D_SWEEP_FACTORY_H
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory
@@ -14,14 +14,14 @@
 #include <string>
 
 namespace Pscf {
-namespace Fd1d {
+namespace R1d {
 
    using namespace Util;
 
    /**
    * Default Factory for subclasses of Sweep.
    *
-   * \ingroup Fd1d_Sweep_Module
+   * \ingroup R1d_Sweep_Module
    */
    class SweepFactory : public Factory<Sweep> 
    {

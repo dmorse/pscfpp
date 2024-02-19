@@ -12,7 +12,7 @@
 #include <util/global.h>
 
 namespace Pscf {
-namespace Fd1d{
+namespace R1d{
 
    using namespace Util;
 
@@ -127,7 +127,7 @@ namespace Fd1d{
 
    bool AmIterator::hasInitialGuess()
    {
-      // Fd1d::System doesn't hav a hasFields() function
+      // R1d::System doesn't hav a hasFields() function
       return true;
    }
 

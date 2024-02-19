@@ -8,7 +8,7 @@
 #include "Polymer.h"
 
 namespace Pscf {
-namespace Fd1d 
+namespace R1d 
 { 
 
    Polymer::Polymer()

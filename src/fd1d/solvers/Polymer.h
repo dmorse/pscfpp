@@ -1,5 +1,5 @@
-#ifndef FD1D_POLYMER_H
-#define FD1D_POLYMER_H
+#ifndef R1D_POLYMER_H
+#define R1D_POLYMER_H
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory
@@ -12,7 +12,7 @@
 #include <pscf/solvers/PolymerTmpl.h>
 
 namespace Pscf { 
-namespace Fd1d
+namespace R1d
 { 
 
    /**
@@ -32,7 +32,7 @@ namespace Fd1d
    * open, mu is read from the parameter file and phi is computed.
    *
    * \ref user_param_polymer_sec "Parameter File Format"
-   * \ingroup Fd1d_Solver_Module
+   * \ingroup R1d_Solver_Module
    */
    class Polymer : public PolymerTmpl<Block>
    {

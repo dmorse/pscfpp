@@ -1,5 +1,5 @@
-#ifndef FD1D_SYSTEM_ACCESS_H
-#define FD1D_SYSTEM_ACCESS_H
+#ifndef R1D_SYSTEM_ACCESS_H
+#define R1D_SYSTEM_ACCESS_H
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory
@@ -11,7 +11,7 @@
 #include "System.h"                        // member
 
 namespace Pscf {
-namespace Fd1d {
+namespace R1d {
 
    using namespace Util;
 
@@ -22,7 +22,7 @@ namespace Fd1d {
    * maintain a pointer to an associated system, and that implement
    * code that frequently accesses the main members of that System.
    *
-   * \ingroup Pscf_Fd1d_Module
+   * \ingroup Pscf_R1d_Module
    */
    class SystemAccess 
    {
@@ -282,6 +282,6 @@ namespace Fd1d {
       return systemPtr_->cField(id); 
    }
 
-} // namespace Fd1d
+} // namespace R1d
 } // namespace Pscf
 #endif

@@ -1,9 +1,9 @@
 namespace Pscf{
-namespace Fd1d{
+namespace R1d{
 /*! 
-\page fd1d_NrIterator_page Fd1d::NrIterator
+\page fd1d_NrIterator_page R1d::NrIterator
 
-A Pscf::Fd1d::NrIterator<D> object is an iterator that solves the SCFT 
+A Pscf::R1d::NrIterator<D> object is an iterator that solves the SCFT 
 equations using the Newton-Raphson method.  The only user-defined parameters 
 are the max number of iterations (maxItr) and the error tolerance (epsilon).
 
@@ -15,7 +15,7 @@ is not particularly robust in the face of a poor initial guess.
 
 \section fd1d_NrIterator_param_sec Parameter File 
 
-The parameter file format for an Fd1d::NrIterator object is:
+The parameter file format for an R1d::NrIterator object is:
 \code
 NrIterator{
    epsilon     real

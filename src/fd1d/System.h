@@ -1,5 +1,5 @@
-#ifndef FD1D_SYSTEM_H
-#define FD1D_SYSTEM_H
+#ifndef R1D_SYSTEM_H
+#define R1D_SYSTEM_H
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory
@@ -21,7 +21,7 @@ namespace Pscf {
 
    class Interaction;
 
-namespace Fd1d
+namespace R1d
 {
 
    class Iterator;
@@ -48,7 +48,7 @@ namespace Fd1d
    * might look something like this:
    * \code
    *   int main(int argc, char **argv) {
-   *      Pscf::Fd1d::System system;
+   *      Pscf::R1d::System system;
    *      system.setOptions(argc, argv);
    *      system.readParam();
    *      system.readCommands();
@@ -57,7 +57,7 @@ namespace Fd1d
    * The actual main program is given in the file pscf_1d.cpp.
    *
    * \ref user_param_1d_page "Parameter File Format"
-   * \ingroup Pscf_Fd1d_Module
+   * \ingroup Pscf_R1d_Module
    */
    class System : public ParamComposite
    {
@@ -628,6 +628,6 @@ namespace Fd1d
    inline double System::pressure() const
    {  return pressure_; }
 
-} // namespace Fd1d
+} // namespace R1d
 } // namespace Pscf
 #endif

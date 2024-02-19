@@ -1,7 +1,7 @@
 namespace Pscf{
-namespace Fd1d{
+namespace R1d{
 /*! 
-\page fd1d_BinaryRelaxIterator_page Fd1d::BinaryRelaxIterator
+\page fd1d_BinaryRelaxIterator_page R1d::BinaryRelaxIterator
 
 An BinaryRelaxIterator solves is an iterator that uses the simple relaxation 
 method presented by F. Drolet and G.H. Fredrickson to solve the SCFT 

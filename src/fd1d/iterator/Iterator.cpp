@@ -11,7 +11,7 @@
 #include <fd1d/solvers/Mixture.h>
 
 namespace Pscf {
-namespace Fd1d
+namespace R1d
 {
 
    using namespace Util;
@@ -26,5 +26,5 @@ namespace Fd1d
    Iterator::~Iterator()
    {}
 
-} // namespace Fd1d
+} // namespace R1d
 } // namespace Pscf

@@ -1,13 +1,13 @@
 
 namespace Pscf{
-namespace Pspc{
+namespace Rpc{
 
    /**
-   * \defgroup Pspc_Iterator_Module Iterators
+   * \defgroup Rpc_Iterator_Module Iterators
    *
    * Iterators for solving the nonlinear SCFT self-consistency equations.
    *
-   * \ingroup Pscf_Pspc_Module
+   * \ingroup Pscf_Rpc_Module
    */
 
 }

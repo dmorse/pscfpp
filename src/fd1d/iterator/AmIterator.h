@@ -1,5 +1,5 @@
-#ifndef FD1D_AM_ITERATOR_H
-#define FD1D_AM_ITERATOR_H
+#ifndef R1D_AM_ITERATOR_H
+#define R1D_AM_ITERATOR_H
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory
@@ -14,7 +14,7 @@
 #include <pscf/iterator/AmIteratorTmpl.h>
 
 namespace Pscf {
-namespace Fd1d
+namespace R1d
 {
 
    class System;
@@ -24,7 +24,7 @@ namespace Fd1d
    /**
    * Anderson-Mixing iterator.
    *
-   * \ingroup Fd1d_Iterator_Module
+   * \ingroup R1d_Iterator_Module
    */
    class AmIterator : public AmIteratorTmpl<Iterator, DArray<double> >
    {
@@ -180,6 +180,6 @@ namespace Fd1d
 
    };
 
-} // namespace Fd1d
+} // namespace R1d
 } // namespace Pscf
 #endif

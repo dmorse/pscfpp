@@ -1,5 +1,5 @@
-#ifndef FD1D_BLOCK_H
-#define FD1D_BLOCK_H
+#ifndef R1D_BLOCK_H
+#define R1D_BLOCK_H
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory
@@ -14,7 +14,7 @@
 #include <pscf/math/TridiagonalSolver.h>  // member
 
 namespace Pscf { 
-namespace Fd1d 
+namespace R1d 
 { 
 
    class Domain;
@@ -26,7 +26,7 @@ namespace Fd1d
    * Derived from BlockTmpl<Propagator>. A BlockTmpl<Propagator> has two 
    * Propagator members and is derived from BlockDescriptor.
    *
-   * \ingroup Fd1d_Solver_Module
+   * \ingroup R1d_Solver_Module
    */
    class Block : public BlockTmpl<Propagator>
    {

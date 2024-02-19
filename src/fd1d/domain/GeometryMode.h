@@ -1,5 +1,5 @@
-#ifndef FD1D_GEOMETRY_MODE_H
-#define FD1D_GEOMETRY_MODE_H
+#ifndef R1D_GEOMETRY_MODE_H
+#define R1D_GEOMETRY_MODE_H
 
 /*
 * Simpatico - Simulation Package for Polymeric and Molecular Liquids
@@ -12,7 +12,7 @@
 #include <iostream>
 
 namespace Pscf{
-namespace Fd1d
+namespace R1d
 {
 
    /**
@@ -25,7 +25,7 @@ namespace Fd1d
    * representations of the three values are "planar", "cylindrical" and
    * "spherical".
    *
-   * \ingroup Fd1d_Domain_Module
+   * \ingroup R1d_Domain_Module
    */
    enum GeometryMode {Planar, Cylindrical, Spherical};
 

@@ -1,12 +1,12 @@
 namespace Pscf{
-namespace Fd1d{
+namespace R1d{
 /*! 
-\page fd1d_Domain_page Fd1d::Domain
+\page fd1d_Domain_page R1d::Domain
 
-A Pscf::Fd1d::Domain<D> object represents a spatial domain and discretization
+A Pscf::R1d::Domain<D> object represents a spatial domain and discretization
 in a simulation of a D-dimensional periodic structure.
 
-\sa Pscf::Fd1d::Domain
+\sa Pscf::R1d::Domain
 
 The parameter file format for a Domain is:
 \code
@@ -22,7 +22,7 @@ Parameters and subblocks are described below:
   <tr>
     <td> geometryMode </td>
     <td> 
-      Enumeration value of type "Fd1d::GeometryMode".
+      Enumeration value of type "R1d::GeometryMode".
       String representations of  allowed values are "planar", "cylindrical" 
       or "spherical" 
     </td>

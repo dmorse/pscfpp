@@ -9,7 +9,7 @@
 #include "GeometryMode.h"    // class header
 
 namespace Pscf{
-namespace Fd1d
+namespace R1d
 {
 
    using namespace Util;

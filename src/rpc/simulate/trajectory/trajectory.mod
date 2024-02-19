@@ -1,14 +1,14 @@
 
 namespace Pscf{
-namespace Pspc{
+namespace Rpc{
 
    /**
-   * \defgroup Pspc_Simulate_Trajectory_Module Trajectory Readers
+   * \defgroup Rpc_Simulate_Trajectory_Module Trajectory Readers
    *
    * Classes that read trajectory files in various file formats for
    * post-process statistical analysis. 
    *
-   * \ingroup Pspc_Simulate_Module
+   * \ingroup Rpc_Simulate_Module
    */
 
 }

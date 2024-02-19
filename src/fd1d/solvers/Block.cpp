@@ -9,7 +9,7 @@
 #include <fd1d/domain/Domain.h>
 
 namespace Pscf { 
-namespace Fd1d
+namespace R1d
 {
 
    using namespace Util;

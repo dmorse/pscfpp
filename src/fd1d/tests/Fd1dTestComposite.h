@@ -1,5 +1,5 @@
-#ifndef FD1D_TEST_COMPOSITE_H
-#define FD1D_TEST_COMPOSITE_H
+#ifndef R1D_TEST_COMPOSITE_H
+#define R1D_TEST_COMPOSITE_H
 
 #include <test/CompositeTestRunner.h>
 
@@ -8,7 +8,7 @@
 #include "MixtureTest.h"
 #include "SystemTest.h"
 
-TEST_COMPOSITE_BEGIN(Fd1dTestComposite)
+TEST_COMPOSITE_BEGIN(R1dTestComposite)
 TEST_COMPOSITE_ADD_UNIT(DomainTest);
 TEST_COMPOSITE_ADD_UNIT(PropagatorTest);
 TEST_COMPOSITE_ADD_UNIT(MixtureTest);

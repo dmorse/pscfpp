@@ -9,7 +9,7 @@
 #include <util/math/Constants.h>
 
 namespace Pscf { 
-namespace Fd1d
+namespace R1d
 { 
 
    Domain::Domain()

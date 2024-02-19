@@ -29,7 +29,7 @@
 #include <unistd.h>
 
 namespace Pscf {
-namespace Fd1d
+namespace R1d
 {
 
    using namespace Util;
@@ -859,5 +859,5 @@ namespace Fd1d
       }
    }
 
-} // namespace Fd1d
+} // namespace R1d
 } // namespace Pscf

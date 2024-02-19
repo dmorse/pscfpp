@@ -1,13 +1,13 @@
 
 namespace Pscf{
-namespace Pspc{
+namespace Rpc{
 
    /**
-   * \defgroup Pspc_Solver_Module Solvers
+   * \defgroup Rpc_Solver_Module Solvers
    *
    * Classes that solve the modified diffusion equation (MDE).
    *
-   * \ingroup Pscf_Pspc_Module
+   * \ingroup Pscf_Rpc_Module
    */
 
 }

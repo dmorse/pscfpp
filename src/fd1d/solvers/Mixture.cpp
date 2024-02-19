@@ -11,7 +11,7 @@
 #include <cmath>
 
 namespace Pscf { 
-namespace Fd1d
+namespace R1d
 { 
 
    Mixture::Mixture()
@@ -152,5 +152,5 @@ namespace Fd1d
 
    }
 
-} // namespace Fd1d
+} // namespace R1d
 } // namespace Pscf

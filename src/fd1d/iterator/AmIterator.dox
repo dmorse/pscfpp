@@ -1,9 +1,9 @@
 namespace Pscf{
-namespace Fd1d{
+namespace R1d{
 /*! 
-\page fd1d_AmIterator_page Fd1d::AmIterator
+\page fd1d_AmIterator_page R1d::AmIterator
 
-An Fd1d::AmIterator<D> object is an iterator that solves the 1D SCFT 
+An R1d::AmIterator<D> object is an iterator that solves the 1D SCFT 
 equations using an Anderson-Mixing algorithm.
 
 \section fd1d_AmIterator_param_sec Parameter File 

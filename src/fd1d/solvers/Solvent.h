@@ -1,5 +1,5 @@
-#ifndef FD1D_SOLVENT_H
-#define FD1D_SOLVENT_H
+#ifndef R1D_SOLVENT_H
+#define R1D_SOLVENT_H
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory
@@ -15,7 +15,7 @@
 #include <fd1d/domain/Domain.h>
 
 namespace Pscf { 
-namespace Fd1d { 
+namespace R1d { 
 
    using namespace Util;
 
@@ -23,7 +23,7 @@ namespace Fd1d {
    * Solver and descriptor for a solvent species.
    *
    * \ref user_param_solvent_sec "Parameter File Format"
-   * \ingroup Fd1d_Solver_Module
+   * \ingroup R1d_Solver_Module
    */
    //class Solvent : public Species, public ParamComposite
    class Solvent : public SolventDescriptor

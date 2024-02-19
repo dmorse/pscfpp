@@ -14,11 +14,11 @@
 *
 * \param argc number of command line parameter strings
 * \param argv array of command line parameter strings
-* \ingroup Pscf_Fd1d_Module
+* \ingroup Pscf_R1d_Module
 */
 int main(int argc, char **argv)
 {
-   Pscf::Fd1d::System system;
+   Pscf::R1d::System system;
 
    // Process command line options
    system.setOptions(argc, argv);

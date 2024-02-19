@@ -1,5 +1,5 @@
-#ifndef FD1D_NR_ITERATOR_H
-#define FD1D_NR_ITERATOR_H
+#ifndef R1D_NR_ITERATOR_H
+#define R1D_NR_ITERATOR_H
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory
@@ -16,7 +16,7 @@
 #include <util/containers/DMatrix.h>
 
 namespace Pscf {
-namespace Fd1d
+namespace R1d
 {
 
    using namespace Util;
@@ -24,7 +24,7 @@ namespace Fd1d
    /**
    * Newton-Raphson Iterator for SCF equations.
    *
-   * \ingroup Fd1d_Iterator_Module
+   * \ingroup R1d_Iterator_Module
    */
    class NrIterator : public Iterator
    {
@@ -163,6 +163,6 @@ namespace Fd1d
 
    };
 
-} // namespace Fd1d
+} // namespace R1d
 } // namespace Pscf
 #endif

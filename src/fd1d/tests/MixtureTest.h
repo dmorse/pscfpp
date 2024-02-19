@@ -1,5 +1,5 @@
-#ifndef FD1D_MIXTURE_TEST_H
-#define FD1D_MIXTURE_TEST_H
+#ifndef R1D_MIXTURE_TEST_H
+#define R1D_MIXTURE_TEST_H
 
 #include <test/UnitTest.h>
 #include <test/UnitTestRunner.h>
@@ -11,7 +11,7 @@
 
 using namespace Util;
 using namespace Pscf;
-using namespace Pscf::Fd1d;
+using namespace Pscf::R1d;
 
 class MixtureTest : public LogFileUnitTest 
 {
