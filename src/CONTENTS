@@ -9,7 +9,7 @@ Subdirectories (corresponding namespaces in parentheses):
   util/  general utilities for scientific computation (Util)
   pscf/  shared classes for entire package PSCF (Pscf)
   prdc/  shared classes for periodic structures (Pscf::Prdc)
-  fd1d/  finite difference one-dimensional SCFT (Pscf::Fd1d)
+  r1d/   real fields, one-dimensional SCFT (Pscf::R1d)
   rpc/   real fields, periodic SCFT & FTS on CPU (Pscf::Rpc)
   pspg/  pseudo-spectral periodic SCFT & FTMC on GPU (Pscf::Pspg)
   test/  unit testing framework (base classes)
