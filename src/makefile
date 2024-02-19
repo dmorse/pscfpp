@@ -1,6 +1,6 @@
 include config.mk
 
-.PHONY: all all-cpu util pscf prdc fd1d pspc pspg \
+.PHONY: all all-cpu util pscf prdc fd1d rpc pspg \
         test test-cpu test-gpu \
         clean clean-tests veryclean
 # ======================================================================
@@ -19,7 +19,7 @@ all-cpu:
 	cd pscf; $(MAKE) all
 	cd fd1d; $(MAKE) all
 	cd prdc; $(MAKE) all
-	cd pspc; $(MAKE) all
+	cd rpc; $(MAKE) all
 
 # Build code in Util names (general scientific utilities)
 util: 
@@ -47,7 +47,7 @@ pscf_pc:
 	cd util; $(MAKE) all
 	cd pscf; $(MAKE) all
 	cd prdc; $(MAKE) all
-	cd pspc; $(MAKE) all
+	cd rpc; $(MAKE) all
 
 ifdef PSCF_CUDA
 # Build pscf_pc GPU code for periodic structures (install in BIN_DIR)
@@ -67,7 +67,7 @@ test:
 	@cd pscf/tests; $(MAKE) all; $(MAKE) run-quiet
 	@cd prdc/tests; $(MAKE) all; $(MAKE) run-quiet
 	@cd fd1d/tests; $(MAKE) all; $(MAKE) run-quiet
-	@cd pspc/tests; $(MAKE) all; $(MAKE) run-quiet
+	@cd rpc/tests; $(MAKE) all; $(MAKE) run-quiet
 ifdef PSCF_CUDA
 	@cd pspg/tests; $(MAKE) all; $(MAKE) run-quiet
 endif
@@ -75,7 +75,7 @@ endif
 	@cat pscf/tests/count >> count
 	@cat prdc/tests/count >> count
 	@cat fd1d/tests/count >> count
-	@cat pspc/tests/count >> count
+	@cat rpc/tests/count >> count
 ifdef PSCF_CUDA
 	@cat pspg/tests/count >> count
 endif
@@ -90,12 +90,12 @@ test-cpu:
 	@cd pscf/tests; $(MAKE) all; $(MAKE) run-quiet
 	@cd prdc/tests; $(MAKE) all; $(MAKE) run-quiet
 	@cd fd1d/tests; $(MAKE) all; $(MAKE) run-quiet
-	@cd pspc/tests; $(MAKE) all; $(MAKE) run-quiet
+	@cd rpc/tests; $(MAKE) all; $(MAKE) run-quiet
 	@cat util/tests/count > count
 	@cat pscf/tests/count >> count
 	@cat prdc/tests/count >> count
 	@cat fd1d/tests/count >> count
-	@cat pspc/tests/count >> count
+	@cat rpc/tests/count >> count
 	@echo " "
 	@echo "Summary"
 	@cat count
@@ -112,7 +112,7 @@ clean:
 	cd util; $(MAKE) clean
 	cd pscf; $(MAKE) clean
 	cd fd1d; $(MAKE) clean
-	cd pspc; $(MAKE) clean
+	cd rpc; $(MAKE) clean
 	cd pspg; $(MAKE) clean
 
 # Clean unit tests
@@ -120,7 +120,7 @@ clean-tests:
 	cd util/tests; $(MAKE) clean
 	cd pscf/tests; $(MAKE) clean
 	cd fd1d/tests; $(MAKE) clean
-	cd pspc/tests; $(MAKE) clean
+	cd rpc/tests; $(MAKE) clean
 	cd pspg/tests; $(MAKE) clean
 
 # Remove all automatically generated files, recreate initial state
@@ -129,26 +129,26 @@ veryclean:
 	cd pscf; $(MAKE) veryclean
 	cd prdc; $(MAKE) veryclean
 	cd fd1d; $(MAKE) veryclean
-	cd pspc; $(MAKE) veryclean
+	cd rpc; $(MAKE) veryclean
 	cd pspg; $(MAKE) veryclean
 	rm -f util/config.mk
 	rm -f pscf/config.mk
 	rm -f prdc/config.mk
 	rm -f fd1d/config.mk
-	rm -f pspc/config.mk
+	rm -f rpc/config.mk
 	rm -f pspg/config.mk
 ifneq ($(BLD_DIR),$(SRC_DIR))
 	rm -f util/makefile
 	rm -f pscf/makefile
 	rm -f prdc/makefile
 	rm -f fd1d/makefile
-	rm -f pspc/makefile
+	rm -f rpc/makefile
 	rm -f pspg/makefile
 	rm -f util/tests/makefile
 	rm -f pscf/tests/makefile
 	rm -f prdc/tests/makefile
 	rm -f fd1d/tests/makefile
-	rm -f pspc/tests/makefile
+	rm -f rpc/tests/makefile
 	rm -f setopts
 endif
 	rm -f config.mk

@@ -90,7 +90,7 @@ cp make/config/util_config src/util/config.mk
 cp make/config/pscf_config src/pscf/config.mk
 cp make/config/prdc_config src/prdc/config.mk
 cp make/config/fd1d_config src/fd1d/config.mk
-cp make/config/pspc_config src/pspc/config.mk
+cp make/config/rpc_config src/rpc/config.mk
 cp make/config/pspg_config src/pspg/config.mk
 
 # Set directory paths in paths.h, write modified file to src/pscf
@@ -114,7 +114,7 @@ cp src/util/config.mk bld/util/config.mk
 cp src/pscf/config.mk bld/pscf/config.mk
 cp src/prdc/config.mk bld/prdc/config.mk
 cp src/fd1d/config.mk bld/fd1d/config.mk
-cp src/pspc/config.mk bld/pspc/config.mk
+cp src/rpc/config.mk bld/rpc/config.mk
 cp src/pspg/config.mk bld/pspg/config.mk
 
 # Copy main and namespace level makefiles
@@ -123,7 +123,7 @@ cp src/util/makefile bld/util/makefile
 cp src/pscf/makefile bld/pscf/makefile
 cp src/prdc/makefile bld/prdc/makefile
 cp src/fd1d/makefile bld/fd1d/makefile
-cp src/pspc/makefile bld/pspc/makefile
+cp src/rpc/makefile bld/rpc/makefile
 cp src/pspg/makefile bld/pspg/makefile
 
 # Copy makefiles in namespace level test directories
@@ -131,7 +131,7 @@ cp src/util/tests/makefile bld/util/tests/makefile
 cp src/pscf/tests/makefile bld/pscf/tests/makefile
 cp src/prdc/tests/makefile bld/prdc/tests/makefile
 cp src/fd1d/tests/makefile bld/fd1d/tests/makefile
-cp src/pspc/tests/makefile bld/pspc/tests/makefile
+cp src/rpc/tests/makefile bld/rpc/tests/makefile
 cp src/pspg/tests/makefile bld/pspg/tests/makefile
 
 # Copy setopts script

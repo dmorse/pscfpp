@@ -1,6 +1,6 @@
 include src/config.mk
 # =========================================================================
-.PHONY:  all-cpu  all fd1d pspc pspg \
+.PHONY:  all-cpu  all fd1d rpc pspg \
          html html-dev \
          clean clean-tests clean-bin clean-html veryclean 
 

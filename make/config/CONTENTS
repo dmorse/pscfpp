@@ -23,7 +23,7 @@ actual absolute paths to the relevant directories.
 
 Namespace level makefiles:
 
-The files util_config, pscf_config, fd1d_config, pspc_config and 
+The files util_config, pscf_config, fd1d_config, rpc_config and 
 pspg_config are repository versions of namespace level configuration 
 files. The setup script copies these files unalterted to create files 
 named config.mk in each corresponding namespace level subdirectory of
