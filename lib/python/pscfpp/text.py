@@ -470,7 +470,7 @@ class FileEditor:
 
       found = False
       for i in range(n + 1 - self.blockSize):
-         block = join(lines[i:i + self.blockSize], '')
+         block = ''.join(lines[i:i + self.blockSize])
          if (self.filter.search(block)):
             if (not found):
                print(filename)
@@ -480,7 +480,7 @@ class FileEditor:
             print(block)
             if (block[-1] == '\n'):
                block = block[0:-1]
-            list  = split(block, '\n')
+            list  = block.split('\n')
             for j in range(len(list)):
                list[j] = list[j] + '\n'
             lines[i:i+self.blockSize] = list
