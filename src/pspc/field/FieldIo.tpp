@@ -34,7 +34,7 @@
 #include <string>
 
 namespace Pscf {
-namespace Pspc {
+namespace Rpc {
 
    using namespace Util;
    using namespace Pscf::Prdc;
@@ -596,7 +596,7 @@ namespace Pspc {
       in >> nGrid;
       if (nGrid != mesh().dimensions()) {
          Log::file() 
-             << "In Pspc::FieldIo::readFieldsRGrid:\n"
+             << "In Rpc::FieldIo::readFieldsRGrid:\n"
              << "mesh().dimensions() = " << mesh().dimensions() << "\n"
              << "nGrid               = " << mesh().dimensions() << "\n";
          UTIL_THROW("Inconsistent grid in mesh and field header");
@@ -1841,6 +1841,6 @@ namespace Pspc {
       }
    }
 
-} // namespace Pspc
+} // namespace Rpc
 } // namespace Pscf
 #endif

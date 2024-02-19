@@ -8,7 +8,7 @@
 #include "ForceBiasMove.tpp"
 
 namespace Pscf {
-namespace Pspc {
+namespace Rpc {
    template class ForceBiasMove<1>;
    template class ForceBiasMove<2>;
    template class ForceBiasMove<3>;

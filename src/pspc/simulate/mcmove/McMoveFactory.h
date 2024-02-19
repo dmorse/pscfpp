@@ -14,7 +14,7 @@
 #include <string>
 
 namespace Pscf {
-namespace Pspc {
+namespace Rpc {
 
    template <int D> class McSimulator;
 
@@ -23,7 +23,7 @@ namespace Pspc {
    /**
    * Factory for subclasses of McMove.
    *
-   * \ingroup Pspc_McMove_Module
+   * \ingroup Rpc_McMove_Module
    */
    template <int D>
    class McMoveFactory : public Factory< McMove<D> > 

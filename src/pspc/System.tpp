@@ -44,7 +44,7 @@
 #endif
 
 namespace Pscf {
-namespace Pspc {
+namespace Rpc {
 
    using namespace Util;
    using namespace Pscf::Prdc;
@@ -1944,6 +1944,6 @@ namespace Pspc {
       hasFreeEnergy_ = false;
    }
 
-} // namespace Pspc
+} // namespace Rpc
 } // namespace Pscf
 #endif

@@ -10,7 +10,7 @@ namespace Util {
 }
 
 namespace Pscf {
-namespace Pspc {
+namespace Rpc {
 
    using namespace Util;
 
@@ -41,7 +41,7 @@ namespace Pspc {
    * SystemAnalyzer<MdSystem> or SystemAnalyzer<MdSystem>, 
    * respectively.
    *
-   * \ingroup Pspc_Simulate_Analyzer_Module
+   * \ingroup Rpc_Simulate_Analyzer_Module
    */
    template <int D>
    class Analyzer : public ParamComposite

@@ -16,7 +16,7 @@ namespace Pscf {
 }
 
 namespace Pscf {
-namespace Pspc { 
+namespace Rpc { 
 
    using namespace Util;
 
@@ -24,7 +24,7 @@ namespace Pspc {
    * Solver and descriptor for a solvent species.
    *
    * \ref user_param_solvent_sec "Parameter File Format"
-   * \ingroup Pspc_Solver_Module
+   * \ingroup Rpc_Solver_Module
    */
    template <int D>
    class Solvent : public SolventDescriptor

@@ -13,7 +13,7 @@
 #include <util/global.h>
 
 namespace Pscf {
-namespace Pspc{
+namespace Rpc{
 
    using namespace Util;
 

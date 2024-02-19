@@ -6,7 +6,7 @@
 #include <util/param/ParamComposite.h>
 
 namespace Pscf {
-namespace Pspc {
+namespace Rpc {
 
    using namespace Util;
 

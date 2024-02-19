@@ -8,7 +8,7 @@
 #include "BinaryStructureFactorGrid.tpp"
 
 namespace Pscf {
-namespace Pspc {
+namespace Rpc {
    template class BinaryStructureFactorGrid<1>;
    template class BinaryStructureFactorGrid<2>;
    template class BinaryStructureFactorGrid<3>;

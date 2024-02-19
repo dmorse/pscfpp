@@ -1,5 +1,5 @@
 /*! 
-\page pspc_AmIteratorBasis_page Pspc::AmIteratorBasis
+\page pspc_AmIteratorBasis_page Rpc::AmIteratorBasis
 
 The AmIteratorBasis algorithm used by the pscf_pc programs solves 
 the SCFT equations for a periodic system using the Anderson Mixing 

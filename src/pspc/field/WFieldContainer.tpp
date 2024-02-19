@@ -12,7 +12,7 @@
 #include <pspc/field/FieldIo.h>
 
 namespace Pscf {
-namespace Pspc
+namespace Rpc
 {
 
    using namespace Util;
@@ -318,6 +318,6 @@ namespace Pspc
       isSymmetric_ = isSymmetric;
    }
 
-} // namespace Pspc
+} // namespace Rpc
 } // namespace Pscf
 #endif

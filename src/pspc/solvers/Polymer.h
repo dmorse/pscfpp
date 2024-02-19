@@ -14,7 +14,7 @@
 #include <util/containers/FArray.h>      // member template
 
 namespace Pscf { 
-namespace Pspc { 
+namespace Rpc { 
 
    using namespace Pscf::Prdc::Cpu;
 
@@ -36,7 +36,7 @@ namespace Pspc {
    *
    * \ref user_param_polymer_sec "Parameter File Format"
    *
-   * \ingroup Pspc_Solver_Module
+   * \ingroup Rpc_Solver_Module
    */
    template <int D>
    class Polymer : public PolymerTmpl< Block<D> >

@@ -1,9 +1,9 @@
 namespace Pscf{
-namespace Pspc{
+namespace Rpc{
 /*! 
-\page pspc_Domain_page Pspc::Domain
+\page pspc_Domain_page Rpc::Domain
 
-Pscf::Pspc::Domain<D> and Pscf::Pspg::Domain<D> are closely analogous
+Pscf::Rpc::Domain<D> and Pscf::Pspg::Domain<D> are closely analogous
 class templates that are used to represent a periodic unit cell and 
 discretization mesh for a D-dimensional periodic structure, as used 
 in the pscf_pc and pscf_pg programs, respectively. These closely 

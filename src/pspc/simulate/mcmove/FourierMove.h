@@ -18,7 +18,7 @@
 //#include <util/global.h>
 
 namespace Pscf {
-namespace Pspc
+namespace Rpc
 {
 
    using namespace Util;
@@ -27,7 +27,7 @@ namespace Pspc
    /**
    * FourierMove is a Monte Carlo move in fourier space
    *
-   * \ingroup Pspc_Simulate_McMove_Module
+   * \ingroup Rpc_Simulate_McMove_Module
    */
    template <int D>
    class FourierMove : public McMove<D>

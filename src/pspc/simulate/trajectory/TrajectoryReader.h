@@ -11,14 +11,14 @@
 #include <string>
 
 namespace Pscf {
-namespace Pspc {
+namespace Rpc {
 
    template <int D> class System;
 
    /**
    * Trajectory file reader (base class).
    *
-   * \ingroup Pspc_Simulate_Trajectory_Module
+   * \ingroup Rpc_Simulate_Trajectory_Module
    */
    template <int D>
    class TrajectoryReader

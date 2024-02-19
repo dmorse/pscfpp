@@ -8,7 +8,7 @@
 #include "AnalyzerFactory.tpp"
 
 namespace Pscf {
-namespace Pspc {
+namespace Rpc {
    template class AnalyzerFactory<1>;
    template class AnalyzerFactory<2>;
    template class AnalyzerFactory<3>;

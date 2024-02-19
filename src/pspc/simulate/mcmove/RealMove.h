@@ -13,7 +13,7 @@
 #include <util/containers/DArray.h>          // member
 
 namespace Pscf {
-namespace Pspc {
+namespace Rpc {
 
    using namespace Util;
    using namespace Pscf::Prdc::Cpu;
@@ -21,7 +21,7 @@ namespace Pspc {
    /**
    * RealMove is a Monte Carlo move in real space
    *
-   * \ingroup Pspc_Simulate_McMove_Module
+   * \ingroup Rpc_Simulate_McMove_Module
    */
    template <int D>
    class RealMove : public McMove<D>

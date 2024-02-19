@@ -12,7 +12,7 @@
 #include <string>
 
 namespace Pscf {
-namespace Pspc
+namespace Rpc
 {
 
    using namespace Util;
@@ -94,6 +94,6 @@ namespace Pspc
    extern template class BasisFieldState<3>;
    #endif
 
-} // namespace Pspc
+} // namespace Rpc
 } // namespace Pscf
 #endif

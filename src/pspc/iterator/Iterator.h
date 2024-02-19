@@ -13,7 +13,7 @@
 #include <util/global.h>                  
 
 namespace Pscf {
-namespace Pspc
+namespace Rpc
 {
 
    template <int D>
@@ -24,7 +24,7 @@ namespace Pspc
    /**
    * Base class for iterative solvers for SCF equations.
    *
-   * \ingroup Pspc_Iterator_Module
+   * \ingroup Rpc_Iterator_Module
    */
    template <int D>
    class Iterator : public ParamComposite
@@ -183,6 +183,6 @@ namespace Pspc
       }
    }
 
-} // namespace Pspc
+} // namespace Rpc
 } // namespace Pscf
 #endif

@@ -1,5 +1,5 @@
 /*! 
-\page pspc_AmIteratorBasisFilm_page Pspc::AmIteratorBasisFilm
+\page pspc_AmIteratorBasisFilm_page Rpc::AmIteratorBasisFilm
 
 An AmIteratorBasisFilm is an iterator that uses an Anderson Mixing (AM) 
 algorithm to solve the SCFT equations for a system confined to a thin

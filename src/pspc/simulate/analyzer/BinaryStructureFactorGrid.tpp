@@ -30,7 +30,7 @@
 //#include <unordered_map>
 
 namespace Pscf {
-namespace Pspc {
+namespace Rpc {
 
    using namespace Util;
    using namespace Pscf::Prdc;

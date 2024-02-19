@@ -11,7 +11,7 @@
 #include "McState.h"
 
 namespace Pscf {
-namespace Pspc {
+namespace Rpc {
 
    using namespace Util;
    using namespace Pscf::Prdc::Cpu;

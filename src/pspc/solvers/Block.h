@@ -26,7 +26,7 @@ namespace Pscf {
 }
 
 namespace Pscf {
-namespace Pspc {
+namespace Rpc {
 
    using namespace Util;
    using namespace Pscf::Prdc;
@@ -39,7 +39,7 @@ namespace Pspc {
    * has two Propagator<D> members and is derived from BlockDescriptor.
    *
    * \ref user_param_block_sec "Parameter File Format"
-   * \ingroup Pspc_Solver_Module
+   * \ingroup Rpc_Solver_Module
    */
    template <int D>
    class Block : public BlockTmpl< Propagator<D> >

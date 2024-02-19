@@ -15,7 +15,7 @@
 #include <cmath>
 
 namespace Pscf {
-namespace Pspc
+namespace Rpc
 {
 
    using namespace Prdc::Cpu;
@@ -301,6 +301,6 @@ namespace Pspc
       }
    }
 
-} // namespace Pspc
+} // namespace Rpc
 } // namespace Pscf
 #endif

@@ -8,12 +8,12 @@
 #include "BasisFieldState.tpp"
 
 namespace Pscf {
-namespace Pspc
+namespace Rpc
 {
 
    template class BasisFieldState<1>;
    template class BasisFieldState<2>;
    template class BasisFieldState<3>;
 
-} // namespace Pspc
+} // namespace Rpc
 } // namespace Pscf

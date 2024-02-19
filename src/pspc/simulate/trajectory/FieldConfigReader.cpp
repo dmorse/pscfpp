@@ -8,7 +8,7 @@
 #include "FieldConfigReader.tpp"
 
 namespace Pscf {
-namespace Pspc {
+namespace Rpc {
    template class FieldConfigReader<1>;
    template class FieldConfigReader<2>;
    template class FieldConfigReader<3>;

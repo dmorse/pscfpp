@@ -9,7 +9,7 @@
 #include "AmIteratorBasis.tpp"
 
 namespace Pscf {
-namespace Pspc {
+namespace Rpc {
 
    template class FilmIterator<1, AmIteratorBasis<1> >;
    template class FilmIterator<2, AmIteratorBasis<2> >;

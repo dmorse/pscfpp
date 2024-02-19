@@ -5,7 +5,7 @@
 #include <util/param/Manager.h>        // base class template
 
 namespace Pscf {
-namespace Pspc {
+namespace Rpc {
 
    using namespace Util;
    
@@ -16,7 +16,7 @@ namespace Pspc {
    /**
    * Manager for a list of Analyzer objects.
    *
-   * \ingroup Pspc_Simulate_Analyzer_Module
+   * \ingroup Rpc_Simulate_Analyzer_Module
    */
    template <int D>
    class AnalyzerManager : public Manager< Analyzer<D> >

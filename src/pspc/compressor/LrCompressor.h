@@ -16,7 +16,7 @@
 #include <util/misc/Timer.h>
 
 namespace Pscf {
-namespace Pspc
+namespace Rpc
 {
 
    template <int D> class System;
@@ -32,7 +32,7 @@ namespace Pspc
    * calculated linear response of a homogeneous liquid with the same
    * composition as the system of interest.
    *
-   * \ingroup Pspc_Compressor_Module
+   * \ingroup Rpc_Compressor_Module
    */
    template <int D>
    class LrCompressor : public Compressor<D>
@@ -218,6 +218,6 @@ namespace Pspc
    extern template class LrCompressor<3>;
    #endif
 
-} // namespace Pspc
+} // namespace Rpc
 } // namespace Pscf
 #endif

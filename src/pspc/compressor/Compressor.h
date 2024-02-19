@@ -12,7 +12,7 @@
 #include <util/global.h>
 
 namespace Pscf {
-namespace Pspc
+namespace Rpc
 {
 
    template <int D> class System;
@@ -22,7 +22,7 @@ namespace Pspc
    /**
    * Base class for iterators that impose incompressibility.
    *
-   * \ingroup Pspc_Compressor_Module
+   * \ingroup Rpc_Compressor_Module
    */
    template <int D>
    class Compressor : public ParamComposite
@@ -111,6 +111,6 @@ namespace Pspc
    inline int Compressor<D>::mdeCounter()
    {  return mdeCounter_; }
 
-} // namespace Pspc
+} // namespace Rpc
 } // namespace Pscf
 #endif

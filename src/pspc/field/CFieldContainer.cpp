@@ -8,12 +8,12 @@
 #include "CFieldContainer.tpp"
 
 namespace Pscf {
-namespace Pspc
+namespace Rpc
 {
 
    template class CFieldContainer<1>;
    template class CFieldContainer<2>;
    template class CFieldContainer<3>;
 
-} // namespace Pspc
+} // namespace Rpc
 } // namespace Pscf

@@ -14,7 +14,7 @@
 #include <string>
 
 namespace Pscf {
-namespace Pspc {
+namespace Rpc {
 
    template <int D> class System;
 
@@ -23,7 +23,7 @@ namespace Pspc {
    /**
    * Factory for subclasses of Iterator.
    *
-   * \ingroup Pspc_Iterator_Module
+   * \ingroup Rpc_Iterator_Module
    */
 
    template <int D>

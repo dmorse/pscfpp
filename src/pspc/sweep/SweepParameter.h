@@ -12,7 +12,7 @@
 #include <string>
 
 namespace Pscf {
-namespace Pspc {
+namespace Rpc {
 
    template <int D> class System;
 
@@ -78,7 +78,7 @@ namespace Pspc {
    * value. The corresponding format for a parameter that requires two 
    * indices (e.g., block or chi) is instead: "type id(0) id(1) change".
    *
-   * \ingroup Pspc_Sweep_Module
+   * \ingroup Rpc_Sweep_Module
    */
    template <int D>
    class SweepParameter

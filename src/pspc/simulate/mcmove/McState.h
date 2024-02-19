@@ -13,7 +13,7 @@
 #include <util/containers/DArray.h>
 
 namespace Pscf {
-namespace Pspc {
+namespace Rpc {
 
    using namespace Util;
    using namespace Prdc::Cpu;
@@ -21,7 +21,7 @@ namespace Pspc {
    /**
    * McState stores the state used by an MC simulation.
    *
-   * \ingroup Pspc_McState_Module
+   * \ingroup Rpc_McState_Module
    */
    template <int D>
    struct McState 

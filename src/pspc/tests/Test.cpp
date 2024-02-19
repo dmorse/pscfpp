@@ -14,7 +14,7 @@
 #include <util/param/BracketPolicy.h>
 #include <util/global.h>
 
-TEST_COMPOSITE_BEGIN(PspcNsTestComposite)
+TEST_COMPOSITE_BEGIN(RpcNsTestComposite)
 addChild(new FieldTestComposite, "field/");
 addChild(new SolverTestComposite, "solvers/");
 addChild(new TEST_RUNNER(SystemTest), "system/");
@@ -33,7 +33,7 @@ int main(int argc, char* argv[])
 
    try {
 
-      PspcNsTestComposite runner;
+      RpcNsTestComposite runner;
 
       // Add any file prefix given as command line argument
       if (argc > 2) {

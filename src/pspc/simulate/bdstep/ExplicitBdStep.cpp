@@ -8,7 +8,7 @@
 #include "ExplicitBdStep.tpp"
 
 namespace Pscf {
-namespace Pspc {
+namespace Rpc {
    template class ExplicitBdStep<1>;
    template class ExplicitBdStep<2>;
    template class ExplicitBdStep<3>;

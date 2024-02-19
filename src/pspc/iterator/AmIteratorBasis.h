@@ -15,7 +15,7 @@
 
 
 namespace Pscf {
-namespace Pspc
+namespace Rpc
 {
 
    template <int D> class System;
@@ -23,9 +23,9 @@ namespace Pspc
    using namespace Util;
 
    /**
-   * Pspc implementation of the Anderson Mixing iterator with symmetry.
+   * Rpc implementation of the Anderson Mixing iterator with symmetry.
    *
-   * \ingroup Pspc_Iterator_Module
+   * \ingroup Rpc_Iterator_Module
    */
    template <int D>
    class AmIteratorBasis
@@ -200,6 +200,6 @@ namespace Pspc
    extern template class AmIteratorBasis<3>;
    #endif
 
-} // namespace Pspc
+} // namespace Rpc
 } // namespace Pscf
 #endif

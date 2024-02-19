@@ -12,7 +12,7 @@
 #include "FilmIteratorBase.h"
 
 namespace Pscf {
-namespace Pspc
+namespace Rpc
 {
 
    template <int D>
@@ -45,7 +45,7 @@ namespace Pspc
    * FilmIterator (e.g., "AmIteratorFilm{" will create a FilmIterator with
    * an AmIterator object inside of it). 
    *
-   * \ingroup Pspc_Iterator_Module
+   * \ingroup Rpc_Iterator_Module
    */
    template <int D, typename IteratorType>
    class FilmIterator : public FilmIteratorBase<D,IteratorType>
@@ -206,6 +206,6 @@ namespace Pspc
    extern template class FilmIterator<3, AmIteratorBasis<3> >;
    #endif
 
-} // namespace Pspc
+} // namespace Rpc
 } // namespace Pscf
 #endif

@@ -29,7 +29,7 @@ namespace Pscf {
 }
 
 namespace Pscf {
-namespace Pspc {
+namespace Rpc {
 
    using namespace Util;
    using namespace Pscf;
@@ -45,7 +45,7 @@ namespace Pspc {
    * representations. The member functions that implement IO operations 
    * define the file formats for these field representations.
    *
-   * \ingroup Pspc_Field_Module
+   * \ingroup Rpc_Field_Module
    */
    template <int D>
    class FieldIo 
@@ -785,6 +785,6 @@ namespace Pspc {
    extern template class FieldIo<3>;
    #endif
 
-} // namespace Pspc
+} // namespace Rpc
 } // namespace Pscf
 #endif

@@ -8,7 +8,7 @@
 #include "BdSimulator.tpp"
 
 namespace Pscf {
-namespace Pspc {
+namespace Rpc {
    template class BdSimulator<1>;
    template class BdSimulator<2>;
    template class BdSimulator<3>;

@@ -8,12 +8,12 @@
 #include "Mask.tpp"
 
 namespace Pscf {
-namespace Pspc
+namespace Rpc
 {
 
    template class Mask<1>;
    template class Mask<2>;
    template class Mask<3>;
 
-} // namespace Pspc
+} // namespace Rpc
 } // namespace Pscf

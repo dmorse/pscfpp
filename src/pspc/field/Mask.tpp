@@ -13,7 +13,7 @@
 #include <prdc/cpu/RFieldDft.h>
 
 namespace Pscf {
-namespace Pspc
+namespace Rpc
 {
 
    using namespace Util;
@@ -217,6 +217,6 @@ namespace Pspc
       }
    }
 
-} // namespace Pspc
+} // namespace Rpc
 } // namespace Pscf
 #endif

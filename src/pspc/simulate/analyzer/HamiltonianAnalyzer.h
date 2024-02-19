@@ -11,7 +11,7 @@
 #include "AverageListAnalyzer.h"
 
 namespace Pscf {
-namespace Pspc {
+namespace Rpc {
 
    template <int D> class System;
    template <int D> class Simulator;
@@ -26,7 +26,7 @@ namespace Pspc {
    * Field contribution (HW)) as well as for the total, and 
    * periodically outputs block averages of each to a file.
    *
-   * \ingroup Pspc_Simulate_Analyzer_Module
+   * \ingroup Rpc_Simulate_Analyzer_Module
    */
    template <int D>
    class HamiltonianAnalyzer : public AverageListAnalyzer<D>

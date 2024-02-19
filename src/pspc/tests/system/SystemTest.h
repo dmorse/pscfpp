@@ -17,7 +17,7 @@ using namespace Util;
 using namespace Pscf;
 using namespace Pscf::Prdc;
 using namespace Pscf::Prdc::Cpu;
-using namespace Pscf::Pspc;
+using namespace Pscf::Rpc;
 
 class SystemTest : public LogFileUnitTest
 {

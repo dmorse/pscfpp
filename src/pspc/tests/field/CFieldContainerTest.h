@@ -27,7 +27,7 @@
 
 using namespace Util;
 using namespace Pscf;
-using namespace Pscf::Pspc;
+using namespace Pscf::Rpc;
 using namespace Pscf::Prdc;
 using namespace Pscf::Prdc::Cpu;
 

@@ -16,7 +16,7 @@
 #include <util/containers/DArray.h>
 
 namespace Pscf {
-namespace Pspc {
+namespace Rpc {
 
    using namespace Util;
    using namespace Prdc::Cpu;
@@ -26,7 +26,7 @@ namespace Pspc {
    *
    * The virtual step() method must generate a single step.
    *
-   * \ingroup Pspc_Simulate_BdStep_Module
+   * \ingroup Rpc_Simulate_BdStep_Module
    */
    template <int D>
    class ExplicitBdStep : public BdStep<D>

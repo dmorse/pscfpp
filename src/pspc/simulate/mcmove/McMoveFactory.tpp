@@ -10,7 +10,7 @@
 #include "ForceBiasMove.h"
 
 namespace Pscf {
-namespace Pspc {
+namespace Rpc {
 
    using namespace Util;
 

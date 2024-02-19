@@ -16,7 +16,7 @@
 namespace Pscf { template <int D> class Mesh; }
 
 namespace Pscf { 
-namespace Pspc { 
+namespace Rpc { 
 
    template <int D> class Block;
 
@@ -43,7 +43,7 @@ namespace Pspc {
    * of the associated block, because that function has access to all 
    * the parameters used in the numerical solution.
    *
-   * \ingroup Pspc_Solver_Module
+   * \ingroup Rpc_Solver_Module
    */
    template <int D>
    class Propagator : public PropagatorTmpl< Propagator<D> >

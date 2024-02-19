@@ -18,7 +18,7 @@
 #include <iostream>
 
 namespace Pscf {
-namespace Pspc {
+namespace Rpc {
 
    template <int D> class System;
 
@@ -28,7 +28,7 @@ namespace Pspc {
    /**
    * Trajectory file reader.
    *
-   * \ingroup Pspc_Simulate_Trajectory_Module
+   * \ingroup Rpc_Simulate_Trajectory_Module
    */
    template <int D>
    class FieldConfigReader : public TrajectoryReader<D>

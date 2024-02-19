@@ -34,9 +34,9 @@ namespace Pscf {
 }
 
 namespace Pscf {
-namespace Pspc {
+namespace Rpc {
 
-   // Forward references in Pscf::Pspc
+   // Forward references in Pscf::Rpc
    template <int D> class Iterator;
    template <int D> class IteratorFactory;
    template <int D> class Sweep;
@@ -73,12 +73,12 @@ namespace Pspc {
    * \endcode
    * where argc, and argv are parameters containing information about
    * command line arguments that must be passed from the main program.
-   * This is implemented as function template Pscf::Pspc::run in the
+   * This is implemented as function template Pscf::Rpc::run in the
    * file src/pspc/pscf_pc.cpp.
    *
    * \ref user_param_pc_page "Parameter File Format"
    * \ref user_command_pc_page "Command File Format"
-   * \ingroup Pscf_Pspc_Module
+   * \ingroup Pscf_Rpc_Module
    */
    template <int D>
    class System : public ParamComposite
@@ -1278,6 +1278,6 @@ namespace Pspc {
    extern template class System<3>;
    #endif
 
-} // namespace Pspc
+} // namespace Rpc
 } // namespace Pscf
 #endif

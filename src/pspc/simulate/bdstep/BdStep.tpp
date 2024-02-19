@@ -14,7 +14,7 @@
 #include <pspc/System.h>
 
 namespace Pscf {
-namespace Pspc {
+namespace Rpc {
 
    using namespace Util;
 

@@ -13,7 +13,7 @@
 #include <util/containers/DArray.h>          // member
 
 namespace Pscf {
-namespace Pspc {
+namespace Rpc {
 
    using namespace Util;
    using namespace Pscf::Prdc::Cpu;
@@ -21,7 +21,7 @@ namespace Pspc {
    /**
    * ForceBiasMove attempts a Brownian dynamics move.
    *
-   * \ingroup Pspc_Simulate_McMove_Module
+   * \ingroup Rpc_Simulate_McMove_Module
    */
    template <int D>
    class ForceBiasMove : public McMove<D>

@@ -14,7 +14,7 @@
 #include <pspc/simulate/analyzer/AnalyzerManager.h>    // member
 
 namespace Pscf {
-namespace Pspc {
+namespace Rpc {
 
    using namespace Util;
    using namespace Prdc::Cpu;
@@ -25,7 +25,7 @@ namespace Pspc {
    /**
    * Monte-Carlo simulation coordinator.
    *
-   * \ingroup Pspc_Simulate_Module
+   * \ingroup Rpc_Simulate_Module
    */
    template <int D>
    class McSimulator : public Simulator<D>

@@ -13,7 +13,7 @@
 #include <util/param/Factory.h>                      // member template
 
 namespace Pscf {
-namespace Pspc {
+namespace Rpc {
 
    using namespace Util;
 
@@ -23,7 +23,7 @@ namespace Pspc {
    /**
    * Brownian dynamics simulator.
    *
-   * \ingroup Pspc_Simulate_Module
+   * \ingroup Rpc_Simulate_Module
    */
    template <int D>
    class BdSimulator : public Simulator<D>

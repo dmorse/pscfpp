@@ -8,7 +8,7 @@
 #include "BdStepFactory.tpp"
 
 namespace Pscf {
-namespace Pspc {
+namespace Rpc {
    template class BdStepFactory<1>;
    template class BdStepFactory<2>;
    template class BdStepFactory<3>;

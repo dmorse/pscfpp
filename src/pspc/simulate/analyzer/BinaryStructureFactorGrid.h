@@ -19,7 +19,7 @@
 #include <iostream>
 
 namespace Pscf {
-namespace Pspc {
+namespace Rpc {
 
    template <int D> class System;
    template <int D> class Simulator;
@@ -41,7 +41,7 @@ namespace Pspc {
    * where, V is system volume, and \f$W_(k)\f$ is a Fourier mode of 
    * fluctuating field 
    * 
-   * \ingroup Pspc_Simulate_Analyzer_Module
+   * \ingroup Rpc_Simulate_Analyzer_Module
    */
    template <int D>
    class BinaryStructureFactorGrid : public Analyzer<D>

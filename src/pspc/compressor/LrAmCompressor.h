@@ -14,7 +14,7 @@
 #include <pscf/iterator/AmIteratorTmpl.h>                 
 
 namespace Pscf {
-namespace Pspc
+namespace Rpc
 {
 
    template <int D> class System;
@@ -36,7 +36,7 @@ namespace Pspc
    * to changes in pressure in a homogeneous system of the same chemical
    * composition as the system of interest.
    *
-   * \ingroup Pspc_Compressor_Module
+   * \ingroup Rpc_Compressor_Module
    */
    template <int D>
    class LrAmCompressor 
@@ -297,6 +297,6 @@ namespace Pspc
    #endif
 
 
-} // namespace Pspc
+} // namespace Rpc
 } // namespace Pscf
 #endif

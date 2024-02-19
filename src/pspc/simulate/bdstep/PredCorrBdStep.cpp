@@ -8,7 +8,7 @@
 #include "PredCorrBdStep.tpp"
 
 namespace Pscf {
-namespace Pspc {
+namespace Rpc {
    template class PredCorrBdStep<1>;
    template class PredCorrBdStep<2>;
    template class PredCorrBdStep<3>;

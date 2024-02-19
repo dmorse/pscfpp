@@ -14,7 +14,7 @@
 #include <iostream>
 
 namespace Pscf {
-namespace Pspc {
+namespace Rpc {
 
    template <int D> class System;
 
@@ -25,7 +25,7 @@ namespace Pspc {
    * linearly with the sweep variable. 
    * 
    * \ref user_param_sweep_linear_sec "Parameter File Format"
-   * \ingroup Pspc_Sweep_Module
+   * \ingroup Rpc_Sweep_Module
    */
    template <int D>
    class LinearSweep : public Sweep<D>

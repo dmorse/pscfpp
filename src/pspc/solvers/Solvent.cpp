@@ -8,7 +8,7 @@
 #include "Solvent.tpp"
 
 namespace Pscf {
-namespace Pspc { 
+namespace Rpc { 
 
    template class Solvent<1>;
    template class Solvent<2>;

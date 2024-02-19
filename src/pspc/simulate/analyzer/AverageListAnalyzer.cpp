@@ -8,7 +8,7 @@
 #include "AverageListAnalyzer.tpp"
 
 namespace Pscf {
-namespace Pspc {
+namespace Rpc {
    template class AverageListAnalyzer<1>;
    template class AverageListAnalyzer<2>;
    template class AverageListAnalyzer<3>;

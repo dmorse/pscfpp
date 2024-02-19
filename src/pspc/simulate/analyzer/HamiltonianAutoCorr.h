@@ -12,7 +12,7 @@
 #include <util/accumulators/Average.h>            // member template
 
 namespace Pscf {
-namespace Pspc {
+namespace Rpc {
 
    template <int D> class System;
    template <int D> class Simulator;
@@ -22,7 +22,7 @@ namespace Pspc {
    /**
    * Compute hamiltonian autocorrelation.
    *
-   * \ingroup Pspc_Simulate_Analyzer_Module
+   * \ingroup Rpc_Simulate_Analyzer_Module
    */
    template <int D>
    class HamiltonianAutoCorr : public Analyzer<D>

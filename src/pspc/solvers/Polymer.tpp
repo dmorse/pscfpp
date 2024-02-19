@@ -11,7 +11,7 @@
 #include "Polymer.h"
 
 namespace Pscf {
-namespace Pspc { 
+namespace Rpc { 
 
    template <int D>
    Polymer<D>::Polymer()

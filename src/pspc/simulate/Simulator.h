@@ -16,7 +16,7 @@
 #include <util/containers/DMatrix.h>       // member (template)
 
 namespace Pscf {
-namespace Pspc {
+namespace Rpc {
 
    template <int D> class System;
    template <int D> class Perturbation;
@@ -49,7 +49,7 @@ namespace Pspc {
    * dc that end with a suffix "c" refer to components of multi-component 
    * fields that are defined using this eigenvector basis. 
    *
-   * \ingroup Pspc_Simulate_Module
+   * \ingroup Rpc_Simulate_Module
    */
    template <int D>
    class Simulator : public ParamComposite

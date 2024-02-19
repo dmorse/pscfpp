@@ -16,7 +16,7 @@
 #include <util/containers/DArray.h>
 
 namespace Pscf {
-namespace Pspc {
+namespace Rpc {
 
    using namespace Util;
    using namespace Prdc::Cpu;
@@ -24,7 +24,7 @@ namespace Pspc {
    /**
    * Predictor-corrector Brownian dynamics stepper.
    *
-   * \ingroup Pspc_Simulate_BdStep_Module
+   * \ingroup Rpc_Simulate_BdStep_Module
    */
    template <int D>
    class PredCorrBdStep : public BdStep<D>

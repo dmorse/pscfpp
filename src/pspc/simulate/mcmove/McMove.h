@@ -15,7 +15,7 @@
 #include <util/misc/Timer.h>
 
 namespace Pscf {
-namespace Pspc
+namespace Rpc
 {
 
    using namespace Util;
@@ -30,7 +30,7 @@ namespace Pspc
    * to accept or reject it, and update the associated System fields
    * if it is accepted.
    *
-   * \ingroup Pspc_Simulate_McMove_Module
+   * \ingroup Rpc_Simulate_McMove_Module
    */
    template <int D>
    class McMove : public ParamComposite

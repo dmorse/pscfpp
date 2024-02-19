@@ -8,7 +8,7 @@
 #include "HamiltonianAutoCorr.tpp"
 
 namespace Pscf {
-namespace Pspc {
+namespace Rpc {
    template class HamiltonianAutoCorr<1>;
    template class HamiltonianAutoCorr<2>;
    template class HamiltonianAutoCorr<3>;

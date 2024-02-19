@@ -24,7 +24,7 @@
 #include <gsl/gsl_eigen.h>
 
 namespace Pscf {
-namespace Pspc {
+namespace Rpc {
 
    using namespace Util;
 

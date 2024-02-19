@@ -8,7 +8,7 @@
 #include "TrajectoryReader.tpp"
 
 namespace Pscf {
-namespace Pspc {
+namespace Rpc {
    template class TrajectoryReader<1>;
    template class TrajectoryReader<2>;
    template class TrajectoryReader<3>;

@@ -8,7 +8,7 @@
 #include "Perturbation.tpp"
 
 namespace Pscf {
-namespace Pspc {
+namespace Rpc {
 
    template class Perturbation<1>;
    template class Perturbation<2>;

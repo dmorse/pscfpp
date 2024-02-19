@@ -11,7 +11,7 @@
 #include "CFieldContainer.h"
 
 namespace Pscf {
-namespace Pspc
+namespace Rpc
 {
 
    using namespace Util;
@@ -133,6 +133,6 @@ namespace Pspc
       allocateBasis(nBasis);
    }
 
-} // namespace Pspc
+} // namespace Rpc
 } // namespace Pscf
 #endif

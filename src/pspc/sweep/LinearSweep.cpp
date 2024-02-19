@@ -8,12 +8,12 @@
 #include "LinearSweep.tpp"
 
 namespace Pscf {
-   namespace Pspc
+   namespace Rpc
    {
 
       template class LinearSweep<1>;
       template class LinearSweep<2>;
       template class LinearSweep<3>;
 
-   } // namespace Pspc
+   } // namespace Rpc
 } // namespace Pscf

@@ -8,7 +8,7 @@
 #include "Mixture.tpp"
 
 namespace Pscf {
-namespace Pspc { 
+namespace Rpc { 
 
    template class Mixture<1>;
    template class Mixture<2>;

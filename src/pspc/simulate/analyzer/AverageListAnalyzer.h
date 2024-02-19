@@ -12,7 +12,7 @@
 #include <util/accumulators/Average.h>           // member
 
 namespace Pscf {
-namespace Pspc 
+namespace Rpc 
 {
 
    template <int D> class System;
@@ -27,7 +27,7 @@ namespace Pspc
    * It is intended for use as a base class for Analyzers that evaluate 
    * averages and (optionally) block averages for specific physical variables.
    *
-   * \ingroup Pspc_Simulate_Analyzer_Module
+   * \ingroup Rpc_Simulate_Analyzer_Module
    */
    template <int D>
    class AverageListAnalyzer : public Analyzer<D>

@@ -1,10 +1,10 @@
 namespace Pscf{
-namespace Pspc{
+namespace Rpc{
 /*! 
-\page pspc_System_page Pspc::System
+\page pspc_System_page Rpc::System
 
 The main object in a pscf_pc program is an instance of a class
-Pscf::Pspc::System<D>, in which the integer template parameter D is the 
+Pscf::Rpc::System<D>, in which the integer template parameter D is the 
 dimension of space specified by the argument of the "-d" command line 
 option. The outermost block of the parameter file for pscf_pc, which 
 encloses all of the data in the file, is a block labelled "System". The 
@@ -63,7 +63,7 @@ Subblocks are described below:
     user-prescribed path through parameter space, as described
     \ref user_param_sweep_page "here". The block is selectable and
     optional, but the option that is currently provided is a
-    LinearSweep (class Pscf::Pspc::LinearSweep). 
+    LinearSweep (class Pscf::Rpc::LinearSweep). 
     </td>
   </tr>
   <tr>

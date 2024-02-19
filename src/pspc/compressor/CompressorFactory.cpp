@@ -8,7 +8,7 @@
 #include "CompressorFactory.tpp"
 
 namespace Pscf {
-namespace Pspc {
+namespace Rpc {
    template class CompressorFactory<1>;
    template class CompressorFactory<2>;
    template class CompressorFactory<3>;

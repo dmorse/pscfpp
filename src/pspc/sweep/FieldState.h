@@ -13,7 +13,7 @@
 #include <util/containers/DArray.h>        // member template
 
 namespace Pscf {
-namespace Pspc
+namespace Rpc
 {
 
    using namespace Util;
@@ -35,7 +35,7 @@ namespace Pspc
    * Different choices for class FT can be used to store fields in
    * symmetry-adapted basis function, r-grid or k-grid format.
    *
-   * \ingroup Pspc_Sweep_Module
+   * \ingroup Rpc_Sweep_Module
    */
    template <int D, class FT>
    class FieldState 
@@ -205,6 +205,6 @@ namespace Pspc
    extern template class FieldState< 3, DArray<double> >;
    #endif
 
-} // namespace Pspc
+} // namespace Rpc
 } // namespace Pscf
 #endif

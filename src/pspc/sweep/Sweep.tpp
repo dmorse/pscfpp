@@ -14,7 +14,7 @@
 #include <util/misc/ioUtil.h>
 
 namespace Pscf {
-namespace Pspc {
+namespace Rpc {
 
    using namespace Util;
 
@@ -337,6 +337,6 @@ namespace Pspc {
    void Sweep<D>::cleanup() 
    {  logFile_.close(); }
 
-} // namespace Pspc
+} // namespace Rpc
 } // namespace Pscf
 #endif

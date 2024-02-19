@@ -14,7 +14,7 @@
 #include <pspc/simulate/Simulator.h>
 
 namespace Pscf {
-namespace Pspc {
+namespace Rpc {
 
    using namespace Util;
 

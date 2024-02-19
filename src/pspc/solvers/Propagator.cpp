@@ -8,7 +8,7 @@
 #include "Propagator.tpp"
 
 namespace Pscf { 
-namespace Pspc {
+namespace Rpc {
 
    template class Propagator<1>;
    template class Propagator<2>;

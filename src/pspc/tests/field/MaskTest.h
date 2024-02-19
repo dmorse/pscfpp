@@ -27,7 +27,7 @@
 
 using namespace Util;
 using namespace Pscf;
-using namespace Pscf::Pspc;
+using namespace Pscf::Rpc;
 
 class MaskTest : public UnitTest 
 {

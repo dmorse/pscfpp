@@ -8,7 +8,7 @@
 #include "AmIteratorBasis.tpp"
 
 namespace Pscf {
-namespace Pspc {
+namespace Rpc {
 
    template class AmIteratorBasis<1>;
    template class AmIteratorBasis<2>;

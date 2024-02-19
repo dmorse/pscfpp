@@ -16,7 +16,7 @@ namespace Cpu{
 }
 
 namespace Pscf {
-namespace Pspc {
+namespace Rpc {
 
    using namespace Util;
    using namespace Prdc;
@@ -27,7 +27,7 @@ namespace Pspc {
    /**
    * Abstract base for perturbations of standard Hamiltonian.
    *
-   * \ingroup Pspc_Simulate_Perturbation_Module
+   * \ingroup Rpc_Simulate_Perturbation_Module
    */
    template <int D>
    class Perturbation : public ParamComposite

@@ -8,7 +8,7 @@
 #include "Block.tpp"
 
 namespace Pscf { 
-namespace Pspc {
+namespace Rpc {
 
    template class Block<1>;
    template class Block<2>;

@@ -8,7 +8,7 @@
 #include "McMove.tpp"
 
 namespace Pscf {
-namespace Pspc {
+namespace Rpc {
    template class McMove<1>;
    template class McMove<2>;
    template class McMove<3>;

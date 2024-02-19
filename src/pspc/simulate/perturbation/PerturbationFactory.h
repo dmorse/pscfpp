@@ -13,7 +13,7 @@
 #include <string>
 
 namespace Pscf {
-namespace Pspc {
+namespace Rpc {
 
    template <int D> class Simulator;
 
@@ -22,7 +22,7 @@ namespace Pspc {
    /**
    * Factory for subclasses of Perturbation.
    *
-   * \ingroup Pspc_Simulate_Perturbation_Module
+   * \ingroup Rpc_Simulate_Perturbation_Module
    */
    template <int D>
    class PerturbationFactory : public Factory< Perturbation<D> > 

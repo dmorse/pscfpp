@@ -14,14 +14,14 @@
 #include <string>
 
 namespace Pscf {
-namespace Pspc {
+namespace Rpc {
 
    using namespace Util;
    
    /**
    * Default Factory for subclasses of Sweep.
    *
-   * \ingroup Pspc_Sweep_Module
+   * \ingroup Rpc_Sweep_Module
    */
    template <int D>
    class SweepFactory : public Factory< Sweep<D> > 

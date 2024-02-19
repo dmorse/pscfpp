@@ -16,14 +16,14 @@
 #include <iostream>
 
 namespace Pscf {
-namespace Pspc {
+namespace Rpc {
 
    /**
    * Function template for main pscf_pc program.
    *
    * \param argc  number of command line parameters
    * \param argv  array of command line parameter strings
-   * \ingroup Pscf_Pspc_Module
+   * \ingroup Pscf_Rpc_Module
    */
    template <int D>
    void run(int argc, char **argv) {
@@ -47,7 +47,7 @@ namespace Pspc {
 *
 * \param argc  number of command line arguments
 * \param argv  array of command line arguments
-* \ingroup Pscf_Pspc_Module
+* \ingroup Pscf_Rpc_Module
 */
 int main(int argc, char **argv)
 {
@@ -64,13 +64,13 @@ int main(int argc, char **argv)
    #endif
 
    if (1 == D) {
-      Pscf::Pspc::run<1>(argc, argv);
+      Pscf::Rpc::run<1>(argc, argv);
    } else
    if (2 == D) {
-      Pscf::Pspc::run<2>(argc, argv);
+      Pscf::Rpc::run<2>(argc, argv);
    } else
    if (3 == D) {
-      Pscf::Pspc::run<3>(argc, argv);
+      Pscf::Rpc::run<3>(argc, argv);
    } else {
       std::cout << " Invalid dimension = " << D << std::endl;
    }

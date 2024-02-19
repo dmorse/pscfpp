@@ -13,7 +13,7 @@
 #include <string>
 
 namespace Pscf {
-namespace Pspc {
+namespace Rpc {
 
    template <int D> class System;
 
@@ -22,7 +22,7 @@ namespace Pspc {
    /**
    * Factory for subclasses of TrajectoryReader.
    *
-   * \ingroup Pspc_Simulate_Trajectory_Module
+   * \ingroup Rpc_Simulate_Trajectory_Module
    */
    template <int D>
    class TrajectoryReaderFactory : public Factory< TrajectoryReader<D> > 

@@ -12,7 +12,7 @@
 #include <util/containers/DArray.h>      // member template
 
 namespace Pscf {
-namespace Pspc {
+namespace Rpc {
 
    using namespace Util;
    using namespace Prdc;
@@ -34,7 +34,7 @@ namespace Pspc {
    *    the nodes of a regular grid. This is accessed by the rgrid()
    *    and rgrid(int) member functions.
    *
-   * \ingroup Pspc_Field_Module
+   * \ingroup Rpc_Field_Module
    */
    template <int D>
    class CFieldContainer 
@@ -209,6 +209,6 @@ namespace Pspc {
    extern template class CFieldContainer<3>;
    #endif
 
-} // namespace Pspc
+} // namespace Rpc
 } // namespace Pscf
 #endif

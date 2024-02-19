@@ -8,7 +8,7 @@
 #include "Polymer.tpp"
 
 namespace Pscf {
-namespace Pspc { 
+namespace Rpc { 
 
    template class Polymer<1>;
    template class Polymer<2>;

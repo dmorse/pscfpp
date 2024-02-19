@@ -13,7 +13,7 @@
 #include <pscf/iterator/AmIteratorTmpl.h>                 
 
 namespace Pscf {
-namespace Pspc
+namespace Rpc
 {
 
    template <int D>
@@ -23,9 +23,9 @@ namespace Pspc
    using namespace Pscf::Prdc::Cpu;
 
    /**
-   * Pspc implementation of the Anderson Mixing compressor.
+   * Rpc implementation of the Anderson Mixing compressor.
    *
-   * \ingroup Pspc_Compressor_Module
+   * \ingroup Rpc_Compressor_Module
    */
    template <int D>
    class AmCompressor 
@@ -228,6 +228,6 @@ namespace Pspc
    extern template class AmCompressor<3>;
    #endif
 
-} // namespace Pspc
+} // namespace Rpc
 } // namespace Pscf
 #endif

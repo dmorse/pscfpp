@@ -29,7 +29,7 @@ namespace Pscf {
 }
  
 namespace Pscf {
-namespace Pspc {
+namespace Rpc {
 
    using namespace Pscf::Prdc::Cpu;
 
@@ -59,7 +59,7 @@ namespace Pspc {
    * before the next call to Mixture::compute.
    *
    * \ref user_param_mixture_page "Parameter File Format" 
-   * \ingroup Pspc_Solver_Module
+   * \ingroup Rpc_Solver_Module
    */
    template <int D>
    class Mixture : public MixtureTmpl< Polymer<D>, Solvent<D> >
@@ -254,6 +254,6 @@ namespace Pspc {
    extern template class Mixture<3>;
    #endif
 
-} // namespace Pspc
+} // namespace Rpc
 } // namespace Pscf
 #endif

@@ -8,7 +8,7 @@
 #include "AmCompressor.tpp"
 
 namespace Pscf {
-namespace Pspc {
+namespace Rpc {
 
    template class AmCompressor<1>;
    template class AmCompressor<2>;

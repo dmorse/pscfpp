@@ -8,7 +8,7 @@
 #include "EinsteinCrystalPerturbation.tpp"
 
 namespace Pscf {
-namespace Pspc {
+namespace Rpc {
 
    template class EinsteinCrystalPerturbation<1>;
    template class EinsteinCrystalPerturbation<2>;

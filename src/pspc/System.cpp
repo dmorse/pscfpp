@@ -8,12 +8,12 @@
 #include "System.tpp"
 
 namespace Pscf {
-namespace Pspc
+namespace Rpc
 {
 
    template class System<1>;
    template class System<2>;
    template class System<3>;
 
-} // namespace Pspc
+} // namespace Rpc
 } // namespace Pscf

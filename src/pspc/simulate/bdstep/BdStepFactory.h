@@ -14,7 +14,7 @@
 #include <string>
 
 namespace Pscf {
-namespace Pspc {
+namespace Rpc {
 
    template <int D> class BdSimulator;
 
@@ -23,7 +23,7 @@ namespace Pspc {
    /**
    * Factory for subclasses of BdStep.
    *
-   * \ingroup Pspc_BdStep_Module
+   * \ingroup Rpc_BdStep_Module
    */
    template <int D>
    class BdStepFactory : public Factory< BdStep<D> > 

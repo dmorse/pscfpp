@@ -14,7 +14,7 @@
 #include <iostream>
 
 namespace Pscf {
-namespace Pspc
+namespace Rpc
 {
 
    template <int D>
@@ -45,7 +45,7 @@ namespace Pspc
    * FilmIterator (e.g., "AmIteratorFilm{" will create a FilmIterator with
    * an AmIterator object inside of it). 
    *
-   * \ingroup Pspc_Iterator_Module
+   * \ingroup Rpc_Iterator_Module
    */
    template <int D, typename IteratorType>
    class FilmIteratorBase : public Iterator<D>
@@ -346,7 +346,7 @@ namespace Pspc
    const
    {  return chiTop_[s]; }
 
-} // namespace Pspc
+} // namespace Rpc
 } // namespace Pscf
 
 #include "FilmIteratorBase.tpp"

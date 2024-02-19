@@ -12,14 +12,14 @@
 #include <util/containers/DArray.h>
 
 namespace Pscf {
-namespace Pspc {
+namespace Rpc {
 
    using namespace Util;
 
    /**
    * Comparator for fields in symmetry-adapted basis format.
    * 
-   * \ingroup Pspc_Field_Module
+   * \ingroup Rpc_Field_Module
    */
    class BFieldComparison : public FieldComparison< DArray<double> >
    {
@@ -47,6 +47,6 @@ namespace Pspc {
 
    };
 
-} // namespace Pspc
+} // namespace Rpc
 } // namespace Pscf
 #endif
