@@ -155,7 +155,7 @@ the implementation provided by this class).
 <em>Technical note: </em>
 Source code files that are specific to different PSCF
 programs are defined in different C++ implementation level namespaces
-(i.e., in Pscf::Fd1d, Pscf::Pspc and Pscf::Pspg). This allows classes
+(i.e., in Pscf::Fd1d, Pscf::Rpc and Pscf::Pspg). This allows classes
 that play analogous roles in different programs to be given the same
 name. The LinearSweep classes for the pscf_1d, pscf_pc and pscf_pg
 programs are actually different classes defined in different namespaces

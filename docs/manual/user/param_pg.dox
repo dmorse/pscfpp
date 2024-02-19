@@ -17,7 +17,7 @@ in the available iterators.
 The default iterator for pscf_pg, which is implemented by class 
 Pspg::AmIteratorBasis<D>, uses an Anderson-Mixing (AM) algorithm 
 that imposes a prescribed space group symmetry, much like the closely
-analogous \ref pspc_AmIteratorBasis_page "Pspc::AmIteratorBasis" 
+analogous \ref rpc_AmIteratorBasis_page "Rpc::AmIteratorBasis" 
 iterator used by pscf_pc.  This iteration algorithm may be invoked 
 in the parameter file for pscf_pg using either the generic block label 
 "Iterator" or a specific label "AmIteratorBasis".  The parameter 
@@ -58,7 +58,7 @@ can be found by following the links in the table below:
 
 \section user_param_pg_sweep_sec Sweep
 
-The only sweep algorithm currently available for use with pspc_pg is a
+The only sweep algorithm currently available for use with rpc_pg is a
 general linear sweep algorithm. This can be invoked by including a block 
 that starts either with the generic label Sweep or the specific label 
 LinearSweep.  The required parameter file format for a linear sweep has 

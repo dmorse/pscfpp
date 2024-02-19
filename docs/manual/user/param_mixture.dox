@@ -175,7 +175,7 @@ Comments:
 
 The source code for PCSF is defined within a C++ namespace named Pscf.
 This top-level namespace contains several enclosed sub-namespaces named
-Fd1d, Pspc, and Pspg that each contain code specific to a specific
+Fd1d, Rpc, and Pspg that each contain code specific to a specific
 implementation of SCFT (i.e., a specific program or family of programs).
 We refer to these as implementation-level namespaces. This segregation 
 of code associated with different SCFT implementations into corresponding
@@ -187,7 +187,7 @@ SCFT implementations.
 
 Each implementation-level namespace contains a class or class template 
 named Mixture. The Fd1d namespace contains a concrete class named Mixture. 
-The Pspc and Pspg namespaces each contain a class template Mixture<int D>, 
+The Rpc and Pspg namespaces each contain a class template Mixture<int D>, 
 in which the integer dimensionality of space D is a template parameter. 
 The Mixture object used by the pscf_pc program to treat a 2D periodic 
 structure is thus an instance of class Pscf::Mixture<2>, where the 
@@ -282,7 +282,7 @@ branched polymers are discussed separately below.
 <i> Technical comment (for users who examine the source code)</i>:
 A Class or class template named Polymer is defined in each
 implementation-level namespace of the top-level Pscf namespace (i.e., in
-the Fd1d, Pspc and Pspg sub-namespaces of Pscf). These Polymer classes
+the Fd1d, Rpc and Pspg sub-namespaces of Pscf). These Polymer classes
 all use the same parameter file format, which is described above. Each
 of these Polymer classes is a subclass of an instances of a common class
 template named Pscf::PolymerTmpl. The readParameters function of this
@@ -437,7 +437,7 @@ specify both phi and mu or to omit both variables.
 
 <i> Technical comment (for users who examine the source code)</i>:
 A Class or class template named Solvent is defined in each
-implementation-level namespace (i.e., in the Fd1d, Pspc and Pspg
+implementation-level namespace (i.e., in the Fd1d, Rpc and Pspg
 sub-namespaces of Pscf). These classes are all use the same parameter
 file format, which is described above, and are all subclasses of a
 common base class named Pscf::SolventDescriptor. The function

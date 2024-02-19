@@ -105,8 +105,8 @@ This command will cause the system to:
     src/prdc directories that have not been previously compiled, and
     create associated static library files in these directories.
 
-  - Compile all of the *.cpp class files in the src/pspc/ directory, and '
-    create a corresponding static library file named libpspc.a.
+  - Compile all of the *.cpp class files in the src/rpc/ directory, and '
+    create a corresponding static library file named librpc.a.
 
   - Compile and link the main program pscf_pc.cpp, and install an 
     executable program file named pscf_pc in the pscfpp/bin directory.
@@ -229,7 +229,7 @@ any code outside of that subdirectory.
 
 Invoking "make all" from a subdirectory of a namespace level directory
 (i.e., a subdirectory of the src/util, src/pscf, src/fd1d, src/prdc, 
-src/pspc, or src/pspg directory) will generally compile all the *.cpp 
+src/rpc, or src/pspg directory) will generally compile all the *.cpp 
 and (if CUDA is enabled) *.cu source files in that directory and any 
 nested subdirectories.
 
@@ -237,7 +237,7 @@ Invoking "make all" from any namespace level subdirectory of src/ will
 compile of all the *.cpp and (as appropriate) *.cu source files in the 
 directory tree, and also create a static library file containing all 
 of the resulting object code. In addition, invoking "make all" from
-the fd1d/, pspc/ or pspg/ subdirectories of src/ will compile, link 
+the fd1d/, rpc/ or pspg/ subdirectories of src/ will compile, link 
 and install an executable program located in that directory.  For 
 example, entering "make all" from src/fd1d directory will create a 
 static library named src/fd1d/libfd1d.a, and install an executable 

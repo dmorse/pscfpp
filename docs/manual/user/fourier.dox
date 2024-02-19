@@ -269,9 +269,9 @@ a finite rather than an infinite sum.
 <em> Relationship to source code: </em>  The D-dimensional forward and
 inverse DFT, defined using the conventions given above, are implemented for
 the field container classes used by pscf_pc by the member functions
-forwardTransform and inverseTransform defined in the class Pscf::Pspc::FFT<D>,
-respectively. The class Pscf::Pspc::FFT<D> is an instantiation of the class
-template Pscf::Pspc::FFT , in which D=1, 2, or 3 is a template parameter 
+forwardTransform and inverseTransform defined in the class Pscf::Rpc::FFT<D>,
+respectively. The class Pscf::Rpc::FFT<D> is an instantiation of the class
+template Pscf::Rpc::FFT , in which D=1, 2, or 3 is a template parameter 
 that represents the dimensionality of space.  These member functions are 
 simple wrappers around functions provided by the open source FFTW package.
 

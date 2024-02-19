@@ -71,7 +71,7 @@ As for pscf_1d, the Sweep block is optional, and Iterator and Sweep blocks
 blocks that are relevant for SCFT calculations, and excludes some optional
 elements that are used for FTMC simulations. A more complete description 
 of the format for the main System block of pscf_pc parameter file is given 
-\subpage pspc_System_page "here". 
+\subpage rpc_System_page "here". 
 
 Formats of the Mixture and Interaction blocks are the same for all PSCF 
 programs, and have thus been discussed previously. Below, we discuss the 
@@ -83,7 +83,7 @@ The Domain block contains information required to describe the unit cell
 of a periodic structure, the regular mesh that is used to discretize 
 fields within each unit cell, and (optionally) an identifier for the space 
 group of the desired solution.  The parameter file format is discussed 
-below, as well as in separate page \subpage pspc_Domain_page "here".
+below, as well as in separate page \subpage rpc_Domain_page "here".
 
 An example of the format of this block is shown below:
 \code
@@ -241,12 +241,12 @@ iterators can be found by following the links in the table below:
     <td> <b> Description  </b> </td>
   </tr>
   <tr>
-    <td> \subpage pspc_AmIteratorBasis_page "AmIteratorBasis" </td>
+    <td> \subpage rpc_AmIteratorBasis_page "AmIteratorBasis" </td>
     <td> Anderson Mixing iterator for periodic structures with known
          space-group symmetry (default) </td>
   </tr>
   <tr>
-    <td> \subpage pspc_AmIteratorBasisFilm_page "AmIteratorBasisFilm" </td>
+    <td> \subpage rpc_AmIteratorBasisFilm_page "AmIteratorBasisFilm" </td>
     <td> Anderson Mixing iterator for system of known space group 
          symmetry confined to a thin film. </td>
   </tr>
@@ -262,7 +262,7 @@ field trajectory.
 
 \section user_param_pc_sweep_sec Sweep
 
-The only sweep algorithm currently avaiable for use with pspc_pc is a
+The only sweep algorithm currently avaiable for use with rpc_pc is a
 general linear sweep algorithm. This can be invoked by including a block
 that starts either with the generic label Sweep or the specific label
 LinearSweep.  The required parameter file format for a linear sweep is

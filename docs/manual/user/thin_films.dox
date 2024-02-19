@@ -137,7 +137,7 @@ In the example, we have constructed a parameter file that might be used to
 represent an AB diblock polymer self-assembled into a bcc structure 
 confined to a thin film that is ~2 unit cells thick. This will be 
 explained in more detail below. Also, see our parameter-level breakdown 
-of the components of an \ref pspc_AmIteratorBasisFilm_page block.
+of the components of an \ref rpc_AmIteratorBasisFilm_page block.
 
 ## Domain Block
 
