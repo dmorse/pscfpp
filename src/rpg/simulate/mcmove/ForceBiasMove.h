@@ -1,5 +1,5 @@
-#ifndef PSPG_FORCE_BIAS_MOVE_H
-#define PSPG_FORCE_BIAS_MOVE_H
+#ifndef RPG_FORCE_BIAS_MOVE_H
+#define RPG_FORCE_BIAS_MOVE_H
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory
@@ -120,7 +120,7 @@ namespace Rpg {
       
    };
 
-   #ifndef PSPG_FORCE_BIAS_MOVE_TPP
+   #ifndef RPG_FORCE_BIAS_MOVE_TPP
    // Suppress implicit instantiation
    extern template class ForceBiasMove<1>;
    extern template class ForceBiasMove<2>;

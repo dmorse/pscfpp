@@ -1,5 +1,5 @@
-#ifndef PSPG_C_FIELD_CONTAINER_H
-#define PSPG_C_FIELD_CONTAINER_H
+#ifndef RPG_C_FIELD_CONTAINER_H
+#define RPG_C_FIELD_CONTAINER_H
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory
@@ -202,7 +202,7 @@ namespace Rpg {
 
    };
 
-   #ifndef PSPG_FIELD_CONTAINER_TPP
+   #ifndef RPG_FIELD_CONTAINER_TPP
    // Suppress implicit instantiation
    extern template class CFieldContainer<1>;
    extern template class CFieldContainer<2>;

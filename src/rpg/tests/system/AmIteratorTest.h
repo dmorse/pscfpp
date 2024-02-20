@@ -1,5 +1,5 @@
-#ifndef PSPG_AM_ITERATOR_TEST_H
-#define PSPG_AM_ITERATOR_TEST_H
+#ifndef RPG_AM_ITERATOR_TEST_H
+#define RPG_AM_ITERATOR_TEST_H
 
 #include <test/UnitTest.h>
 #include <test/UnitTestRunner.h>

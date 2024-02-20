@@ -1,5 +1,5 @@
-#ifndef PSPG_BD_SIMULATOR_TPP
-#define PSPG_BD_SIMULATOR_TPP
+#ifndef RPG_BD_SIMULATOR_TPP
+#define RPG_BD_SIMULATOR_TPP
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory

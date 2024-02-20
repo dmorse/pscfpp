@@ -1,5 +1,5 @@
-#ifndef PSPG_FIELD_IO_TEST_H
-#define PSPG_FIELD_IO_TEST_H
+#ifndef RPG_FIELD_IO_TEST_H
+#define RPG_FIELD_IO_TEST_H
 
 #include <test/UnitTest.h>
 #include <test/UnitTestRunner.h>

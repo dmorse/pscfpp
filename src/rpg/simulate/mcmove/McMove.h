@@ -1,5 +1,5 @@
-#ifndef PSPG_MC_MOVE_H
-#define PSPG_MC_MOVE_H
+#ifndef RPG_MC_MOVE_H
+#define RPG_MC_MOVE_H
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory
@@ -291,7 +291,7 @@ namespace Rpg
    inline void McMove<D>::setProbability(double probability)
    {  probability_ = probability; }
 
-   #ifndef PSPG_MC_MOVE_TPP
+   #ifndef RPG_MC_MOVE_TPP
    // Suppress implicit instantiation
    extern template class McMove<1>;
    extern template class McMove<2>;

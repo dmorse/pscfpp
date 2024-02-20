@@ -1,5 +1,5 @@
-#ifndef PSPG_DOMAIN_TEST_H
-#define PSPG_DOMAIN_TEST_H
+#ifndef RPG_DOMAIN_TEST_H
+#define RPG_DOMAIN_TEST_H
 
 #include <test/UnitTest.h>
 #include <test/UnitTestRunner.h>

@@ -1,5 +1,5 @@
-#ifndef PSPG_LM_BD_STEP_H
-#define PSPG_LM_BD_STEP_H
+#ifndef RPG_LM_BD_STEP_H
+#define RPG_LM_BD_STEP_H
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory
@@ -126,7 +126,7 @@ namespace Rpg {
 
    };
 
-   #ifndef PSPG_LM_BD_STEP_TPP
+   #ifndef RPG_LM_BD_STEP_TPP
    // Suppress implicit instantiation
    extern template class LMBdStep<1>;
    extern template class LMBdStep<2>;

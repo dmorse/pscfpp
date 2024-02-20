@@ -1,5 +1,5 @@
-#ifndef PSPG_SWEEP_PARAMETER_TPP
-#define PSPG_SWEEP_PARAMETER_TPP
+#ifndef RPG_SWEEP_PARAMETER_TPP
+#define RPG_SWEEP_PARAMETER_TPP
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory

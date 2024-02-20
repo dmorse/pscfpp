@@ -1,5 +1,5 @@
-#ifndef PSPG_BD_SIMULATOR_H
-#define PSPG_BD_SIMULATOR_H
+#ifndef RPG_BD_SIMULATOR_H
+#define RPG_BD_SIMULATOR_H
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory
@@ -208,7 +208,7 @@ namespace Rpg {
       return *trajectoryReaderFactoryPtr_;
    }
 
-   #ifndef PSPG_BD_SIMULATOR_TPP
+   #ifndef RPG_BD_SIMULATOR_TPP
    // Suppress implicit instantiation
    extern template class BdSimulator<1>;
    extern template class BdSimulator<2>;

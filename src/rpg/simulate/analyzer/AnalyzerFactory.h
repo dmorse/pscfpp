@@ -1,5 +1,5 @@
-#ifndef PSPG_ANALYZER_FACTORY_H
-#define PSPG_ANALYZER_FACTORY_H
+#ifndef RPG_ANALYZER_FACTORY_H
+#define RPG_ANALYZER_FACTORY_H
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory
@@ -59,7 +59,7 @@ namespace Rpg {
 
    };
 
-   #ifndef PSPG_MC_MOVE_FACTORY_TPP
+   #ifndef RPG_MC_MOVE_FACTORY_TPP
    // Suppress implicit instantiation
    extern template class AnalyzerFactory<1>;
    extern template class AnalyzerFactory<2>;

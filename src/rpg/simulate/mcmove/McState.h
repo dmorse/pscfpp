@@ -1,5 +1,5 @@
-#ifndef PSPG_MC_STATE_H
-#define PSPG_MC_STATE_H
+#ifndef RPG_MC_STATE_H
+#define RPG_MC_STATE_H
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory
@@ -79,7 +79,7 @@ namespace Rpg {
 
    };
 
-   #ifndef PSPG_MC_STATE_TPP
+   #ifndef RPG_MC_STATE_TPP
    // Suppress implicit instantiation
    extern template struct McState<1>;
    extern template struct McState<2>;

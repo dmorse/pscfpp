@@ -1,5 +1,5 @@
-#ifndef PSPG_SIMULATOR_H
-#define PSPG_SIMULATOR_H
+#ifndef RPG_SIMULATOR_H
+#define RPG_SIMULATOR_H
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory
@@ -691,7 +691,7 @@ namespace Rpg {
    inline long Simulator<D>::iStep()
    {  return iStep_; }
 
-   #ifndef PSPG_SIMULATOR_TPP
+   #ifndef RPG_SIMULATOR_TPP
    // Suppress implicit instantiation
    extern template class Simulator<1>;
    extern template class Simulator<2>;

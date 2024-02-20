@@ -1,5 +1,5 @@
-#ifndef PSPG_SWEEP_H
-#define PSPG_SWEEP_H
+#ifndef RPG_SWEEP_H
+#define RPG_SWEEP_H
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory

@@ -1,5 +1,5 @@
-#ifndef PSPG_BASIS_FIELD_STATE_H
-#define PSPG_BASIS_FIELD_STATE_H
+#ifndef RPG_BASIS_FIELD_STATE_H
+#define RPG_BASIS_FIELD_STATE_H
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory
@@ -89,7 +89,7 @@ namespace Rpg
 
    };
 
-   #ifndef PSPG_BASIS_FIELD_STATE_TPP
+   #ifndef RPG_BASIS_FIELD_STATE_TPP
    // Suppress implicit instantiation
    extern template class BasisFieldState<1>;
    extern template class BasisFieldState<2>;

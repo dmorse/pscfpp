@@ -1,5 +1,5 @@
-#ifndef PSPG_BD_STEP_FACTORY_TPP
-#define PSPG_BD_STEP_FACTORY_TPP
+#ifndef RPG_BD_STEP_FACTORY_TPP
+#define RPG_BD_STEP_FACTORY_TPP
 
 #include "BdStepFactory.h"  
 #include <rpg/simulate/bdstep/BdSimulator.h>

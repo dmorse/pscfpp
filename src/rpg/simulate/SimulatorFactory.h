@@ -1,5 +1,5 @@
-#ifndef PSPG_SIMULATOR_FACTORY_H
-#define PSPG_SIMULATOR_FACTORY_H
+#ifndef RPG_SIMULATOR_FACTORY_H
+#define RPG_SIMULATOR_FACTORY_H
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory
@@ -55,7 +55,7 @@ namespace Rpg {
 
    };
 
-   #ifndef PSPG_SIMULATOR_FACTORY_TPP
+   #ifndef RPG_SIMULATOR_FACTORY_TPP
    // Suppress implicit instantiation
    extern template class SimulatorFactory<1>;
    extern template class SimulatorFactory<2>;

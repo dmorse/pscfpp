@@ -1,5 +1,5 @@
-#ifndef PSPG_POLYMER_H
-#define PSPG_POLYMER_H
+#ifndef RPG_POLYMER_H
+#define RPG_POLYMER_H
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory
@@ -149,7 +149,7 @@ namespace Rpg {
    double Polymer<D>::stress(int n)
    {  return stress_[n]; }
 
-   #ifndef PSPG_POLYMER_TPP
+   #ifndef RPG_POLYMER_TPP
    // Suppress implicit instantiation
    extern template class Polymer<1>;
    extern template class Polymer<2>;

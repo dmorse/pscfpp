@@ -1,5 +1,5 @@
-#ifndef PSPG_WAVE_LIST_H
-#define PSPG_WAVE_LIST_H
+#ifndef RPG_WAVE_LIST_H
+#define RPG_WAVE_LIST_H
 /*
 * PSCF - Polymer Self-Consistent Field Theory
 *
@@ -172,7 +172,7 @@ namespace Rpg {
    inline int WaveList<D>::kSize() const
    { return kSize_; }
 
-   #ifndef PSPG_WAVE_LIST_TPP
+   #ifndef RPG_WAVE_LIST_TPP
    // Suppress implicit instantiation
    extern template class WaveList<1>;
    extern template class WaveList<2>;

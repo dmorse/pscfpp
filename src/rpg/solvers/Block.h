@@ -1,5 +1,5 @@
-#ifndef PSPG_BLOCK_H
-#define PSPG_BLOCK_H
+#ifndef RPG_BLOCK_H
+#define RPG_BLOCK_H
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory
@@ -311,7 +311,7 @@ namespace Rpg {
       return *fftPtr_;
    }
 
-   #ifndef PSPG_BLOCK_TPP
+   #ifndef RPG_BLOCK_TPP
    // Suppress implicit instantiation
    extern template class Block<1>;
    extern template class Block<2>;

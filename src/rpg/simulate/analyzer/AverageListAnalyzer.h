@@ -1,5 +1,5 @@
-#ifndef PSPG_AVERAGE_LIST_ANALYZER_H
-#define PSPG_AVERAGE_LIST_ANALYZER_H
+#ifndef RPG_AVERAGE_LIST_ANALYZER_H
+#define RPG_AVERAGE_LIST_ANALYZER_H
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory

@@ -1,5 +1,5 @@
-#ifndef PSPG_ANALYZER_H
-#define PSPG_ANALYZER_H
+#ifndef RPG_ANALYZER_H
+#define RPG_ANALYZER_H
 
 #include <util/param/ParamComposite.h>      // base class
 #include <util/misc/FileMaster.h>           // member variable
@@ -261,7 +261,7 @@ namespace Rpg {
    }
    #endif
 
-   #ifndef PSPG_ANALYZER_TPP
+   #ifndef RPG_ANALYZER_TPP
    // Suppress implicit instantiation
    extern template class Analyzer<1>;
    extern template class Analyzer<2>;

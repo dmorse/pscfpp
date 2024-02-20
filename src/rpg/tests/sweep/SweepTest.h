@@ -1,5 +1,5 @@
-#ifndef PSPG_SWEEP_TEST_H
-#define PSPG_SWEEP_TEST_H
+#ifndef RPG_SWEEP_TEST_H
+#define RPG_SWEEP_TEST_H
 
 #include <test/UnitTest.h>
 #include <test/UnitTestRunner.h>

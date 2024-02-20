@@ -1,5 +1,5 @@
-#ifndef PSPG_SYSTEM_TEST_H
-#define PSPG_SYSTEM_TEST_H
+#ifndef RPG_SYSTEM_TEST_H
+#define RPG_SYSTEM_TEST_H
 
 #include <test/UnitTest.h>
 #include <test/UnitTestRunner.h>

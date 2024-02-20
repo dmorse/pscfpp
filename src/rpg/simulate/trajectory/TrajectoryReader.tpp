@@ -1,5 +1,5 @@
-#ifndef PSPG_TRAJECTORY_READER_TPP
-#define PSPG_TRAJECTORY_READER_TPP
+#ifndef RPG_TRAJECTORY_READER_TPP
+#define RPG_TRAJECTORY_READER_TPP
 /*
 * PSCF - Polymer Self-Consistent Field Theory
 *

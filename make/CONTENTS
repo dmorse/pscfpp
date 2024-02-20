@@ -6,7 +6,7 @@ fragments for files that are installed by the pscfpp/setup script. These
 include files that contain fragments of the main config.mk configuration 
 file that are installed in the bld/ and src/ directories and copies of 
 namespace level config.mk files that are installed in the util/, pscf/,
-fd1d/, pspc/ and pspg/ namespace level subdirectories of each build
+prdc/, r1d/, rpc/ and rpg/ namespace level subdirectories of each build
 directory. Users should generally not modify files in this directory.
 
 The make/compiler directory contains a set of compiler configuration files

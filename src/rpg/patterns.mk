@@ -27,10 +27,10 @@ INCLUDES+=$(CUDA_INC)
 LIBS+=$(CUDA_LIB)
 
 # Preprocessor macro definitions specific to rpg/ directory 
-PSPG_DEFS+=-DPSPG_FFTW -DGPU_OUTER
+RPG_DEFS+=-DRPG_FFTW -DGPU_OUTER
 
 # Preprocessor macro definitions needed in src/rpg
-DEFINES=$(UTIL_DEFS) $(PSCF_DEFS) $(PRDC_DEFS) $(PSPG_DEFS) 
+DEFINES=$(UTIL_DEFS) $(PSCF_DEFS) $(PRDC_DEFS) $(RPG_DEFS) 
 
 # Arguments for MAKEDEP
 MAKEDEP_ARGS=$(CPPFLAGS) $(INCLUDES) $(DEFINES)

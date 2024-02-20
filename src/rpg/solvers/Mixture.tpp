@@ -1,5 +1,5 @@
-#ifndef PSPG_MIXTURE_TPP
-#define PSPG_MIXTURE_TPP
+#ifndef RPG_MIXTURE_TPP
+#define RPG_MIXTURE_TPP
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory

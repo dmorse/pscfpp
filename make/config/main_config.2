@@ -31,8 +31,8 @@ UTIL_CXX11=1
 #-----------------------------------------------------------------------
 # Compiler Pattern Rules:
 #
-# The top level subdirectories of src/ named util/, pscf/, fd1d/, prdc/,
-# pscf/ and pspg/ each contain the source code defined in a particular
+# The top level subdirectories of src/ named util/, pscf/, prdc, r1d/, 
+# rpc/ and rpg/ each contain the source code defined in a particular
 # namespace, and are referred to here as name-space level directories.
 #
 # Each such namespace level directory contains makefile fragments named
@@ -49,8 +49,8 @@ UTIL_CXX11=1
 # if C++ or CUDA source code in A may use names (classes and functions) 
 # defined in B. If namespace level directory A depends on directory B,
 # then the include.mk file in A will include the config.mk and sources.mk 
-# files located in directory B. For example, subdirectory fd1d/ depends on
-# the util/ and pscf/ directories, but not on the pscpc/, prdc/ or pspg/
+# files located in directory B. For example, subdirectory r1d/ depends on
+# the util/ and pscf/ directories, but not on the pscpc/, prdc/ or rpg/
 # directories.  You can see what directories a particular namespace level
 # directory depends on by inspecting the include.mk file in that directory,
 # which contains statements to include config.mk and sources.mk files from
@@ -153,15 +153,15 @@ UTIL_CXX11=1
 # file in the same directory. The rule for the Pscf::Fd1d namespace, as
 # an example, is of the form
 #
-# $(AR) rcs $(fd1d_LIB) $(fd1d_OBJS)
+# $(AR) rcs $(r1d_LIB) $(r1d_OBJS)
 #
 # where $(AR) is the name of archiver command used to create a library,
-# $(fd1d_LIB) is an absolute path for the resulting library file and 
-# $(fd1d_OBJS) is a string that contains absolute paths for all of the
+# $(r1d_LIB) is an absolute path for the resulting library file and 
+# $(r1d_OBJS) is a string that contains absolute paths for all of the
 # *.o object files created by compiling source files in the directory
-# src/fd1d. Rules for other namespace level directories are analogous.
+# src/r1d. Rules for other namespace level directories are analogous.
 #
-# The fd1d/, rpc/, and rpc/ namespace level directories each contain 
+# The r1d/, rpc/, and rpc/ namespace level directories each contain 
 # a *.cpp or *.cu main program file that contain the "main" function 
 # for an associated executable program. The static libraries in these 
 # directories do not contain code created by compiling that main program 
@@ -193,7 +193,7 @@ UTIL_CXX11=1
 # contains the static library in that directory and those in all 
 # directories that it depends on. For example, in the rule to compile 
 # the program pscf_1d, $(LIBS) contains paths to libraries in the util/, 
-# pscf/ and fd1d/ directories. The LIBS variable also lists any required 
+# pscf/ and r1d/ directories. The LIBS variable also lists any required 
 # external libraries (e.g., GSL, FFTW, or CUDA libraries). The order in
 # which libraries are listed matters - if library A uses a name that is
 # defined in library B, A must appear before B in this list.

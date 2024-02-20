@@ -1,5 +1,5 @@
-#ifndef PSPG_FOURIER_MOVE_H
-#define PSPG_FOURIER_MOVE_H
+#ifndef RPG_FOURIER_MOVE_H
+#define RPG_FOURIER_MOVE_H
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory
@@ -195,7 +195,7 @@ namespace Rpg
       
    };
       
-   #ifndef PSPG_FOURIER_MOVE_TPP
+   #ifndef RPG_FOURIER_MOVE_TPP
    // Suppress implicit instantiation
    extern template class FourierMove<1>;
    extern template class FourierMove<2>;

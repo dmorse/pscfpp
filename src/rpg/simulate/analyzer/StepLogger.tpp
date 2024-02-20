@@ -1,5 +1,5 @@
-#ifndef PSPG_STEP_LOGGER_TPP
-#define PSPG_STEP_LOGGER_TPP
+#ifndef RPG_STEP_LOGGER_TPP
+#define RPG_STEP_LOGGER_TPP
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory

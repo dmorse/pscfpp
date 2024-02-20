@@ -1,5 +1,5 @@
-#ifndef PSPG_HAMILTONIAN_ANALYZER_H
-#define PSPG_HAMILTONIAN_ANALYZER_H
+#ifndef RPG_HAMILTONIAN_ANALYZER_H
+#define RPG_HAMILTONIAN_ANALYZER_H
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory
@@ -129,7 +129,7 @@ namespace Rpg {
    inline Simulator<D>& HamiltonianAnalyzer<D>::simulator()
    {  return *simulatorPtr_; }
 
-   #ifndef PSPG_HAMILTONIAN_ANALYZER_TPP
+   #ifndef RPG_HAMILTONIAN_ANALYZER_TPP
    // Suppress implicit instantiation
    extern template class HamiltonianAnalyzer<1>;
    extern template class HamiltonianAnalyzer<2>;

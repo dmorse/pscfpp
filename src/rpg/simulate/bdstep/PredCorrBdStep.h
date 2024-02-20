@@ -1,5 +1,5 @@
-#ifndef PSPG_PRED_CORR_BD_STEP_H
-#define PSPG_PRED_CORR_BD_STEP_H
+#ifndef RPG_PRED_CORR_BD_STEP_H
+#define RPG_PRED_CORR_BD_STEP_H
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory
@@ -95,7 +95,7 @@ namespace Rpg {
 
    };
 
-   #ifndef PSPG_PRED_CORR_BD_STEP_TPP
+   #ifndef RPG_PRED_CORR_BD_STEP_TPP
    // Suppress implicit instantiation
    extern template class PredCorrBdStep<1>;
    extern template class PredCorrBdStep<2>;

@@ -1,5 +1,5 @@
-#ifndef PSPG_REAL_MOVE_H
-#define PSPG_REAL_MOVE_H
+#ifndef RPG_REAL_MOVE_H
+#define RPG_REAL_MOVE_H
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory
@@ -110,7 +110,7 @@ namespace Rpg {
       
    };
       
-   #ifndef PSPG_REAL_MOVE_TPP
+   #ifndef RPG_REAL_MOVE_TPP
    // Suppress implicit instantiation
    extern template class RealMove<1>;
    extern template class RealMove<2>;

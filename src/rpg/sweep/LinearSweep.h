@@ -1,5 +1,5 @@
-#ifndef PSPG_LINEAR_SWEEP_H
-#define PSPG_LINEAR_SWEEP_H
+#ifndef RPG_LINEAR_SWEEP_H
+#define RPG_LINEAR_SWEEP_H
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory
@@ -81,7 +81,7 @@ namespace Rpg {
        
    };
 
-   #ifndef PSPG_LINEAR_SWEEP_TPP
+   #ifndef RPG_LINEAR_SWEEP_TPP
    // Suppress implicit instantiation
    extern template class LinearSweep<1>;
    extern template class LinearSweep<2>;

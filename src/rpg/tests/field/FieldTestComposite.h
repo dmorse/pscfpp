@@ -1,5 +1,5 @@
-#ifndef PSPG_FIELD_TEST_COMPOSITE_H
-#define PSPG_FIELD_TEST_COMPOSITE_H
+#ifndef RPG_FIELD_TEST_COMPOSITE_H
+#define RPG_FIELD_TEST_COMPOSITE_H
 
 #include <test/CompositeTestRunner.h>
 

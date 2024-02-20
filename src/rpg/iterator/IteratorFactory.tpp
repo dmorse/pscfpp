@@ -1,5 +1,5 @@
-#ifndef PSPG_ITERATOR_FACTORY_TPP
-#define PSPG_ITERATOR_FACTORY_TPP
+#ifndef RPG_ITERATOR_FACTORY_TPP
+#define RPG_ITERATOR_FACTORY_TPP
 
 #include "IteratorFactory.h"  
 

@@ -1,5 +1,5 @@
-#ifndef PSPG_PROPAGATOR_H
-#define PSPG_PROPAGATOR_H
+#ifndef RPG_PROPAGATOR_H
+#define RPG_PROPAGATOR_H
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory
@@ -277,7 +277,7 @@ namespace Rpg {
    {  blockPtr_ = &block; }
 
 
-   #ifndef PSPG_PROPAGATOR_TPP
+   #ifndef RPG_PROPAGATOR_TPP
    // Suppress implicit instantiation
    extern template class Propagator<1>;
    extern template class Propagator<2>;

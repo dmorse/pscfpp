@@ -1,5 +1,5 @@
-#ifndef PSPG_TRAJECTORY_WRITER_TPP
-#define PSPG_TRAJECTORY_WRITER_TPP
+#ifndef RPG_TRAJECTORY_WRITER_TPP
+#define RPG_TRAJECTORY_WRITER_TPP
 /*
 * PSCF - Polymer Self-Consistent Field Theory
 *

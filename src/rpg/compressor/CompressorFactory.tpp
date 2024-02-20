@@ -1,5 +1,5 @@
-#ifndef PSPG_COMPRESSOR_FACTORY_TPP
-#define PSPG_COMPRESSOR_FACTORY_TPP
+#ifndef RPG_COMPRESSOR_FACTORY_TPP
+#define RPG_COMPRESSOR_FACTORY_TPP
 
 #include "CompressorFactory.h"  
 

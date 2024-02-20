@@ -1,5 +1,5 @@
-#ifndef PSPG_DOMAIN_H
-#define PSPG_DOMAIN_H
+#ifndef RPG_DOMAIN_H
+#define RPG_DOMAIN_H
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory
@@ -373,7 +373,7 @@ namespace Rpg
    inline bool Domain<D>::hasBasis() const
    {  return basis_.isInitialized(); }
 
-   #ifndef PSPG_DOMAIN_TPP
+   #ifndef RPG_DOMAIN_TPP
    // Suppress implicit instantiation
    extern template class Domain<1>;
    extern template class Domain<2>;

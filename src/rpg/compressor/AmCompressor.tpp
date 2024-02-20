@@ -1,5 +1,5 @@
-#ifndef PSPG_AM_COMPRESSOR_TPP
-#define PSPG_AM_COMPRESSOR_TPP
+#ifndef RPG_AM_COMPRESSOR_TPP
+#define RPG_AM_COMPRESSOR_TPP
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory

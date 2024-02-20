@@ -1,5 +1,5 @@
-#ifndef PSPG_AM_ITERATOR_GRID_H
-#define PSPG_AM_ITERATOR_GRID_H
+#ifndef RPG_AM_ITERATOR_GRID_H
+#define RPG_AM_ITERATOR_GRID_H
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory

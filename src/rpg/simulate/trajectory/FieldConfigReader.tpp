@@ -1,5 +1,5 @@
-#ifndef PSPG_FIELD_CONFIG_READER_TPP
-#define PSPG_FIELD_CONFIG_READER_TPP
+#ifndef RPG_FIELD_CONFIG_READER_TPP
+#define RPG_FIELD_CONFIG_READER_TPP
 /*
 * PSCF - Polymer Self-Consistent Field Theory
 *

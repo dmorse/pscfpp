@@ -1,5 +1,5 @@
-#ifndef PSPG_ANALYZER_MANAGER_TPP
-#define PSPG_ANALYZER_MANAGER_TPP
+#ifndef RPG_ANALYZER_MANAGER_TPP
+#define RPG_ANALYZER_MANAGER_TPP
 
 #include "AnalyzerManager.h" 
 #include "Analyzer.h" 

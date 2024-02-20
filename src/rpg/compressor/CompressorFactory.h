@@ -1,5 +1,5 @@
-#ifndef PSPG_COMPRESSOR_FACTORY_H
-#define PSPG_COMPRESSOR_FACTORY_H
+#ifndef RPG_COMPRESSOR_FACTORY_H
+#define RPG_COMPRESSOR_FACTORY_H
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory
@@ -51,7 +51,7 @@ namespace Rpg {
 
    };
 
-   #ifndef PSPG_COMPRESSOR_FACTORY_TPP
+   #ifndef RPG_COMPRESSOR_FACTORY_TPP
    // Suppress implicit instantiation
    extern template class CompressorFactory<1>;
    extern template class CompressorFactory<2>;

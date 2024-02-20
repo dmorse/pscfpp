@@ -31,6 +31,6 @@ config.mk    - configuration file (installed by configure script)
 
 Doxygen documentation files:
 
-rpg.mod     - definition of Rpg doxygen module 
+rpg.mod      - definition of Rpg doxygen module 
 pscf_pg.dox  - command line interface documentation for pscf_pg
 

@@ -1,5 +1,5 @@
-#ifndef PSPG_REAL_MOVE_TPP
-#define PSPG_REAL_MOVE_TPP
+#ifndef RPG_REAL_MOVE_TPP
+#define RPG_REAL_MOVE_TPP
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory

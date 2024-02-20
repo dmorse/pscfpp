@@ -1,5 +1,5 @@
-#ifndef PSPG_BD_STEP_H
-#define PSPG_BD_STEP_H
+#ifndef RPG_BD_STEP_H
+#define RPG_BD_STEP_H
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory
@@ -135,7 +135,7 @@ namespace Rpg {
    inline CudaRandom& BdStep<D>::cudaRandom()
    {  return *cudaRandomPtr_; }
 
-   #ifndef PSPG_BD_STEP_TPP
+   #ifndef RPG_BD_STEP_TPP
    // Suppress implicit instantiation
    extern template class BdStep<1>;
    extern template class BdStep<2>;

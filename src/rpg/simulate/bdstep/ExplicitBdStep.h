@@ -1,5 +1,5 @@
-#ifndef PSPG_EXPLICIT_BD_STEP_H
-#define PSPG_EXPLICIT_BD_STEP_H
+#ifndef RPG_EXPLICIT_BD_STEP_H
+#define RPG_EXPLICIT_BD_STEP_H
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory
@@ -91,7 +91,7 @@ namespace Rpg {
 
    };
 
-   #ifndef PSPG_EXPLICIT_BD_STEP_TPP
+   #ifndef RPG_EXPLICIT_BD_STEP_TPP
    // Suppress implicit instantiation
    extern template class ExplicitBdStep<1>;
    extern template class ExplicitBdStep<2>;

@@ -1,5 +1,5 @@
-#ifndef PSPG_ITERATOR_FACTORY_H
-#define PSPG_ITERATOR_FACTORY_H
+#ifndef RPG_ITERATOR_FACTORY_H
+#define RPG_ITERATOR_FACTORY_H
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory
@@ -53,7 +53,7 @@ namespace Rpg {
 
    };
 
-   #ifndef PSPG_ITERATOR_FACTORY_TPP
+   #ifndef RPG_ITERATOR_FACTORY_TPP
    // Suppress implicit instantiation
    extern template class IteratorFactory<1>;
    extern template class IteratorFactory<2>;

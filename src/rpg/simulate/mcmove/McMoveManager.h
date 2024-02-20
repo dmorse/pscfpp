@@ -1,5 +1,5 @@
-#ifndef PSPG_MC_MOVE_MANAGER_H
-#define PSPG_MC_MOVE_MANAGER_H
+#ifndef RPG_MC_MOVE_MANAGER_H
+#define RPG_MC_MOVE_MANAGER_H
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory
@@ -142,7 +142,7 @@ namespace Rpg {
       return probabilities_[i];
    }
 
-   #ifndef PSPG_MC_MOVE_MANAGER_TPP
+   #ifndef RPG_MC_MOVE_MANAGER_TPP
    // Suppress implicit instantiation
    extern template class McMoveManager<1>;
    extern template class McMoveManager<2>;

@@ -1,5 +1,5 @@
-#ifndef PSPG_ANALYZER_MANAGER_H
-#define PSPG_ANALYZER_MANAGER_H
+#ifndef RPG_ANALYZER_MANAGER_H
+#define RPG_ANALYZER_MANAGER_H
 
 #include "Analyzer.h"                  // template parameter
 #include <util/param/Manager.h>        // base class template
@@ -116,7 +116,7 @@ namespace Rpg {
 
    };
 
-   #ifndef PSPG_ANALZYER_MANAGER_TPP
+   #ifndef RPG_ANALZYER_MANAGER_TPP
    // Suppress implicit instantiation
    extern template class AnalyzerManager<1>;
    extern template class AnalyzerManager<2>;

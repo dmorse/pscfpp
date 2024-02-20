@@ -1,5 +1,5 @@
-#ifndef PSPG_MIXTURE_H
-#define PSPG_MIXTURE_H
+#ifndef RPG_MIXTURE_H
+#define RPG_MIXTURE_H
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory
@@ -254,7 +254,7 @@ namespace Rpg
       return stress_[parameterId]; 
    }
 
-   #ifndef PSPG_MIXTURE_TPP
+   #ifndef RPG_MIXTURE_TPP
    // Suppress implicit instantiation
    extern template class Mixture<1>;
    extern template class Mixture<2>;

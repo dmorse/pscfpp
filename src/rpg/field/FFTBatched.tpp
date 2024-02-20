@@ -1,5 +1,5 @@
-#ifndef PSPG_FFT_BATCHED_TPP
-#define PSPG_FFT_BATCHED_TPP
+#ifndef RPG_FFT_BATCHED_TPP
+#define RPG_FFT_BATCHED_TPP
 
 /*
 * PSCF Package 

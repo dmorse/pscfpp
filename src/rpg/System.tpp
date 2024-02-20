@@ -1,5 +1,5 @@
-#ifndef PSPG_SYSTEM_TPP
-#define PSPG_SYSTEM_TPP
+#ifndef RPG_SYSTEM_TPP
+#define RPG_SYSTEM_TPP
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory

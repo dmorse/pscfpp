@@ -1,5 +1,5 @@
-#ifndef PSPG_SWEEP_FACTORY_H
-#define PSPG_SWEEP_FACTORY_H
+#ifndef RPG_SWEEP_FACTORY_H
+#define RPG_SWEEP_FACTORY_H
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory
@@ -54,7 +54,7 @@ namespace Rpg {
 
    };
 
-   #ifndef PSPG_SWEEP_FACTORY_TPP
+   #ifndef RPG_SWEEP_FACTORY_TPP
    // Suppress implicit instantiation
    extern template class SweepFactory<1>;
    extern template class SweepFactory<2>;

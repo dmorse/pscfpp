@@ -1,4 +1,4 @@
-#ifndef PSPG_SWEEP_TPP
+#ifndef RPG_SWEEP_TPP
 /*
 * PSCF - Polymer Self-Consistent Field Theory
 *
@@ -21,14 +21,14 @@ namespace Rpg {
    using namespace Util;
 
    // Maximum number of previous states = order of continuation + 1
-   #define PSPG_HISTORY_CAPACITY 3
+   #define RPG_HISTORY_CAPACITY 3
 
    /*
    * Default constructor.
    */
    template <int D>
    Sweep<D>::Sweep() 
-    : SweepTmpl< BasisFieldState<D> >(PSPG_HISTORY_CAPACITY),
+    : SweepTmpl< BasisFieldState<D> >(RPG_HISTORY_CAPACITY),
       writeCRGrid_(false),
       writeCBasis_(false),
       writeWRGrid_(false),
@@ -40,7 +40,7 @@ namespace Rpg {
    */
    template <int D>
    Sweep<D>::Sweep(System<D> & system) 
-    : SweepTmpl< BasisFieldState<D> >(PSPG_HISTORY_CAPACITY),
+    : SweepTmpl< BasisFieldState<D> >(RPG_HISTORY_CAPACITY),
       writeCRGrid_(false),
       writeCBasis_(false),
       writeWRGrid_(false),

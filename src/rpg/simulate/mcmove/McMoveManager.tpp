@@ -1,5 +1,5 @@
-#ifndef PSPG_MC_MOVE_MANAGER_TPP
-#define PSPG_MC_MOVE_MANAGER_TPP
+#ifndef RPG_MC_MOVE_MANAGER_TPP
+#define RPG_MC_MOVE_MANAGER_TPP
 
 /*
 * PSCF - Polymer Self-Consistent Field 

@@ -1,5 +1,5 @@
-#ifndef PSPG_MIXTURE_TEST_H
-#define PSPG_MIXTURE_TEST_H
+#ifndef RPG_MIXTURE_TEST_H
+#define RPG_MIXTURE_TEST_H
 
 #include <test/UnitTest.h>
 #include <test/UnitTestRunner.h>

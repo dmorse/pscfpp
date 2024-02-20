@@ -1,5 +1,5 @@
-#ifndef PSPG_PROPAGATOR_TEST_H
-#define PSPG_PROPAGATOR_TEST_H
+#ifndef RPG_PROPAGATOR_TEST_H
+#define RPG_PROPAGATOR_TEST_H
 
 #include <test/UnitTest.h>
 #include <test/UnitTestRunner.h>

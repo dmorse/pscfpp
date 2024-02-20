@@ -1,5 +1,5 @@
-#ifndef PSPG_FIELD_IO_TPP
-#define PSPG_FIELD_IO_TPP
+#ifndef RPG_FIELD_IO_TPP
+#define RPG_FIELD_IO_TPP
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory

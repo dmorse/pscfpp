@@ -1,5 +1,5 @@
-#ifndef PSPG_FIELD_IO_H
-#define PSPG_FIELD_IO_H
+#ifndef RPG_FIELD_IO_H
+#define RPG_FIELD_IO_H
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory
@@ -567,7 +567,7 @@ namespace Rpg {
 
    };
 
-   #ifndef PSPG_FIELD_IO_TPP
+   #ifndef RPG_FIELD_IO_TPP
    extern template class FieldIo<1>;
    extern template class FieldIo<2>;
    extern template class FieldIo<3>;

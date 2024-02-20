@@ -1,5 +1,5 @@
-#ifndef PSPG_FFT_BATCHED_H
-#define PSPG_FFT_BATCHED_H
+#ifndef RPG_FFT_BATCHED_H
+#define RPG_FFT_BATCHED_H
 
 /*
 * PSCF Package 
@@ -137,7 +137,7 @@ namespace Rpg {
    inline cufftHandle& FFTBatched<D>::iPlan()
    { return iPlan_; }
 
-   #ifndef PSPG_FFT_BATCHED_TPP
+   #ifndef RPG_FFT_BATCHED_TPP
    // Suppress implicit instantiation
    extern template class FFTBatched<1>;
    extern template class FFTBatched<2>;

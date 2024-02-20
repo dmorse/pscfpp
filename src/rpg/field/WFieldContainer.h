@@ -1,5 +1,5 @@
-#ifndef PSPG_W_FIELD_CONTAINER_H
-#define PSPG_W_FIELD_CONTAINER_H
+#ifndef RPG_W_FIELD_CONTAINER_H
+#define RPG_W_FIELD_CONTAINER_H
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory
@@ -433,7 +433,7 @@ namespace Rpg {
    inline bool WFieldContainer<D>::isSymmetric() const
    {  return isSymmetric_; }
 
-   #ifndef PSPG_W_FIELD_CONTAINER_TPP
+   #ifndef RPG_W_FIELD_CONTAINER_TPP
    // Suppress implicit instantiation
    extern template class WFieldContainer<1>;
    extern template class WFieldContainer<2>;

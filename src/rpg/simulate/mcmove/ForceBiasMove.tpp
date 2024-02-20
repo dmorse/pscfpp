@@ -1,5 +1,5 @@
-#ifndef PSPG_FORCE_BIAS_MOVE_TPP
-#define PSPG_FORCE_BIAS_MOVE_TPP
+#ifndef RPG_FORCE_BIAS_MOVE_TPP
+#define RPG_FORCE_BIAS_MOVE_TPP
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory

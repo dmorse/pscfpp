@@ -1,5 +1,5 @@
-#ifndef PSPG_STEP_LOGGER_H
-#define PSPG_STEP_LOGGER_H
+#ifndef RPG_STEP_LOGGER_H
+#define RPG_STEP_LOGGER_H
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory
@@ -57,7 +57,7 @@ namespace Rpg {
 
    };
 
-   #ifndef PSPG_STEP_LOGGER_TPP
+   #ifndef RPG_STEP_LOGGER_TPP
    // Suppress implicit instantiation
    extern template class StepLogger<1>;
    extern template class StepLogger<2>;

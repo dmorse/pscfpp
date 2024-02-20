@@ -1,5 +1,5 @@
-#ifndef PSPG_SIMULATOR_FACTORY_TPP
-#define PSPG_SIMULATOR_FACTORY_TPP
+#ifndef RPG_SIMULATOR_FACTORY_TPP
+#define RPG_SIMULATOR_FACTORY_TPP
 
 #include "SimulatorFactory.h"  
 #include <rpg/System.h>

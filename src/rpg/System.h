@@ -1,5 +1,5 @@
-#ifndef PSPG_SYSTEM_H
-#define PSPG_SYSTEM_H
+#ifndef RPG_SYSTEM_H
+#define RPG_SYSTEM_H
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory
@@ -1121,7 +1121,7 @@ namespace Rpg {
    inline bool System<D>::hasSimulator() const
    {  return (simulatorPtr_ != 0); }
 
-   #ifndef PSPG_SYSTEM_TPP
+   #ifndef RPG_SYSTEM_TPP
    // Suppress implicit instantiation
    extern template class System<1>;
    extern template class System<2>;
