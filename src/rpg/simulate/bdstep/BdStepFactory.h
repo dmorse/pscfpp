@@ -23,7 +23,7 @@ namespace Rpg {
    /**
    * Factory for subclasses of BdStep.
    *
-   * \ingroup Rpg_BdStep_Module
+   * \ingroup Rpg_Simulate_BdStep_Module
    */
    template <int D>
    class BdStepFactory : public Factory< BdStep<D> > 

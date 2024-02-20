@@ -24,7 +24,7 @@ namespace Pscf {
    * but inputting a value of 0 causes the use of a seed that 
    * is generated from the system clock. 
    *
-   * \ingroup Cuda_Module
+   * \ingroup Pscf_Cuda_Module
    */
    class CudaRandom 
    {

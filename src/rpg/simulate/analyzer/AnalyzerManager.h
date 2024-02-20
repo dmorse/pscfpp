@@ -16,7 +16,7 @@ namespace Rpg {
    /**
    * Manager for a list of Analyzer objects.
    *
-   * \ingroup Rpg_Simulator_Analyzer_Module
+   * \ingroup Rpg_Simulate_Analyzer_Module
    */
    template <int D>
    class AnalyzerManager : public Manager< Analyzer<D> >

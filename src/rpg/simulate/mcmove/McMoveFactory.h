@@ -23,7 +23,7 @@ namespace Rpg {
    /**
    * Factory for subclasses of McMove.
    *
-   * \ingroup Rpg_McMove_Module
+   * \ingroup Rpg_Simulate_McMove_Module
    */
    template <int D>
    class McMoveFactory : public Factory< McMove<D> > 
