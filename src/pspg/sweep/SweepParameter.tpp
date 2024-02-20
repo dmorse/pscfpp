@@ -23,7 +23,7 @@
 #include <iomanip>
 
 namespace Pscf {
-namespace Pspg {
+namespace Rpg {
 
    using namespace Util;
    using namespace Pscf::Prdc;

@@ -17,7 +17,7 @@
 #include <pscf/cuda/CudaRandom.h>
 
 namespace Pscf {
-namespace Pspg {
+namespace Rpg {
 
    using namespace Util;
    using namespace Pscf::Prdc;

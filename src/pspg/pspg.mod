@@ -4,12 +4,12 @@ namespace Pscf
    /**
    * SCFT and FTMC for periodic boundary conditions.
    */
-   namespace Pspg {
+   namespace Rpg {
 
       /**
-      * \defgroup Pscf_Pspg_Module SCFT Periodic (GPU)
+      * \defgroup Pscf_Rpg_Module SCFT Periodic (GPU)
       *
-      * SCFT and FTMC for periodic structures (GPU), namespace Pscf::Pspg
+      * SCFT and FTMC for periodic structures (GPU), namespace Pscf::Rpg
       *
       * \ingroup Pscf_NS_Module
       */

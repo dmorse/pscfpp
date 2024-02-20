@@ -23,7 +23,7 @@
 #include <string>
 
 namespace Pscf {
-namespace Pspg
+namespace Rpg
 {
 
    using namespace Util;
@@ -45,7 +45,7 @@ namespace Pspg
    *    - a lattice system enumeration value
    *    - a groupName string
    *
-   * \ingroup Pspg_Field_Module
+   * \ingroup Rpg_Field_Module
    */
    template <int D>
    class Domain : public ParamComposite
@@ -380,6 +380,6 @@ namespace Pspg
    extern template class Domain<3>;
    #endif
 
-} // namespace Pspg
+} // namespace Rpg
 } // namespace Pscf
 #endif

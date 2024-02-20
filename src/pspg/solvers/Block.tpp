@@ -19,7 +19,7 @@
 #include <sys/time.h>
 
 namespace Pscf {
-namespace Pspg {
+namespace Rpg {
 
    using namespace Util;
    using namespace Pscf::Prdc;
@@ -388,8 +388,8 @@ namespace Pspg {
       assignUniformReal<<<nBlocks_, nThreads_>>>
               (cField().cField(), 0.0, nx);
 
-      Pscf::Pspg::Propagator<D> const & p0 = propagator(0);
-      Pscf::Pspg::Propagator<D> const & p1 = propagator(1);
+      Pscf::Rpg::Propagator<D> const & p0 = propagator(0);
+      Pscf::Rpg::Propagator<D> const & p1 = propagator(1);
 
       multiplyScaleQQ<<<nBlocks_, nThreads_>>>
               (cField().cField(), p0.q(0), p1.q(ns_ - 1), 1.0, nx);
@@ -494,8 +494,8 @@ namespace Pspg {
          stress_[i] = 0.0;
       }
 
-      Pscf::Pspg::Propagator<D> const & p0 = propagator(0);
-      Pscf::Pspg::Propagator<D> const & p1 = propagator(1);
+      Pscf::Rpg::Propagator<D> const & p0 = propagator(0);
+      Pscf::Rpg::Propagator<D> const & p1 = propagator(1);
 
       fftBatched_.forwardTransform(p0.head(), qkBatched_, ns_);
       fftBatched_.forwardTransform(p1.head(), qk2Batched_, ns_);

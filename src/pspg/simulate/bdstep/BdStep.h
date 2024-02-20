@@ -14,7 +14,7 @@
 #include <util/global.h>
 
 namespace Pscf {
-namespace Pspg {
+namespace Rpg {
 
    using namespace Util;
 
@@ -26,7 +26,7 @@ namespace Pspg {
    *
    * The virtual step() method must generate a single step.
    *
-   * \ingroup Pspg_Simulate_BdStep_Module
+   * \ingroup Rpg_Simulate_BdStep_Module
    */
    template <int D>
    class BdStep : public ParamComposite

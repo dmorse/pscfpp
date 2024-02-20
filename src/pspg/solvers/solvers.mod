@@ -1,14 +1,14 @@
 
 namespace Pscf{
-namespace Pspg{
+namespace Rpg{
 
    /**
-   * \defgroup Pspg_Solvers_Module Solvers
+   * \defgroup Rpg_Solvers_Module Solvers
    *
    * Classes that solve modified diffusion equations for periodic 
    * microstrucures using a pseudo-spectral algorithm.
    *
-   * \ingroup Pscf_Pspg_Module
+   * \ingroup Pscf_Rpg_Module
    */
 
 }

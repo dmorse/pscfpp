@@ -9,7 +9,7 @@
 #include <pspg/simulate/bdstep/BdSimulator.h>
 
 namespace Pscf {
-namespace Pspg {
+namespace Rpg {
 
    using namespace Util;
 

@@ -11,7 +11,7 @@
 #include "McState.tpp"
 
 namespace Pscf {
-namespace Pspg {
+namespace Rpg {
 
    template struct McState<1>;
    template struct McState<2>;

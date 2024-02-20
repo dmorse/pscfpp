@@ -13,7 +13,7 @@
 #include <pscf/cuda/GpuResources.h>
 
 namespace Pscf {
-namespace Pspg
+namespace Rpg
 {
 
    // Need a reference table that maps index to a pair wavevector

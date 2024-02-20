@@ -1,5 +1,5 @@
 /*! 
-\page pspg_AmIteratorGrid_page Pspg::AmIteratorGrid
+\page pspg_AmIteratorGrid_page Rpg::AmIteratorGrid
 
 The AmIteratorGrid iterator used by the pscf_pg programs uses an 
 Anderson mixing algorithm in which residual equations and field updates
@@ -78,8 +78,8 @@ parameters. The meaning of the various parameters are described below:
 The iterative loop exits if the number of iterations has reaches
 maxItr or if the magnitude of the scalar error drops below epsilon. 
 
-The Pspg::AmIteratorGrid uses a definition of the residual vector that 
-analogous to that used by Pspg::AmIteratorBasis and Rpc::AmIterator,
+The Rpg::AmIteratorGrid uses a definition of the residual vector that 
+analogous to that used by Rpg::AmIteratorBasis and Rpc::AmIterator,
 except that residal components associated with errors in the SCF
 equations are defined as components of the relevant difference in
 fields at particular grid points, rather than components of these

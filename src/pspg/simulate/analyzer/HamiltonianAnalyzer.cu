@@ -8,7 +8,7 @@
 #include "HamiltonianAnalyzer.tpp"
 
 namespace Pscf {
-namespace Pspg {
+namespace Rpg {
    template class HamiltonianAnalyzer<1>;
    template class HamiltonianAnalyzer<2>;
    template class HamiltonianAnalyzer<3>;

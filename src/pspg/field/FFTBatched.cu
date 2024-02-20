@@ -8,7 +8,7 @@
 #include "FFTBatched.tpp"
 
 namespace Pscf {
-namespace Pspg {
+namespace Rpg {
 
    using namespace Util;
 

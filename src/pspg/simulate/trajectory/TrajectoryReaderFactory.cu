@@ -8,7 +8,7 @@
 #include "TrajectoryReaderFactory.tpp"
 
 namespace Pscf {
-namespace Pspg {
+namespace Rpg {
    template class TrajectoryReaderFactory<1>;
    template class TrajectoryReaderFactory<2>;
    template class TrajectoryReaderFactory<3>;

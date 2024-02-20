@@ -15,7 +15,7 @@
 using namespace Util;
 using namespace Pscf;
 using namespace Pscf::Prdc;
-using namespace Pscf::Pspg;
+using namespace Pscf::Rpg;
 
 class AmIteratorTest : public LogFileUnitTest
 {

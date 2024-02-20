@@ -6,7 +6,7 @@
 #include <util/param/ParamComposite.h>
 
 namespace Pscf {
-namespace Pspg {
+namespace Rpg {
 
    template <int D> class System;
    template <int D> class Simulator;
@@ -16,7 +16,7 @@ namespace Pspg {
    /**
    * Manager for a list of Analyzer objects.
    *
-   * \ingroup Pspg_Simulator_Analyzer_Module
+   * \ingroup Rpg_Simulator_Analyzer_Module
    */
    template <int D>
    class AnalyzerManager : public Manager< Analyzer<D> >

@@ -17,7 +17,7 @@
 #include <util/containers/DArray.h>                 
 
 namespace Pscf {
-namespace Pspg
+namespace Rpg
 {
 
    template <int D> class System;
@@ -29,7 +29,7 @@ namespace Pspg
    /**
    * Pspg implementation of the Anderson Mixing compressor.
    *
-   * \ingroup Pspg_Compressor_Module
+   * \ingroup Rpg_Compressor_Module
    */
    template <int D>
    class AmCompressor : public AmIteratorTmpl<Compressor<D>, Field<cudaReal> >
@@ -226,6 +226,6 @@ namespace Pspg
 
    };
    
-} // namespace Pspg
+} // namespace Rpg
 } // namespace Pscf
 #endif

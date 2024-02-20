@@ -12,14 +12,14 @@
 #include <util/global.h>
 
 namespace Pscf {
-namespace Pspg {
+namespace Rpg {
 
    using namespace Util;
 
    /**
    * Periodically write snapshots to a trajectory file.
    *
-   * \ingroup Pspg_Simulate_Analyzer_Module
+   * \ingroup Rpg_Simulate_Analyzer_Module
    */
    template <int D>
    class StepLogger : public Analyzer<D>

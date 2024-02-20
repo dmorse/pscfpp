@@ -19,7 +19,7 @@ namespace Pscf {
       template <int D> class UnitCell;
    }
 
-namespace Pspg { 
+namespace Rpg { 
 
    template <int D> class WaveList;
 
@@ -43,7 +43,7 @@ namespace Pspg {
    * the parameter file and mu is computed. If the ensemble is
    * open, mu is read from the parameter file and phi is computed.
    *
-   * \ingroup Pspg_Solvers_Module
+   * \ingroup Rpg_Solvers_Module
    */
    template <int D>
    class Polymer : public PolymerTmpl< Block<D> >

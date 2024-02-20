@@ -1,7 +1,7 @@
 /*! 
-\page pspg_AmIteratorBasis_page Pspg::AmIteratorBasis
+\page pspg_AmIteratorBasis_page Rpg::AmIteratorBasis
 
-The Pspg::AmIteratorBasis iterator used by the pscf_pg programs is closely
+The Rpg::AmIteratorBasis iterator used by the pscf_pg programs is closely
 analogous to the \ref rpc_AmIteratorBasis_page "Rpc::AmIteratorBasis" 
 iterator used by the pscf_pc programs. Both classes use a formulation of
 the Anderson mixing algorithm in which both the residual vector and the
@@ -81,7 +81,7 @@ parameters. The meaning of the various parameters are described below:
 The iterative loop exits if the number of iterations has reaches
 maxItr or if the magnitude of the scalar error drops below epsilon. 
 
-The Pspg::AmIteratorBasis class is nearly identical to the corresponding
+The Rpg::AmIteratorBasis class is nearly identical to the corresponding
 Rpc::AmIteratorBasis class used by the pscf_pc programs. The same 
 definition of the the residual vector is used in both classes.  Please 
 see the documentation of the Rpc \ref rpc_AmIteratorBasis_page 

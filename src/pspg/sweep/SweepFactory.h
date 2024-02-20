@@ -14,7 +14,7 @@
 #include <string>
 
 namespace Pscf {
-namespace Pspg {
+namespace Rpg {
 
    using namespace Util;
    using namespace Pscf::Prdc;
@@ -23,7 +23,7 @@ namespace Pspg {
    /**
    * Default Factory for subclasses of Sweep.
    *
-   * \ingroup Pspg_Sweep_Module
+   * \ingroup Rpg_Sweep_Module
    */
    template <int D>
    class SweepFactory : public Factory< Sweep<D> > 

@@ -12,7 +12,7 @@
 #include <prdc/crystal/fieldHeader.h>
 
 namespace Pscf {
-namespace Pspg {
+namespace Rpg {
 
    using namespace Util;
 
@@ -229,6 +229,6 @@ namespace Pspg {
       UTIL_CHECK(basis().isInitialized());
    }
 
-} // namespace Pspg
+} // namespace Rpg
 } // namespace Pscf
 #endif

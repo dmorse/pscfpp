@@ -10,8 +10,8 @@ Subdirectories (corresponding namespaces in parentheses):
   pscf/  shared classes for entire package PSCF (Pscf)
   prdc/  shared classes for periodic structures (Pscf::Prdc)
   r1d/   real fields, one-dimensional SCFT (Pscf::R1d)
-  rpc/   real fields, periodic SCFT & FTS on CPU (Pscf::Rpc)
-  pspg/  pseudo-spectral periodic SCFT & FTMC on GPU (Pscf::Pspg)
+  rpc/   real periodic fields, SCFT & FTS on CPU (Pscf::Rpc)
+  rpg/   real periodic fields, SCFT & FTMC on GPU (Pscf::Pspg)
   test/  unit testing framework (base classes)
 
 Files (in repository):

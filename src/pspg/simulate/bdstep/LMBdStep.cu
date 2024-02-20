@@ -8,7 +8,7 @@
 #include "LMBdStep.tpp"
 
 namespace Pscf {
-namespace Pspg {
+namespace Rpg {
    template class LMBdStep<1>;
    template class LMBdStep<2>;
    template class LMBdStep<3>;

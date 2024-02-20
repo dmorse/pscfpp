@@ -8,11 +8,11 @@
 #include "FieldState.tpp"
 
 namespace Pscf {
-namespace Pspg {
+namespace Rpg {
 
    template class FieldState< 1, DArray<double> >;
    template class FieldState< 2, DArray<double> >;
    template class FieldState< 3, DArray<double> >;
 
-} // namespace Pspg
+} // namespace Rpg
 } // namespace Pscf

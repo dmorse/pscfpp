@@ -16,7 +16,7 @@
 #include <util/containers/DArray.h>
 
 namespace Pscf {
-namespace Pspg {
+namespace Rpg {
 
    using namespace Util;
    using namespace Pscf::Prdc;
@@ -36,7 +36,7 @@ namespace Pspg {
    *   B. Leimkuhler and C. Matthews, J. Chemical Physics, 
    *   vol. 138, 174102 (2013) [ https://doi.org/10.1063/1.4802990 ] 
    * 
-   * \ingroup Pspg_Simulate_BdStep_Module
+   * \ingroup Rpg_Simulate_BdStep_Module
    */
    template <int D>
    class LMBdStep : public BdStep<D>

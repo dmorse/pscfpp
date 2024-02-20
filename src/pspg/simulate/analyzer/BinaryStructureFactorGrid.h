@@ -21,7 +21,7 @@
 #include <map>
 
 namespace Pscf {
-namespace Pspg {
+namespace Rpg {
 
    template <int D> class System;
    template <int D> class Simulator;
@@ -43,7 +43,7 @@ namespace Pspg {
    * where, V is system volume, and \f$W_(k)\f$ is a Fourier mode of fluctuating field 
    *
    * 
-   * \ingroup Pspg_Simulate_Analyzer_Module
+   * \ingroup Rpg_Simulate_Analyzer_Module
    */
    template <int D>
    class BinaryStructureFactorGrid : public Analyzer<D>

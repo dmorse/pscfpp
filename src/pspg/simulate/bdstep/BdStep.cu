@@ -8,7 +8,7 @@
 #include "BdStep.tpp"
 
 namespace Pscf {
-namespace Pspg {
+namespace Rpg {
    template class BdStep<1>;
    template class BdStep<2>;
    template class BdStep<3>;

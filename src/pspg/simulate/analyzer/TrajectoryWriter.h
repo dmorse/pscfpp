@@ -13,7 +13,7 @@
 #include <pspg/System.h>
 
 namespace Pscf {
-namespace Pspg
+namespace Rpg
 {
 
    template <int D> class System;
@@ -26,7 +26,7 @@ namespace Pspg
    /**
    * Periodically write snapshots to a trajectory file
    *
-   * \ingroup Pspg_Simulate_Analyzer_Module
+   * \ingroup Rpg_Simulate_Analyzer_Module
    */
    template <int D>
    class TrajectoryWriter : public Analyzer<D>

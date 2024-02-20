@@ -8,7 +8,7 @@
 #include "Analyzer.tpp"
 
 namespace Pscf {
-namespace Pspg {
+namespace Rpg {
 
    template<> long Analyzer<1>::baseInterval = 0;
    template<> long Analyzer<2>::baseInterval = 0;

@@ -15,7 +15,7 @@
 
 
 namespace Pscf {
-namespace Pspg
+namespace Rpg
 {
 
    template <int D> class System;
@@ -24,7 +24,7 @@ namespace Pspg
    /**
    * Trajectory file reader.
    *
-   * \ingroup Pspg_Simulate_Trajectory_Module
+   * \ingroup Rpg_Simulate_Trajectory_Module
    */
    template <int D>
    class TrajectoryReader

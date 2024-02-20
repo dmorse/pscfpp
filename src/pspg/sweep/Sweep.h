@@ -13,7 +13,7 @@
 #include <util/global.h>
 
 namespace Pscf {
-namespace Pspg {
+namespace Rpg {
 
    template <int D> class System;
 
@@ -174,6 +174,6 @@ namespace Pspg {
 
    };
 
-} // namespace Pspg
+} // namespace Rpg
 } // namespace Pscf
 #endif

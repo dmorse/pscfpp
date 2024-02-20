@@ -8,12 +8,12 @@
 #include "FieldIo.tpp"
 
 namespace Pscf {
-namespace Pspg
+namespace Rpg
 {
 
    template class FieldIo<1>;
    template class FieldIo<2>;
    template class FieldIo<3>;
 
-} // namespace Pscf::Pspg
+} // namespace Pscf::Rpg
 } // namespace Pscf

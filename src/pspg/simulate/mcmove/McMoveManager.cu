@@ -8,7 +8,7 @@
 #include "McMoveManager.tpp"
 
 namespace Pscf {
-namespace Pspg {
+namespace Rpg {
    template class McMoveManager<1>;
    template class McMoveManager<2>;
    template class McMoveManager<3>;

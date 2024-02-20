@@ -1,14 +1,14 @@
 
 namespace Pscf{
-namespace Pspg{
+namespace Rpg{
 
    /**
-   * \defgroup Pspg_Simulate_BdStep_Module Brownian dynamics step algorithms
+   * \defgroup Rpg_Simulate_BdStep_Module Brownian dynamics step algorithms
    *
    * Classes that implement Brownian dynamics steps for field theoretic 
    * simulations in a partial saddle-point approximation. 
    *
-   * \ingroup Pspg_Simulate_Module
+   * \ingroup Rpg_Simulate_Module
    */
 
 }

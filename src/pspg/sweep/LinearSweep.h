@@ -14,7 +14,7 @@
 #include <iostream>
 
 namespace Pscf {
-namespace Pspg {
+namespace Rpg {
 
    template <int D> class System;
 
@@ -26,7 +26,7 @@ namespace Pspg {
    * Base class for a sweep in parameter space where parameters change
    * linearly with the sweep variable. 
    * 
-   * \ingroup Pspg_Sweep_Module
+   * \ingroup Rpg_Sweep_Module
    */
    template <int D>
    class LinearSweep : public Sweep<D>

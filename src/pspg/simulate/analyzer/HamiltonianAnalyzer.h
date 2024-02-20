@@ -16,7 +16,7 @@ namespace Util{
 }
 
 namespace Pscf {
-namespace Pspg {
+namespace Rpg {
 
    template <int D> class System;
    template <int D> class Simulator;
@@ -31,7 +31,7 @@ namespace Pspg {
    * Field contribution (HW)) as well as for the total, and 
    * periodically outputs block averages of each to a file.
    *
-   * \ingroup Pspg_Simulate_Analyzer_Module
+   * \ingroup Rpg_Simulate_Analyzer_Module
    */
    template <int D>
    class HamiltonianAnalyzer : public AverageListAnalyzer<D>

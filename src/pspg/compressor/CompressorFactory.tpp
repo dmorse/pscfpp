@@ -8,7 +8,7 @@
 #include "LrAmCompressor.h"
 
 namespace Pscf {
-namespace Pspg {
+namespace Rpg {
 
    using namespace Util;
 

@@ -15,7 +15,7 @@
 namespace Util { class Random; }
 
 namespace Pscf {
-namespace Pspg {
+namespace Rpg {
 
    using namespace Util;
 
@@ -25,7 +25,7 @@ namespace Pspg {
    /**
    * Manager for a set of McMove objects.
    *
-   * \ingroup Pspg_Simulate_McMove_Module
+   * \ingroup Rpg_Simulate_McMove_Module
    */
    template <int D>
    class McMoveManager : public Manager< McMove<D> >

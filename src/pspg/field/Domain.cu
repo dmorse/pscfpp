@@ -8,12 +8,12 @@
 #include "Domain.tpp"
 
 namespace Pscf {
-namespace Pspg
+namespace Rpg
 {
 
    template class Domain<1>;
    template class Domain<2>;
    template class Domain<3>;
 
-} // namespace Pspg
+} // namespace Rpg
 } // namespace Pscf

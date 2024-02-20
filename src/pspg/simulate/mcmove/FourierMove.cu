@@ -7,7 +7,7 @@
 #include "FourierMove.tpp"
 
 namespace Pscf {
-namespace Pspg {
+namespace Rpg {
    template class FourierMove<1>;
    template class FourierMove<2>;
    template class FourierMove<3>;

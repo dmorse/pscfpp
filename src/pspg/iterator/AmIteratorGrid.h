@@ -13,7 +13,7 @@
 #include <pscf/iterator/AmbdInteraction.h>   // member variable
 
 namespace Pscf {
-namespace Pspg
+namespace Rpg
 {
 
    template <int D>
@@ -26,7 +26,7 @@ namespace Pspg
    /**
    * Pspg implementation of the Anderson Mixing iterator.
    *
-   * \ingroup Pspg_Iterator_Module
+   * \ingroup Rpg_Iterator_Module
    */
    template <int D>
    class AmIteratorGrid : public AmIteratorTmpl<Iterator<D>, FieldCUDA>
@@ -234,6 +234,6 @@ namespace Pspg
 
    };
 
-} // namespace Pspg
+} // namespace Rpg
 } // namespace Pscf
 #endif

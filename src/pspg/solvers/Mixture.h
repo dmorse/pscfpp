@@ -24,7 +24,7 @@ namespace Pscf {
 }
  
 namespace Pscf {
-namespace Pspg
+namespace Rpg
 {
 
    using namespace Pscf::Prdc;
@@ -44,7 +44,7 @@ namespace Pspg
    * A Mixture is associated with a Mesh<D> object, which models a
    * spatial discretization mesh. 
    *
-   * \ingroup Pspg_Solvers_Module
+   * \ingroup Rpg_Solvers_Module
    */
    template <int D>
    class Mixture : public MixtureTmpl< Polymer<D>, Solvent<D> >
@@ -261,7 +261,7 @@ namespace Pspg
    extern template class Mixture<3>;
    #endif
 
-} // namespace Pspg
+} // namespace Rpg
 } // namespace Pscf
 //#include "Mixture.tpp"
 #endif

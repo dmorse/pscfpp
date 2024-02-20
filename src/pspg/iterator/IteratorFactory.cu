@@ -8,7 +8,7 @@
 #include "IteratorFactory.tpp"
 
 namespace Pscf {
-namespace Pspg {
+namespace Rpg {
    template class IteratorFactory<1>;
    template class IteratorFactory<2>;
    template class IteratorFactory<3>;

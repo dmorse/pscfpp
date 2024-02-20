@@ -13,7 +13,7 @@
 #include <util/param/Factory.h>                      // member template
 
 namespace Pscf {
-namespace Pspg {
+namespace Rpg {
 
    using namespace Util;
    using namespace Pscf::Prdc::Cuda;
@@ -24,7 +24,7 @@ namespace Pspg {
    /**
    * Brownian dynamics simulator.
    *
-   * \ingroup Pspg_Simulate_Module
+   * \ingroup Rpg_Simulate_Module
    */
    template <int D>
    class BdSimulator : public Simulator<D>

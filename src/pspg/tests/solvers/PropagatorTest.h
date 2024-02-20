@@ -21,7 +21,7 @@
 using namespace Util;
 using namespace Pscf;
 using namespace Pscf::Prdc;
-using namespace Pscf::Pspg;
+using namespace Pscf::Rpg;
 
 class PropagatorTest : public UnitTest
 {
@@ -35,7 +35,7 @@ public:
    {}
 
    template <int D> 
-   void setupBlock(Pscf::Pspg::Block<D>& block)
+   void setupBlock(Pscf::Rpg::Block<D>& block)
    {
       block.setId(0);
       double length = 2.0;
@@ -68,7 +68,7 @@ public:
    void testConstructor1D()
    {
       printMethod(TEST_FUNC);
-      Pscf::Pspg::Block<1> block;
+      Pscf::Rpg::Block<1> block;
    }
 
    void testSetDiscretization1D()
@@ -76,7 +76,7 @@ public:
       printMethod(TEST_FUNC);
 
       // Create and initialize block
-      Pscf::Pspg::Block<1> block;
+      Pscf::Rpg::Block<1> block;
       setupBlock<1>(block);
 
       // Create and initialize mesh
@@ -99,7 +99,7 @@ public:
       printMethod(TEST_FUNC);
 
       //Create and initialize block
-      Pscf::Pspg::Block<2> block;
+      Pscf::Rpg::Block<2> block;
       setupBlock<2>(block);
 
       Mesh<2> mesh;
@@ -121,7 +121,7 @@ public:
       printMethod(TEST_FUNC);
 
       //Create and initialize block
-      Pscf::Pspg::Block<3> block;
+      Pscf::Rpg::Block<3> block;
       setupBlock<3>(block);
 
       Mesh<3> mesh;
@@ -145,7 +145,7 @@ public:
       printMethod(TEST_FUNC);
 
       // Create and initialize block
-      Pscf::Pspg::Block<1> block;
+      Pscf::Rpg::Block<1> block;
       setupBlock<1>(block);
 
       // Create and initialize mesh
@@ -190,7 +190,7 @@ public:
       printMethod(TEST_FUNC);
 
       // Create and initialize block
-      Pscf::Pspg::Block<2> block;
+      Pscf::Rpg::Block<2> block;
       setupBlock<2>(block);
 
       // Create and initialize mesh
@@ -236,7 +236,7 @@ public:
       printMethod(TEST_FUNC);
 
       // Create and initialize block
-      Pscf::Pspg::Block<3> block;
+      Pscf::Rpg::Block<3> block;
       setupBlock<3>(block);
 
       // Create and initialize mesh
@@ -283,7 +283,7 @@ public:
       printMethod(TEST_FUNC);
 
       // Create and initialize block
-      Pscf::Pspg::Block<1> block;
+      Pscf::Rpg::Block<1> block;
       setupBlock<1>(block);
 
       // Create and initialize mesh
@@ -380,7 +380,7 @@ public:
       printMethod(TEST_FUNC);
 
       // Create and initialize block
-      Pscf::Pspg::Block<2> block;
+      Pscf::Rpg::Block<2> block;
       setupBlock<2>(block);
 
       // Create and initialize mesh
@@ -483,7 +483,7 @@ public:
       printMethod(TEST_FUNC);
 
       // Create and initialize block
-      Pscf::Pspg::Block<3> block;
+      Pscf::Rpg::Block<3> block;
       setupBlock<3>(block);
 
       // Create and initialize mesh

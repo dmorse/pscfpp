@@ -8,7 +8,7 @@
 #include "SimulatorFactory.tpp"
 
 namespace Pscf {
-namespace Pspg {
+namespace Rpg {
    template class SimulatorFactory<1>;
    template class SimulatorFactory<2>;
    template class SimulatorFactory<3>;

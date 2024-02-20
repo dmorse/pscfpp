@@ -14,7 +14,7 @@
 #include <string>
 
 namespace Pscf {
-namespace Pspg {
+namespace Rpg {
 
    template <int D> class System;
 
@@ -23,7 +23,7 @@ namespace Pspg {
    /**
    * Factory for subclasses of Simulator.
    *
-   * \ingroup Pspg_Simulator_Module
+   * \ingroup Rpg_Simulator_Module
    */
    template <int D>
    class SimulatorFactory : public Factory< Simulator<D> > 

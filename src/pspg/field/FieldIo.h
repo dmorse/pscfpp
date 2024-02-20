@@ -24,7 +24,7 @@
 #include <util/containers/Array.h>        // function parameter
 
 namespace Pscf {
-namespace Pspg {
+namespace Rpg {
 
    using namespace Util;
    using namespace Pscf::Prdc;
@@ -33,7 +33,7 @@ namespace Pspg {
    /**
    * File input/output operations for fields in several file formats.
    *
-   * \ingroup Pspg_Field_Module
+   * \ingroup Rpg_Field_Module
    */
    template <int D>
    class FieldIo 

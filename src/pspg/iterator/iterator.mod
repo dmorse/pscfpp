@@ -1,13 +1,13 @@
 
 namespace Pscf{
-namespace Pspg{
+namespace Rpg{
 
    /**
-   * \defgroup Pspg_Iterator_Module Iterators
+   * \defgroup Rpg_Iterator_Module Iterators
    *
    * Iterators for solving the nonlinear self-consistency equations.
    *
-   * \ingroup Pscf_Pspg_Module
+   * \ingroup Pscf_Rpg_Module
    */
 
 }

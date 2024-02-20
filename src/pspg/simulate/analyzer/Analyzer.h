@@ -9,7 +9,7 @@
 #include <fstream>
 
 namespace Pscf {
-namespace Pspg {
+namespace Rpg {
 
    using namespace Util;
 
@@ -40,7 +40,7 @@ namespace Pspg {
    * SystemAnalyzer<MdSystem> or SystemAnalyzer<MdSystem>, 
    * respectively.
    *
-   * \ingroup Pspg_Simulate_Analyzer_Module
+   * \ingroup Rpg_Simulate_Analyzer_Module
    */
    template <int D>
    class Analyzer : public ParamComposite

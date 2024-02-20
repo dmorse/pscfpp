@@ -22,7 +22,7 @@
 
 using namespace Util;
 using namespace Pscf;
-using namespace Pscf::Pspg;
+using namespace Pscf::Rpg;
 
 class DomainTest : public LogFileUnitTest 
 {

@@ -8,12 +8,12 @@
 #include "Sweep.tpp"
 
 namespace Pscf {
-namespace Pspg
+namespace Rpg
 {
 
    template class Sweep<1>;
    template class Sweep<2>;
    template class Sweep<3>;
 
-} // namespace Pspg
+} // namespace Rpg
 } // namespace Pscf

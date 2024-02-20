@@ -8,7 +8,7 @@
 #include "McMoveFactory.tpp"
 
 namespace Pscf {
-namespace Pspg {
+namespace Rpg {
    template class McMoveFactory<1>;
    template class McMoveFactory<2>;
    template class McMoveFactory<3>;

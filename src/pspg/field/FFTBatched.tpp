@@ -12,7 +12,7 @@
 #include <pscf/cuda/GpuResources.h>
 
 namespace Pscf {
-namespace Pspg
+namespace Rpg
 {
 
 static __global__ void scaleComplexData(cudaComplex* data, cudaReal scale, int size) {

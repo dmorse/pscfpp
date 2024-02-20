@@ -14,7 +14,7 @@
 #include <pspg/simulate/analyzer/AnalyzerManager.h>    // member
 
 namespace Pscf {
-namespace Pspg {
+namespace Rpg {
 
    using namespace Util;
    using namespace Pscf::Prdc::Cuda;
@@ -25,7 +25,7 @@ namespace Pspg {
    /**
    * Monte-Carlo simulation coordinator.
    *
-   * \ingroup Pspg_Simulate_Module
+   * \ingroup Rpg_Simulate_Module
    */
    template <int D>
    class McSimulator : public Simulator<D>

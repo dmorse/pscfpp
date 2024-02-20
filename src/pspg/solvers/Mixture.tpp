@@ -14,7 +14,7 @@
 #include <cmath>
 
 namespace Pscf { 
-namespace Pspg
+namespace Rpg
 {
 
    template <int D>
@@ -293,6 +293,6 @@ namespace Pspg
       }
    }
 
-} // namespace Pspg
+} // namespace Rpg
 } // namespace Pscf
 #endif

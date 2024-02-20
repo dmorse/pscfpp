@@ -12,7 +12,7 @@
 #include <pscf/mesh/Mesh.h>
 
 namespace Pscf {
-namespace Pspg { 
+namespace Rpg { 
 
    template <int D>
    Solvent<D>::Solvent()

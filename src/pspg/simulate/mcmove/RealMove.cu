@@ -8,7 +8,7 @@
 #include "RealMove.tpp"
 
 namespace Pscf {
-namespace Pspg {
+namespace Rpg {
    template class RealMove<1>;
    template class RealMove<2>;
    template class RealMove<3>;

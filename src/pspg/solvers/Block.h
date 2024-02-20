@@ -22,7 +22,7 @@ namespace Pscf {
 
    template <int D> class Mesh;
 
-namespace Pspg {
+namespace Rpg {
 
    using namespace Util;
    using namespace Pscf::Prdc;
@@ -34,7 +34,7 @@ namespace Pspg {
    * Derived from BlockTmpl<Propagator<D>>. A BlockTmpl<Propagator<D>>
    * has two Propagator<D> members and is derived from BlockDescriptor.
    *
-   * \ingroup Pspg_Solvers_Module
+   * \ingroup Rpg_Solvers_Module
    */
    template <int D>
    class Block : public BlockTmpl< Propagator<D> >
@@ -165,11 +165,11 @@ namespace Pspg {
       int ns() const;
 
       // Functions with non-dependent names from BlockTmpl<Propagator<D>>
-      using BlockTmpl< Pscf::Pspg::Propagator<D> >::setKuhn;
-      using BlockTmpl< Pscf::Pspg::Propagator<D> >::propagator;
-      using BlockTmpl< Pscf::Pspg::Propagator<D> >::cField;
-      using BlockTmpl< Pscf::Pspg::Propagator<D> >::length;
-      using BlockTmpl< Pscf::Pspg::Propagator<D> >::kuhn;
+      using BlockTmpl< Pscf::Rpg::Propagator<D> >::setKuhn;
+      using BlockTmpl< Pscf::Rpg::Propagator<D> >::propagator;
+      using BlockTmpl< Pscf::Rpg::Propagator<D> >::cField;
+      using BlockTmpl< Pscf::Rpg::Propagator<D> >::length;
+      using BlockTmpl< Pscf::Rpg::Propagator<D> >::kuhn;
 
       // Functions with non-dependent names from BlockDescriptor
       using BlockDescriptor::setId;

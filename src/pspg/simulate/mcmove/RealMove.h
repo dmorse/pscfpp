@@ -17,7 +17,7 @@
 #include <util/global.h>
 
 namespace Pscf {
-namespace Pspg {
+namespace Rpg {
 
    using namespace Util;
    using namespace Pscf::Prdc;
@@ -26,7 +26,7 @@ namespace Pspg {
    /**
    * RealMove is a Monte Carlo move in real space
    *
-   * \ingroup Pspg_Simulate_McMove_Module
+   * \ingroup Rpg_Simulate_McMove_Module
    */
    template <int D>
    class RealMove : public McMove<D>

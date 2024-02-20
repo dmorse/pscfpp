@@ -8,7 +8,7 @@
 #include "AnalyzerManager.tpp"
 
 namespace Pscf {
-namespace Pspg {
+namespace Rpg {
    template class AnalyzerManager<1>;
    template class AnalyzerManager<2>;
    template class AnalyzerManager<3>;

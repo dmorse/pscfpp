@@ -17,7 +17,7 @@ namespace Pscf {
 }
 
 namespace Pscf { 
-namespace Pspg { 
+namespace Rpg { 
 
    using namespace Util;
    using namespace Pscf::Prdc;
@@ -26,7 +26,7 @@ namespace Pspg {
    /**
    * Solver and descriptor for a solvent species.
    *
-   * \ingroup Pspg_Solvers_Module
+   * \ingroup Rpg_Solvers_Module
    */
    template <int D>
    class Solvent : public SolventDescriptor

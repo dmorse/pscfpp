@@ -8,7 +8,7 @@
 #include "AmIteratorGrid.tpp"
 
 namespace Pscf {
-namespace Pspg {
+namespace Rpg {
    template class AmIteratorGrid<1>;
    template class AmIteratorGrid<2>;
    template class AmIteratorGrid<3>;

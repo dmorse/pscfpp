@@ -14,7 +14,7 @@
 #include <util/containers/DArray.h>
 
 namespace Pscf {
-namespace Pspg
+namespace Rpg
 {
 
    using namespace Util;
@@ -24,7 +24,7 @@ namespace Pspg
    /**
    * FourierMove is a Monte Carlo move in fourier space
    *
-   * \ingroup Pspg_Simulate_McMove_Module
+   * \ingroup Rpg_Simulate_McMove_Module
    */
    template <int D>
    class FourierMove : public McMove<D>

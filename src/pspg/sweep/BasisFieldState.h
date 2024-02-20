@@ -12,7 +12,7 @@
 #include <string>
 
 namespace Pscf {
-namespace Pspg
+namespace Rpg
 {
 
    using namespace Util;
@@ -96,6 +96,6 @@ namespace Pspg
    extern template class BasisFieldState<3>;
    #endif
 
-} // namespace Pspg
+} // namespace Rpg
 } // namespace Pscf
 #endif

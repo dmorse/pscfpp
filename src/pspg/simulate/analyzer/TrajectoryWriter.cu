@@ -8,7 +8,7 @@
 #include "TrajectoryWriter.tpp"
 
 namespace Pscf {
-namespace Pspg {
+namespace Rpg {
    template class TrajectoryWriter<1>;
    template class TrajectoryWriter<2>;
    template class TrajectoryWriter<3>;

@@ -17,7 +17,7 @@
 #include <util/containers/DArray.h>        // member template
 
 namespace Pscf {
-namespace Pspg {
+namespace Rpg {
 
    template <int D> class FieldIo;
 
@@ -54,7 +54,7 @@ namespace Pspg {
    * current field is symmetric, and thus whether the basis format 
    * exists.
    *
-   * \ingroup Pspg_Field_Module
+   * \ingroup Rpg_Field_Module
    */
    template <int D>
    class WFieldContainer : public ParamComposite
@@ -440,6 +440,6 @@ namespace Pspg {
    extern template class WFieldContainer<3>;
    #endif
 
-} // namespace Pspg
+} // namespace Rpg
 } // namespace Pscf
 #endif

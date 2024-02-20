@@ -12,7 +12,7 @@
 #include <prdc/cuda/RField.h>             // member template parameter
 
 namespace Pscf {
-namespace Pspg {
+namespace Rpg {
 
    using namespace Util;
    using namespace Pscf::Prdc;
@@ -34,7 +34,7 @@ namespace Pspg {
    *    the nodes of a regular grid. This is accessed by the rgrid()
    *    and rgrid(int) member functions.
    *
-   * \ingroup Pspg_Field_Module
+   * \ingroup Rpg_Field_Module
    */
    template <int D>
    class CFieldContainer 
@@ -209,6 +209,6 @@ namespace Pspg {
    extern template class CFieldContainer<3>;
    #endif
 
-} // namespace Pspg
+} // namespace Rpg
 } // namespace Pscf
 #endif

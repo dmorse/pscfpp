@@ -17,7 +17,7 @@
 #include <gsl/gsl_eigen.h>
 
 namespace Pscf {
-namespace Pspg {
+namespace Rpg {
 
    using namespace Util;
 

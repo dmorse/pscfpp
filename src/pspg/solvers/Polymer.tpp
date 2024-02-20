@@ -12,7 +12,7 @@
 #include <pscf/cuda/GpuResources.h>
 
 namespace Pscf {
-namespace Pspg { 
+namespace Rpg { 
 
    template <int D>
    Polymer<D>::Polymer()

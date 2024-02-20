@@ -8,7 +8,7 @@
 #include "StepLogger.tpp"
 
 namespace Pscf {
-namespace Pspg {
+namespace Rpg {
    template class StepLogger<1>;
    template class StepLogger<2>;
    template class StepLogger<3>;

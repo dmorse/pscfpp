@@ -33,7 +33,7 @@ namespace Pscf {
 }
 
 namespace Pscf {
-namespace Pspg {
+namespace Rpg {
 
    template <int D> class Iterator;
    template <int D> class IteratorFactory;
@@ -70,12 +70,12 @@ namespace Pspg {
    * \endcode
    * where argc, and argv are parameters containing information about
    * command line arguments that must be passed from the main program.
-   * This is implemented as function template Pscf::Pspg::run in the
+   * This is implemented as function template Pscf::Rpg::run in the
    * file src/pspg/pscf_pg.cpp.
    *
    * \ref user_param_pg_page "Parameter File Format"
    * \ref user_command_pc_page "Command File Format"
-   * \ingroup Pscf_Pspg_Module
+   * \ingroup Pscf_Rpg_Module
    */
    template <int D>
    class System : public ParamComposite
@@ -1128,7 +1128,7 @@ namespace Pspg {
    extern template class System<3>;
    #endif
 
-} // namespace Pspg
+} // namespace Rpg
 } // namespace Pscf
 //#include "System.tpp"
 #endif

@@ -1,6 +1,6 @@
 This directory contains C++ and CUDA code specific to a GPU-accelerated
 pseudo-spectral implementation of SCFT for periodic structures.  All
-code in this directory is defined in the namespace Pscf::Pspg. Class
+code in this directory is defined in the namespace Pscf::Rpg. Class
 designs and algorithms are closely analogous to those of the C++ version
 of this code in the src/pspc directory.
 

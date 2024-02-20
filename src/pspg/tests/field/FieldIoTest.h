@@ -32,7 +32,7 @@ using namespace Util;
 using namespace Pscf;
 using namespace Pscf::Prdc;
 using namespace Pscf::Prdc::Cuda;
-using namespace Pscf::Pspg;
+using namespace Pscf::Rpg;
 
 class FieldIoTest : public LogFileUnitTest 
 {

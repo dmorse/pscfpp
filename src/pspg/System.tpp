@@ -37,7 +37,7 @@
 //#include <getopt.h>
 
 namespace Pscf {
-namespace Pspg
+namespace Rpg
 {
 
    using namespace Util;
@@ -1734,6 +1734,6 @@ namespace Pspg
    }
    #endif
 
-} // namespace Pspg
+} // namespace Rpg
 } // namespace Pscf
 #endif

@@ -15,7 +15,7 @@
 #include <string>
 
 namespace Pscf {
-namespace Pspg {
+namespace Rpg {
 
    using namespace Util;
    using namespace Pscf::Prdc;
@@ -24,7 +24,7 @@ namespace Pspg {
    /**
    * Factory for subclasses of Iterator.
    *
-   * \ingroup Pspg_Iterator_Module
+   * \ingroup Rpg_Iterator_Module
    */
 
    template <int D>

@@ -15,14 +15,14 @@
 #include <string>
 
 namespace Pscf {
-namespace Pspg {
+namespace Rpg {
 
    using namespace Util;
 
    /**
    * Factory for subclasses of Compressor.
    *
-   * \ingroup Pspg_Compressor_Module
+   * \ingroup Rpg_Compressor_Module
    */
 
    template <int D>

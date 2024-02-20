@@ -22,7 +22,7 @@
 #include <iostream>
 
 namespace Pscf {
-namespace Pspg {
+namespace Rpg {
 
    using namespace Util;
    using namespace Pscf;
@@ -32,7 +32,7 @@ namespace Pspg {
    /**
    * Fourier transform wrapper for real data.
    *
-   * \ingroup Pspg_Field_Module
+   * \ingroup Rpg_Field_Module
    */
    template <int D>
    class FFTBatched

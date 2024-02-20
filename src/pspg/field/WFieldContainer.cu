@@ -8,12 +8,12 @@
 #include "WFieldContainer.tpp"
 
 namespace Pscf {
-namespace Pspg
+namespace Rpg
 {
 
    template class WFieldContainer<1>;
    template class WFieldContainer<2>;
    template class WFieldContainer<3>;
 
-} // namespace Pspg
+} // namespace Rpg
 } // namespace Pscf

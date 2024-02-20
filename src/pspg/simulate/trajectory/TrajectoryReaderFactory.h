@@ -14,7 +14,7 @@
 
 
 namespace Pscf {
-namespace Pspg {
+namespace Rpg {
    
    template <int D> class System;
    
@@ -23,7 +23,7 @@ namespace Pspg {
    /**
    * Factory for subclasses of TrajectoryReader.
    *
-   * \ingroup Pspg_Simulate_Trajectory_Module
+   * \ingroup Rpg_Simulate_Trajectory_Module
    */
    template <int D>
    class TrajectoryReaderFactory : public Factory< TrajectoryReader<D> > 

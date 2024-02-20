@@ -1,14 +1,14 @@
 
 namespace Pscf{
-namespace Pspg{
+namespace Rpg{
 
    /**
-   * \defgroup Pspg_Simulate_Analyzer_Module Analyzers
+   * \defgroup Rpg_Simulate_Analyzer_Module Analyzers
    *
    * Classes that implement statistical analysis operations for field
    * theoretic simulations in a partial saddle-point approximation. 
    *
-   * \ingroup Pspg_Simulate_Module
+   * \ingroup Rpg_Simulate_Module
    */
 
 }

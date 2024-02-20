@@ -14,7 +14,7 @@
 #include <pspg/System.h>
 
 namespace Pscf {
-namespace Pspg {
+namespace Rpg {
 
    using namespace Util;
 

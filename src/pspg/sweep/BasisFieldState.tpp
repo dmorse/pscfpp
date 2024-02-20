@@ -15,7 +15,7 @@
 #include <util/global.h>
 
 namespace Pscf {
-namespace Pspg
+namespace Rpg
 {
 
    using namespace Util;
@@ -129,6 +129,6 @@ namespace Pspg
 
    }
 
-} // namespace Pspg
+} // namespace Rpg
 } // namespace Pscf
 #endif
