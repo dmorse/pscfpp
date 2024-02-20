@@ -12,7 +12,7 @@
 #include <util/containers/DMatrix.h>
 
 using namespace Util;
-using namespace Pscf::Prdc::Cpu;
+using namespace Pscf::Prdc;
 
 class CpuFieldBasisConverterTest : public UnitTest 
 {
@@ -27,9 +27,9 @@ private:
 
    typedef double Data;
 
-   DArray< RField<1> > ref;
-   DArray< RField<1> > in;
-   DArray< RField<1> > out;
+   DArray< Cpu::RField<1> > ref;
+   DArray< Cpu::RField<1> > in;
+   DArray< Cpu::RField<1> > out;
 
 public:
 
@@ -95,7 +95,7 @@ void CpuFieldBasisConverterTest::testDefaultConstructor()
 {
    printMethod(TEST_FUNC);
    {
-      FieldBasisConverter<1> converter;
+      Cpu::FieldBasisConverter<1> converter;
    }
 }
 
@@ -103,7 +103,7 @@ void CpuFieldBasisConverterTest::testConstructor()
 {
    printMethod(TEST_FUNC);
    {
-      FieldBasisConverter<1> converter(basis);
+      Cpu::FieldBasisConverter<1> converter(basis);
 
       // Test Basis
       double normSq = 3.0;
@@ -118,7 +118,7 @@ void CpuFieldBasisConverterTest::testRoundTrip()
 {
    printMethod(TEST_FUNC);
    {
-      FieldBasisConverter<1> converter(basis);
+      Cpu::FieldBasisConverter<1> converter(basis);
       allocate();
 
       // Round trip conversion 

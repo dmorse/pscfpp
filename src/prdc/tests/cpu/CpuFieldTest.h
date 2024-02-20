@@ -14,6 +14,7 @@
 
 using namespace Util;
 using namespace Pscf; 
+using namespace Pscf::Prdc; 
 
 class CpuFieldTest : public UnitTest 
 {
@@ -41,10 +42,9 @@ public:
 
 void CpuFieldTest::testConstructor()
 {
-   using namespace Pscf::Prdc::Cpu;
    printMethod(TEST_FUNC);
    {
-      Field<double> v;
+      Cpu::Field<double> v;
       TEST_ASSERT(v.capacity() == 0 );
       TEST_ASSERT(!v.isAllocated() );
    }
@@ -52,10 +52,9 @@ void CpuFieldTest::testConstructor()
 
 void CpuFieldTest::testAllocate()
 {
-   using namespace Pscf::Prdc::Cpu;
    printMethod(TEST_FUNC);
    {
-      Field<double> v;
+      Cpu::Field<double> v;
       v.allocate(capacity);
       TEST_ASSERT(v.capacity() == capacity );
       TEST_ASSERT(v.isAllocated());
@@ -64,10 +63,9 @@ void CpuFieldTest::testAllocate()
 
 void CpuFieldTest::testSubscript()
 {
-   using namespace Pscf::Prdc::Cpu;
    printMethod(TEST_FUNC);
    {
-      Field<double> v;
+      Cpu::Field<double> v;
       v.allocate(capacity);
       for (int i=0; i < capacity; i++ ) {
          v[i] = (i+1)*10.0 ;
@@ -80,10 +78,9 @@ void CpuFieldTest::testSubscript()
 
 void CpuFieldTest::testSerialize1Memory()
 {
-   using namespace Pscf::Prdc::Cpu;
    printMethod(TEST_FUNC);
    {
-      Field<double> v;
+      Cpu::Field<double> v;
       v.allocate(3);
       for (int i=0; i < capacity; i++ ) {
          v[i] = (i+1)*10.0;
@@ -104,7 +101,7 @@ void CpuFieldTest::testSerialize1Memory()
       TEST_ASSERT(v[1]==20.0);
       TEST_ASSERT(v.capacity() == 3);
    
-      Field<double> u;
+      Cpu::Field<double> u;
       u.allocate(3);
    
       MemoryIArchive iArchive;
@@ -162,10 +159,9 @@ void CpuFieldTest::testSerialize1Memory()
 
 void CpuFieldTest::testSerialize2Memory()
 {
-   using namespace Pscf::Prdc::Cpu;
    printMethod(TEST_FUNC);
    {
-      Field<double> v;
+      Cpu::Field<double> v;
       v.allocate(capacity);
       for (int i=0; i < capacity; i++ ) {
          v[i] = (i+1)*10.0;
@@ -182,9 +178,9 @@ void CpuFieldTest::testSerialize2Memory()
       TEST_ASSERT(v[1] == 20.0);
       TEST_ASSERT(v.capacity() == capacity);
    
-      Field<double> u;
+      Cpu::Field<double> u;
    
-      // Note: We do not allocate Field<double> u in this test.
+      // Note: We do not allocate Cpu::Field<double> u in this test.
       // This is the main difference from testSerialize1Memory()
    
       MemoryIArchive iArchive;
@@ -204,10 +200,9 @@ void CpuFieldTest::testSerialize2Memory()
 
 void CpuFieldTest::testSerialize1File()
 {
-   using namespace Pscf::Prdc::Cpu;
    printMethod(TEST_FUNC);
    {
-      Field<double> v;
+      Cpu::Field<double> v;
       v.allocate(3);
       for (int i=0; i < capacity; i++ ) {
          v[i] = (i+1)*10.0;
@@ -226,7 +221,7 @@ void CpuFieldTest::testSerialize1File()
       TEST_ASSERT(v[1]==20.0);
       TEST_ASSERT(v.capacity() == 3);
    
-      Field<double> u;
+      Cpu::Field<double> u;
       u.allocate(3);
    
       BinaryFileIArchive iArchive;
@@ -258,10 +253,9 @@ void CpuFieldTest::testSerialize1File()
 
 void CpuFieldTest::testSerialize2File()
 {
-   using namespace Pscf::Prdc::Cpu;
    printMethod(TEST_FUNC);
    {
-      Field<double> v;
+      Cpu::Field<double> v;
       v.allocate(3);
       for (int i=0; i < capacity; i++ ) {
          v[i] = (i+1)*10.0;
@@ -280,7 +274,7 @@ void CpuFieldTest::testSerialize2File()
       TEST_ASSERT(v[1] == 20.0);
       TEST_ASSERT(v.capacity() == 3);
    
-      Field<double> u;
+      Cpu::Field<double> u;
    
       // u.allocate(3); -> 
       // Note: We do not allocate first. This is the difference 

@@ -13,6 +13,7 @@
 
 using namespace Util;
 using namespace Pscf;
+using namespace Pscf::Prdc;
 
 class CudaMemTest : public UnitTest
 {
@@ -27,12 +28,11 @@ public:
 
    void testCopyRoundTrip()
    {
-      using namespace Pscf::Prdc::Cuda;
       printMethod(TEST_FUNC);
       
       int nx = 10;
       // device array
-      RField<1> d_in;
+      Cuda::RField<1> d_in;
       d_in.allocate(10);
       // host arrays
       cudaReal* in = new cudaReal[nx];

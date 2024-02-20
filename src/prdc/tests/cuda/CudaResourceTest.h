@@ -12,6 +12,7 @@
 
 using namespace Util;
 using namespace Pscf;
+using namespace Pscf::Prdc;
 
 class CudaResourceTest : public UnitTest
 {
@@ -267,10 +268,8 @@ public:
       int nBlocks;
       ThreadGrid::setThreadsLogical(n/2, nBlocks);
 
-      using namespace Pscf::Prdc::Cuda;
-
       // Device arrays
-      Field<cudaReal> d_a, d_b;
+      Prdc::Cuda::Field<cudaReal> d_a, d_b;
       d_a.allocate(n);
       d_b.allocate(n);
 
@@ -313,10 +312,8 @@ public:
       int nBlocks;
       ThreadGrid::setThreadsLogical(n/2, nBlocks);
 
-      using namespace Pscf::Prdc::Cuda;
-
       // Device arrays
-      Field<cudaReal> d_data;
+      Prdc::Cuda::Field<cudaReal> d_data;
       d_data.allocate(n);
 
       // Host arrays
@@ -355,10 +352,8 @@ public:
       int nBlocks;
       ThreadGrid::setThreadsLogical(n/2, nBlocks);
 
-      using namespace Pscf::Prdc::Cuda;
-
       // Device arrays
-      Field<cudaReal> d_data;
+      Prdc::Cuda::Field<cudaReal> d_data;
       d_data.allocate(n);
 
       // Host arrays
@@ -397,10 +392,8 @@ public:
       int nBlocks;
       ThreadGrid::setThreadsLogical(n/2, nBlocks);
 
-      using namespace Pscf::Prdc::Cuda;
-
       // Device arrays
-      Field<cudaReal> d_data;
+      Prdc::Cuda::Field<cudaReal> d_data;
       d_data.allocate(n);
 
       // Host arrays
@@ -439,10 +432,8 @@ public:
       int nBlocks;
       ThreadGrid::setThreadsLogical(n/2, nBlocks);
 
-      using namespace Pscf::Prdc::Cuda;
-
       // Device arrays
-      Field<cudaReal> d_data;
+      Prdc::Cuda::Field<cudaReal> d_data;
       d_data.allocate(n);
 
       // Host arrays
@@ -481,10 +472,8 @@ public:
       int nBlocks;
       ThreadGrid::setThreadsLogical(n/2, nBlocks);
 
-      using namespace Pscf::Prdc::Cuda;
-
       // Device arrays
-      Field<cudaReal> d_data;
+      Prdc::Cuda::Field<cudaReal> d_data;
       d_data.allocate(n);
 
       // Host arrays

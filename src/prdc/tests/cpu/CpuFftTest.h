@@ -32,10 +32,9 @@ public:
 
 void CpuFftTest::testConstructor()
 {
-   using namespace Pscf::Prdc::Cpu;
    printMethod(TEST_FUNC);
    {
-      FFT<1> v;
+      Cpu::FFT<1> v;
       //TEST_ASSERT(v.capacity() == 0 );
       //TEST_ASSERT(!v.isAllocated() );
    }
@@ -43,7 +42,6 @@ void CpuFftTest::testConstructor()
 
 void CpuFftTest::testTransform1D() 
 {
-   using namespace Pscf::Prdc::Cpu;
    printMethod(TEST_FUNC);
    //printEndl();
 
@@ -51,10 +49,10 @@ void CpuFftTest::testTransform1D()
    IntVec<1> d;
    d[0] = n;
 
-   FFT<1> v;
+   Cpu::FFT<1> v;
    v.setup(d);
 
-   RField<1> in;
+   Cpu::RField<1> in;
    in.allocate(d);
    TEST_ASSERT(in.capacity() == n);
 
@@ -67,18 +65,18 @@ void CpuFftTest::testTransform1D()
    }
 
    // Transform in -> out
-   RFieldDft<1> out;
+   Cpu::RFieldDft<1> out;
    out.allocate(d);
    v.forwardTransform(in, out);
 
    #if 0
    // Save a copy of out (to check if input was overwritten)
-   RFieldDft<1> outCopy(out);
+   Cpu::RFieldDft<1> outCopy(out);
    TEST_ASSERT(out.capacity() == outCopy.capacity());
    #endif
 
    // Inverse transform out -> inCopy
-   RField<1> inCopy;
+   Cpu::RField<1> inCopy;
    inCopy.allocate(d);
    v.inverseTransform(out, inCopy);
 
@@ -98,7 +96,6 @@ void CpuFftTest::testTransform1D()
 
 void CpuFftTest::testTransform2D() 
 {
-   using namespace Pscf::Prdc::Cpu;
    printMethod(TEST_FUNC);
    //printEndl();
 
@@ -108,10 +105,10 @@ void CpuFftTest::testTransform2D()
    d[0] = n1;
    d[1] = n2;
 
-   FFT<2> v;
+   Cpu::FFT<2> v;
    v.setup(d);
 
-   RField<2> in;
+   Cpu::RField<2> in;
    in.allocate(d);
    int rank = 0;
    double x, y, cx, sy;
@@ -128,7 +125,7 @@ void CpuFftTest::testTransform2D()
    }
 
    // Forward transform in -> out
-   RFieldDft<2> out;
+   Cpu::RFieldDft<2> out;
    out.allocate(d);
    TEST_ASSERT(eq(in.capacity() / in.meshDimensions()[1],
                   out.capacity() / (out.meshDimensions()[1]/2 + 1)));
@@ -136,7 +133,7 @@ void CpuFftTest::testTransform2D()
 
    #if 1
    // Save a copy of out
-   RFieldDft<2> outCopy(out);
+   Cpu::RFieldDft<2> outCopy(out);
    TEST_ASSERT(out.capacity() == outCopy.capacity());
    for (int i = 0; i < out.capacity(); ++i) {
       TEST_ASSERT(eq(out[i][0], outCopy[i][0]));
@@ -145,7 +142,7 @@ void CpuFftTest::testTransform2D()
    #endif
 
    // Inverse transform out -> inCopy
-   RField<2> inCopy;
+   Cpu::RField<2> inCopy;
    inCopy.allocate(d);
    v.inverseTransform(out, inCopy);
 
@@ -169,7 +166,6 @@ void CpuFftTest::testTransform2D()
 
 void CpuFftTest::testTransform3D() 
 {
-   using namespace Pscf::Prdc::Cpu;
    printMethod(TEST_FUNC);
    //printEndl();
 
@@ -181,11 +177,11 @@ void CpuFftTest::testTransform3D()
    d[1] = n2;
    d[2] = n3;
 
-   FFT<3> v;
+   Cpu::FFT<3> v;
    v.setup(d);
 
-   RField<3> in;
-   RFieldDft<3> out;
+   Cpu::RField<3> in;
+   Cpu::RFieldDft<3> out;
    in.allocate(d);
    out.allocate(d);
 
@@ -203,7 +199,7 @@ void CpuFftTest::testTransform3D()
    }
 
    v.forwardTransform(in, out);
-   RField<3> inCopy;
+   Cpu::RField<3> inCopy;
    inCopy.allocate(d);
    v.inverseTransform(out, inCopy);
 
@@ -216,7 +212,7 @@ void CpuFftTest::testTransform3D()
       }
    }
 
-   RFieldComparison<3> comparison;
+   Cpu::RFieldComparison<3> comparison;
    comparison.compare(in, inCopy);
    //std::cout << std::endl;
    //std::cout << "maxDiff = " 

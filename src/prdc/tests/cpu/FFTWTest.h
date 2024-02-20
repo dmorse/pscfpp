@@ -26,7 +26,8 @@ public:
    void tearDown()
    {}
  
-   void testFFTW_1D() {
+   void testFFTW_1D() 
+   {
       printMethod(TEST_FUNC);
       printEndl();
 
