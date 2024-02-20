@@ -1,5 +1,5 @@
 
-The Pscf::Pspc namespace implements SCFT for periodic structures on a CPU.
+The Pscf::Rpc namespace implements SCFT for periodic structures on a CPU.
 
 -----------------------------------------------------------------------------
 General comments:
@@ -28,12 +28,12 @@ The Pscf namespace contains all code that is specfic to field theoretic simulati
 is specific to periodic boundary conditions but that is available for use by more
 than one programs (e.g., for CPUs or GPUs) is in namespace Pscf::Prdc.  Classes
 that are used in only one program are in separate enclosed namespaces of Pscf. For
-example, classes used by the pscf_pc program are in namespace Pscf::Pspc (Psuedo 
-SPectral on a Cpu), which is all in directory src/pspc. 
+example, classes used by the pscf_pc program are in namespace Pscf::Rpc (Psuedo 
+SPectral on a Cpu), which is all in directory src/rpc. 
 
 3) Use of template argument D for the dimension of space: 
 
-Most classes in Pscf::Pspc are defined as C++ templates that take an integer 
+Most classes in Pscf::Rpc are defined as C++ templates that take an integer 
 D as a template parameter that represents the dimensionality of space, or the 
 number of coordinates required to describe the structure. Different instances 
 of each template with D=1, 2, or 3 are compiled to create codes for 1D (e.g., 
@@ -44,7 +44,7 @@ cases D=1, 2, and 3.
 
 4) Parameter files formats and inheritance from Util::ParamComposite:: 
 
-Most main classes in Pscf:Pspc are subclasses of a class Util::ParamComposite, 
+Most main classes in Pscf:Rpc are subclasses of a class Util::ParamComposite, 
 which is a class that provides member functions to read and write a parameter 
 file block in a standard hierarchichal format. The file format associated with 
 a ParamComposite object may include both individual data members with values 
@@ -87,8 +87,8 @@ overrun, or turned off for speed after you are convinced the code is correct.
 Classes that are used to solve the MDE and use the solution to compute monomer
 concentrations are generally constructed using a system of C++ templates that 
 allow common code to be shared in generic form between different implementations 
-of SCFT. For example, the Pscf::Pspc::Polymer class that represents a single
-polymer in Pspc namespace is a subclass of a template Pscf::PolymerTmpl<Block>
+of SCFT. For example, the Pscf::Rpc::Polymer class that represents a single
+polymer in Rpc namespace is a subclass of a template Pscf::PolymerTmpl<Block>
 that is defined in the main Pscf namespace. The template Pscf::PolymerTmp<Block>
 takes the type of the object associated with one block in a block polymer as a
 template parameter.  Different implementations of SCFT define different data 
@@ -112,20 +112,20 @@ Consistent use of namespaces allows analogous objects to be given the same
 name in different implemtations without causing ambiguities or name clashes. 
 Thus far, the PSCF code contains three SCFT implementations: One that uses 
 a finite-difference method for solving 1-dimensional problems (namespace 
-Fd1d, directory src/fd1d), a Pseudo-SPectral method for periodic problems 
-on a Cpu (namespace Pspc, directory src/pspc), and a Psuedo-Spectral method 
-for periodic problems on a Gpu (namespace Pspg, directory src/pspg).  The 
+R1d, directory src/r1d), a Pseudo-SPectral method for periodic problems 
+on a Cpu (namespace Rpc, directory src/rpc), and a Psuedo-Spectral method 
+for periodic problems on a Gpu (namespace Rpg, directory src/rpg).  The 
 object that represents an MDE solver for a polymer is simply called Polymer 
 in such each sub-namespace of Pscf, and the object that represents a block 
 is simply called Block.
 
 -----------------------------------------------------------------------------
-Overview of some important classes in Pscf::Pspc::
+Overview of some important classes in Pscf::Rpc::
 
 /*
 * Main system object
 *
-* Inheritance: Pscf::Pspc::System<D> <= Util::ParamComposite
+* Inheritance: Pscf::Rpc::System<D> <= Util::ParamComposite
 */
 template <int D>
 class System
@@ -144,7 +144,7 @@ class System
 
   // Data members:
 
-  Pscf::Pspc Mixture<D>   mixture      :: MDE solver for mixture
+  Pscf::Rpc Mixture<D>   mixture      :: MDE solver for mixture
 
   Pscf::Mesh<D>           mesh         :: Spatial discretization mesh
 
@@ -171,8 +171,8 @@ class System
 * it by the parent system. The Mixture::compute fucntion calls corresponding 
 * compute function for each polymer and solvent. 
 *
-* Pspc::Pscf is subclass of the generic Pscf::MixtureTmpl template. This is part
-* a pattern: Each "solver" in the Pscf::Pspc namespace (i.e., in the CPU code 
+* Rpc::Pscf is subclass of the generic Pscf::MixtureTmpl template. This is part
+* a pattern: Each "solver" in the Pscf::Rpc namespace (i.e., in the CPU code 
 * for periodic systems) is a subclass of a corresponding template in the Pscf.
 * This is true for mixture, polymer, solvent, and propagator solvers. The 
 * implementation of the base class template attempts to include everything that 
@@ -181,7 +181,7 @@ class System
 *
 * Inheritance: 
 *
-*   Pspc::Pspc::Mixture<D>  <=  Pscf::MixtureTpl<Polymer<D>, Solvent<D>>
+*   Rpc::Rpc::Mixture<D>  <=  Pscf::MixtureTpl<Polymer<D>, Solvent<D>>
 */
 class Mixture {
 
@@ -214,9 +214,9 @@ class Mixture {
 
    DArray<Pscf::Monomers>        monomers; // Array of monomer objects
 
-   DArray<Pscf::Pspc::Polymer>   polymers; // Array of Polymer objects
+   DArray<Pscf::Rpc::Polymer>   polymers; // Array of Polymer objects
 
-   DArray<Pscf::Pspc::Solvent>   solvents; // Array of Solvent objects
+   DArray<Pscf::Rpc::Solvent>   solvents; // Array of Solvent objects
 
 }
 
@@ -226,14 +226,14 @@ class Mixture {
 *
 * Inheritance:
 *
-*   Pscf::Pspc::Polymer<D> <= Pscf::PolymerTmpl::< Block<D> >
+*   Pscf::Rpc::Polymer<D> <= Pscf::PolymerTmpl::< Block<D> >
 *   
 *   Notes:
 *
 *   1) The Block<D> class defines a typedef Block::Propagator that specifies the 
 *   type of the associated propagator class.
 *
-*   2) The Pscf::PolymerTmpl<Pscf:Pspc::Block<D>> template instance is itself
+*   2) The Pscf::PolymerTmpl<Pscf:Rpc::Block<D>> template instance is itself
 *   derived from Util::Paramcomposite and Pscf::Species.
 *  
 *   3) Each Block of a polymer has two associated Propagator objects, representing
@@ -266,16 +266,16 @@ class Polymer {
 
 // Important private members (inherited from PolymerTmpl<Block>)
 
-   DArray<Pspc::Block>       blocks_;
+   DArray<Rpc::Block>       blocks_;
 
-   DArray<Pspc::Vertex>      vertices_;
+   DArray<Rpc::Vertex>      vertices_;
 
-   DArray<Pspc::Propagator>  propagators_;
+   DArray<Rpc::Propagator>  propagators_;
 
 }
 
 /*
-* Class Pscf::Pspc::Block represents one block in a block polymer.
+* Class Pscf::Rpc::Block represents one block in a block polymer.
 *
 * Notes:
 * 

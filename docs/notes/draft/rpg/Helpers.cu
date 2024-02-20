@@ -1,10 +1,10 @@
-#ifndef PSPG_HELPERS_CU
-#define PSPG_HELPERS_CU
+#ifndef RPG_HELPERS_CU
+#define RPG_HELPERS_CU
 
 #include "Helpers.h"
 
 namespace Pscf {
-namespace Pspg {
+namespace Rpg {
 
 __global__ void helmholtzHelper(cudaReal* result, const cudaReal* composition,
    const cudaReal* pressure, double chi, int size) 

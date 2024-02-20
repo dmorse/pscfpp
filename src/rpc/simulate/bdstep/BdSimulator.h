@@ -23,7 +23,7 @@ namespace Rpc {
    /**
    * Brownian dynamics simulator.
    *
-   * \ingroup Rpc_Simulate_Module
+   * \ingroup Rpc_Simulate_BdStep_Module
    */
    template <int D>
    class BdSimulator : public Simulator<D>

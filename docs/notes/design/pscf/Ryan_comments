@@ -1,13 +1,15 @@
 --------------------------------------------------------------------------
+Note: Edited Feb. 20 2024 to reflect changes in namespace names
+Pspc => Rpc, Pspg => Rpg, and Fd1d => R1d
 --------------------------------------------------------------------------
 RYAN'S THOUGHTS ON TO-DO
 
-note -- since Pspc:: and Pspg:: essentially have the same classes and
+note -- since Rpc:: and Rpg:: essentially have the same classes and
 design at this point, I am mainly talking about both, and when I need to 
-distinguish from Fd1d:: or from Pscf:: I will use Pspx:: to denote both
-Pspc:: and Pspg::.
+distinguish from R1d:: or from Pscf:: I will use Rpx:: to denote both
+Rpc:: and Rpg::.
 
-note -- I wrote many of my thoughts on Pspg::Sweep in an email to Dave,
+note -- I wrote many of my thoughts on Rpg::Sweep in an email to Dave,
 and I will defer to his decision on whether to include those thoughts in 
 Github issues or in a TODO file. 
 
@@ -18,7 +20,7 @@ Github issues or in a TODO file.
    state from files. Why draw this distinction? There are many other 
    situations where you want to do file IO, extract System state, or set 
    System state, and all of these generally require the same safety measures
-   and encapsulation. There are currently read/write functions in Pspx::System
+   and encapsulation. There are currently read/write functions in Rpx::System
    to do this, and functions scattered throughout the code that essentially 
    just wrap calls to said functions, or wrap calls to a FieldIo object. I 
    think that gathering this functionality into one place would be a strong 
@@ -74,13 +76,13 @@ Github issues or in a TODO file.
 
    My proposition would be to adjust classes that make calls to the System
    to instead take the data and functionality they require as parameters.
-   This could be done in a similar way to how FieldIo was adjusted in Pspc.
+   This could be done in a similar way to how FieldIo was adjusted in Rpc.
    Though this leads to more complicated signatures for methods, it also leads
    to far more predictable method and class behavior. Given a certain input, 
    we can rest assured that we will get a certain output. 
 
    As an example, I will give some very loose ideas about how one might do 
-   this for AmIterator. Currently, Pspx::AmIterator() takes as input a System
+   this for AmIterator. Currently, Rpx::AmIterator() takes as input a System
    by reference. The member functions of AmIterator use the System to get data
    from its associated Mixture, Basis (or mesh), Interaction, and UnitCell. 
    
@@ -152,5 +154,5 @@ any adjustments with the intention of creating more appropriate encapsulation
 and reducing connections within the code will likely have a net positive
 effect, even when considering time required for implementation. One potential
 alternative or complementary strategy might be to further embrace the patterns
-used with Pspg::ThreadGrid for other classes that do not really need actual 
+used with Rpg::ThreadGrid for other classes that do not really need actual 
 instances, instead treating converting them into namespaces. 

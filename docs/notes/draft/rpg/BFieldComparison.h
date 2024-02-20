@@ -9,13 +9,13 @@
 */
 
 #include <pscf/math/FieldComparison.h>
-//#include <pspg/field/RDField.h>
+//#include <rpg/field/RDField.h>
 #include <util/containers/DArray.h>
-#include <pspg/field/DField.h>
-#include <pspg/math/GpuResources.h>
+#include <rpg/field/DField.h>
+#include <rpg/math/GpuResources.h>
 
 namespace Pscf {
-namespace Pspg {
+namespace Rpg {
 
    using namespace Util;
 

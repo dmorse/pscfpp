@@ -23,7 +23,7 @@ namespace Rpg {
    /**
    * McState stores the state used by an MC simulation.
    *
-   * \ingroup Rpg_McState_Module
+   * \ingroup Rpg_McMove_Module
    */
    template <int D>
    struct McState 

@@ -26,6 +26,7 @@ namespace Rpc {
    * Monte-Carlo simulation coordinator.
    *
    * \ingroup Rpc_Simulate_Module
+   * \ingroup Rpc_Simulate_McMove_Module
    */
    template <int D>
    class McSimulator : public Simulator<D>

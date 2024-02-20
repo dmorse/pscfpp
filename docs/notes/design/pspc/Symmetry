@@ -72,7 +72,7 @@ name in either the parameter file or in the header of any input or output
 field file. FTMC and symmetric SCFT simulations will not normally be 
 performed in the same command file. 
 
-9) The Pspc::Iterator and Pspg::Iterator bases classes have a protected
+9) The Rpc::Iterator and Rpg::Iterator bases classes have a protected
 boolean variable isSymmetric_ and a public function isSymmetric() that
 returns isSymmetric_. This flag is set true in Iterator classes that update 
 fields using the symmetry-adapted Fourier basis and false in classes that 

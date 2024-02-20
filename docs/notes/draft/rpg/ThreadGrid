@@ -2,7 +2,7 @@
 // File: ThreadGrid.h
 
 namespace Pscf {
-namespace Pspg {
+namespace Rpg {
 
    class ThreadGrid 
    {
@@ -100,7 +100,7 @@ namespace Pspg {
 #include "ThreadGrid.h"
 
 namespace Pscf {
-namespace Pspg {
+namespace Rpg {
 
    // Number of threads per block.
    int ThreadGrid::nThreadPerBlock_ = 0;

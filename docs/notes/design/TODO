@@ -1,7 +1,7 @@
 ------------------------------------------------------------------------
 v1.2
 
-Pspc:  
+Rpc:  
 -----
 
 Field Theoretic simulation with real fields (FTS-R):
@@ -14,7 +14,7 @@ Field Theoretic simulation with real fields (FTS-R):
   - Create real-space and Fourier space MC moves (done)
   - Create Explicit, PredCorr and Leimkuhler-Matthews bd steps (done)
 
-Pspg:  
+Rpg:  
 -----
 
 Field Theoretic simulation with real fields (FTS-R):
@@ -25,7 +25,7 @@ Field Theoretic simulation with real fields (FTS-R):
   - Add commands to System (done)
   - Create classes to read and write trajectories (done)
   - Create real-space and Fourier space MC moves (done)
-  - Create Explicit, PredCorr and Leimkuhler-Matthews bd steps 
+  - Create Explicit, PredCorr and Leimkuhler-Matthews bd steps  (done)
 
 Docs:
 -----

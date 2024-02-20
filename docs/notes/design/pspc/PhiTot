@@ -136,11 +136,11 @@ Proposal
 
             [ void compute(wFields, double phiTot = 1.0); ]
 
-  * Modify Pspc::Mixture::compute
+  * Modify Rpc::Mixture::compute
 
        - Modify interface to take an optional argument double phiTot = 1.0.
 
-  * Add function Pspc::Mixture::computeFreeEnergy that computes the ideal gas
+  * Add function Rpc::Mixture::computeFreeEnergy that computes the ideal gas
     contribution to the Helmholtz free energy and grand-canonical free energies
     per monomer. Add accessors to return fHelhmoltzIdeal and pressureIdeal.
 

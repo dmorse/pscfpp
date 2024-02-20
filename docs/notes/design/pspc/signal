@@ -6,7 +6,7 @@ General Proposal: Consider using signals to keep track of changes to unit
 cell dimensions, possibly other changes. 
 
 Changes to unit cell cause changes in internal parameters in all Block 
-objects, as well as WaveList in Pspg. Signals sent to Mixture and 
+objects, as well as WaveList in Rpg. Signals sent to Mixture and 
 WaveList would do the trick. The Mixture::modifyUnitCell() method could
 call 
 

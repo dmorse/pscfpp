@@ -18,8 +18,8 @@ create separate programs that differ may differ in, among other things:
 The package currently contains the following three implementations:
 
    - pscf_1d: Finite-difference code for 1D problems
-   - pscf_pc: CPU code for periodic structures, using pseudo-spectral solver
-   - pscf_pg: GPU code for periodic structures, using pseudo-spectral solver
+   - pscf_pc: CPU code for real periodic fields
+   - pscf_pg: GPU code for real periodic fields
 
 The decision of whether the addition of some new capability requires the 
 creation of a entirely new SCFT implementation depends in large part on 
@@ -61,12 +61,12 @@ defined within a namespace named Pscf. A nested sub-namespace of Pscf
 is defined for each SCFT implementation. For example, the package
 currently contains namespaces:
  
-   Pscf::Fd1d - Classes for the pscf_1d finite difference 1D code
-   Pscf::Pspc - Classes for the pscf_pc periodic CPU code
-   Pscf::Pspg - Classes for the pscf_pc periodic CPU code
+   Pscf::R1d - Classes for the pscf_1d finite difference 1D code
+   Pscf::Rpc - Classes for the pscf_pc periodic CPU code
+   Pscf::Rpg - Classes for the pscf_pc periodic CPU code
 
-The name Pspc was intended to mean "pseudo-spectral periodic CPU" while 
-Pspg was intended to mean "pseudo-spectral periodic GPU".  Classes that 
+The name Rpc was intended to mean "real periodic fields on CPU" while 
+Rpg was intended to mean "real periodic fields on GPU".  Classes that 
 I expected to be usable in two or more implementations are defined 
 directly in the Pscf namespaces, while classes that are only used in 
 one implementation are defined directly in the subnamespace for that 
@@ -104,14 +104,14 @@ the name with the prefixes "Util::" or "Pscf::".
 
 Currently, all of the classes that are defined directly in the Pscf 
 namespace (rather than a sub-namespace) and all of the classes in 
-the Pscf::Fd1d and Pscf::Pspc enclosed namespaces can be compiled 
+the Pscf::R1d and Pscf::Rpc enclosed namespaces can be compiled 
 with a C++ compiler, while a CUDA compiler is only required to 
-compile the code in the Pscf::Pspg namespace. 
+compile the code in the Pscf::Rpg namespace. 
 
 Use of Dimension D of Space as a C++ Template Parameter
 -------------------------------------------------------
 
-The code for periodic structures in namespaces Pscf::Pspc and Pscf::Pspg
+The code for periodic structures in namespaces Pscf::Rpc and Pscf::Rpg
 consistently treats the dimension of space as C++ parameter, and is
 designed to produce different executable files for programs designed
 treat structures that are periodic in 1D (e.g., lamellar), 2D (e.g.,
@@ -170,7 +170,7 @@ designed to allow for the use of identical names for closely analogous
 classes without causing name clashes.
 For example, the solver and field classes for CPU and GPU codes for 
 periodic structures are separate classes with similar or identical 
-names, but are defined in the Pscf::Pspc and Pscf::Pspg namespaces,
+names, but are defined in the Pscf::Rpc and Pscf::Rpg namespaces,
 respectively. 
 
 One limitation of this design is that it does not allow for the
@@ -189,7 +189,7 @@ Because PSCF+ is designed for periodic structures, it should be able
 re-use some of the container classes that are used to represent fields, 
 and classes such as the FFT classes that define operations on fields.  
 Reuse is made difficult, however, by the fact that these classes are 
-currently defined in Pspc and Pspg namespaces that were designed to 
+currently defined in Rpc and Rpg namespaces that were designed to 
 be used only with a single SCFT implementation. 
 
 Because PSCF+ is designed for a discrete chains, it may not be able
@@ -220,7 +220,7 @@ to simulate models of molecules with discrete atoms. I recommend that
 each such program be designed as if it were another "implementation" 
 of PSCF, that re-uses classes that are defined in the Pscf main 
 namespace and the Util mainspace, but that either avoids the use of
-classes defined in the Pscf::Fd1d, Pscf::Pspc, or Pscf::Pspg namespaces,
+classes defined in the Pscf::R1d, Pscf::Rpc, or Pscf::Rpg namespaces,
 or uses these classes only with fully qualified names.
 
 The most important protential problems one might encounter when trying
@@ -228,9 +228,9 @@ to do this using the current design of PSCF are:
 
 1) The new code would need to be able to re-use the classes that define
 data structure and FFT operations for real fields on a regular mesh.
-These are currently located in pscf/pspg/fields and pscf/pspc/fields, 
-and are (unfortunately) currently defined in the Pscf::Pspc and 
-Pscf::Pspg namespaces.  implementation-level namespaces.
+These are currently located in pscf/rpg/fields and pscf/rpc/fields, 
+and are (unfortunately) currently defined in the Pscf::Rpc and 
+Pscf::Rpg namespaces.  implementation-level namespaces.
 
 2) The new code may need new variants of the classes that describe 
 chemical structure or the classes that implement MDE solvers that use 
@@ -247,9 +247,9 @@ to contain code that is intended for use by any code that uses periodic
 boundary conditions. Define subnamespaces Pscf::Prdc::Cpu and 
 Pscf::Prdc:Gpu for analogous classes that are defined to store field
 data in CPU or GPU memory. Move all or almost all of the classes that 
-are currently located in pspg/fields from namespace Pscf::Pspc to 
+are currently located in rpg/fields from namespace Pscf::Rpc to 
 Pscf::Prdc::Gpu. Similarly, move most of the classes that are currently 
-in pspg/fields to from namespace Pscf::Pspg to Pscf::Prdc::Cpu.  In the 
+in rpg/fields to from namespace Pscf::Rpg to Pscf::Prdc::Cpu.  In the 
 new GPU code, you can then using "using namespace Pscf::Prdc::Gpu" to 
 allow you to access these classes by name without needing to qualify 
 names with a prefix such as "Prdc::Gpu".

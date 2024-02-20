@@ -21,7 +21,7 @@ namespace Rpc {
    /**
    * McState stores the state used by an MC simulation.
    *
-   * \ingroup Rpc_McState_Module
+   * \ingroup Rpc_McMove_Module
    */
    template <int D>
    struct McState 

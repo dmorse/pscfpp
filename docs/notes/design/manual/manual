@@ -62,7 +62,7 @@ To be written (v1.2):
        - Compressor
    2. Example (Parameter File and Command File)
    3. Sampling Algorithms (MC and BD)
-   4. Parameter Files (unified pspc and pspg )
+   4. Parameter Files (unified rpc and rpg )
    5. Compressor Algorithms
    6. Analyzers
    7. Trajectories and Postprocessing

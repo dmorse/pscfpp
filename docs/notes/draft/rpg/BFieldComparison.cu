@@ -8,7 +8,7 @@
 #include "BFieldComparison.h"
 
 namespace Pscf {
-namespace Pspg {
+namespace Rpg {
 
    BFieldComparison::BFieldComparison(int begin)
     : fieldComparison_(begin)

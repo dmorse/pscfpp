@@ -12,9 +12,9 @@ Proposed solution:
 
     - Add a default value Scalar = double for Scalar template parameter
       for Species and Solver classes so that some current derived classes
-       (for fd1d and pspc) can remain unchanged.
+      (for r1d and rpc) can remain unchanged.
 
-    - Look for an consider other uses of double in the solver templates
+    - Look for and consider other uses of double in the solver templates
 
 2) Reconsider use of typdefs used to define single and double precision
    real numbers for variables defined on the GPU.

@@ -1,4 +1,4 @@
-TODO (pspg GPU code):
+TODO (rpg GPU code):
 
 Clean up of simple vector linear algebra kernel functions
 ----------------------------------------------------------
@@ -10,7 +10,7 @@ Clean up of simple vector linear algebra kernel functions
    Some are found in solvers/Block.tpp and (possibly?) math/Helpers.cu
    (From Ryan: definitely some in math/Helpers.cu!)
 
-3) Analyze what operations in the current pspg code are or should be 
+3) Analyze what operations in the current rpg code are or should be 
    implemented by calling a standard linear algebra operation like
    one of those described below. That will give a list of operations
    that are needed immediately, and may identify some possible 
@@ -121,7 +121,7 @@ Clean up of simple vector linear algebra kernel functions
          (if any) would be after arguments, and the ThreadGrid (if any) after 
          that.
 
-       - Even the existing pspg code might be able to use some functions that 
+       - Even the existing rpg code might be able to use some functions that 
          act on complex-valued data in order to operator on RFieldDft 
          containers.  We'd have to think about something that operates on 
          RFieldDft containers could use the same underlying kernels as 

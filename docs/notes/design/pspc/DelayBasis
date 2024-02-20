@@ -149,7 +149,7 @@ basis thus requires us to delay allocating all arrays that hold field
 components in symmetry-adapted basis format.  
 
 2) We may have to allow the FieldIo to construct a basis within the read 
-functions of Pspc::FieldIo, since the existence of an appropriate basis 
+functions of Rpc::FieldIo, since the existence of an appropriate basis 
 is used in some of the read functions. To implement policy A, we would
 allow a basis to be constructed if and only if the basis is not 
 initialized.
