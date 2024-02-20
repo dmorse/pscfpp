@@ -1,4 +1,4 @@
-/*! \page user_field_fd1d_page Field File - 1D Fields (pscf_1d)
+/*! \page user_field_r1d_page Field File - 1D Fields (pscf_1d)
 
  \ref user_field_page (Prev/Up) &nbsp; &nbsp; &nbsp; &nbsp; 
  \ref user_field_periodic_page (Next) 
@@ -22,7 +22,7 @@ The first row (index 0) contains field values at the lower bound of the
 coordinate (xmin), while the last row (index nx-1) contains values at the 
 upper bound (xmax). 
 
-\section user_field_fd1d_example_sec Example:
+\section user_field_r1d_example_sec Example:
 
 An example of a w (chemical potential) file is shown below. A large part 
 of the data section has beem omitted, as indicated by vertical dots.
@@ -59,7 +59,7 @@ nm     2
 \endcode
 <BR>
 
-\section user_field_fd1d_bc_sec Boundary Conditions:
+\section user_field_r1d_bc_sec Boundary Conditions:
 
 The pscf_1d program solves the underlying modified diffusion equation
 using a boundary condition that requires the 1D spatial derivative of 

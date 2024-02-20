@@ -72,7 +72,7 @@ make pscf_1d
 \endcode
 If entered before compiling any other code, this command will:
 
-  - Compile a large number *.cpp files in the util/, pscf/ and fd1d/
+  - Compile a large number *.cpp files in the util/, pscf/ and r1d/
     namespace-level subdirectories of the src/ directory.
 
   - Install corresponding object (*.o) and dependency (*.d) files in
@@ -82,13 +82,13 @@ If entered before compiling any other code, this command will:
   - Create a static library (with file extension *.a) in each of these
     three namespace-level subdirectories of the build directory.
 
-  - Compile and link the main program file src/fd1d/pscf_1d.cpp and
+  - Compile and link the main program file src/r1d/pscf_1d.cpp and
     install an executable file named pscf_1d in the pscfpp/bin
     directory.
 
 To recompile these programs after making any changes to configuration
 files (e.g., after enabling or disabling the debugging feature or
-changing compiler command line options), simply reissue the "make fd1d"
+changing compiler command line options), simply reissue the "make r1d"
 command.  The build system will detect if you have changed any of the
 relevant configuration files, and will recompile any file that might
 be effected by such changes.
@@ -130,7 +130,7 @@ for periodic structures on such a computer, enter
 make pscf_pg
 \endcode
 from either the pscfpp root directory or the desired build directory.
-If successful, this will compile code from the pspg/ subdirectory of
+If successful, this will compile code from the rpg/ subdirectory of
 the src/ directory, compile code from the util/, pscf/ and prdc/
 directories if needed, place object, dependency and library files in
 subdirectories of the chosen build tree, and install an executable
@@ -228,8 +228,8 @@ all C++ files in the tree rooted at that subdirectory, without compiling
 any code outside of that subdirectory.
 
 Invoking "make all" from a subdirectory of a namespace level directory
-(i.e., a subdirectory of the src/util, src/pscf, src/fd1d, src/prdc, 
-src/rpc, or src/pspg directory) will generally compile all the *.cpp 
+(i.e., a subdirectory of the src/util, src/pscf, src/r1d, src/prdc, 
+src/rpc, or src/rpg directory) will generally compile all the *.cpp 
 and (if CUDA is enabled) *.cu source files in that directory and any 
 nested subdirectories.
 
@@ -237,10 +237,10 @@ Invoking "make all" from any namespace level subdirectory of src/ will
 compile of all the *.cpp and (as appropriate) *.cu source files in the 
 directory tree, and also create a static library file containing all 
 of the resulting object code. In addition, invoking "make all" from
-the fd1d/, rpc/ or pspg/ subdirectories of src/ will compile, link 
+the r1d/, rpc/ or rpg/ subdirectories of src/ will compile, link 
 and install an executable program located in that directory.  For 
-example, entering "make all" from src/fd1d directory will create a 
-static library named src/fd1d/libfd1d.a, and install an executable 
+example, entering "make all" from src/r1d directory will create a 
+static library named src/r1d/libr1d.a, and install an executable 
 named pscf_1d in the bin/ directory.
 
 <em> Rationale </em>: The ability to invoke "make all" from a 

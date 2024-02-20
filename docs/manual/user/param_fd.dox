@@ -39,7 +39,7 @@ Sweep blocks.
 
 The domain block describes the spatial domain over which the SCFT equations 
 should be solved. The parameter file syntax is described in detail 
-\subpage fd1d_Domain_page "here", and also discussed below.
+\subpage r1d_Domain_page "here", and also discussed below.
 
 The example parameter file shown \ref user_param_example_page "previously" 
 was designed to describe a planar geometry. As another example, here is
@@ -167,15 +167,15 @@ is given in the links in the table below:
 <td> <b> Description </b> </td>
 </tr>
 <tr>
-<td> \subpage fd1d_AmIterator_page "AmIterator" </td>
+<td> \subpage r1d_AmIterator_page "AmIterator" </td>
 <td> Anderson-Mixing iterator (default) </td>
 </tr>
 <tr>
-<td> \subpage fd1d_NrIterator_page "NrIterator" </td>
+<td> \subpage r1d_NrIterator_page "NrIterator" </td>
 <td> Newton-Raphson iterator </td>
 </tr>
 <tr>
-<td> \subpage fd1d_BinaryRelaxIterator_page "BinaryRelaxIterator" </td>
+<td> \subpage r1d_BinaryRelaxIterator_page "BinaryRelaxIterator" </td>
 <td> Simple relaxation algorithm for AB (two monomer) systems, as 
      described by Drolet and Fredrickson. </td>
 </tr>

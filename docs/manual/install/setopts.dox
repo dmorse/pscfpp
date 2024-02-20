@@ -148,8 +148,8 @@ and usage of all of the variables defined there.
 The directories src/ and bld/ contain analogous directory structures, and
 similar sets of build configuration files.  In what follows, we will refer
 to src/ and bld/ generically as build directories. Both of these directories
-contains a set of five subdirectories named util/, pscf/, fd1d/, pscpc/, and
-pspg/ that each contain C++ source files from a single C++ namespace. We
+contains a set of five subdirectories named util/, pscf/, r1d/, pscpc/, and
+rpg/ that each contain C++ source files from a single C++ namespace. We
 refer to these top-level subdirectories of bld/ and src/ as 
 "namespace-level" subdirectories.
 

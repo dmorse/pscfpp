@@ -49,7 +49,7 @@ The effect of each command in this example is described below:
   - FINISH instructs the main program to stop execution and return.
 
 All pscf_1d that read or write field files use the same field file 
-format, described \ref user_field_fd1d_page "here".  The last line
+format, described \ref user_field_r1d_page "here".  The last line
 in every PSCF command script must be a FINISH command. Anything that
 appears after the FINISH command will be ignored.
 
@@ -473,8 +473,8 @@ propagator slice on the nodes of the regular spatial mesh used throughout
 the computation.
 
 <em> Comment for readers who read the source code </em>: This command 
-calls the function Fd1d::System::writeQ, which defines the output 
-format, and is defined in the C++ file src/fd1d/System.cpp.
+calls the function R1d::System::writeQ, which defines the output 
+format, and is defined in the C++ file src/r1d/System.cpp.
 
 \anchor user_command_1d_writeqall_sub 
 <b> WRITE_Q_ALL </b>:

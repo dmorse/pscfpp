@@ -277,7 +277,7 @@ simple wrappers around functions provided by the open source FFTW package.
 
 Equivalent operations are implemented for the field container classes used
 by pscf_pg by corresponding member functions of the class template 
-Pscf::Pspg::FFT that are wrappers around functions provided by the 
+Pscf::Rpg::FFT that are wrappers around functions provided by the 
 cuFFT CUDA library, which implements FFTs on a GPU.
 
 \subsection user_fourier_dft_alias_sub Wavevector Aliasing

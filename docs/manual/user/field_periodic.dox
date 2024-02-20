@@ -1,6 +1,6 @@
 /*! \page user_field_periodic_page Field File - Periodic Fields (pscf_pc and pscf_pg)
 
-\ref user_field_fd1d_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref user_field_r1d_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
 \ref user_command_page     (Next)
 <BR>
 
@@ -173,7 +173,7 @@ detail in the sub-pages linked below:
 </ol>
 
  <BR>
- \ref user_field_fd1d_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
+ \ref user_field_r1d_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
  \ref user_field_page       (Up) &nbsp; &nbsp; &nbsp; &nbsp;
  \ref user_command_page     (Next)
 */

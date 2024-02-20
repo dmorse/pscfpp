@@ -563,7 +563,7 @@ that may contain a field component associated with a specific monomer
 type, a row index, or information about a basis function, depending on 
 the type of field file being parsed and the column. The 'type' 
 attribute is a string identifier for the field file type, which has 
-allowed values "fd1d", "basis", "rgrid", and "kgrid". 
+allowed values "r1d", "basis", "rgrid", and "kgrid". 
 
 The Field class provides several methods that can change the format of 
 the data table, including methods to add a new column (to allow for

@@ -24,7 +24,7 @@
    </li>
    <li> \subpage user_field_page     
      <ul>
-       <li> \ref user_field_fd1d_page "1D Fields"  </li>
+       <li> \ref user_field_r1d_page "1D Fields"  </li>
        <li> \ref user_field_periodic_page "Period Fields" 
          <ul>
            <li> \ref user_field_basis_page "Basis Format" </li>

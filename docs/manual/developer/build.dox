@@ -29,23 +29,23 @@ The main subdirectories of src/ are:
  - src/pscf/ contains code defined directly in the Pscf namespace, which is
    accessible to all PSCF programs.
 
- - src/fd1d/ contains all code in the Pscf::Fd1d namespace, which is only
-   used by the pscf_1d 1D finite element program.
-
  - src/prdc/ contains all code in the Pscf::Prdc namespace, which is used
    by both the pscf_pc and pscf_pg programs for periodic structures.
+
+ - src/r1d/ contains all code in the Pscf::R1d namespace, which is only
+   used by the pscf_1d 1D finite element program.
 
  - src/rpc/ contains all code in the Pscf::Rpc namespace, which is only
    used by the pscf_pc C++ CPU program for periodic structures.
 
- - src/pspg/ contains all code for the Pscf::Rpc namespace, which is
+ - src/rpg/ contains all code for the Pscf::Rpg namespace, which is
    only used by the pscf_pg CUDA GPU program for periodic structures.
 
 These six directories will be referred to in what follows as "namespace"
 level subdirectories of src/.  The PSCF makefile system constructs a
 static library in each of these namespace level directories that contains
 compiled code for all of the classes and global functions defined in that
-directory. The src/fd1d, src/rpc, and src/pspg each contain one or more
+directory. The src/r1d, src/rpc, and src/rpg each contain one or more
 main program source files that are also compiled and installed by the
 build system.
 
@@ -92,9 +92,10 @@ contain the following files and namespace level subdirectories:
       configure
       util/
       pscf/
-      fd1d/
+      prdc/
+      r1d/
       rpc/
-      pspg/
+      rpg/
 \endcode
 Here, we use the BLD_DIR to represent the path to a specific build
 directory. The purposes of the files in this directory are:
@@ -107,7 +108,7 @@ directory. The purposes of the files in this directory are:
      some features before compilation.
 
 After setup but before compilation, each of the six namespace level
-subdirectories (util/, pscf/, fd1d/, pscp/, and pspg/) of each build
+subdirectories (util/, pscf/, prdc/, r1d/, pscp/, and rpg/) of each build
 directory also contains a few makefile fragments with similar names,
 of the form:
 \code
@@ -163,7 +164,7 @@ The makefile in each namespace level subdirectory of each build directory define
 
 The "all" target in each namespace level directory also creates a static library that contains the object files for all classes in the associated namespace.  The base name of each such library is given by a prefix "lib" followed by the namespace level directory name with a file extension ".a". Each such library is placed in the corresponding namespace level build directory. For example, the makefile in the util/ subdirectory creates a static library that (by default) is named BLD_DIR/util/libutil.a.  Executable files are built by linking main program files to these namespace level libraries.
 
-The "all" targets of the makefiles in the fd1d, rpc, and pspg namespace level subdirectories also compile main programs and install the resulting executables in the BIN_DIR directory. Entering "make all" from the BLD_DIR/fd1d directory compiles and links the main program src/fd1d/pscf_1d.cpp, in addition to compiling all of the required class files and aggregating the source files into a static library.
+The "all" targets of the makefiles in the r1d, rpc, and rpg namespace level subdirectories also compile main programs and install the resulting executables in the BIN_DIR directory. Entering "make all" from the BLD_DIR/r1d directory compiles and links the main program src/r1d/pscf_1d.cpp, in addition to compiling all of the required class files and aggregating the source files into a static library.
 
 \section make_sources Source file lists (sources.mk files)
 
@@ -367,9 +368,9 @@ any object file target.
 \section make_makefile Example: A Namespace Directory makefile
 
 As an example of how the system works, here are the essential parts of the 
-namespace level makefile from the directory bld/fd1d. The actual makefile 
+namespace level makefile from the directory bld/r1d. The actual makefile 
 also includes "clean" and "veryclean" targets that have been excluded for 
-clarity. Corresponding makefiles in bld/fd1d and src/fd1d are identical:
+clarity. Corresponding makefiles in bld/r1d and src/r1d are identical:
 
 \code
 BLD_DIR_REL =..

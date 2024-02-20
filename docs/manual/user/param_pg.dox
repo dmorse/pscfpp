@@ -15,7 +15,7 @@ in the available iterators.
 \section user_param_pg_iterator_sec Iterators
 
 The default iterator for pscf_pg, which is implemented by class 
-Pspg::AmIteratorBasis<D>, uses an Anderson-Mixing (AM) algorithm 
+Rpg::AmIteratorBasis<D>, uses an Anderson-Mixing (AM) algorithm 
 that imposes a prescribed space group symmetry, much like the closely
 analogous \ref rpc_AmIteratorBasis_page "Rpc::AmIteratorBasis" 
 iterator used by pscf_pc.  This iteration algorithm may be invoked 
@@ -45,12 +45,12 @@ can be found by following the links in the table below:
     <td> <b> Description </b> </td>
   </tr>
   <tr>
-    <td> \subpage pspg_AmIteratorBasis_page "AmIteratorBasis" </td>
+    <td> \subpage rpg_AmIteratorBasis_page "AmIteratorBasis" </td>
     <td> Anderson Mixing iterator for periodic structures, 
          formulated using a symmetry-adapted basis (default)  </td>
   </tr>
   <tr>
-    <td> \subpage pspg_AmIteratorGrid_page "AmIteratorGrid" </td>
+    <td> \subpage rpg_AmIteratorGrid_page "AmIteratorGrid" </td>
     <td> Anderson Mixing iterator for periodic structures, 
          formulated using values defined on a spatial grid  </td>
   </tr>
