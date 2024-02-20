@@ -5,9 +5,10 @@
 #include <test/UnitTestRunner.h>
 
 #include <prdc/cpu/RField.h>
-#include <prdc/cpu/RFieldDft.h>
 #include <prdc/cpu/RFieldComparison.h>
-#include <prdc/cpu/RFieldDftComparison.h>
+
+//#include <prdc/cpu/RFieldDft.h>
+//#include <prdc/cpu/RFieldDftComparison.h>
 
 #include <util/format/Dbl.h>
 
@@ -27,10 +28,9 @@ public:
 
    void testRFieldComparison_1D()
    {
-      using namespace Pscf::Prdc::Cpu;
       printMethod(TEST_FUNC);
 
-      RField<1> rf_0, rf_1;
+      Cpu::RField<1> rf_0, rf_1;
       int n = 10;
       IntVec<1> dimensions;
       dimensions[0] = n;
@@ -42,7 +42,7 @@ public:
          rf_0[i] = 2.0;
          rf_1[i] = 2.001;
       }
-      RFieldComparison<1> comparison;
+      Cpu::RFieldComparison<1> comparison;
       comparison.compare(rf_0,  rf_1);
       if (verbose() > 0) {
          std::cout << "\n";
@@ -60,10 +60,9 @@ public:
 
    void testRFieldComparison_2D()
    {
-      using namespace Pscf::Prdc::Cpu;
       printMethod(TEST_FUNC);
 
-      RField<2> rf_0, rf_1;
+      Cpu::RField<2> rf_0, rf_1;
       int m = 5;
       int n = 10;
       IntVec<2> dimensions;
@@ -77,7 +76,7 @@ public:
          rf_0[i] = 2.0;
          rf_1[i] = 2.001;
       }
-      RFieldComparison<2> comparison;
+      Cpu::RFieldComparison<2> comparison;
       comparison.compare(rf_0,  rf_1);
       if (verbose() > 0) {
          std::cout << "\n";

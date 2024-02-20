@@ -13,6 +13,8 @@
 #include <util/archives/BinaryFileIArchive.h>
 
 using namespace Util;
+using namespace Pscf;
+using namespace Pscf::Prdc;
 
 class CpuRFieldDftTest : public UnitTest 
 {
@@ -46,10 +48,9 @@ public:
 
 void CpuRFieldDftTest::testConstructor()
 {
-   using namespace Pscf::Prdc::Cpu;
    printMethod(TEST_FUNC);
    {
-      RFieldDft<3> v;
+      Cpu::RFieldDft<3> v;
       TEST_ASSERT(v.capacity() == 0 );
       TEST_ASSERT(!v.isAllocated() );
    }
@@ -57,10 +58,9 @@ void CpuRFieldDftTest::testConstructor()
 
 void CpuRFieldDftTest::testAllocate()
 {
-   using namespace Pscf::Prdc::Cpu;
    printMethod(TEST_FUNC);
    {
-      RFieldDft<3> v;
+      Cpu::RFieldDft<3> v;
       v.allocate(capacity);
       TEST_ASSERT(v.capacity() == capacity );
       TEST_ASSERT(v.isAllocated());
@@ -69,12 +69,11 @@ void CpuRFieldDftTest::testAllocate()
 
 void CpuRFieldDftTest::testAllocate1()
 {
-   using namespace Pscf::Prdc::Cpu;
    printMethod(TEST_FUNC);
    {
       IntVec<1> d;
       d[0] = 3;
-      RFieldDft<1> v;
+      Cpu::RFieldDft<1> v;
       v.allocate(d);
       TEST_ASSERT(v.capacity() == 2);
       TEST_ASSERT(v.isAllocated());
@@ -84,14 +83,13 @@ void CpuRFieldDftTest::testAllocate1()
  
 void CpuRFieldDftTest::testAllocate3()
 {
-   using namespace Pscf::Prdc::Cpu;
    printMethod(TEST_FUNC);
    {
       IntVec<3> d;
       d[0] = 2;
       d[1] = 3;
       d[2] = 4;
-      RFieldDft<3> v;
+      Cpu::RFieldDft<3> v;
       v.allocate(d);
       TEST_ASSERT(v.capacity() == 18);
       TEST_ASSERT(v.isAllocated());
@@ -101,10 +99,9 @@ void CpuRFieldDftTest::testAllocate3()
  
 void CpuRFieldDftTest::testSubscript()
 {
-   using namespace Pscf::Prdc::Cpu;
    printMethod(TEST_FUNC);
    {
-      RFieldDft<3> v;
+      Cpu::RFieldDft<3> v;
       v.allocate(capacity);
       for (int i=0; i < capacity; i++ ) {
          v[i][0] = (i+1)*10.0 ;
@@ -122,14 +119,13 @@ void CpuRFieldDftTest::testSubscript()
 
 void CpuRFieldDftTest::testCopyConst()
 {
-   using namespace Pscf::Prdc::Cpu;
    printMethod(TEST_FUNC);
    {
       IntVec<3> d;
       d[0] = 3;
       d[1] = 3;
       d[2] = 2;
-      RFieldDft<3> v;
+      Cpu::RFieldDft<3> v;
       v.allocate(d);
       TEST_ASSERT(v.capacity() == 18);
       TEST_ASSERT(v.isAllocated());
@@ -140,7 +136,7 @@ void CpuRFieldDftTest::testCopyConst()
          v[i][1] = (i + 1) * 10.0 + 0.1;
       }
 
-      RFieldDft<3> u(v);
+      Cpu::RFieldDft<3> u(v);
       TEST_ASSERT(u.isAllocated());
       TEST_ASSERT(u.capacity() == v.capacity());
 
@@ -154,16 +150,15 @@ void CpuRFieldDftTest::testCopyConst()
 
 void CpuRFieldDftTest::testAssignment()
 {
-   using namespace Pscf::Prdc::Cpu;
    printMethod(TEST_FUNC);
 
    {
-      RFieldDft<3> v;
+      Cpu::RFieldDft<3> v;
       v.allocate(capacity);
       TEST_ASSERT(v.capacity() == 3);
       TEST_ASSERT(v.isAllocated() );
    
-      RFieldDft<3> u;
+      Cpu::RFieldDft<3> u;
       u.allocate(3);
       TEST_ASSERT(u.capacity() == 3 );
       TEST_ASSERT(u.isAllocated() );
@@ -193,10 +188,9 @@ void CpuRFieldDftTest::testAssignment()
 #if 0
 void CpuRFieldDftTest::testSerialize1Memory()
 { 
-   using namespace Pscf::Prdc::Cpu;
    printMethod(TEST_FUNC);
    {
-      RFieldDft<3> v;
+      Cpu::RFieldDft<3> v;
       v.allocate(3);
       for (int i=0; i < capacity; i++ ) {
          v[i][0] = (i+1)*10.0 ;
@@ -219,7 +213,7 @@ void CpuRFieldDftTest::testSerialize1Memory()
       TEST_ASSERT(v[1][1]==20.0);
       TEST_ASSERT(v.capacity() == 3);
    
-      RFieldDft<3> u;
+      Cpu::RFieldDft<3> u;
       u.allocate(3);
    
       MemoryIArchive iArchive;
@@ -283,10 +277,9 @@ void CpuRFieldDftTest::testSerialize1Memory()
 
 void CpuRFieldDftTest::testSerialize2Memory()
 {
-   using namespace Pscf::Prdc::Cpu;
    printMethod(TEST_FUNC);
    {
-      RFieldDft<3> v;
+      Cpu::RFieldDft<3> v;
       v.allocate(capacity);
       for (int i=0; i < capacity; i++ ) {
          v[i][0] = (i+1)*10.0 ;
@@ -304,9 +297,9 @@ void CpuRFieldDftTest::testSerialize2Memory()
       TEST_ASSERT(v[1] == 20.0);
       TEST_ASSERT(v.capacity() == capacity);
    
-      RFieldDft<3> u;
+      Cpu::RFieldDft<3> u;
    
-      // Note: We do not allocate RFieldDft<3> u in this test.
+      // Note: We do not allocate Cpu::RFieldDft<3> u in this test.
       // This is the main difference from testSerialize1Memory()
    
       MemoryIArchive iArchive;
@@ -331,10 +324,9 @@ void CpuRFieldDftTest::testSerialize2Memory()
 
 void CpuRFieldDftTest::testSerialize1File()
 {
-   using namespace Pscf::Prdc::Cpu;
    printMethod(TEST_FUNC);
    {
-      RFieldDft<3> v;
+      Cpu::RFieldDft<3> v;
       v.allocate(3);
       for (int i=0; i < capacity; i++ ) {
          v[i][0] = (i+1)*10.0 ;
@@ -354,7 +346,7 @@ void CpuRFieldDftTest::testSerialize1File()
       TEST_ASSERT(v[1]==20.0);
       TEST_ASSERT(v.capacity() == 3);
    
-      RFieldDft<3> u;
+      Cpu::RFieldDft<3> u;
       u.allocate(3);
    
       BinaryFileIArchive iArchive;
@@ -386,10 +378,9 @@ void CpuRFieldDftTest::testSerialize1File()
 
 void CpuRFieldDftTest::testSerialize2File()
 {
-   using namespace Pscf::Prdc::Cpu;
    printMethod(TEST_FUNC);
    {
-      RFieldDft<3> v;
+      Cpu::RFieldDft<3> v;
       v.allocate(3);
       for (int i=0; i < capacity; i++ ) {
          v[i][0] = (i+1)*10.0 ;
@@ -409,7 +400,7 @@ void CpuRFieldDftTest::testSerialize2File()
       TEST_ASSERT(v[1] == 20.0);
       TEST_ASSERT(v.capacity() == 3);
    
-      RFieldDft<3> u;
+      Cpu::RFieldDft<3> u;
    
       // u.allocate(3); -> 
       // Note: We do not allocate first. This is the difference 
