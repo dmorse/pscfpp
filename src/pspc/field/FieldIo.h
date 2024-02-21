@@ -301,9 +301,7 @@ namespace Pspc {
       void writeFieldsRGrid(std::ostream& out, 
                             DArray< RField<D> > const & fields, 
                             UnitCell<D> const & unitCell,
-                            IntVec<D> const & meshDimensions,
                             bool writeHeader = true,
-                            bool writeMeshSize = true,
                             bool isSymmetric = true) const;
 
       /**

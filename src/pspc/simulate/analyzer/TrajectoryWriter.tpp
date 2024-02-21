@@ -88,7 +88,6 @@ namespace Pspc
       FieldIo<D> const & fieldIo = domain.fieldIo();
       fieldIo.writeFieldsRGrid(out, system().w().rgrid(), 
                                domain.unitCell(), 
-                               system().mesh().dimensions(),
                                writeHeader, isSymmetric);
       out << "\n";
    }  

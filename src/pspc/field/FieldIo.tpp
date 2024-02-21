@@ -922,9 +922,7 @@ namespace Pspc {
    void FieldIo<D>::writeFieldsRGrid(std::ostream &out,
                                      DArray<RField<D> > const & fields,
                                      UnitCell<D> const & unitCell,
-                                     IntVec<D> const & meshDimensions,
                                      bool writeHeader,
-                                     bool writeMeshSize,
                                      bool isSymmetric) const
    {
       int nMonomer = fields.capacity();
@@ -932,15 +930,13 @@ namespace Pspc {
       if (writeHeader){
          writeFieldHeader(out, nMonomer, unitCell, isSymmetric);
       }
-      if (writeMeshSize){
-         out << "mesh " <<  std::endl
-             << "           " << meshDimensions << std::endl;
-      }
+      out << "mesh " <<  std::endl
+          << "           " << mesh().dimensions() << std::endl;
 
       DArray<RField<D> > temp;
       temp.allocate(nMonomer);
       for (int i = 0; i < nMonomer; ++i) {
-         temp[i].allocate(meshDimensions);
+         temp[i].allocate(mesh().dimensions());
       } 
 
       int p = 0; 
@@ -952,21 +948,21 @@ namespace Pspc {
       int n3 =0;
 
       if (D==3) {
-         while (n3 < meshDimensions[2]) {
+         while (n3 < mesh().dimension(2)) {
             q = p; 
             n2 = 0; 
-            while (n2 < meshDimensions[1]) {
+            while (n2 < mesh().dimension(1)) {
                r =q;
                n1 = 0; 
-               while (n1 < meshDimensions[0]) {
+               while (n1 < mesh().dimension(0)) {
                   for (int i = 0; i < nMonomer; ++i) {
                      temp[i][s] = fields[i][r];
                   }    
-                  r = r + (meshDimensions[1] * meshDimensions[2]);
+                  r = r + (mesh().dimension(1) * mesh().dimension(2));
                   ++s; 
                   ++n1;     
                }    
-               q = q + meshDimensions[2];
+               q = q + mesh().dimension(2);
                ++n2;
             }    
             ++n3;
@@ -974,14 +970,14 @@ namespace Pspc {
          }    
       }
       else if (D==2) {
-         while (n2 < meshDimensions[1]) {
+         while (n2 < mesh().dimension(1)) {
             r =q;
             n1 = 0;
-            while (n1 < meshDimensions[0]) {
+            while (n1 < mesh().dimension(0)) {
                for (int i = 0; i < nMonomer; ++i) {
                   temp[i][s] = fields[i][r];
                }
-               r = r + (meshDimensions[1]);
+               r = r + (mesh().dimension(1));
                ++s;
                ++n1;
             }
@@ -990,7 +986,7 @@ namespace Pspc {
          }
       }
       else if (D==1) {
-         while (n1 < meshDimensions[0]) {
+         while (n1 < mesh().dimension(0)) {
             for (int i = 0; i < nMonomer; ++i) {
                temp[i][s] = fields[i][r];
             }
@@ -1003,7 +999,7 @@ namespace Pspc {
       }
 
       // Write fields
-      MeshIterator<D> itr(meshDimensions);
+      MeshIterator<D> itr(mesh().dimensions());
       for (itr.begin(); !itr.atEnd(); ++itr) {
          for (int j = 0; j < nMonomer; ++j) {
             out << "  " << Dbl(temp[j][itr.rank()], 18, 15);
@@ -1022,11 +1018,10 @@ namespace Pspc {
       std::ofstream file;
       fileMaster().openOutputFile(filename, file);
       bool writeHeader = true;
-      bool writeMeshSize = true;
-      writeFieldsRGrid(file, fields, unitCell, mesh().dimensions(), writeHeader, writeMeshSize, isSymmetric);
+      writeFieldsRGrid(file, fields, unitCell, writeHeader, isSymmetric);
       file.close();
    }
-
+   
    template <int D>
    void FieldIo<D>::writeFieldRGrid(std::ostream &out, 
                                     RField<D> const & field, 
@@ -1453,7 +1448,7 @@ namespace Pspc {
       out << "mesh " <<  std::endl
           << "           " << replicateDimensions << std::endl;
       // Write Fields
-      FieldIo<D>::writeFieldsRGrid(out, outFields, cell, replicateDimensions, false, false, false);
+      FieldIo<D>::writeFieldsRGrid(out, outFields, cell, false, false);
    }
    
    template <int D>
