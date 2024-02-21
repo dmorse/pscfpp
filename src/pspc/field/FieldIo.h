@@ -397,14 +397,26 @@ namespace Pspc {
                                  int d) const;
 
       /**
-      * Replicate the unit cell a specified number of time in each directio
-      * and write the new field to a file
+      * Write r-grid fields with a replicated unit cell.
+      * 
+      * \param out  output stream (i.e., output file)
+      * \param fields  array of RField fields (r-space grid) needs to be replicated in dimensions
+      * \param unitCell  associated crystallographic unit cell
+      * \param n  a specified number of time replication in each direction
+      */
+      void replicateUnitCell(std::ostream& out, 
+                             DArray<RField<D> > const & fields,
+                             UnitCell<D> const & unitCell,
+                             int n) const;
+
+      /**
+      * Write r-grid fields with a replicated unit cell.
       * 
       * This function opens an output file with the specified filename, 
       * writes expanded fields in RField<d> real-space grid format to that file, 
       * and then closes the file.
       *
-      * \param out  output stream (i.e., output file)
+      * \param filename  name of output file
       * \param fields  array of RField fields (r-space grid) needs to be replicated in dimensions
       * \param unitCell  associated crystallographic unit cell
       * \param n  a specified number of time replication in each direction
@@ -413,7 +425,6 @@ namespace Pspc {
                              DArray<RField<D> > const & fields,
                              UnitCell<D> const & unitCell,
                              int n) const;
-
 
       /**
       * Expand the dimensions of array of RField objects (fields on an r-space grid) 
@@ -434,7 +445,7 @@ namespace Pspc {
                                  UnitCell<D> const & unitCell,
                                  int d,
                                  DArray<int> newGridDimensions) const;
-     
+ 
       ///@}
       /// \name Field File IO - Fourier Space (K-Space) Grid Format
       ///@{
