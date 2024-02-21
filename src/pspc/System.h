@@ -352,6 +352,22 @@ namespace Pspc {
       * Clear timers 
       */
       void clearTimers();
+      
+      /**
+      * Expand the dimensions of RField
+      *
+      * Perform a field theoretic Monte-Carlo simulation using the 
+      * partial saddle-point approximation. 
+      * 
+      * \param inFileName filename name of input field file
+      * \param outFileName filename name of output field file
+      * \param d  intended dimensions 
+      * \param newGridDimensions the number of grid points in each of the added dimensions
+      */
+      void expandRGridDimension(const std::string & inFileName,
+                                const std::string & outFileName,
+                                int d,
+                                DArray<int> newGridDimensions);
 
       ///@}
       /// \name Thermodynamic Properties
