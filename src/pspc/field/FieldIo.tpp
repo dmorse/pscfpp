@@ -922,9 +922,7 @@ namespace Pspc {
    void FieldIo<D>::writeFieldsRGrid(std::ostream &out,
                                      DArray<RField<D> > const & fields,
                                      UnitCell<D> const & unitCell,
-                                     IntVec<D> const & meshDimensions,
                                      bool writeHeader,
-                                     bool writeMeshSize,
                                      bool isSymmetric) const
    {
       int nMonomer = fields.capacity();
@@ -932,15 +930,13 @@ namespace Pspc {
       if (writeHeader){
          writeFieldHeader(out, nMonomer, unitCell, isSymmetric);
       }
-      if (writeMeshSize){
-         out << "mesh " <<  std::endl
-             << "           " << meshDimensions << std::endl;
-      }
+      out << "mesh " <<  std::endl
+          << "           " << mesh().dimensions() << std::endl;
 
       DArray<RField<D> > temp;
       temp.allocate(nMonomer);
       for (int i = 0; i < nMonomer; ++i) {
-         temp[i].allocate(meshDimensions);
+         temp[i].allocate(mesh().dimensions());
       } 
 
       int p = 0; 
@@ -952,21 +948,21 @@ namespace Pspc {
       int n3 =0;
 
       if (D==3) {
-         while (n3 < meshDimensions[2]) {
+         while (n3 < mesh().dimension(2)) {
             q = p; 
             n2 = 0; 
-            while (n2 < meshDimensions[1]) {
+            while (n2 < mesh().dimension(1)) {
                r =q;
                n1 = 0; 
-               while (n1 < meshDimensions[0]) {
+               while (n1 < mesh().dimension(0)) {
                   for (int i = 0; i < nMonomer; ++i) {
                      temp[i][s] = fields[i][r];
                   }    
-                  r = r + (meshDimensions[1] * meshDimensions[2]);
+                  r = r + (mesh().dimension(1) * mesh().dimension(2));
                   ++s; 
                   ++n1;     
                }    
-               q = q + meshDimensions[2];
+               q = q + mesh().dimension(2);
                ++n2;
             }    
             ++n3;
@@ -974,14 +970,14 @@ namespace Pspc {
          }    
       }
       else if (D==2) {
-         while (n2 < meshDimensions[1]) {
+         while (n2 < mesh().dimension(1)) {
             r =q;
             n1 = 0;
-            while (n1 < meshDimensions[0]) {
+            while (n1 < mesh().dimension(0)) {
                for (int i = 0; i < nMonomer; ++i) {
                   temp[i][s] = fields[i][r];
                }
-               r = r + (meshDimensions[1]);
+               r = r + (mesh().dimension(1));
                ++s;
                ++n1;
             }
@@ -990,7 +986,7 @@ namespace Pspc {
          }
       }
       else if (D==1) {
-         while (n1 < meshDimensions[0]) {
+         while (n1 < mesh().dimension(0)) {
             for (int i = 0; i < nMonomer; ++i) {
                temp[i][s] = fields[i][r];
             }
@@ -1003,7 +999,7 @@ namespace Pspc {
       }
 
       // Write fields
-      MeshIterator<D> itr(meshDimensions);
+      MeshIterator<D> itr(mesh().dimensions());
       for (itr.begin(); !itr.atEnd(); ++itr) {
          for (int j = 0; j < nMonomer; ++j) {
             out << "  " << Dbl(temp[j][itr.rank()], 18, 15);
@@ -1022,11 +1018,10 @@ namespace Pspc {
       std::ofstream file;
       fileMaster().openOutputFile(filename, file);
       bool writeHeader = true;
-      bool writeMeshSize = true;
-      writeFieldsRGrid(file, fields, unitCell, mesh().dimensions(), writeHeader, writeMeshSize, isSymmetric);
+      writeFieldsRGrid(file, fields, unitCell, writeHeader, isSymmetric);
       file.close();
    }
-
+   
    template <int D>
    void FieldIo<D>::writeFieldRGrid(std::ostream &out, 
                                     RField<D> const & field, 
@@ -1127,10 +1122,8 @@ namespace Pspc {
    {
       // Check the intended dimensions are greater than the current dimensions and less than 4
       UTIL_CHECK(d > D);
-     
       // Check the capacity of newGridDimensions should be equal to d - D
       UTIL_CHECK(newGridDimensions.capacity() == (d - D));
-
       // Obtain number of monomer types
       int nMonomer = fields.capacity();
       UTIL_CHECK(nMonomer > 0);
@@ -1141,10 +1134,8 @@ namespace Pspc {
       int v2 = 0;
       std::string gname = "";
       FSArray<double, 6> cellParameters;
-
       if (d == 2){
          // For d == 2, the only case is 1D expanded to 2D
-        
          // Set parameter 
          DArray<RField<2> > outFields;
          UnitCell<2> cell;
@@ -1158,7 +1149,6 @@ namespace Pspc {
             cellParameters[1] = (double)dimensions[1]/dimensions[0] * cellParameters[0];
             cell.set(UnitCell<2>::Rectangular, cellParameters);
          }
-
          // Allocate outFields
          outFields.allocate(nMonomer);
          for (int i = 0; i < nMonomer; ++i){
@@ -1186,13 +1176,11 @@ namespace Pspc {
          }
       }
       if (d == 3){
-        
          // Set parameter 
          DArray<RField<3> > outFields;
          UnitCell<3> cell;
          IntVec<3> dimensions;
          int rank = 0;
-        
          // 1D to 3D
          if (D == 1){
             dimensions[0] = meshDimensions[0];
@@ -1208,11 +1196,11 @@ namespace Pspc {
                }
             } 
             else{
-               if (dimensions[1] == dimensions[0]) {
+               if (dimensions[1] == dimensions[0]){
                   cellParameters[0] = unitCell.parameters()[0];
                   cellParameters[1] = (double)dimensions[2]/dimensions[0] * cellParameters[0];
                   cell.set(UnitCell<3>::Tetragonal, cellParameters);
-               } else if (dimensions[2] == dimensions[0]){
+               }else if (dimensions[2] == dimensions[0]){
                   cellParameters[0] = unitCell.parameters()[0];
                   cellParameters[1] = (double)dimensions[1]/dimensions[0] * cellParameters[0];
                   cell.set(UnitCell<3>::Tetragonal, cellParameters);
@@ -1224,7 +1212,6 @@ namespace Pspc {
                }
                
             }
-
             // Allocate outFields
             outFields.allocate(nMonomer);
             for (int i = 0; i < nMonomer; ++i){
@@ -1244,7 +1231,6 @@ namespace Pspc {
          
          // 2D to 3D
          if (D == 2){
-
             dimensions[0] = meshDimensions[0];
             dimensions[1] = meshDimensions[1];
             dimensions[2] = newGridDimensions[0];
@@ -1273,7 +1259,6 @@ namespace Pspc {
                cellParameters[1] = (double)dimensions[2]/dimensions[0] * cellParameters[0];
                cell.set(UnitCell<3>::Hexagonal, cellParameters);
             }
-
             // Allocate outFields
             outFields.allocate(nMonomer);
             for (int i = 0; i < nMonomer; ++i){
@@ -1310,7 +1295,6 @@ namespace Pspc {
          Pscf::Prdc::writeFieldHeader(out, v1, v2, cell, gname, nMonomer);
             out << "mesh " <<  std::endl
                 << "           " << dimensions << std::endl;
-        
          // Write fields
          MeshIterator<3> itr(dimensions);
          for (itr.begin(); !itr.atEnd(); ++itr) {
@@ -1319,7 +1303,6 @@ namespace Pspc {
             }
             out << std::endl;
          }
-        
       }
       
    }
@@ -1453,7 +1436,7 @@ namespace Pspc {
       out << "mesh " <<  std::endl
           << "           " << replicateDimensions << std::endl;
       // Write Fields
-      FieldIo<D>::writeFieldsRGrid(out, outFields, cell, replicateDimensions, false, false, false);
+      FieldIo<D>::writeFieldsRGrid(out, outFields, cell, false, false);
    }
    
    template <int D>

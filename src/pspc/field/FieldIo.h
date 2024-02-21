@@ -301,9 +301,7 @@ namespace Pspc {
       void writeFieldsRGrid(std::ostream& out, 
                             DArray< RField<D> > const & fields, 
                             UnitCell<D> const & unitCell,
-                            IntVec<D> const & meshDimensions,
                             bool writeHeader = true,
-                            bool writeMeshSize = true,
                             bool isSymmetric = true) const;
 
       /**
@@ -376,8 +374,7 @@ namespace Pspc {
                                  UnitCell<D> const & unitCell,
                                  int d,
                                  DArray<int> newGridDimensions) const;
-
-
+                                 
       /**
       * Expand the dimensions of array of RField objects (fields on an r-space grid) 
       * and write the new field to a file
@@ -386,15 +383,17 @@ namespace Pspc {
       * writes expanded fields in RField<d> real-space grid format to that file, 
       * and then closes the file.
       *
-      * \param out  output stream (i.e., output file)
+      * \param filename  name of output file
       * \param fields  array of RField fields (r-space grid) needs to be expanded in dimensions
       * \param unitCell  original crystallographic unit cell
-      * \param d  intended dimensions 
+      * \param d  intended dimensions
+      * \param newGridDimensions the number of grid points in each of the added dimensions
       */
       void expandFieldsDimension(std::string filename, 
                                  DArray<RField<D> > const & fields,
                                  UnitCell<D> const & unitCell,
-                                 int d) const;
+                                 int d,
+                                 DArray<int> newGridDimensions) const;
 
       /**
       * Write r-grid fields with a replicated unit cell.
@@ -425,26 +424,6 @@ namespace Pspc {
                              DArray<RField<D> > const & fields,
                              UnitCell<D> const & unitCell,
                              int n) const;
-
-      /**
-      * Expand the dimensions of array of RField objects (fields on an r-space grid) 
-      * and write the new field to a file
-      * 
-      * This function opens an output file with the specified filename, 
-      * writes expanded fields in RField<d> real-space grid format to that file, 
-      * and then closes the file.
-      *
-      * \param out  output stream (i.e., output file)
-      * \param fields  array of RField fields (r-space grid) needs to be expanded in dimensions
-      * \param unitCell  original crystallographic unit cell
-      * \param d  intended dimensions
-      * \param newGridDimensions the number of grid points in each of the added dimensions
-      */
-      void expandFieldsDimension(std::string filename, 
-                                 DArray<RField<D> > const & fields,
-                                 UnitCell<D> const & unitCell,
-                                 int d,
-                                 DArray<int> newGridDimensions) const;
  
       ///@}
       /// \name Field File IO - Fourier Space (K-Space) Grid Format
