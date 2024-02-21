@@ -427,6 +427,22 @@ namespace Pspc {
             UTIL_CHECK(hasCompressor());
             compressor().compress();
          } else
+         if (command == "EXPAND_W_RGRID") {
+            // Expand fields to dimension d
+            int d;
+            readEcho(in, filename);
+            in >> d;
+            Log::file() << Str("Expand fields to dimensions:  ", 21)<< d << "\n";
+            domain_.fieldIo().expandFieldsDimension(filename, w_.rgrid(), domain_.unitCell(), d);
+         } else
+         if (command == "REPLICATE_UNIT_CELL") {
+            // Replicate unit cell in each direction n times
+            int n;
+            readEcho(in, filename);
+            in >> n;
+            Log::file() << Str("Replicate unit cell in each direction n times:  ", 21)<< n << "\n";
+            domain_.fieldIo().replicateUnitCell(filename, w_.rgrid(), domain_.unitCell(), n);
+         } else
          if (command == "WRITE_TIMER") {
             readEcho(in, filename);
             std::ofstream file;

@@ -301,7 +301,9 @@ namespace Pspc {
       void writeFieldsRGrid(std::ostream& out, 
                             DArray< RField<D> > const & fields, 
                             UnitCell<D> const & unitCell,
+                            IntVec<D> const & meshDimensions,
                             bool writeHeader = true,
+                            bool writeMeshSize = true,
                             bool isSymmetric = true) const;
 
       /**
@@ -352,21 +354,66 @@ namespace Pspc {
                            RField<D> const & field, 
                            UnitCell<D> const & unitCell,
                            bool isSymmetric = true) const;
+
       /**
-      * Expand the dimensions of array of RField objects (fields on an r-space grid) 
-      * and write the expanded field to ostream
+      * Expand dimensions of array of r-grid fields, write result to ostream.
+      * 
+      * This function is used for template dimension D < 3, and allows a D=1 or 2 dimensional
+      * field to be expanded into a higher dimensional (2D or 3D) field in which field values
+      * are independent of the values of the added dimensions. For example, it can be used to
+      * output a lamellar computed with D=1 on a 3D grid appropriate. Results are written to a
+      * file in the r-grid format that can be read back in by another run of the program run 
+      * with the higher dimension specified by parameter d.
       *
       * \param out  output stream (i.e., output file)
       * \param fields  array of RField fields (r-space grid) needs to be expanded in dimensions
       * \param unitCell  original crystallographic unit cell
-      * \param d  intended dimensions 
-      * \param newGridDimensions the number of grid points in each of the added dimensions
+      * \param d  intended dimensions (greater than D)
+      * \param newGridDimensions number of grid points in each added dimension
       */
       void expandFieldsDimension(std::ostream &out, 
                                  DArray<RField<D> > const & fields,
                                  UnitCell<D> const & unitCell,
                                  int d,
                                  DArray<int> newGridDimensions) const;
+
+
+      /**
+      * Expand the dimensions of array of RField objects (fields on an r-space grid) 
+      * and write the new field to a file
+      * 
+      * This function opens an output file with the specified filename, 
+      * writes expanded fields in RField<d> real-space grid format to that file, 
+      * and then closes the file.
+      *
+      * \param out  output stream (i.e., output file)
+      * \param fields  array of RField fields (r-space grid) needs to be expanded in dimensions
+      * \param unitCell  original crystallographic unit cell
+      * \param d  intended dimensions 
+      */
+      void expandFieldsDimension(std::string filename, 
+                                 DArray<RField<D> > const & fields,
+                                 UnitCell<D> const & unitCell,
+                                 int d) const;
+
+      /**
+      * Replicate the unit cell a specified number of time in each directio
+      * and write the new field to a file
+      * 
+      * This function opens an output file with the specified filename, 
+      * writes expanded fields in RField<d> real-space grid format to that file, 
+      * and then closes the file.
+      *
+      * \param out  output stream (i.e., output file)
+      * \param fields  array of RField fields (r-space grid) needs to be replicated in dimensions
+      * \param unitCell  associated crystallographic unit cell
+      * \param n  a specified number of time replication in each direction
+      */
+      void replicateUnitCell(std::string filename, 
+                             DArray<RField<D> > const & fields,
+                             UnitCell<D> const & unitCell,
+                             int n) const;
+
 
       /**
       * Expand the dimensions of array of RField objects (fields on an r-space grid) 
@@ -387,6 +434,7 @@ namespace Pspc {
                                  UnitCell<D> const & unitCell,
                                  int d,
                                  DArray<int> newGridDimensions) const;
+     
       ///@}
       /// \name Field File IO - Fourier Space (K-Space) Grid Format
       ///@{
