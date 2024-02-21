@@ -433,7 +433,7 @@ namespace Pspc {
             readEcho(in, filename);
             in >> d;
             Log::file() << Str("Expand fields to dimensions:  ", 21)<< d << "\n";
-            domain_.fieldIo().expandFieldsDimension(filename, w_.rgrid(), domain_.unitCell(), d);
+            // domain_.fieldIo().expandFieldsDimension(filename, w_.rgrid(), domain_.unitCell(), d);
          } else
          if (command == "REPLICATE_UNIT_CELL") {
             // Replicate unit cell in each direction n times
