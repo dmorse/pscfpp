@@ -1111,6 +1111,216 @@ namespace Pspc {
       writeFieldRGrid(file, field, unitCell, isSymmetric);
       file.close();
    }
+   
+   template <int D>
+   void FieldIo<D>::expandFieldsDimension(std::ostream &out,
+                                          DArray<RField<D> > const & fields,
+                                          UnitCell<D> const & unitCell,
+                                          int d,
+                                          DArray<int> newGridDimensions) const
+                           
+   {
+      // Check the intended dimensions are greater than the current dimensions and less than 4
+      UTIL_CHECK(d > D);
+      // Check the capacity of newGridDimensions should be equal to d - D
+      UTIL_CHECK(newGridDimensions.capacity() == (d - D));
+      // Obtain number of monomer types
+      int nMonomer = fields.capacity();
+      UTIL_CHECK(nMonomer > 0);
+      // Obtain initial dimension of fields
+      IntVec<D> meshDimensions = fields[0].meshDimensions();
+      
+      int v1 = 1;
+      int v2 = 0;
+      std::string gname = "";
+      FSArray<double, 6> cellParameters;
+      if (d == 2){
+         // For d == 2, the only case is 1D expanded to 2D
+         // Set parameter 
+         DArray<RField<2> > outFields;
+         UnitCell<2> cell;
+         IntVec<2> dimensions;
+         dimensions[0] = meshDimensions[0];
+         dimensions[1] = newGridDimensions[0];
+         if (dimensions[0] == dimensions[1]){
+            cell.set(UnitCell<2>::Square, unitCell.parameters());
+         } else {
+            cellParameters[0] = unitCell.parameters()[0];
+            cellParameters[1] = (double)dimensions[1]/dimensions[0] * cellParameters[0];
+            cell.set(UnitCell<2>::Rectangular, cellParameters);
+         }
+         // Allocate outFields
+         outFields.allocate(nMonomer);
+         for (int i = 0; i < nMonomer; ++i){
+            outFields[i].allocate(dimensions);
+            int rank = 0;
+            for (int j = 0; j < dimensions[1]; ++j){
+               for (int k = 0; k < dimensions[0]; ++k){
+                  outFields[i][rank] = fields[i][k];
+                  rank++;
+               }
+            }
+         }
+         
+         // Write Header
+         Pscf::Prdc::writeFieldHeader(out, v1, v2, cell, gname, nMonomer);
+         out << "mesh " <<  std::endl
+             << "           " << dimensions << std::endl;
+         // Write fields
+         MeshIterator<2> itr(dimensions);
+         for (itr.begin(); !itr.atEnd(); ++itr) {
+            for (int j = 0; j < nMonomer; ++j) {
+               out << "  " << Dbl(outFields[j][itr.rank()], 18, 15);
+            }
+            out << std::endl;
+         }
+      }
+      if (d == 3){
+         // Set parameter 
+         DArray<RField<3> > outFields;
+         UnitCell<3> cell;
+         IntVec<3> dimensions;
+         int rank = 0;
+         // 1D to 3D
+         if (D == 1){
+            dimensions[0] = meshDimensions[0];
+            dimensions[1] = newGridDimensions[0];
+            dimensions[2] = newGridDimensions[1];
+            cell.set(UnitCell<3>::Cubic, unitCell.parameters());
+            if (dimensions[2] == dimensions[1]){
+               if (dimensions[1] == dimensions[0] ){
+                  cell.set(UnitCell<3>::Cubic, unitCell.parameters());
+               } else {
+                  cellParameters[0] = unitCell.parameters()[0];
+                  cellParameters[1] = (double)dimensions[2]/dimensions[0] * cellParameters[0];
+               }
+            } 
+            else{
+               if (dimensions[1] == dimensions[0]){
+                  cellParameters[0] = unitCell.parameters()[0];
+                  cellParameters[1] = (double)dimensions[2]/dimensions[0] * cellParameters[0];
+                  cell.set(UnitCell<3>::Tetragonal, cellParameters);
+               }else if (dimensions[2] == dimensions[0]){
+                  cellParameters[0] = unitCell.parameters()[0];
+                  cellParameters[1] = (double)dimensions[1]/dimensions[0] * cellParameters[0];
+                  cell.set(UnitCell<3>::Tetragonal, cellParameters);
+               } else{
+                  cellParameters[0] = unitCell.parameters()[0];
+                  cellParameters[1] = (double)dimensions[1]/dimensions[0] * cellParameters[0];
+                  cellParameters[2] = (double)dimensions[2]/dimensions[0] * cellParameters[0];
+                  cell.set(UnitCell<3>::Orthorhombic, cellParameters);
+               }
+               
+            }
+            // Allocate outFields
+            outFields.allocate(nMonomer);
+            for (int i = 0; i < nMonomer; ++i){
+               outFields[i].allocate(dimensions);
+            }
+            for (int l = 0; l < dimensions[2]; ++l){
+               for (int k = 0; k< dimensions[1]; ++k){
+                  for(int j = 0; j< dimensions[0]; ++j){
+                     for (int i = 0; i < nMonomer; ++i){
+                        outFields[i][rank] = fields[i][j];
+                     }
+                     ++rank;
+                  }
+               }
+            }   
+         }
+         
+         // 2D to 3D
+         if (D == 2){
+            dimensions[0] = meshDimensions[0];
+            dimensions[1] = meshDimensions[1];
+            dimensions[2] = newGridDimensions[0];
+            if (unitCell.lattice() == UnitCell<2>::Square){
+               if (newGridDimensions[0] == meshDimensions[0]){
+                  cell.set(UnitCell<3>::Cubic, unitCell.parameters());
+               } else {
+                  cellParameters[0] = unitCell.parameters()[0];
+                  cellParameters[1] = (double)dimensions[2]/dimensions[0] * cellParameters[0];
+                  cell.set(UnitCell<3>::Tetragonal, cellParameters);
+               }
+            }
+            if (unitCell.lattice() == UnitCell<2>::Rectangular){
+               if (newGridDimensions[0] == meshDimensions[0] || newGridDimensions[0] == meshDimensions[1]){
+                  cell.set(UnitCell<3>::Tetragonal, unitCell.parameters());
+               } else {
+                  cellParameters[0] = unitCell.parameters()[0];
+                  cellParameters[1] = unitCell.parameters()[1];
+                  cellParameters[2] = (double)dimensions[2]/dimensions[0] * cellParameters[0];
+                  cell.set(UnitCell<3>::Orthorhombic, cellParameters);
+               }
+            }
+            
+            if (unitCell.lattice() == UnitCell<2>::Hexagonal){
+               cellParameters[0] = unitCell.parameters()[0];
+               cellParameters[1] = (double)dimensions[2]/dimensions[0] * cellParameters[0];
+               cell.set(UnitCell<3>::Hexagonal, cellParameters);
+            }
+            // Allocate outFields
+            outFields.allocate(nMonomer);
+            for (int i = 0; i < nMonomer; ++i){
+               outFields[i].allocate(dimensions);
+            }
+            int q = 0; 
+            int r = 0; 
+            int s = 0; 
+            int n1 =0;
+            int n2 =0;
+            int n3 =0;
+            while (n3 < dimensions[2]) {
+            q = 0; 
+            n2 = 0; 
+               while (n2 < dimensions[1]) {
+                  r = q;
+                  n1 = 0; 
+                  while (n1 < dimensions[0]) {
+                     for (int i = 0; i < nMonomer; ++i) {
+                        outFields[i][s] = fields[i][r];
+                     }    
+                     r = r + dimensions[1];
+                     ++s; 
+                     ++n1;     
+                  }    
+                  ++q;
+                  ++n2;
+               }    
+               ++n3;
+            }
+         }    
+            
+         // Write Header
+         Pscf::Prdc::writeFieldHeader(out, v1, v2, cell, gname, nMonomer);
+            out << "mesh " <<  std::endl
+                << "           " << dimensions << std::endl;
+         // Write fields
+         MeshIterator<3> itr(dimensions);
+         for (itr.begin(); !itr.atEnd(); ++itr) {
+            for (int j = 0; j < nMonomer; ++j) {
+               out << "  " << Dbl(outFields[j][itr.rank()], 18, 15);
+            }
+            out << std::endl;
+         }
+      }
+      
+   }
+   
+   template <int D>
+   void FieldIo<D>::expandFieldsDimension(std::string filename, 
+                                          DArray<RField<D> > const & fields,
+                                          UnitCell<D> const & unitCell,
+                                          int d,
+                                          DArray<int> newGridDimensions) const
+   {
+      std::ofstream file;
+      fileMaster().openOutputFile(filename, file);
+      expandFieldsDimension(file, fields, unitCell, d, newGridDimensions);
+      file.close();
+   }
+   
+   
 
    // K-Grid Field Format
 
