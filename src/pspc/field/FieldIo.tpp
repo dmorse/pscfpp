@@ -1122,10 +1122,8 @@ namespace Pspc {
    {
       // Check the intended dimensions are greater than the current dimensions and less than 4
       UTIL_CHECK(d > D);
-     
       // Check the capacity of newGridDimensions should be equal to d - D
       UTIL_CHECK(newGridDimensions.capacity() == (d - D));
-
       // Obtain number of monomer types
       int nMonomer = fields.capacity();
       UTIL_CHECK(nMonomer > 0);
@@ -1136,10 +1134,8 @@ namespace Pspc {
       int v2 = 0;
       std::string gname = "";
       FSArray<double, 6> cellParameters;
-
       if (d == 2){
          // For d == 2, the only case is 1D expanded to 2D
-        
          // Set parameter 
          DArray<RField<2> > outFields;
          UnitCell<2> cell;
@@ -1153,7 +1149,6 @@ namespace Pspc {
             cellParameters[1] = (double)dimensions[1]/dimensions[0] * cellParameters[0];
             cell.set(UnitCell<2>::Rectangular, cellParameters);
          }
-
          // Allocate outFields
          outFields.allocate(nMonomer);
          for (int i = 0; i < nMonomer; ++i){
@@ -1181,13 +1176,11 @@ namespace Pspc {
          }
       }
       if (d == 3){
-        
          // Set parameter 
          DArray<RField<3> > outFields;
          UnitCell<3> cell;
          IntVec<3> dimensions;
          int rank = 0;
-        
          // 1D to 3D
          if (D == 1){
             dimensions[0] = meshDimensions[0];
@@ -1203,11 +1196,11 @@ namespace Pspc {
                }
             } 
             else{
-               if (dimensions[1] == dimensions[0]) {
+               if (dimensions[1] == dimensions[0]){
                   cellParameters[0] = unitCell.parameters()[0];
                   cellParameters[1] = (double)dimensions[2]/dimensions[0] * cellParameters[0];
                   cell.set(UnitCell<3>::Tetragonal, cellParameters);
-               } else if (dimensions[2] == dimensions[0]){
+               }else if (dimensions[2] == dimensions[0]){
                   cellParameters[0] = unitCell.parameters()[0];
                   cellParameters[1] = (double)dimensions[1]/dimensions[0] * cellParameters[0];
                   cell.set(UnitCell<3>::Tetragonal, cellParameters);
@@ -1219,7 +1212,6 @@ namespace Pspc {
                }
                
             }
-
             // Allocate outFields
             outFields.allocate(nMonomer);
             for (int i = 0; i < nMonomer; ++i){
@@ -1239,7 +1231,6 @@ namespace Pspc {
          
          // 2D to 3D
          if (D == 2){
-
             dimensions[0] = meshDimensions[0];
             dimensions[1] = meshDimensions[1];
             dimensions[2] = newGridDimensions[0];
@@ -1268,7 +1259,6 @@ namespace Pspc {
                cellParameters[1] = (double)dimensions[2]/dimensions[0] * cellParameters[0];
                cell.set(UnitCell<3>::Hexagonal, cellParameters);
             }
-
             // Allocate outFields
             outFields.allocate(nMonomer);
             for (int i = 0; i < nMonomer; ++i){
@@ -1305,7 +1295,6 @@ namespace Pspc {
          Pscf::Prdc::writeFieldHeader(out, v1, v2, cell, gname, nMonomer);
             out << "mesh " <<  std::endl
                 << "           " << dimensions << std::endl;
-        
          // Write fields
          MeshIterator<3> itr(dimensions);
          for (itr.begin(); !itr.atEnd(); ++itr) {
@@ -1314,7 +1303,6 @@ namespace Pspc {
             }
             out << std::endl;
          }
-        
       }
       
    }
