@@ -1,6 +1,6 @@
 This directory contains C++ files specific to the implementation of 
 a one-dimensional finite difference implementation of polymer SCFT.
-All code in this directory is defined in C++ namespace Pscf::Fd1d.
+All code in this directory is defined in C++ namespace Pscf::R1d.
 
 Subdirectories:
 
@@ -9,7 +9,7 @@ iterator/  - iterative SCF equation solvers
 misc/      - miscellaneous utility classes
 solvers/   - modified diffusion equation solvers
 sweep/     - classes to implement continuation of solutions ("sweep")
-tests/     - unit cell tests for Fd1d code
+tests/     - unit cell tests for R1d code
 
 C++ Files:
 
@@ -29,7 +29,7 @@ config.mk    - configuration file (installed by setup script)
 
 Doxygen documentation files:
 
-fd1d.mod     - definition of Fd1d doxygen module 
+r1d.mod      - definition of R1d doxygen module 
 pscf_fd.dox  - command line interface documentation for pscf_fd
 
 

@@ -1,5 +1,5 @@
 /*
-* This program runs all unit tests in the pspc/tests/cpu directory.
+* This program runs all unit tests in the prdc/tests/cpu directory.
 */ 
 
 #include "CpuTestComposite.h"

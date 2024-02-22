@@ -1,5 +1,5 @@
 /*
-* This program runs all unit tests in the pspc/tests/sweep directory.
+* This program runs all unit tests in the rpg/tests/sweep directory.
 */ 
 
 #include <util/global.h>

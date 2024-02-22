@@ -1,5 +1,5 @@
-#ifndef PSPC_BASIS_FIELD_STATE_TEST_H
-#define PSPC_BASIS_FIELD_STATE_TEST_H
+#ifndef RPG_BASIS_FIELD_STATE_TEST_H
+#define RPG_BASIS_FIELD_STATE_TEST_H
 
 #include <test/UnitTest.h>
 #include <test/UnitTestRunner.h>

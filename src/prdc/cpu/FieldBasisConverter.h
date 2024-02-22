@@ -154,7 +154,7 @@ namespace Cpu {
    extern template class FieldBasisConverter<3>;
    #endif
 
-} // namespace Pscf::Pspc::Cpu
-} // namespace Pscf::Pspc
+} // namespace Pscf::Prdc::Cpu
+} // namespace Pscf::Prdc
 } // namespace Pscf
 #endif

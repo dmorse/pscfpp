@@ -291,7 +291,7 @@ public:
       copyFieldsBasis(b_wFields_check, system.w().basis());
 
       // Read initial guess, iterate, output solution
-      // PSPC tests start from the reference solution, 
+      // RPC tests start from the reference solution, 
       // rather than a nearby solution, so I guess do that here too?
       // system.readWBasis("in/diblock/hex/omega.in");
       Log::file() << "Beginning iteration \n";

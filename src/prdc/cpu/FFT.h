@@ -174,7 +174,7 @@ namespace Cpu {
    extern template class FFT<3>;
    #endif
 
-} // namespace Pscf::Pspc::Cpu
-} // namespace Pscf::Pspc
+} // namespace Pscf::Prdc::Cpu
+} // namespace Pscf::Prdc
 } // namespace Pscf
 #endif

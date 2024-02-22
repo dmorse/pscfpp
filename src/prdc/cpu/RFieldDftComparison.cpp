@@ -15,6 +15,6 @@ namespace Cpu {
    template class RFieldDftComparison<2>;
    template class RFieldDftComparison<3>;
 
-} // namespace Pscf::Pspc::Cpu
-} // namespace Pscf::Pspc
+} // namespace Pscf::Prdc::Cpu
+} // namespace Pscf::Prdc
 } // namespace Pscf

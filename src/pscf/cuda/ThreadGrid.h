@@ -21,7 +21,7 @@ namespace ThreadGrid {
   */
  
   /**
-  * Initialize static variables in Pspg::ThreadGrid namespace.
+  * Initialize static variables in Pscf::ThreadGrid namespace.
   */ 
   void init();
 

@@ -102,6 +102,6 @@ namespace Cpu {
 
 
 } // namespace Cpu
-} // namespace Pspc
+} // namespace Prdc
 } // namespace Pscf
 #endif

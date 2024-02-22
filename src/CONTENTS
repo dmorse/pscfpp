@@ -11,7 +11,7 @@ Subdirectories (corresponding namespaces in parentheses):
   prdc/  shared classes for periodic structures (Pscf::Prdc)
   r1d/   real fields, one-dimensional SCFT (Pscf::R1d)
   rpc/   real periodic fields, SCFT & FTS on CPU (Pscf::Rpc)
-  rpg/   real periodic fields, SCFT & FTMC on GPU (Pscf::Pspg)
+  rpg/   real periodic fields, SCFT & FTMC on GPU (Pscf::Rpg)
   test/  unit testing framework (base classes)
 
 Files (in repository):

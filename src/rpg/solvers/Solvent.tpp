@@ -1,5 +1,5 @@
-#ifndef PSPC_SOLVENT_TPP
-#define PSPC_SOLVENT_TPP
+#ifndef RPG_SOLVENT_TPP
+#define RPG_SOLVENT_TPP
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory
