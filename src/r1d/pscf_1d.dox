@@ -4,7 +4,12 @@
 
 Program for one-dimensional (1D) SCFT problems. The implementation
 uses a regular grid and finite-difference algorithm for solving the 
-modified diffusion equation.
+modified diffusion equation. This program can treat one-dimensional
+problems in which all fields depend on a single Cartesian coordinate, 
+or treat problems with spherical or cylindrical symmetry in which
+fields depend on a single radial coordinate.  It is thus useful for 
+treating flat interfaces, curved spherical or cylindrical interfaces, 
+and spherical or cylindrical micelles. 
 
 \section pscf_1d_usage_section Usage
 

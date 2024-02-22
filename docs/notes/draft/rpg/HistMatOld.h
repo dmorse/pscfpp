@@ -1,5 +1,5 @@
-#ifndef PSPG_HIST_MAT_H
-#define PSPG_HIST_MAT_H
+#ifndef RPG_HIST_MAT_H
+#define RPG_HIST_MAT_H
 
 #include <util/containers/DMatrix.h>
 

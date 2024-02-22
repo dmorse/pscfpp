@@ -2,8 +2,9 @@
 \page pscf_pc_page pscf_pc - Periodic Structures (CPU)
 
 Program for self-consistent field theory (SCFT) and field-theoretic 
-Monte-Carlo (FTMC) simulations of spatially periodic structures of
-polymer liquids, implemnted on a standard CPU.
+simulation (FTS) of spatially periodic structures of polymer liquids using
+real fields, implemnted on a standard CPU. All FTS methods implemented by
+this program are based on a partial saddle-point approximation.
 
 \section pscf_pc_usage_section Usage
 

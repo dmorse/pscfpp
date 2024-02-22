@@ -453,25 +453,31 @@ namespace Rpc {
             file.close();
          } else
          if (command == "EXPAND_RGRID_DIMENSION") {
-            // Expand fields to dimension d
-            int d;
-            DArray<int> newGridDimensions;
             readEcho(in, inFileName);
             readEcho(in, outFileName);
+
+            // Read expanded spatial dimension d
+            int d;
             in >> d;
             UTIL_CHECK(d > D);
-            // Allocate newGridDimensions
+            Log::file() << Str("Expand dimension to: ") << d << "\n";
+
+            // Read numbers of grid points for added dimensions
+            DArray<int> newGridDimensions;
             newGridDimensions.allocate(d-D);
-            for (int i = 0; i < d-D; i++){
+            for (int i = 0; i < d-D; i++) {
                in >> newGridDimensions[i];
             }
-            expandRGridDimension(inFileName, outFileName, d, newGridDimensions);
-            Log::file() << Str("Expand fields to dimensions:  ", 21)<< d << "\n";
-            Log::file() << Str("The number of grid points in each of the added dimensions :  ", 21);
-            for (int i = 0; i < d-D; i++){
+            Log::file() 
+               << Str("Numbers of grid points in added dimensions :  ");
+            for (int i = 0; i < d-D; i++) {
                Log::file() << newGridDimensions[i] << " ";
             }
             Log::file() << "\n";
+
+            expandRGridDimension(inFileName, outFileName, 
+                                 d, newGridDimensions);
+
          } else
          if (command == "WRITE_THERMO") {
             readEcho(in, filename);
@@ -511,7 +517,8 @@ namespace Rpc {
             Log::file() << Str("polymer ID  ", 21) << polymerId << "\n"
                         << Str("block ID  ", 21) << blockId << "\n"
                         << Str("direction ID  ", 21) << directionId << "\n"
-                        << Str("segment ID  ", 21) << segmentId << std::endl;
+                        << Str("segment ID  ", 21) << segmentId 
+                        << std::endl;
             writeQSlice(filename, polymerId, blockId, directionId, 
                                   segmentId);
          } else
@@ -523,7 +530,8 @@ namespace Rpc {
             in >> directionId;
             Log::file() << Str("polymer ID  ", 21) << polymerId << "\n"
                         << Str("block ID  ", 21) << blockId << "\n"
-                        << Str("direction ID  ", 21) << directionId << "\n";
+                        << Str("direction ID  ", 21) << directionId 
+                        << "\n";
             writeQTail(filename, polymerId, blockId, directionId);
          } else
          if (command == "WRITE_Q") {
@@ -534,7 +542,8 @@ namespace Rpc {
             in >> directionId;
             Log::file() << Str("polymer ID  ", 21) << polymerId << "\n"
                         << Str("block ID  ", 21) << blockId << "\n"
-                        << Str("direction ID  ", 21) << directionId << "\n";
+                        << Str("direction ID  ", 21) << directionId 
+                        << "\n";
             writeQ(filename, polymerId, blockId, directionId);
          } else
          if (command == "WRITE_Q_ALL") {
@@ -595,11 +604,9 @@ namespace Rpc {
                    << std::endl << std::endl;
             } else {
                Log::file() << std::endl
-                   << "Symmetry of r-grid file does not match this space group" 
-                   << std::endl
-                   << "to within error threshold of "
-                   << Dbl(epsilon) << "."
-                   << std::endl << std::endl;
+                 << "Symmetry of r-grid file does not match this\n" 
+                 << "space group to within error threshold of "
+                 << Dbl(epsilon) << " ." << std::endl << std::endl;
             }
          } else
          if (command == "COMPARE_BASIS") {
@@ -998,8 +1005,12 @@ namespace Rpc {
       // Read fields
       UnitCell<D> tmpUnitCell;
       fieldIo().readFieldsRGrid(inFileName, tmpFieldsRGrid_, tmpUnitCell);
+
       // Expand Fields
-      domain_.fieldIo().expandFieldsDimension(outFileName, tmpFieldsRGrid_, tmpUnitCell, d, newGridDimensions);
+      domain_.fieldIo().expandFieldsDimension(outFileName, 
+                                              tmpFieldsRGrid_, 
+                                              tmpUnitCell, 
+                                              d, newGridDimensions);
    }
 
    // Thermodynamic Properties

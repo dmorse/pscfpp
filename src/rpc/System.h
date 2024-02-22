@@ -353,22 +353,6 @@ namespace Rpc {
       */
       void clearTimers();
       
-      /**
-      * Expand the dimensions of RField
-      *
-      * Perform a field theoretic Monte-Carlo simulation using the 
-      * partial saddle-point approximation. 
-      * 
-      * \param inFileName filename name of input field file
-      * \param outFileName filename name of output field file
-      * \param d  intended dimensions 
-      * \param newGridDimensions the number of grid points in each of the added dimensions
-      */
-      void expandRGridDimension(const std::string & inFileName,
-                                const std::string & outFileName,
-                                int d,
-                                DArray<int> newGridDimensions);
-
       ///@}
       /// \name Thermodynamic Properties
       ///@{
@@ -681,6 +665,30 @@ namespace Rpc {
       */
       bool checkRGridFieldSymmetry(const std::string & inFileName,
                                    double epsilon = 1.0E-8);
+
+      /**
+      * Expand the number of spatial dimensions of an r-grid field.
+      *
+      * This function reads a D-dimensional field and outputs a field
+      * in a format appropriate for d-dimensional space, for d > D, by
+      * assuming that all field values are independent of coordinates
+      * associated with the added dimensions. It can thus create a file
+      * representing a field with lamellar (D=1) or hexagonal (D=2)
+      * symmetry on a 3D (d=3) grid. 
+      *
+      * Element i of array newGridDimensions contains the number of
+      * grid points in added dimension D + i. This array must have a
+      * capacity d - D. 
+      *
+      * \param inFileName filename name of input field file
+      * \param outFileName filename name of output field file
+      * \param d  intended dimensions (d > D)
+      * \param newGridDimensions number of grid points in added dimensions
+      */
+      void expandRGridDimension(const std::string & inFileName,
+                                const std::string & outFileName,
+                                int d,
+                                DArray<int> newGridDimensions);
 
       ///@}
       /// \name Field Accessors

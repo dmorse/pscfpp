@@ -13,9 +13,6 @@ namespace Pscf {
       *
       * SCFT and FTS with real periodic fields on CPU, namespace Pscf::Rpc
       *
-      * All field theoretic simulation (FTS) methods implemented in this
-      * namespace rely on a partial saddle point approximation (PSPA).
-      *
       * \ingroup Pscf_NS_Module
       */
 

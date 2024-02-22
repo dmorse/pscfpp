@@ -33,11 +33,13 @@ namespace R1d
    /**
    * Main class in SCFT simulation of one system.
    *
-   * A System has (among other components):
+   * An R1d::System is designed to perform SCFT calculations of 
+   * one-dimension SCFT problems in Cartesian, spherical or cylindrical
+   * coordinates. Such a System has (among other components):
    *
    *    - a Mixture (a container for polymer and solvent solvers)
    *    - an Interaction (list of binary chi parameters)
-   *    - a Domain (description of the unit cell and discretization)
+   *    - a Domain (description of the 1D domain and discretization)
    *    - monomer chemical potential fields 
    *    - monomer concentration fields 
    *    - An Iterator

@@ -9,9 +9,9 @@ Subdirectories:
 compressor / - iterators that change pressure to obtain uniform density
 field/       - classes to represent or manipulate fields
 iterator/    - iterative SCF equation solvers
-solvers/     - modified diffusion equation solvers
+solvers/     - classes to solve the modified diffusion equation (MDE)
 sweep/       - classes to implement continuation of solutions ("sweep")
-simulator/   - classes to implement field-theoretic Monte Carlo (FTMC)
+simulate/    - classes to implement field-theoretic simulation (FTS)
 tests/       - unit tests for code in src/rpc
 
 C++ Files:

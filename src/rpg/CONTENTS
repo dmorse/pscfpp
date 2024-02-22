@@ -1,8 +1,9 @@
 This directory contains C++ and CUDA code specific to a GPU-accelerated
-pseudo-spectral implementation of SCFT for periodic structures.  All
-code in this directory is defined in the namespace Pscf::Rpg. Class
-designs and algorithms are generally closely analogous to those of the 
-C++ versions of this code found in the src/rpc directory.
+pseudo-spectral implementation of SCFT and FTS methods for real fields
+with periodic structures.  All code in this directory is defined in the 
+namespace Pscf::Rpg. Class designs and algorithms are generally closely 
+analogous to those of the C++ versions of this code found in the src/rpc 
+directory.
 
 Subdirectories:
 
@@ -27,6 +28,7 @@ sources.mk   - list of source files (makefile fragment)
 patterns.mk  - pattern rules for src/rpg (makefile fragment)
 include.mk   - header of makefile includes (makefile fragment)
 makefile     - main makefile for src/rpg directory tree
+
 config.mk    - configuration file (installed by configure script)
 
 Doxygen documentation files:
