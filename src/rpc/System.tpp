@@ -427,6 +427,14 @@ namespace Rpc {
             UTIL_CHECK(hasCompressor());
             compressor().compress();
          } else
+         if (command == "REPLICATE_UNIT_CELL") {
+            // Replicate unit cell in each direction n times
+            int n;
+            readEcho(in, filename);
+            in >> n;
+            Log::file() << Str("Replicate unit cell in each direction n times:  ", 21)<< n << "\n";
+            domain_.fieldIo().replicateUnitCell(filename, w_.rgrid(), domain_.unitCell(), n);
+         } else
          if (command == "WRITE_TIMER") {
             readEcho(in, filename);
             std::ofstream file;
@@ -443,6 +451,27 @@ namespace Rpc {
             fileMaster().openOutputFile(filename, file);
             writeParamNoSweep(file);
             file.close();
+         } else
+         if (command == "EXPAND_RGRID_DIMENSION") {
+            // Expand fields to dimension d
+            int d;
+            DArray<int> newGridDimensions;
+            readEcho(in, inFileName);
+            readEcho(in, outFileName);
+            in >> d;
+            UTIL_CHECK(d > D);
+            // Allocate newGridDimensions
+            newGridDimensions.allocate(d-D);
+            for (int i = 0; i < d-D; i++){
+               in >> newGridDimensions[i];
+            }
+            expandRGridDimension(inFileName, outFileName, d, newGridDimensions);
+            Log::file() << Str("Expand fields to dimensions:  ", 21)<< d << "\n";
+            Log::file() << Str("The number of grid points in each of the added dimensions :  ", 21);
+            for (int i = 0; i < d-D; i++){
+               Log::file() << newGridDimensions[i] << " ";
+            }
+            Log::file() << "\n";
          } else
          if (command == "WRITE_THERMO") {
             readEcho(in, filename);
@@ -953,6 +982,24 @@ namespace Rpc {
 
       simulator().simulate(nStep);
       hasCFields_ = true;
+   }
+   
+   /*
+   * Expand the dimensions of RField
+   */
+   template <int D>
+   void System<D>::expandRGridDimension(const std::string & inFileName,
+                                        const std::string & outFileName,
+                                        int d,
+                                        DArray<int> newGridDimensions)
+   {
+      UTIL_CHECK(d > D);
+      
+      // Read fields
+      UnitCell<D> tmpUnitCell;
+      fieldIo().readFieldsRGrid(inFileName, tmpFieldsRGrid_, tmpUnitCell);
+      // Expand Fields
+      domain_.fieldIo().expandFieldsDimension(outFileName, tmpFieldsRGrid_, tmpUnitCell, d, newGridDimensions);
    }
 
    // Thermodynamic Properties
