@@ -39,15 +39,11 @@ endif
 
 clean:
 	rm -f $(prdc_tests_OBJS) $(prdc_tests_OBJS:.o=.d)
-	rm -f $(BLD_DIR)/$(TEST) $(BLD_DIR)/$(TEST).d
+	rm -f $(BLD_DIR)/$(TEST)
 	rm -f cpuTest cudaTest
-	rm -f *Test.o *Test.p
-ifeq ($(BLD_DIR),$(SRC_DIR))
-	rm -f crystal/Test crystal/Test.o crystal/Test.d
-else
+	rm -f *Test.o *Test.d
+	rm -f log count
 	-cd $(SRC_DIR)/prdc/tests/crystal; $(MAKE) clean
-endif
-	$(MAKE) clean-outputs
 
 -include $(prdc_tests_OBJS:.o=.d)
 -include $(prdc_OBJS:.o=.d)

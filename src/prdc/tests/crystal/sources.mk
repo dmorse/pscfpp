@@ -1,5 +1,5 @@
-pscf_tests_crystal_=pscf/tests/crystal/Test.cc
+prdc_tests_crystal_=prdc/tests/crystal/Test.cpp
 
-pscf_tests_crystal_OBJS=\
-     $(addprefix $(BLD_DIR)/, $(pscf_tests_crystal_:.cc=.o))
+prdc_tests_crystal_OBJS=\
+     $(addprefix $(BLD_DIR)/, $(prdc_tests_crystal_:.cpp=.o))
 

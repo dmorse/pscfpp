@@ -23,7 +23,8 @@ clean-outputs:
 	rm -f log count 
 
 clean:
-	rm -f $(pscf_tests_solvers_OBJS) $(pscf_tests_solvers_OBJS:.o=.d)
+	rm -f $(pscf_tests_solvers_OBJS)
+	rm -f $(pscf_tests_solvers_OBJS:.o=.d)
 	rm -f $(BLD_DIR)/$(TEST)
 	$(MAKE) clean-outputs
 

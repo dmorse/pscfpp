@@ -23,7 +23,7 @@ clean-outputs:
 
 clean:
 	rm -f $(pscf_tests_inter_OBJS) $(pscf_tests_inter_OBJS:.o=.d)
-	rm -f $(BLD_DIR)/$(TEST) $(BLD_DIR)/$(TEST).d
+	rm -f $(BLD_DIR)/$(TEST)
 	$(MAKE) clean-outputs
 
 -include $(pscf_tests_inter_OBJS:.o=.d)

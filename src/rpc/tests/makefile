@@ -21,38 +21,26 @@ run-quiet: $(rpc_tests_OBJS) $(BLD_DIR)/$(TEST)
 
 clean-outputs:
 	rm -f log count 
-ifeq ($(SRC_DIR),$(BLD_DIR))
-	-cd field; $(MAKE) clean-outputs
-	-cd iterator; $(MAKE) clean-outputs
-	-cd solvers; $(MAKE) clean-outputs
-	-cd system; $(MAKE) clean-outputs
-	-cd sweep; $(MAKE) clean-outputs
-else
 	-cd $(SRC_DIR)/rpc/tests/field; $(MAKE) clean-outputs
 	-cd $(SRC_DIR)/rpc/tests/iterator; $(MAKE) clean-outputs
 	-cd $(SRC_DIR)/rpc/tests/solvers; $(MAKE) clean-outputs
 	-cd $(SRC_DIR)/rpc/tests/system; $(MAKE) clean-outputs
 	-cd $(SRC_DIR)/rpc/tests/sweep; $(MAKE) clean-outputs
-endif
+	-cd $(SRC_DIR)/rpc/tests/simulate; $(MAKE) clean-outputs
 
 clean:
 	rm -f $(rpc_tests_OBJS) $(rpc_tests_OBJS:.o=.d)
-	rm -f $(BLD_DIR)/$(TEST) $(BLD_DIR)/$(TEST).d
+	rm -f $(BLD_DIR)/$(TEST) 
 	rm -f log count 
-ifeq ($(SRC_DIR),$(BLD_DIR))
-	-cd field; $(MAKE) clean
-	-cd iterator; $(MAKE) clean
-	-cd solvers; $(MAKE) clean
-	-cd system; $(MAKE) clean
-	-cd sweep; $(MAKE) clean
-	rm -f */Test */*.o */*.d
-else
 	-cd $(SRC_DIR)/rpc/tests/field; $(MAKE) clean
 	-cd $(SRC_DIR)/rpc/tests/iterator; $(MAKE) clean
 	-cd $(SRC_DIR)/rpc/tests/solvers; $(MAKE) clean
 	-cd $(SRC_DIR)/rpc/tests/system; $(MAKE) clean
 	-cd $(SRC_DIR)/rpc/tests/sweep; $(MAKE) clean
-endif
+	-cd $(SRC_DIR)/rpc/tests/simulate; $(MAKE) clean
+	rm -f $(SRC_DIR)/*.o $(SRC_DIR)/*.d
+	rm -f $(SRC_DIR)/rpc/tests/*/Test
+	rm -f $(SRC_DIR)/rpc/tests/*/*.o $(SRC_DIR)/rpc/tests/*/*.d
 
 -include $(rpc_tests_OBJS:.o=.d)
 -include $(rpc_OBJS:.o=.d)

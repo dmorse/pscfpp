@@ -24,7 +24,10 @@ run-quiet: $(rpc_tests_sweep_OBJS) $(BLD_DIR)/$(TEST)
 
 clean-outputs:
 	rm -f log count 
-	find out -type f \( ! -iname ".*" \) -exec rm -f {} \;
+	rm -f out/*/*
+	rm -f out/test*
+
+#find out -type f \( ! -iname ".*" \) -exec rm -f {} \;
 
 clean:
 	rm -f $(rpc_tests_sweep_OBJS) $(rpc_tests_sweep_OBJS:.o=.d)
