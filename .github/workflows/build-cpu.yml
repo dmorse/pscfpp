@@ -25,6 +25,6 @@ jobs:
     - run: ls 
     - run: cd bld; make all
     - run: cd bld/pscf/tests; make run
-    - run: cd bld/fd1d/tests; make run
     - run: cd bld/prdc/tests; make run
-    - run: cd bld/pspc/tests; make run
+    - run: cd bld/r1d/tests; make run
+    - run: cd bld/rpc/tests; make run
