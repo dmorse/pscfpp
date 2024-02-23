@@ -394,36 +394,48 @@ namespace Rpc {
                                  UnitCell<D> const & unitCell,
                                  int d,
                                  DArray<int> newGridDimensions) const;
+      /**
+      * Write array of RField objects for replicated fields (fields on r-space grid) 
+      * to ostream.
+      *
+      * \param out  output stream (i.e., output file)
+      * \param fields  array of RField fields (r-space grid)
+      * \param unitCell  associated crystallographic unit cell
+      * \param meshDimensions mesh dimensions of fields
+      */
+      void writeReplicatedFieldsRGrid(std::ostream& out, 
+                                      DArray< RField<D> > const & fields, 
+                                      UnitCell<D> const & unitCell,
+                                      IntVec<D> const & meshDimensions) const;                           
+      /**
+      * Write r-grid fields with a replicated unit cell.
+      * 
+      * \param out  output stream (i.e., output file)
+      * \param fields  array of RField fields (r-space grid) needs 
+      *        to be replicated in dimensions
+      * \param unitCell  associated crystallographic unit cell
+      * \param replicas  specify the number of replicas in each 
+      *        of the D directions
+      */
+      void replicateUnitCell(std::ostream& out, 
+                             DArray<RField<D> > const & fields,
+                             UnitCell<D> const & unitCell,
+                             IntVec<D> const & replicas) const;
 
       /**
       * Write r-grid fields with a replicated unit cell.
       * 
       * \param out  output stream (i.e., output file)
-      * \param fields  array of RField fields (r-space grid) needs to be replicated in dimensions
+      * \param fields  array of RField fields (r-space grid) needs 
+      *        to be replicated in dimensions
       * \param unitCell  associated crystallographic unit cell
-      * \param n  a specified number of time replication in each direction
-      */
-      void replicateUnitCell(std::ostream& out, 
-                             DArray<RField<D> > const & fields,
-                             UnitCell<D> const & unitCell,
-                             int n) const;
-
-      /**
-      * Write r-grid fields with a replicated unit cell.
-      * 
-      * This function opens an output file with the specified filename, 
-      * writes expanded fields in RField<d> real-space grid format to that file, 
-      * and then closes the file.
-      *
-      * \param filename  name of output file
-      * \param fields  array of RField fields (r-space grid) needs to be replicated in dimensions
-      * \param unitCell  associated crystallographic unit cell
-      * \param n  a specified number of time replication in each direction
+      * \param replicas  elements that each specify the number of 
+      *                  replicas in each of the D directions
       */
       void replicateUnitCell(std::string filename, 
                              DArray<RField<D> > const & fields,
                              UnitCell<D> const & unitCell,
-                             int n) const;
+                             IntVec<D> const & replicas) const;
  
       ///@}
       /// \name Field File IO - Fourier Space (K-Space) Grid Format

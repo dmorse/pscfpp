@@ -689,6 +689,22 @@ namespace Rpc {
                                 const std::string & outFileName,
                                 int d,
                                 DArray<int> newGridDimensions);
+      /**
+      * Replicate unit cell
+      *
+      * This function reads a D-dimensional field and replicate 
+      * the unit cell a specified number of times in each D direction
+      * 
+      * Element i of array replicas contains the number of replication 
+      * times in direction i. 
+      * 
+      * \param inFileName filename name of input field file
+      * \param outFileName filename name of output field file
+      * \param replicas  the number of replicas in each D direction
+      */
+      void replicateUnitCell(const std::string & inFileName,
+                             const std::string & outFileName,
+                             IntVec<D> const & replicas);
 
       ///@}
       /// \name Field Accessors
