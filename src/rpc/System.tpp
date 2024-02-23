@@ -427,14 +427,6 @@ namespace Rpc {
             UTIL_CHECK(hasCompressor());
             compressor().compress();
          } else
-         if (command == "REPLICATE_UNIT_CELL") {
-            // Replicate unit cell in each direction n times
-            int n;
-            readEcho(in, filename);
-            in >> n;
-            Log::file() << Str("Replicate unit cell in each direction n times:  ", 21)<< n << "\n";
-            domain_.fieldIo().replicateUnitCell(filename, w_.rgrid(), domain_.unitCell(), n);
-         } else
          if (command == "WRITE_TIMER") {
             readEcho(in, filename);
             std::ofstream file;
@@ -478,6 +470,23 @@ namespace Rpc {
             expandRGridDimension(inFileName, outFileName, 
                                  d, newGridDimensions);
 
+         } else
+         if (command == "REPLICATE_UNIT_CELL") {
+            readEcho(in, inFileName);
+            readEcho(in, outFileName);
+            
+            // Read numbers of replication times for each dimension
+            IntVec<D> replicas;
+            for (int i = 0; i < D; i++){
+              in >> replicas[i];
+            }
+            for (int i = 0; i < D; i++){
+               Log::file() << "Replicate unit cell in direction " << i << " : ";
+               Log::file() << replicas[i] << " times ";
+               Log::file() << "\n";
+            }
+            
+            replicateUnitCell(inFileName, outFileName, replicas);
          } else
          if (command == "WRITE_THERMO") {
             readEcho(in, filename);
@@ -1011,6 +1020,25 @@ namespace Rpc {
                                               tmpFieldsRGrid_, 
                                               tmpUnitCell, 
                                               d, newGridDimensions);
+   }
+   
+   /*
+   * Replicate unit cell
+   */
+   template <int D>
+   void System<D>::replicateUnitCell(const std::string & inFileName,
+                                     const std::string & outFileName,
+                                     IntVec<D> const & replicas)
+   {
+      // Read fields
+      UnitCell<D> tmpUnitCell;
+      fieldIo().readFieldsRGrid(inFileName, tmpFieldsRGrid_, tmpUnitCell);
+      
+      // Replicate Fields
+      domain_.fieldIo().replicateUnitCell(outFileName, 
+                                          tmpFieldsRGrid_, 
+                                          tmpUnitCell, 
+                                          replicas);
    }
 
    // Thermodynamic Properties
