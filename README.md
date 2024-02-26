@@ -7,30 +7,31 @@ on microstructures formed by block polymers.  PSCF can perform both
 self-consistent field theory (SCFT) calculations and some types of 
 stochastic field-theoretic simulations (FTS) simulations. 
 
+The current version of PSCF is written primarily in C++, supplemented 
+by CUDA code to enable the use of a graphics processing unit (GPU). 
+
+## SCFT and FTS
+
 PSCF was originally designed for SCFT calculations, and provides an 
 extensive set of tools for this.  The acronym PSCF stands for Polymer 
-Self Consistent Field, reflecting this origin of the package.
+Self Consistent Field, reflecting this origin.
 
-The current version of PSCF (v1.2) is the first to also provide the
-ability to perform field theoretic Monte-Carlo and Brownian dynamics 
-simulations. The types of FTS provided by the current code are all
-based on a partial-saddle point approximation to the exact 
-"fully fluctuating" formation of the partititon function of a polymer
-liquid as a functional integral. The exact fully-fluctuating formulation 
-of polymer field theory (which is not implemented in this version of 
-PSCF) requires the stochastic sampling of complex-valued fields. The 
-partial-saddle point approximation used here is an approximation for 
+The current version of PSCF (v1.2) is the first to also provide 
+tools for field theoretic simulations based on Monte-Carlo (MC) and 
+Brownian dynamics (BD) sampling algorithms. The FTS algorithms in
+the current version all rely a partial saddle-point approximation 
+(PSPA) to the exact fully fluctuating formulation of the partititon 
+function of a polymer liquid as a functional integral.
+
+The exact or "fully-fluctuating" formulation of polymer field theory 
+(which is not yet implemented in PSCF) requires the stochastic sampling 
+of complex-valued fields. The PSPA used here is an approximation for 
 incompressible models in which the Lagrange multiplier field that 
 imposes a constraint on the total monomer density in the corresponding
 fully-fluctuating theory is approximated at a mean-field or saddle-point
-level, while other fields that couple to composition fluctuations are 
-allowed to fluctuate. The resulting approximation allows the use of 
-simulation algorithms that only involve real-valued fields, and that
-share many key algorithms with SCFT, making it possible to create 
-programs that implement both types of calculation.
-
-The current version of PSCF is written primarily in C++, supplemented 
-by CUDA code to enable the use of a graphics processing unit (GPU). 
+level, while fields that couple to composition fluctuations are allowed 
+to fluctuate. The resulting approximation yields a theory that involves
+only real-valued fields, and that share many key algorithms with SCFT.
 
 ## History
 
@@ -56,9 +57,11 @@ Fortran version include:
    - The current version enables use of a graphics processing unit (GPU) 
      to dramatically accelerate some applications.
 
-   - Starting with this release (v1.2), the current version of PSCF
-     can perform some types of stochastic field-theoretic simulation 
-     (FTS) in addition to SCFT.
+   - Starting with this release (v1.2), PSCF can perform field-theoretic 
+     simulation (FTS) calculations that rely on a partial saddle-point 
+     approximation (PSPA), in addition to SCFT.  Both Monte-Carlo (MC) 
+     and Brownian dynamics (BD) sampling methods are available.
+     
 
 ## Programs
 
@@ -77,18 +80,18 @@ PSCF currently contains three programs:
      CPU hardware. A pseudo-spectral algorithm is used to solve the
      MDE. This program provides capabilities for SCFT calculations 
      analogous to those of the older PSCF Fortran program, as well as 
-     code for FTMC simulations. The suffix "pc" stands for 
-     "periodic CPU".  
+     code for field-theoretic simulations based on a partial saddle-point
+     approximation. The suffix "pc" stands for "periodic CPU".  
      
    - **pscf_pg** : The pscf_pg program is a GPU-accelerated version
-     of pscf_pc that can also perform SCFT and FTMC simulations of
+     of pscf_pc that can also perform SCFT and FTS calculations for
      periodic systems. It is based on algorithms similar to those 
      used in pscf_pc and provides almost identical features, but 
      provides much higher performance for large systems. The suffix 
      "pg" stands for "periodic GPU". 
 
-FTMC simulations are only available in the two codes designed for use
-with periodic boundary conditions (pscf_pc and pscf_pg). 
+Field-theretic simulations are only available in the two codes designed 
+for use with periodic boundary conditions (pscf_pc and pscf_pg). 
 
 ## Features
 
