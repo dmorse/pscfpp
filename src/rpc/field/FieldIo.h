@@ -302,7 +302,8 @@ namespace Rpc {
                             DArray< RField<D> > const & fields,
                             UnitCell<D> const & unitCell,
                             bool writeHeader = true,
-                            bool isSymmetric = true) const;
+                            bool isSymmetric = true,
+                            bool writeMeshSize = true) const;
 
       /**
       * Write array of RField objects (fields on an r-space grid) to file.
