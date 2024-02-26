@@ -729,20 +729,6 @@ namespace Rpc {
                                  DArray<int> newGridDimensions) const;
 
       /**
-      * Write fields in replicated unit cell to ostream.
-      *
-      * \param out  output stream (i.e., output file)
-      * \param fields  array of RField fields (r-space grid)
-      * \param unitCell  associated crystallographic unit cell
-      * \param meshDimensions mesh dimensions of fields
-      */
-      void 
-      writeReplicatedFieldsRGrid(std::ostream& out,
-                                 DArray< RField<D> > const & fields,
-                                 UnitCell<D> const & unitCell,
-                                 IntVec<D> const & meshDimensions) const;
-
-      /**
       * Write r-grid fields within a replicated unit cell.
       *
       * \param out  output stream (i.e., output file)
