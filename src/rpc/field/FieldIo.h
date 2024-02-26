@@ -302,7 +302,8 @@ namespace Rpc {
                             DArray< RField<D> > const & fields, 
                             UnitCell<D> const & unitCell,
                             bool writeHeader = true,
-                            bool isSymmetric = true) const;
+                            bool isSymmetric = true,
+                            bool writeMeshSize = true) const;
 
       /**
       * Write array of RField objects (fields on an r-space grid) to file.
@@ -394,19 +395,7 @@ namespace Rpc {
                                  UnitCell<D> const & unitCell,
                                  int d,
                                  DArray<int> newGridDimensions) const;
-      /**
-      * Write array of RField objects for replicated fields (fields on r-space grid) 
-      * to ostream.
-      *
-      * \param out  output stream (i.e., output file)
-      * \param fields  array of RField fields (r-space grid)
-      * \param unitCell  associated crystallographic unit cell
-      * \param meshDimensions mesh dimensions of fields
-      */
-      void writeReplicatedFieldsRGrid(std::ostream& out, 
-                                      DArray< RField<D> > const & fields, 
-                                      UnitCell<D> const & unitCell,
-                                      IntVec<D> const & meshDimensions) const;                           
+                          
       /**
       * Write r-grid fields with a replicated unit cell.
       * 

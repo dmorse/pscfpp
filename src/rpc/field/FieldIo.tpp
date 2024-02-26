@@ -923,20 +923,25 @@ namespace Rpc {
                                      DArray<RField<D> > const & fields,
                                      UnitCell<D> const & unitCell,
                                      bool writeHeader,
-                                     bool isSymmetric) const
+                                     bool isSymmetric,
+                                     bool writeMeshSize) const
    {
       int nMonomer = fields.capacity();
       UTIL_CHECK(nMonomer > 0);
       if (writeHeader){
          writeFieldHeader(out, nMonomer, unitCell, isSymmetric);
       }
-      out << "mesh " <<  std::endl
-          << "           " << mesh().dimensions() << std::endl;
-
+      
+      IntVec<D> meshDimensions = fields[0].meshDimensions();
+      if (writeMeshSize){
+         out << "mesh " <<  std::endl
+             << "           " << meshDimensions << std::endl;
+      }
+      
       DArray<RField<D> > temp;
       temp.allocate(nMonomer);
       for (int i = 0; i < nMonomer; ++i) {
-         temp[i].allocate(mesh().dimensions());
+         temp[i].allocate(meshDimensions);
       } 
 
       int p = 0; 
@@ -948,21 +953,21 @@ namespace Rpc {
       int n3 =0;
 
       if (D==3) {
-         while (n3 < mesh().dimension(2)) {
+         while (n3 < meshDimensions[2]) {
             q = p; 
             n2 = 0; 
-            while (n2 < mesh().dimension(1)) {
+            while (n2 < meshDimensions[1]) {
                r =q;
                n1 = 0; 
-               while (n1 < mesh().dimension(0)) {
+               while (n1 < meshDimensions[0]) {
                   for (int i = 0; i < nMonomer; ++i) {
                      temp[i][s] = fields[i][r];
                   }    
-                  r = r + (mesh().dimension(1) * mesh().dimension(2));
+                  r = r + (meshDimensions[1] * meshDimensions[2]);
                   ++s; 
                   ++n1;     
                }    
-               q = q + mesh().dimension(2);
+               q = q + meshDimensions[2];
                ++n2;
             }    
             ++n3;
@@ -970,14 +975,14 @@ namespace Rpc {
          }    
       }
       else if (D==2) {
-         while (n2 < mesh().dimension(1)) {
+         while (n2 < meshDimensions[1]) {
             r =q;
             n1 = 0;
-            while (n1 < mesh().dimension(0)) {
+            while (n1 < meshDimensions[0]) {
                for (int i = 0; i < nMonomer; ++i) {
                   temp[i][s] = fields[i][r];
                }
-               r = r + (mesh().dimension(1));
+               r = r + (meshDimensions[1]);
                ++s;
                ++n1;
             }
@@ -986,7 +991,7 @@ namespace Rpc {
          }
       }
       else if (D==1) {
-         while (n1 < mesh().dimension(0)) {
+         while (n1 < meshDimensions[0]) {
             for (int i = 0; i < nMonomer; ++i) {
                temp[i][s] = fields[i][r];
             }
@@ -999,7 +1004,7 @@ namespace Rpc {
       }
 
       // Write fields
-      MeshIterator<D> itr(mesh().dimensions());
+      MeshIterator<D> itr(meshDimensions);
       for (itr.begin(); !itr.atEnd(); ++itr) {
          for (int j = 0; j < nMonomer; ++j) {
             out << "  " << Dbl(temp[j][itr.rank()], 18, 15);
@@ -1018,7 +1023,8 @@ namespace Rpc {
       std::ofstream file;
       fileMaster().openOutputFile(filename, file);
       bool writeHeader = true;
-      writeFieldsRGrid(file, fields, unitCell, writeHeader, isSymmetric);
+      bool writeMeshSize = true;
+      writeFieldsRGrid(file, fields, unitCell, writeHeader, isSymmetric, writeMeshSize);
       file.close();
    }
    
@@ -1321,90 +1327,6 @@ namespace Rpc {
    }
    
    template <int D>
-   void FieldIo<D>::writeReplicatedFieldsRGrid(std::ostream &out,
-                                               DArray<RField<D> > const & fields,
-                                               UnitCell<D> const & unitCell,
-                                               IntVec<D> const & meshDimensions) const
-   {
-      int nMonomer = fields.capacity();
-      UTIL_CHECK(nMonomer > 0);
-      DArray<RField<D> > temp;
-      temp.allocate(nMonomer);
-      for (int i = 0; i < nMonomer; ++i) {
-         temp[i].allocate(meshDimensions);
-      } 
-
-      int p = 0; 
-      int q = 0; 
-      int r = 0; 
-      int s = 0; 
-      int n1 =0;
-      int n2 =0;
-      int n3 =0;
-
-      if (D==3) {
-         while (n3 < meshDimensions[2]) {
-            q = p; 
-            n2 = 0; 
-            while (n2 < meshDimensions[1]) {
-               r =q;
-               n1 = 0; 
-               while (n1 < meshDimensions[0]) {
-                  for (int i = 0; i < nMonomer; ++i) {
-                     temp[i][s] = fields[i][r];
-                  }    
-                  r = r + (meshDimensions[1] * meshDimensions[2]);
-                  ++s; 
-                  ++n1;     
-               }    
-               q = q + meshDimensions[2];
-               ++n2;
-            }    
-            ++n3;
-            ++p;     
-         }    
-      }
-      else if (D==2) {
-         while (n2 < meshDimensions[1]) {
-            r =q;
-            n1 = 0;
-            while (n1 < meshDimensions[0]) {
-               for (int i = 0; i < nMonomer; ++i) {
-                  temp[i][s] = fields[i][r];
-               }
-               r = r + (meshDimensions[1]);
-               ++s;
-               ++n1;
-            }
-            ++q;
-            ++n2;
-         }
-      }
-      else if (D==1) {
-         while (n1 < meshDimensions[0]) {
-            for (int i = 0; i < nMonomer; ++i) {
-               temp[i][s] = fields[i][r];
-            }
-            ++r;
-            ++s;
-            ++n1;
-         }
-      } else {
-         Log::file() << "Invalid Dimensions";
-      }
-
-      // Write fields
-      MeshIterator<D> itr(meshDimensions);
-      for (itr.begin(); !itr.atEnd(); ++itr) {
-         for (int j = 0; j < nMonomer; ++j) {
-            out << "  " << Dbl(temp[j][itr.rank()], 18, 15);
-         }
-         out << std::endl;
-      }
-
-   }
-   
-   template <int D>
    void FieldIo<D>::replicateUnitCell(std::ostream &out,
                                       DArray<RField<D> > const & fields,
                                       UnitCell<D> const & unitCell,
@@ -1518,8 +1440,7 @@ namespace Rpc {
       out << "mesh " <<  std::endl
           << "           " << replicateDimensions << std::endl;
       // Write Fields
-      FieldIo<D>::writeReplicatedFieldsRGrid(out, outFields, cell, 
-                                             replicateDimensions);
+      FieldIo<D>::writeFieldsRGrid(out, outFields, cell, false, false, false);
    }
    
    template <int D>
