@@ -34,10 +34,9 @@ Features of the current version of PSCF that distinguish it from the
 legacy Fortran version include the following:
 <ul>
   <li>
-  The current version is written as an extensible package that contains
-  several different programs designed for use with different geometries,
-  algorithms or hardware. The Fortran version is a single program 
-  designed for periodic structure and linear polymers.
+  The current version is extensible package of several programs designed 
+  for different geometries, algorithms and/or hardware. The Fortran code
+  is a single SCFT program for periodic structure and linear polymers.
   </li>
   <li>
   The current version enables simulations of mixtures containing acyclic
@@ -49,8 +48,8 @@ legacy Fortran version include the following:
   to dramatically accelerate some applications.
   </li>
   <li>
-  The current version enables field theoretic simulations that are based 
-  on a partial-saddle point approximation as well as SCFT calculations.
+  The current version enables field theoretic simulation (FTS) calculations
+  in a partial-saddle point approximation in addition to SCFT calculations.
   </li>
 </ul>
 
@@ -59,36 +58,40 @@ legacy Fortran version include the following:
 The following features of the legacy Fortran program have not been ported 
 to the C++/CUDA version:
 <ul>
-  <li> The Fortran PSCF program can perform RPA-like linear-reponse 
-       calculations for ordered structures, 
-  </li>
   <li> The Fortran PSCF program provides a quasi-Newton-Broyden SCFT
-       algorithm that works very well for smaller problems.
+       iteration algorithm that works very well for problems of modest 
+       size.
+  </li>
+  <li> The Fortran PSCF program can perform RPA-like linear-reponse 
+       calculations for ordered structures.
   </li>
 </ul>
 These two features are described in more detail below;
 
-The Fortran PSCF program has the ability to perform RPA-like calculations 
-to compute the self-consistent linear response of a periodic structure to 
-an infinitesimal inhomogeneous external field. Because this algorithm has 
-not been ported to the new version, users who are interested in doing this 
-type of calculation should consider using the Fortran program, which will 
-remain available.  The required algorithm and its application are described 
-in the following reference: 
-
-Ranjan, A. and Qin, J. and Morse, D.C., "Linear Response and Stability of 
-Ordered Phases of Block Copolymers", **2008** *Macromolecules* <i>41</i>, 942.  
-
-The Fortran PSCF program also provided a unique quasi-Newton/Broyden SCFT 
+The Fortran PSCF program provided a unique quasi-Newton/Broyden SCFT 
 iteration algorithm that was based on a physically motivated initial
-approximation for the inverse Jacobian that is iteratively improved via
-a Broyden algorithm.  This evolved into an excellent algorithm for the 
+approximation for the inverse Jacobian that is iteratively improved via a 
+Broyden update algorithm.  This was an excellent algorithm for the 
 problems of moderate size for which it was originally designed. It was 
-abandoned in the new version in favor of Anderson-mixing algorithms 
-because the amount of memory required by the older algorithm increases 
-quadratically with the number of spatial degrees of freedom (i.e., number 
-of basis functions), and this prevented the algorithm from being applied 
-to larger problems.
+abandoned in the new version in favor of a variety of Anderson-mixing 
+algorithms because the amount of memory required by the Newton/Broyden
+algorithm increases as the square of the number of spatial degrees of 
+freedom (i.e., number of basis functions), which prevented the algorithm 
+from being applied to larger problems.
+
+The Fortran PSCF program has the ability to perform generalized RPA
+calculations to compute the self-consistent linear response of a periodic 
+structure to an infinitesimal inhomogeneous external field. This algorithm 
+allowed description of limits of stability of ordered phases and composition
+fluctuations within such phases. This feature has not been ported to the 
+new C++ version, but will remain available within the legacy Fortran 
+program, via the github repository for that program.  The required 
+algorithm and some application are described in the following reference: 
+
+Ranjan, A. and Qin, J. and Morse, D.C., 
+<a href="https://doi.org/10.1021/ma0714316">
+"Linear Response and Stability of Ordered Phases of Block Copolymers", 
+</a> **2008** *Macromolecules* <i>41</i>, 942.  
 
 <BR>
 \ref about_methods_page   (Prev) &nbsp; &nbsp; &nbsp; &nbsp;

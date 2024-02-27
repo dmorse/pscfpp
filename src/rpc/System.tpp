@@ -444,50 +444,6 @@ namespace Rpc {
             writeParamNoSweep(file);
             file.close();
          } else
-         if (command == "EXPAND_RGRID_DIMENSION") {
-            readEcho(in, inFileName);
-            readEcho(in, outFileName);
-
-            // Read expanded spatial dimension d
-            int d;
-            in >> d;
-            UTIL_CHECK(d > D);
-            Log::file() << Str("Expand dimension to: ") << d << "\n";
-
-            // Read numbers of grid points for added dimensions
-            DArray<int> newGridDimensions;
-            newGridDimensions.allocate(d-D);
-            for (int i = 0; i < d-D; i++) {
-               in >> newGridDimensions[i];
-            }
-            Log::file() 
-               << Str("Numbers of grid points in added dimensions :  ");
-            for (int i = 0; i < d-D; i++) {
-               Log::file() << newGridDimensions[i] << " ";
-            }
-            Log::file() << "\n";
-
-            expandRGridDimension(inFileName, outFileName, 
-                                 d, newGridDimensions);
-
-         } else
-         if (command == "REPLICATE_UNIT_CELL") {
-            readEcho(in, inFileName);
-            readEcho(in, outFileName);
-            
-            // Read numbers of replication times for each dimension
-            IntVec<D> replicas;
-            for (int i = 0; i < D; i++){
-              in >> replicas[i];
-            }
-            for (int i = 0; i < D; i++){
-               Log::file() << "Replicate unit cell in direction " << i << " : ";
-               Log::file() << replicas[i] << " times ";
-               Log::file() << "\n";
-            }
-            
-            replicateUnitCell(inFileName, outFileName, replicas);
-         } else
          if (command == "WRITE_THERMO") {
             readEcho(in, filename);
             std::ofstream file;
@@ -653,6 +609,51 @@ namespace Rpc {
             compare(Rfield1, Rfield2);
 
          } else 
+         if (command == "EXPAND_RGRID_DIMENSION") {
+            readEcho(in, inFileName);
+            readEcho(in, outFileName);
+
+            // Read expanded spatial dimension d
+            int d;
+            in >> d;
+            UTIL_CHECK(d > D);
+            Log::file() << Str("Expand dimension to: ") << d << "\n";
+
+            // Read numbers of grid points along added dimensions
+            DArray<int> newGridDimensions;
+            newGridDimensions.allocate(d-D);
+            for (int i = 0; i < d-D; i++) {
+               in >> newGridDimensions[i];
+            }
+            Log::file() 
+               << Str("Numbers of grid points in added dimensions :  ");
+            for (int i = 0; i < d-D; i++) {
+               Log::file() << newGridDimensions[i] << " ";
+            }
+            Log::file() << "\n";
+
+            expandRGridDimension(inFileName, outFileName, 
+                                 d, newGridDimensions);
+
+         } else
+         if (command == "REPLICATE_UNIT_CELL") {
+            readEcho(in, inFileName);
+            readEcho(in, outFileName);
+            
+            // Read numbers of replicas along each direction
+            IntVec<D> replicas;
+            for (int i = 0; i < D; i++){
+              in >> replicas[i];
+            }
+            for (int i = 0; i < D; i++){
+               Log::file() << "Replicate unit cell in direction " 
+                           << i << " : ";
+               Log::file() << replicas[i] << " times ";
+               Log::file() << "\n";
+            }
+            
+            replicateUnitCell(inFileName, outFileName, replicas);
+         } else
          if (command == "READ_H_BASIS") {
             readEcho(in, filename);
             if (!h_.isAllocatedBasis()) {

@@ -365,6 +365,24 @@ that command or of a group of closely related commands.
          compares values at all grid nodes and writes a report
          of the magnitude of differences to the log output. </td>
   </tr>
+  <tr>
+    <td> \ref user_command_pc_grid_sub "EXPAND_RGRID_DIMENSION" </td>
+    <td> 
+         inFile [string], outFile [string], 
+         d[int], newGridDimensions Array[int] 
+    </td>
+    <td> Read D-dimensional r-grid fields from inFile, output to outFile in 
+         format for d > D dimensions, with newGridDimensions[i] grid points 
+         in added direction D+i for i < d - D.
+    </td>
+  </tr>
+  <tr>
+    <td> \ref user_command_pc_grid_sub "REPLICATE_UNIT_CELL" </td>
+    <td> inFile [string], outFile [string], replicas Array[int] </td>
+    <td> Read r-grid fields from inFile, output in replicated unit cell to
+         outFile, with cell replicated replicas[i] times in direction i.
+    </td>
+  </tr>
 
   <tr>
     <td colspan="3" style="text-align:center">
@@ -964,6 +982,46 @@ a pair of field files in the same format (basis or rgrid format,
 respectively), computes differences between corresponding fields, 
 and write a report to the log file summarizing several measures of 
 the magnitude of the differences. 
+
+\subsection user_command_pc_grid_sub Field Grid Manipulations
+
+The <b>EXPAND_RGRID_DIMENSION</b> and <b>REPLICATE_UNIT_CELL</b> 
+are utilities for changing or expanding the dimensions of the grid
+on which a field is defined. These commands are intended to be 
+used together to allow users to modify results of SCFT calculations
+to prepare initial field configurations for use in FTS calculations.
+
+The <b> EXPAND_RGRID_DIMENSION</b> command allows a user to take a
+field that was computed using a reduced dimensionality D=1 or D=2
+and use it to create a field file output in a format appropriate to 
+a higher dimension d, with D < d <= 3. For example, this command
+could be used to convert the result of a 1D SCFT calculation for 
+a lamellar phase into a file format that could be read in as the
+initial field configuration for a 3D FTS simulation of a lamellar
+phase. To this, the command would be used within a command file for 
+pscf_pc invoked with a command line option -d 1 (thus setting D=1)
+to read in the converged file for a lamellar phase, and with a
+command parameter d=3 in order to output a file in the format
+appropriate for a 3D calculation. In order to expand the number
+of dimensions, values of all fields are assumed to be independent
+of coordinates associated with the added dimensions. The parameter
+newGridDimensions is an integer array of dimension d-D in which
+element i contains the number of grid points along added direction 
+D+i, for 0 <= i < d-D.
+
+The <b> REPLICATE_UNIT_CELL </b> command is instead designed to 
+read in a field file containing one unit cell of a periodic 
+structure and create a corresponding file in which that unit
+cell is replicated a specified number of times in each direction.
+This is useful because SCFT calculations are normally performed
+within a single unit cell, but it is often necessary to perform
+FTS calculations of ordered structures in simulation unit cells
+that contain several unit cells of the ordered structure in order
+to minimize finite size effects in calculations with fluctuating
+fields. Parameter replicas is an array of D integers in which 
+element i contains the number of replicas of the original unit
+cell along direction i, for 0 <= i < D.
+
 
 \section user_command_pc_external_sec External Fields
 

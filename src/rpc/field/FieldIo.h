@@ -297,6 +297,7 @@ namespace Rpc {
       * \param unitCell  associated crystallographic unit cell
       * \param writeHeader  flag to write header of file if true
       * \param isSymmetric  Do fields have a space group symmetry ?
+      * \param writeMeshSize Should mesh size be written at end of header?
       */
       void writeFieldsRGrid(std::ostream& out,
                             DArray< RField<D> > const & fields,
@@ -712,9 +713,9 @@ namespace Rpc {
       * Expand dimensions of array of r-grid fields, write to file.
       *
       * This function opens an output file with the specified filename,
-      * writes expanded fields in RField<d> real-space grid format to
-      * that file, and then closes the file. Function of the same name
-      * that takes a std::ostream argument is called internally.
+      * writes expanded fields in RField<d> real-space grid format to 
+      * that file, and then closes the file. The overloaded function of 
+      * the same name with a std::ostream parameter is called internally.
       *
       * \param filename  name of output file
       * \param fields  input array of RField<D> objects (r-space grid)
@@ -729,14 +730,20 @@ namespace Rpc {
                                  DArray<int> newGridDimensions) const;
 
       /**
-      * Write r-grid fields within a replicated unit cell.
+      * Write r-grid fields in a replicated unit cell to std::ostream.
       *
+      * This function takes an input array of periodic fields and outputs
+      * them within an expanded unit cell in which the original input unit 
+      * cell has been replicated a specified number of times in each 
+      * direction. Results are written to an std::ostream output stream.
+      *
+      * Element i of the replicas IntVec<D> parameter contains the 
+      * number of unit cell replicas along direction i. 
+      * 
       * \param out  output stream (i.e., output file)
-      * \param fields  array of RField fields (r-space grid) needs
-      *        to be replicated in dimensions
-      * \param unitCell  associated crystallographic unit cell
-      * \param replicas  specify the number of replicas in each
-      *        of the D directions
+      * \param fields  array of RField (r-space) fields to be replicated
+      * \param unitCell  original crystallographic unit cell
+      * \param replicas  number of unit cell replicas in each direction
       */
       void replicateUnitCell(std::ostream& out,
                              DArray<RField<D> > const & fields,
@@ -744,14 +751,17 @@ namespace Rpc {
                              IntVec<D> const & replicas) const;
 
       /**
-      * Write r-grid fields with a replicated unit cell.
+      * Write r-grid fields in a replicated unit cell to named file.
       *
-      * \param out  output stream (i.e., output file)
+      * This function opens output file filename, writes fields within
+      * a replicated unit cell to the file, and closes the file. See
+      * documentation of the overloaded function of the same name with 
+      * a std::ostream parameter, which is called internally. 
+      *
+      * \param filename  output file name
       * \param fields  array of RField fields (r-space grid) needs
-      *        to be replicated in dimensions
-      * \param unitCell  associated crystallographic unit cell
-      * \param replicas  elements that each specify the number of
-      *                  replicas in each of the D directions
+      * \param unitCell  original crystallographic unit cell
+      * \param replicas  number of unit cell replicas in each direction
       */
       void replicateUnitCell(std::string filename,
                              DArray<RField<D> > const & fields,
@@ -762,21 +772,21 @@ namespace Rpc {
 
    private:
 
-      // DFT work array for two-step conversion basis <-> kgrid <-> r-grid.
+      // DFT work array for conversions basis <-> kgrid <-> r-grid
       mutable RFieldDft<D> workDft_;
 
       // Pointers to associated external data
 
-      /// Pointer to spatial discretization mesh.
+      /// Pointer to spatial discretization mesh
       Mesh<D> const * meshPtr_;
 
-      /// Pointer to FFT object.
+      /// Pointer to FFT object
       FFT<D> const * fftPtr_;
 
-      /// Pointer to lattice system.
+      /// Pointer to lattice system
       typename UnitCell<D>::LatticeSystem const * latticePtr_;
 
-      /// Pointer to boolean hasGroup (true if a space group is known).
+      /// Pointer to boolean hasGroup (true if a space group is known)
       bool const * hasGroupPtr_;
 
       /// Pointer to group name string
@@ -788,61 +798,61 @@ namespace Rpc {
       /// Pointer to a Basis object
       Basis<D> * basisPtr_;
 
-      /// Pointer to Filemaster (holds paths to associated I/O files).
+      /// Pointer to Filemaster (holds paths to associated I/O files)
       FileMaster const * fileMasterPtr_;
 
       // Private accessor functions for associated external data
 
-      /// Get spatial discretization mesh by const reference.
+      /// Get spatial discretization mesh by const reference
       Mesh<D> const & mesh() const
       {
          UTIL_ASSERT(meshPtr_);
          return *meshPtr_;
       }
 
-      /// Get FFT object by const reference.
+      /// Get FFT object by const reference
       FFT<D> const & fft() const
       {
          UTIL_ASSERT(fftPtr_);
          return *fftPtr_;
       }
 
-      /// Get the lattice type enum value by const reference.
+      /// Get the lattice type enum value by const reference
       typename UnitCell<D>::LatticeSystem const & lattice() const
       {
          UTIL_ASSERT(latticePtr_);
          return *latticePtr_;
       }
 
-      /// Has a group been declared externally ?
+      /// Has a space group been declared externally ?
       bool hasGroup() const
       {
          UTIL_ASSERT(hasGroupPtr_);
          return *hasGroupPtr_;
       }
 
-      /// Get associated group name string by const reference.
+      /// Get associated group name string by const reference
       std::string const & groupName() const
       {
          UTIL_ASSERT(groupNamePtr_);
          return *groupNamePtr_;
       }
 
-      /// Get associated SpaceGroup<D> by const reference.
+      /// Get associated SpaceGroup<D> by const reference
       SpaceGroup<D> const & group() const
       {
          UTIL_ASSERT(groupPtr_);
          return *groupPtr_;
       }
 
-      /// Get the associated Basis by const reference.
+      /// Get the associated Basis by const reference
       Basis<D> & basis() const
       {
          UTIL_ASSERT(basisPtr_);
          return *basisPtr_;
       }
 
-      /// Get associated FileMaster by reference.
+      /// Get associated FileMaster by reference
       FileMaster const & fileMaster() const
       {
          UTIL_ASSERT(fileMasterPtr_);

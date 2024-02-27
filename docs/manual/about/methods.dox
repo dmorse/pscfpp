@@ -5,16 +5,16 @@
 <BR>
 
 
-PSCF can be used to perform either self-consistent field theory 
-calculations or some types of stochastic field-theoretic simulation 
+PSCF can be used to perform either self-consistent field theory
+calculations or some types of stochastic field-theoretic simulation
 simulations.
 
-\section about_methods_scft_sec Self-Consistent Field Theory 
+\section about_methods_scft_sec Self-Consistent Field Theory
 
 Self-consistent field theory (SCFT) is an approximate theory for
 predicting structures and free energies of inhomogeneous equilibrium states
-of polymer liquids in which inhomogeneity is driven by a tendency for 
-sub-units of different chemistry to phase separate. SCFT is a form of 
+of polymer liquids in which inhomogeneity is driven by a tendency for
+sub-units of different chemistry to phase separate. SCFT is a form of
 mean field theory in which the conformational statistics of individual
 polymers is approximated by the solution of an auxiliary single-polymer
 problem in which each molecule is acted upon by a set of monomer chemical
@@ -32,112 +32,121 @@ of an SCFT problem must satisfy a set of nonlinear self-consistent field
 corresponding c fields by an empirical description of the thermodynamics
 of mixing for the chosen set of monomer types.
 
-We recommend the following references as introductions to the SCFT of 
+We recommend the following references as introductions to the SCFT of
 inhomogeneous polymer liquids:
 
-  - Matsen, M. W. "The standard Gaussian model for block copolymer
-    melts," *J. Phys.: Condens. Matter*, **2001**, <i>14</i>, R21.
+  - Matsen, M. W. <a href="https://doi.org/10.1088/0953-8984/14/2/201">
+    "The standard Gaussian model for block copolymer melts," </a>
+    *J. Phys.: Condens. Matter*, **2001**, <i>14</i>, R21.
 
   - Fredrickson, G. H. "The Equilibrium Theory of Inhomogeneous Polymers",
     Oxford University Press, **2006**.
 
-  - Arora, A., *et al.* "Broadly Accessible Self-Consistent Field Theory
-    for Block Polymer Materials Discovery," *Macromolecules*, **2016**,
-    <i>49</i>, 4675.
+  - Shi, A.-C. <a href+"https://doi.org/10.1002/adts.201800188">
+    "Self-Consistent Field Theory of Inhomogeneous Polymeric Systems: 
+    A Variational Derivation," </a>
+    *Adv. Theory Simul.*, **2019**, <i>2</i>, 1800188.
 
-  - Shi, A.-C. "Self-Consistent Field Theory of Inhomogeneous Polymeric
-    Systems: A Variational Derivation," *Adv. Theory Simul.*, **2019**,
-    <i>2</i>, 1800188.
+  - Arora, A., *et al.*
+    <a href="https://doi.org/10.1021/acs.macromol.6b00107">
+    "Broadly Accessible Self-Consistent Field Theory for Block Polymer
+    Materials Discovery," </a> *Macromolecules*, **2016**, <i>49</i>, 4675.
 
-The reference by Arora et al. is particularly appropriate as an
-introduction to the implementation of SCFT in PSCF because it was
-written, in part, as a description of an earlier version of the package,
-and uses notation, conventions and working equations consistent with
-those used throughout the PSCF documentation and source code.
+The reference by Arora et al. is particularly appropriate as an introduction 
+to the implementation of SCFT in PSCF because it was written, in part, as 
+a description of the earlier Fortran version of PSCF, and uses conventions 
+and working equations consistent with those used throughout the PSCF 
+documentation and source code.
 
-\section about_methods_fts_sec Field-Theoretic Simulation 
+\section about_methods_fts_sec Field-Theoretic Simulation
 
 Field-theoretic simulation (FTS) methods are a family of closely related
-stochastic simulation methods that sample an equilibrium ensemble of 
-possible configurations of fluctuating chemical potential fields 
-("w fields"), rather than solving for a single field configuration as 
-in SCFT.  The theory underlying these methods relies upon an exact 
-formal transformation of the partition function for a system of 
-interacting particles from an integral over particle positions into a 
-functional integral over configurations of a set of fluctuating fields. 
-There are two distinct classes of FTS methods, which are discussed 
+stochastic simulation methods that sample an equilibrium ensemble of
+possible configurations of fluctuating chemical potential fields
+("w fields"), rather than solving for a single field configuration as
+in SCFT.  The theory underlying these methods relies upon an exact
+formal transformation of the partition function for a system of
+interacting particles from an integral over particle positions into a
+functional integral over configurations of a set of fluctuating fields.
+There are two distinct classes of FTS methods, which are discussed
 separately below:
 
 <b> Fully Fluctuating Simulations: </b>
 
-The exact formulation of this particle-to-field transformation leads 
+The exact formulation of this particle-to-field transformation leads
 to a formalism in which the fields and the integrand of the resulting
-functional integral are all generally complex-valued rather than 
-real-valued functions. The complex Langevin sampling method, which 
-is not yet implemented in PSCF, is designed to sample the resulting 
-complex functional integral.  Complex Langevin simulations of this 
-"fully fluctuating" field theory are believed to yield results that 
-are statistically equivalent to those obtained from simulations of 
-the corresponding particle based model. 
+functional integral are all generally complex-valued rather than
+real-valued functions. The complex Langevin sampling method, which
+is not yet implemented in PSCF, is designed to sample the resulting
+complex functional integral.  Complex Langevin simulations of this
+"fully fluctuating" field theory are believed to yield results that
+are statistically equivalent to those obtained from simulations of
+the corresponding particle based model.
 
-The following references discuss the transformation of the partition 
-function into a functional integral, and the formulation of 
-"fully fluctuating" simulations that are based directly on the 
+The following references discuss the transformation of the partition
+function into a functional integral, and the formulation of
+"fully fluctuating" simulations that are based directly on the
 resulting formulation:
 
-  - Fredrickson, G. H. and Ganesan, V. and Drolet, F., "Field-theoretic
-    computer simulations methods for polymers and complex fluids,"
-    *Macromolecules* **2002**, <i>35</i>, 16-39.
+  - Fredrickson, G. H. and Ganesan, V. and Drolet, F.,
+    <a href="https://doi.org/10.1021/ma011515t">
+    "Field-theoretic computer simulations methods for polymers and
+    complex fluids," </a> *Macromolecules* **2002**, <i>35</i>, 16-39.
 
-  - Fredrickson, G. H. "The Equilibrium Theory of Inhomogeneous Polymers",
+  - Fredrickson, G. H.
+    "The Equilibrium Theory of Inhomogeneous Polymers",
     Oxford University Press, **2006**.
 
-  - Delaney, K.T. and Fredrickson, G.H., "Recent Developments in 
-    Fully Fluctuating Field-Theoretic Simulations of Polymer Melts
-    and Solutions", *J. Phys. Chem. B* **2016**, <i>120</i> 7615.
+  - Delaney, K.T. and Fredrickson, G.H.,
+    <a href="https://doi.org/10.1021/acs.jpcb.6b05704">
+    "Recent Developments in Fully Fluctuating Field-Theoretic Simulations
+    of Polymer Melts and Solutions", </a>
+    *J. Phys. Chem. B* **2016**, <i>120</i> 7615.
 
-The current v1.2 release of PSCF does not yet, however, provide code 
-for fully fluctuating complex Langevin simulations.
+The current version PSCF does not provide code for fully-fluctuating
+complex Langevin simulations.
 
 <b> Partial-Saddle Point Approximation: </b>
 
-The FTS methods that are implemented in PSCF v1.2 are instead all based 
-on a so-called "partial saddle point" approximation to the fully 
-fluctuating field theory. This is an approximation in which a field 
-component component that enforces the incompressibility constraint, 
-sometimes referred to as a "pressure" field, is treated at a 
-self-consistent field level, while the other field component or components 
-are allowed to fluctuate. The use of a self-consistent field for the 
-pressure field is mathematically equivalent to approximating this field 
-by its value at a partial saddle-point, which is a field configuration 
-in which the partial functional derivative with respect to this field 
-vanishes. 
+The FTS methods that are implemented in PSCF v1.2 are instead all based
+on a so-called "partial saddle point" approximation to the fully
+fluctuating field theory. This is an approximation in which a field
+component component that enforces the incompressibility constraint,
+sometimes referred to as a "pressure" field, is treated at a
+self-consistent field level, while the other field component or components
+are allowed to fluctuate. The use of a self-consistent field for the
+pressure field is mathematically equivalent to approximating this field
+by its value at a partial saddle-point, which is a field configuration
+in which the partial functional derivative with respect to this field
+vanishes.
 
-The partial saddle point approximation cannot be applied to as wide a 
-range of different types of systems as the fully fluctuating system. 
-It has previously been applied in published work only to systems with 
-only two monomer types (AB systems) with a positive Flory-Huggins 
-interaction parameter. The implemention of partial-saddle point approximation 
-that is used in PSCF allows application to a somewhat wider range of 
-systems, including some systems with three monomer types, but also 
+The partial saddle point approximation cannot be applied to as wide a
+range of different types of systems as the fully fluctuating system.
+It has previously been applied in published work only to systems with
+only two monomer types (AB systems) with a positive Flory-Huggins
+interaction parameter. The implemention of partial-saddle point approximation
+that is used in PSCF allows application to a somewhat wider range of
+systems, including some systems with three monomer types, but also
 requires imposes some constraints on the allowed values of interaction
 parameters.
 
 When the partial saddle-point approximation is applicable, it leads to
 an expression for the partition function as a functional integral
-in which all of quantities of interest have real (rather than complex) 
-values.  Simulations that rely on the partial-saddle point approximation 
-also seem thus far to be substantially more efficient than complex 
-Langevin simulations, at a modest cost in accuracy.  PSCF v1.2 implements 
-a variety of both Monte-Carlo and Brownian dynamics algorithms for sampling 
-the ensemble defined by the partial saddle-point approximation. 
+in which all of quantities of interest have real (rather than complex)
+values.  Simulations that rely on the partial-saddle point approximation
+also seem thus far to be substantially more efficient than complex
+Langevin simulations, at a modest cost in accuracy.  PSCF v1.2 implements
+a variety of both Monte-Carlo and Brownian dynamics algorithms for sampling
+the ensemble defined by the partial saddle-point approximation.
 
-The following reference provides a good overview of simulations based on 
-the partial saddle-point approximation up to 2021, with references to 
+The following reference provides a good overview of simulations based on
+the partial saddle-point approximation up to 2021, with references to
 earlier work:
 
-  - M.W. Matsen and T.M. Beardsley, "Field Theoretic Simulations for Block
-    Copolymer Melts Using the Partial Saddle-Point Approximation",
+  - M.W. Matsen and T.M. Beardsley, 
+    <a href="https://doi.org/10.3390/polym13152437">
+    "Field Theoretic Simulations for Block Copolymer Melts Using the 
+    Partial Saddle-Point Approximation", </a>
     *Polymers*, **2021**, <i>13</i>, 2437.
 
 <BR>
