@@ -1,13 +1,13 @@
-/*! \page user_command_pg_page Commands - pscf_pg 
+/*! \page scft_command_pg_page Commands - pscf_pg 
 
- \ref user_command_pc_page     (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
- \ref user_thermo_page (Next) 
+ \ref scft_command_pc_page     (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
+ \ref scft_thermo_page (Next) 
 <BR>
 
 Most of the available commands for the pscf_pg programs GPU programs 
 are similar to those used by the pscf_pc CPU programs.  Users of 
 pscf_pg programs should thus consult the documentation for
-\ref user_command_pc_page "pscf_pc commands" for a list of commands,
+\ref scft_command_pc_page "pscf_pc commands" for a list of commands,
 while noting the difference listed below.
 
 The only differences between pscf_pg and pscf_pg commands are that the 
@@ -31,7 +31,7 @@ pscf_pc, since the pscf_pc and pscf_pg programs use the same field file
 formats.
 
  <BR>
- \ref user_command_pc_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
- \ref user_command_page     (Up) &nbsp; &nbsp; &nbsp; &nbsp; 
- \ref user_thermo_page     (Next) 
+ \ref scft_command_pc_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
+ \ref scft_command_page     (Up) &nbsp; &nbsp; &nbsp; &nbsp; 
+ \ref scft_thermo_page     (Next) 
 */

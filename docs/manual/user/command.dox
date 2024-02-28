@@ -1,7 +1,7 @@
 /*! \page user_command_page Command Files
 
- \ref user_field_page   (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
- \ref user_thermo_page (Next) 
+ \ref user_param_page   (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
+ \ref user_example_page (Next) 
 <BR>
 
 For any PSCF simulation program, the parameter file is read first,
@@ -18,18 +18,8 @@ upper case label, separated by whitespace. The program stops execution
 and returns control to the operating system when it encounters the 
 command string 'FINISH' on a line by itself. 
 
-<h2> Contents: </h2>
-Each of the following subpages gives more detailed information about
-commands available for specific programs.
-
-<ol>
- <li> \subpage user_command_1d_page </li>
- <li> \subpage user_command_pc_page </li>
- <li> \subpage user_command_pg_page </li>
-</ol>
-
  <BR>
- \ref user_field_page   (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
+ \ref user_param_page   (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
  \ref user_page         (Up) &nbsp; &nbsp; &nbsp; &nbsp; 
- \ref user_thermo_page (Next) 
+ \ref user_example_page (Next) 
 */

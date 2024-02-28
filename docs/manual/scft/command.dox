@@ -1,0 +1,21 @@
+/*! \page scft_command_page Command Files
+
+ \ref scft_field_page   (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
+ \ref scft_thermo_page (Next) 
+<BR>
+
+<h2> Contents: </h2>
+The following subpages gives more detailed information about 
+commands available for each of the PSCF programs:
+
+<ol>
+ <li> \subpage scft_command_1d_page </li>
+ <li> \subpage scft_command_pc_page </li>
+ <li> \subpage scft_command_pg_page </li>
+</ol>
+
+ <BR>
+ \ref scft_field_page   (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
+ \ref scft_page         (Up) &nbsp; &nbsp; &nbsp; &nbsp; 
+ \ref scft_thermo_page  (Next) 
+*/

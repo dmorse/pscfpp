@@ -4,34 +4,35 @@ To be written (v1.2):
    - Sec. 5 (FTS user doc - all of it)
 
 
-1. About
+1. About (Unchanged)
 
+   About
    Simulation Methods
        SCFT
        FTS
-         [ To do: Add references ]
    Package History
    Programs
    Features
+   Contributors
 
 2. Installation  (Unchanged)
 
-3. User Guide: General 
+3. User Guide: Introduction
 
    1.  Model and Parameters  (unchanged from 3.1)
    2.  Input Files  (unchanged from 3.2)
-   3.  Running a program (unchanged)
+   3.  Running a program (unchanged from 3.3)
    4.  Types of calculation (largely unchanged)
    5.  Parameter Files (Syntax and one example) (shorten and divide)
-   6.  Field Files (unchanged)
-   7.  Command Files (Syntax and one example) (shorten and divide)
-   8.  Examples (unchanged)    [skip thermo properties, current 3.8]
-   9. Visualization (unchanged) [current 3.13 skip cells, space groups, films]
-   10. Python Tools
+         1. 1D SCFT Example (unchanged)
+         2. Syntax (unchanged)
+         3. Format Descriptions (unchanged)
+         4. Mixture Block (unchanged)
+         (Delay Description of Sweep and Full Descriptions)
+   6.  Command Files 
+         - Examples for 1D SCFT (in some page)
+   7.  Examples (unchanged)  [delay thermo properties, current 3.8]
 
-   A.  Modified Diffusion Equation   (v1.3)
-   B.  Block Polymers                (v1.3)
-   C.  Theorems for Propagators      (v1.3)
 
 4. User Guide: Self-Consistent Field Theory
 
@@ -41,20 +42,26 @@ To be written (v1.2):
          - Unit Cell Parameters
    2.  Operations: ITERATE vs. SWEEP  ( <= To be written)
    3.  Parameter Files (Full listing for 1d, pc, pg)
-         - Subheading for 1d, pc, pg, with examples for each
-         - Parameter file block for sweeps
-   5.  Command Files (Full lists for 1d, pc, pg) [
-   6.  Thermodynamic Properties
-   7.  Crystal Unit Cells
-   8.  Space Groups
-   9.  Thin Films
+        - Parameter file block for sweeps (current subsection 5)
+        - Subheadings for 1d, pc, pg (unchanged)
+   4.  Field Files (unchanged)
+   5.  Command Files  (Largely copied over, with brief intro)
+        1. pscf_1d
+        2. pscf_pc
+        3. pscf_pg
+   6.  Thermodynamic Properties (unchanged)
+   7.  Crystal Unit Cells (unchanged)
+   8.  Space Groups (unchanged)
+   9.  Thin Films (unchanged)
+   10. Visualization (unchanged) [delay cells, space groups, films]
+   11. Python Tools 
 
    A.  SCFT
    B.  Periodic Functions and Fourier Series
    C.  Space Group Symmetry
    D.  Symmetry-Adapted Bases
 
-5. User Guide: Field-Theoretic Simulation, Self-Consistent Presssure
+5. Field-Theoretic Simulation (Real Fields)
 
    1. Field Theoretic Simulation
        - Two-Monomer Systems (nMonomer = 2)

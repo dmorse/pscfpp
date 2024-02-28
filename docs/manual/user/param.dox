@@ -1,7 +1,7 @@
-/*! \page user_param_page Parameter Files (SCFT)
+/*! \page user_param_page Parameter Files 
 
 \ref user_calculation_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
-\ref user_field_page (Next) 
+\ref user_command_page (Next) 
 <BR>
 
 This manual section describes the format and contents of the parameter 
@@ -9,15 +9,15 @@ files used by all of the PSCF programs to perform self-consistent field
 (SCFT) calculations. The discussion given here is thus limited to parameter
 file elements that are required to perform SCFT calculations and SCFT
 parameter sweeps, while deferring discussion of elements that are only
-needed for field-theoretic Monte-Carlo (FTMC) simulations.
+needed for field-theoretic Monte-Carlo or Brownian dynamics simulations.
 
 The parameter files required by the three different PSCF programs exhibit 
 a very similar structure and syntax, but differ in a few details. The
-discussion given in this manual section thus begins in subpages 1-5 with
-discussions of syntactical features that are common to all PSCF parameter 
-files, and of parameter file elements that are required for all SCFT 
-calculations.  Subpages 6-8 then discuss unique aspects of SCFT parameter 
-files for each of the three available programs.
+discussion in this introductory section of the user manual focuses on
+syntactical features that are common to all PSCF parameter files, and 
+of parameter file elements that are required for multiple applications.
+More detailed descriptions of elements that are required for SCFT and
+FTS calculations are given elsewhere.
 
 <h2> Contents:</h2>
    <ol>
@@ -25,14 +25,10 @@ files for each of the three available programs.
      <li> \subpage user_param_syntax_page   "Syntax" </li>
      <li> \subpage user_param_format_page   "Format Descriptions" </li>
      <li> \subpage user_param_mixture_page  "Mixture Block" </li>
-     <li> \subpage user_param_sweep_page    "Parameter Sweeps" </li>
-     <li> \subpage user_param_1d_page </li>
-     <li> \subpage user_param_pc_page </li>
-     <li> \subpage user_param_pg_page </li>
    </ol>
 <BR>
-\ref user_usage_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
+\ref user_calculation_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
 \ref user_page  (Up) &nbsp; &nbsp; &nbsp; &nbsp; 
-\ref user_field_page (Next) 
+\ref user_command_page (Next) 
 
 */

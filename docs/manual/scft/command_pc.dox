@@ -1,7 +1,7 @@
-/*! \page user_command_pc_page Commands - pscf_pc
+/*! \page scft_command_pc_page Commands - pscf_pc
 
- \ref user_command_1d_page     (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
- \ref user_command_pg_page (Next)
+ \ref scft_command_1d_page     (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
+ \ref scft_command_pg_page (Next)
 <BR>
 
 The pscf_pc program accepts a larger set of commands than the simpler
@@ -15,7 +15,7 @@ end with a suffic _RGRID. The pscf_pc program also accept a set of
 commands that can be used convert between different possible field
 file formats.
 
-\section user_command_pc_scft_sec Example: SCFT Calculation
+\section scft_command_pc_scft_sec Example: SCFT Calculation
 
 Below is an example of a simple command file for using pscf_pc to
 perform a single SCFT calculation. Note that the names of the pscf_pc 
@@ -49,7 +49,7 @@ for the current system to the file out/data. The command,
 converged solution to the end of the same file.  The FINISH command
 instructs the main program to finish execution and return.
 
-\section user_command_pc_ex_sweep_sec Example: SCFT Parameter Sweep
+\section scft_command_pc_ex_sweep_sec Example: SCFT Parameter Sweep
 
 Here is an example of a minimal command file to perform an SCFT 
 parameter sweep. 
@@ -78,10 +78,10 @@ associated with the converged solution. This is possible because
 the required data output operations are programmed to occur 
 automatically for each state in the sweep.
 
-\section user_command_pc_ex_simulate_sec Example: FTMC simulation
+\section scft_command_pc_ex_simulate_sec Example: FTS 
 
-A minimal command file for an FTMC simulation of 1,000,000 steps
-looks like this:
+A minimal command file for a field theoretic MC or BD simulation
+of 1,000,000 moves or steps looks like this:
 \code
 READ_W_RGRID    in/w.rf
 SIMULATE        1000000
@@ -94,11 +94,10 @@ fields in an stochastic simulation generally have no nontrivial
 space group symmetry, and so must be input and output using a
 file format that does not impose any such symmetry.
 
-The parameter file for used for run that performs a FTMC 
-simulation must contain a Compressor block and an McSimulator
-block.
+The parameter file for used for run that perform a FTS must
+contain a Compressor block and an McSimulator block.
 
-\section user_command_pc_commands_sec Commands
+\section scft_command_pc_commands_sec Commands
 
 The following table shows a list of available commands for pscf_pc.
 Each clickable command name links to a more detailed discussion of 
@@ -112,60 +111,60 @@ that command or of a group of closely related commands.
 
   <tr>
     <td colspan="3" style="text-align:center">
-      \ref user_command_pc_fieldin_sec "W Field Initialization"
+      \ref scft_command_pc_fieldin_sec "W Field Initialization"
     </td>
   </tr>
   <tr>
-    <td> \ref user_command_pc_readwbasis_sub "READ_W_BASIS" </td>
+    <td> \ref scft_command_pc_readwbasis_sub "READ_W_BASIS" </td>
     <td> filename [string] </td>
     <td>
       Read w fields from file filename, in symmetry-adapted basis format
     </td>
   </tr>
   <tr>
-    <td> \ref user_command_pc_estimatewc_sub "ESTIMATE_W_FROM_C" </td>
+    <td> \ref scft_command_pc_estimatewc_sub "ESTIMATE_W_FROM_C" </td>
     <td> filename [string] </td>
     <td> Read c fields in symmetry-adapted basis format from file 
          filename, compute estimated w fields as initial guesses for 
          iteration. </td>
   </tr>
   <tr>
-    <td> \ref user_command_pc_readwrgrid_sub "READ_W_RGRID" </td>
+    <td> \ref scft_command_pc_readwrgrid_sub "READ_W_RGRID" </td>
     <td> filename [string] </td>
     <td> Read w fields from file filename, in real-space grid (r-grid)
-         format. See \ref user_command_pc_readwrgrid_sub "discussion"
+         format. See \ref scft_command_pc_readwrgrid_sub "discussion"
          for constraints on usage. </td>
   </tr>
 
   <tr>
     <td colspan="3" style="text-align:center">
-      \ref user_command_pc_compute_sec "Computation"
+      \ref scft_command_pc_compute_sec "Computation"
     </td>
   </tr>
   <tr>
-    <td> \ref user_command_pc_compute_sub "COMPUTE" </td>
+    <td> \ref scft_command_pc_compute_sub "COMPUTE" </td>
     <td> </td>
     <td> Solve modified diffusion equation for the current w fields </td>
   </tr>
   <tr>
-    <td> \ref user_command_pc_iterate_sub "ITERATE" </td>
+    <td> \ref scft_command_pc_iterate_sub "ITERATE" </td>
     <td> </td>
     <td> Iteratively solve SCFT equations. </td>
   </tr>
   <tr>
-    <td> \ref user_command_pc_sweep_sub "SWEEP" </td>
+    <td> \ref scft_command_pc_sweep_sub "SWEEP" </td>
     <td> </td>
     <td> Perform a SCFT parameter sweep.
          The associated parameter file must contain an Iterator block
          and a Sweep block. </td>
   </tr>
   <tr>
-    <td> \ref user_command_pc_simulate_sub "SIMULATE" </td>
+    <td> \ref scft_command_pc_simulate_sub "SIMULATE" </td>
     <td> nStep </td>
     <td> Perform a field-theoretic simulation of nStep steps.  </td>
   </tr>
   <tr>
-    <td> \ref user_command_pc_analyze_sub "ANALYZE" </td>
+    <td> \ref scft_command_pc_analyze_sub "ANALYZE" </td>
     <td> min, max, className, filename </td>
     <td> Postprocess a field trajectory output by looping over frames
          of a field trajectory file output by a previous simulation. 
@@ -174,7 +173,7 @@ that command or of a group of closely related commands.
          of class className.  </td>
   </tr>
   <tr>
-    <td> \ref user_command_pc_compress_sub "COMPRESS" </td>
+    <td> \ref scft_command_pc_compress_sub "COMPRESS" </td>
     <td> </td>
     <td> Iteratively adjust the Lagrange multiplier pressure field
          component of the current w fields so as to satisfy the 
@@ -183,57 +182,57 @@ that command or of a group of closely related commands.
 
   <tr>
     <td colspan="3" style="text-align:center">
-     \ref user_command_pc_dataout_sec "Thermodynamic Data Output"
+     \ref scft_command_pc_dataout_sec "Thermodynamic Data Output"
     </td>
   </tr>
   <tr>
-    <td> \ref user_command_pc_param_sub "WRITE_PARAM" </td>
+    <td> \ref scft_command_pc_param_sub "WRITE_PARAM" </td>
     <td> filename [string] </td>
     <td> Write the param file associated with the current computation to
          specified file "filename", excluding any Sweep block </td>
   </tr>
   <tr>
-    <td> \ref user_command_pc_thermo_sub "WRITE_THERMO" </td>
+    <td> \ref scft_command_pc_thermo_sub "WRITE_THERMO" </td>
     <td> filename [string] </td>
     <td> Write SCFT predictions for thermodynamic data (free energy, 
          pressure, phi and mu for each species, and unit cell parameters) 
          to file filename.
-         See \ref user_command_pc_thermo_sub "discussion"
+         See \ref scft_command_pc_thermo_sub "discussion"
          </td>
   </tr>
   <tr>
     <td colspan="3" style="text-align:center">
-      \ref user_command_pc_fieldout_sec "Field Output"
+      \ref scft_command_pc_fieldout_sec "Field Output"
     </td>
   </tr>
   <tr>
     <td>
-   \ref user_command_pc_fieldout_sec
+   \ref scft_command_pc_fieldout_sec
     "WRITE_W_BASIS" </td>
     <td> filename [string] </td>
     <td> Write current w fields to file filename, in symmetry-adapted 
          basis format </td>
   </tr>
   <tr>
-    <td> \ref user_command_pc_fieldout_sec "WRITE_W_RGRID" </td>
+    <td> \ref scft_command_pc_fieldout_sec "WRITE_W_RGRID" </td>
     <td> filename [string] </td>
     <td> Write w fields to file filename, in real-space grid (r-grid) 
          format </td>
   </tr>
   <tr>
-    <td> \ref user_command_pc_fieldout_sec "WRITE_C_BASIS" </td>
+    <td> \ref scft_command_pc_fieldout_sec "WRITE_C_BASIS" </td>
     <td> filename [string] </td>
     <td> Write monomer volume fraction fields (c fields) to file filename,
          in symmetry adapted basis format  </td>
   </tr>
   <tr>
-    <td> \ref user_command_pc_fieldout_sec "WRITE_C_RGRID" </td>
+    <td> \ref scft_command_pc_fieldout_sec "WRITE_C_RGRID" </td>
     <td> filename [string] </td>
     <td> Write monomer volume fraction fields (c fields) to file filename,
          in r-grid format  </td>
   </tr>
   <tr>
-    <td> \ref user_command_pc_writeblockc_sub "WRITE_BLOCK_C_RGRID" </td>
+    <td> \ref scft_command_pc_writeblockc_sub "WRITE_BLOCK_C_RGRID" </td>
     <td> filename [string] </td>
     <td> Write volume fraction fields (c fields) for all individual polymer
          blocks and solvent species to file filename, in r-grid format
@@ -242,11 +241,11 @@ that command or of a group of closely related commands.
 
   <tr>
     <td colspan="3" style="text-align:center">
-      \ref user_command_pc_qout_sec "Propagator Output"
+      \ref scft_command_pc_qout_sec "Propagator Output"
     </td>
   </tr>
   <tr>
-    <td> \ref user_command_pc_writeqslice_sub "WRITE_Q_SLICE" </td>
+    <td> \ref scft_command_pc_writeqslice_sub "WRITE_Q_SLICE" </td>
     <td> filename [string], ip[int], ib[int], id[int], is[int] </td>
     <td> Write a single "slice" of a propagator at fixed contour step
          number is, for direction id (id=0 or 1), block number ib, and
@@ -254,21 +253,21 @@ that command or of a group of closely related commands.
          </td>
   </tr>
   <tr>
-    <td> \ref user_command_pc_writeqtail_sub "WRITE_Q_TAIL" </td>
+    <td> \ref scft_command_pc_writeqtail_sub "WRITE_Q_TAIL" </td>
     <td> filename [string], ip[int], ib[int], id[int] </td>
     <td> Write the final slice (or "tail") of the propagator for direction
          id (id=0 or 1), block ib, and polymer ip to file filename, in
          r-grid format. </td>
   </tr>
   <tr>
-    <td> \ref user_command_pc_writeq_sub "WRITE_Q" </td>
+    <td> \ref scft_command_pc_writeq_sub "WRITE_Q" </td>
     <td> filename [string], ip[int], ib[int], id[int] </td>
     <td> Write an entire propagator (all slices) for direction id, block ib,
          and polymer ip to a file named filename, in r-grid format.
          </td>
   </tr>
   <tr>
-    <td> \ref user_command_pc_writeqall_sub "WRITE_Q_ALL" </td>
+    <td> \ref scft_command_pc_writeqall_sub "WRITE_Q_ALL" </td>
     <td> basename [string] </td>
     <td> Write all propagators for both directions of all blocks of all
          polymers to separate files with automatically generated filenames
@@ -278,73 +277,73 @@ that command or of a group of closely related commands.
 
   <tr>
     <td colspan="3" style="text-align:center">
-      \ref user_command_pc_crystal_sec "Crystallographic Information"
+      \ref scft_command_pc_crystal_sec "Crystallographic Information"
     </td>
   </tr>
   <tr>
-    <td> \ref user_command_pc_writewaves_sub "WRITE_WAVES" </td>
+    <td> \ref scft_command_pc_writewaves_sub "WRITE_WAVES" </td>
     <td> filename [string] </td>
     <td> Write list of all allowed wavevectors to file filename. </td>
   </tr>
   <tr>
-    <td> \ref user_command_pc_writestars_sub "WRITE_STARS" </td>
+    <td> \ref scft_command_pc_writestars_sub "WRITE_STARS" </td>
     <td> filename [string] </td>
     <td> Write a list of all wavevector stars to file filename. </td>
   </tr>
   <tr>
-    <td> \ref user_command_pc_writegroup_sub "WRITE_GROUP" </td>
+    <td> \ref scft_command_pc_writegroup_sub "WRITE_GROUP" </td>
     <td> filename [string] </td>
     <td> Write all group symmetry elements to file filename. </td>
   </tr>
 
   <tr>
     <td colspan="3" style="text-align:center">
-      \ref user_command_pc_fieldops_sec "Field File Operations"
+      \ref scft_command_pc_fieldops_sec "Field File Operations"
     </td>
   </tr>
   <tr>
     <td>
-    \ref user_command_pc_conversion_sub "BASIS_TO_RGRID" </td>
+    \ref scft_command_pc_conversion_sub "BASIS_TO_RGRID" </td>
     <td> inFile [string], outFile [string] </td>
     <td> Read fields from file inFile in symmetry-adapted basis format,
          write to file outFile in real-space grid (r-grid) format </td>
   </tr>
   <tr>
     <td>
-    \ref user_command_pc_conversion_sub "RGRID_TO_BASIS" </td>
+    \ref scft_command_pc_conversion_sub "RGRID_TO_BASIS" </td>
     <td> inFile [string], outFile [string] </td>
     <td> Read fields from file inFile in real-space grid (r-grid) format,
          write to file outFile in symmetry-adapted basis format.  </td>
   </tr>
   <tr>
-    <td> \ref user_command_pc_conversion_sub "KGRID_TO_RGRID" </td>
+    <td> \ref scft_command_pc_conversion_sub "KGRID_TO_RGRID" </td>
     <td> inFile [string], outFile [string] </td>
     <td> Read fields from file inFile in discrete Fourier transform
          (k-grid) format, write to file outFile in r-grid format </td>
   </tr>
   <tr>
-    <td> \ref user_command_pc_conversion_sub "RGRID_TO_KGRID" </td>
+    <td> \ref scft_command_pc_conversion_sub "RGRID_TO_KGRID" </td>
     <td> inFile [string], outFile [string] </td>
     <td> Read fields from file inFile in real-space (r-grid) format,
          write to outFile in discrete Fourier expansion (k-grid) format
          </td>
   </tr>
   <tr>
-    <td> \ref user_command_pc_conversion_sub "BASIS_TO_KGRID" </td>
+    <td> \ref scft_command_pc_conversion_sub "BASIS_TO_KGRID" </td>
     <td> inFile [string], outFile [string] </td>
     <td> Read fields from file inFile in symmetry-adapted basis format,
          write to outFile in discrete Fourier transform (k-grid) format
          </td>
   </tr>
   <tr>
-    <td> \ref user_command_pc_conversion_sub "KGRID_TO_BASIS" </td>
+    <td> \ref scft_command_pc_conversion_sub "KGRID_TO_BASIS" </td>
     <td> inFile [string], outFile [string] </td>
     <td> Read fields from file inFile in discrete Fourier transform
          (k-grid) format, write to file outFile in symmetry-adapted
          basis format. </td>
   </tr>
   <tr>
-    <td> \ref user_command_pc_symmetry_sub "CHECK_RGRID_SYMMETRY" </td>
+    <td> \ref scft_command_pc_symmetry_sub "CHECK_RGRID_SYMMETRY" </td>
     <td> inFile [string], epsilon [double] </td>
     <td> Read fields from file inFile in real-space (r-grid) format,
          check whether the fields are invariant under all elements of
@@ -352,21 +351,21 @@ that command or of a group of closely related commands.
          error threshold epsilon.  </td>
   </tr>
   <tr>
-    <td> \ref user_command_pc_compare_sub "COMPARE_BASIS" </td>
+    <td> \ref scft_command_pc_compare_sub "COMPARE_BASIS" </td>
     <td> file1 [string], file2 [string] </td>
     <td> Read fields from files file1 and file2 in basis format,
          compares all component of all fields and write a report
          of the magnitude of differences to the log output. </td>
   </tr>
   <tr>
-    <td> \ref user_command_pc_compare_sub "COMPARE_RGRID" </td>
+    <td> \ref scft_command_pc_compare_sub "COMPARE_RGRID" </td>
     <td> file1 [string], file2 [string] </td>
     <td> Read fields from files file1 and file2 in r-grid format,
          compares values at all grid nodes and writes a report
          of the magnitude of differences to the log output. </td>
   </tr>
   <tr>
-    <td> \ref user_command_pc_grid_sub "EXPAND_RGRID_DIMENSION" </td>
+    <td> \ref scft_command_pc_grid_sub "EXPAND_RGRID_DIMENSION" </td>
     <td> 
          inFile [string], outFile [string], 
          d[int], newGridDimensions Array[int] 
@@ -377,7 +376,7 @@ that command or of a group of closely related commands.
     </td>
   </tr>
   <tr>
-    <td> \ref user_command_pc_grid_sub "REPLICATE_UNIT_CELL" </td>
+    <td> \ref scft_command_pc_grid_sub "REPLICATE_UNIT_CELL" </td>
     <td> inFile [string], outFile [string], replicas Array[int] </td>
     <td> Read r-grid fields from inFile, output in replicated unit cell to
          outFile, with cell replicated replicas[i] times in direction i.
@@ -386,31 +385,31 @@ that command or of a group of closely related commands.
 
   <tr>
     <td colspan="3" style="text-align:center">
-    \ref user_command_pc_external_sec "External Fields"
+    \ref scft_command_pc_external_sec "External Fields"
     </td>
   </tr>
   <tr>
-    <td> \ref user_command_pc_external_sec "READ_H_BASIS" </td>
+    <td> \ref scft_command_pc_external_sec "READ_H_BASIS" </td>
     <td> filename [string] </td>
     <td> Read external (h) fields from file filename, in symmetry-adapted
          basis format </td>
   </tr>
   <tr>
     <td>
-    \ref user_command_pc_external_sec "READ_H_RGRID" </td>
+    \ref scft_command_pc_external_sec "READ_H_RGRID" </td>
     <td> filename [string] </td>
     <td> Read external (h) fields from file filename, in real-space grid
          (r-grid) format </td>
   </tr>
   <tr>
     <td>
-    \ref user_command_pc_external_sec "WRITE_H_BASIS" </td>
+    \ref scft_command_pc_external_sec "WRITE_H_BASIS" </td>
     <td> filename [string] </td>
     <td> Write external potential fields (h fields) to file filename,
          in symmetry adapted basis format  </td>
   </tr>
   <tr>
-    <td> \ref user_command_pc_external_sec "WRITE_H_RGRID" </td>
+    <td> \ref scft_command_pc_external_sec "WRITE_H_RGRID" </td>
     <td> filename [string] </td>
     <td> Write external potential fields (h fields) to file filename,
          in r-grid format  </td>
@@ -418,48 +417,48 @@ that command or of a group of closely related commands.
 
   <tr>
     <td colspan="3" style="text-align:center">
-    \ref user_command_pc_mask_sec
+    \ref scft_command_pc_mask_sec
     "Mask Fields (Inhomogeneous Density Constraints)"
     </td>
   </tr>
   <tr>
-    <td> \ref user_command_pc_mask_sec "READ_MASK_BASIS" </td>
+    <td> \ref scft_command_pc_mask_sec "READ_MASK_BASIS" </td>
     <td> filename [string] </td>
     <td> Read a mask field from file filename, in symmetry-adapted
          basis format </td>
   </tr>
   <tr>
-    <td> \ref user_command_pc_mask_sec "READ_MASK_RGRID" </td>
+    <td> \ref scft_command_pc_mask_sec "READ_MASK_RGRID" </td>
     <td> filename [string] </td>
     <td> Read a mask field from file filename, in real-space grid
          (r-grid) format </td>
   </tr>
   <tr>
-    <td> \ref user_command_pc_mask_sec "WRITE_MASK_BASIS" </td>
+    <td> \ref scft_command_pc_mask_sec "WRITE_MASK_BASIS" </td>
     <td> filename [string] </td>
     <td> Write mask field to file filename, in symmetry adapted basis
          format  </td>
   </tr>
   <tr>
-    <td> \ref user_command_pc_mask_sec "WRITE_MASK_RGRID" </td>
+    <td> \ref scft_command_pc_mask_sec "WRITE_MASK_RGRID" </td>
     <td> filename [string] </td>
     <td> Write mask field to file filename, in r-grid format  </td>
   </tr>
 
   <tr>
     <td colspan="3" style="text-align:center">
-    \ref user_command_pc_timers_sec
+    \ref scft_command_pc_timers_sec
     "Timer Commands"
     </td>
   </tr>
   <tr>
-    <td> \ref user_command_pc_writetimer_sub "WRITE_TIMER" </td>
+    <td> \ref scft_command_pc_writetimer_sub "WRITE_TIMER" </td>
     <td> filename [string] </td>
     <td> Write a report of computational times spent on various
          operations in a preceding calculation or simulation. </td>
   </tr>
   <tr>
-    <td> \ref user_command_pc_cleartimer_sub "CLEAR_TIMER" </td>
+    <td> \ref scft_command_pc_cleartimer_sub "CLEAR_TIMER" </td>
     <td> filename [string] </td>
     <td> Clear the state of timers that keep track of time spent
          on different operations, by resetting all values to zero.
@@ -470,7 +469,7 @@ that command or of a group of closely related commands.
 Further discussion of particular commands and groups of commands is
 provided below.
 
-\section user_command_pc_fieldin_sec W Field Initialization
+\section scft_command_pc_fieldin_sec W Field Initialization
 
 The READ_W_BASIS, ESTIMATE_W_FROM_C and READ_W_RGRID commands allow
 a user to set or reset the w fields that are stored in program
@@ -495,7 +494,7 @@ of unit cell parameters that are stored in program memory, by
 setting them equal equal to the values that are given in this field
 file header.
 
-\anchor user_command_pc_readwbasis_sub
+\anchor scft_command_pc_readwbasis_sub
 <b> READ_W_BASIS</b>:
 The READ_W_BASIS command reads the coefficients of an expansion of
 the w fields in a symmetry-adapted Fourier basis from an input file
@@ -531,7 +530,7 @@ particular mesh and space group is, however, independent of the values
 of the unit cell parameter values that were used to create this order
 during creation of the basis.
 
-\anchor user_command_pc_estimatewc_sub
+\anchor scft_command_pc_estimatewc_sub
 <b> ESTIMATE_W_FROM_C </b>:
 The ESTIMATE_W_FROM_C command reads a set of approximate monomer volume
 fraction fields in symmetry-adapted basis format from the file whose name
@@ -556,7 +555,7 @@ is the volume fraction of monomer type \f$ \beta \f$, as read from the
 input file, and \f$ \chi_{\alpha\beta} \f$ is a binary Flory-Huggins
 interaction parameter.
 
-\anchor user_command_pc_readwrgrid_sub
+\anchor scft_command_pc_readwrgrid_sub
 <b> READ_W_RGRID </b>:
 The READ_W_RGRID command reads the values of w fields in real-space
 grid (r-grid) format from an input file. The header of the an r-grid
@@ -591,7 +590,7 @@ development of stochastic field theoretic simulation algorithms in
 which the fluctuating field generally do not exhibit any special
 symmetry.
 
-\section user_command_pc_compute_sec Computation Commands
+\section scft_command_pc_compute_sec Computation Commands
 
 The COMPUTE, ITERATE and SWEEP commands perform the primary computations
 involved in a self-consistent field calculation.  Each performs the
@@ -600,7 +599,7 @@ of these commands requires an initialized set of w fields and unit cell
 parameters as an input, which must have been initialized by a previous
 call to READ_W_BASIS, READ_W_RGRID, or ESTIMATE_W_FROM_C.
 
-\anchor user_command_pc_compute_sub
+\anchor scft_command_pc_compute_sub
 <b> COMPUTE </b>:
 The COMPUTE command solves solves the single molecule statistical
 mechanics problem for all polymer and solvent species for a system of
@@ -608,7 +607,7 @@ non-interacting molecules subjected to the current w-fields. This
 modifies the current c-fields stored in program memory, but does not
 modify the w fields.
 
-\anchor user_command_pc_iterate_sub
+\anchor scft_command_pc_iterate_sub
 <b> ITERATE </b>:
 The ITERATE command attempts to iteratively solve the self
 self-consistent field equations for a fixed set of input parameters, and 
@@ -626,7 +625,7 @@ if the unit cell is treated as flexible.  The w fields and unit cell
 parameters that are in memory on entry to iteration are used as 
 initial guesses.
 
-\anchor user_command_pc_sweep_sub
+\anchor scft_command_pc_sweep_sub
 <b> SWEEP </b>:
 THE SWEEP command attempts to solve the SCFT equations at a sequence
 of points along a path through the space of possible choices of input
@@ -638,16 +637,16 @@ parameters as initial guesses for the first state point in the
 sequence, and then generates initial guesses for subsequent points 
 by extrapolation of the solutions obtained at previous points.
 
-\anchor user_command_pc_simulate_sub
+\anchor scft_command_pc_simulate_sub
 <b> SIMULATE </b>:
-THE SIMULATE command performs a field-theoretic Monte Carlo (FTMC)
-simulation of a specified number nStep of attempted Monte-Carlo
-(MC) moves.  The associated parameter file must contain Compressor
-and McSimulator blocks.  Field trajectories may be written to file 
-by including a trajectory writer among the analyzers listed in the 
-AnalyzerManager subblock of the McSimulator block.
+THE SIMULATE command performs a field-theoretic simulation of a
+specified number nStep of attempted MC moves or BD steps. The 
+associated parameter file must contain Compressor and Simulator 
+blocks.  Field trajectories may be written to file by including a 
+trajectory writer among the analyzers listed in the AnalyzerManager 
+subblock of the McSimulator block.
 
-\anchor user_command_pc_analyze_sub
+\anchor scft_command_pc_analyze_sub
 <b> ANALYZE </b>:
 THE ANALYZE command reads a field trajectory file that was written 
 by a previous field-theoretic simulation, and postprocesses the 
@@ -661,7 +660,7 @@ Analyzer in the AnalyzerManager block is applied to frames with
 frame indices between the values specified by the min and max 
 parameters. 
 
-\anchor user_command_pc_compress_sub
+\anchor scft_command_pc_compress_sub
 <b> COMPRESS </b>:
 The COMPRESS command applies the Compressor iterator algorithm 
 to the current w-fields.  The associated parameter file must
@@ -672,13 +671,13 @@ difference between chemical potential fields associated with
 different monomer types. 
 
 
-\section user_command_pc_dataout_sec Data Output Commands
+\section scft_command_pc_dataout_sec Data Output Commands
 
 The WRITE_PARAM and WRITE_THERMO commands can be used to create a
 record of the input parameters and computed thermodynamic properties
 associated with an SCFT calculation.
 
-\anchor user_command_pc_param_sub
+\anchor scft_command_pc_param_sub
 <b> WRITE_PARAM </b>:
 The WRITE_PARAM writes a slightly modified copy of the parameter
 file to a file whose name that is specified as a command parameter.
@@ -687,12 +686,12 @@ the current values for all parameters, and excludes any Sweep block.
 The output of this command is designed to serve as a record of the
 input parameters associated with a single SCFT calculation.
 
-\anchor user_command_pc_thermo_sub
+\anchor scft_command_pc_thermo_sub
 <b> WRITE_THERMO </b>:
 The WRITE_THERMO command outputs a report of values for thermodynamic 
 properties obtained after solution of a SCFT problem. The details of
 the output of this command can be found on the 
-\ref user_thermo_page "Thermodynamic Properties" page.
+\ref scft_thermo_page "Thermodynamic Properties" page.
 
 If the file whose name is passed to the WRITE_THERMO command already
 exists, the report of thermodynamic properties will be appended to
@@ -702,7 +701,7 @@ that contains the input parameters followed by a report of computed
 thermodynamic properties in a single file, if desired, by invoking
 WRITE_PARAM and WRITE_THERMO with the same file name parameter.
 
-\section user_command_pc_fieldout_sec Field Output Commands
+\section scft_command_pc_fieldout_sec Field Output Commands
 
 The WRITE_W_BASIS, WRITE_W_RGRID, WRITE_C_BASIS, and WRITE_C_RGRID
 can be used to output the current w fields or c fields associated 
@@ -731,16 +730,16 @@ maintain space group symmetry.  Symmetry is assumed to exist for
 c fields only if the c fields were computed from w fields that 
 are known to be symmetric.
 
-Fields that represent states in a FTMC simulation should be input
-and output using the RGRID format.
+Fields that represent states in a field theoretic MC or BD
+simulation must be input and output using the RGRID format.
 
-\anchor user_command_pc_writeblockc_sub
+\anchor scft_command_pc_writeblockc_sub
 <b> WRITE_BLOCK_C_RGRID </b>:
 The WRITE_BLOCK_C_RGRID command outputs the current volume fraction
 fields (c-fields) for all blocks of all polymers and for all solvent
 species r-grid format as separate fields within a single file. The
 resulting file has a data section analogous to that produced by the
-\ref user_command_pc_writeblockc_sub "WRITE_BLOCK_C" command of
+\ref scft_command_pc_writeblockc_sub "WRITE_BLOCK_C" command of
 the pscf_1d program.  The resulting file contains a header section
 identical to that contained in any r-grid field file, followed by a
 data section.  The format of the data section is similar to that of
@@ -749,10 +748,10 @@ that each polymer block and solvent species is treated as a separate
 monomer type, and thus output in a separate column of the data
 section.  Blocks and solvent species are output in the order in which
 they appear within the parameter file, as in the output of the
-\ref user_command_1d_writeblockc_sub "WRITE_BLOCK_C" command of the
+\ref scft_command_1d_writeblockc_sub "WRITE_BLOCK_C" command of the
 pscf_1d program.
 
-\section user_command_pc_qout_sec Propagator Output
+\section scft_command_pc_qout_sec Propagator Output
 
 In the inner loop of a SCFT calculation, a modified diffusion equation
 (MDE) is solved within every block of every polymer to obtain a set of
@@ -791,7 +790,7 @@ field file for a system with only one monomer type, in which all values
 are output in a single column, with nodes listed in the same order as
 in an r-grid field file.
 
-\anchor user_command_pc_writeqslice_sub 
+\anchor scft_command_pc_writeqslice_sub 
 <b> WRITE_Q_SLICE </b>:
 The command WRITE_Q_SLICE write the values of a propagator slice at
 a specified contour variable index \f$ is \f$ to an output file.
@@ -801,7 +800,7 @@ and the direction index \f$ id \f$, in that order.
 The data section for output by this function is the same as that of
 an r-grid field file for a system with one monomer type.
 
-\anchor user_command_pc_writeqtail_sub 
+\anchor scft_command_pc_writeqtail_sub 
 <b> WRITE_Q_TAIL </b>:
 The command WRITE_Q_TAIL write the values of the propagator slice at a
 value of \f$ s \f$ equal to the length of the block, corresponding to
@@ -817,7 +816,7 @@ corresponding to the vertex at which it originates (i.e., the propagator
 variable index \f$ is = 0 \f$, corresponding to a contour variable
 \f$ s = 0 \f$,
 
-\anchor user_command_pc_writeq_sub 
+\anchor scft_command_pc_writeq_sub 
 <b> WRITE_Q </b>:
 The command WRITE_Q writes all slices of a specified propagator to a
 single file.  This command name must be followed by the name of the
@@ -845,7 +844,7 @@ computation.
 calls the function Rpc::System::writeQ, which defines the output 
 format, and is defined in the C++ file src/rpc/System.tpp.
 
-\anchor user_command_pc_writeqall_sub 
+\anchor scft_command_pc_writeqall_sub 
 <b> WRITE_Q_ALL </b>:
 The command WRITE_Q_ALL writes all slices of every propagator of every
 polymer to a set of files, with all the slices of each propagator
@@ -855,7 +854,7 @@ parameter "basename" that contains a common prefix for the names of
 the resulting file set of output files.
 
 Each of files created by this command has the same format as that of
-a file created by the \ref user_command_pc_writeq_sub "WRITE_Q" command.
+a file created by the \ref scft_command_pc_writeq_sub "WRITE_Q" command.
 The name of the file containing the propagator associated with polymer
 ip, block ib, and direction id is given by a string of the form
 (basename)_(ip)_(ib)_(id).rf, where (basename) denotes the value of
@@ -865,7 +864,7 @@ ib, and id. Thus, for example, if the command is passed a basename
 parameter out/q, then the file out/q_0_2_1.rf will contain all slices
 of the propagator associated with polymer 0, block 2 and direction 1.
 
-\section user_command_pc_crystal_sec Crystallographic Information
+\section scft_command_pc_crystal_sec Crystallographic Information
 
 The commands WRITE_WAVES and WRITE_STARS allow the user to output
 information about the symmetry-adapted basis that program has 
@@ -884,7 +883,7 @@ between complex arguments) that are determined by the requirement
 that each such function be invariant under all operations of the 
 specified space group.
 
-\anchor user_command_pc_writewaves_sub
+\anchor scft_command_pc_writewaves_sub
 <b> WRITE_WAVES</b>:
 The WRITE_WAVES command outputs an ordered list of unique wavevectors
 that can appear in the expansion of a function with the specified space
@@ -892,32 +891,32 @@ group symmetry, with associated information about each wavevector.
 The name of this command must be followed by the name of the file to
 which this listing should be written.
 The format of the file created by this command is discussed
-\ref user_command_pc_wave_page "here" .
+\ref scft_command_pc_wave_page "here" .
 
-\anchor user_command_pc_writestars_sub
+\anchor scft_command_pc_writestars_sub
 <b> WRITE_STARS</b>:
 The WRITE_STARS command outputs a list of information about stars, or 
 associated basis functions.
 The name of this command must be followed by the name of the file to
 which this listing should be written.
 The format of the file created by this command is discussed
-\ref user_command_pc_star_page "here" .
+\ref scft_command_pc_star_page "here" .
 
-\anchor user_command_pc_writegroup_sub
+\anchor scft_command_pc_writegroup_sub
 <b> WRITE_GROUP</b>:
 The WRITE_GROUP command outputs a list of all of the symmetry operations
 in the space group to a file.
 The name of the output file is given as a command argument that follows
 the command name.
 The format of the file created by this command is discussed
-\ref user_command_pc_group_page "here" .
+\ref scft_command_pc_group_page "here" .
 
-\section user_command_pc_fieldops_sec Field File Manipulations
+\section scft_command_pc_fieldops_sec Field File Manipulations
 
 The pscf_pc program accepts several commands that perform manipulations
 on field files, including conversions among different formats.
 
-\subsection user_command_pc_conversion_sub Field Format Conversions
+\subsection scft_command_pc_conversion_sub Field Format Conversions
 
 The 6 commands 
 <b>BASIS_TO_RGRID</b>, <b>RGRID_TO_BASIS</b>, <b>KGRID_TO_RGRID</b>,
@@ -965,7 +964,7 @@ that contains only the identity element (i.e., 1D group P_1, 2D plane
 group p_1, or 3D space group P_1), since this group does no imply
 any nontrivial symmetry constraints.
 
-\subsection user_command_pc_symmetry_sub Checking Symmetry
+\subsection scft_command_pc_symmetry_sub Checking Symmetry
 
 The <b>CHECK_RGRID_SYMMETRY</b> command can be used to check whether 
 a field that is represented in r-grid format has a specified space group
@@ -975,7 +974,7 @@ the file with the specified name, checks if it is invariant under all
 space group operations to within the specified tolerance, and writes
 a report to the log file.
 
-\subsection user_command_pc_compare_sub Field Comparisons
+\subsection scft_command_pc_compare_sub Field Comparisons
 
 The <b>COMPARE_BASIS</b> and <b>COMPARE_RGRID</b> commands each read 
 a pair of field files in the same format (basis or rgrid format, 
@@ -983,7 +982,7 @@ respectively), computes differences between corresponding fields,
 and write a report to the log file summarizing several measures of 
 the magnitude of the differences. 
 
-\subsection user_command_pc_grid_sub Field Grid Manipulations
+\subsection scft_command_pc_grid_sub Field Grid Manipulations
 
 The <b>EXPAND_RGRID_DIMENSION</b> and <b>REPLICATE_UNIT_CELL</b> 
 are utilities for changing or expanding the dimensions of the grid
@@ -1023,7 +1022,7 @@ element i contains the number of replicas of the original unit
 cell along direction i, for 0 <= i < D.
 
 
-\section user_command_pc_external_sec External Fields
+\section scft_command_pc_external_sec External Fields
 
 The pscf_pc program accepts several commands that allow users to input
 and output external chemical potential fields that act on monomers of
@@ -1054,7 +1053,7 @@ Simulations of polymer liquids confined to thin films may use external
 fields to represent interactions of different monomer types with the 
 boundaries or "walls" of the film.  The external fields that are used to
 define a thin film problem are defined algorithmically by the thin film
-iterator, as described \ref user_thin_films_page "here".
+iterator, as described \ref scft_thin_films_page "here".
 
 The <b>READ_H_BASIS</b> and <b>READ_H_RGRID</b> commands can be used 
 to instead read in external fields from an existing file and apply them 
@@ -1066,7 +1065,7 @@ fields from file, because they are instead defined by the iterator.
 The <b>WRITE_H_BASIS</b> and <b>WRITE_H_RGRID</b> commands write the current 
 external fields, if any, to a specified field in basis or r-grid format.
 
-\section user_command_pc_mask_sec Mask Field (Inhomogeneous Density Constraint)
+\section scft_command_pc_mask_sec Mask Field (Inhomogeneous Density Constraint)
 
 A polymer fluid can be confined to a specified region by introducing a
 "mask" field that modifies the incompressibility constraint.  A mask field
@@ -1087,11 +1086,11 @@ program that is designed for periodic systems.
 
 The mask that is used to confine a polymer to a thin film is generated
 algorithmically by the thin film iterator, as described in more detail
-\ref user_thin_films_page "here".  
+\ref scft_thin_films_page "here".  
 
 The commands 
-\anchor user_command_pc_readmaskbasis_cmd <b>READ_MASK_BASIS</b> or
-\anchor user_command_pc_readmaskrgrid_cmd <b>READ_MASK_RGRID</b>
+\anchor scft_command_pc_readmaskbasis_cmd <b>READ_MASK_BASIS</b> or
+\anchor scft_command_pc_readmaskrgrid_cmd <b>READ_MASK_RGRID</b>
 may instead be used to read a mask field from a file in basis or
 r-grid format. The file formats are identical to those which would be 
 used for w or c field file for a system with only one monomer type.
@@ -1100,39 +1099,39 @@ to define a thin film problem, because the mask is defined by the
 iterator.
 
 The commands 
-\anchor user_command_pc_writemaskbasis_cmd <b>WRITE_MASK_BASIS</b> or
-\anchor user_command_pc_writemaskrgrid_cmd <b>WRITE_MASK_RGRID</b>
+\anchor scft_command_pc_writemaskbasis_cmd <b>WRITE_MASK_BASIS</b> or
+\anchor scft_command_pc_writemaskrgrid_cmd <b>WRITE_MASK_RGRID</b>
 may instead be used to write any current mask field to a file in 
 basis or r-grid format.
 
-\section user_command_pc_timers_sec Timer Commands
+\section scft_command_pc_timers_sec Timer Commands
 
-\anchor user_command_pc_writetimer_sub <b>WRITE_TIMER</b>:
+\anchor scft_command_pc_writetimer_sub <b>WRITE_TIMER</b>:
 The WRITE_TIMER command writes a report of the amounts of 
 computational time spent on different operations since the
 program was invoked, or since the last time the timers were
 cleared. The format of the report is designed for use with
-FTMC simulations.
+FTS calculations.
 
-\anchor user_command_pc_cleartimer_sub <b>CLEAR_TIMER</b> 
+\anchor scft_command_pc_cleartimer_sub <b>CLEAR_TIMER</b> 
 The CLEAR_TIMER command clears the state of all timers, by 
 resetting to zero the values for accumulated times associated 
 with different operations.
 
-\section user_command_pc_subpages_sec Contents (Subpages)
+\section scft_command_pc_subpages_sec Contents (Subpages)
 
 Each of the following subpages gives more detailed information about
 output formats of files created by particular commands. Each is also
 referred to above in the discussion of the corresponding command.
 
 <ol>
- <li> \subpage user_command_pc_wave_page  "WRITE_WAVES" </li>
- <li> \subpage user_command_pc_star_page  "WRITE_STARS" </li>
- <li> \subpage user_command_pc_group_page "WRITE_GROUP" </li>
+ <li> \subpage scft_command_pc_wave_page  "WRITE_WAVES" </li>
+ <li> \subpage scft_command_pc_star_page  "WRITE_STARS" </li>
+ <li> \subpage scft_command_pc_group_page "WRITE_GROUP" </li>
 </ol>
 
 <BR>
- \ref user_command_1d_page   (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
- \ref user_command_page      (Up) &nbsp; &nbsp; &nbsp; &nbsp;
- \ref user_command_pg_page   (Next)
+ \ref scft_command_1d_page   (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
+ \ref scft_command_page      (Up) &nbsp; &nbsp; &nbsp; &nbsp;
+ \ref scft_command_pg_page   (Next)
 */

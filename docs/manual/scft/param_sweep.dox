@@ -1,7 +1,7 @@
-/*! \page user_param_sweep_page Parameter File - Parameter Sweeps
+/*! \page scft_param_sweep_page Parameter File - Parameter Sweeps
 
-\ref user_param_mixture_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
-\ref user_param_1d_page       (Next)
+\ref scft_param_page       (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref scft_param_1d_page    (Next)
 <BR>
 
 Some of the PSCF programs provide capability to run a sequence of SCFT
@@ -10,7 +10,7 @@ a line through the space of possible input parameter values. We refer
 to this kind of calculation as a "sweep".  All of the PSCF programs can
 perform sweep operations.
 
-\section user_param_sweep_concept_sec Sweep Concept
+\section scft_param_sweep_concept_sec Sweep Concept
 
 To perform a sweep, the program attempts to solve a sequence of SCFT problems
 for choices of input parameters (e.g., block lengths, chi parameters, species
@@ -40,7 +40,7 @@ varied simultaneously, and in which each of the affected parameters is a
 linear functions of s.  Every pscfp program can perform a general linear
 sweep of this type.
 
-\section user_param_sweep_param_sec Parameter File
+\section scft_param_sweep_param_sec Parameter File
 
 The parameter file for a calculation in which a sweep will be performed
 must include an optional block that describes the nature of the sweep.
@@ -72,7 +72,7 @@ for the Sweep block can define different types of paths through
 parameter space.
 
 Below, we show an example of a pscf_1d parameter file that extends the
-example parameter file shown \ref user_param_example_page "previously"
+example parameter file shown \ref scft_param_example_page "previously"
 by appending a Sweep parameter file block to the end of the main System
 block, using the default algorithm.
 \code
@@ -130,7 +130,7 @@ System{
 The only new element in this example is the Sweep block, which is discussed
 below.
 
-\section user_param_sweep_command_sec SWEEP Command
+\section scft_param_sweep_command_sec SWEEP Command
 
 A sweep is actually performed by including a command named "SWEEP" in
 the command file. The SWEEP command does not take any parameters, and
@@ -140,7 +140,7 @@ initializes the w files with an initial guess for the solution of the
 first point of the sweep, e.g., by reading an initial guess from a
 file.
 
-\section user_param_sweep_linear_sec Class LinearSweep
+\section scft_param_sweep_linear_sec Class LinearSweep
 
 The default implementation of sweep for all PSCF programs is a general
 linear sweep algorithm. This algorithm may be selected by using the
@@ -163,7 +163,7 @@ that have identical or nearly identical user interfaces and implement
 closely analogous algorithms.  The common user interface for these
 classes is described here.
 
-\subsection user_param_sweep_linear_param_sub Parameter File Format
+\subsection scft_param_sweep_linear_param_sub Parameter File Format
 
 The parameter file format for a LinearSweep is summarized below:
 \code
@@ -277,7 +277,7 @@ The "parameters" array must contain exactly nParameter entries, each
 on a separate line. Each entry in this array describes how one input
 parameter should be modified.
 
-\subsection user_param_sweep_linear_parameters_sec Sweep Parameters
+\subsection scft_param_sweep_linear_parameters_sec Sweep Parameters
 
 The file format each line of the "parameters" array (corresponding to
 a single parameter) in a LinearSweep contains an identifier for a specific
@@ -366,12 +366,12 @@ entry is is given for the the second index.
   </tr>
   <tr>
     <td> chi_bottom  </td><td> thin film only, see \ref
-                                      user_thin_films_page  </td>
+                                      scft_thin_films_page  </td>
     <td> mId         </td><td>        </td>
   </tr>
   <tr>
     <td> chi_top     </td><td> thin film only, see \ref
-                                      user_thin_films_page  </td>
+                                      scft_thin_films_page  </td>
     <td> mId         </td><td>        </td>
   </tr>
 </table>
@@ -392,17 +392,17 @@ crystal, or the value of the angle between two edges for a non-orthogonal
 crystal lattice type.  PSCF uses a set of standard conventions for a
 list of parameters required to describe each unit cell type for 1, 2
 and 3 dimensional structures of various crystal lattice system types.
-These conventions are described \ref user_unitcell_page "here".
+These conventions are described \ref scft_unitcell_page "here".
 The uid index for a cell_parameter is a zero based integer index
 that identifies which parameter in such a list is being varied.
 
 The chi_top and chi_bottom parameters are only applicable to
 simulations of thin films performed with pscf_pc program, as discussed
-\ref user_thin_films_page "here". These are used to vary the effective
+\ref scft_thin_films_page "here". These are used to vary the effective
 interaction parameters for interactions of a specific monomer type
 with the top or bottom surface of a thin film.
 
-\section user_param_sweep_output_sec Output Files
+\section scft_param_sweep_output_sec Output Files
 
 A parameter sweep will output several files for each state point in
 the sweep. The names of all output files associated with a particular 
@@ -420,7 +420,7 @@ sweep is a "state file", which contains values for both the input
 parameters and the output thermodynamic properties for that state.
 Names for state files end with a file name extension ".stt", giving
 names of the form "0.stt", "1.stt", etc. See the linked page on
-\ref user_thermo_state_sec "state files" for more information about 
+\ref scft_thermo_state_sec "state files" for more information about 
 the format of these files.
 
 The other files output for each state in a parameter sweep are field 
@@ -431,19 +431,19 @@ these files are different for different programs.
 
 In the case of the pscf_1d program, both a chemical potential field 
 and a monomer concentration field are always output, and are both 
-output in the \ref user_field_r1d_page "1D field file" used by 
+output in the \ref scft_field_r1d_page "1D field file" used by 
 pscf_1d. Names for these files end with filename extension ".w" for 
 chemical potential fields and ".c" for monomer concentration fields.
 
 In the case of the pscf_pc and pscf_pg programs, only the chemical
 potential fields are output by default, using
-\ref user_field_basis_page "basis format". Names for these files
+\ref scft_field_basis_page "basis format". Names for these files
 end with a postfix string "_w.bf", are thus of the form "0_w.bf", 
 "1_w.bf", etc.  Chemical potential fields in rgrid format and/or monomer 
 concentration fields in basis or rgrid format can be output at each state 
 point by adding the optional boolean input parameters writeWRGrid, 
 writeCBasis, and writeCRGrid with values of 1, as described
-\ref user_param_sweep_linear_param_sub "above". Names for these files,
+\ref scft_param_sweep_linear_param_sub "above". Names for these files,
 when they are created, end with postfixes "_w.rf", "_c.bf" and "_c.rf",
 respectively, where "_w" or "_c" is used to indicate a chemical potential
 (w) or monomer concentration (c) field, while ".bf" or ".rf" is used to
@@ -457,19 +457,18 @@ along the parameter sweep (denoted "ds"), the Helmholtz free energy and
 the non-dimensionalized pressure. Values for the Helmholtz free energy 
 and pressure are reported using the same conventions as those used for 
 the variables "fHelmholtz" and "pressure" reported in the
-\ref user_thermo_page "thermo file block" of a state file.
+\ref scft_thermo_page "thermo file block" of a state file.
 
 After a sweep is completed, the Python class pscfpp.output.sweep can be 
 used to parse all of the state files produced by a sweep and produce 
 Python lists or tables of data that contain any combination of input 
 and output variables that the user wishes. See the manual page on 
-\ref user_python_page "Python Tools" for an overview of this and other
+\ref scft_python_page "Python Tools" for an overview of this and other
 Python postprocessing tools, in addition to the documentation for this 
 specific class. 
 
 <BR>
-\ref user_param_mixture_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
-\ref user_param_page         (Up)   &nbsp; &nbsp; &nbsp; &nbsp;
-\ref user_param_1d_page      (Next)
+\ref scft_param_page         (Prev and Up)   &nbsp; &nbsp; &nbsp; &nbsp;
+\ref scft_param_1d_page      (Next)
 
 */

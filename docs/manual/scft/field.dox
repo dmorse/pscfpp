@@ -1,7 +1,7 @@
-/*! \page user_field_page Field Files
+/*! \page scft_field_page Field Files
 
-\ref user_param_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
-\ref user_command_page   (Next) 
+\ref scft_param_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
+\ref scft_command_page   (Next) 
 <BR>
 
 Among the commands that can be issued from the command file for any 
@@ -10,7 +10,7 @@ local concentrations or volume fractions of different types of monomer
 (referred to as "c fields") or corresponding monomer chemical potential 
 fields (referred to as "w" fields). 
 
-\section user_field_formats_sec Field File Formats
+\section scft_field_formats_sec Field File Formats
 
 Every PSCF program can read and write w and c fields using one or more
 file formats designed for field files. Each program uses the same file
@@ -28,12 +28,12 @@ in the sub-pages linked below.
 
 <h2> Contents :</h2>
 <ol>
-  <li> \subpage user_field_r1d_page "1D Fields"  </li>
-  <li> \subpage user_field_periodic_page "Period Fields" 
+  <li> \subpage scft_field_r1d_page "1D Fields"  </li>
+  <li> \subpage scft_field_periodic_page "Period Fields" 
     <ul>
-      <li> \ref user_field_basis_page "Basis Format" </li>
-      <li> \ref user_field_rgrid_page "R-Grid Format" </li>
-      <li> \ref user_field_kgrid_page "K-Grid Format" </li>
+      <li> \ref scft_field_basis_page "Basis Format" </li>
+      <li> \ref scft_field_rgrid_page "R-Grid Format" </li>
+      <li> \ref scft_field_kgrid_page "K-Grid Format" </li>
     </ul>
   </li>
 </ol>
@@ -41,7 +41,7 @@ in the sub-pages linked below.
 The physical meanings of the c- and w-fields is discussed in more detail
 below.
 
-\section user_field_c_sec Monomer Concentration / Volume Fraction Fields
+\section scft_field_c_sec Monomer Concentration / Volume Fraction Fields
 
 Because PSCF uses a continuous chain model in which there are not 
 actually any discrete monomers, we use the word "monomer" in what 
@@ -70,13 +70,13 @@ A converged solution to an SCFT problem for an incompressible system
 must have average monomer concentrations for different monomer types 
 that add to  a total local concentration \f$ c_{0} \equiv 1/v \f$, so 
 as to obtain volume fractions that satisfy a constraint
-\anchor user_field_incompressible_eqn
+\anchor scft_field_incompressible_eqn
 \f[
    \sum_{\alpha=0}^{C-1} \phi_{\alpha}({\bf r}) = 1
 \f]
 at every point in the system.
 
-\section user_field_types_sec Monomer Chemical Potential Fields
+\section scft_field_types_sec Monomer Chemical Potential Fields
 
 Self-consistent field theory is based on a physical approximation in 
 which monomer concentrations and thermodynamic properties are computed 
@@ -92,7 +92,7 @@ commands as "w fields".
 
 The volume fraction and chemical potential fields in any solution of an 
 incompressible SCFT problem are related by a self-consistency condition
-\anchor user_field_scf_eqn
+\anchor scft_field_scf_eqn
 \f[
    w_{\alpha}({\bf r}) 
    = \sum_{\beta=0}^{C-1} \chi_{\alpha \beta} \phi_{\beta}({\bf r})
@@ -102,7 +102,7 @@ Here, \f$\chi_{\alpha\beta}\f$ is a Flory-Huggins interaction parameter
 for interactions between monomers of types \f$\alpha\f$ and \f$\beta\f$, 
 while \f$\xi({\bf r})\f$ is a Langrange-multiplier field that is chosen
 so as to yield volume fraction fields that satisfy the incompressibility 
-constraint given \ref user_field_incompressible_eqn "above" (i.e., for
+constraint given \ref scft_field_incompressible_eqn "above" (i.e., for
 which the sum of the local monomer volume fractions is equal to 1 at 
 every point in the system).
 
@@ -113,7 +113,7 @@ obtained, the resulting converged w and c fields are usually written to
 output files.
 
 <BR>
- \ref user_param_page    (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
- \ref user_page           (Up) &nbsp; &nbsp; &nbsp; &nbsp; 
- \ref user_command_page   (Next) 
+ \ref scft_param_page    (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
+ \ref scft_page           (Up) &nbsp; &nbsp; &nbsp; &nbsp; 
+ \ref scft_command_page   (Next) 
 */

@@ -1,13 +1,13 @@
-/*! \page user_command_1d_page Commands - pscf_1d
-\ref user_command_page    (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
-\ref user_command_pc_page (Next) 
+/*! \page scft_command_1d_page Commands - pscf_1d
+\ref scft_command_page    (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
+\ref scft_command_pc_page (Next) 
 <BR>
 
 
 This page describes the commands accepted by the pscf_1d program. 
 We begin by showing simple examples of complete command files.
 
-\section user_command_1d_example_sec Example: SCFT Calculation
+\section scft_command_1d_example_sec Example: SCFT Calculation
 
 Here is a example of a command file for a single SCFT calculation 
 performed with pscf_1d.  The example assumes the use of a convention
@@ -49,11 +49,11 @@ The effect of each command in this example is described below:
   - FINISH instructs the main program to stop execution and return.
 
 All pscf_1d that read or write field files use the same field file 
-format, described \ref user_field_r1d_page "here".  The last line
+format, described \ref scft_field_r1d_page "here".  The last line
 in every PSCF command script must be a FINISH command. Anything that
 appears after the FINISH command will be ignored.
 
-\section user_command_1d_sweep_sec Example: A Sweep
+\section scft_command_1d_sweep_sec Example: A Sweep
 
 Here is an example of a command file to perform a sweep. The SWEEP 
 command can only be used if the parameter file that was read by pscf_1d 
@@ -77,7 +77,7 @@ the sweep operation. Adding output commands that output data after the
 SWEEP command would in any case only output information that describes 
 the solution for the final state point of the sweep, for which s=1.
 
-\section user_command_1d_commands_sec Commands
+\section scft_command_1d_commands_sec Commands
 
 The following table shows a list of available commands for pscf_1d, along 
 with descriptions of any required parameters and the action initiated by 
@@ -90,51 +90,51 @@ each command:
   </tr>
   <tr> 
     <td colspan="3" style="text-align:center"> 
-      \ref user_command_1d_input_sec "Field Input"
+      \ref scft_command_1d_input_sec "Field Input"
     </td> 
   </tr>
   <tr> 
-    <td> \ref user_command_1d_readw_sub "READ_W" </td>
+    <td> \ref scft_command_1d_readw_sub "READ_W" </td>
     <td> filename [string] </td>
     <td> Read w fields from specified file (filename)
          </td>
   </tr>
   <tr> 
     <td colspan="3" style="text-align:center"> 
-      \ref user_command_1d_computation_sec "Computation"
+      \ref scft_command_1d_computation_sec "Computation"
     </td> 
   </tr>
   <tr> 
-    <td> \ref user_command_1d_compute_sub "COMPUTE" </td>
+    <td> \ref scft_command_1d_compute_sub "COMPUTE" </td>
     <td> </td>
     <td> Solve the modified diffusion equation for current w fields, 
          without iteration. </td>
   </tr>
   <tr> 
-    <td> \ref user_command_1d_iterate_sub "ITERATE" </td>
+    <td> \ref scft_command_1d_iterate_sub "ITERATE" </td>
     <td> </td>
     <td> Iteratively solve SCFT equations, using current w fields as an 
          initial guess. </td>
   </tr>
   <tr> 
-    <td> \ref user_command_1d_sweep_sub "SWEEP" </td>
+    <td> \ref scft_command_1d_sweep_sub "SWEEP" </td>
     <td> </td>
     <td> Perform a sweep, as specified by the Sweep object in the param 
          file. </td>
   </tr>
   <tr> 
     <td colspan="3" style="text-align:center"> 
-      \ref user_command_1d_dataout_sec "Data Output"
+      \ref scft_command_1d_dataout_sec "Data Output"
     </td> 
   </tr>
   <tr> 
-    <td> \ref user_command_1d_writeparam_sub "WRITE_PARAM" </td>
+    <td> \ref scft_command_1d_writeparam_sub "WRITE_PARAM" </td>
     <td> filename [string] </td>
     <td> Write param file associated with the current system. excluding any
          Sweep block </td>
   </tr>
   <tr>
-    <td> \ref user_command_1d_writethermo_sub "WRITE_THERMO" </td>
+    <td> \ref scft_command_1d_writethermo_sub "WRITE_THERMO" </td>
     <td> filename [string] </td>
     <td> Write thermodynamic data (free energy, pressure, phi, and 
          mu for each species) to file filename. If this file already exists, 
@@ -143,32 +143,32 @@ each command:
   </tr>
   <tr> 
     <td colspan="3" style="text-align:center"> 
-      \ref user_command_1d_fieldout_sec "Field Output"
+      \ref scft_command_1d_fieldout_sec "Field Output"
     </td> 
   </tr>
   <tr> 
-    <td> \ref user_command_1d_writew_sub "WRITE_W" </td>
+    <td> \ref scft_command_1d_writew_sub "WRITE_W" </td>
     <td> filename [string] </td>
     <td> Write chemical potential (w) fields to file filename  </td>
   </tr>
   <tr> 
-    <td> \ref user_command_1d_writec_sub "WRITE_C" </td>
+    <td> \ref scft_command_1d_writec_sub "WRITE_C" </td>
     <td> filename [string] </td>
     <td> Write monomer volume fraction (c) fields to file filename  </td>
   </tr>
   <tr> 
-    <td> \ref user_command_1d_writeblockc_sub "WRITE_BLOCK_C" </td>
+    <td> \ref scft_command_1d_writeblockc_sub "WRITE_BLOCK_C" </td>
     <td> filename [string] </td>
     <td> Write volume fraction fields (c fields) for all individual polymer 
          blocks and solvent species to file filename.  </td>
   </tr>
   <tr>
     <td colspan="3" style="text-align:center">
-      \ref user_command_1d_qout_sec "Propagator Output"
+      \ref scft_command_1d_qout_sec "Propagator Output"
     </td>
   </tr>
   <tr>
-    <td> \ref user_command_1d_writeqslice_sub "WRITE_Q_SLICE" </td>
+    <td> \ref scft_command_1d_writeqslice_sub "WRITE_Q_SLICE" </td>
     <td> filename [string], ip[int], ib[int], id[int], is[int] </td>
     <td> Write a single "slice" of a propagator at fixed contour step
          number is, for direction id (id=0 or 1), block number ib, and
@@ -176,14 +176,14 @@ each command:
     </td>
   </tr>
   <tr>
-    <td> \ref user_command_1d_writeqtail_sub "WRITE_Q_TAIL" </td>
+    <td> \ref scft_command_1d_writeqtail_sub "WRITE_Q_TAIL" </td>
     <td> filename [string], ip[int], ib[int], id[int] </td>
     <td> Write the final slice (or "tail") of the propagator for direction
          id (id=0 or 1), block ib, and polymer ip to file filename. 
     </td>
   </tr>
   <tr> 
-    <td> \ref user_command_1d_writeqvertex_sub "WRITE_Q_VERTEX" </td>
+    <td> \ref scft_command_1d_writeqvertex_sub "WRITE_Q_VERTEX" </td>
     <td> polymerId [int], vertexId [int], filename [string] </td>
     <td> Write product of incoming propagators fields for a specified 
          vertex (vertexId) in a specified polymer (polymerId) to file
@@ -191,13 +191,13 @@ each command:
     </td>
   </tr>
   <tr>
-    <td> \ref user_command_1d_writeq_sub "WRITE_Q" </td>
+    <td> \ref scft_command_1d_writeq_sub "WRITE_Q" </td>
     <td> filename [string], ip[int], ib[int], id[int] </td>
     <td> Write an entire propagator (all slices) for direction id (0 or 1), 
          block ib, and polymer ip to a file named filename.  </td>
   </tr>
   <tr>
-    <td> \ref user_command_1d_writeqall_sub "WRITE_Q_ALL" </td>
+    <td> \ref scft_command_1d_writeqall_sub "WRITE_Q_ALL" </td>
     <td> basename [string] </td>
     <td> Write all propagators for both directions of all blocks of all
          polymers to separate files with automatically generated filenames
@@ -206,17 +206,17 @@ each command:
   </tr>
   <tr> 
     <td colspan="3" style="text-align:center"> 
-      \ref user_command_1d_mesh_sec "Mesh Manipulation"
+      \ref scft_command_1d_mesh_sec "Mesh Manipulation"
     </td> 
   </tr>
   <tr> 
-    <td> \ref user_command_1d_remeshw_sub "REMESH_W" </td>
+    <td> \ref scft_command_1d_remeshw_sub "REMESH_W" </td>
     <td> nx [int], outfile [string]</td>
     <td> Write current w fields interpolated onto a new mesh with 
          nx nodes to output file "filename" </td>
   </tr>
   <tr> 
-    <td> \ref user_command_1d_extendw_sub "EXTEND_W" </td>
+    <td> \ref scft_command_1d_extendw_sub "EXTEND_W" </td>
     <td> m [int], filename </td>
     <td> Write w fields extended to a mesh with m additional nodes 
          with values that repeat values at the current last grid 
@@ -224,11 +224,11 @@ each command:
   </tr>
   <tr> 
     <td colspan="3" style="text-align:center"> 
-      \ref user_command_1d_comparison_sec "Compare to Homogenous Reference"
+      \ref scft_command_1d_comparison_sec "Compare to Homogenous Reference"
     </td> 
   </tr>
   <tr> 
-    <td> \ref user_command_1d_compare_sub "COMPARE_HOMOGENEOUS" </td>
+    <td> \ref scft_command_1d_compare_sub "COMPARE_HOMOGENEOUS" </td>
     <td> mode [int] </td>
     <td> Compare solution to a homogeneous solution </td>
   </tr>
@@ -237,9 +237,9 @@ each command:
 Individual commands and related groups of commands are discuss below in 
 greater detail:
 
-\section user_command_1d_input_sec Field Input 
+\section scft_command_1d_input_sec Field Input 
 
-\anchor user_command_1d_readw_sub 
+\anchor scft_command_1d_readw_sub 
 <b> READ_W </b>:
 The first command in a command file is usually a READ_W command, which 
 takes the name of an input file as an argument. This command reads an 
@@ -247,14 +247,14 @@ initial guess for the chemical potential fields ("w fields") from the
 specified file and assigns the current values for these fields equal 
 to the values read from this file. 
 
-\section user_command_1d_computation_sec Computation 
+\section scft_command_1d_computation_sec Computation 
 
 The COMPUTE, ITERATE and SWEEP commands each perform a computation that 
 requires an initial value for all w fields as an input. Each of these 
 commands must thus be preceded by a READ_W command that initializes the 
 w fields.
 
-\anchor user_command_1d_compute_sub 
+\anchor scft_command_1d_compute_sub 
 <b> COMPUTE </b>:
 The COMPUTE command performs a computation of the single molecule 
 partition functions and monomer concentrations for a system of 
@@ -267,7 +267,7 @@ fields (c fields) associated with polymer blocks, solvent species and
 monomer types. The resulting c fields generally do not satisfy the 
 self-consistenct field conditions.
 
-\anchor user_command_1d_iterate_sub 
+\anchor scft_command_1d_iterate_sub 
 <b> ITERATE </b>:
 The ITERATE command attempts to obtain a solution to the self-consistent 
 field equations for a fixed set of parameters by iteratively adjusting 
@@ -276,7 +276,7 @@ Iterator block of the parameter file. Each iteration usually requires at
 least one calculation similar to that performed once by the COMPUTE 
 command. 
 
-\anchor user_command_1d_sweep_sub 
+\anchor scft_command_1d_sweep_sub 
 <b> SWEEP </b>:
 THE SWEEP command attempts to solve the SCFT equations at a sequence of 
 points along a path through the space of possible choices of input 
@@ -284,25 +284,25 @@ parameters. This command can only be invoked if the parameter file
 contains a SWEEP block, which defines the desired sequence of state 
 points.
 
-\section user_command_1d_dataout_sec Data Output 
+\section scft_command_1d_dataout_sec Data Output 
 
 The WRITE_PARAM and WRITE_THERMO commands can be used to create a record 
 of the input parameters and computed thermodynamic properties associated 
 with a single SCFT calculation. 
 
-\anchor user_command_1d_writeparam_sub 
+\anchor scft_command_1d_writeparam_sub 
 <b> WRITE_PARAM </b>:
 The WRITE_PARAM writes a slightly modified copy of the parameter 
 file to a file whose name is given as a command parameter. 
 The version of the parameter file written by this command outputs
 the current values for all parameters, and excludes any Sweep block.
 
-\anchor user_command_1d_writethermo_sub 
+\anchor scft_command_1d_writethermo_sub 
 <b> WRITE_THERMO </b>:
 The WRITE_THERMO command outputs a report of values for thermodynamic 
 properties obtained after solution of a SCFT problem. The details of
 the output of this command can be found on the 
-\ref user_thermo_page "Thermodynamic Properties" page.
+\ref scft_thermo_page "Thermodynamic Properties" page.
 
 If the file whose name is passed to the WRITE_THERMO command already 
 exists, the report of thermodynamic properties will be appended to 
@@ -315,23 +315,23 @@ example command file shown above uses this pattern, by providing the
 same filename "out/data" as a parameter for both the WRITE_PARAM and 
 WRITE_THERMO commands.
  
-\section user_command_1d_fieldout_sec Field Output 
+\section scft_command_1d_fieldout_sec Field Output 
 
 The following commands can be used to output information about chemical
 potential and concentration fields after solving a SCFT problem.
 
-\anchor user_command_1d_writew_sub 
+\anchor scft_command_1d_writew_sub 
 <b> WRITE_W </b>:
 Writes the current chemical potential fields 
 (w fields) for all monomer types to an output file whose name
 is specified as a command parameter.
 
-\anchor user_command_1d_writec_sub 
+\anchor scft_command_1d_writec_sub 
 <b> WRITE_C </b>:
 Writes the current volume fraction / concentration
 fields for all monomer types to a specified output file. 
 
-\anchor user_command_1d_writeblockc_sub 
+\anchor scft_command_1d_writeblockc_sub 
 <b> WRITE_BLOCK_C </b>:
 Writes the current volume fraction / concentration fields for all 
 polymer blocks and monomer species to a single file, with the field 
@@ -368,7 +368,7 @@ polymer id.  Columns associated with solvent species appear after all
 polymer blocks, listed left to right in order of increasing solvent
 species id. 
 
-\section user_command_1d_qout_sec Propagator Output
+\section scft_command_1d_qout_sec Propagator Output
 
 In the inner loop of a SCFT calculation, a modified diffusion equation
 (MDE) is solved within every block of every polymer to obtain a set of
@@ -407,7 +407,7 @@ field file for a system with only one monomer type, in which all values
 are output in a single column, with nodes listed in the same order as
 in an r-grid field file.
 
-\anchor user_command_1d_writeqslice_sub 
+\anchor scft_command_1d_writeqslice_sub 
 <b> WRITE_Q_SLICE </b>:
 The command WRITE_Q_SLICE write the values of a propagator slice at
 a specified contour variable index \f$ is \f$ to an output file.
@@ -417,7 +417,7 @@ and the direction index \f$ id \f$, in that order.
 The data section for output by this function is the same as that of
 an r-grid field file for a system with one monomer type.
 
-\anchor user_command_1d_writeqtail_sub 
+\anchor scft_command_1d_writeqtail_sub 
 <b> WRITE_Q_TAIL </b>:
 The command WRITE_Q_TAIL write the values of a propagator slice at a
 value of \f$ s \f$ equal to the length of the block, corresponding to
@@ -433,7 +433,7 @@ corresponding to the vertex at which it originates (i.e., the propagator
 variable index \f$ is = 0 \f$, corresponding to a contour variable
 \f$ s = 0 \f$,
 
-\anchor user_command_1d_writeqvertex_sub 
+\anchor scft_command_1d_writeqvertex_sub 
 <b> WRITE_Q_VERTEX </b>:
 The command WRITE_Q_VERTEX writes values of the point-wise product of all 
 incoming propagators at a specific vertex of a specific polymer species. 
@@ -448,7 +448,7 @@ average of this field should have the same value for any vertex, within
 numerical error, and is equal to the molecular partitition function 
 \f$ Q \f$ for a molecule of type \f$ ip \f$.
 
-\anchor user_command_1d_writeq_sub 
+\anchor scft_command_1d_writeq_sub 
 <b> WRITE_Q </b>:
 The command WRITE_Q writes all slices of a specified propagator to a
 single file.  This command name must be followed by the name of the
@@ -476,7 +476,7 @@ the computation.
 calls the function R1d::System::writeQ, which defines the output 
 format, and is defined in the C++ file src/r1d/System.cpp.
 
-\anchor user_command_1d_writeqall_sub 
+\anchor scft_command_1d_writeqall_sub 
 <b> WRITE_Q_ALL </b>:
 The command WRITE_Q_ALL writes all slices of every propagator of every
 polymer to a set of files, with all the slices of each propagator
@@ -486,7 +486,7 @@ parameter "basename" that contains a common prefix for the names of
 the resulting file set of output files.
 
 Each of files created by this command has the same format as that of
-a file created by the \ref user_command_1d_writeq_sub "WRITE_Q" command.
+a file created by the \ref scft_command_1d_writeq_sub "WRITE_Q" command.
 The name of the file containing the propagator associated with polymer
 ip, block ib, and direction id is given by a string of the form
 (basename)_(ip)_(ib)_(id).rf, where (basename) denotes the value of
@@ -496,12 +496,12 @@ ib, and id. Thus, for example, if the command is passed a basename
 parameter out/q, then the file out/q_0_2_1.rf will contain all slices
 of the propagator associated with polymer 0, block 2 and direction 1.
 
-\section user_command_1d_mesh_sec Mesh Manipulation
+\section scft_command_1d_mesh_sec Mesh Manipulation
 
 The REMESH_W and EXTEND_W can be used to change the mesh used to 
 define a problem, by changing resolution or extending the domain.
 
-\anchor user_command_1d_remeshw_sub 
+\anchor scft_command_1d_remeshw_sub 
 <b> REMESH_W </b>:
 The REMESH_W command allows a user to change the discretization 
 of the existing domain by writing a file that contains the current 
@@ -509,7 +509,7 @@ w fields interpolated onto a mesh with a modified number of grid
 points. The command takes the number nx of grid points of the new
 mesh and the name of the output file as parameters.
 
-\anchor user_command_1d_extendw_sub 
+\anchor scft_command_1d_extendw_sub 
 <b> EXTEND_W </b>:
 The EXTEND_W command allows a user to extend the domain of the
 solution by adding new points with field values that are simply 
@@ -517,9 +517,9 @@ copies of the values of w fields at the last grid point. The
 command takes the number m of added grid points and the name of
 the output file as parameters. 
 
-\section user_command_1d_comparison_sec Compare to Homogeneous Reference 
+\section scft_command_1d_comparison_sec Compare to Homogeneous Reference 
 
-\anchor user_command_1d_compare_sub 
+\anchor scft_command_1d_compare_sub 
 <b> COMPARE_HOMOGENEOUS </b>:
 The COMPARE_HOMOGENEOUS command computes differences between properties 
 of an inhomogeneous system of interest, as predicted by SCFT, and those 
@@ -533,11 +533,11 @@ system in which chemical potentials for all species are equal to those
 of the system of interest.  
 
 Further details of the operation of this command are described in a 
-separate page \subpage user_command_1d_homo_page "here". These details
+separate page \subpage scft_command_1d_homo_page "here". These details
 include a description of the difference between modes 1 and 2 and a
 discussion of the format of the resulting report.
 
 <BR>
-\ref user_command_page    (Up) &nbsp; &nbsp; &nbsp; &nbsp; 
-\ref user_command_pc_page (Next) 
+\ref scft_command_page    (Prev and Up) &nbsp; &nbsp; &nbsp; &nbsp; 
+\ref scft_command_pc_page (Next) 
 */

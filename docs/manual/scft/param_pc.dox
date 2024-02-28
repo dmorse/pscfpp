@@ -1,13 +1,13 @@
-/*! \page user_param_pc_page Parameter File - pscf_pc 
+/*! \page scft_param_pc_page Parameter File - pscf_pc 
 
-\ref user_param_1d_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
-\ref user_param_pg_page  (Next)
+\ref scft_param_1d_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref scft_param_pg_page  (Next)
 <BR>
 
 The pscf_pc and pscf_pg programs for periodic systems use nearly identical
 parameter file formats, and so are discussed together here.
 
-\section user_param_pc_example_sec Example
+\section scft_param_pc_example_sec Example
 The example show below is a typical parameter file for setting up an SCFT 
 calculation for a perodic structure of known space group symmetry of a 
 diblock copolymer melt using either pscf_pc or pscf_pg.
@@ -51,7 +51,7 @@ System{
 }
 \endcode
 
-\section user_param_pc_system_sec File Format
+\section scft_param_pc_system_sec File Format
 
 The main System block of a parameter file for an SCFT calculation
 peformed using pscf_pc or pscf_pg has the same overall structure as 
@@ -69,7 +69,7 @@ System{
 As for pscf_1d, the Sweep block is optional, and Iterator and Sweep blocks
 (if present) are both selectable blocks.  The above skeleton includes only
 blocks that are relevant for SCFT calculations, and excludes some optional
-elements that are used for FTMC simulations. A more complete description 
+elements that are used for FTS calculations. A more complete description 
 of the format for the main System block of pscf_pc parameter file is given 
 \subpage rpc_System_page "here". 
 
@@ -77,7 +77,7 @@ Formats of the Mixture and Interaction blocks are the same for all PSCF
 programs, and have thus been discussed previously. Below, we discuss the 
 contents of the Domain, Iterator, and Sweep blocks.
 
-\section user_param_pc_domain_sec Domain Block
+\section scft_param_pc_domain_sec Domain Block
 
 The Domain block contains information required to describe the unit cell 
 of a periodic structure, the regular mesh that is used to discretize 
@@ -137,7 +137,7 @@ The allowed values for a 2D system include "square", "rectangular",
 system for a 1D crystal, which is referred to as  "lamellar". A more 
 detailed discussion of each of the possible lattice systems is given in 
 a separate page that documents conventions for
-\ref user_unitcell_page "unit cells".
+\ref scft_unitcell_page "unit cells".
 
 <b> groupName </b>
 
@@ -153,7 +153,7 @@ symbol for a space group into a text string that involve insertion
 of underbars between logical elements and the use of - sign to 
 represent an overbar, among other conventions. Allowed identifiers 
 for crystallographic space groups are listed and discussed in more
-detail \ref user_groups_page "here".
+detail \ref scft_groups_page "here".
 
 If groupName identifer is present, it is used construct a space group
 (i.e., a set of symmetry operations) and a symmetry-adapted Fourier
@@ -186,7 +186,7 @@ stored in an array that lists the required parameters in some
 pre-specified order. Conventions for the meaning of the required 
 parameters and the order in which they are listed are described 
 for each crystal system in a separate page of documentation about
-\ref user_unitcell_page "unit cells".
+\ref scft_unitcell_page "unit cells".
 
 Values for unit cell parameters are not specified in the parameter 
 files for pscf_pc or pscf_pg. These parameters values are instead 
@@ -211,7 +211,7 @@ At the end of such a calculation, converged values for the optimal
 unit cell parameters are normally output within the header of a file 
 that contains the converged w-fields.
 
-\section user_param_pc_iterator_sec Iterators
+\section scft_param_pc_iterator_sec Iterators
 
 The default Iterator for the pscf_pc and pscf_pg programs is based on
 an algorithm that uses an Anderson-Mixing (AM) iterator algorithm, and 
@@ -222,7 +222,7 @@ the specific label "AmIteratorBasis".
 The only other iterator currently available for pscf_pc is an 
 Anderson-Mixing iterator designed specifically for problems in 
 which a polymer material is confined to a thin film 
-(see \ref user_thin_films_page ). This iterator can be invoked using
+(see \ref scft_thin_films_page ). This iterator can be invoked using
 the label AmIteratorBasisFilm.
 
 Both of the two available iterators for pscf_pc are designed to
@@ -254,23 +254,19 @@ iterators can be found by following the links in the table below:
 
 The Iterator block of the parameter file is formally optional (i.e., 
 the program will finish reading the parameter file if it is omitted), 
-but it required to enable any SCFT calculation. It may be omitted in
-a parameter file used with a command file that does not execute any 
-SCFT calculations, but may involve other operations such as field 
-file manipulations, an FTMC simulation, or postprocessing of an FTMC 
-field trajectory.
+but is required to enable SCFT calculations.
 
-\section user_param_pc_sweep_sec Sweep
+\section scft_param_pc_sweep_sec Sweep
 
-The only sweep algorithm currently avaiable for use with rpc_pc is a
+The only sweep algorithm currently avaiable for use with pscf_pc is a
 general linear sweep algorithm. This can be invoked by including a block
 that starts either with the generic label Sweep or the specific label
 LinearSweep.  The required parameter file format for a linear sweep is
-described in detail \ref user_param_sweep_linear_sec "here".
+described in detail \ref scft_param_sweep_linear_sec "here".
 
 <BR>
-\ref user_param_1d_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
-\ref user_param_page     (Up)   &nbsp; &nbsp; &nbsp; &nbsp;
-\ref user_param_pg_page  (Next)
+\ref scft_param_1d_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref scft_param_page     (Up)   &nbsp; &nbsp; &nbsp; &nbsp;
+\ref scft_param_pg_page  (Next)
 
 */

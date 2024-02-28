@@ -1,7 +1,7 @@
-/*! \page user_field_kgrid_page Field File - K-Grid (Periodic)
+/*! \page scft_field_kgrid_page Field File - K-Grid (Periodic)
 
- \ref user_field_rgrid_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
- \ref user_command_page      (Next) 
+ \ref scft_field_rgrid_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
+ \ref scft_command_page      (Next) 
 <BR>
 
 The pscf_pc and pscf_gp programs for periodic systems can also read 
@@ -56,7 +56,7 @@ rather than the last index, as is the case here. The two programs
 thus use incompatiable formats for k-grid field files. 
 
 <BR>
- \ref user_field_rgrid_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
- \ref user_field_page        (Up) &nbsp; &nbsp; &nbsp; &nbsp; 
- \ref user_command_page      (Next) 
+ \ref scft_field_rgrid_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
+ \ref scft_field_page        (Up) &nbsp; &nbsp; &nbsp; &nbsp; 
+ \ref scft_command_page      (Next) 
 */

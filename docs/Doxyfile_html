@@ -946,6 +946,7 @@ INPUT                  = manual/main.dox \
                          manual/about \
                          manual/install \
                          manual/user \
+                         manual/scft \
                          manual/developer \
                          ../src/programs.mod \
                          ../src/util \

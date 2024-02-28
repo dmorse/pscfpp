@@ -37,19 +37,25 @@ theory calculations and field theoretic Monte-Carlo simulations.
     <li> \ref user_usage_page  </li>
     <li> \ref user_calculation_page  </li>
     <li> \ref user_param_page  </li>
-    <li> \ref user_field_page  </li>
     <li> \ref user_command_page  </li>
-    <li> \ref user_thermo_page  </li>
     <li> \ref user_example_page  </li>
-    <li> \ref user_unitcell_page  </li>
-    <li> \ref user_groups_page  </li>
-    <li> \ref user_thin_films_page  </li>
-    <li> \ref user_visualize_page  </li>
-    <li> \ref user_python_page  </li>
-    <li> \ref user_theory_page  </li>
-    <li> \ref user_fourier_page  </li>
-    <li> \ref user_symmetry_page  </li>
-    <li> \ref user_basis_page  </li>
+    </ol>
+  </li>
+  <li> \subpage scft_page 
+    <ol type="1">
+    <li> \ref scft_param_page  </li>
+    <li> \ref scft_field_page  </li>
+    <li> \ref scft_command_page  </li>
+    <li> \ref scft_thermo_page  </li>
+    <li> \ref scft_unitcell_page  </li>
+    <li> \ref scft_groups_page  </li>
+    <li> \ref scft_thin_films_page  </li>
+    <li> \ref scft_visualize_page  </li>
+    <li> \ref scft_python_page  </li>
+    <li> \ref scft_theory_page  </li>
+    <li> \ref scft_fourier_page  </li>
+    <li> \ref scft_symmetry_page  </li>
+    <li> \ref scft_basis_page  </li>
     </ol>
   </li>
   <li> \subpage developer_page 

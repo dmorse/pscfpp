@@ -1,7 +1,7 @@
-/*! \page user_visualize_page Visualization 
+/*! \page scft_visualize_page Visualization 
 
-\ref user_thin_films_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
-\ref user_python_page (Next)
+\ref scft_thin_films_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
+\ref scft_python_page (Next)
 <BR>
 
 An external matlab package named 
@@ -11,7 +11,7 @@ predicted by PSCF.  This package is designed to allow users of PSCF to
 generate figures that characterize the kinds of periodic structures 
 predicted by the pscf_pc and pscf_pg programs. Polymer Visual can read 
 files containing the monomer concentration fields written in the 
-\ref user_field_rgrid_page "r-grid" field file format used by pscf_pc 
+\ref scft_field_rgrid_page "r-grid" field file format used by pscf_pc 
 and pscf_pg, and can generate several different types of color plots. 
 Among the possible outputs are plots that show monomer volume fractions 
 along one- and two-dimensional cuts through a structure, and 
@@ -26,8 +26,8 @@ which includes examples of the different types of plots that can be
 generated.
 
 <BR>
-\ref user_thin_films_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
-\ref user_page (Up) &nbsp; &nbsp; &nbsp; &nbsp; 
-\ref user_python_page (Next)
+\ref scft_thin_films_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
+\ref scft_page (Up) &nbsp; &nbsp; &nbsp; &nbsp; 
+\ref scft_python_page (Next)
 
 */

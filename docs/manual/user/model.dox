@@ -62,7 +62,7 @@ model thus includes:
     types.
 
 Other user-provided input parameters required to initialize a SCFT or
-FTMC calculation include:
+FTS calculation include:
 
   -  Parameters that describe the unit cell (for periodic structures)
      or spatial domain within which the self-consistent field equations
@@ -408,8 +408,7 @@ in PSCF simply do not require a value for \f$ v \f$ as an independent
 input parameter. 
 
 A value for \f$ v \f$ is, however, always required as an independent
-input parameter for stochastic field theoretic simulation methods such 
-FTMC.
+input parameter for stochastic field theoretic simulations.
 
 <BR>
 \ref user_page       (Prev / Up) &nbsp; &nbsp; &nbsp; &nbsp;

@@ -1,7 +1,7 @@
-/*! \page user_symmetry_page Appendix: Space Group Symmetry
+/*! \page scft_symmetry_page Appendix: Space Group Symmetry
 
-\ref user_fourier_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
-\ref user_basis_page   (Next) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref scft_fourier_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref scft_basis_page   (Next) &nbsp; &nbsp; &nbsp; &nbsp;
 <BR>
 
 The space group of a crystal is a set of symmetry operations under which
@@ -20,9 +20,9 @@ a textbook, for which we recommend the book *Structure of Materials:
 An Introduction to Crystallography, Diffraction and Symmetry* by Marc 
 De Graef and Michael E. McHenry. 
 
-\section user_symmetry_ops_sec Crystal Symmetry Operations
+\section scft_symmetry_ops_sec Crystal Symmetry Operations
 
-\anchor user_symmetry_operation_def
+\anchor scft_symmetry_operation_def
 <b> Definition (Crystal Symmetry Operation) </b>:
 Every crystal symmetry operation \f$ A \f$ is a function that maps
 every position \f$ {\bf r} \f$ within a crystal onto a new position
@@ -62,14 +62,14 @@ for any vector \f$ {\bf v} \f$.
 The adjoint of any linear operator \f$ R \f$ in the space of real
 D-dimensional vectors is denoted here by \f$ R^{\dagger} \f$. The 
 adjoint is defined by the requirement that
-\anchor user_symmetry_adjoint_def_eqn
+\anchor scft_symmetry_adjoint_def_eqn
 \f[
   (R^{\dagger}{\bf a}) \cdot {\bf b} = {\bf a} \cdot (R {\bf b})
 \f]
 for any two D-dimensional vectors \f$ {\bf a} \f$ and \f$ {\bf b} \f$
 in this space.
 
-\anchor user_symmetry_multiplication_def
+\anchor scft_symmetry_multiplication_def
 <b> Definition (Multiplication of Crystal Symmetry Operations) </b>:
 Multiplication of symmetry operations is defined such that the product
 \f$ AB \f$ of two symmetry operations \f$ A \f$ and \f$ B \f$ is the
@@ -86,7 +86,7 @@ then
 Multiplication of symmetry operations is not commutative: Generally,
 \f$ AB \neq BA \f$.
 
-\anchor user_symmetry_multiplication_thrm
+\anchor scft_symmetry_multiplication_thrm
 <b> Theorem C.1 (Multiplication Rule for Crystal Symmetry Operations) </b>:
 If \f$ A \f$, \f$ B \f$ are two symmetry operations
 \f[
@@ -111,7 +111,7 @@ any vector \f$ {\bf r} \f$, and that
    = R_{A} R_{B} {\bf r} + R_{A} {\bf t}_{B} + {\bf t}_{A} \quad.
 \f]
 
-\anchor user_symmetry_identity_def
+\anchor scft_symmetry_identity_def
 <b> Identity Operation </b>:
 The identity operation, denoted by \f$ E \f$, is the trivial crystal
 symmetry operation that maps every position onto itself, so that
@@ -127,7 +127,7 @@ for which the matrix representation in any basis is an identity matrix.
 Mutlplication of any other symmetry operation \f$ A \f$ by the identity
 leaves \f$ A \f$ unchanged, such that \f$ EA = AE = A \f$.
 
-\anchor user_symmetry_identity_thrm
+\anchor scft_symmetry_identity_thrm
 <b> Defininition (Inverse of a Space Group Operation) </b>:
 Every crystal symmetry operation \f$ A \f$ has an inverse, denoted by
 \f$ A^{-1} \f$, which is defined such that
@@ -148,15 +148,15 @@ then
 \f]
 
 <em> Proof </em>:
-Use the \ref user_symmetry_multiplication_thrm "multiplication rule"
+Use the \ref scft_symmetry_multiplication_thrm "multiplication rule"
 to confirm that \f$ A^{-1}A = A A^{-1} = (I, 0) = E \f$.
 
-\section user_symmetry_group_sec Space Groups
+\section scft_symmetry_group_sec Space Groups
 
 <b> Definition (Space Group) </b>
 A space group \f$ S \f$ is a set of crystal symmetry operations
 for which multiplication is defined as discussed
-\ref user_symmetry_multiplication_def "above", and which obey the 
+\ref scft_symmetry_multiplication_def "above", and which obey the 
 following rules:
 
    - Inclusion of identity: \f$ S \f$ must include the identity \f$ E \f$
@@ -172,17 +172,17 @@ following rules:
 The set of possible distinct crystallographic space groups is finite 
 and known. There are 230 possible 3D space groups, 17 possible 2D 
 plane groups, and 2 possible symmetry groups in 1D, as discussed 
-\ref user_groups_page "here". The pscfpp/data/groups directory 
+\ref scft_groups_page "here". The pscfpp/data/groups directory 
 contains a set of files that each list all of the symmetry operations 
 for one of these groups.
 
-\section user_symmetry_components_sec Bases and Vector Components
+\section scft_symmetry_components_sec Bases and Vector Components
 
 Different vector bases are used in PSCF to define components of vectors 
 that represent positions or translations and for vectors that represent 
 reciprocal lattice wavevectors.
 
-\subsection user_symmetry_components_bravais_sub Bravais Basis (Positions and Translations)
+\subsection scft_symmetry_components_bravais_sub Bravais Basis (Positions and Translations)
 
 It is convenient for to define components of position vectors such as a
 position \f$ {\bf r} \f$ or a translation vector \f$ {\bf t} \f$ using a 
@@ -241,7 +241,7 @@ template parameter, giving a class Pscf::SpaceSymmetry<D>. Each
 component of the translation vector \f$ {\bf t} \f$ is represented by 
 an instance of class Util::Rational, which represents a rational number.
 
-\subsection user_symmetry_components_reciprocal_sub Reciprocal Basis (Wavevectors)
+\subsection scft_symmetry_components_reciprocal_sub Reciprocal Basis (Wavevectors)
 
 It is convenient to express reciprocal lattice wavevectors in a basis of
 reciprocal lattice basis vectors, which we refer to as a reciprocal basis.
@@ -269,7 +269,7 @@ where \f$ G_{0}, \ldots, G_{D-1} \f$ are the integer components of
 \f$ {\bf G} \f$ in a reciprocal basis and \f$ r_{0}, \ldots, r_{D-1} \f$
 are components of \f$ {\bf r} \f$ in a Bravais basis (reduced coordinates).
 
-\subsection user_symmetry_adjoint_matrix_sub Adjoint Operators
+\subsection scft_symmetry_adjoint_matrix_sub Adjoint Operators
 
 <b> Theorem C.3 (Matrix Representation of an Adjoint Operator) </b>:
 Suppose \f$ R \f$ is a linear operator such as a point group operation
@@ -318,7 +318,7 @@ where \f$ R_{ji}^{T} \f$ denotes element \f$ (j, i) \f$ of the
 matrix transpose of the matrix representation of \f$ R \f$ in 
 a Bravais basis, completing the proof. 
 
-\section user_symmetry_symmfunc_sec Transformation of Fields
+\section scft_symmetry_symmfunc_sec Transformation of Fields
 
 <b> Definition (Field) </b>: We refer to any complex-valued periodic
 function of D-dimensional position within a crystal as a <em> field</em>.
@@ -336,7 +336,7 @@ indicates that \f$ f' \f$ is a field for which
 \f]
 for all \f$ {\bf r} \f$.
 
-\anchor user_symmetry_symmfunc_def
+\anchor scft_symmetry_symmfunc_def
 <b> Definition (Symmetric Fields) </b>:
 A field \f$ f({\bf r}) \f$ is said to be symmetric or invariant under
 a space group \f$ S \f$ if \f$ fA = f \f$ or (equivalently)
@@ -347,13 +347,13 @@ for every crystal symmetry operation \f$ A \in S \f$.
 
 The following two simple theorems apply to such symmetric functions:
 
-\anchor user_symmetry_symmfunc_mult_thrm
+\anchor scft_symmetry_symmfunc_mult_thrm
 <b> Theorem C.4 (Symmetry is Preserved by Scalar Multiplication)</b>:
 If \f$ f({\bf r}) \f$ is a field that is symmetric under a space group
 \f$ S \f$, and \f$ c \f$ is complex constant, then \f$ cf({\bf r}) \f$
 is also symmetric under \f$ S \f$.
 
-\anchor user_symmetry_symmfunc_conj_thrm
+\anchor scft_symmetry_symmfunc_conj_thrm
 <b> Theorem C.5 (Symmetry is Preserved by Complex Conjugation)</b>:
 If \f$ f({\bf r}) \f$ is a complex field that is symmetric under a
 space group \f$ S \f$, its complex conjugate \f$ f^{*}({\bf r}) \f$
@@ -368,7 +368,7 @@ then \f$ c f(R{\bf r} + {\bf t}) = c f({\bf r}) \f$ and
      \f$ f^{*}(R{\bf r} + {\bf t}) = f^{*}({\bf r}) \f$,
 proving both of the above theorems.
 
-\section user_symmetry_wave_sec Transformation of Plane Waves
+\section scft_symmetry_wave_sec Transformation of Plane Waves
 
 To construct basis functions, we consider the effect of space group
 operations on a field that is expressed as a general Fourier series.
@@ -464,7 +464,7 @@ then
 where \f$ AB \f$ denotes a product of symmetry operations, defined such
 that \f$ (AB)({\bf r}) = A(B({\bf r})) \f$ for any \f$ {\bf r} \f$.
 
-\section user_symmetry_mesh_sec Symmetry Transformations on a Mesh
+\section scft_symmetry_mesh_sec Symmetry Transformations on a Mesh
 
 Numerical computations in the PSCF programs for periodic systems are 
 performed using periodic fields that are actually defined only at 
@@ -476,7 +476,7 @@ such a mesh by a crystal symmetry operations, we must require that
 set of positions occupied by nodes of the mesh be invariant under all 
 symmetry operations in that group, in the following sense:
 
-\anchor user_symmetry_invariant_def
+\anchor scft_symmetry_invariant_def
 <b> Definition (Invariant Mesh) </b>: 
 A regular mesh of values for the reduced position coordinates within
 a unit cell of a crystal is said to be invariant under a crystal
@@ -533,8 +533,8 @@ symmetry-adapted basis functions will print an error message
 indicating the nature of the problem and then halt execution.
 
 <BR>
-\ref user_fourier_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
-\ref user_page    (Up) &nbsp; &nbsp; &nbsp; &nbsp;
-\ref user_basis_page  (Next) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref scft_fourier_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref scft_page    (Up) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref scft_basis_page  (Next) &nbsp; &nbsp; &nbsp; &nbsp;
 
 */

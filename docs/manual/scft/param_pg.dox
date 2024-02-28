@@ -1,18 +1,18 @@
-/*! \page user_param_pg_page Parameter File - pscf_pg 
+/*! \page scft_param_pg_page Parameter File - pscf_pg 
 
-\ref user_param_pc_page       (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
-\ref user_field_page  (Next)
+\ref scft_param_pc_page       (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
+\ref scft_field_page  (Next)
 <BR>
 
 The parameter file format for SCFT calculations using the pscf_pg
 GPU-accelerated program is almost identical to the parameter file 
-format for the \ref user_param_pc_page "pscf_pc".
+format for the \ref scft_param_pc_page "pscf_pc".
 The Mixture and Interaction blocks use the same format as that used
 by both pscf_1d and pscf_pc, and the Domain block has the same 
 format as that used by pscf_pc. The only differences are differences 
 in the available iterators.
 
-\section user_param_pg_iterator_sec Iterators
+\section scft_param_pg_iterator_sec Iterators
 
 The default iterator for pscf_pg, which is implemented by class 
 Rpg::AmIteratorBasis<D>, uses an Anderson-Mixing (AM) algorithm 
@@ -56,18 +56,18 @@ can be found by following the links in the table below:
   </tr>
 </table>
 
-\section user_param_pg_sweep_sec Sweep
+\section scft_param_pg_sweep_sec Sweep
 
 The only sweep algorithm currently available for use with rpc_pg is a
 general linear sweep algorithm. This can be invoked by including a block 
 that starts either with the generic label Sweep or the specific label 
 LinearSweep.  The required parameter file format for a linear sweep has 
-been described \ref user_param_sweep_linear_sec "here". 
+been described \ref scft_param_sweep_linear_sec "here". 
 
 
 <BR>
-\ref user_param_pc_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
-\ref user_param_page     (Up)   &nbsp; &nbsp; &nbsp; &nbsp; 
-\ref user_field_page   (Next)
+\ref scft_param_pc_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
+\ref scft_param_page     (Up)   &nbsp; &nbsp; &nbsp; &nbsp; 
+\ref scft_field_page   (Next)
 
 */

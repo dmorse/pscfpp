@@ -1,7 +1,7 @@
-/*! \page user_field_basis_page Field File - Symmetrized Basis (Periodic)
+/*! \page scft_field_basis_page Field File - Symmetrized Basis (Periodic)
 
- \ref user_field_periodic_page  (Prev/Up)  &nbsp; &nbsp; &nbsp; &nbsp;
- \ref user_field_rgrid_page     (Next)
+ \ref scft_field_periodic_page  (Prev/Up)  &nbsp; &nbsp; &nbsp; &nbsp;
+ \ref scft_field_rgrid_page     (Next)
 <BR>
 
 The basis file format is one of three formats used by the pscf_pc and
@@ -28,7 +28,7 @@ the prescribed symmetry, \f$ a_{i\alpha} \f$ is an associated real
 coefficient, and \f$ N_{\rm b} \f$ is the number of basis functions
 used in the expansion.
 
-\section user_field_basis_fourier_sec Symmetry-Adapted Fourier Basis
+\section scft_field_basis_fourier_sec Symmetry-Adapted Fourier Basis
 
 The symmetry-adapted Fourier basis used by the pscf_pc and pscf_pg
 programs is a finite sequence of of real orthogonal basis functions,
@@ -83,25 +83,25 @@ of a regular grid replaces the average over space, given in the above
 expression as an integeral divided by a volume, by an average over
 all grid points.
 
-\section user_field_basis_format_sec File Format
+\section scft_field_basis_format_sec File Format
 
 This basis field file format consists of a header section followed by a
 data section. Readers may find it useful to also refer to the examples of
-field files given below for a \ref user_field_basis_lamellar_sec "lamellar"
-and \ref user_field_basis_gyroid_sec "gyroid" phase.
+field files given below for a \ref scft_field_basis_lamellar_sec "lamellar"
+and \ref scft_field_basis_gyroid_sec "gyroid" phase.
 
-\subsection user_field_basis_format_header_sub Header Section
+\subsection scft_field_basis_format_header_sub Header Section
 
 Each field file begins with a header section that contains information
 about the crystallographic unit cell, space group, the number of monomers
 and the number of basis functions that is required to interpret the data 
 section. The format of the header is similar for r-grid, k-grid, and 
-basis file formats, and is described \ref user_field_periodic_header_sec 
+basis file formats, and is described \ref scft_field_periodic_header_sec 
 "here" . The last parameter in the header section of a basis field file 
 is a parameter "N_basis" that gives the number of basis functions in the 
 symmetry-adapted Fourier series. 
 
-\subsection user_field_basis_format_data_sub Data Section
+\subsection scft_field_basis_format_data_sub Data Section
 
 The data section of a basis field file contains exactly N_basis rows of
 data, each of which contains information associated with one basis
@@ -129,7 +129,7 @@ in which:
      of the waves that is superposed to construct basis function i.
 
    - size is the number of inequivalaent plane waves within a 
-     \ref user_field_basis_star_sec "star" of waves that are related 
+     \ref scft_field_basis_star_sec "star" of waves that are related 
      by space group symmetries among the waves that are superposed to 
      construct the relevant basis function.
 
@@ -151,9 +151,9 @@ in the data section, and thus uniquely identify the relevant basis
 function. The use of such identifier for each basis function in this
 file format is required by the fact that basis functions are generally 
 not listed in any fixed order, as discussed in more detail
-\ref user_field_basis_order_sec "below".
+\ref scft_field_basis_order_sec "below".
 
-\section user_field_basis_lamellar_sec Example: 1D Lamellar Phase
+\section scft_field_basis_lamellar_sec Example: 1D Lamellar Phase
 
 Below is an example the concentration / volume fraction field file output
 for a small simulation of a centro-symmetric lamellar phase of a diblock
@@ -276,7 +276,7 @@ wavenumbers (in 1D) or wavevectors (in 2D or 3D) for which the indices
 associated with a particular direction differ by integer multiples of 
 the number of grid points along each that direction are aliases of one
 another, and thus equivalent for this purpose, as discussed in more 
-detail in \ref user_fourier_dft_alias_sub "appendix".  Waves that are 
+detail in \ref scft_fourier_dft_alias_sub "appendix".  Waves that are 
 aliases of one another in this sense are counted as equivalent by the 
 algorithm that constructs basis functions for functions that are 
 defined on a lattice.
@@ -294,7 +294,7 @@ cosine basis functions with \f$ n =1, \ldots, 19 \f$, and a value of
 \f$ 1 \f$ for the cosine function with \f$ n = N/2 = 20 \f$ as a
 result of aliasing of wavenumbers used in a discrete Fourier transform.
 
-\section user_field_basis_gyroid_sec Example: 3D Gyroid Phase
+\section scft_field_basis_gyroid_sec Example: 3D Gyroid Phase
 
 Below is an example of a c field output from a simulation of a gyroid
 phase for a diblock copolymer melt. A long section of the middle of the 
@@ -389,7 +389,7 @@ that leads systematic cancellations only contains basis functions
 or "stars" that are not "cancelled" (i.e., those that obey the
 rules for allowed reflections).
 
-\section user_field_basis_star_sec Stars and Star Functions
+\section scft_field_basis_star_sec Stars and Star Functions
 
 The algorithm that the PSCF programs for periodic structures uses to
 generate a symmetry-adapted Fourier basis is based on:
@@ -414,12 +414,12 @@ The remainder of this section summarizes the relationship between
 stars and symmetry-adapted basis functions in a form sufficient to
 allow users to understand the basis file format for field files.
 A more detailed discussion of the underlying mathematics is given 
-as an \ref user_basis_page "appendix". That appendix provides more 
+as an \ref scft_basis_page "appendix". That appendix provides more 
 precise notation and definitions, and includes proofs of variety 
 of assertions about mathematical facts that are made here without 
 proof.
 
-\anchor user_field_basis_star_defn
+\anchor scft_field_basis_star_defn
 <b> Definition (Star) </b>:
 A star \f$ T \f$ of a space group \f$ S \f$ is a set of reciprocal
 lattice wavevectors that are are all related to one another by
@@ -433,7 +433,7 @@ are related to a triplet of integers \f$ (hkl) \f$ with
 In such a crystal, every wavevector belongs to one such star or
 family of wavevectors.
 
-\anchor user_field_basis_starfunc_defn
+\anchor scft_field_basis_starfunc_defn
 <b> Definition (Star Function) </b>:
 A star function associated with a star \f$ T \f$ of a space group
 \f$ S \f$ is a nonzero function of position that is a superposition of
@@ -453,7 +453,7 @@ a space group can be expressed as a a set of homogeneous linear equation
 that relate the coefficients \f$ c_{0}, \ldots, c_{M-1} \f$ of different
 waves in the above expansion.
 These relationships among coefficients are discussed in detail in the
-associated \ref user_basis_page "appendix".
+associated \ref scft_basis_page "appendix".
 The form of these equations can be shown to require that these coefficients
 all have equal absolute magnitude
 \f[
@@ -481,7 +481,7 @@ no inversion center at the origin, however, we must all these coefficients
 to be complex numbers of equal magnitude but generally unequal phase
 (complex argument).
 
-\subsection user_field_basis_cancelled_sub Cancelled Stars
+\subsection scft_field_basis_cancelled_sub Cancelled Stars
 
 There exist some stars of some space groups for which the only solution
 to the set of homogeneous linear equations that relate the coefficients
@@ -528,13 +528,13 @@ body-centered-cubic lattice. Other cancellations, such as the
 cancellation of the {110} star, are consequences of the existence of
 other symmetry operations in this space group.
 
-\subsection user_field_basis_uncancelled_sub Uncancelled Stars
+\subsection scft_field_basis_uncancelled_sub Uncancelled Stars
 
 A basis for complex or real functions with the symmetry of a specified
 space group can be constructed from the star functions associated with
 all uncancelled stars of that space group.
 
-\anchor user_field_basis_closed_defn
+\anchor scft_field_basis_closed_defn
 Uncancelled stars may be either closed or open under inversion:
 
    - A star \f$ T \f$ is <em> closed </em> (or, more precisely, closed
@@ -546,7 +546,7 @@ Uncancelled stars may be either closed or open under inversion:
      is not in \f$ T \f$.
 
 The following theorems about uncancelled stars and star functions are
-proved in an \ref user_basis_page "appendix":
+proved in an \ref scft_basis_page "appendix":
 
    - Every wavevector belongs to exactly one star.
 
@@ -571,7 +571,7 @@ proved in an \ref user_basis_page "appendix":
      \f$ T' \f$ such that \f$ \phi'({\bf r}) \f$ and
      \f$ \phi({\bf r}) \f$ are complex conjugates of one another.
 
-\subsection user_field_basis_starbasis_sub Conventions for Star Functions
+\subsection scft_field_basis_starbasis_sub Conventions for Star Functions
 
 The PSCF programs for periodic functions generates a sequence of
 uncancelled stars and associated star functions, such that each such
@@ -646,7 +646,7 @@ with complex coefficients \f$ c_{0}, c_{1}, \ldots, c_{N-1} \f$,
 where \f$ N_{\rm b} \f$ denotes the number of basis functions
 used in the expansion.
 
-\subsection user_field_basis_waveofstar_sec Characteristic Wavevectors
+\subsection scft_field_basis_waveofstar_sec Characteristic Wavevectors
 
 By convention, the characteristic wavevector for a closed star or the
 first of two open stars that are related by inversion is taken to be
@@ -687,7 +687,7 @@ integer in the range \f$ -N/2 < n \leq N/2 \f$. The rules
 discussed above provide a natural generalization of this
 convention to periodic functions in two or three dimensions.
 
-\section user_field_basis_real_sec Real Functions
+\section scft_field_basis_real_sec Real Functions
 
 The concentration and chemical potential fields that appear in
 SCFT calculations are real (rather than complex) functions of
@@ -773,7 +773,7 @@ with the following rules for the complex coefficients
      \f]
      respectively, giving \f$ c_{i+1} = c_{i}^{*} \f$.
 
-\section user_field_basis_format2_sec File Format (Revisited)
+\section scft_field_basis_format2_sec File Format (Revisited)
 
 The above discussion allows us to give a somewhat more precise 
 description of the format of data section of a basis field file.
@@ -804,7 +804,7 @@ inversion (in which case \f$ f_{i}({\bf r}) = \phi_{i}({\bf r})\f$
 inversion (in which case \f$ f_{i}({\bf r}) \f$ is a superposition
 of \f$ \phi_{i}({\bf r}) \f$ and its complex conjugate). 
 
-\section user_field_basis_order_sec Ordering of Basis Functions
+\section scft_field_basis_order_sec Ordering of Basis Functions
 
 The order in which star functions or associated real basis functions
 are listed and assigned indices by a pscf_pc or pscf_pg program is
@@ -868,6 +868,6 @@ that appear in each row of the data section to identity the
 associated basis function.
 
 <BR>
- \ref user_field_periodic_page (Prev/Up)  &nbsp; &nbsp; &nbsp; &nbsp;
- \ref user_field_rgrid_page    (Next)
+ \ref scft_field_periodic_page (Prev/Up)  &nbsp; &nbsp; &nbsp; &nbsp;
+ \ref scft_field_rgrid_page    (Next)
 */

@@ -138,9 +138,7 @@ example. A different sequence of top-level subblocks may be required
 for other types of calculation.  For example, a parameter file used 
 to setup an SCFT parameter sweep would require an additional block
 "Sweep" block to described the desired sequence of states, as 
-discussed \ref user_param_sweep_page "elsewhere". Parameters files 
-for FTMC simulations other specialized subblocks that are not shown
-here.
+discussed \ref user_param_sweep_page "elsewhere". 
 
 \section user_param_example_elements_sec Parameters
 

@@ -1,7 +1,7 @@
-/*! \page user_field_rgrid_page Field File - R-Grid (Periodic)
+/*! \page scft_field_rgrid_page Field File - R-Grid (Periodic)
 
- \ref user_field_basis_page   (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
- \ref user_field_kgrid_page   (Next) 
+ \ref scft_field_basis_page   (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
+ \ref scft_field_kgrid_page   (Next) 
 <BR>
 
 The r-grid file format is used by the pscf_pc and pscf_pg programs to 
@@ -11,7 +11,7 @@ covers one unit cell of a periodic structure. This mesh is the same
 one as that used by the pseudo-spectral algorithm for solving the 
 modified diffusion equation. 
 
-\section user_field_rgrid_hex_sec Example: 2D Hex Phase 
+\section scft_field_rgrid_hex_sec Example: 2D Hex Phase 
 
 Here is example of a converged omega field for a hex phase of a diblock 
 copolymer melt:
@@ -45,7 +45,7 @@ mesh
 \endcode
 <BR>
 
-\section user_field_rgrid_format_sec File Format 
+\section scft_field_rgrid_format_sec File Format 
 
 Like other field formats, this file format contains a header section 
 with crystallographic information followed by a data section.  The header 
@@ -113,7 +113,7 @@ points in each direction and lower case-variables (n0, n1, n2) denote
 indices for a particular grid point.
 
 <BR>
- \ref user_field_basis_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
- \ref user_field_page        (Up)   &nbsp; &nbsp; &nbsp; &nbsp; 
- \ref user_field_kgrid_page  (Next) 
+ \ref scft_field_basis_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
+ \ref scft_field_page        (Up)   &nbsp; &nbsp; &nbsp; &nbsp; 
+ \ref scft_field_kgrid_page  (Next) 
 */

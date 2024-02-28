@@ -1,6 +1,6 @@
-/*! \page user_basis_page Appendix: Symmetry-Adapted Bases
+/*! \page scft_basis_page Appendix: Symmetry-Adapted Bases
 
-\ref user_symmetry_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref scft_symmetry_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
 \ref developer_page  (Next)
 <BR>
 
@@ -13,7 +13,7 @@ and the expansion as a symmetry-adapted Fourier series. This page
 discusses the mathematics underlying the construction of such a basis.
 The discussion of symmetry-adapted basis functions given here uses 
 concepts and notation introduced in a separate appendix about
-\ref user_symmetry_page "crystal symmetry", which should be read 
+\ref scft_symmetry_page "crystal symmetry", which should be read 
 before this page.
 
 The discussion given here uses a notation appropriate to periodic 
@@ -23,7 +23,7 @@ results can also be interpreted so as to apply to symmetry-adapted
 basis functions that are defined on the nodes of a regular mesh, 
 subject to a few restrictions that we discuss.
 
-\section user_basis_mesh_sec Continuous vs. Discretized Functions
+\section scft_basis_mesh_sec Continuous vs. Discretized Functions
 
 Numerical computations in the PSCF programs for periodic systems are
 performed using periodic fields that are actually defined only at
@@ -40,7 +40,7 @@ following assumptions and constraints are understood to apply:
 
    - The mesh on which functions are defined must be invariant
      under all elements of the space group of interest, in the
-     sense defined \ref user_symmetry_invariant_def "here". This
+     sense defined \ref scft_symmetry_invariant_def "here". This
      is necessary to allow us to unambigously define the effect
      of crystal symmetry operations upon a discretized function.
 
@@ -67,7 +67,7 @@ following assumptions and constraints are understood to apply:
 
    - The norm \f$ |{\bf G} |\f$ of a reciprocal lattice wavevector
      \f$ {\bf G} \f$, when needed, is defined to be the norm of
-     a \ref user_fourier_minindex_sub "minimal image" of
+     a \ref scft_fourier_minindex_sub "minimal image" of
      \f$ {\bf G} \f$, i.e., the norm of an alias with integer 
      components chosen so as to minimize the usual definition of the 
      norm as \f$ |{\bf G}| = \sqrt{{\bf G}\cdot{\bf G}} \f$.
@@ -95,7 +95,7 @@ directions to be multiples of some small integer. For example, a mesh
 for a BCC crystal must use equal even numbers of grid points in all 
 directions in order to correctly represent operations that map the 
 origin to the body-centered point.  These constraints on mesh dimensions 
-are discussed in somewhat more detail \ref user_symmetry_invariant_def 
+are discussed in somewhat more detail \ref scft_symmetry_invariant_def 
 "here".
 
 The algorithm that PSCF uses to construct symmetry-adapted basis functions
@@ -106,7 +106,7 @@ If the mesh dimensions and space group are found to be incompatible, the
 pscf_pc and pscf_pg programs will write a message to the log file that 
 explains the nature of the error, and then halt execution. 
 
-\section user_basis_star_sec Wavevector Stars
+\section scft_basis_star_sec Wavevector Stars
 
 The first step in the algorithm used by PSCF to construct symmetry
 adapted basis functions is to partition the set of all distinct
@@ -139,7 +139,7 @@ wavevectors used to describe functions that are defined on a mesh,
 the norm must be understood to be the norm of a minimal image of each
 wavevector.
 
-\anchor user_basis_star_defn
+\anchor scft_basis_star_defn
 <b> Definition (Star) </b>: A <em>star</em> star \f$ T \f$ of a space
 group \f$ S \f$ is a set of distinct reciprocal lattice vectors with
 the following two properties:
@@ -160,7 +160,7 @@ in a star be related by a single symmetry operation is thus completely
 equivalent to a requirement that they be related by some sequence of
 symmetry operations.
 
-\anchor user_basis_star_intersect_thrm
+\anchor scft_basis_star_intersect_thrm
 <b> Theorem D.1 (Intersecting Stars are Equal) </b>:
 If \f$ T \f$ and \f$ T' \f$ are both star functions of a space group
 \f$ S \f$ with \f$ T \cap T' \neq \emptyset \f$, then \f$ T = T' \f$.
@@ -178,11 +178,11 @@ reversing the roles of \f$ T \f$ and \f$ T' \f$, by assuming that
 show by analogous arguments that \f$ T \subseteq T' \f$, and thus that
 \f$ T = T' \f$.
 
-\ref user_basis_star_intersect_thrm "Theorem D.1" is logically equivalent
+\ref scft_basis_star_intersect_thrm "Theorem D.1" is logically equivalent
 to the statement that unequal stars must have an empty intersection.
 It also implies that a star cannot be proper subset of another star.
 
-\anchor user_basis_star_generate_thrm
+\anchor scft_basis_star_generate_thrm
 <b> Theorem D.2 (Generating a Star from a Wavevector) </b>:
 Suppose that \f$ {\bf G}_{0} \f$ is a reciprocal lattice wavevector,
 and \f$ S \f$ is a space group. Let \f$ Q \f$ be the set of all
@@ -196,7 +196,7 @@ and \f$ {\bf G}_{0} = {\bf G}_{0}E \f$, \f$ Q \f$ must contain
 \f$ {\bf G}_{0} \f$.
 To prove that \f$ Q \f$ is a star, we must prove closure under
 \f$ S \f$ and connectivity, as defined in the above definition
-of a \ref user_basis_star_defn "star".
+of a \ref scft_basis_star_defn "star".
 
 Proving closure: Suppose \f$ {\bf G} \f$ is a wavector in
 \f$ Q \f$ and that \f$ A \f$ and \f$ B \f$ are elements of
@@ -214,7 +214,7 @@ for which there exist \f$ A, B \in S \f$ such that
 Observe that \f$ {\bf G}' = {\bf G}C \f$ where
 \f$ C = A^{-1}B \f$, and that \f$ C \in S \f$.
 
-\anchor user_basis_star_unique_thrm
+\anchor scft_basis_star_unique_thrm
 <b> Theorem D.3 (Every Wavevector Belongs to a Unique Star) </b>:
 If \f$ {\bf G} \f$ is a reciprocal lattice wavevector and
 \f$ S \f$ is a space group, then \f$ {\bf G} \f$ belongs to
@@ -223,21 +223,21 @@ exactly one star of \f$ S \f$.
 <em> Proof </em>:
 Let \f$ T \f$ denote the set that is generated by applying all
 the elements of \f$ S \f$ to \f$ {\bf G} \f$.
-By \ref user_basis_star_generate_thrm "theorem D.2", \f$ T \f$
+By \ref scft_basis_star_generate_thrm "theorem D.2", \f$ T \f$
 is a star of \f$ S \f$ that contains \f${\bf G} \f$.
 Suppose \f$ T' \f$ is also a star of \f$ S \f$ such that
 \f$ {\bf G} \in T' \f$.
 This implies \f$ T \cap T' \neq \emptyset \f$ and thus, by
-\ref user_basis_star_intersect_thrm "theorem D.1" , that
+\ref scft_basis_star_intersect_thrm "theorem D.1" , that
 \f$ T = T' \f$.
 
-\section user_basis_star_functions_sec Star Functions
+\section scft_basis_star_functions_sec Star Functions
 
 A star function is a linear superposition of waves with wavevectors
 in a star with coefficients chosen such that the superposition is
 symmetric under the space group.
 
-\anchor user_basis_starfunc_def
+\anchor scft_basis_starfunc_def
 <b> Definition (Star Function) </b>:
 Suppose \f$ T \f$ is a star of a space group \f$ S \f$ that contains
 \f$ M \f$ wavevectors, such that
@@ -245,7 +245,7 @@ Suppose \f$ T \f$ is a star of a space group \f$ S \f$ that contains
 A <em>star function</em> associated with \f$ T \f$ is defined to be
 a nonzero function \f$ \phi({\bf r}) \f$ that is symmetric under
 \f$ S \f$ and that is equal to a superposition
-\anchor user_basis_starfunc_eqn
+\anchor scft_basis_starfunc_eqn
 \f[
    \phi(\textbf{r}) =
    \sum_{j=0}^{M-1} c_{j} e^{i\textbf{G}_{j} \cdot \textbf{r}}
@@ -299,7 +299,7 @@ The relationship among coefficients in this expansion of a star
 function may be determined by requiring that the function be symmetric
 under the specified space group.
 
-\anchor user_basis_starfunc_phase_thrm
+\anchor scft_basis_starfunc_phase_thrm
 <b> Theorem D.6 (Relationships Among Coefficients in a Star Function) </b>:
 Suppose that \f$ \phi({\bf r}) \f$ is a star function associated with a
 star \f$ T = \{ {\bf G}_{0}, \ldots, {\bf G}_{M-1} \} \f$ of space group
@@ -312,13 +312,13 @@ in \f$ S \f$, for which
 \f]
 The coefficients for the waves associated with wavevectors
 \f$ {\bf G}_{j} \f$ and \f$ {\bf G}_{k} \f$ must satisfy
-\anchor user_basis_phase_eqn
+\anchor scft_basis_phase_eqn
 \f[
    c_{k} = c_{j} e^{ i{\bf G}_{j}\cdot{\bf t} } \quad.
 \f]
 where \f$ c_{j} \f$ denotes the coefficient of the wave with wavevector
 \f$ {\bf G}_{j} \f$ in the superposition of the form given in the above
-\ref user_basis_starfunc_def "definition of a star function".
+\ref scft_basis_starfunc_def "definition of a star function".
 
 <em>Proof</em>:
 Suppose that
@@ -342,21 +342,21 @@ requirement that coefficients of corresponding waves be equal in the
 expansions of \f$ \phi \f$ and \f$ \phi A \f$.
 
 <b> Corollary: </b> The relationships among coefficients obtained
-in \ref user_basis_starfunc_phase_thrm "Theorem D.6" imply that the
+in \ref scft_basis_starfunc_phase_thrm "Theorem D.6" imply that the
 coefficients associated with different waves in a star function must
 all have equal absolute magnitude,
 \f[
     |c_{1}| = |c_{2}| = \cdots |c_{M}| \quad.
 \f]
 
-\anchor user_basis_phaserel_def
+\anchor scft_basis_phaserel_def
 <b> Definition (Phase Relationship) </b>:
 The equation relating the coefficients of two waves within a star given
-in \ref user_basis_starfunc_phase_thrm "Theorem D.6" is referred to here
+in \ref scft_basis_starfunc_phase_thrm "Theorem D.6" is referred to here
 as a <em> phase relationship </em> between these waves, or between the
 associated wavevectors.
 
-\anchor user_basis_phasefactor_def
+\anchor scft_basis_phasefactor_def
 <b> Definition (Phase Factor) </b>:
 The quantity
 \f[
@@ -396,7 +396,7 @@ the factor \f$ e^{i {\bf G}'\cdot{\bf t}_{B}} \f$ generated by applying
 \f$ R_{C} =  R_{A}R_{B} \f$ and 
 \f$ {\bf t}_{C} = {\bf t}_{A} + R_{A}{\bf t}_{B} \f$. 
 Using the fact that \f$ {\bf G}A = R_{A}^{\dagger}{\bf G} \f$, where 
-\f$ R_{A}^{\dagger} \f$ is the \ref user_symmetry_adjoint_def_eqn 
+\f$ R_{A}^{\dagger} \f$ is the \ref scft_symmetry_adjoint_def_eqn 
 "adjoint" of \f$ R_{A} \f$, observe that
 \f[
    {\bf G}'\cdot {\bf t}_{B}
@@ -413,7 +413,7 @@ Combining these relationships yields
 This additive relationship of phase changes yields a
 multiplicative relationship for phase factors.
 
-\subsection user_basis_cancel_sub Cancelled Stars
+\subsection scft_basis_cancel_sub Cancelled Stars
 
 The set of phase relationships among waves in a star of \f$ M \f$
 wavevectors is a homogeneous system of linear equations for the
@@ -563,9 +563,9 @@ the star.
 The algorithm used by PSCF to identify cancelled stars tests for
 the existence of unary contradictions for any wave in the star.
 
-\subsection user_basis_noncancel_sub Uncancelled Stars
+\subsection scft_basis_noncancel_sub Uncancelled Stars
 
-\anchor user_basis_starfunc_dimension_thrm
+\anchor scft_basis_starfunc_dimension_thrm
 <b> Theorem D.10 (Dimension of the System of Phase Relationships) </b>:
 If \f$ T \f$ is a star of space group \f$ S \f$ that contains \f$ M \f$
 wavevectors, and the phase relationships among wavevectors in \f$ T \f$
@@ -627,7 +627,7 @@ independent homogeneous linear equations for \f$ M \f$ coefficients.
 The resulting system of equations always has a non-empty set of
 nontrivial solutions, and is thus not cancelled.
 
-\anchor user_basis_starfunc_uniqueness_thrm
+\anchor scft_basis_starfunc_uniqueness_thrm
 <b> Theorem D.11 (Uniqueness of Star Functions to Within a Constant) </b>:
 If two functions \f$ f({\bf r}) \f$ and \f$ g({\bf r}) \f$ are both
 nonzero star functions associated with a single star \f$ T \f$ of
@@ -646,7 +646,7 @@ space with dimension 1. This corresponds to a set of solutions that
 can all be expressed as \f$ c f({\bf r}) \f$, in which \f$ c \f$ is a
 complex constant and \f$ f({\bf r}) \f$ is any single nonzero solution.
 
-\section user_basis_closed_sec Closed Stars
+\section scft_basis_closed_sec Closed Stars
 
 <b> Definition (Closed Stars) </b>: A set of wavevectors \f$ T \f$
 is <em>closed</em> under inversion if, for every wavevector
@@ -654,7 +654,7 @@ is <em>closed</em> under inversion if, for every wavevector
 
 The following theorem simplifies the treatment of closed stars:
 
-\anchor user_basis_closed_real_thrm
+\anchor scft_basis_closed_real_thrm
 <b> Theorem D.12 (Closed Stars Yield Real Star Functions) </b>:
 If \f$ \phi({\bf r}) \f$ is a star function associated with a star
 that is closed under inversion, then there exists a complex constant
@@ -678,13 +678,13 @@ If \f$ u({\bf r}) \neq 0 \f$ and \f$ v({\bf r}) \neq 0\f$, then
 \f$ u \f$ and \f$ v \f$ are two functions that are superpositions of
 waves in star \f$ T \f$ and symmetric under space group \f$ S \f$.
 Because the set of such functions is a vector space of dimension 1
-(see \ref user_basis_starfunc_uniqueness_thrm "Theorem D.11" above),
+(see \ref scft_basis_starfunc_uniqueness_thrm "Theorem D.11" above),
 this implies that there exists a real constant \f$ d \f$ such that
 \f$ v({\bf r}) = d u({\bf r}) \f$ for all \f$ {\bf r} \f$, giving
 \f$ \phi({\bf r}) = (1+id)u({\bf r}) \f$. In this case
 \f$ \phi({\bf r})/(1+id) \f$ is real, giving \f$ c \propto 1/(1+id)\f$.
 
-\section user_basis_open_sec Open Stars
+\section scft_basis_open_sec Open Stars
 
 <b> Definition (Open Sets of Wavevectors) </b>: A set of wavevectors
 \f$ T \f$ is <em>open</em> under inversion if, for every wavevector
@@ -721,7 +721,7 @@ wavevector in \f$ T \f$, for which \f$ {\bf G}' \neq {\bf G} \f$ and
 \f$ {\bf G}' \neq -{\bf G} \f$. There must exist a symmetry operation
 \f$ A = (R, {\bf t}) \f$ in \f$ S \f$ such that
 \f$ {\bf G}' = R^{\dagger}{\bf G} \f$ (where \f$ R^{\dagger} \f$ is the 
-\ref user_symmetry_adjoint_def_eqn "adjoint" of \f$ R \f$ and 
+\ref scft_symmetry_adjoint_def_eqn "adjoint" of \f$ R \f$ and 
 \f$ {\bf G}A = R^{\dagger}{\bf G} \f$). 
 Closure of the star under symmetry operations then implies that
 \f$ - {\bf G}' \f$ is also in \f$ T \f$, because
@@ -782,12 +782,12 @@ set \f$ T' = \{ -{\bf G}_{0}, \ldots, -{\bf G}_{M-1} \} \f$ that is
 the inverse of \f$ T \f$.
 Because \f$ \phi({\bf r}) \f$ is invariant under group \f$ S \f$, so
 is \f$ \phi^{*}({\bf r}) \f$, by
-\ref user_symmetry_symmfunc_conj_thrm "Theorem C.5".
+\ref scft_symmetry_symmfunc_conj_thrm "Theorem C.5".
 This implies that \f$ \phi^{*}({\bf r}) \f$ is a star function
 associated with \f$ T '\f$, the inverse of star \f$ T \f$.
 
-\section user_basis_centro_sec Centrosymmetric Groups
-\anchor user_basis_centro_def
+\section scft_basis_centro_sec Centrosymmetric Groups
+\anchor scft_basis_centro_def
 <b> Definition (Centrosymmetric Groups) </b>: A space group is
 centro-symmetric if it contains an operation that represents inversion
 through some inversion center. Inversion through an inversion center
@@ -804,7 +804,7 @@ and for which \f$ i({\bf c}) = {\bf c} \f$.
 The following theorem allows a particularly simple treatment of star
 functions of centro-symmetric groups:
 
-\anchor user_basis_centro_closed_thrm
+\anchor scft_basis_centro_closed_thrm
 <b> Theorem D.16 (Stars of Centrosymmetric Groups) </b>: All stars of 
 a centro-symmetric group are closed under inversion.
 
@@ -818,11 +818,11 @@ where we have used the fact that \f$ (-I)^{\dagger} = -I \f$.
 This implies that, for any centrosymmetric group, if a wavevector
 \f$ {\bf G} \f$ is in a star, then \f$ -{\bf G} \f$ is in the same
 star, and thus that every star must be closed under inversion.
-By \ref user_basis_closed_real_thrm "Theorem D.12", this implies
+By \ref scft_basis_closed_real_thrm "Theorem D.12", this implies
 that a real star function can be defined for every star of any
 centro-symmetric group.
 
-\anchor user_basis_centro_origin_thrm
+\anchor scft_basis_centro_origin_thrm
 <b> Theorem D.17 (Star Functions of Groups with with an Inversion Center at the Origin) </b>: 
 If a group \f$ S \f$ has an inversion center at the origin of space, then 
 it is possible to define a star function for every star of \f$ S \f$ in 
@@ -860,8 +860,8 @@ coefficients of all waves in each star must all have equal values
 that can all be chosen to be positive by convention.
 
 <BR>
-\ref user_symmetry_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
-\ref user_page    (Up) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref scft_symmetry_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref scft_page    (Up) &nbsp; &nbsp; &nbsp; &nbsp;
 \ref developer_page    (Next)
 
 */

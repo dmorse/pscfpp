@@ -1,27 +1,27 @@
-/*! \page user_field_periodic_page Field File - Periodic Fields (pscf_pc and pscf_pg)
+/*! \page scft_field_periodic_page Field File - Periodic Fields (pscf_pc and pscf_pg)
 
-\ref user_field_r1d_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
-\ref user_command_page     (Next)
+\ref scft_field_r1d_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref scft_command_page     (Next)
 <BR>
 
 The pscf_pcN and pscf_pgN programs are both designed to treat periodic
 structures, and use the same set of several field file formats.
 
-\section user_field_periodic_formats_sec File Formats
+\section scft_field_periodic_formats_sec File Formats
 
 The pscf_pc and pscf_pg programs can all read and write fields using
 following three field file formats:
 
-  - A \ref user_field_basis_page "basis" file format contains the
+  - A \ref scft_field_basis_page "basis" file format contains the
     components for a representation of each field as a linear
     superposition of symmetry-adapated basis functions, in which
     each basis function is invariant under all of the elements of
     a specified space group.
 
-  - A \ref user_field_rgrid_page "r-grid" file format contains the
+  - A \ref scft_field_rgrid_page "r-grid" file format contains the
     values of fields defined on the nodes of a regular grid.
 
-  - A \ref user_field_kgrid_page "k-grid" file format that contains
+  - A \ref scft_field_kgrid_page "k-grid" file format that contains
     the discrete Fourier transform of fields defined on a regular
     grid.
 
@@ -57,7 +57,7 @@ pscf_pg programs to read or write field files contain the strings
 "BASIS", "RGRID", or "KGRID" to indicate the use of a particular
 field file format.
 
-\section user_field_periodic_header_sec Header Section
+\section scft_field_periodic_header_sec Header Section
 
 Each of the three field file formats described above contains a
 header section followed by a data section. The header section has
@@ -67,7 +67,7 @@ unit cell, the space group, and the mesh or basis used to represent
 the fields.
 
 
-\subsection user_field_periodic_header_example_sub Example
+\subsection scft_field_periodic_header_example_sub Example
 
 As an example, here is header section of a r-grid field file for
 a double gyroid phase (space group \f$ Ia \overline{3}d \f$ that
@@ -91,7 +91,7 @@ orthogonal directions:
                      32    32    32
 \endcode
 
-\subsection user_field_periodic_header_description_sub Description
+\subsection scft_field_periodic_header_description_sub Description
 
 The first line of the header specifies a file format version number
 (file format v1.0).
@@ -111,7 +111,7 @@ of the web documentation.
 <b> crystal_system </b>:
 The parameter crystal_system is a string identifer for the crystal system,
 i.e., the type of Bravais lattice. Allowed values of this string for each
-value of dim are listed \ref user_unitcell_page "here".
+value of dim are listed \ref scft_unitcell_page "here".
 
 <b> N_cell_param </b>:
 The parameter N_cell_param is a positive integer that gives the number of
@@ -126,13 +126,13 @@ to describe the unit cell, separated by spaces. These parameters generally
 specify lengths of Bravais basis vectors or unit cell edges and (when
 required) angles between those vectors.  The number, order, and the
 meaning of those parameters depends upon the value of the crystal_system
-identifier, as discussed \ref user_unitcell_page "here".
+identifier, as discussed \ref scft_unitcell_page "here".
 
 <b> group_name </b>:
 The parameter group_name is a string identifier for a crystallographic
 space group.  Allowed values of this identifier string for each
 combination of values for dim and crystal_system are listed
-\ref user_groups_page "here". The group_name parameter is a required
+\ref scft_groups_page "here". The group_name parameter is a required
 part of the header for a file basis format, but is an optional element 
 for files written in r-grid or k-grid formats.
 
@@ -161,19 +161,19 @@ in the basis format.
 All of the above parameters except space_group, mesh and N_basis are 
 required elements of the header in all three file formats.
 
-\section user_field_periodic_contents_sub Contents
+\section scft_field_periodic_contents_sub Contents
 
 The three field file formats for periodic fields are described in more
 detail in the sub-pages linked below:
 
 <ol>
-  <li> \subpage user_field_basis_page  </li>
-  <li> \subpage user_field_rgrid_page  </li>
-  <li> \subpage user_field_kgrid_page  </li>
+  <li> \subpage scft_field_basis_page  </li>
+  <li> \subpage scft_field_rgrid_page  </li>
+  <li> \subpage scft_field_kgrid_page  </li>
 </ol>
 
  <BR>
- \ref user_field_r1d_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
- \ref user_field_page       (Up) &nbsp; &nbsp; &nbsp; &nbsp;
- \ref user_command_page     (Next)
+ \ref scft_field_r1d_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
+ \ref scft_field_page       (Up) &nbsp; &nbsp; &nbsp; &nbsp;
+ \ref scft_command_page     (Next)
 */
