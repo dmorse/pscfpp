@@ -341,10 +341,8 @@ commands output final chemical potential and monomer concentration
 fields to output files, i.e., converted solutions for SCFT or the
 field values after the final step of a FTS.
 
-### pscf_1d
-
-The usual command line syntax for invoking the pscf_1d program for
-one-dimensional SCFT calculations is
+**pscf_1d** : The usual command line syntax for invoking the pscf_1d program
+for one-dimensional SCFT calculations is
 ```
 pscf_1d -p param -c command -e
 ```
@@ -352,22 +350,18 @@ where the string "param" denotes actual name of a parameter file, and
 "command" denotes the name of a command file.  The -p and -c options
 are required.
 
-The "-e" command line option in the above example is optional, and
-causes the program to "echo" the parameter file to standard output as
-this file is being processed. Use of this option makes it easier to
-debug any failure arising from a syntax error in the parameter file.
-The echoed output also documents allowed optional elements of the
-parameter file that were not found in the input file, thus helping
-to document the full file format.
+The "-e" command line option in the above example is optional but 
+recommended. This option causes the program to "echo" the parameter file 
+to standard output as this file is being processed. Use of this option
+makes it easier to debug failures that arise from syntax errors in 
+the parameter file. 
 
-### pscf_pc and pscf_pg
-
-The command line interfaces for the pscf_pc and pscf_pg programs take
-the same required and optional elements as pscf_1d, but also require a
-value for the dimension of space as an additional parameter.  This is
-an integer parameter of the -d option that must have a value 1, 2 or 3,
-which specifies the number of coordinates along which the structure
-is periodic.  The usual syntax for invoking pscf_pc for a three
+**pscf_pc and pscf_pg** : The command line interfaces for the pscf_pc and
+pscf_pg programs take the same required and optional elements as pscf_1d, but
+also require a value for the dimension of space as an additional parameter.
+This is an integer parameter of the -d option that must have a value 1, 2 or 
+3, which specifies the number of coordinates along which the structure is 
+periodic.  The usual syntax for invoking pscf_pc for a three
 dimensionally periodic structure (e.g., a network structure or a 3D
 arrangement of spheres), while also using the -e option, is thus
 ```
@@ -379,11 +373,11 @@ phase would instead use 1 as the argument of the -d option. The syntax
 for invoking pscf_pg is the same as that for pccf_pc, except for the
 use of the different program name.
 
-Programs that are invoked as shown in the above examples would write log
-output that is produced during execution to the user's screen (i.e., to
-standard output).  This log output may instead be redirected to a file
-by using the unix ">" standard output redirection operator. For example,
-a command such as
+**Output redirection** : Programs that are invoked as shown in the above 
+examples would write log output that is produced during execution to the 
+user's screen (i.e., to standard output).  This log output may instead be
+redirected to a file by using the unix ">" standard output redirection 
+operator. For example, the command
 ```
 pscf_pc -d 3 -p param -c command -e > log
 ```
