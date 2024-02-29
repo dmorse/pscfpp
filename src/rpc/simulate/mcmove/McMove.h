@@ -127,6 +127,11 @@ namespace Rpc
       * Return number of moves that have been accepted.
       */
       long nAccept() const;
+      
+      /**
+      * Return number of moves that fail to converge.
+      */
+      long nFail() const;
 
       /**
       * Output statistics for this move (at the end of simulation)
@@ -206,6 +211,9 @@ namespace Rpc
       /// Number of moves that have been accepted by this object.
       long  nAccept_;
       
+      /// Number of moves that fail to converge.
+      long  nFail_;
+      
    };
 
    // Public inline methods
@@ -223,6 +231,13 @@ namespace Rpc
    template <int D>
    inline long McMove<D>::nAccept() const
    {  return nAccept_; }
+   
+   /*
+   * Return number of moves that fail to converge.
+   */
+   template <int D>
+   inline long McMove<D>::nFail() const
+   {  return nFail_; }
 
    // Protected inline methods
 

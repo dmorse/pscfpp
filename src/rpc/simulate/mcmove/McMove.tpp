@@ -29,7 +29,8 @@ namespace Rpc {
       systemPtr_(&(mcSimulator.system())),
       randomPtr_(&(mcSimulator.random())),
       nAttempt_(0),
-      nAccept_(0)
+      nAccept_(0),
+      nFail_(0)
    {}
 
    /*
@@ -63,6 +64,7 @@ namespace Rpc {
    {
       nAttempt_ = 0;
       nAccept_  = 0;
+      nFail_ = 0;
       clearTimers();
    }
 
@@ -92,7 +94,6 @@ namespace Rpc {
       // Call compressor
       compressorTimer_.start();
       int compress = system().compressor().compress();
-      UTIL_CHECK(compress == 0);
       compressorTimer_.stop();
       
       // Compute eigenvector components of the current w fields
@@ -111,11 +112,16 @@ namespace Rpc {
       bool accept = false;
       double weight = exp(-(newHamiltonian - oldHamiltonian));
       accept = random().metropolis(weight);
-      if (accept) {
-          incrementNAccept();
-          mcSimulator().clearMcState();
+      if (compress != 0){
+         nFail_++;
+         mcSimulator().restoreMcState();
       } else {
-          mcSimulator().restoreMcState();
+         if (accept) {
+            incrementNAccept();
+            mcSimulator().clearMcState();
+         } else {
+            mcSimulator().restoreMcState();
+         }
       }
       decisionTimer_.stop();
       totalTimer_.stop();
