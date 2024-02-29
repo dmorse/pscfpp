@@ -10,7 +10,7 @@
 #  the pscf_pc and pscf_pg programs to represent periodic fields, and 
 #  the simpler file format used by pscf_fd for one-dimensional fields.
 #  For detail on these file formats see the section of the web manual
-#  on \ref user_field_page "field files". Users can access and modify
+#  on \ref scft_field_page "field files". Users can access and modify
 #  stored values of the parameters in the header and values in the data 
 #  section after parsing by using specific statements (commands), and 
 #  can write the entire object to a file in proper format.

@@ -4,7 +4,7 @@
 An AmIteratorBasisFilm is an iterator that uses an Anderson Mixing (AM) 
 algorithm to solve the SCFT equations for a system confined to a thin
 film, while imposing a specific space group symmetry.  See the detailed
-discussion at \ref user_thin_films_page .
+discussion at \ref scft_thin_films_page .
 
 The parameter file format for an AmIteratorBasisFilm object is:
 \code

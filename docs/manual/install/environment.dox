@@ -29,7 +29,7 @@ Rationale:
 
 The required changes to the user's shell environment should be made in a 
 manner that guarantees that these changes are automatically put in place
-when a user is logs on. To accomplish this, commands that modify the
+when a user logs in. To accomplish this, commands that modify the
 PATH and PYTHON variables should be added to a configuration file in the 
 users home directory that is read and executed whenever the user launches 
 a login shell (e.g., to the .profile or .bash_profile file on systems that 
@@ -62,10 +62,10 @@ should put these commands in one of these files.
 
 Recent versions of the Mac OS operating system instead use zsh (also
 known as the Z shell) by default within the Mac Terminal app. We 
-recommend that mac users who are using zsh from within the Terminal
-app place these commands in a file named .zprofile. The Terminal 
-app treats every terminal window as new login shell, and executes 
-the .zprofile file every time you open a new terminal window.
+recommend that mac users who are using zsh from within the Terminal app 
+place these commands in a file named .zprofile. The Terminal app treats 
+every terminal window as new login shell, and executes the .zprofile 
+file every time you open a new terminal window.
 
 <BR>
 \ref install_overview_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 

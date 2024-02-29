@@ -16,13 +16,14 @@ an NVIDIA graphics processing unit (GPU) is written in CUDA.
 
 \section require_overview_section Overview
 
-The PSCF package provides several programs that are designed to run
-on a conventional CPU, and others that are designed to also use an
-NVIDIA GPU. We distinguish these in what follows by referring to
-CPU programs and GPU-enabled programs
+The PSCF package provides two programs that are designed to run on a 
+conventional CPU (pscf_1d and pscf_pg), and one that is designed to 
+use an NVIDIA GPU (pscf_pg). We distinguish these in what follows by 
+referring to CPU programs and a GPU-enabled program.
 
-In order to compile all of the CPU programs in the PSCF package, the
+In order to compile both of the CPU programs in the PSCF package, the
 system on which the code is compiled and run must have:
+
    - a git version control client
    - a C++ compiler
    - a python interpreter, version 3 or greater
@@ -42,14 +43,16 @@ within the package for linear algebra operations.  The FFTW Fast Fourier
 transform library is used extensively by the pscf_pc programs for 
 periodic microstructures.
 
-In order to compile GPU-enabled programs, the user's system must also 
-have:
+In order to compile the GPU-enabled pscf_pg program, the user's system 
+must also have:
 
-   - an NVIDIA graphics card
-   - the NVIDIA nvcc C++/CUDA compiler 
-   - the cuFFT GPU-accelerated fast Fourier transform library.
+   - an CUDA-enabled NVIDIA graphics card
+   - the <a href="https://developer.nvidia.com/cuda-toolkit">
+     NVIDIA CUDA Toolkit</a>
 
-The cuFFT library is provided with the CUDA development environment.
+The CUDA Toolkit is a development environment that provides the 
+nvcc C++/CUDA compiler and a variety of GPU-accelerated libraries,
+including the cuFFT fast Fourier transform library.
 
 Users who wish to generate a local copy of this html documentation, as 
 web pages that reside on their own computer, will also need to install 
@@ -87,7 +90,7 @@ installation process.
 \section require_git_section Git client
 
 The source code for the C++/CUDA version of PSCF described here is hosted
-on the github server, at <a href=http://github.com>github.com</a>, as
+on the github server, at <a href="http://github.com">github.com</a>, as
 project dmorse/pscfpp.  The older fortran PSCF program is maintained in
 a separate github repository, as project dmorse/pscf. 
 
@@ -137,23 +140,23 @@ and confirming that the command works, and returns a version number
 which python
 \endcode
 and confirm that it returns a non-empty path such as /user/bin/python3. 
-We recommend using of the command "python3" rather than "python" to
-make sure that you access a python 3 interpreter on any system in 
-which python 2.* interpreter may still also are installed. A python 3 
+We recommend using of the command "python3" rather than "python" to make 
+sure that you access a python 3 interpreter on any system in which a
+python 2.* interpreter may still also are installed. A python 3 
 interpreter should be available from the command line in any common 
-linux distribution (e.g., Fedora or Ubuntu), and should be available 
-in Mac OS X after installation of the command line tools package.
+linux distribution (e.g., Fedora or Ubuntu), and should be available in 
+Mac OS X after installation of the command line tools package.
 
 \section install_require_compiler_cpp C++ compiler
 
 By default, the PSCF build system invokes a C++ compiler using the
 compiler commnd name "g++". On linux systems, this command normally
-invokes the gnu compiler collection (GCC) C++ compiler. On a MacIntosh
-running Mac OS X that is set up for C++ developent (see above), the "g++"
-command is normally a link to the Clang compiler, which is the default
-compiler for C++ development on Mac OS X. The Clang compiler accepts
-almost all the same command line options as the gnu compiler, and so
-functions as a compatible replacement for the gnu C++ compiler. 
+invokes the GNU compiler collection (GCC) C++ compiler. On a Apple
+computer running Mac OS X that is set up for C++ developent (see above), 
+the "g++" command is normally a link to the Clang compiler, which is the 
+default compiler for C++ development on Mac OS X. The Clang compiler 
+accepts almost all the same command line options as the GNU compiler, 
+and so functions as a compatible replacement for the GCC C++ compiler. 
 
 It is possible to configure the build system during the initial 
 configuration process so as to instead use a different C++ compiler, as 

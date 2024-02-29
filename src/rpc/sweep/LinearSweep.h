@@ -24,7 +24,7 @@ namespace Rpc {
    * A sweep in parameter space where one or more parameters change
    * linearly with the sweep variable. 
    * 
-   * \ref user_param_sweep_linear_sec "Parameter File Format"
+   * \ref scft_param_sweep_linear_sec "Parameter File Format"
    * \ingroup Rpc_Sweep_Module
    */
    template <int D>

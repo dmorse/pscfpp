@@ -10,17 +10,21 @@ To perform a typical self-consistent field theory (SCFT) calculation, a
 PSCF program generally reads three different types of input file:
 <ul>
    <li> a parameter file </li>
-   <li> a field file </li>
    <li> a command file </li>
+   <li> a field file </li>
 </ul>
 All PSCF programs use similar formats for the parameter and command 
 files. Several different formats are used for field files.
 
-\section user_files_parameter_section Parameter file
+\section user_files_parameter_sec Parameter file
 
 When any PSCF program is executed, the parameter file is processed first.
-This file defines the basic parameters of a physical problem of interest,
-and is used to initialize the state of the program.  The parameter file
+The name of the parameter file is specified as command line argument when 
+a PSCF program is invoked, as a parameter of the required "-p" command 
+line option.  
+
+The parameter file defines the basic parameters of a physical problem of 
+interest, and is used to initialize the state of the program.  This file
 contains physical information about chemical structures (e.g., monomer 
 properties and block polymer chemical structures), the composition of 
 the system of interest (the volume fraction or chemical potential of each 
@@ -28,9 +32,7 @@ species in a mixture), interactions among the constituents (Flory-Huggins
 chi parameters), information about the spatial domain of interest (e.g.,
 the Bravai lattice type of a periodic structure), a description of a 
 spatial discretization of that domain, and a variety of algorithmic 
-parameters. The name of the parameter file is specified as command line 
-argument when a PSCF program is invoked, as a parameter of the required
-"-p" command line option.
+parameters. 
 
 The information that must be provided in a parameter file depends somewhat 
 on what type of calculation are going to be performed, as dictated by the
@@ -47,21 +49,7 @@ SCFT calculation generally contains the following 4 sections:
 An example of a simple parameter file for the pscf_1d program is shown 
 \ref user_param_example_page "here" .
 
-\section user_files_field_section Field file
-
-A field file contains a description of a set of fields (i.e., functions
-of position) that are associated with different monomer types. Several
-different field formats are used by different programs in the PSCF 
-package. For each program, the same file format or file formats are
-used to describe both monomer chemical potential fields and monomer
-volume fraction fields. 
-
-Every SCFT calculation must read an input file that contains an initial 
-guess for the self-consistent field chemical potential fields.  The name 
-of the input file containing this initial guess is given as a parameter 
-to a command in the command file.
-
-\section user_files_command_section Command file
+\section user_files_command_sec Command file
 
 The command file is processed after the parameter file, and controls
 program flow after initialization.  The command file is a script that
@@ -82,33 +70,19 @@ monomer concentration fields to output files.  The names of these
 input and output field files and various other data files are 
 specified as parameters of commands within the command file.
 
-A simple command file for using the pscf_pc program to perform an 
-SCFT calculation for a periodic system might look like this:
-\code
-READ_W_BASIS      in/w.bf
-ITERATE
-WRITE_W_BASIS     out/w.bf
-WRITE_C_RGRID     out/c.rf
-FINISH
-\endcode
-In this example, we assume that the input chemical potential field file 
-(which we refer to as a w field file) is located in a subirectory of 
-the working directory named in/, and that output files are written to a 
-subdirector named out/.  This command file instructs the program to:
+An example of a simple command file for a 1D SCFT calculation performed
+with the pscf_1d program is shown \ref user_command_example_sec "here" .
 
-- READ_W_BASIS: Read in a chemical potential fields (w-fields in 
-symmetrized Fourier basis from a file named in/w.bf
+\section user_files_field_sec Field file
 
-- ITERATE: Iteratively solve the SCFT equation, using the iterator 
-algorithm and parameters that are specified in the parameter file.
-
-- WRITE_W_BASIS: Write the converged chemical potential fields 
-(w-fields) in symmetrized Fourier basis format to a file out/w.bf
-
-- WRITE_C_RGRID: Write the corresponding monomer concentration fields 
-(c-fields) in real-space grid (r-grid) format to a file out/c.rf
-
-- FINISH: finish execution and halt the main program
+A field file contains a description of a set of fields (i.e., functions
+of position) that are associated with different monomer types. Several
+different field formats are used by different programs in the PSCF 
+package. For each program, the same file format or file formats are
+used to describe both monomer chemical potential fields and monomer
+volume fraction fields.  The command file for every SCFT and FTS 
+calculation generally includes a command that reads an input file 
+containing an initial set of chemical potential fields.  
 
 <BR>
 \ref user_model_page (Prev)

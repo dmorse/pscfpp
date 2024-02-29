@@ -182,19 +182,20 @@ configuration file are that:
      over.  Files stored in the make/compiler directory, however, 
      are not erased by this command.
 
-\section install_configure_moving_sec Moving the root directory
+\section install_configure_moving_sec Reconfigure after moving the root directory
 
-If you ever decide to rename or move the root directory for the 
-pscfpp repository, you should run "make veryclean" before moving 
-this directory, and then rerun the configure script after moving it.  
+If you ever decide to rename or move the root directory for the pscfpp 
+repository, you should run "make veryclean" before moving this directory, 
+and then rerun the configure script after moving it.  
 
 <em>Rationale</em>: The configure script queries the operating system 
-to identify the absolute path to the root directory that contains
-this script. This path is then stored in a variable that is used 
-as a prefix to construct absolute paths to various subdirectories 
-such as the src/, bld/, and data/ directories. The configure script 
-thus must to be rerun after the root directory is moved in order
-to update these stored path variables.
+to identify the absolute path to the root directory, which is the 
+directory that contains this script. This path is then stored in a 
+variable that is used as a prefix to assign values to makefile variables
+that contain absolute paths to various subdirectories such as the src/, 
+bld/, data/, and bin/ directories.  The configure script thus must to 
+be rerun after the root directory is moved in order to update values of 
+these stored path variables.
 
 <BR>
 \ref install_environment_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 

@@ -35,7 +35,7 @@ namespace Prdc {
    * The text representation for a UnitCell<D> contains a text 
    * representation of the LatticeSystem<D> enumeration (i.e., the
    * unit cell type) and a list of one or more unit cell parameters 
-   * (lengths and angles), as described \ref user_unitcell_page "here".
+   * (lengths and angles), as described \ref scft_unitcell_page "here".
    *
    * \ingroup Prdc_Crystal_Module
    */

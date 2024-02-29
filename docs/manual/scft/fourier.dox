@@ -1,6 +1,6 @@
 /*! \page scft_fourier_page Appendix: Periodic Functions and Fourier Series
 
-\ref scft_theory_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref scft_propagator_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
 \ref scft_symmetry_page  (Next)
 <BR>
 
@@ -375,7 +375,7 @@ minimal (or Brillouin zone) indexes of each wavevector used in a
 DFT are assigned to each wavevector within the Pscf::Basis<D> class.
 
 <BR>
-\ref scft_theory_page   (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref scft_propagator_page   (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
 \ref scft_page          (Up) &nbsp; &nbsp; &nbsp; &nbsp;
 \ref scft_symmetry_page (Next)
 

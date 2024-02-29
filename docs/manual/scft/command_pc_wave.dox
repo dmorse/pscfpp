@@ -1,22 +1,22 @@
-/*! \page user_command_pc_wave_page Command for pscf_pc: WRITE_WAVES
-\ref user_command_pc_page  (Up/Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
-\ref user_command_pg_page  (Next) 
+/*! \page scft_command_pc_wave_page Command for pscf_pc: WRITE_WAVES
+\ref scft_command_pc_page  (Up/Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
+\ref scft_command_pg_page  (Next) 
 <BR>
 
 THE WRITE_WAVES command accepted by pscf_pc and pscf_pg programs writes a 
 detailed description of the symmetry-adapted basis used by these programs. 
 Closely related information about the basis is also provided by the
-\ref user_command_pc_star_page "WRITE_STARS" command.
+\ref scft_command_pc_star_page "WRITE_STARS" command.
 
 <em> Conceptual background </em>: As background, before reading this 
 description of the output of the WRTIE_WAVES command, we strongly recommend
 that users read the discussion of the relationships between "stars" and 
 basis functions given in the documentation of the 
-\ref user_field_basis_page "basis file format". 
+\ref scft_field_basis_page "basis file format". 
 Users who seek a more complete discussion can also consult appendices 
 that discuss crystallographic space group
-\ref user_symmetry_page "symmetry operations" and
-\ref user_basis_page "symmetry-adapted bases".
+\ref scft_symmetry_page "symmetry operations" and
+\ref scft_basis_page "symmetry-adapted bases".
 
 The type of symmetry-adapated Fourier basis used by the pscf_pc and
 pscf_pg programs is constructed by grouping all of the reciprocal lattice
@@ -24,11 +24,11 @@ wavevectors used in a discrete Fourier transform of periodic functions
 into subsets of wavevectors that are related to one another by space 
 group symmetry operations. 
 We refer to each such subset of symmetry-related wavevectors as a 
-\ref user_field_basis_star_sec "star" of wavevectors.
+\ref scft_field_basis_star_sec "star" of wavevectors.
 A basis function that is invariant under all operations of the space group, 
-known as a \ref user_field_basis_starfunc_defn "star function", is created 
+known as a \ref scft_field_basis_starfunc_defn "star function", is created 
 as a linear superposition of waves with wavevectors that belong to each 
-\ref user_field_basis_uncancelled_sub "uncancelled" star. 
+\ref scft_field_basis_uncancelled_sub "uncancelled" star. 
 The report created by the WRITE_WAVES command writes a list of all of 
 wavevectors that belong to uncancelled stars, in which the row associated 
 with each wavevector gives integer indices for the wavevector, the integer 
@@ -40,7 +40,7 @@ The format of this report is defined by the outputWaves function of class
 template Basis<int D>, which is defined in the file 
 src/pscf/crystal/Basis.tpp. 
 
-\section user_command_pc_wave_format_sec File Format
+\section scft_command_pc_wave_format_sec File Format
 
 The file created by the MAKE_WAVES command contains a header section 
 similar to that used for field files followed by a long data section.
@@ -49,7 +49,7 @@ is the total number of wavevectors listed in the data section.
 
 The data section contains one row for each reciprocal lattice wavevector 
 that belongs to an uncancelled star. 
-Wavevectors that belong to \ref user_field_basis_cancelled_sub "cancelled"
+Wavevectors that belong to \ref scft_field_basis_cancelled_sub "cancelled"
 stars are omitted.
 Waves that belong to the same star are are assigned a continuous block of 
 values for the index waveId, and are listed as a consecutive block within 
@@ -91,7 +91,7 @@ in which:
 Please see the resources recommended above for definitions of what
 we mean by a star, a cancelled star, and a star function.
 
-\section user_command_pc_wave_gyroid_sec Example (Gyroid Phase) 
+\section scft_command_pc_wave_gyroid_sec Example (Gyroid Phase) 
 
 An example of the file created by a WRITE_WAVES command is shown below 
 for a system with space group \f$ I a\overline{3} d \f$, or PSCF space 
@@ -219,6 +219,6 @@ N_wave
 \endcode
 
 <BR>
-\ref user_command_pc_page  (Up/Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
-\ref user_command_pg_page  (Next) 
+\ref scft_command_pc_page  (Up/Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
+\ref scft_command_pg_page  (Next) 
 */

@@ -76,8 +76,8 @@ namespace Rpc {
    * This is implemented as function template Pscf::Rpc::run in the
    * file src/rpc/pscf_pc.cpp.
    *
-   * \ref user_param_pc_page "Parameter File Format"
-   * \ref user_command_pc_page "Command File Format"
+   * \ref scft_param_pc_page "Parameter File Format"
+   * \ref scft_command_pc_page "Command File Format"
    * \ingroup Pscf_Rpc_Module
    */
    template <int D>

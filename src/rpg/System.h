@@ -73,8 +73,8 @@ namespace Rpg {
    * This is implemented as function template Pscf::Rpg::run in the
    * file src/rpg/pscf_pg.cpp.
    *
-   * \ref user_param_pg_page "Parameter File Format"
-   * \ref user_command_pc_page "Command File Format"
+   * \ref scft_param_pg_page "Parameter File Format"
+   * \ref scft_command_pc_page "Command File Format"
    * \ingroup Pscf_Rpg_Module
    */
    template <int D>

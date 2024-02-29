@@ -174,16 +174,24 @@ Comments:
 <i> Technical comments (for users who examine the source code) </i>:
 
 The source code for PCSF is defined within a C++ namespace named Pscf.
-This top-level namespace contains several enclosed sub-namespaces named
-R1d, Rpc, and Rpg that each contain code specific to a specific
-implementation of SCFT (i.e., a specific program or family of programs).
-We refer to these as implementation-level namespaces. This segregation 
-of code associated with different SCFT implementations into corresponding
-namespaces allows the same class name to be used for analogous classes 
-in different implementations without causing name clashes or ambiguity. 
-When possible, identical or similar parameter file formats are used for 
-the parameter blocks associated with analogous classes used in different 
-SCFT implementations.
+This top-level namespace contains several enclosed namespaces named
+Prdc, R1d, Rpc, and Rpg. The enclosed namespace Pscf::Prdc contains
+code relevant to any problem involving periodic boundary conditions.
+The enclosed namespaces named R1d, Rpc, and each contain code that is
+only used by one executable program (e.g., pscf_1d, pscf_pc or pscf_pg,
+respectively).  
+
+We refer to the enclosed namespaces R1d, Rpc, and Rpg throughout this
+documentation as implementation-level namespaces, because each contains
+contain associated with a single implementation of SCFT and/or polymer 
+field theory, corresponding to a different executable program. The 
+segregation of code associated with different implementations of the 
+theory into corresponding separate namespaces allows a single class 
+name to be used for several analogous classes in different implementations 
+without causing name clashes or ambiguity.  When possible, identical or 
+similar parameter file formats are used for the parameter blocks 
+associated with analogous classes used in different programs or SCFT 
+implementations.
 
 Each implementation-level namespace contains a class or class template 
 named Mixture. The R1d namespace contains a concrete class named Mixture. 

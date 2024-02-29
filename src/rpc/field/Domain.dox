@@ -26,7 +26,7 @@ Parameters and subblocks are described below:
     hexagonal, etc.). The lattice system is stored internally as a 
     UnitCell<D>::LatticeSype enum value.  A discussion of allowed
     crystal system identifiers and associated unit cell parameters is 
-    given \ref user_unitcell_page "here".  
+    given \ref scft_unitcell_page "here".  
     </td>
   <tr>
     <td> mesh </td>
@@ -40,7 +40,7 @@ Parameters and subblocks are described below:
     <td> 
       String identifier for a crystallographic space group (optional).
       A list of valid space group identifiers for each value of D is 
-      given \ref user_groups_page "here".
+      given \ref scft_groups_page "here".
     </td> 
   </tr>
 </table>

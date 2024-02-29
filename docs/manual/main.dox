@@ -43,6 +43,7 @@ theory calculations and field theoretic Monte-Carlo simulations.
   </li>
   <li> \subpage scft_page 
     <ol type="1">
+    <li> \ref scft_theory_page  </li>
     <li> \ref scft_param_page  </li>
     <li> \ref scft_field_page  </li>
     <li> \ref scft_command_page  </li>
@@ -52,7 +53,7 @@ theory calculations and field theoretic Monte-Carlo simulations.
     <li> \ref scft_thin_films_page  </li>
     <li> \ref scft_visualize_page  </li>
     <li> \ref scft_python_page  </li>
-    <li> \ref scft_theory_page  </li>
+    <li> \ref scft_propagator_page  </li>
     <li> \ref scft_fourier_page  </li>
     <li> \ref scft_symmetry_page  </li>
     <li> \ref scft_basis_page  </li>

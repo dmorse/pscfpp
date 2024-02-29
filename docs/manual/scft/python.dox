@@ -1,7 +1,7 @@
 /*! \page scft_python_page Python Tools
 
 \ref scft_visualize_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
-\ref scft_theory_page (Next)
+\ref scft_propagator_page (Next)
 <BR>
 
 The PSCF repository contains Python tools that allow the user to
@@ -576,6 +576,6 @@ details.
 <BR>
 \ref scft_visualize_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
 \ref scft_page (Up) &nbsp; &nbsp; &nbsp; &nbsp;
-\ref scft_theory_page (Next)
+\ref scft_propagator_page (Next)
 
 */

@@ -18,10 +18,10 @@ pscf_pc and pscf_pg programs for periodic systems, but not with the
 pscf_1d program.  
 
 All three PSCF programs can also perform SCFT parameter sweeps. 
-A \ref user_param_sweep_page "parameter sweep" is an operations that 
+A \ref scft_param_sweep_page "parameter sweep" is an operations that 
 performs a sequence of SCFT calculations for slightly different choices 
 of parameter values spaced along a path through parameter space, as 
-discussed in more detail \ref user_param_sweep_page "here".
+discussed in more detail \ref scft_param_sweep_page "here".
 
 Each of the PSCF programs is initialized using data in a parameter file
 and then executes a series of commands specified in a command file. The 

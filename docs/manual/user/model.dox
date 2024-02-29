@@ -7,10 +7,7 @@
 This page provides an overview of the input parameters required by all
 of the programs in the PSCF package to characterize a physical system, 
 as well as a discussion of the system of units and conventions used to 
-define parameter values. A separate page, \ref user_thermo_page 
-"Thermodynamic Properties," discusses conventions used to define 
-numerical values for thermodynamic properties (e.g., free energies) that 
-are reported as outputs.
+define parameter values. 
 
 \section user_model_overview_sec Physical Model (Overview)
 
@@ -379,8 +376,8 @@ will generally be much greater than 1.
 
 \section user_model_vMonomer_sec Irrelevance of Monomer Volume in SCFT
 
-A value for the monomer reference volume \f$ \f$ is not required as 
-an input to a standard SCFT calculation.  As discussed 
+A value for the monomer reference volume \f$ \f$ is not required 
+as an input to a standard SCFT calculation.  As discussed 
 \ref user_model_continuous_sec "above", when using a model that idealizes 
 polymers as continuous chains to analyze a specific experimental system, 
 the choice of a convention for the monomer reference volume \f$ v \f$ 
@@ -396,19 +393,28 @@ parameters) have no effect on SCFT predictions for values of any of
 the properties normally output by the PSCF programs. Specifically, 
 changes in the value of \f$ v \f$ alone can be shown to have no effect 
 on SCFT predictions for average monomer volume fraction fields, polymer 
-or solvent chemical potential values, or the non-dimensionalized 
+or solvent chemical potential values, or the non-dimensionalized SCFT
 Helmholtz free energy that is reported by PSCF in its standard format 
-for outputting \ref user_thermo_page "thermodynamic properties", which 
-is a free energy per monomer. 
+for outputting SCFT \ref scft_thermo_page "thermodynamic properties", 
+which is a dimensionless free energy per monomer.
 
 The role of \f$ v \f$ in SCFT is discussed in more detail in a separate 
-discussion of the \ref user_theory_page "working equations for SCFT".
+discussion of the \ref scft_theory_page "working equations for SCFT".
 There we show explicitly that the forms of these equations implemented 
 in PSCF simply do not require a value for \f$ v \f$ as an independent
-input parameter. 
+input parameter.
 
 A value for \f$ v \f$ is, however, always required as an independent
-input parameter for stochastic field theoretic simulations.
+input parameter for stochastic FTS calculations. If all other parameters
+are held fixed, smaller values for \f$ v \f$ lead to less overlap 
+among polymers, and weaker field fluctuations. In systems with a
+single species of chain length \f$ N \f$ and a single statistical
+segment length \f$ b \f$, the extent of overlap and the magnitude
+of fluctuations can be characterized by a dimensionless parameter
+\f$ \overline{N} = N (b^{3}/v)^2 \f$ known as the invariant degree
+of polymerization.  SCFT predictions are recovered in the limit 
+\f$\overline{N} \rightarrow \infty\f$ or, equivalenty, in the limit 
+\f$ v \rightarrow \infty \f$.
 
 <BR>
 \ref user_page       (Prev / Up) &nbsp; &nbsp; &nbsp; &nbsp;

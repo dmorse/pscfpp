@@ -5,18 +5,52 @@
 <BR>
 
 For any PSCF simulation program, the parameter file is read first,
-followed by a command script. The command file controls the sequence
-of operations performed after the program is initialized using 
-information from the parameter file.  The name of the command file 
-is specified when the program is invoked as an argument of the -c 
-command line option.
+followed by a command script.  The name of the command file is specified 
+when the program is invoked as an argument of the -c command line option.
+The command file controls the sequence of operations that will be 
+performed after the program is initialized by processing information 
+from the parameter file.  
 
 The command file contains a sequence of commands that are read and 
-executed in sequence. Each command begins with an all upper case label. 
-Some commands take one or more parameters, which must appear after the 
-upper case label, separated by whitespace. The program stops execution 
-and returns control to the operating system when it encounters the 
-command string 'FINISH' on a line by itself. 
+executed in the order in which they appear. Each command begins with 
+an all upper case label.  Some commands take one or more parameters, 
+which must appear after the upper case label, separated by whitespace. 
+The program stops execution and returns control to the operating system 
+when it encounters the command string 'FINISH' on a line by itself. 
+
+Full descriptions of all of the commands recognized by all three PSCF
+programs are given \ref scft_command_page "here". 
+
+\section user_command_example_sec Example Command File
+
+The following is a minimal command file for using the pscf_1d program 
+to perform an SCFT calculation:
+\code
+READ_W          in/w.bf
+ITERATE
+WRITE_W         out/w.bf
+WRITE_C         out/c.rf
+FINISH
+\endcode
+In this example, we assume that the input chemical potential field 
+file (which we refer to as a w field file) is located in a subirectory 
+of the working directory named in/, and that output files are written 
+to a subdirector named out/.  This command file instructs the program 
+to:
+
+- READ_W: Read in a chemical potential fields (w-fields) from a file
+named in/w.rf
+
+- ITERATE: Iteratively solve the SCFT equation, using the iterator 
+algorithm and parameters that are specified in the parameter file.
+
+- WRITE_W: Write the converged chemical potential fields (w-fields) 
+to a file out/w.rf
+
+- WRITE_C: Write the corresponding monomer concentration fields 
+(c-fields) to a file out/c.rf
+
+- FINISH: finish execution and halt the main program
 
  <BR>
  \ref user_param_page   (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 

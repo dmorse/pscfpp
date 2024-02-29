@@ -58,7 +58,7 @@ namespace R1d
    * \endcode
    * The actual main program is given in the file pscf_1d.cpp.
    *
-   * \ref user_param_1d_page "Parameter File Format"
+   * \ref scft_param_1d_page "Parameter File Format"
    * \ingroup Pscf_R1d_Module
    */
    class System : public ParamComposite

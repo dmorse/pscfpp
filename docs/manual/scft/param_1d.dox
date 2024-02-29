@@ -12,7 +12,7 @@ a planar geometry, or can treat curved interfaces and a cylindrical or
 spherical micelles by using a cylindrical or spherical coordinate by
 using a cylindrical or spherical geometry.
 An example of a parameter file for an pscf_1d program was given 
-\ref scft_param_example_page "previously" as an example of the syntax.
+\ref user_param_example_page "previously" as an example of the syntax.
 Please consult this example when looking at this discussion of the file
 format.
 
@@ -41,7 +41,7 @@ The domain block describes the spatial domain over which the SCFT equations
 should be solved. The parameter file syntax is described in detail 
 \subpage r1d_Domain_page "here", and also discussed below.
 
-The example parameter file shown \ref scft_param_example_page "previously" 
+The example parameter file shown \ref user_param_example_page "previously" 
 was designed to describe a planar geometry. As another example, here is
 the Domain block for a simulation of a spherical micelle
 

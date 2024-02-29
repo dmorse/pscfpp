@@ -6,6 +6,7 @@
 
 <h2> Contents:</h2>
    <ol>
+   <li> \subpage scft_theory_page  </li>
    <li> \subpage scft_param_page     
      <ul>
        <li> \ref scft_param_sweep_page    "Parameter Sweeps" </li>

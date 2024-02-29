@@ -7,7 +7,7 @@
 To illustrate common elements of PSCF parameter files, we start with
 an example.
 
-\section user_param_example_file Example File
+\section user_param_example_file Example Parameter File
 
 The text shown below is a complete parameter file for a simple 1D SCFT 
 calculation performed using the pscf_1d program:
@@ -138,7 +138,7 @@ example. A different sequence of top-level subblocks may be required
 for other types of calculation.  For example, a parameter file used 
 to setup an SCFT parameter sweep would require an additional block
 "Sweep" block to described the desired sequence of states, as 
-discussed \ref user_param_sweep_page "elsewhere". 
+discussed \ref scft_param_sweep_page "elsewhere". 
 
 \section user_param_example_elements_sec Parameters
 
