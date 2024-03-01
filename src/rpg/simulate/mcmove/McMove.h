@@ -42,9 +42,9 @@ namespace Rpg
       /**
       * Constructor.
       *
-      * \param mcSimulator  parent McSimulator object
+      * \param simulator  parent McSimulator object
       */
-      McMove(McSimulator<D>& mcSimulator);
+      McMove(McSimulator<D>& simulator);
 
       /**
       * Destructor.
@@ -154,7 +154,7 @@ namespace Rpg
       /**
       * Get parent McSimulator object.
       */
-      McSimulator<D>& mcSimulator();
+      McSimulator<D>& simulator();
 
       /**
       * Get Random number generator of parent System.
@@ -195,7 +195,7 @@ namespace Rpg
    private:
 
       /// Pointer to parent McSimulator object
-      McSimulator<D>* mcSimulatorPtr_;
+      McSimulator<D>* simulatorPtr_;
 
       /// Pointer to parent System object
       System<D>* systemPtr_;
@@ -260,8 +260,8 @@ namespace Rpg
    * Get parent McSimulator object.
    */
    template <int D>
-   inline McSimulator<D>& McMove<D>::mcSimulator()
-   {  return *mcSimulatorPtr_; }
+   inline McSimulator<D>& McMove<D>::simulator()
+   {  return *simulatorPtr_; }
 
    /*
    * Get Random number generator.

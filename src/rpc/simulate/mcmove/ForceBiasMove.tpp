@@ -87,9 +87,9 @@ namespace Rpc {
 
       McMove<D>::setup();
       system().compute();
-      mcSimulator().computeWc();
-      mcSimulator().computeCc();
-      mcSimulator().computeDc();
+      simulator().computeWc();
+      simulator().computeCc();
+      simulator().computeDc();
 
    }
  
@@ -104,10 +104,10 @@ namespace Rpc {
 
       // Preconditions
       UTIL_CHECK(system().hasCFields());
-      UTIL_CHECK(mcSimulator().hasWc());
-      UTIL_CHECK(mcSimulator().hasCc());
-      UTIL_CHECK(mcSimulator().hasDc());
-      UTIL_CHECK(mcSimulator().hasHamiltonian());
+      UTIL_CHECK(simulator().hasWc());
+      UTIL_CHECK(simulator().hasCc());
+      UTIL_CHECK(simulator().hasDc());
+      UTIL_CHECK(simulator().hasHamiltonian());
 
       // Array sizes and indices
       const int nMonomer = system().mixture().nMonomer();
@@ -115,13 +115,13 @@ namespace Rpc {
       int i, j, k;
 
       // Get current Hamiltonian
-      double oldHamiltonian = mcSimulator().hamiltonian();
+      double oldHamiltonian = simulator().hamiltonian();
 
       // Save current state
-      mcSimulator().saveMcState();
+      simulator().saveMcState();
 
       // Clear both eigen-components of the fields and hamiltonian
-      mcSimulator().clearData();
+      simulator().clearData();
 
       attemptMoveTimer_.start();
       
@@ -132,7 +132,7 @@ namespace Rpc {
 
       // Copy current derivative fields from into member variable dc_
       for (i = 0; i < nMonomer - 1; ++i) {
-         dc_[i] = mcSimulator().dc(i);
+         dc_[i] = simulator().dc(i);
       }
 
       // Constants for dynamics
@@ -156,7 +156,7 @@ namespace Rpc {
          for (i = 0; i < nMonomer; ++i) {
             RField<D> const & dwc = dwc_[j];
             RField<D> & wn = w_[i];
-            evec = mcSimulator().chiEvecs(j,i);
+            evec = simulator().chiEvecs(j,i);
             for (k = 0; k < meshSize; ++k) {
                wn[k] += evec*dwc[k];
             }
@@ -165,7 +165,7 @@ namespace Rpc {
 
       // Set modified fields in parent system
       system().setWRGrid(w_);
-      mcSimulator().clearData();
+      simulator().clearData();
 
       attemptMoveTimer_.stop();
 
@@ -177,15 +177,15 @@ namespace Rpc {
 
       // Compute eigenvector components of current fields
       computeWcTimer_.start();
-      mcSimulator().computeWc();
-      mcSimulator().computeCc();
-      mcSimulator().computeDc();
+      simulator().computeWc();
+      simulator().computeCc();
+      simulator().computeDc();
       computeWcTimer_.stop();
 
       // Evaluate new Hamiltonian
       computeHamiltonianTimer_.start();
-      mcSimulator().computeHamiltonian();
-      double newHamiltonian = mcSimulator().hamiltonian();
+      simulator().computeHamiltonian();
+      double newHamiltonian = simulator().hamiltonian();
       double dH = newHamiltonian - oldHamiltonian;
 
       // Compute force bias 
@@ -193,7 +193,7 @@ namespace Rpc {
       double bias = 0.0;
       for (j = 0; j < nMonomer - 1; ++j) {
          RField<D> const & di = dc_[j];
-         RField<D> const & df = mcSimulator().dc(j);
+         RField<D> const & df = simulator().dc(j);
          RField<D> const & dwc = dwc_[j];
          for (k=0; k < meshSize; ++k) {
             dp = 0.5*(di[k] + df[k]);
@@ -211,12 +211,12 @@ namespace Rpc {
       accept = random().metropolis(weight);
       if (accept) {
           incrementNAccept();
-          mcSimulator().clearMcState();
+          simulator().clearMcState();
       } else {
-          mcSimulator().restoreMcState();
+          simulator().restoreMcState();
           system().compute();
-          mcSimulator().computeCc();
-          mcSimulator().computeDc();
+          simulator().computeCc();
+          simulator().computeDc();
       }
       decisionTimer_.stop();
       totalTimer_.stop();

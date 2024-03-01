@@ -83,7 +83,7 @@ namespace Rpg {
    protected:
 
       using McMove<D>::system;
-      using McMove<D>::mcSimulator;
+      using McMove<D>::simulator;
       using McMove<D>::random;
       using McMove<D>::cudaRandom;
       using McMove<D>::incrementNAttempt;

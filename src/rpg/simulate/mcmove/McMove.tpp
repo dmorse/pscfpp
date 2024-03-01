@@ -23,11 +23,11 @@ namespace Rpg {
    * Constructor.
    */
    template <int D>
-   McMove<D>::McMove(McSimulator<D>& mcSimulator)
-    : mcSimulatorPtr_(&mcSimulator),
-      systemPtr_(&(mcSimulator.system())),
-      randomPtr_(&(mcSimulator.random())),
-      cudaRandomPtr_(&(mcSimulator.cudaRandom())),
+   McMove<D>::McMove(McSimulator<D>& simulator)
+    : simulatorPtr_(&simulator),
+      systemPtr_(&(simulator.system())),
+      randomPtr_(&(simulator.random())),
+      cudaRandomPtr_(&(simulator.cudaRandom())),
       nAttempt_(0),
       nAccept_(0)
    {}
@@ -76,13 +76,13 @@ namespace Rpg {
       incrementNAttempt();
 
       // Get current Hamiltonian
-      double oldHamiltonian = mcSimulator().hamiltonian();
+      double oldHamiltonian = simulator().hamiltonian();
 
       // Save current state
-      mcSimulator().saveMcState();
+      simulator().saveMcState();
 
       // Clear both eigen-components of the fields and hamiltonian
-      mcSimulator().clearData();
+      simulator().clearData();
       
       // Attempt modification
       attemptMoveTimer_.start();
@@ -97,13 +97,13 @@ namespace Rpg {
       
       // Compute eigenvector components of the current w fields
       computeWcTimer_.start();
-      mcSimulator().computeWc();
+      simulator().computeWc();
       computeWcTimer_.stop();
       
       // Evaluate new Hamiltonian
       computeHamiltonianTimer_.start();
-      mcSimulator().computeHamiltonian();
-      double newHamiltonian = mcSimulator().hamiltonian();
+      simulator().computeHamiltonian();
+      double newHamiltonian = simulator().hamiltonian();
       computeHamiltonianTimer_.stop();
 
       // Accept or reject move
@@ -113,9 +113,9 @@ namespace Rpg {
       accept = random().metropolis(weight);
       if (accept) {
           incrementNAccept();
-          mcSimulator().clearMcState();
+          simulator().clearMcState();
       } else {
-          mcSimulator().restoreMcState();
+          simulator().restoreMcState();
       }
       decisionTimer_.stop();
       totalTimer_.stop();
