@@ -149,6 +149,11 @@ namespace Rpc
       * Increment the number of accepted moves.
       */
       void incrementNAccept();
+      
+      /**
+      * Increment the number of failed moves.
+      */
+      void incrementNFail();
 
       /**
       * Get parent System object.
@@ -254,6 +259,13 @@ namespace Rpc
    template <int D>
    inline void McMove<D>::incrementNAccept()
    {  ++nAccept_; }
+   
+   /*
+   * Increment the number of fail moves.
+   */
+   template <int D>
+   inline void McMove<D>::incrementNFail()
+   {  ++nFail_; }
 
    /*
    * Get parent System object.
