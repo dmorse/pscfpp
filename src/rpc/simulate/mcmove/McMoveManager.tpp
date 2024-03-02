@@ -24,12 +24,12 @@ namespace Rpc {
    * Constructor.
    */
    template <int D>
-   McMoveManager<D>::McMoveManager(McSimulator<D>& mcSimulator, 
+   McMoveManager<D>::McMoveManager(McSimulator<D>& simulator, 
                                    System<D>& system)
    : Manager< McMove<D> >(),
-     mcSimulatorPtr_(&mcSimulator),
+     simulatorPtr_(&simulator),
      systemPtr_(&system),
-     randomPtr_(&mcSimulator.random())
+     randomPtr_(&simulator.random())
    {  setClassName("McMoveManager"); }
 
    // Destructor
@@ -42,7 +42,7 @@ namespace Rpc {
    */
    template <int D>
    Factory< McMove<D> >* McMoveManager<D>::newDefaultFactory() const
-   {  return new McMoveFactory<D>(*mcSimulatorPtr_); }
+   {  return new McMoveFactory<D>(*simulatorPtr_); }
 
    /* 
    * Read instructions for creating objects from file.

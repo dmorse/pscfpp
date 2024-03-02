@@ -18,8 +18,8 @@ namespace Rpg {
    * Constructor
    */
    template <int D>
-   McMoveFactory<D>::McMoveFactory(McSimulator<D>& mcSimulator)
-    : mcSimulatorPtr_(&mcSimulator)
+   McMoveFactory<D>::McMoveFactory(McSimulator<D>& simulator)
+    : simulatorPtr_(&simulator)
    {}
 
    /* 
@@ -37,11 +37,11 @@ namespace Rpg {
       
       // Try to match classname
       if (className == "RealMove") {
-         ptr = new RealMove<D>(*mcSimulatorPtr_);
+         ptr = new RealMove<D>(*simulatorPtr_);
       } else if (className == "FourierMove") {
-         ptr = new FourierMove<D>(*mcSimulatorPtr_);
+         ptr = new FourierMove<D>(*simulatorPtr_);
       } else if (className == "ForceBiasMove") {
-         ptr = new ForceBiasMove<D>(*mcSimulatorPtr_);
+         ptr = new ForceBiasMove<D>(*simulatorPtr_);
       }
 
       return ptr;

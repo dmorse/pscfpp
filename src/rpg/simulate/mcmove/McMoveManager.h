@@ -36,10 +36,10 @@ namespace Rpg {
       /**
       * Constructor.
       *
-      * \param mcSimulator parent McSimulator
+      * \param simulator parent McSimulator
       * \param system parent System
       */
-      McMoveManager(McSimulator<D>& mcSimulator, System<D>& system);
+      McMoveManager(McSimulator<D>& simulator, System<D>& system);
 
       /**
       * Destructor.
@@ -108,7 +108,7 @@ namespace Rpg {
       /**
        * Pointer to parent Simulator
        */
-      McSimulator<D>* mcSimulatorPtr_;
+      McSimulator<D>* simulatorPtr_;
 
       /**
       * Pointer to parent System.

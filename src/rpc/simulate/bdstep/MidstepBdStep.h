@@ -35,9 +35,9 @@ namespace Rpc {
       /**
       * Constructor.
       *
-      * \param bdSimulator  parent BdSimulator object
+      * \param simulator  parent BdSimulator object
       */
-      MidstepBdStep(BdSimulator<D>& bdSimulator);
+      MidstepBdStep(BdSimulator<D>& simulator);
 
       /**
       * Destructor.

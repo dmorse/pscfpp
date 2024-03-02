@@ -82,7 +82,7 @@ namespace Rpc {
    protected:
 
       using McMove<D>::system;
-      using McMove<D>::mcSimulator;
+      using McMove<D>::simulator;
       using McMove<D>::random;
       using McMove<D>::incrementNAttempt;
       using McMove<D>::incrementNAccept;

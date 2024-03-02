@@ -34,9 +34,9 @@ namespace Rpc {
       /**
       * Constructor.
       *
-      * \param mcSimulator parent McSimulator<D> object
+      * \param simulator parent McSimulator<D> object
       */
-      McMoveFactory(McSimulator<D>& mcSimulator);
+      McMoveFactory(McSimulator<D>& simulator);
 
       /**
       * Method to create any McMove supplied with PSCF.
@@ -50,8 +50,8 @@ namespace Rpc {
 
    private:
 
-      /// Pointer to the parent mcSimulator.
-      McSimulator<D>* mcSimulatorPtr_;
+      /// Pointer to the parent simulator.
+      McSimulator<D>* simulatorPtr_;
 
    };
 
