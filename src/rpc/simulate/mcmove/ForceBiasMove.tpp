@@ -209,12 +209,14 @@ namespace Rpc {
       double weight = exp(bias - dH);
       accept = random().metropolis(weight);
       if (compress != 0){
+         failConverge();
          incrementNFail();
          mcSimulator().restoreMcState();
          system().compute();
          mcSimulator().computeCc();
          mcSimulator().computeDc();
       } else {
+         successConverge();
          if (accept) {
             incrementNAccept();
             mcSimulator().clearMcState();

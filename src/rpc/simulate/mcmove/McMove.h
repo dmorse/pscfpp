@@ -132,6 +132,11 @@ namespace Rpc
       * Return number of moves that fail to converge.
       */
       long nFail() const;
+      
+      /**
+      * Return converge status of current move.
+      */
+      bool isConverge() const;
 
       /**
       * Output statistics for this move (at the end of simulation)
@@ -154,6 +159,16 @@ namespace Rpc
       * Increment the number of failed moves.
       */
       void incrementNFail();
+      
+      /*
+      * Compressor fail to converge. Set isConverge_ to false.
+      */
+      void failConverge();
+      
+      /*
+      * Compressor converge successfully. Set isConverge_ to true.
+      */
+      void successConverge();
 
       /**
       * Get parent System object.
@@ -219,6 +234,9 @@ namespace Rpc
       /// Number of moves that fail to converge.
       long  nFail_;
       
+      /// Compress status.
+      bool  isConverge_;
+      
    };
 
    // Public inline methods
@@ -266,7 +284,28 @@ namespace Rpc
    template <int D>
    inline void McMove<D>::incrementNFail()
    {  ++nFail_; }
-
+   
+   /*
+   * Compressor fail to converge. Set isConverge_ to false.
+   */
+   template <int D>
+   inline void McMove<D>::failConverge()
+   {  isConverge_ = false; }
+   
+   /*
+   * Compressor converge successfully. Set isConverge_ to true.
+   */
+   template <int D>
+   inline void McMove<D>::successConverge()
+   {  isConverge_ = true; }
+   
+   /*
+   * Return converge status of current move.
+   */
+   template <int D>
+   inline bool McMove<D>::isConverge() const
+   {  return isConverge_; }
+   
    /*
    * Get parent System object.
    */

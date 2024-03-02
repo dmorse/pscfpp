@@ -113,9 +113,11 @@ namespace Rpc {
       double weight = exp(-(newHamiltonian - oldHamiltonian));
       accept = random().metropolis(weight);
       if (compress != 0){
+         failConverge();
          incrementNFail();
          mcSimulator().restoreMcState();
       } else {
+         successConverge();
          if (accept) {
             incrementNAccept();
             mcSimulator().clearMcState();
