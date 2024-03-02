@@ -221,7 +221,7 @@ namespace Rpc {
             incrementNAccept();
             simulator().clearMcState();
          } else {
-            mcSimulator().restoreMcState();
+            simulator().restoreMcState();
             system().compute();
             simulator().computeCc();
             simulator().computeDc();
