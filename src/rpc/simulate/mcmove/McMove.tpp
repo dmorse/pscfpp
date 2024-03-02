@@ -85,50 +85,51 @@ namespace Rpc {
 
       // Clear both eigen-components of the fields and hamiltonian
       simulator().clearData();
-      
+
       // Attempt modification
       attemptMoveTimer_.start();
       attemptMove();
       attemptMoveTimer_.stop();
-      
+
       // Call compressor
       compressorTimer_.start();
       int compress = system().compressor().compress();
       compressorTimer_.stop();
-      
+
       // Compute eigenvector components of the current w fields
       computeWcTimer_.start();
       simulator().computeWc();
       computeWcTimer_.stop();
-      
+
       // Evaluate new Hamiltonian
       computeHamiltonianTimer_.start();
       simulator().computeHamiltonian();
       double newHamiltonian = simulator().hamiltonian();
       computeHamiltonianTimer_.stop();
 
-      // Accept or reject move
-      decisionTimer_.start();
       bool accept = false;
-      double weight = exp(-(newHamiltonian - oldHamiltonian));
-      accept = random().metropolis(weight);
-
       if (compress != 0){
          failConverge();
          incrementNFail();
          simulator().restoreMcState();
       } else {
          successConverge();
+
+         // Accept or reject move
+         decisionTimer_.start();
+         double weight = exp(-(newHamiltonian - oldHamiltonian));
+         accept = random().metropolis(weight);
          if (accept) {
             incrementNAccept();
             simulator().clearMcState();
          } else {
             simulator().restoreMcState();
          }
+         decisionTimer_.stop();
+
       }
-      decisionTimer_.stop();
+
       totalTimer_.stop();
-      
       return accept;
    }
 
@@ -138,7 +139,7 @@ namespace Rpc {
    template <int D>
    void McMove<D>::output()
    {}
-   
+
    template<int D>
    void McMove<D>::outputTimers(std::ostream& out)
    {
@@ -171,7 +172,7 @@ namespace Rpc {
           << Dbl(total/nAttempt_, 9, 3) << " s  \n";
       out << "\n";
    }
-   
+
    template<int D>
    void McMove<D>::clearTimers()
    {
@@ -182,7 +183,6 @@ namespace Rpc {
       decisionTimer_.clear();
       totalTimer_.clear();
    }
-      
 
 }
 }

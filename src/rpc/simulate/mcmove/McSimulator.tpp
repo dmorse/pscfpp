@@ -138,7 +138,7 @@ namespace Rpc {
 
          // Choose and attempt an McMove
          mcMoveManager_.chooseMove().move();
-         if (!mcMoveManager_.chooseMove().isConverge()){
+         if (!mcMoveManager_.chosenMove().isConverge()){
             Log::file() << "Step: "<< iStep_<< " fail to converge" << "\n";
          }
       }

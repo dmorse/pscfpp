@@ -203,11 +203,7 @@ namespace Rpc {
       bias *= vNode;
       computeHamiltonianTimer_.stop();
 
-      // Accept or reject move
-      decisionTimer_.start();
       bool accept = false;
-      double weight = exp(bias - dH);
-      accept = random().metropolis(weight);
       if (compress != 0){
          failConverge();
          incrementNFail();
@@ -217,6 +213,11 @@ namespace Rpc {
          simulator().computeDc();
       } else {
          successConverge();
+
+         // Accept or reject move
+         decisionTimer_.start();
+         double weight = exp(bias - dH);
+         accept = random().metropolis(weight);
          if (accept) {
             incrementNAccept();
             simulator().clearMcState();
@@ -226,10 +227,11 @@ namespace Rpc {
             simulator().computeCc();
             simulator().computeDc();
          }
+         decisionTimer_.stop();
+
       }
-      decisionTimer_.stop();
-      totalTimer_.stop();
       
+      totalTimer_.stop();
       return accept;
    }
 
