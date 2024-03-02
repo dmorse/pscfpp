@@ -18,8 +18,8 @@ namespace Rpg {
    * Constructor
    */
    template <int D>
-   BdStepFactory<D>::BdStepFactory(BdSimulator<D>& bdSimulator)
-    : bdSimulatorPtr_(&bdSimulator)
+   BdStepFactory<D>::BdStepFactory(BdSimulator<D>& simulator)
+    : simulatorPtr_(&simulator)
    {}
 
    /* 
@@ -37,13 +37,13 @@ namespace Rpg {
       
       // Try to match classname
       if (className == "ExplicitBdStep" || className == "BdStep") {
-         ptr = new ExplicitBdStep<D>(*bdSimulatorPtr_);
+         ptr = new ExplicitBdStep<D>(*simulatorPtr_);
       } else
       if (className == "PredCorrBdStep") {
-         ptr = new PredCorrBdStep<D>(*bdSimulatorPtr_);
+         ptr = new PredCorrBdStep<D>(*simulatorPtr_);
       } else
       if (className == "LMBdStep") {
-         ptr = new LMBdStep<D>(*bdSimulatorPtr_);
+         ptr = new LMBdStep<D>(*simulatorPtr_);
       }
 
       return ptr;
