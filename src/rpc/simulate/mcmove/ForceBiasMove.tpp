@@ -172,7 +172,6 @@ namespace Rpc {
       // Call compressor
       compressorTimer_.start();
       int compress = system().compressor().compress();
-      UTIL_CHECK(compress == 0);
       compressorTimer_.stop();
 
       // Compute eigenvector components of current fields
@@ -209,18 +208,28 @@ namespace Rpc {
       bool accept = false;
       double weight = exp(bias - dH);
       accept = random().metropolis(weight);
-      if (accept) {
-          incrementNAccept();
-          simulator().clearMcState();
+      if (compress != 0){
+         failConverge();
+         incrementNFail();
+         simulator().restoreMcState();
+         system().compute();
+         simulator().computeCc();
+         simulator().computeDc();
       } else {
-          simulator().restoreMcState();
-          system().compute();
-          simulator().computeCc();
-          simulator().computeDc();
+         successConverge();
+         if (accept) {
+            incrementNAccept();
+            simulator().clearMcState();
+         } else {
+            mcSimulator().restoreMcState();
+            system().compute();
+            simulator().computeCc();
+            simulator().computeDc();
+         }
       }
       decisionTimer_.stop();
       totalTimer_.stop();
-
+      
       return accept;
    }
 

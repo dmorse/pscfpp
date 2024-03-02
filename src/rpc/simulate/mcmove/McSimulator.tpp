@@ -138,7 +138,9 @@ namespace Rpc {
 
          // Choose and attempt an McMove
          mcMoveManager_.chooseMove().move();
-
+         if (!mcMoveManager_.chooseMove().isConverge()){
+            Log::file() << "Step: "<< iStep_<< " fail to converge" << "\n";
+         }
       }
 
       // Analysis (if any)
@@ -183,23 +185,30 @@ namespace Rpc {
       // Print McMove acceptance statistics
       long attempt;
       long accept;
+      long fail;
       using namespace std;
       Log::file() << "Move Statistics:" << endl << endl;
-      Log::file() << setw(32) << left <<  "Move Name"
-           << setw(12) << right << "Attempted"
-           << setw(12) << right << "Accepted"
-           << setw(15) << right << "AcceptRate"
+      Log::file() << setw(20) << left <<  "Move Name"
+           << setw(10) << right << "Attempted"
+           << setw(10) << right << "Accepted"
+           << setw(13) << right << "AcceptRate"
+           << setw(10) << right << "Failed"
+           << setw(13) << right << "FailRate"
            << endl;
       int nMove = mcMoveManager_.size();
       for (int iMove = 0; iMove < nMove; ++iMove) {
          attempt = mcMoveManager_[iMove].nAttempt();
          accept  = mcMoveManager_[iMove].nAccept();
-         Log::file() << setw(32) << left
+         fail  = mcMoveManager_[iMove].nFail();
+         Log::file() << setw(20) << left
               << mcMoveManager_[iMove].className()
-              << setw(12) << right << attempt
-              << setw(12) << accept
-              << setw(15) << fixed << setprecision(6)
+              << setw(10) << right << attempt
+              << setw(10) << accept
+              << setw(13) << fixed << setprecision(5)
               << ( attempt == 0 ? 0.0 : double(accept)/double(attempt) )
+              << setw(10) << fail
+              << setw(13) << fixed << setprecision(5)
+              << ( attempt == 0 ? 0.0 : double(fail)/double(attempt) )
               << endl;
       }
       Log::file() << endl;

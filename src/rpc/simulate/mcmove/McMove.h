@@ -127,6 +127,16 @@ namespace Rpc
       * Return number of moves that have been accepted.
       */
       long nAccept() const;
+      
+      /**
+      * Return number of moves that fail to converge.
+      */
+      long nFail() const;
+      
+      /**
+      * Return converge status of current move.
+      */
+      bool isConverge() const;
 
       /**
       * Output statistics for this move (at the end of simulation)
@@ -144,6 +154,21 @@ namespace Rpc
       * Increment the number of accepted moves.
       */
       void incrementNAccept();
+      
+      /**
+      * Increment the number of failed moves.
+      */
+      void incrementNFail();
+      
+      /*
+      * Compressor fail to converge. Set isConverge_ to false.
+      */
+      void failConverge();
+      
+      /*
+      * Compressor converge successfully. Set isConverge_ to true.
+      */
+      void successConverge();
 
       /**
       * Get parent System object.
@@ -206,6 +231,12 @@ namespace Rpc
       /// Number of moves that have been accepted by this object.
       long  nAccept_;
       
+      /// Number of moves that fail to converge.
+      long  nFail_;
+      
+      /// Compress status.
+      bool  isConverge_;
+      
    };
 
    // Public inline methods
@@ -223,6 +254,13 @@ namespace Rpc
    template <int D>
    inline long McMove<D>::nAccept() const
    {  return nAccept_; }
+   
+   /*
+   * Return number of moves that fail to converge.
+   */
+   template <int D>
+   inline long McMove<D>::nFail() const
+   {  return nFail_; }
 
    // Protected inline methods
 
@@ -239,7 +277,35 @@ namespace Rpc
    template <int D>
    inline void McMove<D>::incrementNAccept()
    {  ++nAccept_; }
-
+   
+   /*
+   * Increment the number of fail moves.
+   */
+   template <int D>
+   inline void McMove<D>::incrementNFail()
+   {  ++nFail_; }
+   
+   /*
+   * Compressor fail to converge. Set isConverge_ to false.
+   */
+   template <int D>
+   inline void McMove<D>::failConverge()
+   {  isConverge_ = false; }
+   
+   /*
+   * Compressor converge successfully. Set isConverge_ to true.
+   */
+   template <int D>
+   inline void McMove<D>::successConverge()
+   {  isConverge_ = true; }
+   
+   /*
+   * Return converge status of current move.
+   */
+   template <int D>
+   inline bool McMove<D>::isConverge() const
+   {  return isConverge_; }
+   
    /*
    * Get parent System object.
    */

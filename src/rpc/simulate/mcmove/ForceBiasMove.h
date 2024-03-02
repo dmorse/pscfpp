@@ -86,6 +86,9 @@ namespace Rpc {
       using McMove<D>::random;
       using McMove<D>::incrementNAttempt;
       using McMove<D>::incrementNAccept;
+      using McMove<D>::incrementNFail;
+      using McMove<D>::failConverge;
+      using McMove<D>::successConverge;
 
       using McMove<D>::computeWcTimer_;
       using McMove<D>::attemptMoveTimer_;
