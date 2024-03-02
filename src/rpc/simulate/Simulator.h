@@ -19,6 +19,8 @@ namespace Pscf {
 namespace Rpc {
 
    template <int D> class System;
+   template <int D> class Compressor;
+   template <int D> class CompressorFactory;
    template <int D> class Perturbation;
    template <int D> class PerturbationFactory;
 
@@ -415,12 +417,22 @@ namespace Rpc {
       System<D>& system();
 
       /**
+      * Get the compressor by reference.
+      */
+      Compressor<D>& compressor();
+
+      /**
+      * Does this system have a Compressor object?
+      */
+      bool hasCompressor() const;
+
+      /**
       * Get random number generator by reference.
       */
       Random& random();
 
       /**
-      * Get the perturbation factory by const reference.
+      * Get the perturbation by const reference.
       */
       Perturbation<D> const & perturbation() const;
 
@@ -436,6 +448,13 @@ namespace Rpc {
       // Protected member functions
 
       using Util::ParamComposite::setClassName;
+
+      /**
+      * Read the compressor block of the parameter file. 
+      *
+      * \param in input parameter stream
+      */
+      void readCompressor(std::istream& in);
 
       /**
       * Get the perturbation factory by non-const reference.
@@ -506,6 +525,11 @@ namespace Rpc {
       long iStep_;
 
       /**
+      * Random number generator seed.
+      */
+      long seed_;
+
+      /**
       * Has the Hamiltonian been computed for the current w and c fields?
       */
       bool hasHamiltonian_;
@@ -568,6 +592,16 @@ namespace Rpc {
       System<D>* systemPtr_;
 
       /**
+      * Pointer to compressor factory object.
+      */
+      CompressorFactory<D>* compressorFactoryPtr_;
+
+      /**
+      * Pointer to an compressor.
+      */
+      Compressor<D>* compressorPtr_;
+
+      /**
       * Pointer to the perturbation Factory.
       */
       PerturbationFactory<D>* perturbationFactoryPtr_;
@@ -593,6 +627,19 @@ namespace Rpc {
       assert(systemPtr_);  
       return *systemPtr_; 
    }
+
+   // Get the Compressor
+   template <int D>
+   inline Compressor<D>& Simulator<D>::compressor()
+   {
+      UTIL_ASSERT(compressorPtr_);
+      return *compressorPtr_;
+   }
+
+   // Does the system have a Compressor object?
+   template <int D>
+   inline bool Simulator<D>::hasCompressor() const
+   {  return (compressorPtr_ != 0); }
 
    // Get the random number generator.
    template <int D>
