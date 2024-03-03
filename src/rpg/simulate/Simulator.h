@@ -10,9 +10,9 @@
 
 #include <util/param/ParamComposite.h>     // base class
 
+#include <pscf/cuda/CudaRandom.h>          // member
 #include <prdc/cuda/RField.h>              // memmber (template arg)
 #include <util/random/Random.h>            // member
-#include <pscf/cuda/CudaRandom.h>          // member
 #include <util/containers/DArray.h>        // member (template)
 #include <util/containers/DMatrix.h>       // member (template)
 
@@ -20,6 +20,8 @@ namespace Pscf {
 namespace Rpg {
 
    template <int D> class System;
+   template <int D> class Compressor;
+   template <int D> class CompressorFactory;
 
    using namespace Util;
    using namespace Pscf::Prdc::Cuda;
@@ -414,6 +416,16 @@ namespace Rpg {
       System<D>& system();
 
       /**
+      * Get the compressor by reference.
+      */
+      Compressor<D>& compressor();
+
+      /**
+      * Does this system have a Compressor object?
+      */
+      bool hasCompressor() const;
+
+      /**
       * Get random number generator by reference.
       */
       Random& random();
@@ -428,6 +440,13 @@ namespace Rpg {
    protected:
 
       using Util::ParamComposite::setClassName;
+
+      /**
+      * Read compressor parameter block.
+      *
+      * \param in input parameter stream
+      */
+      virtual void readCompressor(std::istream &in);
 
       /**
       * Random number generator
@@ -541,7 +560,7 @@ namespace Rpg {
       DArray<double>  sc_;
       
       /**
-      * A single eigenvector component of the w fields after a constant shift
+      * A single eigen-component of w fields after a constant shift.
       */ 
       RField<D> wcs_;
 
@@ -551,6 +570,16 @@ namespace Rpg {
       System<D>* systemPtr_;
 
       /**
+      * Pointer to compressor factory object
+      */
+      CompressorFactory<D>* compressorFactoryPtr_;
+
+      /**
+      * Pointer to an compressor.
+      */
+      Compressor<D>* compressorPtr_;
+
+      /**
       * Has required memory been allocated?
       */
       bool isAllocated_;
@@ -558,6 +587,19 @@ namespace Rpg {
    };
 
    // Inline functions
+
+   // Get the Compressor
+   template <int D>
+   inline Compressor<D>& Simulator<D>::compressor()
+   {
+      UTIL_ASSERT(compressorPtr_);
+      return *compressorPtr_;
+   }
+
+   // Does the system have a Compressor object?
+   template <int D>
+   inline bool Simulator<D>::hasCompressor() const
+   {  return (compressorPtr_ != 0); }
 
    // Get the random number generator.
    template <int D>

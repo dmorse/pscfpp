@@ -10,7 +10,8 @@
 
 #include "Simulator.h"
 #include <rpg/System.h>
-#include <rpg/compressor/Compressor.h>
+#include <rpc/compressor/Compressor.h>
+#include <rpc/compressor/CompressorFactory.h>
 #include <util/misc/Timer.h>
 #include <util/random/Random.h>
 #include <util/global.h>
@@ -26,24 +27,40 @@ namespace Rpg {
    */
    template <int D>
    Simulator<D>::Simulator(System<D>& system)
-   : random_(),
-     cudaRandom_(),
-     iStep_(0),
-     hasHamiltonian_(false),
-     hasWc_(false),
-     hasCc_(false),
-     systemPtr_(&system),
-     isAllocated_(false)
-   { setClassName("Simulator"); }
+    : random_(),
+      cudaRandom_(),
+      iStep_(0),
+      hasHamiltonian_(false),
+      hasWc_(false),
+      hasCc_(false),
+      systemPtr_(&system),
+      compressorFactoryPtr_(0),
+      compressorPtr_(0),
+      isAllocated_(false)
+   {
+      setClassName("Simulator");
+      if (system.hasCompressor()) {
+         compressorPtr_ = &(system.compressor());
+      }
+      compressorFactoryPtr_ = new CompressorFactory<D>(system);
+      //perturbationFactoryPtr_ = new PerturbationFactory<D>(*this);
+   }
 
    /*
    * Destructor.
    */
    template <int D>
    Simulator<D>::~Simulator()
-   {}
+   {
+      if (compressorFactoryPtr_) {
+         delete compressorFactoryPtr_;
+      }
+      if (compressorPtr_ and !system().hasCompressor()) {
+         delete compressorPtr_;
+      }
+   }
 
-   /* 
+   /*
    * Allocate required memory.
    */
    template <int D>
@@ -73,19 +90,37 @@ namespace Rpg {
       for (int i = 0; i < nMonomer - 1; ++i) {
          dc_[i].allocate(meshSize);
       }
-      
-      // Allocate memory for single eignevector components of w after constant shift
+
+      // Allocate memory for single eigencomponent of w
       wcs_.allocate(meshSize);
-      
+
       isAllocated_ = true;
    }
 
-   /* 
+   /*
    * Virtual function to read parameters - unimplemented.
    */
    template <int D>
    void Simulator<D>::readParameters(std::istream &in)
-   {  UTIL_THROW("Error: Unimplemented Simulator<D>::readParameters"); } 
+   {
+      // Read required Compressor block, if needed
+      if (!system().hasCompressor()) {
+         readCompressor(in);
+      }
+
+      // Optionally random seed.
+      seed_ = 0;
+      readOptional(in, "seed", seed_);
+
+      // Set random number generator seed.
+      // Default value seed_ = 0 uses the clock time.
+      random().setSeed(seed_);
+
+      // Initialize data of Simulator<D> base class
+      allocate();
+      analyzeChi();
+   }
+
 
    /*
    * Perform a field theoretic simulation of nStep steps.
@@ -102,7 +137,7 @@ namespace Rpg {
                               std::string classname,
                               std::string filename)
    {  UTIL_THROW("Error: Unimplemented function Simulator<D>::analyze"); }
-   
+
    /*
    * Compute field theoretic Hamiltonian H[W].
    */
@@ -120,7 +155,7 @@ namespace Rpg {
 
       const int nMonomer = mixture.nMonomer();
       const int meshSize = domain.mesh().size();
-      
+
       // GPU resources
       int nBlocks, nThreads;
       ThreadGrid::setThreadsLogical(meshSize, nBlocks, nThreads);
@@ -161,12 +196,12 @@ namespace Rpg {
             }
          }
       }
-      
+
       // Add average of pressure field wc_[nMonomer-1] to lnQ
-      double sum_xi = 
+      double sum_xi =
            (double)gpuSum(wc_[nMonomer-1].cField(), meshSize);
       lnQ += sum_xi/double(meshSize);
-      
+
       // lnQ now contains a value per monomer
 
       // Initialize field contribution HW
@@ -184,19 +219,19 @@ namespace Rpg {
             (wcs_.cField(), wc_[j].cField(), s, meshSize);
          // Compute quadratic field contribution to HW
          double wSqure = 0;
-         wSqure = 
-              (double)gpuInnerProduct(wcs_.cField(), 
+         wSqure =
+              (double)gpuInnerProduct(wcs_.cField(),
                                       wcs_.cField(), meshSize);
          HW += prefactor * wSqure;
       }
-      
+
       // Normalize HW to equal a value per monomer
       HW /= double(meshSize);
 
       // Add constant term K/2 per monomer (K=s=e^{T}chi e/M^2)
       HW += 0.5*sc_[nMonomer - 1];
 
-      // Compute number of monomers in the system (nMonomerSystem)      
+      // Compute number of monomers in the system (nMonomerSystem)
       const double vSystem  = domain.unitCell().volume();
       const double vMonomer = mixture.vMonomer();
       const double nMonomerSystem = vSystem / vMonomer;
@@ -253,7 +288,7 @@ namespace Rpg {
          }
       }
 
-      // Eigenvalue calculations use data structures and 
+      // Eigenvalue calculations use data structures and
       // functions from the Gnu Scientific Library (GSL)
 
       // Allocate GSL matrix A that will hold a copy of chiP
@@ -274,7 +309,7 @@ namespace Rpg {
       error = gsl_eigen_symmv(A, Avals, Avecs, work);
       UTIL_CHECK(error == 0);
 
-      // Requirements: 
+      // Requirements:
       // - A has exactly one zero eigenvalue, with eigenvector (1,...,1)
       // - All other eigenvalues must be negative.
 
@@ -305,8 +340,8 @@ namespace Rpg {
       }
       UTIL_CHECK(nNull == 1);
       UTIL_CHECK(iNull >= 0);
-    
-      // Set eigenpair with zero eigenvalue 
+
+      // Set eigenpair with zero eigenvalue
       i = nMonomer - 1;
       chiEvals_[i] = 0.0;
       for (j = 0; j < nMonomer; ++j) {
@@ -325,11 +360,11 @@ namespace Rpg {
          for (j = 0;  j < nMonomer; ++j) {
             vec = chiEvecs_(i, j);
             norm += vec*vec;
-         } 
+         }
          prefactor = sqrt( double(nMonomer)/norm );
          for (j = 0;  j < nMonomer; ++j) {
             chiEvecs_(i, j) *= prefactor;
-         } 
+         }
       }
 
       // Check final eigenvector is (1, ..., 1)
@@ -344,7 +379,7 @@ namespace Rpg {
          s[i] = 0.0;
          for (j = 0; j < nMonomer; ++j) {
            s[i] += chi(i,j);
-         } 
+         }
          s[i] = s[i]/double(nMonomer);
       }
 
@@ -362,7 +397,7 @@ namespace Rpg {
       for (i = 0; i < nMonomer; ++i) {
          Log::file() << "Eigenpair " << i << "\n";
          Log::file() << "value  =  " << chiEvals_[i] << "\n";
-         Log::file() << "vector = [ "; 
+         Log::file() << "vector = [ ";
          for (j = 0; j < nMonomer; ++j) {
             Log::file() << chiEvecs_(i, j) << "   ";
          }
@@ -388,7 +423,7 @@ namespace Rpg {
       // GPU resources
       int nBlocks, nThreads;
       ThreadGrid::setThreadsLogical(meshSize, nBlocks, nThreads);
-      
+
       DArray<RField<D>> const * Wr = &system().w().rgrid();
       // Loop over eigenvectors (j is an eigenvector index)
       for (i = 0; i < nMonomer; ++i) {
@@ -407,17 +442,17 @@ namespace Rpg {
                (Wc.cField(), (*Wr)[j].cField(), vec, meshSize);
          }
       }
-      
+
       #if 0
       // Debugging output
       std::string filename = "wc";
-      system().fieldIo().writeFieldsRGrid(filename, wc_, 
+      system().fieldIo().writeFieldsRGrid(filename, wc_,
                                           system().domain().unitCell());
       #endif
 
       hasWc_ = true;
    }
-   
+
    /*
    * Compute the eigenvector components of the c-fields, using the
    * eigenvectors chiEvecs_ of the projected chi matrix as a basis.
@@ -440,26 +475,26 @@ namespace Rpg {
       DArray<RField<D>> const * Cr = &system().c().rgrid();
       // Loop over eigenvectors (i is an eigenvector index)
       for (i = 0; i < nMonomer; ++i) {
-         
+
          // Set cc_[i] to zero
          RField<D>& Cc = cc_[i];
          assignUniformReal<<<nBlocks, nThreads>>>(Cc.cField(), 0, meshSize);
 
-         // Loop over monomer types 
+         // Loop over monomer types
          for (j = 0; j < nMonomer; ++j) {
             cudaReal vec;
             vec = (cudaReal)chiEvecs_(i, j);
-            
+
             // Loop over grid points
             pointWiseAddScale<<<nBlocks, nThreads>>>
                (Cc.cField(), (*Cr)[j].cField(), vec, meshSize);
          }
       }
-      
+
       #if 0
       // Debugging output
       std::string filename = "cc";
-      system().fieldIo().writeFieldsRGrid(filename, cc_, 
+      system().fieldIo().writeFieldsRGrid(filename, cc_,
                                           system().domain().unitCell());
       #endif
 
@@ -487,7 +522,7 @@ namespace Rpg {
       // GPU resources
       int nBlocks, nThreads;
       ThreadGrid::setThreadsLogical(meshSize, nBlocks, nThreads);
-      
+
       // Loop over composition eigenvectors (exclude the last)
       for (i = 0; i < nMonomer - 1; ++i) {
          RField<D>& Dc = dc_[i];
@@ -495,7 +530,7 @@ namespace Rpg {
          RField<D> const & Cc = cc_[i];
          b = -1.0*double(nMonomer)/chiEvals_[i];
          s = sc_[i];
-          
+
          // Loop over grid points
          computeDField<<<nBlocks, nThreads>>>
             (Dc.cField(), Wc.cField(), Cc.cField(), a, b, s, meshSize);
@@ -506,17 +541,33 @@ namespace Rpg {
 
    /*
    * Output all timer results.
-   */ 
+   */
    template<int D>
    void Simulator<D>::outputTimers(std::ostream& out)
    { }
-  
+
    /*
    * Clear all timers.
-   */ 
+   */
    template<int D>
    void Simulator<D>::clearTimers()
    { }
+
+   // Protected functions
+
+   /*
+   * Read the required Compressor parameter file block.
+   */
+   template<int D>
+   void Simulator<D>::readCompressor(std::istream& in)
+   {
+      UTIL_CHECK(compressorFactoryPtr_);
+      std::string className;
+      bool isEnd = false;
+      compressorPtr_ =
+         compressorFactoryPtr_->readObject(in, *this, className, isEnd);
+      UTIL_CHECK(compressorPtr_);
+   }
 
 }
 }
