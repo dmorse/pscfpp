@@ -115,7 +115,7 @@ namespace Rpc {
       simulator().clearData();
 
       // Enforce incompressibility (also solves MDE repeatedly)
-      system().compressor().compress();
+      simulator().compressor().compress();
       UTIL_CHECK(system().hasCFields());
 
       // Evaluate component properties in new state

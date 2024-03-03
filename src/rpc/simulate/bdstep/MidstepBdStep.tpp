@@ -140,7 +140,7 @@ namespace Rpc {
 
       // Set modified fields at mid-point
       system().setWRGrid(wh_);
-      system().compressor().compress();
+      simulator().compressor().compress();
       UTIL_CHECK(system().hasCFields());
 
       // Compute components and derivatives at mid-point
@@ -181,7 +181,7 @@ namespace Rpc {
 
       // Set fields at final point
       system().setWRGrid(wf_);
-      system().compressor().compress();
+      simulator().compressor().compress();
       UTIL_CHECK(system().hasCFields());
 
       // Compute components and derivatives at final point

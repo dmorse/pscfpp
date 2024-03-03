@@ -168,7 +168,7 @@ namespace Rpc {
 
       // Set modified fields at predicted state wp_
       system().setWRGrid(w_);
-      system().compressor().compress();
+      simulator().compressor().compress();
       UTIL_CHECK(system().hasCFields());
 
       // Compute components and derivatives at wp_

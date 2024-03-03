@@ -152,6 +152,7 @@ namespace Rpc {
       // Inherited public functions
 
       using Simulator<D>::system;
+      using Simulator<D>::compressor;
       using Simulator<D>::random;
       using Simulator<D>::allocate;
       using Simulator<D>::analyzeChi;

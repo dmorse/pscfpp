@@ -171,7 +171,7 @@ namespace Rpc {
 
       // Call compressor
       compressorTimer_.start();
-      int compress = system().compressor().compress();
+      int compress = simulator().compressor().compress();
       compressorTimer_.stop();
 
       // Compute eigenvector components of current fields

@@ -60,6 +60,10 @@ namespace Rpc {
    template <int D>
    void McSimulator<D>::readParameters(std::istream &in)
    {
+      // Read compressor block and optional random number generator seed
+      Simulator<D>::readParameters(in);
+
+      #if 0
       // Read required Compressor block
       //readCompressor(in);
 
@@ -74,6 +78,7 @@ namespace Rpc {
       // Initialize data of Simulator<D> base class
       allocate();
       analyzeChi();
+      #endif
 
       // Read block of mc move data inside
       readParamComposite(in, mcMoveManager_);
@@ -172,7 +177,7 @@ namespace Rpc {
       // Output number of times MDE has been solved for the simulation run
       Log::file() << std::endl;
       Log::file() << "MDE counter   " 
-                  << system().compressor().mdeCounter() << std::endl;
+                  << compressor().mdeCounter() << std::endl;
       Log::file() << std::endl;
       
       // Output times for the simulation run
