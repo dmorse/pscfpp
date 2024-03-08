@@ -1,0 +1,171 @@
+
+Goal:
+
+Create a system for restoring rejected McMoves that is flexible enough
+to deal with moves that require non-standard data (e.g., the force
+bias move) and can also be used to revert BD steps upon failure of the
+compressor to converge.
+
+Ideas: 
+
+1) The information we are storing in McState could include all of the 
+information that is computed and stored in the Simulation base class. 
+This includes Hamiltonian values, and eigenvector components of w, c 
+and d field.
+
+2) Much of the same information is potentially needed in both Mc and Bd
+simulations. If we develop a flexible system for deciding what to save,
+we might as well move the system up into the Simulator base class and
+use it for both Mc and Bd.
+
+3) The proposed design assumes that we can design MC and BD algorithms 
+that never require access to the real-field representation of the monomer
+c-fields that are stored by the system, since those can only be recomputed
+by an expensive MDE solution. If we really needed these, we could easily 
+reconstruct them from a stored set of Cc_ eigenvector components, but thus 
+far we haven't seen an algorithm in which these are even needed. The
+fields that are needed are the w, wc and dc fields.
+
+4) Proposal: Create a new SimState class that is very similar to McState
+but that is owned by the Simulator base class, and move responsibility
+for save and restoring states up into the base class. 
+
+
+Pseudo-Code
+---------------
+
+struct SimState {
+
+   // Idea: Stores all information computed stored by the Simulation
+   // bas class and can restore entire physical state if needed
+
+   // Essentially identical to McState, but with added 
+   // DArray< RField<D> > members for cc, and dc.
+
+   DArray< RField<D> > w;
+   DArray< RField<D> > wc;
+   DArray< RField<D> > cc;
+   DArray< RField<D> > dc;
+   double hamiltonian;
+   double idealHamiltonian;
+   double fieldHamiltonian;
+
+   // Save policy controls if something needs to be saved. 
+   // If true -> save and restore
+   bool ccSavePolicy;
+   bool dcSavePolicy;
+
+   // Use values of ccSavePolicy and dcSavePolicy
+   // to control what gets allocated by SimState::allocate statement
+   // This requires that policies are set before allocation.
+
+   // Assumption, for now: w and wc should always be saved and 
+   // restored, so we don't need policy variables for these.
+
+}
+
+class Simulate {
+
+public:
+
+   .
+   .
+   .
+
+protected:
+
+   // Save and restore functions can use values of SavePolicy variables
+   // in state_ to decide what to save.
+
+   SimState state_;
+
+   void restoreState() {
+ 
+      // Restore Hamiltonian 
+      hamiltonian_ = mcState_.hamiltonian; 
+      idealHamiltonian_ = mcState_.idealHamiltonian; 
+      fieldHamiltonian_ = mcState_.fieldHamiltonian; 
+      hasHamiltonian_;
+
+      // Restore fields
+      system().restoreRGrid(mcState_.w);
+      system().setWRGrid(state_.w);
+      wc_ <- state_.wc
+      hasWc_ = true;
+      if (state_.ccSavePolicy_) {
+         cc_ <- mcState_.dc;
+         hasCc_ = true;
+      }
+      if (state_.dcSavePolicy_) {
+         dc_ <- mcState_.dc;
+         hasDc_ = true;
+      }
+
+      state_.hasData = false;
+   }
+
+   void saveState() {
+  
+      // Save fields
+      for (int i = 0; i < nMonomer; ++i) {
+         state_.w[i] = system().w().rgrid(i)
+         state_.wc[i] = wc(i)
+         if (state_.ccSavePolicy_) {
+            state_.cc[i] = cc_[i];
+         }
+         if (state_.ccSavePolicy_) {
+           state_.dc[i] = dc_[i];
+         }
+      }
+
+      // Save Hamiltonian
+      ....
+
+      state_.hasData = true;
+   }
+
+}
+
+class McMove {
+
+   virtual bool needsCc()
+   {  return False_; }
+
+   virtual bool needsDc()
+   {  return False_; }
+
+}
+
+class BdStep {
+
+   virtual bool needsCc()
+   {  return False_; }
+
+   virtual bool needsDc()
+   {  return True_; }
+
+}
+
+class McSimulator {
+
+   void setUp () {
+
+      // Figure out what needs to be saved
+      state_.ccSavePolicy = false;
+      state_.dcSavePolicy = false;
+      // Loop over McMoves to set true if true for any move
+
+      system().compute();     \\ exists
+      computeWc();            \\ exists
+      computeHamiltonian();   \\ exists
+      if (state_.ccSavePolicy || state_.dcSavePolicy()) {
+         computeCc();
+      }
+      if (state_.dcSavePolicy()) {
+         computeDc();
+      }
+
+   }
+
+}
+
