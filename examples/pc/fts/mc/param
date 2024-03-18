@@ -36,14 +36,16 @@ System{
   }
   McSimulator{
     McMoveManager{
-
-      RealMove{
+      ForceBiasMove{
         probability     0.50
+        mobility	4E-3
+      }
+      RealMove{
+        probability     0.25
         A               0.15
       }
-
       FourierMove{
-        probability     0.50
+        probability     0.25
         A               0.001
         F*              20.990
         tau             2.64737
@@ -61,10 +63,6 @@ System{
         outputFileName  out/hamiltonian
         nSamplePerBlock 2
       }
-HamiltonianAutoCorr{
-interval        2
-outputFileName  out/hamAuto
-}
       StepLogger{
         interval        50
       }

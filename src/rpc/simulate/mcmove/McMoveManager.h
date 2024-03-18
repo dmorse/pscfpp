@@ -101,7 +101,17 @@ namespace Rpc {
       * Clear timers 
       */
       void clearTimers();
-  
+      
+      /**
+      * Decide whether any move needs to store cc fields.
+      */
+      bool needsCc();
+      
+      /**
+      * Decide whether any move needs to store dc fields.
+      */
+      bool needsDc();
+ 
    protected:
       
       using Manager< McMove<D> >::setClassName;

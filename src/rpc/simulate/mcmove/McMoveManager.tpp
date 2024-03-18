@@ -137,6 +137,34 @@ namespace Rpc {
       }
    }
    
+   /*
+   * Decide whether any move needs to store cc fields.
+   */
+   template <int D>
+   bool McMoveManager<D>::needsCc()
+   {
+      for (int i=0; i< size(); i++) {
+         if((*this)[i].needsCc()){
+            return true;
+         }
+      }
+      return false;
+   }
+   
+   /*
+   * Decide whether any move needs to store dc fields.
+   */
+   template <int D>
+   bool McMoveManager<D>::needsDc()
+   {
+      for (int i=0; i< size(); i++) {
+         if((*this)[i].needsDc()){
+            return true;
+         }
+      }
+      return false;
+   }
+   
 }
 }
 #endif

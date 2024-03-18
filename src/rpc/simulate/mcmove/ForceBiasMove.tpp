@@ -86,11 +86,6 @@ namespace Rpc {
       }
 
       McMove<D>::setup();
-      system().compute();
-      simulator().computeWc();
-      simulator().computeCc();
-      simulator().computeDc();
-
    }
  
    /*
@@ -103,9 +98,7 @@ namespace Rpc {
       incrementNAttempt();
 
       // Preconditions
-      UTIL_CHECK(system().hasCFields());
       UTIL_CHECK(simulator().hasWc());
-      UTIL_CHECK(simulator().hasCc());
       UTIL_CHECK(simulator().hasDc());
       UTIL_CHECK(simulator().hasHamiltonian());
 
@@ -118,7 +111,7 @@ namespace Rpc {
       double oldHamiltonian = simulator().hamiltonian();
 
       // Save current state
-      simulator().saveMcState();
+      simulator().saveState();
 
       // Clear both eigen-components of the fields and hamiltonian
       simulator().clearData();
@@ -207,10 +200,7 @@ namespace Rpc {
       if (compress != 0){
          failConverge();
          incrementNFail();
-         simulator().restoreMcState();
-         system().compute();
-         simulator().computeCc();
-         simulator().computeDc();
+         simulator().restoreState();
       } else {
          successConverge();
 
@@ -220,12 +210,9 @@ namespace Rpc {
          accept = random().metropolis(weight);
          if (accept) {
             incrementNAccept();
-            simulator().clearMcState();
+            simulator().clearState();
          } else {
-            simulator().restoreMcState();
-            system().compute();
-            simulator().computeCc();
-            simulator().computeDc();
+            simulator().restoreState();
          }
          decisionTimer_.stop();
 
@@ -247,7 +234,7 @@ namespace Rpc {
    {
       // Output timing results, if requested.
       out << "\n";
-      out << "Real Move times contributions:\n";
+      out << "Force Bias Move times contributions:\n";
       McMove<D>::outputTimers(out);
    }
 
