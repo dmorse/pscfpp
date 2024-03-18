@@ -11,6 +11,7 @@ rpc_simulate_= \
   $(rpc_simulate_perturbation_) \
   $(rpc_simulate_analyzer_) \
   $(rpc_trajectory_) \
+  rpc/simulate/SimState.cpp \
   rpc/simulate/Simulator.cpp \
   rpc/simulate/SimulatorFactory.cpp 
   

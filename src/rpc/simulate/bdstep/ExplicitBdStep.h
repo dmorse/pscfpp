@@ -64,12 +64,14 @@ namespace Rpc {
       * Take a single Brownian dynamics step.
       */
       virtual void step();
-
+      
    protected:
 
       using BdStep<D>::system;
       using BdStep<D>::simulator;
       using BdStep<D>::random;
+      using BdStep<D>::failConverge;
+      using BdStep<D>::successConverge;
       using ParamComposite::read;
 
    private:
@@ -82,9 +84,9 @@ namespace Rpc {
 
       // Prefactor of -dc_ in deterministic drift term
       double mobility_;
-
+      
    };
-
+   
    #ifndef RPC_EXPLICIT_BD_STEP_TPP
    // Suppress implicit instantiation
    extern template class ExplicitBdStep<1>;

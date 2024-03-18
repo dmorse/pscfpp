@@ -1,5 +1,5 @@
-#ifndef RPC_MC_STATE_CPP
-#define RPC_MC_STATE_CPP
+#ifndef RPC_SIM_STATE_CPP
+#define RPC_SIM_STATE_CPP
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory
@@ -8,14 +8,14 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "McState.tpp"
+#include "SimState.tpp"
 
 namespace Pscf {
 namespace Rpc {
 
-   template struct McState<1>;
-   template struct McState<2>;
-   template struct McState<3>;
+   template struct SimState<1>;
+   template struct SimState<2>;
+   template struct SimState<3>;
 
 }
 }

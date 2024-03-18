@@ -112,6 +112,7 @@ namespace Rpc {
    void BdSimulator<D>::setup()
    {
       UTIL_CHECK(system().w().hasData());
+      state_.hamiltonianSavePolicy = false;
       analyzeChi();
       system().compute();
       computeWc();
@@ -139,21 +140,35 @@ namespace Rpc {
       Timer timer;
       Timer analyzerTimer;
       timer.start();
-      for (iStep_ = 0; iStep_ < nStep; ++iStep_) {
-
-         // Analysis (if any)
-         analyzerTimer.start();
-         if (Analyzer<D>::baseInterval != 0) {
-            if (iStep_ % Analyzer<D>::baseInterval == 0) {
-               if (analyzerManager_.size() > 0) {
-                  analyzerManager_.sample(iStep_);
-               }
+      iStep_ = 0;
+      // Analysis initial step (if any)
+      analyzerTimer.start();
+      if (Analyzer<D>::baseInterval != 0) {
+         if (iStep_ % Analyzer<D>::baseInterval == 0) {
+            if (analyzerManager_.size() > 0) {
+               analyzerManager_.sample(iStep_);
             }
          }
-         analyzerTimer.stop();
-
+      }
+      analyzerTimer.stop();
+      for (iTotalStep_ = 0; iTotalStep_ < nStep; ++iTotalStep_) {
          // Take a step (modifies W fields)
          stepper().step();
+         if (stepper().isConverge()){
+            iStep_++;
+            // Analysis (if any)
+            analyzerTimer.start();
+            if (Analyzer<D>::baseInterval != 0) {
+               if (iStep_ % Analyzer<D>::baseInterval == 0) {
+                  if (analyzerManager_.size() > 0) {
+                     analyzerManager_.sample(iStep_);
+                  }
+               }
+            }
+            analyzerTimer.stop();
+         } else{
+            Log::file() << "Step: "<< iTotalStep_<< " fail to converge" << "\n";
+         }
 
       }
 
@@ -186,6 +201,9 @@ namespace Rpc {
       // Output times for the simulation run
       Log::file() << std::endl;
       Log::file() << "nStep               " << nStep << std::endl;
+      if (iStep_ != nStep){
+         Log::file() << "nFail Step          " << (nStep - iStep_) << std::endl;
+      }
       Log::file() << "Total run time      " << time
                   << " sec" << std::endl;
       double rStep = double(nStep);

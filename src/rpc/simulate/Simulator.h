@@ -10,6 +10,7 @@
 
 #include <util/param/ParamComposite.h>     // base class
 
+#include <rpc/simulate/SimState.h>         // member
 #include <prdc/cpu/RField.h>               // memmber (template arg)
 #include <util/random/Random.h>            // member
 #include <util/containers/DArray.h>        // member (template)
@@ -150,9 +151,14 @@ namespace Rpc {
       virtual void clearTimers();
 
       /**
-      * Return the current simulation step index.
+      * Return the current converged simulation step index.
       */
       long iStep();
+      
+      /**
+      * Return the current simulation step index.
+      */
+      long iTotalStep();
 
       ///@}
       /// \name Projected Chi Matrix
@@ -265,12 +271,12 @@ namespace Rpc {
       double idealHamiltonian() const;
 
       /**
-      * Get the quadratic field contribution to the MC Hamiltonian.
+      * Get the quadratic field contribution to the Hamiltonian.
       */
       double fieldHamiltonian() const;
 
       /**
-      * Has the MC Hamiltonian been computed for current w and c fields?
+      * Has the Hamiltonian been computed for current w and c fields?
       */
       bool hasHamiltonian() const;
 
@@ -404,7 +410,46 @@ namespace Rpc {
       * Are the current d fields valid ?
       */
       bool hasDc() const;
-
+      
+      ///@}
+      /// \name Utilities for moves
+      ///@{
+      
+      /**
+      * Save a copy of the fts move state.
+      *
+      * This function and restoreState() are intended for use 
+      * in the implementation of field theoretic moves. 
+      * This function stores the current w fields and the corresponding
+      * Hamiltonian value. Current cc fields and dc fields are saved 
+      * based on save policy. This is normally the first step of a fts
+      * move, prior to an attempted modification of the fields stored
+      * in the system w field container.
+      */
+      void saveState();
+      
+      /**
+      * Restore the saved copy of the fts move state.
+      *
+      * This function and saveState() are intended to be used
+      * together in the implementation of fts moves. If an
+      * attempted Monte-Carle move is rejected or an fts move 
+      * fails to converge restoreState() is called to restore 
+      * the fields and Hamiltonian value that were saved
+      * by a previous call to the function saveState().
+      */
+      void restoreState();
+      
+      /**
+      * Clear the saved copy of the fts state.
+      *
+      * This function, restoreState(), and saveState() are intended
+      * to be used together in the implementation of fts moves. If
+      * an attempted move is accepted, clearState() is called to clear
+      * clear state_.hasData
+      */
+      void clearState();
+      
       ///@}
       /// \name Miscellaneous
       ///@{
@@ -418,7 +463,7 @@ namespace Rpc {
       * Get random number generator by reference.
       */
       Random& random();
-
+      
       /**
       * Get the perturbation factory by const reference.
       */
@@ -484,6 +529,11 @@ namespace Rpc {
       * with respect to one eigenvector w-field component.
       */
       DArray< RField<D> > dc_;
+      
+      /**
+      * State saved during fts simulation.
+      */
+      mutable SimState<D> state_;
 
       /**
       * Field theoretic Hamiltonian H[W] (extensive value).
@@ -501,9 +551,14 @@ namespace Rpc {
       double fieldHamiltonian_;
 
       /**
-      * Simulation step counter.
+      * Simulation converge step counter.
       */
       long iStep_;
+      
+      /**
+      * Simulation step counter.
+      */
+      long iTotalStep_;
 
       /**
       * Has the Hamiltonian been computed for the current w and c fields?
@@ -561,7 +616,7 @@ namespace Rpc {
       * chiEvecs_, and M = nMonomer.
       */
       DArray<double>  sc_;
-
+      
       /**
       * Pointer to the parent system.
       */
@@ -731,7 +786,7 @@ namespace Rpc {
    template <int D>
    inline bool Simulator<D>::hasPerturbation() const
    {  return (perturbationPtr_ != 0); }
-
+   
    // Clear all data (eigen-components of w field and Hamiltonian)
    template <int D>
    inline void Simulator<D>::clearData()
@@ -745,6 +800,10 @@ namespace Rpc {
    template <int D>
    inline long Simulator<D>::iStep()
    {  return iStep_; }
+   
+   template <int D>
+   inline long Simulator<D>::iTotalStep()
+   {  return iTotalStep_; }
 
    #ifndef RPC_SIMULATOR_TPP
    // Suppress implicit instantiation

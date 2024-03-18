@@ -101,6 +101,21 @@ namespace Rpc
       */
       virtual bool move();
       
+      
+      /**
+      * Decide whether cc fields need to be saved for move
+      * The default implementation is false
+      */
+      virtual bool needsCc()
+      {  return false; }
+      
+      /**
+      * Decide whether dc fields need to be saved for move
+      * The default implementation is false
+      */
+      virtual bool needsDc()
+      { return false; }
+
       /**
       * Log output timing results 
       */

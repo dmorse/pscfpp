@@ -71,6 +71,11 @@ namespace Rpc {
       * Return real move times contributions.
       */
       void outputTimers(std::ostream& out);
+      
+      /**
+      * Decide whether dc fields need to be saved for move
+      */
+      bool needsDc();
 
       // Inherited public member function
       using McMove<D>::move;
@@ -112,6 +117,15 @@ namespace Rpc {
       double mobility_;
 
    };
+   
+   // Public inline methods
+
+   /*
+   * Return whether dc fields need to be saved for ForceBiasMove.
+   */
+   template <int D>
+   inline bool ForceBiasMove<D>::needsDc()
+   {  return true; }
 
    #ifndef RPC_FORCE_BIAS_MOVE_TPP
    // Suppress implicit instantiation
