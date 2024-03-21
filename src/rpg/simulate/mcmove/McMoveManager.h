@@ -66,11 +66,11 @@ namespace Rpg {
       * \return chosen McMove
       */
       McMove<D>& chooseMove();
-
+      
       /**
       * Output statistics for all moves.
       */
-      void output();
+      void output() const;
 
       /**
       * Return probability of move i.
@@ -85,12 +85,22 @@ namespace Rpg {
       /**
       * Log output timing results 
       */
-      void outputTimers(std::ostream& out);
+      void outputTimers(std::ostream& out) const;
       
       /**
       * Clear timers 
       */
       void clearTimers();
+      
+      /**
+      * Decide whether any move needs to store cc fields.
+      */
+      bool needsCc();
+      
+      /**
+      * Decide whether any move needs to store dc fields.
+      */
+      bool needsDc();
   
    protected:
       
@@ -119,7 +129,7 @@ namespace Rpg {
       * Pointer to random number generator.
       */
       Random* randomPtr_;
-
+      
       // Private member functions
 
       /**

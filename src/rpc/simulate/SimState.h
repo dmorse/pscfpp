@@ -86,14 +86,14 @@ namespace Rpc {
       /// Monte-Carlo field part contribution to Hamiltonian value.
       double fieldHamiltonian;
             
-      /// Save policy controls if cc fields needs to be saved.
-      bool ccSavePolicy;
+      /// If cc fields needs to be saved.
+      bool needsCc;
       
-      /// Save policy controls if dc fields needs to be saved.
-      bool dcSavePolicy;
+      /// If dc fields needs to be saved.
+      bool needsDc;
       
-      /// Save policy controls if hamiltonian needs to be saved.
-      bool hamiltonianSavePolicy;
+      /// If hamiltonian needs to be saved.
+      bool needsHamiltonian;
 
       /// Is this struct being used to store data?
       bool hasData;

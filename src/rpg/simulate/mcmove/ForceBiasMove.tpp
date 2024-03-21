@@ -86,10 +86,6 @@ namespace Rpg {
       }
 
       McMove<D>::setup();
-      system().compute();
-      simulator().computeWc();
-      simulator().computeCc();
-      simulator().computeDc(); 
       biasField_.allocate(meshSize);
       dwd_.allocate(meshSize);
       gaussianField_.allocate(meshSize);
@@ -105,9 +101,7 @@ namespace Rpg {
       incrementNAttempt();
 
       // Preconditions
-      UTIL_CHECK(system().hasCFields());
       UTIL_CHECK(simulator().hasWc());
-      UTIL_CHECK(simulator().hasCc());
       UTIL_CHECK(simulator().hasDc());
       UTIL_CHECK(simulator().hasHamiltonian());
 
@@ -115,6 +109,7 @@ namespace Rpg {
       const int nMonomer = system().mixture().nMonomer();
       const int meshSize = system().domain().mesh().size();
       int i, j;
+      
       // GPU resources
       int nBlocks, nThreads;
       ThreadGrid::setThreadsLogical(meshSize, nBlocks, nThreads);
@@ -123,7 +118,7 @@ namespace Rpg {
       double oldHamiltonian = simulator().hamiltonian();
 
       // Save current state
-      simulator().saveMcState();
+      simulator().saveState();
 
       // Clear both eigen-components of the fields and hamiltonian
       simulator().clearData();
@@ -149,6 +144,7 @@ namespace Rpg {
       const double vNode = vSystem/double(meshSize);
       double a = -1.0*mobility_;
       double b = sqrt(2.0*mobility_/vNode);
+      
       // Constants for normal distribution
       double stddev = 1.0;
       double mean = 0;
@@ -161,11 +157,14 @@ namespace Rpg {
          
          // Generagte normal distributed random floating point numbers
          cudaRandom().normal(gaussianField_.cField(), meshSize, (cudaReal)stddev, (cudaReal)mean);
+         
          // dwr
          scaleReal<<<nBlocks, nThreads>>>(gaussianField_.cField(), b, meshSize);
+         
          // dwd
          assignReal<<<nBlocks, nThreads>>>(dwd_.cField(), dc_[j].cField(), meshSize);
          scaleReal<<<nBlocks, nThreads>>>(dwd_.cField(), a, meshSize);
+         
          // dwc
          pointWiseBinaryAdd<<<nBlocks, nThreads>>>(dwd_.cField(), gaussianField_.cField(), dwc.cField(), meshSize);
          
@@ -176,6 +175,7 @@ namespace Rpg {
             evec = simulator().chiEvecs(j,i);
             pointWiseAddScale<<<nBlocks, nThreads>>>(wn.cField(), dwc.cField(), evec, meshSize);
          }
+         
       }
 
       // Set modified fields in parent system
@@ -187,54 +187,58 @@ namespace Rpg {
       // Call compressor
       compressorTimer_.start();
       int compress = system().compressor().compress();
-      UTIL_CHECK(compress == 0);
       compressorTimer_.stop();
-
-      // Compute eigenvector components of current fields
-      computeWcTimer_.start();
-      simulator().computeWc();
-      simulator().computeCc();
-      simulator().computeDc();
-      computeWcTimer_.stop();
-
-      // Evaluate new Hamiltonian
-      computeHamiltonianTimer_.start();
-      simulator().computeHamiltonian();
-      double newHamiltonian = simulator().hamiltonian();
-      double dH = newHamiltonian - oldHamiltonian;
-
-      // Compute force bias 
-      double bias = 0.0;
-      for (j = 0; j < nMonomer - 1; ++j) {
-         RField<D> const & di = dc_[j];
-         RField<D> const & df = simulator().dc(j);
-         RField<D> const & dwc = dwc_[j];
-         
-         computeForceBias<<<nBlocks, nThreads>>>
-            (biasField_.cField(), di.cField(), df.cField(), dwc.cField(), mobility_, meshSize);
-         bias += (double) gpuSum(biasField_.cField(), meshSize);
-      }
-      bias *= vNode;
-      computeHamiltonianTimer_.stop();
-
-      // Accept or reject move
-      decisionTimer_.start();
-      bool accept = false;
-      double weight = exp(bias - dH);
-      accept = random().metropolis(weight);
-      if (accept) {
-          incrementNAccept();
-          simulator().clearMcState();
+      
+      bool isConverged = false;
+      if (compress != 0){
+         incrementNFail();
+         simulator().restoreState();
       } else {
-          simulator().restoreMcState();
-          system().compute();
-          simulator().computeCc();
-          simulator().computeDc();
-      }
-      decisionTimer_.stop();
-      totalTimer_.stop();
+         isConverged = true;
+         
+         // Compute eigenvector components of current fields
+         computeWcTimer_.start();
+         simulator().computeWc();
+         simulator().computeCc();
+         simulator().computeDc();
+         computeWcTimer_.stop();
 
-      return accept;
+         // Evaluate new Hamiltonian
+         computeHamiltonianTimer_.start();
+         simulator().computeHamiltonian();
+         double newHamiltonian = simulator().hamiltonian();
+         double dH = newHamiltonian - oldHamiltonian;
+
+         // Compute force bias 
+         double bias = 0.0;
+         for (j = 0; j < nMonomer - 1; ++j) {
+            RField<D> const & di = dc_[j];
+            RField<D> const & df = simulator().dc(j);
+            RField<D> const & dwc = dwc_[j];
+         
+            computeForceBias<<<nBlocks, nThreads>>>
+               (biasField_.cField(), di.cField(), df.cField(), dwc.cField(), mobility_, meshSize);
+            bias += (double) gpuSum(biasField_.cField(), meshSize);
+         }
+         bias *= vNode;
+         computeHamiltonianTimer_.stop();
+
+         // Accept or reject move
+         decisionTimer_.start();
+         bool accept = false;
+         double weight = exp(bias - dH);
+         accept = random().metropolis(weight);
+         if (accept) {
+            incrementNAccept();
+            simulator().clearState();
+         } else {
+            simulator().restoreState();
+         }
+         decisionTimer_.stop();
+      }
+      
+      totalTimer_.stop();
+      return isConverged;
    }
 
    /*

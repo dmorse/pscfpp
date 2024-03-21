@@ -80,6 +80,7 @@ namespace Rpg {
    {
       const int nMonomer = system().mixture().nMonomer();
       const int meshSize = system().domain().mesh().size();
+      
       // GPU resources  
       int nBlocks, nThreads;
       ThreadGrid::setThreadsLogical(meshSize, nBlocks, nThreads);
@@ -94,10 +95,12 @@ namespace Rpg {
       int j;
       for (j = 0; j < nMonomer - 1; ++j) {
          RField<D>& eta = etaNew(j);
+        
          // Generagte normal distributed random floating point numbers
          cudaRandom().normal(gaussianField_.cField(), meshSize, (cudaReal)stddev, (cudaReal)mean);
          scaleReal<<<nBlocks, nThreads>>>(gaussianField_.cField(), b, meshSize);
          assignReal<<<nBlocks, nThreads>>>(eta.cField(), gaussianField_.cField(), meshSize);
+      
       }
    }
 
@@ -140,19 +143,25 @@ namespace Rpg {
    * One step of Leimkuhler-Matthews BD algorithm.
    */
    template <int D>
-   void LMBdStep<D>::step()
+   bool LMBdStep<D>::step()
    {
       // Array sizes and indices
       const int nMonomer = system().mixture().nMonomer();
       const int meshSize = system().domain().mesh().size();
       int i, j;
+      
+      // Save current state
+      simulator().saveState();
+      
       // GPU resources
       int nBlocks, nThreads;
       ThreadGrid::setThreadsLogical(meshSize, nBlocks, nThreads);
       
-      // Copy current fields to w_
+      // Copy current W fields from parent system into w_
+      DArray<RField<D>> const * Wr = &system().w().rgrid();
       for (i = 0; i < nMonomer; ++i) {
-         w_[i] = system().w().rgrid(i);
+         assignReal<<<nBlocks, nThreads>>>
+            (w_[i].cField(), (*Wr)[i].cField(), meshSize);
       }
 
       // Generate new random displacement values
@@ -161,6 +170,7 @@ namespace Rpg {
       // Take LM step:
       double a = -1.0*mobility_;
       double evec;
+      
       // Loop over composition eigenvectors of projected chi matrix
       for (j = 0; j < nMonomer - 1; ++j) {
          RField<D> const & etaN = etaNew(j);
@@ -178,19 +188,32 @@ namespace Rpg {
          }
       }
 
-      // Set modified fields at predicted state wp_
+      // Set modified fields 
       system().setWRGrid(w_);
-      system().compressor().compress();
-      UTIL_CHECK(system().hasCFields());
+      
+      // Enforce incompressibility (also solves MDE repeatedly)
+      bool isConverged = false;
+      int compress = system().compressor().compress();
+      if (compress != 0){
+         simulator().restoreState();
+      } else{
+         isConverged = true;
+         UTIL_CHECK(system().hasCFields());
+         
+         // Compute components and derivatives at wp_
+         simulator().clearState();
+         simulator().clearData();
+         simulator().computeWc();
+         simulator().computeCc();
+         simulator().computeDc();
 
-      // Compute components and derivatives at wp_
-      simulator().clearData();
-      simulator().computeWc();
-      simulator().computeCc();
-      simulator().computeDc();
-
-      // Exchange old and new random fields
-      exchangeOldNew();
+         // Exchange old and new random fields
+         exchangeOldNew();
+         
+      }
+      
+      return isConverged;
+     
    }
 
 }

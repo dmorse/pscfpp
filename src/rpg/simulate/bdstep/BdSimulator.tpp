@@ -70,10 +70,6 @@ namespace Rpg {
       // Set random seed
       random().setSeed(seed_);
       cudaRandom().setSeed(seed_);
-      
-      // Initialize Simulator<D> base class
-      allocate();
-      analyzeChi();
 
       // Instantiate an BdStep object
       std::string className;
@@ -94,12 +90,31 @@ namespace Rpg {
    void BdSimulator<D>::setup()
    {
       UTIL_CHECK(system().w().hasData());
+      
+      // Figure out what variables need to be saved
+      state_.needsCc = false;
+      state_.needsDc = false;
+      state_.needsHamiltonian = false;
+      if (stepper().needsCc()){
+         state_.needsCc = true;
+      }
+      if (stepper().needsDc()){
+         state_.needsDc = true;
+      }
+      
+      // Initialize Simulator<D> base class
+      allocate();
+      
+      // Eigenanalysis of the projected chi matrix.
       analyzeChi();
+      
+      // Compute field components and Hamiltonian for initial state
       system().compute();
       computeWc();
       computeCc();
       computeDc();
       computeHamiltonian();
+      
       stepper().setup();
       if (analyzerManager_.size() > 0){
          analyzerManager_.setup();
@@ -121,35 +136,39 @@ namespace Rpg {
       Timer timer;
       Timer analyzerTimer;
       timer.start();
-      for (iStep_ = 0; iStep_ < nStep; ++iStep_) {
-
-         // Analysis (if any)
-         analyzerTimer.start();
-         if (Analyzer<D>::baseInterval != 0) {
-            if (iStep_ % Analyzer<D>::baseInterval == 0) {
-               if (analyzerManager_.size() > 0) {
-                  analyzerManager_.sample(iStep_);
+      iStep_ = 0;
+      
+      // Analysis initial step (if any)
+      analyzerTimer.start();
+      analyzerManager_.sample(iStep_);
+      analyzerTimer.stop();
+      
+      for (iTotalStep_ = 0; iTotalStep_ < nStep; ++iTotalStep_) {
+         
+         // Take a step (modifies W fields)
+         bool converged;
+         converged = stepper().step();
+         
+         if (converged){
+            iStep_++;
+            
+            // Analysis (if any)
+            analyzerTimer.start();
+            if (Analyzer<D>::baseInterval != 0) {
+               if (iStep_ % Analyzer<D>::baseInterval == 0) {
+                  if (analyzerManager_.size() > 0) {
+                     analyzerManager_.sample(iStep_);
+                  }
                }
             }
+            analyzerTimer.stop();
+            
+         } else{
+            Log::file() << "Step: "<< iTotalStep_<< " fail to converge" << "\n";
          }
-         analyzerTimer.stop();
-
-         // Take a step (modifies W fields)
-         stepper().step();
 
       }
-
-      // Analysis after final step (if any)
-      analyzerTimer.start();
-      if (Analyzer<D>::baseInterval != 0) {
-         if (iStep_ % Analyzer<D>::baseInterval == 0) {
-            if (analyzerManager_.size() > 0) {
-               analyzerManager_.sample(iStep_);
-            }
-         }
-      }
-      analyzerTimer.stop();
-
+      
       timer.stop();
       double time = timer.time();
       double analyzerTime = analyzerTimer.time();
@@ -168,6 +187,9 @@ namespace Rpg {
       // Output times for the simulation run
       Log::file() << std::endl;
       Log::file() << "nStep               " << nStep << std::endl;
+      if (iStep_ != nStep){
+         Log::file() << "nFail Step          " << (nStep - iStep_) << std::endl;
+      }
       Log::file() << "Total run time      " << time
                   << " sec" << std::endl;
       double rStep = double(nStep);
@@ -176,7 +198,7 @@ namespace Rpg {
       Log::file() << "Analyzer run time   " << analyzerTime
                   << " sec" << std::endl;
       Log::file() << std::endl;
-
+      
    }
 
    /*

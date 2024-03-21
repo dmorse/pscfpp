@@ -1,5 +1,5 @@
-#ifndef RPG_MC_STATE_H
-#define RPG_MC_STATE_H
+#ifndef RPG_SIM_STATE_H
+#define RPG_SIM_STATE_H
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory
@@ -9,39 +9,37 @@
 */
 
 
-#include <prdc/cuda/RField.h>
-#include <prdc/cuda/Field.h>  
+#include <prdc/cuda/RField.h>              // memmber 
 #include <util/containers/DArray.h>
 
 namespace Pscf {
 namespace Rpg {
 
    using namespace Util;
-   using namespace Pscf::Prdc;
    using namespace Pscf::Prdc::Cuda;
 
    /**
-   * McState stores the state used by an MC simulation.
+   * SimState stores the state used by an fts simulation.
    *
-   * \ingroup Rpg_Simulate_McMove_Module
+   * \ingroup Rpg_Simulate_Module
    */
    template <int D>
-   struct McState 
+   struct SimState 
    {
       public:
 
       /**
       * Constructor.
       */
-      McState();
+      SimState();
 
       /**
       * Destructor.
       */
-      ~McState();
+      ~SimState();
 
       /**
-      * Allocate memory for w fields.
+      * Allocate memory for fields.
       *
       * \param nMonomer  number of monomer types
       * \param dimensions  dimensions of discretization grid
@@ -61,7 +59,24 @@ namespace Rpg {
       * correspond to eigenvector indices.
       */
       DArray< RField<D> > wc;
-
+      
+      /**
+      * Eigenvector components of c fields on a real space grid.
+      *
+      * Each field component corresponds to a point-wise projection of c
+      * onto an eigenvector of the projected chi matrix.
+      */
+      DArray< RField<D> > cc;
+      
+      /**
+      * Components of functional derivatives of the Hamiltonian fields 
+      * on a real space grid.
+      *
+      * Each field component is the functional derivative of H[W]
+      * with respect to one eigenvector w-field component.
+      */
+      DArray< RField<D> > dc;
+      
       /// Monte-Carlo Hamiltonian value.
       double hamiltonian;
       
@@ -70,20 +85,29 @@ namespace Rpg {
       
       /// Monte-Carlo field part contribution to Hamiltonian value.
       double fieldHamiltonian;
+            
+      /// If cc fields needs to be saved.
+      bool needsCc;
+      
+      /// If dc fields needs to be saved.
+      bool needsDc;
+      
+      /// If hamiltonian needs to be saved.
+      bool needsHamiltonian;
 
       /// Is this struct being used to store data?
       bool hasData;
-
+      
       /// Has memory be allocated for the w field?
       bool isAllocated;
 
    };
 
-   #ifndef RPG_MC_STATE_TPP
+   #ifndef RPG_SIM_STATE_TPP
    // Suppress implicit instantiation
-   extern template struct McState<1>;
-   extern template struct McState<2>;
-   extern template struct McState<3>;
+   extern template struct SimState<1>;
+   extern template struct SimState<2>;
+   extern template struct SimState<3>;
    #endif
 
 }

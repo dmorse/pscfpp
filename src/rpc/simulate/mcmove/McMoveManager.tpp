@@ -29,8 +29,7 @@ namespace Rpc {
    : Manager< McMove<D> >(),
      simulatorPtr_(&simulator),
      systemPtr_(&system),
-     randomPtr_(&simulator.random()),
-     movePtr_(0)
+     randomPtr_(&simulator.random())
    {  setClassName("McMoveManager"); }
 
    // Destructor
@@ -89,19 +88,7 @@ namespace Rpc {
    {
       int iMove;
       iMove = randomPtr_->drawFrom(&probabilities_[0], size());
-      movePtr_ = &(*this)[iMove];
-      return *movePtr_;
-      //return (*this)[iMove];
-   }
-
-   /*
-   * Choose a McMove at random.
-   */
-   template <int D>
-   McMove<D> const & McMoveManager<D>::chosenMove() const
-   {
-      UTIL_CHECK(movePtr_ != 0);
-      return *movePtr_;
+      return (*this)[iMove];
    }
 
    /*

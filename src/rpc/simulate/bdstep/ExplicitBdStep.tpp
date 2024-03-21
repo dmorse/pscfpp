@@ -73,7 +73,7 @@ namespace Rpc {
    }
 
    template <int D>
-   void ExplicitBdStep<D>::step()
+   bool ExplicitBdStep<D>::step()
    {
       // Array sizes and indices
       const int nMonomer = system().mixture().nMonomer();
@@ -118,12 +118,12 @@ namespace Rpc {
       simulator().clearData();
 
       // Enforce incompressibility (also solves MDE repeatedly)
+      bool isConverged = false;
       int compress = system().compressor().compress();
       if (compress != 0){
-         failConverge();
          simulator().restoreState();
       } else {
-         successConverge();
+         isConverged = true;
          UTIL_CHECK(system().hasCFields());
          
          // Evaluate component properties in new state
@@ -132,6 +132,8 @@ namespace Rpc {
          simulator().computeCc();
          simulator().computeDc();
       }
+      
+      return isConverged;
    }
 
 }

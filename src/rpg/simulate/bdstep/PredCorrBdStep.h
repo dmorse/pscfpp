@@ -60,8 +60,10 @@ namespace Rpg {
 
       /**
       * Take a single Brownian dynamics step.
+      * 
+      * \return true if converged, false if failed to converge.
       */
-      virtual void step();
+      virtual bool step();
 
    protected:
 

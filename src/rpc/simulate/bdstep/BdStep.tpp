@@ -23,8 +23,7 @@ namespace Rpc {
    */
    template <int D>
    BdStep<D>::BdStep(BdSimulator<D>& simulator)
-    : isConverge_(true),
-      simulatorPtr_(&simulator),
+    : simulatorPtr_(&simulator),
       systemPtr_(&(simulator.system())),
       randomPtr_(&(simulator.random()))
    {}

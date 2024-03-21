@@ -97,10 +97,9 @@ namespace Rpc
       * for which this skeleton is inappropriate or inadequate can 
       * be implemented by redefining the move function. 
       *
-      * \return true if accepted, false if rejected
+      * \return true if converged, false if failed to converge.
       */
       virtual bool move();
-      
       
       /**
       * Decide whether cc fields need to be saved for move
@@ -149,11 +148,6 @@ namespace Rpc
       long nFail() const;
       
       /**
-      * Return converge status of current move.
-      */
-      bool isConverge() const;
-
-      /**
       * Output statistics for this move (at the end of simulation)
       */
       virtual void output();
@@ -175,16 +169,6 @@ namespace Rpc
       */
       void incrementNFail();
       
-      /*
-      * Compressor fail to converge. Set isConverge_ to false.
-      */
-      void failConverge();
-      
-      /*
-      * Compressor converge successfully. Set isConverge_ to true.
-      */
-      void successConverge();
-
       /**
       * Get parent System object.
       */
@@ -249,9 +233,6 @@ namespace Rpc
       /// Number of moves that fail to converge.
       long  nFail_;
       
-      /// Compress status.
-      bool  isConverge_;
-      
    };
 
    // Public inline methods
@@ -299,27 +280,6 @@ namespace Rpc
    template <int D>
    inline void McMove<D>::incrementNFail()
    {  ++nFail_; }
-   
-   /*
-   * Compressor fail to converge. Set isConverge_ to false.
-   */
-   template <int D>
-   inline void McMove<D>::failConverge()
-   {  isConverge_ = false; }
-   
-   /*
-   * Compressor converge successfully. Set isConverge_ to true.
-   */
-   template <int D>
-   inline void McMove<D>::successConverge()
-   {  isConverge_ = true; }
-   
-   /*
-   * Return converge status of current move.
-   */
-   template <int D>
-   inline bool McMove<D>::isConverge() const
-   {  return isConverge_; }
    
    /*
    * Get parent System object.

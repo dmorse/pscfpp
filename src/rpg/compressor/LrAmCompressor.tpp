@@ -394,6 +394,7 @@ namespace Rpg{
       
       // Initialize residuals to -1
       assignUniformReal<<<nBlocks, nThreads>>>(error_.cField(), -1.0, meshSize);
+     
       // Add composition of each monomer
       for (int i = 0; i < nMonomer; i++) {
          pointWiseAdd<<<nBlocks, nThreads>>>

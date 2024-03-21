@@ -560,7 +560,7 @@ namespace Rpc {
       }
       
       // Save cc based on ccSavePolicy
-      if (state_.ccSavePolicy) {
+      if (state_.needsCc) {
          UTIL_CHECK(hasCc());
          for (int i = 0; i < nMonomer; ++i) {
             state_.cc[i] = cc(i);
@@ -568,7 +568,7 @@ namespace Rpc {
       }
       
       // Save dc based on dcSavePolicy
-      if (state_.dcSavePolicy) {
+      if (state_.needsDc) {
          UTIL_CHECK(hasDc());
          for (int i = 0; i < nMonomer - 1; ++i) {
             state_.dc[i] = dc(i);
@@ -576,7 +576,7 @@ namespace Rpc {
       }
       
       // Save Hamiltonian based on hamiltonianSavePolicy
-      if (state_.hamiltonianSavePolicy){
+      if (state_.needsHamiltonian){
          UTIL_CHECK(hasHamiltonian());
          state_.hamiltonian  = hamiltonian();
          state_.idealHamiltonian  = idealHamiltonian();
@@ -603,7 +603,7 @@ namespace Rpc {
       system().setWRGrid(state_.w); 
 
       // Restore Hamiltonian and components
-      if (state_.hamiltonianSavePolicy){
+      if (state_.needsHamiltonian){
          hamiltonian_ = state_.hamiltonian;
          idealHamiltonian_ = state_.idealHamiltonian;
          fieldHamiltonian_ = state_.fieldHamiltonian;
@@ -615,14 +615,14 @@ namespace Rpc {
       }
       hasWc_ = true;
       
-      if (state_.ccSavePolicy) {
+      if (state_.needsCc) {
          for (int i = 0; i < nMonomer; ++i) {
             cc_[i] = state_.cc[i];
          }
          hasCc_ = true;
       }
       
-      if (state_.dcSavePolicy) {
+      if (state_.needsDc) {
          for (int i = 0; i < nMonomer - 1; ++i) {
             dc_[i] = state_.dc[i];
          }

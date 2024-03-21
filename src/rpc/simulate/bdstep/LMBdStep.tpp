@@ -130,7 +130,7 @@ namespace Rpc {
    * One step of Leimkuhler-Matthews BD algorithm.
    */
    template <int D>
-   void LMBdStep<D>::step()
+   bool LMBdStep<D>::step()
    {
       // Array sizes and indices
       const int nMonomer = system().mixture().nMonomer();
@@ -169,14 +169,16 @@ namespace Rpc {
          }
       }
 
-      // Set modified fields at predicted state wp_
+      // Set modified fields
       system().setWRGrid(w_);
+      
+      // Enforce incompressibility (also solves MDE repeatedly)
+      bool isConverged = false;
       int compress = system().compressor().compress();
       if (compress != 0){
          simulator().restoreState();
-         failConverge();
       } else {
-         successConverge();
+         isConverged = true;
          UTIL_CHECK(system().hasCFields());
          
          // Compute components and derivatives at wp_
@@ -188,7 +190,10 @@ namespace Rpc {
 
          // Exchange old and new random fields
          exchangeOldNew();
+         
       }
+      
+      return isConverged;
    }
 
 }

@@ -797,10 +797,12 @@ namespace Rpc {
       hasDc_ = false;
    }
 
+   // Return the current converged simulation step index.
    template <int D>
    inline long Simulator<D>::iStep()
    {  return iStep_; }
    
+   // Return the current simulation step index.
    template <int D>
    inline long Simulator<D>::iTotalStep()
    {  return iTotalStep_; }

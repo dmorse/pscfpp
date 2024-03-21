@@ -94,7 +94,7 @@ namespace Rpc {
    }
 
    template <int D>
-   void PredCorrBdStep<D>::step()
+   bool PredCorrBdStep<D>::step()
    {
       // Array sizes and indices
       const int nMonomer = system().mixture().nMonomer();
@@ -150,9 +150,11 @@ namespace Rpc {
 
       // Set modified fields at predicted state wp_
       system().setWRGrid(wp_);
+      
+      // Enforce incompressibility (also solves MDE repeatedly)
+      bool isConverged = false;
       int compress = system().compressor().compress();
       if (compress != 0){
-         failConverge();
          simulator().restoreState();
       } else {
          UTIL_CHECK(system().hasCFields());
@@ -197,12 +199,12 @@ namespace Rpc {
 
          // Set fields at final point
          system().setWRGrid(wf_);
+         
          int compress2 = system().compressor().compress();
          if (compress2 != 0){
-            failConverge();
             simulator().restoreState();
          } else {
-            successConverge();
+            isConverged = true;
             UTIL_CHECK(system().hasCFields());
 
             // Compute components and derivatives at final point
@@ -211,10 +213,11 @@ namespace Rpc {
             simulator().computeWc();
             simulator().computeCc();
             simulator().computeDc();
+            
          }
-         
       }
-
+      
+      return isConverged;
    }
 
 }

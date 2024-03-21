@@ -95,12 +95,16 @@ namespace Rpg {
    }
 
    template <int D>
-   void PredCorrBdStep<D>::step()
+   bool PredCorrBdStep<D>::step()
    {
       // Array sizes and indices
       const int nMonomer = system().mixture().nMonomer();
       const int meshSize = system().domain().mesh().size();
       int i, j;
+      
+      // Save current state
+      simulator().saveState();
+      
       // GPU resources  
       int nBlocks, nThreads;
       ThreadGrid::setThreadsLogical(meshSize, nBlocks, nThreads);
@@ -122,6 +126,7 @@ namespace Rpg {
       const double vSystem = system().domain().unitCell().volume();
       double a = -1.0*mobility_;
       double b = sqrt(2.0*mobility_*double(meshSize)/vSystem);
+      
       // Constants for normal distribution
       double stddev = 1.0;
       double mean = 0;
@@ -141,6 +146,7 @@ namespace Rpg {
          RField<D> const & dc = simulator().dc(j);
          RField<D> const & eta = eta_[j];
          RField<D> & dci = dci_[j];
+         
          // dwc_[k] = a*dc[k] + eta[k];
          assignReal<<<nBlocks, nThreads>>>(dwc_.cField(), eta.cField(), meshSize);
          pointWiseAddScale<<<nBlocks, nThreads>>>(dwc_.cField(), dc.cField(), a, meshSize);
@@ -158,55 +164,74 @@ namespace Rpg {
 
       // Set modified fields at predicted state wp_
       system().setWRGrid(wp_);
-      system().compressor().compress();
-      UTIL_CHECK(system().hasCFields());
+      
+      // Enforce incompressibility (also solves MDE repeatedly)
+      bool isConverged = false;
+      int compress = system().compressor().compress();
+      if (compress != 0){
+         simulator().restoreState();
+      } else {
+         UTIL_CHECK(system().hasCFields());
 
-      // Compute components and derivatives at wp_
-      simulator().clearData();
-      simulator().computeWc();
-      simulator().computeCc();
-      simulator().computeDc();
+         // Compute components and derivatives at wp_
+         simulator().clearData();
+         simulator().computeWc();
+         simulator().computeCc();
+         simulator().computeDc();
+         
+         // Compute change in pressure field
+         RField<D> const & wp = simulator().wc(nMonomer-1);
+         
+         // dwp_[k] = wp[k] - dwp_[k]
+         pointWiseBinarySubtract<<<nBlocks, nThreads>>>(wp.cField(), dwp_.cField(), dwp_.cField(), meshSize);
 
-      // Compute change in pressure field
-      RField<D> const & wp = simulator().wc(nMonomer-1);
-      // dwp_[k] = wp[k] - dwp_[k]
-      pointWiseBinarySubtract<<<nBlocks, nThreads>>>(wp.cField(), dwp_.cField(), dwp_.cField(), meshSize);
-
-      // Adjust pressure field
-      for (i = 0; i < nMonomer; ++i) {
-         RField<D> & wf = wf_[i];
-         pointWiseAdd<<<nBlocks, nThreads>>>(wf.cField(), dwp_.cField(), meshSize);
-      }
-
-      // Full step (corrector)
-      double ha = 0.5*a;
-      for (j = 0; j < nMonomer - 1; ++j) {
-         RField<D> const & dcp = simulator().dc(j);
-         RField<D> const & dci = dci_[j];
-         RField<D> const & eta = eta_[j];
-         // dwc_[k] = ha*( dci[k] + dcp[k]) + eta[k];
-         pointWiseBinaryAdd<<<nBlocks, nThreads>>>(dci.cField(), dcp.cField(), dwc_.cField(), meshSize);
-         scaleReal<<<nBlocks, nThreads>>>(dwc_.cField(), ha, meshSize);
-         pointWiseAdd<<<nBlocks, nThreads>>>(dwc_.cField(), eta.cField(), meshSize);
-
+         // Adjust pressure field
          for (i = 0; i < nMonomer; ++i) {
             RField<D> & wf = wf_[i];
-            evec = simulator().chiEvecs(j,i);
-            pointWiseAddScale<<<nBlocks, nThreads>>>(wf.cField(), dwc_.cField(), evec, meshSize);
+            pointWiseAdd<<<nBlocks, nThreads>>>(wf.cField(), dwp_.cField(), meshSize);
+         }
+         
+         // Full step (corrector)
+         double ha = 0.5*a;
+         for (j = 0; j < nMonomer - 1; ++j) {
+            RField<D> const & dcp = simulator().dc(j);
+            RField<D> const & dci = dci_[j];
+            RField<D> const & eta = eta_[j];
+            
+            // dwc_[k] = ha*( dci[k] + dcp[k]) + eta[k];
+            pointWiseBinaryAdd<<<nBlocks, nThreads>>>(dci.cField(), dcp.cField(), dwc_.cField(), meshSize);
+            scaleReal<<<nBlocks, nThreads>>>(dwc_.cField(), ha, meshSize);
+            pointWiseAdd<<<nBlocks, nThreads>>>(dwc_.cField(), eta.cField(), meshSize);
+
+            for (i = 0; i < nMonomer; ++i) {
+               RField<D> & wf = wf_[i];
+               evec = simulator().chiEvecs(j,i);
+               pointWiseAddScale<<<nBlocks, nThreads>>>(wf.cField(), dwc_.cField(), evec, meshSize);
+            }
+         }
+         
+         // Set fields at final point
+         system().setWRGrid(wf_);
+         
+         // Enforce incompressibility for final point
+         int compress2 = system().compressor().compress();
+         if (compress2 != 0){
+            simulator().restoreState();
+         }  else {
+            isConverged = true;
+            UTIL_CHECK(system().hasCFields());
+
+            // Compute components and derivatives at final point
+            simulator().clearState();
+            simulator().clearData();
+            simulator().computeWc();
+            simulator().computeCc();
+            simulator().computeDc();
+            
          }
       }
-
-      // Set fields at final point
-      system().setWRGrid(wf_);
-      system().compressor().compress();
-      UTIL_CHECK(system().hasCFields());
-
-      // Compute components and derivatives at final point
-      simulator().clearData();
-      simulator().computeWc();
-      simulator().computeCc();
-      simulator().computeDc();
-
+      
+      return isConverged;
    }
 
 }

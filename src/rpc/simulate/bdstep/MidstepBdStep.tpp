@@ -90,7 +90,7 @@ namespace Rpc {
    }
 
    template <int D>
-   void MidstepBdStep<D>::step()
+   bool MidstepBdStep<D>::step()
    {
       // Array sizes and indices
       const int nMonomer = system().mixture().nMonomer();
@@ -131,6 +131,7 @@ namespace Rpc {
          for (k = 0; k < meshSize; ++k) {
             dwc_[k] = a*dc[k] + eta[k];
          }
+         
          // Loop over monomer types
          for (i = 0; i < nMonomer; ++i) {
             RField<D> & wn = wh_[i];
@@ -139,13 +140,16 @@ namespace Rpc {
                wn[k] += evec*dwc_[k];
             }
          }
+         
       }
 
       // Set modified fields at mid-point
       system().setWRGrid(wh_);
+      
+       // Enforce incompressibility (also solves MDE repeatedly)
+      bool isConverged = false;
       int compress = system().compressor().compress();
       if (compress != 0){
-         failConverge();
          simulator().restoreState();
       } else{
          UTIL_CHECK(system().hasCFields());
@@ -188,12 +192,12 @@ namespace Rpc {
 
          // Set fields at final point
          system().setWRGrid(wf_);
+         
          int compress2 = system().compressor().compress();
          if (compress2 != 0){
-            failConverge();
             simulator().restoreState();
          } else {
-            successConverge();
+            isConverged = true;
             UTIL_CHECK(system().hasCFields());
             
             // Compute components and derivatives at final point
@@ -202,9 +206,11 @@ namespace Rpc {
             simulator().computeWc();
             simulator().computeCc();
             simulator().computeDc();
+            
          }
       }
-
+      
+      return isConverged;
    }
 
 }

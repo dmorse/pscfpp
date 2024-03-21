@@ -60,16 +60,16 @@ namespace Rpc {
 
       /**
       * Take a single Brownian dynamics step.
+      * 
+      * \return true if converged, false if failed to converge.
       */
-      virtual void step();
+      virtual bool step();
    
    protected:
 
       using BdStep<D>::system;
       using BdStep<D>::simulator;
       using BdStep<D>::random;
-      using BdStep<D>::failConverge;
-      using BdStep<D>::successConverge;
       using ParamComposite::read;
 
    private:
