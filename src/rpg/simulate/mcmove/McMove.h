@@ -98,9 +98,23 @@ namespace Rpg
       * for which this skeleton is inappropriate or inadequate can 
       * be implemented by redefining the move function. 
       *
-      * \return true if accepted, false if rejected
+      * \return true if converged, false if failed to converge.
       */
       virtual bool move();
+      
+      /**
+      * Decide whether cc fields need to be saved for move
+      * The default implementation is false
+      */
+      virtual bool needsCc()
+      {  return false; }
+      
+      /**
+      * Decide whether dc fields need to be saved for move
+      * The default implementation is false
+      */
+      virtual bool needsDc()
+      { return false; }
       
       /**
       * Log output timing results 
@@ -128,6 +142,11 @@ namespace Rpg
       * Return number of moves that have been accepted.
       */
       long nAccept() const;
+      
+      /**
+      * Return number of moves that fail to converge.
+      */
+      long nFail() const;
 
       /**
       * Output statistics for this move (at the end of simulation)
@@ -145,6 +164,11 @@ namespace Rpg
       * Increment the number of accepted moves.
       */
       void incrementNAccept();
+      
+      /**
+      * Increment the number of failed moves.
+      */
+      void incrementNFail();
 
       /**
       * Get parent System object.
@@ -215,6 +239,9 @@ namespace Rpg
       /// Number of moves that have been accepted by this object.
       long  nAccept_;
       
+      /// Number of moves that fail to converge.
+      long  nFail_;
+      
    };
 
    // Public inline methods
@@ -232,6 +259,13 @@ namespace Rpg
    template <int D>
    inline long McMove<D>::nAccept() const
    {  return nAccept_; }
+   
+   /*
+   * Return number of moves that fail to converge.
+   */
+   template <int D>
+   inline long McMove<D>::nFail() const
+   {  return nFail_; }
 
    // Protected inline methods
 
@@ -248,6 +282,13 @@ namespace Rpg
    template <int D>
    inline void McMove<D>::incrementNAccept()
    {  ++nAccept_; }
+   
+   /*
+   * Increment the number of fail moves.
+   */
+   template <int D>
+   inline void McMove<D>::incrementNFail()
+   {  ++nFail_; }
 
    /*
    * Get parent System object.

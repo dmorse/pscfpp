@@ -63,7 +63,7 @@ namespace Rpg {
       /**
       * Take a single Brownian dynamics step.
       */
-      virtual void step();
+      virtual bool step();
 
    protected:
 

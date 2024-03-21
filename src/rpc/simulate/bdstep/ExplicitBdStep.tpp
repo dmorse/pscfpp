@@ -73,13 +73,16 @@ namespace Rpc {
    }
 
    template <int D>
-   void ExplicitBdStep<D>::step()
+   bool ExplicitBdStep<D>::step()
    {
       // Array sizes and indices
       const int nMonomer = system().mixture().nMonomer();
       const int meshSize = system().domain().mesh().size();
       int i, j, k;
-
+      
+      // Save current state
+      simulator().saveState();
+      
       // Copy current W fields from parent system into w_
       for (i = 0; i < nMonomer; ++i) {
          w_[i] = system().w().rgrid(i);
@@ -115,13 +118,22 @@ namespace Rpc {
       simulator().clearData();
 
       // Enforce incompressibility (also solves MDE repeatedly)
-      system().compressor().compress();
-      UTIL_CHECK(system().hasCFields());
-
-      // Evaluate component properties in new state
-      simulator().computeWc();
-      simulator().computeCc();
-      simulator().computeDc();
+      bool isConverged = false;
+      int compress = system().compressor().compress();
+      if (compress != 0){
+         simulator().restoreState();
+      } else {
+         isConverged = true;
+         UTIL_CHECK(system().hasCFields());
+         
+         // Evaluate component properties in new state
+         simulator().clearState();
+         simulator().computeWc();
+         simulator().computeCc();
+         simulator().computeDc();
+      }
+      
+      return isConverged;
    }
 
 }

@@ -33,6 +33,7 @@ namespace Rpc {
    Simulator<D>::Simulator(System<D>& system)
    : random_(),
      iStep_(0),
+     iTotalStep_(0), 
      hasHamiltonian_(false),
      hasWc_(false),
      hasCc_(false),
@@ -88,6 +89,12 @@ namespace Rpc {
       dc_.allocate(nMonomer-1);
       for (int i = 0; i < nMonomer - 1; ++i) {
          dc_[i].allocate(meshSize);
+      }
+      
+      // Allocate state_, if necessary.
+      if (!state_.isAllocated) {
+         const IntVec<D> dimensions = system().domain().mesh().dimensions();
+         state_.allocate(nMonomer, dimensions);
       }
 
       isAllocated_ = true;
@@ -530,6 +537,110 @@ namespace Rpc {
 
       hasDc_ = true;
    }
+   
+   /*
+   * Save the current state prior to a next move.
+   *
+   * Invoked before each move.
+   */
+   template <int D>
+   void Simulator<D>::saveState()
+   {
+      UTIL_CHECK(system().w().hasData());
+      UTIL_CHECK(hasWc());
+      UTIL_CHECK(state_.isAllocated);
+      UTIL_CHECK(!state_.hasData);
+
+      // Set fields
+      int nMonomer = system().mixture().nMonomer(); 
+     
+      for (int i = 0; i < nMonomer; ++i) {
+         state_.w[i] = system().w().rgrid(i);
+         state_.wc[i] = wc(i);
+      }
+      
+      // Save cc based on ccSavePolicy
+      if (state_.needsCc) {
+         UTIL_CHECK(hasCc());
+         for (int i = 0; i < nMonomer; ++i) {
+            state_.cc[i] = cc(i);
+         }
+      }
+      
+      // Save dc based on dcSavePolicy
+      if (state_.needsDc) {
+         UTIL_CHECK(hasDc());
+         for (int i = 0; i < nMonomer - 1; ++i) {
+            state_.dc[i] = dc(i);
+         }
+      }
+      
+      // Save Hamiltonian based on hamiltonianSavePolicy
+      if (state_.needsHamiltonian){
+         UTIL_CHECK(hasHamiltonian());
+         state_.hamiltonian  = hamiltonian();
+         state_.idealHamiltonian  = idealHamiltonian();
+         state_.fieldHamiltonian  = fieldHamiltonian();
+      }
+
+      state_.hasData = true;
+   }
+
+   /*
+   * Restore a saved fts state.
+   *
+   * Invoked after an attempted Monte-Carlo move is rejected 
+   * or an fts move fails to converge
+   */
+   template <int D>
+   void Simulator<D>::restoreState()
+   {
+      UTIL_CHECK(state_.isAllocated);
+      UTIL_CHECK(state_.hasData);
+      const int nMonomer = system().mixture().nMonomer();
+
+      // Restore fields
+      system().setWRGrid(state_.w); 
+
+      // Restore Hamiltonian and components
+      if (state_.needsHamiltonian){
+         hamiltonian_ = state_.hamiltonian;
+         idealHamiltonian_ = state_.idealHamiltonian;
+         fieldHamiltonian_ = state_.fieldHamiltonian;
+         hasHamiltonian_ = true;
+      }
+      
+      for (int i = 0; i < nMonomer; ++i) {
+         wc_[i] = state_.wc[i];
+      }
+      hasWc_ = true;
+      
+      if (state_.needsCc) {
+         for (int i = 0; i < nMonomer; ++i) {
+            cc_[i] = state_.cc[i];
+         }
+         hasCc_ = true;
+      }
+      
+      if (state_.needsDc) {
+         for (int i = 0; i < nMonomer - 1; ++i) {
+            dc_[i] = state_.dc[i];
+         }
+         hasDc_ = true;
+      }
+      
+      state_.hasData = false;
+   }
+ 
+   /*
+   * Clear the saved Monte-Carlo state.
+   *
+   * Invoked when an attempted Monte-Carlo move is accepted.
+   */
+   template <int D>
+   void Simulator<D>::clearState()
+   {  state_.hasData = false; }
+
 
    /*
    * Output all timer results.

@@ -62,19 +62,35 @@ namespace Rpc {
 
       /**
       * Take a single Brownian dynamics step.
+      * 
+      * \return true if converged, false if failed to converge.
       */
-      virtual void step() = 0;
+      virtual bool step() = 0;
       
       /**
-      * Log output timing results 
+      * Decide whether cc fields need to be saved for move.
+      * The default implementation is false.
+      */
+      virtual bool needsCc()
+      {  return false; }
+      
+      /**
+      * Decide whether dc fields need to be saved for move.
+      * The default implementation is false.
+      */
+      virtual bool needsDc()
+      { return true; }
+      
+      /**
+      * Log output timing results.
       */
       virtual void outputTimers(std::ostream& out);
       
       /**
-      * Clear timers 
+      * Clear timers. 
       */
       virtual void clearTimers();
-
+      
       // Accessor Functions
 
       /**
@@ -83,7 +99,7 @@ namespace Rpc {
       virtual void output();
 
    protected:
-
+      
       /**
       * Get parent System object.
       */
@@ -100,7 +116,7 @@ namespace Rpc {
       Random& random();
 
    private:
-
+      
       /// Pointer to parent BdSimulator object
       BdSimulator<D>* simulatorPtr_;
 
@@ -113,7 +129,7 @@ namespace Rpc {
    };
 
    // Protected inline methods
-
+   
    /*
    * Get parent System object.
    */

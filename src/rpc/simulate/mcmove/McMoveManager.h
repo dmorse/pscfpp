@@ -68,16 +68,6 @@ namespace Rpc {
       McMove<D>& chooseMove();
 
       /**
-      * Return the most recently chosen McMove by const reference.
-      *
-      * Returns the McMove<D> chosen by the most recent call to
-      * chooseMove. Throws an Exception if no move has been chosen.
-      *
-      * \return previously chosen McMove
-      */
-      McMove<D> const & chosenMove() const;
-
-      /**
       * Output statistics for all moves.
       */
       void output() const;
@@ -101,7 +91,17 @@ namespace Rpc {
       * Clear timers 
       */
       void clearTimers();
-  
+      
+      /**
+      * Decide whether any move needs to store cc fields.
+      */
+      bool needsCc();
+      
+      /**
+      * Decide whether any move needs to store dc fields.
+      */
+      bool needsDc();
+ 
    protected:
       
       using Manager< McMove<D> >::setClassName;
@@ -129,11 +129,6 @@ namespace Rpc {
       * Pointer to random number generator.
       */
       Random* randomPtr_;
-
-      /**
-      * Pointer to most recent McMove.
-      */
-      McMove<D>* movePtr_;
 
       // Private member functions
 

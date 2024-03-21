@@ -1,6 +1,5 @@
 rpc_simulate_mcmove_= \
   rpc/simulate/mcmove/McSimulator.cpp \
-  rpc/simulate/mcmove/McState.cpp \
   rpc/simulate/mcmove/McMove.cpp \
   rpc/simulate/mcmove/McMoveFactory.cpp \
   rpc/simulate/mcmove/McMoveManager.cpp \

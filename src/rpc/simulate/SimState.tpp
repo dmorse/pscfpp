@@ -1,5 +1,5 @@
-#ifndef RPC_MC_STATE_TPP
-#define RPC_MC_STATE_TPP
+#ifndef RPC_SIM_STATE_TPP
+#define RPC_SIM_STATE_TPP
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory
@@ -8,7 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "McState.h"
+#include "SimState.h"
 
 namespace Pscf {
 namespace Rpc {
@@ -20,12 +20,15 @@ namespace Rpc {
    * Constructor.
    */
    template <int D>
-   McState<D>::McState() 
+   SimState<D>::SimState() 
      : w(),
        wc(), 
        hamiltonian(0.0),
        idealHamiltonian(0.0),
-       fieldHamiltonian(0.0), 
+       fieldHamiltonian(0.0),
+       needsCc(false),
+       needsDc(false),
+       needsHamiltonian(false), 
        hasData(false),
        isAllocated(false)
    {}
@@ -34,20 +37,32 @@ namespace Rpc {
    * Destructor.
    */
    template <int D>
-   McState<D>::~McState() 
+   SimState<D>::~SimState() 
    {}
 
    /*
    * Allocate memory for w fields.
    */ 
    template <int D>
-   void McState<D>::allocate(int nMonomer, IntVec<D> const & dimensions)
+   void SimState<D>::allocate(int nMonomer, IntVec<D> const & dimensions)
    {
       w.allocate(nMonomer);
       wc.allocate(nMonomer);
       for (int i = 0; i < nMonomer; ++i) {
          w[i].allocate(dimensions);
          wc[i].allocate(dimensions);
+      }
+      if (needsCc){
+         cc.allocate(nMonomer);
+         for (int i = 0; i < nMonomer; ++i) {
+            cc[i].allocate(dimensions);
+         }
+      }
+      if (needsDc){
+         dc.allocate(nMonomer-1);
+         for (int i = 0; i < nMonomer - 1; ++i) {
+            dc[i].allocate(dimensions);
+         }
       }
       isAllocated = true;
    }

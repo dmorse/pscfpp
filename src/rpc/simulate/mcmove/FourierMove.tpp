@@ -21,7 +21,6 @@
 
 #include <iostream>
 #include <complex>
-#include <random>
 #include <cmath>
 
 //#include <util/archives/Serializable_includes.h>
@@ -174,12 +173,6 @@ namespace Rpc
       for (int i = 0; i < nMonomer; ++i) {
          system().fft().forwardTransform(system().w().rgrid()[i], wKGrid_[i]);
       }
-      // Complex Random number Generator
-      // Set up the Mersenne Twister engine  
-      std::mt19937_64 engine(std::random_device{}());
-      // Set up the uniform distribution for real and imaginary parts
-      std::uniform_real_distribution<double> real_dist(-stepSize_, stepSize_);
-      std::uniform_real_distribution<double> imag_dist(-stepSize_, stepSize_);
       
       /// Move step size in Fourier space Delta_W(q) is randomly selected from 
       /// uniform distribution [-stepSize_*S(q)^(1/2), stepSize_*S(q)^(1/2)]      
@@ -193,10 +186,11 @@ namespace Rpc
                // Compute Fredrickson-Helfand structure factor
                S_ = structureFactors_[itr.rank()];
                // Generate random complex number
-               std::complex<double> z(real_dist(engine), imag_dist(engine));
+               double real = random().uniform(-stepSize_,stepSize_);
+               double imag = random().uniform(-stepSize_,stepSize_);
                // Attempt Move in ourier (k-grid) format
-               wKGrid_[i][itr.rank()][0] += z.real() * sqrt(S_); 
-               wKGrid_[i][itr.rank()][1] += z.imag() * sqrt(S_);
+               wKGrid_[i][itr.rank()][0] += real * sqrt(S_); 
+               wKGrid_[i][itr.rank()][1] += imag * sqrt(S_);
             }
          }
       }

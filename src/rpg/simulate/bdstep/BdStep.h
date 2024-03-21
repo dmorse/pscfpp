@@ -62,8 +62,24 @@ namespace Rpg {
 
       /**
       * Take a single Brownian dynamics step.
+      * 
+      * \return true if converged, false if failed to converge.
       */
-      virtual void step() = 0;
+      virtual bool step() = 0;
+      
+      /**
+      * Decide whether cc fields need to be saved for move.
+      * The default implementation is false.
+      */
+      virtual bool needsCc()
+      {  return false; }
+      
+      /**
+      * Decide whether dc fields need to be saved for move.
+      * The default implementation is false.
+      */
+      virtual bool needsDc()
+      { return true; }
       
       /**
       * Log output timing results 

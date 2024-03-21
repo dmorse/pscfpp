@@ -86,11 +86,6 @@ namespace Rpc {
       }
 
       McMove<D>::setup();
-      system().compute();
-      simulator().computeWc();
-      simulator().computeCc();
-      simulator().computeDc();
-
    }
  
    /*
@@ -103,9 +98,7 @@ namespace Rpc {
       incrementNAttempt();
 
       // Preconditions
-      UTIL_CHECK(system().hasCFields());
       UTIL_CHECK(simulator().hasWc());
-      UTIL_CHECK(simulator().hasCc());
       UTIL_CHECK(simulator().hasDc());
       UTIL_CHECK(simulator().hasHamiltonian());
 
@@ -118,7 +111,7 @@ namespace Rpc {
       double oldHamiltonian = simulator().hamiltonian();
 
       // Save current state
-      simulator().saveMcState();
+      simulator().saveState();
 
       // Clear both eigen-components of the fields and hamiltonian
       simulator().clearData();
@@ -152,6 +145,7 @@ namespace Rpc {
             dwr = b*random().gaussian();
             dwc[k] = dwd + dwr;
          }
+
          // Loop over monomer types
          for (i = 0; i < nMonomer; ++i) {
             RField<D> const & dwc = dwc_[j];
@@ -161,6 +155,7 @@ namespace Rpc {
                wn[k] += evec*dwc[k];
             }
          }
+
       }
 
       // Set modified fields in parent system
@@ -174,65 +169,59 @@ namespace Rpc {
       int compress = system().compressor().compress();
       compressorTimer_.stop();
 
-      // Compute eigenvector components of current fields
-      computeWcTimer_.start();
-      simulator().computeWc();
-      simulator().computeCc();
-      simulator().computeDc();
-      computeWcTimer_.stop();
-
-      // Evaluate new Hamiltonian
-      computeHamiltonianTimer_.start();
-      simulator().computeHamiltonian();
-      double newHamiltonian = simulator().hamiltonian();
-      double dH = newHamiltonian - oldHamiltonian;
-
-      // Compute force bias 
-      double dp, dm;
-      double bias = 0.0;
-      for (j = 0; j < nMonomer - 1; ++j) {
-         RField<D> const & di = dc_[j];
-         RField<D> const & df = simulator().dc(j);
-         RField<D> const & dwc = dwc_[j];
-         for (k=0; k < meshSize; ++k) {
-            dp = 0.5*(di[k] + df[k]);
-            dm = 0.5*(di[k] - df[k]);
-            bias += dp*( dwc[k] + mobility_*dm );
-         }
-      }
-      bias *= vNode;
-      computeHamiltonianTimer_.stop();
-
-      bool accept = false;
+      bool isConverged = false;
       if (compress != 0){
-         failConverge();
          incrementNFail();
-         simulator().restoreMcState();
-         system().compute();
+         simulator().restoreState();
+      } else {
+         isConverged = true;
+         
+         // Compute eigenvector components of current fields
+         computeWcTimer_.start();
+         simulator().computeWc();
          simulator().computeCc();
          simulator().computeDc();
-      } else {
-         successConverge();
+         computeWcTimer_.stop();
+
+         // Evaluate new Hamiltonian
+         computeHamiltonianTimer_.start();
+         simulator().computeHamiltonian();
+         double newHamiltonian = simulator().hamiltonian();
+         double dH = newHamiltonian - oldHamiltonian;
+
+         // Compute force bias 
+         double dp, dm;
+         double bias = 0.0;
+         for (j = 0; j < nMonomer - 1; ++j) {
+            RField<D> const & di = dc_[j];
+            RField<D> const & df = simulator().dc(j);
+            RField<D> const & dwc = dwc_[j];
+            for (k=0; k < meshSize; ++k) {
+               dp = 0.5*(di[k] + df[k]);
+               dm = 0.5*(di[k] - df[k]);
+               bias += dp*( dwc[k] + mobility_*dm );
+            }
+         }
+         bias *= vNode;
+         computeHamiltonianTimer_.stop();
 
          // Accept or reject move
+         bool accept = false;
          decisionTimer_.start();
          double weight = exp(bias - dH);
          accept = random().metropolis(weight);
          if (accept) {
             incrementNAccept();
-            simulator().clearMcState();
+            simulator().clearState();
          } else {
-            simulator().restoreMcState();
-            system().compute();
-            simulator().computeCc();
-            simulator().computeDc();
+            simulator().restoreState();
          }
          decisionTimer_.stop();
 
       }
       
       totalTimer_.stop();
-      return accept;
+      return isConverged;
    }
 
    /*
@@ -247,7 +236,7 @@ namespace Rpc {
    {
       // Output timing results, if requested.
       out << "\n";
-      out << "Real Move times contributions:\n";
+      out << "Force Bias Move times contributions:\n";
       McMove<D>::outputTimers(out);
    }
 

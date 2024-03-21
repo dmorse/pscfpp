@@ -29,6 +29,7 @@ namespace Rpg {
    : random_(),
      cudaRandom_(),
      iStep_(0),
+     iTotalStep_(0),
      hasHamiltonian_(false),
      hasWc_(false),
      hasCc_(false),
@@ -76,6 +77,12 @@ namespace Rpg {
       
       // Allocate memory for single eignevector components of w after constant shift
       wcs_.allocate(meshSize);
+      
+      // Allocate state_, if necessary.
+      if (!state_.isAllocated) {
+         const IntVec<D> dimensions = system().domain().mesh().dimensions();
+         state_.allocate(nMonomer, dimensions);
+      }
       
       isAllocated_ = true;
    }
@@ -503,7 +510,128 @@ namespace Rpg {
 
       hasDc_ = true;
    }
+   
+   /*
+   * Save the current state prior to a next move.
+   *
+   * Invoked before each move.
+   */
+   template <int D>
+   void Simulator<D>::saveState()
+   {
+      UTIL_CHECK(system().w().hasData());
+      UTIL_CHECK(hasWc());
+      UTIL_CHECK(state_.isAllocated);
+      UTIL_CHECK(!state_.hasData);
 
+      // Set fields
+      int nMonomer = system().mixture().nMonomer(); 
+      int meshSize = system().domain().mesh().size();
+      
+      // GPU resources
+      int nBlocks, nThreads;
+      ThreadGrid::setThreadsLogical(meshSize, nBlocks, nThreads);
+      
+      // Set field components
+      for (int i = 0; i < nMonomer; ++i) {
+         assignReal<<<nBlocks, nThreads>>> (state_.w[i].cField(), 
+             system().w().rgrid(i).cField(), meshSize);
+         assignReal<<<nBlocks, nThreads>>>
+            (state_.wc[i].cField(), wc_[i].cField(), meshSize);
+      }
+      
+      // Save cc based on ccSavePolicy
+      if (state_.needsCc) {
+         UTIL_CHECK(hasCc());
+         for (int i = 0; i < nMonomer; ++i) {
+            assignReal<<<nBlocks, nThreads>>>
+               (state_.cc[i].cField(), cc_[i].cField(), meshSize);
+         }
+      }
+      
+      // Save dc based on dcSavePolicy
+      if (state_.needsDc) {
+         UTIL_CHECK(hasDc());
+         for (int i = 0; i < nMonomer - 1; ++i) {
+            assignReal<<<nBlocks, nThreads>>>
+               (state_.dc[i].cField(), dc_[i].cField(), meshSize);
+         }
+      }
+      
+      // Save Hamiltonian based on hamiltonianSavePolicy
+      if (state_.needsHamiltonian){
+         UTIL_CHECK(hasHamiltonian());
+         state_.hamiltonian  = hamiltonian();
+         state_.idealHamiltonian  = idealHamiltonian();
+         state_.fieldHamiltonian  = fieldHamiltonian();
+      }
+
+      state_.hasData = true;
+   }
+
+   /*
+   * Restore a saved fts state.
+   *
+   * Invoked after an attempted Monte-Carlo move is rejected 
+   * or an fts move fails to converge
+   */
+   template <int D>
+   void Simulator<D>::restoreState()
+   {
+      UTIL_CHECK(state_.isAllocated);
+      UTIL_CHECK(state_.hasData);
+      int nMonomer = system().mixture().nMonomer();
+      int meshSize = system().domain().mesh().size();
+      
+      // GPU resources
+      int nBlocks, nThreads;
+      ThreadGrid::setThreadsLogical(meshSize, nBlocks, nThreads);
+
+      // Restore fields
+      system().setWRGrid(state_.w); 
+
+      // Restore Hamiltonian and components
+      if (state_.needsHamiltonian){
+         hamiltonian_ = state_.hamiltonian;
+         idealHamiltonian_ = state_.idealHamiltonian;
+         fieldHamiltonian_ = state_.fieldHamiltonian;
+         hasHamiltonian_ = true;
+      }
+      
+      for (int i = 0; i < nMonomer; ++i) {
+         assignReal<<<nBlocks, nThreads>>>
+            (wc_[i].cField(), state_.wc[i].cField(), meshSize);
+      }
+      hasWc_ = true;
+      
+      if (state_.needsCc) {
+         for (int i = 0; i < nMonomer; ++i) {
+            assignReal<<<nBlocks, nThreads>>>
+               (cc_[i].cField(), state_.cc[i].cField(), meshSize);
+         }
+         hasCc_ = true;
+      }
+      
+      if (state_.needsDc) {
+         for (int i = 0; i < nMonomer - 1; ++i) {
+            assignReal<<<nBlocks, nThreads>>>
+               (dc_[i].cField(), state_.dc[i].cField(), meshSize);
+         }
+         hasDc_ = true;
+      }
+      
+      state_.hasData = false;
+   }
+ 
+   /*
+   * Clear the saved Monte-Carlo state.
+   *
+   * Invoked when an attempted Monte-Carlo move is accepted.
+   */
+   template <int D>
+   void Simulator<D>::clearState()
+   {  state_.hasData = false; }
+   
    /*
    * Output all timer results.
    */ 
