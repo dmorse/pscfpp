@@ -72,6 +72,11 @@ namespace Rpg {
       * Return real move times contributions.
       */
       void outputTimers(std::ostream& out);
+      
+      /**
+      * Decide whether dc fields need to be saved for move
+      */
+      bool needsDc();
 
       // Inherited public member function
       using McMove<D>::move;
@@ -88,6 +93,7 @@ namespace Rpg {
       using McMove<D>::cudaRandom;
       using McMove<D>::incrementNAttempt;
       using McMove<D>::incrementNAccept;
+      using McMove<D>::incrementNFail;
 
       using McMove<D>::computeWcTimer_;
       using McMove<D>::attemptMoveTimer_;
@@ -119,6 +125,15 @@ namespace Rpg {
       double mobility_;
       
    };
+   
+   // Public inline methods
+
+   /*
+   * Return whether dc fields need to be saved for ForceBiasMove.
+   */
+   template <int D>
+   inline bool ForceBiasMove<D>::needsDc()
+   {  return true; }
 
    #ifndef RPG_FORCE_BIAS_MOVE_TPP
    // Suppress implicit instantiation

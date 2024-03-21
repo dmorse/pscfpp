@@ -89,12 +89,12 @@ namespace Rpg {
       iMove = randomPtr_->drawFrom(&probabilities_[0], size());
       return (*this)[iMove];
    }
-
+   
    /*
    * Output statistics for every move.
    */
    template <int D>
-   void McMoveManager<D>::output()
+   void McMoveManager<D>::output() const
    {
       for (int i=0; i< size(); i++) {
          (*this)[i].output();
@@ -105,7 +105,7 @@ namespace Rpg {
    * Log output timing results 
    */
    template <int D>
-   void McMoveManager<D>::outputTimers(std::ostream& out)
+   void McMoveManager<D>::outputTimers(std::ostream& out) const
    {
       for (int i=0; i< size(); i++) {
          (*this)[i].outputTimers(out);
@@ -116,11 +116,39 @@ namespace Rpg {
    * Clear timers 
    */
    template <int D>
-   void McMoveManager<D>::clearTimers()
+   void McMoveManager<D>::clearTimers() 
    {
       for (int i=0; i< size(); i++) {
          (*this)[i].clearTimers();
       }
+   }
+   
+   /*
+   * Decide whether any move needs to store cc fields.
+   */
+   template <int D>
+   bool McMoveManager<D>::needsCc()
+   {
+      for (int i=0; i< size(); i++) {
+         if((*this)[i].needsCc()){
+            return true;
+         }
+      }
+      return false;
+   }
+   
+   /*
+   * Decide whether any move needs to store dc fields.
+   */
+   template <int D>
+   bool McMoveManager<D>::needsDc()
+   {
+      for (int i=0; i< size(); i++) {
+         if((*this)[i].needsDc()){
+            return true;
+         }
+      }
+      return false;
    }
    
 }

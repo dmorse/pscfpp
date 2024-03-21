@@ -9,7 +9,6 @@
 */
 
 #include <rpg/simulate/Simulator.h>                   // member
-#include <rpg/simulate/mcmove/McState.h>              // member
 #include <rpg/simulate/mcmove/McMoveManager.h>        // member
 #include <rpg/simulate/analyzer/AnalyzerManager.h>    // member
 
@@ -90,43 +89,16 @@ namespace Rpg {
       * Clear timers
       */
       virtual void clearTimers();
-
-      ///@}
-      /// \name Utilities for MC Moves
-      ///@{
-
+      
       /**
-      * Save a copy of the Monte-Carlo state.
-      *
-      * This function and restoreMcState() are intended for use in
-      * the implementation of field theoretic Monte Carlo moves. This
-      * function stores the current w fields and the corresponding
-      * Hamiltonian value.  This is normally the first step of a MC
-      * move, prior to an attempted modification of the fields stored
-      * in the system w field container.
+      * Return the simulations whether needs to store cc fields
       */
-      void saveMcState();
-
+      bool needsCc();
+      
       /**
-      * Restore the saved copy of the Monte-Carlo state.
-      *
-      * This function  and saveMcState() are intended to be used
-      * together in the implementation of Monte-Carlo moves. If an
-      * attempted move is rejected, restoreMcState() is called to
-      * restore the fields ahd Hamiltonian value that were saved
-      * by a previous call to the function saveMcState().
+      * Return the simulations whether needs to store Dc fields
       */
-      void restoreMcState();
-
-      /**
-      * Clear the saved copy of the Monte-Carlo state.
-      *
-      * This function, restoreMcState(), and saveMcState() are intended
-      * to be used together in the implementation of Monte-Carlo moves. If
-      * an attempted move is accepted, clearMcState() is called to clear
-      * clear mcState_.hasData
-      */
-      void clearMcState();
+      bool needsDc();
 
       ///@}
       /// \name Miscellaneous
@@ -157,6 +129,8 @@ namespace Rpg {
       using Simulator<D>::allocate;
       using Simulator<D>::analyzeChi;
       using Simulator<D>::computeWc;
+      using Simulator<D>::computeCc;
+      using Simulator<D>::computeDc;
       using Simulator<D>::wc;
       using Simulator<D>::hasWc;
       using Simulator<D>::clearData;
@@ -165,6 +139,9 @@ namespace Rpg {
       using Simulator<D>::idealHamiltonian;
       using Simulator<D>::fieldHamiltonian;
       using Simulator<D>::hasHamiltonian;
+      using Simulator<D>::saveState;
+      using Simulator<D>::restoreState;
+      using Simulator<D>::clearState;
 
    protected:
 
@@ -184,6 +161,8 @@ namespace Rpg {
       using Simulator<D>::fieldHamiltonian_;
       using Simulator<D>::hasHamiltonian_;
       using Simulator<D>::iStep_;
+      using Simulator<D>::iTotalStep_;
+      using Simulator<D>::state_;
 
    private:
 
@@ -196,11 +175,6 @@ namespace Rpg {
       * Manger for Monte Carlo Analyzer.
       */
       AnalyzerManager<D> analyzerManager_;
-
-      /**
-      * State saved during MC simulation.
-      */
-      mutable McState<D> mcState_;
 
       /**
       * Pointer to a trajectory reader/writer factory.
@@ -238,6 +212,20 @@ namespace Rpg {
    {
       UTIL_ASSERT(trajectoryReaderFactoryPtr_);
       return *trajectoryReaderFactoryPtr_;
+   }
+   
+   // Return the simulations whether needs to store Cc fields
+   template <int D>
+   inline bool McSimulator<D>::needsCc()
+   {
+      return state_.needsCc;
+   }
+   
+   // Return the simulations whether needs to store Dc fields
+   template <int D>
+   inline bool McSimulator<D>::needsDc()
+   {
+      return state_.needsDc;
    }
 
    #ifndef RPG_MC_SIMULATOR_TPP

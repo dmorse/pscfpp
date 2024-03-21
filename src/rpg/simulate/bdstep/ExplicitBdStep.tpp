@@ -75,12 +75,16 @@ namespace Rpg {
    }
 
    template <int D>
-   void ExplicitBdStep<D>::step()
+   bool ExplicitBdStep<D>::step()
    {
       // Array sizes and indices
       const int nMonomer = system().mixture().nMonomer();
       const int meshSize = system().domain().mesh().size();
       int i, j;
+      
+      // Save current state
+      simulator().saveState();
+      
       // GPU resources
       int nBlocks, nThreads;
       ThreadGrid::setThreadsLogical(meshSize, nBlocks, nThreads);
@@ -96,6 +100,7 @@ namespace Rpg {
       const double vSystem = system().domain().unitCell().volume();
       double a = -1.0*mobility_;
       double b = sqrt(2.0*mobility_*double(meshSize)/vSystem);
+      
       // Constants for normal distribution
       double stddev = 1.0;
       double mean = 0;
@@ -105,13 +110,17 @@ namespace Rpg {
       double evec;
       for (j = 0; j < nMonomer - 1; ++j) {
          RField<D> const & dc = simulator().dc(j);
+         
          // Generagte normal distributed random floating point numbers
          cudaRandom().normal(gaussianField_.cField(), meshSize, (cudaReal)stddev, (cudaReal)mean);
+         
          // dwr
          scaleReal<<<nBlocks, nThreads>>>(gaussianField_.cField(), b, meshSize);
+         
          // dwd
          assignReal<<<nBlocks, nThreads>>>(dwd_.cField(), dc.cField(), meshSize);
          scaleReal<<<nBlocks, nThreads>>>(dwd_.cField(), a, meshSize);
+         
          // dwc
          pointWiseBinaryAdd<<<nBlocks, nThreads>>>
             (dwd_.cField(), gaussianField_.cField(), dwc_.cField(), meshSize);
@@ -123,6 +132,7 @@ namespace Rpg {
             pointWiseAddScale<<<nBlocks, nThreads>>>
                (w.cField(), dwc_.cField(), evec, meshSize);
          }
+         
       }
 
       // Set modified fields in parent system
@@ -130,13 +140,23 @@ namespace Rpg {
       simulator().clearData();
 
       // Enforce incompressibility (also solves MDE repeatedly)
-      system().compressor().compress();
-      UTIL_CHECK(system().hasCFields());
-
-      // Evaluate component properties in new state
-      simulator().computeWc();
-      simulator().computeCc();
-      simulator().computeDc();
+      bool isConverged = false;
+      int compress = system().compressor().compress();
+      if (compress != 0){
+         simulator().restoreState();
+      } else {
+         isConverged = true;
+         UTIL_CHECK(system().hasCFields());
+         
+         // Evaluate component properties in new state
+         simulator().clearState();
+         simulator().computeWc();
+         simulator().computeCc();
+         simulator().computeDc();
+         
+      }
+      
+      return isConverged;
    }
 
 }

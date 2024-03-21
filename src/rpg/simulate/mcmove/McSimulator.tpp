@@ -69,10 +69,6 @@ namespace Rpg {
       random().setSeed(seed_);
       cudaRandom().setSeed(seed_);
       
-      // Initialize Simulator<D> base class
-      allocate();
-      analyzeChi();
-
       // Read block of mc move data inside
       readParamComposite(in, mcMoveManager_);
 
@@ -89,14 +85,21 @@ namespace Rpg {
    void McSimulator<D>::setup()
    {  
       UTIL_CHECK(system().w().hasData());
-
-      // Allocate mcState_, if necessary.
-      if (!mcState_.isAllocated) {
-         const int nMonomer = system().mixture().nMonomer();
-         const IntVec<D> dimensions = system().domain().mesh().dimensions();
-         mcState_.allocate(nMonomer, dimensions);
+      
+      // Figure out what needs to be saved
+      state_.needsCc = false;
+      state_.needsDc = false;
+      state_.needsHamiltonian = true;
+      if (mcMoveManager_.needsCc()){
+         state_.needsCc = true;
       }
-   
+      if (mcMoveManager_.needsDc()){
+         state_.needsDc = true;
+      }
+      
+      // Initialize Simulator<D> base class
+      allocate();
+      
       // Eigenanalysis of the projected chi matrix.
       analyzeChi();
 
@@ -104,6 +107,13 @@ namespace Rpg {
       system().compute();
       computeWc();
       computeHamiltonian();
+      if (state_.needsCc || state_.needsDc) {
+         computeCc();
+      }
+      if (state_.needsDc) {
+         computeDc();
+      }
+      
       mcMoveManager_.setup();
       if (analyzerManager_.size() > 0){
          analyzerManager_.setup();
@@ -125,34 +135,36 @@ namespace Rpg {
       Timer timer;
       Timer analyzerTimer;
       timer.start();
-      for (iStep_ = 0; iStep_ < nStep; ++iStep_) {
+      iStep_ = 0;
+      
+      // Analysis initial step (if any)
+      analyzerTimer.start();
+      analyzerManager_.sample(iStep_);
+      analyzerTimer.stop();
+      
+      for (iTotalStep_ = 0; iTotalStep_ < nStep; ++iTotalStep_) {
+         // Choose and attempt an McMove
+         bool converged;
+         converged = mcMoveManager_.chooseMove().move();
 
-         // Analysis (if any)
-         analyzerTimer.start();
-         if (Analyzer<D>::baseInterval != 0) {
-            if (iStep_ % Analyzer<D>::baseInterval == 0) {
-               if (analyzerManager_.size() > 0) {
-                  analyzerManager_.sample(iStep_);
+         if (converged){
+            iStep_++;
+            
+            // Analysis (if any)
+            analyzerTimer.start();
+            if (Analyzer<D>::baseInterval != 0) {
+               if (iStep_ % Analyzer<D>::baseInterval == 0) {
+                  if (analyzerManager_.size() > 0) {
+                     analyzerManager_.sample(iStep_);
+                  }
                }
             }
-         }
-         analyzerTimer.stop();
-
-         // Choose and attempt an McMove
-         mcMoveManager_.chooseMove().move();
-
-      }
-
-      // Analysis (if any)
-      analyzerTimer.start();
-      if (Analyzer<D>::baseInterval != 0) {
-         if (iStep_ % Analyzer<D>::baseInterval == 0) {
-            if (analyzerManager_.size() > 0) {
-               analyzerManager_.sample(iStep_);
-            }
+            analyzerTimer.stop();
+            
+         } else{
+            Log::file() << "Step: "<< iTotalStep_<< " fail to converge" << "\n";
          }
       }
-      analyzerTimer.stop();
 
       timer.stop();
       double time = timer.time();
@@ -173,6 +185,9 @@ namespace Rpg {
       // Output times for the simulation run
       Log::file() << std::endl;
       Log::file() << "nStep               " << nStep << std::endl;
+      if (iStep_ != nStep){
+         Log::file() << "nFail Step          " << (nStep - iStep_) << std::endl;
+      }
       Log::file() << "Total run time      " << time
                   << " sec" << std::endl;
       double rStep = double(nStep);
@@ -185,107 +200,35 @@ namespace Rpg {
       // Print McMove acceptance statistics
       long attempt;
       long accept;
+      long fail;
       using namespace std;
       Log::file() << "Move Statistics:" << endl << endl;
-      Log::file() << setw(32) << left <<  "Move Name"
-           << setw(12) << right << "Attempted"
-           << setw(12) << right << "Accepted"
-           << setw(15) << right << "AcceptRate"
+      Log::file() << setw(20) << left <<  "Move Name"
+           << setw(10) << right << "Attempted"
+           << setw(10) << right << "Accepted"
+           << setw(13) << right << "AcceptRate"
+           << setw(10) << right << "Failed"
+           << setw(13) << right << "FailRate"
            << endl;
       int nMove = mcMoveManager_.size();
       for (int iMove = 0; iMove < nMove; ++iMove) {
          attempt = mcMoveManager_[iMove].nAttempt();
          accept  = mcMoveManager_[iMove].nAccept();
-         Log::file() << setw(32) << left
+         fail  = mcMoveManager_[iMove].nFail();
+         Log::file() << setw(20) << left
               << mcMoveManager_[iMove].className()
-              << setw(12) << right << attempt
-              << setw(12) << accept
-              << setw(15) << fixed << setprecision(6)
+              << setw(10) << right << attempt
+              << setw(10) << accept
+              << setw(13) << fixed << setprecision(5)
               << ( attempt == 0 ? 0.0 : double(accept)/double(attempt) )
+              << setw(10) << fail
+              << setw(13) << fixed << setprecision(5)
+              << ( attempt == 0 ? 0.0 : double(fail)/double(attempt) )
               << endl;
       }
       Log::file() << endl;
 
    }
-
-   /*
-   * Save the current Monte-Carlo state prior to an attempted MC move.
-   *
-   * Invoked before each attempted Monte-Carlo move.
-   */
-   template <int D>
-   void McSimulator<D>::saveMcState()
-   {
-      UTIL_CHECK(system().w().hasData());
-      UTIL_CHECK(hasWc());
-      UTIL_CHECK(hasHamiltonian());
-      UTIL_CHECK(mcState_.isAllocated);
-      UTIL_CHECK(!mcState_.hasData);
-
-      // Set fields
-      int nMonomer = system().mixture().nMonomer();
-      int meshSize = system().domain().mesh().size();
-      // GPU resources
-      int nBlocks, nThreads;
-      ThreadGrid::setThreadsLogical(meshSize, nBlocks, nThreads);
-      
-      // Set field components
-      for (int i = 0; i < nMonomer; ++i) {
-         assignReal<<<nBlocks, nThreads>>> (mcState_.w[i].cField(), 
-             system().w().rgrid(i).cField(), meshSize);
-         assignReal<<<nBlocks, nThreads>>>
-            (mcState_.wc[i].cField(), wc_[i].cField(), meshSize);
-      }
-
-      // Set Hamiltonian
-      mcState_.hamiltonian  = hamiltonian();
-      mcState_.idealHamiltonian  = idealHamiltonian();
-      mcState_.fieldHamiltonian  = fieldHamiltonian();
-
-      mcState_.hasData = true;
-   }
-
-   /*
-   * Restore a saved Monte-Carlo state.
-   *
-   * Invoked after an attempted Monte-Carlo move is rejected.
-   */
-   template <int D>
-   void McSimulator<D>::restoreMcState()
-   {
-      UTIL_CHECK(mcState_.isAllocated);
-      UTIL_CHECK(mcState_.hasData);
-       int nMonomer = system().mixture().nMonomer();
-      int meshSize = system().domain().mesh().size();
-      // GPU resources
-      int nBlocks, nThreads;
-      ThreadGrid::setThreadsLogical(meshSize, nBlocks, nThreads);
-
-      // Restore fields
-      system().setWRGrid(mcState_.w); 
-      for (int i = 0; i < nMonomer; ++i) {
-         assignReal<<<nBlocks, nThreads>>>
-            (wc_[i].cField(), mcState_.wc[i].cField(), meshSize);
-      }
-      hasWc_ = true;
-
-      // Restore Hamiltonian and components
-      hamiltonian_ = mcState_.hamiltonian;
-      idealHamiltonian_ = mcState_.idealHamiltonian;
-      fieldHamiltonian_ = mcState_.fieldHamiltonian;
-      hasHamiltonian_ = true;
-
-      mcState_.hasData = false;
-   }
- 
-   /*
-   * Clear the saved Monte-Carlo state.
-   *
-   * Invoked when an attempted Monte-Carlo move is accepted.
-   */
-   template <int D>
-   void McSimulator<D>::clearMcState()
-   {  mcState_.hasData = false; }
 
    /*
    * Open, read and analyze a trajectory file

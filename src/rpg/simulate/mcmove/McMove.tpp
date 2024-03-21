@@ -63,7 +63,16 @@ namespace Rpg {
    {
       nAttempt_ = 0;
       nAccept_  = 0;
+      nFail_ = 0;
       clearTimers();
+      simulator().computeWc();
+      if (simulator().needsCc() || simulator().needsDc()){
+         system().compute();
+         simulator().computeCc();
+      }
+      if (simulator().needsDc()){
+         simulator().computeDc();
+      }
    }
 
    /*
@@ -79,7 +88,7 @@ namespace Rpg {
       double oldHamiltonian = simulator().hamiltonian();
 
       // Save current state
-      simulator().saveMcState();
+      simulator().saveState();
 
       // Clear both eigen-components of the fields and hamiltonian
       simulator().clearData();
@@ -92,35 +101,52 @@ namespace Rpg {
       // Call compressor
       compressorTimer_.start();
       int compress = system().compressor().compress();
-      UTIL_CHECK(compress == 0);
       compressorTimer_.stop();
       
-      // Compute eigenvector components of the current w fields
-      computeWcTimer_.start();
-      simulator().computeWc();
-      computeWcTimer_.stop();
-      
-      // Evaluate new Hamiltonian
-      computeHamiltonianTimer_.start();
-      simulator().computeHamiltonian();
-      double newHamiltonian = simulator().hamiltonian();
-      computeHamiltonianTimer_.stop();
-
-      // Accept or reject move
-      decisionTimer_.start();
-      bool accept = false;
-      double weight = exp(-(newHamiltonian - oldHamiltonian));
-      accept = random().metropolis(weight);
-      if (accept) {
-          incrementNAccept();
-          simulator().clearMcState();
+      bool isConverged = false;
+      if (compress != 0){
+         incrementNFail();
+         simulator().restoreState();
       } else {
-          simulator().restoreMcState();
+         isConverged = true;
+         
+         // Compute eigenvector components of the current w fields
+         computeWcTimer_.start();
+         simulator().computeWc();
+         // Compute cc fields if any move require cc fields
+         if (simulator().needsCc() || simulator().needsDc()){
+            system().compute();
+            simulator().computeCc();
+         }
+         // Compute dc fields if any move require dc fields
+         if (simulator().needsDc()){
+            simulator().computeDc();
+         }
+         computeWcTimer_.stop();
+      
+         // Evaluate new Hamiltonian
+         computeHamiltonianTimer_.start();
+         simulator().computeHamiltonian();
+         double newHamiltonian = simulator().hamiltonian();
+         computeHamiltonianTimer_.stop();
+         
+         // Accept or reject move
+         bool accept = false;
+         decisionTimer_.start();
+         double weight = exp(-(newHamiltonian - oldHamiltonian));
+         accept = random().metropolis(weight);
+         if (accept) {
+            incrementNAccept();
+            simulator().clearState();
+         } else {
+            simulator().restoreState();
+         }
+         decisionTimer_.stop();
+         
       }
-      decisionTimer_.stop();
       totalTimer_.stop();
       
-      return accept;
+      return isConverged;
    }
 
    /*

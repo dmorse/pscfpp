@@ -133,6 +133,9 @@ namespace Rpg {
       using Simulator<D>::idealHamiltonian;
       using Simulator<D>::fieldHamiltonian;
       using Simulator<D>::hasHamiltonian;
+      using Simulator<D>::saveState;
+      using Simulator<D>::restoreState;
+      using Simulator<D>::clearState;
 
    protected:
 
@@ -152,6 +155,8 @@ namespace Rpg {
       using Simulator<D>::fieldHamiltonian_;
       using Simulator<D>::hasHamiltonian_;
       using Simulator<D>::iStep_;
+      using Simulator<D>::iTotalStep_;
+      using Simulator<D>::state_;
 
    private:
 

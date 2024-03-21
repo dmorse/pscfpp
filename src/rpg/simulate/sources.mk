@@ -9,6 +9,7 @@ rpg_simulate_= \
   $(rpg_simulate_bdstep_) \
   $(rpg_trajectory_) \
   $(rpg_simulate_analyzer_) \
+  rpg/simulate/SimState.cu \
   rpg/simulate/Simulator.cu \
   rpg/simulate/SimulatorFactory.cu
   

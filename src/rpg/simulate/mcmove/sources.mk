@@ -1,6 +1,5 @@
 rpg_simulate_mcmove_= \
   rpg/simulate/mcmove/McSimulator.cu \
-  rpg/simulate/mcmove/McState.cu \
   rpg/simulate/mcmove/McMove.cu \
   rpg/simulate/mcmove/McMoveFactory.cu \
   rpg/simulate/mcmove/McMoveManager.cu \
