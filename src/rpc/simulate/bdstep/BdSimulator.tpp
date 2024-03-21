@@ -73,10 +73,6 @@ namespace Rpc {
       readOptional(in, "seed", seed_);
       random().setSeed(seed_);
       
-      // Initialize Simulator<D> base class
-      allocate();
-      analyzeChi();
-
       std::string className;
       bool isEnd = false;
 
@@ -112,17 +108,36 @@ namespace Rpc {
    void BdSimulator<D>::setup()
    {
       UTIL_CHECK(system().w().hasData());
-      state_.hamiltonianSavePolicy = false;
+      
+      // Figure out what variables need to be saved
+      state_.needsCc = false;
+      state_.needsDc = false;
+      state_.needsHamiltonian = false;
+      if (stepper().needsCc()){
+         state_.needsCc = true;
+      }
+      if (stepper().needsDc()){
+         state_.needsDc = true;
+      }
+      
+      // Initialize Simulator<D> base class
+      allocate();
+      
+      // Eigenanalysis of the projected chi matrix.
       analyzeChi();
+      
+      // Compute field components and Hamiltonian for initial state
       system().compute();
       computeWc();
       computeCc();
       computeDc();
       computeHamiltonian();
+      
       stepper().setup();
       if (analyzerManager_.size() > 0){
          analyzerManager_.setup();
       }
+      
    }
 
    /*
@@ -141,21 +156,21 @@ namespace Rpc {
       Timer analyzerTimer;
       timer.start();
       iStep_ = 0;
+      
       // Analysis initial step (if any)
       analyzerTimer.start();
-      if (Analyzer<D>::baseInterval != 0) {
-         if (iStep_ % Analyzer<D>::baseInterval == 0) {
-            if (analyzerManager_.size() > 0) {
-               analyzerManager_.sample(iStep_);
-            }
-         }
-      }
+      analyzerManager_.sample(iStep_);
       analyzerTimer.stop();
+      
       for (iTotalStep_ = 0; iTotalStep_ < nStep; ++iTotalStep_) {
+         
          // Take a step (modifies W fields)
-         stepper().step();
-         if (stepper().isConverge()){
+         bool converged;
+         converged = stepper().step();
+         
+         if (converged){
             iStep_++;
+            
             // Analysis (if any)
             analyzerTimer.start();
             if (Analyzer<D>::baseInterval != 0) {
@@ -166,23 +181,13 @@ namespace Rpc {
                }
             }
             analyzerTimer.stop();
+            
          } else{
             Log::file() << "Step: "<< iTotalStep_<< " fail to converge" << "\n";
          }
 
       }
-
-      // Analysis after final step (if any)
-      analyzerTimer.start();
-      if (Analyzer<D>::baseInterval != 0) {
-         if (iStep_ % Analyzer<D>::baseInterval == 0) {
-            if (analyzerManager_.size() > 0) {
-               analyzerManager_.sample(iStep_);
-            }
-         }
-      }
-      analyzerTimer.stop();
-
+      
       timer.stop();
       double time = timer.time();
       double analyzerTime = analyzerTimer.time();

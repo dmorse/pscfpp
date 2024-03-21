@@ -26,8 +26,9 @@ namespace Rpc {
        hamiltonian(0.0),
        idealHamiltonian(0.0),
        fieldHamiltonian(0.0),
-       ccSavePolicy(false),
-       dcSavePolicy(false), 
+       needsCc(false),
+       needsDc(false),
+       needsHamiltonian(false), 
        hasData(false),
        isAllocated(false)
    {}
@@ -51,13 +52,13 @@ namespace Rpc {
          w[i].allocate(dimensions);
          wc[i].allocate(dimensions);
       }
-      if (ccSavePolicy){
+      if (needsCc){
          cc.allocate(nMonomer);
          for (int i = 0; i < nMonomer; ++i) {
             cc[i].allocate(dimensions);
          }
       }
-      if (dcSavePolicy){
+      if (needsDc){
          dc.allocate(nMonomer-1);
          for (int i = 0; i < nMonomer - 1; ++i) {
             dc[i].allocate(dimensions);

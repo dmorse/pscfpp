@@ -99,7 +99,7 @@ namespace Rpc {
       * Return the simulations whether needs to store Dc fields
       */
       bool needsDc();
-
+      
       ///@}
       /// \name Miscellaneous
       ///@{
@@ -217,16 +217,16 @@ namespace Rpc {
    template <int D>
    inline bool McSimulator<D>::needsCc()
    {
-      return mcMoveManager_.needsCc();
+      return state_.needsCc;
    }
    
    // Return the simulations whether needs to store Dc fields
    template <int D>
    inline bool McSimulator<D>::needsDc()
    {
-      return mcMoveManager_.needsDc();
+      return state_.needsDc;
    }
-   
+      
    #ifndef RPC_MC_SIMULATOR_TPP
    // Suppress implicit instantiation
    extern template class McSimulator<1>;
