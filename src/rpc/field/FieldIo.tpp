@@ -1987,7 +1987,6 @@ namespace Rpc {
          DArray<RField<3> > outFields;
          UnitCell<3> cell;
          IntVec<3> dimensions;
-         int rank = 0;
          // Set dimensions
          dimensions[0] = meshDimensions[0];
          dimensions[1] = meshDimensions[1];

@@ -184,11 +184,9 @@ namespace Prdc {
       IntVec<D> rootVecDft;  // DFT indices for root of this star
       IntVec<D> vec;         // Indices of temporary wavevector
       IntVec<D> nVec;        // Indices of negation of a wavevector
-      int listId = 0;        // id for this list
       int listBegin = 0;     // id of first wave in this list
       int listEnd = 0;       // (id of last wave in this list) + 1
       int listSize;          // listEnd - listBegin
-      int starId = 0;        // id for this star
       int starBegin = 0;     // id of first wave in this star
       int i, j, k;
       bool cancel;
@@ -587,7 +585,6 @@ namespace Prdc {
                }
 
                stars_.append(newStar);
-               ++starId;
                starBegin = newStar.endId;
 
             }
@@ -621,7 +618,6 @@ namespace Prdc {
             // the coeff may not be unity for the first or last wave in
             // the star.
 
-            ++listId;
             listBegin = listEnd;
          } 
          // Finished processing a list of waves of equal norm
