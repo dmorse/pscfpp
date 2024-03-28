@@ -78,7 +78,7 @@ namespace Prdc {
    * listed as as a consecutive block. Wavevectors within each star are 
    * listed in order of decreasing order as determined by the integer 
    * indices, as defined by the member function Wave::indicesBz, with more
-   * signficant digits on the left. For example, the waves of the {211} 
+   * signficant digits on the left. For example, the waves of the {111} 
    * star of a cubic structure with full cubic symmetry will be listed 
    * in the order:
    * \code
@@ -391,6 +391,11 @@ namespace Prdc {
          int starId;
 
          /**
+         * Index of the wave that is the inverse of this wavevector.
+         */
+         int inverseId;
+
+         /**
          * Is this wave represented implicitly in DFT of real field?
          * 
          * In the discrete Fourier transform (DFT) of a real function, 
@@ -413,6 +418,7 @@ namespace Prdc {
             indicesDft(0),
             indicesBz(0),
             starId(0),
+            inverseId(-1),
             implicit(false),
             sqNorm(0.0)
          {}
@@ -434,7 +440,7 @@ namespace Prdc {
       * The wavevectors in a star form a continuous block within the array
       * waves defined by the Basis classes.  Within this block, waves are 
       * listed in descending lexigraphical order of their integer (ijk) 
-      * indices as given by Basis::Wave::indexBz.
+      * indices as given by Basis::Wave::indicesBz.
       */
       class Star 
       {
@@ -452,7 +458,10 @@ namespace Prdc {
          int beginId; 
 
          /**
-         * Wave index of last wavevector in star.
+         * Wave index of first wavevector of the next star.
+         * 
+         * This index is one past the wave index of the last wavevector of 
+         * this star.
          */
          int endId;  
 
@@ -486,9 +495,9 @@ namespace Prdc {
          int invertFlag; 
 
          /**
-         * Integer indices indexBz of a characteristic wave of this star.
+         * Integer indices indicesBz of a characteristic wave of this star.
          *
-         * Wave given here is the value of indexBz for a characteristic
+         * Wave given here is the value of indicesBz for a characteristic
          * wave for the star.  For invertFlag = 0 or 1, the characteristic
          * wave is the first wave in the star.  For invertFlag = -1, this 
          * is the negation of the waveBz of the partner star for which

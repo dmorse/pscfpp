@@ -654,6 +654,56 @@ namespace Prdc {
          // Treat open and closed stars differently
 
          if (stars_[i].invertFlag == 0) {
+
+            // First, assign inverseId for each wave in star
+            for (j = stars_[i].beginId; j < stars_[i].endId; ++j) {
+               if (waves_[j].inverseId < 0) { // if inverseId is unassigned
+
+                  // Compute nVec = negation of root, shifted to DFT mesh
+                  nVec.negate(waves_[j].indicesBz);
+                  (*meshPtr_).shift(nVec);
+
+                  // Find inverse
+
+                  // Check in the position that the inverse is 
+                  // expected to be located for a typical star
+                  k = stars_[i].endId - 1 - (j - stars_[i].beginId);
+                  if (nVec == waves_[k].indicesDft) {
+                     waves_[j].inverseId = k;
+                     waves_[k].inverseId = j;
+                  } else {
+                     // Inverse not in expected position, search full star
+                     // (this usually occurs for stars on the edge of the
+                     // Brillouin zone)
+                     for (k = j; k < stars_[i].endId; ++k) {
+                        if (nVec == waves_[k].indicesDft) {
+                           waves_[j].inverseId = k;
+                           waves_[k].inverseId = j;
+                           break;
+                        }
+                     }
+                  }
+
+                  // For invertFlag == 0, failure to find nVec in this
+                  // star is a fatal error
+                  if (waves_[j].inverseId < 0) {
+                     std::cout << "\n";
+                     std::cout << "Negation not found in closed star" 
+                              << std::endl;
+                     std::cout << "G = " << waves_[j].indicesBz 
+                               << ", coeff = " << waves_[j].coeff 
+                               << std::endl;
+                     std::cout << "All waves in star " << i 
+                               << std::endl;
+                     for (k=stars_[i].beginId; k < stars_[i].endId; ++k) {
+                        std::cout << waves_[k].indicesBz << "  "
+                                 << waves_[k].coeff << std::endl;
+                     }
+                     UTIL_CHECK(waves_[j].inverseId >= 0);
+                  } 
+
+               }
+            }
      
             // Identify root of this star (star i)
             // Set the root to be the first wave in the star
@@ -671,23 +721,8 @@ namespace Prdc {
 
             } else { // if not cancelled
 
-               // Compute nVec = negation of root, shifted to DFT mesh
-               nVec.negate(waves_[rootId].indicesBz);
-               (*meshPtr_).shift(nVec);
-
-               // Find negation of root in this star, set partId to index 
-               bool negationFound = false;
-               for (j = stars_[i].beginId; j < stars_[i].endId; ++j) {
-                  if (nVec == waves_[j].indicesDft) {
-                     partId = j;
-                     negationFound = true;
-                     break;
-                  }
-               }
-
-               // For invertFlag == 0, failure to find nVec in this
-               // star is a fatal error
-               UTIL_CHECK(negationFound);
+               // Set partId to index of the negation of the root
+               partId = waves_[rootId].inverseId;
 
                // Divide all coefficients by the root coefficient
                rootCoeff = waves_[rootId].coeff;
@@ -733,28 +768,58 @@ namespace Prdc {
             UTIL_CHECK(stars_[i].cancel == stars_[i+1].cancel);
             // UTIL_CHECK(stars_[i+1].invertFlag == -1);
 
+            // First, assign inverseId for each wave in pair of stars
+            for (j = stars_[i].beginId; j < stars_[i].endId; ++j) {
+               if (waves_[j].inverseId < 0) { // if inverseId is unassigned
+
+                  // Compute nVec = negation of root, shifted to DFT mesh
+                  nVec.negate(waves_[j].indicesBz);
+                  (*meshPtr_).shift(nVec);
+
+                  // Find inverse
+
+                  // Check in the position that the inverse is expected
+                  // to be located for a typical pair of stars
+                  k = stars_[i+1].endId - 1 - (j - stars_[i].beginId);
+                  if (nVec == waves_[k].indicesDft) {
+                     waves_[j].inverseId = k;
+                     waves_[k].inverseId = j;
+                  } else {
+                     // Inverse not in expected position, search full star
+                     // (this usually occurs for stars on the edge of the
+                     // Brillouin zone)
+                     k = stars_[i+1].beginId;
+                     for ( ; k < stars_[i+1].endId; ++k) {
+                        if (nVec == waves_[k].indicesDft) {
+                           waves_[j].inverseId = k;
+                           waves_[k].inverseId = j;
+                           break;
+                        }
+                     }
+                  }
+
+                  // For invertFlag = 1, failure to find nVec in the 
+                  // next star is a fatal error
+                  UTIL_CHECK(waves_[j].inverseId >= 0); 
+
+               }
+            }
+
+            // Check that inverseId was assigned for all waves in the 
+            // next star
+            for (j = stars_[i+1].beginId; j < stars_[i+1].endId; ++j) {
+               UTIL_CHECK(waves_[j].inverseId >= 0);
+            }
+
             // Identify root of this star (star i)
             // Set the root to be the first wave in the star
             rootId = stars_[i].beginId;
             stars_[i].waveBz = waves_[rootId].indicesBz;
 
-            // Compute nVec = negation of root vector, shifted to DFT mesh
-            nVec.negate(waves_[rootId].indicesBz);
-            (*meshPtr_).shift(nVec);
-
-            // Seek negation of root wave in the next star (star i+1)
-            bool negationFound = false;
-            for (j = stars_[i+1].beginId; j < stars_[i+1].endId; ++j) {
-               if (nVec == waves_[j].indicesDft) {
-                  partId = j;
-                  stars_[i+1].waveBz = waves_[j].indicesBz;
-                  negationFound = true;
-                  break;
-               }
-            }
-
-            // For invertFlag == 1, absence of nVec in next star is fatal
-            UTIL_CHECK(negationFound);
+            // Identify root of the next star (star i+1)
+            // Set the root to be the negation of the root of star i
+            partId = waves_[rootId].inverseId;
+            stars_[i+1].waveBz = waves_[partId].indicesBz;
 
             if (stars_[i].cancel) {
 
@@ -974,7 +1039,37 @@ namespace Prdc {
          } 
          if (iw >= stars_[is].endId) {
             std::cout << "\n";
-            std::cout << " Wave::starId >= Star::endId" << std::endl;
+            std::cout << "Wave::starId >= Star::endId" << std::endl;
+            return false;
+         }
+
+         // Check that inverseId has been assigned
+         if (waves_[iw].inverseId < 0) {
+            std::cout << "\n";
+            std::cout << "Wave::inverseId not assigned\n";
+            std::cout << "G = " << waves_[iw].indicesBz << std::endl;
+            return false;
+         }
+         
+         // Check that inverseId points to the correct wave
+         v.negate(waves_[iw].indicesBz);
+         mesh().shift(v);
+         iwp = waves_[iw].inverseId;
+         if (waves_[iwp].indicesDft != v) {
+            std::cout << "\n";
+            std::cout << "Wave::inverseId is not inverse" << std::endl;
+            std::cout << "G = " << waves_[iw].indicesBz << std::endl;
+            std::cout << "-G (from inverseId) = " 
+                      << waves_[iwp].indicesBz << std::endl;
+            return false;
+         }
+
+         // Check that inverseId of the inverse wave is correct
+         if (waves_[iwp].inverseId != iw) {
+            std::cout << "\n";
+            std::cout << "Wave::inverseId values do not agree\n";
+            std::cout << "+G = " << waves_[iw].indicesBz << std::endl;
+            std::cout << "-G = " << waves_[iwp].indicesBz << std::endl;
             return false;
          }
       }
@@ -1003,6 +1098,34 @@ namespace Prdc {
                          << stars_[is].beginId << std::endl;
                std::cout << "stars_[" << is-1 << "]" << ".endId   = " 
                          << stars_[is-1].endId << std::endl;
+               return false;
+            }
+         }
+
+         // Check waveBz indices of star
+         if (stars_[is].invertFlag == -1) {
+            v.negate(stars_[is-1].waveBz);
+            v = shiftToMinimum(v, mesh().dimensions(), *unitCellPtr_);
+            if (stars_[is].waveBz != v) {
+               std::cout << "\n";
+               std::cout << "waveBz of star is not inverse of waveBz " 
+                         << "of previous star" << std::endl;
+               std::cout << "star id " << is << std::endl;
+               std::cout << "waveBz  " << stars_[is].waveBz << std::endl;
+               std::cout << "waveBz (previous star) " 
+                         << stars_[is-1].waveBz << std::endl;
+               return false;
+            }
+         } else {
+            v = waves_[stars_[is].beginId].indicesBz;
+            if (stars_[is].waveBz != v) {
+               std::cout << "\n";
+               std::cout << "waveBz of star != first wave of star"
+                         << std::endl;
+               std::cout << "star id    " << is << std::endl;
+               std::cout << "waveBz     " << stars_[is].waveBz 
+                         << std::endl;
+               std::cout << "first wave " << v << std::endl;
                return false;
             }
          }
@@ -1066,6 +1189,22 @@ namespace Prdc {
             }
          } 
 
+         // Check that all coefficients are zero if star is cancelled
+         if (stars_[is].cancel) {
+            for (iw = stars_[is].beginId + 1; iw < stars_[is].endId; ++iw) 
+            {
+               if (std::abs(waves_[iw].coeff) > 1.0E-8) {
+                  std::cout << "\n";
+                  std::cout << "Nonzero coefficient in a cancelled star" 
+                              << "\n";
+                  std::cout << "G = " << waves_[iw].indicesBz
+                              << "  coeff = " << waves_[iw].coeff 
+                              << "\n";
+                  return false;
+               }
+            }
+         }
+
       } // End do loop over all stars
 
       // Check that all waves in mesh are accounted for in stars
@@ -1083,7 +1222,7 @@ namespace Prdc {
       // Loop over closed stars and related pairs of stars.
       // Test closure under inversion and conjugacy of coefficients.
       std::complex<double> cdel;
-      bool negationFound, cancel;
+      bool cancel;
       is = 0;
       while (is < nStar_) {
          cancel = stars_[is].cancel;
@@ -1094,20 +1233,8 @@ namespace Prdc {
             int begin = stars_[is].beginId;
             int end = stars_[is].endId;
             for (iw = begin; iw < end; ++iw) {
-               v.negate(waves_[iw].indicesBz);
-               mesh().shift(v);
-               negationFound = false;
-               for (iwp = begin; iw < end; ++iwp) {
-                  if (waves_[iwp].indicesDft == v) {
-                     negationFound = true;
-                     if (!cancel) {
-                        cdel = conj(waves_[iwp].coeff);
-                        cdel -= waves_[iw].coeff;
-                     }
-                     break;
-                  }
-               }
-               if (!negationFound) {
+               iwp = waves_[iw].inverseId;
+               if (waves_[iwp].starId != is) {
                   std::cout << "\n";
                   std::cout << "Negation not found in closed star" 
                             << std::endl;
@@ -1121,32 +1248,28 @@ namespace Prdc {
                   }
                   return false;
                }
-               if (!cancel && std::abs(cdel) > 1.0E-8) {
-                  std::cout << "\n";
-                  std::cout << "Function for closed star is not real:" 
-                            << "\n";
-                  std::cout << "+G = " << waves_[iw].indicesBz
-                            << "  coeff = " << waves_[iw].coeff 
-                            << "\n";
-                  std::cout << "-G = " << waves_[iwp].indicesBz
-                            << "  coeff = " << waves_[iwp].coeff 
-                            << "\n";
-                  std::cout << "Coefficients are not conjugates." << "\n";
-                  std::cout << "All waves in star " << is << "\n";
-                  for (j=begin; j < end; ++j) {
-                     std::cout << waves_[j].indicesBz << "  "
-                               << waves_[j].coeff << "\n";
+               if (!cancel) {
+                  cdel = conj(waves_[iwp].coeff);
+                  cdel -= waves_[iw].coeff;
+                  if (std::abs(cdel) > 1.0E-8) {
+                     std::cout << "\n";
+                     std::cout << "Function for closed star is not real:" 
+                              << "\n";
+                     std::cout << "+G = " << waves_[iw].indicesBz
+                              << "  coeff = " << waves_[iw].coeff 
+                              << "\n";
+                     std::cout << "-G = " << waves_[iwp].indicesBz
+                              << "  coeff = " << waves_[iwp].coeff 
+                              << "\n";
+                     std::cout << "Coefficients are not conjugates." 
+                               << "\n";
+                     std::cout << "All waves in star " << is << "\n";
+                     for (j=begin; j < end; ++j) {
+                        std::cout << waves_[j].indicesBz << "  "
+                                 << waves_[j].coeff << "\n";
+                     }
+                     return false;
                   }
-                  return false;
-               }
-               if (cancel && std::abs(waves_[iw].coeff) > 1.0E-8) {
-                  std::cout << "\n";
-                  std::cout << "Nonzero coefficient in a cancelled star" 
-                            << "\n";
-                  std::cout << "G = " << waves_[iw].indicesBz
-                            << "  coeff = " << waves_[iw].coeff 
-                            << "\n";
-                  return false;
                }
             }
 
@@ -1185,24 +1308,13 @@ namespace Prdc {
             int begin2 = stars_[is+1].beginId; 
             int end2 = stars_[is+1].endId;
 
-            // Check existence of negation and conjugate coefficients
+            // Check that negation is in next star and check for
+            // conjugate coefficients
+
             // Loop over waves in first star
             for (iw = begin1; iw < end1; ++iw) {
-               v.negate(waves_[iw].indicesBz);
-               mesh().shift(v);
-               negationFound = false;
-               // Loop over second star, searching for negation
-               for (iwp = begin2; iw < end2; ++iwp) {
-                  if (waves_[iwp].indicesDft == v) {
-                     negationFound = true;
-                     if (!cancel) {
-                        cdel = conj(waves_[iwp].coeff);
-                        cdel -= waves_[iw].coeff;
-                     }
-                     break;
-                  }
-               }
-               if (!negationFound) {
+               iwp = waves_[iw].inverseId;
+               if (waves_[iwp].starId != is + 1) {
                   std::cout << "\n";
                   std::cout << "Negation not found for G in open star" 
                             << std::endl;
@@ -1223,33 +1335,37 @@ namespace Prdc {
                                << waves_[j].coeff << "\n";
                   }
                   return false;
-               } else 
-               if (!cancel && std::abs(cdel) > 1.0E-8) {
-                  std::cout << "\n";
-                  std::cout << "Error of coefficients in open stars:" 
-                            << "\n";
-                  std::cout << "First star id = " << is << std::endl;
-                  std::cout << "+G = " << waves_[iw].indicesBz
-                            << "  coeff = " << waves_[iw].coeff 
-                            << "\n";
-                  std::cout << "-G = " << waves_[iwp].indicesBz
-                            << "  coeff = " << waves_[iwp].coeff 
-                            << "\n";
-                  std::cout << "Coefficients are not conjugates." 
-                            << "\n";
-                  std::cout << "Waves in star " << is 
-                            << "  (starInvert ==1):" << "\n";
-                  for (j = begin1; j < end1; ++j) {
-                     std::cout << waves_[j].indicesBz  << "  "
-                               << waves_[j].coeff << "\n";
+               }
+               if (!cancel) {
+                  cdel = conj(waves_[iwp].coeff);
+                  cdel -= waves_[iw].coeff;
+                  if (std::abs(cdel) > 1.0E-8) {
+                     std::cout << "\n";
+                     std::cout << "Error of coefficients in open stars:" 
+                              << "\n";
+                     std::cout << "First star id = " << is << std::endl;
+                     std::cout << "+G = " << waves_[iw].indicesBz
+                              << "  coeff = " << waves_[iw].coeff 
+                              << "\n";
+                     std::cout << "-G = " << waves_[iwp].indicesBz
+                              << "  coeff = " << waves_[iwp].coeff 
+                              << "\n";
+                     std::cout << "Coefficients are not conjugates." 
+                              << "\n";
+                     std::cout << "Waves in star " << is 
+                              << "  (starInvert ==1):" << "\n";
+                     for (j = begin1; j < end1; ++j) {
+                        std::cout << waves_[j].indicesBz  << "  "
+                                 << waves_[j].coeff << "\n";
+                     }
+                     std::cout << "Waves in star " << is+1 
+                              << "  (starInvert == -1):" << "\n";
+                     for (j=begin2; j < end2; ++j) {
+                        std::cout << waves_[j].indicesBz  << "  "
+                                 << waves_[j].coeff << "\n";
+                     }
+                     return false;
                   }
-                  std::cout << "Waves in star " << is+1 
-                            << "  (starInvert == -1):" << "\n";
-                  for (j=begin2; j < end2; ++j) {
-                     std::cout << waves_[j].indicesBz  << "  "
-                               << waves_[j].coeff << "\n";
-                  }
-                  return false;
                }
             }
 
@@ -1270,7 +1386,7 @@ namespace Prdc {
          }
          if (stars_[is].basisId != ib) {
             std::cout << "\n";
-            std::cout << "Eror: stars_[starIds_[ib]].basisId != ib\n";
+            std::cout << "Error: stars_[starIds_[ib]].basisId != ib\n";
             std::cout << "Basis function index ib = " << ib << "\n";
             std::cout << "is = starIds_[ib]       = " << is << "\n";
             std::cout << "stars_[is].basisId      = " 
