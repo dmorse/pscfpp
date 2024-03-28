@@ -1068,6 +1068,16 @@ namespace Prdc {
             std::cout << "-G = " << waves_[iwp].indicesBz << std::endl;
             return false;
          }
+
+         // Check that either this wave or its inverse is explicit
+         if (waves_[iw].implicit == true && waves_[iwp].implicit == true) 
+         {
+            std::cout << "\n";
+            std::cout << "Wave and its inverse are both implicit";
+            std::cout << "+G = " << waves_[iw].indicesBz << std::endl;
+            std::cout << "-G = " << waves_[iwp].indicesBz << std::endl;
+            return false;
+         }
       }
 
       // Loop over all stars (elements of stars_ array)
