@@ -1478,6 +1478,7 @@ namespace Rpc {
       int rank;                                // dft grid rank of wave
       int is;                                  // star index
       int ib;                                  // basis index
+      int iw;                                  // wave index
 
       // Initialize all components to zero
       for (is = 0; is < basis().nBasis(); ++is) {
@@ -1502,7 +1503,7 @@ namespace Rpc {
             // Choose a wave in the star that is not implicit
             int beginId = starPtr->beginId;
             int endId = starPtr->endId;
-            int iw = 0;
+            iw = 0;
             bool isImplicit = true;
             while (isImplicit) {
                wavePtr = &basis().wave(beginId + iw);
@@ -1530,13 +1531,15 @@ namespace Rpc {
          if (starPtr->invertFlag == 1) {
 
             // Identify a characteristic wave that is not implicit:
-            // Either the first wave of the 1st star or last wave of 2nd
+            // Either the first wave of the 1st star or its inverse
+            // in the second star
             wavePtr = &basis().wave(starPtr->beginId);
             UTIL_CHECK(wavePtr->starId == is);
             if (wavePtr->implicit) {
+               iw = wavePtr->inverseId;
                starPtr = &(basis().star(is+1));
                UTIL_CHECK(starPtr->invertFlag == -1);
-               wavePtr = &basis().wave(starPtr->endId - 1);
+               wavePtr = &basis().wave(iw);
                UTIL_CHECK(!(wavePtr->implicit));
                UTIL_CHECK(wavePtr->starId == is+1);
             }
@@ -1987,7 +1990,6 @@ namespace Rpc {
          DArray<RField<3> > outFields;
          UnitCell<3> cell;
          IntVec<3> dimensions;
-         int rank = 0;
          // Set dimensions
          dimensions[0] = meshDimensions[0];
          dimensions[1] = meshDimensions[1];

@@ -1348,12 +1348,14 @@ namespace Rpg {
          if (starPtr->invertFlag == 1) {
 
             // Identify a characteristic wave that is not implicit:
-            // Either first wave of 1st star or last wave of 2nd star.
+            // Either the first wave of the 1st star or its inverse
+            // in the second star
             wavePtr = &basis().wave(starPtr->beginId);
             if (wavePtr->implicit) {
+               iw = wavePtr->inverseId;
                starPtr = &(basis().star(is+1));
                UTIL_CHECK(starPtr->invertFlag == -1);
-               wavePtr = &basis().wave(starPtr->endId - 1);
+               wavePtr = &basis().wave(iw);
                UTIL_CHECK(!(wavePtr->implicit));
                UTIL_CHECK(wavePtr->starId == is+1);
             }
