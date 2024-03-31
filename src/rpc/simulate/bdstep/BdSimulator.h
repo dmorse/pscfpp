@@ -145,6 +145,7 @@ namespace Rpc {
       using ParamComposite::readParamComposite;
       using ParamComposite::readParamCompositeOptional;
       using ParamComposite::readOptional;
+      using Simulator<D>::readCompressor;
       using Simulator<D>::perturbation;
       using Simulator<D>::perturbationFactory;
       using Simulator<D>::setPerturbation;
@@ -160,7 +161,7 @@ namespace Rpc {
       using Simulator<D>::iStep_;
       using Simulator<D>::iTotalStep_;
       using Simulator<D>::state_;
-
+      using Simulator<D>::seed_;
 
    private:
 
@@ -184,11 +185,6 @@ namespace Rpc {
       */
       Factory< TrajectoryReader<D> >* trajectoryReaderFactoryPtr_;
       
-      /**
-      * Seed value of random generator. 
-      */
-      long seed_;
-
       // Private member functions
 
       /**

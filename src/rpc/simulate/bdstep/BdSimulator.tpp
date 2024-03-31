@@ -38,8 +38,7 @@ namespace Rpc {
       analyzerManager_(*this, system),
       bdStepPtr_(0),
       bdStepFactoryPtr_(0),
-      trajectoryReaderFactoryPtr_(0),
-      seed_(0)
+      trajectoryReaderFactoryPtr_(0)
    {
       setClassName("BdSimulator");
       bdStepFactoryPtr_ = new BdStepFactory<D>(*this);
@@ -67,10 +66,15 @@ namespace Rpc {
    template <int D>
    void BdSimulator<D>::readParameters(std::istream &in)
    {
+      // Read required Compressor block
+      // readCompressor(in);
+
       // Optionally read random seed. 
-      // For default value seed_ = 0, seed is taken from the clock time
       seed_ = 0;
       readOptional(in, "seed", seed_);
+
+      // Set random number generator seed
+      // For default value seed_ = 0, seed is taken from the clock time
       random().setSeed(seed_);
       
       std::string className;

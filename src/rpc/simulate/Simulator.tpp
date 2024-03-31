@@ -12,6 +12,7 @@
 
 #include <rpc/System.h>
 #include <rpc/compressor/Compressor.h>
+#include <rpc/compressor/CompressorFactory.h>
 #include <rpc/simulate/perturbation/Perturbation.h>
 #include <rpc/simulate/perturbation/PerturbationFactory.h>
 
@@ -31,19 +32,22 @@ namespace Rpc {
    */
    template <int D>
    Simulator<D>::Simulator(System<D>& system)
-   : random_(),
-     iStep_(0),
-     iTotalStep_(0), 
-     hasHamiltonian_(false),
-     hasWc_(false),
-     hasCc_(false),
-     systemPtr_(&system),
-     perturbationFactoryPtr_(0),
-     perturbationPtr_(0),
-     isAllocated_(false)
+    : random_(),
+      iStep_(0),
+      iTotalStep_(0), 
+      hasHamiltonian_(false),
+      hasWc_(false),
+      hasCc_(false),
+      systemPtr_(&system),
+      compressorFactoryPtr_(0),
+      compressorPtr_(0),
+      perturbationFactoryPtr_(0),
+      perturbationPtr_(0),
+      isAllocated_(false)
    {  
-     setClassName("Simulator"); 
-     perturbationFactoryPtr_ = new PerturbationFactory<D>(*this);
+      setClassName("Simulator"); 
+      compressorFactoryPtr_ = new CompressorFactory<D>(system);
+      perturbationFactoryPtr_ = new PerturbationFactory<D>(*this);
    }
 
    /*
@@ -52,6 +56,12 @@ namespace Rpc {
    template <int D>
    Simulator<D>::~Simulator()
    {
+      if (compressorFactoryPtr_) {
+         delete compressorFactoryPtr_;
+      }
+      if (compressorPtr_) {
+         delete compressorPtr_;
+      }
       if (perturbationFactoryPtr_) {
          delete perturbationFactoryPtr_;
       }
@@ -60,7 +70,7 @@ namespace Rpc {
       }
    }
 
-   /* 
+   /*
    * Allocate required memory.
    */
    template <int D>
@@ -101,21 +111,26 @@ namespace Rpc {
    }
 
    /*
-   * Set the associated Perturbation<D> object.
-   */ 
-   template<int D>
-   void Simulator<D>::setPerturbation(Perturbation<D>* ptr)
-   {
-      UTIL_CHECK(ptr != 0);
-      perturbationPtr_ = ptr; 
-   }
-
-   /* 
    * Virtual function to read parameters - unimplemented.
    */
    template <int D>
    void Simulator<D>::readParameters(std::istream &in)
-   {  UTIL_THROW("Error: Unimplemented Simulator<D>::readParameters"); } 
+   {
+      // Read required Compressor block
+      //readCompressor(in);
+
+      // Optionally random seed.
+      seed_ = 0;
+      readOptional(in, "seed", seed_);
+
+      // Set random number generator seed.
+      // Default value seed_ = 0 uses the clock time.
+      random().setSeed(seed_);
+
+      // Initialize data of Simulator<D> base class
+      allocate();
+      analyzeChi();
+   }
 
    /*
    * Perform a field theoretic simulation of nStep steps.
@@ -132,7 +147,7 @@ namespace Rpc {
                               std::string classname,
                               std::string filename)
    {  UTIL_THROW("Error: Unimplemented function Simulator<D>::analyze"); }
-   
+
    /*
    * Compute field theoretic Hamiltonian H[W].
    */
@@ -187,7 +202,7 @@ namespace Rpc {
             }
          }
       }
-      
+
       // Subtract average of pressure field wc_[nMonomer-1]
       RField<D> const & Wc = wc_[nMonomer-1];
       for (int i = 0; i < meshSize; ++i) {
@@ -210,14 +225,14 @@ namespace Rpc {
             HW += prefactor*w*w;
          }
       }
-      
+
       // Normalize HW to equal a value per monomer
       HW /= double(meshSize);
 
       // Add constant term K/2 per monomer (K=s=e^{T}chi e/M^2)
       HW += 0.5*sc_[nMonomer - 1];
 
-      // Compute number of monomers in the system (nMonomerSystem)      
+      // Compute number of monomers in the system (nMonomerSystem)
       const double vSystem  = domain.unitCell().volume();
       const double vMonomer = mixture.vMonomer();
       const double nMonomerSystem = vSystem / vMonomer;
@@ -280,7 +295,7 @@ namespace Rpc {
          }
       }
 
-      // Eigenvalue calculations use data structures and 
+      // Eigenvalue calculations use data structures and
       // functions from the Gnu Scientific Library (GSL)
 
       // Allocate GSL matrix A that will hold a copy of chiP
@@ -301,7 +316,7 @@ namespace Rpc {
       error = gsl_eigen_symmv(A, Avals, Avecs, work);
       UTIL_CHECK(error == 0);
 
-      // Requirements: 
+      // Requirements:
       // - A has exactly one zero eigenvalue, with eigenvector (1,...,1)
       // - All other eigenvalues must be negative.
 
@@ -332,8 +347,8 @@ namespace Rpc {
       }
       UTIL_CHECK(nNull == 1);
       UTIL_CHECK(iNull >= 0);
-    
-      // Set eigenpair with zero eigenvalue 
+
+      // Set eigenpair with zero eigenvalue
       i = nMonomer - 1;
       chiEvals_[i] = 0.0;
       for (j = 0; j < nMonomer; ++j) {
@@ -352,11 +367,11 @@ namespace Rpc {
          for (j = 0;  j < nMonomer; ++j) {
             vec = chiEvecs_(i, j);
             norm += vec*vec;
-         } 
+         }
          prefactor = sqrt( double(nMonomer)/norm );
          for (j = 0;  j < nMonomer; ++j) {
             chiEvecs_(i, j) *= prefactor;
-         } 
+         }
       }
 
       // Check final eigenvector is (1, ..., 1)
@@ -371,7 +386,7 @@ namespace Rpc {
          s[i] = 0.0;
          for (j = 0; j < nMonomer; ++j) {
            s[i] += chi(i,j);
-         } 
+         }
          s[i] = s[i]/double(nMonomer);
       }
 
@@ -389,7 +404,7 @@ namespace Rpc {
       for (i = 0; i < nMonomer; ++i) {
          Log::file() << "Eigenpair " << i << "\n";
          Log::file() << "value  =  " << chiEvals_[i] << "\n";
-         Log::file() << "vector = [ "; 
+         Log::file() << "vector = [ ";
          for (j = 0; j < nMonomer; ++j) {
             Log::file() << chiEvecs_(i, j) << "   ";
          }
@@ -434,7 +449,7 @@ namespace Rpc {
 
          }
       }
-      
+
       #if 0
       // Debugging output
       Log::file() << "wc " << wc_.capacity() << "\n";
@@ -446,7 +461,7 @@ namespace Rpc {
 
       hasWc_ = true;
    }
-   
+
    /*
    * Compute the eigenvector components of the c-fields, using the
    * eigenvectors chiEvecs_ of the projected chi matrix as a basis.
@@ -472,7 +487,7 @@ namespace Rpc {
             Cc[k] = 0.0;
          }
 
-         // Loop over monomer types 
+         // Loop over monomer types
          for (j = 0; j < nMonomer; ++j) {
             RField<D> const & Cr = system().c().rgrid(j);
             double vec = chiEvecs_(i, j);
@@ -484,7 +499,7 @@ namespace Rpc {
 
          }
       }
-      
+
       #if 0
       // Debugging output
       Log::file() << "cc " << cc_.capacity() << "\n";
@@ -644,17 +659,43 @@ namespace Rpc {
 
    /*
    * Output all timer results.
-   */ 
+   */
    template<int D>
    void Simulator<D>::outputTimers(std::ostream& out)
    { }
-  
+
    /*
    * Clear all timers.
-   */ 
+   */
    template<int D>
    void Simulator<D>::clearTimers()
    { }
+
+   // Protected Functions
+
+   /*
+   * Read the required Compressor parameter file block.
+   */
+   template<int D>
+   void Simulator<D>::readCompressor(std::istream& in)
+   {
+      UTIL_CHECK(compressorFactoryPtr_);
+      std::string className;
+      bool isEnd = false;
+      compressorPtr_ =
+         compressorFactoryPtr_->readObject(in, *this, className, isEnd);
+      UTIL_CHECK(compressorPtr_);
+   }
+
+   /*
+   * Set the associated Perturbation<D> object.
+   */
+   template<int D>
+   void Simulator<D>::setPerturbation(Perturbation<D>* ptr)
+   {
+      UTIL_CHECK(ptr != 0);
+      perturbationPtr_ = ptr;
+   }
 
 }
 }
