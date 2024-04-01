@@ -27,7 +27,6 @@ System{
     mesh           16    16    16
     lattice     cubic   
   }
-  McSimulator{
     LrAmCompressor{
       epsilon      1.0e-4
       maxItr       200
@@ -35,6 +34,7 @@ System{
       verbose	   0
       errorType    normResid
     }
+  McSimulator{
     seed              1784106389
     McMoveManager{
       ForceBiasMove{
@@ -47,7 +47,7 @@ System{
       }
       FourierMove{
         probability     0.25
-        A               0.001
+        A               0.0008
         F*              20.990
         tau             2.64737
         N               1.0

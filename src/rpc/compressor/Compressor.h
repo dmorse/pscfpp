@@ -50,11 +50,6 @@ namespace Rpc
       virtual int compress() = 0;
 
       /**
-      * Get the number of times the MDE has been solved.
-      */
-      int mdeCounter();
-
-      /**
       * Output report of timing results to stream.
       *
       * \param out output stream for results
@@ -65,6 +60,11 @@ namespace Rpc
       * Clear timers.
       */
       virtual void clearTimers() = 0;
+
+      /**
+      * Get the number of times the MDE has been solved.
+      */
+      int mdeCounter();
 
    protected:
 

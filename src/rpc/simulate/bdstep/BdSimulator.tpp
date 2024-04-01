@@ -82,7 +82,7 @@ namespace Rpc {
          Simulator<D>::setPerturbation(perturbationPtr);
       } else
       if (ParamComponent::echo()) {
-         Log::file() << indent() << "  [Perturbation{} absent]\n";
+         Log::file() << indent() << "  Perturbation{ [absent] }\n";
       }
 
       // Instantiate an BdStep object (mandatory)

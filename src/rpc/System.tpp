@@ -285,7 +285,7 @@ namespace Rpc {
          iteratorFactoryPtr_->readObjectOptional(in, *this, className, 
                                                  isEnd);
       if (!iteratorPtr_ && ParamComponent::echo()) {
-         Log::file() << indent() << "  [Iterator{} absent]\n";
+         Log::file() << indent() << "  Iterator{ [absent] }\n";
       }
 
       // Optionally instantiate a Sweep object
@@ -1263,9 +1263,6 @@ namespace Rpc {
       }
       if (hasSimulator()){
          simulator().clearTimers();
-      }
-      if (compressorPtr_){
-         compressor().clearTimers();
       }
    }
 

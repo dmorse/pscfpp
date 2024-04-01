@@ -49,7 +49,7 @@ System{
       }
 
       StepLogger{
-        interval        50
+        interval        20
       }
 
     }

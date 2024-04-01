@@ -282,7 +282,7 @@ namespace Rpg
          iteratorFactoryPtr_->readObjectOptional(in, *this, className, 
                                                  isEnd);
       if (!iteratorPtr_) {
-         Log::file() << indent() << "  [Iterator{} absent]\n";
+         Log::file() << indent() << "  Iterator{ [absent] }\n";
       }
 
       // Optionally instantiate a Sweep object (if an iterator exists)

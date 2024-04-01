@@ -1,5 +1,5 @@
 READ_W_RGRID     in/w.rf
-CLEAR_TIMER
+CLEAR_TIMERS
 SIMULATE         100
 WRITE_W_RGRID    out/w.rf
 WRITE_C_RGRID    out/c.rf
