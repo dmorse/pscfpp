@@ -123,6 +123,7 @@ namespace Rpc {
       if (!system().hasCompressor()) {
          readCompressor(in);
       }
+      UTIL_CHECK(compressorPtr_);
 
       // Optionally random seed.
       seed_ = 0;
@@ -131,6 +132,9 @@ namespace Rpc {
       // Set random number generator seed.
       // Default value seed_ = 0 uses the clock time.
       random().setSeed(seed_);
+
+      // Optionally read a perturbation
+      readPerturbation(in);
    }
 
    /*
@@ -703,6 +707,26 @@ namespace Rpc {
       compressorPtr_ =
          compressorFactoryPtr_->readObject(in, *this, className, isEnd);
       UTIL_CHECK(compressorPtr_);
+   }
+
+   /*
+   * Optionally read a Perturbation parameter file block.
+   */
+   template<int D>
+   void Simulator<D>::readPerturbation(std::istream& in)
+   {
+      UTIL_CHECK(!perturbationPtr_);
+
+      std::string className;
+      bool isEnd = false;
+
+      perturbationPtr_ =
+         perturbationFactory().readObjectOptional(in, *this,
+                                                  className, isEnd);
+      UTIL_CHECK(!isEnd);
+      if (!perturbationPtr_ && ParamComponent::echo()) {
+         Log::file() << indent() << "  Perturbation{ [absent] }\n";
+      }
    }
 
    /*

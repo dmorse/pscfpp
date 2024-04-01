@@ -66,28 +66,15 @@ namespace Rpc {
    template <int D>
    void BdSimulator<D>::readParameters(std::istream &in)
    {
-      // Read compressor block and optional random number seed
+      // Read compressor, optional random seed, optional perturbation
       Simulator<D>::readParameters(in);
 
+      // Instantiate an BdStep object (required)
       std::string className;
       bool isEnd = false;
-
-      // Optionally read and instantiate a Perturbation object
-      Perturbation<D>* perturbationPtr = 0;
-      perturbationPtr =
-         perturbationFactory().readObjectOptional(in, *this,
-                                                  className, isEnd);
-      UTIL_CHECK(!isEnd);
-      if (perturbationPtr) {
-         Simulator<D>::setPerturbation(perturbationPtr);
-      } else
-      if (ParamComponent::echo()) {
-         Log::file() << indent() << "  Perturbation{ [absent] }\n";
-      }
-
-      // Instantiate an BdStep object (mandatory)
       bdStepPtr_ =
           bdStepFactoryPtr_->readObject(in, *this, className, isEnd);
+      UTIL_CHECK(bdStepPtr_);
 
       // Read analyzer block (optional)
       if (!isEnd) {

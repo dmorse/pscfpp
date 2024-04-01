@@ -27,6 +27,7 @@ System{
     mesh           16    16    16
     lattice     cubic   
   }
+  McSimulator{
     LrAmCompressor{
       epsilon      1.0e-4
       maxItr       200
@@ -34,7 +35,6 @@ System{
       verbose	   0
       errorType    normResid
     }
-  McSimulator{
     seed              1784106389
     McMoveManager{
       ForceBiasMove{

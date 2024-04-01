@@ -477,7 +477,7 @@ namespace Rpc {
       Compressor<D>& compressor();
 
       /**
-      * Does this system have a Compressor object?
+      * Does this Simulator have a Compressor object?
       */
       bool hasCompressor() const;
 
@@ -520,6 +520,13 @@ namespace Rpc {
       * Get the perturbation factory by reference.
       */
       PerturbationFactory<D>& perturbationFactory();
+
+      /**
+      * Optionally read an associated perturbation.
+      *
+      * \param in input parameter stream
+      */
+      void readPerturbation(std::istream& in);
 
       /**
       * Set the associated perturbation.

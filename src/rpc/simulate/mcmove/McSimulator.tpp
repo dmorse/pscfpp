@@ -63,19 +63,6 @@ namespace Rpc {
       // Read compressor block and optional random number generator seed
       Simulator<D>::readParameters(in);
 
-      #if 0
-      // Read required Compressor block
-      //readCompressor(in);
-
-      // Optionally random seed.
-      seed_ = 0;
-      readOptional(in, "seed", seed_);
-
-      // Set random number generator seed.
-      // Default value seed_ = 0 uses the clock time.
-      random().setSeed(seed_);
-      #endif
-
       // Read block of McMove parameters
       readParamComposite(in, mcMoveManager_);
 
