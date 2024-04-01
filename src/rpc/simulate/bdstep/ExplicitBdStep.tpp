@@ -79,10 +79,10 @@ namespace Rpc {
       const int nMonomer = system().mixture().nMonomer();
       const int meshSize = system().domain().mesh().size();
       int i, j, k;
-      
+
       // Save current state
       simulator().saveState();
-      
+
       // Copy current W fields from parent system into w_
       for (i = 0; i < nMonomer; ++i) {
          w_[i] = system().w().rgrid(i);
@@ -119,20 +119,20 @@ namespace Rpc {
 
       // Enforce incompressibility (also solves MDE repeatedly)
       bool isConverged = false;
-      int compress = system().compressor().compress();
+      int compress = simulator().compressor().compress();
       if (compress != 0){
          simulator().restoreState();
       } else {
          isConverged = true;
          UTIL_CHECK(system().hasCFields());
-         
+
          // Evaluate component properties in new state
          simulator().clearState();
          simulator().computeWc();
          simulator().computeCc();
          simulator().computeDc();
       }
-      
+
       return isConverged;
    }
 

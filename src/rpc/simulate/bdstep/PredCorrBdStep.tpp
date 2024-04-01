@@ -153,7 +153,7 @@ namespace Rpc {
       
       // Enforce incompressibility (also solves MDE repeatedly)
       bool isConverged = false;
-      int compress = system().compressor().compress();
+      int compress = simulator().compressor().compress();
       if (compress != 0){
          simulator().restoreState();
       } else {
@@ -200,7 +200,7 @@ namespace Rpc {
          // Set fields at final point
          system().setWRGrid(wf_);
          
-         int compress2 = system().compressor().compress();
+         int compress2 = simulator().compressor().compress();
          if (compress2 != 0){
             simulator().restoreState();
          } else {

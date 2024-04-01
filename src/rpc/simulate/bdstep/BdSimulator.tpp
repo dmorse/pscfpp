@@ -66,6 +66,10 @@ namespace Rpc {
    template <int D>
    void BdSimulator<D>::readParameters(std::istream &in)
    {
+      // Read compressor block and optional random number seed
+      Simulator<D>::readParameters(in);
+
+      #if 0
       // Read required Compressor block
       // readCompressor(in);
 
@@ -76,7 +80,8 @@ namespace Rpc {
       // Set random number generator seed
       // For default value seed_ = 0, seed is taken from the clock time
       random().setSeed(seed_);
-
+      #endif
+      
       std::string className;
       bool isEnd = false;
 
@@ -205,7 +210,7 @@ namespace Rpc {
       // Output number of times MDE has been solved for the simulation run
       Log::file() << std::endl;
       Log::file() << "MDE counter   "
-                  << system().compressor().mdeCounter() << std::endl;
+                  << compressor().mdeCounter() << std::endl;
       Log::file() << std::endl;
 
       // Output times for the simulation run

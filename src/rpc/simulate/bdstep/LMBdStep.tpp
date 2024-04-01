@@ -77,7 +77,7 @@ namespace Rpc {
    {
       const int nMonomer = system().mixture().nMonomer();
       const int meshSize = system().domain().mesh().size();
-      
+
       // Prefactor b for displacements
       const double vSystem = system().domain().unitCell().volume();
       const double b = sqrt(0.5*mobility_*double(meshSize)/vSystem);
@@ -136,7 +136,7 @@ namespace Rpc {
       const int nMonomer = system().mixture().nMonomer();
       const int meshSize = system().domain().mesh().size();
       int i, j, k;
-      
+
       // Save current state
       simulator().saveState();
 
@@ -171,16 +171,16 @@ namespace Rpc {
 
       // Set modified fields
       system().setWRGrid(w_);
-      
+
       // Enforce incompressibility (also solves MDE repeatedly)
       bool isConverged = false;
-      int compress = system().compressor().compress();
+      int compress = simulator().compressor().compress();
       if (compress != 0){
          simulator().restoreState();
       } else {
          isConverged = true;
          UTIL_CHECK(system().hasCFields());
-         
+
          // Compute components and derivatives at wp_
          simulator().clearState();
          simulator().clearData();
@@ -190,9 +190,9 @@ namespace Rpc {
 
          // Exchange old and new random fields
          exchangeOldNew();
-         
+
       }
-      
+
       return isConverged;
    }
 

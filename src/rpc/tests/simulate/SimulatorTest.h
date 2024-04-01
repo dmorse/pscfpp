@@ -33,7 +33,7 @@ public:
    {}
 
    void setUp()
-   {  setVerbose(0); }
+   {  setVerbose(2); }
 
    void initSystem(std::string filename)
    {

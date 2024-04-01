@@ -27,14 +27,15 @@ System{
     mesh           16    16    16
     lattice     cubic   
   }
-  LrAmCompressor{
-    epsilon      1.0e-4
-    maxItr       200
-    maxHist      30     
-    verbose	 0
-    errorType    normResid
-  }
   McSimulator{
+    LrAmCompressor{
+      epsilon      1.0e-4
+      maxItr       200
+      maxHist      30     
+      verbose	   0
+      errorType    normResid
+    }
+    seed              1784106389
     McMoveManager{
       ForceBiasMove{
         probability     0.50
@@ -56,13 +57,14 @@ System{
 
     }
     AnalyzerManager{
-      baseInterval    1
+      baseInterval    10
 
       HamiltonianAnalyzer{
         interval        10
         outputFileName  out/hamiltonian
         nSamplePerBlock 2
       }
+
       StepLogger{
         interval        20
       }

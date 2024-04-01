@@ -309,7 +309,7 @@ namespace Rpc {
       }
 
       // Optionally instantiate a Simulator
-      if (hasCompressor() && !isEnd) {
+      if (!isEnd) {
          simulatorPtr_ = 
             simulatorFactoryPtr_->readObjectOptional(in, *this, 
                                                       className, isEnd);
@@ -424,8 +424,9 @@ namespace Rpc {
          } else
          if (command == "COMPRESS") {
             // Impose incompressibility
-            UTIL_CHECK(hasCompressor());
-            compressor().compress();
+            UTIL_CHECK(hasSimulator());
+            UTIL_CHECK(simulator().hasCompressor());
+            simulator().compressor().compress();
          } else
          if (command == "WRITE_TIMER") {
             readEcho(in, filename);
@@ -992,7 +993,6 @@ namespace Rpc {
    void System<D>::simulate(int nStep)
    {
       UTIL_CHECK(nStep > 0);
-      UTIL_CHECK(hasCompressor());
       UTIL_CHECK(hasSimulator());
       hasCFields_ = false;
       hasFreeEnergy_ = false;
@@ -1249,10 +1249,6 @@ namespace Rpc {
       if (hasSimulator()){
          simulator().outputTimers(Log::file());
          simulator().outputTimers(out);
-      }
-      if (compressorPtr_){
-         compressor().outputTimers(Log::file());
-         compressor().outputTimers(out);
       }
    }
    

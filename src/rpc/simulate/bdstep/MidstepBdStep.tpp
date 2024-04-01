@@ -96,7 +96,7 @@ namespace Rpc {
       const int nMonomer = system().mixture().nMonomer();
       const int meshSize = system().domain().mesh().size();
       int i, j, k;
-      
+
       // Save current state
       simulator().saveState();
 
@@ -131,7 +131,7 @@ namespace Rpc {
          for (k = 0; k < meshSize; ++k) {
             dwc_[k] = a*dc[k] + eta[k];
          }
-         
+
          // Loop over monomer types
          for (i = 0; i < nMonomer; ++i) {
             RField<D> & wn = wh_[i];
@@ -140,15 +140,15 @@ namespace Rpc {
                wn[k] += evec*dwc_[k];
             }
          }
-         
+
       }
 
       // Set modified fields at mid-point
       system().setWRGrid(wh_);
-      
-       // Enforce incompressibility (also solves MDE repeatedly)
+
+      // Enforce incompressibility (also solves MDE repeatedly)
       bool isConverged = false;
-      int compress = system().compressor().compress();
+      int compress = simulator().compressor().compress();
       if (compress != 0){
          simulator().restoreState();
       } else{
@@ -165,7 +165,7 @@ namespace Rpc {
          for (k = 0; k < meshSize; ++k) {
             dwp_[k] = wp[k] - dwp_[k];
          }
-   
+
          // Full step (corrector)
          for (j = 0; j < nMonomer - 1; ++j) {
             RField<D> const & dc = simulator().dc(j);
@@ -192,24 +192,23 @@ namespace Rpc {
 
          // Set fields at final point
          system().setWRGrid(wf_);
-         
-         int compress2 = system().compressor().compress();
+
+         int compress2 = simulator().compressor().compress();
          if (compress2 != 0){
             simulator().restoreState();
          } else {
             isConverged = true;
             UTIL_CHECK(system().hasCFields());
-            
+
             // Compute components and derivatives at final point
             simulator().clearState();
             simulator().clearData();
             simulator().computeWc();
             simulator().computeCc();
             simulator().computeDc();
-            
+
          }
       }
-      
       return isConverged;
    }
 
