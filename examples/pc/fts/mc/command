@@ -3,6 +3,6 @@ CLEAR_TIMER
 SIMULATE         100
 WRITE_W_RGRID    out/w.rf
 WRITE_C_RGRID    out/c.rf
-WRITE_TIMER 	 out/timerFtmc
+WRITE_TIMERS 	 out/timers
 FINISH
 

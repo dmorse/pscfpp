@@ -79,20 +79,10 @@ namespace Rpc {
                            std::string classname,
                            std::string filename);
 
-      /**
-      * Output timing results
-      */
-      virtual void outputTimers(std::ostream& out);
-
-      /**
-      * Clear timers
-      */
-      virtual void clearTimers();
-
       ///@}
       /// \name Miscellaneous
       ///@{
-      
+
       /**
       * Get BdStep.
       */
@@ -136,6 +126,7 @@ namespace Rpc {
       using Simulator<D>::saveState;
       using Simulator<D>::restoreState;
       using Simulator<D>::clearState;
+      using Simulator<D>::outputMdeCounter;
 
    protected:
 
@@ -185,7 +176,7 @@ namespace Rpc {
       * Pointer to a trajectory reader/writer factory.
       */
       Factory< TrajectoryReader<D> >* trajectoryReaderFactoryPtr_;
-      
+
       // Private member functions
 
       /**
@@ -207,7 +198,7 @@ namespace Rpc {
 
    // Get the TrajectoryReaderfactory
    template <int D>
-   inline 
+   inline
    Factory<TrajectoryReader<D> >& BdSimulator<D>::trajectoryReaderFactory()
    {
       UTIL_ASSERT(trajectoryReaderFactoryPtr_);

@@ -146,7 +146,17 @@ namespace Rpc {
       virtual void outputTimers(std::ostream& out);
 
       /**
-      * Clear timers
+      * Output MDE counter.
+      *
+      * Output the number of times the modified diffusion equation has been 
+      * solved.
+      *
+      * \param out  output stream
+      */
+      virtual void outputMdeCounter(std::ostream& out);
+
+      /**
+      * Clear timers.
       *
       * Empty default implementation.
       */
@@ -687,11 +697,11 @@ namespace Rpc {
    template <int D>
    inline Compressor<D>& Simulator<D>::compressor()
    {
-      UTIL_ASSERT(compressorPtr_);
+      UTIL_CHECK(compressorPtr_);
       return *compressorPtr_;
    }
 
-   // Does the system have a Compressor object?
+   // Does the simulator have a Compressor object?
    template <int D>
    inline bool Simulator<D>::hasCompressor() const
    {  return (compressorPtr_ != 0); }

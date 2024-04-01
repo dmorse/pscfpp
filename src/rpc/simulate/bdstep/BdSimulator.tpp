@@ -69,19 +69,6 @@ namespace Rpc {
       // Read compressor block and optional random number seed
       Simulator<D>::readParameters(in);
 
-      #if 0
-      // Read required Compressor block
-      // readCompressor(in);
-
-      // Optionally read random seed.
-      seed_ = 0;
-      readOptional(in, "seed", seed_);
-
-      // Set random number generator seed
-      // For default value seed_ = 0, seed is taken from the clock time
-      random().setSeed(seed_);
-      #endif
-      
       std::string className;
       bool isEnd = false;
 
@@ -296,20 +283,6 @@ namespace Rpc {
       Log::file() << std::endl;
 
    }
-
-   /*
-   * Output timer results.
-   */
-   template<int D>
-   void BdSimulator<D>::outputTimers(std::ostream& out)
-   {}
-
-   /*
-   * Clear all timers.
-   */
-   template<int D>
-   void BdSimulator<D>::clearTimers()
-   {}
 
 }
 }

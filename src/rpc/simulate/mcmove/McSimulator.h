@@ -142,6 +142,7 @@ namespace Rpc {
       using Simulator<D>::saveState;
       using Simulator<D>::restoreState;
       using Simulator<D>::clearState;
+      using Simulator<D>::outputMdeCounter;
 
    protected:
 

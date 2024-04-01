@@ -186,10 +186,13 @@ namespace Rpc {
       }
 
       // Output number of times MDE has been solved for the simulation run
+      outputMdeCounter(Log::file());
+      #if 0
       Log::file() << std::endl;
       Log::file() << "MDE counter   " 
                   << compressor().mdeCounter() << std::endl;
       Log::file() << std::endl;
+      #endif
 
       // Output times for the simulation run
       Log::file() << std::endl;

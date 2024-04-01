@@ -428,14 +428,14 @@ namespace Rpc {
             UTIL_CHECK(simulator().hasCompressor());
             simulator().compressor().compress();
          } else
-         if (command == "WRITE_TIMER") {
+         if (command == "WRITE_TIMERS") {
             readEcho(in, filename);
             std::ofstream file;
             fileMaster().openOutputFile(filename, file);
             writeTimers(file);
             file.close();
          } else
-         if (command == "CLEAR_TIMER") {
+         if (command == "CLEAR_TIMERS") {
             clearTimers();
          } else
          if (command == "WRITE_PARAM") {
