@@ -37,9 +37,9 @@ namespace Rpc {
       mcMoveManager_(*this, system),
       analyzerManager_(*this, system),
       trajectoryReaderFactoryPtr_(0)
-   { 
-      setClassName("McSimulator");   
-      trajectoryReaderFactoryPtr_ 
+   {
+      setClassName("McSimulator");
+      trajectoryReaderFactoryPtr_
              = new TrajectoryReaderFactory<D>(system);
    }
 
@@ -54,7 +54,7 @@ namespace Rpc {
       }
    }
 
-   /* 
+   /*
    * Read instructions for creating objects from file.
    */
    template <int D>
@@ -63,17 +63,13 @@ namespace Rpc {
       // Read required Compressor block
       //readCompressor(in);
 
-      // Optionally random seed. 
+      // Optionally random seed.
       seed_ = 0;
       readOptional(in, "seed", seed_);
 
-      // Set random number generator seed. 
+      // Set random number generator seed.
       // Default value seed_ = 0 uses the clock time.
       random().setSeed(seed_);
-      
-      // Initialize data of Simulator<D> base class
-      allocate();
-      analyzeChi();
 
       // Read block of McMove parameters
       readParamComposite(in, mcMoveManager_);
@@ -82,16 +78,6 @@ namespace Rpc {
       Analyzer<D>::baseInterval = 0; // default value
       readParamCompositeOptional(in, analyzerManager_);
 
-   }
-
-   /*
-   * Initialize just prior to a run.
-   */
-   template <int D>
-   void McSimulator<D>::setup()
-   {  
-      UTIL_CHECK(system().w().hasData());
-      
       // Figure out what needs to be saved
       state_.needsCc = false;
       state_.needsDc = false;
@@ -102,13 +88,23 @@ namespace Rpc {
       if (mcMoveManager_.needsDc()){
          state_.needsDc = true;
       }
-      
+
       // Initialize Simulator<D> base class
       allocate();
-      
+
+   }
+
+   /*
+   * Initialize just prior to a run.
+   */
+   template <int D>
+   void McSimulator<D>::setup()
+   {
+      UTIL_CHECK(system().w().hasData());
+
       // Eigenanalysis of the projected chi matrix.
       analyzeChi();
-      
+
       // Compute field components and MC Hamiltonian for initial state
       system().compute();
       computeWc();
@@ -119,12 +115,12 @@ namespace Rpc {
       if (state_.needsDc) {
          computeDc();
       }
-      
+
       mcMoveManager_.setup();
       if (analyzerManager_.size() > 0){
          analyzerManager_.setup();
       }
-      
+
    }
 
    /*
@@ -143,21 +139,21 @@ namespace Rpc {
       Timer analyzerTimer;
       timer.start();
       iStep_ = 0;
-      
+
       // Analysis initial step (if any)
       analyzerTimer.start();
       analyzerManager_.sample(iStep_);
       analyzerTimer.stop();
-      
+
       for (iTotalStep_ = 0; iTotalStep_ < nStep; ++iTotalStep_) {
-         
+
          // Choose and attempt an McMove
          bool converged;
          converged = mcMoveManager_.chooseMove().move();
-         
+
          if (converged){
             iStep_++;
-            
+
             // Analysis (if any)
             analyzerTimer.start();
             if (Analyzer<D>::baseInterval != 0) {
@@ -168,12 +164,12 @@ namespace Rpc {
                }
             }
             analyzerTimer.stop();
-            
+
          } else{
             Log::file() << "Step: "<< iTotalStep_<< " fail to converge" << "\n";
          }
       }
-      
+
       timer.stop();
       double time = timer.time();
       double analyzerTime = analyzerTimer.time();
@@ -186,10 +182,10 @@ namespace Rpc {
 
       // Output number of times MDE has been solved for the simulation run
       Log::file() << std::endl;
-      Log::file() << "MDE counter   " 
+      Log::file() << "MDE counter   "
                   << system().compressor().mdeCounter() << std::endl;
       Log::file() << std::endl;
-      
+
       // Output times for the simulation run
       Log::file() << std::endl;
       Log::file() << "nStep               " << nStep << std::endl;
@@ -251,7 +247,7 @@ namespace Rpc {
       UTIL_CHECK(max >= min);
       UTIL_CHECK(Analyzer<D>::baseInterval > 0);
       UTIL_CHECK(analyzerManager_.size() > 0);
-      
+
       // Construct TrajectoryReader
       TrajectoryReader<D>* trajectoryReaderPtr;
       trajectoryReaderPtr = trajectoryReaderFactory().factory(classname);
@@ -274,7 +270,7 @@ namespace Rpc {
          if (hasFrame) {
             clearData();
 
-            // Initialize analyzers 
+            // Initialize analyzers
             if (iStep_ == min) {
                analyzerManager_.setup();
             }
@@ -297,17 +293,17 @@ namespace Rpc {
       // Output number of frames and times
       Log::file() << std::endl;
       Log::file() << "# of frames   " << nFrames << std::endl;
-      Log::file() << "run time      " << timer.time() 
+      Log::file() << "run time      " << timer.time()
                   << "  sec" << std::endl;
-      Log::file() << "time / frame " << timer.time()/double(nFrames) 
+      Log::file() << "time / frame " << timer.time()/double(nFrames)
                   << "  sec" << std::endl;
       Log::file() << std::endl;
 
    }
-   
+
    /*
    * Output McMoveManager timer results.
-   */ 
+   */
    template<int D>
    void McSimulator<D>::outputTimers(std::ostream& out)
    {
@@ -315,10 +311,10 @@ namespace Rpc {
       out << "McSimulator times contributions:\n";
       mcMoveManager_.outputTimers(out);
    }
-  
+
    /*
    * Clear all McMoveManager timers.
-   */ 
+   */
    template<int D>
    void McSimulator<D>::clearTimers()
    {  mcMoveManager_.clearTimers(); }

@@ -72,13 +72,19 @@ namespace Rpc
       * Return const reference to parent system.
       */
       System<D> const & system() const
-      {  return *sysPtr_;}
+      {  
+         UTIL_ASSERT(sysPtr_);
+         return *sysPtr_;
+      }
 
       /**
       * Return non-const reference to parent system.
       */
       System<D>& system()
-      {  return *sysPtr_;}
+      {  
+         UTIL_ASSERT(sysPtr_);
+         return *sysPtr_;
+      }
 
       /**
       * Count how many times MDE has been solved.

@@ -577,6 +577,7 @@ namespace Rpc {
       // Save cc based on ccSavePolicy
       if (state_.needsCc) {
          UTIL_CHECK(hasCc());
+         UTIL_CHECK(state_.cc.isAllocated());
          for (int i = 0; i < nMonomer; ++i) {
             state_.cc[i] = cc(i);
          }
@@ -585,6 +586,7 @@ namespace Rpc {
       // Save dc based on dcSavePolicy
       if (state_.needsDc) {
          UTIL_CHECK(hasDc());
+         UTIL_CHECK(state_.dc.isAllocated());
          for (int i = 0; i < nMonomer - 1; ++i) {
             state_.dc[i] = dc(i);
          }

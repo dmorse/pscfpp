@@ -69,21 +69,21 @@ namespace Rpc {
       // Read required Compressor block
       // readCompressor(in);
 
-      // Optionally read random seed. 
+      // Optionally read random seed.
       seed_ = 0;
       readOptional(in, "seed", seed_);
 
       // Set random number generator seed
       // For default value seed_ = 0, seed is taken from the clock time
       random().setSeed(seed_);
-      
+
       std::string className;
       bool isEnd = false;
 
       // Optionally read and instantiate a Perturbation object
       Perturbation<D>* perturbationPtr = 0;
-      perturbationPtr = 
-         perturbationFactory().readObjectOptional(in, *this, 
+      perturbationPtr =
+         perturbationFactory().readObjectOptional(in, *this,
                                                   className, isEnd);
       UTIL_CHECK(!isEnd);
       if (perturbationPtr) {
@@ -94,7 +94,7 @@ namespace Rpc {
       }
 
       // Instantiate an BdStep object (mandatory)
-      bdStepPtr_ = 
+      bdStepPtr_ =
           bdStepFactoryPtr_->readObject(in, *this, className, isEnd);
 
       // Read analyzer block (optional)
@@ -103,16 +103,6 @@ namespace Rpc {
          readParamCompositeOptional(in, analyzerManager_);
       }
 
-   }
-
-   /*
-   * Perform a field theoretic MC simulation of nStep steps.
-   */
-   template <int D>
-   void BdSimulator<D>::setup()
-   {
-      UTIL_CHECK(system().w().hasData());
-      
       // Figure out what variables need to be saved
       state_.needsCc = false;
       state_.needsDc = false;
@@ -123,25 +113,35 @@ namespace Rpc {
       if (stepper().needsDc()){
          state_.needsDc = true;
       }
-      
-      // Initialize Simulator<D> base class
+
+      // Allocate memory for Simulator<D> base class
       allocate();
-      
+
+   }
+
+   /*
+   * Perform a field theoretic MC simulation of nStep steps.
+   */
+   template <int D>
+   void BdSimulator<D>::setup()
+   {
+      UTIL_CHECK(system().w().hasData());
+
       // Eigenanalysis of the projected chi matrix.
       analyzeChi();
-      
+
       // Compute field components and Hamiltonian for initial state
       system().compute();
       computeWc();
       computeCc();
       computeDc();
       computeHamiltonian();
-      
+
       stepper().setup();
       if (analyzerManager_.size() > 0){
          analyzerManager_.setup();
       }
-      
+
    }
 
    /*
@@ -160,21 +160,22 @@ namespace Rpc {
       Timer analyzerTimer;
       timer.start();
       iStep_ = 0;
-      
+
       // Analysis initial step (if any)
       analyzerTimer.start();
       analyzerManager_.sample(iStep_);
       analyzerTimer.stop();
-      
+
       for (iTotalStep_ = 0; iTotalStep_ < nStep; ++iTotalStep_) {
-         
+
          // Take a step (modifies W fields)
          bool converged;
          converged = stepper().step();
          
+
          if (converged){
             iStep_++;
-            
+
             // Analysis (if any)
             analyzerTimer.start();
             if (Analyzer<D>::baseInterval != 0) {
@@ -185,13 +186,13 @@ namespace Rpc {
                }
             }
             analyzerTimer.stop();
-            
+
          } else{
             Log::file() << "Step: "<< iTotalStep_<< " fail to converge" << "\n";
          }
 
       }
-      
+
       timer.stop();
       double time = timer.time();
       double analyzerTime = analyzerTimer.time();

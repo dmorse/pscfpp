@@ -52,6 +52,8 @@ namespace Rpc {
       * Read required parameters from file.
       *
       * Empty default implementation.
+      *
+      * \param in input stream from which to read
       */
       virtual void readParameters(std::istream &in);
 
@@ -63,26 +65,34 @@ namespace Rpc {
       /**
       * Take a single Brownian dynamics step.
       * 
-      * \return true if converged, false if failed to converge.
+      * \return true if the compressor converged, false if it failed.
       */
       virtual bool step() = 0;
       
       /**
-      * Decide whether cc fields need to be saved for move.
-      * The default implementation is false.
+      * Do cc concentration components need to be saved before a step?
+      *
+      * The default implementation returns false.
+      *
+      * \return true to save, or false otherwise
       */
       virtual bool needsCc()
       {  return false; }
       
       /**
-      * Decide whether dc fields need to be saved for move.
-      * The default implementation is false.
+      * Do dc derivative components need to be saved before a step?
+      *
+      * The default implementation returns false.
+      *
+      * \return true to save, or false otherwise
       */
       virtual bool needsDc()
       { return true; }
       
       /**
-      * Log output timing results.
+      * Output timing results to ostream.
+      *
+      * \param out output stream
       */
       virtual void outputTimers(std::ostream& out);
       
@@ -91,8 +101,6 @@ namespace Rpc {
       */
       virtual void clearTimers();
       
-      // Accessor Functions
-
       /**
       * Output statistics for this move (at the end of simulation)
       */

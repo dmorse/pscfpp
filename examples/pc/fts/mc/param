@@ -64,7 +64,7 @@ System{
         nSamplePerBlock 2
       }
       StepLogger{
-        interval        50
+        interval        20
       }
 
     }
