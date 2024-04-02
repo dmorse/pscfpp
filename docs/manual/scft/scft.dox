@@ -18,7 +18,7 @@
    <li> \subpage scft_field_page     
      <ul>
        <li> \ref scft_field_r1d_page "1D Fields"  </li>
-       <li> \ref scft_field_periodic_page "Period Fields" 
+       <li> \ref scft_field_periodic_page "Periodic Fields" 
          <ul>
            <li> \ref scft_field_basis_page "Basis Format" </li>
            <li> \ref scft_field_rgrid_page "R-Grid Format" </li>

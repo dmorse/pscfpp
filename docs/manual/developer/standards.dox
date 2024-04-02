@@ -4,42 +4,43 @@
 \ref developer_param_page  (Next)
 <BR>
 
-This file documents programming and formatting conventions that should be used
-in the source code of PSCF:
+This file documents programming and formatting conventions that should be 
+used throughout the source code of PSCF:
 
 \section file_section File Names
 
-  - Header files that may be included in other files use file extension *.h
+  - Header files that may be included in other files use file extension \*.h
 
-  - Compilable C++ source files use extension *.cpp
+  - Compilable C++ source files use extension \*.cpp
 
   - Files that contain definitions of member functions for class templates 
-    are sometimes separated from the header file and given names that end in 
-    an extension *.tpp
+    are often separated from the header file and given names that end 
+    in an extension \*.tpp
 
-  - One class per file: Avoid including definitions or definitions involving 
-    more than one public class in a single file. 
+  - One class per file: Avoid including definitions or definitions 
+    involving more than one public class in a single file. 
 
-  - Use the same base name for e header and implementation for the same class:
-    The header and source files for a class named MyClass should be MyClass.h 
-    and MyClass.cpp. If MyClass is class template, some of the implementatiom 
-    may be defined in a file MyClass.tpp.
+  - Use the same base name for e header and implementation for the same 
+    class: The header and source files for a class named MyClass should 
+    be MyClass.h and MyClass.cpp. If MyClass is class template, some of 
+    the implementatiom may be defined in a file MyClass.tpp.
 
-  - Place the header and implementation files for each class or class template
-    in the same directory within the src/ directory tree.
+  - Place the header and implementation files for each class or class 
+    template in the same directory within the src/ directory tree. An
+    analogous directory must exist in the bld/ directory tree.
 
-  - Use header guards in all header files.
+  - Use header guards in all header (\*.h) files.
 
 \section name_section Symbol Names
 
-  - Names of functions and variables are lower case camel, as in "myVariable" 
-    or "myData".
+  - Names of functions and variables are lower case camel, as in 
+    "myVariable" or "myData".
 
   - Names of user-defined types (class, typedef, and enum) and namespaces 
     are upper case camel, as in "MyClass" or "Util".
 
   - Names of private or protected class member variables must end with
-    with a trailing underscore, like "data_" or "outputFile_". 
+    with a single trailing underscore, like "data_" or "outputFile_". 
 
   - Public static constant class member variable names are upper case 
     camel, as in "MaxDimension". 
@@ -47,9 +48,9 @@ in the source code of PSCF:
   - Use plural nouns for names of arrays and other containers. A private 
     array of Monomer objects might thus be named "monomers_".
 
-  - Names of pointer variables end with a suffix Ptr.  A local Thing* 
+  - Names of pointer variables end with a suffix Ptr.  A local Thing\* 
     pointer variable within a function might thus be called "thingPtr". 
-    A Thing* pointer that is a private or protected class member variable 
+    A Thing\* pointer that is a private or protected class member variable 
     might be called "thinkPtr_". Do not use this convention for pointers 
     that point at C arrays (and avoid bare C-arrays): The suffix "Ptr" 
     denotes a pointer that will point at a single object.
@@ -128,7 +129,8 @@ namespace Util
 
 \section format_section Code Formatting:
 
-  - Indent exactly 3 spaces per level. Do NOT use any tabs (ever).
+  - Indent exactly 3 spaces per level. Do NOT ever use tabs for
+    indentation.
 
   - For control structures (if, for, while, etc.), place the opening 
     brace at the end of a line, and the closing brace on a line by itself, 
@@ -164,9 +166,9 @@ namespace Util
 \endcode
 
   - Set off the operators  =, ==, <, >, +, and - by one space on either 
-    side, with occasional exceptions.  Multipication (*) and division 
-    (/) operators may or may not be set off by white space. Make some 
-    exceptions to avoid line wraps.
+    side, with occasional exceptions.  Multipication (\*) and division 
+    (/) operators may or may not be set off by white space. Allow some 
+    exceptions when doing so avoids a line wraps.
 
   - Use one space to separate keywords, parentheseses, and opening 
     braces in conditional statements. Use one space after each 
@@ -180,8 +182,9 @@ namespace Util
     along with associated documentation blocks, should be separated by 
     a single blank line.
 
-  - Break lines less than 80 characters per line whenever possible, to 
-    preserve readability in printouts and small laptop terminal screens.
+  - Break lines at less than 75 characters per line whenever possible, 
+    to preserve readability in printouts and small laptop terminal 
+    screens.
 
   - Wrap every source file in the src/ directory in a namespace block. 
     Start the namespace declaration in the first column.
@@ -265,8 +268,9 @@ namespace Util
 PSCF uses the doxygen (www.doxygen.org) utility to create html 
 documentation from documentations blocks that are extracted from the 
 source code. Doxygen will extracts any multi-line comment that begin 
-with a slash and two asterisks ("/**"), or single line comments that 
-begin with three slashes ("///"). See comments in the following example:
+with a slash and two asterisks ("/\*\*"), or single line comments that 
+begin with three slashes ("///"). See comments in the following 
+example:
 \verbatim
 
    /**
@@ -373,19 +377,23 @@ Example:
     possibility, or ii) the pointer contains an address that must be 
     re-assigned within the function.
 
-  - Prefer references over pointers as function return values. Return a pointer only if a null pointer is a meaningful possibility.
-  - Practice strict "const correctness".  Mark function parameters and class member functions as const whenever possible.
+  - Prefer references over pointers as function return values. Return a 
+    pointer only if a null pointer is a meaningful possibility.
 
-  - Read-only access to a member variable of a primitive C/C++ type should be 
-    provided (when needed) by an accessor function that returns the member 
-    variable by value.  Read-only access to an object (class instance) that 
-    is owned by a class may be provided by an accessor function that returns 
-    the object by const reference. Read-write access to an object may be 
-    provided by an accessor that returns the object by non-const reference. 
-    Simple accessors that return by value or const references should be 
-    declared as const functions.  For example, if a class has an int member 
-    variable data_ and a member object_ that is an instance of class Object, 
-    you might consider providing any or (none) of the following methods:
+  - Practice strict "const correctness".  Mark function parameters and class 
+    member functions as const whenever possible.
+
+  - Read-only access to a member variable of a primitive C/C++ type should 
+    be provided (when needed) by an accessor function that returns the 
+    member variable by value.  Read-only access to an object (class 
+    instance) that is owned by a class may be provided by an accessor 
+    function that returns the object by const reference. Read-write access 
+    to an object may be provided by an accessor that returns the object by 
+    non-const reference.  Simple accessors that return by value or const 
+    references should be declared as const functions.  For example, if a 
+    class has an int member variable data_ and a member object_ that is 
+    an instance of class Object, you might consider providing any or 
+    (none) of the following member accessor functions:
 \code
 
    /**
@@ -413,35 +421,46 @@ Example:
     used when this is the desired behavior. Do not instead simply make the 
     data member a public member.
 
-Accessors that return non-const references provide pseudo-public access to 
-data members (i.e., variables or objects).  The advantages of this scheme 
-over simply making selected data members public are:
-     <ul>
-     <li> Uniform interface: All members must be accessed through accessors, 
+  - Accessors that return non-const references provide pseudo-public 
+    access to data members (i.e., variables or objects).  The advantages 
+    of this scheme over simply making selected data members public are:
+    <ul>
+     <li> Uniform interface: All members must be accessed through accessors,
 so users need not remember which members are public and which are accessed 
 through accessor functions. </li>
-     <li> Uniform name conventions: The name of the accessor that returns a member is always the name of the member variable, without amy underscore. This allows us to use an underscore to mark member variable names, without exposing underscored names outside the class implementation. </li>
-     <li> Uniform access: The same name convention is used for accessors that return by value, const reference, or reference, but the compiler can still enforce access control. </li>
-     <li> Implementation hiding: The same convention is for functions that access members of a class and those that access objects athrough a pointer. Use of accessor functions also makes it possible to add and remove sanity checks for debugging, such as checks that pointers are not null.
-     </ul>
+     <li> Uniform name conventions: The name of the accessor that returns a 
+member is always the name of the member variable, without amy underscore. 
+This allows us to use an underscore to mark member variable names, without 
+exposing underscored names outside the class implementation. </li>
+     <li> Uniform access: The same name convention is used for accessors 
+that return by value, const reference, or reference, but the compiler can 
+still enforce access control. </li>
+     <li> Implementation hiding: The same convention is used for functions 
+that access members of a class and those that access objects through a 
+pointer.  Use of accessor functions also makes it convenient to add and 
+remove sanity checks for debugging, such as checks that pointers are not 
+null.
+    </ul>
 
-  - Write access to a class instance may sometimes instead be provided by an 
-    explicit "set" function. The use of a set function is preferable when one 
-    needs to check preconditions or carry out operations necessary to 
-    guarantee data validity.
+  - Write access to a class instance may sometimes be provided by an
+    explicit "set" function. The use of a set function allows the
+    inclusion of code to check preconditions or carry out operations
+    necessary to guarantee data validity.
 
 \section data_section Data Structures
 
   - Use the C++ iostream classes for all file IO. For consistency, avoid 
     the C fscan() and fprint() methods. Use the wrapper classes in the 
-    src/util/format directory to simplify coding of formatted output to 
-    ostreams.
+    src/util/format directory as needed to simplify coding of formatted 
+    output to ostreams.
 
   - Use std::string to represent character strings whenever possible.
 
   - Prefer the array container templates in src/util/containers over bare 
     C arrays and STL containers. STL containers such as std::vector should 
-    be used when there is not an equivalent home-brewed container. Our 
+    should be used only when there is not an equivalent home-brewed 
+    container, or when use of std library container simplifies access to
+    standard library algorithms (e.g., the sorting algorithm). This
     preference for the home-brewed containers is based on the fact that:
     <ul>
     <li> Our home-brewed containers provide optional bounds checking, 
@@ -455,36 +474,54 @@ through accessor functions. </li>
 
   - In header files, prefer forward class declarations over inclusion of
     class headers when possible.  Forward declarations are sufficient for 
-    classes or class templates that used in the header file only in function 
-    declarations (as parameter or return types) or in the declaration of 
-    types for pointer member variables. Header files inclusion is generally 
-    necessary for base classes, member objects, and classes that are used 
-    in the implementation of inline functions.
+    classes or class templates that used in the header file only in 
+    function declarations (as parameter or return types) or in the 
+    declaration of types for pointer member variables. Header files 
+    inclusion is generally necessary for base classes, member objects, 
+    and classes that are used in the implementation of inline functions.
 
   - Header files that provide information required in another C++ file 
     should normally be included explicitly, even if it is known that they 
     would be indirectly included via another included header file. Reliance 
     on indirect inclusion is fragile, and explicit inclusion helps document 
     the dependency. Exceptions are:
-       <ul>
-       <li> A class implementation file MyClass.cpp may rely on indirect inclusion of header files that are included by the corresponding header file MyClass.h </li>
-       <li> A derived class may sometimes rely on indirect inclusion of header files that are included by a base class. </li>
-       <li> The Exception.h header is should always be included indirectly by inclusion of src/util/global.h. </li>
-       </ul>
+    <ul>
+       <li> A class implementation file MyClass.cpp may rely on indirect 
+inclusion of header files that are included by the corresponding header 
+file MyClass.h </li>
+       <li> A derived class may sometimes rely on indirect inclusion of 
+header files that are included by a base class. </li>
+       <li> The Exception.h header is should always be included indirectly 
+by inclusion of src/util/global.h. </li>
+    </ul>
 
-  - Use explicitly qualified names for standard library symbols such as std::string in function parameter lists and return values. Use this convention both in function declarations and functions definitions.
+  - Use explicitly qualified names for standard library symbols such as 
+    std::string in function parameter lists and return values. Use this 
+    convention both in function declarations and functions definitions.
 
-  - Never use a "using std" statement to load the entire C++ standard library namespace into a header file.
+  - NEVER use a "using std" statement to load the entire C++ standard 
+    library namespace any C++ file.
 
 \section error_section Error Handling
 
-  - Include the file <util/global.h> in all files that use C assert() statements or that can throw exceptions. This automatically includes the "Exception.h" and "Log.h" header files, defines the UTIL_THROW(..) macro that is used to throw exceptions, and enables assert() statements if UTIL_DEBUG is defined,
+  - Include the file <util/global.h> in all files that use C assert() 
+    statements or that can throw exceptions. This automatically includes 
+    the "Exception.h" and "Log.h" header files, defines the UTIL_THROW(..) 
+    macro that is used to throw exceptions, and enables assert() 
+    statements if UTIL_DEBUG is defined,
 
-  - For checks that are intended only for debugging, use C assert() statements or enclose the test in a ifndef UTIL_DEBUG .... endif conditional compilation block.
+  - For checks that are intended only for debugging, use C assert() 
+    statements or enclose the test in a ifndef UTIL_DEBUG .... endif 
+    conditional compilation block.
 
-  - Use the UTIL_THROW macro defined in src/util/global.h to throw Exception objects for all errors, except those caught in debugging mode by C assert() statements.  Like the standard assert() macro, this macro prints a message and showing the file and line number from which an Exception is thrown, as an aid to debugging.
+  - Use the UTIL_THROW macro defined in src/util/global.h to throw 
+    Exception objects for all errors, except those caught in debugging 
+    mode by C assert() statements.  Like the standard assert() macro, 
+    this macro prints a message and showing the file and line number 
+    from which an Exception is thrown, as an aid to debugging.
 
-  - Do not Exceptions for control flow. Exceptions should be used only for errors, and should normally cause the program to terminate.
+  - Do not Exceptions for control flow. Exceptions should be used only 
+    for errors, and should normally cause the program to terminate.
 
 <BR>
 \ref developer_build_page   (Prev)   &nbsp; &nbsp; &nbsp; &nbsp;

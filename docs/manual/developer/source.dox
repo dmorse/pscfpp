@@ -1,56 +1,214 @@
-namespace McMd
-{
-
 /*! \page developer_source_page Directory Structure
 
 \ref developer_build_page  (Next)
 <BR>
 
-\section srcdir_source Source code directory
 
-All C++ and CUDA files for PSCF, are in the pscfpp/src/ directory tree.  The header and source file for each class are in the same directory.
-The name of each C++ file is the same as the class name, followed by an extension to indicate file type.
-We use extension .h to indicate a header file, .tpp to indicate the implementation of a class template, .cpp to indicate a C++ source file, and .cu to indicate a CUDA source file.
-All class names and corresponding file names are upper space camel (like Util::Vector or Pscf::Basis).
+All C++ and C++/CUDA files for PSCF are in the src/ subdirectory of 
+the root pscfpp directory.  
 
-The source code in pscfpp/src is divided among two top-level namespaces, named Util and Pscf.
+\section source_files_sec Source Files
 
-The Util namespace contains a collection of utilities for scientific computation that is also used by other projects. All code in the Util namespace is contained in the src/util directory. This directory contains the contents of a separate github git repository (repository dmorse/util) that is imported into the pscfpp as a submodule.
+All C++ files associated with a given class or set of functions are 
+placed in the same directory and have the same base name.  The base 
+name of a C++ file that defines or implements a class or class 
+template is the same as the class name, followed by an extension to 
+indicate file type.  All class names and corresponding file names are 
+upper space camel (such as Pscf::Monomer).
 
-The Pscf namespace contains all C++ and CUDA code that is specific to the PSCF project. The Pscf namespace contains several enclosed namespaces that each contain code that is used only by one program or set of closely related programs.
+PSCF uses the following file name extensions for source files:
 
-The main subdirectories of src/ are:
+   - Extension \*.h indicates a header file
 
- - src/util/ contains code in the Util namespace
+   - Extension \*.tpp indicates the implementation of a class template
 
- - src/pscf/ contains code defined directly in the Pscf namespace, which is
-   accessible to all PSCF programs.
+   - Extension \*.cpp indicates a compilable C++ file
+
+   - Extension \*.cu indicates a compilable CUDA source file
+
+\section source_namespaces_sec Namespaces and Subdirectories
+
+The source code that is used to build PSCF is divided among two top-level 
+namespaces, named Util and Pscf.  The Pscf namespace contains all of the 
+source code that is specfic to the PSCF package, all of which is maintained 
+on github in the dmorse/pscfpp repository.  The Util namespace instead
+contains a collection of more general resources.
+
+The Util namespace contains a collection of general utilities for 
+scientific computation that is used by more than one project.  This 
+code is maintained in a separate github repository (dmorse/util) and 
+imported into the pscfpp repository as a git submodule. All source 
+code files for entities that are defined in the Util namespace is
+installed in the src/util directory. 
+
+The Pscf namespace contains all C++ and CUDA code that is specific 
+to the PSCF package. The Pscf namespace contains several enclosed 
+namespaces. All source code for each such enclosed namespace is 
+located within a specific subdirectory of the src/ directory, as
+discussed below.
+
+The main subdirectories of src/ and corresponding namespaces are:
+
+ - src/util/ contains all code in the Util namespace
+
+ - src/pscf/ contains code defined directly in the Pscf namespace, 
+   which is accessible to all PSCF programs.
+
+ - src/prdc/ contains all code in the Pscf::Prdc namespace, which is used
+   by both the pscf_pc and pscf_pg programs for periodic structures.
 
  - src/r1d/ contains all code in the Pscf::R1d namespace, which is only
-   used by the pscf_1d 1D finite element program.
+   used within the pscf_1d 1D finite element program.
 
  - src/rpc/ contains all code in the Pscf::Rpc namespace, which is only
-   used by the pscf_pc C++ CPU programs for periodic structures.
+   used within the pscf_pc C++ CPU program for periodic structures.
 
- - src/rpg/ contains all code for the Pscf::Rpc namespace, which is
-   only used by the pscf_pg CUDA GPU programs for periodic structures.
+ - src/rpg/ contains all code for the Pscf::Rpg namespace, which is
+   used within the pscf_pg CUDA GPU program for periodic structures.
 
-These five directories will be referred to in what follows as "namespace"
+These six directories will be referred to in what follows as "namespace"
 level subdirectories of src/.  The PSCF makefile system constructs a
 static library in each of these namespace level directories that contains
 compiled code for all of the classes and global functions defined in that
-directory. The src/r1d, src/rpc, and src/rpg each contain one or more
-main program source files that are also compiled and installed by the
-build system.
+directory. The src/r1d, src/rpc, and src/rpg each also contain one main
+program source file that is also compiled and installed by the build 
+system.
 
-Each of the five namespace level source directories contains a
-subdirectory named tests/ that contains unit tests for classes defined
-in the associated name space. These unit tests are not automatically
-compiled or run by the build system that compiles the source code.
+\section source_dimension_sec Use of Templates for Spatial Dimension 
+
+In the source code for the pscf_pc and pscf_pg programs for periodic 
+structures, most classes are defined as instances of class templates 
+in which the dimension of space (denoted by D) is a template parameter. 
+This pattern permeates the code in the prdc/, rpc/ and rpg/ namespace 
+level directories. In this use of D as a template parameter, the only
+relevant values of D are D=1, D=2, and D=3, which are used for periodic
+structures in which fields are periodic in 1, 2 or 3 spatial dimensions.
+The build system is designed to explicitly instantiate classes with
+D=1, 2 and 3 for each such class template.
+
+Source code for each class templates that is defined in this way is
+organized as follows:
+
+   - A header file with extension \*.h contains the class definition
+     and definitions of any functions that are declared "inline".
+
+   - A template implementation file with extension \*.tpp contains
+     the definitions of all non-inline member functions. The *.tpp
+     file includes the associated header file. 
+
+   - A source file with extension \*.cpp for C++ code or \*.cu for
+     C++/CUDA code. This source code file contains expressions that
+     explicitly instantiate the templates for the D=1, 2 and 3.
+     The source file includes the associated *.tpp implementation 
+     file, which is not included by any other file. 
+
+The build system compiles the *.cpp or *.cu file for each such class 
+template, and thereby instantiates classes with D=1, 2 and 3. 
+
+For example, the file src/prdc/crystal/Basis.h contains a definition 
+of a class template for a class template Pscf::Prdc::Basis<D>, in 
+which D is the dimension of space. This is defined (in skeleton form)
+as
+\code
+namespace Pscf {
+namespace Prdc {
+
+   template <int D> 
+   class Basis {
+    ....
+   }
+
+}
+}
+\endcode
+The file src/prdc/crystal/Basis.tpp contains all of the actual
+definitions of non-inline member functions for the Basis class.  
+The file src/prdc/crystal/Basis.cpp contains a list of explicit 
+instantiation statements, of the form
+\code
+
+#include "Basis.tpp"
+
+namespace Pscf {
+namespace Prdc {
+
+   template class Basis<1>;
+   template class Basis<2>;
+   template class Basis<3>;
+
+}
+}
+\endcode
+The build system compiles src/prdc/crystal/Basis.cpp and then
+adds the resulting object code for these three class template 
+instantations into a static library.
+
+As an essential part of this system, the header file for each such
+class template also contains a block of "extern" declarations for 
+instantiations of the template the template with D=1, D=2, and D=3.  
+The relevant block for the Pscf::Prdc::Basis template in file 
+src/prdc/crystal/Basis.h looks like this:
+\code
+
+#ifndef PSCF_BASIS_TPP
+extern template class Basis<1>;
+extern template class Basis<2>;
+extern template class Basis<3>;
+#endif
+
+\endcode
+These "extern" declarations guarantee that files other than 
+Basis.tpp that include the header Basis.h will not attempt to 
+implicit instantiate the template as needed, but will instead 
+assume that they are instantiated elsewhere. This pattern allows 
+the required instantiations to be compiled once and then linked, 
+as for non-templated classes. 
+
+An "ifndef" macro surrounds each such block of extern declarations
+in order guarantee that the block of extern declarations will be 
+skipped when the header file is included into the associated \*.tpp 
+implementation file, but included when it is included into any other 
+file. The extern declarations is skipped when the header is included 
+into the \*.tpp file so that, when the \*.tpp file is included into 
+a \*.cpp or \*.cu source file, the "extern" declarations will not 
+contradict the explicit instantiation statements given in the 
+source file. 
+
+In order for this system to work as designed:
+
+  - Template implementation files with extension \*.tpp must all
+    contain header guards the define an appropriate guard macro
+    (e.g., PSCF_BASIS_TPP).
+
+  - A template implementation file that is included by a compiled 
+    *.cpp or *.cu source file may never be included into any other 
+    file.
+
+A template implementation for a class template that is included 
+into a compiled source file (which is only done for templates in
+which the only template parameter is the spatial dimension D) is
+effectively part of the source file, and so may not be included
+into other files.
+
+\section source_unittests_sec Unit Tests
+
+Each of the six namespace level sub-directories of the src/ directory
+contains a subdirectory named tests/ that contains unit tests for classes 
+defined in the associated name space. These unit tests are not 
+automatically compiled or run by the build system that compiles the 
+source code. All of the tests associated with a given namespace level 
+directory can be compiled and run by entering "make run" from within 
+the appropriate tests/ directory.
+
+Source code for a general unit testing framework is located in the 
+src/test directory. This is a header-only C++ framework in which all 
+classes are defined outside of any namespace. This unit testing framework 
+used by PSCF is maintained on github in a separate repository (dmorse/test) 
+and is imported into pscfpp as a submodule.
+
 
 <BR>
 \ref developer_page  (Up)  &nbsp; &nbsp; &nbsp; &nbsp;
 \ref developer_build_page  (Next)
 
 */
-}

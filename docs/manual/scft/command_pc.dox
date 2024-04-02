@@ -452,13 +452,13 @@ that command or of a group of closely related commands.
     </td>
   </tr>
   <tr>
-    <td> \ref scft_command_pc_writetimer_sub "WRITE_TIMER" </td>
+    <td> \ref scft_command_pc_writetimer_sub "WRITE_TIMERS" </td>
     <td> filename [string] </td>
     <td> Write a report of computational times spent on various
          operations in a preceding calculation or simulation. </td>
   </tr>
   <tr>
-    <td> \ref scft_command_pc_cleartimer_sub "CLEAR_TIMER" </td>
+    <td> \ref scft_command_pc_cleartimer_sub "CLEAR_TIMERS" </td>
     <td> filename [string] </td>
     <td> Clear the state of timers that keep track of time spent
          on different operations, by resetting all values to zero.
@@ -1106,15 +1106,15 @@ basis or r-grid format.
 
 \section scft_command_pc_timers_sec Timer Commands
 
-\anchor scft_command_pc_writetimer_sub <b>WRITE_TIMER</b>:
-The WRITE_TIMER command writes a report of the amounts of 
+\anchor scft_command_pc_writetimer_sub <b>WRITE_TIMERS</b>:
+The WRITE_TIMERS command writes a report of the amounts of 
 computational time spent on different operations since the
 program was invoked, or since the last time the timers were
 cleared. The format of the report is designed for use with
 FTS calculations.
 
-\anchor scft_command_pc_cleartimer_sub <b>CLEAR_TIMER</b> 
-The CLEAR_TIMER command clears the state of all timers, by 
+\anchor scft_command_pc_cleartimer_sub <b>CLEAR_TIMERS</b> 
+The CLEAR_TIMERS command clears the state of all timers, by 
 resetting to zero the values for accumulated times associated 
 with different operations.
 
