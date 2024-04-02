@@ -1,5 +1,5 @@
-#ifndef PSCF_SPACE_SYMMETRY_TEST_H
-#define PSCF_SPACE_SYMMETRY_TEST_H
+#ifndef PRDC_SPACE_SYMMETRY_TEST_H
+#define PRDC_SPACE_SYMMETRY_TEST_H
 
 #include <test/UnitTest.h>
 #include <test/UnitTestRunner.h>

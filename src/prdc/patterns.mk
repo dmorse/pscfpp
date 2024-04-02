@@ -13,10 +13,10 @@
 #-----------------------------------------------------------------------
 
 # Local pscf-specific libraries needed in src/prdc
-PSCF_LIBS=$(prdc_LIB) $(pscf_LIB) $(util_LIB)
+PRDC_LIBS=$(prdc_LIB) $(pscf_LIB) $(util_LIB)
 
 # All libraries needed by executables in src/prdc (including external)
-LIBS=$(PSCF_LIBS)
+LIBS=$(PRDC_LIBS)
 
 # Add paths to Gnu scientific library (GSL)
 INCLUDES+=$(GSL_INC)
@@ -75,13 +75,13 @@ $(BLD_DIR)/%.o:$(SRC_DIR)/%.cu
    endif
 
 # Pattern rule to compile Test programs in src/prdc/tests
-$(BLD_DIR)/%Test: $(BLD_DIR)/%Test.o $(PSCF_LIBS)
+$(BLD_DIR)/%Test: $(BLD_DIR)/%Test.o $(PRDC_LIBS)
 ifdef PSCF_CUDA
 	$(NVXX) $(LDFLAGS) -o $@ $< $(LIBS)
 else
 	$(CXX) $(LDFLAGS) -o $@ $< $(LIBS)
 endif
 
-# Note: In the linking rule for tests, we include the list $(PSCF_LIBS) 
+# Note: In the linking rule for tests, we include the list $(PRDC_LIBS) 
 # of PSCF-specific libraries as dependencies but link to the list $(LIBS) 
 # of libraries that includes relevant external libraries

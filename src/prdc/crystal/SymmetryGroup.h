@@ -1,5 +1,5 @@
-#ifndef PSCF_SYMMETRY_GROUP_H
-#define PSCF_SYMMETRY_GROUP_H
+#ifndef PRDC_SYMMETRY_GROUP_H
+#define PRDC_SYMMETRY_GROUP_H
 
 /*
 * Pscfatico - Simulation Package for Polymeric and Molecular Liquids
@@ -185,7 +185,7 @@ namespace Prdc {
    const Symmetry& SymmetryGroup<Symmetry>::operator [] (int i) const
    { return elements_[i]; }
 
-   #ifndef PSCF_SYMMETRY_GROUP_TPP
+   #ifndef PRDC_SYMMETRY_GROUP_TPP
    template <int D> class SpaceSymmetry;
    extern template class SymmetryGroup< SpaceSymmetry<1> >;
    extern template class SymmetryGroup< SpaceSymmetry<2> >;

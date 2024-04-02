@@ -1,5 +1,5 @@
-#ifndef PSCF_SYMMETRY_GROUP_TPP
-#define PSCF_SYMMETRY_GROUP_TPP
+#ifndef PRDC_SYMMETRY_GROUP_TPP
+#define PRDC_SYMMETRY_GROUP_TPP
 
 /*
 * Pscfatico - Simulation Package for Polymeric and Molecular Liquids

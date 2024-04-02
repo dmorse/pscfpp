@@ -1,5 +1,5 @@
-#ifndef PSCF_SPACE_SYMMETRY_H
-#define PSCF_SPACE_SYMMETRY_H
+#ifndef PRDC_SPACE_SYMMETRY_H
+#define PRDC_SPACE_SYMMETRY_H
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory
@@ -498,7 +498,7 @@ namespace Prdc {
    bool SpaceSymmetry<D>::hasIdentity_ = false;
 
 
-   #ifndef PSCF_SPACE_SYMMETRY_TPP
+   #ifndef PRDC_SPACE_SYMMETRY_TPP
    // Suppress implicit instantiation
    extern template class SpaceSymmetry<1>;
    extern template class SpaceSymmetry<2>;

@@ -1,5 +1,5 @@
-#ifndef PSCF_SPACE_GROUP_TPP
-#define PSCF_SPACE_GROUP_TPP
+#ifndef PRDC_SPACE_GROUP_TPP
+#define PRDC_SPACE_GROUP_TPP
 
 /*
 * Simpatico - Simulation Package for Polymeric and Molecular Liquids

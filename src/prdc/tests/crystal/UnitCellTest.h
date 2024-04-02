@@ -1,5 +1,5 @@
-#ifndef PSCF_UNIT_CELL_TEST_H
-#define PSCF_UNIT_CELL_TEST_H
+#ifndef PRDC_UNIT_CELL_TEST_H
+#define PRDC_UNIT_CELL_TEST_H
 
 #include <test/UnitTest.h>
 #include <test/UnitTestRunner.h>

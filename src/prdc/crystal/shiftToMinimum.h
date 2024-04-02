@@ -1,5 +1,5 @@
-#ifndef PSCF_SHIFT_MINIMUM_H
-#define PSCF_SHIFT_MINIMUM_H
+#ifndef PRDC_SHIFT_MINIMUM_H
+#define PRDC_SHIFT_MINIMUM_H
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory

@@ -1,5 +1,5 @@
-#ifndef PSCF_SPACE_SYMMETRY_TPP
-#define PSCF_SPACE_SYMMETRY_TPP
+#ifndef PRDC_SPACE_SYMMETRY_TPP
+#define PRDC_SPACE_SYMMETRY_TPP
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory

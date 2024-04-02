@@ -1,5 +1,5 @@
-#ifndef PSCF_SPACE_GROUP_H
-#define PSCF_SPACE_GROUP_H
+#ifndef PRDC_SPACE_GROUP_H
+#define PRDC_SPACE_GROUP_H
 
 /*
 * Simpatico - Simulation Package for Polymeric and Molecular Liquids
@@ -164,7 +164,7 @@ namespace Prdc {
    template <int D>
    void writeGroup(std::string filename, SpaceGroup<D> const & group);
 
-   #ifndef PSCF_SPACE_GROUP_TPP
+   #ifndef PRDC_SPACE_GROUP_TPP
    extern template class SpaceGroup<1>;
    extern template class SpaceGroup<2>;
    extern template class SpaceGroup<3>;

@@ -1,5 +1,5 @@
-#ifndef PSCF_CUDA_MEM_TEST_H
-#define PSCF_CUDA_MEM_TEST_H
+#ifndef PRDC_CUDA_MEM_TEST_H
+#define PRDC_CUDA_MEM_TEST_H
 
 #include <test/UnitTest.h>
 #include <test/UnitTestRunner.h>

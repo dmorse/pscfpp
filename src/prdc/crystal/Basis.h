@@ -1,5 +1,5 @@
-#ifndef PSCF_BASIS_H
-#define PSCF_BASIS_H
+#ifndef PRDC_BASIS_H
+#define PRDC_BASIS_H
 /*
 * PSCF - Polymer Self-Consistent Field Theory
 *
@@ -841,7 +841,7 @@ namespace Prdc {
    inline bool Basis<D>::isInitialized() const
    {  return isInitialized_; }
 
-   #ifndef PSCF_BASIS_TPP
+   #ifndef PRDC_BASIS_TPP
    extern template class Basis<1>;
    extern template class Basis<2>;
    extern template class Basis<3>;
