@@ -1,6 +1,6 @@
 /*! \page developer_param_page Parameter File I/O
 
-\ref developer_standards_page   (Prev)   &nbsp; &nbsp; &nbsp; &nbsp;
+\ref developer_template_page   (Prev)   &nbsp; &nbsp; &nbsp; &nbsp;
 \ref developer_test_page  (Next)
 <BR>
 
@@ -118,7 +118,7 @@ possible names in the case of a polymorphic parameter file
 block.
 
 <BR>
-\ref developer_standards_page   (Prev)   &nbsp; &nbsp; &nbsp; &nbsp;
+\ref developer_template_page   (Prev)   &nbsp; &nbsp; &nbsp; &nbsp;
 \ref developer_page  (Up)  &nbsp; &nbsp; &nbsp; &nbsp;
 \ref developer_test_page  (Next)
 

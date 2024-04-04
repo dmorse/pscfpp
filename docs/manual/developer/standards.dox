@@ -1,7 +1,7 @@
 /*! \page developer_standards_page Coding Standards
 
 \ref developer_build_page   (Prev)   &nbsp; &nbsp; &nbsp; &nbsp;
-\ref developer_param_page  (Next)
+\ref developer_template_page  (Next)
 <BR>
 
 This file documents programming and formatting conventions that should be 
@@ -526,6 +526,6 @@ by inclusion of src/util/global.h. </li>
 <BR>
 \ref developer_build_page   (Prev)   &nbsp; &nbsp; &nbsp; &nbsp;
 \ref developer_page  (Up)  &nbsp; &nbsp; &nbsp; &nbsp;
-\ref developer_param_page  (Next)
+\ref developer_template_page  (Next)
 
 */

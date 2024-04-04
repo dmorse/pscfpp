@@ -1,6 +1,6 @@
 /*! \page developer_source_page Source File Directory
 
-\ref developer_build_page  (Next)
+\ref developer_list_page  (Next)
 <BR>
 
 
@@ -74,122 +74,6 @@ directory. The src/r1d, src/rpc, and src/rpg each also contain one main
 program source file that is also compiled and installed by the build 
 system.
 
-\section source_dimension_sec Use of Templates for Spatial Dimension 
-
-In the source code for the pscf_pc and pscf_pg programs for periodic 
-structures, most classes are defined as instances of class templates 
-in which the dimension of space (denoted by D) is a template parameter. 
-This pattern permeates the code in the prdc/, rpc/ and rpg/ namespace 
-level directories. In this use of D as a template parameter, the only
-relevant values of D are D=1, D=2, and D=3, which are used for periodic
-structures in which fields are periodic in 1, 2 or 3 spatial dimensions.
-The build system is designed to explicitly instantiate classes with
-D=1, 2 and 3 for each such class template.
-
-Source code for each class templates that is defined in this way is
-organized as follows:
-
-   - A header file with extension \*.h contains the class definition
-     and definitions of any functions that are declared "inline".
-
-   - A template implementation file with extension \*.tpp contains
-     the definitions of all non-inline member functions. The *.tpp
-     file includes the associated header file. 
-
-   - A source file with extension \*.cpp for C++ code or \*.cu for
-     C++/CUDA code. This source code file contains expressions that
-     explicitly instantiate the templates for the D=1, 2 and 3.
-     The source file includes the associated *.tpp implementation 
-     file, which is not included by any other file. 
-
-The build system compiles the *.cpp or *.cu file for each such class 
-template, and thereby instantiates classes with D=1, 2 and 3. 
-
-For example, the file src/prdc/crystal/Basis.h contains a definition 
-of a class template for a class template Pscf::Prdc::Basis<D>, in 
-which D is the dimension of space. This is defined (in skeleton form)
-as
-\code
-namespace Pscf {
-namespace Prdc {
-
-   template <int D> 
-   class Basis {
-    ....
-   }
-
-}
-}
-\endcode
-The file src/prdc/crystal/Basis.tpp contains all of the actual
-definitions of non-inline member functions for the Basis class.  
-The file src/prdc/crystal/Basis.cpp contains a list of explicit 
-instantiation statements, of the form
-\code
-
-#include "Basis.tpp"
-
-namespace Pscf {
-namespace Prdc {
-
-   template class Basis<1>;
-   template class Basis<2>;
-   template class Basis<3>;
-
-}
-}
-\endcode
-The build system compiles src/prdc/crystal/Basis.cpp and then
-adds the resulting object code for these three class template 
-instantations into a static library.
-
-As an essential part of this system, the header file for each such
-class template also contains a block of "extern" declarations for 
-instantiations of the template the template with D=1, D=2, and D=3.  
-The relevant block for the Pscf::Prdc::Basis template in file 
-src/prdc/crystal/Basis.h looks like this:
-\code
-
-#ifndef PSCF_BASIS_TPP
-extern template class Basis<1>;
-extern template class Basis<2>;
-extern template class Basis<3>;
-#endif
-
-\endcode
-These "extern" declarations guarantee that files other than 
-Basis.tpp that include the header Basis.h will not attempt to 
-implicit instantiate the template as needed, but will instead 
-assume that they are instantiated elsewhere. This pattern allows 
-the required instantiations to be compiled once and then linked, 
-as for non-templated classes. 
-
-An "ifndef" macro surrounds each such block of extern declarations
-in order guarantee that the block of extern declarations will be 
-skipped when the header file is included into the associated \*.tpp 
-implementation file, but included when it is included into any other 
-file. The extern declarations is skipped when the header is included 
-into the \*.tpp file so that, when the \*.tpp file is included into 
-a \*.cpp or \*.cu source file, the "extern" declarations will not 
-contradict the explicit instantiation statements given in the 
-source file. 
-
-In order for this system to work as designed:
-
-  - Template implementation files with extension \*.tpp must all
-    contain header guards the define an appropriate guard macro
-    (e.g., PSCF_BASIS_TPP).
-
-  - A template implementation file that is included by a compiled 
-    *.cpp or *.cu source file may never be included into any other 
-    file.
-
-A template implementation for a class template that is included 
-into a compiled source file (which is only done for templates in
-which the only template parameter is the spatial dimension D) is
-effectively part of the source file, and so may not be included
-into other files.
-
 \section source_unittests_sec Unit Tests
 
 Each of the six namespace level sub-directories of the src/ directory
@@ -209,6 +93,6 @@ and is imported into pscfpp as a submodule.
 
 <BR>
 \ref developer_page  (Up)  &nbsp; &nbsp; &nbsp; &nbsp;
-\ref developer_build_page  (Next)
+\ref developer_list_page  (Next)
 
 */

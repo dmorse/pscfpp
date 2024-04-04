@@ -5,7 +5,6 @@ All code defined in this directory is defined in the Pscf C++ namespace.
 Subdirectories:
 
    chem/        - molecular structure descriptors
-   crystal/     - unit cells, space groups, and symmetrized bases
    homogeneous/ - spatially homogeneous mixtures
    inter/       - models of interaction (excess) free energy 
    iterator/    - templates for iterator algorithms
@@ -13,7 +12,7 @@ Subdirectories:
    mesh/        - spatial mesh
    solvers/     - templates for modified diffusion eqn (MDE) solvers 
    sweep/       - template for sweep algorithms
-   tests/       - unit tests of code in src/pscf
+   tests/       - unit tests for code in src/pscf
 
 All classes in subdirectory homogeneous are defined in a nested namespace 
 Pscf::Homogeneous 

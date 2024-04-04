@@ -1,0 +1,223 @@
+/*! \page developer_template_page C++ Class Templates
+
+\ref developer_standards_page  (Prev)  &nbsp; &nbsp; &nbsp; &nbsp;
+\ref developer_param_page      (Next)
+<BR>
+
+The PSCF source code makes rather heavy use of C++ class templates to 
+avoid duplication of code for closely analogous classes. For purposes 
+of discussion, it is useful to divide class templates into two 
+categories that are treated somewhat differently:
+
+  - Class templates in which the only template parameter is the 
+   integer dimension D of space, which are used throughout programs
+   that use periodic boundary conditions.
+
+  - Generic class templates that contain template parameters other
+    than the dimension of space.
+
+We discuss these two cases separately below because they are treated
+quite differently by the build system: For class templates in which the 
+only template parameter is the dimension D of space, the PSCF build 
+system explicitly instantiates classes for the physically relevant 
+values of D=1, D=2 and D=3, and later link to these pre-compiled classes. 
+For other "generic" templates, the build system generally relies on 
+implicit instantiation. These two cases are thus discussed separately 
+below.
+
+\section developer_template_dimension_sec Spatial Dimension as a Template Paramaeter
+
+In the source code for the pscf_pc and pscf_pg programs for periodic 
+structures, many classes are defined by instantiating class templates 
+in which the dimension of space (denoted by D) is the only template 
+parameter.  This pattern is used for most of the classes defined in 
+the prdc/, rpc/ and rpg/ namespace level directories. In this usage,
+the only relevant values of D are D=1, D=2, and D=3, which are used 
+for periodic structures in which fields are periodic in 1, 2 or 3 
+spatial dimensions.  For example, a lamellar phase would be simulated 
+using classes defined with D=1, while a hexagonal phase would be 
+simulated using classes in which D=2.  
+
+The PSCF build system is designed to explicitly instantiate classes 
+with D=1, 2 and 3 for class templates in which D is the only template
+parameter. Source code for this type of class template is almost
+always divided among three files with the same base name but different 
+file extensions, which is organized as follows:
+
+   - A header file with extension \*.h contains the class definition
+     and definitions of any functions that are declared "inline".
+
+   - A template implementation file with extension \*.tpp contains
+     the definitions of all non-inline member functions. The *.tpp
+     file includes the associated header file. 
+
+   - A source file with extension \*.cpp for C++ code or \*.cu for
+     C++/CUDA code. This source code file contains expressions that
+     explicitly instantiate the templates for the D=1, 2 and 3.
+
+The build system compiles the *.cpp or *.cu file for each such class 
+template, and thereby instantiates classes with D=1, 2 and 3. 
+
+For example, the file src/prdc/crystal/Basis.h contains a definition 
+of a class template for a class template Pscf::Prdc::Basis<D>, in 
+which D is the dimension of space. This is defined (in skeleton form)
+as
+\code
+namespace Pscf {
+namespace Prdc {
+
+   template <int D> 
+   class Basis {
+    ....
+   }
+
+}
+}
+\endcode
+The file src/prdc/crystal/Basis.tpp, which is longer than the 
+header file, contains the actual definitions of all non-inline 
+member functions for the Basis class.
+The file src/prdc/crystal/Basis.cpp contains a list of explicit 
+instantiation statements, of the form
+\code
+
+#include "Basis.tpp"
+
+namespace Pscf {
+namespace Prdc {
+
+   template class Basis<1>;
+   template class Basis<2>;
+   template class Basis<3>;
+
+}
+}
+\endcode
+The build system compiles src/prdc/crystal/Basis.cpp and then
+adds the resulting object code for these three class template 
+instantations into a static library.
+
+As an essential part of this system, the header file for each such
+class template also contains a block of "extern" declarations for 
+instantiations of the template the template with D=1, D=2, and D=3.  
+The relevant block for the Pscf::Prdc::Basis template in file 
+src/prdc/crystal/Basis.h looks like this:
+\code
+
+#ifndef PSCF_BASIS_TPP
+extern template class Basis<1>;
+extern template class Basis<2>;
+extern template class Basis<3>;
+#endif
+
+\endcode
+These "extern" declarations guarantee that files other than 
+Basis.tpp that directly or indirectly include the header Basis.h 
+will not attempt to implicitly instantiate the template as needed, 
+but will instead assume that they are instantiated elsewhere. This 
+pattern allows the required instantiations for D=1, 2 and 3 to be 
+compiled once and then linked, as would normally be done for
+non-templated classes. 
+
+Note that an "ifndef" macro surrounds the block of extern 
+declarations in the above example. This ifndef macro tests for 
+definition of guard macro that is defined in the associated *.tpp 
+file. This is designed such that that the block of extern 
+declarations will be skipped when the header file is included into 
+the associated \*.tpp file, but will be included when the header 
+file is included into any other file. The extern declarations 
+must be skipped when the header is included into the \*.tpp file 
+so that, when the \*.tpp file is included into a \*.cpp or \*.cu 
+source file, the "extern" declarations will not contradict the 
+explicit instantiation statements given in the source file. 
+An analogous "ifndef" macro must surround the extern declarations
+in each header file that uses this pattern. 
+
+In order for this pattern to work correctly for class templates
+in which D is the only template parameter:
+
+  - The header file with extension *.h must contain a block of 
+    "extern" declarations that is surrounded by an ifndef macro 
+    that refers to a header guard macro defined in the *.tpp file
+    (e.g., PRDC_BASIS_TPP), which omits this block when the header 
+    file is included into the associated *.tpp file. 
+
+  - The template implementation file with extension \*.tpp must 
+    contain a header guard that defines an appropriate guard macro 
+    (e.g., PRDC_BASIS_TPP), and must include the header file after
+    the definition of the guard macro.
+
+  - A source file with file extension *.cpp or *.cu that will be
+    compiled by the build system must include the *.tpp file and 
+    must contain statements to explicitly instantiate classes with 
+    D=1, 2 and 3
+
+  - A *.tpp template implementation file that is included into a
+    compiled source file may *never* be included into any file 
+    other than the associated source file.
+
+In this usage pattern, the \*.tpp file is effectively treated as 
+part of the source file, since it is included into the source file
+and should never be included into any other file. Despite the 
+division of code into three files, this usage is analogous to the
+usual organization of code for non-templated classes into a header
+that may be included into other classes and a source file that may
+not. 
+
+\section developer_template_generic_sec Generic Class Templates
+
+In what follows, we refer to class templates that contain template
+parameter other than the spatial dimension D as "generic" templates.
+The PSCF build system generally relies on implicit rather than
+explicit instantiation for such generic templates. This requires 
+an entirely different file organization than that described above
+for the special case in which D is the only template parameter. 
+For such generic templates:
+
+   - There is no associated *.cpp or *.tpp source file.
+
+   - Inclusion of the header file must by another file must cause 
+     direct or indirect inclusion of definitions for all class 
+     template members.
+
+Source code for a generic class template may be organized into 
+either of two ways:
+
+   - Definitions of all class member functions may be placed in the
+     the header file. In this case, all of the source code for the 
+     class template is contained in a single header file.
+
+   - Source code for a class template may be divided among a *.h
+     header file and *.tpp template implementation file, with the
+     definitions of some or all of the class member functions
+     placed in the *.tpp file. 
+
+In the latter case, in which the source code for a class template
+is divided between a header and implementation file:
+
+   - The *.tpp implementation file must not include the header file 
+  
+   - The *.tpp file must be included into the header file at or near 
+     the end of the header file. 
+
+   - The *.tpp file should never be directly included by any file 
+     other than the associated header file.
+
+In this usage, the implementation file acts in practice like part
+of the header file, which is included indirectly by any file that
+includes the header file. 
+
+A template implementation file with file extension *.tpp should 
+thus always be included either into an associated source file (for 
+templates with a single template parameter D that are explicitly 
+instantiated) or into the associated header file (for generic 
+templates that are implicitly instantiated). In either case, such 
+template implementation files should never be directly included 
+into any file other than an associated header or source file. 
+
+<BR>
+\ref developer_standards_page (Prev)  &nbsp; &nbsp; &nbsp; &nbsp;
+\ref developer_page           (Up)    &nbsp; &nbsp; &nbsp; &nbsp;
+\ref developer_param_page     (Next)
+
+*/
