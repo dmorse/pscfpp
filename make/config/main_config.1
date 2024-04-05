@@ -3,31 +3,31 @@
 #
 # This makefile fragment is the main configuration file for the pscf
 # build system.  A copy of this file is included by all other makefiles. 
-# This file is installed by the "configure" script, and may be edited by
-# the user if needed. Copies of this file are installed in the src/
+# This file is installed by the "configure" script, and may be edited 
+# by the user if needed. Copies of this file are installed in the src/
 # directory and in the bld/ directory. The copy in the src/ directory
 # controls in-source compilation, in which intermediate files are created
-# in the root directory tree, and the copy in the bld/ directory controls
-# out-of-source compilation in which these files are installed in the bld/
+# in the src/ directory tree, and the copy in the bld/ directory controls
+# out-of-source compilation in which these files are created in the bld/
 # directory.
 #
 # This file contains definitions of several types of makefile variables:
 # 
 #  - Variables ROOT_DIR, SRC_DIR, BLD_DIR, BIN_DIR and DAT_DIR define
-#    absolute paths for the pscfpp/ root directory and some of its 
-#    subdirectories.
+#    absolute paths for the pscf root directory and some of its 
+#    subdirectories
 #
-#  - A variable UTIL_DEBUG that, if defined, enables compilation of 
-#    debugging version of all source files with additional sanity checks.
+#  - A variable UTIL_DEBUG that, if defined, enables conditional
+#    compilation of additional run-time validity checks
 #
-#  - A variable PSCF_OPENMP that, if defined, enables OpenMP in C++ code.
+#  - A variable PSCF_CUDA that, if defined, enables building of CUDA code
 #
-#  - A variable PSCF_CUDA that, if defined, enables building of CUDA code.
+#  - A variable PSCF_OPENMP that, if defined, enables OpenMP in C++ code
 #
 #  - A string PSCF_DEFS of C/C++ macro definitions that is passed to the
 #    compiler
 #
-#  - Variables that control the name for C++ and C++/CUDA compilers,
+#  - Variables that control the names of the C++ and C++/CUDA compilers,
 #    and command line options passed to both compilers.
 # 
 #  - Variable MAKEDEP and MAKEDEP_CUDA that give names for scripts used
@@ -38,7 +38,8 @@
 #
 # In the config.mk file installed in each build directory (src/ or bld/), 
 # values of these variables are set by the configure script, and should
-# usually not need to be modified by users.
+# usually not need to be modified by users. If the pscf root directory
+# is moved, rerun the configure script to reset these variables.
 
 # Absolute path to the pscfpp/ root directory
 ROOT_DIR=PWD
@@ -63,17 +64,8 @@ DAT_DIR=$(ROOT_DIR)/data
 #UTIL_DEBUG=1
 
 # Note: The setopts script may be used to uncomment or comment out this
-# definition of UTIL_DEBUG , by entering "./setopts -d1" to enable 
-# debugging (uncomment) or "./setopts -d0" to disable (comment out).
-#======================================================================
-# Conditional compilation of C++ with OpenMP 
- 
-# Defining PSCF_OPENMP enables compilation of C++ with OpenMP.
-#PSCF_OPENMP=1
- 
-# Note: The setopts script may be used to uncomment or comment out this
-# definition of PSCF_OPENMP, by entering "./setopts -m1" to enable OpenMP
-# (uncomment PSCF_OPENMP=1) or "./setopts -m0" to disable (comment out).
+# definition, by entering "./setopts -d1" to enable debugging (uncomment) 
+# or "./setopts -d0" to disable (comment out).
 #======================================================================
 # Conditional compilation of CUDA code
  
@@ -81,10 +73,19 @@ DAT_DIR=$(ROOT_DIR)/data
 #PSCF_CUDA=1
  
 # Note: The setopts script may be used to uncomment or comment out this
-# definition of PSCF_CUDA, by entering "./setopts -c1" to enable CUDA
-# (uncomment PSCF_CUDA=1) or "./setopts -c0" to disable (comment out).
+# definition, by entering "./setopts -c1" to enable CUDA (uncomment) or 
+# "./setopts -c0" to disable (comment out).
 #======================================================================
-# Define PSCF_DEFS - preprocessor definitions pased to compiler
+# Conditional compilation of C++ with OpenMP 
+ 
+# Defining PSCF_OPENMP enables compilation of C++ with OpenMP.
+#PSCF_OPENMP=1
+ 
+# Note: The setopts script may be used to uncomment or comment out this
+# definition, by entering "./setopts -m1" to enable OpenMP (uncomment)
+# or "./setopts -m0" to disable (comment out).
+#======================================================================
+# Define PSCF_DEFS : list of preprocessor definitions pased to compiler
 #
 # The variable PSCF_DEFS is part of the string of command line
 # arguments passed to the compiler, and uses the compiler "-D" option 

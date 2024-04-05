@@ -33,45 +33,49 @@ UTIL_CXX11=1
 #
 # The top level subdirectories of src/ named util/, pscf/, prdc, r1d/, 
 # rpc/ and rpg/ each contain the source code defined in a particular
-# namespace, and are referred to here as name-space level directories.
+# namespace, and are referred to here as namespace level directories.
 #
 # Each such namespace level directory contains makefile fragments named
-# patterns.mk, sources.mk, include.mk, and config.mk. The functions of
-# these files are as follows:
+# sources.mk, patterns.mk and include.mk. The purposes of these files
+# are as follows:
 # 
-#    config.mk   contains editable makefile variable definitions
-#    patterns.mk defines pattern rules for compilation and linking
-#    sources.mk  contains a list of source files in the directory
-#    include.mk  indirectly includes other makefile fragments
+#    sources.mk  defines a list of source files in the directory
+#    patterns.mk defines pattern rules for compilation 
+#    include.mk  indirectly includes other required makefile fragments
 # 
+# The makefile file in each namespace level directory includes the
+# include.mk file from that directory, which indirectly includes the
+# pattern file from the same directory and all relevant sources.mk
+# files that contain required source file lists.
+#
 # Some namespace level sub-directories of src/ "depend" on others:
 # A namespace level directory named A is said to depends on directory B 
 # if C++ or CUDA source code in A may use names (classes and functions) 
 # defined in B. If namespace level directory A depends on directory B,
-# then the include.mk file in A will include the config.mk and sources.mk 
-# files located in directory B. For example, subdirectory r1d/ depends on
-# the util/ and pscf/ directories, but not on the pscpc/, prdc/ or rpg/
-# directories.  You can see what directories a particular namespace level
-# directory depends on by inspecting the include.mk file in that directory,
-# which contains statements to include config.mk and sources.mk files from
-# the namespace level directories on which that directory depends.
+# then the include.mk file in A will include the sources.mk file located
+# in directory B. For example, subdirectory r1d/ depends on the util/ and
+# pscf/ directories, but not on the prdc/, rpc/ or rpg/ directories.
+# You can see what directories a particular namespace level directory 
+# depends on by inspecting the include.mk file in that directory, which 
+# contains statements that include the sources.mk files from the 
+# namespace level directories on which that directory depends.
 #
-# Slightly different makefile pattern rules for compilation of source 
-# files are used in different namespace level directories. A file named
-# patterns.mk in each namespace level subdirectory of src/ is a makefile 
-# fragment that defines pattern rules used for compiling C++ and (when
-# relevant) CUDA source files in that directory tree. 
+# Slightly different makefile pattern rules may be used for compilation 
+# of source files are used in different namespace level directories. A 
+# file named patterns.mk in each namespace level subdirectory of src/ 
+# is a makefile fragment that defines pattern rules used for compiling 
+# C++ and (when relevant) CUDA source files in that directory tree. 
 #
 # The pattern rules for different namespace level subdirectories of src/
 # are similar except for differences in the values of two makefile
-# variables named INCLUDES and DEFINES that are assigned different values 
-# in different namespace level directories. 
+# variables named INCLUDES and DEFINES that are sometimes assigned 
+# different values in different namespace level directories. 
 #
 # Compiling *.cpp C++ files:
 # --------------------------
 #
 # The compiler pattern rule for compiling C++ files for each namespace 
-# level subdirectory src/ is of the form:
+# level subdirectory of src/ is of the form:
 # 
 # $(BLD_DIR)/%.o:$(SRC_DIR)/%.cpp
 #      $(CXX) $(CPPFLAGS) $(CXXFLAGS) $(INCLUDES) $(DEFINES) -c -o $@ $<
