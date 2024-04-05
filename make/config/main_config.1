@@ -24,6 +24,9 @@
 #
 #  - A variable PSCF_CUDA that, if defined, enables building of CUDA code.
 #
+#  - A string PSCF_DEFS of C/C++ macro definitions that is passed to the
+#    compiler
+#
 #  - Variables that control the name for C++ and C++/CUDA compilers,
 #    and command line options passed to both compilers.
 # 
@@ -81,3 +84,24 @@ DAT_DIR=$(ROOT_DIR)/data
 # definition of PSCF_CUDA, by entering "./setopts -c1" to enable CUDA
 # (uncomment PSCF_CUDA=1) or "./setopts -c0" to disable (comment out).
 #======================================================================
+# Define PSCF_DEFS - preprocessor definitions pased to compiler
+#
+# The variable PSCF_DEFS is part of the string of command line
+# arguments passed to the compiler, and uses the compiler "-D" option 
+# to pass C/C++ preprocessor macro definitions to the compiler to 
+# enable or disable conditional compilation of some code sections.
+ 
+# Initialize to default empty string
+PSCF_DEFS=
+
+# Conditionally enable CUDA compilation
+ifdef PSCF_CUDA
+PSCF_DEFS+= -DPSCF_CUDA
+endif
+
+# Conditionally enable OpenMP compilation
+ifdef PSCF_OPENMP
+PSCF_DEFS+= -DPSCF_OPENMP
+endif
+
+#-----------------------------------------------------------------------

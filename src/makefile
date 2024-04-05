@@ -132,11 +132,6 @@ veryclean:
 	cd rpc; $(MAKE) veryclean
 	cd rpg; $(MAKE) veryclean
 	rm -f util/config.mk
-	rm -f pscf/config.mk
-	rm -f prdc/config.mk
-	rm -f r1d/config.mk
-	rm -f rpc/config.mk
-	rm -f rpg/config.mk
 ifneq ($(BLD_DIR),$(SRC_DIR))
 	rm -f util/makefile
 	rm -f pscf/makefile

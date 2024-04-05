@@ -87,11 +87,6 @@ rm src/temp
 
 # Install namespace level config.mk in src/ directory (for in-source builds)
 cp make/config/util_config src/util/config.mk
-cp make/config/pscf_config src/pscf/config.mk
-cp make/config/prdc_config src/prdc/config.mk
-cp make/config/r1d_config src/r1d/config.mk
-cp make/config/rpc_config src/rpc/config.mk
-cp make/config/rpg_config src/rpg/config.mk
 
 # Set directory paths in paths.h, write modified file to src/pscf
 sed -e "s|PWD|$PWD|" make/config/paths.h > src/pscf/paths.h
@@ -111,11 +106,6 @@ rm make/temp
 
 # Copy namespace level config.mk files
 cp src/util/config.mk bld/util/config.mk
-cp src/pscf/config.mk bld/pscf/config.mk
-cp src/prdc/config.mk bld/prdc/config.mk
-cp src/r1d/config.mk bld/r1d/config.mk
-cp src/rpc/config.mk bld/rpc/config.mk
-cp src/rpg/config.mk bld/rpg/config.mk
 
 # Copy main and namespace level makefiles
 cp src/makefile bld/makefile

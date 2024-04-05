@@ -5,11 +5,6 @@
 # files in the directory tree rooted at the src/prdc directory, which
 # contains all source code for the Pscf::Prdc namespace. It is included 
 # by all "makefile" files in this directory tree. 
-#
-# This file must be included in other makefiles after inclusion of
-# the root src/config.mk and relevant namespace level config.mk files 
-# in the build directory, because this file uses makefile variables 
-# defined in those configuration files.
 #-----------------------------------------------------------------------
 
 # Local pscf-specific libraries needed in src/prdc
@@ -41,14 +36,12 @@ ifdef PSCF_OPENMP
 endif
 
 # Preprocessor macro definitions needed in src/prdc
-DEFINES=$(UTIL_DEFS) $(PSCF_DEFS) $(PRDC_DEFS) 
+DEFINES=$(UTIL_DEFS) $(PSCF_DEFS) 
 
 # Arguments for MAKEDEP
 MAKEDEP_ARGS=$(CPPFLAGS) $(INCLUDES) $(DEFINES)
 MAKEDEP_ARGS+= -A$(BLD_DIR)/config.mk
 MAKEDEP_ARGS+= -A$(BLD_DIR)/util/config.mk
-MAKEDEP_ARGS+= -A$(BLD_DIR)/pscf/config.mk
-MAKEDEP_ARGS+= -A$(BLD_DIR)/prdc/config.mk
 MAKEDEP_ARGS+= -S$(SRC_DIR)
 MAKEDEP_ARGS+= -B$(SRC_DIR)
 

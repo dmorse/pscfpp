@@ -3,13 +3,8 @@
 #
 # This makefile contains the pattern rule used to compile all sources
 # files in the directory tree rooted at the src/rpc directory, which
-# contains source files defined in the Pscf namespace. It is included 
-# by all makefiles in this directory tree. 
-#
-# This file must be included in other makefiles after inclusion of
-# the root src/config.mk and relevant namespace level config.mk files 
-# in the build directory, because this file uses makefile variables 
-# defined in those configuration files.
+# contains source files defined in the Pscf::Rpc namespace. It is 
+# included by all makefiles in this directory tree. 
 #-----------------------------------------------------------------------
 
 # PSCF-specific static libraries needed in src/rpc (the order matters)
@@ -36,16 +31,12 @@ ifdef PSCF_OPENMP
 endif
 
 # List of all preprocessor macro definitions needed in src/rpc
-# Variables $(RPC_DEFS) etc are initialized in namespace config.mk files
-DEFINES=$(UTIL_DEFS) $(PSCF_DEFS) $(RPC_DEFS) 
+DEFINES=$(UTIL_DEFS) $(PSCF_DEFS) 
 
 # Arguments for MAKEDEP
 MAKEDEP_ARGS=$(CPPFLAGS) $(INCLUDES) $(DEFINES)
 MAKEDEP_ARGS+= -A$(BLD_DIR)/config.mk
 MAKEDEP_ARGS+= -A$(BLD_DIR)/util/config.mk
-MAKEDEP_ARGS+= -A$(BLD_DIR)/pscf/config.mk
-MAKEDEP_ARGS+= -A$(BLD_DIR)/prdc/config.mk
-MAKEDEP_ARGS+= -A$(BLD_DIR)/rpc/config.mk
 MAKEDEP_ARGS+= -S$(SRC_DIR)
 MAKEDEP_ARGS+= -B$(SRC_DIR)
 

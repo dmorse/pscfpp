@@ -3,12 +3,8 @@
 #
 # This makefile contains the pattern rule used to compile all sources
 # files in the directory tree rooted at the src/r1d directory, which
-# contains all source code for the Util namespace. It is included by
-# all "makefile" files in this directory tree. 
-#
-# This file should be included in other makefiles after inclusion of
-# the files src/config.mk and src/r1d/config.mk because this file
-# uses makefile variables defined in those files.
+# contains all source code for the Pscf::R1d namespace. It is included
+# by all "makefile" files in this directory tree. 
 #-----------------------------------------------------------------------
 
 # PSCF-specific libraries needed in src/r1d
@@ -28,8 +24,6 @@ DEFINES=$(PSCF_DEFS) $(UTIL_DEFS)
 MAKEDEP_ARGS=$(CPPFLAGS) $(INCLUDES) $(DEFINES)
 MAKEDEP_ARGS+= -A$(BLD_DIR)/config.mk
 MAKEDEP_ARGS+= -A$(BLD_DIR)/util/config.mk
-MAKEDEP_ARGS+= -A$(BLD_DIR)/pscf/config.mk
-MAKEDEP_ARGS+= -A$(BLD_DIR)/r1d/config.mk
 MAKEDEP_ARGS+= -S$(SRC_DIR)
 MAKEDEP_ARGS+= -B$(SRC_DIR)
 

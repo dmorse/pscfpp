@@ -3,13 +3,8 @@
 #
 # This makefile contains the pattern rule used to compile all sources
 # files in the directory tree rooted at the src/rpg directory, which
-# contains all source code for the PsSp namespace. It is included by
-# all "makefile" files in this directory tree. 
-#
-# This file must be included in other makefiles after inclusion of
-# the root src/config.mk and relevant namespace level config.mk files 
-# in the build directory, because this file uses makefile variables 
-# defined in those configuration files.
+# contains all source code for the Pscf:Rpg namespace. It is included 
+# by all "makefile" files in this directory tree. 
 #-----------------------------------------------------------------------
 
 # Local PSCF-specific libraries needed in src/rpg (the order matters)
@@ -30,15 +25,12 @@ LIBS+=$(CUDA_LIB)
 RPG_DEFS+=-DRPG_FFTW -DGPU_OUTER
 
 # Preprocessor macro definitions needed in src/rpg
-DEFINES=$(UTIL_DEFS) $(PSCF_DEFS) $(PRDC_DEFS) $(RPG_DEFS) 
+DEFINES=$(UTIL_DEFS) $(PSCF_DEFS)
 
 # Arguments for MAKEDEP
 MAKEDEP_ARGS=$(CPPFLAGS) $(INCLUDES) $(DEFINES)
 MAKEDEP_ARGS+= -A$(BLD_DIR)/config.mk
 MAKEDEP_ARGS+= -A$(BLD_DIR)/util/config.mk
-MAKEDEP_ARGS+= -A$(BLD_DIR)/pscf/config.mk
-MAKEDEP_ARGS+= -A$(BLD_DIR)/prdc/config.mk
-MAKEDEP_ARGS+= -A$(BLD_DIR)/rpg/config.mk
 MAKEDEP_ARGS+= -S$(SRC_DIR)
 MAKEDEP_ARGS+= -B$(SRC_DIR)
 

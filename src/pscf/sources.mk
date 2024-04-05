@@ -1,3 +1,6 @@
+#-----------------------------------------------------------------------
+# Source files in src/pscf and associated object file targets
+
 # CPP source directories
 include $(SRC_DIR)/pscf/chem/sources.mk
 include $(SRC_DIR)/pscf/inter/sources.mk
@@ -28,6 +31,12 @@ ifdef PSCF_CUDA
   include $(SRC_DIR)/pscf/cuda/sources.mk
   pscf_OBJS+=$(pscf_cuda_OBJS)
 endif
+
+#-----------------------------------------------------------------------
+# Path and makefile target for libpscf.a library 
+
+pscf_LIBNAME=pscf
+pscf_LIB=$(BLD_DIR)/pscf/lib$(pscf_LIBNAME).a
 
 $(pscf_LIB): $(pscf_OBJS)
 	$(AR) rcs $(pscf_LIB) $(pscf_OBJS) 
