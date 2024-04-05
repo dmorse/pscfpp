@@ -25,7 +25,7 @@ MAKEDEP_ARGS=$(CPPFLAGS) $(INCLUDES) $(DEFINES)
 MAKEDEP_ARGS+= -A$(BLD_DIR)/config.mk
 MAKEDEP_ARGS+= -A$(BLD_DIR)/util/config.mk
 MAKEDEP_ARGS+= -S$(SRC_DIR)
-MAKEDEP_ARGS+= -B$(SRC_DIR)
+MAKEDEP_ARGS+= -B$(BLD_DIR)
 
 # Pattern rule to compile *.cpp class source files in src/r1d
 # Note: Creates a *.d dependency file as a side effect
