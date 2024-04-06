@@ -18,6 +18,8 @@ INCLUDES+=$(GSL_INC)
 LIBS+=$(GSL_LIB) 
 
 # Preprocessor macro definitions needed in src/r1d
+# UTIL_DEFS is defined in src/util/config.mk
+# PSCF_DEFS is defined in src/config.mk
 DEFINES=$(PSCF_DEFS) $(UTIL_DEFS)
 
 # Arguments for MAKEDEP script

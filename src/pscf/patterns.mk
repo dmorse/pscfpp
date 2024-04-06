@@ -32,6 +32,8 @@ ifdef PSCF_CUDA
 endif
 
 # Preprocessor macro definitions needed in src/pscf
+# UTIL_DEFS is defined in src/util/config.mk
+# PSCF_DEFS is defined in src/config.mk
 DEFINES=$(PSCF_DEFS) $(UTIL_DEFS)
 
 # Arguments for MAKEDEP

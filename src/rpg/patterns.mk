@@ -10,7 +10,7 @@
 # Local PSCF-specific libraries needed in src/rpg (the order matters)
 PSCF_LIBS=$(rpg_LIB) $(prdc_LIB) $(pscf_LIB) $(util_LIB)
 
-# All libraries needed by executables in src/rpg (including external libs)
+# List of all libraries needed in src/rpg (including external libs)
 LIBS=$(PSCF_LIBS)
 
 # Add paths to Gnu scientific library (GSL)
@@ -21,10 +21,9 @@ LIBS+=$(GSL_LIB)
 INCLUDES+=$(CUDA_INC)
 LIBS+=$(CUDA_LIB)
 
-# Preprocessor macro definitions specific to rpg/ directory 
-RPG_DEFS+=-DRPG_FFTW -DGPU_OUTER
-
 # Preprocessor macro definitions needed in src/rpg
+# UTIL_DEFS is defined in src/util/config.mk
+# PSCF_DEFS is defined in src/config.mk
 DEFINES=$(UTIL_DEFS) $(PSCF_DEFS)
 
 # Arguments for MAKEDEP
@@ -55,5 +54,5 @@ $(BLD_DIR)/%Test: $(BLD_DIR)/%Test.o  $(PSCF_LIBS)
 	$(NVXX) $(LDFLAGS) -o $@ $< $(LIBS)
 
 # Note: In the linking rule for tests, we include the list $(PSCF_LIBS) 
-# of PSCF-specific libraries as dependencies but link to the list 
+# of PSCF-specific libraries as dependencies but link to the full list 
 # $(LIBS) of libraries that includes any relevant external libraries.

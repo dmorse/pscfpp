@@ -31,6 +31,8 @@ ifdef PSCF_OPENMP
 endif
 
 # List of all preprocessor macro definitions needed in src/rpc
+# UTIL_DEFS is defined in src/util/config.mk
+# PSCF_DEFS is defined in src/config.mk
 DEFINES=$(UTIL_DEFS) $(PSCF_DEFS) 
 
 # Arguments for MAKEDEP
