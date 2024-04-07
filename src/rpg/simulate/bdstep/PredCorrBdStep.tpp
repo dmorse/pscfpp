@@ -167,7 +167,7 @@ namespace Rpg {
       
       // Enforce incompressibility (also solves MDE repeatedly)
       bool isConverged = false;
-      int compress = system().compressor().compress();
+      int compress = simulator().compressor().compress();
       if (compress != 0){
          simulator().restoreState();
       } else {
@@ -214,7 +214,7 @@ namespace Rpg {
          system().setWRGrid(wf_);
          
          // Enforce incompressibility for final point
-         int compress2 = system().compressor().compress();
+         int compress2 = simulator().compressor().compress();
          if (compress2 != 0){
             simulator().restoreState();
          }  else {

@@ -114,6 +114,7 @@ namespace Rpg {
       // Inherited public functions
 
       using Simulator<D>::system;
+      using Simulator<D>::compressor;
       using Simulator<D>::random;
       using Simulator<D>::cudaRandom;
       using Simulator<D>::allocate;

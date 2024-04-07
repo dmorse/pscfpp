@@ -38,8 +38,7 @@ namespace Rpg {
     : Simulator<D>(system),
       mcMoveManager_(*this, system),
       analyzerManager_(*this, system),
-      trajectoryReaderFactoryPtr_(0),
-      seed_(0)
+      trajectoryReaderFactoryPtr_(0)
    { 
       setClassName("McSimulator");   
       trajectoryReaderFactoryPtr_ 
@@ -63,11 +62,17 @@ namespace Rpg {
    template <int D>
    void McSimulator<D>::readParameters(std::istream &in)
    {
+      // Read compressor block and optional random number seed
+      Simulator<D>::readParameters(in);
+
+      #if 0
       // Read random seed. Default is seed_(0), taken from the clock time
       readOptional(in, "seed", seed_);
+
       // Set random seed
       random().setSeed(seed_);
       cudaRandom().setSeed(seed_);
+      #endif
       
       // Read block of mc move data inside
       readParamComposite(in, mcMoveManager_);
@@ -179,7 +184,7 @@ namespace Rpg {
       // Output number of times MDE has been solved for the simulation run
       Log::file() << std::endl;
       Log::file() << "MDE counter   " 
-                  << system().compressor().mdeCounter() << std::endl;
+                  << compressor().mdeCounter() << std::endl;
       Log::file() << std::endl;
       
       // Output times for the simulation run

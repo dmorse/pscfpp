@@ -141,7 +141,7 @@ namespace Rpg {
 
       // Enforce incompressibility (also solves MDE repeatedly)
       bool isConverged = false;
-      int compress = system().compressor().compress();
+      int compress = simulator().compressor().compress();
       if (compress != 0){
          simulator().restoreState();
       } else {

@@ -124,6 +124,7 @@ namespace Rpg {
       // Inherited public functions
 
       using Simulator<D>::system;
+      using Simulator<D>::compressor;
       using Simulator<D>::random;
       using Simulator<D>::cudaRandom;
       using Simulator<D>::allocate;
@@ -181,11 +182,6 @@ namespace Rpg {
       */
       Factory< TrajectoryReader<D> >* trajectoryReaderFactoryPtr_;
       
-      /**
-      * Seed value of random generator. 
-      */
-      long seed_;
-
       // Private member functions
 
       /**

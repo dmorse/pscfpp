@@ -27,14 +27,14 @@ System{
     mesh           16    16    16
     lattice     cubic   
   }
-  AmCompressor{
-    epsilon      1.0e-4
-    maxItr       200
-    maxHist      30     
-    verbose	 0
-    errorType    normResid
-  }
   McSimulator{
+    AmCompressor{
+      epsilon      1.0e-4
+      maxItr       200
+      maxHist      30     
+      verbose	 0
+      errorType    normResid
+    }
     McMoveManager{
 
         RealMove{
@@ -68,7 +68,7 @@ System{
        }
 
        StepLogger{
-          interval  50
+          interval  20
        }
 
     }

@@ -186,7 +186,7 @@ namespace Rpg {
 
       // Call compressor
       compressorTimer_.start();
-      int compress = system().compressor().compress();
+      int compress = simulator().compressor().compress();
       compressorTimer_.stop();
       
       bool isConverged = false;

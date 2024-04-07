@@ -11,10 +11,12 @@
 #include "Simulator.h"
 #include <rpg/System.h>
 #include <rpg/compressor/Compressor.h>
+#include <rpg/compressor/CompressorFactory.h>
 #include <util/misc/Timer.h>
 #include <util/random/Random.h>
 #include <util/global.h>
 #include <gsl/gsl_eigen.h>
+
 
 namespace Pscf {
 namespace Rpg {
@@ -26,23 +28,40 @@ namespace Rpg {
    */
    template <int D>
    Simulator<D>::Simulator(System<D>& system)
-   : random_(),
-     cudaRandom_(),
-     iStep_(0),
-     iTotalStep_(0),
-     hasHamiltonian_(false),
-     hasWc_(false),
-     hasCc_(false),
-     systemPtr_(&system),
-     isAllocated_(false)
-   { setClassName("Simulator"); }
+    : random_(),
+      cudaRandom_(),
+      iStep_(0),
+      iTotalStep_(0),
+      seed_(0),
+      hasHamiltonian_(false),
+      hasWc_(false),
+      hasCc_(false),
+      systemPtr_(&system),
+      compressorFactoryPtr_(0),
+      compressorPtr_(0),
+      isAllocated_(false)
+   {  
+      setClassName("Simulator"); 
+      setClassName("Simulator");
+      if (system.hasCompressor()) {
+         compressorPtr_ = &(system.compressor());
+      }
+      compressorFactoryPtr_ = new CompressorFactory<D>(system);
+   }
 
    /*
    * Destructor.
    */
    template <int D>
    Simulator<D>::~Simulator()
-   {}
+   {
+      if (compressorFactoryPtr_) {
+         delete compressorFactoryPtr_;
+      }
+      if (compressorPtr_ and !system().hasCompressor()) {
+         delete compressorPtr_;
+      }
+   }
 
    /* 
    * Allocate required memory.
@@ -92,7 +111,25 @@ namespace Rpg {
    */
    template <int D>
    void Simulator<D>::readParameters(std::istream &in)
-   {  UTIL_THROW("Error: Unimplemented Simulator<D>::readParameters"); } 
+   { 
+      // Read required Compressor block, if needed
+      if (!system().hasCompressor()) {
+         readCompressor(in);
+      }
+      UTIL_CHECK(compressorPtr_);
+
+      // Optionally random seed
+      seed_ = 0;
+      readOptional(in, "seed", seed_);
+
+      // Set random number generator seed.
+      // Default value seed_ = 0 uses clock time.
+      random().setSeed(seed_);
+      cudaRandom().setSeed(seed_);
+
+      // Optionally read a perturbation
+      // readPerturbation(in);
+   }
 
    /*
    * Perform a field theoretic simulation of nStep steps.
@@ -638,13 +675,44 @@ namespace Rpg {
    template<int D>
    void Simulator<D>::outputTimers(std::ostream& out)
    { }
-  
+ 
    /*
-   * Clear all timers.
+   * Output modified diffusion equation (MDE) counter.
    */ 
    template<int D>
+   void Simulator<D>::outputMdeCounter(std::ostream& out)
+   { 
+      out << std::endl;
+      out << "MDE counter   "
+          << compressor().mdeCounter() << std::endl;
+      out << std::endl;
+   }
+
+   /*
+   * Clear all timers.
+   */
+   template<int D>
    void Simulator<D>::clearTimers()
-   { }
+   {  
+      UTIL_CHECK(compressorPtr_);
+      compressor().clearTimers(); 
+   }
+
+   // Protected Functions
+
+   /*
+   * Read the required Compressor parameter file block.
+   */
+   template<int D>
+   void Simulator<D>::readCompressor(std::istream& in)
+   {
+      UTIL_CHECK(compressorFactoryPtr_);
+      std::string className;
+      bool isEnd = false;
+      compressorPtr_ =
+         compressorFactoryPtr_->readObject(in, *this, className, isEnd);
+      UTIL_CHECK(compressorPtr_);
+   }
 
 }
 }

@@ -295,7 +295,7 @@ namespace Rpg
          }
       }
       
-      // Optionally instantiate a Compressor object
+      // Optionally read and instantiate a Compressor object
       compressorPtr_ = 
          compressorFactoryPtr_->readObjectOptional(in, *this, className, 
                                                    isEnd);
@@ -303,16 +303,12 @@ namespace Rpg
          Log::file() << indent() << "  Compressor{ [absent] }\n";
       }
       
-      // Optionally instantiate a Simulator
-      if (hasCompressor()) {
-
-         simulatorPtr_ = 
-            simulatorFactoryPtr_->readObjectOptional(in, *this, 
-                                                      className, isEnd);
-         if (!simulatorPtr_ && ParamComponent::echo()) {
-            Log::file() << indent() << "  Simulator{ [absent] }\n";
-         }
-
+      // Optionally read and instantiate a Simulator
+      simulatorPtr_ = 
+         simulatorFactoryPtr_->readObjectOptional(in, *this, 
+                                                  className, isEnd);
+      if (!simulatorPtr_ && ParamComponent::echo()) {
+         Log::file() << indent() << "  Simulator{ [absent] }\n";
       }
 
       // Initialize homogeneous object
@@ -383,8 +379,7 @@ namespace Rpg
          } else
          if (command == "COMPRESS") {
             // Impose incompressibility
-            UTIL_CHECK(hasCompressor());
-            compressor().compress();
+            simulator().compressor().compress();
          } else
          if (command == "SIMULATE") {
             // Perform a field theoretic MC simulation
@@ -855,7 +850,6 @@ namespace Rpg
    void System<D>::simulate(int nStep)
    {
       UTIL_CHECK(nStep > 0);
-      UTIL_CHECK(hasCompressor());
       UTIL_CHECK(hasSimulator());
       hasCFields_ = false;
       hasFreeEnergy_ = false;
@@ -997,10 +991,6 @@ namespace Rpg
          simulator().outputTimers(Log::file());
          simulator().outputTimers(out);
       }
-      if (hasCompressor()){
-         compressor().outputTimers(Log::file());
-         compressor().outputTimers(out);
-      }
    }
    
    /*
@@ -1011,9 +1001,6 @@ namespace Rpg
    {
       if (iteratorPtr_) {
          iterator().clearTimers();
-      }
-      if (hasCompressor()){
-         compressor().clearTimers();
       }
       if (hasSimulator()){
          simulator().clearTimers();

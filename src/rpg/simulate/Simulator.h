@@ -21,6 +21,9 @@ namespace Pscf {
 namespace Rpg {
 
    template <int D> class System;
+   template <int D> class Compressor;
+   template <int D> class CompressorFactory;
+
 
    using namespace Util;
    using namespace Pscf::Prdc::Cuda;
@@ -141,6 +144,16 @@ namespace Rpg {
       * \param out  output stream
       */
       virtual void outputTimers(std::ostream& out);
+
+      /**
+      * Output MDE counter.
+      *
+      * Output the number of times the modified diffusion equation has 
+      * been solved.
+      *
+      * \param out  output stream
+      */
+      virtual void outputMdeCounter(std::ostream& out);
 
       /**
       * Clear timers
@@ -459,6 +472,16 @@ namespace Rpg {
       System<D>& system();
 
       /**
+      * Get the compressor by reference.
+      */
+      Compressor<D>& compressor();
+
+      /**
+      * Does this Simulator have a Compressor object?
+      */
+      bool hasCompressor() const;
+
+      /**
       * Get random number generator by reference.
       */
       Random& random();
@@ -472,8 +495,19 @@ namespace Rpg {
 
    protected:
 
+      // Protected member functions
+ 
       using Util::ParamComposite::setClassName;
 
+      /**
+      * Read the compressor block of the parameter file. 
+      *
+      * \param in input parameter stream
+      */
+      void readCompressor(std::istream& in);
+
+      // Protected data members
+  
       /**
       * Random number generator
       */
@@ -539,6 +573,11 @@ namespace Rpg {
       long iTotalStep_;
 
       /**
+      * Random number generator seed.
+      */
+      long seed_;
+
+      /**
       * Has the Hamiltonian been computed for the current w and c fields?
       */
       bool hasHamiltonian_;
@@ -596,7 +635,7 @@ namespace Rpg {
       DArray<double>  sc_;
       
       /**
-      * A single eigenvector component of the w fields after a constant shift
+      * A single eigenvector component of w fields after constant shift.
       */ 
       RField<D> wcs_;
 
@@ -604,6 +643,16 @@ namespace Rpg {
       * Pointer to the parent system.
       */
       System<D>* systemPtr_;
+
+      /**
+      * Pointer to compressor factory object.
+      */
+      CompressorFactory<D>* compressorFactoryPtr_;
+
+      /**
+      * Pointer to an compressor.
+      */
+      Compressor<D>* compressorPtr_;
 
       /**
       * Has required memory been allocated?
@@ -627,6 +676,19 @@ namespace Rpg {
    template <int D>
    inline System<D>& Simulator<D>::system()
    {  return *systemPtr_; }
+
+   // Get the Compressor
+   template <int D>
+   inline Compressor<D>& Simulator<D>::compressor()
+   {
+      UTIL_CHECK(compressorPtr_);
+      return *compressorPtr_;
+   }
+
+   // Does the simulator have a Compressor object?
+   template <int D>
+   inline bool Simulator<D>::hasCompressor() const
+   {  return (compressorPtr_ != 0); }
 
    // Return an array of eigenvalues of projected chi matrix.
    template <int D>

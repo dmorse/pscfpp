@@ -65,19 +65,26 @@ namespace Rpg {
    template <int D>
    void BdSimulator<D>::readParameters(std::istream &in)
    {
+
+      // Read compressor block, and optionally random seed
+      Simulator<D>::readParameters(in);
+
+      #if 0
       // Read random seed. Default is seed_(0), taken from the clock time
       readOptional(in, "seed", seed_);
+
       // Set random seed
       random().setSeed(seed_);
       cudaRandom().setSeed(seed_);
+      #endif
 
-      // Instantiate an BdStep object
+      // Read and instantiate a BdStep object (required)
       std::string className;
       bool isEnd;
       bdStepPtr_ = 
           bdStepFactoryPtr_->readObject(in, *this, className, isEnd);
 
-      // Read block of analyzer
+      // Read AnalyzerManager block
       Analyzer<D>::baseInterval = 0; // default value
       readParamCompositeOptional(in, analyzerManager_);
 
@@ -181,7 +188,7 @@ namespace Rpg {
       // Output number of times MDE has been solved for the simulation run
       Log::file() << std::endl;
       Log::file() << "MDE counter   "
-                  << system().compressor().mdeCounter() << std::endl;
+                  << compressor().mdeCounter() << std::endl;
       Log::file() << std::endl;
 
       // Output times for the simulation run
