@@ -1,0 +1,64 @@
+System{
+  Mixture{
+    nMonomer  2
+    monomers[
+             1.0  
+             1.0 
+    ]
+    nPolymer  1
+    Polymer{
+      type    linear
+      nBlock  2
+      blocks[
+              0   0.5
+              1   0.5
+      ]
+      phi     1.0
+    }
+    vMonomer  0.01
+    ds   0.02
+  }
+  Interaction{
+    chi(
+        1   0   12.0
+    )
+  }
+  Domain{
+    mesh         16    16    16
+    lattice      cubic   
+  }
+  BdSimulator{
+    LrAmCompressor{
+      epsilon      1.0e-4
+      maxItr       200
+      maxHist      40     
+      verbose	   0
+      errorType    normResid
+    }
+    seed           486394701
+    LMBdStep{
+      mobility  1.0E-4
+    }
+    AnalyzerManager{
+      baseInterval    10
+
+      HamiltonianAnalyzer{
+        interval        10
+        outputFileName  out/hamiltonian
+        nSamplePerBlock 5
+      }
+
+      StepLogger{
+        interval        20
+      }
+
+    }
+  }
+}
+
+      TrajectoryWriter{
+        interval        10
+        outputFileName  out/trajectory
+      }
+
+  unitCell cubic   1.3835952906

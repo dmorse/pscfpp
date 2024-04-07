@@ -674,7 +674,7 @@ namespace Rpg {
    */ 
    template<int D>
    void Simulator<D>::outputTimers(std::ostream& out)
-   { }
+   {  outputMdeCounter(out); }
  
    /*
    * Output modified diffusion equation (MDE) counter.
