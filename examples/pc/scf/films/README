@@ -16,10 +16,8 @@ typing
     cp init/c.rf in/c.rf
 
 Then, to run pscf, type:
-    pscf_pcN -p param -c command -e
 
-(but replace "N" with the appropriate dimension of your
-calculation, either 1, 2, or 3). 
+    pscf_pc -p param -c command -e
 
 Alternatively, you can just type "./generate_guess" to 
 call the pre-written executable that will run 

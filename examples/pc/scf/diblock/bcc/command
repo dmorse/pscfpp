@@ -7,6 +7,6 @@ WRITE_W_BASIS    out/w.bf
 WRITE_C_BASIS    out/c.bf
 BASIS_TO_RGRID   out/w.bf  out/w.rf
 READ_W_BASIS     in/w.bf
-WRITE_TIMER	 out/timer
+WRITE_TIMERS     out/times
 FINISH
 
