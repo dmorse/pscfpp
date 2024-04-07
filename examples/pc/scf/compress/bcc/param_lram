@@ -27,11 +27,16 @@ System{
     lattice        cubic 
     groupName      P_1
   }
-  LrAmCompressor{
-    epsilon      1.0e-10
-    maxItr       300
-    maxHist      50 
-    errorType    normResid
+  BdSimulator{
+    LrAmCompressor{
+      epsilon      1.0e-10
+      maxItr       300
+      maxHist      50 
+      errorType    normResid
+    }
+    LMBdStep{
+      mobility  1.0E-3
+    }
   }
 }
 

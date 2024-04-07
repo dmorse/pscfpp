@@ -39,7 +39,7 @@ System{
     McMoveManager{
       ForceBiasMove{
         probability     0.50
-        mobility	4E-3
+        mobility        4.0E-3
       }
       RealMove{
         probability     0.25
