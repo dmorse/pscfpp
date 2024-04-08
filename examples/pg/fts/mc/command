@@ -1,8 +1,8 @@
 READ_W_RGRID     in/w.rf
-COMPRESS
-SIMULATE         80
-WRITE_TIMER      out/timer
+CLEAR_TIMERS
+SIMULATE         100
 WRITE_W_RGRID    out/w.rf
 WRITE_C_RGRID    out/c.rf
+WRITE_TIMERS 	 out/time
 FINISH
 

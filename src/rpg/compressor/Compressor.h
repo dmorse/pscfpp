@@ -28,6 +28,7 @@ namespace Rpg {
    {
 
    public:
+
       #if 0
       /**
       * Default constructor.
@@ -95,7 +96,6 @@ namespace Rpg {
 
    };
 
-   // Inline member functions
    #if 0
    // Default constructor
    template <int D>
@@ -107,19 +107,20 @@ namespace Rpg {
    // Constructor
    template <int D>
    Compressor<D>::Compressor(System<D>& system)
-    : sysPtr_(&system)
+    : mdeCounter_(0),
+      sysPtr_(&system)
    {  setClassName("Compressor"); }
 
    // Destructor
    template <int D>
    Compressor<D>::~Compressor()
    {}
-   
+
    // Get number of times MDE has been solved.
    template <int D>
    inline int Compressor<D>::mdeCounter()
    {  return mdeCounter_; }
-   
+
 } // namespace Rpg
 } // namespace Pscf
 #endif
