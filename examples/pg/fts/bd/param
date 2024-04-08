@@ -37,7 +37,7 @@ System{
     }
     seed           486394701
     LMBdStep{
-      mobility  1.0E-4
+      mobility  3.0E-3
     }
     AnalyzerManager{
       baseInterval    10
