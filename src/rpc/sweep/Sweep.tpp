@@ -25,7 +25,7 @@ namespace Rpc {
    * Default constructor (for unit testing).
    */
    template <int D>
-   Sweep<D>::Sweep() 
+   Sweep<D>::Sweep()
     : SweepTmpl< BasisFieldState<D> >(RPC_HISTORY_CAPACITY),
       writeCRGrid_(false),
       writeCBasis_(false),
@@ -37,7 +37,7 @@ namespace Rpc {
    * Constructor, creates association with parent system.
    */
    template <int D>
-   Sweep<D>::Sweep(System<D> & system) 
+   Sweep<D>::Sweep(System<D> & system)
     : SweepTmpl< BasisFieldState<D> >(RPC_HISTORY_CAPACITY),
       writeCRGrid_(false),
       writeCBasis_(false),
@@ -49,14 +49,14 @@ namespace Rpc {
    * Destructor.
    */
    template <int D>
-   Sweep<D>::~Sweep() 
+   Sweep<D>::~Sweep()
    {}
 
    /*
    * Set association with a parent system (for unit testing).
    */
    template <int D>
-   void Sweep<D>::setSystem(System<D>& system) 
+   void Sweep<D>::setSystem(System<D>& system)
    {  systemPtr_ = &system; }
 
    /*
@@ -67,7 +67,7 @@ namespace Rpc {
    {
       // Call the base class's readParameters function.
       SweepTmpl< BasisFieldState<D> >::readParameters(in);
-      
+
       // Read optional flags indicating which field types to output
       readOptional(in, "writeCRGrid", writeCRGrid_);
       readOptional(in, "writeCBasis", writeCBasis_);
@@ -78,11 +78,11 @@ namespace Rpc {
    * Check allocation of one state object, allocate if necessary.
    */
    template <int D>
-   void Sweep<D>::checkAllocation(BasisFieldState<D>& state) 
-   { 
-      UTIL_CHECK(hasSystem()); 
+   void Sweep<D>::checkAllocation(BasisFieldState<D>& state)
+   {
+      UTIL_CHECK(hasSystem());
       state.setSystem(system());
-      state.allocate(); 
+      state.allocate();
       state.unitCell() = system().unitCell();
    }
 
@@ -90,7 +90,7 @@ namespace Rpc {
    * Setup operations at the beginning of a sweep.
    */
    template <int D>
-   void Sweep<D>::setup() 
+   void Sweep<D>::setup()
    {
       initialize();
       checkAllocation(trial_);
@@ -109,7 +109,7 @@ namespace Rpc {
    * \param s path length coordinate, in range [0,1]
    */
    template <int D>
-   void Sweep<D>::setParameters(double s) 
+   void Sweep<D>::setParameters(double s)
    {
       // Empty default implementation allows Sweep<D> to be compiled.
       UTIL_THROW("Calling unimplemented function Sweep::setParameters");
@@ -119,13 +119,13 @@ namespace Rpc {
    * Create guess for adjustable variables by polynomial extrapolation.
    */
    template <int D>
-   void Sweep<D>::extrapolate(double sNew) 
+   void Sweep<D>::extrapolate(double sNew)
    {
       UTIL_CHECK(historySize() > 0);
 
       // If historySize() == 1, do nothing: Use previous system state
       // as trial for the new state.
-      
+
       if (historySize() > 1) {
          UTIL_CHECK(historySize() <= historyCapacity());
 
@@ -135,12 +135,12 @@ namespace Rpc {
          // Compute coefficients of polynomial extrapolation to sNew
          setCoefficients(sNew);
 
-         // Set extrapolated trial w fields 
+         // Set extrapolated trial w fields
          double coeff;
          int nMonomer = system().mixture().nMonomer();
          int nBasis = system().basis().nBasis();
          DArray<double>* newFieldPtr;
-         DArray<double>* oldFieldPtr; 
+         DArray<double>* oldFieldPtr;
          int i, j, k;
          for (i=0; i < nMonomer; ++i) {
             newFieldPtr = &(trial_.field(i));
@@ -173,8 +173,8 @@ namespace Rpc {
 
             double coeff;
             double parameter;
-            
-            const FSArray<bool,6> flexParams = 
+
+            const FSArray<bool,6> flexParams =
                               system().iterator().flexibleParams();
             const int nParameter = system().unitCell().nParameter();
             UTIL_CHECK(flexParams.size() == nParameter);
@@ -206,11 +206,11 @@ namespace Rpc {
             }
          }
 
-         // Transfer data from trial_ state to parent system         
+         // Transfer data from trial_ state to parent system
          trial_.setSystemState(newCellParams);
       }
 
-    
+
    };
 
    /*
@@ -230,23 +230,23 @@ namespace Rpc {
    */
    template <int D>
    void Sweep<D>::reset()
-   {  
+   {
       bool isFlexible = system().iterator().isFlexible();
-      state(0).setSystemState(isFlexible); 
+      state(0).setSystemState(isFlexible);
    }
 
    /*
    * Update state(0) and output data after successful convergence
    *
-   * The implementation of this function should copy the current 
+   * The implementation of this function should copy the current
    * system state into state(0) and output any desired information
    * about the current converged solution.
    */
    template <int D>
-   void Sweep<D>::getSolution() 
-   { 
+   void Sweep<D>::getSolution()
+   {
       state(0).setSystem(system());
-      state(0).getSystemState(); 
+      state(0).getSystemState();
 
       // Output converged solution to several files
       outputSolution();
@@ -282,8 +282,8 @@ namespace Rpc {
       outFileName += ".bf";
       UTIL_CHECK(system().w().hasData());
       UTIL_CHECK(system().w().isSymmetric());
-      system().fieldIo().writeFieldsBasis(outFileName, 
-                                          system().w().basis(), 
+      system().fieldIo().writeFieldsBasis(outFileName,
+                                          system().w().basis(),
                                           system().unitCell());
 
       // Optionally write c rgrid files
@@ -292,8 +292,8 @@ namespace Rpc {
          outFileName += indexString;
          outFileName += "_c";
          outFileName += ".rf";
-         system().fieldIo().writeFieldsRGrid(outFileName, 
-                                             system().c().rgrid(), 
+         system().fieldIo().writeFieldsRGrid(outFileName,
+                                             system().c().rgrid(),
                                              system().unitCell());
       }
 
@@ -304,8 +304,8 @@ namespace Rpc {
          outFileName += "_c";
          outFileName += ".bf";
          UTIL_CHECK(system().hasCFields());
-         system().fieldIo().writeFieldsBasis(outFileName, 
-                                             system().c().basis(), 
+         system().fieldIo().writeFieldsBasis(outFileName,
+                                             system().c().basis(),
                                              system().unitCell());
       }
 
@@ -315,8 +315,8 @@ namespace Rpc {
          outFileName += indexString;
          outFileName += "_w";
          outFileName += ".rf";
-         system().fieldIo().writeFieldsRGrid(outFileName, 
-                                             system().w().rgrid(), 
+         system().fieldIo().writeFieldsRGrid(outFileName,
+                                             system().w().rgrid(),
                                              system().unitCell());
       }
    }
@@ -334,7 +334,7 @@ namespace Rpc {
    }
 
    template <int D>
-   void Sweep<D>::cleanup() 
+   void Sweep<D>::cleanup()
    {  logFile_.close(); }
 
 } // namespace Rpc

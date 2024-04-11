@@ -29,16 +29,21 @@ namespace Rpc {
       Sweep<D>::readParameters(in);
       
       // Read in the number of sweep parameters and allocate.
-      this->read(in, "nParameter", nParameter_);
+      //this->read(in, "nParameter", nParameter_);
+      read(in, "nParameter", nParameter_);
       parameters_.allocate(nParameter_);
       
       // Read in array of SweepParameters, calling << for each
-      this->template readDArray< SweepParameter<D> >(in, "parameters", parameters_, nParameter_);
+      //this->template readDArray< SweepParameter<D> >(in, "parameters", 
+      //                                            parameters_, nParameter_);
+      readDArray(in, "parameters", parameters_, nParameter_);
 
       // Verify net zero change in volume fractions if being swept
       double sum = 0.0;
       for (int i = 0; i < nParameter_; ++i) {
-         if (parameters_[i].type() == "phi_polymer" || parameters_[i].type() == "phi_solvent") {
+         if (parameters_[i].type() == "phi_polymer" || 
+             parameters_[i].type() == "phi_solvent") 
+         {
             sum += parameters_[i].change();
          }
       }

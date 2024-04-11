@@ -9,7 +9,7 @@
 */
 
 #include "Sweep.h"            // base class
-#include "SweepParameter.h"   // member 
+#include "SweepParameter.h"   // member
 #include <util/global.h>
 #include <iostream>
 
@@ -22,8 +22,8 @@ namespace Rpc {
 
    /**
    * A sweep in parameter space where one or more parameters change
-   * linearly with the sweep variable. 
-   * 
+   * linearly with the sweep variable.
+   *
    * \ref scft_param_sweep_linear_sec "Parameter File Format"
    * \ingroup Rpc_Sweep_Module
    */
@@ -32,7 +32,7 @@ namespace Rpc {
    {
    public:
 
-      /** 
+      /**
       * Constructor.
       * \param system parent System object
       */
@@ -40,23 +40,23 @@ namespace Rpc {
 
       /**
       * Read parameters from param file.
-      * 
+      *
       * \param in Input stream from param file.
       */
       void readParameters(std::istream& in);
 
       /**
-      * Setup operation at the beginning of a sweep. Gets initial 
+      * Setup operation at the beginning of a sweep. Gets initial
       * values of individual parameters.
       */
       void setup();
 
       /**
-      * Set the state before an iteration. Called with each new iteration 
+      * Set the state before an iteration. Called with each new iteration
       * in SweepTempl::sweep()
       *
       * \param s path length coordinate, in [0,1]
-      */    
+      */
       void setParameters(double s);
 
       /**
@@ -66,18 +66,22 @@ namespace Rpc {
       */
       void outputSummary(std::ostream& out);
 
+      using ParamComposite::read;
+      using ParamComposite::readDArray;
+
    protected:
 
       using Sweep<D>::system;
       using Sweep<D>::hasSystem;
-   
+
    private:
-      /// Number of parameters being swept. 
-      int nParameter_; 
+
+      /// Number of parameters being swept.
+      int nParameter_;
 
       /// Array of SweepParameter objects.
       DArray< SweepParameter<D> > parameters_;
-       
+
    };
 
    #ifndef RPC_LINEAR_SWEEP_TPP

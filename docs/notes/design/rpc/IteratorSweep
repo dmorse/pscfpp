@@ -1,0 +1,324 @@
+
+Goal
+====
+
+Allow some Iterator classes to define specialized parameters that 
+can be manipulated by a LinearSweep class, without the LinearSweep
+class needing to know what those parameters might be or what they
+mean. 
+
+New Parameter Modifier Interface (Abstract Base Class)
+======================================================
+
+File: src/pscf/sweep/ParameterModifier.h
+
+namespace Pscf {
+
+  /**
+  * Interface for iterators that define sweepable parameters.
+  */
+  class ParameterModifier 
+  {
+
+  public:
+ 
+     virtual 
+     void setParameter(std::string name, double value)
+     {  UTIL_THROW("Error: Unimplemented setParameter function"); }
+
+     virtual 
+     void setParameter(std::string name, DArray<int> ids, double value)
+     {  UTIL_THROW("Error: Unimplemented setParameter function"); }
+
+     virtual 
+     double getParameter(std::string name, double value) const
+     {  
+        UTIL_THROW("Error: Unimplemented getParameter function"); 
+        return 0.0;
+     }
+
+     virtual 
+     double getParameter(std::string name, DArray<int> ids) const
+     {  
+        UTIL_THROW("Error: Unimplemented setParameter function"); 
+        return 0.0;
+     }
+
+  }
+
+}
+
+
+  Idea: 
+
+     - Make Iterator classes subclasses of ParameterModifier
+
+     - Iterator classes that have define sweepable parameters must
+       implement set and get functions.
+
+     - Get and set implementations may contain nested if or
+       switch statements that choose from among valid names
+       (e.g., chiTop and chiBottom) or throw an Exception for 
+       unrecognized names.
+
+     - Unimplemented get and set functions should never be called, 
+       and should throw exceptions if they are called.
+
+     - Define in Pscf so it can be used in several programs
+
+     - Potential annoyance: Will compilers throw warnings for the
+       above construction for get functions, because the lines that
+       return values cannot be reached? If so, is there a better way
+       way to do this while keeping compilers happy?
+
+   Question / Proposed Alternative:
+
+     - I don't think we currently have any parameters that do not 
+       require at least one associated index. If so the, set and get 
+       functions that don't take any indices may not be necessary.
+
+     - Proposed alternative: If so, don't bother to define the function 
+       interfaces for the special case of no indices for now, consider 
+       later if they are useful if we run into cases of parameters with 
+       no associated indices.
+
+
+New Pscf::ParameterType Struct
+==============================
+
+File: src/pscf/sweeep/ParameterType.h
+
+namespace Pscf {
+
+  /**
+  * Declaration of a specialized sweep parameter type.
+  */
+  struct ParameterType 
+  {
+
+     // String identifier
+     std::string  name;
+
+     // Number of associated integer indices
+     int          nId;
+
+     // Pointer to object that can get and set the parameter
+     ParameterModifier*   modifierPtr_;
+
+  };
+
+}
+
+  Ideas:
+
+  - A SweepTmpl can have a growable array of Pscf::ParamterType
+  objects, each of which declares a type of parameter that will 
+  be recognized in addition to any standard parameters.
+
+  - The struct contains everything one needs to know about a
+  parameter type to validate the name, read the required number
+  of parameters and get or set via a pointer to the relevant
+  ParameterModifier object.
+
+  - Define in Pscf and src/pscf/sweep directory to allow use
+  in all subnamespaces.
+
+
+Changes to Pscf::SweepTmpl Base Class Template
+==============================================
+
+  (1) New data member - Growable array of ParameterType objects:
+
+     /// Array of specialized parameter types
+     GArray<ParameterType> parameterTypes_;
+
+     Probably simplest to make this protected, to allow direct
+     access by subclasses (e.g., LinearSweep).
+
+  (2) New public member function:
+
+     /**
+     * Add declaration of a specialized parameter type.
+     * 
+     * This function adds a new ParameterType object to the
+     * array of declared specialized parameter types.
+     *
+     * \param name  parameter string identifier
+     * \param nId  number of associated integer indices
+     * \param modifier  object that can set and get the parameter
+     */
+     addParameterType(std::string name, int nId, 
+                      ParameterModifier& modifier);
+
+
+     This should simply append a new ParameterType to the
+     parameterTypes_ GArray.
+
+     It should probably check whether a name already exists
+     before adding a name. Redundant names should be treated
+     as an error. 
+
+     Idea: Subclasses of ParameterModifier that define 
+     parameters should define a function addParameterTypes that 
+     can call SweepTmpl::addParameterType once per parameter 
+     type to declare whatever parameter types they need.
+
+
+Changes to Pscf::Rpc::Iterator (Base Class)
+==========================================
+
+   (1) Make Pscf::Rpc::Iterator a subclass of Pscf::ParameterModifier
+
+   (2) Add a new virtual function with an empty default implementation:
+
+     virtual
+     void addParameterTypes(Sweep& sweep)
+     {}
+
+   Comment: Adding the empty implementation in the base class will 
+   allow code to compile with Iterators that don't define any special 
+   parameters.
+
+Changes to Pscf::Rpc::Sweep
+============================
+
+     (1) Add new function call inside the Sweep constructor:
+    
+     system().iterator().addParameterTypes(*this); 
+
+     Idea: After construction, but before reading the Sweep
+     parameter block, the Sweep object will have a complete
+     list of all valid specialized parameters. In the current
+     design, these can only be defined by the Iterator.
+
+
+Changes to Pscf::Rpc::SweepParameter
+====================================
+
+     (1) Add Special to allowed values of the SweepParameter::ParamType 
+         enumeration, just before Null.
+
+     (2) Add a new pointer data member, set null by default:
+
+         GArray<ParameterType>* specialTypeArrayPtr_;
+
+         The specialTypeArrayPtr_ should point to parameterTypes_
+         array owned by the Sweep base class.  This address should 
+         be set in every SweepParameter after the array of 
+         SweepParameter objects is allocated, but before any of the
+         parameters are read.
+
+     (3) Add a new integer member:
+
+         int specialTypeId_;
+
+         The typeIndex_ should be set to the index of 
+         the relevant type within that array, if one that
+         matches the name is found. This is set when the
+         type name is read.
+
+     (4) Add set and accessor functions for new members
+         specialTypeArrayPtr_ and specialTypeId_
+
+          void setSpecialTypeArray(GArray<ParameterType>& parameterTypes);
+          void setSpecialTypeId(int specialTypeId);
+
+          int specialTypeId() const
+          {  return specialTypeId_; }
+
+     (5) The SweepParameter::readParamType function is called
+     by the >> operator to read the parameter type_ enum value.
+     This should check first for standard type names as done
+     currently. If none is found, it should then loop over the 
+     elements of the GArray<ParameterType> pointed to by the 
+     specialTypeArrayPtr_. If a matching name is found, set the 
+     type_ enum value to Special, set specialTypeId_ to the 
+     value of the array element index for the relevant 
+     ParameterType, and set nID_ to the value of nId for that 
+     ParameterType.
+
+     (6) For a parameter of type Special, the set_ function should
+     call the appropriate set function of the ParameterModifier
+     that is accessed through the linked ParameterType, and pass 
+     it the name string stored in the associated type, any 
+     associated indices, and the new parameter value.
+
+     (7) For a parameter of type Special, the get_ function should
+     call the appropriate get function of the ParameterModifier
+     that is accessed through the linked ParameterType, and pass 
+     it the name string stored in the associated type and any
+     associated indices.
+
+     Ideas: 
+
+     A) Specific specialized parameters can be represented by
+     instances of SweepParameter with a handle that allows 
+     access to the associated Pscf::ParameterType object. The 
+     associated ParameterType object contains all required information
+     about how to treat the parameter, including a pointer to a 
+     ParameterModifier object that can get and set the parameter
+     value.
+
+     B) Before reading anything, a SweepParameter needs to have a
+     pre-set pointer to the array of TypeParameter objects so that
+     it can decide if a specialized type is valid when it encounters
+     one during reading. These pointers thus need to be set before
+     the parameter are read from file.
+
+     C) After reading a specialized parameter, SweepParameter can 
+     store the element index of the ParameterType within the array 
+     of ParameterType objects. The pointer to the array and the
+     index then form a complete handle for the ParameterType. All
+     of the required information should be accessible within the
+     readParamType() function and >> operator. 
+
+     D) The pointer to the GArray<ParameterType> and the element
+     index within that the array is a safer form of handle for
+     an element than a pointer to an element of a GArray, 
+     because a GArray is allowed move the block of memory in 
+     which its elements are stored as it grows, thus invalidating 
+     any pointer to an element. 
+
+ 
+Changes to Pscf::Rpc::LinearSweep
+=================================
+
+     (1) In Pscf::Rpc::LinearSweep::readParameters, after allocating the 
+     the DArray of SweepParameter<D> objects, loop over objects in that 
+     array and call SweepParameter::setSpecialTypeArray for each
+     element to pass parameterTypes_ array owned by the parent Sweep
+     class. (This requires that parameterTypes_ be protected rather 
+     than private)
+      
+     (2) In readParameters, the parameters are currently read using
+      
+     readDArray(in, "parameters", parameters_, nParameter_)
+
+     After the modifications to the design of SweepParameter described
+     above, this should still work as designed, without modification.
+
+     (3) It does not appear to me that any changes are required to the
+     setup or setParameters functions.
+
+     Idea: Most of the required changes are made to SweepParameter.
+     Required changes to LinearSweep are then minimal. 
+
+
+Changes to Pscf::Rpc::FilmIteratorBase
+=======================================
+
+These changes are the final step, after the rest of the framework is
+in place.
+
+     (1) Write an implementation of setParameterTypes(Sweep& )
+
+     Idea: This function can add declarations of ParameterType objects
+     for all relevant parameter types to the Sweep object, using the
+     interface defined in the SweepTmpl base class. It will be called 
+     in the Sweep constructor (see below).
+
+     (2) Write implementations of setParameter and getParameter 
+     functions.
+
+     (3) Comment out relevant sections of SweepParameter set_ and get_
+
