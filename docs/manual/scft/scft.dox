@@ -1,7 +1,7 @@
-/*! \page scft_page User Guide: Self-Consistent Field Theory
+/*! \page scft_page Self-Consistent Field Theory
 
 \ref user_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
-\ref developer_page (Next)
+\ref ftsr_page (Next)
 <BR>
 
 <h2> Contents:</h2>
@@ -49,6 +49,6 @@
 <BR>
 \ref user_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
 \ref index "Main Page" (Up) &nbsp; &nbsp; &nbsp; &nbsp;
-\ref developer_page (Next)
+\ref ftsr_page (Next)
 
 */

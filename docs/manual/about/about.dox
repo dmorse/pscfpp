@@ -7,35 +7,8 @@
 PSCF is package of software for field-theoretic simulations of
 inhomogeneous equilibrium structures formed by polymer liquids, with a
 focus on systems that contain block polymers.  The package can be used
-to perform either self-consistent field (SCFT) or some types of stochastic 
-field theoretic simulation (FTS). 
-
-The PSCF package is comprised of several programs that are all designed 
-to predict equilibrium properties of polymer liquids using a standard type 
-of coarse-grained model that treat polymer conformations as continuous 
-random walks.  Systems modeled by PSCF may be either one-component block 
-polymer melts or mixtures that contains one or more polymeric species. 
-PSCF allows a mixture to contain any number of block polymer, homopolymer 
-and small molecule solvent species, and treats the liquid as effectively 
-incompressible. 
-
-The current version of PSCF is written primarily in C++, supplemented by 
-CUDA for code that uses NVIDIA graphics processing units (GPUs).  PSCF 
-is only available in source code form, and must be compiled from source. 
-The source code is maintained in the github repository
-<a href=https://github.com/dmorse/pscfpp/>https://github.com/dmorse/pscfpp</a>.
-
-The C++/CUDA version of PSCF is free, open source software. It is
-distributed under the terms of the GNU General Public License as (GPL)
-published by the Free Software Foundation, either version 3 of the
-License or (at your option) any later version.  PSCF is distributed
-without any warranty, without even the implied warranty of merchantability
-or fitness for a particular purpose.  See the LICENSE file or the
-<a href=http://www.gnu.org/licenses/>gnu web page</a> for details.
-
-Development of PSCF is currently supported by the National Science
-Foundation program for Cyberinfrastructure for Sustained Scientific
-Development (CSSI) under Grant No. 2103627.
+to perform either self-consistent field (SCFT) or some types of 
+stochastic field theoretic simulation (FTS). 
 
 <BR>
 
@@ -50,7 +23,6 @@ Development (CSSI) under Grant No. 2103627.
    <li> \subpage about_history_page     </li>
    <li> \subpage about_programs_page     </li>
    <li> \subpage about_features_page     </li>
-   <li> \subpage about_source_page     </li>
    <li> \subpage about_contributors_page     </li>
    </ol>
 

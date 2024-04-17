@@ -17,7 +17,7 @@ pscfpp but that are not installed by cloning the github repository. Most
 of the files installed by this script are files that the user may need to 
 modify in order to customize or extend the package. These include include 
 configuration files that a user may need to modify in order to adapt the 
-simpatico build system to a particular environment or to enable optional 
+PSCF build system to a particular environment or to enable optional 
 features. 
 
 The most important file created by the configure script is a file named 
@@ -53,31 +53,33 @@ the directories listed in the PATH environment variable for an executable
 with this name.
 
 The default configuration should work for most linux environments. 
-It also should work for a Mac with an Intel CPU in which the "homebrew"
+It also should work for a Mac with an Intel CPU in which the 
+<a href="https://brew.sh/"> Homebrew </a> package manager
 package manager was used to install GSL and FFTW.  The definitions 
 used in this default configuration are defined in a file named
 pscfpp/make/compiler/linux-default. 
 
-\section install_configure_homebrewm1_sec Macs with Apple silicon and homebrew 
+\section install_configure_homebrewm1_sec Macs with Apple silicon and Homebrew 
 
-To create an environment that should work correctly for a newer Mac with
-Apple silicon (i.e., the Apple M1 or M2 chip) on which homebrew was used 
-to install dependencies, enter:
+To create an environment that should work correctly for a newer Mac 
+with Apple silicon (i.e., the Apple M1 or M2 chip) on which the
+<a href="https://brew.sh/"> Homebrew </a> package manager was used to 
+install dependencies, enter:
 \code
 ./configure mac-si-homebrew
 \endcode
 This will use a compiler configuration file 
 pscfpp/make/compiler/mac-si-homebrew that was designed for such an 
 environment. This configure file adds paths to appropriate subdirectories 
-of /opt/homebrew to search paths used by the compiler to find header files 
-and libraries.
+of /opt/homebrew to search paths used by the compiler to find header 
+files and libraries.
 
-The hardware used for a Mac OS system is relevant if homebrew was used
-to install dependencies because the homebrew project decided to use the 
-introduction of new CPU hardware (apple silicon vs Intel chips) as an 
+The hardware used for a Mac OS system is relevant if Homebrew was used
+to install dependencies because the Homebrew project decided to use the 
+introduction of new CPU hardware (Apple silicon vs Intel chips) as an 
 opportunity to introduce new conventions for paths without breaking 
 backwards compatibility on existing computers. As a result of this
-decision, homebrew uses completely different path conventions on Intel 
+decision, Homebrew uses completely different path conventions on Intel 
 and Apple-Si Macs. 
 
 \section install_configure_local_file_sec Customized compiler configuration files

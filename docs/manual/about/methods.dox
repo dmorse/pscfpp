@@ -1,9 +1,24 @@
 
-/*! \page about_methods_page Computational Methods
+/*! \page about_methods_page Model and Methods
 
+\ref about_page  (Prev/Up) &nbsp; &nbsp; &nbsp; &nbsp;
 \ref about_history_page  (Next)
 <BR>
 
+
+The PSCF package is comprised of several programs that are all 
+designed to predict equilibrium properties of polymer liquids.
+All of these programs currently use a standard type of coarse-grained 
+model that treat polymer conformations as continuous random walks, and
+that treats the material as rigorously incompressible. Systems modeled 
+by PSCF may be either one-component block polymer melts or mixtures that 
+contains one or more polymeric species.  Such a mixture may contain any 
+number of block polymer, homopolymer and small molecule solvent species. 
+All polymer species may be linear or have a branched acyclic topology. 
+All species in a mixture are constructed from a finite number of 
+types of monomer, in which each monomer is assigned a statistical
+segment length. Interactions among different types of monomer are
+described by binary Flory-Huggins interaction parameters.
 
 PSCF can be used to perform either self-consistent field theory
 calculations or some types of stochastic field-theoretic simulation
@@ -52,11 +67,11 @@ inhomogeneous polymer liquids:
     "Broadly Accessible Self-Consistent Field Theory for Block Polymer
     Materials Discovery," </a> *Macromolecules*, **2016**, <i>49</i>, 4675.
 
-The reference by Arora et al. is particularly appropriate as an introduction 
-to the implementation of SCFT in PSCF because it was written, in part, as 
-a description of the earlier Fortran version of PSCF, and uses conventions 
-and working equations consistent with those used throughout the PSCF 
-documentation and source code.
+The reference by Arora et al. is particularly appropriate as an 
+introduction to the implementation of SCFT in PSCF because it was written, 
+in part, as a description of the earlier Fortran version of PSCF, and so
+uses conventions and working equations consistent with those used 
+throughout the PSCF documentation and source code.
 
 \section about_methods_fts_sec Field-Theoretic Simulation
 
@@ -150,7 +165,7 @@ earlier work:
     *Polymers*, **2021**, <i>13</i>, 2437.
 
 <BR>
-\ref about_page  (Up) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref about_page  (Prev/Up) &nbsp; &nbsp; &nbsp; &nbsp;
 \ref about_history_page  (Next)
 
 */

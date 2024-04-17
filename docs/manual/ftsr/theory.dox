@@ -1,0 +1,31 @@
+/*! \page ftsr_theory_page  Fluctuating Field Theory
+
+\ref ftsr_page       (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref ftsr_methods_page  (Next)
+<BR>
+
+Below, we summarize a few of the working equations 
+
+\section ftsr_theory_model_sec Particle Based Model 
+
+General description of particle based model
+
+\section ftsr_theory_AB_sec Incompressible AB System (M = 2)
+
+Definition of c(plus) and c(minus).
+
+Result of Hubbard-Stratonovich transformation
+
+Partial Saddle-point
+
+\section ftsr_theory_ABC_sec General Incompressible System (M >=2)
+
+Projected chi matrix ??
+
+\subsection ftsr_theory_PS_sec Partial Saddle-Point Approximation
+
+<BR>
+\ref ftsr_page       (Prev, Up) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref ftsr_methods_page  (Next)
+
+*/

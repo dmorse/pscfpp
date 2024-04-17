@@ -1,0 +1,17 @@
+/*! \page ftsr_page Field Theoretic Simulation - Real Fields
+
+\ref scft_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
+\ref developer_page (Next)
+<BR>
+
+<h2> Contents:</h2>
+   <ol>
+   <li> \subpage ftsr_theory_page  </li>
+   <li> \subpage ftsr_methods_page  </li>
+   </ol>
+<BR>
+\ref scft_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
+\ref index "Main Page" (Up) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref developer_page (Next)
+
+*/

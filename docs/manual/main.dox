@@ -2,18 +2,44 @@
 
 PSCF is a C++ package for field-theoretic simulation of inhomogeneous
 equilibrium structures formed by polymer liquids with components that
-tend to phase separate. The package enables both self-consistent field 
-theory calculations and field theoretic Monte-Carlo simulations.
+tend to phase separate. The package enables both self-consistent field
+theory (SCFT) calculations and some types of stochastic field theoretic
+simulation (FTS).
+
+PSCF is distributed only in source code form, and so must be compiled 
+by the user. It is designed for use in a unix-like environment, and is
+regularly tested on Linux and Mac OS X operating systems.
+PSCF can take advantage of a CUDA-capable Nvidia graphics processing 
+unit (GPU) if one is available. 
+
+PSCF is free, open source software. It is distributed under the terms 
+of the GNU General Public License as (GPL) published by the Free
+Software Foundation, either version 3 of the License or (at your 
+option) any later version.  See the LICENSE file or the
+<a href=http://www.gnu.org/licenses/>gnu web page</a> for details.
+Development of PSCF is currently supported by the National Science
+Foundation program for Cyberinfrastructure for Sustained Scientific
+Development (CSSI) under Grant No. 2103627.
+
+This manual is constructed as a set of linked web pages that provide 
+both documentation designed at users and more detailed API documentation
+that is aimed primarily at developers.  Basic information about how to
+install and use PSCF is provided through the set of web pages that is 
+outlined and linked below. Full documentation of class and function
+interfaces is instead accessible via the "Topics", "Namespaces" and
+"Classes" tabs at the top of each manual page.  The web manual for
+the most recent numbered release of PSCF (currently v1.1) is available
+online at: <a ref=https://dmorse.github.io/pscfpp-man/>
+https://dmorse.github.io/pscfpp-man </a>.
 
 <h2>Contents:</h2>
 <ol type="1">
- <li> \subpage about_page 
+ <li> \subpage about_page
     <ol type="1">
     <li> \ref about_methods_page  </li>
     <li> \ref about_history_page  </li>
     <li> \ref about_programs_page  </li>
     <li> \ref about_features_page  </li>
-    <li> \ref about_source_page  </li>
     <li> \ref about_contributors_page  </li>
     </ol>
  </li>
@@ -30,7 +56,7 @@ theory calculations and field theoretic Monte-Carlo simulations.
     <li> \ref install_doc_page  </li>
     </ol>
   </li>
-  <li> \subpage user_page 
+  <li> \subpage user_page
     <ol type="1">
     <li> \ref user_model_page  </li>
     <li> \ref user_files_page  </li>
@@ -41,7 +67,7 @@ theory calculations and field theoretic Monte-Carlo simulations.
     <li> \ref user_example_page  </li>
     </ol>
   </li>
-  <li> \subpage scft_page 
+  <li> \subpage scft_page
     <ol type="1">
     <li> \ref scft_theory_page  </li>
     <li> \ref scft_param_page  </li>
@@ -59,7 +85,13 @@ theory calculations and field theoretic Monte-Carlo simulations.
     <li> \ref scft_basis_page  </li>
     </ol>
   </li>
-  <li> \subpage developer_page 
+  <li> \subpage ftsr_page
+    <ol type="1">
+    <li> \ref ftsr_theory_page  </li>
+    <li> \ref ftsr_methods_page  </li>
+    </ol>
+  </li>
+  <li> \subpage developer_page
     <ol type="1">
     <li> \ref developer_source_page </li>
     <li> \ref developer_list_page </li>
@@ -71,5 +103,5 @@ theory calculations and field theoretic Monte-Carlo simulations.
     </ol>
   </li>
 </ol>
- 
+
 */

@@ -1,42 +1,43 @@
-/*! \page install_require_page Dependencies
+/*! \page install_require_page Requirements and Dependencies
 
 \ref install_page (Up/ Prev) &nbsp; &nbsp; &nbsp; &nbsp;
 \ref install_source_page (Next)
 <BR>
 
-PSCF is designed to be compiled and run in a unix-like environment.
-The package has been tested and used on systems running either linux
-or recent versions of the Mac OS X operating systems.  Compilation is
+PSCF is designed to be compiled from source and run in a unix-like 
+environment.  The package has been tested and used on systems running 
+either linux or recent versions of the Mac OS X operating systems.
+PSCF can take advantage of a CUDA-capable Nvidia GPU if one is 
+available, or can run on standard CPU hardware.  Compilation is 
 controlled by a system of unix makefiles.
 
-PSCF is distributed only as source code, and must be compiled by the
-user.  All source code that is designed to run on a conventional CPU
-is written in ANSI 2011 C++ language standard.  Code that is run on
-an NVIDIA graphics processing unit (GPU) is written in CUDA.
+PSCF is distributed only as source code, and so must be compiled by 
+the user.  All C++ source code follows the ANSI 2011 C++ language 
+standard.  Code that uses an NVIDIA (GPU) is written in CUDA.
 
 \section require_overview_section Overview
 
-The PSCF package provides two programs that are designed to run on a 
+PSCF currently provides two programs that are designed to run on a 
 conventional CPU (pscf_1d and pscf_pg), and one that is designed to 
 use an NVIDIA GPU (pscf_pg). We distinguish these in what follows by 
 referring to CPU programs and a GPU-enabled program.
 
-In order to compile both of the CPU programs in the PSCF package, the
-system on which the code is compiled and run must have:
+In order to compile just the two CPU programs in the PSCF package, 
+the system on which the code is compiled and run must have:
 
    - a git version control client
    - a C++ compiler
-   - a python interpreter, version 3 or greater
+   - a Python interpreter, version 3 or greater
    - the GNU Scientific Library (GSL) (header and library)
    - the FFTW fast Fourier transform library (header and library)
 
 A git client is needed to obtain the source code, by cloning the git
-repository in which PSCF is maintained on the github.com site. A python
+repository in which PSCF is maintained on the github.com site. A Python
 interpreter is needed during compilation because the build system that 
-compiles PSCF uses several python scripts that are provided within 
-the PSCF repository. A git client, C++ compiler and python interpreter 
-will normally come pre-installed in either the most common linux 
-distributions or in a Mac OS operating system in which 
+compiles PSCF uses several Python scripts that are provided within 
+the PSCF repository. A git client, C++ compiler and Python interpreter 
+will all normally come pre-installed in common linux distributions or 
+in a Mac OS operating system in which 
 \ref require_mac_commandtools_section "command line tools" have been 
 installed.  The GNU scientific library is used by several programs 
 within the package for linear algebra operations.  The FFTW Fast Fourier 
@@ -54,19 +55,19 @@ The CUDA Toolkit is a development environment that provides the
 nvcc C++/CUDA compiler and a variety of GPU-accelerated libraries,
 including the cuFFT fast Fourier transform library.
 
-Users who wish to generate a local copy of this html documentation, as 
-web pages that reside on their own computer, will also need to install 
-the "doxygen" documentation utility.
+Users who wish to generate a local copy of this web manual, as a set
+of html pages that reside on the user's computer, will also need to 
+install the "doxygen" documentation utility.
 
-\section require_mac_commandtools_section Mac OS X Command tools
+\section require_mac_commandtools_section Mac OS X command line tools
 
-In order to compile the PSCF CPU programs in Mac OS X, the computer must
-first be configured to provide a unix command-line development environment
-by installing the Command Line Tools package for XCode.  In recent 
-versions of Mac OS X, it is not necessary to install the rather large 
-XCode integrated development environment (IDE) to obtain just the command 
-line tools. The command line tools package is all that is needed to 
-compile and use PSCF.
+In order to compile the PSCF CPU programs in Mac OS X, the operatign 
+system must first be configured to provide a unix command-line development 
+environment. We can do this by installing the Mac Command Line Tools 
+package for XCode.  In recent versions of Mac OS X, it is not necessary 
+to install the rather large XCode integrated development environment 
+(IDE) to obtain just the much smaller set of command line tools. The 
+command line tools package is all that is needed to compile and use PSCF.
 
 To install just the command line tools, follow the instructions given
 <a href= https://osxdaily.com/2014/02/12/install-command-line-tools-mac-os-x/>
@@ -91,7 +92,7 @@ installation process.
 
 The source code for the C++/CUDA version of PSCF described here is hosted
 on the github server, at <a href="http://github.com">github.com</a>, as
-project dmorse/pscfpp.  The older fortran PSCF program is maintained in
+project dmorse/pscfpp.  The older Fortran PSCF program is maintained in
 a separate github repository, as project dmorse/pscf. 
 
 The source code of this current version of PSCF may be obtained by using
@@ -127,9 +128,9 @@ If you are using Mac OS X, a git client should be installed as a
 component of the XCode Command Line Tools package, which is needed
 for many other purposes. 
 
-\section install_require_python Python
+\section install_require_python Python interpeter
 
-Similarly, one can check if a python 3 interpreter is accessible by 
+Similarly, one can check if a Python 3 interpreter is accessible by 
 issuing the command
 \code
 python3 --version
@@ -142,7 +143,7 @@ which python
 and confirm that it returns a non-empty path such as /user/bin/python3. 
 We recommend using of the command "python3" rather than "python" to make 
 sure that you access a python 3 interpreter on any system in which a
-python 2.* interpreter may still also are installed. A python 3 
+Python 2.* interpreter may still also are installed. A Python 3 
 interpreter should be available from the command line in any common 
 linux distribution (e.g., Fedora or Ubuntu), and should be available in 
 Mac OS X after installation of the command line tools package.
@@ -230,19 +231,19 @@ To also install doxygen, issue the command
 brew install doxygen
 \endcode
 
-Mac users should be aware that homebrew installs files in different
+Mac users should be aware that Homebrew installs files in different
 locations on newer Macs that use Apple silicon (e.g., an M1 or M2 chip)
-than the file locations used by homebrew on older Macs that use Intel 
+than the file locations used by Homebrew on older Macs that use Intel 
 cpus:
 
-On Macs with Intel cpus, homebrew installed links to required header 
+On Macs with Intel cpus, Homebrew installed links to required header 
 and library files in subdirectories of the /usr/local directory.
 Because /usr/local is  one of the standard directories in which a unix
 shell normally looks for such files, PSCF can be installed on such
 machines using a default configuration for the makefile system that 
 is the same as the default used on linux machines.
 
-On Macs with Apple silicon, homebrew instead installs all files in
+On Macs with Apple silicon, Homebrew instead installs all files in
 /opt/homebrew.  This requires users to add paths to this directory and/or
 some of its subdirectories to the search paths used by the compiler to
 find header and library files.  A compiler configuration file that

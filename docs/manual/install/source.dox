@@ -1,4 +1,4 @@
-/*! \page install_source_page Source Code
+/*! \page install_source_page Getting the Source Code
 
 \ref install_require_page (Prev)   &nbsp; &nbsp; &nbsp; &nbsp; 
 \ref install_overview_page (Next) 
@@ -6,14 +6,17 @@
 
 The source code for the C++/CUDA version of PSCF is hosted on 
  <a href=http://github.com>github.com</a>, as project dmorse/pscfpp. The
-source code may be obtained by using a git version control manager to clone
-the public <a href=https://github.com/dmorse/pscfpp>git repository</a>. 
+source code should be obtained by using a git version control manager to 
+clone the public <a href=https://github.com/dmorse/pscfpp>git repository</a>. 
 The following instructions assume that a "git" client has been installed 
-on your computer.  The instructions given below should allow you to clone 
-the source code whether or not you have any experience with git or github. 
-If you are unfamiliar with git or need to look up some details, we heartily 
-recommend the online <a href=https://git-scm.com/book/en/v2>Pro Git</a> 
-book as a tutorial and reference. 
+on your computer.  
+
+The instructions given below should allow you to clone the PSCF source 
+code whether or not you have any experience with git or github.  If you 
+are unfamiliar with git or would like to learn more details, we heartily 
+recommend the free online 
+<a href=https://git-scm.com/book/en/v2>Pro Git</a> book as a tutorial 
+and reference. 
 
 \section compile_getcode_section Cloning the repository
 
