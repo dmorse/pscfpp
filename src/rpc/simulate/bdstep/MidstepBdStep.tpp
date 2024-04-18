@@ -11,7 +11,7 @@
 #include "MidstepBdStep.h"
 
 #include <rpc/simulate/bdstep/BdSimulator.h>
-#include <rpc/compressor/Compressor.h>
+#include <rpc/simulate/compressor/Compressor.h>
 #include <rpc/System.h>
 #include <pscf/math/IntVec.h>
 #include <util/random/Random.h>

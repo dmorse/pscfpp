@@ -8,13 +8,14 @@ include $(SRC_DIR)/rpc/include.mk
 #--------------------------------------------------------------------
 # Main targets 
 
-all: $(rpc_trajectory_OBJS) 
+all: $(rpc_simulate_trajectory_OBJS) 
 
 includes:
 	echo $(INCLUDES)
 
 clean:
-	rm -f $(rpc_trajectory_OBJS) $(rpc_trajectory_OBJS:.o=.d) 
+	rm -f $(rpc_simulate_trajectory_OBJS)
+	rm -f $(rpc_simulate_trajectory_OBJS:.o=.d) 
 
 #--------------------------------------------------------------------
 # Include dependency files

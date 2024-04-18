@@ -8,7 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <rpc/compressor/Compressor.h>
+#include <rpc/simulate/compressor/Compressor.h>
 #include <util/param/Factory.h>  
 
 #include <string>

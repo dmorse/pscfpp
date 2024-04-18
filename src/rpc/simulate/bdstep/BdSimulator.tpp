@@ -17,7 +17,7 @@
 #include <rpc/simulate/trajectory/TrajectoryReaderFactory.h>
 #include <rpc/simulate/perturbation/PerturbationFactory.h>
 #include <rpc/simulate/perturbation/Perturbation.h>
-#include <rpc/compressor/Compressor.h>
+#include <rpc/simulate/compressor/Compressor.h>
 #include <rpc/System.h>
 
 #include <util/random/Random.h>

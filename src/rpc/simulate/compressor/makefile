@@ -1,20 +1,21 @@
 #--------------------------------------------------------------------
 # Include makefiles
 
-SRC_DIR_REL =../..
+SRC_DIR_REL =../../..
 include $(SRC_DIR_REL)/config.mk
 include $(SRC_DIR)/rpc/include.mk
 
 #--------------------------------------------------------------------
 # Main targets 
 
-all: $(rpc_compressor_OBJS) 
+all: $(rpc_simulate_compressor_OBJS) 
 
 includes:
 	echo $(INCLUDES)
 
 clean:
-	rm -f $(rpc_compressor_OBJS) $(rpc_compressor_OBJS:.o=.d) 
+	rm -f $(rpc_simulate_compressor_OBJS)
+	rm -f  $(rpc_simulate_compressor_OBJS:.o=.d) 
 
 #--------------------------------------------------------------------
 # Include dependency files

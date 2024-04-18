@@ -12,8 +12,8 @@
 
 #include <rpc/simulate/Simulator.h>
 #include <rpc/simulate/SimulatorFactory.h>
-#include <rpc/compressor/Compressor.h>
-#include <rpc/compressor/CompressorFactory.h>
+#include <rpc/simulate/compressor/Compressor.h>
+#include <rpc/simulate/compressor/CompressorFactory.h>
 #include <rpc/sweep/Sweep.h>
 #include <rpc/sweep/SweepFactory.h>
 #include <rpc/iterator/Iterator.h>

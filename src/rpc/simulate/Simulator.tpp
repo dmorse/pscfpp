@@ -11,8 +11,8 @@
 #include "Simulator.h"
 
 #include <rpc/System.h>
-#include <rpc/compressor/Compressor.h>
-#include <rpc/compressor/CompressorFactory.h>
+#include <rpc/simulate/compressor/Compressor.h>
+#include <rpc/simulate/compressor/CompressorFactory.h>
 #include <rpc/simulate/perturbation/Perturbation.h>
 #include <rpc/simulate/perturbation/PerturbationFactory.h>
 

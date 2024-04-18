@@ -11,7 +11,7 @@
 #include "ForceBiasMove.h"
 #include "McMove.h" 
 #include <rpc/simulate/mcmove/McSimulator.h>
-#include <rpc/compressor/Compressor.h>
+#include <rpc/simulate/compressor/Compressor.h>
 #include <rpc/System.h>
 #include <util/param/ParamComposite.h>
 #include <util/random/Random.h>
