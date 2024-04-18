@@ -26,6 +26,7 @@
 #include <pscf/homogeneous/Clump.h>
 
 #include <util/param/BracketPolicy.h>
+#include <util/param/ParamComponent.h>
 #include <util/format/Str.h>
 #include <util/format/Int.h>
 #include <util/format/Dbl.h>
@@ -34,13 +35,12 @@
 #include <string>
 #include <unistd.h>
 
-//#include <getopt.h>
-
 namespace Pscf {
-namespace Rpg
-{
+namespace Rpg {
 
    using namespace Util;
+   using namespace Pscf::Prdc;
+   using namespace Pscf::Prdc::Gpu;
 
    /*
    * Constructor.
@@ -67,7 +67,6 @@ namespace Rpg
       fInter_(0.0),
       pressure_(0.0),
       hasMixture_(false),
-      hasSimulator_(false),
       isAllocatedGrid_(false),
       isAllocatedBasis_(false),
       hasCFields_(false),
@@ -193,32 +192,115 @@ namespace Rpg
 
       // Check option -p, set parameter file name
       if (pFlag) {
-         fileMaster().setParamFileName(std::string(pArg));
+         fileMaster_.setParamFileName(std::string(pArg));
       } else {
          UTIL_THROW("Missing required -p option - no parameter file");
       }
 
       // Check option -c, set command file name
       if (cFlag) {
-         fileMaster().setCommandFileName(std::string(cArg));
+         fileMaster_.setCommandFileName(std::string(cArg));
       } else {
          UTIL_THROW("Missing required -c option - no command file");
       }
 
       // If option -i, set path prefix for input files
       if (iFlag) {
-         fileMaster().setInputPrefix(std::string(iArg));
+         fileMaster_.setInputPrefix(std::string(iArg));
       }
 
       // If option -o, set path prefix for output files
       if (oFlag) {
-         fileMaster().setOutputPrefix(std::string(oArg));
+         fileMaster_.setOutputPrefix(std::string(oArg));
       }
 
       // If option -t, set the threads per block.
       if (tFlag) {
          ThreadGrid::setThreadsPerBlock(tArg);
       }
+
+   }
+
+   /*
+   * Read parameters and initialize.
+   */
+   template <int D>
+   void System<D>::readParameters(std::istream& in)
+   {
+
+      // Read the Mixture{ ... } block
+      readParamComposite(in, mixture_);
+      hasMixture_ = true;
+
+      int nm = mixture_.nMonomer();
+      int np = mixture_.nPolymer();
+      int ns = mixture_.nSolvent();
+      UTIL_CHECK(nm > 0);
+      UTIL_CHECK(np >= 0);
+      UTIL_CHECK(ns >= 0);
+      UTIL_CHECK(np + ns > 0);
+
+      // Read the Interaction{ ... } block
+      interaction().setNMonomer(nm);
+      readParamComposite(in, interaction());
+
+      // Read the Domain{ ... } block
+      readParamComposite(in, domain_);
+      UTIL_CHECK(domain_.mesh().size() > 0);
+      UTIL_CHECK(domain_.unitCell().nParameter() > 0);
+      UTIL_CHECK(domain_.unitCell().lattice() != UnitCell<D>::Null);
+
+      // Setup mixture
+      mixture_.setDiscretization(domain_.mesh(), fft());
+      mixture_.setupUnitCell(domain_.unitCell());
+
+      // Allocate memory for w and c fields
+      allocateFieldsGrid();
+
+      // Optionally instantiate an Iterator object
+      std::string className;
+      bool isEnd;
+      iteratorPtr_ =
+         iteratorFactoryPtr_->readObjectOptional(in, *this, className,
+                                                 isEnd);
+      if (!iteratorPtr_ && ParamComponent::echo()) {
+         Log::file() << indent() << "  Iterator{ [absent] }\n";
+      }
+
+      // Optionally instantiate a Sweep object (if an iterator exists)
+      if (iteratorPtr_ && !isEnd) {
+         sweepPtr_ =
+            sweepFactoryPtr_->readObjectOptional(in, *this, className,
+                                                 isEnd);
+         if (!sweepPtr_ && ParamComponent::echo()) {
+            Log::file() << indent() << "  Sweep{ [absent] }\n";
+         }
+      }
+
+      // Optionally instantiate a Compressor object
+      if (!isEnd) {
+         compressorPtr_ =
+            compressorFactoryPtr_->readObjectOptional(in, *this, className,
+                                                      isEnd);
+         if (!compressorPtr_ && ParamComponent::echo()) {
+            Log::file() << indent() << "  Compressor{ [absent] }\n";
+         }
+      }
+
+      // Optionally instantiate a Simulator object
+      if (!isEnd) {
+         simulatorPtr_ =
+            simulatorFactoryPtr_->readObjectOptional(in, *this,
+                                                     className, isEnd);
+         if (!simulatorPtr_ && ParamComponent::echo()) {
+            Log::file() << indent() << "  Simulator{ [absent] }\n";
+         }
+      }
+
+      // Initialize homogeneous object
+      homogeneous_.setNMolecule(np+ns);
+      homogeneous_.setNMonomer(nm);
+      initHomogeneous();
 
    }
 
@@ -238,89 +320,7 @@ namespace Rpg
    */
    template <int D>
    void System<D>::readParam()
-   {  readParam(fileMaster().paramFile()); }
-   /*
-   * Read parameters and initialize.
-   */
-   template <int D>
-   void System<D>::readParameters(std::istream& in)
-   {
-
-      // Read the Mixture{ ... } block
-      readParamComposite(in, mixture());
-      hasMixture_ = true;
-
-      int nm = mixture().nMonomer();
-      int np = mixture().nPolymer();
-      int ns = mixture().nSolvent();
-      UTIL_CHECK(nm > 0);
-      UTIL_CHECK(np >= 0);
-      UTIL_CHECK(ns >= 0);
-      UTIL_CHECK(np + ns > 0);
-
-      // Read the Interaction{ ... } block
-      interaction().setNMonomer(mixture().nMonomer());
-      readParamComposite(in, interaction());
-
-      // Read the Domain{ ... } block
-      readParamComposite(in, domain_);
-      UTIL_CHECK(domain_.mesh().size() > 0);
-      UTIL_CHECK(domain_.unitCell().nParameter() > 0);
-      UTIL_CHECK(domain_.unitCell().lattice() != UnitCell<D>::Null);
-
-      // Setup mixture
-      mixture().setDiscretization(domain_.mesh(), fft());
-      mixture().setupUnitCell(domain_.unitCell());
-
-      // Allocate memory for w and c fields
-      allocateFieldsGrid();
-
-      // Optionally instantiate an Iterator object
-      std::string className;
-      bool isEnd;
-      iteratorPtr_ = 
-         iteratorFactoryPtr_->readObjectOptional(in, *this, className, 
-                                                 isEnd);
-      if (!iteratorPtr_) {
-         Log::file() << indent() << "  Iterator{ [absent] }\n";
-      }
-
-      // Optionally instantiate a Sweep object (if an iterator exists)
-      if (iteratorPtr_ && !isEnd) {
-         sweepPtr_ = 
-            sweepFactoryPtr_->readObjectOptional(in, *this, className, 
-                                                 isEnd);
-         if (!sweepPtr_ && ParamComponent::echo()) {
-            Log::file() << indent() << "  Sweep{ [absent] }\n";
-         }
-      }
-      
-      // Optionally read and instantiate a Compressor object
-      if (!isEnd) {
-         compressorPtr_ = 
-            compressorFactoryPtr_->readObjectOptional(in, *this, className, 
-                                                      isEnd);
-         if (!compressorPtr_ && ParamComponent::echo()) {
-            Log::file() << indent() << "  Compressor{ [absent] }\n";
-         }
-      }
-      
-      // Optionally read and instantiate a Simulator
-      if (!isEnd) {
-         simulatorPtr_ = 
-            simulatorFactoryPtr_->readObjectOptional(in, *this, 
-                                                     className, isEnd);
-         if (!simulatorPtr_ && ParamComponent::echo()) {
-            Log::file() << indent() << "  Simulator{ [absent] }\n";
-         }
-      }
-
-      // Initialize homogeneous object
-      homogeneous_.setNMolecule(np+ns);
-      homogeneous_.setNMonomer(nm);
-      initHomogeneous();
-
-   }
+   {  readParam(fileMaster_.paramFile()); }
 
    /*
    * Read and execute commands from a specified command file.
@@ -383,10 +383,11 @@ namespace Rpg
          } else
          if (command == "COMPRESS") {
             // Impose incompressibility
+            UTIL_CHECK(hasSimulator());
             simulator().compressor().compress();
          } else
          if (command == "SIMULATE") {
-            // Perform a field theoretic MC simulation
+            // Perform a field theoretic simulation
             int nStep;
             in >> nStep;
             Log::file() << "   "  << nStep << "\n";
@@ -407,7 +408,7 @@ namespace Rpg
          if (command == "WRITE_TIMERS") {
             readEcho(in, filename);
             std::ofstream file;
-            fileMaster().openOutputFile(filename, file);
+            fileMaster_.openOutputFile(filename, file);
             writeTimers(file);
             file.close();
          } else
@@ -417,14 +418,14 @@ namespace Rpg
          if (command == "WRITE_PARAM") {
             readEcho(in, filename);
             std::ofstream file;
-            fileMaster().openOutputFile(filename, file);
+            fileMaster_.openOutputFile(filename, file);
             writeParamNoSweep(file);
             file.close();
          } else
          if (command == "WRITE_THERMO") {
             readEcho(in, filename);
             std::ofstream file;
-            fileMaster().openOutputFile(filename, file, 
+            fileMaster_.openOutputFile(filename, file,
                                         std::ios_base::app);
             writeThermo(file);
             file.close();
@@ -457,10 +458,11 @@ namespace Rpg
             in >> directionId;
             in >> segmentId;
             Log::file() << Str("polymer ID  ", 21) << polymerId << "\n"
-                    << Str("block ID  ", 21) << blockId << "\n"
-                    << Str("direction ID  ", 21) << directionId << "\n"
-                    << Str("segment ID  ", 21) << segmentId << std::endl;
-            writeQSlice(filename, polymerId, blockId, directionId, 
+                        << Str("block ID  ", 21) << blockId << "\n"
+                        << Str("direction ID  ", 21) << directionId << "\n"
+                        << Str("segment ID  ", 21) << segmentId 
+                        << std::endl;
+            writeQSlice(filename, polymerId, blockId, directionId,
                                   segmentId);
          } else
          if (command == "WRITE_Q_TAIL") {
@@ -470,8 +472,9 @@ namespace Rpg
             in >> blockId;
             in >> directionId;
             Log::file() << Str("polymer ID  ", 21) << polymerId << "\n"
-                      << Str("block ID  ", 21) << blockId << "\n"
-                      << Str("direction ID  ", 21) << directionId << "\n";
+                        << Str("block ID  ", 21) << blockId << "\n"
+                        << Str("direction ID  ", 21) << directionId 
+                        << "\n";
             writeQTail(filename, polymerId, blockId, directionId);
          } else
          if (command == "WRITE_Q") {
@@ -496,12 +499,12 @@ namespace Rpg
          if (command == "WRITE_WAVES") {
             readEcho(in, filename);
             writeWaves(filename);
-         } else 
+         } else
          if (command == "WRITE_GROUP") {
             readEcho(in, filename);
             writeGroup(filename);
             //writeGroup(filename, domain_.group());
-         } else 
+         } else
          if (command == "BASIS_TO_RGRID") {
             readEcho(in, inFileName);
             readEcho(in, outFileName);
@@ -532,7 +535,7 @@ namespace Rpg
             readEcho(in, outFileName);
             basisToKGrid(inFileName, outFileName);
          } else {
-            Log::file() << "  Error: Unknown command  " 
+            Log::file() << "Error: Unknown command  "
                         << command << std::endl;
             readNext = false;
          }
@@ -545,10 +548,10 @@ namespace Rpg
    template <int D>
    void System<D>::readCommands()
    {
-      if (fileMaster().commandFileName().empty()) {
+      if (fileMaster_.commandFileName().empty()) {
          UTIL_THROW("Empty command file name");
       }
-      readCommands(fileMaster().commandFile());
+      readCommands(fileMaster_.commandFile());
    }
 
    // W-Field Modifier Functions
@@ -563,7 +566,7 @@ namespace Rpg
       UTIL_CHECK(domain_.hasGroup());
 
       if (!domain_.unitCell().isInitialized()) {
-         readFieldHeader(filename); 
+         readFieldHeader(filename);
       }
       UTIL_CHECK(domain_.unitCell().isInitialized());
       UTIL_CHECK(domain_.waveList().hasMinimumImages());
@@ -591,7 +594,7 @@ namespace Rpg
 
       // If necessary, peek at header to initialize unit cell
       if (!domain_.unitCell().isInitialized()) {
-         readFieldHeader(filename); 
+         readFieldHeader(filename);
       }
       UTIL_CHECK(domain_.unitCell().isInitialized());
       UTIL_CHECK(domain_.waveList().hasMinimumImages());
@@ -620,14 +623,14 @@ namespace Rpg
    {
       // Preconditions
       UTIL_CHECK(hasMixture_);
-      const int nMonomer = mixture_.nMonomer();
-      UTIL_CHECK(nMonomer > 0);
+      const int nm = mixture_.nMonomer();
+      UTIL_CHECK(nm > 0);
       UTIL_CHECK(isAllocatedGrid_);
       UTIL_CHECK(domain_.hasGroup());
 
       // Check required initializations
       if (!domain_.unitCell().isInitialized()) {
-         readFieldHeader(filename); 
+         readFieldHeader(filename);
       }
       UTIL_CHECK(domain_.unitCell().isInitialized());
       UTIL_CHECK(domain_.waveList().hasMinimumImages());
@@ -637,24 +640,24 @@ namespace Rpg
       }
 
       // Allocate temporary storage
-      const int nBasis = domain_.basis().nBasis();
-      UTIL_CHECK(nBasis > 0);
+      const int nb = domain_.basis().nBasis();
+      UTIL_CHECK(nb > 0);
       DArray< DArray<double> > tmpCFieldsBasis;
-      tmpCFieldsBasis.allocate(nMonomer);
-      for (int i = 0; i < nMonomer; ++i) {
-         tmpCFieldsBasis[i].allocate(nBasis);
+      tmpCFieldsBasis.allocate(nm);
+      for (int i = 0; i < nm; ++i) {
+         tmpCFieldsBasis[i].allocate(nb);
       }
 
       // Read c fields from input file
-      fieldIo().readFieldsBasis(filename, tmpCFieldsBasis, 
+      fieldIo().readFieldsBasis(filename, tmpCFieldsBasis,
                                 domain_.unitCell());
 
       // Compute w fields from c fields
-      for (int i = 0; i < nBasis; ++i) {
-         for (int j = 0; j < nMonomer; ++j) {
+      for (int i = 0; i < nb; ++i) {
+         for (int j = 0; j < nm; ++j) {
             tmpFieldsBasis_[j][i] = 0.0;
-            for (int k = 0; k < nMonomer; ++k) {
-               tmpFieldsBasis_[j][i] += interaction().chi(j,k) 
+            for (int k = 0; k < nm; ++k) {
+               tmpFieldsBasis_[j][i] += interaction().chi(j,k)
                                         * tmpCFieldsBasis[k][i];
             }
          }
@@ -726,7 +729,7 @@ namespace Rpg
    void System<D>::setUnitCell(UnitCell<D> const & unitCell)
    {
       domain_.setUnitCell(unitCell);
-      // Note - Domain::setUnitCell updates the WaveList 
+      // Note - Domain::setUnitCell updates the WaveList
       mixture_.setupUnitCell(unitCell, domain_.waveList());
       if (domain_.hasGroup() && !isAllocatedBasis_) {
          allocateFieldsBasis();
@@ -737,12 +740,12 @@ namespace Rpg
    * Set the associated unit cell.
    */
    template <int D>
-   void 
+   void
    System<D>::setUnitCell(typename UnitCell<D>::LatticeSystem lattice,
                           FSArray<double, 6> const & parameters)
    {
       domain_.setUnitCell(lattice, parameters);
-      // Note - Domain::setUnitCell updates the WaveList 
+      // Note - Domain::setUnitCell updates the WaveList
       mixture_.setupUnitCell(domain_.unitCell(), domain_.waveList());
       if (domain_.hasGroup() && !isAllocatedBasis_) {
          allocateFieldsBasis();
@@ -756,7 +759,7 @@ namespace Rpg
    void System<D>::setUnitCell(FSArray<double, 6> const & parameters)
    {
       domain_.setUnitCell(parameters);
-      // Note - Domain::setUnitCell updates the WaveList 
+      // Note - Domain::setUnitCell updates the WaveList
       mixture_.setupUnitCell(domain_.unitCell(), domain_.waveList());
       if (domain_.hasGroup() && !isAllocatedBasis_) {
          allocateFieldsBasis();
@@ -776,7 +779,7 @@ namespace Rpg
       UTIL_CHECK(w_.hasData());
 
       // Solve the modified diffusion equation (without iteration)
-      mixture().compute(w_.rgrid(), c_.rgrid());
+      mixture_.compute(w_.rgrid(), c_.rgrid());
       hasCFields_ = true;
       hasFreeEnergy_ = false;
 
@@ -788,7 +791,7 @@ namespace Rpg
 
       // Compute stress if needed
       if (needStress) {
-         mixture().computeStress(domain_.waveList());
+         mixture_.computeStress(domain_.waveList());
       }
    }
 
@@ -805,7 +808,7 @@ namespace Rpg
          UTIL_CHECK(isAllocatedBasis_);
       }
       hasCFields_ = false;
-      hasFreeEnergy_ = false; 
+      hasFreeEnergy_ = false;
 
       Log::file() << std::endl;
       Log::file() << std::endl;
@@ -814,7 +817,7 @@ namespace Rpg
       int error = iterator().solve(isContinuation);
 
       hasCFields_ = true;
-      hasFreeEnergy_ = false; 
+      hasFreeEnergy_ = false;
 
       if (w_.isSymmetric()) {
          fieldIo().convertRGridToBasis(c_.rgrid(), c_.basis());
@@ -822,7 +825,7 @@ namespace Rpg
 
       if (!error) {
          if (!iterator().isFlexible()) {
-            mixture().computeStress(domain_.waveList());
+            mixture_.computeStress(domain_.waveList());
          }
          computeFreeEnergy();
          writeThermo(Log::file());
@@ -846,9 +849,9 @@ namespace Rpg
       // Perform sweep
       sweepPtr_->sweep();
    }
-   
+
    /*
-   * Perform a field theoretic MC simulation of nStep steps.
+   * Perform a field theoretic simulation of nStep steps.
    */
    template <int D>
    void System<D>::simulate(int nStep)
@@ -857,7 +860,7 @@ namespace Rpg
       UTIL_CHECK(hasSimulator());
       hasCFields_ = false;
       hasFreeEnergy_ = false;
-      
+
       simulator().simulate(nStep);
       hasCFields_ = true;
    }
@@ -884,9 +887,9 @@ namespace Rpg
       if (np > 0) {
          Polymer<D>* polymerPtr;
          double phi, mu, length;
-         int np = mixture().nPolymer();
+         int np = mixture_.nPolymer();
          for (int i = 0; i < np; ++i) {
-            polymerPtr = &mixture().polymer(i);
+            polymerPtr = &mixture_.polymer(i);
             phi = polymerPtr->phi();
             mu = polymerPtr->mu();
             // Recall: mu = ln(phi/q)
@@ -912,7 +915,7 @@ namespace Rpg
          }
       }
 
-      int nm  = mixture().nMonomer();
+      int nm  = mixture_.nMonomer();
       int nx = domain_.mesh().size();
 
       // GPU resources
@@ -996,7 +999,7 @@ namespace Rpg
          simulator().outputTimers(out);
       }
    }
-   
+
    /*
    * Clear timers.
    */
@@ -1069,11 +1072,11 @@ namespace Rpg
          }
          out << std::endl;
       }
-   
+
       out << "cellParams:" << std::endl;
       for (int i = 0; i < domain_.unitCell().nParameter(); ++i) {
          out << Int(i, 5)
-             << "  " 
+             << "  "
              << Dbl(domain_.unitCell().parameter(i), 18, 11)
              << std::endl;
       }
@@ -1098,7 +1101,7 @@ namespace Rpg
    void System<D>::writeWRGrid(const std::string & filename) const
    {
       UTIL_CHECK(w_.hasData());
-      fieldIo().writeFieldsRGrid(filename, w_.rgrid(), 
+      fieldIo().writeFieldsRGrid(filename, w_.rgrid(),
                                  domain_.unitCell(),
                                  w_.isSymmetric());
    }
@@ -1121,13 +1124,13 @@ namespace Rpg
    void System<D>::writeCRGrid(const std::string & filename) const
    {
       UTIL_CHECK(hasCFields_);
-      fieldIo().writeFieldsRGrid(filename, c_.rgrid(), 
+      fieldIo().writeFieldsRGrid(filename, c_.rgrid(),
                                  domain_.unitCell(),
                                  w_.isSymmetric());
    }
 
    /*
-   * Write all concentration fields in real space (r-grid) format, for 
+   * Write all concentration fields in real space (r-grid) format, for
    * each block (or solvent) individually rather than for each species.
    */
    template <int D>
@@ -1145,7 +1148,7 @@ namespace Rpg
 
       // Get data from Mixture and write to file
       mixture_.createBlockCRGrid(blockCFields);
-      fieldIo().writeFieldsRGrid(filename, blockCFields, 
+      fieldIo().writeFieldsRGrid(filename, blockCFields,
                                  domain_.unitCell(),
                                  w_.isSymmetric());
    }
@@ -1154,9 +1157,9 @@ namespace Rpg
    * Write the last time slice of the propagator in r-grid format.
    */
    template <int D>
-   void System<D>::writeQSlice(const std::string & filename, 
-                               int polymerId, int blockId, 
-                               int directionId, int segmentId) 
+   void System<D>::writeQSlice(const std::string & filename,
+                               int polymerId, int blockId,
+                               int directionId, int segmentId)
    const
    {
       UTIL_CHECK(polymerId >= 0);
@@ -1166,14 +1169,14 @@ namespace Rpg
       UTIL_CHECK(blockId < polymer.nBlock());
       UTIL_CHECK(directionId >= 0);
       UTIL_CHECK(directionId <= 1);
-      Propagator<D> const& 
+      Propagator<D> const&
           propagator = polymer.propagator(blockId, directionId);
       RField<D> field;
       field.allocate(domain_.mesh().size());
       cudaMemcpy(field.cField(), propagator.q(segmentId),
-                 domain_.mesh().size() * sizeof(cudaReal), 
+                 domain_.mesh().size() * sizeof(cudaReal),
                  cudaMemcpyDeviceToDevice);
-      fieldIo().writeFieldRGrid(filename, field, 
+      fieldIo().writeFieldRGrid(filename, field,
                                 domain_.unitCell(),
                                 w_.isSymmetric());
    }
@@ -1182,7 +1185,7 @@ namespace Rpg
    * Write the last time slice of the propagator in r-grid format.
    */
    template <int D>
-   void System<D>::writeQTail(const std::string & filename, 
+   void System<D>::writeQTail(const std::string & filename,
                               int polymerId, int blockId, int directionId)
    const
    {
@@ -1193,14 +1196,14 @@ namespace Rpg
       UTIL_CHECK(blockId < polymer.nBlock());
       UTIL_CHECK(directionId >= 0);
       UTIL_CHECK(directionId <= 1);
-      Propagator<D> const& 
+      Propagator<D> const&
           propagator = polymer.propagator(blockId, directionId);
       RField<D> field;
       field.allocate(domain_.mesh().size());
       cudaMemcpy(field.cField(), propagator.tail(),
-                 domain_.mesh().size()*sizeof(cudaReal), 
+                 domain_.mesh().size()*sizeof(cudaReal),
                  cudaMemcpyDeviceToDevice);
-      fieldIo().writeFieldRGrid(filename, field, 
+      fieldIo().writeFieldRGrid(filename, field,
                                 domain_.unitCell(),
                                 w_.isSymmetric());
    }
@@ -1209,7 +1212,7 @@ namespace Rpg
    * Write the propagator for a block and direction.
    */
    template <int D>
-   void System<D>::writeQ(const std::string & filename, 
+   void System<D>::writeQ(const std::string & filename,
                           int polymerId, int blockId, int directionId)
    const
    {
@@ -1220,7 +1223,7 @@ namespace Rpg
       UTIL_CHECK(blockId < polymer.nBlock());
       UTIL_CHECK(directionId >= 0);
       UTIL_CHECK(directionId <= 1);
-      Propagator<D> const& 
+      Propagator<D> const&
            propagator = polymer.propagator(blockId, directionId);
       int ns = propagator.ns();
 
@@ -1229,7 +1232,7 @@ namespace Rpg
       fileMaster_.openOutputFile(filename, file);
 
       // Write header
-      fieldIo().writeFieldHeader(file, 1, domain_.unitCell(), 
+      fieldIo().writeFieldHeader(file, 1, domain_.unitCell(),
                                  w_.isSymmetric());
       file << "ngrid" << std::endl
            << "          " << domain_.mesh().dimensions() << std::endl
@@ -1243,9 +1246,9 @@ namespace Rpg
       for (int i = 0; i < ns; ++i) {
           file << "slice " << i << std::endl;
           cudaMemcpy(field.cField(), propagator.q(i),
-                     domain_.mesh().size() * sizeof(cudaReal), 
+                     domain_.mesh().size() * sizeof(cudaReal),
                      cudaMemcpyDeviceToDevice);
-          fieldIo().writeFieldRGrid(file, field, 
+          fieldIo().writeFieldRGrid(file, field,
                                     domain_.unitCell(), hasHeader);
       }
    }
@@ -1306,7 +1309,7 @@ namespace Rpg
       std::ofstream outFile;
       fileMaster_.openOutputFile(filename, outFile);
       bool isSymmetric = true;
-      fieldIo().writeFieldHeader(outFile, mixture_.nMonomer(), 
+      fieldIo().writeFieldHeader(outFile, mixture_.nMonomer(),
                                  domain_.unitCell(), isSymmetric);
       basis().outputWaves(outFile);
    }
@@ -1316,9 +1319,9 @@ namespace Rpg
    */
    template <int D>
    void System<D>::writeGroup(const std::string & filename) const
-   {  
+   {
       UTIL_CHECK(domain_.hasGroup());
-      Pscf::Prdc::writeGroup(filename, domain_.group()); 
+      Pscf::Prdc::writeGroup(filename, domain_.group());
    }
 
    // Field File Operations
@@ -1335,19 +1338,19 @@ namespace Rpg
 
       // Check required initializations
       if (!domain_.unitCell().isInitialized()) {
-         readFieldHeader(inFileName); 
+         readFieldHeader(inFileName);
       }
       UTIL_CHECK(domain_.unitCell().isInitialized());
       UTIL_CHECK(domain_.basis().isInitialized());
       if (!isAllocatedBasis_) {
-         allocateFieldsBasis(); 
+         allocateFieldsBasis();
       }
 
       // Read, convert and write fields
       UnitCell<D> tmpUnitCell;
       fieldIo().readFieldsBasis(inFileName, tmpFieldsBasis_, tmpUnitCell);
       fieldIo().convertBasisToRGrid(tmpFieldsBasis_, tmpFieldsRGrid_);
-      fieldIo().writeFieldsRGrid(outFileName, tmpFieldsRGrid_, 
+      fieldIo().writeFieldsRGrid(outFileName, tmpFieldsRGrid_,
                                  tmpUnitCell);
    }
 
@@ -1363,19 +1366,19 @@ namespace Rpg
 
       // Check required initializations
       if (!domain_.unitCell().isInitialized()) {
-         readFieldHeader(inFileName); 
+         readFieldHeader(inFileName);
       }
       UTIL_CHECK(domain_.unitCell().isInitialized());
       UTIL_CHECK(domain_.basis().isInitialized());
       if (!isAllocatedBasis_) {
-         allocateFieldsBasis(); 
+         allocateFieldsBasis();
       }
 
       // Read, convert and write fields
       UnitCell<D> tmpUnitCell;
       fieldIo().readFieldsRGrid(inFileName, tmpFieldsRGrid_, tmpUnitCell);
       fieldIo().convertRGridToBasis(tmpFieldsRGrid_, tmpFieldsBasis_);
-      fieldIo().writeFieldsBasis(outFileName, tmpFieldsBasis_, 
+      fieldIo().writeFieldsBasis(outFileName, tmpFieldsBasis_,
                                  tmpUnitCell);
    }
 
@@ -1388,7 +1391,7 @@ namespace Rpg
    {
       // Check required initializations
       if (!domain_.unitCell().isInitialized()) {
-         readFieldHeader(inFileName); 
+         readFieldHeader(inFileName);
       }
       UTIL_CHECK(domain_.unitCell().isInitialized());
 
@@ -1398,7 +1401,7 @@ namespace Rpg
       for (int i = 0; i < mixture_.nMonomer(); ++i) {
          fft().inverseTransform(tmpFieldsKGrid_[i], tmpFieldsRGrid_[i]);
       }
-      fieldIo().writeFieldsRGrid(outFileName, tmpFieldsRGrid_, 
+      fieldIo().writeFieldsRGrid(outFileName, tmpFieldsRGrid_,
                                  tmpUnitCell);
    }
 
@@ -1411,18 +1414,18 @@ namespace Rpg
    {
       // Check required initializations
       if (!domain_.unitCell().isInitialized()) {
-         readFieldHeader(inFileName); 
+         readFieldHeader(inFileName);
       }
       UTIL_CHECK(domain_.unitCell().isInitialized());
 
       // Read, convert and write fields
       UnitCell<D> tmpUnitCell;
-      fieldIo().readFieldsRGrid(inFileName, tmpFieldsRGrid_, 
+      fieldIo().readFieldsRGrid(inFileName, tmpFieldsRGrid_,
                                 tmpUnitCell);
       for (int i = 0; i < mixture_.nMonomer(); ++i) {
          fft().forwardTransform(tmpFieldsRGrid_[i], tmpFieldsKGrid_[i]);
       }
-      fieldIo().writeFieldsKGrid(outFileName, tmpFieldsKGrid_, 
+      fieldIo().writeFieldsKGrid(outFileName, tmpFieldsKGrid_,
                                  tmpUnitCell);
    }
 
@@ -1438,19 +1441,19 @@ namespace Rpg
 
       // Check for required initializations
       if (!domain_.unitCell().isInitialized()) {
-         readFieldHeader(inFileName); 
+         readFieldHeader(inFileName);
       }
       UTIL_CHECK(domain_.unitCell().isInitialized());
       UTIL_CHECK(domain_.basis().isInitialized());
       if (!isAllocatedBasis_) {
-         allocateFieldsBasis(); 
+         allocateFieldsBasis();
       }
 
       // Read, convert and write fields
       UnitCell<D> tmpUnitCell;
       fieldIo().readFieldsKGrid(inFileName, tmpFieldsKGrid_, tmpUnitCell);
       fieldIo().convertKGridToBasis(tmpFieldsKGrid_, tmpFieldsBasis_);
-      fieldIo().writeFieldsBasis(outFileName, tmpFieldsBasis_, 
+      fieldIo().writeFieldsBasis(outFileName, tmpFieldsBasis_,
                                  tmpUnitCell);
    }
 
@@ -1466,19 +1469,19 @@ namespace Rpg
 
       // Check for required initializations
       if (!domain_.unitCell().isInitialized()) {
-         readFieldHeader(inFileName); 
+         readFieldHeader(inFileName);
       }
       UTIL_CHECK(domain_.unitCell().isInitialized());
       UTIL_CHECK(domain_.basis().isInitialized());
       if (!isAllocatedBasis_) {
-         allocateFieldsBasis(); 
+         allocateFieldsBasis();
       }
 
       // Read, convert and write fields
       UnitCell<D> tmpUnitCell;
       fieldIo().readFieldsBasis(inFileName, tmpFieldsBasis_, tmpUnitCell);
       fieldIo().convertBasisToKGrid(tmpFieldsBasis_, tmpFieldsKGrid_);
-      fieldIo().writeFieldsKGrid(outFileName, tmpFieldsKGrid_, 
+      fieldIo().writeFieldsKGrid(outFileName, tmpFieldsKGrid_,
                                  tmpUnitCell);
    }
 
@@ -1492,7 +1495,7 @@ namespace Rpg
    {
       // Preconditions
       UTIL_CHECK(hasMixture_);
-      int nMonomer = mixture().nMonomer();
+      int nMonomer = mixture_.nMonomer();
       UTIL_CHECK(nMonomer > 0);
       UTIL_CHECK(domain_.mesh().size() > 0);
       UTIL_CHECK(!isAllocatedGrid_);
@@ -1530,7 +1533,7 @@ namespace Rpg
    {
       // Preconditions and constants
       UTIL_CHECK(hasMixture_);
-      const int nMonomer = mixture().nMonomer();
+      const int nMonomer = mixture_.nMonomer();
       UTIL_CHECK(nMonomer > 0);
       UTIL_CHECK(domain_.unitCell().isInitialized());
       UTIL_CHECK(domain_.unitCell().nParameter() > 0);
@@ -1571,9 +1574,9 @@ namespace Rpg
       // Read field file header.
       int nMonomer;
       bool isSymmetric;
-      domain_.fieldIo().readFieldHeader(file, nMonomer, 
+      domain_.fieldIo().readFieldHeader(file, nMonomer,
                                         domain_.unitCell(), isSymmetric);
-      // Note: FieldIo<D>::readFieldHeader computes WaveList minimum 
+      // Note: FieldIo<D>::readFieldHeader computes WaveList minimum
       // images and initializes the Basis if needed.
       file.close();
 
@@ -1620,9 +1623,9 @@ namespace Rpg
    {
 
       // Set number of molecular species and monomers
-      int nm = mixture().nMonomer();
-      int np = mixture().nPolymer();
-      int ns = mixture().nSolvent();
+      int nm = mixture_.nMonomer();
+      int np = mixture_.nPolymer();
+      int ns = mixture_.nSolvent();
 
       UTIL_CHECK(homogeneous_.nMolecule() == np + ns);
       UTIL_CHECK(homogeneous_.nMonomer() == nm);
@@ -1698,17 +1701,17 @@ namespace Rpg
    * Check if fields are symmetric under space group.
    */
    template <int D>
-   bool System<D>::checkRGridFieldSymmetry(const std::string & inFileName) 
+   bool System<D>::checkRGridFieldSymmetry(const std::string & inFileName)
    const
    {
-      // If basis fields are not allocated, peek at field file header to 
+      // If basis fields are not allocated, peek at field file header to
       // get unit cell parameters, initialize basis and allocate fields.
       if (!domain.unitCell().isInitialized()) {
-         readFieldHeader(inFileName); 
+         readFieldHeader(inFileName);
       }
       UTIL_CHECK(domain_.basis().isInitialized());
       if (!isAllocatedBasis_) {
-         allocateFieldsBasis(); 
+         allocateFieldsBasis();
       }
       const int nBasis = domain_.basis().nBasis();
       UTIL_CHECK(nBasis > 0);

@@ -898,11 +898,6 @@ namespace Rpg {
       bool hasMixture_;
       
       /**
-      * Does a Simulator exist?
-      */
-      bool hasSimulator_;
-
-      /**
       * Has memory been allocated for fields in FFT grid formats?
       */
       bool isAllocatedGrid_;
