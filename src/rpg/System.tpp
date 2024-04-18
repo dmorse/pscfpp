@@ -40,7 +40,7 @@ namespace Rpg {
 
    using namespace Util;
    using namespace Pscf::Prdc;
-   using namespace Pscf::Prdc::Gpu;
+   using namespace Pscf::Prdc::Cuda;
 
    /*
    * Constructor.
@@ -1503,23 +1503,23 @@ namespace Rpg {
       // Alias for mesh dimensions
       IntVec<D> const & dimensions = domain_.mesh().dimensions();
 
-      // Allocate W Fields
+      // Allocate c (chemical potential) fields
       w_.setNMonomer(nMonomer);
       w_.allocateRGrid(dimensions);
 
-      // Allocate C Fields
+      // Allocate c (monomer concentration) fields
       c_.setNMonomer(nMonomer);
       c_.allocateRGrid(dimensions);
 
-      // Allocate temporary work space
+      // Allocate work space field arrays
       tmpFieldsRGrid_.allocate(nMonomer);
       tmpFieldsKGrid_.allocate(nMonomer);
       for (int i = 0; i < nMonomer; ++i) {
          tmpFieldsRGrid_[i].allocate(dimensions);
          tmpFieldsKGrid_[i].allocate(dimensions);
       }
-
       workArray_.allocate(domain_.mesh().size());
+
       ThreadGrid::setThreadsLogical(domain_.mesh().size());
 
       isAllocatedGrid_ = true;
