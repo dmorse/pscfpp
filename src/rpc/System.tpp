@@ -13,7 +13,7 @@
 #include <rpc/simulate/Simulator.h>
 #include <rpc/simulate/SimulatorFactory.h>
 #include <rpc/simulate/compressor/Compressor.h>
-#include <rpc/simulate/compressor/CompressorFactory.h>
+//#include <rpc/simulate/compressor/CompressorFactory.h>
 #include <rpc/sweep/Sweep.h>
 #include <rpc/sweep/SweepFactory.h>
 #include <rpc/iterator/Iterator.h>
@@ -59,8 +59,8 @@ namespace Rpc {
       iteratorFactoryPtr_(0),
       sweepPtr_(0),
       sweepFactoryPtr_(0),
-      compressorPtr_(0),
-      compressorFactoryPtr_(0),
+      //compressorPtr_(0),
+      //compressorFactoryPtr_(0),
       simulatorPtr_(0),
       simulatorFactoryPtr_(0),
       w_(),
@@ -86,7 +86,7 @@ namespace Rpc {
       interactionPtr_ = new Interaction();
       iteratorFactoryPtr_ = new IteratorFactory<D>(*this);
       sweepFactoryPtr_ = new SweepFactory<D>(*this);
-      compressorFactoryPtr_ = new CompressorFactory<D>(*this);
+      //compressorFactoryPtr_ = new CompressorFactory<D>(*this);
       simulatorFactoryPtr_ = new SimulatorFactory<D>(*this);
       BracketPolicy::set(BracketPolicy::Optional);
    }
@@ -112,12 +112,14 @@ namespace Rpc {
       if (sweepFactoryPtr_) {
          delete sweepFactoryPtr_;
       }
+      #if 0
       if (compressorPtr_) {
          delete compressorPtr_;
       }
       if (compressorFactoryPtr_) {
          delete compressorFactoryPtr_;
       }
+      #endif
       if (simulatorPtr_) {
          delete simulatorPtr_;
       }
@@ -285,6 +287,7 @@ namespace Rpc {
          }
       }
 
+      #if 0
       // Optionally instantiate a Compressor object
       if (!isEnd) {
          compressorPtr_ =
@@ -294,6 +297,7 @@ namespace Rpc {
             Log::file() << indent() << "  Compressor{ [absent] }\n";
          }
       }
+      #endif
 
       // Optionally instantiate a Simulator
       if (!isEnd) {

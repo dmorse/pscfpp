@@ -46,9 +46,11 @@ namespace Rpc {
       isAllocated_(false)
    {
       setClassName("Simulator");
+      #if 0
       if (system.hasCompressor()) {
          compressorPtr_ = &(system.compressor());
       }
+      #endif
       compressorFactoryPtr_ = new CompressorFactory<D>(system);
       perturbationFactoryPtr_ = new PerturbationFactory<D>(*this);
    }
@@ -62,7 +64,8 @@ namespace Rpc {
       if (compressorFactoryPtr_) {
          delete compressorFactoryPtr_;
       }
-      if (compressorPtr_ and !system().hasCompressor()) {
+      //if (compressorPtr_ && !system().hasCompressor()) {
+      if (compressorPtr_ ) {
          delete compressorPtr_;
       }
       if (perturbationFactoryPtr_) {
@@ -119,10 +122,14 @@ namespace Rpc {
    template <int D>
    void Simulator<D>::readParameters(std::istream &in)
    {
-      // Read required Compressor block, if needed
+      #if 0
       if (!system().hasCompressor()) {
          readCompressor(in);
       }
+      #endif
+
+      // Read required Compressor block, if needed
+      readCompressor(in);
       UTIL_CHECK(compressorPtr_);
 
       // Optionally random seed.

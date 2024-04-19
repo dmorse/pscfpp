@@ -43,10 +43,13 @@ namespace Rpg {
    {  
       setClassName("Simulator"); 
       setClassName("Simulator");
+      compressorFactoryPtr_ = new CompressorFactory<D>(system);
+
+      #if 0
       if (system.hasCompressor()) {
          compressorPtr_ = &(system.compressor());
       }
-      compressorFactoryPtr_ = new CompressorFactory<D>(system);
+      #endif
    }
 
    /*
@@ -58,7 +61,8 @@ namespace Rpg {
       if (compressorFactoryPtr_) {
          delete compressorFactoryPtr_;
       }
-      if (compressorPtr_ and !system().hasCompressor()) {
+      //if (compressorPtr_ and !system().hasCompressor()) {
+      if (compressorPtr_) {
          delete compressorPtr_;
       }
    }
@@ -112,10 +116,14 @@ namespace Rpg {
    template <int D>
    void Simulator<D>::readParameters(std::istream &in)
    { 
-      // Read required Compressor block, if needed
+      #if 0
       if (!system().hasCompressor()) {
          readCompressor(in);
       }
+      #endif
+
+      // Read required Compressor block
+      readCompressor(in);
       UTIL_CHECK(compressorPtr_);
 
       // Optionally random seed

@@ -41,8 +41,8 @@ namespace Rpc {
    template <int D> class IteratorFactory;
    template <int D> class Sweep;
    template <int D> class SweepFactory;
-   template <int D> class Compressor;
-   template <int D> class CompressorFactory;
+   //template <int D> class Compressor;
+   //template <int D> class CompressorFactory;
    template <int D> class Simulator;
    template <int D> class SimulatorFactory;
 
@@ -61,8 +61,8 @@ namespace Rpc {
    *    - a container of monomer chemical potential fields 
    *    - a container of monomer concentration fields 
    *
-   * A system may also optionally contain Iterator, Sweep, Compressor
-   * and Simulator objects.
+   * A system may also optionally contain Iterator, Sweep, and
+   * Simulator objects.
    *
    * Typical usage of a System<D> object looks something like this:
    * \code
@@ -804,10 +804,12 @@ namespace Rpc {
       */
       Iterator<D> const & iterator() const;
 
+      #if 0
       /**
       * Get the compressor by reference.
       */
       Compressor<D>& compressor();
+      #endif
 
       /**
       * Get Simulator for field theoretic simulation. 
@@ -875,10 +877,12 @@ namespace Rpc {
       */
       bool hasSweep() const;
 
+      #if 0
       /**
       * Does this system have a Compressor object?
       */
       bool hasCompressor() const;
+      #endif
 
       /**
       * Does this system have an initialized Simulator?
@@ -936,6 +940,7 @@ namespace Rpc {
       */
       SweepFactory<D>* sweepFactoryPtr_;
 
+      #if 0
       /**
       * Pointer to an compressor.
       */
@@ -945,6 +950,7 @@ namespace Rpc {
       * Pointer to compressor factory object
       */
       CompressorFactory<D>* compressorFactoryPtr_;
+      #endif
 
       /**
       * Simulator - coordinator for field theoretic simulation.
@@ -1225,6 +1231,7 @@ namespace Rpc {
       return *iteratorPtr_;
    }
 
+   #if 0
    // Get the Compressor
    template <int D>
    inline Compressor<D>& System<D>::compressor()
@@ -1232,6 +1239,7 @@ namespace Rpc {
       UTIL_ASSERT(compressorPtr_);
       return *compressorPtr_;
    }
+   #endif
 
    // Get container of chemical potential fields (const reference)
    template <int D>
@@ -1275,10 +1283,12 @@ namespace Rpc {
    inline bool System<D>::hasMask() const
    {  return mask_.hasData(); }
 
+   #if 0
    // Does the system have a Compressor object?
    template <int D>
    inline bool System<D>::hasCompressor() const
    {  return (compressorPtr_ != 0); }
+   #endif
 
    // Does the system have an initialized Simulator ?
    template <int D>

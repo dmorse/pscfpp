@@ -13,7 +13,7 @@
 #include <rpg/simulate/Simulator.h>
 #include <rpg/simulate/SimulatorFactory.h>
 #include <rpg/simulate/compressor/Compressor.h>
-#include <rpg/simulate/compressor/CompressorFactory.h>
+//#include <rpg/simulate/compressor/CompressorFactory.h>
 #include <rpg/sweep/Sweep.h>
 #include <rpg/sweep/SweepFactory.h>
 #include <rpg/iterator/Iterator.h>
@@ -56,8 +56,8 @@ namespace Rpg {
       iteratorFactoryPtr_(0),
       sweepPtr_(0),
       sweepFactoryPtr_(0),
-      compressorPtr_(0),
-      compressorFactoryPtr_(0),
+      //compressorPtr_(0),
+      //compressorFactoryPtr_(0),
       simulatorPtr_(0),
       simulatorFactoryPtr_(0),
       w_(),
@@ -79,7 +79,7 @@ namespace Rpg {
       interactionPtr_ = new Interaction();
       iteratorFactoryPtr_ = new IteratorFactory<D>(*this);
       sweepFactoryPtr_ = new SweepFactory<D>(*this);
-      compressorFactoryPtr_ = new CompressorFactory<D>(*this);
+      //compressorFactoryPtr_ = new CompressorFactory<D>(*this);
       simulatorFactoryPtr_ = new SimulatorFactory<D>(*this);
       BracketPolicy::set(BracketPolicy::Optional);
       ThreadGrid::init();
@@ -106,12 +106,14 @@ namespace Rpg {
       if (sweepFactoryPtr_) {
          delete sweepFactoryPtr_;
       }
+      #if 0
       if (compressorPtr_) {
          delete compressorPtr_;
       }
       if (compressorFactoryPtr_) {
          delete compressorFactoryPtr_;
       }
+      #endif
       if (simulatorPtr_) {
          delete simulatorPtr_;
       }
@@ -277,6 +279,7 @@ namespace Rpg {
          }
       }
 
+      #if 0
       // Optionally instantiate a Compressor object
       if (!isEnd) {
          compressorPtr_ =
@@ -286,6 +289,7 @@ namespace Rpg {
             Log::file() << indent() << "  Compressor{ [absent] }\n";
          }
       }
+      #endif
 
       // Optionally instantiate a Simulator object
       if (!isEnd) {
@@ -1695,38 +1699,6 @@ namespace Rpg {
          }
       }
    }
-
-   #if 0
-   /*
-   * Check if fields are symmetric under space group.
-   */
-   template <int D>
-   bool System<D>::checkRGridFieldSymmetry(const std::string & inFileName)
-   const
-   {
-      // If basis fields are not allocated, peek at field file header to
-      // get unit cell parameters, initialize basis and allocate fields.
-      if (!domain.unitCell().isInitialized()) {
-         readFieldHeader(inFileName);
-      }
-      UTIL_CHECK(domain_.basis().isInitialized());
-      if (!isAllocatedBasis_) {
-         allocateFieldsBasis();
-      }
-      const int nBasis = domain_.basis().nBasis();
-      UTIL_CHECK(nBasis > 0);
-
-      UnitCell<D> tmpUnitCell;
-      fieldIo().readFieldsRGrid(inFileName, tmpFieldsRGrid_, tmpUnitCell);
-      for (int i = 0; i < mixture_.nMonomer(); ++i) {
-         bool symmetric = fieldIo().hasSymmetry(tmpFieldsRGrid_[i]);
-         if (!symmetric) {
-            return false;
-         }
-      }
-      return true;
-   }
-   #endif
 
 } // namespace Rpg
 } // namespace Pscf
