@@ -123,7 +123,7 @@ namespace Rpc {
    void System<D>::setOptions(int argc, char **argv)
    {
       bool eFlag = false;  // echo
-      bool dFlag = false;  // spatial dimension (1,2, or 3)
+      bool dFlag = false;  // spatial dimension (1, 2, or 3)
       bool pFlag = false;  // param file
       bool cFlag = false;  // command file
       bool iFlag = false;  // input prefix
@@ -212,8 +212,7 @@ namespace Rpc {
 
       if (tFlag) {
          if (tArg <= 0) {
-            Log::file() << "Warning: Program called with non-positive"
-                        << "thread count -t " <<  tArg << "\n";
+            UTIL_THROW("Error: Non-positive thread count -t option");
          } else {
             // Set thread count
          }
@@ -245,11 +244,15 @@ namespace Rpc {
 
       // Read the Domain{ ... } block
       readParamComposite(in, domain_);
+      UTIL_CHECK(domain_.mesh().size() > 0);
+      UTIL_CHECK(domain_.unitCell().nParameter() > 0);
+      UTIL_CHECK(domain_.unitCell().lattice() != UnitCell<D>::Null);
 
+      // Setup mixture
       mixture_.setDiscretization(domain_.mesh(), domain_.fft());
-      mixture_.setupUnitCell(unitCell());
+      mixture_.setupUnitCell(domain_.unitCell());
 
-      // Allocate field array members of System
+      // Allocate memory for w and c fields
       allocateFieldsGrid();
       if (domain_.basis().isInitialized()) {
          allocateFieldsBasis();
@@ -275,11 +278,11 @@ namespace Rpc {
          }
       }
 
-      // Optionally instantiate a Simulator
+      // Optionally instantiate a Simulator object
       if (!isEnd) {
          simulatorPtr_ =
             simulatorFactoryPtr_->readObjectOptional(in, *this,
-                                                      className, isEnd);
+                                                     className, isEnd);
          if (!simulatorPtr_ && ParamComponent::echo()) {
             Log::file() << indent() << "  Simulator{ [absent] }\n";
          }
@@ -294,7 +297,7 @@ namespace Rpc {
    }
 
    /*
-   * Read default parameter file.
+   * Read parameter file (including open and closing brackets).
    */
    template <int D>
    void System<D>::readParam(std::istream& in)
@@ -370,6 +373,11 @@ namespace Rpc {
             // through parameter space
             sweep();
          } else
+         if (command == "COMPRESS") {
+            // Impose incompressibility
+            UTIL_CHECK(hasSimulator());
+            simulator().compressor().compress();
+         } else
          if (command == "SIMULATE") {
             // Perform a field theoretic simulation
             int nStep;
@@ -388,11 +396,6 @@ namespace Rpc {
             readEcho(in, classname);
             readEcho(in, filename);
             simulator().analyze(min, max, classname, filename);
-         } else
-         if (command == "COMPRESS") {
-            // Impose incompressibility
-            UTIL_CHECK(hasSimulator());
-            simulator().compressor().compress();
          } else
          if (command == "WRITE_TIMERS") {
             readEcho(in, filename);
@@ -730,6 +733,9 @@ namespace Rpc {
    template <int D>
    void System<D>::readWRGrid(const std::string & filename)
    {
+      UTIL_CHECK(isAllocatedGrid_);
+
+      // If necessary, peek at header to initialize unit cell
       if (!domain_.unitCell().isInitialized()) {
          readFieldHeader(filename);
       }
@@ -760,6 +766,7 @@ namespace Rpc {
       UTIL_CHECK(hasMixture_);
       const int nm = mixture_.nMonomer();
       UTIL_CHECK(nm > 0);
+      UTIL_CHECK(isAllocatedGrid_);
       UTIL_CHECK(domain_.hasGroup());
 
       if (!domain_.unitCell().isInitialized()) {
@@ -1777,7 +1784,7 @@ namespace Rpc {
    // Private member functions
 
    /*
-   * Allocate memory for fields.
+   * Allocate memory for fields in grid format.
    */
    template <int D>
    void System<D>::allocateFieldsGrid()
@@ -1809,6 +1816,7 @@ namespace Rpc {
          tmpFieldsRGrid_[i].allocate(dimensions);
          tmpFieldsKGrid_[i].allocate(dimensions);
       }
+
       isAllocatedGrid_ = true;
    }
 
@@ -1832,11 +1840,12 @@ namespace Rpc {
       w_.allocateBasis(nBasis);
       c_.allocateBasis(nBasis);
 
-      // Temporary work fields
+      // Temporary work space
       tmpFieldsBasis_.allocate(nMonomer);
       for (int i = 0; i < nMonomer; ++i) {
          tmpFieldsBasis_[i].allocate(nBasis);
       }
+
       isAllocatedBasis_ = true;
    }
 

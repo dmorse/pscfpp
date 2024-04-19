@@ -116,13 +116,13 @@ namespace Rpg {
    template <int D>
    void System<D>::setOptions(int argc, char **argv)
    {
-      bool eFlag = false; // echo
-      bool dFlag = false; // dimension
-      bool pFlag = false; // param file
-      bool cFlag = false; // command file
-      bool iFlag = false; // input prefix
-      bool oFlag = false; // output prefix
-      bool tFlag = false; // GPU input threads (max. # of threads per block)
+      bool eFlag = false;  // echo
+      bool dFlag = false;  // spatial dimension (1, 2, or 3)
+      bool pFlag = false;  // param file
+      bool cFlag = false;  // command file
+      bool iFlag = false;  // input prefix
+      bool oFlag = false;  // output prefix
+      bool tFlag = false;  // GPU threads (max # threads per block)
       char* pArg = 0;
       char* cArg = 0;
       char* iArg = 0;
@@ -278,6 +278,7 @@ namespace Rpg {
       }
 
       // Initialize homogeneous object
+      // NOTE: THIS OBJECT IS NOT USED AT ALL.
       homogeneous_.setNMolecule(np+ns);
       homogeneous_.setNMonomer(nm);
       initHomogeneous();
@@ -335,7 +336,6 @@ namespace Rpg {
             readWRGrid(filename);
          } else
          if (command == "ESTIMATE_W_FROM_C") {
-            // Read c field file in r-grid format
             readEcho(in, inFileName);
             estimateWfromC(inFileName);
          } else
@@ -346,13 +346,14 @@ namespace Rpg {
             setUnitCell(unitCell);
          } else
          if (command == "COMPUTE") {
-            // Solve the modified diffusion equation for current w fields
+            // Solve the modified diffusion equation, without iteration
             compute();
          } else
          if (command == "ITERATE") {
-            // Attempt to iteratively solve a SCFT problem
-            int error = iterate();
-            if (error) {
+            // Attempt to iteratively solve a single SCFT problem
+            bool isContinuation = false;
+            int fail = iterate(isContinuation);
+            if (fail) {
                readNext = false;
             }
          } else
@@ -374,9 +375,9 @@ namespace Rpg {
             simulate(nStep);
          } else
          if (command == "ANALYZE" || command == "ANALYZE_TRAJECTORY") {
-            int min;
+            // Read and analyze a field trajectory file
+            int min, max;
             in >> min;
-            int max;
             in >> max;
             Log::file() << "   "  << min ;
             Log::file() << "   "  << max << "\n";
@@ -439,7 +440,8 @@ namespace Rpg {
             in >> segmentId;
             Log::file() << Str("polymer ID  ", 21) << polymerId << "\n"
                         << Str("block ID  ", 21) << blockId << "\n"
-                        << Str("direction ID  ", 21) << directionId << "\n"
+                        << Str("direction ID  ", 21) << directionId 
+                        << "\n"
                         << Str("segment ID  ", 21) << segmentId 
                         << std::endl;
             writeQSlice(filename, polymerId, blockId, directionId,
@@ -579,6 +581,8 @@ namespace Rpg {
       UTIL_CHECK(domain_.unitCell().isInitialized());
       UTIL_CHECK(domain_.waveList().hasMinimumImages());
       if (domain_.hasGroup() && !isAllocatedBasis_) {
+         UTIL_CHECK(domain_.basis().isInitialized());
+         UTIL_CHECK(domain_.basis().nBasis() > 0);
          allocateFieldsBasis();
       }
 
@@ -1468,7 +1472,7 @@ namespace Rpg {
    // Private member functions
 
    /*
-   * Allocate memory for fields.
+   * Allocate memory for fields in grid format.
    */
    template <int D>
    void System<D>::allocateFieldsGrid()
@@ -1506,7 +1510,7 @@ namespace Rpg {
    }
 
    /*
-   * Allocate memory for fields.
+   * Allocate memory for fields in basis format.
    */
    template <int D>
    void System<D>::allocateFieldsBasis()
