@@ -27,21 +27,22 @@ System{
     mesh           16    16    16
     lattice     cubic   
   }
-  AmCompressor{
-    epsilon      1.0e-4
-    maxItr       200
-    maxHist      30     
-    verbose	 0
-    errorType    normResid
-  }
-  
   McSimulator{
+    AmCompressor{
+      epsilon      1.0e-4
+      maxItr       200
+      maxHist      30     
+      verbose	 0
+      errorType    normResid
+    }
     McMoveManager{
+
         RealMove{
             probability     1
             A               0.5
       }
-      }
+
+    }
     AnalyzerManager{
       baseInterval    1
 
@@ -57,6 +58,7 @@ System{
       }
 
     }
+
   }
 
 }

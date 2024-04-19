@@ -39,9 +39,9 @@ namespace Rpg {
       mcMoveManager_(*this, system),
       analyzerManager_(*this, system),
       trajectoryReaderFactoryPtr_(0)
-   { 
-      setClassName("McSimulator");   
-      trajectoryReaderFactoryPtr_ 
+   {
+      setClassName("McSimulator");
+      trajectoryReaderFactoryPtr_
              = new TrajectoryReaderFactory<D>(system);
    }
 
@@ -56,7 +56,7 @@ namespace Rpg {
       }
    }
 
-   /* 
+   /*
    * Read instructions for creating objects from file.
    */
    template <int D>
@@ -65,32 +65,13 @@ namespace Rpg {
       // Read compressor block and optional random number seed
       Simulator<D>::readParameters(in);
 
-      #if 0
-      // Read random seed. Default is seed_(0), taken from the clock time
-      readOptional(in, "seed", seed_);
-
-      // Set random seed
-      random().setSeed(seed_);
-      cudaRandom().setSeed(seed_);
-      #endif
-      
-      // Read block of mc move data inside
+      // Read block of McMove parameters
       readParamComposite(in, mcMoveManager_);
 
-      // Read block of analyzer
+      // Read block of Analyzers
       Analyzer<D>::baseInterval = 0; // default value
       readParamCompositeOptional(in, analyzerManager_);
 
-   }
-
-   /*
-   * Initialize just prior to a run.
-   */
-   template <int D>
-   void McSimulator<D>::setup()
-   {  
-      UTIL_CHECK(system().w().hasData());
-      
       // Figure out what needs to be saved
       state_.needsCc = false;
       state_.needsDc = false;
@@ -101,10 +82,20 @@ namespace Rpg {
       if (mcMoveManager_.needsDc()){
          state_.needsDc = true;
       }
-      
+
       // Initialize Simulator<D> base class
       allocate();
-      
+
+   }
+
+   /*
+   * Initialize just prior to a run.
+   */
+   template <int D>
+   void McSimulator<D>::setup()
+   {
+      UTIL_CHECK(system().w().hasData());
+
       // Eigenanalysis of the projected chi matrix.
       analyzeChi();
 
@@ -118,7 +109,7 @@ namespace Rpg {
       if (state_.needsDc) {
          computeDc();
       }
-      
+
       mcMoveManager_.setup();
       if (analyzerManager_.size() > 0){
          analyzerManager_.setup();
@@ -141,12 +132,12 @@ namespace Rpg {
       Timer analyzerTimer;
       timer.start();
       iStep_ = 0;
-      
+
       // Analysis initial step (if any)
       analyzerTimer.start();
       analyzerManager_.sample(iStep_);
       analyzerTimer.stop();
-      
+
       for (iTotalStep_ = 0; iTotalStep_ < nStep; ++iTotalStep_) {
          // Choose and attempt an McMove
          bool converged;
@@ -154,7 +145,7 @@ namespace Rpg {
 
          if (converged){
             iStep_++;
-            
+
             // Analysis (if any)
             analyzerTimer.start();
             if (Analyzer<D>::baseInterval != 0) {
@@ -165,7 +156,7 @@ namespace Rpg {
                }
             }
             analyzerTimer.stop();
-            
+
          } else{
             Log::file() << "Step: "<< iTotalStep_<< " fail to converge" << "\n";
          }
@@ -183,10 +174,10 @@ namespace Rpg {
 
       // Output number of times MDE has been solved for the simulation run
       Log::file() << std::endl;
-      Log::file() << "MDE counter   " 
+      Log::file() << "MDE counter   "
                   << compressor().mdeCounter() << std::endl;
       Log::file() << std::endl;
-      
+
       // Output times for the simulation run
       Log::file() << std::endl;
       Log::file() << "nStep               " << nStep << std::endl;
@@ -248,7 +239,7 @@ namespace Rpg {
       UTIL_CHECK(max >= min);
       UTIL_CHECK(Analyzer<D>::baseInterval > 0);
       UTIL_CHECK(analyzerManager_.size() > 0);
-      
+
       // Construct TrajectoryReader
       TrajectoryReader<D>* trajectoryReaderPtr;
       trajectoryReaderPtr = trajectoryReaderFactory().factory(classname);
@@ -271,7 +262,7 @@ namespace Rpg {
          if (hasFrame) {
             clearData();
 
-            // Initialize analyzers 
+            // Initialize analyzers
             if (iStep_ == min) {
                analyzerManager_.setup();
             }
@@ -294,17 +285,17 @@ namespace Rpg {
       // Output number of frames and times
       Log::file() << std::endl;
       Log::file() << "# of frames   " << nFrames << std::endl;
-      Log::file() << "run time      " << timer.time() 
+      Log::file() << "run time      " << timer.time()
                   << "  sec" << std::endl;
-      Log::file() << "time / frame " << timer.time()/double(nFrames) 
+      Log::file() << "time / frame " << timer.time()/double(nFrames)
                   << "  sec" << std::endl;
       Log::file() << std::endl;
 
    }
-   
+
    /*
    * Output McMoveManager timer results.
-   */ 
+   */
    template<int D>
    void McSimulator<D>::outputTimers(std::ostream& out)
    {
@@ -312,10 +303,10 @@ namespace Rpg {
       out << "McSimulator times contributions:\n";
       mcMoveManager_.outputTimers(out);
    }
-  
+
    /*
    * Clear all McMoveManager timers.
-   */ 
+   */
    template<int D>
    void McSimulator<D>::clearTimers()
    {  mcMoveManager_.clearTimers(); }

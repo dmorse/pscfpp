@@ -13,7 +13,6 @@
 #include <rpg/simulate/Simulator.h>
 #include <rpg/simulate/SimulatorFactory.h>
 #include <rpg/simulate/compressor/Compressor.h>
-//#include <rpg/simulate/compressor/CompressorFactory.h>
 #include <rpg/sweep/Sweep.h>
 #include <rpg/sweep/SweepFactory.h>
 #include <rpg/iterator/Iterator.h>
@@ -56,8 +55,6 @@ namespace Rpg {
       iteratorFactoryPtr_(0),
       sweepPtr_(0),
       sweepFactoryPtr_(0),
-      //compressorPtr_(0),
-      //compressorFactoryPtr_(0),
       simulatorPtr_(0),
       simulatorFactoryPtr_(0),
       w_(),
@@ -79,7 +76,6 @@ namespace Rpg {
       interactionPtr_ = new Interaction();
       iteratorFactoryPtr_ = new IteratorFactory<D>(*this);
       sweepFactoryPtr_ = new SweepFactory<D>(*this);
-      //compressorFactoryPtr_ = new CompressorFactory<D>(*this);
       simulatorFactoryPtr_ = new SimulatorFactory<D>(*this);
       BracketPolicy::set(BracketPolicy::Optional);
       ThreadGrid::init();
@@ -106,14 +102,6 @@ namespace Rpg {
       if (sweepFactoryPtr_) {
          delete sweepFactoryPtr_;
       }
-      #if 0
-      if (compressorPtr_) {
-         delete compressorPtr_;
-      }
-      if (compressorFactoryPtr_) {
-         delete compressorFactoryPtr_;
-      }
-      #endif
       if (simulatorPtr_) {
          delete simulatorPtr_;
       }
@@ -278,18 +266,6 @@ namespace Rpg {
             Log::file() << indent() << "  Sweep{ [absent] }\n";
          }
       }
-
-      #if 0
-      // Optionally instantiate a Compressor object
-      if (!isEnd) {
-         compressorPtr_ =
-            compressorFactoryPtr_->readObjectOptional(in, *this, className,
-                                                      isEnd);
-         if (!compressorPtr_ && ParamComponent::echo()) {
-            Log::file() << indent() << "  Compressor{ [absent] }\n";
-         }
-      }
-      #endif
 
       // Optionally instantiate a Simulator object
       if (!isEnd) {

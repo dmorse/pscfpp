@@ -44,12 +44,6 @@ namespace Rpg {
       setClassName("Simulator"); 
       setClassName("Simulator");
       compressorFactoryPtr_ = new CompressorFactory<D>(system);
-
-      #if 0
-      if (system.hasCompressor()) {
-         compressorPtr_ = &(system.compressor());
-      }
-      #endif
    }
 
    /*
@@ -61,7 +55,6 @@ namespace Rpg {
       if (compressorFactoryPtr_) {
          delete compressorFactoryPtr_;
       }
-      //if (compressorPtr_ and !system().hasCompressor()) {
       if (compressorPtr_) {
          delete compressorPtr_;
       }
@@ -116,12 +109,6 @@ namespace Rpg {
    template <int D>
    void Simulator<D>::readParameters(std::istream &in)
    { 
-      #if 0
-      if (!system().hasCompressor()) {
-         readCompressor(in);
-      }
-      #endif
-
       // Read required Compressor block
       readCompressor(in);
       UTIL_CHECK(compressorPtr_);
@@ -437,6 +424,7 @@ namespace Rpg {
       const int nMonomer = system().mixture().nMonomer();
       const int meshSize = system().domain().mesh().size();
       int i,j;
+
       // GPU resources
       int nBlocks, nThreads;
       ThreadGrid::setThreadsLogical(meshSize, nBlocks, nThreads);

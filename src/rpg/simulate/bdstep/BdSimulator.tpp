@@ -81,23 +81,13 @@ namespace Rpg {
       // Read and instantiate a BdStep object (required)
       std::string className;
       bool isEnd;
-      bdStepPtr_ = 
+      bdStepPtr_ =
           bdStepFactoryPtr_->readObject(in, *this, className, isEnd);
 
       // Read AnalyzerManager block
       Analyzer<D>::baseInterval = 0; // default value
       readParamCompositeOptional(in, analyzerManager_);
 
-   }
-
-   /*
-   * Perform a field theoretic MC simulation of nStep steps.
-   */
-   template <int D>
-   void BdSimulator<D>::setup()
-   {
-      UTIL_CHECK(system().w().hasData());
-      
       // Figure out what variables need to be saved
       state_.needsCc = false;
       state_.needsDc = false;
@@ -108,20 +98,30 @@ namespace Rpg {
       if (stepper().needsDc()){
          state_.needsDc = true;
       }
-      
+
       // Initialize Simulator<D> base class
       allocate();
-      
+
+   }
+
+   /*
+   * Perform a field theoretic MC simulation of nStep steps.
+   */
+   template <int D>
+   void BdSimulator<D>::setup()
+   {
+      UTIL_CHECK(system().w().hasData());
+
       // Eigenanalysis of the projected chi matrix.
       analyzeChi();
-      
+
       // Compute field components and Hamiltonian for initial state
       system().compute();
       computeWc();
       computeCc();
       computeDc();
       computeHamiltonian();
-      
+
       stepper().setup();
       if (analyzerManager_.size() > 0){
          analyzerManager_.setup();
@@ -144,21 +144,21 @@ namespace Rpg {
       Timer analyzerTimer;
       timer.start();
       iStep_ = 0;
-      
+
       // Analysis initial step (if any)
       analyzerTimer.start();
       analyzerManager_.sample(iStep_);
       analyzerTimer.stop();
-      
+
       for (iTotalStep_ = 0; iTotalStep_ < nStep; ++iTotalStep_) {
-         
+
          // Take a step (modifies W fields)
          bool converged;
          converged = stepper().step();
-         
+
          if (converged){
             iStep_++;
-            
+
             // Analysis (if any)
             analyzerTimer.start();
             if (Analyzer<D>::baseInterval != 0) {
@@ -169,13 +169,13 @@ namespace Rpg {
                }
             }
             analyzerTimer.stop();
-            
+
          } else{
             Log::file() << "Step: "<< iTotalStep_<< " fail to converge" << "\n";
          }
 
       }
-      
+
       timer.stop();
       double time = timer.time();
       double analyzerTime = analyzerTimer.time();
@@ -195,7 +195,8 @@ namespace Rpg {
       Log::file() << std::endl;
       Log::file() << "nStep               " << nStep << std::endl;
       if (iStep_ != nStep){
-         Log::file() << "nFail Step          " << (nStep - iStep_) << std::endl;
+         Log::file() << "nFail Step          " << (nStep - iStep_) 
+                     << std::endl;
       }
       Log::file() << "Total run time      " << time
                   << " sec" << std::endl;
@@ -205,7 +206,7 @@ namespace Rpg {
       Log::file() << "Analyzer run time   " << analyzerTime
                   << " sec" << std::endl;
       Log::file() << std::endl;
-      
+
    }
 
    /*

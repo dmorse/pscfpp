@@ -10,11 +10,11 @@
 
 #include <util/param/ParamComposite.h>     // base class
 
-#include <rpg/solvers/Mixture.h>          // member
-#include <rpg/field/Domain.h>             // member
-#include <rpg/field/FieldIo.h>            // member
-#include <rpg/field/WFieldContainer.h>    // member
-#include <rpg/field/CFieldContainer.h>    // member
+#include <rpg/solvers/Mixture.h>           // member
+#include <rpg/field/Domain.h>              // member
+#include <rpg/field/FieldIo.h>             // member
+#include <rpg/field/WFieldContainer.h>     // member
+#include <rpg/field/CFieldContainer.h>     // member
 
 #include <prdc/cuda/RField.h>              // member
 #include <prdc/cuda/RFieldDft.h>           // member
@@ -39,8 +39,6 @@ namespace Rpg {
    template <int D> class IteratorFactory;
    template <int D> class Sweep;
    template <int D> class SweepFactory;
-   //template <int D> class Compressor;
-   //template <int D> class CompressorFactory;
    template <int D> class Simulator;
    template <int D> class SimulatorFactory;
 
@@ -691,13 +689,6 @@ namespace Rpg {
       */
       Iterator<D>& iterator();
 
-      #if 0
-      /**
-      * Get the compressor by reference.
-      */
-      Compressor<D>& compressor();
-      #endif
-
       /**
       * Get Simulator container for Monte Carlo moves.
       */
@@ -756,13 +747,6 @@ namespace Rpg {
       */
       bool hasSweep() const;
 
-      #if 0
-      /**
-      * Does this system have a Compressor object?
-      */
-      bool hasCompressor() const;
-      #endif
-
       /**
       * Does this system have an initialized Simulator?
       */
@@ -816,18 +800,6 @@ namespace Rpg {
       * Pointer to SweepFactory object
       */
       SweepFactory<D>* sweepFactoryPtr_;
-
-      #if 0
-      /**
-      * Pointer to a compressor.
-      */
-      Compressor<D>* compressorPtr_;
-
-      /**
-      * Pointer to compressor factory object
-      */
-      CompressorFactory<D>* compressorFactoryPtr_;
-      #endif
 
       /**
       * Pointer to a simulator.
@@ -1047,16 +1019,6 @@ namespace Rpg {
       return *iteratorPtr_;
    }
 
-   #if 0
-   // Get the Compressor
-   template <int D>
-   inline Compressor<D>& System<D>::compressor()
-   {
-      UTIL_ASSERT(compressorPtr_);
-      return *compressorPtr_;
-   }
-   #endif
-
    // Get the Simulator.
    template <int D>
    inline Simulator<D>& System<D>::simulator()
@@ -1114,13 +1076,6 @@ namespace Rpg {
    inline bool System<D>::hasSweep() const
    {  return (sweepPtr_ != 0); }
 
-   #if 0
-   // Does the system have a Compressor object?
-   template <int D>
-   inline bool System<D>::hasCompressor() const
-   {  return (compressorPtr_ != 0); }
-   #endif
-
    // Does the system have an initialized Simulator ?
    template <int D>
    inline bool System<D>::hasSimulator() const
@@ -1135,5 +1090,4 @@ namespace Rpg {
 
 } // namespace Rpg
 } // namespace Pscf
-//#include "System.tpp"
 #endif
