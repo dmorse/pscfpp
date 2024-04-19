@@ -5,7 +5,6 @@ include $(SRC_DIR)/rpg/field/sources.mk
 include $(SRC_DIR)/rpg/solvers/sources.mk
 include $(SRC_DIR)/rpg/iterator/sources.mk
 include $(SRC_DIR)/rpg/sweep/sources.mk
-include $(SRC_DIR)/rpg/compressor/sources.mk
 include $(SRC_DIR)/rpg/simulate/sources.mk
 
 # List of source files in src/rpg
@@ -14,7 +13,6 @@ rpg_= \
   $(rpg_solvers_) \
   $(rpg_iterator_) \
   $(rpg_sweep_) \
-  $(rpg_compressor_) \
   $(rpg_simulate_) \
   rpg/System.cu
 

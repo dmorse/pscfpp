@@ -11,7 +11,7 @@
 #include "ExplicitBdStep.h"
 
 #include <rpg/simulate/bdstep/BdSimulator.h>
-#include <rpg/compressor/Compressor.h>
+#include <rpg/simulate/compressor/Compressor.h>
 #include <rpg/System.h>
 #include <pscf/math/IntVec.h>
 

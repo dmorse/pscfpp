@@ -8,13 +8,13 @@ include $(SRC_DIR)/rpg/include.mk
 #--------------------------------------------------------------------
 # Main targets 
 
-all: $(rpg_trajectory_OBJS) 
+all: $(rpg_simulate_trajectory_OBJS) 
 
 includes:
 	@echo $(INCLUDES)
 
 clean:
-	rm -f $(rpg_trajectory_OBJS) $(rpg_trajectory_OBJS:.o=.d) 
+	rm -f $(rpg_simulate_trajectory_OBJS) $(rpg_simulate_trajectory_OBJS:.o=.d) 
 
 #--------------------------------------------------------------------
 # Include dependency files

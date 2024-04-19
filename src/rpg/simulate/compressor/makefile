@@ -1,20 +1,20 @@
 #--------------------------------------------------------------------
 # Include makefiles
 
-SRC_DIR_REL =../..
+SRC_DIR_REL =../../..
 include $(SRC_DIR_REL)/config.mk
 include $(SRC_DIR)/rpg/include.mk
 
 #--------------------------------------------------------------------
 # Main targets 
 
-all: $(rpg_compressor_OBJS) 
+all: $(rpg_simulate_compressor_OBJS) 
 
 includes:
 	@echo $(INCLUDES)
 
 clean:
-	rm -f $(rpg_compressor_OBJS) $(rpg_compressor_OBJS:.o=.d) 
+	rm -f $(rpg_simulate_compressor_OBJS) $(rpg_simulate_compressor_OBJS:.o=.d) 
 
 #--------------------------------------------------------------------
 # Include dependency files

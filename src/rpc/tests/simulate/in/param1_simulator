@@ -27,17 +27,15 @@ System{
     mesh           32    32    32
     lattice     cubic   
   }
-  AmCompressor{
-    epsilon      1.0e-4
-    maxItr       200
-    maxHist      30     
-    verbose	 0
-    errorType    normResid
-  }
-}
-
-
   McSimulator{
+    AmCompressor{
+      epsilon      1.0e-4
+      maxItr       200
+      maxHist      30     
+      verbose	 0
+      errorType    normResid
+    }
+
     McMoveManager{
 
       RealMove{
@@ -76,6 +74,7 @@ System{
 
     }
   }
+}
 
   unitCell cubic   1.3835952906
   groupName   P_-1

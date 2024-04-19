@@ -12,8 +12,8 @@
 
 #include <rpg/simulate/Simulator.h>
 #include <rpg/simulate/SimulatorFactory.h>
-#include <rpg/compressor/Compressor.h>
-#include <rpg/compressor/CompressorFactory.h>
+#include <rpg/simulate/compressor/Compressor.h>
+#include <rpg/simulate/compressor/CompressorFactory.h>
 #include <rpg/sweep/Sweep.h>
 #include <rpg/sweep/SweepFactory.h>
 #include <rpg/iterator/Iterator.h>

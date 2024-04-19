@@ -9,7 +9,7 @@
 */
 
 #include <util/param/Factory.h>  
-#include <rpg/compressor/Compressor.h>
+#include <rpg/simulate/compressor/Compressor.h>
 #include <rpg/System.h>
 
 #include <string>

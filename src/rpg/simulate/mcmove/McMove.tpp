@@ -11,7 +11,7 @@
 #include "McMove.h"
 
 #include <rpg/simulate/mcmove/McSimulator.h>
-#include <rpg/compressor/Compressor.h>
+#include <rpg/simulate/compressor/Compressor.h>
 #include <rpg/System.h>
 
 namespace Pscf {

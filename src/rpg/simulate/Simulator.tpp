@@ -10,8 +10,8 @@
 
 #include "Simulator.h"
 #include <rpg/System.h>
-#include <rpg/compressor/Compressor.h>
-#include <rpg/compressor/CompressorFactory.h>
+#include <rpg/simulate/compressor/Compressor.h>
+#include <rpg/simulate/compressor/CompressorFactory.h>
 #include <util/misc/Timer.h>
 #include <util/random/Random.h>
 #include <util/global.h>

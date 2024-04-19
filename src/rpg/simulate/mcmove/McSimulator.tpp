@@ -15,7 +15,7 @@
 #include <rpg/simulate/analyzer/AnalyzerFactory.h>
 #include <rpg/simulate/trajectory/TrajectoryReader.h>
 #include <rpg/simulate/trajectory/TrajectoryReaderFactory.h>
-#include <rpg/compressor/Compressor.h>
+#include <rpg/simulate/compressor/Compressor.h>
 
 #include <util/random/Random.h>
 #include <pscf/cuda/CudaRandom.h>
