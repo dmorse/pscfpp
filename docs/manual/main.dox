@@ -10,7 +10,7 @@ PSCF is distributed only in source code form, and so must be compiled
 by the user. It is designed for use in a unix-like environment, and is
 regularly tested on Linux and Mac OS X operating systems.
 PSCF can take advantage of a CUDA-capable Nvidia graphics processing 
-unit (GPU) if one is available. 
+unit if one is available. 
 
 PSCF is free, open source software. It is distributed under the terms 
 of the GNU General Public License as (GPL) published by the Free
@@ -22,7 +22,7 @@ Foundation program for Cyberinfrastructure for Sustained Scientific
 Development (CSSI) under Grant No. 2103627.
 
 This manual is constructed as a set of linked web pages that provide 
-both documentation designed at users and more detailed API documentation
+both documentation designed for users and more detailed API documentation
 that is aimed primarily at developers.  Basic information about how to
 install and use PSCF is provided through the set of web pages that is 
 outlined and linked below. Full documentation of class and function

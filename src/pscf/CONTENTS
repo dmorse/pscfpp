@@ -1,6 +1,7 @@
 The src/pscf directory contains source files in namespace Pscf that can be 
 used in several different implementations of self-consistent field theory. 
-All code defined in this directory is defined in the Pscf C++ namespace.
+All entities defined in files in this directory are defined in the Pscf 
+C++ namespace.
 
 Subdirectories:
 
@@ -14,5 +15,5 @@ Subdirectories:
    sweep/       - template for sweep algorithms
    tests/       - unit tests for code in src/pscf
 
-All classes in subdirectory homogeneous are defined in a nested namespace 
-Pscf::Homogeneous 
+All classes in subdirectory pscf/homogeneous are defined in a nested 
+namespace Pscf::Homogeneous 

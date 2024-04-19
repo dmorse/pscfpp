@@ -6,7 +6,6 @@ to those used in the older Fortran PSCF code.
 
 Subdirectories:
 
-compressor / - iterators that change pressure to obtain uniform density
 field/       - classes to represent or manipulate fields
 iterator/    - iterative SCF equation solvers
 solvers/     - classes to solve the modified diffusion equation (MDE)
@@ -23,11 +22,10 @@ pscf_pc.cpp   - Main program periodic structures on CPU hardware
 
 Makefile and makefile fragments:
 
-source.mk     - list of source files (makefile fragment)
+sources.mk    - list of source files (makefile fragment)
 patterns.mk   - pattern rules for src/rpc (makefile fragment)
 include.mk    - header of makefile includes (makefile fragment)
 makefile      - main makefile for src/rpc directory tree
-config.mk     - configuration file (installed by setup script)
 
 Doxygen documentation files:
 

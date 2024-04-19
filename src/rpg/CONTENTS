@@ -29,8 +29,6 @@ patterns.mk  - pattern rules for src/rpg (makefile fragment)
 include.mk   - header of makefile includes (makefile fragment)
 makefile     - main makefile for src/rpg directory tree
 
-config.mk    - configuration file (installed by configure script)
-
 Doxygen documentation files:
 
 rpg.mod      - definition of Rpg doxygen module 
