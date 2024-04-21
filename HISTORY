@@ -10,42 +10,59 @@ programs are affected by specific changes:
 
   pc  - CPU code for periodic structures (pscf_pc)
   pg  - GPU code for periodic structures (pscf_pg)
-  fd  - CPU finite difference code for 1D problems (pscf_fd)
-  all - all programs (fd, pc, and pg)
+  1d  - CPU finite difference code for 1D problems (pscf_1d)
+  all - all programs (1d, pc, and pg)
 
+Versions before v1.2 use program name pscf_fd and label fd for the 
+finite different 1D code that is now called pscf_1d.
 
 Version 1.2.0  (in development)
 =========================================
 
 User-visible features
 ---------------------
-* Stochastic field theoretic simulations in a partial saddle-point 
-  approximation (FTPS) (pc, pg)
+* Stochastic field theoretic simulation (FTS) with real fields in a 
+  partial saddle-point approximation (FTS-PS) (pc, pg)
 
-  This includes:
-   - Framework for FTPS simulations
-   - Monte Carlo (MC) simulation engine
-   - Real-space and Fourier-space MC moves
-   - Analyzers for structure factor, other observables
-   - Code to write and postprocess field trajectories
+  Implementation of FTS-PS includes:
+
+   - Framework for FTS-PS simulations
+   - Monte Carlo (MC) and Brownian Dynamics (BD) simulation engines
+   - MC Moves: Real-space, Fourier-space and Force-Bias moves
+   - BD Steppers: Euler, Predictor-Corrector and Leimkuhler-Matthews
+   - Compressor classes to find partial saddle-point equations
+   - Analyzer classes to measure structure factor, other observables
+   - ANALYZE command to postprocess field trajectories
+
+* Commands to replicate unit cell and increase spatial dimensions
 
 User-visible changes
----------------------
-* Use -d command line option to specify spatial dimension (pc and pg)
-* Renamed "setup" to "configure" for consistency with GNU convention
-* Renamed PSCF "configure" script to "setopts"
+--------------------
+* Program names changed to pscf_1d, pscf_pc, and pscf_pg
+* Added -d command line option to specify spatial dimension (pc and pg)
+* Renamed initialization script to "configure" (was named "setup")
+* Renamed script for compile time options to "setopts" (was "configure")
+* Declaration of a space group is now optional in the parameter file
 
 Documentation
 -------------
+* Documentation of theory for FTPS simulations 
 * User documentation for FTPS MC commands 
-* User documentation for FTPS MC simulations (not started)
-* Documentation of theory for FTPS simulations (not started)
+* User documentation for FTPS MC simulations 
+* Re-written Developer Information manual chapter
 
 Developer-visible changes
 -------------------------
+* Code to implement FTS-PS is in new directory src/simulate 
 * Moved CUDA utility classes to src/pscf/cuda
-* Created namespace Pscf::Prdc in src/prdc 
-* Moved CPU and CUDA fields to prdc/cpu and prdc/cuda
+* Created namespace Pscf::Prdc in src/prdc
+* Created Cpu and Cuda subnamespaces of Pscf::Prdc
+* Moved CPU and CUDA field classes to prdc/cpu and prdc/cuda
+* Renamed namespace Pspc to Rpc (real periodic CPU)
+* Renamed namespace Pspg to Rpg (real periodic GPU)
+* Added Pscf::CudaRandom wrapper class for nVidia RNG
+* Added tests for presence or absence of space group symmetry
+* Added inverseId member to Pscf::Basis::Wave
 
 Version 1.1.0  (9/20/2023)
 =========================================
