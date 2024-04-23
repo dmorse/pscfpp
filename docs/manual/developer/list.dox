@@ -1,6 +1,6 @@
 /*! \page developer_list_page Source File Lists
 
-\ref developer_source_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref developer_directory_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
 \ref developer_build_page  (Next)
 <BR>
 
@@ -131,8 +131,8 @@ operations as those used in the simpler example given above for a
 directory with no subdirectories.
 
 <BR>
-\ref developer_source_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
-\ref developer_page  (Up)          &nbsp; &nbsp; &nbsp; &nbsp;
-\ref developer_build_page  (Next)
+\ref developer_directory_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref developer_page            (Up)          &nbsp; &nbsp; &nbsp; &nbsp;
+\ref developer_build_page      (Next)
 
 */

@@ -111,6 +111,7 @@ test-gpu:
 clean:
 	cd util; $(MAKE) clean
 	cd pscf; $(MAKE) clean
+	cd prdc; $(MAKE) clean
 	cd r1d; $(MAKE) clean
 	cd rpc; $(MAKE) clean
 	cd rpg; $(MAKE) clean
@@ -119,6 +120,7 @@ clean:
 clean-tests:
 	cd util/tests; $(MAKE) clean
 	cd pscf/tests; $(MAKE) clean
+	cd prdc/tests; $(MAKE) clean
 	cd r1d/tests; $(MAKE) clean
 	cd rpc/tests; $(MAKE) clean
 	cd rpg/tests; $(MAKE) clean
@@ -144,6 +146,7 @@ ifneq ($(BLD_DIR),$(SRC_DIR))
 	rm -f prdc/tests/makefile
 	rm -f r1d/tests/makefile
 	rm -f rpc/tests/makefile
+	rm -f rpg/tests/makefile
 	rm -f setopts
 endif
 	rm -f config.mk

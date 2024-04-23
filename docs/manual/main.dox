@@ -93,7 +93,7 @@ https://dmorse.github.io/pscfpp-man </a>.
   </li>
   <li> \subpage developer_page
     <ol type="1">
-    <li> \ref developer_source_page </li>
+    <li> \ref developer_directory_page </li>
     <li> \ref developer_list_page </li>
     <li> \ref developer_build_page </li>
     <li> \ref developer_standards_page </li>

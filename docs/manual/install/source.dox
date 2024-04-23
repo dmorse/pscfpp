@@ -18,7 +18,7 @@ recommend the free online
 <a href=https://git-scm.com/book/en/v2>Pro Git</a> book as a tutorial 
 and reference. 
 
-\section compile_getcode_section Cloning the repository
+\section source_getcode_sec Cloning the repository
 
 To obtain a working copy of the pscfpp git repository, you should first
 change directory (cd) to the directory you would like to contain a newly
@@ -29,7 +29,7 @@ git clone --recursive https://github.com/dmorse/pscfpp.git
 This should create a complete copy of the PSCF source code in a new 
 subdirectory named "pscfpp/" of the working directory from which you 
 invoked this command. See the discussion of the reason for use of the 
-"--recursive" option \ref compile_submodules_section "below". 
+"--recursive" option \ref source_submodules_sec "below". 
 
 The above instructions are intended for users who simply want to get a 
 copy of PSCF their own use, but who are not (or not yet) interested in 
@@ -81,7 +81,7 @@ a prefix "pscfpp/" should be understood to be relative paths, relative
 to this directory. The directory structure of the pscfpp repository is 
 explained \ref developer_source_page "here".
 
-\section compile_submodules_section Use of git submodules
+\section source_submodules_sec Use of git submodules
 
 Some subdirectories of the pscfpp/src directory are maintained in separate 
 github repositories and are imported into the pscfpp repository as git 

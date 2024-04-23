@@ -24,7 +24,7 @@ list:
 clean:
 	rm -f $(prdc_OBJS) $(prdc_OBJS:.o=.d)
 	rm -f $(prdc_LIB)
-	-rm -f lib*.a
+	rm -f lib*.a
 	rm -f *.o */*.o
 	rm -f *.d */*.d
 	cd tests; $(MAKE) clean
