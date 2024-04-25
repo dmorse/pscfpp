@@ -9,6 +9,7 @@
 #include "HamiltonianAutoCorr.h"
 #include "BinaryStructureFactorGrid.h"
 #include "StepLogger.h"
+#include "LinearResponseAnalyzer.h"
 
 namespace Pscf {
 namespace Rpc {
@@ -50,6 +51,8 @@ namespace Rpc {
            = new BinaryStructureFactorGrid<D>(*simulatorPtr_, *sysPtr_);
       } else if (className == "StepLogger") {
          ptr = new StepLogger<D>();
+      } else if (className == "LinearResponseAnalyzer") {
+         ptr = new LinearResponseAnalyzer<D>(*simulatorPtr_, *sysPtr_);
       }
 
       return ptr;

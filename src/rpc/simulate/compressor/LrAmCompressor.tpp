@@ -11,6 +11,7 @@
 #include "LrAmCompressor.h"
 #include <pscf/chem/Monomer.h>
 #include <pscf/mesh/MeshIterator.h>
+#include <rpc/intra/IntraCorrelation.h>
 #include <prdc/crystal/shiftToMinimum.h>
 #include <rpc/System.h>
 #include <util/global.h>
@@ -84,7 +85,7 @@ namespace Rpc{
          }
       }
 
-      computeIntraCorrelation();
+      intraCorrelation_ = system().intraCorrelation().computeIntraCorrelations();
    }
 
    // Iterative solver (AM algorithm)
@@ -299,59 +300,6 @@ namespace Rpc{
    {
       AmIteratorTmpl<Compressor<D>, DArray<double> >::clearTimers();
       mdeCounter_ = 0;
-   }
-
-   template<int D>
-   double LrAmCompressor<D>::computeDebye(double x)
-   {
-      if (x == 0){
-         return 1.0;
-      } else {
-         return 2.0 * (std::exp(-x) - 1.0 + x) / (x * x);
-      }
-   }
-
-   template<int D>
-   double LrAmCompressor<D>::computeIntraCorrelation(double qSquare)
-   {
-      const int np = system().mixture().nPolymer();
-      const double vMonomer = system().mixture().vMonomer();
-      // Overall intramolecular correlation
-      double omega = 0;
-      int monomerId; int nBlock;
-      double kuhn; double length; double g; double rg2;
-      Polymer<D> const * polymerPtr;
-
-      for (int i = 0; i < np; i++){
-         polymerPtr = &system().mixture().polymer(i);
-         nBlock = polymerPtr->nBlock();
-         for (int j = 0; j < nBlock; j++) {
-            monomerId = polymerPtr-> block(j).monomerId();
-            kuhn = system().mixture().monomer(monomerId).kuhn();
-            // Get the length (number of monomers) in this block.
-            length = polymerPtr-> block(j).length();
-            rg2 = length * kuhn* kuhn /6.0;
-            g = computeDebye(qSquare*rg2);
-            omega += length * g/ vMonomer;
-         }
-      }
-      return omega;
-   }
-
-   template<int D>
-   void LrAmCompressor<D>::computeIntraCorrelation()
-   {
-      MeshIterator<D> iter;
-      iter.setDimensions(kMeshDimensions_);
-      IntVec<D> G, Gmin;
-      double Gsq;
-      for (iter.begin(); !iter.atEnd(); ++iter) {
-         G = iter.position();
-         Gmin = shiftToMinimum(G, system().mesh().dimensions(),
-                                  system().unitCell());
-         Gsq = system().unitCell().ksq(Gmin);
-         intraCorrelation_[iter.rank()] = computeIntraCorrelation(Gsq);
-      }
    }
 
    template<int D>

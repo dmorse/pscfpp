@@ -190,22 +190,7 @@ namespace Rpc
       * Outputs relevant system details to the iteration log.
       */
       void outputToLog();
-
-      /**
-      * Compute Debye function
-      */
-      double computeDebye(double x);
-
-      /**
-      * Compute intramolecular correlation at specific sqSquare
-      */
-      double computeIntraCorrelation(double qSquare);
-
-      /**
-      * Compute intramolecular correlation
-      */
-      void computeIntraCorrelation();
-
+      
       // Private inherited members
       using Compressor<D>::system;
 
