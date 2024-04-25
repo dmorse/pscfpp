@@ -6,6 +6,7 @@ include $(SRC_DIR)/rpc/solvers/sources.mk
 include $(SRC_DIR)/rpc/iterator/sources.mk
 include $(SRC_DIR)/rpc/sweep/sources.mk
 include $(SRC_DIR)/rpc/simulate/sources.mk
+include $(SRC_DIR)/rpc/intra/sources.mk
 
 # List of source files in src/rpc
 rpc_= \
@@ -14,6 +15,7 @@ rpc_= \
   $(rpc_iterator_) \
   $(rpc_sweep_) \
   $(rpc_simulate_) \
+  $(rpc_intra_) \
   rpc/System.cpp 
 
 # List of object file targets

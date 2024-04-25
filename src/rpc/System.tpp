@@ -13,6 +13,7 @@
 #include <rpc/simulate/Simulator.h>
 #include <rpc/simulate/SimulatorFactory.h>
 #include <rpc/simulate/compressor/Compressor.h>
+#include <rpc/intra/IntraCorrelation.h>
 #include <rpc/sweep/Sweep.h>
 #include <rpc/sweep/SweepFactory.h>
 #include <rpc/iterator/Iterator.h>
@@ -60,6 +61,7 @@ namespace Rpc {
       sweepFactoryPtr_(0),
       simulatorPtr_(0),
       simulatorFactoryPtr_(0),
+      intraCorrelationPtr_(0),
       w_(),
       c_(),
       h_(),
@@ -84,6 +86,7 @@ namespace Rpc {
       iteratorFactoryPtr_ = new IteratorFactory<D>(*this);
       sweepFactoryPtr_ = new SweepFactory<D>(*this);
       simulatorFactoryPtr_ = new SimulatorFactory<D>(*this);
+      intraCorrelationPtr_ = new IntraCorrelation<D>(*this);
       BracketPolicy::set(BracketPolicy::Optional);
    }
 
@@ -113,6 +116,9 @@ namespace Rpc {
       }
       if (simulatorFactoryPtr_) {
          delete simulatorFactoryPtr_;
+      }
+      if (intraCorrelationPtr_) {
+         delete intraCorrelationPtr_;
       }
    }
 

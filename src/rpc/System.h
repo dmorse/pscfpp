@@ -43,6 +43,7 @@ namespace Rpc {
    template <int D> class SweepFactory;
    template <int D> class Simulator;
    template <int D> class SimulatorFactory;
+   template <int D> class IntraCorrelation;
 
    using namespace Util;
    using namespace Prdc;
@@ -751,6 +752,11 @@ namespace Rpc {
       * Get Interaction (excess free energy model) by const reference.
       */
       Interaction const & interaction() const;
+      
+      /**
+      * Get the IntraCorrelation (homopolymer) by reference.
+      */
+      IntraCorrelation<D>& intraCorrelation();
 
       /**
       * Get Domain by non-const reference.
@@ -933,6 +939,11 @@ namespace Rpc {
       * Pointer to Simulator factory object
       */
       SimulatorFactory<D>* simulatorFactoryPtr_;
+      
+      /**
+      * Pointer to the IntraCorrelation (homopolymer)
+      */
+      IntraCorrelation<D>* intraCorrelationPtr_;
 
       /**
       * Chemical potential fields.
@@ -1185,6 +1196,13 @@ namespace Rpc {
    {
       UTIL_ASSERT(interactionPtr_);
       return *interactionPtr_;
+   }
+   
+   // Get the intraCorrelation (homopolymer) by non-const reference.
+   template <int D>
+   inline IntraCorrelation<D>& System<D>::intraCorrelation()
+   { 
+      return *intraCorrelationPtr_; 
    }
 
    // Get the Iterator.
