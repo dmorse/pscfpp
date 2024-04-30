@@ -10,37 +10,43 @@ or \*.cu to a list of files that the build system should compile. This
 list is maintained in a file named "sources.mk" in the directory that 
 contains the new source file. 
 
-\section developer_list_sources sources.mk files
+\section developer_list_sources Source and object file lists
 
 Almost every subdirectory of the  src/ directory tree contain a file 
 named "sources.mk". This file is a makefile fragment that is included 
-into other makefiles. Each such file defines a makefile variable whose 
-value is a list of the source files in that directory and all of its
-subdirectories that should be compiled when the PSCF is built. 
+into other makefile fragments and makefiles. Each such sources.mk file 
+defines a makefile variable whose value is a list of the source files 
+in that directory and all of its subdirectories that should be compiled 
+when the PSCF is built. 
 
 The name of the makefile variable that contains this list of source
 files is always a string of the form [directory]_, where "[directory]" 
 represents a mangled form of the name of the subdirectory containing 
-the source.mk file.  Specifically, the [directory] string in this 
-variable name is constructed by taking the relative path from the 
-src/ directory to the subdirectory of interest and replacing each 
-"/" directory separator in this path an underscore ("_").  Every 
-sources.mk file also defines a second makefile variable with a name 
-of the form [directory]_OBJS that contains a corresponding list of 
-paths to the \*.o object files (extension *.o) that should be created 
-by compiling the listed source files. 
+the source.mk file.  Specifically, the [directory] string in each 
+such variable name is constructed by taking the relative path from 
+the src/ directory to the subdirectory of interest and replacing 
+each "/" directory separator in this path an underscore ("_"). 
+As an example that is discussed in more detail below, the file 
+src/pscf/chem/sources.mk defines a variable of this kind named 
+pscf_chem_.
+
+Every sources.mk file also defines a second makefile variable with a 
+name of the form [directory]_OBJS that contains a corresponding list 
+of paths to the \*.o object files (extension *.o) that should be 
+created by compiling the listed source files. For example, the file
+src/pscf/chem/sources.mk thus a defines a variable pscf_chem_OBJS.
 
 In what follows, we refer to the [directory]_ variable in each such 
-file that expands to a list of source file names as a source file 
-list, and the variable that expands to a list of corresponding object 
-files as an object file list.  Paths to files in the source file 
-list are always given as relative paths, defined relative to the 
-src/ directory. File paths in the object file lists are instead
-always given as absolute paths. The source file list is created 
-automatically from the source file list by applying some simple 
-text processing operations, as described below.
+file as a source file list, and the [directory]_OBJS variable as an 
+object file list.  Paths to files in each source file list are always
+given as relative paths, defined relative to the PSCF src/ directory. 
+File paths in the object file lists are instead always given as 
+absolute paths to locations in which object files should be placed
+within the build directory. The object file list is created 
+automatically by applying some simple text manipulation operations 
+to the source file list, as shown in the examples discussed below.
 
-\section make_example1 Example (a directory with no subdirectories)
+\section make_example1 Example - a directory with no subdirectories
 
 The simplest type of sources.mk files occur in directories that do
 not contain any subdirectories.  As an example of this case, the 
@@ -58,41 +64,45 @@ pscf_chem_OBJS=\
      $(addprefix $(BLD_DIR)/, $(pscf_chem_:.cpp=.o))
 
 \endcode
-In this file, we have used the makefile syntax in which a
-backslash (\\) character continues a statement on the next 
-line. In this example, values are assigned to two variables
-named pscf_chem_ (the source file list) and pscf_chem_OBJS
-(the object file list).
+The definition of pscf_chem_ in this example uses a makefile syntax
+syntax in which a backslash (\\) character is used to continue a 
+statement to the next line. Lines 2 - 7 of this example thus assign
+the variable pscf_chem a list of file names separated by spaces. 
 
 The value assigned pscf_chem_ in this example is a list of all of 
 the C++ source files in the relevant subdirectory, src/pscf/chem.
-All path strings for these files are given as relative paths, 
-relative to the src/ directory. All of these files are C++ source
-files with names that end with file extension *.cpp. Source files
-that contain CUDA code would instead have names that end in file
-extension *.cu. 
+Note that all paths in this definition are given as relative paths, 
+defined relative to the src/ directory. All of these files are C++ 
+source files with names that end with file extension .cpp. CUDA
+C++ source files with file extension .cu can also be included in
+source file lists. Source file lists should not, however, contain
+any *.h header files or *.tpp template implementation files. 
 
-The value that is assigned to the variable $pscf_chem_OBJS is a
-corresponding list of paths to object files, with extension *.o.
-The value of this object file list variable is constructed 
-automatically by using standard makefile functions and operators
-to modify the value of pscf_chem_:  The ":" operator is used to 
-replace the .cpp extension with .o in each of the file names in 
-pscf_chem_, and the "addprefix" function is used to add the 
-absolute path to the build directory as a common prefix. The
-absolute path to the build directory is given throughout the
-build system by the value of a variable BLD_DIR. 
+The value that is assigned to the object file list variable 
+pscf_chem_OBJS is a corresponding list of paths to object files, 
+with extension *.o.  The value of this object file list variable 
+is constructed in the last two lines of this example by applying
+two makefile text manipulation functions to the value of the 
+source file list pscf_chem_. First, the ":" operator is used in
+the expression $(pscf_chem_:.cpp=.o) to replace the .cpp 
+extension with .o in each of the file names in pscf_chem_. The 
+"addprefix" function is the used to add the absolute path to 
+the build directory as a common prefix. The result is a list of 
+absolute paths to the locations of the *.o object files that 
+should be created by compiling the files in the source file list. 
 
-\section devel_list_example2 Example (a directory with subdirectories)
+\section devel_list_example2 Example - a directory with subdirectories
 
 We now consider the structure of a sources.mk file for a subdirectory
-of src/ that contains one or more enclosed subdirectories that 
-contain source files. In this case, the value of the source file
-list variable is a list of paths for all of the source files in 
-that directory and all of its subdirectories. This list is created 
-by concatenating corresponding lists defined in the source.mk files 
-of subdirectories, and then appending any additional source files 
-that are defined in the parent directory.
+of src/ that contains one or more enclosed  subdirectories with
+source files. In this case, the value of the source file list 
+variable [directory]_ is a list of paths for all of the source files 
+in the directory tree rooted at the file that contains the source.mk 
+file, including source files in all of its subdirectories. 
+This list is created by concatenating source file lists defined in 
+the source.mk files of subdirectories, and then appending any 
+additional source files that are defined in the root directory of
+this tree.
 
 As an example, here is the relevant part of the file src/r1d/sources.mk
 in the namespace level directory src/r1d:
@@ -116,19 +126,27 @@ r1d_OBJS=\
      $(addprefix $(BLD_DIR)/, $(r1d_:.cpp=.o))
 
 \endcode
-The first segment of this file is a set of include statements that 
-includes the sources.mk files from all relevant subdirectories of 
-src/r1d. The first several lines of the statement that assigns a
-value to the source file list variable r1d_ then simply concatenates 
-the corresponding source file lists for these enclosed subdirectories, 
-each of which is defined in the sources.mk file in that subdirectory. 
-This is followed in this list by explicit paths for two source files 
+The first segment of this file is a set of 5 include directives that 
+instruct make to include the contains of the sources.mk files from 
+all relevant subdirectories of src/r1d. The make "include" directive 
+is analogous to the C/C++ \#include preprocessor command, and simply 
+instructs make to paste the contents of another file into the 
+current file, verbatim, before parsing the current file. 
+
+The next section of this file assigns a value to the source file list 
+variable r1d_. The first several lines of the value assigned to r1d_ 
+is simple a concatentation of the corresponding source file lists for 
+the enclosed subdirectories. Each of the source file list variables
+for a subdirectory is defined in the sources.mk file in that 
+subdirectory, each of which has been included into this file. The
+last two lines of this assignment list two additional source files 
 (System.cpp and SystemAccess.cpp) that are located in the r1d parent 
-directory rather than one of its subdirectories. The statement that 
-defines r1d_OBJS creates a corresponding list of object files by 
-processing the source file list, using the same text processing 
-operations as those used in the simpler example given above for a
-directory with no subdirectories.
+directory rather than one of its subdirectories. 
+
+The statement that defines r1d_OBJS creates a corresponding object
+file list by processing the source file list, using the same text 
+processing operations as those used in the simpler example given 
+above for an directory with no subdirectories.
 
 <BR>
 \ref developer_directory_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp;

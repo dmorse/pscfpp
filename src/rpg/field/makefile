@@ -8,15 +8,12 @@ include $(SRC_DIR)/rpg/include.mk
 #--------------------------------------------------------------------
 # Main targets 
 
-.PHONY= all clean includes
-
 all: $(rpg_field_OBJS) 
 
 clean:
 	rm -f $(rpg_field_OBJS) $(rpg_field_OBJS:.o=.d) 
 
-includes:
-	echo $(INCLUDES)
+.PHONY: all clean
 
 #--------------------------------------------------------------------
 # Include dependency files

@@ -1,6 +1,8 @@
 # ==============================================================================
 .PHONY: all html latex clean clean-latex clean-html
 
+all:    html
+
 html:    
 	doxygen Doxyfile_html
 

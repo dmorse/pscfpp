@@ -2,8 +2,8 @@
 # src/rpc/makefile
 #
 # The repository copy of this namespace level makefile is in the src/rpc
-# directory. This is copied verbatim by the setup script to create the 
-# copy in the bld/rpc directory.
+# directory. This is copied verbatim by the configure script to create 
+# the identical copy in the bld/rpc directory.
 #------------------------------------------------------------------------
 # Include makefile fragments
 
@@ -12,7 +12,7 @@ include $(BLD_DIR_REL)/config.mk
 include $(SRC_DIR)/rpc/include.mk
 
 #-----------------------------------------------------------------------
-# Main pscf_pc program files
+# Paths to pscf_pc program files
 
 # Base path to *.o and *.d files for pscf_pc
 PSCF_PC=$(BLD_DIR)/rpc/pscf_pc
@@ -22,8 +22,6 @@ PSCF_PC_EXE=$(BIN_DIR)/pscf_pc
 
 #-----------------------------------------------------------------------
 # Main targets 
-
-.PHONY: all clean veryclean
 
 all: $(rpc_OBJS) $(rpc_LIB) $(PSCF_PC_EXE)
 
@@ -37,19 +35,20 @@ clean:
 
 veryclean:
 	$(MAKE) clean
-	-rm -f lib*.a
 
-# Target for main pscf_pc executable 
+# Rule for pscf_pc executable file
 $(PSCF_PC_EXE): $(PSCF_PC).o $(PSCF_LIBS)
 	$(CXX) $(LDFLAGS) -o $(PSCF_PC_EXE) $(PSCF_PC).o $(LIBS)
 
-# Note: In the target for pcsf_pc, we include the list $(PSCF_LIBS) of 
+# Note: In the rule for pcsf_pc, we include the list $(PSCF_LIBS) of 
 # PSCF static libraries as dependencies, but link to the list $(LIBS) 
 # of all libraries, which includes relevant external libraries.
 
-# Short name for executable target (for convenience)
+# Short phony target for executable file (for convenience)
 pscf_pc:
 	$(MAKE) $(PSCF_PC_EXE)
+
+.PHONY: all clean veryclean pscf_pc
 
 #-----------------------------------------------------------------------
 # Include dependency files

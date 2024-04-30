@@ -3,175 +3,176 @@
 \ref developer_list_page  (Next)
 <BR>
 
-This page provides an introduction to the directory structure of the 
-PSCF repository for developers and a brief introduction to the build
-system. Various aspects of the PSCF build system is discussed in greater
+This page provides an introduction to the directory structure of the
+PSCF repository aimed at developers, as well as very brief introduction
+to the build system. The PSCF build system is discussed in greater
 detail in following pages.
 
-\section developer_directory_summary_sec PSCF Root Directory 
+\section developer_directory_summary_sec PSCF root directory
 
-A user's local copy of the PSCF repository is normally created by 
-\ref source_getcode_sec "cloning project dmorse/pscfpp" from 
-github.com, while using the --recursive option to load the contents of 
-two other github repositories into subdirectories as 
-\ref source_submodules_sec "git submodules". By default, this creates 
-a directory named pscfpp/ as a subdirectory of the directory from which 
-the git clone command was issued. In what follows, we refer to the 
-resulting directory, which contains the contents of the entire PSCF 
-repository and its submodules, as the PSCF root directory.  
+A user's local copy of the PSCF repository is normally created by
+\ref source_getcode_sec "cloning project dmorse/pscfpp" from
+github.com, while using the --recursive option to load the contents 
+of two other github repositories into subdirectories as
+\ref source_submodules_sec "git submodules". By default, this creates
+a directory named pscfpp as a subdirectory of the directory from which
+the git clone command was issued. In what follows, we refer to the
+resulting directory, which contains the contents of the entire PSCF
+repository and its submodules, as the PSCF root directory.
 
-The PSCF root directory can be renamed or moved by the user after it is 
-created. If a user does so, however, they must then run or rerun the 
-\ref install_configure_page "configure" script in order to allow this 
-script to assign new values for some makefile variables that contains 
-absolute paths to the PSCF root directory and some of its subdirectories, 
+The PSCF root directory can be renamed or moved by the user after it is
+created. If a user does so, however, they must then run or rerun the
+\ref install_configure_page "configure" script in order to allow this
+script to assign new values for some makefile variables that contains
+absolute paths to the PSCF root directory and some of its subdirectories,
 as discussed \ref developer_directory_dirvars_sec "below".
 
-The names and purposes of all of the top-level subdirectories of the PSCF 
-root directory are given briefly below:
+The names and purposes of all of the top-level subdirectories of the 
+PSCF root directory are given briefly below:
 
 <table>
-<tr> 
-   <th> Directory </th> 
-   <th> Purpose </th> 
+<tr>
+   <th> Directory </th>
+   <th> Purpose </th>
 </tr>
-<tr> 
-   <td> src/ </td> 
-   <td>  Contains all C++ and CUDA C++ files </td>
+<tr>
+   <td> src </td>
+   <td>  Contains all C++ and CUDA C++ source code </td>
 </tr>
-<tr> 
-   <td> bld/ </td>
-   <td> Build directory for intermediate files, for out-of-source 
-        builds </td>
+<tr>
+   <td> bld </td>
+   <td> Build directory for out-of-source builds </td>
 </tr>
-<tr> 
-   <td> bin/ </td>
-   <td> Default location for executable files </td>
+<tr>
+   <td> bin </td>
+   <td> Default installation location for executable files </td>
 </tr>
-<tr> 
-  <td> lib/  </td>
-  <td> Source files for interpreted languages (python and bash) </td>
+<tr>
+  <td> lib  </td>
+  <td> Source code for interpreted languages (python and bash) </td>
 </tr>
-<tr> 
-  <td> docs/ </td>
+<tr>
+  <td> docs </td>
   <td> Documentation, including source pages for web manual </td>
 </tr>
-<tr> 
-  <td> examples/ </td>
+<tr>
+  <td> examples </td>
   <td> Examples input files for a variety of calculations types </td>
 </tr>
-<tr> 
-  <td> data/ </td>
-  <td> Read-only data, including lists of space group symmetry elements </td>
+<tr>
+  <td> data </td>
+  <td> Read-only data, such as lists of space group symmetry elements </td>
 </tr>
-<tr> 
-  <td> make/ </td>
-  <td> Files used or copied by configure script </td>
+<tr>
+  <td> make </td>
+  <td> Files copied to otherwise used by the "configure" script </td>
 </tr>
 </table>
 
-The three most important top-level subdirectories are the first three 
-listed above: src/, bld/ and bin/.
+The three most important top-level subdirectories are the first three
+listed above: src, bld and bin.
 
-In what follows, we describe file name patterns and standard file extension 
-using the * (asterisk) symbol to represent a wildcard that can represent 
-any string of characters.  For example, the pattern *.h can represent 
-any file name that ends in extension .h, which is a standard file name 
-extension for C++ header files. We sometimes refer to file names that 
-match this pattern either as, for example, "*.h files".
+In what follows, we describe file name patterns and standard file
+extension using the * (asterisk) symbol to represent a wildcard that can
+represent any string of characters.  For example, the pattern *.h can
+represent any file name that ends in extension .h, which is a standard
+file name extension for C++ header files. We sometimes refer to file
+names that match such a pattern either as, for example, "*.h files".
 
-\section developer_directory_blddir_sec Overview of Build Process 
+\section developer_directory_blddir_sec Overview of build process
 
-PSCF is compiled by the user using a system of unix makefiles. 
+PSCF is compiled by the user using a system of unix makefiles.
 Compilation and installation of the package involves the following steps:
-  
-  - Compiling all source files in the src/ directory
 
-  - Collecting of assembly code into several static libraries 
+  - Compiling all source files in the src directory
 
-  - Compiling and linking several main programs to create corresponding
-    executable files (pscf_1d, pscf_pc, and pscf_pg)
+  - Collecting the resulting assembly code into several static library files
 
-  - Installation of executable files in the bin/ directory
+  - Creating executable files (pscf_1d, pscf_pc, and pscf_pg)
 
 Several aspects of this process are described in more detail below.
 
-All C++ and CUDA C++ source files for PSCF are located in the src/ 
-directory tree. When a source file in this directory is compiled, the 
-build system creates two associated files that we refer to as an object 
-file and a dependency file.  An object file is a file with a name of the 
-form *.o (file extension .o) that contains assembly code created by 
-compiling an associated source file.  A dependency file is a makefile 
-fragment with file name of the form *.d (file extension .d) that contains 
-a makefile rule that lists all the the dependencies of the associated 
-source file, which contains all of the header files that are included 
-by the associated source file. 
+All C++ and CUDA C++ source files for PSCF are located in the src
+directory tree. When a source file in this directory is compiled, the
+build system creates two associated files that we refer to as an object
+file and a dependency file.  
 
-The PSCF build system also creates several static libraries with file 
-names of the form lib*.a. Each such library contains the assembly code 
-created by compiling all of the source files in one top-level 
-subdirectory of the src/ directory.
+  - An object file is a file with file name extension .o that contains 
+    the assembly code created by compiling an associated source file.  
+
+  - A dependency file is a makefile fragment with file name extension .d 
+    that contains a makefile rule that lists all the the pre-requisites 
+    of the associated source file.
+
+The object and dependency file that are created by compiling a source
+file have the same base file name as the associated source file.
+
+The PSCF build system also creates several static libraries with file
+names of the form lib*.a. Each such library contains all of the
+assembly code created by compiling the source files in one top-level
+subdirectory of the src directory.
 
 The object, dependency and library files that are created during the
 build process are referred to in what follows as "intermediate" files.
-The directory in which all such intermediate files are placed is 
+The directory in which all such intermediate files are placed is
 referred to as the build directory.
 
-The PSCF makefile system is designed to allow the user to perform either 
-an "out-of-source" build or an "in-source" build. In an "out-of-source" 
-build, all intermediate files created during compilation are placed in 
-a build directory that is distinct from the src/ directory.  By default, 
-PSCF uses the bld/ subdirectory of the PSCF root directory as the build 
-directory for this purpose.  In an "in-source" build, these intermediate 
-files are instead placed within the src/ directory, alongside the source 
-files from which they were created. 
+The PSCF makefile system is designed to allow a user to perform either
+an "out-of-source" build or an "in-source" build. In an "out-of-source"
+build, all intermediate files created during compilation are placed in
+a build directory that is distinct from the src directory.  By default,
+PSCF uses the bld subdirectory of the PSCF root directory as the build
+directory for this purpose.  In an "in-source" build, these intermediate
+files are instead placed within the src directory, alongside the source
+files from which they were created.
 
-During an in-source build, the PSCF build system places the *.o object 
+During an in-source build, the PSCF build system places the *.o object
 file and the *.d dependency file that are created by compiling one
-source file in the same subdirectory of src/ as the associated source 
-file. These two intermediate files are also given the same base name as 
-that of the associated source file, with different file name extensions. 
-During an out-of-source build, these two files are instead placed in an 
-analogous subdirectory of the bld/ directory tree. To make this convention 
-possible, the bld/ directory must have an internal directory structure 
-exactly analogous to that of the src/ directory. 
+source file in the same subdirectory of src as the associated source
+file.  During an out-of-source build, these two files are instead placed 
+in an analogous subdirectory of the bld directory tree. To make this 
+convention possible, the bld directory must have an internal directory 
+structure exactly analogous to that of the src directory.
 
-PSCF is generally built by involing the "make" command from an
-appropriate location.  The choice between in-source and out-of-source 
-builds is determined by the working directory from which a user invokes 
-the "make" command: Invoking "make" from within the src/ directory 
-causes the code to be built in-source. Invoking "make" from within 
-either the PSCF root directory or from the bld/ directory causes the 
-code to be built out-of-source in the bld/ directory.
+PSCF is built by invoking the "make" command.  The choice between 
+in-source and out-of-source compilation is determined by the working 
+directory from which a user invokes "make":
+Invoking "make" from either the PSCF root directory or from the bld
+directory causes make to perform an out-of-source build in which
+intermediate files are placed in the the bld directory.  Invoking "make"
+from the src directory instead causes make to be built in-source.
 
-\section developer_directory_src_sec Source File Directory
+\section developer_directory_src_sec Source file (src) directory
 
-The src/ directory contains all of the C++ source code files for PSCF. 
-The structure of subdirectories of src/ reflects the organization of
-entities defined in this source code into several C++ namespaces. 
+The src directory contains all of the C++ source code files for PSCF.
+The structure of subdirectories of src reflects the organization of
+entities defined in the source code (i.e., classes and functions) into
+several C++ namespaces.
 
-\subsection developer_directory_src_namespaces_sub Namespaces and Subdirectories
+* **C++ namespaces:**
 
-The source code for PSCF is divided among two top-level C++ namespaces, 
-named Util and Pscf. 
+The source code for PSCF is divided among two top-level C++ namespaces,
+named Util and Pscf.
 
-The Util namespace contains a collection of general utilities for 
+The Util namespace contains a collection of general utilities for
 scientific computation that are also used by projects other than PSCF.
 The code is maintained in a separate github repository (project
- dmorse/util) and imported into the pscfpp repository as a git submodule. 
-All source code files for entities that are defined in the Util namespace 
-are located in the src/util directory. 
+dmorse/util) and imported into the pscfpp repository as a git submodule.
+All source code files for entities that are defined in the Util namespace
+are located in the src/util directory.
 
-The Pscf namespace contains all of source code files that are 
-contained in the dmorse/pscfpp github repository, all of which are 
-specific to the PSCF package.  The Pscf namespace contains several 
-enclosed sub-namespaces. All source code for each such enclosed 
-namespace is located within a specific subdirectory of the src/ 
+The Pscf namespace contains all of source code files that are
+contained in the dmorse/pscfpp github repository, all of which are
+specific to the PSCF package.  The Pscf namespace contains several
+enclosed sub-namespaces. All source code for each such enclosed
+namespace is located within a specific subdirectory of the src
 directory, as discussed below.
 
-The src/ directory contains six subdirectories that each contain code 
-defined in a specific C++ namespace.  These six directories will be 
-referred to in what follows as "namespace" level subdirectories of src/.  
+* **Namespace-level directories:**
+
+The src directory contains six subdirectories that each contain code
+defined in a specific C++ namespace.  These six directories will be
+referred to in what follows as "namespace" level subdirectories of src.
 These six namespace-level subdirectories are listed below:
 
 <table>
@@ -181,167 +182,240 @@ These six namespace-level subdirectories are listed below:
   <th>Purpose</th>
 </tr>
 <tr>
-  <td> src/util/ </td>
+  <td> util </td>
   <td> Util </td>
   <td> General utilities </td>
 </tr>
 <tr>
-  <td> src/pscf/ </td>
+  <td> pscf </td>
   <td> Pscf </td>
   <td> Code defined directly in Pscf, used by all PSCF programs </td>
 </tr>
 <tr>
-  <td> src/prdc/ </td>
+  <td> prdc </td>
   <td> Pscf::Prdc </td>
   <td> Code for periodic structures, used by pscf_pc and pscf_pg programs </td>
 </tr>
 <tr>
-  <td> src/r1d/ </td>
+  <td> r1d </td>
   <td> Pscf::R1d </td>
   <td> Code used only by the pscf_1d program </td>
 </tr>
 <tr>
-  <td> src/rpc/ </td>
+  <td> rpc </td>
   <td> Pscf::Rpc </td>
   <td> Code used only by the pscf_pc CPU program for periodic structures </td>
 </tr>
 <tr>
-  <td> src/rpg/ </td>
+  <td> rpg </td>
   <td> Pscf::Rpg </td>
   <td> Code used only by the pscf_pg GPU program for periodic structures </td>
 </tr>
 </table>
-The src/pscf/ directory contains all of the C++ and CUDA C++ files that 
-contain code for of class and functions that are defined directly in the 
-Pscf namespace, rather than in one of the enclosed sub namespaces of 
+The src/pscf directory contains all of the C++ and CUDA C++ files that
+contain code for of class and functions that are defined directly in the
+Pscf namespace, rather than in one of the enclosed sub namespaces of
 PSCF. The src/prdc, src/r1d, src/rpc, and src/rpg instead each contain
 code for entities that are defined in a specific sub-namespace of Pscf.
 
-The PSCF makefile system constructs a static library in each of these 
-namespace level directories, which is a file with a name of the form
-lib*.a. The src/r1d, src/rpc, and src/rpg directories each also contain 
-source code for a main program (pscf_1d, pscf_pc or pscf_pg) that is 
-installed in the bin/ directory.
+The PSCF makefile system constructs a static library in each of these
+namespace level directories. Each static library file is a file with a
+name of the form lib[namespace].a, where [namespace] represents the
+name of the relevant static library. For example, the build system
+creates a library file named libprdc.a in the src/prdc directory.
 
-In addition to these namespace level subdirectories, the src/ directory 
-has one more subdirectory named test/ that contains header files for a
-C++ unit test framework, as discussed below.
+The r1d, rpc and rpg subdirectories of src each contain code is only used 
+in a single executable program. Specifically r1d contains code that is
+only used by pscf_1d, rpc contains all code that only used by pscf_pc,
+and rpg contains code that only used by pscf_pg.  Each of these three 
+directories also contains a source code file that defines the main 
+function for the associated program, which we refer to as a main 
+program file.  The directories util, pscf and prdc do not contain 
+any main program files, and instead all contain code for classes and 
+functions that can be used in more than program. 
 
-\subsection developer_directory_src_tests_sec Unit Test Directories
+PSCF imposes a set of rules for dependencies among the various namespace
+level directories. A namespace level directory named A is said to depend 
+on another such directory named B if C++ files in directory A are allowed
+to use entities (i.e., classes, class templates or functions) that are 
+defined by files in directory B.  The following table lists the directories
+that each of the namespace level directories depend upon in this sense:
+<table>
+<tr>
+  <th>Subdirectory</th>
+  <th>Dependencies </th>
+</tr>
+<tr>
+  <td> util </td>
+  <td> (None) </td>
+</tr>
+<tr>
+  <td> pscf </td>
+  <td> util </td>
+</tr>
+<tr>
+  <td> prdc </td>
+  <td> pscf, util </td>
+</tr>
+<tr>
+  <td> r1d </td>
+  <td> pscf, util </td>
+</tr>
+<tr>
+  <td> rpc </td>
+  <td> prdc, pscf, util </td>
+</tr>
+<tr>
+  <td> rpg </td>
+  <td> prdc, pscf, util </td>
+</tr>
+</table>
+Every directory other than util depends on util, and every directory
+other than util and pscf depends on util and pscf. These two directories
+thus provide code that used through PSCF code. The prdc directory 
+contains code that is only needed in the pscf_pc and pscf_pg programs
+for systems with periodic boundary conditions, and so is listed as a
+dependency of associated directories rpc and rpg.
 
-Each of the six namespace level sub-directories of the src/ directory
-contains a subdirectory named tests/ that contains unit tests for 
-classes and fucntions defined in the associated namespace. These unit 
-tests are not automatically compiled or run by the build system that 
-builds the main PSCF executable programs.  All of the tests associated 
-with a given namespace level directory can be compiled and run by 
-changing directory to the corresponding tests/ subdirectory within 
-the relevant build directory (i.e.,, within the bld/ directory for 
-an out-of source build, or within src/ for an in-source-build) and 
-entering "make run" from within that directory. 
+* **Unit test directories:**
 
-Source code for the unit testing framework used in all of these unit
-tests is located in the src/test directory. This is a header-only C++ 
-framework in which all classes are defined outside of any namespace. 
-This unit test framework is maintained on github in a separate 
-repository (dmorse/test) and is imported into PSCF as a submodule.
+In addition to these namespace level subdirectories, the src directory
+has one additional top-level subdirectory named "test" that contains files 
+that define a C++ unit test framework. This framework is defined using 
+only header (*.h) files, and thus does not need to be compiled or linked.
+The unit test framework used by PSCF is maintained on github in a
+separate repository (dmorse/test) and is imported into the src/test
+directory of a user's PSCF repository as a submodule.
 
-\subsection developer_directory_sourcetypes_sub Source Code File Types
+Each of the six namespace level subdirectories of the src directory 
+also contains a subdirectory named "tests" that contains unit tests for
+classes and functions defined in the associated namespace. These unit
+tests are not automatically compiled or run by the commands that build
+the PSCF executable programs. 
 
-All C++ files associated with a given class or set of functions are 
+All of the PSCF unit tests can be run by changing directory to the
+desired build directory (src or bld/) and entering the command
+\code
+make test
+\endcode
+All of the tests associated with a single namespace level directory
+can be compiled and run by changing directory to the corresponding
+tests subdirectory within that namespace directory in the relevant 
+build directory (i.e., within a namespace level subdirectory of the 
+bld directory for an out-of source build, or within a namespace level 
+subdirectory of src for an in-source-build) and entering 
+\code
+make run
+\endcode
+from within that subdirectory.
+
+* **Source code file types:**
+
+All C++ files associated with a given class or set of functions are
 placed in the same directory and have the same base name.  The name
-of a file that contains C++ code for a specific class or class 
-template has a base name that is same as the class name, followed by 
-an extension to indicate file type.  All class names and corresponding 
-file names are upper space camel (such as Pscf::Monomer).
+of a file that contains C++ code for a specific class or class
+template has a base name that is same as the class name, and has a
+file name extension that indicates the file type.  All class names
+are upper space camel (such as Pscf::Monomer).
 
-PSCF uses the following file name patterns and file extensions for C++ 
+PSCF uses the following file name patterns and file extensions for C++
 and CUDA C++ files:
 
 <table>
-   <tr> 
+   <tr>
      <th> Pattern </th>
      <th> Purpose </th>
-   </tr> 
-   <tr> 
+   </tr>
+   <tr>
      <td> *.h </td>
      <td> C++ header file </td>
-   </tr> 
-   <tr> 
+   </tr>
+   <tr>
      <td> *.tpp </td>
      <td> implementation of a class template </td>
-   </tr> 
-   <tr> 
+   </tr>
+   <tr>
      <td> *.cpp </td>
      <td> compilable C++ source file </td>
-   </tr> 
-   <tr> 
+   </tr>
+   <tr>
      <td> *.cu </td>
      <td> compilable CUDA C++ source file </td>
-   </tr> 
+   </tr>
 </table>
-Header files, with extension .h, may be included into other C++ files. 
-C++ and CUDA C++ source files, with extension .cpp or .cu, are compiled,
-and should never be included by other files. Template implementation 
-files, with extension .tpp, are included into either an associated 
-header file or and associated source file with the same base name
-(as discussed developer_template_page "here"), and should not be 
-directly included by other files.
+Header files, with extension .h, may be included into other C++ files
+using a C/C++ \#include directive.  C++ and CUDA C++ source files, with
+extension .cpp or .cu, are compiled, and may never be included by other
+program files. Template implementation files, with extension .tpp, are
+generally included into either an associated *.h header file or an
+associated *.cpp or *.cu source file with the same base name (as
+discussed in more detail developer_template_page "here"), and may not
+be directly included by other files.
 
-Compilable source files that contain or include only standard C++ code 
-should be given file extension .cpp. Compilable files that include any
-CUDA C++ code must instead use file extension .cu. Different makefile 
-pattern rules are used to compile files with name extension .cpp and 
-.cu, using different compilers, with the NVIDIA nvcc compiler being 
-used to compile *.cu files. 
+Compilable source files that contain or include only standard C++ code
+should be given file extension .cpp. Compilable source files that
+contain or include any CUDA C++ code must instead use file extension
+.cu. Different makefile pattern rules are used to compile files with
+filename extension .cpp and .cu, using different compilers, using the
+NVIDIA nvcc compiler to compile files with file extension .cu.
 
-\subsection developer_directory_othertypes_sub  Other File Types
+* **Build system and documentation files types:**
 
-The following table explains the purposes of several other types of file 
-that are the user will see in the src/ directory after running the 
-configure script. 
+The following table explains the purposes of several other types of
+file that are the user will see in the src directory after running
+the configure script.
 <table>
-   <tr> 
+   <tr>
      <th> Pattern </th>
      <th> Purpose </th>
-   </tr> 
-   <tr> 
+   </tr>
+   <tr>
      <td> makefile </td>
      <td> makefile (instructions for the make command)</td>
-   </tr> 
-   <tr> 
+   </tr>
+   <tr>
      <td> *.mk </td>
      <td> makefile fragment (included by other makefiles)</td>
-   </tr> 
-   <tr> 
+   </tr>
+   <tr>
      <td> *.dox </td>
      <td> doxygen documentation file (manual page) </td>
-   </tr> 
-   <tr> 
+   </tr>
+   <tr>
      <td> *.mod </td>
      <td> doxygen documentation file (topic module) </td>
-   </tr> 
+   </tr>
 </table>
-Compilation also creates multiple object (*.o), dependency (*.d) 
-and static library (*.a) files that will be placed in the src/
-directory tree in the case of an in-source build.
+After the configure script is run, the bld directory will also
+contain several files named "makefile", but not either of the 
+types of documentation files listed above. 
 
-\section developer_directory_dirvars_sec Configuration Files and Directory Path Variables
+\section developer_directory_configmk_sec Configuration (config.mk) files 
 
-After the configure script has been run, the src/ and bld/ 
-directory will each contain a makefile fragment named config.mk.
-This is the main configuration file used by build system to build
-in the directory that contains this file. This file assigns values 
-to a variety of makefile variables that are needed throughout the
-build system, and is included in every other makefile in the same 
-build directory (i.e., in bld/ or src/).  The config.mk file in 
-src/ is used during an in-source build, while the config.mk file 
-in bld/ is used during an out-of-source build. 
+After the configure script is run, the src and bld directory 
+will each contain a makefile fragment named config.mk. Each of
+this is the main configuration file used by the build system to 
+build in the directory that contains the configuration file. This
+file assigns values to a variety of makefile variables that are 
+needed throughout the build system. 
 
-Among the variables defined in the main config file are makefile
-variables whose values give absolute paths to the PSCF root directory 
-and several of its subdirectories. The names and meanings of these
-variables are listed below:
+The config.mk configuration file in each build directory (i.e., in 
+the src or bld directory) is included in every other makefile in 
+the same build directory tree. The config.mk file in the src 
+directory is thus included by all makefiles in the src directory 
+tree, but not those in the bld directory, and so only affects 
+in-source builds that are performed by calling make from within 
+the src directory.  Conversely, the config.mk file in the bld 
+directory is included by all makefiles in the bld directory tree, 
+but not those in the src directory, and so only affects 
+out-of-source builds.
+
+\section developer_directory_dirvars_sec Directory path variables
+
+Among the variables defined in the config.mk file in each build 
+directory are makefile variables whose values give paths to the PSCF 
+root directory and several of its subdirectories. The names and 
+meanings of the most important such path variables are listed below:
 <table>
 <tr>
   <th> Name </th>
@@ -364,21 +438,21 @@ variables are listed below:
   <td> Path to directory for installing executables </td>
 </tr>
 </table>
-Values assigned to all of these variables are absolute path, which
-on a unix-like system start with a backslash ("/") character that
-represents the root of the filesystem. 
-The value of the ROOT_DIR variable is set by the configure script,
-and corresponds to the absolute path to the root directory as
-identified by this script at the time that the configure script 
+The values assigned to all of these variables are absolute paths.
+On any unix-like system, the first character of an absolute path 
+is a backslash ("/") character that represents the root of the 
+computer filesystem.  The value of the ROOT_DIR variable is set by 
+the configure script to be the absolute path to the root directory 
+as identified by this script at the time that the configure script 
 was run.  Values of other variables are defined using the value of 
-ROOT_DIR.
+ROOT_DIR, as discussed below.
 
-As an example, suppose that a user with user name smith has a home 
+As an example, suppose that a user with user name smith has a home
 directory /users/smith, and suppose that this user has installed
 the PSCF root directory as a subdirectory of their home directory,
-as /users/smith/pscfpp. In this case, the part of the config.mk file 
-that is located in the users bld/ directory that defines these 
-path variables would look like this after the configure script has 
+as /users/smith/pscfpp. In this case, the part of the config.mk file
+that is located in the users bld directory that defines these
+path variables would look like this after the configure script has
 been run:
 \code
 ROOT_DIR=/users/smith/pscfpp
@@ -386,37 +460,48 @@ SRC_DIR=$(ROOT_DIR)/src
 BLD_DIR=$(ROOT_DIR)/bld
 BIN_DIR=$(ROOT_DIR)/bin
 \endcode
-The syntax $(ROOT_DIR) causes the variable ROOT_DIR to be replaced
-by its value within a text string. The config.mk file in the bld/
-directory is used only during an out-of-source build that is
-performed by invoking make from within the bld/ directory. This
-file thus declares $(ROOT_DIR)/bld to be the build directory in 
-which all intermediate files should be placed during this process.
+The symbol $(ROOT_DIR) represents the value of the makefile variable
+ROOT_DIR, which is given here by the string /usrs/smith/pscfpp.
+The config.mk file in the bld directory is only included by
+makefiles in the bld directory, and is only used during an
+out-of-source build that is performed by invoking make from within
+the PSCF root directory or the bld directory. This configuration
+file thus declares $(ROOT_DIR)/bld to be the build directory in
+which all intermediate files should be placed.
 
-The corresponding code in the config.mk file in the src/ directory
-would be almost identical except that it would assign a different 
-value to the variable BLD_DIR: In the file src/config.mk, BLD_DIR 
-would be assigned a value $(ROOT_DIR)/src rather than $(ROOT_DIR)/bld. 
-The file src/config.mk is only used during an in-source-build that 
-is performed by invoking make from within the src/ directory, and
-so it declares the build directory that should be used during such
-a process be the same as the source directory. 
+The corresponding variable definitions in the config.mk file in the
+src directory in this example would be almost identical to those
+shown above, *except* for the value assigned to the variable BLD_DIR: 
+In the file src/config.mk, BLD_DIR would be assigned a value 
+$(ROOT_DIR)/src rather than $(ROOT_DIR)/bld. In both cases, the
+value of BLD_DIR is an absolute path to the directory that contains
+the config.mk file This configuration file thus declares the build 
+directory BLD_DIR used during in-source-bld is the same as the
+src directory.
+
+If the name or location of the PSCF root directory is changed after
+the configure script has been run, users will need to rerun the 
+configure script to reset the value of the makefile variable ROOT_DIR 
+to the correct location.
 
 Users can, if desired, change the location in which executable
-files are installed by using an editor to change the value 
-assigned to BIN_DIR within either or both of these config.mk 
-configuration files. The executable files produced by PSCF are 
-self-contained and moveable, and so users can also simply move 
-these files to a new location after building PSCF. 
+files are installed by using an text editor to change the value
+assigned to BIN_DIR within either or both of these configuration
+files. The executable files produced by PSCF are self-contained
+and may be moved after they are created. Users may thus also simply 
+move the executable files to a new location after building PSCF.
 
-Users may not rename or move the PSCF root directory after building
-PSCF.  This is because some of the PSCF executables contain a path 
-to the PSCF data/ directory that is used to access read-only data 
-files at run time.  Currently, the only such files are data files 
-in directory data/groups that specify symmetry elements for all 
-standard crystallographic space groups. If the root directory is
-moved after building PSCF, users must re-run the configure script 
-and then re-build the package.
+If the name or location of the PSCF root directory is changed after
+after executables have been created, however, users will need to rerun 
+the configure script and then rebuild PSCF to create new executables.  
+This is necessary because some of the PSCF executables contain a path 
+to the PSCF data directory that is used to access read-only data 
+files at run time.  Currently, the only files that are accessed in 
+this way are files in the directory data/groups that specify the
+symmetry elements for all standard crystallographic space groups.
+The files are accessed by the pscf_pc and pscf_pg programs. In order 
+for these programs to function correctly, the path to the data 
+directory cannot change after these executables are created.
 
 <BR>
 \ref developer_page  (Up)  &nbsp; &nbsp; &nbsp; &nbsp;

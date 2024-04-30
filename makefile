@@ -1,4 +1,4 @@
-include src/config.mk
+include bld/config.mk
 # =========================================================================
 .PHONY:  all-cpu  all fd1d rpc rpg \
          html html-dev \

@@ -2,19 +2,19 @@
 # src/rpg/makefile
 #
 # The repository copy of this namespace level makefile is in the src/rpg
-# directory. This is copied verbatim by the setup to create the copy in
-# in the bld/rpg directory.
+# directory. This is copied verbatim by the configure script to create 
+# the identical copy in in the bld/rpg directory.
 #------------------------------------------------------------------------
-# Include makefiles
+# Include makefile fragments
 
 BLD_DIR_REL =..
 include $(BLD_DIR_REL)/config.mk
 include $(SRC_DIR)/rpg/include.mk
 
 #-----------------------------------------------------------------------
-# Main program source file base name
+# Paths to pscf_pg program files
 
-# Base path to *.o and *.d files for pscf_pg
+# Base path for *.o and *.d files for pscf_pg
 PSCF_PG=$(BLD_DIR)/rpg/pscf_pg
 
 # Path to pscf_pg executable
@@ -22,8 +22,6 @@ PSCF_PG_EXE=$(BIN_DIR)/pscf_pg
 
 #-----------------------------------------------------------------------
 # Main targets 
-
-.PHONY: all clean veryclean
 
 all: $(rpg_OBJS) $(rpg_LIB) $(PSCF_PG_EXE)
 
@@ -37,20 +35,20 @@ clean:
 
 veryclean:
 	$(MAKE) clean
-	-rm -f lib*.a
 
-# Main pscf_pg executable target
+# Main pscf_pg executable file
 $(PSCF_PG_EXE): $(PSCF_PG).o $(PSCF_LIBS)
 	$(NVXX) $(LDFLAGS) -o $(PSCF_PG_EXE) $(PSCF_PG).o $(LIBS)
 
 # Note: In the linking rule for pscf_pg, we include the list $(PSCF_LIBS) 
-# of PSCF-specific libraries as dependencies but link to list $(LIBS) of
-# libraries that includes relevant external libraries.
+# of PSCF-specific libraries as dependencies but link to the list $(LIBS)
+# of libraries that includes relevant external libraries.
 
-# Short name for executable target (for convenience)
+# Short phony target for executable file (for convenience)
 pscf_pg:
 	$(MAKE) $(PSCF_PG_EXE)
 
+.PHONY: all clean veryclean pscf_pg
 
 #-----------------------------------------------------------------------
 # Include dependency files
