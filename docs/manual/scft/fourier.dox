@@ -36,7 +36,7 @@ arrangements of cylinders (e.g., hexagonally packed cylinders), and
 \f$ D = 3 \f$ for crystals with full three-dimensional periodicity (e.g.,
 arrangements of spheres and 3D network structures).
 
-\section scft_fourier_bravais_sec Bravais Lattice
+\section scft_fourier_bravais_sec Bravais lattice
 
 Consider a D-dimensional crystal with a Bravais lattice defined by
 lattice basis vectors \f$ {\bf a}_{0}, \ldots, {\bf a}_{D-1} \f$.
@@ -55,7 +55,7 @@ translation by any Bravais lattice vector, i.e., if
 for any D-dimensional position vector \f$ {\bf r} \f$ and any translation 
 vector \f$ {\bf R} \f$ that belongs to the Bravais lattice.
 
-\section scft_fourier_reciprocal_sec Reciprocal Lattice
+\section scft_fourier_reciprocal_sec Reciprocal lattice
 
 Let \f$ {\bf b}_{0}, \ldots, {\bf b}_{D-1} \f$ denote \f$ D \f$ 
 reciprocal lattice basis vectors that are defined such that
@@ -112,7 +112,7 @@ number \f$ C \f$.  Note that this constraint requires that that
 \f$ \tilde{f}({\bf G}) \f$ be real in the specal case
 \f$ {\bf G} = 0 \f$.
 
-\section scft_fourier_reduced_sec Reduced Coordinates
+\section scft_fourier_reduced_sec Reduced coordinates
 
 It is convenient to introduce dimensionless reduced coordinates
 \f$ r_{0}, \ldots, r_{D-1} \f$ associated with any Cartesian position
@@ -195,7 +195,7 @@ Fourier expansion of a periodic function, as applied here to a function
 cubic lattice with orthogonal Bravais lattice basis vectors of unit 
 magnitude.
 
-\section scft_fourier_grid_sec Mesh Discretization
+\section scft_fourier_grid_sec Mesh discretization
 
 All periodic fields in are represented internally in pscf_pc and pscf_pg 
 using values of fields on a regular D-dimensional mesh in the space of 
@@ -215,7 +215,7 @@ has a value
 for some integer \f$ m_{\alpha} \in [0,\ldots,M_{\alpha}-1] \f$ for
 nodes within the primary unit cell.
 
-\section scft_fourier_dft_sec Discrete Fourier Transform (DFT)
+\section scft_fourier_dft_sec Discrete fourier transform (DFT)
 
 Let \f$ F \f$ denote a function that is defined only on the nodes of such
 a regular mesh, where \f$ F(m_{0}, \ldots, m_{D-1}) \f$ denotes the value 
@@ -330,7 +330,7 @@ aliases of one another are thus treated as equivalent within forward and
 inverse DFT operations, in which values of the underlying field are 
 only defined on the nodes of a mesh.
 
-\section scft_fourier_kindex_sec Wavevector Indexing Schemes
+\section scft_fourier_kindex_sec Wavevector indexing schemes
 
 The phenomena of aliasing of wavevectors for fields that are defined on
 a mesh means that there are infinite number of ways of defining Miller

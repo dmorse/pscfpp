@@ -28,7 +28,7 @@ PSCF should use the C++/CUDA version documented here, and users of the
 Fortran version should consider switching to the current version
 whenever they can.
 
-<b> Features and Advantages of Current C++ Version </b>:
+<b> Features and advantages of current C++ version </b>:
 
 Features of the current version of PSCF that distinguish it from the
 legacy Fortran version include the following:
@@ -53,7 +53,7 @@ legacy Fortran version include the following:
   </li>
 </ul>
 
-<b> Features Unique to the Legacy Fortran Program </b>:
+<b> Features unique to the legacy Fortran program </b>:
 
 The following features of the legacy Fortran program have not been ported 
 to the C++/CUDA version:

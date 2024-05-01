@@ -190,7 +190,7 @@ compiler, so we recommend using the GNU compiler to compile C++ source
 files if you are planning to compile CUDA code for use on the same 
 machine.
 
-\section install_require_ubuntu Packages: Ubuntu and other Debian-based Linux Systems
+\section install_require_ubuntu Packages: Ubuntu and other Debian-based linux systems
 
 The CPU-based programs in PSCF require access to development versions of 
 the Gnu Scientific Library (GSL) and FFTW packages.  These may be installed
@@ -250,11 +250,11 @@ find header and library files.  A compiler configuration file that
 modifies these search paths is provided as part of PSCF, as discussed
 \ref install_configure_homebrewm1_sec "here".
 
-\section install_require_module Linux Software Modules
+\section install_require_module Linux software modules
 
 At the University of Minnesota, PSCF is often run on a cluster provided
-by the Minnesota Supercomputer Institute (MSI).  The computer clusters
-at MSI, like many similar multi-user facilities, use the linux "module"
+by the Minnesota Supercomputer Institute (MSI). The computer clusters at 
+MSI, at at many similar multi-user facilities, use the linux "module"
 command to allow users to load particular software packages, including
 particular choices of compiler. The module command is the user interface
 to the "Modules" package, which is a system for automating changes in a

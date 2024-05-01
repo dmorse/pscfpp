@@ -12,7 +12,7 @@ that is written to standard output during execution of an ITERATE command, as
 well as within each of the \ref scft_thermo_state_sec "state" files that are
 created by a SWEEP command.
 
-\section scft_thermo_format_sec Thermo File Block Format
+\section scft_thermo_format_sec Thermo file block format
 
 An example of the thermo block format produced by an SCFT calculation for
 a periodic system is shown below:
@@ -42,7 +42,7 @@ used to define its numerical value.
 
 \section scft_thermo_energetic_sec Properties
 
-\subsection scft_thermo_helmholtz_sub Helmholtz Free Energy
+\subsection scft_thermo_helmholtz_sub Helmholtz free energy
 
 The property "fHelmholtz" is a non-dimensional form of the Helmholtz free
 energy, which will be denoted here by the symbol \f$ \tilde{f} \f$.  The
@@ -66,7 +66,7 @@ occupied by a molecular species by multiplying the overall contour length
 (for polymers) or size (for solvents) of the species by the value
 reported for "fHelmholtz".
 
-\subsection scft_thermo_pressure_sub Pressure and Grand-Canonical Free Energy
+\subsection scft_thermo_pressure_sub Pressure and grand-canonical free energy
 
 The property "pressure" reported by PSCF is a non-dimensionalized
 thermodynamic pressure that is computed from the value of the
@@ -94,7 +94,7 @@ The value of pressure reported by PSCF is thus \f$ -1 \f$ times the
 grand-canonical free energy per monomer reference volume, in thermal
 energy units.
 
-\subsection scft_thermo_f_components_sub Free Energy Components
+\subsection scft_thermo_f_components_sub Free energy components
 
 The next two parameters, "fIdeal" and "fInter", are individual components
 of the Helmholtz free energy. "fInter" is an interaction free energy,
@@ -109,7 +109,7 @@ In calculations with an external field, a third term will appear here:
 arising from interactions between the monomer species and the external
 potential fields.
 
-\subsection scft_thermo_species_sub Polymer and Solvent Species
+\subsection scft_thermo_species_sub Polymer and solvent species
 
 The next two sections of the example given above are labeled "polymers"
 and "solvents". These are lists, with one row per chemical species, in
@@ -118,7 +118,7 @@ and the chemical potential "mu" of that chemical species. Note that the
 chemical potential values are in thermal energy units, so the numerical
 value reported for species \f$ a \f$ actually \f$ \mu_{a} / k_{B}T \f$.
 
-\subsection scft_thermo_params_sub Lattice Parameters
+\subsection scft_thermo_params_sub Lattice parameters
 
 The final section, labeled "cellParams", lists the lattice parameters
 for the converged SCFT solution. This section appears in the output
@@ -139,7 +139,7 @@ fields (the w fields). The lattice parameters are reported in whatever
 \ref user_model_length_sec "length units" were used in the input field
 and parameter files.
 
-\section scft_thermo_state_sec State Files
+\section scft_thermo_state_sec State files
 
 A "state" file is a type of file that is created for each state
 (i.e., each set of input parameters) during a

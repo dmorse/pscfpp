@@ -66,7 +66,7 @@ below, on which our implementation is largely based:
 - Matsen, M. W. (1997). *J. Chem. Phys.*, **106**, 7781.
 - Khanna, V., *et al.* (2006). *Macromolecules*, **39**, 9346.
 
-# Parameter File Input
+# Parameter file input
 
 In the parameter file, the thin film constraint is included by modifying 
 the iterator block. First, the word "Film" is appended to the end of the 
@@ -139,19 +139,19 @@ confined to a thin film that is ~2 unit cells thick. This will be
 explained in more detail below. Also, see our parameter-level breakdown 
 of the components of an \ref rpc_AmIteratorBasisFilm_page block.
 
-## Domain Block
+## Domain block
 
 First, we draw your attention to the `Domain` block. Notice that this 
 differs significantly from the `Domain` block that would be expected for 
 a bcc structure in a neat melt. The space group has been downgraded from
 the cubic <i>Im</i>-3<i>m</i> group to tetragonal <i>P</i>4/<i>mmm</i>. 
-See the Space Groups section below for more information about determining 
+See the Space groups section below for more information about determining 
 the appropriate space group symmetry for a thin film. Also notice that we 
 have chosen specific and intentional values for the **c** lattice vector 
 and the mesh discretization in that direction, which will be discussed 
 further below.
 
-## Iterator Block
+## Iterator block
 
 Now, we proceed to the `AmIteratorBasisFilm` block. The first four 
 parameters in this block define the AmIteratorBasis object and do not 
@@ -306,7 +306,7 @@ polymers/solvents and walls is dependent not only on &chi;<sub>&alpha;w</sub>
 but also on *t*. Because of this, it is strongly recommended to use the same 
 value of *t* for all calculations that are to be compared to one another.
 
-## Variable Lattice Parameters
+## Variable lattice parameters
 
 When walls are added into the system, the user can still choose whether to 
 fix the unit cell parameters or allow some or all of them to vary, but the 
@@ -335,7 +335,7 @@ lattice parameters are actually allowed to vary based on `normalVecId` and
 with the rules above (*e.g.,* a 2D unit cell with <i>&alpha;</i> &ne; 
 90&deg;), the software will throw an error.
 
-## A Note About The COMPUTE Command
+## Note about the COMPUTE command
 
 When using PSCF for bulk systems (those without a thin film constraint), 
 users can use the COMPUTE command in the command file to solve the MDEs
@@ -357,7 +357,7 @@ without ever updating the potential fields. Thus, the only operation
 performed by ITERATE will be solving the MDEs, which will then allow the
 user to write the resulting concentration fields to a file.
 
-#  Space Groups
+#  Space groups
 
 Although we are imposing a thin film constraint on the system, we still use 
 periodic boundary conditions in all directions so that the symmetry-adapted 
@@ -375,7 +375,7 @@ requirements because it significantly reduces the size of the field in basis
 format, which accelerates the calculations and reduces file sizes, while 
 ensuring that the resulting solution has the symmetry that is expected.
 
-## Identifying the Correct Space Group
+## Identifying the correct space group
 
 The appropriate space group for a desired system can be 
 identified by looking at the symmetry operations for the space group that 
@@ -414,7 +414,7 @@ through the tetragonal space groups, we find that
 [<i>P</i>4/<i>mmm</i>](http://img.chem.ucl.ac.uk/sgp/large/123az1.htm) is 
 the space group we are looking for. 
 
-## Relationship Between Unit Cell and Space Group
+## Relationship between unit cell and space group
 
 An important detail to note is the difference between the space group and 
 the unit cell. The unit cell shape only defines the lattice vectors along 
@@ -460,7 +460,7 @@ vary in a monoclinic unit cell, but a choice of 0 or 2 for `normalVecId`
 would force &beta; to be 90&deg; and thus force the unit cell to be stuck in 
 an orthorhombic shape.
 
-## Initial Guess
+## Initial guess
 
 We intend to develop a tool to generate an initial guess for thin film 
 geometries using the form factor method and the level set method (see Arora, 
@@ -480,7 +480,7 @@ film, which can subsequently be converted into an initial guess for the omega
 field in symmetry-adapted basis format by using the RGRID_TO_BASIS and 
 GUESS_W_FROM_C commands in the command file. 
 
-## Rules for Determining Allowed Space Groups
+## Rules for determining allowed space groups
 
 Here we present a comprehensive list of the rules determining 
 permitted/forbidden choices of unit cell and space group in a thin film 
@@ -530,7 +530,7 @@ trigonal crystal system, so the reader is directed to the very helpful
 summary at <https://en.wikipedia.org/wiki/Hexagonal_crystal_family> for more 
 details.
 
-## List of Allowed Space Groups
+## List of allowed space groups
 
 A comprehensive list of allowed space groups is given below. The entries that 
 are listed in bold are those that are allowed for chemically dissimilar 

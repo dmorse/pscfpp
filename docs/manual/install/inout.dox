@@ -4,7 +4,7 @@
 \ref install_setopts_page (Next)
 <BR>
 
-\section install_inout_build Intermediate Files and Build Directories
+\section install_inout_build Intermediate files and build directories
 
 All C++ and CUDA header and source files for PSCF are contained in within
 the pscfpp/src/ directory tree.  When the PSCF build system is used to 
@@ -53,7 +53,7 @@ we refer to in what follows as namespace level directories.
 By default, all executable program files are installed in the pscfpp/bin 
 directory. This is true for both in-source or out-of-source compilation.
 
-\section install_inout_out Out-of-Source Builds
+\section install_inout_out Building out-of-source
 
 We recommend that most users of PSCF who are not working on modifying or 
 extending the code build the package out-of source. The overview of 
@@ -63,7 +63,7 @@ performed if "make all" is entered either from within either the root
 pscfpp/ directory (as recommended in those instructions) or from within 
 the pscfpp/bld directory. 
 
-\section install_inout_in In-Source Builds
+\section install_inout_in Building in-source
 
 Users who are actively working on development or modification of the 
 PSCF source code may find it more convenient to build PSCF in-source 

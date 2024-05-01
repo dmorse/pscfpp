@@ -21,7 +21,7 @@ when it encounters the command string 'FINISH' on a line by itself.
 Full descriptions of all of the commands recognized by all three PSCF
 programs are given \ref scft_command_page "here". 
 
-\section user_command_example_sec Example Command File
+\section user_command_example_sec Example command file
 
 The following is a minimal command file for using the pscf_1d program 
 to perform an SCFT calculation:

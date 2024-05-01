@@ -7,7 +7,7 @@ The input files for pscf_pc and pscf_pg programs use a shared set of
 conventions to describe crystallographic unit cells (i.e,. Bravais
 lattices).
 
-\section scft_unitcell_description_sec Unit Cell Descriptors
+\section scft_unitcell_description_sec Unit cell descriptors
 
 Three different types of information are required to completely describe
 a crystal lattice, as discussed below:
@@ -75,7 +75,7 @@ meaning and conventional order of required unit cell parameters for
 each lattice system type are described below for 1, 2 and 3 dimensional
 systems.
 
-\section scft_unitcell_1D_sec 1D Systems
+\section scft_unitcell_1D_sec 1D systems
 
 There is only possible lattice system for a one dimensionally periodic
 system, which is identifed by the string "lamellar". A 1D lamellar
@@ -106,7 +106,7 @@ describes the meaning of those parameters.
   </tr>
 </table>
 
-\section scft_unitcell_2D_sec 2D Systems
+\section scft_unitcell_2D_sec 2D systems
 
 There are 4 conventional 2D lattice systems (square, hexagonal,
 rectangular, and oblique). The code also allows the user to specify
@@ -159,7 +159,7 @@ provided in radians, and not in degrees.
   </tr>
 </table>
 
-\section scft_unitcell_3D_sec 3D Systems
+\section scft_unitcell_3D_sec 3D systems
 
 In what follows we use the letters a, b, c both to denote lengths of the
 three Bravais lattice basis vectors and as labels to identify the actual

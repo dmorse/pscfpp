@@ -12,7 +12,7 @@ are familiar with the principles of polymer physics and statistical
 mechanics. Several recommended references for information about SCFT 
 are given \ref about_methods_page "here". 
 
-\section scft_theory_setup_sec Model and Notation
+\section scft_theory_setup_sec Model and notation
 
 PSCF solves the SCFT equations for an incompressible mixture of any
 number of block polymer species and point-like solvent molecular
@@ -51,7 +51,7 @@ Incompressibility is imposed by requiring that
 \f]
 at every position \f$ {\bf r} \f$ within the problem domain.
 
-\section scft_theory_scf_sec Self-Consistent Field Approximation
+\section scft_theory_scf_sec Self-consistent field approximation
 
 SCFT for a liquid of flexible polymers is based on a mean-field
 approximation that allows us to approximately predict properties of

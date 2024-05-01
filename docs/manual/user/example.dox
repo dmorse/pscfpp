@@ -91,7 +91,7 @@ if the users PATH variable has been modified so as to include the
 current working directory among the list of directories in which to 
 search for an executable file.
 
-\section examples_clean_sec Cleaning Up
+\section examples_clean_sec Cleaning up
 
 After running an example, you may run the command
 \code

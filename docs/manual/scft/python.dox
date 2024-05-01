@@ -9,7 +9,7 @@ parse and edit several different types of input and output files used
 by the package.  These tools can be used to process and analyze output
 files, or to modify input files.
 
-\section scft_python_modules_sec Python Source Files
+\section scft_python_modules_sec Python source files
 
 All Python source code files that are provided with PSCF are located
 within the directory pscfpp/lib/python/pscfpp.  Every Python file in
@@ -44,7 +44,7 @@ commands interactively, the Python interpreter can also be invoked with
 a file name as an argument, using the syntax 'python script.py', where
 script.py is the name of a Python script file.
 
-\section scft_python_doc_sec Python API Documentation
+\section scft_python_doc_sec Python API documentation
 
 Detailed API documentation for all Python modules that are distributed
 with PSCF can be accessed within the PSCF web manual by opening the
@@ -68,7 +68,7 @@ in a single programming language, and does not provide a better way
 to separate documentation of source code files that were written in
 different languages but distributed as part of the same package.
 
-\section scft_python_parser_sec Parser Classes (Overview)
+\section scft_python_parser_sec Parser classes (overview)
 
 Python classes have been created to parse the following file formats:
 
@@ -101,7 +101,7 @@ A brief overview of usage for each of these classes is given below,
 while more detailed documentation is given in the documentation page
 for each class.
 
-\section scft_python_param_sec Parameter Files
+\section scft_python_param_sec Parameter files
 
 The class param.Composite (or pscfpp.param.Composite) is designed to
 parse a parameter file block that is delimited opening and closing curly
@@ -256,7 +256,7 @@ would parse an existing parameter file, modify one or more of the
 parameter values, and then write the string representation of the
 modified object to a file.
 
-\section scft_python_thermo_sec Thermo Files
+\section scft_python_thermo_sec Thermo files
 
 \ref scft_thermo_page "Thermo file" blocks contain output variables 
 that are computed during an SCFT calculation. Such blocks may appear 
@@ -323,7 +323,7 @@ formatted like the thermo file block from which the object was created.
 This string representation of Thermo object named thermo is given by the
 expression str(thermo), and can be printed to screen using print(thermo).
 
-\section scft_python_state_sec State Files
+\section scft_python_state_sec State files
 
 \ref scft_thermo_state_sec "State files" are designed to contain values 
 of both input parameters and output variables for an SCFT calculation.  
@@ -496,7 +496,7 @@ suitable for printing. This string can then be printed to the screen using
 \endcode
 or written to a file.
 
-\section scft_python_command_sec Command Script Files
+\section scft_python_command_sec Command script files
 
 An instance of class Script (or pscfpp.command.Script) can be used to parse
 and store the contents of a PSCF command script file.  Each single-line
@@ -537,7 +537,7 @@ modified using the param and setParam methods of class Command.
 A Script may be converted to a multi-line string using the str()
 function.
 
-\section scft_python_field_sec Field Files
+\section scft_python_field_sec Field files
 
 An instance of class Field (or pscfpp.field.Field) can be used to parse
 and store the contents of a field file written in any of the formats used 

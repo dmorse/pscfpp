@@ -13,7 +13,7 @@ Below, have divided the instructions into a set of instructions for
 compiling and installing the programs that use only CPU hardware, and
 additional instructions for compiling programs that use an NVIDIA GPU.
 
-\section install_overview_configure_sec Preliminary Steps
+\section install_overview_configure_sec Preliminary steps
 
 The following steps must be taken before attempting to compile any
 part of the PSCF package. The first two steps have been described
@@ -61,7 +61,7 @@ in previous pages:
      custom configuration file is discussed in detail
      \ref install_configure_page "here".
 
-\section install_overview_CPU_sec Compiling C++ Code (CPU Hardware)
+\section install_overview_CPU_sec Compiling C++ code (CPU hardware)
 
 We recommend that users first attempt to compile only the pscf_1d and
 pscf_pc CPU programs, leaving compilation of the GPU-enabled pscf_pg 
@@ -94,7 +94,7 @@ as described above, will create a large number of intermediate object
 the pscfpp/bld directory, in addition to the executable files that are 
 created in the pscfpp/bin directory.
 
-\section install_overview_GPU_sec Compiling C++/CUDA Code (GPU Hardware)
+\section install_overview_GPU_sec Compiling CUDA C++ Code (GPU hardware)
 
 The GPU-enabled pscf_pg program can only be compiled on computers that 
 have an NVIDIA CUDA development kit installed, and can only be run on 
@@ -176,7 +176,7 @@ named pscf_1d and pscf_pc that are created by compiling only C++ code.
 Several of the above steps are discussed in more detail in subsequent
 pages.
 
-\section user_overview_inout_sec Out-of-source vs. In-Source Compilation
+\section user_overview_inout_sec Out-of-source vs. in-source compilation
 
 The above instructions explain how to perform an "out-of-source" build in
 which intermediate files created during compilation process are placed in

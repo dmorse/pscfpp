@@ -51,7 +51,7 @@ System{
 }
 \endcode
 
-\section scft_param_pc_system_sec File Format
+\section scft_param_pc_system_sec File format
 
 The main System block of a parameter file for an SCFT calculation
 peformed using pscf_pc or pscf_pg has the same overall structure as 
@@ -77,7 +77,7 @@ Formats of the Mixture and Interaction blocks are the same for all PSCF
 programs, and have thus been discussed previously. Below, we discuss the 
 contents of the Domain, Iterator, and Sweep blocks.
 
-\section scft_param_pc_domain_sec Domain Block
+\section scft_param_pc_domain_sec Domain block
 
 The Domain block contains information required to describe the unit cell 
 of a periodic structure, the regular mesh that is used to discretize 

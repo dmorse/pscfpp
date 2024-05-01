@@ -15,7 +15,7 @@ end with a suffic _RGRID. The pscf_pc program also accept a set of
 commands that can be used convert between different possible field
 file formats.
 
-\section scft_command_pc_scft_sec Example: SCFT Calculation
+\section scft_command_pc_scft_sec Example: SCFT calculation
 
 Below is an example of a simple command file for using pscf_pc to
 perform a single SCFT calculation. Note that the names of the pscf_pc 
@@ -49,7 +49,7 @@ for the current system to the file out/data. The command,
 converged solution to the end of the same file.  The FINISH command
 instructs the main program to finish execution and return.
 
-\section scft_command_pc_ex_sweep_sec Example: SCFT Parameter Sweep
+\section scft_command_pc_ex_sweep_sec Example: SCFT parameter sweep
 
 Here is an example of a minimal command file to perform an SCFT 
 parameter sweep. 
@@ -469,7 +469,7 @@ that command or of a group of closely related commands.
 Further discussion of particular commands and groups of commands is
 provided below.
 
-\section scft_command_pc_fieldin_sec W Field Initialization
+\section scft_command_pc_fieldin_sec W field initialization
 
 The READ_W_BASIS, ESTIMATE_W_FROM_C and READ_W_RGRID commands allow
 a user to set or reset the w fields that are stored in program
@@ -590,7 +590,7 @@ development of stochastic field theoretic simulation algorithms in
 which the fluctuating field generally do not exhibit any special
 symmetry.
 
-\section scft_command_pc_compute_sec Computation Commands
+\section scft_command_pc_compute_sec Computation commands
 
 The COMPUTE, ITERATE and SWEEP commands perform the primary computations
 involved in a self-consistent field calculation.  Each performs the
@@ -671,7 +671,7 @@ difference between chemical potential fields associated with
 different monomer types. 
 
 
-\section scft_command_pc_dataout_sec Data Output Commands
+\section scft_command_pc_dataout_sec Data output commands
 
 The WRITE_PARAM and WRITE_THERMO commands can be used to create a
 record of the input parameters and computed thermodynamic properties
@@ -701,7 +701,7 @@ that contains the input parameters followed by a report of computed
 thermodynamic properties in a single file, if desired, by invoking
 WRITE_PARAM and WRITE_THERMO with the same file name parameter.
 
-\section scft_command_pc_fieldout_sec Field Output Commands
+\section scft_command_pc_fieldout_sec Field output commands
 
 The WRITE_W_BASIS, WRITE_W_RGRID, WRITE_C_BASIS, and WRITE_C_RGRID
 can be used to output the current w fields or c fields associated 
@@ -751,7 +751,7 @@ they appear within the parameter file, as in the output of the
 \ref scft_command_1d_writeblockc_sub "WRITE_BLOCK_C" command of the
 pscf_1d program.
 
-\section scft_command_pc_qout_sec Propagator Output
+\section scft_command_pc_qout_sec Propagator output
 
 In the inner loop of a SCFT calculation, a modified diffusion equation
 (MDE) is solved within every block of every polymer to obtain a set of
@@ -864,7 +864,7 @@ ib, and id. Thus, for example, if the command is passed a basename
 parameter out/q, then the file out/q_0_2_1.rf will contain all slices
 of the propagator associated with polymer 0, block 2 and direction 1.
 
-\section scft_command_pc_crystal_sec Crystallographic Information
+\section scft_command_pc_crystal_sec Crystallographic information
 
 The commands WRITE_WAVES and WRITE_STARS allow the user to output
 information about the symmetry-adapted basis that program has 
@@ -911,7 +911,7 @@ the command name.
 The format of the file created by this command is discussed
 \ref scft_command_pc_group_page "here" .
 
-\section scft_command_pc_fieldops_sec Field File Manipulations
+\section scft_command_pc_fieldops_sec Field file manipulations
 
 The pscf_pc program accepts several commands that perform manipulations
 on field files, including conversions among different formats.
@@ -1022,7 +1022,7 @@ element i contains the number of replicas of the original unit
 cell along direction i, for 0 <= i < D.
 
 
-\section scft_command_pc_external_sec External Fields
+\section scft_command_pc_external_sec External fields
 
 The pscf_pc program accepts several commands that allow users to input
 and output external chemical potential fields that act on monomers of
@@ -1065,7 +1065,7 @@ fields from file, because they are instead defined by the iterator.
 The <b>WRITE_H_BASIS</b> and <b>WRITE_H_RGRID</b> commands write the current 
 external fields, if any, to a specified field in basis or r-grid format.
 
-\section scft_command_pc_mask_sec Mask Field (Inhomogeneous Density Constraint)
+\section scft_command_pc_mask_sec Mask field (inhomogeneous density constraint)
 
 A polymer fluid can be confined to a specified region by introducing a
 "mask" field that modifies the incompressibility constraint.  A mask field
@@ -1104,7 +1104,7 @@ The commands
 may instead be used to write any current mask field to a file in 
 basis or r-grid format.
 
-\section scft_command_pc_timers_sec Timer Commands
+\section scft_command_pc_timers_sec Timer commands
 
 \anchor scft_command_pc_writetimer_sub <b>WRITE_TIMERS</b>:
 The WRITE_TIMERS command writes a report of the amounts of 
@@ -1118,7 +1118,7 @@ The CLEAR_TIMERS command clears the state of all timers, by
 resetting to zero the values for accumulated times associated 
 with different operations.
 
-\section scft_command_pc_subpages_sec Contents (Subpages)
+\section scft_command_pc_subpages_sec Contents (subpages)
 
 Each of the following subpages gives more detailed information about
 output formats of files created by particular commands. Each is also

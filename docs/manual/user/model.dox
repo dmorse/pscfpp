@@ -9,7 +9,7 @@ of the programs in the PSCF package to characterize a physical system,
 as well as a discussion of the system of units and conventions used to 
 define parameter values. 
 
-\section user_model_overview_sec Physical Model (Overview)
+\section user_model_overview_sec Physical model (overview)
 
 All of the programs in the PSCF software package are designed to compute
 properties of a system that contains an incompressible liquid mixture of
@@ -74,7 +74,7 @@ FTS calculation include:
 Particular numerical algorithms may require a variety of other
 algorithmic parameter and options.
 
-\section user_model_energy_sec Energy Units
+\section user_model_energy_sec Energy units
 
 In all input parameter and output values with units that involve
 energy, PSCF uses "thermal" units for energy in which \f$ k_{B}T = 1\f$,
@@ -82,7 +82,7 @@ where \f$ k_{B} \f$ is Boltmann's constant and \f$ T \f$ is absolute
 temperature. For instance, the chemical potential values reported in
 the parameter files are reported as \f$ \mu / k_{B}T \f$.
 
-\section user_model_length_sec Length Units
+\section user_model_length_sec Length units
 
 PSCF allows the user to use any system of units for quantities that
 involve units of length, as long as the same choice of units is used
@@ -119,7 +119,7 @@ unperturbed coil sizes (i.e., RMS end-to-end lengths or radii of
 gyration) of polymers or blocks of the polymer species present
 within a system.
 
-\section user_model_continuous_sec Continuous Chain Model
+\section user_model_continuous_sec Continuous chain model
 
 PSCF uses a model of polymers as continuous random walks. In this model,
 a specific configuration of a single block of length \f$ L \f$ within
@@ -327,7 +327,7 @@ the statistical segment length of at least one monomer type is set to
 1.0. This type of convention is also used in the input files for all of
 the examples provided with PSCF.
 
-\section user_model_solvent_sec Solvent Species
+\section user_model_solvent_sec Solvent species
 
 PSCF allows user to model polymer solutions by including zero or more
 "solvent" species in addition to one or more polymer species. Each
@@ -374,7 +374,7 @@ is taken as the reference volume. In this case, the solvent size wil
 be set equal to 1.0 by convention, and the lengths for polymer blocks
 will generally be much greater than 1.
 
-\section user_model_vMonomer_sec Irrelevance of Monomer Volume in SCFT
+\section user_model_vMonomer_sec Irrelevance of monomer volume in SCFT
 
 A value for the monomer reference volume \f$ \f$ is not required 
 as an input to a standard SCFT calculation.  As discussed 

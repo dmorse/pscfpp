@@ -10,7 +10,7 @@ a line through the space of possible input parameter values. We refer
 to this kind of calculation as a "sweep".  All of the PSCF programs can
 perform sweep operations.
 
-\section scft_param_sweep_concept_sec Sweep Concept
+\section scft_param_sweep_concept_sec Sweep concept
 
 To perform a sweep, the program attempts to solve a sequence of SCFT problems
 for choices of input parameters (e.g., block lengths, chi parameters, species
@@ -40,7 +40,7 @@ varied simultaneously, and in which each of the affected parameters is a
 linear functions of s.  Every pscfp program can perform a general linear
 sweep of this type.
 
-\section scft_param_sweep_param_sec Parameter File
+\section scft_param_sweep_param_sec Parameter file
 
 The parameter file for a calculation in which a sweep will be performed
 must include an optional block that describes the nature of the sweep.
@@ -130,7 +130,7 @@ System{
 The only new element in this example is the Sweep block, which is discussed
 below.
 
-\section scft_param_sweep_command_sec SWEEP Command
+\section scft_param_sweep_command_sec SWEEP command
 
 A sweep is actually performed by including a command named "SWEEP" in
 the command file. The SWEEP command does not take any parameters, and
@@ -402,7 +402,7 @@ simulations of thin films performed with pscf_pc program, as discussed
 interaction parameters for interactions of a specific monomer type
 with the top or bottom surface of a thin film.
 
-\section scft_param_sweep_output_sec Output Files
+\section scft_param_sweep_output_sec Output files
 
 A parameter sweep will output several files for each state point in
 the sweep. The names of all output files associated with a particular 

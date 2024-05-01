@@ -4,8 +4,7 @@
 \ref about_contributors_page    (Next)
 <BR>
 
-Features that are common to all three PSCF programs and that are 
-applicable to both SCFT and FTS calculations include:
+* **Common features for SCFT and FTS (all programs):**
 
   - Ability to treat mixtures containing any number of block polymer 
     and solvent molecular species. Linear homopolymers are treated 
@@ -27,7 +26,7 @@ applicable to both SCFT and FTS calculations include:
 
   - Python tools for data analysis and manipulation of input files
 
-Features for SCFT calculations that are common to all PSCF programs:
+* **Features for SCFT (all programs):**
 
   - Efficient Anderson-mixing SCFT iteration algorithms
 
@@ -45,8 +44,7 @@ structure. In FTS simulations, the simulation unit cell is usually taken
 to represent a larger region that, for simulations of ordered phases, may 
 contain multiple crystallographic unit cells.  
 
-Features of the pscf_pc and pscf_pg programs that are relevant to both 
-SCFT and FTS calculation:
+* **Features for SCFT or FTS on periodic systems (pscf_pc and pscf_pg):**
 
   - Accurate pseudo-spectral solution of the modified diffusion equation
     using an algorithm that is accurate to 4th order in the contour
@@ -59,10 +57,9 @@ SCFT and FTS calculation:
 
   - A companion matlab package
     [Polymer Visual](<https://github.com/kdorfmanUMN/polymer_visual/>)
-    for visualization of structures
+    for visualization of periodic structures
 
-Special features for SCFT calculations that are available in both the 
-pscf_pc and pscf_pg:
+* **Features for SCFT on periodic systems (pscf_pc and pscf_pg):**
 
   - Efficient algorithms to optimize unit cell parameters in SCFT so as
     to minimize free energy density
@@ -72,8 +69,7 @@ pscf_pc and pscf_pg:
   - Built-in database of symmetry operations for all 230 3D space groups
     and 17 2D plane groups for use in SCFT
 
-Special features for field-theoretic simulations that are available in 
-both the pscf_pc and pscf_pg:
+* **Features for FTS with periodic boundary conditions(pscf_pc and pscf_pg):**
 
   - Implementation of both Monte Carlo (MC) and Brownian dynamics (BD) 
     sampling algorithms, 
@@ -85,8 +81,7 @@ both the pscf_pc and pscf_pg:
 
   - BD algorithms: predictor corrector and Leimkuhler-Matthews steppers
 
-Features for SCFT calculations that are available in pscf_pc but that
-have not yet been ported to pscf_pg:
+* **SCFT features unique to pscf_pc:**
 
   - Inhomogeneous density constraints (a "mask")
 

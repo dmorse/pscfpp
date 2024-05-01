@@ -20,10 +20,10 @@ a textbook, for which we recommend the book *Structure of Materials:
 An Introduction to Crystallography, Diffraction and Symmetry* by Marc 
 De Graef and Michael E. McHenry. 
 
-\section scft_symmetry_ops_sec Crystal Symmetry Operations
+\section scft_symmetry_ops_sec Crystal symmetry operations
 
 \anchor scft_symmetry_operation_def
-<b> Definition (Crystal Symmetry Operation) </b>:
+<b> Definition (Crystal symmetry operation) </b>:
 Every crystal symmetry operation \f$ A \f$ is a function that maps
 every position \f$ {\bf r} \f$ within a crystal onto a new position
 \f$ A({\bf r}) \f$, of the form
@@ -38,7 +38,7 @@ group symmetry operation can be zero, giving a pure point group
 operation, or can be a sum of translations by rational fractions of a
 unit cell along Bravais lattice basis vectors.
 
-<b> Notation (Vectors and Dot Products) </b>:
+<b> Notation (Vectors and dot products) </b>:
 Here and hereafter, we use bold faced symbols to denote real D-dimensional 
 vectors such as \f$ {\bf r} \f$ or \f$ {\bf t} \f$.  We define an 
 inner-product space for vectors by defining the dot product 
@@ -50,7 +50,7 @@ norm
      |{\bf a}| = \sqrt{{\bf a}\cdot{\bf a}}
 \f]
 
-<b> Orthogonality of Point Group Operations </b>: Point group operations
+<b> Orthogonality of point group operations </b>: Point group operations
 are always orthogonal transformations. That is, for any point group operator 
 \f$ R \f$,
 \f[
@@ -58,7 +58,7 @@ are always orthogonal transformations. That is, for any point group operator
 \f]
 for any vector \f$ {\bf v} \f$.
 
-<b> Definition (Adjoint of a Point Group Operator) </b>
+<b> Definition (Adjoint of a point group operator) </b>
 The adjoint of any linear operator \f$ R \f$ in the space of real
 D-dimensional vectors is denoted here by \f$ R^{\dagger} \f$. The 
 adjoint is defined by the requirement that
@@ -70,7 +70,7 @@ for any two D-dimensional vectors \f$ {\bf a} \f$ and \f$ {\bf b} \f$
 in this space.
 
 \anchor scft_symmetry_multiplication_def
-<b> Definition (Multiplication of Crystal Symmetry Operations) </b>:
+<b> Definition (Multiplication of crystal symmetry operations) </b>:
 Multiplication of symmetry operations is defined such that the product
 \f$ AB \f$ of two symmetry operations \f$ A \f$ and \f$ B \f$ is the
 operation whose effect on a vector is given by applying \f$ B \f$
@@ -87,7 +87,7 @@ Multiplication of symmetry operations is not commutative: Generally,
 \f$ AB \neq BA \f$.
 
 \anchor scft_symmetry_multiplication_thrm
-<b> Theorem C.1 (Multiplication Rule for Crystal Symmetry Operations) </b>:
+<b> Theorem C.1 (Multiplication rule for crystal symmetry operations) </b>:
 If \f$ A \f$, \f$ B \f$ are two symmetry operations
 \f[
    A = (R_{A}, {\bf t}_{A}) \quad
@@ -112,7 +112,7 @@ any vector \f$ {\bf r} \f$, and that
 \f]
 
 \anchor scft_symmetry_identity_def
-<b> Identity Operation </b>:
+<b> Identity operation </b>:
 The identity operation, denoted by \f$ E \f$, is the trivial crystal
 symmetry operation that maps every position onto itself, so that
 \f[
@@ -128,7 +128,7 @@ Mutlplication of any other symmetry operation \f$ A \f$ by the identity
 leaves \f$ A \f$ unchanged, such that \f$ EA = AE = A \f$.
 
 \anchor scft_symmetry_identity_thrm
-<b> Defininition (Inverse of a Space Group Operation) </b>:
+<b> Defininition (Inverse of a space group operation) </b>:
 Every crystal symmetry operation \f$ A \f$ has an inverse, denoted by
 \f$ A^{-1} \f$, which is defined such that
 \f[
@@ -136,7 +136,7 @@ Every crystal symmetry operation \f$ A \f$ has an inverse, denoted by
 \f]
 The identity element is equal its own inverse, since \f$ EE = E \f$.
 
-<b> Theorem C.2 (Inversion Rule for Crystal Symmetry Operations)</b> : 
+<b> Theorem C.2 (Inversion rule for crystal symmetry operations)</b> : 
 If \f$A\f$ is a crystal symmetry operation
 \f[
    A = (R, {\bf t})
@@ -151,9 +151,9 @@ then
 Use the \ref scft_symmetry_multiplication_thrm "multiplication rule"
 to confirm that \f$ A^{-1}A = A A^{-1} = (I, 0) = E \f$.
 
-\section scft_symmetry_group_sec Space Groups
+\section scft_symmetry_group_sec Space groups
 
-<b> Definition (Space Group) </b>
+<b> Definition (Space group) </b>
 A space group \f$ S \f$ is a set of crystal symmetry operations
 for which multiplication is defined as discussed
 \ref scft_symmetry_multiplication_def "above", and which obey the 
@@ -176,7 +176,7 @@ plane groups, and 2 possible symmetry groups in 1D, as discussed
 contains a set of files that each list all of the symmetry operations 
 for one of these groups.
 
-\section scft_symmetry_components_sec Bases and Vector Components
+\section scft_symmetry_components_sec Bases and vector components
 
 Different vector bases are used in PSCF to define components of vectors 
 that represent positions or translations and for vectors that represent 
@@ -271,7 +271,7 @@ are components of \f$ {\bf r} \f$ in a Bravais basis (reduced coordinates).
 
 \subsection scft_symmetry_adjoint_matrix_sub Adjoint Operators
 
-<b> Theorem C.3 (Matrix Representation of an Adjoint Operator) </b>:
+<b> Theorem C.3 (Matrix representation of an adjoint operator) </b>:
 Suppose \f$ R \f$ is a linear operator such as a point group operation
 in the inner-product space of D-dimensional real vectors, and that
 \f$ R^{\dagger} \f$ is the adjoint of \f$ R \f$.
@@ -318,13 +318,13 @@ where \f$ R_{ji}^{T} \f$ denotes element \f$ (j, i) \f$ of the
 matrix transpose of the matrix representation of \f$ R \f$ in 
 a Bravais basis, completing the proof. 
 
-\section scft_symmetry_symmfunc_sec Transformation of Fields
+\section scft_symmetry_symmfunc_sec Transformation of fields
 
 <b> Definition (Field) </b>: We refer to any complex-valued periodic
 function of D-dimensional position within a crystal as a <em> field</em>.
 A real field has real values at any position.
 
-<b> Notation (Transformation of Fields) </b>:
+<b> Notation (Transformation of fields) </b>:
 If \f$ f \f$ is a field and \f$ A \f$ is a crystal symmetry operation, 
 then the notation
 \f[
@@ -337,7 +337,7 @@ indicates that \f$ f' \f$ is a field for which
 for all \f$ {\bf r} \f$.
 
 \anchor scft_symmetry_symmfunc_def
-<b> Definition (Symmetric Fields) </b>:
+<b> Definition (Symmetric fields) </b>:
 A field \f$ f({\bf r}) \f$ is said to be symmetric or invariant under
 a space group \f$ S \f$ if \f$ fA = f \f$ or (equivalently)
 \f[
@@ -348,13 +348,13 @@ for every crystal symmetry operation \f$ A \in S \f$.
 The following two simple theorems apply to such symmetric functions:
 
 \anchor scft_symmetry_symmfunc_mult_thrm
-<b> Theorem C.4 (Symmetry is Preserved by Scalar Multiplication)</b>:
+<b> Theorem C.4 (Symmetry is preserved by scalar multiplication)</b>:
 If \f$ f({\bf r}) \f$ is a field that is symmetric under a space group
 \f$ S \f$, and \f$ c \f$ is complex constant, then \f$ cf({\bf r}) \f$
 is also symmetric under \f$ S \f$.
 
 \anchor scft_symmetry_symmfunc_conj_thrm
-<b> Theorem C.5 (Symmetry is Preserved by Complex Conjugation)</b>:
+<b> Theorem C.5 (Symmetry is preserved by complex conjugation)</b>:
 If \f$ f({\bf r}) \f$ is a complex field that is symmetric under a
 space group \f$ S \f$, its complex conjugate \f$ f^{*}({\bf r}) \f$
 is also invariant under \f$ S \f$. This also implies that the real
@@ -368,7 +368,7 @@ then \f$ c f(R{\bf r} + {\bf t}) = c f({\bf r}) \f$ and
      \f$ f^{*}(R{\bf r} + {\bf t}) = f^{*}({\bf r}) \f$,
 proving both of the above theorems.
 
-\section scft_symmetry_wave_sec Transformation of Plane Waves
+\section scft_symmetry_wave_sec Transformation of plane waves
 
 To construct basis functions, we consider the effect of space group
 operations on a field that is expressed as a general Fourier series.
@@ -376,7 +376,7 @@ As a first step, it useful to consider the effect of a symmetry operation
 on a single complex-exponential wave.
 The following definition and notation are used to simplify the discussion:
 
-<b> Definition (Plane Wave) </b>:
+<b> Definition (Plane wave) </b>:
 A wave or plane wave \f$ f \f$ is a complex field of the form
 \f[
    f({\bf r}) = ce^{i{\bf G}\cdot{\bf r}}
@@ -393,7 +393,7 @@ a pair
 in which \f$ {\bf G} \f$ denotes the associated wavevector and \f$ c \f$
 is the prefactor.
 
-<b> Theorem C.6 (Transformation of Plane Waves) </b>:
+<b> Theorem C.6 (Transformation of plane waves) </b>:
 If \f$ f = ({\bf G}, c) \f$ is a wave and \f$ A=(R,{\bf t}) \f$ is a space
 group symmetry operation, then \f$ fA \f$ is a wave
 \f[
@@ -434,7 +434,7 @@ invertible: If \f$ f' = fA \f$ then \f$ f = f'A^{-1} \f$.  Two waves
 that are related in this way can be said to related by the symmetry
 operation \f$ A \f$, or by \f$ A^{-1} \f$.
 
-<b> Notation (Transformation of Wavevectors) </b>:
+<b> Notation (Transformation of wavevectors) </b>:
 If \f$ {\bf G} \f$ is a wavevector and \f$ A= (R, {\bf t}) \f$ is a
 space group symmetry operation, then we define  \f$ {\bf G}A \f$ to
 be the wavevector of a wave that is obtained by applying symmetry
@@ -464,7 +464,7 @@ then
 where \f$ AB \f$ denotes a product of symmetry operations, defined such
 that \f$ (AB)({\bf r}) = A(B({\bf r})) \f$ for any \f$ {\bf r} \f$.
 
-\section scft_symmetry_mesh_sec Symmetry Transformations on a Mesh
+\section scft_symmetry_mesh_sec Symmetry transformations on a mesh
 
 Numerical computations in the PSCF programs for periodic systems are 
 performed using periodic fields that are actually defined only at 

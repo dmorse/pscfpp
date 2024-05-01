@@ -24,7 +24,7 @@ PSCF can be used to perform either self-consistent field theory
 calculations or some types of stochastic field-theoretic simulation
 simulations.
 
-\section about_methods_scft_sec Self-Consistent Field Theory
+\section about_methods_scft_sec Self-consistent field theory
 
 Self-consistent field theory (SCFT) is an approximate theory for
 predicting structures and free energies of inhomogeneous equilibrium states
@@ -73,7 +73,7 @@ in part, as a description of the earlier Fortran version of PSCF, and so
 uses conventions and working equations consistent with those used 
 throughout the PSCF documentation and source code.
 
-\section about_methods_fts_sec Field-Theoretic Simulation
+\section about_methods_fts_sec Field-theoretic simulation
 
 Field-theoretic simulation (FTS) methods are a family of closely related
 stochastic simulation methods that sample an equilibrium ensemble of

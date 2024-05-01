@@ -54,7 +54,7 @@ pscfpp/docs/html folder, double click on any file in that directory with
 an *.html file extension, and then click on the "main page" button in the
 upper left to go to the main page (i.e., the index.html page).
 
-\section install_doc_source_sec Manual Source Files
+\section install_doc_source_sec Manual source files
 
 The text of the main manual pages, including the page you are now reading,
 is contained in a set of files with file extension *.dox in the docs/manual

@@ -16,7 +16,7 @@ An example of a parameter file for an pscf_1d program was given
 Please consult this example when looking at this discussion of the file
 format.
 
-\section scft_param_1d_format_sec File Format
+\section scft_param_1d_format_sec File format
 
 The overall format for a pscf_1d parameter file is shown below in 
 skeleton form:
@@ -35,7 +35,7 @@ for all PSCF programs, and have also been discussed previously.
 We thus focus below on the contents of the Domain, Iterator, and 
 Sweep blocks. 
 
-\section scft_param_1d_domain_section Domain Block
+\section scft_param_1d_domain_section Domain block
 
 The domain block describes the spatial domain over which the SCFT equations 
 should be solved. The parameter file syntax is described in detail 

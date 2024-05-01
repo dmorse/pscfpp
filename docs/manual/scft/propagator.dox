@@ -12,7 +12,7 @@ intended to be an introduction to the field theory itself, and we do
 not provide a derivation of the SCFT equations. We assume readers are
 familiar with the principles of polymer physics and statistical mechanics.
 
-\section scft_propagator_setup_sec Model and Notation
+\section scft_propagator_setup_sec Model and notation
 
 PSCF solves the SCFT equations for an incompressible mixture of any number 
 of block polymer species and point-like solvent molecular species.
@@ -50,7 +50,7 @@ Incompressibility is imposed by requiring that
 \f]
 at every position \f$ {\bf r} \f$ within the problem domain.
 
-\section scft_propagator_scf_sec Self-Consistent Field Approximation
+\section scft_propagator_scf_sec Self-consistent field approximation
 
 SCFT for a liquid of flexible polymers is based on a mean-field
 approximation that allows us to approximately predict properties of
@@ -103,7 +103,7 @@ monomer concentrations (or volume fractions) computed using these
 fields as inputs to the ideal gas model satisfy the above SCF
 equations and the incompressibility constraint.
 
-\section scft_propagator_polymer_sec Polymer Species
+\section scft_propagator_polymer_sec Polymer species
 
 Each polymer species in a system modeled by PSCF must be a block polymer
 consisting of one or more blocks connected at junction points.
@@ -578,7 +578,7 @@ monomer type \f$ \alpha\f$ is simply the sum of volume fractions for
 all polymer blocks and all solvent species that have been assigned a
 monomer type index \f$ \alpha\f$ .
 
-\section scft_propagator_solvent_sec Solvent Species
+\section scft_propagator_solvent_sec Solvent species
 
 Each solvent species \f$ i\f$ is associated with a specific monomer type
 \f$ \alpha\f$ and a dimensionless "size" parameter. The size parameter
@@ -617,7 +617,7 @@ in this expression is chosen to guarantee that the spatial average of
 \f$ \phi_{i}(\textbf{r})\f$ (the integral divided by total volume) is
 give by the parameter \f$ \overline{\phi}_{i} \f$.
 
-\section scft_propagator_ensemble_sec Open and Closed Ensembles
+\section scft_propagator_ensemble_sec Open and closed ensembles
 
 PSCF allows the user to choose either an open or closed statistical
 ensemble for each molecular species in the mixture, by allowing a
@@ -669,7 +669,7 @@ used by PSCF, which are denoted indicated the label "mu", are given in
 thermal energy units, and thus are correspond to values of the ratio
 \f$ \mu_{i}/k_{B}T \f$.
 
-\section scft_propagator_thermo_sec Thermodynamic Properties
+\section scft_propagator_thermo_sec Thermodynamic properties
 
 PSCF reports values of the Helmholtz free energy and the pressure in
 non-dimensionalized form.
@@ -747,7 +747,7 @@ over both polymeric and solvent species, and \f$ L_{i} \f$ denotes
 a ratio of molecular volume to monomer reference volume, exactly
 as in Eq. (A.28).
 
-\section scft_propagator_xi_sec Indeterminancy of Pressure in Canonical Ensemble
+\section scft_propagator_xi_sec Indeterminancy of pressure in canonical ensemble
 
 In grand-canonical and mixed ensembles, values for the Lagrange
 multiplier field \f$ \xi(\textbf{r}) \f$ and the macroscopic pressure
@@ -808,7 +808,7 @@ only in the special case of a canonical ensemble. Equal values for monomer
 volume fraction fields and Helmholtz free energies should, however, be
 obtained in any ensemble.
 
-\section scft_propagator_inputs_sec Overview: Working Equations, Inputs and Outputs
+\section scft_propagator_inputs_sec Overview: Working equations, inputs and outputs
 
 The above discussion provide a complete set of working equations for SCFT of
 an incompressible liquid in the form implemented in PSCF, for calculations in

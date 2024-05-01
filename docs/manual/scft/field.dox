@@ -10,7 +10,7 @@ local concentrations or volume fractions of different types of monomer
 (referred to as "c fields") or corresponding monomer chemical potential 
 fields (referred to as "w" fields). 
 
-\section scft_field_formats_sec Field File Formats
+\section scft_field_formats_sec Field file formats
 
 Every PSCF program can read and write w and c fields using one or more
 file formats designed for field files. Each program uses the same file
@@ -41,7 +41,7 @@ in the sub-pages linked below.
 The physical meanings of the c- and w-fields is discussed in more detail
 below.
 
-\section scft_field_c_sec Monomer Concentration / Volume Fraction Fields
+\section scft_field_c_sec Monomer concentration / volume fraction fields
 
 Because PSCF uses a continuous chain model in which there are not 
 actually any discrete monomers, we use the word "monomer" in what 
@@ -76,7 +76,7 @@ as to obtain volume fractions that satisfy a constraint
 \f]
 at every point in the system.
 
-\section scft_field_types_sec Monomer Chemical Potential Fields
+\section scft_field_types_sec Monomer chemical potential fields
 
 Self-consistent field theory is based on a physical approximation in 
 which monomer concentrations and thermodynamic properties are computed 
