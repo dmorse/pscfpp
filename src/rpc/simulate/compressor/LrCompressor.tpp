@@ -10,10 +10,12 @@
 
 #include "LrCompressor.h"
 #include <rpc/System.h>
+#include <rpc/simulate/compressor/intra/IntraCorrelation.h> 
 #include <util/global.h>
 #include <pscf/mesh/MeshIterator.h>
 #include <pscf/iterator/NanException.h>
 #include <prdc/crystal/shiftToMinimum.h>
+
 
 namespace Pscf {
 namespace Rpc{
@@ -29,8 +31,12 @@ namespace Rpc{
       maxItr_(0),
       errorType_("rmsResid"),
       verbose_(0),
-      isAllocated_(false)
-   {  setClassName("LrCompressor"); }
+      isAllocated_(false),
+      intraCorrelationPtr_(0)
+   {  
+      setClassName("LrCompressor"); 
+      intraCorrelationPtr_ = new IntraCorrelation<D>(system);
+   }
 
    // Destructor
    template <int D>
@@ -63,6 +69,7 @@ namespace Rpc{
             kMeshDimensions_[i] = dimensions[i]/2 + 1;
          }
       }
+      
       // Allocate memory required by AM algorithm if not done earlier.
       if (!isAllocated_){
          resid_.allocate(dimensions);
@@ -81,7 +88,9 @@ namespace Rpc{
             w0_[i][j] = system().w().rgrid(i)[j];
          }
       }
-      computeIntraCorrelation();
+      
+      // Compute intraCorrelation (homopolymer)
+      intraCorrelation_ = intraCorrelation().computeIntraCorrelations();
    }
 
    template <int D>
@@ -221,59 +230,6 @@ namespace Rpc{
       // Output timing results, if requested.
       out << "\n";
       out << "Lr Compressor times contributions:\n";
-   }
-
-   template<int D>
-   double LrCompressor<D>::computeDebye(double x)
-   {
-      if (x == 0){
-         return 1.0;
-      } else {
-         return 2.0 * (std::exp(-x) - 1.0 + x) / (x * x);
-      }
-   }
-
-   template<int D>
-   double LrCompressor<D>::computeIntraCorrelation(double qSquare)
-   {
-      const int np = system().mixture().nPolymer();
-      const double vMonomer = system().mixture().vMonomer();
-      // Overall intramolecular correlation
-      double omega = 0;
-      int monomerId; int nBlock;
-      double kuhn; double length; double g; double rg2;
-      Polymer<D> const * polymerPtr;
-
-      for (int i = 0; i < np; i++){
-         polymerPtr = &system().mixture().polymer(i);
-         nBlock = polymerPtr->nBlock();
-         for (int j = 0; j < nBlock; j++) {
-            monomerId = polymerPtr-> block(j).monomerId();
-            kuhn = system().mixture().monomer(monomerId).kuhn();
-            // Get the length (number of monomers) in this block.
-            length = polymerPtr-> block(j).length();
-            rg2 = length * kuhn* kuhn /6.0;
-            g = computeDebye(qSquare*rg2);
-            omega += length * g/ vMonomer;
-         }
-      }
-      return omega;
-   }
-
-   template<int D>
-   void LrCompressor<D>::computeIntraCorrelation()
-   {
-      MeshIterator<D> iter;
-      iter.setDimensions(kMeshDimensions_);
-      IntVec<D> G, Gmin;
-      double Gsq;
-      for (iter.begin(); !iter.atEnd(); ++iter) {
-         G = iter.position();
-         Gmin = shiftToMinimum(G, system().mesh().dimensions(), 
-                                  system().unitCell());
-         Gsq = system().unitCell().ksq(Gmin);
-         intraCorrelation_[iter.rank()] = computeIntraCorrelation(Gsq);
-      }
    }
 
    template<int D>
