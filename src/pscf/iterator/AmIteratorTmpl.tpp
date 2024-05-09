@@ -567,64 +567,45 @@ namespace Pscf
    double AmIteratorTmpl<Iterator,T>::computeError(int verbose)
    {
       double error = 0.0;
-
-      if (verbose > 1) {
-
-         Log::file() << "\n";
-
-         // Find max residual vector element
-         double maxRes  = maxAbs(resHists_[0]);
-         Log::file() << "Max Residual  = " << Dbl(maxRes,15) << "\n";
-
-         // Find norm of residual vector
-         double normRes = norm(resHists_[0]);
-         Log::file() << "Residual Norm = " << Dbl(normRes,15) << "\n";
-
-         // Find root-mean-squared residual element value
-         double rmsRes = normRes/sqrt(nElem_);
-         Log::file() << "RMS Residual  = " << Dbl(rmsRes,15) << "\n";
-
-         // Find norm of residual vector relative to field
-         double normField = norm(fieldHists_[0]);
-         double relNormRes = normRes/normField;
-         Log::file() << "Relative Norm = " << Dbl(relNormRes,15) 
-                     << std::endl;
-
-         // Check if calculation has diverged (normRes will be NaN)
-         UTIL_CHECK(!std::isnan(normRes));
-
-         // Set error value
-         if (errorType_ == "maxResid") {
-            error = maxRes;
-         } else if (errorType_ == "normResid") {
-            error = normRes;
-         } else if (errorType_ == "rmsResid") {
-            error = rmsRes;
-         } else if (errorType_ == "relNormResid") {
-            error = relNormRes;
-         } else {
-            UTIL_THROW("Invalid iterator error type in parameter file.");
-         }
-
+      
+      // Find max residual vector element
+      double maxRes  = maxAbs(resHists_[0]);
+      
+      // Find norm of residual vector
+      double normRes = norm(resHists_[0]);
+      
+      // Find root-mean-squared residual element value
+      double rmsRes = normRes/sqrt(nElem_);
+      
+      // Find norm of residual vector relative to field
+      double normField = norm(fieldHists_[0]);
+      double relNormRes = normRes/normField;
+      
+      // Check if calculation has diverged (normRes will be NaN)
+      UTIL_CHECK(!std::isnan(normRes));
+      
+      // Set error value
+      if (errorType_ == "maxResid") {
+         error = maxRes;
+      } else if (errorType_ == "normResid") {
+         error = normRes;
+      } else if (errorType_ == "rmsResid") {
+         error = rmsRes;
+      } else if (errorType_ == "relNormResid") {
+         error = relNormRes;
       } else {
-
-         // Set error value
-         if (errorType_ == "maxResid") {
-            error = maxAbs(resHists_[0]);
-         } else if (errorType_ == "normResid") {
-            error = norm(resHists_[0]);
-         } else if (errorType_ == "rmsResid") {
-            error = norm(resHists_[0])/sqrt(nElem_);
-         } else if (errorType_ == "relNormResid") {
-            double normRes = norm(resHists_[0]);
-            double normField = norm(fieldHists_[0]);
-            error = normRes/normField;
-         } else {
-            UTIL_THROW("Invalid iterator error type in parameter file.");
-         }
-
+         UTIL_THROW("Invalid iterator error type in parameter file.");
       }
 
+      if (verbose > 1) {
+         Log::file() << "\n";
+         Log::file() << "Max Residual  = " << Dbl(maxRes,15) << "\n";
+         Log::file() << "Residual Norm = " << Dbl(normRes,15) << "\n";
+         Log::file() << "RMS Residual  = " << Dbl(rmsRes,15) << "\n";
+         Log::file() << "Relative Norm = " << Dbl(relNormRes,15) 
+                     << std::endl;
+      } 
+      
       return error;
    }
    
