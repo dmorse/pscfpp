@@ -7,8 +7,7 @@ rpc_simulate_analyzer_= \
   rpc/simulate/analyzer/HamiltonianAnalyzer.cpp \
   rpc/simulate/analyzer/HamiltonianAutoCorr.cpp \
   rpc/simulate/analyzer/BinaryStructureFactorGrid.cpp \
-  rpc/simulate/analyzer/StepLogger.cpp \
-  rpc/simulate/analyzer/LinearResponseAnalyzer.cpp \
+  rpc/simulate/analyzer/StepLogger.cpp 
   
 rpc_simulate_analyzer_OBJS=\
      $(addprefix $(BLD_DIR)/, $(rpc_simulate_analyzer_:.cpp=.o))
