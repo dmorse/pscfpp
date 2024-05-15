@@ -41,7 +41,12 @@ namespace Rpc{
    // Destructor
    template <int D>
    LrCompressor<D>::~LrCompressor()
-   {}
+   {
+      if (intraCorrelationPtr_){
+        delete intraCorrelationPtr_;
+     }
+   
+   }
 
    // Read parameters from file
    template <int D>
