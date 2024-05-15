@@ -35,7 +35,11 @@ namespace Rpc{
    // Destructor
    template <int D>
    LrAmCompressor<D>::~LrAmCompressor()
-   {  setClassName("LrAmCompressor"); }
+   { 
+     if (intraCorrelationPtr_){
+        delete intraCorrelationPtr_;
+     }
+   }
 
    // Read parameters from file
    template <int D>
