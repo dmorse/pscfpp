@@ -1,5 +1,5 @@
-#ifndef RPC_LR_AM_COMPRESSOR_H
-#define RPC_LR_AM_COMPRESSOR_H
+#ifndef RPC_LR_POST_AM_COMPRESSOR_H
+#define RPC_LR_POST_AM_COMPRESSOR_H
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory
@@ -11,8 +11,8 @@
 #include "Compressor.h"
 #include <prdc/cpu/RField.h>
 #include <prdc/cpu/RFieldDft.h>
-#include <pscf/iterator/AmIteratorTmpl.h> 
-#include <rpc/simulate/compressor/intra/IntraCorrelation.h>             
+#include <pscf/iterator/AmIteratorTmpl.h>                 
+#include <rpc/simulate/compressor/intra/IntraCorrelation.h> 
 
 namespace Pscf {
 namespace Rpc
@@ -25,23 +25,12 @@ namespace Rpc
    using namespace Pscf::Prdc::Cpu;
 
    /**
-   * Anderson Mixing compressor with linear-response preconditioning.
-   *
-   * Class LrAmCompressor implements an Anderson mixing algorithm in
-   * which the residual is defined using a preconditioning scheme that
-   * would yield a Jacobian of unity if applied to a homogeneous system.
-   * The residual in the unpreconditioned form of Anderson mixing is a
-   * vector in which each that represents a deviations in the sum of 
-   * volume fractions from unity. In this preconditioned algorithm, each
-   * Fourier component of this deviation is multiplied by the inverse of
-   * Fourier representation of the linear response of total concentration 
-   * to changes in pressure in a homogeneous system of the same chemical
-   * composition as the system of interest.
+   * Rpc implementation of the Anderson Mixing compressor.
    *
    * \ingroup Rpc_Compressor_Module
    */
    template <int D>
-   class LrAmCompressor 
+   class LrPostAmCompressor 
          : public AmIteratorTmpl<Compressor<D>, DArray<double> >
    {
 
@@ -52,12 +41,12 @@ namespace Rpc
       * 
       * \param system System object associated with this compressor.
       */
-      LrAmCompressor(System<D>& system);
+      LrPostAmCompressor(System<D>& system);
 
       /**
       * Destructor.
       */
-      ~LrAmCompressor();
+      ~LrPostAmCompressor();
 
       /**
       * Read all parameters and initialize.
@@ -86,27 +75,16 @@ namespace Rpc
       int compress();    
       
       /**
-      * Write a report of time contributions used by this algorithm.
-      * 
-      * \param out  output stream to which to write
+      * Return compressor times contributions.
       */
       void outputTimers(std::ostream& out);
 
       /**
-      * Reset / clear all timers.
+      * Clear all timers (reset accumulated time to zero).
       */
       void clearTimers();
-
-      /**
-      * Compute and return the scalar error.
-      *
-      * \param verbose  verbosity level (higher is more verbose)
-      */
-      double computeError(int verbose);
-      
       
       // Inherited public member functions
-
       using AmIteratorTmpl<Compressor<D>, DArray<double> >::setClassName;
       
    protected:
@@ -116,26 +94,31 @@ namespace Rpc
       using Compressor<D>::mdeCounter_;
 
    private:
-
+   
       /**
-      * Type of error criterion used to test convergence 
-      */ 
-      std::string errorType_;
-      
-      /**
-      * How many times MDE has been solved for each mc move.
+      * How many times MDE has been solved for each mc move 
       */
       int itr_;
-  
+      
       /**
       * Current values of the fields
       */
       DArray< RField<D> > w0_;  
+
+      /**
+      * Has the variable been allocated?
+      */
+      bool isAllocated_;
       
       /**
-      * Incompressibility constraint error
+      * Template w Field used in update function
       */
-      DArray<double> error_;
+      DArray< RField<D> > wFieldTmp_;
+      
+      /**
+      * New Basis variable used in updateBasis function 
+      */
+      DArray<double> newBasis_;
       
       /**
       * Residual in real space used for linear response anderson mixing.
@@ -156,22 +139,6 @@ namespace Rpc
       * Dimensions of wavevector mesh in real-to-complex transform
       */ 
       IntVec<D> kMeshDimensions_;
-      
-      /**
-      * Has the variable been allocated?
-      */
-      bool isAllocated_;
-      
-      /**
-      * Template w Field used in update function.
-      */
-      
-      DArray< RField<D> > wFieldTmp_;
-      
-      /**
-      * New Basis variable used in updateBasis function. 
-      */
-      DArray<double> newBasis_;
 
       /**
       * Assign one field to another.
@@ -284,23 +251,23 @@ namespace Rpc
       * Pointer to the IntraCorrelation (homopolymer) class
       */
       IntraCorrelation<D>* intraCorrelationPtr_;
-      
+    
+      // Inherited private members 
       using Compressor<D>::system;
 
    };
    
    // Get the intraCorrelation (homopolymer) by non-const reference.
    template <int D>
-   inline IntraCorrelation<D>& LrAmCompressor<D>::intraCorrelation()
+   inline IntraCorrelation<D>& LrPostAmCompressor<D>::intraCorrelation()
    { return *intraCorrelationPtr_; }
-
-   #ifndef RPC_LR_AM_COMPRESSOR_TPP
+   
+   #ifndef RPC_LR_POST_AM_COMPRESSOR_TPP
    // Suppress implicit instantiation
-   extern template class LrAmCompressor<1>;
-   extern template class LrAmCompressor<2>;
-   extern template class LrAmCompressor<3>;
+   extern template class LrPostAmCompressor<1>;
+   extern template class LrPostAmCompressor<2>;
+   extern template class LrPostAmCompressor<3>;
    #endif
-
 
 } // namespace Rpc
 } // namespace Pscf
