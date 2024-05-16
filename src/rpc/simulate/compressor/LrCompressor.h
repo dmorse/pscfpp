@@ -14,12 +14,14 @@
 #include <util/containers/DArray.h>
 #include <util/containers/DMatrix.h>
 #include <util/misc/Timer.h>
+#include <rpc/simulate/compressor/intra/IntraCorrelation.h>  
 
 namespace Pscf {
 namespace Rpc
 {
 
    template <int D> class System;
+   template <int D> class IntraCorrelation;
 
    using namespace Util;
    using namespace Pscf::Prdc::Cpu;
@@ -190,26 +192,26 @@ namespace Rpc
       * Outputs relevant system details to the iteration log.
       */
       void outputToLog();
-
+      
       /**
-      * Compute Debye function
+      * Get the IntraCorrelation (homopolymer) by reference.
       */
-      double computeDebye(double x);
-
+      IntraCorrelation<D>& intraCorrelation();
+      
       /**
-      * Compute intramolecular correlation at specific sqSquare
+      * Pointer to the IntraCorrelation (homopolymer) class
       */
-      double computeIntraCorrelation(double qSquare);
-
-      /**
-      * Compute intramolecular correlation
-      */
-      void computeIntraCorrelation();
-
+      IntraCorrelation<D>* intraCorrelationPtr_;
+      
       // Private inherited members
       using Compressor<D>::system;
 
    };
+   
+   // Get the intraCorrelation (homopolymer) by non-const reference.
+   template <int D>
+   inline IntraCorrelation<D>& LrCompressor<D>::intraCorrelation()
+   { return *intraCorrelationPtr_; }
 
    #ifndef RPC_LR_COMPRESSOR_TPP
    // Suppress implicit instantiation
