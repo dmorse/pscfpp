@@ -612,6 +612,10 @@ namespace Rpc {
          state_.fieldHamiltonian  = fieldHamiltonian();
       }
 
+      if (hasPerturbation()) {
+         perturbation().saveState();
+      }
+
       state_.hasData = true;
    }
 
@@ -658,6 +662,10 @@ namespace Rpc {
          hasDc_ = true;
       }
       
+      if (hasPerturbation()) {
+         perturbation().restoreState();
+      }
+
       state_.hasData = false;
    }
  

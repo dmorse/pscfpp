@@ -82,6 +82,30 @@ namespace Rpc {
       virtual void incrementDc(DArray< RField<D> >& dc);
 
       /**
+      * Save any required internal state variables.
+      *
+      * This function should save any state variables that would need to 
+      * be restored after a rejected Monte Carlo move or failure of the
+      * compressor to converge after an attempted Brownian dynamics move.
+      *
+      * Empty default implementation 
+      */
+      virtual void saveState()
+      {};
+
+      /**
+      * Restore any required internal state variables.
+      *
+      * This function is called after rejection of an MC move or failure
+      * of an attempted BD step, and should restore the variables saved 
+      * by the saveState function.
+      *
+      * Empty default implementation 
+      */
+      virtual void restoreState()
+      {};
+
+      /**
       * Get parent Simulator<D> by const reference.
       */
       Simulator<D> const & simulator() const;
