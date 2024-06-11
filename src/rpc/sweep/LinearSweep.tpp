@@ -10,7 +10,6 @@
 
 #include "LinearSweep.h"
 #include <rpc/System.h>
-#include <cstdio>
 
 namespace Pscf {
 namespace Rpc {
@@ -25,20 +24,17 @@ namespace Rpc {
    template <int D>
    void LinearSweep<D>::readParameters(std::istream& in)
    {
-      // Call the base class's readParameters function.
+      // Call the base class's readParameters function
       Sweep<D>::readParameters(in);
       
-      // Read in the number of sweep parameters and allocate.
-      //this->read(in, "nParameter", nParameter_);
+      // Read the number of sweep parameters, allocate parameters_ array
       read(in, "nParameter", nParameter_);
       parameters_.allocate(nParameter_);
       
-      // Read in array of SweepParameters, calling << for each
-      //this->template readDArray< SweepParameter<D> >(in, "parameters", 
-      //                                            parameters_, nParameter_);
+      // Read array of SweepParameters, calling << operator for each
       readDArray(in, "parameters", parameters_, nParameter_);
 
-      // Verify net zero change in volume fractions if being swept
+      // Verify net zero change in volume fractions, if these are swept
       double sum = 0.0;
       for (int i = 0; i < nParameter_; ++i) {
          if (parameters_[i].type() == "phi_polymer" || 
@@ -54,10 +50,10 @@ namespace Rpc {
    template <int D>
    void LinearSweep<D>::setup()
    {
-      // Verify that the LinearSweep has a system pointer
+      // Verify that the LinearSweep has a pointer to parent System
       UTIL_CHECK(hasSystem());
 
-      // Call base class's setup function
+      // Call base class setup function
       Sweep<D>::setup();
       
       // Set system pointer and initial value for each parameter object

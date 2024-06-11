@@ -110,14 +110,17 @@ namespace Rpc {
       {  systemPtr_ = &system;}
 
       /**
-      * Store the pre-sweep value of the corresponding parameter.
+      * Get and store initial value this parameters.
+      *
+      * This function is called before a sweep begins, and simply gets
+      * current values of this parameter.
       */
       void getInitial();
 
       /**
-      * Update the corresponding parameter value in the system.
+      * Update the corresponding parameter value in the System.
       *
-      * \param newVal   new value for the parameter (input)
+      * \param newVal  new value for this parameter (input)
       */
       void update(double newVal);
 
@@ -134,33 +137,47 @@ namespace Rpc {
       void writeParamType(std::ostream& out) const;
 
       /**
-      * Get a id for a sub-object or element to which this is applied.
+      * Get id for a sub-object or element to which this is applied.
       *
-      * This function returns a value from the id_ array. Elements
-      * of this array store indices associating the parameter with
-      * a particular subobject or value. Different types of parameters
-      * require either 1 or 2 such identifiers. The number of required
-      * identifiers is denoted by private variable nId_.
+      * This function returns a value from the id_ array. Elements of 
+      * array store indices associating with a parameter value, which
+      * may, for example, identify a molecule type index, one or more 
+      * monomer type indices or a unit cell parameter index. 
+      * 
+      * Different types of parameters require either 1 or 2 such 
+      * identifiers.  The number of required identifiers is returned 
+      * by the function nId(). 
       *
       * \param i array index to access
       */
       int id(int i) const
-      {  return id_[i];}
+      {
+         UTIL_CHECK(i < nId_);  
+         return id_[i];
+      }
 
       /**
-      * Return the current system parameter value.
+      * Number of indices associated with this type of parameter.
+      *
+      * See documentation of id(int).
+      */
+      int nId() const
+      {  return nId_; }
+
+      /**
+      * Get the current system parameter value.
       */
       double current()
       {  return get_(); }
 
       /**
-      * Return the initial system parameter value.
+      * Get the initial system parameter value.
       */
       double initial() const
       {  return initial_; }
 
       /**
-      * Return the total change planned for this parameter during sweep.
+      * Get the total change planned for this parameter during sweep.
       */
       double change() const
       {  return change_; }
@@ -187,7 +204,7 @@ namespace Rpc {
       /// Number of identifiers needed for this parameter type.
       int nId_;
 
-      /// Identifier indices.
+      /// Identifier indices (e.g., molecule or monomer type index)
       DArray<int> id_;
 
       /// Initial parameter value, retrieved from system at start of sweep.
@@ -212,7 +229,7 @@ namespace Rpc {
       double get_();
 
       /**
-      * Set the system parameter value.
+      * Set a new system parameter value.
       *
       * \param newVal  new value for this parameter.
       */
@@ -231,8 +248,7 @@ namespace Rpc {
 
       template <int U>
       friend
-      std::ostream&
-      operator << (std::ostream&, SweepParameter<U> const&);
+      std::ostream& operator << (std::ostream&, SweepParameter<U> const&);
 
    };
 

@@ -21,8 +21,7 @@ namespace Rpc {
    using namespace Util;
 
    /**
-   * A sweep in parameter space where one or more parameters change
-   * linearly with the sweep variable.
+   * Sweep in which parameters vary linearly with sweep variable s.
    *
    * \ref scft_param_sweep_linear_sec "Parameter File Format"
    * \ingroup Rpc_Sweep_Module
@@ -34,28 +33,31 @@ namespace Rpc {
 
       /**
       * Constructor.
-      * \param system parent System object
+      *
+      * \param system  parent System object
       */
       LinearSweep(System<D>& system);
 
       /**
       * Read parameters from param file.
       *
-      * \param in Input stream from param file.
+      * \param in  parameter file input stream
       */
       void readParameters(std::istream& in);
 
       /**
-      * Setup operation at the beginning of a sweep. Gets initial
-      * values of individual parameters.
+      * Setup operation at the beginning of a sweep.
+      *
+      * Gets and stores initial values of individual swept parameters.
       */
       void setup();
 
       /**
-      * Set the state before an iteration. Called with each new iteration
-      * in SweepTempl::sweep()
+      * Set state parameters before solving an SCFT problem.
       *
-      * \param s path length coordinate, in [0,1]
+      * Called by SweepTempl::sweep() for each new state in sweep.
+      *
+      * \param s  path length coordinate, in [0,1]
       */
       void setParameters(double s);
 
@@ -66,11 +68,13 @@ namespace Rpc {
       */
       void outputSummary(std::ostream& out);
 
+      // Inherited public members
       using ParamComposite::read;
       using ParamComposite::readDArray;
 
    protected:
 
+      // Inherited protected members
       using Sweep<D>::system;
       using Sweep<D>::hasSystem;
 

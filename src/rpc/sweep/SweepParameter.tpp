@@ -61,7 +61,7 @@ namespace Rpc {
    {
       std::string buffer;
       in >> buffer;
-      std::transform(buffer.begin(), buffer.end(), 
+      std::transform(buffer.begin(), buffer.end(),
                      buffer.begin(), ::tolower);
 
       if (buffer == "block" || buffer == "block_length") {
@@ -113,27 +113,21 @@ namespace Rpc {
    */
    template <int D>
    void SweepParameter<D>::writeParamType(std::ostream& out) const
-   {
-      out << type();
-   }
+   {  out << type(); }
 
    /*
-   * Get the current value from the parent system.
+   * Get initial (current) values of swept parameters from parent system.
    */
    template <int D>
    void SweepParameter<D>::getInitial()
-   {
-      initial_ = get_();
-   }
+   {  initial_ = get_(); }
 
    /*
-   * Set a new value in the parent system.
+   * Set new values of swept parameters in the parent system.
    */
    template <int D>
    void SweepParameter<D>::update(double newVal)
-   {
-      set_(newVal);
-   }
+   {  set_(newVal); }
 
    /*
    * Get string representation of type enum value.
@@ -191,23 +185,24 @@ namespace Rpc {
          return systemPtr_->unitCell().parameter(id(0));
       } else if (type_ == Chi_Bottom) {
          // Note: this option is only relevant for thin film systems
-         UTIL_CHECK(isFilmIterator()); 
+         UTIL_CHECK(isFilmIterator());
          if (systemPtr_->iterator().className() == "AmIteratorBasisFilm") {
             FilmIterator<D, AmIteratorBasis<D> >* itrPtr_(0);
-            itrPtr_ = static_cast<FilmIterator<D, AmIteratorBasis<D> >* >(&(systemPtr_->iterator()));
+            itrPtr_ = static_cast< FilmIterator<D, AmIteratorBasis<D> >* >
+                      (&(systemPtr_->iterator()));
             return itrPtr_->chiBottom(id(0));
          } else {
-            UTIL_THROW("Iterator type is not compatible with this sweep parameter.");
+            UTIL_THROW("Iterator type incompatible with sweep parameter.");
          }
       } else if (type_ == Chi_Top) {
          // Note: this option is only relevant for thin film systems
-         UTIL_CHECK(isFilmIterator()); 
+         UTIL_CHECK(isFilmIterator());
          if (systemPtr_->iterator().className() == "AmIteratorBasisFilm") {
             FilmIterator<D, AmIteratorBasis<D> >* itrPtr_(0);
             itrPtr_ = static_cast<FilmIterator<D, AmIteratorBasis<D> >* >(&(systemPtr_->iterator()));
             return itrPtr_->chiTop(id(0));
          } else {
-            UTIL_THROW("Iterator type is not compatible with this sweep parameter.");
+            UTIL_THROW("Iterator type incompatible with sweep parameter.");
          }
       } else {
          UTIL_THROW("This should never happen.");
@@ -239,23 +234,24 @@ namespace Rpc {
          systemPtr_->setUnitCell(params);
       } else if (type_ == Chi_Bottom) {
          // Note: this option is only relevant for thin film systems
-         UTIL_CHECK(isFilmIterator()); 
+         UTIL_CHECK(isFilmIterator());
          if (systemPtr_->iterator().className() == "AmIteratorBasisFilm") {
             FilmIterator<D, AmIteratorBasis<D> >* itrPtr_(0);
-            itrPtr_ = static_cast<FilmIterator<D, AmIteratorBasis<D> >* >(&(systemPtr_->iterator()));
+            itrPtr_ = static_cast<FilmIterator<D, AmIteratorBasis<D> >* >
+                      (&(systemPtr_->iterator()));
             itrPtr_->setChiBottom(id(0), newVal);
          } else {
-            UTIL_THROW("Iterator type is not compatible with this sweep parameter.");
+            UTIL_THROW("Iterator type incompatible with sweep parameter.");
          }
       } else if (type_ == Chi_Top) {
          // Note: this option is only relevant for thin film systems
-         UTIL_CHECK(isFilmIterator()); 
+         UTIL_CHECK(isFilmIterator());
          if (systemPtr_->iterator().className() == "AmIteratorBasisFilm") {
             FilmIterator<D, AmIteratorBasis<D> >* itrPtr_(0);
             itrPtr_ = static_cast<FilmIterator<D, AmIteratorBasis<D> >* >(&(systemPtr_->iterator()));
             itrPtr_->setChiTop(id(0), newVal);
          } else {
-            UTIL_THROW("Iterator type is not compatible with this sweep parameter.");
+            UTIL_THROW("Iterator type incompatible with sweep parameter.");
          }
       } else {
          UTIL_THROW("This should never happen.");
@@ -263,10 +259,10 @@ namespace Rpc {
    }
 
    /*
-   * Check if the system iterator is a thin film iterator. 
+   * Check if the system iterator is a thin film iterator.
    */
    template <int D>
-   bool SweepParameter<D>::isFilmIterator() const 
+   bool SweepParameter<D>::isFilmIterator() const
    {
       std::string name = systemPtr_->iterator().className();
       if (name.size() < 4) {
@@ -289,18 +285,19 @@ namespace Rpc {
       ar & change_;
    }
 
-   // Definitions of operators, with no explicit instantiations. 
+   // Definitions of operators, with no explicit instantiations.
 
    /*
    * Inserter for reading a SweepParameter from an istream.
    */
    template <int D>
-   std::istream& operator >> (std::istream& in, 
+   std::istream& operator >> (std::istream& in,
                               SweepParameter<D>& param)
    {
-      // Read the parameter type.
-      param.readParamType(in);  
-      // Read the identifiers associated with this parameter type. 
+      // Read the parameter type identifier string
+      param.readParamType(in);
+
+      // Read the identifiers associated with this parameter type.
       for (int i = 0; i < param.nId_; ++i) {
          in >> param.id_[i];
       }
@@ -314,7 +311,7 @@ namespace Rpc {
    * Extractor for writing a SweepParameter to ostream.
    */
    template <int D>
-   std::ostream& operator << (std::ostream& out, 
+   std::ostream& operator << (std::ostream& out,
                               SweepParameter<D> const & param)
    {
       param.writeParamType(out);

@@ -19,7 +19,7 @@ namespace Rpc {
    using namespace Util;
 
    /**
-   * Solve a sequence of problems along a line in parameter space.
+   * Solve a sequence of SCFT problems along a line in parameter space.
    */
    template <int D>
    class Sweep : public SweepTmpl< BasisFieldState<D> >
@@ -34,6 +34,8 @@ namespace Rpc {
 
       /**
       * Constructor, creates assocation with parent system.
+      *
+      * \param system reference to parent system
       */
       Sweep(System<D>& system);
 
@@ -44,13 +46,17 @@ namespace Rpc {
 
       /**
       * Set association with parent System.
+      *
+      * Call for objects created with default constructor.
+      *
+      * \param system reference to parent system
       */
       void setSystem(System<D>& system);
 
       /**
       * Read parameters from param file.
-      * 
-      * \param in Input stream from param file.
+      *
+      * \param in parameter file input stream 
       */
       virtual void readParameters(std::istream& in);
 
@@ -64,8 +70,10 @@ namespace Rpc {
 
    protected:
 
+      // Protected member functions
+
       /**
-      * Check allocation state of fields in one state, allocate if necessary.
+      * Check allocation of fields in one state, allocate if necessary.
       *
       * \param state object that represents a stored state of the system.
       */
@@ -77,7 +85,7 @@ namespace Rpc {
       virtual void setup();
 
       /**
-      * Set non-adjustable system parameters to new values.
+      * Set system parameters to new values.
       *
       * \param sNew contour variable value for new trial solution.
       */
@@ -86,6 +94,10 @@ namespace Rpc {
       /**
       * Create a guess for adjustable variables by continuation.
       *
+      * The "adjustable variables" in a standard SCFT problem are omega
+      * fields and adjustable unit cell parameters, i.e., variables that
+      * are adjusted by the iterator.
+      *
       * \param sNew contour variable value for new trial solution.
       */
       virtual void extrapolate(double sNew);
@@ -93,7 +105,9 @@ namespace Rpc {
       /**
       * Call current iterator to solve SCFT problem.
       *
-      * Return 0 for sucessful solution, 1 on failure to converge.
+      * \param isContinuation If true, use information from previous states
+      *
+      * \return 0 for sucessful solution, 1 on failure to converge.
       */
       virtual int solve(bool isContinuation);
 
@@ -106,9 +120,9 @@ namespace Rpc {
       virtual void reset();
 
       /**
-      * Update state(0) and output data after successful convergence
+      * Update state(0) and output data after successful convergence.
       *
-      * The implementation of this function should copy the current 
+      * The implementation of this function should copy the current
       * system state into state(0) and output any desired information
       * about the current converged solution.
       */
@@ -120,7 +134,7 @@ namespace Rpc {
       virtual void cleanup();
 
       /**
-      * Has an association with the parent System been set?
+      * Does an association with the parent System exist?
       */
       bool hasSystem()
       {  return (systemPtr_ != 0); }
@@ -131,16 +145,26 @@ namespace Rpc {
       System<D>& system()
       {  return *systemPtr_; }
 
-      /// Whether to write real space concentration field files. 
+      // Protected variables writeCGrid_, writeCBasis_ and writeWGrid_
+      // control which converged fields will be written to files after
+      // solution of each SCFT solution within a sweep.
+
+      /**
+      * Should concentration fields be written to file in r-grid format?
+      */
       bool writeCRGrid_;
 
-      /// Whether to write concentration field files in basis format. 
+      /**
+      * Should concentration fields be written to file in basis format?
+      */
       bool writeCBasis_;
 
-      /// Whether to write real space potential field files. 
+      /**
+      * Should converged w fields be written to file in r-grid format?
+      */
       bool writeWRGrid_;
 
-      // Protected members inherited from base classes
+      // Protected member variables inherited from base classes
       using SweepTmpl< BasisFieldState<D> >::ns_;
       using SweepTmpl< BasisFieldState<D> >::baseFileName_;
       using SweepTmpl< BasisFieldState<D> >::initialize;
@@ -152,7 +176,7 @@ namespace Rpc {
       /// Trial state (produced by continuation in setGuess)
       BasisFieldState<D> trial_;
 
-      /// Unit cell parameters for trial state 
+      /// Unit cell parameters for trial state
       FSArray<double, 6> unitCellParameters_;
 
       /// Log file for summary output
