@@ -19,16 +19,18 @@ namespace Rpc {
    template <int D>
    Perturbation<D>::Perturbation(Simulator<D>& simulator)
     : ParamComposite(),
-      simulatorPtr_(&simulator)
+      simulatorPtr_(&simulator),
+      lambda_(1.0),
+      savedLambda_(1.0)
    {}
-   
+
    /* 
    * Destructor.
    */
    template <int D>
    Perturbation<D>::~Perturbation()
    {}
-   
+
    /*
    * Read parameters from stream, empty default implementation.
    */
@@ -47,8 +49,8 @@ namespace Rpc {
    * Compute and return perturbation, default implementation.
    */
    template <int D>
-   double Perturbation<D>::hamiltonian()
-   { return 0.0; }
+   double Perturbation<D>::hamiltonian(double unperturbedHamiltonian)
+   {  return 0.0; }
 
    /*
    * Modify functional derivatives, empty default implementation.
@@ -56,6 +58,20 @@ namespace Rpc {
    template <int D>
    void Perturbation<D>::incrementDc(DArray< RField<D> > & dc)
    {}
+
+   /*
+   * Save internal variables (including lambda).
+   */
+   template <int D>
+   void Perturbation<D>::saveState()
+   {  savedLambda_ = lambda_; }
+
+   /*
+   * Restored saved internal variables (including lambda).
+   */
+   template <int D>
+   void Perturbation<D>::restoreState()
+   {  lambda_ = savedLambda_; }
 
 }
 }

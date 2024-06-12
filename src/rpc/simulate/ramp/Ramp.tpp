@@ -29,15 +29,6 @@ namespace Rpc {
    Ramp<D>::~Ramp()
    {}
 
-   #if 0   
-   /*
-   * Read parameters from stream, empty default implementation.
-   */
-   template <int D>
-   void Ramp<D>::readParameters(std::istream& in)
-   {}
-   #endif
-
 }
 }
 #endif 

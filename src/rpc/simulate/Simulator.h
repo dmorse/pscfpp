@@ -24,6 +24,8 @@ namespace Rpc {
    template <int D> class CompressorFactory;
    template <int D> class Perturbation;
    template <int D> class PerturbationFactory;
+   template <int D> class Ramp;
+   template <int D> class RampFactory;
 
    using namespace Util;
    using namespace Prdc::Cpu;
@@ -288,6 +290,18 @@ namespace Rpc {
       double fieldHamiltonian() const;
 
       /**
+      * Get the perturbation to the standard Hamiltonian (if any).
+      *
+      * A perturbation to the Hamiltonian, if any, is computed by an 
+      * associated Perturbation object. When a perturbation exists, as
+      * indicated by the return value of hasPerturbation(), the
+      * perturbationHamiltonian component is added to the idealHamiltonian
+      * and fieldHamiltonian components to obtain the total value that is
+      * returned by hamiltonian() function.
+      */
+      double perturbationHamiltonian() const;
+
+      /**
       * Has the Hamiltonian been computed for current w and c fields?
       */
       bool hasHamiltonian() const;
@@ -487,14 +501,24 @@ namespace Rpc {
       Random& random();
       
       /**
-      * Get the perturbation by const reference.
+      * Does this Simulator have a Perturbation?
+      */
+      bool hasPerturbation() const;
+
+      /**
+      * Get the associated Perturbation by const reference.
       */
       Perturbation<D> const & perturbation() const;
 
       /**
-      * Does this Simulator have a Perturbation?
+      * Does this Simulator have a Ramp?
       */
-      bool hasPerturbation() const;
+      bool hasRamp() const;
+
+      /**
+      * Get the associated Ramp by const reference.
+      */
+      Ramp<D> const & ramp() const;
 
       ///@}
 
@@ -535,6 +559,30 @@ namespace Rpc {
       */
       void setPerturbation(Perturbation<D>* ptr);
 
+      /**
+      * Get the ramp by non-const reference.
+      */
+      Ramp<D>& ramp();
+
+      /**
+      * Get the ramp factory by reference.
+      */
+      RampFactory<D>& rampFactory();
+
+      /**
+      * Optionally read an associated ramp.
+      *
+      * \param in input parameter stream
+      */
+      void readRamp(std::istream& in);
+
+      /**
+      * Set the associated ramp.
+      *
+      * \param ptr pointer to a new Ramp<D> object.
+      */
+      void setRamp(Ramp<D>* ptr);
+
       // Protected data members
 
       /**
@@ -572,7 +620,7 @@ namespace Rpc {
       mutable SimState<D> state_;
 
       /**
-      * Field theoretic Hamiltonian H[W] (extensive value).
+      * Total field theoretic Hamiltonian H[W] (extensive value).
       */
       double hamiltonian_;
 
@@ -585,6 +633,15 @@ namespace Rpc {
       * Field contribution (H_W) to Hamiltonian
       */
       double fieldHamiltonian_;
+
+      /**
+      * Perturbation to the standard Hamiltonian (if any).
+      *
+      * A perturbation to the Hamiltonian, if any, is computed by an 
+      * associated Perturbation object and added to the ideal and field
+      * components to obtain the total hamiltonian_ value. 
+      */
+      double perturbationHamiltonian_;
 
       /**
       * Simulation converge step counter.
@@ -682,6 +739,16 @@ namespace Rpc {
       * Pointer to the perturbation (if any)
       */
       Perturbation<D>* perturbationPtr_;
+
+      /**
+      * Pointer to the Ramp Factory.
+      */
+      RampFactory<D>* rampFactoryPtr_;
+
+      /**
+      * Pointer to the Ramp (if any)
+      */
+      Ramp<D>* rampPtr_;
 
       /**
       * Has required memory been allocated?
@@ -794,6 +861,14 @@ namespace Rpc {
    {
       UTIL_CHECK(hasHamiltonian_);
       return fieldHamiltonian_;
+   }
+
+   // Get the perturbation component of the precomputed Hamiltonian.
+   template <int D>
+   inline double Simulator<D>::perturbationHamiltonian() const
+   {
+      UTIL_CHECK(hasHamiltonian_);
+      return perturbationHamiltonian_;
    }
 
    // Has the Hamiltonian been computed for the current w fields ?

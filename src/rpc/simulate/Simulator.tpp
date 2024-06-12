@@ -15,6 +15,8 @@
 #include <rpc/simulate/compressor/CompressorFactory.h>
 #include <rpc/simulate/perturbation/Perturbation.h>
 #include <rpc/simulate/perturbation/PerturbationFactory.h>
+#include <rpc/simulate/ramp/Ramp.h>
+#include <rpc/simulate/ramp/RampFactory.h>
 
 #include <util/misc/Timer.h>
 #include <util/random/Random.h>
@@ -33,16 +35,24 @@ namespace Rpc {
    template <int D>
    Simulator<D>::Simulator(System<D>& system)
     : random_(),
+      hamiltonian_(0.0),
+      idealHamiltonian_(0.0),
+      fieldHamiltonian_(0.0),
+      perturbationHamiltonian_(0.0),
       iStep_(0),
       iTotalStep_(0), 
+      seed_(0),
       hasHamiltonian_(false),
       hasWc_(false),
       hasCc_(false),
+      hasDc_(false),
       systemPtr_(&system),
       compressorFactoryPtr_(0),
       compressorPtr_(0),
       perturbationFactoryPtr_(0),
       perturbationPtr_(0),
+      rampFactoryPtr_(0),
+      rampPtr_(0),
       isAllocated_(false)
    {
       setClassName("Simulator");
@@ -53,6 +63,7 @@ namespace Rpc {
       #endif
       compressorFactoryPtr_ = new CompressorFactory<D>(system);
       perturbationFactoryPtr_ = new PerturbationFactory<D>(*this);
+      rampFactoryPtr_ = new RampFactory<D>(*this);
    }
 
    /*
@@ -73,6 +84,12 @@ namespace Rpc {
       }
       if (perturbationPtr_) {
          delete perturbationPtr_;
+      }
+      if (rampFactoryPtr_) {
+         delete rampFactoryPtr_;
+      }
+      if (rampPtr_) {
+         delete rampPtr_;
       }
    }
 
@@ -122,25 +139,22 @@ namespace Rpc {
    template <int D>
    void Simulator<D>::readParameters(std::istream &in)
    {
-      #if 0
-      if (!system().hasCompressor()) {
-         readCompressor(in);
-      }
-      #endif
-
       // Read required Compressor block, if needed
       readCompressor(in);
       UTIL_CHECK(compressorPtr_);
 
-      // Optionally random seed.
+      // Optionally read a random number generator seed
       seed_ = 0;
       readOptional(in, "seed", seed_);
 
-      // Set random number generator seed.
+      // Set random number generator seed
       // Default value seed_ = 0 uses the clock time.
       random().setSeed(seed_);
 
       // Optionally read a perturbation
+      readPerturbation(in);
+
+      // Optionally read a ramp
       readPerturbation(in);
    }
 
@@ -255,9 +269,10 @@ namespace Rpc {
       hamiltonian_ = idealHamiltonian_ + fieldHamiltonian_;
 
       if (hasPerturbation()) {
-        double perturbationHamiltonian;
-        perturbationHamiltonian = perturbation().hamiltonian();
-        hamiltonian_ += perturbationHamiltonian;
+        perturbationHamiltonian_ = perturbation().hamiltonian(hamiltonian_);
+        hamiltonian_ += perturbationHamiltonian_;
+      } else {
+        perturbationHamiltonian_ = 0.0;
       }
 
       hasHamiltonian_ = true;
@@ -610,6 +625,7 @@ namespace Rpc {
          state_.hamiltonian  = hamiltonian();
          state_.idealHamiltonian  = idealHamiltonian();
          state_.fieldHamiltonian  = fieldHamiltonian();
+         state_.perturbationHamiltonian  = perturbationHamiltonian();
       }
 
       if (hasPerturbation()) {
@@ -640,6 +656,7 @@ namespace Rpc {
          hamiltonian_ = state_.hamiltonian;
          idealHamiltonian_ = state_.idealHamiltonian;
          fieldHamiltonian_ = state_.fieldHamiltonian;
+         perturbationHamiltonian_ = state_.perturbationHamiltonian;
          hasHamiltonian_ = true;
       }
       
@@ -724,6 +741,8 @@ namespace Rpc {
       UTIL_CHECK(compressorPtr_);
    }
 
+   // Functions related to an associated Perturbation
+
    /*
    * Optionally read a Perturbation parameter file block.
    */
@@ -744,6 +763,8 @@ namespace Rpc {
       }
    }
 
+   // Functions associated with associated Ramp
+
    /*
    * Set the associated Perturbation<D> object.
    */
@@ -752,6 +773,36 @@ namespace Rpc {
    {
       UTIL_CHECK(ptr != 0);
       perturbationPtr_ = ptr;
+   }
+
+   /*
+   * Optionally read a Ramp parameter file block.
+   */
+   template<int D>
+   void Simulator<D>::readRamp(std::istream& in)
+   {
+      UTIL_CHECK(!rampPtr_);
+
+      std::string className;
+      bool isEnd = false;
+
+      rampPtr_ =
+         rampFactory().readObjectOptional(in, *this,
+                                                  className, isEnd);
+      UTIL_CHECK(!isEnd);
+      if (!rampPtr_ && ParamComponent::echo()) {
+         Log::file() << indent() << "  Ramp{ [absent] }\n";
+      }
+   }
+
+   /*
+   * Set the associated Ramp<D> object.
+   */
+   template<int D>
+   void Simulator<D>::setRamp(Ramp<D>* ptr)
+   {
+      UTIL_CHECK(ptr != 0);
+      rampPtr_ = ptr;
    }
 
 }

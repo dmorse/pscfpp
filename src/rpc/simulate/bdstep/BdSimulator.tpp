@@ -12,12 +12,14 @@
 
 #include <rpc/simulate/bdstep/BdStep.h>
 #include <rpc/simulate/bdstep/BdStepFactory.h>
+#include <rpc/simulate/compressor/Compressor.h>
 #include <rpc/simulate/analyzer/AnalyzerFactory.h>
 #include <rpc/simulate/trajectory/TrajectoryReader.h>
 #include <rpc/simulate/trajectory/TrajectoryReaderFactory.h>
 #include <rpc/simulate/perturbation/PerturbationFactory.h>
 #include <rpc/simulate/perturbation/Perturbation.h>
-#include <rpc/simulate/compressor/Compressor.h>
+#include <rpc/simulate/ramp/RampFactory.h>
+#include <rpc/simulate/ramp/Ramp.h>
 #include <rpc/System.h>
 
 #include <util/random/Random.h>
@@ -133,14 +135,23 @@ namespace Rpc {
 
       // Initial setup
       setup();
+      if (hasPerturbation()) {
+         perturbation().setup();
+      }
+      if (hasRamp()) {
+         ramp().setup(nStep);
+      }
 
       // Main simulation loop
       Timer timer;
       Timer analyzerTimer;
       timer.start();
       iStep_ = 0;
+      if (hasRamp()) {
+         ramp().setParameters(iStep_);
+      }
 
-      // Analysis initial step (if any)
+      // Analysis for initial state (if any)
       analyzerTimer.start();
       analyzerManager_.sample(iStep_);
       analyzerTimer.stop();
@@ -150,10 +161,13 @@ namespace Rpc {
          // Take a step (modifies W fields)
          bool converged;
          converged = stepper().step();
-         
 
          if (converged){
             iStep_++;
+
+            if (hasRamp()) {
+               ramp().setParameters(iStep_);               
+            }
 
             // Analysis (if any)
             analyzerTimer.start();
@@ -166,8 +180,9 @@ namespace Rpc {
             }
             analyzerTimer.stop();
 
-         } else{
-            Log::file() << "Step: "<< iTotalStep_<< " fail to converge" << "\n";
+         } else {
+            Log::file() << "Step: "<< iTotalStep_
+                        << " fail to converge" << "\n";
          }
 
       }

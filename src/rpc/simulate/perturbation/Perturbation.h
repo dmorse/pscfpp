@@ -25,7 +25,7 @@ namespace Rpc {
    template <int D> class Simulator;
 
    /**
-   * Abstract base for perturbations of standard Hamiltonian.
+   * Abstract base for additive perturbations of standard Hamiltonian.
    *
    * \ingroup Rpc_Simulate_Perturbation_Module
    */
@@ -71,8 +71,10 @@ namespace Rpc {
       * Compute and return the perturbation to the Hamiltonian.
       *
       * Default implementation returns 0. 
+      *
+      * \param hamiltonian Hamiltonian without perturbation
       */
-      virtual double hamiltonian();
+      virtual double hamiltonian(double unperturbedHamiltonian);
 
       /**
       * Modify the generalized forces to include perturbation.
@@ -87,11 +89,8 @@ namespace Rpc {
       * This function should save any state variables that would need to 
       * be restored after a rejected Monte Carlo move or failure of the
       * compressor to converge after an attempted Brownian dynamics move.
-      *
-      * Empty default implementation 
       */
-      virtual void saveState()
-      {};
+      virtual void saveState();
 
       /**
       * Restore any required internal state variables.
@@ -99,16 +98,24 @@ namespace Rpc {
       * This function is called after rejection of an MC move or failure
       * of an attempted BD step, and should restore the variables saved 
       * by the saveState function.
-      *
-      * Empty default implementation 
       */
-      virtual void restoreState()
-      {};
+      virtual void restoreState();
 
       /**
       * Get parent Simulator<D> by const reference.
       */
       Simulator<D> const & simulator() const;
+
+      /**
+      * Get the perturbation parameter.
+      */ 
+      double lambda() const
+      {  return lambda_; }
+
+      /**
+      * Set the perturbation parameter.
+      */
+      void setLambda(double lambda);
 
    protected:
 
@@ -121,6 +128,12 @@ namespace Rpc {
 
       /// Pointer to parent Simulator.
       Simulator<D>* simulatorPtr_;
+
+      /// Perturbation parameter
+      double lambda_;
+
+      /// Saved value of lambda (for save / restore)
+      double savedLambda_;
 
    };
 
