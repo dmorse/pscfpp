@@ -31,7 +31,7 @@ namespace Rpc {
    void LinearRamp<D>::readParameters(std::istream& in)
    {
       
-      // Read the number of sweep parameters, allocate parameters_ array
+      // Read the number of ramp parameters, allocate parameters_ array
       ParamComposite::read(in, "nParameter", nParameter_);
       parameters_.allocate(nParameter_);
       
@@ -69,7 +69,7 @@ namespace Rpc {
    template <int D>
    void LinearRamp<D>::setParameters(int iStep)
    {
-      // Compute sweep parameter in range [0,1]
+      // Compute ramp parameter in range [0,1]
       double s = double(iStep)/double(nStep_);
 
       // Update the system parameter values

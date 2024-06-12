@@ -1,9 +1,9 @@
 #ifndef RPC_LINEAR_RAMP_H
 #define RPC_LINEAR_RAMP_H
 
-#include <rpc/simulate/ramp/Ramp.h>      // base class
-#include <rpc/sweep/SweepParameter.h>    // member (template parameter)
-#include <util/containers/DArray.h>      // member (container template)
+#include <rpc/simulate/ramp/Ramp.h>           // base class
+#include <rpc/simulate/ramp/RampParameter.h>  // member (templ parameter)
+#include <util/containers/DArray.h>           // member (template)
 
 namespace Pscf {
 namespace Rpc {
@@ -67,7 +67,7 @@ namespace Rpc {
       int nParameter_;
 
       // Array of variable parameters
-      DArray< SweepParameter<D> > parameters_;
+      DArray< RampParameter<D> > parameters_;
 
    };
 
