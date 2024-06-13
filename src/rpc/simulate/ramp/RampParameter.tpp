@@ -8,14 +8,16 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
+#include <rpc/System.h>
+#include <rpc/simulate/Simulator.h>
+#include <rpc/simulate/perturbation/Perturbation.h>
 #include <rpc/solvers/Block.h>
 #include <rpc/solvers/Mixture.h>
 #include <rpc/solvers/Polymer.h>
-#include <rpc/System.h>
 #include <prdc/crystal/UnitCell.h>
 #include <pscf/inter/Interaction.h>
-#include <util/global.h>
 #include <util/containers/FSArray.h>
+#include <util/global.h>
 #include <algorithm>
 #include <iomanip>
 
@@ -35,21 +37,34 @@ namespace Rpc {
       id_(),
       initial_(0.0),
       change_(0.0),
+      simulatorPtr_(0),
       systemPtr_(0)
    {}
 
    /*
-   * Constructor, creates association with system.
+   * Constructor, creates association with simulator and system.
    */
    template <int D>
-   RampParameter<D>::RampParameter(System<D>& system)
+   RampParameter<D>::RampParameter(Simulator<D>& simulator)
     : type_(RampParameter<D>::Null),
       nId_(0),
       id_(),
       initial_(0.0),
       change_(0.0),
-      systemPtr_(&system)
+      simulatorPtr_(&simulator),
+      systemPtr_(&(simulator.system()))
    {}
+
+
+   /*
+   * Set the simulator and system associated with this object.
+   */
+   template <int D>
+   void RampParameter<D>::setSimulator(Simulator<D>& simulator)
+   {
+      simulatorPtr_ = &simulator;
+      systemPtr_ = &(simulator.system());
+   }
 
    /*
    * Read type, set nId and allocate id_ array.
@@ -89,12 +104,17 @@ namespace Rpc {
       } else if (buffer == "cell_param") {
          type_ = Cell_Param;
          nId_ = 1; // lattice parameter identifier.
+      } else if (buffer == "lambda_pert") {
+         type_ = Lambda_Pert;
+         nId_ = 0; // No associated index
       } else {
          UTIL_THROW("Invalid RampParameter::ParamType value");
       }
 
       if (id_.isAllocated()) id_.deallocate();
-      id_.allocate(nId_);
+      if (nId_ > 0) {
+         id_.allocate(nId_);
+      }
 
    }
 
@@ -143,6 +163,8 @@ namespace Rpc {
          return "solvent_size";
       } else if (type_ == Cell_Param) {
          return "cell_param";
+      } else if (type_ == Lambda_Pert) {
+         return "lambda_pert";
       } else {
          UTIL_THROW("This should never happen.");
       }
@@ -169,6 +191,9 @@ namespace Rpc {
          return systemPtr_->mixture().solvent(id(0)).size();
       } else if (type_ == Cell_Param) {
          return systemPtr_->unitCell().parameter(id(0));
+      } else if (type_ == Lambda_Pert) {
+         UTIL_CHECK(simulatorPtr_->hasPerturbation());
+         return simulatorPtr_->perturbation().lambda();
       } else {
          UTIL_THROW("This should never happen.");
       }
@@ -197,6 +222,9 @@ namespace Rpc {
          FSArray<double,6> params = systemPtr_->unitCell().parameters();
          params[id(0)] = newVal;
          systemPtr_->setUnitCell(params);
+      } else if (type_ == Lambda_Pert) {
+         UTIL_CHECK(simulatorPtr_->hasPerturbation());
+         return simulatorPtr_->perturbation().setLambda(newVal);
       } else {
          UTIL_THROW("This should never happen.");
       }
@@ -208,8 +236,10 @@ namespace Rpc {
    {
       serializeEnum(ar, type_, version);
       ar & nId_;
-      for (int i = 0; i < nId_; ++i) {
-         ar & id_[i];
+      if (nId_ > 0) {
+         for (int i = 0; i < nId_; ++i) {
+            ar & id_[i];
+         }
       }
       ar & initial_;
       ar & change_;
@@ -228,9 +258,12 @@ namespace Rpc {
       param.readParamType(in);
 
       // Read the identifiers associated with this parameter type.
-      for (int i = 0; i < param.nId_; ++i) {
-         in >> param.id_[i];
+      if (param.nId_ > 0) {
+         for (int i = 0; i < param.nId_; ++i) {
+            in >> param.id_[i];
+         }
       }
+
       // Read in the range in the parameter to sweep over
       in >> param.change_;
 
@@ -246,9 +279,11 @@ namespace Rpc {
    {
       param.writeParamType(out);
       out << "  ";
-      for (int i = 0; i < param.nId_; ++i) {
-         out << param.id(i);
-         out << " ";
+      if (param.nId_ > 0) {
+         for (int i = 0; i < param.nId_; ++i) {
+            out << param.id(i);
+            out << " ";
+         }
       }
       out << param.change_;
 
@@ -257,5 +292,4 @@ namespace Rpc {
 
 }
 }
-
 #endif

@@ -14,6 +14,7 @@
 namespace Pscf {
 namespace Rpc {
 
+   template <int D> class Simulator;
    template <int D> class System;
 
    /**
@@ -23,17 +24,17 @@ namespace Rpc {
    * parameter value of any of several types.  The type of parameter
    * is indicated in the public interface and parameter file format
    * by a string identifier with any of several allowed values.
-   * Each parameter is also identified by one or two associated index 
-   * values, denoted here by id(0) and id(1), that specify the index 
-   * or indices for a subobject or array element with which the 
+   * Most types of parameter are also identified by one or two associated 
+   * index values, denoted here by id(0) and id(1), that specify the 
+   * index or indices for a subobject or array element with which the 
    * parameter is associated applied. Allowed string representations 
    * and meanings of parameter types are given below, along with the 
    * meaning of any associated index value or pair of values.
-   * To indicate the meaning of index values, we use mId to denote 
-   * a monomer type index, pId to denote a polymer species index, 
-   * bId to denote the index of a block within a polymer, sId to
-   * denote a solvent species index, lId to denote a lattice parameter
-   * index, and wId to denote a wall index:
+   * To indicate the meaning of index values, we use mId to denote a
+   * monomer type index, pId to denote a polymer species index, bId
+   * to denote the index of a block within a polymer, sId to denote a
+   * solvent species index, and lId to denote a lattice parameter index.
+   * The lambda_pert parameter type does not take an index.
    * \code
    *  | Type        | Meaning                            | id(0) | id(1)
    *  | ----------- | ---------------------------------- | ----- | -----
@@ -46,8 +47,7 @@ namespace Rpc {
    *  | phi_solvent | solvent volume fraction            | sId   |
    *  | mu_solvent  | solvent chemical potential         | sId   |
    *  | cell_param  | lattice parameter                  | lId   |
-   *  | chi_bottom  | thin film wall/monomer interaction | mId   | 
-   *  | chi_top     | thin film wall/monomer interaction | mId   | 
+   *  | lambda_pert | perturbation strength              |  -    |
    * \endcode
    * The two indices for a Flory-Huggins chi parameter refer to indices
    * in the chi matrix maintained by Interaction. Changes to element
@@ -63,10 +63,10 @@ namespace Rpc {
    * be supplied as part of the text format for a RampParameter.
    *
    * A RampParameter<D> object is initialized by reading the parameter
-   * type, index or index and change value from a parameter file as a
-   * a single line.  An overloaded >> operator is defined that allows 
-   * a RampParameter<D> object named "parameter" to be read from an 
-   * istream named "in" using the syntax "in >> parameter". 
+   * type, index or indices (if any) and change value from a parameter 
+   * file as a a single line.  An overloaded >> operator is defined that 
+   * allows a RampParameter<D> object named "parameter" to be read from 
+   * an istream named "in" using the syntax "in >> parameter". 
    *
    * The text format for a parameter of a type that requires a single
    * index id(0) is:
@@ -92,22 +92,22 @@ namespace Rpc {
       RampParameter();
 
       /**
-      * Constructor that stores a pointer to parent system.
+      * Constructor that stores a pointer to parent Simulator.
       *
-      * \param system  parent system
+      * \param system  parent Simulator
       */
-      RampParameter(System<D>& system);
+      RampParameter(Simulator<D>& simulator);
 
       /**
-      * Set the system associated with this object.
+      * Set the simulator and system associated with this object.
       *
       * Invoke this function on objects created with the default 
-      * constructor to create an association with a parent system.
+      * constructor to create an association with a parent simulator
+      * and system.
       *
-      * \param system  parent system
+      * \param simulator  parent simulator
       */
-      void setSystem(System<D>& system)
-      {  systemPtr_ = &system;}
+      void setSimulator(Simulator<D>& simulator);
 
       /**
       * Get and store initial value this parameters.
@@ -196,7 +196,7 @@ namespace Rpc {
       /// Enumeration of allowed parameter types.
       enum ParamType { Block, Chi, Kuhn, Phi_Polymer, Phi_Solvent,
                        Mu_Polymer, Mu_Solvent, Solvent, Cell_Param, 
-                       Null};
+                       Lambda_Pert, Null};
 
       /// Type of parameter associated with an object of this class
       ParamType type_;
@@ -212,6 +212,9 @@ namespace Rpc {
 
       /// Change in parameter
       double change_;
+
+      /// Pointer to the parent simulator
+      Simulator<D>* simulatorPtr_;
 
       /// Pointer to the parent system
       System<D>* systemPtr_;

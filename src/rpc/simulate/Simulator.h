@@ -513,6 +513,11 @@ namespace Rpc {
       Perturbation<D> const & perturbation() const;
 
       /**
+      * Get the perturbation factory by non-const reference.
+      */
+      Perturbation<D>& perturbation();
+
+      /**
       * Does this Simulator have a Ramp?
       */
       bool hasRamp() const;
@@ -536,11 +541,6 @@ namespace Rpc {
       * \param in input parameter stream
       */
       void readCompressor(std::istream& in);
-
-      /**
-      * Get the perturbation factory by non-const reference.
-      */
-      Perturbation<D>& perturbation();
 
       /**
       * Get the perturbation factory by reference.

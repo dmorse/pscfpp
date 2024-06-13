@@ -61,7 +61,7 @@ namespace Rpc {
  
       // Set system pointer and initial value for each parameter object
       for (int i = 0; i < nParameter_; ++i) {
-         parameters_[i].setSystem(Ramp<D>::simulator().system());
+         parameters_[i].setSimulator(Ramp<D>::simulator());
          parameters_[i].getInitial();
       }
    }
