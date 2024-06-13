@@ -114,6 +114,8 @@ namespace Rpc {
 
       /**
       * Set the perturbation parameter.
+      *
+      * \param lambda  new value for lambda perturbation parameter
       */
       void setLambda(double lambda);
 
@@ -132,8 +134,10 @@ namespace Rpc {
       /// Perturbation parameter
       double lambda_;
 
+      #if 0
       /// Saved value of lambda (for save / restore)
       double savedLambda_;
+      #endif
 
    };
 
