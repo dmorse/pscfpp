@@ -19,6 +19,7 @@
 namespace Pscf {
 namespace Rpc {
 
+   // Forward declarations
    template <int D> class System;
    template <int D> class Compressor;
    template <int D> class CompressorFactory;
@@ -28,6 +29,7 @@ namespace Rpc {
    template <int D> class RampFactory;
 
    using namespace Util;
+   using namespace Prdc;
    using namespace Prdc::Cpu;
 
    /**
@@ -133,7 +135,7 @@ namespace Rpc {
       /**
       * Clear field eigen-components and hamiltonian components.
       *
-      * Immediately calling this function, hasHamiltonian(), hasWc(), 
+      * Immediately after calling this function, hasHamiltonian(), hasWc(), 
       * hasCc(), and hasDc() will all return false.
       */
       void clearData();
@@ -470,9 +472,9 @@ namespace Rpc {
       * Clear the saved copy of the fts state.
       *
       * This function, restoreState(), and saveState() are intended
-      * to be used together in the implementation of fts moves. If
-      * an attempted move is accepted, clearState() is called to clear
-      * clear state_.hasData
+      * to be used together in the implementation of reversible fts moves. 
+      * If an attempted move is accepted, clearState() is called to 
+      * indicate the need to recompute some quantities.
       */
       void clearState();
       
@@ -809,6 +811,30 @@ namespace Rpc {
       return *perturbationFactoryPtr_; 
    }
 
+   // Get the ramp (if any) by const reference.
+   template <int D>
+   inline Ramp<D> const & Simulator<D>::ramp() const
+   {
+      UTIL_CHECK(rampPtr_);  
+      return *rampPtr_; 
+   }
+
+   // Get the ramp (if any) by non-const reference.
+   template <int D>
+   inline Ramp<D>& Simulator<D>::ramp()
+   {
+      UTIL_CHECK(rampPtr_);  
+      return *rampPtr_; 
+   }
+
+   // Get the ramp factory.
+   template <int D>
+   inline RampFactory<D>& Simulator<D>::rampFactory()
+   {
+      UTIL_CHECK(rampFactoryPtr_);  
+      return *rampFactoryPtr_; 
+   }
+
    // Return an array of eigenvalues of projected chi matrix.
    template <int D>
    inline DArray<double> const & Simulator<D>::chiEvals() const
@@ -921,21 +947,16 @@ namespace Rpc {
    inline bool Simulator<D>::hasDc() const
    {  return hasDc_; }
 
-   // Have eigenvector components of current d fields been computed?
+   // Does this Simulator have an associated Perturbation?
    template <int D>
    inline bool Simulator<D>::hasPerturbation() const
    {  return (perturbationPtr_ != 0); }
    
-   // Clear all data (eigen-components of w field and Hamiltonian)
+   // Does this Simulator have an associated Ramp?
    template <int D>
-   inline void Simulator<D>::clearData()
-   {
-      hasHamiltonian_ = false;
-      hasWc_ = false;
-      hasCc_ = false;
-      hasDc_ = false;
-   }
-
+   inline bool Simulator<D>::hasRamp() const
+   {  return (rampPtr_ != 0); }
+   
    // Return the current converged simulation step index.
    template <int D>
    inline long Simulator<D>::iStep()

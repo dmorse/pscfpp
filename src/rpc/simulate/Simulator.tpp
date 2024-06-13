@@ -56,11 +56,6 @@ namespace Rpc {
       isAllocated_(false)
    {
       setClassName("Simulator");
-      #if 0
-      if (system.hasCompressor()) {
-         compressorPtr_ = &(system.compressor());
-      }
-      #endif
       compressorFactoryPtr_ = new CompressorFactory<D>(system);
       perturbationFactoryPtr_ = new PerturbationFactory<D>(*this);
       rampFactoryPtr_ = new RampFactory<D>(*this);
@@ -173,6 +168,18 @@ namespace Rpc {
                               std::string classname,
                               std::string filename)
    {  UTIL_THROW("Error: Unimplemented function Simulator<D>::analyze"); }
+
+   /*
+   * Clear all local state data (eigen-components of w and Hamiltonian)
+   */
+   template <int D>
+   void Simulator<D>::clearData()
+   {
+      hasHamiltonian_ = false;
+      hasWc_ = false;
+      hasCc_ = false;
+      hasDc_ = false;
+   }
 
    /*
    * Compute field theoretic Hamiltonian H[W].
