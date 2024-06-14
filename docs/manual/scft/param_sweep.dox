@@ -14,12 +14,12 @@ perform sweep operations.
 
 To perform a sweep, the program attempts to solve a sequence of SCFT problems
 for choices of input parameters (e.g., block lengths, chi parameters, species
-volume fractions, etc.) that are spaced lie along a line through the space of
-possible values for these parameters. During a sweep, the resulting SCFT
-problems are solved in the sequence that they appear along this line. An
-initial guess for the vector of unknown variables for every point after the
-first one is obtained by extrapolating from solutions obtained at one or more
-immediately preceding points along this line.
+volume fractions, etc.) that lie along a line through the space of possible 
+values for these parameters. During a sweep, the resulting SCFT problems are 
+solved in the sequence that they appear along this line. An initial guess for 
+the vector of unknown variables for every point after the first one is 
+obtained by extrapolating from solutions obtained at one or more immediately 
+preceding points along this line.
 
 To define a sweep, a path through parameter space is defined by defining
 how one or more input parameters vary as a function of a contour variable
@@ -203,7 +203,9 @@ explained below:
     <td>
     integer that gives the maximum number of previous states to use
     to compute initial guesses by extrapolation.  Optional, and
-    equal to 3 by default. </td>
+    equal to 3 by default. Set to 1 to use zeroth-order extrapolation,
+    in which the fields from the previous state along the sweep are 
+    used as the initial guess for the next sweep step.</td>
   </tr>
   <tr>
     <td> reuseState* </td>

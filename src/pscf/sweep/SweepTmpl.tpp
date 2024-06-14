@@ -152,7 +152,7 @@ namespace Pscf {
    template <class State>
    void SweepTmpl<State>::initialize()
    {
-      UTIL_CHECK(historyCapacity_  > 1);
+      UTIL_CHECK(historyCapacity_  > 0);
       UTIL_CHECK(states_.capacity() == historyCapacity_);
       UTIL_CHECK(sHistory_.capacity() == historyCapacity_);
       UTIL_CHECK(stateHistory_.capacity() == historyCapacity_);
