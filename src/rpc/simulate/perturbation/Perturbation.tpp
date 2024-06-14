@@ -21,7 +21,6 @@ namespace Rpc {
     : ParamComposite(),
       simulatorPtr_(&simulator),
       lambda_(1.0)
-      //savedLambda_(1.0)
    {}
 
    /* 
@@ -65,7 +64,6 @@ namespace Rpc {
    template <int D>
    void Perturbation<D>::saveState()
    {}
-   // {  savedLambda_ = lambda_; }
 
    /*
    * Restored any saved internal variables.
@@ -73,7 +71,6 @@ namespace Rpc {
    template <int D>
    void Perturbation<D>::restoreState()
    {}
-   //{  lambda_ = savedLambda_; }
 
    /*
    * Set a new value for the lambda_ parameter.

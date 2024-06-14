@@ -29,6 +29,13 @@ namespace Rpc {
    Ramp<D>::~Ramp()
    {}
 
+   /* 
+   * Setup before simulation - sets the nStep member variable. 
+   */
+   template <int D>
+   void Ramp<D>::setup(int nStep)
+   {  nStep_ = nStep; }
+
 }
 }
 #endif 

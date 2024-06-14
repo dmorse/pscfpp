@@ -30,12 +30,12 @@ namespace Rpc {
    template <int D>
    void LinearRamp<D>::readParameters(std::istream& in)
    {
-      
       // Read the number of ramp parameters, allocate parameters_ array
       ParamComposite::read(in, "nParameter", nParameter_);
+      UTIL_CHECK(nParameter_ > 0);
       parameters_.allocate(nParameter_);
       
-      // Read array of RampParameters, calling << operator for each
+      // Read array of RampParameters, using << operator for each
       ParamComposite::readDArray(in, "parameters", parameters_, nParameter_);
 
       // Verify net zero change in volume fractions, if these are swept
@@ -56,10 +56,7 @@ namespace Rpc {
    {
       nStep_ = nStep;
 
-      // Call base class setup function
-      // Ramp<D>::setup();
- 
-      // Set system pointer and initial value for each parameter object
+      // Set simulator pointer and initial value for each parameter object
       for (int i = 0; i < nParameter_; ++i) {
          parameters_[i].setSimulator(Ramp<D>::simulator());
          parameters_[i].getInitial();
@@ -69,7 +66,7 @@ namespace Rpc {
    template <int D>
    void LinearRamp<D>::setParameters(int iStep)
    {
-      // Compute ramp parameter in range [0,1]
+      // Compute a ramp parameter in the range [0,1]
       double s = double(iStep)/double(nStep_);
 
       // Update the system parameter values

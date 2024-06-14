@@ -34,19 +34,19 @@ namespace Rpc {
       virtual ~Ramp();
 
       /**
-      * Set nStep and complete and required initialization.
+      * Final setup before simulation loop, set value of nStep.
       *
-      * This method must be called just before the beginning of
-      * the main simulation loop, after an initial configuration 
-      * is known. It should set the value of nStep_ and may be 
-      * complete any initialization that cannot be completed in 
-      * the readParam method.
+      * This method must be called just before the beginning of the main
+      * simulation loop, after an initial configuration is known. It must
+      * set and store the value of nStep (the number of steps planned for
+      * the simulation) and complete any initialization that cannot be
+      * completed in the readParam method.
       *
-      * The default implementation is an empty function.
+      * The default implementation simply stores a value of nStep.
       *
       * \param nStep number of steps planned for this simulation
       */
-      virtual void setup(int nStep) = 0;
+      virtual void setup(int nStep);
 
       /**
       * Set new parameters values in associated System and Simulator.
@@ -67,7 +67,7 @@ namespace Rpc {
       */
       Simulator<D>& simulator();
 
-      /// Number of steps planned for this simulation
+      /// Number of steps planned for this simulation (set in setup).
       int nStep_;
 
    private:

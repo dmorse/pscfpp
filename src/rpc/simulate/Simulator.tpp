@@ -146,11 +146,11 @@ namespace Rpc {
       // Default value seed_ = 0 uses the clock time.
       random().setSeed(seed_);
 
-      // Optionally read a perturbation
+      // Optionally read a Perturbation
       readPerturbation(in);
 
-      // Optionally read a ramp
-      readPerturbation(in);
+      // Optionally read a Ramp
+      readRamp(in);
    }
 
    /*
@@ -783,7 +783,7 @@ namespace Rpc {
    }
 
    /*
-   * Optionally read a Ramp parameter file block.
+   * Optionally read a parameter file block for an associated Ramp.
    */
    template<int D>
    void Simulator<D>::readRamp(std::istream& in)
@@ -794,8 +794,7 @@ namespace Rpc {
       bool isEnd = false;
 
       rampPtr_ =
-         rampFactory().readObjectOptional(in, *this,
-                                                  className, isEnd);
+         rampFactory().readObjectOptional(in, *this, className, isEnd);
       UTIL_CHECK(!isEnd);
       if (!rampPtr_ && ParamComponent::echo()) {
          Log::file() << indent() << "  Ramp{ [absent] }\n";

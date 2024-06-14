@@ -25,7 +25,7 @@ namespace Rpc {
    template <int D> class Simulator;
 
    /**
-   * Abstract base for additive perturbations of standard Hamiltonian.
+   * Base class for additive perturbations of standard FTS Hamiltonian.
    *
    * \ingroup Rpc_Simulate_Perturbation_Module
    */
@@ -60,8 +60,7 @@ namespace Rpc {
       * This method must be called just before the beginning of
       * the main simulation loop, after an initial configuration 
       * is known. It may be used to complete any initialization
-      * that cannot be completed in the readParam method, because
-      * knowledge of the configuration is needed. 
+      * that cannot be completed in the readParameters function.
       *
       * The default implementation is an empty function.
       */
@@ -108,12 +107,15 @@ namespace Rpc {
 
       /**
       * Get the perturbation parameter.
+      *
+      * The perturbation parameter lambda is initialized to 1.0 in
+      * the Perturbation constructor.
       */ 
       double lambda() const
       {  return lambda_; }
 
       /**
-      * Set the perturbation parameter.
+      * Set the perturbation parameter value.
       *
       * \param lambda  new value for lambda perturbation parameter
       */
@@ -134,11 +136,6 @@ namespace Rpc {
       /// Perturbation parameter
       double lambda_;
 
-      #if 0
-      /// Saved value of lambda (for save / restore)
-      double savedLambda_;
-      #endif
-
    };
 
    // Inline methods
@@ -158,8 +155,6 @@ namespace Rpc {
       assert(simulatorPtr_);  
       return *simulatorPtr_; 
    }
-
-   // Method template
 
    #ifndef RPC_PERTURBATION_TPP
    // Suppress implicit instantiation

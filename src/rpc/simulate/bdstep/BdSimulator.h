@@ -8,8 +8,8 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <rpc/simulate/Simulator.h>                 // base class
-#include <rpc/simulate/analyzer/AnalyzerManager.h>  // member
+#include <rpc/simulate/Simulator.h>                  // base class
+#include <rpc/simulate/analyzer/AnalyzerManager.h>   // member
 #include <util/param/Factory.h>                      // member template
 
 namespace Pscf {

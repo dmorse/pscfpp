@@ -91,6 +91,9 @@ namespace Rpc {
       }
    }
 
+   /*
+   * Exchange pointers to old and new random fields.
+   */
    template <int D>
    void LMBdStep<D>::exchangeOldNew()
    {
@@ -101,7 +104,7 @@ namespace Rpc {
    }
 
    /*
-   * Initial setup before main simulation loop.
+   * Initial setup of stepper before main simulation loop.
    */
    template <int D>
    void LMBdStep<D>::setup()
