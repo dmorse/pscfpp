@@ -30,7 +30,14 @@ namespace Rpc {
       // Read the number of sweep parameters, allocate parameters_ array
       read(in, "nParameter", nParameter_);
       parameters_.allocate(nParameter_);
-      
+
+      // Set the pointer to the array of specialized parameter types for 
+      // each SweepParameter object
+      for (int i = 0; i < nParameter_; ++i) {
+         parameters_[i].setParameterTypesArray(
+                        SweepTmpl< BasisFieldState<D> >::parameterTypes_);
+      }
+
       // Read array of SweepParameters, calling << operator for each
       readDArray(in, "parameters", parameters_, nParameter_);
 

@@ -153,20 +153,37 @@ namespace Rpc
       bool isAthermal() const;
 
       /**
-      * Set the value of chi between species s and the bottom wall.
+      * Add specialized sweep parameter types to the Sweep object.
       * 
-      * \param s  species index, 0 <= id < nVertex
-      * \param chi  value of chi(s,w)
+      * In this class, the two specialized sweep parameters are chi_top
+      * and chi_bottom.
+      * 
+      * \param sweep  The sweep object to which parameters will be added
       */
-      void setChiBottom(int s, double chi);
+      void addParameterTypes(Sweep<D>& sweep);
 
       /**
-      * Set the value of chi between species s and the top wall.
+      * Set the value of a specialized sweep parameter.
       * 
-      * \param s  species index, 0 <= id < nVertex
-      * \param chi  value of chi(s,w)
+      * In this class, the two specialized sweep parameters are chi_top
+      * and chi_bottom.
+      * 
+      * \param name  name of the specialized parameter
+      * \param ids  array of integer indices specifying the value to set
+      * \param value  the value to which the parameter is set
       */
-      void setChiTop(int s, double chi);
+      void setParameter(std::string name, DArray<int> ids, double value);
+
+      /**
+      * Get the value of a specialized sweep parameter.
+      * 
+      * In this class, the two specialized sweep parameters are chi_top
+      * and chi_bottom.
+      * 
+      * \param name  name of the specialized parameter
+      * \param ids  array of integer indices specifying the value to set
+      */
+      double getParameter(std::string name, DArray<int> ids) const;
 
       /**
       * Get value of normalVecId
@@ -186,12 +203,12 @@ namespace Rpc
       /**
       * Get const chiBottom matrix by reference
       */
-      DArray<double> const & chiTop() const;
+      DArray<double> const & chiBottom() const;
 
       /**
       * Get const chiTop array by reference
       */
-      DArray<double> const & chiBottom() const;
+      DArray<double> const & chiTop() const;
 
       /**
       * Get the chi parameter between the bottom wall and species s
@@ -291,18 +308,6 @@ namespace Rpc
    inline 
    IteratorType const & FilmIteratorBase<D, IteratorType>::iterator() const
    {  return iterator_; }
-
-   // Set value of chi between species s and the bottom wall
-   template <int D, typename IteratorType>
-   inline 
-   void FilmIteratorBase<D, IteratorType>::setChiBottom(int s, double chi)
-   {  chiBottom_[s] = chi; }
-
-   // Set value of chi between species s and the top wall
-   template <int D, typename IteratorType>
-   inline 
-   void FilmIteratorBase<D, IteratorType>::setChiTop(int s, double chi)
-   {  chiTop_[s] = chi; }
 
    // Get value of normalVecId
    template <int D, typename IteratorType>

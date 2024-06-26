@@ -11,11 +11,10 @@
 #include <rpc/solvers/Block.h>
 #include <rpc/solvers/Mixture.h>
 #include <rpc/solvers/Polymer.h>
-#include <rpc/iterator/AmIteratorBasis.h>
-#include <rpc/iterator/FilmIterator.h>
 #include <rpc/System.h>
 #include <prdc/crystal/UnitCell.h>
 #include <pscf/inter/Interaction.h>
+#include <pscf/sweep/ParameterModifier.h>
 #include <util/global.h>
 #include <util/containers/FSArray.h>
 #include <algorithm>
@@ -37,7 +36,9 @@ namespace Rpc {
       id_(),
       initial_(0.0),
       change_(0.0),
-      systemPtr_(0)
+      systemPtr_(0),
+      parameterTypesPtr_(0),
+      parameterTypeId_(-1)
    {}
 
    /*
@@ -50,7 +51,9 @@ namespace Rpc {
       id_(),
       initial_(0.0),
       change_(0.0),
-      systemPtr_(&system)
+      systemPtr_(&system),
+      parameterTypesPtr_(0),
+      parameterTypeId_(-1)
    {}
 
    /*
@@ -91,16 +94,24 @@ namespace Rpc {
       } else if (buffer == "cell_param") {
          type_ = Cell_Param;
          nId_ = 1; // lattice parameter identifier.
-      } else if (buffer == "chi_bottom") {
-         // Note: this option is only relevant for thin film systems
-         type_ = Chi_Bottom;
-         nId_ = 1; // monomer type
-      } else if (buffer == "chi_top") {
-         // Note: this option is only relevant for thin film systems
-         type_ = Chi_Top;
-         nId_ = 1; // monomer type
       } else {
-         UTIL_THROW("Invalid SweepParameter::ParamType value");
+         // Search in parameterTypes array for this sweep parameter
+         bool found = false;
+         for (int i = 0; i < parameterTypesPtr_->size(); i++) {
+            ParameterType& pType = (*parameterTypesPtr_)[i];
+            if (buffer == pType.name) {
+               type_ = Special;
+               nId_ = pType.nId;
+               parameterTypeId_ = i;
+               found = true;
+               break;
+            }
+         }
+         if (!found) {
+            std::string msg;
+            msg = "Invalid SweepParameter::ParamType value: " + buffer;
+            UTIL_THROW(msg.c_str());
+         }
       }
 
       if (id_.isAllocated()) id_.deallocate();
@@ -114,6 +125,16 @@ namespace Rpc {
    template <int D>
    void SweepParameter<D>::writeParamType(std::ostream& out) const
    {  out << type(); }
+
+   /*
+   * Get the ParameterType object for a specialized sweep parameter
+   */
+   template <int D>
+   ParameterType& SweepParameter<D>::parameterType() const
+   {  
+      UTIL_CHECK(isSpecialized());
+      return (*parameterTypesPtr_)[parameterTypeId_]; 
+   }
 
    /*
    * Get initial (current) values of swept parameters from parent system.
@@ -153,10 +174,8 @@ namespace Rpc {
          return "solvent_size";
       } else if (type_ == Cell_Param) {
          return "cell_param";
-      } else if (type_ == Chi_Bottom) {
-         return "chi_bottom";
-      } else if (type_ == Chi_Top) {
-         return "chi_top";
+      } else if (type_ == Special) {
+         return parameterType().name;
       } else {
          UTIL_THROW("This should never happen.");
       }
@@ -183,27 +202,10 @@ namespace Rpc {
          return systemPtr_->mixture().solvent(id(0)).size();
       } else if (type_ == Cell_Param) {
          return systemPtr_->unitCell().parameter(id(0));
-      } else if (type_ == Chi_Bottom) {
-         // Note: this option is only relevant for thin film systems
-         UTIL_CHECK(isFilmIterator());
-         if (systemPtr_->iterator().className() == "AmIteratorBasisFilm") {
-            FilmIterator<D, AmIteratorBasis<D> >* itrPtr_(0);
-            itrPtr_ = static_cast< FilmIterator<D, AmIteratorBasis<D> >* >
-                      (&(systemPtr_->iterator()));
-            return itrPtr_->chiBottom(id(0));
-         } else {
-            UTIL_THROW("Iterator type incompatible with sweep parameter.");
-         }
-      } else if (type_ == Chi_Top) {
-         // Note: this option is only relevant for thin film systems
-         UTIL_CHECK(isFilmIterator());
-         if (systemPtr_->iterator().className() == "AmIteratorBasisFilm") {
-            FilmIterator<D, AmIteratorBasis<D> >* itrPtr_(0);
-            itrPtr_ = static_cast<FilmIterator<D, AmIteratorBasis<D> >* >(&(systemPtr_->iterator()));
-            return itrPtr_->chiTop(id(0));
-         } else {
-            UTIL_THROW("Iterator type incompatible with sweep parameter.");
-         }
+      } else if (type_ == Special) {
+         ParameterModifier* modifier = parameterType().modifierPtr_;
+         std::string name = parameterType().name;
+         return modifier->getParameter(name,id_);
       } else {
          UTIL_THROW("This should never happen.");
       }
@@ -232,43 +234,12 @@ namespace Rpc {
          FSArray<double,6> params = systemPtr_->unitCell().parameters();
          params[id(0)] = newVal;
          systemPtr_->setUnitCell(params);
-      } else if (type_ == Chi_Bottom) {
-         // Note: this option is only relevant for thin film systems
-         UTIL_CHECK(isFilmIterator());
-         if (systemPtr_->iterator().className() == "AmIteratorBasisFilm") {
-            FilmIterator<D, AmIteratorBasis<D> >* itrPtr_(0);
-            itrPtr_ = static_cast<FilmIterator<D, AmIteratorBasis<D> >* >
-                      (&(systemPtr_->iterator()));
-            itrPtr_->setChiBottom(id(0), newVal);
-         } else {
-            UTIL_THROW("Iterator type incompatible with sweep parameter.");
-         }
-      } else if (type_ == Chi_Top) {
-         // Note: this option is only relevant for thin film systems
-         UTIL_CHECK(isFilmIterator());
-         if (systemPtr_->iterator().className() == "AmIteratorBasisFilm") {
-            FilmIterator<D, AmIteratorBasis<D> >* itrPtr_(0);
-            itrPtr_ = static_cast<FilmIterator<D, AmIteratorBasis<D> >* >(&(systemPtr_->iterator()));
-            itrPtr_->setChiTop(id(0), newVal);
-         } else {
-            UTIL_THROW("Iterator type incompatible with sweep parameter.");
-         }
+      } else if (type_ == Special) {
+         ParameterModifier* modifier = parameterType().modifierPtr_;
+         std::string name = parameterType().name;
+         return modifier->setParameter(name,id_,newVal);
       } else {
          UTIL_THROW("This should never happen.");
-      }
-   }
-
-   /*
-   * Check if the system iterator is a thin film iterator.
-   */
-   template <int D>
-   bool SweepParameter<D>::isFilmIterator() const
-   {
-      std::string name = systemPtr_->iterator().className();
-      if (name.size() < 4) {
-         return false;
-      } else {
-         return (name.substr(name.size() - 4) == "Film");
       }
    }
 

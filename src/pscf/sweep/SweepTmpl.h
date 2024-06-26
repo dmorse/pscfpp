@@ -9,6 +9,9 @@
 */
 
 #include <util/param/ParamComposite.h>                     // base class
+#include <util/containers/GArray.h>
+#include <pscf/sweep/ParameterModifier.h>
+#include <pscf/sweep/ParameterType.h>
 
 namespace Pscf {
 
@@ -44,13 +47,40 @@ namespace Pscf {
       */
       virtual void sweep();
 
+      /**
+      * Add declaration of a specialized parameter type.
+      * 
+      * This function adds a new ParameterType object to the
+      * array of declared specialized parameter types.
+      *
+      * \param name  parameter string identifier
+      * \param nId  number of associated integer indices
+      * \param modifier  object that can set and get the parameter
+      */
+      void addParameterType(std::string name, int nId, 
+                            ParameterModifier& modifier);
+
    protected:
 
       /// Number of steps. 
       int ns_;
 
-      /// Base name for output files
+      /// Base name for output files.
       std::string baseFileName_;
+
+      /**
+      * Array of specialized parameter types.
+      * 
+      * This list allows other objects to add custom sweepable parameters 
+      * to this object at run time, referred to as "specialized" parameter
+      * types. The method addParameterType is used to add to this list.
+      * 
+      * As a general design principle, any object whose class is 
+      * determined at run time using a Factory object should use this list
+      * to add any sweepable parameters. In order to do this, the object
+      * must be a subclass of ParameterModifier.
+      */
+      GArray<ParameterType> parameterTypes_;
 
       /**
       * Constructor (protected).

@@ -8,6 +8,7 @@
 
 #include "Sweep.h"
 #include <rpc/System.h>
+#include <rpc/iterator/Iterator.h>
 #include <pscf/inter/Interaction.h>
 #include <pscf/sweep/SweepTmpl.tpp>
 #include <util/misc/FileMaster.h>
@@ -37,13 +38,18 @@ namespace Rpc {
    * Constructor, creates association with parent system.
    */
    template <int D>
-   Sweep<D>::Sweep(System<D> & system)
+   Sweep<D>::Sweep(System<D> & sys)
     : SweepTmpl< BasisFieldState<D> >(RPC_HISTORY_CAPACITY),
       writeCRGrid_(false),
       writeCBasis_(false),
       writeWRGrid_(false),
-      systemPtr_(&system)
-   {}
+      systemPtr_(&sys)
+   {
+      // Get specialized sweep parameters from Iterator
+      if (system().hasIterator()) {
+         system().iterator().addParameterTypes(*this);
+      }
+   }
 
    /*
    * Destructor.

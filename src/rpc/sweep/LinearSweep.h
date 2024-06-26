@@ -77,6 +77,7 @@ namespace Rpc {
       // Inherited protected members
       using Sweep<D>::system;
       using Sweep<D>::hasSystem;
+      using SweepTmpl< BasisFieldState<D> >::parameterTypes_;
 
    private:
 

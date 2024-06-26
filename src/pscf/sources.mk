@@ -8,13 +8,14 @@ include $(SRC_DIR)/pscf/math/sources.mk
 include $(SRC_DIR)/pscf/mesh/sources.mk
 include $(SRC_DIR)/pscf/homogeneous/sources.mk
 include $(SRC_DIR)/pscf/iterator/sources.mk
+include $(SRC_DIR)/pscf/sweep/sources.mk
 
 # CPP source files
 
 pscf_CPP= \
   $(pscf_chem_) $(pscf_inter_) $(pscf_math_) \
   $(pscf_mesh_) $(pscf_crystal_) $(pscf_homogeneous_) \
-  $(pscf_iterator_) 
+  $(pscf_iterator_) $(pscf_sweep_)
 
 ifdef PSCF_OPENMP
   include $(SRC_DIR)/pscf/openmp/sources.mk

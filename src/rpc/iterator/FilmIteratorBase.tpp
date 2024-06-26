@@ -485,6 +485,50 @@ namespace Rpc
       return true;
    }
 
+   /*
+   * Add specialized sweep parameter types chi_top and chi_bottom to 
+   * the Sweep object.
+   */
+   template <int D, typename IteratorType>
+   void FilmIteratorBase<D, IteratorType>::addParameterTypes(Sweep<D>& sweep)
+   {
+      sweep.addParameterType("chi_top", 1, *this);
+      sweep.addParameterType("chi_bottom", 1, *this);
+   }
+
+   /*
+   * Set the value of a specialized sweep parameter (chi_top or chi_bottom).
+   */
+   template <int D, typename IteratorType>
+   void FilmIteratorBase<D, IteratorType>::setParameter(std::string name, 
+                                            DArray<int> ids, double value)
+   {
+      if (name == "chi_top") {
+         chiTop_[ids[0]] = value;
+      } else if (name == "chi_bottom") {
+         chiBottom_[ids[0]] = value;
+      } else {
+         UTIL_THROW(("Parameter name " + name + " not recognized.").c_str());
+      }
+   }
+
+   /*
+   * Get the value of a specialized sweep parameter (chi_top or chi_bottom).
+   */
+   template <int D, typename IteratorType>
+   double FilmIteratorBase<D, IteratorType>::getParameter(std::string name, 
+                                                      DArray<int> ids) const
+   {
+      if (name == "chi_top") {
+         return chiTop_[ids[0]];
+      } else if (name == "chi_bottom") {
+         return chiBottom_[ids[0]];
+      } else {
+         UTIL_THROW(("Parameter name " + name + " not recognized.").c_str());
+         return 0.0;
+      }
+   }
+
 } // namespace Rpc
 } // namespace Pscf
 #endif

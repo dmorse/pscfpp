@@ -146,6 +146,24 @@ namespace Pscf {
 
    }
 
+   template <class State>
+   void SweepTmpl<State>::addParameterType(std::string name, int nId, 
+                                           ParameterModifier& modifier)
+   {
+      // Check if parameterTypes_ already has an element with this name
+      if (parameterTypes_.size() > 0) {
+         for (int i = 0; i < parameterTypes_.size(); ++i) {
+            UTIL_CHECK(parameterTypes_[i].name != name);
+         }
+      }
+
+      ParameterType paramType;
+      paramType.name = name;
+      paramType.nId = nId;
+      paramType.modifierPtr_ = &modifier;
+      parameterTypes_.append(paramType);
+   }
+
    /*
    * Initialize history variables (must be called by setup function).
    */
