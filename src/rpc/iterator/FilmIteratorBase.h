@@ -114,8 +114,8 @@ namespace Rpc
       * Generates mask and external field for the walls and stores in System.
       * 
       * Generates the field representation of the walls, based on the values
-      * of wallThickness and interfaceThickness that were input by the user.
-      * Then, stores this wall field in system().mask() to be used
+      * of excludedThickness and interfaceThickness that were input by the 
+      * user. Then, stores this wall field in system().mask() to be used
       * as a mask during iteration, and also passes the corresponding
       * external potential fields into system().h() if isAthermal() = false.
       */
@@ -196,9 +196,9 @@ namespace Rpc
       double interfaceThickness() const;
 
       /**
-      * Get value of wallThickness
+      * Get value of excludedThickness
       */
-      double wallThickness() const;
+      double excludedThickness() const;
 
       /**
       * Get const chiBottom matrix by reference
@@ -275,10 +275,10 @@ namespace Rpc
       int normalVecId_;
 
       /// Interface thickness
-      double t_;
+      double interfaceThickness_;
 
-      /// Wall thickness
-      double T_;
+      /// Excluded (wall) thickness
+      double excludedThickness_;
 
       /// chiBottom array
       DArray<double> chiBottom_;
@@ -318,12 +318,12 @@ namespace Rpc
    template <int D, typename IteratorType>
    inline double FilmIteratorBase<D, IteratorType>::interfaceThickness() 
    const
-   {  return t_; }
+   {  return interfaceThickness_; }
 
-   // Get value of wallThickness
+   // Get value of excludedThickness
    template <int D, typename IteratorType>
-   inline double FilmIteratorBase<D, IteratorType>::wallThickness() const
-   {  return T_; }
+   inline double FilmIteratorBase<D, IteratorType>::excludedThickness() const
+   {  return excludedThickness_; }
 
    // Get chiBottom array by const reference
    template <int D, typename IteratorType>

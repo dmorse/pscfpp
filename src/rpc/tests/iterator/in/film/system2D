@@ -36,7 +36,7 @@ System{
     flexibleParams       1   1
     normalVecId          1
     interfaceThickness   0.2     
-    wallThickness        0.4
+    excludedThickness    0.4
     chiBottom[  20.0  0.0  ]
     chiTop[  20.0  0.0  ]
   }

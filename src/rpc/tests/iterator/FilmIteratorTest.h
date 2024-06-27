@@ -69,7 +69,7 @@ public:
       // Check that everything was read in correctly
       TEST_ASSERT(eq(iterator.normalVecId(),1));
       TEST_ASSERT(eq(iterator.interfaceThickness(),0.2));
-      TEST_ASSERT(eq(iterator.wallThickness(),0.4));
+      TEST_ASSERT(eq(iterator.excludedThickness(),0.4));
       TEST_ASSERT(eq(iterator.chiBottom(0),3.0));
       TEST_ASSERT(eq(iterator.chiBottom(1),0.0));
       TEST_ASSERT(eq(iterator.chiTop(0),0.0));

@@ -109,7 +109,7 @@ System{
       isFlexible          1
       normalVecId         2
       interfaceThickness  0.15     
-      wallThickness       0.3
+      excludedThickness   0.3
       chiBottom[
                           5
                           0
@@ -166,7 +166,7 @@ the example above) must be parallel to the wall. So, if <b>c</b> is normal
 to the wall, then the unit cell angles *&alpha;* and *&beta;* must both be 
 90&deg;. The software will throw an Exception if this condition is not met.
 
-The next required inputs are `interfaceThickness` and `wallThickness`,
+The next required inputs are `interfaceThickness` and `excludedThickness`,
 which correspond to *t* and *T* in the expression for 
 *&rho;*<sub>wall</sub>(*z*) above. These values are defined in the same 
 units as other length inputs (unit cell parameters, segment lengths). In 
