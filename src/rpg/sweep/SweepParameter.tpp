@@ -16,6 +16,7 @@
 #include <prdc/crystal/UnitCell.h>
 
 #include <pscf/inter/Interaction.h>
+#include <pscf/sweep/ParameterModifier.h>
 #include <util/containers/FSArray.h>
 #include <util/global.h>
 
@@ -38,7 +39,9 @@ namespace Rpg {
       id_(),
       initial_(0.0),
       change_(0.0),
-      systemPtr_(0)
+      systemPtr_(0),
+      parameterTypesPtr_(0),
+      parameterTypeId_(-1)
    {}
 
    /*
@@ -51,7 +54,9 @@ namespace Rpg {
       id_(),
       initial_(0.0),
       change_(0.0),
-      systemPtr_(&system)
+      systemPtr_(0),
+      parameterTypesPtr_(0),
+      parameterTypeId_(-1)
    {}
 
    /*
@@ -93,10 +98,23 @@ namespace Rpg {
          type_ = Cell_Param;
          nID_ = 1; //lattice parameter identifier.
       } else {
-         std::string msg = "Invalid SweepParameter::ParamType value: ";
-         msg += buffer;
-         //UTIL_THROW("Invalid SweepParameter::ParamType value");
-         UTIL_THROW(msg.c_str());
+         // Search in parameterTypes array for this sweep parameter
+         bool found = false;
+         for (int i = 0; i < parameterTypesPtr_->size(); i++) {
+            ParameterType& pType = (*parameterTypesPtr_)[i];
+            if (buffer == pType.name) {
+               type_ = Special;
+               nId_ = pType.nId;
+               parameterTypeId_ = i;
+               found = true;
+               break;
+            }
+         }
+         if (!found) {
+            std::string msg;
+            msg = "Invalid SweepParameter::ParamType value: " + buffer;
+            UTIL_THROW(msg.c_str());
+         }
       }
 
       if (id_.isAllocated()) id_.deallocate();
@@ -111,6 +129,16 @@ namespace Rpg {
    void SweepParameter<D>::writeParamType(std::ostream& out) const
    {
       out << type();
+   }
+
+   /*
+   * Get the ParameterType object for a specialized sweep parameter
+   */
+   template <int D>
+   ParameterType& SweepParameter<D>::parameterType() const
+   {  
+      UTIL_CHECK(isSpecialized());
+      return (*parameterTypesPtr_)[parameterTypeId_]; 
    }
 
    /*
@@ -155,6 +183,8 @@ namespace Rpg {
          return "solvent_size";
       } else if (type_ == Cell_Param) {
          return "cell_param";
+      } else if (type_ == Special) {
+         return parameterType().name;
       } else {
          UTIL_THROW("This should never happen.");
       }
@@ -181,6 +211,10 @@ namespace Rpg {
          return systemPtr_->mixture().solvent(id(0)).size();
       } else if (type_ == Cell_Param) {
          return systemPtr_->unitCell().parameter(id(0));
+      } else if (type_ == Special) {
+         ParameterModifier* modifier = parameterType().modifierPtr_;
+         std::string name = parameterType().name;
+         return modifier->getParameter(name,id_);
       } else {
          UTIL_THROW("This should never happen.");
       }
@@ -209,6 +243,10 @@ namespace Rpg {
          FSArray<double,6> params = systemPtr_->unitCell().parameters();
          params[id(0)] = newVal;
          systemPtr_->setUnitCell(params);
+      } else if (type_ == Special) {
+         ParameterModifier* modifier = parameterType().modifierPtr_;
+         std::string name = parameterType().name;
+         return modifier->setParameter(name,id_,newVal);
       } else {
          UTIL_THROW("This should never happen.");
       }

@@ -39,13 +39,18 @@ namespace Rpg {
    * Constructor, creates association with parent system.
    */
    template <int D>
-   Sweep<D>::Sweep(System<D> & system) 
+   Sweep<D>::Sweep(System<D> & sys) 
     : SweepTmpl< BasisFieldState<D> >(RPG_HISTORY_CAPACITY),
       writeCRGrid_(false),
       writeCBasis_(false),
       writeWRGrid_(false),
-      systemPtr_(&system)
-   {}
+      systemPtr_(&sys)
+   {
+      // Get specialized sweep parameters from Iterator
+      if (system().hasIterator()) {
+         system().iterator().addParameterTypes(*this);
+      }
+   }
 
    /*
    * Destructor.

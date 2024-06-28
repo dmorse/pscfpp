@@ -8,9 +8,11 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
+#include <pscf/sweep/ParameterModifier.h> // base class
 #include <util/param/ParamComposite.h>    // base class
 #include <prdc/cuda/Field.h>
 #include <util/global.h>                  
+#include <rpg/sweep/Sweep.h>
 
 namespace Pscf {
 namespace Rpg
@@ -31,7 +33,7 @@ namespace Rpg
    * \ingroup Rpg_Iterator_Module
    */
    template <int D>
-   class Iterator : public ParamComposite
+   class Iterator : public ParamComposite, public ParameterModifier
    {
 
    public:
@@ -72,6 +74,14 @@ namespace Rpg
       * Clear timers 
       */
       virtual void clearTimers() = 0;
+
+      /**
+      * Add specialized sweep parameter types to the Sweep object
+      * 
+      * \param sweep  The sweep object to which parameters will be added
+      */
+      virtual void addParameterTypes(Sweep<D>& sweep)
+      {}
 
       /**
       * Does this iterator use a symmetry-adapted Fourier basis?

@@ -27,15 +27,17 @@ namespace R1d
    /*
    * Constructor.
    */
-   Sweep::Sweep(System& system)
+   Sweep::Sweep(System& sys)
     : Base(R1D_HISTORY_CAPACITY),
-      SystemAccess(system),
+      SystemAccess(sys),
       homogeneousMode_(-1),
-      comparison_(system),
+      comparison_(sys),
       fieldIo_()
    {
       setClassName("Sweep"); 
-      fieldIo_.associate(system.domain(), system.fileMaster());
+      fieldIo_.associate(sys.domain(), sys.fileMaster());
+
+      system().iterator().addParameterTypes(*this);
    }
 
    /*
