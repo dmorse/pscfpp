@@ -8,9 +8,11 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
+#include <pscf/sweep/ParameterModifier.h> // base class
 #include <util/param/ParamComposite.h>    // base class
 #include <util/containers/FSArray.h>
-#include <util/global.h>                  
+#include <util/global.h>         
+#include <rpc/sweep/Sweep.h>
 
 namespace Pscf {
 namespace Rpc
@@ -27,7 +29,7 @@ namespace Rpc
    * \ingroup Rpc_Iterator_Module
    */
    template <int D>
-   class Iterator : public ParamComposite
+   class Iterator : public ParamComposite, public ParameterModifier
    {
 
    public:
@@ -66,6 +68,14 @@ namespace Rpc
       * Clear timers 
       */
       virtual void clearTimers() = 0;
+
+      /**
+      * Add specialized sweep parameter types to the Sweep object
+      * 
+      * \param sweep  The sweep object to which parameters will be added
+      */
+      virtual void addParameterTypes(Sweep<D>& sweep)
+      {}
 
       /**
       * Does this iterator use a symmetry-adapted Fourier basis?

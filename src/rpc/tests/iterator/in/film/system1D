@@ -34,7 +34,7 @@ System{
     isFlexible   0
     normalVecId          0
     interfaceThickness   0.2     
-    wallThickness        0.4
+    excludedThickness    0.4
     chiBottom[   0.0   0.0  ]
     chiTop[      40.0  0.0  ]
   }

@@ -69,7 +69,7 @@ public:
       // Check that everything was read in correctly
       TEST_ASSERT(eq(iterator.normalVecId(),1));
       TEST_ASSERT(eq(iterator.interfaceThickness(),0.2));
-      TEST_ASSERT(eq(iterator.wallThickness(),0.4));
+      TEST_ASSERT(eq(iterator.excludedThickness(),0.4));
       TEST_ASSERT(eq(iterator.chiBottom(0),3.0));
       TEST_ASSERT(eq(iterator.chiBottom(1),0.0));
       TEST_ASSERT(eq(iterator.chiTop(0),0.0));
@@ -384,6 +384,34 @@ public:
       TEST_ASSERT(system2.iterator().flexibleParams()[3]);
    }
 
+   void testGetSetParameter() // test FilmIterator::(s/g)etParameter
+   {
+      printMethod(TEST_FUNC);
+      openLogFile("out/filmTestGetSetParameter.log");
+      
+      // Set up system with some data
+      System<1> system;
+      FilmIteratorTest::setUpSystem(system, "in/film/system1D");
+
+      // Set up iterator from file
+      FilmIterator<1, AmIteratorBasis<1> > iterator(system);
+      FilmIteratorTest::setUpFilmIterator(iterator, "in/film/film1D");
+
+      // Test getParameter
+      DArray<int> ids;
+      ids.allocate(1);
+      ids[0] = 0;
+      TEST_ASSERT(iterator.getParameter("chi_top",ids) == 40.0);
+      ids[0] = 1;
+      TEST_ASSERT(iterator.getParameter("chi_top",ids) == 0.0);
+
+      // Test setParameter
+      iterator.setParameter("chi_top",ids,80.0);
+      TEST_ASSERT(iterator.getParameter("chi_top",ids) == 80.0);
+      iterator.setParameter("chi_bottom",ids,-80.0);
+      TEST_ASSERT(iterator.getParameter("chi_bottom",ids) == -80.0);
+   }
+
    void testSolve1D() // test FilmIterator::solve
    {
       printMethod(TEST_FUNC);
@@ -465,6 +493,7 @@ public:
 
    void testSweep() // test sweep along chiBottom and lattice parameter
    {
+      // NOTE: this also tests that the addParameterTypes method works
       printMethod(TEST_FUNC);
       
       openLogFile("out/filmTestSweep.log");
@@ -645,6 +674,7 @@ TEST_ADD(FilmIteratorTest, testCheckSpaceGroup3DB)
 TEST_ADD(FilmIteratorTest, testFlexibleParams)
 TEST_ADD(FilmIteratorTest, testReadFlexibleParams)
 TEST_ADD(FilmIteratorTest, testCheckLatticeVectors)
+TEST_ADD(FilmIteratorTest, testGetSetParameter)
 TEST_ADD(FilmIteratorTest, testSolve1D)
 TEST_ADD(FilmIteratorTest, testSolve2D)
 TEST_ADD(FilmIteratorTest, testSweep)

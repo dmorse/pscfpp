@@ -10,6 +10,7 @@
 
 #include <iostream>
 #include <string>
+#include <pscf/sweep/ParameterType.h>
 
 namespace Pscf {
 namespace Rpc {
@@ -78,6 +79,25 @@ namespace Rpc {
    * value. The corresponding format for a parameter that requires two 
    * indices (e.g., block or chi) is instead: "type id(0) id(1) change".
    *
+   * Most of the parameter types in the table above are hard-coded into
+   * this class, but certain classes can also add "specialized"
+   * parameters to the list SweepTmpl::parameterTypes_ using the method
+   * SweepTmpl::addParameterTypes. This list of specialized parameters 
+   * is then consulted if the user-specified parameter type is not found
+   * in the list of hard-coded parameter names. In order to add parameters
+   * to SweepTmpl::parameterTypes_, a class must be a subclass of
+   * ParameterModifier. 
+   * 
+   * Currently, the only classes that can add parameters to 
+   * parameterTypes_ are Iterators. The Iterator for a given calculation
+   * is determined via a Factory, so the type of Iterator is not known
+   * until run time. Therefore, Iterators can add sweepable parameters
+   * to parameterTypes_ as necessary at run time, depending on the type of
+   * Iterator used in that calculation. As a design principle, an object
+   * that is created by a Factory and used for SCFT calculations should
+   * also be a subclass of ParameterModifier so that it can add sweepable
+   * parameters at run time.
+   *
    * \ingroup Rpc_Sweep_Module
    */
    template <int D>
@@ -107,10 +127,38 @@ namespace Rpc {
       * \param system  parent system
       */
       void setSystem(System<D>& system)
-      {  systemPtr_ = &system;}
+      {  systemPtr_ = &system; }
 
       /**
-      * Get and store initial value this parameters.
+      * Set the pointer to the array of specialized sweep parameter types.
+      * 
+      * \param array  array of specialized parameter types
+      */
+      void setParameterTypesArray(GArray<ParameterType>& array)
+      {  parameterTypesPtr_ = &array; }
+
+      /**
+      * Get the ParameterType object for a specialized sweep parameter.
+      * 
+      * An error will result if this SweepParameter is not specialized
+      * and this function is called.
+      */
+      ParameterType& parameterType() const;
+
+      /**
+      * Get the array index for the specialized sweep parameter.
+      */
+      int parameterTypeId() const
+      {  return parameterTypeId_; }
+
+      /**
+      * Is this SweepParameter a specialized parameter type? 
+      */
+      bool isSpecialized() const
+      {  return (parameterTypeId_ != -1); }
+
+      /**
+      * Get and store initial value of this parameter.
       *
       * This function is called before a sweep begins, and simply gets
       * current values of this parameter.
@@ -196,7 +244,7 @@ namespace Rpc {
       /// Enumeration of allowed parameter types.
       enum ParamType { Block, Chi, Kuhn, Phi_Polymer, Phi_Solvent,
                        Mu_Polymer, Mu_Solvent, Solvent, Cell_Param, 
-                       Chi_Bottom, Chi_Top, Null};
+                       Special, Null};
 
       /// Type of parameter associated with an object of this class.
       ParamType type_;
@@ -216,6 +264,12 @@ namespace Rpc {
       /// Pointer to the parent system.
       System<D>* systemPtr_;
 
+      /// Pointer to the parameterTypes_ array of the Sweep base class.
+      GArray<ParameterType>* parameterTypesPtr_;
+
+      /// Index of parameter type within parameterTypes_ array if found
+      int parameterTypeId_;
+
       /**
       * Read type of parameter being swept, and set number of identifiers.
       *
@@ -234,11 +288,6 @@ namespace Rpc {
       * \param newVal  new value for this parameter.
       */
       void set_(double newVal);
-
-      /**
-      * Check if the system iterator is a thin film iterator. 
-      */
-      bool isFilmIterator() const;
 
    // friends:
 

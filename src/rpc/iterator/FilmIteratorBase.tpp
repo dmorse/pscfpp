@@ -42,8 +42,8 @@ namespace Rpc
       iterator_(system),
       parameters_(),
       normalVecId_(-1),
-      t_(-1.0),
-      T_(-1.0),
+      interfaceThickness_(-1.0),
+      excludedThickness_(-1.0),
       chiBottom_(),
       chiTop_(),
       chiBottomCurrent_(),
@@ -80,18 +80,18 @@ namespace Rpc
 
       // Read required data defining the walls
       read(in, "normalVecId", normalVecId_);
-      read(in, "interfaceThickness", t_);
-      read(in, "wallThickness", T_);
+      read(in, "interfaceThickness", interfaceThickness_);
+      read(in, "excludedThickness", excludedThickness_);
 
       // Make sure inputs are valid
       if (normalVecId_ > D || normalVecId_ < 0) {
          UTIL_THROW("bad value for normalVecId, must be in [0,D)");
       }
-      if (t_ > T_) {
-         UTIL_THROW("wallThickness must be larger than interfaceThickness");
+      if (interfaceThickness_ > excludedThickness_) {
+         UTIL_THROW("excludedThickness must be larger than interfaceThickness");
       }
-      if ((T_ <= 0) || (t_ <= 0)) {
-         UTIL_THROW("wallThickness and interfaceThickness must be >0");
+      if ((excludedThickness_ <= 0) || (interfaceThickness_ <= 0)) {
+         UTIL_THROW("excludedThickness and interfaceThickness must be >0");
       }
 
       // Allocate chiBottom_ and chiTop_ and set to zero before 
@@ -180,7 +180,7 @@ namespace Rpc
    void FilmIteratorBase<D, IteratorType>::generateWallFields() 
    {
       UTIL_CHECK(interfaceThickness() > 0);
-      UTIL_CHECK(wallThickness() > interfaceThickness());
+      UTIL_CHECK(excludedThickness() > interfaceThickness());
       UTIL_CHECK(system().mask().isAllocated());
 
       if (ungenerated_) ungenerated_ = false;
@@ -228,7 +228,8 @@ namespace Rpc
                d = coords[normalVecId_] * L / dim[normalVecId_];
 
                // Calculate wall volume fraction (rho_w) at gridpoint (x,y,z)
-               rho_w = 0.5*(1+tanh(4*(((.5*(T_-L))+fabs(d-(L/2)))/t_)));
+               rho_w = 0.5 * (1 + tanh(4 * (((.5 * (excludedThickness_-L)) + 
+                                  fabs(d - (L/2))) / interfaceThickness_)));
                rGrid[counter++] = 1-rho_w;
             }
          }
@@ -359,7 +360,8 @@ namespace Rpc
 
                   // Calculate wall volume fraction (rho_w) at gridpoint 
                   // (x,y,z)
-                  rho_w = 0.5*(1+tanh(4*(((.5*(T_-L))+fabs(d-(L/2)))/t_)));
+                  rho_w = 0.5 * (1 + tanh(4 * (((.5 * (excludedThickness_-L)) + 
+                                     fabs(d - (L/2))) / interfaceThickness_)));
                   if (d < (L/2)) {
                      hRGrid[i][counter++] = rho_w * chiBottom_[i];
                   } else {
@@ -483,6 +485,50 @@ namespace Rpc
          }
       }
       return true;
+   }
+
+   /*
+   * Add specialized sweep parameter types chi_top and chi_bottom to 
+   * the Sweep object.
+   */
+   template <int D, typename IteratorType>
+   void FilmIteratorBase<D, IteratorType>::addParameterTypes(Sweep<D>& sweep)
+   {
+      sweep.addParameterType("chi_top", 1, *this);
+      sweep.addParameterType("chi_bottom", 1, *this);
+   }
+
+   /*
+   * Set the value of a specialized sweep parameter (chi_top or chi_bottom).
+   */
+   template <int D, typename IteratorType>
+   void FilmIteratorBase<D, IteratorType>::setParameter(std::string name, 
+                                            DArray<int> ids, double value)
+   {
+      if (name == "chi_top") {
+         chiTop_[ids[0]] = value;
+      } else if (name == "chi_bottom") {
+         chiBottom_[ids[0]] = value;
+      } else {
+         UTIL_THROW(("Parameter name " + name + " not recognized.").c_str());
+      }
+   }
+
+   /*
+   * Get the value of a specialized sweep parameter (chi_top or chi_bottom).
+   */
+   template <int D, typename IteratorType>
+   double FilmIteratorBase<D, IteratorType>::getParameter(std::string name, 
+                                                      DArray<int> ids) const
+   {
+      if (name == "chi_top") {
+         return chiTop_[ids[0]];
+      } else if (name == "chi_bottom") {
+         return chiBottom_[ids[0]];
+      } else {
+         UTIL_THROW(("Parameter name " + name + " not recognized.").c_str());
+         return 0.0;
+      }
    }
 
 } // namespace Rpc

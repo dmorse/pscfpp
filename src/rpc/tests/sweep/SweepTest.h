@@ -10,8 +10,11 @@
 
 #include <prdc/crystal/BFieldComparison.h>
 
+#include <pscf/sweep/ParameterType.h>
+
 #include <util/tests/LogFileUnitTest.h>
 #include <util/format/Dbl.h>
+#include <util/containers/GArray.h>
 
 #include <fstream>
 #include <sstream>
@@ -78,16 +81,20 @@ public:
       TEST_ASSERT(ps[0].id(0)==0);
       TEST_ASSERT(ps[0].id(1)==0);
       TEST_ASSERT(ps[0].change()==0.25);
+      TEST_ASSERT(ps[0].isSpecialized() == false);
       TEST_ASSERT(ps[1].type()=="chi");
       TEST_ASSERT(ps[1].id(0)==0);
       TEST_ASSERT(ps[1].id(1)==1);
       TEST_ASSERT(ps[1].change()==5.00);
+      TEST_ASSERT(ps[1].isSpecialized() == false);
       TEST_ASSERT(ps[2].type()=="kuhn");
       TEST_ASSERT(ps[2].id(0)==0);
       TEST_ASSERT(ps[2].change()==0.1);
+      TEST_ASSERT(ps[2].isSpecialized() == false);
       TEST_ASSERT(ps[3].type()=="phi_polymer");
       TEST_ASSERT(ps[3].id(0)==0);
       TEST_ASSERT(ps[3].change()==-0.01);
+      TEST_ASSERT(ps[3].isSpecialized() == false);
    }
 
    void testParameterGet()
@@ -171,6 +178,69 @@ public:
       for (int i = 0; i < 4; ++i) {
          TEST_ASSERT(sysval[i]==paramval[i]);
       }
+   }
+
+   void testSpecializedParameter() // test reading of specialized parameters
+   {
+      printMethod(TEST_FUNC);
+      openLogFile("out/testSpecializedParameter");
+
+      // Set up ParameterType array
+      GArray<ParameterType> pTypes;
+      ParameterType pType1, pType2, pType3;
+      ParameterModifier modifier;
+
+      pType1.name = "test1";
+      pType1.nId = 1;
+      pType1.modifierPtr_ = &modifier;
+      pTypes.append(pType1);
+
+      pType2.name = "test2";
+      pType2.nId = 2;
+      pType2.modifierPtr_ = &modifier;
+      pTypes.append(pType2);
+
+      pType3.name = "test3";
+      pType3.nId = 3;
+      pType3.modifierPtr_ = &modifier;
+      pTypes.append(pType3);
+      Log::file() << pTypes.size() << std::endl;
+
+      // Set up SweepParameter objects 
+      DArray< SweepParameter<1> > ps;
+      ps.allocate(3);
+      std::ifstream in;
+      openInputFile("in/special/param.test", in);
+      for (int i = 0; i < 3; ++i) {
+         ps[i].setParameterTypesArray(pTypes);
+         in >> ps[i];
+      }
+
+      // Check that the SweepParameters were read correctly
+      TEST_ASSERT(ps[0].type()=="test1");
+      TEST_ASSERT(ps[0].id(0)==0);
+      TEST_ASSERT(ps[0].change()==-0.08);
+      TEST_ASSERT(ps[0].parameterType().name == "test1");
+      TEST_ASSERT(ps[0].parameterType().nId == 1);
+      TEST_ASSERT(ps[0].parameterTypeId() == 0);
+      TEST_ASSERT(ps[0].isSpecialized());
+      TEST_ASSERT(ps[1].type()=="test2");
+      TEST_ASSERT(ps[1].id(0)==1);
+      TEST_ASSERT(ps[1].id(1)==2);
+      TEST_ASSERT(ps[1].change()==+0.08);
+      TEST_ASSERT(ps[1].parameterType().name == "test2");
+      TEST_ASSERT(ps[1].parameterType().nId == 2);
+      TEST_ASSERT(ps[1].parameterTypeId() == 1);
+      TEST_ASSERT(ps[1].isSpecialized());
+      TEST_ASSERT(ps[2].type()=="test3");
+      TEST_ASSERT(ps[2].id(0)==3);
+      TEST_ASSERT(ps[2].id(1)==4);
+      TEST_ASSERT(ps[2].id(2)==5);
+      TEST_ASSERT(ps[2].change()==+40);
+      TEST_ASSERT(ps[2].parameterType().name == "test3");
+      TEST_ASSERT(ps[2].parameterType().nId == 3);
+      TEST_ASSERT(ps[2].parameterTypeId() == 2);
+      TEST_ASSERT(ps[2].isSpecialized());
    }
 
    void testLinearSweepRead()
@@ -306,6 +376,7 @@ TEST_ADD(SweepTest, testFactory)
 TEST_ADD(SweepTest, testParameterRead)
 TEST_ADD(SweepTest, testParameterGet)
 TEST_ADD(SweepTest, testParameterSet)
+TEST_ADD(SweepTest, testSpecializedParameter)
 TEST_ADD(SweepTest, testLinearSweepRead)
 TEST_ADD(SweepTest, testLinearSweepBlock)
 TEST_ADD(SweepTest, testLinearSweepChi)

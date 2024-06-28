@@ -19,7 +19,7 @@ AmIteratorBasisFilm{
    scaleStress*        float (10.0 by default)
    normalVecId         int (0, 1, or 2)   
    interfaceThickness  float  
-   wallThickness       float 
+   excludedThickness   float 
    chiBottom           Array [ float ] (nMonomer elements)
    chiTop              Array [ float ] (nMonomer elements)
 }
@@ -96,7 +96,7 @@ Parameters and subblocks are described below:
          of gyration of the majority species in the SCFT system. </td>
   </tr>
   <tr>
-    <td> wallThickness </td>
+    <td> excludedThickness </td>
     <td> thickness of the wall (i.e., the region from which the mixture 
          is excluded). Recommendation is to use at least twice the 
          interfaceThickness value. </td>
