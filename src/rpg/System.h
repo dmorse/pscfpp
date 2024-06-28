@@ -734,6 +734,11 @@ namespace Rpg {
       ///@{
 
       /**
+      * Does this system have an Iterator object?
+      */
+      bool hasIterator() const;
+
+      /**
       * Have monomer concentration fields (c fields) been computed?
       *
       * Returns  true if and only if monomer concentration fields have
@@ -1070,6 +1075,11 @@ namespace Rpg {
    template <int D>
    inline bool System<D>::hasCFields() const
    {  return hasCFields_; }
+
+   // Does the system have an Iterator object?
+   template <int D>
+   inline bool System<D>::hasIterator() const
+   {  return (iteratorPtr_ != 0); }
 
    // Does this system have an associated Sweep object?
    template <int D>

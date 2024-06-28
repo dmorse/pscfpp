@@ -189,7 +189,7 @@ namespace Rpg {
       * of this array store indices associating the parameter with
       * a particular subobject or value. Different types of parameters
       * require either 1 or 2 such identifiers. The number of required
-      * identifiers is denoted by private variable nID_.
+      * identifiers is denoted by private variable nId_.
       *
       *
       *
@@ -236,7 +236,7 @@ namespace Rpg {
       ParamType type_;
 
       /// Number of identifiers needed for this parameter type.
-      int nID_;
+      int nId_;
 
       /// Identifier indices.
       DArray<int> id_;

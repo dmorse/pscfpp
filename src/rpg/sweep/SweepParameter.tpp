@@ -35,7 +35,7 @@ namespace Rpg {
    template <int D>
    SweepParameter<D>::SweepParameter()
     : type_(SweepParameter<D>::Null),
-      nID_(0),
+      nId_(0),
       id_(),
       initial_(0.0),
       change_(0.0),
@@ -50,7 +50,7 @@ namespace Rpg {
    template <int D>
    SweepParameter<D>::SweepParameter(System<D>& system)
     : type_(SweepParameter<D>::Null),
-      nID_(0),
+      nId_(0),
       id_(),
       initial_(0.0),
       change_(0.0),
@@ -72,31 +72,31 @@ namespace Rpg {
 
       if (buffer == "block" || buffer == "block_length") {
          type_ = Block;
-         nID_ = 2; // polymer and block identifiers
+         nId_ = 2; // polymer and block identifiers
       } else if (buffer == "chi") {
          type_ = Chi;
-         nID_ = 2; // two monomer type identifiers
+         nId_ = 2; // two monomer type identifiers
       } else if (buffer == "kuhn") {
          type_ = Kuhn;
-         nID_ = 1; // monomer type identifier
+         nId_ = 1; // monomer type identifier
       } else if (buffer == "phi_polymer") {
          type_ = Phi_Polymer;
-         nID_ = 1; //species identifier.
+         nId_ = 1; //species identifier.
       } else if (buffer == "phi_solvent") {
          type_ = Phi_Solvent;
-         nID_ = 1; //species identifier.
+         nId_ = 1; //species identifier.
       } else if (buffer == "mu_polymer") {
          type_ = Mu_Polymer;
-         nID_ = 1; //species identifier.
+         nId_ = 1; //species identifier.
       } else if (buffer == "mu_solvent") {
          type_ = Mu_Solvent;
-         nID_ = 1; //species identifier.
+         nId_ = 1; //species identifier.
       } else if (buffer == "solvent" || buffer == "solvent_size") {
          type_ = Solvent;
-         nID_ = 1; //species identifier.
+         nId_ = 1; //species identifier.
       } else if (buffer == "cell_param") {
          type_ = Cell_Param;
-         nID_ = 1; //lattice parameter identifier.
+         nId_ = 1; //lattice parameter identifier.
       } else {
          // Search in parameterTypes array for this sweep parameter
          bool found = false;
@@ -118,7 +118,7 @@ namespace Rpg {
       }
 
       if (id_.isAllocated()) id_.deallocate();
-      id_.allocate(nID_);
+      id_.allocate(nId_);
 
    }
 
@@ -257,8 +257,8 @@ namespace Rpg {
    void SweepParameter<D>::serialize(Archive ar, const unsigned int version)
    {
       serializeEnum(ar, type_, version);
-      ar & nID_;
-      for (int i = 0; i < nID_; ++i) {
+      ar & nId_;
+      for (int i = 0; i < nId_; ++i) {
          ar & id_[i];
       }
       ar & initial_;
@@ -280,7 +280,7 @@ namespace Rpg {
       // Read the parameter type.
       param.readParamType(in);  
       // Read the identifiers associated with this parameter type. 
-      for (int i = 0; i < param.nID_; ++i) {
+      for (int i = 0; i < param.nId_; ++i) {
          in >> param.id_[i];
       }
       // Read in the range in the parameter to sweep over
@@ -301,7 +301,7 @@ namespace Rpg {
    {
       param.writeParamType(out);
       out << "  ";
-      for (int i = 0; i < param.nID_; ++i) {
+      for (int i = 0; i < param.nId_; ++i) {
          out << param.id(i);
          out << " ";
       }
