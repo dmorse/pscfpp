@@ -990,7 +990,7 @@ namespace Rpc {
       fieldIo().readFieldsRGrid(inFileName, tmpFieldsRGrid_, tmpUnitCell);
 
       // Expand Fields
-      domain_.fieldIo().expandFieldsDimension(outFileName,
+      domain_.fieldIo().expandRGridDimension(outFileName,
                                               tmpFieldsRGrid_,
                                               tmpUnitCell,
                                               d, newGridDimensions);
