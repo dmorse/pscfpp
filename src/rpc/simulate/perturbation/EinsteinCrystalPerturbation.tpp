@@ -45,8 +45,9 @@ namespace Rpc {
    * Compute and return perturbation to Hamiltonian.
    */
    template <int D>
-   double EinsteinCrystalPerturbation<D>::hamiltonian()
-   { return 0.0; }
+   double 
+   EinsteinCrystalPerturbation<D>::hamiltonian(double unperturbedHamiltonian)
+   {  return 0.0; }
 
    /*
    * Modify functional derivatives, empty default implementation.

@@ -80,11 +80,14 @@ namespace Rpc {
       /// Monte-Carlo Hamiltonian value.
       double hamiltonian;
       
-      /// Monte-Carlo ideal gas contribution to Hamiltonian value.
+      /// Ideal gas contribution to Hamiltonian value.
       double idealHamiltonian;
       
-      /// Monte-Carlo field part contribution to Hamiltonian value.
+      /// Quadratic field contribution to Hamiltonian value.
       double fieldHamiltonian;
+            
+      /// Perturbation to Hamiltonian value (if any).
+      double perturbationHamiltonian;
             
       /// If cc fields needs to be saved.
       bool needsCc;

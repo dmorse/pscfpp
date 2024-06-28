@@ -8,8 +8,8 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <rpc/simulate/Simulator.h>                 // base class
-#include <rpc/simulate/analyzer/AnalyzerManager.h>  // member
+#include <rpc/simulate/Simulator.h>                  // base class
+#include <rpc/simulate/analyzer/AnalyzerManager.h>   // member
 #include <util/param/Factory.h>                      // member template
 
 namespace Pscf {
@@ -123,6 +123,7 @@ namespace Rpc {
       using Simulator<D>::fieldHamiltonian;
       using Simulator<D>::hasHamiltonian;
       using Simulator<D>::hasPerturbation;
+      using Simulator<D>::hasRamp;
       using Simulator<D>::saveState;
       using Simulator<D>::restoreState;
       using Simulator<D>::clearState;
@@ -141,6 +142,9 @@ namespace Rpc {
       using Simulator<D>::perturbation;
       using Simulator<D>::perturbationFactory;
       using Simulator<D>::setPerturbation;
+      using Simulator<D>::ramp;
+      using Simulator<D>::rampFactory;
+      using Simulator<D>::setRamp;
 
       // Inherited protected data members
 

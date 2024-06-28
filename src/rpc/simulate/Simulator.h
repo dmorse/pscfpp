@@ -19,13 +19,17 @@
 namespace Pscf {
 namespace Rpc {
 
+   // Forward declarations
    template <int D> class System;
    template <int D> class Compressor;
    template <int D> class CompressorFactory;
    template <int D> class Perturbation;
    template <int D> class PerturbationFactory;
+   template <int D> class Ramp;
+   template <int D> class RampFactory;
 
    using namespace Util;
+   using namespace Prdc;
    using namespace Prdc::Cpu;
 
    /**
@@ -131,7 +135,7 @@ namespace Rpc {
       /**
       * Clear field eigen-components and hamiltonian components.
       *
-      * Immediately calling this function, hasHamiltonian(), hasWc(), 
+      * Immediately after calling this function, hasHamiltonian(), hasWc(), 
       * hasCc(), and hasDc() will all return false.
       */
       void clearData();
@@ -286,6 +290,18 @@ namespace Rpc {
       * Get the quadratic field contribution to the Hamiltonian.
       */
       double fieldHamiltonian() const;
+
+      /**
+      * Get the perturbation to the standard Hamiltonian (if any).
+      *
+      * A perturbation to the Hamiltonian, if any, is computed by an 
+      * associated Perturbation object. When a perturbation exists, as
+      * indicated by the return value of hasPerturbation(), the
+      * perturbationHamiltonian component is added to the idealHamiltonian
+      * and fieldHamiltonian components to obtain the total value that is
+      * returned by hamiltonian() function.
+      */
+      double perturbationHamiltonian() const;
 
       /**
       * Has the Hamiltonian been computed for current w and c fields?
@@ -456,9 +472,9 @@ namespace Rpc {
       * Clear the saved copy of the fts state.
       *
       * This function, restoreState(), and saveState() are intended
-      * to be used together in the implementation of fts moves. If
-      * an attempted move is accepted, clearState() is called to clear
-      * clear state_.hasData
+      * to be used together in the implementation of reversible fts moves. 
+      * If an attempted move is accepted, clearState() is called to 
+      * indicate the need to recompute some quantities.
       */
       void clearState();
       
@@ -487,14 +503,29 @@ namespace Rpc {
       Random& random();
       
       /**
-      * Get the perturbation by const reference.
+      * Does this Simulator have a Perturbation?
+      */
+      bool hasPerturbation() const;
+
+      /**
+      * Get the associated Perturbation by const reference.
       */
       Perturbation<D> const & perturbation() const;
 
       /**
-      * Does this Simulator have a Perturbation?
+      * Get the perturbation factory by non-const reference.
       */
-      bool hasPerturbation() const;
+      Perturbation<D>& perturbation();
+
+      /**
+      * Does this Simulator have a Ramp?
+      */
+      bool hasRamp() const;
+
+      /**
+      * Get the associated Ramp by const reference.
+      */
+      Ramp<D> const & ramp() const;
 
       ///@}
 
@@ -510,11 +541,6 @@ namespace Rpc {
       * \param in input parameter stream
       */
       void readCompressor(std::istream& in);
-
-      /**
-      * Get the perturbation factory by non-const reference.
-      */
-      Perturbation<D>& perturbation();
 
       /**
       * Get the perturbation factory by reference.
@@ -534,6 +560,30 @@ namespace Rpc {
       * \param ptr pointer to a new Perturbation<D> object.
       */
       void setPerturbation(Perturbation<D>* ptr);
+
+      /**
+      * Get the ramp by non-const reference.
+      */
+      Ramp<D>& ramp();
+
+      /**
+      * Get the ramp factory by reference.
+      */
+      RampFactory<D>& rampFactory();
+
+      /**
+      * Optionally read an associated ramp.
+      *
+      * \param in input parameter stream
+      */
+      void readRamp(std::istream& in);
+
+      /**
+      * Set the associated ramp.
+      *
+      * \param ptr pointer to a new Ramp<D> object.
+      */
+      void setRamp(Ramp<D>* ptr);
 
       // Protected data members
 
@@ -572,7 +622,7 @@ namespace Rpc {
       mutable SimState<D> state_;
 
       /**
-      * Field theoretic Hamiltonian H[W] (extensive value).
+      * Total field theoretic Hamiltonian H[W] (extensive value).
       */
       double hamiltonian_;
 
@@ -585,6 +635,15 @@ namespace Rpc {
       * Field contribution (H_W) to Hamiltonian
       */
       double fieldHamiltonian_;
+
+      /**
+      * Perturbation to the standard Hamiltonian (if any).
+      *
+      * A perturbation to the Hamiltonian, if any, is computed by an 
+      * associated Perturbation object and added to the ideal and field
+      * components to obtain the total hamiltonian_ value. 
+      */
+      double perturbationHamiltonian_;
 
       /**
       * Simulation converge step counter.
@@ -684,6 +743,16 @@ namespace Rpc {
       Perturbation<D>* perturbationPtr_;
 
       /**
+      * Pointer to the Ramp Factory.
+      */
+      RampFactory<D>* rampFactoryPtr_;
+
+      /**
+      * Pointer to the Ramp (if any)
+      */
+      Ramp<D>* rampPtr_;
+
+      /**
       * Has required memory been allocated?
       */
       bool isAllocated_;
@@ -742,6 +811,30 @@ namespace Rpc {
       return *perturbationFactoryPtr_; 
    }
 
+   // Get the ramp (if any) by const reference.
+   template <int D>
+   inline Ramp<D> const & Simulator<D>::ramp() const
+   {
+      UTIL_CHECK(rampPtr_);  
+      return *rampPtr_; 
+   }
+
+   // Get the ramp (if any) by non-const reference.
+   template <int D>
+   inline Ramp<D>& Simulator<D>::ramp()
+   {
+      UTIL_CHECK(rampPtr_);  
+      return *rampPtr_; 
+   }
+
+   // Get the ramp factory.
+   template <int D>
+   inline RampFactory<D>& Simulator<D>::rampFactory()
+   {
+      UTIL_CHECK(rampFactoryPtr_);  
+      return *rampFactoryPtr_; 
+   }
+
    // Return an array of eigenvalues of projected chi matrix.
    template <int D>
    inline DArray<double> const & Simulator<D>::chiEvals() const
@@ -796,6 +889,14 @@ namespace Rpc {
       return fieldHamiltonian_;
    }
 
+   // Get the perturbation component of the precomputed Hamiltonian.
+   template <int D>
+   inline double Simulator<D>::perturbationHamiltonian() const
+   {
+      UTIL_CHECK(hasHamiltonian_);
+      return perturbationHamiltonian_;
+   }
+
    // Has the Hamiltonian been computed for the current w fields ?
    template <int D>
    inline bool Simulator<D>::hasHamiltonian() const
@@ -846,21 +947,16 @@ namespace Rpc {
    inline bool Simulator<D>::hasDc() const
    {  return hasDc_; }
 
-   // Have eigenvector components of current d fields been computed?
+   // Does this Simulator have an associated Perturbation?
    template <int D>
    inline bool Simulator<D>::hasPerturbation() const
    {  return (perturbationPtr_ != 0); }
    
-   // Clear all data (eigen-components of w field and Hamiltonian)
+   // Does this Simulator have an associated Ramp?
    template <int D>
-   inline void Simulator<D>::clearData()
-   {
-      hasHamiltonian_ = false;
-      hasWc_ = false;
-      hasCc_ = false;
-      hasDc_ = false;
-   }
-
+   inline bool Simulator<D>::hasRamp() const
+   {  return (rampPtr_ != 0); }
+   
    // Return the current converged simulation step index.
    template <int D>
    inline long Simulator<D>::iStep()

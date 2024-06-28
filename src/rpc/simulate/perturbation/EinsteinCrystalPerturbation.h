@@ -59,8 +59,10 @@ namespace Rpc {
 
       /**
       * Compute and return the perturbation to the Hamiltonian.
+      *
+      * \param unperturbedHamiltonian Hamiltonian in absence of perturbation
       */
-      virtual double hamiltonian();
+      virtual double hamiltonian(double unperturbedHamiltonian);
 
       /**
       * Modify the generalized forces to include perturbation.
