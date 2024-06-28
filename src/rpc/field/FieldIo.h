@@ -703,11 +703,11 @@ namespace Rpc {
       * \param d  expanded dimension (greater than D)
       * \param newGridDimensions number of grid points in added dimensions
       */
-      void expandFieldsDimension(std::ostream &out,
-                                 DArray<RField<D> > const & fields,
-                                 UnitCell<D> const & unitCell,
-                                 int d,
-                                 DArray<int> newGridDimensions) const;
+      void expandRGridDimension(std::ostream &out,
+                                DArray<RField<D> > const & fields,
+                                UnitCell<D> const & unitCell,
+                                int d,
+                                DArray<int> newGridDimensions) const;
 
       /**
       * Expand dimensions of array of r-grid fields, write to file.
@@ -723,11 +723,11 @@ namespace Rpc {
       * \param d  expanded dimension (greater than D)
       * \param newGridDimensions  number of grid points in added dimensions
       */
-      void expandFieldsDimension(std::string filename,
-                                 DArray<RField<D> > const & fields,
-                                 UnitCell<D> const & unitCell,
-                                 int d,
-                                 DArray<int> newGridDimensions) const;
+      void expandRGridDimension(std::string filename,
+                                DArray<RField<D> > const & fields,
+                                UnitCell<D> const & unitCell,
+                                int d,
+                                DArray<int> newGridDimensions) const;
 
       /**
       * Write r-grid fields in a replicated unit cell to std::ostream.
