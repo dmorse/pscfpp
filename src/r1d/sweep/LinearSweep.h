@@ -69,6 +69,7 @@ namespace R1d {
    protected:
 
       using Sweep::system;
+      using SweepTmpl< DArray<System::WField> >::parameterTypes_;
    
    private:
 

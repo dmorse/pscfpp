@@ -11,6 +11,7 @@
 #include <r1d/solvers/Polymer.h>
 #include <r1d/System.h>
 #include <pscf/inter/Interaction.h>
+#include <pscf/sweep/ParameterModifier.h>
 #include <util/containers/FSArray.h>
 #include <util/global.h>
 
@@ -27,11 +28,13 @@ namespace R1d {
    */
    SweepParameter::SweepParameter()
     : type_(SweepParameter::Null),
-      nID_(0),
+      nId_(0),
       id_(),
       initial_(0.0),
       change_(0.0),
-      systemPtr_(0)
+      systemPtr_(0),
+      parameterTypesPtr_(0),
+      parameterTypeId_(-1)
    {}
 
    /*
@@ -39,11 +42,13 @@ namespace R1d {
    */
    SweepParameter::SweepParameter(System& system)
     : type_(SweepParameter::Null),
-      nID_(0),
+      nId_(0),
       id_(),
       initial_(0.0),
       change_(0.0),
-      systemPtr_(&system)
+      systemPtr_(&system),
+      parameterTypesPtr_(0),
+      parameterTypeId_(-1)
    {}
 
    /*
@@ -58,37 +63,53 @@ namespace R1d {
 
       if (buffer == "block" || buffer == "block_length") {
          type_ = Block;
-         nID_ = 2; // polymer and block identifiers
+         nId_ = 2; // polymer and block identifiers
       } else if (buffer == "chi") {
          type_ = Chi;
-         nID_ = 2; // two monomer type identifiers
+         nId_ = 2; // two monomer type identifiers
       } else if (buffer == "kuhn") {
          type_ = Kuhn;
-         nID_ = 1; // monomer type identifier
+         nId_ = 1; // monomer type identifier
       } else if (buffer == "phi_polymer") {
          type_ = Phi_Polymer;
-         nID_ = 1; //species identifier.
+         nId_ = 1; //species identifier.
       } else if (buffer == "phi_solvent") {
          type_ = Phi_Solvent;
-         nID_ = 1; //species identifier.
+         nId_ = 1; //species identifier.
       } else if (buffer == "mu_polymer") {
          type_ = Mu_Polymer;
-         nID_ = 1; //species identifier.
+         nId_ = 1; //species identifier.
       } else if (buffer == "mu_solvent") {
          type_ = Mu_Solvent;
-         nID_ = 1; //species identifier.
+         nId_ = 1; //species identifier.
       } else if (buffer == "solvent" || buffer == "solvent_size") {
          type_ = Solvent;
-         nID_ = 1; //species identifier.
+         nId_ = 1; //species identifier.
       } else if (buffer == "cell_param") {
          type_ = Cell_Param;
-         nID_ = 1; //lattice parameter identifier.
+         nId_ = 1; //lattice parameter identifier.
       } else {
-         UTIL_THROW("Invalid SweepParameter::ParamType value");
+         // Search in parameterTypes array for this sweep parameter
+         bool found = false;
+         for (int i = 0; i < parameterTypesPtr_->size(); i++) {
+            ParameterType& pType = (*parameterTypesPtr_)[i];
+            if (buffer == pType.name) {
+               type_ = Special;
+               nId_ = pType.nId;
+               parameterTypeId_ = i;
+               found = true;
+               break;
+            }
+         }
+         if (!found) {
+            std::string msg;
+            msg = "Invalid SweepParameter::ParamType value: " + buffer;
+            UTIL_THROW(msg.c_str());
+         }
       }
 
       if (id_.isAllocated()) id_.deallocate();
-      id_.allocate(nID_);
+      id_.allocate(nId_);
    }
 
    /*
@@ -97,6 +118,15 @@ namespace R1d {
    void SweepParameter::writeParamType(std::ostream& out) const
    {
       out << type();
+   }
+
+   /*
+   * Get the ParameterType object for a specialized sweep parameter
+   */
+   ParameterType& SweepParameter::parameterType() const
+   {  
+      UTIL_CHECK(isSpecialized());
+      return (*parameterTypesPtr_)[parameterTypeId_]; 
    }
 
    /*
@@ -136,6 +166,8 @@ namespace R1d {
          return "mu_solvent";
       } else if (type_ == Solvent) {
          return "solvent_size";
+      } else if (type_ == Special) {
+         return parameterType().name;
       } else {
          UTIL_THROW("Invalid type_ in accessor SweepParameter::type().");
       }
@@ -159,6 +191,10 @@ namespace R1d {
          return systemPtr_->mixture().solvent(id(0)).mu();
       } else if (type_ == Solvent) {
          return systemPtr_->mixture().solvent(id(0)).size();
+      } else if (type_ == Special) {
+         ParameterModifier* modifier = parameterType().modifierPtr_;
+         std::string name = parameterType().name;
+         return modifier->getParameter(name,id_);
       } else {
          UTIL_THROW("Invalid type_ in SweepParameter::get_.");
       }
@@ -182,6 +218,10 @@ namespace R1d {
          systemPtr_->mixture().solvent(id(0)).setMu(newVal);
       } else if (type_ == Solvent) {
          systemPtr_->mixture().solvent(id(0)).setSize(newVal);
+      } else if (type_ == Special) {
+         ParameterModifier* modifier = parameterType().modifierPtr_;
+         std::string name = parameterType().name;
+         return modifier->setParameter(name,id_,newVal);
       } else {
          UTIL_THROW("Invalid type_ in SweepParameter::set_.");
       }
@@ -201,7 +241,7 @@ namespace R1d {
       // Read the parameter type.
       param.readParamType(in);  
       // Read the identifiers associated with this parameter type. 
-      for (int i = 0; i < param.nID_; ++i) {
+      for (int i = 0; i < param.nId_; ++i) {
          in >> param.id_[i];
       }
       // Read in the range in the parameter to sweep over
@@ -221,7 +261,7 @@ namespace R1d {
    {
       param.writeParamType(out);
       out << "  ";
-      for (int i = 0; i < param.nID_; ++i) {
+      for (int i = 0; i < param.nId_; ++i) {
          out << param.id(i);
          out << " ";
       }

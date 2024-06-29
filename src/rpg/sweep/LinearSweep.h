@@ -71,6 +71,7 @@ namespace Rpg {
 
       using Sweep<D>::system;
       using Sweep<D>::hasSystem;
+      using SweepTmpl< BasisFieldState<D> >::parameterTypes_;
    
    private:
       /// Number of parameters being swept. 

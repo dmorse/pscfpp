@@ -32,6 +32,13 @@ namespace Rpg {
       this->read(in, "nParameter", nParameter_);
       parameters_.allocate(nParameter_);
       
+      // Set the pointer to the array of specialized parameter types for 
+      // each SweepParameter object
+      for (int i = 0; i < nParameter_; ++i) {
+         parameters_[i].setParameterTypesArray(
+                        SweepTmpl< BasisFieldState<D> >::parameterTypes_);
+      }
+      
       // Read in array of SweepParameters, calling << for each
       this->template readDArray< SweepParameter<D> >(in, "parameters", parameters_, nParameter_);
 

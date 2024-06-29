@@ -8,9 +8,11 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
+#include <pscf/sweep/ParameterModifier.h> // base class
 #include <util/param/ParamComposite.h>    // base class
-#include <r1d/SystemAccess.h>            // base class
+#include <r1d/SystemAccess.h>             // base class
 #include <util/global.h>                  
+#include <r1d/sweep/Sweep.h>
 
 namespace Pscf {
 namespace R1d
@@ -23,7 +25,8 @@ namespace R1d
    *
    * \ingroup R1d_Iterator_Module
    */
-   class Iterator : public ParamComposite, public SystemAccess
+   class Iterator : public ParamComposite, public SystemAccess, 
+                    public ParameterModifier
    {
 
    public:
@@ -52,6 +55,14 @@ namespace R1d
       * \return error code: 0 for success, 1 for failure.
       */
       virtual int solve(bool isContinuation = false) = 0;
+
+      /**
+      * Add specialized sweep parameter types to the Sweep object
+      * 
+      * \param sweep  The sweep object to which parameters will be added
+      */
+      virtual void addParameterTypes(Sweep& sweep)
+      {}
 
    };
 

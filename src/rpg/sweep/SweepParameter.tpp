@@ -16,6 +16,7 @@
 #include <prdc/crystal/UnitCell.h>
 
 #include <pscf/inter/Interaction.h>
+#include <pscf/sweep/ParameterModifier.h>
 #include <util/containers/FSArray.h>
 #include <util/global.h>
 
@@ -34,11 +35,13 @@ namespace Rpg {
    template <int D>
    SweepParameter<D>::SweepParameter()
     : type_(SweepParameter<D>::Null),
-      nID_(0),
+      nId_(0),
       id_(),
       initial_(0.0),
       change_(0.0),
-      systemPtr_(0)
+      systemPtr_(0),
+      parameterTypesPtr_(0),
+      parameterTypeId_(-1)
    {}
 
    /*
@@ -47,11 +50,13 @@ namespace Rpg {
    template <int D>
    SweepParameter<D>::SweepParameter(System<D>& system)
     : type_(SweepParameter<D>::Null),
-      nID_(0),
+      nId_(0),
       id_(),
       initial_(0.0),
       change_(0.0),
-      systemPtr_(&system)
+      systemPtr_(0),
+      parameterTypesPtr_(0),
+      parameterTypeId_(-1)
    {}
 
    /*
@@ -67,40 +72,53 @@ namespace Rpg {
 
       if (buffer == "block" || buffer == "block_length") {
          type_ = Block;
-         nID_ = 2; // polymer and block identifiers
+         nId_ = 2; // polymer and block identifiers
       } else if (buffer == "chi") {
          type_ = Chi;
-         nID_ = 2; // two monomer type identifiers
+         nId_ = 2; // two monomer type identifiers
       } else if (buffer == "kuhn") {
          type_ = Kuhn;
-         nID_ = 1; // monomer type identifier
+         nId_ = 1; // monomer type identifier
       } else if (buffer == "phi_polymer") {
          type_ = Phi_Polymer;
-         nID_ = 1; //species identifier.
+         nId_ = 1; //species identifier.
       } else if (buffer == "phi_solvent") {
          type_ = Phi_Solvent;
-         nID_ = 1; //species identifier.
+         nId_ = 1; //species identifier.
       } else if (buffer == "mu_polymer") {
          type_ = Mu_Polymer;
-         nID_ = 1; //species identifier.
+         nId_ = 1; //species identifier.
       } else if (buffer == "mu_solvent") {
          type_ = Mu_Solvent;
-         nID_ = 1; //species identifier.
+         nId_ = 1; //species identifier.
       } else if (buffer == "solvent" || buffer == "solvent_size") {
          type_ = Solvent;
-         nID_ = 1; //species identifier.
+         nId_ = 1; //species identifier.
       } else if (buffer == "cell_param") {
          type_ = Cell_Param;
-         nID_ = 1; //lattice parameter identifier.
+         nId_ = 1; //lattice parameter identifier.
       } else {
-         std::string msg = "Invalid SweepParameter::ParamType value: ";
-         msg += buffer;
-         //UTIL_THROW("Invalid SweepParameter::ParamType value");
-         UTIL_THROW(msg.c_str());
+         // Search in parameterTypes array for this sweep parameter
+         bool found = false;
+         for (int i = 0; i < parameterTypesPtr_->size(); i++) {
+            ParameterType& pType = (*parameterTypesPtr_)[i];
+            if (buffer == pType.name) {
+               type_ = Special;
+               nId_ = pType.nId;
+               parameterTypeId_ = i;
+               found = true;
+               break;
+            }
+         }
+         if (!found) {
+            std::string msg;
+            msg = "Invalid SweepParameter::ParamType value: " + buffer;
+            UTIL_THROW(msg.c_str());
+         }
       }
 
       if (id_.isAllocated()) id_.deallocate();
-      id_.allocate(nID_);
+      id_.allocate(nId_);
 
    }
 
@@ -111,6 +129,16 @@ namespace Rpg {
    void SweepParameter<D>::writeParamType(std::ostream& out) const
    {
       out << type();
+   }
+
+   /*
+   * Get the ParameterType object for a specialized sweep parameter
+   */
+   template <int D>
+   ParameterType& SweepParameter<D>::parameterType() const
+   {  
+      UTIL_CHECK(isSpecialized());
+      return (*parameterTypesPtr_)[parameterTypeId_]; 
    }
 
    /*
@@ -155,6 +183,8 @@ namespace Rpg {
          return "solvent_size";
       } else if (type_ == Cell_Param) {
          return "cell_param";
+      } else if (type_ == Special) {
+         return parameterType().name;
       } else {
          UTIL_THROW("This should never happen.");
       }
@@ -181,6 +211,10 @@ namespace Rpg {
          return systemPtr_->mixture().solvent(id(0)).size();
       } else if (type_ == Cell_Param) {
          return systemPtr_->unitCell().parameter(id(0));
+      } else if (type_ == Special) {
+         ParameterModifier* modifier = parameterType().modifierPtr_;
+         std::string name = parameterType().name;
+         return modifier->getParameter(name,id_);
       } else {
          UTIL_THROW("This should never happen.");
       }
@@ -209,6 +243,10 @@ namespace Rpg {
          FSArray<double,6> params = systemPtr_->unitCell().parameters();
          params[id(0)] = newVal;
          systemPtr_->setUnitCell(params);
+      } else if (type_ == Special) {
+         ParameterModifier* modifier = parameterType().modifierPtr_;
+         std::string name = parameterType().name;
+         return modifier->setParameter(name,id_,newVal);
       } else {
          UTIL_THROW("This should never happen.");
       }
@@ -219,8 +257,8 @@ namespace Rpg {
    void SweepParameter<D>::serialize(Archive ar, const unsigned int version)
    {
       serializeEnum(ar, type_, version);
-      ar & nID_;
-      for (int i = 0; i < nID_; ++i) {
+      ar & nId_;
+      for (int i = 0; i < nId_; ++i) {
          ar & id_[i];
       }
       ar & initial_;
@@ -242,7 +280,7 @@ namespace Rpg {
       // Read the parameter type.
       param.readParamType(in);  
       // Read the identifiers associated with this parameter type. 
-      for (int i = 0; i < param.nID_; ++i) {
+      for (int i = 0; i < param.nId_; ++i) {
          in >> param.id_[i];
       }
       // Read in the range in the parameter to sweep over
@@ -263,7 +301,7 @@ namespace Rpg {
    {
       param.writeParamType(out);
       out << "  ";
-      for (int i = 0; i < param.nID_; ++i) {
+      for (int i = 0; i < param.nId_; ++i) {
          out << param.id(i);
          out << " ";
       }
