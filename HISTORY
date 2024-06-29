@@ -28,11 +28,12 @@ User-visible features
 
    - Framework for FTS-PS simulations
    - Monte Carlo (MC) and Brownian Dynamics (BD) simulation engines
-   - MC Moves: Real-space, Fourier-space and Force-Bias moves
-   - BD Steppers: Euler, Predictor-Corrector and Leimkuhler-Matthews
+   - MC Moves: Real-space, Fourier-space and Force-Bias MC moves
+   - BD Steps: Euler, Predictor-Corrector and Leimkuhler-Matthews
    - Compressor classes to find partial saddle-point equations
    - Analyzer classes to measure structure factor, other observables
    - ANALYZE command to postprocess field trajectories
+   - Classes to continuously vary ("Ramp") one or more parameters (pc)
 
 * Commands to replicate unit cell and increase spatial dimensions
 
@@ -53,7 +54,7 @@ Documentation
 
 Developer-visible changes
 -------------------------
-* Code to implement FTS-PS is in new directory src/simulate 
+* Code for FTS-PS is in new directory src/simulate 
 * Moved CUDA utility classes to src/pscf/cuda
 * Created namespace Pscf::Prdc in src/prdc
 * Created Cpu and Cuda subnamespaces of Pscf::Prdc
@@ -61,6 +62,7 @@ Developer-visible changes
 * Renamed namespace Pspc to Rpc (real periodic CPU)
 * Renamed namespace Pspg to Rpg (real periodic GPU)
 * Added Pscf::CudaRandom wrapper class for nVidia RNG
+* Added ParameterModifier interface for sweeping specialized parameters
 * Added tests for presence or absence of space group symmetry
 * Added inverseId member to Pscf::Basis::Wave
 
