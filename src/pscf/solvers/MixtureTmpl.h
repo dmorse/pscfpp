@@ -124,6 +124,17 @@ namespace Pscf
       * Get monomer reference volume (set to 1.0 by default).
       */
       double vMonomer() const;
+      
+      /**
+      * Set value of monomer reference volume.
+      * 
+      * An initial value is normally read from a parameter file. 
+      * This function is provided for use by a ramp in which 
+      * monomer reference volume is modified after initialization.
+      * 
+      * \param vMonomer new monomer reference volume.
+      */
+      void setVmonomer(double vMonomer);
 
       ///@}
 
@@ -247,7 +258,11 @@ namespace Pscf
    template <class TP, class TS>
    inline double MixtureTmpl<TP,TS>::vMonomer() const
    {  return vMonomer_; }
-
+   
+   template <class TP, class TS>
+   inline void MixtureTmpl<TP,TS>::setVmonomer(double vMonomer)
+   { vMonomer_ = vMonomer; }
+   
    // Non-inline member functions
 
    /*
