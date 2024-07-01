@@ -60,7 +60,7 @@ namespace Rpc
       virtual double computeDerivative();
       
       /**
-      * Return current variable value
+      * Return current lambda value.
       */
       virtual double variable();
       

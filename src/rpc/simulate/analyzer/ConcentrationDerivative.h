@@ -55,17 +55,17 @@ namespace Rpc
       virtual void setup();
       
       /**
-      * Compute and return the derivative of H w/ respect to concentration
+      * Compute and return the derivative of H w/ respect to concentration.
       */
       virtual double computeDerivative();
       
       /**
-      * Return current variable value
+      * Return current vMonomer value.
       */
       virtual double variable();
       
       /**
-      * Return the derivative parameter type string "Concentration Derivative"
+      * Return the derivative parameter type string "Concentration Derivative".
       */
       virtual std::string parameterType();
       

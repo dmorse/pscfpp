@@ -55,17 +55,17 @@ namespace Rpc
       virtual void setup();
       
       /**
-      * Compute and return the derivative of H w/ respect to chi
+      * Compute and return the derivative of H w/ respect to chi.
       */
       virtual double computeDerivative();
       
       /**
-      * Return current variable value
+      * Return current chi value.
       */
       virtual double variable();
       
       /**
-      * Return the derivative parameter type string "Chi Derivative"
+      * Return the derivative parameter type string "Chi Derivative".
       */
       virtual std::string parameterType();
       

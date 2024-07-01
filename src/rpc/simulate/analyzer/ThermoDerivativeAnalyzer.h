@@ -58,12 +58,12 @@ namespace Rpc
       virtual void setup();
       
       /**
-      * Compute and return the thermodynamic derivative.
+      * Compute and return the thermodynamic derivative of H.
       */
       virtual double computeDerivative() = 0;
       
       /**
-      * Return current variable value
+      * Return current variable value.
       */
       virtual double variable() = 0;
       
@@ -101,10 +101,10 @@ namespace Rpc
       */
       Simulator<D>& simulator();
       
-      // Output file stream
+      // Output file stream.
       std::ofstream outputFile_;
       
-      // Output filename
+      // Output filename.
       std::string outputFileName_;
       
       // Statistical accumulator.
@@ -122,7 +122,7 @@ namespace Rpc
       */ 
       bool hasOutputFile_;
       
-      /// Pointer to parent Simulator
+      /// Pointer to parent Simulator.
       Simulator<D>* simulatorPtr_;
       
       /// Pointer to the parent system.
