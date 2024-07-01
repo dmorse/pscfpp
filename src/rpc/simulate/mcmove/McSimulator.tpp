@@ -16,6 +16,10 @@
 #include <rpc/simulate/trajectory/TrajectoryReader.h>
 #include <rpc/simulate/trajectory/TrajectoryReaderFactory.h>
 #include <rpc/simulate/compressor/Compressor.h>
+#include <rpc/simulate/perturbation/PerturbationFactory.h>
+#include <rpc/simulate/perturbation/Perturbation.h>
+#include <rpc/simulate/ramp/RampFactory.h>
+#include <rpc/simulate/ramp/Ramp.h>
 
 #include <util/random/Random.h>
 #include <util/misc/Timer.h>
@@ -100,6 +104,11 @@ namespace Rpc {
       // Compute field components and MC Hamiltonian for initial state
       system().compute();
       computeWc();
+      
+      if (hasPerturbation()) {
+         perturbation().setup();
+      }
+   
       computeHamiltonian();
       if (state_.needsCc || state_.needsDc) {
          computeCc();
@@ -122,8 +131,13 @@ namespace Rpc {
    void McSimulator<D>::simulate(int nStep)
    {
       UTIL_CHECK(mcMoveManager_.size() > 0);
-
+      
+      // Initial setup
       setup();
+      if (hasRamp()) {
+         ramp().setup(nStep);
+      }
+   
       Log::file() << std::endl;
 
       // Main Monte Carlo loop
@@ -131,6 +145,9 @@ namespace Rpc {
       Timer analyzerTimer;
       timer.start();
       iStep_ = 0;
+      if (hasRamp()) {
+         ramp().setParameters(iStep_);
+      }
 
       // Analysis initial step (if any)
       analyzerTimer.start();
@@ -145,6 +162,10 @@ namespace Rpc {
 
          if (converged){
             iStep_++;
+            
+            if (hasRamp()) {
+               ramp().setParameters(iStep_);               
+            }
 
             // Analysis (if any)
             analyzerTimer.start();
@@ -170,6 +191,11 @@ namespace Rpc {
       mcMoveManager_.output();
       if (Analyzer<D>::baseInterval > 0){
          analyzerManager_.output();
+      }
+      
+      // Output results of ramp
+      if (hasRamp()){
+         ramp().output();
       }
 
       // Output number of times MDE has been solved for the simulation run

@@ -4,7 +4,7 @@
 #include "PerturbationFactory.h"  
 
 // Subclasses of Perturbation 
-//#include "EinsteinCrystalPerturbation.h"
+#include "EinsteinCrystalPerturbation.h"
 
 #include <rpc/simulate/Simulator.h>
 
@@ -35,9 +35,10 @@ namespace Rpc {
       if (ptr) return ptr;
        
       // Try to match classname
-      //if (className == "EinsteinCrystal") {
-      //   ptr = new EinsteinCrystal<D>(*simulatorPtr_);
-      //} 
+      if (className == "EinsteinCrystal" || 
+          className == "EinsteinCrystalPerturbation") {
+         ptr = new EinsteinCrystalPerturbation<D>(*simulatorPtr_);
+      } 
 
       return ptr;
    }

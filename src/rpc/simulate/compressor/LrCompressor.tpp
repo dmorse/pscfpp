@@ -32,21 +32,13 @@ namespace Rpc{
       errorType_("rmsResid"),
       verbose_(0),
       isAllocated_(false),
-      intraCorrelationPtr_(0)
-   {  
-      setClassName("LrCompressor"); 
-      intraCorrelationPtr_ = new IntraCorrelation<D>(system);
-   }
+      intraCorrelation_(system)
+   { setClassName("LrCompressor"); }
 
    // Destructor
    template <int D>
    LrCompressor<D>::~LrCompressor()
-   {
-      if (intraCorrelationPtr_){
-        delete intraCorrelationPtr_;
-     }
-   
-   }
+   {}
 
    // Read parameters from file
    template <int D>
@@ -81,7 +73,7 @@ namespace Rpc{
          residK_.allocate(dimensions);
          w0_.allocate(nMonomer);
          wFieldTmp_.allocate(nMonomer);
-         intraCorrelation_.allocate(kMeshDimensions_);
+         intraCorrelationK_.allocate(kMeshDimensions_);
          for (int i = 0; i < nMonomer; ++i) {
             w0_[i].allocate(meshSize);
             wFieldTmp_[i].allocate(meshSize);
@@ -95,7 +87,7 @@ namespace Rpc{
       }
       
       // Compute intraCorrelation (homopolymer)
-      intraCorrelation_ = intraCorrelation().computeIntraCorrelations();
+      intraCorrelationK_ = intraCorrelation_.computeIntraCorrelations();
    }
 
    template <int D>
@@ -210,8 +202,8 @@ namespace Rpc{
       MeshIterator<D> iter;
       iter.setDimensions(residK_.dftDimensions());
       for (iter.begin(); !iter.atEnd(); ++iter) {
-         residK_[iter.rank()][0] *= 1.0 / (vMonomer * intraCorrelation_[iter.rank()]);
-         residK_[iter.rank()][1] *= 1.0 / (vMonomer * intraCorrelation_[iter.rank()]);
+         residK_[iter.rank()][0] *= 1.0 / (vMonomer * intraCorrelationK_[iter.rank()]);
+         residK_[iter.rank()][1] *= 1.0 / (vMonomer * intraCorrelationK_[iter.rank()]);
       }
 
       // Convert back to real Space

@@ -107,6 +107,9 @@ namespace Rpc {
       } else if (buffer == "lambda_pert") {
          type_ = Lambda_Pert;
          nId_ = 0; // No associated index
+      } else if (buffer == "monomer_ref_volume") {
+         type_ = Vmonomer;
+         nId_ = 0; // No associated index
       } else {
          UTIL_THROW("Invalid RampParameter::ParamType value");
       }
@@ -165,6 +168,8 @@ namespace Rpc {
          return "cell_param";
       } else if (type_ == Lambda_Pert) {
          return "lambda_pert";
+      } else if (type_ == Vmonomer) {
+         return "vMonomer";
       } else {
          UTIL_THROW("This should never happen.");
       }
@@ -194,7 +199,9 @@ namespace Rpc {
       } else if (type_ == Lambda_Pert) {
          UTIL_CHECK(simulatorPtr_->hasPerturbation());
          return simulatorPtr_->perturbation().lambda();
-      } else {
+      } else if (type_ == Vmonomer) {
+         return systemPtr_->mixture().vMonomer();
+      }else {
          UTIL_THROW("This should never happen.");
       }
    }
@@ -225,6 +232,8 @@ namespace Rpc {
       } else if (type_ == Lambda_Pert) {
          UTIL_CHECK(simulatorPtr_->hasPerturbation());
          return simulatorPtr_->perturbation().setLambda(newVal);
+      } else if (type_ == Vmonomer) {
+         systemPtr_->mixture().setVmonomer(newVal);
       } else {
          UTIL_THROW("This should never happen.");
       }

@@ -19,8 +19,9 @@ namespace Rpc {
    template <int D>
    Perturbation<D>::Perturbation(Simulator<D>& simulator)
     : ParamComposite(),
+      lambda_(1.0),
       simulatorPtr_(&simulator),
-      lambda_(1.0)
+      systemPtr_(&(simulator.system()))
    {}
 
    /* 
@@ -71,6 +72,13 @@ namespace Rpc {
    template <int D>
    void Perturbation<D>::restoreState()
    {}
+   
+   /*
+   * Compute and return derivative of free energy 
+   */ 
+   template <int D>
+   double Perturbation<D>::df()
+   { return 0.0; }
 
    /*
    * Set a new value for the lambda_ parameter.

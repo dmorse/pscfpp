@@ -22,6 +22,7 @@ namespace Rpc {
    using namespace Prdc;
    using namespace Prdc::Cpu;
 
+   template <int D> class System;
    template <int D> class Simulator;
 
    /**
@@ -99,11 +100,24 @@ namespace Rpc {
       * by the saveState function.
       */
       virtual void restoreState();
+      
+      /**
+      * Compute and return derivative of free energy 
+      * with respective to specific variable per monomer.
+      * 
+      * Default implementation returns 0. 
+      */ 
+      virtual double df();
 
       /**
       * Get parent Simulator<D> by const reference.
       */
       Simulator<D> const & simulator() const;
+      
+      /** 
+      * Get parent System<D> by const reference.
+      */      
+      System<D> const & system() const;
 
       /**
       * Get the perturbation parameter.
@@ -127,14 +141,24 @@ namespace Rpc {
       * Get parent Simulator<D> by non-const reference.
       */
       Simulator<D>& simulator();
+      
+      /**
+      * Get parent system<D> by non-const reference.
+      */
+      System<D>& system();
+      
+      /**
+      * Strength of the perturbation
+      */
+      double lambda_;
 
    private:
 
       /// Pointer to parent Simulator.
       Simulator<D>* simulatorPtr_;
-
-      /// Perturbation parameter
-      double lambda_;
+      
+      /// Pointer to parent System.
+      System<D>* systemPtr_;
 
    };
 
@@ -154,6 +178,22 @@ namespace Rpc {
    {  
       assert(simulatorPtr_);  
       return *simulatorPtr_; 
+   }
+   
+   // Return parent simulator by const reference.
+   template <int D>
+   inline System<D> const & Perturbation<D>::system() const
+   {  
+      assert(systemPtr_);  
+      return *systemPtr_; 
+   }
+   
+   // Return parent simulator by non-const reference.
+   template <int D>
+   inline System<D> & Perturbation<D>::system() 
+   {  
+      assert(systemPtr_);  
+      return *systemPtr_; 
    }
 
    #ifndef RPC_PERTURBATION_TPP

@@ -148,9 +148,10 @@ namespace Rpc
       RFieldDft<D> residK_;
      
       /**
-      * IntraCorrelation.
+      * IntraCorrelation in fourier space 
+      * Calculated by IntraCorrlation class.
       */
-      RField<D> intraCorrelation_;
+      RField<D> intraCorrelationK_;
       
       /**
       * Dimensions of wavevector mesh in real-to-complex transform
@@ -276,24 +277,14 @@ namespace Rpc
       double setLambda();
       
       /**
-      * Get the IntraCorrelation (homopolymer) by reference.
+      * IntraCorrelation (homopolymer) object
       */
-      IntraCorrelation<D>& intraCorrelation();
-      
-      /**
-      * Pointer to the IntraCorrelation (homopolymer) class
-      */
-      IntraCorrelation<D>* intraCorrelationPtr_;
+      IntraCorrelation<D> intraCorrelation_;
       
       using Compressor<D>::system;
 
    };
    
-   // Get the intraCorrelation (homopolymer) by non-const reference.
-   template <int D>
-   inline IntraCorrelation<D>& LrAmCompressor<D>::intraCorrelation()
-   { return *intraCorrelationPtr_; }
-
    #ifndef RPC_LR_AM_COMPRESSOR_TPP
    // Suppress implicit instantiation
    extern template class LrAmCompressor<1>;
