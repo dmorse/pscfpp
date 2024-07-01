@@ -68,12 +68,63 @@ namespace Rpc {
       * Modify the generalized forces to include perturbation.
       */
       virtual void incrementDc(DArray< RField<D> >& dc);
+      
+      /**
+      * Compute and return derivative of free energy.
+      */ 
+      virtual double df();
+      
+      /**
+      * Save any required internal state variables.
+      */
+      virtual void saveState();
 
+      /**
+      * Restore any required internal state variables.
+      */
+      virtual void restoreState();
+      
+      // Inherited functions
+      using ParamComposite::setClassName;
+      using ParamComposite::read;
+      using Perturbation<D>::simulator;
+      using Perturbation<D>::system;
+      using Perturbation<D>::lambda;
+      
+   protected:
+      
+      // Inherited protected data members
+      using Perturbation<D>::lambda_;
+      
    private:
-
-      // Coupling parameter
-      double lambda_;
-
+      
+      // Spring constant for the einstein crystal. alpha = 1/chi
+      double alpha_;
+      
+      // Reference w field
+      DArray< RField<D> > w0_;
+      
+      // Eigenvector components of the reference w fields
+      DArray< RField<D> > wc0_;
+      
+      // Current Einstein Crystal hamiltonian 
+      double ecHamiltonian_;
+      
+      // Current Block copolymer hamiltonian 
+      double bcpHamiltonian_;
+      
+      // Saved Einstein Crystal hamiltonian  
+      double stateEcHamiltonian_;
+      
+      // Saved Block copolymer hamiltonian 
+      double stateBcpHamiltonian_;
+      
+      // Reference FieldFileName
+      std::string referenceFieldFileName_;
+      
+      // Compute eigenvector components of the reference field
+      void computeWcReference();
+      
    };
 
    #ifndef RPC_EINSTEIN_CRYSTAL_PERTURBATION_TPP

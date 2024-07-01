@@ -34,7 +34,7 @@ namespace Rpc {
    * monomer type index, pId to denote a polymer species index, bId
    * to denote the index of a block within a polymer, sId to denote a
    * solvent species index, and lId to denote a lattice parameter index.
-   * The lambda_pert parameter type does not take an index.
+   * The lambda_pert and vMonomer parameter types do not take an index.
    * \code
    *  | Type        | Meaning                            | id(0) | id(1)
    *  | ----------- | ---------------------------------- | ----- | -----
@@ -48,6 +48,7 @@ namespace Rpc {
    *  | mu_solvent  | solvent chemical potential         | sId   |
    *  | cell_param  | lattice parameter                  | lId   |
    *  | lambda_pert | perturbation strength              |  -    |
+   *  | vMonomer    | monomer reference volume           |  -    |
    * \endcode
    * The two indices for a Flory-Huggins chi parameter refer to indices
    * in the chi matrix maintained by Interaction. Changes to element
@@ -196,7 +197,7 @@ namespace Rpc {
       /// Enumeration of allowed parameter types.
       enum ParamType { Block, Chi, Kuhn, Phi_Polymer, Phi_Solvent,
                        Mu_Polymer, Mu_Solvent, Solvent, Cell_Param, 
-                       Lambda_Pert, Null};
+                       Lambda_Pert, Vmonomer, Null};
 
       /// Type of parameter associated with an object of this class
       ParamType type_;

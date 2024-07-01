@@ -526,6 +526,11 @@ namespace Rpc {
       * Get the associated Ramp by const reference.
       */
       Ramp<D> const & ramp() const;
+      
+      /**
+      * Get the ramp by non-const reference.
+      */
+      Ramp<D>& ramp();
 
       ///@}
 
@@ -560,11 +565,6 @@ namespace Rpc {
       * \param ptr pointer to a new Perturbation<D> object.
       */
       void setPerturbation(Perturbation<D>* ptr);
-
-      /**
-      * Get the ramp by non-const reference.
-      */
-      Ramp<D>& ramp();
 
       /**
       * Get the ramp factory by reference.

@@ -54,6 +54,14 @@ namespace Rpc {
       * \param iStep  current simulation step index
       */
       virtual void setParameters(int iStep) = 0;
+      
+      /**
+      * Output any results at the end of the simulation.
+      *
+      * The default implementation is an empty function.
+      */
+      virtual void output()
+      {}
 
       /**
       * Get parent Simulator<D> by const reference.

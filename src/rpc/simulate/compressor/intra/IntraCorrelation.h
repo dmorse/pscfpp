@@ -67,17 +67,17 @@ namespace Rpc
       */      
       System<D>& system();
       
+   private:
+      
       /// Pointer to the associated system object.
       System<D>* systemPtr_;
-      
-   private:
       
       /// Dimensions of fourier space 
       IntVec<D> kMeshDimensions_;
       
       /// Size of fourier space
       int kSize_;
-      
+   
    };
    
    // Get the parent system.

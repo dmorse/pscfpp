@@ -76,6 +76,30 @@ namespace Rpc {
          parameters_[i].update(newVal);
       }
    }
+   
+   template <int D>
+   void LinearRamp<D>::output()
+   {
+      for (int i = 0; i < nParameter_; ++i) {
+         
+         // Output parameter type
+         Log::file()<< "Linear Ramp parameter: " 
+                    << parameters_[i].type() << std::endl;
+                    
+         // Output initial value
+         Log::file()<< "The initial value is: "
+                    << parameters_[i].initial() << " ";
+         
+         // Output final value 
+         Log::file()<< "The final value is: "
+                    << parameters_[i].initial() + parameters_[i].change() 
+                    << std::endl;
+         
+         // Output the magnitude of change           
+         Log::file()<< "The change is: "
+                    << parameters_[i].change() <<std::endl;
+      }
+   }
 
 }
 }

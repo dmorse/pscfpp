@@ -126,9 +126,9 @@ namespace Rpc
       IntVec<D> kMeshDimensions_;
 
       /**
-      * IntraCorrelation.
+      * IntraCorrelation in fourier space calculated by IntraCorrlation class.
       */
-      RField<D> intraCorrelation_;
+      RField<D> intraCorrelationK_;
 
       /**
       * Residual in real space used for linear response anderson mixing.
@@ -194,25 +194,15 @@ namespace Rpc
       void outputToLog();
       
       /**
-      * Get the IntraCorrelation (homopolymer) by reference.
+      * IntraCorrelation (homopolymer) object
       */
-      IntraCorrelation<D>& intraCorrelation();
-      
-      /**
-      * Pointer to the IntraCorrelation (homopolymer) class
-      */
-      IntraCorrelation<D>* intraCorrelationPtr_;
+      IntraCorrelation<D> intraCorrelation_;
       
       // Private inherited members
       using Compressor<D>::system;
 
    };
    
-   // Get the intraCorrelation (homopolymer) by non-const reference.
-   template <int D>
-   inline IntraCorrelation<D>& LrCompressor<D>::intraCorrelation()
-   { return *intraCorrelationPtr_; }
-
    #ifndef RPC_LR_COMPRESSOR_TPP
    // Suppress implicit instantiation
    extern template class LrCompressor<1>;

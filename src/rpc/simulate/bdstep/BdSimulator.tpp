@@ -115,6 +115,11 @@ namespace Rpc {
       system().compute();
       computeWc();
       computeCc();
+      
+      if (hasPerturbation()) {
+         perturbation().setup();
+      }
+      
       computeDc();
       computeHamiltonian();
 
@@ -135,13 +140,10 @@ namespace Rpc {
 
       // Initial setup
       setup();
-      if (hasPerturbation()) {
-         perturbation().setup();
-      }
       if (hasRamp()) {
          ramp().setup(nStep);
       }
-
+      
       // Main simulation loop
       Timer timer;
       Timer analyzerTimer;
@@ -194,6 +196,12 @@ namespace Rpc {
       // Output results analyzers to files
       if (Analyzer<D>::baseInterval > 0){
          analyzerManager_.output();
+      }
+      
+      // Output results of ramp
+      if (hasRamp()){
+         Log::file() << std::endl;
+         ramp().output();
       }
 
       // Output number of times MDE has been solved for the simulation run
@@ -274,7 +282,7 @@ namespace Rpc {
 
       // Output results of all analyzers to output files
       analyzerManager_.output();
-
+   
       // Output number of frames and times
       Log::file() << std::endl;
       Log::file() << "# of frames   " << nFrames << std::endl;

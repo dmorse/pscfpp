@@ -56,6 +56,12 @@ namespace Rpc {
       * \param iStep  current simulation step index
       */
       virtual void setParameters(int iStep);
+      
+      /**
+      * Output initial and final parameter values of linear ramp
+      * at the end of the simulation.
+      */
+      virtual void output();
 
    protected:
 
