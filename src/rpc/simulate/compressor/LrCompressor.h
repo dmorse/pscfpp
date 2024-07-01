@@ -126,8 +126,7 @@ namespace Rpc
       IntVec<D> kMeshDimensions_;
 
       /**
-      * IntraCorrelation in fourier space 
-      * Calculated by IntraCorrlation class.
+      * IntraCorrelation in fourier space calculated by IntraCorrlation class.
       */
       RField<D> intraCorrelationK_;
 

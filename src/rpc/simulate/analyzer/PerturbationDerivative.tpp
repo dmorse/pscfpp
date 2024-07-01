@@ -46,7 +46,7 @@ namespace Rpc
    }
    
    /*
-   * Setup before system.
+   * Setup before simulation loop.
    */ 
    template <int D>
    void PerturbationDerivative<D>::setup()

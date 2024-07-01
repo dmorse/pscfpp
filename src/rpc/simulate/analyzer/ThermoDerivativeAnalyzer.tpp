@@ -35,11 +35,11 @@ namespace Rpc
    ThermoDerivativeAnalyzer<D>::ThermoDerivativeAnalyzer(
                                 Simulator<D>& simulator, System<D>& system) 
     : Analyzer<D>(),
-      simulatorPtr_(&simulator),
-      systemPtr_(&(simulator.system())),
       outputFileName_(""),
       hasAverage_(true),
-      hasOutputFile_(false)
+      hasOutputFile_(false),
+      simulatorPtr_(&simulator),
+      systemPtr_(&(simulator.system()))
    { setClassName("ThermoDerivativeAnalyzer"); }
 
    /*
@@ -71,7 +71,7 @@ namespace Rpc
    }
    
    /*
-   * Setup before system.
+   * Setup before simulation loop.
    */ 
    template <int D>
    void ThermoDerivativeAnalyzer<D>::setup()
@@ -102,7 +102,7 @@ namespace Rpc
    } 
    
    /*
-   * Output results after a system is completed.
+   * Output results after a simulation is completed.
    */
    template <int D>
    void ThermoDerivativeAnalyzer<D>::output()

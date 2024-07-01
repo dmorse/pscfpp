@@ -21,10 +21,7 @@ namespace Rpc
    using namespace Util;
 
    /**
-   * Evaluate thermodynamic derivatives
-   *
-   * This class evaluates the derivative of free energy with respect
-   * to relevant parameter.
+   * Base class for analyzers that evaluate derivatives of Hamiltonian.
    *
    * \ingroup Rpc_Simulate_Analyzer_Module
    */
@@ -46,30 +43,32 @@ namespace Rpc
       virtual ~ThermoDerivativeAnalyzer(); 
 
       /**
-      * Read interval (optionally) outputFileName 
-      * and (optionally) hasAverage.
+      * Read parameters from archive.
+      * 
+      * Default implementation, reads interval, (optionally) hasAverage, 
+      * and (optionally) outputFileName.
       *
       * \param in  input parameter file
       */
       virtual void readParameters(std::istream& in);
       
       /**
-      * Setup before loop. Opens an output file, if any.
+      * Setup before simulation loop.
       */
       virtual void setup();
       
       /**
-      * Compute the thermodynamic derivative.
+      * Compute and return the thermodynamic derivative.
       */
       virtual double computeDerivative() = 0;
       
       /**
-      * Obtain current variable value.
+      * Return current variable value
       */
       virtual double variable() = 0;
       
       /**
-      * Obtain derivative parameter type.
+      * Return derivative parameter type.
       */
       virtual std::string parameterType() = 0;
    
@@ -82,16 +81,6 @@ namespace Rpc
       * Write final results to file after a simulation.
       */
       virtual void output();
-      
-      /**
-      * Pointer to parent Simulator
-      */
-      Simulator<D>* simulatorPtr_;
-      
-      /**
-      * Pointer to the parent system.
-      */
-      System<D>* systemPtr_;  
       
       using ParamComposite::setClassName;
       using ParamComposite::read;
@@ -123,17 +112,21 @@ namespace Rpc
       
    private:
             
-      /**
-      * Whether the Average object is needed to compute the time average 
-      * of the thermodynamic derivative?
-      */ 
+      /// Whether the Average object is needed?
       bool hasAverage_;
       
       /**
       * Does the parameter file have the outputFileName parameter?
+      * 
       * If true, the analyzer would output every derivative value to the file.
       */ 
       bool hasOutputFile_;
+      
+      /// Pointer to parent Simulator
+      Simulator<D>* simulatorPtr_;
+      
+      /// Pointer to the parent system.
+      System<D>* systemPtr_;  
    };
    
    // Inline functions

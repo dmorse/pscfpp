@@ -22,10 +22,7 @@ namespace Rpc
    using namespace Util;
 
    /**
-   * Evaluate thermodynamic derivatives
-   *
-   * This class evaluates the derivative of free energy with respect
-   * to relevant parameter.
+   * Evaluate the derivative of H w/ respect to perturbation parameter lambda.
    *
    * \ingroup Rpc_Simulate_Analyzer_Module
    */
@@ -43,33 +40,32 @@ namespace Rpc
       /**
       * Destructor.
       */
-      virtual ~PerturbationDerivative(); 
-
+      virtual ~PerturbationDerivative();
+   
       /**
-      * Read interval (optionally) outputFileName 
-      * and (optionally) hasAverage.
+      * Read parameters from archive.
       *
       * \param in  input parameter file
       */
       virtual void readParameters(std::istream& in);
       
       /**
-      * Setup before loop. Opens an output file, if any.
+      * Setup before simulation loop.
       */
       virtual void setup();
       
       /**
-      * Compute the thermodynamic derivative.
+      * Compute and return the derivative of H w/ respect to lambda.
       */
       virtual double computeDerivative();
       
       /**
-      * Obtain current variable value
+      * Return current variable value
       */
       virtual double variable();
       
       /**
-      * Obtain derivative parameter type.
+      * Return derivative parameter type "Perturbation Derivatie".
       */
       virtual std::string parameterType();
       

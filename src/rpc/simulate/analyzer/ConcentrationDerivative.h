@@ -22,10 +22,7 @@ namespace Rpc
    using namespace Util;
 
    /**
-   * Evaluate thermodynamic derivatives
-   *
-   * This class evaluates the derivative of free energy with respect
-   * to relevant parameter.
+   * Evaluate the derivative of H with respect to concentration.
    *
    * \ingroup Rpc_Simulate_Analyzer_Module
    */
@@ -46,30 +43,29 @@ namespace Rpc
       virtual ~ConcentrationDerivative(); 
 
       /**
-      * Read interval (optionally) outputFileName 
-      * and (optionally) hasAverage.
-      *
-      * \param in  input parameter file
+      * Read parameters from archive.
+      * 
+      * \param in input parameter file
       */
       virtual void readParameters(std::istream& in);
       
       /**
-      * Setup before loop. Opens an output file, if any.
+      * Setup before simulation loop.
       */
       virtual void setup();
       
       /**
-      * Compute the thermodynamic derivative.
+      * Compute and return the derivative of H w/ respect to concentration
       */
       virtual double computeDerivative();
       
       /**
-      * Obtain current variable value
+      * Return current variable value
       */
       virtual double variable();
       
       /**
-      * Obtain derivative parameter type.
+      * Return the derivative parameter type string "Concentration Derivative"
       */
       virtual std::string parameterType();
       

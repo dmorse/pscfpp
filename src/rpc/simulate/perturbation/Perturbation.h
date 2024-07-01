@@ -102,8 +102,7 @@ namespace Rpc {
       virtual void restoreState();
       
       /**
-      * Compute and return derivative of free energy 
-      * with respective to specific variable per monomer.
+      * Compute and return derivative of H w/ respect to parameter lambda.
       * 
       * Default implementation returns 0. 
       */ 
