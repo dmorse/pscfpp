@@ -47,7 +47,7 @@ namespace Rpc {
    {
       // Get specialized sweep parameters from Iterator
       if (system().hasIterator()) {
-         system().iterator().addParameterTypes(*this);
+         addParameterTypes(system().iterator().getParameterTypes());
       }
    }
 

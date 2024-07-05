@@ -9,6 +9,7 @@
 */
 
 #include <util/param/ParamComposite.h>                     // base class
+#include <util/containers/DArray.h>
 #include <util/containers/GArray.h>
 #include <pscf/sweep/ParameterModifier.h>
 #include <pscf/sweep/ParameterType.h>
@@ -48,10 +49,11 @@ namespace Pscf {
       virtual void sweep();
 
       /**
-      * Add declaration of a specialized parameter type.
+      * Declare a specialized parameter type.
       * 
-      * This function adds a new ParameterType object to the
-      * array of declared specialized parameter types.
+      * This function creates a new ParameterType object using 
+      * the input parameters and adds this object to the array 
+      * of declared specialized parameter types.
       *
       * \param name  parameter string identifier
       * \param nId  number of associated integer indices
@@ -59,6 +61,26 @@ namespace Pscf {
       */
       void addParameterType(std::string name, int nId, 
                             ParameterModifier& modifier);
+
+      /**
+      * Declare a specialized parameter type.
+      * 
+      * This function adds a new ParameterType object to the
+      * array of declared specialized parameter types.
+      *
+      * \param paramType  parameterType object defining the sweep parameter
+      */
+      void addParameterType(ParameterType paramType);
+
+      /**
+      * Declare an array of specialized parameter types.
+      * 
+      * This function adds an array of new ParameterType objects to the
+      * array of declared specialized parameter types.
+      *
+      * \param paramType  array of parameterType objects
+      */
+      void addParameterTypes(DArray<ParameterType> paramTypes);
 
    protected:
 

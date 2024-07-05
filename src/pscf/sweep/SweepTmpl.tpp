@@ -160,8 +160,36 @@ namespace Pscf {
       ParameterType paramType;
       paramType.name = name;
       paramType.nId = nId;
-      paramType.modifierPtr_ = &modifier;
+      paramType.modifierPtr = &modifier;
       parameterTypes_.append(paramType);
+   }
+
+   template <class State>
+   void SweepTmpl<State>::addParameterType(ParameterType paramType)
+   {
+      // Check if parameterTypes_ already has an element with this name
+      if (parameterTypes_.size() > 0) {
+         for (int i = 0; i < parameterTypes_.size(); ++i) {
+            UTIL_CHECK(parameterTypes_[i].name != paramType.name);
+         }
+      }
+
+      parameterTypes_.append(paramType);
+   }
+
+   template <class State>
+   void SweepTmpl<State>::addParameterTypes(DArray<ParameterType> paramTypes)
+   {
+      for (int i = 0; i < paramTypes.capacity(); i++) {
+         // Check if parameterTypes_ already has an element with this name
+         if (parameterTypes_.size() > 0) {
+            for (int j = 0; j < parameterTypes_.size(); j++) {
+               UTIL_CHECK(parameterTypes_[j].name != paramTypes[i].name);
+            }
+         }
+         
+         parameterTypes_.append(paramTypes[i]);
+      }
    }
 
    /*

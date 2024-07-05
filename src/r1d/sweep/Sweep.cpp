@@ -37,7 +37,7 @@ namespace R1d
       setClassName("Sweep"); 
       fieldIo_.associate(sys.domain(), sys.fileMaster());
 
-      system().iterator().addParameterTypes(*this);
+      addParameterTypes(system().iterator().getParameterTypes());
    }
 
    /*

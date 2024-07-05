@@ -153,14 +153,12 @@ namespace Rpc
       bool isAthermal() const;
 
       /**
-      * Add specialized sweep parameter types to the Sweep object.
+      * Return specialized sweep parameter types to add to the Sweep object.
       * 
       * In this class, the two specialized sweep parameters are chi_top
       * and chi_bottom.
-      * 
-      * \param sweep  The sweep object to which parameters will be added
       */
-      void addParameterTypes(Sweep<D>& sweep);
+      DArray<ParameterType> getParameterTypes();
 
       /**
       * Set the value of a specialized sweep parameter.

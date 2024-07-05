@@ -56,14 +56,6 @@ namespace R1d
       */
       virtual int solve(bool isContinuation = false) = 0;
 
-      /**
-      * Add specialized sweep parameter types to the Sweep object
-      * 
-      * \param sweep  The sweep object to which parameters will be added
-      */
-      virtual void addParameterTypes(Sweep& sweep)
-      {}
-
    };
 
 } // namespace R1d

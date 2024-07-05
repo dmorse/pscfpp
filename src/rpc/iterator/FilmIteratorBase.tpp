@@ -18,8 +18,10 @@
 #include "prdc/crystal/SpaceGroup.h"
 
 #include "pscf/math/RealVec.h"
+#include "pscf/sweep/ParameterType.h"
 
 #include "util/containers/FArray.h"
+#include "util/containers/DArray.h"
 #include "util/format/Dbl.h"
 
 #include <cmath>
@@ -488,14 +490,17 @@ namespace Rpc
    }
 
    /*
-   * Add specialized sweep parameter types chi_top and chi_bottom to 
-   * the Sweep object.
+   * Return specialized sweep parameter types to add to the Sweep object.
    */
    template <int D, typename IteratorType>
-   void FilmIteratorBase<D, IteratorType>::addParameterTypes(Sweep<D>& sweep)
+   DArray<ParameterType> 
+   FilmIteratorBase<D, IteratorType>::getParameterTypes()
    {
-      sweep.addParameterType("chi_top", 1, *this);
-      sweep.addParameterType("chi_bottom", 1, *this);
+      DArray<ParameterType> pTypes;
+      pTypes.allocate(2);
+      pTypes[0] = ParameterType("chi_top", 1, *this);
+      pTypes[1] = ParameterType("chi_bottom", 1, *this);
+      return pTypes;
    }
 
    /*

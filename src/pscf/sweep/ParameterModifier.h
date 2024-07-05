@@ -3,6 +3,7 @@
 
 #include <string>
 #include "util/containers/DArray.h"
+#include "pscf/sweep/ParameterType.h" // base class
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory
@@ -18,11 +19,15 @@ namespace Pscf {
    /**
    * Base class allowing subclasses to define sweepable parameters.
    * 
-   * The SweepTmpl class defines a method, addParameterTypes(), which
-   * allows custom "specialized" sweepable parameters to be added to
-   * the sweep class at run time. Any object with a specialized sweep
-   * parameter must be a subclass of ParameterModifier, and must 
-   * redefine the two virtual methods setParameter and getParameter.
+   * This class, along with SweepTmpl, define an interface which allows 
+   * "specialized" sweepable parameters to be added to the Sweep class 
+   * at run time. Any object with a specialized sweep parameter must 
+   * be a subclass of ParameterModifier, and must redefine the three 
+   * virtual methods getParameterTypes, setParameter, and getParameter.
+   * The Sweep object is then responsible for calling the method 
+   * getParameterTypes for any ParameterModifier in the system and 
+   * adding the parameters to its list of specialized sweep parameters.
+   * This should happen in the Sweep class constructor.
    * 
    * This interface was designed to allow objects whose class is 
    * determined at run time (i.e., an object created by a Factory) to
@@ -45,6 +50,17 @@ namespace Pscf {
       * Destructor.
       */
       ~ParameterModifier();
+
+      /**
+      * Return specialized sweep parameter types to add to the Sweep object.
+      * 
+      * This method should be called by the Sweep object in its constructor.
+      * If the ParameterModifier object does not have any specialized sweep 
+      * parameters, this method can be left as implemented here, returning 
+      * an empty array.
+      */
+      virtual DArray<ParameterType> getParameterTypes()
+      {  return DArray<ParameterType>(); } // empty array
 
       /**
       * Set the value of a specialized sweep parameter.
