@@ -212,7 +212,7 @@ namespace Rpg {
       } else if (type_ == Cell_Param) {
          return systemPtr_->unitCell().parameter(id(0));
       } else if (type_ == Special) {
-         ParameterModifier* modifier = parameterType().modifierPtr_;
+         ParameterModifier* modifier = parameterType().modifierPtr;
          std::string name = parameterType().name;
          return modifier->getParameter(name,id_);
       } else {
@@ -244,7 +244,7 @@ namespace Rpg {
          params[id(0)] = newVal;
          systemPtr_->setUnitCell(params);
       } else if (type_ == Special) {
-         ParameterModifier* modifier = parameterType().modifierPtr_;
+         ParameterModifier* modifier = parameterType().modifierPtr;
          std::string name = parameterType().name;
          return modifier->setParameter(name,id_,newVal);
       } else {

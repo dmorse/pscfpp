@@ -13,7 +13,15 @@ namespace Pscf {
    ParameterType::ParameterType()
     : name(),
       nId(0),
-      modifierPtr_(0)
+      modifierPtr(0)
+   {}
+
+   // Alternate constructor that sets all members
+   ParameterType::ParameterType(std::string name, int nId, 
+                                    ParameterModifier& modifier)
+    : name(name),
+      nId(nId),
+      modifierPtr(&modifier)
    {}
 
    // Destructor

@@ -493,7 +493,7 @@ public:
 
    void testSweep() // test sweep along chiBottom and lattice parameter
    {
-      // NOTE: this also tests that the addParameterTypes method works
+      // NOTE: this also tests that the getParameterTypes method works
       printMethod(TEST_FUNC);
       
       openLogFile("out/filmTestSweep.log");

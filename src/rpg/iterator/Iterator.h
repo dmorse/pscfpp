@@ -76,14 +76,6 @@ namespace Rpg
       virtual void clearTimers() = 0;
 
       /**
-      * Add specialized sweep parameter types to the Sweep object
-      * 
-      * \param sweep  The sweep object to which parameters will be added
-      */
-      virtual void addParameterTypes(Sweep<D>& sweep)
-      {}
-
-      /**
       * Does this iterator use a symmetry-adapted Fourier basis?
       */
       bool isSymmetric() const;

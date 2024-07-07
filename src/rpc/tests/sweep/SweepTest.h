@@ -192,17 +192,17 @@ public:
 
       pType1.name = "test1";
       pType1.nId = 1;
-      pType1.modifierPtr_ = &modifier;
+      pType1.modifierPtr = &modifier;
       pTypes.append(pType1);
 
       pType2.name = "test2";
       pType2.nId = 2;
-      pType2.modifierPtr_ = &modifier;
+      pType2.modifierPtr = &modifier;
       pTypes.append(pType2);
 
       pType3.name = "test3";
       pType3.nId = 3;
-      pType3.modifierPtr_ = &modifier;
+      pType3.modifierPtr = &modifier;
       pTypes.append(pType3);
       Log::file() << pTypes.size() << std::endl;
 

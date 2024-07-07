@@ -192,7 +192,7 @@ namespace R1d {
       } else if (type_ == Solvent) {
          return systemPtr_->mixture().solvent(id(0)).size();
       } else if (type_ == Special) {
-         ParameterModifier* modifier = parameterType().modifierPtr_;
+         ParameterModifier* modifier = parameterType().modifierPtr;
          std::string name = parameterType().name;
          return modifier->getParameter(name,id_);
       } else {
@@ -219,7 +219,7 @@ namespace R1d {
       } else if (type_ == Solvent) {
          systemPtr_->mixture().solvent(id(0)).setSize(newVal);
       } else if (type_ == Special) {
-         ParameterModifier* modifier = parameterType().modifierPtr_;
+         ParameterModifier* modifier = parameterType().modifierPtr;
          std::string name = parameterType().name;
          return modifier->setParameter(name,id_,newVal);
       } else {

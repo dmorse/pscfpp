@@ -58,6 +58,8 @@ namespace Rpg {
       virtual void readParameters(std::istream& in);
 
       // Public members inherited from base class template SweepTmpl
+      using SweepTmpl< BasisFieldState<D> >::addParameterTypes;
+      using SweepTmpl< BasisFieldState<D> >::addParameterType;
       using SweepTmpl< BasisFieldState<D> >::historyCapacity;
       using SweepTmpl< BasisFieldState<D> >::historySize;
       using SweepTmpl< BasisFieldState<D> >::nAccept;
