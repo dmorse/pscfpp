@@ -170,7 +170,8 @@ namespace Rpc
       * \param ids  array of integer indices specifying the value to set
       * \param value  the value to which the parameter is set
       */
-      void setParameter(std::string name, DArray<int> ids, double value);
+      void setParameter(std::string name, DArray<int> ids, 
+                                          double value, bool& success);
 
       /**
       * Get the value of a specialized sweep parameter.
@@ -181,7 +182,8 @@ namespace Rpc
       * \param name  name of the specialized parameter
       * \param ids  array of integer indices specifying the value to set
       */
-      double getParameter(std::string name, DArray<int> ids) const;
+      double getParameter(std::string name, DArray<int> ids, bool& success) 
+      const;
 
       /**
       * Get value of normalVecId

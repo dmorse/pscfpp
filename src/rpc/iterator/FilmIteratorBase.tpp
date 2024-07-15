@@ -22,7 +22,6 @@
 
 #include "util/containers/FArray.h"
 #include "util/containers/DArray.h"
-#include "util/format/Dbl.h"
 
 #include <cmath>
 #include <iostream>
@@ -508,14 +507,17 @@ namespace Rpc
    */
    template <int D, typename IteratorType>
    void FilmIteratorBase<D, IteratorType>::setParameter(std::string name, 
-                                            DArray<int> ids, double value)
+                                                        DArray<int> ids, 
+                                                        double value,
+                                                        bool& success)
    {
+      success = true;
       if (name == "chi_top") {
          chiTop_[ids[0]] = value;
       } else if (name == "chi_bottom") {
          chiBottom_[ids[0]] = value;
       } else {
-         UTIL_THROW(("Parameter name " + name + " not recognized.").c_str());
+         success = false;
       }
    }
 
@@ -524,14 +526,17 @@ namespace Rpc
    */
    template <int D, typename IteratorType>
    double FilmIteratorBase<D, IteratorType>::getParameter(std::string name, 
-                                                      DArray<int> ids) const
+                                                          DArray<int> ids, 
+                                                          bool& success) 
+   const
    {
+      success = true;
       if (name == "chi_top") {
          return chiTop_[ids[0]];
       } else if (name == "chi_bottom") {
          return chiBottom_[ids[0]];
       } else {
-         UTIL_THROW(("Parameter name " + name + " not recognized.").c_str());
+         success = false;
          return 0.0;
       }
    }

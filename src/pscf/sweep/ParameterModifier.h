@@ -65,26 +65,75 @@ namespace Pscf {
       /**
       * Set the value of a specialized sweep parameter.
       * 
+      * Subclass implementations of setParameter should attempt to set 
+      * the desired parameter, and should not throw an error regardless 
+      * of whether this attempt succeeded. A boolean input parameter 
+      * named success should be set to true or false depending on 
+      * whether the parameter was successfully set. This method should
+      * be used when the caller does not know if the specialized sweep
+      * parameter belongs to this ParameterModifier or not. 
+      * 
       * \param name  name of the specialized parameter
       * \param ids  array of integer indices specifying the value to set
       * \param value  the value to which the parameter is set
+      * \param success  boolean flag used to indicate if parameter was set
       */
       virtual 
-      void setParameter(std::string name, DArray<int> ids, double value)
+      void setParameter(std::string name, DArray<int> ids, 
+                                          double value, bool& success)
       {  UTIL_THROW("Error: Unimplemented setParameter function"); }
 
       /**
       * Get the value of a specialized sweep parameter.
       * 
+      * Subclass implementations of getParameter should attempt to get 
+      * the desired parameter, and should not throw an error regardless 
+      * of whether this attempt succeeded. A boolean input parameter 
+      * named success should be set to true or false depending on 
+      * whether the parameter was successfully gotten. This method 
+      * should be used when the caller does not know if the specialized 
+      * sweep parameter belongs to this ParameterModifier or not. 
+      * 
       * \param name  name of the specialized parameter
       * \param ids  array of integer indices specifying the value to set
+      * \param success  boolean flag used to indicate if parameter was gotten
       */
       virtual 
-      double getParameter(std::string name, DArray<int> ids) const
+      double getParameter(std::string name, DArray<int> ids, bool& success) 
+      const
       {  
          UTIL_THROW("Error: Unimplemented getParameter function"); 
          return 0.0;
       }
+
+      /**
+      * Set the value of a specialized sweep parameter.
+      * 
+      * This is an overloaded version of the setParameter method above,
+      * which should be used only when the caller is certain that the
+      * specialized sweep parameter belongs to this ParameterModifier.
+      * An error will be thrown if the specialized parameter is not 
+      * settable using this class.
+      * 
+      * \param name  name of the specialized parameter
+      * \param ids  array of integer indices specifying the value to set
+      * \param value  the value to which the parameter is set
+      */
+      void setParameter(std::string name, DArray<int> ids, double value);
+
+      /**
+      * Get the value of a specialized sweep parameter.
+      * 
+      * This is an overloaded version of the getParameter method above,
+      * which should be used only when the caller is certain that the
+      * specialized sweep parameter belongs to this ParameterModifier.
+      * An error will be thrown if the specialized parameter is not 
+      * gettable using this class.
+      * 
+      * \param name  name of the specialized parameter
+      * \param ids  array of integer indices specifying the value to set
+      */
+      double getParameter(std::string name, DArray<int> ids) const;
 
    };
 

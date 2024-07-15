@@ -16,14 +16,15 @@
 #include <cmath>
 
 namespace Pscf{
-namespace Rpc{
+namespace Rpc {
 
    using namespace Util;
 
    // Constructor
    template <int D>
    AmIteratorBasis<D>::AmIteratorBasis(System<D>& system)
-    : Iterator<D>(system)
+    : Iterator<D>(system),
+      imposedFields_(system)
    {
      isFlexible_ = true;  
      setClassName("AmIteratorBasis"); 
@@ -76,6 +77,9 @@ namespace Rpc{
 
       // Read optional scaleStress value
       readOptional(in, "scaleStress", scaleStress_);
+
+      // Read optional ImposedFieldsGenerator object
+      readParamCompositeOptional(in, imposedFields_);
    }
 
    // Protected virtual function
@@ -86,6 +90,10 @@ namespace Rpc{
    {
       AmIteratorTmpl<Iterator<D>, DArray<double> >::setup(isContinuation);
       interaction_.update(system().interaction());
+
+      if (imposedFields_.isActive()) {
+         imposedFields_.setup();
+      }
    }
 
    // Private virtual functions used to implement AM algorithm
@@ -422,7 +430,42 @@ namespace Rpc{
       AmIteratorTmpl<Iterator<D>, DArray<double> >::outputTimers(out);
    }
    
-   
+   // Return specialized sweep parameter types to add to the Sweep object
+   template<int D>
+   DArray<ParameterType> AmIteratorBasis<D>::getParameterTypes()
+   {
+      DArray<ParameterType> arr;
+      if (imposedFields_.isActive()) {
+         arr = imposedFields_.getParameterTypes();
+      } 
+      return arr;
+   }
+
+   // Set the value of a specialized sweep parameter
+   template<int D>
+   void AmIteratorBasis<D>::setParameter(std::string name, DArray<int> ids, 
+                                         double value, bool& success)
+   {
+      if (imposedFields_.isActive()) {
+         imposedFields_.setParameter(name, ids, value, success);
+      } else {
+         success = false;
+      }
+   }
+
+   // Get the value of a specialized sweep parameter
+   template<int D>
+   double AmIteratorBasis<D>::getParameter(std::string name, 
+                                           DArray<int> ids, bool& success)
+   const
+   {
+      if (imposedFields_.isActive()) {
+         return imposedFields_.getParameter(name, ids, success);
+      } else {
+         success = false;
+         return 0.0;
+      }
+   }
 
 }
 }
