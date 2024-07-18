@@ -64,7 +64,6 @@ namespace Rpc
       */ 
       void setup(bool isContinuation);      
       
-      
       /**
       * Compress to obtain partial saddle point w+
       *

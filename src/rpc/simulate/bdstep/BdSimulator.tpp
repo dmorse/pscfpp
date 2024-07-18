@@ -224,7 +224,9 @@ namespace Rpc {
       Log::file() << "Analyzer run time   " << analyzerTime
                   << " sec" << std::endl;
       Log::file() << std::endl;
-
+      
+      // Output compressor timer results
+      compressor().outputTimers(Log::file());
    }
 
    /*

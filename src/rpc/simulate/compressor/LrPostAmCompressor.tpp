@@ -182,8 +182,8 @@ namespace Rpc{
 
    template <int D>
    void LrPostAmCompressor<D>::addPredictedError(DArray<double>& fieldTrial,
-                                         DArray<double> const & resTrial,
-                                         double lambda)
+                                                 DArray<double> const & resTrial,
+                                                 double lambda)
    {
       int n = fieldTrial.capacity();
       const double vMonomer = system().mixture().vMonomer();
@@ -297,7 +297,7 @@ namespace Rpc{
    {
       // Output timing results, if requested.
       out << "\n";
-      out << "Compressor times contributions:\n";
+      out << "LrPostAmCompressor time contributions:\n";
       AmIteratorTmpl<Compressor<D>, DArray<double> >::outputTimers(out);
    }
    

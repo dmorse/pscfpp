@@ -250,7 +250,7 @@ namespace Rpc{
    {
       // Output timing results, if requested.
       out << "\n";
-      out << "Compressor times contributions:\n";
+      out << "AmCompressor time contributions:\n";
       AmIteratorTmpl<Compressor<D>, DArray<double> >::outputTimers(out);
    }
    

@@ -48,7 +48,7 @@ namespace Rpc {
    *  | mu_solvent  | solvent chemical potential         | sId   |
    *  | cell_param  | lattice parameter                  | lId   |
    *  | lambda_pert | perturbation strength              |  -    |
-   *  | vMonomer    | monomer reference volume           |  -    |
+   *  | v_monomer   | monomer reference volume           |  -    |
    * \endcode
    * The two indices for a Flory-Huggins chi parameter refer to indices
    * in the chi matrix maintained by Interaction. Changes to element
@@ -95,7 +95,7 @@ namespace Rpc {
       /**
       * Constructor that stores a pointer to parent Simulator.
       *
-      * \param system  parent Simulator
+      * \param simulator  parent Simulator
       */
       RampParameter(Simulator<D>& simulator);
 

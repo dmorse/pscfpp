@@ -72,7 +72,7 @@ namespace Rpc {
       *
       * Default implementation returns 0. 
       *
-      * \param hamiltonian Hamiltonian without perturbation
+      * \param unperturbedHamiltonian Hamiltonian without perturbation
       */
       virtual double hamiltonian(double unperturbedHamiltonian);
 
