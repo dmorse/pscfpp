@@ -27,15 +27,18 @@ System{
     lattice        lamellar  
     groupName      P_1
   }
-  AmIteratorBasisFilm{
-    epsilon      1.0e-12
+  AmIteratorBasis{
+    epsilon      1.0e-10
     maxItr       2500
     maxHist      50 
     isFlexible   0
-    normalVecId          0
-    interfaceThickness   0.15     
-    excludedThickness    0.3
-    chiBottom[ 10 10 ]
-    chiTop[    0 0 ]
+    ImposedFieldsGenerator{
+      type                 film
+      normalVecId          0
+      interfaceThickness   0.15     
+      excludedThickness    0.3
+      chiBottom[ 10 10 ]
+      chiTop[    0 0 ]
+    }
   }
 }

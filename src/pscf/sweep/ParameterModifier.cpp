@@ -18,6 +18,16 @@ namespace Pscf {
    {}
 
    /*
+   * Return specialized sweep parameter types to add to the Sweep object.
+   */
+   GArray<ParameterType> ParameterModifier::getParameterTypes()
+   {  
+      // Default behavior: return empty array
+      GArray<ParameterType> arr;
+      return arr; 
+   } 
+
+   /*
    * Set the value of a specialized sweep parameter, and throw an error 
    * if the parameter is not found.
    */

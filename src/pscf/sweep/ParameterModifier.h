@@ -2,6 +2,7 @@
 #define PSCF_PARAMETER_MODIFIER_H
 
 #include <string>
+#include "util/containers/GArray.h"
 #include "util/containers/DArray.h"
 #include "pscf/sweep/ParameterType.h" // base class
 
@@ -59,8 +60,7 @@ namespace Pscf {
       * parameters, this method can be left as implemented here, returning 
       * an empty array.
       */
-      virtual DArray<ParameterType> getParameterTypes()
-      {  return DArray<ParameterType>(); } // empty array
+      virtual GArray<ParameterType> getParameterTypes();
 
       /**
       * Set the value of a specialized sweep parameter.
@@ -81,7 +81,7 @@ namespace Pscf {
       virtual 
       void setParameter(std::string name, DArray<int> ids, 
                                           double value, bool& success)
-      {  UTIL_THROW("Error: Unimplemented setParameter function"); }
+      {  success = false; }
 
       /**
       * Get the value of a specialized sweep parameter.
@@ -102,7 +102,7 @@ namespace Pscf {
       double getParameter(std::string name, DArray<int> ids, bool& success) 
       const
       {  
-         UTIL_THROW("Error: Unimplemented getParameter function"); 
+         success = false; 
          return 0.0;
       }
 

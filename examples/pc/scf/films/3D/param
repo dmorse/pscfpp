@@ -27,21 +27,24 @@ System{
     lattice        tetragonal 
     groupName      P_4%m_m_m
   }
-  AmIteratorBasisFilm{
+  AmIteratorBasis{
     epsilon      1.0e-6
     maxItr       2000
     maxHist      50 
     isFlexible   1
-    normalVecId          2
-    interfaceThickness   0.2     
-    excludedThickness    0.4
-    chiBottom[  
-                 0.0
-                 0.0
-    ]
-    chiTop[
-                 0.0
-                 0.0
-    ]
+    ImposedFieldsGenerator{
+      type                 film
+      normalVecId          2
+      interfaceThickness   0.2     
+      excludedThickness    0.4
+      chiBottom[  
+                   0.0
+                   0.0
+      ]
+      chiTop[
+                   0.0
+                   0.0
+      ]
+    }
   }
 }

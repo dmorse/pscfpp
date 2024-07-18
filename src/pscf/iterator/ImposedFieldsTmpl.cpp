@@ -1,6 +1,3 @@
-#ifndef PSCF_IMPOSED_FIELDS_TMPL_TPP
-#define PSCF_IMPOSED_FIELDS_TMPL_TPP
-
 /*
 * PSCF - Polymer Self-Consistent Field Theory
 *
@@ -75,23 +72,26 @@ namespace Pscf {
       if (fieldGenPtr2_) fieldGenPtr2_->setup();
    }
 
-   // Return specialized sweep parameter types to add to the Sweep object
-   DArray<ParameterType> ImposedFieldsTmpl::getParameterTypes()
+   // Check whether system has changed and update the field(s) if necessary
+   void ImposedFieldsTmpl::update()
    {
-      DArray<ParameterType> a1, a2, a3;
+      if (fieldGenPtr1_) fieldGenPtr1_->update();
+      if (fieldGenPtr2_) fieldGenPtr2_->update();
+   }
+
+   // Return specialized sweep parameter types to add to the Sweep object
+   GArray<ParameterType> ImposedFieldsTmpl::getParameterTypes()
+   {
+      GArray<ParameterType> a1, a2;
 
       if (fieldGenPtr1_) a1 = fieldGenPtr1_->getParameterTypes();
       if (fieldGenPtr2_) a2 = fieldGenPtr2_->getParameterTypes();
 
-      a3.allocate(a1.capacity() + a2.capacity());
-      for (int i = 0; i < a1.capacity(); i++) {
-         a3[i] = a1[i];
-      }
-      for (int i = 0; i < a2.capacity(); i++) {
-         a3[i+a1.capacity()] = a2[i];
+      for (int i = 0; i < a2.size(); i++) {
+         a1.append(a2[i]);
       }
 
-      return a3;
+      return a1;
    }
 
    // Set the value of a specialized sweep parameter
@@ -129,4 +129,3 @@ namespace Pscf {
    std::string ImposedFieldsTmpl::type() const
    {  return type_; }
 }
-#endif

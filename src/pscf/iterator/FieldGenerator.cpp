@@ -1,6 +1,3 @@
-#ifndef PSCF_IMPOSED_FIELDS_GENERATOR_TPP
-#define PSCF_IMPOSED_FIELDS_GENERATOR_TPP
-
 /*
 * PSCF - Polymer Self-Consistent Field Theory
 *
@@ -28,7 +25,7 @@ namespace Pscf
       allocate();
       checkCompatibility();
       if (!isGenerated()) {
-         generateMask();
+         generate();
       } else {
          update();
       }
@@ -42,9 +39,8 @@ namespace Pscf
          // update not needed, do nothing
          return;
       } else {
-         generateMask();
+         generate();
       }
    }   
    
 }
-#endif

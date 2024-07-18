@@ -1,5 +1,5 @@
-#ifndef RPC_IMPOSED_FIELDS_H
-#define RPC_IMPOSED_FIELDS_H
+#ifndef RPC_IMPOSED_FIELDS_GENERATOR_H
+#define RPC_IMPOSED_FIELDS_GENERATOR_H
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory

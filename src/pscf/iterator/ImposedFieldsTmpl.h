@@ -58,9 +58,14 @@ namespace Pscf {
       void setup();
 
       /**
+      * Check whether system has changed and update the field(s) if necessary
+      */
+      void update();
+
+      /**
       * Return specialized sweep parameter types to add to the Sweep object
       */
-      DArray<ParameterType> getParameterTypes();
+      GArray<ParameterType> getParameterTypes();
 
       /**
       * Set the value of a specialized sweep parameter
@@ -82,6 +87,9 @@ namespace Pscf {
       */
       double getParameter(std::string name, DArray<int> ids, bool& success)
       const;
+
+      using ParameterModifier::setParameter; // overloaded method
+      using ParameterModifier::getParameter; // overloaded method
 
    protected:
 

@@ -14,7 +14,6 @@
 #include <pscf/iterator/AmbdInteraction.h>       // member variable
 #include <util/containers/DArray.h>              // base class argument
 
-
 namespace Pscf {
 namespace Rpc
 {
@@ -64,7 +63,7 @@ namespace Rpc
       /**
       * Return specialized sweep parameter types to add to the Sweep object
       */
-      DArray<ParameterType> getParameterTypes();
+      GArray<ParameterType> getParameterTypes();
 
       /**
       * Set the value of a specialized sweep parameter
@@ -94,6 +93,8 @@ namespace Rpc
       using Iterator<D>::flexibleParams;
       using Iterator<D>::setFlexibleParams;
       using Iterator<D>::nFlexibleParams;
+      using ParameterModifier::setParameter; // overloaded method
+      using ParameterModifier::getParameter; // overloaded method
 
    protected:
 

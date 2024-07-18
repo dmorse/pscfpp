@@ -1,6 +1,6 @@
 rpc_iterator_= \
   rpc/iterator/AmIteratorBasis.cpp \
-  rpc/iterator/FilmIterator.cpp \
+  rpc/iterator/ExtGenFilm.cpp \
   rpc/iterator/ImposedFieldsGenerator.cpp \
   rpc/iterator/IteratorFactory.cpp \
   rpc/iterator/MaskGenFilm.cpp

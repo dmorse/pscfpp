@@ -5,7 +5,6 @@
 
 // Subclasses of Iterator 
 #include "AmIteratorBasis.h"
-#include "FilmIterator.h"
 
 namespace Pscf {
 namespace Rpc {
@@ -36,8 +35,6 @@ namespace Rpc {
       if (className == "Iterator" || className == "AmIteratorBasis" 
                                   || className == "AmIterator" ) {
          ptr = new AmIteratorBasis<D>(*sysPtr_);
-      } else if (className == "AmIteratorBasisFilm") {
-         ptr = new FilmIterator<D, AmIteratorBasis<D> >(*sysPtr_);
       }
 
       return ptr;

@@ -88,15 +88,15 @@ namespace Prdc
       // Check if system lattice parameters are different than parameters_
       FSArray<double, 6> sysParams = getLatticeParameters();
       UTIL_CHECK(sysParams.size() == parameters_.size());
-      bool identical = true; // are the two arrays identical?
+      
       for (int i = 0; i < parameters_.size(); i++) {
          if (fabs(sysParams[i] - parameters_[i]) > 1e-10) {
-            identical = false;
-            break;
+            return true;
          }
       }
 
-      return identical;
+      // If this point is reached, no update is needed
+      return false;
    }
 
    /*
@@ -135,6 +135,8 @@ namespace Prdc
       }
    }
 
+   // Explicit Specializations for checkLatticeVectors are in
+   // MaskGenFilmBase.cpp
 }
 }
 #endif

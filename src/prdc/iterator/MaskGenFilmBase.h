@@ -9,6 +9,7 @@
 */
 
 #include <pscf/iterator/FieldGenerator.h>  // Base class
+#include <pscf/math/RealVec.h>        // container
 #include <util/containers/FSArray.h>  // container
 #include <iostream>
 #include <string>
@@ -22,9 +23,8 @@ namespace Prdc {
    * Base class defining mask that imposes thin film confinement.
    * 
    * This is a base class for MaskGenFilm that defines all traits of a 
-   * MaskGenFilm that do not depend on D, the dimension of the system.
-   * The subclasses of MaskGenFilmBase are the partial specializations of 
-   * MaskGenFilm for 1D, 2D, and 3D problems.
+   * MaskGenFilm that do not require access to the System (System access is
+   * needed, for example, to get the space group and set the mask field).
    * 
    * If the user chooses a MaskGenFilm object to construct the mask, then 
    * the system will contain two parallel hard surfaces ("walls"), confining
@@ -101,6 +101,17 @@ namespace Prdc {
       void checkSpaceGroup() const;
 
       /**
+      * Check that lattice vectors are compatible with thin film constraint.
+      * 
+      * Check that user-defined lattice basis vectors (stored in the
+      * Domain member of the parent System object) are compatible with 
+      * thin film confinement. The lattice basis vector with index 
+      * normalVecId should be normal to the walls, while any other lattice
+      * basis vectors must be parallel to the walls.
+      */
+      virtual void checkLatticeVectors() const;
+
+      /**
       * Allocate container necessary to generate and store field.
       */ 
       virtual void allocate() = 0;
@@ -108,7 +119,7 @@ namespace Prdc {
       /**
       * Generate the field and store where the Iterator can access.
       */
-      virtual void generateMask() = 0;
+      virtual void generate() = 0;
 
       /**
       * Sets flexible lattice parameters to be compatible with the mask.
@@ -119,27 +130,8 @@ namespace Prdc {
       * lattice parameters appropriately so that the film thickness is
       * held constant, while the other lattice parameters are allowed
       * to be flexible if the user chooses.
-      * 
-      * This function varies depending on D, the dimensionality of the
-      * system. Therefore, it is implemented in partial class 
-      * specializations in subclasses, rather than in this base class.
       */
       virtual void setFlexibleParams() = 0;
-
-      /**
-      * Check that lattice vectors are compatible with thin film constraint.
-      * 
-      * Check that user-defined lattice basis vectors (stored in the
-      * Domain member of the parent System object) are compatible with 
-      * thin film confinement. The lattice basis vector with index 
-      * normalVecId should be normal to the walls, while any other lattice
-      * basis vectors must be parallel to the walls.
-      * 
-      * This function varies depending on D, the dimensionality of the
-      * system. Therefore, it is implemented in partial class 
-      * specializations in subclasses, rather than in this base class.
-      */
-      virtual void checkLatticeVectors() const = 0;
 
       /**
       * Get the space group name for this system.
@@ -151,7 +143,14 @@ namespace Prdc {
       */
       virtual FSArray<double, 6> getLatticeParameters() const = 0;
 
-      /// Lattice parameters associated with the current maskBasis
+      /**
+      * Get one of the lattice vectors for this system.
+      * 
+      * \param id  index of the desired lattice parameter
+      */
+      virtual RealVec<D> getLatticeVector(int id) const = 0;
+
+      /// Lattice parameters associated with the current mask
       FSArray<double, 6> parameters_;
 
    private:
@@ -188,6 +187,4 @@ namespace Prdc {
 
 }
 }
-
-#include "MaskGenFilmBase.tpp"
 #endif

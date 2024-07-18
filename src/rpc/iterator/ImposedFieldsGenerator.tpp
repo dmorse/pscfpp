@@ -1,5 +1,5 @@
-#ifndef RPC_IMPOSED_FIELDS_TPP
-#define RPC_IMPOSED_FIELDS_TPP
+#ifndef RPC_IMPOSED_FIELDS_GENERATOR_TPP
+#define RPC_IMPOSED_FIELDS_GENERATOR_TPP
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory
@@ -10,7 +10,7 @@
 
 #include "ImposedFieldsGenerator.h"
 #include <rpc/iterator/MaskGenFilm.h>
-//#include <rpc/iterator/ExtGenFilm.h>
+#include <rpc/iterator/ExtGenFilm.h>
 
 namespace Pscf {
 namespace Rpc {
@@ -33,7 +33,7 @@ namespace Rpc {
    {
       if (type() == "film") {
          fieldGenPtr1_ = new MaskGenFilm<D>(*sysPtr_);
-         //fieldGenPtr2_ = new ExtGenFilm<D>(*sysPtr_);
+         fieldGenPtr2_ = new ExtGenFilm<D>(*sysPtr_);
       } else {
          UTIL_THROW(("Unrecognized type parameter: " + type()).c_str());
       }

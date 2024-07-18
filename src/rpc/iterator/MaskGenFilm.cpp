@@ -11,7 +11,7 @@
 namespace Pscf {
 namespace Rpc {
 
-   // Explicit Specializations for setFlexibleParams and checkLatticeVectors
+   // Explicit Specializations for setFlexibleParams
 
    /*
    * Construct an array indicating whether each lattice parameter is 
@@ -30,7 +30,7 @@ namespace Rpc {
          Log::file() 
             << "Warning - The lattice parameter is not allowed "
             << "to be flexible for a 1D thin film system."
-            << std::endl;
+            << std::endl << std::endl;
       }
 
       // Pass params into the iterator member of this object
@@ -79,9 +79,10 @@ namespace Rpc {
       }
       if (nFlexParams < system().iterator().nFlexibleParams()) {
          Log::file() 
-            << "***Notice - Some lattice parameters will be held constant\n"
-            << "to comply with the thin film constraint.***"
-            << std::endl;
+            << "***\n"
+            << "Notice - Some lattice parameters will be held constant\n"
+            << "to comply with the thin film constraint.\n"
+            << "***\n" << std::endl;
       }
 
       // Pass params into the iterator member of this object
@@ -164,71 +165,14 @@ namespace Rpc {
       }
       if (nFlexParams < system().iterator().nFlexibleParams()) {
          Log::file() 
-            << "***Notice - Some lattice parameters will be held constant\n"
-            << "to comply with the thin film constraint.***"
-            << std::endl;
+            << "***\n"
+            << "Notice - Some lattice parameters will be held constant\n"
+            << "to comply with the thin film constraint.\n"
+            << "***\n" << std::endl;
       }
 
       // Pass params into the iterator member of this object
       system().iterator().setFlexibleParams(params);
-   }
-
-   /*
-   * Check that user-defined lattice basis vectors are compatible with 
-   * the thin film constraint.
-   * 
-   * In 1D, there is nothing to do; the lattice basis vector is correct in 
-   * all cases.
-   */
-   template <>
-   void MaskGenFilm<1>::checkLatticeVectors() const 
-   {} // do nothing
-
-   
-   // In 2D, we require that gamma = 90°.
-   template <>
-   void MaskGenFilm<2>::checkLatticeVectors() const 
-   {
-      RealVec<2> a, b;
-      a = system().domain().unitCell().rBasis(0);
-      b = system().domain().unitCell().rBasis(1);
-
-      double gamma = dot(a,b);
-      if (gamma > 1e-8) { // Dot product between a and b should be 0
-         UTIL_THROW("ERROR: Lattice basis vectors must be orthogonal when wall is present");
-      }
-   } 
-
-   /*
-   * In 3D, we require that there be one lattice basis vector that is 
-   * orthogonal to the walls (parameter with index normalVecId), and two
-   * that are parallel to the walls.
-   */
-   template <>
-   void MaskGenFilm<3>::checkLatticeVectors() const 
-   {
-      RealVec<3> a, b, c;
-      a = system().domain().unitCell().rBasis(0);
-      b = system().domain().unitCell().rBasis(1);
-      c = system().domain().unitCell().rBasis(2);
-      double alpha, beta, gamma;
-      gamma = dot(a,b);
-      beta = dot(a,c);
-      alpha = dot(b,c);
-
-      if (normalVecId() == 0) {
-         if (beta > 1e-8 || gamma > 1e-8) {
-            UTIL_THROW("ERROR: If normalVecId = 0, beta and gamma must be 90 degrees");
-         }
-      } else if (normalVecId() == 1) {
-         if (alpha > 1e-8 || gamma > 1e-8) {
-            UTIL_THROW("ERROR: If normalVecId = 1, alpha and gamma must be 90 degrees");
-         }
-      } else { // normalVecId == 2
-         if (alpha > 1e-8 || beta > 1e-8) {
-            UTIL_THROW("ERROR: If normalVecId = 2, alpha and beta must be 90 degrees");
-         }
-      }
    }
 
    // Class declarations

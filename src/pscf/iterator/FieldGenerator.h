@@ -1,5 +1,5 @@
-#ifndef PSCF_IMPOSED_FIELD_GENERATOR_H
-#define PSCF_IMPOSED_FIELD_GENERATOR_H
+#ifndef PSCF_FIELD_GENERATOR_H
+#define PSCF_FIELD_GENERATOR_H
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory
@@ -97,7 +97,7 @@ namespace Pscf {
       /**
       * Generate the field(s) and store where the Iterator can access
       */
-      virtual void generateMask() = 0;
+      virtual void generate() = 0;
 
       /**
       * Type of field (Mask, External, Both, or None)

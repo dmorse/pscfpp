@@ -15,8 +15,6 @@
 #include <pscf/math/IntVec.h>
 #include <util/containers/FArray.h>
 #include <rpc/field/FieldIo.h>
-#include <string>
-#include <iostream>
 
 namespace Pscf {
 namespace Rpc
@@ -73,7 +71,7 @@ namespace Rpc
    * Generate the field and store where the Iterator can access
    */
    template <int D>
-   void MaskGenFilm<D>::generateMask()
+   void MaskGenFilm<D>::generate()
    {
       UTIL_CHECK(interfaceThickness() > 0);
       UTIL_CHECK(excludedThickness() > interfaceThickness());
@@ -134,8 +132,7 @@ namespace Rpc
 
    }
 
-   // Explicit Specializations for setFlexibleParams and checkLatticeVectors
-   // are written in MaskGenFilm.cpp
+   // Explicit Specializations for setFlexibleParams are in MaskGenFilm.cpp
 }
 }
 #endif

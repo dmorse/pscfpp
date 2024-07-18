@@ -88,12 +88,12 @@ namespace Rpc {
    template <int D>
    void AmIteratorBasis<D>::setup(bool isContinuation)
    {
-      AmIteratorTmpl<Iterator<D>, DArray<double> >::setup(isContinuation);
-      interaction_.update(system().interaction());
-
       if (imposedFields_.isActive()) {
          imposedFields_.setup();
       }
+      
+      AmIteratorTmpl<Iterator<D>, DArray<double> >::setup(isContinuation);
+      interaction_.update(system().interaction());
    }
 
    // Private virtual functions used to implement AM algorithm
@@ -401,6 +401,10 @@ namespace Rpc {
          system().setUnitCell(parameters);
       }
 
+      // Update imposed fields if needed
+      if (imposedFields_.isActive()) {
+         imposedFields_.update();
+      }
    }
 
    template<int D>
@@ -432,9 +436,9 @@ namespace Rpc {
    
    // Return specialized sweep parameter types to add to the Sweep object
    template<int D>
-   DArray<ParameterType> AmIteratorBasis<D>::getParameterTypes()
+   GArray<ParameterType> AmIteratorBasis<D>::getParameterTypes()
    {
-      DArray<ParameterType> arr;
+      GArray<ParameterType> arr;
       if (imposedFields_.isActive()) {
          arr = imposedFields_.getParameterTypes();
       } 

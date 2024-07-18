@@ -18,12 +18,11 @@ namespace Rpc {
    using namespace Pscf::Prdc;
 
    /**
-   * Mask generator for a thin film geometry (empty base template).
+   * Mask generator for a thin film geometry.
    *
    * The parent MaskGenFilmBase class template defines all traits of a 
-   * MaskGenFilm that do not depend on D, the dimension of space. This 
-   * MaskGenFilm class template is an empty template that is replaced
-   * by partial specializations for D=1, 2 and 3.
+   * MaskGenFilm that do not require access to the System. This subclass
+   * defines all methods that need System access.
    * 
    * If the user chooses a MaskGenFilm as their mask generator, then the 
    * system will contain two parallel hard surfaces ("walls"), confining
@@ -74,23 +73,12 @@ namespace Rpc {
       /**
       * Generate the field and store where the Iterator can access.
       */
-      void generateMask();
+      void generate();
 
       /**
       * Modifies iterator().flexibleParams_ to be compatible with the mask.
       */
       void setFlexibleParams();
-
-      /**
-      * Check that lattice vectors are compatible with thin film constraint.
-      * 
-      * Check that user-defined lattice basis vectors (stored in the
-      * Domain member of the parent System object) are compatible with 
-      * thin film confinement. The lattice basis vector with index 
-      * normalVecId should be normal to the walls, while any other lattice
-      * basis vectors must be parallel to the walls.
-      */
-      void checkLatticeVectors() const;
 
       /**
       * Get the System associated with this object by reference.
@@ -110,6 +98,13 @@ namespace Rpc {
       * Get the lattice parameters for this system.
       */
       FSArray<double, 6> getLatticeParameters() const;
+
+      /**
+      * Get one of the lattice vectors for this system.
+      * 
+      * \param id  index of the desired lattice parameter
+      */
+      RealVec<D> getLatticeVector(int id) const;
 
    private:
 
@@ -146,6 +141,11 @@ namespace Rpc {
    template <int D>
    inline FSArray<double, 6> MaskGenFilm<D>::getLatticeParameters() const
    {  return system().domain().unitCell().parameters(); }
+
+   // Get one of the lattice vectors for this system.
+   template <int D>
+   inline RealVec<D> MaskGenFilm<D>::getLatticeVector(int id) const
+   {  return system().domain().unitCell().rBasis(id); }
 
 }
 }
