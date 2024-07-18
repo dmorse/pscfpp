@@ -114,7 +114,7 @@ namespace Pscf {
                                                     bool& success)
    const
    {
-      double val;
+      double val(0);
       success = false;
       if (fieldGenPtr1_) {
          val = fieldGenPtr1_->getParameter(name, ids, success);
