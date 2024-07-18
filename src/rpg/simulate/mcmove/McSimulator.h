@@ -140,9 +140,12 @@ namespace Rpg {
       using Simulator<D>::idealHamiltonian;
       using Simulator<D>::fieldHamiltonian;
       using Simulator<D>::hasHamiltonian;
+      using Simulator<D>::hasPerturbation;
+      using Simulator<D>::hasRamp;
       using Simulator<D>::saveState;
       using Simulator<D>::restoreState;
       using Simulator<D>::clearState;
+      using Simulator<D>::outputMdeCounter;
 
    protected:
 
@@ -152,6 +155,13 @@ namespace Rpg {
       using ParamComposite::readParamComposite;
       using ParamComposite::readParamCompositeOptional;
       using ParamComposite::readOptional;
+      using Simulator<D>::readCompressor;
+      using Simulator<D>::perturbation;
+      using Simulator<D>::perturbationFactory;
+      using Simulator<D>::setPerturbation;
+      using Simulator<D>::ramp;
+      using Simulator<D>::rampFactory;
+      using Simulator<D>::setRamp;
 
       // Inherited protected data members
 

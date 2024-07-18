@@ -23,7 +23,10 @@ namespace Rpg {
    template <int D> class System;
    template <int D> class Compressor;
    template <int D> class CompressorFactory;
-
+   template <int D> class Perturbation;
+   template <int D> class PerturbationFactory;
+   template <int D> class Ramp;
+   template <int D> class RampFactory;
 
    using namespace Util;
    using namespace Pscf::Prdc::Cuda;
@@ -286,6 +289,18 @@ namespace Rpg {
       * Get the quadratic field contribution (HW) to MC Hamiltonian.
       */
       double fieldHamiltonian() const;
+      
+      /**
+      * Get the perturbation to the standard Hamiltonian (if any).
+      *
+      * A perturbation to the Hamiltonian, if any, is computed by an 
+      * associated Perturbation object. When a perturbation exists, as
+      * indicated by the return value of hasPerturbation(), the
+      * perturbationHamiltonian component is added to the idealHamiltonian
+      * and fieldHamiltonian components to obtain the total value that is
+      * returned by hamiltonian() function.
+      */
+      double perturbationHamiltonian() const;
 
       /**
       * Has the MC Hamiltonian been computed for current w and c fields?
@@ -490,6 +505,36 @@ namespace Rpg {
       * Get cuda random number generator by reference.
       */
       CudaRandom& cudaRandom();
+      
+      /**
+      * Does this Simulator have a Perturbation?
+      */
+      bool hasPerturbation() const;
+
+      /**
+      * Get the associated Perturbation by const reference.
+      */
+      Perturbation<D> const & perturbation() const;
+
+      /**
+      * Get the perturbation factory by non-const reference.
+      */
+      Perturbation<D>& perturbation();
+      
+      /**
+      * Does this Simulator have a Ramp?
+      */
+      bool hasRamp() const;
+
+      /**
+      * Get the associated Ramp by const reference.
+      */
+      Ramp<D> const & ramp() const;
+      
+      /**
+      * Get the ramp by non-const reference.
+      */
+      Ramp<D>& ramp();
 
       ///@}
 
@@ -505,6 +550,44 @@ namespace Rpg {
       * \param in input parameter stream
       */
       void readCompressor(std::istream& in);
+      
+      /**
+      * Get the perturbation factory by reference.
+      */
+      PerturbationFactory<D>& perturbationFactory();
+
+      /**
+      * Optionally read an associated perturbation.
+      *
+      * \param in input parameter stream
+      */
+      void readPerturbation(std::istream& in);
+
+      /**
+      * Set the associated perturbation.
+      *
+      * \param ptr pointer to a new Perturbation<D> object.
+      */
+      void setPerturbation(Perturbation<D>* ptr);
+      
+      /**
+      * Get the ramp factory by reference.
+      */
+      RampFactory<D>& rampFactory();
+
+      /**
+      * Optionally read an associated ramp.
+      *
+      * \param in input parameter stream
+      */
+      void readRamp(std::istream& in);
+
+      /**
+      * Set the associated ramp.
+      *
+      * \param ptr pointer to a new Ramp<D> object.
+      */
+      void setRamp(Ramp<D>* ptr);
 
       // Protected data members
   
@@ -561,6 +644,15 @@ namespace Rpg {
       * Field contribution (H_W) to Hamiltonian
       */
       double fieldHamiltonian_;
+      
+      /**
+      * Perturbation to the standard Hamiltonian (if any).
+      *
+      * A perturbation to the Hamiltonian, if any, is computed by an 
+      * associated Perturbation object and added to the ideal and field
+      * components to obtain the total hamiltonian_ value. 
+      */
+      double perturbationHamiltonian_;
 
       /**
       * Simulation step counter.
@@ -653,6 +745,26 @@ namespace Rpg {
       * Pointer to an compressor.
       */
       Compressor<D>* compressorPtr_;
+      
+      /**
+      * Pointer to the perturbation Factory.
+      */
+      PerturbationFactory<D>* perturbationFactoryPtr_;
+
+      /**
+      * Pointer to the perturbation (if any)
+      */
+      Perturbation<D>* perturbationPtr_;
+      
+      /**
+      * Pointer to the Ramp Factory.
+      */
+      RampFactory<D>* rampFactoryPtr_;
+
+      /**
+      * Pointer to the Ramp (if any)
+      */
+      Ramp<D>* rampPtr_;
 
       /**
       * Has required memory been allocated?
@@ -671,6 +783,54 @@ namespace Rpg {
    template <int D>
    inline CudaRandom& Simulator<D>::cudaRandom()
    {  return cudaRandom_; }
+   
+   // Get the perturbation (if any) by const reference.
+   template <int D>
+   inline Perturbation<D> const & Simulator<D>::perturbation() const
+   {
+      UTIL_CHECK(perturbationPtr_);  
+      return *perturbationPtr_; 
+   }
+
+   // Get the perturbation (if any) by non-const reference.
+   template <int D>
+   inline Perturbation<D>& Simulator<D>::perturbation()
+   {
+      UTIL_CHECK(perturbationPtr_);  
+      return *perturbationPtr_; 
+   }
+   
+   // Get the perturbation factory.
+   template <int D>
+   inline PerturbationFactory<D>& Simulator<D>::perturbationFactory()
+   {
+      UTIL_CHECK(perturbationFactoryPtr_);  
+      return *perturbationFactoryPtr_; 
+   }
+   
+   // Get the ramp (if any) by const reference.
+   template <int D>
+   inline Ramp<D> const & Simulator<D>::ramp() const
+   {
+      UTIL_CHECK(rampPtr_);  
+      return *rampPtr_; 
+   }
+
+   // Get the ramp (if any) by non-const reference.
+   template <int D>
+   inline Ramp<D>& Simulator<D>::ramp()
+   {
+      UTIL_CHECK(rampPtr_);  
+      return *rampPtr_; 
+   }
+
+   // Get the ramp factory.
+   template <int D>
+   inline RampFactory<D>& Simulator<D>::rampFactory()
+   {
+      UTIL_CHECK(rampFactoryPtr_);  
+      return *rampFactoryPtr_; 
+   }
 
    // Get the parent System.
    template <int D>
@@ -743,6 +903,14 @@ namespace Rpg {
       UTIL_CHECK(hasHamiltonian_);
       return fieldHamiltonian_;
    }
+   
+   // Get the perturbation component of the precomputed Hamiltonian.
+   template <int D>
+   inline double Simulator<D>::perturbationHamiltonian() const
+   {
+      UTIL_CHECK(hasHamiltonian_);
+      return perturbationHamiltonian_;
+   }
 
    // Has the Hamiltonian been computed for the current w fields ?
    template <int D>
@@ -793,6 +961,16 @@ namespace Rpg {
    template <int D>
    inline bool Simulator<D>::hasDc() const
    {  return hasDc_; }
+   
+   // Does this Simulator have an associated Perturbation?
+   template <int D>
+   inline bool Simulator<D>::hasPerturbation() const
+   {  return (perturbationPtr_ != 0); }
+   
+   // Does this Simulator have an associated Ramp?
+   template <int D>
+   inline bool Simulator<D>::hasRamp() const
+   {  return (rampPtr_ != 0); }
 
    // Clear all data (eigen-components of w field and Hamiltonian)
    template <int D>

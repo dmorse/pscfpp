@@ -85,6 +85,9 @@ namespace Rpg {
       
       /// Monte-Carlo field part contribution to Hamiltonian value.
       double fieldHamiltonian;
+      
+      /// Perturbation to Hamiltonian value (if any).
+      double perturbationHamiltonian;
             
       /// If cc fields needs to be saved.
       bool needsCc;

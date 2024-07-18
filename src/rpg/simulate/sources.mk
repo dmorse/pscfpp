@@ -2,6 +2,8 @@
 include $(SRC_DIR)/rpg/simulate/compressor/sources.mk
 include $(SRC_DIR)/rpg/simulate/mcmove/sources.mk
 include $(SRC_DIR)/rpg/simulate/bdstep/sources.mk
+include $(SRC_DIR)/rpg/simulate/perturbation/sources.mk
+include $(SRC_DIR)/rpg/simulate/ramp/sources.mk
 include $(SRC_DIR)/rpg/simulate/trajectory/sources.mk
 include $(SRC_DIR)/rpg/simulate/analyzer/sources.mk
 
@@ -9,6 +11,8 @@ rpg_simulate_= \
   $(rpg_simulate_compressor_) \
   $(rpg_simulate_mcmove_) \
   $(rpg_simulate_bdstep_) \
+  $(rpg_simulate_perturbation_) \
+  $(rpg_simulate_ramp_) \
   $(rpg_simulate_trajectory_) \
   $(rpg_simulate_analyzer_) \
   rpg/simulate/SimState.cu \

@@ -8,6 +8,9 @@
 #include "HamiltonianAnalyzer.h"
 #include "BinaryStructureFactorGrid.h"
 #include "StepLogger.h"
+#include "PerturbationDerivative.h"
+#include "ChiDerivative.h"
+#include "ConcentrationDerivative.h"
 
 namespace Pscf {
 namespace Rpg {
@@ -48,6 +51,14 @@ namespace Rpg {
                                             *sysPtr_);
       } else if (className == "StepLogger") {
          ptr = new StepLogger<D>();
+      } else if (className == "PerturbationDerivative") {
+         ptr = new PerturbationDerivative<D>(*simulatorPtr_, 
+                                             *sysPtr_);
+      } else if (className == "ChiDerivative") {
+         ptr = new ChiDerivative<D>(*simulatorPtr_, *sysPtr_);
+      } else if (className == "ConcentrationDerivative") {
+         ptr = new ConcentrationDerivative<D>(*simulatorPtr_, 
+                                              *sysPtr_);
       }
 
       return ptr;

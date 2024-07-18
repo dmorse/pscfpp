@@ -15,6 +15,10 @@
 #include <rpg/simulate/analyzer/AnalyzerFactory.h>
 #include <rpg/simulate/trajectory/TrajectoryReader.h>
 #include <rpg/simulate/trajectory/TrajectoryReaderFactory.h>
+#include <rpg/simulate/perturbation/PerturbationFactory.h>
+#include <rpg/simulate/perturbation/Perturbation.h>
+#include <rpg/simulate/ramp/RampFactory.h>
+#include <rpg/simulate/ramp/Ramp.h>
 #include <rpg/simulate/compressor/Compressor.h>
 #include <rpg/System.h>
 
@@ -66,7 +70,7 @@ namespace Rpg {
    void BdSimulator<D>::readParameters(std::istream &in)
    {
 
-      // Read compressor block, and optionally random seed
+      // Read compressor block, and optionally random seed, optional perturbation
       Simulator<D>::readParameters(in);
 
       #if 0
@@ -119,6 +123,11 @@ namespace Rpg {
       system().compute();
       computeWc();
       computeCc();
+      
+      if (hasPerturbation()) {
+         perturbation().setup();
+      }
+      
       computeDc();
       computeHamiltonian();
 
@@ -138,12 +147,18 @@ namespace Rpg {
 
       // Initial setup
       setup();
+      if (hasRamp()) {
+         ramp().setup(nStep);
+      }
 
       // Main simulation loop
       Timer timer;
       Timer analyzerTimer;
       timer.start();
       iStep_ = 0;
+      if (hasRamp()) {
+         ramp().setParameters(iStep_);
+      }
 
       // Analysis initial step (if any)
       analyzerTimer.start();
@@ -158,6 +173,10 @@ namespace Rpg {
 
          if (converged){
             iStep_++;
+            
+            if (hasRamp()) {
+               ramp().setParameters(iStep_);               
+            }
 
             // Analysis (if any)
             analyzerTimer.start();
@@ -184,6 +203,12 @@ namespace Rpg {
       if (Analyzer<D>::baseInterval > 0){
          analyzerManager_.output();
       }
+      
+      // Output results of ramp
+      if (hasRamp()){
+         Log::file() << std::endl;
+         ramp().output();
+      }
 
       // Output number of times MDE has been solved for the simulation run
       Log::file() << std::endl;
@@ -206,7 +231,9 @@ namespace Rpg {
       Log::file() << "Analyzer run time   " << analyzerTime
                   << " sec" << std::endl;
       Log::file() << std::endl;
-
+      
+      // Output compressor timer results
+      compressor().outputTimers(Log::file());
    }
 
    /*
@@ -282,13 +309,6 @@ namespace Rpg {
    template<int D>
    void BdSimulator<D>::outputTimers(std::ostream& out)
    {}
-
-   /*
-   * Clear all timers.
-   */
-   template<int D>
-   void BdSimulator<D>::clearTimers()
-   { }
 
 }
 }
