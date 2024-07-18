@@ -107,6 +107,9 @@ namespace Rpc
       // Maximum number of iterations.
       int maxItr_;
 
+      // Total iteration counter.
+      int totalItr_;
+
       // Timers for analyzing performance.
       Timer timerTotal_;
       Timer timerMDE_;

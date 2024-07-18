@@ -107,7 +107,7 @@ namespace Rpc {
       } else if (buffer == "lambda_pert") {
          type_ = Lambda_Pert;
          nId_ = 0; // No associated index
-      } else if (buffer == "monomer_ref_volume") {
+      } else if (buffer == "v_monomer") {
          type_ = Vmonomer;
          nId_ = 0; // No associated index
       } else {

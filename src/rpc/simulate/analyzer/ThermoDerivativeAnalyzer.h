@@ -101,31 +101,31 @@ namespace Rpc
       */
       Simulator<D>& simulator();
       
-      // Output file stream.
+      /// Output file stream.
       std::ofstream outputFile_;
       
-      // Output filename.
+      /// Output filename.
       std::string outputFileName_;
       
-      // Statistical accumulator.
+      /// Statistical accumulator.
       Average accumulator_;
       
    private:
             
-      /// Whether the Average object is needed?
+      // Whether the Average object is needed?
       bool hasAverage_;
       
-      /**
+      /*
       * Does the parameter file have the outputFileName parameter?
       * 
       * If true, the analyzer would output every derivative value to the file.
       */ 
       bool hasOutputFile_;
       
-      /// Pointer to parent Simulator.
+      // Pointer to parent Simulator.
       Simulator<D>* simulatorPtr_;
       
-      /// Pointer to the parent system.
+      // Pointer to the parent system.
       System<D>* systemPtr_;  
    };
    

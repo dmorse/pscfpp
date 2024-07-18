@@ -13,14 +13,16 @@
 #include <prdc/cuda/RField.h>    
 #include <prdc/cuda/RFieldDft.h> 
 #include <pscf/math/IntVec.h>
-#include <pscf/iterator/AmIteratorTmpl.h>                 
+#include <pscf/iterator/AmIteratorTmpl.h>      
+#include <rpg/simulate/compressor/intra/IntraCorrelation.h>            
 
 namespace Pscf {
 namespace Rpg
 {
 
    template <int D> class System;
-
+   template <int D> class IntraCorrelation;
+   
    using namespace Util;
    using namespace Pscf::Prdc;
    using namespace Pscf::Prdc::Cuda;
@@ -276,26 +278,16 @@ namespace Rpg
       * Outputs relevant system details to the iteration log.
       */
       void outputToLog();
-      
-      /**
-      * Compute Debye function
-      */
-      double computeDebye(double x);
-      
-      /**
-      * Compute intramolecular correlation at specific sqSquare
-      */
-      double computeIntraCorrelation(double qSquare);
-      
-      /**
-      * Compute intramolecular correlation  
-      */
-      void computeIntraCorrelation();
-      
+   
       /**
       * Set mixing parameter lambda
       */
       double setLambda();
+      
+      /**
+      * IntraCorrelation (homopolymer) object
+      */
+      IntraCorrelation<D> intra_;
       
    };
    

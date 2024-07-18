@@ -200,6 +200,7 @@ namespace Rpc {
 
       // Output number of times MDE has been solved for the simulation run
       outputMdeCounter(Log::file());
+      
       #if 0
       Log::file() << std::endl;
       Log::file() << "MDE counter   " 

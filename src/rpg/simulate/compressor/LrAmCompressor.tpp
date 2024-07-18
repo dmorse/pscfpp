@@ -10,6 +10,7 @@
 
 #include "LrAmCompressor.h"
 #include <rpg/System.h>
+#include <rpg/simulate/compressor/intra/IntraCorrelation.h>  
 #include <pscf/chem/Monomer.h>
 #include <pscf/mesh/MeshIterator.h>
 #include <prdc/crystal/shiftToMinimum.h>
@@ -25,13 +26,14 @@ namespace Rpg{
    template <int D>
    LrAmCompressor<D>::LrAmCompressor(System<D>& system)
     : Compressor<D>(system),
-      isAllocated_(false)
+      isAllocated_(false),
+      intra_(system)
    {  setClassName("LrAmCompressor"); }
 
    // Destructor
    template <int D>
    LrAmCompressor<D>::~LrAmCompressor()
-   {  setClassName("LrAmCompressor"); }
+   {}
 
    // Read parameters from file
    template <int D>
@@ -49,6 +51,7 @@ namespace Rpg{
       const int nMonomer = system().mixture().nMonomer();
       const int meshSize = system().domain().mesh().size();
       IntVec<D> const & dimensions = system().mesh().dimensions();
+      
       // Allocate memory required by AM algorithm if not done earlier.
       AmIteratorTmpl<Compressor<D>, Field<cudaReal> >::setup(isContinuation);
       
@@ -87,7 +90,8 @@ namespace Rpg{
       // GPU resources
       int nBlocks, nThreads;
       ThreadGrid::setThreadsLogical(meshSize, nBlocks, nThreads);
-      // Pointer to fields on system
+
+      // Store current fields
       DArray<RField<D>> const * currSys = &system().w().rgrid();
       for (int i = 0; i < nMonomer; ++i) {
          assignReal<<<nBlocks,nThreads>>>(w0_[i].cField(), 
@@ -95,7 +99,7 @@ namespace Rpg{
       }
       
       // Compute intramolecular correlation
-      computeIntraCorrelation();
+      intraCorrelation_ = intra_.computeIntraCorrelations();
    }
   
    // Iterative solver (AM algorithm) 
@@ -122,7 +126,7 @@ namespace Rpg{
    // Compute and return inner product of two vectors.
    template <int D>
    double LrAmCompressor<D>::dotProduct(Field<cudaReal> const & a, 
-                                      Field<cudaReal> const & b)
+                                        Field<cudaReal> const & b)
    {
       const int n = a.capacity();
       UTIL_CHECK(b.capacity() == n);
@@ -143,7 +147,7 @@ namespace Rpg{
    template <int D>
    void 
    LrAmCompressor<D>::updateBasis(RingBuffer< Field<cudaReal> > & basis,
-                                RingBuffer< Field<cudaReal> > const & hists)
+                                  RingBuffer< Field<cudaReal> > const & hists)
    {
       // Make sure at least two histories are stored
       UTIL_CHECK(hists.size() >= 2);
@@ -151,9 +155,10 @@ namespace Rpg{
       const int n = hists[0].capacity();
       
       // GPU resources
-      // New basis vector is difference between two most recent states
       int nBlocks, nThreads;
       ThreadGrid::setThreadsLogical(n, nBlocks, nThreads);
+
+      // New basis vector is difference between two most recent states
       pointWiseBinarySubtract<<<nBlocks,nThreads>>>
             (hists[0].cField(), hists[1].cField(), newBasis_.cField(),n);
 
@@ -164,9 +169,9 @@ namespace Rpg{
    template <int D>
    void
    LrAmCompressor<D>::addHistories(Field<cudaReal>& trial,
-                                 RingBuffer<Field<cudaReal> > const & basis,
-                                 DArray<double> coeffs,
-                                 int nHist)
+                                   RingBuffer<Field<cudaReal> > const & basis,
+                                   DArray<double> coeffs,
+                                   int nHist)
    {
       // GPU resources
       int nBlocks, nThreads;
@@ -180,8 +185,8 @@ namespace Rpg{
 
    template <int D>
    void LrAmCompressor<D>::addPredictedError(Field<cudaReal>& fieldTrial,
-                                           Field<cudaReal> const & resTrial,
-                                           double lambda)
+                                             Field<cudaReal> const & resTrial,
+                                             double lambda)
    {
       // GPU resources
       int nBlocks, nThreads;
@@ -247,6 +252,7 @@ namespace Rpg{
       
       // Initialize residuals to -1
       assignUniformReal<<<nBlocks, nThreads>>>(resid_.cField(), -1, meshSize);
+
       // Compute incompressibility constraint error vector elements
       for (int i = 0; i < nMonomer; i++) {
          pointWiseAdd<<<nBlocks, nThreads>>>
@@ -280,13 +286,13 @@ namespace Rpg{
       int nBlocks, nThreads;
       ThreadGrid::setThreadsLogical(meshSize, nBlocks, nThreads);
       
-      //New field is the w0_ + the newGuess for the Lagrange multiplier field
+      // New field is the w0_ + the newGuess for the Lagrange multiplier field
       for (int i = 0; i < nMonomer; i++){
          pointWiseBinaryAdd<<<nBlocks, nThreads>>>
             (w0_[i].cField(), newGuess.cField(), wFieldTmp_[i].cField(), meshSize);
       }
       
-      // set system r grid
+      // Set system r grid
       system().setWRGrid(wFieldTmp_);
    }
 
@@ -310,69 +316,7 @@ namespace Rpg{
       AmIteratorTmpl<Compressor<D>, Field<cudaReal> >::clearTimers();
       mdeCounter_ = 0;
    }
-   
-   template<int D>
-   double LrAmCompressor<D>::computeDebye(double x)
-   {
-      if (x == 0){
-         return 1.0;
-      } else {
-         return 2.0 * (std::exp(-x) - 1.0 + x) / (x * x);
-      }
-   }
-   
-   template<int D>
-   double LrAmCompressor<D>::computeIntraCorrelation(double qSquare)
-   {
-      const int np = system().mixture().nPolymer();
-      const double vMonomer = system().mixture().vMonomer();
-      // Overall intramolecular correlation
-      double omega = 0;
-      int monomerId; int nBlock; 
-      double kuhn; double length; double g; double rg2; 
-      Polymer<D> const * polymerPtr;
       
-      for (int i = 0; i < np; i++){
-         polymerPtr = &system().mixture().polymer(i);
-         nBlock = polymerPtr->nBlock();
-         double totalLength = 0;
-         for (int j = 0; j < nBlock; j++) {
-            totalLength += polymerPtr->block(j).length();
-         }
-         for (int j = 0; j < nBlock; j++) {
-            monomerId = polymerPtr-> block(j).monomerId();
-            kuhn = system().mixture().monomer(monomerId).kuhn();
-            // Get the length (number of monomers) in this block.
-            length = polymerPtr-> block(j).length();
-            rg2 = length/totalLength * kuhn* kuhn /6.0;
-            g = computeDebye(qSquare*rg2);
-            omega += length * g/ vMonomer;
-         }
-      }
-      return omega;
-   }
-   
-   template<int D>
-   void LrAmCompressor<D>::computeIntraCorrelation()
-   {
-      // convert into a cudaReal array
-      cudaReal* temp = new cudaReal[kSize_];
-      MeshIterator<D> iter;
-      iter.setDimensions(kMeshDimensions_);
-      IntVec<D> G, Gmin;
-      double Gsq;
-      for (iter.begin(); !iter.atEnd(); ++iter) {
-         G = iter.position();
-         Gmin = shiftToMinimum(G, system().mesh().dimensions(), 
-                                  system().unitCell());
-         Gsq = system().unitCell().ksq(Gmin);
-         temp[iter.rank()] = (cudaReal) computeIntraCorrelation(Gsq);
-      }
-      // Copy parameters to the end of the curr array
-      cudaMemcpy(intraCorrelation_.cField(), temp, kSize_*sizeof(cudaReal), cudaMemcpyHostToDevice);
-      delete[] temp;
-   }
-   
    template<int D>
    double LrAmCompressor<D>::setLambda()
    {

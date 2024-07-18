@@ -28,7 +28,7 @@ namespace Rpg{
    // Destructor
    template <int D>
    AmCompressor<D>::~AmCompressor()
-   {  setClassName("AmCompressor"); }
+   {}
 
    // Read parameters from file
    template <int D>

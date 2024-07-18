@@ -12,6 +12,10 @@
 #include <rpg/System.h>
 #include <rpg/simulate/compressor/Compressor.h>
 #include <rpg/simulate/compressor/CompressorFactory.h>
+#include <rpg/simulate/perturbation/Perturbation.h>
+#include <rpg/simulate/perturbation/PerturbationFactory.h>
+#include <rpg/simulate/ramp/Ramp.h>
+#include <rpg/simulate/ramp/RampFactory.h>
 #include <util/misc/Timer.h>
 #include <util/random/Random.h>
 #include <util/global.h>
@@ -30,20 +34,30 @@ namespace Rpg {
    Simulator<D>::Simulator(System<D>& system)
     : random_(),
       cudaRandom_(),
+      hamiltonian_(0.0),
+      idealHamiltonian_(0.0),
+      fieldHamiltonian_(0.0),
+      perturbationHamiltonian_(0.0),
       iStep_(0),
       iTotalStep_(0),
       seed_(0),
       hasHamiltonian_(false),
       hasWc_(false),
       hasCc_(false),
+      hasDc_(false),
       systemPtr_(&system),
       compressorFactoryPtr_(0),
       compressorPtr_(0),
+      perturbationFactoryPtr_(0),
+      perturbationPtr_(0),
+      rampFactoryPtr_(0),
+      rampPtr_(0),
       isAllocated_(false)
    {  
       setClassName("Simulator"); 
-      setClassName("Simulator");
       compressorFactoryPtr_ = new CompressorFactory<D>(system);
+      perturbationFactoryPtr_ = new PerturbationFactory<D>(*this);
+      rampFactoryPtr_ = new RampFactory<D>(*this);
    }
 
    /*
@@ -57,6 +71,18 @@ namespace Rpg {
       }
       if (compressorPtr_) {
          delete compressorPtr_;
+      }
+      if (perturbationFactoryPtr_) {
+         delete perturbationFactoryPtr_;
+      }
+      if (perturbationPtr_) {
+         delete perturbationPtr_;
+      }
+      if (rampFactoryPtr_) {
+         delete rampFactoryPtr_;
+      }
+      if (rampPtr_) {
+         delete rampPtr_;
       }
    }
 
@@ -121,9 +147,12 @@ namespace Rpg {
       // Default value seed_ = 0 uses clock time.
       random().setSeed(seed_);
       cudaRandom().setSeed(seed_);
-
-      // Optionally read a perturbation
-      // readPerturbation(in);
+      
+      // Optionally read a Perturbation
+      readPerturbation(in);
+      
+      // Optionally read a Ramp
+      readRamp(in);
    }
 
    /*
@@ -244,7 +273,14 @@ namespace Rpg {
       fieldHamiltonian_ = nMonomerSystem * HW;
       idealHamiltonian_ = -1.0 * nMonomerSystem * lnQ;
       hamiltonian_ = idealHamiltonian_ + fieldHamiltonian_;
-
+      
+      if (hasPerturbation()) {
+        perturbationHamiltonian_ = perturbation().hamiltonian(hamiltonian_);
+        hamiltonian_ += perturbationHamiltonian_;
+      } else {
+        perturbationHamiltonian_ = 0.0;
+      }
+      
       hasHamiltonian_ = true;
    }
 
@@ -430,14 +466,14 @@ namespace Rpg {
       ThreadGrid::setThreadsLogical(meshSize, nBlocks, nThreads);
       
       DArray<RField<D>> const * Wr = &system().w().rgrid();
-      // Loop over eigenvectors (j is an eigenvector index)
+      // Loop over eigenvectors (i is an eigenvector index)
       for (i = 0; i < nMonomer; ++i) {
 
-         // Loop over grid points to zero out field wc_[j]
+         // Loop over grid points to zero out field wc_[i]
          RField<D>& Wc = wc_[i];
          assignUniformReal<<<nBlocks, nThreads>>>(Wc.cField(), 0, meshSize);
 
-         // Loop over monomer types (k is a monomer index)
+         // Loop over monomer types (j is a monomer index)
          for (j = 0; j < nMonomer; ++j) {
             cudaReal vec;
             vec = (cudaReal) chiEvecs_(i, j)/nMonomer;
@@ -524,6 +560,7 @@ namespace Rpg {
       const double a = 1.0/vMonomer;
       double b, s;
       int i;
+      
       // GPU resources
       int nBlocks, nThreads;
       ThreadGrid::setThreadsLogical(meshSize, nBlocks, nThreads);
@@ -539,6 +576,11 @@ namespace Rpg {
          // Loop over grid points
          computeDField<<<nBlocks, nThreads>>>
             (Dc.cField(), Wc.cField(), Cc.cField(), a, b, s, meshSize);
+      }
+      
+      // Add derivatives arising from a perturbation (if any).
+      if (hasPerturbation()) {
+         perturbation().incrementDc(dc_);
       }
 
       hasDc_ = true;
@@ -597,6 +639,11 @@ namespace Rpg {
          state_.hamiltonian  = hamiltonian();
          state_.idealHamiltonian  = idealHamiltonian();
          state_.fieldHamiltonian  = fieldHamiltonian();
+         state_.perturbationHamiltonian  = perturbationHamiltonian();
+      }
+      
+      if (hasPerturbation()) {
+         perturbation().saveState();
       }
 
       state_.hasData = true;
@@ -628,6 +675,7 @@ namespace Rpg {
          hamiltonian_ = state_.hamiltonian;
          idealHamiltonian_ = state_.idealHamiltonian;
          fieldHamiltonian_ = state_.fieldHamiltonian;
+         perturbationHamiltonian_ = state_.perturbationHamiltonian;
          hasHamiltonian_ = true;
       }
       
@@ -653,6 +701,10 @@ namespace Rpg {
          hasDc_ = true;
       }
       
+      if (hasPerturbation()) {
+         perturbation().restoreState();
+      }
+      
       state_.hasData = false;
    }
  
@@ -670,7 +722,10 @@ namespace Rpg {
    */ 
    template<int D>
    void Simulator<D>::outputTimers(std::ostream& out)
-   {  outputMdeCounter(out); }
+   {  
+      outputMdeCounter(out); 
+      compressor().outputTimers(out);
+   }
  
    /*
    * Output modified diffusion equation (MDE) counter.
@@ -708,6 +763,67 @@ namespace Rpg {
       compressorPtr_ =
          compressorFactoryPtr_->readObject(in, *this, className, isEnd);
       UTIL_CHECK(compressorPtr_);
+   }
+   
+   // Functions related to an associated Perturbation
+
+   /*
+   * Optionally read a Perturbation parameter file block.
+   */
+   template<int D>
+   void Simulator<D>::readPerturbation(std::istream& in)
+   {
+      UTIL_CHECK(!perturbationPtr_);
+
+      std::string className;
+      bool isEnd = false;
+
+      perturbationPtr_ =
+         perturbationFactory().readObjectOptional(in, *this,
+                                                  className, isEnd);
+      UTIL_CHECK(!isEnd);
+      if (!perturbationPtr_ && ParamComponent::echo()) {
+         Log::file() << indent() << "  Perturbation{ [absent] }\n";
+      }
+   }
+   
+   /*
+   * Set the associated Perturbation<D> object.
+   */
+   template<int D>
+   void Simulator<D>::setPerturbation(Perturbation<D>* ptr)
+   {
+      UTIL_CHECK(ptr != 0);
+      perturbationPtr_ = ptr;
+   }
+   
+   /*
+   * Optionally read a parameter file block for an associated Ramp.
+   */
+   template<int D>
+   void Simulator<D>::readRamp(std::istream& in)
+   {
+      UTIL_CHECK(!rampPtr_);
+
+      std::string className;
+      bool isEnd = false;
+
+      rampPtr_ =
+         rampFactory().readObjectOptional(in, *this, className, isEnd);
+      UTIL_CHECK(!isEnd);
+      if (!rampPtr_ && ParamComponent::echo()) {
+         Log::file() << indent() << "  Ramp{ [absent] }\n";
+      }
+   }
+
+   /*
+   * Set the associated Ramp<D> object.
+   */
+   template<int D>
+   void Simulator<D>::setRamp(Ramp<D>* ptr)
+   {
+      UTIL_CHECK(ptr != 0);
+      rampPtr_ = ptr;
    }
 
 }

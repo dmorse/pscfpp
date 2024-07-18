@@ -25,7 +25,13 @@ namespace Rpc
    using namespace Pscf::Prdc::Cpu;
 
    /**
-   * Rpc implementation of the Anderson Mixing compressor.
+   * Anderson Mixing compressor with linear-response mixing step.
+   *
+   * Class LrPostAmCompressor implements an Anderson mixing algorithm 
+   * which modifies the second mixing step, estimating Jacobian by linear 
+   * response of homogenous liquid instead of unity. The residual is a 
+   * vector in which each that represents a deviations 
+   * in the sum of volume fractions from unity.
    *
    * \ingroup Rpc_Compressor_Module
    */
