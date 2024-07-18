@@ -62,7 +62,7 @@ namespace Rpg
       double vMonomer = system().mixture().vMonomer();
       const int meshSize = system().domain().mesh().size();
       
-      // Obteain field hamiltonian
+      // Compute hamiltonian, if necessary
       if (!simulator().hasWc()){
          system().compute();
          simulator().computeWc();
@@ -71,7 +71,7 @@ namespace Rpg
          simulator().computeHamiltonian();
       }
       
-      // Obteain Hamiltonian
+      // Obtain Hamiltonian
       double h = simulator().hamiltonian();
       
       // Calculate derivative with respect to concentration
