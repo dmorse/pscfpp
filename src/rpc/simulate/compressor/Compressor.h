@@ -22,7 +22,7 @@ namespace Rpc
    /**
    * Base class for iterators that impose incompressibility.
    *
-   * \ingroup Rpc_Compressor_Module
+   * \ingroup Rpc_Simulate_Compressor_Module
    */
    template <int D>
    class Compressor : public ParamComposite

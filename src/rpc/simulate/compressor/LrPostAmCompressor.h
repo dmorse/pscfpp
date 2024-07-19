@@ -33,7 +33,7 @@ namespace Rpc
    * vector in which each that represents a deviations 
    * in the sum of volume fractions from unity.
    *
-   * \ingroup Rpc_Compressor_Module
+   * \ingroup Rpc_Simulate_Compressor_Module
    */
    template <int D>
    class LrPostAmCompressor 

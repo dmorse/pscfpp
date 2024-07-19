@@ -41,7 +41,7 @@ namespace Rpg
    * to changes in pressure in a homogeneous system of the same chemical
    * composition as the system of interest.
    *
-   * \ingroup Rpg_Compressor_Module
+   * \ingroup Rpg_Simulate_Compressor_Module
    */
    template <int D>
    class LrAmCompressor 

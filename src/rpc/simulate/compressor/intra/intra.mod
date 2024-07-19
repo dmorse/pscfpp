@@ -1,12 +1,13 @@
 
 namespace Pscf{
 namespace Rpc {
+
    /**
-   * \defgroup rpc_Intra_Module IntraCorrelation
+   * \defgroup Rpc_Compressor_Intra_Module Intramolecular Correlation 
    *
-   * Classes that specify a model for compute intraCorrelation of homopolymer.
+   * Classes that compute intramolecular correlations for a homopolymer.
    *
-   * \ingroup Rpc_intra_Module
+   * \ingroup Rpc_Simulate_Compressor_Module
    */
 
 }

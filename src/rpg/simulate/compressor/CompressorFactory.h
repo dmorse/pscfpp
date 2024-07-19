@@ -22,7 +22,7 @@ namespace Rpg {
    /**
    * Factory for subclasses of Compressor.
    *
-   * \ingroup Rpg_Compressor_Module
+   * \ingroup Rpg_Simulate_Compressor_Module
    */
 
    template <int D>

@@ -34,7 +34,7 @@ namespace Rpc
    * calculated linear response of a homogeneous liquid with the same
    * composition as the system of interest.
    *
-   * \ingroup Rpc_Compressor_Module
+   * \ingroup Rpc_Simulate_Compressor_Module
    */
    template <int D>
    class LrCompressor : public Compressor<D>

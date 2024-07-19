@@ -25,7 +25,7 @@ namespace Rpc
    /**
    * Base class for iterators that impose incompressibility.
    *
-   * \ingroup Rpc_Intra_Module
+   * \ingroup Rpc_Compressor_Intra_Module
    */
    template <int D>
    class IntraCorrelation : public ParamComposite

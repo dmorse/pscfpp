@@ -35,7 +35,7 @@ namespace Rpg
    * calculated linear response of a homogeneous liquid with the same
    * composition as the system of interest.
    *
-   * \ingroup Rpg_Compressor_Module
+   * \ingroup Rpg_Simulate_Compressor_Module
    */
    template <int D>
    class LrCompressor : public Compressor<D>

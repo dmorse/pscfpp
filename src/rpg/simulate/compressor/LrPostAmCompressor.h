@@ -34,7 +34,7 @@ namespace Rpg
    * vector in which each that represents a deviations 
    * in the sum of volume fractions from unity.
    *
-   * \ingroup Rpg_Compressor_Module
+   * \ingroup Rpg_Simulate_Compressor_Module
    */
    template <int D>
    class LrPostAmCompressor 

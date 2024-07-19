@@ -79,7 +79,7 @@ namespace Rpc {
    * value. The corresponding format for a parameter that requires two 
    * indices (e.g., block or chi) is instead: "type id(0) id(1) change".
    *
-   * \ingroup Rpc_Ramp_Module
+   * \ingroup Rpc_Simulate_Ramp_Module
    */
    template <int D>
    class RampParameter

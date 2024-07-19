@@ -21,7 +21,7 @@ namespace Rpg {
    /**
    * Base class for iterators that impose incompressibility.
    *
-   * \ingroup Rpg_Compressor_Module
+   * \ingroup Rpg_Simulate_Compressor_Module
    */
    template <int D>
    class Compressor : public ParamComposite

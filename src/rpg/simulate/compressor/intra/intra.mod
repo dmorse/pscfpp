@@ -1,12 +1,12 @@
-
-namespace Pscf{
+namespace Pscf {
 namespace Rpg {
+
    /**
-   * \defgroup rgg_Intra_Module IntraCorrelation
+   * \defgroup Rpg_Compressor_Intra_Module Intramolecular Correlation
    *
-   * Classes that specify a model for computing intraCorrelation of homopolymer.
+   * Classes that compute intramolecular correlation for a homopolymer.
    *
-   * \ingroup Rpg_intra_Module
+   * \ingroup Rpg_Simulate_Compressor_Module
    */
 
 }

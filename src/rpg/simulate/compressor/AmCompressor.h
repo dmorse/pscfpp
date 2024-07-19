@@ -29,7 +29,7 @@ namespace Rpg
    /**
    * Rpg implementation of the Anderson Mixing compressor.
    *
-   * \ingroup Rpg_Compressor_Module
+   * \ingroup Rpg_Simulate_Compressor_Module
    */
    template <int D>
    class AmCompressor : public AmIteratorTmpl<Compressor<D>, Field<cudaReal> >

@@ -51,9 +51,9 @@ namespace Pscf {
       /**
       * Declare a specialized parameter type.
       * 
-      * This function creates a new ParameterType object using 
-      * the input parameters and adds this object to the array 
-      * of declared specialized parameter types.
+      * This function creates a new ParameterType object using the 
+      * required input parameters and adds this object to the array of 
+      * declared specialized parameter types.
       *
       * \param name  parameter string identifier
       * \param nId  number of associated integer indices
@@ -63,22 +63,22 @@ namespace Pscf {
                             ParameterModifier& modifier);
 
       /**
-      * Declare a specialized parameter type.
+      * Declare a single specialized sweep parameter type.
       * 
-      * This function adds a new ParameterType object to the
-      * array of declared specialized parameter types.
+      * This function adds a new ParameterType object to the array of
+      * declared specialized parameter types.
       *
       * \param paramType  parameterType object defining the sweep parameter
       */
       void addParameterType(ParameterType paramType);
 
       /**
-      * Declare an array of specialized parameter types.
+      * Declare an array of specialized sweep parameter types.
       * 
       * This function adds an array of new ParameterType objects to the
       * array of declared specialized parameter types.
       *
-      * \param paramType  array of parameterType objects
+      * \param paramTypes  array of parameterType objects
       */
       void addParameterTypes(DArray<ParameterType> paramTypes);
 
