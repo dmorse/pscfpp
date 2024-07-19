@@ -1,0 +1,11 @@
+url_path,views_total,views_unique
+/dmorse/pscfpp,23,13
+/dmorse/pscfpp/pulls,15,1
+/dmorse/pscfpp/blob/master/src/pscf/solvers/PolymerTmpl.h,12,3
+/dmorse/pscfpp/issues,8,3
+/dmorse/pscfpp/blob/master/src/pspc/iterator/AmIterator.tpp,6,2
+/dmorse/pscfpp/tree/master/src,5,2
+/dmorse/pscfpp/pull/185,4,3
+/dmorse/pscfpp/pull/186,3,2
+/dmorse/pscfpp/blob/master/src/pspg/math/KernelWrappers.cu,3,1
+/dmorse/pscfpp/blob/master/src/pspg/math/ParallelReductions.cu,3,1
