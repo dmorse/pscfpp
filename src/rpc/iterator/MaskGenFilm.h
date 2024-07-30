@@ -8,8 +8,8 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <prdc/iterator/MaskGenFilmBase.h>  // Base class
 #include <rpc/System.h>
+#include <prdc/iterator/MaskGenFilmBase.h>  // Base class
 
 namespace Pscf {
 namespace Rpc {
@@ -92,26 +92,26 @@ namespace Rpc {
       /**
       * Get the space group name for this system.
       */
-      std::string getSpaceGroup() const;
+      std::string systemSpaceGroup() const;
 
       /**
       * Get the lattice parameters for this system.
       */
-      FSArray<double, 6> getLatticeParameters() const;
+      FSArray<double, 6> systemLatticeParameters() const;
 
       /**
       * Get one of the lattice vectors for this system.
       * 
       * \param id  index of the desired lattice parameter
       */
-      RealVec<D> getLatticeVector(int id) const;
+      RealVec<D> systemLatticeVector(int id) const;
+
+      using MaskGenFilmBase<D>::parametersCurrent_;
 
    private:
 
       /// Pointer to the associated system object.
       System<D>* sysPtr_;
-
-      using MaskGenFilmBase<D>::parameters_;
 
    };
 
@@ -134,17 +134,17 @@ namespace Rpc {
 
    // Get space group name for this system.
    template <int D>
-   inline std::string MaskGenFilm<D>::getSpaceGroup() const
+   inline std::string MaskGenFilm<D>::systemSpaceGroup() const
    {  return system().groupName(); }
 
    // Get lattice parameters for this system.
    template <int D>
-   inline FSArray<double, 6> MaskGenFilm<D>::getLatticeParameters() const
+   inline FSArray<double, 6> MaskGenFilm<D>::systemLatticeParameters() const
    {  return system().domain().unitCell().parameters(); }
 
    // Get one of the lattice vectors for this system.
    template <int D>
-   inline RealVec<D> MaskGenFilm<D>::getLatticeVector(int id) const
+   inline RealVec<D> MaskGenFilm<D>::systemLatticeVector(int id) const
    {  return system().domain().unitCell().rBasis(id); }
 
 }

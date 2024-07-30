@@ -24,7 +24,7 @@ namespace Prdc
    template <int D>
    MaskGenFilmBase<D>::MaskGenFilmBase()
     : FieldGenerator::FieldGenerator(),
-      parameters_(),
+      parametersCurrent_(),
       normalVecId_(-1),
       interfaceThickness_(-1.0),
       excludedThickness_(-1.0)
@@ -85,12 +85,12 @@ namespace Prdc
    template <int D>
    bool MaskGenFilmBase<D>::updateNeeded() const
    {
-      // Check if system lattice parameters are different than parameters_
-      FSArray<double, 6> sysParams = getLatticeParameters();
-      UTIL_CHECK(sysParams.size() == parameters_.size());
+      // Check if system lattice parameters differ from parametersCurrent_
+      FSArray<double, 6> sysParams = systemLatticeParameters();
+      UTIL_CHECK(sysParams.size() == parametersCurrent_.size());
       
-      for (int i = 0; i < parameters_.size(); i++) {
-         if (fabs(sysParams[i] - parameters_[i]) > 1e-10) {
+      for (int i = 0; i < parametersCurrent_.size(); i++) {
+         if (fabs(sysParams[i] - parametersCurrent_[i]) > 1e-10) {
             return true;
          }
       }
@@ -106,7 +106,7 @@ namespace Prdc
    void MaskGenFilmBase<D>::checkSpaceGroup() const
    {
       // Setup
-      std::string groupName = getSpaceGroup();
+      std::string groupName = systemSpaceGroup();
       SpaceGroup<D> group;
       std::ifstream in;
 

@@ -8,6 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
+#include <pscf/sweep/ParameterType.h>      // Return type of method
 #include <pscf/iterator/FieldGenerator.h>  // Base class
 #include <util/containers/DArray.h>  // Container
 #include <util/containers/FSArray.h> // Container
@@ -180,41 +181,73 @@ namespace Prdc {
       /**
       * Get the space group name for this system.
       */
-      virtual std::string getSpaceGroup() const = 0;
+      virtual std::string systemSpaceGroup() const = 0;
 
       /**
       * Get the lattice parameters for this system.
       */
-      virtual FSArray<double, 6> getLatticeParameters() const = 0;
+      virtual FSArray<double, 6> systemLatticeParameters() const = 0;
 
       /**
       * Get the number of monomer species for this system.
       */
-      virtual int getNMonomer() const = 0;
+      virtual int systemNMonomer() const = 0;
 
       /**
       * Use mask to determine normalVecId and store value in this object.
       */
-      virtual void getNormalVecId() = 0;
+      virtual void maskNormalVecId() = 0;
 
-      /// Lattice parameters associated with the current external fields
-      FSArray<double, 6> parameters_;
+      /**
+      * The lattice parameters used to generate the current external fields.
+      * 
+      * This array is set to be equal to the system lattice parameters each
+      * time the external fields are generated. The system's lattice 
+      * parameters may then change, and this parametersCurrent_ array is
+      * used to detect whether they have changed. This is used to determine 
+      * whether a new set of external fields needs to be generated.
+      */
+      FSArray<double, 6> parametersCurrent_;
 
-      /// chiBottom array associated with the current fields
+      /**
+      * The chiBottom array used to generate the current external fields.
+      * 
+      * This array is set to be equal to chiBottom_ each time the external 
+      * fields are generated. The chiBottom array may then be changed via 
+      * the setParameter method, and this chiBottomCurrent_ array is
+      * used to detect whether they have changed. This is used to determine 
+      * whether a new set of external fields needs to be generated.
+      */
       DArray<double> chiBottomCurrent_;
 
-      /// chiTop array associated with the current fields
+      /**
+      * The chiTop array used to generate the current external fields.
+      * 
+      * This array is set to be equal to chiTop_ each time the external 
+      * fields are generated. The chiTop array may then be changed via 
+      * the setParameter method, and this chiTopCurrent_ array is
+      * used to detect whether they have changed. This is used to determine 
+      * whether a new set of external fields needs to be generated.
+      */
       DArray<double> chiTopCurrent_;
 
-      /// value of normalVecId for the mask, determined via getNormalVecId()
+      /// value of normalVecId for the mask, determined via maskNormalVecId()
       int normalVecId_;
 
    private:
 
-      /// chiBottom array
+      /**
+      * chiBottom array.
+      * 
+      * This array can be modified using the setParameter() method.
+      */
       DArray<double> chiBottom_;
 
-      /// chiTop array
+      /**
+      * chiTop array.
+      * 
+      * This array can be modified using the setParameter() method.
+      */
       DArray<double> chiTop_;
 
       using FieldGenerator::type_;

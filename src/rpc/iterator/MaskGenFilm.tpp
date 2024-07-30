@@ -9,12 +9,12 @@
 */
 
 #include "MaskGenFilm.h"
+#include <rpc/field/FieldIo.h>
 #include <prdc/cpu/RField.h>
 #include <prdc/crystal/UnitCell.h>
 #include <pscf/math/RealVec.h>
 #include <pscf/math/IntVec.h>
 #include <util/containers/FArray.h>
-#include <rpc/field/FieldIo.h>
 
 namespace Pscf {
 namespace Rpc
@@ -128,7 +128,7 @@ namespace Rpc
       system().mask().setRGrid(rGrid,true);
 
       // Store lattice parameters associated with this maskBasis
-      parameters_ = system().domain().unitCell().parameters();
+      parametersCurrent_ = system().domain().unitCell().parameters();
 
    }
 

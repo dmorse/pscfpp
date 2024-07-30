@@ -1,10 +1,10 @@
 #ifndef PSCF_PARAMETER_MODIFIER_H
 #define PSCF_PARAMETER_MODIFIER_H
 
-#include <string>
+#include "pscf/sweep/ParameterType.h"
 #include "util/containers/GArray.h"
 #include "util/containers/DArray.h"
-#include "pscf/sweep/ParameterType.h" // base class
+#include <string>
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory

@@ -9,10 +9,10 @@
 */
 
 #include "ExtGenFilm.h"
+#include <rpc/field/FieldIo.h>
 #include <prdc/cpu/RField.h>
 #include <pscf/math/IntVec.h>
 #include <util/containers/FArray.h>
-#include <rpc/field/FieldIo.h>
 
 namespace Pscf {
 namespace Rpc
@@ -76,13 +76,12 @@ namespace Rpc
    void ExtGenFilm<D>::generate()
    {
       // Make sure normalVecId_ is set
-      if (normalVecId_ < 0) getNormalVecId();
+      if (normalVecId_ < 0) maskNormalVecId();
 
-      // Set chiBottomCurrent_,chiTopCurrent_, and parameters_ equal to the 
-      // arrays associated with the external fields that are about to be set
+      // Set chiBottomCurrent_, chiTopCurrent_, and parametersCurrent_
       chiBottomCurrent_ = chiBottom();
       chiTopCurrent_ = chiTop();
-      parameters_ = getLatticeParameters();
+      parametersCurrent_ = systemLatticeParameters();
 
       // If walls are athermal then there is no external field needed.
       // If an external field already exists in the System, we need to
@@ -94,7 +93,7 @@ namespace Rpc
       UTIL_CHECK(system().h().isAllocatedBasis());
       UTIL_CHECK(system().mask().isAllocated());
 
-      int nm = getNMonomer();
+      int nm = systemNMonomer();
 
       // Create a 3 element vector 'dim' that contains the grid dimensions.
       // If system is 2D (1D), then the z (y & z) dimensions are set to 1.
@@ -152,7 +151,7 @@ namespace Rpc
    * Use the mask to determine the value of normalVecId
    */
    template <int D>
-   void ExtGenFilm<D>::getNormalVecId()
+   void ExtGenFilm<D>::maskNormalVecId()
    {
       // If normalVecId_ has already been set, do nothing.
       if (normalVecId_ >= 0) return;

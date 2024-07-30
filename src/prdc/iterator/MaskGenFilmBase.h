@@ -136,22 +136,30 @@ namespace Prdc {
       /**
       * Get the space group name for this system.
       */
-      virtual std::string getSpaceGroup() const = 0;
+      virtual std::string systemSpaceGroup() const = 0;
 
       /**
       * Get the lattice parameters for this system.
       */
-      virtual FSArray<double, 6> getLatticeParameters() const = 0;
+      virtual FSArray<double, 6> systemLatticeParameters() const = 0;
 
       /**
       * Get one of the lattice vectors for this system.
       * 
       * \param id  index of the desired lattice parameter
       */
-      virtual RealVec<D> getLatticeVector(int id) const = 0;
+      virtual RealVec<D> systemLatticeVector(int id) const = 0;
 
-      /// Lattice parameters associated with the current mask
-      FSArray<double, 6> parameters_;
+      /**
+      * The lattice parameters used to generate the current external fields.
+      * 
+      * This array is set to be equal to the system lattice parameters each
+      * time the external fields are generated. The system's lattice 
+      * parameters may then change, and this parametersCurrent_ array is
+      * used to detect whether they have changed. This is used to determine 
+      * whether a new set of external fields needs to be generated.
+      */
+      FSArray<double, 6> parametersCurrent_;
 
    private:
 

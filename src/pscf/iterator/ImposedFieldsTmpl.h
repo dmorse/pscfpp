@@ -8,9 +8,9 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
+#include <pscf/iterator/FieldGenerator.h>
 #include <util/param/ParamComposite.h>
 #include <util/param/Factory.h>
-#include <pscf/iterator/FieldGenerator.h>
 #include <string>
 
 namespace Pscf {

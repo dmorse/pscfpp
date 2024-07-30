@@ -32,8 +32,8 @@ namespace Prdc
    void MaskGenFilmBase<2>::checkLatticeVectors() const 
    {
       RealVec<2> a, b;
-      a = getLatticeVector(0);
-      b = getLatticeVector(1);
+      a = systemLatticeVector(0);
+      b = systemLatticeVector(1);
 
       double gamma = dot(a,b);
       if (gamma > 1e-8) { // Dot product between a and b should be 0
@@ -50,9 +50,9 @@ namespace Prdc
    void MaskGenFilmBase<3>::checkLatticeVectors() const 
    {
       RealVec<3> a, b, c;
-      a = getLatticeVector(0);
-      b = getLatticeVector(1);
-      c = getLatticeVector(2);
+      a = systemLatticeVector(0);
+      b = systemLatticeVector(1);
+      c = systemLatticeVector(2);
 
       double alpha, beta, gamma;
       gamma = dot(a,b);

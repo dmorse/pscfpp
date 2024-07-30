@@ -8,8 +8,8 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <prdc/iterator/ExtGenFilmBase.h>  // Base class
 #include <rpc/System.h>
+#include <prdc/iterator/ExtGenFilmBase.h>  // Base class
 
 namespace Pscf {
 namespace Rpc {
@@ -82,7 +82,7 @@ namespace Rpc {
       /**
       * Get the System associated with this object by reference.
       */
-      System<D>& system();
+      System<D> & system();
       /**
       * Get the System associated with this object by const reference.
       */
@@ -91,32 +91,32 @@ namespace Rpc {
       /**
       * Get the space group name for this system.
       */
-      std::string getSpaceGroup() const;
+      std::string systemSpaceGroup() const;
 
       /**
       * Get the lattice parameters for this system.
       */
-      FSArray<double, 6> getLatticeParameters() const;
+      FSArray<double, 6> systemLatticeParameters() const;
 
       /**
       * Get the number of monomer species for this system.
       */
-      int getNMonomer() const;
+      int systemNMonomer() const;
 
       /**
       * Use the mask to determine the value of normalVecId
       */
-      void getNormalVecId();
+      void maskNormalVecId();
+
+      using ExtGenFilmBase<D>::parametersCurrent_;
+      using ExtGenFilmBase<D>::chiBottomCurrent_;
+      using ExtGenFilmBase<D>::chiTopCurrent_;
+      using ExtGenFilmBase<D>::normalVecId_;
 
    private:
 
       /// Pointer to the associated system object.
       System<D>* sysPtr_;
-
-      using ExtGenFilmBase<D>::parameters_;
-      using ExtGenFilmBase<D>::chiBottomCurrent_;
-      using ExtGenFilmBase<D>::chiTopCurrent_;
-      using ExtGenFilmBase<D>::normalVecId_;
 
    };
 
@@ -139,17 +139,17 @@ namespace Rpc {
 
    // Get space group name for this system.
    template <int D>
-   inline std::string ExtGenFilm<D>::getSpaceGroup() const
+   inline std::string ExtGenFilm<D>::systemSpaceGroup() const
    {  return system().groupName(); }
 
    // Get lattice parameters for this system.
    template <int D>
-   inline FSArray<double, 6> ExtGenFilm<D>::getLatticeParameters() const
+   inline FSArray<double, 6> ExtGenFilm<D>::systemLatticeParameters() const
    {  return system().domain().unitCell().parameters(); }
 
    // Get the number of monomer species for this system.
    template <int D>
-   inline int ExtGenFilm<D>::getNMonomer() const
+   inline int ExtGenFilm<D>::systemNMonomer() const
    {  return system().mixture().nMonomer(); }
 
 }

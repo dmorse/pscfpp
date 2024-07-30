@@ -23,7 +23,7 @@ namespace Prdc
    template <int D>
    ExtGenFilmBase<D>::ExtGenFilmBase()
     : FieldGenerator::FieldGenerator(),
-      parameters_(),
+      parametersCurrent_(),
       chiBottomCurrent_(),
       chiTopCurrent_(),
       normalVecId_(-1),
@@ -46,7 +46,7 @@ namespace Prdc
    {
       // Allocate chiBottom_ and chiTop_ and set to zero before 
       // reading them in
-      int nm = getNMonomer();
+      int nm = systemNMonomer();
       chiBottom_.allocate(nm);
       chiTop_.allocate(nm);
 
@@ -69,7 +69,7 @@ namespace Prdc
 
       // Otherwise, walls are asymmetric, so the space group must not 
       // have any operations that swap the two walls
-      std::string groupName = getSpaceGroup();
+      std::string groupName = systemSpaceGroup();
       SpaceGroup<D> group;
       std::ifstream in;
 
@@ -77,7 +77,7 @@ namespace Prdc
       readGroup(groupName, group);
 
       // Get normalVecId from mask
-      getNormalVecId();
+      maskNormalVecId();
 
       // Make sure all symmetry operations are allowed
       std::string msg = "Space group contains forbidden symmetry operations";
@@ -117,11 +117,11 @@ namespace Prdc
       // If chiTop and chiBottom are unchanged and all zeros, no update needed
       if (isAthermal()) return false;
 
-      // Check if system lattice parameters are different than parameters_
-      FSArray<double, 6> sysParams = getLatticeParameters();
-      UTIL_CHECK(sysParams.size() == parameters_.size());
-      for (int i = 0; i < parameters_.size(); i++) {
-         if (fabs(sysParams[i] - parameters_[i]) > 1e-10) {
+      // Check if system lattice parameters differ from parametersCurrent_
+      FSArray<double, 6> sysParams = systemLatticeParameters();
+      UTIL_CHECK(sysParams.size() == parametersCurrent_.size());
+      for (int i = 0; i < parametersCurrent_.size(); i++) {
+         if (fabs(sysParams[i] - parametersCurrent_[i]) > 1e-10) {
             return true;
          }
       }
@@ -137,7 +137,7 @@ namespace Prdc
    template <int D>
    bool ExtGenFilmBase<D>::hasSymmetricWalls() const 
    {
-      int nm = getNMonomer();
+      int nm = systemNMonomer();
 
       UTIL_CHECK(nm > 0);
       UTIL_CHECK(chiBottom_.capacity() == nm);
@@ -158,7 +158,7 @@ namespace Prdc
    template <int D>
    bool ExtGenFilmBase<D>::isAthermal() const 
    {
-      int nm = getNMonomer();
+      int nm = systemNMonomer();
 
       UTIL_CHECK(nm > 0);
       UTIL_CHECK(chiBottom_.capacity() == nm);
