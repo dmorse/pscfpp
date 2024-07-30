@@ -178,9 +178,9 @@ namespace Pscf {
    }
 
    template <class State>
-   void SweepTmpl<State>::addParameterTypes(DArray<ParameterType> paramTypes)
+   void SweepTmpl<State>::addParameterTypes(GArray<ParameterType> paramTypes)
    {
-      for (int i = 0; i < paramTypes.capacity(); i++) {
+      for (int i = 0; i < paramTypes.size(); i++) {
          // Check if parameterTypes_ already has an element with this name
          if (parameterTypes_.size() > 0) {
             for (int j = 0; j < parameterTypes_.size(); j++) {

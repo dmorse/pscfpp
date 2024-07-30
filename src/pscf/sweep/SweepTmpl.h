@@ -80,7 +80,7 @@ namespace Pscf {
       *
       * \param paramTypes  array of parameterType objects
       */
-      void addParameterTypes(DArray<ParameterType> paramTypes);
+      void addParameterTypes(GArray<ParameterType> paramTypes);
 
    protected:
 

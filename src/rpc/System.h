@@ -724,9 +724,19 @@ namespace Rpc {
       WFieldContainer<D>& h();
 
       /**
+      * Get all of the external potential fields (const reference).
+      */
+      WFieldContainer<D> const & h() const;
+
+      /**
       * Get the mask (field to which total density is constrained). 
       */
       Mask<D>& mask();
+
+      /**
+      * Get the mask by const reference. 
+      */
+      Mask<D> const & mask() const;
 
       ///@}
       /// \name Member Object Accessors
@@ -1220,9 +1230,19 @@ namespace Rpc {
    inline WFieldContainer<D>& System<D>::h()
    {  return h_; }
 
+   // Get container of external potential fields (const reference)
+   template <int D>
+   inline WFieldContainer<D> const & System<D>::h() const
+   {  return h_; }
+
    // Get mask field (reference)
    template <int D>
    inline Mask<D>& System<D>::mask()
+   {  return mask_; }
+
+   // Get mask field (const reference)
+   template <int D>
+   inline Mask<D> const & System<D>::mask() const
    {  return mask_; }
 
    // Does the system have an Iterator object?

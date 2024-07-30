@@ -95,6 +95,13 @@ namespace Rpc
       */
       int nFlexibleParams() const;
 
+      /**
+      * Set the array indicating which lattice parameters are flexible.
+      *
+      * \param flexParams array of indices of flexible lattice parameters
+      */ 
+      void setFlexibleParams(FSArray<bool,6> const & flexParams);
+
    protected:
 
       /**
@@ -118,13 +125,6 @@ namespace Rpc
       */
       System<D>& system() 
       {  return *sysPtr_; }
-
-      /**
-      * Set the array indicating which lattice parameters are flexible.
-      *
-      * \param flexParams array of indices of flexible lattice parameters
-      */ 
-      void setFlexibleParams(FSArray<bool,6> const & flexParams);
 
       /**
       * Array of indices of the lattice parameters that are flexible.

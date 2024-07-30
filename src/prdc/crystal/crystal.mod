@@ -1,5 +1,6 @@
 
 namespace Pscf{
+namespace Prdc{
 
    /**
    * \defgroup Prdc_Crystal_Module Crystallography
@@ -9,4 +10,5 @@ namespace Pscf{
    * \ingroup Pscf_Prdc_Module
    */
 
+}
 }
