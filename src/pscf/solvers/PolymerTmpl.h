@@ -185,7 +185,12 @@ namespace Pscf
       * Sum of the lengths of all blocks in the polymer.
       */
       double length() const;
-
+      
+      /**
+      * Get Polymer type (Branched or Linear)
+      */
+      PolymerType::Enum type() const;
+      
       ///@}
 
    protected:
@@ -323,6 +328,13 @@ namespace Pscf
       Pair<int> propId = propagatorId(id);
       return propagator(propId[0], propId[1]); 
    }
+   
+   /*
+   * Get Polymer type (Branched or Linear).
+   */
+   template <class Block>
+   inline PolymerType::Enum PolymerTmpl<Block>::type() const
+   { return type_; }
 
    // Non-inline functions
 
