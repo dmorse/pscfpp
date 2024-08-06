@@ -30,6 +30,8 @@ __global__ void inPlacePointwiseMul(cudaReal* a, const cudaReal* b, int size);
 
 __global__ void inPlacePointwiseDivComplex(cudaComplex* a, const cudaReal* b, int size);
 
+__global__ void squaredMagnitudeComplex(const cudaComplex* a, cudaReal* result, int size); 
+
 __global__ void pointWiseBinaryMultiply(const cudaReal* a, const cudaReal* b, cudaReal* result, int size);
 
 __global__ void assignUniformReal(cudaReal* result, cudaReal uniform, int size);

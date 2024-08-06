@@ -251,7 +251,7 @@ namespace Rpc {
 
       // Output structure factors to one file
       system().fileMaster().openOutputFile(outputFileName(), outputFile_);
-      outputFile_ << "\t" << "qRO";
+      outputFile_ << "\t" << "kRO";
       outputFile_ << "\t" <<"\t" <<"S(k)/(\u03C1 N)";
       outputFile_<< std::endl;
       for (const auto& i : averageSMap_) {

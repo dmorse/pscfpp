@@ -94,6 +94,15 @@ __global__ void inPlacePointwiseDivComplex(cudaComplex* a, const cudaReal* b, in
    }
 }
 
+__global__ void squaredMagnitudeComplex(const cudaComplex* a, cudaReal* result, int size) 
+{
+   int nThreads = blockDim.x * gridDim.x;
+   int startID = blockIdx.x * blockDim.x + threadIdx.x;
+   for (int i = startID; i < size; i += nThreads) {
+      result[i] = a[i].x *  a[i].x + a[i].y * a[i].y;
+   }
+}
+
 __global__ void pointWiseBinaryMultiply(const cudaReal* a, const cudaReal* b, cudaReal* result, int size) 
 {
    int nThreads = blockDim.x * gridDim.x;
