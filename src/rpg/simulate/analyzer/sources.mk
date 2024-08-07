@@ -10,7 +10,9 @@ rpg_simulate_analyzer_= \
   rpg/simulate/analyzer/ThermoDerivativeAnalyzer.cu \
   rpg/simulate/analyzer/PerturbationDerivative.cu \
   rpg/simulate/analyzer/ChiDerivative.cu \
-  rpg/simulate/analyzer/ConcentrationDerivative.cu
+  rpg/simulate/analyzer/ConcentrationDerivative.cu \
+  rpg/simulate/analyzer/MaxOrderParameter.cu \
+  rpg/simulate/analyzer/FourthOrderParameter.cu
   
 rpg_simulate_analyzer_OBJS=\
      $(addprefix $(BLD_DIR)/, $(rpg_simulate_analyzer_:.cu=.o))

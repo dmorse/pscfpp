@@ -11,6 +11,8 @@
 #include "PerturbationDerivative.h"
 #include "ChiDerivative.h"
 #include "ConcentrationDerivative.h"
+#include "MaxOrderParameter.h"
+#include "FourthOrderParameter.h"
 
 namespace Pscf {
 namespace Rpg {
@@ -59,6 +61,10 @@ namespace Rpg {
       } else if (className == "ConcentrationDerivative") {
          ptr = new ConcentrationDerivative<D>(*simulatorPtr_, 
                                               *sysPtr_);
+      } else if (className == "MaxOrderParameter") {
+         ptr = new MaxOrderParameter<D>(*simulatorPtr_, *sysPtr_);
+      } else if (className == "FourthOrderParameter") {
+         ptr = new FourthOrderParameter<D>(*simulatorPtr_, *sysPtr_);
       }
 
       return ptr;

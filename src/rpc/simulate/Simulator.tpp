@@ -108,9 +108,10 @@ namespace Rpc {
       wc_.allocate(nMonomer);
       cc_.allocate(nMonomer);
       const int meshSize = system().domain().mesh().size();
+      const IntVec<D> dimensions = system().domain().mesh().dimensions();
       for (int i = 0; i < nMonomer; ++i) {
-         wc_[i].allocate(meshSize);
-         cc_[i].allocate(meshSize);
+         wc_[i].allocate(dimensions);
+         cc_[i].allocate(dimensions);
       }
 
       // Allocate memory for components of d (functional derivative)
