@@ -12,7 +12,7 @@
 #include <rpc/System.h>
 #include <util/global.h>
 #include <pscf/mesh/MeshIterator.h>
-#include <pscf/iterator/NanException.h>
+#include <pscf/chem/PolymerType.h>
 #include <prdc/crystal/shiftToMinimum.h>
 
 namespace Pscf {
@@ -54,8 +54,14 @@ namespace Rpc{
       double phi; double kuhn; double length; 
       double totalN; double avgKuhn; double g; double rg2;
       Polymer<D> const * polymerPtr;
+      PolymerType::Enum type;
       for (int i = 0; i < np; i++){
          polymerPtr = &system().mixture().polymer(i);
+         
+         // Ensure this function only works for linear polymers
+         type = polymerPtr->type();
+         UTIL_CHECK(type == PolymerType::Linear);
+         
          phi = polymerPtr->phi();
          nBlock = polymerPtr->nBlock();
          totalN = 0;
