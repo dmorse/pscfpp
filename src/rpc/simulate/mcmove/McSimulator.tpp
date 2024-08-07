@@ -59,12 +59,13 @@ namespace Rpc {
    }
 
    /*
-   * Read instructions for creating objects from file.
+   * Read parameter file block.
    */
    template <int D>
    void McSimulator<D>::readParameters(std::istream &in)
    {
-      // Read compressor block and optional random number generator seed
+      // Read compressor block, optional random number generator seed,
+      // optional Perturbation and optional Ramp.
       Simulator<D>::readParameters(in);
 
       // Read block of McMove parameters
@@ -86,7 +87,7 @@ namespace Rpc {
       }
 
       // Initialize Simulator<D> base class
-      allocate();
+      Simulator<D>::allocate();
 
    }
 

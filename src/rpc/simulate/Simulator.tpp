@@ -130,7 +130,8 @@ namespace Rpc {
    }
 
    /*
-   * Virtual function to read parameters - unimplemented.
+   * Default implementation - designed to be used by subclasses to read the
+   * initial common part of the parameter file block. 
    */
    template <int D>
    void Simulator<D>::readParameters(std::istream &in)
@@ -155,14 +156,14 @@ namespace Rpc {
    }
 
    /*
-   * Perform a field theoretic simulation of nStep steps.
+   * Perform a field theoretic simulation (unimplemented by base class).
    */
    template <int D>
    void Simulator<D>::simulate(int nStep)
    {  UTIL_THROW("Error: Unimplemented function Simulator<D>::simulate"); }
 
    /*
-   * Open, read and analyze a trajectory file
+   * Open, read and analyze a trajectory file (unimplemented by base class).
    */
    template <int D>
    void Simulator<D>::analyze(int min, int max,

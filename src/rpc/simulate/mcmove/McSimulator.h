@@ -45,7 +45,7 @@ namespace Rpc {
       ~McSimulator();
 
       /**
-      * Read parameters for a MC simulation.
+      * Read parameters file block for an MC simulation.
       *
       * \param in input parameter stream
       */
@@ -126,18 +126,24 @@ namespace Rpc {
       using Simulator<D>::system;
       using Simulator<D>::compressor;
       using Simulator<D>::random;
-      using Simulator<D>::allocate;
       using Simulator<D>::analyzeChi;
+      using Simulator<D>::chiEval;
+      using Simulator<D>::chiEvecs;
       using Simulator<D>::computeWc;
       using Simulator<D>::computeCc;
       using Simulator<D>::computeDc;
       using Simulator<D>::wc;
+      using Simulator<D>::cc;
+      using Simulator<D>::dc;
       using Simulator<D>::hasWc;
+      using Simulator<D>::hasCc;
+      using Simulator<D>::hasDc;
       using Simulator<D>::clearData;
       using Simulator<D>::computeHamiltonian;
       using Simulator<D>::hamiltonian;
       using Simulator<D>::idealHamiltonian;
       using Simulator<D>::fieldHamiltonian;
+      using Simulator<D>::perturbationHamiltonian;
       using Simulator<D>::hasHamiltonian;
       using Simulator<D>::hasPerturbation;
       using Simulator<D>::hasRamp;

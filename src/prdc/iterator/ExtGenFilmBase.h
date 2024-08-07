@@ -34,7 +34,7 @@ namespace Prdc {
    * is specific to thin-film systems because it also allows for a 
    * different chi parameter to be defined on the top boundary than on
    * the bottom, through user input arrays chi_bottom and chi_top. See 
-   * \ref user_thin_films_page for more information. 
+   * \ref scft_thin_films_page for more information. 
    * 
    * \ingroup Prdc_Iterator_Module
    */
@@ -46,8 +46,6 @@ namespace Prdc {
 
       /**
       * Constructor
-      * 
-      * \param itr  Iterator parent object
       */
       ExtGenFilmBase();
 
@@ -113,9 +111,10 @@ namespace Prdc {
       * \param name  name of the specialized parameter
       * \param ids  array of integer indices specifying the value to set
       * \param value  the value to which the parameter is set
+      * \param success  was the attempt to set the parameter successful?
       */
-      void setParameter(std::string name, DArray<int> ids, 
-                                          double value, bool& success);
+      void setParameter(std::string name, DArray<int> ids, double value, 
+                        bool& success);
 
       /**
       * Get the value of a specialized sweep parameter.
@@ -125,6 +124,7 @@ namespace Prdc {
       * 
       * \param name  name of the specialized parameter
       * \param ids  array of integer indices specifying the value to set
+      * \param success  was the attempt to get the parameter successful?
       */
       double getParameter(std::string name, DArray<int> ids, bool& success) 
       const;

@@ -31,7 +31,7 @@ namespace Prdc {
    * the polymers/solvents to a "thin film" region of the unit cell. The
    * shape of the mask is defined by three input parameters: normalVecId,
    * excludedThickness, and interfaceThickness. See \ref 
-   * user_thin_films_page for more information. 
+   * scft_thin_films_page for more information. 
    * 
    * \ingroup Prdc_Iterator_Module
    */
@@ -42,19 +42,17 @@ namespace Prdc {
    public:
 
       /**
-      * Constructor
-      * 
-      * \param itr  Iterator parent object
+      * Constructor.
       */
       MaskGenFilmBase();
 
       /**
-      * Destructor
+      * Destructor.
       */
       ~MaskGenFilmBase();
 
       /**
-      * Read and initialize.
+      * Read parameter file block and initialize.
       *
       * \param in  input parameter stream
       */

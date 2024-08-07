@@ -44,7 +44,7 @@ namespace Rpc {
       ~BdSimulator();
 
       /**
-      * Read parameters for a MC simulation.
+      * Read parameter file block for a Brownian dynamics (BD) simulation.
       *
       * \param in input parameter stream
       */
@@ -105,8 +105,9 @@ namespace Rpc {
       using Simulator<D>::system;
       using Simulator<D>::compressor;
       using Simulator<D>::random;
-      using Simulator<D>::allocate;
       using Simulator<D>::analyzeChi;
+      using Simulator<D>::chiEval;
+      using Simulator<D>::chiEvecs;
       using Simulator<D>::computeWc;
       using Simulator<D>::computeCc;
       using Simulator<D>::computeDc;
@@ -121,6 +122,7 @@ namespace Rpc {
       using Simulator<D>::hamiltonian;
       using Simulator<D>::idealHamiltonian;
       using Simulator<D>::fieldHamiltonian;
+      using Simulator<D>::perturbationHamiltonian;
       using Simulator<D>::hasHamiltonian;
       using Simulator<D>::hasPerturbation;
       using Simulator<D>::hasRamp;

@@ -63,7 +63,7 @@ namespace Rpc {
    }
 
    /*
-   * Read instructions for creating objects from file.
+   * Read parameter file block for a BD simulator.
    */
    template <int D>
    void BdSimulator<D>::readParameters(std::istream &in)
@@ -96,7 +96,7 @@ namespace Rpc {
       }
 
       // Allocate memory for Simulator<D> base class
-      allocate();
+      Simulator<D>::allocate();
 
    }
 

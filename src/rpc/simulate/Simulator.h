@@ -35,19 +35,22 @@ namespace Rpc {
    /**
    * Field theoretic simulator (base class).
    *
-   * The Simulator base class provides tools needed in field-theoretic
-   * simulations that are based on a partial saddle-point approximation,
-   * including field theoretic Monte Carlo and field-theoretic Langevin 
-   * simulations.  Subclasses of this class provide algorithms and 
-   * more specialized data structures needed by specific sampling 
-   * methods.
+   * The Simulator base class provides tools needed in all field-theoretic
+   * simulations that are based on a partial saddle-point approximation.
+   * Subclasses designed for field theoretic Monte Carlo (MC) and Brownian
+   * dynamics (BD) simulations provide algorithms and more specialized 
+   * data structures needed by specific sampling methods. This class
+   * provided functions to compute and diagonalze a projected chi matrix,
+   * functions to access components of several types of fields in a basis
+   * of eigenvectors of the projected chi matrix, and functions to compute 
+   * and return contributions to the field theoretic Hamiltonian.
    *
    * The analyzeChi() function constructs and diagonalizes the projected
    * chi matrix. This is a singular nMonomer x nMonomer matrix defined 
-   * by evaluating the projection of the chi matrix into the subspace 
-   * of fluctuations that preserves total monomer concentration. The 
-   * eigenvalues and eigenvectors of this matrix via the chiEvals and
-   * chiEvecs functions, respectively.
+   * by evaluating the orthogonal projection of the chi matrix into the 
+   * subspace of fluctuations that preserves total monomer concentration. 
+   * The eigenvalues and eigenvectors of this matrix are accessed via the 
+   * chiEvals and chiEvecs functions, respectively.
    *
    * The functions computeWc, computeCc and computeDc compute components
    * components of various types of multi-component fields (i.e., fields
@@ -81,7 +84,7 @@ namespace Rpc {
       *
       * Values of nMonomer and the mesh dimensions must be defined in
       * Mixture and Domain members of the parent System on entry. This
-      * function should be called by the readParameters method of any
+      * function must be called by the readParameters method of any
       * subclass.
       */
       void allocate();
@@ -89,8 +92,12 @@ namespace Rpc {
       /**
       * Read parameters for a simulation.
       *
-      * The default implemention is a do-nothing placeholder that throws
-      * an error if called, and must be re-implemented by subclasses.
+      * The default implementation reads a Compressor block, an optional 
+      * random seed, and optional Perturbation, and an optional Ramp, in
+      * that order. This is intended to be used by subclasses designed for 
+      * and BD simulations to read the shared initial parts of the 
+      * parameter block format, to which blocks for MC moves or a BD step 
+      * and analyzers can be added by subclasses.
       *
       * \param in input parameter stream
       */
@@ -139,6 +146,10 @@ namespace Rpc {
       * hasCc(), and hasDc() will all return false.
       */
       void clearData();
+
+      ///@}
+      /// \name Timers and Counters
+      ///@{
 
       /**
       * Output timing results
