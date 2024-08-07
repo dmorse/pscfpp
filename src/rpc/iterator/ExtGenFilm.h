@@ -30,7 +30,7 @@ namespace Rpc {
    * is specific to thin-film systems because it also allows for a 
    * different chi parameter to be defined on the top boundary than on
    * the bottom, through user input arrays chi_bottom and chi_top. See 
-   * \ref user_thin_films_page for more information. 
+   * \ref scft_thin_films_page for more information. 
    *
    * \ingroup Rpc_Iterator_Module
    */
@@ -48,7 +48,7 @@ namespace Rpc {
       /**
       * Constructor
       * 
-      * \param itr  Iterator parent object
+      * \param sys  System parent object
       */
       ExtGenFilm(System<D>& sys);
 

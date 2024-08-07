@@ -33,7 +33,7 @@ namespace Rpc {
       /**
       * Constructor
       * 
-      * \param itr  Iterator parent object
+      * \param sys  System parent object
       */
       ImposedFieldsGenerator(System<D>& sys);
 

@@ -36,50 +36,50 @@ namespace Pscf {
    public:
 
       /**
-      * Constructor
+      * Constructor.
       */
       ImposedFieldsTmpl();
 
       /**
-      * Destructor
+      * Destructor.
       */
       ~ImposedFieldsTmpl();
       
       /**
-      * Read parameters from input stream
+      * Read parameters from input stream.
       * 
       * \param in  input stream
       */
       void readParameters(std::istream& in);
 
       /**
-      * Allocate, check compatibility, calculate, and store the field(s)
+      * Allocate, check compatibility, calculate, and store the field(s).
       */
       void setup();
 
       /**
-      * Check whether system has changed and update the field(s) if necessary
+      * Check whether system has changed, update the field(s) if necessary.
       */
       void update();
 
       /**
-      * Return specialized sweep parameter types to add to the Sweep object
+      * Return specialized sweep parameter types to add to a Sweep object.
       */
       GArray<ParameterType> getParameterTypes();
 
       /**
-      * Set the value of a specialized sweep parameter
+      * Set the value of a specialized sweep parameter.
       * 
       * \param name  name of the specialized parameter
-      * \param ids  array of integer indices specifying the value to set
-      * \param value  the value to which the parameter is set
+      * \param ids  array of integer indices specifying value to set
+      * \param value  value to which the parameter is set
       * \param success  boolean flag used to indicate if parameter was set
       */
-      void setParameter(std::string name, DArray<int> ids, 
-                                          double value, bool& success);
+      void setParameter(std::string name, DArray<int> ids, double value, 
+                        bool& success);
       
       /**
-      * Get the value of a specialized sweep parameter
+      * Get the value of a specialized sweep parameter.
       * 
       * \param name  name of the specialized parameter
       * \param ids  array of integer indices specifying the value to get
@@ -94,7 +94,7 @@ namespace Pscf {
    protected:
 
       /**
-      * Create FieldGenerator objects for the mask & external field
+      * Create FieldGenerator objects for mask and/or external field.
       * 
       * This method must be defined in each subclass. In it, fieldGenPtr1_
       * and (optionally) fieldGenPtr2_ should be assigned to dynamically 
@@ -105,7 +105,7 @@ namespace Pscf {
       * 
       * If only fieldGenPtr1_ is assigned, then it can be any type of 
       * FieldGenerator (Mask, External, or Both). If both fieldGenPtr1_
-      *  and fieldGenPtr2_ are assigned, then one of them must be of type
+      * and fieldGenPtr2_ are assigned, then one of them must be of type
       * Mask and the other must be of type External.
       * 
       * This is the only method that must be defined by subclasses of this
@@ -114,15 +114,15 @@ namespace Pscf {
       virtual void createGenerators() = 0;
 
       /**
-      * Get the type string associated with this object
+      * Get the type string associated with this object.
       */
       std::string type() const;
 
       /**
       * Pointer to the first FieldGenerator object (required).
       * 
-      * This FieldGenerator may generate a mask, a set of external
-      * fields, or both.
+      * This FieldGenerator may generate a mask, a set of external fields,
+      * or both.
       */
       FieldGenerator* fieldGenPtr1_;
 
@@ -138,7 +138,7 @@ namespace Pscf {
 
    private:
 
-      /// String that defines the type of fields to impose
+      /// String that defines the type of fields to impose.
       std::string type_;
 
    };
