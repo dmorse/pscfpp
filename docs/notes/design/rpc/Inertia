@@ -1,0 +1,71 @@
+Idea:
+
+Create a subclass of Simulator to implemented inertial dynamics.
+Perhaps call it IdSImulator, where Id denotes inertial dynamics.
+
+The class would have to provide:
+
+  1) Storage of time derivatives of wc components (velocity and acceleration)
+  2) Storage of old values of wp field
+  3) Algorithm to extrapolate of wp fields
+
+Use mass of unity defined in system units to define unit of time.
+Then choose dt_ for accuracy and stabilty.
+
+class IdSimulator {
+
+public:
+
+  IdSimulator(System& system);
+  ~IdSimulator();
+
+  void readParameters() {
+     read dt_
+  }
+
+  virtual void setup() {
+     // Compute initial forces
+     // Generate initial velocities
+     // 
+  }
+
+  virtual void simulate(int nStep) {
+  }
+
+  virtual void step() {
+     // Initial wcVelocity_ update
+     // Compute dc_ (forces)
+     // Compute wcAcceleration (Call virtual function)
+     // Finish wcVelocity_ update
+     // Update wc_
+     // Extrapolate wp
+     // Update wr_ (real space)
+     // Use compressor to adjust wp
+     // Add final wp to history
+  }
+
+  void computeAcceleration() = 0;
+
+  void computeKinetic() = 0;
+
+  double dt() const;
+  double kinetic() const;
+
+  virtual void output(std::ostream& out);
+
+protected:
+
+  void extrapolateWp();
+
+private:
+
+  DArray< RField<D> > wcVelocity_;
+  DArray< RField<D> > wcAcceleration_;
+  RingBuffer< RField<D> > wpHistory_;
+
+  double dt_;
+  double kinetic_;
+   
+}
+
+Note: Subclasses differ only in definition of mass operator

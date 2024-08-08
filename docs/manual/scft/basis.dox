@@ -1,7 +1,7 @@
 /*! \page scft_basis_page Appendix: Symmetry-Adapted Bases
 
 \ref scft_symmetry_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
-\ref ftsr_page  (Next)
+\ref ftsps_page  (Next)
 <BR>
 
 PSCF allows users to input and output chemical potential and monomer
@@ -861,7 +861,7 @@ that can all be chosen to be positive by convention.
 
 <BR>
 \ref scft_symmetry_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
-\ref scft_page    (Up) &nbsp; &nbsp; &nbsp; &nbsp;
-\ref ftsr_page    (Next)
+\ref scft_page           (Up) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref ftsps_page          (Next)
 
 */

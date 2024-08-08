@@ -60,37 +60,42 @@ To be written (v1.2):
 
 5. Field-Theoretic Simulation, Partial Saddle-Point Approximation (FTS-PS)
 
-   1.  Field Theoretic Simulation
+   1.  Introduction
+   2.  Incompressible Field Theoretic (Fully Fluctuating)
         - Two-Monomer Systems (nMonomer = 2)
+        - Projected Chi Matrix
         - General (nMonomer >= 2)
+   3.  Partial Saddle Point Approximation
+        - Restrictions (No positive eigenvalues)
+        - Approximation
         - Algorithm
-   2.  Example (Parameter File and Command File)
-   3.  Sampling Algorithms
-   4.  Parameter Files (unified rpc and rpg )
+   4.  Example (Parameter File and Command File)
+   5.  Sampling Algorithms
+   6.  Parameter Files (unified rpc and rpg )
         - BD Example
         - MC Example
         - Analyzers
-   5.  Compressor Algorithms
+   7.  Compressor Algorithms
         - AndersonMixing
         - LinearReponse
         - Linear Response / Anderson-Mixing
-   6.  Brownian Dynamics Steppers
+   8.  Brownian Dynamics Steppers
         - Leimkuhler-Matthews
         - Predictor-Corrector
         - Explicit Euler
-   7.  Monte Carlo Moves
+   9.  Monte Carlo Moves
         - ForceBias
         - Local
         - Fourier
-   8.  Data Analysis
-   9.  Parameter Ramps
+   10. Data Analysis
+   11. Parameter Ramps
    10. Perturbations
    11. Commands
    12. Postprocessing Field Trajectories
 
    A. Hubbard-Stratonovich Transformation  (v1.3)
    B. Functional Delta Function (v1.3)
-   C. Projected Interaction Matrix
+   C. Projected Chi Matrix
    D. Functional Integral Representation of Z  (v1.3)
 
 6. Developer Guide

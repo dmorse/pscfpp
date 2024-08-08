@@ -947,7 +947,7 @@ INPUT                  = manual/main.dox \
                          manual/install \
                          manual/user \
                          manual/scft \
-                         manual/ftsr \
+                         manual/ftsps \
                          manual/developer \
                          ../src/programs.mod \
                          ../src/util \

@@ -1,4 +1,4 @@
-/*! \page ftsr_page Field Theoretic Simulation - Real Fields
+/*! \page ftsps_page Field Theoretic Simulation - Partial Saddle-Point Approximation
 
 \ref scft_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
 \ref developer_page (Next)
@@ -6,8 +6,8 @@
 
 <h2> Contents:</h2>
    <ol>
-   <li> \subpage ftsr_theory_page  </li>
-   <li> \subpage ftsr_methods_page  </li>
+   <li> \subpage ftsps_theory_page  </li>
+   <li> \subpage ftsps_methods_page  </li>
    </ol>
 <BR>
 \ref scft_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
