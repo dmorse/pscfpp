@@ -6,8 +6,10 @@
 
 <h2> Contents:</h2>
    <ol>
+   <li> \subpage ftsps_intro_page  </li>
    <li> \subpage ftsps_theory_page  </li>
-   <li> \subpage ftsps_methods_page  </li>
+   <li> \subpage ftsps_psa_page     </li>
+   <li> \subpage ftsps_methods_page </li>
    </ol>
 <BR>
 \ref scft_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
