@@ -1,7 +1,7 @@
 /*! \page scft_groups_page Space Groups
 
  \ref scft_unitcell_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
- \ref scft_thin_films_page   (Next) 
+ \ref scft_imposed_fields_page   (Next) 
 <BR>
 
 The PSCF programs that are designed to simulate periodic structures use
@@ -376,5 +376,5 @@ Group identifiers:
 <BR>
  \ref scft_unitcell_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
  \ref scft_page          (Up) &nbsp; &nbsp; &nbsp; &nbsp; 
- \ref scft_thin_films_page   (Next) 
+ \ref scft_imposed_fields_page   (Next) 
 */

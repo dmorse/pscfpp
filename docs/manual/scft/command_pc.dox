@@ -1032,7 +1032,7 @@ fields are referred to throughout the source code and documentation
 as "h" fields. This feature was introduced into the code to allow
 simulation of polymers in thin films or other confined geometries,
 for which external fields that act differently on different monomer
-types are used represent selective interactions of polymers with the
+types are used to represent selective interactions of polymers with the
 confining walls.
 
 When nonzero external fields have been set, the self-consistent field
@@ -1053,14 +1053,15 @@ Simulations of polymer liquids confined to thin films may use external
 fields to represent interactions of different monomer types with the 
 boundaries or "walls" of the film.  The external fields that are used to
 define a thin film problem are defined algorithmically by the thin film
-iterator, as described \ref scft_thin_films_page "here".
+ImposedFieldsGenerator, as described \ref scft_thin_films_page "here".
 
 The <b>READ_H_BASIS</b> and <b>READ_H_RGRID</b> commands can be used 
 to instead read in external fields from an existing file and apply them 
 to the current simulation. Files that contain external fields use the 
-same formats as those used for w fields. Users who use this a thin film 
-iterator to simulate a thin film generally do not need to read external
-fields from file, because they are instead defined by the iterator.
+same formats as those used for w fields. Users who use a thin film 
+ImposedFieldsGenerator to simulate a thin film generally do not need to 
+read external fields from file, because they are instead defined by the 
+generator.
 
 The <b>WRITE_H_BASIS</b> and <b>WRITE_H_RGRID</b> commands write the current 
 external fields, if any, to a specified field in basis or r-grid format.
@@ -1081,22 +1082,22 @@ at every point in the system, where \f$ m({\bf r}) \f$ is the mask field,
 \f$ c_{\alpha}({\bf r}) \f$ is the number concentration of monomers of type
 \f$ \alpha \f$ at point \f$ {\bf r} \f$, \f$ v \f$ is the monomer reference
 volume, and the summation is over all distinct monomer types. Introduction
-of a mask provides a simple way to impose geometric confinment within a
+of a mask provides a simple way to impose geometric confinement within a
 program that is designed for periodic systems.
 
 The mask that is used to confine a polymer to a thin film is generated
-algorithmically by the thin film iterator, as described in more detail
-\ref scft_thin_films_page "here".  
+algorithmically by the thin film ImposedFieldsGenerator, as described in 
+more detail \ref scft_thin_films_page "here".  
 
 The commands 
 \anchor scft_command_pc_readmaskbasis_cmd <b>READ_MASK_BASIS</b> or
 \anchor scft_command_pc_readmaskrgrid_cmd <b>READ_MASK_RGRID</b>
 may instead be used to read a mask field from a file in basis or
 r-grid format. The file formats are identical to those which would be 
-used for w or c field file for a system with only one monomer type.
-These commands are generally not needed by users who use an interator
-to define a thin film problem, because the mask is defined by the
-iterator.
+used for a w or c field file for a system with only one monomer type.
+These commands are generally not needed by users who use an 
+ImposedFieldsGenerator to define a thin film problem, because the mask 
+is constructed and updated internally by the generator.
 
 The commands 
 \anchor scft_command_pc_writemaskbasis_cmd <b>WRITE_MASK_BASIS</b> or

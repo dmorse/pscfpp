@@ -76,7 +76,7 @@ https://dmorse.github.io/pscfpp-man </a>.
     <li> \ref scft_thermo_page  </li>
     <li> \ref scft_unitcell_page  </li>
     <li> \ref scft_groups_page  </li>
-    <li> \ref scft_thin_films_page  </li>
+    <li> \ref scft_imposed_fields_page  </li>
     <li> \ref scft_visualize_page  </li>
     <li> \ref scft_python_page  </li>
     <li> \ref scft_propagator_page  </li>

@@ -217,40 +217,19 @@ The default Iterator for the pscf_pc and pscf_pg programs is based on
 an algorithm that uses an Anderson-Mixing (AM) iterator algorithm, and 
 that imposes a specified space group symmetry.  This default iterator
 can be invoked in pscf_pc using either the generic label "Iterator" or 
-the specific label "AmIteratorBasis". 
+the specific label "AmIteratorBasis". This is currently the only 
+iterator available in pscf_pc.
 
-The only other iterator currently available for pscf_pc is an 
-Anderson-Mixing iterator designed specifically for problems in 
-which a polymer material is confined to a thin film 
-(see \ref scft_thin_films_page ). This iterator can be invoked using
-the label AmIteratorBasisFilm.
+This iterator is designed to search for a solution with a specified 
+space group symmetry, and thus it requires that the parameter file 
+contain a groupName parameter. The pscf_pg program, however, provides 
+an Anderson-Mixing algorithm named AmIteratorGrid that does not impose 
+any space-group symmetry, and that can be used with a parameter file 
+that does not contain a groupName string. 
 
-Both of the two available iterators for pscf_pc are designed to
-search for a solution with a specified space group symmetry, and thus
-both require that the parameter file contain a groupName parameter. 
-The pscf_pg program, however, provides an Anderson-Mixing algorithm 
-named AmIteratorGrid that does not impose any space-group symmetry, 
-and that can be used with a parameter file that does not contain a 
-groupName string. 
-
-Descriptions of parameter file formats for the available pscf_pc
-iterators can be found by following the links in the table below:
-<table>
-  <tr>
-    <td> <b> Class </b> </td>
-    <td> <b> Description  </b> </td>
-  </tr>
-  <tr>
-    <td> \subpage rpc_AmIteratorBasis_page "AmIteratorBasis" </td>
-    <td> Anderson Mixing iterator for periodic structures with known
-         space-group symmetry (default) </td>
-  </tr>
-  <tr>
-    <td> \subpage rpc_AmIteratorBasisFilm_page "AmIteratorBasisFilm" </td>
-    <td> Anderson Mixing iterator for system of known space group 
-         symmetry confined to a thin film. </td>
-  </tr>
-</table>
+Descriptions of parameter file format for the available pscf_pc
+iterator can be found on the \subpage rpc_AmIteratorBasis_page 
+"AmIteratorBasis" page.
 
 The Iterator block of the parameter file is formally optional (i.e., 
 the program will finish reading the parameter file if it is omitted), 
