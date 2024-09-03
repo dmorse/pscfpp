@@ -1,0 +1,19 @@
+/*! \page ftsps_psa_page  Partial Saddle-Point Approximation
+
+\ref ftsps_theory_page   (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref ftsps_methods_page  (Next)
+<BR>
+
+Below, we summarize a few of the working equations 
+
+\section ftsps_psa_AB_sec Incompressible AB System (M = 2)
+
+Partial Saddle-point (conventional)
+
+\section ftsps_psa_ABC_sec General Incompressible System (M >=2)
+
+<BR>
+\ref ftsps_theory_page   (Prev, Up) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref ftsps_methods_page  (Next)
+
+*/
