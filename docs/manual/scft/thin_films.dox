@@ -1,12 +1,12 @@
 /*! \page scft_thin_films_page Thin-Film Confinement
 
- \ref scft_imposed_fields_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
+ \ref scft_imposed_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
  \ref scft_visualize_page   (Next) 
 <BR>
 
 Thin-film confinement can be imposed on the PSCF unit cell by including an 
 ImposedFieldsGenerator object in the parameter file with "film" as the 
-type parameter. See \ref scft_imposed_fields_page "this previous page" 
+type parameter. See \ref scft_imposed_page "this previous page" 
 for more general information about the ImposedFieldsGenerator feature and 
 for a description of how masks and external potential fields are implemented 
 in PSCF. On this page, we first explain the model used to represent thin 
@@ -553,6 +553,6 @@ summary at <https://en.wikipedia.org/wiki/Hexagonal_crystal_family> for more
 details.
 
 <BR>
- \ref scft_imposed_fields_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
+ \ref scft_imposed_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
  \ref scft_visualize_page   (Next) 
 */

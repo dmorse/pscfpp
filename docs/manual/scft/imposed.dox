@@ -1,0 +1,240 @@
+/*! \page scft_imposed_page Confinement and External Fields
+
+ \ref scft_groups_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
+ \ref scft_visualize_page   (Next) 
+<BR>
+
+\section scft_imposed_overview_sec Overview
+
+The SCFT iterators used by pscf_pc and pscf_pg allow users to define two 
+different types of externally imposed fields to describe situations in 
+which a polymeric material interacts with an inhomogeneous environment.
+A "mask" field is used to describe geometric confinement to a specified
+region in a manner that does not distinguish among different monomer
+types. "External" fields instead specify preferential potential energy
+biases that can induce preferential accumulation of particular monomer 
+types in specific locations. The two features can be used together to 
+allow SCFT calculations to describe situations in which a material is 
+confined to a region, such a thin film and in which the confining 
+surfaces exhibit preferential wetting, using external fields that are 
+nonzero only in narrow regions near the confining surfaces to induce 
+wetting.  As described below, a mask field is implemented as a modification 
+of the incompressibility constraint, whereas the external fields are 
+implemented via addition of an external field term to the self-consistent 
+field equation for each monomer type. The resulting framework is designed 
+to be quite general and extensible by users. The current version of PSCF 
+is distributed with a set tools that use this framework to simulate 
+confinement of polymer to a thin film with chemically homogeneous but 
+selective top and bottom surfaces.
+
+We refer to a mask and a set of external fields collectively as "imposed 
+fields" for a given SCFT calculation. These imposed fields can be defined
+by either of two methods. 
+
+  - Mask and external fields can be defined in field files that are
+    created separately by the user, which can be read into PSCF using 
+    any of several commands that are designed for this purpose, as 
+    described below and in the \ref scft_command_pc_page "commands" 
+    page. 
+
+  - Mask and external fields may be generated within the PSCF software
+    using an \ref scft_imposed_generator_sec "ImposedFieldsGenerator" 
+    object that reads a few parameters specific to a particular type of 
+    calculation from the parameter file (e.g., the thickness of a film 
+    and parameters that describe the strength of preferential wetting) 
+    and generates an appropriate set of imposed fields. 
+
+PSCF is currently distributed with an ImposedFieldGenerator that can
+generate imposed fields for simulating thin films with preferential
+wetting.  Thin films are simulated using a "supercell" that contains 
+alternating regions of polymer and vaccum, as defined by a periodic 
+"mask" field.  This thin film field generator is described in detail 
+on the \subpage scft_thin_films_page "Thin Films" page. 
+
+The declared space-group symmetry of an SCFT calculation with imposed 
+fields must be chosen so as to guarantee that the mask and external 
+fields are invariant under all elements of the declared space group. 
+The space group that best describes a given system is that which contains 
+every symmetry operation shared by the mask, the external fields, and 
+the polymer morphology itself; this is typically a lower-symmetry space 
+group than that of the bulk polymer morphology that would be formed in 
+the absence of any imposed fields. The choice of an appropriate 
+space-group for a thin film morphology that is defined in a periodic 
+super-cell is discussed in the \ref scft_thin_films_page "Thin Films" 
+page. 
+
+\section scft_imposed_mask_sec Mask field
+
+The iterators used in pscf_pc allows users to define a "mask" field that 
+imposes geometric confinement within the unit cell by modifying the 
+incompressibility constraint. A mask field is a dimensionless function of 
+position, denoted here by \f$ m({\bf r}) \f$, that has a value very close 
+to 1 throughout a region to which the polymer material is confined and a 
+value very close to 0 throughout a region from which the material is being 
+excluded. The incompressibility constraint for a system that is subjected 
+to a mask is modified so as to require that
+\f[
+   v \sum_{\alpha=1} c_\alpha({\bf r}) = m({\bf r})
+\f]
+at every point in the system, where \f$ m({\bf r}) \f$ is the mask field,
+\f$ c_{\alpha}({\bf r}) \f$ is the number concentration of monomers of type
+\f$ \alpha \f$ at point \f$ {\bf r} \f$, \f$ v \f$ is the monomer reference
+volume, and the summation is over all distinct monomer types. Introduction
+of a mask provides a simple way to impose geometric confinement within a
+program that is designed for periodic systems. The mask can have any 
+functional form as long as it satisfies the periodic boundary condition and
+the space-group symmetry of the system.
+
+A user-defined mask field may be read in from a file using the 
+READ_MASK_BASIS to read a file in which the mask specified using the
+symmetry-adapted basis file format or using the READ_MASK_RGRID command
+to read in a mask that is defined using the r-grid format as a set 
+values on nodes of the relevant grid. The READ_MASK_BASIS command must
+be used to initialize a mask for a calculation in which the iterator 
+an internal representation of the fields in a symmetry-adapted basis 
+to search for a solution with a specified space-group symmetry. The 
+READ_MASK_RGRID can only be used for calculations that use an iterator
+that does not impose a space-group symmetry.
+
+\section scft_imposed_external_sec External fields
+
+The iterators in pscf_pc also allows users to define an external potential
+field associated with each type of monomer in the system. In what follows,
+let \f$ h_{\alpha}({\bf r}) \f$ denote the external field imposed on 
+monomers of type \f$ \alpha \f$.  When nonzero external fields have been 
+set, the self-consistent field equation for monomers of type \f$ alpha \f$
+become an equation of the form
+\f[
+   w_{\alpha}({\bf r})
+   = \sum_{\beta} \chi_{\alpha\beta} \phi_{\beta}({\bf r})
+   + \xi({\bf r}) + h_{\alpha}({\bf r}) \quad,
+\f]
+in which \f$ \xi ({\bf r}) \f$ is the Lagrange multiplier local pressure 
+field that imposes incompressibility, and \f$ \chi_{\alpha\beta} \f$ is 
+the binary Flory-Huggins interaction parameter for  monomers of types 
+\f$ \alpha \f$ and \f$ \beta \f$. These fields can also assume any form 
+as long as they satisfy the periodic boundary condition and the declared
+space-group symmetry of the calculation.
+
+A list of external fields for all monomer types may be read from a file 
+using READ_H_BASIS command to read in a file in which the fields are 
+defined using a symmetry-basis or READ_H_RGRID to read in fields that 
+are defined in r-grid format. The READ_H_BASIS command must be used to 
+set external fields for any SCFT calculation that explicitly imposes a 
+specified space-group symmetry.
+
+\section scft_imposed_generator_sec ImposedFieldsGenerator objects
+
+When studying a specific class of problems, such as polymer thin films, 
+it is often most convenient to have appropriate mask and external fields 
+generated algorithmically within the PSCF software, based on numerical 
+values of a few parameters that are provided by the user within the 
+parameter file.  This can be done by the use of an ImposedFieldGenerator 
+object that is associated with the iterator.
+
+An ImposedFieldsGenerator object is created by the inclusion of an 
+optional block of the parameter file inside of the Iterator block, after 
+all other Iterator parameters have been read. The first parameter inside 
+of this ImposedFieldsGenerator block is "type". The software uses this 
+"type" keyword to determine which imposed fields should be generated, what 
+their functional form should be, and what parameters are necessary to 
+define the imposed fields. Therefore, the implementation of the 
+ImposedFieldsGenerator feature is entirely different depending on what 
+keyword is provided as the value of the "type" parameter. All of the
+parameters required for the specified "type" of calculation appear after 
+the type parameter. 
+
+An example is provided below for the "film" type, which is currently the
+only allowed value for the type parameter:
+\code
+Iterator{
+  epsilon      1e-6
+  maxItr       100
+  maxHist      50
+  isFlexible   1
+  ImposedFieldsGenerator{
+    type         film 
+    normalVecId  2
+    interfaceThickness 0.2
+    excludedThickness  0.4
+    chiBottom[
+                       0
+                       10
+    ]
+    chiTop[
+                       0
+                       0
+    ]
+  }
+}
+\endcode
+In this example, the film "type" parameter is followed by 5 input
+parameters required to define a mask and external fields appropriate 
+to thin film problem, which are named normalVecId, interfaceThickness, 
+excludedThickness, chiBottom and chiTop.  The "film" type of 
+ImposedFieldsGenerator is described in detail on 
+the \ref scft_thin_films_page "Thin Films" page. 
+
+One advantage of the use of an ImposedFieldsGenerator to programmatically
+generate a mask and external fields is that this method allows these
+imposed fields to be automatically recomputed during a calculation as 
+needed. Regeneration of the fields can sometimes be required by changes 
+in the unit cell parameters. The design of the ImposedFieldsGenerator
+class also allows some specialized parameters that are defined within 
+the associated parameter file block to be declared to be parameters
+that can be varied during an SCFT parameter sweep, which generally
+requires recomputation of the mask or external fields before each SCFT 
+calculation within the sweep.  For example, for thin films, the chiBottom 
+and chiTop parameters that control preferential wetting along the bottom 
+and top surfaces to be varied during a linear parameter sweep, which
+requires repeated recomputation of the associated external fields.
+
+\section scft_imposed_freeenergy_sec Modified free energy calculation
+
+In the presence of imposed fields, it is necessary to modify the free 
+energy calculation to account for the fields. The free energy per monomer 
+reference volume \f$ \tilde{f} \f$ is defined to be 
+\f[
+   \tilde{f} = \tilde{f}_{\rm id} + \tilde{f}_{\rm int} + \tilde{f}_{\rm ext}
+\f]
+where
+\f{eqnarray*}
+    \tilde{f}_{\rm id}
+    & = & \sum_{i=0}^{P+S-1} \frac{\overline{\phi}_{i}}{L_{i}}
+    \left [ \ln ( \overline{\phi}_{i} / Q_{i} ) - 1 \right ]
+     - \frac{1}{\overline{m}V}
+       \sum_{\alpha=0}^{C-1}
+       \int \! d\textbf{r} \;
+       w_{\alpha}(\textbf{r})
+      \phi_{\alpha}(\textbf{r}) \\
+    \tilde{f}_{\rm int}
+    & = &  \frac{1}{2 \overline{m} V} \sum_{\alpha, \beta =0}^{C-1}
+    \chi_{\alpha\beta} \int \! d\textbf{r} \;
+    \phi_{\alpha}(\textbf{r}) \phi_{\beta}(\textbf{r}) \\
+    \tilde{f}_{\rm ext} 
+    & = &  \frac{1}{\overline{m}V} \sum_{\alpha=0}^{C-1}
+    \int \! d\textbf{r} \;
+       h_{\alpha}(\textbf{r})
+      \phi_{\alpha}(\textbf{r})
+\f}
+There are two changes in the above equations relative to those that 
+describe systems in the absence of imposed fields 
+(see \ref scft_propagator_thermo_sec "here"). First, an additional term 
+is added, \f$ \tilde{f}_{\rm ext} \f$, that contains the free energy 
+arising from monomer species interacting with their associated external 
+potential fields. This property is output along with the 
+\ref scft_thermo_page "other thermodynamic properties" as "fExt" for 
+any calculation that uses an external field. The second change is that 
+we use \f$ \overline{m}V \f$ rather than \f$ V \f$ as the volume by 
+which the integrals are normalized. \f$ \overline{m} \f$ is defined as the 
+average value of the mask function \f$ m({\bf r}) \f$ over the entire unit 
+cell, representing the volume fraction of the unit cell that is occupied by 
+polymer. \f$ \overline{m}V \f$ is therefore the volume available to the 
+polymers in the system, and is the volume that is relevant to the polymer 
+thermodynamic properties.
+
+<BR>
+ \ref scft_groups_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
+ \ref scft_page          (Up) &nbsp; &nbsp; &nbsp; &nbsp; 
+ \ref scft_visualize_page   (Next) 
+*/

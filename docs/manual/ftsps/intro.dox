@@ -1,0 +1,17 @@
+/*! \page ftsps_intro_page  Introduction
+
+\ref ftsps_page         (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref ftsps_theory_page  (Next)
+<BR>
+
+Overview:
+  - Use of incompressible model
+  - Based on partial saddle-point approximation
+  - Implemented in both pscf_pc and pscf_pg
+  - 
+
+<BR>
+\ref ftsps_page         (Prev, Up) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref ftsps_theory_page  (Next)
+
+*/

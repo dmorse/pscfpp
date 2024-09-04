@@ -1,6 +1,6 @@
 /*! \page scft_visualize_page Visualization 
 
-\ref scft_imposed_fields_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
+\ref scft_imposed_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
 \ref scft_python_page (Next)
 <BR>
 
@@ -26,7 +26,7 @@ which includes examples of the different types of plots that can be
 generated.
 
 <BR>
-\ref scft_imposed_fields_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
+\ref scft_imposed_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
 \ref scft_page (Up) &nbsp; &nbsp; &nbsp; &nbsp; 
 \ref scft_python_page (Next)
 
