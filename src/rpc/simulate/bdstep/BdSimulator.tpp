@@ -111,7 +111,7 @@ namespace Rpc {
       // Eigenanalysis of the projected chi matrix.
       analyzeChi();
 
-      // Compute field components and Hamiltonian for initial state
+      // Compute field components and Hamiltonian for initial state.
       system().compute();
       computeWc();
       computeCc();
@@ -127,6 +127,10 @@ namespace Rpc {
       if (analyzerManager_.size() > 0){
          analyzerManager_.setup();
       }
+      
+      // Compress the initial field before entering simulate loop. 
+      compressor().compress();
+      compressor().clearTimers();
 
    }
 
