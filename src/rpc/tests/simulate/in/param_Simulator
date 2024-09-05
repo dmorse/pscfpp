@@ -33,24 +33,19 @@ System{
       maxItr       200
       maxHist      30     
       verbose	 0
-      errorType    normResid
+      errorType    rmsResid
     }
 
     McMoveManager{
+      
+      ForceBiasMove{
+        probability     0.5
+        mobility        4.0E-3
+      }
 
       RealMove{
         probability     0.5
         A               0.4
-      }
-
-      FourierMove{
-        probability     0.5
-        A               0.008
-        F*              20.990
-        tau             2.64737
-        N               1.0
-        volumeFraction  0.5
-        statisticalSegmentLength 1
       }
 
     }
@@ -76,5 +71,5 @@ System{
   }
 }
 
-  unitCell cubic   1.3835952906
+  unitCell cubic   3.29
   groupName   P_-1

@@ -54,7 +54,7 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      initSystem("in/param1_simulator");
+      initSystem("in/param_Simulator");
       Simulator<3> simulator(system);
       simulator.allocate();
       simulator.analyzeChi();
@@ -94,7 +94,7 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      initSystem("in/param1_simulator");
+      initSystem("in/param_Simulator");
       Simulator<3> simulator(system);
       simulator.allocate();
       simulator.analyzeChi();
