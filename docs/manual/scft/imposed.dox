@@ -200,9 +200,10 @@ reference volume \f$ \tilde{f} \f$ is defined to be
 where
 \f{eqnarray*}
     \tilde{f}_{\rm id}
-    & = & \sum_{i=0}^{P+S-1} \frac{\overline{\phi}_{i}}{L_{i}}
-    \left [ \ln ( \overline{\phi}_{i} / Q_{i} ) - 1 \right ]
-     - \frac{1}{\overline{m}V}
+    & = & \sum_{i=0}^{P+S-1} \frac{\overline{\phi}_{i}}{\overline{m} L_{i}}
+    \left[ \ln \left( \frac{\overline{\phi}_{i}}{\overline{m} Q_{i}}\right) 
+     - 1 \right]
+     - \frac{1}{\overline{m} V}
        \sum_{\alpha=0}^{C-1}
        \int \! d\textbf{r} \;
        w_{\alpha}(\textbf{r})
@@ -217,21 +218,37 @@ where
        h_{\alpha}(\textbf{r})
       \phi_{\alpha}(\textbf{r})
 \f}
-There are two changes in the above equations relative to those that 
-describe systems in the absence of imposed fields 
-(see \ref scft_propagator_thermo_sec "here"). First, an additional term 
-is added, \f$ \tilde{f}_{\rm ext} \f$, that contains the free energy 
-arising from monomer species interacting with their associated external 
-potential fields. This property is output along with the 
-\ref scft_thermo_page "other thermodynamic properties" as "fExt" for 
-any calculation that uses an external field. The second change is that 
-we use \f$ \overline{m}V \f$ rather than \f$ V \f$ as the volume by 
-which the integrals are normalized. \f$ \overline{m} \f$ is defined as the 
-average value of the mask function \f$ m({\bf r}) \f$ over the entire unit 
-cell, representing the volume fraction of the unit cell that is occupied by 
-polymer. \f$ \overline{m}V \f$ is therefore the volume available to the 
-polymers in the system, and is the volume that is relevant to the polymer 
-thermodynamic properties.
+where \f$ \overline{\phi_{i}} \f$ is the average volume fraction of species
+\f$ i \f$ across the entire unit cell, and \f$ \phi_{\alpha}({\bf r}) \f$
+is the local volume fraction of monomer \f$ \alpha \f$ at position **r**,
+such that the sum of \f$ \phi_{\alpha}({\bf r}) \f$ over all species is
+equal to \f$ m({\bf r}) \f$. \f$ \overline{m} \f$ is the average value of 
+the mask function \f$ m({\bf r}) \f$ over the entire unit cell, representing 
+the volume fraction of the unit cell that is occupied by polymer.
+
+There are three changes in the above equations relative to those that
+describe systems in the absence of imposed fields (see \ref
+scft_propagator_thermo_sec "here"). 
+- First, an additional term is added, \f$ \tilde{f}_{\rm ext} \f$, that
+  contains the free energy arising from monomer species interacting with
+  their associated external potential fields. This property is output along
+  with the \ref scft_thermo_page "other thermodynamic properties" as "fExt"
+  for any calculation that uses an external field. 
+- Second, the overall volume fraction \f$ \overline{\phi_i} \f$ is replaced
+  with \f$ \overline{\phi_i}/\overline{m} \f$. In a system containing a
+  mask, the overall volume fractions \f$ \overline{\phi_i} \f$ will add to 
+  \f$ \overline{m} \f$, rather than one. But the volume fraction that is
+  relevant to thermodynamic properties like the entropy of mixing should
+  be the fraction of each species in the melt, the sum of which should be 
+  one. Therefore, we use \f$ \overline{\phi_i}/\overline{m} \f$.
+- And third, we use \f$ \overline{m}V \f$ rather than \f$ V \f$ as the
+  volume by which the integrals are normalized.  \f$ \overline{m} \f$ is
+  the volume fraction of the unit cell that is occupied by polymer. 
+  \f$ \overline{m}V \f$ is therefore the volume available to the polymers 
+  in the system, and is the volume that is relevant to the polymer 
+  thermodynamic properties. Note that \f$ \overline{m}V \f$ must also be 
+  used to normalize the spatial integral used to calculate \f$ Q_i \f$ in 
+  the presence of a mask.
 
 <BR>
  \ref scft_groups_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
