@@ -77,72 +77,109 @@ to a mask is modified so as to require that
    v \sum_{\alpha=1} c_\alpha({\bf r}) = m({\bf r})
 \f]
 at every point in the system, where \f$ m({\bf r}) \f$ is the mask field,
-\f$ c_{\alpha}({\bf r}) \f$ is the number concentration of monomers of type
-\f$ \alpha \f$ at point \f$ {\bf r} \f$, \f$ v \f$ is the monomer reference
-volume, and the summation is over all distinct monomer types. Introduction
-of a mask provides a simple way to impose geometric confinement within a
-program that is designed for periodic systems. The mask can have any 
-functional form as long as it satisfies the periodic boundary condition and
-the space-group symmetry of the system.
+\f$ c_{\alpha}({\bf r}) \f$ average is the number concentration of monomers 
+of type \f$ \alpha \f$ at point \f$ {\bf r} \f$, \f$ v \f$ is the monomer 
+reference volume, and the summation is over all distinct monomer types. 
+Introduction of a mask provides a simple way to impose geometric confinement 
+within a program that is designed for periodic systems. The mask can have 
+any functional form as long as it satisfies the periodic boundary condition 
+and the space-group symmetry of the system.
 
-A user-defined mask field may be read in from a file using the 
-READ_MASK_BASIS to read a file in which the mask specified using the
-symmetry-adapted basis file format or using the READ_MASK_RGRID command
-to read in a mask that is defined using the r-grid format as a set 
-values on nodes of the relevant grid. The READ_MASK_BASIS command must
-be used to initialize a mask for a calculation in which the iterator 
-an internal representation of the fields in a symmetry-adapted basis 
-to search for a solution with a specified space-group symmetry. The 
-READ_MASK_RGRID can only be used for calculations that use an iterator
-that does not impose a space-group symmetry.
+Let \f$ \phi_{\alpha}({\bf r}) \f$ denote the product
+\f[
+   \phi_{\alpha}({\bf r}) = v c_{\alpha}({\bf r}) 
+\f]
+of monomer reference volume and average monomer concentration, which we
+refer to as the monomer volume fraction for monomers of type \f$ \alpha \f$. 
+In a system with a mask, the sum of the monomer volume fractions at position 
+\f$ {\bf r} \f$ is thus constrained to equal to \f$ m({\bf r}) \f$, rather 
+than unity.
+
+Let \f$ \overline{m} \f$ denote the spatial average of the mask function 
+\f$ m({\bf r}) \f$ over the computational unit cell, given by the ratio
+\f[
+   \overline{m} = \frac{1}{V} \int d{\bf r} \; m({\bf r}) \quad,
+\f]
+where the integral is taken over the entire computational unit cell of 
+total volume \f$ V \f$ that includes regions from which the polymer is 
+excluded.  The quantity \f$ \overline{m} \f$ is thus the fraction of the 
+unit cell volume that is occupied by polymer material, while the product
+\f$ \overline{m} V \f$ is the total volume with the unit cell occupied 
+by material. 
+
+A user-defined mask may be set by using a command to read the mask field 
+from a file. The READ_MASK_BASIS reads a file in which the mask field is 
+specified using the symmetry-adapted basis file format, thus defining a 
+field that is guaranteed to exhibit the declared space group symmetry.
+The READ_MASK_RGRID command instead reads a file in which a mask is 
+defined using the r-grid format as a list values on nodes of the relevant 
+grid, for which the file format does not impose any symmetry. 
+The READ_MASK_BASIS command must be used to initialize a mask for any 
+SCFT calculation in which the iterator explicitly imposes a space-group 
+symmetry, by using an internal representation of w-fields using a 
+symmetry-adapated basis.  Because the mask and external field features
+are implemented in the current version of PSCF (v1.2) only for the 
+pscf_pc program (and not yet for pscf_pg), and the only iterator that 
+is currently distributed for use with pscf_pc (the default 
+Rpc::AmIteratorBasis class) does impose a space group symmetry, the 
+READ_MASK_RGRID command thus actually cannot be used to set up an SCFT 
+calculation in the current version of PSCF.
 
 \section scft_imposed_external_sec External fields
 
-The iterators in pscf_pc also allows users to define an external potential
+The pscf_pc program also allows users to define an external potential
 field associated with each type of monomer in the system. In what follows,
 let \f$ h_{\alpha}({\bf r}) \f$ denote the external field imposed on 
 monomers of type \f$ \alpha \f$.  When nonzero external fields have been 
-set, the self-consistent field equation for monomers of type \f$ alpha \f$
-become an equation of the form
+set, the self-consistent field equation for monomers of type \f$ \alpha \f$
+becomes 
 \f[
    w_{\alpha}({\bf r})
    = \sum_{\beta} \chi_{\alpha\beta} \phi_{\beta}({\bf r})
    + \xi({\bf r}) + h_{\alpha}({\bf r}) \quad,
 \f]
 in which \f$ \xi ({\bf r}) \f$ is the Lagrange multiplier local pressure 
-field that imposes incompressibility, and \f$ \chi_{\alpha\beta} \f$ is 
-the binary Flory-Huggins interaction parameter for  monomers of types 
-\f$ \alpha \f$ and \f$ \beta \f$. These fields can also assume any form 
-as long as they satisfy the periodic boundary condition and the declared
-space-group symmetry of the calculation.
+field that imposes incompressibility, \f$ \chi_{\alpha\beta} \f$ is the 
+binary Flory-Huggins interaction parameter for  monomers of types 
+\f$ \alpha \f$ and \f$ \beta \f$, and 
+\f$ \phi_{\beta}({\bf r}) = v c_{\beta}({\bf r}) \f$ is the local volume
+fraction of monomers of type \f$ \beta \f$. The external fields can also 
+assume any form as long as they satisfy the periodic boundary condition 
+and the declared space-group symmetry of the calculation.
 
-A list of external fields for all monomer types may be read from a file 
-using READ_H_BASIS command to read in a file in which the fields are 
-defined using a symmetry-basis or READ_H_RGRID to read in fields that 
-are defined in r-grid format. The READ_H_BASIS command must be used to 
-set external fields for any SCFT calculation that explicitly imposes a 
-specified space-group symmetry.
+A list of external fields for all monomer types may be set by using a 
+command to read these fields from a single file. The READ_H_BASIS command 
+reads a file in which these fields are defined using a symmetry-adapted 
+basis, creating fields that guaranteed to be invariant under all elements 
+of a declared space group, whild READ_H_RGRID read a field file that uses 
+the r-grid format, for which the format does not impose any symmetr.
+External fields for an SCFT calculation in which symmetry is imposed by 
+the iterator must be symmetric, and so must be set using the READ_H_BASIS 
+command.  Because the only pscf_pc iterator that is provided with the 
+current version of PSCF (v1.2) does impose a space-group symmetry, the 
+READ_H_RGRID command actually cannot be used to set up an SCFT calculation 
+for this version of PSCF.
 
 \section scft_imposed_generator_sec ImposedFieldsGenerator objects
 
 When studying a specific class of problems, such as polymer thin films, 
-it is often most convenient to have appropriate mask and external fields 
-generated algorithmically within the PSCF software, based on numerical 
-values of a few parameters that are provided by the user within the 
-parameter file.  This can be done by the use of an ImposedFieldGenerator 
-object that is associated with the iterator.
+it is convenient for appropriate mask and external fields to be generated 
+algorithmically within the PSCF software, based on numerical values of a 
+few parameters that are provided by the user within the parameter file.  
+This can be done by the use of an ImposedFieldGenerator object that is 
+designed such a class of problems.
 
-An ImposedFieldsGenerator object is created by the inclusion of an 
-optional block of the parameter file inside of the Iterator block, after 
-all other Iterator parameters have been read. The first parameter inside 
-of this ImposedFieldsGenerator block is "type". The software uses this 
-"type" keyword to determine which imposed fields should be generated, what 
-their functional form should be, and what parameters are necessary to 
-define the imposed fields. Therefore, the implementation of the 
-ImposedFieldsGenerator feature is entirely different depending on what 
-keyword is provided as the value of the "type" parameter. All of the
-parameters required for the specified "type" of calculation appear after 
-the type parameter. 
+An ImposedFieldsGenerator object may be created by the user by including
+including an optional block of the parameter file inside of the Iterator 
+block, after all other Iterator parameters have been read. The first 
+parameter inside of this ImposedFieldsGenerator block is "type". 
+The software uses this "type" keyword to determine which imposed fields 
+should be generated, what their functional form should be, and what 
+parameters are necessary to define the imposed fields. Therefore, the 
+implementation of the ImposedFieldsGenerator feature is entirely different 
+depending on what keyword is provided as the value of the "type" parameter. 
+All of the parameters required for the specified "type" of calculation 
+appear after the type parameter. 
 
 An example is provided below for the "film" type, which is currently the
 only allowed value for the type parameter:
@@ -168,12 +205,12 @@ Iterator{
   }
 }
 \endcode
-In this example, the film "type" parameter is followed by 5 input
-parameters required to define a mask and external fields appropriate 
-to thin film problem, which are named normalVecId, interfaceThickness, 
-excludedThickness, chiBottom and chiTop.  The "film" type of 
-ImposedFieldsGenerator is described in detail on 
-the \ref scft_thin_films_page "Thin Films" page. 
+In this example, the value "film" for the "type" parameter is followed 
+by specialized 5 input parameters required to define a mask and external 
+fields appropriate to a polymer thin film problem, named normalVecId, 
+interfaceThickness, excludedThickness, chiBottom and chiTop.  The 
+"film" type of ImposedFieldsGenerator is described in detail in the 
+\ref scft_thin_films_page "Thin Films" page. 
 
 One advantage of the use of an ImposedFieldsGenerator to programmatically
 generate a mask and external fields is that this method allows these
@@ -191,9 +228,9 @@ requires repeated recomputation of the associated external fields.
 
 \section scft_imposed_freeenergy_sec Modified free energy calculation
 
-In the presence of imposed fields, it is necessary to modify the free 
-energy calculation to account for the fields. The free energy per monomer 
-reference volume \f$ \tilde{f} \f$ is defined to be 
+In the presence of imposed mask and external fields, it is necessary to 
+modify the free energy calculation to account for the fields.  The free 
+energy per monomer of material is given by
 \f[
    \tilde{f} = \tilde{f}_{\rm id} + \tilde{f}_{\rm int} + \tilde{f}_{\rm ext}
 \f]
@@ -216,39 +253,42 @@ where
     & = &  \frac{1}{\overline{m}V} \sum_{\alpha=0}^{C-1}
     \int \! d\textbf{r} \;
        h_{\alpha}(\textbf{r})
-      \phi_{\alpha}(\textbf{r})
+      \phi_{\alpha}(\textbf{r}) \quad.
 \f}
-where \f$ \overline{\phi_{i}} \f$ is the average volume fraction of species
-\f$ i \f$ across the entire unit cell, and \f$ \phi_{\alpha}({\bf r}) \f$
-is the local volume fraction of monomer \f$ \alpha \f$ at position **r**,
-such that the sum of \f$ \phi_{\alpha}({\bf r}) \f$ over all species is
-equal to \f$ m({\bf r}) \f$. \f$ \overline{m} \f$ is the average value of 
-the mask function \f$ m({\bf r}) \f$ over the entire unit cell, representing 
-the volume fraction of the unit cell that is occupied by polymer.
+Here, \f$ \phi_{\alpha}({\bf r}) = v c_{\alpha}({\bf r}) \f$ is the local 
+volume fraction of monomer type \f$ \alpha \f$ at position **r** , while 
+\f$ \overline{\phi_{i}} \f$ is the spatial average volume fraction of 
+molecular species \f$ i \f$ across the entire unit cell.
+These quantities are defined such that the sum of values of 
+\f$ \phi_{\alpha}({\bf r}) \f$ over all monomer types is equal to 
+\f$ m({\bf r}) \f$ (as discussed \ref scft_imposed_mask_sec "above"), while 
+the sum of values of \f$ \overline{\phi}_{i} \f$ over all molecular species 
+is equal to \f$ \overline{m} \f$.
 
-There are three changes in the above equations relative to those that
-describe systems in the absence of imposed fields (see \ref
-scft_propagator_thermo_sec "here"). 
-- First, an additional term is added, \f$ \tilde{f}_{\rm ext} \f$, that
-  contains the free energy arising from monomer species interacting with
-  their associated external potential fields. This property is output along
-  with the \ref scft_thermo_page "other thermodynamic properties" as "fExt"
-  for any calculation that uses an external field. 
-- Second, the overall volume fraction \f$ \overline{\phi_i} \f$ is replaced
-  with \f$ \overline{\phi_i}/\overline{m} \f$. In a system containing a
-  mask, the overall volume fractions \f$ \overline{\phi_i} \f$ will add to 
-  \f$ \overline{m} \f$, rather than one. But the volume fraction that is
-  relevant to thermodynamic properties like the entropy of mixing should
-  be the fraction of each species in the melt, the sum of which should be 
-  one. Therefore, we use \f$ \overline{\phi_i}/\overline{m} \f$.
-- And third, we use \f$ \overline{m}V \f$ rather than \f$ V \f$ as the
-  volume by which the integrals are normalized.  \f$ \overline{m} \f$ is
-  the volume fraction of the unit cell that is occupied by polymer. 
-  \f$ \overline{m}V \f$ is therefore the volume available to the polymers 
-  in the system, and is the volume that is relevant to the polymer 
-  thermodynamic properties. Note that \f$ \overline{m}V \f$ must also be 
-  used to normalize the spatial integral used to calculate \f$ Q_i \f$ in 
-  the presence of a mask.
+There are three changes in the above equations relative to those that 
+describe systems in the absence of imposed fields 
+(see \ref scft_propagator_thermo_sec "here"). 
+
+   - There is an additional term, \f$ \tilde{f}_{\rm ext} \f$, that contains 
+     the average energy per monomer arising from interaction of monomers 
+     with associated external potential fields. In any calculation that uses 
+     external fields, this property is output as "fExt" along with the 
+     \ref scft_thermo_page "other thermodynamic properties".
+
+   - The overall volume fraction \f$ \overline{\phi_i} \f$ is replaced by 
+     \f$ \overline{\phi_i}/\overline{m} \f$ within the expression for
+     \f$ \tilde{f}_{\rm id} \f$. In a system containing a mask, in which 
+     the sum of species volume fractions \f$ \overline{\phi}_i \f$ is 
+     equal to \f$ \overline{m} \f$ rather than unity, the ratio 
+     \f$ \overline{\phi}_{i}/\overline{m} \f$ represents the fraction of 
+     the material volume that is occupied by molecular species \f$ i \f$.
+
+   - The volume \f$ \overline{m}V \f$ that is occupied by material is
+     used to normalize spatial integrals, rather than the volume \f$ V \f$ 
+     of the computational unit cell, which includes regions from which
+     polymer material is excluded by the mask.  Note that the material 
+     volume \f$ \overline{m}V \f$ is also used to normalize the spatial 
+     integral used to define \f$ Q_i \f$ in a system with a mask.
 
 <BR>
  \ref scft_groups_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
