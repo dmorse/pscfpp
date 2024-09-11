@@ -1,9 +1,12 @@
-To be written (v1.2):
+============================================================================
+To be written or heavily edited (v1.2):
 
-   - Sec. 4.1 SCFT (Theory) and modify appendix
+   - Sec. 4.1 SCFT (Theory) [edit and expand, include MDE)
+   - Sec. 4.2 - Primary Operations and Commands
+   - Sec. 4.11 Modified Diffusion Equation (reduce overlap with 4.1)
    - Sec. 5 (FTS user doc - all of it)
 
-
+============================================================================
 1. About (Done)
 
    Model and Methods
@@ -18,8 +21,8 @@ To be written (v1.2):
 
 3. User Introduction  (Done)
 
-   1.  Model and Parameters  (unchanged from 3.1)
-   2.  Input Files  (unchanged from 3.2)
+   1.  Model and Parameters  (unchanged)
+   2.  Input Files  (unchanged)
    3.  Running a program
    4.  Types of calculation 
    5.  Parameter Files (Syntax and one example) 
@@ -28,74 +31,84 @@ To be written (v1.2):
          3. Format Descriptions 
          4. Mixture Block 
    6.  Command Files 
-         - Examples for 1D SCFT (in some page)
+         - Example for 1D SCFT 
    7.  Examples 
 
 4. Self-Consistent Field Theory (SCFT)
 
-   1.  Theory (Modify from current appendix)    <= To be written
-         - Modified diffusion equation
-         - SCFT equations
-         - Unit Cell Parameters
-   2.  Operations: ITERATE vs. SWEEP  ( <= To be written)
+   1.  Self-Consistent Field Theory (Done, but should be edited)
+         - Model and Notation
+         - Self-consistent field approximation
+         - Modified diffusion equation ( <= to be written and added )
+         - Unit Cell Parameters ( <= to be written and added )
+   2.  Primary Commands (Iteration vs. Sweep) (<= to be written)
    3.  Parameter Files (Full listing for 1d, pc, pg)
-        - Parameter file block for sweeps (current subsection 5)
-        - Subheadings for 1d, pc, pg (unchanged)
+        - Parameter File - pscf_1d
+            - Comparison to Homogeneous State
+        - Parameter File - pscf_pc
+        - Parameter File - pscf_pg
+        - Parameter Sweeps (move, but largely unchanged)
    4.  Field Files (unchanged)
    5.  Command Files  (Largely copied over, with brief intro)
         1. pscf_1d
-        2. pscf_pc
+        2. pscf_pc (edit discussion of imposed fields)
+           - WRITE_WAVES Command
+           - WRITE_STARS Command
+           - WRITE_GROUP Command
         3. pscf_pg
    6.  Thermodynamic Properties (unchanged)
    7.  Crystal Unit Cells (unchanged)
    8.  Space Groups (unchanged)
-   9.  Thin Films (unchanged)
+   9.  Imposed Fields (new, done by Ben)
    10. Visualization (unchanged)
    11. Python Tools 
 
-   A.  SCFT
-   B.  Periodic Functions and Fourier Series
-   C.  Space Group Symmetry
-   D.  Symmetry-Adapted Bases
+   Appendices:
+   12.  Appendix: SCFT (edit to avoid repetition of material in 4.1)
+   13.  Appendix: Periodic Functions and Fourier Series
+   14.  Appendix: Space Group Symmetry
+   15.  Appendix: Symmetry-Adapted Bases
 
-5. Field-Theoretic Simulation, Partial Saddle-Point Approximation (FTS-PS)
+5. Field-Theoretic Simulation, Partial Saddle-Point Approximation (PS-FTS)
 
-   1.  Introduction
-   2.  Incompressible Field Theoretic (Fully Fluctuating)
+        - FTS capabilities of PSCF
+        - SIMULATE Command
+
+   1.  Incompressible Field Theory (Fully Fluctuating)
+        - Potential Energy Model
         - Two-Monomer Systems (nMonomer = 2)
         - Projected Chi Matrix
         - General (nMonomer >= 2)
-   3.  Partial Saddle Point Approximation
-        - Restrictions (No positive eigenvalues)
-        - Approximation
-        - Algorithm
-   4.  Example (Parameter File and Command File)
-   5.  Sampling Algorithms
-   6.  Parameter Files (unified rpc and rpg )
+   2.  Partial Saddle Point Approximation
+        - Two-Monomer Systems
+        - General (Restriction to no positive eigenvalues)
+   3.  Sampling Algorithms
+   4.  Examples (unified rpc and rpg, parameter and command files)
         - BD Example
         - MC Example
-        - Analyzers
-   7.  Compressor Algorithms
+        - Data Analysis
+        - Trajectory Postprocessing
+   5.  Compressor Algorithms
         - AndersonMixing
         - LinearReponse
         - Linear Response / Anderson-Mixing
-   8.  Brownian Dynamics Steppers
+   6.  Brownian Dynamics Step Algorithms
         - Leimkuhler-Matthews
         - Predictor-Corrector
         - Explicit Euler
-   9.  Monte Carlo Moves
+   7.  Monte Carlo Move Algorithms
         - ForceBias
         - Local
         - Fourier
-   10. Data Analysis
-   11. Parameter Ramps
+   8.  Data Analysis Algorithms
+   9.  Parameter Ramps
    10. Perturbations
-   11. Commands
-   12. Postprocessing Field Trajectories
+   11. Postprocessing Field Trajectories
+   12. Commands
 
    A. Hubbard-Stratonovich Transformation  (v1.3)
    B. Functional Delta Function (v1.3)
    C. Projected Chi Matrix
    D. Functional Integral Representation of Z  (v1.3)
 
-6. Developer Guide
+6. Developer Guide (edit lightly for clarity)
