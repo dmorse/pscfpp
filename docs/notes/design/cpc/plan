@@ -1,0 +1,39 @@
+Design choices / conventions:
+=============================
+
+   Namespaces named Pscf::Cpc (CPU) and Pscf::Cpg (GPU), where the acronyms
+   stand for Cpc -> complex periodic CPU and Cpg -> complex periodic GPU
+
+   There will be no symmetry-adapted Fourier basis
+
+   In CPU code, use double and fftw_complex as types
+
+   In GPU code, use cudaReal, cudaComplex, hostReal and hostComplex aliases
+
+   In namespaces Cpc and Cpg, use namespace Pscf::Prdc but use explicit 
+   Cpu:: and Cuda:: qualifiers for classes defined in these subnamepsaces
+   of Pscf::Prdc. Rationale: RField and CField classes have the same names
+   in these namespaces, but are store data on CPU or GPU respectively.
+
+
+Programming tasks:
+==================
+
+In namespaces Pscf::Prdc::Cpu and Pscf::Prdc::Cuda
+
+   - Create class CField 
+   - Create class CFieldComparison
+   - Add complex transform functions to FFT
+
+In namespaces Pscf::Cpc and Pscf::Cpg
+
+   - Create class FieldIo (functions for both real and complex fields)
+   - Create class Domain (Mesh, UnitCell, FFT, FieldIo, no symmetry)
+
+In namespace Pscf:Cpc 
+
+   - Create solvers (Propagator, Block, Polymer, Solvent, Mixture)
+   - Create system
+   - Create Step base class, factory and default class
+   
+   Repeat above for Pscf::Cpg
