@@ -1,0 +1,11 @@
+url_path,views_total,views_unique
+/dmorse/pscfpp,55,25
+/dmorse/pscfpp/commits/devel,37,2
+/dmorse/pscfpp/branches,27,1
+/dmorse/pscfpp/tree/devel/src/prdc/cuda,17,1
+/dmorse/pscfpp/tree/devel,12,4
+/dmorse/pscfpp/blob/devel/src/rpc/simulate/Simulator.tpp,12,2
+/dmorse/pscfpp/tree/master/examples,11,3
+/dmorse/pscfpp/tree/devel/src/rpc/simulate,11,2
+/dmorse/pscfpp/blob/master/src/pscf/sweep/SweepTmpl.tpp,11,1
+/dmorse/pscfpp/pulls,10,2
