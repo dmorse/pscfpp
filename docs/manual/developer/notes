@@ -1,0 +1,54 @@
+
+========================================================================
+Pages
+=====
+
+Directory Structure (see below)
+
+   - Root Directory 
+   - Executables (to be written)  <====
+   - Build Process (In-Source vs. Out-of-Source)
+   - Source Code Namespaces (to be written)  <=====
+   - Source Directory
+      - Namespace Level Subdirectories
+      - Unit Tests
+      - C++ Files Types
+      - Other File Types
+   - Configuration Files (config.mk)
+
+       ROOT_DIR  -> pscfpp
+       SRC_DIR   -> $(ROOT_DIR)/src
+       BLD_DIR   -> $(ROOT_DIR)/src or $(ROOT_DIR)/bld
+       BIN_DIR   -> $(ROOT_DIR)/bin
+
+Source File Lists (Written)
+
+Build System (Needs to be rewritten)
+
+   - Makefiles (Top Down)
+
+   - Build Process (Namespace Level)
+
+     List relevant files.
+
+     Use rpc as an example
+
+   - Pattern Rules
+
+   - Source File Lists
+
+   - Include.mk File
+
+     Show example
+
+   - Makefile
+
+Coding Standards (complete)
+
+Use of C++ Templates (complete)
+
+Parameter File IO (needs to be edited)
+
+Unit Tests
+
+========================================================================
