@@ -135,6 +135,10 @@ namespace Rpg {
       if (analyzerManager_.size() > 0){
          analyzerManager_.setup();
       }
+      
+      // Compress the initial field before entering simulate loop. 
+      compressor().compress();
+      compressor().clearTimers();
    }
 
    /*

@@ -1,0 +1,33 @@
+System{
+  Mixture{
+    nMonomer  2
+    monomers[
+             1.0  
+             1.0 
+    ]
+    nPolymer  1
+    Polymer{
+      type    linear
+      nBlock  2
+      blocks[
+              0   0.5
+              1   0.5
+      ]
+      phi     1.0
+    }
+    vMonomer  0.01
+    ds   0.01
+  }
+  Interaction{
+    chi(
+        1   0   10
+    )
+  }
+  Domain{
+    mesh        16    16    16
+    lattice     cubic   
+  }
+}
+
+  unitCell cubic   3.29
+  groupName   P_-1
