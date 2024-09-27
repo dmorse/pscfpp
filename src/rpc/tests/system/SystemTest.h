@@ -304,8 +304,8 @@ public:
 
       // Copy the wFieldsRGrid to a temporary container
       RField<3> field;
-      field.allocate(system.mesh().dimensions());
-      int meshSize = system.mesh().size();
+      field.allocate(system.domain().mesh().dimensions());
+      int meshSize = system.domain().mesh().size();
       for (int j = 0; j < meshSize; ++j) {
          field[j] = system.w().rgrid(0)[j];
       }
@@ -347,10 +347,10 @@ public:
       }
       system.fieldIo().writeFieldsBasis("out/testIterate1D_lam_rigid_w.bf", 
                                         system.w().basis(), 
-                                        system.unitCell());
+                                        system.domain().unitCell());
       system.fieldIo().writeFieldsBasis("out/testIterate1D_lam_rigid_c.bf", 
                                         system.c().basis(), 
-                                        system.unitCell());
+                                        system.domain().unitCell());
 
       // Compare solution to original fields
       BFieldComparison comparison(1);
@@ -394,10 +394,10 @@ public:
       }
       system.fieldIo().writeFieldsBasis("out/testIterate1D_lam_flex_w.bf", 
                                         system.w().basis(), 
-                                        system.unitCell());
+                                        system.domain().unitCell());
       system.fieldIo().writeFieldsBasis("out/testIterate1D_lam_flex_c.bf", 
                                         system.c().basis(), 
-                                        system.unitCell());
+                                        system.domain().unitCell());
 
       DArray< DArray<double> > wFields_check;
       wFields_check = system.w().basis();
@@ -439,10 +439,10 @@ public:
       }
       system.fieldIo().writeFieldsBasis("out/testIterate1D_lam_soln_w.bf", 
                                         system.w().basis(), 
-                                        system.unitCell());
+                                        system.domain().unitCell());
       system.fieldIo().writeFieldsBasis("out/testIterate1D_lam_soln_c.bf", 
                                         system.c().basis(), 
-                                        system.unitCell());
+                                        system.domain().unitCell());
 
       BFieldComparison comparison(1);
       comparison.compare(wFields_check, system.w().basis());
@@ -481,10 +481,10 @@ public:
       }
       system.fieldIo().writeFieldsBasis("out/testIterate1D_lam_open_soln_w.bf", 
                                         system.w().basis(), 
-                                        system.unitCell());
+                                        system.domain().unitCell());
       system.fieldIo().writeFieldsBasis("out/testIterate1D_lam_open_soln_c.bf", 
                                         system.c().basis(), 
-                                        system.unitCell());
+                                        system.domain().unitCell());
 
       // Compare result
       BFieldComparison comparison(1);
@@ -523,10 +523,10 @@ public:
       }
       system.fieldIo().writeFieldsBasis("out/testIterate1D_lam_open_blend_w.bf", 
                                         system.w().basis(), 
-                                        system.unitCell());
+                                        system.domain().unitCell());
       system.fieldIo().writeFieldsBasis("out/testIterate1D_lam_open_blend_c.bf", 
                                         system.c().basis(), 
-                                        system.unitCell());
+                                        system.domain().unitCell());
 
       // Compare result
       BFieldComparison comparison(1);
@@ -639,10 +639,10 @@ public:
       }
       system.fieldIo().writeFieldsBasis("out/testIterate2D_hex_rigid_w.bf", 
                                         system.w().basis(), 
-                                        system.unitCell());
+                                        system.domain().unitCell());
       system.fieldIo().writeFieldsBasis("out/testIterate2D_hex_rigid_c.bf", 
                                         system.c().basis(), 
-                                        system.unitCell());
+                                        system.domain().unitCell());
 
       // Compare current solution to reference solution
       BFieldComparison comparison(1);
@@ -693,10 +693,10 @@ public:
       }
       system.fieldIo().writeFieldsBasis("out/testIterate2D_hex_flex_w.bf", 
                                         system.w().basis(), 
-                                        system.unitCell());
+                                        system.domain().unitCell());
       system.fieldIo().writeFieldsBasis("out/testIterate2D_hex_flex_c.bf", 
                                         system.c().basis(), 
-                                        system.unitCell());
+                                        system.domain().unitCell());
 
       // Compare solution to reference solution
       BFieldComparison comparison(1);
@@ -739,10 +739,10 @@ public:
       }
       system.fieldIo().writeFieldsBasis("out/testIterate3D_bcc_rigid_w.bf", 
                                         system.w().basis(), 
-                                        system.unitCell());
+                                        system.domain().unitCell());
       system.fieldIo().writeFieldsBasis("out/testIterate3D_bcc_rigid_c.bf", 
                                         system.c().basis(), 
-                                        system.unitCell());
+                                        system.domain().unitCell());
 
       // Compare solution to reference solution
       BFieldComparison comparison(1); // Constructor argument 1 skips star 0
@@ -790,10 +790,10 @@ public:
       }
       system.fieldIo().writeFieldsBasis("out/testIterate3D_bcc_flex_w.bf", 
                                         system.w().basis(), 
-                                        system.unitCell());
+                                        system.domain().unitCell());
       system.fieldIo().writeFieldsBasis("out/testIterate3D_bcc_flex_c.bf", 
                                         system.c().basis(), 
-                                        system.unitCell());
+                                        system.domain().unitCell());
 
       BFieldComparison comparison(1);
       comparison.compare(wFields_check, system.w().basis());
@@ -835,10 +835,10 @@ public:
       }
       system.fieldIo().writeFieldsBasis("out/testIterate3D_altGyr_flex_w.bf", 
                                         system.w().basis(), 
-                                        system.unitCell());
+                                        system.domain().unitCell());
       system.fieldIo().writeFieldsBasis("out/testIterate3D_altGyr_flex_c.bf", 
                                         system.c().basis(), 
-                                        system.unitCell());
+                                        system.domain().unitCell());
 
       // Compare w fields
       BFieldComparison comparison(1);
@@ -861,7 +861,7 @@ public:
       TEST_ASSERT(std::abs(fDiff) < 1.0E-7);
 
       // Compare relaxed unit cell parameters
-      double cellParam = system.unitCell().parameter(0); 
+      double cellParam = system.domain().unitCell().parameter(0); 
       double cellParamRef = 2.2348701424;     // from PSCF Fortran
       double cellDiff = cellParam - cellParamRef;
       if (verbose() > 0) {
@@ -896,10 +896,10 @@ public:
       }
       system.fieldIo().writeFieldsBasis("out/testIterate3D_c15_1_flex_w.bf", 
                                         system.w().basis(), 
-                                        system.unitCell());
+                                        system.domain().unitCell());
       system.fieldIo().writeFieldsRGrid("out/testIterate3D_c15_1_flex_w.rf", 
                                         system.c().rgrid(), 
-                                        system.unitCell());
+                                        system.domain().unitCell());
 
       BFieldComparison comparison(1);
       comparison.compare(wFields_check, system.w().basis());

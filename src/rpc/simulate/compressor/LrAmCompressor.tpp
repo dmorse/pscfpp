@@ -49,7 +49,7 @@ namespace Rpc{
    {
       const int nMonomer = system().mixture().nMonomer();
       const int meshSize = system().domain().mesh().size();
-      IntVec<D> const & dimensions = system().mesh().dimensions();
+      IntVec<D> const & dimensions = system().domain().mesh().dimensions();
       // Allocate memory required by AM algorithm if not done earlier.
       AmIteratorTmpl<Compressor<D>, DArray<double> >::setup(isContinuation);
 

@@ -630,14 +630,14 @@ namespace Rpc {
                h_.allocateBasis(basis().nBasis());
             }
             if (!h_.isAllocatedRGrid()) {
-               h_.allocateRGrid(mesh().dimensions());
+               h_.allocateRGrid(domain().mesh().dimensions());
             }
             h_.readBasis(filename, domain_.unitCell());
          } else
          if (command == "READ_H_RGRID") {
             readEcho(in, filename);
             if (!h_.isAllocatedRGrid()) {
-               h_.allocateRGrid(mesh().dimensions());
+               h_.allocateRGrid(domain().mesh().dimensions());
             }
             h_.readRGrid(filename, domain_.unitCell());
          } else
@@ -645,25 +645,25 @@ namespace Rpc {
             readEcho(in, filename);
             UTIL_CHECK(h_.hasData());
             UTIL_CHECK(h_.isSymmetric());
-            fieldIo().writeFieldsBasis(filename, h_.basis(), unitCell());
+            fieldIo().writeFieldsBasis(filename, h_.basis(), domain().unitCell());
          } else
          if (command == "WRITE_H_RGRID") {
             readEcho(in, filename);
             UTIL_CHECK(h_.hasData());
-            fieldIo().writeFieldsRGrid(filename, h_.rgrid(), unitCell());
+            fieldIo().writeFieldsRGrid(filename, h_.rgrid(), domain().unitCell());
          } else
          if (command == "READ_MASK_BASIS") {
             UTIL_CHECK(domain_.basis().isInitialized());
             readEcho(in, filename);
             if (!mask_.isAllocated()) {
-               mask_.allocate(basis().nBasis(), mesh().dimensions());
+               mask_.allocate(basis().nBasis(), domain().mesh().dimensions());
             }
             mask_.readBasis(filename, domain_.unitCell());
          } else
          if (command == "READ_MASK_RGRID") {
             readEcho(in, filename);
             if (!mask_.isAllocated()) {
-               mask_.allocate(basis().nBasis(), mesh().dimensions());
+               mask_.allocate(basis().nBasis(), domain().mesh().dimensions());
             }
             mask_.readBasis(filename, domain_.unitCell());
          } else
@@ -671,12 +671,14 @@ namespace Rpc {
             readEcho(in, filename);
             UTIL_CHECK(mask_.hasData());
             UTIL_CHECK(mask_.isSymmetric());
-            fieldIo().writeFieldBasis(filename, mask_.basis(), unitCell());
+            fieldIo().writeFieldBasis(filename, mask_.basis(), 
+                                      domain().unitCell());
          } else
          if (command == "WRITE_MASK_RGRID") {
             readEcho(in, filename);
             UTIL_CHECK(mask_.hasData());
-            fieldIo().writeFieldRGrid(filename, mask_.rgrid(), unitCell(),
+            fieldIo().writeFieldRGrid(filename, mask_.rgrid(), 
+                                      domain().unitCell(),
                                       mask_.isSymmetric());
          } else {
             Log::file() << "Error: Unknown command  "
@@ -1310,10 +1312,10 @@ namespace Rpc {
       }
 
       out << "cellParams:" << std::endl;
-      for (int i = 0; i < unitCell().nParameter(); ++i) {
+      for (int i = 0; i < domain().unitCell().nParameter(); ++i) {
          out << Int(i, 5)
              << "  "
-             << Dbl(unitCell().parameter(i), 18, 11)
+             << Dbl(domain().unitCell().parameter(i), 18, 11)
              << std::endl;
       }
       out << std::endl;

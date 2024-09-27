@@ -70,7 +70,7 @@ namespace Rpc
    {  
       McMove<D>::setup();
       const int nMonomer = system().mixture().nMonomer();
-      IntVec<D> const & dimensions = system().mesh().dimensions();
+      IntVec<D> const & dimensions = system().domain().mesh().dimensions();
       if (!isAllocated_){
          wFieldTmp_.allocate(nMonomer);
          wKGrid_.allocate(nMonomer);
@@ -80,7 +80,7 @@ namespace Rpc
          }
          isAllocated_ = true;
       }
-      structureFactors_.allocate(system().mesh().size());
+      structureFactors_.allocate(system().domain().mesh().size());
       computeRgSquare();
       computeStructureFactor();
    }
@@ -140,7 +140,9 @@ namespace Rpc
    void FourierMove<D>::computeStructureFactor()
    {
       MeshIterator<D> itr;
-      itr.setDimensions(system().mesh().dimensions());
+      IntVec<D> meshDimensions = system().domain().mesh().dimensions();
+      UnitCell<D> const & unitCell = system().domain().unitCell();
+      itr.setDimensions(meshDimensions);
       IntVec<D> G; IntVec<D> Gmin; 
       double qSq; double S_; 
       for (itr.begin(); !itr.atEnd(); ++itr){
@@ -150,8 +152,8 @@ namespace Rpc
          // Obtain square magnitude of reciprocal basis vector
          if (itr.rank() >= 1){
             G = itr.position();
-            Gmin = shiftToMinimum(G, system().mesh().dimensions(), system().unitCell());
-            qSq = system().unitCell().ksq(Gmin);
+            Gmin = shiftToMinimum(G, meshDimensions, unitCell);
+            qSq = unitCell.ksq(Gmin);
             // Compute Fredrickson-Helfand structure factor
             S_ = computeS(qSq);
             structureFactors_[itr.rank()] = S_;

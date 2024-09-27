@@ -4,28 +4,30 @@ v1.2
 Rpc:  
 -----
 
-Field Theoretic simulation with real fields (FTS-R):
+Field Theoretic simulation with real fields (FTS-R) (done):
 
-  - Create AMCompressor and LrAmCompressor (done)
-  - Create Simulation classes and subclasses (done)
-  - Create Analyzer and simple subclasses (done)
-  - Add commands to System (done)
-  - Create classes to read and write trajectories (done)
-  - Create real-space and Fourier space MC moves (done)
-  - Create Explicit, PredCorr and Leimkuhler-Matthews bd steps (done)
+  - Create AMCompressor and LrAmCompressor 
+  - Create Simulation classes and subclasses 
+  - Create Analyzer and simple subclasses 
+  - Add commands to System 
+  - Create classes to read and write trajectories 
+  - Create real-space and Fourier space MC moves 
+  - Create Explicit, PredCorr and Leimkuhler-Matthews bd steps
+
+Improve encapsulation (ongoing)
 
 Rpg:  
 -----
 
-Field Theoretic simulation with real fields (FTS-R):
+Field Theoretic simulation with real fields (FTS-R) (done):
 
-  - Create AMCompressor and LrAmCompressor (done)
-  - Create Simulation classes and subclasses (nearly done, reorganizing)
-  - Create Analyzer and simple subclasses (done)
-  - Add commands to System (done)
-  - Create classes to read and write trajectories (done)
-  - Create real-space and Fourier space MC moves (done)
-  - Create Explicit, PredCorr and Leimkuhler-Matthews bd steps  (done)
+  - Create AMCompressor and LrAmCompressor 
+  - Create Simulation classes and subclasses 
+  - Create Analyzer and simple subclasses 
+  - Add commands to System 
+  - Create classes to read and write trajectories 
+  - Create real-space and Fourier space MC moves 
+  - Create Explicit, PredCorr and Leimkuhler-Matthews bd steps 
 
 Docs:
 -----
@@ -40,17 +42,13 @@ Field-theoretic simulation with real fields (FTS-R)
 
   - Document MC moves and Bd step algorithms
 
-Documentation for building on Windows Subsystem for Linux (WSL)
-
-Improve developer documentation for build system, Parameter IO
-
 ------------------------------------------------------------------------
 v1.3
 
 Pscf
 -----
 
-1) Review and clean up redundant GPU kernels (leave for v1.1?)
+1) Review and clean up redundant GPU kernels 
 
 2) Change treatment of phases in Basis to explicitly store and 
 manipulate Rational number phases, compute floating point coefficients 
@@ -67,7 +65,11 @@ order.
 Docs
 -----
 
-1) Write a first draft of a latex algorithms and theory manual, or 
+1) Documentation for building on Windows Subsystem for Linux (WSL)
+
+2) Improve developer documentation for build system, Parameter IO
+
+3) Write a first draft of a latex algorithms and theory manual, or 
 publish as an article in a computational science oriented journal.
 
 ------------------------------------------------------------------------

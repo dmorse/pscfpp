@@ -70,12 +70,13 @@ namespace Rpc {
 
       // Read Header
       int nMonomer = system().mixture().nMonomer();
-      Domain<D> & domain = system().domain();
-      UnitCell<D> & unitcell = domain.unitCell();
-      FieldIo<D> & fieldIo = domain.fieldIo();
+      Domain<D> const & domain = system().domain();
+      FieldIo<D> const & fieldIo = domain.fieldIo();
+      UnitCell<D> tmpUnitCell;
       bool hasSymmetry;
-      fieldIo.readFieldHeader(inputfile_, nMonomer, unitcell, hasSymmetry);
-      //Log::file()<<"Read Header" << "\n";
+      fieldIo.readFieldHeader(inputfile_, nMonomer, tmpUnitCell, 
+                              hasSymmetry);
+      system().setUnitCell(tmpUnitCell);
    }
 
    /*
@@ -119,7 +120,7 @@ namespace Rpc {
       int nMonomer = system().mixture().nMonomer();
 
       // Read a single real-space grid field frame from trajectory file
-      FieldIo<D> & fieldIo = system().domain().fieldIo();
+      FieldIo<D> const & fieldIo = system().domain().fieldIo();
       fieldIo.readFieldsRGridData(inputfile_, wField_, nMonomer);
 
       // Update system real-space grid field 

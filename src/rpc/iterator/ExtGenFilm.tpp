@@ -53,18 +53,18 @@ namespace Rpc
    template <int D>
    void ExtGenFilm<D>::allocate()
    {
-      UTIL_CHECK(system().basis().isInitialized());
-      UTIL_CHECK(system().unitCell().isInitialized());
+      UTIL_CHECK(system().domain().basis().isInitialized());
+      UTIL_CHECK(system().domain().unitCell().isInitialized());
 
       system().h().setFieldIo(system().fieldIo());
 
       // Allocate the external field containers if needed
       if (!isAthermal()) {
          if (!system().h().isAllocatedRGrid()) {
-            system().h().allocateRGrid(system().mesh().dimensions());
+            system().h().allocateRGrid(system().domain().mesh().dimensions());
          }
          if (!system().h().isAllocatedBasis()) {
-            system().h().allocateBasis(system().basis().nBasis());
+            system().h().allocateBasis(system().domain().basis().nBasis());
          }
       }
    }

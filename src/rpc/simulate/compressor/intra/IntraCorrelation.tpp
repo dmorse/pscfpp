@@ -85,7 +85,7 @@ namespace Rpc{
    RField<D> IntraCorrelation<D>::computeIntraCorrelations()
    {
       
-      IntVec<D> const & dimensions = system().mesh().dimensions();
+      IntVec<D> const & dimensions = system().domain().mesh().dimensions();
       
       // Compute Fourier space kMeshDimensions_
       for (int i = 0; i < D; ++i) {
@@ -98,20 +98,20 @@ namespace Rpc{
          }
       }
       
-      // Define IntraCorrelations.
+      // Define IntraCorrelations 
       RField<D> intraCorrelations;
       intraCorrelations.allocate(kMeshDimensions_);
       
-      // Define iterator
+      // Iterator over k-grid points
       MeshIterator<D> iter;
       iter.setDimensions(kMeshDimensions_);
       IntVec<D> G, Gmin;
       double Gsq;
+      UnitCell<D> const & unitCell = system().domain().unitCell();
       for (iter.begin(); !iter.atEnd(); ++iter) {
          G = iter.position();
-         Gmin = shiftToMinimum(G, system().mesh().dimensions(), 
-                                  system().unitCell());
-         Gsq = system().unitCell().ksq(Gmin);
+         Gmin = shiftToMinimum(G, dimensions, unitCell);
+         Gsq = unitCell.ksq(Gmin);
          intraCorrelations[iter.rank()] = computeIntraCorrelation(Gsq);
       }
       

@@ -50,10 +50,10 @@ namespace Rpc {
       isFlexible_ = 1; 
       scaleStress_ = 10.0;
 
-      int np = system().unitCell().nParameter();
+      int np = system().domain().unitCell().nParameter();
       UTIL_CHECK(np > 0);
       UTIL_CHECK(np <= 6);
-      UTIL_CHECK(system().unitCell().lattice() != UnitCell<D>::Null);
+      UTIL_CHECK(system().domain().unitCell().lattice() != UnitCell<D>::Null);
 
       // Read optional isFlexible boolean (true by default)
       readOptional(in, "isFlexible", isFlexible_);
@@ -199,7 +199,7 @@ namespace Rpc {
    int AmIteratorBasis<D>::nElements()
    {
       const int nMonomer = system().mixture().nMonomer();
-      const int nBasis = system().basis().nBasis();
+      const int nBasis = system().domain().basis().nBasis();
 
       int nEle = nMonomer*nBasis;
       if (isFlexible()) {
@@ -214,7 +214,7 @@ namespace Rpc {
    void AmIteratorBasis<D>::getCurrent(DArray<double>& curr)
    {
       const int nMonomer = system().mixture().nMonomer();
-      const int nBasis = system().basis().nBasis();
+      const int nBasis = system().domain().basis().nBasis();
       const DArray< DArray<double> > * currSys = &system().w().basis();
 
       // Straighten out fields into linear arrays
@@ -226,9 +226,9 @@ namespace Rpc {
 
       // Add elements associated with unit cell parameters (if any)
       if (isFlexible()) {
-         const int nParam = system().unitCell().nParameter();
+         const int nParam = system().domain().unitCell().nParameter();
          const FSArray<double,6> currParam 
-                                  = system().unitCell().parameters();
+                                  = system().domain().unitCell().parameters();
          int counter = 0;
          for (int i = 0; i < nParam; i++) {
             if (flexibleParams_[i]) {
@@ -260,7 +260,7 @@ namespace Rpc {
    {
       const int n = nElements();
       const int nMonomer = system().mixture().nMonomer();
-      const int nBasis = system().basis().nBasis();
+      const int nBasis = system().domain().basis().nBasis();
 
       // Initialize residual vector to zero
       for (int i = 0 ; i < n; ++i) {
@@ -322,7 +322,7 @@ namespace Rpc {
 
       // If variable unit cell, compute stress residuals
       if (isFlexible()) {
-         const int nParam = system().unitCell().nParameter();
+         const int nParam = system().domain().unitCell().nParameter();
 
          // Combined -1 factor and stress scaling here. This is okay:
          // - residuals only show up as dot products (U, v, norm)
@@ -352,7 +352,7 @@ namespace Rpc {
    {
       // Convert back to field format
       const int nMonomer = system().mixture().nMonomer();
-      const int nBasis = system().basis().nBasis();
+      const int nBasis = system().domain().basis().nBasis();
 
       DArray< DArray<double> > wField;
       wField.allocate(nMonomer);
@@ -385,8 +385,9 @@ namespace Rpc {
       system().setWBasis(wField);
 
       if (isFlexible()) {
-         const int nParam = system().unitCell().nParameter();
-         FSArray<double,6> parameters = system().unitCell().parameters();
+         const int nParam = system().domain().unitCell().nParameter();
+         FSArray<double,6> parameters 
+                                  = system().domain().unitCell().parameters();
          int counter = 0;
 
          for (int i = 0; i < nParam; i++) {
@@ -411,12 +412,12 @@ namespace Rpc {
    void AmIteratorBasis<D>::outputToLog()
    {
       if (isFlexible() && verbose() > 1) {
-         const int nParam = system().unitCell().nParameter();
+         const int nParam = system().domain().unitCell().nParameter();
          for (int i = 0; i < nParam; i++) {
             if (flexibleParams_[i]) {
                Log::file() 
                       << " Cell Param  " << i << " = "
-                      << Dbl(system().unitCell().parameters()[i], 15)
+                      << Dbl(system().domain().unitCell().parameters()[i], 15)
                       << " , stress = " 
                       << Dbl(system().mixture().stress(i), 15)
                       << "\n";

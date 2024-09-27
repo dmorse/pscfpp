@@ -60,7 +60,7 @@ namespace Rpc{
    {
       const int nMonomer = system().mixture().nMonomer();
       const int meshSize = system().domain().mesh().size();
-      IntVec<D> const & dimensions = system().mesh().dimensions();
+      IntVec<D> const & dimensions = system().domain().mesh().dimensions();
       for (int i = 0; i < D; ++i) {
          if (i < D - 1) {
             kMeshDimensions_[i] = dimensions[i];

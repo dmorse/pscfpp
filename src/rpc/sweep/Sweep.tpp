@@ -89,7 +89,7 @@ namespace Rpc {
       UTIL_CHECK(hasSystem());
       state.setSystem(system());
       state.allocate();
-      state.unitCell() = system().unitCell();
+      state.unitCell() = system().domain().unitCell();
    }
 
    /*
@@ -172,9 +172,9 @@ namespace Rpc {
          // (if we are sweeping in a lattice parameter, then the system
          // parameters will be up-to-date but unitCellParameters_ wont be)
          FSArray<double, 6> oldParameters = unitCellParameters_;
-         unitCellParameters_ = system().unitCell().parameters();
+         unitCellParameters_ = system().domain().unitCell().parameters();
 
-         // If isFlexible, then extrapolate the flexible unit cell parameters
+         // If isFlexible, extrapolate the flexible unit cell parameters
          if (isFlexible) {
 
             double coeff;
@@ -182,7 +182,8 @@ namespace Rpc {
 
             const FSArray<bool,6> flexParams =
                               system().iterator().flexibleParams();
-            const int nParameter = system().unitCell().nParameter();
+            const int nParameter 
+                             = system().domain().unitCell().nParameter();
             UTIL_CHECK(flexParams.size() == nParameter);
 
            // Add contributions from all previous states
@@ -290,7 +291,7 @@ namespace Rpc {
       UTIL_CHECK(system().w().isSymmetric());
       system().fieldIo().writeFieldsBasis(outFileName,
                                           system().w().basis(),
-                                          system().unitCell());
+                                          system().domain().unitCell());
 
       // Optionally write c rgrid files
       if (writeCRGrid_) {
@@ -300,7 +301,7 @@ namespace Rpc {
          outFileName += ".rf";
          system().fieldIo().writeFieldsRGrid(outFileName,
                                              system().c().rgrid(),
-                                             system().unitCell());
+                                             system().domain().unitCell());
       }
 
        // Optionally write c basis files
@@ -312,7 +313,7 @@ namespace Rpc {
          UTIL_CHECK(system().hasCFields());
          system().fieldIo().writeFieldsBasis(outFileName,
                                              system().c().basis(),
-                                             system().unitCell());
+                                             system().domain().unitCell());
       }
 
       // Optionally write w rgrid files
@@ -323,7 +324,7 @@ namespace Rpc {
          outFileName += ".rf";
          system().fieldIo().writeFieldsRGrid(outFileName,
                                              system().w().rgrid(),
-                                             system().unitCell());
+                                             system().domain().unitCell());
       }
    }
 

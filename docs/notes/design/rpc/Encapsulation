@@ -1,8 +1,5 @@
 Goal: Change pscfpp interfaces so as to better enforce data validity.
 
-Challenge: We need to be careful about changes to classes that are 
-used by 
-
 ======================================================================
 Changes that can be made (mostly) without affecting GPU code:
 
@@ -44,15 +41,14 @@ Monomer Kuhn Length
      This would change Monomer functions setStep(double ) and step()
      to setKuhn(double ) and kuhn().
 
-UnitCell
---------
+Domain
+------
 
-   - Create public functions System<D>::setUnitCell(FSArray const & )
-     and System<D>::setUnitCell(UnitCell<D> const & ). These functions
-     should call setUnitCell(...) functions for all blocks internally,
-     and Basis<D>::update(....) internally.
+   - Get rid of member functions of system that directly return members
+     of Domain (unitCell, mesh, basis).
 
-   - Make System<D> return unitCell() as a const reference.
+   - Make System return domain by const reference, so that members of
+     domain cannot be directly modified outside of System class.
 
 C-Fields
 --------

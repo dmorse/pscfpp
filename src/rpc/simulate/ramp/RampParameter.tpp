@@ -195,7 +195,7 @@ namespace Rpc {
       } else if (type_ == Solvent) {
          return systemPtr_->mixture().solvent(id(0)).size();
       } else if (type_ == Cell_Param) {
-         return systemPtr_->unitCell().parameter(id(0));
+         return systemPtr_->domain().unitCell().parameter(id(0));
       } else if (type_ == Lambda_Pert) {
          UTIL_CHECK(simulatorPtr_->hasPerturbation());
          return simulatorPtr_->perturbation().lambda();
@@ -226,7 +226,8 @@ namespace Rpc {
       } else if (type_ == Solvent) {
          systemPtr_->mixture().solvent(id(0)).setSize(newVal);
       } else if (type_ == Cell_Param) {
-         FSArray<double,6> params = systemPtr_->unitCell().parameters();
+         FSArray<double,6> params 
+                            = systemPtr_->domain().unitCell().parameters();
          params[id(0)] = newVal;
          systemPtr_->setUnitCell(params);
       } else if (type_ == Lambda_Pert) {

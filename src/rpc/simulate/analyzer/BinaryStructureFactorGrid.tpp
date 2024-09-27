@@ -71,7 +71,7 @@ namespace Rpc {
       }
       
       //Allocate variables
-      IntVec<D> const & dimensions = system().mesh().dimensions();
+      IntVec<D> const & dimensions = system().domain().mesh().dimensions();
       if (!isInitialized_){
          wKGrid_.allocate(nMonomer);
          for (int i = 0; i < nMonomer; ++i) {
@@ -116,7 +116,7 @@ namespace Rpc {
    template <int D>   
    void BinaryStructureFactorGrid<D>::updateAccumulators() 
    {
-      IntVec<D> const & dimensions = system().mesh().dimensions();
+      IntVec<D> const & dimensions = system().domain().mesh().dimensions();
       RField<D> wm;
       wm.allocate(dimensions);
       // Compute W-
@@ -157,7 +157,11 @@ namespace Rpc {
       for (int i = 0; i < nMonomer; ++i) {
          system().fft().forwardTransform(system().w().rgrid()[i], wKGrid_[i]);
       }
-      IntVec<D> G; IntVec<D> Gmin; 
+
+      IntVec<D> G; 
+      IntVec<D> Gmin; 
+      IntVec<D> meshDimensions = system().domain().mesh().dimensions(); 
+      UnitCell<D> const & unitCell = system().domain().unitCell();
       MeshIterator<D> itr(wKGrid_[0].dftDimensions());
       double kSq;
       std::vector<double> qRoList(wKGrid_[0].capacity());
@@ -165,8 +169,8 @@ namespace Rpc {
       for (itr.begin(); !itr.atEnd(); ++itr){
          // Obtain square magnitude of reciprocal basis vector
          G = itr.position();
-         Gmin = shiftToMinimum(G, system().mesh().dimensions(), system().unitCell());
-         kSq = system().unitCell().ksq(Gmin);
+         Gmin = shiftToMinimum(G, meshDimensions, unitCell);
+         kSq = unitCell.ksq(Gmin);
          qRoList[itr.rank()] = sqrt(kSq * roSquare_);
       }
      

@@ -55,15 +55,15 @@ namespace Rpc
    template <int D>
    void MaskGenFilm<D>::allocate()
    {
-      UTIL_CHECK(system().basis().isInitialized());
-      UTIL_CHECK(system().unitCell().isInitialized());
+      UTIL_CHECK(system().domain().basis().isInitialized());
+      UTIL_CHECK(system().domain().unitCell().isInitialized());
 
       system().mask().setFieldIo(system().fieldIo());
 
       // Allocate the mask containers if needed
       if (!system().mask().isAllocated()) {
-         system().mask().allocate(system().basis().nBasis(), 
-                                  system().mesh().dimensions());
+         system().mask().allocate(system().domain().basis().nBasis(), 
+                                  system().domain().mesh().dimensions());
       }
    }
 

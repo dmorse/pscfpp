@@ -109,7 +109,7 @@ namespace Rpc
       }
 
       // Get system unit cell
-      unitCell() = system().unitCell();
+      unitCell() = system().domain().unitCell();
    }
 
    /*

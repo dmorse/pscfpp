@@ -74,7 +74,7 @@ namespace Rpc {
       }
       
       //Allocate variables
-      IntVec<D> const & dimensions = system().mesh().dimensions();
+      IntVec<D> const & dimensions = system().domain().mesh().dimensions();
       if (!isInitialized_){
          wK_.allocate(dimensions);
       }

@@ -685,8 +685,8 @@ namespace Rpc {
 
    template <int D>
    void FieldIo<D>::readFieldsRGrid(std::string filename,
-                              DArray< RField<D> >& fields,
-                              UnitCell<D>& unitCell)
+                                    DArray< RField<D> >& fields,
+                                    UnitCell<D>& unitCell) 
    const
    {
       std::ifstream file;
@@ -697,8 +697,8 @@ namespace Rpc {
 
    template <int D>
    void FieldIo<D>::readFieldRGrid(std::istream &in,
-                                    RField<D> & field,
-                                    UnitCell<D>& unitCell)
+                                   RField<D> & field,
+                                   UnitCell<D>& unitCell)
    const
    {
       int nMonomer;

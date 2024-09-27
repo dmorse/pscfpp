@@ -56,8 +56,8 @@ namespace Rpc {
    *    - a Mixture (a container for polymer and solvent solvers)
    *    - an Interaction (list of binary chi parameters)
    *    - a Domain (description of unit cell and discretization)
-   *    - a container of monomer chemical potential fields 
-   *    - a container of monomer concentration fields 
+   *    - a container of monomer chemical potential fields
+   *    - a container of monomer concentration fields
    *
    * A system may also optionally contain Iterator, Sweep, and
    * Simulator objects.
@@ -105,7 +105,7 @@ namespace Rpc {
       * Process command line options.
       *
       * This function takes the same arguments as any C/C++ main program
-      * function. The arguments of the main function should d be passed 
+      * function. The arguments of the main function should d be passed
       * to this function unaltered, to allow this function to process the
       * command line options.
       *
@@ -159,12 +159,12 @@ namespace Rpc {
       * Read chemical potential fields in symmetry adapted basis format.
       *
       * This function opens and reads the file with the name given by the
-      * "filename" string parameter, which must contain chemical potential 
+      * "filename" string parameter, which must contain chemical potential
       * fields in symmetry-adapted basis format. The function sets the
       * system w fields equal to those given in this file, by copying
       * elements of the representation in basis format and computing the
       * representation in r-grid format. On exit, both w().basis() and
-      * w().rgrid() have been reset, w().hasData and w().isSymmetric() 
+      * w().rgrid() have been reset, w().hasData and w().isSymmetric()
       * are true, and hasCFields() is false.
       *
       * \param filename name of input w-field basis file
@@ -176,11 +176,11 @@ namespace Rpc {
       *
       * This function opens and reads the file with the name given by the
       * "filename" string, which must contain chemical potential fields
-      * in real space grid (r-grid) format. The function sets values for 
+      * in real space grid (r-grid) format. The function sets values for
       * system w fields in r-grid format. It does not set attempt to set
       * field values in symmetry-adapted basis format, because it cannot
       * be known whether the r-grid field exhibits the declared space
-      * group symmetry.  On exit, w().rgrid() is reset and w().hasData() 
+      * group symmetry.  On exit, w().rgrid() is reset and w().hasData()
       * is true, while w().isSymmetric() and hasCFields() are false.
       *
       * \param filename  name of input w-field basis file
@@ -190,10 +190,10 @@ namespace Rpc {
       /**
       * Set chemical potential fields, in symmetry-adapted basis format.
       *
-      * This function sets values for w fields in both symmetry adapted 
-      * and r-grid format.  On exit, values of both w().basis() and 
-      * w().rgrid() are reset, w().hasData() and w().isSymmetric() are 
-      * true, and hasCFields() is false. 
+      * This function sets values for w fields in both symmetry adapted
+      * and r-grid format.  On exit, values of both w().basis() and
+      * w().rgrid() are reset, w().hasData() and w().isSymmetric() are
+      * true, and hasCFields() is false.
       *
       * \param fields  array of new w (chemical potential) fields
       */
@@ -204,7 +204,7 @@ namespace Rpc {
       *
       * This function set values for w fields in r-grid format, but does
       * not set components the symmetry-adapted basis format. On return,
-      * w.rgrid() is reset, w().hasData() is true, w().isSymmetric() is 
+      * w.rgrid() is reset, w().hasData() is true, w().isSymmetric() is
       * false, and hasCFields() is false.
       *
       * \param fields  array of new w (chemical potential) fields
@@ -235,7 +235,7 @@ namespace Rpc {
       *
       * The lattice set in this UnitCell must agree with any lattice
       * value that was set previously in the parameter file.
-      * 
+      *
       * \param unitCell  new UnitCell<D> (i.e., new parameters)
       */
       void setUnitCell(UnitCell<D> const & unitCell);
@@ -245,7 +245,7 @@ namespace Rpc {
       *
       * The lattice parameter must agree with any lattice value that
       * was set previously in the parameter file.
-      * 
+      *
       * \param lattice  lattice system
       * \param parameters  array of new unit cell parameters.
       */
@@ -257,7 +257,7 @@ namespace Rpc {
       *
       * The size of the FSArray<double> parameters must match the
       * expected number of parameters for the current lattice type.
-      * 
+      *
       * \param parameters  array of new unit cell parameters.
       */
       void setUnitCell(FSArray<double, 6> const & parameters);
@@ -272,13 +272,13 @@ namespace Rpc {
       * This function calls the Mixture::compute() function to solve
       * the statistical mechanics problem for a non-interacting system
       * subjected to the currrent chemical potential fields. This
-      * requires solution of the modified diffusion equation for all 
-      * polymers, computation of Boltzmann weights for all solvents, 
-      * computation of molecular partition functions for all species, 
-      * computation of concentration fields for blocks and solvents, 
-      * and computation of overall concentrations for all monomer types. 
-      * This function does not compute the canonical (Helmholtz) free 
-      * energy or grand-canonical free energy (i.e., pressure). Upon 
+      * requires solution of the modified diffusion equation for all
+      * polymers, computation of Boltzmann weights for all solvents,
+      * computation of molecular partition functions for all species,
+      * computation of concentration fields for blocks and solvents,
+      * and computation of overall concentrations for all monomer types.
+      * This function does not compute the canonical (Helmholtz) free
+      * energy or grand-canonical free energy (i.e., pressure). Upon
       * return, the flag hasCFields is set true.
       *
       * If argument needStress == true, then this function also calls
@@ -296,16 +296,16 @@ namespace Rpc {
       *
       * This function calls the iterator to attempt to solve the SCFT
       * problem for the current mixture and system parameters, using
-      * the current chemical potential fields and current unit cell 
-      * parameter values as initial guesses.  On exit, hasCFields is 
-      * set true whether or not convergence is obtained to within the 
-      * desired tolerance.  The Helmholtz free energy and pressure are 
+      * the current chemical potential fields and current unit cell
+      * parameter values as initial guesses.  On exit, hasCFields is
+      * set true whether or not convergence is obtained to within the
+      * desired tolerance.  The Helmholtz free energy and pressure are
       * computed if and only if convergence is obtained.
       *
       * \pre The w().hasData() flag must be true on entry, to confirm
-      * that chemical potential fields have been set. 
+      * that chemical potential fields have been set.
       *
-      * \pre The w().isSymmetric() flag must be set true if the chosen 
+      * \pre The w().isSymmetric() flag must be set true if the chosen
       * iterator uses a basis representation, and thus requires this.
       *
       * \param isContinuation true if continuation within a sweep.
@@ -332,25 +332,25 @@ namespace Rpc {
       /**
       * Perform a field theoretic Monte-Carlo simulation.
       *
-      * Perform a field theoretic Monte-Carlo simulation using the 
-      * partial saddle-point approximation. 
-      * 
+      * Perform a field theoretic Monte-Carlo simulation using the
+      * partial saddle-point approximation.
+      *
       * \param nStep  number of Monte-Carlo steps
       */
       void simulate(int nStep);
-      
+
       /**
       * Write timer file to an ostream
       *
       * \param out output stream
       */
       void writeTimers(std::ostream& out);
-      
+
       /**
-      * Clear timers 
+      * Clear timers
       */
       void clearTimers();
-      
+
       ///@}
       /// \name Thermodynamic Properties
       ///@{
@@ -359,8 +359,8 @@ namespace Rpc {
       * Compute free energy density and pressure for current fields.
       *
       * This function should be called after a successful call of
-      * System::iterate() or Iterator::solve(). Resulting values are 
-      * stored and then accessed by the fHelmholtz() and pressure() 
+      * System::iterate() or Iterator::solve(). Resulting values are
+      * stored and then accessed by the fHelmholtz() and pressure()
       * functions.
       */
       void computeFreeEnergy();
@@ -382,7 +382,7 @@ namespace Rpc {
       double pressure() const;
 
       ///@}
-      /// \name Thermodynamic Data Output 
+      /// \name Thermodynamic Data Output
       ///@{
 
       /**
@@ -401,12 +401,12 @@ namespace Rpc {
       * Write thermodynamic properties to a file.
       *
       * This function outputs Helmholtz free energy per monomer, pressure
-      * (in units of kT per monomer volume), the volume fraction and 
+      * (in units of kT per monomer volume), the volume fraction and
       * chemical potential of each species, and all unit cell parameters.
-      * 
+      *
       * If parameter "out" is a file that already exists, this function
-      * will append this information to the end of the file, rather than 
-      * overwriting that file. Calling writeParamNoSweep and writeThermo 
+      * will append this information to the end of the file, rather than
+      * overwriting that file. Calling writeParamNoSweep and writeThermo
       * in succession with the same file will thus produce a single file
       * containing both input parameters and resulting thermodynanic
       * properties.
@@ -416,7 +416,7 @@ namespace Rpc {
       void writeThermo(std::ostream& out);
 
       ///@}
-      /// \name Field Output 
+      /// \name Field Output
       ///@{
 
       /**
@@ -461,7 +461,7 @@ namespace Rpc {
       void writeBlockCRGrid(const std::string & filename) const;
 
       ///@}
-      /// \name Propagator Output 
+      /// \name Propagator Output
       ///@{
 
       /**
@@ -529,7 +529,7 @@ namespace Rpc {
       * This function opens a file with the specified filename, calls
       * Basis<D>::outputStars, and closes the file before returning.
       *
-      * \param filename name of output file 
+      * \param filename name of output file
       */
       void writeStars(std::string const & filename) const;
 
@@ -539,32 +539,32 @@ namespace Rpc {
       * This function opens a file with the specified filename, calls
       * Basis<D>::outputWaves, and closes the file before returning.
       *
-      * \param filename name of output file 
+      * \param filename name of output file
       */
       void writeWaves(std::string const & filename) const;
 
       /**
       * Output all elements of the space group.
       *
-      * \param filename name of output file 
+      * \param filename name of output file
       */
       void writeGroup(std::string const & filename) const;
 
       ///@}
-      /// \name Field File Manipulations 
+      /// \name Field File Manipulations
       ///@{
 
       /**
       * Convert a field from symmetrized basis format to r-grid format.
       *
-      * This function reads a field file in basis format, converts the 
-      * fields to r-grid format, and writes the fields in r-grid format 
-      * to a different file. 
+      * This function reads a field file in basis format, converts the
+      * fields to r-grid format, and writes the fields in r-grid format
+      * to a different file.
       *
-      * This and other field conversion functions do not change the w 
-      * or c fields stored by this System - all required calculations 
-      * are performed using temporary or mutable memory. 
-      * 
+      * This and other field conversion functions do not change the w
+      * or c fields stored by this System - all required calculations
+      * are performed using temporary or mutable memory.
+      *
       * \param inFileName name of input file (basis format)
       * \param outFileName name of output file (r-grid format)
       */
@@ -577,7 +577,7 @@ namespace Rpc {
       * This function checks if the input fields have the declared space
       * group symmetry, and prints a warning if it detects deviations
       * that exceed some small threshhold, but proceeds to attempt the
-      * conversion even if such an error is detected. Converting a field 
+      * conversion even if such an error is detected. Converting a field
       * that does not have the declared space group symmetry to basis
       * format is a destructive operation that modifies the field in
       * unpredictable ways.
@@ -612,7 +612,7 @@ namespace Rpc {
       * This function checks if the input fields have the declared space
       * group symmetry, and prints a warning if it detects deviations
       * that exceed some small threshhold, but proceeds to attempt the
-      * conversion even if such an error is detected. Converting a field 
+      * conversion even if such an error is detected. Converting a field
       * that does not have the declared space group symmetry to basis
       * format is a destructive operation that modifies the field in
       * unpredictable ways.
@@ -672,11 +672,11 @@ namespace Rpc {
       * assuming that all field values are independent of coordinates
       * associated with the added dimensions. It can thus create a file
       * representing a field with lamellar (D=1) or hexagonal (D=2)
-      * symmetry on a 3D (d=3) grid. 
+      * symmetry on a 3D (d=3) grid.
       *
       * Element i of array newGridDimensions contains the number of
       * grid points in added dimension D + i. This array must have a
-      * capacity d - D. 
+      * capacity d - D.
       *
       * \param inFileName filename name of input field file
       * \param outFileName filename name of output field file
@@ -690,12 +690,12 @@ namespace Rpc {
       /**
       * Replicate unit cell
       *
-      * This function reads a D-dimensional field and replicate 
+      * This function reads a D-dimensional field and replicate
       * the unit cell a specified number of times in each D direction
-      * 
-      * Element i of array replicas contains the number of replication 
-      * times in direction i. 
-      * 
+      *
+      * Element i of array replicas contains the number of replication
+      * times in direction i.
+      *
       * \param inFileName filename name of input field file
       * \param outFileName filename name of output field file
       * \param replicas  the number of replicas in each D direction
@@ -729,12 +729,12 @@ namespace Rpc {
       WFieldContainer<D> const & h() const;
 
       /**
-      * Get the mask (field to which total density is constrained). 
+      * Get the mask (field to which total density is constrained).
       */
       Mask<D>& mask();
 
       /**
-      * Get the mask by const reference. 
+      * Get the mask by const reference.
       */
       Mask<D> const & mask() const;
 
@@ -763,29 +763,23 @@ namespace Rpc {
       Interaction const & interaction() const;
 
       /**
-      * Get Domain by non-const reference.
-      */
-      Domain<D> const & domain() const;
-      
-      /**
       * Get Domain by const reference.
       */
-      Domain<D> & domain();
+      Domain<D> const & domain() const;
 
+      #if 0
       /**
       * Get UnitCell (i.e., type and parameters) by const reference.
       */
       UnitCell<D> const & unitCell() const;
-      
-      /**
-      * Get UnitCell (i.e., type and parameters) by non-const reference.
-      */
-      UnitCell<D> & unitCell();
+      #endif
 
+      #if 0
       /**
       * Get the spatial discretization mesh by const reference.
       */
       Mesh<D> const & mesh() const;
+      #endif
 
       /**
       * Get the Basis by const reference.
@@ -813,7 +807,7 @@ namespace Rpc {
       Iterator<D> const & iterator() const;
 
       /**
-      * Get Simulator for field theoretic simulation. 
+      * Get Simulator for field theoretic simulation.
       */
       Simulator<D>& simulator();
 
@@ -991,10 +985,10 @@ namespace Rpc {
       double fHelmholtz_;
 
       /**
-      * Ideal gas contribution to fHelmholtz_. 
-      * 
-      * This encompasses the internal energy and entropy of 
-      * non-interacting free chains in their corresponding 
+      * Ideal gas contribution to fHelmholtz_.
+      *
+      * This encompasses the internal energy and entropy of
+      * non-interacting free chains in their corresponding
       * potential fields defined by w_.
       */
       double fIdeal_;
@@ -1011,7 +1005,7 @@ namespace Rpc {
 
       /**
       * Pressure times monomer volume / kT.
-      * 
+      *
       * This is -1 times the grand-canonical free energy per monomer,
       * divided by kT.
       */
@@ -1037,17 +1031,17 @@ namespace Rpc {
       *
       * Set true when c fields are computed by solving the MDEs for
       * all blocks, and set false whenever w fields or the unit cell
-      * parameters are reset. When hasCFields_ is true, both the 
+      * parameters are reset. When hasCFields_ is true, both the
       * c fields for individual blocks and solvent species in the
-      * Mixture and the fields for different monomer types the 
-      * System::c_ container are those obtained from the current w 
+      * Mixture and the fields for different monomer types the
+      * System::c_ container are those obtained from the current w
       * fields in System::w_ container.
       */
       bool hasCFields_;
 
       /**
       * Has fHelmholtz been computed for the current w and c fields?
-      */ 
+      */
       bool hasFreeEnergy_;
 
       // Private member functions
@@ -1064,7 +1058,7 @@ namespace Rpc {
 
       /**
       * Read a field file header, make the basis if not done previously.
-      * 
+      *
       * Used to peek at a file header to get initial unit cell parameters,
       * use this to initialize basis if not done previously.
       *
@@ -1101,7 +1095,7 @@ namespace Rpc {
 
    // Inline member functions
 
-   // Get the Mixture object.
+   // Get the Mixture object by non-const reference.
    template <int D>
    inline Mixture<D>& System<D>::mixture()
    { return mixture_; }
@@ -1115,26 +1109,20 @@ namespace Rpc {
    template <int D>
    inline Domain<D> const & System<D>::domain() const
    { return domain_; }
-   
-   // Get the Domain by nonconst reference.
-   template <int D>
-   inline Domain<D> & System<D>::domain() 
-   { return domain_; }
 
+   #if 0
    // Get the UnitCell by const reference.
    template <int D>
    inline UnitCell<D> const & System<D>::unitCell() const
    { return domain_.unitCell(); }
-   
-   // Get the UnitCell by const reference.
-   template <int D>
-   inline UnitCell<D> & System<D>::unitCell()
-   { return domain_.unitCell(); }
+   #endif
 
+   #if 0
    // Get the Mesh by const reference.
    template <int D>
    inline Mesh<D> const & System<D>::mesh() const
    { return domain_.mesh(); }
+   #endif
 
    // Get the Basis<D> object.
    template <int D>
@@ -1255,7 +1243,7 @@ namespace Rpc {
    inline bool System<D>::hasSweep() const
    {  return (sweepPtr_ != 0); }
 
-   // Does this system have external potential fields? 
+   // Does this system have external potential fields?
    template <int D>
    inline bool System<D>::hasExternalFields() const
    {  return h_.hasData(); }
@@ -1280,7 +1268,7 @@ namespace Rpc {
    inline double System<D>::fHelmholtz() const
    {
       UTIL_CHECK(hasFreeEnergy_);
-      return fHelmholtz_; 
+      return fHelmholtz_;
    }
 
    // Get the precomputed pressure (units of kT / monomer volume).
@@ -1288,7 +1276,7 @@ namespace Rpc {
    inline double System<D>::pressure() const
    {
       UTIL_CHECK(hasFreeEnergy_);
-      return pressure_; 
+      return pressure_;
    }
 
    // Has the free energy been computed for the current w fields?

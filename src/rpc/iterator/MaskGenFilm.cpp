@@ -46,7 +46,7 @@ namespace Rpc {
       
       FSArray<bool,6> params;
       FSArray<bool,6> current = system().iterator().flexibleParams();
-      UTIL_CHECK(current.size() == system().unitCell().nParameter());
+      UTIL_CHECK(current.size() == system().domain().unitCell().nParameter());
 
       // Initialize params to an array of false values
       for (int i = 0; i < current.size(); i++) {
@@ -60,7 +60,7 @@ namespace Rpc {
       // oblique, then the length of the basis vector parallel to the
       // film may be flexible.
       UnitCell<2>::LatticeSystem lattice = 
-                                 system().domain().unitCell().lattice();
+                                    system().domain().unitCell().lattice();
       if ((lattice = UnitCell<2>::Rectangular) || 
                                     (lattice = UnitCell<2>::Oblique)) {
          if (normalVecId() == 0) {
@@ -98,7 +98,7 @@ namespace Rpc {
       
       FSArray<bool,6> params;
       FSArray<bool,6> current = system().iterator().flexibleParams();
-      UTIL_CHECK(current.size() == system().unitCell().nParameter());
+      UTIL_CHECK(current.size() == system().domain().unitCell().nParameter());
 
       UnitCell<3>::LatticeSystem lattice = 
                                  system().domain().unitCell().lattice();
