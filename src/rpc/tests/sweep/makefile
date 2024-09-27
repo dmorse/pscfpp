@@ -30,8 +30,8 @@ clean-outputs:
 #find out -type f \( ! -iname ".*" \) -exec rm -f {} \;
 
 clean:
+	rm -f $(BLD_DIR)/$(TEST)
 	rm -f $(rpc_tests_sweep_OBJS) $(rpc_tests_sweep_OBJS:.o=.d)
-	rm -f $(BLD_DIR)/$(TEST) $(BLD_DIR)/$(TEST).d
 	$(MAKE) clean-outputs
 
 -include $(rpc_tests_sweep_OBJS:.o=.d)

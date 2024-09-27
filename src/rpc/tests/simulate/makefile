@@ -27,8 +27,8 @@ clean-outputs:
 	rm -f out/*
 
 clean:
+	rm -f $(BLD_DIR)/$(TEST)
 	rm -f $(rpc_tests_simulate_OBJS) $(rpc_tests_simulate_OBJS:.o=.d)
-	rm -f $(BLD_DIR)/$(TEST) $(BLD_DIR)/$(TEST).d
 	$(MAKE) clean-outputs
 
 -include $(rpc_tests_simulate_OBJS:.o=.d)

@@ -29,8 +29,8 @@ clean-outputs:
 	-cd $(SRC_DIR)/rpc/tests/simulate; $(MAKE) clean-outputs
 
 clean:
-	rm -f $(rpc_tests_OBJS) $(rpc_tests_OBJS:.o=.d)
 	rm -f $(BLD_DIR)/$(TEST) 
+	rm -f $(rpc_tests_OBJS) $(rpc_tests_OBJS:.o=.d)
 	rm -f log count 
 	-cd $(SRC_DIR)/rpc/tests/field; $(MAKE) clean
 	-cd $(SRC_DIR)/rpc/tests/iterator; $(MAKE) clean
@@ -38,8 +38,8 @@ clean:
 	-cd $(SRC_DIR)/rpc/tests/system; $(MAKE) clean
 	-cd $(SRC_DIR)/rpc/tests/sweep; $(MAKE) clean
 	-cd $(SRC_DIR)/rpc/tests/simulate; $(MAKE) clean
-	rm -f $(SRC_DIR)/*.o $(SRC_DIR)/*.d
 	rm -f $(SRC_DIR)/rpc/tests/*/Test
+	rm -f $(SRC_DIR)/rpc/tests/*.o $(SRC_DIR)/rpc/tests/*.d
 	rm -f $(SRC_DIR)/rpc/tests/*/*.o $(SRC_DIR)/rpc/tests/*/*.d
 
 -include $(rpc_tests_OBJS:.o=.d)

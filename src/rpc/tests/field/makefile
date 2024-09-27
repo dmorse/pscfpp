@@ -31,8 +31,8 @@ clean-outputs:
 	rm -f log count out/*
 
 clean:
+	rm -f $(BLD_DIR)/$(TEST)
 	rm -f $(rpc_tests_field_OBJS) $(rpc_tests_field_OBJS:.o=.d)
-	rm -f $(BLD_DIR)/$(TEST) $(BLD_DIR)/$(TEST).d
 	$(MAKE) clean-outputs
 
 -include $(rpc_OBJS:.o=.d)

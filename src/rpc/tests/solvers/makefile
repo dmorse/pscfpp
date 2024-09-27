@@ -26,8 +26,8 @@ clean-outputs:
 	rm -f log count
 
 clean:
+	rm -f $(BLD_DIR)/$(TEST)
 	rm -f $(rpc_tests_solvers_OBJS) $(rpc_tests_solvers_OBJS:.o=.d)
-	rm -f $(BLD_DIR)/$(TEST) $(BLD_DIR)/$(TEST).d
 	$(MAKE) clean-outputs
 
 -include $(rpc_tests_solvers_OBJS:.o=.d)
