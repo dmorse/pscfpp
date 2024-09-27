@@ -7,10 +7,10 @@
 To compile PSCF in a unix environment, before compiling any code, 
 the user should modify the following unix environment variables:
 
-  - Add the pscfpp/bin directory to the unix PATH shell 
+  - Add the PSCF bin/ directory to the unix PATH shell 
     environment variable (the shell command search path)
 
-  - Add the pscfpp/lib/python directory to the PYTHONPATH 
+  - Add the PSCF lib/python/ directory to the PYTHONPATH 
     environment variable (the python module search path)
 
 Rationale: 
@@ -21,7 +21,7 @@ Rationale:
     to allow the unix shell to find these executable files when they 
     are invoked by name from the command line.
 
-  - The pscfpp/lib/python directory contains several python modules that 
+  - The PSCF lib/python directory contains several python modules that 
     are used by the PSCF build to process information about dependencies 
     among C++ files. The path to this directory must be added to the 
     PYTHONPATH variable in order to allow a python interpreter to find 

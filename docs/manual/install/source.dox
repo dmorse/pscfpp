@@ -20,9 +20,9 @@ and reference.
 
 \section source_getcode_sec Cloning the repository
 
-To obtain a working copy of the pscfpp git repository, you should first
+To obtain a working copy of the PSCF git repository, you should first
 change directory (cd) to the directory you would like to contain a newly
-created pscfpp directory. From there, enter the command
+created PSCF directory tree. From there, enter the command
 \code
 git clone --recursive https://github.com/dmorse/pscfpp.git
 \endcode
@@ -42,10 +42,10 @@ user/developers should instead:
   Create a user account on github.com, if they do not already have one.
 </li>
 <li> 
-  Create a fork (i.e., a personal version) of the pscfpp repository in 
+  Create a fork (i.e., a personal version) of the PSCF repository in 
   their github user account</li>
 <li> 
-  Clone their personal fork of the pscfpp repository to a computer on 
+  Clone their personal fork of the PSCF repository to a computer on 
   which they can compile and edit the code, using the "--recursive" option 
   as described above. 
 </li>
@@ -55,10 +55,10 @@ fork to a local computer may use a prefix that selects either the https
 (prefix https://github.com/) or ssh (prefix git@github.com: ) communication 
 protocol. Cloning with either of these protocols creates a connection with
 the github server that will allow the user write access to their personal 
-fork of pscfpp on github.  The https protocol was used in the above 
-instructions for general users who clone the main pscfpp directory 
+fork of the PSCF repository on github.  The https protocol was used in the 
+above instructions for general users who clone the main pscfpp directory 
 directly, in which the repository URL starts with "https://github.com/..." 
-The command to use ssh to clone a fork of pscfpp created by a user with 
+The command to use ssh to clone a fork of PSCF created by a user with 
 a github username JaneDoe would generally look like
 \code
 git clone --recursive git@github.com:JaneDoe/pscfpp.git
@@ -75,16 +75,17 @@ for further details about how to set up public keys for use with ssh,
 among other issues related to github account security.
 
 
-Herefafter, we assume that the root directory of the pscfpp working copy 
-is named pscfpp/.  References to paths that do not start explicitly with 
-a prefix "pscfpp/" should be understood to be relative paths, relative 
-to this directory. The structure of the pscfpp repository is explained in 
-detail \ref developer_directory_page "here".
+Hereafter, we refer to the root directory of the PSCF repository, which
+is named pscfpp by default, as simply the PSCF root directory. References 
+to directories or paths that are part of this repository should hereafter 
+be understood to be relative paths, relative to this root directory. The 
+structure of subdirectories within the PSCF root directory is explained 
+in detail \ref developer_directory_page "here".
 
 \section source_submodules_sec Use of git submodules
 
-Some subdirectories of the pscfpp/src directory are maintained in separate 
-github repositories and are imported into the pscfpp repository as git 
+Some subdirectories of the PSCF src/ directory are maintained in separate 
+github repositories and are imported into the PSCF repository as git 
 "submodules". (See 
 [chapter 7.11](https://git-scm.com/book/en/v2/Git-Tools-Submodules) of the 
 Pro Git online book). Specifically, the src/util and src/tests directories 
@@ -93,12 +94,12 @@ repositories on github, respectively.
 
 The use of the "--recursive" option of the git clone command given above 
 should automatically create clones of these submodules in the appropriate 
-locations within the pscfpp source directory tree, thus creating a complete 
-functional copy of the source code. Cloning a copy of pscfpp without 
+locations within the PSCF directory tree, thus creating a complete 
+functional copy of the source code. Cloning a copy of PSCF without 
 using the "--recursive" option, however, would create a version of the 
-pscfpp directory tree in which the src/util and src/tests directories 
+PSCF directory tree in which the src/util and src/tests directories 
 are empty. If you find yourself with a repository clone in which one or 
-both of these repositories is empty, you can either clone pscfpp again 
+both of these repositories is empty, you can either clone PSCF again 
 with the recursive option, or initialize and update the submodules by calling
 \code
 git submodule update --init
@@ -112,8 +113,8 @@ with different versions of the submodules. An error will likely occur during
 compilation of the software if any submodule is not properly updated. 
 
 You can check if you have the correct version of the submodules by running 
-"git status" from your pscfpp directory. If, for example, your util submodule
-is the wrong version, you will see the following output:
+"git status" from the PSCF root directory. If, for example, your util 
+submodule is the wrong version, you will see the following output:
 \code
 # Changes not staged for commit:
 #   (use "git add <file>..." to update what will be committed)

@@ -248,7 +248,7 @@ On Macs with Apple silicon, Homebrew instead installs all files in
 some of its subdirectories to the search paths used by the compiler to
 find header and library files.  A compiler configuration file that
 modifies these search paths is provided as part of PSCF, as discussed
-\ref install_configure_homebrewm1_sec "here".
+\ref install_configure_compiler_file_sec "here".
 
 \section install_require_module Linux software modules
 

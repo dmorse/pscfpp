@@ -5,9 +5,17 @@
 <BR>
 
 Below is a brief overview of instructions for compiling all of the PSCF
-programs using default settings.  The descriptions assume that the root 
-directory of the repository is named pscfpp/. You are free to rename
-the root directory before running or rerunning the configure script.
+programs using default settings. Using git to clone the PSCF repository
+will create a directory named pscfpp/, which we hereafter refer to as the 
+PSCF root directory.  
+
+Directory name conventions: Here and herafter, a backslash after a name 
+is used to indicate that a string is the name of a directory. In what
+follows, we also often use PSCF as an adjective when specifying a 
+directory name to indicate a directory within the PSCF directory tree
+that is specified by a path relative to the PSCF root directory. For 
+example, the "PSCF src/ directory" thus refers to the src/ subdirectory
+of the PSCF root directory.
 
 Below, have divided the instructions into a set of instructions for
 compiling and installing the programs that use only CPU hardware, and
@@ -27,33 +35,25 @@ in previous pages:
 
    - **Set environment variables:**
      Modify the users PATH and PYTHONPATH unix environment variables
-     so as to include pscfpp/bin directory in the PATH (the unix shell
-     command search path) and so as to include pscfpp/lib/python in
+     so as to include PSCF bin/ directory (i.e., the bin/ subdiretory
+     of the PSCF root directory) in the PATH (the unix shell command 
+     search path) and so as to include PSCF lib/python directory in
      the PYTHONPATH (the Python module search path). This is discussed
      in greater detail \ref install_environment_page "here".
 
    - **Navigate to root directory:**
-     Change directory (cd) to the pscfpp/ root directory.
+     Change directory (cd) to the PSCF root directory.
 
    - **Configure:**
-     Invoke the "configure" script from the pscfpp/ root directory.  To 
+     Invoke the "configure" script from the PSCF root directory.  To 
      configure the build system with default compiler options appropriate 
-     to most linux systems, enter the command
+     to most linux or Mac OS X systems, enter the command
      \code
      ./configure
      \endcode
      from the root directory. Note the use of the prefix "./" before
      the name of the script, which indicates that the operating system
      should look for this script in the present working directory.
-
-     An environment appropriate for compiling on a Mac OS X system with 
-     Apple silicon hardware (e.g., an M1 or M2 chip) in which the 
-     dependencies were installed using the homebrew package mamager can 
-     be configured by entering
-     \code
-     ./configure mac-si-homebrew
-     \endcode
-     from the root pscfpp/ directory.
 
      To customize compiler options, one may also invoke the configure 
      script with a filename argument that is the name of a user-defined
@@ -72,11 +72,11 @@ the pscf_1d and pscf_pc CPU programs, you may simply enter
 \code
     make all
 \endcode
-from the pscfpp/ directory immediately after running the configure 
+from the PSCF directory immediately after running the configure 
 script.  If successful, this will install executables named "pscf_1d" 
-and "pscf_pc" in the pscfpp/bin directory.
+and "pscf_pc" in the PSCF bin/ directory.
 
-Compiling all the PSCF C++ code using "make all" takes a little time
+Compiling all the PSCF C++ code using "make all" takes a bit of time
 (e.g., 2 to 3 minutes on a 2020 Mac air laptop with an M1 chip). This
 can be completed more quickly on a multi-core machine by using the -j
 option of the "make" command to use multiple CPU cores in parallel to
@@ -88,11 +88,11 @@ could enter
 \endcode
 to use all 8 CPU cores of an 8-core computer to compile.
 
-Entering "make all" or "make -jn all" from the pscfpp/ root directory,
+Entering "make all" or "make -jn all" from the PSCF root directory,
 as described above, will create a large number of intermediate object
 (*.o), dependency (*.d) and library (*.a) files in subdirectories of
-the pscfpp/bld directory, in addition to the executable files that are 
-created in the pscfpp/bin directory.
+the PSCF bld/ directory, in addition to the executable files that are 
+created in the PSCF bin/ directory.
 
 \section install_overview_GPU_sec Compiling CUDA C++ Code (GPU hardware)
 
@@ -110,7 +110,7 @@ already completed the preliminary steps described above.
      \code
      ./setopts -c1
      \endcode
-     from the pscfpp/ root directory. If you later want to disable
+     from the PSCF root directory. If you later want to disable
      compilation of CUDA code, instead enter
      \code
      ./setopts -c0
@@ -121,7 +121,7 @@ already completed the preliminary steps described above.
      \ref install_setopts_page "here".
 
      To check if CUDA compilation is currently enabled, change directory
-     to the pscfpp/bld directory, and enter
+     to the PSCF bld/ directory, and enter
      \code
      ./setopts -q
      \endcode
@@ -133,7 +133,7 @@ already completed the preliminary steps described above.
    - **Set the target GPU architecture:**
      CUDA must be compiled for a particular target GPU architecture.
      To set the target architecture to correspond to the GPU on your
-     computer, you must change directory to pscfpp/ root directory and
+     computer, you must change directory to PSCF root directory and
      issue a command of the form
      \code
      ./setopts -a [architecture id]
@@ -156,7 +156,7 @@ already completed the preliminary steps described above.
      \code
      ./setopts -a sm_70
      \endcode
-     from the pscfpp/ directory, using "sm_70" as the architecture id.
+     from the PSCF root directory, using "sm_70" as the architecture id.
 
    - **Compile all programs (including pscf_pg):**
      After enabling CUDA compilation and setting the appropriate
@@ -165,12 +165,12 @@ already completed the preliminary steps described above.
      \code 
      make all
      \endcode 
-     from within the pscfpp/ root directory. As when compiling pure C++ 
+     from within the PSCF root directory. As when compiling pure C++ 
      code, one may use multiple cores to compile by instead entering 
      "make -jn all", where "n" is the number of CPU cores to be used.
 
 If successful, the "make all" command will install an executable file
-named pscf_pg in the pscfpp/bin directory in addition to the files
+named pscf_pg in the PSCF bin/ directory in addition to the files
 named pscf_1d and pscf_pc that are created by compiling only C++ code.
 
 Several of the above steps are discussed in more detail in subsequent
@@ -180,8 +180,8 @@ pages.
 
 The above instructions explain how to perform an "out-of-source" build in
 which intermediate files created during compilation process are placed in
-the pscfpp/bld directory tree. One can instead perform an "in-source"
-build in which these files are instead placed in the pscfpp/src directory
+the PSCF bld/ sub-directory tree. One can instead perform an "in-source"
+build in which these files are instead placed in the PSCF src/ directory
 that also contains all C++ and CUDA source code files. The option of
 in-source compilation is discussed in more detail \ref install_inout_page
 "here".  We recommend the use of out-of-source compilation for package 

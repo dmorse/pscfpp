@@ -8,38 +8,40 @@ The build system for PSCF is based on unix makefiles.
 
 \section install_targets_make_sec Using the "make" command
 
-Individual programs or groups of programs may be compiled by invoking 
-the "make" command with an appropriate target name, using the syntax
+Individual programs or groups of programs may be compiled by invoking the 
+"make" command with an appropriate target name, using the syntax
 \code
 make target
 \endcode
 where "target" represents a target name such as "all" or "pscf_pc". 
 The command "make" with no target is equivalent to "make all".
 
-The make utility may be invoked from the pscfpp/ root directory, or from
-either the pscfpp/src/ or pscfpp/bld/ build directories, using a common 
-set of main target names in all three cases. Invoking make from the pscfpp/ 
-root with a target that causes compilation generally has the same effect 
-as invoking it with the same target from the pscfpp/bld directory, and
-performs an out-of-source compilation that creates intermediate files in
-the pscfpp/bld/ directory tree.  Invoking make from within the pscfpp/src/
-directory will instead initiate an in-source compilation that creates
-intermediate files in the src/ directory, alongside the source files.
-Makefile targets that create executable programs all install the resulting 
-executable files in the pscfpp/bin directory by default, no matter where 
-the intermediate object and library files are created.
+The make utility may be invoked from the PSCF root directory (named pscfpp/
+by default), or from either the src/ or bld/ build subdirectories of this
+root directory. The same names are used for the main make targets in all 
+the three cases. Invoking make from the bld/ directory performs an 
+out-of-source compilation in which intermediate files are installed 
+in the bld/ directory tree. Invoking make from the PSCF root directory 
+with a target that causes compilation generally has the same effect as 
+invoking make with the same target from the bld/ directory, and so also
+performs an out-of-source compilation.  Invoking make from within the 
+PSCF src/ directory, however, will instead perform an in-source 
+compilation that installs intermediate files in the src/ directory, 
+alongside the source files.  Makefile targets that create executable 
+programs all install the resulting executable files in the PSCF bin/
+directory by default, for either out-of-source or in-source compilation.
  
-On this page, we explain the most important makefile targets in more detail
-than was given in the \ref install_overview_page "overview of instructions".
+This page explains the most important makefile targets in more detail than 
+given in the \ref install_overview_page "overview of instructions".
 The following instructions assume that you have already made the required
-changes to environment variables and run the configure script before using
-make to compile.
+changes to environment variables and run the configure script before 
+using the make utility to compile.
 
 \section install_targets_main_sec Compilation
 
 All of the makefile targets described below can be invoked either from 
-the pscfpp/ or pscfpp/bld/ directory to perform out-of-source compilation, 
-or from the src/ directory to perform in-source compilation.
+either the PSCF root directory or bld/ directory to perform out-of-source 
+compilation, or from the src/ directory to perform in-source compilation.
 
 <h2> all: </h2>
 To compile all programs in the PSCF package, enter either 
@@ -83,7 +85,7 @@ If entered before compiling any other code, this command will:
     three namespace-level subdirectories of the build directory.
 
   - Compile and link the main program file src/r1d/pscf_1d.cpp and
-    install an executable file named pscf_1d in the pscfpp/bin
+    install an executable file named pscf_1d in the PSCF bin/
     directory.
 
 To recompile these programs after making any changes to configuration
@@ -98,7 +100,7 @@ To compile only the pscf_pc CPU program for periodic structures, enter:
 \code
 make pscf_pc
 \endcode
-from the pscfpp/, pscfpp/bld or pscfpp/src directory.
+from the PSCF root, bld/ or src/ directory.
 This command will cause the system to:
 
   - If needed, compile all *.cpp files in the src/util/, src/pscf/, and
@@ -109,7 +111,7 @@ This command will cause the system to:
     create a corresponding static library file named librpc.a.
 
   - Compile and link the main program pscf_pc.cpp, and install an 
-    executable program file named pscf_pc in the pscfpp/bin directory.
+    executable program file named pscf_pc in the PSCF bin/ directory.
 
 <h2> all-cpu: </h2>
 
@@ -129,12 +131,12 @@ for periodic structures on such a computer, enter
 \code
 make pscf_pg
 \endcode
-from either the pscfpp root directory or the desired build directory.
+from either the PSCF root directory or the desired build directory.
 If successful, this will compile code from the rpg/ subdirectory of
 the src/ directory, compile code from the util/, pscf/ and prdc/
 directories if needed, place object, dependency and library files in
 subdirectories of the chosen build tree, and install an executable
-named pscf_pg in the pscfpp/bin directory.
+named pscf_pg in the PSCF bin/ directory.
 
 \section install_targets_docs_sec Documentation
 
@@ -142,9 +144,9 @@ To create a local copy of the html files for this web manual, enter
 \code
 make html
 \endcode
-from either the pscfpp/ or pscfpp/docs directory. This procedure 
-requires that doxygen be installed, as discussed in greater detail 
-on the \ref install_doc_page "following page". 
+from either the PSCF root directory or docs./ subdirectory. This 
+procedure requires that doxygen be installed, as discussed in greater 
+detail on the \ref install_doc_page "following page". 
 
 \section install_targets_clean_sec Clean-up
 
@@ -158,11 +160,11 @@ generated during compilation, you may enter
 \code
 make clean
 \endcode
-from either the relevant build directory or from the pscfpp/ root
+from either the relevant build directory or from the PSCF root
 directory.  The clean target removes all the intermediate files 
 generated by compilation, but does not remove the final executable 
 files or any files that were installed by the configure script.  
-If "make clean" is invoked from the pscfpp/ root directory, it 
+If "make clean" is invoked from the PSCF root directory, it 
 removes all such intermediate files in both the bld/ and src/ 
 directory trees. If "make clean" is invoked from the src/ or bld/ 
 directory, it only removes such files from the build directory 
@@ -175,7 +177,7 @@ or from namespace level subdirectories of the bld/ directory.
 
 <h2> clean-bin: </h2>
 The "clean-bin" command removes all pscf executable files with names
-of the form pscf_* from the pscfpp/bin directory, which is where they
+of the form pscf_* from the PSCF bin/ directory, which is where they
 are normally installed.  It does not remove any other executable 
 files that are installed in the bin/ directory by the configure 
 script.
@@ -196,10 +198,9 @@ and "clean-docs" targets, enter
 \code
 make veryclean
 \endcode
-from the pscfpp/ root directory. This command returns the pscfpp/
-directory tree to a state very similar to the state it had
-immediately after the repository was created by cloning a remote
-repository.
+from the PSCF root directory. This command returns the entire PSCF 
+directory tree to a state very similar to the state it had immediately 
+after the repository was created by cloning a remote repository.
 
 After you run "make veryclean", you will need to rerun the configure
 script before attempting to compile any code.

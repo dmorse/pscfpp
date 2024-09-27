@@ -11,7 +11,7 @@ are passed to the compiler.
 
 \section install_setopts_setopts The "setopts" scripts
 
-The pscfpp/src and pscfpp/bld directories are used as build directories for
+The PSCF src/ and bld/ directories are used as build directories for
 in-source and out-of source compilation, respectively. After the configure
 script has been run, each of these two standard build directories will
 contain an exectuable shell script named "setopts". A setopts script can 
@@ -23,10 +23,10 @@ directory (i.e., from the src/ or bld/ directory) in order to modify which
 features will be enabled and disabled in code that is subsequently compiled 
 in that build directory. 
 
-The pscfpp/ root directory also contains an analogous setopts script.
-That "global" setopts script can be invoked to apply identical changes in 
-compile-time features to the configuration files in both the src/ and bld/ 
-directories.
+The PSCF root directory (usually named pscfpp/) also contains an analogous 
+setopts script. That "global" setopts script can be invoked to apply identical 
+changes in compile-time features to the configuration files in both the src/ 
+and bld/ directories.
 
 The setopts scripts function by editing configuration files that are
 used by the makefile system to define what actions should be taken during
@@ -46,7 +46,7 @@ in the code built in either the src/ or bld/ directory one would enter
 \code
 ./setopts -d1
 \endcode
-from the pscfpp/ root directory. 
+from the PSCF root directory. 
 To instead disable debugging before compiling, one would enter
 \code
 ./setopts -d0
@@ -68,7 +68,7 @@ the bld/ or src/ directory, one would enter
 \code
 ./setopts -c1
 \endcode
-from the pscfpp/ root directory.  To disable CUDA compilation, one would 
+from the PSCF root directory.  To disable CUDA compilation, one would 
 instead enter
 \code
 ./setopts -c0
@@ -105,7 +105,7 @@ for a K40 GPU.
 The -q command line option of the setopts script may be used to query
 what optional features are currently set to be enabled or disabled 
 during compilation. To see an example, change directory (cd) to the 
-pscfpp/bld/ directory and then enter
+PSCF bld/ directory and then enter
 \code
 ./setopts -q
 \endcode
@@ -122,7 +122,7 @@ configuration), or
 \endcode
 if debugging is disabled but CUDA compilation has been enabled. 
 
-Entering "./setopts -q" from the pscfpp/ root directory instead yields 
+Entering "./setopts -q" from the PSCF root directory instead yields 
 a report that shows which optional features are enabled in both the bld/ 
 and src/ directory.
 

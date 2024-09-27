@@ -34,7 +34,7 @@
 #
 #========================================================================
 # If necessary, change directory (cd) to the pscf root directory that 
-# contains this script.
+# contains this configure script.
 
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" > /dev/null && pwd )"
 if [ "$SCRIPT_DIR" != "$PWD" ]; then
@@ -52,14 +52,54 @@ export PSCFPP_DIR
 #=======================================================================
 # Choose a compiler settings file from make/compiler directory 
 #
-# The name of this file, which is assigned to VARFILE, may be passed as 
-# a command line argument to this configure script. If no argument is
-# present, the file "linux-default" is used as the default.
+# If a command line argument is passed to the configure script, this
+# argument is taken to be the name of a compiler setting file in the
+# make/compiler directory. 
+#
+# If the script is not passed a command line argument, the script will
+# try to identify the operating system and choose an appropriate
+# setting file if possible. The "linux-default" file is used if the 
+# operating system is a linux variant or if no better option can be
+# identified. 
+# 
+
+# Set a default value for the name of the compiler settings file
+VARFILE='linux-default'
 
 if [ "$#" -gt 0 ]; then
+  # If the configure script is passed one or more command line arguments, 
+  # use the first argument as the name of the compiler setting file
   VARFILE=$1
 else
-  VARFILE="linux-default"
+  # If the script is not passed any command line arguments, use the 
+  # 'uname -s' command to find the name of the operating system
+  case "$(uname -s)" in
+    Linux*)
+      echo "Linux operating system detected"
+      echo "Using default compiler settings file make/compiler/linux-default"
+      ;;
+    Darwin*)
+      echo "Mac OS X (Darwin) operating system detected"
+      if [ -d "/opt/homebrew/bin" ]; then
+        if [ -f "/opt/homebrew/bin/brew" ]; then
+          echo "Homebrew installation for Apple silicon detected"
+          VARFILE="mac-si-homebrew"
+        fi
+      fi
+      ;;
+    FreeBSD*)
+      echo "FreeBSD operating system detected"
+      ;;
+    CYGWIN*)
+      echo "CYGWIN operating system for Windows hardware detected"
+      ;;
+    MINGW*)
+      echo "CYGWIN operating system for Windows hardware detected"
+      ;;
+    *)
+      echo "Unknown operating system"
+      ;;
+    esac
 fi
 VARFILE="make/compiler/$VARFILE"
 echo "Using compiler settings file $VARFILE"
