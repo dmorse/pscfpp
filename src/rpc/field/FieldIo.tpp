@@ -102,7 +102,8 @@ namespace Rpc {
       // Precondition
       UTIL_CHECK(hasGroup());
 
-      // Read header of field file
+      // Read header of field file, which must declare a group name
+      // consistent with that declared in the parameter file. 
       int nMonomer;
       bool isSymmetric;
       FieldIo<D>::readFieldHeader(in, nMonomer, unitCell, isSymmetric);
@@ -378,7 +379,7 @@ namespace Rpc {
       if (nReversedPair > 0) {
          Log::file() << "\n";
          Log::file() << nReversedPair << " reversed pairs of open stars"
-                   << " detected in FieldIo::readFieldsBasis\n";
+                     << " detected in FieldIo::readFieldsBasis\n";
       }
 
    }
@@ -419,6 +420,7 @@ namespace Rpc {
 
       // Read file containing a single field, allocate if needed.
       readFieldsBasis(in, fields, unitCell);
+
       // Check that it only read 1 field
       UTIL_CHECK(fields.capacity() == 1);
 

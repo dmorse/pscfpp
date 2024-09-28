@@ -551,7 +551,7 @@ namespace Rpc {
       void writeGroup(std::string const & filename) const;
 
       ///@}
-      /// \name Field File Manipulations
+      /// \name Field File Manipulation and Analysis
       ///@{
 
       /**
@@ -633,9 +633,10 @@ namespace Rpc {
                         const std::string & outFileName);
 
       /**
-      * Compare two field files in symmetrized basis format.
+      * Compare arrays of fields in basis format, output a report.
       *
-      * Outputs maximum and root-mean-squared differences.
+      * Outputs maximum and root-mean-squared differences to the
+      * standard Log file. 
       *
       * \param field1  first array of fields (basis format)
       * \param field2  second array of fields (basis format)
@@ -644,9 +645,10 @@ namespace Rpc {
                    const DArray< DArray<double> > field2);
 
       /**
-      * Compare two field files in symmetrized basis format.
+      * Compare two fields in r-grid format, output a report.
       *
-      * Outputs maximum and root-mean-squared differences.
+      * Outputs maximum and root-mean-squared differences to the
+      * standard Log file. 
       *
       * \param field1  first array of fields (r-grid format)
       * \param field2  second array of fields (r-grid format)
@@ -688,10 +690,10 @@ namespace Rpc {
                                 int d,
                                 DArray<int> newGridDimensions);
       /**
-      * Replicate unit cell
+      * Replicate the crystal unit cell to create a larger cell. 
       *
-      * This function reads a D-dimensional field and replicate
-      * the unit cell a specified number of times in each D direction
+      * This function reads a D-dimensional field and replicates the
+      * unit cell a specified number of times in each D direction
       *
       * Element i of array replicas contains the number of replication
       * times in direction i.
@@ -745,7 +747,7 @@ namespace Rpc {
       /**
       * Get the Mixture by non-const reference.
       */
-      Mixture<D>& mixture();
+      Mixture<D> & mixture();
 
       /**
       * Get the Mixture by const reference.
@@ -767,50 +769,8 @@ namespace Rpc {
       */
       Domain<D> const & domain() const;
 
-      #if 0
       /**
-      * Get UnitCell (i.e., type and parameters) by const reference.
-      */
-      UnitCell<D> const & unitCell() const;
-      #endif
-
-      #if 0
-      /**
-      * Get the spatial discretization mesh by const reference.
-      */
-      Mesh<D> const & mesh() const;
-      #endif
-
-      #if 0
-      /**
-      * Get the Basis by const reference.
-      */
-      Basis<D> const & basis() const;
-      #endif
-
-      #if 0
-      /**
-      * Get associated FFT object by const reference.
-      */
-      FFT<D> const & fft() const;
-      #endif
-
-      #if 0
-      /**
-      * Get associated FieldIo object by const reference.
-      */
-      FieldIo<D> const & fieldIo() const;
-      #endif
-
-      #if 0
-      /**
-      * Get the group name string.
-      */
-      std::string groupName() const;
-      #endif
-
-      /**
-      * Get the iterator.
+      * Get the iterator by non-const reference.
       */
       Iterator<D>& iterator();
 
@@ -825,16 +785,6 @@ namespace Rpc {
       Simulator<D>& simulator();
 
       /**
-      * Get homogeneous mixture (for reference calculations).
-      */
-      Homogeneous::Mixture& homogeneous();
-
-      /**
-      * Get const homogeneous mixture (for reference calculations).
-      */
-      Homogeneous::Mixture const & homogeneous() const;
-
-      /**
       * Get the FileMaster.
       *
       * Access by non-const reference is used in some unit tests.
@@ -846,8 +796,18 @@ namespace Rpc {
       */
       FileMaster const & fileMaster() const;
 
+      /**
+      * Get homogeneous mixture (for reference calculations).
+      */
+      Homogeneous::Mixture& homogeneous();
+
+      /**
+      * Get const homogeneous mixture (for reference calculations).
+      */
+      Homogeneous::Mixture const & homogeneous() const;
+
       ///@}
-      /// \name Queries
+      /// \name Boolean Queries
       ///@{
 
       /**
@@ -889,7 +849,7 @@ namespace Rpc {
 
    private:
 
-      // Private member variables
+      // Component objects
 
       /**
       * Mixture object (solves MDE for all species).
@@ -946,6 +906,8 @@ namespace Rpc {
       */
       SimulatorFactory<D>* simulatorFactoryPtr_;
 
+      // Field container objects
+
       /**
       * Chemical potential fields.
       */
@@ -987,6 +949,8 @@ namespace Rpc {
       */
       mutable DArray< RFieldDft<D> > tmpFieldsKGrid_;
 
+      // Thermodynamic properties
+
       /**
       * Helmholtz free energy per monomer / kT.
       */
@@ -1007,7 +971,7 @@ namespace Rpc {
       double fInter_;
 
       /**
-      * External field contribution to fHelmholtz_.
+      * External field contribution to fHelmholtz_ (if any).
       */
       double fExt_;
 
@@ -1019,10 +983,7 @@ namespace Rpc {
       */
       double pressure_;
 
-      /**
-      * Has the mixture been initialized?
-      */
-      bool hasMixture_;
+      // Boolean flags 
 
       /**
       * Has memory been allocated for fields in grid format?
@@ -1033,6 +994,11 @@ namespace Rpc {
       * Has memory been allocated for fields in symmetrized basis format?
       */
       bool isAllocatedBasis_;
+
+      /**
+      * Has the mixture been initialized?
+      */
+      bool hasMixture_;
 
       /**
       * Have c fields been computed for the current w fields?
@@ -1108,7 +1074,7 @@ namespace Rpc {
    inline Mixture<D>& System<D>::mixture()
    { return mixture_; }
 
-   // Get the Mixture by const reference.
+   // Get the Mixture object by const reference.
    template <int D>
    inline Mixture<D> const & System<D>::mixture() const
    { return mixture_; }
@@ -1117,48 +1083,6 @@ namespace Rpc {
    template <int D>
    inline Domain<D> const & System<D>::domain() const
    { return domain_; }
-
-   #if 0
-   // Get the UnitCell by const reference.
-   template <int D>
-   inline UnitCell<D> const & System<D>::unitCell() const
-   { return domain_.unitCell(); }
-   #endif
-
-   #if 0
-   // Get the Mesh by const reference.
-   template <int D>
-   inline Mesh<D> const & System<D>::mesh() const
-   { return domain_.mesh(); }
-   #endif
-
-   #if 0
-   // Get the Basis<D> object.
-   template <int D>
-   inline Basis<D> const & System<D>::basis() const
-   {  return domain_.basis(); }
-   #endif
-
-   #if 0
-   // Get the FFT object by const reference.
-   template <int D>
-   inline FFT<D> const & System<D>::fft() const
-   {  return domain_.fft(); }
-   #endif
-
-   #if 0
-   // Get the FieldIo<D> by const reference.
-   template <int D>
-   inline FieldIo<D> const & System<D>::fieldIo() const
-   {  return domain_.fieldIo(); }
-   #endif
-
-   #if 0
-   // Get the groupName string by value.
-   template <int D>
-   inline std::string System<D>::groupName() const
-   { return domain_.groupName(); }
-   #endif
 
    // Get the Simulator.
    template <int D>

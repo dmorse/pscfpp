@@ -42,8 +42,18 @@ namespace Rpc {
    * This class provides functions to read and write arrays that contain
    * fields in any of three representations (symmetry-adapted basis,
    * r-space grid, or Fourier k-space grid), and to convert among these
-   * representations. The member functions that implement IO operations
-   * define the file formats for these field representations.
+   * representations. The member functions that implement field IO 
+   * operations define the file formats for these field representations.
+   *
+   * Side effect of reading a field file: The member functions that read 
+   * fields from a file may all construct a symmetry adapted basis within
+   * an associated Basis object as a side effect of reading the field 
+   * header. All of these functions call FieldIo<D>::readFieldHeader 
+   * member function to read the field file header. If a group has been 
+   * declared in the Domain block of the parameter file for the associated 
+   * system but the symmetry adapted basis has not been initialized before 
+   * entry to this function, the readFieldHeader function will construct 
+   * the basis before returning.
    *
    * \ingroup Rpc_Field_Module
    */
@@ -99,12 +109,16 @@ namespace Rpc {
       /**
       * Read concentration or chemical potential fields from file.
       *
-      * This function reads fields in a symmetry adapted basis from
-      * input stream in.
+      * This function reads fields in a symmetry adapted basis from input
+      * stream in.
       *
       * The capacity of DArray fields is equal to nMonomer, and element
       * fields[i] is a DArray containing components of the field
       * associated with monomer type i.
+      *
+      * The header of a field file in basis format must declare the group
+      * name, and this name must agree with that declared in the parameter
+      * file. 
       *
       * \param in  input stream (i.e., input file)
       * \param fields  array of fields (symmetry adapted basis components)
@@ -117,9 +131,11 @@ namespace Rpc {
       /**
       * Read concentration or chemical potential components from file.
       *
-      * This function opens an input file with the specified filename,
+      * This function opens an input file with the specified filename, 
       * reads components in symmetry-adapted form from that file, and
-      * closes the file.
+      * then closes the file. This function calls the overloaded 
+      * FieldIo<D>::readFieldsBasis function that takes a std::istream 
+      * parameter rather than a filename parameter.
       *
       * \param filename  name of input file
       * \param fields  array of fields (symmetry adapted basis components)
@@ -132,8 +148,9 @@ namespace Rpc {
       /**
       * Read single concentration or chemical potential field from file.
       *
-      * This function reads the field in symmetry adapted basis format
-      * from input stream in.
+      * This function reads a single field in symmetry adapted basis 
+      * format from the input stream in. The corresponding readFieldsBasis 
+      * function is called internally.
       *
       * \param in  input stream (i.e., input file)
       * \param field  array to store the field (basis format)
@@ -147,7 +164,8 @@ namespace Rpc {
       *
       * This function opens an input file with the specified filename,
       * reads field in symmetry adapted basis format from that file, and
-      * closes the file.
+      * and then closes the file. The overloaded readFieldBasis function 
+      * that takes a std::istream parameter is called internally. 
       *
       * \param filename  name of input file
       * \param field  array to store the field (basis format)
@@ -174,7 +192,8 @@ namespace Rpc {
       /**
       * Write concentration or chemical potential field components to file.
       *
-      * This function writes components in a symmetry adapted basis.
+      * This function writes field components in a symmetry adapted basis
+      * to an output stream.
       *
       * \param out  output stream (i.e., output file)
       * \param fields  array of fields (symmetry adapted basis components)
@@ -200,8 +219,7 @@ namespace Rpc {
                             UnitCell<D> const & unitCell) const;
 
       /**
-      * Write single concentration or chemical potential field to output
-      * stream out.
+      * Write a single field in basis format to an output stream.
       *
       * This function writes the field in symmetry adapted basis format.
       *
@@ -218,7 +236,7 @@ namespace Rpc {
       ///@{
 
       /**
-      * Read array of RField objects (fields on r-space grid) from istream.
+      * Read array of RField objects (r-grid fields) from an istream.
       *
       * The capacity of array fields is equal to nMonomer, and element
       * fields[i] is the RField<D> associated with monomer type i.
@@ -447,17 +465,22 @@ namespace Rpc {
       * lattice type, it must match the lattice system in the header
       * file, or an Exception is thrown.
       *
-      * Presence of a group name parameter in the header is optional
-      * if a group name was declared in the parameter file (i.e., if
-      * FieldIo::hasGroup() is true) and forbidden otherwise. If the
-      * header contains a group name, it must match the value given
-      * in the parameter file (accessed as FieldIo::groupName()), or
-      * an Exception is thrown.
+      * The isSymmetric parameter is set to true on return if a group 
+      * name is found in the header. Presence of a group name parameter in
+      * the header is optional. If the header does contain a group name
+      * and a group name was declared in the parameter file (i.e., if 
+      * FieldIo::hasGroup() is true), then these group names must match
+      * or an Exception is thrown. 
       *
-      * If the header contains the appropriate group name but the
-      * associated symmetry-adapted Fourier basis has not been
-      * initialized, this function will attempt to initialize it using
-      * the unit cell parameters read from file.
+      * If a space group was defined in the parameter file but the 
+      * associated Basis object is not been initialized, this function
+      * will initialize the basis by calling Basis<D>::makeBasis via a 
+      * private pointer, using the unit cell parameters found in the 
+      * file header.  This function thus can modify the associated
+      * Basis object as a side effect even though this function is marked 
+      * const. Because all of the FieldIo member functions that read 
+      * field files call this function to read the field file header, 
+      * the same statement also applies to all of these read functions.
       *
       * \param in  input stream (i.e., input file)
       * \param nMonomer  number of fields in the field file (output)
@@ -846,13 +869,13 @@ namespace Rpc {
       }
 
       /// Get the associated Basis by const reference
-      Basis<D> & basis() const
+      Basis<D> const & basis() const
       {
          UTIL_ASSERT(basisPtr_);
          return *basisPtr_;
       }
 
-      /// Get associated FileMaster by reference
+      /// Get associated FileMaster by const reference
       FileMaster const & fileMaster() const
       {
          UTIL_ASSERT(fileMasterPtr_);

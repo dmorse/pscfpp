@@ -44,11 +44,11 @@ Monomer Kuhn Length
 Domain
 ------
 
-   - Get rid of member functions of system that directly return members
-     of Domain (unitCell, mesh, basis).
+   - Get rid of System member functions of system that directly 
+     return members of Domain (unitCell, mesh, basis).
 
-   - Make System return domain by const reference, so that members of
-     domain cannot be directly modified outside of System class.
+   - Make System return domain by const reference, so that members 
+     of domain cannot be directly modified outside of System class.
 
 C-Fields
 --------
@@ -72,18 +72,6 @@ W-Fields
          System<D>::setFieldRGrid(int MonomerId, WField& )
 
      Setter functions will ensure consistency of Basis and RGrid forms.
-
-Accessors to Subobjects:
-------------------------
-
-   - Consider having System<D>::mesh return a constant reference.
-
-     Question: Do we need the ability to set the mesh upon reading
-     a file, or should we assume it will always be set upon reading
-     readParam?
-
-   - Remove function System<D>::domain() to allow control over access
-     to component parts separately.
 
 FieldIo
 -------
