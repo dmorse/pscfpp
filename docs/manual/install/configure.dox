@@ -107,7 +107,7 @@ if it detects a Mac OS X operating system and an installation of the
 homebrew package manager that is installed in the location used by
 homebrew for Macs with Apple Si M(X) CPU chips.
 
-<b> Relevance of CPU Hardware on Apple Macs that use Homebrew: </b>
+<b> Relevance of CPU hardware on Apple Macs that use homebrew: </b>
 
 When PSCF is compiled on an Apple Mac on which the homebrew package
 manager was used to install dependencies, the type of CPU hardware 
@@ -178,53 +178,49 @@ mac-si-homebrew file in the make/compiler directory to another file
 with a different name in the same directory (e.g., "local"), and use 
 this copy as a starting point for customization.
 
-\section install_configure_edit_config_sec Editing configuration files
+<b> Editing compiler configuration files vs. editing config.mk files: </b>
 
-There are actually two ways for users to change values of variables 
-that are defined in the main config.mk files. They may either:
+Users can use either of two methods to change values of variables 
+that are defined in the main config.mk files in the src/ and bld/ 
+directories. They may either:
 
-  - Create a customized compiler configuration file in the make/compiler 
-    directory and pass the name of this file as an argument to the 
-    configure script, as described above, or
+  - Create and modify a customized compiler configuration file in 
+    the make/compiler directory, before running the configure script, 
+    and pass the name of this file as an argument to the configure 
+    script, as described above.
 
-  - Directly edit the config.mk files in the bld and/or src directories 
-    after running the configure script to create these files. 
+  - Directly edit the config.mk files that the configure script
+    creates in the bld and/or src directories, after running the
+    configure script.
 
-In order to figure out what modifications work on your system, you may 
-find it useful to first run the configure script with one of the existing 
-compiler configuration files (linux-default or mac-si-homebrew), then 
-edit the resulting config.mk file in the bld/ or src/ directory, and 
-try compiling in that directory try out possible changes. After you 
-have figured out what modifications are required, however, we recommend 
-that you copy the modified set of definitions to a customized compiler 
-configuration file in the make/compiler directory, in order store these 
-changes for future use. Reasons for this recommendation are discussed 
-below.
+In order to figure out what modifications work on your system, some
+users may find it useful to first run the configure script with one 
+of the existing compiler configuration files (linux-default or 
+mac-si-homebrew), then edit the resulting config.mk file in the bld/ 
+or src/ directory, and compile in that build directory to test 
+changes. After the required modifications have been identified, 
+however, we recommend that one copy any modified makefile definitions 
+to a new compiler configuration file in the make/compiler directory, 
+run "make veryclean", and then rerun the configure script to 
+recreate modified config.mk files. 
 
-Suppose that you have created a configuration file named "local" and 
-installed it in the make/compiler directory.  To use this file, and 
-test that it works as intended, first enter "make veryclean" from the 
-PSCF root directory to remove all the files installed by the preceding 
-configure process, and then enter "./configure local" to rerun the
-configure script.
-
-The advantages of putting required customizations in a compiler 
+The advantages of putting required changes in such a compiler 
 configuration file are that:
 
    - Changes made in a compiler configuration file in the make/compiler
-     directory will be copied into both the src/config.mk and 
-     bld/config.mk files by the configure script, and will thus be used 
-     in both in-source and out-of-source builds.
+     directory will be copied verbatim into both the src/config.mk 
+     and bld/config.mk files by the configure script, and will thus 
+     be used for both in-source and out-of-source builds.
 
-   - Files created by users in the make/compiler directory are not 
-     erased when "make veryclean" command is invoked from the PSCF 
-     root direcory, but the files src/config.mk and bld/config.mk are 
-     erased by this command. 
+   - The src/config.mk and bld/config.mk makefile fragments are erased 
+     when the "make veryclean" command is invoked from the PSCF root 
+     directory, but user-created compiler configuration files that are
+     placed in the make/compiler directory are *not* erased by this 
+     command. 
 
-By creating a customized configuration file, users can thus store 
-required customizations in a form will survive possible repeated 
-invocation of "make veryclean" to clean up before re-invoking the 
-configure script.
+By creating a customized compiler configuration file in make/compiler
+directory, users can thus store required changes in a form can survive 
+possible repeated cycles of "make veryclean" and "configure" commands.
 
 \section install_configure_moving_sec Reconfigure after moving the root directory
 
