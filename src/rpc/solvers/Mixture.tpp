@@ -249,16 +249,22 @@ namespace Rpc
    Mixture<D>::createBlockCRGrid(DArray< RField<D> >& blockCFields) 
    const
    {
-      UTIL_CHECK(nMonomer() > 0);
-      UTIL_CHECK(nBlock() + nSolvent() > 0);
-      UTIL_CHECK(blockCFields.capacity() == nBlock() + nSolvent());
-
       int np = nSolvent() + nBlock();
+      UTIL_CHECK(np > 0);
       int nx = mesh().size();
+      UTIL_CHECK(nx > 0);
       int i, j;
 
-      // Clear all monomer concentration fields, check capacities
+      // Check allocation of blockCFields, allocate if necessary
+      // Initialize all concentration values to zero
+      if (!blockCFields.isAllocated()) {
+         blockCFields.allocate(np);
+      }
+      UTIL_CHECK(blockCFields.capacity() == np);
       for (i = 0; i < np; ++i) {
+         if (!blockCFields[i].isAllocated()) {
+            blockCFields[i].allocate(mesh().dimensions());
+         }
          UTIL_CHECK(blockCFields[i].capacity() == nx);
          for (j = 0; j < nx; ++j) {
             blockCFields[i][j] = 0.0;

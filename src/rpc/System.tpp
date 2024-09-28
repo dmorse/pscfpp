@@ -1388,7 +1388,7 @@ namespace Rpc {
    void System<D>::writeCRGrid(const std::string & filename) const
    {
       UTIL_CHECK(isAllocatedGrid_);
-      //UTIL_CHECK(hasCFields_);
+      UTIL_CHECK(hasCFields_);
       domain_.fieldIo().writeFieldsRGrid(filename, c_.rgrid(),
                                          domain().unitCell(),
                                          w_.isSymmetric());
@@ -1396,7 +1396,7 @@ namespace Rpc {
 
    /*
    * Write all concentration fields in real space (r-grid) format, for
-   * each block (or solvent) individually rather than for each species.
+   * each block and solvent species, rather than for each monomer type.
    */
    template <int D>
    void System<D>::writeBlockCRGrid(const std::string & filename) const
@@ -1404,16 +1404,14 @@ namespace Rpc {
       UTIL_CHECK(isAllocatedGrid_);
       UTIL_CHECK(hasCFields_);
 
-      // Create and allocate the DArray of fields to be written
+      // Construct array to hold block and solvent c-field data
       DArray< RField<D> > blockCFields;
-      blockCFields.allocate(mixture().nSolvent() + mixture().nBlock());
-      int n = blockCFields.capacity();
-      for (int i = 0; i < n; i++) {
-         blockCFields[i].allocate(domain().mesh().dimensions());
-      }
 
-      // Get data from Mixture and write to file
+      // Get c-field data from the Mixture 
+      // Note: blockCFields container is allocated within this function
       mixture_.createBlockCRGrid(blockCFields);
+
+      // Write block and solvent c-field data to file
       domain().fieldIo().writeFieldsRGrid(filename, blockCFields,
                                           domain().unitCell(),
                                           w_.isSymmetric());
@@ -1440,11 +1438,11 @@ namespace Rpc {
       RField<D> const& field = propagator.q(segmentId);
       domain().fieldIo().writeFieldRGrid(filename, field,
                                          domain().unitCell(),
-                                        w_.isSymmetric());
+                                         w_.isSymmetric());
    }
 
    /*
-   * Write the last time slice of the propagator in r-grid format.
+   * Write the last (tail) slice of the propagator in r-grid format.
    */
    template <int D>
    void System<D>::writeQTail(const std::string & filename,

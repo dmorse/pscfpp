@@ -160,15 +160,21 @@ namespace Rpc {
       * Get c-fields for all blocks and solvents as array of r-grid fields.
       * 
       * On return, each element of the blockCFields array contains the
-      * monomer concentration field for a single block of a polymer or
-      * a single monomer type. These are indexed with polymer blocks 
-      * first, followed by solvent types. Polymer blocks are listed with
-      * blocks of each polymer listed consecutively in order of block
-      * index, with polymer ordered in order of polymer index. Fields
-      * associated with solvents are listed after all polymer blocks in
-      * order of solvent type index.
+      * monomer concentration field for a single block of a polymer or 
+      * a single solvent species. These are indexed with polymer blocks 
+      * first, followed by solvent species. Polymer blocks are listed with
+      * blocks of each polymer placed consecutively in order of block
+      * index, with polymers ordered by polymer index. Fields associated
+      * with solvents are listed after all polymer blocks ordered by
+      * solvent species index.
       *
-      * \param blockCFields DArray of RField<D> fields (output)
+      * This function will allocate the blockCFields array and the 
+      * RField<D> arrays it contains as needed. This array thus does not
+      * need to be allocated on entry. If the array or the fields objects
+      * it contains are allocated on entry, their capacities must be 
+      * correct or an error will be thrown.
+      *
+      * \param blockCFields DArray of RField<D> field objects (output)
       */
       void createBlockCRGrid(DArray< RField<D> >& blockCFields) const;
 
