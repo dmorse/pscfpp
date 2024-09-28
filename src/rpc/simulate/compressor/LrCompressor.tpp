@@ -189,12 +189,14 @@ namespace Rpc{
 
    // update system w field using linear response approximation
    template <int D>
-   void LrCompressor<D>::updateWFields(){
+   void LrCompressor<D>::updateWFields()
+   {
       const int nMonomer = system().mixture().nMonomer();
       const int meshSize = system().domain().mesh().size();
       const double vMonomer = system().mixture().vMonomer();
+
       // Convert residual to Fourier Space
-      system().fft().forwardTransform(resid_, residK_);
+      system().domain().fft().forwardTransform(resid_, residK_);
       MeshIterator<D> iter;
       iter.setDimensions(residK_.dftDimensions());
       for (iter.begin(); !iter.atEnd(); ++iter) {
@@ -203,7 +205,7 @@ namespace Rpc{
       }
 
       // Convert back to real Space
-      system().fft().inverseTransform(residK_, resid_);
+      system().domain().fft().inverseTransform(residK_, resid_);
 
       for (int i = 0; i < nMonomer; i++){
          for (int k = 0; k < meshSize; k++){

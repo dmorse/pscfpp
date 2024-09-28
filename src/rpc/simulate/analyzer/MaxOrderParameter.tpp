@@ -130,7 +130,7 @@ namespace Rpc {
       std::vector<double> psi(kSize_);
       
       // Conver W_(r) to fourier mode W_(k)
-      system().fft().forwardTransform(simulator().wc(0), wK_);
+      system().domain().fft().forwardTransform(simulator().wc(0), wK_);
       
       for (itr.begin(); !itr.atEnd(); ++itr) {
          std::complex<double> wK(wK_[itr.rank()][0], wK_[itr.rank()][1]);

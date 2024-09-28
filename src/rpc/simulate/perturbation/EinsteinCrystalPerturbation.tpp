@@ -67,8 +67,9 @@ namespace Rpc {
       
       // Read in reference field 
       UnitCell<D> tempUnitCell;
-      system().fieldIo().readFieldsRGrid(referenceFieldFileName_, w0_, 
-                                         tempUnitCell);
+      FieldIo<D> const & fieldIo = system().domain().fieldIo();
+      fieldIo.readFieldsRGrid(referenceFieldFileName_, 
+                              w0_, tempUnitCell);
       
       // Compute eigenvector components of the reference field
       computeWcReference();

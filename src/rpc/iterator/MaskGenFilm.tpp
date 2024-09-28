@@ -58,7 +58,7 @@ namespace Rpc
       UTIL_CHECK(system().domain().basis().isInitialized());
       UTIL_CHECK(system().domain().unitCell().isInitialized());
 
-      system().mask().setFieldIo(system().fieldIo());
+      system().mask().setFieldIo(system().domain().fieldIo());
 
       // Allocate the mask containers if needed
       if (!system().mask().isAllocated()) {

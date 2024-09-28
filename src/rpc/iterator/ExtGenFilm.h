@@ -140,7 +140,7 @@ namespace Rpc {
    // Get space group name for this system.
    template <int D>
    inline std::string ExtGenFilm<D>::systemSpaceGroup() const
-   {  return system().groupName(); }
+   {  return system().domain().groupName(); }
 
    // Get lattice parameters for this system.
    template <int D>

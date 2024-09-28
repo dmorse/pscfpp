@@ -80,7 +80,8 @@ namespace Rpc {
       }
       
       for (int i = 0; i < nMonomer; ++i) {
-         system().fft().forwardTransform(system().w().rgrid()[i], wKGrid_[i]);
+         system().domain().fft().forwardTransform(system().w().rgrid()[i], 
+                                                  wKGrid_[i]);
       }
       
       nWave_ = wKGrid_[0].capacity();
@@ -119,13 +120,15 @@ namespace Rpc {
       IntVec<D> const & dimensions = system().domain().mesh().dimensions();
       RField<D> wm;
       wm.allocate(dimensions);
+
       // Compute W-
       for (int i = 0; i < wm.capacity(); ++i) {
           wm[i] = (system().w().rgrid(0)[i] - system().w().rgrid(1)[i])/2;
       }
       RFieldDft<D> wk;
       wk.allocate(dimensions);
-      system().fft().forwardTransform(wm, wk);
+      system().domain().fft().forwardTransform(wm, wk);
+
       // Convert real grid to KGrid format
       for (int k=0; k< wk.capacity(); k++) {
          std::complex<double> wmKGrid(wk[k][0], wk[k][1]);
@@ -155,7 +158,8 @@ namespace Rpc {
       // Convert real grid to KGrid format
       const int nMonomer = system().mixture().nMonomer();
       for (int i = 0; i < nMonomer; ++i) {
-         system().fft().forwardTransform(system().w().rgrid()[i], wKGrid_[i]);
+         system().domain().fft().forwardTransform(system().w().rgrid()[i], 
+                                                  wKGrid_[i]);
       }
 
       IntVec<D> G; 

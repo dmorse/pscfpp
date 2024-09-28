@@ -56,7 +56,7 @@ namespace Rpc
       UTIL_CHECK(system().domain().basis().isInitialized());
       UTIL_CHECK(system().domain().unitCell().isInitialized());
 
-      system().h().setFieldIo(system().fieldIo());
+      system().h().setFieldIo(system().domain().fieldIo());
 
       // Allocate the external field containers if needed
       if (!isAthermal()) {

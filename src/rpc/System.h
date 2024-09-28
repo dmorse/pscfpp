@@ -781,20 +781,33 @@ namespace Rpc {
       Mesh<D> const & mesh() const;
       #endif
 
+      #if 0
       /**
       * Get the Basis by const reference.
       */
       Basis<D> const & basis() const;
+      #endif
 
+      #if 0
       /**
       * Get associated FFT object by const reference.
       */
       FFT<D> const & fft() const;
+      #endif
 
+      #if 0
       /**
       * Get associated FieldIo object by const reference.
       */
       FieldIo<D> const & fieldIo() const;
+      #endif
+
+      #if 0
+      /**
+      * Get the group name string.
+      */
+      std::string groupName() const;
+      #endif
 
       /**
       * Get the iterator.
@@ -832,11 +845,6 @@ namespace Rpc {
       * Get the FileMaster by const reference.
       */
       FileMaster const & fileMaster() const;
-
-      /**
-      * Get the group name string.
-      */
-      std::string groupName() const;
 
       ///@}
       /// \name Queries
@@ -1124,25 +1132,33 @@ namespace Rpc {
    { return domain_.mesh(); }
    #endif
 
+   #if 0
    // Get the Basis<D> object.
    template <int D>
    inline Basis<D> const & System<D>::basis() const
    {  return domain_.basis(); }
+   #endif
 
+   #if 0
    // Get the FFT object by const reference.
    template <int D>
    inline FFT<D> const & System<D>::fft() const
    {  return domain_.fft(); }
+   #endif
 
+   #if 0
    // Get the FieldIo<D> by const reference.
    template <int D>
    inline FieldIo<D> const & System<D>::fieldIo() const
    {  return domain_.fieldIo(); }
+   #endif
 
+   #if 0
    // Get the groupName string by value.
    template <int D>
    inline std::string System<D>::groupName() const
    { return domain_.groupName(); }
+   #endif
 
    // Get the Simulator.
    template <int D>

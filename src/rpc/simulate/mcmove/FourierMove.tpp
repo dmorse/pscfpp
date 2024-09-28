@@ -173,7 +173,8 @@ namespace Rpc
       const int nMonomer = system().mixture().nMonomer();
       // Convert real grid to KGrid format
       for (int i = 0; i < nMonomer; ++i) {
-         system().fft().forwardTransform(system().w().rgrid()[i], wKGrid_[i]);
+         system().domain().fft().forwardTransform(system().w().rgrid()[i], 
+                                                  wKGrid_[i]);
       }
       
       /// Move step size in Fourier space Delta_W(q) is randomly selected from 
@@ -199,7 +200,7 @@ namespace Rpc
       
       // Convert Fourier (k-grid) format back to Real grid format
       for (int i = 0; i < nMonomer; ++i) {
-         system().fft().inverseTransform(wKGrid_[i], wFieldTmp_[i]);
+         system().domain().fft().inverseTransform(wKGrid_[i], wFieldTmp_[i]);
       }
       // Update attemptMove
       system().setWRGrid(wFieldTmp_);

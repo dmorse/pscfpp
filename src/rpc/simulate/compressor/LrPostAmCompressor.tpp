@@ -194,7 +194,7 @@ namespace Rpc{
       }
       
       // Convert residual to Fourier Space
-      system().fft().forwardTransform(resid_, residK_);
+      system().domain().fft().forwardTransform(resid_, residK_);
       
       // Combine with Linear response factor to update second step
       MeshIterator<D> iter;
@@ -205,7 +205,7 @@ namespace Rpc{
       }
       
       // Convert back to real Space
-      system().fft().inverseTransform(residK_, resid_);
+      system().domain().fft().inverseTransform(residK_, resid_);
       
       for (int i = 0; i < n; i++) {
          fieldTrial[i] += lambda * resid_[i];

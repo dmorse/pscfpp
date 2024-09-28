@@ -247,7 +247,7 @@ namespace Rpc{
       }
 
       // Convert residual to Fourier Space
-      system().fft().forwardTransform(resid_, residK_);
+      system().domain().fft().forwardTransform(resid_, residK_);
       // Residual combine with Linear response factor
       MeshIterator<D> iter;
       iter.setDimensions(residK_.dftDimensions());
@@ -257,7 +257,7 @@ namespace Rpc{
       }
 
       // Convert back to real Space
-      system().fft().inverseTransform(residK_, resid_);
+      system().domain().fft().inverseTransform(residK_, resid_);
 
       // Copy to resid
       for (int i = 0 ; i < n; ++i) {

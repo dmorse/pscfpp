@@ -144,7 +144,7 @@ namespace Rpc {
          // Set extrapolated trial w fields
          double coeff;
          int nMonomer = system().mixture().nMonomer();
-         int nBasis = system().basis().nBasis();
+         int nBasis = system().domain().basis().nBasis();
          DArray<double>* newFieldPtr;
          DArray<double>* oldFieldPtr;
          int i, j, k;
@@ -282,6 +282,9 @@ namespace Rpc {
       system().writeThermo(out);
       out.close();
 
+      FieldIo<D> const & fieldIo = system().domain().fieldIo();
+      UnitCell<D> const & unitCell = system().domain().unitCell();
+
       // Write w fields
       outFileName = baseFileName_;
       outFileName += indexString;
@@ -289,9 +292,8 @@ namespace Rpc {
       outFileName += ".bf";
       UTIL_CHECK(system().w().hasData());
       UTIL_CHECK(system().w().isSymmetric());
-      system().fieldIo().writeFieldsBasis(outFileName,
-                                          system().w().basis(),
-                                          system().domain().unitCell());
+      fieldIo.writeFieldsBasis(outFileName,
+                               system().w().basis(), unitCell);
 
       // Optionally write c rgrid files
       if (writeCRGrid_) {
@@ -299,9 +301,8 @@ namespace Rpc {
          outFileName += indexString;
          outFileName += "_c";
          outFileName += ".rf";
-         system().fieldIo().writeFieldsRGrid(outFileName,
-                                             system().c().rgrid(),
-                                             system().domain().unitCell());
+         fieldIo.writeFieldsRGrid(outFileName,
+                                  system().c().rgrid(), unitCell);
       }
 
        // Optionally write c basis files
@@ -311,9 +312,9 @@ namespace Rpc {
          outFileName += "_c";
          outFileName += ".bf";
          UTIL_CHECK(system().hasCFields());
-         system().fieldIo().writeFieldsBasis(outFileName,
-                                             system().c().basis(),
-                                             system().domain().unitCell());
+         fieldIo.writeFieldsBasis(outFileName,
+                                  system().c().basis(), unitCell);
+
       }
 
       // Optionally write w rgrid files
@@ -322,10 +323,10 @@ namespace Rpc {
          outFileName += indexString;
          outFileName += "_w";
          outFileName += ".rf";
-         system().fieldIo().writeFieldsRGrid(outFileName,
-                                             system().w().rgrid(),
-                                             system().domain().unitCell());
+         fieldIo.writeFieldsRGrid(outFileName,
+                                  system().w().rgrid(), unitCell);
       }
+
    }
 
    template <int D>

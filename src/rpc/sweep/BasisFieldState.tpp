@@ -58,7 +58,7 @@ namespace Rpc
          fields().allocate(nMonomer);
       }
 
-      int nBasis = system().basis().nBasis();
+      int nBasis = system().domain().basis().nBasis();
       UTIL_CHECK(nBasis > 0);
       for (int i = 0; i < nMonomer; ++i) {
          if (field(i).isAllocated()) {
@@ -77,7 +77,10 @@ namespace Rpc
    void BasisFieldState<D>::read(const std::string & filename)
    {
       allocate();
-      system().fieldIo().readFieldsBasis(filename, fields(), unitCell());
+      FieldIo<D> const & fieldIo = system().domain().fieldIo();
+      fieldIo.readFieldsBasis(filename, 
+                                                    fields(), 
+                                                    unitCell());
    }
 
    /**
@@ -86,7 +89,8 @@ namespace Rpc
    template <int D>
    void BasisFieldState<D>::write(const std::string & filename)
    {
-      system().fieldIo().writeFieldsBasis(filename, fields(), unitCell());
+      FieldIo<D> const & fieldIo = system().domain().fieldIo();
+      fieldIo.writeFieldsBasis(filename, fields(), unitCell());
    }
 
    /*
@@ -98,7 +102,7 @@ namespace Rpc
       // Get system wFields
       allocate();
       int nMonomer = system().mixture().nMonomer();
-      int nBasis = system().basis().nBasis();
+      int nBasis = system().domain().basis().nBasis();
       int i, j;
       for (i = 0; i < nMonomer; ++i) {
          DArray<double>& stateField = field(i);
