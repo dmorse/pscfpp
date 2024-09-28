@@ -450,6 +450,7 @@ public:
                                       "out/testIterate1D_lam_soln_c.bf", 
                                       system.c().basis(), 
                                       system.domain().unitCell());
+      system.writeBlockCRGrid("out/testIterate1D_lam_soln_block_c.rf");
 
       BFieldComparison comparison(1);
       comparison.compare(wFields_check, system.w().basis());
@@ -538,6 +539,7 @@ public:
                                  "out/testIterate1D_lam_open_blend_c.bf", 
                                  system.c().basis(), 
                                  system.domain().unitCell());
+      system.writeBlockCRGrid("out/testIterate1D_lam_open_blend_block_c.rf");
 
       // Compare result
       BFieldComparison comparison(1);
@@ -858,6 +860,7 @@ public:
       system.domain().fieldIo().writeFieldsBasis("out/testIterate3D_altGyr_flex_c.bf", 
                                         system.c().basis(), 
                                         system.domain().unitCell());
+      system.writeBlockCRGrid("out/testIterate3D_altGyr_flex_block_c.rf");
 
       // Compare w fields
       BFieldComparison comparison(1);

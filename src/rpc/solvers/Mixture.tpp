@@ -242,7 +242,7 @@ namespace Rpc
    }
 
    /*
-   * Combine cFields for each block (and solvent) into one DArray
+   * Combine cFields for all blocks and solvents into one DArray
    */
    template <int D>
    void
@@ -251,12 +251,11 @@ namespace Rpc
    {
       UTIL_CHECK(nMonomer() > 0);
       UTIL_CHECK(nBlock() + nSolvent() > 0);
+      UTIL_CHECK(blockCFields.capacity() == nBlock() + nSolvent());
 
       int np = nSolvent() + nBlock();
       int nx = mesh().size();
       int i, j;
-
-      UTIL_CHECK(blockCFields.capacity() == nBlock() + nSolvent());
 
       // Clear all monomer concentration fields, check capacities
       for (i = 0; i < np; ++i) {
@@ -266,39 +265,35 @@ namespace Rpc
          }
       }
 
+      // Initialize section (block or solvent) index
+      int sectionId = 0;
+
       // Process polymer species
-      int sectionId = -1;
-
       if (nPolymer() > 0) {
-
-         // Write each block's r-grid data to blockCFields
          for (i = 0; i < nPolymer(); ++i) {
             for (j = 0; j < polymer(i).nBlock(); ++j) {
-               sectionId++;
-
                UTIL_CHECK(sectionId >= 0);
                UTIL_CHECK(sectionId < np);
-               UTIL_CHECK(blockCFields[sectionId].capacity() == nx);
-
+               // Copy block r-grid c-field to blockCFields
                blockCFields[sectionId] = polymer(i).block(j).cField();
+               sectionId++;
             }
          }
       }
+      UTIL_CHECK(sectionId == nBlock());
 
       // Process solvent species
       if (nSolvent() > 0) {
-
-         // Write each solvent's r-grid data to blockCFields
          for (i = 0; i < nSolvent(); ++i) {
-            sectionId++;
-
             UTIL_CHECK(sectionId >= 0);
             UTIL_CHECK(sectionId < np);
-            UTIL_CHECK(blockCFields[sectionId].capacity() == nx);
-
+            // Copy solvent r-grid c-field to blockCFields
             blockCFields[sectionId] = solvent(i).cField();
+            sectionId++;
          }
       }
+      UTIL_CHECK(sectionId == np);
+
    }
 
 } // namespace Rpc

@@ -157,18 +157,25 @@ namespace Rpc {
                    double phiTot = 1.0);
       
       /**
+      * Get c-fields for all blocks and solvents as array of r-grid fields.
+      * 
+      * On return, each element of the blockCFields array contains the
+      * monomer concentration field for a single block of a polymer or
+      * a single monomer type. These are indexed with polymer blocks 
+      * first, followed by solvent types. Polymer blocks are listed with
+      * blocks of each polymer listed consecutively in order of block
+      * index, with polymer ordered in order of polymer index. Fields
+      * associated with solvents are listed after all polymer blocks in
+      * order of solvent type index.
+      *
+      * \param blockCFields DArray of RField<D> fields (output)
+      */
+      void createBlockCRGrid(DArray< RField<D> >& blockCFields) const;
+
+      /**
       * Compute derivatives of free energy w/ respect to cell parameters.
       */
       void computeStress();
-
-      /**
-      * Combine cFields for each block/solvent into one DArray, which 
-      * is used in System.tpp to print a more detailed r-grid file using
-      * the command WRITE_C_BLOCK_RGRID.
-      * 
-      * \param blockCFields empty but allocated DArray to store fields
-      */
-      void createBlockCRGrid(DArray< RField<D> >& blockCFields) const;
 
       /**
       * Get derivative of free energy w/ respect to a unit cell parameter.
