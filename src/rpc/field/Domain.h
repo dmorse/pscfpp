@@ -34,13 +34,13 @@ namespace Rpc
    *
    * A Domain has (among other components):
    *
-   *    - a Mesh
-   *    - a UnitCell
-   *    - a SpaceGroup 
-   *    - a Basis
-   *    - an FFT 
-   *    - a FieldIo
-   *    - a lattice system enum value
+   *    - a Mesh <D> spatial discretization mesh
+   *    - a Prdc::UnitCell <D> crystallographic unit cell
+   *    - a Prdc::SpaceGroup <D> crystallographic space group
+   *    - a Prdc::Basis <D> symmetry-adapated Fourier basis
+   *    - a Prdc::Cpu::FFT <D> Fast Fourier Transform
+   *    - an Rpc::FieldIo <D>
+   *    - a lattice system (a Prdc::UnitCell<D>::LatticeSystem enum value)
    *    - a groupName string
    *
    * \ingroup Rpc_Field_Module
@@ -51,8 +51,6 @@ namespace Rpc
 
    public:
 
-      /// \name Construction, Initialization and Destruction
-      ///@{
 
       /**
       * Constructor.
@@ -63,6 +61,9 @@ namespace Rpc
       * Destructor.
       */
       ~Domain();
+
+      /// \name Initialization and Mutators
+      ///@{
 
       /**
       * Create association with a FileMaster, needed by FieldIo.
@@ -124,7 +125,7 @@ namespace Rpc
       void makeBasis();
 
       ///@}
-      /// \name Accessors 
+      /// \name Accessors (return by non-const or const reference)
       ///@{
 
       /**
@@ -181,6 +182,10 @@ namespace Rpc
       * Get associated FieldIo object by const reference.
       */
       FieldIo<D> const & fieldIo() const;
+
+      ///@}
+      /// \name Accessors (return by value)
+      ///@{
 
       /** 
       * Get lattice system.

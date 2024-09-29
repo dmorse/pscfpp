@@ -52,6 +52,9 @@ namespace Rpc {
       */
       ~CFieldContainer();
 
+      /// \name Initialization and Memory Management
+      ///@{
+
       /**
       * Set stored value of nMonomer.
       * 
@@ -96,6 +99,10 @@ namespace Rpc {
       */
       void allocate(int nMonomer, int nBasis, IntVec<D> const & dimensions);
 
+      ///@}
+      /// \name Field Mutators and Accessors (return by reference)
+      ///@{
+
       /**
       * Get array of all fields in basis format (non-const).
       */
@@ -109,6 +116,7 @@ namespace Rpc {
       */
       DArray< DArray<double> > const & basis() const
       {  return basis_; }
+
 
       /**
       * Get the field for one monomer type in basis format (non-const).
@@ -154,6 +162,10 @@ namespace Rpc {
       RField<D> const & rgrid(int monomerId) const
       {  return rgrid_[monomerId]; }
 
+      ///@}
+      /// \name Boolean Queries
+      ///@{
+
       /**
       * Has memory been allocated for fields in r-grid format?
       */
@@ -165,6 +177,8 @@ namespace Rpc {
       */
       bool isAllocatedBasis() const
       {  return isAllocatedBasis_; }
+
+      ///@}
 
    private:
 

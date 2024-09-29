@@ -43,13 +43,12 @@ namespace Rpc {
    * A pointer to an associated FieldIo<D> is used for these conversions.
    * The setBasis function allows the user to input new components in
    * basis format and internally recomputes the values in r-grid format.
-   * The setRgrid function allows the user to reset the field in 
-   * r-grid format, but recomputes the components in basis format if 
-   * and only if the user declares that the field are known to be
-   * invariant under all symmetries of the space group. A boolean
-   * flag named isSymmetric is used to keep track of whether the 
-   * current field is symmetric, and thus whether the basis format 
-   * exists.
+   * The setRgrid function allows the user to reset the field in r-grid
+   * format, but recomputes the components in basis format if and only
+   * if the user explicitly declares that the field are known to be
+   * invariant under all symmetries of the space group. A boolean flag
+   * named isSymmetric is used to keep track of whether the current
+   * field is symmetric, and thus whether the basis format exists.
    *
    * \ingroup Rpc_Field_Module
    */
@@ -69,6 +68,9 @@ namespace Rpc {
       */
       ~Mask();
 
+      /// \name Initialization and Memory Management
+      ///@{
+
       /**
       * Create association with FieldIo (store pointer).
       */
@@ -84,6 +86,10 @@ namespace Rpc {
       * \param dimensions  dimensions of spatial mesh
       */
       void allocate(int nBasis, IntVec<D> const & dimensions);
+
+      ///@}
+      /// \name Field Mutators
+      ///@{
 
       /**
       * Set field component values, in symmetrized Fourier format.
@@ -188,6 +194,10 @@ namespace Rpc {
       void readRGrid(std::string filename, UnitCell<D>& unitCell,
                      bool isSymmetric = false);
 
+      ///@}
+      /// \name Field Accessors 
+      ///@{
+
       /**
       * Get the field in basis format.
       *
@@ -203,17 +213,21 @@ namespace Rpc {
       RField<D> const & rgrid() const;
 
       /**
-      * Volume fraction of the unit cell occupied by the polymers/solvents.
+      * Return the volume fraction of unit cell occupied by material.
       * 
-      * This value is equivalent to the spatial average of the mask, which is 
-      * the q=0 coefficient of the discrete Fourier transform.
+      * This value is equivalent to the spatial average of the mask, 
+      * which is the q=0 coefficient of the discrete Fourier transform.
       * 
-      * If hasData_ = true and isSymmetric_ = false (data only exists in 
-      * rgrid format), then this object must be associated with a FieldIo
-      * object in order to call phiTot(). In other cases, the FieldIo 
-      * association is not necessary.
+      * If hasData == true and isSymmetric == false (i.e., data only 
+      * exists in rgrid format), then this object must be associated 
+      * with a FieldIo object in order to call phiTot(). In other 
+      * cases, the FieldIo association is not necessary.
       */
       double phiTot() const;
+
+      ///@}
+      /// \name Boolean Queries
+      ///@{
 
       /**
       * Has memory been allocated?
@@ -236,6 +250,8 @@ namespace Rpc {
       * by the function setRGrid but isSymmetric was set true.
       */
       bool isSymmetric() const;
+
+      ///@}
 
    private:
 

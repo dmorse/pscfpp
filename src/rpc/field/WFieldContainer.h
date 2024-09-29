@@ -26,11 +26,11 @@ namespace Rpc {
    using namespace Pscf::Prdc::Cpu;
 
    /**
-   * A list of fields stored in both basis and r-grid format.
+   * A container of fields stored in both basis and r-grid format.
    *
    * A WFieldContainer<D> contains representations of a list of nMonomer
-   * fields that are associated with different monomer types in two 
-   * different related formats:
+   * fields that are associated with different monomer types. Fields may
+   * be stored in two different related formats:
    * 
    *  - A DArray of DArray<double> containers holds components of each
    *    field in a symmetry-adapted Fourier expansion (i.e., in basis 
@@ -71,6 +71,9 @@ namespace Rpc {
       * Destructor.
       */
       ~WFieldContainer();
+
+      /// \name Initialization and Memory Management
+      ///@{
 
       /**
       * Create association with FieldIo (store pointer).
@@ -120,6 +123,10 @@ namespace Rpc {
       * \param dimensions  dimensions of spatial mesh
       */
       void allocate(int nMonomer, int nBasis, IntVec<D> const & dimensions);
+
+      ///@}
+      /// \name Field Mutators 
+      ///@{
 
       /**
       * Set field component values, in symmetrized Fourier format.
@@ -226,6 +233,10 @@ namespace Rpc {
       void readRGrid(std::string filename, UnitCell<D>& unitCell,
                      bool isSymmetric = false);
 
+      ///@}
+      /// \name Field Accessors (by const reference)
+      ///@{
+
       /**
       * Get array of all fields in basis format.
       *
@@ -256,6 +267,10 @@ namespace Rpc {
       */
       RField<D> const & rgrid(int monomerId) const;
 
+      ///@}
+      /// \name Boolean Queries
+      ///@{
+
       /**
       * Has memory been allocated for fields in r-grid format?
       */
@@ -282,6 +297,8 @@ namespace Rpc {
       * by the function setRGrid but isSymmetric was set true.
       */
       bool isSymmetric() const;
+
+      ///@}
 
    private:
 

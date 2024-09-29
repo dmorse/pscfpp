@@ -76,17 +76,31 @@ To be written or heavily edited (v1.2):
 
    1.  Incompressible Field Theory (Fully Fluctuating)
         - Potential Energy Model
-        - Two-Monomer Systems (nMonomer = 2)
+             U = U_{id} + U_{int}  
+             U_{int} defined with chi parameters
+             Z as configurational integral with constraint
+        - Field Theory - Standard AB Systems (M=2)
+             Define convention chi_{11} = chi_{22} = 0
+             Rewrite U_{int}
+             Particle Fields Transformation
+             Hamiltonian
         - Projected Chi Matrix
-        - General (nMonomer >= 2)
+             Define e
+             Define tilde{chi}
+             Rewrite U_{int}
+             Eigenvector decomposition
+             Rewrite U_{int}
+        - Field Theory - General (M >= 2)
+             Particle Field Transformation
+             Field-Theoretic Hamiltonian
    2.  Partial Saddle Point Approximation
-        - Two-Monomer Systems
+        - Standard AB Systems
         - General (Restriction to no positive eigenvalues)
    3.  Sampling Algorithms
    4.  Examples (unified rpc and rpg, parameter and command files)
         - BD Example
         - MC Example
-        - Data Analysis
+        - On-the Fly Data Analysis
         - Trajectory Postprocessing
    5.  Compressor Algorithms
         - AndersonMixing

@@ -1,0 +1,169 @@
+Proposed Approach
+-----------------
+
+To use threads to compute modified diffusion equations for all 
+propagators, use a a master/slave arrangement in which each thread
+worker takes a jobs from a queue, runs the job, and then modifies
+the queue to reflect any jobs that have become "ready" as a result
+of completion.
+
+Plan: 
+-----
+
+ - Implement first in R1d, which doesn't involve any changes to
+   treatment of FFTs
+
+ - Implement next in Rpc, after changes to allow different threads
+   to use different FFT objects.
+
+Preparatory Changes to Existing Solver Templates
+------------------------------------------------
+
+- Add a setGlobalId(int id) and int globalId() to PropagatorTmpl to 
+  alllow each propagator to be assigned a global id. Use this as the
+  array index in any data structures in which all propagators on all
+  polymers are listed in a single array.
+
+- The PropagatorTmpl already has functions isReady and isSolved.
+  The isReady function computes whether or not the propagator is
+  ready. The isSolved retrieves a boolean variable that marks a 
+  propagator as solved, which is set by the solve function.
+
+- Consider dividing isReady into setIsReady() compute function and
+  isReady() retrieval function.
+
+
+New Classes and Namespaces (for R1d 1D code)
+-------------------------
+
+- Create directories src/pscf/thread and src/r1d/thread
+
+- Struct Pscf::PropagatorId which is a struct that just 
+  lists the polymer, block, and direction Id.
+
+- enum class Pscf::PropagatorStatus 
+  Possible values {waiting, ready, running, solved}
+
+- Create Namespace Pscf::R1d::Thread
+
+- class Pscf::R1d::Thread::PropagatorWorker, which is a functor that 
+  implements the operator () function run by a thread in a pool
+
+- class Pscf::R1d::Thread::PropagatorMaster, which is a master object 
+  that owns a thread pool.
+
+PropagatorWorker
+----------------
+
+  A PropagatorWorker has:
+
+     - A pointer masterPtr_ to the PropagatorMaster
+
+     - Any resources required by the job (e.g., a thread-local FFTW
+       object)
+
+     - A PropagatorId named currentPropagator_ that identifies the
+       current job
+
+  Mixture::PropagatorWorker::operator ()
+  --------------------------------------
+
+   while (master.nIncomplete() > 0) {
+
+       if (local job exists) {
+          assign local job to self
+       } else {
+          Lock mutex for queue
+          If (queue is not empty) {
+             Pop a job off the queue and assign to this
+          }
+          Unlock mutex for queue
+       }
+       If (no job has been assigned) {
+          Create unique_lock on a thread mutex
+          Increment nWaiting_;
+          Wait on condition variable until notified
+          Assign job when woken
+       }
+       Check if a job is assigned
+       Run the assigned job
+       Do end of job processing (involves mutex to modify queue)
+   }
+
+   End of Job Processing by Thread:
+
+   When solution of the MDE for a propagator is completed, have the
+   thread that just completed this job:
+
+    - Check if completion completes the pre-requisites for one or 
+      more outgoing propagators from the terminating vertex. Create
+      a local list of enabled jobs.
+
+    - If the local enabled queue is not empty, copy the last propagator 
+      id to the localReady_ variable and set hasLocal and remove it
+      from the end of the list.
+
+    - If the enabled list is still not empty {
+
+         * Aquire a lock on the mutex that protects the global ready queue
+
+         * Copy all remaining jobs from the enabled list to the global 
+           ready queue, without popping off the queue.
+
+         * Release lock on ready queue
+
+      }
+
+      For each remaining job in the enabled list {
+         Call notify_one on the thread condition variable
+      }
+
+
+   PropagatorMaster
+   ----------------
+
+   A PropagatorMaster has:
+
+       - A pointer mixturePtr_ to the parent Mixture
+
+       - A std::array<std::thread> threads_ of threads
+
+       - A DArray<PropagatorStatus> propagatorStatus_ indexed by global
+         integer propagator index that assigns each propagator a status 
+         (waiting, ready, running or complete).
+
+       - A queue ready_ of identifiers for propagators that are
+         "ready". 
+
+   Mixture::PropagatorMaster void solve() function
+   -----------------------------------------
+
+   Initialize data structures for propagators
+   Fill queue of ready propagators (integrate in from end)
+   Create array of threads
+   Wait for signal of completion of all threads
+   Join all threads
+
+Preparatory Changes to Rpc Solvers to Change Treatment of FFTS
+--------------------------------------------------------------
+
+
+- Add FFT<D>* fftPtr_ to the Propagator to allow it to store the address
+  of an FFT. Add setFFT(...) setter and fft() accessor.
+
+- Add code to set all propagator FFTs to point to the global FFT of
+  the Domain<D> object, for now. 
+
+- Change member functions of Block that use an FFT so as to take the 
+  FFT as an argument, rather than storing a pointer to an FFT. This
+  will allow the two propagators of the same block to use different
+  FFT objects if necessary. Add arguments to all calls of these
+  functions.
+
+- Remove FFT argument from Block<D>::setDiscretization(...) and
+  remove fftPtr_ from Block class.
+
+- We will need a mechanism to allow the plan created by the global
+  FFT (owned by the System) to be used or reproduced by thread-local
+  FFT objects owned by PropagatorWorker objects.
+
