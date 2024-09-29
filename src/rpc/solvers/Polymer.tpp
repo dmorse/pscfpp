@@ -41,13 +41,13 @@ namespace Rpc {
    * Set unit cell dimensions in all solvers.
    */ 
    template <int D>
-   void Polymer<D>::setupUnitCell(UnitCell<D> const & unitCell)
+   void Polymer<D>::setUnitCell(UnitCell<D> const & unitCell)
    {
       // Set association to unitCell
       unitCellPtr_ = &unitCell;
 
       for (int j = 0; j < nBlock(); ++j) {
-         block(j).setupUnitCell(unitCell);
+         block(j).setUnitCell(unitCell);
       }
    }
 

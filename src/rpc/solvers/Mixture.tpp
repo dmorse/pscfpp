@@ -77,7 +77,7 @@ namespace Rpc
    }
 
    template <int D>
-   void Mixture<D>::setupUnitCell(const UnitCell<D>& unitCell)
+   void Mixture<D>::setUnitCell(const UnitCell<D>& unitCell)
    {
 
       // Set association of unitCell to this Mixture
@@ -86,7 +86,7 @@ namespace Rpc
       // SetupUnitCell for all polymers
       if (nPolymer() > 0) {
          for (int i = 0; i < nPolymer(); ++i) {
-            polymer(i).setupUnitCell(unitCell);
+            polymer(i).setUnitCell(unitCell);
          }
       }
 
@@ -106,8 +106,9 @@ namespace Rpc
       // Update kuhn length for all blocks of this monomer type
       for (int i = 0; i < nPolymer(); ++i) {
          for (int j =  0; j < polymer(i).nBlock(); ++j) {
-            if (monomerId == polymer(i).block(j).monomerId()) {
-               polymer(i).block(j).setKuhn(kuhn);
+            Block<D>& block = polymer(i).block(j);
+            if (monomerId == block.monomerId()) {
+               block.setKuhn(kuhn);
             }
          }
       }

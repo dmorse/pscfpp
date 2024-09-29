@@ -250,7 +250,7 @@ namespace Rpc {
 
       // Setup mixture
       mixture_.setDiscretization(domain().mesh(), domain().fft());
-      mixture_.setupUnitCell(domain().unitCell());
+      mixture_.setUnitCell(domain().unitCell());
 
       // Allocate memory for w and c fields
       allocateFieldsGrid();
@@ -735,7 +735,7 @@ namespace Rpc {
       w_.readBasis(filename, domain_.unitCell());
 
       // Update UnitCell in Mixture
-      mixture_.setupUnitCell(domain().unitCell());
+      mixture_.setUnitCell(domain().unitCell());
 
       hasCFields_ = false;
       hasFreeEnergy_ = false;
@@ -765,7 +765,7 @@ namespace Rpc {
       w_.readRGrid(filename, domain_.unitCell());
 
       // Update UnitCell in Mixture
-      mixture_.setupUnitCell(domain().unitCell());
+      mixture_.setUnitCell(domain().unitCell());
 
       hasCFields_ = false;
       hasFreeEnergy_ = false;
@@ -801,7 +801,7 @@ namespace Rpc {
                                          domain_.unitCell());
 
       // Update UnitCell in Mixture
-      mixture_.setupUnitCell(domain().unitCell());
+      mixture_.setUnitCell(domain().unitCell());
 
       // Allocate work space array
       DArray<double> wtmp;
@@ -864,7 +864,7 @@ namespace Rpc {
    void System<D>::setUnitCell(UnitCell<D> const & unitCell)
    {
       domain_.setUnitCell(unitCell);
-      mixture_.setupUnitCell(domain().unitCell());
+      mixture_.setUnitCell(domain().unitCell());
       if (domain().hasGroup() && !isAllocatedBasis_) {
          allocateFieldsBasis();
       }
@@ -879,7 +879,7 @@ namespace Rpc {
                           FSArray<double, 6> const & parameters)
    {
       domain_.setUnitCell(lattice, parameters);
-      mixture_.setupUnitCell(domain().unitCell());
+      mixture_.setUnitCell(domain().unitCell());
       if (domain().hasGroup() && !isAllocatedBasis_) {
          allocateFieldsBasis();
       }
@@ -892,7 +892,7 @@ namespace Rpc {
    void System<D>::setUnitCell(FSArray<double, 6> const & parameters)
    {
       domain_.setUnitCell(parameters);
-      mixture_.setupUnitCell(domain().unitCell());
+      mixture_.setUnitCell(domain().unitCell());
       if (domain().hasGroup() && !isAllocatedBasis_) {
          allocateFieldsBasis();
       }

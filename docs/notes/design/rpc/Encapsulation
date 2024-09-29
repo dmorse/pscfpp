@@ -8,56 +8,51 @@ Block
 
    - Add a private boolean variable hasExpKsq_ that is initialized
      false and set false any time you change anything that could 
-     invalidate data in the arrays expKsq_ an expKsq2_. 
+     invalidate data in the arrays expKsq_ an expKsq2_. (done)
 
    - Change setupUnitCell to setUnitCell. Have this function store
      a pointer to UnitCell that can be retrieved later, and have it
-     set hasExpKsq_ = false.
+     set hasExpKsq_ = false. (done)
 
    - Reimplement BlockDescriptor::setLength so as to set ds_ if 
-     ns_ > 1, and to set hasExpKsq_ = false.
+     ns_ > 1, and to set hasExpKsq_ = false (done).
 
-   - Add function setKuhn(....) which sets the kuhn_ variable and
-     sets hasExpKsq_ = false
+   - Add re-implemented virtual function setKuhn(....) in Rpc which 
+     sets the kuhn_ variable and sets hasExpKsq_ = false (done)
 
    - Create a private function computeExpKsq that is called by
-     setupSolver if and only if (!hasExpKSq_)
+     setupSolver if and only if (!hasExpKSq_) (done)
 
 Monomer Kuhn Length
 -------------------
  
    - Create a function Mixture::setKuhn(....) that sets the step
      value in the Monomer descriptor and calls setKuhn(...) for
-     every block of the relevant type.
-
-   - (Later, when we can test GPU code): Make MixtureTmpl return
-     a const reference to a Monomer, rather than a non-const reference.
-     This will make it impossible for someone with access to a System<D>
-     to call Monomer::setStep
-
-   - (Later, when we can test GPU code): Make nomenclature for 
-     statistical segment lengths consistent, by using "kuhn" or "step"
-     throughout. I think "kuhn" is less subject to misinterpretation.
-     This would change Monomer functions setStep(double ) and step()
-     to setKuhn(double ) and kuhn().
+     every block of the relevant monomer type (done).
 
 Domain
 ------
 
-   - Get rid of System member functions of system that directly 
-     return members of Domain (unitCell, mesh, basis).
+   - Get rid of System member functions of system that directly return
+     members of Domain (unitCell, mesh, basis) (done).
 
-   - Make System return domain by const reference, so that members 
-     of domain cannot be directly modified outside of System class.
+   - Make System return domain by const reference, so that members of 
+     domain cannot be directly modified outside of System class.
 
 C-Fields
 --------
 
-   - Make all System<D> cField accessors return constant references. 
+   - Make System<D> cField accessor c() return constant reference (done).
 
-     There is no reason to allow users to modify the concentration 
+     Rationale: There is no reason to allow users to modify the concentration 
      field, which should be computed internally.
 
+   - Make System<D> wField accessor w() return constant references (done).
+
+     Users must use a read or set function to set the w-field, which can
+     set flags to invalidate variables that depend on w. 
+
+     
 W-Fields
 --------
 

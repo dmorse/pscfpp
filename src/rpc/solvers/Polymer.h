@@ -96,7 +96,7 @@ namespace Rpc {
       *
       * \param unitCell crystallographic unit cell
       */ 
-      void setupUnitCell(UnitCell<D> const & unitCell);
+      void setUnitCell(UnitCell<D> const & unitCell);
 
       /**
       * Compute solution to MDE and block concentrations.

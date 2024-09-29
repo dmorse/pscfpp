@@ -53,7 +53,7 @@ namespace Rpc {
    *
    * A Mixture is associated with a Mesh<D> object, which models a spatial
    * discretization mesh, and a UnitCell<D> object, which describes the
-   * the periodic unit cell. The Mixture::setupUnitCell function sets up
+   * the periodic unit cell. The Mixture::setUnitCell function sets up
    * all parameters that depend on the unit cell, and must be called once
    * once after every time the unit cell is initialized or modified, 
    * before the next call to Mixture::compute.
@@ -111,7 +111,7 @@ namespace Rpc {
       *
       * \param unitCell UnitCell<D> object that contains Bravais lattice.
       */
-      void setupUnitCell(const UnitCell<D>& unitCell);
+      void setUnitCell(const UnitCell<D>& unitCell);
 
       /**
       * Reset statistical segment length for one monomer type.

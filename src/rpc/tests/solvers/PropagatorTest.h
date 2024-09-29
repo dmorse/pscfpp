@@ -55,7 +55,7 @@ public:
    }
 
    template <int D>
-   void setupUnitCell(UnitCell<D>& unitCell, std::string fname)
+   void setUnitCell(UnitCell<D>& unitCell, std::string fname)
    {
       std::ifstream in;
       openInputFile(fname, in);
@@ -156,7 +156,7 @@ public:
       block.setDiscretization(ds, mesh, fft);
 
       UnitCell<1> unitCell;
-      setupUnitCell<1>(unitCell, "in/Lamellar");
+      setUnitCell<1>(unitCell, "in/Lamellar");
 
       TEST_ASSERT(eq(unitCell.rBasis(0)[0], 4.0));
 
@@ -168,7 +168,7 @@ public:
          w[i] = 1.0;
       }
 
-      block.setupUnitCell(unitCell);
+      block.setUnitCell(unitCell);
       block.setupSolver(w);
    }
    
@@ -190,7 +190,7 @@ public:
       block.setDiscretization(ds, mesh, fft);
 
       UnitCell<2> unitCell;
-      setupUnitCell<2>(unitCell, "in/Rectangular");
+      setUnitCell<2>(unitCell, "in/Rectangular");
 
       TEST_ASSERT(eq(unitCell.rBasis(0)[0], 3.0));
       TEST_ASSERT(eq(unitCell.rBasis(1)[1], 4.0));
@@ -203,7 +203,7 @@ public:
          w[i] = 1.0;
       }
 
-      block.setupUnitCell(unitCell);
+      block.setUnitCell(unitCell);
       block.setupSolver(w);
    }
 
@@ -225,7 +225,7 @@ public:
       block.setDiscretization(ds, mesh, fft);
 
       UnitCell<3> unitCell;
-      setupUnitCell<3>(unitCell, "in/Orthorhombic");
+      setUnitCell<3>(unitCell, "in/Orthorhombic");
 
       TEST_ASSERT(eq(unitCell.rBasis(0)[0], 3.0));
       TEST_ASSERT(eq(unitCell.rBasis(1)[1], 4.0));
@@ -239,7 +239,7 @@ public:
          w[i] = 1.0;
       }
 
-      block.setupUnitCell(unitCell);
+      block.setUnitCell(unitCell);
       block.setupSolver(w);
    }
 
@@ -261,7 +261,7 @@ public:
       block.setDiscretization(ds, mesh, fft);
 
       UnitCell<1> unitCell;
-      setupUnitCell<1>(unitCell, "in/Lamellar");
+      setUnitCell<1>(unitCell, "in/Lamellar");
 
       // Setup chemical potential field
       RField<1> w;
@@ -273,7 +273,7 @@ public:
          w[i] = wc;
       }
 
-      block.setupUnitCell(unitCell);
+      block.setUnitCell(unitCell);
       block.setupSolver(w);
 
       // Test step
@@ -331,7 +331,7 @@ public:
       block.setDiscretization(ds, mesh, fft);
 
       UnitCell<2> unitCell;
-      setupUnitCell<2>(unitCell, "in/Rectangular");
+      setUnitCell<2>(unitCell, "in/Rectangular");
 
       TEST_ASSERT(eq(unitCell.rBasis(0)[0], 3.0));
       TEST_ASSERT(eq(unitCell.rBasis(1)[1], 4.0));
@@ -347,7 +347,7 @@ public:
          w[i] = wc;
       }
 
-      block.setupUnitCell(unitCell);
+      block.setUnitCell(unitCell);
       block.setupSolver(w);
 
       // Test step
@@ -415,7 +415,7 @@ public:
       block.setDiscretization(ds, mesh, fft);
 
       UnitCell<3> unitCell;
-      setupUnitCell<3>(unitCell, "in/Orthorhombic");
+      setUnitCell<3>(unitCell, "in/Orthorhombic");
 
       TEST_ASSERT(eq(unitCell.rBasis(0)[0], 3.0));
       TEST_ASSERT(eq(unitCell.rBasis(1)[1], 4.0));
@@ -432,7 +432,7 @@ public:
          w[i] = wc;
       }
 
-      block.setupUnitCell(unitCell);
+      block.setUnitCell(unitCell);
       block.setupSolver(w);
 
       // Test step

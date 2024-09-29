@@ -60,35 +60,43 @@ namespace Rpc {
       /**
       * Initialize discretization and allocate required memory.
       *
-      * This function chooses a value for the number ns of contour
-      * variable grid points for this block so as to yield a value
-      * for the the actual step size length/(ns-1) as close as possible
-      * to the input parameter ds (the desired step size) consistent
-      * with the requirements that ns be odd and ns > 1. These
-      * requirements allow use of Simpson's rule for integration with
-      * respect to the contour variable s.
+      * This function creates associations with the mesh and fft objects
+      * (i.e., stores addresses), choses a value for the number ns of 
+      * contour variable grid points for this block and the associated 
+      * step size length/(ns-1) for this block, and allocates memory for 
+      * a variety of private arrays. 
+      * 
+      * The value for the number ns of contour variable grid points for 
+      * this block so as to yield a value for the the actual step size 
+      * length/(ns-1) as close as possible to the input parameter ds (the 
+      * desired step size) consistent with the requirements that ns be an
+      * odd integer and ns > 1. These requirements allow use of Simpson's 
+      * rule for integration with respect to the contour variable s to
+      * compute monomer concentration fields and stress contributions.
       *
       * \param ds desired (optimal) value for contour length step
       * \param mesh  spatial discretization mesh
       * \param fft  Fast Fourier Transform object
       */
-      void setDiscretization(double ds, const Mesh<D>& mesh, const FFT<D>& fft);
+      void 
+      setDiscretization(double ds, const Mesh<D>& mesh, const FFT<D>& fft);
 
       /**
-      * Setup parameters that depend on the unit cell.
+      * Set the unit cell.
       *
       * This should be called once after every change in unit cell
-      * parameters. Doing so marks internal variables that depends on the
-      * unit cell parameters as being "dirty" or outdated. These internal
-      * variables are actually recomputed later, in the setupSolver
-      * function, which is called within Polymer<D>::compute function before
-      * solving the modified diffusion equation (MDE) for all propagators
-      * associated with the polymer, using a pointer to the unit cell that
-      * is set in this function.
+      * parameters. The function stores the address of the unitCell object 
+      * and sets a flag that marks internal variables that depends on the
+      * unit cell parameters as being "dirty" or invalid. These internal
+      * variables are actually recomputed later, just before they are 
+      * needed, within the setupSolver member function. The setupSolver 
+      * function is called by the Polymer<D>::compute function just before 
+      * solving the modified diffusion equation (MDE) for all propagators 
+      * associated with the polymer.
       *
-      * \param unitCell  crystallographic unit cell, defines cell dimensions
+      * \param unitCell  crystal unit cell, defining cell parameters
       */
-      void setupUnitCell(const UnitCell<D>& unitCell);
+      void setUnitCell(const UnitCell<D>& unitCell);
 
       /**
       * Set or reset block length.
@@ -138,7 +146,9 @@ namespace Rpc {
       * q(r,s) is the solution obtained from propagator(0), q^{*}(r,s) is
       * the solution of propagator(1),  and s is a contour variable that
       * is integrated over the domain 0 < s < length(), where length()
-      * is the block length. The "prefactor" parameter for a system with
+      * is the block length. 
+      * 
+      * In a closed ensemble, the "prefactor" parameter for a system with
       * a constant total density should be set to prefactor = phi/(L q),
       * where phi is the overall volume fraction for this molecular species,
       * L is the total number of monomers in the polymer species, and q is
@@ -153,7 +163,7 @@ namespace Rpc {
       * Compute stress contribution for this block.
       *
       * This function is called by Polymer<D>::computeStress. The parameter
-      * prefactor should be the same as that passed to the function
+      * prefactor should be the same as that passed to the member function
       * computeConcentration.
       *
       * \param prefactor  constant multiplying integral over s

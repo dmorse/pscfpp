@@ -72,7 +72,7 @@ public:
       FFT<1> fft;
       fft.setup(d);
       mixture.setDiscretization(mesh, fft);
-      mixture.setupUnitCell(unitCell);
+      mixture.setUnitCell(unitCell);
 
       #if 0
       std::cout << "\n";
@@ -149,7 +149,7 @@ public:
       FFT<2> fft;
       fft.setup(d);
       mixture.setDiscretization(mesh, fft);
-      mixture.setupUnitCell(unitCell);
+      mixture.setUnitCell(unitCell);
 
       #if 0
       std::cout << "\n";
@@ -246,7 +246,7 @@ public:
       FFT<2> fft;
       fft.setup(d);
       mixture.setDiscretization(mesh, fft);
-      mixture.setupUnitCell(unitCell);
+      mixture.setUnitCell(unitCell);
 
       #if 0
       std::cout << "\n";
@@ -332,7 +332,7 @@ public:
       FFT<3> fft;
       fft.setup(d);
       mixture.setDiscretization(mesh, fft);
-      mixture.setupUnitCell(unitCell);
+      mixture.setUnitCell(unitCell);
 
       #if 0
       std::cout << "\n";

@@ -72,11 +72,9 @@ namespace Rpc {
       ns_ = 2*tempNs + 1;
       ds_ = length()/double(ns_-1);
 
-      // Set association to mesh
+      // Set pointers to mesh and fft
       meshPtr_ = &mesh;
       fftPtr_ = &fft;
-
-      //fft_.setup(mesh.dimensions());
 
       // Compute Fourier space kMeshDimensions_
       for (int i = 0; i < D; ++i) {
@@ -159,15 +157,18 @@ namespace Rpc {
    }
 
    /*
-   * Setup data that depend on the unit cell parameters.
+   * Set data that depend on the unit cell parameters.
    */
    template <int D>
-   void Block<D>::setupUnitCell(const UnitCell<D>& unitCell)
+   void Block<D>::setUnitCell(const UnitCell<D>& unitCell)
    {
       unitCellPtr_ = &unitCell;
       hasExpKsq_ = false;
    }
 
+   /*
+   * Compute all elements of expKsq_ and expKsq2_ arrays
+   */ 
    template <int D>
    void Block<D>::computeExpKsq()
    {
