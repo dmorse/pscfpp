@@ -1,0 +1,19 @@
+/*! \page psfts_psa_page  Partial Saddle-Point Approximation
+
+\ref psfts_theory_page   (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref psfts_methods_page  (Next)
+<BR>
+
+Below, we summarize a few of the working equations 
+
+\section psfts_psa_AB_sec Incompressible AB System (M = 2)
+
+Partial Saddle-point (conventional)
+
+\section psfts_psa_ABC_sec General Incompressible System (M >=2)
+
+<BR>
+\ref psfts_theory_page   (Prev, Up) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref psfts_methods_page  (Next)
+
+*/

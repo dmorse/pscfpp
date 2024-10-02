@@ -34,14 +34,17 @@ namespace Rpc
    *
    * A Domain has (among other components):
    *
-   *    - a Mesh <D> spatial discretization mesh
-   *    - a Prdc::UnitCell <D> crystallographic unit cell
-   *    - a Prdc::SpaceGroup <D> crystallographic space group
-   *    - a Prdc::Basis <D> symmetry-adapated Fourier basis
-   *    - a Prdc::Cpu::FFT <D> Fast Fourier Transform
-   *    - an Rpc::FieldIo <D>
-   *    - a lattice system (a Prdc::UnitCell<D>::LatticeSystem enum value)
+   *    - a Mesh spatial discretization mesh
+   *    - a Prdc::UnitCell crystallographic unit cell
+   *    - a Prdc::SpaceGroup crystallographic space group
+   *    - a Prdc::Basis symmetry-adapated Fourier basis
+   *    - a Prdc::Cpu::FFT Fast Fourier Transform
+   *    - a Rpc::FieldIo object for field IO and conversion operations
+   *    - a lattice system enum (type Prdc::UnitCell::LatticeSystem)
    *    - a groupName string
+   *
+   * Note: Class names Mesh, UnitCell, etc. mentioned above are actually
+   * all templates with a template parameter D.
    *
    * \ingroup Rpc_Field_Module
    */
