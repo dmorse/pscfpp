@@ -24,9 +24,9 @@ public:
    void tearDown() {}
 
    void testConstructor();
-   void testTransform1D();
-   void testTransform2D();
-   void testTransform3D();
+   void testTransformReal1D();
+   void testTransformReal2D();
+   void testTransformReal3D();
 
 };
 
@@ -40,7 +40,7 @@ void CpuFftTest::testConstructor()
    }
 } 
 
-void CpuFftTest::testTransform1D() 
+void CpuFftTest::testTransformReal1D() 
 {
    printMethod(TEST_FUNC);
    //printEndl();
@@ -94,7 +94,7 @@ void CpuFftTest::testTransform1D()
 
 }
 
-void CpuFftTest::testTransform2D() 
+void CpuFftTest::testTransformReal2D() 
 {
    printMethod(TEST_FUNC);
    //printEndl();
@@ -164,11 +164,12 @@ void CpuFftTest::testTransform2D()
 
 }
 
-void CpuFftTest::testTransform3D() 
+void CpuFftTest::testTransformReal3D() 
 {
    printMethod(TEST_FUNC);
    //printEndl();
 
+   // Create mesh
    int n1 = 3;
    int n2 = 3;
    int n3 = 3;
@@ -177,6 +178,7 @@ void CpuFftTest::testTransform3D()
    d[1] = n2;
    d[2] = n3;
 
+   // Instantiate and initialize objects
    Cpu::FFT<3> v;
    v.setup(d);
 
@@ -188,6 +190,7 @@ void CpuFftTest::testTransform3D()
    TEST_ASSERT(eq(in.capacity() / in.meshDimensions()[2],
                   out.capacity() / (out.meshDimensions()[2]/2 + 1)));
 
+   // Generate test data
    int rank = 0;
    for (int i = 0; i < n1; i++) {
       for (int j = 0; j < n2; j++) {
@@ -198,11 +201,15 @@ void CpuFftTest::testTransform3D()
       }
    }
 
+   // Forward transform in -> out
    v.forwardTransform(in, out);
+
+   // Inverse transform out -> inCopy
    Cpu::RField<3> inCopy;
    inCopy.allocate(d);
    v.inverseTransform(out, inCopy);
 
+   // Elementwise compare in and inCopy
    for (int i = 0; i < n1; i++) {
       for (int j = 0; j < n2; j++) {
          for (int k = 0; k < n3; k++){
@@ -212,6 +219,7 @@ void CpuFftTest::testTransform3D()
       }
    }
 
+   // Use RFieldComparison to compare in and inCopy
    Cpu::RFieldComparison<3> comparison;
    comparison.compare(in, inCopy);
    //std::cout << std::endl;
@@ -224,9 +232,9 @@ void CpuFftTest::testTransform3D()
 
 TEST_BEGIN(CpuFftTest)
 TEST_ADD(CpuFftTest, testConstructor)
-TEST_ADD(CpuFftTest, testTransform1D)
-TEST_ADD(CpuFftTest, testTransform2D)
-TEST_ADD(CpuFftTest, testTransform3D)
+TEST_ADD(CpuFftTest, testTransformReal1D)
+TEST_ADD(CpuFftTest, testTransformReal2D)
+TEST_ADD(CpuFftTest, testTransformReal3D)
 TEST_END(CpuFftTest)
 
 #endif

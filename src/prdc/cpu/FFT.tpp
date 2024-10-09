@@ -25,8 +25,10 @@ namespace Cpu {
       meshDimensions_(0),
       rSize_(0),
       kSize_(0),
-      fPlan_(0),
-      iPlan_(0),
+      rcPlan_(0),
+      crPlan_(0),
+      ccfPlan_(0),
+      cciPlan_(0),
       isSetup_(false)
    {}
 
@@ -36,16 +38,22 @@ namespace Cpu {
    template <int D>
    FFT<D>::~FFT()
    {
-      if (fPlan_) {
-         fftw_destroy_plan(fPlan_);
+      if (rcPlan_) {
+         fftw_destroy_plan(rcPlan_);
       }
-      if (iPlan_) {
-         fftw_destroy_plan(iPlan_);
+      if (crPlan_) {
+         fftw_destroy_plan(crPlan_);
+      }
+      if (ccfPlan_) {
+         fftw_destroy_plan(ccfPlan_);
+      }
+      if (cciPlan_) {
+         fftw_destroy_plan(cciPlan_);
       }
    }
 
    /*
-   * Setup mesh dimensions.
+   * Setup mesh dimensions, work memory and FFT plans.
    */
    template <int D>
    void FFT<D>::setup(IntVec<D> const& meshDimensions)
@@ -53,76 +61,95 @@ namespace Cpu {
       // Precondition
       UTIL_CHECK(!isSetup_);
 
-      // Create local r-grid and k-grid field objects
-      RField<D> rField;
-      rField.allocate(meshDimensions);
-      RFieldDft<D> kField;
-      kField.allocate(meshDimensions);
-
-      setup(rField, kField);
-   }
-
-   /*
-   * Check and (if necessary) setup mesh dimensions.
-   */
-   template <int D>
-   void FFT<D>::setup(RField<D>& rField, RFieldDft<D>& kField)
-   {
-      // Preconditions
-      UTIL_CHECK(!isSetup_);
-      IntVec<D> rDimensions = rField.meshDimensions();
-      IntVec<D> kDimensions = kField.meshDimensions();
-      UTIL_CHECK(rDimensions == kDimensions);
-
       // Set and check mesh dimensions
       rSize_ = 1;
       kSize_ = 1;
       for (int i = 0; i < D; ++i) {
-         UTIL_CHECK(rDimensions[i] > 0);
-         meshDimensions_[i] = rDimensions[i];
-         rSize_ *= rDimensions[i];
+         UTIL_CHECK(meshDimensions[i] > 0);
+         meshDimensions_[i] = meshDimensions[i];
+         rSize_ *= meshDimensions[i];
          if (i < D - 1) {
-            kSize_ *= rDimensions[i];
+            kSize_ *= meshDimensions[i];
          } else {
-            kSize_ *= (rDimensions[i]/2 + 1);
+            kSize_ *= (meshDimensions[i]/2 + 1);
          }
       }
-      UTIL_CHECK(rField.capacity() == rSize_);
-      UTIL_CHECK(kField.capacity() == kSize_);
 
       // Allocate rFieldCopy_ array if necessary
       if (!rFieldCopy_.isAllocated()) {
-          rFieldCopy_.allocate(rDimensions);
+          rFieldCopy_.allocate(meshDimensions);
       } else {
           if (rFieldCopy_.capacity() != rSize_) {
              rFieldCopy_.deallocate();
-             rFieldCopy_.allocate(rDimensions);
+             rFieldCopy_.allocate(meshDimensions);
           }
       }
+      UTIL_CHECK(meshDimensions == rFieldCopy_.meshDimensions());
       UTIL_CHECK(rFieldCopy_.capacity() == rSize_);
 
       // Allocate kFieldCopy_ array if necessary
       if (!kFieldCopy_.isAllocated()) {
-          kFieldCopy_.allocate(kDimensions);
+          kFieldCopy_.allocate(meshDimensions);
       } else {
-          if (kFieldCopy_.capacity() != rSize_) {
+          if (kFieldCopy_.capacity() != kSize_) {
              kFieldCopy_.deallocate();
-             kFieldCopy_.allocate(kDimensions);
+             kFieldCopy_.allocate(meshDimensions);
           }
       }
+      UTIL_CHECK(meshDimensions == kFieldCopy_.meshDimensions());
       UTIL_CHECK(kFieldCopy_.capacity() == kSize_);
 
+      // Allocate cFieldCopy_ array if necessary
+      if (!cFieldCopy_.isAllocated()) {
+          cFieldCopy_.allocate(meshDimensions);
+      } else {
+          if (cFieldCopy_.capacity() != rSize_) {
+             cFieldCopy_.deallocate();
+             cFieldCopy_.allocate(meshDimensions);
+          }
+      }
+      UTIL_CHECK(meshDimensions == cFieldCopy_.meshDimensions());
+      UTIL_CHECK(cFieldCopy_.capacity() == rSize_);
+
+      #if 0
+      // Create local field objects used for plans
+      RField<D> rField;
+      rField.allocate(meshDimensions);
+      UTIL_CHECK(meshDimensions == rField.meshDimensions());
+      UTIL_CHECK(rField.capacity() == rSize_);
+
+      RFieldDft<D> kField;
+      kField.allocate(meshDimensions);
+      UTIL_CHECK(meshDimensions == kField.meshDimensions());
+      UTIL_CHECK(kField.capacity() == kSize_);
+
+      CField<D> cFieldIn;
+      cFieldIn.allocate(meshDimensions);
+      UTIL_CHECK(meshDimensions == cFieldIn.meshDimensions());
+      UTIL_CHECK(cFieldIn.capacity() == rSize_);
+      #endif
+
+      CField<D> cFieldOut;
+      cFieldOut.allocate(meshDimensions);
+      UTIL_CHECK(meshDimensions == cFieldOut.meshDimensions());
+      UTIL_CHECK(cFieldOut.capacity() == rSize_);
+
       // Make FFTW plans (see explicit specializations FFT.cpp)
-      makePlans(rField, kField);
+      //makePlans(rField, kField, cFieldIn, cFieldOut);
+      makePlans(rFieldCopy_, kFieldCopy_, cFieldCopy_, cFieldOut);
 
       isSetup_ = true;
    }
 
+   // Real <-> Complex Transforms
+
    /*
-   * Execute forward transform.
+   * Execute real-to-complex forward transform.
    */
    template <int D>
-   void FFT<D>::forwardTransform(RField<D> const & rField, RFieldDft<D>& kField)   const
+   void FFT<D>::forwardTransform(RField<D> const & rField, 
+                                 RFieldDft<D>& kField)   
+   const
    {
       UTIL_CHECK(isSetup_)
       UTIL_CHECK(rFieldCopy_.capacity() == rSize_);
@@ -138,7 +165,7 @@ namespace Cpu {
       }
      
       // Execute preplanned forward transform 
-      fftw_execute_dft_r2c(fPlan_, &rFieldCopy_[0], &kField[0]);
+      fftw_execute_dft_r2c(rcPlan_, &rFieldCopy_[0], &kField[0]);
    }
 
    /*
@@ -155,7 +182,7 @@ namespace Cpu {
       UTIL_CHECK(rField.meshDimensions() == meshDimensions_);
       UTIL_CHECK(kField.meshDimensions() == meshDimensions_);
 
-      fftw_execute_dft_c2r(iPlan_, &kField[0], &rField[0]);
+      fftw_execute_dft_c2r(crPlan_, &kField[0], &rField[0]);
 
    }
 
@@ -163,13 +190,61 @@ namespace Cpu {
    * Execute inverse (complex-to-real) transform without destroying input.
    */
    template <int D>
-   void FFT<D>::inverseTransformSafe(RFieldDft<D> const & kField, RField<D>& rField) 
+   void 
+   FFT<D>::inverseTransformSafe(RFieldDft<D> const & kField, 
+                                RField<D>& rField) 
    const
    {
       UTIL_CHECK(kFieldCopy_.capacity()==kField.capacity());
 
       kFieldCopy_ = kField;
       inverseTransform(kFieldCopy_, rField);
+   }
+
+   // Complex <-> Complex Transforms
+
+   /*
+   * Execute complex-to-complex forward transform.
+   */
+   template <int D>
+   void 
+   FFT<D>::forwardTransform(CField<D> const & rField, CField<D>& kField)   
+   const
+   {
+      UTIL_CHECK(isSetup_)
+      UTIL_CHECK(cFieldCopy_.capacity() == rSize_);
+      UTIL_CHECK(cFieldCopy_.meshDimensions() == meshDimensions_);
+      UTIL_CHECK(rField.capacity() == rSize_);
+      UTIL_CHECK(rField.meshDimensions() == meshDimensions_);
+      UTIL_CHECK(kField.capacity() == rSize_);
+      UTIL_CHECK(kField.meshDimensions() == meshDimensions_);
+
+      // Copy rescaled input data prior to work array
+      double scale = 1.0/double(rSize_);
+      for (int i = 0; i < rSize_; ++i) {
+         cFieldCopy_[i][0] = rField[i][0]*scale;
+         cFieldCopy_[i][1] = rField[i][1]*scale;
+      }
+     
+      // Execute preplanned forward transform 
+      fftw_execute_dft(ccfPlan_, &cFieldCopy_[0], &kField[0]);
+   }
+
+   /*
+   * Execute inverse (complex-to-real) transform.
+   */
+   template <int D>
+   void 
+   FFT<D>::inverseTransform(CField<D> & kField, CField<D>& rField)
+   const
+   {
+      UTIL_CHECK(isSetup_)
+      UTIL_CHECK(rField.capacity() == rSize_);
+      UTIL_CHECK(kField.capacity() == rSize_);
+      UTIL_CHECK(rField.meshDimensions() == meshDimensions_);
+      UTIL_CHECK(kField.meshDimensions() == meshDimensions_);
+
+      fftw_execute_dft(cciPlan_, &kField[0], &rField[0]);
    }
 
 }
