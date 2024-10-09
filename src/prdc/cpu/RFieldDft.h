@@ -9,6 +9,7 @@
 */
 
 #include <prdc/cpu/Field.h>
+#include <prdc/cpu/complex.h>
 #include <pscf/math/IntVec.h>
 #include <util/global.h>
 
@@ -109,6 +110,7 @@ namespace Cpu {
 
    };
 
+   #if 0
    /*
    * Allocate the underlying C array for an FFT grid.
    */
@@ -129,6 +131,7 @@ namespace Cpu {
       }
       Field<fftw_complex>::allocate(size);
    }
+   #endif
 
    /*
    * Return mesh dimensions by constant reference.

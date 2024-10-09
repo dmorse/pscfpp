@@ -1,5 +1,5 @@
-#ifndef PRDC_CPU_R_FIELD_DFT_TPP
-#define PRDC_CPU_R_FIELD_DFT_TPP
+#ifndef PRDC_CPU_C_FIELD_TPP
+#define PRDC_CPU_C_FIELD_TPP
 
 /*
 * PSCF Package 
@@ -8,7 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "RFieldDft.h"
+#include "CField.h"
 #include "Field.tpp"
 
 namespace Pscf {
@@ -21,7 +21,7 @@ namespace Cpu {
    * Default constructor.
    */
    template <int D>
-   RFieldDft<D>::RFieldDft()
+   CField<D>::CField()
     : Field<fftw_complex>()
    {}
 
@@ -29,7 +29,7 @@ namespace Cpu {
    * Destructor.
    */
    template <int D>
-   RFieldDft<D>::~RFieldDft()
+   CField<D>::~CField()
    {}
 
    /*
@@ -37,11 +37,12 @@ namespace Cpu {
    *
    * Allocates new memory and copies all elements by value.
    *
-   *\param other the RField<D> to be copied.
+   *\param other the Field to be copied.
    */
    template <int D>
-   RFieldDft<D>::RFieldDft(const RFieldDft<D>& other)
-    : Field<fftw_complex>()
+   CField<D>::CField(const CField<D>& other)
+    : Field<fftw_complex>(),
+      meshDimensions_(0)
    {
       if (!other.isAllocated()) {
          UTIL_THROW("Other Field must be allocated.");
@@ -53,21 +54,15 @@ namespace Cpu {
          data_[i][1] = other.data_[i][1];
       }
       meshDimensions_ = other.meshDimensions_;
-      dftDimensions_ = other.dftDimensions_;
    }
 
    /*
    * Assignment, element-by-element.
    *
    * This operator will allocate memory if not allocated previously.
-   *
-   * \throw Exception if other Field is not allocated.
-   * \throw Exception if both Fields are allocated with unequal capacities.
-   *
-   * \param other the rhs Field
    */
    template <int D>
-   RFieldDft<D>& RFieldDft<D>::operator = (const RFieldDft<D>& other)
+   CField<D>& CField<D>::operator = (const CField<D>& other)
    {
       // Check for self assignment
       if (this == &other) return *this;
@@ -89,7 +84,6 @@ namespace Cpu {
          data_[i][1] = other.data_[i][1];
       }
       meshDimensions_ = other.meshDimensions_;
-      dftDimensions_ = other.dftDimensions_;
 
       return *this;
    }
@@ -98,19 +92,13 @@ namespace Cpu {
    * Allocate the underlying C array for an FFT grid.
    */
    template <int D>
-   void RFieldDft<D>::allocate(IntVec<D> const & meshDimensions)
+   void CField<D>::allocate(const IntVec<D>& meshDimensions)
    {
       int size = 1;
       for (int i = 0; i < D; ++i) {
          UTIL_CHECK(meshDimensions[i] > 0);
          meshDimensions_[i] = meshDimensions[i];
-         if (i < D - 1) {
-            dftDimensions_[i] = meshDimensions[i];
-            size *= meshDimensions[i];
-         } else {
-            dftDimensions_[i] = (meshDimensions[i]/2 + 1);
-            size *= dftDimensions_[i];
-         }
+         size *= meshDimensions[i];
       }
       Field<fftw_complex>::allocate(size);
    }
