@@ -37,10 +37,10 @@ public:
    void testSubscript();
    void testCopyConst();
    void testAssignment();
-   //void testSerialize1File();
-   //void testSerialize2File();
-   //void testSerialize1Memory();
-   //void testSerialize2Memory();
+   void testSerialize1Memory();
+   void testSerialize2Memory();
+   void testSerialize1File();
+   void testSerialize2File();
 
 };
 
@@ -112,12 +112,12 @@ void CpuRFieldDftTest::testSubscript()
          v[i][1] = (i+1)*10.0 + 0.1;
       }
    
-      TEST_ASSERT(v[0][0] == 10.0);
-      TEST_ASSERT(v[0][1] == 10.1);
-      TEST_ASSERT(v[1][0] == 20.0);
-      TEST_ASSERT(v[1][1] == 20.1);
-      TEST_ASSERT(v[2][0] == 30.0);
-      TEST_ASSERT(v[2][1] == 30.1);
+      TEST_ASSERT(eq(v[0][0], 10.0));
+      TEST_ASSERT(eq(v[0][1], 10.1));
+      TEST_ASSERT(eq(v[1][0], 20.0));
+      TEST_ASSERT(eq(v[1][1], 20.1));
+      TEST_ASSERT(eq(v[2][0], 30.0));
+      TEST_ASSERT(eq(v[2][1], 30.1));
    }
 } 
 
@@ -144,10 +144,9 @@ void CpuRFieldDftTest::testCopyConst()
       TEST_ASSERT(u.isAllocated());
       TEST_ASSERT(u.capacity() == v.capacity());
 
-      for(int i = 0; i < v.capacity(); i++)
-      {
-         TEST_ASSERT(u[i][0] == v[i][0]);
-         TEST_ASSERT(u[i][1] == v[i][1]);
+      for(int i = 0; i < v.capacity(); i++) {
+         TEST_ASSERT(eq(u[i][0], v[i][0]));
+         TEST_ASSERT(eq(u[i][1], v[i][1]));
       }
    }
 }
@@ -184,21 +183,20 @@ void CpuRFieldDftTest::testAssignment()
       u  = v;
    
       TEST_ASSERT(u.capacity() == capacity);
-      TEST_ASSERT(u.isAllocated() );
-      TEST_ASSERT(v[0][0] == 10.0);
-      TEST_ASSERT(v[0][1] == 10.1);
-      TEST_ASSERT(v[1][0] == 20.0);
-      TEST_ASSERT(v[1][1] == 20.1);
-      TEST_ASSERT(u[0][0] == 10.0);
-      TEST_ASSERT(u[0][1] == 10.1);
-      TEST_ASSERT(u[1][0] == 20.0);
-      TEST_ASSERT(u[1][1] == 20.1);
-      TEST_ASSERT(u[2][0] == 30.0);
-      TEST_ASSERT(u[2][1] == 30.1);
+      TEST_ASSERT(u.isAllocated());
+      TEST_ASSERT(eq(v[0][0], 10.0));
+      TEST_ASSERT(eq(v[0][1], 10.1));
+      TEST_ASSERT(eq(v[1][0], 20.0));
+      TEST_ASSERT(eq(v[1][1], 20.1));
+      TEST_ASSERT(eq(u[0][0], 10.0));
+      TEST_ASSERT(eq(u[0][1], 10.1));
+      TEST_ASSERT(eq(u[1][0], 20.0));
+      TEST_ASSERT(eq(u[1][1], 20.1));
+      TEST_ASSERT(eq(u[2][0], 30.0));
+      TEST_ASSERT(eq(u[2][1], 30.1));
    }
 } 
 
-#if 0
 void CpuRFieldDftTest::testSerialize1Memory()
 { 
    printMethod(TEST_FUNC);
@@ -219,7 +217,7 @@ void CpuRFieldDftTest::testSerialize1Memory()
 
       for (int i=0; i < capacity; i++ ) {
          v[i][0] = (i+1)*10.0 ;
-         v[i][1] = (i+1)*10.0 + 0.1;
+         v[i][1] = i*10.0 + 3.0;
       }
       int size = memorySize(v);
      
@@ -234,12 +232,12 @@ void CpuRFieldDftTest::testSerialize1Memory()
       oArchive << i1;
    
       // Show that v is unchanged by packing
-      TEST_ASSERT(v[1][0]==20.0);
-      TEST_ASSERT(v[1][1]==20.0);
+      TEST_ASSERT(eq(v[1][0], 20.0));
+      TEST_ASSERT(eq(v[1][1], 13.0));
       TEST_ASSERT(v.capacity() == capacity);
    
       Cpu::RFieldDft<3> u;
-      u.allocate(3);
+      u.allocate(d);
    
       MemoryIArchive iArchive;
       iArchive = oArchive;
@@ -257,7 +255,8 @@ void CpuRFieldDftTest::testSerialize1Memory()
       TEST_ASSERT(iArchive.begin() == oArchive.begin());
       TEST_ASSERT(iArchive.end() == oArchive.cursor());
    
-      TEST_ASSERT(u[1] == 20.0);
+      TEST_ASSERT(eq(u[1][0], 20.0));
+      TEST_ASSERT(eq(u[1][1], 13.0));
       TEST_ASSERT(i2 == 13);
       TEST_ASSERT(u.capacity() == capacity);
    
@@ -288,12 +287,12 @@ void CpuRFieldDftTest::testSerialize1Memory()
       TEST_ASSERT(iArchive.begin() == oArchive.begin());
       TEST_ASSERT(iArchive.end() == oArchive.cursor());
    
-      TEST_ASSERT(u[0][0] == 10.0);
-      TEST_ASSERT(u[0][1] == 10.1);
-      TEST_ASSERT(u[1][0] == 20.0);
-      TEST_ASSERT(u[1][1] == 20.1);
-      TEST_ASSERT(u[2][0] == 30.0);
-      TEST_ASSERT(u[2][1] == 30.1);
+      TEST_ASSERT(eq(u[0][0], 10.0));
+      TEST_ASSERT(eq(u[0][1], 3.0));
+      TEST_ASSERT(eq(u[1][0], 20.0));
+      TEST_ASSERT(eq(u[1][1], 13.0));
+      TEST_ASSERT(eq(u[2][0], 30.0));
+      TEST_ASSERT(eq(u[2][1], 23.0));
       TEST_ASSERT(i2 == 13);
       TEST_ASSERT(u.capacity() == capacity);
    }
@@ -331,7 +330,8 @@ void CpuRFieldDftTest::testSerialize2Memory()
       TEST_ASSERT(oArchive.cursor() == oArchive.begin() + size);
    
       // Show that v is unchanged by packing
-      TEST_ASSERT(v[1] == 20.0);
+      TEST_ASSERT(eq(v[1][0], 20.0));
+      TEST_ASSERT(eq(v[1][1], 20.1));
       TEST_ASSERT(v.capacity() == capacity);
    
       Cpu::RFieldDft<3> u;
@@ -349,12 +349,12 @@ void CpuRFieldDftTest::testSerialize2Memory()
       iArchive >> u;
    
       TEST_ASSERT(iArchive.cursor() == iArchive.begin() + size);
-      TEST_ASSERT(u[0][0] == 10.0);
-      TEST_ASSERT(u[0][1] == 10.1);
-      TEST_ASSERT(u[1][0] == 20.0);
-      TEST_ASSERT(u[1][1] == 20.1);
-      TEST_ASSERT(u[2][0] == 30.0);
-      TEST_ASSERT(u[2][1] == 30.1);
+      TEST_ASSERT(eq(u[0][0], 10.0));
+      TEST_ASSERT(eq(u[0][1], 10.1));
+      TEST_ASSERT(eq(u[1][0], 20.0));
+      TEST_ASSERT(eq(u[1][1], 20.1));
+      TEST_ASSERT(eq(u[2][0], 30.0));
+      TEST_ASSERT(eq(u[2][1], 30.1));
       TEST_ASSERT(u.capacity() == capacity);
    }
 }
@@ -392,11 +392,12 @@ void CpuRFieldDftTest::testSerialize1File()
       oArchive.file().close();
    
       // Show that v is unchanged by packing
-      TEST_ASSERT(v[1]==20.0);
-      TEST_ASSERT(v.capacity() == 3);
+      TEST_ASSERT(eq(v[1][0], 20.0));
+      TEST_ASSERT(eq(v[1][1], 20.1));
+      TEST_ASSERT(v.capacity() == capacity);
    
       Cpu::RFieldDft<3> u;
-      u.allocate(3);
+      u.allocate(d);
    
       BinaryFileIArchive iArchive;
       openInputFile("out/binary", iArchive.file());
@@ -404,13 +405,19 @@ void CpuRFieldDftTest::testSerialize1File()
       iArchive >> i2;
       iArchive.file().close();
    
-      TEST_ASSERT(u[1] == 20.0);
+      TEST_ASSERT(eq(u[1][0], 20.0));
+      TEST_ASSERT(eq(u[1][1], 20.1));
       TEST_ASSERT(i2 == 13);
-      TEST_ASSERT(u.capacity() == 3);
+      TEST_ASSERT(u.capacity() == capacity);
+      for (int i=0; i < capacity; i++ ) {
+         TEST_ASSERT(eq(u[i][0], v[i][0]));
+         TEST_ASSERT(eq(u[i][1], v[i][1]));
+      }
    
       // Clear values of u and i2
       for (int i=0; i < capacity; i++ ) {
-         u[i] = 0.0;
+         u[i][0] = 0.0;
+         u[i][1] = 0.0;
       }
       i2 = 0;
    
@@ -419,9 +426,15 @@ void CpuRFieldDftTest::testSerialize1File()
       iArchive >> u;
       iArchive >> i2;
    
-      TEST_ASSERT(u[1] == 20.0);
+      TEST_ASSERT(eq(u[1][0], 20.0));
+      TEST_ASSERT(eq(u[1][1], 20.1));
+      for (int i=0; i < capacity; i++ ) {
+         TEST_ASSERT(eq(u[i][0], v[i][0]));
+         TEST_ASSERT(eq(u[i][1], v[i][1]));
+      }
       TEST_ASSERT(i2 == 13);
-      TEST_ASSERT(u.capacity() == 3);
+      TEST_ASSERT(u.capacity() == capacity);
+
    }
 }
 
@@ -458,8 +471,9 @@ void CpuRFieldDftTest::testSerialize2File()
       oArchive.file().close();
    
       // Show that v is unchanged by packing
-      TEST_ASSERT(v[1] == 20.0);
-      TEST_ASSERT(v.capacity() == 3);
+      TEST_ASSERT(eq(v[1][0], 20.0));
+      TEST_ASSERT(eq(v[1][1], 20.1));
+      TEST_ASSERT(v.capacity() == capacity);
    
       Cpu::RFieldDft<3> u;
    
@@ -473,13 +487,19 @@ void CpuRFieldDftTest::testSerialize2File()
       iArchive >> i2;
       iArchive.file().close();
    
-      TEST_ASSERT(eq(u[1], 20.0));
+      TEST_ASSERT(eq(u[1][0], 20.0));
+      TEST_ASSERT(eq(u[1][1], 20.1));
+      for (int i=0; i < capacity; i++ ) {
+         TEST_ASSERT(eq(u[i][0], v[i][0]));
+         TEST_ASSERT(eq(u[i][1], v[i][1]));
+      }
       TEST_ASSERT(i2 == 13);
-      TEST_ASSERT(u.capacity() == 3);
+      TEST_ASSERT(u.capacity() == capacity);
    
       // Clear values of u and i2
       for (int i=0; i < capacity; i++ ) {
-         u[i] = 0.0;
+         u[i][0] = 0.0;
+         u[i][1] = 0.0;
       }
       i2 = 0;
    
@@ -488,12 +508,16 @@ void CpuRFieldDftTest::testSerialize2File()
       iArchive >> u;
       iArchive >> i2;
    
-      TEST_ASSERT(eq(u[1], 20.0));
+      TEST_ASSERT(eq(u[1][0], 20.0));
+      TEST_ASSERT(eq(u[1][1], 20.1));
+      for (int i=0; i < capacity; i++ ) {
+         TEST_ASSERT(eq(u[i][0], v[i][0]));
+         TEST_ASSERT(eq(u[i][1], v[i][1]));
+      }
       TEST_ASSERT(i2 == 13);
-      TEST_ASSERT(u.capacity() == 3);
+      TEST_ASSERT(u.capacity() == capacity);
    }
 }
-#endif
 
 TEST_BEGIN(CpuRFieldDftTest)
 TEST_ADD(CpuRFieldDftTest, testConstructor)
@@ -502,10 +526,10 @@ TEST_ADD(CpuRFieldDftTest, testAllocate3)
 TEST_ADD(CpuRFieldDftTest, testSubscript)
 TEST_ADD(CpuRFieldDftTest, testCopyConst)
 TEST_ADD(CpuRFieldDftTest, testAssignment)
-//TEST_ADD(CpuRFieldDftTest, testSerialize1Memory)
-//TEST_ADD(CpuRFieldDftTest, testSerialize2Memory)
-//TEST_ADD(CpuRFieldDftTest, testSerialize1File)
-//TEST_ADD(CpuRFieldDftTest, testSerialize2File)
+TEST_ADD(CpuRFieldDftTest, testSerialize1Memory)
+TEST_ADD(CpuRFieldDftTest, testSerialize2Memory)
+TEST_ADD(CpuRFieldDftTest, testSerialize1File)
+TEST_ADD(CpuRFieldDftTest, testSerialize2File)
 TEST_END(CpuRFieldDftTest)
 
 #endif
