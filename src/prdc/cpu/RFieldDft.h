@@ -66,16 +66,19 @@ namespace Cpu {
       */
       RFieldDft<D>& operator = (RFieldDft<D> const & other);
 
-      using Field<fftw_complex>::allocate;
-
       /**
-      * Allocate the underlying C array for an FFT grid.
+      * Allocate the underlying C array and set mesh dimensions.
       *
       * \throw Exception if the RFieldDft is already allocated.
       *
       * \param meshDimensions vector of grid points in each direction
       */
       void allocate(IntVec<D> const & meshDimensions);
+
+      /**
+      * Deallocate underlying C array and clear mesh dimensions.
+      */
+      virtual void deallocate();
 
       /**
       * Return vector of spatial mesh dimensions by constant reference.
@@ -107,6 +110,8 @@ namespace Cpu {
 
       // Vector containing dimensions of dft (Fourier) grid.
       IntVec<D> dftDimensions_;
+
+      using Field<fftw_complex>::allocate;
 
    };
 

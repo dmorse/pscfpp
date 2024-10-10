@@ -22,7 +22,9 @@ namespace Cpu {
    */
    template <int D>
    RFieldDft<D>::RFieldDft()
-    : Field<fftw_complex>()
+    : Field<fftw_complex>(),
+      meshDimensions_(0),
+      dftDimensions_(0)
    {}
 
    /*
@@ -36,24 +38,21 @@ namespace Cpu {
    * Copy constructor.
    *
    * Allocates new memory and copies all elements by value.
-   *
-   *\param other the RField<D> to be copied.
    */
    template <int D>
    RFieldDft<D>::RFieldDft(const RFieldDft<D>& other)
-    : Field<fftw_complex>()
+    : Field<fftw_complex>(),
+      meshDimensions_(0),
+      dftDimensions_(0)
    {
       if (!other.isAllocated()) {
          UTIL_THROW("Other Field must be allocated.");
       }
-      data_ = (fftw_complex*) fftw_malloc(sizeof(fftw_complex)*other.capacity_);
-      capacity_ = other.capacity_;
+      allocate(other.meshDimensions_);
       for (int i = 0; i < capacity_; ++i) {
          data_[i][0] = other.data_[i][0];
          data_[i][1] = other.data_[i][1];
       }
-      meshDimensions_ = other.meshDimensions_;
-      dftDimensions_ = other.dftDimensions_;
    }
 
    /*
@@ -74,22 +73,22 @@ namespace Cpu {
 
       // Precondition
       if (!other.isAllocated()) {
-         UTIL_THROW("Other Field must be allocated.");
+         UTIL_THROW("Other RFieldDft must be allocated.");
       }
 
+      // Allocate if necessary, check dimensions
       if (!isAllocated()) {
-         allocate(other.capacity());
-      } else if (capacity_ != other.capacity_) {
-         UTIL_THROW("Cannot assign Fields of unequal capacity");
+         allocate(other.meshDimensions_);
       }
+      UTIL_CHECK(capacity_ == other.capacity_);
+      UTIL_CHECK(meshDimensions_ == other.meshDimensions_);
+      UTIL_CHECK(dftDimensions_ == other.dftDimensions_);
 
       // Copy elements
       for (int i = 0; i < capacity_; ++i) {
          data_[i][0] = other.data_[i][0];
          data_[i][1] = other.data_[i][1];
       }
-      meshDimensions_ = other.meshDimensions_;
-      dftDimensions_ = other.dftDimensions_;
 
       return *this;
    }
@@ -113,6 +112,19 @@ namespace Cpu {
          }
       }
       Field<fftw_complex>::allocate(size);
+   }
+
+   /*
+   * Dellocate the underlying C array and clear dimensions.
+   */
+   template <int D>
+   void RFieldDft<D>::deallocate()
+   {
+      Field<fftw_complex>::deallocate();
+      for (int i = 0; i < D; ++i) {
+         meshDimensions_[i] = 0;
+         dftDimensions_[i] = 0;
+      }
    }
 
 }

@@ -22,7 +22,8 @@ namespace Cpu {
    */
    template <int D>
    RField<D>::RField()
-    : Field<double>()
+    : Field<double>(),
+      meshDimensions_(0)
    {}
 
    /*
@@ -44,15 +45,12 @@ namespace Cpu {
     : Field<double>(),
       meshDimensions_(0)
    {
-      if (!other.isAllocated()) {
-         UTIL_THROW("Other Field must be allocated.");
+      if (other.isAllocated()) {
+         allocate(other.meshDimensions_);
+         for (int i = 0; i < capacity_; ++i) {
+            data_[i] = other.data_[i];
+         }
       }
-      data_ = (double*) fftw_malloc(sizeof(double)*other.capacity_);
-      capacity_ = other.capacity_;
-      for (int i = 0; i < capacity_; ++i) {
-         data_[i] = other.data_[i];
-      }
-      meshDimensions_ = other.meshDimensions_;
    }
 
    /*
@@ -77,16 +75,15 @@ namespace Cpu {
       }
 
       if (!isAllocated()) {
-         allocate(other.capacity());
-      } else if (capacity_ != other.capacity_) {
-         UTIL_THROW("Cannot assign Fields of unequal capacity");
-      }
+         allocate(other.meshDimensions_);
+      } 
+      UTIL_CHECK(capacity_ == other.capacity_);
+      UTIL_CHECK(meshDimensions_ == other.meshDimensions_);
 
       // Copy elements
       for (int i = 0; i < capacity_; ++i) {
          data_[i] = other[i];
       }
-      meshDimensions_ = other.meshDimensions_;
 
       return *this;
    }
@@ -104,6 +101,18 @@ namespace Cpu {
          size *= meshDimensions[i];
       }
       Field<double>::allocate(size);
+   }
+
+   /*
+   * Dellocate the underlying C array and clear meshDimensions.
+   */
+   template <int D>
+   void RField<D>::deallocate()
+   {
+      Field<double>::deallocate();
+      for (int i = 0; i < D; ++i) {
+         meshDimensions_[i] = 0;
+      }
    }
 
 }

@@ -22,7 +22,8 @@ namespace Cpu {
    */
    template <int D>
    CField<D>::CField()
-    : Field<fftw_complex>()
+    : Field<fftw_complex>(),
+      meshDimensions_()
    {}
 
    /*
@@ -42,18 +43,16 @@ namespace Cpu {
    template <int D>
    CField<D>::CField(const CField<D>& other)
     : Field<fftw_complex>(),
-      meshDimensions_(0)
+      meshDimensions_()
    {
-      if (!other.isAllocated()) {
-         UTIL_THROW("Other Field must be allocated.");
+      if (other.isAllocated() && other.capacity_ > 0) {
+         Field<fftw_complex>::allocate(other.capacity_);
+         meshDimensions_ = other.meshDimensions_;
+         for (int i = 0; i < capacity_; ++i) {
+            data_[i][0] = other.data_[i][0];
+            data_[i][1] = other.data_[i][1];
+         }
       }
-      data_ = (fftw_complex*) fftw_malloc(sizeof(fftw_complex)*other.capacity_);
-      capacity_ = other.capacity_;
-      for (int i = 0; i < capacity_; ++i) {
-         data_[i][0] = other.data_[i][0];
-         data_[i][1] = other.data_[i][1];
-      }
-      meshDimensions_ = other.meshDimensions_;
    }
 
    /*
@@ -62,28 +61,27 @@ namespace Cpu {
    * This operator will allocate memory if not allocated previously.
    */
    template <int D>
-   CField<D>& CField<D>::operator = (const CField<D>& other)
+   CField<D>& CField<D>::operator = (CField<D> const & other)
    {
       // Check for self assignment
       if (this == &other) return *this;
 
       // Precondition
       if (!other.isAllocated()) {
-         UTIL_THROW("Other Field must be allocated.");
+         UTIL_THROW("Other CField must be allocated in assignment.");
       }
 
       if (!isAllocated()) {
-         allocate(other.capacity());
-      } else if (capacity_ != other.capacity_) {
-         UTIL_THROW("Cannot assign Fields of unequal capacity");
-      }
+         allocate(other.meshDimensions_);
+      } 
+      UTIL_CHECK(capacity_ == other.capacity_);
+      UTIL_CHECK(meshDimensions_ == other.meshDimensions_);
 
       // Copy elements
       for (int i = 0; i < capacity_; ++i) {
          data_[i][0] = other.data_[i][0];
          data_[i][1] = other.data_[i][1];
       }
-      meshDimensions_ = other.meshDimensions_;
 
       return *this;
    }
@@ -101,6 +99,18 @@ namespace Cpu {
          size *= meshDimensions[i];
       }
       Field<fftw_complex>::allocate(size);
+   }
+
+   /*
+   * Allocate the underlying C array for an FFT grid.
+   */
+   template <int D>
+   void CField<D>::deallocate()
+   {
+      Field<fftw_complex>::deallocate();
+      for (int i = 0; i < D; ++i) {
+         meshDimensions_[i] = 0;
+      }
    }
 
 }

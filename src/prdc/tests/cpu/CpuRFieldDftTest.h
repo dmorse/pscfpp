@@ -32,12 +32,11 @@ public:
    void tearDown() {}
 
    void testConstructor();
-   void testAllocate();
    void testAllocate1();
    void testAllocate3();
    void testSubscript();
-   void testAssignment();
    void testCopyConst();
+   void testAssignment();
    //void testSerialize1File();
    //void testSerialize2File();
    //void testSerialize1Memory();
@@ -53,17 +52,6 @@ void CpuRFieldDftTest::testConstructor()
       Cpu::RFieldDft<3> v;
       TEST_ASSERT(v.capacity() == 0 );
       TEST_ASSERT(!v.isAllocated() );
-   }
-} 
-
-void CpuRFieldDftTest::testAllocate()
-{
-   printMethod(TEST_FUNC);
-   {
-      Cpu::RFieldDft<3> v;
-      v.allocate(capacity);
-      TEST_ASSERT(v.capacity() == capacity );
-      TEST_ASSERT(v.isAllocated());
    }
 } 
 
@@ -85,15 +73,19 @@ void CpuRFieldDftTest::testAllocate3()
 {
    printMethod(TEST_FUNC);
    {
+      // Mesh dimensions
       IntVec<3> d;
       d[0] = 2;
       d[1] = 3;
       d[2] = 4;
+
+      // Construct and allocate RFieldDft<3> v
       Cpu::RFieldDft<3> v;
       v.allocate(d);
-      TEST_ASSERT(v.capacity() == 18);
       TEST_ASSERT(v.isAllocated());
+      TEST_ASSERT(v.capacity() == 18);
       TEST_ASSERT(d == v.meshDimensions());
+
    }
 }
  
@@ -101,8 +93,20 @@ void CpuRFieldDftTest::testSubscript()
 {
    printMethod(TEST_FUNC);
    {
+      // Mesh dimensions
+      IntVec<3> d;
+      d[0] = 2;
+      d[1] = 3;
+      d[2] = 4;
+
+      // Construct and allocate RFieldDft<3> v
       Cpu::RFieldDft<3> v;
-      v.allocate(capacity);
+      v.allocate(d);
+      TEST_ASSERT(v.isAllocated());
+      TEST_ASSERT(v.capacity() == 18);
+      TEST_ASSERT(d == v.meshDimensions());
+      int capacity = v.capacity();
+
       for (int i=0; i < capacity; i++ ) {
          v[i][0] = (i+1)*10.0 ;
          v[i][1] = (i+1)*10.0 + 0.1;
@@ -153,14 +157,23 @@ void CpuRFieldDftTest::testAssignment()
    printMethod(TEST_FUNC);
 
    {
+      // Mesh dimensions
+      IntVec<3> d;
+      d[0] = 2;
+      d[1] = 3;
+      d[2] = 4;
+
+      // Construct and allocate RFieldDft<3> v
       Cpu::RFieldDft<3> v;
-      v.allocate(capacity);
-      TEST_ASSERT(v.capacity() == 3);
-      TEST_ASSERT(v.isAllocated() );
-   
+      v.allocate(d);
+      TEST_ASSERT(v.isAllocated());
+      TEST_ASSERT(v.capacity() == 18);
+      TEST_ASSERT(d == v.meshDimensions());
+      int capacity = v.capacity();
+
       Cpu::RFieldDft<3> u;
-      u.allocate(3);
-      TEST_ASSERT(u.capacity() == 3 );
+      u.allocate(d);
+      TEST_ASSERT(u.capacity() == capacity);
       TEST_ASSERT(u.isAllocated() );
    
       for (int i=0; i < capacity; i++ ) {
@@ -170,7 +183,7 @@ void CpuRFieldDftTest::testAssignment()
    
       u  = v;
    
-      TEST_ASSERT(u.capacity() == 3 );
+      TEST_ASSERT(u.capacity() == capacity);
       TEST_ASSERT(u.isAllocated() );
       TEST_ASSERT(v[0][0] == 10.0);
       TEST_ASSERT(v[0][1] == 10.1);
@@ -190,8 +203,20 @@ void CpuRFieldDftTest::testSerialize1Memory()
 { 
    printMethod(TEST_FUNC);
    {
+      // Mesh dimensions
+      IntVec<3> d;
+      d[0] = 2;
+      d[1] = 3;
+      d[2] = 4;
+
+      // Construct and allocate RFieldDft<3> v
       Cpu::RFieldDft<3> v;
-      v.allocate(3);
+      v.allocate(d);
+      TEST_ASSERT(v.isAllocated());
+      TEST_ASSERT(v.capacity() == 18);
+      TEST_ASSERT(d == v.meshDimensions());
+      int capacity = v.capacity();
+
       for (int i=0; i < capacity; i++ ) {
          v[i][0] = (i+1)*10.0 ;
          v[i][1] = (i+1)*10.0 + 0.1;
@@ -211,7 +236,7 @@ void CpuRFieldDftTest::testSerialize1Memory()
       // Show that v is unchanged by packing
       TEST_ASSERT(v[1][0]==20.0);
       TEST_ASSERT(v[1][1]==20.0);
-      TEST_ASSERT(v.capacity() == 3);
+      TEST_ASSERT(v.capacity() == capacity);
    
       Cpu::RFieldDft<3> u;
       u.allocate(3);
@@ -234,7 +259,7 @@ void CpuRFieldDftTest::testSerialize1Memory()
    
       TEST_ASSERT(u[1] == 20.0);
       TEST_ASSERT(i2 == 13);
-      TEST_ASSERT(u.capacity() == 3);
+      TEST_ASSERT(u.capacity() == capacity);
    
       // Release
       iArchive.release();
@@ -270,7 +295,7 @@ void CpuRFieldDftTest::testSerialize1Memory()
       TEST_ASSERT(u[2][0] == 30.0);
       TEST_ASSERT(u[2][1] == 30.1);
       TEST_ASSERT(i2 == 13);
-      TEST_ASSERT(u.capacity() == 3);
+      TEST_ASSERT(u.capacity() == capacity);
    }
 
 }
@@ -279,8 +304,20 @@ void CpuRFieldDftTest::testSerialize2Memory()
 {
    printMethod(TEST_FUNC);
    {
+      // Mesh dimensions
+      IntVec<3> d;
+      d[0] = 2;
+      d[1] = 3;
+      d[2] = 4;
+
+      // Construct and allocate RFieldDft<3> v
       Cpu::RFieldDft<3> v;
-      v.allocate(capacity);
+      v.allocate(d);
+      TEST_ASSERT(v.isAllocated());
+      TEST_ASSERT(v.capacity() == 18);
+      TEST_ASSERT(d == v.meshDimensions());
+      int capacity = v.capacity();
+
       for (int i=0; i < capacity; i++ ) {
          v[i][0] = (i+1)*10.0 ;
          v[i][1] = (i+1)*10.0 + 0.1;
@@ -318,7 +355,7 @@ void CpuRFieldDftTest::testSerialize2Memory()
       TEST_ASSERT(u[1][1] == 20.1);
       TEST_ASSERT(u[2][0] == 30.0);
       TEST_ASSERT(u[2][1] == 30.1);
-      TEST_ASSERT(u.capacity() == 3);
+      TEST_ASSERT(u.capacity() == capacity);
    }
 }
 
@@ -326,8 +363,20 @@ void CpuRFieldDftTest::testSerialize1File()
 {
    printMethod(TEST_FUNC);
    {
+      // Mesh dimensions
+      IntVec<3> d;
+      d[0] = 2;
+      d[1] = 3;
+      d[2] = 4;
+
+      // Construct and allocate RFieldDft<3> v
       Cpu::RFieldDft<3> v;
-      v.allocate(3);
+      v.allocate(d);
+      TEST_ASSERT(v.isAllocated());
+      TEST_ASSERT(v.capacity() == 18);
+      TEST_ASSERT(d == v.meshDimensions());
+      int capacity = v.capacity();
+
       for (int i=0; i < capacity; i++ ) {
          v[i][0] = (i+1)*10.0 ;
          v[i][1] = (i+1)*10.0 + 0.1;
@@ -380,8 +429,20 @@ void CpuRFieldDftTest::testSerialize2File()
 {
    printMethod(TEST_FUNC);
    {
+      // Mesh dimensions
+      IntVec<3> d;
+      d[0] = 2;
+      d[1] = 3;
+      d[2] = 4;
+
+      // Construct and allocate RFieldDft<3> v
       Cpu::RFieldDft<3> v;
-      v.allocate(3);
+      v.allocate(d);
+      TEST_ASSERT(v.isAllocated());
+      TEST_ASSERT(v.capacity() == 18);
+      TEST_ASSERT(d == v.meshDimensions());
+      int capacity = v.capacity();
+
       for (int i=0; i < capacity; i++ ) {
          v[i][0] = (i+1)*10.0 ;
          v[i][1] = (i+1)*10.0 + 0.1;
@@ -436,12 +497,11 @@ void CpuRFieldDftTest::testSerialize2File()
 
 TEST_BEGIN(CpuRFieldDftTest)
 TEST_ADD(CpuRFieldDftTest, testConstructor)
-TEST_ADD(CpuRFieldDftTest, testAllocate)
 TEST_ADD(CpuRFieldDftTest, testAllocate1)
 TEST_ADD(CpuRFieldDftTest, testAllocate3)
 TEST_ADD(CpuRFieldDftTest, testSubscript)
-TEST_ADD(CpuRFieldDftTest, testAssignment)
 TEST_ADD(CpuRFieldDftTest, testCopyConst)
+TEST_ADD(CpuRFieldDftTest, testAssignment)
 //TEST_ADD(CpuRFieldDftTest, testSerialize1Memory)
 //TEST_ADD(CpuRFieldDftTest, testSerialize2Memory)
 //TEST_ADD(CpuRFieldDftTest, testSerialize1File)

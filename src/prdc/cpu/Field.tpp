@@ -54,10 +54,10 @@ namespace Cpu {
          UTIL_THROW("Attempt to re-allocate a Field");
       }
       if (capacity <= 0) {
-         UTIL_THROW("Attempt to allocate with capacity <= 0");
+         UTIL_THROW("Attempt to allocate Field with capacity <= 0");
       }
-      data_ = (Data*) fftw_malloc(sizeof(Data)*capacity);
       capacity_ = capacity;
+      data_ = (Data*) fftw_malloc(sizeof(Data)*capacity);
    }
 
    /*

@@ -54,7 +54,7 @@ namespace Cpu {
       *
       * \throw Exception if the Field is not allocated.
       */
-      void deallocate();
+      virtual void deallocate();
 
       /**
       * Return true if the Field has been allocated, false otherwise.
@@ -180,7 +180,7 @@ namespace Cpu {
    */
    template <typename Data>
    inline bool Field<Data>::isAllocated() const
-   {  return (bool)data_; }
+   {  return (bool) data_; }
 
    /*
    * Serialize a Field to/from an Archive.
@@ -216,7 +216,6 @@ namespace Cpu {
    extern template class Field<double>;
    extern template class Field<fftw_complex>;
    #endif
-
 
 }
 }

@@ -64,8 +64,6 @@ namespace Cpu {
       */
       CField& operator = (const CField& other);
 
-      using Field<fftw_complex>::allocate;
-
       /**
       * Allocate the underlying C array for an FFT grid.
       *
@@ -74,6 +72,11 @@ namespace Cpu {
       * \param meshDimensions vector of numbers of grid points per direction
       */
       void allocate(const IntVec<D>& meshDimensions);
+
+      /**
+      * Deallocate underlying C array and clear mesh dimensions.
+      */
+      virtual void deallocate();
 
       /**
       * Return mesh dimensions by constant reference.
@@ -93,6 +96,8 @@ namespace Cpu {
 
       // Vector containing number of grid points in each direction.
       IntVec<D> meshDimensions_;
+
+      using Field<fftw_complex>::allocate;
 
    };
 

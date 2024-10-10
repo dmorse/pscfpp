@@ -63,8 +63,6 @@ namespace Cpu {
       */
       RField& operator = (const RField& other);
 
-      using Field<double>::allocate;
-
       /**
       * Allocate the underlying C array for an FFT grid.
       *
@@ -72,7 +70,12 @@ namespace Cpu {
       *
       * \param meshDimensions vector of numbers of grid points per direction
       */
-      void allocate(const IntVec<D>& meshDimensions);
+      void allocate(IntVec<D> const & meshDimensions);
+
+      /**
+      * Deallocate memory and return to empty state.
+      */
+      virtual void deallocate();
 
       /**
       * Return mesh dimensions by constant reference.
@@ -92,6 +95,8 @@ namespace Cpu {
 
       // Vector containing number of grid points in each direction.
       IntVec<D> meshDimensions_;
+
+      using Field<double>::allocate;
 
    };
 
