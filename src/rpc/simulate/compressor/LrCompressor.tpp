@@ -59,7 +59,6 @@ namespace Rpc{
    void LrCompressor<D>::setup()
    {
       const int nMonomer = system().mixture().nMonomer();
-      const int meshSize = system().domain().mesh().size();
       IntVec<D> const & dimensions = system().domain().mesh().dimensions();
       for (int i = 0; i < D; ++i) {
          if (i < D - 1) {
@@ -76,7 +75,7 @@ namespace Rpc{
          wFieldTmp_.allocate(nMonomer);
          intraCorrelationK_.allocate(kMeshDimensions_);
          for (int i = 0; i < nMonomer; ++i) {
-            wFieldTmp_[i].allocate(meshSize);
+            wFieldTmp_[i].allocate(dimensions);
          }
          isAllocated_ = true;
       }

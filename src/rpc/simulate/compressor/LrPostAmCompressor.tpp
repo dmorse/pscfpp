@@ -71,8 +71,8 @@ namespace Rpc{
          residK_.allocate(dimensions);
          intraCorrelationK_.allocate(kMeshDimensions_);
          for (int i = 0; i < nMonomer; ++i) {
-            w0_[i].allocate(meshSize);
-            wFieldTmp_[i].allocate(meshSize);
+            w0_[i].allocate(dimensions);
+            wFieldTmp_[i].allocate(dimensions);
          }
             
          isAllocated_ = true;

@@ -45,6 +45,7 @@ namespace Rpc{
    {  
       const int nMonomer = system().mixture().nMonomer();
       const int meshSize = system().domain().mesh().size();
+      IntVec<D> const & dimensions = system().domain().mesh().dimensions();
       // Allocate memory required by AM algorithm if not done earlier.
       AmIteratorTmpl<Compressor<D>, DArray<double> >::setup(isContinuation);
       
@@ -54,10 +55,9 @@ namespace Rpc{
          w0_.allocate(nMonomer);
          wFieldTmp_.allocate(nMonomer);
          for (int i = 0; i < nMonomer; ++i) {
-            w0_[i].allocate(meshSize);
-            wFieldTmp_[i].allocate(meshSize);
+            w0_[i].allocate(dimensions);
+            wFieldTmp_[i].allocate(dimensions);
          }
-            
          isAllocated_ = true;
       }
       

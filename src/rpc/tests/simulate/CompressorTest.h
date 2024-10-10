@@ -54,10 +54,11 @@ public:
       // Random change in pressure field
       int nMonomer = system.mixture().nMonomer();
       int meshSize = system.domain().mesh().size();
+      IntVec<D> const & dimensions = system.domain().mesh().dimensions();
       DArray< RField<3> > w2;
       w2.allocate(nMonomer);
       for (int i = 0; i < nMonomer; ++i) {
-         w2[i].allocate(meshSize);
+         w2[i].allocate(dimensions);
       }
       
       DArray< RField<3> > const & w = system.w().rgrid();
@@ -79,10 +80,11 @@ public:
       // Random change in pressure field
       int nMonomer = system.mixture().nMonomer();
       int meshSize = system.domain().mesh().size();
+      IntVec<D> const & dimensions = system.domain().mesh().dimensions();
       DArray< RField<3> > w2;
       w2.allocate(nMonomer);
       for (int i = 0; i < nMonomer; ++i) {
-         w2[i].allocate(meshSize);
+         w2[i].allocate(dimensions);
       }
       
       DArray< RField<3> > const & w = system.w().rgrid();
@@ -117,15 +119,16 @@ public:
       system.readWRGrid("in/w_dis.rf");
       int nMonomer = system.mixture().nMonomer();
       int meshSize = system.domain().mesh().size();
+      IntVec<3> const & dimensions = system.domain().mesh().dimensions();
       
       // Store value of input chemical potential fields
       DArray< RField<3> > w0;
       w0.allocate(nMonomer);
       for (int i = 0; i < nMonomer; ++i) {
-         w0[i].allocate(meshSize);
+         w0[i].allocate(dimensions);
       }
       for (int i = 0; i < nMonomer; ++i) {
-         for (int j = 0; j< meshSize; ++j){
+         for (int j = 0; j < meshSize; ++j){
             w0[i][j] = system.w().rgrid(i)[j];
          }
       }
@@ -152,7 +155,7 @@ public:
       DArray< RField<3> > w1;
       w1.allocate(nMonomer);
       for (int i = 0; i < nMonomer; ++i) {
-         w1[i].allocate(meshSize);
+         w1[i].allocate(dimensions);
       }
       for (int i = 0; i < nMonomer; ++i) {
          for (int j = 0; j< meshSize; ++j){

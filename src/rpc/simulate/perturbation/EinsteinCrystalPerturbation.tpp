@@ -52,7 +52,7 @@ namespace Rpc {
    void EinsteinCrystalPerturbation<D>::setup()
    {
       const int nMonomer = system().mixture().nMonomer();
-      const int meshSize = system().domain().mesh().size();
+      // const int meshSize = system().domain().mesh().size();
       const IntVec<D> dimensions = system().domain().mesh().dimensions();
       
       UTIL_CHECK(nMonomer == 2);
@@ -62,7 +62,7 @@ namespace Rpc {
       wc0_.allocate(nMonomer);
       for (int i = 0; i < nMonomer; ++i) {
          w0_[i].allocate(dimensions);
-         wc0_[i].allocate(meshSize);
+         wc0_[i].allocate(dimensions);
       }
       
       // Read in reference field 

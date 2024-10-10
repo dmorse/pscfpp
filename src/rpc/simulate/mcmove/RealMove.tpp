@@ -54,11 +54,11 @@ namespace Rpc {
    {  
       McMove<D>::setup();
       const int nMonomer = system().mixture().nMonomer();
-      const int meshSize = system().domain().mesh().size();
+      IntVec<D> const & dimensions = system().domain().mesh().dimensions();
       if (!isAllocated_){
          wFieldTmp_.allocate(nMonomer);
          for (int i = 0; i < nMonomer; ++i) {
-            wFieldTmp_[i].allocate(meshSize);
+            wFieldTmp_[i].allocate(dimensions);
          }
          isAllocated_ = true;
       }
