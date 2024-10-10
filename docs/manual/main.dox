@@ -85,12 +85,12 @@ https://dmorse.github.io/pscfpp-man </a>.
     <li> \ref scft_basis_page  </li>
     </ol>
   </li>
-  <li> \subpage ftsps_page
+  <li> \subpage psfts_page
     <ol type="1">
-    <li> \ref ftsps_intro_page  </li>
-    <li> \ref ftsps_theory_page  </li>
-    <li> \ref ftsps_psa_page  </li>
-    <li> \ref ftsps_methods_page  </li>
+    <li> \ref psfts_intro_page  </li>
+    <li> \ref psfts_theory_page  </li>
+    <li> \ref psfts_psa_page  </li>
+    <li> \ref psfts_methods_page  </li>
     </ol>
   </li>
   <li> \subpage developer_page

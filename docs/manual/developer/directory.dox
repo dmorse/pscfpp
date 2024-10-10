@@ -73,11 +73,11 @@ The three most important top-level subdirectories are the first three
 listed above: src, bld and bin.
 
 In what follows, we describe file name patterns and standard file
-extension using the * (asterisk) symbol to represent a wildcard that can
-represent any string of characters.  For example, the pattern *.h can
+extension using the \* (asterisk) symbol to represent a wildcard that can
+represent any string of characters.  For example, the pattern \*.h can
 represent any file name that ends in extension .h, which is a standard
 file name extension for C++ header files. We sometimes refer to file
-names that match such a pattern either as, for example, "*.h files".
+names that match such a pattern either as, for example, "\*.h files".
 
 \section developer_directory_blddir_sec Overview of build process
 
@@ -108,7 +108,7 @@ The object and dependency file that are created by compiling a source
 file have the same base file name as the associated source file.
 
 The PSCF build system also creates several static libraries with file
-names of the form lib*.a. Each such library contains all of the
+names of the form lib\*.a. Each such library contains all of the
 assembly code created by compiling the source files in one top-level
 subdirectory of the src directory.
 
@@ -126,8 +126,8 @@ directory for this purpose.  In an "in-source" build, these intermediate
 files are instead placed within the src directory, alongside the source
 files from which they were created.
 
-During an in-source build, the PSCF build system places the *.o object
-file and the *.d dependency file that are created by compiling one
+During an in-source build, the PSCF build system places the \*.o object
+file and the \*.d dependency file that are created by compiling one
 source file in the same subdirectory of src as the associated source
 file.  During an out-of-source build, these two files are instead placed 
 in an analogous subdirectory of the bld directory tree. To make this 
@@ -327,19 +327,19 @@ and CUDA C++ files:
      <th> Purpose </th>
    </tr>
    <tr>
-     <td> *.h </td>
+     <td> \*.h </td>
      <td> C++ header file </td>
    </tr>
    <tr>
-     <td> *.tpp </td>
+     <td> \*.tpp </td>
      <td> implementation of a class template </td>
    </tr>
    <tr>
-     <td> *.cpp </td>
+     <td> \*.cpp </td>
      <td> compilable C++ source file </td>
    </tr>
    <tr>
-     <td> *.cu </td>
+     <td> \*.cu </td>
      <td> compilable CUDA C++ source file </td>
    </tr>
 </table>
@@ -347,8 +347,8 @@ Header files, with extension .h, may be included into other C++ files
 using a C/C++ \#include directive.  C++ and CUDA C++ source files, with
 extension .cpp or .cu, are compiled, and may never be included by other
 program files. Template implementation files, with extension .tpp, are
-generally included into either an associated *.h header file or an
-associated *.cpp or *.cu source file with the same base name (as
+generally included into either an associated \*.h header file or an
+associated \*.cpp or \*.cu source file with the same base name (as
 discussed in more detail developer_template_page "here"), and may not
 be directly included by other files.
 
@@ -374,15 +374,15 @@ the configure script.
      <td> makefile (instructions for the make command)</td>
    </tr>
    <tr>
-     <td> *.mk </td>
+     <td> \*.mk </td>
      <td> makefile fragment (included by other makefiles)</td>
    </tr>
    <tr>
-     <td> *.dox </td>
+     <td> \*.dox </td>
      <td> doxygen documentation file (manual page) </td>
    </tr>
    <tr>
-     <td> *.mod </td>
+     <td> \*.mod </td>
      <td> doxygen documentation file (topic module) </td>
    </tr>
 </table>

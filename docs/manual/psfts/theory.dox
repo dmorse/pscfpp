@@ -1,0 +1,381 @@
+/*! \page psfts_theory_page  Fluctuating Field Theory
+
+\ref psfts_intro_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref psfts_psa_page    (Next)
+<BR>
+
+Below, we summarize a few of the working equations 
+
+\section psfts_theory_model_sec Incompressible Particle-Based Model
+
+We consider a mixture of polymers and solvents containing \f$ M \f$ types 
+of monomer (where \f$ M \f$ is denoted by nMonomer in the parameter file).
+Let \f$ c_{i}({\bf r}) \f$ denote the concentration of monomers of type 
+ \f$ i \f$ at point \f$ {\bf r} \f$ within the mixture in a specific 
+mechanical microstate (i.e., a specific list of monomer positions).  
+We consider a strictly incompressible model in which the monomer 
+concentrations must satisfy a constraint
+\f[
+   \sum_{i=1}^{M} c_{i}({\bf r}) = c_{0}
+\f]
+for all \f$ {\bf r} \f$ , where \f$ c_{0} = 1/v \f$ and \f$ v = 1/c_{0} \f$ 
+is the monomer reference volume (denoted by vMonomer in the parameter
+file). The potential energy for microstates that satisfy this constraint 
+is assumed to be of the form
+\f[
+   U = U_{\rm id} + U_{\rm int}
+   \quad, 
+\f]
+in which \f$ U_{\rm id} \f$ is the intramolecular potential energy of 
+a gas of non-interacting molecules, and
+\f[
+   U_{\rm int} 
+    =  \frac{v}{2} 
+   \int d{\bf r} \; \chi_{ij} c_{i}({\bf r}) c_{j}({\bf r}) 
+\f]
+is a non-bonded pair interaction energy, where
+\f$ \chi_{ij} \f$ is an element of a symmetric \f$ M \times M \f$ 
+matrix of Flory-Huggins interaction parameters.
+Here and hereafter, we adopt the Einstein convention for summations 
+over repeated indices \f$ i \f$ or \f$ j \f$ that represent monomer 
+type indices, which are sums from \f$ 1, \ldots, M \f$ .
+
+The partition function \f$ Z \f$ for such a model is given to within an
+irrelevant multiplicative constant by a configurational integral
+\f[
+   Z = \int {\cal D}{\bf r} \; e^{-U_{\rm id} - U_{\rm int} }
+       \; 
+       \delta \left ( \sum_{i=1}^{M} c_{i}({\bf r}) - c_{0} \right )
+   \quad,
+\f]
+in which the \f$ \delta \f$-function imposes the incompressibility 
+constraint.
+
+\section psfts_theory_AB_sec Fluctuating Field Theory: Standard AB Systems (\f$ M=2 \f$)
+
+Definition of c(plus) and c(minus):
+\f[
+  C_{1}(\bf r}) = c_{1}({\bf r} - c_{2}({\bf r})
+  \quad\quad
+  C_{+}(\bf r}) = c_{1}({\bf r} + c_{2}({\bf r})
+\f]
+Constraint: \f$ C_{+}({\bf r}) = c_{0} \f$.
+
+
+Result of Hubbard-Stratonovich transformation
+
+\section psfts_theory_general_sec Fluctuating Field Theory: General (\f$ M \geq 2 \f$)
+
+PSCF uses a formulation of field theory for incompressible systems that 
+allows treatment of some systems with more than two monomer types
+(\f$ M > 2 \f$), but that reduces to formalism described above in the
+case of a standard AB system. 
+
+<b> Matrix Notation </b>
+
+Throughout the following discussion of this formulation, we use bold-faced
+symbols to denote column vectors and matrices in which column and indices 
+are associated with monomer types. Specifically, let 
+\f$ {\bf c}({\bf r}) \f$ denotes the column vector with elements given by 
+the monomer concentrations \f$ c_{1}({\bf r}), \ldots, c_{M}({\bf r}) \f$ 
+at position \f$ {\bf r} \f$ .  Let \f$ {\boldsymbol \chi} \f$ denote the 
+symmetric \f$ M \times M \f$ matrix of Flory-Huggins interaction 
+parameters.
+
+The incompressibility constraint can be expressed in matrix notation as
+a requirement that 
+\f[
+   {\bf e}^{T} {\bf c}({\bf r}) = c_{0} \quad,
+\f]
+in which
+\f[
+  {\bf e} = \left [ \begin{array}{c}
+            1 \\ 1 \\ \vdots \\ 1
+            \end{array} \right ]
+\f]
+is an \f$ M \f$-component column vector with equal components 
+\f$ e_{i}=1 \f$ for all \f$ i = 1, \cdots, M \f$. Here and hereafter,
+a superscript \f$ T \f$ denotes a matrix transpose, so that 
+\f$ {\bf e}^{T} = [1 \ldots 1] \f$ is a corresponding row vector.
+Fluctuations of \f$ {\bf c}({\bf r})\f$ within the subspace orthogonal 
+to \f$ {\bf e} \f$ thus preserve the incompressibility constraint. 
+
+The formulation of polymer field theory theory used by PSCF for PS-FTS 
+simulations of incompressible systems is based on a a de-composition of 
+\f$ {\bf c}({\bf r}) \f$ and other vectors into components parallel and 
+orthogonal to \f$ {\bf e} \f$.
+Let \f$ {\bf Q} \f$ and \f$ {\bf P} \f$ denote \f$ M \times M \f$ 
+orthogonal projection matrices
+\f[
+   {\bf Q} = \frac{1}{M}{\bf e}{\bf e}^{T}
+   \quad\quad, \quad\quad
+   {\bf P} = {\bf I} - {\bf Q}
+   \quad, 
+\f]
+where \f$ {\bf I} \f$ is the \f$ M \times M \f$ identity matrix. 
+Note that \f$ {\bf Q}{\bf e} = {\bf e} \f$, \f$ {\bf P}{\bf e} = 0 \f$,
+and \f$ {\bf Q}{\bf P} = {\bf P}{\bf Q} = 0 \f$.
+Multiplying a column vector by \f$ {\bf Q} \f$ yields its orthogonal
+projection onto \f$ {\bf e} \f$, while multiplying such a vector by 
+\f$ {\bf P} \f$ yields its projection into the \f$ M-1 \f$ dimensional 
+subspace orthogonal to \f$ {\bf e} \f$ .  
+
+<b> Projected \f$ \chi \f$ Matrix </b>
+
+Let \f$ \tilde{\boldsymbol\chi} \f$ denote a symmetric \f$ M \times M \f$ 
+matrix defined by the matrix product
+\f[
+   \tilde{\boldsymbol \chi} 
+   \equiv {\bf P}{\boldsymbol \chi}{\bf P} \quad,
+   \quad.
+\f]
+We refer to this as the projected \f$ \chi \f$ matrix. 
+Let \f$ \tilde{\chi}_{ij} \f$ denote the element in row i and 
+column j of matrix \f$ \tilde{\boldsymbol \chi} \f$ . 
+Note that \f$ \tilde{\boldsymbol{\chi}} {\bf e} = 0\f$, implying 
+that \f$ \tilde{\boldsymbol{\chi}} \f$ is a singular matrix for 
+which \f$ {\bf e} \f$ is an eigenvector associated with a zero 
+eigenvalue.
+
+Let \f$ {\bf v}_{1}, \ldots, {\bf v}_{M} \f$ denote \f$ M \f$ orthogonal
+eigenvectors of the symmetric matrix \f$ \tilde{\boldsymbol \chi} \f$, 
+and let \f$ \lambda_{1}, \ldots, \lambda_{M} \f$ be the corresponding 
+real eigenvalues,  defined such that
+\f[
+   \tilde{\boldsymbol\chi} {\bf v}_{\alpha} = 
+   \lambda_{\alpha} {\bf v}_{\alpha}
+\f]
+for all \f$ \alpha = 1, \ldots, M \f$ .
+As already noted, \f$ {\bf e} \f$ is always an eigenvector with a 
+zero eigenvalue. By convention, we define the last eigenvector to be 
+\f[
+   {\bf v}_{M} = {\bf e} \quad,
+\f] 
+for which \f$ \lambda_{M}=0 \f$. We also choose a normalization 
+convention for which
+\f[
+   {\bf v}_{\alpha}^{T} {\bf v}_{\beta} 
+   = \delta_{\alpha\beta}M  
+\f]
+for all \f$ \alpha, \beta = 1,\ldots, M \f$ .
+Note that this convention is compatible with the normalization of 
+\f$ {\bf e} = {\bf v}_{M} \f$, for which \f$ {\bf e}^{T}{\bf e} = M \f$ . 
+The \f$ M - 1 \f$ eigenvectors \f$ {\bf v}_{1}, \ldots, {\bf v}_{M-1} \f$ 
+are all orthogonal to \f$ {\bf e} \f$, and thus span the \f$ M - 1 \f$ 
+dimensional subspace orthogonal to \f$ {\bf e} \f$ .
+
+Let \f$ C_{\alpha}({\bf r}) \f$ denote a component of the vector
+\f$ {\bf c}({\bf r}) \f$ in a basis of these eigenvectors, defined such 
+that
+\f[
+   {\bf c}({\bf r}) = \frac{1}{M}\sum_{\alpha = 1}^{M}
+   C_{\alpha}({\bf r}) {\bf v}_{\alpha}
+   \quad\quad
+   C_{\alpha}({\bf r}) = 
+   {\bf v}^{T}_{\alpha} {\bf c}({\bf r}) 
+\f]
+for all \f$ \alpha = 1, \ldots, M \f$ .
+Here and hereafter, we use lower case Greek letters \f$ \alpha, \beta \f$ 
+for eigenvector indices and small Latin letters \f$ i, j, \ldots \f$ for 
+monomer type indices, and use the Einstein summation convention and/or 
+matrix multiplication only to represent sums over repeated monomer type 
+indices.
+Note that, because \f$ {\bf v}_{M} = {\bf e} \f$, the constraint requires
+that \f$ C_{M}({\bf r}) = c_{0}\f$ for all \f$ {\bf r} \f$.
+By substituting the expansion of \f$ {\bf c} \f$ in eigenvectors of the 
+projected \f$ \chi \f$ matrix into the definition of \f$ U_{\rm int} \f$, 
+while setting \f$ C_{M}({\bf r}) = c_{0} \f$ and noting that 
+\f$ {\bf P}{\bf v}_{\alpha} = {\bf v}_{\alpha} \f$ for all 
+\f$ \alpha = 1, \ldots, M - 1 \f$, it is straightforward to show that
+\f[
+   U_{\rm int} = 
+   \sum_{\alpha=1}^{M-1} 
+   \int d{\bf r} \;  \left \{
+   \frac{v \lambda_{\alpha} }{2M} C_{\alpha}^{2} ({\bf r})
+   + S_{\alpha} C_{\alpha}({\bf r})  
+   \right \}
+   + \frac{V}{2v} S_{M} 
+\f]
+where \f$ V \f$ is total system volume, and where we have defined
+\f[
+   S_{\alpha} \equiv 
+   \frac{1}{M^2} {\bf v}_{\alpha}^{T} {\boldsymbol \chi} {\bf e}
+\f]
+for all \f$ \alpha = 1, \ldots, M \f$.
+
+Field components associated with positive or negative eigenvalues 
+must be treated differently when constructing a functional integral 
+representation of \f$ Z \f$ .  
+For each \f$ \alpha = 1, \ldots, M - 1\f$, let 
+\f[
+   \lambda_{\alpha}  = - \sigma_{\alpha}^{2} |\lambda_{\alpha}|
+   \quad, 
+\f]
+with \f$ \sigma_{\alpha} = 1 \f$ for all \f$ \lambda_{\alpha} < 0 \f$ 
+and \f$ \sigma_{\alpha} = i \f$ for \f$ \lambda_{\alpha} > 0 \f$.
+By convention, we also define \f$ \sigma_{M} = i \f$ .
+
+Let \f$ L \f$ denote the number of negative eigenvalues of 
+\f$ \tilde{\boldsymbol \chi} \f$ . By convention, for systems with 
+\f$ 0< L < M - 1 \f$, we take the first \f$ L \f$ eigenvalues 
+\f$ \lambda_1, \ldots, \lambda_{L} \f$ to be negative and take 
+eigenvalues \f$ L+1, \ldots, M - 1 \f$ to be non-negative, while 
+\f$ \lambda_{M} = 0 \f$ .
+
+<b> Particle-Field Transformation </b>
+
+A Hubbard-Stratonovich transformation may used to transform the
+Boltzmann factor \f$ \exp( -U_{\rm int} ) \f$ given above into an 
+a functional integral over \f$ M - 1 \f$ real-valued auxiliary 
+fields \f$ \omega_{1}({\bf r}), \ldots, \omega_{M-1}({\bf r}) \f$, 
+of the form
+\f[
+   e^{-U_{\rm int} }
+   =  \frac{1}{N} 
+   \int {\cal D}\omega' 
+   \exp \left \{ - \sum_{\alpha=1}^{M-1} 
+   \int \! d{\bf r} \; \left [  
+    \frac{ M \omega_{\alpha}^{2}}{ 2 v |\lambda_{\alpha}| }
+          + \sigma_{\alpha} \omega_{\alpha} C_{\alpha} 
+          + S_{\alpha} C_{\alpha}
+   \right ] \right \}
+   \; , 
+\f]
+where \f$ \int {\cal D} \omega' \f$ denotes a functional integral over 
+the \f$ M-1 \f$ auxiliary fields \f$ \omega_{1}, \ldots, \omega_{M-1} \f$, 
+and where
+\f[
+   N \equiv
+   \int {\cal D}\omega'
+   \exp \left \{  -
+   \sum_{\alpha=1}^{M-1} 
+   \int \! d{\bf r} \; 
+   \frac{M \omega_{\alpha}^{2}}{ 2 v |\lambda_{\alpha}| }  
+   \right \} 
+\f]
+is a constant.  
+
+The \f$ \delta \f$-function that constrains the total monomer 
+concentration may also be expressed as a functional integral
+\f[
+   \delta(c({\bf r}) - c_{0}) = 
+   \int {\cal D}\omega_{M} \exp \left \{ 
+   - i \int d{\bf r} \; \omega_{M} [ \; C_{M} - c_{0} \; ]
+   \right \} 
+\f]
+in which \f$ \omega_{M}({\bf r}) \f$ is a fluctuating Lagrange multplier 
+field that imposes the constraint requiring that 
+\f$ C_{M}({\bf r}) = c_{0} \f$, for all \f$ {\bf r} \f$, and 
+\f$ \int {\cal D}\omega_{M} \f$ is a functional integral over this field.
+
+Substituting the field-theoretic expressions for \f$ e^{-U_{\rm int}} \f$ 
+and the \f$ \delta \f$-function into the definition of the \f$ Z \f$ for
+an incompressible system, we obtain
+\f[
+   Z = N^{-1} 
+   \int {\cal D}\omega \; e^{ -H_{\rm f} }
+   \int \! {\cal D}{\bf r} \; e^{-U_{\rm id} - H_{\rm c}}
+   \quad,
+\f]
+in which \f$ \int {\cal D}\omega \f$ denotes an integral over all 
+\f$ M \f$ real fields \f$ \omega_{1}, \ldots, \omega_{M} \f$ (including 
+the Lagrange multiplier field \f$ \omega_{M} \f$ ), and
+\f[
+   H_{\rm f}  = 
+   \int \! d{\bf r} \; \left \{
+   - \sum_{\alpha=1}^{M-1}  
+     \frac{M \Omega_{\alpha}^{2} }{ 2 v \lambda_{\alpha}}
+   - \Omega_{M}c_{0} \right \}  + U_{\rm int}^{(0)} \quad
+\f]
+\f[
+   H_{\rm c}  = 
+   \sum_{\alpha=1}^{M} 
+   \int \! d{\bf r} \; 
+    W_{\alpha} ({\bf r}) C_{\alpha}({\bf r})
+   \quad.  
+\f]
+The fields \f$ W_{1}, \ldots, W_{M} \f$ used to define \f$ H_{\rm c} \f$ are
+given by
+\f[
+   W_{\alpha}({\bf r}) \equiv
+   + \sigma_{\alpha} \omega_{\alpha}({\bf r}) 
+   + S_{\alpha} 
+\f]
+for all \f$ \alpha = 1, \ldots, M - 1 \f$ and
+\f[
+   W_{M}({\bf r}) \equiv i\omega_{M}({\bf r}) 
+   \quad, 
+\f]
+for \f$ \alpha = M \f$.
+Note that Hamiltonian component \f$ H_{\rm f} \f$ depends only on 
+the auxiliary fields (so that the subscript f denotes "field"),
+while component \f$ H_{\rm c} \f$ introduces a coupling between 
+auxiliary fields and the monomer concentrations (so that the 
+subscript c denotes "concentration" or "coupling").
+
+<b> Monomer Type Potential Fields </b>
+
+Let \f$ w_{1}({\bf r}), \ldots w_{M}({\bf r}) \f$ denote potential
+fields associated with specific monomer types, given by
+\f[
+   w_{i}({\bf r}) = 
+   \sum_{\alpha=1}^{M} W_{\alpha}({\bf r}) v_{\alpha i} 
+   \quad \quad
+   W_{\alpha}({\bf r}) = 
+   \frac{1}{M} \sum_{j=1}^{M} v_{\alpha j} w_{j}({\bf r}) 
+\f]
+for all \f$ i = 1, \ldots, M \f$ and \f$ \alpha = 1, \ldots, M \f$ .
+Using this definition, \f$ H_{\rm c} \f$ can also be expressed as a sum 
+\f[
+   H_{\rm c}  = 
+   \sum_{i=1}^{M} \int \! d{\bf r} \; 
+   w_{i}({\bf r})c_{i}({\bf r})  
+   \quad. 
+\f]
+The fields \f$ w_{1}, \ldots, w_{M} \f$ are the monomer chemical 
+potential fields used within the solution of the modified diffusion 
+equation to compute single-polymer partition functions.
+
+The functional integral for the canonical partition function \f$ Z \f$ 
+may be expressed as an integral
+\f[
+  Z = N^{-1} \int {\cal D}\omega \; e^{-H[\omega]}
+\f]
+in which 
+\f[
+  H = H_{\rm f} - \ln Z_{\rm id}
+\f]
+is an effective Hamiltonian, and
+\f[
+  Z_{\rm id}[w] = 
+  \int {\cal D}{\bf r} \; e^{-U_{\rm id} - H_{\rm c} } \\
+\f]
+is the partition function of a hypothetical gas of non-interacting 
+molecules in which monomers of type \f$ i \f$ are subjected to a 
+field \f$ w_{i}({\bf r}) \f$ . 
+
+Hereafter, we use the notation \f$ \langle \cdots \rangle_{\rm id} \f$ 
+to denote averages evaluated for a hypothetical ideal gas subjected to 
+an external potential \f$ H_{\rm c} \f$, as in the definition of 
+\f$ Z_{\rm id} \f$ . We define average volume fraction fields as
+\f[
+    \phi_{i}({\bf r}) = v \langle c_{i}({\bf r}) \rangle_{\rm id} 
+\f]
+\f[
+    \Phi_{\alpha}({\bf r}) 
+                   =  v \langle C_{\alpha}({\bf r}) \rangle_{\rm id}
+                    = v_{\alpha i}\phi_{i}({\bf r})
+    \quad. 
+\f]
+for all \f$ i, \alpha = 1, \ldots, M \f$ .
+Because these are evaluated for a gas with an external potential 
+\f$ H_{\rm c} \f$, these volume fraction fields are functionals of 
+the \f$ w \f$ fields.
+
+
+<BR>
+\ref psfts_intro_page  (Prev, Up) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref psfts_page        (Up)       &nbsp; &nbsp; &nbsp; &nbsp;
+\ref psfts_psa_page    (Next)
+
+*/
