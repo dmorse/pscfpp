@@ -72,8 +72,6 @@ namespace Cpu {
       */
       void allocate(IntVec<D> const & meshDimensions);
 
-      using Field<double>::allocate;
-
       /**
       * Deallocate memory and return to empty state.
       */
@@ -97,6 +95,8 @@ namespace Cpu {
 
       // Vector containing number of grid points in each direction.
       IntVec<D> meshDimensions_;
+
+      using Field<double>::allocate;
 
    };
 

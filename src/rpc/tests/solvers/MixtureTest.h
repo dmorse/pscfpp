@@ -88,8 +88,8 @@ public:
       cFields.allocate(nMonomer);
       double nx = (double)mesh.size();
       for (int i = 0; i < nMonomer; ++i) {
-         wFields[i].allocate(nx);
-         cFields[i].allocate(nx);
+         wFields[i].allocate(d);
+         cFields[i].allocate(d);
       }
 
       double cs;
@@ -165,8 +165,8 @@ public:
       cFields.allocate(nMonomer);
       double nx = (double)mesh.size();
       for (int i = 0; i < nMonomer; ++i) {
-         wFields[i].allocate(nx);
-         cFields[i].allocate(nx);
+         wFields[i].allocate(d);
+         cFields[i].allocate(d);
       }
 
       #if 0
@@ -262,8 +262,8 @@ public:
       cFields.allocate(nMonomer);
       double nx = (double)mesh.size();
       for (int i = 0; i < nMonomer; ++i) {
-         wFields[i].allocate(nx);
-         cFields[i].allocate(nx);
+         wFields[i].allocate(d);
+         cFields[i].allocate(d);
       }
 
       // Generate oscillatory wField
@@ -348,8 +348,8 @@ public:
       cFields.allocate(nMonomer);
       double nx = (double)mesh.size();
       for (int i = 0; i < nMonomer; ++i) {
-         wFields[i].allocate(nx);
-         cFields[i].allocate(nx);
+         wFields[i].allocate(d);
+         cFields[i].allocate(d);
       }
 
       double cs;
