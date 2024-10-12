@@ -9,6 +9,7 @@
 */
 
 #include <prdc/cuda/Field.h>
+#include <prdc/cpu/RField.h>
 #include <pscf/cuda/GpuResources.h>
 #include <pscf/math/IntVec.h>
 #include <util/global.h>
@@ -18,7 +19,6 @@ namespace Prdc {
 namespace Cuda {
 
    using namespace Util;
-   using namespace Pscf;
 
    /**
    * Field of real single precision values on an FFT mesh on a device.
@@ -39,13 +39,22 @@ namespace Cuda {
       RField();
 
       /**
+      * Allocating constructor.
+      *
+      * Allocates memory by calling allocate(meshDimensions) internally.
+      *  
+      * \param meshDimensions dimensions of the associated Mesh<D>
+      */
+      RField(IntVec<D> const & meshDimensions);
+
+      /**
       * Copy constructor.
       *
       * Allocates new memory and copies all elements by value.
       *
       *\param other the RField to be copied.
       */
-      RField(const RField& other);
+      RField(RField<D> const& other);
 
       /**
       * Destructor.
@@ -55,30 +64,42 @@ namespace Cuda {
       virtual ~RField();
 
       /**
-      * Assignment operator.
-      *
-      * If this Field is not allocated, launch a kernel to swap memory.
-      *
-      * If this and the other Field are both allocated, the capacities must
-      * be exactly equal. If so, this method copies all elements.
-      * 
-      * \param other the RHS RField
-      */
-      RField& operator = (const RField& other);
-
-      /**
       * Allocate the underlying C array for an FFT grid.
       *
       * \throw Exception if the RField is already allocated.
       *
       * \param meshDimensions number of grid points in each direction
       */
-      void allocate(const IntVec<D>& meshDimensions);
+      void allocate(IntVec<D> const & meshDimensions);
+
+      /**
+      * Assignment operator.
+      *
+      * If this Field is not allocated, allocate and copy all elements.
+      *
+      * If this and the other Field are both allocated, the capacities must
+      * be exactly equal. If so, this method copies all elements.
+      * 
+      * \param other the RHS RField
+      */
+      RField<D>& operator = (const RField<D>& other);
+
+      /**
+      * Assignment from Cpu::RField.
+      *
+      * If this Field is not allocated, allocate and copy all elements.
+      *
+      * If this and the other Field are both allocated, the capacities must
+      * be exactly equal. If so, this method copies all elements.
+      * 
+      * \param other the RHS RField
+      */
+      RField<D>& operator = (const Cpu::RField<D>& other);
 
       /**
       * Return mesh dimensions by constant reference.
       */
-      const IntVec<D>& meshDimensions() const;
+      IntVec<D> const & meshDimensions() const;
 
       /**
       * Serialize a Field to/from an Archive.
@@ -98,21 +119,6 @@ namespace Cuda {
       IntVec<D> meshDimensions_;
 
    };
-
-   /*
-   * Allocate the underlying C array for an FFT grid.
-   */
-   template <int D>
-   void RField<D>::allocate(const IntVec<D>& meshDimensions)
-   {
-      int size = 1;
-      for (int i = 0; i < D; ++i) {
-         UTIL_CHECK(meshDimensions[i] > 0);
-         meshDimensions_[i] = meshDimensions[i];
-         size *= meshDimensions[i];
-      }
-      Field<cudaReal>::allocate(size);
-   }
 
    /*
    * Return mesh dimensions by constant reference.
@@ -163,9 +169,7 @@ namespace Cuda {
    extern template class RField<3>;
    #endif
 
-
 }
 }
 }
-//#include "RField.tpp"
 #endif

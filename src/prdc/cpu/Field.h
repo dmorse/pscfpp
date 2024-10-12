@@ -13,6 +13,11 @@
 
 namespace Pscf {
 namespace Prdc {
+
+namespace Cuda { 
+   template <typename Data> class Field; 
+}
+
 namespace Cpu {
 
    using namespace Util;
@@ -107,6 +112,13 @@ namespace Cpu {
       template <class Archive>
       void serialize(Archive& ar, const unsigned int version);
 
+      /**
+      * Assignment from Cuda::Field<Data> (data on GPU device).
+      *
+      * \param other Cpu::Field<Data> field with data on a GPU
+      */
+      Field<Data>& operator = (Cuda::Field<Data> const & other);
+
    protected:
 
       /// Pointer to an array of Data elements.
@@ -120,12 +132,12 @@ namespace Cpu {
       /**
       * Copy constructor (private and not implemented to prohibit).
       */
-      Field(Field const & other);
+      Field(Field<Data> const & other);
 
       /**
       * Assignment operator (private and non implemented to prohibit).
       */
-      Field& operator = (Field const & other);
+      Field<Data>& operator = (Field<Data> const & other);
 
    };
 
@@ -212,12 +224,8 @@ namespace Cpu {
       }
    }
 
-   #ifndef PRDC_CPU_FIELD_TPP
-   extern template class Field<double>;
-   extern template class Field<fftw_complex>;
-   #endif
-
 }
 }
 }
+#include "Field.tpp"
 #endif

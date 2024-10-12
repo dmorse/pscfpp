@@ -7,9 +7,9 @@
 
 #include <prdc/cuda/Field.tpp>
 
-namespace Pscf { 
+namespace Pscf {
 namespace Prdc { 
-namespace Cuda { 
+namespace Cuda {
 
    template class Field<cudaReal>;
    template class Field<cudaComplex>;

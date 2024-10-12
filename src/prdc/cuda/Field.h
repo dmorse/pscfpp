@@ -8,6 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
+#include <prdc/cpu/Field.h>
 #include <pscf/cuda/GpuResources.h>
 #include <util/global.h>
 #include <cufft.h>
@@ -40,6 +41,13 @@ namespace Cuda {
       Field();
 
       /**
+      * Copy constructor.
+      * 
+      * \param other Field<Data> to be copied (input)
+      */
+      Field(Field<Data> const & other);
+
+      /**
       * Destructor.
       *
       * Deletes underlying C array, if allocated previously.
@@ -68,9 +76,38 @@ namespace Cuda {
       bool isAllocated() const;
 
       /**
+      * Assignment operator.
+      *  
+      * Performs a deep copy, by copying values of all elements from device
+      * memory to device memory.
+      *
+      * This function will allocate memory if this (LHS) Field is not 
+      * allocated.  If this is allocated, it must have the same dimensions 
+      * as the other (RHS) field. 
+      *
+      * \param other Field<Data> on rhs of assignent (input)
+      */
+      virtual Field<Data>& operator = (const Field<Data>& other);
+
+      /**
+      * Assignment operator, assignment from Cpu::Field<Data> host array.
+      *
+      * Performs a deep copy from Cpu::Field<Data> RHS host array to this 
+      * Cuda::Field<D> LHS device array, by copying underlying C array 
+      * from host memory to device memory.
+      *
+      * This function will allocate memory if this (LHS) Field<D> is not 
+      * allocated.  If this is allocated, it must have the same dimensions 
+      * as the other (RHS) Cpu::Field<D> object.
+      *
+      * \param other Cpu::Field<Data> on RHS of assignent (input)
+      */
+      virtual Field<Data>& operator = (const Cpu::Field<Data>& other);
+
+      /**
       * Return allocated size.
       *
-      * \return Number of elements allocated in array.
+      * \return Number of elements allocated in array
       */
       int capacity() const;
 
@@ -82,21 +119,7 @@ namespace Cuda {
       /**
       * Return pointer to const to underlying C array.
       */
-      const Data* cField() const;
-
-      /**
-      * Assignment operator.
-      *
-      * \param other Field<Data> on rhs of assignent (input)
-      */
-      virtual Field<Data>& operator = (const Field<Data>& other);
-
-      /**
-      * Copy constructor.
-      * 
-      * \param other Field<Data> to be copied (input)
-      */
-      Field(const Field& other);
+      Data const * cField() const;
 
    protected:
 
@@ -141,7 +164,7 @@ namespace Cuda {
    extern template class Field<cudaComplex>;
    #endif
 
-}
-}
-}
+} // namespace Cuda
+} // namespace Prdc
+} // namespace Pscf
 #endif

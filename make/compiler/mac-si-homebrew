@@ -94,7 +94,7 @@ NVXX=nvcc
 NVARCH=sm_35
 
 # Options passed to CUDA compiler
-NVXXFLAGS= $(CXX_STD) -O3 -arch=$(NVARCH)
+NVXXFLAGS= $(CXX_STD) -O3 -arch=$(NVARCH) -DPSCF_CUDA
 
 #-----------------------------------------------------------------------
 # Archiver

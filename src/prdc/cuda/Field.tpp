@@ -28,6 +28,26 @@ namespace Cuda {
    {}
 
    /*
+   * Copy constructor.
+   *
+   * Allocates new memory and copies all elements by value.
+   *
+   *\param other the Field to be copied.
+   */
+   template <typename Data>
+   Field<Data>::Field(const Field<Data>& other)
+   {
+      if (!other.isAllocated()) {
+         UTIL_THROW("Other Field must be allocated.");
+      }
+
+      allocate(other.capacity_);
+      cudaMemcpy(data_, other.cField(), 
+                 capacity_ * sizeof(Data), cudaMemcpyDeviceToDevice);
+
+   }
+
+   /*
    * Destructor.
    */
    template <typename Data>
@@ -75,34 +95,7 @@ namespace Cuda {
    }
 
    /*
-   * Copy constructor.
-   *
-   * Allocates new memory and copies all elements by value.
-   *
-   *\param other the Field to be copied.
-   */
-   template <typename Data>
-   Field<Data>::Field(const Field<Data>& other)
-   {
-      if (!other.isAllocated()) {
-         UTIL_THROW("Other Field must be allocated.");
-      }
-
-      allocate(other.capacity_);
-      cudaMemcpy(data_, other.cField(), 
-                 capacity_ * sizeof(Data), cudaMemcpyDeviceToDevice);
-
-   }
-
-   /*
-   * Assignment.
-   *
-   * This operator will allocate memory if not allocated previously.
-   *
-   * \throw Exception if other Field is not allocated.
-   * \throw Exception if both Fields are allocated with unequal capacities.
-   *
-   * \param other the rhs Field
+   * Assignment from another Cuda::Field<Data>.
    */
    template <typename Data>
    Field<Data>& Field<Data>::operator = (const Field<Data>& other)
@@ -128,7 +121,69 @@ namespace Cuda {
       return *this;
    }
 
+   /*
+   * Assignment of Cuda::Field<Data> LHS from Cpu:RField<Data> RHS.
+   */
+   template <typename Data>
+   Field<Data>& Field<Data>::operator = (const Cpu::Field<Data>& other)
+   {
+      // Precondition
+      if (!other.isAllocated()) {
+         UTIL_THROW("RHS Cpu::Field<D> must be allocated.");
+      }
+
+      // Allocate this if necessary, otherwise require equal dimensions
+      if (!isAllocated()) {
+         allocate(other.capacity());
+      } else if (capacity_ != other.capacity()) {
+         UTIL_THROW("Cannot assign Fields of unequal capacity");
+      }
+
+      // Copy elements
+      cudaMemcpy(data_, other.cField(), 
+                 capacity_ * sizeof(Data), cudaMemcpyHostToDevice);
+
+      return *this;
+   }
+
 }
-}
-}
+
+#if 0
+namespace Cpu {
+  
+   /*
+   * Assignment of Cpu::Field<Data> LHS from Cuda:RField<Data> RHS.
+   *
+   * This is a member of Cpu::Field<Data> that is declared in the header for that
+   * class template, but defined here, and so is only compiled or used when 
+   * compilation of CUDA code is enabled. 
+   *
+   */
+   template <typename Data>
+   Field<Data>& Field<Data>::operator = (const Cuda::Field<Data>& other)
+   {
+      // Precondition
+      if (!other.isAllocated()) {
+         UTIL_THROW("RHS Cuda::Field<D> must be allocated.");
+      }
+
+      // Allocate this if necessary, otherwise require equal dimensions
+      if (!isAllocated()) {
+         allocate(other.capacity());
+      } else if (capacity_ != other.capacity()) {
+         UTIL_THROW("Cannot assign Fields of unequal capacity");
+      }
+
+      // Copy elements
+      cudaMemcpy(data_, other.cField(), 
+                 capacity_ * sizeof(Data), cudaMemcpyDeviceToHost);
+
+      return *this;
+   }
+
+} // namespace Cpu
+#endif
+
+} // namespace Prdc
+} // namespace Pscf
 #endif

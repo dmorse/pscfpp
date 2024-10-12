@@ -95,11 +95,6 @@ DAT_DIR=$(ROOT_DIR)/data
 # Initialize to default empty string
 PSCF_DEFS=
 
-# Conditionally enable CUDA compilation
-ifdef PSCF_CUDA
-PSCF_DEFS+= -DPSCF_CUDA
-endif
-
 # Conditionally enable OpenMP compilation
 ifdef PSCF_OPENMP
 PSCF_DEFS+= -DPSCF_OPENMP
