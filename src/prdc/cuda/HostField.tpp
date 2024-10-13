@@ -9,9 +9,7 @@
 */
 
 #include "HostField.h"
-#include <util/misc/Memory.h>
-
-#include <fftw3.h>
+#include "Field.h"
 
 namespace Pscf {
 namespace Prdc {
@@ -62,10 +60,6 @@ namespace Cuda {
 
    /*
    * Allocate the underlying C array.
-   *
-   * Throw an Exception if the HostField has already allocated.
-   *
-   * \param capacity number of elements to allocate.
    */
    template <typename Data>
    void HostField<Data>::allocate(int capacity)
@@ -105,12 +99,12 @@ namespace Cuda {
       // Check for self assignment
       if (this == &other) return *this;
 
-      // Precondition
+      // Precondition - RHS array must be allocated
       if (!other.isAllocated()) {
          UTIL_THROW("Other HostField must be allocated.");
       }
 
-      // Allocate this if necessary 
+      // Allocate this LHS array if necessary 
       if (!isAllocated()) {
          allocate(other.capacity());
       } 
@@ -120,7 +114,7 @@ namespace Cuda {
          UTIL_THROW("Cannot assign HostFields of unequal capacity");
       }
 
-      // Copy elements
+      // Copy elements from RHS to LHS
       cudaMemcpy(data_, other.cArray(), 
                  capacity_ * sizeof(Data), cudaMemcpyHostToHost);
 
@@ -128,13 +122,12 @@ namespace Cuda {
    }
 
    /*
-   * Assignment from Field<Data> RHS device array.
+   * Assignment from a Field<Data> RHS device array.
    */
    template <typename Data>
-   HostField<Data>& 
-   HostField<Data>::operator = (const Field<Data>& other)
+   HostField<Data>& HostField<Data>::operator = (const Field<Data>& other)
    {
-      // Precondition - RHS must be allocated
+      // Precondition - RHS array must be allocated
       if (!other.isAllocated()) {
          UTIL_THROW("RHS Field<Data> must be allocated.");
       }

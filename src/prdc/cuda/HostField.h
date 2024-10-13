@@ -9,7 +9,6 @@
 */
 
 #include <util/global.h>
-#include <fftw3.h>
 
 namespace Pscf {
 namespace Prdc {
@@ -17,8 +16,21 @@ namespace Cuda {
 
    using namespace Util;
 
+   // Forward declaration of analogous container for data on the device.
+   template <typename Data> class Field;
+
    /**
-   * Dynamic array of field values located on the host.
+   * Dynamic array of field values in host CPU memory.
+   *
+   * This class is provided as a convenience to allow the use of assigment
+   * operators to copy data between corresponding containers that store
+   * field data in device and host memory. A HostField<Data> stores data in
+   * host memory, whereas a Field<Data> stores analogous data in device 
+   * memory. Each of these classes defines an assigment operation that allows
+   * assignment from the other, and that silently copies memory from device
+   * to host or from host to device.
+   *
+   * Memory is allocated using cudaMallocHost to optimize data transfer.
    *
    * \ingroup Prdc_Cuda_Module
    */
@@ -52,24 +64,59 @@ namespace Cuda {
       *
       * \throw Exception if the HostField is already allocated.
       *
-      * \param capacity number of elements to allocate.
+      * \param capacity number of elements to allocate
       */
       void allocate(int capacity);
 
       /**
       * Dellocate the underlying C array.
       *
-      * \throw Exception if the HostField is not allocated.
+      * \throw Exception if the HostField is not allocated
       */
       virtual void deallocate();
 
       /**
-      * Return true iff the HostField has been allocated.
+      * Assignment operator, assignment from another HostField<Data>.
+      *  
+      * Performs a deep copy, by copying all elements of the underlying
+      * C array from host memory to host memory.
+      *
+      * The RHS HostField<Data> object must be allocated.  If this LHS 
+      * HostField<D> is not allocated, the correct size block of memory 
+      * will be allocated. Otherwise, if this LHS object is allocated
+      * on entry, capacity values for LHS and RHS objects must be equal. 
+      *
+      * \throw Exception if other HostField<Data> is not allocated
+      * Exceptions are thrown if the RHS array is not allocated or if
+      * both arrays are allocated but have unequal capacities.
+      *
+      * \param other HostField<Data> on RHS of assignment (input)
       */
-      bool isAllocated() const;
+      virtual
+      HostField<Data>& operator = (const HostField<Data>& other);
 
       /**
-      * Get an element by non-const reference.
+      * Assignment operator, assignment from Field<Data> device array.
+      *
+      * Performs a deep copy from a RHS Field<Data> device array to this 
+      * LHS HostField<D> host array, by copying the underlying C array 
+      * from device memory to host memory.
+      *
+      * The RHS Field<Data> object must be allocated.  If this LHS 
+      * HostField<D> is not allocated, the correct size block of memory 
+      * will be allocated. Otherwise, if this LHS object is allocated on
+      * entry, capacity values for LHS and RHS objects must be equal. 
+      *
+      * Exceptions are thrown if the RHS array is not allocated or if
+      * both arrays are allocated but have unequal capacities.
+      *
+      * \param other Field<Data> device array on RHS of assignment (input)
+      */
+      virtual 
+      HostField<Data>& operator = (const Field<Data>& other);
+
+      /**
+      * Get one element by non-const reference.
       *
       * Mimic C-array subscripting.
       *
@@ -79,7 +126,7 @@ namespace Cuda {
       Data & operator[] (int i);
 
       /**
-      * Get an element by const reference.
+      * Get one element by const reference.
       *
       * Mimics C-array subscripting.
       *
@@ -89,56 +136,30 @@ namespace Cuda {
       Data const & operator[] (int i) const;
 
       /**
-      * Assignment operator.
-      *  
-      * Performs a deep copy, by copying values of all elements.
+      * Return allocated array capacity.
       *
-      * The RHS Field<Data> array must be allocated.  If this LHS 
-      * HostField<D> is not allocated, memory will be allocated.  
-      * If this LHS array is allocated, capacity values for LHS and 
-      * RHS arrays must be equal. 
-      *
-      * \param other HostField<Data> on rhs of assignent (input)
-      */
-      virtual HostField<Data>& operator = (const HostField<Data>& other);
-
-      /**
-      * Assignment operator, assignment from Field<Data> device array.
-      *
-      * Performs a deep copy from Field<Data> RHS device array to this 
-      * HostField<D> LHS host array, by copying underlying C array from
-      * device memory to host memory.
-      *
-      * The RHS Field<Data> array must be allocated.  If this LHS 
-      * HostField<D> is not allocated, allocate memory.  If this LHS
-      * array is allocated, the capacity values for the LHS and RHS 
-      * arrays must be equal.
-      *
-      * \param other Cpu::HostField<Data> on RHS of assignent (input)
-      */
-      virtual 
-      HostField<Data>& operator = (const Cpu::HostField<Data>& other);
-
-      /**
-      * Return allocated size.
-      *
-      * \return Number of elements allocated in array.
+      * \return Number of elements allocated in the array
       */
       int capacity() const;
 
       /**
-      * Return pointer to underlying C array.
+      * Return pointer to the underlying C array on the host.
       */
-      Data* cArray();
+      Data* cField();
 
       /**
-      * Return pointer to const to underlying C array.
+      * Return pointer to const to the underlying C array on the host.
       */
-      Data const * cArray() const;
+      Data const * cField() const;
 
-   protected:
+      /**
+      * Return true iff the HostField has been allocated.
+      */
+      bool isAllocated() const;
 
-      /// Pointer to an array of Data elements.
+   private:
+
+      /// Pointer to a C array of Data elements, allocated on host.
       Data* data_;
 
       /// Allocated size of the data_ array.
@@ -171,7 +192,7 @@ namespace Cuda {
    }
 
    /*
-   * Return allocated size.
+   * Return allocated array capacity.
    */
    template <typename Data>
    inline int HostField<Data>::capacity() const
@@ -181,7 +202,7 @@ namespace Cuda {
    * Get a pointer to the underlying C array.
    */
    template <typename Data>
-   inline Data* HostField<Data>::cArray()
+   inline Data* HostField<Data>::cField()
    {  return data_; }
 
    /*
@@ -189,7 +210,7 @@ namespace Cuda {
    */
    template <typename Data>
    inline 
-   Data const * HostField<Data>::cArray() const
+   Data const * HostField<Data>::cField() const
    {  return data_; }
 
    /*
@@ -199,8 +220,12 @@ namespace Cuda {
    inline bool HostField<Data>::isAllocated() const
    {  return (bool) data_; }
 
+   #ifndef PRDC_CUDA_HOST_FIELD_TPP
+   extern template class HostField<cudaReal>;
+   extern template class HostField<cudaComplex>;
+   #endif
+
 }
 }
 }
-#include "HostField.tpp"
 #endif

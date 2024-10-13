@@ -9,6 +9,7 @@
 */
 
 #include <prdc/cuda/Field.h>
+#include <prdc/cuda/HostField.h>
 #include <pscf/cuda/GpuResources.h>
 #include <cuda_runtime.h>
 
@@ -103,14 +104,18 @@ namespace Cuda {
       // Check for self assignment
       if (this == &other) return *this;
 
-      // Precondition
+      // Precondition - RHS Field<Data> must be allocated
       if (!other.isAllocated()) {
-         UTIL_THROW("Other Field must be allocated.");
+         UTIL_THROW("Other Field<Data> must be allocated.");
       }
 
+      // If this is not allocated, then allocate
       if (!isAllocated()) {
          allocate(other.capacity());
-      } else if (capacity_ != other.capacity_) {
+      } 
+
+      // Require equal capacity values 
+      if (capacity_ != other.capacity_) {
          UTIL_THROW("Cannot assign Fields of unequal capacity");
       }
 
@@ -122,20 +127,23 @@ namespace Cuda {
    }
 
    /*
-   * Assignment of Cuda::Field<Data> LHS from Cpu:RField<Data> RHS.
+   * Assignment of LHS Field<Data> from LHS HostField<Data> host array.
    */
    template <typename Data>
-   Field<Data>& Field<Data>::operator = (const Cpu::Field<Data>& other)
+   Field<Data>& Field<Data>::operator = (const HostField<Data>& other)
    {
       // Precondition
       if (!other.isAllocated()) {
-         UTIL_THROW("RHS Cpu::Field<D> must be allocated.");
+         UTIL_THROW("RHS HostField<Data> must be allocated.");
       }
 
-      // Allocate this if necessary, otherwise require equal dimensions
+      // Allocate this if necessary
       if (!isAllocated()) {
          allocate(other.capacity());
-      } else if (capacity_ != other.capacity()) {
+      } 
+
+      // Require equal capacity values
+      if (capacity_ != other.capacity()) {
          UTIL_THROW("Cannot assign Fields of unequal capacity");
       }
 
@@ -146,44 +154,7 @@ namespace Cuda {
       return *this;
    }
 
-}
-
-#if 0
-namespace Cpu {
-  
-   /*
-   * Assignment of Cpu::Field<Data> LHS from Cuda:RField<Data> RHS.
-   *
-   * This is a member of Cpu::Field<Data> that is declared in the header for that
-   * class template, but defined here, and so is only compiled or used when 
-   * compilation of CUDA code is enabled. 
-   *
-   */
-   template <typename Data>
-   Field<Data>& Field<Data>::operator = (const Cuda::Field<Data>& other)
-   {
-      // Precondition
-      if (!other.isAllocated()) {
-         UTIL_THROW("RHS Cuda::Field<D> must be allocated.");
-      }
-
-      // Allocate this if necessary, otherwise require equal dimensions
-      if (!isAllocated()) {
-         allocate(other.capacity());
-      } else if (capacity_ != other.capacity()) {
-         UTIL_THROW("Cannot assign Fields of unequal capacity");
-      }
-
-      // Copy elements
-      cudaMemcpy(data_, other.cField(), 
-                 capacity_ * sizeof(Data), cudaMemcpyDeviceToHost);
-
-      return *this;
-   }
-
-} // namespace Cpu
-#endif
-
+} // namespace Cuda
 } // namespace Prdc
 } // namespace Pscf
 #endif

@@ -8,7 +8,6 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <prdc/cpu/Field.h>
 #include <pscf/cuda/GpuResources.h>
 #include <util/global.h>
 #include <cufft.h>
@@ -19,13 +18,16 @@ namespace Cuda {
 
    using namespace Util;
 
+   // Forward declaration of analogous container for data on host.
+   template <typename Data> class HostField;
+
    /**
-   * Dynamic array on the GPU with aligned data.
+   * Dynamic array on the GPU device with aligned data.
    *
    * This class wraps an aligned C array with elements of type Data that is
-   * allocated in device global memory.  All member functions may be called 
-   * from the host, but the class thus does not offer access to individual 
-   * elements via operator[]
+   * allocated in GPU device global memory.  All member functions may be 
+   * called from the CPU host, but the class does not offer access to 
+   * individual elements via the subscript operator, operator[]
    *
    * \ingroup Prdc_Cuda_Module
    */
@@ -71,45 +73,45 @@ namespace Cuda {
       void deallocate();
 
       /**
-      * Return true if the Field has been allocated, false otherwise.
-      */
-      bool isAllocated() const;
-
-      /**
-      * Assignment operator.
+      * Assignment operator, assignment from another Field<Data> array.
       *  
       * Performs a deep copy, by copying values of all elements from device
       * memory to device memory.
       *
       * This function will allocate memory if this (LHS) Field is not 
       * allocated.  If this is allocated, it must have the same dimensions 
-      * as the other (RHS) field. 
+      * as the RHS Field<Data>.
       *
       * \param other Field<Data> on rhs of assignent (input)
       */
       virtual Field<Data>& operator = (const Field<Data>& other);
 
       /**
-      * Assignment operator, assignment from Cpu::Field<Data> host array.
+      * Assignment operator, assignment from HostField<Data> host array.
       *
-      * Performs a deep copy from Cpu::Field<Data> RHS host array to this 
-      * Cuda::Field<D> LHS device array, by copying underlying C array 
-      * from host memory to device memory.
+      * Performs a deep copy from a RHS HostField<Data> host array to this 
+      * LHS Field<D> device array, by copying underlying C array from host
+      * memory to device memory.
       *
       * This function will allocate memory if this (LHS) Field<D> is not 
       * allocated.  If this is allocated, it must have the same dimensions 
-      * as the other (RHS) Cpu::Field<D> object.
+      * as the RHS HostField<D>.
       *
-      * \param other Cpu::Field<Data> on RHS of assignent (input)
+      * \param other HostField<Data> on RHS of assignent (input)
       */
-      virtual Field<Data>& operator = (const Cpu::Field<Data>& other);
+      virtual Field<Data>& operator = (const HostField<Data>& other);
 
       /**
-      * Return allocated size.
+      * Return allocated capacity.
       *
       * \return Number of elements allocated in array
       */
       int capacity() const;
+
+      /**
+      * Return true if the Field has been allocated, false otherwise.
+      */
+      bool isAllocated() const;
 
       /**
       * Return pointer to underlying C array.
@@ -123,16 +125,16 @@ namespace Cuda {
 
    protected:
 
-      /// Pointer to an array of Data elements on the device / GPU.
+      /// Pointer to a C array of Data elements on the GPU device.
       Data* data_;
 
-      /// Allocated size of the data_ array.
+      /// Allocated size (capacity) of the data_ array.
       int capacity_;
 
    };
 
    /*
-   * Return allocated size.
+   * Return allocated capacity.
    */
    template <typename Data>
    inline int Field<Data>::capacity() const
