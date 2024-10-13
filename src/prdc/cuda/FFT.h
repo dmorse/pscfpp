@@ -139,11 +139,8 @@ namespace Cuda {
       // Pointer to a plan for a complex-to-real inverse transform
       cufftHandle criPlan_;
 
-      // Pointer to a plan for a complex-to-complex forward transform
-      cufftHandle ccfPlan_;
-
-      // Pointer to a plan for a complex-to-complex inverse transform
-      cufftHandle cciPlan_;
+      // Pointer to a plan for a complex-to-complex transform
+      cufftHandle ccPlan_;
 
       // Have array dimension and plans been initialized?
       bool isSetup_;
@@ -151,20 +148,20 @@ namespace Cuda {
       /**
       * Make FFTW plans all transform types.
       */
-      void makePlans(RField<D>& rField, RFieldDft<D>& kField);
+      void makePlans();
 
    };
 
    // Declarations of explicit specializations
 
    template <>
-   void FFT<1>::makePlans(RField<1>& rField, RFieldDft<1>& kField);
+   void FFT<1>::makePlans();
 
    template <>
-   void FFT<2>::makePlans(RField<2>& rField, RFieldDft<2>& kField);
+   void FFT<2>::makePlans();
 
    template <>
-   void FFT<3>::makePlans(RField<3>& rField, RFieldDft<3>& kField);
+   void FFT<3>::makePlans();
 
    /*
    * Return the dimensions of the grid for which this was allocated.

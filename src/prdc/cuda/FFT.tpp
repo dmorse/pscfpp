@@ -30,8 +30,7 @@ namespace Cuda {
       kSize_(0),
       rcfPlan_(0),
       criPlan_(0),
-      ccfPlan_(0),
-      cciPlan_(0),
+      ccPlan_(0),
       isSetup_(false)
    {}
 
@@ -47,11 +46,8 @@ namespace Cuda {
       if (criPlan_) {
          cufftDestroy(criPlan_);
       }
-      if (ccfPlan_) {
-         cufftDestroy(ccfPlan_);
-      }
-      if (criPlan_) {
-         cufftDestroy(cciPlan_);
+      if (ccPlan_) {
+         cufftDestroy(ccPlan_);
       }
    }
 
@@ -111,13 +107,8 @@ namespace Cuda {
       }
       UTIL_CHECK(kFieldCopy_.capacity() == kSize_);
 
-      #if 0
-      // Create local complex field objects
-      CField<D> cFieldOut(meshDimensions);
-      #endif
-
       // Make FFTW plans (explicit specializations)
-      makePlans(rFieldCopy_, kFieldCopy_);
+      makePlans();
 
       isSetup_ = true;
    }
