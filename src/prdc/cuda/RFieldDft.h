@@ -42,13 +42,22 @@ namespace Cuda {
       RFieldDft();
 
       /**
+      * Allocating constructor.
+      *
+      * Calls allocate(meshDimensions internally.
+      *
+      * \param meshDimensions dimensions of asssociated r-grid mesh
+      */
+      RFieldDft(IntVec<D> const & meshDimensions);
+
+      /**
       * Copy constructor.
       *
       * Allocates new memory and copies all elements by value.
       *
       *\param other the RFieldDft to be copied.
       */
-      RFieldDft(const RFieldDft<D>& other);
+      RFieldDft(RFieldDft<D> const & other);
 
       /**
       * Destructor.
@@ -67,7 +76,7 @@ namespace Cuda {
       *
       * \param other the RHS Field
       */
-      RFieldDft<D>& operator = (const RFieldDft<D>& other);
+      RFieldDft<D>& operator = (RFieldDft<D> const & other);
 
       /**
       * Assignment operator, assignment from a HostField<cudaComplex>.
@@ -80,7 +89,7 @@ namespace Cuda {
       * 
       * \param other the RHS HostField<cudaComplex>
       */
-      RFieldDft<D>& operator = (const HostField<cudaComplex>& other);
+      RFieldDft<D>& operator = (HostField<cudaComplex> const & other);
 
       /**
       * Allocate the underlying C array for an FFT grid.
@@ -89,12 +98,12 @@ namespace Cuda {
       *
       * \param meshDimensions vector of mesh dimensions
       */
-      void allocate(const IntVec<D>& meshDimensions);
+      void allocate(IntVec<D> const & meshDimensions);
 
       /**
-      * Return vector of mesh dimensions by constant reference.
+      * Return vector of real-space mesh dimensions by constant reference.
       */
-      const IntVec<D>& meshDimensions() const;
+      IntVec<D> const & meshDimensions() const;
 
       /**
       * Return vector of dft (Fourier) grid dimensions by const reference.
@@ -103,7 +112,7 @@ namespace Cuda {
       * about a factor of two: dftDimension()[D-1] = meshDimensions()/2 + 1.
       * For D > 1, other elements are equal. 
       */
-      const IntVec<D>& dftDimensions() const;
+      IntVec<D> const & dftDimensions() const;
 
       /**
       * Serialize a Field to/from an Archive.

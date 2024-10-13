@@ -17,13 +17,21 @@ namespace Cuda {
 
    using namespace Util;
 
-   /**
+   /*
    * Default constructor.
    */
    template <int D>
    RFieldDft<D>::RFieldDft()
     : Field<cudaComplex>()
    {}
+
+   /*
+   * Allocating constructor (calls allocate).
+   */
+   template <int D>
+   RFieldDft<D>::RFieldDft(IntVec<D> const & meshDimensions)
+    : Field<cudaComplex>()
+   {  allocate(meshDimensions); }
 
    /*
    * Destructor.

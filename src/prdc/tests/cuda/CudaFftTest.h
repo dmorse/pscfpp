@@ -57,7 +57,8 @@ void CudaFftTest::testTransformReal1D()
    d_kField.allocate(d);
 
    Cuda::FFT<1> v;
-   v.setup(d_rField, d_kField);
+   v.setup(d);
+   //v.setup(d_rField, d_kField);
 
    TEST_ASSERT(d_rField.capacity() == n);
 
@@ -119,8 +120,8 @@ void CudaFftTest::testTransformReal2D() {
    TEST_ASSERT(d_rField.capacity() == rSize);
 
    Cuda::FFT<2> v;
-   //v.setup(d_rField, d_kField);
    v.setup(d);
+   //v.setup(d_rField, d_kField);
 
    // Initialize input data in a temporary array in host memory 
    Cuda::HostField<cudaReal> in(rSize);
@@ -184,7 +185,8 @@ void CudaFftTest::testTransformReal3D() {
    d_kField.allocate(d);
 
    Cuda::FFT<3> v;
-   v.setup(d_rField, d_kField);
+   v.setup(d);
+   //v.setup(d_rField, d_kField);
 
    TEST_ASSERT(d_rField.capacity() == rSize);
 

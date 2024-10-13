@@ -39,13 +39,22 @@ namespace Cuda {
       CField();
 
       /**
+      * Allocating constructor.
+      *
+      * Calls allocate(meshDimension) internally. 
+      *
+      * \param meshDimensions numbers of grid points in each direction
+      */
+      CField(IntVec<D> const & meshDimensions);
+
+      /**
       * Copy constructor.
       *
       * Allocates new memory and copies all elements by value.
       *
       *\param other the CField to be copied.
       */
-      CField(const CField& other);
+      CField(CField const & other);
 
       /**
       * Destructor.
@@ -66,7 +75,7 @@ namespace Cuda {
       * 
       * \param other the RHS CField<D>
       */
-      CField<D>& operator = (const CField<D>& other);
+      CField<D>& operator = (CField<D> const & other);
 
       /**
       * Assignment operator, assignment from a HostField<cudaComplex>.
@@ -79,7 +88,7 @@ namespace Cuda {
       * 
       * \param other the RHS HostField<cudaComplex>
       */
-      CField<D>& operator = (const HostField<cudaComplex>& other);
+      CField<D>& operator = (HostField<cudaComplex> const & other);
 
       /**
       * Allocate the underlying C array for an FFT grid.
@@ -88,12 +97,12 @@ namespace Cuda {
       *
       * \param meshDimensions number of grid points in each direction
       */
-      void allocate(const IntVec<D>& meshDimensions);
+      void allocate(IntVec<D> const & meshDimensions);
 
       /**
       * Return mesh dimensions by constant reference.
       */
-      const IntVec<D>& meshDimensions() const;
+      IntVec<D> const & meshDimensions() const;
 
       /**
       * Serialize a Field to/from an Archive.
@@ -166,9 +175,7 @@ namespace Cuda {
    extern template class CField<3>;
    #endif
 
-
 }
 }
 }
-//#include "CField.tpp"
 #endif

@@ -26,6 +26,14 @@ namespace Cuda {
     : Field<cudaComplex>()
    {}
 
+   /**
+   * Allocating constructor.
+   */
+   template <int D>
+   CField<D>::CField(IntVec<D> const & meshDimensions)
+    : Field<cudaComplex>()
+   {  allocate(meshDimensions); }
+
    /*
    * Destructor.
    */
@@ -64,7 +72,7 @@ namespace Cuda {
    * Assignment from RHS HostField<Data> host array.
    */
    template <int D>
-   CField<D>& CField<D>::operator = (const HostField<cudaComplex>& other)
+   CField<D>& CField<D>::operator = (HostField<cudaComplex> const & other)
    {
       // Preconditions: both arrays must be allocated with equal capacities
       if (!other.isAllocated()) {
@@ -87,7 +95,7 @@ namespace Cuda {
    * Allocate the underlying C array sized for an associated mesh.
    */
    template <int D>
-   void CField<D>::allocate(const IntVec<D>& meshDimensions)
+   void CField<D>::allocate(IntVec<D> const & meshDimensions)
    {
       int size = 1;
       for (int i = 0; i < D; ++i) {
