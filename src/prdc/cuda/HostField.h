@@ -22,15 +22,15 @@ namespace Cuda {
    /**
    * Dynamic array of field values in host CPU memory.
    *
-   * This class is provided as a convenience to allow the use of assigment
-   * operators to copy data between corresponding containers that store
-   * field data in device and host memory. A HostField<Data> stores data in
-   * host memory, whereas a Field<Data> stores analogous data in device 
-   * memory. Each of these classes defines an assigment operation that allows
-   * assignment from the other, and that silently copies memory from device
-   * to host or from host to device.
+   * This class is provided as a convenience to allow the use of assigment (=)
+   * operators to copy data between corresponding containers that store field
+   * data in device vs. host memory. A HostField<Data> stores data in a 
+   * dynamically allocated array in host memory, whereas a Field<Data> stores 
+   * analogous data in global device memory. Each of these classes defines an 
+   * assigment operation that allows assignment from the other, and that 
+   * silently copies the underlying arrays between device and host memory.
    *
-   * Memory is allocated using cudaMallocHost to optimize data transfer.
+   * Memory is allocated using cudaMallocHost.
    *
    * \ingroup Prdc_Cuda_Module
    */
@@ -44,6 +44,15 @@ namespace Cuda {
       * Default constructor.
       */
       HostField();
+
+      /**
+      * Allocating constructor.
+      *
+      * This function calls allocate(capacity) internally.
+      * 
+      * \param capacity number of elements to allocate 
+      */
+      HostField(int capacity);
 
       /**
       * Copy constructor.

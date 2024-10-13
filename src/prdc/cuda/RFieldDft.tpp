@@ -9,6 +9,7 @@
 */
 
 #include <prdc/cuda/RFieldDft.h>
+#include <prdc/cuda/HostField.h>
 
 namespace Pscf {
 namespace Prdc {
@@ -47,14 +48,7 @@ namespace Cuda {
    }
 
    /*
-   * Assignment, element-by-element.
-   *
-   * This operator will allocate memory if not allocated previously.
-   *
-   * \throw Exception if other Field is not allocated.
-   * \throw Exception if both Fields are allocated with unequal capacities.
-   *
-   * \param other the rhs Field
+   * Assignment, element-by-element from another RFieldDft<D>.
    */
    template <int D>
    RFieldDft<D>& RFieldDft<D>::operator = (const RFieldDft<D>& other)
@@ -65,6 +59,51 @@ namespace Cuda {
       dftDimensions_ = other.dftDimensions_;
 
       return *this;
+   }
+
+   /*
+   * Assignment of RFieldDft<D> from RHS HostField<Data> host array.
+   */
+   template <int D>
+   RFieldDft<D>& RFieldDft<D>::operator = (const HostField<cudaComplex>& other)
+   {
+      // Preconditions: both arrays must be allocated with equal capacities
+      if (!other.isAllocated()) {
+         UTIL_THROW("Error: RHS HostField<cudaComplex> is not allocated.");
+      }
+      if (!isAllocated()) {
+         UTIL_THROW("Error: LHS RFieldDft<D> is not allocated.");
+      }
+      if (capacity_ != other.capacity()) {
+         UTIL_THROW("Cannot assign Fields of unequal capacity");
+      }
+
+      // Use base class assignment operator to copy elements
+      Field<cudaComplex>::operator = (other);
+
+      return *this;
+   }
+
+   /*
+   * Allocate the underlying C array for the dftDimensions mesh.
+   */
+   template <int D>
+   void RFieldDft<D>::allocate(const IntVec<D>& meshDimensions)
+   {
+      int size = 1;
+      for (int i = 0; i < D; ++i) {
+         UTIL_CHECK(meshDimensions[i] > 0);
+         meshDimensions_[i] = meshDimensions[i];
+         if (i < D - 1) {
+            dftDimensions_[i] = meshDimensions[i];
+            size *= meshDimensions[i];
+         } else {
+            dftDimensions_[i] = (meshDimensions[i]/2 + 1); 
+            size *= (meshDimensions[i]/2 + 1);
+         }
+      }
+      // Note: size denotes size of mesh with dftDimensions 
+      Field<cudaComplex>::allocate(size);
    }
 
 }

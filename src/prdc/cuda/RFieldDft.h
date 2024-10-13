@@ -58,7 +58,7 @@ namespace Cuda {
       virtual ~RFieldDft();
 
       /**
-      * Assignment operator.
+      * Assignment operator, assignment from another RFieldDft<D>.
       *
       * If this Field is not allocated, allocates and copies all elements.
       *
@@ -68,6 +68,19 @@ namespace Cuda {
       * \param other the RHS Field
       */
       RFieldDft<D>& operator = (const RFieldDft<D>& other);
+
+      /**
+      * Assignment operator, assignment from a HostField<cudaComplex>.
+      *
+      * Performs a deep copy, by copying all elements of the RHS RFieldDft<D>
+      * from host memory to device memory.
+      *
+      * The RHS HostField<cudaComplex> and LHS RFieldDft<D> must both be 
+      * allocated and have equal capacity values on entry. 
+      * 
+      * \param other the RHS HostField<cudaComplex>
+      */
+      RFieldDft<D>& operator = (const HostField<cudaComplex>& other);
 
       /**
       * Allocate the underlying C array for an FFT grid.
@@ -101,8 +114,8 @@ namespace Cuda {
       template <class Archive>
       void serialize(Archive& ar, const unsigned int version);
 
+      // Make private to prevent allocation without setting meshDimensions
       using Field<cudaComplex>::allocate;
-      using Field<cudaComplex>::operator =;
 
    private:
 
@@ -112,29 +125,13 @@ namespace Cuda {
       // Vector containing dimensions of dft (Fourier) grid.
       IntVec<D> dftDimensions_;
 
+      // Make private to prevent assignment without setting meshDimensions
+      using Field<cudaComplex>::operator =;
+
    };
 
-   /*
-   * Allocate the underlying C array for an FFT grid.
-   */
-   template <int D>
-   void RFieldDft<D>::allocate(const IntVec<D>& meshDimensions)
-   {
-      int size = 1;
-      for (int i = 0; i < D; ++i) {
-         UTIL_CHECK(meshDimensions[i] > 0);
-         meshDimensions_[i] = meshDimensions[i];
-         if (i < D - 1) {
-            dftDimensions_[i] = meshDimensions[i];
-            size *= meshDimensions[i];
-         } else {
-            dftDimensions_[i] = (meshDimensions[i]/2 + 1); 
-            size *= (meshDimensions[i]/2 + 1);
-         }
-      }
-      Field<cudaComplex>::allocate(size);
-   }
-
+   // Inline and templated member functions
+   
    /*
    * Return mesh dimensions by constant reference.
    */
@@ -195,5 +192,4 @@ namespace Cuda {
 }
 }
 }
-//#include "RFieldDft.tpp"
 #endif

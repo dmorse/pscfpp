@@ -26,8 +26,8 @@ namespace Cuda {
    *
    * This class wraps an aligned C array with elements of type Data that is
    * allocated in GPU device global memory.  All member functions may be 
-   * called from the CPU host, but the class does not offer access to 
-   * individual elements via the subscript operator, operator[]
+   * called from the CPU host, but this class does not offer access to 
+   * individual elements via the subscript operator, operator[].
    *
    * \ingroup Prdc_Cuda_Module
    */

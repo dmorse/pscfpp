@@ -25,9 +25,9 @@ public:
    void tearDown() {}
 
    void testConstructor();
-   void testTransform1D();
-   void testTransform2D();
-   void testTransform3D();
+   void testTransformReal1D();
+   void testTransformReal2D();
+   void testTransformReal3D();
 
 };
 
@@ -40,7 +40,7 @@ void CudaFftTest::testConstructor()
    }
 } 
 
-void CudaFftTest::testTransform1D() 
+void CudaFftTest::testTransformReal1D() 
 {
    printMethod(TEST_FUNC);
 
@@ -91,10 +91,12 @@ void CudaFftTest::testTransform1D()
 
 }
 
-void CudaFftTest::testTransform2D() {
+void CudaFftTest::testTransformReal2D() {
    printMethod(TEST_FUNC);
    
-   int n1 = 3, n2 = 3;
+   int n1 = 3;
+   int n2 = 3;
+   int rSize= n1*n2;
    IntVec<2> d;
    d[0] = n1;
    d[1] = n2;
@@ -103,11 +105,11 @@ void CudaFftTest::testTransform2D() {
    Cuda::RFieldDft<2> d_kField;
    d_rField.allocate(d);
    d_kField.allocate(d);
+   TEST_ASSERT(d_rField.capacity() == rSize);
 
    Cuda::FFT<2> v;
-   v.setup(d_rField, d_kField);
-
-   TEST_ASSERT(d_rField.capacity() == n1*n2);
+   //v.setup(d_rField, d_kField);
+   v.setup(d);
 
    // Initialize input data in a temporary array in host memory 
    cudaReal* in = new cudaReal[n1*n2];
@@ -149,10 +151,13 @@ void CudaFftTest::testTransform2D() {
 
 }
 
-void CudaFftTest::testTransform3D() {
+void CudaFftTest::testTransformReal3D() {
    printMethod(TEST_FUNC);
    
-   int n1 = 3, n2 = 3, n3 = 3;
+   int n1 = 1;
+   int n2 = 3;
+   int n3 = 4;
+   int rSize= n1*n2*n3;
    IntVec<3> d;
    d[0] = n1;
    d[1] = n2;
@@ -166,10 +171,10 @@ void CudaFftTest::testTransform3D() {
    Cuda::FFT<3> v;
    v.setup(d_rField, d_kField);
 
-   TEST_ASSERT(d_rField.capacity() == n1*n2*n3);
+   TEST_ASSERT(d_rField.capacity() == rSize);
 
    // Initialize input data in a temporary array in host memory 
-   cudaReal* in = new cudaReal[n1*n2*n3];
+   cudaReal* in = new cudaReal[rSize];
 
    int rank = 0;
    for (int i = 0; i < n1; i++) {
@@ -206,9 +211,9 @@ void CudaFftTest::testTransform3D() {
 
 TEST_BEGIN(CudaFftTest)
 TEST_ADD(CudaFftTest, testConstructor)
-TEST_ADD(CudaFftTest, testTransform1D)
-TEST_ADD(CudaFftTest, testTransform2D)
-TEST_ADD(CudaFftTest, testTransform3D)
+TEST_ADD(CudaFftTest, testTransformReal1D)
+TEST_ADD(CudaFftTest, testTransformReal2D)
+TEST_ADD(CudaFftTest, testTransformReal3D)
 TEST_END(CudaFftTest)
 
 #endif

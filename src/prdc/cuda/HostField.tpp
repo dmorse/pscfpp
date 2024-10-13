@@ -27,6 +27,17 @@ namespace Cuda {
    {}
 
    /*
+   * Allocating constructor.
+   */
+   template <typename Data>
+   HostField<Data>::HostField(int capacity)
+    : data_(0),
+      capacity_(0)
+   {
+      allocate(capacity);
+   }
+
+   /*
    * Copy constructor.
    *
    * Allocates new memory and copies all elements by value.

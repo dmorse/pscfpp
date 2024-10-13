@@ -17,11 +17,13 @@ namespace Pscf {
 namespace Prdc {
 namespace Cuda {
 
+   template <typename Data> class HostField;
+
    using namespace Util;
    using namespace Pscf;
 
    /**
-   * Field of complex values on an FFT mesh on a device.
+   * Field of complex values on an regular mesh, allocated on a GPU device.
    *
    * \ingroup Prdc_Cuda_Module 
    */
@@ -53,16 +55,31 @@ namespace Cuda {
       virtual ~CField();
 
       /**
-      * Assignment operator.
+      * Assignment operator, assignment from another CField<D>.
       *
-      * If this Field is not allocated, launch a kernel to swap memory.
+      * Performs a deep copy, by copying all elements of the RHS CField<D>
+      * from device memory to device memory.
       *
-      * If this and the other Field are both allocated, the capacities must
-      * be exactly equal. If so, this method copies all elements.
+      * The RHS CField must be allocated. If this LHS CField is not allocated
+      * on entry, allocate it before copying elements. If both LHS and RHS
+      * objects are allocated on entry, the capacities must be equal. 
       * 
-      * \param other the RHS CField
+      * \param other the RHS CField<D>
       */
-      CField& operator = (const CField& other);
+      CField<D>& operator = (const CField<D>& other);
+
+      /**
+      * Assignment operator, assignment from a HostField<cudaComplex>.
+      *
+      * Performs a deep copy, by copying all elements of the RHS CField<D>
+      * from host memory to device memory.
+      *
+      * The RHS HostField<cudaComplex> and LHS CField<D> must both be allocated
+      * with equal capacity values on entry. 
+      * 
+      * \param other the RHS HostField<cudaComplex>
+      */
+      CField<D>& operator = (const HostField<cudaComplex>& other);
 
       /**
       * Allocate the underlying C array for an FFT grid.
@@ -87,30 +104,18 @@ namespace Cuda {
       template <class Archive>
       void serialize(Archive& ar, const unsigned int version);
 
-      using Field<cudaComplex>::allocate;
-      using Field<cudaComplex>::operator=;
-
    private:
 
       // Vector containing number of grid points in each direction.
       IntVec<D> meshDimensions_;
 
-   };
+      // Make private to prevent allocation without mesh dimensions.
+      using Field<cudaComplex>::allocate;
 
-   /*
-   * Allocate the underlying C array for an FFT grid.
-   */
-   template <int D>
-   void CField<D>::allocate(const IntVec<D>& meshDimensions)
-   {
-      int size = 1;
-      for (int i = 0; i < D; ++i) {
-         UTIL_CHECK(meshDimensions[i] > 0);
-         meshDimensions_[i] = meshDimensions[i];
-         size *= meshDimensions[i];
-      }
-      Field<cudaComplex>::allocate(size);
-   }
+      // Make private to prevent assignment without mesh dimensions
+      using Field<cudaComplex>::operator=;
+
+   };
 
    /*
    * Return mesh dimensions by constant reference.
