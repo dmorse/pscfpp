@@ -9,7 +9,6 @@
 */
 
 #include <prdc/cuda/Field.h>
-#include <prdc/cpu/RField.h>
 #include <pscf/cuda/GpuResources.h>
 #include <pscf/math/IntVec.h>
 #include <util/global.h>
@@ -17,6 +16,8 @@
 namespace Pscf {
 namespace Prdc {
 namespace Cuda {
+
+   template <typename Data> class HostField;
 
    using namespace Util;
 
@@ -73,28 +74,31 @@ namespace Cuda {
       void allocate(IntVec<D> const & meshDimensions);
 
       /**
-      * Assignment operator.
+      * Assignment operator, assignment from another RField<D>.
       *
-      * If this Field is not allocated, allocate and copy all elements.
+      * Performs a deep copy, by copying all elements of the RHS RField<D>
+      * from device memory to device memory, and copying the meshDimensions.
       *
-      * If this and the other Field are both allocated, the capacities must
-      * be exactly equal. If so, this method copies all elements.
+      * The RHS RField<D> must be allocated on entry. If this LHS object is 
+      * not allocated, allocate with the required capacity.  If the LHS and
+      * RHS arrays are both allocated, capacity values must be equal.
       * 
       * \param other the RHS RField
       */
       RField<D>& operator = (const RField<D>& other);
 
       /**
-      * Assignment from Cpu::RField.
+      * Assignment operator, assignment from a HostField<cudaReal>.
       *
-      * If this Field is not allocated, allocate and copy all elements.
+      * Performs a deep copy, by copying all elements of the RHS RField<D>
+      * from host memory to device memory.
       *
-      * If this and the other Field are both allocated, the capacities must
-      * be exactly equal. If so, this method copies all elements.
+      * The RHS HostField<cudaReal> and LHS RField<D> must both be allocated
+      * with equal capacity values on entry. 
       * 
-      * \param other the RHS RField
+      * \param other the RHS HostField<cudaReal>
       */
-      RField<D>& operator = (const Cpu::RField<D>& other);
+      RField<D>& operator = (const HostField<cudaReal>& other);
 
       /**
       * Return mesh dimensions by constant reference.

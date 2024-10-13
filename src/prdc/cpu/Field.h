@@ -13,11 +13,6 @@
 
 namespace Pscf {
 namespace Prdc {
-
-namespace Cuda { 
-   template <typename Data> class Field; 
-}
-
 namespace Cpu {
 
    using namespace Util;
@@ -111,13 +106,6 @@ namespace Cpu {
       */
       template <class Archive>
       void serialize(Archive& ar, const unsigned int version);
-
-      /**
-      * Assignment from Cuda::Field<Data> (data on GPU device).
-      *
-      * \param other Cpu::Field<Data> field with data on a GPU
-      */
-      Field<Data>& operator = (Cuda::Field<Data> const & other);
 
    protected:
 

@@ -41,7 +41,7 @@ namespace Cuda {
       }
 
       allocate(other.capacity_);
-      cudaMemcpy(data_, other.cArray(), 
+      cudaMemcpy(data_, other.cField(), 
                  capacity_ * sizeof(Data), cudaMemcpyHostToHost);
 
    }
@@ -115,7 +115,7 @@ namespace Cuda {
       }
 
       // Copy elements from RHS to LHS
-      cudaMemcpy(data_, other.cArray(), 
+      cudaMemcpy(data_, other.cField(), 
                  capacity_ * sizeof(Data), cudaMemcpyHostToHost);
 
       return *this;
@@ -143,7 +143,7 @@ namespace Cuda {
       }
 
       // Copy all elements
-      cudaMemcpy(data_, other.cArray(), 
+      cudaMemcpy(data_, other.cField(), 
                  capacity_ * sizeof(Data), cudaMemcpyDeviceToHost);
 
       return *this;

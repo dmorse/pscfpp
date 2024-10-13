@@ -3,6 +3,7 @@ prdc_cuda_= \
   prdc/cuda/RField.cu \
   prdc/cuda/RFieldDft.cu \
   prdc/cuda/CField.cu \
+  prdc/cuda/HostField.cu \
   prdc/cuda/RFieldComparison.cu \
   prdc/cuda/RFieldDftComparison.cu \
   prdc/cuda/FFT.cu 

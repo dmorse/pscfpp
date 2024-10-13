@@ -75,38 +75,6 @@ namespace Cpu {
       capacity_ = 0;
    }
 
-   #ifdef PSCF_CUDA
-   /*
-   * Assignment of Cpu::Field<Data> LHS from Cuda:RField<Data> RHS.
-   *
-   * This is a member of Cpu::Field<Data> that is declared in the header for that
-   * class template, but defined here, and so is only compiled or used when 
-   * compilation of CUDA code is enabled. 
-   *
-   */
-   template <typename Data>
-   Field<Data>& Field<Data>::operator = (const Cuda::Field<Data>& other)
-   {
-      // Precondition
-      if (!other.isAllocated()) {
-         UTIL_THROW("RHS Cuda::Field<D> must be allocated.");
-      }
-
-      // Allocate this if necessary, otherwise require equal dimensions
-      if (!isAllocated()) {
-         allocate(other.capacity());
-      } else if (capacity_ != other.capacity()) {
-         UTIL_THROW("Cannot assign Fields of unequal capacity");
-      }
-
-      // Copy elements
-      cudaMemcpy(data_, other.cField(), 
-                 capacity_ * sizeof(Data), cudaMemcpyDeviceToHost);
-
-      return *this;
-   }
-   #endif
-
 }
 }
 }
