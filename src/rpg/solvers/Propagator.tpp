@@ -32,7 +32,6 @@ namespace Rpg {
     : blockPtr_(0),
       meshPtr_(0),
       ns_(0),
-      temp_(0),
       isAllocated_(false)
    {
    }
@@ -44,8 +43,6 @@ namespace Rpg {
    Propagator<D>::~Propagator()
    {
       if (isAllocated_) {
-	      delete[] temp_;
-	      cudaFree(d_temp_);
          cudaFree(qFields_d);
       }
    }  
@@ -57,11 +54,8 @@ namespace Rpg {
       meshPtr_ = &mesh;
 
       ThreadGrid::setThreadsLogical(mesh.size());
-
       gpuErrchk(cudaMalloc((void**)&qFields_d, sizeof(cudaReal)* mesh.size() *
                  ns));
-	   gpuErrchk(cudaMalloc((void**)&d_temp_, ThreadGrid::nBlocks() * sizeof(cudaReal)));
-	   temp_ = new cudaReal[ThreadGrid::nBlocks()];
       isAllocated_ = true;
    }
 

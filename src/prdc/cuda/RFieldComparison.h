@@ -68,8 +68,8 @@ namespace Cuda {
       // True if a comparison has been made, false otherwise.
       bool compared_;
 
-      // Composition usage of FieldComparison, rather than inheritance.
-      FieldComparison< DArray< cudaReal > > fieldComparison_;
+      // Use FieldComparison template via composition
+      FieldComparison< HostField< cudaReal > > fieldComparison_;
 
    };
 

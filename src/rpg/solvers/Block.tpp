@@ -144,7 +144,6 @@ namespace Rpg {
       kMeshDimensions_(0),
       ds_(0.0),
       ns_(0),
-      temp_(0),
       isAllocated_(false),
       hasExpKsq_(false),
       expKsq_host(0),
@@ -163,11 +162,8 @@ namespace Rpg {
       if (isAllocated_) {
          cudaFree(qkBatched_);
          cudaFree(qk2Batched_);
-         cudaFree(d_temp_);
-         delete[] temp_;
          delete[] expKsq_host;
          delete[] expKsq2_host;
-         
       }
    }
 
@@ -239,9 +235,6 @@ namespace Rpg {
                              ns_ * kSize_ * sizeof(cudaComplex))
                );
       cField().allocate(mesh.dimensions());
-
-      gpuErrchk(cudaMalloc((void**)&d_temp_, nBlocks_ * sizeof(cudaReal)));
-      temp_ = new cudaReal[nBlocks_];
 
       expKsq_host = new cudaReal[kSize_];
       expKsq2_host = new cudaReal[kSize_];
