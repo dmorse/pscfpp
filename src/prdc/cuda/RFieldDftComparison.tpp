@@ -25,7 +25,8 @@ namespace Cuda {
 
    // Comparator for individual fields.
    template <int D>
-   double RFieldDftComparison<D>::compare(RFieldDft<D> const& a, RFieldDft<D> const& b)
+   double RFieldDftComparison<D>::compare(RFieldDft<D> const& a, 
+                                          RFieldDft<D> const& b)
    {
       UTIL_CHECK(a.capacity() > 0);
       UTIL_CHECK(a.capacity() == b.capacity());
@@ -44,6 +45,8 @@ namespace Cuda {
       HostField<cudaComplex> hb;
       ha.allocate(capacity);
       hb.allocate(capacity);
+      ha = a;
+      hb = b;
 
       double diffSq, diff, d0, d1;
       maxDiff_ = 0.0;

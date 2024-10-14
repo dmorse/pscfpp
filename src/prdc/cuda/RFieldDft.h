@@ -19,7 +19,6 @@ namespace Prdc {
 namespace Cuda {
 
    using namespace Util;
-   using namespace Pscf;
 
    /**
    * Discrete Fourier Transform (DFT) of a real field on an FFT mesh.

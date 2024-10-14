@@ -47,7 +47,7 @@ namespace Cuda {
       * \param b  2nd field
       * \return   maximum element-by-element difference (maxDiff)
       */ 
-      double compare(RFieldDft<D> const& a, RFieldDft<D> const& b);
+      double compare(RFieldDft<D> const & a, RFieldDft<D> const & b);
 
       /**
       * Compare arrays of fields associated with different monomer types.
@@ -59,12 +59,12 @@ namespace Cuda {
       * capacities of any pair of individual fields  (number of grid 
       * points or basis functions) are not equal.
       *
-      * \param a  1st DArray of field
-      * \param b  2nd DArray of field
+      * \param a  1st DArray of fields
+      * \param b  2nd DArray of fields
       * \return   maximum element-by-element difference (maxDiff)
       */ 
-      double compare(DArray<RFieldDft<D> > const& a, 
-                     DArray<RFieldDft<D> > const& b);
+      double compare(DArray< RFieldDft<D> > const & a, 
+                     DArray< RFieldDft<D> > const & b);
 
       /**
       * Return the precomputed maximum element-by-element difference.
