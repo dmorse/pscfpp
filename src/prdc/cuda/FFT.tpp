@@ -10,6 +10,7 @@
 
 #include "FFT.h"
 #include <pscf/cuda/GpuResources.h>
+#include <pscf/cuda/LinearAlgebra.h>
 
 //forward declaration
 //static __global__ void scaleRealData(cudaReal* data, rtype scale, int size);
@@ -131,7 +132,8 @@ namespace Cuda {
 
       // Rescale outputted data. 
       cudaReal scale = 1.0/cudaReal(rSize_);
-      scaleRealData<<<nBlocks, nThreads>>>(rField.cField(), scale, rSize_);
+      //scaleRealData<<<nBlocks, nThreads>>>(rField.cField(), scale, rSize_);
+      scaleReal<<<nBlocks, nThreads>>>(rField.cField(), scale, rSize_);
       
       // Perform transform
       cufftResult result;
@@ -195,6 +197,93 @@ namespace Cuda {
 
       kFieldCopy_ = kField;
       inverseTransform(kFieldCopy_, rField);
+   }
+
+   // Complex-to-Complex Transforms
+
+   /*
+   * Execute forward complex-to-complex transform.
+   */
+   template <int D>
+   void FFT<D>::forwardTransform(CField<D> & rField, CField<D>& kField)
+   const
+   {
+      // GPU resources
+      int nBlocks, nThreads;
+      ThreadGrid::setThreadsLogical(rSize_, nBlocks, nThreads);
+
+      // Check dimensions or setup
+      UTIL_CHECK(isSetup_);
+      UTIL_CHECK(rField.capacity() == rSize_);
+      UTIL_CHECK(kField.capacity() == rSize_);
+
+      // Rescale outputted data. 
+      cudaReal scale = 1.0/cudaReal(rSize_);
+      //scaleComplexData<<<nBlocks, nThreads>>>(rField.cField(), scale, rSize_);
+      scaleComplex<<<nBlocks, nThreads>>>(rField.cField(), scale, rSize_);
+      
+      // Perform transform
+      cufftResult result;
+      #ifdef SINGLE_PRECISION
+      result = cufftExecC2C(ccPlan_, rField.cField(), kField.cField(), CUFFT_FORWARD);
+      #else
+      result = cufftExecZ2Z(ccPlan_, rField.cField(), kField.cField(), CUFFT_FORWARD);
+      #endif
+      if (result != CUFFT_SUCCESS) {
+         UTIL_THROW("Failure in cufft real-to-complex forward transform");
+      }
+   }
+
+   /*
+   * Execute forward transform without destroying input.
+   */
+   template <int D>
+   void FFT<D>::forwardTransformSafe(CField<D> const & rField, 
+                                     CField<D>& kField)
+   const
+   {
+      UTIL_CHECK(cFieldCopy_.capacity() == rField.capacity());
+
+      cFieldCopy_ = rField;
+      forwardTransform(cFieldCopy_, kField);
+   }
+
+   /*
+   * Execute inverse (complex-to-complex) transform.
+   */
+   template <int D>
+   void FFT<D>::inverseTransform(CField<D> & kField, CField<D>& rField) 
+   const
+   {
+      UTIL_CHECK(isSetup_);
+      UTIL_CHECK(rField.capacity() == rSize_);
+      UTIL_CHECK(kField.capacity() == rSize_);
+      UTIL_CHECK(rField.meshDimensions() == meshDimensions_);
+      UTIL_CHECK(kField.meshDimensions() == meshDimensions_);
+
+      cufftResult result;
+      #ifdef SINGLE_PRECISION
+      result = cufftExecC2C(ccPlan_, kField.cField(), rField.cField(), CUFFT_INVERSE);
+      #else
+      result = cufftExecZ2Z(ccPlan_, kField.cField(), rField.cField(), CUFFT_INVERSE);
+      #endif
+      if (result != CUFFT_SUCCESS) {
+         UTIL_THROW( "Failure in cufft complex-to-real inverse transform");
+      }
+   
+   }
+
+   /*
+   * Execute inverse (complex-to-complex) transform without destroying input.
+   */
+   template <int D>
+   void FFT<D>::inverseTransformSafe(CField<D> const & kField, 
+                                     CField<D>& rField) const
+   {
+      UTIL_CHECK(cFieldCopy_.capacity() == kField.capacity());
+
+      cFieldCopy_ = kField;
+      inverseTransform(cFieldCopy_, rField);
    }
 
 }

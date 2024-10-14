@@ -55,6 +55,8 @@ namespace Cuda {
       */
       void setup(IntVec<D> const & meshDimensions);
 
+      // Real <-> Complex transforms
+      
       /**
       * Compute forward (real-to-complex) discrete Fourier transform.
       *
@@ -90,6 +92,43 @@ namespace Cuda {
       */
       void inverseTransformSafe(RFieldDft<D> const & kField, 
                                 RField<D>& rField) const;
+
+      // Complex <-> Complex transforms
+      
+      /**
+      * Compute forward (complex-to-complex) discrete Fourier transform.
+      *
+      * \param rField  complex values on r-space grid (input, gpu mem)
+      * \param kField  complex values on k-space grid (output, gpu mem)
+      */
+      void forwardTransform(CField<D> & rField, CField<D>& kField) 
+      const;
+
+      /**
+      * Compute forward complex-to-complex transform without destroying input.
+      *
+      * \param rField  complex values on r-space grid (input, gpu mem)
+      * \param kField  complex values on k-space grid (output, gpu mem)
+      */
+      void forwardTransformSafe(CField<D> const & rField, 
+                                CField<D>& kField) const;
+
+      /**
+      * Compute inverse (complex-to-complex) discrete Fourier transform.
+      *
+      * \param kField  complex values on k-space grid (input, gpu mem)
+      * \param rField  complex values on r-space grid (output, gpu mem)
+      */
+      void inverseTransform(CField<D> & kField, CField<D>& rField) const;
+
+      /**
+      * Compute inverse (complex to complex) DFT without destroying input.
+      *
+      * \param kField  complex values on k-space grid (input, gpu mem)
+      * \param rField  complex values on r-space grid (output, gpu mem)
+      */
+      void inverseTransformSafe(CField<D> const & kField, 
+                                CField<D>& rField) const;
 
       /**
       * Return the dimensions of the grid for which this was allocated.
@@ -191,15 +230,26 @@ namespace Cuda {
    extern template class FFT<3>;
    #endif
 
+   #if 0
    static __global__ 
    void scaleRealData(cudaReal* data, cudaReal scale, int size) {
-      //write code that will scale
       int nThreads = blockDim.x * gridDim.x;
       int startId = blockIdx.x * blockDim.x + threadIdx.x;
       for(int i = startId; i < size; i += nThreads ) {
          data[i] *= scale;
       }
    }
+
+   static __global__ 
+   void scaleComplexData(cudaComplex* data, cudaReal scale, int size) {
+      int nThreads = blockDim.x * gridDim.x;
+      int startId = blockIdx.x * blockDim.x + threadIdx.x;
+      for(int i = startId; i < size; i += nThreads ) {
+         data[i].x *= scale;
+         data[i].y *= scale;
+      }
+   }
+   #endif
 
 }
 }
