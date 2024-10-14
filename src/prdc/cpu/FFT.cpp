@@ -37,8 +37,8 @@ namespace Cpu {
       #endif
       int n0 = rSize_;
       unsigned int flags = FFTW_ESTIMATE;
-      rcPlan_ = fftw_plan_dft_r2c_1d(n0, &rField[0], &kField[0], flags);
-      crPlan_ = fftw_plan_dft_c2r_1d(n0, &kField[0], &rField[0], flags);
+      rcfPlan_ = fftw_plan_dft_r2c_1d(n0, &rField[0], &kField[0], flags);
+      criPlan_ = fftw_plan_dft_c2r_1d(n0, &kField[0], &rField[0], flags);
       int sign = FFTW_FORWARD;
       ccfPlan_ = fftw_plan_dft_1d(n0, &cFieldIn[0], &cFieldOut[0], 
                                   sign, flags);
@@ -61,8 +61,8 @@ namespace Cpu {
       unsigned int flags = FFTW_ESTIMATE;
       int n0 = meshDimensions_[0];
       int n1 = meshDimensions_[1];
-      rcPlan_ = fftw_plan_dft_r2c_2d(n0, n1, &rField[0], &kField[0], flags);
-      crPlan_ = fftw_plan_dft_c2r_2d(n0, n1, &kField[0], &rField[0], flags);
+      rcfPlan_ = fftw_plan_dft_r2c_2d(n0, n1, &rField[0], &kField[0], flags);
+      criPlan_ = fftw_plan_dft_c2r_2d(n0, n1, &kField[0], &rField[0], flags);
       int sign = FFTW_FORWARD;
       ccfPlan_ = fftw_plan_dft_2d(n0, n1, &cFieldIn[0], &cFieldOut[0], 
                                   sign, flags);
@@ -86,9 +86,9 @@ namespace Cpu {
       int n0 = meshDimensions_[0];
       int n1 = meshDimensions_[1];
       int n2 = meshDimensions_[2];
-      rcPlan_ = fftw_plan_dft_r2c_3d(n0, n1, n2, 
+      rcfPlan_ = fftw_plan_dft_r2c_3d(n0, n1, n2, 
                                       &rField[0], &kField[0], flags);
-      crPlan_ = fftw_plan_dft_c2r_3d(n0, n1, n2,
+      criPlan_ = fftw_plan_dft_c2r_3d(n0, n1, n2,
                                       &kField[0], &rField[0], flags);
       int sign = FFTW_FORWARD;
       ccfPlan_ = fftw_plan_dft_3d(n0, n1, n2,

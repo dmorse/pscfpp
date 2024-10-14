@@ -1,5 +1,5 @@
-#ifndef PRDC_CUDA_R_FIELD_DFT_TPP
-#define PRDC_CUDA_R_FIELD_DFT_TPP
+#ifndef PRDC_CUDA_C_FIELD_TPP
+#define PRDC_CUDA_C_FIELD_TPP
 
 /*
 * PSCF Package 
@@ -8,7 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <prdc/cuda/RFieldDft.h>
+#include <prdc/cuda/CField.h>
 #include <prdc/cuda/HostField.h>
 
 namespace Pscf {
@@ -16,20 +16,21 @@ namespace Prdc {
 namespace Cuda {
 
    using namespace Util;
+   using namespace Pscf;
 
-   /*
+   /**
    * Default constructor.
    */
    template <int D>
-   RFieldDft<D>::RFieldDft()
+   CField<D>::CField()
     : Field<cudaComplex>()
    {}
 
-   /*
-   * Allocating constructor (calls allocate).
+   /**
+   * Allocating constructor.
    */
    template <int D>
-   RFieldDft<D>::RFieldDft(IntVec<D> const & meshDimensions)
+   CField<D>::CField(IntVec<D> const & meshDimensions)
     : Field<cudaComplex>()
    {  allocate(meshDimensions); }
 
@@ -37,7 +38,7 @@ namespace Cuda {
    * Destructor.
    */
    template <int D>
-   RFieldDft<D>::~RFieldDft()
+   CField<D>::~CField()
    {}
 
    /*
@@ -45,42 +46,40 @@ namespace Cuda {
    *
    * Allocates new memory and copies all elements by value.
    *
-   *\param other the RField<D> to be copied.
+   *\param other the Field to be copied.
    */
    template <int D>
-   RFieldDft<D>::RFieldDft(const RFieldDft<D>& other)
-    : Field<cudaComplex>(other)
+   CField<D>::CField(const CField<D>& other)
+    : Field<cudaComplex>(other),
+      meshDimensions_(0)
    {
       meshDimensions_ = other.meshDimensions_;
-      dftDimensions_ = other.dftDimensions_;
    }
 
    /*
-   * Assignment, element-by-element from another RFieldDft<D>.
+   * Assignment from another RField<D>.
    */
    template <int D>
-   RFieldDft<D>& RFieldDft<D>::operator = (const RFieldDft<D>& other)
+   CField<D>& CField<D>::operator = (const CField<D>& other)
    {
-      
       Field<cudaComplex>::operator = (other);
       meshDimensions_ = other.meshDimensions_;
-      dftDimensions_ = other.dftDimensions_;
 
       return *this;
    }
 
    /*
-   * Assignment of RFieldDft<D> from RHS HostField<Data> host array.
+   * Assignment from RHS HostField<Data> host array.
    */
    template <int D>
-   RFieldDft<D>& RFieldDft<D>::operator = (const HostField<cudaComplex>& other)
+   CField<D>& CField<D>::operator = (HostField<cudaComplex> const & other)
    {
       // Preconditions: both arrays must be allocated with equal capacities
       if (!other.isAllocated()) {
          UTIL_THROW("Error: RHS HostField<cudaComplex> is not allocated.");
       }
       if (!isAllocated()) {
-         UTIL_THROW("Error: LHS RFieldDft<D> is not allocated.");
+         UTIL_THROW("Error: LHS CField<D> is not allocated.");
       }
       if (capacity_ != other.capacity()) {
          UTIL_THROW("Cannot assign Fields of unequal capacity");
@@ -93,24 +92,17 @@ namespace Cuda {
    }
 
    /*
-   * Allocate the underlying C array for the dftDimensions mesh.
+   * Allocate the underlying C array sized for an associated mesh.
    */
    template <int D>
-   void RFieldDft<D>::allocate(const IntVec<D>& meshDimensions)
+   void CField<D>::allocate(IntVec<D> const & meshDimensions)
    {
       int size = 1;
       for (int i = 0; i < D; ++i) {
          UTIL_CHECK(meshDimensions[i] > 0);
          meshDimensions_[i] = meshDimensions[i];
-         if (i < D - 1) {
-            dftDimensions_[i] = meshDimensions[i];
-            size *= meshDimensions[i];
-         } else {
-            dftDimensions_[i] = (meshDimensions[i]/2 + 1); 
-            size *= (meshDimensions[i]/2 + 1);
-         }
+         size *= meshDimensions[i];
       }
-      // Note: size denotes size of mesh with dftDimensions 
       Field<cudaComplex>::allocate(size);
    }
 

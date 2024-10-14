@@ -13,47 +13,53 @@ namespace Cuda {
 
    using namespace Util;
 
-   // Forward transform, explicit specializations.
-   //use local mesh dimensions later
+   // Forward real-to-complex transform, explicit specializations.
    template<>
-   void FFT<1>::makePlans(RField<1>& rField, RFieldDft<1>& kField)
+   void FFT<1>::makePlans()
    {
-#ifdef SINGLE_PRECISION
-      cufftPlan1d(&fPlan_, rField.capacity(), CUFFT_R2C, 1);
-      cufftPlan1d(&iPlan_, rField.capacity(), CUFFT_C2R, 1);
-#else
-      cufftPlan1d(&fPlan_, rField.capacity(), CUFFT_D2Z, 1);
-      cufftPlan1d(&iPlan_, rField.capacity(), CUFFT_Z2D, 1);
-#endif
+      int n0 = meshDimensions_[0];
+      #ifdef SINGLE_PRECISION
+      cufftPlan1d(&rcfPlan_, n0, CUFFT_R2C, 1);
+      cufftPlan1d(&criPlan_, n0, CUFFT_C2R, 1);
+      cufftPlan1d(&ccPlan_, n0, CUFFT_C2C, 1);
+      #else
+      cufftPlan1d(&rcfPlan_, n0, CUFFT_D2Z, 1);
+      cufftPlan1d(&criPlan_, n0, CUFFT_Z2D, 1);
+      cufftPlan1d(&ccPlan_, n0, CUFFT_Z2Z, 1);
+      #endif
    }
 
    template <>
-   void FFT<2>::makePlans(RField<2>& rField, RFieldDft<2>& kField)
+   void FFT<2>::makePlans()
    {
-#ifdef SINGLE_PRECISION
-      cufftPlan2d(&fPlan_, rField.meshDimensions()[0], rField.meshDimensions()[1], CUFFT_R2C);
-      cufftPlan2d(&iPlan_, rField.meshDimensions()[0], rField.meshDimensions()[1], CUFFT_C2R);
-#else
-      cufftPlan2d(&fPlan_, rField.meshDimensions()[0], rField.meshDimensions()[1], CUFFT_D2Z);
-      cufftPlan2d(&iPlan_, rField.meshDimensions()[0], rField.meshDimensions()[1], CUFFT_Z2D);
-#endif
-
+      int n0 = meshDimensions_[0];
+      int n1 = meshDimensions_[1];
+      #ifdef SINGLE_PRECISION
+      cufftPlan2d(&rcfPlan_, n0, n1, CUFFT_R2C);
+      cufftPlan2d(&criPlan_, n0, n1, CUFFT_C2R);
+      cufftPlan2d(&ccPlan_, n0, n1, CUFFT_C2C);
+      #else
+      cufftPlan2d(&rcfPlan_, n0, n1, CUFFT_D2Z);
+      cufftPlan2d(&criPlan_, n0, n1, CUFFT_Z2D);
+      cufftPlan2d(&ccPlan_, n0, n1, CUFFT_Z2Z);
+      #endif
    }
 
    template <>
-   void FFT<3>::makePlans(RField<3>& rField, RFieldDft<3>& kField)
+   void FFT<3>::makePlans()
    {
-#ifdef SINGLE_PRECISION
-      cufftPlan3d(&fPlan_, rField.meshDimensions()[0], rField.meshDimensions()[1],
-            rField.meshDimensions()[2], CUFFT_R2C);
-      cufftPlan3d(&iPlan_, rField.meshDimensions()[0], rField.meshDimensions()[1],
-            rField.meshDimensions()[2], CUFFT_C2R);
-#else
-      cufftPlan3d(&fPlan_, rField.meshDimensions()[0], rField.meshDimensions()[1],
-            rField.meshDimensions()[2], CUFFT_D2Z);
-      cufftPlan3d(&iPlan_, rField.meshDimensions()[0], rField.meshDimensions()[1],
-            rField.meshDimensions()[2], CUFFT_Z2D);
-#endif
+      int n0 = meshDimensions_[0];
+      int n1 = meshDimensions_[1];
+      int n2 = meshDimensions_[2];
+      #ifdef SINGLE_PRECISION
+      cufftPlan3d(&rcfPlan_, n0, n1, n2, CUFFT_R2C);
+      cufftPlan3d(&criPlan_, n0, n1, n2, CUFFT_C2R);
+      cufftPlan3d(&ccPlan_, n0, n1, n2, CUFFT_C2C);
+      #else
+      cufftPlan3d(&rcfPlan_, n0, n1, n2, CUFFT_D2Z);
+      cufftPlan3d(&criPlan_, n0, n1, n2, CUFFT_Z2D);
+      cufftPlan3d(&ccPlan_, n0, n1, n2, CUFFT_Z2Z);
+      #endif
    }
 
    // Explicit instantiation of relevant class instances

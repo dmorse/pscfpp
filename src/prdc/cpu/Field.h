@@ -120,12 +120,12 @@ namespace Cpu {
       /**
       * Copy constructor (private and not implemented to prohibit).
       */
-      Field(Field const & other);
+      Field(Field<Data> const & other);
 
       /**
       * Assignment operator (private and non implemented to prohibit).
       */
-      Field& operator = (Field const & other);
+      Field<Data>& operator = (Field<Data> const & other);
 
    };
 
@@ -212,12 +212,8 @@ namespace Cpu {
       }
    }
 
-   #ifndef PRDC_CPU_FIELD_TPP
-   extern template class Field<double>;
-   extern template class Field<fftw_complex>;
-   #endif
-
 }
 }
 }
+#include "Field.tpp"
 #endif

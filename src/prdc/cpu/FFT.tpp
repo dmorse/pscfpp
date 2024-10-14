@@ -25,8 +25,8 @@ namespace Cpu {
       meshDimensions_(0),
       rSize_(0),
       kSize_(0),
-      rcPlan_(0),
-      crPlan_(0),
+      rcfPlan_(0),
+      criPlan_(0),
       ccfPlan_(0),
       cciPlan_(0),
       isSetup_(false)
@@ -38,11 +38,11 @@ namespace Cpu {
    template <int D>
    FFT<D>::~FFT()
    {
-      if (rcPlan_) {
-         fftw_destroy_plan(rcPlan_);
+      if (rcfPlan_) {
+         fftw_destroy_plan(rcfPlan_);
       }
-      if (crPlan_) {
-         fftw_destroy_plan(crPlan_);
+      if (criPlan_) {
+         fftw_destroy_plan(criPlan_);
       }
       if (ccfPlan_) {
          fftw_destroy_plan(ccfPlan_);
@@ -165,7 +165,7 @@ namespace Cpu {
       }
      
       // Execute preplanned forward transform 
-      fftw_execute_dft_r2c(rcPlan_, &rFieldCopy_[0], &kField[0]);
+      fftw_execute_dft_r2c(rcfPlan_, &rFieldCopy_[0], &kField[0]);
    }
 
    /*
@@ -182,7 +182,7 @@ namespace Cpu {
       UTIL_CHECK(rField.meshDimensions() == meshDimensions_);
       UTIL_CHECK(kField.meshDimensions() == meshDimensions_);
 
-      fftw_execute_dft_c2r(crPlan_, &kField[0], &rField[0]);
+      fftw_execute_dft_c2r(criPlan_, &kField[0], &rField[0]);
 
    }
 

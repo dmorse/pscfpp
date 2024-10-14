@@ -5,15 +5,16 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <prdc/cuda/Field.tpp>
+#include "CField.tpp"
 
 namespace Pscf {
-namespace Prdc { 
+namespace Prdc {
 namespace Cuda {
 
-   template class Field<cudaReal>;
-   template class Field<cudaComplex>;
+   template class CField<1>;
+   template class CField<2>;
+   template class CField<3>;
 
-}
-}
-}
+} // namespace Pscf::Prdc::Cuda
+} // namespace Pscf::Prdc
+} // namespace Pscf

@@ -224,9 +224,6 @@ namespace Rpg {
       RField<D> q1_;
       RField<D> q2_;
 
-      cudaReal* d_temp_;
-      cudaReal* temp_;
-
       cudaReal* expKsq_host;
       cudaReal* expKsq2_host;
 

@@ -163,10 +163,10 @@ namespace Cpu {
       int kSize_;
 
       /// Plan for a real-to-complex forward transform.
-      fftw_plan rcPlan_;
+      fftw_plan rcfPlan_;
 
       /// Plan for a complex-to-real inverse transform.
-      fftw_plan crPlan_;
+      fftw_plan criPlan_;
 
       /// Plan for a forward complex-to-complex transform.
       fftw_plan ccfPlan_;

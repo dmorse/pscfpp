@@ -86,12 +86,20 @@ NVXX=nvcc
 # NVCC architecture identifier, argument of -arch compiler option.
 # Use sm_xx, where xx denotes a numerical code for a CUDA compute 
 # capability, without the dot between major and minor version. For
-# example, use sm_35 for compute capability 3.5 (e.g., for a K40 
+# example, use sm_70 for compute capability 7.0 (e.g., for a V100
 # NVIDIA GPU)
-NVARCH=sm_35
+NVARCH=sm_70
+
+# Compute capabilities for GPUs (https://developer.nvidia.com/cuda-gpus)
+# GPU  CC
+# ---  ---
+# K40  3.5
+# V100 7.0
+# A100 8.0
+# A40  8.6
 
 # Flags always passed to cuda compiler
-NVXXFLAGS= $(CXX_STD) -O3 -arch=$(NVARCH)
+NVXXFLAGS= $(CXX_STD) -O3 -arch=$(NVARCH) -DPSCF_CUDA
 
 # Compiler command used to generate dependencies for CUDA
 MAKEDEP_CUDA_CMD="-C$(NVXX) -M"

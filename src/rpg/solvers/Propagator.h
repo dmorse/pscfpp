@@ -201,10 +201,6 @@ namespace Rpg {
       /// Is this propagator allocated?
       bool isAllocated_;
 
-      /// Work arrays for inner product. 
-      cudaReal* d_temp_;
-      cudaReal* temp_;
-
    };
 
    // Inline member functions

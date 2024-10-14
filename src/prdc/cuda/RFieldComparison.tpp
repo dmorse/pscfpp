@@ -9,6 +9,7 @@
 */
 
 #include "RFieldComparison.h"
+#include "HostField.h"
 
 namespace Pscf {
 namespace Prdc {
@@ -23,23 +24,15 @@ namespace Cuda {
    template <int D>
    double RFieldComparison<D>::compare(RField<D> const& a, RField<D> const& b)
    {
-      // Copy data to host.
       int nPoints = a.capacity();
-      cudaReal* temp_a = new cudaReal[nPoints];
-      cudaReal* temp_b = new cudaReal[nPoints];
-      cudaMemcpy(temp_a, a.cField(), nPoints*sizeof(cudaReal), 
-                                      cudaMemcpyDeviceToHost);
-      cudaMemcpy(temp_b, b.cField(), nPoints*sizeof(cudaReal), 
-                                      cudaMemcpyDeviceToHost);
 
-      DArray< cudaReal > h_a, h_b;
-      h_a.allocate(nPoints);
-      h_b.allocate(nPoints);
-      for (int j = 0; j < nPoints; j++) {
-         h_a[j] = temp_a[j];
-         h_b[j] = temp_b[j];
-      }
-      fieldComparison_.compare(h_a,h_b);
+      // Copy fields a,b to local arrays ha, hb on the host CPU
+      HostField<cudaReal> ha(nPoints);
+      HostField<cudaReal> hb(nPoints);
+      ha = a;
+      hb = b;
+
+      fieldComparison_.compare(ha, hb);
       compared_ = true;
 
       return fieldComparison_.maxDiff();
@@ -53,35 +46,17 @@ namespace Cuda {
       int nFields = a.capacity();
       int nPoints = a[0].capacity();
 
-      // Array on host (used for cudaMemcpy)
-      DArray< cudaReal* > temp_a, temp_b;
-      temp_a.allocate(nFields);
-      temp_b.allocate(nFields);
-
-      // DArrays on host (for compatibility with FieldComparison)
-      DArray< DArray< cudaReal > > h_a, h_b;
-      h_a.allocate(nFields);
-      h_b.allocate(nFields);
-      
+      // Copy fields to HostField containers on CPU host
+      DArray< HostField<cudaReal> > ha, hb;
+      ha.allocate(nFields);
+      hb.allocate(nFields);
       for (int i = 0; i < nFields; i++) {
-         temp_a[i] = new cudaReal[nPoints];
-         temp_b[i] = new cudaReal[nPoints];
-         cudaMemcpy(temp_a[i], a[i].cField(), nPoints*sizeof(cudaReal), 
-                                               cudaMemcpyDeviceToHost);
-         cudaMemcpy(temp_b[i], b[i].cField(), nPoints*sizeof(cudaReal), 
-                                               cudaMemcpyDeviceToHost);
-
-         h_a[i].allocate(nPoints);
-         h_b[i].allocate(nPoints);
-
-         for (int j = 0; j < nPoints; j++) {
-            h_a[i][j] = temp_a[i][j];
-            h_b[i][j] = temp_b[i][j];
-         }
+         ha[i] = a[i];
+         hb[i] = b[i];
       }
 
       // Perform comparison
-      fieldComparison_.compare(h_a,h_b);
+      fieldComparison_.compare(ha, hb);
       compared_ = true;
 
       return fieldComparison_.maxDiff();

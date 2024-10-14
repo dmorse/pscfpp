@@ -10,6 +10,7 @@
 
 #include "FFT.h"
 #include <pscf/cuda/GpuResources.h>
+#include <pscf/cuda/LinearAlgebra.h>
 
 //forward declaration
 //static __global__ void scaleRealData(cudaReal* data, rtype scale, int size);
@@ -28,8 +29,9 @@ namespace Cuda {
     : meshDimensions_(0),
       rSize_(0),
       kSize_(0),
-      fPlan_(0),
-      iPlan_(0),
+      rcfPlan_(0),
+      criPlan_(0),
+      ccPlan_(0),
       isSetup_(false)
    {}
 
@@ -39,11 +41,14 @@ namespace Cuda {
    template <int D>
    FFT<D>::~FFT()
    {
-      if (fPlan_) {
-         cufftDestroy(fPlan_);
+      if (rcfPlan_) {
+         cufftDestroy(rcfPlan_);
       }
-      if (iPlan_) {
-         cufftDestroy(iPlan_);
+      if (criPlan_) {
+         cufftDestroy(criPlan_);
+      }
+      if (ccPlan_) {
+         cufftDestroy(ccPlan_);
       }
    }
 
@@ -51,74 +56,60 @@ namespace Cuda {
    * Setup mesh dimensions.
    */
    template <int D>
-   void FFT<D>::setup(IntVec<D> const& meshDimensions)
+   void FFT<D>::setup(IntVec<D> const & meshDimensions)
    {
       // Precondition
       UTIL_CHECK(!isSetup_);
 
-      // Create local r-grid and k-grid field objects
-      RField<D> rField;
-      rField.allocate(meshDimensions);
-      RFieldDft<D> kField;
-      kField.allocate(meshDimensions);
-
-      setup(rField, kField);
-   }
-
-   /*
-   * Check and (if necessary) setup mesh dimensions.
-   */
-   template <int D>
-   void FFT<D>::setup(RField<D>& rField, RFieldDft<D>& kField)
-   {
-      // Preconditions
-      UTIL_CHECK(!isSetup_);
-      IntVec<D> rDimensions = rField.meshDimensions();
-      IntVec<D> kDimensions = kField.meshDimensions();
-      UTIL_CHECK(rDimensions == kDimensions);
-
-      // Set Mesh dimensions
+      // Set mesh dimensions and sizes
       rSize_ = 1;
       kSize_ = 1;
       for (int i = 0; i < D; ++i) {
-         UTIL_CHECK(rDimensions[i] > 0);
-         meshDimensions_[i] = rDimensions[i];
-         rSize_ *= rDimensions[i];
+         UTIL_CHECK(meshDimensions[i] > 0);
+         meshDimensions_[i] = meshDimensions[i];
+         rSize_ *= meshDimensions[i];
          if (i < D - 1) {
-            kSize_ *= rDimensions[i];
+            kSize_ *= meshDimensions[i];
          } else {
-            kSize_ *= (rDimensions[i]/2 + 1);
+            kSize_ *= (meshDimensions[i]/2 + 1);
          }
       }
 
-      UTIL_CHECK(rField.capacity() == rSize_);
-      UTIL_CHECK(kField.capacity() == kSize_);
-
-
-      // Make FFTW plans (explicit specializations)
-      makePlans(rField, kField);
-
       // Allocate rFieldCopy_ array if necessary
       if (!rFieldCopy_.isAllocated()) {
-          rFieldCopy_.allocate(rDimensions);
+         rFieldCopy_.allocate(meshDimensions);
       } else {
-          if (rFieldCopy_.capacity() != rSize_) {
-             rFieldCopy_.deallocate();
-             rFieldCopy_.allocate(rDimensions);
-          }
+         if (rFieldCopy_.capacity() != rSize_) {
+            rFieldCopy_.deallocate();
+            rFieldCopy_.allocate(meshDimensions);
+         }
       }
       UTIL_CHECK(rFieldCopy_.capacity() == rSize_);
 
+      // Allocate cFieldCopy_ array if necessary
+      if (!cFieldCopy_.isAllocated()) {
+         cFieldCopy_.allocate(meshDimensions);
+      } else {
+         if (cFieldCopy_.capacity() != rSize_) {
+            cFieldCopy_.deallocate();
+            cFieldCopy_.allocate(meshDimensions);
+         }
+      }
+      UTIL_CHECK(cFieldCopy_.capacity() == rSize_);
+
       // Allocate kFieldCopy_ array if necessary
       if (!kFieldCopy_.isAllocated()) {
-          kFieldCopy_.allocate(kDimensions);
+         kFieldCopy_.allocate(meshDimensions);
       } else {
-          if (kFieldCopy_.capacity() != rSize_) {
-             kFieldCopy_.deallocate();
-             kFieldCopy_.allocate(kDimensions);
-          }
+         if (kFieldCopy_.capacity() != rSize_) {
+            kFieldCopy_.deallocate();
+            kFieldCopy_.allocate(meshDimensions);
+         }
       }
       UTIL_CHECK(kFieldCopy_.capacity() == kSize_);
+
+      // Make FFTW plans (explicit specializations)
+      makePlans();
 
       isSetup_ = true;
    }
@@ -141,28 +132,27 @@ namespace Cuda {
 
       // Rescale outputted data. 
       cudaReal scale = 1.0/cudaReal(rSize_);
-      scaleRealData<<<nBlocks, nThreads>>>(rField.cField(), scale, rSize_);
+      //scaleRealData<<<nBlocks, nThreads>>>(rField.cField(), scale, rSize_);
+      scaleReal<<<nBlocks, nThreads>>>(rField.cField(), scale, rSize_);
       
-      //perform fft
+      // Perform transform
+      cufftResult result;
       #ifdef SINGLE_PRECISION
-      if(cufftExecR2C(fPlan_, rField.cField(), kField.cField()) != CUFFT_SUCCESS) {
-         std::cout << "CUFFT error: forward" << std::endl;
-         return;
-      }
+      result = cufftExecR2C(rcfPlan_, rField.cField(), kField.cField());
       #else
-      if(cufftExecD2Z(fPlan_, rField.cField(), kField.cField()) != CUFFT_SUCCESS) {
-         std::cout << "CUFFT error: forward" << std::endl;
-         return;
-      }
+      result = cufftExecD2Z(rcfPlan_, rField.cField(), kField.cField());
       #endif
-
+      if (result != CUFFT_SUCCESS) {
+         UTIL_THROW("Failure in cufft real-to-complex forward transform");
+      }
    }
 
    /*
    * Execute forward transform without destroying input.
    */
    template <int D>
-   void FFT<D>::forwardTransformSafe(RField<D> const & rField, RFieldDft<D>& kField)
+   void FFT<D>::forwardTransformSafe(RField<D> const & rField, 
+                                     RFieldDft<D>& kField)
    const
    {
       UTIL_CHECK(rFieldCopy_.capacity() == rField.capacity());
@@ -184,17 +174,15 @@ namespace Cuda {
       UTIL_CHECK(rField.meshDimensions() == meshDimensions_);
       UTIL_CHECK(kField.meshDimensions() == meshDimensions_);
 
+      cufftResult result;
       #ifdef SINGLE_PRECISION
-      if(cufftExecC2R(iPlan_, kField.cField(), rField.cField()) != CUFFT_SUCCESS) {
-         std::cout << "CUFFT error: inverse" << std::endl;
-         return;
-      }
+      result = cufftExecC2R(criPlan_, kField.cField(), rField.cField());
       #else
-      if(cufftExecZ2D(iPlan_, kField.cField(), rField.cField()) != CUFFT_SUCCESS) {
-         std::cout << "CUFFT error: inverse" << std::endl;
-         return;
-      }
+      result = cufftExecZ2D(criPlan_, kField.cField(), rField.cField());
       #endif
+      if (result != CUFFT_SUCCESS) {
+         UTIL_THROW( "Failure in cufft complex-to-real inverse transform");
+      }
    
    }
 
@@ -202,13 +190,100 @@ namespace Cuda {
    * Execute inverse (complex-to-real) transform without destroying input.
    */
    template <int D>
-   void FFT<D>::inverseTransformSafe(RFieldDft<D> const & kField, RField<D>& rField) 
-   const
+   void FFT<D>::inverseTransformSafe(RFieldDft<D> const & kField, 
+                                     RField<D>& rField) const
    {
       UTIL_CHECK(kFieldCopy_.capacity()==kField.capacity());
 
       kFieldCopy_ = kField;
       inverseTransform(kFieldCopy_, rField);
+   }
+
+   // Complex-to-Complex Transforms
+
+   /*
+   * Execute forward complex-to-complex transform.
+   */
+   template <int D>
+   void FFT<D>::forwardTransform(CField<D> & rField, CField<D>& kField)
+   const
+   {
+      // GPU resources
+      int nBlocks, nThreads;
+      ThreadGrid::setThreadsLogical(rSize_, nBlocks, nThreads);
+
+      // Check dimensions or setup
+      UTIL_CHECK(isSetup_);
+      UTIL_CHECK(rField.capacity() == rSize_);
+      UTIL_CHECK(kField.capacity() == rSize_);
+
+      // Rescale outputted data. 
+      cudaReal scale = 1.0/cudaReal(rSize_);
+      //scaleComplexData<<<nBlocks, nThreads>>>(rField.cField(), scale, rSize_);
+      scaleComplex<<<nBlocks, nThreads>>>(rField.cField(), scale, rSize_);
+      
+      // Perform transform
+      cufftResult result;
+      #ifdef SINGLE_PRECISION
+      result = cufftExecC2C(ccPlan_, rField.cField(), kField.cField(), CUFFT_FORWARD);
+      #else
+      result = cufftExecZ2Z(ccPlan_, rField.cField(), kField.cField(), CUFFT_FORWARD);
+      #endif
+      if (result != CUFFT_SUCCESS) {
+         UTIL_THROW("Failure in cufft real-to-complex forward transform");
+      }
+   }
+
+   /*
+   * Execute forward transform without destroying input.
+   */
+   template <int D>
+   void FFT<D>::forwardTransformSafe(CField<D> const & rField, 
+                                     CField<D>& kField)
+   const
+   {
+      UTIL_CHECK(cFieldCopy_.capacity() == rField.capacity());
+
+      cFieldCopy_ = rField;
+      forwardTransform(cFieldCopy_, kField);
+   }
+
+   /*
+   * Execute inverse (complex-to-complex) transform.
+   */
+   template <int D>
+   void FFT<D>::inverseTransform(CField<D> & kField, CField<D>& rField) 
+   const
+   {
+      UTIL_CHECK(isSetup_);
+      UTIL_CHECK(rField.capacity() == rSize_);
+      UTIL_CHECK(kField.capacity() == rSize_);
+      UTIL_CHECK(rField.meshDimensions() == meshDimensions_);
+      UTIL_CHECK(kField.meshDimensions() == meshDimensions_);
+
+      cufftResult result;
+      #ifdef SINGLE_PRECISION
+      result = cufftExecC2C(ccPlan_, kField.cField(), rField.cField(), CUFFT_INVERSE);
+      #else
+      result = cufftExecZ2Z(ccPlan_, kField.cField(), rField.cField(), CUFFT_INVERSE);
+      #endif
+      if (result != CUFFT_SUCCESS) {
+         UTIL_THROW( "Failure in cufft complex-to-real inverse transform");
+      }
+   
+   }
+
+   /*
+   * Execute inverse (complex-to-complex) transform without destroying input.
+   */
+   template <int D>
+   void FFT<D>::inverseTransformSafe(CField<D> const & kField, 
+                                     CField<D>& rField) const
+   {
+      UTIL_CHECK(cFieldCopy_.capacity() == kField.capacity());
+
+      cFieldCopy_ = kField;
+      inverseTransform(cFieldCopy_, rField);
    }
 
 }

@@ -9,6 +9,7 @@
 */
 
 #include <prdc/cuda/RField.h>
+#include <prdc/cuda/CField.h>
 #include <prdc/cuda/RFieldDft.h>
 
 //#include <pscf/cuda/GpuResources.h>
@@ -54,14 +55,8 @@ namespace Cuda {
       */
       void setup(IntVec<D> const & meshDimensions);
 
-      /**
-      * Check and setup grid dimensions if necessary.
-      *
-      * \param rField  real data on r-space grid (device mem)
-      * \param kField  complex data on k-space grid (device mem)
-      */
-      void setup(RField<D>& rField, RFieldDft<D>& kField);
-
+      // Real <-> Complex transforms
+      
       /**
       * Compute forward (real-to-complex) discrete Fourier transform.
       *
@@ -98,6 +93,43 @@ namespace Cuda {
       void inverseTransformSafe(RFieldDft<D> const & kField, 
                                 RField<D>& rField) const;
 
+      // Complex <-> Complex transforms
+      
+      /**
+      * Compute forward (complex-to-complex) discrete Fourier transform.
+      *
+      * \param rField  complex values on r-space grid (input, gpu mem)
+      * \param kField  complex values on k-space grid (output, gpu mem)
+      */
+      void forwardTransform(CField<D> & rField, CField<D>& kField) 
+      const;
+
+      /**
+      * Compute forward complex-to-complex transform without destroying input.
+      *
+      * \param rField  complex values on r-space grid (input, gpu mem)
+      * \param kField  complex values on k-space grid (output, gpu mem)
+      */
+      void forwardTransformSafe(CField<D> const & rField, 
+                                CField<D>& kField) const;
+
+      /**
+      * Compute inverse (complex-to-complex) discrete Fourier transform.
+      *
+      * \param kField  complex values on k-space grid (input, gpu mem)
+      * \param rField  complex values on r-space grid (output, gpu mem)
+      */
+      void inverseTransform(CField<D> & kField, CField<D>& rField) const;
+
+      /**
+      * Compute inverse (complex to complex) DFT without destroying input.
+      *
+      * \param kField  complex values on k-space grid (input, gpu mem)
+      * \param rField  complex values on r-space grid (output, gpu mem)
+      */
+      void inverseTransformSafe(CField<D> const & kField, 
+                                CField<D>& rField) const;
+
       /**
       * Return the dimensions of the grid for which this was allocated.
       */
@@ -108,6 +140,7 @@ namespace Cuda {
       */
       bool isSetup() const;
 
+      #if 0
       /**
       *  Get the plan for the forward DFT.
       */
@@ -117,70 +150,78 @@ namespace Cuda {
       *  Get the plan for the inverse DFT.
       */
       cufftHandle& iPlan();
+      #endif
 
    private:
 
       // Vector containing number of grid points in each direction.
       IntVec<D> meshDimensions_;
 
-      // Private r-space array for performing safe transforms.
+      // Private RField<D> real array for work space
       mutable RField<D> rFieldCopy_;
 
-      // Private k-space array for performing safe transforms.
+      // Private CField<D> real array for work space
+      mutable CField<D> cFieldCopy_;
+
+      // Private RFieldDft<D> k-space array work space
       mutable RFieldDft<D> kFieldCopy_;
 
       // Number of points in r-space grid
       int rSize_;
 
-      // Number of points in k-space grid
+      // Number of points in k-space grid for transform of real data
       int kSize_;
 
-      // Pointer to a plan for a forward transform.
-      cufftHandle fPlan_;
+      // Pointer to a plan for a real-to-complex forward transform
+      cufftHandle rcfPlan_;
 
-      // Pointer to a plan for an inverse transform.
-      cufftHandle iPlan_;
+      // Pointer to a plan for a complex-to-real inverse transform
+      cufftHandle criPlan_;
 
-      // Have array dimension and plan been initialized?
+      // Pointer to a plan for a complex-to-complex transform
+      cufftHandle ccPlan_;
+
+      // Have array dimension and plans been initialized?
       bool isSetup_;
 
       /**
-      * Make FFTW plans for transform and inverse transform.
+      * Make FFTW plans all transform types.
       */
-      void makePlans(RField<D>& rField, RFieldDft<D>& kField);
+      void makePlans();
 
    };
 
    // Declarations of explicit specializations
 
    template <>
-   void FFT<1>::makePlans(RField<1>& rField, RFieldDft<1>& kField);
+   void FFT<1>::makePlans();
 
    template <>
-   void FFT<2>::makePlans(RField<2>& rField, RFieldDft<2>& kField);
+   void FFT<2>::makePlans();
 
    template <>
-   void FFT<3>::makePlans(RField<3>& rField, RFieldDft<3>& kField);
+   void FFT<3>::makePlans();
 
    /*
    * Return the dimensions of the grid for which this was allocated.
    */
    template <int D>
-   inline const IntVec<D>& FFT<D>::meshDimensions() const
+   inline IntVec<D> const & FFT<D>::meshDimensions() const
    {  return meshDimensions_; }
 
    template <int D>
    inline bool FFT<D>::isSetup() const
    { return isSetup_; }
 
+   #if 0
    template <int D>
    inline cufftHandle& FFT<D>::fPlan() 
-   { return fPlan_; }
+   { return rcfPlan_; }
 
    template <int D>
    inline cufftHandle& FFT<D>::iPlan()
-   { return iPlan_; }
-
+   { return criPlan_; }
+   #endif
 
    #ifndef PRDC_CUDA_FFT_TPP
    // Suppress implicit instantiation
@@ -189,15 +230,26 @@ namespace Cuda {
    extern template class FFT<3>;
    #endif
 
+   #if 0
    static __global__ 
    void scaleRealData(cudaReal* data, cudaReal scale, int size) {
-      //write code that will scale
       int nThreads = blockDim.x * gridDim.x;
       int startId = blockIdx.x * blockDim.x + threadIdx.x;
       for(int i = startId; i < size; i += nThreads ) {
          data[i] *= scale;
       }
    }
+
+   static __global__ 
+   void scaleComplexData(cudaComplex* data, cudaReal scale, int size) {
+      int nThreads = blockDim.x * gridDim.x;
+      int startId = blockIdx.x * blockDim.x + threadIdx.x;
+      for(int i = startId; i < size; i += nThreads ) {
+         data[i].x *= scale;
+         data[i].y *= scale;
+      }
+   }
+   #endif
 
 }
 }

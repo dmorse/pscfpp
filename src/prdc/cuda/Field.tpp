@@ -9,6 +9,7 @@
 */
 
 #include <prdc/cuda/Field.h>
+#include <prdc/cuda/HostField.h>
 #include <pscf/cuda/GpuResources.h>
 #include <cuda_runtime.h>
 
@@ -26,6 +27,26 @@ namespace Cuda {
     : data_(0),
       capacity_(0)
    {}
+
+   /*
+   * Copy constructor.
+   *
+   * Allocates new memory and copies all elements by value.
+   *
+   *\param other the Field to be copied.
+   */
+   template <typename Data>
+   Field<Data>::Field(const Field<Data>& other)
+   {
+      if (!other.isAllocated()) {
+         UTIL_THROW("Other Field must be allocated.");
+      }
+
+      allocate(other.capacity_);
+      cudaMemcpy(data_, other.cField(), 
+                 capacity_ * sizeof(Data), cudaMemcpyDeviceToDevice);
+
+   }
 
    /*
    * Destructor.
@@ -75,34 +96,7 @@ namespace Cuda {
    }
 
    /*
-   * Copy constructor.
-   *
-   * Allocates new memory and copies all elements by value.
-   *
-   *\param other the Field to be copied.
-   */
-   template <typename Data>
-   Field<Data>::Field(const Field<Data>& other)
-   {
-      if (!other.isAllocated()) {
-         UTIL_THROW("Other Field must be allocated.");
-      }
-
-      allocate(other.capacity_);
-      cudaMemcpy(data_, other.cField(), 
-                 capacity_ * sizeof(Data), cudaMemcpyDeviceToDevice);
-
-   }
-
-   /*
-   * Assignment.
-   *
-   * This operator will allocate memory if not allocated previously.
-   *
-   * \throw Exception if other Field is not allocated.
-   * \throw Exception if both Fields are allocated with unequal capacities.
-   *
-   * \param other the rhs Field
+   * Assignment from another Cuda::Field<Data>.
    */
    template <typename Data>
    Field<Data>& Field<Data>::operator = (const Field<Data>& other)
@@ -110,14 +104,18 @@ namespace Cuda {
       // Check for self assignment
       if (this == &other) return *this;
 
-      // Precondition
+      // Precondition - RHS Field<Data> must be allocated
       if (!other.isAllocated()) {
-         UTIL_THROW("Other Field must be allocated.");
+         UTIL_THROW("Other Field<Data> must be allocated.");
       }
 
+      // If this is not allocated, then allocate
       if (!isAllocated()) {
          allocate(other.capacity());
-      } else if (capacity_ != other.capacity_) {
+      } 
+
+      // Require equal capacity values 
+      if (capacity_ != other.capacity_) {
          UTIL_THROW("Cannot assign Fields of unequal capacity");
       }
 
@@ -128,7 +126,35 @@ namespace Cuda {
       return *this;
    }
 
-}
-}
-}
+   /*
+   * Assignment of LHS Field<Data> from LHS HostField<Data> host array.
+   */
+   template <typename Data>
+   Field<Data>& Field<Data>::operator = (const HostField<Data>& other)
+   {
+      // Precondition
+      if (!other.isAllocated()) {
+         UTIL_THROW("RHS HostField<Data> must be allocated.");
+      }
+
+      // Allocate this if necessary
+      if (!isAllocated()) {
+         allocate(other.capacity());
+      } 
+
+      // Require equal capacity values
+      if (capacity_ != other.capacity()) {
+         UTIL_THROW("Cannot assign Fields of unequal capacity");
+      }
+
+      // Copy elements
+      cudaMemcpy(data_, other.cField(), 
+                 capacity_ * sizeof(Data), cudaMemcpyHostToDevice);
+
+      return *this;
+   }
+
+} // namespace Cuda
+} // namespace Prdc
+} // namespace Pscf
 #endif

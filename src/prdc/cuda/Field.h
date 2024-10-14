@@ -18,13 +18,16 @@ namespace Cuda {
 
    using namespace Util;
 
+   // Forward declaration of analogous container for data on host.
+   template <typename Data> class HostField;
+
    /**
-   * Dynamic array on the GPU with aligned data.
+   * Dynamic array on the GPU device with aligned data.
    *
    * This class wraps an aligned C array with elements of type Data that is
-   * allocated in device global memory.  All member functions may be called 
-   * from the host, but the class thus does not offer access to individual 
-   * elements via operator[]
+   * allocated in GPU device global memory.  All member functions may be 
+   * called from the CPU host, but this class does not offer access to 
+   * individual elements via the subscript operator, operator[].
    *
    * \ingroup Prdc_Cuda_Module
    */
@@ -38,6 +41,13 @@ namespace Cuda {
       * Default constructor.
       */
       Field();
+
+      /**
+      * Copy constructor.
+      * 
+      * \param other Field<Data> to be copied (input)
+      */
+      Field(Field<Data> const & other);
 
       /**
       * Destructor.
@@ -63,16 +73,45 @@ namespace Cuda {
       void deallocate();
 
       /**
+      * Assignment operator, assignment from another Field<Data> array.
+      *  
+      * Performs a deep copy, by copying values of all elements from device
+      * memory to device memory.
+      *
+      * This function will allocate memory if this (LHS) Field is not 
+      * allocated.  If this is allocated, it must have the same dimensions 
+      * as the RHS Field<Data>.
+      *
+      * \param other Field<Data> on rhs of assignent (input)
+      */
+      virtual Field<Data>& operator = (const Field<Data>& other);
+
+      /**
+      * Assignment operator, assignment from HostField<Data> host array.
+      *
+      * Performs a deep copy from a RHS HostField<Data> host array to this 
+      * LHS Field<D> device array, by copying underlying C array from host
+      * memory to device memory.
+      *
+      * This function will allocate memory if this (LHS) Field<D> is not 
+      * allocated.  If this is allocated, it must have the same dimensions 
+      * as the RHS HostField<D>.
+      *
+      * \param other HostField<Data> on RHS of assignent (input)
+      */
+      virtual Field<Data>& operator = (const HostField<Data>& other);
+
+      /**
+      * Return allocated capacity.
+      *
+      * \return Number of elements allocated in array
+      */
+      int capacity() const;
+
+      /**
       * Return true if the Field has been allocated, false otherwise.
       */
       bool isAllocated() const;
-
-      /**
-      * Return allocated size.
-      *
-      * \return Number of elements allocated in array.
-      */
-      int capacity() const;
 
       /**
       * Return pointer to underlying C array.
@@ -82,34 +121,20 @@ namespace Cuda {
       /**
       * Return pointer to const to underlying C array.
       */
-      const Data* cField() const;
-
-      /**
-      * Assignment operator.
-      *
-      * \param other Field<Data> on rhs of assignent (input)
-      */
-      virtual Field<Data>& operator = (const Field<Data>& other);
-
-      /**
-      * Copy constructor.
-      * 
-      * \param other Field<Data> to be copied (input)
-      */
-      Field(const Field& other);
+      Data const * cField() const;
 
    protected:
 
-      /// Pointer to an array of Data elements on the device / GPU.
+      /// Pointer to a C array of Data elements on the GPU device.
       Data* data_;
 
-      /// Allocated size of the data_ array.
+      /// Allocated size (capacity) of the data_ array.
       int capacity_;
 
    };
 
    /*
-   * Return allocated size.
+   * Return allocated capacity.
    */
    template <typename Data>
    inline int Field<Data>::capacity() const
@@ -141,7 +166,7 @@ namespace Cuda {
    extern template class Field<cudaComplex>;
    #endif
 
-}
-}
-}
+} // namespace Cuda
+} // namespace Prdc
+} // namespace Pscf
 #endif

@@ -1,5 +1,5 @@
-#ifndef PRDC_CUDA_K_FIELD_COMPARISON_H
-#define PRDC_CUDA_K_FIELD_COMPARISON_H
+#ifndef PRDC_CUDA_R_FIELD_DFT_COMPARISON_H
+#define PRDC_CUDA_R_FIELD_DFT_COMPARISON_H
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory
@@ -94,7 +94,7 @@ namespace Cuda {
    
    };
 
-   #ifndef PRDC_CUDA_K_FIELD_COMPARISON_TPP
+   #ifndef PRDC_CUDA_R_FIELD_DFT_COMPARISON_TPP
    // Suppress implicit instantiation
    extern template class RFieldDftComparison<1>;
    extern template class RFieldDftComparison<2>;
