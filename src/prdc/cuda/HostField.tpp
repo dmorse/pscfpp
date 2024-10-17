@@ -33,9 +33,7 @@ namespace Cuda {
    HostField<Data>::HostField(int capacity)
     : data_(0),
       capacity_(0)
-   {
-      allocate(capacity);
-   }
+   {  allocate(capacity); }
 
    /*
    * Copy constructor.

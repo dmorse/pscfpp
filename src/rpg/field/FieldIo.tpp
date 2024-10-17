@@ -10,6 +10,7 @@
 
 #include "FieldIo.h"
 
+#include <prdc/cuda/HostField.h>
 #include <prdc/crystal/fieldHeader.h>
 #include <prdc/crystal/shiftToMinimum.h>
 #include <prdc/crystal/UnitCell.h>
@@ -244,8 +245,8 @@ namespace Rpg {
                   // This is a pair of open stars written in the same
                   // order as in this basis. Check preconditions:
                   UTIL_CHECK(starPtr2->invertFlag == -1);
-                  UTIL_CHECK(starId2 = starId + 1);
-                  UTIL_CHECK(basisId2 = basisId + 1);
+                  UTIL_CHECK(starId2 == starId + 1);
+                  UTIL_CHECK(basisId2 == basisId + 1);
                   UTIL_CHECK(starPtr->waveBz == waveIn);
                   UTIL_CHECK(starPtr2->waveBz == waveIn2);
 
@@ -452,10 +453,11 @@ namespace Rpg {
       in >> nGrid;
       UTIL_CHECK(nGrid == mesh().dimensions());
 
-      DArray<cudaReal*> temp_out;
-      temp_out.allocate(nMonomer);
-      for(int i = 0; i < nMonomer; ++i) {
-         temp_out[i] = new cudaReal[mesh().size()];
+      DArray< HostField<cudaReal> > hostFields;
+      hostFields.allocate(nMonomer);
+      for (int i = 0; i < nMonomer; ++i) {
+         //hostFields[i] = new cudaReal[mesh().size()];
+         hostFields[i].allocate(mesh().size());
       }
 
       IntVec<D> offsets;
@@ -476,7 +478,7 @@ namespace Rpg {
             rank += offsets[dim] * position[dim];
          }
          for(int k = 0; k < nMonomer; ++k) {
-            in >> std::setprecision(15)>> temp_out[k][rank];
+            in >> std::setprecision(15)>> hostFields[k][rank];
          }
          //add position
          positionId = 0;
@@ -492,10 +494,11 @@ namespace Rpg {
       }
 
       for (int i = 0; i < nMonomer; i++) {
-         cudaMemcpy(fields[i].cField(), temp_out[i],
-            mesh().size() * sizeof(cudaReal), cudaMemcpyHostToDevice);
-         delete[] temp_out[i];
-         temp_out[i] = nullptr;
+         fields[i] = hostFields[i];
+         //cudaMemcpy(fields[i].cField(), hostFields[i],
+         //    mesh().size() * sizeof(cudaReal), cudaMemcpyHostToDevice);
+         //delete[] hostFields[i];
+         //hostFields[i] = nullptr;
       }
 
    }
@@ -537,10 +540,12 @@ namespace Rpg {
       in >> nGrid;
       UTIL_CHECK(nGrid == mesh().dimensions());
 
-      DArray<cudaReal*> temp_out;
-      temp_out.allocate(nMonomer);
+      //DArray<cudaReal*> hostFields;
+      DArray< HostField<cudaReal> > hostFields;
+      hostFields.allocate(nMonomer);
       for(int i = 0; i < nMonomer; ++i) {
-         temp_out[i] = new cudaReal[mesh().size()];
+         //hostFields[i] = new cudaReal[mesh().size()];
+         hostFields[i].allocate(mesh().size());
       }
 
       IntVec<D> offsets;
@@ -561,9 +566,9 @@ namespace Rpg {
             rank += offsets[dim] * position[dim];
          }
          for(int k = 0; k < nMonomer; ++k) {
-            in >> std::setprecision(15)>> temp_out[k][rank];
+            in >> std::setprecision(15)>> hostFields[k][rank];
          }
-         //add position
+         // Add position
          positionId = 0;
          while( positionId < D) {
             position[positionId]++;
@@ -577,11 +582,14 @@ namespace Rpg {
       }
 
       for (int i = 0; i < nMonomer; i++) {
-         cudaMemcpy(fields[i].cField(), temp_out[i],
-            mesh().size() * sizeof(cudaReal), cudaMemcpyHostToDevice);
-         delete[] temp_out[i];
-         temp_out[i] = nullptr;
+         //cudaMemcpy(fields[i].cField(), hostFields[i],
+         //           mesh().size() * sizeof(cudaReal), 
+         //           cudaMemcpyHostToDevice);
+         //delete[] hostFields[i];
+         //hostFields[i] = nullptr;
+         fields[i] = hostFields[i];
       }
+
    }
 
    /*
@@ -611,7 +619,8 @@ namespace Rpg {
       in >> nGrid;
       UTIL_CHECK(nGrid == mesh().dimensions());
 
-      cudaReal* temp_out = new cudaReal[mesh().size()];
+      //cudaReal* hostField = new cudaReal[mesh().size()];
+      HostField<cudaReal> hostField(mesh().size());
 
       IntVec<D> offsets;
       offsets[D - 1] = 1;
@@ -630,9 +639,9 @@ namespace Rpg {
          for(int dim = 0; dim < D; ++dim) {
             rank += offsets[dim] * position[dim];
          }
-         in >> std::setprecision(15) >> temp_out[rank];
+         in >> std::setprecision(15) >> hostField[rank];
 
-         //add position
+         // Add position
          positionId = 0;
          while( positionId < D) {
             position[positionId]++;
@@ -643,12 +652,15 @@ namespace Rpg {
             }
             break;
          }
+
       }
 
-      cudaMemcpy(field.cField(), temp_out,
-            mesh().size() * sizeof(cudaReal), cudaMemcpyHostToDevice);
-      delete[] temp_out;
-      temp_out = nullptr;
+      //cudaMemcpy(field.cField(), hostField,
+      //      mesh().size() * sizeof(cudaReal), cudaMemcpyHostToDevice);
+      //delete[] hostField;
+      //hostField = nullptr;
+
+      field = hostField;
 
    }
 
@@ -684,12 +696,15 @@ namespace Rpg {
       out << "mesh " <<  std::endl
           << "           " << mesh().dimensions() << std::endl;
 
-      DArray<cudaReal*> temp_out;
-      temp_out.allocate(nMonomer);
+      //DArray<cudaReal*> hostFields;
+      DArray< HostField<cudaReal> > hostFields;
+      hostFields.allocate(nMonomer);
       for (int i = 0; i < nMonomer; ++i) {
-         temp_out[i] = new cudaReal[mesh().size()];
-         cudaMemcpy(temp_out[i], fields[i].cField(),
-                    mesh().size() * sizeof(cudaReal), cudaMemcpyDeviceToHost);
+         //hostFields[i] = new cudaReal[mesh().size()];
+         //cudaMemcpy(hostFields[i], fields[i].cField(),
+         //           mesh().size() * sizeof(cudaReal), cudaMemcpyDeviceToHost);
+         hostFields[i].allocate(mesh().size());
+         hostFields[i] = fields[i];
       }
 
       IntVec<D> offsets;
@@ -710,7 +725,7 @@ namespace Rpg {
             rank += offsets[dim] * position[dim];
          }
          for(int k = 0; k < nMonomer; ++k) {
-            out << "  " << Dbl(temp_out[k][rank], 18, 15);
+            out << "  " << Dbl(hostFields[k][rank], 18, 15);
          }
          out<<'\n';
          //add position
@@ -726,10 +741,10 @@ namespace Rpg {
          }
       }
 
-      for(int i = 0; i < nMonomer; ++i) {
-         delete[] temp_out[i];
-         temp_out[i] = nullptr;
-      }
+      //for(int i = 0; i < nMonomer; ++i) {
+      //   delete[] hostFields[i];
+      //   hostFields[i] = nullptr;
+      //}
 
    }
 
@@ -766,9 +781,12 @@ namespace Rpg {
              << "           " << mesh().dimensions() << std::endl;
       }
 
-      cudaReal* temp_out = new cudaReal[mesh().size()];;
-      cudaMemcpy(temp_out, field.cField(),
-                  mesh().size() * sizeof(cudaReal), cudaMemcpyDeviceToHost);
+      //cudaReal* hostField = new cudaReal[mesh().size()];;
+      //cudaMemcpy(hostField, field.cField(),
+      //           mesh().size() * sizeof(cudaReal), 
+      //           cudaMemcpyDeviceToHost);
+      HostField<cudaReal> hostField(mesh().size());
+      hostField = field;
 
       IntVec<D> offsets;
       offsets[D - 1] = 1;
@@ -787,7 +805,7 @@ namespace Rpg {
          for(int dim = 0; dim < D; ++dim) {
             rank += offsets[dim] * position[dim];
          }
-         out << "  " << Dbl(temp_out[rank], 18, 15);
+         out << "  " << Dbl(hostField[rank], 18, 15);
          out<<'\n';
          //add position
          positionId = 0;
@@ -802,8 +820,8 @@ namespace Rpg {
          }
       }
 
-      delete[] temp_out;
-      temp_out = nullptr;
+      //delete[] hostField;
+      //hostField = nullptr;
    }
 
    /*
@@ -850,9 +868,6 @@ namespace Rpg {
       in >> nGrid;
       UTIL_CHECK(nGrid == mesh().dimensions());
 
-      DArray<cudaComplex*> temp_out;
-      temp_out.allocate(nMonomer);
-
       int kSize = 1;
       for (int i = 0; i < D; i++) {
          if (i == D - 1) {
@@ -863,27 +878,34 @@ namespace Rpg {
          }
       }
 
+      //DArray<cudaComplex*> hostFields;
+      DArray< HostField<cudaComplex> > hostFields;
+      hostFields.allocate(nMonomer);
       for(int i = 0; i < nMonomer; ++i) {
-         temp_out[i] = new cudaComplex[kSize];
+         //hostFields[i] = new cudaComplex[kSize];
+         hostFields[i].allocate(kSize);
       }
 
       // Read Fields;
       int idum;
-      MeshIterator<D> itr(mesh().dimensions());
+      //MeshIterator<D> itr(mesh().dimensions());
       for (int i = 0; i < kSize; ++i) {
          in >> idum;
          for (int j = 0; j < nMonomer; ++j) {
-            in >> temp_out [j][i].x;
-            in >> temp_out [j][i].y;
+            in >> hostFields [j][i].x;
+            in >> hostFields [j][i].y;
          }
       }
 
+      // Copy fields from host to device
       for(int i = 0; i < nMonomer; ++i) {
-         cudaMemcpy(fields[i].cField(), temp_out[i],
-            kSize * sizeof(cudaComplex), cudaMemcpyHostToDevice);
-         delete[] temp_out[i];
-         temp_out[i] = nullptr;
+         //cudaMemcpy(fields[i].cField(), hostFields[i],
+         //   kSize * sizeof(cudaComplex), cudaMemcpyHostToDevice);
+         //delete[] hostFields[i];
+         //hostFields[i] = nullptr;
+         fields[i] = hostFields[i];
       }
+
    }
 
    template <int D>
@@ -912,7 +934,6 @@ namespace Rpg {
       out << "mesh " << std::endl
           << "               " << mesh().dimensions() << std::endl;
 
-      DArray<cudaComplex*> temp_out;
       int kSize = 1;
       for (int i = 0; i < D; i++) {
          if (i == D - 1) {
@@ -922,11 +943,16 @@ namespace Rpg {
             kSize *= mesh().dimension(i);
          }
       }
-      temp_out.allocate(nMonomer);
+
+      //DArray<cudaComplex*> hostFields;
+      DArray< HostField<cudaComplex> > hostFields;
+      hostFields.allocate(nMonomer);
       for(int i = 0; i < nMonomer; ++i) {
-         temp_out[i] = new cudaComplex[kSize];
-         cudaMemcpy(temp_out[i], fields[i].cField(),
-            kSize * sizeof(cudaComplex), cudaMemcpyDeviceToHost);
+         //hostFields[i] = new cudaComplex[kSize];
+         //cudaMemcpy(hostFields[i], fields[i].cField(),
+         //   kSize * sizeof(cudaComplex), cudaMemcpyDeviceToHost);
+         hostFields[i].allocate(kSize);
+         hostFields[i] = fields[i];
       }
 
       // Write fields
@@ -934,16 +960,16 @@ namespace Rpg {
       for (int i = 0; i < kSize; i++) {
          out << Int(i, 5);
          for (int j = 0; j < nMonomer; ++j) {
-               out << "  " << Dbl(temp_out[j][i].x, 18, 11)
-              << Dbl(temp_out[j][i].y, 18, 11);
+               out << "  " << Dbl(hostFields[j][i].x, 18, 11)
+              << Dbl(hostFields[j][i].y, 18, 11);
          }
          out << std::endl;
       }
 
-      for(int i = 0; i < nMonomer; ++i) {
-         delete[] temp_out[i];
-         temp_out[i] = nullptr;
-      }
+      //for(int i = 0; i < nMonomer; ++i) {
+      //   delete[] hostFields[i];
+      //   hostFields[i] = nullptr;
+      //}
    }
 
    template <int D>
@@ -1073,7 +1099,7 @@ namespace Rpg {
       UTIL_CHECK(nBasis > 0);
       UTIL_CHECK(nStar >= nBasis);
 
-      // Compute DFT array size
+      // Compute and check DFT array size
       int kSize = 1;
       for (int i = 0; i < D; i++) {
          if (i == D - 1) {
@@ -1083,12 +1109,12 @@ namespace Rpg {
             kSize *= mesh().dimension(i);
          }
       }
-      kSize = dft.capacity();
+      UTIL_CHECK(kSize == dft.capacity());
       
-      // Allocate dft_out
-      cudaComplex* dft_out;
-      dft_out = new cudaComplex[kSize];
-
+      // Allocate hostDft
+      //cudaComplex* hostDft;
+      //hostDft = new cudaComplex[kSize];
+      HostField<cudaComplex> hostDft(kSize);
 
       // Create Mesh<D> with dimensions of DFT Fourier grid.
       Mesh<D> dftMesh(dft.dftDimensions());
@@ -1103,10 +1129,10 @@ namespace Rpg {
       int ib;                                 // basis index
       int iw;                                 // wave index
 
-      // Initialize all dft_out components to zero
+      // Initialize all hostDft components to zero
       for (rank = 0; rank < dftMesh.size(); ++rank) {
-         dft_out[rank].x = 0.0;
-         dft_out[rank].y = 0.0;
+         hostDft[rank].x = 0.0;
+         hostDft[rank].y = 0.0;
       }
 
       // Loop over stars, skipping cancelled stars
@@ -1138,8 +1164,8 @@ namespace Rpg {
                   UTIL_ASSERT(!isnan(coeff.imag()));
                   indices = wavePtr->indicesDft;
                   rank = dftMesh.rank(indices);
-                  dft_out[rank].x = coeff.real();
-                  dft_out[rank].y = coeff.imag();
+                  hostDft[rank].x = coeff.real();
+                  hostDft[rank].y = coeff.imag();
                }
             }
             ++is;
@@ -1165,8 +1191,8 @@ namespace Rpg {
                   UTIL_ASSERT(!isnan(coeff.imag()));
                   indices = wavePtr->indicesDft;
                   rank = dftMesh.rank(indices);
-                  dft_out[rank].x = (cudaReal)coeff.real();
-                  dft_out[rank].y = (cudaReal)coeff.imag();
+                  hostDft[rank].x = (cudaReal)coeff.real();
+                  hostDft[rank].y = (cudaReal)coeff.imag();
                }
             }
 
@@ -1184,8 +1210,8 @@ namespace Rpg {
                   UTIL_ASSERT(!isnan(coeff.imag()));
                   indices = wavePtr->indicesDft;
                   rank = dftMesh.rank(indices);
-                  dft_out[rank].x = (cudaReal)coeff.real();
-                  dft_out[rank].y = (cudaReal)coeff.imag();
+                  hostDft[rank].x = (cudaReal)coeff.real();
+                  hostDft[rank].y = (cudaReal)coeff.imag();
                }
             }
 
@@ -1199,11 +1225,12 @@ namespace Rpg {
          }
       }
 
-      // Copy dft_out (host) to dft (device)
-      cudaMemcpy(dft.cField(), dft_out,
-                 kSize * sizeof(cudaComplex), cudaMemcpyHostToDevice);
+      // Copy hostDft (host) to dft (device)
+      //cudaMemcpy(dft.cField(), hostDft,
+      //           kSize * sizeof(cudaComplex), cudaMemcpyHostToDevice);
+      dft = hostDft;
 
-      delete[] dft_out;
+      //delete[] hostDft;
 
    }
 
@@ -1213,10 +1240,11 @@ namespace Rpg {
    const
    {
       UTIL_CHECK(basis().isInitialized());
-      const int nStar = basis().nStar();       // Number of stars
-      const int nBasis = basis().nBasis();     // Number of basis functions
+      UTIL_CHECK(dft.meshDimensions() == mesh().dimensions());
+      const int nStar = basis().nStar();    // Number of stars
+      const int nBasis = basis().nBasis();  // Number of basis functions
 
-      // Allocate dft_in
+      // Compute size for DFT of real data
       int kSize = 1;
       for (int i = 0; i < D; i++) {
          if (i == D - 1) {
@@ -1226,15 +1254,21 @@ namespace Rpg {
             kSize *= mesh().dimension(i);
          }
       }
-      cudaComplex* dft_in;
-      dft_in = new cudaComplex[kSize];
-
-      // Copy dft (device) to dft_in (host)
-      cudaMemcpy(dft_in, dft.cField(),
-             kSize * sizeof(cudaComplex), cudaMemcpyDeviceToHost);
+      UTIL_CHECK(kSize == dft.capacity());
 
       // Create Mesh<D> with dimensions of DFT Fourier grid.
       Mesh<D> dftMesh(dft.dftDimensions());
+      UTIL_CHECK(dftMesh.size() == kSize);
+
+      // Allocate hostDft
+      //cudaComplex* hostDft;
+      //hostDft = new cudaComplex[kSize];
+      HostField<cudaComplex> hostDft(kSize);
+
+      // Copy dft (device) to hostDft (host)
+      //cudaMemcpy(hostDft, dft.cField(),
+      //       kSize * sizeof(cudaComplex), cudaMemcpyDeviceToHost);
+      hostDft = dft;
 
       // Declare variables needed in loop over stars
       typename Basis<D>::Star const* starPtr;  // pointer to current star
@@ -1293,7 +1327,7 @@ namespace Rpg {
             // Compute component value 
             rank = dftMesh.rank(wavePtr->indicesDft);
             component =
-                   std::complex<double>(dft_in[rank].x, dft_in[rank].y);
+                   std::complex<double>(hostDft[rank].x, hostDft[rank].y);
             bool componentError = false;
             #if UTIL_DEBUG
             if (std::isnan(component.real())) componentError = true;
@@ -1323,7 +1357,7 @@ namespace Rpg {
             // Verbose reporting of any detected error
             if (componentError) {
                std::complex<double> waveComponent =
-                   std::complex<double>(dft_in[rank].x, dft_in[rank].y);
+                   std::complex<double>(hostDft[rank].x, hostDft[rank].y);
                Log::file() 
                   << " Error in FieldIo::convertKGridToBasis\n"
                   << "Star  Id        " << starPtr->starId << "\n"
@@ -1363,7 +1397,7 @@ namespace Rpg {
 
             // Compute component value
             component =
-                     std::complex<double>(dft_in[rank].x, dft_in[rank].y);
+                     std::complex<double>(hostDft[rank].x, hostDft[rank].y);
             UTIL_CHECK(abs(wavePtr->coeff) > 1.0E-8);
             component /= wavePtr->coeff;
             component *= sqrt(2.0);
@@ -1388,13 +1422,14 @@ namespace Rpg {
 
       } //  loop over star index is
 
-      // Deallocate arrays (clean up)
-      delete[] dft_in;
+      // Deallocate array (clean up)
+      // delete[] hostDft;
    }
 
    template <int D>
-   void FieldIo<D>::convertBasisToKGrid(DArray< DArray<double> > const & in,
-                                        DArray< RFieldDft<D> >& out) 
+   void 
+   FieldIo<D>::convertBasisToKGrid(DArray< DArray<double> > const & in,
+                                   DArray< RFieldDft<D> >& out) 
    const
    {
       UTIL_CHECK(in.capacity() == out.capacity());

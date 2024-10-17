@@ -26,12 +26,13 @@ namespace Cuda {
     : Field<cudaReal>()
    {}
 
-   /*
-   * Destructor.
+   /**
+   * Allocating constructor.
    */
    template <int D>
-   RField<D>::~RField()
-   {}
+   RField<D>::RField(IntVec<D> const & meshDimensions)
+    : Field<cudaReal>()
+   {  allocate(meshDimensions); }
 
    /*
    * Copy constructor.
@@ -44,15 +45,20 @@ namespace Cuda {
    RField<D>::RField(const RField<D>& other)
     : Field<cudaReal>(other),
       meshDimensions_(0)
-   {
-      meshDimensions_ = other.meshDimensions_;
-   }
+   {  meshDimensions_ = other.meshDimensions_; }
+
+   /*
+   * Destructor.
+   */
+   template <int D>
+   RField<D>::~RField()
+   {}
 
    /*
    * Allocate the underlying C array for an FFT grid.
    */
    template <int D>
-   void RField<D>::allocate(const IntVec<D>& meshDimensions)
+   void RField<D>::allocate(IntVec<D> const & meshDimensions)
    {
       int size = 1;
       for (int i = 0; i < D; ++i) {
@@ -76,7 +82,7 @@ namespace Cuda {
    }
 
    /*
-   * Assignment of RField<D> from RHS HostField<Data> host array.
+   * Assignment of this RField<D> from RHS HostField<Data> host array.
    */
    template <int D>
    RField<D>& RField<D>::operator = (const HostField<cudaReal>& other)
