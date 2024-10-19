@@ -1,75 +1,239 @@
-/*! \page psfts_theory_page  Fluctuating Field Theory
+/*! \page psfts_theory_page  Fully Fluctuating Field Theory
 
 \ref psfts_intro_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
 \ref psfts_psa_page    (Next)
 <BR>
 
-Below, we summarize a few of the working equations 
+The PS-FTS simulation method used in PSCF is derived by applying the
+partial-saddle point approximation to an exact fully-fluctuating field 
+theoretic formulation of the partition function for an incompressible 
+polymer fluid.  The underlying particle-based model and its 
+field-theoretic formulation are discussed below. 
 
-\section psfts_theory_model_sec Incompressible Particle-Based Model
+We consider a mixture of polymers and solvents constructed from \f$ M \f$ 
+different types of monomer. The variable \f$ M \f$ used in this discussion
+is equivalent to the parameter nMonomer that appears in a PSCF parameter 
+file.  Let \f$ c_{i}({\bf r}) \f$ denote the concentration of monomers of 
+type \f$ i \f$ at point \f$ {\bf r} \f$ within the mixture in a specific 
+mechanical microstate of the underlying particle based model. Partcular 
+attention is given here to the common special case of systems with only
+two types of monomer (\f$ M = 2 \f$), also known as AB systems.
 
-We consider a mixture of polymers and solvents containing \f$ M \f$ types 
-of monomer (where \f$ M \f$ is denoted by nMonomer in the parameter file).
-Let \f$ c_{i}({\bf r}) \f$ denote the concentration of monomers of type 
- \f$ i \f$ at point \f$ {\bf r} \f$ within the mixture in a specific 
-mechanical microstate (i.e., a specific list of monomer positions).  
-We consider a strictly incompressible model in which the monomer 
-concentrations must satisfy a constraint
+The implementation of PS-FTS in PSCF is designed for a type of 
+incompressible model in which the monomer concentrations are assumed
+to rigorously satisfy a incompressibility constraint 
 \f[
    \sum_{i=1}^{M} c_{i}({\bf r}) = c_{0}
 \f]
-for all \f$ {\bf r} \f$ , where \f$ c_{0} = 1/v \f$ and \f$ v = 1/c_{0} \f$ 
-is the monomer reference volume (denoted by vMonomer in the parameter
-file). The potential energy for microstates that satisfy this constraint 
-is assumed to be of the form
+for all \f$ {\bf r} \f$ , where \f$ c_{0} = 1/v \f$ is the total 
+mononer concentration and \f$ v = 1/c_{0} \f$ is the corresponding 
+monomer reference volume (denoted by vMonomer in the parameter file). 
+
+Throughout this and subsequent theoretic discussions of particle-field
+transformations, we use units for energy in which \f$ k_{B} T = 1 \f$.
+
+\section psfts_theory_model_sec Incompressible Model (Particle-Based)
+
+In the particle-based model used by PSCF for PS-FTS calculations, the 
+potential energy for states that satisfy the incompressibility 
+constraint is taken to be of the form
 \f[
    U = U_{\rm id} + U_{\rm int}
    \quad, 
 \f]
 in which \f$ U_{\rm id} \f$ is the intramolecular potential energy of 
-a gas of non-interacting molecules, and
+a gas of non-interacting Gaussian chains, and in which
 \f[
    U_{\rm int} 
     =  \frac{v}{2} 
    \int d{\bf r} \; \chi_{ij} c_{i}({\bf r}) c_{j}({\bf r}) 
 \f]
-is a non-bonded pair interaction energy, where
-\f$ \chi_{ij} \f$ is an element of a symmetric \f$ M \times M \f$ 
-matrix of Flory-Huggins interaction parameters.
-Here and hereafter, we adopt the Einstein convention for summations 
-over repeated indices \f$ i \f$ or \f$ j \f$ that represent monomer 
-type indices, which are sums from \f$ 1, \ldots, M \f$ .
+is a non-bonded pair interaction energy with local interactions.
+Here, \f$ \chi_{ij} \f$ is an element of a symmetric \f$ M \times M \f$ 
+matrix of Flory-Huggins interaction parameters, which is dimensionless
+because \f$U_{\rm int}\f$ is expressed in units with \f$ k_{B} T = 1 \f$.
+Here and hereafter, we adopt the Einstein convention for summations over 
+repeated indices \f$ i \f$ or \f$ j \f$ that represent monomer type 
+indices, which are sums from \f$ 1, \ldots, M \f$ .
 
-The partition function \f$ Z \f$ for such a model is given to within an
-irrelevant multiplicative constant by a configurational integral
+Consider the commonly studied case of AB systems, with \f$ M = 2 \f$.
+For simplicity, when considering such systems, we focus on a model 
+in which the chi matrix has vanishing diagonal components, 
+\f$ \chi_{11} = \chi_{22} = 0 \f$, and a positive value denoted by
+\f$ \chi \f$ for the off-diagonal components,
+\f$ \chi = \chi_{12} = \chi_{21} \f$, \f$ \chi > 0 \f$.
+We refer to such systems in what follows as standard AB systems.
+The potential energy for such a system is given by
+\f[
+   U_{\rm int} 
+   =  v \chi 
+   \int d{\bf r} c_{1}({\bf r}) c_{2}({\bf r})
+\f]
+with \f$ \chi > 0 \f$.
+At the time of writing of these notes (Oct. 2024), all published
+PS-FTS calculations had treated on such standard AB systems.
+
+The partition function \f$ Z \f$ for an incompressible particle-based
+model with any value of \f$ M \f$ can be expressed to within an 
+irrelevant multiplicative constant as a configurational integral
 \f[
    Z = \int {\cal D}{\bf r} \; e^{-U_{\rm id} - U_{\rm int} }
        \; 
        \delta \left ( \sum_{i=1}^{M} c_{i}({\bf r}) - c_{0} \right )
    \quad,
 \f]
-in which the \f$ \delta \f$-function imposes the incompressibility 
+in which the \f$ \delta \f$-functional imposes the incompressibility 
 constraint.
 
-\section psfts_theory_AB_sec Fluctuating Field Theory: Standard AB Systems (\f$ M=2 \f$)
+\section psfts_theory_AB_sec Field Theory: Standard AB Systems (\f$ M=2 \f$)
 
-Definition of c(plus) and c(minus):
+We first consider the case of standard AB systems, as described above.
+To describe this, it is convenient to define concentration components
 \f[
-  C_{1}(\bf r}) = c_{1}({\bf r} - c_{2}({\bf r})
+  C_{-}({\bf r}) = c_{1}({\bf r} - c_{2}({\bf r})
   \quad\quad
-  C_{+}(\bf r}) = c_{1}({\bf r} + c_{2}({\bf r})
+  C_{+}({\bf r}) = c_{1}({\bf r} + c_{2}({\bf r}) \quad.
 \f]
-Constraint: \f$ C_{+}({\bf r}) = c_{0} \f$.
+Note that the incompressibility constraint requires that 
+\f$ C_{+}({\bf r}) = c_{0} \f$ for all \f$ {\bf r} \f$, while 
+\f$ C_{-}({\bf r}) \f$ fluctuates.
+Rewriting the potential energy \f$ U_{\rm int} \f$ in terms of these 
+variables yields
+\f[
+   U_{\rm int} 
+   =  \frac{1}{4} v \chi 
+   \int d{\bf r} 
+   [ \; C_{+}^{2} ({\bf r}) - C_{-}^{2}({\bf r}) + c_{0}^{2} \; ] 
+   \quad,
+\f]
+where we now may set \f$ C_{+}({\bf r}) = c_{0} \f$ within the 
+integrand.
 
+<b> Particle-Field Transformation </b>
 
-Result of Hubbard-Stratonovich transformation
+The factor of \f$ \exp( -U_{\rm int} ) \f$ in the configurational
+integral that defines \f$ Z \f$ may be re-expressed as a functional
+integeral over an auxiliary field by applying a Hubbard-Stratonovich 
+transformation. For the case \f$ \chi > 0 \f$ of interest here, this 
+yields
+\f[
+   e^{-U_{\rm int} }
+   =  \frac{1}{N} 
+   \int {\cal D}\omega_{-}
+   \exp \left \{ - 
+   \int \! d{\bf r} \; \left [  \;
+    \frac{ \omega_{\alpha}^{2}}{ v \chi}
+          + \omega_{\alpha} C_{\alpha} 
+          + \frac{\chi}{4} \;
+   \right ] \right \}
+   \; ,
+\f]
+where \f$ \int {\cal D} \omega_{-} \f$ denotes a functional integral 
+over a real-valued field \f$ \omega_{-}({\bf r}) \f$, and where
+\f[
+   N \equiv
+   \int {\cal D} \omega_{-}
+   \exp \left \{ 
+   - \int \! d{\bf r} \; 
+   \frac{\omega_{-}^{2}}{v \chi }  
+   \right \}
+\f]
+is a constant.
 
-\section psfts_theory_general_sec Fluctuating Field Theory: General (\f$ M \geq 2 \f$)
+The \f$ \delta \f$-function that constrains the total monomer 
+concentration may also be expressed as a functional integral
+\f[
+   \delta(c({\bf r}) - c_{0}) = 
+   \int {\cal D}\omega_{+} \exp \left \{ 
+   - i \int d{\bf r} \; \omega_{+} [ \; C_{M} - c_{0} \; ]
+   \right \} 
+\f]
+in which \f$ \omega_{+}({\bf r}) \f$ is a fluctuating real-valued
+Lagrange multplier field that imposes the constraint requiring 
+that \f$ C_{M}({\bf r}) = c_{0} \f$, for all \f$ {\bf r} \f$, and 
+\f$ \int {\cal D}\omega_{+} \f$ is a functional integral over 
+this field.
 
-PSCF uses a formulation of field theory for incompressible systems that 
-allows treatment of some systems with more than two monomer types
-(\f$ M > 2 \f$), but that reduces to formalism described above in the
-case of a standard AB system. 
+Substituting the field-theoretic expressions for \f$ e^{-U_{\rm int}} \f$ 
+and the \f$ \delta \f$-function into the definition of the \f$ Z \f$ for
+an incompressible system, we obtain
+\f[
+   Z = N^{-1} 
+   \int {\cal D}\omega \; e^{ -H_{\rm f} }
+   \int \! {\cal D}{\bf r} \; e^{-U_{\rm id} - H_{\rm c}}
+   \quad,
+\f]
+in which \f$ \int {\cal D}\omega \f$ denotes an integral over both
+\f$ \omega_{-} \f$ and \f$ \omega_{+} \f$, and
+\f[
+   H_{\rm f}  = 
+   \int \! d{\bf r} \; \left \{
+   - \sum_{\alpha=1}^{M-1}  
+     \frac{M \Omega_{\alpha}^{2} }{ 2 v \lambda_{\alpha}}
+   - i \omega_{+}({\bf r}) c_{0} 
+   + \chi/4 \right \}  
+\f]
+\f[
+   H_{\rm c}  = 
+   \int \! d{\bf r} \; 
+   [ \omega_{-}({\bf r}) C_{-}({\bf r}) 
+     + i \omega_{+}({\bf r}) C_{+}({\bf r}) 
+   \quad.  
+\f]
+for \f$ \alpha = M \f$.
+Note that \f$ H_{\rm f} \f$ depends only on the auxiliary fields 
+(so that the subscript f denotes "field"), while \f$ H_{\rm c} \f$ 
+introduces a coupling between auxiliary fields and the monomer 
+concentrations (so that the subscript c denotes "concentration" or 
+"coupling").  The energy \f$ H_{\rm c} \f$ can also be expressed as 
+an external field energy
+\f[
+   H_{\rm c}  = 
+   \int \! d{\bf r} \; 
+   \left [ w_{1}({\bf r}) c_{1}({\bf r}) 
+     + w_{2}({\bf r}) C_{2}({\bf r}) \right ]
+   \quad,
+\f]
+in which each monomer of type \f$ i \f$ is subjected to a
+complex-valued potential field \f$ w_{i} ({\bf r}) \f$, where
+\f[
+   w_{1}({\bf r}) = +\omega_{-}({\bf r}) + i\omega_{+}({\bf r}) \;
+\f]
+\f[
+   w_{2}({\bf r}) = -\omega_{-}({\bf r}) + i\omega_{+}({\bf r}) .
+\f]
+for \f$ i = \f$ 1 and 2. 
+
+<b> Field-Theoretic Hamiltonian  </b>
+
+The expression for \f$ Z \f$ obtained above can be summarized as a 
+functional integral of the form
+\f[
+   Z = N^{-1} 
+   \int {\cal D}\omega \; e^{-H[\omega]}
+   \quad,
+\f]
+in which 
+\f[
+   H  = -\ln Z_{\rm id} + H_{\rm f} \quad.
+\f]
+is a field theoretic Hamiltonian that is a functional of the fields 
+\f$\omega_{-}\f$ and \f$\omega_{+}\f$, in which
+\f[
+   Z_{\rm id}[w]
+   = \int \! {\cal D}{\bf r} \; e^{-U_{\rm id} - H_{\rm c}}
+\f]
+is the partition function for a hypothetical gas of non-interacting 
+molecules subjected to fluctuating external fields, in which monomers 
+of type \f$ i \f$ are subjected to field \f$ w_{i}({\bf r}) \f$.
+
+\section psfts_theory_general_sec Field Theory: General (\f$ M \geq 2 \f$)
+
+The implementation of PS-FTS in PSCF uses a ``symmetric" formulation of 
+field theory for incompressible systems that allows treatment of systems
+ with more than two monomer types (\f$ M > 2 \f$), subject to some 
+constraints, but that reduces to the formalism described above when 
+applied to a standard AB system.
 
 <b> Matrix Notation </b>
 
@@ -100,12 +264,10 @@ a superscript \f$ T \f$ denotes a matrix transpose, so that
 Fluctuations of \f$ {\bf c}({\bf r})\f$ within the subspace orthogonal 
 to \f$ {\bf e} \f$ thus preserve the incompressibility constraint. 
 
-The formulation of polymer field theory theory used by PSCF for PS-FTS 
-simulations of incompressible systems is based on a a de-composition of 
+The formulation of PS-FTS in PSCF is based on a a de-composition of 
 \f$ {\bf c}({\bf r}) \f$ and other vectors into components parallel and 
-orthogonal to \f$ {\bf e} \f$.
-Let \f$ {\bf Q} \f$ and \f$ {\bf P} \f$ denote \f$ M \times M \f$ 
-orthogonal projection matrices
+orthogonal to \f$ {\bf e} \f$.  Let \f$ {\bf Q} \f$ and \f$ {\bf P} \f$ 
+denote \f$ M \times M \f$ orthogonal projection matrices
 \f[
    {\bf Q} = \frac{1}{M}{\bf e}{\bf e}^{T}
    \quad\quad, \quad\quad
@@ -146,23 +308,27 @@ real eigenvalues,  defined such that
    \lambda_{\alpha} {\bf v}_{\alpha}
 \f]
 for all \f$ \alpha = 1, \ldots, M \f$ .
-As already noted, \f$ {\bf e} \f$ is always an eigenvector with a 
-zero eigenvalue. By convention, we define the last eigenvector to be 
+As already noted, \f$ {\bf e} \f$ is always an eigenvector with a zero 
+eigenvalue. By convention, we define this to be the last eigenvector,
+so that 
 \f[
    {\bf v}_{M} = {\bf e} \quad,
 \f] 
-for which \f$ \lambda_{M}=0 \f$. We also choose a normalization 
-convention for which
+giving \f$ \lambda_{M}=0 \f$. We also choose a normalization convention
+for the eigenvectors in which
 \f[
    {\bf v}_{\alpha}^{T} {\bf v}_{\beta} 
    = \delta_{\alpha\beta}M  
 \f]
 for all \f$ \alpha, \beta = 1,\ldots, M \f$ .
-Note that this convention is compatible with the normalization of 
-\f$ {\bf e} = {\bf v}_{M} \f$, for which \f$ {\bf e}^{T}{\bf e} = M \f$ . 
-The \f$ M - 1 \f$ eigenvectors \f$ {\bf v}_{1}, \ldots, {\bf v}_{M-1} \f$ 
-are all orthogonal to \f$ {\bf e} \f$, and thus span the \f$ M - 1 \f$ 
-dimensional subspace orthogonal to \f$ {\bf e} \f$ .
+This convention is chosen to be compatible with the norm of 
+\f$ {\bf e} = {\bf v}_{M} \f$, for which \f$ {\bf e}^{T}{\bf e} = M \f$,
+and thus with the identification \f$ {\bf v}_{M} = {\bf e} \f$. 
+Because eigenvectors of a real symmetric matrix with distinct eigenvalues
+must be orthogonal, the \f$ M - 1 \f$ eigenvectors 
+\f$ {\bf v}_{1}, \ldots, {\bf v}_{M-1} \f$ with generally nonzero 
+eigenvalues are all orthogonal to \f$ {\bf e} \f$, and thus span the 
+\f$ M - 1 \f$ dimensional subspace orthogonal to \f$ {\bf e} \f$ .
 
 Let \f$ C_{\alpha}({\bf r}) \f$ denote a component of the vector
 \f$ {\bf c}({\bf r}) \f$ in a basis of these eigenvectors, defined such 
@@ -313,10 +479,15 @@ while component \f$ H_{\rm c} \f$ introduces a coupling between
 auxiliary fields and the monomer concentrations (so that the 
 subscript c denotes "concentration" or "coupling").
 
-<b> Monomer Type Potential Fields </b>
-
-Let \f$ w_{1}({\bf r}), \ldots w_{M}({\bf r}) \f$ denote potential
-fields associated with specific monomer types, given by
+The energy \f$ H_{\rm c} \f$ can also be expressed as a sum 
+\f[
+   H_{\rm c}  = 
+   \sum_{i=1}^{M} \int \! d{\bf r} \; 
+   w_{i}({\bf r})c_{i}({\bf r})  
+   \quad,
+\f]
+in which \f$ w_{1}({\bf r}), \ldots w_{M}({\bf r}) \f$ denote 
+potential fields associated with specific monomer types, given by
 \f[
    w_{i}({\bf r}) = 
    \sum_{\alpha=1}^{M} W_{\alpha}({\bf r}) v_{\alpha i} 
@@ -325,19 +496,15 @@ fields associated with specific monomer types, given by
    \frac{1}{M} \sum_{j=1}^{M} v_{\alpha j} w_{j}({\bf r}) 
 \f]
 for all \f$ i = 1, \ldots, M \f$ and \f$ \alpha = 1, \ldots, M \f$ .
-Using this definition, \f$ H_{\rm c} \f$ can also be expressed as a sum 
-\f[
-   H_{\rm c}  = 
-   \sum_{i=1}^{M} \int \! d{\bf r} \; 
-   w_{i}({\bf r})c_{i}({\bf r})  
-   \quad. 
-\f]
 The fields \f$ w_{1}, \ldots, w_{M} \f$ are the monomer chemical 
 potential fields used within the solution of the modified diffusion 
-equation to compute single-polymer partition functions.
+equation to compute single-polymer partition functions for chains
+in an external field. 
 
-The functional integral for the canonical partition function \f$ Z \f$ 
-may be expressed as an integral
+<b> Field-Theoretic Hamiltonian  </b>
+
+The functional integral expression for \f$ Z \f$ obtained above
+may expressed as an integral
 \f[
   Z = N^{-1} \int {\cal D}\omega \; e^{-H[\omega]}
 \f]
@@ -352,26 +519,10 @@ is an effective Hamiltonian, and
 \f]
 is the partition function of a hypothetical gas of non-interacting 
 molecules in which monomers of type \f$ i \f$ are subjected to a 
-field \f$ w_{i}({\bf r}) \f$ . 
-
-Hereafter, we use the notation \f$ \langle \cdots \rangle_{\rm id} \f$ 
-to denote averages evaluated for a hypothetical ideal gas subjected to 
-an external potential \f$ H_{\rm c} \f$, as in the definition of 
-\f$ Z_{\rm id} \f$ . We define average volume fraction fields as
-\f[
-    \phi_{i}({\bf r}) = v \langle c_{i}({\bf r}) \rangle_{\rm id} 
-\f]
-\f[
-    \Phi_{\alpha}({\bf r}) 
-                   =  v \langle C_{\alpha}({\bf r}) \rangle_{\rm id}
-                    = v_{\alpha i}\phi_{i}({\bf r})
-    \quad. 
-\f]
-for all \f$ i, \alpha = 1, \ldots, M \f$ .
-Because these are evaluated for a gas with an external potential 
-\f$ H_{\rm c} \f$, these volume fraction fields are functionals of 
-the \f$ w \f$ fields.
-
+field \f$ w_{i}({\bf r}) \f$ . The result is a straightforward 
+generalization of that obtained for standard AB systems, after
+generalizing the definition of both \f$ H_{\rm f} \f$ and 
+\f$ H_{\rm c} \f$. 
 
 <BR>
 \ref psfts_intro_page  (Prev, Up) &nbsp; &nbsp; &nbsp; &nbsp;
