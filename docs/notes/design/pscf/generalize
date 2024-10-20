@@ -1,28 +1,42 @@
 
 Strategy:
----------
 
-PSCF will provide multiple programs, each with its own range of 
-applications:
+Possible types of generalization (and associated issues):
+----------------------------------------------------------
 
-- A specific program will be implemented for a specific type of chain 
-geometry, either threads or beads. 
+ For each type of generalization, we have to choose between
+ different programs with different code bases for some features,
+ or switches that allow multiple options within a single code.
 
-- It may be possible for a program to allow for more than one type of 
-interaction, but it may then require different types of iterators for
-different types of interaction.
+ - Continous vs. discrete chains 
+     - Definitely affects block class
+     - Treatment of vertices for continuous chains
+     - Also affects Sweep class (can't sweep discrete lengths)
 
-- In order to generalize the Sweep module, it may be necessary for 
-the LinearSweep class to divide its responsibilities up among smaller 
-classes that allow variations of defined in the Mixture or Interaction.
+ - Change in nature of interaction:
+     - Compressible vs. Incompressible
+     - Local vs. Nonlocal
+     - Harmonic vs. Anharmonic interation models
+     - Strong influences design of Iterators
+     - Also affects Sweep class
 
-Different types of chain geometry
----------------------------------
+ - Complex values fields and free energies
+
+     - Necessary for CL-FTS
+
+     - May need to rethink some solver templates and 
+       classes that were designed for use with real fields
+
+
+Continuous vs. discrete chains:
+-------------------------------
+
+Alternative 1:
 
 Proposed division of code into subnamespaces for the "thread" model 
 (Continuous chains) and for models with discrete beads.
 
-namespace Pscf::Thread{
+namespace Pscf::Continuous{
      // Continuous chains, defined in terms of preferred volume.
      chem/
      solvers/
@@ -34,13 +48,13 @@ Namespace Pscf::Bead{
      solvers/
 }
 
-Place these in Pscf, but use "using Pscf::Thread" or "using Pscf::Bead" 
-as needed. 
+Place these in Pscf, but use "using Pscf::Continuous" or 
+"using Pscf::Discrete" as needed. 
 
-Possible alternative:
+Alternative 2:
 
-  - Allow continuous or discrete models in current code, chosen by a
-    boolean variable. 
+  - Allow continuous or discrete models in current code, chosen by 
+    a global (perhaps class static) boolean variable. 
 
   - Put switch in Block to change iteration algorithm
 
@@ -54,32 +68,33 @@ Possible alternative:
      - Add file format to specify vertex types. For linear polymers
        consider adding default which make this unnecessary.
 
-     - Default: For linear polymers, each vertex has the same type
-       as the following block, and the last vertex has the same 
-       type as the previous block. 
+     - Default: For linear polymers, each junction has the same type
+       as the previous block (pick one).
 
      - Assign each monomer type a bond length that is used for bonds
        between monomers of the same type.
 
+     - Default: For linear polymers, bonds between the last monomer of
+       one block and the first monomer of the next use the bond type 
+       of the next block. 
+
+     - Add a convention that, by default bonds between beads of 
+       different type that are conntected to a vertex is the arithmetic 
+       mean of the bond lengths associated with the two types.
+
      - Add file format to specify types of bonds for bonds between
        beads of different type.
 
-     - Add a convention that, by default bonds between beads of 
-       different type have a length that is the arithmetic mean of
-       the bond lengths associated with the two types.
-
      - Stick to Gaussian bonds for now.
 
+Generalized Interaction
+-----------------------
 
-Different types of interaction
-------------------------------
-
-Create Interaction base class with the following flags:
+Create Interaction class with the following flags:
 
    - Local
    - Incompressible
-   - Linear (i.e., linear equation for w as a function of concentration)
-   - Flory-Huggins
+   - Harmonic (i.e., linear equation for w as a function of concentration)
 
 Iterators can then be designed for interactions with specific properties,
 and can test for these properties to ensure validity.
@@ -112,8 +127,9 @@ Compressibility:
 
 Sweep:
 
-   - For each type of interaction, we would have to define an
-     an interface to the linear sweep class.
+   - For each type of interaction, we would have to define an an 
+     interface to the linear sweep class, or have if statements in
+     the sweep class to cope with multiple possibilities.
 
 Iterators:
 ----------

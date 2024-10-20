@@ -29,177 +29,123 @@ Clean up of simple vector linear algebra kernel functions
           Use overloading of arguments to distinguish input types,
           thus limiting the number of required function names.
 
-          Use add, sub, mul div for binary operations. Start each
-          function name with the binary operation in lower case.
-
           Use V for vector, S for scalar for input argument(s). 
-          Agument types V and S follow the operation name. The
-          function addVV thus implements vector-vector addition.
+          Agument types V and S follow the operation name. 
 
+          Use Eq for unary assignment. The function eqV(A,B) thus 
+          assigns vector B to a vector A (A=B) while, eqS(A,S)
+          assigns scalar S to every element of vector A. 
+
+          Use add, sub, mul div for binary operations. Start each
+          function name with the binary operation in lower case. 
           Multiplication and division are interpreted as elementwise
-          operations, like addition and subtraction.
+          operations, like addition and subtraction.  The function 
+          addVV(A,B,C) thus implements vector-vector addition 
+          A = B + C, while addVS(A,B,c) implements vector scalar
+          addition A = B + c in which c is a scalar that is added
+          to every element of B.
 
-          Use Eq after the operation name to denote in-place operation 
-          (compound assignments), such as addEq, analogous to C/C++
-          notation +=, -=, *=, 
+          Use Eq after a binary operation name to denote in-place 
+          operations (compound assignments), such as addEq, analogous 
+          to C/C++ notation +=, -=, *=. The function addEqV(A,B) thus
+          implements A = A + B or A += B.
 
           In examples below (but not in names) use upper case for 
           vectors, lower case for scalars:
 
-            addVV   :  A = B + C vector-vector addition
-            addVS   :  A = B + c vector-scalar addition
-            addEqVV :  A = A + B in-place vector-vector addition
-            addEqVS :  A = A + c in-place vector-scalar addition
+          Unary assignment:
 
-          Result types are known from argument types.
-          Binary operations involving inputs of the same type (both
-          cudaReal or both cudaComplex) yield a result of that type.  
-          Operations involving complex and real arguments yield 
-          complex results. 
- 
-          For in place operation, the first argument must be a vector
-          of the same type as the result, passed as a pointer.
-         
+            eqV(A,B)  :  A = B  vector assignment
+            eqS(A,s)  :  A = s  assigment of scalar s to every element
+          Binary operations:
+
+            addVV(A,B,C) :  A = B + C vector-vector addition
+            addVS(A,B,c) :  A = B + c vector-scalar addition
+
+          Compound assignment:
+
+            addEqV  :  A += B or A = A + B (addition of vector V)
+            addEqS  :  A += c or A = A + c (addition of scalar c)
+
           C interface: Order of the first few parameters would be the 
           same as in order of equation, with the LHS vector listed 
-          first.  Int array size would be after arguments.
+          first.  Integer array size is after other arguments. 
+          In Cuda kernels, vectors are passed as pointers (cudaReal*
+          or cudaComplex*), scalars are passed as by value as cudaReal
+          or cudaComplex. Vectors that are not modified (any after 
+          the first argument) are passed as pointers to const (i.e.,
+          cudaReal const * or cudaComplex const *).  Return value is 
+          always void.
 
-          Define function in Pscf::Cuda.
+          Result data types (real or complex) are known from argument 
+          types.  Binary operations involving inputs of the same type 
+          (both cudaReal or both cudaComplex) yield a result with
+          elements of that type. Operations involving complex and 
+          real arguments yield complex results. 
+ 
+          Define kernel function in Pscf::Cuda::VecOp::
 
-          Examples of interfaces:
+          Examples of interfaces (return type is void in all):
 
-            addVV(real* result, real const * a, real const * b, int n)
-            addVV(complex* result, complex const * a, complex const * b, int n)
-            addVV(complex* result, complex* a, real const * b, in n)
+            addVV(real* result, real const * a, real const * b, int n);
+            addVV(complex* result, complex const * a, complex const * b, 
+                 int n);
+            addVV(complex* result, complex* a, real const * b, in n);
+            addVS(real* result, real const * a, real b, int n);
+            addVS(complex* result, complex const * a, complex b, int n);
+            addVS(complex* result, complex const * a, real b, int n);
+            addVS(complex* result, real const * a, complex b, int n);
   
-            addVS(real* result, real const * a, real b, int n)
-            addVS(complex* result, complex const * a, complex b, int n)
-            addVS(complex* result, complex const * a, real b, int n)
-            addVS(complex* result, real const * a, complex b, int n)
+            addEqV(real* a, real const * b, int n)
+            addEqV(complex* a, complex const * b, int n)
+            addEqV(complex* a, real const * b, int n)
   
-            addEqVV(real* a, real const * b, int n)
-            addEqVV(complex* a, complex const * b, int n)
-            addEqVV(complex* a, real const * b, int n)
-  
-            addEqVS(real* a, real b, int n)
-            addEqVS(complex* a, complex b, int n)
-            addEqVS(complex* a, real b, int n)
+            addEqS(real* a, real b, int n)
+            addEqS(complex* a, complex b, int n)
+            addEqS(complex* a, real b, int n)
      
           Here "real" and  "complex" denote cudaReal and cudaComplex.
 
-          That is a total of 13 functions. With 4 possible operations,
-          that is 52 possible functions. Start by implementing the ones
-          we need now.
-
-   Older proposal (less desirable, I think):
-
-       LHS (result):
-       rV - real vector
-       cV - complex vector
-
-       Pointwise binary Operations:
-       Sub   -> subtraction
-       Add   -> addition
-       Mul   -> pointwise multiplication
-       Div   -> pointwise division
-
-       Assignment:
-       Eq     -> assignment
-       Eq(Op) -> assignment to first vector operand
-
-       RHS operands:
-       V   -> vector on rhs (same as LHS by default)
-       R   -> real vector with same value for all elements
-       C   -> complex Vector with same value for all elements
-       r   -> real prefactor multiplying all elements
-       c   -> complex prefactor multiplying all elements
-       Vr  -> Vector multiplied by real prefactor
-       Vc  -> Vector multiplied by complex prefactor
-
-       In what follows: A, B, C are vectors, while a, b are scalars 
-
-       Simple Assignment:
-
-       C = A        :  rV_EqV   (vector assignment)
-       C = R        :  rV_EqR   (assign all elements same value)
-
-       Pointwise Binary operations C = A Op B have form C_OpAB 
-       (two arguments)
-
-       C = A + B    :  rV_AddVV
-       C = A - B    :  rV_SubVV
-       C = A + R    :  rV_AddVR
-       C = A - R    :  rV_SubVR
-       C = A * B    :  rV_MulVV   (element-wise multiplication)
-       C = A / B    :  rV_DivVV   (element-wise division)
-       C = Aa + Bb  :  rV_AddVrVr
-       C = A + Bb   :  rV_AddVVr
-
-       Increment operations A = A Op B have form A_EqOpB 
-       (First operand must be a vector, same address as the LHS)
-
-       A = A + B    :  rV_EqAddV
-       A = A - B    :  rV_EqSubV
-       A = A + R    :  rV_EqAddR (pointwise add same value to all elements)
-       A = A - R    :  rV_EqSubR (pointwise sub same value from all)
-       A = A*r      :  rV_EqMulr
-       A = A + aB   :  rV_EqAddVr
-
-       Corresponding functions that return a complex-valued vector
-       will start with cV. Arguments on the RHS side will use V for
-       a complex vector, c for a complex scalar that multiplies a
-       vector, r for a real scalar that multiplies a vector, C for 
-       a complex vector with the same value for all elements, R for 
-       a real vector with the same value for all elements. If we 
-       need a symbol for a real valued vector (which we may not)
-       use U. 
-
-       Rr  -> real vector (capital) and scalar (lower case)
-       Cc  -> complex vector (capital) and scalar (lower case)
+          That is a total of 13 possible binary or compount assignment 
+          functions involving the add operation.  With 4 possible binary
+          operations, that is 52 possible functions.  Start by renaming 
+          the ones we use now.
 
 5) Kernels vs. C++ Wrapper functions
 
        For many required operations with vector results, we will probably 
-       want three types of closely related function:
+       want up to three types of closely related function:
 
        1. A global cuda kernel like the existing kernels, in which the 
-          Block and Thread counts have to be passed explicitly. This 
-          could be defined in pscf/cuda. Arrays are passed as pointers.
+          Block and Thread counts have to be passed explicitly. These
+          could be defined in Pscf::Cuda. Arrays are passed as pointers.
 
        2. A C++ function in which a ThreadGrid is passed as an argument, 
           along with bare C pointers to memory on the GPU, and an array 
           dimension.  This would call a kernel internally. The presence 
           of a ThreadGrid in the argument would distinguish the interface 
           from that of an analogous kernel, so the name could be the same. 
-          This could also be defined in pscf/cuda
+          This could also be defined in Pscf::Cuda.
 
-       3. A C++ function that takes RField or RFieldDft containers.
-          This would calls the C++ pointer version internally. This could 
-          take a ThreadGrid as an argument or create one internally from 
-          knowledge of field array dimensions. The interface would be 
-          distinguished from that of the other two function types by the 
-          appearance of container types rather than pointers. This would 
-          have to be defined in a file in prdc/gpu, since that is where 
-          the containers are defined.
+       3. A C++ function that takes Field<typename T> containers.
+          This would calls the kernel or C++ pointer version internally. 
+          This could take a ThreadGrid as an argument or create one 
+          internally from knowledge of field array dimensions. The 
+          interface would be distinguished from that of the other two 
+          function types by the appearance of container types rather 
+          than pointers. This would have to be defined in namespace
+          Prdc::Gpu, since that is where the container template is 
+          defined.
 
-       - Even the existing rpg code might be able to use some functions 
-         that act on complex-valued data in order to operator on RFieldDft 
-         containers.  We'd have to think about something that operates on 
-         RFieldDft containers could use the same underlying kernels as 
-         something that operates on a CField container (not yet created). 
-         It depends in part on what data types cudaFFT is using for these 
-         two types of data.
+       -  Using Field<cudaReal> and Field<cudaComplex> rather than
+          RField<D>, RFieldDft<D> and CField<D> would avoid the need
+          to treat D as a template parameter, and allow the same 
+          functions to be used for RFieldDft<D> and CField<D> containers.
 
-       - Container CField would be created in prdc/cuda and prdc/cpu
-
-       - We would later add functions that act on complex data to 
-         pscf/gpu/linearAlgebra, and analogous functions that act on 
-         CField containers to prdc/gpu
-
-       - We need thorough unit tests to be written for all functions 
-         during development of these functions. These are simple, but 
-         humans still make mistakes, and its a lot of minor changes at 
-         once. 
+       -  We need thorough unit tests to be written for all functions 
+          during development of these functions. These are simple, but 
+          humans still make mistakes, and its a lot of minor changes at 
+          once. 
 
 6) Find locally defined kernels and replace them one-by-one with ones 
 defined in pscf/gpu or prdc/gpu:
