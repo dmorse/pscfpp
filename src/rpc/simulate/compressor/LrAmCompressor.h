@@ -86,6 +86,20 @@ namespace Rpc
       int compress();    
       
       /**
+      * Compute and return error used to test for convergence.
+      *
+      * \param resid  current residual vector
+      * \param field  current field vector    
+      * \param errorType  type of error 
+      * \param verbose  verbosity level of output report.
+      * \return error  measure used to test for convergence.
+      */
+      double computeError(DArray<double>& residTrial, 
+                          DArray<double>& fieldTrial,
+                          std::string errorType,
+                          int verbose);
+                          
+      /**
       * Write a report of time contributions used by this algorithm.
       * 
       * \param out  output stream to which to write
@@ -95,15 +109,7 @@ namespace Rpc
       /**
       * Reset / clear all timers.
       */
-      void clearTimers();
-
-      /**
-      * Compute and return the scalar error.
-      *
-      * \param verbose  verbosity level (higher is more verbose)
-      */
-      double computeError(int verbose);
-      
+      void clearTimers();      
       
       // Inherited public member functions
 
@@ -271,9 +277,9 @@ namespace Rpc
       void outputToLog();
       
       /**
-      * Set mixing parameter lambda
+      * Compute mixing parameter lambda
       */
-      double setLambda();
+      double computeLambda(double r);
       
       /**
       * IntraCorrelation (homopolymer) object

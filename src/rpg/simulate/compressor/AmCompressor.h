@@ -76,6 +76,11 @@ namespace Rpg
       int compress();    
       
       /**
+      * Compute mixing parameter lambda
+      */
+      double computeLambda(double r);  
+      
+      /**
       * Return how many times MDE has been solved.
       */
       int mdeCounter(); 

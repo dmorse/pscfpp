@@ -33,6 +33,7 @@ namespace Pscf
     : errorType_("relNormResid"),
       epsilon_(0),
       lambda_(0),
+      r_(0.9),
       maxItr_(200),
       maxHist_(50),
       nBasis_(0),
@@ -73,6 +74,15 @@ namespace Pscf
       // verbose_ = 2 => report all error measures at end
       // verbose_ = 3 => report all error measures every iteration
       readOptional(in, "verbose", verbose_);
+      
+      // Ramping parameter for correction step 
+      // Default set to 0.9. lambda = 1 - r_^Nh for Nh < maxHist
+      readOptional(in, "correctionRamp", r_);
+      
+      #ifdef PSCF_AM_TEST
+      // Default set to be false
+      readOptional(in, "hasAmTest", hasAmTest_);
+      #endif
    }
 
    /*
@@ -114,7 +124,7 @@ namespace Pscf
             Log::file() << " Iteration " << Int(itr_,5);
          }
          
-         lambda_ = setLambda();
+         lambda_ = computeLambda(r_);
 
          // Compute current residual vector, store in temp_
          timerResid_.start();
@@ -144,25 +154,16 @@ namespace Pscf
          
          #ifdef PSCF_AM_TEST
          // Compute errors and ratios used for algorithm testing
-         correctionError_ = computeError(0);
-         if (itr_ > 0) {
-            mixingRatio_ += mixingError_/preError_;
-            correctionRatio_ += correctionError_/preError_;
-            testCounter ++;
-            #if 0
-            //Log::file() << "   nBasis          = " << nBasis_ << "\n";
-            //Log::file() << "   preError        = " << preError_ << "\n";
-            //Log::file() << "   mixingError     = " << mixingError_ 
-            //            << "\n";
-            Log::file() << "   correctionError = " << correctionError_ 
-                        << "\n" ;
-            Log::file() << "   mixingRatio     = "
-                        << mixingError_/preError_ << "\n";
-            Log::file() << "   correctionRatio = " 
-                        << correctionError_/preError_ << "\n";
-            #endif
+         if (hasAmTest_){
+            // Compute errors and ratios used for algorithm testing
+            correctionError_ = computeError(0);
+            if (itr_ > 0) {
+               projectionRatio_ += projectionError_/preError_;
+               correctionRatio_ += correctionError_/preError_;
+               testCounter ++;
+            }
+            preError_ = correctionError_;
          }
-         preError_ = correctionError_;
          #endif
 
          // Check for convergence
@@ -450,23 +451,24 @@ namespace Pscf
       }
       
       #ifdef PSCF_AM_TEST
-      // Additional computation of error after linear mixing step
-      timerOmega_.stop();
+      if (hasAmTest_){
+         // Additional computation of error after projection step
+         timerOmega_.stop();
 
-      timerMDE_.start();
-      update(fieldTrial_);
-      evaluate();
-      timerMDE_.stop();
+         timerMDE_.start();
+         update(fieldTrial_);
+         evaluate();
+         timerMDE_.stop();
 
-      timerResid_.start();
-      getResidual(temp_);
-      timerResid_.stop();
+         timerResid_.start();
+         getResidual(temp_);
+         timerResid_.stop();
 
-      timerError_.start();
-      mixingError_ = computeError(0);
-      timerError_.stop();
-
-      timerOmega_.start();
+         timerError_.start();
+         projectionError_ = computeError(temp_, fieldTrial_, errorType_, 0);
+         timerError_.stop();
+         timerOmega_.start();
+      }
       #endif
 
       // Correct for predicted error
@@ -503,15 +505,15 @@ namespace Pscf
    }
 
    /**
-   * Set mixing parameter for second step of an Anderson Mixing Algorithm
+   * Compute mixing parameter for mixing step of an Anderson mixing algorithm.
    * (virtual)
    */
    template <typename Iterator, typename T>
-   double AmIteratorTmpl<Iterator,T>::setLambda()
+   double AmIteratorTmpl<Iterator,T>::computeLambda(double r)
    {
       double lambda;
       if (nBasis_ < maxHist_) {
-         lambda = 1.0 - pow(0.9, nBasis_ + 1);
+         lambda = 1.0 - pow(r, nBasis_ + 1);
       } else {
          lambda = 1.0;
       }
@@ -564,94 +566,58 @@ namespace Pscf
    }
 
    template <typename Iterator, typename T>
-   double AmIteratorTmpl<Iterator,T>::computeError(int verbose)
-   {
+   double AmIteratorTmpl<Iterator,T>::computeError(T&residTrial, T&fieldTrial, 
+                                                   std::string errorType, 
+                                                   int verbose)
+   { 
       double error = 0.0;
+      
+      // Find max residual vector element
+      double maxRes  = maxAbs(residTrial);
+      
+      // Find norm of residual vector
+      double normRes = norm(residTrial);
+      
+      // Check if calculation has diverged (normRes will be NaN)
+      UTIL_CHECK(!std::isnan(normRes));
+      
+      // Find root-mean-squared residual element value
+      double rmsRes = normRes/sqrt(nElements());
+      
+      // Find norm of residual vector relative to field
+      double normField = norm(fieldTrial);
+      double relNormRes = normRes/normField;
+      
+      // Set error value
+      if (errorType == "maxResid") {
+         error = maxRes;
+      } else if (errorType == "normResid") {
+         error = normRes;
+      } else if (errorType == "rmsResid") {
+         error = rmsRes;
+      } else if (errorType == "relNormResid") {
+         error = relNormRes;
+      } else {
+         UTIL_THROW("Invalid iterator error type in parameter file.");
+      }
 
       if (verbose > 1) {
-
          Log::file() << "\n";
-
-         // Find max residual vector element
-         double maxRes  = maxAbs(resHists_[0]);
          Log::file() << "Max Residual  = " << Dbl(maxRes,15) << "\n";
-
-         // Find norm of residual vector
-         double normRes = norm(resHists_[0]);
          Log::file() << "Residual Norm = " << Dbl(normRes,15) << "\n";
-
-         // Find root-mean-squared residual element value
-         double rmsRes = normRes/sqrt(nElem_);
          Log::file() << "RMS Residual  = " << Dbl(rmsRes,15) << "\n";
-
-         // Find norm of residual vector relative to field
-         double normField = norm(fieldHists_[0]);
-         double relNormRes = normRes/normField;
          Log::file() << "Relative Norm = " << Dbl(relNormRes,15) 
                      << std::endl;
-
-         // Check if calculation has diverged (normRes will be NaN)
-         UTIL_CHECK(!std::isnan(normRes));
-
-         // Set error value
-         if (errorType_ == "maxResid") {
-            error = maxRes;
-         } else if (errorType_ == "normResid") {
-            error = normRes;
-         } else if (errorType_ == "rmsResid") {
-            error = rmsRes;
-         } else if (errorType_ == "relNormResid") {
-            error = relNormRes;
-         } else {
-            UTIL_THROW("Invalid iterator error type in parameter file.");
-         }
-
-      } else {
-
-         // Set error value
-         if (errorType_ == "maxResid") {
-            error = maxAbs(resHists_[0]);
-         } else if (errorType_ == "normResid") {
-            error = norm(resHists_[0]);
-         } else if (errorType_ == "rmsResid") {
-            error = norm(resHists_[0])/sqrt(nElem_);
-         } else if (errorType_ == "relNormResid") {
-            double normRes = norm(resHists_[0]);
-            double normField = norm(fieldHists_[0]);
-            error = normRes/normField;
-         } else {
-            UTIL_THROW("Invalid iterator error type in parameter file.");
-         }
-
       }
 
       return error;
    }
    
-   #ifdef PSCF_AM_TEST
    template <typename Iterator, typename T>
-   double AmIteratorTmpl<Iterator,T>::computeError(T a)
-   { 
-      double error = 0;
-      if (errorType_ == "maxResid") {
-         // Maximum residual vector element
-         error = maxAbs(a);
-      } else if (errorType_ == "normResid") {
-         // L2 norm of residual vector
-         error = norm(a);
-      } else if (errorType_ == "rmsResid") {
-         // Root-mean-squared residual element value
-         error = norm(a)/sqrt(nElem_);
-      } else if (errorType_ == "relNormResid") {
-         double normRes = norm(a);
-         double normField = norm(fieldHists_[0]);
-         error = normRes/normField;
-      } else {
-         UTIL_THROW("Invalid iterator error type.");
-      }
-      return error; 
+   double AmIteratorTmpl<Iterator,T>::computeError(int verbose)
+   {
+      return computeError(resHists_[0], fieldHists_[0], errorType_, verbose);
    }
-   #endif
    
    template <typename Iterator, typename T>
    void AmIteratorTmpl<Iterator,T>::outputTimers(std::ostream& out)
@@ -688,10 +654,12 @@ namespace Pscf
       out << "\n";
       
       #ifdef PSCF_AM_TEST
-      out << "Average Mixing Step Ratio:     "
-           << Dbl(mixingRatio_/testCounter, 3, 3)<< "\n";
-      out << "Average Correction Step Ratio:     "
-           << Dbl(correctionRatio_/testCounter, 3, 3)<< "\n";
+      if (hasAmTest_){
+         out << "Average Projection Step Reduction Ratio:     "
+             << Dbl(projectionRatio_/testCounter, 3, 3)<< "\n";
+         out << "Average Correction Step Reduction Ratio:     "
+             << Dbl(correctionRatio_/testCounter, 3, 3)<< "\n";
+      }
       #endif
    }
 
