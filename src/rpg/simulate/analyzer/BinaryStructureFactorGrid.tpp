@@ -3,9 +3,11 @@
 
 #include "BinaryStructureFactorGrid.h"
 
+#include <prdc/cuda/HostField.h>
+#include <prdc/crystal/shiftToMinimum.h>
+
 #include <rpg/simulate/Simulator.h>
 #include <rpg/System.h>
-#include <prdc/crystal/shiftToMinimum.h>
 #include <pscf/mesh/MeshIterator.h>
 #include <util/misc/FileMaster.h>
 #include <util/misc/ioUtil.h>
@@ -118,23 +120,27 @@ namespace Rpg {
       IntVec<D> const & dimensions = system().mesh().dimensions();
       RField<D> wm;
       wm.allocate(dimensions);
+      
       // Compute W-
       // GPU resources
       int nBlocks, nThreads;
       ThreadGrid::setThreadsLogical(wm.capacity(), nBlocks, nThreads);
+      
       pointWiseBinarySubtract<<<nBlocks, nThreads>>>
             (system().w().rgrid(0).cField(), system().w().rgrid(1).cField(), wm.cField(), wm.capacity());
       scaleReal<<<nBlocks, nThreads>>>(wm.cField(), 0.5, wm.capacity());
+      
+      // Convert real grid to KGrid format
       RFieldDft<D> wk;
       wk.allocate(dimensions);
       system().fft().forwardTransform(wm, wk);
-      complex<double> *wkCpu; 
-      wkCpu= new complex<double>[kSize_];
-      cudaMemcpy(wkCpu, wk.cField(), kSize_ * sizeof(cudaComplex), cudaMemcpyDeviceToHost);
-      // Convert real grid to KGrid format
+      
+      std::vector<std::complex<double>> wkCpu(kSize_);
+      cudaMemcpy(wkCpu.data(), wk.cField(), kSize_ * sizeof(cudaComplex), cudaMemcpyDeviceToHost);
       for (int k=0; k< wk.capacity(); k++) {
          accumulators_[k].sample(norm(wkCpu[k]));
       }
+      
    }
    
    template <int D>

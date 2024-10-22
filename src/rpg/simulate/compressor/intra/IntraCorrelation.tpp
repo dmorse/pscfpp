@@ -15,6 +15,7 @@
 #include <pscf/iterator/NanException.h>
 #include <pscf/chem/PolymerType.h>
 #include <prdc/crystal/shiftToMinimum.h>
+#include <prdc/cuda/HostField.h>
 
 namespace Pscf {
 namespace Rpg{
@@ -105,7 +106,8 @@ namespace Rpg{
       intraCorrelations.allocate(kMeshDimensions_);
       
       // CudaReal array
-      cudaReal* temp = new cudaReal[kSize_];
+      HostField<cudaReal> hostField;
+      hostField.allocate(kSize_);
       
       // Define iterator
       MeshIterator<D> iter;
@@ -117,12 +119,11 @@ namespace Rpg{
          Gmin = shiftToMinimum(G, system().mesh().dimensions(), 
                                   system().unitCell());
          Gsq = system().unitCell().ksq(Gmin);
-         temp[iter.rank()] = (cudaReal) computeIntraCorrelation(Gsq);
+         hostField[iter.rank()] = (cudaReal) computeIntraCorrelation(Gsq);
       }
       
       // Copy to device (gpu) memory
-      cudaMemcpy(intraCorrelations.cField(), temp, kSize_*sizeof(cudaReal), cudaMemcpyHostToDevice);
-      delete[] temp;
+      intraCorrelations = hostField;
    
       return intraCorrelations;
    }
