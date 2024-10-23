@@ -69,7 +69,12 @@ namespace Rpc
       *
       * \return 0 for convergence, 1 for failure
       */
-      int compress();    
+      int compress();
+
+      /**
+      * Compute mixing parameter lambda
+      */
+      double computeLambda(double r);     
       
       /**
       * Return compressor times contributions.

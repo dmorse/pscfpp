@@ -175,7 +175,7 @@ namespace Rpc{
    }
    
    template<int D>
-   double LrPostAmCompressor<D>::setLambda()
+   double LrPostAmCompressor<D>::computeLambda(double r)
    {
       return 1.0;
    }
