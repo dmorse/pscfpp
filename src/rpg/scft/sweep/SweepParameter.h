@@ -99,7 +99,7 @@ namespace Rpg {
    * also be a subclass of ParameterModifier so that it can add sweepable
    * parameters at run time.
    *
-   * \ingroup Rpg_Sweep_Module
+   * \ingroup Rpg_Scft_Sweep_Module
    */
    template <int D>
    class SweepParameter

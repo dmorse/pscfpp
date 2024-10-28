@@ -36,7 +36,7 @@ namespace Rpg
    * Different choices for class FT can be used to store fields in
    * symmetry-adapted basis function, r-grid or k-grid format.
    *
-   * \ingroup Rpg_Sweep_Module
+   * \ingroup Rpg_Scft_Sweep_Module
    */
    template <int D, class FT>
    class FieldState 

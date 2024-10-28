@@ -23,7 +23,7 @@ namespace Rpg {
    /**
    * Default Factory for subclasses of Sweep.
    *
-   * \ingroup Rpg_Sweep_Module
+   * \ingroup Rpg_Scft_Sweep_Module
    */
    template <int D>
    class SweepFactory : public Factory< Sweep<D> > 

@@ -30,7 +30,7 @@ namespace Rpg
    /**
    * Base class for iterative solvers for SCF equations.
    *
-   * \ingroup Rpg_Iterator_Module
+   * \ingroup Rpg_Scft_Iterator_Module
    */
    template <int D>
    class Iterator : public ParamComposite, public ParameterModifier

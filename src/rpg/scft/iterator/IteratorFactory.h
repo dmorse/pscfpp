@@ -24,7 +24,7 @@ namespace Rpg {
    /**
    * Factory for subclasses of Iterator.
    *
-   * \ingroup Rpg_Iterator_Module
+   * \ingroup Rpg_Scft_Iterator_Module
    */
 
    template <int D>

@@ -26,7 +26,7 @@ namespace Rpg {
    * Base class for a sweep in parameter space where parameters change
    * linearly with the sweep variable. 
    * 
-   * \ingroup Rpg_Sweep_Module
+   * \ingroup Rpg_Scft_Sweep_Module
    */
    template <int D>
    class LinearSweep : public Sweep<D>

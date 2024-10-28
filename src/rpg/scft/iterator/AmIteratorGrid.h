@@ -26,7 +26,7 @@ namespace Rpg
    /**
    * Rpg implementation of the Anderson Mixing iterator.
    *
-   * \ingroup Rpg_Iterator_Module
+   * \ingroup Rpg_Scft_Iterator_Module
    */
    template <int D>
    class AmIteratorGrid : public AmIteratorTmpl<Iterator<D>, FieldCUDA>
