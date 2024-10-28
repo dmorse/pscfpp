@@ -318,15 +318,17 @@ namespace Rpg{
    }
       
    template<int D>
-   double LrAmCompressor<D>::setLambda()
+   double LrAmCompressor<D>::computeLambda(double r)
    {
       return 1.0;
    }
    
    template<int D>
-   double LrAmCompressor<D>::computeError(int verbose)
+   double LrAmCompressor<D>::computeError(Field<cudaReal>& residTrial, 
+                                          Field<cudaReal>& fieldTrial,
+                                          std::string errorType,
+                                          int verbose)
    {
-      errorType_ = AmIteratorTmpl<Compressor<D>, Field<cudaReal> >::errorType();
       double error = 0.0;
       const int n = nElements();
       const int nMonomer = system().mixture().nMonomer();
@@ -364,11 +366,11 @@ namespace Rpg{
          error = normRes;
          Log::file() <<"\n";
          // Set error value
-         if (errorType_ == "maxResid") {
+         if (errorType == "maxResid") {
             error = maxRes;
-         } else if (errorType_ == "normResid") {
+         } else if (errorType == "normResid") {
             error = normRes;
-         } else if (errorType_ == "rmsResid") {
+         } else if (errorType == "rmsResid") {
             error = rmsRes;
          } else {
             UTIL_THROW("Invalid iterator error type in parameter file.");
@@ -376,11 +378,11 @@ namespace Rpg{
 
       } else {
          // Set error value
-         if (errorType_ == "maxResid") {
+         if (errorType == "maxResid") {
             error = maxRes;
-         } else if (errorType_ == "normResid") {
+         } else if (errorType == "normResid") {
             error = normRes;
-         } else if (errorType_ == "rmsResid") {
+         } else if (errorType == "rmsResid") {
             error = normRes/sqrt(n);
          } else {
             UTIL_THROW("Invalid iterator error type in parameter file.");

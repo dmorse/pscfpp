@@ -240,6 +240,12 @@ namespace Rpc{
       }
       system().setWRGrid(wFieldTmp_);
    }
+   
+   template<int D>
+   double AmCompressor<D>::computeLambda(double r)
+   {
+      return 1.0;
+   }
 
    template<int D>
    void AmCompressor<D>::outputToLog()

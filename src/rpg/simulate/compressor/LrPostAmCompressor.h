@@ -249,9 +249,9 @@ namespace Rpg
       void outputToLog();
       
       /**
-      * Set mixing parameter lambda
+      * Compute mixing parameter lambda
       */
-      double setLambda();
+      double computeLambda(double r);
       
       /**
       * IntraCorrelation (homopolymer) object
