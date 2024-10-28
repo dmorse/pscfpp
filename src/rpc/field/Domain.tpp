@@ -66,23 +66,26 @@ namespace Rpc
       UTIL_CHECK(!isInitialized_);
       UTIL_CHECK(hasFileMaster_);
 
+      // Read computational mesh dimensions (required)
       read(in, "mesh", mesh_);
       UTIL_CHECK(mesh().size() > 0);
       fft_.setup(mesh_.dimensions());
 
+      // Read lattice_ (lattice system) enumeration value (required)
       read(in, "lattice", lattice_);
       unitCell_.set(lattice_);
       UTIL_CHECK(unitCell().lattice() != UnitCell<D>::Null);
       UTIL_CHECK(unitCell().nParameter() > 0);
 
-      // Optionally read group name
+      // Optionally read groupName_ string identifier for group
       hasGroup_ = false;
       bool hasGroupName;
       hasGroupName = readOptional(in, "groupName", groupName_).isActive();
 
-      // If group name is present, construct the group
+      // If groupName_ string is present, construct group_
       if (hasGroupName) {
          // Read group symmetry operations from file
+         // An Exception is thrown if groupName_ string is not recognized
          readGroup(groupName_, group_);
          hasGroup_ = true;
       }
@@ -144,6 +147,9 @@ namespace Rpc
       isInitialized_ = true;
    }
 
+   /*
+   * Set the unit cell by copying a UnitCell<D> object.
+   */
    template <int D>
    void Domain<D>::setUnitCell(UnitCell<D> const & unitCell)
    {
@@ -202,14 +208,6 @@ namespace Rpc
       UTIL_CHECK(mesh_.size() > 0);
       UTIL_CHECK(unitCell_.lattice() != UnitCell<D>::Null);
       UTIL_CHECK(hasGroup_);
-
-      #if 0
-      // Check group, read from file if necessary
-      if (!hasGroup_ && groupName_ != "") {
-         readGroup(groupName_, group_);
-         hasGroup_ = true;
-      }
-      #endif
 
       // Check basis, construct if not initialized
       if (!basis().isInitialized()) {

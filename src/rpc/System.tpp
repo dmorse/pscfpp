@@ -27,6 +27,7 @@
 #include <pscf/math/IntVec.h>
 #include <pscf/homogeneous/Clump.h>
 
+#include <util/containers/FSArray.h>
 #include <util/param/BracketPolicy.h>
 #include <util/param/ParamComponent.h>
 #include <util/format/Str.h>
@@ -716,7 +717,7 @@ namespace Rpc {
    * Read w-field in symmetry adapted basis format.
    */
    template <int D>
-   void System<D>::readWBasis(const std::string & filename)
+   void System<D>::readWBasis(std::string const & filename)
    {
       // Precondition
       UTIL_CHECK(domain().hasGroup());
@@ -746,7 +747,7 @@ namespace Rpc {
    * Read w-fields in real-space grid (r-grid) format.
    */
    template <int D>
-   void System<D>::readWRGrid(const std::string & filename)
+   void System<D>::readWRGrid(std::string const & filename)
    {
       UTIL_CHECK(isAllocatedGrid_);
 
@@ -864,6 +865,7 @@ namespace Rpc {
    void System<D>::setUnitCell(UnitCell<D> const & unitCell)
    {
       domain_.setUnitCell(unitCell);
+      // Note: Domain::setUnitCell checks agreement of lattice system 
       mixture_.setUnitCell(domain().unitCell());
       if (domain().hasGroup() && !isAllocatedBasis_) {
          allocateFieldsBasis();
@@ -879,6 +881,7 @@ namespace Rpc {
                           FSArray<double, 6> const & parameters)
    {
       domain_.setUnitCell(lattice, parameters);
+      // Note: Domain::setUnitCell checks agreement of lattice system
       mixture_.setUnitCell(domain().unitCell());
       if (domain().hasGroup() && !isAllocatedBasis_) {
          allocateFieldsBasis();
@@ -892,6 +895,7 @@ namespace Rpc {
    void System<D>::setUnitCell(FSArray<double, 6> const & parameters)
    {
       domain_.setUnitCell(parameters);
+      // Note: Domain::setUnitCell requires lattice system is set on entry
       mixture_.setUnitCell(domain().unitCell());
       if (domain().hasGroup() && !isAllocatedBasis_) {
          allocateFieldsBasis();
@@ -918,10 +922,11 @@ namespace Rpc {
       // If w fields are symmetric, compute basis components for c-fields
       if (w_.isSymmetric()) {
          UTIL_CHECK(c_.isAllocatedBasis());
-         domain().fieldIo().convertRGridToBasis(c_.rgrid(), c_.basis(), false);
+         domain().fieldIo().convertRGridToBasis(c_.rgrid(), c_.basis(), 
+                                                false);
       }
 
-      // Compute stress if needed
+      // Compute stress if it is needed
       if (needStress) {
          mixture_.computeStress();
       }
@@ -949,7 +954,7 @@ namespace Rpc {
       int error = iterator().solve(isContinuation);
       hasCFields_ = true;
 
-      // If converged, compute related properties
+      // If converged, compute related thermodynamic properties
       if (!error) {
          computeFreeEnergy();  // Sets hasFreeEnergy_ = true
          if (!iterator().isFlexible()) {
@@ -962,7 +967,7 @@ namespace Rpc {
    }
 
    /*
-   * Perform sweep along a line in parameter space.
+   * Perform sweep of SCFT calculations along a line in parameter space.
    */
    template <int D>
    void System<D>::sweep()
@@ -973,12 +978,12 @@ namespace Rpc {
       Log::file() << std::endl;
       Log::file() << std::endl;
 
-      // Perform sweep
+      // Perform SCFT sweep
       sweepPtr_->sweep();
    }
 
    /*
-   * Perform a field theoretic simulation of nStep steps.
+   * Perform a stochast field theoretic simulation of nStep steps.
    */
    template <int D>
    void System<D>::simulate(int nStep)
@@ -993,11 +998,11 @@ namespace Rpc {
    }
 
    /*
-   * Expand the dimensions of RField
+   * Expand the number of spatial dimensions of an RField.
    */
    template <int D>
-   void System<D>::expandRGridDimension(const std::string & inFileName,
-                                        const std::string & outFileName,
+   void System<D>::expandRGridDimension(std::string const & inFileName,
+                                        std::string const & outFileName,
                                         int d,
                                         DArray<int> newGridDimensions)
    {
@@ -1017,11 +1022,11 @@ namespace Rpc {
    }
 
    /*
-   * Replicate unit cell
+   * Replicate unit cell a specified number of times in each direction.
    */
    template <int D>
-   void System<D>::replicateUnitCell(const std::string & inFileName,
-                                     const std::string & outFileName,
+   void System<D>::replicateUnitCell(std::string const & inFileName,
+                                     std::string const & outFileName,
                                      IntVec<D> const & replicas)
    {
       // Read fields
@@ -1029,7 +1034,7 @@ namespace Rpc {
       domain().fieldIo().readFieldsRGrid(inFileName, tmpFieldsRGrid_, 
                                          tmpUnitCell);
 
-      // Replicate Fields
+      // Replicate fields
       domain().fieldIo().replicateUnitCell(outFileName,
                                            tmpFieldsRGrid_,
                                            tmpUnitCell,
@@ -1039,7 +1044,7 @@ namespace Rpc {
    // Thermodynamic Properties
 
    /*
-   * Compute Helmoltz free energy and pressure
+   * Compute Helmholtz free energy and pressure.
    */
    template <int D>
    void System<D>::computeFreeEnergy()
@@ -1048,9 +1053,9 @@ namespace Rpc {
       UTIL_CHECK(hasCFields_);
       UTIL_CHECK(!hasFreeEnergy_);
 
-      int nm = mixture().nMonomer();  // Number of monomer types
-      int np = mixture().nPolymer();   // Number of polymer species
-      int ns = mixture().nSolvent();   // Number of solvent species
+      int nm = mixture().nMonomer();   // number of monomer types
+      int np = mixture().nPolymer();   // number of polymer species
+      int ns = mixture().nSolvent();   // number of solvent species
 
       // Initialize all free energy contributions to zero
       fHelmholtz_ = 0.0;
@@ -1060,7 +1065,7 @@ namespace Rpc {
 
       double phi, mu;
 
-      // Compute polymer ideal gas contributions to fHelhmoltz_
+      // Compute polymer ideal gas contribution to fIdeal_
       if (np > 0) {
          Polymer<D>* polymerPtr;
          double length;
@@ -1076,7 +1081,7 @@ namespace Rpc {
          }
       }
 
-      // Compute solvent ideal gas contributions to fHelhmoltz_
+      // Compute solvent ideal gas contributions to fIdeal_
       if (ns > 0) {
          Solvent<D>* solventPtr;
          double size;
@@ -1093,7 +1098,7 @@ namespace Rpc {
 
       // Volume integrals with a mask: If the system has a mask, then the
       // volume that should be used in calculating free energy/pressure
-      // is the volume available to the polymers, not the total unit cell
+      // is the volume available to the material, not the total unit cell
       // volume. We thus divide all terms that involve integrating over
       // the unit cell volume by quantity mask().phiTot(), which is the
       // volume fraction of the unit cell that is occupied by material.
@@ -1192,7 +1197,7 @@ namespace Rpc {
       fInter_ /= mask().phiTot();
       fHelmholtz_ += fInter_;
 
-      // Initialize pressure
+      // Initialize pressure (-1 x grand-canonical free energy / monomer)
       pressure_ = -fHelmholtz_;
 
       // Polymer chemical potential corrections to pressure
@@ -1231,7 +1236,7 @@ namespace Rpc {
    // Output Operations
 
    /*
-   * Write time cost to file.
+   * Write timer values to output stream (computational cost).
    */
    template <int D>
    void System<D>::writeTimers(std::ostream& out)
@@ -1247,7 +1252,7 @@ namespace Rpc {
    }
 
    /*
-   * Clear timers.
+   * Clear state of all timers.
    */
    template <int D>
    void System<D>::clearTimers()
@@ -1261,7 +1266,7 @@ namespace Rpc {
    }
 
    /*
-   * Write parameter file, omitting any sweep block.
+   * Write parameter file for SCFT, omitting any sweep block.
    */
    template <int D>
    void System<D>::writeParamNoSweep(std::ostream& out) const
@@ -1368,7 +1373,7 @@ namespace Rpc {
    }
 
    /*
-   * Write all concentration fields in symmetry-adapted basis format.
+   * Write concentration fields in symmetry-adapted basis format.
    */
    template <int D>
    void System<D>::writeCBasis(const std::string & filename) const
@@ -1382,7 +1387,7 @@ namespace Rpc {
    }
 
    /*
-   * Write all concentration fields in real space (r-grid) format.
+   * Write concentration fields in real space (r-grid) format.
    */
    template <int D>
    void System<D>::writeCRGrid(const std::string & filename) const
@@ -1571,7 +1576,7 @@ namespace Rpc {
    * Write all elements of the space group to a file.
    */
    template <int D>
-   void System<D>::writeGroup(const std::string & filename) const
+   void System<D>::writeGroup(std::string const & filename) const
    {
       UTIL_CHECK(domain_.hasGroup());
       Pscf::Prdc::writeGroup(filename, domain_.group());
@@ -1583,8 +1588,8 @@ namespace Rpc {
    * Convert fields from symmetry-adapted basis to real-space grid format.
    */
    template <int D>
-   void System<D>::basisToRGrid(const std::string & inFileName,
-                                const std::string & outFileName)
+   void System<D>::basisToRGrid(std::string const & inFileName,
+                                std::string const & outFileName)
    {
       UTIL_CHECK(domain_.hasGroup());
 
@@ -1608,8 +1613,8 @@ namespace Rpc {
    * Convert fields from real-space grid to symmetry-adapted basis format.
    */
    template <int D>
-   void System<D>::rGridToBasis(const std::string & inFileName,
-                                const std::string & outFileName)
+   void System<D>::rGridToBasis(std::string const & inFileName,
+                                std::string const & outFileName)
    {
       UTIL_CHECK(domain_.hasGroup());
 
@@ -1633,8 +1638,8 @@ namespace Rpc {
    * Convert fields from Fourier (k-grid) to real-space (r-grid) format.
    */
    template <int D>
-   void System<D>::kGridToRGrid(const std::string & inFileName,
-                                const std::string& outFileName)
+   void System<D>::kGridToRGrid(std::string const & inFileName,
+                                std::string const & outFileName)
    {
       // If basis fields are not allocated, peek at field file header to
       // get unit cell parameters, initialize basis and allocate fields.
@@ -1659,8 +1664,8 @@ namespace Rpc {
    * Convert fields from real-space (r-grid) to Fourier (k-grid) format.
    */
    template <int D>
-   void System<D>::rGridToKGrid(const std::string & inFileName,
-                                const std::string & outFileName)
+   void System<D>::rGridToKGrid(std::string const & inFileName,
+                                std::string const & outFileName)
    {
       // If basis fields are not allocated, peek at field file header to
       // get unit cell parameters, initialize basis and allocate fields.
@@ -1686,8 +1691,8 @@ namespace Rpc {
    * Convert fields from Fourier (k-grid) to symmetry-adapted basis format.
    */
    template <int D>
-   void System<D>::kGridToBasis(const std::string & inFileName,
-                                const std::string& outFileName)
+   void System<D>::kGridToBasis(std::string const & inFileName,
+                                std::string const & outFileName)
    {
       UTIL_CHECK(domain_.hasGroup());
 
@@ -1712,8 +1717,8 @@ namespace Rpc {
    * Convert fields from symmetry-adapted basis to Fourier (k-grid) format.
    */
    template <int D>
-   void System<D>::basisToKGrid(const std::string & inFileName,
-                                const std::string & outFileName)
+   void System<D>::basisToKGrid(std::string const & inFileName,
+                                std::string const & outFileName)
    {
       UTIL_CHECK(domain_.hasGroup());
 
@@ -1739,7 +1744,7 @@ namespace Rpc {
    */
    template <int D>
    bool
-   System<D>::checkRGridFieldSymmetry(const std::string & inFileName,
+   System<D>::checkRGridFieldSymmetry(std::string const & inFileName,
                                       double epsilon)
    {
       UTIL_CHECK(domain_.hasGroup());

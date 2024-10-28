@@ -1,23 +1,20 @@
-This directory contains code specific to SCFT calculations.
+This directory contains code used only stochastic in FTS calculations.
 
 Subdirectories:
 
-bdstep/        -
-mcmove/        -
-compressor/    - 
-analyzer/      -
-perturbation/  -
-ramp/          -
-trajectory/    -
+bdstep/        - Brownian dynamics simulation steps and BdSimulator
+mcmove/        - Monte Carlo moves and McSimulator
+compressor/    - algorithms to iteratively find a partial saddle point
+analyzer/      - Data analysis classes (for on-the-fly or postprocessing)
+perturbation/  - perturbations of the Hamiltonian (e.g., Einstein crystal)
+ramp/          - continuous parameter ramp during simulation
+trajectory/    - writing and reading field trajectories
 
-C++ Files:
+C++ Files (extensions h, tpp and cpp):
 
-Simulator.h    - Simulator<D> class template header (main object)
-Simulator.tpp  - Simulator<D> class template definition
-Simulator.cpp  - Simulator<D> explicit instantiations for D=1,2,3
-SimState.h     - SimState<D> class template header (main object)
-SimState.tpp   - SimState<D> class template definition
-SimState.cpp   - SimState<D> explicit instantiations for D=1,2,3
+Simulator.*        - Simulator<D> class template (main object)
+SimulatorFactory.* - Factory to choose BdSimulator<D> or McSimulator<D>
+SimState.*         - SimState<D> class template 
 
 Makefile and makefile fragments:
 
@@ -26,5 +23,5 @@ makefile      - main makefile for rpc/fts directory tree
 
 Doxygen documentation files:
 
-fts.mod       - defintion of the Rpc_Scft doxygen module
+fts.mod       - defintion of the Rpc_Scft_Module doxygen topic module
 

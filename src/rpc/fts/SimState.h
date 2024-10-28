@@ -19,14 +19,25 @@ namespace Rpc {
    using namespace Prdc::Cpu;
 
    /**
-   * SimState stores the state used by an fts simulation.
+   * SimState stores the state used by an FTS simulation.
+   *
+   * This class is used to restore the state of FTS simulation after an
+   * attempted move or step that is rejected or fails to converge. It is
+   * used in Monte Carlo (MC) simulations to restore the state after a 
+   * rejected move. It is also used less frequently in Brownian dynamics 
+   * (BD) simulations to restore state and try another choice of random 
+   * noise if the compressor algorithm (the search for a partial saddle 
+   * point) fails to converge after an attempted BD step.
    *
    * \ingroup Rpc_Fts_Module
    */
    template <int D>
    struct SimState 
    {
-      public:
+
+   public:
+
+      // Public member functions
 
       /**
       * Constructor.
@@ -46,41 +57,46 @@ namespace Rpc {
       */ 
       void allocate(int nMonomer, IntVec<D> const & dimensions);
  
+      // Public data members
+
       /**
       * Chemical potential fields, r-grid format, indexed by monomer.
+      *
+      * Field w[i] is the chemical potential field for monomer type i,
+      * for i = 0, ..., nMonomer - 1.
       */
       DArray< RField<D> > w;
 
       /**
       * Chemical potential fields, r-grid format, indexed by eigenvector.
       *
-      * Each field is a component projected on pointwise onto a
-      * eigenvector of the projected chi matrix, with indices that
-      * correspond to eigenvector indices.
+      * Field wc[i] is a pointwise projection of the w fields onto 
+      * eigenvector number i of the projected chi matrix. for values
+      * i = 0, ..., nMonomer - 1.
       */
       DArray< RField<D> > wc;
       
       /**
       * Eigenvector components of c fields on a real space grid.
       *
-      * Each field component corresponds to a point-wise projection of c
-      * onto an eigenvector of the projected chi matrix.
+      * Field cc[i] is a point-wise projection of the c fields onto
+      * eigenvector number i of the projected chi matrix , for values
+      * i = 0, ..., nMonomer - 1.
       */
       DArray< RField<D> > cc;
       
       /**
-      * Components of functional derivatives of the Hamiltonian fields 
-      * on a real space grid.
+      * Functional derivatives of the Hamiltonian on a real space grid.
       *
-      * Each field component is the functional derivative of H[W]
-      * with respect to one eigenvector w-field component.
+      * Field dc[i] is the functional derivative of H[W] with respect to
+      * w-field component wc[i], indexed by eigenvector index i.
       */
       DArray< RField<D> > dc;
       
-      /// Monte-Carlo Hamiltonian value.
+      /// Field theoretic Hamiltonian value (total).
       double hamiltonian;
       
-      /// Ideal gas contribution to Hamiltonian value.
+      /// Ideal gas contribution to Hamiltonian.
       double idealHamiltonian;
       
       /// Quadratic field contribution to Hamiltonian value.
@@ -89,19 +105,19 @@ namespace Rpc {
       /// Perturbation to Hamiltonian value (if any).
       double perturbationHamiltonian;
             
-      /// If cc fields needs to be saved.
+      /// True iff cc fields need to be saved.
       bool needsCc;
       
-      /// If dc fields needs to be saved.
+      /// True iff dc fields need to be saved.
       bool needsDc;
       
-      /// If hamiltonian needs to be saved.
+      /// True iff Hamiltonian components need to be saved.
       bool needsHamiltonian;
 
-      /// Is this struct being used to store data?
+      /// Does this object currently store data?
       bool hasData;
       
-      /// Has memory be allocated for the w field?
+      /// Has memory been allocated for the fields?
       bool isAllocated;
 
    };

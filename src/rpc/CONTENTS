@@ -1,8 +1,8 @@
 This directory contains code specific to a pseudo-spectral 
 implementation of SCFT and field theoretic simulations (FTS) for 
-periodic structures on a single CPU.  All code in this directory is 
-defined in the namespace Pscf::Rpc.  Most algorithms are analogous 
-to those used in the older Fortran PSCF code.  
+periodic structures on CPU hardware.  All code in this directory is 
+defined in the namespace Pscf::Rpc.  Most algorithms are analogous to
+those used in the older Fortran PSCF code.  
 
 Subdirectories:
 
@@ -14,21 +14,19 @@ tests/       - unit tests for code in src/rpc
 
 C++ Files:
 
-System.h      - System<D> class template header (main object)
-System.tpp    - System<D> class template definition
-System.cpp    - System<D> explicit instantiations for D=1,2,3
-pscf_pc.cpp   - Main program periodic structures on CPU hardware
+System.(h,tpp,cpp) - System<D> class template (main object)
+pscf_pc.cpp        - main program for periodic structures on CPU hardware
 
 Makefile and makefile fragments:
 
-sources.mk    - list of source files (makefile fragment)
+sources.mk    - list of source files in src/rpc (makefile fragment)
 patterns.mk   - pattern rules for src/rpc (makefile fragment)
-include.mk    - header of makefile includes (makefile fragment)
+include.mk    - header of makefile fragment includes (makefile fragment)
 makefile      - main makefile for src/rpc directory tree
 
 Doxygen documentation files:
 
 pscf_pc.dox   - command line interface for pscf_pc executable
-rpc.mod       - definition of Rpc doxygen module 
+rpc.mod       - definition of Pscf_Rpc_Module doxygen topics module 
 System.dox    - parameter file format for main System block
 
