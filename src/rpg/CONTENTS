@@ -8,19 +8,15 @@ directory.
 Subdirectories:
 
 field/     - classes to represent or manipulate fields, including FFTs
-iterator/  - iterative SCF equation solvers
-math/      - CUDA resources and kernels for mathematical operations
 solvers/   - modified diffusion equation solvers
-simulate/  - classes for FTMC simulation
-sweep/     - classes to implement continuation of solutions ("sweep")
+scft/      - classes used only for self-consistent field theory (SCFT)
+fts/       - classes for stochastic field theoretic simulation (FTS)
 tests/     - unit cell tests for code
 
-Source Files:
+C++/CUDA Source Files (file extensions .h, .tpp and .cu)
 
 pscf_pg.cpp  - Main program for perodic structure on a GPU
-System.h     - System<D> class template header (main object)
-System.tpp   - System<D> class template definition
-System.cpp   - System<D> explicit instantiations for D=1,2,3
+System.*     - System<D> class template (main object)
 
 Makefile and makefile fragments:
 
@@ -31,6 +27,6 @@ makefile     - main makefile for src/rpg directory tree
 
 Doxygen documentation files:
 
-rpg.mod      - definition of Rpg doxygen module 
 pscf_pg.dox  - command line interface documentation for pscf_pg
+rpg.mod      - definition of Rpg doxygen module 
 

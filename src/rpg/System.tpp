@@ -10,13 +10,13 @@
 
 #include "System.h"
 
-#include <rpg/simulate/Simulator.h>
-#include <rpg/simulate/SimulatorFactory.h>
-#include <rpg/simulate/compressor/Compressor.h>
-#include <rpg/sweep/Sweep.h>
-#include <rpg/sweep/SweepFactory.h>
-#include <rpg/iterator/Iterator.h>
-#include <rpg/iterator/IteratorFactory.h>
+#include <rpg/fts/Simulator.h>
+#include <rpg/fts/SimulatorFactory.h>
+#include <rpg/fts/compressor/Compressor.h>
+#include <rpg/scft/sweep/Sweep.h>
+#include <rpg/scft/sweep/SweepFactory.h>
+#include <rpg/scft/iterator/Iterator.h>
+#include <rpg/scft/iterator/IteratorFactory.h>
 #include <prdc/cuda/RField.h>
 #include <pscf/cuda/GpuResources.h>
 

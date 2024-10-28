@@ -1,0 +1,22 @@
+This directory contains code specific to SCFT calculations.
+
+Subdirectories:
+
+iterator/    - classes to implement SCFT iteration algorithms
+sweep/       - classes to peform a sweep through parameter space
+
+C++ Files:
+
+System.h      - System<D> class template header (main object)
+System.tpp    - System<D> class template definition
+System.cpp    - System<D> explicit instantiations for D=1,2,3
+
+Makefile and makefile fragments:
+
+sources.mk    - list of source files (makefile fragment)
+makefile      - main makefile for rpg/scft directory tree
+
+Doxygen documentation files:
+
+scft.mod      - defintion of the Rpg_Scft doxygen module
+

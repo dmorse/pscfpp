@@ -1,5 +1,5 @@
-This directory contains code used only in stochastic FTS calculations
-using a partial saddle-point approximation on CPU hardware.
+This directory contains code used only stochastic FTS calculations
+using a partial-saddle point approximation using a GPU accelerator.
 
 Subdirectories:
 
@@ -11,7 +11,7 @@ perturbation/  - perturbations of the Hamiltonian (e.g., Einstein crystal)
 ramp/          - continuous parameter ramp during simulation
 trajectory/    - reading field trajectory files (postprocessing)
 
-C++ Files (extensions h, tpp and cpp):
+C++ Files (extensions h, tpp and cu):
 
 Simulator.*        - Simulator<D> class template (main object)
 SimulatorFactory.* - Factory to choose BdSimulator<D> or McSimulator<D>
@@ -20,9 +20,9 @@ SimState.*         - SimState<D> class template
 Makefile and makefile fragments:
 
 sources.mk    - list of source files (makefile fragment)
-makefile      - main makefile for rpc/fts directory tree
+makefile      - main makefile for rpg/fts directory tree
 
 Doxygen documentation files:
 
-fts.mod       - defintion of the Rpc_Fts_Module doxygen topic module
+fts.mod       - definition of the Rpg_Fts_Module doxygen topic module
 
