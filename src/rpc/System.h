@@ -8,7 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <util/param/ParamComposite.h>     // base class
+#include <util/param/ParamComposite.h>    // base class
 
 #include <rpc/solvers/Mixture.h>          // member
 #include <rpc/field/Domain.h>             // member
@@ -17,14 +17,14 @@
 #include <rpc/field/CFieldContainer.h>    // member
 #include <rpc/field/Mask.h>               // member
 
-#include <prdc/cpu/RField.h>               // member
-#include <prdc/cpu/RFieldDft.h>            // member
+#include <prdc/cpu/RField.h>              // member
+#include <prdc/cpu/RFieldDft.h>           // member
 
-#include <pscf/homogeneous/Mixture.h>      // member
+#include <pscf/homogeneous/Mixture.h>     // member
 
-#include <util/misc/FileMaster.h>          // member
-#include <util/containers/DArray.h>        // member template
-#include <util/containers/FSArray.h>       // member template
+#include <util/misc/FileMaster.h>         // member
+#include <util/containers/DArray.h>       // member template
+#include <util/containers/FSArray.h>      // member template
 
 namespace Pscf {
    class Interaction;

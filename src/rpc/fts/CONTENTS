@@ -1,0 +1,30 @@
+This directory contains code specific to SCFT calculations.
+
+Subdirectories:
+
+bdstep/        -
+mcmove/        -
+compressor/    - 
+analyzer/      -
+perturbation/  -
+ramp/          -
+trajectory/    -
+
+C++ Files:
+
+Simulator.h    - Simulator<D> class template header (main object)
+Simulator.tpp  - Simulator<D> class template definition
+Simulator.cpp  - Simulator<D> explicit instantiations for D=1,2,3
+SimState.h     - SimState<D> class template header (main object)
+SimState.tpp   - SimState<D> class template definition
+SimState.cpp   - SimState<D> explicit instantiations for D=1,2,3
+
+Makefile and makefile fragments:
+
+sources.mk    - list of source files (makefile fragment)
+makefile      - main makefile for rpc/fts directory tree
+
+Doxygen documentation files:
+
+fts.mod       - defintion of the Rpc_Scft doxygen module
+

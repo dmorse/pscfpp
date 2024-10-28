@@ -10,13 +10,13 @@
 
 #include "System.h"
 
-#include <rpc/simulate/Simulator.h>
-#include <rpc/simulate/SimulatorFactory.h>
-#include <rpc/simulate/compressor/Compressor.h>
-#include <rpc/sweep/Sweep.h>
-#include <rpc/sweep/SweepFactory.h>
-#include <rpc/iterator/Iterator.h>
-#include <rpc/iterator/IteratorFactory.h>
+#include <rpc/fts/Simulator.h>
+#include <rpc/fts/SimulatorFactory.h>
+#include <rpc/fts/compressor/Compressor.h>
+#include <rpc/scft/sweep/Sweep.h>
+#include <rpc/scft/sweep/SweepFactory.h>
+#include <rpc/scft/iterator/Iterator.h>
+#include <rpc/scft/iterator/IteratorFactory.h>
 #include <rpc/solvers/Polymer.h>
 #include <rpc/solvers/Solvent.h>
 

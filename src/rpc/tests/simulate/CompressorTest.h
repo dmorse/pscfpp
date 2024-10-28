@@ -5,12 +5,12 @@
 #include <test/UnitTestRunner.h>
 
 #include <rpc/System.h>
-#include <rpc/simulate/Simulator.h>
-#include <rpc/simulate/bdstep/BdSimulator.h>
-#include <rpc/simulate/compressor/Compressor.h>
-#include <rpc/simulate/compressor/AmCompressor.h>
-#include <rpc/simulate/compressor/LrCompressor.h>
-#include <rpc/simulate/compressor/LrAmCompressor.h>
+#include <rpc/fts/Simulator.h>
+#include <rpc/fts/bdstep/BdSimulator.h>
+#include <rpc/fts/compressor/Compressor.h>
+#include <rpc/fts/compressor/AmCompressor.h>
+#include <rpc/fts/compressor/LrCompressor.h>
+#include <rpc/fts/compressor/LrAmCompressor.h>
 
 #include <prdc/cpu/RFieldComparison.h>
 

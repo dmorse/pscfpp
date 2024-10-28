@@ -5,7 +5,7 @@
 #include <test/UnitTestRunner.h>
 
 #include <rpc/System.h>
-#include <rpc/sweep/BasisFieldState.h>
+#include <rpc/scft/sweep/BasisFieldState.h>
 
 #include <prdc/crystal/BFieldComparison.h>
 

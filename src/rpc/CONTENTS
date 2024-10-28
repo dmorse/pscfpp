@@ -7,10 +7,9 @@ to those used in the older Fortran PSCF code.
 Subdirectories:
 
 field/       - classes to represent or manipulate fields
-iterator/    - iterative SCF equation solvers
+fts/         - classes to implement field-theoretic simulation (FTS)
+scft/        - classes to implement self-consistent field theory (SCFT)
 solvers/     - classes to solve the modified diffusion equation (MDE)
-sweep/       - classes to implement continuation of solutions ("sweep")
-simulate/    - classes to implement field-theoretic simulation (FTS)
 tests/       - unit tests for code in src/rpc
 
 C++ Files:
