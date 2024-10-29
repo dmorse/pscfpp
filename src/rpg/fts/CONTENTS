@@ -11,11 +11,11 @@ perturbation/  - perturbations of the Hamiltonian (e.g., Einstein crystal)
 ramp/          - continuous parameter ramp during simulation
 trajectory/    - reading field trajectory files (postprocessing)
 
-C++ Files (extensions h, tpp and cu):
+C++ Files (file name extensions .h, .tpp and .cu):
 
-Simulator.*        - Simulator<D> class template (main object)
-SimulatorFactory.* - Factory to choose BdSimulator<D> or McSimulator<D>
-SimState.*         - SimState<D> class template 
+Simulator.*         - Simulator<D> class template (main object)
+SimulatorFactory.*  - Factory to create BdSimulator<D> or McSimulator<D>
+SimState.*          - SimState<D> class template 
 
 Makefile and makefile fragments:
 

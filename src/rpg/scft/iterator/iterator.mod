@@ -5,7 +5,8 @@ namespace Rpg{
    /**
    * \defgroup Rpg_Scft_Iterator_Module Iterators
    *
-   * Iterators for solving the nonlinear self-consistency equations.
+   * Classes for iteratively solving the nonlinear self-consistent field 
+   * (SCF) equations of SCFT.
    *
    * \ingroup Rpg_Scft_Module
    */

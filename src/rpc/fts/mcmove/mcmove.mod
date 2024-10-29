@@ -3,10 +3,10 @@ namespace Pscf{
 namespace Rpc{
 
    /**
-   * \defgroup Rpc_Simulate_McMove_Module Monte Carlo Moves
+   * \defgroup Rpc_Simulate_McMove_Module Monte Carlo 
    *
-   * Classes that implement Monte Carlo (MC) moves for field theoretic MC
-   * simulations in a partial saddle-point approximation. 
+   * Monte Carlo (MC) sampling algorithms for field theoretic MC 
+   * simulations in a partial saddle-point approximation (PS-FTS).
    *
    * \ingroup Rpc_Fts_Module
    */

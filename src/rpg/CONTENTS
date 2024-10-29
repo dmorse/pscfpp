@@ -1,32 +1,32 @@
-This directory contains C++ and CUDA code specific to a GPU-accelerated
+This directory contains C++ and C++/CUDA code used by a GPU-accelerated
 pseudo-spectral implementation of SCFT and FTS methods for real fields
 with periodic structures.  All code in this directory is defined in the 
 namespace Pscf::Rpg. Class designs and algorithms are generally closely 
-analogous to those of the C++ versions of this code found in the src/rpc 
-directory.
+analogous to those of the pure C++ version of this code located in the 
+src/rpc directory.
 
 Subdirectories:
 
-field/     - classes to represent or manipulate fields, including FFTs
-solvers/   - modified diffusion equation solvers
-scft/      - classes used only for self-consistent field theory (SCFT)
-fts/       - classes for stochastic field theoretic simulation (FTS)
-tests/     - unit cell tests for code
+field/      - classes to represent or manipulate fields, including FFTs
+solvers/    - classes that solve the modified diffusion equation (MDE)
+scft/       - classes used only for self-consistent field theory (SCFT)
+fts/        - classes for stochastic field theoretic simulation (FTS)
+tests/      - unit cell tests for code
 
 C++/CUDA Source Files (file extensions .h, .tpp and .cu)
 
-pscf_pg.cpp  - Main program for perodic structure on a GPU
-System.*     - System<D> class template (main object)
+pscf_pg.cpp - Main program for perodic structure on a GPU
+System.*    - System<D> class template (main object)
 
 Makefile and makefile fragments:
 
-sources.mk   - list of source files (makefile fragment)
-patterns.mk  - pattern rules for src/rpg (makefile fragment)
-include.mk   - header of makefile includes (makefile fragment)
-makefile     - main makefile for src/rpg directory tree
+sources.mk  - list of source files (makefile fragment)
+patterns.mk - pattern rules for src/rpg (makefile fragment)
+include.mk  - header of makefile includes (makefile fragment)
+makefile    - main makefile for src/rpg directory tree
 
 Doxygen documentation files:
 
-pscf_pg.dox  - command line interface documentation for pscf_pg
-rpg.mod      - definition of Rpg doxygen module 
+pscf_pg.dox - command line interface documentation for pscf_pg
+rpg.mod     - definition of Pscf_Rpg_Module doxygen topic module 
 

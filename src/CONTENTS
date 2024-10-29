@@ -4,7 +4,7 @@ rpg/ contain source code from a particular C++ namespace.  Subdirectories
 util/ and test/ are maintained as separate github repositories that are 
 installed as submodules of the pscfpp respository. 
 
-Subdirectories (corresponding namespaces in parentheses):
+Subdirectories (corresponding namespace names in parentheses):
 
   util/  general utilities for scientific computation (Util)
   pscf/  shared classes for entire package PSCF (Pscf)
@@ -18,7 +18,7 @@ Files (in repository):
 
   setopts  - script for managing compile-time options
   makefile - main makefile for in-source compilation (build in src/)
-  programs.mod - doxygen module for program command-line interfaces
+  programs.mod - doxygen page for program command-line interfaces
   CONTENTS - this file
 
 Files (installed by configure script):

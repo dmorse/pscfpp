@@ -3,10 +3,10 @@ namespace Pscf{
 namespace Rpg{
 
    /**
-   * \defgroup Rpg_Fts_Module Field Theoretic Simulation
+   * \defgroup Rpg_Fts_Module Field Theoretic Simulation (FTS)
    *
-   * Classes for performing field theoretic simulations in a partial
-   * saddle-point approximation. 
+   * Classes for performing a field theoretic simulation in a partial
+   * saddle-point approximation (PS-FTS) with GPU acceleration.
    *
    * \ingroup Pscf_Rpg_Module
    */
