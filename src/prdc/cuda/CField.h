@@ -23,7 +23,7 @@ namespace Cuda {
    using namespace Pscf;
 
    /**
-   * Field of complex values on an regular mesh, allocated on a GPU device.
+   * Field of complex values on a regular mesh, allocated on a GPU device.
    *
    * \ingroup Prdc_Cuda_Module 
    */

@@ -21,7 +21,7 @@ namespace Cuda {
    using namespace Util;
 
    /**
-   * Discrete Fourier Transform (DFT) of a real field on an FFT mesh.
+   * Discrete Fourier Transform (DFT) of a real field, allocated on a GPU.
    *
    * The DFT is stored internally as a C array of cudaComplex elements 
    * located in global GPU memory. All member functions are C++ functions 

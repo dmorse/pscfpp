@@ -22,9 +22,9 @@ namespace Cuda {
    using namespace Util;
 
    /**
-   * Field of real single precision values on an FFT mesh on a device.
+   * Field of real values on a regular mesh, allocated on a GPU device.
    *
-   * cudaReal = float or double, depending on preprocessor macro.
+   * Type cudaReal is float or double, depending on preprocessor macro.
    *
    * \ingroup Prdc_Cuda_Module 
    */

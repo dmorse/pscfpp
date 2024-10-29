@@ -43,13 +43,13 @@ namespace Cuda {
       double compare(RField<D> const& a, RField<D> const& b);
 
       /**
-      * Comparator for array of fields.
+      * Comparator for arrays of fields.
       *
       * \param a first array of fields
       * \param b second array of fields
       */
       double 
-      compare(DArray<RField<D>> const& a, DArray<RField<D>> const& b);
+      compare(DArray< RField<D> > const& a, DArray< RField<D> > const& b);
 
       /**
       * Get precomputed maximum element-by-element difference.

@@ -20,17 +20,18 @@ namespace Cuda {
    template <typename Data> class Field;
 
    /**
-   * Dynamic array of field values in host CPU memory.
+   * Template for dynamic array of field values in host CPU memory.
    *
    * This class is provided as a convenience to allow the use of assigment (=)
    * operators to copy data between corresponding containers that store field
    * data in device vs. host memory. A HostField<Data> stores data in a 
-   * dynamically allocated array in host memory, whereas a Field<Data> stores 
-   * analogous data in global device memory. Each of these classes defines an 
-   * assigment operation that allows assignment from the other, and that 
-   * silently copies the underlying arrays between device and host memory.
+   * dynamically allocated array in host CPU memory, whereas a Field<Data> 
+   * stores analogous data in global GPU device memory. Each of these classes 
+   * defines an assigment operation that allows assignment from the other, 
+   * which silently copies the underlying arrays between device and host 
+   * memory.
    *
-   * Memory is allocated using cudaMallocHost.
+   * The underlying array is allocated using cudaMallocHost.
    *
    * \ingroup Prdc_Cuda_Module
    */
