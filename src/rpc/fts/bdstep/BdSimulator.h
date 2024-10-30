@@ -21,7 +21,7 @@ namespace Rpc {
    template <int D> class TrajectoryReader;
 
    /**
-   * Brownian dynamics simulator.
+   * Brownian dynamics simulator for PS-FTS.
    *
    * \ingroup Rpc_Simulate_BdStep_Module
    */
@@ -174,7 +174,7 @@ namespace Rpc {
       BdStep<D>* bdStepPtr_;
 
       /**
-      * Pointer to a trajectory reader/writer factory.
+      * Pointer to a BdStep factory.
       */
       Factory< BdStep<D> >* bdStepFactoryPtr_;
 

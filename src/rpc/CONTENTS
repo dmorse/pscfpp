@@ -1,10 +1,9 @@
 This directory contains code specific to a pseudo-spectral 
-implementation of SCFT and field theoretic simulations (FTS) for 
-periodic structures on CPU hardware.  All code in this directory 
-is defined in the namespace Pscf::Rpc.  Most SCFT algorithms are 
-analogous to those used in the older Fortran PSCF code.  All FTS
-algorithms defined here rely on a partial saddle point approximation, 
-which allows the use of real fields. 
+implementation of self-consistent field theory (SCFT) and field theoretic 
+simulations (FTS) with real fields for periodic structures, running on
+CPU hardware.  All code in this directory is defined in the namespace 
+Pscf::Rpc.  All FTS algorithms in this namespaced rely on a partial 
+saddle point approximation (PS-FTS), which allows the use of real fields. 
 
 Subdirectories:
 
@@ -29,6 +28,6 @@ makefile     - main makefile for src/rpc directory tree
 Doxygen documentation files:
 
 pscf_pc.dox  - command line interface for pscf_pc executable
-rpc.mod      - definition of Pscf_Rpc_Module doxygen topics module 
 System.dox   - parameter file format for main System block
+rpc.mod      - definition of Pscf_Rpc_Module doxygen topics module 
 

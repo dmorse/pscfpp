@@ -8,6 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
+// Header file includes
 #include <util/param/ParamComposite.h>     // base class
 
 #include <rpg/solvers/Mixture.h>           // member
@@ -25,29 +26,33 @@
 #include <util/containers/DArray.h>        // member template
 #include <util/containers/FSArray.h>       // member template
 
+// Forward references
 namespace Pscf {
    class Interaction;
    namespace Prdc {
       template <int D> class UnitCell;
    }
+   namespace Rpg { 
+      template <int D> class Iterator;
+      template <int D> class IteratorFactory;
+      template <int D> class Sweep;
+      template <int D> class SweepFactory;
+      template <int D> class Simulator;
+      template <int D> class SimulatorFactory;
+   }
 }
+
 
 namespace Pscf {
 namespace Rpg {
 
-   template <int D> class Iterator;
-   template <int D> class IteratorFactory;
-   template <int D> class Sweep;
-   template <int D> class SweepFactory;
-   template <int D> class Simulator;
-   template <int D> class SimulatorFactory;
-
+   // Namespaces that are implicitly available, without qualification
    using namespace Util;
    using namespace Pscf::Prdc;
    using namespace Pscf::Prdc::Cuda;
 
    /**
-   * Main class in SCFT simulation of one system.
+   * Main class for calculations that represent one system.
    *
    * A System has (among other components):
    *
@@ -57,9 +62,11 @@ namespace Rpg {
    *    - a container of monomer chemical potential fields (w fields)
    *    - a container of monomer concentration fields (c fields)
    *
-   * A System may also optionally contain Iterator and Sweep objects.
+   * A System may also optionally contain Iterator, Sweep and
+   * Simulator (BdSimulator or McSimulator) objects.
    *
-   * Typical usage of a System<D> object looks something like this:
+   * Usage of a System<D> object within the pscf_pg main program looks 
+   * like this:
    * \code
    *    System<D> system;
    *    system.setOptions(argc, argv);
@@ -71,7 +78,10 @@ namespace Rpg {
    * This is implemented as function template Pscf::Rpg::run in the
    * file src/rpg/pscf_pg.cpp.
    *
-   * \ref scft_param_pg_page "Parameter File Format"
+   * Parameter file format is the same as for corresponding object
+   * Pscf::Rpc::System<D> used in the analogous pscf_pc CPU program.
+   *
+   * \ref scft_param_pc_page "Parameter File Format"
    * \ref scft_command_pc_page "Command File Format"
    * \ingroup Pscf_Rpg_Module
    */

@@ -1,10 +1,9 @@
 /*!
 \page pscf_pg_page pscf_pg - Periodic Structures (GPU)
 
-GPU-accelerated program for self-consistent field theory (SCFT) and 
-field-theoretic Monte-Carlo (FTMC) simulations of spatially periodic 
-structures of polymer liquids.
-
+GPU-accelerated program for self-consistent field theory (SCFT) and partial 
+saddle-point field-theoretic simulation (PS-FTS) simulations of spatially 
+periodic structures of polymer liquids, using real fields.
 
 \section pscf_pg_usage_section Usage
 
@@ -20,11 +19,11 @@ options are not required.
   -d dimension
 
    Set the spatial dimension (# of periodic coordinates) of the structure
-   of interest, given by the integer argument "dimension", which must
-   be set to 1, 2 or 3. For example, set dimension to 1 for a lamellar
-   phase, 2 for any two-dimensional periodic arrangement of cylinders
-   (e.g., hexagonally packed cylinders), and 3 for any fully
-   three-dimensional structure. (required)
+   of interest, given by the integer argument "dimension", which must be
+   set to 1, 2 or 3. For example, set dimension to 1 for a lamellar phase,
+   2 for any two-dimensional periodic arrangement of cylinders (e.g., 
+   hexagonally packed cylinders), and 3 for any fully three-dimensional 
+   structure (e.g., BCC or gyroid). (required)
 
   -p file
 
