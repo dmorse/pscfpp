@@ -19,7 +19,7 @@ namespace Cuda {
    using namespace Util;
 
    /**
-   * Comparator for RFieldDft (k-grid) arrays.
+   * Comparator for RFieldDft (k-grid) arrays, allocated on device.
    *
    * \ingroup Prdc_Cuda_Module
    */

@@ -3,17 +3,15 @@
 
 include $(SRC_DIR)/rpg/field/sources.mk
 include $(SRC_DIR)/rpg/solvers/sources.mk
-include $(SRC_DIR)/rpg/iterator/sources.mk
-include $(SRC_DIR)/rpg/sweep/sources.mk
-include $(SRC_DIR)/rpg/simulate/sources.mk
+include $(SRC_DIR)/rpg/scft/sources.mk
+include $(SRC_DIR)/rpg/fts/sources.mk
 
 # List of source files in src/rpg
 rpg_= \
   $(rpg_field_) \
   $(rpg_solvers_) \
-  $(rpg_iterator_) \
-  $(rpg_sweep_) \
-  $(rpg_simulate_) \
+  $(rpg_scft_) \
+  $(rpg_fts_) \
   rpg/System.cu
 
 # List of object file targets

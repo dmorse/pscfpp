@@ -95,7 +95,9 @@ namespace Rpc
       /**
       * Set unit cell. 
       *
-      * Initializes basis if not done previously.
+      * The lattice system in the unitCell must match any value that was
+      * read from the parameter file. This function initializes the basis if 
+      * a space group exists and the basis was not initialized previously.
       *
       * \param unitCell new unit cell
       */
@@ -104,7 +106,9 @@ namespace Rpc
       /**
       * Set unit cell state.
       *
-      * Initializes basis if not done previously.
+      * The "lattice" lattice system enumeration match any non-null value that 
+      * was read from the parameter file. This function initializes the basis 
+      * if a space group exists and the basis was not initialized previously.
       *
       * \param lattice  lattice system
       * \param parameters array of unit cell parameters
@@ -115,8 +119,9 @@ namespace Rpc
       /**
       * Set unit cell parameters.
       *
-      * Initializes basis if not done previously.
-      * Lattice system must already be set to non-null value on entry.
+      * The lattice system must already be set to non-null value on entry.
+      * This function initializes the basis if a space group exists and the
+      * basis was not initialized previously.
       *
       * \param parameters array of unit cell parameters
       */

@@ -3,17 +3,15 @@
 
 include $(SRC_DIR)/rpc/field/sources.mk
 include $(SRC_DIR)/rpc/solvers/sources.mk
-include $(SRC_DIR)/rpc/iterator/sources.mk
-include $(SRC_DIR)/rpc/sweep/sources.mk
-include $(SRC_DIR)/rpc/simulate/sources.mk
+include $(SRC_DIR)/rpc/scft/sources.mk
+include $(SRC_DIR)/rpc/fts/sources.mk
 
 # List of source files in src/rpc
 rpc_= \
   $(rpc_field_) \
   $(rpc_solvers_) \
-  $(rpc_iterator_) \
-  $(rpc_sweep_) \
-  $(rpc_simulate_) \
+  $(rpc_scft_) \
+  $(rpc_fts_) \
   rpc/System.cpp 
 
 # List of object file targets

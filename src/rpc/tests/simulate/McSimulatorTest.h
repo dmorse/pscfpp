@@ -5,9 +5,9 @@
 #include <test/UnitTestRunner.h>
 
 #include <rpc/System.h>
-#include <rpc/simulate/Simulator.h>
-#include <rpc/simulate/mcmove/McSimulator.h>
-#include <rpc/simulate/compressor/Compressor.h>
+#include <rpc/fts/Simulator.h>
+#include <rpc/fts/mcmove/McSimulator.h>
+#include <rpc/fts/compressor/Compressor.h>
 
 #include <util/tests/LogFileUnitTest.h>
 

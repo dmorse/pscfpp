@@ -5,7 +5,7 @@
 #include <test/UnitTestRunner.h>
 
 #include <rpg/System.h>
-#include <rpg/simulate/Simulator.h>
+#include <rpg/fts/Simulator.h>
 #include <prdc/cuda/RField.h> 
 #include <util/containers/DArray.h>  
 

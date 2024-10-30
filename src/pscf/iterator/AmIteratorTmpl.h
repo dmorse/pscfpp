@@ -182,6 +182,19 @@ namespace Pscf {
       * \param isContinuation true iff continuation within a sweep
       */ 
       virtual void setup(bool isContinuation);
+      
+      /**
+      * Compute and return error used to test for convergence.
+      *
+      * \param residTrial  current residual vector
+      * \param fieldTrial  current field vector    
+      * \param errorType  type of error 
+      * \param verbose  verbosity level of output report.
+      * \return error  measure used to test for convergence.
+      */
+      virtual double computeError(T& residTrial, T& fieldTrial, 
+                                  std::string errorType, 
+                                  int verbose);
      
       /**
       * Compute and return error used to test for convergence.
@@ -189,18 +202,15 @@ namespace Pscf {
       * \param verbose  verbosity level of output report
       * \return error  measure used to test for convergence.
       */
-      virtual double computeError(int verbose);
+      double computeError(int verbose);
       
-      #ifdef PSCF_AM_TEST
-      double computeError(T a);
-      #endif
-
       /**
-      * Set mixing parameter for correction step of Anderson Mixing.
-      *
-      * \return lambda mixing parameter
+      * Compute mixing parameter for correction step of Anderson mixing.
+      * 
+      * \param r  ramping parameter: lambda = 1 - r^Nh for Nh < maxHist.
+      * \return lambda mixing parameter.
       */
-      virtual double setLambda();
+      virtual double computeLambda(double r);
 
       /**
       * Return the current residual vector by const reference.
@@ -260,6 +270,9 @@ namespace Pscf {
 
       /// Free parameter for minimization.
       double lambda_;
+      
+      /// Ramp parameter for correction step.
+      double r_;
 
       /// Maximum number of iterations to attempt.
       int maxItr_;
@@ -325,10 +338,11 @@ namespace Pscf {
       Timer timerTotal_;
 
       #ifdef PSCF_AM_TEST
+      bool hasAmTest_{false};
       double preError_{0};
-      double mixingError_{0};
+      double projectionError_{0};
       double correctionError_{0};
-      double mixingRatio_{0};
+      double projectionRatio_{0};
       double correctionRatio_{0};
       int testCounter{0};
       #endif

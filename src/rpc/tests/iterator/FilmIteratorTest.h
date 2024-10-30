@@ -4,8 +4,8 @@
 #include <test/UnitTest.h>
 #include <test/UnitTestRunner.h>
 
-#include <rpc/iterator/FilmIterator.h>
-#include <rpc/iterator/AmIteratorBasis.h>
+#include <rpc/scft/iterator/FilmIterator.h>
+#include <rpc/scft/iterator/AmIteratorBasis.h>
 #include <rpc/field/FieldIo.h>
 #include <rpc/System.h>
 

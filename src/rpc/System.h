@@ -8,42 +8,42 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <util/param/ParamComposite.h>     // base class
-
+// Header file includes 
+#include <util/param/ParamComposite.h>    // base class
 #include <rpc/solvers/Mixture.h>          // member
 #include <rpc/field/Domain.h>             // member
-#include <rpc/field/FieldIo.h>            // member
 #include <rpc/field/WFieldContainer.h>    // member
 #include <rpc/field/CFieldContainer.h>    // member
 #include <rpc/field/Mask.h>               // member
+#include <prdc/cpu/RField.h>              // member (tmpFieldsRGrid_)
+#include <prdc/cpu/RFieldDft.h>           // member (tmpFieldSKGrid_)
+#include <pscf/homogeneous/Mixture.h>     // member
+#include <util/misc/FileMaster.h>         // member
+#include <util/containers/DArray.h>       // member (tmpFields...)
 
-#include <prdc/cpu/RField.h>               // member
-#include <prdc/cpu/RFieldDft.h>            // member
-
-#include <pscf/homogeneous/Mixture.h>      // member
-
-#include <util/misc/FileMaster.h>          // member
-#include <util/containers/DArray.h>        // member template
-#include <util/containers/FSArray.h>       // member template
-
+// Forward references 
+namespace Util {
+   template <typename T, int N> class FSArray;
+}
 namespace Pscf {
    class Interaction;
    namespace Prdc {
       template <int D> class UnitCell;
+   }
+   namespace Rpc {
+      template <int D> class Iterator;
+      template <int D> class IteratorFactory;
+      template <int D> class Sweep;
+      template <int D> class SweepFactory;
+      template <int D> class Simulator;
+      template <int D> class SimulatorFactory;
    }
 }
 
 namespace Pscf {
 namespace Rpc {
 
-   // Forward references in Pscf::Rpc
-   template <int D> class Iterator;
-   template <int D> class IteratorFactory;
-   template <int D> class Sweep;
-   template <int D> class SweepFactory;
-   template <int D> class Simulator;
-   template <int D> class SimulatorFactory;
-
+   // Namespaces names that may be used implicitly in Pscf::Rpc
    using namespace Util;
    using namespace Prdc;
    using namespace Prdc::Cpu;
@@ -53,7 +53,7 @@ namespace Rpc {
    *
    * A System has (among other components):
    *
-   *    - a Mixture (a container for polymer and solvent solvers)
+   *    - a Mixture (container for polymer and solvent solvers)
    *    - an Interaction (list of binary chi parameters)
    *    - a Domain (description of unit cell and discretization)
    *    - a container of monomer chemical potential fields
@@ -62,14 +62,15 @@ namespace Rpc {
    * A system may also optionally contain Iterator, Sweep, and
    * Simulator objects.
    *
-   * Typical usage of a System<D> object looks something like this:
+   * Usage of a System<D> object in the main program looks something like 
+   * this:
    * \code
    *    System<D> system;
    *    system.setOptions(argc, argv);
    *    system.readParam();
    *    system.readCommands();
    * \endcode
-   * where argc, and argv are parameters containing information about
+   * where argc, and argv are parameters containing information about 
    * command line arguments that must be passed from the main program.
    * This is implemented as function template Pscf::Rpc::run in the
    * file src/rpc/pscf_pc.cpp.
@@ -98,7 +99,7 @@ namespace Rpc {
       ~System();
 
       ///@}
-      /// \name Lifetime (Actions)
+      /// \name Lifetime (Main Actions)
       ///@{
 
       /**
@@ -137,14 +138,14 @@ namespace Rpc {
       virtual void readParameters(std::istream& in);
 
       /**
-      * Read command script from a file.
+      * Read and process commands from a specific file.
       *
-      * \param in command script file.
+      * \param in command script file
       */
       void readCommands(std::istream& in);
 
       /**
-      * Read commands from default command file.
+      * Read and process commands from default command file.
       *
       * This function reads the parameter file set by the -c command
       * line option.
@@ -152,7 +153,7 @@ namespace Rpc {
       void readCommands();
 
       ///@}
-      /// \name W Field Modifiers
+      /// \name W Field (Chemical Potential Field) Modifiers
       ///@{
 
       /**
@@ -164,10 +165,11 @@ namespace Rpc {
       * system w fields equal to those given in this file, by copying
       * elements of the representation in basis format and computing the
       * representation in r-grid format. On exit, both w().basis() and
-      * w().rgrid() have been reset, w().hasData and w().isSymmetric()
-      * are true, and hasCFields() is false.
+      * w().rgrid() are set, w().hasData and w().isSymmetric() are true,
+      * and hasCFields() and hasFreeEnergy() are false. Unit cell 
+      * parameters are set to those read from the field file header.
       *
-      * \param filename name of input w-field basis file
+      * \param filename name of input w-field file in basis format
       */
       void readWBasis(const std::string & filename);
 
@@ -181,9 +183,11 @@ namespace Rpc {
       * field values in symmetry-adapted basis format, because it cannot
       * be known whether the r-grid field exhibits the declared space
       * group symmetry.  On exit, w().rgrid() is reset and w().hasData()
-      * is true, while w().isSymmetric() and hasCFields() are false.
+      * is true, while w().isSymmetric(), hasCFields() and hasFreeEnergy()
+      * are false. Unit cell parameters are set to those read from the
+      * field file header.
       *
-      * \param filename  name of input w-field basis file
+      * \param filename  name of input w-field file in r-grid format
       */
       void readWRGrid(const std::string & filename);
 
@@ -191,9 +195,11 @@ namespace Rpc {
       * Set chemical potential fields, in symmetry-adapted basis format.
       *
       * This function sets values for w fields in both symmetry adapted
-      * and r-grid format.  On exit, values of both w().basis() and
-      * w().rgrid() are reset, w().hasData() and w().isSymmetric() are
-      * true, and hasCFields() is false.
+      * and r-grid format by copying values provided in the "fields"
+      * container that is passed as an argument. Upon return, values 
+      * of both w().basis() and w().rgrid() are set, w().hasData() and 
+      * w().isSymmetric() are true, while hasCFields() and hasFreeEnergy()
+      * are false. Unit cell parameters are left unchanged.
       *
       * \param fields  array of new w (chemical potential) fields
       */
@@ -202,10 +208,11 @@ namespace Rpc {
       /**
       * Set new w fields, in real-space (r-grid) format.
       *
-      * This function set values for w fields in r-grid format, but does
-      * not set components the symmetry-adapted basis format. On return,
-      * w.rgrid() is reset, w().hasData() is true, w().isSymmetric() is
-      * false, and hasCFields() is false.
+      * This function set values for w fields in r-grid format, but 
+      * does not set components the symmetry-adapted basis format. On 
+      * return, w.rgrid() is reset and w().hasData() is true, while
+      * w().isSymmetric(), hasCFields() and hasFreeEnergy() are false.
+      * Unit cell parameters are left unchanged.
       *
       * \param fields  array of new w (chemical potential) fields
       */
@@ -217,10 +224,12 @@ namespace Rpc {
       * This function reads concentration fields in symmetrized basis
       * format and constructs an initial guess for corresponding chemical
       * potential fields by setting the Lagrange multiplier field xi to
-      * zero. The result is stored in the System w fields container
+      * zero. The result is stored in the System w fields container.
       *
-      * Upon return, w().hasData() and w().isSymmetric() are set true,
-      * while hasCFields is set false.
+      * Upon return, w().hasData() and w().isSymmetric() are set true, 
+      * while hasCFields() and hasFreeEnergy() are set false. Unit
+      * cell parameters are set to those read from the c field file
+      * header.
       *
       * \param filename  name of input c-field file (basis format)
       */
@@ -233,8 +242,9 @@ namespace Rpc {
       /**
       * Set parameters of the associated unit cell.
       *
-      * The lattice set in this UnitCell must agree with any lattice
-      * value that was set previously in the parameter file.
+      * The lattice (i.e., lattice system type) set in this UnitCell must 
+      * agree with any lattice value that was set previously in the 
+      * parameter file, or an Exception is thrown.
       *
       * \param unitCell  new UnitCell<D> (i.e., new parameters)
       */
@@ -243,8 +253,8 @@ namespace Rpc {
       /**
       * Set state of the associated unit cell.
       *
-      * The lattice parameter must agree with any lattice value that
-      * was set previously in the parameter file.
+      * The "lattice" (lattice system) parameter must agree with any 
+      * lattice value that was set previously in the parameter file.
       *
       * \param lattice  lattice system
       * \param parameters  array of new unit cell parameters.
@@ -255,8 +265,9 @@ namespace Rpc {
       /**
       * Set parameters of the associated unit cell.
       *
-      * The size of the FSArray<double> parameters must match the
-      * expected number of parameters for the current lattice type.
+      * The logical size of the FSArray<double, 6> "parameters" array 
+      * must match the expected number of parameters for the current 
+      * lattice type.
       *
       * \param parameters  array of new unit cell parameters.
       */

@@ -5,8 +5,8 @@
 #include <test/UnitTestRunner.h>
 
 #include <rpg/System.h>
-#include <rpg/sweep/SweepFactory.h>
-#include <rpg/sweep/LinearSweep.h>
+#include <rpg/scft/sweep/SweepFactory.h>
+#include <rpg/scft/sweep/LinearSweep.h>
 
 #include <prdc/crystal/BFieldComparison.h>
 

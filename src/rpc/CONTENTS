@@ -1,35 +1,33 @@
 This directory contains code specific to a pseudo-spectral 
-implementation of SCFT and field theoretic simulations (FTS) for 
-periodic structures on a single CPU.  All code in this directory is 
-defined in the namespace Pscf::Rpc.  Most algorithms are analogous 
-to those used in the older Fortran PSCF code.  
+implementation of self-consistent field theory (SCFT) and field theoretic 
+simulations (FTS) with real fields for periodic structures, running on
+CPU hardware.  All code in this directory is defined in the namespace 
+Pscf::Rpc.  All FTS algorithms in this namespaced rely on a partial 
+saddle point approximation (PS-FTS), which allows the use of real fields. 
 
 Subdirectories:
 
 field/       - classes to represent or manipulate fields
-iterator/    - iterative SCF equation solvers
 solvers/     - classes to solve the modified diffusion equation (MDE)
-sweep/       - classes to implement continuation of solutions ("sweep")
-simulate/    - classes to implement field-theoretic simulation (FTS)
+scft/        - classes to implement self-consistent field theory (SCFT)
+fts/         - classes to implement field-theoretic simulation (FTS)
 tests/       - unit tests for code in src/rpc
 
-C++ Files:
+C++ Files (file extensions .h, .tpp and .cpp):
 
-System.h      - System<D> class template header (main object)
-System.tpp    - System<D> class template definition
-System.cpp    - System<D> explicit instantiations for D=1,2,3
-pscf_pc.cpp   - Main program periodic structures on CPU hardware
+System.*     - System<D> class template (main object)
+pscf_pc.cpp  - main program for periodic structures on CPU hardware
 
 Makefile and makefile fragments:
 
-sources.mk    - list of source files (makefile fragment)
-patterns.mk   - pattern rules for src/rpc (makefile fragment)
-include.mk    - header of makefile includes (makefile fragment)
-makefile      - main makefile for src/rpc directory tree
+sources.mk   - list of source files in src/rpc (makefile fragment)
+patterns.mk  - pattern rules for use in src/rpc (makefile fragment)
+include.mk   - header of makefile file includes (makefile fragment)
+makefile     - main makefile for src/rpc directory tree
 
 Doxygen documentation files:
 
-pscf_pc.dox   - command line interface for pscf_pc executable
-rpc.mod       - definition of Rpc doxygen module 
-System.dox    - parameter file format for main System block
+pscf_pc.dox  - command line interface for pscf_pc executable
+System.dox   - parameter file format for main System block
+rpc.mod      - definition of Pscf_Rpc_Module doxygen topics module 
 

@@ -7,33 +7,21 @@ Proposed solution:
    -  Make Pscf::Species a template with a type parameter Scalar.
       Define mu_, phi_ and q_ to be type Scalar.
 
-    - Add a template parameter Scalar (scalar type) as a final parameter 
-      for all solver template classes.  
+   -  Add a template parameter Scalar (scalar type) as a final parameter 
+      for all solver template classes.
 
-    - Add a default value Scalar = double for Scalar template parameter
+   -  Add a default value Scalar = double for Scalar template parameter
       for Species and Solver classes so that some current derived classes
       (for r1d and rpc) can remain unchanged.
 
-    - Look for and consider other uses of double in the solver templates
+   - Look for and consider other uses of double in the solver templates
 
 2) Reconsider use of typdefs used to define single and double precision
    real numbers for variables defined on the GPU.
 
-    - Status: Not yet analyzed or resolved.
+   - Status: Not yet analyzed or resolved.
 
-3) The implementation-level namespace names were not designed to 
-accomodate a code for complex, periodic functions.
-
-Proposal: 
-
-  - Change current namespace names, which all involve real fields 
-
-    Fd1d ->  R1d (Real, one-dimensional)
-    Pspc ->  Rpc (Real, periodic, CPU)
-    Pspg  -> Rpg (Real, periodic, GPU)
-
-  - Create a new namespace or namespaces for complex fields
-
-    Cpg  - Complex, periodic (GPU)
-    Cpc  - Complex, periodic (CPU) if desired
+   - Status: Upon rereading this comment in Oct. 2024, it's not clear
+      to me what the problem is. Maybe keeping the cudaReal and cudaComplex
+      typedefs is fine.
 

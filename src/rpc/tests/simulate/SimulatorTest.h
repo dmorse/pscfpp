@@ -5,7 +5,7 @@
 #include <test/UnitTestRunner.h>
 
 #include <rpc/System.h>
-#include <rpc/simulate/Simulator.h>
+#include <rpc/fts/Simulator.h>
 
 #include <prdc/cpu/RFieldComparison.h>
 #include <prdc/crystal/BFieldComparison.h>

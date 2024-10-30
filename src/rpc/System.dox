@@ -17,11 +17,12 @@ System{
   Domain{ ... }
   Iterator#*{ ... }
   Sweep#*{ ... }
-  Compressor#*{ ... }
-  McSimulator*{ ... }
+  Simulator#*{ ... }
 }
 \endcode
-Subblocks are described below:
+Here, as elsewhere in this documentation, the suffixes # and * after a 
+name denote selectable and optional elements, respectively. Subblocks are 
+described below:
 <table>
   <tr>
     <td> Mixture </td>
@@ -34,10 +35,10 @@ Subblocks are described below:
   <tr>
     <td> Interaction </td>
     <td> 
-    The interaction block for a system described by the "standard model" of
-    an incompressible polymer mixture contains a list of Flory-Huggins chi
-    parameters, as discussed \ref user_param_example_interaction "here".
-    (required)
+    The interaction block for a system described by the "standard model" 
+    of an incompressible polymer mixture. This contains a list of nonzero
+    Flory-Huggins chi parameters, as discussed 
+    \ref user_param_example_interaction "here". (required)
     </td>
   </tr>
   <tr>
@@ -53,7 +54,7 @@ Subblocks are described below:
     An Iterator implements an iterative algorithm for solving the
     self-consistent field equations. Available algorithms are listed
     \ref scft_param_pc_iterator_sec "here". An Iterator is required
-    for any SCFT calculation.
+    for any SCFT calculation. (optional and selectable)
     </td>
   </tr>
   <tr>
@@ -61,26 +62,23 @@ Subblocks are described below:
     <td>
     A Sweep performs a sequence of SCFT calculations along a 
     user-prescribed path through parameter space, as described
-    \ref scft_param_sweep_page "here". The block is selectable and
-    optional, but the option that is currently provided is a
-    LinearSweep (class Pscf::Rpc::LinearSweep). 
+    \ref scft_param_sweep_page "here". The block is optional and
+    selectable, but the only option that is currently implemented is 
+    a LinearSweep (class Pscf::Rpc::LinearSweep). This is thus also 
+    the default choice obtained using the generic block name "Sweep". 
     </td>
   </tr>
   <tr>
-    <td> Compressor#* </td>
+    <td> Simulator* </td>
     <td>
-    A Compressor is an iterative solver that adjusts the Lagrange
-    multiplier chemical potential field in order to satisfy the 
-    incompressibility constraint, also known as a partial-saddle
-    point condition. A Compressor is required for all field theoretic
-    simulations that can be performed by pscf_pc, all of which are
-    based on a partial saddle point approximation.
-    </td>
-  </tr>
-  <tr>
-    <td> McSimulator* </td>
-    <td>
-    An McSimulator performs a field theoretic Monte Carlo simulation.
+    A Simulator block contains parameters for all of the objects and
+    algorithms that required to perform a partial saddle-point field 
+    theoretic simulation (PS-FTS), but that are not required for SCFT.  
+    Users may currently between a BdSimulator{ ... } block (which
+    creates an instance of class Pscf::Rpc::BdSimulator <D> ) to perform 
+    a Brownian dynamics simulation or an McSimulator{ ... } block (class 
+    Pscf::Rpc::McSimulator <D>) to perform a field theoretic Monte-Carlo 
+    simulation.
     </td>
   </tr>
 </table>

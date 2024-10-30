@@ -1,0 +1,28 @@
+This directory contains code used only in stochastic FTS calculations
+using a partial saddle-point approximation on CPU hardware.
+
+Subdirectories:
+
+compressor/    - algorithms to iteratively find a partial saddle point
+bdstep/        - Brownian dynamics simulation steps and BdSimulator
+mcmove/        - Monte Carlo moves and McSimulator
+analyzer/      - Data analysis classes (for on-the-fly or postprocessing)
+perturbation/  - perturbations of the Hamiltonian (e.g., Einstein crystal)
+ramp/          - continuous parameter ramp during simulation
+trajectory/    - reading field trajectory files (postprocessing)
+
+C++ Files (file name extensions .h, .tpp and .cpp):
+
+Simulator.*        - Simulator<D> class template (main object)
+SimulatorFactory.* - Factory to choose BdSimulator<D> or McSimulator<D>
+SimState.*         - SimState<D> class template 
+
+Makefile and makefile fragments:
+
+sources.mk    - list of source files (makefile fragment)
+makefile      - main makefile for rpc/fts directory tree
+
+Doxygen documentation files:
+
+fts.mod       - defintion of the Rpc_Fts_Module doxygen topic module
+

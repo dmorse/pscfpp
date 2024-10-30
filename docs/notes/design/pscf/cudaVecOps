@@ -1,0 +1,190 @@
+TODO (rpg GPU code):
+
+Clean up of simple vector linear algebra kernel functions
+----------------------------------------------------------
+
+1) Create a new public branch vector in which to do clean up.
+   Submit partial but functional changes to that.
+
+2) Comment out (first) then erase (second) unused kernels.
+   Some are found in solvers/Block.tpp and (possibly?) math/Helpers.cu
+   (From Ryan: definitely some in math/Helpers.cu!)
+
+3) Analyze what operations in the current rpg code are or should be 
+   implemented by calling a standard linear algebra operation like
+   one of those described below. That will give a list of operations
+   that are needed immediately, and may identify some possible 
+   operations that we actually don't need immediately. 
+
+4) Establish more consistent function name conventions for a new
+   set of functions in pscf/cuda/LinearAlgebra files.
+
+   Proposal: One way to do this would be to write and test copies 
+   with new names and/or new interfaces, and then just start 
+   replacing function calls to refer to the new functions. Comment 
+   out and remove old ones only after all calls have been changed
+
+   Proposal for name convention (current preference):
+
+          Use overloading of arguments to distinguish input types,
+          thus limiting the number of required function names.
+
+          Use V for vector, S for scalar for input argument(s). 
+          Agument types V and S follow the operation name. 
+
+          Use Eq for unary assignment. The function eqV(A,B) thus 
+          assigns vector B to a vector A (A=B) while, eqS(A,S)
+          assigns scalar S to every element of vector A. 
+
+          Use add, sub, mul div for binary operations. Start each
+          function name with the binary operation in lower case. 
+          Multiplication and division are interpreted as elementwise
+          operations, like addition and subtraction.  The function 
+          addVV(A,B,C) thus implements vector-vector addition 
+          A = B + C, while addVS(A,B,c) implements vector scalar
+          addition A = B + c in which c is a scalar that is added
+          to every element of B.
+
+          Use Eq after a binary operation name to denote in-place 
+          operations (compound assignments), such as addEq, analogous 
+          to C/C++ notation +=, -=, *=. The function addEqV(A,B) thus
+          implements A = A + B or A += B.
+
+          In examples below (but not in names) use upper case for 
+          vectors, lower case for scalars:
+
+          Unary assignment:
+
+            eqV(A,B)  :  A = B  vector assignment
+            eqS(A,s)  :  A = s  assigment of scalar s to every element
+          Binary operations:
+
+            addVV(A,B,C) :  A = B + C vector-vector addition
+            addVS(A,B,c) :  A = B + c vector-scalar addition
+
+          Compound assignment:
+
+            addEqV  :  A += B or A = A + B (addition of vector V)
+            addEqS  :  A += c or A = A + c (addition of scalar c)
+
+          C interface: Order of the first few parameters would be the 
+          same as in order of equation, with the LHS vector listed 
+          first.  Integer array size is after other arguments. 
+          In Cuda kernels, vectors are passed as pointers (cudaReal*
+          or cudaComplex*), scalars are passed as by value as cudaReal
+          or cudaComplex. Vectors that are not modified (any after 
+          the first argument) are passed as pointers to const (i.e.,
+          cudaReal const * or cudaComplex const *).  Return value is 
+          always void.
+
+          Result data types (real or complex) are known from argument 
+          types.  Binary operations involving inputs of the same type 
+          (both cudaReal or both cudaComplex) yield a result with
+          elements of that type. Operations involving complex and 
+          real arguments yield complex results. 
+ 
+          Define kernel function in Pscf::Cuda::VecOp::
+
+          Examples of interfaces (return type is void in all):
+
+            addVV(real* result, real const * a, real const * b, int n);
+            addVV(complex* result, complex const * a, complex const * b, 
+                 int n);
+            addVV(complex* result, complex* a, real const * b, in n);
+            addVS(real* result, real const * a, real b, int n);
+            addVS(complex* result, complex const * a, complex b, int n);
+            addVS(complex* result, complex const * a, real b, int n);
+            addVS(complex* result, real const * a, complex b, int n);
+  
+            addEqV(real* a, real const * b, int n)
+            addEqV(complex* a, complex const * b, int n)
+            addEqV(complex* a, real const * b, int n)
+  
+            addEqS(real* a, real b, int n)
+            addEqS(complex* a, complex b, int n)
+            addEqS(complex* a, real b, int n)
+     
+          Here "real" and  "complex" denote cudaReal and cudaComplex.
+
+          That is a total of 13 possible binary or compount assignment 
+          functions involving the add operation.  With 4 possible binary
+          operations, that is 52 possible functions.  Start by renaming 
+          the ones we use now.
+
+5) Kernels vs. C++ Wrapper functions
+
+       For many required operations with vector results, we will probably 
+       want up to three types of closely related function:
+
+       1. A global cuda kernel like the existing kernels, in which the 
+          Block and Thread counts have to be passed explicitly. These
+          could be defined in Pscf::Cuda. Arrays are passed as pointers.
+
+       2. A C++ function in which a ThreadGrid is passed as an argument, 
+          along with bare C pointers to memory on the GPU, and an array 
+          dimension.  This would call a kernel internally. The presence 
+          of a ThreadGrid in the argument would distinguish the interface 
+          from that of an analogous kernel, so the name could be the same. 
+          This could also be defined in Pscf::Cuda.
+
+       3. A C++ function that takes Field<typename T> containers.
+          This would calls the kernel or C++ pointer version internally. 
+          This could take a ThreadGrid as an argument or create one 
+          internally from knowledge of field array dimensions. The 
+          interface would be distinguished from that of the other two 
+          function types by the appearance of container types rather 
+          than pointers. This would have to be defined in namespace
+          Prdc::Gpu, since that is where the container template is 
+          defined.
+
+       -  Using Field<cudaReal> and Field<cudaComplex> rather than
+          RField<D>, RFieldDft<D> and CField<D> would avoid the need
+          to treat D as a template parameter, and allow the same 
+          functions to be used for RFieldDft<D> and CField<D> containers.
+
+       -  We need thorough unit tests to be written for all functions 
+          during development of these functions. These are simple, but 
+          humans still make mistakes, and its a lot of minor changes at 
+          once. 
+
+6) Find locally defined kernels and replace them one-by-one with ones 
+defined in pscf/gpu or prdc/gpu:
+
+     - Replace scaleRealData in fieldFFT.tpp 
+
+     - Consider replacing some pointwise multiplication functions defined 
+       in Block.
+
+     - Consider replacing FFTBatched.tpp/scaleComplexData 
+
+--------------------------------------------------------------------------
+Parallel Reductions:
+
+   After cleaning up operations that create or modify vectors, we could
+   try to clean up parallel reduction kernels and wrappers.
+
+1) Move parallel reduction kernels to private namespace in implementation
+   of kernel wrappers, so not publically visible. 
+
+    Example wrapper function for reductions:
+
+       reduceSum
+       reduceAbsMax
+
+       Overloaded versions of wrappers for pointers and containers,
+       as for vector operations. Pointer versions should take a 
+       ThreadGrid as an argument.
+
+       Some convention will be need to distinguish names of kernels
+       from analogous C++ wrapper. The use of a ThreadGrid argument
+       to the C++ wrapper may be enough, if done consistently. 
+
+2) Rename some files:
+
+       KernelWrappers -> Reductions (both kernels and C++ wrappers)
+
+       Provide overloaded operations for field containers in 
+       directories or files that define containers
+
+       Move Helpers to pscf/gpu
+      

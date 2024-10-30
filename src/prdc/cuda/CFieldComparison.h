@@ -19,7 +19,7 @@ namespace Cuda {
    using namespace Util;
 
    /**
-   * Comparator for CField (k-grid) arrays.
+   * Comparator for CField (k-grid) arrays, defined in device memory.
    *
    * \ingroup Prdc_Cuda_Module
    */

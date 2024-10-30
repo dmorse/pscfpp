@@ -1,36 +1,32 @@
-This directory contains C++ and CUDA code specific to a GPU-accelerated
+This directory contains C++ and C++/CUDA code used by a GPU-accelerated
 pseudo-spectral implementation of SCFT and FTS methods for real fields
 with periodic structures.  All code in this directory is defined in the 
 namespace Pscf::Rpg. Class designs and algorithms are generally closely 
-analogous to those of the C++ versions of this code found in the src/rpc 
-directory.
+analogous to those of the pure C++ version of this code located in the 
+src/rpc directory.
 
 Subdirectories:
 
-field/     - classes to represent or manipulate fields, including FFTs
-iterator/  - iterative SCF equation solvers
-math/      - CUDA resources and kernels for mathematical operations
-solvers/   - modified diffusion equation solvers
-simulate/  - classes for FTMC simulation
-sweep/     - classes to implement continuation of solutions ("sweep")
-tests/     - unit cell tests for code
+field/      - classes to represent or manipulate fields
+solvers/    - classes that solve the modified diffusion equation (MDE)
+scft/       - classes used only for self-consistent field theory (SCFT)
+fts/        - classes for stochastic field theoretic simulation (FTS)
+tests/      - unit cell tests for code
 
-Source Files:
+C++/CUDA Source Files (file extensions .h, .tpp and .cu)
 
-pscf_pg.cpp  - Main program for perodic structure on a GPU
-System.h     - System<D> class template header (main object)
-System.tpp   - System<D> class template definition
-System.cpp   - System<D> explicit instantiations for D=1,2,3
+System.*    - System<D> class template (main object)
+pscf_pg.cu  - Main program for real perodic fields using a GPU
 
 Makefile and makefile fragments:
 
-sources.mk   - list of source files (makefile fragment)
-patterns.mk  - pattern rules for src/rpg (makefile fragment)
-include.mk   - header of makefile includes (makefile fragment)
-makefile     - main makefile for src/rpg directory tree
+sources.mk  - list of source files (makefile fragment)
+patterns.mk - pattern rules for src/rpg (makefile fragment)
+include.mk  - header of makefile file includes (makefile fragment)
+makefile    - main makefile for src/rpg directory tree
 
 Doxygen documentation files:
 
-rpg.mod      - definition of Rpg doxygen module 
-pscf_pg.dox  - command line interface documentation for pscf_pg
+pscf_pg.dox - command line interface for pscf_pg main program
+rpg.mod     - definition of Pscf_Rpg_Module doxygen topic module 
 
