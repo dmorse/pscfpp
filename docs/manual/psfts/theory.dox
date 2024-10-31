@@ -85,6 +85,31 @@ irrelevant multiplicative constant as a configurational integral
 in which the \f$ \delta \f$-functional imposes the incompressibility 
 constraint.
 
+\section psfts_theory_ideal_sec Ideal Gas Model
+
+All of the theoretical methods implemented in PSCF relate the free energy
+of an interacting polymer fluids to that of a corresponding ideal gas of
+non-interacting molecules that is subjected to a set of external fields.
+In this hypothetical non-interacting system, each monomer of type \f$i\f$ 
+is subjected to a potential energy \f$ w_{i}({\bf r}) \f$, for each
+\f$ i = 1, \ldots, M \f$.
+The potential energy for the resutling ideal gas model can be expressed 
+as a sum \f$ U_{\rm id} + U_{\rm c} \f$ of the intramolecular potential 
+energy \f$ U_{\rm id} \f$ of the corresponding interaction 
+of interest plus a coupling energy of the form
+\f[
+   U_{\rm c} = \sum_{i=1}^{M} \int \! d{\bf r}
+   c_{i}({\bf r}) w_{i}({\bf r}) \quad.
+\f]
+Let $Z_{\rm id}[w]$ denote the partition function for such a gas as a
+functional of the fields \f$ w_{1}, \ldots, w_{M} \f$, which is given
+by an integral
+\f[
+   Z_{\rm id}[w] 
+    = \int {\cal D}{\bf r} \; e^{-U_{\rm id} - U_{\rm c} }
+   \quad,
+\f]
+
 \section psfts_theory_AB_sec Field Theory: Standard AB Systems (\f$ M=2 \f$)
 
 We first consider the case of standard AB systems, as described above.
@@ -503,8 +528,8 @@ in an external field.
 
 <b> Field-Theoretic Hamiltonian  </b>
 
-The functional integral expression for \f$ Z \f$ obtained above
-may expressed as an integral
+The functional integral expression for \f$ Z \f$ obtained above may 
+expressed as an integral
 \f[
   Z = N^{-1} \int {\cal D}\omega \; e^{-H[\omega]}
 \f]
