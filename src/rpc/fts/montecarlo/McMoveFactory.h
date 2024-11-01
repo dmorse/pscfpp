@@ -23,7 +23,7 @@ namespace Rpc {
    /**
    * Factory for subclasses of McMove.
    *
-   * \ingroup Rpc_Fts_McMove_Module
+   * \ingroup Rpc_Fts_MonteCarlo_Module
    */
    template <int D>
    class McMoveFactory : public Factory< McMove<D> > 

@@ -25,7 +25,7 @@ namespace Rpc {
    /**
    * Manager for a set of McMove objects.
    *
-   * \ingroup Rpc_Fts_McMove_Module
+   * \ingroup Rpc_Fts_MonteCarlo_Module
    */
    template <int D>
    class McMoveManager : public Manager< McMove<D> >

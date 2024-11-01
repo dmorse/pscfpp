@@ -21,7 +21,7 @@ namespace Rpc {
    /**
    * ForceBiasMove attempts a Brownian dynamics move.
    *
-   * \ingroup Rpc_Fts_McMove_Module
+   * \ingroup Rpc_Fts_MonteCarlo_Module
    */
    template <int D>
    class ForceBiasMove : public McMove<D>
