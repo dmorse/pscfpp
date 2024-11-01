@@ -2,7 +2,7 @@
 #define RPC_BD_STEP_FACTORY_TPP
 
 #include "BdStepFactory.h"  
-#include <rpc/fts/bdstep/BdSimulator.h>
+#include <rpc/fts/brownian/BdSimulator.h>
 
 // Subclasses of BdStep 
 #include "ExplicitBdStep.h"

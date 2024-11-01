@@ -9,7 +9,7 @@
 */
 
 #include <util/param/Factory.h>  
-#include <rpc/fts/bdstep/BdStep.h>
+#include <rpc/fts/brownian/BdStep.h>
 
 #include <string>
 

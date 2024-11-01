@@ -9,9 +9,9 @@
 */
 
 #include <util/global.h>
-#include <rpc/fts/mcmove/McMoveManager.h>
-#include <rpc/fts/mcmove/McMoveFactory.h>
-#include <rpc/fts/mcmove/McSimulator.h>
+#include <rpc/fts/montecarlo/McMoveManager.h>
+#include <rpc/fts/montecarlo/McMoveFactory.h>
+#include <rpc/fts/montecarlo/McSimulator.h>
 
 #include <util/random/Random.h>
 

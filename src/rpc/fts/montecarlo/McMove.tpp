@@ -10,7 +10,7 @@
 
 #include "McMove.h"
 
-#include <rpc/fts/mcmove/McSimulator.h>
+#include <rpc/fts/montecarlo/McSimulator.h>
 #include <rpc/fts/compressor/Compressor.h>
 #include <rpc/System.h>
 #include <util/archives/Serializable_includes.h>

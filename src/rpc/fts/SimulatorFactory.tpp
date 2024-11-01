@@ -5,8 +5,8 @@
 #include <rpc/System.h>
 
 // Subclasses of Simulator 
-#include <rpc/fts/mcmove/McSimulator.h>
-#include <rpc/fts/bdstep/BdSimulator.h>
+#include <rpc/fts/montecarlo/McSimulator.h>
+#include <rpc/fts/brownian/BdSimulator.h>
 
 namespace Pscf {
 namespace Rpc {

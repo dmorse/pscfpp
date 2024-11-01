@@ -4,11 +4,11 @@ using a partial saddle-point approximation on CPU hardware.
 Subdirectories:
 
 compressor/    - algorithms to iteratively find a partial saddle point
-bdstep/        - Brownian dynamics simulation steps and BdSimulator
-mcmove/        - Monte Carlo moves and McSimulator
-analyzer/      - Data analysis classes (for on-the-fly or postprocessing)
+brownian/      - Brownian dynamics simulation 
+montecarlo/    - Monte Carlo simulation
+analyzer/      - data analysis classes (for on-the-fly or postprocessing)
 perturbation/  - perturbations of the Hamiltonian (e.g., Einstein crystal)
-ramp/          - continuous parameter ramp during simulation
+ramp/          - continuous change of parameters during a simulation
 trajectory/    - reading field trajectory files (postprocessing)
 
 C++ Files (file name extensions .h, .tpp and .cpp):

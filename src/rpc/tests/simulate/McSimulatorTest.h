@@ -6,7 +6,7 @@
 
 #include <rpc/System.h>
 #include <rpc/fts/Simulator.h>
-#include <rpc/fts/mcmove/McSimulator.h>
+#include <rpc/fts/montecarlo/McSimulator.h>
 #include <rpc/fts/compressor/Compressor.h>
 
 #include <util/tests/LogFileUnitTest.h>

@@ -1,5 +1,5 @@
-#ifndef RPC_MC_SIMULATOR_TPP
-#define RPC_MC_SIMULATOR_TPP
+#ifndef RPC_BD_SIMULATOR_TPP
+#define RPC_BD_SIMULATOR_TPP
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory
@@ -8,24 +8,23 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "McSimulator.h"
+#include "BdSimulator.h"
 
-#include <rpc/System.h>
-#include <rpc/fts/mcmove/McMoveFactory.h>
+#include <rpc/fts/brownian/BdStep.h>
+#include <rpc/fts/brownian/BdStepFactory.h>
+#include <rpc/fts/compressor/Compressor.h>
 #include <rpc/fts/analyzer/AnalyzerFactory.h>
 #include <rpc/fts/trajectory/TrajectoryReader.h>
 #include <rpc/fts/trajectory/TrajectoryReaderFactory.h>
-#include <rpc/fts/compressor/Compressor.h>
 #include <rpc/fts/perturbation/PerturbationFactory.h>
 #include <rpc/fts/perturbation/Perturbation.h>
 #include <rpc/fts/ramp/RampFactory.h>
 #include <rpc/fts/ramp/Ramp.h>
+#include <rpc/System.h>
 
 #include <util/random/Random.h>
 #include <util/misc/Timer.h>
 #include <util/global.h>
-
-#include <gsl/gsl_eigen.h>
 
 namespace Pscf {
 namespace Rpc {
@@ -36,13 +35,15 @@ namespace Rpc {
    * Constructor.
    */
    template <int D>
-   McSimulator<D>::McSimulator(System<D>& system)
+   BdSimulator<D>::BdSimulator(System<D>& system)
     : Simulator<D>(system),
-      mcMoveManager_(*this, system),
       analyzerManager_(*this, system),
+      bdStepPtr_(0),
+      bdStepFactoryPtr_(0),
       trajectoryReaderFactoryPtr_(0)
    {
-      setClassName("McSimulator");
+      setClassName("BdSimulator");
+      bdStepFactoryPtr_ = new BdStepFactory<D>(*this);
       trajectoryReaderFactoryPtr_
              = new TrajectoryReaderFactory<D>(system);
    }
@@ -51,74 +52,78 @@ namespace Rpc {
    * Destructor.
    */
    template <int D>
-   McSimulator<D>::~McSimulator()
+   BdSimulator<D>::~BdSimulator()
    {
+      if (bdStepFactoryPtr_) {
+         delete bdStepFactoryPtr_;
+      }
       if (trajectoryReaderFactoryPtr_) {
          delete trajectoryReaderFactoryPtr_;
       }
    }
 
    /*
-   * Read parameter file block.
+   * Read parameter file block for a BD simulator.
    */
    template <int D>
-   void McSimulator<D>::readParameters(std::istream &in)
+   void BdSimulator<D>::readParameters(std::istream &in)
    {
-      // Read compressor block, optional random number generator seed,
-      // optional Perturbation and optional Ramp.
+      // Read compressor, optional random seed, optional perturbation
       Simulator<D>::readParameters(in);
 
-      // Read block of McMove parameters
-      readParamComposite(in, mcMoveManager_);
+      // Instantiate an BdStep object (required)
+      std::string className;
+      bool isEnd = false;
+      bdStepPtr_ =
+          bdStepFactoryPtr_->readObject(in, *this, className, isEnd);
+      UTIL_CHECK(bdStepPtr_);
 
-      // Read block of Analyzers
-      Analyzer<D>::baseInterval = 0; // default value
-      readParamCompositeOptional(in, analyzerManager_);
+      // Read analyzer block (optional)
+      if (!isEnd) {
+         Analyzer<D>::baseInterval = 0; // default value
+         readParamCompositeOptional(in, analyzerManager_);
+      }
 
-      // Figure out what needs to be saved
+      // Figure out what variables need to be saved
       state_.needsCc = false;
       state_.needsDc = false;
-      state_.needsHamiltonian = true;
-      if (mcMoveManager_.needsCc()){
+      state_.needsHamiltonian = false;
+      if (stepper().needsCc()){
          state_.needsCc = true;
       }
-      if (mcMoveManager_.needsDc()){
+      if (stepper().needsDc()){
          state_.needsDc = true;
       }
 
-      // Initialize Simulator<D> base class
+      // Allocate memory for Simulator<D> base class
       Simulator<D>::allocate();
 
    }
 
    /*
-   * Initialize just prior to a run.
+   * Perform a field theoretic MC simulation of nStep steps.
    */
    template <int D>
-   void McSimulator<D>::setup()
+   void BdSimulator<D>::setup()
    {
       UTIL_CHECK(system().w().hasData());
 
       // Eigenanalysis of the projected chi matrix.
       analyzeChi();
 
-      // Compute field components and MC Hamiltonian for initial state
+      // Compute field components and Hamiltonian for initial state.
       system().compute();
       computeWc();
+      computeCc();
       
       if (hasPerturbation()) {
          perturbation().setup();
       }
-   
+      
+      computeDc();
       computeHamiltonian();
-      if (state_.needsCc || state_.needsDc) {
-         computeCc();
-      }
-      if (state_.needsDc) {
-         computeDc();
-      }
 
-      mcMoveManager_.setup();
+      stepper().setup();
       if (analyzerManager_.size() > 0){
          analyzerManager_.setup();
       }
@@ -133,19 +138,17 @@ namespace Rpc {
    * Perform a field theoretic MC simulation of nStep steps.
    */
    template <int D>
-   void McSimulator<D>::simulate(int nStep)
+   void BdSimulator<D>::simulate(int nStep)
    {
-      UTIL_CHECK(mcMoveManager_.size() > 0);
-      
+      UTIL_CHECK(system().w().hasData());
+
       // Initial setup
       setup();
       if (hasRamp()) {
          ramp().setup(nStep);
       }
-   
-      Log::file() << std::endl;
-
-      // Main Monte Carlo loop
+      
+      // Main simulation loop
       Timer timer;
       Timer analyzerTimer;
       timer.start();
@@ -154,20 +157,20 @@ namespace Rpc {
          ramp().setParameters(iStep_);
       }
 
-      // Analysis initial step (if any)
+      // Analysis for initial state (if any)
       analyzerTimer.start();
       analyzerManager_.sample(iStep_);
       analyzerTimer.stop();
 
       for (iTotalStep_ = 0; iTotalStep_ < nStep; ++iTotalStep_) {
 
-         // Choose and attempt an McMove
+         // Take a step (modifies W fields)
          bool converged;
-         converged = mcMoveManager_.chooseMove().move();
+         converged = stepper().step();
 
          if (converged){
             iStep_++;
-            
+
             if (hasRamp()) {
                ramp().setParameters(iStep_);               
             }
@@ -183,35 +186,33 @@ namespace Rpc {
             }
             analyzerTimer.stop();
 
-         } else{
-            Log::file() << "Step: "<< iTotalStep_<< " fail to converge" << "\n";
+         } else {
+            Log::file() << "Step: "<< iTotalStep_
+                        << " fail to converge" << "\n";
          }
+
       }
 
       timer.stop();
       double time = timer.time();
       double analyzerTime = analyzerTimer.time();
 
-      // Output results of move statistics to files
-      mcMoveManager_.output();
+      // Output results analyzers to files
       if (Analyzer<D>::baseInterval > 0){
          analyzerManager_.output();
       }
       
       // Output results of ramp
       if (hasRamp()){
+         Log::file() << std::endl;
          ramp().output();
       }
 
       // Output number of times MDE has been solved for the simulation run
-      outputMdeCounter(Log::file());
-      
-      #if 0
       Log::file() << std::endl;
-      Log::file() << "MDE counter   " 
+      Log::file() << "MDE counter   "
                   << compressor().mdeCounter() << std::endl;
       Log::file() << std::endl;
-      #endif
 
       // Output times for the simulation run
       Log::file() << std::endl;
@@ -227,45 +228,16 @@ namespace Rpc {
       Log::file() << "Analyzer run time   " << analyzerTime
                   << " sec" << std::endl;
       Log::file() << std::endl;
-
-      // Print McMove acceptance statistics
-      long attempt;
-      long accept;
-      long fail;
-      using namespace std;
-      Log::file() << "Move Statistics:" << endl << endl;
-      Log::file() << setw(20) << left <<  "Move Name"
-           << setw(10) << right << "Attempted"
-           << setw(10) << right << "Accepted"
-           << setw(13) << right << "AcceptRate"
-           << setw(10) << right << "Failed"
-           << setw(13) << right << "FailRate"
-           << endl;
-      int nMove = mcMoveManager_.size();
-      for (int iMove = 0; iMove < nMove; ++iMove) {
-         attempt = mcMoveManager_[iMove].nAttempt();
-         accept  = mcMoveManager_[iMove].nAccept();
-         fail  = mcMoveManager_[iMove].nFail();
-         Log::file() << setw(20) << left
-              << mcMoveManager_[iMove].className()
-              << setw(10) << right << attempt
-              << setw(10) << accept
-              << setw(13) << fixed << setprecision(5)
-              << ( attempt == 0 ? 0.0 : double(accept)/double(attempt) )
-              << setw(10) << fail
-              << setw(13) << fixed << setprecision(5)
-              << ( attempt == 0 ? 0.0 : double(fail)/double(attempt) )
-              << endl;
-      }
-      Log::file() << endl;
-
+      
+      // Output compressor timer results
+      compressor().outputTimers(Log::file());
    }
 
    /*
    * Open, read and analyze a trajectory file
    */
    template <int D>
-   void McSimulator<D>::analyze(int min, int max,
+   void BdSimulator<D>::analyze(int min, int max,
                                 std::string classname,
                                 std::string filename)
    {
@@ -316,7 +288,7 @@ namespace Rpc {
 
       // Output results of all analyzers to output files
       analyzerManager_.output();
-
+   
       // Output number of frames and times
       Log::file() << std::endl;
       Log::file() << "# of frames   " << nFrames << std::endl;
@@ -327,24 +299,6 @@ namespace Rpc {
       Log::file() << std::endl;
 
    }
-
-   /*
-   * Output McMoveManager timer results.
-   */
-   template<int D>
-   void McSimulator<D>::outputTimers(std::ostream& out)
-   {
-      out << "\n";
-      out << "McSimulator times contributions:\n";
-      mcMoveManager_.outputTimers(out);
-   }
-
-   /*
-   * Clear all McMoveManager timers.
-   */
-   template<int D>
-   void McSimulator<D>::clearTimers()
-   {  mcMoveManager_.clearTimers(); }
 
 }
 }

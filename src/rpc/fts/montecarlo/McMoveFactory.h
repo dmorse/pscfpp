@@ -9,7 +9,7 @@
 */
 
 #include <util/param/Factory.h>  
-#include <rpc/fts/mcmove/McMove.h>
+#include <rpc/fts/montecarlo/McMove.h>
 
 #include <string>
 

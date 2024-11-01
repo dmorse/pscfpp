@@ -9,7 +9,7 @@
 */
 
 #include <rpc/fts/Simulator.h>                   // member
-#include <rpc/fts/mcmove/McMoveManager.h>        // member
+#include <rpc/fts/montecarlo/McMoveManager.h>        // member
 #include <rpc/fts/analyzer/AnalyzerManager.h>    // member
 
 namespace Pscf {

@@ -8,13 +8,13 @@ include $(SRC_DIR)/rpc/include.mk
 #--------------------------------------------------------------------
 # Main targets 
 
-all: $(rpc_fts_mcmove_OBJS) 
+all: $(rpc_fts_montecarlo_OBJS) 
 
 includes:
 	echo $(INCLUDES)
 
 clean:
-	rm -f $(rpc_fts_mcmove_OBJS) $(rpc_fts_mcmove_OBJS:.o=.d) 
+	rm -f $(rpc_fts_montecarlo_OBJS) $(rpc_fts_montecarlo_OBJS:.o=.d) 
 
 #--------------------------------------------------------------------
 # Include dependency files

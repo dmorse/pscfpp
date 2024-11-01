@@ -10,7 +10,7 @@
 
 #include "MidstepBdStep.h"
 
-#include <rpc/fts/bdstep/BdSimulator.h>
+#include <rpc/fts/brownian/BdSimulator.h>
 #include <rpc/fts/compressor/Compressor.h>
 #include <rpc/System.h>
 #include <pscf/math/IntVec.h>
