@@ -2,7 +2,7 @@
 #define RPG_EINSTEIN_CRYSTAL_PERTURBATION_TPP
 
 #include "EinsteinCrystalPerturbation.h"
-#include <rpg/fts/Simulator.h>
+#include <rpg/fts/simulator/Simulator.h>
 #include <rpg/System.h>
 #include <prdc/cuda/RField.h>
 #include <prdc/cuda/Field.h>

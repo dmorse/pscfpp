@@ -3,7 +3,7 @@
 
 #include "FourthOrderParameter.h"
 
-#include <rpg/fts/Simulator.h>
+#include <rpg/fts/simulator/Simulator.h>
 #include <rpg/System.h>
 
 #include <prdc/cuda/RField.h>

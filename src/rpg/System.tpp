@@ -10,8 +10,8 @@
 
 #include "System.h"
 
-#include <rpg/fts/Simulator.h>
-#include <rpg/fts/SimulatorFactory.h>
+#include <rpg/fts/simulator/Simulator.h>
+#include <rpg/fts/simulator/SimulatorFactory.h>
 #include <rpg/fts/compressor/Compressor.h>
 #include <rpg/scft/sweep/Sweep.h>
 #include <rpg/scft/sweep/SweepFactory.h>

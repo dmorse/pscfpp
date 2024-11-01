@@ -10,7 +10,7 @@
 
 #include <util/param/ParamComposite.h>     // base class
 
-#include <rpg/fts/SimState.h>         // member
+#include <rpg/fts/simulator/SimState.h>         // member
 #include <prdc/cuda/RField.h>              // memmber (template arg)
 #include <util/random/Random.h>            // member
 #include <pscf/cuda/CudaRandom.h>          // member

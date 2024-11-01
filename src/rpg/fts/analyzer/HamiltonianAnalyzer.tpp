@@ -10,7 +10,7 @@
 
 #include "HamiltonianAnalyzer.h"
 #include <rpg/System.h>
-#include <rpg/fts/Simulator.h>
+#include <rpg/fts/simulator/Simulator.h>
 
 namespace Pscf {
 namespace Rpg

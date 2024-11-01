@@ -9,7 +9,7 @@
 */
 
 #include <rpg/System.h>
-#include <rpg/fts/Simulator.h>
+#include <rpg/fts/simulator/Simulator.h>
 #include <rpg/fts/perturbation/Perturbation.h>
 #include <rpg/solvers/Block.h>
 #include <rpg/solvers/Mixture.h>

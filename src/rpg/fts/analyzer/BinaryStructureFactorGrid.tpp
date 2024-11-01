@@ -6,7 +6,7 @@
 #include <prdc/cuda/HostField.h>
 #include <prdc/crystal/shiftToMinimum.h>
 
-#include <rpg/fts/Simulator.h>
+#include <rpg/fts/simulator/Simulator.h>
 #include <rpg/System.h>
 #include <pscf/mesh/MeshIterator.h>
 #include <util/misc/FileMaster.h>

@@ -2,7 +2,7 @@
 #define RPG_RAMP_TPP
 
 #include "Ramp.h"
-#include <rpg/fts/Simulator.h>
+#include <rpg/fts/simulator/Simulator.h>
 #include <prdc/cuda/RField.h>
 
 #include <util/containers/DArray.h>

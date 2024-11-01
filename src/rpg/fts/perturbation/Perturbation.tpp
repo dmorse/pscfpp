@@ -2,7 +2,7 @@
 #define RPG_PERTURBATION_TPP
 
 #include "Perturbation.h"
-#include <rpg/fts/Simulator.h>
+#include <rpg/fts/simulator/Simulator.h>
 #include <prdc/cuda/RField.h>
 
 #include <util/containers/DArray.h>
