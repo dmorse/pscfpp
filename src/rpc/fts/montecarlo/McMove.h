@@ -30,7 +30,7 @@ namespace Rpc
    * to accept or reject it, and update the associated System fields
    * if it is accepted.
    *
-   * \ingroup Rpc_Fts_McMove_Module
+   * \ingroup Rpc_Fts_MonteCarlo_Module
    */
    template <int D>
    class McMove : public ParamComposite

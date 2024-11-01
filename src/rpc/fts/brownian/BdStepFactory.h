@@ -23,7 +23,7 @@ namespace Rpc {
    /**
    * Factory for subclasses of BdStep.
    *
-   * \ingroup Rpc_Fts_BdStep_Module
+   * \ingroup Rpc_Fts_Brownian_Module
    */
    template <int D>
    class BdStepFactory : public Factory< BdStep<D> > 
