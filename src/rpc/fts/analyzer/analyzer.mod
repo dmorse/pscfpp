@@ -3,7 +3,7 @@ namespace Pscf{
 namespace Rpc{
 
    /**
-   * \defgroup Rpc_Simulate_Analyzer_Module Analyzers
+   * \defgroup Rpc_Fts_Analyzer_Module Analyzers
    *
    * Classes that implement statistical analysis operations for field
    * theoretic simulations in a partial saddle-point approximation. 

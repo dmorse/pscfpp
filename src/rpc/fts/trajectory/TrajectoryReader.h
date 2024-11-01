@@ -18,7 +18,7 @@ namespace Rpc {
    /**
    * Trajectory file reader (base class).
    *
-   * \ingroup Rpc_Simulate_Trajectory_Module
+   * \ingroup Rpc_Fts_Trajectory_Module
    */
    template <int D>
    class TrajectoryReader

@@ -41,7 +41,7 @@ namespace Rpc {
    * SystemAnalyzer<MdSystem> or SystemAnalyzer<MdSystem>, 
    * respectively.
    *
-   * \ingroup Rpc_Simulate_Analyzer_Module
+   * \ingroup Rpc_Fts_Analyzer_Module
    */
    template <int D>
    class Analyzer : public ParamComposite

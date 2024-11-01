@@ -24,7 +24,7 @@ namespace Rpc
    /**
    * Evaluate the derivative of H w/ respect to perturbation parameter lambda.
    *
-   * \ingroup Rpc_Simulate_Analyzer_Module
+   * \ingroup Rpc_Fts_Analyzer_Module
    */
    template <int D>
    class PerturbationDerivative : public ThermoDerivativeAnalyzer<D>

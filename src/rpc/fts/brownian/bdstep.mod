@@ -3,7 +3,7 @@ namespace Pscf{
 namespace Rpc{
 
    /**
-   * \defgroup Rpc_Simulate_BdStep_Module Brownian Dynamics 
+   * \defgroup Rpc_Fts_BdStep_Module Brownian Dynamics 
    *
    * Brownian dynamics algorithms for field theoretic simulations in a 
    * partial saddle-point approximation (PS-FTS).

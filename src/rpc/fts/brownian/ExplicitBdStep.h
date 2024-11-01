@@ -26,7 +26,7 @@ namespace Rpc {
    *
    * The virtual step() method must generate a single step.
    *
-   * \ingroup Rpc_Simulate_BdStep_Module
+   * \ingroup Rpc_Fts_BdStep_Module
    */
    template <int D>
    class ExplicitBdStep : public BdStep<D>

@@ -23,7 +23,7 @@ namespace Rpc
    /**
    * Base class for analyzers that evaluate derivatives of Hamiltonian.
    *
-   * \ingroup Rpc_Simulate_Analyzer_Module
+   * \ingroup Rpc_Fts_Analyzer_Module
    */
    template <int D>
    class ThermoDerivativeAnalyzer : public Analyzer<D>

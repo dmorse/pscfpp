@@ -26,7 +26,7 @@ namespace Rpc {
    * Field contribution (HW)) as well as for the total, and 
    * periodically outputs block averages of each to a file.
    *
-   * \ingroup Rpc_Simulate_Analyzer_Module
+   * \ingroup Rpc_Fts_Analyzer_Module
    */
    template <int D>
    class HamiltonianAnalyzer : public AverageListAnalyzer<D>

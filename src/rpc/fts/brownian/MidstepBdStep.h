@@ -24,7 +24,7 @@ namespace Rpc {
    /**
    * Midstep predictor Brownian dynamics step.
    *
-   * \ingroup Rpc_Simulate_BdStep_Module
+   * \ingroup Rpc_Fts_BdStep_Module
    */
    template <int D>
    class MidstepBdStep : public BdStep<D>

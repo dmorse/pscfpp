@@ -25,7 +25,7 @@ namespace Rpc
    /**
    * Rpc implementation of the Anderson Mixing compressor.
    *
-   * \ingroup Rpc_Simulate_Compressor_Module
+   * \ingroup Rpc_Fts_Compressor_Module
    */
    template <int D>
    class AmCompressor 

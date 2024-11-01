@@ -24,7 +24,7 @@ namespace Rpc
    /**
    * Evaluate the derivative of H with respect to concentration.
    *
-   * \ingroup Rpc_Simulate_Analyzer_Module
+   * \ingroup Rpc_Fts_Analyzer_Module
    */
    template <int D>
    class ConcentrationDerivative : public ThermoDerivativeAnalyzer<D>

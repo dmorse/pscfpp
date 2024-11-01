@@ -22,7 +22,7 @@ namespace Rpc {
    /**
    * Factory for subclasses of Ramp.
    *
-   * \ingroup Rpc_Simulate_Ramp_Module
+   * \ingroup Rpc_Fts_Ramp_Module
    */
    template <int D>
    class RampFactory : public Factory< Ramp<D> > 

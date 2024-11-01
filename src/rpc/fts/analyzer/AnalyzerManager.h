@@ -16,7 +16,7 @@ namespace Rpc {
    /**
    * Manager for a list of Analyzer objects.
    *
-   * \ingroup Rpc_Simulate_Analyzer_Module
+   * \ingroup Rpc_Fts_Analyzer_Module
    */
    template <int D>
    class AnalyzerManager : public Manager< Analyzer<D> >

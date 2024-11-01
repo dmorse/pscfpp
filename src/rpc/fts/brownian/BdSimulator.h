@@ -23,7 +23,7 @@ namespace Rpc {
    /**
    * Brownian dynamics simulator for PS-FTS.
    *
-   * \ingroup Rpc_Simulate_BdStep_Module
+   * \ingroup Rpc_Fts_BdStep_Module
    */
    template <int D>
    class BdSimulator : public Simulator<D>

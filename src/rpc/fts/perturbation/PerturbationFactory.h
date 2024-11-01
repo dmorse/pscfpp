@@ -22,7 +22,7 @@ namespace Rpc {
    /**
    * Factory for subclasses of Perturbation.
    *
-   * \ingroup Rpc_Simulate_Perturbation_Module
+   * \ingroup Rpc_Fts_Perturbation_Module
    */
    template <int D>
    class PerturbationFactory : public Factory< Perturbation<D> > 

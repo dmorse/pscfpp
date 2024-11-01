@@ -27,7 +27,7 @@ namespace Rpc
    /**
    * FourierMove is a Monte Carlo move in fourier space
    *
-   * \ingroup Rpc_Simulate_McMove_Module
+   * \ingroup Rpc_Fts_McMove_Module
    */
    template <int D>
    class FourierMove : public McMove<D>

@@ -28,7 +28,7 @@ namespace Rpc {
    /**
    * Base class for additive perturbations of standard FTS Hamiltonian.
    *
-   * \ingroup Rpc_Simulate_Perturbation_Module
+   * \ingroup Rpc_Fts_Perturbation_Module
    */
    template <int D>
    class Perturbation : public ParamComposite

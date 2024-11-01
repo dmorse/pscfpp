@@ -15,7 +15,7 @@ namespace Rpc {
    /**
    * Linear ramp - parameters vary linearly with step index.
    *
-   * \ingroup Rpc_Simulate_Ramp_Module
+   * \ingroup Rpc_Fts_Ramp_Module
    */
    template <int D>
    class LinearRamp : public Ramp<D>

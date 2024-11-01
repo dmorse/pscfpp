@@ -27,7 +27,7 @@ namespace Rpc {
    /**
    * Perturbation for Einstein crystal thermodynamic integration method.
    *
-   * \ingroup Rpc_Simulate_Perturbation_Module
+   * \ingroup Rpc_Fts_Perturbation_Module
    */
    template <int D>
    class EinsteinCrystalPerturbation : public Perturbation<D>

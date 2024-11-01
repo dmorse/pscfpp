@@ -22,7 +22,7 @@ namespace Rpc {
    /**
    * Factory for subclasses of TrajectoryReader.
    *
-   * \ingroup Rpc_Simulate_Trajectory_Module
+   * \ingroup Rpc_Fts_Trajectory_Module
    */
    template <int D>
    class TrajectoryReaderFactory : public Factory< TrajectoryReader<D> > 
