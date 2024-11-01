@@ -3,10 +3,10 @@ using a partial-saddle point approximation using a GPU accelerator.
 
 Subdirectories:
 
-bdstep/        - Brownian dynamics simulation steps and BdSimulator
-mcmove/        - Monte Carlo moves and McSimulator
 compressor/    - algorithms to iteratively find a partial saddle point
-analyzer/      - Data analysis classes (for on-the-fly or postprocessing)
+brownian/      - Brownian dynamics FTS algorithms
+montecarlo/    - Monte Carlo FTS algorithms
+analyzer/      - data analysis classes (for on-the-fly or postprocessing)
 perturbation/  - perturbations of the Hamiltonian (e.g., Einstein crystal)
 ramp/          - continuous parameter ramp during simulation
 trajectory/    - reading field trajectory files (postprocessing)
