@@ -8,7 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <rpc/fts/Simulator.h>                  // base class
+#include <rpc/fts/simulator/Simulator.h>                  // base class
 #include <rpc/fts/analyzer/AnalyzerManager.h>   // member
 #include <util/param/Factory.h>                      // member template
 

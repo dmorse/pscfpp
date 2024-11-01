@@ -9,7 +9,7 @@
 */
 
 #include <util/param/Factory.h>  
-#include <rpc/fts/Simulator.h>
+#include <rpc/fts/simulator/Simulator.h>
 
 #include <string>
 

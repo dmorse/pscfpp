@@ -5,7 +5,7 @@
 #include <test/UnitTestRunner.h>
 
 #include <rpc/System.h>
-#include <rpc/fts/Simulator.h>
+#include <rpc/fts/simulator/Simulator.h>
 #include <rpc/fts/montecarlo/McSimulator.h>
 #include <rpc/fts/compressor/Compressor.h>
 

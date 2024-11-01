@@ -3,6 +3,7 @@ using a partial saddle-point approximation on CPU hardware.
 
 Subdirectories:
 
+simulator /    - Simulator base class and factory
 compressor/    - algorithms to iteratively find a partial saddle point
 brownian/      - Brownian dynamics simulation 
 montecarlo/    - Monte Carlo simulation

@@ -8,7 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <rpc/fts/Simulator.h>                   // member
+#include <rpc/fts/simulator/Simulator.h>                   // member
 #include <rpc/fts/montecarlo/McMoveManager.h>        // member
 #include <rpc/fts/analyzer/AnalyzerManager.h>    // member
 

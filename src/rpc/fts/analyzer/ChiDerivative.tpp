@@ -11,7 +11,7 @@
 #include "ChiDerivative.h"
 
 #include <rpc/System.h>
-#include <rpc/fts/Simulator.h>
+#include <rpc/fts/simulator/Simulator.h>
 
 namespace Pscf {
 namespace Rpc 

@@ -10,7 +10,7 @@
 
 #include <util/param/ParamComposite.h>     // base class
 
-#include <rpc/fts/SimState.h>         // member
+#include <rpc/fts/simulator/SimState.h>         // member
 #include <prdc/cpu/RField.h>               // memmber (template arg)
 #include <util/random/Random.h>            // member
 #include <util/containers/DArray.h>        // member (template)

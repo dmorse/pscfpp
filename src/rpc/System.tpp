@@ -10,8 +10,8 @@
 
 #include "System.h"
 
-#include <rpc/fts/Simulator.h>
-#include <rpc/fts/SimulatorFactory.h>
+#include <rpc/fts/simulator/Simulator.h>
+#include <rpc/fts/simulator/SimulatorFactory.h>
 #include <rpc/fts/compressor/Compressor.h>
 #include <rpc/scft/sweep/Sweep.h>
 #include <rpc/scft/sweep/SweepFactory.h>
