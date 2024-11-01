@@ -9,7 +9,7 @@
 */
 
 #include <util/param/Factory.h>  
-#include <rpg/fts/bdstep/BdStep.h>
+#include <rpg/fts/brownian/BdStep.h>
 
 #include <string>
 
@@ -23,7 +23,7 @@ namespace Rpg {
    /**
    * Factory for subclasses of BdStep.
    *
-   * \ingroup Rpg_Fts_BdStep_Module
+   * \ingroup Rpg_Fts_Brownian_Module
    */
    template <int D>
    class BdStepFactory : public Factory< BdStep<D> > 

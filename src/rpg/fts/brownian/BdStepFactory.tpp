@@ -2,7 +2,7 @@
 #define RPG_BD_STEP_FACTORY_TPP
 
 #include "BdStepFactory.h"  
-#include <rpg/fts/bdstep/BdSimulator.h>
+#include <rpg/fts/brownian/BdSimulator.h>
 
 // Subclasses of BdStep 
 #include "ExplicitBdStep.h"

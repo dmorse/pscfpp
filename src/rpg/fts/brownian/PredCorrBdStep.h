@@ -24,7 +24,7 @@ namespace Rpg {
    /**
    * Predictor-corrector Brownian dynamics stepper.
    *
-   * \ingroup Rpg_Fts_BdStep_Module
+   * \ingroup Rpg_Fts_Brownian_Module
    */
    template <int D>
    class PredCorrBdStep : public BdStep<D>

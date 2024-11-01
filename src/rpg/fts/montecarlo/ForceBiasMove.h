@@ -22,7 +22,7 @@ namespace Rpg {
    /**
    * ForceBiasMove attempts a Brownian dynamics move.
    *
-   * \ingroup Rpg_Fts_McMove_Module
+   * \ingroup Rpg_Fts_MonteCarlo_Module
    */
    template <int D>
    class ForceBiasMove : public McMove<D>

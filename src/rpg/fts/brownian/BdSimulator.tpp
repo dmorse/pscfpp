@@ -10,8 +10,8 @@
 
 #include "BdSimulator.h"
 
-#include <rpg/fts/bdstep/BdStep.h>
-#include <rpg/fts/bdstep/BdStepFactory.h>
+#include <rpg/fts/brownian/BdStep.h>
+#include <rpg/fts/brownian/BdStepFactory.h>
 #include <rpg/fts/analyzer/AnalyzerFactory.h>
 #include <rpg/fts/trajectory/TrajectoryReader.h>
 #include <rpg/fts/trajectory/TrajectoryReaderFactory.h>

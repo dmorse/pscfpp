@@ -1,7 +1,7 @@
 # Include source files lists from subdirectories
 include $(SRC_DIR)/rpg/fts/compressor/sources.mk
-include $(SRC_DIR)/rpg/fts/mcmove/sources.mk
-include $(SRC_DIR)/rpg/fts/bdstep/sources.mk
+include $(SRC_DIR)/rpg/fts/montecarlo/sources.mk
+include $(SRC_DIR)/rpg/fts/brownian/sources.mk
 include $(SRC_DIR)/rpg/fts/perturbation/sources.mk
 include $(SRC_DIR)/rpg/fts/ramp/sources.mk
 include $(SRC_DIR)/rpg/fts/trajectory/sources.mk

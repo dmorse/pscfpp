@@ -10,7 +10,7 @@
 
 #include "ForceBiasMove.h"
 #include "McMove.h" 
-#include <rpg/fts/mcmove/McSimulator.h>
+#include <rpg/fts/montecarlo/McSimulator.h>
 #include <rpg/fts/compressor/Compressor.h>
 #include <rpg/System.h>
 #include <util/param/ParamComposite.h>

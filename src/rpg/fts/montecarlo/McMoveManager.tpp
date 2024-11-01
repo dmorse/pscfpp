@@ -9,9 +9,9 @@
 */
 
 #include <util/global.h>
-#include <rpg/fts/mcmove/McMoveManager.h>
-#include <rpg/fts/mcmove/McMoveFactory.h>
-#include <rpg/fts/mcmove/McSimulator.h>
+#include <rpg/fts/montecarlo/McMoveManager.h>
+#include <rpg/fts/montecarlo/McMoveFactory.h>
+#include <rpg/fts/montecarlo/McSimulator.h>
 #include <util/random/Random.h>
 
 namespace Pscf {

@@ -26,7 +26,7 @@ namespace Rpg {
    *
    * The virtual step() method must generate a single step.
    *
-   * \ingroup Rpg_Fts_BdStep_Module
+   * \ingroup Rpg_Fts_Brownian_Module
    */
    template <int D>
    class BdStep : public ParamComposite

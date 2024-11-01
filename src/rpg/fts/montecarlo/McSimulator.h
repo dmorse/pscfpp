@@ -9,7 +9,7 @@
 */
 
 #include <rpg/fts/Simulator.h>                   // member
-#include <rpg/fts/mcmove/McMoveManager.h>        // member
+#include <rpg/fts/montecarlo/McMoveManager.h>        // member
 #include <rpg/fts/analyzer/AnalyzerManager.h>    // member
 
 namespace Pscf {
@@ -24,7 +24,7 @@ namespace Rpg {
    /**
    * Monte-Carlo simulation coordinator.
    *
-   * \ingroup Rpg_Fts_McMove_Module
+   * \ingroup Rpg_Fts_MonteCarlo_Module
    */
    template <int D>
    class McSimulator : public Simulator<D>

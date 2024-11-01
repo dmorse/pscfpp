@@ -24,7 +24,7 @@ namespace Rpg {
    /**
    * Brownian dynamics simulator.
    *
-   * \ingroup Rpg_Fts_BdStep_Module
+   * \ingroup Rpg_Fts_Brownian_Module
    */
    template <int D>
    class BdSimulator : public Simulator<D>

@@ -2,7 +2,7 @@
 #define RPG_MC_MOVE_FACTORY_TPP
 
 #include "McMoveFactory.h"  
-#include <rpg/fts/mcmove/McSimulator.h>
+#include <rpg/fts/montecarlo/McSimulator.h>
 
 // Subclasses of McMove 
 #include "RealMove.h"

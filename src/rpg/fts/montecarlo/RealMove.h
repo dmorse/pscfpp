@@ -26,7 +26,7 @@ namespace Rpg {
    /**
    * RealMove is a Monte Carlo move in real space
    *
-   * \ingroup Rpg_Fts_McMove_Module
+   * \ingroup Rpg_Fts_MonteCarlo_Module
    */
    template <int D>
    class RealMove : public McMove<D>

@@ -11,7 +11,7 @@
 #include "McSimulator.h"
 
 #include <rpg/System.h>
-#include <rpg/fts/mcmove/McMoveFactory.h>
+#include <rpg/fts/montecarlo/McMoveFactory.h>
 #include <rpg/fts/analyzer/AnalyzerFactory.h>
 #include <rpg/fts/trajectory/TrajectoryReader.h>
 #include <rpg/fts/trajectory/TrajectoryReaderFactory.h>

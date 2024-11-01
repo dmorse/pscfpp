@@ -9,7 +9,7 @@
 */
 
 #include <util/param/Factory.h>  
-#include <rpg/fts/mcmove/McMove.h>
+#include <rpg/fts/montecarlo/McMove.h>
 
 #include <string>
 
@@ -23,7 +23,7 @@ namespace Rpg {
    /**
    * Factory for subclasses of McMove.
    *
-   * \ingroup Rpg_Fts_McMove_Module
+   * \ingroup Rpg_Fts_MonteCarlo_Module
    */
    template <int D>
    class McMoveFactory : public Factory< McMove<D> > 
