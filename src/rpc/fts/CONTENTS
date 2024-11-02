@@ -3,14 +3,14 @@ using a partial saddle-point approximation on CPU hardware.
 
 Subdirectories:
 
-simulator /    - Simulator base class and factory, class SimState
-compressor/    - algorithms to iteratively find a partial saddle point
-brownian/      - Brownian dynamics simulation 
-montecarlo/    - Monte Carlo simulation
-perturbation/  - perturbations of the Hamiltonian (e.g., Einstein crystal)
-ramp/          - continuous change of parameters during a simulation
-analyzer/      - data analysis classes (for on-the-fly or postprocessing)
-trajectory/    - reading field trajectory files (postprocessing)
+simulator /   - Simulator base class and factory, class SimState
+compressor/   - algorithms to iteratively find a partial saddle point
+brownian/     - Brownian dynamics simulation 
+montecarlo/   - Monte Carlo simulation
+perturbation/ - perturbations of the Hamiltonian (e.g., Einstein crystal)
+ramp/         - continuous change of parameters during a simulation
+analyzer/     - data analysis classes (for on-the-fly or postprocessing)
+trajectory/   - reading field trajectory files (postprocessing)
 
 Makefile and makefile fragments:
 

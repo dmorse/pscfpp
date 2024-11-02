@@ -7,9 +7,9 @@ simulator/     - Simulator base class and factory, class SimState
 compressor/    - algorithms to iteratively find a partial saddle point
 brownian/      - Brownian dynamics FTS algorithms
 montecarlo/    - Monte Carlo FTS algorithms
-analyzer/      - data analysis classes (for on-the-fly or postprocessing)
 perturbation/  - perturbations of the Hamiltonian (e.g., Einstein crystal)
 ramp/          - continuous parameter ramp during simulation
+analyzer/      - data analysis classes (for on-the-fly or postprocessing)
 trajectory/    - reading field trajectory files (postprocessing)
 
 Makefile and makefile fragments:
