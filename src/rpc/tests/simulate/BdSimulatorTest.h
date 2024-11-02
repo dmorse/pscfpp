@@ -5,8 +5,8 @@
 #include <test/UnitTestRunner.h>
 
 #include <rpc/System.h>
-#include <rpc/fts/Simulator.h>
-#include <rpc/fts/bdstep/BdSimulator.h>
+#include <rpc/fts/simulator/Simulator.h>
+#include <rpc/fts/brownian/BdSimulator.h>
 #include <rpc/fts/compressor/Compressor.h>
 
 #include <util/tests/LogFileUnitTest.h>

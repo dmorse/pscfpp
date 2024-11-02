@@ -22,7 +22,7 @@ namespace Rpc {
    /**
    * Compute hamiltonian autocorrelation.
    *
-   * \ingroup Rpc_Simulate_Analyzer_Module
+   * \ingroup Rpc_Fts_Analyzer_Module
    */
    template <int D>
    class HamiltonianAutoCorr : public Analyzer<D>

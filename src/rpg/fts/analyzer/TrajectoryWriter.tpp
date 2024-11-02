@@ -10,7 +10,7 @@
 #include "TrajectoryWriter.h"
 #include "Analyzer.h"
 #include <rpg/System.h>
-#include <rpg/fts/Simulator.h>
+#include <rpg/fts/simulator/Simulator.h>
 #include <util/misc/FileMaster.h>
 //#include <util/archives/Serializable_includes.h>
 #include <util/misc/ioUtil.h>

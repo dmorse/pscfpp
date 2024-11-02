@@ -2,7 +2,7 @@
 #define RPC_LINEAR_RAMP_TPP
 
 #include "LinearRamp.h"
-#include <rpc/fts/Simulator.h>
+#include <rpc/fts/simulator/Simulator.h>
 
 #include <util/containers/DArray.h>
 #include <util/global.h>

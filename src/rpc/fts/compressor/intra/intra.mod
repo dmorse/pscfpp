@@ -7,7 +7,7 @@ namespace Rpc {
    *
    * Classes that compute intramolecular correlations for a homopolymer.
    *
-   * \ingroup Rpc_Simulate_Compressor_Module
+   * \ingroup Rpc_Fts_Compressor_Module
    */
 
 }

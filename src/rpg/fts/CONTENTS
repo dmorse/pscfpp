@@ -3,19 +3,14 @@ using a partial-saddle point approximation using a GPU accelerator.
 
 Subdirectories:
 
-bdstep/        - Brownian dynamics simulation steps and BdSimulator
-mcmove/        - Monte Carlo moves and McSimulator
+simulator/     - Simulator base class and factory, class SimState
 compressor/    - algorithms to iteratively find a partial saddle point
-analyzer/      - Data analysis classes (for on-the-fly or postprocessing)
+brownian/      - Brownian dynamics FTS algorithms
+montecarlo/    - Monte Carlo FTS algorithms
 perturbation/  - perturbations of the Hamiltonian (e.g., Einstein crystal)
 ramp/          - continuous parameter ramp during simulation
+analyzer/      - data analysis classes (for on-the-fly or postprocessing)
 trajectory/    - reading field trajectory files (postprocessing)
-
-C++ Files (file name extensions .h, .tpp and .cu):
-
-Simulator.*         - Simulator<D> class template (main object)
-SimulatorFactory.*  - Factory to create BdSimulator<D> or McSimulator<D>
-SimState.*          - SimState<D> class template 
 
 Makefile and makefile fragments:
 

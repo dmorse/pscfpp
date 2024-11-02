@@ -11,7 +11,7 @@
 #include "ThermoDerivativeAnalyzer.h"
 
 #include <rpg/System.h>
-#include <rpg/fts/Simulator.h>
+#include <rpg/fts/simulator/Simulator.h>
 #include <rpg/fts/ramp/Ramp.h>
 
 #include <util/format/Int.h>

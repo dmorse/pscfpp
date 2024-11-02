@@ -6,7 +6,7 @@
 // Subclasses of Ramp 
 #include "LinearRamp.h"
 
-#include <rpc/fts/Simulator.h>
+#include <rpc/fts/simulator/Simulator.h>
 
 namespace Pscf {
 namespace Rpc {

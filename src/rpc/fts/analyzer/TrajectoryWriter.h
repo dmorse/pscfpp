@@ -22,7 +22,7 @@ namespace Rpc {
    /**
    * Periodically write snapshots to a trajectory file.
    *
-   * \ingroup Rpc_Simulate_Analyzer_Module
+   * \ingroup Rpc_Fts_Analyzer_Module
    */
    template <int D>
    class TrajectoryWriter : public Analyzer<D>

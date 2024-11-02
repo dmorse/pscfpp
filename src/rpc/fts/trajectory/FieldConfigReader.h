@@ -28,7 +28,7 @@ namespace Rpc {
    /**
    * Trajectory file reader.
    *
-   * \ingroup Rpc_Simulate_Trajectory_Module
+   * \ingroup Rpc_Fts_Trajectory_Module
    */
    template <int D>
    class FieldConfigReader : public TrajectoryReader<D>

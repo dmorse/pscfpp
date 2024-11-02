@@ -39,7 +39,7 @@ namespace Rpc {
    * \f]
    * where \f$W_(k)\f$ is a Fourier mode of fluctuating field 
    * 
-   * \ingroup Rpc_Simulate_Analyzer_Module
+   * \ingroup Rpc_Fts_Analyzer_Module
    */
    template <int D>
    class FourthOrderParameter : public Analyzer<D>

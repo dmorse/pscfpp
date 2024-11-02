@@ -23,7 +23,7 @@ namespace Rpc {
    /**
    * Factory for subclasses of Analyzer.
    *
-   * \ingroup Rpc_Simulate_Analyzer_Module
+   * \ingroup Rpc_Fts_Analyzer_Module
    */
    template <int D>
    class AnalyzerFactory : public Factory< Analyzer<D> > 

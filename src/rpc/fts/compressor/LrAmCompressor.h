@@ -38,7 +38,7 @@ namespace Rpc
    * to changes in pressure in a homogeneous system of the same chemical
    * composition as the system of interest.
    *
-   * \ingroup Rpc_Simulate_Compressor_Module
+   * \ingroup Rpc_Fts_Compressor_Module
    */
    template <int D>
    class LrAmCompressor 

@@ -2,7 +2,7 @@
 #define RPG_LINEAR_RAMP_TPP
 
 #include "LinearRamp.h"
-#include <rpg/fts/Simulator.h>
+#include <rpg/fts/simulator/Simulator.h>
 
 #include <util/containers/DArray.h>
 #include <util/global.h>

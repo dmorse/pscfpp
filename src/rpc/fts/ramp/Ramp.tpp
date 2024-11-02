@@ -2,7 +2,7 @@
 #define RPC_RAMP_TPP
 
 #include "Ramp.h"
-#include <rpc/fts/Simulator.h>
+#include <rpc/fts/simulator/Simulator.h>
 #include <prdc/cpu/RField.h>
 
 #include <util/containers/DArray.h>

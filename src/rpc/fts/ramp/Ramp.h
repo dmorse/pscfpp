@@ -13,7 +13,7 @@ namespace Rpc {
    /**
    * Class that varies parameters during a simulation (abstract).
    *
-   * \ingroup Rpc_Simulate_Ramp_Module
+   * \ingroup Rpc_Fts_Ramp_Module
    */
    template <int D>
    class Ramp : public ParamComposite

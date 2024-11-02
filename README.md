@@ -3,9 +3,9 @@
 
 PSCF is a package of software for field-theoretic simulation of
 inhomogeneous equilibrium states of polymer liquids, with a focus
-on microstructures formed by block polymers. PSCF can perform both
-self-consistent field theory (SCFT) calculations and some types of
-stochastic field-theoretic simulation (FTS).
+on microstructures formed by block polymers. PSCF can currently
+perform both self-consistent field theory (SCFT) calculations and 
+some types of stochastic field-theoretic simulation (FTS).
 
 This current version of PSCF is written primarily in C++, supplemented
 by CUDA code to enable the use of a graphics processing unit (GPU).
@@ -22,26 +22,27 @@ The current version of PSCF (v1.2) is the first to also provide a set
 of tools for field theoretic simulations (FTS) based on Monte-Carlo (MC)
 and Brownian dynamics (BD) sampling algorithms. The FTS algorithms in
 the current version all rely the partial saddle-point approximation
-(PSPA) to the exact of "fully fluctuating" formulation of the partititon
+(PSA) to the exact or "fully fluctuating" formulation of the partititon
 function as a functional integral.
 
-The fully-fluctuating formulation of polymer field theory (which is
-not yet implemented in PSCF) requires the stochastic sampling of
-complex-valued fields. The PSPA used here is an approximation for
-incompressible models in which the Lagrange multiplier pressure field
-that imposes a constraint on the total monomer density is approximated
-at a mean-field (i.e., saddle-point) level, while fields that couple
-to composition fluctuations are allowed to fluctuate. The resulting
-approximation yields a theory that involves only real-valued fields.
+The fully-fluctuating formulation of polymer field theory (which is 
+not yet implemented in PSCF) requires the stochastic sampling of 
+complex-valued fields. The PSA used in the current version uses an
+approximation for incompressible models in which a Langrange multiplier 
+pressure-like field that imposes a constraint on the total monomer 
+density is approximated at a mean-field (i.e., saddle-point) level, 
+while fields that couple to composition fluctuations are allowed to 
+fluctuate. The resulting approximation yields a theory that involves 
+only real-valued fields.
 
 ## History
 
-The current C++/CUDA version of PSCF is intended to supersede an older
-Fortran SCFT program of the same name. The Fortran PSCF program is
-maintained in a separate github.com repository at
+The current C++/CUDA version of PSCF is intended to supersede an 
+older Fortran SCFT program of the same name. The Fortran PSCF program 
+is maintained in a separate github.com repository at 
 https://github.com/dmorse/pscf.
-The current C++/CUDA version provides almost all of the capabilities of
-the older Fortran program, and several important new capabilities, as
+The current C++/CUDA version provides almost all of the capabilities 
+of the older Fortran program, and many important new capabilities, as
 discussed below.
 
 Differences between the current C++/CUDA version of PSCF and the legacy
@@ -59,85 +60,85 @@ Fortran version include:
    - The current version enables use of a graphics processing unit (GPU)
      to dramatically accelerate some applications.
 
-   - PSCF can now perform FTS calculations that rely on the PSPA.  A
+   - PSCF can now perform FTS calculations that rely on the PSA.  A
      variety of MC and BD sampling algorithms have been implemented.
 
 The most important capability of the Fortran PSCF program that has not 
 been ported to the current version is the ability to perform generalized
-random-phase approximation (RPA) calculations for ordered phases to 
-characterize composition fluctuations and stability limits for such 
-phases.
+random-phase approximation (RPA) calculations for periodic ordered 
+phases to characterize composition fluctuations and limit of stability 
+for such phases.
 
 ## Programs
 
 PSCF currently contains three programs:
 
    - **pscf_1d** : The program pscf_1d is is designed to perform SCFT
-     calculations on one-dimensional (1d) problems in Cartesian,
+     calculations for one-dimensional (1d) problems in Cartesian,
      cylindrical or spherical coordinates. A finite difference method is
      used to solve the underlying partial differential equation, known
      as the modified diffusion equation (MDE). This program is useful
      for treating problems involving flat and curved interfaces, as well
      as cylindrical or spherical copolymer micelles.
 
-   - **pscf_pc** : The pscf_pc rogram is designed to treat structures
-     that are periodic in 1, 2 or 3 dimensions, using conventional
-     CPU hardware. A pseudo-spectral algorithm is used to solve the
-     MDE. This program provides capabilities for SCFT calculations
-     analogous to those of the older PSCF Fortran program, as well as
-     code for FTS calculations based on the PSPA.  The suffix "pc"
-     stands for "periodic CPU".
+   - **pscf_pc** : The pscf_pc rogram is designed to perform SCFT
+     and PS-FTS calculations for structures systems that are periodic
+     in 1, 2 or 3 dimensions, using conventional CPU hardware. A 
+     pseudo-spectral algorithm is used to solve the MDE. This program 
+     provides capabilities for SCFT calculations analogous to those 
+     of the older PSCF Fortran program, as well as algorithms for
+     PS-FTS simulations.  The suffix "pc" stands for "periodic CPU".
 
    - **pscf_pg** : The pscf_pg program is a GPU-accelerated version
-     of pscf_pc that can also perform SCFT and FTS calculations for
-     periodic systems. It is based on algorithms similar to those
+     of pscf_pc that can also perform SCFT and PS-FTS calculations 
+     for periodic systems. It is based on algorithms similar to those
      used in pscf_pc and provides almost identical features, but
-     provides much higher performance for large systems. The suffix
-     "pg" stands for "periodic GPU".
+     provides higher performance for large systems. The suffix "pg" 
+     stands for "periodic GPU".
 
 ## Features
 
-All PSCF programs are designed to treat an incompressible mixture
+All three PSCF programs are designed to treat an incompressible mixture
 containing any number of block polymers, homopolymers and small molecule
 (point-like) solvent molecular species. All polymeric species are
 treated using the standard Gaussian model of each polymer block as a
 continuous random walk.
 
-Features that are common to all three PSCF programs, all of which apply
-to both SCFT and FTS calculations, include:
+Features that are common to all PSCF programs, and which apply to both 
+SCFT and FTS calculations, include:
 
   - Ability to treat mixtures of any number of block polymers and
     solvent species.
 
-  - Ability to treat complex acyclic branched block polymers, in addition
-    to linear block polymers and homopolymers
+  - Ability to treat acyclic branched block polymers of arbitrary
+    topology, in addition to linear block polymers and homopolymers
 
   - Ability to use canonical, grand-canonical or mixed statistical
-    ensembles - users may specify either a volume fraction or a chemical
-    potential for each molecular species
+    ensembles. Users may specify either a volume fraction or a chemical
+    potential for each molecular species in a mixture
 
   - Examples of input files for many types of calculation and structures
 
   - Python tools for data analysis
 
-  - Thorough user and developer documentation provided as an integrated
+  - Thorough user and developer documentation is provided as an integrated
     web manual
 
-  - Well documented open source code written in object oriented C++
+  - Well documented, open source code written in object oriented C++
 
-Features used in SCFT calculations that are common to all three PSCF
-programs include:
+Features used only in SCFT calculations that are common to all three 
+PSCF programs include:
 
-  - Efficient Anderson-mixing iteration algorithms
+  - Efficient Anderson-mixing SCFT iteration algorithms
 
   - Efficient SCFT calculations for sequences of parameter choices along
-    a path in parameter space ("sweeps"), using extrapolation to
-    construct initial guesses
+    a path in parameter space (parameter "sweeps"), using extrapolation 
+    to construct accurate initial guesses
 
 Features specific to the pscf_pc and pscf_pg programs for periodic systems
 include:
 
-  - Ability to perform both SCFT and FTS calculations
+  - Ability to perform both SCFT and PS-FTS calculations
 
   - Accurate pseudo-spectral solution of the modified diffusion equation
 
@@ -154,7 +155,7 @@ include:
   - Built-in database of symmetry operations for all 230 3D space groups
     and 17 2D plane groups for use in SCFT
 
-  - Availability of a companion package
+  - Availability of a companion Matlab package
     [Polymer Visual](<https://github.com/kdorfmanUMN/polymer_visual/>)
     for visualization of periodic structures
 
@@ -175,12 +176,12 @@ bottom surfaces.
 
 The pscf_pc program also provides a few utilities for manipulating input
 field files that have not been reproduced in pscf_pg. Because the two 
-programs use the same field file formats, manipulations of input files 
-used by pscf_pg can be performed with pscf_pc. 
+programs use the same field file formats, input files used by pscf_pg 
+can be manipulated by using pscf_pc. 
 
 ## Getting the source code
 
-The current PSCF source code is maintained in the github repository
+The PSCF source code is maintained in the github repository
 
    <https://github.com/dmorse/pscfpp>.
 
@@ -191,18 +192,19 @@ enter the command:
 git clone --recursive https://github.com/dmorse/pscfpp.git
 ```
 Note the use of the --recursive option to the git clone command. This
-option is necessary to clone several git submodules that are maintained
-in separate repositories. This command will create a new directory
-called pscfpp/ that contains all of the source code and associated
-documentation, including all required git submodules.
+option is necessary to clone two git submodules that are maintained in 
+separate repositories. This command will create a new directory called 
+pscfpp/ that contains all of the source code and associated documentation, 
+including the required git submodules.
 
 We do *not* recommend that users obtain the source code by simply
-downloading a zip or tar file of a tagged release from the PSCF github
-repository, because this file will not contain source code for the other
-git repositories that are automatically downloaded and installed as
-submodules by the above git command. It is possible to install the
-required submodules after the fact, but simpler to follow the
-instructions given above.
+downloading an unpackng a zip or tar file of a tagged release from the 
+PSCF github repository. Doing so would create a directory that does
+not contain source code for two git repositories that are automatically 
+downloaded and installed as submodules by the above git command. It is 
+possible to install the required submodules after the fact, but simpler 
+to follow the instructions given above to clone using the --recursive
+option. 
 
 ## Documentation
 
@@ -229,8 +231,9 @@ the main page of the web manual.
 
 ## Dependencies
 
-PSCF has been developed on both linux and and Mac OS X operating systems,
-and is designed to run on these or other unix-like systems.
+PSCF has been developed and tested on both linux and and Mac OS X 
+operating systems, and is designed to run on these or other unix-like 
+systems. 
 
 The pscf_1d and pscf_pc CPU programs depend on the following external
 libraries:
@@ -244,12 +247,15 @@ pscf_pc program relies on both GSL and FFTW.
 
 The GPU-accelerated pscf_pg program can only be compiled and run on a
 computer with an appropriate NVIDIA GPU and an NVIDIA CUDA development
-kit. Some GPU-accelerated libraries used by pscf_pg, such as the FFT
-library cuFFT, are provided as part of this kit.
+kit.  Some GPU-accelerated libraries used by pscf_pg, such as the FFT
+library cuFFT, are provided as part of this kit. The pscf_pg program 
+cannot be run on an Apple Mac, because Macs do not contain the required 
+type of GPU. 
 
-Procedures for installing these dependencies are different for different
-operating system environments and different package managers. Instructions
-for some common environments are given in the web manual.
+Procedures for installing the required dependencies are different for 
+different operating system environments and for different package 
+managers.  Instructions for some common environments are given in the 
+web manual.
 
 ## Compiling
 

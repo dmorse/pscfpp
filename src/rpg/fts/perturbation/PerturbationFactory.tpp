@@ -6,7 +6,7 @@
 // Subclasses of Perturbation 
 #include "EinsteinCrystalPerturbation.h"
 
-#include <rpg/fts/Simulator.h>
+#include <rpg/fts/simulator/Simulator.h>
 
 namespace Pscf {
 namespace Rpg {

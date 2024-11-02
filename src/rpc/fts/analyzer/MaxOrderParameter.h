@@ -39,7 +39,7 @@ namespace Rpc {
    * \f]
    * where \f$W_(k)\f$ is fluctuating field at Fourier mode k 
    * 
-   * \ingroup Rpc_Simulate_Analyzer_Module
+   * \ingroup Rpc_Fts_Analyzer_Module
    */
    template <int D>
    class MaxOrderParameter : public Analyzer<D>

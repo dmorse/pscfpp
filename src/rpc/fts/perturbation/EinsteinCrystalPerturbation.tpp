@@ -2,7 +2,7 @@
 #define RPC_EINSTEIN_CRYSTAL_PERTURBATION_TPP
 
 #include "EinsteinCrystalPerturbation.h"
-#include <rpc/fts/Simulator.h>
+#include <rpc/fts/simulator/Simulator.h>
 #include <rpc/System.h>
 #include <prdc/cpu/RField.h>
 #include <util/containers/DArray.h>

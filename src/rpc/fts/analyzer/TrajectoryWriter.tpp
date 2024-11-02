@@ -9,7 +9,7 @@
 
 #include "TrajectoryWriter.h"
 #include "Analyzer.h"
-#include <rpc/fts/Simulator.h>
+#include <rpc/fts/simulator/Simulator.h>
 #include <rpc/System.h>
 #include <util/misc/FileMaster.h>
 //#include <util/archives/Serializable_includes.h>
