@@ -49,7 +49,10 @@ namespace Rpc {
    using namespace Prdc::Cpu;
 
    /**
-   * Main class for SCFT simulation of one system.
+   * Main class for SCFT or PS-FTS simulation of one system.
+   *
+   * System is a class template with an integer template parameter 
+   * D = 1, 2, or 3 that represents the dimension of space.
    *
    * A System has (among other components):
    *
@@ -59,11 +62,14 @@ namespace Rpc {
    *    - a container of monomer chemical potential fields
    *    - a container of monomer concentration fields
    *
-   * A system may also optionally contain Iterator, Sweep, and
-   * Simulator objects.
+   * A System may also optionally contain Iterator, Sweep, and
+   * Simulator objects. Iterator and Sweep objects are only used 
+   * for SCFT calculations. A Simulator object is only used for
+   * PS-FTS calculations (i.e., field theoretic simulations in
+   * a partial saddle-point approximation).
    *
-   * Usage of a System<D> object in the main program looks something like 
-   * this:
+   * Usage of a System\<D\> object in the main program looks something 
+   * like this:
    * \code
    *    System<D> system;
    *    system.setOptions(argc, argv);
@@ -75,8 +81,13 @@ namespace Rpc {
    * This is implemented as function template Pscf::Rpc::run in the
    * file src/rpc/pscf_pc.cpp.
    *
-   * \ref scft_param_pc_page "Parameter File Format"
-   * \ref scft_command_pc_page "Command File Format"
+   * See also:
+   * <ul>
+   *  <li> \ref scft_param_pc_page   "Parameter File Format (SCFT)" </li>
+   *  <li> \ref rpc_System_page      "Parameter File Format (Full)" </li>
+   *  <li> \ref scft_command_pc_page "Command File Format" </li>
+   * </ul>
+   *
    * \ingroup Pscf_Rpc_Module
    */
    template <int D>

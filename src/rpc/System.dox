@@ -69,15 +69,15 @@ described below:
     </td>
   </tr>
   <tr>
-    <td> Simulator* </td>
+    <td> Simulator#* </td>
     <td>
     A Simulator block contains parameters for all of the objects and
     algorithms that required to perform a partial saddle-point field 
     theoretic simulation (PS-FTS), but that are not required for SCFT.  
     Users may currently between a BdSimulator{ ... } block (which
-    creates an instance of class Pscf::Rpc::BdSimulator <D> ) to perform 
+    creates an instance of class Pscf::Rpc::BdSimulator \<D\> ) to perform 
     a Brownian dynamics simulation or an McSimulator{ ... } block (class 
-    Pscf::Rpc::McSimulator <D>) to perform a field theoretic Monte-Carlo 
+    Pscf::Rpc::McSimulator \<D\>) to perform a field theoretic Monte-Carlo 
     simulation.
     </td>
   </tr>
