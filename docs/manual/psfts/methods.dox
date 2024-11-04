@@ -1,14 +1,14 @@
-/*! \page psfts_methods_page  Sampling Methods
+/*! \page psfts_methods_page  Stochastic Sampling Methods
 
-\ref psfts_theory_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
-\ref developer_page     (Next)
+\ref psfts_psa_page        (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref psfts_compressor_page (Next) &nbsp; &nbsp; &nbsp; &nbsp;
 <BR>
 
 Monte-Carlo and Brownian Dynamics
 
 <BR>
-\ref psfts_theory_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
-\ref psfts_page        (Up) &nbsp; &nbsp; &nbsp; &nbsp;
-\ref developer_page    (Next)
+\ref psfts_psa_page         (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref psfts_page             (Up) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref psfts_compressor_page  (Next) &nbsp; &nbsp; &nbsp; &nbsp;
 
 */

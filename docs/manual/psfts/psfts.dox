@@ -6,10 +6,16 @@
 
 <h2> Contents:</h2>
    <ol>
-   <li> \subpage psfts_intro_page  </li>
-   <li> \subpage psfts_theory_page  </li>
-   <li> \subpage psfts_psa_page     </li>
-   <li> \subpage psfts_methods_page </li>
+   <li> \subpage psfts_intro_page          </li>
+   <li> \subpage psfts_theory_page         </li>
+   <li> \subpage psfts_psa_page            </li>
+   <li> \subpage psfts_example_page        </li>
+   <li> \subpage psfts_methods_page        </li>
+   <li> \subpage psfts_compressor_page     </li>
+   <li> \subpage psfts_analyzer_page       </li>
+   <li> \subpage psfts_param_page          </li>
+   <li> \subpage psfts_command_page        </li>
+   <li> \subpage psfts_postprocessing_page </li>
    </ol>
 <BR>
 \ref scft_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 

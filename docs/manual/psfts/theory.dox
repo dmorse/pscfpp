@@ -10,8 +10,6 @@ theoretic formulation of the partition function for an incompressible
 polymer fluid.  The underlying particle-based model and its 
 field-theoretic formulation are discussed below. 
 
-\section psfts_theory_notation_sec Notation
-
 We consider a mixture of polymers and solvents constructed from \f$ M \f$ 
 different types of monomer. The variable \f$ M \f$ used in this discussion
 is equivalent to the parameter nMonomer that appears in a PSCF parameter 
@@ -21,8 +19,8 @@ Let \f$ c_{i}({\bf r}) \f$ denote the concentration of monomers of
 type \f$ i \f$ at point \f$ {\bf r} \f$ within the mixture in a specific 
 mechanical microstate of the underlying particle based model. 
 
-Throughout this and subsequent theoretic discussions of particle-field
-transformations, we use units for energy in which \f$ k_{B} T = 1 \f$.
+Throughout this and subsequent theoretic discussions, we use units for 
+energy in which \f$ k_{B} T = 1 \f$.
 
 \section psfts_theory_model_sec Incompressible Particle-Based Model
 
