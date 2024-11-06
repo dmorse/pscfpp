@@ -29,17 +29,13 @@ namespace Cpu {
    {}
       
    /*
-   * Constructor.
+   * Constructor, creates basis.
    */
    template <int D>
    FieldBasisConverter<D>::FieldBasisConverter(DMatrix<double> basis)
-    : basis_(basis),
-      nMonomer_(basis.capacity1())
-   {
-      UTIL_CHECK(basis.isAllocated());
-      UTIL_CHECK(basis_.capacity1() == basis_.capacity2());
-      UTIL_CHECK(nMonomer_ > 1);
-   }
+    : basis_(),
+      nMonomer_(0)
+   {  setBasis(basis); }
 
    /*
    * Destructor.
@@ -49,7 +45,7 @@ namespace Cpu {
    {}
 
    /*
-   * Set the basis after construction.
+   * Set the basis.
    */
    template <int D>
    void FieldBasisConverter<D>::setBasis(DMatrix<double> basis)
@@ -60,6 +56,9 @@ namespace Cpu {
 
       basis_ = basis;
       nMonomer_ = basis.capacity1();
+
+      UTIL_CHECK(basis_.capacity1() == nMonomer_);
+      UTIL_CHECK(basis_.capacity2() == nMonomer_);
    }
 
    template <int D> 

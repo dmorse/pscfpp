@@ -57,9 +57,12 @@ namespace Cpu {
       * The parameter basis is an nMonomer times nMonomer matrix of 
       * orthogonal basis vectors in which the first index (row index) 
       * identifies a basis vector and the second index identifies a 
-      * monomer type of a particular vector component. 
+      * monomer type of a particular basis vector. The design assumes
+      * that the basis vectors are orthogonal, and that they all have 
+      * the same norm, but does not require that they be orthonormal 
+      * (i.e., have a unit norm). 
       *
-      * Note that matrix basis is passed by value, and a local copy is made
+      * The matrix basis is passed by value, and a local copy is made
       * internally during construction. 
       * 
       * \param basis  Matrix of basis vectors
@@ -74,8 +77,8 @@ namespace Cpu {
       /**
       * Set or reset the basis after construction.
       *
-      * The parameters have same meaning as parameters of non-default 
-      * constructors.
+      * The parameter basis has the same meaning as parameters of 
+      * the non-default constructor.
       *
       * \param basis  Matrix of vectors.
       */
@@ -127,6 +130,18 @@ namespace Cpu {
       void convertFromBasis(DArray< RField<D> > const & in, 
                             DArray< RField<D> > & out,
                             double prefactor = 1.0) const;
+
+      /**
+      * Return the number of monomer types (dimension of basis).
+      */
+      int nMonomer() const
+      {  return nMonomer_; }
+
+      /**
+      * Has a basis been initialized?
+      */
+      bool hasBasis() const
+      {  return (nMonomer_ > 0); }
 
    private:
 

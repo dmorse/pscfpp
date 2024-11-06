@@ -6,6 +6,7 @@ prdc_cpu_= \
   prdc/cpu/FFT.cpp \
   prdc/cpu/RFieldComparison.cpp \
   prdc/cpu/RFieldDftComparison.cpp \
+  prdc/cpu/CFieldComparison.cpp \
   prdc/cpu/FieldBasisConverter.cpp 
 
 prdc_cpu_OBJS=\
