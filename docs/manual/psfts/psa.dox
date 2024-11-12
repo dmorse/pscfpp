@@ -4,42 +4,99 @@
 \ref psfts_methods_page  (Next)
 <BR>
 
-In the fully fluctuating field theory for an incompressible system, 
-there is a pressure-like field whose role is to impose a constraint 
-on total monomer concentration. The partial saddle-point 
-approximation (PSA) is an approximation for the treatment of this 
-pressure-like field. 
-
-We denoted this field by \f$ \omega_{+} \f$ 
-in our discussion of the special case of standard AB systems, and by
-\f$ \omega_{M} \f$ in the more general discussion of systems with 
-\f$ M \geq 2 \f$ monomer types.  
-
-In the remainder of this discussion, we use a modified notation for a 
-system with an arbitrary number of monomer types in which we use 
-\f$ \omega_{+} \f$ to denote the pressure-like field \f$ \omega_{M} \f$
-(as for an AB system) and use \f$ \omega_{-} \f$ as short-hand for the
-remaining fields
-\f[
-   \omega_{-} = [\omega_{1}, \ldots, \omega_{M-1}]
-\f]
-other than the pressure like field. 
+In a field theoretic treatment of an incompressible system, the
+partial-saddle approximation (PSA) an approximation for the
+treatment of the pressure like field that acts to constrain the 
+total density. When it is applicable, the approximation yields a
+theory with real statistical weights for all allowed field 
+configurations.
 
 \section psfts_psa_ab_sec AB Systems
 
+We first consider the PSA for an incompressible standard AB system with 
+\f$ \chi > 0 \f$.  In the fully fluctuating theory for such a system, 
+the partition function can be expressed as an functional integral over 
+an exchange field \f$ \omega_{-} \f$ and a pressure field 
+\f$ \omega_{+} \f$. In this case contributions to the monomer chemical
+potentials \f$ w_{A} \f$ and \f$ w_{B} \f$ arising from the exchange
+field are real, while those arising from the pressure field are pure
+imaginary. 
 
+In the PSA for such a system, \f$ Z \f$ is approximated a functional
+integral with respect to \f$ \omega_{-} \f$ alone in which the 
+Hamiltonian \f$ H \f$ is evaluated in a field configuration in which 
+the partial derivative of \f$ H[\omega] \f$ with respect to 
+\f$ \omega_{+}({\bf r}) \f$ vanishes, known as a partial saddle-point
+configuration.  This yields an approximation
+\f[
+   Z = \frac{1}{N} \int D\omega_{-} \; e^{-H[\omega_{-}, \omega_{+}^{*}]}
+\f]
+in which \f$ \int D\omega_{-} \f$ denotes a functional integral over 
+the exchange field \f$ \omega_{-} \f$, while \f$ \omega_{+}^{*} \f$ 
+denotes a configuration of \f$ \omega_{+}({\bf r}) \f$ that is chosen 
+to satisfy a partial-saddle point condition, which requires that
+\f[
+    \left . 
+    \frac{ \delta H[\omega_{-}, \omega_{+} ] }
+         { \delta \omega_{+}({\bf r}) } 
+    \right |_{\omega_{+} = \omega_{+}^{*}}
+    = 0
+\f]
+for every position \f$ {\bf r} \f$ within the system.
+This condition is equivalent to a requirement that 
+\f$ \langle C_{+}({\bf r}) \rangle_{\rm id} = c_{0} \f$ or, 
+equivalently, that
+\f[
+    \langle c_{A}({\bf r}) \rangle_{\rm id} +
+    \langle c_{B}({\bf r}) \rangle_{\rm id} 
+    = c_{0}
+    \quad.
+\f]
+A partial saddle-point field configuration is thus one in which 
+the incompressibility constraint is satisfied in the same 
+approximate sense as it is imposed in SCFT, as a constraint on the 
+average monomer concentrations in the ideal gas reference system. 
 
-In the partial-saddle approximation, \f$ Z \f$ is approximated by a
-using the value of \f$ H \f$ in a field configuration in which the partial 
-derivative of \f$ H[\omega] \f$ with respect to \f$ \omega_{M}({\bf r}) \f$ 
-vanishes, which is referred to as a partial saddle-point configuration.
-In this approxmation, the functional integral with respect to 
-\f$ \omega_{M} \f$ is suppressed in the expression for \f$ Z \f$, 
-leaving an an integral over the remaining \f$ M - 1 \f$ fields, and 
-the Hamiltonian \f$ H \f$ is evaluated using a field 
-\f$ \omega_{M}({\bf r}) \f$ 
-that is chosen satisfy the partial saddle-point criterion. This yields 
-an approximation
+The partial saddle-point configuration of \f$ \omega_{+} \f$ in a 
+system with a real-valued field \f$ \omega_{-}({\bf r}) \f$ is found 
+to always be pure imaginary field 
+\f[
+   \omega_{+}^{*}({\bf r}) =  -i W^{*}_{+}({\bf r})
+   \quad,
+\f]
+in which \f$W^{*}_{+}({\bf r})\f$ is a real valued pressure field.
+Such a partial saddle-point configuration yields real monomer fields
+given by
+\f[
+   w_{A}({\bf r} =  \omega_{-}({\bf r}) + W^{*}_{+}({\bf r}) 
+\f]
+\f[
+   w_{B}({\bf r} = -\omega_{-}({\bf r}) + W^{*}_{+}({\bf r}) 
+\f]
+while also yielding real values for \f$\ln Z_{\rm id}[w]\f$ and for the
+Hamiltonian \f$H\f$. 
+
+\section psfts_psa_general_sec General Case (\f$ M \geq 2 \f$)
+
+The current version of PSCF allow PS-FTS simulations of some systems with 
+M > 2, subject to a condition on allowed values of the \f$ \chi \f$ 
+parameters.  The generalized PSA currently used in PSCF is applicable if 
+and only if the values of the \f$ \chi \f$ parameters yield negative values
+for all of nontrivial eigenvalues \f$ \lambda_{1}, \ldots \lambda_{M} \f$ 
+of the projected \f$ chi \f$ matrix.  This requirement is a generalization 
+of the requirement that \f$ \chi > 0 \f$ in a standard AB system, which 
+leads in this case to a negative value for \f$ \lambda_{1} \f$.
+
+To discuss the generalized PSA for such systems, it is convenient to 
+adopt a modified notation analogous to that used for AB systems, in
+which we use \f$ \omega_{-} \f$ as short-hand for the list of fields
+\f[
+   \omega_{-} = [\omega_{1}, \ldots, \omega_{M-1}]
+\f]
+while using \f$ \omega_{+} \f$ as an alternate symbol for the 
+pressure-like field \f$ \omega_{M} \f$. Using this notation, we may
+express the generalized PSA for such systems as an integral
+This yields an approximation
 \f[
    Z = \frac{1}{N} \int D\omega_{-} \; e^{-H[\omega_{-}, \omega_{+}^{*}]}
 \f]
@@ -55,29 +112,21 @@ requiring that
      \right |_{\omega_{+} = \omega_{+}^{*}}
      \quad.
 \f]
-The requirement that 
+As for an AB system, the requirement that 
 \f$ \delta H[\omega]/\delta \omega_{M}({\bf r}) = 0 \f$ 
-is equivalent to a requirement that 
+can be shown to be equivalent to a requirement that 
 \f$ \langle C_{M}({\bf r}) \rangle_{\rm id} = c_{0} \f$ or, 
 equivalently, that
 \f[
     \sum_{i=}^{M} \langle c_{i}({\bf r}) \rangle_{\rm id} = c_{0}
     \quad.
 \f]
-A partial saddle-point field configuration is thus one in which the
-incompressibility constraint is satisfied in the same sense as it 
-is imposed in self-consistent field theory, as a constraint on the
-average monomer concentrations in the associated ideal gas reference
-system. 
-The implementation of the saddle-point approximation is only applicable 
-when certain constraints on the interaction parameters 
-systems for which the interaction 
-parameters yield negative values for all of the nontrivial eigenvalues
-\f$ \lambda_{-}, \ldots, \lambda_{M-1} \f$ of the projected 
-\f$ \chi \f$ matrix.
+In the cases to which this approximation applies, in which
+\f$ \lambda_{1}, \ldots, \lambda_{M-1} \f$ are all negative, this 
+approximation leads to positive values for all monomer fields and to 
+a positive value for the Hamiltonian \f$ H \f$. 
 
 \section psfts_psa_general_sec General (\f$ M \geq 2 \f$)
-
 
 Hereafter, we use the notation \f$ \langle \cdots \rangle_{\rm id} \f$ 
 to denote averages evaluated for a hypothetical ideal gas subjected to 
@@ -98,11 +147,6 @@ Because these are evaluated for a gas with an external potential
 the \f$ w \f$ fields.
 
 
-\section psfts_psa_AB_sec Incompressible AB System (M = 2)
-
-Partial Saddle-point (conventional)
-
-\section psfts_psa_ABC_sec General Incompressible System (M >=2)
 
 <BR>
 \ref psfts_theory_page   (Prev, Up) &nbsp; &nbsp; &nbsp; &nbsp;

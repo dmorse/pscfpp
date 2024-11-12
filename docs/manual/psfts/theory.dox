@@ -124,7 +124,7 @@ fraction, given by
 where \f$ v \f$ is the volume per monomer in a corresponding 
 incompressible system.
 
-\section psfts_theory_AB_sec Incompressible Field Theory: Standard AB Systems (\f$ M=2 \f$)
+\section psfts_theory_AB_sec Field Theory: Standard AB Systems (\f$ M=2 \f$)
 
 We focus first on the heavily studied case of systems with two monomer 
 types, \f$ M = 2\f$.
@@ -141,7 +141,7 @@ The interaction potential energy for such a system is given by
 \f[
    U_{\rm int} 
    =  v \chi 
-   \int d{\bf r} c_{1}({\bf r}) c_{2}({\bf r}) 
+   \int d{\bf r} \; \chi c_{1}({\bf r}) c_{2}({\bf r}) 
    \quad.
 \f]
 At the time of writing of these notes (Nov. 2024), all published
@@ -160,8 +160,8 @@ Rewriting the potential energy \f$ U_{\rm int} \f$ in terms of
 these variables yields
 \f[
    U_{\rm int} 
-   =  \frac{1}{4} v \chi 
-   \int d{\bf r} 
+   =  \frac{v}{4} 
+   \int d{\bf r}  \; \chi 
    [ \; c_{0}^{2} - C_{-}^{2}({\bf r}) \; ] 
    \quad,
 \f]
@@ -289,53 +289,49 @@ of type \f$ i \f$ are subjected to a field \f$ w_{i}({\bf r}) \f$,
 with \f$ w_1 = i\omega_{+} + \omega_{-} \f$ and 
 \f$ w_2 = i\omega_{+} - \omega_{-} \f$.
 
-The functional derivatives of \f$ H[\omega] \f$ with respect to the
+The functional derivatives of \f$ H[\omega] \f$ with respect to the 
 fields \f$ \omega_{-} \f$ and \f$ \omega_{+} \f$ are given by
 \f[
    \frac{\delta H[\omega]}{\delta \omega_{-}({\bf r})} 
-   = + \langle C_{-}({\bf r}) \rangle_{\rm id} - \frac{2\omega_{-}({\bf r})}{v\chi} 
+   = \langle C_{-}({\bf r}) \rangle_{\rm id} - \frac{2\omega_{-}({\bf r})}{v\chi} 
 \f]
 \f[
    \frac{1}{i} \frac{\delta H[\omega]}{\delta \omega_{-}({\bf r}) }
    = \langle C_{+}({\bf r}) \rangle_{\rm id} - c_{0} \quad.  
 \f]
-Note that the functional derivative with respect to the 
-pressure-like field \f$ \omega_{+}({\bf r}) \f$ vanishes when the 
-average concentrations in the ideal gas reference state satisfy 
-the incompressibility condition, i.e., when 
-\f$ \langle C_{+}({\bf r}) \rangle_{\rm id} = c_{0} \f$.
+Note that the functional derivative with respect to the pressure-like 
+field \f$ \omega_{+}({\bf r}) \f$ vanishes when the average concentrations 
+in the ideal gas reference state satisfy the incompressibility condition, 
+i.e., when \f$ \langle C_{+}({\bf r}) \rangle_{\rm id} = c_{0} \f$.
 
 A saddle-point of the Hamiltonian is defined to be a field configuration 
 in which functional derivatives with respect to both fields vanish for 
-all \f$ {\bf r} \f$.  
-It is straightforward to show that the resulting sadddle point 
-equations are equivalent to the self-consistent field equations used 
-in SCFT for such a standard AB system, and that the value of the 
+all \f$ {\bf r} \f$. It is straightforward to show that the resulting 
+saddle point equations are equivalent to the self-consistent field 
+equations used in SCFT for such system, and that the value of the 
 Hamiltonian at such a saddle point is equal to the SCFT free energy.
-Saddle point field configurations correspond to SCFT solutions.
+Saddle point field configurations thus correspond to SCFT solutions.
 
-\section psfts_theory_general_sec Incompressible Field Theory: General (\f$ M \geq 2 \f$)
+\section psfts_theory_general_sec Field Theory: General Case (\f$ M \geq 2 \f$)
 
 The implementation of PS-FTS in PSCF is based on a a ``symmetric" 
-formulation of field theory for incompressible systems that allows 
-treatment of systems with more than two monomer types (\f$ M > 2 \f$), 
-subject to some constraints. This general formulation can be shown to 
-reduce to the formalism described above for a standard AB system when
-applied to this special case.
+formulation of the fully fluctuating field theory for an incompressible 
+system that allows treatment of systems with any number of monomer types.
+This general formulation can be shown to reduce to the usual formulation 
+for a standard AB system when applied to this case.
 
 <b> Matrix Notation </b>
 
-Throughout the following discussion of this formulation, we use bold-faced
-symbols to denote column vectors and matrices in which column and indices 
-are associated with monomer types. Specifically, let 
-\f$ {\bf c}({\bf r}) \f$ denotes the column vector with elements given by 
-the monomer concentrations \f$ c_{1}({\bf r}), \ldots, c_{M}({\bf r}) \f$ 
-at position \f$ {\bf r} \f$ .  Let \f$ {\boldsymbol \chi} \f$ denote the 
-symmetric \f$ M \times M \f$ matrix of Flory-Huggins interaction 
-parameters.
+Throughout the following discussion, we use bold-faced symbols to denote
+column vectors and matrices in which column and row indices are associated
+with monomer types. Specifically, let \f$ {\bf c}({\bf r}) \f$ denote the 
+column vector with elements given by the monomer concentrations 
+\f$ c_{1}({\bf r}), \ldots, c_{M}({\bf r}) \f$ at position \f$ {\bf r} \f$.
+Let \f$ {\boldsymbol \chi} \f$ denote the symmetric \f$ M \times M \f$ 
+matrix of Flory-Huggins interaction parameters.
 
-The incompressibility constraint can be expressed in matrix notation as
-a requirement that 
+The incompressibility constraint can then be expressed in matrix notation 
+as a requirement that 
 \f[
    {\bf e}^{T} {\bf c}({\bf r}) = c_{0} \quad,
 \f]
@@ -346,29 +342,34 @@ in which
             \end{array} \right ]
 \f]
 is an \f$ M \f$-component column vector with equal components 
-\f$ e_{i}=1 \f$ for all \f$ i = 1, \cdots, M \f$. Here and hereafter,
-a superscript \f$ T \f$ denotes a matrix transpose, so that 
-\f$ {\bf e}^{T} = [1 \ldots 1] \f$ is a corresponding row vector.
-Fluctuations of \f$ {\bf c}({\bf r})\f$ within the subspace orthogonal 
-to \f$ {\bf e} \f$ thus preserve the incompressibility constraint. 
+\f$ e_{i}=1 \f$ for all \f$ i = 1, \cdots, M \f$, and its transpose
+is the corresponding row vector ${\bf e}^{T} = [1 \ldots 1]$.
+Here and hereafter, a superscript \f$ T \f$ is used to denote a matrix 
+transpose. Fluctuations of \f$ {\bf c}({\bf r})\f$ within the subspace 
+orthogonal to \f$ {\bf e} \f$ thus preserve the incompressibility 
+constraint. 
 
-The formulation of PS-FTS in PSCF is based on a a de-composition of 
-\f$ {\bf c}({\bf r}) \f$ and other vectors into components parallel and 
-orthogonal to \f$ {\bf e} \f$.  Let \f$ {\bf Q} \f$ and \f$ {\bf P} \f$ 
-denote \f$ M \times M \f$ orthogonal projection matrices
+The formulation of field theory for incompressible systems used in PSCF 
+is based on a a decomposition of \f$ {\bf c}({\bf r}) \f$ and other 
+vectors into components parallel and orthogonal to \f$ {\bf e} \f$.  
+Let \f$ {\bf Q} \f$ and \f$ {\bf P} \f$ denote \f$ M \times M \f$ 
+orthogonal projection matrices
 \f[
-   {\bf Q} = \frac{1}{M}{\bf e}{\bf e}^{T}
+   {\bf Q} \equiv \frac{1}{M}{\bf e}{\bf e}^{T}
    \quad\quad, \quad\quad
-   {\bf P} = {\bf I} - {\bf Q}
+   {\bf P} \equiv {\bf I} - {\bf Q}
    \quad, 
 \f]
 where \f$ {\bf I} \f$ is the \f$ M \times M \f$ identity matrix. 
-Note that \f$ {\bf Q}{\bf e} = {\bf e} \f$, \f$ {\bf P}{\bf e} = 0 \f$,
-and \f$ {\bf Q}{\bf P} = {\bf P}{\bf Q} = 0 \f$.
-Multiplying a column vector by \f$ {\bf Q} \f$ yields its orthogonal
-projection onto \f$ {\bf e} \f$, while multiplying such a vector by 
-\f$ {\bf P} \f$ yields its projection into the \f$ M-1 \f$ dimensional 
-subspace orthogonal to \f$ {\bf e} \f$ .  
+Note that \f$ {\bf Q}{\bf e} = {\bf e} \f$, \f$ {\bf P}{\bf e} = 0 \f$.
+Also note that \f$ {\bf Q} \f$ are both idempotent (i.e., that
+\f$ {\bf Q}{\bf Q} = {\bf Q} \f$, \f$ {\bf P}{\bf P} = {\bf P} \f$),
+and that \f$ {\bf Q}{\bf P} = {\bf P}{\bf Q} = 0 \f$.
+Multiplying a column vector by \f$ {\bf Q} \f$ yields the orthogonal
+projection of the original vector onto \f$ {\bf e} \f$. 
+Multiplying such a vector by \f$ {\bf P} \f$ instead yields the 
+projection of the vector into the \f$ M-1 \f$ dimensional subspace 
+orthogonal to \f$ {\bf e} \f$ .  
 
 <b> Projected \f$ \chi \f$ Matrix </b>
 
@@ -381,11 +382,10 @@ matrix defined by the matrix product
 \f]
 We refer to this as the projected \f$ \chi \f$ matrix. 
 Let \f$ \tilde{\chi}_{ij} \f$ denote the element in row i and 
-column j of matrix \f$ \tilde{\boldsymbol \chi} \f$ . 
-Note that \f$ \tilde{\boldsymbol{\chi}} {\bf e} = 0\f$, implying 
-that \f$ \tilde{\boldsymbol{\chi}} \f$ is a singular matrix for 
-which \f$ {\bf e} \f$ is an eigenvector associated with a zero 
-eigenvalue.
+column j of matrix \f$ \tilde{\boldsymbol \chi} \f$ .  Note that 
+\f$ \tilde{\boldsymbol{\chi}} {\bf e} = 0\f$, implying 
+that \f$ \tilde{\boldsymbol{\chi}} \f$ is a singular matrix for which 
+\f$ {\bf e} \f$ is an eigenvector associated with a zero eigenvalue.
 
 Let \f$ {\bf v}_{1}, \ldots, {\bf v}_{M} \f$ denote \f$ M \f$ orthogonal
 eigenvectors of the symmetric matrix \f$ \tilde{\boldsymbol \chi} \f$, 
@@ -397,21 +397,20 @@ real eigenvalues,  defined such that
 \f]
 for all \f$ \alpha = 1, \ldots, M \f$ .
 As already noted, \f$ {\bf e} \f$ is always an eigenvector with a zero 
-eigenvalue. By convention, we define this to be the last eigenvector,
-so that 
+eigenvalue. By convention, we take this to be the last eigenvector in
+the list, so that 
 \f[
-   {\bf v}_{M} = {\bf e} \quad,
+   {\bf v}_{M} = {\bf e} 
 \f] 
-giving \f$ \lambda_{M}=0 \f$. We also choose a normalization convention
-for the eigenvectors in which
+and \f$ \lambda_{M}=0 \f$. We also choose a normalization convention
+for which
 \f[
    {\bf v}_{\alpha}^{T} {\bf v}_{\beta} 
    = \delta_{\alpha\beta}M  
 \f]
 for all \f$ \alpha, \beta = 1,\ldots, M \f$ .
 This convention is chosen to be compatible with the norm of 
-\f$ {\bf e} = {\bf v}_{M} \f$, for which \f$ {\bf e}^{T}{\bf e} = M \f$,
-and thus with the identification \f$ {\bf v}_{M} = {\bf e} \f$. 
+\f$ {\bf e} = {\bf v}_{M} \f$, for which \f$ {\bf e}^{T}{\bf e} = M \f$.
 Because eigenvectors of a real symmetric matrix with distinct eigenvalues
 must be orthogonal, the \f$ M - 1 \f$ eigenvectors 
 \f$ {\bf v}_{1}, \ldots, {\bf v}_{M-1} \f$ with generally nonzero 
@@ -433,9 +432,9 @@ Here and hereafter, we use lower case Greek letters \f$ \alpha, \beta \f$
 for eigenvector indices and small Latin letters \f$ i, j, \ldots \f$ for 
 monomer type indices, and use the Einstein summation convention and/or 
 matrix multiplication only to represent sums over repeated monomer type 
-indices.
-Note that, because \f$ {\bf v}_{M} = {\bf e} \f$, the constraint requires
-that \f$ C_{M}({\bf r}) = c_{0}\f$ for all \f$ {\bf r} \f$.
+indices.  Note that, because \f$ {\bf v}_{M} = {\bf e} \f$, the constraint 
+requires that \f$ C_{M}({\bf r}) = c_{0}\f$ for all \f$ {\bf r} \f$.
+
 By substituting the expansion of \f$ {\bf c} \f$ in eigenvectors of the 
 projected \f$ \chi \f$ matrix into the definition of \f$ U_{\rm int} \f$, 
 while setting \f$ C_{M}({\bf r}) = c_{0} \f$ and noting that 
