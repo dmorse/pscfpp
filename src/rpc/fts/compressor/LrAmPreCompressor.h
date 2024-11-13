@@ -27,7 +27,7 @@ namespace Rpc
    /**
    * Anderson Mixing compressor with linear-response preconditioning.
    *
-   * Class LrAmCompressor implements an Anderson mixing algorithm in
+   * Class LrAmPreCompressor implements an Anderson mixing algorithm in
    * which the residual is defined using a preconditioning scheme that
    * would yield a Jacobian of unity if applied to a homogeneous system.
    * The residual in the unpreconditioned form of Anderson mixing is a
@@ -41,7 +41,7 @@ namespace Rpc
    * \ingroup Rpc_Fts_Compressor_Module
    */
    template <int D>
-   class LrAmCompressor 
+   class LrAmPreCompressor 
          : public AmIteratorTmpl<Compressor<D>, DArray<double> >
    {
 
@@ -52,12 +52,12 @@ namespace Rpc
       * 
       * \param system System object associated with this compressor.
       */
-      LrAmCompressor(System<D>& system);
+      LrAmPreCompressor(System<D>& system);
 
       /**
       * Destructor.
       */
-      ~LrAmCompressor();
+      ~LrAmPreCompressor();
 
       /**
       * Read all parameters and initialize.
@@ -292,9 +292,9 @@ namespace Rpc
    
    #ifndef RPC_LR_AM_COMPRESSOR_TPP
    // Suppress implicit instantiation
-   extern template class LrAmCompressor<1>;
-   extern template class LrAmCompressor<2>;
-   extern template class LrAmCompressor<3>;
+   extern template class LrAmPreCompressor<1>;
+   extern template class LrAmPreCompressor<2>;
+   extern template class LrAmPreCompressor<3>;
    #endif
 
 

@@ -93,9 +93,9 @@ namespace Rpc {
       using McMove<D>::incrementNAccept;
       using McMove<D>::incrementNFail;
 
-      using McMove<D>::computeWcTimer_;
       using McMove<D>::attemptMoveTimer_;
       using McMove<D>::compressorTimer_;
+      using McMove<D>::componentTimer_;
       using McMove<D>::computeHamiltonianTimer_;
       using McMove<D>::decisionTimer_;
       using McMove<D>::totalTimer_;

@@ -45,19 +45,19 @@ namespace Rpc {
    * of eigenvectors of the projected chi matrix, and functions to compute 
    * and return contributions to the field theoretic Hamiltonian.
    *
-   * The analyzeChi() function constructs and diagonalizes the projected
+   * The analyzeChi function constructs and diagonalizes the projected
    * chi matrix. This is a singular nMonomer x nMonomer matrix defined 
    * by evaluating the orthogonal projection of the chi matrix into the 
    * subspace of fluctuations that preserves total monomer concentration. 
-   * The eigenvalues and eigenvectors of this matrix are accessed via the 
-   * chiEvals and chiEvecs functions, respectively.
+   * The eigenvalues and eigenvectors of this matrix are accessed via 
+   * the chiEvals and chiEvecs functions, respectively.
    *
-   * The functions computeWc, computeCc and computeDc compute components
-   * components of various types of multi-component fields (i.e., fields
-   * that are associated with a monomer type index) in a basis of 
-   * eigenvectors of the projected chi matrix. Names such as wc, cc and 
-   * dc that end with a suffix "c" refer to components of multi-component 
-   * fields that are defined using this eigenvector basis. 
+   * The computeWc, computeCc and computeDc functions compute components
+   * of various types of multi-component fields (i.e., fields that are
+   * associated with a monomer type index) in a basis of eigenvectors of 
+   * the projected chi matrix. Names such as wc, cc and dc that end with 
+   * a suffix "c" refer to components of multi-component fields that are 
+   * defined using this eigenvector basis. 
    *
    * \ingroup Rpc_Fts_Module
    */
@@ -279,16 +279,16 @@ namespace Rpc {
       ///@{
 
       /**
-      * Compute the Hamiltonian used in field theoretic simulations.
+      * Compute the Hamiltonian used in PS-FTS.
       */
       void computeHamiltonian();
 
       /**
-      * Get the Hamiltonian used in field theoretic simulations.
+      * Get the Hamiltonian used in PS-FTS.
       *
       * This function returns the real, thermodynamically extensive
       * Hamiltonian used in simulations based on partial saddle-point
-      * approximation.
+      * approximation (PS-FTS).
       */
       double hamiltonian() const;
 
@@ -306,11 +306,11 @@ namespace Rpc {
       * Get the perturbation to the standard Hamiltonian (if any).
       *
       * A perturbation to the Hamiltonian, if any, is computed by an 
-      * associated Perturbation object. When a perturbation exists, as
-      * indicated by the return value of hasPerturbation(), the
-      * perturbationHamiltonian component is added to the idealHamiltonian
-      * and fieldHamiltonian components to obtain the total value that is
-      * returned by hamiltonian() function.
+      * associated Perturbation object. When a perturbation exists, 
+      * as indicated by hasPerturbation(), the perturbationHamiltonian
+      * component is added to the idealHamiltonian and fieldHamiltonian
+      * components to obtain the total value that is returned by the
+      * hamiltonian() member function.
       */
       double perturbationHamiltonian() const;
 
@@ -784,7 +784,7 @@ namespace Rpc {
    template <int D>
    inline Compressor<D>& Simulator<D>::compressor()
    {
-      UTIL_CHECK(compressorPtr_);
+      UTIL_CHECK(hasCompressor());
       return *compressorPtr_;
    }
 

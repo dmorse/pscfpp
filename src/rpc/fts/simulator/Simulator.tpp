@@ -70,7 +70,6 @@ namespace Rpc {
       if (compressorFactoryPtr_) {
          delete compressorFactoryPtr_;
       }
-      //if (compressorPtr_ && !system().hasCompressor()) {
       if (compressorPtr_ ) {
          delete compressorPtr_;
       }
@@ -710,8 +709,8 @@ namespace Rpc {
    template<int D>
    void Simulator<D>::outputTimers(std::ostream& out)
    {  
-      outputMdeCounter(out); 
-      compressor().outputTimers(out);
+      UTIL_CHECK(compressorPtr_);
+      compressor().outputTimers(out); 
    }
 
    /*
@@ -720,7 +719,7 @@ namespace Rpc {
    template<int D>
    void Simulator<D>::outputMdeCounter(std::ostream& out)
    { 
-      out << std::endl;
+      UTIL_CHECK(compressorPtr_);
       out << "MDE counter   "
           << compressor().mdeCounter() << std::endl;
       out << std::endl;

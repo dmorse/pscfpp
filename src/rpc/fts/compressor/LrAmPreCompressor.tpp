@@ -8,7 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "LrAmCompressor.h"
+#include "LrAmPreCompressor.h"
 #include <pscf/chem/Monomer.h>
 #include <pscf/mesh/MeshIterator.h>
 #include <rpc/fts/compressor/intra/IntraCorrelation.h>
@@ -23,20 +23,20 @@ namespace Rpc{
 
    // Constructor
    template <int D>
-   LrAmCompressor<D>::LrAmCompressor(System<D>& system)
+   LrAmPreCompressor<D>::LrAmPreCompressor(System<D>& system)
     : Compressor<D>(system),
       isAllocated_(false),
       intraCorrelation_(system)
-   { setClassName("LrAmCompressor"); }
+   { setClassName("LrAmPreCompressor"); }
 
    // Destructor
    template <int D>
-   LrAmCompressor<D>::~LrAmCompressor()
+   LrAmPreCompressor<D>::~LrAmPreCompressor()
    {}
 
    // Read parameters from file
    template <int D>
-   void LrAmCompressor<D>::readParameters(std::istream& in)
+   void LrAmPreCompressor<D>::readParameters(std::istream& in)
    {
       // Call parent class readParameters
       AmIteratorTmpl<Compressor<D>, DArray<double> >::readParameters(in);
@@ -45,7 +45,7 @@ namespace Rpc{
 
    // Initialize just before entry to iterative loop.
    template <int D>
-   void LrAmCompressor<D>::setup(bool isContinuation)
+   void LrAmPreCompressor<D>::setup(bool isContinuation)
    {
       const int nMonomer = system().mixture().nMonomer();
       const int meshSize = system().domain().mesh().size();
@@ -91,7 +91,7 @@ namespace Rpc{
 
    // Iterative solver (AM algorithm)
    template <int D>
-   int LrAmCompressor<D>::compress()
+   int LrAmPreCompressor<D>::compress()
    {
       int solve = AmIteratorTmpl<Compressor<D>, DArray<double> >::solve();
       //mdeCounter_ = AmIteratorTmpl<Compressor<D>,DArray<double>>::totalItr();
@@ -100,12 +100,12 @@ namespace Rpc{
 
    // Assign one array to another
    template <int D>
-   void LrAmCompressor<D>::setEqual(DArray<double>& a, DArray<double> const & b)
+   void LrAmPreCompressor<D>::setEqual(DArray<double>& a, DArray<double> const & b)
    {  a = b; }
 
    // Compute and return inner product of two vectors.
    template <int D>
-   double LrAmCompressor<D>::dotProduct(DArray<double> const & a,
+   double LrAmPreCompressor<D>::dotProduct(DArray<double> const & a,
                                     DArray<double> const & b)
    {
       const int n = a.capacity();
@@ -114,7 +114,7 @@ namespace Rpc{
       for (int i = 0; i < n; i++) {
          // If either value is NaN, throw NanException
          if (std::isnan(a[i]) || std::isnan(b[i])) {
-            throw NanException("LrAmCompressor::dotProduct",
+            throw NanException("LrAmPreCompressor::dotProduct",
                                __FILE__,__LINE__,0);
          }
          product += a[i] * b[i];
@@ -124,7 +124,7 @@ namespace Rpc{
 
    // Compute and return maximum element of a vector.
    template <int D>
-   double LrAmCompressor<D>::maxAbs(DArray<double> const & a)
+   double LrAmPreCompressor<D>::maxAbs(DArray<double> const & a)
    {
       const int n = a.capacity();
       double max = 0.0;
@@ -132,7 +132,7 @@ namespace Rpc{
       for (int i = 0; i < n; i++) {
          value = a[i];
          if (std::isnan(value)) { // if value is NaN, throw NanException
-            throw NanException("LrAmCompressor::dotProduct",__FILE__,__LINE__,0);
+            throw NanException("LrAmPreCompressor::dotProduct",__FILE__,__LINE__,0);
          }
          if (fabs(value) > max) {
             max = fabs(value);
@@ -144,7 +144,7 @@ namespace Rpc{
    // Update basis
    template <int D>
    void
-   LrAmCompressor<D>::updateBasis(RingBuffer< DArray<double> > & basis,
+   LrAmPreCompressor<D>::updateBasis(RingBuffer< DArray<double> > & basis,
                               RingBuffer< DArray<double> > const & hists)
    {
       // Make sure at least two histories are stored
@@ -162,7 +162,7 @@ namespace Rpc{
 
    template <int D>
    void
-   LrAmCompressor<D>::addHistories(DArray<double>& trial,
+   LrAmPreCompressor<D>::addHistories(DArray<double>& trial,
                                RingBuffer<DArray<double> > const & basis,
                                DArray<double> coeffs,
                                int nHist)
@@ -178,7 +178,7 @@ namespace Rpc{
 
    template <int D>
    void
-   LrAmCompressor<D>::addPredictedError(DArray<double>& fieldTrial,
+   LrAmPreCompressor<D>::addPredictedError(DArray<double>& fieldTrial,
                                         DArray<double> const & resTrial,
                                         double lambda)
    {
@@ -190,17 +190,17 @@ namespace Rpc{
 
    // Does the system have an initial field guess?
    template <int D>
-   bool LrAmCompressor<D>::hasInitialGuess()
+   bool LrAmPreCompressor<D>::hasInitialGuess()
    {  return system().w().hasData(); }
 
    // Compute and return the number of elements in a field vector
    template <int D>
-   int LrAmCompressor<D>::nElements()
+   int LrAmPreCompressor<D>::nElements()
    {  return system().domain().mesh().size(); }
 
    // Get the current field from the system
    template <int D>
-   void LrAmCompressor<D>::getCurrent(DArray<double>& curr)
+   void LrAmPreCompressor<D>::getCurrent(DArray<double>& curr)
    {
       // Straighten out fields into  linear arrays
       const int meshSize = system().domain().mesh().size();
@@ -219,7 +219,7 @@ namespace Rpc{
 
    // Perform the main system computation (solve the MDE)
    template <int D>
-   void LrAmCompressor<D>::evaluate()
+   void LrAmPreCompressor<D>::evaluate()
    {
       system().compute();
       ++mdeCounter_;
@@ -227,7 +227,7 @@ namespace Rpc{
 
    // Compute the residual for the current system state
    template <int D>
-   void LrAmCompressor<D>::getResidual(DArray<double>& resid)
+   void LrAmPreCompressor<D>::getResidual(DArray<double>& resid)
    {
       const int n = nElements();
       const int nMonomer = system().mixture().nMonomer();
@@ -267,7 +267,7 @@ namespace Rpc{
 
    // Update the current system field coordinates
    template <int D>
-   void LrAmCompressor<D>::update(DArray<double>& newGuess)
+   void LrAmPreCompressor<D>::update(DArray<double>& newGuess)
    {
       // Convert back to field format
       const int nMonomer = system().mixture().nMonomer();
@@ -283,34 +283,34 @@ namespace Rpc{
    }
 
    template<int D>
-   void LrAmCompressor<D>::outputToLog()
+   void LrAmPreCompressor<D>::outputToLog()
    {}
 
    template<int D>
-   void LrAmCompressor<D>::outputTimers(std::ostream& out)
+   void LrAmPreCompressor<D>::outputTimers(std::ostream& out)
    {
       // Output timing results, if requested.
       out << "\n";
-      out << "LrAmCompressor time contributions:\n";
+      out << "LrAmPreCompressor time contributions:\n";
       AmIteratorTmpl<Compressor<D>, DArray<double> >::outputTimers(out);
    }
 
 
    template<int D>
-   void LrAmCompressor<D>::clearTimers()
+   void LrAmPreCompressor<D>::clearTimers()
    {
       AmIteratorTmpl<Compressor<D>, DArray<double> >::clearTimers();
       mdeCounter_ = 0;
    }
 
    template<int D>
-   double LrAmCompressor<D>::computeLambda(double r)
+   double LrAmPreCompressor<D>::computeLambda(double r)
    {
       return 1.0;
    }
 
    template<int D>
-   double LrAmCompressor<D>::computeError(DArray<double>& residTrial, 
+   double LrAmPreCompressor<D>::computeError(DArray<double>& residTrial, 
                                           DArray<double>& fieldTrial,
                                           std::string errorType,
                                           int verbose)

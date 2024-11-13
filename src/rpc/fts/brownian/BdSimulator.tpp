@@ -101,25 +101,35 @@ namespace Rpc {
    }
 
    /*
-   * Perform a field theoretic MC simulation of nStep steps.
+   * Setup before main loop of a BD simulation.
    */
    template <int D>
-   void BdSimulator<D>::setup()
+   void BdSimulator<D>::setup(int nStep)
    {
+      UTIL_CHECK(hasCompressor());
       UTIL_CHECK(system().w().hasData());
 
       // Eigenanalysis of the projected chi matrix.
       analyzeChi();
 
-      // Compute field components and Hamiltonian for initial state.
-      system().compute();
-      computeWc();
-      computeCc();
-      
       if (hasPerturbation()) {
          perturbation().setup();
       }
-      
+
+      if (hasRamp()) {
+         ramp().setup(nStep);
+      }
+
+      // Solve MDE and compute c-fields for the intial state
+      system().compute();
+
+      // Compress the initial state (adjust pressure-like field)
+      compressor().compress();
+      compressor().clearTimers();
+
+      // Compute field components and Hamiltonian for initial state.
+      computeWc();
+      computeCc();
       computeDc();
       computeHamiltonian();
 
@@ -127,10 +137,6 @@ namespace Rpc {
       if (analyzerManager_.size() > 0){
          analyzerManager_.setup();
       }
-      
-      // Compress the initial field before entering simulate loop. 
-      compressor().compress();
-      compressor().clearTimers();
 
    }
 
@@ -140,14 +146,12 @@ namespace Rpc {
    template <int D>
    void BdSimulator<D>::simulate(int nStep)
    {
+      UTIL_CHECK(hasCompressor());
       UTIL_CHECK(system().w().hasData());
 
       // Initial setup
-      setup();
-      if (hasRamp()) {
-         ramp().setup(nStep);
-      }
-      
+      setup(nStep);
+
       // Main simulation loop
       Timer timer;
       Timer analyzerTimer;
@@ -159,7 +163,9 @@ namespace Rpc {
 
       // Analysis for initial state (if any)
       analyzerTimer.start();
-      analyzerManager_.sample(iStep_);
+      if (analyzerManager_.size() > 0){
+         analyzerManager_.sample(iStep_);
+      }
       analyzerTimer.stop();
 
       for (iTotalStep_ = 0; iTotalStep_ < nStep; ++iTotalStep_) {
@@ -172,14 +178,14 @@ namespace Rpc {
             iStep_++;
 
             if (hasRamp()) {
-               ramp().setParameters(iStep_);               
+               ramp().setParameters(iStep_);
             }
 
             // Analysis (if any)
             analyzerTimer.start();
             if (Analyzer<D>::baseInterval != 0) {
-               if (iStep_ % Analyzer<D>::baseInterval == 0) {
-                  if (analyzerManager_.size() > 0) {
+               if (analyzerManager_.size() > 0) {
+                  if (iStep_ % Analyzer<D>::baseInterval == 0) {
                      analyzerManager_.sample(iStep_);
                   }
                }
@@ -188,7 +194,7 @@ namespace Rpc {
 
          } else {
             Log::file() << "Step: "<< iTotalStep_
-                        << " fail to converge" << "\n";
+                        << " failed to converge" << "\n";
          }
 
       }
@@ -201,18 +207,12 @@ namespace Rpc {
       if (Analyzer<D>::baseInterval > 0){
          analyzerManager_.output();
       }
-      
+
       // Output results of ramp
       if (hasRamp()){
          Log::file() << std::endl;
          ramp().output();
       }
-
-      // Output number of times MDE has been solved for the simulation run
-      Log::file() << std::endl;
-      Log::file() << "MDE counter   "
-                  << compressor().mdeCounter() << std::endl;
-      Log::file() << std::endl;
 
       // Output times for the simulation run
       Log::file() << std::endl;
@@ -228,9 +228,14 @@ namespace Rpc {
       Log::file() << "Analyzer run time   " << analyzerTime
                   << " sec" << std::endl;
       Log::file() << std::endl;
-      
+
+      // Output number of times MDE has been solved for the simulation run
+      Log::file() << "MDE counter   "
+                  << compressor().mdeCounter() << std::endl;
+      Log::file() << std::endl;
+
       // Output compressor timer results
-      compressor().outputTimers(Log::file());
+      // compressor().outputTimers(Log::file());
    }
 
    /*
@@ -288,7 +293,7 @@ namespace Rpc {
 
       // Output results of all analyzers to output files
       analyzerManager_.output();
-   
+
       // Output number of frames and times
       Log::file() << std::endl;
       Log::file() << "# of frames   " << nFrames << std::endl;
