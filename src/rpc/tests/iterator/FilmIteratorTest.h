@@ -31,7 +31,10 @@ public:
    std::ofstream logFile_;
 
    void setUp()
-   {  setVerbose(0); }
+   {  
+      setVerbose(0);
+      openLogFile("out/MaskGenFilmTest.log"); 
+   }
 
    void tearDown()
    {

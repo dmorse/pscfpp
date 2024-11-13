@@ -25,7 +25,14 @@ namespace Rpc {
    // Destructor
    template <int D>
    ImposedFieldsGenerator<D>::~ImposedFieldsGenerator()
-   {}
+   {
+      if (fieldGenPtr1_) {
+         delete fieldGenPtr1_;
+      }
+      if (fieldGenPtr2_) {
+         delete fieldGenPtr2_;
+      }
+   }
 
    // Create FieldGenerator objects for the mask & external field
    template <int D>

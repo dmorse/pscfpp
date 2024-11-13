@@ -42,7 +42,14 @@ namespace Rpc {
       */
       ~ImposedFieldsGenerator();
 
+      using ImposedFieldsTmpl::type;
       using ParamComposite::isActive;
+
+   protected:
+
+      using ImposedFieldsTmpl::fieldGenPtr1_;
+      using ImposedFieldsTmpl::fieldGenPtr2_;
+      using ParamComposite::setClassName;
 
    private:
 
@@ -59,11 +66,6 @@ namespace Rpc {
 
       /// Pointer to the associated system object.
       System<D>* sysPtr_;
-
-      using ImposedFieldsTmpl::fieldGenPtr1_;
-      using ImposedFieldsTmpl::fieldGenPtr2_;
-      using ImposedFieldsTmpl::type;
-      using ParamComposite::setClassName;
 
    };
 }

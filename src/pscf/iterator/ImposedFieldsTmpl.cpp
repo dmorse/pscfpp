@@ -27,7 +27,7 @@ namespace Pscf {
       read(in, "type", type_);
       createGenerators();
 
-      // Read FieldGenerator for mask (optional)
+      // Read first FieldGenerator (optional)
       if (fieldGenPtr1_) {
 
          // Make fieldGenPtr1_ a child paramComponent of this object, so that 
@@ -128,4 +128,11 @@ namespace Pscf {
    // Get the type string associated with this object
    std::string ImposedFieldsTmpl::type() const
    {  return type_; }
+
+   // Return const pointers to the FieldGenerator child objects
+   FieldGenerator const & ImposedFieldsTmpl::fieldGenerator1() const
+   {  return *fieldGenPtr1_; }
+
+   FieldGenerator const & ImposedFieldsTmpl::fieldGenerator2() const
+   {  return *fieldGenPtr2_; }
 }
