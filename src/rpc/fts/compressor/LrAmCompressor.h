@@ -27,7 +27,7 @@ namespace Rpc
    /**
    * Anderson Mixing compressor with linear-response mixing step.
    *
-   * Class LrPostAmCompressor implements an Anderson mixing algorithm 
+   * Class LrAmCompressor implements an Anderson mixing algorithm 
    * which modifies the second mixing step, estimating Jacobian by linear 
    * response of homogenous liquid instead of unity. The residual is a 
    * vector in which each that represents a deviations 
@@ -36,7 +36,7 @@ namespace Rpc
    * \ingroup Rpc_Fts_Compressor_Module
    */
    template <int D>
-   class LrPostAmCompressor 
+   class LrAmCompressor 
          : public AmIteratorTmpl<Compressor<D>, DArray<double> >
    {
 
@@ -47,12 +47,12 @@ namespace Rpc
       * 
       * \param system System object associated with this compressor.
       */
-      LrPostAmCompressor(System<D>& system);
+      LrAmCompressor(System<D>& system);
 
       /**
       * Destructor.
       */
-      ~LrPostAmCompressor();
+      ~LrAmCompressor();
 
       /**
       * Read all parameters and initialize.
@@ -260,9 +260,9 @@ namespace Rpc
    
    #ifndef RPC_LR_POST_AM_COMPRESSOR_TPP
    // Suppress implicit instantiation
-   extern template class LrPostAmCompressor<1>;
-   extern template class LrPostAmCompressor<2>;
-   extern template class LrPostAmCompressor<3>;
+   extern template class LrAmCompressor<1>;
+   extern template class LrAmCompressor<2>;
+   extern template class LrAmCompressor<3>;
    #endif
 
 } // namespace Rpc

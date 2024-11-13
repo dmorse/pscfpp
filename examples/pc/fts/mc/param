@@ -28,7 +28,7 @@ System{
     lattice     cubic   
   }
   McSimulator{
-    LrAmPreCompressor{
+    LrAmCompressor{
       epsilon      1.0e-4
       maxItr       200
       maxHist      30     

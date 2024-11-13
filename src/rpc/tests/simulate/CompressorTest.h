@@ -11,7 +11,7 @@
 #include <rpc/fts/compressor/AmCompressor.h>
 #include <rpc/fts/compressor/LrCompressor.h>
 #include <rpc/fts/compressor/LrAmPreCompressor.h>
-#include <rpc/fts/compressor/LrPostAmCompressor.h>
+#include <rpc/fts/compressor/LrAmCompressor.h>
 
 #include <prdc/cpu/RFieldComparison.h>
 
@@ -205,14 +205,14 @@ public:
                      "out/testLrAmPreCompressor.log");
    }
    
-   void testLrPostAmCompressor()
+   void testLrAmCompressor()
    {
       printMethod(TEST_FUNC);
       System<3> system;
-      LrPostAmCompressor<3> lrAmCompressor(system);
+      LrAmCompressor<3> lrAmCompressor(system);
       testCompressor(lrAmCompressor, system, 
-                     "in/param_LrPostAmCompressor",
-                     "out/testLrPostAmCompressor.log");
+                     "in/param_LrAmCompressor",
+                     "out/testLrAmCompressor.log");
    }
    
 };
@@ -221,7 +221,7 @@ TEST_BEGIN(CompressorTest)
 TEST_ADD(CompressorTest, testAmCompressor)
 TEST_ADD(CompressorTest, testLrCompressor)
 TEST_ADD(CompressorTest, testLrAmPreCompressor)
-TEST_ADD(CompressorTest, testLrPostAmCompressor)
+TEST_ADD(CompressorTest, testLrAmCompressor)
 TEST_END(CompressorTest)
 
 #endif
