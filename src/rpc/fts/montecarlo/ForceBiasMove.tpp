@@ -177,11 +177,11 @@ namespace Rpc {
          isConverged = true;
          
          // Compute eigenvector components of current fields
-         computeWcTimer_.start();
+         componentTimer_.start();
          simulator().computeWc();
          simulator().computeCc();
          simulator().computeDc();
-         computeWcTimer_.stop();
+         componentTimer_.stop();
 
          // Evaluate new Hamiltonian
          computeHamiltonianTimer_.start();

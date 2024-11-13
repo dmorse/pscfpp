@@ -1,7 +1,7 @@
 LrAmCompressor{
-     epsilon      1.0e-8
-     maxItr       200
-     maxHist      30
-     verbose	  1
-     errorType    rmsResid
+  epsilon     1.0e-8
+  maxItr      200
+  maxHist     30
+  verbose      1
+  errorType    rmsResid
 }

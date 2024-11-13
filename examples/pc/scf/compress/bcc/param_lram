@@ -28,7 +28,7 @@ System{
     groupName      P_1
   }
   BdSimulator{
-    LrAmCompressor{
+    LrPostAmCompressor{
       epsilon      1.0e-10
       maxItr       300
       maxHist      50 

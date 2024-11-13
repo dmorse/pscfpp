@@ -205,7 +205,7 @@ namespace Rpc
       /// Timers for McMove 
       Timer attemptMoveTimer_;
       Timer compressorTimer_;
-      Timer computeWcTimer_;
+      Timer componentTimer_;
       Timer computeHamiltonianTimer_;
       Timer decisionTimer_;
       Timer totalTimer_;

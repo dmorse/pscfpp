@@ -1,5 +1,5 @@
-#ifndef RPC_LR_AM_COMPRESSOR_TPP
-#define RPC_LR_AM_COMPRESSOR_TPP
+#ifndef RPC_LR_POST_AM_COMPRESSOR_TPP
+#define RPC_LR_POST_AM_COMPRESSOR_TPP
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory
@@ -9,11 +9,9 @@
 */
 
 #include "LrAmCompressor.h"
-#include <pscf/chem/Monomer.h>
-#include <pscf/mesh/MeshIterator.h>
-#include <rpc/fts/compressor/intra/IntraCorrelation.h>
-#include <prdc/crystal/shiftToMinimum.h>
 #include <rpc/System.h>
+#include <rpc/fts/compressor/intra/IntraCorrelation.h>
+#include <pscf/mesh/MeshIterator.h>
 #include <util/global.h>
 
 namespace Pscf {
@@ -27,7 +25,7 @@ namespace Rpc{
     : Compressor<D>(system),
       isAllocated_(false),
       intraCorrelation_(system)
-   { setClassName("LrAmCompressor"); }
+   {  setClassName("LrAmCompressor"); }
 
    // Destructor
    template <int D>
@@ -50,6 +48,7 @@ namespace Rpc{
       const int nMonomer = system().mixture().nMonomer();
       const int meshSize = system().domain().mesh().size();
       IntVec<D> const & dimensions = system().domain().mesh().dimensions();
+
       // Allocate memory required by AM algorithm if not done earlier.
       AmIteratorTmpl<Compressor<D>, DArray<double> >::setup(isContinuation);
 
@@ -62,12 +61,11 @@ namespace Rpc{
          }
       }
 
-      // Allocate memory required by compressor if not done earlier.
+      // Allocate memory required by compressor, if not done previously
       if (!isAllocated_){
          newBasis_.allocate(meshSize);
          w0_.allocate(nMonomer);
          wFieldTmp_.allocate(nMonomer);
-         error_.allocate(meshSize);
          resid_.allocate(dimensions);
          residK_.allocate(dimensions);
          intraCorrelationK_.allocate(kMeshDimensions_);
@@ -79,40 +77,48 @@ namespace Rpc{
          isAllocated_ = true;
       }
 
-      // Store value of initial guess chemical potential fields
+      // Store initial values of monomer chemical potential fields in w0_
       for (int i = 0; i < nMonomer; ++i) {
          for (int j = 0; j< meshSize; ++j){
             w0_[i][j] = system().w().rgrid(i)[j];
          }
       }
 
+      // Compute homopolymer intraCorrelation
       intraCorrelationK_ = intraCorrelation_.computeIntraCorrelations();
    }
 
-   // Iterative solver (AM algorithm)
+   /*
+   * Apply the Anderson-Mixing algorithm (main function).
+   */
    template <int D>
    int LrAmCompressor<D>::compress()
    {
       int solve = AmIteratorTmpl<Compressor<D>, DArray<double> >::solve();
-      //mdeCounter_ = AmIteratorTmpl<Compressor<D>,DArray<double>>::totalItr();
       return solve;
    }
 
-   // Assign one array to another
+   /*
+   * Assign one array to another.
+   */
    template <int D>
-   void LrAmCompressor<D>::setEqual(DArray<double>& a, DArray<double> const & b)
+   void LrAmCompressor<D>::setEqual(DArray<double>& a,
+                                        DArray<double> const & b)
    {  a = b; }
 
-   // Compute and return inner product of two vectors.
+   /*
+   * Compute and return inner product of two vectors.
+   */
    template <int D>
-   double LrAmCompressor<D>::dotProduct(DArray<double> const & a,
-                                    DArray<double> const & b)
+   double
+   LrAmCompressor<D>::dotProduct(DArray<double> const & a,
+                                     DArray<double> const & b)
    {
       const int n = a.capacity();
       UTIL_CHECK(b.capacity() == n);
       double product = 0.0;
       for (int i = 0; i < n; i++) {
-         // If either value is NaN, throw NanException
+         // if either value is NaN, throw NanException
          if (std::isnan(a[i]) || std::isnan(b[i])) {
             throw NanException("LrAmCompressor::dotProduct",
                                __FILE__,__LINE__,0);
@@ -122,7 +128,9 @@ namespace Rpc{
       return product;
    }
 
-   // Compute and return maximum element of a vector.
+   /*
+   * Compute and return the maximum element of a vector.
+   */
    template <int D>
    double LrAmCompressor<D>::maxAbs(DArray<double> const & a)
    {
@@ -132,7 +140,8 @@ namespace Rpc{
       for (int i = 0; i < n; i++) {
          value = a[i];
          if (std::isnan(value)) { // if value is NaN, throw NanException
-            throw NanException("LrAmCompressor::dotProduct",__FILE__,__LINE__,0);
+            throw NanException("LrAmCompressor::dotProduct",
+                               __FILE__, __LINE__, 0);
          }
          if (fabs(value) > max) {
             max = fabs(value);
@@ -141,11 +150,14 @@ namespace Rpc{
       return max;
    }
 
-   // Update basis
+   /*
+   * Update basis by adding one new basis vector.
+   */
    template <int D>
    void
-   LrAmCompressor<D>::updateBasis(RingBuffer< DArray<double> > & basis,
-                              RingBuffer< DArray<double> > const & hists)
+   LrAmCompressor<D>::updateBasis(
+                            RingBuffer< DArray<double> > & basis,
+                            RingBuffer< DArray<double> > const & hists)
    {
       // Make sure at least two histories are stored
       UTIL_CHECK(hists.size() >= 2);
@@ -176,29 +188,79 @@ namespace Rpc{
       }
    }
 
+   /*
+   * Returns mixing value parameter lambda = 1.0
+   */
+   template<int D>
+   double LrAmCompressor<D>::computeLambda(double r)
+   {  return 1.0; }
+
+   /*
+   * Correction step (second step of Anderson mixing)
+   *
+   * This LrAM algorithm uses a quasi-Newton correction step with an
+   * approximate Jacobian given by the Jacobian in a homogeneous state.
+   */
    template <int D>
    void
    LrAmCompressor<D>::addPredictedError(DArray<double>& fieldTrial,
-                                        DArray<double> const & resTrial,
-                                        double lambda)
+                                            DArray<double> const & resTrial,
+                                            double lambda)
    {
-      int n = fieldTrial.capacity();
+      // Local constants
+      const int n = fieldTrial.capacity();
+      const double vMonomer = system().mixture().vMonomer();
+
+      // Copy DArray<double> resTrial into RField<D> resid_ 
+      // Allows use of FFT functions that take an RField container
+      for (int i = 0 ; i < n; ++i) {
+         resid_[i] = resTrial[i];
+      }
+
+      // Fourier transfor r-grid residual resid_ to k-grid form residK_
+      system().domain().fft().forwardTransform(resid_, residK_);
+
+      // Compute update on a k-grid, using quasi-Newton algorithm
+      double factor;
+      MeshIterator<D> iter;
+      iter.setDimensions(kMeshDimensions_);
+      for (iter.begin(); !iter.atEnd(); ++iter) {
+         factor = 1.0 / (vMonomer * intraCorrelationK_[iter.rank()]);
+         residK_[iter.rank()][0] *= factor;
+         residK_[iter.rank()][1] *= factor;
+      }
+      // Field residK_ now stores k-grid update rather than residual
+
+      // Convert field update back to r-grid (real space) form 
+      // On return, resid_ contains r-grid field update
+      system().domain().fft().inverseTransform(residK_, resid_);
+
+      // Add update to obtain new fieldTrial
       for (int i = 0; i < n; i++) {
-         fieldTrial[i] += lambda * resTrial[i];
+         fieldTrial[i] += lambda * resid_[i];
       }
    }
 
-   // Does the system have an initial field guess?
+   /*
+   * Does the associated system have initialized w fields?
+   */
    template <int D>
    bool LrAmCompressor<D>::hasInitialGuess()
    {  return system().w().hasData(); }
 
-   // Compute and return the number of elements in a field vector
+   /*
+   * Compute and return the number of elements in a field vector.
+   */
    template <int D>
    int LrAmCompressor<D>::nElements()
    {  return system().domain().mesh().size(); }
 
-   // Get the current field from the system
+   /*
+   * Get the current field variable from the system.
+   *
+   * The field variable is the change in the Lagrange multiplier field.
+   * relative to that used in initial array of monomer fields, w0_.
+   */
    template <int D>
    void LrAmCompressor<D>::getCurrent(DArray<double>& curr)
    {
@@ -208,8 +270,9 @@ namespace Rpc{
 
       /*
       * The field that we are adjusting is the Langrange multiplier field
-      * defined on a grid.  The current value is the difference between
-      * w and w0_ for the first monomer (or any other monomer).
+      * with number of grid pts components. The current value is the
+      * difference between w and w0_ for the first monomer (any monomer
+      * should give the same answer)
       */
       for (int i = 0; i < meshSize; i++){
          curr[i] = (*currSys)[0][i] - w0_[0][i];
@@ -217,7 +280,9 @@ namespace Rpc{
 
    }
 
-   // Perform the main system computation (solve the MDE)
+   /*
+   * Perform the main system computation (solve the MDE).
+   */
    template <int D>
    void LrAmCompressor<D>::evaluate()
    {
@@ -225,60 +290,49 @@ namespace Rpc{
       ++mdeCounter_;
    }
 
-   // Compute the residual for the current system state
+   /*
+   * Compute the residual vector for the current system state
+   */
    template <int D>
    void LrAmCompressor<D>::getResidual(DArray<double>& resid)
    {
       const int n = nElements();
       const int nMonomer = system().mixture().nMonomer();
       const int meshSize = system().domain().mesh().size();
-      const double vMonomer = system().mixture().vMonomer();
 
       // Initialize residuals
       for (int i = 0 ; i < n; ++i) {
-         resid_[i] = -1.0;
+         resid[i] = -1.0;
       }
 
       // Compute SCF residual vector elements
       for (int j = 0; j < nMonomer; ++j) {
         for (int k = 0; k < meshSize; ++k) {
-           resid_[k] += system().c().rgrid(j)[k];
+           resid[k] += system().c().rgrid(j)[k];
         }
       }
 
-      // Convert residual to Fourier Space
-      system().domain().fft().forwardTransform(resid_, residK_);
-      // Residual combine with Linear response factor
-      MeshIterator<D> iter;
-      iter.setDimensions(residK_.dftDimensions());
-      for (iter.begin(); !iter.atEnd(); ++iter) {
-         residK_[iter.rank()][0] *= 1.0 / (vMonomer * intraCorrelationK_[iter.rank()]);
-         residK_[iter.rank()][1] *= 1.0 / (vMonomer * intraCorrelationK_[iter.rank()]);
-      }
-
-      // Convert back to real Space
-      system().domain().fft().inverseTransform(residK_, resid_);
-
-      // Copy to resid
-      for (int i = 0 ; i < n; ++i) {
-         resid[i] = resid_[i];
-      }
    }
 
-   // Update the current system field coordinates
+   /*
+   * Update the w field values stored in the system 
+   */
    template <int D>
    void LrAmCompressor<D>::update(DArray<double>& newGuess)
    {
-      // Convert back to field format
+      // Local constant values
       const int nMonomer = system().mixture().nMonomer();
       const int meshSize = system().domain().mesh().size();
 
-      //New field is the w0_ + the newGuess for the Lagrange multiplier field
+      // Locally update monomer w fields in array wFieldTmp_
+      // Set wFieldTmp = w0_ + newGuess 
       for (int i = 0; i < nMonomer; i++){
          for (int k = 0; k < meshSize; k++){
             wFieldTmp_[i][k] = w0_[i][k] + newGuess[k];
          }
       }
+
+      // Update w fields in the system WContainer
       system().setWRGrid(wFieldTmp_);
    }
 
@@ -286,6 +340,9 @@ namespace Rpc{
    void LrAmCompressor<D>::outputToLog()
    {}
 
+   /*
+   * Output timing results to an output stream (file)
+   */
    template<int D>
    void LrAmCompressor<D>::outputTimers(std::ostream& out)
    {
@@ -295,91 +352,14 @@ namespace Rpc{
       AmIteratorTmpl<Compressor<D>, DArray<double> >::outputTimers(out);
    }
 
-
+   /*
+   * Clear all timers and the MDE counter
+   */
    template<int D>
    void LrAmCompressor<D>::clearTimers()
    {
       AmIteratorTmpl<Compressor<D>, DArray<double> >::clearTimers();
       mdeCounter_ = 0;
-   }
-
-   template<int D>
-   double LrAmCompressor<D>::computeLambda(double r)
-   {
-      return 1.0;
-   }
-
-   template<int D>
-   double LrAmCompressor<D>::computeError(DArray<double>& residTrial, 
-                                          DArray<double>& fieldTrial,
-                                          std::string errorType,
-                                          int verbose)
-   {
-      double error = 0.0;
-      const int n = nElements();
-      const int nMonomer = system().mixture().nMonomer();
-      const int meshSize = system().domain().mesh().size();
-
-      // Initialize residuals
-      for (int i = 0 ; i < n; ++i) {
-         error_[i] = -1.0;
-      }
-
-      // Compute SCF residual vector elements
-      for (int j = 0; j < nMonomer; ++j) {
-         for (int k = 0; k < meshSize; ++k) {
-           error_[k] += system().c().rgrid(j)[k];
-         }
-      }
-
-      // Find max residual vector element
-      double maxRes  = maxAbs(error_);
-
-      // Find norm of residual vector
-      double normRes = AmIteratorTmpl<Compressor<D>, DArray<double> >::norm(error_);
-
-      // Find root-mean-squared residual element value
-      double rmsRes = normRes/sqrt(n);
-
-      if (verbose > 1) {
-         Log::file() << "\n";
-         Log::file() << "Max Residual  = " << Dbl(maxRes,15) << "\n";
-         Log::file() << "Residual Norm = " << Dbl(normRes,15) << "\n";
-         Log::file() << "RMS Residual  = " << Dbl(rmsRes,15);
-
-         // Check if calculation has diverged (normRes will be NaN)
-         UTIL_CHECK(!std::isnan(normRes));
-         error = normRes;
-         Log::file() <<"\n";
-
-         // Set error value
-         if (errorType == "maxResid") {
-            error = maxRes;
-         } else if (errorType == "normResid") {
-            error = normRes;
-         } else if (errorType == "rmsResid") {
-            error = rmsRes;
-         } else {
-            UTIL_THROW("Invalid iterator error type in parameter file.");
-         }
-
-      } else {
-
-         // Set error value
-         if (errorType == "maxResid") {
-            error = maxRes;
-         } else if (errorType == "normResid") {
-            error = normRes;
-         } else if (errorType == "rmsResid") {
-            error = normRes/sqrt(n);
-         } else {
-            UTIL_THROW("Invalid iterator error type in parameter file.");
-         }
-         //Log::file() << ",  error  = " << Dbl(error, 15) << "\n";
-
-      }
-
-      return error;
    }
 
 }
