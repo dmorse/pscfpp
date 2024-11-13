@@ -29,7 +29,7 @@ namespace Pscf {
    * \ingroup Pscf_Iterator_Module
    */
    class FieldGenerator : public ParamComposite, 
-                                 public ParameterModifier
+                          public ParameterModifier
    {
 
    public:

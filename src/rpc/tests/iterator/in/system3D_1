@@ -15,7 +15,7 @@ System{
       ]
       phi     1.0
     }
-    ds   0.01
+    ds   0.005
   }
   Interaction{
     chi(  
@@ -27,17 +27,10 @@ System{
     lattice        tetragonal
     groupName      P_4%m_m_m
   }
-  AmIteratorBasisFilm{
+  AmIteratorBasis{
     epsilon      1.0e-7
     maxItr       1000
     maxHist      50 
     isFlexible   1
-    normalVecId          2
-    interfaceThickness   0.2    
-    excludedThickness    0.4
-    chiBottom[ 3 0 ]
-    chiTop[ 3 0 ]
   }
 }
-
-    unitCell       tetragonal  2.0  4.4

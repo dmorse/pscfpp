@@ -145,7 +145,7 @@ class Field:
             lineCount += 1
             if lineCount%2 == 0:
                name = l[0]
-               if name == 'N_basis':
+               if name == 'N_basis' or name == "N_star":
                   self.type = 'basis'
             else:
                if name == 'mesh' or name == 'ngrid' or name == 'cell_param':

@@ -190,17 +190,24 @@ namespace Prdc
    */
    template <int D>
    void ExtGenFilmBase<D>::setParameter(std::string name, 
-                                                        DArray<int> ids, 
-                                                        double value,
-                                                        bool& success)
+                                        DArray<int> ids, 
+                                        double value,
+                                        bool& success)
    {
       success = true;
+      bool wasAthermal = isAthermal();
       if (name == "chi_top") {
          chiTop_[ids[0]] = value;
       } else if (name == "chi_bottom") {
          chiBottom_[ids[0]] = value;
       } else {
          success = false;
+      }
+      
+      // If walls were athermal but are not anymore, then the h fields
+      // have not been allocated. Thus, we must call allocate() again.
+      if (wasAthermal && success && (!isAthermal())) {
+         allocate();
       }
    }
 
@@ -209,8 +216,8 @@ namespace Prdc
    */
    template <int D>
    double ExtGenFilmBase<D>::getParameter(std::string name, 
-                                                          DArray<int> ids, 
-                                                          bool& success) 
+                                          DArray<int> ids, 
+                                          bool& success) 
    const
    {
       success = true;

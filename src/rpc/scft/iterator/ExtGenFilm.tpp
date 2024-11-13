@@ -75,9 +75,6 @@ namespace Rpc
    template <int D>
    void ExtGenFilm<D>::generate()
    {
-      // Make sure normalVecId_ is set
-      if (normalVecId_ < 0) maskNormalVecId();
-
       // Set chiBottomCurrent_, chiTopCurrent_, and parametersCurrent_
       chiBottomCurrent_ = chiBottom();
       chiTopCurrent_ = chiTop();
@@ -87,6 +84,9 @@ namespace Rpc
       // If an external field already exists in the System, we need to
       // overwrite it with a field of all zeros, otherwise do nothing
       if ((isAthermal()) && (!isGenerated())) return;
+
+      // Make sure normalVecId_ is set
+      if (normalVecId_ < 0) maskNormalVecId();
 
       // If this point is reached, external field must be generated
       UTIL_CHECK(system().h().isAllocatedRGrid());

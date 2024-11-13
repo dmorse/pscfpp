@@ -679,7 +679,7 @@ namespace R1d
 
    }
 
-   void System::writeThermo(std::ostream& out)
+   void System::writeThermo(std::ostream& out) const
    {
       out << std::endl;
       out << "fHelmholtz    " << Dbl(fHelmholtz(), 18, 11) << std::endl;
@@ -730,7 +730,7 @@ namespace R1d
    /*
    * Write w-fields in symmetry-adapted basis format. 
    */
-   void System::writeW(std::string const & filename)
+   void System::writeW(std::string const & filename) const
    {
       //UTIL_CHECK(hasWFields_);
       fieldIo_.writeFields(wFields(), filename);
@@ -739,7 +739,7 @@ namespace R1d
    /*
    * Write all concentration fields in symmetry-adapted basis format.
    */
-   void System::writeC(std::string const & filename)
+   void System::writeC(std::string const & filename) const
    {
       //UTIL_CHECK(hasCFields_);
       fieldIo_.writeFields(cFields(), filename);
@@ -749,7 +749,7 @@ namespace R1d
    * Write all concentration fields in real space (r-grid) format, for 
    * each block (or solvent) individually rather than for each species.
    */
-   void System::writeBlockC(std::string const & filename) 
+   void System::writeBlockC(std::string const & filename) const
    {
       //UTIL_CHECK(hasCFields_);
       fieldIo_.writeBlockCFields(mixture_, filename);
@@ -836,7 +836,7 @@ namespace R1d
    /*
    * Write propagators for all blocks of all polymers to files.
    */
-   void System::writeQAll(std::string const & basename)
+   void System::writeQAll(std::string const & basename) const
    {
       std::string filename;
       int np, nb, ip, ib, id;

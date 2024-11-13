@@ -10,12 +10,12 @@ System{
       type    linear
       nBlock  2
       blocks[
-              0  0.4
-              1  0.6
+              0  0.50
+              1  0.50
       ]
       phi     1.0
     }
-    ds   0.01
+    ds   0.0025
   }
   Interaction{
     chi(  
@@ -23,15 +23,14 @@ System{
     )
   }
   Domain{
-    mesh          64
-    lattice       lamellar    
-    groupName     P_-1
+    mesh           72
+    lattice        lamellar
+    groupName      P_-1
   }
-  AmIterator{
-    epsilon      1.0e-7
-    maxItr       1000
-    maxHist      50  
-    isFlexible   0   
+  AmIteratorBasis{
+    epsilon      1.0e-6
+    maxItr       2000
+    maxHist      100 
+    isFlexible   1
   }
 }
-

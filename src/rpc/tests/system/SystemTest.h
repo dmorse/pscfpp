@@ -937,6 +937,57 @@ public:
 
    }
 
+   void testIterateWithMaskAndH() // test manual entry of mask and h fields
+   {
+      printMethod(TEST_FUNC);
+      openLogFile("out/testIterateWithMaskAndH.log");
+      
+      // Set up system
+      System<1> system;
+      system.fileMaster().setInputPrefix(filePrefix());
+      system.fileMaster().setOutputPrefix(filePrefix());
+      std::ifstream in;
+      openInputFile("in/maskAndH/param", in);
+      system.readParam(in);
+      in.close();
+
+      // Read initial guess
+      system.readWBasis("in/maskAndH/w.bf");
+
+      // Read in the mask and external fields from file
+      UnitCell<1> unitCell; // UnitCell object to pass to FieldIo functions
+      unitCell = system.domain().unitCell();
+      system.mask().setFieldIo(system.domain().fieldIo());
+      system.mask().allocate(system.domain().basis().nBasis(), 
+                             system.domain().mesh().dimensions());
+      system.mask().readBasis("in/maskAndH/mask.bf", unitCell);
+      TEST_ASSERT(eq(system.mask().phiTot(), 8.0951532073e-01));
+
+      system.h().setFieldIo(system.domain().fieldIo());
+      system.h().allocateBasis(system.domain().basis().nBasis());
+      system.h().allocateRGrid(system.domain().mesh().dimensions());
+      system.h().readBasis("in/maskAndH/h.bf", unitCell);
+
+      // Run the solve function
+      system.iterate();
+
+      // Check converged field is correct by comparing to files in in/maskAndH
+      DArray< DArray<double> > wFieldsCheck; // Copy of reference field
+      system.domain().fieldIo().readFieldsBasis("in/maskAndH/w.ref", 
+                                                wFieldsCheck, unitCell);
+      BFieldComparison bComparison(0); // object to compare fields
+      bComparison.compare(system.w().basis(), wFieldsCheck);
+
+      double diff = bComparison.maxDiff();
+      double epsilon = 1.0E-5; 
+      if (verbose() > 0 || diff > epsilon) {
+         std::cout << "\n";
+         std::cout << "diff    = " << diff << "\n";
+         std::cout << "epsilon = " << epsilon << "\n";
+      }
+      TEST_ASSERT(diff < epsilon);
+   }
+
 };
 
 TEST_BEGIN(SystemTest)
@@ -958,6 +1009,7 @@ TEST_ADD(SystemTest, testIterate3D_bcc_rigid)
 TEST_ADD(SystemTest, testIterate3D_bcc_flex)
 TEST_ADD(SystemTest, testIterate3D_altGyr_flex)
 TEST_ADD(SystemTest, testIterate3D_c15_1_flex)
+TEST_ADD(SystemTest, testIterateWithMaskAndH)
 TEST_END(SystemTest)
 
 #endif
