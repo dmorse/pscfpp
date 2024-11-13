@@ -733,7 +733,7 @@ namespace Rpg {
    template<int D>
    void Simulator<D>::outputMdeCounter(std::ostream& out)
    { 
-      out << std::endl;
+      //out << std::endl;
       out << "MDE counter   "
           << compressor().mdeCounter() << std::endl;
       out << std::endl;

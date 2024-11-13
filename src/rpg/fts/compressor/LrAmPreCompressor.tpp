@@ -8,7 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "LrAmCompressor.h"
+#include "LrAmPreCompressor.h"
 #include <rpg/System.h>
 #include <rpg/fts/compressor/intra/IntraCorrelation.h>  
 #include <pscf/chem/Monomer.h>
@@ -24,20 +24,20 @@ namespace Rpg{
 
    // Constructor
    template <int D>
-   LrAmCompressor<D>::LrAmCompressor(System<D>& system)
+   LrAmPreCompressor<D>::LrAmPreCompressor(System<D>& system)
     : Compressor<D>(system),
       isAllocated_(false),
       intra_(system)
-   {  setClassName("LrAmCompressor"); }
+   {  setClassName("LrAmPreCompressor"); }
 
    // Destructor
    template <int D>
-   LrAmCompressor<D>::~LrAmCompressor()
+   LrAmPreCompressor<D>::~LrAmPreCompressor()
    {}
 
    // Read parameters from file
    template <int D>
-   void LrAmCompressor<D>::readParameters(std::istream& in)
+   void LrAmPreCompressor<D>::readParameters(std::istream& in)
    {
       // Call parent class readParameters
       AmIteratorTmpl<Compressor<D>, Field<cudaReal> >::readParameters(in);
@@ -46,7 +46,7 @@ namespace Rpg{
       
    // Initialize just before entry to iterative loop.
    template <int D>
-   void LrAmCompressor<D>::setup(bool isContinuation)
+   void LrAmPreCompressor<D>::setup(bool isContinuation)
    {  
       const int nMonomer = system().mixture().nMonomer();
       const int meshSize = system().domain().mesh().size();
@@ -104,7 +104,7 @@ namespace Rpg{
   
    // Iterative solver (AM algorithm) 
    template <int D>
-   int LrAmCompressor<D>::compress()
+   int LrAmPreCompressor<D>::compress()
    {
       int solve = AmIteratorTmpl<Compressor<D>, Field<cudaReal> >::solve();
       //mdeCounter_ = AmIteratorTmpl<Compressor<D>, Field<cudaReal>>::totalItr();
@@ -113,7 +113,7 @@ namespace Rpg{
 
    // Assign one array to another
    template <int D>
-   void LrAmCompressor<D>::setEqual(Field<cudaReal>& a, Field<cudaReal> const & b)
+   void LrAmPreCompressor<D>::setEqual(Field<cudaReal>& a, Field<cudaReal> const & b)
    {
       // GPU resources
       int nBlocks, nThreads;
@@ -125,7 +125,7 @@ namespace Rpg{
 
    // Compute and return inner product of two vectors.
    template <int D>
-   double LrAmCompressor<D>::dotProduct(Field<cudaReal> const & a, 
+   double LrAmPreCompressor<D>::dotProduct(Field<cudaReal> const & a, 
                                         Field<cudaReal> const & b)
    {
       const int n = a.capacity();
@@ -136,7 +136,7 @@ namespace Rpg{
 
    // Compute and return maximum element of a vector.
    template <int D>
-   double LrAmCompressor<D>::maxAbs(Field<cudaReal> const & a)
+   double LrAmPreCompressor<D>::maxAbs(Field<cudaReal> const & a)
    {
       int n = a.capacity();
       cudaReal max = gpuMaxAbs(a.cField(), n);
@@ -146,7 +146,7 @@ namespace Rpg{
    // Update basis
    template <int D>
    void 
-   LrAmCompressor<D>::updateBasis(RingBuffer< Field<cudaReal> > & basis,
+   LrAmPreCompressor<D>::updateBasis(RingBuffer< Field<cudaReal> > & basis,
                                   RingBuffer< Field<cudaReal> > const & hists)
    {
       // Make sure at least two histories are stored
@@ -168,7 +168,7 @@ namespace Rpg{
 
    template <int D>
    void
-   LrAmCompressor<D>::addHistories(Field<cudaReal>& trial,
+   LrAmPreCompressor<D>::addHistories(Field<cudaReal>& trial,
                                    RingBuffer<Field<cudaReal> > const & basis,
                                    DArray<double> coeffs,
                                    int nHist)
@@ -184,7 +184,7 @@ namespace Rpg{
    }
 
    template <int D>
-   void LrAmCompressor<D>::addPredictedError(Field<cudaReal>& fieldTrial,
+   void LrAmPreCompressor<D>::addPredictedError(Field<cudaReal>& fieldTrial,
                                              Field<cudaReal> const & resTrial,
                                              double lambda)
    {
@@ -198,17 +198,17 @@ namespace Rpg{
 
    // Does the system have an initial field guess?
    template <int D>
-   bool LrAmCompressor<D>::hasInitialGuess()
+   bool LrAmPreCompressor<D>::hasInitialGuess()
    {  return system().w().hasData(); }
 
    // Compute and return the number of elements in a field vector
    template <int D>
-   int LrAmCompressor<D>::nElements()
+   int LrAmPreCompressor<D>::nElements()
    {  return system().domain().mesh().size(); }
 
    // Get the current field from the system
    template <int D>
-   void LrAmCompressor<D>::getCurrent(Field<cudaReal>& curr)
+   void LrAmPreCompressor<D>::getCurrent(Field<cudaReal>& curr)
    {
       // Straighten out fields into  linear arrays
       const int meshSize = system().domain().mesh().size();
@@ -231,7 +231,7 @@ namespace Rpg{
 
    // Perform the main system computation (solve the MDE)
    template <int D>
-   void LrAmCompressor<D>::evaluate()
+   void LrAmPreCompressor<D>::evaluate()
    {  
       system().compute(); 
       ++mdeCounter_;
@@ -239,7 +239,7 @@ namespace Rpg{
 
    // Compute the residual for the current system state
    template <int D>
-   void LrAmCompressor<D>::getResidual(Field<cudaReal>& resid)
+   void LrAmPreCompressor<D>::getResidual(Field<cudaReal>& resid)
    {
       const int n = nElements();
       const int nMonomer = system().mixture().nMonomer();
@@ -276,7 +276,7 @@ namespace Rpg{
 
    // Update the current system field coordinates
    template <int D>
-   void LrAmCompressor<D>::update(Field<cudaReal>& newGuess)
+   void LrAmPreCompressor<D>::update(Field<cudaReal>& newGuess)
    {
       // Convert back to field format
       const int nMonomer = system().mixture().nMonomer();
@@ -297,11 +297,11 @@ namespace Rpg{
    }
 
    template<int D>
-   void LrAmCompressor<D>::outputToLog()
+   void LrAmPreCompressor<D>::outputToLog()
    {}
    
    template<int D>
-   void LrAmCompressor<D>::outputTimers(std::ostream& out)
+   void LrAmPreCompressor<D>::outputTimers(std::ostream& out)
    {
       // Output timing results, if requested.
       out << "\n";
@@ -311,20 +311,20 @@ namespace Rpg{
    
    
    template<int D>
-   void LrAmCompressor<D>::clearTimers()
+   void LrAmPreCompressor<D>::clearTimers()
    {
       AmIteratorTmpl<Compressor<D>, Field<cudaReal> >::clearTimers();
       mdeCounter_ = 0;
    }
       
    template<int D>
-   double LrAmCompressor<D>::computeLambda(double r)
+   double LrAmPreCompressor<D>::computeLambda(double r)
    {
       return 1.0;
    }
    
    template<int D>
-   double LrAmCompressor<D>::computeError(Field<cudaReal>& residTrial, 
+   double LrAmPreCompressor<D>::computeError(Field<cudaReal>& residTrial, 
                                           Field<cudaReal>& fieldTrial,
                                           std::string errorType,
                                           int verbose)

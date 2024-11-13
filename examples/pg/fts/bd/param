@@ -28,7 +28,7 @@ System{
     lattice      cubic   
   }
   BdSimulator{
-    LrAmCompressor{
+    LrAmPreCompressor{
       epsilon      1.0e-4
       maxItr       200
       maxHist      40     
@@ -37,7 +37,7 @@ System{
     }
     seed           486394701
     LMBdStep{
-      mobility  3.0E-3
+      mobility  5.0E-2
     }
     AnalyzerManager{
       baseInterval    10

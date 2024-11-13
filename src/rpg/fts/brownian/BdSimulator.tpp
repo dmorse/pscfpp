@@ -214,12 +214,6 @@ namespace Rpg {
          ramp().output();
       }
 
-      // Output number of times MDE has been solved for the simulation run
-      Log::file() << std::endl;
-      Log::file() << "MDE counter   "
-                  << compressor().mdeCounter() << std::endl;
-      Log::file() << std::endl;
-
       // Output times for the simulation run
       Log::file() << std::endl;
       Log::file() << "nStep               " << nStep << std::endl;
@@ -236,8 +230,13 @@ namespace Rpg {
                   << " sec" << std::endl;
       Log::file() << std::endl;
       
+      // Output number of times MDE has been solved for the simulation run
+      Log::file() << "MDE counter   "
+                  << compressor().mdeCounter() << std::endl;
+      Log::file() << std::endl;
+
       // Output compressor timer results
-      compressor().outputTimers(Log::file());
+      // compressor().outputTimers(Log::file());
    }
 
    /*
@@ -312,7 +311,9 @@ namespace Rpg {
    */
    template<int D>
    void BdSimulator<D>::outputTimers(std::ostream& out)
-   {}
+   {
+      compressor().outputTimers(out);
+   }
 
 }
 }

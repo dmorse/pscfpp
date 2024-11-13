@@ -5,14 +5,14 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "LrAmCompressor.tpp"
+#include "LrAmPreCompressor.tpp"
 
 namespace Pscf {
 namespace Rpg {
 
-   template class LrAmCompressor<1>;
-   template class LrAmCompressor<2>;
-   template class LrAmCompressor<3>;
+   template class LrAmPreCompressor<1>;
+   template class LrAmPreCompressor<2>;
+   template class LrAmPreCompressor<3>;
 
 }
 }
