@@ -127,8 +127,8 @@ namespace Rpc
       // Store this mask in System
       system().mask().setRGrid(rGrid,true);
 
-      // Store lattice parameters associated with this maskBasis
-      parametersCurrent_ = system().domain().unitCell().parameters();
+      // Store lattice vector normal to film used to construct this mask
+      normalVecCurrent_ = systemLatticeVector(normalVecId());
 
    }
 

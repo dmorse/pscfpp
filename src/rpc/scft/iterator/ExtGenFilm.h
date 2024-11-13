@@ -93,9 +93,11 @@ namespace Rpc {
       std::string systemSpaceGroup() const;
 
       /**
-      * Get the lattice parameters for this system.
+      * Get one of the lattice vectors for this system.
+      * 
+      * \param id  index of the desired lattice vector
       */
-      FSArray<double, 6> systemLatticeParameters() const;
+      RealVec<D> systemLatticeVector(int id) const;
 
       /**
       * Get the number of monomer species for this system.
@@ -107,7 +109,7 @@ namespace Rpc {
       */
       void maskNormalVecId();
 
-      using ExtGenFilmBase<D>::parametersCurrent_;
+      using ExtGenFilmBase<D>::normalVecCurrent_;
       using ExtGenFilmBase<D>::chiBottomCurrent_;
       using ExtGenFilmBase<D>::chiTopCurrent_;
       using ExtGenFilmBase<D>::normalVecId_;
@@ -142,10 +144,10 @@ namespace Rpc {
    inline std::string ExtGenFilm<D>::systemSpaceGroup() const
    {  return system().domain().groupName(); }
 
-   // Get lattice parameters for this system.
+   // Get one of the lattice vectors for this system.
    template <int D>
-   inline FSArray<double, 6> ExtGenFilm<D>::systemLatticeParameters() const
-   {  return system().domain().unitCell().parameters(); }
+   inline RealVec<D> ExtGenFilm<D>::systemLatticeVector(int id) const
+   {  return system().domain().unitCell().rBasis(id); }
 
    // Get the number of monomer species for this system.
    template <int D>

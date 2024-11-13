@@ -78,7 +78,7 @@ namespace Rpc
       // Set chiBottomCurrent_, chiTopCurrent_, and parametersCurrent_
       chiBottomCurrent_ = chiBottom();
       chiTopCurrent_ = chiTop();
-      parametersCurrent_ = systemLatticeParameters();
+      normalVecCurrent_ = systemLatticeVector(normalVecId_);
 
       // If walls are athermal then there is no external field needed.
       // If an external field already exists in the System, we need to

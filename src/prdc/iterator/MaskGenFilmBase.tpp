@@ -24,7 +24,7 @@ namespace Prdc
    template <int D>
    MaskGenFilmBase<D>::MaskGenFilmBase()
     : FieldGenerator::FieldGenerator(),
-      parametersCurrent_(),
+      normalVecCurrent_(),
       normalVecId_(-1),
       interfaceThickness_(-1.0),
       excludedThickness_(-1.0)
@@ -85,18 +85,12 @@ namespace Prdc
    template <int D>
    bool MaskGenFilmBase<D>::updateNeeded() const
    {
-      // Check if system lattice parameters differ from parametersCurrent_
-      FSArray<double, 6> sysParams = systemLatticeParameters();
-      UTIL_CHECK(sysParams.size() == parametersCurrent_.size());
-      
-      for (int i = 0; i < parametersCurrent_.size(); i++) {
-         if (fabs(sysParams[i] - parametersCurrent_[i]) > 1e-10) {
-            return true;
-         }
+      // Check if system normalVec differ from normalVecCurrent_
+      if (normalVecCurrent_ == systemLatticeVector(normalVecId_)) {
+         return false;
+      } else {
+         return true;
       }
-
-      // If this point is reached, no update is needed
-      return false;
    }
 
    /*

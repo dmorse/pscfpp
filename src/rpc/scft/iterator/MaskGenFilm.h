@@ -94,18 +94,13 @@ namespace Rpc {
       std::string systemSpaceGroup() const;
 
       /**
-      * Get the lattice parameters for this system.
-      */
-      FSArray<double, 6> systemLatticeParameters() const;
-
-      /**
       * Get one of the lattice vectors for this system.
       * 
-      * \param id  index of the desired lattice parameter
+      * \param id  index of the desired lattice vector
       */
       RealVec<D> systemLatticeVector(int id) const;
 
-      using MaskGenFilmBase<D>::parametersCurrent_;
+      using MaskGenFilmBase<D>::normalVecCurrent_;
       using ParamComposite::setClassName;
 
    private:
@@ -136,11 +131,6 @@ namespace Rpc {
    template <int D>
    inline std::string MaskGenFilm<D>::systemSpaceGroup() const
    {  return system().domain().groupName(); }
-
-   // Get lattice parameters for this system.
-   template <int D>
-   inline FSArray<double, 6> MaskGenFilm<D>::systemLatticeParameters() const
-   {  return system().domain().unitCell().parameters(); }
 
    // Get one of the lattice vectors for this system.
    template <int D>
