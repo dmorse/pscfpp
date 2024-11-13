@@ -108,7 +108,7 @@ namespace R1d {
       * \param writeHeader  write file header iff this bool is true
       */
       void writeFields(DArray<Field> const& fields, std::ostream& out, 
-                       bool writeHeader= true);
+                       bool writeHeader= true) const;
 
       /**
       * Write a set of fields, one per monomer type, to a named file.
@@ -122,7 +122,8 @@ namespace R1d {
       * \param writeHeader  write header iff this bool is true
       */
       void writeFields(DArray<Field> const&  fields, 
-                       std::string const& filename, bool writeHeader= true);
+                       std::string const& filename, 
+                       bool writeHeader= true) const;
 
       /**
       * Write block concentration fields for all blocks to an output stream.
@@ -132,7 +133,7 @@ namespace R1d {
       * \param mixture  associated Mixture MDE solver object
       * \param out  output stream 
       */
-      void writeBlockCFields(Mixture const& mixture, std::ostream& out);
+      void writeBlockCFields(Mixture const& mixture, std::ostream& out) const;
 
       /**
       * Write block concentration fields for all blocks to a named file.
@@ -146,7 +147,7 @@ namespace R1d {
       * \param filename name of output file
       */
       void writeBlockCFields(Mixture const& mixture,
-                             std::string const& filename);
+                             std::string const& filename) const;
 
       /**
       * Write product of incoming q fields for one vertex to stream.
@@ -159,7 +160,8 @@ namespace R1d {
       * \param out  output stream 
       */
       void writeVertexQ(Mixture const& mixture,
-                        int polymerId, int vertexId, std::ostream& out);
+                        int polymerId, int vertexId, 
+                        std::ostream& out) const;
 
       /**
       * Write incoming q fields for a specified vertex.
@@ -171,7 +173,7 @@ namespace R1d {
       */
       void writeVertexQ(Mixture const& mixture,
                         int polymerId, int vertexId, 
-                        std::string const& filename);
+                        std::string const& filename) const;
 
       /**
       * Interpolate an array of fields onto a new mesh and write to stream.

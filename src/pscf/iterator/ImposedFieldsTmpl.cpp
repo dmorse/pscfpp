@@ -129,7 +129,7 @@ namespace Pscf {
    std::string ImposedFieldsTmpl::type() const
    {  return type_; }
 
-   // Return const pointers to the FieldGenerator child objects
+   // Return const references to the FieldGenerator child objects
    FieldGenerator const & ImposedFieldsTmpl::fieldGenerator1() const
    {  return *fieldGenPtr1_; }
 

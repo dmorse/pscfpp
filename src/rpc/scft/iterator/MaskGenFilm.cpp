@@ -82,7 +82,7 @@ namespace Rpc {
             << "***\n"
             << "Notice - Some lattice parameters will be held constant\n"
             << "to comply with the thin film constraint.\n"
-            << "***\n" << std::endl;
+            << "***" << std::endl;
       }
 
       // Pass params into the iterator member of this object
@@ -168,7 +168,7 @@ namespace Rpc {
             << "***\n"
             << "Notice - Some lattice parameters will be held constant\n"
             << "to comply with the thin film constraint.\n"
-            << "***\n" << std::endl;
+            << "***" << std::endl;
       }
 
       // Pass params into the iterator member of this object

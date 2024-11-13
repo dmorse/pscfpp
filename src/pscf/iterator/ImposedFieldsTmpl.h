@@ -68,7 +68,7 @@ namespace Pscf {
       std::string type() const;
 
       /**
-       * Return const pointers to the FieldGenerator child objects
+       * Return const references to the FieldGenerator child objects
        */
       FieldGenerator const & fieldGenerator1() const;
       FieldGenerator const & fieldGenerator2() const;
