@@ -96,37 +96,42 @@ namespace Rpg {
    * Initialize just prior to a run.
    */
    template <int D>
-   void McSimulator<D>::setup()
+   void McSimulator<D>::setup(int nStep)
    {
       UTIL_CHECK(system().w().hasData());
 
       // Eigenanalysis of the projected chi matrix.
       analyzeChi();
 
-      // Compute field components and MC Hamiltonian for initial state
-      system().compute();
-      computeWc();
-      
       if (hasPerturbation()) {
          perturbation().setup();
       }
-      
-      computeHamiltonian();
+      if (hasRamp()) {
+         ramp().setup(nStep);
+      }
+
+      // Compute field components and MC Hamiltonian for initial state
+      system().compute();
+
+      // Compress the initial field before entering simulate loop. 
+      compressor().compress();
+      compressor().clearTimers();
+
+      // Compute field components and Hamiltonian
+      computeWc();
       if (state_.needsCc || state_.needsDc) {
          computeCc();
       }
       if (state_.needsDc) {
          computeDc();
       }
+      computeHamiltonian();
 
       mcMoveManager_.setup();
       if (analyzerManager_.size() > 0){
          analyzerManager_.setup();
       }
       
-      // Compress the initial field before entering simulate loop. 
-      compressor().compress();
-      compressor().clearTimers();
    }
 
    /*
@@ -138,10 +143,7 @@ namespace Rpg {
       UTIL_CHECK(mcMoveManager_.size() > 0);
       
       // Initial setup
-      setup();
-      if (hasRamp()) {
-         ramp().setup(nStep);
-      }
+      setup(nStep);
       
       Log::file() << std::endl;
 
@@ -282,9 +284,10 @@ namespace Rpg {
 
       // Main loop over trajectory frames
       Timer timer;
-      bool hasFrame = true;
       timer.start();
+      bool hasFrame = true;
       for (iStep_ = 0; iStep_ <= max && hasFrame; ++iStep_) {
+
          hasFrame = trajectoryReaderPtr->readFrame();
          if (hasFrame) {
             clearData();

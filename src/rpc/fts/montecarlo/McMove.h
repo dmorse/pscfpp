@@ -206,7 +206,7 @@ namespace Rpc
       Timer attemptMoveTimer_;
       Timer compressorTimer_;
       Timer componentTimer_;
-      Timer computeHamiltonianTimer_;
+      Timer hamiltonianTimer_;
       Timer decisionTimer_;
       Timer totalTimer_;
 

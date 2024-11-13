@@ -5,14 +5,14 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "LrPostAmCompressor.tpp"
+#include "LrAmCompressor.tpp"
 
 namespace Pscf {
 namespace Rpg {
 
-   template class LrPostAmCompressor<1>;
-   template class LrPostAmCompressor<2>;
-   template class LrPostAmCompressor<3>;
+   template class LrAmCompressor<1>;
+   template class LrAmCompressor<2>;
+   template class LrAmCompressor<3>;
 
 }
 }
