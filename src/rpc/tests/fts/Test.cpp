@@ -1,16 +1,16 @@
 /*
-* This program runs all unit tests in the rpc/tests/simulate directory.
+* This program runs all unit tests in the rpc/tests/fts directory.
 */ 
 
 #include <util/global.h>
-#include "SimulateTestComposite.h"
+#include "FtsTestComposite.h"
 
 #include <test/TestRunner.h>
 #include <test/CompositeTestRunner.h>
 
 int main(int argc, char* argv[])
 {
-   SimulateTestComposite runner;
+   FtsTestComposite runner;
 
    if (argc > 2) {
       UTIL_THROW("Too many arguments");
