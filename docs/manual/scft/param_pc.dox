@@ -5,7 +5,11 @@
 <BR>
 
 The pscf_pc and pscf_pg programs for periodic systems use nearly identical
-parameter file formats, and so are discussed together here.
+parameter file formats, and so are discussed together here. The description
+given here only covers required and optional elements relevant to SCFT
+calculations. A complete description of the parameter file format for either
+of these programs, including optional elements that not relevant to SCFT, is 
+given \ref rpc_System_page "here". 
 
 \section scft_param_pc_example_sec Example
 The example show below is a typical parameter file for setting up an SCFT 
@@ -215,33 +219,33 @@ that contains the converged w-fields.
 
 The default Iterator for the pscf_pc and pscf_pg programs is based on
 an algorithm that uses an Anderson-Mixing (AM) iterator algorithm, and 
-that imposes a specified space group symmetry.  This default iterator
-can be invoked in pscf_pc using either the generic label "Iterator" or 
-the specific label "AmIteratorBasis". This is currently the only 
-iterator available in pscf_pc.
+that imposes a specified space group symmetry.  This default iterator can 
+be invoked in pscf_pc using either the generic label "Iterator" or the 
+specific label "AmIteratorBasis". This is currently the only iterator 
+available in pscf_pc.  A description of the parameter file format for 
+this iterator is given \subpage rpc_AmIteratorBasis_page "here".
 
-This iterator is designed to search for a solution with a specified 
-space group symmetry, and thus it requires that the parameter file 
-contain a groupName parameter. The pscf_pg program, however, provides 
-an Anderson-Mixing algorithm named AmIteratorGrid that does not impose 
-any space-group symmetry, and that can be used with a parameter file 
-that does not contain a groupName string. 
-
-Descriptions of parameter file format for the available pscf_pc
-iterator can be found on the \subpage rpc_AmIteratorBasis_page 
-"AmIteratorBasis" page.
+The AmIteratorBasis is designed to search for a solution with a specified
+space group symmetry, and can only be used with a parameter file that
+contains a valid groupName parameter. The pscf_pg program, however, 
+also provides an Anderson-Mixing algorithm named AmIteratorGrid that 
+does not impose any space-group symmetry, and that can be used with a 
+parameter file that does not contain a groupName string. 
 
 The Iterator block of the parameter file is formally optional (i.e., 
 the program will finish reading the parameter file if it is omitted), 
-but is required to enable SCFT calculations.
+but is required to enable SCFT calculations. An Iterator block is
+not needed to peform a field theoretic simulation.
 
 \section scft_param_pc_sweep_sec Sweep
 
 The only sweep algorithm currently avaiable for use with pscf_pc is a
-general linear sweep algorithm. This can be invoked by including a block
-that starts either with the generic label Sweep or the specific label
-LinearSweep.  The required parameter file format for a linear sweep is
-described in detail \ref scft_param_sweep_linear_sec "here".
+general linear sweep algorithm, which is also the default option. Such
+a sweep can thus be initialized by including a block that starts either 
+with the generic label "Sweep" (as done in all examples that define a
+sweep) or the specific label "LinearSweep". The format of the 
+associated parameter file block is described 
+\ref scft_param_sweep_linear_sec "here".
 
 <BR>
 \ref scft_param_1d_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp;

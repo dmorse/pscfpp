@@ -211,8 +211,8 @@ namespace Rpg
       /// Timers for McMove 
       Timer attemptMoveTimer_;
       Timer compressorTimer_;
-      Timer computeWcTimer_;
-      Timer computeHamiltonianTimer_;
+      Timer componentTimer_;
+      Timer hamiltonianTimer_;
       Timer decisionTimer_;
       Timer totalTimer_;
 

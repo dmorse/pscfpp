@@ -65,7 +65,6 @@ namespace Rpc {
       using ExtGenFilmBase<D>::isAthermal;
       using ExtGenFilmBase<D>::chiBottom;
       using ExtGenFilmBase<D>::chiTop;
-      using ParamComposite::setClassName;
 
    protected:
 
@@ -112,6 +111,7 @@ namespace Rpc {
       using ExtGenFilmBase<D>::chiBottomCurrent_;
       using ExtGenFilmBase<D>::chiTopCurrent_;
       using ExtGenFilmBase<D>::normalVecId_;
+      using ParamComposite::setClassName;
 
    private:
 

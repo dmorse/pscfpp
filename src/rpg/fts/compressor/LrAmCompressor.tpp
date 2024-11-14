@@ -1,5 +1,5 @@
-#ifndef RPG_LR_AM_COMPRESSOR_TPP
-#define RPG_LR_AM_COMPRESSOR_TPP
+#ifndef RPG_LR_POST_AM_COMPRESSOR_TPP
+#define RPG_LR_POST_AM_COMPRESSOR_TPP
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory
@@ -10,11 +10,8 @@
 
 #include "LrAmCompressor.h"
 #include <rpg/System.h>
-#include <rpg/fts/compressor/intra/IntraCorrelation.h>  
-#include <pscf/chem/Monomer.h>
+#include <rpg/fts/compressor/intra/IntraCorrelation.h>
 #include <pscf/mesh/MeshIterator.h>
-#include <prdc/crystal/shiftToMinimum.h>
-#include <complex>
 #include <util/global.h>
 
 namespace Pscf {
@@ -25,10 +22,10 @@ namespace Rpg{
    // Constructor
    template <int D>
    LrAmCompressor<D>::LrAmCompressor(System<D>& system)
-    : Compressor<D>(system),
-      isAllocated_(false),
-      intra_(system)
-   {  setClassName("LrAmCompressor"); }
+   : Compressor<D>(system),
+     isAllocated_(false),
+     intraCorrelation_(system)
+   { setClassName("LrAmCompressor"); }
 
    // Destructor
    template <int D>
@@ -43,7 +40,7 @@ namespace Rpg{
       AmIteratorTmpl<Compressor<D>, Field<cudaReal> >::readParameters(in);
       AmIteratorTmpl<Compressor<D>, Field<cudaReal> >::readErrorType(in);
    }
-      
+   
    // Initialize just before entry to iterative loop.
    template <int D>
    void LrAmCompressor<D>::setup(bool isContinuation)
@@ -51,6 +48,10 @@ namespace Rpg{
       const int nMonomer = system().mixture().nMonomer();
       const int meshSize = system().domain().mesh().size();
       IntVec<D> const & dimensions = system().mesh().dimensions();
+      
+      // GPU resources
+      int nBlocks, nThreads;
+      ThreadGrid::setThreadsLogical(meshSize, nBlocks, nThreads);
       
       // Allocate memory required by AM algorithm if not done earlier.
       AmIteratorTmpl<Compressor<D>, Field<cudaReal> >::setup(isContinuation);
@@ -75,39 +76,33 @@ namespace Rpg{
          newBasis_.allocate(meshSize);
          w0_.allocate(nMonomer);
          wFieldTmp_.allocate(nMonomer);
-         error_.allocate(meshSize);
          resid_.allocate(dimensions);
          residK_.allocate(dimensions);
-         intraCorrelation_.allocate(kMeshDimensions_);
+         intraCorrelationK_.allocate(kMeshDimensions_);
          for (int i = 0; i < nMonomer; ++i) {
             w0_[i].allocate(meshSize);
             wFieldTmp_[i].allocate(meshSize);
          }
+            
          isAllocated_ = true;
       }
-      
-      // Store value of initial guess chemical potential fields
-      // GPU resources
-      int nBlocks, nThreads;
-      ThreadGrid::setThreadsLogical(meshSize, nBlocks, nThreads);
 
-      // Store current fields
+      // Store value of initial guess chemical potential fields
       DArray<RField<D>> const * currSys = &system().w().rgrid();
       for (int i = 0; i < nMonomer; ++i) {
          assignReal<<<nBlocks,nThreads>>>(w0_[i].cField(), 
                                           (*currSys)[i].cField(), meshSize);
       }
       
-      // Compute intramolecular correlation
-      intraCorrelation_ = intra_.computeIntraCorrelations();
+      // Compute homopolymer intraCorrelation
+      intraCorrelationK_ = intraCorrelation_.computeIntraCorrelations();
    }
-  
-   // Iterative solver (AM algorithm) 
+   
    template <int D>
    int LrAmCompressor<D>::compress()
    {
       int solve = AmIteratorTmpl<Compressor<D>, Field<cudaReal> >::solve();
-      //mdeCounter_ = AmIteratorTmpl<Compressor<D>, Field<cudaReal>>::totalItr();
+      //mdeCounter_ = AmIteratorTmpl<Compressor<D>,DArray<double>>::totalItr();
       return solve;
    }
 
@@ -122,11 +117,11 @@ namespace Rpg{
       UTIL_CHECK(b.capacity() == a.capacity());
       assignReal<<<nBlocks, nThreads>>>(a.cField(), b.cField(), a.capacity());
    }
-
+   
    // Compute and return inner product of two vectors.
    template <int D>
    double LrAmCompressor<D>::dotProduct(Field<cudaReal> const & a, 
-                                        Field<cudaReal> const & b)
+                                            Field<cudaReal> const & b)
    {
       const int n = a.capacity();
       UTIL_CHECK(b.capacity() == n);
@@ -147,7 +142,7 @@ namespace Rpg{
    template <int D>
    void 
    LrAmCompressor<D>::updateBasis(RingBuffer< Field<cudaReal> > & basis,
-                                  RingBuffer< Field<cudaReal> > const & hists)
+                                      RingBuffer< Field<cudaReal> > const & hists)
    {
       // Make sure at least two histories are stored
       UTIL_CHECK(hists.size() >= 2);
@@ -163,15 +158,14 @@ namespace Rpg{
             (hists[0].cField(), hists[1].cField(), newBasis_.cField(),n);
 
       basis.append(newBasis_);
-
    }
 
    template <int D>
    void
    LrAmCompressor<D>::addHistories(Field<cudaReal>& trial,
-                                   RingBuffer<Field<cudaReal> > const & basis,
-                                   DArray<double> coeffs,
-                                   int nHist)
+                                       RingBuffer<Field<cudaReal> > const & basis,
+                                       DArray<double> coeffs,
+                                       int nHist)
    {
       // GPU resources
       int nBlocks, nThreads;
@@ -182,18 +176,41 @@ namespace Rpg{
             (trial.cField(), basis[i].cField(), -1*coeffs[i], trial.capacity());
       }
    }
+   
+   template<int D>
+   double LrAmCompressor<D>::computeLambda(double r)
+   {
+      return 1.0;
+   }
 
    template <int D>
    void LrAmCompressor<D>::addPredictedError(Field<cudaReal>& fieldTrial,
-                                             Field<cudaReal> const & resTrial,
-                                             double lambda)
+                                                 Field<cudaReal> const & resTrial,
+                                                 double lambda)
    {
-      // GPU resources
+      int n = fieldTrial.capacity();
+      const double vMonomer = system().mixture().vMonomer();
+      const int meshSize = system().domain().mesh().size();
+      
+       // GPU resources
       int nBlocks, nThreads;
       ThreadGrid::setThreadsLogical(fieldTrial.capacity(), nBlocks, nThreads);
-
+      
+      // Convert resTrial to RField<D> type
+      assignReal<<<nBlocks, nThreads>>>(resid_.cField(), resTrial.cField(), meshSize);
+      
+      // Convert residual to Fourier Space
+      system().fft().forwardTransform(resid_, residK_);
+      
+      // Combine with Linear response factor to update second step
+      scaleComplex<<<nBlocks, nThreads>>>(residK_.cField(), 1.0/vMonomer, kSize_);
+      inPlacePointwiseDivComplex<<<nBlocks, nThreads>>>(residK_.cField(), intraCorrelationK_.cField(), kSize_);
+      
+      // Convert back to real Space
+      system().fft().inverseTransform(residK_, resid_);
+      
       pointWiseAddScale<<<nBlocks, nThreads>>>
-         (fieldTrial.cField(), resTrial.cField(), lambda, fieldTrial.capacity());
+         (fieldTrial.cField(), resid_.cField(), lambda, fieldTrial.capacity());
    }
 
    // Does the system have an initial field guess?
@@ -244,34 +261,20 @@ namespace Rpg{
       const int n = nElements();
       const int nMonomer = system().mixture().nMonomer();
       const int meshSize = system().domain().mesh().size();
-      const double vMonomer = system().mixture().vMonomer();  
       
       // GPU resources
       int nBlocks, nThreads;
       ThreadGrid::setThreadsLogical(meshSize, nBlocks, nThreads);
-      
-      // Initialize residuals to -1
-      assignUniformReal<<<nBlocks, nThreads>>>(resid_.cField(), -1, meshSize);
 
-      // Compute incompressibility constraint error vector elements
+      // Initialize residuals
+      assignUniformReal<<<nBlocks, nThreads>>>(resid.cField(), -1.0, meshSize);
+
+      // Compute SCF residual vector elements
       for (int i = 0; i < nMonomer; i++) {
          pointWiseAdd<<<nBlocks, nThreads>>>
-            (resid_.cField(), system().c().rgrid(i).cField(), meshSize);
+            (resid.cField(), system().c().rgrid(i).cField(), meshSize);
       }
-      
-      // Convert residual to Fourier Space
-      system().fft().forwardTransform(resid_, residK_);
-      
-      // Residual combine with Linear response factor
-      scaleComplex<<<nBlocks, nThreads>>>(residK_.cField(), 1.0/vMonomer, kSize_);
-      inPlacePointwiseDivComplex<<<nBlocks, nThreads>>>(residK_.cField(), intraCorrelation_.cField(), kSize_);
-   
-      // Convert back to real Space
-      system().fft().inverseTransform(residK_, resid_);
-      
-      // Assign resid_ to resid
-      assignReal<<<nBlocks, nThreads>>>(resid.cField(), resid_.cField(), meshSize);
-      
+
    }
 
    // Update the current system field coordinates
@@ -295,7 +298,7 @@ namespace Rpg{
       // Set system r grid
       system().setWRGrid(wFieldTmp_);
    }
-
+   
    template<int D>
    void LrAmCompressor<D>::outputToLog()
    {}
@@ -305,92 +308,16 @@ namespace Rpg{
    {
       // Output timing results, if requested.
       out << "\n";
-      out << "Compressor times contributions:\n";
+      out << "LrAmCompressor time contributions:\n";
       AmIteratorTmpl<Compressor<D>, Field<cudaReal> >::outputTimers(out);
    }
    
-   
+   // Clear timers and MDE counter 
    template<int D>
    void LrAmCompressor<D>::clearTimers()
    {
       AmIteratorTmpl<Compressor<D>, Field<cudaReal> >::clearTimers();
       mdeCounter_ = 0;
-   }
-      
-   template<int D>
-   double LrAmCompressor<D>::computeLambda(double r)
-   {
-      return 1.0;
-   }
-   
-   template<int D>
-   double LrAmCompressor<D>::computeError(Field<cudaReal>& residTrial, 
-                                          Field<cudaReal>& fieldTrial,
-                                          std::string errorType,
-                                          int verbose)
-   {
-      double error = 0.0;
-      const int n = nElements();
-      const int nMonomer = system().mixture().nMonomer();
-      const int meshSize = system().domain().mesh().size();
-      
-      // GPU resources
-      int nBlocks, nThreads;
-      ThreadGrid::setThreadsLogical(meshSize, nBlocks, nThreads);
-      
-      // Initialize residuals to -1
-      assignUniformReal<<<nBlocks, nThreads>>>(error_.cField(), -1.0, meshSize);
-     
-      // Add composition of each monomer
-      for (int i = 0; i < nMonomer; i++) {
-         pointWiseAdd<<<nBlocks, nThreads>>>
-            (error_.cField(), system().c().rgrid(i).cField(), meshSize);
-      }
-      
-      // Find max residual vector element
-      double maxRes  = maxAbs(error_);
-     
-      // Find norm of residual vector
-      double normRes = AmIteratorTmpl<Compressor<D>, Field<cudaReal> >::norm(error_);
-      
-      // Find root-mean-squared residual element value
-      double rmsRes = normRes/sqrt(n);
-      if (verbose > 1) {
-         Log::file() << "\n";
-         Log::file() << "Max Residual  = " << Dbl(maxRes,15) << "\n";
-         Log::file() << "Residual Norm = " << Dbl(normRes,15) << "\n";
-         Log::file() << "RMS Residual  = " << Dbl(rmsRes,15);
-
-         // Check if calculation has diverged (normRes will be NaN)
-         UTIL_CHECK(!std::isnan(normRes));
-         error = normRes;
-         Log::file() <<"\n";
-         // Set error value
-         if (errorType == "maxResid") {
-            error = maxRes;
-         } else if (errorType == "normResid") {
-            error = normRes;
-         } else if (errorType == "rmsResid") {
-            error = rmsRes;
-         } else {
-            UTIL_THROW("Invalid iterator error type in parameter file.");
-         }
-
-      } else {
-         // Set error value
-         if (errorType == "maxResid") {
-            error = maxRes;
-         } else if (errorType == "normResid") {
-            error = normRes;
-         } else if (errorType == "rmsResid") {
-            error = normRes/sqrt(n);
-         } else {
-            UTIL_THROW("Invalid iterator error type in parameter file.");
-         }
-         //Log::file() << ",  error  = " << Dbl(error, 15) << "\n";
-      }
-
-      return error;
    }
    
 }

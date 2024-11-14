@@ -117,6 +117,7 @@ namespace R1d
    
    void FieldIo::writeFields(DArray<Field> const &  fields, 
                              std::string const & filename, bool writeHeader)
+   const
    {
       std::ofstream out;
       fileMaster().openOutputFile(filename, out);
@@ -124,7 +125,9 @@ namespace R1d
       out.close();
    }
 
-   void FieldIo::writeFields(DArray<Field> const & fields, std::ostream& out, bool writeHeader)
+   void FieldIo::writeFields(DArray<Field> const & fields, 
+                             std::ostream& out, bool writeHeader)
+   const
    {
       int nm = fields.capacity();
       UTIL_CHECK(nm > 0);
@@ -151,7 +154,7 @@ namespace R1d
    }
 
    void FieldIo::writeBlockCFields(Mixture const & mixture, 
-                                   std::string const & filename)
+                                   std::string const & filename) const
    {
       std::ofstream out;
       fileMaster().openOutputFile(filename, out);
@@ -163,6 +166,7 @@ namespace R1d
    * Write the concentrations associated with all blocks.
    */
    void FieldIo::writeBlockCFields(Mixture const & mixture, std::ostream& out)
+   const
    {
       int nx = domain().nx();         // number grid points
       int np = mixture.nPolymer();    // number of polymer species
@@ -198,7 +202,7 @@ namespace R1d
    */
    void FieldIo::writeVertexQ(Mixture const & mixture,
                               int polymerId, int vertexId, 
-                              std::string const & filename)
+                              std::string const & filename) const
    {
       std::ofstream out;
       fileMaster().openOutputFile(filename, out);
@@ -211,7 +215,7 @@ namespace R1d
    */
    void FieldIo::writeVertexQ(Mixture const & mixture,
                               int polymerId, int vertexId, 
-                              std::ostream& out)
+                              std::ostream& out) const
    {
       UTIL_CHECK(polymerId >= 0);
       UTIL_CHECK(polymerId < mixture.nPolymer());

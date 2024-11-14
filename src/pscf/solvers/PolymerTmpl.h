@@ -550,7 +550,7 @@ namespace Pscf
       q_ = block(0).propagator(0).computeQ(); 
   
       // The Propagator::computeQ function returns a spatial average.
-      // Correct for partial occupation of the unit cell.k
+      // Correct for partial occupation of the unit cell.
       q_ = q_/phiTot;
 
       // Compute mu_ or phi_, depending on ensemble

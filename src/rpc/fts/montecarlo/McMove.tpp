@@ -84,7 +84,9 @@ namespace Rpc {
    template <int D>
    bool McMove<D>::move()
    {
+      // Start timers
       totalTimer_.start();
+      attemptMoveTimer_.start();
       incrementNAttempt();
 
       // Get current Hamiltonian
@@ -96,14 +98,14 @@ namespace Rpc {
       // Clear both eigen-components of the fields and hamiltonian
       simulator().clearData();
 
-      // Attempt modification
-      attemptMoveTimer_.start();
+      // Attempt modification of exchange fields
       attemptMove();
       attemptMoveTimer_.stop();
 
-      // Call compressor
+      // Call compressor to modify pressure-like fields
       compressorTimer_.start();
       int compress = simulator().compressor().compress();
+      UTIL_CHECK(system().hasCFields()); 
       compressorTimer_.stop();
 
       bool isConverged = false;
@@ -113,29 +115,30 @@ namespace Rpc {
       } else {
          isConverged = true;
 
-         // Compute eigenvector components of the current w fields
-         computeWcTimer_.start();
+         // Compute eigenvector components of the current fields
+         componentTimer_.start();
          simulator().computeWc();
          // Compute cc fields if any move require cc fields
          if (simulator().needsCc() || simulator().needsDc()){
-            system().compute();
+            UTIL_CHECK(system().hasCFields()); 
+            //system().compute();
             simulator().computeCc();
          }
          // Compute dc fields if any move require dc fields
          if (simulator().needsDc()){
             simulator().computeDc();
          }
-         computeWcTimer_.stop();
+         componentTimer_.stop();
       
          // Evaluate new Hamiltonian
-         computeHamiltonianTimer_.start();
+         hamiltonianTimer_.start();
          simulator().computeHamiltonian();
          double newHamiltonian = simulator().hamiltonian();
-         computeHamiltonianTimer_.stop();
+         hamiltonianTimer_.stop();
 
          // Accept or reject move
-         bool accept = false;
          decisionTimer_.start();
+         bool accept = false;
          double weight = exp(-(newHamiltonian - oldHamiltonian));
          accept = random().metropolis(weight);
          if (accept) {
@@ -175,16 +178,16 @@ namespace Rpc {
           << Dbl(compressorTimer_.time()/nAttempt_, 9, 3)  << " s,  "
           << Dbl(compressorTimer_.time()/total, 9, 3) << "\n";
       out << "Compute eigen-components: "
-          << Dbl(computeWcTimer_.time(), 9, 3)  << " s,  "
-          << Dbl(computeWcTimer_.time()/nAttempt_, 9, 3)  << " s,  "
-          << Dbl(computeWcTimer_.time()/total, 9, 3) << "\n";
+          << Dbl(componentTimer_.time(), 9, 3)  << " s,  "
+          << Dbl(componentTimer_.time()/nAttempt_, 9, 3)  << " s,  "
+          << Dbl(componentTimer_.time()/total, 9, 3) << "\n";
       out << "Compute Hamiltonian:      "
-          << Dbl(computeHamiltonianTimer_.time(), 9, 3)  << " s,  "
-          << Dbl(computeHamiltonianTimer_.time()/nAttempt_, 9, 3)  << " s,  "
-          << Dbl(computeHamiltonianTimer_.time()/total, 9, 3) << "\n";
+          << Dbl(hamiltonianTimer_.time(), 9, 3)  << " s,  "
+          << Dbl(hamiltonianTimer_.time()/nAttempt_, 9, 3)  << " s,  "
+          << Dbl(hamiltonianTimer_.time()/total, 9, 3) << "\n";
       out << "Accept or Reject:         "
           << Dbl(decisionTimer_.time(), 9, 3)  << " s,  "
-          << Dbl(computeHamiltonianTimer_.time()/nAttempt_, 9, 3)  << " s,  "
+          << Dbl(decisionTimer_.time()/nAttempt_, 9, 3)  << " s,  "
           << Dbl(decisionTimer_.time()/total, 9, 3) << "\n";
       out << "total time:               "
           << Dbl(total, 9, 3) << " s,  "
@@ -197,8 +200,8 @@ namespace Rpc {
    {
       attemptMoveTimer_.clear();
       compressorTimer_.clear();
-      computeWcTimer_.clear();
-      computeHamiltonianTimer_.clear();
+      componentTimer_.clear();
+      hamiltonianTimer_.clear();
       decisionTimer_.clear();
       totalTimer_.clear();
    }

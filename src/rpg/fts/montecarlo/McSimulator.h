@@ -196,8 +196,10 @@ namespace Rpg {
 
       /**
       * Called at the beginning of the simulation member function.
+      *
+      * \param nStep  number of Monte-Carlo steps in simulation
       */
-      void setup();
+      void setup(int nStep);
 
    };
 

@@ -63,6 +63,17 @@ namespace Pscf {
       void update();
 
       /**
+      * Get the type string associated with this object.
+      */
+      std::string type() const;
+
+      /**
+       * Return const references to the FieldGenerator child objects
+       */
+      FieldGenerator const & fieldGenerator1() const;
+      FieldGenerator const & fieldGenerator2() const;
+
+      /**
       * Return specialized sweep parameter types to add to a Sweep object.
       */
       GArray<ParameterType> getParameterTypes();
@@ -112,11 +123,6 @@ namespace Pscf {
       * class. All other methods are fully defined in this class.
       */
       virtual void createGenerators() = 0;
-
-      /**
-      * Get the type string associated with this object.
-      */
-      std::string type() const;
 
       /**
       * Pointer to the first FieldGenerator object (required).

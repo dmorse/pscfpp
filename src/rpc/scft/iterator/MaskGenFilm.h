@@ -58,7 +58,6 @@ namespace Rpc {
       */
       bool isGenerated() const;
 
-      using ParamComposite::setClassName;
       using MaskGenFilmBase<D>::normalVecId;
       using MaskGenFilmBase<D>::interfaceThickness;
       using MaskGenFilmBase<D>::excludedThickness;
@@ -107,6 +106,7 @@ namespace Rpc {
       RealVec<D> systemLatticeVector(int id) const;
 
       using MaskGenFilmBase<D>::parametersCurrent_;
+      using ParamComposite::setClassName;
 
    private:
 

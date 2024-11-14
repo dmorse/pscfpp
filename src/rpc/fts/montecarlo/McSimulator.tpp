@@ -203,16 +203,6 @@ namespace Rpc {
          ramp().output();
       }
 
-      // Output number of times MDE has been solved for the simulation run
-      outputMdeCounter(Log::file());
-      
-      #if 0
-      Log::file() << std::endl;
-      Log::file() << "MDE counter   " 
-                  << compressor().mdeCounter() << std::endl;
-      Log::file() << std::endl;
-      #endif
-
       // Output times for the simulation run
       Log::file() << std::endl;
       Log::file() << "nStep               " << nStep << std::endl;
@@ -228,6 +218,9 @@ namespace Rpc {
                   << " sec" << std::endl;
       Log::file() << std::endl;
 
+      // Output number of times MDE has been solved for the simulation run
+      outputMdeCounter(Log::file());
+      
       // Print McMove acceptance statistics
       long attempt;
       long accept;
@@ -334,9 +327,11 @@ namespace Rpc {
    template<int D>
    void McSimulator<D>::outputTimers(std::ostream& out)
    {
+      compressor().outputTimers(out);
       out << "\n";
-      out << "McSimulator times contributions:\n";
+      out << "MC move time contributions:\n";
       mcMoveManager_.outputTimers(out);
+      out << "\n";
    }
 
    /*

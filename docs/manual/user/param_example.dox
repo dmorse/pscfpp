@@ -186,10 +186,38 @@ enclosed by opening and closing parentheses.
 \anchor user_param_example_mixture
 <b> Mixture  </b>:
 
-The system described in the Mixture block of the above example contains
-a mixture of two types of polymers (nPolymer=2) that contain two types
-of monomer (nMonomer=2).  Different types of monomer are labelled by
-integer indices in the range 0,...,nMonomer-1.
+The Mixture block of the above example is reproduced below for reference:
+\code
+  Mixture{
+     nMonomer   2
+     monomers[
+                1.0
+                1.0
+     ]
+     nPolymer   2
+     Polymer{
+        nBlock  2
+        blocks[
+                0   0.5
+                1   0.5
+        ]
+        phi     0.6
+     }
+     Polymer{
+        nBlock  1
+        blocks[
+                0   1.0
+        ]
+        phi     0.4
+     }
+     ds   0.01
+  }
+\endcode
+
+The parameter value nMonomer = 2 in the first line of this block 
+indicates that the molecular species in this system are constructed
+from two types of monomer.  Different types of monomer are labelled 
+by integer indices in the range 0,...,nMonomer-1. 
 
 The "monomers" parameter is an array-valued parameter shown above as
 \code
@@ -200,58 +228,115 @@ The "monomers" parameter is an array-valued parameter shown above as
 \endcode
 The value of each element in the "monomers" array gives the monomer
 statistical segment length for a monomer type, listed in order of
-increasing monomer type index. The number of elements, corresponding
-to the number of lines between the lines containing the opening an 
-closing square brackets) is equal to the number of monomer types 
-(e.g., nMonomer=2) in this example. 
+increasing monomer type index. The number of elements in this array
+(corresponding to the number of lines between the lines containing 
+the opening an closing square brackets) must be equal to nMonomer.
 
-The Mixture block in this examnple contains two "Polymer" subblocks.
-Each "Polymer" subblock describes a polymer molecular species. The first 
-polymer species in this system is a diblock copolymer (nBlock=2) containing 
-blocks with monomers of types 0 and 1. The second polymer is a homopolymer 
-(nBlock=1) with monomers of type 0.  The system described in this file 
-contains 60% of diblock copolymer by volume (phi = 0.6 in the first 
+The value of the parameter nPolymer that appears next gives the number
+of polymer species in system. In this example, nPolymer = 2, indicating
+the presence of two species of polymer. This parameter is followed by 
+two "Polymer" blocks, each of which describe one of these two species. 
+In this example, each Polymer block contains an integer parameter named 
+"nBlock", an array named "blocks", and a floating point parameter named 
+"phi"
+
+PSCF treats each polymer species as a block polymer, which can be either
+linear or branched. Homopolymers are treated as a special case of a block 
+polymer with only one block. Each polymer species is assumed to be a 
+linear block polymer by default, which is the case for both species in 
+this example.  A polymer can instead be declared to be a branched polymer 
+by adding an optional "type" variable at the begining of the Polymer
+block (which is not present for either species in this example), as 
+discussed \ref user_param_polymer_sec "here".
+
+The value of the parameter "nBlock" within each Polymer block gives the 
+number of blocks in the polymer.  Each line with the array-valued "blocks" 
+parameter (or each element of the associated array) contains information
+associated with one block of the polymer.  In the default case of a linear 
+polymer that is used for both species in this example, each such block 
+description contains an integer monomer type index (the type of monomers 
+in the block) followed by a floating point block length.  For linear 
+polymers, blocks are listed in the order in which they are connected 
+along the chain. A more complicated format is needed to describe each 
+block within a branched block polymer, in order to described connectivity 
+as well as monomer type and length, as described 
+\ref user_param_polymer_sec "here".  
+
+In this example, the value of the "phi" parameter in each Polymer block 
+specifies the volume fraction of the associated species. It is also 
+possible to specify a value for chemical potential (denoted by "mu") 
+rather than a volume fraction for some or all of the species in a mixtue, 
+but we have specified volume fraction values for both species in this 
+example.  
+
+In this example, the first polymer species is a diblock copolymer 
+(nBlock=2) containing blocks of equal length 0.5 with monomers of 
+types 0 and 1. The second polymer species is a homopolymer (nBlock=1) 
+of length 1.0 with monomers of type 0. The system is binary mixture
+containing 60% of diblock copolymer by volume (phi = 0.6 in the first 
 Polymer block) and 40% homopolymer by volume (phi= 0.4 in the second 
-block). The diblock copolymer is a symmetric copolymer in which each 
-block has a length of 0.5. The homopolymer has a single block of length 
-1.0.
+block). 
 
-Each element of the "blocks" array within each Polymer subblock contains 
-information associated with a single block of a block polymer.  The 
-syntax used in this example for each block is designed for the simple 
-case of a linear block polymers, which is the default polymer topology. 
-In the case of a linear polymer, each element of the blocks array 
-contains the integer id for the type of monomer in that block followed 
-by the length of the block, which is given as a real number.  A more 
-complicated description of each block is required to describe the 
-connectivity of a branched polymer, as described 
-\ref user_param_polymer_sec "elsewhere".
+The last line in the mixture block in this example contains a value
+for the computational parameter ds, which is the approximate value
+of the contour length step used to discretize the length of each 
+polymer within the numerical solution of the modified diffusion 
+equation. In this example, the contour of the homopolymer of length 
+1.0 would thus be discretized into 100 steps within this numerical
+solver, while each block of length 0.5 within the symmetric diblock 
+copolymer species would be discretized into 50 steps. 
 
 \anchor user_param_example_interaction
 <b> Interaction  </b>:
 
 The Interaction block of the parameter file contains a single 
-matrix-valued parameter named chi. The chi matrix for this problem has 
-a nonzero value of 10.0 for the interaction chi(0,1) between monomers 
-of types 0 and 1. Elements that are not listed explicitly are assumed 
-to be zero, so the diagonal elements chi(0,0) and chi(1,1) are 
-implictly set to zero.  The chi matrix is represented internally as a 
-symmetric square matrix with nMonomer rows and columns. Values of 
-diagonal elements (i=j) are usually set equal to zero by convention, 
-though this is not required.  In a system with two types of monomer 
-and vanishing diagonal elements, only one nonzero chi parameter value 
-is required.  The value of this parameter is given here as the line 
-containing "0  1  10.0".
+matrix-valued parameter named chi. The Interaction block from the
+above example is reproduced below for reference:
+\code
+  Interaction{
+     chi(
+           0    1    10.0
+     )
+  }
+\endcode
+Each line in within the "chi" matrix valued parameter contains a pair 
+of monomer type indices (or row and column indices) followed by the
+a value for the corresponding matrix element.  The chi matrix used in
+this example thus has a nonzero value of 10.0 for the element chi(0,1) 
+that represents interactions between monomers of types 0 and 1. The 
+chi matrix is represented internally as an nMonomer \f$ \times \f$ 
+nMonomer symmetric matrix, so it is not necessary to specify a value 
+for chi(1,0) in addition to chi(0,1).  Elements that are not listed 
+explicitly in the parameter file are assumed to be zero, so the diagonal 
+elements chi(0,0) and chi(1,1) are implictly set to zero in this 
+example. 
+
+Values of diagonal elements of the chi matrix are commonly set equal 
+to zero by convention, though PSCF does not require this. In a system 
+with two types of monomer and vanishing diagonal elements, only one 
+nonzero chi parameter value thus needs to be specified in the parameter 
+file. 
 
 \anchor user_param_example_domain
 <b> Domain </b>:
 
-The simulation uses a 1D planar geometry, in which variation occurs
-only along one axis of a Cartesian coordinate system.  The block
-labelled Domain contains information about the spatial domain (minimum
-and maximum coordinate values xmin and xmax) and the number of grid
-(nx). The value of nx = 401 indicates 401 grid points, including both 
-end points.
+This example uses the pscf_1d program to simulate a 1D planar geometry, 
+in which variation occurs only along one axis of a Cartesian coordinate 
+system.  The block labelled Domain contains information about the 
+spatial domain and discreteization. The parameter xmin and xmax give
+the minimum and maximum values of the spatial coordinate that define
+the ends of the 1D domain over which the problem is solved. The value
+of parameter nx indicates the number of nodes or grid points of an 
+evenly spaced 1D mesh, including nodes at both end points. In this
+example, the domain is thus discretized using a mesh with 401 notes
+or 400 spatial steps.
+
+A parameter file for an SCFT calculation performed using the pscf_pc 
+or pscf_pg program to simulate a periodic structure would also contain 
+a "Domain" block in an analogous location in the parameter file. The 
+Domain block such a calculation would normally contain information about 
+the crystallographic lattice system type, the unit cell parameters and 
+the space group as well as well information about the computational mesh. 
 
 <b> Iterator </b>:
 
@@ -311,7 +396,7 @@ for the body of the iterator block. The documentation of the parameter
 file format for each PSCF program lists of all of the available 
 iteration algorithms, and provides links to pages that fuly describe 
 the parameter file format for each algorithm, including all required 
-and optional parameters for each algorithm). 
+and optional parameters for each algorithm. 
 
 For simplicity, almost all of the examples shown in this user manual
 use the default iterator algorithm. The default iterator classes for 
