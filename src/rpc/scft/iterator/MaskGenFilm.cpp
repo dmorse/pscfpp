@@ -27,10 +27,17 @@ namespace Rpc {
       params.append(false); // parameter is not flexible
 
       if (system().iterator().flexibleParams()[0]) {
-         Log::file() 
-            << "Warning - The lattice parameter is not allowed "
-            << "to be flexible for a 1D thin film system."
-            << std::endl << std::endl;
+         if (hasFBulk()) {
+            // If user specified that the parameter is flexible and also
+            // provided a value for fBulk, the parameter may be flexible
+            params[0] = 1;
+         } else {
+            Log::file() 
+               << "Warning - The lattice parameter is not allowed "
+               << "to be flexible\n for a 1D thin film system "
+               << "unless fBulk is provided."
+               << std::endl;
+         }
       }
 
       // Pass params into the iterator member of this object
@@ -53,20 +60,28 @@ namespace Rpc {
          params.append(false); 
       }
 
-      // In 2D problems, the length of the basis vector with index 
-      // normalVecId is fixed and gamma = 90 degrees. If the lattice 
+      // In 2D problems, gamma is fixed at 90 degrees, and the length
+      // of the basis vector with index normalVecId is fixed as well,
+      // unless the input parameter fBulk is provided, in which case 
+      // it may be flexible. If fBulk is not provided and the lattice 
       // system is square, hexagonal, or rhombic, then no parameters
       // can be flexible under these conditions. If rectangular or
       // oblique, then the length of the basis vector parallel to the
       // film may be flexible.
       UnitCell<2>::LatticeSystem lattice = 
                                     system().domain().unitCell().lattice();
-      if ((lattice = UnitCell<2>::Rectangular) || 
-                                    (lattice = UnitCell<2>::Oblique)) {
-         if (normalVecId() == 0) {
-            params[1] = current[1];
-         } else { // normalVecId() == 1
-            params[0] = current[0];
+      if (hasFBulk()) {
+         params = current;
+         if (lattice == UnitCell<2>::Rhombic) params[1] = 0;
+         if (lattice == UnitCell<2>::Oblique) params[2] = 0;
+      } else {
+         if ((lattice == UnitCell<2>::Rectangular) || 
+             (lattice == UnitCell<2>::Oblique)) {
+            if (normalVecId() == 0) {
+               params[1] = current[1];
+            } else { // normalVecId() == 1
+               params[0] = current[0];
+            }
          }
       }
 
@@ -108,11 +123,14 @@ namespace Rpc {
          params.append(false); 
       }
 
-      // There can be up to 3 flexible lattice parameters in 3D: the length 
-      // of the two lattice vectors that are not normalVecId, and the angle 
-      // between them. The other two angles must be 90 degrees, and the 
-      // length of normalVecId is fixed. The crystal system determines which 
-      // parameters are flexible.
+      // If fBulk is not provided, then there can be up to 3 flexible 
+      // lattice parameters in 3D: the length of the two lattice vectors 
+      // that are not normalVecId, and the angle between them. The other 
+      // two angles must be 90 degrees, and the length of normalVecId is 
+      // fixed. The crystal system determines which parameters are flexible.
+      // 
+      // If fBulk is provided, then the length of the basis vector with
+      // index normalVecId may also be flexible. 
       if (lattice == UnitCell<3>::Rhombohedral) {
 
          Log::file() << "Rhombohedral lattice systems are not compatible "
@@ -123,23 +141,32 @@ namespace Rpc {
       } else if (lattice == UnitCell<3>::Hexagonal) {
 
          UTIL_CHECK(normalVecId() == 2); // this is required for hexagonal
-         params[0] = current[0]; // a is the only allowed flexible parameter
+         params[0] = current[0]; 
+         if (hasFBulk()) params[1] = current[1];
 
       } else if (lattice == UnitCell<3>::Tetragonal) {
 
-         // if normalVecId = 2, the only allowed flexibleParam is 0
-         // if normalVecId < 2, the only allowed flexibleParam is 1
-         if (normalVecId() == 2) {
-            params[0] = current[0];
-         } else if (normalVecId() < 2) {
-            params[1] = current[1];
-         }
+         if (hasFBulk()) {
+            params = current; // both parameters can be flexible if desired
+         } else {
+            // if normalVecId = 2, the only allowed flexibleParam is 0
+            // if normalVecId < 2, the only allowed flexibleParam is 1
+            if (normalVecId() == 2) {
+               params[0] = current[0];
+            } else if (normalVecId() < 2) {
+               params[1] = current[1];
+            }
+          }
 
-      } else if (lattice != UnitCell<3>::Cubic) {
+      } else if (lattice == UnitCell<3>::Cubic) {
+
+         if (hasFBulk()) params[0] = current[0];
+
+      } else { // Orthorhombic, monoclinic, or triclinic
          
          for (int i = 0; i < 3; i++) {
             // This if-statement applies for orthorhombic/monoclinic/triclinic
-            if (i != normalVecId()) { 
+            if (i != normalVecId() || hasFBulk()) { 
                params[i] = current[i];
             }
          }

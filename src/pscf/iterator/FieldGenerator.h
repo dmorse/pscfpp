@@ -80,6 +80,51 @@ namespace Pscf {
       virtual bool isGenerated() const = 0;
 
       /**
+      * Get contribution to the stress from this imposed field
+      * 
+      * If the imposed fields change in a non-affine manner under changes
+      * in the lattice parameters, then the "stress" used to optimize the
+      * lattice parameters must contain additional terms arising from the
+      * imposed field(s). A term arises from the presence of external
+      * fields, and two terms arise from the presence of the mask. Thus,
+      * this method may return a nonzero value regardless of the Type of
+      * this object. A return value of zero indicates that the imposed
+      * field(s) stretch affinely under a change in the given lattice 
+      * parameter. The default implementation returns zero; subclasses
+      * should override this method if necessary.
+      * 
+      * \param paramId  index of the lattice parameter being varied
+      */
+      virtual double stressTerm(int paramId) const
+      {  return 0.0; } 
+
+      /**
+      * Modify stress value if necessary.
+      * 
+      * It may be preferable with certain imposed fields to minimize a  
+      * property other than fHelmholtz with respect to the lattice  
+      * parameters. For instance, in a thin film it is useful to minimize 
+      * the excess free energy per unit area, (fHelmholtz - fRef) * Delta, 
+      * where fRef is a reference free energy and Delta is the film 
+      * thickness. The information needed to perform such a modification
+      * is often contained within the FieldGenerator objects. Therefore,
+      * this method allows subclasses of FieldGenerator to modify the 
+      * stress.
+      * 
+      * The method should be called by the ImposedFieldsGenerator object 
+      * that owns this object, and the return value should be used to 
+      * compute error and optimize the lattice parameters. 
+      * 
+      * By default, this method will simply return the value of stress
+      * that is provided as an input, without performing a modification.
+      * 
+      * \param paramId  index of the lattice parameter with this stress
+      * \param stress  stress value calculated by Mixture object
+      */
+      virtual double modifyStress(int paramId, double stress) const
+      {  return stress; }
+
+      /**
       * Return Type enumeration value (Mask, External, or None)
       *
       * This value should be initialized by subclasses during construction.

@@ -180,8 +180,16 @@ namespace Rpc {
 
       /**
       * Compute derivatives of free energy w/ respect to cell parameters.
+      * 
+      * The optional parameter phiTot is only relevant to problems with a 
+      * mask, in which the material is excluded from part of the unit cell
+      * by imposing an inhomogeneous constrain on the sum of monomer 
+      * concentrations. In such cases, the stress needs to be scaled by 
+      * a factor of 1/phiTot.
+      * 
+      * \param phiTot  volume fraction of unit cell occupied by material
       */
-      void computeStress();
+      void computeStress(double phiTot = 1.0);
 
       /**
       * Get derivative of free energy w/ respect to a unit cell parameter.

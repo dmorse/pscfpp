@@ -86,9 +86,51 @@ namespace Prdc {
       double excludedThickness() const;
 
       /**
+      * Check whether a value of fBulk was provided.
+      */
+      bool hasFBulk() const;
+
+      /**
       * Check whether the field has been generated.
       */
       bool isGenerated() const = 0;
+
+      /**
+      * Get contribution to the stress from this mask
+      * 
+      * The mask defined by this class changes in a non-affine manner 
+      * upon changing the lattice parameter corresponding to normalVecId.
+      * Thus, if this lattice parameter is allowed to be flexible, the 
+      * "stress" used to optimize the parameter must contain additional 
+      * terms arising from the mask. This method evaluates these terms
+      * and returns their value. Access to various System properties is
+      * required, so the method must be implemented by subclasses.
+      * 
+      * \param paramId  index of the lattice parameter being varied
+      */
+      virtual double stressTerm(int paramId) const = 0;
+
+      /**
+      * Modify stress value in direction normal to the film.
+      * 
+      * The "stress" calculated by the Mixture object is used to minimize
+      * fHelmholtz with respect to a given lattice parameter. In a thin 
+      * film it is useful to instead minimize the excess free energy 
+      * per unit area, (fHelmholtz - fRef) * Delta, where fRef is a 
+      * reference free energy and Delta is the film thickness. The 
+      * information needed to perform such a modification is contained 
+      * within this object. This method performs this modification. The
+      * stress will not be modified for lattice parameters that are 
+      * parallel to the film.
+      * 
+      * This method requires access to various attributes of the System,
+      * so it is left as a pure virtual method here and should be 
+      * implemented by subclasses.
+      * 
+      * \param paramId  index of the lattice parameter with this stress
+      * \param stress  stress value calculated by Mixture object
+      */
+      virtual double modifyStress(int paramId, double stress) const = 0;
 
    protected:
 
@@ -123,10 +165,18 @@ namespace Prdc {
       * 
       * An iterator for a thin film SCFT calculation should allow for
       * some lattice parameters to be fixed, while others are held 
-      * constant. Subclasses should define this method to set these
-      * lattice parameters appropriately so that the film thickness is
-      * held constant, while the other lattice parameters are allowed
-      * to be flexible if the user chooses.
+      * constant. Subclasses should define this method to set the 
+      * flexibility of these lattice parameters appropriately so that 
+      * the film thickness is held constant, as are all but one of the 
+      * angles between basis vectors (the angle in the plane of the film
+      * may vary). The other lattice parameters are allowed to be 
+      * flexible if the user specified that they are flexible in the 
+      * Iterator parameters. 
+      * 
+      * Note that the lattice parameter that defines the film thickness
+      * may be flexible if the optional input parameter fBulk is provided.
+      * This parameter is necessary to compute the stress in the direction
+      * normal to the film.
       */
       virtual void setFlexibleParams() = 0;
 
@@ -153,6 +203,12 @@ namespace Prdc {
       */
       RealVec<D> normalVecCurrent_;
 
+      /// Reference free energy used to calculate stress normal to the film
+      double fBulk_;
+
+      using ParamComposite::read;
+      using ParamComposite::readOptional;
+
    private:
 
       /// Lattice basis vector that is normal to the walls
@@ -163,6 +219,9 @@ namespace Prdc {
 
       /// Excluded (wall) thickness
       double excludedThickness_;
+
+      /// Does this object have a value of fBulk from the parameter file?
+      bool hasFBulk_;
 
       using FieldGenerator::type_;
 
@@ -184,6 +243,11 @@ namespace Prdc {
    template <int D> 
    inline double MaskGenFilmBase<D>::excludedThickness() const
    {  return excludedThickness_; }
+
+   // Check whether a value of fBulk was provided.
+   template <int D> 
+   inline bool MaskGenFilmBase<D>::hasFBulk() const
+   {  return hasFBulk_; }
 
 }
 }

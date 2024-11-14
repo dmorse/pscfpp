@@ -58,9 +58,42 @@ namespace Rpc {
       */
       bool isGenerated() const;
 
+      /**
+      * Get contribution to the stress from this mask
+      * 
+      * The mask defined by this class changes in a non-affine manner 
+      * upon changing the lattice parameter corresponding to normalVecId.
+      * Thus, if this lattice parameter is allowed to be flexible, the 
+      * "stress" used to optimize the parameter must contain additional 
+      * terms arising from the mask. This method evaluates these terms
+      * and returns their value. 
+      * 
+      * \param paramId  index of the lattice parameter being varied
+      */
+      double stressTerm(int paramId) const;
+
+      /**
+      * Modify stress value in direction normal to the film.
+      * 
+      * The "stress" calculated by the Mixture object is used to minimize
+      * fHelmholtz with respect to a given lattice parameter. In a thin 
+      * film it is useful to instead minimize the excess free energy 
+      * per unit area, (fHelmholtz - fRef) * Delta, where fRef is a 
+      * reference free energy and Delta is the film thickness. The 
+      * information needed to perform such a modification is contained 
+      * within this object. This method performs this modification. The
+      * stress will not be modified for lattice parameters that are 
+      * parallel to the film.
+      * 
+      * \param paramId  index of the lattice parameter with this stress
+      * \param stress  stress value calculated by Mixture object
+      */
+      double modifyStress(int paramId, double stress) const;
+
       using MaskGenFilmBase<D>::normalVecId;
       using MaskGenFilmBase<D>::interfaceThickness;
       using MaskGenFilmBase<D>::excludedThickness;
+      using MaskGenFilmBase<D>::hasFBulk;
 
    protected:
 
@@ -101,6 +134,7 @@ namespace Rpc {
       RealVec<D> systemLatticeVector(int id) const;
 
       using MaskGenFilmBase<D>::normalVecCurrent_;
+      using MaskGenFilmBase<D>::fBulk_;
       using ParamComposite::setClassName;
 
    private:

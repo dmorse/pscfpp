@@ -163,6 +163,22 @@ namespace Prdc {
       */
       bool isGenerated() const = 0;
 
+      /**
+      * Get contribution to the stress from these external fields
+      * 
+      * The external fields defined by this class change in a non-affine 
+      * manner upon changing the lattice parameter corresponding to 
+      * normalVecId. Thus, if this lattice parameter is allowed to be 
+      * flexible, the "stress" used to optimize the parameter must 
+      * contain an additional term arising from the external fields. This 
+      * method evaluates this term and returns its value. Access to 
+      * various System properties is required, so the method must be 
+      * implemented by subclasses.
+      * 
+      * \param paramId  index of the lattice parameter being varied
+      */
+      virtual double stressTerm(int paramId) const = 0;
+
       using ParameterModifier::setParameter; // overloaded method
       using ParameterModifier::getParameter; // overloaded method
 

@@ -79,6 +79,26 @@ namespace Pscf {
       if (fieldGenPtr2_) fieldGenPtr2_->update();
    }
 
+   // Correct stress value if necessary
+   double ImposedFieldsTmpl::correctedStress(int paramId, double stress) 
+   const
+   {
+      // Get stress contributions from non-affine distortions of the 
+      // imposed fields
+      if (fieldGenPtr1_) {
+         stress += fieldGenPtr1_->stressTerm(paramId);
+      }
+      if (fieldGenPtr2_) {
+         stress += fieldGenPtr2_->stressTerm(paramId);
+      }
+      
+      // Make any additional modifications to stress
+      stress = modifyStress(paramId, stress);
+
+      return stress;
+   }
+
+
    // Return specialized sweep parameter types to add to the Sweep object
    GArray<ParameterType> ImposedFieldsTmpl::getParameterTypes()
    {
@@ -135,4 +155,9 @@ namespace Pscf {
 
    FieldGenerator const & ImposedFieldsTmpl::fieldGenerator2() const
    {  return *fieldGenPtr2_; }
+
+   // Modify the stress value if necessary
+   double ImposedFieldsTmpl::modifyStress(int paramId, double stress) const
+   {  return stress; }
+
 }

@@ -84,7 +84,7 @@ namespace Pscf {
       /**
       * Obtain error type
       */
-      std::string errorType();
+      std::string errorType() const;
 
    protected:
 
@@ -536,7 +536,7 @@ namespace Pscf {
    * Return error type
    */ 
    template <typename Iterator, typename T>
-   std::string AmIteratorTmpl<Iterator,T>::errorType() 
+   std::string AmIteratorTmpl<Iterator,T>::errorType() const
    {  return errorType_; }
    
    /*
