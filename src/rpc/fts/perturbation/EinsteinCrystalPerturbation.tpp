@@ -52,8 +52,8 @@ namespace Rpc {
    void EinsteinCrystalPerturbation<D>::setup()
    {
       const int nMonomer = system().mixture().nMonomer();
-      // const int meshSize = system().domain().mesh().size();
-      const IntVec<D> dimensions = system().domain().mesh().dimensions();
+      const IntVec<D> 
+      meshDimensions = system().domain().mesh().dimensions();
       
       UTIL_CHECK(nMonomer == 2);
       
@@ -61,11 +61,11 @@ namespace Rpc {
       w0_.allocate(nMonomer);
       wc0_.allocate(nMonomer);
       for (int i = 0; i < nMonomer; ++i) {
-         w0_[i].allocate(dimensions);
-         wc0_[i].allocate(dimensions);
+         w0_[i].allocate(meshDimensions);
+         wc0_[i].allocate(meshDimensions);
       }
       
-      // Read in reference field 
+      // Read in reference field from a file
       UnitCell<D> tempUnitCell;
       FieldIo<D> const & fieldIo = system().domain().fieldIo();
       fieldIo.readFieldsRGrid(referenceFieldFileName_, 

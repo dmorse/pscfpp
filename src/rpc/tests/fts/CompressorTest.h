@@ -10,6 +10,7 @@
 #include <rpc/fts/compressor/Compressor.h>
 #include <rpc/fts/compressor/AmCompressor.h>
 #include <rpc/fts/compressor/LrCompressor.h>
+#include <rpc/fts/compressor/LrAmPreCompressor.h>
 #include <rpc/fts/compressor/LrAmCompressor.h>
 
 #include <prdc/cpu/RFieldComparison.h>
@@ -108,9 +109,15 @@ public:
       compressor.readParam(in);
       in.close();
    }
-   
+  
+   /*
+   * Generic test function template.
+   */ 
    template <typename Compressor>
-   void testCompressor(Compressor& compressor, System<3>& system, std::string infilename, char const * outfilename)
+   void testCompressor(Compressor& compressor, 
+                       System<3>& system, 
+                       std::string infilename, 
+                       char const * outfilename)
    {
       openLogFile(outfilename);
       
@@ -173,15 +180,9 @@ public:
       printMethod(TEST_FUNC);
       System<3> system;
       AmCompressor<3> amCompressor(system);
-      testCompressor(amCompressor, system, "in/param_AmCompressor","out/testAmCompressor.log");
-   }
-   
-   void testLrAmCompressor()
-   {
-      printMethod(TEST_FUNC);
-      System<3> system;
-      LrAmCompressor<3> lrAmCompressor(system);
-      testCompressor(lrAmCompressor, system, "in/param_LrAmCompressor","out/testLrAmCompressor.log");
+      testCompressor(amCompressor, system, 
+                     "in/param_AmCompressor",
+                     "out/testAmCompressor.log");
    }
    
    void testLrCompressor()
@@ -189,15 +190,38 @@ public:
       printMethod(TEST_FUNC);
       System<3> system;
       LrCompressor<3> lrCompressor(system);
-      testCompressor(lrCompressor,  system, "in/param_LrCompressor", "out/testLrCompressor.log");
+      testCompressor(lrCompressor,  system, 
+                     "in/param_LrCompressor", 
+                     "out/testLrCompressor.log");
    }
 
+   void testLrAmPreCompressor()
+   {
+      printMethod(TEST_FUNC);
+      System<3> system;
+      LrAmPreCompressor<3> lrAmPreCompressor(system);
+      testCompressor(lrAmPreCompressor, system, 
+                     "in/param_LrAmPreCompressor",
+                     "out/testLrAmPreCompressor.log");
+   }
+   
+   void testLrAmCompressor()
+   {
+      printMethod(TEST_FUNC);
+      System<3> system;
+      LrAmCompressor<3> lrAmCompressor(system);
+      testCompressor(lrAmCompressor, system, 
+                     "in/param_LrAmCompressor",
+                     "out/testLrAmCompressor.log");
+   }
+   
 };
 
 TEST_BEGIN(CompressorTest)
 TEST_ADD(CompressorTest, testAmCompressor)
-TEST_ADD(CompressorTest, testLrAmCompressor)
 TEST_ADD(CompressorTest, testLrCompressor)
+TEST_ADD(CompressorTest, testLrAmPreCompressor)
+TEST_ADD(CompressorTest, testLrAmCompressor)
 TEST_END(CompressorTest)
 
 #endif

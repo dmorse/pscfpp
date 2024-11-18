@@ -1,5 +1,5 @@
-#ifndef RPG_LR_AM_COMPRESSOR_H
-#define RPG_LR_AM_COMPRESSOR_H
+#ifndef RPG_LR_POST_AM_COMPRESSOR_H
+#define RPG_LR_POST_AM_COMPRESSOR_H
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory
@@ -9,12 +9,10 @@
 */
 
 #include "Compressor.h"
-#include <prdc/cuda/Field.h>
-#include <prdc/cuda/RField.h>    
-#include <prdc/cuda/RFieldDft.h> 
-#include <pscf/math/IntVec.h>
-#include <pscf/iterator/AmIteratorTmpl.h>      
-#include <rpg/fts/compressor/intra/IntraCorrelation.h>            
+#include <prdc/cpu/RField.h>
+#include <prdc/cpu/RFieldDft.h>
+#include <pscf/iterator/AmIteratorTmpl.h>                 
+#include <rpg/fts/compressor/intra/IntraCorrelation.h> 
 
 namespace Pscf {
 namespace Rpg
@@ -22,24 +20,19 @@ namespace Rpg
 
    template <int D> class System;
    template <int D> class IntraCorrelation;
-   
+
    using namespace Util;
    using namespace Pscf::Prdc;
    using namespace Pscf::Prdc::Cuda;
 
    /**
-   * Anderson Mixing compressor with linear-response preconditioning.
+   * Anderson Mixing compressor with linear-response mixing step.
    *
-   * Class LrAmCompressor implements an Anderson mixing algorithm in
-   * which the residual is defined using a preconditioning scheme that
-   * would yield a Jacobian of unity if applied to a homogeneous system.
-   * The residual in the unpreconditioned form of Anderson mixing is a
-   * vector in which each that represents a deviations in the sum of 
-   * volume fractions from unity. In this preconditioned algorithm, each
-   * Fourier component of this deviation is multiplied by the inverse of
-   * Fourier representation of the linear response of total concentration 
-   * to changes in pressure in a homogeneous system of the same chemical
-   * composition as the system of interest.
+   * Class LrAmCompressor implements an Anderson mixing algorithm 
+   * which modifies the second mixing step, estimating Jacobian by linear 
+   * response of homogenous liquid instead of unity. The residual is a 
+   * vector in which each that represents a deviations 
+   * in the sum of volume fractions from unity.
    *
    * \ingroup Rpg_Fts_Compressor_Module
    */
@@ -80,7 +73,6 @@ namespace Rpg
       */ 
       void setup(bool isContinuation);      
       
-      
       /**
       * Compress to obtain partial saddle point w+
       *
@@ -89,63 +81,50 @@ namespace Rpg
       int compress();    
       
       /**
-      * Write a report of time contributions used by this algorithm.
-      * 
-      * \param out  output stream to which to write
+      * Return compressor times contributions.
       */
       void outputTimers(std::ostream& out);
 
       /**
-      * Reset / clear all timers.
+      * Clear all timers (reset accumulated time to zero).
       */
       void clearTimers();
-
-      /**
-      * Compute and return error used to test for convergence.
-      *
-      * \param residTrial  current residual vector
-      * \param fieldTrial  current field vector    
-      * \param errorType  type of error 
-      * \param verbose  verbosity level of output report.
-      * \return error  measure used to test for convergence.
-      */
-      double computeError(Field<cudaReal>& residTrial, 
-                          Field<cudaReal>& fieldTrial,
-                          std::string errorType,
-                          int verbose);
       
       // Inherited public member functions
-
-      using AmIteratorTmpl<Compressor<D>,Field<cudaReal> >::setClassName;
+      using AmIteratorTmpl<Compressor<D>, Field<cudaReal> >::setClassName;
       
    protected:
   
       // Inherited protected members 
       using ParamComposite::readOptional;
-      using Compressor<D>::system;
       using Compressor<D>::mdeCounter_;
 
    private:
-
+   
       /**
-      * Type of error criterion used to test convergence 
-      */ 
-      std::string errorType_;
-      
-      /**
-      * How many times MDE has been solved for each mc move.
+      * How many times MDE has been solved for each mc move 
       */
       int itr_;
-  
-      /**
-      * Current values of the fields.
-      */
-      DArray< RField<D> > w0_;  
       
       /**
-      * Incompressibility constraint error.
-      */ 
-      RField<D> error_;
+      * Current values of the fields
+      */
+      DArray< RField<D> > w0_;  
+
+      /**
+      * Has the variable been allocated?
+      */
+      bool isAllocated_;
+      
+      /**
+      * Template w Field used in update function
+      */
+      DArray< RField<D> > wFieldTmp_;
+      
+      /**
+      * New Basis variable used in updateBasis function 
+      */
+      Field<cudaReal> newBasis_;
       
       /**
       * Residual in real space used for linear response anderson mixing.
@@ -158,9 +137,9 @@ namespace Rpg
       RFieldDft<D> residK_;
      
       /**
-      * IntraCorrelation.
+      * IntraCorrelation in fourier space calculated by IntraCorrlation class
       */
-      RField<D> intraCorrelation_;
+      RField<D> intraCorrelationK_;
       
       /**
       * Dimensions of wavevector mesh in real-to-complex transform
@@ -171,22 +150,6 @@ namespace Rpg
       * Number of points in k-space grid
       */
       int kSize_;
-      
-      /**
-      * Has the variable been allocated?
-      */
-      bool isAllocated_;
-      
-      /**
-      * Template w Field used in update function.
-      */
-      
-      DArray< RField<D> > wFieldTmp_;
-      
-      /**
-      * New Basis variable used in updateBasis function. 
-      */
-      Field<cudaReal> newBasis_;
 
       /**
       * Assign one field to another.
@@ -284,7 +247,7 @@ namespace Rpg
       * Outputs relevant system details to the iteration log.
       */
       void outputToLog();
-   
+      
       /**
       * Compute mixing parameter lambda
       */
@@ -293,11 +256,14 @@ namespace Rpg
       /**
       * IntraCorrelation (homopolymer) object
       */
-      IntraCorrelation<D> intra_;
-      
+      IntraCorrelation<D> intraCorrelation_;
+    
+      // Inherited private members 
+      using Compressor<D>::system;
+
    };
    
-   #ifndef RPG_LR_AM_COMPRESSOR_TPP
+   #ifndef RPG_LR_POST_AM_COMPRESSOR_TPP
    // Suppress implicit instantiation
    extern template class LrAmCompressor<1>;
    extern template class LrAmCompressor<2>;

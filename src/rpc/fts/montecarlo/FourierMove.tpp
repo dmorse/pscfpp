@@ -218,9 +218,8 @@ namespace Rpc
    template<int D>
    void FourierMove<D>::outputTimers(std::ostream& out)
    {
-      // Output timing results, if requested.
       out << "\n";
-      out << "Fourier Move times contributions:\n";
+      out << "FourierMove time contributions:\n";
       McMove<D>::outputTimers(out);
    }
 

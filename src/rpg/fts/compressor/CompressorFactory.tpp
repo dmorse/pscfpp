@@ -5,9 +5,9 @@
 
 // Subclasses of Compressor 
 #include "AmCompressor.h"
-#include "LrAmCompressor.h"
+#include "LrAmPreCompressor.h"
 #include "LrCompressor.h"
-#include "LrPostAmCompressor.h"
+#include "LrAmCompressor.h"
 
 namespace Pscf {
 namespace Rpg {
@@ -38,12 +38,12 @@ namespace Rpg {
       // Try to match classname
       if (className == "Compressor" || className == "AmCompressor") {
          ptr = new AmCompressor<D>(*sysPtr_);
-      } else if (className == "LrAmCompressor") {
-         ptr = new LrAmCompressor<D>(*sysPtr_);
+      } else if (className == "LrAmPreCompressor") {
+         ptr = new LrAmPreCompressor<D>(*sysPtr_);
       } else if (className == "LrCompressor") {
          ptr = new LrCompressor<D>(*sysPtr_);
-      } else if (className == "LrPostAmCompressor") {
-         ptr = new LrPostAmCompressor<D>(*sysPtr_);
+      } else if (className == "LrAmCompressor") {
+         ptr = new LrAmCompressor<D>(*sysPtr_);
       }
       
       return ptr;

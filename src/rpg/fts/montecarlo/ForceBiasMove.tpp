@@ -187,6 +187,7 @@ namespace Rpg {
       // Call compressor
       compressorTimer_.start();
       int compress = simulator().compressor().compress();
+      UTIL_CHECK(system().hasCFields());
       compressorTimer_.stop();
       
       bool isConverged = false;
@@ -197,14 +198,15 @@ namespace Rpg {
          isConverged = true;
          
          // Compute eigenvector components of current fields
-         computeWcTimer_.start();
+         componentTimer_.start();
          simulator().computeWc();
+         UTIL_CHECK(system().hasCFields());
          simulator().computeCc();
          simulator().computeDc();
-         computeWcTimer_.stop();
+         componentTimer_.stop();
 
          // Evaluate new Hamiltonian
-         computeHamiltonianTimer_.start();
+         hamiltonianTimer_.start();
          simulator().computeHamiltonian();
          double newHamiltonian = simulator().hamiltonian();
          double dH = newHamiltonian - oldHamiltonian;
@@ -221,7 +223,7 @@ namespace Rpg {
             bias += (double) gpuSum(biasField_.cField(), meshSize);
          }
          bias *= vNode;
-         computeHamiltonianTimer_.stop();
+         hamiltonianTimer_.stop();
 
          // Accept or reject move
          decisionTimer_.start();
@@ -253,7 +255,7 @@ namespace Rpg {
    {
       // Output timing results, if requested.
       out << "\n";
-      out << "Real Move times contributions:\n";
+      out << "ForceBiasMove time contributions:\n";
       McMove<D>::outputTimers(out);
    }
 

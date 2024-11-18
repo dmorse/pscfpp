@@ -96,9 +96,8 @@ namespace Rpc {
    template<int D>
    void RealMove<D>::outputTimers(std::ostream& out)
    {
-      // Output timing results, if requested.
       out << "\n";
-      out << "Real Move times contributions:\n";
+      out << "RealMove time contributions:\n";
       McMove<D>::outputTimers(out);
    }
 

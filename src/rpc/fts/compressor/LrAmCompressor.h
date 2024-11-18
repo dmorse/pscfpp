@@ -1,5 +1,5 @@
-#ifndef RPC_LR_AM_COMPRESSOR_H
-#define RPC_LR_AM_COMPRESSOR_H
+#ifndef RPC_LR_POST_AM_COMPRESSOR_H
+#define RPC_LR_POST_AM_COMPRESSOR_H
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory
@@ -11,8 +11,8 @@
 #include "Compressor.h"
 #include <prdc/cpu/RField.h>
 #include <prdc/cpu/RFieldDft.h>
-#include <pscf/iterator/AmIteratorTmpl.h> 
-#include <rpc/fts/compressor/intra/IntraCorrelation.h>             
+#include <pscf/iterator/AmIteratorTmpl.h>                 
+#include <rpc/fts/compressor/intra/IntraCorrelation.h> 
 
 namespace Pscf {
 namespace Rpc
@@ -25,18 +25,13 @@ namespace Rpc
    using namespace Pscf::Prdc::Cpu;
 
    /**
-   * Anderson Mixing compressor with linear-response preconditioning.
+   * Anderson Mixing compressor with linear-response mixing step.
    *
-   * Class LrAmCompressor implements an Anderson mixing algorithm in
-   * which the residual is defined using a preconditioning scheme that
-   * would yield a Jacobian of unity if applied to a homogeneous system.
-   * The residual in the unpreconditioned form of Anderson mixing is a
-   * vector in which each that represents a deviations in the sum of 
-   * volume fractions from unity. In this preconditioned algorithm, each
-   * Fourier component of this deviation is multiplied by the inverse of
-   * Fourier representation of the linear response of total concentration 
-   * to changes in pressure in a homogeneous system of the same chemical
-   * composition as the system of interest.
+   * Class LrAmCompressor implements an Anderson mixing algorithm 
+   * which modifies the second mixing step, estimating Jacobian by linear 
+   * response of homogenous liquid instead of unity. The residual is a 
+   * vector in which each that represents a deviations 
+   * in the sum of volume fractions from unity.
    *
    * \ingroup Rpc_Fts_Compressor_Module
    */
@@ -86,33 +81,16 @@ namespace Rpc
       int compress();    
       
       /**
-      * Compute and return error used to test for convergence.
-      *
-      * \param residTrial  current residual vector
-      * \param fieldTrial  current field vector    
-      * \param errorType  type of error 
-      * \param verbose  verbosity level of output report.
-      * \return error  measure used to test for convergence.
-      */
-      double computeError(DArray<double>& residTrial, 
-                          DArray<double>& fieldTrial,
-                          std::string errorType,
-                          int verbose);
-                          
-      /**
-      * Write a report of time contributions used by this algorithm.
-      * 
-      * \param out  output stream to which to write
+      * Return compressor times contributions.
       */
       void outputTimers(std::ostream& out);
 
       /**
-      * Reset / clear all timers.
+      * Clear all timers (reset accumulated time to zero).
       */
-      void clearTimers();      
+      void clearTimers();
       
       // Inherited public member functions
-
       using AmIteratorTmpl<Compressor<D>, DArray<double> >::setClassName;
       
    protected:
@@ -122,26 +100,31 @@ namespace Rpc
       using Compressor<D>::mdeCounter_;
 
    private:
-
+   
       /**
-      * Type of error criterion used to test convergence 
-      */ 
-      std::string errorType_;
-      
-      /**
-      * How many times MDE has been solved for each mc move.
+      * How many times MDE has been solved for each mc move 
       */
       int itr_;
-  
+      
       /**
       * Current values of the fields
       */
       DArray< RField<D> > w0_;  
+
+      /**
+      * Has the variable been allocated?
+      */
+      bool isAllocated_;
       
       /**
-      * Incompressibility constraint error
+      * Template w Field used in update function
       */
-      DArray<double> error_;
+      DArray< RField<D> > wFieldTmp_;
+      
+      /**
+      * New Basis variable used in updateBasis function 
+      */
+      DArray<double> newBasis_;
       
       /**
       * Residual in real space used for linear response anderson mixing.
@@ -162,22 +145,6 @@ namespace Rpc
       * Dimensions of wavevector mesh in real-to-complex transform
       */ 
       IntVec<D> kMeshDimensions_;
-      
-      /**
-      * Has the variable been allocated?
-      */
-      bool isAllocated_;
-      
-      /**
-      * Template w Field used in update function.
-      */
-      
-      DArray< RField<D> > wFieldTmp_;
-      
-      /**
-      * New Basis variable used in updateBasis function. 
-      */
-      DArray<double> newBasis_;
 
       /**
       * Assign one field to another.
@@ -279,24 +246,24 @@ namespace Rpc
       /**
       * Compute mixing parameter lambda
       */
-      double computeLambda(double r);
+      double computeLambda(double r);;
       
       /**
       * IntraCorrelation (homopolymer) object
       */
       IntraCorrelation<D> intraCorrelation_;
-      
+    
+      // Inherited private members 
       using Compressor<D>::system;
 
    };
    
-   #ifndef RPC_LR_AM_COMPRESSOR_TPP
+   #ifndef RPC_LR_POST_AM_COMPRESSOR_TPP
    // Suppress implicit instantiation
    extern template class LrAmCompressor<1>;
    extern template class LrAmCompressor<2>;
    extern template class LrAmCompressor<3>;
    #endif
-
 
 } // namespace Rpc
 } // namespace Pscf

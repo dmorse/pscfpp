@@ -226,7 +226,7 @@ namespace Rpg
    {
       // Output timing results, if requested.
       out << "\n";
-      out << "Fourier Move times contributions:\n";
+      out << "FourierMove time contributions:\n";
       McMove<D>::outputTimers(out);
    }
 

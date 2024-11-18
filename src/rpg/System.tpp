@@ -785,7 +785,7 @@ namespace Rpg {
    template <int D>
    int System<D>::iterate(bool isContinuation)
    {
-      UTIL_CHECK(iteratorPtr_);
+      UTIL_CHECK(hasIterator());
       UTIL_CHECK(w_.hasData());
       if (iterator().isSymmetric()) {
          UTIL_CHECK(w_.isSymmetric());
@@ -974,7 +974,7 @@ namespace Rpg {
    template <int D>
    void System<D>::writeTimers(std::ostream& out)
    {
-      if (iteratorPtr_) {
+      if (hasIterator()) {
          iterator().outputTimers(Log::file());
          iterator().outputTimers(out);
       }
@@ -990,7 +990,7 @@ namespace Rpg {
    template <int D>
    void System<D>::clearTimers()
    {
-      if (iteratorPtr_) {
+      if (hasIterator()) {
          iterator().clearTimers();
       }
       if (hasSimulator()){
@@ -1007,7 +1007,7 @@ namespace Rpg {
       mixture_.writeParam(out);
       interaction().writeParam(out);
       domain_.writeParam(out);
-      if (iteratorPtr_) {
+      if (hasIterator()) {
          iteratorPtr_->writeParam(out);
       }
       out << "}" << std::endl;

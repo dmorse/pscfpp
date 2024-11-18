@@ -177,14 +177,14 @@ namespace Rpc {
          isConverged = true;
          
          // Compute eigenvector components of current fields
-         computeWcTimer_.start();
+         componentTimer_.start();
          simulator().computeWc();
          simulator().computeCc();
          simulator().computeDc();
-         computeWcTimer_.stop();
+         componentTimer_.stop();
 
          // Evaluate new Hamiltonian
-         computeHamiltonianTimer_.start();
+         hamiltonianTimer_.start();
          simulator().computeHamiltonian();
          double newHamiltonian = simulator().hamiltonian();
          double dH = newHamiltonian - oldHamiltonian;
@@ -203,7 +203,7 @@ namespace Rpc {
             }
          }
          bias *= vNode;
-         computeHamiltonianTimer_.stop();
+         hamiltonianTimer_.stop();
 
          // Accept or reject move
          bool accept = false;
@@ -234,9 +234,8 @@ namespace Rpc {
    template<int D>
    void ForceBiasMove<D>::outputTimers(std::ostream& out)
    {
-      // Output timing results, if requested.
       out << "\n";
-      out << "Force Bias Move times contributions:\n";
+      out << "ForceBiasMove time contributions:\n";
       McMove<D>::outputTimers(out);
    }
 
