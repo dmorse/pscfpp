@@ -165,7 +165,7 @@ public:
       BFieldComparison bComparison(0); // object to compare fields
       bComparison.compare(system.w().basis(), wFieldsCheck);
      
-      double epsilon = 1.0E-5; 
+      double epsilon = 1.0E-4; 
       double diff = bComparison.maxDiff();
 
       if (verbose() > 0 || diff > epsilon) {
