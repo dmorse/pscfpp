@@ -173,6 +173,10 @@ namespace Rpc
       if (nvParamId == paramId) {
          UTIL_CHECK(system().hasMask());
 
+         if (!hasFBulk()) {
+            UTIL_THROW("fBulk must be set before calculating this stress.");
+         }
+
          // Get system free energy
          if (!sysPtr_->hasFreeEnergy()) {
             sysPtr_->computeFreeEnergy();

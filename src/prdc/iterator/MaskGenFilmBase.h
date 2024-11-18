@@ -86,6 +86,11 @@ namespace Prdc {
       double excludedThickness() const;
 
       /**
+      * Get value of fBulk.
+      */
+      double fBulk() const;
+
+      /**
       * Check whether a value of fBulk was provided.
       */
       bool hasFBulk() const;
@@ -243,6 +248,11 @@ namespace Prdc {
    template <int D> 
    inline double MaskGenFilmBase<D>::excludedThickness() const
    {  return excludedThickness_; }
+
+   // Get value of fBulk.
+   template <int D> 
+   inline double MaskGenFilmBase<D>::fBulk() const
+   {  return fBulk_; }
 
    // Check whether a value of fBulk was provided.
    template <int D> 

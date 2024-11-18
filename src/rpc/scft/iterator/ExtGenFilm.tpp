@@ -64,7 +64,7 @@ namespace Rpc
       // If walls are not athermal, calculate the stress contribution
       // from the external fields.
       UTIL_CHECK(isGenerated());
-      UTIL_CHECK(normalVecId_ > 0); // normalVecId_ has been set
+      UTIL_CHECK(normalVecId_ >= 0); // normalVecId_ has been set
       UTIL_CHECK(interfaceThickness_ > 0); // interfaceThickness_ has been set
       int nvParamId = convertFullParamIdToReduced<D>(normalVecId_,
                                                  system().domain().lattice());
