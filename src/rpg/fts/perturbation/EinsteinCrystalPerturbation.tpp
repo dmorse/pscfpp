@@ -152,7 +152,7 @@ namespace Rpg {
          RField<D>& Dc = dc[i];
          RField<D> const & Wc = simulator().wc(i);
          s = simulator().sc(i);
-         prefactor = -1.0*double(nMonomer)/simulator().chiEval(i)/vMonomer;
+         prefactor = 1.0*alpha_*double(nMonomer)/vMonomer;
          
          // Copy block copolymer derivative
          assignReal<<<nBlocks,nThreads>>>(DcBCP.cField(), 

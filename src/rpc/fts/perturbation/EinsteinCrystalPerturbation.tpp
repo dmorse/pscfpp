@@ -140,7 +140,7 @@ namespace Rpc {
             DcBCP = Dc[k];
             
             // Compute EC derivative
-            prefactor = -1.0*double(nMonomer)/simulator().chiEval(i)/vMonomer;
+            prefactor = 1.0*alpha_*double(nMonomer)/vMonomer;
             s = simulator().sc(i);
             DcEC = prefactor * (Wc[k] - s - wc0_[i][k]);
             
