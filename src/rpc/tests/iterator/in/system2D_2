@@ -33,6 +33,5 @@ System{
     maxHist              50 
     verbose              1
     isFlexible           1
-    flexibleParams       1
   }
 }

@@ -47,6 +47,33 @@ namespace Rpc {
 
    protected:
 
+      /**
+      * Modify the stress value if necessary.
+      * 
+      * It may be preferable with certain imposed fields to minimize a 
+      * property other than fHelmholtz with respect to the lattice 
+      * parameters. For instance, in a thin film it is useful to 
+      * minimize the excess free energy per unit area, 
+      * (fHelmholtz - fRef) * Delta, where fRef is a reference free 
+      * energy and Delta is the film thickness. Therefore, this method
+      * modifies the stress value accordingly, depending on the "type"
+      * parameter that is read from the parameter file. This method is 
+      * called by the method correctedStress after adding in the stress 
+      * contributions from non-affine distortions of the imposed fields.
+      * 
+      * In some cases, the modification may be performed directly by 
+      * this class, and in others it requires parameters that are stored
+      * in the FieldGenerator objects. In the latter case, the method
+      * FieldGenerator::modifyStress is called to perform the actual
+      * modification. The specific way that the modification is 
+      * performed is determined based on the "type" parameter of this 
+      * object.
+      * 
+      * \param paramId  index of the lattice parameter with this stress
+      * \param stress  stress value
+      */
+      virtual double modifyStress(int paramId, double stress) const;
+
       using ImposedFieldsTmpl::fieldGenPtr1_;
       using ImposedFieldsTmpl::fieldGenPtr2_;
       using ParamComposite::setClassName;

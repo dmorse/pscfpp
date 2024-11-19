@@ -34,6 +34,18 @@ namespace Rpc {
       }
    }
 
+   // Modify the stress value if necessary.
+   template <int D>
+   double ImposedFieldsGenerator<D>::modifyStress(int paramId, double stress) 
+   const
+   {
+      if (type() == "film") {
+         return fieldGenPtr1_->modifyStress(paramId, stress);
+      } else {
+         return stress;
+      }
+   }
+
    // Create FieldGenerator objects for the mask & external field
    template <int D>
    void ImposedFieldsGenerator<D>::createGenerators()

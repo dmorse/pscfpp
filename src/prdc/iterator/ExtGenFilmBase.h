@@ -10,8 +10,8 @@
 
 #include <pscf/sweep/ParameterType.h>      // Return type of method
 #include <pscf/iterator/FieldGenerator.h>  // Base class
+#include <pscf/math/RealVec.h>       // Container
 #include <util/containers/DArray.h>  // Container
-#include <util/containers/FSArray.h> // Container
 #include <string>
 
 
@@ -163,6 +163,22 @@ namespace Prdc {
       */
       bool isGenerated() const = 0;
 
+      /**
+      * Get contribution to the stress from these external fields
+      * 
+      * The external fields defined by this class change in a non-affine 
+      * manner upon changing the lattice parameter corresponding to 
+      * normalVecId. Thus, if this lattice parameter is allowed to be 
+      * flexible, the "stress" used to optimize the parameter must 
+      * contain an additional term arising from the external fields. This 
+      * method evaluates this term and returns its value. Access to 
+      * various System properties is required, so the method must be 
+      * implemented by subclasses.
+      * 
+      * \param paramId  index of the lattice parameter being varied
+      */
+      virtual double stressTerm(int paramId) const = 0;
+
       using ParameterModifier::setParameter; // overloaded method
       using ParameterModifier::getParameter; // overloaded method
 
@@ -184,9 +200,11 @@ namespace Prdc {
       virtual std::string systemSpaceGroup() const = 0;
 
       /**
-      * Get the lattice parameters for this system.
+      * Get one of the lattice vectors for this system.
+      * 
+      * \param id  index of the desired lattice vector
       */
-      virtual FSArray<double, 6> systemLatticeParameters() const = 0;
+      virtual RealVec<D> systemLatticeVector(int id) const = 0;
 
       /**
       * Get the number of monomer species for this system.
@@ -199,15 +217,15 @@ namespace Prdc {
       virtual void maskNormalVecId() = 0;
 
       /**
-      * The lattice parameters used to generate the current external fields.
+      * The lattice vector normal to the film used to generate these fields.
       * 
-      * This array is set to be equal to the system lattice parameters each
-      * time the external fields are generated. The system's lattice 
-      * parameters may then change, and this parametersCurrent_ array is
-      * used to detect whether they have changed. This is used to determine 
-      * whether a new set of external fields needs to be generated.
+      * This vector is set to be equal to the system's lattice vector with
+      * index normalVecId_ each time the external fields are generated. The 
+      * system's lattice vectors may then change, and this normalVecCurrent_
+      * vector is used to detect whether they have changed. This is used to 
+      * decide whether a new set of external fields needs to be generated.
       */
-      FSArray<double, 6> parametersCurrent_;
+      RealVec<D> normalVecCurrent_;
 
       /**
       * The chiBottom array used to generate the current external fields.

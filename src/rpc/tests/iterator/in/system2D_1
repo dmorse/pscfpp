@@ -23,7 +23,7 @@ System{
     )
   }
   Domain{
-    mesh           48  96
+    mesh           32 64
     lattice        rectangular
     groupName      p_2_m_m
   }
@@ -33,6 +33,5 @@ System{
     maxHist              50 
     verbose              1
     isFlexible           1
-    flexibleParams       1   1
   }
 }

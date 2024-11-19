@@ -928,7 +928,7 @@ namespace Rpc {
 
       // Compute stress if it is needed
       if (needStress) {
-         mixture_.computeStress();
+         mixture_.computeStress(mask().phiTot());
       }
 
    }
@@ -958,7 +958,7 @@ namespace Rpc {
       if (!error) {
          computeFreeEnergy();  // Sets hasFreeEnergy_ = true
          if (!iterator().isFlexible()) {
-            mixture_.computeStress();
+            mixture_.computeStress(mask().phiTot());
          }
          writeThermo(Log::file());
       }
@@ -1049,9 +1049,10 @@ namespace Rpc {
    template <int D>
    void System<D>::computeFreeEnergy()
    {
+      if (hasFreeEnergy_) return;
+      
       UTIL_CHECK(w_.hasData());
       UTIL_CHECK(hasCFields_);
-      UTIL_CHECK(!hasFreeEnergy_);
 
       int nm = mixture().nMonomer();   // number of monomer types
       int np = mixture().nPolymer();   // number of polymer species

@@ -104,6 +104,7 @@ namespace Rpc
       using ParamComposite::readOptionalFSArray;
       using ParamComposite::setClassName;
       using AmIteratorTmpl< Iterator<D>, DArray<double> >::verbose;
+      using AmIteratorTmpl< Iterator<D>, DArray<double> >::residual;
       using Iterator<D>::system;
       using Iterator<D>::isFlexible_;
       using Iterator<D>::flexibleParams_;

@@ -64,14 +64,16 @@ public:
       MaskGenFilm<2> mask(system);
 
       std::ifstream in;
-      openInputFile("in/filmMask2", in);
+      openInputFile("in/filmMask1", in);
       mask.readParameters(in);
       in.close();
 
       // Check that everything was read in correctly
-      TEST_ASSERT(eq(mask.normalVecId(),1));
+      TEST_ASSERT(eq(mask.normalVecId(),0));
       TEST_ASSERT(eq(mask.interfaceThickness(),0.2));
       TEST_ASSERT(eq(mask.excludedThickness(),0.4));
+      TEST_ASSERT(eq(mask.fBulk(), 2.98468253989));
+      TEST_ASSERT(mask.hasFBulk());
       TEST_ASSERT(mask.type() == FieldGenerator::Mask);
    }
 
@@ -104,9 +106,9 @@ public:
       Log::file() << "Testing system 1:" << std::endl;
       TEST_ASSERT(checkCheckCompatibility(mask1,false));
       TEST_ASSERT(!mask1.isGenerated());
-      TEST_ASSERT(system1.iterator().isFlexible() == false);
-      TEST_ASSERT(system1.iterator().nFlexibleParams() == 0);
-      TEST_ASSERT(system1.iterator().flexibleParams()[0] == false);
+      TEST_ASSERT(system1.iterator().isFlexible() == true);
+      TEST_ASSERT(system1.iterator().nFlexibleParams() == 1);
+      TEST_ASSERT(system1.iterator().flexibleParams()[0] == true);
 
 
       // Set up 2D mask with a compatible system and check compatibility
@@ -218,8 +220,8 @@ public:
 
       // Set unit cell parameter
       FSArray<double, 6> parameters;
-      parameters.append(1.6);
-      parameters.append(3.1);
+      parameters.append(1.6353661975);
+      parameters.append(2.0);
       system.setUnitCell(UnitCell<2>::Rectangular, parameters);
 
       // Set up mask
@@ -230,7 +232,7 @@ public:
       TEST_ASSERT(system.mask().isAllocated());
       TEST_ASSERT(system.mask().hasData());
       TEST_ASSERT(system.mask().isSymmetric());
-      TEST_ASSERT(eq(system.mask().phiTot(), 8.7096155661e-01));
+      TEST_ASSERT(eq(system.mask().phiTot(), 7.99990525324e-01));
 
       // Check that the generated mask is correct
       UnitCell<2> unitCell; // UnitCell object to pass to FieldIo functions
@@ -282,6 +284,63 @@ public:
          std::cout << "\nMax error = " << bComparison.maxDiff() << "\n";
       }
       TEST_ASSERT(bComparison.maxDiff() < 1.0E-7);
+   }
+
+   void testStressTerm() // test MaskGenFilm::stressTerm
+   {
+      printMethod(TEST_FUNC);
+      openLogFile("out/maskTestStressTermLog");
+
+      // Set up 2D mask with a compatible system
+      System<2> system;
+      createSystem(system, "in/system2D_1");
+
+      // Set unit cell parameter
+      FSArray<double, 6> parameters;
+      parameters.append(1.6353661975);
+      parameters.append(2.0);
+      system.setUnitCell(UnitCell<2>::Rectangular, parameters);
+
+      // Set up mask
+      MaskGenFilm<2> mask(system);
+      createMaskGenFilm(mask, "in/filmMask2");
+      mask.setup();
+
+      // Read w field and solve MDEs, so system can calculate fHelmholtz
+      system.readWBasis("in/wIn2D.bf");
+      system.compute();
+
+      // Call stressTerm and check that the result is correct
+      TEST_ASSERT(eq(mask.stressTerm(0),0.0));
+      TEST_ASSERT(std::abs(mask.stressTerm(1) - 0.4211629642) < 1e-5);
+   }
+
+   void testModifyStress() // test MaskGenFilm::modifyStress
+   {
+      printMethod(TEST_FUNC);
+      openLogFile("out/maskTestModifyStressLog");
+
+      // Set up 1D mask with a compatible system
+      System<1> system;
+      createSystem(system, "in/system1D");
+
+      // Set unit cell parameter
+      FSArray<double, 6> parameters;
+      parameters.append(2.0);
+      system.setUnitCell(UnitCell<1>::Lamellar, parameters);
+
+      // Set up mask
+      MaskGenFilm<1> mask(system);
+      createMaskGenFilm(mask, "in/filmMask1");
+      mask.setup();
+
+      // Read w field and solve MDEs, so system can calculate fHelmholtz
+      system.readWBasis("in/wIn1D_2.bf");
+      system.compute();
+
+      // Call modifyStress with an arbitrary input stress value 
+      // and test that the result is correct
+      TEST_ASSERT(eq(mask.modifyStress(0, 5.0),8.94005073083));
    }
 
    // Read parameter file to create a System object
@@ -342,6 +401,8 @@ TEST_ADD(MaskGenFilmTest, testReadParameters)
 TEST_ADD(MaskGenFilmTest, testCheckCompatibility)
 TEST_ADD(MaskGenFilmTest, testSetup)
 TEST_ADD(MaskGenFilmTest, testUpdate)
+TEST_ADD(MaskGenFilmTest, testStressTerm)
+TEST_ADD(MaskGenFilmTest, testModifyStress)
 TEST_END(MaskGenFilmTest)
 
 #endif
