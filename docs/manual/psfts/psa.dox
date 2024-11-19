@@ -1,7 +1,7 @@
 /*! \page psfts_psa_page  Partial Saddle-Point Approximation
 
-\ref psfts_theory_page   (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
-\ref psfts_methods_page  (Next)
+\ref psfts_theory_page     (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref psfts_algorithm_page  (Next)
 <BR>
 
 In a field theoretic treatment of an incompressible system, the
@@ -52,10 +52,10 @@ equivalently, that
     = c_{0}
     \quad.
 \f]
-A partial saddle-point field configuration is thus one in which 
-the incompressibility constraint is satisfied in the same 
-approximate sense as it is imposed in SCFT, as a constraint on the 
-average monomer concentrations in the ideal gas reference system. 
+A partial saddle-point field configuration is thus one in which the 
+incompressibility constraint is satisfied in the same approximate 
+sense as it is imposed in SCFT, as a constraint on the average 
+monomer concentrations in the ideal gas reference system. 
 
 The partial saddle-point configuration of \f$ \omega_{+} \f$ in a 
 system with a real-valued field \f$ \omega_{-}({\bf r}) \f$ is found 
@@ -126,7 +126,7 @@ In the cases to which this approximation applies, in which
 approximation leads to positive values for all monomer fields and to 
 a positive value for the Hamiltonian \f$ H \f$. 
 
-\section psfts_psa_general_sec General (\f$ M \geq 2 \f$)
+\section psfts_psa_phi_sec Definition of Phi
 
 Hereafter, we use the notation \f$ \langle \cdots \rangle_{\rm id} \f$ 
 to denote averages evaluated for a hypothetical ideal gas subjected to 
@@ -149,7 +149,8 @@ the \f$ w \f$ fields.
 
 
 <BR>
-\ref psfts_theory_page   (Prev, Up) &nbsp; &nbsp; &nbsp; &nbsp;
-\ref psfts_methods_page  (Next)
+\ref psfts_psa_page         (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref psfts_page             (Up)
+\ref psfts_algorithm_page   (Next)
 
 */

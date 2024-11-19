@@ -1,0 +1,70 @@
+/*! \page psfts_algorithm_page  Simulation Algorithms
+
+\ref psfts_psa_page    (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref psfts_param_page  (Next) &nbsp; &nbsp; &nbsp; &nbsp;
+<BR>
+
+The pscf_pc and pscf_pg programs allow PS-FTS simulations to be 
+performed using either Brownian dynamics (BD) or Monte Carlo (MC) 
+algorithms to stochastically sample the exchange field \f$ W_{-} \f$.
+BD or MC sampling algorithms for PS-FTS have a similar structure.
+At the beginning of each step of either type of simulation of
+a standard AB system, a BD or MC algorithm is used to generate 
+a small random change in \f$ W_{-} \f$. 
+Next, an iterative algorithm is then used to adjust \f$ W_{+} \f$ 
+so as to satisfy the partial saddle-point condition.
+In MC simulations, a decision is then made about whether to 
+accept or reject the resulting move.
+The algorithm that is used to identify a partial saddle-point 
+configuration for \f$ W_{+} \f$ is referred to throughout the 
+PSCF code and documentation as a ``compressor" algorithm. 
+
+PSCF allows user to choose a set data analysis and data output 
+operations that should be performed at regular intervals during a 
+simulation. C++ Classes that implement these operations are 
+referred to in PSCF as "Analyzer" classes. Analyzer classes may 
+calculate quantities of interest, accumulate statistical properties 
+such as average values, and/or periodically output data to file.
+
+The format of a PSCF parameter file for PS-FTS calculations is thus 
+designed to allow a user to choose from different available choices 
+for three different types of simulation and anaysis algorithms.
+
+  - **Sampling** : BD or MC stochastic sampling algorithms, which are 
+    used to update \f$ W_{-} \f$.
+
+  - **Compressor** : A compressor algorithm that is used to 
+    adjust \f$ W_{+} \f$ so as to satisfy the partial 
+    saddle-point condition.
+
+  - **Analysis** : Data analysis and data output operations.
+
+The parameter files used by pscf_pc and pscf_pg programs may 
+contain an optional "Simulator" block that must be present to 
+enable PS-FTS calculations, but that is normally omitted in 
+parameter files for SCFT calculations. The Simulator block 
+contains three main subblock that specify choices and 
+associated parameter values for sampling, compressor, and 
+analysis algorithms.
+
+\section psfts_algorithm_BD Brownian Dynamics (BD)
+
+Define mobility, using explicit Euler as an example.
+
+Mention available BD algorithms.
+
+\section psfts_algorithm_MC Monte Carlo (MC)
+
+Describe Metropolis algorithm, including random choice of
+algorithm.
+
+Describe available MC algorithms.
+
+\section psfts_algorithm_analyzer Data Analysis and Output
+
+<BR>
+\ref psfts_psa_page    (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref psfts_page        (Up) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref psfts_param_page  (Next) &nbsp; &nbsp; &nbsp; &nbsp;
+
+*/

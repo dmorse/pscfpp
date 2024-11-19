@@ -1,7 +1,7 @@
 /*! \page psfts_theory_page  Fully Fluctuating Field Theory
 
-\ref psfts_intro_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
-\ref psfts_psa_page    (Next)
+\ref psfts_page       (Prev/Up) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref psfts_psa_page   (Next)
 <BR>
 
 The PS-FTS simulation method used in PSCF is derived by applying the
@@ -341,13 +341,13 @@ in which
             1 \\ 1 \\ \vdots \\ 1
             \end{array} \right ]
 \f]
-is an \f$ M \f$-component column vector with equal components 
+is an \f$ M \f$-component column vector with equal element values
 \f$ e_{i}=1 \f$ for all \f$ i = 1, \cdots, M \f$, and its transpose
-is the corresponding row vector ${\bf e}^{T} = [1 \ldots 1]$.
-Here and hereafter, a superscript \f$ T \f$ is used to denote a matrix 
-transpose. Fluctuations of \f$ {\bf c}({\bf r})\f$ within the subspace 
-orthogonal to \f$ {\bf e} \f$ thus preserve the incompressibility 
-constraint. 
+is the corresponding row vector \f$ {\bf e}^{T} = [1 \ldots 1] \f$.
+Here and hereafter, a superscript \f$ T \f$ is used to denote a
+matrix transpose. Fluctuations of \f$ {\bf c}({\bf r})\f$ within
+the subspace orthogonal to \f$ {\bf e} \f$ thus preserve the 
+incompressibility constraint. 
 
 The formulation of field theory for incompressible systems used in PSCF 
 is based on a a decomposition of \f$ {\bf c}({\bf r}) \f$ and other 
@@ -612,7 +612,7 @@ generalizing the definition of both \f$ H_{\rm f} \f$ and
 \f$ H_{\rm c} \f$. 
 
 <BR>
-\ref psfts_intro_page  (Prev, Up) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref psfts_page  (Prev, Up) &nbsp; &nbsp; &nbsp; &nbsp;
 \ref psfts_page        (Up)       &nbsp; &nbsp; &nbsp; &nbsp;
 \ref psfts_psa_page    (Next)
 
