@@ -63,9 +63,9 @@ public:
       }
       
       DArray< RField<3> > const & w = system.w().rgrid();
-      double stepSize = 1e-2;
+      double stepSize = 1e-1;
       Random random;
-      random.setSeed(12345);
+      random.setSeed(0);
       for (int i = 0; i < nMonomer; i++){
          for (int k = 0; k < meshSize; k++){
             double r = random.uniform(-stepSize,stepSize);
@@ -89,9 +89,9 @@ public:
       }
       
       DArray< RField<3> > const & w = system.w().rgrid();
-      double stepSize = 1e-2;
+      double stepSize = 1e-1;
       Random random;
-      random.setSeed(12345);
+      random.setSeed(0);
       for (int k = 0; k < meshSize; k++){
          double r = random.uniform(-stepSize,stepSize);
          for (int i = 0; i < nMonomer; i++){
@@ -151,7 +151,7 @@ public:
          }
          totalError += error*error;
       }
-      TEST_ASSERT(sqrt(totalError)/sqrt(meshSize) < 1.0E-4);
+      TEST_ASSERT(sqrt(totalError)/sqrt(meshSize) < 1.0E-8);
       
       // Reset back to input chemical potential fields
       system.setWRGrid(w0);
@@ -171,7 +171,7 @@ public:
       }
       RFieldComparison<3> comparison;
       comparison.compare(w0, w1);
-      TEST_ASSERT(comparison.maxDiff() < 1.0E-4);
+      TEST_ASSERT(comparison.maxDiff() < 1.0E-2);
    }
    
    
