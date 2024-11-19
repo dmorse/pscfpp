@@ -250,7 +250,7 @@ namespace Rpc {
 
       // Compute stress if required
       if (isFlexible()) {
-         system().mixture().computeStress();
+         system().mixture().computeStress(system().mask().phiTot());
       }
    }
 
@@ -336,8 +336,14 @@ namespace Rpc {
          int counter = 0;
          for (int i = 0; i < nParam ; i++) {
             if (flexibleParams_[i]) {
-               resid[nMonomer*nBasis + counter] = scaleStress_ * -1
-                                    * system().mixture().stress(i);
+               double stress = system().mixture().stress(i);
+
+               // Correct stress to account for effect of imposed fields
+               if (imposedFields_.isActive()) {
+                  stress = imposedFields_.correctedStress(i,stress);
+               } 
+
+               resid[nMonomer*nBasis + counter] = -1 * scaleStress_ * stress;
                counter++;
             }
          }
@@ -413,14 +419,20 @@ namespace Rpc {
    {
       if (isFlexible() && verbose() > 1) {
          const int nParam = system().domain().unitCell().nParameter();
+         const int nMonomer = system().mixture().nMonomer();
+         const int nBasis = system().domain().basis().nBasis();
+         int counter = 0;
          for (int i = 0; i < nParam; i++) {
             if (flexibleParams_[i]) {
+               double stress = residual()[nMonomer*nBasis + counter] /
+                               (-1.0 * scaleStress_);
                Log::file() 
                       << " Cell Param  " << i << " = "
                       << Dbl(system().domain().unitCell().parameters()[i], 15)
                       << " , stress = " 
-                      << Dbl(system().mixture().stress(i), 15)
+                      << Dbl(stress, 15)
                       << "\n";
+               counter++;
             }
          }
       }

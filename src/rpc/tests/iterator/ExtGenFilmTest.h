@@ -265,6 +265,43 @@ public:
       TEST_ASSERT(bComparison2.maxDiff() < 1.0E-7);
    }
 
+   void testStressTerm() // test ExtGenFilm::stressTerm
+   {
+      printMethod(TEST_FUNC);
+      openLogFile("out/extTestStressTermLog");
+
+      // Set up 2D field generator with a compatible system
+      System<2> system;
+      createSystem(system, "in/system2D_1");
+
+      // Set unit cell parameter
+      FSArray<double, 6> parameters;
+      parameters.append(1.6353661975);
+      parameters.append(2.0);
+      system.setUnitCell(UnitCell<2>::Rectangular, parameters);
+
+      // Set up mask
+      MaskGenFilm<2> mask(system);
+      std::ifstream in;
+      openInputFile("in/filmMask2", in);
+      mask.readParameters(in);
+      in.close();
+      mask.setup();
+
+      // Set up external field generator
+      ExtGenFilm<2> ext(system);
+      createExtGenFilm(ext, "in/filmExt2");
+      ext.setup();
+
+      // Read w field and solve MDEs, so system can calculate fHelmholtz
+      system.readWBasis("in/wIn2D.bf");
+      system.compute();
+
+      // Call stressTerm and check that the result is correct
+      TEST_ASSERT(eq(ext.stressTerm(0),0.0));
+      TEST_ASSERT(std::abs(ext.stressTerm(1) + 0.163552445657) < 1e-5);
+   }
+
    // Read parameter file to create a System object
    template <int D>
    void createSystem(System<D>& system, std::string fname)
@@ -323,6 +360,7 @@ TEST_ADD(ExtGenFilmTest, testReadParameters)
 TEST_ADD(ExtGenFilmTest, testCheckCompatibility)
 TEST_ADD(ExtGenFilmTest, testSetup)
 TEST_ADD(ExtGenFilmTest, testUpdate)
+TEST_ADD(ExtGenFilmTest, testStressTerm)
 TEST_END(ExtGenFilmTest)
 
 #endif

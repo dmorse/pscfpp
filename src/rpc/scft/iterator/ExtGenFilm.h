@@ -62,6 +62,20 @@ namespace Rpc {
       */
       bool isGenerated() const;
 
+      /**
+      * Get contribution to the stress from the external fields
+      * 
+      * The external fields defined by this class change in a non-affine 
+      * manner upon changing the lattice parameter corresponding to 
+      * normalVecId. Thus, if this lattice parameter is allowed to be 
+      * flexible, the "stress" used to optimize the parameter must 
+      * contain an additional term arising from the external fields. This 
+      * method evaluates this term and returns its value. 
+      * 
+      * \param paramId  index of the lattice parameter being varied
+      */
+      double stressTerm(int paramId) const;
+
       using ExtGenFilmBase<D>::isAthermal;
       using ExtGenFilmBase<D>::chiBottom;
       using ExtGenFilmBase<D>::chiTop;
@@ -93,9 +107,11 @@ namespace Rpc {
       std::string systemSpaceGroup() const;
 
       /**
-      * Get the lattice parameters for this system.
+      * Get one of the lattice vectors for this system.
+      * 
+      * \param id  index of the desired lattice vector
       */
-      FSArray<double, 6> systemLatticeParameters() const;
+      RealVec<D> systemLatticeVector(int id) const;
 
       /**
       * Get the number of monomer species for this system.
@@ -103,11 +119,16 @@ namespace Rpc {
       int systemNMonomer() const;
 
       /**
-      * Use the mask to determine the value of normalVecId
+      * Use the mask to determine and store the value of normalVecId
       */
       void maskNormalVecId();
 
-      using ExtGenFilmBase<D>::parametersCurrent_;
+      /**
+      * Use the mask to determine and store the value of interfaceThickness
+      */
+      void maskInterfaceThickness();
+
+      using ExtGenFilmBase<D>::normalVecCurrent_;
       using ExtGenFilmBase<D>::chiBottomCurrent_;
       using ExtGenFilmBase<D>::chiTopCurrent_;
       using ExtGenFilmBase<D>::normalVecId_;
@@ -117,6 +138,9 @@ namespace Rpc {
 
       /// Pointer to the associated system object.
       System<D>* sysPtr_;
+
+      /// interfaceThickness of the mask, obtained via maskInterfaceThickness
+      double interfaceThickness_;
 
    };
 
@@ -142,10 +166,10 @@ namespace Rpc {
    inline std::string ExtGenFilm<D>::systemSpaceGroup() const
    {  return system().domain().groupName(); }
 
-   // Get lattice parameters for this system.
+   // Get one of the lattice vectors for this system.
    template <int D>
-   inline FSArray<double, 6> ExtGenFilm<D>::systemLatticeParameters() const
-   {  return system().domain().unitCell().parameters(); }
+   inline RealVec<D> ExtGenFilm<D>::systemLatticeVector(int id) const
+   {  return system().domain().unitCell().rBasis(id); }
 
    // Get the number of monomer species for this system.
    template <int D>

@@ -192,7 +192,7 @@ namespace Rpc
    * Compute total stress for this mixture.
    */
    template <int D>
-   void Mixture<D>::computeStress()
+   void Mixture<D>::computeStress(double phiTot)
    {
       int i, j;
 
@@ -215,6 +215,11 @@ namespace Rpc
             }
          }
 
+      }
+
+      // Correct for partial occupation of the unit cell
+      for (i = 0; i < unitCellPtr_->nParameter(); ++i) {
+         stress_[i] /= phiTot;
       }
 
       // Note: Solvent does not contribute to derivatives of f_Helmholtz

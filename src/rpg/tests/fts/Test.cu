@@ -1,5 +1,5 @@
 /*
-* This program runs all unit tests in the rpg/tests/simulate directory.
+* This program runs all unit tests in the rpg/tests/fts directory.
 */ 
 
 #include <util/global.h>

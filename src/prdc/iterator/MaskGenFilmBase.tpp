@@ -10,6 +10,7 @@
 
 #include "MaskGenFilmBase.h"
 #include "prdc/crystal/SpaceGroup.h"
+#include "util/param/ScalarParam.h"
 #include <cmath>
 
 namespace Pscf {
@@ -24,10 +25,12 @@ namespace Prdc
    template <int D>
    MaskGenFilmBase<D>::MaskGenFilmBase()
     : FieldGenerator::FieldGenerator(),
-      parametersCurrent_(),
+      normalVecCurrent_(),
+      fBulk_(),
       normalVecId_(-1),
       interfaceThickness_(-1.0),
-      excludedThickness_(-1.0)
+      excludedThickness_(-1.0),
+      hasFBulk_(false)
    {  type_ = Mask; }
 
    /*
@@ -47,6 +50,10 @@ namespace Prdc
       read(in, "normalVecId", normalVecId_);
       read(in, "interfaceThickness", interfaceThickness_);
       read(in, "excludedThickness", excludedThickness_);
+      ScalarParam<double>& fBulkParam = readOptional(in, "fBulk", fBulk_);
+      if (fBulkParam.isActive()) { // if we read fBulk
+         hasFBulk_ = true;
+      }
 
       // Make sure inputs are valid
       if (normalVecId_ > D || normalVecId_ < 0) {
@@ -85,18 +92,12 @@ namespace Prdc
    template <int D>
    bool MaskGenFilmBase<D>::updateNeeded() const
    {
-      // Check if system lattice parameters differ from parametersCurrent_
-      FSArray<double, 6> sysParams = systemLatticeParameters();
-      UTIL_CHECK(sysParams.size() == parametersCurrent_.size());
-      
-      for (int i = 0; i < parametersCurrent_.size(); i++) {
-         if (fabs(sysParams[i] - parametersCurrent_[i]) > 1e-10) {
-            return true;
-         }
+      // Check if system normalVec differ from normalVecCurrent_
+      if (normalVecCurrent_ == systemLatticeVector(normalVecId_)) {
+         return false;
+      } else {
+         return true;
       }
-
-      // If this point is reached, no update is needed
-      return false;
    }
 
    /*

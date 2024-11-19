@@ -26,7 +26,7 @@ clean-outputs:
 	-cd $(SRC_DIR)/rpc/tests/solvers; $(MAKE) clean-outputs
 	-cd $(SRC_DIR)/rpc/tests/system; $(MAKE) clean-outputs
 	-cd $(SRC_DIR)/rpc/tests/sweep; $(MAKE) clean-outputs
-	-cd $(SRC_DIR)/rpc/tests/simulate; $(MAKE) clean-outputs
+	-cd $(SRC_DIR)/rpc/tests/fts; $(MAKE) clean-outputs
 
 clean:
 	rm -f $(BLD_DIR)/$(TEST) 
@@ -37,7 +37,7 @@ clean:
 	-cd $(SRC_DIR)/rpc/tests/solvers; $(MAKE) clean
 	-cd $(SRC_DIR)/rpc/tests/system; $(MAKE) clean
 	-cd $(SRC_DIR)/rpc/tests/sweep; $(MAKE) clean
-	-cd $(SRC_DIR)/rpc/tests/simulate; $(MAKE) clean
+	-cd $(SRC_DIR)/rpc/tests/fts; $(MAKE) clean
 	rm -f $(SRC_DIR)/rpc/tests/*/Test
 	rm -f $(SRC_DIR)/rpc/tests/*.o $(SRC_DIR)/rpc/tests/*.d
 	rm -f $(SRC_DIR)/rpc/tests/*/*.o $(SRC_DIR)/rpc/tests/*/*.d

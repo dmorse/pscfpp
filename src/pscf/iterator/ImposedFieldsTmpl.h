@@ -63,6 +63,41 @@ namespace Pscf {
       void update();
 
       /**
+      * Correct the stress value if necessary.
+      * 
+      * There are two changes to the stress that may be necessary due to 
+      * the presence of imposed fields. First, If the imposed fields 
+      * change in a non-affine manner under changes in the lattice 
+      * parameters, then the stress used to optimize the lattice 
+      * parameters must contain additional contributions arising from the
+      * imposed field(s). 
+      * 
+      * And second, it may be preferable with certain imposed fields to 
+      * minimize a property other than fHelmholtz with respect to the 
+      * lattice parameters. For instance, in a thin film it is useful to 
+      * minimize the excess free energy per unit area, 
+      * (fHelmholtz - fRef) * Delta, where fRef is a reference free 
+      * energy and Delta is the film thickness. Therefore, a subclass 
+      * of this class may modify the stress value accordingly via its 
+      * modifyStress method.
+      * 
+      * This method first calls the stressTerm() methods of both
+      * FieldGenerator objects and adds them to the original value of 
+      * stress that was passed in as a parameter, correcting for the 
+      * former effect described above. It then calls the 
+      * modifyStress method of this object, which can correct for the
+      * latter effect. 
+      * 
+      * The method should be called by Iterator classes that own this 
+      * object and the return value should be used to compute error and 
+      * optimize the lattice parameters. 
+      * 
+      * \param paramId  index of the lattice parameter with this stress
+      * \param stress  stress value calculated by Mixture object
+      */
+      double correctedStress(int paramId, double stress) const;
+
+      /**
       * Get the type string associated with this object.
       */
       std::string type() const;
@@ -123,6 +158,28 @@ namespace Pscf {
       * class. All other methods are fully defined in this class.
       */
       virtual void createGenerators() = 0;
+
+      /**
+      * Modify the stress value if necessary.
+      * 
+      * It may be preferable with certain imposed fields to minimize a 
+      * property other than fHelmholtz with respect to the lattice 
+      * parameters. For instance, in a thin film it is useful to 
+      * minimize the excess free energy per unit area, 
+      * (fHelmholtz - fRef) * Delta, where fRef is a reference free 
+      * energy and Delta is the film thickness. Therefore, a subclass 
+      * of this class may modify the stress value accordingly via this
+      * method, which is called by the method correctedStress after
+      * adding in the stress contributions from non-affine distortions
+      * of the imposed fields.
+      * 
+      * By default, this method will simply return the value of the 
+      * stress that it was passed, without applying any modifications.
+      * 
+      * \param paramId  index of the lattice parameter with this stress
+      * \param stress  stress value
+      */
+      virtual double modifyStress(int paramId, double stress) const;
 
       /**
       * Pointer to the first FieldGenerator object (required).
