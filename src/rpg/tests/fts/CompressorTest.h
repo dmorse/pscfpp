@@ -1,19 +1,22 @@
-#ifndef RPC_COMPRESSOR_TEST_H
-#define RPC_COMPRESSOR_TEST_H
+#ifndef RPG_COMPRESSOR_TEST_H
+#define RPG_COMPRESSOR_TEST_H
 
 #include <test/UnitTest.h>
 #include <test/UnitTestRunner.h>
 
-#include <rpc/System.h>
-#include <rpc/fts/simulator/Simulator.h>
-#include <rpc/fts/brownian/BdSimulator.h>
-#include <rpc/fts/compressor/Compressor.h>
-#include <rpc/fts/compressor/AmCompressor.h>
-#include <rpc/fts/compressor/LrCompressor.h>
-#include <rpc/fts/compressor/LrAmPreCompressor.h>
-#include <rpc/fts/compressor/LrAmCompressor.h>
+#include <rpg/System.h>
+#include <rpg/fts/simulator/Simulator.h>
+#include <rpg/fts/brownian/BdSimulator.h>
+#include <rpg/fts/compressor/Compressor.h>
+#include <rpg/fts/compressor/AmCompressor.h>
+#include <rpg/fts/compressor/LrCompressor.h>
+#include <rpg/fts/compressor/LrAmPreCompressor.h>
+#include <rpg/fts/compressor/LrAmCompressor.h>
 
-#include <prdc/cpu/RFieldComparison.h>
+#include <prdc/cuda/RFieldComparison.h>
+
+#include <pscf/cuda/CudaRandom.h> 
+#include <pscf/cuda/GpuResources.h>
 
 #include <util/tests/LogFileUnitTest.h>
 #include <util/random/Random.h> 
@@ -23,8 +26,8 @@
 using namespace Util;
 using namespace Pscf;
 using namespace Pscf::Prdc;
-using namespace Pscf::Prdc::Cpu;
-using namespace Pscf::Rpc;
+using namespace Pscf::Prdc::Cuda;
+using namespace Pscf::Rpg;
 
 class CompressorTest : public LogFileUnitTest
 {
@@ -61,18 +64,36 @@ public:
       for (int i = 0; i < nMonomer; ++i) {
          w2[i].allocate(dimensions);
       }
+      RField<D> randomField;
+      randomField.allocate(meshSize);
       
-      DArray< RField<3> > const & w = system.w().rgrid();
+      // GPU resources
+      int nBlocks, nThreads;
+      ThreadGrid::setThreadsLogical(meshSize, nBlocks, nThreads);
+      
       double stepSize = 1e-1;
-      Random random;
-      random.setSeed(0);
+      CudaRandom cudaRandom;
+      cudaRandom.setSeed(0);
+      DArray< RField<3> > const & w = system.w().rgrid();
+      
+      // For multi-component copolymer
       for (int i = 0; i < nMonomer; i++){
-         for (int k = 0; k < meshSize; k++){
-            double r = random.uniform(-stepSize,stepSize);
-            w2[i][k] =  w[i][k]+ r;
-         }
+
+         // Generate random numbers between 0.0 and 1.0 from uniform distribution
+         cudaRandom.uniform(randomField.cField(), meshSize);
+
+         // Generate random numbers between [-stepSize_,stepSize_]
+         mcftsScale<<<nBlocks, nThreads>>>(randomField.cField(), stepSize, meshSize);
+
+         // Change the w field configuration
+         pointWiseBinaryAdd<<<nBlocks, nThreads>>>(w[i].cField(), randomField.cField(),
+                                                   w2[i].cField(), meshSize);
+
       }
+      
+      // set system r grid
       system.setWRGrid(w2);
+
    }
    
    template <int D>
@@ -87,18 +108,27 @@ public:
       for (int i = 0; i < nMonomer; ++i) {
          w2[i].allocate(dimensions);
       }
-      
       DArray< RField<3> > const & w = system.w().rgrid();
+      
+      // GPU resources
+      int nBlocks, nThreads;
+      ThreadGrid::setThreadsLogical(meshSize, nBlocks, nThreads);
+      RField<D> randomField;
+      randomField.allocate(meshSize);
+      
+      CudaRandom cudaRandom;
+      cudaRandom.setSeed(0);
+      cudaRandom.uniform(randomField.cField(), meshSize);
       double stepSize = 1e-1;
-      Random random;
-      random.setSeed(0);
-      for (int k = 0; k < meshSize; k++){
-         double r = random.uniform(-stepSize,stepSize);
-         for (int i = 0; i < nMonomer; i++){
-            w2[i][k] =  w[i][k]+ r;
-         }
+      mcftsScale<<<nBlocks, nThreads>>>(randomField.cField(), stepSize, meshSize);
+      
+      // For multi-component copolymer
+      for (int i = 0; i < nMonomer; i++){
+         pointWiseBinaryAdd<<<nBlocks, nThreads>>>(w[i].cField(), randomField.cField(),
+                                                   w2[i].cField(), meshSize);
       }
       system.setWRGrid(w2);
+      
    }
    
    template <typename Compressor>
@@ -134,44 +164,57 @@ public:
       for (int i = 0; i < nMonomer; ++i) {
          w0[i].allocate(dimensions);
       }
+      
+      // GPU resources
+      int nBlocks, nThreads;
+      ThreadGrid::setThreadsLogical(meshSize, nBlocks, nThreads);
+      
+      DArray<RField<3>> const * currSys = &system.w().rgrid();
       for (int i = 0; i < nMonomer; ++i) {
-         for (int j = 0; j < meshSize; ++j){
-            w0[i][j] = system.w().rgrid(i)[j];
-         }
+         assignReal<<<nBlocks,nThreads>>>(w0[i].cField(), 
+                                          (*currSys)[i].cField(), meshSize);
+         
       }
       
       // Apply a random step to check the incompressibility constraint
       randomStep(system);
+      
       compressor.compress();
-      double totalError = 0.0;
-      for (int i = 0; i<  meshSize; i++){
-         double error = -1.0;
-         for (int j = 0; j <nMonomer ; j++){
-            error +=  system.c().rgrid(j)[i];
-         }
-         totalError += error*error;
+      
+      // Compute incompressible error
+      RField<3> error;
+      error.allocate(dimensions);
+      assignUniformReal<<<nBlocks, nThreads>>>(error.cField(), -1.0, meshSize);
+      for (int i = 0; i < nMonomer; i++) {
+         pointWiseAdd<<<nBlocks, nThreads>>>
+            (error.cField(), system.c().rgrid(i).cField(), meshSize);
       }
-      TEST_ASSERT(sqrt(totalError)/sqrt(meshSize) < 1.0E-8);
+      double product = (double)gpuInnerProduct(error.cField(), error.cField(), meshSize);
+      
+      TEST_ASSERT(sqrt(product)/sqrt(meshSize) < 1.0E-8);
       
       // Reset back to input chemical potential fields
       system.setWRGrid(w0);
       
       // Apply pressure field
       addPressureField(system);
+      
       compressor.compress();
       DArray< RField<3> > w1;
       w1.allocate(nMonomer);
       for (int i = 0; i < nMonomer; ++i) {
          w1[i].allocate(dimensions);
       }
+      
       for (int i = 0; i < nMonomer; ++i) {
-         for (int j = 0; j< meshSize; ++j){
-            w1[i][j] = system.w().rgrid(i)[j];
-         }
+         assignReal<<<nBlocks,nThreads>>>(w1[i].cField(), 
+                                          (*currSys)[i].cField(), meshSize);
       }
+      
       RFieldComparison<3> comparison;
       comparison.compare(w0, w1);
       TEST_ASSERT(comparison.maxDiff() < 1.0E-2);
+      
    }
    
    
