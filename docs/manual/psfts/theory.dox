@@ -7,20 +7,16 @@
 The PS-FTS simulation method used in PSCF is derived by applying the
 partial-saddle point approximation to an exact fully-fluctuating field 
 theoretic formulation of the partition function for an incompressible 
-polymer fluid.  The underlying particle-based model and its 
-field-theoretic formulation are discussed below. 
+polymer fluid.  The underlying particle-based model and its field-theoretic 
+formulation are discussed below. Throughout this discussion, as elsewhere, 
+we use units for energy in which \f$ k_{B} T = 1 \f$.
 
 We consider a mixture of polymers and solvents constructed from \f$ M \f$ 
 different types of monomer. The variable \f$ M \f$ used in this discussion
 is equivalent to the parameter nMonomer that appears in a PSCF parameter 
-file.  
-
-Let \f$ c_{i}({\bf r}) \f$ denote the concentration of monomers of 
+file.  Let \f$ c_{i}({\bf r}) \f$ denote the concentration of monomers of 
 type \f$ i \f$ at point \f$ {\bf r} \f$ within the mixture in a specific 
 mechanical microstate of the underlying particle based model. 
-
-Throughout this and subsequent theoretic discussions, we use units for 
-energy in which \f$ k_{B} T = 1 \f$.
 
 \section psfts_theory_model_sec Incompressible Particle-Based Model
 
@@ -51,11 +47,13 @@ reference system), and in which
 \f]
 is a non-bonded pair interaction energy with local interactions.
 Here, \f$ \chi_{ij} \f$ is an element of a symmetric \f$ M \times M \f$ 
-matrix of Flory-Huggins interaction parameters, which is dimensionless
-because \f$ U_{\rm int} \f$ is expressed in units with \f$ k_{B} T = 1 \f$.
-Here and hereafter, we adopt the Einstein convention for summations over 
-repeated indices \f$ i \f$ or \f$ j \f$ that represent monomer type 
-indices, which are sums from \f$ 1, \ldots, M \f$ .
+matrix of Flory-Huggins interaction parameters.
+Throughout the PSCF documentation, we use units for quantities with 
+units of energy, such as \f$ U_{\rm int} \f$, in which \f$ k_{B}T=1 \f$, 
+which yields dimensionless values for the \f$ \chi \f$ parameters.
+Here and hereafter, we adopt the Einstein convention for summations 
+over repeated indices \f$ i \f$ or \f$ j \f$ that represent monomer 
+type indices, which are sums from \f$ 1, \ldots, M \f$ .
 
 The partition function \f$ Z \f$ for an incompressible particle-based
 model with any value of \f$ M \f$ can be expressed to within an 
@@ -68,8 +66,7 @@ irrelevant multiplicative constant as a configurational integral
    \quad,
 \f]
 in which the \f$ \delta \f$-functional imposes the incompressibility 
-constraint. Here, as throughout these notes, we use units for energy 
-in which \f$ k_{B}T = 1 \f$.
+constraint. 
 
 \section psfts_theory_ideal_sec Ideal-Gas Reference System
 
@@ -181,20 +178,21 @@ yields
    \int {\cal D}\omega_{-}
    \exp \left \{ - 
    \int \! d{\bf r} \; \left [  \;
-    \frac{ \omega_{\alpha}^{2}}{ v \chi}
-          + \omega_{\alpha} C_{\alpha} 
+    \frac{ \omega_{-}^{2}}{ v \chi}
+          + \omega_{-} C_{-} 
           + \frac{\chi}{4 v} \;
    \right ] \right \}
    \; ,
 \f]
 where \f$ \int {\cal D} \omega_{-} \f$ denotes a functional integral 
-over a real-valued field \f$ \omega_{-}({\bf r}) \f$, and where
+over a real-valued auxiliary field \f$ \omega_{-}({\bf r}) \f$, and 
+where
 \f[
    N \equiv
    \int {\cal D} \omega_{-}
    \exp \left \{ 
    - \int \! d{\bf r} \; 
-   \frac{\omega_{-}^{2}}{v \chi }  
+   \frac{ \omega_{-}^{2}({\bf r}) }{v \chi }  
    \right \}
 \f]
 is a constant.
@@ -211,19 +209,18 @@ in which \f$ \omega_{+}({\bf r}) \f$ is a fluctuating real-valued
 Lagrange multplier field that imposes the constraint requiring 
 that \f$ C_{+}({\bf r}) = c_{0} \f$ for all \f$ {\bf r} \f$, and 
 \f$ \int {\cal D}\omega_{+} \f$ is a functional integral over 
-this field.
+this field. 
 
-By substituting the functional integral expressions for \f$ e^{-U_{\rm int}} \f$ 
-and the \f$ \delta \f$-function into the definition of the \f$ Z \f$, we
-obtain
+By substituting the functional integral expressions for the Boltzmann
+factor \f$ e^{-U_{\rm int}} \f$ and the \f$ \delta \f$-function into 
+the definition of the \f$ Z \f$, we obtain a functional integral
 \f[
    Z = N^{-1} 
-   \int {\cal D}\omega \; e^{ -H_{\rm f} }
+   \int {\cal D}\omega_{-} \int {\cal D}\omega_{+}  \; e^{ -H_{\rm f} }
    \int \! {\cal D}{\bf r} \; e^{-U_{\rm id} - H_{\rm c}}
    \quad,
 \f]
-in which \f$ \int {\cal D}\omega \f$ denotes an integral over both
-\f$ \omega_{-} \f$ and \f$ \omega_{+} \f$, and
+over both \f$ \omega_{-} \f$ and \f$ \omega_{+} \f$, in which
 \f[
    H_{\rm f}  = 
    \int \! d{\bf r} \; \left \{
@@ -232,8 +229,7 @@ in which \f$ \int {\cal D}\omega \f$ denotes an integral over both
    + \frac{\chi}{4v} \right \}  
 \f]
 \f[
-   H_{\rm c}  = 
-   \int \! d{\bf r} \; 
+   H_{\rm c}  = \int \! d{\bf r} \; 
    \left [ \omega_{-}({\bf r}) C_{-}({\bf r}) 
      + i \omega_{+}({\bf r}) C_{+}({\bf r}) \right ]
    \quad.  
@@ -244,8 +240,8 @@ introduces a coupling between auxiliary fields and the monomer
 concentrations (so that the subscript c denotes "concentration" or 
 "coupling").  
 
-The energy \f$ H_{\rm c} \f$ can also be expressed as an external 
-field energy
+The energy \f$ H_{\rm c} \f$ can also be expressed in terms of monomer 
+concentrations as a sum
 \f[
    H_{\rm c}  = 
    \int \! d{\bf r} \; 
@@ -254,13 +250,13 @@ field energy
 \f]
 of the form defined above for the ideal gas reference system, in which 
 \f[
-   w_{1}({\bf r}) = +\omega_{-}({\bf r}) + i\omega_{+}({\bf r}) \;
+   w_{1}({\bf r}) =  i\omega_{+}({\bf r}) + \omega_{-}({\bf r}) \;
 \f]
 \f[
-   w_{2}({\bf r}) = -\omega_{-}({\bf r}) + i\omega_{+}({\bf r}) .
+   w_{2}({\bf r}) =  i\omega_{+}({\bf r}) - \omega_{-}({\bf r}) .
 \f]
 are the fields that act on monomers of types \f$ 1 \f$ and \f$ 2 \f$,
-respectively. 
+respectively.
 
 <b> Field-Theoretic Hamiltonian  </b>
 
@@ -270,12 +266,13 @@ integral. The resulting expression for \f$ Z \f$ obtained above can be
 summarized as a functional integral of the form
 \f[
    Z = N^{-1} 
-   \int {\cal D}\omega \; e^{-H[\omega]}
+   \int {\cal D}\omega_{-} 
+   \int {\cal D}\omega_{+} \; e^{-H}
    \quad,
 \f]
 in which 
 \f[
-   H[\omega]  = -\ln Z_{\rm id}[w] + H_{\rm f}[\omega] \quad.
+   H  = -\ln Z_{\rm id}[w] + H_{\rm f} \quad.
 \f]
 is a field theoretic Hamiltonian that is a functional of the fields 
 \f$ \omega_{-} \f$ and \f$ \omega_{+} \f$, in which
@@ -285,24 +282,37 @@ is a field theoretic Hamiltonian that is a functional of the fields
 \f]
 is the partition function for a hypothetical gas of non-interacting 
 molecules subjected to fluctuating external fields, in which monomers 
-of type \f$ i \f$ are subjected to a field \f$ w_{i}({\bf r}) \f$,
-with \f$ w_1 = i\omega_{+} + \omega_{-} \f$ and 
+of type \f$ i \f$ are subjected to a field \f$ w_{i}({\bf r}) \f$, with 
+\f$ w_1 = i\omega_{+} + \omega_{-} \f$ and 
 \f$ w_2 = i\omega_{+} - \omega_{-} \f$.
 
-The functional derivatives of \f$ H[\omega] \f$ with respect to the 
-fields \f$ \omega_{-} \f$ and \f$ \omega_{+} \f$ are given by
+The Hamiltonian \f$ H \f$ is an analytic functional of the fields 
+\f$ \omega_{-}({\bf r}) \f$ and \f$ \omega_{+}({\bf r}) \f$.
+The functional derivatives of \f$ H[ \omega_{-}, \omega_{+}] \f$ with 
+respect to these fields are given by
 \f[
-   \frac{\delta H[\omega]}{\delta \omega_{-}({\bf r})} 
-   = \langle C_{-}({\bf r}) \rangle_{\rm id} - \frac{2\omega_{-}({\bf r})}{v\chi} 
+    \quad \left . \frac{\delta H}{\delta \omega_{-}({\bf r})}  
+    \right |_{\omega_{+}} = 
+    \frac{1}{v} 
+    \left [ \Phi_{-}({\bf r}) - 2 \omega_{-}({\bf r})/\chi \right ] 
+    \quad
 \f]
 \f[
-   \frac{1}{i} \frac{\delta H[\omega]}{\delta \omega_{-}({\bf r}) }
-   = \langle C_{+}({\bf r}) \rangle_{\rm id} - c_{0} \quad.  
+   \frac{1}{i} 
+   \left .  \frac{\delta H}{\delta \omega_{+}({\bf r}) } 
+   \right |_{\omega_{-}}
+    = \frac{1}{v} 
+       \left [ \Phi_{+}({\bf r}) - 1 \right ] \quad,
 \f]
-Note that the functional derivative with respect to the pressure-like 
-field \f$ \omega_{+}({\bf r}) \f$ vanishes when the average concentrations 
-in the ideal gas reference state satisfy the incompressibility condition, 
-i.e., when \f$ \langle C_{+}({\bf r}) \rangle_{\rm id} = c_{0} \f$.
+where \f$\Phi_{+} \f$ and \f$ \Phi_{-} \f$ are defined as 
+non-dimensional average concentrations
+\f[
+   \Phi_{\pm}({\bf r}) \equiv
+   v \langle C_{\pm}({\bf r}) \rangle_{\rm id} \quad.
+\f]
+Note that \f$ \delta H/\delta \omega_{+}({\bf r}) = 0 \f$ when
+\f$ \Phi_{+}({\bf r}) = 1 \f$, which is a mean-field version of
+the incompressibility constraint similar to that used in SCFT.
 
 A saddle-point of the Hamiltonian is defined to be a field configuration 
 in which functional derivatives with respect to both fields vanish for 
@@ -310,7 +320,7 @@ all \f$ {\bf r} \f$. It is straightforward to show that the resulting
 saddle point equations are equivalent to the self-consistent field 
 equations used in SCFT for such system, and that the value of the 
 Hamiltonian at such a saddle point is equal to the SCFT free energy.
-Saddle point field configurations thus correspond to SCFT solutions.
+Saddle points thus correspond to SCFT solutions.
 
 \section psfts_theory_general_sec Field Theory: General Case (\f$ M \geq 2 \f$)
 
@@ -462,7 +472,7 @@ representation of \f$ Z \f$ .
 For each \f$ \alpha = 1, \ldots, M - 1\f$, let 
 \f[
    \lambda_{\alpha}  = - \sigma_{\alpha}^{2} |\lambda_{\alpha}|
-   \quad, 
+   \quad,
 \f]
 with \f$ \sigma_{\alpha} = 1 \f$ for all \f$ \lambda_{\alpha} < 0 \f$ 
 and \f$ \sigma_{\alpha} = i \f$ for \f$ \lambda_{\alpha} > 0 \f$.
@@ -478,7 +488,7 @@ eigenvalues \f$ L+1, \ldots, M - 1 \f$ to be non-negative, while
 <b> Particle-Field Transformation </b>
 
 A Hubbard-Stratonovich transformation may used to transform the
-Boltzmann factor \f$ \exp( -U_{\rm int} ) \f$ given above into an 
+Boltzmann factor \f$ \exp( -U_{\rm int} ) \f$ given above into 
 a functional integral over \f$ M - 1 \f$ real-valued auxiliary 
 fields \f$ \omega_{1}({\bf r}), \ldots, \omega_{M-1}({\bf r}) \f$, 
 of the form
@@ -516,8 +526,8 @@ concentration may also be expressed as a functional integral
    - i \int d{\bf r} \; \omega_{M} [ \; C_{M} - c_{0} \; ]
    \right \} 
 \f]
-in which \f$ \omega_{M}({\bf r}) \f$ is a fluctuating Lagrange multplier 
-field that imposes the constraint requiring that 
+in which \f$ \omega_{M}({\bf r}) \f$ is a fluctuating Lagrange 
+multplier field that imposes the constraint requiring that 
 \f$ C_{M}({\bf r}) = c_{0} \f$, for all \f$ {\bf r} \f$, and 
 \f$ \int {\cal D}\omega_{M} \f$ is a functional integral over this field.
 
@@ -537,8 +547,8 @@ the Lagrange multiplier field \f$ \omega_{M} \f$ ), and
    H_{\rm f}  = 
    \int \! d{\bf r} \; \left \{
    - \sum_{\alpha=1}^{M-1}  
-     \frac{M \Omega_{\alpha}^{2} }{ 2 v \lambda_{\alpha}}
-   - \Omega_{M}c_{0} \right \}  + U_{\rm int}^{(0)} \quad
+     \frac{M \omega_{\alpha}^{2} }{ 2 v |\lambda_{\alpha}|}
+   - i \omega_{M}c_{0} \right \}  + U_{\rm int}^{(0)} \quad
 \f]
 \f[
    H_{\rm c}  = 
@@ -547,8 +557,8 @@ the Lagrange multiplier field \f$ \omega_{M} \f$ ), and
     W_{\alpha} ({\bf r}) C_{\alpha}({\bf r})
    \quad.  
 \f]
-The fields \f$ W_{1}, \ldots, W_{M} \f$ used to define \f$ H_{\rm c} \f$ are
-given by
+The fields \f$ W_{1}, \ldots, W_{M} \f$ used to define \f$ H_{\rm c} \f$ 
+are given by
 \f[
    W_{\alpha}({\bf r}) \equiv
    + \sigma_{\alpha} \omega_{\alpha}({\bf r}) 
@@ -561,10 +571,10 @@ for all \f$ \alpha = 1, \ldots, M - 1 \f$ and
 \f]
 for \f$ \alpha = M \f$.
 Note that Hamiltonian component \f$ H_{\rm f} \f$ depends only on 
-the auxiliary fields (so that the subscript f denotes "field"),
-while component \f$ H_{\rm c} \f$ introduces a coupling between 
-auxiliary fields and the monomer concentrations (so that the 
-subscript c denotes "concentration" or "coupling").
+the auxiliary fields (where the subscript f denotes "field"), while 
+\f$ H_{\rm c} \f$ introduces a coupling between the auxiliary fields 
+and monomer concentrations (where the subscript c thus denotes 
+"concentration" or "coupling").
 
 The energy \f$ H_{\rm c} \f$ can also be expressed as a sum 
 \f[
@@ -593,11 +603,11 @@ in an external field.
 The functional integral expression for \f$ Z \f$ obtained above may 
 expressed as an integral
 \f[
-  Z = N^{-1} \int {\cal D}\omega \; e^{-H[\omega]}
+  Z = N^{-1} \int {\cal D}\omega \; e^{-H}
 \f]
 in which 
 \f[
-  H = H_{\rm f} - \ln Z_{\rm id}
+  H = H_{\rm f} - \ln Z_{\rm id}[w]
 \f]
 is an effective Hamiltonian, and
 \f[
@@ -608,12 +618,11 @@ is the partition function of a hypothetical gas of non-interacting
 molecules in which monomers of type \f$ i \f$ are subjected to a 
 field \f$ w_{i}({\bf r}) \f$ . The result is a straightforward 
 generalization of that obtained for standard AB systems, after
-generalizing the definition of both \f$ H_{\rm f} \f$ and 
+generalizing the definitions of both \f$ H_{\rm f} \f$ and 
 \f$ H_{\rm c} \f$. 
 
 <BR>
 \ref psfts_page  (Prev, Up) &nbsp; &nbsp; &nbsp; &nbsp;
-\ref psfts_page        (Up)       &nbsp; &nbsp; &nbsp; &nbsp;
 \ref psfts_psa_page    (Next)
 
 */

@@ -11,11 +11,7 @@ simulations share a common overall structure that is described
 in the remainder of this page, along with examples for both types
 of simulation and discussion of the differences.
 
-\section psfts_param_algorithms_sec Algorithms
-
-
-
-\section psfts_param_overview_sec Overview
+\section psfts_param_overview_sec Parameter File Structure (Overview)
 
 A parameter file used for either BD or MC FTS calculations must 
 begin with Mixture, Interaction and Domain blocks that contain 
@@ -67,30 +63,41 @@ The corresponding format for a paramete file for an MC
 simulation would replace the BdSimulator block by an 
 McSimulator block with a slightly different internal format.
 
-There are two notable differences between the content or 
+There are only a few notable differences between the content and 
 interpretation of the Mixture and Domain blocks used for FTS 
 and those used for SCFT:
 
 <ul>
 
 <li>
-Mixture: The Mixture block used for an FTS normally contains a 
-value for an optional parameter vMonomer that represents the
-monomer reference volume in an incompressible system. This
-parameter is not normally needed or used in SCFT calculations,
-and so is usually from SCFT parameter files. In FTS, the value
-of vMonomer determines the invariant degree of polymerization,
-and thus controls the magnitude of field fluctuations. 
+**vMonomer** : The Mixture block used for an FTS normally contains a 
+value for a parameter vMonomer that represents the monomer 
+reference volume in an incompressible system. This is an optional 
+parameter is not normally needed or used in SCFT calculations, and 
+so is usually omitted from SCFT parameter files. In FTS, the value
+of vMonomer determines the invariant degree of polymerization, and 
+thus controls the magnitude of field fluctuations. 
 </li>
 
 <li>
-Domain: In an FTS calculation, the description of the periodic 
-unit cell provided in the Domain block describes the periodic 
-computational unit cell. In FTS, this is often chosen to be a 
-"large cell" with dimensions large enough to contain multiple 
-crystallographic unit cells of any expected periodic microstructure.
+** Unit cell** : In a FTS, the description of the periodic unit 
+cell given in the Domain block describes the periodic computational 
+unit cell. In FTS, this is often chosen to be a "large cell" with 
+dimensions large enough to contain multiple crystallographic unit 
+cells of any expected periodic microstructure.
+</li>
+
+<li>
+**Absence of space group** : In a FTS, it does not make sense 
+to impose a strict space group symmetry on the fields, since 
+fluctuating fields will generally not preserve any nontrivial
+symmetries characteristic of an SCFT solution.  The optional 
+space group declaration is thus usually omitted from a parameter 
+file for FTS. 
+</li>
 
 </li>
+
 </ul>
 
 The BdSimulator and McSimulator parameter blocks share a common 
