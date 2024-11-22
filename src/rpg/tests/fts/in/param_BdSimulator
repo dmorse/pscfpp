@@ -1,0 +1,32 @@
+BdSimulator{
+   LrAmPreCompressor{
+      epsilon      1.0e-4
+      maxItr       200
+      maxHist      30
+      verbose	 0
+      errorType    normResid
+   }
+   
+   LMBdStep{
+      mobility        1.0E-3
+   }
+ 
+   AnalyzerManager{
+      baseInterval    1
+
+      TrajectoryWriter{
+         interval        10
+         outputFileName  out/trajectory
+      }
+      
+      HamiltonianAnalyzer{
+         interval        10
+         outputFileName  out/hamiltonian
+         nSamplePerBlock 2
+      }
+
+      StepLogger{
+         interval        5
+      }
+   }
+}
