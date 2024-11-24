@@ -95,38 +95,43 @@ namespace Rpc {
    * Initialize just prior to a run.
    */
    template <int D>
-   void McSimulator<D>::setup()
+   void McSimulator<D>::setup(int nStep)
    {
       UTIL_CHECK(system().w().hasData());
 
       // Eigenanalysis of the projected chi matrix.
       analyzeChi();
-
-      // Compute field components and MC Hamiltonian for initial state
-      system().compute();
-      computeWc();
       
       if (hasPerturbation()) {
          perturbation().setup();
       }
+      
+      if (hasRamp()) {
+         ramp().setup(nStep);
+      }
    
-      computeHamiltonian();
+      // Solve MDE and compute c-fields for the intial state
+      system().compute();
+      
+      // Compress the initial state (adjust pressure-like field)
+      compressor().compress();
+      compressor().clearTimers();
+      
+      // Compute field components and Hamiltonian
+      computeWc();
       if (state_.needsCc || state_.needsDc) {
          computeCc();
       }
       if (state_.needsDc) {
          computeDc();
       }
+      computeHamiltonian();
 
       mcMoveManager_.setup();
       if (analyzerManager_.size() > 0){
          analyzerManager_.setup();
       }
-      
-      // Compress the initial field before entering simulate loop. 
-      compressor().compress();
-      compressor().clearTimers();
-
+   
    }
 
    /*
@@ -138,10 +143,7 @@ namespace Rpc {
       UTIL_CHECK(mcMoveManager_.size() > 0);
       
       // Initial setup
-      setup();
-      if (hasRamp()) {
-         ramp().setup(nStep);
-      }
+      setup(nStep);
    
       Log::file() << std::endl;
 
@@ -292,7 +294,8 @@ namespace Rpc {
 
             // Initialize analyzers
             if (iStep_ == min) {
-               analyzerManager_.setup();
+               //analyzerManager_.setup();
+               setup(iStep_);
             }
 
             // Sample property values only for iStep >= min

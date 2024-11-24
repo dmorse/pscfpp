@@ -127,6 +127,11 @@ namespace Rpg {
    template <int D>
    void FourthOrderParameter<D>::computeFourthOrderParameter()
    {
+      if (!simulator().hasWc()){
+         system().compute();
+         simulator().computeWc();
+      }
+      
       const int meshSize = system().domain().mesh().size();
       RField<D> psi;
       psi.allocate(kSize_);

@@ -203,7 +203,7 @@ namespace Rpc {
       /**
       * Called at the beginning of the simulation member function.
       */
-      void setup();
+      void setup(int nStep);
 
    };
 

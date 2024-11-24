@@ -294,7 +294,8 @@ namespace Rpg {
 
             // Initialize analyzers
             if (iStep_ == min) {
-               analyzerManager_.setup();
+               //analyzerManager_.setup();
+               setup(iStep_);
             }
 
             // Sample property values only for iStep >= min

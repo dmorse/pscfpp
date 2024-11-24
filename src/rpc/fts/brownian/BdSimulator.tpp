@@ -269,6 +269,7 @@ namespace Rpc {
       Timer timer;
       bool hasFrame = true;
       timer.start();
+      
       for (iStep_ = 0; iStep_ <= max && hasFrame; ++iStep_) {
          hasFrame = trajectoryReaderPtr->readFrame();
          if (hasFrame) {
@@ -276,7 +277,8 @@ namespace Rpc {
 
             // Initialize analyzers
             if (iStep_ == min) {
-               analyzerManager_.setup();
+               //analyzerManager_.setup();
+               setup(iStep_);
             }
 
             // Sample property values only for iStep >= min
