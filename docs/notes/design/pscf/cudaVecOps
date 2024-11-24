@@ -3,157 +3,276 @@ TODO (rpg GPU code):
 Clean up of simple vector linear algebra kernel functions
 ----------------------------------------------------------
 
-1) Create a new public branch vector in which to do clean up.
-   Submit partial but functional changes to that.
+1) Create a new public branch vector in the github repository of 
+   whoever does the work in which to do clean up. Commit and push 
+   partial but functional changes to that.
 
 2) Comment out (first) then erase (second) unused kernels.
    Some are found in solvers/Block.tpp and (possibly?) math/Helpers.cu
    (From Ryan: definitely some in math/Helpers.cu!)
 
-3) Analyze what operations in the current rpg code are or should be 
+3) Many of the existing linear algebra operations use a consistent
+   order in which the first argument is a pointer to the LHS and the 
+   last is the array size, but some do not. Before changing function 
+   names, clean up the interface of any that don't to correspond to 
+   this convention, and make corresponding changes in locations that 
+   call these functions.  Standardizing the function interfaces will 
+   make it simpler to change the names later. We may be able to do 
+   this in stages, by first just changing the names of Cuda kernels, 
+   testing the results of that transformation, and then later
+   changing from cuda kernels with <<< ... >>> syntax to 
+   corresponding wrapper C++ functions that use the ThreadGrid 
+   namespace internally.  If we standardize parameter order first,
+   the later changes in names should become easy.
+
+4) Analyze what operations in the current rpg code are or should be 
    implemented by calling a standard linear algebra operation like
    one of those described below. That will give a list of operations
    that are needed immediately, and may identify some possible 
    operations that we actually don't need immediately. 
 
-4) Establish more consistent function name conventions for a new
-   set of functions in pscf/cuda/LinearAlgebra files.
+5)  Recommendation: Create unit tests for existing functions
+    before creating new ones, to add confidence during later
+    transformations.  These functions are simple, but humans still 
+    make random mistakes. The earlier in this process we right
+    good tests, the easier and safer all later transformations
+    will become. 
 
-   Proposal: One way to do this would be to write and test copies 
-   with new names and/or new interfaces, and then just start 
-   replacing function calls to refer to the new functions. Comment 
-   out and remove old ones only after all calls have been changed
+6) Create a file with functions for vector operations that use a 
+   more consistent name and interface conventions than the 
+   functions currently defined in pscf/cuda/LinearAlgebra files. 
 
-   Proposal for name convention (current preference):
+   Proposal: Create new files name pscf/cuda/Vec with .h and .cu
+   file extension that are created by copying the corresponding
+   LinearAlgebra files after the parameter file has been 
+   standardized. Then create renamed cuda kernels simply by
+   changing function names in the new file. 
 
-          Use overloading of arguments to distinguish input types,
-          thus limiting the number of required function names.
+   Proposal for function name conventions:
 
-          Use V for vector, S for scalar for input argument(s). 
-          Agument types V and S follow the operation name. 
+       Define all these functions in a namespace Pscf::Cuda::Vec.
+       Use qualified names in which "Vec::" is explicit to increase
+       readability, to make it clear that these are vector operations.
+       The result (or LHS) of every function in this namespace is a
+       vector (i.e., an array).
 
-          Use Eq for unary assignment. The function eqV(A,B) thus 
-          assigns vector B to a vector A (A=B) while, eqS(A,S)
-          assigns scalar S to every element of vector A. 
+       Declare all of these functions in a new file pscf/cuda/Vec.h
+       that is created by copying LinearAlgebra.h and changing names.
+       Add include statements for this header where needed and 
+       eventually remove include statements for the LinearAlgebra.h 
+       header. Erase LinearAlgebra files after the functions they
+       define are unused.
 
-          Use add, sub, mul div for binary operations. Start each
-          function name with the binary operation in lower case. 
-          Multiplication and division are interpreted as elementwise
-          operations, like addition and subtraction.  The function 
-          addVV(A,B,C) thus implements vector-vector addition 
-          A = B + C, while addVS(A,B,c) implements vector scalar
-          addition A = B + c in which c is a scalar that is added
-          to every element of B.
+       Use overloading of arguments to distinguish input data types
+       (real vs. complex) thus limiting the number of required 
+       function names.
 
-          Use Eq after a binary operation name to denote in-place 
-          operations (compound assignments), such as addEq, analogous 
-          to C/C++ notation +=, -=, *=. The function addEqV(A,B) thus
-          implements A = A + B or A += B.
+       Use V for vector, S for scalar for input argument(s). 
+       Agument types V and S follow the operation name. 
 
-          In examples below (but not in names) use upper case for 
-          vectors, lower case for scalars:
+       Use eq for unary assignment. The function eqV(A,B) thus 
+       assigns vector B to a vector A (A=B) while, eqS(A,S)
+       assigns scalar S to every element of vector A. 
 
-          Unary assignment:
+       Use add, sub, mul div for binary operations. Start each
+       function name that involves such an operation with the binary 
+       operation in lower case.  All binary operations are 
+       interpreted as elementwise operations.  The function 
+       addVV(A,B,C) thus implements vector-vector addition 
+       A[i] = B[i] + C[i], while addVS(A,B,c) implements vector 
+       scalar addition A[i] = B[i] + c in which c is a scalar 
+       that is added to every element of B.
 
-            eqV(A,B)  :  A = B  vector assignment
-            eqS(A,s)  :  A = s  assigment of scalar s to every element
-          Binary operations:
+       Use Eq after a binary operation name to denote in-place 
+       operations (compound assignments), such as addEq, analogous 
+       to the C/C++ notation +=, -=, *=. The function addEqV(A,B) 
+       thus implements A[i] += B[i].
 
-            addVV(A,B,C) :  A = B + C vector-vector addition
-            addVS(A,B,c) :  A = B + c vector-scalar addition
+       Use a lower case c (for "coefficient") after a V to indicate
+       a coefficient (or scaling factor) that multiplies a vector.
+       Thus addEqVc(A,B,c) implements A[i] += c*B[i].  Coefficients
+       follow the vector that the multiply in both the name and
+       the argument list.
 
-          Compound assignment:
+       Unary operations such as exponentiation can appear to the
+       right of assignment eq, a binary operation such as add or 
+       a compound assignment. Thus eqExpVc(B,c) represents
+       A[i] = exp(c*B[i]) while addEqExpVc(A,B,c) represents
+       A[i] += exp(c*B[i]).
 
-            addEqV  :  A += B or A = A + B (addition of vector V)
-            addEqS  :  A += c or A = A + c (addition of scalar c)
+       In examples below (but not in functions names), we use 
+       upper case for vector variables, lower case for scalars 
+       variables.
 
-          C interface: Order of the first few parameters would be the 
-          same as in order of equation, with the LHS vector listed 
-          first.  Integer array size is after other arguments. 
-          In Cuda kernels, vectors are passed as pointers (cudaReal*
-          or cudaComplex*), scalars are passed as by value as cudaReal
-          or cudaComplex. Vectors that are not modified (any after 
-          the first argument) are passed as pointers to const (i.e.,
-          cudaReal const * or cudaComplex const *).  Return value is 
-          always void.
+       Unary assignment:
 
-          Result data types (real or complex) are known from argument 
-          types.  Binary operations involving inputs of the same type 
-          (both cudaReal or both cudaComplex) yield a result with
-          elements of that type. Operations involving complex and 
-          real arguments yield complex results. 
+         eqV(A,B,n)  :  A[i] = B[i]  vector assignment
+         eqS(A,s,n)  :  A[i] = s     assigment of scalar to every element
+
+       Binary operations (distinct LHS memory location)
+
+         addVV(A,B,C,n) :  A[i] = B[i] + C[i] vector-vector addition
+         addVS(A,B,c,n) :  A[i] = B[i] + c    vector-scalar addition
+
+       Compound assignment ("in place" operations)
+
+         addEqV(A,B,n) :  A[i] += B[i]  (addition of vector V)
+         addEqS(A,B,c) :  A[i] += c     (addition of scalar c)
+
+       C interface: The first function parameter is always a non-const
+       pointer to the vector associated with the LHS or result. 
+       The int vector dimension is listed last, after all other arguments. 
+       In Cuda kernels, vectors are passed as pointers (cudaReal*
+       or cudaComplex*), scalars are passed as by value as cudaReal
+       or cudaComplex. RHS vectors that are not modified (any after 
+       the first argument) are passed as pointers to const (i.e.,
+       cudaReal const * or cudaComplex const *).  Return value is 
+       always void.
+
+       Result data types (real or complex) are known from argument 
+       types.  Binary operations involving inputs of the same type 
+       (all cudaReal or all cudaComplex) yield a result with
+       elements of that type. Operations involving both complex and 
+       real RHS arguments yield a complex result vector.
  
-          Define kernel function in Pscf::Cuda::VecOp::
+       Define kernel function in Pscf::Cuda::Vec::
 
-          Examples of interfaces (return type is void in all):
+       Use an underscore in names of kernel functions to distinguish
+       them from corresponding C++ functions (see discussion below).
 
-            addVV(real* result, real const * a, real const * b, int n);
-            addVV(complex* result, complex const * a, complex const * b, 
-                 int n);
-            addVV(complex* result, complex* a, real const * b, in n);
-            addVS(real* result, real const * a, real b, int n);
-            addVS(complex* result, complex const * a, complex b, int n);
-            addVS(complex* result, complex const * a, real b, int n);
-            addVS(complex* result, real const * a, complex b, int n);
+       Examples of kernel interfaces (return type is void in all):
+
+         _eqV(real* result, real const * a, int n);
+
+         _addVV(real* result, real const * a, real const * b, int n);
+         _addVS(real* result, real const * a, real b, int n);
+         _addEqV(real * a, real const * b, int n)
+         _addEqS(real * a, real b, int n)
+
+         _addVV(complex* result, complex* a, real const * b, in n);
+         _addVV(complex* result, complex const * a, complex const * b, 
+              int n);
+         _addVS(complex* result, complex const * a, complex b, int n);
+         _addVS(complex* result, complex const * a, real b, int n);
+         _addVS(complex* result, real const * a, complex b, int n);
+         _addEqV(complex* a, complex const * b, int n)
+         _addEqV(complex* a, real const * b, int n)
   
-            addEqV(real* a, real const * b, int n)
-            addEqV(complex* a, complex const * b, int n)
-            addEqV(complex* a, real const * b, int n)
+         _addEqS(complex* a, complex b, int n)
+         _addEqS(complex* a, real b, int n)
   
-            addEqS(real* a, real b, int n)
-            addEqS(complex* a, complex b, int n)
-            addEqS(complex* a, real b, int n)
-     
-          Here "real" and  "complex" denote cudaReal and cudaComplex.
+       Here "real" and  "complex" denote cudaReal and cudaComplex.
 
-          That is a total of 13 possible binary or compount assignment 
-          functions involving the add operation.  With 4 possible binary
-          operations, that is 52 possible functions.  Start by renaming 
-          the ones we use now.
+       The number of possible functions involving only real numbers
+       is not that huge, but expands a lot when we include possible
+       binary operations that generate complex vectors with both real 
+       and complex RHS arguments.
 
-5) Kernels vs. C++ Wrapper functions
+       Start by defining and renaming the ones that are already used
+       in the code, and add others as we need them. The library 
+       doesn't need to be exhaustive - it just needs an unambigous set 
+       of conventions that will allow orderly growth as needed.
+
+7) Kernels vs. C++ Wrapper functions
 
        For many required operations with vector results, we will probably 
        want up to three types of closely related function:
 
-       1. A global cuda kernel like the existing kernels, in which the 
-          Block and Thread counts have to be passed explicitly. These
-          could be defined in Pscf::Cuda. Arrays are passed as pointers.
+       1. A __global__ cuda kernel like the existing kernels, for which 
+          the Block and Thread counts have to be passed explicitly in 
+          a <<< .... >> block. Names of these functions begin with an
+          underbar (_), and all vector operations are defined in
+          Pscf::Cuda::Vec.  Arrays are passed as pointers. 
 
-       2. A C++ function in which a ThreadGrid is passed as an argument, 
-          along with bare C pointers to memory on the GPU, and an array 
-          dimension.  This would call a kernel internally. The presence 
-          of a ThreadGrid in the argument would distinguish the interface 
-          from that of an analogous kernel, so the name could be the same. 
-          This could also be defined in Pscf::Cuda.
+          Example declaration (within Pscf::Cuda::Vec) :
 
-       3. A C++ function that takes Field<typename T> containers.
-          This would calls the kernel or C++ pointer version internally. 
+          __global__ 
+          void _addEqV(cudaReal * A, cudaReal const * B, int n)
+
+          Example usage (in context with "using namespace Pscf::Cuda"):
+
+             Vec::_addEqV<<nBlocks, nThreads>>(a,b,,n)
+
+          Comment: The underscore prefix name convention would initially 
+          be used only for names of Cuda kernels for which there are 
+          corresponding C++ functions with the same name and interface.
+
+          We might then consider establishing a convention in which 
+          CUDA kernels are always distinguished by an underscore prefix, 
+          since this is a compact syntax that we aren't using elsewhere
+          to mean something else (class members have an _ suffix).
+          If we decide to make the rule general, we'd document it in 
+          the PSCF programmers style guide section of the manual in a 
+          separate section on Cuda kernels.
+
+          Recommendation: Make changes as need to make sure the order 
+          of arguments of all existing linear algebra functions obey 
+          a standard order (LHS first and vector dimension last) that is
+          the same as the one we want to use in the new library BEFORE 
+          changing names or header includes, to make the name change 
+          as trivial as possible. 
+
+
+       2. A C++ function with the same interface and analogous name as
+          the corresponding cuda kernel, without the underbar. Arrays 
+          are pointers to global Gpu memory. A static ThreadGrid 
+          functions is used internally to choose values for the block 
+          and thread counts that are passed to the kernel that is called 
+          internally.
+
+          Example declaration (within Pscf::Cuda::Vec namespace):
+
+             void addEqV(cudaReal* A, cudaReal const * B, int n) {
+                int nb, nt;
+                ThreadGrid::setThreadsLogical(n, nb, nt);
+                _addEqV<<<nt, nt>>>(A, B, n);
+             }
+
+          Example usage (calling location):
+
+             In context with "using namespace Pscf::Cuda" :
+
+                  Vec::addEqV(a,b,n)
+
+             In context with "using namespace Pscf" :
+
+                  Cuda::Vec::addEqV(a,b,n)
+
+          Note: Syntax might allow analogous functions to be defined
+          and used in Cpu code, by using Pscf::Cpu instead
+
+          Comment: The internal call to ThreadGrid::setThreadsLogical
+          is a zero cost operation if the logical number of threads is
+          the same as the used in the most recently called thread,
+          since it the implementation of that function is designed to 
+          use the existing values of nBlocks and nThreads if the 
+          logical number of threads (i.e., the array dimension) is
+          unchanged.
+
+       3. Possibly a C++ function that takes Field<T> containers.
+          This would calls the C++ pointer version internally. 
           This could take a ThreadGrid as an argument or create one 
-          internally from knowledge of field array dimensions. The 
-          interface would be distinguished from that of the other two 
+          internally from knowledge of field array dimensions. 
+          The interface would be distinguished from that of the other two 
           function types by the appearance of container types rather 
           than pointers. This would have to be defined in namespace
-          Prdc::Gpu, since that is where the container template is 
-          defined.
-
+          Prdc::Cuda, since that is where the container templates
+          are defined. 
+   
        -  Using Field<cudaReal> and Field<cudaComplex> rather than
           RField<D>, RFieldDft<D> and CField<D> would avoid the need
           to treat D as a template parameter, and allow the same 
-          functions to be used for RFieldDft<D> and CField<D> containers.
+          functions to be used for RFieldDft<D> and CField<D> 
+          containers.
 
-       -  We need thorough unit tests to be written for all functions 
-          during development of these functions. These are simple, but 
-          humans still make mistakes, and its a lot of minor changes at 
-          once. 
 
-6) Find locally defined kernels and replace them one-by-one with ones 
-defined in pscf/gpu or prdc/gpu:
+8) Find locally defined kernels and replace them one-by-one with ones 
+defined in pscf/gpu or prdc/gpu when possible:
 
      - Replace scaleRealData in fieldFFT.tpp 
 
      - Consider replacing some pointwise multiplication functions defined 
-       in Block.
+       in Block, and perhaps assignment to an exponential. 
 
      - Consider replacing FFTBatched.tpp/scaleComplexData 
 
