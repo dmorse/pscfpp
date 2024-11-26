@@ -98,6 +98,7 @@ namespace Rpg {
    template <int D>
    void McSimulator<D>::setup(int nStep)
    {
+      UTIL_CHECK(hasCompressor());
       UTIL_CHECK(system().w().hasData());
 
       // Eigenanalysis of the projected chi matrix.
@@ -106,6 +107,7 @@ namespace Rpg {
       if (hasPerturbation()) {
          perturbation().setup();
       }
+      
       if (hasRamp()) {
          ramp().setup(nStep);
       }
@@ -294,7 +296,8 @@ namespace Rpg {
 
             // Initialize analyzers
             if (iStep_ == min) {
-               analyzerManager_.setup();
+               //analyzerManager_.setup();
+               setup(iStep_);
             }
 
             // Sample property values only for iStep >= min

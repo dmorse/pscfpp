@@ -67,6 +67,11 @@ namespace Rpg {
    template <int D>
    void MaxOrderParameter<D>::setup() 
    {
+      UTIL_CHECK(system().w().hasData());
+      if (!simulator().hasWc()){
+         simulator().computeWc();
+      }
+      
       //Check if the system is AB diblock copolymer
       const int nMonomer = system().mixture().nMonomer();
       if (nMonomer != 2) {

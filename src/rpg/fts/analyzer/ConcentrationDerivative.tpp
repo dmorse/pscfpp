@@ -55,6 +55,8 @@ namespace Rpg
    template <int D>
    double ConcentrationDerivative<D>::computeDerivative()
    { 
+      UTIL_CHECK(system().w().hasData());
+      
       // For AB diblock
       const int nMonomer = system().mixture().nMonomer();
       UTIL_CHECK(nMonomer == 2); 

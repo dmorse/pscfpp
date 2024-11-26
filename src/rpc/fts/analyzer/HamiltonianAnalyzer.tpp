@@ -58,8 +58,11 @@ namespace Rpc {
    template <int D>
    void HamiltonianAnalyzer<D>::compute() 
    {
-      if (!simulator().hasWc()){
+      UTIL_CHECK(system().w().hasData());
+      if (!system().hasCFields()) {
          system().compute();
+      }
+      if (!simulator().hasWc()){
          simulator().computeWc();
       }
       UTIL_CHECK(simulator().hasWc());

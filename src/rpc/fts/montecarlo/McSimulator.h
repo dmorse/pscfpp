@@ -144,6 +144,7 @@ namespace Rpc {
       using Simulator<D>::idealHamiltonian;
       using Simulator<D>::fieldHamiltonian;
       using Simulator<D>::perturbationHamiltonian;
+      using Simulator<D>::hasCompressor;
       using Simulator<D>::hasHamiltonian;
       using Simulator<D>::hasPerturbation;
       using Simulator<D>::hasRamp;
@@ -203,7 +204,7 @@ namespace Rpc {
       /**
       * Called at the beginning of the simulation member function.
       */
-      void setup();
+      void setup(int nStep);
 
    };
 

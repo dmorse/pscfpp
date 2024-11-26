@@ -112,22 +112,32 @@ namespace Rpg {
    * Perform a field theoretic MC simulation of nStep steps.
    */
    template <int D>
-   void BdSimulator<D>::setup()
+   void BdSimulator<D>::setup(int nStep)
    {
+      UTIL_CHECK(hasCompressor());
       UTIL_CHECK(system().w().hasData());
 
       // Eigenanalysis of the projected chi matrix.
       analyzeChi();
-
-      // Compute field components and Hamiltonian for initial state
-      system().compute();
-      computeWc();
-      computeCc();
       
       if (hasPerturbation()) {
          perturbation().setup();
       }
       
+      if (hasRamp()) {
+         ramp().setup(nStep);
+      }
+   
+      // Solve MDE and compute c-fields for the intial state
+      system().compute();
+
+      // Compress the initial state (adjust pressure-like field)
+      compressor().compress();
+      compressor().clearTimers();
+
+      // Compute field components and Hamiltonian for initial state.
+      computeWc();
+      computeCc();
       computeDc();
       computeHamiltonian();
 
@@ -136,9 +146,6 @@ namespace Rpg {
          analyzerManager_.setup();
       }
       
-      // Compress the initial field before entering simulate loop. 
-      compressor().compress();
-      compressor().clearTimers();
    }
 
    /*
@@ -150,10 +157,7 @@ namespace Rpg {
       UTIL_CHECK(system().w().hasData());
 
       // Initial setup
-      setup();
-      if (hasRamp()) {
-         ramp().setup(nStep);
-      }
+      setup(nStep);
 
       // Main simulation loop
       Timer timer;
@@ -277,7 +281,8 @@ namespace Rpg {
 
             // Initialize analyzers
             if (iStep_ == min) {
-               analyzerManager_.setup();
+               //analyzerManager_.setup();
+               setup(iStep_);
             }
 
             // Sample property values only for iStep >= min

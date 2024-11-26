@@ -126,6 +126,11 @@ namespace Rpc {
    template <int D>
    void FourthOrderParameter<D>::computeFourthOrderParameter()
    {
+      UTIL_CHECK(system().w().hasData());
+      if (!simulator().hasWc()){
+         simulator().computeWc();
+      }
+      
       MeshIterator<D> itr;
       itr.setDimensions(kMeshDimensions_);
       std::vector<double> psi(kSize_);
