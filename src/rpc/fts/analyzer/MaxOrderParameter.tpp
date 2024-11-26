@@ -125,8 +125,8 @@ namespace Rpc {
    template <int D>
    void MaxOrderParameter<D>::computeMaxOrderParameter()
    {
+      UTIL_CHECK(system().w().hasData());
       if (!simulator().hasWc()){
-         system().compute();
          simulator().computeWc();
       }
       

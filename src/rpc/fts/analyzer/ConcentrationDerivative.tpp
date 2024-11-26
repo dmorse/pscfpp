@@ -55,6 +55,8 @@ namespace Rpc
    template <int D>
    double ConcentrationDerivative<D>::computeDerivative()
    { 
+      UTIL_CHECK(system().w().hasData());
+      
       // For AB diblock
       const int nMonomer = system().mixture().nMonomer();
       UTIL_CHECK(nMonomer == 2); 
@@ -62,9 +64,10 @@ namespace Rpc
       double vMonomer = system().mixture().vMonomer();
       const int meshSize = system().domain().mesh().size();
       
-      // Obteain field hamiltonian
-      if (!simulator().hasWc()){
+      if (!system().hasCFields()) {
          system().compute();
+      }
+      if (!simulator().hasWc()){
          simulator().computeWc();
       }
       if (!simulator().hasHamiltonian()) {
