@@ -7,6 +7,7 @@
 #include <rpg/System.h>
 #include <rpg/fts/simulator/Simulator.h>
 #include <prdc/cuda/RField.h> 
+#include <prdc/cuda/RFieldComparison.h>
 #include <util/containers/DArray.h>  
 
 #include <util/tests/LogFileUnitTest.h>
@@ -206,11 +207,95 @@ public:
       #endif
      
    }
+   
+   void testComputeHamiltonian()
+   {
+      printMethod(TEST_FUNC);
+      
+      initSystem("in/param_system_disordered");
+      Simulator<3> simulator(system);
+      
+      simulator.allocate();
+      simulator.analyzeChi();
+      
+      system.readWRGrid("in/w_dis.rf");
+      system.compute();
+      simulator.computeWc();
+      simulator.computeCc();
+      
+      // ComputeHamiltonian
+      simulator.computeHamiltonian();
+      
+      double diff;
+      double idealHamiltonian = simulator.idealHamiltonian();
+      diff = fabs(-4784.86 - idealHamiltonian);
+      TEST_ASSERT(diff < 1.0E-1);
+   
+      double fieldHamiltonian = simulator.fieldHamiltonian();
+      diff = fabs(12081.8 - fieldHamiltonian);
+      TEST_ASSERT(diff < 1.0E-1);
+      
+      double totalHamiltonian = simulator.hamiltonian();
+      diff = fabs(7296.89 - totalHamiltonian);
+      TEST_ASSERT(diff < 1.0E-1);
+      
+      #if 0
+      std::cout << "ideal Hamiltonian: " << idealHamiltonian<< std::endl;
+      std::cout << "field Hamiltonian: " << fieldHamiltonian<< std::endl;
+      std::cout << "total Hamiltonian: " << totalHamiltonian<< std::endl;
+      #endif
+   }
+   
+   void testDc()
+   {
+      printMethod(TEST_FUNC);
+      
+      initSystem("in/param_system_disordered");
+      Simulator<3> simulator(system);
+      
+      simulator.allocate();
+      simulator.analyzeChi();
+      
+      system.readWRGrid("in/w_dis.rf");
+      system.compute();
+      simulator.computeWc();
+      simulator.computeCc();
+      simulator.computeDc();
+      
+      int nMonomer = system.mixture().nMonomer();
+      IntVec<3> dimensions = system.domain().mesh().dimensions();
+      DArray< RField<3> > dc0;
+      dc0.allocate(nMonomer-1);
+      for (int i = 0; i < nMonomer - 1; ++i) {
+         dc0[i].allocate(dimensions);
+      }
+      UnitCell<3> refUnitCell;
+      system.domain().fieldIo().readFieldsRGrid("in/dc_dis.rf", dc0, refUnitCell);
+      
+      #if 0
+      // Gernerate reference dc
+      std::ofstream out;
+      openOutputFile("in/dc_dis.rf", out);
+      system.domain().fieldIo().writeFieldsRGrid(out, simulator.dc(),
+                                                 system.domain().unitCell(),
+                                                 true, false, true);
+      out.close();
+      #endif 
+      
+      RFieldComparison<3> comparison;
+      comparison.compare(dc0, simulator.dc());
+      TEST_ASSERT(comparison.maxDiff() < 1.0E-2);
+      
+   }
+   
+   
 };
 
 TEST_BEGIN(SimulatorTest)
 TEST_ADD(SimulatorTest, testAnalyzeChi)
 TEST_ADD(SimulatorTest, testSaddlePointField)
+TEST_ADD(SimulatorTest, testComputeHamiltonian)
+TEST_ADD(SimulatorTest, testDc)
 TEST_END(SimulatorTest)
 
 #endif

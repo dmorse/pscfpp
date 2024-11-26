@@ -55,9 +55,12 @@ namespace Rpg
    template <int D>
    double PerturbationDerivative<D>::computeDerivative()
    {
-      // Obteain Hamiltonian per monomer
-      if (!simulator().hasWc()){
+      UTIL_CHECK(system().w().hasData());
+      UTIL_CHECK(simulator().hasPerturbation());
+      if (!system().hasCFields()) {
          system().compute();
+      }
+      if (!simulator().hasWc()){
          simulator().computeWc();
       }
       

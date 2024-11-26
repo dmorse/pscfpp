@@ -127,8 +127,8 @@ namespace Rpg {
    template <int D>
    void FourthOrderParameter<D>::computeFourthOrderParameter()
    {
+      UTIL_CHECK(system().w().hasData());
       if (!simulator().hasWc()){
-         system().compute();
          simulator().computeWc();
       }
       

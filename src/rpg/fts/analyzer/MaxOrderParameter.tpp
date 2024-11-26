@@ -67,8 +67,8 @@ namespace Rpg {
    template <int D>
    void MaxOrderParameter<D>::setup() 
    {
+      UTIL_CHECK(system().w().hasData());
       if (!simulator().hasWc()){
-         system().compute();
          simulator().computeWc();
       }
       

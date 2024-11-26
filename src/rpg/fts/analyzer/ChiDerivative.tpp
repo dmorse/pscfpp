@@ -54,6 +54,7 @@ namespace Rpg
    template <int D>
    double ChiDerivative<D>::computeDerivative()
    {
+      UTIL_CHECK(system().w().hasData());
       
       // For AB diblock
       const int nMonomer = system().mixture().nMonomer();
@@ -70,8 +71,10 @@ namespace Rpg
       * The fieldHamitonian is calculated in the computeHamiltonian() function,
       * located in rpc/simulate/Simulator.tpp 
       */
-      if (!simulator().hasWc()){
+      if (!system().hasCFields()) {
          system().compute();
+      }
+      if (!simulator().hasWc()){
          simulator().computeWc();
       }
       if (!simulator().hasHamiltonian()) {

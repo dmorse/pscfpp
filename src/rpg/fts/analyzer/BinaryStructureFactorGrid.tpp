@@ -106,6 +106,7 @@ namespace Rpg {
    template <int D>
    void BinaryStructureFactorGrid<D>::sample(long iStep) 
    {
+      UTIL_CHECK(system().w().hasData());
       if (isAtInterval(iStep))  {
          updateAccumulators();
       }
