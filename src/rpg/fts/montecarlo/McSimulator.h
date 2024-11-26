@@ -139,6 +139,7 @@ namespace Rpg {
       using Simulator<D>::hamiltonian;
       using Simulator<D>::idealHamiltonian;
       using Simulator<D>::fieldHamiltonian;
+      using Simulator<D>::hasCompressor;
       using Simulator<D>::hasHamiltonian;
       using Simulator<D>::hasPerturbation;
       using Simulator<D>::hasRamp;
