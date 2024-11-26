@@ -1,16 +1,21 @@
-This directory contains code specific to a pseudo-spectral 
-implementation of self-consistent field theory (SCFT) and field theoretic 
-simulations (FTS) with real fields for periodic structures, running on
-CPU hardware.  All code in this directory is defined in the namespace 
-Pscf::Rpc.  All FTS algorithms in this namespaced rely on a partial 
+This directory contains code used in program pscf_pc for self-consistent
+field theory (SCFT) and field theoretic simulations (FTS) with real fields 
+and periodic boundary conditions, using conventional CPU hardware.  All 
+stochastic FTS algorithms implemented in this directory rely on a partial 
 saddle point approximation (PS-FTS), which allows the use of real fields. 
+
+All code in this directory is defined in the namespace Pscf::Rpc. The
+symbol Rpc stands for 'real periodic CPU' Code defined in this namespace 
+may use classes and functions defined in namespace Util (directory src/util), 
+parent namespace Pscf (directory src/pscf), and namespace Pscf::Prdc 
+(directory src/prdc).
 
 Subdirectories:
 
 field/       - classes to represent or manipulate fields
-solvers/     - classes to solve the modified diffusion equation (MDE)
-scft/        - classes to implement self-consistent field theory (SCFT)
-fts/         - classes to implement field-theoretic simulation (FTS)
+solvers/     - modified diffusion equation (MDE) solvers
+scft/        - self-consistent field theory (SCFT)
+fts/         - field-theoretic simulation (FTS)
 tests/       - unit tests for code in src/rpc
 
 C++ Files (file extensions .h, .tpp and .cpp):
@@ -20,10 +25,10 @@ pscf_pc.cpp  - main program for periodic structures on CPU hardware
 
 Makefile and makefile fragments:
 
+makefile     - main makefile for src/rpc directory tree
 sources.mk   - list of source files in src/rpc (makefile fragment)
 patterns.mk  - pattern rules for use in src/rpc (makefile fragment)
 include.mk   - header of makefile file includes (makefile fragment)
-makefile     - main makefile for src/rpc directory tree
 
 Doxygen documentation files:
 

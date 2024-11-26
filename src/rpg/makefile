@@ -41,7 +41,7 @@ $(PSCF_PG_EXE): $(PSCF_PG).o $(PSCF_LIBS)
 	$(NVXX) $(LDFLAGS) -o $(PSCF_PG_EXE) $(PSCF_PG).o $(LIBS)
 
 # Note: In the linking rule for pscf_pg, we include the list $(PSCF_LIBS) 
-# of PSCF-specific libraries as dependencies but link to the list $(LIBS)
+# of PSCF-specific libraries as a dependency but link to the list $(LIBS)
 # of libraries that includes relevant external libraries.
 
 # Short phony target for executable file (for convenience)

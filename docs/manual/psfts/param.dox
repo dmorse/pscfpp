@@ -1,0 +1,223 @@
+/*! \page psfts_param_page Parameter Files
+
+\ref psfts_algorithm_page (Up) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref developer_page       (Next)
+<BR>
+
+PSCF can perform partial saddle-point field theoretic simulation 
+(PS-FTS) using either Brownian dynamics (BD) or Monte Carlo (MC)
+sampling methods. Parameter file formats for these two types of
+simulations share a common overall structure that is described 
+in the remainder of this page, along with examples for both types
+of simulation and discussion of the differences.
+
+\section psfts_param_overview_sec Parameter File Structure (Overview)
+
+A parameter file used for either BD or MC FTS calculations must 
+begin with Mixture, Interaction and Domain blocks that contain 
+similar information and as that in corresponding blocks used 
+in an SCFT parameter file for a periodic structure. 
+
+To enable a BD or MC simulation, the Mixture, Interaction, and
+Domain blocks must be followed by an selectable "Simulator" 
+block that contains parameters that are required for the chosen 
+type of FTS, but that are not necessary for SCFT calculations. 
+The Simulator block may either be a block labelled BdSimulator, 
+to enable a BD simulation, or a block labelled McSimulator, to 
+enable MC simulations. The BdSimulator and McSimulator blocks 
+use slightly different param file formats, because they contain 
+description of different types of stochastic sampling
+algorithms. 
+
+The overall format of a parameter file for either pscf_pc or 
+pscf_pg is shown below in skeleton form:
+\code
+\System{
+   Mixture{ ... }
+   Interaction{ ... }
+   Domain{ ... }
+   Iterator*#{ ... }
+   Sweep*#{ ... }
+   Simulator*#{ ... }
+}
+\endcode
+The Iterator, Sweep, and Simulator blocks are all optional,
+selectable blocks that are required to enable different types
+of simulation. The Iterator and Sweep blocks are only used 
+for SCFT calculations, and are normally omitted in parameter
+files that are used to enable a BD or MC calculation. The
+Simulator block must be present to enable FTS, but and is
+only used for this purpose. 
+
+The typical skeleton for a parameter file that enables 
+Brownian dynamics FTS but not SCFT would thus be
+\code
+\System{
+   Mixture{ ... }
+   Interaction{ ... }
+   Domain{ ... }
+   BdSimulator{ ... }
+}
+\endcode
+The corresponding format for a paramete file for an MC 
+simulation would replace the BdSimulator block by an 
+McSimulator block with a slightly different internal format.
+
+There are only a few notable differences between the content and 
+interpretation of the Mixture and Domain blocks used for FTS 
+and those used for SCFT:
+
+<ul>
+
+<li>
+**vMonomer** : The Mixture block used for an FTS normally contains a 
+value for a parameter vMonomer that represents the monomer 
+reference volume in an incompressible system. This is an optional 
+parameter is not normally needed or used in SCFT calculations, and 
+so is usually omitted from SCFT parameter files. In FTS, the value
+of vMonomer determines the invariant degree of polymerization, and 
+thus controls the magnitude of field fluctuations. 
+</li>
+
+<li>
+** Unit cell** : In a FTS, the description of the periodic unit 
+cell given in the Domain block describes the periodic computational 
+unit cell. In FTS, this is often chosen to be a "large cell" with 
+dimensions large enough to contain multiple crystallographic unit 
+cells of any expected periodic microstructure.
+</li>
+
+<li>
+**Absence of space group** : In a FTS, it does not make sense 
+to impose a strict space group symmetry on the fields, since 
+fluctuating fields will generally not preserve any nontrivial
+symmetries characteristic of an SCFT solution.  The optional 
+space group declaration is thus usually omitted from a parameter 
+file for FTS. 
+</li>
+
+</li>
+
+</ul>
+
+The BdSimulator and McSimulator parameter blocks share a common 
+overall structure, in which the only differences arise in the
+part of the block that describes the actual BD or MC sampling 
+algorithm. The shared overall structure may be described
+schematically as follows:
+\code
+  Simulator{
+    Compressor#{..}
+    seed   int
+    (Sampling Algorithm)
+    AnalyzerManager{ .... }
+  }
+\endcode
+Here, the label Simulator is used as a generic placeholder for 
+BdSimulator or McSimulator, and the label (Sampling Algorithm) 
+is used as a placeholder for a block that describes the BD or 
+MC sampling algorithm, which are discusssed separately below. 
+
+The Compressor block is a required but selectable block that
+initializes an algorithm that is used to find a partial saddle
+point configuration of a pressure-like field after each update
+of the fluctuating field or fields. 
+
+The purposes of the elements that are common to the two types of
+simulation are briefly
+
+
+\section psfts_param_brownian_sec Parameter File: Brownian Dynamics
+
+The text shown below is a complete parameter file for a simple 1D SCFT 
+calculation performed using the pscf_1d program:
+
+\code
+System{
+  Mixture{
+     nMonomer   2
+     monomers[
+                1.0
+                1.0
+     ]
+     nPolymer   1
+     Polymer{
+        nBlock  2
+        blocks[
+                0   0.5
+                1   0.5
+        ]
+        phi     0.1
+     }
+     v    0.01
+     ds   0.01
+  }
+  Interaction{
+     chi(
+           0    1    10.0
+     )
+  }
+  Domain{
+     mode     planar
+     xMin     0.0
+     xMax     8.0
+     nx       401
+  }
+  BdSimulator{
+     LrAmCompressor{
+     }
+     seed ....
+     LMBdStep{
+        mobility
+     }
+     AnalyzerManager{
+     }
+  }
+}
+\endcode
+
+This particular example gives parameters for a simulation of a melt of
+symmetric AB diblock copolymers.
+
+\section psfts_param_example_structure_sec File Structure
+
+Before delving into details, note the overall structure of this example:
+The above parameter file consists of a set of nested blocks that each begin 
+and end with matching curly brackets, much like the syntax of a C program. 
+Each block begins with a line that contains a capitalized label for the 
+block (e.g., System, Mixture, etc.), followed without any intervening 
+white space by an opening curly bracket, "{". Each such block ends with 
+a matching closing curly bracket on a line by itself. 
+
+The structure of the main blocks in this example is shown in skeleton 
+form below:
+\code
+System{
+  Mixture{
+     ...
+  }
+  Interaction{
+     ...
+  }
+  Domain{
+     ...
+  }
+  Iterator{
+     ...
+  }
+}
+\endcode
+The main block of a PSCF parameter file, which encloses all the data in 
+the file, is always labelled "System". The purpose of each primary 
+subblock of the main "System" block is described below.
+
+
+
+
+
+<BR>
+\ref psfts_algorithm_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref psfts_page           (Up)
+\ref developer_page       (Next)
+
+*/
