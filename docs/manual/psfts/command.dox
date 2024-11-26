@@ -1,0 +1,68 @@
+/*! \page psfts_command_page Command File
+
+\ref psfts_param_page         (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref psfts_postprocess_page   (Next)
+<BR>
+
+The input files required to run a field theoretic simulation (FTS) 
+are closely analogous to those required an SCFT calculation for a 
+periodic system. The pscf_pc or pscf_pg program must be invoked 
+with command line parameters that specify the names of a parameter 
+file and a command file.  The main difference in the command file 
+is simply that a SIMULATE command is used to run a stochastic 
+simulation, rather than the ITERATE or SWEEP command used to run 
+an SCFT calculation or an SCFT parameter sweep.
+
+For example, suppose that we want to use pscf_pg to run a GPU
+accelerated BD simulation of 30,000 BD steps in a 3D domain, 
+using a parameter file named param and a command file named 
+command. To do so we might invoke the program as
+\code
+   pscf_pg -e -d 3 -p param -c command > log 
+\endcode
+The parameter file used for such a calculation must contain
+a BdSimulator block that specifies appropriate choices of 
+algorithms and parameters for a BD step algorithm, a compressor 
+algorithm, and any desired analyzers. 
+
+A stochastic simulation must read in an initial field 
+configuration from a field file. 
+Field files used for FTS are almost always input and output in
+the r-grid file format, which gives values for the w fields on 
+the nodes of a grid. 
+Because the fluctuating fields used in a FTS generally do not 
+exhibit any nontrivial space group symmetry, field files used
+for this purpose often do not contain a space group identifier.
+
+A simple command file for running such a simulation, using an 
+input field named 'in/w.rf' might look like this:
+\code
+READ_W_RGRID   in/w.rf
+SIMULATE       30000
+WRITE_W_RGRID  out/w.rf
+WRITE_C_RGRID  out/c.rf
+WRITE_TIMERS   out/timers
+FINISH
+\endcode
+In this example, the READ_W_GRID reads in the initial w-field
+file, and thus SIMULATE command actually runs the simulation.
+The WRITE_W_RGRID and WRITE_C_GRID commands then writes the 
+final w and c field configurations to different files within
+the out/ directory.  The WRITE_TIMERS command writes diagnostic 
+information about the amount time take by different operations
+to a file. 
+
+The most important new command in this example is the SIMULATE 
+command. This command runs a simulation of a specified number
+of BD or MC steps, and takes the number of steps as a parameter. 
+In this example, the command thus runs a simulation of 30000 
+BD steps.  The type of simulation that is performed (i.e., BD 
+vs. MC) and the choice of algorithms and parameter values used 
+in the simulation must all be specified in the parameter file. 
+
+<BR>
+\ref psfts_param_page        (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
+\ref psfts_page              (Up)   &nbsp; &nbsp; &nbsp; &nbsp;
+\ref psfts_postprocess_page  (Next)
+
+*/
