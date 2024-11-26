@@ -8,7 +8,7 @@
 #include "solvers/SolverTestComposite.h"
 #include "system/SystemTestComposite.h"
 #include "sweep/SweepTestComposite.h"
-#include "fts/SimulatorTest.h"
+#include "fts/FtsTestComposite.h"
 #include <util/global.h>
 
 TEST_COMPOSITE_BEGIN(RpgNsTestComposite)
@@ -16,7 +16,7 @@ addChild(new FieldTestComposite, "field/");
 addChild(new SolverTestComposite, "solvers/");
 addChild(new SystemTestComposite, "system/");
 addChild(new SweepTestComposite, "sweep/");
-addChild(new TEST_RUNNER(SimulatorTest), "fts/");
+addChild(new FtsTestComposite, "fts/");
 TEST_COMPOSITE_END
 
 using namespace Pscf;

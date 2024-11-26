@@ -58,13 +58,15 @@ public:
       
       BdSimulator<3> simulator(system);
       initSimulator(simulator, "in/param_BdSimulator_analyzer");
-      simulator.analyze(0, 10, "FieldConfigReader", "in/w_dis_trajectory.rf");
+      std::string filename = filePrefix() + "in/w_dis_trajectory.rf";
+      simulator.analyze(0, 10, "FieldConfigReader", filename);
    }
    
    void testFourthOrderParameter()
    {
       printMethod(TEST_FUNC);
-      std::ifstream file("out/fourthOrder_analyzer");
+      std::string filename = filePrefix() + "out/fourthOrder_analyzer";
+      std::ifstream file(filename);
       if (!file.is_open()) {
         std::cout << "Error: Could not open file out/fourthOrder" 
                   << std::endl;
