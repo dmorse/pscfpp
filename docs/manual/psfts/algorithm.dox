@@ -4,116 +4,133 @@
 \ref psfts_param_page  (Next) &nbsp; &nbsp; &nbsp; &nbsp;
 <BR>
 
-The pscf_pc and pscf_pg programs allow PS-FTS simulations for to
-performed using either Brownian dynamics (BD) or Monte Carlo (MC) 
-algorithms to stochastically sample the exchange field or fields.
+The pscf_pc and pscf_pg programs allow PS-FTS simulations to be
+performed using either Brownian dynamics (BD) or Monte Carlo (MC)
+algorithms to stochastically sample the fluctuating exchange
+field or fields.
 
-BD or MC sampling algorithms for PS-FTS have a similar structure.
-At the beginning of each step of either type of simulation of a 
-standard AB system, a BD or MC algorithm is used to generate a 
-small random change in the exchange field(s) \f$ \omega_{-} \f$. 
-Next, an iterative algorithm is then used to adjust the 
-presssure-like field \f$ W_{+} \f$ so as to satisfy the partial 
-saddle-point condition.
-In MC simulations, a decision is then made about whether to 
-accept or reject the resulting move.
-The algorithm that is used to identify a partial saddle-point 
-configuration for \f$ W_{+} \f$ is referred to throughout the 
-PSCF code and documentation as a ``compressor" algorithm. 
+BD and MC sampling algorithms for PS-FTS have a similar structure.
+First, at the beginning of each step of either type of simulation,
+a a BD or MC algorithm is used to generate a small random change
+in the exchange field(s) \f$ \omega_{-} \f$.
+Next, an iterative algorithm is used to adjust the presssure-like
+field \f$ W_{+} \f$ so as to satisfy the partial saddle-point
+condition, thus imposing incompressibility at a mean-field level.
+In the case of a MC simulation, a decision is then made about
+whether to accept or reject the resulting move, based on the
+value of the Hamiltonian at the new partial saddle-point state.
+The algorithm that is used to identify a partial saddle-point
+configuration for \f$ W_{+} \f$ is referred to throughout the
+PSCF code and documentation as a "compressor" algorithm.
 
-PSCF allows user to choose a set data analysis and data output 
-operations that should be performed at regular intervals during a 
-simulation. C++ Classes that implement these operations are 
-referred to in PSCF as "Analyzer" classes. Analyzer classes may 
-calculate quantities of interest, accumulate statistical properties 
-such as average values, and/or periodically output data to file.
 
-The format of a PSCF parameter file for PS-FTS calculations is thus 
-designed to allow a user to choose from different available choices 
-for three different types of simulation and anaysis algorithms.
+PSCF allows user to specify a set of data analysis and data output
+operations that will be performed at regular intervals during a
+stochastic simulation.
+The C++ classes that implement such operations are subclasses of
+a base class named "Analyzer", and are referred to generically
+as analyzer classes or simply analyzers.
+Analyzer classes may calculate quantities of interest, accumulate
+statistical properties such as average values, and/or periodically
+output data to file.
+One of the simplest such classes simply outputs periodic snapshots
+of the current field configuration to a field trajectory file for
+later processing.
 
-  - **Sampling** : BD or MC stochastic sampling algorithms, which 
-    are used to update \f$ \omega_{-} \f$.
+The format of a PSCF parameter file is thus designed to allow a
+user to choose at run time from different available choices for
+three different types of simulation and anaysis algorithms:
 
-  - **Compressor** : A compressor algorithm that is used to 
-    adjust \f$ W_{+} \f$ so as to satisfy the partial 
-    saddle-point condition.
+   - **BD or MC Sampling** :  BD or MC stochastic sampling algorithms,
+     which are used to update \f$ \omega_{-} \f$.
 
-  - **Analysis** : Data analysis and data output operations.
+   - **Compressor** :  A compressor algorithm that is used to adjust
+     \f$ W_{+} \f$ so as to again satisfy the partial saddle-point
+     condition after a change in \f$ \omega_{-} \f$.
 
-The format for parameter files used by pscf_pc and pscf_pg 
-programs contains an optional "Simulator" block that must be 
-present to enable PS-FTS calculations, but that is normally 
-omitted in parameter files for SCFT calculations. The Simulator 
-block contains three main subblock that specify choices and 
-associated parameter values for sampling, compressor, and 
+   - **Analyzers** :  Data analysis and/or data output operations
+     that are performed at regular intervals during a simulation.
+
+The format for parameter files used by pscf_pc and pscf_pg
+programs contains an optional "Simulator" block that must be
+present to enable PS-FTS calculations, but that is normally
+omitted in parameter files for SCFT calculations. The Simulator
+block contains three main subblock that specify choices and
+associated parameter values for sampling, compressor, and
 analysis algorithms.
 
 \section psfts_algorithm_BD Brownian Dynamics (BD)
 
 The description of BD step algorithms used to define parameters
-is based on units in which the fictitious "time" is measured 
-in units of BD steps and energy is measured in units in which 
-\f$ kT = 1 \f$. The magnitude of the change in the exchange
-field per time step is controlled by a "mobility" parameter,
-denoted by the label "mobility" in the parameter file, and by
-the symbol \f$ \gamma \f$ in these notes.
+is based on units in which the fictitious "time" is measured
+in units of BD steps and energy is measured in units in which
+\f$ kT = 1 \f$. The typical magnitude of changes in the exchange
+field(s) per time step is controlled by a "mobility" parameter,
+which is denoted by the label "mobility" in the parameter file,
+and by the symbol \f$ \gamma \f$ in these notes.
 
-As an example, an explicit Euler BD step algorithm yields a
-change \f$ \Delta \omega_{-}({\bf r}) \f$ per time step in the 
-exchange field \f$ \omega_{-}({\bf r}) \f$ at a grid point located 
-at position \f$ {\bf r} \f$ that is given by
+As an example, an explicit Euler BD step algorithm for a standard
+AB system yields a change \f$ \Delta \omega_{-}({\bf r}) \f$ per
+time step in the exchange field \f$ \omega_{-}({\bf r}) \f$ at
+grid point \f$ {\bf r} \f$ that is given by
 \f[
-  \Delta \omega_{-}({\bf r}) = 
+  \Delta \omega_{-}({\bf r}) =
   - \gamma \frac{\delta H}{\delta \omega_{-}({\bf r})}
   + g({\bf r})
 \f]
-where \f$ \gamma \f$ is the BD mobility parameter, 
+where \f$ \gamma \f$ is the BD mobility parameter,
+\f$ g({\bf r}) \f$ is a random field displacement, and
 \f[
   \frac{\delta H}{\delta \omega_{-}({\bf r})}
   = \frac{1}{v} \left [
-    \frac{2\omega_{-}({\bf r})}{\chi_{b}} 
+    \frac{2\omega_{-}({\bf r})}{\chi_{b}}
     - \Phi_{-}({\bf r}) \right ]
-    \quad,
+    \quad.
 \f]
-and \f$ g({\bf r}) \f$ is a random displacement. The random
-displacement is chosen independently at each grid point 
-and each BD step from a Gaussian distribution with a 
-vanishing mean value, \f$ \overline{g({\bf r})} = 0 \f$, 
-and a variance
+The random displacement \f$ g({\bf r}) \f$ is chosen independently
+independently at each grid point and each BD step from a Gaussian
+distribution with a vanishing mean value,
+\f$ \overline{g({\bf r})} = 0 \f$,
+and with a variance
 \f[
-  \overline{g^{2}({\bf r}) = \gamma \Delta V
+  \overline{g^{2}({\bf r})} = \gamma \Delta V \quad.
 \f]
-where \f$ \Delta V \f$ is the volume per grid point of
-the computational mesh, given by \f$ \Delta V = V/G \f$,
-where \f$ V \f$ is the total system volume and \f$ G \f$
-is the number of grid points on the mesh. 
+Here, \f$ \Delta V \f$ is the volume per grid point of the
+computational mesh, given by \f$ \Delta V = V/G \f$, where
+\f$ V \f$ is the total system volume and \f$ G \f$ is the
+number of grid points on the mesh.
 
 The mobility parameter has an analogous meeting in more
-sophisticated BD step algorithms, and always appears as a 
-prefactor of \f$ \delta H/\delta \omega_{-}({\bf r}) \f$ in 
-expressions for changes in \f$ \omega_{-}({\bf r}) \f$. 
+complicated BD step algorithms, and always appears as a
+prefactor of \f$ \delta H/\delta \omega_{-}({\bf r}) \f$
+in expressions for changes in \f$ \omega_{-}({\bf r}) \f$.
 
-PSCF currently allows users to choose from among the
-explicit Euler algorithm described above, a predictor 
-corrector algorithm, and Leimkuhler-Matthews (LM) BD 
-step algorithms. We recommend the LM algorithm as the 
-method of choice. 
+Other authors have sometimes referred to what we call a
+"mobility" as a time step, sometimes indicated by a s
+symbol such \f$\Delta t\f$.  We avoid this notation and
+language because there is no natural definition of "time"
+or units of time in this context, in which an inertialess
+BD algorithm is simply being used to sample an equilibrium
+distribution.
 
-
+PSCF currently allows users to choose from among three
+BD step algorithms: (1) the explicit Euler algorithm
+described above, (2) a predictor corrector algorithm,
+and (3) the Leimkuhler-Matthews (LM) BD step algorithm.
+We recommend the LM algorithm as the method of choice.
 
 \section psfts_algorithm_MC Monte Carlo (MC)
 
 The PSCF implementation of MC sampling allows the user to
-specify a set of MC moves algorithms from among which the 
-code chooses a type of move (or move algorithm) at random 
+specify a set of MC moves algorithms from among which the
+code chooses a type of move (or move algorithm) at random
 at the beginning of each MC step.  The algorithm for each
-step of an MC simulation is thus:
+attempted step of an MC simulation is thus:
 
    - Choose a type of MC move at random from among a set
      of choices specified by the user.
 
-   - Use the chosen MC move to generate a random change in 
+   - Use the chosen MC move to generate a random change in
      \f$ \omega_{-} \f$.
 
    - Use the chosen compressor algorithm to adjust the
@@ -124,45 +141,60 @@ step of an MC simulation is thus:
      point state.
 
    - Use a Metropolis criterion that is designed to
-     satisfy detailed balance to decide whether to 
+     satisfy detailed balance to decide whether to
      accept or reject the move.
 
    - If the move is rejected, restore the system to
-     the state it had before the generation of the
-     random change. 
+     the field configuration it had before the
+     beginning of the attempted step.
 
-The block of the parameter file for an MC simulation that 
+The block of the parameter file for an MC simulation that
 contains information about MC moves, which is labelled
 "McMoveManager", contains one or more subblocks that are
 associated with different types of move.  The parameter
-file subblock associated with each such MC move type 
-always contains a "probability" parameter that specifies 
-the probability of that type of move being chosen at the 
-start of each step, in addition to whatever other parameters 
-are required to specify the probability distribution for
-the random change.
+file block associated with each such MC move type always
+contains a "probability" parameter that specifies the
+probability of that type of move being chosen at the
+start of each step, among other required parameters.
 
-PSCF currently provides a simple move that generates 
-statistically independent changes at each grid point 
-(labelled RealMcMove) and a "smart" force bias move 
-(labelled ForceBiasMcMove) that uses an explicit Euler 
-BD step to generate a proposed MC move.
+PSCF currently provides two types of MC move:
+A simple named RealMove that generates statistically
+independent changes at each grid point, and a "smart
+MC" or force bias move named ForceBiasMove that uses
+an explicit Euler BD step to generate a proposed MC
+move. The force bias move leads to much more efficient
+sampling than the real move.
 
-MC simulations can efficiently sample of relatively
-small systems, but become rapidly less efficient with
-increasing system size. This decrease in efficiency is
-a result of a rapid decrease in acceptance rates with
-increasing system size for the type of collective MC 
-moves used in PSCF, and forces the use of smaller step 
-sizes for larger systems to obtain optimal acceptance
-rates.  We generally recommend the use BD rather than
-MC simulation for 3D systems with roughly \f$ 10^{4} \f$ 
-or more grid points. When MC simulations are performed, 
-the ForceBiasMcMove algorithm is much more efficient than 
-the RealMcMove, and is recommended as the workhorse 
-sampling algorithm for MC simulations.
+MC simulations that rely primarily on the force bias
+move can efficiently sample relatively small systems,
+but become less efficient with increasing system size.
+This decrease in efficiency is a result of a decrease
+in acceptance rates with increasing system size for
+the type of collective MC moves used in PSCF, which
+forces the use of smaller step sizes for larger systems.
+We generally recommend the use BD rather than MC simulation
+for 3D systems with roughly \f$ 10^{4} \f$ or more grid
+points.
 
-\section psfts_algorithm_analyzer Data Analysis and Output
+One virtue of MC simulations over BD simulations is
+that, because MC algorithms are designed to satisfy
+the principle of detailed balance, they do not exhibit
+any systematic sampling error: An infinitely long MC
+simulation should, in principle, yield exact results
+for any average value obtained from a spatially
+discretized model (aside from errors arising from the
+spatial discretization). The only sampling errors in MC
+simulations are true statistical errors arising from the
+finite length of a simulation, which can be estimated by
+standard statistical methods, and errors arising from
+round off of floating point numbers, which are usually
+small.  BD simulations, however, exhibit an additional
+systematic error due to discretization of the time
+coordinate in the Langevin equation, which increases
+with increases in the mobility parameter.
+Users of BD simulations thus need to be careful about
+assessing systematic errors as well as about
+quantifying purely statistical errors.
 
 <BR>
 \ref psfts_psa_page    (Prev) &nbsp; &nbsp; &nbsp; &nbsp;

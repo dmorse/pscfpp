@@ -1,4 +1,4 @@
-/*! \page psfts_page Field Theoretic Simulation - Partial Saddle-Point Approximation
+/*! \page psfts_page Field Theoretic Simulation (PS-FTS)
 
 \ref scft_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
 \ref developer_page (Next)
@@ -34,6 +34,8 @@ this discussion provide an overview of the underlying theory.
    <li> \subpage psfts_psa_page            </li>
    <li> \subpage psfts_algorithm_page      </li>
    <li> \subpage psfts_param_page          </li>
+   <li> \subpage psfts_command_page        </li>
+   <li> \subpage psfts_postprocess_page    </li>
    </ol>
 
 <BR>
