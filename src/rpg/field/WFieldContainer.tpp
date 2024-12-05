@@ -204,8 +204,8 @@ namespace Rpg
       ThreadGrid::setThreadsLogical(meshSize_, nBlocks, nThreads);
       for (int i = 0; i < nMonomer_; ++i) {
          //UTIL_CHECK(fields[i].capacity() == nBasis_)
-         assignReal<<<nBlocks, nThreads>>>(rgrid_[i].cField(), 
-                                           fields[i].cField(), 
+         assignReal<<<nBlocks, nThreads>>>(rgrid_[i].cArray(), 
+                                           fields[i].cArray(), 
                                            meshSize_);
          //rgrid_[i] = fields[i];
       }
@@ -222,7 +222,7 @@ namespace Rpg
    * Set new w-field values, using unfoldeded array of r-grid fields.
    */
    template <int D>
-   void WFieldContainer<D>::setRGrid(Field<cudaReal> & fields)
+   void WFieldContainer<D>::setRGrid(DeviceDArray<cudaReal> & fields)
    {
       UTIL_CHECK(isAllocatedRGrid_);
 
@@ -231,8 +231,8 @@ namespace Rpg
       ThreadGrid::setThreadsLogical(meshSize_, nBlocks, nThreads);
 
       for (int i = 0; i < nMonomer_; i++) {
-         assignReal<<<nBlocks, nThreads>>>(rgrid_[i].cField(), 
-                                           fields.cField() + i*meshSize_, 
+         assignReal<<<nBlocks, nThreads>>>(rgrid_[i].cArray(), 
+                                           fields.cArray() + i*meshSize_, 
                                            meshSize_);
       }
 

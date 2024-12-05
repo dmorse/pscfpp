@@ -69,7 +69,7 @@ namespace Rpg {
          etaB_[i].allocate(meshDimensions);
       }
       dwc_.allocate(meshDimensions);
-      gaussianField_.allocate(meshSize);
+      gaussianField_.allocate(meshDimensions);
    }
 
    /*
@@ -97,9 +97,9 @@ namespace Rpg {
          RField<D>& eta = etaNew(j);
         
          // Generagte normal distributed random floating point numbers
-         cudaRandom().normal(gaussianField_.cField(), meshSize, (cudaReal)stddev, (cudaReal)mean);
-         scaleReal<<<nBlocks, nThreads>>>(gaussianField_.cField(), b, meshSize);
-         assignReal<<<nBlocks, nThreads>>>(eta.cField(), gaussianField_.cField(), meshSize);
+         cudaRandom().normal(gaussianField_.cArray(), meshSize, (cudaReal)stddev, (cudaReal)mean);
+         scaleReal<<<nBlocks, nThreads>>>(gaussianField_.cArray(), b, meshSize);
+         assignReal<<<nBlocks, nThreads>>>(eta.cArray(), gaussianField_.cArray(), meshSize);
       
       }
    }
@@ -161,7 +161,7 @@ namespace Rpg {
       DArray<RField<D>> const * Wr = &system().w().rgrid();
       for (i = 0; i < nMonomer; ++i) {
          assignReal<<<nBlocks, nThreads>>>
-            (w_[i].cField(), (*Wr)[i].cField(), meshSize);
+            (w_[i].cArray(), (*Wr)[i].cArray(), meshSize);
       }
 
       // Generate new random displacement values
@@ -177,14 +177,14 @@ namespace Rpg {
          RField<D> const & etaO = etaOld(j);
          RField<D> const & dc = simulator().dc(j);
          pointWiseBinaryAdd<<<nBlocks, nThreads>>>
-            (etaN.cField(), etaO.cField(), dwc_.cField(), meshSize);
+            (etaN.cArray(), etaO.cArray(), dwc_.cArray(), meshSize);
          pointWiseAddScale<<<nBlocks, nThreads>>>
-            (dwc_.cField(), dc.cField(), a, meshSize);
+            (dwc_.cArray(), dc.cArray(), a, meshSize);
          // Loop over monomer types
          for (i = 0; i < nMonomer; ++i) {
             RField<D> & w = w_[i];
             evec = simulator().chiEvecs(j,i);
-            pointWiseAddScale<<<nBlocks, nThreads>>>(w.cField(), dwc_.cField(), evec, meshSize);
+            pointWiseAddScale<<<nBlocks, nThreads>>>(w.cArray(), dwc_.cArray(), evec, meshSize);
          }
       }
 

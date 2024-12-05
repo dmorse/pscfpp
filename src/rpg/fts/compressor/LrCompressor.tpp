@@ -86,7 +86,7 @@ namespace Rpg{
          wFieldTmp_.allocate(nMonomer);
          intraCorrelationK_.allocate(kMeshDimensions_);
          for (int i = 0; i < nMonomer; ++i) {
-            wFieldTmp_[i].allocate(meshSize);
+            wFieldTmp_[i].allocate(dimensions);
          }
          isAllocated_ = true;
       }
@@ -189,12 +189,12 @@ namespace Rpg{
       ThreadGrid::setThreadsLogical(meshSize, nBlocks, nThreads);
 
       // Initialize residuals to -1
-      assignUniformReal<<<nBlocks, nThreads>>>(resid_.cField(), -1, meshSize);
+      assignUniformReal<<<nBlocks, nThreads>>>(resid_.cArray(), -1, meshSize);
 
       // Compute incompressibility constraint error vector elements
       for (int i = 0; i < nMonomer; i++) {
          pointWiseAdd<<<nBlocks, nThreads>>>
-            (resid_.cField(), system().c().rgrid(i).cField(), meshSize);
+            (resid_.cArray(), system().c().rgrid(i).cArray(), meshSize);
       }
       
    }
@@ -214,8 +214,10 @@ namespace Rpg{
       system().fft().forwardTransform(resid_, residK_);
       
       // Compute change in fields using estimated Jacobian
-      scaleComplex<<<nBlocks, nThreads>>>(residK_.cField(), 1.0/vMonomer, kSize_);
-      inPlacePointwiseDivComplex<<<nBlocks, nThreads>>>(residK_.cField(), intraCorrelationK_.cField(), kSize_);
+      scaleComplex<<<nBlocks, nThreads>>>(residK_.cArray(), 1.0/vMonomer, kSize_);
+      inPlacePointwiseDivComplex<<<nBlocks, nThreads>>>(residK_.cArray(), 
+                                                        intraCorrelationK_.cArray(), 
+                                                        kSize_);
    
       // Convert back to real Space
       system().fft().inverseTransform(residK_, resid_);
@@ -223,7 +225,8 @@ namespace Rpg{
       // Update new fields
       for (int i = 0; i < nMonomer; i++){
          pointWiseBinaryAdd<<<nBlocks, nThreads>>>
-            (system().w().rgrid(i).cField(), resid_.cField(), wFieldTmp_[i].cField(), meshSize);
+            (system().w().rgrid(i).cArray(), resid_.cArray(), 
+             wFieldTmp_[i].cArray(), meshSize);
       }
       
       // Set system r grid
@@ -264,7 +267,7 @@ namespace Rpg{
    double LrCompressor<D>::maxAbs(RField<D> const & a)
    {
       int n = a.capacity();
-      cudaReal max = gpuMaxAbs(a.cField(), n);
+      cudaReal max = gpuMaxAbs(a.cArray(), n);
       return (double)max;
    }
 
@@ -275,7 +278,7 @@ namespace Rpg{
    {
       const int n = a.capacity();
       UTIL_CHECK(b.capacity() == n);
-      double product = (double)gpuInnerProduct(a.cField(), b.cField(), n);
+      double product = (double)gpuInnerProduct(a.cArray(), b.cArray(), n);
       return product;
    }
 

@@ -7,8 +7,8 @@
 #include <prdc/cuda/FFT.h>
 #include <prdc/cuda/RField.h>
 #include <prdc/cuda/RFieldDft.h>
-#include <prdc/cuda/HostField.h>
 
+#include <pscf/cuda/HostDArray.h>
 #include <pscf/math/IntVec.h>
 
 #include <util/math/Constants.h>
@@ -46,13 +46,6 @@ void CudaFftTest::testConstructor()
    }
 } 
 
-
-
-
-
-
-
-
 void CudaFftTest::testTransformReal1D() 
 {
    printMethod(TEST_FUNC);
@@ -70,15 +63,13 @@ void CudaFftTest::testTransformReal1D()
 
    Cuda::FFT<1> v;
    v.setup(d);
-   //v.setup(d_rField, d_kField);
 
    TEST_ASSERT(d_rField.capacity() == n);
 
    // Initialize input data in a temporary array in host memory 
-   Cuda::HostField<cudaReal> in(rSize);
+   HostDArray<cudaReal> in(rSize);
 
    // Initialize input data in a temporary array in host memory 
-   //cudaReal* in = new cudaReal[n];
    double x;
    double twoPi = 2.0*Constants::Pi;
    for (int i = 0; i < n; ++i) {
@@ -87,8 +78,6 @@ void CudaFftTest::testTransformReal1D()
    }
 
    // Copy data to device
-   //cudaMemcpy(d_rField.cField(), in, 
-   //         n*sizeof(cudaReal), cudaMemcpyHostToDevice);
    d_rField = in;
 
    // Transform forward, r to k
@@ -99,13 +88,8 @@ void CudaFftTest::testTransformReal1D()
    d_rField_out.allocate(d);
    v.inverseTransform(d_kField, d_rField_out);
 
-   // Copy to host memory (old method with bare pointers)
-   //cudaReal* out = new cudaReal[n];
-   //cudaMemcpy(out, d_rField_out.cField(), 
-   //         n*sizeof(cudaReal), cudaMemcpyDeviceToHost);
-
    // Copy to host memory
-   Cuda::HostField<cudaReal> out(rSize);
+   HostDArray<cudaReal> out(rSize);
    out = d_rField_out;
 
    // Test agreement after transform and round trip
@@ -133,10 +117,9 @@ void CudaFftTest::testTransformReal2D() {
 
    Cuda::FFT<2> v;
    v.setup(d);
-   //v.setup(d_rField, d_kField);
 
    // Initialize input data in a temporary array in host memory 
-   Cuda::HostField<cudaReal> in(rSize);
+   HostDArray<cudaReal> in(rSize);
 
    int rank = 0;
    double x, y, cx, sy;
@@ -163,13 +146,8 @@ void CudaFftTest::testTransformReal2D() {
    d_rField_out.allocate(d);
    v.inverseTransform(d_kField, d_rField_out);
 
-   // Copy to host memory (old method with bare pointers)
-   //cudaReal* out = new cudaReal[n1*n2];
-   //cudaMemcpy(out, d_rField_out.cField(), 
-   //         n1*n2*sizeof(cudaReal), cudaMemcpyDeviceToHost);
-
    // Copy to host memory
-   Cuda::HostField<cudaReal> out(rSize);
+   HostDArray<cudaReal> out(rSize);
    out = d_rField_out;
 
    // Test agreement
@@ -203,8 +181,7 @@ void CudaFftTest::testTransformReal3D() {
    TEST_ASSERT(d_rField.capacity() == rSize);
 
    // Declare input array in host memory
-   //cudaReal* in = new cudaReal[rSize];
-   Cuda::HostField<cudaReal> in(rSize);
+   HostDArray<cudaReal> in(rSize);
 
    // Initialize input data in host memory 
    int rank = 0;
@@ -218,8 +195,6 @@ void CudaFftTest::testTransformReal3D() {
    }
 
    // Copy data to device
-   //cudaMemcpy(d_rField.cField(), in, 
-   //         n1*n2*n3*sizeof(cudaReal), cudaMemcpyHostToDevice);
    d_rField = in;
 
    // Transform forward, r to k
@@ -229,14 +204,9 @@ void CudaFftTest::testTransformReal3D() {
    Cuda::RField<3> d_rField_out;
    d_rField_out.allocate(d);
    v.inverseTransform(d_kField, d_rField_out);
-
-   // Copy to host memory (old method - bare array)
-   //cudaReal* out = new cudaReal[n1*n2*n3];
-   //cudaMemcpy(out, d_rField_out.cField(), 
-   //         n1*n2*n3*sizeof(cudaReal), cudaMemcpyDeviceToHost);
      
    // Copy to host memory
-   Cuda::HostField<cudaReal> out(rSize);
+   HostDArray<cudaReal> out(rSize);
    out = d_rField_out;
 
    // Test round trip agreement
@@ -263,12 +233,11 @@ void CudaFftTest::testTransformComplex1D()
 
    Cuda::FFT<1> v;
    v.setup(d);
-   //v.setup(d_rField, d_kField);
 
    TEST_ASSERT(d_rField.capacity() == n);
 
    // Initialize input data in a temporary array in host memory 
-   Cuda::HostField<cudaComplex> in(rSize);
+   HostDArray<cudaComplex> in(rSize);
 
    // Initialize input data in a temporary array in host memory 
    double x, c, s;
@@ -293,7 +262,7 @@ void CudaFftTest::testTransformComplex1D()
    v.inverseTransform(d_kField, d_rField_out);
 
    // Copy to host memory
-   Cuda::HostField<cudaComplex> out(rSize);
+   HostDArray<cudaComplex> out(rSize);
    out = d_rField_out;
 
    // Test agreement after transform and round trip
@@ -324,7 +293,7 @@ void CudaFftTest::testTransformComplex2D() {
    v.setup(d);
 
    // Initialize input data in a temporary array in host memory 
-   Cuda::HostField<cudaComplex> in(rSize);
+   HostDArray<cudaComplex> in(rSize);
 
    int rank = 0;
    double x, y, cx, cy, sx, sy;
@@ -355,7 +324,7 @@ void CudaFftTest::testTransformComplex2D() {
    v.inverseTransform(d_kField, d_rField_out);
 
    // Copy to host memory
-   Cuda::HostField<cudaComplex> out(rSize);
+   HostDArray<cudaComplex> out(rSize);
    out = d_rField_out;
 
    // Test agreement
@@ -389,7 +358,7 @@ void CudaFftTest::testTransformComplex3D() {
    TEST_ASSERT(d_rField.capacity() == rSize);
 
    // Declare input array in host memory
-   Cuda::HostField<cudaComplex> in(rSize);
+   HostDArray<cudaComplex> in(rSize);
 
    // Initialize input data in host memory 
    int rank = 0;
@@ -417,7 +386,7 @@ void CudaFftTest::testTransformComplex3D() {
    v.inverseTransform(d_kField, d_rField_out);
 
    // Copy to host memory
-   Cuda::HostField<cudaComplex> out(rSize);
+   HostDArray<cudaComplex> out(rSize);
    out = d_rField_out;
 
    // Test round trip agreement

@@ -8,7 +8,8 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <prdc/cuda/Field.h>
+#include <pscf/cuda/DeviceDArray.h>
+#include <pscf/cuda/HostDArray.h>
 #include <pscf/cuda/GpuResources.h>
 #include <pscf/math/IntVec.h>
 #include <util/global.h>
@@ -30,7 +31,7 @@ namespace Cuda {
    * \ingroup Prdc_Cuda_Module
    */
    template <int D>
-   class RFieldDft : public Field<cudaComplex>
+   class RFieldDft : public DeviceDArray<cudaComplex>
    {
 
    public:
@@ -78,17 +79,17 @@ namespace Cuda {
       RFieldDft<D>& operator = (RFieldDft<D> const & other);
 
       /**
-      * Assignment operator, assignment from a HostField<cudaComplex>.
+      * Assignment operator, assignment from a HostDArray<cudaComplex>.
       *
-      * Performs a deep copy, by copying all elements of the RHS RFieldDft<D>
-      * from host memory to device memory.
+      * Performs a deep copy, by copying all elements of the RHS 
+      * RFieldDft<D> from host memory to device memory.
       *
-      * The RHS HostField<cudaComplex> and LHS RFieldDft<D> must both be 
+      * The RHS HostDArray<cudaComplex> and LHS RFieldDft<D> must both be 
       * allocated and have equal capacity values on entry. 
       * 
-      * \param other the RHS HostField<cudaComplex>
+      * \param other the RHS HostDArray<cudaComplex>
       */
-      RFieldDft<D>& operator = (HostField<cudaComplex> const & other);
+      RFieldDft<D>& operator = (HostDArray<cudaComplex> const & other);
 
       /**
       * Allocate the underlying C array for an FFT grid.
@@ -108,7 +109,8 @@ namespace Cuda {
       * Return vector of dft (Fourier) grid dimensions by const reference.
       *  
       * The last element of dftDimensions() and meshDimensions() differ by
-      * about a factor of two: dftDimension()[D-1] = meshDimensions()/2 + 1.
+      * about a factor of two: 
+      *    dftDimensions()[D-1] = meshDimensions()/2 + 1.
       * For D > 1, other elements are equal. 
       */
       IntVec<D> const & dftDimensions() const;
@@ -123,7 +125,7 @@ namespace Cuda {
       void serialize(Archive& ar, const unsigned int version);
 
       // Make private to prevent allocation without setting meshDimensions
-      using Field<cudaComplex>::allocate;
+      using DeviceDArray<cudaComplex>::allocate;
 
    private:
 
@@ -134,7 +136,7 @@ namespace Cuda {
       IntVec<D> dftDimensions_;
 
       // Make private to prevent assignment without setting meshDimensions
-      using Field<cudaComplex>::operator =;
+      using DeviceDArray<cudaComplex>::operator =;
 
    };
 

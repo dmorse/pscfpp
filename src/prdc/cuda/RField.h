@@ -8,7 +8,8 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <prdc/cuda/Field.h>
+#include <pscf/cuda/DeviceDArray.h>
+#include <pscf/cuda/HostDArray.h>
 #include <pscf/cuda/GpuResources.h>
 #include <pscf/math/IntVec.h>
 #include <util/global.h>
@@ -16,8 +17,6 @@
 namespace Pscf {
 namespace Prdc {
 namespace Cuda {
-
-   template <typename Data> class HostField;
 
    using namespace Util;
 
@@ -29,7 +28,7 @@ namespace Cuda {
    * \ingroup Prdc_Cuda_Module 
    */
    template <int D>
-   class RField : public Field<cudaReal>
+   class RField : public DeviceDArray<cudaReal>
    {
 
    public:
@@ -77,7 +76,8 @@ namespace Cuda {
       * Assignment operator, assignment from another RField<D>.
       *
       * Performs a deep copy, by copying all elements of the RHS RField<D>
-      * from device memory to device memory, and copying the meshDimensions.
+      * from device memory to device memory, and copying the 
+      * meshDimensions.
       *
       * The RHS RField<D> must be allocated on entry. If this LHS object is 
       * not allocated, allocate with the required capacity.  If the LHS and
@@ -88,17 +88,17 @@ namespace Cuda {
       RField<D>& operator = (const RField<D>& other);
 
       /**
-      * Assignment operator, assignment from a HostField<cudaReal>.
+      * Assignment operator, assignment from a HostDArray<cudaReal>.
       *
       * Performs a deep copy, by copying all elements of the RHS RField<D>
       * from host memory to device memory.
       *
-      * The RHS HostField<cudaReal> and LHS RField<D> must both be allocated
-      * with equal capacity values on entry. 
+      * The RHS HostDArray<cudaReal> and LHS RField<D> must both be 
+      * allocated with equal capacity values on entry. 
       * 
-      * \param other the RHS HostField<cudaReal>
+      * \param other the RHS HostDArray<cudaReal>
       */
-      RField<D>& operator = (const HostField<cudaReal>& other);
+      RField<D>& operator = (const HostDArray<cudaReal>& other);
 
       /**
       * Return mesh dimensions by constant reference.
@@ -114,13 +114,16 @@ namespace Cuda {
       template <class Archive>
       void serialize(Archive& ar, const unsigned int version);
 
-      using Field<cudaReal>::allocate;
-      using Field<cudaReal>::operator=;
-
    private:
 
       // Vector containing number of grid points in each direction.
       IntVec<D> meshDimensions_;
+
+      // Make private to prevent allocation without mesh dimensions.
+      using DeviceDArray<cudaReal>::allocate;
+
+      // Make private to prevent assignment without mesh dimensions
+      using DeviceDArray<cudaReal>::operator=;
 
    };
 

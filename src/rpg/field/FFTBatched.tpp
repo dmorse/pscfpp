@@ -264,16 +264,16 @@ static __global__ void scaleRealData(cudaReal* data, cudaReal scale, int size) {
       // Copy rescaled input data prior to work array
       cudaReal scale = 1.0/cudaReal(rSize_);
       //scale for every batch
-      scaleRealData<<<nBlocks, nThreads>>>(rField.cField(), scale, rSize_ * 2);
+      scaleRealData<<<nBlocks, nThreads>>>(rField.cArray(), scale, rSize_ * 2);
       
       //perform fft
       #ifdef SINGLE_PRECISION
-      if(cufftExecR2C(fPlan_, rField.cField(), kField.cField()) != CUFFT_SUCCESS) {
+      if(cufftExecR2C(fPlan_, rField.cArray(), kField.cArray()) != CUFFT_SUCCESS) {
          std::cout<<"CUFFT error: forward"<<std::endl;
          return;
       }
       #else
-      if(cufftExecD2Z(fPlan_, rField.cField(), kField.cField()) != CUFFT_SUCCESS) {
+      if(cufftExecD2Z(fPlan_, rField.cArray(), kField.cArray()) != CUFFT_SUCCESS) {
          std::cout<<"CUFFT error: forward"<<std::endl;
          return;
       }
@@ -331,12 +331,12 @@ static __global__ void scaleRealData(cudaReal* data, cudaReal scale, int size) {
       }
 
       #ifdef SINGLE_PRECISION
-      if(cufftExecC2R(iPlan_, kField.cField(), rField.cField()) != CUFFT_SUCCESS) {
+      if(cufftExecC2R(iPlan_, kField.cArray(), rField.cArray()) != CUFFT_SUCCESS) {
          std::cout<<"CUFFT error: inverse"<<std::endl;
          return;
       }
       #else
-      if(cufftExecZ2D(iPlan_, kField.cField(), rField.cField()) != CUFFT_SUCCESS) {
+      if(cufftExecZ2D(iPlan_, kField.cArray(), rField.cArray()) != CUFFT_SUCCESS) {
          std::cout<<"CUFFT error: inverse"<<std::endl;
          return;
       }

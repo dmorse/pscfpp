@@ -9,7 +9,7 @@
 */
 
 #include "RFieldDftComparison.h"
-#include "HostField.h"
+#include <pscf/cuda/HostDArray.h>
 #include <cmath>
 
 namespace Pscf {
@@ -37,12 +37,12 @@ namespace Cuda {
       int nPoints = a.capacity();
       cudaComplex* ha = new cudaComplex[nPoints];
       cudaComplex* hb = new cudaComplex[nPoints];
-      cudaMemcpy(ha, a.cField(), nPoints*sizeof(cudaComplex), cudaMemcpyDeviceToHost);
-      cudaMemcpy(hb, b.cField(), nPoints*sizeof(cudaComplex), cudaMemcpyDeviceToHost);
+      cudaMemcpy(ha, a.cArray(), nPoints*sizeof(cudaComplex), cudaMemcpyDeviceToHost);
+      cudaMemcpy(hb, b.cArray(), nPoints*sizeof(cudaComplex), cudaMemcpyDeviceToHost);
       #endif
 
-      HostField<cudaComplex> ha;
-      HostField<cudaComplex> hb;
+      HostDArray<cudaComplex> ha;
+      HostDArray<cudaComplex> hb;
       ha.allocate(capacity);
       hb.allocate(capacity);
       ha = a;
@@ -86,13 +86,13 @@ namespace Cuda {
       for (int i = 0; i < nFields; i++) {
          ha[i] = new cudaComplex[capacity];
          hb[i] = new cudaComplex[capacity];
-         cudaMemcpy(ha[i], a[i].cField(), capacity*sizeof(cudaComplex), cudaMemcpyDeviceToHost);
-         cudaMemcpy(hb[i], b[i].cField(), capacity*sizeof(cudaComplex), cudaMemcpyDeviceToHost);
+         cudaMemcpy(ha[i], a[i].cArray(), capacity*sizeof(cudaComplex), cudaMemcpyDeviceToHost);
+         cudaMemcpy(hb[i], b[i].cArray(), capacity*sizeof(cudaComplex), cudaMemcpyDeviceToHost);
       }
       #endif
 
-      DArray< HostField<cudaComplex> > ha;
-      DArray< HostField<cudaComplex> > hb;
+      DArray< HostDArray<cudaComplex> > ha;
+      DArray< HostDArray<cudaComplex> > hb;
       ha.allocate(nFields);
       hb.allocate(nFields);
       for (int i = 0; i < nFields; i++) {

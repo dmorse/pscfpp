@@ -8,11 +8,11 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
+#include <rpg/scft/sweep/Sweep.h>
+#include <pscf/cuda/DeviceDArray.h>
 #include <pscf/sweep/ParameterModifier.h> // base class
 #include <util/param/ParamComposite.h>    // base class
-#include <prdc/cuda/Field.h>
 #include <util/global.h>                  
-#include <rpg/scft/sweep/Sweep.h>
 
 namespace Pscf {
 namespace Rpg
@@ -25,7 +25,7 @@ namespace Rpg
    using namespace Pscf::Prdc;
    using namespace Pscf::Prdc::Cuda;
 
-   typedef Field<cudaReal> FieldCUDA;
+   typedef DeviceDArray<cudaReal> FieldCUDA;
 
    /**
    * Base class for iterative solvers for SCF equations.

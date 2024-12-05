@@ -9,7 +9,7 @@
 */
 
 #include "CFieldComparison.h"
-#include "HostField.h"
+#include <pscf/cuda/HostDArray.h>
 #include <cmath>
 
 namespace Pscf {
@@ -33,8 +33,8 @@ namespace Cuda {
       int capacity = a.capacity();
 
       // Allocate arrays on CPU host
-      HostField<cudaComplex> ha;
-      HostField<cudaComplex> hb;
+      HostDArray<cudaComplex> ha;
+      HostDArray<cudaComplex> hb;
       ha.allocate(capacity);
       hb.allocate(capacity);
 
@@ -73,8 +73,8 @@ namespace Cuda {
       int nFields = a.capacity();
 
       // Allocate arrays on host
-      DArray< HostField<cudaComplex> > ha;
-      DArray< HostField<cudaComplex> > hb;
+      DArray< HostDArray<cudaComplex> > ha;
+      DArray< HostDArray<cudaComplex> > hb;
       ha.allocate(nFields);
       hb.allocate(nFields);
       for (int i = 0; i < nFields; i++) {

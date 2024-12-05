@@ -5,15 +5,11 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <prdc/cuda/Field.tpp>
+#include "DeviceDArray.tpp"
 
 namespace Pscf {
-namespace Prdc { 
-namespace Cuda {
 
-   template class Field<cudaReal>;
-   template class Field<cudaComplex>;
+   template class DeviceDArray<cudaReal>;
+   template class DeviceDArray<cudaComplex>;
 
-}
-}
 }

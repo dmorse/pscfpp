@@ -134,7 +134,7 @@ namespace Rpg {
       
       const int meshSize = system().domain().mesh().size();
       RField<D> psi;
-      psi.allocate(kSize_);
+      psi.allocate(kMeshDimensions_);
       
       // GPU resources with meshSize threads
       int nBlocks, nThreads;
@@ -142,7 +142,7 @@ namespace Rpg {
       
       // Conver W_(r) to fourier mode W_(k)
       assignReal<<<nBlocks, nThreads>>>
-            (wc0_.cField(), simulator().wc(0).cField(), meshSize);
+            (wc0_.cArray(), simulator().wc(0).cArray(), meshSize);
       system().fft().forwardTransform(wc0_, wK_);
       
       // GPU resources with kSize threads
@@ -150,14 +150,14 @@ namespace Rpg {
       
       // W_(k)^2
       squaredMagnitudeComplex<<<nBlocks,nThreads>>>
-            (wK_.cField(), psi.cField(), kSize_);
+            (wK_.cArray(), psi.cArray(), kSize_);
       
       // W_(k)^4
       inPlacePointwiseMul<<<nBlocks,nThreads>>>
-            (psi.cField(), psi.cField(), kSize_);
+            (psi.cArray(), psi.cArray(), kSize_);
             
       // Get sum over all wavevectors
-      FourthOrderParameter_ = (double)gpuSum(psi.cField(), kSize_);
+      FourthOrderParameter_ = (double)gpuSum(psi.cArray(), kSize_);
       FourthOrderParameter_ = std::pow(FourthOrderParameter_, 0.25);
    }
    

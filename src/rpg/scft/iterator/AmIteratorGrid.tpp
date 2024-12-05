@@ -78,7 +78,7 @@ namespace Rpg {
       ThreadGrid::setThreadsLogical(a.capacity(), nBlocks, nThreads);
       
       UTIL_CHECK(b.capacity() == a.capacity());
-      assignReal<<<nBlocks, nThreads>>>(a.cField(), b.cField(), a.capacity());
+      assignReal<<<nBlocks, nThreads>>>(a.cArray(), b.cArray(), a.capacity());
    }
 
    template <int D>
@@ -87,7 +87,7 @@ namespace Rpg {
    {
       const int n = a.capacity();
       UTIL_CHECK(b.capacity() == n);
-      double product = (double)gpuInnerProduct(a.cField(), b.cField(), n);
+      double product = (double)gpuInnerProduct(a.cArray(), b.cArray(), n);
       return product;
    }
 
@@ -95,7 +95,7 @@ namespace Rpg {
    double AmIteratorGrid<D>::maxAbs(FieldCUDA const & a)
    {
       int n = a.capacity();
-      cudaReal max = gpuMaxAbs(a.cField(), n);
+      cudaReal max = gpuMaxAbs(a.cArray(), n);
       return (double)max;
    }
 
@@ -115,7 +115,7 @@ namespace Rpg {
       ThreadGrid::setThreadsLogical(n, nBlocks, nThreads);
 
       pointWiseBinarySubtract<<<nBlocks,nThreads>>>
-            (hists[0].cField(),hists[1].cField(),newbasis.cField(),n);
+            (hists[0].cArray(),hists[1].cArray(),newbasis.cArray(),n);
 
       basis.append(newbasis);
    }
@@ -131,7 +131,7 @@ namespace Rpg {
 
       for (int i = 0; i < nHist; i++) {
          pointWiseAddScale<<<nBlocks, nThreads>>>
-               (trial.cField(), basis[i].cField(), -1*coeffs[i], trial.capacity());
+               (trial.cArray(), basis[i].cArray(), -1*coeffs[i], trial.capacity());
       }
    }
 
@@ -144,7 +144,7 @@ namespace Rpg {
       ThreadGrid::setThreadsLogical(fieldTrial.capacity(), nBlocks, nThreads);
 
       pointWiseAddScale<<<nBlocks, nThreads>>>
-         (fieldTrial.cField(), resTrial.cField(), lambda, 
+         (fieldTrial.cArray(), resTrial.cArray(), lambda, 
           fieldTrial.capacity());
    }
 
@@ -183,8 +183,8 @@ namespace Rpg {
 
       // Loop to unfold the system fields and store them in one long array
       for (int i = 0; i < nMonomer; i++) {
-         assignReal<<<nBlocks,nThreads>>>(curr.cField() + i*nMesh, 
-                                          (*currSys)[i].cField(), nMesh);
+         assignReal<<<nBlocks,nThreads>>>(curr.cArray() + i*nMesh, 
+                                          (*currSys)[i].cArray(), nMesh);
       }
 
       // If flexible unit cell, also store unit cell parameters
@@ -197,7 +197,7 @@ namespace Rpg {
                temp[k] = (cudaReal)scaleStress_*currParam[k];
          
          // Copy parameters to the end of the curr array
-         cudaMemcpy(curr.cField() + nMonomer*nMesh, temp, 
+         cudaMemcpy(curr.cArray() + nMonomer*nMesh, temp, 
                     nParam*sizeof(cudaReal), cudaMemcpyHostToDevice);
          delete[] temp;
       }
@@ -227,20 +227,20 @@ namespace Rpg {
       
       // Initialize residuals to zero. Kernel will take care of potential
       // additional elements (n vs nMesh).
-      assignUniformReal<<<nBlocks, nThreads>>>(resid.cField(), 0, n);
+      assignUniformReal<<<nBlocks, nThreads>>>(resid.cArray(), 0, n);
 
       // Compute SCF residuals
       for (int i = 0; i < nMonomer; i++) {
          int startIdx = i*nMesh;
          for (int j = 0; j < nMonomer; j++) {
             pointWiseAddScale<<<nBlocks, nThreads>>>
-                (resid.cField() + startIdx,
-                 system().c().rgrid(j).cField(),
+                (resid.cArray() + startIdx,
+                 system().c().rgrid(j).cArray(),
                  interaction_.chi(i, j),
                  nMesh);
             pointWiseAddScale<<<nBlocks, nThreads>>>
-                (resid.cField() + startIdx,
-                 system().w().rgrid(j).cField(),
+                (resid.cArray() + startIdx,
+                 system().w().rgrid(j).cArray(),
                  -interaction_.p(i, j),
                  nMesh);
          }
@@ -250,15 +250,15 @@ namespace Rpg {
       if (!system().mixture().isCanonical()) {
          cudaReal factor = 1/(cudaReal)interaction_.sumChiInverse();
          for (int i = 0; i < nMonomer; ++i) {
-            subtractUniform<<<nBlocks, nThreads>>>(resid.cField() + i*nMesh,
+            subtractUniform<<<nBlocks, nThreads>>>(resid.cArray() + i*nMesh,
                                                    factor, nMesh);
          }
       } else {
          for (int i = 0; i < nMonomer; i++) {
             // Find current average 
-            cudaReal average = findAverage(resid.cField()+i*nMesh, nMesh);
+            cudaReal average = findAverage(resid.cArray()+i*nMesh, nMesh);
             // subtract out average to set residual average to zero
-            subtractUniform<<<nBlocks, nThreads>>>(resid.cField() + i*nMesh,
+            subtractUniform<<<nBlocks, nThreads>>>(resid.cArray() + i*nMesh,
                                                                average, nMesh);
          }
       }
@@ -272,7 +272,7 @@ namespace Rpg {
             stress[i] = (cudaReal)(-1*scaleStress_*system().mixture().stress(i));
          }
 
-         cudaMemcpy(resid.cField()+nMonomer*nMesh, stress, 
+         cudaMemcpy(resid.cArray()+nMonomer*nMesh, stress, 
                     nParam*sizeof(cudaReal), cudaMemcpyHostToDevice);
       }
    }
@@ -292,20 +292,20 @@ namespace Rpg {
          cudaReal average, wAverage, cAverage;
          for (int i = 0; i < nMonomer; i++) {
             // Find current spatial average
-            average = findAverage(newGuess.cField() + i*nMesh, nMesh);
+            average = findAverage(newGuess.cArray() + i*nMesh, nMesh);
             
             // Subtract average from field, setting average to zero
-            subtractUniform<<<nBlocks, nThreads>>>(newGuess.cField() + i*nMesh,
+            subtractUniform<<<nBlocks, nThreads>>>(newGuess.cArray() + i*nMesh,
                                                    average, nMesh);
             
             // Compute the new average omega value, add it to all elements
             wAverage = 0;
             for (int j = 0; j < nMonomer; j++) {
                // Find average concentration for j monomers
-               cAverage = findAverage(system().c().rgrid(j).cField(), nMesh);
+               cAverage = findAverage(system().c().rgrid(j).cArray(), nMesh);
                wAverage += interaction_.chi(i,j) * cAverage;
             }
-            addUniform<<<nBlocks, nThreads>>>(newGuess.cField() + i*nMesh, 
+            addUniform<<<nBlocks, nThreads>>>(newGuess.cArray() + i*nMesh, 
                                               wAverage, nMesh); 
          }
       }
@@ -319,7 +319,7 @@ namespace Rpg {
          const int nParam = system().unitCell().nParameter();
          cudaReal* temp = new cudaReal[nParam];
 
-         cudaMemcpy(temp, newGuess.cField() + nMonomer*nMesh, 
+         cudaMemcpy(temp, newGuess.cArray() + nMonomer*nMesh, 
                     nParam*sizeof(cudaReal), cudaMemcpyDeviceToHost);
          for (int i = 0; i < nParam; i++) {
             parameters.append(1/scaleStress_ * (double)temp[i]);

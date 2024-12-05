@@ -132,15 +132,15 @@ namespace Cuda {
 
       // Rescale outputted data. 
       cudaReal scale = 1.0/cudaReal(rSize_);
-      //scaleRealData<<<nBlocks, nThreads>>>(rField.cField(), scale, rSize_);
-      scaleReal<<<nBlocks, nThreads>>>(rField.cField(), scale, rSize_);
+      //scaleRealData<<<nBlocks, nThreads>>>(rField.cArray(), scale, rSize_);
+      scaleReal<<<nBlocks, nThreads>>>(rField.cArray(), scale, rSize_);
       
       // Perform transform
       cufftResult result;
       #ifdef SINGLE_PRECISION
-      result = cufftExecR2C(rcfPlan_, rField.cField(), kField.cField());
+      result = cufftExecR2C(rcfPlan_, rField.cArray(), kField.cArray());
       #else
-      result = cufftExecD2Z(rcfPlan_, rField.cField(), kField.cField());
+      result = cufftExecD2Z(rcfPlan_, rField.cArray(), kField.cArray());
       #endif
       if (result != CUFFT_SUCCESS) {
          UTIL_THROW("Failure in cufft real-to-complex forward transform");
@@ -176,9 +176,9 @@ namespace Cuda {
 
       cufftResult result;
       #ifdef SINGLE_PRECISION
-      result = cufftExecC2R(criPlan_, kField.cField(), rField.cField());
+      result = cufftExecC2R(criPlan_, kField.cArray(), rField.cArray());
       #else
-      result = cufftExecZ2D(criPlan_, kField.cField(), rField.cField());
+      result = cufftExecZ2D(criPlan_, kField.cArray(), rField.cArray());
       #endif
       if (result != CUFFT_SUCCESS) {
          UTIL_THROW( "Failure in cufft complex-to-real inverse transform");
@@ -219,15 +219,15 @@ namespace Cuda {
 
       // Rescale outputted data. 
       cudaReal scale = 1.0/cudaReal(rSize_);
-      //scaleComplexData<<<nBlocks, nThreads>>>(rField.cField(), scale, rSize_);
-      scaleComplex<<<nBlocks, nThreads>>>(rField.cField(), scale, rSize_);
+      //scaleComplexData<<<nBlocks, nThreads>>>(rField.cArray(), scale, rSize_);
+      scaleComplex<<<nBlocks, nThreads>>>(rField.cArray(), scale, rSize_);
       
       // Perform transform
       cufftResult result;
       #ifdef SINGLE_PRECISION
-      result = cufftExecC2C(ccPlan_, rField.cField(), kField.cField(), CUFFT_FORWARD);
+      result = cufftExecC2C(ccPlan_, rField.cArray(), kField.cArray(), CUFFT_FORWARD);
       #else
-      result = cufftExecZ2Z(ccPlan_, rField.cField(), kField.cField(), CUFFT_FORWARD);
+      result = cufftExecZ2Z(ccPlan_, rField.cArray(), kField.cArray(), CUFFT_FORWARD);
       #endif
       if (result != CUFFT_SUCCESS) {
          UTIL_THROW("Failure in cufft real-to-complex forward transform");
@@ -263,9 +263,9 @@ namespace Cuda {
 
       cufftResult result;
       #ifdef SINGLE_PRECISION
-      result = cufftExecC2C(ccPlan_, kField.cField(), rField.cField(), CUFFT_INVERSE);
+      result = cufftExecC2C(ccPlan_, kField.cArray(), rField.cArray(), CUFFT_INVERSE);
       #else
-      result = cufftExecZ2Z(ccPlan_, kField.cField(), rField.cField(), CUFFT_INVERSE);
+      result = cufftExecZ2Z(ccPlan_, kField.cArray(), rField.cArray(), CUFFT_INVERSE);
       #endif
       if (result != CUFFT_SUCCESS) {
          UTIL_THROW( "Failure in cufft complex-to-real inverse transform");

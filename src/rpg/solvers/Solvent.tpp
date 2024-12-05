@@ -45,13 +45,13 @@ namespace Rpg {
       ThreadGrid::setThreadsLogical(nx, nBlocks, nThreads);
 
       // Initialize concField_ to zero
-      assignUniformReal<<<nBlocks, nThreads>>>(concField_.cField(), 0, nx);
+      assignUniformReal<<<nBlocks, nThreads>>>(concField_.cArray(), 0, nx);
 
       // Evaluate unnormalized integral and q_
       double s = size();
       q_ = 0.0;
-      assignExp<<<nBlocks, nThreads>>>(concField_.cField(), wField.cField(), s, nx);
-      q_ = (double)gpuSum(concField_.cField(),nx);
+      assignExp<<<nBlocks, nThreads>>>(concField_.cArray(), wField.cArray(), s, nx);
+      q_ = (double)gpuSum(concField_.cArray(),nx);
       q_ = q_/double(nx);
 
       // Compute mu_ or phi_ and prefactor
@@ -65,7 +65,7 @@ namespace Rpg {
       }
 
       // Normalize concentration 
-      scaleReal<<<nBlocks, nThreads>>>(concField_.cField(), prefactor, nx);
+      scaleReal<<<nBlocks, nThreads>>>(concField_.cArray(), prefactor, nx);
     
    }
 

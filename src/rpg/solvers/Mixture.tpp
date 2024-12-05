@@ -136,7 +136,7 @@ namespace Rpg
       for (i = 0; i < nm; ++i) {
          UTIL_CHECK(cFields[i].capacity() == nMesh);
          UTIL_CHECK(wFields[i].capacity() == nMesh);
-         assignUniformReal<<<nBlocks, nThreads>>>(cFields[i].cField(), 
+         assignUniformReal<<<nBlocks, nThreads>>>(cFields[i].cArray(), 
                                                   0.0, nMesh);
       }
 
@@ -155,8 +155,8 @@ namespace Rpg
             RField<D>& monomerField = cFields[monomerId];
             RField<D>& blockField = polymer(i).block(j).cField();
             UTIL_CHECK(blockField.capacity()==nMesh);
-            pointWiseAdd<<<nBlocks, nThreads>>>(monomerField.cField(), 
-                                                blockField.cField(), nMesh);
+            pointWiseAdd<<<nBlocks, nThreads>>>(monomerField.cArray(), 
+                                                blockField.cArray(), nMesh);
          }
       }
       
@@ -173,8 +173,8 @@ namespace Rpg
          RField<D>& monomerField = cFields[monomerId];
          RField<D> const & solventField = solvent(i).concField();
          UTIL_CHECK(solventField.capacity() == nMesh);
-         pointWiseAdd<<<nBlocks, nThreads>>>(monomerField.cField(), 
-                                             solventField.cField(), 
+         pointWiseAdd<<<nBlocks, nThreads>>>(monomerField.cArray(), 
+                                             solventField.cArray(), 
                                              nMesh);
 
 
@@ -251,7 +251,7 @@ namespace Rpg
       // Clear all monomer concentration fields, check capacities
       for (i = 0; i < np; ++i) {
          UTIL_CHECK(blockCFields[i].capacity() == nx);
-         assignUniformReal<<<nBlocks, nThreads>>>(blockCFields[i].cField(), 0.0, nx);
+         assignUniformReal<<<nBlocks, nThreads>>>(blockCFields[i].cArray(), 0.0, nx);
       }
 
       // Process polymer species
@@ -268,8 +268,8 @@ namespace Rpg
                UTIL_CHECK(sectionId < np);
                UTIL_CHECK(blockCFields[sectionId].capacity() == nx);
 
-               const cudaReal* blockField = polymer(i).block(j).cField().cField();
-               cudaMemcpy(blockCFields[sectionId].cField(), blockField, 
+               const cudaReal* blockField = polymer(i).block(j).cField().cArray();
+               cudaMemcpy(blockCFields[sectionId].cArray(), blockField, 
                           mesh().size() * sizeof(cudaReal), cudaMemcpyDeviceToDevice);
             }
          }
@@ -286,8 +286,8 @@ namespace Rpg
             UTIL_CHECK(sectionId < np);
             UTIL_CHECK(blockCFields[sectionId].capacity() == nx);
 
-            const cudaReal* solventField = solvent(i).concField().cField();
-            cudaMemcpy(blockCFields[sectionId].cField(), solventField, 
+            const cudaReal* solventField = solvent(i).concField().cArray();
+            cudaMemcpy(blockCFields[sectionId].cArray(), solventField, 
                        mesh().size() * sizeof(cudaReal), cudaMemcpyDeviceToDevice);
          }
       }

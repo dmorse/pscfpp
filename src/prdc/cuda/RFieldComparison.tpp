@@ -9,7 +9,7 @@
 */
 
 #include "RFieldComparison.h"
-#include "HostField.h"
+#include <pscf/cuda/HostDArray.h>
 
 namespace Pscf {
 namespace Prdc {
@@ -22,13 +22,14 @@ namespace Cuda {
 
    // Comparator for individual fields
    template <int D>
-   double RFieldComparison<D>::compare(RField<D> const& a, RField<D> const& b)
+   double RFieldComparison<D>::compare(RField<D> const& a, 
+                                       RField<D> const& b)
    {
       int nPoints = a.capacity();
 
       // Copy fields a,b to local arrays ha, hb on the host CPU
-      HostField<cudaReal> ha(nPoints);
-      HostField<cudaReal> hb(nPoints);
+      HostDArray<cudaReal> ha(nPoints);
+      HostDArray<cudaReal> hb(nPoints);
       ha = a;
       hb = b;
 
@@ -46,8 +47,8 @@ namespace Cuda {
       int nFields = a.capacity();
       int nPoints = a[0].capacity();
 
-      // Copy fields to HostField containers on CPU host
-      DArray< HostField<cudaReal> > ha, hb;
+      // Copy fields to HostDArray containers on CPU host
+      DArray< HostDArray<cudaReal> > ha, hb;
       ha.allocate(nFields);
       hb.allocate(nFields);
       for (int i = 0; i < nFields; i++) {
