@@ -124,9 +124,6 @@ namespace Cuda {
       template <class Archive>
       void serialize(Archive& ar, const unsigned int version);
 
-      // Make private to prevent allocation without setting meshDimensions
-      using DeviceDArray<cudaComplex>::allocate;
-
    private:
 
       // Vector containing number of grid points in each direction.
@@ -134,6 +131,9 @@ namespace Cuda {
 
       // Vector containing dimensions of dft (Fourier) grid.
       IntVec<D> dftDimensions_;
+
+      // Make private to prevent allocation without setting meshDimensions
+      using DeviceDArray<cudaComplex>::allocate;
 
       // Make private to prevent assignment without setting meshDimensions
       using DeviceDArray<cudaComplex>::operator =;
