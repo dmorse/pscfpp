@@ -4,9 +4,6 @@
 #include "EinsteinCrystalPerturbation.h"
 #include <rpg/fts/simulator/Simulator.h>
 #include <rpg/System.h>
-#include <prdc/cuda/RField.h>
-#include <prdc/cuda/Field.h>
-#include <util/containers/DArray.h>
 #include <util/global.h>
 
 namespace Pscf {
@@ -85,11 +82,12 @@ namespace Rpg {
       double prefactor, s;
       const int nMonomer = system().mixture().nMonomer();
       const int meshSize = system().domain().mesh().size();
+      const IntVec<D> dimensions = system().domain().mesh().dimensions();
       const double vSystem  = system().domain().unitCell().volume();
       const double vMonomer = system().mixture().vMonomer();
       const double nMonomerSystem = vSystem / vMonomer;
       RField<D> wcs;
-      wcs.allocate(meshSize);
+      wcs.allocate(dimensions);
       ecHamiltonian_ = 0.0;
       
       // GPU resources
@@ -101,13 +99,13 @@ namespace Rpg {
          prefactor = alpha_;
          s = simulator().sc(j);
          assignRealSubtractDouble<<<nBlocks, nThreads>>>
-            (wcs.cField(), Wc.cField(), s, meshSize);
+            (wcs.cArray(), Wc.cArray(), s, meshSize);
          pointWiseSubtract<<<nBlocks, nThreads>>>
-            (wcs.cField(), wc0_[j].cField(), meshSize);
+            (wcs.cArray(), wc0_[j].cArray(), meshSize);
          double wSqure = 0;
          wSqure = 
-              (double)gpuInnerProduct(wcs.cField(), 
-                                      wcs.cField(), meshSize);
+              (double)gpuInnerProduct(wcs.cArray(), 
+                                      wcs.cArray(), meshSize);
          ecHamiltonian_ += prefactor * wSqure;
       }
       
@@ -135,12 +133,13 @@ namespace Rpg {
    {
       double prefactor, s, b;
       const int meshSize = system().domain().mesh().size();
+      const IntVec<D> dimensions = system().domain().mesh().dimensions();
       const int nMonomer = system().mixture().nMonomer();
       const double vMonomer = system().mixture().vMonomer();   
       RField<D> DcBCP, DcEC, wRef;
-      DcBCP.allocate(meshSize);
-      DcEC.allocate(meshSize);
-      wRef.allocate(meshSize);
+      DcBCP.allocate(dimensions);
+      DcEC.allocate(dimensions);
+      wRef.allocate(dimensions);
       b = 1.0;
       
       // GPU resources
@@ -155,21 +154,21 @@ namespace Rpg {
          prefactor = 1.0*alpha_*double(nMonomer)/vMonomer;
          
          // Copy block copolymer derivative
-         assignReal<<<nBlocks,nThreads>>>(DcBCP.cField(), 
-                                          Dc.cField(), meshSize);
+         assignReal<<<nBlocks,nThreads>>>(DcBCP.cArray(), 
+                                          Dc.cArray(), meshSize);
          
          // Multiply reference field by -1.0
-         assignReal<<<nBlocks,nThreads>>>(wRef.cField(), 
-                                          wc0_[i].cField(), meshSize);
-         scaleReal<<<nBlocks,nThreads>>>(wRef.cField(), -1.0, meshSize);
+         assignReal<<<nBlocks,nThreads>>>(wRef.cArray(), 
+                                          wc0_[i].cArray(), meshSize);
+         scaleReal<<<nBlocks,nThreads>>>(wRef.cArray(), -1.0, meshSize);
          
          // Compute EC derivative
          computeDField<<<nBlocks, nThreads>>>
-            (DcEC.cField(), Wc.cField(), wRef.cField(), prefactor, b, s, meshSize);
+            (DcEC.cArray(), Wc.cArray(), wRef.cArray(), prefactor, b, s, meshSize);
        
          // Compute composite derivative
-         scaleReal<<<nBlocks, nThreads>>>(Dc.cField(), lambda_, meshSize);
-         pointWiseAddScale<<<nBlocks, nThreads>>>(Dc.cField(), DcEC.cField(), 1.0 - lambda_, meshSize);
+         scaleReal<<<nBlocks, nThreads>>>(Dc.cArray(), lambda_, meshSize);
+         pointWiseAddScale<<<nBlocks, nThreads>>>(Dc.cArray(), DcEC.cArray(), 1.0 - lambda_, meshSize);
       }
    }
    
@@ -220,7 +219,7 @@ namespace Rpg {
 
          // Loop over grid points to zero out field wc0_[i]
          RField<D>& Wc = wc0_[i];
-         assignUniformReal<<<nBlocks, nThreads>>>(Wc.cField(), 0, meshSize);
+         assignUniformReal<<<nBlocks, nThreads>>>(Wc.cArray(), 0, meshSize);
          
          // Loop over monomer types (j is a monomer index)
          for (j = 0; j < nMonomer; ++j) {
@@ -229,7 +228,7 @@ namespace Rpg {
 
             // Loop over grid points
             pointWiseAddScale<<<nBlocks, nThreads>>>
-               (Wc.cField(), (*Wr)[j].cField(), vec, meshSize);
+               (Wc.cArray(), (*Wr)[j].cArray(), vec, meshSize);
          }
          
       }

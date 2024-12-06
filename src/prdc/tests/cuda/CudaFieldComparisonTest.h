@@ -6,10 +6,11 @@
 
 #include <prdc/cuda/RField.h>
 #include <prdc/cuda/RFieldDft.h>
-#include <prdc/cuda/HostField.h>
 #include <prdc/cuda/RFieldComparison.h>
 #include <prdc/cuda/RFieldDftComparison.h>
 #include <prdc/cuda/CFieldComparison.h>
+
+#include <pscf/cuda/HostDArray.h>
 
 #include <util/format/Dbl.h>
 
@@ -37,7 +38,7 @@ public:
       dimensions[0] = n;
 
       // Allocate arrays on host CPU
-      Cuda::HostField<cudaReal> ha, hb;
+      HostDArray<cudaReal> ha, hb;
       ha.allocate(n);
       hb.allocate(n);
       int size = ha.capacity();
@@ -88,7 +89,7 @@ public:
       dimensions[1] = n;
 
       // Allocate fields ha and hb on CPU host
-      Cuda::HostField<cudaReal> ha, hb;
+      HostDArray<cudaReal> ha, hb;
       ha.allocate(size);
       hb.allocate(size);
       TEST_ASSERT(ha.capacity() == size);
@@ -139,7 +140,7 @@ public:
       dimensions[1] = n;
 
       // Allocate fields ha and hb on CPU host
-      DArray< Cuda::HostField<cudaReal> > ha, hb;
+      DArray< HostDArray<cudaReal> > ha, hb;
       ha.allocate(nMonomer);
       hb.allocate(nMonomer);
 
@@ -204,8 +205,8 @@ public:
       int capacity = da.capacity();
 
       // Allocate host arrays ha and hb
-      Cuda::HostField<cudaComplex> ha;
-      Cuda::HostField<cudaComplex> hb;
+      HostDArray<cudaComplex> ha;
+      HostDArray<cudaComplex> hb;
       ha.allocate(capacity);
       hb.allocate(capacity);
 
@@ -267,8 +268,8 @@ public:
       int capacity = da[0].capacity();
 
       // Allocate host fields ha and hb
-      DArray< Cuda::HostField<cudaComplex> > ha;
-      DArray< Cuda::HostField<cudaComplex> > hb;
+      DArray< HostDArray<cudaComplex> > ha;
+      DArray< HostDArray<cudaComplex> > hb;
       ha.allocate(nMonomer);
       hb.allocate(nMonomer);
       for (int i = 0; i < nMonomer; ++i) {
@@ -332,8 +333,8 @@ public:
       int capacity = da.capacity();
 
       // Allocate host arrays ha and hb
-      Cuda::HostField<cudaComplex> ha;
-      Cuda::HostField<cudaComplex> hb;
+      HostDArray<cudaComplex> ha;
+      HostDArray<cudaComplex> hb;
       ha.allocate(capacity);
       hb.allocate(capacity);
 
@@ -395,8 +396,8 @@ public:
       int capacity = da[0].capacity();
 
       // Allocate host fields ha and hb
-      DArray< Cuda::HostField<cudaComplex> > ha;
-      DArray< Cuda::HostField<cudaComplex> > hb;
+      DArray< HostDArray<cudaComplex> > ha;
+      DArray< HostDArray<cudaComplex> > hb;
       ha.allocate(nMonomer);
       hb.allocate(nMonomer);
       for (int i = 0; i < nMonomer; ++i) {

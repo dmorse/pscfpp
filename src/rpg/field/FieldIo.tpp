@@ -10,11 +10,11 @@
 
 #include "FieldIo.h"
 
-#include <prdc/cuda/HostField.h>
 #include <prdc/crystal/fieldHeader.h>
 #include <prdc/crystal/shiftToMinimum.h>
 #include <prdc/crystal/UnitCell.h>
 
+#include <pscf/cuda/HostDArray.h>
 #include <pscf/mesh/MeshIterator.h>
 #include <pscf/math/IntVec.h>
 
@@ -453,7 +453,7 @@ namespace Rpg {
       in >> nGrid;
       UTIL_CHECK(nGrid == mesh().dimensions());
 
-      DArray< HostField<cudaReal> > hostFields;
+      DArray< HostDArray<cudaReal> > hostFields;
       hostFields.allocate(nMonomer);
       for (int i = 0; i < nMonomer; ++i) {
          //hostFields[i] = new cudaReal[mesh().size()];
@@ -495,7 +495,7 @@ namespace Rpg {
 
       for (int i = 0; i < nMonomer; i++) {
          fields[i] = hostFields[i];
-         //cudaMemcpy(fields[i].cField(), hostFields[i],
+         //cudaMemcpy(fields[i].cArray(), hostFields[i],
          //    mesh().size() * sizeof(cudaReal), cudaMemcpyHostToDevice);
          //delete[] hostFields[i];
          //hostFields[i] = nullptr;
@@ -541,7 +541,7 @@ namespace Rpg {
       UTIL_CHECK(nGrid == mesh().dimensions());
 
       //DArray<cudaReal*> hostFields;
-      DArray< HostField<cudaReal> > hostFields;
+      DArray< HostDArray<cudaReal> > hostFields;
       hostFields.allocate(nMonomer);
       for(int i = 0; i < nMonomer; ++i) {
          //hostFields[i] = new cudaReal[mesh().size()];
@@ -582,7 +582,7 @@ namespace Rpg {
       }
 
       for (int i = 0; i < nMonomer; i++) {
-         //cudaMemcpy(fields[i].cField(), hostFields[i],
+         //cudaMemcpy(fields[i].cArray(), hostFields[i],
          //           mesh().size() * sizeof(cudaReal), 
          //           cudaMemcpyHostToDevice);
          //delete[] hostFields[i];
@@ -620,7 +620,7 @@ namespace Rpg {
       UTIL_CHECK(nGrid == mesh().dimensions());
 
       //cudaReal* hostField = new cudaReal[mesh().size()];
-      HostField<cudaReal> hostField(mesh().size());
+      HostDArray<cudaReal> hostField(mesh().size());
 
       IntVec<D> offsets;
       offsets[D - 1] = 1;
@@ -655,7 +655,7 @@ namespace Rpg {
 
       }
 
-      //cudaMemcpy(field.cField(), hostField,
+      //cudaMemcpy(field.cArray(), hostField,
       //      mesh().size() * sizeof(cudaReal), cudaMemcpyHostToDevice);
       //delete[] hostField;
       //hostField = nullptr;
@@ -697,11 +697,11 @@ namespace Rpg {
           << "           " << mesh().dimensions() << std::endl;
 
       //DArray<cudaReal*> hostFields;
-      DArray< HostField<cudaReal> > hostFields;
+      DArray< HostDArray<cudaReal> > hostFields;
       hostFields.allocate(nMonomer);
       for (int i = 0; i < nMonomer; ++i) {
          //hostFields[i] = new cudaReal[mesh().size()];
-         //cudaMemcpy(hostFields[i], fields[i].cField(),
+         //cudaMemcpy(hostFields[i], fields[i].cArray(),
          //           mesh().size() * sizeof(cudaReal), cudaMemcpyDeviceToHost);
          hostFields[i].allocate(mesh().size());
          hostFields[i] = fields[i];
@@ -782,10 +782,10 @@ namespace Rpg {
       }
 
       //cudaReal* hostField = new cudaReal[mesh().size()];;
-      //cudaMemcpy(hostField, field.cField(),
+      //cudaMemcpy(hostField, field.cArray(),
       //           mesh().size() * sizeof(cudaReal), 
       //           cudaMemcpyDeviceToHost);
-      HostField<cudaReal> hostField(mesh().size());
+      HostDArray<cudaReal> hostField(mesh().size());
       hostField = field;
 
       IntVec<D> offsets;
@@ -879,7 +879,7 @@ namespace Rpg {
       }
 
       //DArray<cudaComplex*> hostFields;
-      DArray< HostField<cudaComplex> > hostFields;
+      DArray< HostDArray<cudaComplex> > hostFields;
       hostFields.allocate(nMonomer);
       for(int i = 0; i < nMonomer; ++i) {
          //hostFields[i] = new cudaComplex[kSize];
@@ -899,7 +899,7 @@ namespace Rpg {
 
       // Copy fields from host to device
       for(int i = 0; i < nMonomer; ++i) {
-         //cudaMemcpy(fields[i].cField(), hostFields[i],
+         //cudaMemcpy(fields[i].cArray(), hostFields[i],
          //   kSize * sizeof(cudaComplex), cudaMemcpyHostToDevice);
          //delete[] hostFields[i];
          //hostFields[i] = nullptr;
@@ -945,11 +945,11 @@ namespace Rpg {
       }
 
       //DArray<cudaComplex*> hostFields;
-      DArray< HostField<cudaComplex> > hostFields;
+      DArray< HostDArray<cudaComplex> > hostFields;
       hostFields.allocate(nMonomer);
       for(int i = 0; i < nMonomer; ++i) {
          //hostFields[i] = new cudaComplex[kSize];
-         //cudaMemcpy(hostFields[i], fields[i].cField(),
+         //cudaMemcpy(hostFields[i], fields[i].cArray(),
          //   kSize * sizeof(cudaComplex), cudaMemcpyDeviceToHost);
          hostFields[i].allocate(kSize);
          hostFields[i] = fields[i];
@@ -1114,7 +1114,7 @@ namespace Rpg {
       // Allocate hostDft
       //cudaComplex* hostDft;
       //hostDft = new cudaComplex[kSize];
-      HostField<cudaComplex> hostDft(kSize);
+      HostDArray<cudaComplex> hostDft(kSize);
 
       // Create Mesh<D> with dimensions of DFT Fourier grid.
       Mesh<D> dftMesh(dft.dftDimensions());
@@ -1226,7 +1226,7 @@ namespace Rpg {
       }
 
       // Copy hostDft (host) to dft (device)
-      //cudaMemcpy(dft.cField(), hostDft,
+      //cudaMemcpy(dft.cArray(), hostDft,
       //           kSize * sizeof(cudaComplex), cudaMemcpyHostToDevice);
       dft = hostDft;
 
@@ -1263,10 +1263,10 @@ namespace Rpg {
       // Allocate hostDft
       //cudaComplex* hostDft;
       //hostDft = new cudaComplex[kSize];
-      HostField<cudaComplex> hostDft(kSize);
+      HostDArray<cudaComplex> hostDft(kSize);
 
       // Copy dft (device) to hostDft (host)
-      //cudaMemcpy(hostDft, dft.cField(),
+      //cudaMemcpy(hostDft, dft.cArray(),
       //       kSize * sizeof(cudaComplex), cudaMemcpyDeviceToHost);
       hostDft = dft;
 

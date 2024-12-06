@@ -3,9 +3,11 @@
 
 #include <test/CompositeTestRunner.h>
 
+#include "CudaArrayTest.h"
 #include "CudaRandomTest.h"
 
 TEST_COMPOSITE_BEGIN(CudaTestComposite)
+TEST_COMPOSITE_ADD_UNIT(CudaArrayTest);
 TEST_COMPOSITE_ADD_UNIT(CudaRandomTest);
 TEST_COMPOSITE_END
 

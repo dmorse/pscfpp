@@ -88,8 +88,8 @@ public:
       d_cFields.allocate(nMonomer);
       int nx = mesh.size();
       for (int i = 0; i < nMonomer; ++i) {
-         d_wFields[i].allocate(nx);
-         d_cFields[i].allocate(nx);
+         d_wFields[i].allocate(d);
+         d_cFields[i].allocate(d);
       }
 
       UTIL_CHECK(nMonomer == 2); // Hard-coded in here!
@@ -101,9 +101,9 @@ public:
          wFields0[i] = 0.5 + cs;
          wFields1[i] = 0.5 - cs;
       }
-      cudaMemcpy(d_wFields[0].cField(), wFields0, 
+      cudaMemcpy(d_wFields[0].cArray(), wFields0, 
                   nx*sizeof(cudaReal), cudaMemcpyHostToDevice);
-      cudaMemcpy(d_wFields[1].cField(), wFields1, 
+      cudaMemcpy(d_wFields[1].cArray(), wFields1, 
                   nx*sizeof(cudaReal), cudaMemcpyHostToDevice);
 
       mixture.compute(d_wFields, d_cFields);
@@ -164,8 +164,8 @@ public:
       d_cFields.allocate(nMonomer);
       int nx = mesh.size();
       for (int i = 0; i < nMonomer; ++i) {
-         d_wFields[i].allocate(nx);
-         d_cFields[i].allocate(nx);
+         d_wFields[i].allocate(d);
+         d_cFields[i].allocate(d);
       }
 
       UTIL_CHECK(nMonomer == 2); // Hard-coded in here!
@@ -188,9 +188,9 @@ public:
          }
       }
 
-      cudaMemcpy(d_wFields[0].cField(), wFields0, 
+      cudaMemcpy(d_wFields[0].cArray(), wFields0, 
                   nx*sizeof(cudaReal), cudaMemcpyHostToDevice);
-      cudaMemcpy(d_wFields[1].cField(), wFields1, 
+      cudaMemcpy(d_wFields[1].cArray(), wFields1, 
                   nx*sizeof(cudaReal), cudaMemcpyHostToDevice);
 
       mixture.compute(d_wFields, d_cFields);
@@ -251,8 +251,8 @@ public:
       d_cFields.allocate(nMonomer);
       int nx = mesh.size();
       for (int i = 0; i < nMonomer; ++i) {
-         d_wFields[i].allocate(nx);
-         d_cFields[i].allocate(nx);
+         d_wFields[i].allocate(d);
+         d_cFields[i].allocate(d);
       }
 
       UTIL_CHECK(nMonomer == 2); // Hard-coded in here!
@@ -275,9 +275,9 @@ public:
          }
       }
 
-      cudaMemcpy(d_wFields[0].cField(), wFields0, 
+      cudaMemcpy(d_wFields[0].cArray(), wFields0, 
                   nx*sizeof(cudaReal), cudaMemcpyHostToDevice);
-      cudaMemcpy(d_wFields[1].cField(), wFields1, 
+      cudaMemcpy(d_wFields[1].cArray(), wFields1, 
                   nx*sizeof(cudaReal), cudaMemcpyHostToDevice);
 
       mixture.compute(d_wFields, d_cFields);
@@ -338,8 +338,8 @@ public:
       d_cFields.allocate(nMonomer);
       int nx = mesh.size();
       for (int i = 0; i < nMonomer; ++i) {
-         d_wFields[i].allocate(nx);
-         d_cFields[i].allocate(nx);
+         d_wFields[i].allocate(d);
+         d_cFields[i].allocate(d);
       }
 
       UTIL_CHECK(nMonomer == 2); // Hard-coded in here!
@@ -352,9 +352,9 @@ public:
          wFields1[i] = 0.5 - cs;
       }
 
-      cudaMemcpy(d_wFields[0].cField(), wFields0, 
+      cudaMemcpy(d_wFields[0].cArray(), wFields0, 
                   nx*sizeof(cudaReal), cudaMemcpyHostToDevice);
-      cudaMemcpy(d_wFields[1].cField(), wFields1, 
+      cudaMemcpy(d_wFields[1].cArray(), wFields1, 
                   nx*sizeof(cudaReal), cudaMemcpyHostToDevice);
 
       mixture.compute(d_wFields, d_cFields);

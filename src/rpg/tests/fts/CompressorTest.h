@@ -65,7 +65,7 @@ public:
          w2[i].allocate(dimensions);
       }
       RField<D> randomField;
-      randomField.allocate(meshSize);
+      randomField.allocate(dimensions);
       
       // GPU resources
       int nBlocks, nThreads;
@@ -80,14 +80,14 @@ public:
       for (int i = 0; i < nMonomer; i++){
 
          // Generate random numbers between 0.0 and 1.0 from uniform distribution
-         cudaRandom.uniform(randomField.cField(), meshSize);
+         cudaRandom.uniform(randomField.cArray(), meshSize);
 
          // Generate random numbers between [-stepSize_,stepSize_]
-         mcftsScale<<<nBlocks, nThreads>>>(randomField.cField(), stepSize, meshSize);
+         mcftsScale<<<nBlocks, nThreads>>>(randomField.cArray(), stepSize, meshSize);
 
          // Change the w field configuration
-         pointWiseBinaryAdd<<<nBlocks, nThreads>>>(w[i].cField(), randomField.cField(),
-                                                   w2[i].cField(), meshSize);
+         pointWiseBinaryAdd<<<nBlocks, nThreads>>>(w[i].cArray(), randomField.cArray(),
+                                                   w2[i].cArray(), meshSize);
 
       }
       
@@ -114,18 +114,18 @@ public:
       int nBlocks, nThreads;
       ThreadGrid::setThreadsLogical(meshSize, nBlocks, nThreads);
       RField<D> randomField;
-      randomField.allocate(meshSize);
+      randomField.allocate(dimensions);
       
       CudaRandom cudaRandom;
       cudaRandom.setSeed(0);
-      cudaRandom.uniform(randomField.cField(), meshSize);
+      cudaRandom.uniform(randomField.cArray(), meshSize);
       double stepSize = 1e-1;
-      mcftsScale<<<nBlocks, nThreads>>>(randomField.cField(), stepSize, meshSize);
+      mcftsScale<<<nBlocks, nThreads>>>(randomField.cArray(), stepSize, meshSize);
       
       // For multi-component copolymer
       for (int i = 0; i < nMonomer; i++){
-         pointWiseBinaryAdd<<<nBlocks, nThreads>>>(w[i].cField(), randomField.cField(),
-                                                   w2[i].cField(), meshSize);
+         pointWiseBinaryAdd<<<nBlocks, nThreads>>>(w[i].cArray(), randomField.cArray(),
+                                                   w2[i].cArray(), meshSize);
       }
       system.setWRGrid(w2);
       
@@ -171,8 +171,8 @@ public:
       
       DArray<RField<3>> const * currSys = &system.w().rgrid();
       for (int i = 0; i < nMonomer; ++i) {
-         assignReal<<<nBlocks,nThreads>>>(w0[i].cField(), 
-                                          (*currSys)[i].cField(), meshSize);
+         assignReal<<<nBlocks,nThreads>>>(w0[i].cArray(), 
+                                          (*currSys)[i].cArray(), meshSize);
          
       }
       
@@ -184,12 +184,12 @@ public:
       // Compute incompressible error
       RField<3> error;
       error.allocate(dimensions);
-      assignUniformReal<<<nBlocks, nThreads>>>(error.cField(), -1.0, meshSize);
+      assignUniformReal<<<nBlocks, nThreads>>>(error.cArray(), -1.0, meshSize);
       for (int i = 0; i < nMonomer; i++) {
          pointWiseAdd<<<nBlocks, nThreads>>>
-            (error.cField(), system.c().rgrid(i).cField(), meshSize);
+            (error.cArray(), system.c().rgrid(i).cArray(), meshSize);
       }
-      double product = (double)gpuInnerProduct(error.cField(), error.cField(), meshSize);
+      double product = (double)gpuInnerProduct(error.cArray(), error.cArray(), meshSize);
       
       TEST_ASSERT(sqrt(product)/sqrt(meshSize) < 1.0E-8);
       
@@ -207,8 +207,8 @@ public:
       }
       
       for (int i = 0; i < nMonomer; ++i) {
-         assignReal<<<nBlocks,nThreads>>>(w1[i].cField(), 
-                                          (*currSys)[i].cField(), meshSize);
+         assignReal<<<nBlocks,nThreads>>>(w1[i].cArray(), 
+                                          (*currSys)[i].cArray(), meshSize);
       }
       
       RFieldComparison<3> comparison;

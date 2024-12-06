@@ -14,8 +14,8 @@
 #include <pscf/mesh/MeshIterator.h>
 #include <pscf/iterator/NanException.h>
 #include <pscf/chem/PolymerType.h>
+#include <pscf/cuda/HostDArray.h>
 #include <prdc/crystal/shiftToMinimum.h>
-#include <prdc/cuda/HostField.h>
 
 namespace Pscf {
 namespace Rpg{
@@ -106,7 +106,7 @@ namespace Rpg{
       intraCorrelations.allocate(kMeshDimensions_);
       
       // CudaReal array
-      HostField<cudaReal> hostField;
+      HostDArray<cudaReal> hostField;
       hostField.allocate(kSize_);
       
       // Define iterator

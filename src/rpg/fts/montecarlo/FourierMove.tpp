@@ -69,12 +69,11 @@ namespace Rpg
       McMove<D>::setup();
       const int nMonomer = system().mixture().nMonomer();
       IntVec<D> const & dimensions = system().mesh().dimensions();
-      const int meshSize = system().domain().mesh().size();
       
       if (!isAllocated_){
          wFieldTmp_.allocate(nMonomer);
-         randomFieldR_.allocate(meshSize);
-         randomFieldK_.allocate(meshSize);
+         randomFieldR_.allocate(dimensions);
+         randomFieldK_.allocate(dimensions);
          wKGrid_.allocate(nMonomer);
          wRGrid_.allocate(nMonomer);
          sqrtSq_.allocate(dimensions);
@@ -161,7 +160,7 @@ namespace Rpg
             sqTemp[itr.rank()] = sqrt(S_);
          }
       }
-      cudaMemcpy(sqrtSq_.cField(), sqTemp, meshSize * sizeof(cudaReal), cudaMemcpyHostToDevice);
+      cudaMemcpy(sqrtSq_.cArray(), sqTemp, meshSize * sizeof(cudaReal), cudaMemcpyHostToDevice);
       delete[] sqTemp;
    }
    
@@ -179,7 +178,7 @@ namespace Rpg
       ThreadGrid::setThreadsLogical(meshSize, nBlocks, nThreads);
       for (int i = 0; i < nMonomer; ++i) {
          assignReal<<<nBlocks, nThreads>>>
-            (wRGrid_[i].cField(), system().w().rgrid(i).cField(), meshSize);
+            (wRGrid_[i].cArray(), system().w().rgrid(i).cArray(), meshSize);
       }
       // Convert real grid to KGrid format
       for (int i = 0; i < nMonomer; ++i) {
@@ -188,21 +187,21 @@ namespace Rpg
       
       for (int i = 0; i < nMonomer; ++i){
          //Generate randome number for real part
-         cudaRandom().uniform(randomFieldR_.cField(), meshSize);
+         cudaRandom().uniform(randomFieldR_.cArray(), meshSize);
          // Generate random numbers between [-stepSize_,stepSize_]
-         mcftsScale<<<nBlocks, nThreads>>>(randomFieldR_.cField(), stepSize_, meshSize);
+         mcftsScale<<<nBlocks, nThreads>>>(randomFieldR_.cArray(), stepSize_, meshSize);
          // Generate random numbers between [-stepSize_*S(q)^(1/2), stepSize_*S(q)^(1/2)]
-         inPlacePointwiseMul<<<nBlocks, nThreads>>>(randomFieldR_.cField(), sqrtSq_.cField(), meshSize);
+         inPlacePointwiseMul<<<nBlocks, nThreads>>>(randomFieldR_.cArray(), sqrtSq_.cArray(), meshSize);
          
          //Generate randome number for imagine part
-         cudaRandom().uniform(randomFieldK_.cField(), meshSize);
+         cudaRandom().uniform(randomFieldK_.cArray(), meshSize);
          // Generate random numbers between [-stepSize_,stepSize_]
-         mcftsScale<<<nBlocks, nThreads>>>(randomFieldK_.cField(), stepSize_, meshSize);
+         mcftsScale<<<nBlocks, nThreads>>>(randomFieldK_.cArray(), stepSize_, meshSize);
          // Generate random numbers between [-stepSize_*S(q)^(1/2), stepSize_*S(q)^(1/2)]
-         inPlacePointwiseMul<<<nBlocks, nThreads>>>(randomFieldK_.cField(), sqrtSq_.cField(), meshSize);
+         inPlacePointwiseMul<<<nBlocks, nThreads>>>(randomFieldK_.cArray(), sqrtSq_.cArray(), meshSize);
    
          // Attempt Move in ourier (k-grid) format
-         fourierMove<<<nBlocks, nThreads>>>(wKGrid_[i].cField(), randomFieldR_.cField(), randomFieldK_.cField(), meshSize);
+         fourierMove<<<nBlocks, nThreads>>>(wKGrid_[i].cArray(), randomFieldR_.cArray(), randomFieldK_.cArray(), meshSize);
       }
       
       // Convert Fourier (k-grid) format back to Real grid format

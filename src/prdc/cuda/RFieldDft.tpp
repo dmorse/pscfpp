@@ -9,7 +9,7 @@
 */
 
 #include <prdc/cuda/RFieldDft.h>
-#include <prdc/cuda/HostField.h>
+#include <pscf/cuda/HostDArray.h>
 
 namespace Pscf {
 namespace Prdc {
@@ -22,7 +22,7 @@ namespace Cuda {
    */
    template <int D>
    RFieldDft<D>::RFieldDft()
-    : Field<cudaComplex>()
+    : DeviceDArray<cudaComplex>()
    {}
 
    /*
@@ -30,7 +30,7 @@ namespace Cuda {
    */
    template <int D>
    RFieldDft<D>::RFieldDft(IntVec<D> const & meshDimensions)
-    : Field<cudaComplex>()
+    : DeviceDArray<cudaComplex>()
    {  allocate(meshDimensions); }
 
    /*
@@ -49,7 +49,7 @@ namespace Cuda {
    */
    template <int D>
    RFieldDft<D>::RFieldDft(const RFieldDft<D>& other)
-    : Field<cudaComplex>(other)
+    : DeviceDArray<cudaComplex>(other)
    {
       meshDimensions_ = other.meshDimensions_;
       dftDimensions_ = other.dftDimensions_;
@@ -62,7 +62,7 @@ namespace Cuda {
    RFieldDft<D>& RFieldDft<D>::operator = (const RFieldDft<D>& other)
    {
       
-      Field<cudaComplex>::operator = (other);
+      DeviceDArray<cudaComplex>::operator = (other);
       meshDimensions_ = other.meshDimensions_;
       dftDimensions_ = other.dftDimensions_;
 
@@ -70,14 +70,15 @@ namespace Cuda {
    }
 
    /*
-   * Assignment of RFieldDft<D> from RHS HostField<Data> host array.
+   * Assignment of RFieldDft<D> from RHS HostDArray<Data> host array.
    */
    template <int D>
-   RFieldDft<D>& RFieldDft<D>::operator = (const HostField<cudaComplex>& other)
+   RFieldDft<D>& 
+   RFieldDft<D>::operator = (const HostDArray<cudaComplex>& other)
    {
       // Preconditions: both arrays must be allocated with equal capacities
       if (!other.isAllocated()) {
-         UTIL_THROW("Error: RHS HostField<cudaComplex> is not allocated.");
+         UTIL_THROW("Error: RHS HostDArray<cudaComplex> is not allocated.");
       }
       if (!isAllocated()) {
          UTIL_THROW("Error: LHS RFieldDft<D> is not allocated.");
@@ -87,7 +88,7 @@ namespace Cuda {
       }
 
       // Use base class assignment operator to copy elements
-      Field<cudaComplex>::operator = (other);
+      DeviceDArray<cudaComplex>::operator = (other);
 
       return *this;
    }
@@ -111,7 +112,7 @@ namespace Cuda {
          }
       }
       // Note: size denotes size of mesh with dftDimensions 
-      Field<cudaComplex>::allocate(size);
+      DeviceDArray<cudaComplex>::allocate(size);
    }
 
 }

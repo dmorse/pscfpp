@@ -1,5 +1,5 @@
-#ifndef PRDC_CUDA_HOST_FIELD_TPP
-#define PRDC_CUDA_HOST_FIELD_TPP
+#ifndef PSCF_HOST_D_ARRAY_TPP
+#define PSCF_HOST_D_ARRAY_TPP
 
 /*
 * PSCF Package 
@@ -8,12 +8,10 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "HostField.h"
-#include "Field.h"
+#include "HostDArray.h"
+#include "DeviceDArray.h"
 
 namespace Pscf {
-namespace Prdc {
-namespace Cuda {
 
    using namespace Util;
 
@@ -21,7 +19,7 @@ namespace Cuda {
    * Default constructor.
    */
    template <typename Data>
-   HostField<Data>::HostField()
+   HostDArray<Data>::HostDArray()
     : data_(0),
       capacity_(0)
    {}
@@ -30,7 +28,7 @@ namespace Cuda {
    * Allocating constructor.
    */
    template <typename Data>
-   HostField<Data>::HostField(int capacity)
+   HostDArray<Data>::HostDArray(int capacity)
     : data_(0),
       capacity_(0)
    {  allocate(capacity); }
@@ -40,17 +38,17 @@ namespace Cuda {
    *
    * Allocates new memory and copies all elements by value.
    *
-   *\param other the HostField to be copied.
+   *\param other the HostDArray to be copied.
    */
    template <typename Data>
-   HostField<Data>::HostField(const HostField<Data>& other)
+   HostDArray<Data>::HostDArray(const HostDArray<Data>& other)
    {
       if (!other.isAllocated()) {
-         UTIL_THROW("Other HostField must be allocated.");
+         UTIL_THROW("Other HostDArray must be allocated.");
       }
 
       allocate(other.capacity_);
-      cudaMemcpy(data_, other.cField(), 
+      cudaMemcpy(data_, other.cArray(), 
                  capacity_ * sizeof(Data), cudaMemcpyHostToHost);
 
    }
@@ -59,7 +57,7 @@ namespace Cuda {
    * Destructor.
    */
    template <typename Data>
-   HostField<Data>::~HostField()
+   HostDArray<Data>::~HostDArray()
    {
       if (isAllocated()) {
          cudaFreeHost(data_);
@@ -71,10 +69,10 @@ namespace Cuda {
    * Allocate the underlying C array.
    */
    template <typename Data>
-   void HostField<Data>::allocate(int capacity)
+   void HostDArray<Data>::allocate(int capacity)
    {
       if (isAllocated()) {
-         UTIL_THROW("Attempt to re-allocate a HostField");
+         UTIL_THROW("Attempt to re-allocate a HostDArray");
       }
       if (capacity <= 0) {
          UTIL_THROW("Attempt to allocate with capacity <= 0");
@@ -86,31 +84,32 @@ namespace Cuda {
    /*
    * Deallocate the underlying C array.
    *
-   * Throw an Exception if this HostField is not allocated.
+   * Throw an Exception if this HostDArray is not allocated.
    */
    template <typename Data>
-   void HostField<Data>::deallocate()
+   void HostDArray<Data>::deallocate()
    {
       if (!isAllocated()) {
-         UTIL_THROW("Attempt to deallocate unallocated HostField");
+         UTIL_THROW("Attempt to deallocate unallocated HostDArray");
       }
       cudaFreeHost(data_);
+      data_ = 0; // reset to null ptr
       capacity_ = 0;
    }
 
    /*
-   * Assignment from another HostField<Data> host array.
+   * Assignment from another HostDArray<Data> host array.
    */
    template <typename Data>
-   HostField<Data>& 
-   HostField<Data>::operator = (const HostField<Data>& other)
+   HostDArray<Data>& 
+   HostDArray<Data>::operator = (const HostDArray<Data>& other)
    {
       // Check for self assignment
       if (this == &other) return *this;
 
       // Precondition - RHS array must be allocated
       if (!other.isAllocated()) {
-         UTIL_THROW("Other HostField must be allocated.");
+         UTIL_THROW("Other HostDArray must be allocated.");
       }
 
       // Allocate this LHS array if necessary 
@@ -120,25 +119,26 @@ namespace Cuda {
 
       // Require equal capacities
       if (capacity_ != other.capacity_) {
-         UTIL_THROW("Cannot assign HostFields of unequal capacity");
+         UTIL_THROW("Cannot assign HostDArrays of unequal capacity");
       }
 
       // Copy elements from RHS to LHS
-      cudaMemcpy(data_, other.cField(), 
+      cudaMemcpy(data_, other.cArray(), 
                  capacity_ * sizeof(Data), cudaMemcpyHostToHost);
 
       return *this;
    }
 
    /*
-   * Assignment from a Field<Data> RHS device array.
+   * Assignment from a DeviceDArray<Data> RHS device array.
    */
    template <typename Data>
-   HostField<Data>& HostField<Data>::operator = (const Field<Data>& other)
+   HostDArray<Data>& 
+   HostDArray<Data>::operator = (const DeviceDArray<Data>& other)
    {
       // Precondition - RHS array must be allocated
       if (!other.isAllocated()) {
-         UTIL_THROW("RHS Field<Data> must be allocated.");
+         UTIL_THROW("RHS DeviceDArray<Data> must be allocated.");
       }
 
       // Allocate this if necessary 
@@ -148,17 +148,15 @@ namespace Cuda {
 
       // Require equal capacities
       if (capacity_ != other.capacity()) {
-         UTIL_THROW("Cannot assign fields of unequal capacity");
+         UTIL_THROW("Cannot assign arrays of unequal capacity");
       }
 
       // Copy all elements
-      cudaMemcpy(data_, other.cField(), 
+      cudaMemcpy(data_, other.cArray(), 
                  capacity_ * sizeof(Data), cudaMemcpyDeviceToHost);
 
       return *this;
    }
 
-}
-}
 }
 #endif

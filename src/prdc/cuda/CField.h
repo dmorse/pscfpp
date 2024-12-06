@@ -8,7 +8,8 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <prdc/cuda/Field.h>
+#include <pscf/cuda/DeviceDArray.h>
+#include <pscf/cuda/HostDArray.h>
 #include <pscf/cuda/GpuResources.h>
 #include <pscf/math/IntVec.h>
 #include <util/global.h>
@@ -16,8 +17,6 @@
 namespace Pscf {
 namespace Prdc {
 namespace Cuda {
-
-   template <typename Data> class HostField;
 
    using namespace Util;
    using namespace Pscf;
@@ -28,7 +27,7 @@ namespace Cuda {
    * \ingroup Prdc_Cuda_Module 
    */
    template <int D>
-   class CField : public Field<cudaComplex>
+   class CField : public DeviceDArray<cudaComplex>
    {
 
    public:
@@ -66,29 +65,30 @@ namespace Cuda {
       /**
       * Assignment operator, assignment from another CField<D>.
       *
-      * Performs a deep copy, by copying all elements of the RHS CField<D>
-      * from device memory to device memory.
+      * Performs a deep copy, by copying all elements of the RHS 
+      * CField<D> from device memory to device memory.
       *
-      * The RHS CField must be allocated. If this LHS CField is not allocated
-      * on entry, allocate it before copying elements. If both LHS and RHS
-      * objects are allocated on entry, the capacities must be equal. 
+      * The RHS CField must be allocated. If this LHS CField is not 
+      * allocated on entry, allocate it before copying elements. If 
+      * both LHS and RHS objects are allocated on entry, the 
+      * capacities must be equal. 
       * 
       * \param other the RHS CField<D>
       */
       CField<D>& operator = (CField<D> const & other);
 
       /**
-      * Assignment operator, assignment from a HostField<cudaComplex>.
+      * Assignment operator, assignment from a HostDArray<cudaComplex>.
       *
-      * Performs a deep copy, by copying all elements of the RHS CField<D>
-      * from host memory to device memory.
+      * Performs a deep copy, by copying all elements of the RHS 
+      * CField<D> from host memory to device memory.
       *
-      * The RHS HostField<cudaComplex> and LHS CField<D> must both be allocated
-      * with equal capacity values on entry. 
+      * The RHS HostDArray<cudaComplex> and LHS CField<D> must both be 
+      * allocated with equal capacity values on entry. 
       * 
-      * \param other the RHS HostField<cudaComplex>
+      * \param other the RHS HostDArray<cudaComplex>
       */
-      CField<D>& operator = (HostField<cudaComplex> const & other);
+      CField<D>& operator = (HostDArray<cudaComplex> const & other);
 
       /**
       * Allocate the underlying C array for an FFT grid.
@@ -119,10 +119,10 @@ namespace Cuda {
       IntVec<D> meshDimensions_;
 
       // Make private to prevent allocation without mesh dimensions.
-      using Field<cudaComplex>::allocate;
+      using DeviceDArray<cudaComplex>::allocate;
 
       // Make private to prevent assignment without mesh dimensions
-      using Field<cudaComplex>::operator=;
+      using DeviceDArray<cudaComplex>::operator=;
 
    };
 
