@@ -78,28 +78,11 @@ associated with the converged solution. This is possible because
 the required data output operations are programmed to occur 
 automatically for each state in the sweep.
 
-\section scft_command_pc_ex_simulate_sec Example: FTS 
-
-A minimal command file for a field theoretic MC or BD simulation
-of 1,000,000 moves or steps looks like this:
-\code
-READ_W_RGRID    in/w.rf
-SIMULATE        1000000
-FINISH
-\endcode
-The command READ_W_RGRID used here to read an initial guess for 
-the w fields must read an input in real-space grid format, rather 
-than in symmetrized basis format. This is because the fluctuating 
-fields in an stochastic simulation generally have no nontrivial 
-space group symmetry, and so must be input and output using a
-file format that does not impose any such symmetry.
-
-The parameter file for used for run that perform a FTS must
-contain a Compressor block and an McSimulator block.
-
 \section scft_command_pc_commands_sec Commands
 
-The following table shows a list of available commands for pscf_pc.
+The following table shows a list of available commands for pscf_pc
+that are relevant to SCFT calculations. 
+
 Each clickable command name links to a more detailed discussion of 
 that command or of a group of closely related commands.
 <table>
@@ -455,7 +438,8 @@ that command or of a group of closely related commands.
     <td> \ref scft_command_pc_writetimer_sub "WRITE_TIMERS" </td>
     <td> filename [string] </td>
     <td> Write a report of computational times spent on various
-         operations in a preceding calculation or simulation. </td>
+         operations in a preceding SCFT calculation or FTS
+         simulation. </td>
   </tr>
   <tr>
     <td> \ref scft_command_pc_cleartimer_sub "CLEAR_TIMERS" </td>
@@ -1107,17 +1091,29 @@ basis or r-grid format.
 
 \section scft_command_pc_timers_sec Timer commands
 
+The WRITER_TIMERS and CLEAR_TIMERS commands are designed to output
+and manipulate time counters that keep track of how much time was
+spent on various operations during either a preceding SCFT or a 
+preceding FTS.  These commands are designed to work either with
+SCFT or FTS calculations, depending on what types of calculation 
+have been enabled in the parameter file. 
+
 \anchor scft_command_pc_writetimer_sub <b>WRITE_TIMERS</b>:
-The WRITE_TIMERS command writes a report of the amounts of 
-computational time spent on different operations since the
-program was invoked, or since the last time the timers were
-cleared. The format of the report is designed for use with
-FTS calculations.
+The WRITE_TIMERS command writes a report of the amounts of computational 
+time spent on different operations since the main program was invoked, 
+or since the last time the timers were cleared by invoking CLEAR_TIMERS. 
+The resulting report is output both to the file whose name is given a 
+parameter and to the log output (i.e., standard output).  If the 
+parameter file contains an Iterator block, and has thus enabled 
+SCFT, this command will output information about times spent on
+various operations with the SCFT iterator. If the parameter file 
+contains a BdSimulator or McSimulator block, and thus enables FTS, 
+then the WRITE_TIMERS will output information about time spent in 
+different operations with the FTS time step loop.
 
 \anchor scft_command_pc_cleartimer_sub <b>CLEAR_TIMERS</b> 
-The CLEAR_TIMERS command clears the state of all timers, by 
-resetting to zero the values for accumulated times associated 
-with different operations.
+The CLEAR_TIMERS command clears the state of all available timers, 
+resetting values of all timer variables to zero. 
 
 \section scft_command_pc_subpages_sec Contents (subpages)
 

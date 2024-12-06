@@ -59,7 +59,7 @@ block contains three main subblock that specify choices and
 associated parameter values for sampling, compressor, and
 analysis algorithms.
 
-\section psfts_algorithm_BD Brownian Dynamics (BD)
+\section psfts_algorithm_BD Brownian Dynamics (BD) Sampling
 
 The description of BD step algorithms used to define parameters
 is based on units in which the fictitious "time" is measured
@@ -119,7 +119,7 @@ described above, (2) a predictor corrector algorithm,
 and (3) the Leimkuhler-Matthews (LM) BD step algorithm.
 We recommend the LM algorithm as the method of choice.
 
-\section psfts_algorithm_MC Monte Carlo (MC)
+\section psfts_algorithm_MC Monte Carlo (MC) Sampling
 
 The PSCF implementation of MC sampling allows the user to
 specify a set of MC moves algorithms from among which the
@@ -195,6 +195,16 @@ with increases in the mobility parameter.
 Users of BD simulations thus need to be careful about
 assessing systematic errors as well as about
 quantifying purely statistical errors.
+
+\section psfts_algorithm_compressor_sec Compressor Algorithms
+
+Describe purpose
+
+List algorithms
+
+\section psfts_algorithm_analyer_sec Analysis Algorithms
+
+Describe roles for analyzer classes
 
 <BR>
 \ref psfts_psa_page    (Prev) &nbsp; &nbsp; &nbsp; &nbsp;

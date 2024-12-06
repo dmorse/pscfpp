@@ -13,29 +13,31 @@ is simply that a SIMULATE command is used to run a stochastic
 simulation, rather than the ITERATE or SWEEP command used to run 
 an SCFT calculation or an SCFT parameter sweep.
 
-For example, suppose that we want to use pscf_pg to run a GPU
-accelerated BD simulation of 30,000 BD steps in a 3D domain, 
-using a parameter file named param and a command file named 
-command. To do so we might invoke the program as
+\section psfts_command_example_sec FTS Example
+
+For example, suppose that we want to use pscf_pg to run a GPU-accelerated
+BD simulation of 30,000 BD steps in a 3D domain, using a parameter file 
+named param and a command file named command. To do so, we might invoke 
+the pscf_pg executable as
 \code
    pscf_pg -e -d 3 -p param -c command > log 
 \endcode
-The parameter file used for such a calculation must contain
-a BdSimulator block that specifies appropriate choices of 
-algorithms and parameters for a BD step algorithm, a compressor 
-algorithm, and any desired analyzers. 
+We assume that the parameter file "param" contains a BdSimulator block 
+that specifies appropriate choices of algorithms and parameters for a 
+BD step algorithm, a compressor algorithm, and any desired analyzers. 
 
-A stochastic simulation must read in an initial field 
-configuration from a field file. 
-Field files used for FTS are almost always input and output in
-the r-grid file format, which gives values for the w fields on 
-the nodes of a grid. 
-Because the fluctuating fields used in a FTS generally do not 
-exhibit any nontrivial space group symmetry, field files used
-for this purpose often do not contain a space group identifier.
+Before begininng performing a FTS, we must read in an initial field 
+configuration from a field file.  Field files used to initialize a
+FTS must be input and output in the r-grid file format, which gives 
+values for the w fields on the nodes of a grid, and does not impose 
+any space group symmetry. This is done using the READ_W_GRID command,
+as shown in the following example. 
 
-A simple command file for running such a simulation, using an 
-input field named 'in/w.rf' might look like this:
+Suppose that we run a simulation from a directory that contains 
+subdirectories named 'in' and 'out', in which directory 'in' contains
+an initial field file named 'in/w.rf', while all output files are 
+written to subdirectory named 'out'.  A simple command file for 
+such a simulation might look something like the following:
 \code
 READ_W_RGRID   in/w.rf
 SIMULATE       30000
@@ -44,21 +46,78 @@ WRITE_C_RGRID  out/c.rf
 WRITE_TIMERS   out/timers
 FINISH
 \endcode
-In this example, the READ_W_GRID reads in the initial w-field
-file, and thus SIMULATE command actually runs the simulation.
-The WRITE_W_RGRID and WRITE_C_GRID commands then writes the 
-final w and c field configurations to different files within
-the out/ directory.  The WRITE_TIMERS command writes diagnostic 
-information about the amount time take by different operations
-to a file. 
+In this example, the READ_W_GRID command reads in the specified
+w-field file, and the SIMULATE command actually runs the simulation.  
+After the simulation is complete, the WRITE_W_RGRID and WRITE_C_GRID 
+commands then writes the final w and and c field configurations to 
+files within the out/ directory.  The WRITE_TIMERS command writes 
+a report about the amount of time taken by various computational 
+operations to a file named 'out/timers'. 
 
-The most important new command in this example is the SIMULATE 
-command. This command runs a simulation of a specified number
-of BD or MC steps, and takes the number of steps as a parameter. 
-In this example, the command thus runs a simulation of 30000 
-BD steps.  The type of simulation that is performed (i.e., BD 
-vs. MC) and the choice of algorithms and parameter values used 
-in the simulation must all be specified in the parameter file. 
+The most important new command in this example is the SIMULATE command. 
+This command runs a simulation of a specified number of BD or MC steps, 
+and takes the number of steps as a parameter.  In this example, the 
+SIMULATE command thus runs a simulation of 30000 steps.  The type of 
+simulation that is performed (i.e., BD vs. MC) and the choice of 
+algorithms and parameter values used in that simulation are all 
+specified in the parameter file, which is always processed before the 
+command file. 
+
+\section psfts_command_commands_sec Commands for FTS
+
+The commands that can be used SCFT calculations performed with pscf_pc 
+have already been listed here \ref scft_command_pc_page "here". Most
+of these commands can also be used in a command file for pscf_pg.
+Many of the commands that are used to setup or process SCFT calculations
+can also be used in the context of an FTS calculation.  Specifically, 
+commands for reading and writing field files such as READ_W_GRID and 
+WRITE_W_GRID can be used in either context, as can the timer commands
+and some of the commands for manipulating field files.
+
+The following table lists a set of commands that are accepted by either
+pscf_pc or and pscf_pg that are only meaningful in the context of an
+FTS simulation, and that were thus not listed among the commands that
+can be used for SCFT calculations.
+
+<table>
+  <tr>
+    <td> <b>command     </b> </td>
+    <td> <b>parameter(s)</b> </td>
+    <td> <b>action </b> </td>
+  </tr>
+
+  <tr>
+    <td> SIMULATE </td>
+    <td> nStep </td>
+    <td> Perform a field-theoretic simulation of nStep steps.  </td>
+  </tr>
+  <tr>
+    <td> ANALYZE </td>
+    <td> min, max, className, filename </td>
+    <td> Postprocess a field trajectory output by looping over frames
+         of a field trajectory file output by a previous simulation. 
+         Analyze frames with frame numbers min to max from file 
+         filename, using a TrajectoryReader object that is an instance 
+         of class className.  </td>
+  </tr>
+  <tr>
+    <td> COMPRESS </td>
+    <td> </td>
+    <td> Iteratively adjust the Lagrange multiplier pressure field
+         component of the current w fields so as to satisfy the 
+         incompressibility constraint (i.e., the partial saddle
+         point condition). </td>
+  </tr>
+
+</table>
+
+The use of the SIMULATE command has been discussed in the above example.
+
+The use of the ANALYZE command to postprocess a field trajectory file is 
+discussed in more detail on a \ref psfts_postprocess_page "separate page".
+
+The COMPRESS command simply applies the compressor algorithm to the 
+current w fields, outside the context of a stochastic simulation. 
 
 <BR>
 \ref psfts_param_page        (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 

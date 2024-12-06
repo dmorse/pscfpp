@@ -32,47 +32,45 @@ types of stochastic sampling algorithms.
 The overall format of all allowed blocks in a parameter file 
 for either pscf_pc or pscf_pg is shown below in skeleton form:
 \code
-\System{
-   Mixture{ ... }
-   Interaction{ ... }
-   Domain{ ... }
-   Iterator*#{ ... }
-   Sweep*#{ ... }
-   Simulator*#{ ... }
+System{
+  Mixture{ ... }
+  Interaction{ ... }
+  Domain{ ... }
+  Iterator#*{ ... }
+  Sweep#*{ ... }
+  Simulator#*{ ... }
 }
 \endcode
-Note that only the Mixture, Interaction, and Domain blocks are
-required The Iterator, Sweep, and Simulator blocks are instead
-all optional, selectable blocks that are needed to enable 
-different types of calculation. The Iterator and Sweep blocks 
-are only used for SCFT calculations, and so are normally omitted 
-in parameter files that are used to set up a BD or MC calculation. 
-The Simulator block must be present to enable FTS, however, and 
-is normally omitted in a parameter file that is used to set up
-an SCFT calculation or calculations.
+Note that only the Mixture, Interaction, and Domain blocks are required. 
+The Iterator, Sweep, and Simulator blocks are instead all optional, 
+selectable blocks that are needed to enable different types of 
+calculation. The Iterator and Sweep blocks are only used for SCFT 
+calculations, and so are normally omitted in parameter files that 
+are used to initialize a BD or MC FTS.  Conversely, the Simulator
+block is only used for FTS simulations, and so is normally omitted
+omitted in parameter files that are used to initialized SCFT
+calculations.
 
-The typical format for a parameter file that sets up a Brownian
-dynamics FTS, but that not does enable SCFT, is thus, in 
-skeleton form:
+The typical format for a parameter file that enables Brownian dynamics 
+FTS, but that not does enable SCFT, is thus, in skeleton form:
 \code
-\System{
-   Mixture{ ... }
-   Interaction{ ... }
-   Domain{ ... }
-   BdSimulator{ ... }
+System{
+  Mixture{ ... }
+  Interaction{ ... }
+  Domain{ ... }
+  BdSimulator{ ... }
 }
 \endcode
-The corresponding format for a typical parameter file for an MC 
-simulation would be
+The corresponding format for a parameter file for MC simulation is:
 \code
-\System{
-   Mixture{ ... }
-   Interaction{ ... }
-   Domain{ ... }
-   McSimulator{ ... }
+System{
+  Mixture{ ... }
+  Interaction{ ... }
+  Domain{ ... }
+  McSimulator{ ... }
 }
 \endcode
-Formats of these various blocks are discussed below.
+Formats of the various blocks of these skeleton are discussed below.
 
 \section psfts_param_Mixture_sec Mixture, Interaction and Domain Blocks
 
@@ -262,33 +260,102 @@ random changes to the exchange field values on all grid points,
 and a "smart MC" or "force bias" move named ForceBiasMove that 
 uses an explicit Euler BD step to generate a proposed MC move. 
 
-Below, we show an example of an McMoveManager block that uses
-both of these move types with different probabilities:
+Below, we show an example of an McSimulator block for a MC
+simulation analogous to the BdSimulator block of the 
+previous example:
 \code
-McSimulator{
-   ForceBiasMove{
-     probability  0.75
-     mobility     4.0E-3
-   }
-   RealMove{
-     probability  0.25
-     A            0.15
-   }
+  McSimulator{
+    seed           486893701
+    McMoveManager{
+      ForceBiasMove{
+        probability  0.75
+        mobility     4.0E-3
+      }
+      RealMove{
+        probability  0.25
+        A            0.15
+      }
+    }
+    LrAmCompressor{
+      epsilon      1.0e-4
+      maxHist      40
+    }
+    AnalyzerManager{
+      baseInterval    10
+
+      HamiltonianAnalyzer{
+        interval        10
+        outputFileName  out/hamiltonian
+        nSamplePerBlock 5
+      }
+
+      StepLogger{
+        interval        20
+      }
+
+    }
+  }
 }
 \endcode
-Blank lines may also appear before or after blocks within an 
-McMoveManager, though we have not included any blank lines in 
-this example.
+The only difference between this McSimulator block and the BdSimulator 
+block shown in the previous example of a BD simulation parameter file
+is the appearance of a McMmoveManager block in this example where the
+previous example contains a LMBdStep block that described the choice
+of BD step algorithm. 
 
-In this example, a ForceBiasMove is chosen with 75\% probability at the 
-beginning of each step, and a RealMove is chosen with 25\% probability.
-The parameter of a ForceBiasMove named "mobility" specifies the mobility 
-for the explicit Euler BD step that is used by this algorithm to 
-generate a proposed MC move.
-The parameter of a RealMove named "A" specifies the root-mean-squared
-change in the proposed value of the exchange field at each grid point.
+The McMoveManager block from the above example is show separately below:
+\code
+    McMoveManager{
+       ForceBiasMove{
+         probability  0.75
+         mobility     4.0E-3
+       }
+       RealMove{
+         probability  0.25
+         A            0.15
+       }
+    }
+\endcode
+This block has subblocks labelled ForceBiasMove and RealMove, indicating
+that the simulation will use both of the currently available move types.
+
+The first parameter in each subblock is the "probability" parameter,
+which is given a value of 0.75 for the ForceBiasMove and 0.25 for the
+RealMove.  In this example, a ForceBiasMove is thus chosen with 75\% 
+probability at the beginning of each step, and a RealMove is chosen with 
+25\% probability.  
+
+Other parameters of each MC move are required to specify the typical
+magnitude of random changes.  The "mobility" parameter of the  
+ForceBiasMove gives the value of the Brownian dynamics mobility 
+parameter for the explicit Euler BD step that is used by this algorithm 
+to generate a proposed MC move.  The parameter of a RealMove named "A" 
+specifies the root-mean-squared change in the proposed value of the 
+exchange field at each grid point.
 
 \section psfts_param_compressor_sec Compressor Algorithms
+
+In both BD and MC simulations, the block that describes the sampling
+algorithm is followed by a selectable "Compressor" block. Users may
+choose from among several available compressor algorithms by using
+a block label for this block that identifies a specific algorithm,
+and then using a format for the block that is appropriate to the
+chosen algorithm. 
+
+
+The available compressor algorithms are listed below. Users may click
+on the link associated with each algorithm label to access more a
+detailed description of each the algorithm, and of the format of the 
+associated parameter file block. 
+
+   - LrAmCompressor
+   - LrCompressor
+   - AmCompressor
+
+The LrAmCompressor is the default choice, we may thus be selected
+either by using the generic label "Compressor" or the more specific
+label "LrAmCompressor" before the opening bracket in the first line 
+of the associated parameter file block. 
 
 \section psfts_param_analyzer_sec AnalyzerManager
 
