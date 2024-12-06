@@ -8,8 +8,8 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <prdc/cuda/RField.h>
-#include <prdc/cuda/HostField.h>
+#include "RField.h"
+#include <pscf/cuda/HostDArray.h>
 
 namespace Pscf {
 namespace Prdc {
@@ -23,7 +23,7 @@ namespace Cuda {
    */
    template <int D>
    RField<D>::RField()
-    : Field<cudaReal>()
+    : DeviceDArray<cudaReal>()
    {}
 
    /**
@@ -31,7 +31,7 @@ namespace Cuda {
    */
    template <int D>
    RField<D>::RField(IntVec<D> const & meshDimensions)
-    : Field<cudaReal>()
+    : DeviceDArray<cudaReal>()
    {  allocate(meshDimensions); }
 
    /*
@@ -43,7 +43,7 @@ namespace Cuda {
    */
    template <int D>
    RField<D>::RField(const RField<D>& other)
-    : Field<cudaReal>(other),
+    : DeviceDArray<cudaReal>(other),
       meshDimensions_(0)
    {  meshDimensions_ = other.meshDimensions_; }
 
@@ -66,7 +66,7 @@ namespace Cuda {
          meshDimensions_[i] = meshDimensions[i];
          size *= meshDimensions[i];
       }
-      Field<cudaReal>::allocate(size);
+      DeviceDArray<cudaReal>::allocate(size);
    }
 
    /*
@@ -75,21 +75,21 @@ namespace Cuda {
    template <int D>
    RField<D>& RField<D>::operator = (const RField<D>& other)
    {
-      Field<cudaReal>::operator = (other);
+      DeviceDArray<cudaReal>::operator = (other);
       meshDimensions_ = other.meshDimensions_;
 
       return *this;
    }
 
    /*
-   * Assignment of this RField<D> from RHS HostField<Data> host array.
+   * Assignment of this RField<D> from RHS HostDArray<Data> host array.
    */
    template <int D>
-   RField<D>& RField<D>::operator = (const HostField<cudaReal>& other)
+   RField<D>& RField<D>::operator = (const HostDArray<cudaReal>& other)
    {
       // Preconditions: both arrays must be allocated with equal capacities
       if (!other.isAllocated()) {
-         UTIL_THROW("Error: RHS HostField<cudaReal> is not allocated.");
+         UTIL_THROW("Error: RHS HostDArray<cudaReal> is not allocated.");
       }
       if (!isAllocated()) {
          UTIL_THROW("Error: LHS RField<D> is not allocated.");
@@ -99,7 +99,7 @@ namespace Cuda {
       }
 
       // Use base class assignment operator to copy elements
-      Field<cudaReal>::operator = (other);
+      DeviceDArray<cudaReal>::operator = (other);
 
       return *this;
    }

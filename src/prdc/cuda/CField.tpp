@@ -8,8 +8,8 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <prdc/cuda/CField.h>
-#include <prdc/cuda/HostField.h>
+#include "CField.h"
+#include <pscf/cuda/HostDArray.h>
 
 namespace Pscf {
 namespace Prdc {
@@ -23,7 +23,7 @@ namespace Cuda {
    */
    template <int D>
    CField<D>::CField()
-    : Field<cudaComplex>()
+    : DeviceDArray<cudaComplex>()
    {}
 
    /**
@@ -31,7 +31,7 @@ namespace Cuda {
    */
    template <int D>
    CField<D>::CField(IntVec<D> const & meshDimensions)
-    : Field<cudaComplex>()
+    : DeviceDArray<cudaComplex>()
    {  allocate(meshDimensions); }
 
    /*
@@ -50,7 +50,7 @@ namespace Cuda {
    */
    template <int D>
    CField<D>::CField(const CField<D>& other)
-    : Field<cudaComplex>(other),
+    : DeviceDArray<cudaComplex>(other),
       meshDimensions_(0)
    {
       meshDimensions_ = other.meshDimensions_;
@@ -62,21 +62,21 @@ namespace Cuda {
    template <int D>
    CField<D>& CField<D>::operator = (const CField<D>& other)
    {
-      Field<cudaComplex>::operator = (other);
+      DeviceDArray<cudaComplex>::operator = (other);
       meshDimensions_ = other.meshDimensions_;
 
       return *this;
    }
 
    /*
-   * Assignment from RHS HostField<Data> host array.
+   * Assignment from RHS HostDArray<Data> host array.
    */
    template <int D>
-   CField<D>& CField<D>::operator = (HostField<cudaComplex> const & other)
+   CField<D>& CField<D>::operator = (HostDArray<cudaComplex> const & other)
    {
       // Preconditions: both arrays must be allocated with equal capacities
       if (!other.isAllocated()) {
-         UTIL_THROW("Error: RHS HostField<cudaComplex> is not allocated.");
+         UTIL_THROW("Error: RHS HostDArray<cudaComplex> is not allocated.");
       }
       if (!isAllocated()) {
          UTIL_THROW("Error: LHS CField<D> is not allocated.");
@@ -86,7 +86,7 @@ namespace Cuda {
       }
 
       // Use base class assignment operator to copy elements
-      Field<cudaComplex>::operator = (other);
+      DeviceDArray<cudaComplex>::operator = (other);
 
       return *this;
    }
@@ -103,7 +103,7 @@ namespace Cuda {
          meshDimensions_[i] = meshDimensions[i];
          size *= meshDimensions[i];
       }
-      Field<cudaComplex>::allocate(size);
+      DeviceDArray<cudaComplex>::allocate(size);
    }
 
 }

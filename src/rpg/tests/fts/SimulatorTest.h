@@ -8,6 +8,7 @@
 #include <rpg/fts/simulator/Simulator.h>
 #include <prdc/cuda/RField.h> 
 #include <prdc/cuda/RFieldComparison.h>
+#include <pscf/math/IntVec.h>
 #include <util/containers/DArray.h>  
 
 #include <util/tests/LogFileUnitTest.h>
@@ -107,6 +108,7 @@ public:
 
       int nMonomer = system.mixture().nMonomer();
       int meshSize = system.domain().mesh().size();
+      IntVec<3> dimensions = system.domain().mesh().dimensions();
 
       simulator.computeWc();
       DArray< RField<3> > const & wc = simulator.wc();
@@ -136,39 +138,39 @@ public:
 
       // Test wc field
       RField<3> wcTest1;
-      wcTest1.allocate(meshSize);
+      wcTest1.allocate(dimensions);
       RField<3> wcTest2;
-      wcTest2.allocate(meshSize);
+      wcTest2.allocate(dimensions);
       int nBlocks, nThreads;
       ThreadGrid::setThreadsLogical(meshSize, nBlocks, nThreads);
       /// TEST_ASSERT(fabs( w[0][i] - wc[0][i] - wc[1][i] ) < 1.0E-6);
       pointWiseBinarySubtract<<<nBlocks, nThreads>>>
-         (w[0].cField(), wc[0].cField(), wcTest1.cField(), meshSize);
+         (w[0].cArray(), wc[0].cArray(), wcTest1.cArray(), meshSize);
       pointWiseSubtract<<<nBlocks, nThreads>>>
-         (wcTest1.cField(), wc[1].cField(), meshSize);
-      TEST_ASSERT((double)gpuMaxAbs(wcTest1.cField(), meshSize)< 1.0E-6);
+         (wcTest1.cArray(), wc[1].cArray(), meshSize);
+      TEST_ASSERT((double)gpuMaxAbs(wcTest1.cArray(), meshSize)< 1.0E-6);
       
       /// TEST_ASSERT(fabs( w[0][i] - w[1][i] - 2.0*wc[0][i] ) < 1.0E-6);
       pointWiseBinarySubtract<<<nBlocks, nThreads>>>
-         (w[0].cField(), w[1].cField(), wcTest2.cField(), meshSize);
+         (w[0].cArray(), w[1].cArray(), wcTest2.cArray(), meshSize);
       pointWiseAddScale<<<nBlocks, nThreads>>>
-         (wcTest2.cField(), wc[0].cField(), -2.0, meshSize);
-      TEST_ASSERT((double)gpuMaxAbs(wcTest2.cField(), meshSize)< 1.0E-6);
+         (wcTest2.cArray(), wc[0].cArray(), -2.0, meshSize);
+      TEST_ASSERT((double)gpuMaxAbs(wcTest2.cArray(), meshSize)< 1.0E-6);
 
 
       // Test cc field
       RField<3> ccTest;
-      ccTest.allocate(meshSize);
+      ccTest.allocate(dimensions);
       ///TEST_ASSERT(fabs( c[0][i] - c[1][i] - cc[0][i] ) < 1.0E-6);
       pointWiseBinarySubtract<<<nBlocks, nThreads>>>
-         (c[0].cField(), c[1].cField(), ccTest.cField(), meshSize);
+         (c[0].cArray(), c[1].cArray(), ccTest.cArray(), meshSize);
       pointWiseSubtract<<<nBlocks, nThreads>>>
-         (ccTest.cField(), cc[0].cField(), meshSize);
-      TEST_ASSERT((double)gpuMaxAbs(ccTest.cField(), meshSize)< 1.0E-6);
+         (ccTest.cArray(), cc[0].cArray(), meshSize);
+      TEST_ASSERT((double)gpuMaxAbs(ccTest.cArray(), meshSize)< 1.0E-6);
       
       // Test dc field
       // diff = fabs( dc[0][i] );
-      TEST_ASSERT((double)gpuMaxAbs(dc[0].cField(), meshSize) < 1.0E-8);
+      TEST_ASSERT((double)gpuMaxAbs(dc[0].cArray(), meshSize) < 1.0E-8);
 
       #if 0
       std::cout << std::endl;

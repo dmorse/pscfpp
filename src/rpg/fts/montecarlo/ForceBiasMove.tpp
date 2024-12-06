@@ -73,6 +73,7 @@ namespace Rpg {
    {  
       // Check array capacities
       int meshSize = system().domain().mesh().size();
+      IntVec<D> dimensions = system().domain().mesh().dimensions();
       int nMonomer = system().mixture().nMonomer();
       UTIL_CHECK(w_.capacity() == nMonomer);
       for (int i=0; i < nMonomer; ++i) {
@@ -86,9 +87,9 @@ namespace Rpg {
       }
 
       McMove<D>::setup();
-      biasField_.allocate(meshSize);
-      dwd_.allocate(meshSize);
-      gaussianField_.allocate(meshSize);
+      biasField_.allocate(dimensions);
+      dwd_.allocate(dimensions);
+      gaussianField_.allocate(dimensions);
    }
  
    /*
@@ -129,14 +130,14 @@ namespace Rpg {
       DArray<RField<D>> const * Wr = &system().w().rgrid();
       for (i = 0; i < nMonomer; ++i) {
          assignReal<<<nBlocks, nThreads>>>
-            (w_[i].cField(), (*Wr)[i].cField(), meshSize);
+            (w_[i].cArray(), (*Wr)[i].cArray(), meshSize);
       }
 
       // Copy current derivative fields from into member variable dc_
       DArray<RField<D>> const * Dc = &simulator().dc();
       for (i = 0; i < nMonomer - 1; ++i) {
          assignReal<<<nBlocks, nThreads>>>
-            (dc_[i].cField(), (*Dc)[i].cField(), meshSize);
+            (dc_[i].cArray(), (*Dc)[i].cArray(), meshSize);
       }
 
       // Constants for dynamics
@@ -156,24 +157,24 @@ namespace Rpg {
          RField<D> & dwc = dwc_[j];
          
          // Generagte normal distributed random floating point numbers
-         cudaRandom().normal(gaussianField_.cField(), meshSize, (cudaReal)stddev, (cudaReal)mean);
+         cudaRandom().normal(gaussianField_.cArray(), meshSize, (cudaReal)stddev, (cudaReal)mean);
          
          // dwr
-         scaleReal<<<nBlocks, nThreads>>>(gaussianField_.cField(), b, meshSize);
+         scaleReal<<<nBlocks, nThreads>>>(gaussianField_.cArray(), b, meshSize);
          
          // dwd
-         assignReal<<<nBlocks, nThreads>>>(dwd_.cField(), dc_[j].cField(), meshSize);
-         scaleReal<<<nBlocks, nThreads>>>(dwd_.cField(), a, meshSize);
+         assignReal<<<nBlocks, nThreads>>>(dwd_.cArray(), dc_[j].cArray(), meshSize);
+         scaleReal<<<nBlocks, nThreads>>>(dwd_.cArray(), a, meshSize);
          
          // dwc
-         pointWiseBinaryAdd<<<nBlocks, nThreads>>>(dwd_.cField(), gaussianField_.cField(), dwc.cField(), meshSize);
+         pointWiseBinaryAdd<<<nBlocks, nThreads>>>(dwd_.cArray(), gaussianField_.cArray(), dwc.cArray(), meshSize);
          
          // Loop over monomer types
          for (i = 0; i < nMonomer; ++i) {
             RField<D> const & dwc = dwc_[j];
             RField<D> & wn = w_[i];
             evec = simulator().chiEvecs(j,i);
-            pointWiseAddScale<<<nBlocks, nThreads>>>(wn.cField(), dwc.cField(), evec, meshSize);
+            pointWiseAddScale<<<nBlocks, nThreads>>>(wn.cArray(), dwc.cArray(), evec, meshSize);
          }
          
       }
@@ -219,8 +220,8 @@ namespace Rpg {
             RField<D> const & dwc = dwc_[j];
          
             computeForceBias<<<nBlocks, nThreads>>>
-               (biasField_.cField(), di.cField(), df.cField(), dwc.cField(), mobility_, meshSize);
-            bias += (double) gpuSum(biasField_.cField(), meshSize);
+               (biasField_.cArray(), di.cArray(), df.cArray(), dwc.cArray(), mobility_, meshSize);
+            bias += (double) gpuSum(biasField_.cArray(), meshSize);
          }
          bias *= vNode;
          hamiltonianTimer_.stop();

@@ -16,6 +16,7 @@
 #include <rpg/fts/perturbation/PerturbationFactory.h>
 #include <rpg/fts/ramp/Ramp.h>
 #include <rpg/fts/ramp/RampFactory.h>
+#include <pscf/math/IntVec.h>
 #include <util/misc/Timer.h>
 #include <util/random/Random.h>
 #include <util/global.h>
@@ -105,24 +106,24 @@ namespace Rpg {
       // Allocate memory for eignevector components of w and c fields
       wc_.allocate(nMonomer);
       cc_.allocate(nMonomer);
-      const int meshSize = system().domain().mesh().size();
+      const IntVec<D> dimensions = system().domain().mesh().dimensions();
       for (int i = 0; i < nMonomer; ++i) {
-         wc_[i].allocate(meshSize);
-         cc_[i].allocate(meshSize);
+         wc_[i].allocate(dimensions);
+         cc_[i].allocate(dimensions);
       }
 
       // Allocate memory for components of d (functional derivative)
       dc_.allocate(nMonomer-1);
       for (int i = 0; i < nMonomer - 1; ++i) {
-         dc_[i].allocate(meshSize);
+         dc_[i].allocate(dimensions);
       }
       
-      // Allocate memory for single eignevector components of w after constant shift
-      wcs_.allocate(meshSize);
+      // Allocate memory for single eigenvector components of w 
+      // after constant shift
+      wcs_.allocate(dimensions);
       
       // Allocate state_, if necessary.
       if (!state_.isAllocated) {
-         const IntVec<D> dimensions = system().domain().mesh().dimensions();
          state_.allocate(nMonomer, dimensions);
       }
       
@@ -232,7 +233,7 @@ namespace Rpg {
       
       // Add average of pressure field wc_[nMonomer-1] to lnQ
       double sum_xi = 
-           (double)gpuSum(wc_[nMonomer-1].cField(), meshSize);
+           (double)gpuSum(wc_[nMonomer-1].cArray(), meshSize);
       lnQ += sum_xi/double(meshSize);
       
       // lnQ now contains a value per monomer
@@ -249,12 +250,12 @@ namespace Rpg {
          s = sc_[j];
          // Subtract of constat shift s
          assignRealSubtractDouble<<<nBlocks, nThreads>>>
-            (wcs_.cField(), wc_[j].cField(), s, meshSize);
+            (wcs_.cArray(), wc_[j].cArray(), s, meshSize);
          // Compute quadratic field contribution to HW
          double wSqure = 0;
          wSqure = 
-              (double)gpuInnerProduct(wcs_.cField(), 
-                                      wcs_.cField(), meshSize);
+              (double)gpuInnerProduct(wcs_.cArray(), 
+                                      wcs_.cArray(), meshSize);
          HW += prefactor * wSqure;
       }
       
@@ -442,7 +443,7 @@ namespace Rpg {
             Log::file() << chiEvecs_(i, j) << "   ";
          }
          Log::file() << "]\n";
-         Log::file() << " sc[i] = " << sc_{i] << std::endl;
+         Log::file() << " sc[i] = " << sc_[i] << std::endl;
       }
       #endif
 
@@ -471,7 +472,7 @@ namespace Rpg {
 
          // Loop over grid points to zero out field wc_[i]
          RField<D>& Wc = wc_[i];
-         assignUniformReal<<<nBlocks, nThreads>>>(Wc.cField(), 0, meshSize);
+         assignUniformReal<<<nBlocks, nThreads>>>(Wc.cArray(), 0, meshSize);
 
          // Loop over monomer types (j is a monomer index)
          for (j = 0; j < nMonomer; ++j) {
@@ -480,7 +481,7 @@ namespace Rpg {
 
             // Loop over grid points
             pointWiseAddScale<<<nBlocks, nThreads>>>
-               (Wc.cField(), (*Wr)[j].cField(), vec, meshSize);
+               (Wc.cArray(), (*Wr)[j].cArray(), vec, meshSize);
          }
       }
       
@@ -519,7 +520,7 @@ namespace Rpg {
          
          // Set cc_[i] to zero
          RField<D>& Cc = cc_[i];
-         assignUniformReal<<<nBlocks, nThreads>>>(Cc.cField(), 0, meshSize);
+         assignUniformReal<<<nBlocks, nThreads>>>(Cc.cArray(), 0, meshSize);
 
          // Loop over monomer types 
          for (j = 0; j < nMonomer; ++j) {
@@ -528,7 +529,7 @@ namespace Rpg {
             
             // Loop over grid points
             pointWiseAddScale<<<nBlocks, nThreads>>>
-               (Cc.cField(), (*Cr)[j].cField(), vec, meshSize);
+               (Cc.cArray(), (*Cr)[j].cArray(), vec, meshSize);
          }
       }
       
@@ -575,7 +576,7 @@ namespace Rpg {
           
          // Loop over grid points
          computeDField<<<nBlocks, nThreads>>>
-            (Dc.cField(), Wc.cField(), Cc.cField(), a, b, s, meshSize);
+            (Dc.cArray(), Wc.cArray(), Cc.cArray(), a, b, s, meshSize);
       }
       
       // Add derivatives arising from a perturbation (if any).
@@ -609,10 +610,10 @@ namespace Rpg {
       
       // Set field components
       for (int i = 0; i < nMonomer; ++i) {
-         assignReal<<<nBlocks, nThreads>>> (state_.w[i].cField(), 
-             system().w().rgrid(i).cField(), meshSize);
+         assignReal<<<nBlocks, nThreads>>> (state_.w[i].cArray(), 
+             system().w().rgrid(i).cArray(), meshSize);
          assignReal<<<nBlocks, nThreads>>>
-            (state_.wc[i].cField(), wc_[i].cField(), meshSize);
+            (state_.wc[i].cArray(), wc_[i].cArray(), meshSize);
       }
       
       // Save cc based on ccSavePolicy
@@ -620,7 +621,7 @@ namespace Rpg {
          UTIL_CHECK(hasCc());
          for (int i = 0; i < nMonomer; ++i) {
             assignReal<<<nBlocks, nThreads>>>
-               (state_.cc[i].cField(), cc_[i].cField(), meshSize);
+               (state_.cc[i].cArray(), cc_[i].cArray(), meshSize);
          }
       }
       
@@ -629,7 +630,7 @@ namespace Rpg {
          UTIL_CHECK(hasDc());
          for (int i = 0; i < nMonomer - 1; ++i) {
             assignReal<<<nBlocks, nThreads>>>
-               (state_.dc[i].cField(), dc_[i].cField(), meshSize);
+               (state_.dc[i].cArray(), dc_[i].cArray(), meshSize);
          }
       }
       
@@ -681,14 +682,14 @@ namespace Rpg {
       
       for (int i = 0; i < nMonomer; ++i) {
          assignReal<<<nBlocks, nThreads>>>
-            (wc_[i].cField(), state_.wc[i].cField(), meshSize);
+            (wc_[i].cArray(), state_.wc[i].cArray(), meshSize);
       }
       hasWc_ = true;
       
       if (state_.needsCc) {
          for (int i = 0; i < nMonomer; ++i) {
             assignReal<<<nBlocks, nThreads>>>
-               (cc_[i].cField(), state_.cc[i].cField(), meshSize);
+               (cc_[i].cArray(), state_.cc[i].cArray(), meshSize);
          }
          hasCc_ = true;
       }
@@ -696,7 +697,7 @@ namespace Rpg {
       if (state_.needsDc) {
          for (int i = 0; i < nMonomer - 1; ++i) {
             assignReal<<<nBlocks, nThreads>>>
-               (dc_[i].cField(), state_.dc[i].cField(), meshSize);
+               (dc_[i].cArray(), state_.dc[i].cArray(), meshSize);
          }
          hasDc_ = true;
       }

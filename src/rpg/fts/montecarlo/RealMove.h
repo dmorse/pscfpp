@@ -10,7 +10,6 @@
 
 #include "McMove.h"                          // base class
 #include <prdc/cuda/RField.h>
-#include <prdc/cuda/Field.h>  
 
 #include <util/param/ParamComposite.h>
 #include <util/containers/DArray.h>

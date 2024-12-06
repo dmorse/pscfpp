@@ -11,6 +11,7 @@
 #include "Compressor.h"
 #include <prdc/cpu/RField.h>
 #include <prdc/cpu/RFieldDft.h>
+#include <pscf/cuda/DeviceDArray.h>
 #include <pscf/iterator/AmIteratorTmpl.h>                 
 #include <rpg/fts/compressor/intra/IntraCorrelation.h> 
 
@@ -38,7 +39,7 @@ namespace Rpg
    */
    template <int D>
    class LrAmCompressor 
-         : public AmIteratorTmpl<Compressor<D>, Field<cudaReal> >
+         : public AmIteratorTmpl<Compressor<D>, DeviceDArray<cudaReal> >
    {
 
    public:
@@ -91,7 +92,7 @@ namespace Rpg
       void clearTimers();
       
       // Inherited public member functions
-      using AmIteratorTmpl<Compressor<D>, Field<cudaReal> >::setClassName;
+      using AmIteratorTmpl<Compressor<D>, DeviceDArray<cudaReal> >::setClassName;
       
    protected:
   
@@ -124,7 +125,7 @@ namespace Rpg
       /**
       * New Basis variable used in updateBasis function 
       */
-      Field<cudaReal> newBasis_;
+      DeviceDArray<cudaReal> newBasis_;
       
       /**
       * Residual in real space used for linear response anderson mixing.
@@ -157,17 +158,17 @@ namespace Rpg
       * \param a the field to be set (lhs of assignment)
       * \param b the field for it to be set to (rhs of assigment)
       */
-      void setEqual(Field<cudaReal>& a, Field<cudaReal> const & b);
+      void setEqual(DeviceDArray<cudaReal>& a, DeviceDArray<cudaReal> const & b);
 
       /**
       * Compute the inner product of two vectors
       */
-      double dotProduct(Field<cudaReal> const & a, Field<cudaReal> const & b);
+      double dotProduct(DeviceDArray<cudaReal> const & a, DeviceDArray<cudaReal> const & b);
 
       /**
       * Find the maximum magnitude element of a residual vector.
       */
-      double maxAbs(Field<cudaReal> const & hist);
+      double maxAbs(DeviceDArray<cudaReal> const & hist);
 
       /**
       * Update the basis for residual or field vectors.
@@ -175,8 +176,8 @@ namespace Rpg
       * \param basis RingBuffer of residual or field basis vectors
       * \param hists RingBuffer of past residual or field vectors
       */
-      void updateBasis(RingBuffer<Field<cudaReal> > & basis, 
-                       RingBuffer<Field<cudaReal> > const & hists);
+      void updateBasis(RingBuffer<DeviceDArray<cudaReal> > & basis, 
+                       RingBuffer<DeviceDArray<cudaReal> > const & hists);
 
       /**
       * Add linear combination of basis vectors to trial field.
@@ -186,8 +187,8 @@ namespace Rpg
       * \param coeffs array of coefficients of basis vectors
       * \param nHist number of histories stored at this iteration
       */
-      void addHistories(Field<cudaReal>& trial, 
-                        RingBuffer<Field<cudaReal> > const & basis, 
+      void addHistories(DeviceDArray<cudaReal>& trial, 
+                        RingBuffer<DeviceDArray<cudaReal> > const & basis, 
                         DArray<double> coeffs, 
                         int nHist);
 
@@ -198,8 +199,8 @@ namespace Rpg
       * \param resTrial predicted error for current trial
       * \param lambda Anderson-Mixing mixing 
       */
-      void addPredictedError(Field<cudaReal>& fieldTrial, 
-                             Field<cudaReal> const & resTrial, 
+      void addPredictedError(DeviceDArray<cudaReal>& fieldTrial, 
+                             DeviceDArray<cudaReal> const & resTrial, 
                              double lambda);
 
       /**
@@ -219,7 +220,7 @@ namespace Rpg
       * 
       * \param curr current field vector
       */ 
-      void getCurrent(Field<cudaReal>& curr);
+      void getCurrent(DeviceDArray<cudaReal>& curr);
 
       /**
       * Have the system perform a computation using new field.
@@ -234,14 +235,14 @@ namespace Rpg
       *
       * \param resid current residual vector value
       */
-      void getResidual(Field<cudaReal>& resid);
+      void getResidual(DeviceDArray<cudaReal>& resid);
 
       /**
       * Updates the system field with the new trial field.
       *
       * \param newGuess trial field vector
       */
-      void update(Field<cudaReal>& newGuess);
+      void update(DeviceDArray<cudaReal>& newGuess);
 
       /**
       * Outputs relevant system details to the iteration log.

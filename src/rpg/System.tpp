@@ -17,9 +17,11 @@
 #include <rpg/scft/sweep/SweepFactory.h>
 #include <rpg/scft/iterator/Iterator.h>
 #include <rpg/scft/iterator/IteratorFactory.h>
-#include <prdc/cuda/RField.h>
-#include <pscf/cuda/GpuResources.h>
 
+#include <prdc/cuda/RField.h>
+
+#include <pscf/cuda/GpuResources.h>
+#include <pscf/cuda/DeviceDArray.h>
 #include <pscf/inter/Interaction.h>
 #include <pscf/math/IntVec.h>
 #include <pscf/homogeneous/Clump.h>
@@ -689,7 +691,7 @@ namespace Rpg {
    * Set new w-field values, using unfoldeded array of r-grid fields.
    */
    template <int D>
-   void System<D>::setWRGrid(Field<cudaReal> & fields)
+   void System<D>::setWRGrid(DeviceDArray<cudaReal> & fields)
    {
       UTIL_CHECK(isAllocatedGrid_);
       w_.setRGrid(fields);
@@ -910,9 +912,9 @@ namespace Rpg {
       double temp = 0.0;
       for (int i = 0; i < nm; i++) {
          pointWiseBinaryMultiply<<<nBlocks,nThreads>>>
-             (w_.rgrid(i).cField(), c_.rgrid()[i].cField(),
-              workArray_.cField(), nx);
-         temp += gpuSum(workArray_.cField(),nx) / double(nx);
+             (w_.rgrid(i).cArray(), c_.rgrid()[i].cArray(),
+              workArray_.cArray(), nx);
+         temp += gpuSum(workArray_.cArray(),nx) / double(nx);
       }
       fHelmholtz_ -= temp;
       fIdeal_ = fHelmholtz_;
@@ -921,12 +923,12 @@ namespace Rpg {
       for (int i = 0; i < nm; ++i) {
          for (int j = i + 1; j < nm; ++j) {
            assignUniformReal<<<nBlocks, nThreads>>>
-               (workArray_.cField(), interaction().chi(i, j), nx);
+               (workArray_.cArray(), interaction().chi(i, j), nx);
            inPlacePointwiseMul<<<nBlocks, nThreads>>>
-               (workArray_.cField(), c_.rgrid()[i].cField(), nx);
+               (workArray_.cArray(), c_.rgrid()[i].cArray(), nx);
            inPlacePointwiseMul<<<nBlocks, nThreads>>>
-               (workArray_.cField(), c_.rgrid()[j].cField(), nx);
-           fHelmholtz_ += gpuSum(workArray_.cField(), nx) / double(nx);
+               (workArray_.cArray(), c_.rgrid()[j].cArray(), nx);
+           fHelmholtz_ += gpuSum(workArray_.cArray(), nx) / double(nx);
          }
       }
       fInter_ = fHelmholtz_ - fIdeal_;
@@ -1156,8 +1158,8 @@ namespace Rpg {
       Propagator<D> const&
           propagator = polymer.propagator(blockId, directionId);
       RField<D> field;
-      field.allocate(domain_.mesh().size());
-      cudaMemcpy(field.cField(), propagator.q(segmentId),
+      field.allocate(domain_.mesh().dimensions());
+      cudaMemcpy(field.cArray(), propagator.q(segmentId),
                  domain_.mesh().size() * sizeof(cudaReal),
                  cudaMemcpyDeviceToDevice);
       fieldIo().writeFieldRGrid(filename, field,
@@ -1183,8 +1185,8 @@ namespace Rpg {
       Propagator<D> const&
           propagator = polymer.propagator(blockId, directionId);
       RField<D> field;
-      field.allocate(domain_.mesh().size());
-      cudaMemcpy(field.cField(), propagator.tail(),
+      field.allocate(domain_.mesh().dimensions());
+      cudaMemcpy(field.cArray(), propagator.tail(),
                  domain_.mesh().size()*sizeof(cudaReal),
                  cudaMemcpyDeviceToDevice);
       fieldIo().writeFieldRGrid(filename, field,
@@ -1225,11 +1227,11 @@ namespace Rpg {
 
       // Write data
       RField<D> field;
-      field.allocate(domain_.mesh().size());
+      field.allocate(domain_.mesh().dimensions());
       bool hasHeader = false;
       for (int i = 0; i < ns; ++i) {
           file << "slice " << i << std::endl;
-          cudaMemcpy(field.cField(), propagator.q(i),
+          cudaMemcpy(field.cArray(), propagator.q(i),
                      domain_.mesh().size() * sizeof(cudaReal),
                      cudaMemcpyDeviceToDevice);
           fieldIo().writeFieldRGrid(file, field,
@@ -1502,7 +1504,7 @@ namespace Rpg {
          tmpFieldsRGrid_[i].allocate(dimensions);
          tmpFieldsKGrid_[i].allocate(dimensions);
       }
-      workArray_.allocate(domain_.mesh().size());
+      workArray_.allocate(dimensions);
 
       ThreadGrid::setThreadsLogical(domain_.mesh().size());
 

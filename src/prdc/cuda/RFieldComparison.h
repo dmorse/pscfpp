@@ -8,8 +8,8 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/math/FieldComparison.h>
 #include <prdc/cuda/RField.h>
+#include <pscf/math/FieldComparison.h>
 
 namespace Pscf {
 namespace Prdc {
@@ -69,7 +69,7 @@ namespace Cuda {
       bool compared_;
 
       // Use FieldComparison template via composition
-      FieldComparison< HostField< cudaReal > > fieldComparison_;
+      FieldComparison< HostDArray< cudaReal > > fieldComparison_;
 
    };
 

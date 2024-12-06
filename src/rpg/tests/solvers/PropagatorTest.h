@@ -174,7 +174,7 @@ public:
          w[i] = 1.0;
       }
 
-      cudaMemcpy(d_w.cField(), w, nx*sizeof(cudaReal), cudaMemcpyHostToDevice);
+      cudaMemcpy(d_w.cArray(), w, nx*sizeof(cudaReal), cudaMemcpyHostToDevice);
 
       // Construct wavelist 
       WaveList<1> wavelist;
@@ -220,7 +220,7 @@ public:
          w[i] = 1.0;
       }
 
-      cudaMemcpy(d_w.cField(), w, nx*sizeof(cudaReal), cudaMemcpyHostToDevice);
+      cudaMemcpy(d_w.cArray(), w, nx*sizeof(cudaReal), cudaMemcpyHostToDevice);
 
       // Construct wavelist 
       WaveList<2> wavelist;
@@ -267,7 +267,7 @@ public:
          w[i] = 1.0;
       }
 
-      cudaMemcpy(d_w.cField(), w, nx*sizeof(cudaReal), cudaMemcpyHostToDevice);
+      cudaMemcpy(d_w.cArray(), w, nx*sizeof(cudaReal), cudaMemcpyHostToDevice);
 
       // Construct wavelist 
       WaveList<3> wavelist;
@@ -312,7 +312,7 @@ public:
          w[i] = wc;
       }
 
-      cudaMemcpy(d_w.cField(), w, nx*sizeof(cudaReal), cudaMemcpyHostToDevice);
+      cudaMemcpy(d_w.cArray(), w, nx*sizeof(cudaReal), cudaMemcpyHostToDevice);
 
       // Construct wavelist 
       WaveList<1> wavelist;
@@ -335,11 +335,11 @@ public:
          qin[i] = cos(twoPi*double(i)/double(nx));
       }
 
-      cudaMemcpy(d_qin.cField(), qin, nx*sizeof(cudaReal), 
+      cudaMemcpy(d_qin.cArray(), qin, nx*sizeof(cudaReal), 
                  cudaMemcpyHostToDevice);
       block.setupFFT();
-      block.step(d_qin.cField(), d_qout.cField());
-      cudaMemcpy(qout, d_qout.cField(), nx*sizeof(cudaReal), 
+      block.step(d_qin.cArray(), d_qout.cArray());
+      cudaMemcpy(qout, d_qout.cArray(), nx*sizeof(cudaReal), 
                  cudaMemcpyDeviceToHost);
 
       // Test block step output against expected output
@@ -410,7 +410,7 @@ public:
          w[i] = wc;
       }
 
-      cudaMemcpy(d_w.cField(), w, nx*sizeof(cudaReal), cudaMemcpyHostToDevice);
+      cudaMemcpy(d_w.cArray(), w, nx*sizeof(cudaReal), cudaMemcpyHostToDevice);
 
       // Construct wavelist 
       WaveList<2> wavelist;
@@ -436,10 +436,10 @@ public:
                          double(iter.position(1))/double(mesh.dimension(1)) ) );
       }
 
-      cudaMemcpy(d_qin.cField(), qin, nx*sizeof(cudaReal), cudaMemcpyHostToDevice);
+      cudaMemcpy(d_qin.cArray(), qin, nx*sizeof(cudaReal), cudaMemcpyHostToDevice);
       block.setupFFT();
-      block.step(d_qin.cField(), d_qout.cField());
-      cudaMemcpy(qout, d_qout.cField(), nx*sizeof(cudaReal), cudaMemcpyDeviceToHost);
+      block.step(d_qin.cArray(), d_qout.cArray());
+      cudaMemcpy(qout, d_qout.cArray(), nx*sizeof(cudaReal), cudaMemcpyDeviceToHost);
 
       // Test block step output against expected output
       double b = block.kuhn();
@@ -514,7 +514,7 @@ public:
          w[i] = wc;
       }
 
-      cudaMemcpy(d_w.cField(), w, nx*sizeof(cudaReal), cudaMemcpyHostToDevice);
+      cudaMemcpy(d_w.cArray(), w, nx*sizeof(cudaReal), cudaMemcpyHostToDevice);
 
       // Construct wavelist 
       WaveList<3> wavelist;
@@ -541,10 +541,10 @@ public:
                          double(iter.position(2))/double(mesh.dimension(2)) ) );
       }
 
-      cudaMemcpy(d_qin.cField(), qin, nx*sizeof(cudaReal), cudaMemcpyHostToDevice);
+      cudaMemcpy(d_qin.cArray(), qin, nx*sizeof(cudaReal), cudaMemcpyHostToDevice);
       block.setupFFT();
-      block.step(d_qin.cField(), d_qout.cField());
-      cudaMemcpy(qout, d_qout.cField(), nx*sizeof(cudaReal), cudaMemcpyDeviceToHost);
+      block.step(d_qin.cArray(), d_qout.cArray());
+      cudaMemcpy(qout, d_qout.cArray(), nx*sizeof(cudaReal), cudaMemcpyDeviceToHost);
 
       // Test block step output against expected output
       double b = block.kuhn();

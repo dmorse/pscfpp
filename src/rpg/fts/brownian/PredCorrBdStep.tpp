@@ -113,14 +113,14 @@ namespace Rpg {
       DArray<RField<D>> const * Wr = &system().w().rgrid();
       for (i = 0; i < nMonomer; ++i) {
          assignReal<<<nBlocks, nThreads>>>
-            (wp_[i].cField(), (*Wr)[i].cField(), meshSize);
+            (wp_[i].cArray(), (*Wr)[i].cArray(), meshSize);
          assignReal<<<nBlocks, nThreads>>>
-            (wf_[i].cField(), wp_[i].cField(), meshSize);
+            (wf_[i].cArray(), wp_[i].cArray(), meshSize);
       }
 
       // Store initial value of pressure field
       assignReal<<<nBlocks, nThreads>>>
-         (dwp_.cField(), simulator().wc(nMonomer-1).cField(), meshSize);
+         (dwp_.cArray(), simulator().wc(nMonomer-1).cArray(), meshSize);
 
       // Constants for dynamics
       const double vSystem = system().domain().unitCell().volume();
@@ -134,8 +134,8 @@ namespace Rpg {
       // Construct all random displacement components
       for (j = 0; j < nMonomer - 1; ++j) {
          RField<D> & eta = eta_[j];
-         cudaRandom().normal(eta.cField(), meshSize, (cudaReal)stddev, (cudaReal)mean);
-         scaleReal<<<nBlocks, nThreads>>>(eta.cField(), b, meshSize);
+         cudaRandom().normal(eta.cArray(), meshSize, (cudaReal)stddev, (cudaReal)mean);
+         scaleReal<<<nBlocks, nThreads>>>(eta.cArray(), b, meshSize);
       }
 
       // Compute predicted state wp_, and store initial force dci_
@@ -148,17 +148,17 @@ namespace Rpg {
          RField<D> & dci = dci_[j];
          
          // dwc_[k] = a*dc[k] + eta[k];
-         assignReal<<<nBlocks, nThreads>>>(dwc_.cField(), eta.cField(), meshSize);
-         pointWiseAddScale<<<nBlocks, nThreads>>>(dwc_.cField(), dc.cField(), a, meshSize);
+         assignReal<<<nBlocks, nThreads>>>(dwc_.cArray(), eta.cArray(), meshSize);
+         pointWiseAddScale<<<nBlocks, nThreads>>>(dwc_.cArray(), dc.cArray(), a, meshSize);
          
          // dci[k] = dc[k];
-         assignReal<<<nBlocks, nThreads>>>(dci.cField(), dc.cField(), meshSize);
+         assignReal<<<nBlocks, nThreads>>>(dci.cArray(), dc.cArray(), meshSize);
 
          // Loop over monomer types
          for (i = 0; i < nMonomer; ++i) {
             RField<D> & wp = wp_[i];
             evec = simulator().chiEvecs(j,i);
-            pointWiseAddScale<<<nBlocks, nThreads>>>(wp.cField(), dwc_.cField(), evec, meshSize);
+            pointWiseAddScale<<<nBlocks, nThreads>>>(wp.cArray(), dwc_.cArray(), evec, meshSize);
          }
       }
 
@@ -183,12 +183,12 @@ namespace Rpg {
          RField<D> const & wp = simulator().wc(nMonomer-1);
          
          // dwp_[k] = wp[k] - dwp_[k]
-         pointWiseBinarySubtract<<<nBlocks, nThreads>>>(wp.cField(), dwp_.cField(), dwp_.cField(), meshSize);
+         pointWiseBinarySubtract<<<nBlocks, nThreads>>>(wp.cArray(), dwp_.cArray(), dwp_.cArray(), meshSize);
 
          // Adjust pressure field
          for (i = 0; i < nMonomer; ++i) {
             RField<D> & wf = wf_[i];
-            pointWiseAdd<<<nBlocks, nThreads>>>(wf.cField(), dwp_.cField(), meshSize);
+            pointWiseAdd<<<nBlocks, nThreads>>>(wf.cArray(), dwp_.cArray(), meshSize);
          }
          
          // Full step (corrector)
@@ -199,14 +199,14 @@ namespace Rpg {
             RField<D> const & eta = eta_[j];
             
             // dwc_[k] = ha*( dci[k] + dcp[k]) + eta[k];
-            pointWiseBinaryAdd<<<nBlocks, nThreads>>>(dci.cField(), dcp.cField(), dwc_.cField(), meshSize);
-            scaleReal<<<nBlocks, nThreads>>>(dwc_.cField(), ha, meshSize);
-            pointWiseAdd<<<nBlocks, nThreads>>>(dwc_.cField(), eta.cField(), meshSize);
+            pointWiseBinaryAdd<<<nBlocks, nThreads>>>(dci.cArray(), dcp.cArray(), dwc_.cArray(), meshSize);
+            scaleReal<<<nBlocks, nThreads>>>(dwc_.cArray(), ha, meshSize);
+            pointWiseAdd<<<nBlocks, nThreads>>>(dwc_.cArray(), eta.cArray(), meshSize);
 
             for (i = 0; i < nMonomer; ++i) {
                RField<D> & wf = wf_[i];
                evec = simulator().chiEvecs(j,i);
-               pointWiseAddScale<<<nBlocks, nThreads>>>(wf.cField(), dwc_.cField(), evec, meshSize);
+               pointWiseAddScale<<<nBlocks, nThreads>>>(wf.cArray(), dwc_.cArray(), evec, meshSize);
             }
          }
          

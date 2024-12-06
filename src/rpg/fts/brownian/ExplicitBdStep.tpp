@@ -64,14 +64,15 @@ namespace Rpg {
    {
       // Check array capacities
       int meshSize = system().domain().mesh().size();
+      IntVec<D> dimensions = system().domain().mesh().dimensions();
       int nMonomer = system().mixture().nMonomer();
       UTIL_CHECK(w_.capacity() == nMonomer);
       for (int i=0; i < nMonomer; ++i) {
          UTIL_CHECK(w_[i].capacity() == meshSize);
       }
       UTIL_CHECK(dwc_.capacity() == meshSize);
-      gaussianField_.allocate(meshSize);
-      dwd_.allocate(meshSize);
+      gaussianField_.allocate(dimensions);
+      dwd_.allocate(dimensions);
    }
 
    template <int D>
@@ -93,7 +94,7 @@ namespace Rpg {
       DArray<RField<D>> const * Wr = &system().w().rgrid();
       for (i = 0; i < nMonomer; ++i) {
          assignReal<<<nBlocks, nThreads>>>
-            (w_[i].cField(), (*Wr)[i].cField(), meshSize);
+            (w_[i].cArray(), (*Wr)[i].cArray(), meshSize);
       }
       
       // Constants for dynamics
@@ -112,25 +113,25 @@ namespace Rpg {
          RField<D> const & dc = simulator().dc(j);
          
          // Generagte normal distributed random floating point numbers
-         cudaRandom().normal(gaussianField_.cField(), meshSize, (cudaReal)stddev, (cudaReal)mean);
+         cudaRandom().normal(gaussianField_.cArray(), meshSize, (cudaReal)stddev, (cudaReal)mean);
          
          // dwr
-         scaleReal<<<nBlocks, nThreads>>>(gaussianField_.cField(), b, meshSize);
+         scaleReal<<<nBlocks, nThreads>>>(gaussianField_.cArray(), b, meshSize);
          
          // dwd
-         assignReal<<<nBlocks, nThreads>>>(dwd_.cField(), dc.cField(), meshSize);
-         scaleReal<<<nBlocks, nThreads>>>(dwd_.cField(), a, meshSize);
+         assignReal<<<nBlocks, nThreads>>>(dwd_.cArray(), dc.cArray(), meshSize);
+         scaleReal<<<nBlocks, nThreads>>>(dwd_.cArray(), a, meshSize);
          
          // dwc
          pointWiseBinaryAdd<<<nBlocks, nThreads>>>
-            (dwd_.cField(), gaussianField_.cField(), dwc_.cField(), meshSize);
+            (dwd_.cArray(), gaussianField_.cArray(), dwc_.cArray(), meshSize);
          
          // Loop over monomer types
          for (i = 0; i < nMonomer; ++i) {
             RField<D> & w = w_[i];
             evec = simulator().chiEvecs(j,i);
             pointWiseAddScale<<<nBlocks, nThreads>>>
-               (w.cField(), dwc_.cField(), evec, meshSize);
+               (w.cArray(), dwc_.cArray(), evec, meshSize);
          }
          
       }

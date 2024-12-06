@@ -36,11 +36,11 @@ namespace Rpg
    {  
       const int nMonomer = system().mixture().nMonomer();
       UTIL_CHECK(nMonomer > 0);
-      const int meshSize = system().domain().mesh().size();
+      const IntVec<D> dimensions = system().domain().mesh().dimensions();
       if (!isAllocated_){
          wField_.allocate(nMonomer);
          for (int i = 0; i < nMonomer; ++i) {
-            wField_[i].allocate(meshSize);
+            wField_[i].allocate(dimensions);
          }
          isAllocated_ = true;
       }
