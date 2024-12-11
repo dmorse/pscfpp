@@ -26,6 +26,9 @@ namespace Rpc {
    *
    * The virtual step() method must generate a single step.
    *
+   * For a description of the algorithm and parameter file format, look
+   * \ref rpc_ExplicitBdStep_page "here". 
+   *
    * \ingroup Rpc_Fts_Brownian_Module
    */
    template <int D>

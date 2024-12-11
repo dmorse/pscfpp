@@ -6,7 +6,6 @@
 
 // Subclasses of BdStep 
 #include "ExplicitBdStep.h"
-#include "MidstepBdStep.h"
 #include "PredCorrBdStep.h"
 #include "LMBdStep.h"
 
@@ -39,9 +38,6 @@ namespace Rpc {
       // Try to match classname
       if (className == "ExplicitBdStep" || className == "BdStep") {
          ptr = new ExplicitBdStep<D>(*simulatorPtr_);
-      } else
-      if (className == "MidstepBdStep") {
-         ptr = new MidstepBdStep<D>(*simulatorPtr_);
       } else
       if (className == "PredCorrBdStep") {
          ptr = new PredCorrBdStep<D>(*simulatorPtr_);

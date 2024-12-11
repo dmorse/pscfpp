@@ -100,25 +100,25 @@ namespace Rpc {
       const int nMonomer = system().mixture().nMonomer();
       const int meshSize = system().domain().mesh().size();
       int i, j, k;
-      
+
       // Save current state
       simulator().saveState();
-      
+
       // Copy current W fields from parent system
       for (i = 0; i < nMonomer; ++i) {
          wp_[i] = system().w().rgrid(i);
          wf_[i] = wp_[i];
       }
 
-      // Store initial value of pressure field
+      // Store initial value of pressure field at all grid points in dwp_
       dwp_ = simulator().wc(nMonomer-1);
 
-      // Constants for dynamics
+      // Define constants used for step
       const double vSystem = system().domain().unitCell().volume();
       const double a = -1.0*mobility_;
       const double b = sqrt(2.0*mobility_*double(meshSize)/vSystem);
 
-      // Construct all random displacement components
+      // Construct all random displacement (noise) components
       for (j = 0; j < nMonomer - 1; ++j) {
          RField<D> & eta = eta_[j];
          for (k = 0; k < meshSize; ++k) {
@@ -148,11 +148,13 @@ namespace Rpc {
          }
       }
 
-      // Set modified fields at predicted state wp_
+      // Set modified system fields at predicted state wp_
       system().setWRGrid(wp_);
-      
-      // Enforce incompressibility (also solves MDE repeatedly)
+
+      // Set function return value to indicate failure by default
       bool isConverged = false;
+
+      // Enforce incompressibility at predicted state 
       int compress = simulator().compressor().compress();
       if (compress != 0){
          simulator().restoreState();
@@ -165,13 +167,14 @@ namespace Rpc {
          simulator().computeCc();
          simulator().computeDc();
 
-         // Compute change in pressure field
+         // Compute change dwp_ in pressure field 
+         // Note: On entry, dwp_ is the old pressure field
          RField<D> const & wp = simulator().wc(nMonomer-1);
          for (k = 0; k < meshSize; ++k) {
             dwp_[k] = wp[k] - dwp_[k];
          }
 
-         // Adjust pressure field
+         // Adjust predicted pressure field to final monomer fields
          for (i = 0; i < nMonomer; ++i) {
             RField<D> & wf = wf_[i];
             for (k = 0; k < meshSize; ++k) {
@@ -179,7 +182,7 @@ namespace Rpc {
             }
          }
 
-         // Full step (corrector)
+         // Full step (corrector) change in exchange fields
          const double ha = 0.5*a;
          for (j = 0; j < nMonomer - 1; ++j) {
             RField<D> const & dcp = simulator().dc(j);
@@ -197,9 +200,10 @@ namespace Rpc {
             }
          }
 
-         // Set fields at final point
+         // Set system fields after predictor step
          system().setWRGrid(wf_);
-         
+
+         // Apply compressor to final state
          int compress2 = simulator().compressor().compress();
          if (compress2 != 0){
             simulator().restoreState();
@@ -213,10 +217,11 @@ namespace Rpc {
             simulator().computeWc();
             simulator().computeCc();
             simulator().computeDc();
-            
+
          }
       }
-      
+
+      // True iff compression was successful after predictor and corrector
       return isConverged;
    }
 

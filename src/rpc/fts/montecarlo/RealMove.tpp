@@ -43,8 +43,10 @@ namespace Rpc {
    template <int D>
    void RealMove<D>::readParameters(std::istream &in)
    {
+
       //Read the probability
       readProbability(in);
+
       // attampt move range [A, -A]
       read(in, "A", stepSize_);
    }
@@ -74,7 +76,6 @@ namespace Rpc {
    {
       const int nMonomer = system().mixture().nMonomer();
       const int meshSize = system().domain().mesh().size();
-      // For multi-component copolymer
       for (int i = 0; i < nMonomer; i++){
          for (int k = 0; k < meshSize; k++){
             //Random number generator

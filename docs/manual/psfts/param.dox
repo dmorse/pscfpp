@@ -146,7 +146,7 @@ algorithms, rather than the generic names BdStep and Compressor.
 The AnalyzerManager contains nested one or more nested subblocks
 for chosen analysis operations, as shown below.
 
-Below, we show an example of a complete parameter file for a BD
+Example: Here is an example of a complete parameter file for a BD
 simulation:
 \code
 System{
@@ -220,10 +220,16 @@ situations. The LM BD step and LRAM compressor are also the default
 choices for the BdStep and Compressor, and so can also be selected
 using the generic "BdStep" or "Compressor" labels for these blocks.
 
-BD Step Algorithms:
-
-
-Refer reader to separate discussions of 
+<b> BD Step Algorithms: </b>
+The BD step algorithms that are available for use with pscf_pc or pscf_pg 
+are listed below, with each indicated by the name that would be used as 
+the label of the BdStep parameter file block. Each such label is a 
+clickable link to a file containing documentation of the algorithm and 
+associated parameter file format.
+<ul>
+  <li> \subpage rpc_ExplicitBdStep_page "ExplicitBdStep" </li>
+  <li> \subpage rpc_LMBdStep_page "LMBdStep" </li>
+</ul>
 
 \section psfts_param_montecarlo_sec Monte Carlo
 
@@ -332,6 +338,17 @@ parameter for the explicit Euler BD step that is used by this algorithm
 to generate a proposed MC move.  The parameter of a RealMove named "A" 
 specifies the root-mean-squared change in the proposed value of the 
 exchange field at each grid point.
+
+<b> MC Move Algorithms: </b>
+The MC move algorithms that are available for use with pscf_pc or pscf_pg 
+are listed below. Each is indicated by the name that is used as the label 
+of the corresponding parameter file block with the McMoveManager block. 
+Each such label is a clickable link to a file containing documentation of 
+the algorithm and associated parameter file format.
+<ul>
+  <li> \subpage rpc_ForceBiasMove_page "ForceBiasMove" </li>
+  <li> \subpage rpc_RealMove_page "RealMove" </li>
+</ul>
 
 \section psfts_param_compressor_sec Compressor Algorithms
 

@@ -87,12 +87,12 @@ can be used for SCFT calculations.
   </tr>
 
   <tr>
-    <td> SIMULATE </td>
+    <td> \ref psfts_command_pc_simulate_sub "SIMULATE" </td>
     <td> nStep </td>
     <td> Perform a field-theoretic simulation of nStep steps.  </td>
   </tr>
   <tr>
-    <td> ANALYZE </td>
+    <td> \ref psfts_command_pc_analyze_sub "ANALYZE" </td>
     <td> min, max, className, filename </td>
     <td> Postprocess a field trajectory output by looping over frames
          of a field trajectory file output by a previous simulation. 
@@ -101,7 +101,7 @@ can be used for SCFT calculations.
          of class className.  </td>
   </tr>
   <tr>
-    <td> COMPRESS </td>
+    <td> \ref psfts_command_pc_compress_sub "COMPRESS" </td>
     <td> </td>
     <td> Iteratively adjust the Lagrange multiplier pressure field
          component of the current w fields so as to satisfy the 
@@ -111,13 +111,64 @@ can be used for SCFT calculations.
 
 </table>
 
-The use of the SIMULATE command has been discussed in the above example.
+  <tr>
+    <td> nStep </td>
+    <td> Perform a field-theoretic simulation of nStep steps.  </td>
+  </tr>
+  <tr>
+    <td> min, max, className, filename </td>
+    <td> Postprocess a field trajectory output by looping over frames
+         of a field trajectory file output by a previous simulation. 
+         Analyze frames with frame numbers min to max from file 
+         filename, using a TrajectoryReader object that is an instance 
+         of class className.  </td>
+  </tr>
+  <tr>
+    <td> </td>
+    <td> Iteratively adjust the Lagrange multiplier pressure field
+         component of the current w fields so as to satisfy the 
+         incompressibility constraint. </td>
+  </tr>
 
-The use of the ANALYZE command to postprocess a field trajectory file is 
-discussed in more detail on a \ref psfts_postprocess_page "separate page".
 
-The COMPRESS command simply applies the compressor algorithm to the 
-current w fields, outside the context of a stochastic simulation. 
+\anchor psfts_command_pc_simulate_sub
+<b> SIMULATE </b>:
+THE SIMULATE command performs a field-theoretic simulation of a
+specified number nStep of attempted MC moves or BD steps. The 
+associated parameter file must contain Compressor and Simulator 
+blocks.  Field trajectories may be written to file by including a 
+trajectory writer among the analyzers listed in the AnalyzerManager 
+subblock of the McSimulator block.
+
+\anchor psfts_command_pc_analyze_sub
+<b> ANALYZE </b>:
+
+THE ANALYZE command reads a field trajectory file that was written by a 
+previous field-theoretic simulation, and postprocesses the contents of 
+that file.  This postprocessing procedure is discussed in more detail 
+on a \ref psfts_postprocess_page "separate page".
+
+The trajectory file with a name given by the "filename" parameter is 
+read and parsed by an instance of a subclass of the TrajectoryReader 
+class with a name specified by the className parameter.  Different
+subclasses can be used to read files with different formats.
+
+The associated parameter file must contain BdSimulator or McSimulator 
+block with an AnalyzerManager subblock that specifies what analysis 
+operations should be applied to the chosen frames of the trajectory 
+file. Every Analyzer in the AnalyzerManager block is applied to frames 
+with frame indices between the values specified by the min and max 
+parameters. 
+
+\anchor psfts_command_pc_compress_sub
+<b> COMPRESS </b>:
+The COMPRESS command applies the Compressor iterator algorithm that
+is specified in the parameter file to the current w-fields.  
+The compressor adjusts the Lagrange multiplier pressure component of 
+the w fields so as to satisfy the incompressibility constraint without 
+changing any of the difference between chemical potential fields 
+associated with different monomer types. 
+
 
 <BR>
 \ref psfts_param_page        (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 

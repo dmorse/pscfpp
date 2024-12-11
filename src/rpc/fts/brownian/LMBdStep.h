@@ -24,6 +24,14 @@ namespace Rpc {
    /**
    * Leimkuhler-Matthews Brownian dynamics stepper.
    *
+   * The Leimkuhler-Matthews step algorithm differs from an explicit
+   * Euler algorithm in that it uses a random displacement that is 
+   * given by a sum of random numbers generated at this step and the
+   * previous step. 
+   *
+   * For a detailed description of the algorithm, references, and a 
+   * parameter file format, look \ref rpc_LMBdStep_page "here". 
+   *
    * As described in:
    * 
    *   B. Vorselaars, J. Chemical Physics, 158 114117 (2023)

@@ -21,6 +21,18 @@ namespace Rpc {
    /**
    * ForceBiasMove attempts a Brownian dynamics move.
    *
+   * This class implements a Monte Carlo move in which the unconstrained
+   * attempted move is created by an explicit Euler Brownian dynamics
+   * step. 
+   * 
+   * Because the probability of attempting a move is not equal to that
+   * of generating the reverse move, the acceptance criterion used in
+   * the move() function must take into account the ratio of generation 
+   * probabilities.
+   *
+   * For a description of the algorithm and parameter file format see:
+   * \ref rpc_ForceBiasMove_page "here". 
+   *
    * \ingroup Rpc_Fts_MonteCarlo_Module
    */
    template <int D>

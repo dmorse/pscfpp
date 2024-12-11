@@ -1,0 +1,93 @@
+/*! 
+\page rpc_ExplicitBdStep_page Rpc::ExplicitBdStep
+
+The ExplictBdStep classes used by both the pscf_pc and pscf_pg programs 
+implements a simple explicit Euler Brownian dynamics step algorithm.
+
+Two closely analogous classes named Pscf::Rpc::ExplicitBdStep and 
+Pscf::Rpg::ExplicitBdStep that have the same class name but that are 
+defined in different namespaces are used to implement this the same
+step algorithm for different programs. The ExplicitBdStep class 
+defined in the Rpc namespace is used in the pscf_pc program (using 
+CPU hardware) and the class defined in the Rpg namespace is used in
+the pscf_pg program (using GPU acceleration). These two analogous 
+classes implement the same step algorithm and use the same parameter 
+file format, which are documented below.
+
+\section rpc_ExplicitBdStep_algorithm_sec Step Algorithm
+
+A general discussion of conventions used in PSCF for BD step algorithms 
+is given \ref psfts_algorithm_page "here". 
+
+The explicit Euler BD step algorithm for the common case of a 
+standard AB system with two types of monomer is described by an update 
+scheme for the field \f$ \omega_{0}({\bf r}) = \omega_{-}({\bf r}) \f$ 
+at grid point location \f$ {\bf r} \f$ and time step \f$ n \f$ that is 
+given by
+\f[
+  \omega_{-}^{(n+1)}({\bf r}) =
+  \omega_{-}^{(n)}({\bf r}) 
+  - \gamma \frac{\delta H}{\delta \omega_{-}({\bf r})}
+  + g^{(n)}({\bf r})
+\f]
+where \f$ \gamma \f$ is the BD mobility parameter,
+\f[
+  \frac{\delta H}{\delta \omega_{-}({\bf r})}
+  = \frac{1}{v} \left [
+    \frac{2\omega_{-}({\bf r})}{\chi_{b}}
+    - \Phi_{-}({\bf r}) \right ]
+\f]
+is the generalized force evaluated using the field configuration at time 
+step \f$ n \f$, and \f$ g^{(n)}({\bf r}) \f$ is a random field displacement.
+The random displacement \f$ g^{(n)}({\bf r}) \f$ is chosen independently
+at each grid point and each BD step from a Gaussian distribution with a 
+vanishing mean value, \f$ \overline{g^{(n)}({\bf r})} = 0 \f$, and a 
+variance
+\f[
+  \overline{[g^{(n)}({\bf r})]^2} = \gamma \Delta V \quad.
+\f]
+Here, \f$ \Delta V \f$ is the volume per grid point of the computational 
+mesh, given by \f$ \Delta V = V/G \f$, where \f$ V \f$ is the total 
+system volume and \f$ G \f$ is the number of grid points on the mesh.
+
+This algorithm can be generalized to a system with \f$ M \f$ monomer 
+types for which the first \f$ L \f$ eigenvalues of the projected chi 
+matrix are negative, with \f$ L \leq M - 1 \f$. 
+In this case, each field component \f$ \omega_{i}({\bf r}) \f$ 
+associated with eigenvalue \f$ \lambda_{i} < 0 \f$ of the projected 
+\f$ \chi \f$ matrix, for \f$ i = 0, \ldots, L - 1 \f$, is updated 
+via a scheme
+\f[
+  \omega_{i}^{(n+1)}({\bf r}) =
+  \omega_{i}^{(n)}({\bf r}) 
+  - \gamma \frac{\delta H}{\delta \omega_{i}({\bf r})}
+  + g_{i}^{(n)}({\bf r}) \quad.
+\f]
+with a separate random noise components for each such field component.
+The random noise components \f$ g_{i}^{(n)}({\bf r})\f$ with eigenvector 
+indices \f$ i = 0, \ldots, L - 1 \f$ are chosen independently for each 
+index value \f$ i \f$, each grid position \f$ {\bf r} \f$ and each time 
+step \f$ n \f$ from a Gaussian distribution of zero mean and variance 
+\f$ \overline{[g^{(n)}_{i}({\bf r})]^2} = \gamma \Delta V \f$.
+
+\section rpc_ExplicitBdStep_parameter_sec Parameter File
+
+The only parameter needed by this algorithm is a required parameter 
+named "mobility", which gives the value of parameter denoted by 
+\f$ \gamma \f$ in the above equations. 
+A typical example of the contents of the block is shown below.
+below:
+\code
+  ExplicitBdStep{
+    mobility     5.0e-3
+  }
+\endcode
+The format of this block is thus simply
+\code
+ExplicitBdStep{
+   mobility      float
+}
+\endcode
+The mobility parameter is required.
+
+*/
