@@ -434,10 +434,27 @@ __host__ void subVV(DeviceDArray<cudaComplex>& a,
    _subVV<<<nBlocks, nThreads>>>(a.cArray(), b.cArray(), c.cArray(), n);
 }
 
-// Vector subtraction, a[i] = b[i] - c[i], kernel wrapper (mixed type).
+// Vector subtraction, a[i]=b[i]-c[i], kernel wrapper (mixed type, b=real).
 __host__ void subVV(DeviceDArray<cudaComplex>& a, 
                     DeviceDArray<cudaReal> const & b, 
                     DeviceDArray<cudaComplex> const & c)
+{
+   int n = a.capacity();
+   UTIL_CHECK(b.capacity() == n);
+   UTIL_CHECK(c.capacity() == n);
+   
+   // GPU resources
+   int nBlocks, nThreads;
+   ThreadGrid::setThreadsLogical(n, nBlocks, nThreads);
+
+   // Launch kernel
+   _subVV<<<nBlocks, nThreads>>>(a.cArray(), b.cArray(), c.cArray(), n);
+}
+
+// Vector subtraction, a[i]=b[i]-c[i], kernel wrapper (mixed type, c=real).
+__host__ void subVV(DeviceDArray<cudaComplex>& a, 
+                    DeviceDArray<cudaComplex> const & b, 
+                    DeviceDArray<cudaReal> const & c)
 {
    int n = a.capacity();
    UTIL_CHECK(b.capacity() == n);

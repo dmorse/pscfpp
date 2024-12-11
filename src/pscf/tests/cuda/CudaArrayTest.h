@@ -26,40 +26,37 @@ public:
    void testConstructors()
    {
       printMethod(TEST_FUNC);
-      {
-         HostDArray<cudaReal> h;
-         DeviceDArray<cudaReal> d;
+      HostDArray<cudaReal> h;
+      DeviceDArray<cudaReal> d;
 
-         TEST_ASSERT(h.capacity() == 0 );
-         TEST_ASSERT(!h.isAllocated() );
-         TEST_ASSERT(d.capacity() == 0 );
-         TEST_ASSERT(!d.isAllocated() );
-      }
+      TEST_ASSERT(h.capacity() == 0 );
+      TEST_ASSERT(!h.isAllocated() );
+      TEST_ASSERT(d.capacity() == 0 );
+      TEST_ASSERT(!d.isAllocated() );
    }
 
    void testAllocate()
    {
       printMethod(TEST_FUNC);
-      {
-         HostDArray<cudaReal> h;
-         DeviceDArray<cudaReal> d;
 
-         int capacity = 3;
-         h.allocate(capacity);
-         d.allocate(capacity);
+      HostDArray<cudaReal> h;
+      DeviceDArray<cudaReal> d;
 
-         TEST_ASSERT(h.capacity() == capacity);
-         TEST_ASSERT(h.isAllocated());
-         TEST_ASSERT(d.capacity() == capacity);
-         TEST_ASSERT(d.isAllocated());
+      int capacity = 3;
+      h.allocate(capacity);
+      d.allocate(capacity);
 
-         h.deallocate();
-         d.deallocate(); 
-         TEST_ASSERT(h.capacity() == 0);
-         TEST_ASSERT(!h.isAllocated());
-         TEST_ASSERT(d.capacity() == 0);
-         TEST_ASSERT(!d.isAllocated());
-      }
+      TEST_ASSERT(h.capacity() == capacity);
+      TEST_ASSERT(h.isAllocated());
+      TEST_ASSERT(d.capacity() == capacity);
+      TEST_ASSERT(d.isAllocated());
+
+      h.deallocate();
+      d.deallocate(); 
+      TEST_ASSERT(h.capacity() == 0);
+      TEST_ASSERT(!h.isAllocated());
+      TEST_ASSERT(d.capacity() == 0);
+      TEST_ASSERT(!d.isAllocated());
    }
 
    void testAssignmentOperators()

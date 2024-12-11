@@ -8,7 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "Vec.h"
+#include "Vector.h"
 #include <iostream>
 #include <util/global.h>
 
@@ -23,7 +23,7 @@ namespace Pscf
    * \ingroup Pscf_Math_Module
    */
    template <int D, typename T = int>
-   class IntVec : public Vec<D, T>
+   class IntVec : public Vector<D, T>
    {
 
    public:
@@ -35,7 +35,7 @@ namespace Pscf
       * Default constructor
       */
       IntVec<D, T>()
-        : Vec<D, T>()
+        : Vector<D, T>()
       {}
 
       /**
@@ -44,7 +44,7 @@ namespace Pscf
       * \param v IntVec<D, T> to be copied
       */
       IntVec<D, T>(const IntVec<D, T>& v)
-       : Vec<D, T>(v)
+       : Vector<D, T>(v)
       {}
 
       /**
@@ -53,7 +53,7 @@ namespace Pscf
       * \param v C array to be copied
       */
       IntVec<D, T>(T const * v)
-       : Vec<D, T>(v)
+       : Vector<D, T>(v)
       {}
 
       /**
@@ -62,7 +62,7 @@ namespace Pscf
       * \param s scalar initial value for all elements.
       */
       explicit IntVec<D, T>(T s)
-       : Vec<D, T>(s)
+       : Vector<D, T>(s)
       {}
 
       /// Width of field per Cartesian coordinate in stream IO
@@ -128,13 +128,13 @@ namespace Pscf
    }
 
    /**
-   * Equality of an IntVec<D> and a Vec<D, T>
+   * Equality of an IntVec<D> and a Vector<D, T>
    *
    * \return true if v1 == v2, false otherwise.
    */
    template <int D, typename T>
    inline
-   bool operator == (const IntVec<D, T>& v1, const Vec<D, T>& v2)
+   bool operator == (const IntVec<D, T>& v1, const Vector<D, T>& v2)
    {
       for (int i = 0; i < D; ++i) {
          if (v1[i] != v2[i]) {
@@ -151,7 +151,7 @@ namespace Pscf
    */
    template <int D, typename T>
    inline
-   bool operator == (const Vec<D, T>& v1, const IntVec<D, T>& v2)
+   bool operator == (const Vector<D, T>& v1, const IntVec<D, T>& v2)
    {  return (v2 == v1); }
 
    /**
@@ -165,13 +165,13 @@ namespace Pscf
    { return !(v1 == v2); }
 
    /**
-   * Inequality of an IntVec<D> and a Vec<D, T>
+   * Inequality of an IntVec<D> and a Vector<D, T>
    *
    * \return true if v1 == v2, false otherwise.
    */
    template <int D, typename T>
    inline
-   bool operator != (const IntVec<D, T>& v1, const Vec<D, T>& v2)
+   bool operator != (const IntVec<D, T>& v1, const Vector<D, T>& v2)
    {  return !(v1 == v2); }
 
    /**
@@ -181,7 +181,7 @@ namespace Pscf
    */
    template <int D, typename T>
    inline
-   bool operator != (const Vec<D, T>& v1, const IntVec<D, T>& v2)
+   bool operator != (const Vector<D, T>& v1, const IntVec<D, T>& v2)
    {  return !(v2 == v1); }
 
    /**
