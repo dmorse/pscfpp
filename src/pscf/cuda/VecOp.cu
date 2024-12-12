@@ -5,12 +5,12 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "Vec.h"
+#include "VecOp.h"
 #include "ThreadGrid.h"
 #include <cmath>
 
 namespace Pscf {
-namespace Vec {
+namespace VecOp {
 
 // Vector assignment, a[i] = b[i], GPU kernel (cudaReal).
 __global__ void _eqV(cudaReal* a, cudaReal const * b, const int n) 
@@ -1605,7 +1605,7 @@ __host__ void divEqS(DeviceDArray<cudaComplex>& a, cudaReal const b,
 }
 
 // Vector addition in-place w/ coefficient, a[i] += b[i] * c, GPU kernel.
-__global__ void _addEqMulVS(cudaReal* a, cudaReal const * b, 
+__global__ void _addEqVc(cudaReal* a, cudaReal const * b, 
                             cudaReal const c, const int n)
 {
    int nThreads = blockDim.x * gridDim.x;
@@ -1616,7 +1616,7 @@ __global__ void _addEqMulVS(cudaReal* a, cudaReal const * b,
 }
 
 // Vector addition in-place w/ coefficient, a[i] += b[i] * c, kernel wrapper.
-__host__ void addEqMulVS(DeviceDArray<cudaReal>& a, 
+__host__ void addEqVc(DeviceDArray<cudaReal>& a, 
                          DeviceDArray<cudaReal> const & b, 
                          cudaReal const c, const int beginIdA, 
                          const int beginIdB, const int n)
@@ -1629,7 +1629,7 @@ __host__ void addEqMulVS(DeviceDArray<cudaReal>& a,
    ThreadGrid::setThreadsLogical(n, nBlocks, nThreads);
 
    // Launch kernel
-   _addEqMulVS<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, 
+   _addEqVc<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, 
                                       b.cArray()+beginIdB, c, n);
 }
 
@@ -1662,7 +1662,7 @@ __host__ void sqNormV(DeviceDArray<cudaReal>& a,
 }
 
 // Vector exponentiation w/ coefficient, a[i] = exp(b[i]*c), GPU kernel.
-__global__ void _expMulVS(cudaReal* a, cudaReal const * b, 
+__global__ void _expVc(cudaReal* a, cudaReal const * b, 
                           cudaReal const c, const int n)
 {
    int nThreads = blockDim.x * gridDim.x;
@@ -1673,7 +1673,7 @@ __global__ void _expMulVS(cudaReal* a, cudaReal const * b,
 }
 
 // Vector exponentiation w/ coefficient, a[i] = exp(b[i]*c), kernel wrapper.
-__host__ void expMulVS(DeviceDArray<cudaReal>& a, 
+__host__ void expVc(DeviceDArray<cudaReal>& a, 
                        DeviceDArray<cudaReal> const & b, 
                        cudaReal const c, const int beginIdA, 
                        const int beginIdB, const int n)
@@ -1686,7 +1686,7 @@ __host__ void expMulVS(DeviceDArray<cudaReal>& a,
    ThreadGrid::setThreadsLogical(n, nBlocks, nThreads);
 
    // Launch kernel
-   _expMulVS<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, 
+   _expVc<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, 
                                     b.cArray()+beginIdB, c, n);
 }
 

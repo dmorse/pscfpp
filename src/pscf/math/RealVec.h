@@ -8,7 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "Vector.h"
+#include "Vec.h"
 
 #include <iostream>
 #include <util/global.h>
@@ -24,7 +24,7 @@ namespace Pscf
    * \ingroup Pscf_Math_Module
    */
    template <int D, typename T = double>
-   class RealVec : public Vector<D, T>
+   class RealVec : public Vec<D, T>
    {
 
    public:
@@ -36,7 +36,7 @@ namespace Pscf
       * Default constructor
       */
       RealVec<D, T>()
-        : Vector<D, T>()
+        : Vec<D, T>()
       {}
 
       /**
@@ -45,7 +45,7 @@ namespace Pscf
       * \param v RealVec<D, T> to be copied
       */
       RealVec<D, T>(const RealVec<D, T>& v)
-       : Vector<D, T>(v)
+       : Vec<D, T>(v)
       {}
 
       /**
@@ -54,7 +54,7 @@ namespace Pscf
       * \param v C array to be copied
       */
       RealVec<D, T>(T const * v)
-       : Vector<D, T>(v)
+       : Vec<D, T>(v)
       {}
 
       /**
@@ -63,7 +63,7 @@ namespace Pscf
       * \param s scalar initial value for all elements.
       */
       explicit RealVec<D, T>(T s)
-       : Vector<D, T>(s)
+       : Vec<D, T>(s)
       {}
 
       /// Width of field per Cartesian coordinate in stream IO

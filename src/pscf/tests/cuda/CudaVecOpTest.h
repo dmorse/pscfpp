@@ -1,10 +1,10 @@
-#ifndef PSCF_CUDA_VEC_TEST_H
-#define PSCF_CUDA_VEC_TEST_H
+#ifndef PSCF_CUDA_VEC_OP_TEST_H
+#define PSCF_CUDA_VEC_OP_TEST_H
 
 #include <test/UnitTest.h>
 #include <test/UnitTestRunner.h>
 
-#include <pscf/cuda/Vec.h>
+#include <pscf/cuda/VecOp.h>
 #include <pscf/cuda/HostDArray.h>
 #include <pscf/cuda/DeviceDArray.h>
 #include <pscf/cuda/GpuResources.h>
@@ -16,7 +16,7 @@
 using namespace Util;
 using namespace Pscf;
 
-class CudaVecTest : public UnitTest
+class CudaVecOpTest : public UnitTest
 {
 
 private:
@@ -116,20 +116,20 @@ public:
    void tearDown()
    {}
 
-   // Test Vec::eqV and Vec::eqS
+   // Test VecOp::eqV and VecOp::eqS
    void testEq()
    {
       printMethod(TEST_FUNC);
 
       // ~~~ Test eqV ~~~
-      Vec::eqV(dOutReal, dInReal);
+      VecOp::eqV(dOutReal, dInReal);
       hOutReal = dOutReal;
       for (int i = 0; i < n; i++) { // get reference array
          refOutReal[i] = refInReal[i];
       }
       checkEqualReal(hOutReal, refOutReal);
 
-      Vec::eqV(dOutComplex, dInComplex);
+      VecOp::eqV(dOutComplex, dInComplex);
       hOutComplex = dOutComplex;
       for (int i = 0; i < n; i++) { // get reference array
          refOutComplex[i] = refInComplex[i];
@@ -137,14 +137,14 @@ public:
       checkEqualComplex(hOutComplex, refOutComplex);
 
       // ~~~ Test eqS ~~~
-      Vec::eqS(dOutReal, scalarReal);
+      VecOp::eqS(dOutReal, scalarReal);
       hOutReal = dOutReal;
       for (int i = 0; i < n; i++) { // get reference array
          refOutReal[i] = refScalarReal;
       }
       checkEqualReal(hOutReal, refOutReal);
 
-      Vec::eqS(dOutComplex, scalarComplex);
+      VecOp::eqS(dOutComplex, scalarComplex);
       hOutComplex = dOutComplex;
       for (int i = 0; i < n; i++) { // get reference array
          refOutComplex[i] = refScalarComplex;
@@ -152,90 +152,93 @@ public:
       checkEqualComplex(hOutComplex, refOutComplex);
 
       // ~~~ Test eqV using partial arrays ~~~
-      Vec::eqV(dOutReal, dInReal2, n/4, n/4, n/2);
+      VecOp::eqV(dOutReal, dInReal2, n/4, n/4, n/2);
       hOutReal = dOutReal;
       for (int i = 0; i < n/2; i++) { // edit reference array
          refOutReal[i+(n/4)] = refInReal2[i+(n/4)];
       }
       checkEqualReal(hOutReal, refOutReal);
 
-      Vec::eqV(dOutComplex, dInComplex2, n/4, n/4, n/2);
+      VecOp::eqV(dOutComplex, dInComplex2, n/4, n/4, n/2);
       hOutComplex = dOutComplex;
       for (int i = 0; i < n/2; i++) { // edit reference array
-         refOutComplex[i+(n/4)] = refInComplex[i+(n/4)];
+         refOutComplex[i+(n/4)] = refInComplex2[i+(n/4)];
       }
       checkEqualComplex(hOutComplex, refOutComplex);
 
       // ~~~ Test eqS using partial arrays ~~~
-      Vec::eqS(dOutReal, scalarReal*2, n/4, n/2);
+      VecOp::eqS(dOutReal, scalarReal*2.0, n/4, n/2);
       hOutReal = dOutReal;
       for (int i = 0; i < n/2; i++) { // edit reference array
-         refOutReal[i+(n/4)] = refScalarReal*2;
+         refOutReal[i+(n/4)] = refScalarReal*2.0;
       }
       checkEqualReal(hOutReal, refOutReal);
 
-      Vec::eqS(dOutComplex, scalarComplex, n/4, n/2);
+      cudaComplex scalarComplex2;
+      scalarComplex2.x = scalarComplex.x * 2.0;
+      scalarComplex2.y = scalarComplex.y * 2.0;
+      VecOp::eqS(dOutComplex, scalarComplex2, n/4, n/2);
       hOutComplex = dOutComplex;
       for (int i = 0; i < n/2; i++) { // edit reference array
-         refOutComplex[i+(n/4)] = refScalarComplex*2;
+         refOutComplex[i+(n/4)] = refScalarComplex * 2.0;
       }
       checkEqualComplex(hOutComplex, refOutComplex);
    }
 
-   // Test Vec::addVV and Vec::addVS
+   // Test VecOp::addVV and VecOp::addVS
    void testAdd()
    {
       printMethod(TEST_FUNC);
 
       // ~~~ Test addVV ~~~
-      Vec::addVV(dOutReal, dInReal, dInReal2);
+      VecOp::addVV(dOutReal, dInReal, dInReal2);
       hOutReal = dOutReal;
       for (int i = 0; i < n; i++) { // get reference array
          refOutReal[i] = refInReal[i] + refInReal2[i];
       }
       checkEqualReal(hOutReal, refOutReal);
 
-      Vec::addVV(dOutComplex, dInComplex, dInComplex2);
+      VecOp::addVV(dOutComplex, dInComplex, dInComplex2);
       hOutComplex = dOutComplex;
       for (int i = 0; i < n; i++) { // get reference array
          refOutComplex[i] = refInComplex[i] + refInComplex2[i];
       }
       checkEqualComplex(hOutComplex, refOutComplex);
 
-      Vec::addVV(dOutComplex, dInReal, dInComplex);
+      VecOp::addVV(dOutComplex, dInReal, dInComplex);
       hOutComplex = dOutComplex;
       for (int i = 0; i < n; i++) { // get reference array
          refOutComplex[i] = refInReal[i] + refInComplex[i];
       }
       checkEqualComplex(hOutComplex, refOutComplex); 
 
-      Vec::addVV(dOutComplex, dInComplex, dInReal);
+      VecOp::addVV(dOutComplex, dInComplex, dInReal);
       hOutComplex = dOutComplex; 
       checkEqualComplex(hOutComplex, refOutComplex); 
 
       // ~~~ Test addVS ~~~
-      Vec::addVS(dOutReal, dInReal, scalarReal);
+      VecOp::addVS(dOutReal, dInReal, scalarReal);
       hOutReal = dOutReal;
       for (int i = 0; i < n; i++) { // get reference array
          refOutReal[i] = refInReal[i] + refScalarReal;
       }
       checkEqualReal(hOutReal, refOutReal);
 
-      Vec::addVS(dOutComplex, dInComplex, scalarComplex);
+      VecOp::addVS(dOutComplex, dInComplex, scalarComplex);
       hOutComplex = dOutComplex;
       for (int i = 0; i < n; i++) { // get reference array
          refOutComplex[i] = refInComplex[i] + refScalarComplex;
       }
       checkEqualComplex(hOutComplex, refOutComplex);
 
-      Vec::addVS(dOutComplex, dInReal, scalarComplex);
+      VecOp::addVS(dOutComplex, dInReal, scalarComplex);
       hOutComplex = dOutComplex;
       for (int i = 0; i < n; i++) { // get reference array
          refOutComplex[i] = refInReal[i] + refScalarComplex;
       }
       checkEqualComplex(hOutComplex, refOutComplex);
 
-      Vec::addVS(dOutComplex, dInComplex, scalarReal);
+      VecOp::addVS(dOutComplex, dInComplex, scalarReal);
       hOutComplex = dOutComplex;
       for (int i = 0; i < n; i++) { // get reference array
          refOutComplex[i] = refInComplex[i] + refScalarReal;
@@ -243,54 +246,54 @@ public:
       checkEqualComplex(hOutComplex, refOutComplex);
 
       // ~~~ Test addVV using partial arrays ~~~
-      Vec::addVV(dOutReal, dInReal, dInReal, n/2, 0, n/4, n/2);
+      VecOp::addVV(dOutReal, dInReal, dInReal, n/2, 0, n/4, n/2);
       hOutReal = dOutReal;
       for (int i = 0; i < n/2; i++) { // get reference array
-         refOutReal[i] = refInReal[i+(n/4)] + refInReal[i+(n/2)];
+         refOutReal[i+(n/2)] = refInReal[i] + refInReal[i+(n/4)];
       }
       checkEqualReal(hOutReal, refOutReal);
 
-      Vec::addVV(dOutComplex, dInComplex, dInComplex, n/2, 0, n/4, n/2);
+      VecOp::addVV(dOutComplex, dInComplex, dInComplex, n/2, 0, n/4, n/2);
       hOutComplex = dOutComplex;
       for (int i = 0; i < n/2; i++) { // get reference array
-         refOutComplex[i] = refInComplex[i+(n/4)] + refInComplex[i+(n/2)];
+         refOutComplex[i+(n/2)] = refInComplex[i] + refInComplex[i+(n/4)];
       }
       checkEqualComplex(hOutComplex, refOutComplex);
 
-      Vec::addVV(dOutComplex, dInReal2, dInComplex, n/2, 0, n/4, n/2);
+      VecOp::addVV(dOutComplex, dInReal2, dInComplex, n/2, 0, n/4, n/2);
       hOutComplex = dOutComplex;
       for (int i = 0; i < n/2; i++) { // get reference array
-         refOutComplex[i] = refInReal2[i+(n/4)] + refInComplex[i+(n/2)];
+         refOutComplex[i+(n/2)] = refInReal2[i] + refInComplex[i+(n/4)];
       }
       checkEqualComplex(hOutComplex, refOutComplex); 
 
-      Vec::addVV(dOutComplex, dInComplex, dInReal2, n/2, 0, n/2, n/4);
+      VecOp::addVV(dOutComplex, dInComplex, dInReal2, n/2, n/4, 0, n/2);
       hOutComplex = dOutComplex; 
       checkEqualComplex(hOutComplex, refOutComplex); 
 
       // ~~~ Test addVS using partial arrays ~~~
-      Vec::addVS(dOutReal, dInReal2, scalarReal, n/4, 0, n/4);
+      VecOp::addVS(dOutReal, dInReal2, scalarReal, n/4, 0, n/4);
       hOutReal = dOutReal;
       for (int i = 0; i < n/4; i++) { // get reference array
          refOutReal[i+(n/4)] = refInReal2[i] + refScalarReal;
       }
       checkEqualReal(hOutReal, refOutReal);
 
-      Vec::addVS(dOutComplex, dInComplex2, scalarComplex, n/4, 0, n/4);
+      VecOp::addVS(dOutComplex, dInComplex2, scalarComplex, n/4, 0, n/4);
       hOutComplex = dOutComplex;
       for (int i = 0; i < n/4; i++) { // get reference array
          refOutComplex[i+(n/4)] = refInComplex2[i] + refScalarComplex;
       }
       checkEqualComplex(hOutComplex, refOutComplex);
 
-      Vec::addVS(dOutComplex, dInReal2, scalarComplex, n/4, 0, n/4);
+      VecOp::addVS(dOutComplex, dInReal2, scalarComplex, n/4, 0, n/4);
       hOutComplex = dOutComplex;
       for (int i = 0; i < n/4; i++) { // get reference array
          refOutComplex[i+(n/4)] = refInReal2[i] + refScalarComplex;
       }
-      checkEqualComplex(hOutComplex, refOutComplex, n/4, 0, n/4);
+      checkEqualComplex(hOutComplex, refOutComplex);
 
-      Vec::addVS(dOutComplex, dInComplex2, scalarReal);
+      VecOp::addVS(dOutComplex, dInComplex2, scalarReal, n/4, 0, n/4);
       hOutComplex = dOutComplex;
       for (int i = 0; i < n/4; i++) { // get reference array
          refOutComplex[i+(n/4)] = refInComplex2[i] + refScalarReal;
@@ -298,34 +301,34 @@ public:
       checkEqualComplex(hOutComplex, refOutComplex);
    }
 
-   // Test Vec::subVV and Vec::subVS
+   // Test VecOp::subVV and VecOp::subVS
    void testSub()
    {
       printMethod(TEST_FUNC);
 
       // ~~~ Test subVV ~~~
-      Vec::subVV(dOutReal, dInReal, dInReal2);
+      VecOp::subVV(dOutReal, dInReal, dInReal2);
       hOutReal = dOutReal;
       for (int i = 0; i < n; i++) { // get reference array
          refOutReal[i] = refInReal[i] - refInReal2[i];
       }
       checkEqualReal(hOutReal, refOutReal);
 
-      Vec::subVV(dOutComplex, dInComplex, dInComplex2);
+      VecOp::subVV(dOutComplex, dInComplex, dInComplex2);
       hOutComplex = dOutComplex;
       for (int i = 0; i < n; i++) { // get reference array
          refOutComplex[i] = refInComplex[i] - refInComplex2[i];
       }
       checkEqualComplex(hOutComplex, refOutComplex);
 
-      Vec::subVV(dOutComplex, dInReal, dInComplex);
+      VecOp::subVV(dOutComplex, dInReal, dInComplex);
       hOutComplex = dOutComplex;
       for (int i = 0; i < n; i++) { // get reference array
          refOutComplex[i] = refInReal[i] - refInComplex[i];
       }
       checkEqualComplex(hOutComplex, refOutComplex); 
 
-      Vec::subVV(dOutComplex, dInComplex, dInReal);
+      VecOp::subVV(dOutComplex, dInComplex, dInReal);
       hOutComplex = dOutComplex;
       for (int i = 0; i < n; i++) { // get reference array
          refOutComplex[i] = refInComplex[i] - refInReal[i];
@@ -333,28 +336,28 @@ public:
       checkEqualComplex(hOutComplex, refOutComplex);
 
       // ~~~ Test subVS ~~~
-      Vec::subVS(dOutReal, dInReal, scalarReal);
+      VecOp::subVS(dOutReal, dInReal, scalarReal);
       hOutReal = dOutReal;
       for (int i = 0; i < n; i++) { // get reference array
          refOutReal[i] = refInReal[i] - refScalarReal;
       }
       checkEqualReal(hOutReal, refOutReal);
 
-      Vec::subVS(dOutComplex, dInComplex, scalarComplex);
+      VecOp::subVS(dOutComplex, dInComplex, scalarComplex);
       hOutComplex = dOutComplex;
       for (int i = 0; i < n; i++) { // get reference array
          refOutComplex[i] = refInComplex[i] - refScalarComplex;
       }
       checkEqualComplex(hOutComplex, refOutComplex);
 
-      Vec::subVS(dOutComplex, dInReal, scalarComplex);
+      VecOp::subVS(dOutComplex, dInReal, scalarComplex);
       hOutComplex = dOutComplex;
       for (int i = 0; i < n; i++) { // get reference array
          refOutComplex[i] = refInReal[i] - refScalarComplex;
       }
       checkEqualComplex(hOutComplex, refOutComplex);
 
-      Vec::subVS(dOutComplex, dInComplex, scalarReal);
+      VecOp::subVS(dOutComplex, dInComplex, scalarReal);
       hOutComplex = dOutComplex;
       for (int i = 0; i < n; i++) { // get reference array
          refOutComplex[i] = refInComplex[i] - refScalarReal;
@@ -362,28 +365,28 @@ public:
       checkEqualComplex(hOutComplex, refOutComplex);
 
       // ~~~ Test subVV using partial arrays ~~~
-      Vec::subVV(dOutReal, dInReal2, dInReal, n/4, n/4, 0, n*3/4);
+      VecOp::subVV(dOutReal, dInReal2, dInReal, n/4, n/4, 0, n*3/4);
       hOutReal = dOutReal;
       for (int i = 0; i < n*3/4; i++) { // get reference array
          refOutReal[i+(n/4)] = refInReal2[i+(n/4)] - refInReal[i];
       }
       checkEqualReal(hOutReal, refOutReal);
 
-      Vec::subVV(dOutComplex, dInComplex2, dInComplex, n/4, n/4, 0, n*3/4);
+      VecOp::subVV(dOutComplex, dInComplex2, dInComplex, n/4, n/4, 0, n*3/4);
       hOutComplex = dOutComplex;
       for (int i = 0; i < n*3/4; i++) { // get reference array
          refOutComplex[i+(n/4)] = refInComplex2[i+(n/4)] - refInComplex[i];
       }
       checkEqualComplex(hOutComplex, refOutComplex);
 
-      Vec::subVV(dOutComplex, dInReal2, dInComplex, n/4, n/4, 0, n*3/4);
+      VecOp::subVV(dOutComplex, dInReal2, dInComplex, n/4, n/4, 0, n*3/4);
       hOutComplex = dOutComplex;
       for (int i = 0; i < n*3/4; i++) { // get reference array
          refOutComplex[i+(n/4)] = refInReal2[i+(n/4)] - refInComplex[i];
       }
       checkEqualComplex(hOutComplex, refOutComplex); 
 
-      Vec::subVV(dOutComplex, dInComplex, dInReal2, n/4, n/4, 0, n*3/4);
+      VecOp::subVV(dOutComplex, dInComplex, dInReal2, n/4, n/4, 0, n*3/4);
       hOutComplex = dOutComplex;
       for (int i = 0; i < n*3/4; i++) { // get reference array
          refOutComplex[i+(n/4)] = refInComplex[i+(n/4)] - refInReal2[i];
@@ -391,28 +394,28 @@ public:
       checkEqualComplex(hOutComplex, refOutComplex);
 
       // ~~~ Test subVS using partial arrays ~~~
-      Vec::subVS(dOutReal, dInReal2, scalarReal, 0, n/2, n/2);
+      VecOp::subVS(dOutReal, dInReal2, scalarReal, 0, n/2, n/2);
       hOutReal = dOutReal;
       for (int i = 0; i < n/2; i++) { // get reference array
          refOutReal[i] = refInReal2[i+(n/2)] - refScalarReal;
       }
       checkEqualReal(hOutReal, refOutReal);
 
-      Vec::subVS(dOutComplex, dInComplex2, scalarComplex, 0, n/2, n/2);
+      VecOp::subVS(dOutComplex, dInComplex2, scalarComplex, 0, n/2, n/2);
       hOutComplex = dOutComplex;
       for (int i = 0; i < n/2; i++) { // get reference array
          refOutComplex[i] = refInComplex2[i+(n/2)] - refScalarComplex;
       }
       checkEqualComplex(hOutComplex, refOutComplex);
 
-      Vec::subVS(dOutComplex, dInReal2, scalarComplex, 0, n/2, n/2);
+      VecOp::subVS(dOutComplex, dInReal2, scalarComplex, 0, n/2, n/2);
       hOutComplex = dOutComplex;
       for (int i = 0; i < n/2; i++) { // get reference array
          refOutComplex[i] = refInReal2[i+(n/2)] - refScalarComplex;
       }
       checkEqualComplex(hOutComplex, refOutComplex);
 
-      Vec::subVS(dOutComplex, dInComplex2, scalarReal, 0, n/2, n/2);
+      VecOp::subVS(dOutComplex, dInComplex2, scalarReal, 0, n/2, n/2);
       hOutComplex = dOutComplex;
       for (int i = 0; i < n/2; i++) { // get reference array
          refOutComplex[i] = refInComplex2[i+(n/2)] - refScalarReal;
@@ -420,60 +423,60 @@ public:
       checkEqualComplex(hOutComplex, refOutComplex);
    }
 
-   // Test Vec::mulVV and Vec::mulVS
+   // Test VecOp::mulVV and VecOp::mulVS
    void testMul()
    {
       printMethod(TEST_FUNC);
 
       // ~~~ Test mulVV ~~~
-      Vec::mulVV(dOutReal, dInReal, dInReal2);
+      VecOp::mulVV(dOutReal, dInReal, dInReal2);
       hOutReal = dOutReal;
       for (int i = 0; i < n; i++) { // get reference array
          refOutReal[i] = refInReal[i] * refInReal2[i];
       }
       checkEqualReal(hOutReal, refOutReal);
 
-      Vec::mulVV(dOutComplex, dInComplex, dInComplex2);
+      VecOp::mulVV(dOutComplex, dInComplex, dInComplex2);
       hOutComplex = dOutComplex;
       for (int i = 0; i < n; i++) { // get reference array
          refOutComplex[i] = refInComplex[i] * refInComplex2[i];
       }
       checkEqualComplex(hOutComplex, refOutComplex);
 
-      Vec::mulVV(dOutComplex, dInReal, dInComplex);
+      VecOp::mulVV(dOutComplex, dInReal, dInComplex);
       hOutComplex = dOutComplex;
       for (int i = 0; i < n; i++) { // get reference array
          refOutComplex[i] = refInReal[i] * refInComplex[i];
       }
       checkEqualComplex(hOutComplex, refOutComplex); 
 
-      Vec::mulVV(dOutComplex, dInComplex, dInReal);
+      VecOp::mulVV(dOutComplex, dInComplex, dInReal);
       hOutComplex = dOutComplex;
       checkEqualComplex(hOutComplex, refOutComplex); 
 
       // ~~~ Test mulVS ~~~
-      Vec::mulVS(dOutReal, dInReal, scalarReal);
+      VecOp::mulVS(dOutReal, dInReal, scalarReal);
       hOutReal = dOutReal;
       for (int i = 0; i < n; i++) { // get reference array
          refOutReal[i] = refInReal[i] * refScalarReal;
       }
       checkEqualReal(hOutReal, refOutReal);
 
-      Vec::mulVS(dOutComplex, dInComplex, scalarComplex);
+      VecOp::mulVS(dOutComplex, dInComplex, scalarComplex);
       hOutComplex = dOutComplex;
       for (int i = 0; i < n; i++) { // get reference array
          refOutComplex[i] = refInComplex[i] * refScalarComplex;
       }
       checkEqualComplex(hOutComplex, refOutComplex);
 
-      Vec::mulVS(dOutComplex, dInReal, scalarComplex);
+      VecOp::mulVS(dOutComplex, dInReal, scalarComplex);
       hOutComplex = dOutComplex;
       for (int i = 0; i < n; i++) { // get reference array
          refOutComplex[i] = refInReal[i] * refScalarComplex;
       }
       checkEqualComplex(hOutComplex, refOutComplex);
 
-      Vec::mulVS(dOutComplex, dInComplex, scalarReal);
+      VecOp::mulVS(dOutComplex, dInComplex, scalarReal);
       hOutComplex = dOutComplex;
       for (int i = 0; i < n; i++) { // get reference array
          refOutComplex[i] = refInComplex[i] * refScalarReal;
@@ -481,54 +484,54 @@ public:
       checkEqualComplex(hOutComplex, refOutComplex);
 
       // ~~~ Test mulVV using partial arrays ~~~
-      Vec::mulVV(dOutReal, dInReal, dInReal, n/2, n/4, 0, n/2);
+      VecOp::mulVV(dOutReal, dInReal, dInReal, n/2, n/4, 0, n/2);
       hOutReal = dOutReal;
       for (int i = 0; i < n/2; i++) { // get reference array
          refOutReal[i+(n/2)] = refInReal[i+(n/4)] * refInReal[i];
       }
       checkEqualReal(hOutReal, refOutReal);
 
-      Vec::mulVV(dOutComplex, dInComplex, dInComplex, n/2, n/4, 0, n/2);
+      VecOp::mulVV(dOutComplex, dInComplex, dInComplex, n/2, n/4, 0, n/2);
       hOutComplex = dOutComplex;
       for (int i = 0; i < n/2; i++) { // get reference array
          refOutComplex[i+(n/2)] = refInComplex[i+(n/4)] * refInComplex[i];
       }
       checkEqualComplex(hOutComplex, refOutComplex);
 
-      Vec::mulVV(dOutComplex, dInReal2, dInComplex, n/2, n/4, 0, n/2);
+      VecOp::mulVV(dOutComplex, dInReal2, dInComplex, n/2, n/4, 0, n/2);
       hOutComplex = dOutComplex;
       for (int i = 0; i < n/2; i++) { // get reference array
          refOutComplex[i+(n/2)] = refInReal2[i+(n/4)] * refInComplex[i];
       }
       checkEqualComplex(hOutComplex, refOutComplex); 
 
-      Vec::mulVV(dOutComplex, dInComplex, dInReal2, n/2, 0, n/4, n/2);
+      VecOp::mulVV(dOutComplex, dInComplex, dInReal2, n/2, 0, n/4, n/2);
       hOutComplex = dOutComplex;
       checkEqualComplex(hOutComplex, refOutComplex); 
 
       // ~~~ Test mulVS using partial arrays ~~~
-      Vec::mulVS(dOutReal, dInReal2, scalarReal, 0, n/4, n*3/4);
+      VecOp::mulVS(dOutReal, dInReal2, scalarReal, 0, n/4, n*3/4);
       hOutReal = dOutReal;
       for (int i = 0; i < n*3/4; i++) { // get reference array
-         refOutReal[i] = refInReal2[i] * refScalarReal;
+         refOutReal[i] = refInReal2[i+(n/4)] * refScalarReal;
       }
       checkEqualReal(hOutReal, refOutReal);
 
-      Vec::mulVS(dOutComplex, dInComplex2, scalarComplex, 0, n/4, n*3/4);
+      VecOp::mulVS(dOutComplex, dInComplex2, scalarComplex, 0, n/4, n*3/4);
       hOutComplex = dOutComplex;
       for (int i = 0; i < n*3/4; i++) { // get reference array
          refOutComplex[i] = refInComplex2[i+(n/4)] * refScalarComplex;
       }
       checkEqualComplex(hOutComplex, refOutComplex);
 
-      Vec::mulVS(dOutComplex, dInReal2, scalarComplex, 0, n/4, n*3/4);
+      VecOp::mulVS(dOutComplex, dInReal2, scalarComplex, 0, n/4, n*3/4);
       hOutComplex = dOutComplex;
       for (int i = 0; i < n*3/4; i++) { // get reference array
          refOutComplex[i] = refInReal2[i+(n/4)] * refScalarComplex;
       }
       checkEqualComplex(hOutComplex, refOutComplex);
 
-      Vec::mulVS(dOutComplex, dInComplex2, scalarReal, 0, n/4, n*3/4);
+      VecOp::mulVS(dOutComplex, dInComplex2, scalarReal, 0, n/4, n*3/4);
       hOutComplex = dOutComplex;
       for (int i = 0; i < n*3/4; i++) { // get reference array
          refOutComplex[i] = refInComplex2[i+(n/4)] * refScalarReal;
@@ -536,20 +539,20 @@ public:
       checkEqualComplex(hOutComplex, refOutComplex);
    }
 
-   // Test Vec::divVV and Vec::divVS
+   // Test VecOp::divVV and VecOp::divVS
    void testDiv()
    {
       printMethod(TEST_FUNC);
 
       // ~~~ Test divVV ~~~
-      Vec::divVV(dOutReal, dInReal, dInReal2);
+      VecOp::divVV(dOutReal, dInReal, dInReal2);
       hOutReal = dOutReal;
       for (int i = 0; i < n; i++) { // get reference array
          refOutReal[i] = refInReal[i] / refInReal2[i];
       }
       checkEqualReal(hOutReal, refOutReal);
 
-      Vec::divVV(dOutComplex, dInComplex, dInReal2);
+      VecOp::divVV(dOutComplex, dInComplex, dInReal2);
       hOutComplex = dOutComplex;
       for (int i = 0; i < n; i++) { // get reference array
          refOutComplex[i] = refInComplex[i] / refInReal2[i];
@@ -557,14 +560,14 @@ public:
       checkEqualComplex(hOutComplex, refOutComplex); 
 
       // ~~~ Test divVS ~~~
-      Vec::divVS(dOutReal, dInReal, scalarReal);
+      VecOp::divVS(dOutReal, dInReal, scalarReal);
       hOutReal = dOutReal;
       for (int i = 0; i < n; i++) { // get reference array
          refOutReal[i] = refInReal[i] / refScalarReal;
       }
       checkEqualReal(hOutReal, refOutReal);
 
-      Vec::divVS(dOutComplex, dInComplex, scalarReal);
+      VecOp::divVS(dOutComplex, dInComplex, scalarReal);
       hOutComplex = dOutComplex;
       for (int i = 0; i < n; i++) { // get reference array
          refOutComplex[i] = refInComplex[i] / refScalarReal;
@@ -572,14 +575,14 @@ public:
       checkEqualComplex(hOutComplex, refOutComplex);
 
       // ~~~ Test divVV using partial arrays ~~~
-      Vec::divVV(dOutReal, dInReal2, dInReal2, 0, n/4, 0, n*3/4);
+      VecOp::divVV(dOutReal, dInReal2, dInReal2, 0, n/4, 0, n*3/4);
       hOutReal = dOutReal;
       for (int i = 0; i < n*3/4; i++) { // get reference array
          refOutReal[i] = refInReal2[i+(n/4)] / refInReal2[i];
       }
       checkEqualReal(hOutReal, refOutReal);
 
-      Vec::divVV(dOutComplex, dInComplex2, dInReal2, 0, n/4, 0, n*3/4);
+      VecOp::divVV(dOutComplex, dInComplex2, dInReal2, 0, n/4, 0, n*3/4);
       hOutComplex = dOutComplex;
       for (int i = 0; i < n*3/4; i++) { // get reference array
          refOutComplex[i] = refInComplex2[i+(n/4)] / refInReal2[i];
@@ -587,14 +590,14 @@ public:
       checkEqualComplex(hOutComplex, refOutComplex); 
 
       // ~~~ Test divVS using partial arrays ~~~
-      Vec::divVS(dOutReal, dInReal2, scalarReal, n/4, n/2, n/2);
+      VecOp::divVS(dOutReal, dInReal2, scalarReal, n/4, n/2, n/2);
       hOutReal = dOutReal;
       for (int i = 0; i < n/2; i++) { // get reference array
          refOutReal[i+(n/4)] = refInReal2[i+(n/2)] / refScalarReal;
       }
       checkEqualReal(hOutReal, refOutReal);
 
-      Vec::divVS(dOutComplex, dInComplex2, scalarReal, n/4, n/2, n/2);
+      VecOp::divVS(dOutComplex, dInComplex2, scalarReal, n/4, n/2, n/2);
       hOutComplex = dOutComplex;
       for (int i = 0; i < n/2; i++) { // get reference array
          refOutComplex[i+(n/4)] = refInComplex2[i+(n/2)] / refScalarReal;
@@ -602,20 +605,20 @@ public:
       checkEqualComplex(hOutComplex, refOutComplex);
    }
 
-   // Test Vec::expV
+   // Test VecOp::expV
    void testExp()
    {
       printMethod(TEST_FUNC);
 
       // ~~~ Test using full arrays ~~~
-      Vec::expV(dOutReal, dInReal);
+      VecOp::expV(dOutReal, dInReal);
       hOutReal = dOutReal;
       for (int i = 0; i < n; i++) { // get reference array
          refOutReal[i] = exp(refInReal[i]);
       }
       checkEqualReal(hOutReal, refOutReal);
 
-      Vec::expV(dOutComplex, dInComplex);
+      VecOp::expV(dOutComplex, dInComplex);
       hOutComplex = dOutComplex;
       for (int i = 0; i < n; i++) { // get reference array
          refOutComplex[i] = exp(refInComplex[i]);
@@ -623,14 +626,14 @@ public:
       checkEqualComplex(hOutComplex, refOutComplex);
 
       // ~~~ Test using partial arrays ~~~
-      Vec::expV(dOutReal, dInReal2, n/4, n/2, n/4);
+      VecOp::expV(dOutReal, dInReal2, n/4, n/2, n/4);
       hOutReal = dOutReal;
       for (int i = 0; i < n/4; i++) { // get reference array
          refOutReal[i+(n/4)] = exp(refInReal2[i+(n/2)]);
       }
       checkEqualReal(hOutReal, refOutReal);
 
-      Vec::expV(dOutComplex, dInComplex2, n/4, n/2, n/4);
+      VecOp::expV(dOutComplex, dInComplex2, n/4, n/2, n/4);
       hOutComplex = dOutComplex;
       for (int i = 0; i < n/4; i++) { // get reference array
          refOutComplex[i+(n/4)] = exp(refInComplex2[i+(n/2)]);
@@ -638,14 +641,14 @@ public:
       checkEqualComplex(hOutComplex, refOutComplex);
    }
 
-   // Test Vec::addEqV and Vec::addEqS
+   // Test VecOp::addEqV and VecOp::addEqS
    void testAddEq()
    {
       printMethod(TEST_FUNC);
 
       // ~~~ Test addEqV ~~~
-      Vec::eqV(dOutReal, dInReal);
-      Vec::addEqV(dOutReal, dInReal2);
+      VecOp::eqV(dOutReal, dInReal);
+      VecOp::addEqV(dOutReal, dInReal2);
       hOutReal = dOutReal;
       for (int i = 0; i < n; i++) { // get reference array
          refOutReal[i] = refInReal[i];
@@ -653,8 +656,8 @@ public:
       }
       checkEqualReal(hOutReal, refOutReal);
 
-      Vec::eqV(dOutComplex, dInComplex);
-      Vec::addEqV(dOutComplex, dInComplex2);
+      VecOp::eqV(dOutComplex, dInComplex);
+      VecOp::addEqV(dOutComplex, dInComplex2);
       hOutComplex = dOutComplex;
       for (int i = 0; i < n; i++) { // get reference array
          refOutComplex[i] = refInComplex[i];
@@ -662,8 +665,8 @@ public:
       }
       checkEqualComplex(hOutComplex, refOutComplex);
 
-      Vec::eqV(dOutComplex, dInComplex);
-      Vec::addEqV(dOutComplex, dInReal);
+      VecOp::eqV(dOutComplex, dInComplex);
+      VecOp::addEqV(dOutComplex, dInReal);
       hOutComplex = dOutComplex;
       for (int i = 0; i < n; i++) { // get reference array
          refOutComplex[i] = refInComplex[i];
@@ -672,8 +675,8 @@ public:
       checkEqualComplex(hOutComplex, refOutComplex);
 
       // ~~~ Test addEqS ~~~
-      Vec::eqV(dOutReal, dInReal);
-      Vec::addEqS(dOutReal, scalarReal);
+      VecOp::eqV(dOutReal, dInReal);
+      VecOp::addEqS(dOutReal, scalarReal);
       hOutReal = dOutReal;
       for (int i = 0; i < n; i++) { // get reference array
          refOutReal[i] = refInReal[i];
@@ -681,8 +684,8 @@ public:
       }
       checkEqualReal(hOutReal, refOutReal);
 
-      Vec::eqV(dOutComplex, dInComplex);
-      Vec::addEqS(dOutComplex, scalarComplex);
+      VecOp::eqV(dOutComplex, dInComplex);
+      VecOp::addEqS(dOutComplex, scalarComplex);
       hOutComplex = dOutComplex;
       for (int i = 0; i < n; i++) { // get reference array
          refOutComplex[i] = refInComplex[i];
@@ -690,8 +693,8 @@ public:
       }
       checkEqualComplex(hOutComplex, refOutComplex);
 
-      Vec::eqV(dOutComplex, dInComplex);
-      Vec::addEqS(dOutComplex, scalarReal);
+      VecOp::eqV(dOutComplex, dInComplex);
+      VecOp::addEqS(dOutComplex, scalarReal);
       hOutComplex = dOutComplex;
       for (int i = 0; i < n; i++) { // get reference array
          refOutComplex[i] = refInComplex[i];
@@ -700,8 +703,8 @@ public:
       checkEqualComplex(hOutComplex, refOutComplex);
 
       // ~~~ Test addEqV using partial arrays ~~~
-      Vec::eqV(dOutReal, dInReal);
-      Vec::addEqV(dOutReal, dInReal2, 0, n/4, n/2);
+      VecOp::eqV(dOutReal, dInReal);
+      VecOp::addEqV(dOutReal, dInReal2, 0, n/4, n/2);
       hOutReal = dOutReal;
       for (int i = 0; i < n; i++) { // get reference array
          refOutReal[i] = refInReal[i];
@@ -711,8 +714,8 @@ public:
       }
       checkEqualReal(hOutReal, refOutReal);
 
-      Vec::eqV(dOutComplex, dInComplex);
-      Vec::addEqV(dOutComplex, dInComplex2, 0, n/4, n/2);
+      VecOp::eqV(dOutComplex, dInComplex);
+      VecOp::addEqV(dOutComplex, dInComplex2, 0, n/4, n/2);
       hOutComplex = dOutComplex;
       for (int i = 0; i < n; i++) { // get reference array
          refOutComplex[i] = refInComplex[i];
@@ -722,8 +725,8 @@ public:
       }
       checkEqualComplex(hOutComplex, refOutComplex);
 
-      Vec::eqV(dOutComplex, dInComplex);
-      Vec::addEqV(dOutComplex, dInReal, 0, n/4, n/2);
+      VecOp::eqV(dOutComplex, dInComplex);
+      VecOp::addEqV(dOutComplex, dInReal, 0, n/4, n/2);
       hOutComplex = dOutComplex;
       for (int i = 0; i < n; i++) { // get reference array
          refOutComplex[i] = refInComplex[i];
@@ -734,8 +737,8 @@ public:
       checkEqualComplex(hOutComplex, refOutComplex);
 
       // ~~~ Test addEqS using partial arrays ~~~
-      Vec::eqV(dOutReal, dInReal);
-      Vec::addEqS(dOutReal, scalarReal, n/4, n*3/4);
+      VecOp::eqV(dOutReal, dInReal);
+      VecOp::addEqS(dOutReal, scalarReal, n/4, n*3/4);
       hOutReal = dOutReal;
       for (int i = 0; i < n; i++) { // get reference array
          refOutReal[i] = refInReal[i];
@@ -745,8 +748,8 @@ public:
       }
       checkEqualReal(hOutReal, refOutReal);
 
-      Vec::eqV(dOutComplex, dInComplex);
-      Vec::addEqS(dOutComplex, scalarComplex, n/4, n*3/4);
+      VecOp::eqV(dOutComplex, dInComplex);
+      VecOp::addEqS(dOutComplex, scalarComplex, n/4, n*3/4);
       hOutComplex = dOutComplex;
       for (int i = 0; i < n; i++) { // get reference array
          refOutComplex[i] = refInComplex[i];
@@ -756,8 +759,8 @@ public:
       }
       checkEqualComplex(hOutComplex, refOutComplex);
 
-      Vec::eqV(dOutComplex, dInComplex);
-      Vec::addEqS(dOutComplex, scalarReal, n/4, n*3/4);
+      VecOp::eqV(dOutComplex, dInComplex);
+      VecOp::addEqS(dOutComplex, scalarReal, n/4, n*3/4);
       hOutComplex = dOutComplex;
       for (int i = 0; i < n; i++) { // get reference array
          refOutComplex[i] = refInComplex[i];
@@ -768,14 +771,14 @@ public:
       checkEqualComplex(hOutComplex, refOutComplex);
    }
 
-   // Test Vec::subEqV and Vec::subEqS
+   // Test VecOp::subEqV and VecOp::subEqS
    void testSubEq()
    {
       printMethod(TEST_FUNC);
 
       // ~~~ Test subEqV ~~~
-      Vec::eqV(dOutReal, dInReal);
-      Vec::subEqV(dOutReal, dInReal2);
+      VecOp::eqV(dOutReal, dInReal);
+      VecOp::subEqV(dOutReal, dInReal2);
       hOutReal = dOutReal;
       for (int i = 0; i < n; i++) { // get reference array
          refOutReal[i] = refInReal[i];
@@ -783,8 +786,8 @@ public:
       }
       checkEqualReal(hOutReal, refOutReal);
 
-      Vec::eqV(dOutComplex, dInComplex);
-      Vec::subEqV(dOutComplex, dInComplex2);
+      VecOp::eqV(dOutComplex, dInComplex);
+      VecOp::subEqV(dOutComplex, dInComplex2);
       hOutComplex = dOutComplex;
       for (int i = 0; i < n; i++) { // get reference array
          refOutComplex[i] = refInComplex[i];
@@ -792,8 +795,8 @@ public:
       }
       checkEqualComplex(hOutComplex, refOutComplex);
 
-      Vec::eqV(dOutComplex, dInComplex);
-      Vec::subEqV(dOutComplex, dInReal);
+      VecOp::eqV(dOutComplex, dInComplex);
+      VecOp::subEqV(dOutComplex, dInReal);
       hOutComplex = dOutComplex;
       for (int i = 0; i < n; i++) { // get reference array
          refOutComplex[i] = refInComplex[i];
@@ -802,8 +805,8 @@ public:
       checkEqualComplex(hOutComplex, refOutComplex);
 
       // ~~~ Test subEqS ~~~
-      Vec::eqV(dOutReal, dInReal);
-      Vec::subEqS(dOutReal, scalarReal);
+      VecOp::eqV(dOutReal, dInReal);
+      VecOp::subEqS(dOutReal, scalarReal);
       hOutReal = dOutReal;
       for (int i = 0; i < n; i++) { // get reference array
          refOutReal[i] = refInReal[i];
@@ -811,8 +814,8 @@ public:
       }
       checkEqualReal(hOutReal, refOutReal);
 
-      Vec::eqV(dOutComplex, dInComplex);
-      Vec::subEqS(dOutComplex, scalarComplex);
+      VecOp::eqV(dOutComplex, dInComplex);
+      VecOp::subEqS(dOutComplex, scalarComplex);
       hOutComplex = dOutComplex;
       for (int i = 0; i < n; i++) { // get reference array
          refOutComplex[i] = refInComplex[i];
@@ -820,8 +823,8 @@ public:
       }
       checkEqualComplex(hOutComplex, refOutComplex);
 
-      Vec::eqV(dOutComplex, dInComplex);
-      Vec::subEqS(dOutComplex, scalarReal);
+      VecOp::eqV(dOutComplex, dInComplex);
+      VecOp::subEqS(dOutComplex, scalarReal);
       hOutComplex = dOutComplex;
       for (int i = 0; i < n; i++) { // get reference array
          refOutComplex[i] = refInComplex[i];
@@ -830,8 +833,8 @@ public:
       checkEqualComplex(hOutComplex, refOutComplex);
 
       // ~~~ Test subEqV using partial arrays ~~~
-      Vec::eqV(dOutReal, dInReal);
-      Vec::subEqV(dOutReal, dInReal2, n/2, 0, n/2);
+      VecOp::eqV(dOutReal, dInReal);
+      VecOp::subEqV(dOutReal, dInReal2, n/2, 0, n/2);
       hOutReal = dOutReal;
       for (int i = 0; i < n; i++) { // get reference array
          refOutReal[i] = refInReal[i];
@@ -841,8 +844,8 @@ public:
       }
       checkEqualReal(hOutReal, refOutReal);
 
-      Vec::eqV(dOutComplex, dInComplex);
-      Vec::subEqV(dOutComplex, dInComplex2, n/2, 0, n/2);
+      VecOp::eqV(dOutComplex, dInComplex);
+      VecOp::subEqV(dOutComplex, dInComplex2, n/2, 0, n/2);
       hOutComplex = dOutComplex;
       for (int i = 0; i < n; i++) { // get reference array
          refOutComplex[i] = refInComplex[i];
@@ -852,8 +855,8 @@ public:
       }
       checkEqualComplex(hOutComplex, refOutComplex);
 
-      Vec::eqV(dOutComplex, dInComplex);
-      Vec::subEqV(dOutComplex, dInReal, n/2, 0, n/2);
+      VecOp::eqV(dOutComplex, dInComplex);
+      VecOp::subEqV(dOutComplex, dInReal, n/2, 0, n/2);
       hOutComplex = dOutComplex;
       for (int i = 0; i < n; i++) { // get reference array
          refOutComplex[i] = refInComplex[i];
@@ -864,8 +867,8 @@ public:
       checkEqualComplex(hOutComplex, refOutComplex);
 
       // ~~~ Test subEqS using partial arrays ~~~
-      Vec::eqV(dOutReal, dInReal);
-      Vec::subEqS(dOutReal, scalarReal, 0, n/2);
+      VecOp::eqV(dOutReal, dInReal);
+      VecOp::subEqS(dOutReal, scalarReal, 0, n/2);
       hOutReal = dOutReal;
       for (int i = 0; i < n; i++) { // get reference array
          refOutReal[i] = refInReal[i];
@@ -875,8 +878,8 @@ public:
       }
       checkEqualReal(hOutReal, refOutReal);
 
-      Vec::eqV(dOutComplex, dInComplex);
-      Vec::subEqS(dOutComplex, scalarComplex, 0, n/2);
+      VecOp::eqV(dOutComplex, dInComplex);
+      VecOp::subEqS(dOutComplex, scalarComplex, 0, n/2);
       hOutComplex = dOutComplex;
       for (int i = 0; i < n; i++) { // get reference array
          refOutComplex[i] = refInComplex[i];
@@ -886,8 +889,8 @@ public:
       }
       checkEqualComplex(hOutComplex, refOutComplex);
 
-      Vec::eqV(dOutComplex, dInComplex);
-      Vec::subEqS(dOutComplex, scalarReal, 0, n/2);
+      VecOp::eqV(dOutComplex, dInComplex);
+      VecOp::subEqS(dOutComplex, scalarReal, 0, n/2);
       hOutComplex = dOutComplex;
       for (int i = 0; i < n; i++) { // get reference array
          refOutComplex[i] = refInComplex[i];
@@ -898,14 +901,14 @@ public:
       checkEqualComplex(hOutComplex, refOutComplex);
    }
 
-   // Test Vec::mulEqV and Vec::mulEqS
+   // Test VecOp::mulEqV and VecOp::mulEqS
    void testMulEq()
    {
       printMethod(TEST_FUNC);
 
       // ~~~ Test mulEqV ~~~
-      Vec::eqV(dOutReal, dInReal);
-      Vec::mulEqV(dOutReal, dInReal2);
+      VecOp::eqV(dOutReal, dInReal);
+      VecOp::mulEqV(dOutReal, dInReal2);
       hOutReal = dOutReal;
       for (int i = 0; i < n; i++) { // get reference array
          refOutReal[i] = refInReal[i];
@@ -913,8 +916,8 @@ public:
       }
       checkEqualReal(hOutReal, refOutReal);
 
-      Vec::eqV(dOutComplex, dInComplex);
-      Vec::mulEqV(dOutComplex, dInComplex2);
+      VecOp::eqV(dOutComplex, dInComplex);
+      VecOp::mulEqV(dOutComplex, dInComplex2);
       hOutComplex = dOutComplex;
       for (int i = 0; i < n; i++) { // get reference array
          refOutComplex[i] = refInComplex[i];
@@ -922,8 +925,8 @@ public:
       }
       checkEqualComplex(hOutComplex, refOutComplex);
 
-      Vec::eqV(dOutComplex, dInComplex);
-      Vec::mulEqV(dOutComplex, dInReal);
+      VecOp::eqV(dOutComplex, dInComplex);
+      VecOp::mulEqV(dOutComplex, dInReal);
       hOutComplex = dOutComplex;
       for (int i = 0; i < n; i++) { // get reference array
          refOutComplex[i] = refInComplex[i];
@@ -932,8 +935,8 @@ public:
       checkEqualComplex(hOutComplex, refOutComplex);
 
       // ~~~ Test mulEqS ~~~
-      Vec::eqV(dOutReal, dInReal);
-      Vec::mulEqS(dOutReal, scalarReal);
+      VecOp::eqV(dOutReal, dInReal);
+      VecOp::mulEqS(dOutReal, scalarReal);
       hOutReal = dOutReal;
       for (int i = 0; i < n; i++) { // get reference array
          refOutReal[i] = refInReal[i];
@@ -941,8 +944,8 @@ public:
       }
       checkEqualReal(hOutReal, refOutReal);
 
-      Vec::eqV(dOutComplex, dInComplex);
-      Vec::mulEqS(dOutComplex, scalarComplex);
+      VecOp::eqV(dOutComplex, dInComplex);
+      VecOp::mulEqS(dOutComplex, scalarComplex);
       hOutComplex = dOutComplex;
       for (int i = 0; i < n; i++) { // get reference array
          refOutComplex[i] = refInComplex[i];
@@ -950,8 +953,8 @@ public:
       }
       checkEqualComplex(hOutComplex, refOutComplex);
 
-      Vec::eqV(dOutComplex, dInComplex);
-      Vec::mulEqS(dOutComplex, scalarReal);
+      VecOp::eqV(dOutComplex, dInComplex);
+      VecOp::mulEqS(dOutComplex, scalarReal);
       hOutComplex = dOutComplex;
       for (int i = 0; i < n; i++) { // get reference array
          refOutComplex[i] = refInComplex[i];
@@ -960,8 +963,8 @@ public:
       checkEqualComplex(hOutComplex, refOutComplex);
 
       // ~~~ Test mulEqV using partial arrays ~~~
-      Vec::eqV(dOutReal, dInReal);
-      Vec::mulEqV(dOutReal, dInReal2, 0, n/2, n/2);
+      VecOp::eqV(dOutReal, dInReal);
+      VecOp::mulEqV(dOutReal, dInReal2, 0, n/2, n/2);
       hOutReal = dOutReal;
       for (int i = 0; i < n; i++) { // get reference array
          refOutReal[i] = refInReal[i];
@@ -971,8 +974,8 @@ public:
       }
       checkEqualReal(hOutReal, refOutReal);
 
-      Vec::eqV(dOutComplex, dInComplex);
-      Vec::mulEqV(dOutComplex, dInComplex2, 0, n/2, n/2);
+      VecOp::eqV(dOutComplex, dInComplex);
+      VecOp::mulEqV(dOutComplex, dInComplex2, 0, n/2, n/2);
       hOutComplex = dOutComplex;
       for (int i = 0; i < n; i++) { // get reference array
          refOutComplex[i] = refInComplex[i];
@@ -982,8 +985,8 @@ public:
       }
       checkEqualComplex(hOutComplex, refOutComplex);
 
-      Vec::eqV(dOutComplex, dInComplex);
-      Vec::mulEqV(dOutComplex, dInReal, 0, n/2, n/2);
+      VecOp::eqV(dOutComplex, dInComplex);
+      VecOp::mulEqV(dOutComplex, dInReal, 0, n/2, n/2);
       hOutComplex = dOutComplex;
       for (int i = 0; i < n; i++) { // get reference array
          refOutComplex[i] = refInComplex[i];
@@ -994,8 +997,8 @@ public:
       checkEqualComplex(hOutComplex, refOutComplex);
 
       // ~~~ Test mulEqS using partial arrays ~~~
-      Vec::eqV(dOutReal, dInReal);
-      Vec::mulEqS(dOutReal, scalarReal, n/4, n/2);
+      VecOp::eqV(dOutReal, dInReal);
+      VecOp::mulEqS(dOutReal, scalarReal, n/4, n/2);
       hOutReal = dOutReal;
       for (int i = 0; i < n; i++) { // get reference array
          refOutReal[i] = refInReal[i];
@@ -1005,8 +1008,8 @@ public:
       }
       checkEqualReal(hOutReal, refOutReal);
 
-      Vec::eqV(dOutComplex, dInComplex);
-      Vec::mulEqS(dOutComplex, scalarComplex, n/4, n/2);
+      VecOp::eqV(dOutComplex, dInComplex);
+      VecOp::mulEqS(dOutComplex, scalarComplex, n/4, n/2);
       hOutComplex = dOutComplex;
       for (int i = 0; i < n; i++) { // get reference array
          refOutComplex[i] = refInComplex[i];
@@ -1016,8 +1019,8 @@ public:
       }
       checkEqualComplex(hOutComplex, refOutComplex);
 
-      Vec::eqV(dOutComplex, dInComplex);
-      Vec::mulEqS(dOutComplex, scalarReal, n/4, n/2);
+      VecOp::eqV(dOutComplex, dInComplex);
+      VecOp::mulEqS(dOutComplex, scalarReal, n/4, n/2);
       hOutComplex = dOutComplex;
       for (int i = 0; i < n; i++) { // get reference array
          refOutComplex[i] = refInComplex[i];
@@ -1028,14 +1031,14 @@ public:
       checkEqualComplex(hOutComplex, refOutComplex);
    }
 
-   // Test Vec::divEqV and Vec::divEqS
+   // Test VecOp::divEqV and VecOp::divEqS
    void testDivEq()
    {
       printMethod(TEST_FUNC);
 
       // ~~~ Test divEqV ~~~
-      Vec::eqV(dOutReal, dInReal);
-      Vec::divEqV(dOutReal, dInReal2);
+      VecOp::eqV(dOutReal, dInReal);
+      VecOp::divEqV(dOutReal, dInReal2);
       hOutReal = dOutReal;
       for (int i = 0; i < n; i++) { // get reference array
          refOutReal[i] = refInReal[i];
@@ -1043,8 +1046,8 @@ public:
       }
       checkEqualReal(hOutReal, refOutReal);
 
-      Vec::eqV(dOutComplex, dInComplex);
-      Vec::divEqV(dOutComplex, dInReal2);
+      VecOp::eqV(dOutComplex, dInComplex);
+      VecOp::divEqV(dOutComplex, dInReal2);
       hOutComplex = dOutComplex;
       for (int i = 0; i < n; i++) { // get reference array
          refOutComplex[i] = refInComplex[i];
@@ -1053,8 +1056,8 @@ public:
       checkEqualComplex(hOutComplex, refOutComplex);
 
       // ~~~ Test divEqS ~~~
-      Vec::eqV(dOutReal, dInReal);
-      Vec::divEqS(dOutReal, scalarReal);
+      VecOp::eqV(dOutReal, dInReal);
+      VecOp::divEqS(dOutReal, scalarReal);
       hOutReal = dOutReal;
       for (int i = 0; i < n; i++) { // get reference array
          refOutReal[i] = refInReal[i];
@@ -1062,8 +1065,8 @@ public:
       }
       checkEqualReal(hOutReal, refOutReal);
 
-      Vec::eqV(dOutComplex, dInComplex);
-      Vec::divEqS(dOutComplex, scalarReal);
+      VecOp::eqV(dOutComplex, dInComplex);
+      VecOp::divEqS(dOutComplex, scalarReal);
       hOutComplex = dOutComplex;
       for (int i = 0; i < n; i++) { // get reference array
          refOutComplex[i] = refInComplex[i];
@@ -1072,8 +1075,8 @@ public:
       checkEqualComplex(hOutComplex, refOutComplex);
 
       // ~~~ Test divEqV using partial arrays ~~~
-      Vec::eqV(dOutReal, dInReal);
-      Vec::divEqV(dOutReal, dInReal2, n*3/4, 0, n/4);
+      VecOp::eqV(dOutReal, dInReal);
+      VecOp::divEqV(dOutReal, dInReal2, n*3/4, 0, n/4);
       hOutReal = dOutReal;
       for (int i = 0; i < n; i++) { // get reference array
          refOutReal[i] = refInReal[i];
@@ -1083,8 +1086,8 @@ public:
       }
       checkEqualReal(hOutReal, refOutReal);
 
-      Vec::eqV(dOutComplex, dInComplex);
-      Vec::divEqV(dOutComplex, dInReal2, n*3/4, 0, n/4);
+      VecOp::eqV(dOutComplex, dInComplex);
+      VecOp::divEqV(dOutComplex, dInReal2, n*3/4, 0, n/4);
       hOutComplex = dOutComplex;
       for (int i = 0; i < n; i++) { // get reference array
          refOutComplex[i] = refInComplex[i];
@@ -1095,8 +1098,8 @@ public:
       checkEqualComplex(hOutComplex, refOutComplex);
 
       // ~~~ Test divEqS using partial arrays ~~~
-      Vec::eqV(dOutReal, dInReal);
-      Vec::divEqS(dOutReal, scalarReal, 0, n*3/4);
+      VecOp::eqV(dOutReal, dInReal);
+      VecOp::divEqS(dOutReal, scalarReal, 0, n*3/4);
       hOutReal = dOutReal;
       for (int i = 0; i < n; i++) { // get reference array
          refOutReal[i] = refInReal[i];
@@ -1106,8 +1109,8 @@ public:
       }
       checkEqualReal(hOutReal, refOutReal);
 
-      Vec::eqV(dOutComplex, dInComplex);
-      Vec::divEqS(dOutComplex, scalarReal, 0, n*3/4);
+      VecOp::eqV(dOutComplex, dInComplex);
+      VecOp::divEqS(dOutComplex, scalarReal, 0, n*3/4);
       hOutComplex = dOutComplex;
       for (int i = 0; i < n; i++) { // get reference array
          refOutComplex[i] = refInComplex[i];
@@ -1123,9 +1126,9 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      // ~~~ Test addEqMulVS ~~~
-      Vec::eqV(dOutReal, dInReal);
-      Vec::addEqMulVS(dOutReal, dInReal2, scalarReal);
+      // ~~~ Test addEqVc ~~~
+      VecOp::eqV(dOutReal, dInReal);
+      VecOp::addEqVc(dOutReal, dInReal2, scalarReal);
       hOutReal = dOutReal;
       for (int i = 0; i < n; i++) { // get reference array
          refOutReal[i] = refInReal[i];
@@ -1133,8 +1136,8 @@ public:
       }
       checkEqualReal(hOutReal, refOutReal);
 
-      Vec::eqV(dOutReal, dInReal);
-      Vec::addEqMulVS(dOutReal, dInReal2, scalarReal, n/4, 0, n/2);
+      VecOp::eqV(dOutReal, dInReal);
+      VecOp::addEqVc(dOutReal, dInReal2, scalarReal, n/4, 0, n/2);
       hOutReal = dOutReal;
       for (int i = 0; i < n; i++) { // get reference array
          refOutReal[i] = refInReal[i];
@@ -1145,32 +1148,32 @@ public:
       checkEqualReal(hOutReal, refOutReal);
 
       // ~~~ Test sqNormV ~~~
-      Vec::sqNormV(dOutReal, dInComplex);
+      VecOp::sqNormV(dOutReal, dInComplex);
       hOutReal = dOutReal;
       for (int i = 0; i < n; i++) { // get reference array
          refOutReal[i] = norm(refInComplex[i]);
       }
       checkEqualReal(hOutReal, refOutReal);
 
-      Vec::sqNormV(dOutReal, dInComplex2, n/4, 0, n/2);
+      VecOp::sqNormV(dOutReal, dInComplex2, n/4, 0, n/2);
       hOutReal = dOutReal;
       for (int i = n/4; i < n*3/4; i++) { // get reference array
          refOutReal[i] = norm(refInComplex2[i-(n/4)]);
       }
       checkEqualReal(hOutReal, refOutReal);
 
-      // ~~~ Test expMulVS ~~~
-      Vec::expMulVS(dOutReal, dInReal, scalarReal);
+      // ~~~ Test expVc ~~~
+      VecOp::expVc(dOutReal, dInReal, scalarReal);
       hOutReal = dOutReal;
       for (int i = 0; i < n; i++) { // get reference array
          refOutReal[i] = exp(refInReal[i] * refScalarReal);
       }
       checkEqualReal(hOutReal, refOutReal);
 
-      Vec::expMulVS(dOutReal, dInReal2, scalarReal, 0, n/4, n/2);
+      VecOp::expVc(dOutReal, dInReal2, scalarReal, 0, n/4, n/2);
       hOutReal = dOutReal;
       for (int i = 0; i < n/2; i++) { // get reference array
-         refOutReal[i] = exp(refInReal[i+(n/4)] * refScalarReal);
+         refOutReal[i] = exp(refInReal2[i+(n/4)] * refScalarReal);
       }
       checkEqualReal(hOutReal, refOutReal);
    }
@@ -1201,18 +1204,18 @@ public:
 
 };
 
-TEST_BEGIN(CudaVecTest)
-TEST_ADD(CudaVecTest, testEq)
-TEST_ADD(CudaVecTest, testAdd)
-TEST_ADD(CudaVecTest, testSub)
-TEST_ADD(CudaVecTest, testMul)
-TEST_ADD(CudaVecTest, testDiv)
-TEST_ADD(CudaVecTest, testExp)
-TEST_ADD(CudaVecTest, testAddEq)
-TEST_ADD(CudaVecTest, testSubEq)
-TEST_ADD(CudaVecTest, testMulEq)
-TEST_ADD(CudaVecTest, testDivEq)
-TEST_ADD(CudaVecTest, testMisc)
-TEST_END(CudaVecTest)
+TEST_BEGIN(CudaVecOpTest)
+TEST_ADD(CudaVecOpTest, testEq)
+TEST_ADD(CudaVecOpTest, testAdd)
+TEST_ADD(CudaVecOpTest, testSub)
+TEST_ADD(CudaVecOpTest, testMul)
+TEST_ADD(CudaVecOpTest, testDiv)
+TEST_ADD(CudaVecOpTest, testExp)
+TEST_ADD(CudaVecOpTest, testAddEq)
+TEST_ADD(CudaVecOpTest, testSubEq)
+TEST_ADD(CudaVecOpTest, testMulEq)
+TEST_ADD(CudaVecOpTest, testDivEq)
+TEST_ADD(CudaVecOpTest, testMisc)
+TEST_END(CudaVecOpTest)
 
 #endif

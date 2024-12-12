@@ -6,7 +6,7 @@ pscf_cuda_ =\
    pscf/cuda/CudaRandom.cu \
    pscf/cuda/DeviceDArray.cu \
    pscf/cuda/HostDArray.cu \
-   pscf/cuda/Vec.cu
+   pscf/cuda/VecOp.cu
 
 pscf_cuda_OBJS=\
      $(addprefix $(BLD_DIR)/, $(pscf_cuda_:.cu=.o))

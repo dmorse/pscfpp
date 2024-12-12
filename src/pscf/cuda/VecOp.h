@@ -1,5 +1,5 @@
-#ifndef PSCF_VEC_H
-#define PSCF_VEC_H
+#ifndef PSCF_VEC_OP_H
+#define PSCF_VEC_OP_H
 
 /*
 * PSCF Package 
@@ -12,7 +12,7 @@
 #include "DeviceDArray.h"
 
 namespace Pscf {
-namespace Vec {
+namespace VecOp {
 
 /** 
 * Functions that perform element-wise vector operations on the GPU.
@@ -35,7 +35,10 @@ namespace Vec {
 *
 * Additionally, a few miscellaneous functions are defined to perform 
 * multiple of these operations within a single kernel, though these 
-* are not overloaded to accommodate all input data types. 
+* are not overloaded to accommodate all input data types. In these 
+* functions, we use "Vc" in the function name to denote that every
+* element in the vector V is multiplied by a coefficient c. For 
+* example, addEqVc represents the operation a[i] += b[i] * c.
 *
 * The functions are overloaded to perform their respective operations
 * on any combination of cudaReal and cudaComplex input arrays, except
@@ -129,8 +132,8 @@ __host__ void eqV(DeviceDArray<cudaReal>& a,
 * \param a  output array (LHS)
 * \param b  input array (RHS)
 */
-__host__ void eqV(DeviceDArray<cudaReal>& a, 
-                  DeviceDArray<cudaReal> const & b)
+inline __host__ void eqV(DeviceDArray<cudaReal>& a, 
+                         DeviceDArray<cudaReal> const & b)
 {  eqV(a, b, 0, 0, a.capacity()); }
 
 /**
@@ -152,8 +155,8 @@ __host__ void eqV(DeviceDArray<cudaComplex>& a,
 * \param a  output array (LHS)
 * \param b  input array (RHS)
 */
-__host__ void eqV(DeviceDArray<cudaComplex>& a, 
-                  DeviceDArray<cudaComplex> const & b)
+inline __host__ void eqV(DeviceDArray<cudaComplex>& a, 
+                         DeviceDArray<cudaComplex> const & b)
 {  eqV(a, b, 0, 0, a.capacity()); }
 
 /**
@@ -173,7 +176,7 @@ __host__ void eqS(DeviceDArray<cudaReal>& a, cudaReal const b,
 * \param a  output array (LHS)
 * \param b  input scalar (RHS)
 */
-__host__ void eqS(DeviceDArray<cudaReal>& a, cudaReal const b)
+inline __host__ void eqS(DeviceDArray<cudaReal>& a, cudaReal const b)
 {  eqS(a, b, 0, a.capacity()); }
 
 /**
@@ -193,7 +196,7 @@ __host__ void eqS(DeviceDArray<cudaComplex>& a, cudaComplex const b,
 * \param a  output array (LHS)
 * \param b  input scalar (RHS)
 */
-__host__ void eqS(DeviceDArray<cudaComplex>& a, cudaComplex const b)
+inline __host__ void eqS(DeviceDArray<cudaComplex>& a, cudaComplex const b)
 {  eqS(a, b, 0, a.capacity()); }
 
 
@@ -312,9 +315,9 @@ __host__ void addVV(DeviceDArray<cudaReal>& a,
 * \param b  input array (RHS)
 * \param c  input array (RHS)
 */
-__host__ void addVV(DeviceDArray<cudaReal>& a, 
-                    DeviceDArray<cudaReal> const & b, 
-                    DeviceDArray<cudaReal> const & c)
+inline __host__ void addVV(DeviceDArray<cudaReal>& a, 
+                           DeviceDArray<cudaReal> const & b, 
+                           DeviceDArray<cudaReal> const & c)
 {  addVV(a, b, c, 0, 0, 0, a.capacity()); }
 
 /**
@@ -341,9 +344,9 @@ __host__ void addVV(DeviceDArray<cudaComplex>& a,
 * \param b  input array (RHS)
 * \param c  input array (RHS)
 */
-__host__ void addVV(DeviceDArray<cudaComplex>& a, 
-                    DeviceDArray<cudaComplex> const & b, 
-                    DeviceDArray<cudaComplex> const & c)
+inline __host__ void addVV(DeviceDArray<cudaComplex>& a, 
+                           DeviceDArray<cudaComplex> const & b, 
+                           DeviceDArray<cudaComplex> const & c)
 {  addVV(a, b, c, 0, 0, 0, a.capacity()); }
 
 /**
@@ -370,9 +373,9 @@ __host__ void addVV(DeviceDArray<cudaComplex>& a,
 * \param b  input array (RHS)
 * \param c  input array (RHS)
 */
-__host__ void addVV(DeviceDArray<cudaComplex>& a, 
-                    DeviceDArray<cudaReal> const & b, 
-                    DeviceDArray<cudaComplex> const & c)
+inline __host__ void addVV(DeviceDArray<cudaComplex>& a, 
+                           DeviceDArray<cudaReal> const & b, 
+                           DeviceDArray<cudaComplex> const & c)
 {  addVV(a, b, c, 0, 0, 0, a.capacity()); }
 
 /**
@@ -399,9 +402,9 @@ __host__ void addVV(DeviceDArray<cudaComplex>& a,
 * \param b  input array (RHS)
 * \param c  input array (RHS)
 */
-__host__ void addVV(DeviceDArray<cudaComplex>& a, 
-                    DeviceDArray<cudaComplex> const & b, 
-                    DeviceDArray<cudaReal> const & c)
+inline __host__ void addVV(DeviceDArray<cudaComplex>& a, 
+                           DeviceDArray<cudaComplex> const & b, 
+                           DeviceDArray<cudaReal> const & c)
 {  addVV(a, b, c, 0, 0, 0, a.capacity()); }
 
 /**
@@ -425,8 +428,9 @@ __host__ void addVS(DeviceDArray<cudaReal>& a,
 * \param b  input array (RHS)
 * \param c  input scalar (RHS)
 */
-__host__ void addVS(DeviceDArray<cudaReal>& a, 
-                    DeviceDArray<cudaReal> const & b, cudaReal const c)
+inline __host__ void addVS(DeviceDArray<cudaReal>& a, 
+                           DeviceDArray<cudaReal> const & b, 
+                           cudaReal const c)
 {  addVS(a, b, c, 0, 0, a.capacity()); }
 
 /**
@@ -451,9 +455,9 @@ __host__ void addVS(DeviceDArray<cudaComplex>& a,
 * \param b  input array (RHS)
 * \param c  input scalar (RHS)
 */
-__host__ void addVS(DeviceDArray<cudaComplex>& a, 
-                    DeviceDArray<cudaComplex> const & b, 
-                    cudaComplex const c)
+inline __host__ void addVS(DeviceDArray<cudaComplex>& a, 
+                           DeviceDArray<cudaComplex> const & b, 
+                           cudaComplex const c)
 {  addVS(a, b, c, 0, 0, a.capacity()); }
 
 /**
@@ -477,8 +481,9 @@ __host__ void addVS(DeviceDArray<cudaComplex>& a,
 * \param b  input array (RHS)
 * \param c  input scalar (RHS)
 */
-__host__ void addVS(DeviceDArray<cudaComplex>& a, 
-                    DeviceDArray<cudaReal> const & b, cudaComplex const c)
+inline __host__ void addVS(DeviceDArray<cudaComplex>& a, 
+                           DeviceDArray<cudaReal> const & b, 
+                           cudaComplex const c)
 {  addVS(a, b, c, 0, 0, a.capacity()); }
 
 /**
@@ -502,8 +507,9 @@ __host__ void addVS(DeviceDArray<cudaComplex>& a,
 * \param b  input array (RHS)
 * \param c  input scalar (RHS)
 */
-__host__ void addVS(DeviceDArray<cudaComplex>& a, 
-                    DeviceDArray<cudaComplex> const & b, cudaReal const c)
+inline __host__ void addVS(DeviceDArray<cudaComplex>& a, 
+                           DeviceDArray<cudaComplex> const & b, 
+                           cudaReal const c)
 {  addVS(a, b, c, 0, 0, a.capacity()); }
 
 
@@ -622,9 +628,9 @@ __host__ void subVV(DeviceDArray<cudaReal>& a,
 * \param b  input array (RHS)
 * \param c  input array (RHS)
 */
-__host__ void subVV(DeviceDArray<cudaReal>& a, 
-                    DeviceDArray<cudaReal> const & b, 
-                    DeviceDArray<cudaReal> const & c)
+inline __host__ void subVV(DeviceDArray<cudaReal>& a, 
+                           DeviceDArray<cudaReal> const & b, 
+                           DeviceDArray<cudaReal> const & c)
 {  subVV(a, b, c, 0, 0, 0, a.capacity()); }
 
 /**
@@ -651,9 +657,9 @@ __host__ void subVV(DeviceDArray<cudaComplex>& a,
 * \param b  input array (RHS)
 * \param c  input array (RHS)
 */
-__host__ void subVV(DeviceDArray<cudaComplex>& a, 
-                    DeviceDArray<cudaComplex> const & b, 
-                    DeviceDArray<cudaComplex> const & c)
+inline __host__ void subVV(DeviceDArray<cudaComplex>& a, 
+                           DeviceDArray<cudaComplex> const & b, 
+                           DeviceDArray<cudaComplex> const & c)
 {  subVV(a, b, c, 0, 0, 0, a.capacity()); }
 
 /**
@@ -680,9 +686,9 @@ __host__ void subVV(DeviceDArray<cudaComplex>& a,
 * \param b  input array (RHS)
 * \param c  input array (RHS)
 */
-__host__ void subVV(DeviceDArray<cudaComplex>& a, 
-                    DeviceDArray<cudaReal> const & b, 
-                    DeviceDArray<cudaComplex> const & c)
+inline __host__ void subVV(DeviceDArray<cudaComplex>& a, 
+                           DeviceDArray<cudaReal> const & b, 
+                           DeviceDArray<cudaComplex> const & c)
 {  subVV(a, b, c, 0, 0, 0, a.capacity()); }
 
 /**
@@ -709,9 +715,9 @@ __host__ void subVV(DeviceDArray<cudaComplex>& a,
 * \param b  input array (RHS)
 * \param c  input array (RHS)
 */
-__host__ void subVV(DeviceDArray<cudaComplex>& a, 
-                    DeviceDArray<cudaComplex> const & b, 
-                    DeviceDArray<cudaReal> const & c)
+inline __host__ void subVV(DeviceDArray<cudaComplex>& a, 
+                           DeviceDArray<cudaComplex> const & b, 
+                           DeviceDArray<cudaReal> const & c)
 {  subVV(a, b, c, 0, 0, 0, a.capacity()); }
 
 /**
@@ -735,8 +741,9 @@ __host__ void subVS(DeviceDArray<cudaReal>& a,
 * \param b  input array (RHS)
 * \param c  input scalar (RHS)
 */
-__host__ void subVS(DeviceDArray<cudaReal>& a, 
-                    DeviceDArray<cudaReal> const & b, cudaReal const c)
+inline __host__ void subVS(DeviceDArray<cudaReal>& a, 
+                           DeviceDArray<cudaReal> const & b, 
+                           cudaReal const c)
 {  subVS(a, b, c, 0, 0, a.capacity()); }
 
 /**
@@ -761,9 +768,9 @@ __host__ void subVS(DeviceDArray<cudaComplex>& a,
 * \param b  input array (RHS)
 * \param c  input scalar (RHS)
 */
-__host__ void subVS(DeviceDArray<cudaComplex>& a, 
-                    DeviceDArray<cudaComplex> const & b, 
-                    cudaComplex const c)
+inline __host__ void subVS(DeviceDArray<cudaComplex>& a, 
+                           DeviceDArray<cudaComplex> const & b, 
+                           cudaComplex const c)
 {  subVS(a, b, c, 0, 0, a.capacity()); }
 
 /**
@@ -787,8 +794,9 @@ __host__ void subVS(DeviceDArray<cudaComplex>& a,
 * \param b  input array (RHS)
 * \param c  input scalar (RHS)
 */
-__host__ void subVS(DeviceDArray<cudaComplex>& a, 
-                    DeviceDArray<cudaReal> const & b, cudaComplex const c)
+inline __host__ void subVS(DeviceDArray<cudaComplex>& a, 
+                           DeviceDArray<cudaReal> const & b, 
+                           cudaComplex const c)
 {  subVS(a, b, c, 0, 0, a.capacity()); }
 
 /**
@@ -812,8 +820,9 @@ __host__ void subVS(DeviceDArray<cudaComplex>& a,
 * \param b  input array (RHS)
 * \param c  input scalar (RHS)
 */
-__host__ void subVS(DeviceDArray<cudaComplex>& a, 
-                    DeviceDArray<cudaComplex> const & b, cudaReal const c)
+inline __host__ void subVS(DeviceDArray<cudaComplex>& a, 
+                           DeviceDArray<cudaComplex> const & b, 
+                           cudaReal const c)
 {  subVS(a, b, c, 0, 0, a.capacity()); }
 
 
@@ -932,9 +941,9 @@ __host__ void mulVV(DeviceDArray<cudaReal>& a,
 * \param b  input array (RHS)
 * \param c  input array (RHS)
 */
-__host__ void mulVV(DeviceDArray<cudaReal>& a, 
-                    DeviceDArray<cudaReal> const & b, 
-                    DeviceDArray<cudaReal> const & c)
+inline __host__ void mulVV(DeviceDArray<cudaReal>& a, 
+                           DeviceDArray<cudaReal> const & b, 
+                           DeviceDArray<cudaReal> const & c)
 {  mulVV(a, b, c, 0, 0, 0, a.capacity()); }
 
 /**
@@ -961,9 +970,9 @@ __host__ void mulVV(DeviceDArray<cudaComplex>& a,
 * \param b  input array (RHS)
 * \param c  input array (RHS)
 */
-__host__ void mulVV(DeviceDArray<cudaComplex>& a, 
-                    DeviceDArray<cudaComplex> const & b, 
-                    DeviceDArray<cudaComplex> const & c)
+inline __host__ void mulVV(DeviceDArray<cudaComplex>& a, 
+                           DeviceDArray<cudaComplex> const & b, 
+                           DeviceDArray<cudaComplex> const & c)
 {  mulVV(a, b, c, 0, 0, 0, a.capacity()); }
 
 /**
@@ -990,9 +999,9 @@ __host__ void mulVV(DeviceDArray<cudaComplex>& a,
 * \param b  input array (RHS)
 * \param c  input array (RHS)
 */
-__host__ void mulVV(DeviceDArray<cudaComplex>& a, 
-                    DeviceDArray<cudaReal> const & b, 
-                    DeviceDArray<cudaComplex> const & c)
+inline __host__ void mulVV(DeviceDArray<cudaComplex>& a, 
+                           DeviceDArray<cudaReal> const & b, 
+                           DeviceDArray<cudaComplex> const & c)
 {  mulVV(a, b, c, 0, 0, 0, a.capacity()); }
 
 /**
@@ -1019,9 +1028,9 @@ __host__ void mulVV(DeviceDArray<cudaComplex>& a,
 * \param b  input array (RHS)
 * \param c  input array (RHS)
 */
-__host__ void mulVV(DeviceDArray<cudaComplex>& a, 
-                    DeviceDArray<cudaComplex> const & b, 
-                    DeviceDArray<cudaReal> const & c)
+inline __host__ void mulVV(DeviceDArray<cudaComplex>& a, 
+                           DeviceDArray<cudaComplex> const & b, 
+                           DeviceDArray<cudaReal> const & c)
 {  mulVV(a, b, c, 0, 0, 0, a.capacity()); }
 
 /**
@@ -1045,8 +1054,9 @@ __host__ void mulVS(DeviceDArray<cudaReal>& a,
 * \param b  input array (RHS)
 * \param c  input scalar (RHS)
 */
-__host__ void mulVS(DeviceDArray<cudaReal>& a, 
-                    DeviceDArray<cudaReal> const & b, cudaReal const c)
+inline __host__ void mulVS(DeviceDArray<cudaReal>& a, 
+                           DeviceDArray<cudaReal> const & b, 
+                           cudaReal const c)
 {  mulVS(a, b, c, 0, 0, a.capacity()); }
 
 /**
@@ -1071,9 +1081,9 @@ __host__ void mulVS(DeviceDArray<cudaComplex>& a,
 * \param b  input array (RHS)
 * \param c  input scalar (RHS)
 */
-__host__ void mulVS(DeviceDArray<cudaComplex>& a, 
-                    DeviceDArray<cudaComplex> const & b, 
-                    cudaComplex const c)
+inline __host__ void mulVS(DeviceDArray<cudaComplex>& a, 
+                           DeviceDArray<cudaComplex> const & b, 
+                           cudaComplex const c)
 {  mulVS(a, b, c, 0, 0, a.capacity()); }
 
 /**
@@ -1097,8 +1107,9 @@ __host__ void mulVS(DeviceDArray<cudaComplex>& a,
 * \param b  input array (RHS)
 * \param c  input scalar (RHS)
 */
-__host__ void mulVS(DeviceDArray<cudaComplex>& a, 
-                    DeviceDArray<cudaReal> const & b, cudaComplex const c)
+inline __host__ void mulVS(DeviceDArray<cudaComplex>& a, 
+                           DeviceDArray<cudaReal> const & b, 
+                           cudaComplex const c)
 {  mulVS(a, b, c, 0, 0, a.capacity()); }
 
 /**
@@ -1122,8 +1133,9 @@ __host__ void mulVS(DeviceDArray<cudaComplex>& a,
 * \param b  input array (RHS)
 * \param c  input scalar (RHS)
 */
-__host__ void mulVS(DeviceDArray<cudaComplex>& a, 
-                    DeviceDArray<cudaComplex> const & b, cudaReal const c)
+inline __host__ void mulVS(DeviceDArray<cudaComplex>& a, 
+                           DeviceDArray<cudaComplex> const & b, 
+                           cudaReal const c)
 {  mulVS(a, b, c, 0, 0, a.capacity()); }
 
 
@@ -1198,9 +1210,9 @@ __host__ void divVV(DeviceDArray<cudaReal>& a,
 * \param b  input array (RHS)
 * \param c  input array (RHS)
 */
-__host__ void divVV(DeviceDArray<cudaReal>& a, 
-                    DeviceDArray<cudaReal> const & b, 
-                    DeviceDArray<cudaReal> const & c)
+inline __host__ void divVV(DeviceDArray<cudaReal>& a, 
+                           DeviceDArray<cudaReal> const & b, 
+                           DeviceDArray<cudaReal> const & c)
 {  divVV(a, b, c, 0, 0, 0, a.capacity()); }
 
 /**
@@ -1227,9 +1239,9 @@ __host__ void divVV(DeviceDArray<cudaComplex>& a,
 * \param b  input array (RHS)
 * \param c  input array (RHS)
 */
-__host__ void divVV(DeviceDArray<cudaComplex>& a, 
-                    DeviceDArray<cudaComplex> const & b, 
-                    DeviceDArray<cudaReal> const & c)
+inline __host__ void divVV(DeviceDArray<cudaComplex>& a, 
+                           DeviceDArray<cudaComplex> const & b, 
+                           DeviceDArray<cudaReal> const & c)
 {  divVV(a, b, c, 0, 0, 0, a.capacity()); }
 
 /**
@@ -1253,8 +1265,9 @@ __host__ void divVS(DeviceDArray<cudaReal>& a,
 * \param b  input array (RHS)
 * \param c  input scalar (RHS)
 */
-__host__ void divVS(DeviceDArray<cudaReal>& a, 
-                    DeviceDArray<cudaReal> const & b, cudaReal const c)
+inline __host__ void divVS(DeviceDArray<cudaReal>& a, 
+                           DeviceDArray<cudaReal> const & b, 
+                           cudaReal const c)
 {  divVS(a, b, c, 0, 0, a.capacity()); }
 
 /**
@@ -1278,8 +1291,9 @@ __host__ void divVS(DeviceDArray<cudaComplex>& a,
 * \param b  input array (RHS)
 * \param c  input scalar (RHS)
 */
-__host__ void divVS(DeviceDArray<cudaComplex>& a, 
-                    DeviceDArray<cudaComplex> const & b, cudaReal const c)
+inline __host__ void divVS(DeviceDArray<cudaComplex>& a, 
+                           DeviceDArray<cudaComplex> const & b, 
+                           cudaReal const c)
 {  divVS(a, b, c, 0, 0, a.capacity()); }
 
 
@@ -1323,8 +1337,8 @@ __host__ void expV(DeviceDArray<cudaReal>& a,
 * \param a  output array (LHS)
 * \param b  input array (RHS)
 */
-__host__ void expV(DeviceDArray<cudaReal>& a, 
-                   DeviceDArray<cudaReal> const & b)
+inline __host__ void expV(DeviceDArray<cudaReal>& a, 
+                          DeviceDArray<cudaReal> const & b)
 {  expV(a, b, 0, 0, a.capacity()); }
 
 /**
@@ -1346,8 +1360,8 @@ __host__ void expV(DeviceDArray<cudaComplex>& a,
 * \param a  output array (LHS)
 * \param b  input array (RHS)
 */
-__host__ void expV(DeviceDArray<cudaComplex>& a, 
-                   DeviceDArray<cudaComplex> const & b)
+inline __host__ void expV(DeviceDArray<cudaComplex>& a, 
+                          DeviceDArray<cudaComplex> const & b)
 {  expV(a, b, 0, 0, a.capacity()); }
 
 
@@ -1427,8 +1441,8 @@ __host__ void addEqV(DeviceDArray<cudaReal>& a,
 * \param a  output array (LHS)
 * \param b  input array (RHS)
 */
-__host__ void addEqV(DeviceDArray<cudaReal>& a, 
-                     DeviceDArray<cudaReal> const & b)
+inline __host__ void addEqV(DeviceDArray<cudaReal>& a, 
+                            DeviceDArray<cudaReal> const & b)
 {  addEqV(a, b, 0, 0, a.capacity()); }
 
 /**
@@ -1450,8 +1464,8 @@ __host__ void addEqV(DeviceDArray<cudaComplex>& a,
 * \param a  output array (LHS)
 * \param b  input array (RHS)
 */
-__host__ void addEqV(DeviceDArray<cudaComplex>& a, 
-                     DeviceDArray<cudaComplex> const & b)
+inline __host__ void addEqV(DeviceDArray<cudaComplex>& a, 
+                            DeviceDArray<cudaComplex> const & b)
 {  addEqV(a, b, 0, 0, a.capacity()); }
 
 /**
@@ -1473,8 +1487,8 @@ __host__ void addEqV(DeviceDArray<cudaComplex>& a,
 * \param a  output array (LHS)
 * \param b  input array (RHS)
 */
-__host__ void addEqV(DeviceDArray<cudaComplex>& a, 
-                     DeviceDArray<cudaReal> const & b)
+inline __host__ void addEqV(DeviceDArray<cudaComplex>& a, 
+                            DeviceDArray<cudaReal> const & b)
 {  addEqV(a, b, 0, 0, a.capacity()); }
 
 /**
@@ -1494,7 +1508,7 @@ __host__ void addEqS(DeviceDArray<cudaReal>& a, cudaReal const b,
 * \param a  output array (LHS)
 * \param b  input scalar (RHS)
 */
-__host__ void addEqS(DeviceDArray<cudaReal>& a, cudaReal const b)
+inline __host__ void addEqS(DeviceDArray<cudaReal>& a, cudaReal const b)
 {  addEqS(a, b, 0, a.capacity()); }
 
 /**
@@ -1514,7 +1528,8 @@ __host__ void addEqS(DeviceDArray<cudaComplex>& a, cudaComplex const b,
 * \param a  output array (LHS)
 * \param b  input scalar (RHS)
 */
-__host__ void addEqS(DeviceDArray<cudaComplex>& a, cudaComplex const b)
+inline __host__ void addEqS(DeviceDArray<cudaComplex>& a, 
+                            cudaComplex const b)
 {  addEqS(a, b, 0, a.capacity()); }
 
 /**
@@ -1534,7 +1549,7 @@ __host__ void addEqS(DeviceDArray<cudaComplex>& a, cudaReal const b,
 * \param a  output array (LHS)
 * \param b  input scalar (RHS)
 */
-__host__ void addEqS(DeviceDArray<cudaComplex>& a, cudaReal const b)
+inline __host__ void addEqS(DeviceDArray<cudaComplex>& a, cudaReal const b)
 {  addEqS(a, b, 0, a.capacity()); }
 
 
@@ -1614,8 +1629,8 @@ __host__ void subEqV(DeviceDArray<cudaReal>& a,
 * \param a  output array (LHS)
 * \param b  input array (RHS)
 */
-__host__ void subEqV(DeviceDArray<cudaReal>& a, 
-                     DeviceDArray<cudaReal> const & b)
+inline __host__ void subEqV(DeviceDArray<cudaReal>& a, 
+                            DeviceDArray<cudaReal> const & b)
 {  subEqV(a, b, 0, 0, a.capacity()); }
 
 /**
@@ -1637,8 +1652,8 @@ __host__ void subEqV(DeviceDArray<cudaComplex>& a,
 * \param a  output array (LHS)
 * \param b  input array (RHS)
 */
-__host__ void subEqV(DeviceDArray<cudaComplex>& a, 
-                     DeviceDArray<cudaComplex> const & b)
+inline __host__ void subEqV(DeviceDArray<cudaComplex>& a, 
+                            DeviceDArray<cudaComplex> const & b)
 {  subEqV(a, b, 0, 0, a.capacity()); }
 
 /**
@@ -1660,8 +1675,8 @@ __host__ void subEqV(DeviceDArray<cudaComplex>& a,
 * \param a  output array (LHS)
 * \param b  input array (RHS)
 */
-__host__ void subEqV(DeviceDArray<cudaComplex>& a, 
-                     DeviceDArray<cudaReal> const & b)
+inline __host__ void subEqV(DeviceDArray<cudaComplex>& a, 
+                            DeviceDArray<cudaReal> const & b)
 {  subEqV(a, b, 0, 0, a.capacity()); }
 
 /**
@@ -1681,7 +1696,7 @@ __host__ void subEqS(DeviceDArray<cudaReal>& a, cudaReal const b,
 * \param a  output array (LHS)
 * \param b  input scalar (RHS)
 */
-__host__ void subEqS(DeviceDArray<cudaReal>& a, cudaReal const b)
+inline __host__ void subEqS(DeviceDArray<cudaReal>& a, cudaReal const b)
 {  subEqS(a, b, 0, a.capacity()); }
 
 /**
@@ -1701,7 +1716,8 @@ __host__ void subEqS(DeviceDArray<cudaComplex>& a, cudaComplex const b,
 * \param a  output array (LHS)
 * \param b  input scalar (RHS)
 */
-__host__ void subEqS(DeviceDArray<cudaComplex>& a, cudaComplex const b)
+inline __host__ void subEqS(DeviceDArray<cudaComplex>& a, 
+                            cudaComplex const b)
 {  subEqS(a, b, 0, a.capacity()); }
 
 /**
@@ -1721,7 +1737,7 @@ __host__ void subEqS(DeviceDArray<cudaComplex>& a, cudaReal const b,
 * \param a  output array (LHS)
 * \param b  input scalar (RHS)
 */
-__host__ void subEqS(DeviceDArray<cudaComplex>& a, cudaReal const b)
+inline __host__ void subEqS(DeviceDArray<cudaComplex>& a, cudaReal const b)
 {  subEqS(a, b, 0, a.capacity()); }
 
 
@@ -1801,8 +1817,8 @@ __host__ void mulEqV(DeviceDArray<cudaReal>& a,
 * \param a  output array (LHS)
 * \param b  input array (RHS)
 */
-__host__ void mulEqV(DeviceDArray<cudaReal>& a, 
-                     DeviceDArray<cudaReal> const & b)
+inline __host__ void mulEqV(DeviceDArray<cudaReal>& a, 
+                            DeviceDArray<cudaReal> const & b)
 {  mulEqV(a, b, 0, 0, a.capacity()); }
 
 /**
@@ -1824,8 +1840,8 @@ __host__ void mulEqV(DeviceDArray<cudaComplex>& a,
 * \param a  output array (LHS)
 * \param b  input array (RHS)
 */
-__host__ void mulEqV(DeviceDArray<cudaComplex>& a, 
-                     DeviceDArray<cudaComplex> const & b)
+inline __host__ void mulEqV(DeviceDArray<cudaComplex>& a, 
+                            DeviceDArray<cudaComplex> const & b)
 {  mulEqV(a, b, 0, 0, a.capacity()); }
 
 /**
@@ -1847,8 +1863,8 @@ __host__ void mulEqV(DeviceDArray<cudaComplex>& a,
 * \param a  output array (LHS)
 * \param b  input array (RHS)
 */
-__host__ void mulEqV(DeviceDArray<cudaComplex>& a, 
-                     DeviceDArray<cudaReal> const & b)
+inline __host__ void mulEqV(DeviceDArray<cudaComplex>& a, 
+                            DeviceDArray<cudaReal> const & b)
 {  mulEqV(a, b, 0, 0, a.capacity()); }
 
 /**
@@ -1868,7 +1884,7 @@ __host__ void mulEqS(DeviceDArray<cudaReal>& a, cudaReal const b,
 * \param a  output array (LHS)
 * \param b  input scalar (RHS)
 */
-__host__ void mulEqS(DeviceDArray<cudaReal>& a, cudaReal const b)
+inline __host__ void mulEqS(DeviceDArray<cudaReal>& a, cudaReal const b)
 {  mulEqS(a, b, 0, a.capacity()); }
 
 /**
@@ -1888,7 +1904,8 @@ __host__ void mulEqS(DeviceDArray<cudaComplex>& a, cudaComplex const b,
 * \param a  output array (LHS)
 * \param b  input scalar (RHS)
 */
-__host__ void mulEqS(DeviceDArray<cudaComplex>& a, cudaComplex const b)
+inline __host__ void mulEqS(DeviceDArray<cudaComplex>& a, 
+                            cudaComplex const b)
 {  mulEqS(a, b, 0, a.capacity()); }
 
 /**
@@ -1908,7 +1925,7 @@ __host__ void mulEqS(DeviceDArray<cudaComplex>& a, cudaReal const b,
 * \param a  output array (LHS)
 * \param b  input scalar (RHS)
 */
-__host__ void mulEqS(DeviceDArray<cudaComplex>& a, cudaReal const b)
+inline __host__ void mulEqS(DeviceDArray<cudaComplex>& a, cudaReal const b)
 {  mulEqS(a, b, 0, a.capacity()); }
 
 
@@ -1970,8 +1987,8 @@ __host__ void divEqV(DeviceDArray<cudaReal>& a,
 * \param a  output array (LHS)
 * \param b  input array (RHS)
 */
-__host__ void divEqV(DeviceDArray<cudaReal>& a, 
-                     DeviceDArray<cudaReal> const & b)
+inline __host__ void divEqV(DeviceDArray<cudaReal>& a, 
+                            DeviceDArray<cudaReal> const & b)
 {  divEqV(a, b, 0, 0, a.capacity()); }
 
 /**
@@ -1993,8 +2010,8 @@ __host__ void divEqV(DeviceDArray<cudaComplex>& a,
 * \param a  output array (LHS)
 * \param b  input array (RHS)
 */
-__host__ void divEqV(DeviceDArray<cudaComplex>& a, 
-                     DeviceDArray<cudaReal> const & b)
+inline __host__ void divEqV(DeviceDArray<cudaComplex>& a, 
+                            DeviceDArray<cudaReal> const & b)
 {  divEqV(a, b, 0, 0, a.capacity()); }
 
 /**
@@ -2014,7 +2031,7 @@ __host__ void divEqS(DeviceDArray<cudaReal>& a, cudaReal const b,
 * \param a  output array (LHS)
 * \param b  input scalar (RHS)
 */
-__host__ void divEqS(DeviceDArray<cudaReal>& a, cudaReal const b)
+inline __host__ void divEqS(DeviceDArray<cudaReal>& a, cudaReal const b)
 {  divEqS(a, b, 0, a.capacity()); }
 
 /**
@@ -2034,7 +2051,7 @@ __host__ void divEqS(DeviceDArray<cudaComplex>& a, cudaReal const b,
 * \param a  output array (LHS)
 * \param b  input scalar (RHS)
 */
-__host__ void divEqS(DeviceDArray<cudaComplex>& a, cudaReal const b)
+inline __host__ void divEqS(DeviceDArray<cudaComplex>& a, cudaReal const b)
 {  divEqS(a, b, 0, a.capacity()); }
 
 
@@ -2049,7 +2066,7 @@ __host__ void divEqS(DeviceDArray<cudaComplex>& a, cudaReal const b)
 * \param c  input scalar
 * \param n  size of arrays
 */
-__global__ void _addEqMulVS(cudaReal* a, cudaReal const * b, 
+__global__ void _addEqVc(cudaReal* a, cudaReal const * b, 
                             cudaReal const c, const int n);
 
 /**
@@ -2062,7 +2079,7 @@ __global__ void _addEqMulVS(cudaReal* a, cudaReal const * b,
 * \param beginIdB  index of the first entry to evaluate in array b
 * \param n  the number of entries to evaluate
 */
-__host__ void addEqMulVS(DeviceDArray<cudaReal>& a, 
+__host__ void addEqVc(DeviceDArray<cudaReal>& a, 
                          DeviceDArray<cudaReal> const & b, 
                          cudaReal const c, const int beginIdA, 
                          const int beginIdB, const int n);
@@ -2074,10 +2091,10 @@ __host__ void addEqMulVS(DeviceDArray<cudaReal>& a,
 * \param b  input array (RHS)
 * \param c  input scalar
 */
-__host__ void addEqMulVS(DeviceDArray<cudaReal>& a, 
-                         DeviceDArray<cudaReal> const & b, 
-                         cudaReal const c)
-{  addEqMulVS(a, b, c, 0, 0, a.capacity()); }
+inline __host__ void addEqVc(DeviceDArray<cudaReal>& a, 
+                                DeviceDArray<cudaReal> const & b, 
+                                cudaReal const c)
+{  addEqVc(a, b, c, 0, 0, a.capacity()); }
 
 /**
 * Squared norm of complex vector, a[i] = norm(b[i])^2, GPU kernel.
@@ -2107,8 +2124,8 @@ __host__ void sqNormV(DeviceDArray<cudaReal>& a,
 * \param a  output array (LHS)
 * \param b  input array (RHS)
 */
-__host__ void sqNormV(DeviceDArray<cudaReal>& a, 
-                      DeviceDArray<cudaComplex> const & b)
+inline __host__ void sqNormV(DeviceDArray<cudaReal>& a, 
+                             DeviceDArray<cudaComplex> const & b)
 {  sqNormV(a, b, 0, 0, a.capacity()); }
 
 /**
@@ -2119,7 +2136,7 @@ __host__ void sqNormV(DeviceDArray<cudaReal>& a,
 * \param c  input scalar
 * \param n  size of arrays
 */
-__global__ void _expMulVS(cudaReal* a, cudaReal const * b, 
+__global__ void _expVc(cudaReal* a, cudaReal const * b, 
                           cudaReal const c, const int n);
 
 /**
@@ -2132,7 +2149,7 @@ __global__ void _expMulVS(cudaReal* a, cudaReal const * b,
 * \param beginIdB  index of the first entry to evaluate in array b
 * \param n  the number of entries to evaluate
 */
-__host__ void expMulVS(DeviceDArray<cudaReal>& a, 
+__host__ void expVc(DeviceDArray<cudaReal>& a, 
                        DeviceDArray<cudaReal> const & b, 
                        cudaReal const c, const int beginIdA, 
                        const int beginIdB, const int n);
@@ -2144,13 +2161,13 @@ __host__ void expMulVS(DeviceDArray<cudaReal>& a,
 * \param b  input array (RHS)
 * \param c  input scalar
 */
-__host__ void expMulVS(DeviceDArray<cudaReal>& a, 
-                       DeviceDArray<cudaReal> const & b, 
-                       cudaReal const c)
-{  expMulVS(a, b, c, 0, 0, a.capacity()); }
+inline __host__ void expVc(DeviceDArray<cudaReal>& a, 
+                              DeviceDArray<cudaReal> const & b, 
+                              cudaReal const c)
+{  expVc(a, b, c, 0, 0, a.capacity()); }
 
 /** @} */
 
-} // namespace Vec
+} // namespace VecOp
 } // namespace Pscf
 #endif
