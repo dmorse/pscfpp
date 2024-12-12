@@ -54,60 +54,66 @@ __global__ void _eqS(cudaComplex* a, cudaComplex const b, const int n)
    }
 }
 
-// Vector assignment, a[i] = b[i], GPU kernel wrapper (cudaReal).
+// Vector assignment, a[i] = b[i], kernel wrapper (cudaReal).
 __host__ void eqV(DeviceDArray<cudaReal>& a, 
-                  DeviceDArray<cudaReal> const & b)
+                  DeviceDArray<cudaReal> const & b,
+                  const int beginIdA, const int beginIdB, const int n)
 {
-   int n = a.capacity();
-   UTIL_CHECK(b.capacity() == n);
+   UTIL_CHECK(a.capacity() >= n + beginIdA);
+   UTIL_CHECK(b.capacity() >= n + beginIdB);
    
    // GPU resources
    int nBlocks, nThreads;
    ThreadGrid::setThreadsLogical(n, nBlocks, nThreads);
 
    // Launch kernel
-   _eqV<<<nBlocks, nThreads>>>(a.cArray(), b.cArray(), n);
+   _eqV<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, 
+                               b.cArray()+beginIdB, n);
 }
 
-// Vector assignment, a[i] = b[i], GPU kernel wrapper (cudaComplex).
+// Vector assignment, a[i] = b[i], kernel wrapper (cudaComplex).
 __host__ void eqV(DeviceDArray<cudaComplex>& a, 
-                  DeviceDArray<cudaComplex> const & b)
+                  DeviceDArray<cudaComplex> const & b,
+                  const int beginIdA, const int beginIdB, const int n)
 {
-   int n = a.capacity();
-   UTIL_CHECK(b.capacity() == n);
+   UTIL_CHECK(a.capacity() >= n + beginIdA);
+   UTIL_CHECK(b.capacity() >= n + beginIdB);
    
    // GPU resources
    int nBlocks, nThreads;
    ThreadGrid::setThreadsLogical(n, nBlocks, nThreads);
 
    // Launch kernel
-   _eqV<<<nBlocks, nThreads>>>(a.cArray(), b.cArray(), n);
+   _eqV<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, 
+                               b.cArray()+beginIdB, n);
 }
 
-// Vector assignment, a[i] = b, GPU kernel wrapper (cudaReal).
-__host__ void eqS(DeviceDArray<cudaReal>& a, cudaReal const b)
+// Vector assignment, a[i] = b, kernel wrapper (cudaReal).
+__host__ void eqS(DeviceDArray<cudaReal>& a, cudaReal const b,
+                  const int beginIdA, const int n)
 {
-   int n = a.capacity();
+   UTIL_CHECK(a.capacity() >= n + beginIdA);
    
    // GPU resources
    int nBlocks, nThreads;
    ThreadGrid::setThreadsLogical(n, nBlocks, nThreads);
 
    // Launch kernel
-   _eqS<<<nBlocks, nThreads>>>(a.cArray(), b, n);
+   _eqS<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, b, n);
 }
 
-// Vector assignment, a[i] = b, GPU kernel wrapper (cudaComplex).
-__host__ void eqS(DeviceDArray<cudaComplex>& a, cudaComplex const b)
+// Vector assignment, a[i] = b, kernel wrapper (cudaComplex).
+__host__ void eqS(DeviceDArray<cudaComplex>& a, cudaComplex const b,
+                  const int beginIdA, const int n)
 {
-   int n = a.capacity();
+   UTIL_CHECK(a.capacity() >= n + beginIdA);
    
    // GPU resources
    int nBlocks, nThreads;
    ThreadGrid::setThreadsLogical(n, nBlocks, nThreads);
 
    // Launch kernel
-   _eqS<<<nBlocks, nThreads>>>(a.cArray(), b, n);
+   _eqS<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, b, n);
 }
 
 // Vector addition, a[i] = b[i] + c[i], GPU kernel (cudaReal).
@@ -133,7 +139,7 @@ __global__ void _addVV(cudaComplex* a, cudaComplex const * b,
    }
 }
 
-// Vector addition, a[i] = b[i] + c[i], GPU kernel (mixed type).
+// Vector addition, a[i] = b[i] + c[i], GPU kernel (mixed, b = real).
 __global__ void _addVV(cudaComplex* a, cudaReal const * b, 
                        cudaComplex const * c, const int n)
 {
@@ -142,6 +148,18 @@ __global__ void _addVV(cudaComplex* a, cudaReal const * b,
    for(int i = startID; i < n; i += nThreads) {
       a[i].x = b[i] + c[i].x;
       a[i].y = c[i].y;
+   }
+}
+
+// Vector addition, a[i] = b[i] + c[i], GPU kernel (mixed, c = real).
+__global__ void _addVV(cudaComplex* a, cudaComplex const * b, 
+                       cudaReal const * c, const int n)
+{
+   int nThreads = blockDim.x * gridDim.x;
+   int startID = blockIdx.x * blockDim.x + threadIdx.x;
+   for(int i = startID; i < n; i += nThreads) {
+      a[i].x = b[i].x + c[i];
+      a[i].y = b[i].y;
    }
 }
 
@@ -168,7 +186,7 @@ __global__ void _addVS(cudaComplex* a, cudaComplex const * b,
    }
 }
 
-// Vector addition, a[i] = b[i] + c, GPU kernel (mixed type, b = real).
+// Vector addition, a[i] = b[i] + c, GPU kernel (mixed, b = real).
 __global__ void _addVS(cudaComplex* a, cudaReal const * b, 
                        cudaComplex const c, const int n)
 {
@@ -180,7 +198,7 @@ __global__ void _addVS(cudaComplex* a, cudaReal const * b,
    }
 }
 
-// Vector addition, a[i] = b[i] + c, GPU kernel (mixed type, c = real).
+// Vector addition, a[i] = b[i] + c, GPU kernel (mixed, c = real).
 __global__ void _addVS(cudaComplex* a, cudaComplex const * b, 
                        cudaReal const c, const int n)
 {
@@ -192,118 +210,155 @@ __global__ void _addVS(cudaComplex* a, cudaComplex const * b,
    }
 }
 
-// Vector addition, a[i] = b[i] + c[i], GPU kernel wrapper (cudaReal).
+// Vector addition, a[i] = b[i] + c[i], kernel wrapper (cudaReal).
 __host__ void addVV(DeviceDArray<cudaReal>& a, 
                     DeviceDArray<cudaReal> const & b, 
-                    DeviceDArray<cudaReal> const & c)
+                    DeviceDArray<cudaReal> const & c,
+                    const int beginIdA, const int beginIdB, 
+                    const int beginIdC, const int n)
 {
-   int n = a.capacity();
-   UTIL_CHECK(b.capacity() == n);
-   UTIL_CHECK(c.capacity() == n);
+   UTIL_CHECK(a.capacity() >= n + beginIdA);
+   UTIL_CHECK(b.capacity() >= n + beginIdB);
+   UTIL_CHECK(c.capacity() >= n + beginIdC);
    
    // GPU resources
    int nBlocks, nThreads;
    ThreadGrid::setThreadsLogical(n, nBlocks, nThreads);
 
    // Launch kernel
-   _addVV<<<nBlocks, nThreads>>>(a.cArray(), b.cArray(), c.cArray(), n);
+   _addVV<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, b.cArray()+beginIdB, 
+                                 c.cArray()+beginIdC, n);
 }
 
-// Vector addition, a[i] = b[i] + c[i], GPU kernel wrapper (cudaComplex).
+// Vector addition, a[i] = b[i] + c[i], kernel wrapper (cudaComplex).
 __host__ void addVV(DeviceDArray<cudaComplex>& a, 
                     DeviceDArray<cudaComplex> const & b, 
-                    DeviceDArray<cudaComplex> const & c)
+                    DeviceDArray<cudaComplex> const & c,
+                    const int beginIdA, const int beginIdB, 
+                    const int beginIdC, const int n)
 {
-   int n = a.capacity();
-   UTIL_CHECK(b.capacity() == n);
-   UTIL_CHECK(c.capacity() == n);
+   UTIL_CHECK(a.capacity() >= n + beginIdA);
+   UTIL_CHECK(b.capacity() >= n + beginIdB);
+   UTIL_CHECK(c.capacity() >= n + beginIdC);
    
    // GPU resources
    int nBlocks, nThreads;
    ThreadGrid::setThreadsLogical(n, nBlocks, nThreads);
 
    // Launch kernel
-   _addVV<<<nBlocks, nThreads>>>(a.cArray(), b.cArray(), c.cArray(), n);
+   _addVV<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, b.cArray()+beginIdB, 
+                                 c.cArray()+beginIdC, n);
 }
 
-// Vector addition, a[i] = b[i] + c[i], GPU kernel wrapper (mixed type).
+// Vector addition, a[i] = b[i] + c[i], kernel wrapper (mixed, b = real).
 __host__ void addVV(DeviceDArray<cudaComplex>& a, 
                     DeviceDArray<cudaReal> const & b, 
-                    DeviceDArray<cudaComplex> const & c)
+                    DeviceDArray<cudaComplex> const & c,
+                    const int beginIdA, const int beginIdB, 
+                    const int beginIdC, const int n)
 {
-   int n = a.capacity();
-   UTIL_CHECK(b.capacity() == n);
-   UTIL_CHECK(c.capacity() == n);
+   UTIL_CHECK(a.capacity() >= n + beginIdA);
+   UTIL_CHECK(b.capacity() >= n + beginIdB);
+   UTIL_CHECK(c.capacity() >= n + beginIdC);
    
    // GPU resources
    int nBlocks, nThreads;
    ThreadGrid::setThreadsLogical(n, nBlocks, nThreads);
 
    // Launch kernel
-   _addVV<<<nBlocks, nThreads>>>(a.cArray(), b.cArray(), c.cArray(), n);
+   _addVV<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, b.cArray()+beginIdB, 
+                                 c.cArray()+beginIdC, n);
 }
 
-// Vector addition, a[i] = b[i] + c, GPU kernel wrapper (cudaReal).
+// Vector addition, a[i] = b[i] + c[i], kernel wrapper (mixed, c = real).
+__host__ void addVV(DeviceDArray<cudaComplex>& a, 
+                    DeviceDArray<cudaComplex> const & b, 
+                    DeviceDArray<cudaReal> const & c,
+                    const int beginIdA, const int beginIdB, 
+                    const int beginIdC, const int n)
+{
+   UTIL_CHECK(a.capacity() >= n + beginIdA);
+   UTIL_CHECK(b.capacity() >= n + beginIdB);
+   UTIL_CHECK(c.capacity() >= n + beginIdC);
+   
+   // GPU resources
+   int nBlocks, nThreads;
+   ThreadGrid::setThreadsLogical(n, nBlocks, nThreads);
+
+   // Launch kernel
+   _addVV<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, b.cArray()+beginIdB, 
+                                 c.cArray()+beginIdC, n);
+}
+
+// Vector addition, a[i] = b[i] + c, kernel wrapper (cudaReal).
 __host__ void addVS(DeviceDArray<cudaReal>& a, 
-                    DeviceDArray<cudaReal> const & b, cudaReal const c)
+                    DeviceDArray<cudaReal> const & b, cudaReal const c,
+                    const int beginIdA, const int beginIdB,int n)
 {
-   int n = a.capacity();
-   UTIL_CHECK(b.capacity() == n);
+   UTIL_CHECK(a.capacity() >= n + beginIdA);
+   UTIL_CHECK(b.capacity() >= n + beginIdB);
    
    // GPU resources
    int nBlocks, nThreads;
    ThreadGrid::setThreadsLogical(n, nBlocks, nThreads);
 
    // Launch kernel
-   _addVS<<<nBlocks, nThreads>>>(a.cArray(), b.cArray(), c, n);
+   _addVS<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, b.cArray()+beginIdB, 
+                                 c, n);
 }
 
-// Vector addition, a[i] = b[i] + c, GPU kernel wrapper (cudaComplex).
+// Vector addition, a[i] = b[i] + c, kernel wrapper (cudaComplex).
 __host__ void addVS(DeviceDArray<cudaComplex>& a, 
                     DeviceDArray<cudaComplex> const & b, 
-                    cudaComplex const c)
+                    cudaComplex const c,
+                    const int beginIdA, const int beginIdB,int n)
 {
-   int n = a.capacity();
-   UTIL_CHECK(b.capacity() == n);
+   UTIL_CHECK(a.capacity() >= n + beginIdA);
+   UTIL_CHECK(b.capacity() >= n + beginIdB);
    
    // GPU resources
    int nBlocks, nThreads;
    ThreadGrid::setThreadsLogical(n, nBlocks, nThreads);
 
    // Launch kernel
-   _addVS<<<nBlocks, nThreads>>>(a.cArray(), b.cArray(), c, n);
+   _addVS<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, b.cArray()+beginIdB, 
+                                 c, n);
 }
 
-// Vector addition, a[i] = b[i] + c, GPU kernel wrapper (mixed, b = real).
+// Vector addition, a[i] = b[i] + c, kernel wrapper (mixed, b = real).
 __host__ void addVS(DeviceDArray<cudaComplex>& a, 
                     DeviceDArray<cudaReal> const & b, 
-                    cudaComplex const c)
+                    cudaComplex const c,
+                    const int beginIdA, const int beginIdB,int n)
 {
-   int n = a.capacity();
-   UTIL_CHECK(b.capacity() == n);
+   UTIL_CHECK(a.capacity() >= n + beginIdA);
+   UTIL_CHECK(b.capacity() >= n + beginIdB);
    
    // GPU resources
    int nBlocks, nThreads;
    ThreadGrid::setThreadsLogical(n, nBlocks, nThreads);
 
    // Launch kernel
-   _addVS<<<nBlocks, nThreads>>>(a.cArray(), b.cArray(), c, n);
+   _addVS<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, b.cArray()+beginIdB, 
+                                 c, n);
 }
 
-// Vector addition, a[i] = b[i] + c, GPU kernel wrapper (mixed, c = real).
+// Vector addition, a[i] = b[i] + c, kernel wrapper (mixed, c = real).
 __host__ void addVS(DeviceDArray<cudaComplex>& a, 
                     DeviceDArray<cudaComplex> const & b, 
-                    cudaReal const c)
+                    cudaReal const c,
+                    const int beginIdA, const int beginIdB,int n)
 {
-   int n = a.capacity();
-   UTIL_CHECK(b.capacity() == n);
+   UTIL_CHECK(a.capacity() >= n + beginIdA);
+   UTIL_CHECK(b.capacity() >= n + beginIdB);
    
    // GPU resources
    int nBlocks, nThreads;
    ThreadGrid::setThreadsLogical(n, nBlocks, nThreads);
 
    // Launch kernel
-   _addVS<<<nBlocks, nThreads>>>(a.cArray(), b.cArray(), c, n);
+   _addVS<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, b.cArray()+beginIdB, 
+                                 c, n);
 }
 
 // Vector subtraction, a[i] = b[i] - c[i], GPU kernel (cudaReal).
@@ -329,7 +384,7 @@ __global__ void _subVV(cudaComplex* a, cudaComplex const * b,
    }
 }
 
-// Vector subtraction, a[i] = b[i] - c[i], GPU kernel (mixed type, b = real).
+// Vector subtraction, a[i] = b[i] - c[i], GPU kernel (mixed, b = real).
 __global__ void _subVV(cudaComplex* a, cudaReal const * b, 
                        cudaComplex const * c, const int n)
 {
@@ -341,7 +396,7 @@ __global__ void _subVV(cudaComplex* a, cudaReal const * b,
    }
 }
 
-// Vector subtraction, a[i] = b[i] - c[i], GPU kernel (mixed type, c = real).
+// Vector subtraction, a[i] = b[i] - c[i], GPU kernel (mixed, c = real).
 __global__ void _subVV(cudaComplex* a, cudaComplex const * b, 
                        cudaReal const * c, const int n)
 {
@@ -376,7 +431,7 @@ __global__ void _subVS(cudaComplex* a, cudaComplex const * b,
    }
 }
 
-// Vector subtraction, a[i] = b[i] - c, GPU kernel (mixed type, b = real).
+// Vector subtraction, a[i] = b[i] - c, GPU kernel (mixed, b = real).
 __global__ void _subVS(cudaComplex* a, cudaReal const * b, 
                        cudaComplex const c, const int n)
 {
@@ -388,7 +443,7 @@ __global__ void _subVS(cudaComplex* a, cudaReal const * b,
    }
 }
 
-// Vector subtraction, a[i] = b[i] - c, GPU kernel (mixed type, c = real).
+// Vector subtraction, a[i] = b[i] - c, GPU kernel (mixed, c = real).
 __global__ void _subVS(cudaComplex* a, cudaComplex const * b, 
                        cudaReal const c, const int n)
 {
@@ -400,135 +455,155 @@ __global__ void _subVS(cudaComplex* a, cudaComplex const * b,
    }
 }
 
-// Vector subtraction, a[i] = b[i] - c[i], GPU kernel wrapper (cudaReal).
+// Vector subtraction, a[i] = b[i] - c[i], kernel wrapper (cudaReal).
 __host__ void subVV(DeviceDArray<cudaReal>& a, 
                     DeviceDArray<cudaReal> const & b, 
-                    DeviceDArray<cudaReal> const & c)
+                    DeviceDArray<cudaReal> const & c,
+                    const int beginIdA, const int beginIdB, 
+                    const int beginIdC, const int n)
 {
-   int n = a.capacity();
-   UTIL_CHECK(b.capacity() == n);
-   UTIL_CHECK(c.capacity() == n);
+   UTIL_CHECK(a.capacity() >= n + beginIdA);
+   UTIL_CHECK(b.capacity() >= n + beginIdB);
+   UTIL_CHECK(c.capacity() >= n + beginIdC);
    
    // GPU resources
    int nBlocks, nThreads;
    ThreadGrid::setThreadsLogical(n, nBlocks, nThreads);
 
    // Launch kernel
-   _subVV<<<nBlocks, nThreads>>>(a.cArray(), b.cArray(), c.cArray(), n);
+   _subVV<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, b.cArray()+beginIdB, 
+                                 c.cArray()+beginIdC, n);
 }
 
 // Vector subtraction, a[i] = b[i] - c[i], kernel wrapper (cudaComplex).
 __host__ void subVV(DeviceDArray<cudaComplex>& a, 
                     DeviceDArray<cudaComplex> const & b, 
-                    DeviceDArray<cudaComplex> const & c)
+                    DeviceDArray<cudaComplex> const & c,
+                    const int beginIdA, const int beginIdB, 
+                    const int beginIdC, const int n)
 {
-   int n = a.capacity();
-   UTIL_CHECK(b.capacity() == n);
-   UTIL_CHECK(c.capacity() == n);
+   UTIL_CHECK(a.capacity() >= n + beginIdA);
+   UTIL_CHECK(b.capacity() >= n + beginIdB);
+   UTIL_CHECK(c.capacity() >= n + beginIdC);
    
    // GPU resources
    int nBlocks, nThreads;
    ThreadGrid::setThreadsLogical(n, nBlocks, nThreads);
 
    // Launch kernel
-   _subVV<<<nBlocks, nThreads>>>(a.cArray(), b.cArray(), c.cArray(), n);
+   _subVV<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, b.cArray()+beginIdB, 
+                                 c.cArray()+beginIdC, n);
 }
 
-// Vector subtraction, a[i]=b[i]-c[i], kernel wrapper (mixed type, b=real).
+// Vector subtraction, a[i]=b[i]-c[i], kernel wrapper (mixed, b=real).
 __host__ void subVV(DeviceDArray<cudaComplex>& a, 
                     DeviceDArray<cudaReal> const & b, 
-                    DeviceDArray<cudaComplex> const & c)
+                    DeviceDArray<cudaComplex> const & c,
+                    const int beginIdA, const int beginIdB, 
+                    const int beginIdC, const int n)
 {
-   int n = a.capacity();
-   UTIL_CHECK(b.capacity() == n);
-   UTIL_CHECK(c.capacity() == n);
+   UTIL_CHECK(a.capacity() >= n + beginIdA);
+   UTIL_CHECK(b.capacity() >= n + beginIdB);
+   UTIL_CHECK(c.capacity() >= n + beginIdC);
    
    // GPU resources
    int nBlocks, nThreads;
    ThreadGrid::setThreadsLogical(n, nBlocks, nThreads);
 
    // Launch kernel
-   _subVV<<<nBlocks, nThreads>>>(a.cArray(), b.cArray(), c.cArray(), n);
+   _subVV<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, b.cArray()+beginIdB, 
+                                 c.cArray()+beginIdC, n);
 }
 
-// Vector subtraction, a[i]=b[i]-c[i], kernel wrapper (mixed type, c=real).
+// Vector subtraction, a[i]=b[i]-c[i], kernel wrapper (mixed, c=real).
 __host__ void subVV(DeviceDArray<cudaComplex>& a, 
                     DeviceDArray<cudaComplex> const & b, 
-                    DeviceDArray<cudaReal> const & c)
+                    DeviceDArray<cudaReal> const & c,
+                    const int beginIdA, const int beginIdB, 
+                    const int beginIdC, const int n)
 {
-   int n = a.capacity();
-   UTIL_CHECK(b.capacity() == n);
-   UTIL_CHECK(c.capacity() == n);
+   UTIL_CHECK(a.capacity() >= n + beginIdA);
+   UTIL_CHECK(b.capacity() >= n + beginIdB);
+   UTIL_CHECK(c.capacity() >= n + beginIdC);
    
    // GPU resources
    int nBlocks, nThreads;
    ThreadGrid::setThreadsLogical(n, nBlocks, nThreads);
 
    // Launch kernel
-   _subVV<<<nBlocks, nThreads>>>(a.cArray(), b.cArray(), c.cArray(), n);
+   _subVV<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, b.cArray()+beginIdB, 
+                                 c.cArray()+beginIdC, n);
 }
 
-// Vector subtraction, a[i] = b[i] - c, GPU kernel wrapper (cudaReal).
+// Vector subtraction, a[i] = b[i] - c, kernel wrapper (cudaReal).
 __host__ void subVS(DeviceDArray<cudaReal>& a, 
-                    DeviceDArray<cudaReal> const & b, cudaReal const c)
+                    DeviceDArray<cudaReal> const & b, cudaReal const c,
+                    const int beginIdA, const int beginIdB, const int n)
 {
-   int n = a.capacity();
-   UTIL_CHECK(b.capacity() == n);
+   UTIL_CHECK(a.capacity() >= n + beginIdA);
+   UTIL_CHECK(b.capacity() >= n + beginIdB);
    
    // GPU resources
    int nBlocks, nThreads;
    ThreadGrid::setThreadsLogical(n, nBlocks, nThreads);
 
    // Launch kernel
-   _subVS<<<nBlocks, nThreads>>>(a.cArray(), b.cArray(), c, n);
+   _subVS<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, b.cArray()+beginIdB, 
+                                 c, n);
 }
 
-// Vector subtraction, a[i] = b[i] - c, GPU kernel wrapper (cudaComplex).
+// Vector subtraction, a[i] = b[i] - c, kernel wrapper (cudaComplex).
 __host__ void subVS(DeviceDArray<cudaComplex>& a, 
                     DeviceDArray<cudaComplex> const & b, 
-                    cudaComplex const c)
+                    cudaComplex const c, const int beginIdA, 
+                    const int beginIdB, const int n)
 {
-   int n = a.capacity();
-   UTIL_CHECK(b.capacity() == n);
+   UTIL_CHECK(a.capacity() >= n + beginIdA);
+   UTIL_CHECK(b.capacity() >= n + beginIdB);
    
    // GPU resources
    int nBlocks, nThreads;
    ThreadGrid::setThreadsLogical(n, nBlocks, nThreads);
 
    // Launch kernel
-   _subVS<<<nBlocks, nThreads>>>(a.cArray(), b.cArray(), c, n);
+   _subVS<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, b.cArray()+beginIdB, 
+                                 c, n);
 }
 
 // Vector subtraction, a[i] = b[i] - c, kernel wrapper (mixed, b = real).
 __host__ void subVS(DeviceDArray<cudaComplex>& a, 
                     DeviceDArray<cudaReal> const & b, 
-                    cudaComplex const c)
+                    cudaComplex const c, const int beginIdA, 
+                    const int beginIdB, const int n)
 {
-   int n = a.capacity();
-   UTIL_CHECK(b.capacity() == n);
+   UTIL_CHECK(a.capacity() >= n + beginIdA);
+   UTIL_CHECK(b.capacity() >= n + beginIdB);
    
    // GPU resources
    int nBlocks, nThreads;
    ThreadGrid::setThreadsLogical(n, nBlocks, nThreads);
 
    // Launch kernel
-   _subVS<<<nBlocks, nThreads>>>(a.cArray(), b.cArray(), c, n);
+   _subVS<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, b.cArray()+beginIdB, 
+                                 c, n);
 }
 
 // Vector subtraction, a[i] = b[i] - c, kernel wrapper (mixed, c = real).
 __host__ void subVS(DeviceDArray<cudaComplex>& a, 
                     DeviceDArray<cudaComplex> const & b, 
-                    cudaReal const c)
+                    cudaReal const c, const int beginIdA, 
+                    const int beginIdB, const int n)
 {
-   int n = a.capacity();
-   UTIL_CHECK(b.capacity() == n);
+   UTIL_CHECK(a.capacity() >= n + beginIdA);
+   UTIL_CHECK(b.capacity() >= n + beginIdB);
    
    // GPU resources
    int nBlocks, nThreads;
    ThreadGrid::setThreadsLogical(n, nBlocks, nThreads);
 
    // Launch kernel
-   _subVS<<<nBlocks, nThreads>>>(a.cArray(), b.cArray(), c, n);
+   _subVS<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, b.cArray()+beginIdB, 
+                                 c, n);
 }
 
 // Vector multiplication, a[i] = b[i] * c[i], GPU kernel (cudaReal).
@@ -554,7 +629,7 @@ __global__ void _mulVV(cudaComplex* a, cudaComplex const * b,
    }
 }
 
-// Vector multiplication, a[i] = b[i] * c[i], GPU kernel (mixed type).
+// Vector multiplication, a[i] = b[i] * c[i], GPU kernel (mixed, b = real).
 __global__ void _mulVV(cudaComplex* a, cudaReal const * b, 
                        cudaComplex const * c, const int n)
 {
@@ -563,6 +638,18 @@ __global__ void _mulVV(cudaComplex* a, cudaReal const * b,
    for(int i = startID; i < n; i += nThreads) {
       a[i].x = b[i] * c[i].x;
       a[i].y = b[i] * c[i].y;
+   }
+}
+
+// Vector multiplication, a[i] = b[i] * c[i], GPU kernel (mixed, c = real).
+__global__ void _mulVV(cudaComplex* a, cudaComplex const * b, 
+                       cudaReal const * c, const int n)
+{
+   int nThreads = blockDim.x * gridDim.x;
+   int startID = blockIdx.x * blockDim.x + threadIdx.x;
+   for(int i = startID; i < n; i += nThreads) {
+      a[i].x = b[i].x * c[i];
+      a[i].y = b[i].y * c[i];
    }
 }
 
@@ -589,7 +676,7 @@ __global__ void _mulVS(cudaComplex* a, cudaComplex const * b,
    }
 }
 
-// Vector multiplication, a[i] = b[i] * c, GPU kernel (mixed type, b = real).
+// Vector multiplication, a[i] = b[i] * c, GPU kernel (mixed, b = real).
 __global__ void _mulVS(cudaComplex* a, cudaReal const * b, 
                        cudaComplex const c, const int n)
 {
@@ -601,7 +688,7 @@ __global__ void _mulVS(cudaComplex* a, cudaReal const * b,
    }
 }
 
-// Vector multiplication, a[i] = b[i] * c, GPU kernel (mixed type, c = real).
+// Vector multiplication, a[i] = b[i] * c, GPU kernel (mixed, c = real).
 __global__ void _mulVS(cudaComplex* a, cudaComplex const * b, 
                        cudaReal const c, const int n)
 {
@@ -613,118 +700,155 @@ __global__ void _mulVS(cudaComplex* a, cudaComplex const * b,
    }
 }
 
-// Vector multiplication, a[i] = b[i] * c[i], GPU kernel wrapper (cudaReal).
+// Vector multiplication, a[i] = b[i] * c[i], kernel wrapper (cudaReal).
 __host__ void mulVV(DeviceDArray<cudaReal>& a, 
                     DeviceDArray<cudaReal> const & b, 
-                    DeviceDArray<cudaReal> const & c)
+                    DeviceDArray<cudaReal> const & c,
+                    const int beginIdA, const int beginIdB, 
+                    const int beginIdC, const int n)
 {
-   int n = a.capacity();
-   UTIL_CHECK(b.capacity() == n);
-   UTIL_CHECK(c.capacity() == n);
+   UTIL_CHECK(a.capacity() >= n + beginIdA);
+   UTIL_CHECK(b.capacity() >= n + beginIdB);
+   UTIL_CHECK(c.capacity() >= n + beginIdC);
    
    // GPU resources
    int nBlocks, nThreads;
    ThreadGrid::setThreadsLogical(n, nBlocks, nThreads);
 
    // Launch kernel
-   _mulVV<<<nBlocks, nThreads>>>(a.cArray(), b.cArray(), c.cArray(), n);
+   _mulVV<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, b.cArray()+beginIdB, 
+                                 c.cArray()+beginIdC, n);
 }
 
 // Vector multiplication, a[i] = b[i] * c[i], kernel wrapper (cudaComplex).
 __host__ void mulVV(DeviceDArray<cudaComplex>& a, 
                     DeviceDArray<cudaComplex> const & b, 
-                    DeviceDArray<cudaComplex> const & c)
+                    DeviceDArray<cudaComplex> const & c,
+                    const int beginIdA, const int beginIdB, 
+                    const int beginIdC, const int n)
 {
-   int n = a.capacity();
-   UTIL_CHECK(b.capacity() == n);
-   UTIL_CHECK(c.capacity() == n);
+   UTIL_CHECK(a.capacity() >= n + beginIdA);
+   UTIL_CHECK(b.capacity() >= n + beginIdB);
+   UTIL_CHECK(c.capacity() >= n + beginIdC);
    
    // GPU resources
    int nBlocks, nThreads;
    ThreadGrid::setThreadsLogical(n, nBlocks, nThreads);
 
    // Launch kernel
-   _mulVV<<<nBlocks, nThreads>>>(a.cArray(), b.cArray(), c.cArray(), n);
+   _mulVV<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, b.cArray()+beginIdB, 
+                                 c.cArray()+beginIdC, n);
 }
 
-// Vector multiplication, a[i] = b[i] * c[i], kernel wrapper (mixed type).
+// Vector multiplication, a[i]=b[i]*c[i], kernel wrapper (mixed, b = real).
 __host__ void mulVV(DeviceDArray<cudaComplex>& a, 
                     DeviceDArray<cudaReal> const & b, 
-                    DeviceDArray<cudaComplex> const & c)
+                    DeviceDArray<cudaComplex> const & c,
+                    const int beginIdA, const int beginIdB, 
+                    const int beginIdC, const int n)
 {
-   int n = a.capacity();
-   UTIL_CHECK(b.capacity() == n);
-   UTIL_CHECK(c.capacity() == n);
+   UTIL_CHECK(a.capacity() >= n + beginIdA);
+   UTIL_CHECK(b.capacity() >= n + beginIdB);
+   UTIL_CHECK(c.capacity() >= n + beginIdC);
    
    // GPU resources
    int nBlocks, nThreads;
    ThreadGrid::setThreadsLogical(n, nBlocks, nThreads);
 
    // Launch kernel
-   _mulVV<<<nBlocks, nThreads>>>(a.cArray(), b.cArray(), c.cArray(), n);
+   _mulVV<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, b.cArray()+beginIdB, 
+                                 c.cArray()+beginIdC, n);
 }
 
-// Vector multiplication, a[i] = b[i] * c, GPU kernel wrapper (cudaReal).
+// Vector multiplication, a[i]=b[i]*c[i], kernel wrapper (mixed, c = real).
+__host__ void mulVV(DeviceDArray<cudaComplex>& a, 
+                    DeviceDArray<cudaComplex> const & b, 
+                    DeviceDArray<cudaReal> const & c,
+                    const int beginIdA, const int beginIdB, 
+                    const int beginIdC, const int n)
+{
+   UTIL_CHECK(a.capacity() >= n + beginIdA);
+   UTIL_CHECK(b.capacity() >= n + beginIdB);
+   UTIL_CHECK(c.capacity() >= n + beginIdC);
+   
+   // GPU resources
+   int nBlocks, nThreads;
+   ThreadGrid::setThreadsLogical(n, nBlocks, nThreads);
+
+   // Launch kernel
+   _mulVV<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, b.cArray()+beginIdB, 
+                                 c.cArray()+beginIdC, n);
+}
+
+// Vector multiplication, a[i] = b[i] * c, kernel wrapper (cudaReal).
 __host__ void mulVS(DeviceDArray<cudaReal>& a, 
-                    DeviceDArray<cudaReal> const & b, cudaReal const c)
+                    DeviceDArray<cudaReal> const & b, cudaReal const c,
+                    const int beginIdA, const int beginIdB, const int n)
 {
-   int n = a.capacity();
-   UTIL_CHECK(b.capacity() == n);
+   UTIL_CHECK(a.capacity() >= n + beginIdA);
+   UTIL_CHECK(b.capacity() >= n + beginIdB);
    
    // GPU resources
    int nBlocks, nThreads;
    ThreadGrid::setThreadsLogical(n, nBlocks, nThreads);
 
    // Launch kernel
-   _mulVS<<<nBlocks, nThreads>>>(a.cArray(), b.cArray(), c, n);
+   _mulVS<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, b.cArray()+beginIdB, 
+                                 c, n);
 }
 
-// Vector multiplication, a[i] = b[i] * c, GPU kernel wrapper (cudaComplex).
+// Vector multiplication, a[i] = b[i] * c, kernel wrapper (cudaComplex).
 __host__ void mulVS(DeviceDArray<cudaComplex>& a, 
                     DeviceDArray<cudaComplex> const & b, 
-                    cudaComplex const c)
+                    cudaComplex const c, const int beginIdA, 
+                    const int beginIdB, const int n)
 {
-   int n = a.capacity();
-   UTIL_CHECK(b.capacity() == n);
+   UTIL_CHECK(a.capacity() >= n + beginIdA);
+   UTIL_CHECK(b.capacity() >= n + beginIdB);
    
    // GPU resources
    int nBlocks, nThreads;
    ThreadGrid::setThreadsLogical(n, nBlocks, nThreads);
 
    // Launch kernel
-   _mulVS<<<nBlocks, nThreads>>>(a.cArray(), b.cArray(), c, n);
+   _mulVS<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, b.cArray()+beginIdB, 
+                                 c, n);
 }
 
 // Vector multiplication, a[i] = b[i] * c, kernel wrapper (mixed, b = real).
 __host__ void mulVS(DeviceDArray<cudaComplex>& a, 
                     DeviceDArray<cudaReal> const & b, 
-                    cudaComplex const c)
+                    cudaComplex const c, const int beginIdA, 
+                    const int beginIdB, const int n)
 {
-   int n = a.capacity();
-   UTIL_CHECK(b.capacity() == n);
+   UTIL_CHECK(a.capacity() >= n + beginIdA);
+   UTIL_CHECK(b.capacity() >= n + beginIdB);
    
    // GPU resources
    int nBlocks, nThreads;
    ThreadGrid::setThreadsLogical(n, nBlocks, nThreads);
 
    // Launch kernel
-   _mulVS<<<nBlocks, nThreads>>>(a.cArray(), b.cArray(), c, n);
+   _mulVS<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, b.cArray()+beginIdB, 
+                                 c, n);
 }
 
 // Vector multiplication, a[i] = b[i] * c, kernel wrapper (mixed, c = real).
 __host__ void mulVS(DeviceDArray<cudaComplex>& a, 
                     DeviceDArray<cudaComplex> const & b, 
-                    cudaReal const c)
+                    cudaReal const c, const int beginIdA, 
+                    const int beginIdB, const int n)
 {
-   int n = a.capacity();
-   UTIL_CHECK(b.capacity() == n);
+   UTIL_CHECK(a.capacity() >= n + beginIdA);
+   UTIL_CHECK(b.capacity() >= n + beginIdB);
    
    // GPU resources
    int nBlocks, nThreads;
    ThreadGrid::setThreadsLogical(n, nBlocks, nThreads);
 
    // Launch kernel
-   _mulVS<<<nBlocks, nThreads>>>(a.cArray(), b.cArray(), c, n);
+   _mulVS<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, b.cArray()+beginIdB, 
+                                 c, n);
 }
 
 // Vector division, a[i] = b[i] / c[i], GPU kernel (cudaReal).
@@ -738,7 +862,7 @@ __global__ void _divVV(cudaReal* a, cudaReal const * b,
    }
 }
 
-// Vector division, a[i] = b[i] / c[i], GPU kernel (mixed type, c = real).
+// Vector division, a[i] = b[i] / c[i], GPU kernel (mixed, c = real).
 __global__ void _divVV(cudaComplex* a, cudaComplex const * b, 
                        cudaReal const * c, const int n)
 {
@@ -761,7 +885,7 @@ __global__ void _divVS(cudaReal* a, cudaReal const * b,
    }
 }
 
-// Vector division, a[i] = b[i] / c, GPU kernel (mixed type, c = real).
+// Vector division, a[i] = b[i] / c, GPU kernel (mixed, c = real).
 __global__ void _divVS(cudaComplex* a, cudaComplex const * b, 
                        cudaReal const c, const int n)
 {
@@ -773,69 +897,79 @@ __global__ void _divVS(cudaComplex* a, cudaComplex const * b,
    }
 }
 
-// Vector division, a[i] = b[i] / c[i], GPU kernel wrapper (cudaReal).
+// Vector division, a[i] = b[i] / c[i], kernel wrapper (cudaReal).
 __host__ void divVV(DeviceDArray<cudaReal>& a, 
                     DeviceDArray<cudaReal> const & b, 
-                    DeviceDArray<cudaReal> const & c)
+                    DeviceDArray<cudaReal> const & c,
+                    const int beginIdA, const int beginIdB, 
+                    const int beginIdC, const int n)
 {
-   int n = a.capacity();
-   UTIL_CHECK(b.capacity() == n);
-   UTIL_CHECK(c.capacity() == n);
+   UTIL_CHECK(a.capacity() >= n + beginIdA);
+   UTIL_CHECK(b.capacity() >= n + beginIdB);
+   UTIL_CHECK(c.capacity() >= n + beginIdC);
    
    // GPU resources
    int nBlocks, nThreads;
    ThreadGrid::setThreadsLogical(n, nBlocks, nThreads);
 
    // Launch kernel
-   _divVV<<<nBlocks, nThreads>>>(a.cArray(), b.cArray(), c.cArray(), n);
+   _divVV<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, b.cArray()+beginIdB, 
+                                 c.cArray()+beginIdC, n);
 }
 
-// Vector division, a[i] = b[i] / c[i], kernel wrapper (mixed type, c = real).
+// Vector division, a[i] = b[i] / c[i], kernel wrapper (mixed, c = real).
 __host__ void divVV(DeviceDArray<cudaComplex>& a, 
                     DeviceDArray<cudaComplex> const & b, 
-                    DeviceDArray<cudaReal> const & c)
+                    DeviceDArray<cudaReal> const & c,
+                    const int beginIdA, const int beginIdB, 
+                    const int beginIdC, const int n)
 {
-   int n = a.capacity();
-   UTIL_CHECK(b.capacity() == n);
-   UTIL_CHECK(c.capacity() == n);
+   UTIL_CHECK(a.capacity() >= n + beginIdA);
+   UTIL_CHECK(b.capacity() >= n + beginIdB);
+   UTIL_CHECK(c.capacity() >= n + beginIdC);
    
    // GPU resources
    int nBlocks, nThreads;
    ThreadGrid::setThreadsLogical(n, nBlocks, nThreads);
 
    // Launch kernel
-   _divVV<<<nBlocks, nThreads>>>(a.cArray(), b.cArray(), c.cArray(), n);
+   _divVV<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, b.cArray()+beginIdB, 
+                                 c.cArray()+beginIdC, n);
 }
 
-// Vector division, a[i] = b[i] / c, GPU kernel wrapper (cudaReal).
+// Vector division, a[i] = b[i] / c, kernel wrapper (cudaReal).
 __host__ void divVS(DeviceDArray<cudaReal>& a, 
-                    DeviceDArray<cudaReal> const & b, cudaReal const c)
+                    DeviceDArray<cudaReal> const & b, cudaReal const c,
+                    const int beginIdA, const int beginIdB, const int n)
 {
-   int n = a.capacity();
-   UTIL_CHECK(b.capacity() == n);
+   UTIL_CHECK(a.capacity() >= n + beginIdA);
+   UTIL_CHECK(b.capacity() >= n + beginIdB);
    
    // GPU resources
    int nBlocks, nThreads;
    ThreadGrid::setThreadsLogical(n, nBlocks, nThreads);
 
    // Launch kernel
-   _divVS<<<nBlocks, nThreads>>>(a.cArray(), b.cArray(), c, n);
+   _divVS<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, b.cArray()+beginIdB, 
+                                 c, n);
 }
 
 // Vector division, a[i] = b[i] / c, kernel wrapper (mixed, c = real).
 __host__ void divVS(DeviceDArray<cudaComplex>& a, 
                     DeviceDArray<cudaComplex> const & b, 
-                    cudaReal const c)
+                    cudaReal const c, const int beginIdA, 
+                    const int beginIdB, const int n)
 {
-   int n = a.capacity();
-   UTIL_CHECK(b.capacity() == n);
+   UTIL_CHECK(a.capacity() >= n + beginIdA);
+   UTIL_CHECK(b.capacity() >= n + beginIdB);
    
    // GPU resources
    int nBlocks, nThreads;
    ThreadGrid::setThreadsLogical(n, nBlocks, nThreads);
 
    // Launch kernel
-   _divVS<<<nBlocks, nThreads>>>(a.cArray(), b.cArray(), c, n);
+   _divVS<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, b.cArray()+beginIdB, 
+                                 c, n);
 }
 
 // Vector exponentiation, a[i] = exp(b[i]), GPU kernel (cudaReal).
@@ -861,32 +995,36 @@ __global__ void _expV(cudaComplex* a, cudaComplex const * b, const int n)
 
 // Vector exponentiation, a[i] = exp(b[i]), kernel wrapper (cudaReal).
 __host__ void expV(DeviceDArray<cudaReal>& a, 
-                   DeviceDArray<cudaReal> const & b)
+                   DeviceDArray<cudaReal> const & b,
+                   const int beginIdA, const int beginIdB, const int n)
 {
-   int n = a.capacity();
-   UTIL_CHECK(b.capacity() == n);
+   UTIL_CHECK(a.capacity() >= n + beginIdA);
+   UTIL_CHECK(b.capacity() >= n + beginIdB);
    
    // GPU resources
    int nBlocks, nThreads;
    ThreadGrid::setThreadsLogical(n, nBlocks, nThreads);
 
    // Launch kernel
-   _expV<<<nBlocks, nThreads>>>(a.cArray(), b.cArray(), n);
+   _expV<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, 
+                                b.cArray()+beginIdB, n);
 }
 
 // Vector exponentiation, a[i] = exp(b[i]), kernel wrapper (cudaComplex).
 __host__ void expV(DeviceDArray<cudaComplex>& a, 
-                   DeviceDArray<cudaComplex> const & b)
+                   DeviceDArray<cudaComplex> const & b,
+                   const int beginIdA, const int beginIdB, const int n)
 {
-   int n = a.capacity();
-   UTIL_CHECK(b.capacity() == n);
+   UTIL_CHECK(a.capacity() >= n + beginIdA);
+   UTIL_CHECK(b.capacity() >= n + beginIdB);
    
    // GPU resources
    int nBlocks, nThreads;
    ThreadGrid::setThreadsLogical(n, nBlocks, nThreads);
 
    // Launch kernel
-   _expV<<<nBlocks, nThreads>>>(a.cArray(), b.cArray(), n);
+   _expV<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, 
+                                b.cArray()+beginIdB, n);
 }
 
 // Vector addition in-place, a[i] += b[i], GPU kernel (cudaReal).
@@ -910,7 +1048,7 @@ __global__ void _addEqV(cudaComplex* a, cudaComplex const * b, const int n)
    }
 }
 
-// Vector addition in-place, a[i] += b[i], GPU kernel (mixed type).
+// Vector addition in-place, a[i] += b[i], GPU kernel (mixed).
 __global__ void _addEqV(cudaComplex* a, cudaReal const * b, const int n)
 {
    int nThreads = blockDim.x * gridDim.x;
@@ -941,7 +1079,7 @@ __global__ void _addEqS(cudaComplex* a, cudaComplex const b, const int n)
    }
 }
 
-// Vector addition in-place, a[i] += b, GPU kernel (mixed type).
+// Vector addition in-place, a[i] += b, GPU kernel (mixed).
 __global__ void _addEqS(cudaComplex* a, cudaReal const b, const int n)
 {
    int nThreads = blockDim.x * gridDim.x;
@@ -951,91 +1089,97 @@ __global__ void _addEqS(cudaComplex* a, cudaReal const b, const int n)
    }
 }
 
-// Vector addition in-place, a[i] += b[i], GPU kernel wrapper (cudaReal).
-__host__ void
-addEqV(DeviceDArray<cudaReal>& a, DeviceDArray<cudaReal> const & b)
+// Vector addition in-place, a[i] += b[i], kernel wrapper (cudaReal).
+__host__ void addEqV(DeviceDArray<cudaReal>& a, 
+                     DeviceDArray<cudaReal> const & b,
+                     const int beginIdA, const int beginIdB, const int n)
 {
-   int n = a.capacity();
-   UTIL_CHECK(b.capacity() == n);
+   UTIL_CHECK(a.capacity() >= n + beginIdA);
+   UTIL_CHECK(b.capacity() >= n + beginIdB);
    
    // GPU resources
    int nBlocks, nThreads;
    ThreadGrid::setThreadsLogical(n, nBlocks, nThreads);
 
    // Launch kernel
-   _addEqV<<<nBlocks, nThreads>>>(a.cArray(), b.cArray(), n);
+   _addEqV<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, 
+                                  b.cArray()+beginIdB, n);
 }
 
-// Vector addition in-place, a[i] += b[i], GPU kernel wrapper (cudaComplex).
-__host__ void
-addEqV(DeviceDArray<cudaComplex>& a, DeviceDArray<cudaComplex> const & b)
+// Vector addition in-place, a[i] += b[i], kernel wrapper (cudaComplex).
+__host__ void addEqV(DeviceDArray<cudaComplex>& a, 
+                     DeviceDArray<cudaComplex> const & b,
+                     const int beginIdA, const int beginIdB, const int n)
 {
-   int n = a.capacity();
-   UTIL_CHECK(b.capacity() == n);
+   UTIL_CHECK(a.capacity() >= n + beginIdA);
+   UTIL_CHECK(b.capacity() >= n + beginIdB);
    
    // GPU resources
    int nBlocks, nThreads;
    ThreadGrid::setThreadsLogical(n, nBlocks, nThreads);
 
    // Launch kernel
-   _addEqV<<<nBlocks, nThreads>>>(a.cArray(), b.cArray(), n);
+   _addEqV<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, 
+                                  b.cArray()+beginIdB, n);
 }
 
-// Vector addition in-place, a[i] += b[i], GPU kernel wrapper (mixed type).
-__host__ void
-addEqV(DeviceDArray<cudaComplex>& a, DeviceDArray<cudaReal> const & b)
+// Vector addition in-place, a[i] += b[i], kernel wrapper (mixed).
+__host__ void addEqV(DeviceDArray<cudaComplex>& a, 
+                     DeviceDArray<cudaReal> const & b,
+                     const int beginIdA, const int beginIdB, const int n)
 {
-   int n = a.capacity();
-   UTIL_CHECK(b.capacity() == n);
+   UTIL_CHECK(a.capacity() >= n + beginIdA);
+   UTIL_CHECK(b.capacity() >= n + beginIdB);
    
    // GPU resources
    int nBlocks, nThreads;
    ThreadGrid::setThreadsLogical(n, nBlocks, nThreads);
 
    // Launch kernel
-   _addEqV<<<nBlocks, nThreads>>>(a.cArray(), b.cArray(), n);
+   _addEqV<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, 
+                                  b.cArray()+beginIdB, n);
 }
 
-// Vector addition in-place, a[i] += b, GPU kernel wrapper (cudaReal).
-__host__ void
-addEqS(DeviceDArray<cudaReal>& a, cudaReal const b)
+// Vector addition in-place, a[i] += b, kernel wrapper (cudaReal).
+__host__ void addEqS(DeviceDArray<cudaReal>& a, cudaReal const b,
+                     const int beginIdA, const int n)
 {
-   int n = a.capacity();
+   UTIL_CHECK(a.capacity() >= n + beginIdA);
    
    // GPU resources
    int nBlocks, nThreads;
    ThreadGrid::setThreadsLogical(n, nBlocks, nThreads);
 
    // Launch kernel
-   _addEqS<<<nBlocks, nThreads>>>(a.cArray(), b, n);
+   _addEqS<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, b, n);
 }
 
-// Vector addition in-place, a[i] += b, GPU kernel wrapper (cudaComplex).
-__host__ void
-addEqS(DeviceDArray<cudaComplex>& a, cudaComplex const b)
+// Vector addition in-place, a[i] += b, kernel wrapper (cudaComplex).
+__host__ void addEqS(DeviceDArray<cudaComplex>& a, cudaComplex const b,
+                     const int beginIdA, const int n)
 {
-   int n = a.capacity();
+   UTIL_CHECK(a.capacity() >= n + beginIdA);
    
    // GPU resources
    int nBlocks, nThreads;
    ThreadGrid::setThreadsLogical(n, nBlocks, nThreads);
 
    // Launch kernel
-   _addEqS<<<nBlocks, nThreads>>>(a.cArray(), b, n);
+   _addEqS<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, b, n);
 }
 
-// Vector addition in-place, a[i] += b, GPU kernel wrapper (mixed type).
-__host__ void
-addEqS(DeviceDArray<cudaComplex>& a, cudaReal const b)
+// Vector addition in-place, a[i] += b, kernel wrapper (mixed).
+__host__ void addEqS(DeviceDArray<cudaComplex>& a, cudaReal const b,
+                     const int beginIdA, const int n)
 {
-   int n = a.capacity();
+   UTIL_CHECK(a.capacity() >= n + beginIdA);
    
    // GPU resources
    int nBlocks, nThreads;
    ThreadGrid::setThreadsLogical(n, nBlocks, nThreads);
 
    // Launch kernel
-   _addEqS<<<nBlocks, nThreads>>>(a.cArray(), b, n);
+   _addEqS<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, b, n);
 }
 
 // Vector subtraction in-place, a[i] -= b[i], GPU kernel (cudaReal).
@@ -1059,7 +1203,7 @@ __global__ void _subEqV(cudaComplex* a, cudaComplex const * b, const int n)
    }
 }
 
-// Vector subtraction in-place, a[i] -= b[i], GPU kernel (mixed type).
+// Vector subtraction in-place, a[i] -= b[i], GPU kernel (mixed).
 __global__ void _subEqV(cudaComplex* a, cudaReal const * b, const int n)
 {
    int nThreads = blockDim.x * gridDim.x;
@@ -1090,7 +1234,7 @@ __global__ void _subEqS(cudaComplex* a, cudaComplex const b, const int n)
    }
 }
 
-// Vector subtraction in-place, a[i] -= b, GPU kernel (mixed type).
+// Vector subtraction in-place, a[i] -= b, GPU kernel (mixed).
 __global__ void _subEqS(cudaComplex* a, cudaReal const b, const int n)
 {
    int nThreads = blockDim.x * gridDim.x;
@@ -1101,90 +1245,96 @@ __global__ void _subEqS(cudaComplex* a, cudaReal const b, const int n)
 }
 
 // Vector subtraction in-place, a[i] -= b[i], kernel wrapper (cudaReal).
-__host__ void
-subEqV(DeviceDArray<cudaReal>& a, DeviceDArray<cudaReal> const & b)
+__host__ void subEqV(DeviceDArray<cudaReal>& a, 
+                     DeviceDArray<cudaReal> const & b,
+                     const int beginIdA, const int beginIdB, const int n)
 {
-   int n = a.capacity();
-   UTIL_CHECK(b.capacity() == n);
+   UTIL_CHECK(a.capacity() >= n + beginIdA);
+   UTIL_CHECK(b.capacity() >= n + beginIdB);
    
    // GPU resources
    int nBlocks, nThreads;
    ThreadGrid::setThreadsLogical(n, nBlocks, nThreads);
 
    // Launch kernel
-   _subEqV<<<nBlocks, nThreads>>>(a.cArray(), b.cArray(), n);
+   _subEqV<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, 
+                                  b.cArray()+beginIdB, n);
 }
 
 // Vector subtraction in-place, a[i] -= b[i], kernel wrapper (cudaComplex).
-__host__ void
-subEqV(DeviceDArray<cudaComplex>& a, DeviceDArray<cudaComplex> const & b)
+__host__ void subEqV(DeviceDArray<cudaComplex>& a, 
+                     DeviceDArray<cudaComplex> const & b,
+                     const int beginIdA, const int beginIdB, const int n)
 {
-   int n = a.capacity();
-   UTIL_CHECK(b.capacity() == n);
+   UTIL_CHECK(a.capacity() >= n + beginIdA);
+   UTIL_CHECK(b.capacity() >= n + beginIdB);
    
    // GPU resources
    int nBlocks, nThreads;
    ThreadGrid::setThreadsLogical(n, nBlocks, nThreads);
 
    // Launch kernel
-   _subEqV<<<nBlocks, nThreads>>>(a.cArray(), b.cArray(), n);
+   _subEqV<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, 
+                                  b.cArray()+beginIdB, n);
 }
 
-// Vector subtraction in-place, a[i] -= b[i], kernel wrapper (mixed type).
-__host__ void
-subEqV(DeviceDArray<cudaComplex>& a, DeviceDArray<cudaReal> const & b)
+// Vector subtraction in-place, a[i] -= b[i], kernel wrapper (mixed).
+__host__ void subEqV(DeviceDArray<cudaComplex>& a, 
+                     DeviceDArray<cudaReal> const & b,
+                     const int beginIdA, const int beginIdB, const int n)
 {
-   int n = a.capacity();
-   UTIL_CHECK(b.capacity() == n);
+   UTIL_CHECK(a.capacity() >= n + beginIdA);
+   UTIL_CHECK(b.capacity() >= n + beginIdB);
    
    // GPU resources
    int nBlocks, nThreads;
    ThreadGrid::setThreadsLogical(n, nBlocks, nThreads);
 
    // Launch kernel
-   _subEqV<<<nBlocks, nThreads>>>(a.cArray(), b.cArray(), n);
+   _subEqV<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, 
+                                  b.cArray()+beginIdB, n);
 }
 
-// Vector subtraction in-place, a[i] -= b, GPU kernel wrapper (cudaReal).
-__host__ void
-subEqS(DeviceDArray<cudaReal>& a, cudaReal const b)
+// Vector subtraction in-place, a[i] -= b, kernel wrapper (cudaReal).
+__host__ void subEqS(DeviceDArray<cudaReal>& a, cudaReal const b,
+                     const int beginIdA, const int n)
 {
-   int n = a.capacity();
+   UTIL_CHECK(a.capacity() >= n + beginIdA);
    
    // GPU resources
    int nBlocks, nThreads;
    ThreadGrid::setThreadsLogical(n, nBlocks, nThreads);
 
    // Launch kernel
-   _subEqS<<<nBlocks, nThreads>>>(a.cArray(), b, n);
+   _subEqS<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, b, n);
 }
 
-// Vector subtraction in-place, a[i] -= b, GPU kernel wrapper (cudaComplex).
-__host__ void
-subEqS(DeviceDArray<cudaComplex>& a, cudaComplex const b)
+// Vector subtraction in-place, a[i] -= b, kernel wrapper (cudaComplex).
+__host__ void subEqS(DeviceDArray<cudaComplex>& a, cudaComplex const b,
+                     const int beginIdA, const int n)
 {
-   int n = a.capacity();
+   UTIL_CHECK(a.capacity() >= n + beginIdA);
    
    // GPU resources
    int nBlocks, nThreads;
    ThreadGrid::setThreadsLogical(n, nBlocks, nThreads);
 
    // Launch kernel
-   _subEqS<<<nBlocks, nThreads>>>(a.cArray(), b, n);
+   _subEqS<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, b, n);
 }
 
-// Vector subtraction in-place, a[i] -= b, GPU kernel wrapper (mixed type).
-__host__ void
-subEqS(DeviceDArray<cudaComplex>& a, cudaReal const b)
+// Vector subtraction in-place, a[i] -= b, kernel wrapper (mixed).
+__host__ void subEqS(DeviceDArray<cudaComplex>& a, cudaReal const b,
+                     const int beginIdA, const int n)
 {
-   int n = a.capacity();
+   UTIL_CHECK(a.capacity() >= n + beginIdA);
    
    // GPU resources
    int nBlocks, nThreads;
    ThreadGrid::setThreadsLogical(n, nBlocks, nThreads);
 
    // Launch kernel
-   _subEqS<<<nBlocks, nThreads>>>(a.cArray(), b, n);
+   _subEqS<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, b, n);
 }
 
 // Vector multiplication in-place, a[i] *= b[i], GPU kernel (cudaReal).
@@ -1211,7 +1361,7 @@ __global__ void _mulEqV(cudaComplex* a, cudaComplex const * b, const int n)
    }
 }
 
-// Vector multiplication in-place, a[i] *= b[i], GPU kernel (mixed type).
+// Vector multiplication in-place, a[i] *= b[i], GPU kernel (mixed).
 __global__ void _mulEqV(cudaComplex* a, cudaReal const * b, const int n)
 {
    int nThreads = blockDim.x * gridDim.x;
@@ -1246,7 +1396,7 @@ __global__ void _mulEqS(cudaComplex* a, cudaComplex const b, const int n)
    }
 }
 
-// Vector multiplication in-place, a[i] *= b, GPU kernel (mixed type).
+// Vector multiplication in-place, a[i] *= b, GPU kernel (mixed).
 __global__ void _mulEqS(cudaComplex* a, cudaReal const b, const int n)
 {
    int nThreads = blockDim.x * gridDim.x;
@@ -1258,90 +1408,96 @@ __global__ void _mulEqS(cudaComplex* a, cudaReal const b, const int n)
 }
 
 // Vector multiplication in-place, a[i] *= b[i], kernel wrapper (cudaReal).
-__host__ void
-mulEqV(DeviceDArray<cudaReal>& a, DeviceDArray<cudaReal> const & b)
+__host__ void mulEqV(DeviceDArray<cudaReal>& a, 
+                     DeviceDArray<cudaReal> const & b,
+                     const int beginIdA, const int beginIdB, const int n)
 {
-   int n = a.capacity();
-   UTIL_CHECK(b.capacity() == n);
+   UTIL_CHECK(a.capacity() >= n + beginIdA);
+   UTIL_CHECK(b.capacity() >= n + beginIdB);
    
    // GPU resources
    int nBlocks, nThreads;
    ThreadGrid::setThreadsLogical(n, nBlocks, nThreads);
 
    // Launch kernel
-   _mulEqV<<<nBlocks, nThreads>>>(a.cArray(), b.cArray(), n);
+   _mulEqV<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, 
+                                  b.cArray()+beginIdB, n);
 }
 
 // Vector multiplication in-place, a[i] *= b[i], kernel wrapper (cudaComplex).
-__host__ void
-mulEqV(DeviceDArray<cudaComplex>& a, DeviceDArray<cudaComplex> const & b)
+__host__ void mulEqV(DeviceDArray<cudaComplex>& a, 
+                     DeviceDArray<cudaComplex> const & b,
+                     const int beginIdA, const int beginIdB, const int n)
 {
-   int n = a.capacity();
-   UTIL_CHECK(b.capacity() == n);
+   UTIL_CHECK(a.capacity() >= n + beginIdA);
+   UTIL_CHECK(b.capacity() >= n + beginIdB);
    
    // GPU resources
    int nBlocks, nThreads;
    ThreadGrid::setThreadsLogical(n, nBlocks, nThreads);
 
    // Launch kernel
-   _mulEqV<<<nBlocks, nThreads>>>(a.cArray(), b.cArray(), n);
+   _mulEqV<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, 
+                                  b.cArray()+beginIdB, n);
 }
 
-// Vector multiplication in-place, a[i] *= b[i], kernel wrapper (mixed type).
+// Vector multiplication in-place, a[i] *= b[i], kernel wrapper (mixed).
 __host__ void
-mulEqV(DeviceDArray<cudaComplex>& a, DeviceDArray<cudaReal> const & b)
+mulEqV(DeviceDArray<cudaComplex>& a, DeviceDArray<cudaReal> const & b,
+                     const int beginIdA, const int beginIdB, const int n)
 {
-   int n = a.capacity();
-   UTIL_CHECK(b.capacity() == n);
+   UTIL_CHECK(a.capacity() >= n + beginIdA);
+   UTIL_CHECK(b.capacity() >= n + beginIdB);
    
    // GPU resources
    int nBlocks, nThreads;
    ThreadGrid::setThreadsLogical(n, nBlocks, nThreads);
 
    // Launch kernel
-   _mulEqV<<<nBlocks, nThreads>>>(a.cArray(), b.cArray(), n);
+   _mulEqV<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, 
+                                  b.cArray()+beginIdB, n);
 }
 
 // Vector multiplication in-place, a[i] *= b, kernel wrapper (cudaReal).
-__host__ void
-mulEqS(DeviceDArray<cudaReal>& a, cudaReal const b)
+__host__ void mulEqS(DeviceDArray<cudaReal>& a, cudaReal const b,
+                     const int beginIdA, const int n)
 {
-   int n = a.capacity();
+   UTIL_CHECK(a.capacity() >= n + beginIdA);
    
    // GPU resources
    int nBlocks, nThreads;
    ThreadGrid::setThreadsLogical(n, nBlocks, nThreads);
 
    // Launch kernel
-   _mulEqS<<<nBlocks, nThreads>>>(a.cArray(), b, n);
+   _mulEqS<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, b, n);
 }
 
 // Vector multiplication in-place, a[i] *= b, kernel wrapper (cudaComplex).
-__host__ void
-mulEqS(DeviceDArray<cudaComplex>& a, cudaComplex const b)
+__host__ void mulEqS(DeviceDArray<cudaComplex>& a, cudaComplex const b,
+                     const int beginIdA, const int n)
 {
-   int n = a.capacity();
+   UTIL_CHECK(a.capacity() >= n + beginIdA);
    
    // GPU resources
    int nBlocks, nThreads;
    ThreadGrid::setThreadsLogical(n, nBlocks, nThreads);
 
    // Launch kernel
-   _mulEqS<<<nBlocks, nThreads>>>(a.cArray(), b, n);
+   _mulEqS<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, b, n);
 }
 
-// Vector multiplication in-place, a[i] *= b, kernel wrapper (mixed type).
-__host__ void
-mulEqS(DeviceDArray<cudaComplex>& a, cudaReal const b)
+// Vector multiplication in-place, a[i] *= b, kernel wrapper (mixed).
+__host__ void mulEqS(DeviceDArray<cudaComplex>& a, cudaReal const b,
+                     const int beginIdA, const int n)
 {
-   int n = a.capacity();
+   UTIL_CHECK(a.capacity() >= n + beginIdA);
    
    // GPU resources
    int nBlocks, nThreads;
    ThreadGrid::setThreadsLogical(n, nBlocks, nThreads);
 
    // Launch kernel
-   _mulEqS<<<nBlocks, nThreads>>>(a.cArray(), b, n);
+   _mulEqS<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, b, n);
 }
 
 // Vector division in-place, a[i] /= b[i], GPU kernel (cudaReal).
@@ -1354,7 +1510,7 @@ __global__ void _divEqV(cudaReal* a, cudaReal const * b, const int n)
    }
 }
 
-// Vector division in-place, a[i] /= b[i], GPU kernel (mixed type).
+// Vector division in-place, a[i] /= b[i], GPU kernel (mixed).
 __global__ void _divEqV(cudaComplex* a, cudaReal const * b, const int n)
 {
    int nThreads = blockDim.x * gridDim.x;
@@ -1375,7 +1531,7 @@ __global__ void _divEqS(cudaReal* a, cudaReal const b, const int n)
    }
 }
 
-// Vector division in-place, a[i] /= b, GPU kernel (mixed type).
+// Vector division in-place, a[i] /= b, GPU kernel (mixed).
 __global__ void _divEqS(cudaComplex* a, cudaReal const b, const int n)
 {
    int nThreads = blockDim.x * gridDim.x;
@@ -1386,62 +1542,66 @@ __global__ void _divEqS(cudaComplex* a, cudaReal const b, const int n)
    }
 }
 
-// Vector division in-place, a[i] /= b[i], GPU kernel wrapper (cudaReal).
-__host__ void
-divEqV(DeviceDArray<cudaReal>& a, DeviceDArray<cudaReal> const & b)
+// Vector division in-place, a[i] /= b[i], kernel wrapper (cudaReal).
+__host__ void divEqV(DeviceDArray<cudaReal>& a, 
+                     DeviceDArray<cudaReal> const & b,
+                     const int beginIdA, const int beginIdB, const int n)
 {
-   int n = a.capacity();
-   UTIL_CHECK(b.capacity() == n);
+   UTIL_CHECK(a.capacity() >= n + beginIdA);
+   UTIL_CHECK(b.capacity() >= n + beginIdB);
    
    // GPU resources
    int nBlocks, nThreads;
    ThreadGrid::setThreadsLogical(n, nBlocks, nThreads);
 
    // Launch kernel
-   _divEqV<<<nBlocks, nThreads>>>(a.cArray(), b.cArray(), n);
+   _divEqV<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, 
+                                  b.cArray()+beginIdB, n);
 }
 
-// Vector division in-place, a[i] /= b[i], GPU kernel wrapper (mixed type).
-__host__ void
-divEqV(DeviceDArray<cudaComplex>& a, DeviceDArray<cudaReal> const & b)
+// Vector division in-place, a[i] /= b[i], kernel wrapper (mixed).
+__host__ void divEqV(DeviceDArray<cudaComplex>& a, 
+                     DeviceDArray<cudaReal> const & b,
+                     const int beginIdA, const int beginIdB, const int n)
 {
-   int n = a.capacity();
-   UTIL_CHECK(b.capacity() == n);
+   UTIL_CHECK(a.capacity() >= n + beginIdA);
+   UTIL_CHECK(b.capacity() >= n + beginIdB);
    
    // GPU resources
    int nBlocks, nThreads;
    ThreadGrid::setThreadsLogical(n, nBlocks, nThreads);
 
    // Launch kernel
-   _divEqV<<<nBlocks, nThreads>>>(a.cArray(), b.cArray(), n);
+   _divEqV<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, 
+                                  b.cArray()+beginIdB, n);
 }
 
-// Vector division in-place, a[i] /= b, GPU kernel wrapper (cudaReal).
-__host__ void
-divEqS(DeviceDArray<cudaReal>& a, cudaReal const b)
+// Vector division in-place, a[i] /= b, kernel wrapper (cudaReal).
+__host__ void divEqS(DeviceDArray<cudaReal>& a, cudaReal const b,
+                     const int beginIdA, const int n)
 {
-   int n = a.capacity();
+   UTIL_CHECK(a.capacity() >= n + beginIdA);
    
    // GPU resources
    int nBlocks, nThreads;
    ThreadGrid::setThreadsLogical(n, nBlocks, nThreads);
 
    // Launch kernel
-   _divEqS<<<nBlocks, nThreads>>>(a.cArray(), b, n);
+   _divEqS<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, b, n);
 }
 
-// Vector division in-place, a[i] /= b, GPU kernel wrapper (mixed type).
-__host__ void
-divEqS(DeviceDArray<cudaComplex>& a, cudaReal const b)
+// Vector division in-place, a[i] /= b, kernel wrapper (mixed).
+__host__ void divEqS(DeviceDArray<cudaComplex>& a, cudaReal const b,
+                     const int beginIdA, const int n)
 {
-   int n = a.capacity();
+   UTIL_CHECK(a.capacity() >= n + beginIdA);
    
    // GPU resources
    int nBlocks, nThreads;
    ThreadGrid::setThreadsLogical(n, nBlocks, nThreads);
 
    // Launch kernel
-   _divEqS<<<nBlocks, nThreads>>>(a.cArray(), b, n);
+   _divEqS<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, b, n);
 }
 
 // Vector addition in-place w/ coefficient, a[i] += b[i] * c, GPU kernel.
@@ -1458,17 +1618,19 @@ __global__ void _addEqMulVS(cudaReal* a, cudaReal const * b,
 // Vector addition in-place w/ coefficient, a[i] += b[i] * c, kernel wrapper.
 __host__ void addEqMulVS(DeviceDArray<cudaReal>& a, 
                          DeviceDArray<cudaReal> const & b, 
-                         cudaReal const c)
+                         cudaReal const c, const int beginIdA, 
+                         const int beginIdB, const int n)
 {
-   int n = a.capacity();
-   UTIL_CHECK(b.capacity() == n);
+   UTIL_CHECK(a.capacity() >= n + beginIdA);
+   UTIL_CHECK(b.capacity() >= n + beginIdB);
    
    // GPU resources
    int nBlocks, nThreads;
    ThreadGrid::setThreadsLogical(n, nBlocks, nThreads);
 
    // Launch kernel
-   _addEqMulVS<<<nBlocks, nThreads>>>(a.cArray(), b.cArray(), c, n);
+   _addEqMulVS<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, 
+                                      b.cArray()+beginIdB, c, n);
 }
 
 // Squared norm of complex vector, a[i] = norm(b[i])^2, GPU kernel.
@@ -1483,17 +1645,20 @@ __global__ void _sqNormV(cudaReal* a, cudaComplex const * b, const int n)
 
 // Squared norm of complex vector, a[i] = norm(b[i])^2, kernel wrapper.
 __host__ void sqNormV(DeviceDArray<cudaReal>& a, 
-                      DeviceDArray<cudaComplex> const & b)
+                      DeviceDArray<cudaComplex> const & b,
+                      const int beginIdA, const int beginIdB, 
+                      const int n)
 {
-   int n = a.capacity();
-   UTIL_CHECK(b.capacity() == n);
+   UTIL_CHECK(a.capacity() >= n + beginIdA);
+   UTIL_CHECK(b.capacity() >= n + beginIdB);
    
    // GPU resources
    int nBlocks, nThreads;
    ThreadGrid::setThreadsLogical(n, nBlocks, nThreads);
 
    // Launch kernel
-   _sqNormV<<<nBlocks, nThreads>>>(a.cArray(), b.cArray(), n);
+   _sqNormV<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, 
+                                   b.cArray()+beginIdB, n);
 }
 
 // Vector exponentiation w/ coefficient, a[i] = exp(b[i]*c), GPU kernel.
@@ -1510,17 +1675,19 @@ __global__ void _expMulVS(cudaReal* a, cudaReal const * b,
 // Vector exponentiation w/ coefficient, a[i] = exp(b[i]*c), kernel wrapper.
 __host__ void expMulVS(DeviceDArray<cudaReal>& a, 
                        DeviceDArray<cudaReal> const & b, 
-                       cudaReal const c)
+                       cudaReal const c, const int beginIdA, 
+                       const int beginIdB, const int n)
 {
-   int n = a.capacity();
-   UTIL_CHECK(b.capacity() == n);
+   UTIL_CHECK(a.capacity() >= n + beginIdA);
+   UTIL_CHECK(b.capacity() >= n + beginIdB);
    
    // GPU resources
    int nBlocks, nThreads;
    ThreadGrid::setThreadsLogical(n, nBlocks, nThreads);
 
    // Launch kernel
-   _expMulVS<<<nBlocks, nThreads>>>(a.cArray(), b.cArray(), c, n);
+   _expMulVS<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, 
+                                    b.cArray()+beginIdB, c, n);
 }
 
 }
