@@ -617,8 +617,11 @@ class Array:
       if not isinstance(self.val[0], list):
          # Elements with a single value
          for i in range(len(self.val)):
-            v = f'{self.val[i]:.12e}'
-            s += depth + f'{v:>40}\n'
+            if isinstance(self.val[i], float):
+               v = f'{self.val[i]:.12e}'
+               s += depth + f'{v:>40}\n'
+            else:
+               s += depth + f'{self.val[i]:>40}\n'
       else:
          # Elements with a list of values
          if isinstance(self.val[0][0], int) & (len(self.val[0]) == 2):

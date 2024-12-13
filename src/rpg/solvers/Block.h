@@ -12,7 +12,7 @@
 #include <prdc/cuda/RField.h>           // member
 #include <prdc/cuda/RFieldDft.h>        // member
 #include <prdc/cuda/FFT.h>               // member
-#include <rpg/field/FFTBatched.h>        // member
+#include <prdc/cuda/FFTBatched.h>        // member
 #include <rpg/solvers/WaveList.h>
 #include <prdc/crystal/UnitCell.h>
 #include <pscf/solvers/BlockTmpl.h>       // base class template

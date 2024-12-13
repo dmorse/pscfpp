@@ -1,5 +1,4 @@
 rpg_field_= \
-  rpg/field/FFTBatched.cu \
   rpg/field/FieldIo.cu \
   rpg/field/WFieldContainer.cu \
   rpg/field/CFieldContainer.cu \

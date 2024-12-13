@@ -5,7 +5,8 @@ prdc_cuda_= \
   prdc/cuda/RFieldComparison.cu \
   prdc/cuda/RFieldDftComparison.cu \
   prdc/cuda/CFieldComparison.cu \
-  prdc/cuda/FFT.cu 
+  prdc/cuda/FFT.cu \
+  prdc/cuda/FFTBatched.cu
 
 prdc_cuda_OBJS=\
      $(addprefix $(BLD_DIR)/, $(prdc_cuda_:.cu=.o))

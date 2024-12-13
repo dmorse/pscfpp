@@ -12,7 +12,6 @@
 #include <prdc/cuda/CField.h>
 #include <prdc/cuda/RFieldDft.h>
 
-//#include <pscf/cuda/GpuResources.h>
 #include <pscf/math/IntVec.h>
 #include <util/global.h>
 
@@ -140,48 +139,36 @@ namespace Cuda {
       */
       bool isSetup() const;
 
-      #if 0
-      /**
-      *  Get the plan for the forward DFT.
-      */
-      cufftHandle& fPlan();
-
-      /**
-      *  Get the plan for the inverse DFT.
-      */
-      cufftHandle& iPlan();
-      #endif
-
    private:
 
-      // Vector containing number of grid points in each direction.
+      /// Vector containing number of grid points in each direction.
       IntVec<D> meshDimensions_;
 
-      // Private RField<D> real array for work space
+      /// Private RField<D> real array for work space
       mutable RField<D> rFieldCopy_;
 
-      // Private CField<D> real array for work space
+      /// Private CField<D> real array for work space
       mutable CField<D> cFieldCopy_;
 
-      // Private RFieldDft<D> k-space array work space
+      /// Private RFieldDft<D> k-space array work space
       mutable RFieldDft<D> kFieldCopy_;
 
-      // Number of points in r-space grid
+      /// Number of points in r-space grid
       int rSize_;
 
-      // Number of points in k-space grid for transform of real data
+      /// Number of points in k-space grid for transform of real data
       int kSize_;
 
-      // Pointer to a plan for a real-to-complex forward transform
+      /// Pointer to a plan for a real-to-complex forward transform
       cufftHandle rcfPlan_;
 
-      // Pointer to a plan for a complex-to-real inverse transform
+      /// Pointer to a plan for a complex-to-real inverse transform
       cufftHandle criPlan_;
 
-      // Pointer to a plan for a complex-to-complex transform
+      /// Pointer to a plan for a complex-to-complex transform
       cufftHandle ccPlan_;
 
-      // Have array dimension and plans been initialized?
+      /// Have array dimension and plans been initialized?
       bool isSetup_;
 
       /**
@@ -202,53 +189,21 @@ namespace Cuda {
    template <>
    void FFT<3>::makePlans();
 
-   /*
-   * Return the dimensions of the grid for which this was allocated.
-   */
+   // Return the dimensions of the grid for which this was allocated.
    template <int D>
    inline IntVec<D> const & FFT<D>::meshDimensions() const
    {  return meshDimensions_; }
 
+   // Has this FFT object been setup? 
    template <int D>
    inline bool FFT<D>::isSetup() const
    { return isSetup_; }
-
-   #if 0
-   template <int D>
-   inline cufftHandle& FFT<D>::fPlan() 
-   { return rcfPlan_; }
-
-   template <int D>
-   inline cufftHandle& FFT<D>::iPlan()
-   { return criPlan_; }
-   #endif
 
    #ifndef PRDC_CUDA_FFT_TPP
    // Suppress implicit instantiation
    extern template class FFT<1>;
    extern template class FFT<2>;
    extern template class FFT<3>;
-   #endif
-
-   #if 0
-   static __global__ 
-   void scaleRealData(cudaReal* data, cudaReal scale, int size) {
-      int nThreads = blockDim.x * gridDim.x;
-      int startId = blockIdx.x * blockDim.x + threadIdx.x;
-      for(int i = startId; i < size; i += nThreads ) {
-         data[i] *= scale;
-      }
-   }
-
-   static __global__ 
-   void scaleComplexData(cudaComplex* data, cudaReal scale, int size) {
-      int nThreads = blockDim.x * gridDim.x;
-      int startId = blockIdx.x * blockDim.x + threadIdx.x;
-      for(int i = startId; i < size; i += nThreads ) {
-         data[i].x *= scale;
-         data[i].y *= scale;
-      }
-   }
    #endif
 
 }
