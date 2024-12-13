@@ -148,7 +148,7 @@ namespace Rpc {
    
       Log::file() << std::endl;
 
-      // Main Monte Carlo loop
+      // Initialize timer, iStep_, and ramp (if any)
       Timer timer;
       Timer analyzerTimer;
       timer.start();
@@ -162,6 +162,7 @@ namespace Rpc {
       analyzerManager_.sample(iStep_);
       analyzerTimer.stop();
 
+      // Main Monte Carlo loop
       for (iTotalStep_ = 0; iTotalStep_ < nStep; ++iTotalStep_) {
 
          // Choose and attempt an McMove
@@ -187,7 +188,8 @@ namespace Rpc {
             analyzerTimer.stop();
 
          } else{
-            Log::file() << "Step: "<< iTotalStep_<< " fail to converge" << "\n";
+            Log::file() << "Step: "<< iTotalStep_ 
+                        << " failed to converge" << "\n";
          }
       }
 

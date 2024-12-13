@@ -22,6 +22,7 @@
 #include <util/random/Random.h>
 #include <util/global.h>
 
+// Gnu scientifie library
 #include <gsl/gsl_eigen.h>
 
 namespace Pscf {
@@ -134,17 +135,12 @@ namespace Rpc {
    template <int D>
    void Simulator<D>::readParameters(std::istream &in)
    {
-      // Read required Compressor block, if needed
+      // Read required Compressor block
       readCompressor(in);
       UTIL_CHECK(compressorPtr_);
 
       // Optionally read a random number generator seed
-      seed_ = 0;
-      readOptional(in, "seed", seed_);
-
-      // Set random number generator seed
-      // Default value seed_ = 0 uses the clock time.
-      random().setSeed(seed_);
+      readRandomSeed(in);
 
       // Optionally read a Perturbation
       readPerturbation(in);
@@ -484,15 +480,6 @@ namespace Rpc {
          }
       }
 
-      #if 0
-      // Debugging output
-      Log::file() << "wc " << wc_.capacity() << "\n";
-      for (i = 0; i < 10; ++i) {
-         Log::file() << "wc_1 " << wc_[0][i] << "\n";
-         Log::file() << "wc_2 " << wc_[1][i] << "\n";
-      }
-      #endif
-
       hasWc_ = true;
    }
 
@@ -533,15 +520,6 @@ namespace Rpc {
 
          }
       }
-
-      #if 0
-      // Debugging output
-      Log::file() << "cc " << cc_.capacity() << "\n";
-      for (i = 0; i < 10; ++i) {
-         Log::file() << "cc_1 " << cc_[0][i] << "\n";
-         Log::file() << "cc_2 " << cc_[1][i] << "\n";
-      }
-      #endif
 
       hasCc_ = true;
    }
@@ -736,6 +714,21 @@ namespace Rpc {
    }
 
    // Protected Functions
+
+   /*
+   * Optionally read a random number generator seed.
+   */
+   template<int D>
+   void Simulator<D>::readRandomSeed(std::istream& in)
+   {
+      // Optionally read a random number generator seed
+      seed_ = 0;
+      readOptional(in, "seed", seed_);
+
+      // Set random number generator seed
+      // Default value seed_ = 0 uses the clock time.
+      random().setSeed(seed_);
+   }
 
    /*
    * Read the required Compressor parameter file block.

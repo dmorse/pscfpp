@@ -25,9 +25,9 @@ namespace Rpc {
    * attempted move or step that is rejected or fails to converge. It is
    * used in Monte Carlo (MC) simulations to restore the state after a 
    * rejected move. It is also used less frequently in Brownian dynamics 
-   * (BD) simulations to restore state and try another choice of random 
-   * noise if the compressor algorithm (the search for a partial saddle 
-   * point) fails to converge after an attempted BD step.
+   * (BD) simulations to restore the previous state after the compressor 
+   * algorithm (the search for a partial saddle point) fails to converge 
+   * after an attempted unconstrained BD step.
    *
    * \ingroup Rpc_Fts_Module
    */

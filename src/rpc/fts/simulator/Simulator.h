@@ -552,6 +552,13 @@ namespace Rpc {
       using Util::ParamComposite::setClassName;
 
       /**
+      * Optionally read a random number generator seed.
+      *
+      * \param in input parameter stream
+      */
+      void readRandomSeed(std::istream& in);
+
+      /**
       * Read the compressor block of the parameter file. 
       *
       * \param in input parameter stream
@@ -606,16 +613,22 @@ namespace Rpc {
       /**
       * Eigenvector components of w fields on a real space grid.
       *
-      * Each field component corresponds to a point-wise projection of w
-      * onto an eigenvector of the projected chi matrix.
+      * Each field component corresponds to a point-wise projection of 
+      * the monomer w fields onto an eigenvector of the projected chi 
+      * matrix. The number of components is equal to the number of
+      * monomer types, nMonomer. The last component is a pressure-like
+      * field.
       */
       DArray< RField<D> > wc_;
 
       /**
       * Eigenvector components of c fields on a real space grid.
       *
-      * Each field component corresponds to a point-wise projection of c
-      * onto an eigenvector of the projected chi matrix.
+      * Each field component corresponds to a point-wise projection of 
+      * the monomer c fields onto an eigenvector of the projected chi 
+      * matrix. The number of components is equal to the number of 
+      * monomer types, nMonomer. The last component must satisfy an
+      * incompressibility constraint.
       */
       DArray< RField<D> > cc_;
 
@@ -628,7 +641,10 @@ namespace Rpc {
       DArray< RField<D> > dc_;
       
       /**
-      * State saved during fts simulation.
+      * Previous state saved during at the beginning of a step.
+      * 
+      * This data structure is used to restore a previous state if
+      * the compressor fails to converge or if a MC move is rejected.
       */
       mutable SimState<D> state_;
 
@@ -638,7 +654,7 @@ namespace Rpc {
       double hamiltonian_;
 
       /**
-      * Ideal gas contribution (lnQ) to Hamiltonian H[W]
+      * Ideal gas contribution (-lnQ) to Hamiltonian H[W]
       */
       double idealHamiltonian_;
 
@@ -657,12 +673,20 @@ namespace Rpc {
       double perturbationHamiltonian_;
 
       /**
-      * Simulation converge step counter.
+      * Step counter - attempted steps for which compressor converges.
+      *
+      * Steps for which the compressor fails to converge are returned to
+      * the previous state so that another random displacement can be
+      * chosen. Attempted MC moves for which the compressor converged 
+      * but which are then rejected based on a Metropolis criterion are
+      * included in iStep_. The difference iTotalStep_ - iStep_ is the
+      * number of moves that failed because the compressor failed to 
+      * converge.
       */
       long iStep_;
       
       /**
-      * Simulation step counter.
+      * Step counter - total number of attempted BD or MC steps.
       */
       long iTotalStep_;
 
@@ -670,6 +694,8 @@ namespace Rpc {
       * Random number generator seed.
       */
       long seed_;
+
+      // Boolean status indicators
 
       /**
       * Has the Hamiltonian been computed for the current w and c fields?
@@ -703,11 +729,13 @@ namespace Rpc {
       DMatrix<double> chiP_;
 
       /**
-      * Eigenvectors of the projected chi matrix.
+      * Eigenvectors of the projected chi matrix chiP_.
       *
       * Each row (identified by first index) is an eigenvector. 
       * The last eigenvector, with index nMonomer - 1, is always the
-      * vector e = [1, 1, ...., 1].
+      * vector e = [1, 1, ...., 1]. Distinct eigenvectors are orthogonal.
+      * Eigenvectors normalized such that the sum of the square of the 
+      * elements is equal to nMonomer.
       */
       DMatrix<double> chiEvecs_;
 
@@ -721,9 +749,9 @@ namespace Rpc {
       /**
       * Components of vector s = chi*e in a basis of eigenvectors.
       *
-      * Component sc_[a] is given by sc_[a] = v_{a} chi e / M^2, 
-      * where e = [1 1 ... 1]^{T}, v_{a} is a row vector representation
-      * of eigenvector a of the projected chi matrix, given by row a of 
+      * Component sc_[a] is equal to v_{a} chi e / M^2, where
+      * e = [1 1 ... 1]^{T}, v_{a} is a row vector representation of 
+      * eigenvector a of the projected chi matrix, given by row a of 
       * chiEvecs_, and M = nMonomer.
       */
       DArray<double>  sc_;
@@ -734,12 +762,12 @@ namespace Rpc {
       System<D>* systemPtr_;
 
       /**
-      * Pointer to compressor factory object.
+      * Pointer to the compressor factory object.
       */
       CompressorFactory<D>* compressorFactoryPtr_;
 
       /**
-      * Pointer to an compressor.
+      * Pointer to a compressor.
       */
       Compressor<D>* compressorPtr_;
 
@@ -749,7 +777,7 @@ namespace Rpc {
       PerturbationFactory<D>* perturbationFactoryPtr_;
 
       /**
-      * Pointer to the perturbation (if any)
+      * Pointer to a perturbation (if any)
       */
       Perturbation<D>* perturbationPtr_;
 
@@ -759,7 +787,7 @@ namespace Rpc {
       RampFactory<D>* rampFactoryPtr_;
 
       /**
-      * Pointer to the Ramp (if any)
+      * Pointer to a Ramp (if any)
       */
       Ramp<D>* rampPtr_;
 
@@ -772,7 +800,7 @@ namespace Rpc {
 
    // Inline functions
 
-   // Get the parent System.
+   // Get the parent System by reference.
    template <int D>
    inline System<D>& Simulator<D>::system()
    {
@@ -780,7 +808,7 @@ namespace Rpc {
       return *systemPtr_; 
    }
 
-   // Get the Compressor
+   // Get the Compressor by reference.
    template <int D>
    inline Compressor<D>& Simulator<D>::compressor()
    {
@@ -793,7 +821,7 @@ namespace Rpc {
    inline bool Simulator<D>::hasCompressor() const
    {  return (compressorPtr_ != 0); }
 
-   // Get the random number generator.
+   // Get the random number generator by reference.
    template <int D>
    inline Random& Simulator<D>::random()
    {  return random_; }
@@ -814,7 +842,7 @@ namespace Rpc {
       return *perturbationPtr_; 
    }
 
-   // Get the perturbation factory.
+   // Get the perturbation factory by reference.
    template <int D>
    inline PerturbationFactory<D>& Simulator<D>::perturbationFactory()
    {
@@ -846,12 +874,12 @@ namespace Rpc {
       return *rampFactoryPtr_; 
    }
 
-   // Return an array of eigenvalues of projected chi matrix.
+   // Return an array of eigenvalues of the projected chi matrix.
    template <int D>
    inline DArray<double> const & Simulator<D>::chiEvals() const
    {  return chiEvals_; }
 
-   // Return an array of eigenvalues of projected chi matrix.
+   // Return a single eigenvalue of the projected chi matrix.
    template <int D>
    inline double Simulator<D>::chiEval(int a) const
    {  return chiEvals_[a]; }
@@ -861,22 +889,22 @@ namespace Rpc {
    inline DMatrix<double> const & Simulator<D>::chiEvecs() const
    {  return chiEvecs_; }
 
-   // Return a matrix of eigenvectors of the projected chi matrix.
+   // Return an element of an eigenvector of the projected chi matrix.
    template <int D>
    inline double Simulator<D>::chiEvecs(int a, int i) const
    {  return chiEvecs_(a, i); }
 
-   // Return array of values of vector S.
+   // Return the vector S in eigenvector basis.
    template <int D>
    inline DArray<double> const & Simulator<D>::sc() const
    {  return sc_; }
 
-   // Return one component of vector S.
+   // Return one component of vector S in an eigenvector basis.
    template <int D>
    inline double Simulator<D>::sc(int a) const
    {  return sc_[a]; }
 
-   // Get the precomputed Hamiltonian
+   // Get the precomputed Hamiltonian.
    template <int D>
    inline double Simulator<D>::hamiltonian() const
    {
@@ -884,7 +912,7 @@ namespace Rpc {
       return hamiltonian_;
    }
 
-   // Get the ideal gas component of the precomputed Hamiltonian
+   // Get the ideal gas component of the precomputed Hamiltonian.
    template <int D>
    inline double Simulator<D>::idealHamiltonian() const
    {
