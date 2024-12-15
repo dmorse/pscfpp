@@ -1,0 +1,65 @@
+/*! 
+\page rpc_LrCompressor_page Rpc::LrCompressor
+
+The LrCompressor classes used by both the pscf_pc and pscf_pg programs 
+implements a linear-response Anderson mixing (LRAM) algorithm as described
+in this publication.
+
+Two closely analogous classes named Pscf::Rpc::LrCompressor and 
+Pscf::Rpg::LrCompressor implement this algorithm for the pscf_pc CPU and
+program and the pscf_pg GPU-accelerated program, respectively. These two 
+classes implement the same step algorithm and use the same parameter file
+format, which are documented below.
+
+\section rpc_LrCompressor_algorithm_sec Step Algorithm
+
+A general discussion of compressor algorithms for PS-FTS is given 
+\ref psfts_algorithm_page "here".
+
+The LrCompressor algorithm ...
+
+\section rpc_LrCompressor_parameter_sec Parameter File
+
+The only parameter needed by this algorithm are the error threshhold
+"epsilon"
+\code
+  LrCompressor{
+    epsilon      1.0E-4
+  }
+\endcode
+The full parameter file format, including all optional parameters, is shown
+below:
+\code
+LrCompressor{
+  epsilon           float
+  maxItr*           int     (default 200)
+  verbose           int     (default 0)
+  errorType*        string  ("norm", "rms", "max", or "relNorm")
+}
+\endcode
+Meanings of all parameters are described briefly below:
+<table>
+  <tr>
+    <td> <b> Label </b>  </td>
+    <td> <b> Description </b>  </td>
+  </tr>
+  <tr>
+    <td> epsilon </td>
+    <td> error threshhold </td>
+  </tr>
+  <tr>
+    <td>  maxItr* </td>
+    <td>  maximum number of iterations to attempt before declaring failure </td>
+  </tr>
+  <tr>
+    <td>  verbose* </td>
+    <td>  verbosity level (lower values are less verbose. Default level = 0) </td>
+  </tr>
+  <tr>
+    <td>  errorType* </td>
+    <td>  ???? </td>
+  </tr>
+</table>
+
+
+*/

@@ -17,33 +17,31 @@ file format, which are documented below.
 \section rpc_RealMove_algorithm_sec Step Algorithm
 
 A general discussion of MC move algorithms for PS-FTS is given 
-\ref psfts_algorithm_page "here". As discussed there, each move 
-consists of an unconstrained change in the fields, followed by 
-application of a compressor to re-impose the incompressibility 
-constraint. The decision about whether to accept or reject the
-move is based on the value of the Hamiltonian after incompressibility
-has been restored. 
+\ref psfts_algorithm_page "here". As discussed there, each move consists 
+of an unconstrained change in the fields, followed by application of a 
+compressor to re-impose the incompressibility constraint. The decision 
+about whether to accept or reject the move is based on the value of the 
+Hamiltonian after incompressibility has been restored. 
 
-The RealMove algorithm takes one parameter, denoted by stepsize in
-the parameter file. The unconstrained move changes each monomer 
-field component by a random amount chosen from the range
-[-stepsize,+stepsize] with a uniform probability distribution.
+The RealMove algorithm takes one parameter, denoted by stepsize in the 
+parameter file. The unconstrained move changes each monomer field 
+component by a random amount chosen from the range [-stepsize,+stepsize] 
+with a uniform probability distribution.
 
 \section rpc_RealMove_parameter_sec Parameter File
 
 The only parameter needed by this algorithm are the "probability" 
-parameter, which determines the probability that a move of this type
-will be chosen on any step, and a required parameter named stepsize,
-as described above.
-A typical example of the contents of this are show below.
-below:
+parameter, which determines the probability that a move of this type 
+will be chosen on any step, and a required parameter named stepsize, 
+as described above.  A typical example of the contents of this is 
+shown below.
 \code
   RealMove{
     probability  0.05
     stepsize     0.005
   }
 \endcode
-The format is thus:
+The parameter file format is thus:
 \code
 RealMove{
   probability  float (in range [0,1])

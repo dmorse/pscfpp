@@ -46,7 +46,6 @@ namespace Rpc{
    template <int D>
    void LrCompressor<D>::readParameters(std::istream& in)
    {
-      // Call parent class readParameters
       maxItr_ = 60;
       read(in, "epsilon", epsilon_);
       readOptional(in, "maxItr", maxItr_);

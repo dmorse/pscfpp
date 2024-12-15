@@ -353,22 +353,21 @@ the algorithm and associated parameter file format.
 \section psfts_param_compressor_sec Compressor Algorithms
 
 In both BD and MC simulations, the block that describes the sampling
-algorithm is followed by a selectable "Compressor" block. Users may
-choose from among several available compressor algorithms by using
-a block label for this block that identifies a specific algorithm,
-and then using a format for the block that is appropriate to the
-chosen algorithm. 
-
+algorithm (i.e., the BdStep or McMoveManager block) is followed by a 
+selectable "Compressor" block. Users may choose from among several 
+available compressor algorithms by using a block for which the first
+line identifies one of the available algorithms, using a format for
+the contents of the block appropriate to the chosen algorithm. 
 
 The available compressor algorithms are listed below. Users may click
 on the link associated with each algorithm label to access more a
 detailed description of each the algorithm, and of the format of the 
 associated parameter file block. 
-
-   - LrAmCompressor
-   - LrCompressor
-   - AmCompressor
-
+<ul>
+  <li> \subpage rpc_AmCompressor_page "AmCompressor" </li>
+  <li> \subpage rpc_LrCompressor_page "LrCompressor" </li>
+  <li> \subpage rpc_LrAmCompressor_page "LrAmCompressor" </li>
+</ul>
 The LrAmCompressor is the default choice, we may thus be selected
 either by using the generic label "Compressor" or the more specific
 label "LrAmCompressor" before the opening bracket in the first line 
