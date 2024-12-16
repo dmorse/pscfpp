@@ -55,8 +55,8 @@ __global__ void _eqS(cudaComplex* a, cudaComplex const b, const int n)
 }
 
 // Vector assignment, a[i] = b[i], kernel wrapper (cudaReal).
-__host__ void eqV(DeviceDArray<cudaReal>& a, 
-                  DeviceDArray<cudaReal> const & b,
+__host__ void eqV(DeviceArray<cudaReal>& a, 
+                  DeviceArray<cudaReal> const & b,
                   const int beginIdA, const int beginIdB, const int n)
 {
    UTIL_CHECK(a.capacity() >= n + beginIdA);
@@ -72,8 +72,8 @@ __host__ void eqV(DeviceDArray<cudaReal>& a,
 }
 
 // Vector assignment, a[i] = b[i], kernel wrapper (cudaComplex).
-__host__ void eqV(DeviceDArray<cudaComplex>& a, 
-                  DeviceDArray<cudaComplex> const & b,
+__host__ void eqV(DeviceArray<cudaComplex>& a, 
+                  DeviceArray<cudaComplex> const & b,
                   const int beginIdA, const int beginIdB, const int n)
 {
    UTIL_CHECK(a.capacity() >= n + beginIdA);
@@ -89,7 +89,7 @@ __host__ void eqV(DeviceDArray<cudaComplex>& a,
 }
 
 // Vector assignment, a[i] = b, kernel wrapper (cudaReal).
-__host__ void eqS(DeviceDArray<cudaReal>& a, cudaReal const b,
+__host__ void eqS(DeviceArray<cudaReal>& a, cudaReal const b,
                   const int beginIdA, const int n)
 {
    UTIL_CHECK(a.capacity() >= n + beginIdA);
@@ -103,7 +103,7 @@ __host__ void eqS(DeviceDArray<cudaReal>& a, cudaReal const b,
 }
 
 // Vector assignment, a[i] = b, kernel wrapper (cudaComplex).
-__host__ void eqS(DeviceDArray<cudaComplex>& a, cudaComplex const b,
+__host__ void eqS(DeviceArray<cudaComplex>& a, cudaComplex const b,
                   const int beginIdA, const int n)
 {
    UTIL_CHECK(a.capacity() >= n + beginIdA);
@@ -211,9 +211,9 @@ __global__ void _addVS(cudaComplex* a, cudaComplex const * b,
 }
 
 // Vector addition, a[i] = b[i] + c[i], kernel wrapper (cudaReal).
-__host__ void addVV(DeviceDArray<cudaReal>& a, 
-                    DeviceDArray<cudaReal> const & b, 
-                    DeviceDArray<cudaReal> const & c,
+__host__ void addVV(DeviceArray<cudaReal>& a, 
+                    DeviceArray<cudaReal> const & b, 
+                    DeviceArray<cudaReal> const & c,
                     const int beginIdA, const int beginIdB, 
                     const int beginIdC, const int n)
 {
@@ -231,9 +231,9 @@ __host__ void addVV(DeviceDArray<cudaReal>& a,
 }
 
 // Vector addition, a[i] = b[i] + c[i], kernel wrapper (cudaComplex).
-__host__ void addVV(DeviceDArray<cudaComplex>& a, 
-                    DeviceDArray<cudaComplex> const & b, 
-                    DeviceDArray<cudaComplex> const & c,
+__host__ void addVV(DeviceArray<cudaComplex>& a, 
+                    DeviceArray<cudaComplex> const & b, 
+                    DeviceArray<cudaComplex> const & c,
                     const int beginIdA, const int beginIdB, 
                     const int beginIdC, const int n)
 {
@@ -251,9 +251,9 @@ __host__ void addVV(DeviceDArray<cudaComplex>& a,
 }
 
 // Vector addition, a[i] = b[i] + c[i], kernel wrapper (mixed, b = real).
-__host__ void addVV(DeviceDArray<cudaComplex>& a, 
-                    DeviceDArray<cudaReal> const & b, 
-                    DeviceDArray<cudaComplex> const & c,
+__host__ void addVV(DeviceArray<cudaComplex>& a, 
+                    DeviceArray<cudaReal> const & b, 
+                    DeviceArray<cudaComplex> const & c,
                     const int beginIdA, const int beginIdB, 
                     const int beginIdC, const int n)
 {
@@ -271,9 +271,9 @@ __host__ void addVV(DeviceDArray<cudaComplex>& a,
 }
 
 // Vector addition, a[i] = b[i] + c[i], kernel wrapper (mixed, c = real).
-__host__ void addVV(DeviceDArray<cudaComplex>& a, 
-                    DeviceDArray<cudaComplex> const & b, 
-                    DeviceDArray<cudaReal> const & c,
+__host__ void addVV(DeviceArray<cudaComplex>& a, 
+                    DeviceArray<cudaComplex> const & b, 
+                    DeviceArray<cudaReal> const & c,
                     const int beginIdA, const int beginIdB, 
                     const int beginIdC, const int n)
 {
@@ -291,8 +291,8 @@ __host__ void addVV(DeviceDArray<cudaComplex>& a,
 }
 
 // Vector addition, a[i] = b[i] + c, kernel wrapper (cudaReal).
-__host__ void addVS(DeviceDArray<cudaReal>& a, 
-                    DeviceDArray<cudaReal> const & b, cudaReal const c,
+__host__ void addVS(DeviceArray<cudaReal>& a, 
+                    DeviceArray<cudaReal> const & b, cudaReal const c,
                     const int beginIdA, const int beginIdB,int n)
 {
    UTIL_CHECK(a.capacity() >= n + beginIdA);
@@ -308,8 +308,8 @@ __host__ void addVS(DeviceDArray<cudaReal>& a,
 }
 
 // Vector addition, a[i] = b[i] + c, kernel wrapper (cudaComplex).
-__host__ void addVS(DeviceDArray<cudaComplex>& a, 
-                    DeviceDArray<cudaComplex> const & b, 
+__host__ void addVS(DeviceArray<cudaComplex>& a, 
+                    DeviceArray<cudaComplex> const & b, 
                     cudaComplex const c,
                     const int beginIdA, const int beginIdB,int n)
 {
@@ -326,8 +326,8 @@ __host__ void addVS(DeviceDArray<cudaComplex>& a,
 }
 
 // Vector addition, a[i] = b[i] + c, kernel wrapper (mixed, b = real).
-__host__ void addVS(DeviceDArray<cudaComplex>& a, 
-                    DeviceDArray<cudaReal> const & b, 
+__host__ void addVS(DeviceArray<cudaComplex>& a, 
+                    DeviceArray<cudaReal> const & b, 
                     cudaComplex const c,
                     const int beginIdA, const int beginIdB,int n)
 {
@@ -344,8 +344,8 @@ __host__ void addVS(DeviceDArray<cudaComplex>& a,
 }
 
 // Vector addition, a[i] = b[i] + c, kernel wrapper (mixed, c = real).
-__host__ void addVS(DeviceDArray<cudaComplex>& a, 
-                    DeviceDArray<cudaComplex> const & b, 
+__host__ void addVS(DeviceArray<cudaComplex>& a, 
+                    DeviceArray<cudaComplex> const & b, 
                     cudaReal const c,
                     const int beginIdA, const int beginIdB,int n)
 {
@@ -456,9 +456,9 @@ __global__ void _subVS(cudaComplex* a, cudaComplex const * b,
 }
 
 // Vector subtraction, a[i] = b[i] - c[i], kernel wrapper (cudaReal).
-__host__ void subVV(DeviceDArray<cudaReal>& a, 
-                    DeviceDArray<cudaReal> const & b, 
-                    DeviceDArray<cudaReal> const & c,
+__host__ void subVV(DeviceArray<cudaReal>& a, 
+                    DeviceArray<cudaReal> const & b, 
+                    DeviceArray<cudaReal> const & c,
                     const int beginIdA, const int beginIdB, 
                     const int beginIdC, const int n)
 {
@@ -476,9 +476,9 @@ __host__ void subVV(DeviceDArray<cudaReal>& a,
 }
 
 // Vector subtraction, a[i] = b[i] - c[i], kernel wrapper (cudaComplex).
-__host__ void subVV(DeviceDArray<cudaComplex>& a, 
-                    DeviceDArray<cudaComplex> const & b, 
-                    DeviceDArray<cudaComplex> const & c,
+__host__ void subVV(DeviceArray<cudaComplex>& a, 
+                    DeviceArray<cudaComplex> const & b, 
+                    DeviceArray<cudaComplex> const & c,
                     const int beginIdA, const int beginIdB, 
                     const int beginIdC, const int n)
 {
@@ -496,9 +496,9 @@ __host__ void subVV(DeviceDArray<cudaComplex>& a,
 }
 
 // Vector subtraction, a[i]=b[i]-c[i], kernel wrapper (mixed, b=real).
-__host__ void subVV(DeviceDArray<cudaComplex>& a, 
-                    DeviceDArray<cudaReal> const & b, 
-                    DeviceDArray<cudaComplex> const & c,
+__host__ void subVV(DeviceArray<cudaComplex>& a, 
+                    DeviceArray<cudaReal> const & b, 
+                    DeviceArray<cudaComplex> const & c,
                     const int beginIdA, const int beginIdB, 
                     const int beginIdC, const int n)
 {
@@ -516,9 +516,9 @@ __host__ void subVV(DeviceDArray<cudaComplex>& a,
 }
 
 // Vector subtraction, a[i]=b[i]-c[i], kernel wrapper (mixed, c=real).
-__host__ void subVV(DeviceDArray<cudaComplex>& a, 
-                    DeviceDArray<cudaComplex> const & b, 
-                    DeviceDArray<cudaReal> const & c,
+__host__ void subVV(DeviceArray<cudaComplex>& a, 
+                    DeviceArray<cudaComplex> const & b, 
+                    DeviceArray<cudaReal> const & c,
                     const int beginIdA, const int beginIdB, 
                     const int beginIdC, const int n)
 {
@@ -536,8 +536,8 @@ __host__ void subVV(DeviceDArray<cudaComplex>& a,
 }
 
 // Vector subtraction, a[i] = b[i] - c, kernel wrapper (cudaReal).
-__host__ void subVS(DeviceDArray<cudaReal>& a, 
-                    DeviceDArray<cudaReal> const & b, cudaReal const c,
+__host__ void subVS(DeviceArray<cudaReal>& a, 
+                    DeviceArray<cudaReal> const & b, cudaReal const c,
                     const int beginIdA, const int beginIdB, const int n)
 {
    UTIL_CHECK(a.capacity() >= n + beginIdA);
@@ -553,8 +553,8 @@ __host__ void subVS(DeviceDArray<cudaReal>& a,
 }
 
 // Vector subtraction, a[i] = b[i] - c, kernel wrapper (cudaComplex).
-__host__ void subVS(DeviceDArray<cudaComplex>& a, 
-                    DeviceDArray<cudaComplex> const & b, 
+__host__ void subVS(DeviceArray<cudaComplex>& a, 
+                    DeviceArray<cudaComplex> const & b, 
                     cudaComplex const c, const int beginIdA, 
                     const int beginIdB, const int n)
 {
@@ -571,8 +571,8 @@ __host__ void subVS(DeviceDArray<cudaComplex>& a,
 }
 
 // Vector subtraction, a[i] = b[i] - c, kernel wrapper (mixed, b = real).
-__host__ void subVS(DeviceDArray<cudaComplex>& a, 
-                    DeviceDArray<cudaReal> const & b, 
+__host__ void subVS(DeviceArray<cudaComplex>& a, 
+                    DeviceArray<cudaReal> const & b, 
                     cudaComplex const c, const int beginIdA, 
                     const int beginIdB, const int n)
 {
@@ -589,8 +589,8 @@ __host__ void subVS(DeviceDArray<cudaComplex>& a,
 }
 
 // Vector subtraction, a[i] = b[i] - c, kernel wrapper (mixed, c = real).
-__host__ void subVS(DeviceDArray<cudaComplex>& a, 
-                    DeviceDArray<cudaComplex> const & b, 
+__host__ void subVS(DeviceArray<cudaComplex>& a, 
+                    DeviceArray<cudaComplex> const & b, 
                     cudaReal const c, const int beginIdA, 
                     const int beginIdB, const int n)
 {
@@ -701,9 +701,9 @@ __global__ void _mulVS(cudaComplex* a, cudaComplex const * b,
 }
 
 // Vector multiplication, a[i] = b[i] * c[i], kernel wrapper (cudaReal).
-__host__ void mulVV(DeviceDArray<cudaReal>& a, 
-                    DeviceDArray<cudaReal> const & b, 
-                    DeviceDArray<cudaReal> const & c,
+__host__ void mulVV(DeviceArray<cudaReal>& a, 
+                    DeviceArray<cudaReal> const & b, 
+                    DeviceArray<cudaReal> const & c,
                     const int beginIdA, const int beginIdB, 
                     const int beginIdC, const int n)
 {
@@ -721,9 +721,9 @@ __host__ void mulVV(DeviceDArray<cudaReal>& a,
 }
 
 // Vector multiplication, a[i] = b[i] * c[i], kernel wrapper (cudaComplex).
-__host__ void mulVV(DeviceDArray<cudaComplex>& a, 
-                    DeviceDArray<cudaComplex> const & b, 
-                    DeviceDArray<cudaComplex> const & c,
+__host__ void mulVV(DeviceArray<cudaComplex>& a, 
+                    DeviceArray<cudaComplex> const & b, 
+                    DeviceArray<cudaComplex> const & c,
                     const int beginIdA, const int beginIdB, 
                     const int beginIdC, const int n)
 {
@@ -741,9 +741,9 @@ __host__ void mulVV(DeviceDArray<cudaComplex>& a,
 }
 
 // Vector multiplication, a[i]=b[i]*c[i], kernel wrapper (mixed, b = real).
-__host__ void mulVV(DeviceDArray<cudaComplex>& a, 
-                    DeviceDArray<cudaReal> const & b, 
-                    DeviceDArray<cudaComplex> const & c,
+__host__ void mulVV(DeviceArray<cudaComplex>& a, 
+                    DeviceArray<cudaReal> const & b, 
+                    DeviceArray<cudaComplex> const & c,
                     const int beginIdA, const int beginIdB, 
                     const int beginIdC, const int n)
 {
@@ -761,9 +761,9 @@ __host__ void mulVV(DeviceDArray<cudaComplex>& a,
 }
 
 // Vector multiplication, a[i]=b[i]*c[i], kernel wrapper (mixed, c = real).
-__host__ void mulVV(DeviceDArray<cudaComplex>& a, 
-                    DeviceDArray<cudaComplex> const & b, 
-                    DeviceDArray<cudaReal> const & c,
+__host__ void mulVV(DeviceArray<cudaComplex>& a, 
+                    DeviceArray<cudaComplex> const & b, 
+                    DeviceArray<cudaReal> const & c,
                     const int beginIdA, const int beginIdB, 
                     const int beginIdC, const int n)
 {
@@ -781,8 +781,8 @@ __host__ void mulVV(DeviceDArray<cudaComplex>& a,
 }
 
 // Vector multiplication, a[i] = b[i] * c, kernel wrapper (cudaReal).
-__host__ void mulVS(DeviceDArray<cudaReal>& a, 
-                    DeviceDArray<cudaReal> const & b, cudaReal const c,
+__host__ void mulVS(DeviceArray<cudaReal>& a, 
+                    DeviceArray<cudaReal> const & b, cudaReal const c,
                     const int beginIdA, const int beginIdB, const int n)
 {
    UTIL_CHECK(a.capacity() >= n + beginIdA);
@@ -798,8 +798,8 @@ __host__ void mulVS(DeviceDArray<cudaReal>& a,
 }
 
 // Vector multiplication, a[i] = b[i] * c, kernel wrapper (cudaComplex).
-__host__ void mulVS(DeviceDArray<cudaComplex>& a, 
-                    DeviceDArray<cudaComplex> const & b, 
+__host__ void mulVS(DeviceArray<cudaComplex>& a, 
+                    DeviceArray<cudaComplex> const & b, 
                     cudaComplex const c, const int beginIdA, 
                     const int beginIdB, const int n)
 {
@@ -816,8 +816,8 @@ __host__ void mulVS(DeviceDArray<cudaComplex>& a,
 }
 
 // Vector multiplication, a[i] = b[i] * c, kernel wrapper (mixed, b = real).
-__host__ void mulVS(DeviceDArray<cudaComplex>& a, 
-                    DeviceDArray<cudaReal> const & b, 
+__host__ void mulVS(DeviceArray<cudaComplex>& a, 
+                    DeviceArray<cudaReal> const & b, 
                     cudaComplex const c, const int beginIdA, 
                     const int beginIdB, const int n)
 {
@@ -834,8 +834,8 @@ __host__ void mulVS(DeviceDArray<cudaComplex>& a,
 }
 
 // Vector multiplication, a[i] = b[i] * c, kernel wrapper (mixed, c = real).
-__host__ void mulVS(DeviceDArray<cudaComplex>& a, 
-                    DeviceDArray<cudaComplex> const & b, 
+__host__ void mulVS(DeviceArray<cudaComplex>& a, 
+                    DeviceArray<cudaComplex> const & b, 
                     cudaReal const c, const int beginIdA, 
                     const int beginIdB, const int n)
 {
@@ -898,9 +898,9 @@ __global__ void _divVS(cudaComplex* a, cudaComplex const * b,
 }
 
 // Vector division, a[i] = b[i] / c[i], kernel wrapper (cudaReal).
-__host__ void divVV(DeviceDArray<cudaReal>& a, 
-                    DeviceDArray<cudaReal> const & b, 
-                    DeviceDArray<cudaReal> const & c,
+__host__ void divVV(DeviceArray<cudaReal>& a, 
+                    DeviceArray<cudaReal> const & b, 
+                    DeviceArray<cudaReal> const & c,
                     const int beginIdA, const int beginIdB, 
                     const int beginIdC, const int n)
 {
@@ -918,9 +918,9 @@ __host__ void divVV(DeviceDArray<cudaReal>& a,
 }
 
 // Vector division, a[i] = b[i] / c[i], kernel wrapper (mixed, c = real).
-__host__ void divVV(DeviceDArray<cudaComplex>& a, 
-                    DeviceDArray<cudaComplex> const & b, 
-                    DeviceDArray<cudaReal> const & c,
+__host__ void divVV(DeviceArray<cudaComplex>& a, 
+                    DeviceArray<cudaComplex> const & b, 
+                    DeviceArray<cudaReal> const & c,
                     const int beginIdA, const int beginIdB, 
                     const int beginIdC, const int n)
 {
@@ -938,8 +938,8 @@ __host__ void divVV(DeviceDArray<cudaComplex>& a,
 }
 
 // Vector division, a[i] = b[i] / c, kernel wrapper (cudaReal).
-__host__ void divVS(DeviceDArray<cudaReal>& a, 
-                    DeviceDArray<cudaReal> const & b, cudaReal const c,
+__host__ void divVS(DeviceArray<cudaReal>& a, 
+                    DeviceArray<cudaReal> const & b, cudaReal const c,
                     const int beginIdA, const int beginIdB, const int n)
 {
    UTIL_CHECK(a.capacity() >= n + beginIdA);
@@ -955,8 +955,8 @@ __host__ void divVS(DeviceDArray<cudaReal>& a,
 }
 
 // Vector division, a[i] = b[i] / c, kernel wrapper (mixed, c = real).
-__host__ void divVS(DeviceDArray<cudaComplex>& a, 
-                    DeviceDArray<cudaComplex> const & b, 
+__host__ void divVS(DeviceArray<cudaComplex>& a, 
+                    DeviceArray<cudaComplex> const & b, 
                     cudaReal const c, const int beginIdA, 
                     const int beginIdB, const int n)
 {
@@ -994,8 +994,8 @@ __global__ void _expV(cudaComplex* a, cudaComplex const * b, const int n)
 }
 
 // Vector exponentiation, a[i] = exp(b[i]), kernel wrapper (cudaReal).
-__host__ void expV(DeviceDArray<cudaReal>& a, 
-                   DeviceDArray<cudaReal> const & b,
+__host__ void expV(DeviceArray<cudaReal>& a, 
+                   DeviceArray<cudaReal> const & b,
                    const int beginIdA, const int beginIdB, const int n)
 {
    UTIL_CHECK(a.capacity() >= n + beginIdA);
@@ -1011,8 +1011,8 @@ __host__ void expV(DeviceDArray<cudaReal>& a,
 }
 
 // Vector exponentiation, a[i] = exp(b[i]), kernel wrapper (cudaComplex).
-__host__ void expV(DeviceDArray<cudaComplex>& a, 
-                   DeviceDArray<cudaComplex> const & b,
+__host__ void expV(DeviceArray<cudaComplex>& a, 
+                   DeviceArray<cudaComplex> const & b,
                    const int beginIdA, const int beginIdB, const int n)
 {
    UTIL_CHECK(a.capacity() >= n + beginIdA);
@@ -1090,8 +1090,8 @@ __global__ void _addEqS(cudaComplex* a, cudaReal const b, const int n)
 }
 
 // Vector addition in-place, a[i] += b[i], kernel wrapper (cudaReal).
-__host__ void addEqV(DeviceDArray<cudaReal>& a, 
-                     DeviceDArray<cudaReal> const & b,
+__host__ void addEqV(DeviceArray<cudaReal>& a, 
+                     DeviceArray<cudaReal> const & b,
                      const int beginIdA, const int beginIdB, const int n)
 {
    UTIL_CHECK(a.capacity() >= n + beginIdA);
@@ -1107,8 +1107,8 @@ __host__ void addEqV(DeviceDArray<cudaReal>& a,
 }
 
 // Vector addition in-place, a[i] += b[i], kernel wrapper (cudaComplex).
-__host__ void addEqV(DeviceDArray<cudaComplex>& a, 
-                     DeviceDArray<cudaComplex> const & b,
+__host__ void addEqV(DeviceArray<cudaComplex>& a, 
+                     DeviceArray<cudaComplex> const & b,
                      const int beginIdA, const int beginIdB, const int n)
 {
    UTIL_CHECK(a.capacity() >= n + beginIdA);
@@ -1124,8 +1124,8 @@ __host__ void addEqV(DeviceDArray<cudaComplex>& a,
 }
 
 // Vector addition in-place, a[i] += b[i], kernel wrapper (mixed).
-__host__ void addEqV(DeviceDArray<cudaComplex>& a, 
-                     DeviceDArray<cudaReal> const & b,
+__host__ void addEqV(DeviceArray<cudaComplex>& a, 
+                     DeviceArray<cudaReal> const & b,
                      const int beginIdA, const int beginIdB, const int n)
 {
    UTIL_CHECK(a.capacity() >= n + beginIdA);
@@ -1141,7 +1141,7 @@ __host__ void addEqV(DeviceDArray<cudaComplex>& a,
 }
 
 // Vector addition in-place, a[i] += b, kernel wrapper (cudaReal).
-__host__ void addEqS(DeviceDArray<cudaReal>& a, cudaReal const b,
+__host__ void addEqS(DeviceArray<cudaReal>& a, cudaReal const b,
                      const int beginIdA, const int n)
 {
    UTIL_CHECK(a.capacity() >= n + beginIdA);
@@ -1155,7 +1155,7 @@ __host__ void addEqS(DeviceDArray<cudaReal>& a, cudaReal const b,
 }
 
 // Vector addition in-place, a[i] += b, kernel wrapper (cudaComplex).
-__host__ void addEqS(DeviceDArray<cudaComplex>& a, cudaComplex const b,
+__host__ void addEqS(DeviceArray<cudaComplex>& a, cudaComplex const b,
                      const int beginIdA, const int n)
 {
    UTIL_CHECK(a.capacity() >= n + beginIdA);
@@ -1169,7 +1169,7 @@ __host__ void addEqS(DeviceDArray<cudaComplex>& a, cudaComplex const b,
 }
 
 // Vector addition in-place, a[i] += b, kernel wrapper (mixed).
-__host__ void addEqS(DeviceDArray<cudaComplex>& a, cudaReal const b,
+__host__ void addEqS(DeviceArray<cudaComplex>& a, cudaReal const b,
                      const int beginIdA, const int n)
 {
    UTIL_CHECK(a.capacity() >= n + beginIdA);
@@ -1245,8 +1245,8 @@ __global__ void _subEqS(cudaComplex* a, cudaReal const b, const int n)
 }
 
 // Vector subtraction in-place, a[i] -= b[i], kernel wrapper (cudaReal).
-__host__ void subEqV(DeviceDArray<cudaReal>& a, 
-                     DeviceDArray<cudaReal> const & b,
+__host__ void subEqV(DeviceArray<cudaReal>& a, 
+                     DeviceArray<cudaReal> const & b,
                      const int beginIdA, const int beginIdB, const int n)
 {
    UTIL_CHECK(a.capacity() >= n + beginIdA);
@@ -1262,8 +1262,8 @@ __host__ void subEqV(DeviceDArray<cudaReal>& a,
 }
 
 // Vector subtraction in-place, a[i] -= b[i], kernel wrapper (cudaComplex).
-__host__ void subEqV(DeviceDArray<cudaComplex>& a, 
-                     DeviceDArray<cudaComplex> const & b,
+__host__ void subEqV(DeviceArray<cudaComplex>& a, 
+                     DeviceArray<cudaComplex> const & b,
                      const int beginIdA, const int beginIdB, const int n)
 {
    UTIL_CHECK(a.capacity() >= n + beginIdA);
@@ -1279,8 +1279,8 @@ __host__ void subEqV(DeviceDArray<cudaComplex>& a,
 }
 
 // Vector subtraction in-place, a[i] -= b[i], kernel wrapper (mixed).
-__host__ void subEqV(DeviceDArray<cudaComplex>& a, 
-                     DeviceDArray<cudaReal> const & b,
+__host__ void subEqV(DeviceArray<cudaComplex>& a, 
+                     DeviceArray<cudaReal> const & b,
                      const int beginIdA, const int beginIdB, const int n)
 {
    UTIL_CHECK(a.capacity() >= n + beginIdA);
@@ -1296,7 +1296,7 @@ __host__ void subEqV(DeviceDArray<cudaComplex>& a,
 }
 
 // Vector subtraction in-place, a[i] -= b, kernel wrapper (cudaReal).
-__host__ void subEqS(DeviceDArray<cudaReal>& a, cudaReal const b,
+__host__ void subEqS(DeviceArray<cudaReal>& a, cudaReal const b,
                      const int beginIdA, const int n)
 {
    UTIL_CHECK(a.capacity() >= n + beginIdA);
@@ -1310,7 +1310,7 @@ __host__ void subEqS(DeviceDArray<cudaReal>& a, cudaReal const b,
 }
 
 // Vector subtraction in-place, a[i] -= b, kernel wrapper (cudaComplex).
-__host__ void subEqS(DeviceDArray<cudaComplex>& a, cudaComplex const b,
+__host__ void subEqS(DeviceArray<cudaComplex>& a, cudaComplex const b,
                      const int beginIdA, const int n)
 {
    UTIL_CHECK(a.capacity() >= n + beginIdA);
@@ -1324,7 +1324,7 @@ __host__ void subEqS(DeviceDArray<cudaComplex>& a, cudaComplex const b,
 }
 
 // Vector subtraction in-place, a[i] -= b, kernel wrapper (mixed).
-__host__ void subEqS(DeviceDArray<cudaComplex>& a, cudaReal const b,
+__host__ void subEqS(DeviceArray<cudaComplex>& a, cudaReal const b,
                      const int beginIdA, const int n)
 {
    UTIL_CHECK(a.capacity() >= n + beginIdA);
@@ -1408,8 +1408,8 @@ __global__ void _mulEqS(cudaComplex* a, cudaReal const b, const int n)
 }
 
 // Vector multiplication in-place, a[i] *= b[i], kernel wrapper (cudaReal).
-__host__ void mulEqV(DeviceDArray<cudaReal>& a, 
-                     DeviceDArray<cudaReal> const & b,
+__host__ void mulEqV(DeviceArray<cudaReal>& a, 
+                     DeviceArray<cudaReal> const & b,
                      const int beginIdA, const int beginIdB, const int n)
 {
    UTIL_CHECK(a.capacity() >= n + beginIdA);
@@ -1425,8 +1425,8 @@ __host__ void mulEqV(DeviceDArray<cudaReal>& a,
 }
 
 // Vector multiplication in-place, a[i] *= b[i], kernel wrapper (cudaComplex).
-__host__ void mulEqV(DeviceDArray<cudaComplex>& a, 
-                     DeviceDArray<cudaComplex> const & b,
+__host__ void mulEqV(DeviceArray<cudaComplex>& a, 
+                     DeviceArray<cudaComplex> const & b,
                      const int beginIdA, const int beginIdB, const int n)
 {
    UTIL_CHECK(a.capacity() >= n + beginIdA);
@@ -1443,7 +1443,7 @@ __host__ void mulEqV(DeviceDArray<cudaComplex>& a,
 
 // Vector multiplication in-place, a[i] *= b[i], kernel wrapper (mixed).
 __host__ void
-mulEqV(DeviceDArray<cudaComplex>& a, DeviceDArray<cudaReal> const & b,
+mulEqV(DeviceArray<cudaComplex>& a, DeviceArray<cudaReal> const & b,
                      const int beginIdA, const int beginIdB, const int n)
 {
    UTIL_CHECK(a.capacity() >= n + beginIdA);
@@ -1459,7 +1459,7 @@ mulEqV(DeviceDArray<cudaComplex>& a, DeviceDArray<cudaReal> const & b,
 }
 
 // Vector multiplication in-place, a[i] *= b, kernel wrapper (cudaReal).
-__host__ void mulEqS(DeviceDArray<cudaReal>& a, cudaReal const b,
+__host__ void mulEqS(DeviceArray<cudaReal>& a, cudaReal const b,
                      const int beginIdA, const int n)
 {
    UTIL_CHECK(a.capacity() >= n + beginIdA);
@@ -1473,7 +1473,7 @@ __host__ void mulEqS(DeviceDArray<cudaReal>& a, cudaReal const b,
 }
 
 // Vector multiplication in-place, a[i] *= b, kernel wrapper (cudaComplex).
-__host__ void mulEqS(DeviceDArray<cudaComplex>& a, cudaComplex const b,
+__host__ void mulEqS(DeviceArray<cudaComplex>& a, cudaComplex const b,
                      const int beginIdA, const int n)
 {
    UTIL_CHECK(a.capacity() >= n + beginIdA);
@@ -1487,7 +1487,7 @@ __host__ void mulEqS(DeviceDArray<cudaComplex>& a, cudaComplex const b,
 }
 
 // Vector multiplication in-place, a[i] *= b, kernel wrapper (mixed).
-__host__ void mulEqS(DeviceDArray<cudaComplex>& a, cudaReal const b,
+__host__ void mulEqS(DeviceArray<cudaComplex>& a, cudaReal const b,
                      const int beginIdA, const int n)
 {
    UTIL_CHECK(a.capacity() >= n + beginIdA);
@@ -1543,8 +1543,8 @@ __global__ void _divEqS(cudaComplex* a, cudaReal const b, const int n)
 }
 
 // Vector division in-place, a[i] /= b[i], kernel wrapper (cudaReal).
-__host__ void divEqV(DeviceDArray<cudaReal>& a, 
-                     DeviceDArray<cudaReal> const & b,
+__host__ void divEqV(DeviceArray<cudaReal>& a, 
+                     DeviceArray<cudaReal> const & b,
                      const int beginIdA, const int beginIdB, const int n)
 {
    UTIL_CHECK(a.capacity() >= n + beginIdA);
@@ -1560,8 +1560,8 @@ __host__ void divEqV(DeviceDArray<cudaReal>& a,
 }
 
 // Vector division in-place, a[i] /= b[i], kernel wrapper (mixed).
-__host__ void divEqV(DeviceDArray<cudaComplex>& a, 
-                     DeviceDArray<cudaReal> const & b,
+__host__ void divEqV(DeviceArray<cudaComplex>& a, 
+                     DeviceArray<cudaReal> const & b,
                      const int beginIdA, const int beginIdB, const int n)
 {
    UTIL_CHECK(a.capacity() >= n + beginIdA);
@@ -1577,7 +1577,7 @@ __host__ void divEqV(DeviceDArray<cudaComplex>& a,
 }
 
 // Vector division in-place, a[i] /= b, kernel wrapper (cudaReal).
-__host__ void divEqS(DeviceDArray<cudaReal>& a, cudaReal const b,
+__host__ void divEqS(DeviceArray<cudaReal>& a, cudaReal const b,
                      const int beginIdA, const int n)
 {
    UTIL_CHECK(a.capacity() >= n + beginIdA);
@@ -1591,7 +1591,7 @@ __host__ void divEqS(DeviceDArray<cudaReal>& a, cudaReal const b,
 }
 
 // Vector division in-place, a[i] /= b, kernel wrapper (mixed).
-__host__ void divEqS(DeviceDArray<cudaComplex>& a, cudaReal const b,
+__host__ void divEqS(DeviceArray<cudaComplex>& a, cudaReal const b,
                      const int beginIdA, const int n)
 {
    UTIL_CHECK(a.capacity() >= n + beginIdA);
@@ -1616,8 +1616,8 @@ __global__ void _addEqVc(cudaReal* a, cudaReal const * b,
 }
 
 // Vector addition in-place w/ coefficient, a[i] += b[i] * c, kernel wrapper.
-__host__ void addEqVc(DeviceDArray<cudaReal>& a, 
-                         DeviceDArray<cudaReal> const & b, 
+__host__ void addEqVc(DeviceArray<cudaReal>& a, 
+                         DeviceArray<cudaReal> const & b, 
                          cudaReal const c, const int beginIdA, 
                          const int beginIdB, const int n)
 {
@@ -1644,8 +1644,8 @@ __global__ void _sqNormV(cudaReal* a, cudaComplex const * b, const int n)
 }
 
 // Squared norm of complex vector, a[i] = norm(b[i])^2, kernel wrapper.
-__host__ void sqNormV(DeviceDArray<cudaReal>& a, 
-                      DeviceDArray<cudaComplex> const & b,
+__host__ void sqNormV(DeviceArray<cudaReal>& a, 
+                      DeviceArray<cudaComplex> const & b,
                       const int beginIdA, const int beginIdB, 
                       const int n)
 {
@@ -1673,8 +1673,8 @@ __global__ void _expVc(cudaReal* a, cudaReal const * b,
 }
 
 // Vector exponentiation w/ coefficient, a[i] = exp(b[i]*c), kernel wrapper.
-__host__ void expVc(DeviceDArray<cudaReal>& a, 
-                       DeviceDArray<cudaReal> const & b, 
+__host__ void expVc(DeviceArray<cudaReal>& a, 
+                       DeviceArray<cudaReal> const & b, 
                        cudaReal const c, const int beginIdA, 
                        const int beginIdB, const int n)
 {

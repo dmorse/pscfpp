@@ -4,7 +4,7 @@ pscf_cuda_ =\
    pscf/cuda/ParallelReductions.cu \
    pscf/cuda/ThreadGrid.cu \
    pscf/cuda/CudaRandom.cu \
-   pscf/cuda/DeviceDArray.cu \
+   pscf/cuda/DeviceArray.cu \
    pscf/cuda/HostDArray.cu \
    pscf/cuda/VecOp.cu
 

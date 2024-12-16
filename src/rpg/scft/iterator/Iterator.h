@@ -9,7 +9,7 @@
 */
 
 #include <rpg/scft/sweep/Sweep.h>
-#include <pscf/cuda/DeviceDArray.h>
+#include <pscf/cuda/DeviceArray.h>
 #include <pscf/sweep/ParameterModifier.h> // base class
 #include <util/param/ParamComposite.h>    // base class
 #include <util/global.h>                  
@@ -25,7 +25,7 @@ namespace Rpg
    using namespace Pscf::Prdc;
    using namespace Pscf::Prdc::Cuda;
 
-   typedef DeviceDArray<cudaReal> FieldCUDA;
+   typedef DeviceArray<cudaReal> FieldCUDA;
 
    /**
    * Base class for iterative solvers for SCF equations.

@@ -22,7 +22,7 @@ namespace Cuda {
    */
    template <int D>
    RFieldDft<D>::RFieldDft()
-    : DeviceDArray<cudaComplex>()
+    : DeviceArray<cudaComplex>()
    {}
 
    /*
@@ -30,7 +30,7 @@ namespace Cuda {
    */
    template <int D>
    RFieldDft<D>::RFieldDft(IntVec<D> const & meshDimensions)
-    : DeviceDArray<cudaComplex>()
+    : DeviceArray<cudaComplex>()
    {  allocate(meshDimensions); }
 
    /*
@@ -49,7 +49,7 @@ namespace Cuda {
    */
    template <int D>
    RFieldDft<D>::RFieldDft(const RFieldDft<D>& other)
-    : DeviceDArray<cudaComplex>(other)
+    : DeviceArray<cudaComplex>(other)
    {
       meshDimensions_ = other.meshDimensions_;
       dftDimensions_ = other.dftDimensions_;
@@ -62,7 +62,7 @@ namespace Cuda {
    RFieldDft<D>& RFieldDft<D>::operator = (const RFieldDft<D>& other)
    {
       
-      DeviceDArray<cudaComplex>::operator = (other);
+      DeviceArray<cudaComplex>::operator = (other);
       meshDimensions_ = other.meshDimensions_;
       dftDimensions_ = other.dftDimensions_;
 
@@ -88,7 +88,7 @@ namespace Cuda {
       }
 
       // Use base class assignment operator to copy elements
-      DeviceDArray<cudaComplex>::operator = (other);
+      DeviceArray<cudaComplex>::operator = (other);
 
       return *this;
    }
@@ -112,7 +112,7 @@ namespace Cuda {
          }
       }
       // Note: size denotes size of mesh with dftDimensions 
-      DeviceDArray<cudaComplex>::allocate(size);
+      DeviceArray<cudaComplex>::allocate(size);
    }
 
 }

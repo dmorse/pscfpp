@@ -6,7 +6,7 @@
 
 #include <pscf/cuda/VecOp.h>
 #include <pscf/cuda/HostDArray.h>
-#include <pscf/cuda/DeviceDArray.h>
+#include <pscf/cuda/DeviceArray.h>
 #include <pscf/cuda/GpuResources.h>
 #include <pscf/math/FieldComparison.h>
 #include <util/math/Constants.h>
@@ -37,10 +37,10 @@ private:
 
    // Input and output arrays, real and complex
    HostDArray<cudaReal> hInReal, hInReal2, hOutReal;
-   DeviceDArray<cudaReal> dInReal, dInReal2, dOutReal;
+   DeviceArray<cudaReal> dInReal, dInReal2, dOutReal;
 
    HostDArray<cudaComplex> hInComplex, hInComplex2, hOutComplex;
-   DeviceDArray<cudaComplex> dInComplex, dInComplex2, dOutComplex;
+   DeviceArray<cudaComplex> dInComplex, dInComplex2, dOutComplex;
 
    // Input scalars, real and complex
    cudaReal scalarReal;

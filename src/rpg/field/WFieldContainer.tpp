@@ -222,7 +222,7 @@ namespace Rpg
    * Set new w-field values, using unfoldeded array of r-grid fields.
    */
    template <int D>
-   void WFieldContainer<D>::setRGrid(DeviceDArray<cudaReal> & fields)
+   void WFieldContainer<D>::setRGrid(DeviceArray<cudaReal> & fields)
    {
       UTIL_CHECK(isAllocatedRGrid_);
 

@@ -21,7 +21,7 @@
 #include <prdc/cuda/RField.h>
 
 #include <pscf/cuda/GpuResources.h>
-#include <pscf/cuda/DeviceDArray.h>
+#include <pscf/cuda/DeviceArray.h>
 #include <pscf/inter/Interaction.h>
 #include <pscf/math/IntVec.h>
 #include <pscf/homogeneous/Clump.h>
@@ -691,7 +691,7 @@ namespace Rpg {
    * Set new w-field values, using unfoldeded array of r-grid fields.
    */
    template <int D>
-   void System<D>::setWRGrid(DeviceDArray<cudaReal> & fields)
+   void System<D>::setWRGrid(DeviceArray<cudaReal> & fields)
    {
       UTIL_CHECK(isAllocatedGrid_);
       w_.setRGrid(fields);

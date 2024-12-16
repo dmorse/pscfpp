@@ -5,7 +5,7 @@
 #include <test/UnitTestRunner.h>
 
 #include <pscf/cuda/GpuResources.h>
-#include <pscf/cuda/DeviceDArray.h>
+#include <pscf/cuda/DeviceArray.h>
 #include <util/math/Constants.h>
 
 #include <cstdlib>
@@ -270,7 +270,7 @@ public:
       ThreadGrid::setThreadsLogical(n/2, nBlocks);
 
       // Device arrays
-      DeviceDArray<cudaReal> d_a, d_b;
+      DeviceArray<cudaReal> d_a, d_b;
       d_a.allocate(n);
       d_b.allocate(n);
 
@@ -314,7 +314,7 @@ public:
       ThreadGrid::setThreadsLogical(n/2, nBlocks);
 
       // Device arrays
-      DeviceDArray<cudaReal> d_data;
+      DeviceArray<cudaReal> d_data;
       d_data.allocate(n);
 
       // Host arrays
@@ -354,7 +354,7 @@ public:
       ThreadGrid::setThreadsLogical(n/2, nBlocks);
 
       // Device arrays
-      DeviceDArray<cudaReal> d_data;
+      DeviceArray<cudaReal> d_data;
       d_data.allocate(n);
 
       // Host arrays
@@ -394,7 +394,7 @@ public:
       ThreadGrid::setThreadsLogical(n/2, nBlocks);
 
       // Device arrays
-      DeviceDArray<cudaReal> d_data;
+      DeviceArray<cudaReal> d_data;
       d_data.allocate(n);
 
       // Host arrays
@@ -434,7 +434,7 @@ public:
       ThreadGrid::setThreadsLogical(n/2, nBlocks);
 
       // Device arrays
-      DeviceDArray<cudaReal> d_data;
+      DeviceArray<cudaReal> d_data;
       d_data.allocate(n);
 
       // Host arrays
@@ -474,7 +474,7 @@ public:
       ThreadGrid::setThreadsLogical(n/2, nBlocks);
 
       // Device arrays
-      DeviceDArray<cudaReal> d_data;
+      DeviceArray<cudaReal> d_data;
       d_data.allocate(n);
 
       // Host arrays

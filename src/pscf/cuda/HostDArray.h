@@ -16,7 +16,7 @@ namespace Pscf {
    using namespace Util;
 
    // Forward declaration of analogous container for data on the device.
-   template <typename Data> class DeviceDArray;
+   template <typename Data> class DeviceArray;
 
    /**
    * Template for dynamic array stored in host CPU memory.
@@ -25,7 +25,7 @@ namespace Pscf {
    * assigment (=) operators to copy data between corresponding 
    * containers that store array data in device vs. host memory. A 
    * HostDArray<Data> stores data in a dynamically allocated array in 
-   * host CPU memory, whereas a DeviceDArray<Data> stores analogous 
+   * host CPU memory, whereas a DeviceArray<Data> stores analogous 
    * data in global GPU device memory. Each of these classes defines  
    * an assigment operation that allows assignment from the other, 
    * which silently copies the underlying arrays between device and 
@@ -106,13 +106,13 @@ namespace Pscf {
       HostDArray<Data>& operator = (const HostDArray<Data>& other);
 
       /**
-      * Assignment operator, assign from DeviceDArray<Data> device array.
+      * Assignment operator, assign from DeviceArray<Data> device array.
       *
-      * Performs a deep copy from a RHS DeviceDArray<Data> device array 
+      * Performs a deep copy from a RHS DeviceArray<Data> device array 
       * to this LHS HostDArray<D> host array, by copying the underlying 
       * C array from device memory to host memory.
       *
-      * The RHS DeviceDArray<Data> object must be allocated.  If this LHS 
+      * The RHS DeviceArray<Data> object must be allocated.  If this LHS 
       * HostDArray<D> is not allocated, the correct size block of memory 
       * will be allocated. Otherwise, if this LHS object is allocated on
       * entry, capacity values for LHS and RHS objects must be equal. 
@@ -120,10 +120,10 @@ namespace Pscf {
       * Exceptions are thrown if the RHS array is not allocated or if
       * both arrays are allocated but have unequal capacities.
       *
-      * \param other DeviceDArray<Data> array on RHS of assignment (input)
+      * \param other DeviceArray<Data> array on RHS of assignment (input)
       */
       virtual 
-      HostDArray<Data>& operator = (const DeviceDArray<Data>& other);
+      HostDArray<Data>& operator = (const DeviceArray<Data>& other);
 
       /**
       * Get one element by non-const reference.

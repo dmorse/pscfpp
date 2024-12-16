@@ -37,8 +37,8 @@ namespace Rpg{
    void LrAmCompressor<D>::readParameters(std::istream& in)
    {
       // Call parent class readParameters
-      AmIteratorTmpl<Compressor<D>, DeviceDArray<cudaReal> >::readParameters(in);
-      AmIteratorTmpl<Compressor<D>, DeviceDArray<cudaReal> >::readErrorType(in);
+      AmIteratorTmpl<Compressor<D>, DeviceArray<cudaReal> >::readParameters(in);
+      AmIteratorTmpl<Compressor<D>, DeviceArray<cudaReal> >::readErrorType(in);
    }
    
    // Initialize just before entry to iterative loop.
@@ -54,7 +54,7 @@ namespace Rpg{
       ThreadGrid::setThreadsLogical(meshSize, nBlocks, nThreads);
       
       // Allocate memory required by AM algorithm if not done earlier.
-      AmIteratorTmpl<Compressor<D>, DeviceDArray<cudaReal> >::setup(isContinuation);
+      AmIteratorTmpl<Compressor<D>, DeviceArray<cudaReal> >::setup(isContinuation);
       
       // Compute Fourier space kMeshDimensions_
       for (int i = 0; i < D; ++i) {
@@ -101,15 +101,15 @@ namespace Rpg{
    template <int D>
    int LrAmCompressor<D>::compress()
    {
-      int solve = AmIteratorTmpl<Compressor<D>, DeviceDArray<cudaReal> >::solve();
+      int solve = AmIteratorTmpl<Compressor<D>, DeviceArray<cudaReal> >::solve();
       //mdeCounter_ = AmIteratorTmpl<Compressor<D>,DArray<double>>::totalItr();
       return solve;
    }
 
    // Assign one array to another
    template <int D>
-   void LrAmCompressor<D>::setEqual(DeviceDArray<cudaReal>& a, 
-                                    DeviceDArray<cudaReal> const & b)
+   void LrAmCompressor<D>::setEqual(DeviceArray<cudaReal>& a, 
+                                    DeviceArray<cudaReal> const & b)
    {
       // GPU resources
       int nBlocks, nThreads;
@@ -121,8 +121,8 @@ namespace Rpg{
    
    // Compute and return inner product of two vectors.
    template <int D>
-   double LrAmCompressor<D>::dotProduct(DeviceDArray<cudaReal> const & a, 
-                                            DeviceDArray<cudaReal> const & b)
+   double LrAmCompressor<D>::dotProduct(DeviceArray<cudaReal> const & a, 
+                                            DeviceArray<cudaReal> const & b)
    {
       const int n = a.capacity();
       UTIL_CHECK(b.capacity() == n);
@@ -132,7 +132,7 @@ namespace Rpg{
 
    // Compute and return maximum element of a vector.
    template <int D>
-   double LrAmCompressor<D>::maxAbs(DeviceDArray<cudaReal> const & a)
+   double LrAmCompressor<D>::maxAbs(DeviceArray<cudaReal> const & a)
    {
       int n = a.capacity();
       cudaReal max = gpuMaxAbs(a.cArray(), n);
@@ -142,8 +142,8 @@ namespace Rpg{
    // Update basis
    template <int D>
    void 
-   LrAmCompressor<D>::updateBasis(RingBuffer< DeviceDArray<cudaReal> > & basis,
-                                  RingBuffer< DeviceDArray<cudaReal> > const & hists)
+   LrAmCompressor<D>::updateBasis(RingBuffer< DeviceArray<cudaReal> > & basis,
+                                  RingBuffer< DeviceArray<cudaReal> > const & hists)
    {
       // Make sure at least two histories are stored
       UTIL_CHECK(hists.size() >= 2);
@@ -163,8 +163,8 @@ namespace Rpg{
 
    template <int D>
    void
-   LrAmCompressor<D>::addHistories(DeviceDArray<cudaReal>& trial,
-                                   RingBuffer<DeviceDArray<cudaReal> > const & basis,
+   LrAmCompressor<D>::addHistories(DeviceArray<cudaReal>& trial,
+                                   RingBuffer<DeviceArray<cudaReal> > const & basis,
                                    DArray<double> coeffs,
                                    int nHist)
    {
@@ -185,8 +185,8 @@ namespace Rpg{
    }
 
    template <int D>
-   void LrAmCompressor<D>::addPredictedError(DeviceDArray<cudaReal>& fieldTrial,
-                                             DeviceDArray<cudaReal> const & resTrial,
+   void LrAmCompressor<D>::addPredictedError(DeviceArray<cudaReal>& fieldTrial,
+                                             DeviceArray<cudaReal> const & resTrial,
                                              double lambda)
    {
       int n = fieldTrial.capacity();
@@ -230,7 +230,7 @@ namespace Rpg{
 
    // Get the current field from the system
    template <int D>
-   void LrAmCompressor<D>::getCurrent(DeviceDArray<cudaReal>& curr)
+   void LrAmCompressor<D>::getCurrent(DeviceArray<cudaReal>& curr)
    {
       // Straighten out fields into  linear arrays
       const int meshSize = system().domain().mesh().size();
@@ -261,7 +261,7 @@ namespace Rpg{
 
    // Compute the residual for the current system state
    template <int D>
-   void LrAmCompressor<D>::getResidual(DeviceDArray<cudaReal>& resid)
+   void LrAmCompressor<D>::getResidual(DeviceArray<cudaReal>& resid)
    {
       const int n = nElements();
       const int nMonomer = system().mixture().nMonomer();
@@ -284,7 +284,7 @@ namespace Rpg{
 
    // Update the current system field coordinates
    template <int D>
-   void LrAmCompressor<D>::update(DeviceDArray<cudaReal>& newGuess)
+   void LrAmCompressor<D>::update(DeviceArray<cudaReal>& newGuess)
    {
       // Convert back to field format
       const int nMonomer = system().mixture().nMonomer();
@@ -314,14 +314,14 @@ namespace Rpg{
       // Output timing results, if requested.
       out << "\n";
       out << "LrAmCompressor time contributions:\n";
-      AmIteratorTmpl<Compressor<D>, DeviceDArray<cudaReal> >::outputTimers(out);
+      AmIteratorTmpl<Compressor<D>, DeviceArray<cudaReal> >::outputTimers(out);
    }
    
    // Clear timers and MDE counter 
    template<int D>
    void LrAmCompressor<D>::clearTimers()
    {
-      AmIteratorTmpl<Compressor<D>, DeviceDArray<cudaReal> >::clearTimers();
+      AmIteratorTmpl<Compressor<D>, DeviceArray<cudaReal> >::clearTimers();
       mdeCounter_ = 0;
    }
    

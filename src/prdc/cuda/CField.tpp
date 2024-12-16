@@ -23,7 +23,7 @@ namespace Cuda {
    */
    template <int D>
    CField<D>::CField()
-    : DeviceDArray<cudaComplex>()
+    : DeviceArray<cudaComplex>()
    {}
 
    /**
@@ -31,7 +31,7 @@ namespace Cuda {
    */
    template <int D>
    CField<D>::CField(IntVec<D> const & meshDimensions)
-    : DeviceDArray<cudaComplex>()
+    : DeviceArray<cudaComplex>()
    {  allocate(meshDimensions); }
 
    /*
@@ -50,7 +50,7 @@ namespace Cuda {
    */
    template <int D>
    CField<D>::CField(const CField<D>& other)
-    : DeviceDArray<cudaComplex>(other),
+    : DeviceArray<cudaComplex>(other),
       meshDimensions_(0)
    {
       meshDimensions_ = other.meshDimensions_;
@@ -62,7 +62,7 @@ namespace Cuda {
    template <int D>
    CField<D>& CField<D>::operator = (const CField<D>& other)
    {
-      DeviceDArray<cudaComplex>::operator = (other);
+      DeviceArray<cudaComplex>::operator = (other);
       meshDimensions_ = other.meshDimensions_;
 
       return *this;
@@ -86,7 +86,7 @@ namespace Cuda {
       }
 
       // Use base class assignment operator to copy elements
-      DeviceDArray<cudaComplex>::operator = (other);
+      DeviceArray<cudaComplex>::operator = (other);
 
       return *this;
    }
@@ -103,7 +103,7 @@ namespace Cuda {
          meshDimensions_[i] = meshDimensions[i];
          size *= meshDimensions[i];
       }
-      DeviceDArray<cudaComplex>::allocate(size);
+      DeviceArray<cudaComplex>::allocate(size);
    }
 
 }

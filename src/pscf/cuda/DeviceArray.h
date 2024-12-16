@@ -1,5 +1,5 @@
-#ifndef PSCF_DEVICE_D_ARRAY_H
-#define PSCF_DEVICE_D_ARRAY_H
+#ifndef PSCF_DEVICE_ARRAY_H
+#define PSCF_DEVICE_ARRAY_H
 
 /*
 * PSCF Package 
@@ -30,7 +30,7 @@ namespace Pscf {
    * \ingroup Pscf_Cuda_Module
    */
    template <typename Data>
-   class DeviceDArray
+   class DeviceArray
    {
 
    public:
@@ -38,7 +38,7 @@ namespace Pscf {
       /**
       * Default constructor.
       */
-      DeviceDArray();
+      DeviceArray();
 
       /**
       * Allocating constructor.
@@ -47,21 +47,33 @@ namespace Pscf {
       * 
       * \param capacity number of elements to allocate 
       */
-      DeviceDArray(int capacity);
+      DeviceArray(int capacity);
+
+      /**
+      * Associating constructor.
+      *
+      * This function calls associate(arr, beginId, capacity) 
+      * internally.
+      * 
+      * \param arr parent array that owns the data
+      * \param beginId index in the parent array at which this array starts
+      * \param capacity number of elements to allocate 
+      */
+      DeviceArray(DeviceArray<Data>& arr, int beginId, int capacity);
 
       /**
       * Copy constructor.
       * 
-      * \param other DeviceDArray<Data> to be copied (input)
+      * \param other DeviceArray<Data> to be copied (input)
       */
-      DeviceDArray(DeviceDArray<Data> const & other);
+      DeviceArray(DeviceArray<Data> const & other);
 
       /**
       * Destructor.
       *
       * Deletes underlying C array, if allocated previously.
       */
-      virtual ~DeviceDArray();
+      virtual ~DeviceArray();
 
       /**
       * Allocate the underlying C array on the device.
@@ -73,42 +85,61 @@ namespace Pscf {
       void allocate(int capacity);
 
       /**
+      * Associate this object with a slice of a different DeviceArray.
+      *
+      * \throw Exception if the array is already allocated.
+      *
+      * \param arr parent array that owns the data
+      * \param beginId index in the parent array at which this array starts
+      * \param capacity number of elements to allocate 
+      */
+      void associate(DeviceArray<Data>& arr, int beginId, int capacity);
+
+      /**
       * Dellocate the underlying C array.
       *
       * \throw Exception if the array is not allocated.
+      * \throw Exception if this object does not own the array.
       */
       void deallocate();
 
       /**
-      * Assignment operator, assign from another DeviceDArray<Data> array.
+      * Dissociate this object from the associated array.
+      *
+      * \throw Exception if this object is not associated with an array.
+      */
+      void dissociate();
+
+      /**
+      * Assignment operator, assign from another DeviceArray<Data> array.
       *  
       * Performs a deep copy, by copying values of all elements from 
       * device memory to device memory.
       *
       * This function will allocate memory if this (LHS) array is not 
       * allocated.  If this is allocated, it must have the same 
-      * dimensions as the RHS DeviceDArray<Data>.
+      * dimensions as the RHS DeviceArray<Data>.
       *
-      * \param other DeviceDArray<Data> on rhs of assignent (input)
+      * \param other DeviceArray<Data> on rhs of assignent (input)
       */
       virtual 
-      DeviceDArray<Data>& operator = (const DeviceDArray<Data>& other);
+      DeviceArray<Data>& operator = (const DeviceArray<Data>& other);
 
       /**
       * Assignment operator, assignment from HostDArray<Data> host array.
       *
       * Performs a deep copy from a RHS HostDArray<Data> host array to 
-      * this LHS DeviceDArray<Data> device array, by copying underlying 
+      * this LHS DeviceArray<Data> device array, by copying underlying 
       * C array from host memory to device memory.
       *
       * This function will allocate memory if this (LHS) 
-      * DeviceDArray<Data> is not allocated.  If this is allocated, it 
+      * DeviceArray<Data> is not allocated.  If this is allocated, it 
       * must have the same dimensions as the RHS HostDArray<Data>.
       *
       * \param other HostDArray<Data> on RHS of assignent (input)
       */
       virtual 
-      DeviceDArray<Data>& operator = (const HostDArray<Data>& other);
+      DeviceArray<Data>& operator = (const HostDArray<Data>& other);
 
       /**
       * Return allocated capacity.
@@ -123,12 +154,17 @@ namespace Pscf {
       bool isAllocated() const;
 
       /**
+      * Does this object own the underlying array? 
+      */
+      bool isOwner() const;
+
+      /**
       * Return pointer to underlying C array.
       */
       Data* cArray();
 
       /**
-      * Return pointer to const to underlying C array.
+      * Return const pointer to underlying C array.
       */
       Data const * cArray() const;
 
@@ -140,39 +176,51 @@ namespace Pscf {
       /// Allocated size (capacity) of the data_ array.
       int capacity_;
 
+      /// Does this object own the underlying array? 
+      bool isOwner_;
+
+      /**
+      * Pointer to array that owns this data, if isOwner_ == false.
+      * 
+      * Used to check that parent array has not been deallocated and/or
+      * reallocated.
+      */
+      DeviceArray<Data> const * ownerPtr_;
+
+      /**
+      * Capacity of parent array, if isOwner_ == false.
+      * 
+      * Used to check that parent array has not been deallocated and/or
+      * reallocated.
+      */
+      int ownerCapacity_;
+
+      /**
+      * Const pointer to parent array, if isOwner_ == false
+      * 
+      * Used to check that parent array has not been deallocated and/or
+      * reallocated.
+      */
+      Data const * ownerData_;
    };
 
    /*
    * Return allocated capacity.
    */
    template <typename Data>
-   inline int DeviceDArray<Data>::capacity() const
+   inline int DeviceArray<Data>::capacity() const
    {  return capacity_; }
 
    /*
-   * Get a pointer to the underlying C array.
+   * Does this object own the underlying array? 
    */
    template <typename Data>
-   inline Data* DeviceDArray<Data>::cArray()
-   {  return data_; }
+   inline bool DeviceArray<Data>::isOwner() const
+   {  return isOwner_; }
 
-   /*
-   * Get a pointer to const to the underlying C array.
-   */
-   template <typename Data>
-   inline const Data* DeviceDArray<Data>::cArray() const
-   {  return data_; }
-
-   /*
-   * Return true if the array has been allocated, false otherwise.
-   */
-   template <typename Data>
-   inline bool DeviceDArray<Data>::isAllocated() const
-   {  return (bool)data_; }
-
-   #ifndef PSCF_DEVICE_D_ARRAY_TPP
-   extern template class DeviceDArray<cudaReal>;
-   extern template class DeviceDArray<cudaComplex>;
+   #ifndef PSCF_DEVICE_ARRAY_TPP
+   extern template class DeviceArray<cudaReal>;
+   extern template class DeviceArray<cudaComplex>;
    #endif
 
 } // namespace Pscf

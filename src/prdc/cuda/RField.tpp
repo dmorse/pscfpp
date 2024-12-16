@@ -23,7 +23,7 @@ namespace Cuda {
    */
    template <int D>
    RField<D>::RField()
-    : DeviceDArray<cudaReal>()
+    : DeviceArray<cudaReal>()
    {}
 
    /**
@@ -31,7 +31,7 @@ namespace Cuda {
    */
    template <int D>
    RField<D>::RField(IntVec<D> const & meshDimensions)
-    : DeviceDArray<cudaReal>()
+    : DeviceArray<cudaReal>()
    {  allocate(meshDimensions); }
 
    /*
@@ -43,7 +43,7 @@ namespace Cuda {
    */
    template <int D>
    RField<D>::RField(const RField<D>& other)
-    : DeviceDArray<cudaReal>(other),
+    : DeviceArray<cudaReal>(other),
       meshDimensions_(0)
    {  meshDimensions_ = other.meshDimensions_; }
 
@@ -66,7 +66,7 @@ namespace Cuda {
          meshDimensions_[i] = meshDimensions[i];
          size *= meshDimensions[i];
       }
-      DeviceDArray<cudaReal>::allocate(size);
+      DeviceArray<cudaReal>::allocate(size);
    }
 
    /*
@@ -75,7 +75,7 @@ namespace Cuda {
    template <int D>
    RField<D>& RField<D>::operator = (const RField<D>& other)
    {
-      DeviceDArray<cudaReal>::operator = (other);
+      DeviceArray<cudaReal>::operator = (other);
       meshDimensions_ = other.meshDimensions_;
 
       return *this;
@@ -99,7 +99,7 @@ namespace Cuda {
       }
 
       // Use base class assignment operator to copy elements
-      DeviceDArray<cudaReal>::operator = (other);
+      DeviceArray<cudaReal>::operator = (other);
 
       return *this;
    }

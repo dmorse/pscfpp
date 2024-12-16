@@ -5,11 +5,11 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "DeviceDArray.tpp"
+#include "DeviceArray.tpp"
 
 namespace Pscf {
 
-   template class DeviceDArray<cudaReal>;
-   template class DeviceDArray<cudaComplex>;
+   template class DeviceArray<cudaReal>;
+   template class DeviceArray<cudaComplex>;
 
 }

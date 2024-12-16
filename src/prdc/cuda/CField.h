@@ -8,7 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/cuda/DeviceDArray.h>
+#include <pscf/cuda/DeviceArray.h>
 #include <pscf/cuda/HostDArray.h>
 #include <pscf/cuda/GpuResources.h>
 #include <pscf/math/IntVec.h>
@@ -27,7 +27,7 @@ namespace Cuda {
    * \ingroup Prdc_Cuda_Module 
    */
    template <int D>
-   class CField : public DeviceDArray<cudaComplex>
+   class CField : public DeviceArray<cudaComplex>
    {
 
    public:
@@ -119,10 +119,13 @@ namespace Cuda {
       IntVec<D> meshDimensions_;
 
       // Make private to prevent allocation without mesh dimensions.
-      using DeviceDArray<cudaComplex>::allocate;
+      using DeviceArray<cudaComplex>::allocate;
+
+      // Make private to prevent association.
+      using DeviceArray<cudaComplex>::associate;
 
       // Make private to prevent assignment without mesh dimensions
-      using DeviceDArray<cudaComplex>::operator=;
+      using DeviceArray<cudaComplex>::operator=;
 
    };
 

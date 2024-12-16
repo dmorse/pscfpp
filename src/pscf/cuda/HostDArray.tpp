@@ -9,7 +9,7 @@
 */
 
 #include "HostDArray.h"
-#include "DeviceDArray.h"
+#include "DeviceArray.h"
 
 namespace Pscf {
 
@@ -130,15 +130,15 @@ namespace Pscf {
    }
 
    /*
-   * Assignment from a DeviceDArray<Data> RHS device array.
+   * Assignment from a DeviceArray<Data> RHS device array.
    */
    template <typename Data>
    HostDArray<Data>& 
-   HostDArray<Data>::operator = (const DeviceDArray<Data>& other)
+   HostDArray<Data>::operator = (const DeviceArray<Data>& other)
    {
       // Precondition - RHS array must be allocated
       if (!other.isAllocated()) {
-         UTIL_THROW("RHS DeviceDArray<Data> must be allocated.");
+         UTIL_THROW("RHS DeviceArray<Data> must be allocated.");
       }
 
       // Allocate this if necessary 

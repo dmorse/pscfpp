@@ -4,7 +4,7 @@
 #include <test/UnitTest.h>
 #include <test/UnitTestRunner.h>
 
-#include <pscf/cuda/DeviceDArray.h>
+#include <pscf/cuda/DeviceArray.h>
 #include <pscf/cuda/HostDArray.h>
 #include <pscf/cuda/GpuResources.h>
 #include <util/math/Constants.h>
@@ -27,7 +27,7 @@ public:
    {
       printMethod(TEST_FUNC);
       HostDArray<cudaReal> h;
-      DeviceDArray<cudaReal> d;
+      DeviceArray<cudaReal> d;
 
       TEST_ASSERT(h.capacity() == 0 );
       TEST_ASSERT(!h.isAllocated() );
@@ -40,9 +40,9 @@ public:
       printMethod(TEST_FUNC);
 
       HostDArray<cudaReal> h;
-      DeviceDArray<cudaReal> d;
+      DeviceArray<cudaReal> d;
 
-      int capacity = 3;
+      int capacity = 32;
       h.allocate(capacity);
       d.allocate(capacity);
 
@@ -50,6 +50,7 @@ public:
       TEST_ASSERT(h.isAllocated());
       TEST_ASSERT(d.capacity() == capacity);
       TEST_ASSERT(d.isAllocated());
+      TEST_ASSERT(d.isOwner());
 
       h.deallocate();
       d.deallocate(); 
@@ -59,6 +60,26 @@ public:
       TEST_ASSERT(!d.isAllocated());
    }
 
+   void testAssociate()
+   {
+      printMethod(TEST_FUNC);
+
+      DeviceArray<cudaReal> d1;
+      DeviceArray<cudaReal> d2;
+
+      int capacity = 128;
+      d1.allocate(capacity);
+      TEST_ASSERT(d1.capacity() == capacity);
+      TEST_ASSERT(d1.isAllocated());
+      TEST_ASSERT(d1.isOwner());
+      
+      d2.associate(d1, capacity/4, capacity/2);
+      TEST_ASSERT(d2.capacity() == capacity/2);
+      TEST_ASSERT(d2.isAllocated());
+      TEST_ASSERT(!d2.isOwner());
+      TEST_ASSERT(d1.cArray()+(capacity/4) == d2.cArray());
+   }
+
    void testAssignmentOperators()
    {
       printMethod(TEST_FUNC);
@@ -66,8 +87,8 @@ public:
       int nx = 10;
 
       // Device arrays
-      DeviceDArray<cudaReal> d1(nx);
-      DeviceDArray<cudaReal> d2(nx);
+      DeviceArray<cudaReal> d1(nx);
+      DeviceArray<cudaReal> d2(nx);
 
       // Host arrays
       HostDArray<cudaReal> in(nx);
@@ -105,6 +126,7 @@ public:
 TEST_BEGIN(CudaArrayTest)
 TEST_ADD(CudaArrayTest, testConstructors)
 TEST_ADD(CudaArrayTest, testAllocate)
+TEST_ADD(CudaArrayTest, testAssociate)
 TEST_ADD(CudaArrayTest, testAssignmentOperators)
 TEST_END(CudaArrayTest)
 
