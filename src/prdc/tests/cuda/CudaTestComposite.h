@@ -5,14 +5,12 @@
 
 #include "CudaFieldTest.h"
 #include "CudaFieldComparisonTest.h"
-#include "CudaResourceTest.h"
 #include "CudaFieldTest.h"
 #include "CudaFftTest.h"
 
 TEST_COMPOSITE_BEGIN(CudaTestComposite)
 TEST_COMPOSITE_ADD_UNIT(CudaFieldTest);
 TEST_COMPOSITE_ADD_UNIT(CudaFieldComparisonTest);
-TEST_COMPOSITE_ADD_UNIT(CudaResourceTest);
 TEST_COMPOSITE_ADD_UNIT(CudaFftTest);
 TEST_COMPOSITE_END
 

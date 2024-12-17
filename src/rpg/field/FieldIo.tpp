@@ -456,7 +456,6 @@ namespace Rpg {
       DArray< HostDArray<cudaReal> > hostFields;
       hostFields.allocate(nMonomer);
       for (int i = 0; i < nMonomer; ++i) {
-         //hostFields[i] = new cudaReal[mesh().size()];
          hostFields[i].allocate(mesh().size());
       }
 
@@ -495,10 +494,6 @@ namespace Rpg {
 
       for (int i = 0; i < nMonomer; i++) {
          fields[i] = hostFields[i];
-         //cudaMemcpy(fields[i].cArray(), hostFields[i],
-         //    mesh().size() * sizeof(cudaReal), cudaMemcpyHostToDevice);
-         //delete[] hostFields[i];
-         //hostFields[i] = nullptr;
       }
 
    }
@@ -540,11 +535,9 @@ namespace Rpg {
       in >> nGrid;
       UTIL_CHECK(nGrid == mesh().dimensions());
 
-      //DArray<cudaReal*> hostFields;
       DArray< HostDArray<cudaReal> > hostFields;
       hostFields.allocate(nMonomer);
       for(int i = 0; i < nMonomer; ++i) {
-         //hostFields[i] = new cudaReal[mesh().size()];
          hostFields[i].allocate(mesh().size());
       }
 
@@ -582,11 +575,6 @@ namespace Rpg {
       }
 
       for (int i = 0; i < nMonomer; i++) {
-         //cudaMemcpy(fields[i].cArray(), hostFields[i],
-         //           mesh().size() * sizeof(cudaReal), 
-         //           cudaMemcpyHostToDevice);
-         //delete[] hostFields[i];
-         //hostFields[i] = nullptr;
          fields[i] = hostFields[i];
       }
 
@@ -619,7 +607,6 @@ namespace Rpg {
       in >> nGrid;
       UTIL_CHECK(nGrid == mesh().dimensions());
 
-      //cudaReal* hostField = new cudaReal[mesh().size()];
       HostDArray<cudaReal> hostField(mesh().size());
 
       IntVec<D> offsets;
@@ -654,11 +641,6 @@ namespace Rpg {
          }
 
       }
-
-      //cudaMemcpy(field.cArray(), hostField,
-      //      mesh().size() * sizeof(cudaReal), cudaMemcpyHostToDevice);
-      //delete[] hostField;
-      //hostField = nullptr;
 
       field = hostField;
 
@@ -696,13 +678,9 @@ namespace Rpg {
       out << "mesh " <<  std::endl
           << "           " << mesh().dimensions() << std::endl;
 
-      //DArray<cudaReal*> hostFields;
       DArray< HostDArray<cudaReal> > hostFields;
       hostFields.allocate(nMonomer);
       for (int i = 0; i < nMonomer; ++i) {
-         //hostFields[i] = new cudaReal[mesh().size()];
-         //cudaMemcpy(hostFields[i], fields[i].cArray(),
-         //           mesh().size() * sizeof(cudaReal), cudaMemcpyDeviceToHost);
          hostFields[i].allocate(mesh().size());
          hostFields[i] = fields[i];
       }
@@ -740,12 +718,6 @@ namespace Rpg {
             break;
          }
       }
-
-      //for(int i = 0; i < nMonomer; ++i) {
-      //   delete[] hostFields[i];
-      //   hostFields[i] = nullptr;
-      //}
-
    }
 
    /*
@@ -781,10 +753,6 @@ namespace Rpg {
              << "           " << mesh().dimensions() << std::endl;
       }
 
-      //cudaReal* hostField = new cudaReal[mesh().size()];;
-      //cudaMemcpy(hostField, field.cArray(),
-      //           mesh().size() * sizeof(cudaReal), 
-      //           cudaMemcpyDeviceToHost);
       HostDArray<cudaReal> hostField(mesh().size());
       hostField = field;
 
@@ -819,9 +787,6 @@ namespace Rpg {
             break;
          }
       }
-
-      //delete[] hostField;
-      //hostField = nullptr;
    }
 
    /*
@@ -878,17 +843,14 @@ namespace Rpg {
          }
       }
 
-      //DArray<cudaComplex*> hostFields;
       DArray< HostDArray<cudaComplex> > hostFields;
       hostFields.allocate(nMonomer);
       for(int i = 0; i < nMonomer; ++i) {
-         //hostFields[i] = new cudaComplex[kSize];
          hostFields[i].allocate(kSize);
       }
 
       // Read Fields;
       int idum;
-      //MeshIterator<D> itr(mesh().dimensions());
       for (int i = 0; i < kSize; ++i) {
          in >> idum;
          for (int j = 0; j < nMonomer; ++j) {
@@ -899,10 +861,6 @@ namespace Rpg {
 
       // Copy fields from host to device
       for(int i = 0; i < nMonomer; ++i) {
-         //cudaMemcpy(fields[i].cArray(), hostFields[i],
-         //   kSize * sizeof(cudaComplex), cudaMemcpyHostToDevice);
-         //delete[] hostFields[i];
-         //hostFields[i] = nullptr;
          fields[i] = hostFields[i];
       }
 
@@ -944,13 +902,9 @@ namespace Rpg {
          }
       }
 
-      //DArray<cudaComplex*> hostFields;
       DArray< HostDArray<cudaComplex> > hostFields;
       hostFields.allocate(nMonomer);
       for(int i = 0; i < nMonomer; ++i) {
-         //hostFields[i] = new cudaComplex[kSize];
-         //cudaMemcpy(hostFields[i], fields[i].cArray(),
-         //   kSize * sizeof(cudaComplex), cudaMemcpyDeviceToHost);
          hostFields[i].allocate(kSize);
          hostFields[i] = fields[i];
       }
@@ -965,11 +919,6 @@ namespace Rpg {
          }
          out << std::endl;
       }
-
-      //for(int i = 0; i < nMonomer; ++i) {
-      //   delete[] hostFields[i];
-      //   hostFields[i] = nullptr;
-      //}
    }
 
    template <int D>
@@ -1112,8 +1061,6 @@ namespace Rpg {
       UTIL_CHECK(kSize == dft.capacity());
       
       // Allocate hostDft
-      //cudaComplex* hostDft;
-      //hostDft = new cudaComplex[kSize];
       HostDArray<cudaComplex> hostDft(kSize);
 
       // Create Mesh<D> with dimensions of DFT Fourier grid.
@@ -1224,14 +1171,7 @@ namespace Rpg {
 
          }
       }
-
-      // Copy hostDft (host) to dft (device)
-      //cudaMemcpy(dft.cArray(), hostDft,
-      //           kSize * sizeof(cudaComplex), cudaMemcpyHostToDevice);
       dft = hostDft;
-
-      //delete[] hostDft;
-
    }
 
    template <int D>
@@ -1261,13 +1201,9 @@ namespace Rpg {
       UTIL_CHECK(dftMesh.size() == kSize);
 
       // Allocate hostDft
-      //cudaComplex* hostDft;
-      //hostDft = new cudaComplex[kSize];
       HostDArray<cudaComplex> hostDft(kSize);
 
       // Copy dft (device) to hostDft (host)
-      //cudaMemcpy(hostDft, dft.cArray(),
-      //       kSize * sizeof(cudaComplex), cudaMemcpyDeviceToHost);
       hostDft = dft;
 
       // Declare variables needed in loop over stars
@@ -1421,9 +1357,6 @@ namespace Rpg {
          }
 
       } //  loop over star index is
-
-      // Deallocate array (clean up)
-      // delete[] hostDft;
    }
 
    template <int D>
@@ -1541,6 +1474,6 @@ namespace Rpg {
       }
    }
 
-} // namespace Rpc
+} // namespace Rpg
 } // namespace Pscf
 #endif

@@ -82,8 +82,8 @@ namespace Rpg {
       
 
       // Pointwise multiply tail QFields of all sources
-      // this could be slow with many sources. Should launch 1 kernel for the whole
-      // function of computeHead
+      // this could be slow with many sources. Should launch 1 kernel for the 
+      // whole function of computeHead
       const cudaReal* qt;
       for (int is = 0; is < nSource(); ++is) {
          if (!source(is).isSolved()) {

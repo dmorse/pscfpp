@@ -31,7 +31,8 @@ namespace Rpg {
    * Container for wavevector data.
    */
    template <int D>
-   class WaveList{
+   class WaveList
+   {
    public:
 
       /**
@@ -94,14 +95,14 @@ namespace Rpg {
       const IntVec<D>& minImage(int i) const;
 
       /**
-      * Get a pointer to the kSq array on device.
+      * Get the kSq array on the host by reference.
       */
-      cudaReal* kSq() const;
+      HostDArray<cudaReal> const & kSq() const;
 
       /**
-      * Get a pointer to the dkSq array on device.
+      * Get the dkSq array on the device by reference.
       */
-      cudaReal* dkSq() const;
+      DeviceArray<cudaReal> const & dkSq() const;
 
       /**
       * Get size of k-grid (number of wavewavectors).
@@ -122,33 +123,32 @@ namespace Rpg {
 
    private:
 
-      // Bare C array holding precomputed minimum images
-      int* minImage_d;
+      // Array containing precomputed minimum images
+      DeviceArray<int> minImage_;
+      DArray< IntVec<D> > minImage_h_;
 
-      // Bare C array holding values of kSq_
-      cudaReal*  kSq_;
+      // Array containing values of kSq_, stored on the host
+      HostDArray<cudaReal> kSq_h_;
 
-      // Bare C array holding values of dkSq_
-      cudaReal*  dkSq_;
+      // Array containing values of dkSq_ stored on the device
+      DeviceArray<cudaReal>  dkSq_;
 
-      cudaReal* dkkBasis_d;
-      cudaReal* dkkBasis;
+      DeviceArray<cudaReal> dkkBasis_;
+      HostDArray<cudaReal> dkkBasis_h_;
 
-      int* partnerIdTable;
-      int* partnerIdTable_d;
+      DeviceArray<int> partnerIdTable_;
+      HostDArray<int> partnerIdTable_h_;
 
-      int* selfIdTable;
-      int* selfIdTable_d;
+      DeviceArray<int> selfIdTable_;
+      HostDArray<int> selfIdTable_h_;
 
-      bool* implicit;
-      bool* implicit_d;
+      DeviceArray<bool> implicit_;
+      HostDArray<bool> implicit_h_;
 
       IntVec<D> dimensions_;
       int kSize_;
       int rSize_;
       int nParams_;
-
-      DArray< IntVec<D> > minImage_;
 
       bool isAllocated_;
 
@@ -158,14 +158,17 @@ namespace Rpg {
 
    template <int D>
    inline const IntVec<D>& WaveList<D>::minImage(int i) const
-   {  return minImage_[i]; }
+   {  
+      UTIL_CHECK(hasMinimumImages_);
+      return minImage_h_[i]; 
+   }
 
    template <int D>
-   inline cudaReal* WaveList<D>::kSq() const
-   {  return kSq_; }
+   inline HostDArray<cudaReal> const & WaveList<D>::kSq() const
+   {  return kSq_h_; }
 
    template <int D>
-   inline cudaReal* WaveList<D>::dkSq() const
+   inline DeviceArray<cudaReal> const & WaveList<D>::dkSq() const
    {  return dkSq_; }
 
    template <int D>

@@ -217,15 +217,15 @@ namespace Rpg {
       RFieldDft<D> qk2_;
 
       // Batched FFTs of q
-      cudaComplex* qkBatched_;
-      cudaComplex* qk2Batched_;
+      DeviceArray<cudaComplex> qkBatched_;
+      DeviceArray<cudaComplex> qk2Batched_;
 
       // Propagators on r-grid
       RField<D> q1_;
       RField<D> q2_;
 
-      cudaReal* expKsq_host;
-      cudaReal* expKsq2_host;
+      HostDArray<cudaReal> expKsq_h_;
+      HostDArray<cudaReal> expKsq2_h_;
 
       /// Pointer to associated Mesh<D> object.
       Mesh<D> const * meshPtr_;

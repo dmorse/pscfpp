@@ -162,13 +162,11 @@ namespace Cuda {
       }
 
       if (isAllocated()) {
-         double* tempData = new double[capacity];
-         cudaMemcpy(tempData, data_, capacity * sizeof(cudaReal), 
-                    cudaMemcpyDeviceToHost);
+         HostDArray<cudaReal> tempData(capacity);
+         tempData = this; // copy this object's data from device to host
          for (int i = 0; i < capacity_; ++i) {
             ar & tempData[i];
          }
-         delete[] tempData;
       }
       ar & meshDimensions_;
    }

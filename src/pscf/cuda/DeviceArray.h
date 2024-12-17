@@ -221,6 +221,8 @@ namespace Pscf {
    #ifndef PSCF_DEVICE_ARRAY_TPP
    extern template class DeviceArray<cudaReal>;
    extern template class DeviceArray<cudaComplex>;
+   extern template class DeviceArray<int>;
+   extern template class DeviceArray<bool>;
    #endif
 
 } // namespace Pscf

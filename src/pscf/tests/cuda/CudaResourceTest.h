@@ -5,7 +5,6 @@
 #include <test/UnitTestRunner.h>
 
 #include <pscf/cuda/GpuResources.h>
-#include <pscf/cuda/DeviceArray.h>
 #include <util/math/Constants.h>
 
 #include <cstdlib>
@@ -13,7 +12,6 @@
 
 using namespace Util;
 using namespace Pscf;
-using namespace Pscf::Prdc;
 
 class CudaResourceTest : public UnitTest
 {
@@ -41,13 +39,9 @@ public:
       ThreadGrid::setThreadsLogical(n/2, nBlocks);
 
       // Create device and host arrays
-      cudaReal sum = 0;
       cudaReal sumCheck = 0;
-      cudaReal* num = new cudaReal[n];
-      cudaReal* d_temp;
-      cudaReal* d_num;
-      cudaMalloc((void**) &d_num, n*sizeof(cudaReal));
-      cudaMalloc((void**) &d_temp, nBlocks*sizeof(cudaReal));
+      HostDArray<cudaReal> num(n), sum(1);
+      DeviceArray<cudaReal> d_num(n), d_temp(nBlocks), d_sum(1);
 
       // Test data
       for (int i = 0; i < n; i++) {
@@ -60,12 +54,14 @@ public:
       }
 
       // Launch kernel twice and get output
-      cudaMemcpy(d_num, num, n*sizeof(cudaReal), cudaMemcpyHostToDevice);
-      reductionSum<<<nBlocks, nThreads, nThreads*sizeof(cudaReal)>>>(d_temp, d_num, n);
-      reductionSum<<<1, nBlocks/2, nBlocks/2*sizeof(cudaReal)>>>(d_temp, d_temp, nBlocks);
-      cudaMemcpy(&sum, d_temp, 1*sizeof(cudaReal), cudaMemcpyDeviceToHost);
+      d_num = num;
+      reductionSum<<<nBlocks, nThreads, nThreads*sizeof(cudaReal)>>>
+                                    (d_temp.cArray(), d_num.cArray(), n);
+      reductionSum<<<1, nBlocks/2, nBlocks/2*sizeof(cudaReal)>>>
+                              (d_sum.cArray(), d_temp.cArray(), nBlocks);
+      sum = d_sum; // copy first element of d_sum from device
 
-      TEST_ASSERT(sum == sumCheck);
+      TEST_ASSERT(sum[0] == sumCheck);
    }
 
    void testReductionMaxSmall()
@@ -83,19 +79,14 @@ public:
       ThreadGrid::setThreadsLogical(n/2, nBlocks);
 
       // Create device and host arrays
-      cudaReal max = -1;
       cudaReal maxCheck = -10;
-      cudaReal* num = new cudaReal[n];
-      cudaReal* d_max;
-      cudaReal* d_num;
-      cudaMalloc((void**) &d_max, 1*sizeof(cudaReal));
-      cudaMalloc((void**) &d_num, n*sizeof(cudaReal));
+      HostDArray<cudaReal> num(n), max(1);
+      DeviceArray<cudaReal> d_num(n), d_max(1);
 
       // Test data
       for (int i = 0; i < n; i++) {
          num[i] = (cudaReal)(std::rand() % 100);
       }
-      cudaMemcpy(d_num, num, n*sizeof(cudaReal), cudaMemcpyHostToDevice);
 
       // Host find max
       maxCheck = 0;
@@ -106,10 +97,12 @@ public:
       }
 
       // Launch kernel and get output
-      reductionMax<<<nBlocks, nThreads, nThreads*sizeof(cudaReal)>>>(d_max, d_num, n);
-      cudaMemcpy(&max, d_max, 1*sizeof(cudaReal), cudaMemcpyDeviceToHost);
+      d_num = num;
+      reductionMax<<<nBlocks, nThreads, nThreads*sizeof(cudaReal)>>>
+                                 (d_max.cArray(), d_num.cArray(), n);
+      max = d_max; // copy first element of d_max from device
 
-      TEST_ASSERT(max == maxCheck);
+      TEST_ASSERT(max[0] == maxCheck);
 
    }
 
@@ -128,15 +121,9 @@ public:
       ThreadGrid::setThreadsLogical(n/2, nBlocks);
 
       // Create device and host arrays
-      cudaReal max = -1;
       cudaReal maxCheck = -10;
-      cudaReal* num = new cudaReal[n];
-      cudaReal* d_temp;
-      cudaReal* d_max;
-      cudaReal* d_num;
-      cudaMalloc((void**) &d_num, n*sizeof(cudaReal));
-      cudaMalloc((void**) &d_temp, nBlocks*sizeof(cudaReal));
-      cudaMalloc((void**) &d_max, 1*sizeof(cudaReal));
+      HostDArray<cudaReal> num(n), max(1);
+      DeviceArray<cudaReal> d_num(n), d_temp(nBlocks), d_max(1);
 
       // Test data
       for (int i = 0; i < n; i++) {
@@ -151,12 +138,14 @@ public:
       }
 
       // Launch kernel twice and get output
-      cudaMemcpy(d_num, num, n*sizeof(cudaReal), cudaMemcpyHostToDevice);
-      reductionMax<<<nBlocks, nThreads, nThreads*sizeof(cudaReal)>>>(d_temp, d_num, n);
-      reductionMax<<<1, nBlocks/2, nBlocks/2*sizeof(cudaReal)>>>(d_max, d_temp, nBlocks);
-      cudaMemcpy(&max, d_max, 1*sizeof(cudaReal), cudaMemcpyDeviceToHost);
+      d_num = num;
+      reductionMax<<<nBlocks, nThreads, nThreads*sizeof(cudaReal)>>>
+                                 (d_temp.cArray(), d_num.cArray(), n);
+      reductionMax<<<1, nBlocks/2, nBlocks/2*sizeof(cudaReal)>>>
+                           (d_max.cArray(), d_temp.cArray(), nBlocks);
+      max = d_max;
 
-      TEST_ASSERT(max == maxCheck);
+      TEST_ASSERT(max[0] == maxCheck);
 
    }
 
@@ -175,15 +164,9 @@ public:
       ThreadGrid::setThreadsLogical(n/2, nBlocks);
 
       // Create device and host arrays
-      cudaReal max = -1;
       cudaReal maxCheck = -10;
-      cudaReal* num = new cudaReal[n];
-      cudaReal* d_temp;
-      cudaReal* d_max;
-      cudaReal* d_num;
-      cudaMalloc((void**) &d_num, n*sizeof(cudaReal));
-      cudaMalloc((void**) &d_temp, nBlocks*sizeof(cudaReal));
-      cudaMalloc((void**) &d_max, 1*sizeof(cudaReal));
+      HostDArray<cudaReal> num(n), max(1);
+      DeviceArray<cudaReal> d_num(n), d_temp(nBlocks), d_max(1);
 
       // Test data
       for (int i = 0; i < n; i++) {
@@ -198,12 +181,14 @@ public:
       }
 
       // Launch kernel twice and get output
-      cudaMemcpy(d_num, num, n*sizeof(cudaReal), cudaMemcpyHostToDevice);
-      reductionMaxAbs<<<nBlocks, nThreads, nThreads*sizeof(cudaReal)>>>(d_temp, d_num, n);
-      reductionMaxAbs<<<1, nBlocks/2, nBlocks/2*sizeof(cudaReal)>>>(d_max, d_temp, nBlocks);
-      cudaMemcpy(&max, d_max, 1*sizeof(cudaReal), cudaMemcpyDeviceToHost);
+      d_num = num;
+      reductionMaxAbs<<<nBlocks, nThreads, nThreads*sizeof(cudaReal)>>>
+                                    (d_temp.cArray(), d_num.cArray(), n);
+      reductionMaxAbs<<<1, nBlocks/2, nBlocks/2*sizeof(cudaReal)>>>
+                              (d_max.cArray(), d_temp.cArray(), nBlocks);
+      max = d_max;
 
-      TEST_ASSERT(max == maxCheck);
+      TEST_ASSERT(max[0] == maxCheck);
 
    }
 
@@ -222,15 +207,9 @@ public:
       ThreadGrid::setThreadsLogical(n/2, nBlocks);
 
       // Create device and host arrays
-      cudaReal min = 100000;
       cudaReal minCheck = 100000;
-      cudaReal* num = new cudaReal[n];
-      cudaReal* d_temp;
-      cudaReal* d_min;
-      cudaReal* d_num;
-      cudaMalloc((void**) &d_num, n*sizeof(cudaReal));
-      cudaMalloc((void**) &d_temp, nBlocks*sizeof(cudaReal));
-      cudaMalloc((void**) &d_min, 1*sizeof(cudaReal));
+      HostDArray<cudaReal> num(n), min(1);
+      DeviceArray<cudaReal> d_num(n), d_temp(nBlocks), d_min(1);
 
       // Test data
       for (int i = 0; i < n; i++) {
@@ -245,12 +224,14 @@ public:
       }
 
       // Launch kernel twice and get output
-      cudaMemcpy(d_num, num, n*sizeof(cudaReal), cudaMemcpyHostToDevice);
-      reductionMin<<<nBlocks, nThreads, nThreads*sizeof(cudaReal)>>>(d_temp, d_num, n);
-      reductionMin<<<1, nBlocks/2, nBlocks/2*sizeof(cudaReal)>>>(d_min, d_temp, nBlocks);
-      cudaMemcpy(&min, d_min, 1*sizeof(cudaReal), cudaMemcpyDeviceToHost);
+      d_num = num;
+      reductionMin<<<nBlocks, nThreads, nThreads*sizeof(cudaReal)>>>
+                                 (d_temp.cArray(), d_num.cArray(), n);
+      reductionMin<<<1, nBlocks/2, nBlocks/2*sizeof(cudaReal)>>>
+                           (d_min.cArray(), d_temp.cArray(), nBlocks);
+      min = d_min; 
 
-      TEST_ASSERT(min == minCheck);
+      TEST_ASSERT(min[0] == minCheck);
 
    }
 
@@ -270,21 +251,18 @@ public:
       ThreadGrid::setThreadsLogical(n/2, nBlocks);
 
       // Device arrays
-      DeviceArray<cudaReal> d_a, d_b;
-      d_a.allocate(n);
-      d_b.allocate(n);
+      DeviceArray<cudaReal> d_a(n), d_b(n);
 
       // Host arrays
-      cudaReal* a = new cudaReal[n];
-      cudaReal* b = new cudaReal[n];
+      HostDArray<cudaReal> a(n), b(n);
       
       // Create random data, store on host and device
       for (int i = 0; i < n; i++ ) {
          a[i] = (cudaReal)(std::rand() % 10000);
          b[i] = (cudaReal)(std::rand() % 10000);
       }
-      cudaMemcpy(d_a.cArray(), a, n*sizeof(cudaReal), cudaMemcpyHostToDevice);
-      cudaMemcpy(d_b.cArray(), b, n*sizeof(cudaReal), cudaMemcpyHostToDevice);
+      d_a = a; 
+      d_b = b;
 
       // Inner product on host
       cudaReal prodCheck = 0;
@@ -295,7 +273,7 @@ public:
       // Inner product on device
       cudaReal prod = gpuInnerProduct(d_a.cArray(),d_b.cArray(),n);
 
-      TEST_ASSERT(prodCheck==prod);
+      TEST_ASSERT(prodCheck == prod);
    }
 
    void testGpuSum()
@@ -314,17 +292,16 @@ public:
       ThreadGrid::setThreadsLogical(n/2, nBlocks);
 
       // Device arrays
-      DeviceArray<cudaReal> d_data;
-      d_data.allocate(n);
+      DeviceArray<cudaReal> d_data(n);
 
       // Host arrays
-      cudaReal* data = new cudaReal[n];
+      HostDArray<cudaReal> data(n);
       
       // Create random data, store on host and device
       for (int i = 0; i < n; i++) {
          data[i] = (cudaReal)(std::rand() % 10000);
       }
-      cudaMemcpy(d_data.cArray(), data, n*sizeof(cudaReal), cudaMemcpyHostToDevice);
+      d_data = data;
 
       // Inner product on host
       cudaReal prodCheck = 0;
@@ -335,7 +312,7 @@ public:
       // Inner product on device
       cudaReal prod = gpuSum(d_data.cArray(),n);
 
-      TEST_ASSERT(prodCheck==prod);
+      TEST_ASSERT(prodCheck == prod);
    }
 
    void testGpuMax()
@@ -354,17 +331,16 @@ public:
       ThreadGrid::setThreadsLogical(n/2, nBlocks);
 
       // Device arrays
-      DeviceArray<cudaReal> d_data;
-      d_data.allocate(n);
+      DeviceArray<cudaReal> d_data(n);
 
       // Host arrays
-      cudaReal* data = new cudaReal[n];
+      HostDArray<cudaReal> data(n);
       
       // Create random data, store on host and device
       for (int i = 0; i < n; i++) {
          data[i] = (cudaReal)(std::rand() % 10000);
       }
-      cudaMemcpy(d_data.cArray(), data, n*sizeof(cudaReal), cudaMemcpyHostToDevice);
+      d_data = data;
 
       // Inner product on host
       cudaReal maxCheck = 0;
@@ -375,7 +351,7 @@ public:
       // Inner product on device
       cudaReal max = gpuMax(d_data.cArray(),n);
 
-      TEST_ASSERT(max==maxCheck);
+      TEST_ASSERT(max == maxCheck);
    }
 
    void testGpuMaxAbs()
@@ -394,17 +370,16 @@ public:
       ThreadGrid::setThreadsLogical(n/2, nBlocks);
 
       // Device arrays
-      DeviceArray<cudaReal> d_data;
-      d_data.allocate(n);
+      DeviceArray<cudaReal> d_data(n);
 
       // Host arrays
-      cudaReal* data = new cudaReal[n];
+      HostDArray<cudaReal> data(n);
       
       // Create random data, store on host and device
       for (int i = 0; i < n; i++) {
          data[i] = (cudaReal)(std::rand() % 10000 - 6000);
       }
-      cudaMemcpy(d_data.cArray(), data, n*sizeof(cudaReal), cudaMemcpyHostToDevice);
+      d_data = data;
 
       // Inner product on host
       cudaReal maxCheck = 0;
@@ -415,7 +390,7 @@ public:
       // Inner product on device
       cudaReal max = gpuMaxAbs(d_data.cArray(),n);
 
-      TEST_ASSERT(max==maxCheck);
+      TEST_ASSERT(max == maxCheck);
    }
 
    void testGpuMin()
@@ -434,17 +409,16 @@ public:
       ThreadGrid::setThreadsLogical(n/2, nBlocks);
 
       // Device arrays
-      DeviceArray<cudaReal> d_data;
-      d_data.allocate(n);
+      DeviceArray<cudaReal> d_data(n);
 
       // Host arrays
-      cudaReal* data = new cudaReal[n];
+      HostDArray<cudaReal> data(n);
       
       // Create random data, store on host and device
       for (int i = 0; i < n; i++) {
          data[i] = (cudaReal)(std::rand() % 10000);
       }
-      cudaMemcpy(d_data.cArray(), data, n*sizeof(cudaReal), cudaMemcpyHostToDevice);
+      d_data = data;
 
       // Inner product on host
       cudaReal minCheck = 1000000;
@@ -455,7 +429,7 @@ public:
       // Inner product on device
       cudaReal min = gpuMin(d_data.cArray(),n);
 
-      TEST_ASSERT(min==minCheck);
+      TEST_ASSERT(min == minCheck);
    }
 
    void testGpuMinAbs()
@@ -474,17 +448,16 @@ public:
       ThreadGrid::setThreadsLogical(n/2, nBlocks);
 
       // Device arrays
-      DeviceArray<cudaReal> d_data;
-      d_data.allocate(n);
+      DeviceArray<cudaReal> d_data(n);
 
       // Host arrays
-      cudaReal* data = new cudaReal[n];
+      HostDArray<cudaReal> data(n);
       
       // Create random data, store on host and device
       for (int i = 0; i < n; i++) {
          data[i] = (cudaReal)(std::rand() % 10000 - 6000);
       }
-      cudaMemcpy(d_data.cArray(), data, n*sizeof(cudaReal), cudaMemcpyHostToDevice);
+      d_data = data;
 
       // Inner product on host
       cudaReal minCheck = 1E300;
@@ -495,7 +468,7 @@ public:
       // Inner product on device
       cudaReal min = gpuMinAbs(d_data.cArray(),n);
 
-      TEST_ASSERT(min==minCheck);
+      TEST_ASSERT(min == minCheck);
    }
 
 };

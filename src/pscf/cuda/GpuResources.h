@@ -7,5 +7,7 @@
 #include "VecOp.h"              // Vector operation kernels and wrappers
 #include "ParallelReductions.h" // Kernels using parallel reduction algorithms
 #include "KernelWrappers.h"     // Host functions for reductions
+#include "DeviceArray.h"        // Array container stored on device
+#include "HostDArray.h"         // Array container stored on host
 
 #endif

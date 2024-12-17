@@ -139,15 +139,19 @@ namespace Rpg {
    */
    template <int D>
    Block<D>::Block()
-    : meshPtr_(0),
+    : nBlocks_(0),
+      nThreads_(0),
+      meshPtr_(0),
       fftPtr_(0),
+      unitCellPtr_(0),
+      waveListPtr_(0),
       kMeshDimensions_(0),
+      kSize_(0),
       ds_(0.0),
       ns_(0),
       isAllocated_(false),
       hasExpKsq_(false),
-      expKsq_host(0),
-      expKsq2_host(0)
+      nParams_(0)
    {
       propagator(0).setBlock(*this);
       propagator(1).setBlock(*this);
@@ -158,14 +162,7 @@ namespace Rpg {
    */
    template <int D>
    Block<D>::~Block()
-   {      
-      if (isAllocated_) {
-         cudaFree(qkBatched_);
-         cudaFree(qk2Batched_);
-         delete[] expKsq_host;
-         delete[] expKsq2_host;
-      }
-   }
+   {}
 
    template <int D>
    void Block<D>::setDiscretization(double ds, 
@@ -228,16 +225,12 @@ namespace Rpg {
 
       propagator(0).allocate(ns_, mesh);
       propagator(1).allocate(ns_, mesh);
-      gpuErrchk( cudaMalloc((void**)&qkBatched_, 
-                             ns_ * kSize_ * sizeof(cudaComplex))
-               );
-      gpuErrchk( cudaMalloc((void**)&qk2Batched_, 
-                             ns_ * kSize_ * sizeof(cudaComplex))
-               );
+      qkBatched_.allocate(ns_ * kSize_);
+      qk2Batched_.allocate(ns_ * kSize_);
       cField().allocate(mesh.dimensions());
 
-      expKsq_host = new cudaReal[kSize_];
-      expKsq2_host = new cudaReal[kSize_];
+      expKsq_h_.allocate(kSize_);
+      expKsq2_h_.allocate(kSize_);
 
       isAllocated_ = true;
       hasExpKsq_ = false;
@@ -303,6 +296,10 @@ namespace Rpg {
       UTIL_CHECK(unitCellPtr_);
       UTIL_CHECK(unitCellPtr_->isInitialized());
       
+      if (waveListPtr_) {
+         UTIL_CHECK(waveListPtr_->hasMinimumImages());
+      }
+      
       MeshIterator<D> iter;
       iter.setDimensions(kMeshDimensions_);
       IntVec<D> G, Gmin;
@@ -318,21 +315,19 @@ namespace Rpg {
       int i;
       for (iter.begin(); !iter.atEnd(); ++iter) {
          i = iter.rank();
-         if (waveListPtr_ == 0){
+         if (waveListPtr_ == 0) {
             G = iter.position();
             Gmin = shiftToMinimum(G, mesh().dimensions(), unitCell());
             Gsq = unitCell().ksq(Gmin);
-         } else{
-            Gsq = unitCell().ksq(wavelist().minImage(iter.rank()));
+         } else {
+            Gsq = unitCell().ksq(waveListPtr_->minImage(i));
          }
-         expKsq_host[i] = exp(Gsq*factor);
-         expKsq2_host[i] = exp(Gsq*factor / 2);
+         expKsq_h_[i] = exp(Gsq*factor);
+         expKsq2_h_[i] = exp(Gsq*factor / 2);
       }
 
-      cudaMemcpy(expKsq_.cArray(), expKsq_host, 
-                 kSize * sizeof(cudaReal), cudaMemcpyHostToDevice);
-      cudaMemcpy(expKsq2_.cArray(), expKsq2_host, 
-                 kSize * sizeof(cudaReal), cudaMemcpyHostToDevice);
+      expKsq_ = expKsq_h_;
+      expKsq2_ = expKsq2_h_;
 
       hasExpKsq_ = true;
    }
@@ -455,10 +450,7 @@ namespace Rpg {
                            qr_.cArray(), expW2_.cArray(), nx);
 
       //remove the use of q2
-
-
    }
-
 
    /*
    * Compute stress contribution from this block. 
@@ -490,8 +482,8 @@ namespace Rpg {
       Pscf::Rpg::Propagator<D> const & p0 = propagator(0);
       Pscf::Rpg::Propagator<D> const & p1 = propagator(1);
 
-      fftBatched_.forwardTransform(p0.head(), qkBatched_, ns_);
-      fftBatched_.forwardTransform(p1.head(), qk2Batched_, ns_);
+      fftBatched_.forwardTransform(p0.head(), qkBatched_.cArray(), ns_);
+      fftBatched_.forwardTransform(p1.head(), qk2Batched_.cArray(), ns_);
       cudaMemset(qr2_.cArray(), 0, mesh().size() * sizeof(cudaReal));
 
       for (int j = 0; j < ns_ ; ++j) {
@@ -508,9 +500,9 @@ namespace Rpg {
          for (int n = 0; n < nParams_ ; ++n) {
             mulDelKsq<<<nBlocks_, nThreads_ >>>
                 (qr2_.cArray(), 
-                 qkBatched_ + (j*kSize_), 
-                 qk2Batched_ + (kSize_ * (ns_ -1 -j)),
-                 wavelist.dkSq(), n , kSize_, nx);
+                 qkBatched_.cArray() + (j*kSize_), 
+                 qk2Batched_.cArray() + (kSize_ * (ns_ -1 -j)),
+                 wavelist.dkSq().cArray(), n , kSize_, nx);
 
             increment = gpuSum(qr2_.cArray(), mesh().size());
             increment = (increment * kuhn() * kuhn() * dels)/normal;

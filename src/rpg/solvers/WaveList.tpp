@@ -48,7 +48,8 @@ namespace Rpg
                             * dkkBasis[k + (j * dim) + (param * dim * dim)];
                   } else {
                      pId = partnerId[i];
-                     dksq[(param * size) + i] += waveBz[selfId[pId] * dim + j]
+                     dksq[(param * size) + i] += 
+                        waveBz[selfId[pId] * dim + j]
                         * waveBz[selfId[pId] * dim + k]
                         * dkkBasis[k + (j * dim) + (param * dim * dim)];
                   }
@@ -77,11 +78,7 @@ namespace Rpg
 
    template <int D>
    WaveList<D>::WaveList()
-    : minImage_d(nullptr),
-      dkSq_(nullptr),
-      partnerIdTable(nullptr),
-      partnerIdTable_d(nullptr),
-      kSize_(0),
+    : kSize_(0),
       rSize_(0),
       nParams_(0),
       isAllocated_(false),
@@ -89,18 +86,8 @@ namespace Rpg
    {}
 
    template <int D>
-   WaveList<D>::~WaveList() {
-      if (isAllocated_) {
-         cudaFree(minImage_d);
-         cudaFree(dkSq_);
-         cudaFree(partnerIdTable_d);
-         cudaFree(selfIdTable_d);
-         cudaFree(implicit_d);
-         cudaFree(dkkBasis_d);
-         delete[] kSq_;
-         delete implicit;
-      }
-   }
+   WaveList<D>::~WaveList() 
+   {}
 
    template <int D>
    void WaveList<D>::allocate(Mesh<D> const & mesh, 
@@ -124,35 +111,23 @@ namespace Rpg
          }
       }
 
-      minImage_.allocate(kSize_);
-      gpuErrchk(
-         cudaMalloc((void**) &minImage_d, sizeof(int) * rSize_ * D)
-      );
+      minImage_h_.allocate(kSize_);
+      minImage_.allocate(rSize_ * D);
 
-      kSq_ = new cudaReal[rSize_];
-      gpuErrchk(
-         cudaMalloc((void**) &dkSq_, sizeof(cudaReal) * rSize_ * nParams_)
-      );
+      kSq_h_.allocate(rSize_);
+      dkSq_.allocate(rSize_ * nParams_);
 
-      partnerIdTable = new int[mesh.size()];
-      gpuErrchk(
-         cudaMalloc((void**) &partnerIdTable_d, sizeof(int) * mesh.size())
-      );
+      partnerIdTable_h_.allocate(mesh.size());
+      partnerIdTable_.allocate(mesh.size());
 
-      selfIdTable = new int[mesh.size()];
-      gpuErrchk(
-         cudaMalloc((void**) &selfIdTable_d, sizeof(int) * mesh.size())
-      );
+      selfIdTable_h_.allocate(mesh.size());
+      selfIdTable_.allocate(mesh.size());
 
-      implicit = new bool[mesh.size()];
-      gpuErrchk(
-         cudaMalloc((void**) &implicit_d, sizeof(bool) * mesh.size())
-      );
+      implicit_h_.allocate(mesh.size());
+      implicit_.allocate(mesh.size());
 
-      dkkBasis = new cudaReal[6 * D * D];
-      gpuErrchk(
-         cudaMalloc((void**) &dkkBasis_d, sizeof(cudaReal) * 6 * D * D)
-      );
+      dkkBasis_h_.allocate(nParams_ * D * D);
+      dkkBasis_.allocate(nParams_ * D * D);
 
       isAllocated_ = true;
    }
@@ -179,32 +154,26 @@ namespace Rpg
       int kDimRank = 0;
       int implicitRank = kSize_;
       //kDimRank + implicitRank = rSize
-      int* invertedIdTable = new int[rSize_];
+      HostDArray<int> invertedIdTable(rSize_);
 
       for (itr.begin(); !itr.atEnd(); ++itr) {         
          // If not implicit
          if (itr.position(D - 1) < mesh.dimension(D-1)/2 + 1) {
-            implicit[kDimRank] = false;
-            selfIdTable[kDimRank] = itr.rank();
+            implicit_h_[kDimRank] = false;
+            selfIdTable_h_[kDimRank] = itr.rank();
             invertedIdTable[itr.rank()] = kDimRank;
             kDimRank++;
          } else {
-            implicit[implicitRank] = true;
-            selfIdTable[implicitRank] = itr.rank();
+            implicit_h_[implicitRank] = true;
+            selfIdTable_h_[implicitRank] = itr.rank();
             invertedIdTable[itr.rank()] = implicitRank;
             implicitRank++;
          }
       }
 
-      int* tempMinImage = new int[rSize_ * D];
+      HostDArray<int> tempMinImage(rSize_ * D);
       for (itr.begin(); !itr.atEnd(); ++itr) {
-         kSq_[itr.rank()] = unitCell.ksq(itr.position());
-
-         #if 0
-         //we get position but set mesh dim to be larger, should be okay
-         shiftToMinimum(itr.position(), mesh.dimensions(), 
-                        minImage_ + (itr.rank() * D));
-         #endif
+         kSq_h_[itr.rank()] = unitCell.ksq(itr.position());
 
          // We get position but set mesh dim to be larger, should be okay
          // not the most elegant code with repeated copying but reduces 
@@ -212,11 +181,11 @@ namespace Rpg
          waveId = itr.position();
          tempIntVec = shiftToMinimum(waveId, mesh.dimensions(), unitCell);
          for(int i = 0; i < D; i++) {
-            (tempMinImage + (itr.rank() * D))[i] = tempIntVec[i];
+            tempMinImage[itr.rank() * D + i] = tempIntVec[i];
          }
          
          if(itr.position(D - 1) < mesh.dimension(D-1)/2 + 1) {
-            minImage_[invertedIdTable[itr.rank()]] = tempIntVec;
+            minImage_h_[invertedIdTable[itr.rank()]] = tempIntVec;
          }
 
          for(int j = 0; j < D; ++j) {
@@ -224,44 +193,17 @@ namespace Rpg
          }
          mesh.shift(G2);
          partnerId = mesh.rank(G2);
-         partnerIdTable[invertedIdTable[itr.rank()]] = invertedIdTable[partnerId];
+         partnerIdTable_h_[invertedIdTable[itr.rank()]] = 
+                                             invertedIdTable[partnerId];
       }
 
-      #if 0
-      /*
-      std::cout<< "Sum kDimRank implicitRank: "
-                << kDimRank + (implicitRank-kSize_)<<std::endl;
-      std::cout<< "This is kDimRank sanity check "<<kDimRank<<std::endl;
-      for (int i = 0; i < rSize_; i++) {
-         std::cout << i << ' '
-                   << selfIdTable[i]<< ' '<<partnerIdTable[i]<<' '
-                   << implicit[i] << std::endl;
-         }
-      */
-      #endif
-
-      gpuErrchk(
-         cudaMemcpy(minImage_d, tempMinImage, 
-                    sizeof(int) * rSize_ * D, cudaMemcpyHostToDevice)
-      );
-
+      // Transfer to device
+      minImage_ = tempMinImage;
+      selfIdTable_ = selfIdTable_h_;
+      implicit_ = implicit_h_;
       // Partner is much smaller but we keep this for now
-      gpuErrchk(
-         cudaMemcpy(partnerIdTable_d, partnerIdTable, 
-                    sizeof(int) * mesh.size(), cudaMemcpyHostToDevice)
-      );
-
-      gpuErrchk(
-         cudaMemcpy(selfIdTable_d, selfIdTable, 
-                    sizeof(int) * mesh.size(), cudaMemcpyHostToDevice)
-      );
-
-      gpuErrchk(
-         cudaMemcpy(implicit_d, implicit, 
-                    sizeof(bool) * mesh.size(), cudaMemcpyHostToDevice)
-      );
+      partnerIdTable_ = partnerIdTable_h_;
       
-      delete[] tempMinImage;
       hasMinimumImages_ = true;
    }
 
@@ -292,25 +234,23 @@ namespace Rpg
          for(int j = 0; j < D; ++j) {
             for(int k = 0; k < D; ++k) {
                idx = k + (j * D) + (i * D * D);
-               dkkBasis[idx] = unitCell.dkkBasis(i, j, k);
+               dkkBasis_h_[idx] = unitCell.dkkBasis(i, j, k);
             }
          }
       }
 
-      cudaMemcpy(dkkBasis_d, dkkBasis,
-                 sizeof(cudaReal) * unitCell.nParameter() * D * D,
-                 cudaMemcpyHostToDevice);
-      cudaMemset(dkSq_, 0, 
-                 unitCell.nParameter() * rSize_ * sizeof(cudaReal));
+      dkkBasis_ = dkkBasis_h_; // transfer dkkBasis to device
+
+      VecOp::eqS(dkSq_, 0); // initialize dkSq_ to an array of 0s
 
       makeDksqHelperWave<<<nBlocks, nThreads>>>
-         (dkSq_, minImage_d, dkkBasis_d, partnerIdTable_d,
-          selfIdTable_d, implicit_d, unitCell.nParameter(), 
-          kSize_, rSize_, D);
+         (dkSq_.cArray(), minImage_.cArray(), dkkBasis_.cArray(), 
+          partnerIdTable_.cArray(), selfIdTable_.cArray(), 
+          implicit_.cArray(), unitCell.nParameter(), kSize_, rSize_, D);
        
       makeDksqReduction<<<nBlocks, nThreads>>>
-          (dkSq_, partnerIdTable_d, unitCell.nParameter(),
-            kSize_, rSize_);
+          (dkSq_.cArray(), partnerIdTable_.cArray(), 
+           unitCell.nParameter(), kSize_, rSize_);
    }
 
 

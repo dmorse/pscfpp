@@ -143,7 +143,7 @@ namespace Rpg
    void FourierMove<D>::computeStructureFactor()
    {
       int meshSize = system().domain().mesh().size();
-      cudaReal* sqTemp = new cudaReal[meshSize];
+      HostDArray<cudaReal> sqTemp(meshSize);
       MeshIterator<D> itr;
       itr.setDimensions(system().mesh().dimensions());
       IntVec<D> G; IntVec<D> Gmin; 
@@ -160,8 +160,7 @@ namespace Rpg
             sqTemp[itr.rank()] = sqrt(S_);
          }
       }
-      cudaMemcpy(sqrtSq_.cArray(), sqTemp, meshSize * sizeof(cudaReal), cudaMemcpyHostToDevice);
-      delete[] sqTemp;
+      sqrtSq_ = sqTemp; // copy sqTemp to device
    }
    
    /*

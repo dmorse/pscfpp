@@ -20,8 +20,8 @@ class CudaRandomTest : public UnitTest
 
 public:
 
-   cudaReal* devPtr_;
-   cudaReal* hostPtr_;
+   DeviceArray<cudaReal> d_;
+   HostDArray<cudaReal> h_;
    int n_;
 
    void setUp()
@@ -33,14 +33,8 @@ public:
    void allocate(int n)
    {
       n_ = n;
-      gpuErrchk(cudaMalloc((void**) &devPtr_, n * sizeof(cudaReal)));
-      hostPtr_ = new cudaReal[n];
-   }
-  
-   void copyDevToHost()
-   {
-      cudaMemcpy((void *)hostPtr_, (void const *) devPtr_, 
-                 n_*sizeof(cudaReal), cudaMemcpyDeviceToHost);
+      d_.allocate(n);
+      h_.allocate(n);
    }
 
    void testConstructor()
@@ -57,9 +51,9 @@ public:
       random.setSeed(6712983651284);
       int n = 100000;
       allocate(n);
-      random.uniform(devPtr_, n);
+      random.uniform(d_.cArray(), n);
 
-      copyDevToHost();
+      h_ = d_;
 
       //setVerbose(1);
       if (verbose() > 0) {
@@ -72,14 +66,14 @@ public:
       cudaReal var = 0.0;
       cudaReal val = 0.0;
       for (int i = 0; i < n; ++i) {
-         TEST_ASSERT(hostPtr_[i] > 0.0);
-         TEST_ASSERT(hostPtr_[i] <= 1.0);
-         val = hostPtr_[i] - mean;
+         TEST_ASSERT(h_[i] > 0.0);
+         TEST_ASSERT(h_[i] <= 1.0);
+         val = h_[i] - mean;
          ave += val;
          var += val*val;
          if (verbose() > 1) {
             std::cout << Int(i,5) << "  " 
-                      << Dbl(hostPtr_[i]) << std::endl;
+                      << Dbl(h_[i]) << std::endl;
          }
       }
       ave = ave/cudaReal(n);
@@ -107,9 +101,9 @@ public:
 
       cudaReal mean = 1.0;
       cudaReal stddev = 0.5; 
-      random.normal(devPtr_, n, stddev, mean);
+      random.normal(d_.cArray(), n, stddev, mean);
 
-      copyDevToHost();
+      h_ = d_;
 
       //setVerbose(1);
       if (verbose() > 0) {
@@ -120,7 +114,7 @@ public:
       cudaReal var = 0.0;
       cudaReal val = 0.0;
       for (int i = 0; i < n; ++i) {
-         val = hostPtr_[i] - mean;
+         val = h_[i] - mean;
          ave += val;
          var += val*val;
       }

@@ -11,10 +11,10 @@
 #include "AmIteratorGrid.h"
 #include <rpg/System.h>
 #include <prdc/cuda/RField.h>
-
 #include <prdc/crystal/UnitCell.h>
-
 #include <pscf/inter/Interaction.h>
+#include <pscf/cuda/DeviceArray.h>
+#include <pscf/cuda/HostDArray.h>
 
 #include <util/global.h>
 
@@ -191,15 +191,16 @@ namespace Rpg {
       if (isFlexible_) {
          const int nParam = system().unitCell().nParameter();
          const FSArray<double,6> currParam = system().unitCell().parameters();
+
          // convert into a cudaReal array
-         cudaReal* temp = new cudaReal[nParam];
-         for (int k = 0; k < nParam; k++) 
-               temp[k] = (cudaReal)scaleStress_*currParam[k];
+         HostDArray<cudaReal> tempH(nParam);
+         for (int k = 0; k < nParam; k++) {
+            tempH[k] = (cudaReal)scaleStress_*currParam[k];
+         }
          
          // Copy parameters to the end of the curr array
-         cudaMemcpy(curr.cArray() + nMonomer*nMesh, temp, 
-                    nParam*sizeof(cudaReal), cudaMemcpyHostToDevice);
-         delete[] temp;
+         DeviceArray<cudaReal> tempD(curr, nMonomer*nMesh, nParam);
+         tempD = tempH; // copy from host to device
       }
    }
 
@@ -266,14 +267,15 @@ namespace Rpg {
       // If variable unit cell, compute stress residuals
       if (isFlexible_) {
          const int nParam = system().unitCell().nParameter();
-         cudaReal* stress = new cudaReal[nParam];
+         HostDArray<cudaReal> stressH(nParam);
 
          for (int i = 0; i < nParam; i++) {
-            stress[i] = (cudaReal)(-1*scaleStress_*system().mixture().stress(i));
+            stressH[i] = (cudaReal)(-1 * scaleStress_ * 
+                                   system().mixture().stress(i));
          }
 
-         cudaMemcpy(resid.cArray()+nMonomer*nMesh, stress, 
-                    nParam*sizeof(cudaReal), cudaMemcpyHostToDevice);
+         DeviceArray<cudaReal> stressD(resid, nMonomer*nMesh, nParam);
+         stressD = stressH; // copy from host to device
       }
    }
 
@@ -317,16 +319,13 @@ namespace Rpg {
       if (isFlexible_) {
          FSArray<double,6> parameters;
          const int nParam = system().unitCell().nParameter();
-         cudaReal* temp = new cudaReal[nParam];
-
-         cudaMemcpy(temp, newGuess.cArray() + nMonomer*nMesh, 
-                    nParam*sizeof(cudaReal), cudaMemcpyDeviceToHost);
+         HostDArray<cudaReal> tempH(nParam);
+         DeviceArray<cudaReal> tempD(newGuess, nMonomer*nMesh, nParam);
+         tempH = tempD; // transfer from device to host
          for (int i = 0; i < nParam; i++) {
-            parameters.append(1/scaleStress_ * (double)temp[i]);
+            parameters.append(1/scaleStress_ * (double)tempH[i]);
          }
          system().setUnitCell(parameters);
-
-         delete[] temp;
       }
 
    }
