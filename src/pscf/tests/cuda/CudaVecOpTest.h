@@ -24,11 +24,11 @@ private:
    // Error tolerance for array equality
    #ifdef SINGLE_PRECISION
    typedef float numType;
-   constexpr static numType tolerance = 1E-5;
+   constexpr static numType tolerance_ = 1E-5;
    #else
    #ifdef DOUBLE_PRECISION
    typedef double numType;
-   constexpr static numType tolerance = 1E-10;
+   constexpr static numType tolerance_ = 1E-10;
    #endif
    #endif
 
@@ -1185,7 +1185,7 @@ public:
       TEST_ASSERT(n > 0);
 
       for (int i = 0; i < n; i++) {
-         TEST_ASSERT(abs(a[i] - b[i]) < tolerance);
+         TEST_ASSERT(abs(a[i] - b[i]) < tolerance_);
       }
    }
 
@@ -1197,8 +1197,8 @@ public:
       TEST_ASSERT(n > 0);
 
       for (int i = 0; i < n; i++) {
-         TEST_ASSERT(abs(a[i].x - b[i].real()) < tolerance);
-         TEST_ASSERT(abs(a[i].y - b[i].imag()) < tolerance);
+         TEST_ASSERT(abs(a[i].x - b[i].real()) < tolerance_);
+         TEST_ASSERT(abs(a[i].y - b[i].imag()) < tolerance_);
       }
    }
 

@@ -31,8 +31,6 @@ namespace Pscf {
  
    public:
 
-      typedef unsigned long SeedType;
-
       /**
       * Constructor.
       */   
@@ -43,6 +41,11 @@ namespace Pscf {
       */   
       virtual ~CudaRandom();
    
+      /**
+      * Set value of random seed (private member variable seed_).
+      *
+      * \param seed  value of random number generator seed.
+      */
       void setSeed(unsigned long long seed);
 
       /**
@@ -62,6 +65,10 @@ namespace Pscf {
       * The array data of n elements is filled with random numbers chosen 
       * from a normal distribution with the specified mean value and standard
       * deviation.
+      * 
+      * Note: the input array must have an even number of elements. This is a 
+      * requirement imposed by cuRAND, the random number generator software 
+      * used by CudaRandom.
       *
       * \param data  pointer to first element of array
       * \param n  number of elements in array
@@ -87,6 +94,8 @@ namespace Pscf {
 
       /// Has a seed been set by readParam() or setSeed()?
       bool isInitialized_;
+
+      void errorCheck(curandStatus_t const & error);
    
    };
  

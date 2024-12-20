@@ -5,6 +5,7 @@
 
 #include <curand.h>
 #include <sys/time.h>
+#include <string>
 
 namespace Pscf {
 
@@ -21,7 +22,7 @@ namespace Pscf {
       // Create pseudo-random number generator on gpu
       curandStatus_t status;
       status = curandCreateGenerator(&gen_, CURAND_RNG_PSEUDO_DEFAULT);
-      UTIL_CHECK(status == CURAND_STATUS_SUCCESS);
+      errorCheck(status);
    }
 
    /*
@@ -46,7 +47,8 @@ namespace Pscf {
       }
       curandStatus_t status;
       status = curandSetPseudoRandomGeneratorSeed(gen_, seed_);
-      UTIL_CHECK(status == CURAND_STATUS_SUCCESS);
+      errorCheck(status);
+
       isInitialized_ = true;
    }
 
@@ -65,17 +67,21 @@ namespace Pscf {
       curandStatus_t status
             = curandGenerateUniformDouble(gen_, data, n);
       #endif
-      UTIL_CHECK(status == CURAND_STATUS_SUCCESS);
+      errorCheck(status);
    }
 
    /*
-   * Return normal-distributed random floating point numbers
+   * Return normal-distributed random floating point numbers.
    */
    void CudaRandom::normal(cudaReal* data, int n, cudaReal stddev, cudaReal mean)
    {
       if (!isInitialized_) {
          setSeed(0);
       }
+      if (n % 2 == 1) {
+         UTIL_THROW("normal() requires array size to be an even number.");
+      }
+      
       #ifdef SINGLE_PRECISION
       curandStatus_t status
            = curandGenerateNormal(gen_, data, n, mean, stddev);
@@ -83,7 +89,64 @@ namespace Pscf {
       curandStatus_t status
            = curandGenerateNormalDouble(gen_, data, n, mean, stddev);
       #endif
-      UTIL_CHECK(status == CURAND_STATUS_SUCCESS);
+      errorCheck(status);
+   }
+
+   /*
+   * Check generator error status. If not success, print info and throw error.
+   */
+   void CudaRandom::errorCheck(curandStatus_t const & error)
+   {
+      if (error == CURAND_STATUS_SUCCESS) {
+         return;
+      } else {
+         std::string errString;
+         switch (error)
+         {
+            default:
+               errString = "UNKNOWN";
+               break;
+            case CURAND_STATUS_VERSION_MISMATCH:
+               errString = "CURAND_STATUS_VERSION_MISMATCH";
+               break;
+            case CURAND_STATUS_NOT_INITIALIZED:
+               errString = "CURAND_STATUS_NOT_INITIALIZED";
+               break;
+            case CURAND_STATUS_ALLOCATION_FAILED:
+               errString = "CURAND_STATUS_ALLOCATION_FAILED";
+               break;
+            case CURAND_STATUS_TYPE_ERROR:
+               errString = "CURAND_STATUS_TYPE_ERROR";
+               break;
+            case CURAND_STATUS_OUT_OF_RANGE:
+               errString = "CURAND_STATUS_OUT_OF_RANGE";
+               break;
+            case CURAND_STATUS_LENGTH_NOT_MULTIPLE:
+               errString = "CURAND_STATUS_LENGTH_NOT_MULTIPLE";
+               break;
+            case CURAND_STATUS_DOUBLE_PRECISION_REQUIRED:
+               errString = "CURAND_STATUS_DOUBLE_PRECISION_REQUIRED";
+               break;
+            case CURAND_STATUS_LAUNCH_FAILURE:
+               errString = "CURAND_STATUS_LAUNCH_FAILURE";
+               break;
+            case CURAND_STATUS_PREEXISTING_FAILURE:
+               errString = "CURAND_STATUS_PREEXISTING_FAILURE";
+               break;
+            case CURAND_STATUS_INITIALIZATION_FAILED:
+               errString = "CURAND_STATUS_INITIALIZATION_FAILED";
+               break;
+            case CURAND_STATUS_INTERNAL_ERROR:
+               errString = "CURAND_STATUS_INTERNAL_ERROR";
+               break;
+            case CURAND_STATUS_ARCH_MISMATCH:
+               errString = "CURAND_STATUS_ARCH_MISMATCH";
+               break;
+         }
+
+         Log::file() << "CudaRandom error: " << errString << std::endl;
+         UTIL_THROW("CudaRandom number generation failed.");
+      }
    }
 
 }

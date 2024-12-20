@@ -99,6 +99,11 @@ namespace ThreadGrid {
   int nThreadsLogical();
 
   /**
+  * Get the warp size.
+  */
+  int warpSize();
+
+  /**
   * Indicates whether there will be unused threads. 
   *
   * Returns true iff nThreads*nBlocks != nThreadsLogical.

@@ -2,6 +2,7 @@ pscf_cuda_ =\
    pscf/cuda/KernelWrappers.cu \
    pscf/cuda/LinearAlgebra.cu \
    pscf/cuda/ParallelReductions.cu \
+   pscf/cuda/Reduce.cu \
    pscf/cuda/ThreadGrid.cu \
    pscf/cuda/CudaRandom.cu \
    pscf/cuda/DeviceArray.cu \
