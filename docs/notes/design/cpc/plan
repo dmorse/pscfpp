@@ -34,56 +34,62 @@ Design choices / conventions:
    to be distinguished by a namespace qualifier in any code that might 
    need to use both sets of classes. 
 
-
 Programming tasks:
 ==================
 
 In namespaces Pscf::Prdc::Cpu and Pscf::Prdc::Cuda
 
-   - Create class CField 
+  - Create class CField 
 
-   - Create class CFieldComparison
+  - Create class CFieldComparison
 
-   - Add complex transform functions to FFT classes in both namespaces
+  - Add complex transform functions to FFT classes in both namespaces
 
 In namespaces Pscf::Cpc and Pscf::Cpg
 
-   - Create class FieldIo (functions for both complex and real fields).
-     Note: This will be not have any functions involving a basis, which
-     will simplify things considerably.
+  - Create class FieldIo (functions for both complex and real fields).
+    Note: This will be not have any functions involving a basis, which
+    will simplify things considerably.
 
-   - Create class Domain (Mesh, UnitCell, FFT, FieldIo, no symmetry).
-     Note: Absence of Basis, SpaceGroup, groupName etc. is a simplification.
+  - Create class Domain (Mesh, UnitCell, FFT, FieldIo, no symmetry).
+    Note: Absence of Basis, SpaceGroup, groupName etc. is a simplification.
 
 In namespace Pscf, get ready to do complex arithmetic operations:
 
-   - Overload +, -, *, / operators for fftw_complex as standalone
-     functions defined in Pscf.
+  - Overload +, -, *, / operators for fftw_complex as standalone
+    functions defined in Pscf.
 
-     Note:: fftw_complex is a typdef for double[2]
+    Note:: fftw_complex is a typdef for double[2]
 
-   - Overload +, -, *, / operators for cufftDoubleComplex, cufftComplex.
+  - Overload +, -, *, / operators for cufftDoubleComplex, cufftComplex.
 
-     Note:: cuffDoubleComplex is a typdef for a cuComplex, which is a
-     struct { double x; double y}, so these definitions are distinct
-     from those used for fftw_complex
+    Note:: cuffDoubleComplex is a typdef for a cuComplex, which is a
+    struct { double x; double y}, so these definitions are distinct
+    from those used for fftw_complex
+
+  - Problem: We can't overload assignment = operator for a non-class
+    type. The complex type is an array type rather than a class.
+
+  - Come back to this. I can't tell if inability to do assignment is
+    fatal. Could definition of a Complex class with automatic conversion
+    help?
 
 In namespaces Pscf:Cpc  and Pscf::Cpg
 
-   - Create solver classes (Propagator, Block, Polymer, Solvent, Mixture)
+  - Create solver classes (Propagator, Block, Polymer, Solvent, Mixture)
 
-   - Create and appropriate Interaction class (nonlocal by default)
+  - Create and appropriate Interaction class (nonlocal by default)
 
-   - Create System (Mixture, Interaction, Step)
+  - Create System (Mixture, Interaction, Step)
 
-   - Create Step base class, factory and default class
+  - Create Complex Langevin Step base class, factory and default class
 
 Possible later extensions:
 
-  -  We could later implement SCFT with no symmetry constraints (add 
-     Iterator)
+  - We could later implement SCFT with no symmetry constraints (add 
+    Iterator)
 
-  -  We could eventually reimplement perturbation theory in these complex
-     codes. This functionality requires solution of complex MDE, so this
-     would be the natural place for this.
+  - We could eventually reimplement perturbation theory in these complex
+    codes. This functionality requires solution of complex MDE, so this
+    would be the natural place for this.
    

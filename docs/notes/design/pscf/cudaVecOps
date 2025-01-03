@@ -31,12 +31,12 @@ Clean up of simple vector linear algebra kernel functions
    that are needed immediately, and may identify some possible 
    operations that we actually don't need immediately. 
 
-5)  Recommendation: Create unit tests for existing functions
-    before creating new ones, to add confidence during later
-    transformations.  These functions are simple, but humans still 
-    make random mistakes. The earlier in this process we right
-    good tests, the easier and safer all later transformations
-    will become. 
+5) Recommendation: Create unit tests for existing functions
+   before creating new ones, to add confidence during later
+   transformations.  These functions are simple, but humans still 
+   make random mistakes. The earlier in this process we right
+   good tests, the easier and safer all later transformations
+   will become. 
 
 6) Create a file with functions for vector operations that use a 
    more consistent name and interface conventions than the 
@@ -212,7 +212,6 @@ Clean up of simple vector linear algebra kernel functions
           changing names or header includes, to make the name change 
           as trivial as possible. 
 
-
        2. A C++ function with the same interface and analogous name as
           the corresponding cuda kernel, without the underbar. Arrays 
           are pointers to global Gpu memory. A static ThreadGrid 
@@ -249,22 +248,13 @@ Clean up of simple vector linear algebra kernel functions
           logical number of threads (i.e., the array dimension) is
           unchanged.
 
-       3. Possibly a C++ function that takes Field<T> containers.
-          This would calls the C++ pointer version internally. 
+       3. A C++ function that takes DeviceArray<T> containers.
           This could take a ThreadGrid as an argument or create one 
           internally from knowledge of field array dimensions. 
           The interface would be distinguished from that of the other two 
           function types by the appearance of container types rather 
-          than pointers. This would have to be defined in namespace
-          Prdc::Cuda, since that is where the container templates
-          are defined. 
-   
-       -  Using Field<cudaReal> and Field<cudaComplex> rather than
-          RField<D>, RFieldDft<D> and CField<D> would avoid the need
-          to treat D as a template parameter, and allow the same 
-          functions to be used for RFieldDft<D> and CField<D> 
-          containers.
-
+          than pointers, and the lack of a argument for the number of
+          elements. 
 
 8) Find locally defined kernels and replace them one-by-one with ones 
 defined in pscf/gpu or prdc/gpu when possible:
@@ -282,28 +272,22 @@ Parallel Reductions:
    After cleaning up operations that create or modify vectors, we could
    try to clean up parallel reduction kernels and wrappers.
 
-1) Move parallel reduction kernels to private namespace in implementation
-   of kernel wrappers, so not publically visible. 
+1) Create namespace Reduce
 
-    Example wrapper function for reductions:
+2) Move parallel reduction kernels to private anonymous namespace in the
+   implementation of kernel wrappers, so not publically visible. 
 
-       reduceSum
-       reduceAbsMax
+   Example wrapper function for reductions:
 
-       Overloaded versions of wrappers for pointers and containers,
-       as for vector operations. Pointer versions should take a 
-       ThreadGrid as an argument.
+       Reduce::sum
+       Reduce::absMax
 
-       Some convention will be need to distinguish names of kernels
-       from analogous C++ wrapper. The use of a ThreadGrid argument
-       to the C++ wrapper may be enough, if done consistently. 
+       Overloaded versions of wrappers for pointers and DeviceArray
+       containers, as for vector operations. 
 
 2) Rename some files:
 
-       KernelWrappers -> Reductions (both kernels and C++ wrappers)
-
-       Provide overloaded operations for field containers in 
-       directories or files that define containers
+       KernelWrappers -> Reduce (both kernels and C++ wrappers)
 
        Move Helpers to pscf/gpu
       

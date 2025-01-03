@@ -1,0 +1,80 @@
+
+Problem: 
+
+   How to modify classes in pscf/chem and pscf/solvers to allow
+   subclasses to do complex Langevin sampling. This will require
+   introduction of type WType and redefining some variables that
+   are currently double to WType.
+
+Strategy:
+
+   Input value of phi or mu should still be real
+   All internal values of phi or mu should become complex, 
+       along with w, c and q fields
+
+Directory pscf/chem:
+
+   Monomer (kuhn_ remains real)  - unchanged
+
+   PolymerType (enumeration) unchanged
+
+   BlockDescriptor - unchanged
+
+   Species: Make a template of type WT, default to double
+
+      - q is computed and set by a subclass -> WT
+      - Do we have to convert both mu and phi to type WT
+
+      Is the input parameter real ?
+      Is it read as a complex or real parameter ?
+
+      Proposal:
+
+         Define new inputPhiMu_ to be real and private
+         Make phi_, mu_, q_ and ensemble private
+         Protected member function readPhiMu:
+            Read inputPhiMu_, set ensemble and values accordingly
+         Protected member function writePhiMu:
+         Protected member function setQ:
+            Sets private member q_ and variable (phi_ or mu_) 
+
+   SolventDescriptor: 
+
+      Make this class a template of type WT, default to double.
+      No need to compile - just inherit this into Solvent, compile that.
+       
+Directory pscf/solver (templates): 
+
+   PropagatorTmpl<TP> : Unchanged code, modified concept
+
+      Require concrete Propagator class TP to define a typedef WType
+      WType will be a double by default, complex for complex Langevin
+
+   template <class TP>
+   class BlockTmpl : public BlockDescriptor
+
+      Consider removing CField, WField typedefs - not used in template
+      Keep Block::Propagator, however, because this is used in PolymerTmpl
+   
+   template <class Block> 
+   class PolymerTmpl : public Species
+
+      typedef Propagator::WType WType;
+
+      In solve():
+         Call Species<WType>::setQ to set q, phi, mu
+         Change prefactor to WType;
+
+   template <class TP, class TS>
+   class MixtureTmpl : public ParamComposite - > unchanged
+
+Plan:
+
+   1) Convert Species to more private variables, without changing to template
+      Change all code that accesses phi_, mu_, q_ directly in PolymerTmpl,
+      Polymer, SolventDescriptor and Solvent
+
+   2) Convert SolventDescriptor to make it more private, without changing to
+      a template.
+
+   3) Change Species and SolventDescriptor to templates with default double
