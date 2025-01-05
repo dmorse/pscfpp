@@ -8,7 +8,6 @@
 
 using namespace Util;
 using namespace Pscf;
-using namespace Pscf::Cpu;
 
 class CpuComplexTest : public UnitTest
 {
@@ -32,7 +31,7 @@ public:
          a[1] = 0.5;
          b[0] = 0.25;
          b[1] = 1.5;
-         add(z, a, b);
+         Cpu::add(z, a, b);
          TEST_ASSERT(eq(z[0], 2.25));
          TEST_ASSERT(eq(z[1], 2.00));
          TEST_ASSERT(eq(z[0], a[0] + b[0]));
@@ -50,7 +49,7 @@ public:
          a[0] = 2.0;
          a[1] = 0.5;
          b    = 0.25;
-         add(z, a, b);
+         Cpu::add(z, a, b);
          TEST_ASSERT(eq(z[0], 2.25));
          TEST_ASSERT(eq(z[1], 0.50));
          TEST_ASSERT(eq(z[0], a[0] + b));
@@ -71,7 +70,7 @@ public:
          b[1] = 1.5;
          z[0] = a[0];
          z[1] = a[1];
-         addEq(z, b);
+         Cpu::addEq(z, b);
          TEST_ASSERT(eq(z[0], 2.25));
          TEST_ASSERT(eq(z[1], 2.00));
          TEST_ASSERT(eq(z[0], a[0] + b[0]));
@@ -91,7 +90,7 @@ public:
          b    = 0.25;
          z[0] = a[0];
          z[1] = a[1];
-         addEq(z, b);
+         Cpu::addEq(z, b);
          TEST_ASSERT(eq(z[0], 2.25));
          TEST_ASSERT(eq(z[1], 0.50));
          TEST_ASSERT(eq(z[0], a[0] + b));
@@ -110,7 +109,7 @@ public:
          a[1] = 0.5;
          b[0] = 0.25;
          b[1] = 1.5;
-         sub(z, a, b);
+         Cpu::sub(z, a, b);
          TEST_ASSERT(eq(z[0], 1.75));
          TEST_ASSERT(eq(z[1], -1.00));
          TEST_ASSERT(eq(z[0], a[0] - b[0]));
@@ -128,7 +127,7 @@ public:
          a[0] = 2.0;
          a[1] = 0.5;
          b    = 0.25;
-         sub(z, a, b);
+         Cpu::sub(z, a, b);
          TEST_ASSERT(eq(z[0], 1.75));
          TEST_ASSERT(eq(z[1], 0.50));
          TEST_ASSERT(eq(z[0], a[0] - b));
@@ -149,7 +148,7 @@ public:
          b[1] = 1.5;
          z[0] = a[0];
          z[1] = a[1];
-         subEq(z, b);
+         Cpu::subEq(z, b);
          TEST_ASSERT(eq(z[0],  1.75));
          TEST_ASSERT(eq(z[1], -1.00));
          TEST_ASSERT(eq(z[0], a[0] - b[0]));
@@ -169,7 +168,7 @@ public:
          b    = 0.25;
          z[0] = a[0];
          z[1] = a[1];
-         subEq(z, b);
+         Cpu::subEq(z, b);
          TEST_ASSERT(eq(z[0], 1.75));
          TEST_ASSERT(eq(z[1], 0.50));
          TEST_ASSERT(eq(z[0], a[0] - b));
@@ -188,13 +187,13 @@ public:
          a[1] = 0.5;
          b[0] = 3.0;
          b[1] = 2.0;
-         mul(z, a, b);
+         Cpu::mul(z, a, b);
          TEST_ASSERT(eq(z[0], 5.0));
          TEST_ASSERT(eq(z[1], 5.5));
          TEST_ASSERT(eq(z[0], a[0]*b[0] - a[1]*b[1]));
          TEST_ASSERT(eq(z[1], a[1]*b[0] + a[0]*b[1]));
 
-         mulEq(a, b);
+         Cpu::mulEq(a, b);
          TEST_ASSERT(eq(z[0], a[0]));
          TEST_ASSERT(eq(z[1], a[1]));
       }
@@ -210,13 +209,13 @@ public:
          a[0] = 2.0;
          a[1] = 0.5;
          b    = 0.25;
-         mul(z, a, b);
+         Cpu::mul(z, a, b);
          TEST_ASSERT(eq(z[0], 0.50));
          TEST_ASSERT(eq(z[1], 0.125));
          TEST_ASSERT(eq(z[0], a[0]*b));
          TEST_ASSERT(eq(z[1], a[1]*b));
 
-         mulEq(a, b);
+         Cpu::mulEq(a, b);
          TEST_ASSERT(eq(z[0], a[0]));
          TEST_ASSERT(eq(z[1], a[1]));
       }
@@ -235,7 +234,7 @@ public:
          b[1] = 2.0;
          z[0] = a[0];
          z[1] = a[1];
-         mulEq(z, b);
+         Cpu::mulEq(z, b);
          TEST_ASSERT(eq(z[0], 5.0));
          TEST_ASSERT(eq(z[1], 5.5));
          TEST_ASSERT(eq(z[0], a[0]*b[0] - a[1]*b[1]));
@@ -255,7 +254,7 @@ public:
          b    = 0.25;
          z[0] = a[0];
          z[1] = a[1];
-         mulEq(z, b);
+         Cpu::mulEq(z, b);
          TEST_ASSERT(eq(z[0], 0.50));
          TEST_ASSERT(eq(z[1], 0.125));
          TEST_ASSERT(eq(z[0], a[0]*b));
@@ -274,12 +273,12 @@ public:
          a[1] = 0.5;
          b[0] = 3.0;
          b[1] = 2.0;
-         mul(z, a, b);
+         Cpu::mul(z, a, b);
          TEST_ASSERT(eq(z[0], a[0]*b[0] - a[1]*b[1]));
          TEST_ASSERT(eq(z[1], a[1]*b[0] + a[0]*b[1]));
  
          fftw_complex x;
-         div(x, z, b);
+         Cpu::div(x, z, b);
          TEST_ASSERT(eq(x[0], a[0]));
          TEST_ASSERT(eq(x[1], a[1]));
       }
@@ -295,12 +294,12 @@ public:
          a[0] = 2.0;
          a[1] = 0.5;
          b    = 0.25;
-         mul(z, a, b);
+         Cpu::mul(z, a, b);
          TEST_ASSERT(eq(z[0], a[0]*b));
          TEST_ASSERT(eq(z[1], a[1]*b));
 
          fftw_complex x;
-         div(x, z, b);
+         Cpu::div(x, z, b);
          TEST_ASSERT(eq(x[0], a[0]));
          TEST_ASSERT(eq(x[1], a[1]));
       }
@@ -319,11 +318,11 @@ public:
          b[1] = 2.0;
          z[0] = a[0];
          z[1] = a[1];
-         mulEq(z, b);
+         Cpu::mulEq(z, b);
          TEST_ASSERT(eq(z[0], 5.0));
          TEST_ASSERT(eq(z[1], 5.5));
 
-         divEq(z, b);
+         Cpu::divEq(z, b);
          TEST_ASSERT(eq(z[0], a[0]));
          TEST_ASSERT(eq(z[1], a[1]));
       }
@@ -341,11 +340,11 @@ public:
          b    = 0.25;
          z[0] = a[0];
          z[1] = a[1];
-         mulEq(z, b);
+         Cpu::mulEq(z, b);
          TEST_ASSERT(eq(z[0], a[0]*b));
          TEST_ASSERT(eq(z[1], a[1]*b));
 
-         divEq(z, b);
+         Cpu::divEq(z, b);
          TEST_ASSERT(eq(z[0], a[0]));
          TEST_ASSERT(eq(z[1], a[1]));
       }
