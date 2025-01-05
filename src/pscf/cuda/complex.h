@@ -8,7 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/cuda/gpuTypes.h>
+#include <pscf/cuda/GpuTypes.h>
 
 namespace Pscf {
 namespace Cuda {
