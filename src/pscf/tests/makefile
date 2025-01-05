@@ -35,6 +35,7 @@ clean-outputs:
 	-cd $(SRC_DIR)/pscf/tests/math; $(MAKE) clean-outputs
 	-cd $(SRC_DIR)/pscf/tests/mesh; $(MAKE) clean-outputs
 	-cd $(SRC_DIR)/pscf/tests/solvers; $(MAKE) clean-outputs
+	-cd $(SRC_DIR)/pscf/tests/cpu; $(MAKE) clean-outputs
 
 clean:
 	rm -f *Test
@@ -47,6 +48,7 @@ clean:
 	-cd $(SRC_DIR)/pscf/tests/math; $(MAKE) clean
 	-cd $(SRC_DIR)/pscf/tests/mesh; $(MAKE) clean
 	-cd $(SRC_DIR)/pscf/tests/solvers; $(MAKE) clean
+	-cd $(SRC_DIR)/pscf/tests/cpu; $(MAKE) clean
 
 -include $(pscf_tests_OBJS:.o=.d)
 -include $(pscf_OBJS:.o=.d)
