@@ -13,31 +13,93 @@
 namespace Pscf {
 namespace Cuda {
 
+   // Real and imaginary components
+
+   inline double real(cudaComplex const& a) 
+   {  return a.x; }
+
+   inline double imag(cudaComplex const& a) 
+   {  return a.y; }
+
+   // Absolute magnitude
+
+   inline double abs(cudaComplex const& a) 
+   {  return sqrt(a.x*a.x + a.y*a.y); }
+
+   inline double absSq(cudaComplex const& a) 
+   {  return (a.x*a.x + a.y*a.y); }
+
+   // Complex Conjugation
+
+   /*
+   * Compute complex conjugate, a = b^*
+   *
+   * \param a result (left hand side)
+   * \param b right hand side
+   */
+   inline 
+   void conj(cudaComplex& a, cudaComplex const& b)
+   {
+      a.x = b.x;
+      a.y = -b.y;
+   }
+
+   /*
+   * In place conjugation of argument, a => a^*.
+   *
+   */
+   inline 
+   void conj(cudaComplex& a)
+   {
+      a.x = a.x;
+      a.y = -a.y;
+   }
+
+   // Assignment 
+
+   inline 
+   void assign(cudaComplex& a, cudaComplex const& b)
+   {
+      a.x = b.x;
+      a.y = b.y;
+   }
+
+   inline 
+   void assign(cudaComplex & a, std::complex<double> const& b) 
+   {  
+      a.x = b.real();
+      a.y = b.imag();
+   }
+
+   inline 
+   void assign(std::complex<double> & a, cudaComplex const& b)
+   {  a = std::complex<double>(b.x, b.y); }
+
    // Addition
 
    inline 
-   void add(hostComplex& z, hostComplex const& a, hostComplex const& b)
+   void add(cudaComplex& z, cudaComplex const& a, cudaComplex const& b)
    {   
       z.x = a.x + b.x; 
       z.y = a.y + b.y; 
    }
 
    inline 
-   void add(hostComplex& z, hostComplex const& a, hostReal const& b)
+   void add(cudaComplex& z, cudaComplex const& a, cudaReal const& b)
    {   
       z.x = a.x + b; 
       z.y = a.y; 
    }
 
    inline
-   void addEq(hostComplex& a, hostComplex const& b)
+   void addEq(cudaComplex& a, cudaComplex const& b)
    {   
       a.x += b.x; 
       a.y += b.y; 
    }
 
    inline 
-   void addEq(hostComplex& a, hostReal const& b)
+   void addEq(cudaComplex& a, cudaReal const& b)
    {   
       a.x += b; 
    }
@@ -45,28 +107,28 @@ namespace Cuda {
    // Subtraction
 
    inline 
-   void sub(hostComplex& z, hostComplex const& a, hostComplex const& b)
+   void sub(cudaComplex& z, cudaComplex const& a, cudaComplex const& b)
    {   
       z.x = a.x - b.x; 
       z.y = a.y - b.y; 
    }
 
    inline
-   void sub(hostComplex& z, hostComplex const& a, hostReal const& b)
+   void sub(cudaComplex& z, cudaComplex const& a, cudaReal const& b)
    {   
       z.x = a.x - b; 
       z.y = a.y; 
    }
 
    inline 
-   void subEq(hostComplex & a, hostComplex const& b)
+   void subEq(cudaComplex & a, cudaComplex const& b)
    {   
       a.x -= b.x; 
       a.y -= b.y; 
    }
 
    inline 
-   void subEq(hostComplex & a, hostReal const& b)
+   void subEq(cudaComplex & a, cudaReal const& b)
    {   
       a.x -= b; 
    }
@@ -74,30 +136,30 @@ namespace Cuda {
    // Multiplication
 
    inline 
-   void mul(hostComplex& z, hostComplex const& a, hostComplex const& b)
+   void mul(cudaComplex& z, cudaComplex const& a, cudaComplex const& b)
    {
       z.x = a.x * b.x - a.y * b.y;
       z.y = a.y * b.x + a.x * b.y;
    }
 
    inline 
-   void mul(hostComplex& z, hostComplex const& a, hostReal const& b)
+   void mul(cudaComplex& z, cudaComplex const& a, cudaReal const& b)
    {   
       z.x = a.x * b;
       z.y = a.y * b; 
    }
 
    inline 
-   void mulEq(hostComplex & a, hostComplex const& b)
+   void mulEq(cudaComplex & a, cudaComplex const& b)
    {  
-      hostReal a0;
+      cudaReal a0;
       a0   = a.x * b.x - a.y * b.y;
       a.y = a.y * b.x + a.x * b.y;
       a.x = a0;
    }
 
    inline 
-   void mulEq(hostComplex & a, hostReal const& b)
+   void mulEq(cudaComplex & a, cudaReal const& b)
    {   
       a.x *= b;
       a.y *= b; 
@@ -106,31 +168,31 @@ namespace Cuda {
    // Division
 
    inline 
-   void div(hostComplex& z, hostComplex const& a, hostComplex const& b)
+   void div(cudaComplex& z, cudaComplex const& a, cudaComplex const& b)
    {
-      hostReal bSq = b.x * b.x + b.y * b.y;
+      cudaReal bSq = b.x * b.x + b.y * b.y;
       z.x = (a.x * b.x + a.y * b.y)/bSq;
       z.y = (a.y * b.x - a.x * b.y)/bSq;
    }
 
    inline 
-   void div(hostComplex& z, hostComplex const& a, hostReal const& b)
+   void div(cudaComplex& z, cudaComplex const& a, cudaReal const& b)
    {   
       z.x = a.x/b;
       z.y = a.y/b; 
    }
 
    inline 
-   void divEq(hostComplex & a, hostComplex const & b)
+   void divEq(cudaComplex & a, cudaComplex const & b)
    {
-      hostReal bSq = b.x * b.x + b.y * b.y;
-      hostReal a0 = (a.x * b.x + a.y * b.y)/bSq;
+      cudaReal bSq = b.x * b.x + b.y * b.y;
+      cudaReal a0 = (a.x * b.x + a.y * b.y)/bSq;
       a.y = (a.y * b.x - a.x * b.y)/bSq;
       a.x = a0;
    }
 
    inline 
-   void divEq(hostComplex & a, hostReal const& b)
+   void divEq(cudaComplex & a, cudaReal const& b)
    {   
       a.x /= b;
       a.y /= b; 
