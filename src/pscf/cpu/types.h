@@ -9,14 +9,19 @@
 */
 
 #include <fftw3.h>
-#include <complex>
 
 namespace Pscf {
 namespace Cpu {
 
-   typedef double        Real;
-   typedef fftw_complex  Complex;
-   //typedef std::complex<Real> Complex;
+   /**
+   * Complex number type used in CPU code that uses FFTW.
+   */
+   typedef fftw_complex Complex;
+
+   /**
+   * Real number type used in CPU code that uses FFTW.
+   */
+   typedef double Real;
 
 }
 }
