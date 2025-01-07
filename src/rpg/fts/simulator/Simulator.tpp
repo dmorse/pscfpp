@@ -16,6 +16,7 @@
 #include <rpg/fts/perturbation/PerturbationFactory.h>
 #include <rpg/fts/ramp/Ramp.h>
 #include <rpg/fts/ramp/RampFactory.h>
+#include <pscf/cuda/GpuResources.h>
 #include <pscf/math/IntVec.h>
 #include <util/misc/Timer.h>
 #include <util/random/Random.h>
@@ -232,8 +233,7 @@ namespace Rpg {
       }
       
       // Add average of pressure field wc_[nMonomer-1] to lnQ
-      double sum_xi = 
-           (double)gpuSum(wc_[nMonomer-1].cArray(), meshSize);
+      double sum_xi = Reduce::sum(wc_[nMonomer-1]);
       lnQ += sum_xi/double(meshSize);
       
       // lnQ now contains a value per monomer
@@ -253,9 +253,7 @@ namespace Rpg {
             (wcs_.cArray(), wc_[j].cArray(), s, meshSize);
          // Compute quadratic field contribution to HW
          double wSqure = 0;
-         wSqure = 
-              (double)gpuInnerProduct(wcs_.cArray(), 
-                                      wcs_.cArray(), meshSize);
+         wSqure = Reduce::innerProduct(wcs_, wcs_);
          HW += prefactor * wSqure;
       }
       

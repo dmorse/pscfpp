@@ -13,9 +13,10 @@
 #include <rpg/fts/montecarlo/McSimulator.h>
 #include <rpg/fts/compressor/Compressor.h>
 #include <rpg/System.h>
+#include <pscf/cuda/CudaRandom.h>
+#include <pscf/cuda/GpuResources.h>
 #include <util/param/ParamComposite.h>
 #include <util/random/Random.h>
-#include <pscf/cuda/CudaRandom.h>
 
 namespace Pscf {
 namespace Rpg {
@@ -221,7 +222,7 @@ namespace Rpg {
          
             computeForceBias<<<nBlocks, nThreads>>>
                (biasField_.cArray(), di.cArray(), df.cArray(), dwc.cArray(), mobility_, meshSize);
-            bias += (double) gpuSum(biasField_.cArray(), meshSize);
+            bias += Reduce::sum(biasField_);
          }
          bias *= vNode;
          hamiltonianTimer_.stop();

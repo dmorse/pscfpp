@@ -6,7 +6,6 @@
 
 #include <pscf/cuda/Reduce.h>
 #include <pscf/cuda/CudaRandom.h>
-#include <pscf/cuda/KernelWrappers.h>
 #include <pscf/cuda/GpuTypes.h>
 #include <util/format/Dbl.h>
 #include <util/misc/Timer.h>
@@ -22,12 +21,12 @@ class CudaReduceTest : public UnitTest
 
 private:
 
-   // Error tolerance for array equality
+   // Error tolerance for equality
    #ifdef SINGLE_PRECISION
-   constexpr static float tolerance_ = 1E-5;
+   constexpr static cudaReal tolerance_ = 1E-5;
    #else
    #ifdef DOUBLE_PRECISION
-   constexpr static double tolerance_ = 1E-10;
+   constexpr static cudaReal tolerance_ = 1E-10;
    #endif
    #endif
 
@@ -92,6 +91,7 @@ public:
                num_h[i] += num_h[nReduced+i];
             }
          }
+         cudaReal sumCPU = num_h[0];
          if (verbose() > 0) {
             timerCPU.stop();
             Log::file() << "CPU wall time: " << Dbl(timerCPU.time()) 
@@ -103,36 +103,21 @@ public:
          if (verbose() > 0) {
             timerGPU.start();
          }
-         cudaReal sum = Reduce::sum(num);
+         cudaReal sumGPU = Reduce::sum(num);
          
          // Check answer
          if (verbose() > 0) {
             timerGPU.stop();
             Log::file() << "GPU wall time: " << Dbl(timerGPU.time()) << "\n"
-                        << "Sum on CPU:    " << Dbl(num_h[0]) << "\n"
-                        << "Sum on GPU:    " << Dbl(sum) << "\n"
-                        << "Difference:    " << fabs(sum - num_h[0]) << "\n"
+                        << "Sum on CPU:    " << Dbl(sumCPU) << "\n"
+                        << "Sum on GPU:    " << Dbl(sumGPU) << "\n"
+                        << "Difference:    " << fabs(sumCPU - sumGPU) << "\n"
                         << std::endl;
          }
-         TEST_ASSERT((fabs(sum - num_h[0]) / sum) < tolerance_);
 
-         // Check answer against old version of the code
-         Timer timerGPU2;
-         if (verbose() > 0) {
-            timerGPU2.start();
-         }
-         cudaReal sumOld = gpuSum(num.cArray(), n);
-
-         // Check answer
-         if (verbose() > 0) {
-            timerGPU2.stop();
-            Log::file() << "Old version:\n"
-                        << "GPU wall time: " << Dbl(timerGPU2.time()) << "\n"
-                        << "Sum on GPU:    " << Dbl(sumOld) << "\n"
-                        << "Difference:    " << fabs(sum - sumOld) << "\n"
-                        << std::endl;
-         }
-         TEST_ASSERT((fabs(sum - sumOld) / sum) < tolerance_);
+         // Check that error is at least 5 (10) orders of magnitude smaller 
+         // than the value of the sum for single (double) precision data
+         TEST_ASSERT((fabs(sumCPU - sumGPU) / sumCPU) < tolerance_);
       }
    }
 
@@ -193,24 +178,6 @@ public:
                         << std::endl;
          }
          TEST_ASSERT((fabs(maxCPU - maxGPU)) < tolerance_);
-
-         // Check answer against old version of the code
-         Timer timerGPU2;
-         if (verbose() > 0) {
-            timerGPU2.start();
-         }
-         cudaReal maxOld = gpuMax(num.cArray(), n);
-
-         // Check answer
-         if (verbose() > 0) {
-            timerGPU2.stop();
-            Log::file() << "Old version:\n"
-                        << "GPU wall time: " << Dbl(timerGPU2.time()) << "\n"
-                        << "Max on GPU:    " << Dbl(maxOld) << "\n"
-                        << "Difference:    " << fabs(maxGPU - maxOld) << "\n"
-                        << std::endl;
-         }
-         TEST_ASSERT((fabs(maxGPU - maxOld)) < tolerance_);
       }
    }
 
@@ -273,24 +240,6 @@ public:
                         << std::endl;
          }
          TEST_ASSERT((fabs(maxCPU - maxGPU)) < tolerance_);
-
-         // Check answer against old version of the code
-         Timer timerGPU2;
-         if (verbose() > 0) {
-            timerGPU2.start();
-         }
-         cudaReal maxOld = gpuMaxAbs(num.cArray(), n);
-
-         // Check answer
-         if (verbose() > 0) {
-            timerGPU2.stop();
-            Log::file() << "Old version:\n"
-                        << "GPU wall time: " << Dbl(timerGPU2.time()) << "\n"
-                        << "Max on GPU:    " << Dbl(maxOld) << "\n"
-                        << "Difference:    " << fabs(maxGPU - maxOld) << "\n"
-                        << std::endl;
-         }
-         TEST_ASSERT((fabs(maxGPU - maxOld)) < tolerance_);
       }
    }
 
@@ -351,24 +300,6 @@ public:
                         << std::endl;
          }
          TEST_ASSERT((fabs(minCPU - minGPU)) < tolerance_);
-
-         // Check answer against old version of the code
-         Timer timerGPU2;
-         if (verbose() > 0) {
-            timerGPU2.start();
-         }
-         cudaReal minOld = gpuMin(num.cArray(), n);
-
-         // Check answer
-         if (verbose() > 0) {
-            timerGPU2.stop();
-            Log::file() << "Old version:\n"
-                        << "GPU wall time: " << Dbl(timerGPU2.time()) << "\n"
-                        << "Min on GPU:    " << Dbl(minOld) << "\n"
-                        << "Difference:    " << fabs(minGPU - minOld) << "\n"
-                        << std::endl;
-         }
-         TEST_ASSERT((fabs(minGPU - minOld)) < tolerance_);
       }
    }
 
@@ -431,24 +362,6 @@ public:
                         << std::endl;
          }
          TEST_ASSERT((fabs(minCPU - minGPU)) < tolerance_);
-
-         // Check answer against old version of the code
-         Timer timerGPU2;
-         if (verbose() > 0) {
-            timerGPU2.start();
-         }
-         cudaReal minOld = gpuMinAbs(num.cArray(), n);
-
-         // Check answer
-         if (verbose() > 0) {
-            timerGPU2.stop();
-            Log::file() << "Old version:\n"
-                        << "GPU wall time: " << Dbl(timerGPU2.time()) << "\n"
-                        << "Min on GPU:    " << Dbl(minOld) << "\n"
-                        << "Difference:    " << fabs(minGPU - minOld) << "\n"
-                        << std::endl;
-         }
-         TEST_ASSERT((fabs(minGPU - minOld)) < tolerance_);
       }
    }
 
@@ -502,6 +415,7 @@ public:
                a_h[i] += a_h[nReduced+i];
             }
          }
+         cudaReal ipCPU = a_h[0];
          if (verbose() > 0) {
             timerCPU.stop();
             Log::file() << "CPU wall time:     " << Dbl(timerCPU.time()) 
@@ -513,36 +427,21 @@ public:
          if (verbose() > 0) {
             timerGPU.start();
          }
-         cudaReal ip = Reduce::innerProduct(a, b);
+         cudaReal ipGPU = Reduce::innerProduct(a, b);
          
          // Check answer
          if (verbose() > 0) {
             timerGPU.stop();
             Log::file() << "GPU wall time:     " << Dbl(timerGPU.time()) << "\n"
-                        << "Inner prod on CPU: " << Dbl(a_h[0]) << "\n"
-                        << "Inner prod on GPU: " << Dbl(ip) << "\n"
-                        << "Difference:        " << fabs(ip - a_h[0]) << "\n"
+                        << "Inner prod on CPU: " << Dbl(ipCPU) << "\n"
+                        << "Inner prod on GPU: " << Dbl(ipGPU) << "\n"
+                        << "Difference:        " << fabs(ipCPU - ipGPU) << "\n"
                         << std::endl;
          }
-         TEST_ASSERT((fabs(ip - a_h[0]) / ip) < tolerance_);
 
-         // Check answer against old version of the code
-         Timer timerGPU2;
-         if (verbose() > 0) {
-            timerGPU2.start();
-         }
-         cudaReal ipOld = gpuInnerProduct(a.cArray(), b.cArray(), n);
-
-         // Check answer
-         if (verbose() > 0) {
-            timerGPU2.stop();
-            Log::file() << "Old version:\n"
-                        << "GPU wall time:     " << Dbl(timerGPU2.time()) << "\n"
-                        << "Inner prod on GPU: " << Dbl(ipOld) << "\n"
-                        << "Difference:        " << fabs(ip - ipOld) << "\n"
-                        << std::endl;
-         }
-         TEST_ASSERT((fabs(ip - ipOld) / ip) < tolerance_);
+         // Check that error is at least 5 (10) orders of magnitude smaller 
+         // than the value of the inner prod for single (double) precision data
+         TEST_ASSERT((fabs(ipCPU - ipGPU) / ipCPU) < tolerance_);
       }
    }
 

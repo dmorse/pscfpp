@@ -13,8 +13,7 @@
 #include <prdc/cuda/RField.h>
 #include <prdc/crystal/UnitCell.h>
 #include <pscf/inter/Interaction.h>
-#include <pscf/cuda/DeviceArray.h>
-#include <pscf/cuda/HostDArray.h>
+#include <pscf/cuda/GpuResources.h>
 
 #include <util/global.h>
 
@@ -83,20 +82,16 @@ namespace Rpg {
 
    template <int D>
    double AmIteratorGrid<D>::dotProduct(FieldCUDA const & a, 
-                                        FieldCUDA const& b) 
+                                        FieldCUDA const & b) 
    {
-      const int n = a.capacity();
-      UTIL_CHECK(b.capacity() == n);
-      double product = (double)gpuInnerProduct(a.cArray(), b.cArray(), n);
-      return product;
+      UTIL_CHECK(a.capacity() == b.capacity());
+      return Reduce::innerProduct(a, b);
    }
 
    template <int D>
    double AmIteratorGrid<D>::maxAbs(FieldCUDA const & a)
    {
-      int n = a.capacity();
-      cudaReal max = gpuMaxAbs(a.cArray(), n);
-      return (double)max;
+      return Reduce::maxAbs(a);
    }
 
    template <int D>
@@ -199,7 +194,8 @@ namespace Rpg {
          }
          
          // Copy parameters to the end of the curr array
-         DeviceArray<cudaReal> tempD(curr, nMonomer*nMesh, nParam);
+         DeviceArray<cudaReal> tempD;
+         tempD.associate(curr, nMonomer*nMesh, nParam);
          tempD = tempH; // copy from host to device
       }
    }
@@ -225,6 +221,14 @@ namespace Rpg {
       // Initialize residuals to zero. Kernel will take care of potential
       // additional elements (n vs nMesh).
       assignUniformReal<<<nBlocks, nThreads>>>(resid.cArray(), 0, n);
+
+      // Array of FieldCUDA arrays associated with slices of resid.
+      // one FieldCUDA array per monomer species, each of size nMesh.
+      DArray<FieldCUDA> residSlices;
+      residSlices.allocate(nMonomer);
+      for (int i = 0; i < nMonomer; i++) {
+         residSlices[i].associate(resid, i*nMesh, nMesh);
+      }
 
       // Compute SCF residuals
       for (int i = 0; i < nMonomer; i++) {
@@ -253,7 +257,7 @@ namespace Rpg {
       } else {
          for (int i = 0; i < nMonomer; i++) {
             // Find current average 
-            cudaReal average = findAverage(resid.cArray()+i*nMesh, nMesh);
+            cudaReal average = findAverage(residSlices[i]);
             // subtract out average to set residual average to zero
             subtractUniform<<<nBlocks, nThreads>>>(resid.cArray() + i*nMesh,
                                                                average, nMesh);
@@ -270,7 +274,8 @@ namespace Rpg {
                                    system().mixture().stress(i));
          }
 
-         DeviceArray<cudaReal> stressD(resid, nMonomer*nMesh, nParam);
+         DeviceArray<cudaReal> stressD;
+         stressD.associate(resid, nMonomer*nMesh, nParam);
          stressD = stressH; // copy from host to device
       }
    }
@@ -289,8 +294,12 @@ namespace Rpg {
       if (system().mixture().isCanonical()) {
          cudaReal average, wAverage, cAverage;
          for (int i = 0; i < nMonomer; i++) {
+            // Define FieldCUDA array associated with a slice of newGuess
+            FieldCUDA ngSlice;
+            ngSlice.associate(newGuess, i*nMesh, nMesh);
+
             // Find current spatial average
-            average = findAverage(newGuess.cArray() + i*nMesh, nMesh);
+            average = findAverage(ngSlice);
             
             // Subtract average from field, setting average to zero
             subtractUniform<<<nBlocks, nThreads>>>(newGuess.cArray() + i*nMesh,
@@ -300,7 +309,7 @@ namespace Rpg {
             wAverage = 0;
             for (int j = 0; j < nMonomer; j++) {
                // Find average concentration for j monomers
-               cAverage = findAverage(system().c().rgrid(j).cArray(), nMesh);
+               cAverage = findAverage(system().c().rgrid(j));
                wAverage += interaction_.chi(i,j) * cAverage;
             }
             addUniform<<<nBlocks, nThreads>>>(newGuess.cArray() + i*nMesh, 
@@ -316,7 +325,8 @@ namespace Rpg {
          FSArray<double,6> parameters;
          const int nParam = system().unitCell().nParameter();
          HostDArray<cudaReal> tempH(nParam);
-         DeviceArray<cudaReal> tempD(newGuess, nMonomer*nMesh, nParam);
+         DeviceArray<cudaReal> tempD;
+         tempD.associate(newGuess, nMonomer*nMesh, nParam);
          tempH = tempD; // transfer from device to host
          for (int i = 0; i < nParam; i++) {
             parameters.append(1/scaleStress_ * (double)tempH[i]);
@@ -342,13 +352,10 @@ namespace Rpg {
    // --- Private member functions that are specific to this implementation --- 
 
    template<int D> 
-   cudaReal AmIteratorGrid<D>::findAverage(cudaReal const * field, int n) 
+   cudaReal AmIteratorGrid<D>::findAverage(FieldCUDA const & field) 
    {
-      cudaReal average = gpuSum(field, n)/n;
-      return average;
+      return Reduce::sum(field) / field.capacity();
    }
-
-
 
 }
 }

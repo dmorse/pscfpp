@@ -59,18 +59,6 @@ namespace Pscf {
       DeviceArray(int capacity);
 
       /**
-      * Associating constructor.
-      *
-      * This function calls associate(arr, beginId, capacity) 
-      * internally.
-      * 
-      * \param arr parent array that owns the data
-      * \param beginId index in the parent array at which this array starts
-      * \param capacity number of elements to allocate 
-      */
-      DeviceArray(DeviceArray<Data>& arr, int beginId, int capacity);
-
-      /**
       * Copy constructor.
       * 
       * \param other DeviceArray<Data> to be copied (input)

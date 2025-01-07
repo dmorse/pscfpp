@@ -77,7 +77,7 @@ namespace Pscf {
       if (capacity <= 0) {
          UTIL_THROW("Attempt to allocate with capacity <= 0");
       }
-      gpuErrchk(cudaMallocHost((void**) &data_, capacity * sizeof(Data)));
+      gpuErrChk(cudaMallocHost((void**) &data_, capacity * sizeof(Data)));
       capacity_ = capacity;
    }
 

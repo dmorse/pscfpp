@@ -6,8 +6,7 @@
 #include <rpg/fts/simulator/Simulator.h>
 #include <rpg/System.h>
 
-#include <prdc/cuda/RField.h>
-
+#include <pscf/cuda/GpuResources.h>
 #include <pscf/mesh/MeshIterator.h>
 #include <pscf/math/IntVec.h>
 
@@ -157,7 +156,7 @@ namespace Rpg {
             (psi.cArray(), psi.cArray(), kSize_);
             
       // Get sum over all wavevectors
-      FourthOrderParameter_ = (double)gpuSum(psi.cArray(), kSize_);
+      FourthOrderParameter_ = Reduce::sum(psi);
       FourthOrderParameter_ = std::pow(FourthOrderParameter_, 0.25);
    }
    

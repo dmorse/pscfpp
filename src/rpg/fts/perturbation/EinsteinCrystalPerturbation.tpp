@@ -103,9 +103,7 @@ namespace Rpg {
          pointWiseSubtract<<<nBlocks, nThreads>>>
             (wcs.cArray(), wc0_[j].cArray(), meshSize);
          double wSqure = 0;
-         wSqure = 
-              (double)gpuInnerProduct(wcs.cArray(), 
-                                      wcs.cArray(), meshSize);
+         wSqure = Reduce::innerProduct(wcs, wcs);
          ecHamiltonian_ += prefactor * wSqure;
       }
       

@@ -11,6 +11,7 @@
 #include "AmCompressor.h"
 #include <rpg/System.h>
 #include <prdc/cuda/RField.h>
+#include <pscf/cuda/GpuResources.h>
 #include <pscf/math/IntVec.h>
 #include <util/global.h>
 
@@ -108,19 +109,15 @@ namespace Rpg{
    double AmCompressor<D>::dotProduct(DeviceArray<cudaReal> const & a, 
                                       DeviceArray<cudaReal> const & b)
    {
-      const int n = a.capacity();
-      UTIL_CHECK(b.capacity() == n);
-      double product = (double)gpuInnerProduct(a.cArray(), b.cArray(), n);
-      return product;
+      UTIL_CHECK(a.capacity() == b.capacity());
+      return Reduce::innerProduct(a, b);
    }
 
    // Compute and return maximum element of a vector.
    template <int D>
    double AmCompressor<D>::maxAbs(DeviceArray<cudaReal> const & a)
    {
-      int n = a.capacity();
-      cudaReal max = gpuMaxAbs(a.cArray(), n);
-      return (double)max;
+      return Reduce::maxAbs(a);
    }
 
    // Update basis

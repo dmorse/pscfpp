@@ -148,14 +148,14 @@ public:
          (w[0].cArray(), wc[0].cArray(), wcTest1.cArray(), meshSize);
       pointWiseSubtract<<<nBlocks, nThreads>>>
          (wcTest1.cArray(), wc[1].cArray(), meshSize);
-      TEST_ASSERT((double)gpuMaxAbs(wcTest1.cArray(), meshSize)< 1.0E-6);
+      TEST_ASSERT(Reduce::maxAbs(wcTest1) < 1.0E-6);
       
       /// TEST_ASSERT(fabs( w[0][i] - w[1][i] - 2.0*wc[0][i] ) < 1.0E-6);
       pointWiseBinarySubtract<<<nBlocks, nThreads>>>
          (w[0].cArray(), w[1].cArray(), wcTest2.cArray(), meshSize);
       pointWiseAddScale<<<nBlocks, nThreads>>>
          (wcTest2.cArray(), wc[0].cArray(), -2.0, meshSize);
-      TEST_ASSERT((double)gpuMaxAbs(wcTest2.cArray(), meshSize)< 1.0E-6);
+      TEST_ASSERT(Reduce::maxAbs(wcTest2) < 1.0E-6);
 
 
       // Test cc field
@@ -166,11 +166,10 @@ public:
          (c[0].cArray(), c[1].cArray(), ccTest.cArray(), meshSize);
       pointWiseSubtract<<<nBlocks, nThreads>>>
          (ccTest.cArray(), cc[0].cArray(), meshSize);
-      TEST_ASSERT((double)gpuMaxAbs(ccTest.cArray(), meshSize)< 1.0E-6);
+      TEST_ASSERT(Reduce::maxAbs(ccTest) < 1.0E-6);
       
       // Test dc field
-      // diff = fabs( dc[0][i] );
-      TEST_ASSERT((double)gpuMaxAbs(dc[0].cArray(), meshSize) < 1.0E-8);
+      TEST_ASSERT(Reduce::maxAbs(dc[0]) < 1.0E-6);
 
       #if 0
       std::cout << std::endl;

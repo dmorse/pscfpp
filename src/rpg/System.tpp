@@ -21,7 +21,6 @@
 #include <prdc/cuda/RField.h>
 
 #include <pscf/cuda/GpuResources.h>
-#include <pscf/cuda/DeviceArray.h>
 #include <pscf/inter/Interaction.h>
 #include <pscf/math/IntVec.h>
 #include <pscf/homogeneous/Clump.h>
@@ -911,27 +910,27 @@ namespace Rpg {
       // Compute Legendre transform subtraction
       double temp = 0.0;
       for (int i = 0; i < nm; i++) {
-         pointWiseBinaryMultiply<<<nBlocks,nThreads>>>
-             (w_.rgrid(i).cArray(), c_.rgrid()[i].cArray(),
-              workArray_.cArray(), nx);
-         temp += gpuSum(workArray_.cArray(),nx) / double(nx);
+         temp += Reduce::innerProduct(w_.rgrid(i), c_.rgrid(i)) / double(nx);
       }
       fHelmholtz_ -= temp;
       fIdeal_ = fHelmholtz_;
 
       // Compute excess interaction free energy
+      fInter_ = 0.0;
       for (int i = 0; i < nm; ++i) {
-         for (int j = i + 1; j < nm; ++j) {
-           assignUniformReal<<<nBlocks, nThreads>>>
-               (workArray_.cArray(), interaction().chi(i, j), nx);
-           inPlacePointwiseMul<<<nBlocks, nThreads>>>
-               (workArray_.cArray(), c_.rgrid()[i].cArray(), nx);
-           inPlacePointwiseMul<<<nBlocks, nThreads>>>
-               (workArray_.cArray(), c_.rgrid()[j].cArray(), nx);
-           fHelmholtz_ += gpuSum(workArray_.cArray(), nx) / double(nx);
+         for (int j = i; j < nm; ++j) {
+            const double chi = interaction().chi(i,j);
+            if (fabs(chi) > 1.0E-9) {
+               temp = Reduce::innerProduct(c_.rgrid(i), c_.rgrid(j));
+               if (i == j) {
+                  fInter_ += 0.5 * chi * temp / nx;
+               } else {
+                  fInter_ += chi * temp / nx;
+               }
+            }
          }
       }
-      fInter_ = fHelmholtz_ - fIdeal_;
+      fHelmholtz_ += fInter_;
 
       // Initialize pressure
       pressure_ = -fHelmholtz_;

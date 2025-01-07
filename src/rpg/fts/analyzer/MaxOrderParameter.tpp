@@ -8,6 +8,7 @@
 
 #include <prdc/cuda/RField.h>
 
+#include <pscf/cuda/GpuResources.h>
 #include <pscf/mesh/MeshIterator.h>
 #include <pscf/math/IntVec.h>
 
@@ -152,7 +153,7 @@ namespace Rpg {
             (wK_.cArray(), psi.cArray(), kSize_);
             
       // Obtain max[W_(k)^2]
-      maxOrderParameter_ = (double)gpuMaxAbs(psi.cArray(), kSize_);
+      maxOrderParameter_ = Reduce::maxAbs(psi);
    }
    
    /*

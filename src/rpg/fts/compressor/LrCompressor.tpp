@@ -11,11 +11,12 @@
 #include "LrCompressor.h"
 #include <rpg/System.h>
 #include <rpg/fts/compressor/intra/IntraCorrelation.h> 
+#include <prdc/crystal/shiftToMinimum.h>
+#include <pscf/mesh/MeshIterator.h>
+#include <pscf/cuda/GpuResources.h>
+#include <pscf/iterator/NanException.h>
 #include <util/global.h>
 #include <util/format/Dbl.h>
-#include <pscf/mesh/MeshIterator.h>
-#include <pscf/iterator/NanException.h>
-#include <prdc/crystal/shiftToMinimum.h>
 
 
 namespace Pscf {
@@ -266,9 +267,7 @@ namespace Rpg{
    template <int D>
    double LrCompressor<D>::maxAbs(RField<D> const & a)
    {
-      int n = a.capacity();
-      cudaReal max = gpuMaxAbs(a.cArray(), n);
-      return (double)max;
+      return Reduce::maxAbs(a);
    }
 
    // Compute and return inner product of two vectors.
@@ -276,10 +275,8 @@ namespace Rpg{
    double LrCompressor<D>::dotProduct(RField<D> const & a,
                                       RField<D> const & b)
    {
-      const int n = a.capacity();
-      UTIL_CHECK(b.capacity() == n);
-      double product = (double)gpuInnerProduct(a.cArray(), b.cArray(), n);
-      return product;
+      UTIL_CHECK(a.capacity() == b.capacity());
+      return Reduce::innerProduct(a, b);
    }
 
    // Compute L2 norm of an RField

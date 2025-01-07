@@ -11,14 +11,15 @@
 #include "LrAmPreCompressor.h"
 #include <rpg/System.h>
 #include <rpg/fts/compressor/intra/IntraCorrelation.h>  
+#include <prdc/crystal/shiftToMinimum.h>
 #include <pscf/chem/Monomer.h>
 #include <pscf/mesh/MeshIterator.h>
-#include <prdc/crystal/shiftToMinimum.h>
+#include <pscf/cuda/GpuResources.h>
 #include <complex>
 #include <util/global.h>
 
 namespace Pscf {
-namespace Rpg{
+namespace Rpg {
 
    using namespace Util;
 
@@ -129,21 +130,17 @@ namespace Rpg{
    // Compute and return inner product of two vectors.
    template <int D>
    double LrAmPreCompressor<D>::dotProduct(DeviceArray<cudaReal> const & a, 
-                                        DeviceArray<cudaReal> const & b)
+                                           DeviceArray<cudaReal> const & b)
    {
-      const int n = a.capacity();
-      UTIL_CHECK(b.capacity() == n);
-      double product = (double)gpuInnerProduct(a.cArray(), b.cArray(), n);
-      return product;
+      UTIL_CHECK(a.capacity() == b.capacity());
+      return Reduce::innerProduct(a, b);
    }
 
    // Compute and return maximum element of a vector.
    template <int D>
    double LrAmPreCompressor<D>::maxAbs(DeviceArray<cudaReal> const & a)
    {
-      int n = a.capacity();
-      cudaReal max = gpuMaxAbs(a.cArray(), n);
-      return (double)max;
+      return Reduce::maxAbs(a);
    }
 
    // Update basis

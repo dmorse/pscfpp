@@ -43,20 +43,6 @@ namespace Pscf {
    {  allocate(capacity); }
 
    /*
-   * Associating constructor.
-   */
-   template <typename Data>
-   DeviceArray<Data>::DeviceArray(DeviceArray<Data>& arr, int beginId, 
-                                  int capacity)
-    : data_(0),
-      capacity_(0),
-      isOwner_(true), // initialize to true, though will be set to false
-      ownerPtr_(0),
-      ownerCapacity_(0),
-      ownerData_(0)
-   {  associate(arr, beginId, capacity); }
-
-   /*
    * Copy constructor.
    *
    * Allocates new memory and copies all elements by value.
@@ -100,7 +86,7 @@ namespace Pscf {
       if (capacity <= 0) {
          UTIL_THROW("Attempt to allocate with capacity <= 0");
       }
-      gpuErrchk(cudaMalloc((void**) &data_, capacity * sizeof(Data)));
+      gpuErrChk(cudaMalloc((void**) &data_, capacity * sizeof(Data)));
       capacity_ = capacity;
 
       isOwner_ = true;

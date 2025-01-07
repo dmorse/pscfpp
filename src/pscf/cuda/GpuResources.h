@@ -6,7 +6,6 @@
 #include "LinearAlgebra.h" // Linear algebra kernels 
 #include "VecOp.h"         // Vector operation kernels and wrappers
 #include "Reduce.h"        // Functions using parallel reduction algorithms
-#include "KernelWrappers.h"// Host functions for reductions
 #include "DeviceArray.h"   // Array container stored on device
 #include "HostDArray.h"    // Array container stored on host
 

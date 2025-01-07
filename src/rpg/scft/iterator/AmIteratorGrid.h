@@ -231,7 +231,7 @@ namespace Rpg
 
       // --- Private member functions specific to this implementation --- 
       
-      cudaReal findAverage(cudaReal const * field, int n);
+      cudaReal findAverage(FieldCUDA const & field);
 
    };
 

@@ -189,7 +189,7 @@ public:
          pointWiseAdd<<<nBlocks, nThreads>>>
             (error.cArray(), system.c().rgrid(i).cArray(), meshSize);
       }
-      double product = (double)gpuInnerProduct(error.cArray(), error.cArray(), meshSize);
+      double product = Reduce::innerProduct(error, error); 
       
       TEST_ASSERT(sqrt(product)/sqrt(meshSize) < 1.0E-8);
       

@@ -15,7 +15,7 @@
 namespace Pscf {
 
    /**
-   * CudaRandom GPU number generator.
+   * Random number generator on GPU.
    *
    * The generator may be seeded either by reading a seed from 
    * file, using the readParam() method, or by using setSeed()

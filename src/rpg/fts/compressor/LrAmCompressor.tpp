@@ -11,6 +11,7 @@
 #include "LrAmCompressor.h"
 #include <rpg/System.h>
 #include <rpg/fts/compressor/intra/IntraCorrelation.h>
+#include <pscf/cuda/GpuResources.h>
 #include <pscf/mesh/MeshIterator.h>
 #include <util/global.h>
 
@@ -122,21 +123,17 @@ namespace Rpg{
    // Compute and return inner product of two vectors.
    template <int D>
    double LrAmCompressor<D>::dotProduct(DeviceArray<cudaReal> const & a, 
-                                            DeviceArray<cudaReal> const & b)
+                                        DeviceArray<cudaReal> const & b)
    {
-      const int n = a.capacity();
-      UTIL_CHECK(b.capacity() == n);
-      double product = (double)gpuInnerProduct(a.cArray(), b.cArray(), n);
-      return product;
+      UTIL_CHECK(a.capacity() == b.capacity());
+      return Reduce::innerProduct(a, b); 
    }
 
    // Compute and return maximum element of a vector.
    template <int D>
    double LrAmCompressor<D>::maxAbs(DeviceArray<cudaReal> const & a)
    {
-      int n = a.capacity();
-      cudaReal max = gpuMaxAbs(a.cArray(), n);
-      return (double)max;
+      return Reduce::maxAbs(a);
    }
 
    // Update basis

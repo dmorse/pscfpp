@@ -10,6 +10,7 @@
 
 #include "Solvent.h"
 #include <pscf/mesh/Mesh.h>
+#include <pscf/cuda/GpuResources.h>
 
 namespace Pscf {
 namespace Rpg { 
@@ -51,8 +52,7 @@ namespace Rpg {
       double s = size();
       q_ = 0.0;
       assignExp<<<nBlocks, nThreads>>>(concField_.cArray(), wField.cArray(), s, nx);
-      q_ = (double)gpuSum(concField_.cArray(),nx);
-      q_ = q_/double(nx);
+      q_ = Reduce::sum(concField_) / ((double) nx);
 
       // Compute mu_ or phi_ and prefactor
       double prefactor;
