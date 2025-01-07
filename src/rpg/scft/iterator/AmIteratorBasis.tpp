@@ -420,7 +420,7 @@ namespace Rpg {
    template<int D>
    void AmIteratorBasis<D>::outputToLog()
    {
-      if (isFlexible_) {
+      if (isFlexible_ && verbose() > 1) {
          const int nParam = system().unitCell().nParameter();
          for (int i = 0; i < nParam; i++) {
             Log::file() << "Parameter " << i << " = "

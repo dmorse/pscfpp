@@ -336,8 +336,7 @@ public:
       }
 
       d_qin = qin;
-      block.setupFFT();
-      block.step(d_qin.cArray(), d_qout.cArray());
+      block.step(d_qin, d_qout);
       qout = d_qout;
 
       // Test block step output against expected output
@@ -357,10 +356,8 @@ public:
       // Copy results from propagator solve
       HostDArray<cudaReal> propHead(nx);
       HostDArray<cudaReal> propTail(nx);
-      cudaMemcpy(propHead.cArray(), block.propagator(0).head(), 
-                 nx*sizeof(cudaReal), cudaMemcpyDeviceToHost);
-      cudaMemcpy(propTail.cArray(), block.propagator(0).tail(), 
-                 nx*sizeof(cudaReal), cudaMemcpyDeviceToHost);
+      propHead = block.propagator(0).head();
+      propTail = block.propagator(0).tail();
 
       for (int i = 0; i < nx; ++i) {
          TEST_ASSERT(eq(propHead[i],1.0));
@@ -435,8 +432,7 @@ public:
       }
 
       d_qin = qin;
-      block.setupFFT();
-      block.step(d_qin.cArray(), d_qout.cArray());
+      block.step(d_qin, d_qout);
       qout = d_qout;
 
       // Test block step output against expected output
@@ -462,10 +458,8 @@ public:
       // Copy results from propagator solve
       HostDArray<cudaReal> propHead(nx);
       HostDArray<cudaReal> propTail(nx);
-      cudaMemcpy(propHead.cArray(), block.propagator(0).head(), 
-                 nx*sizeof(cudaReal), cudaMemcpyDeviceToHost);
-      cudaMemcpy(propTail.cArray(), block.propagator(0).tail(), 
-                 nx*sizeof(cudaReal), cudaMemcpyDeviceToHost);
+      propHead = block.propagator(0).head();
+      propTail = block.propagator(0).tail();
 
       for (iter.begin(); !iter.atEnd(); ++iter){
          TEST_ASSERT(eq(propHead[iter.rank()], 1.0));
@@ -542,8 +536,7 @@ public:
       }
 
       d_qin = qin;
-      block.setupFFT();
-      block.step(d_qin.cArray(), d_qout.cArray());
+      block.step(d_qin, d_qout);
       qout = d_qout;
 
       // Test block step output against expected output
@@ -571,10 +564,8 @@ public:
       // Copy results from propagator solve
       HostDArray<cudaReal> propHead(nx);
       HostDArray<cudaReal> propTail(nx);
-      cudaMemcpy(propHead.cArray(), block.propagator(0).head(), 
-                 nx*sizeof(cudaReal), cudaMemcpyDeviceToHost);
-      cudaMemcpy(propTail.cArray(), block.propagator(0).tail(), 
-                 nx*sizeof(cudaReal), cudaMemcpyDeviceToHost);
+      propHead = block.propagator(0).head();
+      propTail = block.propagator(0).tail();
 
       for (iter.begin(); !iter.atEnd(); ++iter){
          TEST_ASSERT(eq(propHead[iter.rank()], 1.0));

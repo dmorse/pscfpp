@@ -10,14 +10,9 @@
 
 #include "Propagator.h"
 #include "Block.h"
-#include <thrust/reduce.h>
-#include "device_launch_parameters.h"
-#include <cuda.h>
-//#include <device_functions.h>
-#include <thrust/count.h>
 #include <pscf/cuda/GpuResources.h>
 #include <pscf/mesh/Mesh.h>
-//#include <Windows.h>
+#include <util/containers/DArray.h>
 
 namespace Pscf {
 namespace Rpg {
@@ -33,30 +28,62 @@ namespace Rpg {
       meshPtr_(0),
       ns_(0),
       isAllocated_(false)
-   {
-   }
+   {}
 
    /*
    * Destructor.
    */
    template <int D>
    Propagator<D>::~Propagator()
-   {
-      if (isAllocated_) {
-         cudaFree(qFields_d);
-      }
-   }  
+   {}
 
+   /*
+   * Allocate memory used by this propagator.
+   */
    template <int D>
    void Propagator<D>::allocate(int ns, const Mesh<D>& mesh)
    {
       ns_ = ns;
       meshPtr_ = &mesh;
 
-      ThreadGrid::setThreadsLogical(mesh.size());
-      gpuErrchk(cudaMalloc((void**)&qFields_d, sizeof(cudaReal)* mesh.size() *
-                 ns));
+      // Allocate memory in qFieldsAll_ using value of ns
+      int meshSize = meshPtr_->size();
+      qFieldsAll_.allocate(ns * meshSize);
+
+      // Set up array of associated RField<D> arrays
+      qFields_.allocate(ns);
+      for (int i = 0; i < ns; ++i) {
+         qFields_[i].associate(qFieldsAll_, i*meshSize, meshPtr_->dimensions());
+      }
       isAllocated_ = true;
+   }
+
+   /*
+   * Reallocate memory used by this propagator using new ns value.
+   */
+   template <int D>
+   void Propagator<D>::reallocate(int ns)
+   {
+      UTIL_CHECK(isAllocated_);
+      UTIL_CHECK(ns_ != ns);
+      ns_ = ns;
+
+      // Deallocate memory previously used by this propagator.
+      qFields_.deallocate(); // Destroys associated RField<D> objects 
+                             // but not the underlying data
+      qFieldsAll_.deallocate(); // Destroy actual propagator data
+
+      // Allocate memory in qFieldsAll_ using new value of ns
+      int meshSize = meshPtr_->size();
+      qFieldsAll_.allocate(ns * meshSize);
+
+      // Set up array of associated RField<D> arrays
+      qFields_.allocate(ns);
+      for (int i = 0; i < ns; ++i) {
+         qFields_[i].associate(qFieldsAll_, i*meshSize, meshPtr_->dimensions());
+      }
+
+      setIsSolved(false);
    }
 
    /*
@@ -65,35 +92,22 @@ namespace Rpg {
    template <int D>
    void Propagator<D>::computeHead()
    {
-
-      // Reference to head of this propagator
-      //QField& qh = qFields_[0];
-
-      // Initialize qh field to 1.0 at all grid points
+      // Initialize head field (s=0) to 1.0 at all grid points
       int nx = meshPtr_->size();
+      VecOp::eqS(qFields_[0], 1.0);
 
-      // GPU resources
-      int nBlocks, nThreads;
-      ThreadGrid::setThreadsLogical(nx, nBlocks, nThreads);
-
-      //qh[ix] = 1.0;
-      //qFields_d points to the first element in gpu memory
-      assignUniformReal<<<nBlocks, nThreads>>>(qFields_d, 1.0, nx);
-      
-
-      // Pointwise multiply tail QFields of all sources
-      // this could be slow with many sources. Should launch 1 kernel for the 
-      // whole function of computeHead
-      const cudaReal* qt;
-      for (int is = 0; is < nSource(); ++is) {
-         if (!source(is).isSolved()) {
-            UTIL_THROW("Source not solved in computeHead");
+      // Multiply head q-field by tail q-fields of all sources
+      if (nSource() > 0) {
+         DArray<DeviceArray<cudaReal> const *> tails;
+         tails.allocate(nSource()+1);
+         tails[0] = &qFields_[0]; 
+         for (int is = 0; is < nSource(); ++is) {
+            if (!source(is).isSolved()) {
+               UTIL_THROW("Source not solved in computeHead");
+            }
+            tails[is+1] = &(source(is).tail());
          }
-         //need to modify tail to give the total_size - mesh_size pointer
-         qt = source(is).tail();
-
-         //qh[ix] *= qt[ix];
-         inPlacePointwiseMul<<<nBlocks, nThreads>>>(qFields_d, qt, nx);
+         VecOp::mulVMany(qFields_[0], tails);
       }
    }
 
@@ -106,14 +120,8 @@ namespace Rpg {
       UTIL_CHECK(isAllocated());
 
       computeHead();
-      // Setup solver and solve
-      block().setupFFT();
-      
-      int currentIdx;
       for (int iStep = 0; iStep < ns_ - 1; ++iStep) {
-         currentIdx = iStep * meshPtr_->size();
-         block().step(qFields_d + currentIdx, 
-                      qFields_d + currentIdx + meshPtr_->size());
+         block().step(qFields_[iStep], qFields_[iStep+1]);
       }
       setIsSolved(true);
    }
@@ -122,24 +130,15 @@ namespace Rpg {
    * Solve the modified diffusion equation with specified initial field.
    */
    template <int D>
-   void Propagator<D>::solve(const cudaReal * head)
+   void Propagator<D>::solve(RField<D> const & head)
    {
-      int nx = meshPtr_->size();
-
-      // GPU resources
-      int nBlocks, nThreads;
-      ThreadGrid::setThreadsLogical(nx, nBlocks, nThreads);
+      UTIL_CHECK(isAllocated());
 
       // Initialize initial (head) field
-      cudaReal* qh = qFields_d;
-      // qh[i] = head[i];
-      assignReal<<<nBlocks, nThreads>>>(qh, head, nx);
+      VecOp::eqV(qFields_[0], head);
 
-      // Setup solver and solve
-      int currentIdx;
       for (int iStep = 0; iStep < ns_ - 1; ++iStep) {
-         currentIdx = iStep * nx;
-         block().step(qFields_d + currentIdx, qFields_d + currentIdx + nx);
+         block().step(qFields_[iStep], qFields_[iStep+1]);
       }
       setIsSolved(true);
    }
@@ -160,17 +159,12 @@ namespace Rpg {
       if (!partner().isSolved()) {
          UTIL_THROW("Partner propagator is not solved");
       }
-      const cudaReal * qh = head();
-      const cudaReal * qt = partner().tail();
-      int nx = meshPtr_->size();
 
       // Take inner product of head and partner tail fields
       // cannot reduce assuming one propagator, qh == 1
       // polymers are divided into blocks midway through
-      double Q = 0; 
-      
-      Q = gpuInnerProduct(qh, qt, nx);
-      Q /= double(nx);
+      int nx = meshPtr_->size();
+      double Q = Reduce::innerProduct(head(), partner().tail()) / double(nx);
       return Q;
    }
 

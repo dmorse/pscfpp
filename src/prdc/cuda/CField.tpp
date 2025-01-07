@@ -43,10 +43,6 @@ namespace Cuda {
 
    /*
    * Copy constructor.
-   *
-   * Allocates new memory and copies all elements by value.
-   *
-   *\param other the Field to be copied.
    */
    template <int D>
    CField<D>::CField(const CField<D>& other)
@@ -104,6 +100,22 @@ namespace Cuda {
          size *= meshDimensions[i];
       }
       DeviceArray<cudaComplex>::allocate(size);
+   }
+
+   /*
+   * Associate this object with a slice of another DeviceArray.
+   */
+   template <int D>
+   void CField<D>::associate(DeviceArray<cudaComplex>& arr, int beginId, 
+                             IntVec<D> const & meshDimensions)
+   {
+      int size = 1;
+      for (int i = 0; i < D; ++i) {
+         UTIL_CHECK(meshDimensions[i] > 0);
+         meshDimensions_[i] = meshDimensions[i];
+         size *= meshDimensions[i];
+      }
+      DeviceArray<cudaComplex>::associate(arr, beginId, size);
    }
 
 }

@@ -58,25 +58,32 @@ namespace Cuda {
       /**
       * Compute forward (real-to-complex) Fourier transform.
       *
-      * \param in  ptr to array of real values on r-grid (device mem)
-      * \param out  ptr to array of complex values on k-grid (device mem)
-      * \param batchSize  number of simultaneous FFTs to perform
+      * \param in  array of real values on r-grid (device mem)
+      * \param out  array of complex values on k-grid (device mem)
       */
-      void forwardTransform(cudaReal* in, cudaComplex* out, int batchSize) const;
+      void forwardTransform(DeviceArray<cudaReal>& in, 
+                            DeviceArray<cudaComplex>& out) const;
 
       /**
       * Compute inverse (complex-to-real) Fourier transform.
       *
       * \param in  ptr to array of complex values on k-grid (device mem)
       * \param out  ptr to array of real values on r-grid (device mem)
-      * \param batchSize  number of simultaneous FFTs to perform
       */
-      void inverseTransform(cudaComplex* in, cudaReal* out, int batchSize) const;
+      void inverseTransform(DeviceArray<cudaComplex>& in, 
+                            DeviceArray<cudaReal>& out) const;
 
       /**
       * Return the dimensions of the grid for which this was allocated.
       */
       const IntVec<D>& meshDimensions() const;
+
+      /**
+      * Set the batch size to a new value. isSetup() must already be true.
+      * 
+      * \param batchSize  The new batch size.
+      */
+      void setBatchSize(int batchSize);
 
       /**
       * Has the setup method been called?
@@ -85,8 +92,14 @@ namespace Cuda {
 
    private:
 
-      /// Vector containing number of grid points in each direction.
+      /// Vector containing number of r-grid points in each direction.
       IntVec<D> meshDimensions_;
+
+      /// Vector containing number of k-grid points in each direction.
+      IntVec<D> kMeshDimensions_;
+
+      /// Number of FFTs in batch
+      int batchSize_;
 
       /// Number of points in r-space grid
       int rSize_;

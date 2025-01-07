@@ -8,15 +8,15 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "Propagator.h"                   // base class argument
-#include <prdc/cuda/RField.h>           // member
-#include <prdc/cuda/RFieldDft.h>        // member
+#include "Propagator.h"                  // base class argument
+#include <prdc/cuda/RField.h>            // member
+#include <prdc/cuda/RFieldDft.h>         // member
 #include <prdc/cuda/FFT.h>               // member
 #include <prdc/cuda/FFTBatched.h>        // member
 #include <rpg/solvers/WaveList.h>
 #include <prdc/crystal/UnitCell.h>
-#include <pscf/solvers/BlockTmpl.h>       // base class template
-#include <util/containers/FArray.h>
+#include <pscf/solvers/BlockTmpl.h>      // base class template
+#include <util/containers/FSArray.h>
 
 namespace Pscf {
 
@@ -27,6 +27,73 @@ namespace Rpg {
    using namespace Util;
    using namespace Pscf::Prdc;
    using namespace Pscf::Prdc::Cuda;
+
+   // Wrappers for the CUDA kernels used internally
+   
+   /**
+   * Element-wise calculation of a = real(b * conj(c) * d), kernel wrapper
+   * 
+   * \param a  output array (real)
+   * \param b  input array 1 (complex)
+   * \param c  input array 2 (complex)
+   * \param d  input array 3 (real)
+   */
+   __host__ void realMulVConjVV(DeviceArray<cudaReal>& a, 
+                                DeviceArray<cudaComplex> const & b,
+                                DeviceArray<cudaComplex> const & c,
+                                DeviceArray<cudaReal> const & d);
+   
+   /**
+   * Performs out1=shared*in1 and out2=shared*in2 elementwise, kernel wrapper
+   * 
+   * \param out1  output array 1
+   * \param out2  output array 2
+   * \param shared  shared input array to be multiplied by both in1 and in2
+   * \param in1  input array 1
+   * \param in2  input array 2
+   */
+   __host__ void mulVVPair(DeviceArray<cudaReal>& out1, 
+                           DeviceArray<cudaReal>& out2, 
+                           DeviceArray<cudaReal> const & shared, 
+                           DeviceArray<cudaReal> const & in1, 
+                           DeviceArray<cudaReal> const & in2);
+   
+   /**
+   * Performs out1 *= shared and out2 *= shared elementwise, kernel wrapper
+   * 
+   * \param out1  output array 1
+   * \param out2  output array 2
+   * \param shared  shared input array to be multiplied by out1 and out2
+   */
+   __host__ void mulEqVPair(DeviceArray<cudaReal>& out1, 
+                            DeviceArray<cudaReal>& out2, 
+                            DeviceArray<cudaReal> const & shared);
+   
+   /**
+   * Performs qNew = (4 * (qr2 * expW2) - qr) / 3 elementwise, kernel wrapper
+   * 
+   * \param qNew  output array (a propagator slice)
+   * \param qr  input array 1 (a propagator slice)
+   * \param qr2  input array 2 (a propagator slice)
+   * \param expW2  input array 3 (exp(-W[i]*ds/4) array)
+   */
+   __host__ void richardsonEx(DeviceArray<cudaReal>& qNew, 
+                              DeviceArray<cudaReal> const & qr,
+                              DeviceArray<cudaReal> const & qr2, 
+                              DeviceArray<cudaReal> const & expW2);
+   
+   /**
+   * Performs a[i] += b[i] * c[i] * d, kernel wrapper
+   * 
+   * \param a  output array
+   * \param b  input array 1
+   * \param c  input array 2
+   * \param d  input scalar
+   */
+   __host__ void addEqMulVVc(DeviceArray<cudaReal>& a, 
+                             DeviceArray<cudaReal> const & b,
+                             DeviceArray<cudaReal> const & c, 
+                             cudaReal const d);
 
    /**
    * Block within a branched polymer.
@@ -58,10 +125,12 @@ namespace Rpg {
       * \param ds  desired (optimal) value for contour length step
       * \param mesh  Mesh<D> object - spatial discretization mesh
       * \param fft  FFT<D> object - Fourier transforms
+      * \param useBatchedFFT  Flag indicating whether to use batched FFTs
       */
       void setDiscretization(double ds,
                              Mesh<D> const & mesh,
-                             FFT<D> const & fft);
+                             FFT<D> const & fft, 
+                             bool useBatchedFFT = true);
 
       /**
       * Setup parameters that depend on the unit cell.
@@ -82,9 +151,9 @@ namespace Rpg {
       /**
       * Set or reset block length.
       *
-      * \param length  new block length
+      * \param newLength  new block length
       */
-      void setLength(double length);
+      void setLength(double newLength);
 
       /**
       * Set or reset monomer statistical segment length.
@@ -101,17 +170,12 @@ namespace Rpg {
       void setupSolver(RField<D> const & w);
 
       /**
-      * Initialize FFT and batch FFT classes.
-      */
-      void setupFFT();
-
-      /**
       * Compute step of integration loop, from i to i+1.
       *
-      * \param q  pointer to current slice of propagator q (input)
-      * \param qNew pointer to current slice of propagator q (output)
+      * \param q  pointer to slice i of propagator q (input)
+      * \param qNew pointer to slice i+1 of propagator q (output)
       */
-      void step(cudaReal const * q, cudaReal* qNew);
+      void step(RField<D> const & q, RField<D>& qNew);
 
       /**
       * Compute unnormalized concentration for block by integration.
@@ -184,47 +248,59 @@ namespace Rpg {
 
    private:
 
-      /// Number of GPU blocks, set in setDiscretization
-      int nBlocks_;
+      /// Object to perform batched FFTs on the entire propagator at once
+      FFTBatched<D> fftBatchedAll_;
 
-      /// Number of GPU threads per block, set in setDiscretization
-      int nThreads_;
+      /// Object to perform batched FFTs on two fields at once
+      FFTBatched<D> fftBatchedPair_;
 
-      /// Batched FFT, used in computeStress
-      FFTBatched<D> fftBatched_;
+      /// Stress contribution from this block
+      FSArray<double, 6> stress_;
 
-      /// Stress conntribution from this block
-      FArray<double, 6> stress_;
-
-      // Array of elements containing exp(-K^2 b^2 ds/6) on k-grid
+      /// exp(-K^2 b^2 ds/6) array on k-grid
       RField<D> expKsq_;
 
-      // Array of elements containing exp(-K^2 b^2 ds/12) on k-grid
+      /// exp(-K^2 b^2 ds/12) array on k-grid
       RField<D> expKsq2_;
 
-      // Array of elements containing exp(-W[i] ds/2) on r-grid
+      /// exp(-W[i] ds/2) array on r-grid
       RField<D> expW_;
 
-      // Array of elements containing exp(-W[i] ds/4) on r-grid
+      /// exp(-W[i] ds/4) array on r-grid
       RField<D> expW2_;
 
-      // Work arrays for r-grid fields
-      RField<D> qr_;
-      RField<D> qr2_;
+      /**
+      * Workspace array containing two r-grid fields, stored on the device.
+      * 
+      * These workspace fields are stored contiguously in a single array to 
+      * allow batched FFTs to be performed on both fields simultaneously, 
+      * which occurs in step().
+      */
+      DeviceArray<cudaReal> qrPair_;
 
-      // Work arrays for wavevector space (k-grid) field
-      RFieldDft<D> qk_;
-      RFieldDft<D> qk2_;
+      /**
+      * Workspace array containing two k-grid fields, stored on the device.
+      * 
+      * These workspace fields are stored contiguously in a single array to 
+      * allow batched FFTs to be performed on both fields simultaneously, 
+      * which occurs in step().
+      */
+      DeviceArray<cudaComplex> qkPair_;
 
-      // Batched FFTs of q
+      /// Container to store batched FFTs of q in contiguous memory
       DeviceArray<cudaComplex> qkBatched_;
+
+      /// Container to store batched FFTs of q in contiguous memory
       DeviceArray<cudaComplex> qk2Batched_;
 
       // Propagators on r-grid
       RField<D> q1_;
       RField<D> q2_;
 
+      /// Array of elements containing exp(-K^2 b^2 ds/6) on k-grid on host
       HostDArray<cudaReal> expKsq_h_;
+
+      /// Array of elements containing exp(-K^2 b^2 ds/6) on k-grid on host
       HostDArray<cudaReal> expKsq2_h_;
 
       /// Pointer to associated Mesh<D> object.
@@ -245,10 +321,13 @@ namespace Rpg {
       /// Number of wavevectors in discrete Fourier transform (DFT) k-grid
       int kSize_;
 
-      /// Contour length step size.
+      /// Contour length step size (actual step size for this block)
       double ds_;
 
-      /// Number of contour length steps = # s nodes - 1.
+      /// Contour length step size (value input in param file)
+      double dsTarget_;
+
+      /// Number of chain contour positions (= # contour steps + 1).
       int ns_;
 
       /// Have arrays been allocated in setDiscretization ?
@@ -256,6 +335,9 @@ namespace Rpg {
 
       /// Are expKsq_ arrays up to date ? (initialize false)
       bool hasExpKsq_;
+
+      /// Use batched FFTs to compute stress? (faster, but doubles memory use)
+      bool useBatchedFFT_;
 
       /// Get associated UnitCell<D> as const reference.
       UnitCell<D> const & unitCell() const
@@ -268,31 +350,29 @@ namespace Rpg {
       /// Number of unit cell parameters
       int nParams_;
 
-      /**
-      * Compute expKSq_ arrays.
-      */
+      /// Compute expKSq_ arrays.
       void computeExpKsq();
 
    };
 
    // Inline member functions
 
-   /// Get number of contour steps.
+   // Get number of contour steps.
    template <int D>
    inline int Block<D>::ns() const
    {  return ns_; }
 
-   /// Get number of contour steps.
+   // Get contour length step size.
    template <int D>
    inline double Block<D>::ds() const
    {  return ds_; }
 
-   /// Get derivative of free energy w/ respect to a unit cell parameter.
+   // Get derivative of free energy w/ respect to a unit cell parameter.
    template <int D>
    inline double Block<D>::stress(int n)
    {  return stress_[n]; }
 
-   /// Get Mesh by reference.
+   // Get Mesh by reference.
    template <int D>
    inline Mesh<D> const & Block<D>::mesh() const
    {
@@ -300,7 +380,7 @@ namespace Rpg {
       return *meshPtr_;
    }
 
-   /// Get FFT by reference.
+   // Get FFT by reference.
    template <int D>
    inline FFT<D> const & Block<D>::fft() const
    {

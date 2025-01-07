@@ -209,6 +209,9 @@ namespace Rpg
       /// Optimal contour length step size.
       double ds_;
 
+      /// Use batched FFTs to compute stress? (faster, but doubles memory use)
+      bool useBatchedFFT_;
+
       /// Number of unit cell parameters.
       int nUnitCellParams_;
 

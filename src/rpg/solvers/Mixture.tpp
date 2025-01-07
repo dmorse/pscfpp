@@ -20,6 +20,7 @@ namespace Rpg
    template <int D>
    Mixture<D>::Mixture()
     : ds_(-1.0),
+      useBatchedFFT_(true),
       nUnitCellParams_(0),
       meshPtr_(0),
       hasStress_(false)
@@ -34,6 +35,7 @@ namespace Rpg
    {
       MixtureTmpl< Polymer<D>, Solvent<D> >::readParameters(in);
       read(in, "ds", ds_);
+      readOptional(in, "useBatchedFFT", useBatchedFFT_);
 
       UTIL_CHECK(nMonomer() > 0);
       UTIL_CHECK(nPolymer()+ nSolvent() > 0);
@@ -56,7 +58,8 @@ namespace Rpg
       int i, j;
       for (i = 0; i < nPolymer(); ++i) {
          for (j = 0; j < polymer(i).nBlock(); ++j) {
-            polymer(i).block(j).setDiscretization(ds_, mesh, fft);
+            polymer(i).block(j).setDiscretization(ds_, mesh, fft, 
+                                                  useBatchedFFT_);
          }
       }
 

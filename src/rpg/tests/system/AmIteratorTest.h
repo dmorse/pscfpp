@@ -60,7 +60,6 @@ public:
          Log::file() << "Max error = " << comparison.maxDiff() << "\n";
       }
       TEST_ASSERT(comparison.maxDiff() < 5.0E-7);
-
    }
 
    void testIterate1D_lam_flex()
@@ -70,6 +69,49 @@ public:
 
       System<1> system;
       setupSystem<1>(system,"in/diblock/lam/param.flex"); 
+
+      system.readWBasis("in/diblock/lam/omega.ref");
+
+      // Make reference copy of w fields
+      DArray< DArray<double> > b_wFields_check;
+      copyFieldsBasis(b_wFields_check, system.w().basis());
+
+      // Read input w-fields, iterate and output solution
+      system.readWBasis("in/diblock/lam/omega.in");
+      int error = system.iterate();
+      if (error) {
+         TEST_THROW("Iterator failed to converge.");
+      };
+      system.writeWBasis("out/testIterate1D_lam_flex_w.bf");
+      system.writeCBasis("out/testIterate1D_lam_flex_c.bf");
+
+      // Get test result
+      DArray< DArray<double> > b_wFields;
+      copyFieldsBasis(b_wFields, system.w().basis());
+
+      // Compare result to original
+      BFieldComparison comparison (1);
+      comparison.compare(b_wFields_check, b_wFields);
+
+      // Compare difference to tolerance epsilon
+      double diff = comparison.maxDiff();
+      double epsilon = 5.0E-7;
+      if (verbose() > 0 || diff > epsilon) {
+         Log::file() << "\n";
+         Log::file() << "Max diff = " << comparison.maxDiff() << "\n";
+         Log::file() << "Rms diff = " << comparison.rmsDiff() << "\n";
+         Log::file() << "epsilon  = " << epsilon << "\n";
+      }
+      TEST_ASSERT(diff < epsilon);
+   }
+
+   void testIterate1D_lam_flex_noBatched()
+   {
+      printMethod(TEST_FUNC);
+      openLogFile("out/testIterate1D_lam_flex_noBatched.log");
+
+      System<1> system;
+      setupSystem<1>(system,"in/diblock/lam/param_noBatched.flex"); 
 
       system.readWBasis("in/diblock/lam/omega.ref");
 
@@ -363,7 +405,49 @@ public:
          Log::file() << "epsilon  = " << epsilon << "\n";
       }
       TEST_ASSERT(diff < epsilon);
+   }
 
+   void testIterate2D_hex_flex_noBatched()
+   {
+      printMethod(TEST_FUNC);
+      openLogFile("out/testIterate2D_hex_flex_noBatched.log");
+
+      System<2> system;
+      setupSystem<2>(system,"in/diblock/hex/param_noBatched.flex"); 
+
+      // Read reference solution (produced by Fortran code)
+      system.readWBasis("in/diblock/hex/omega.ref");
+
+      // Make reference copy of w fields
+      DArray< DArray<double> > b_wFields_check;
+      copyFieldsBasis(b_wFields_check, system.w().basis());
+
+      system.readWBasis("in/diblock/hex/omega.in");
+      int error = system.iterate();
+      if (error) {
+         TEST_THROW("Iterator failed to converge.");
+      };
+      system.writeWBasis("out/testIterate2D_hex_flex_w.bf");
+      system.writeCBasis("out/testIterate2D_hex_flex_c.bf");
+
+      // Get test result
+      DArray< DArray<double> > b_wFields;
+      copyFieldsBasis(b_wFields, system.w().basis());
+
+      // Compare result to original
+      BFieldComparison comparison (1);
+      comparison.compare(b_wFields_check, b_wFields);
+
+      // Compare difference to tolerance epsilon
+      double diff = comparison.maxDiff();
+      double epsilon = 8.0E-7;
+      if (diff > epsilon) {
+         Log::file() << "\n";
+         Log::file() << "Max diff = " << comparison.maxDiff() << "\n";
+         Log::file() << "Rms diff = " << comparison.rmsDiff() << "\n";
+         Log::file() << "epsilon  = " << epsilon << "\n";
+      }
+      TEST_ASSERT(diff < epsilon);
    }
 
    void testIterate3D_bcc_rigid()
@@ -406,7 +490,6 @@ public:
          Log::file() << "epsilon  = " << epsilon << "\n";
       }
       TEST_ASSERT(diff < epsilon);
-
    }
 
    void testIterate3D_bcc_flex()
@@ -449,7 +532,48 @@ public:
          Log::file() << "epsilon  = " << epsilon << "\n";
       }
       TEST_ASSERT(diff < epsilon);
+   }
 
+   void testIterate3D_bcc_flex_noBatched()
+   {
+      printMethod(TEST_FUNC);
+      openLogFile("out/testIterate3D_bcc_flex_noBatched.log");
+
+      System<3> system;
+      setupSystem<3>(system,"in/diblock/bcc/param_noBatched.flex"); 
+
+      system.readWBasis("in/diblock/bcc/omega.ref");
+
+      // Make reference copy of w fields
+      DArray< DArray<double> > b_wFields_check;
+      copyFieldsBasis(b_wFields_check, system.w().basis());
+
+      system.readWBasis("in/diblock/bcc/omega.in");
+      int error = system.iterate();
+      if (error) {
+         TEST_THROW("Iterator failed to converge.");
+      };
+      system.writeWBasis("out/testIterate3D_bcc_flex_w.bf");
+      system.writeCBasis("out/testIterate3D_bcc_flex_c.bf");
+
+      // Get test result
+      DArray< DArray<double> > b_wFields;
+      copyFieldsBasis(b_wFields, system.w().basis());
+
+      // Compare result to original
+      BFieldComparison comparison (1);
+      comparison.compare(b_wFields_check, b_wFields);
+
+      // Compare difference to tolerance epsilon
+      double diff = comparison.maxDiff();
+      double epsilon = 5.0E-7;
+      if (diff > epsilon) {
+         Log::file() << "\n";
+         Log::file() << "Max diff = " << comparison.maxDiff() << "\n";
+         Log::file() << "Rms diff = " << comparison.rmsDiff() << "\n";
+         Log::file() << "epsilon  = " << epsilon << "\n";
+      }
+      TEST_ASSERT(diff < epsilon);
    }
 
    template <int D>
@@ -530,14 +654,17 @@ public:
 TEST_BEGIN(AmIteratorTest)
 TEST_ADD(AmIteratorTest, testIterate1D_lam_rigid)
 TEST_ADD(AmIteratorTest, testIterate1D_lam_flex)
+TEST_ADD(AmIteratorTest, testIterate1D_lam_flex_noBatched)
 TEST_ADD(AmIteratorTest, testIterate1D_lam_soln)
 TEST_ADD(AmIteratorTest, testIterate1D_lam_blend)
 TEST_ADD(AmIteratorTest, testIterate1D_lam_open_blend)
 TEST_ADD(AmIteratorTest, testIterate1D_lam_open_soln)
 TEST_ADD(AmIteratorTest, testIterate2D_hex_rigid)
 TEST_ADD(AmIteratorTest, testIterate2D_hex_flex)
+TEST_ADD(AmIteratorTest, testIterate2D_hex_flex_noBatched)
 TEST_ADD(AmIteratorTest, testIterate3D_bcc_rigid)
 TEST_ADD(AmIteratorTest, testIterate3D_bcc_flex)
+TEST_ADD(AmIteratorTest, testIterate3D_bcc_flex_noBatched)
 
 TEST_END(AmIteratorTest)
 

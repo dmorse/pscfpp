@@ -208,11 +208,7 @@ namespace Rpg {
    void AmIteratorGrid<D>::evaluate()
    {
       // Solve MDEs for current omega field
-      system().compute();
-      // Compute stress if done
-      if (isFlexible_) {
-         system().mixture().computeStress(system().domain().waveList());
-      }
+      system().compute(isFlexible_);
    }
 
    template <int D>
@@ -333,7 +329,7 @@ namespace Rpg {
    template<int D>
    void AmIteratorGrid<D>::outputToLog()
    {
-      if (isFlexible_) {
+      if (isFlexible_ && verbose() > 1) {
          const int nParam = system().unitCell().nParameter();
          for (int i = 0; i < nParam; i++) {
             Log::file() << "Parameter " << i << " = "

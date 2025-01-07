@@ -44,7 +44,7 @@ namespace Cuda {
       /**
       * Allocating constructor.
       *
-      * Calls allocate(meshDimensions internally.
+      * Calls allocate(meshDimensions) internally.
       *
       * \param meshDimensions dimensions of asssociated r-grid mesh
       */
@@ -96,9 +96,21 @@ namespace Cuda {
       *
       * \throw Exception if the RFieldDft is already allocated.
       *
-      * \param meshDimensions vector of mesh dimensions
+      * \param meshDimensions number of grid points in each dimension
       */
       void allocate(IntVec<D> const & meshDimensions);
+
+      /**
+      * Associate this object with a slice of another DeviceArray.
+      *
+      * \throw Exception if the array is already allocated.
+      *
+      * \param arr parent array that owns the data
+      * \param beginId index in the parent array at which this array starts
+      * \param meshDimensions number of grid points in each dimension
+      */
+      void associate(DeviceArray<cudaComplex>& arr, int beginId, 
+                     IntVec<D> const & meshDimensions);
 
       /**
       * Return vector of real-space mesh dimensions by constant reference.
@@ -132,13 +144,13 @@ namespace Cuda {
       // Vector containing dimensions of dft (Fourier) grid.
       IntVec<D> dftDimensions_;
 
-      // Make private to prevent allocation without setting meshDimensions
+      // Make private to prevent allocation without setting meshDimensions.
       using DeviceArray<cudaComplex>::allocate;
 
-      // Make private to prevent association.
+      // Make private to prevent association without setting meshDimensions.
       using DeviceArray<cudaComplex>::associate;
 
-      // Make private to prevent assignment without setting meshDimensions
+      // Make private to prevent assignment without setting meshDimensions.
       using DeviceArray<cudaComplex>::operator =;
 
    };

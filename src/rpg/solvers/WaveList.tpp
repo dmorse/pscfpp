@@ -11,6 +11,8 @@
 #include "WaveList.h"
 #include "cuComplex.h"
 #include <pscf/cuda/GpuResources.h>
+#include <pscf/cuda/HostDArray.tpp>  // tpp needed to use implicit instantiation
+#include <pscf/cuda/DeviceArray.tpp> // tpp needed to use implicit instantiation
 
 namespace Pscf {
 namespace Rpg
@@ -25,8 +27,7 @@ namespace Rpg
                            const int* partnerId,
                            const int* selfId,
                            const bool* implicit,
-                           int nParams, int kSize,
-                                             int size, int dim) 
+                           int nParams, int size, int dim) 
    {
       // Actual size is nStar*nParams
       // Each thread does nParams calculation
@@ -116,6 +117,10 @@ namespace Rpg
 
       kSq_h_.allocate(rSize_);
       dkSq_.allocate(rSize_ * nParams_);
+      dkSqSlices_.allocate(nParams_);
+      for (int i = 0; i < nParams_; i++) {
+         dkSqSlices_[i].associate(dkSq_, i*rSize_, dimensions_);
+      }
 
       partnerIdTable_h_.allocate(mesh.size());
       partnerIdTable_.allocate(mesh.size());
@@ -241,12 +246,12 @@ namespace Rpg
 
       dkkBasis_ = dkkBasis_h_; // transfer dkkBasis to device
 
-      VecOp::eqS(dkSq_, 0); // initialize dkSq_ to an array of 0s
+      VecOp::eqS(dkSq_, 0.0); // initialize dkSq_ to an array of 0s
 
       makeDksqHelperWave<<<nBlocks, nThreads>>>
          (dkSq_.cArray(), minImage_.cArray(), dkkBasis_.cArray(), 
           partnerIdTable_.cArray(), selfIdTable_.cArray(), 
-          implicit_.cArray(), unitCell.nParameter(), kSize_, rSize_, D);
+          implicit_.cArray(), unitCell.nParameter(), rSize_, D);
        
       makeDksqReduction<<<nBlocks, nThreads>>>
           (dkSq_.cArray(), partnerIdTable_.cArray(), 

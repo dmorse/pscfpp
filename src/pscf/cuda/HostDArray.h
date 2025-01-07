@@ -233,8 +233,6 @@ namespace Pscf {
    #ifndef PSCF_HOST_D_ARRAY_TPP
    extern template class HostDArray<cudaReal>;
    extern template class HostDArray<cudaComplex>;
-   extern template class HostDArray<int>;
-   extern template class HostDArray<bool>;
    #endif
 
 }

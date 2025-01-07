@@ -105,6 +105,13 @@ namespace Rpg {
       DeviceArray<cudaReal> const & dkSq() const;
 
       /**
+      * Return slice of the dkSq array for parameter i by reference.
+      * 
+      * \param i index of lattice parameter
+      */
+      RField<D> const & dkSq(int i) const;
+
+      /**
       * Get size of k-grid (number of wavewavectors).
       */
       int kSize() const;
@@ -131,7 +138,8 @@ namespace Rpg {
       HostDArray<cudaReal> kSq_h_;
 
       // Array containing values of dkSq_ stored on the device
-      DeviceArray<cudaReal>  dkSq_;
+      DeviceArray<cudaReal> dkSq_;
+      DArray<RField<D> > dkSqSlices_;
 
       DeviceArray<cudaReal> dkkBasis_;
       HostDArray<cudaReal> dkkBasis_h_;
@@ -170,6 +178,10 @@ namespace Rpg {
    template <int D>
    inline DeviceArray<cudaReal> const & WaveList<D>::dkSq() const
    {  return dkSq_; }
+
+   template <int D>
+   inline RField<D> const & WaveList<D>::dkSq(int i) const
+   {  return dkSqSlices_[i]; }
 
    template <int D>
    inline int WaveList<D>::kSize() const

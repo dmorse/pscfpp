@@ -43,7 +43,7 @@ namespace Cuda {
       *
       * Allocates memory by calling allocate(meshDimensions) internally.
       *  
-      * \param meshDimensions dimensions of the associated Mesh<D>
+      * \param meshDimensions number of grid points in each dimension
       */
       RField(IntVec<D> const & meshDimensions);
 
@@ -64,13 +64,25 @@ namespace Cuda {
       virtual ~RField();
 
       /**
-      * Allocate the underlying C array for an FFT grid.
+      * Allocate the underlying C array for data on a regular mesh.
       *
       * \throw Exception if the RField is already allocated.
       *
-      * \param meshDimensions number of grid points in each direction
+      * \param meshDimensions number of grid points in each dimension
       */
       void allocate(IntVec<D> const & meshDimensions);
+
+      /**
+      * Associate this object with a slice of another DeviceArray.
+      *
+      * \throw Exception if the array is already allocated.
+      *
+      * \param arr parent array that owns the data
+      * \param beginId index in the parent array at which this array starts
+      * \param meshDimensions number of grid points in each dimension
+      */
+      void associate(DeviceArray<cudaReal>& arr, int beginId, 
+                     IntVec<D> const & meshDimensions);
 
       /**
       * Assignment operator, assignment from another RField<D>.
@@ -122,10 +134,10 @@ namespace Cuda {
       // Make private to prevent allocation without mesh dimensions.
       using DeviceArray<cudaReal>::allocate;
 
-      // Make private to prevent association.
+      // Make private to prevent association without mesh dimensions.
       using DeviceArray<cudaReal>::associate;
 
-      // Make private to prevent assignment without mesh dimensions
+      // Make private to prevent assignment without mesh dimensions.
       using DeviceArray<cudaReal>::operator=;
 
    };

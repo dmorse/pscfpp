@@ -1176,6 +1176,29 @@ public:
          refOutReal[i] = exp(refInReal2[i+(n/4)] * refScalarReal);
       }
       checkEqualReal(hOutReal, refOutReal);
+
+      // ~~~ Test addVMany ~~~
+      DArray<DeviceArray<cudaReal> const *> inVecs;
+      inVecs.allocate(4);
+      inVecs[0] = &dInReal;
+      inVecs[1] = &dInReal2;
+      inVecs[2] = &dInReal;
+      inVecs[3] = &dInReal2;
+      VecOp::addVMany(dOutReal, inVecs);
+      hOutReal = dOutReal;
+      for (int i = 0; i < n; i++) { // get reference array
+         refOutReal[i] = 2 * (refInReal[i] + refInReal2[i]);
+      }
+      checkEqualReal(hOutReal, refOutReal);
+
+      // ~~~ Test mulVMany ~~~
+      VecOp::mulVMany(dOutReal, inVecs);
+      hOutReal = dOutReal;
+      for (int i = 0; i < n; i++) { // get reference array
+         refOutReal[i] = refInReal[i] * refInReal[i] * 
+                         refInReal2[i] * refInReal2[i];
+      }
+      checkEqualReal(hOutReal, refOutReal);
    }
 
    void checkEqualReal(HostDArray<cudaReal>& a, DArray<numType>& b)

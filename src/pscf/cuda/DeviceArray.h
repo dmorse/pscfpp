@@ -26,6 +26,15 @@ namespace Pscf {
    * is allocated in GPU device global memory.  All member functions may 
    * be called from the CPU host, but this class does not offer access 
    * to individual elements via the subscript operator, operator[].
+   * 
+   * A DeviceArray can have one of two different relationships with its
+   * underlying data. In case 1, the data are owned by this object, so
+   * the allocation and destruction of the C array are performed by this
+   * object. In case 2, this object is instead "associated" with a slice
+   * of an array owned by a different DeviceArray. If this is the case, 
+   * this object is not responsible for allocation or destruction of the 
+   * underlying C array, and merely acts as a reference to the slice of
+   * the other array to which it is associated. 
    *
    * \ingroup Pscf_Cuda_Module
    */
@@ -221,8 +230,6 @@ namespace Pscf {
    #ifndef PSCF_DEVICE_ARRAY_TPP
    extern template class DeviceArray<cudaReal>;
    extern template class DeviceArray<cudaComplex>;
-   extern template class DeviceArray<int>;
-   extern template class DeviceArray<bool>;
    #endif
 
 } // namespace Pscf

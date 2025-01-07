@@ -23,6 +23,7 @@ namespace Cuda {
    template <int D>
    FFTBatched<D>::FFTBatched()
     : meshDimensions_(0),
+      kMeshDimensions_(0),
       rSize_(0),
       kSize_(0),
       fPlan_(0),
@@ -60,6 +61,7 @@ namespace Cuda {
       for (int i = 0; i < D; ++i) {
          UTIL_CHECK(rDim[i] > 0);
          meshDimensions_[i] = rDim[i];
+         kMeshDimensions_[i] = kDim[i];
          rSize_ *= rDim[i];
          if (i < D - 1) {
             kSize_ *= rDim[i];
@@ -68,10 +70,27 @@ namespace Cuda {
          }
       }
 
-      // Make FFT plans (explicit specializations)
+      // Make FFT plans
       makePlans(rDim, kDim, batchSize);
 
       isSetup_ = true;
+   }
+
+   /**
+   * Set the batch size to a new value. isSetup() must already be true.
+   */
+   template <int D>
+   void FFTBatched<D>::setBatchSize(int batchSize)
+   {
+      UTIL_CHECK(isSetup_);
+
+      if (batchSize == batchSize_) {
+         // Nothing to do
+         return; 
+      } else {
+         // Remake FFT plans
+         makePlans(meshDimensions_, kMeshDimensions_, batchSize); 
+      }
    }
 
    /*
@@ -81,6 +100,8 @@ namespace Cuda {
    void FFTBatched<D>::makePlans(const IntVec<D>& rDim, 
                                  const IntVec<D>& kDim, int batchSize)
    {
+      batchSize_ = batchSize;
+
       int n[D];
       for(int i = 0; i < D; i++) {
          n[i] = rDim[i];
@@ -90,14 +111,14 @@ namespace Cuda {
       if (cufftPlanMany(&fPlan_, D, n,   //plan, rank, n
                         NULL, 1, rSize_, //inembed, istride, idist
                         NULL, 1, kSize_, //onembed, ostride, odist
-                        CUFFT_R2C, batchSize) != CUFFT_SUCCESS) {
+                        CUFFT_R2C, batchSize_) != CUFFT_SUCCESS) {
          std::cout<<"plan creation failed "<<std::endl;
          exit(1);
       }
       if (cufftPlanMany(&iPlan_, D, n,   //plan, rank, n
                         NULL, 1, kSize_, //inembed, istride, idist
                         NULL, 1, rSize_, //onembed, ostride, odist
-                        CUFFT_C2R, batchSize) != CUFFT_SUCCESS) {
+                        CUFFT_C2R, batchSize_) != CUFFT_SUCCESS) {
          std::cout<<"plan creation failed "<<std::endl;
          exit(1);
       }
@@ -105,14 +126,14 @@ namespace Cuda {
       if (cufftPlanMany(&fPlan_, D, n,   // plan, rank, n
                         NULL, 1, rSize_, // inembed, istride, idist
                         NULL, 1, kSize_, // onembed, ostride, odist
-                        CUFFT_D2Z, batchSize) != CUFFT_SUCCESS) {
+                        CUFFT_D2Z, batchSize_) != CUFFT_SUCCESS) {
          std::cout<<"plan creation failed "<<std::endl;
          exit(1);
       }
       if (cufftPlanMany(&iPlan_, D, n,   // plan, rank, n
                         NULL, 1, kSize_, // inembed, istride, idist
                         NULL, 1, rSize_, // onembed, ostride, odist
-                        CUFFT_Z2D, batchSize) != CUFFT_SUCCESS) {
+                        CUFFT_Z2D, batchSize_) != CUFFT_SUCCESS) {
          std::cout<<"plan creation failed "<<std::endl;
          exit(1);
       }
@@ -123,25 +144,25 @@ namespace Cuda {
    * Execute forward transform.
    */
    template <int D>
-   void FFTBatched<D>::forwardTransform(cudaReal* in, cudaComplex* out, 
-                                        int batchSize) const
+   void FFTBatched<D>::forwardTransform(DeviceArray<cudaReal>& in, 
+                                        DeviceArray<cudaComplex>& out) const
    {
+      int nr = rSize_ * batchSize_;
+      int nk = kSize_ * batchSize_;
       UTIL_CHECK(isSetup_);
-
-      // GPU resources
-      int nBlocks, nThreads;
-      ThreadGrid::setThreadsLogical(rSize_*batchSize, nBlocks, nThreads);
+      UTIL_CHECK(in.capacity() == nr);
+      UTIL_CHECK(out.capacity() == nk);
 
       // Scale for every batch
       cudaReal scale = 1.0/cudaReal(rSize_);
-      VecOp::_mulEqS<<<nBlocks, nThreads>>>(in, scale, rSize_ * batchSize);
+      VecOp::mulEqS(in, scale);
       
       // Perform FFT
       cufftResult result;
       #ifdef SINGLE_PRECISION
-      result = cufftExecR2C(fPlan_, in, out);
+      result = cufftExecR2C(fPlan_, in.cArray(), out.cArray());
       #else
-      result = cufftExecD2Z(fPlan_, in, out);
+      result = cufftExecD2Z(fPlan_, in.cArray(), out.cArray());
       #endif
 
       if (result != CUFFT_SUCCESS) {
@@ -153,16 +174,18 @@ namespace Cuda {
    * Execute inverse (complex-to-real) transform.
    */
    template <int D>
-   void FFTBatched<D>::inverseTransform(cudaComplex* in, cudaReal* out, 
-                                        int batchSize) const
+   void FFTBatched<D>::inverseTransform(DeviceArray<cudaComplex>& in, 
+                                        DeviceArray<cudaReal>& out) const
    {
       UTIL_CHECK(isSetup_);
+      UTIL_CHECK(in.capacity() == kSize_ * batchSize_);
+      UTIL_CHECK(out.capacity() == rSize_ * batchSize_);
 
       cufftResult result;
       #ifdef SINGLE_PRECISION
-      result = cufftExecC2R(iPlan_, in, out);
+      result = cufftExecC2R(iPlan_, in.cArray(), out.cArray());
       #else
-      result = cufftExecZ2D(iPlan_, in, out);
+      result = cufftExecZ2D(iPlan_, in.cArray(), out.cArray());
       #endif
 
       if (result != CUFFT_SUCCESS) {

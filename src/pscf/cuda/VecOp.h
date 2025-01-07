@@ -10,6 +10,7 @@
 
 #include "GpuTypes.h"
 #include "DeviceArray.h"
+#include <util/containers/DArray.h>
 
 namespace Pscf {
 namespace VecOp {
@@ -38,7 +39,11 @@ namespace VecOp {
 * are not overloaded to accommodate all input data types. In these 
 * functions, we use "Vc" in the function name to denote that every
 * element in the vector V is multiplied by a coefficient c. For 
-* example, addEqVc represents the operation a[i] += b[i] * c.
+* example, addEqVc represents the operation a[i] += b[i] * c. We also
+* use "Many" to indicate that an undefined number of vectors (>2) are
+* involved in an operation. For example, addVMany adds >2 vectors 
+* together by passing an array of vectors, rather than a discrete set
+* of vectors.
 *
 * The functions are overloaded to perform their respective operations
 * on any combination of cudaReal and cudaComplex input arrays, except
@@ -2067,7 +2072,7 @@ inline __host__ void divEqS(DeviceArray<cudaComplex>& a, cudaReal const b)
 * \param n  size of arrays
 */
 __global__ void _addEqVc(cudaReal* a, cudaReal const * b, 
-                            cudaReal const c, const int n);
+                         cudaReal const c, const int n);
 
 /**
 * Vector addition in-place w/ coefficient, a[i] += b[i] * c, kernel wrapper.
@@ -2080,9 +2085,9 @@ __global__ void _addEqVc(cudaReal* a, cudaReal const * b,
 * \param n  the number of entries to evaluate
 */
 __host__ void addEqVc(DeviceArray<cudaReal>& a, 
-                         DeviceArray<cudaReal> const & b, 
-                         cudaReal const c, const int beginIdA, 
-                         const int beginIdB, const int n);
+                      DeviceArray<cudaReal> const & b, 
+                      cudaReal const c, const int beginIdA, 
+                      const int beginIdB, const int n);
 
 /**
 * Vector addition in-place w/ coefficient, a[i] += b[i] * c, kernel wrapper.
@@ -2092,8 +2097,8 @@ __host__ void addEqVc(DeviceArray<cudaReal>& a,
 * \param c  input scalar
 */
 inline __host__ void addEqVc(DeviceArray<cudaReal>& a, 
-                                DeviceArray<cudaReal> const & b, 
-                                cudaReal const c)
+                             DeviceArray<cudaReal> const & b, 
+                             cudaReal const c)
 {  addEqVc(a, b, c, 0, 0, a.capacity()); }
 
 /**
@@ -2137,7 +2142,7 @@ inline __host__ void sqNormV(DeviceArray<cudaReal>& a,
 * \param n  size of arrays
 */
 __global__ void _expVc(cudaReal* a, cudaReal const * b, 
-                          cudaReal const c, const int n);
+                       cudaReal const c, const int n);
 
 /**
 * Vector exponentiation w/ coefficient, a[i] = exp(b[i]*c), kernel wrapper.
@@ -2150,9 +2155,9 @@ __global__ void _expVc(cudaReal* a, cudaReal const * b,
 * \param n  the number of entries to evaluate
 */
 __host__ void expVc(DeviceArray<cudaReal>& a, 
-                       DeviceArray<cudaReal> const & b, 
-                       cudaReal const c, const int beginIdA, 
-                       const int beginIdB, const int n);
+                    DeviceArray<cudaReal> const & b, 
+                    cudaReal const c, const int beginIdA, 
+                    const int beginIdB, const int n);
 
 /**
 * Vector exponentiation w/ coefficient, a[i] = exp(b[i]*c), kernel wrapper.
@@ -2162,9 +2167,69 @@ __host__ void expVc(DeviceArray<cudaReal>& a,
 * \param c  input scalar
 */
 inline __host__ void expVc(DeviceArray<cudaReal>& a, 
-                              DeviceArray<cudaReal> const & b, 
-                              cudaReal const c)
+                           DeviceArray<cudaReal> const & b, 
+                           cudaReal const c)
 {  expVc(a, b, c, 0, 0, a.capacity()); }
+
+/**
+* Add more than 2 vectors pointwise, GPU kernel.
+*
+* The input const pointer 'vecs' points to an array of const pointers. In
+* other words, this is an array of arrays, where each array is represented
+* by its pointer. The size of vecs is nVecs, and the size of vecs[i] is
+* n (if i < nVecs). These nVecs vectors will be added and the result will
+* be stored in vector 'a'.
+*
+* \param a  output array (LHS)
+* \param vecs  array of pointers to DeviceArrays to be added
+* \param nVecs  number of vectors to be added
+* \param n  size of arrays
+*/
+__global__ void _addVMany(cudaReal* a, cudaReal const ** vecs,
+                          const int nVecs, const int n);
+
+/**
+* Add more than 2 vectors pointwise, kernel wrapper.
+*
+* The input array 'vecs' contains const pointers to each array that will be 
+* added together. The size of vecs determines the number of vectors that
+* will ultimately be added together by the GPU kernel.
+*
+* \param a  output array (LHS)
+* \param vecs  array of pointers to DeviceArrays to be added
+*/
+__host__ void addVMany(DeviceArray<cudaReal>& a, 
+                       DArray<DeviceArray<cudaReal> const *> const & vecs);
+
+/**
+* Multiply more than 2 vectors pointwise, GPU kernel.
+*
+* The input const pointer 'vecs' points to an array of const pointers. In
+* other words, this is an array of arrays, where each array is represented
+* by its pointer. The size of vecs is nVecs, and the size of vecs[i] is
+* n (if i < nVecs). These nVecs vectors will be multiplied and the result 
+* will be stored in vector 'a'.
+*
+* \param a  output array (LHS)
+* \param vecs  array of pointers to DeviceArrays to be multiplied
+* \param nVecs  number of vectors to be multiplied
+* \param n  size of arrays
+*/
+__global__ void _mulVMany(cudaReal* a, cudaReal const ** vecs,
+                          const int nVecs, const int n);
+
+/**
+* Multiply more than 2 vectors pointwise, kernel wrapper.
+*
+* The input array 'vecs' contains const pointers to each array that will be 
+* multiplied together. The size of vecs determines the number of vectors
+* that will ultimately be multiplied together by the GPU kernel.
+*
+* \param a  output array (LHS)
+* \param vecs  array of pointers to DeviceArrays to be multiplied
+*/
+__host__ void mulVMany(DeviceArray<cudaReal>& a, 
+                       DArray<DeviceArray<cudaReal> const *> const & vecs);
 
 /** @} */
 

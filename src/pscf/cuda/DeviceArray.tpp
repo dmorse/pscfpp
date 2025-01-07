@@ -71,8 +71,6 @@ namespace Pscf {
       allocate(other.capacity_);
       cudaMemcpy(data_, other.cArray(), 
                  capacity_ * sizeof(Data), cudaMemcpyDeviceToDevice);
-
-      isOwner_ = true;
    }
 
    /*
@@ -95,6 +93,9 @@ namespace Pscf {
    {
       if (isAllocated()) {
          UTIL_THROW("Attempt to re-allocate an array");
+      }
+      if (!isOwner_) {
+         UTIL_THROW("Attempt to allocate array already associated with data");
       }
       if (capacity <= 0) {
          UTIL_THROW("Attempt to allocate with capacity <= 0");

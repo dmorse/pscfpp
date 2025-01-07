@@ -60,6 +60,7 @@ namespace Rpg
 
    protected:
 
+      using AmIteratorTmpl<Iterator<D>, FieldCUDA>::verbose;
       using ParamComposite::readOptional;
       using ParamComposite::setClassName;
       using Iterator<D>::system;

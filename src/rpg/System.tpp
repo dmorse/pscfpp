@@ -1157,14 +1157,8 @@ namespace Rpg {
       UTIL_CHECK(directionId <= 1);
       Propagator<D> const&
           propagator = polymer.propagator(blockId, directionId);
-      RField<D> field;
-      field.allocate(domain_.mesh().dimensions());
-      cudaMemcpy(field.cArray(), propagator.q(segmentId),
-                 domain_.mesh().size() * sizeof(cudaReal),
-                 cudaMemcpyDeviceToDevice);
-      fieldIo().writeFieldRGrid(filename, field,
-                                domain_.unitCell(),
-                                w_.isSymmetric());
+      fieldIo().writeFieldRGrid(filename, propagator.q(segmentId),
+                                domain_.unitCell(), w_.isSymmetric());
    }
 
    /*
@@ -1184,14 +1178,8 @@ namespace Rpg {
       UTIL_CHECK(directionId <= 1);
       Propagator<D> const&
           propagator = polymer.propagator(blockId, directionId);
-      RField<D> field;
-      field.allocate(domain_.mesh().dimensions());
-      cudaMemcpy(field.cArray(), propagator.tail(),
-                 domain_.mesh().size()*sizeof(cudaReal),
-                 cudaMemcpyDeviceToDevice);
-      fieldIo().writeFieldRGrid(filename, field,
-                                domain_.unitCell(),
-                                w_.isSymmetric());
+      fieldIo().writeFieldRGrid(filename, propagator.tail(),
+                                domain_.unitCell(), w_.isSymmetric());
    }
 
    /*
@@ -1226,15 +1214,10 @@ namespace Rpg {
            << "          " << ns << std::endl;
 
       // Write data
-      RField<D> field;
-      field.allocate(domain_.mesh().dimensions());
       bool hasHeader = false;
       for (int i = 0; i < ns; ++i) {
           file << "slice " << i << std::endl;
-          cudaMemcpy(field.cArray(), propagator.q(i),
-                     domain_.mesh().size() * sizeof(cudaReal),
-                     cudaMemcpyDeviceToDevice);
-          fieldIo().writeFieldRGrid(file, field,
+          fieldIo().writeFieldRGrid(file, propagator.q(i),
                                     domain_.unitCell(), hasHeader);
       }
    }

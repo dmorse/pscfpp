@@ -36,10 +36,6 @@ namespace Cuda {
 
    /*
    * Copy constructor.
-   *
-   * Allocates new memory and copies all elements by value.
-   *
-   *\param other the Field to be copied.
    */
    template <int D>
    RField<D>::RField(const RField<D>& other)
@@ -55,7 +51,7 @@ namespace Cuda {
    {}
 
    /*
-   * Allocate the underlying C array for an FFT grid.
+   * Allocate the underlying C array for data on a regular mesh.
    */
    template <int D>
    void RField<D>::allocate(IntVec<D> const & meshDimensions)
@@ -67,6 +63,22 @@ namespace Cuda {
          size *= meshDimensions[i];
       }
       DeviceArray<cudaReal>::allocate(size);
+   }
+
+   /*
+   * Associate this object with a slice of another DeviceArray.
+   */
+   template <int D>
+   void RField<D>::associate(DeviceArray<cudaReal>& arr, int beginId, 
+                             IntVec<D> const & meshDimensions)
+   {
+      int size = 1;
+      for (int i = 0; i < D; ++i) {
+         UTIL_CHECK(meshDimensions[i] > 0);
+         meshDimensions_[i] = meshDimensions[i];
+         size *= meshDimensions[i];
+      }
+      DeviceArray<cudaReal>::associate(arr, beginId, size);
    }
 
    /*

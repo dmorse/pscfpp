@@ -42,7 +42,7 @@ namespace Cuda {
       *
       * Calls allocate(meshDimension) internally. 
       *
-      * \param meshDimensions numbers of grid points in each direction
+      * \param meshDimensions numbers of grid points in each dimension
       */
       CField(IntVec<D> const & meshDimensions);
 
@@ -51,7 +51,7 @@ namespace Cuda {
       *
       * Allocates new memory and copies all elements by value.
       *
-      *\param other the CField to be copied.
+      * \param other the CField to be copied.
       */
       CField(CField const & other);
 
@@ -91,13 +91,25 @@ namespace Cuda {
       CField<D>& operator = (HostDArray<cudaComplex> const & other);
 
       /**
-      * Allocate the underlying C array for an FFT grid.
+      * Allocate the underlying C array for data on a regular mesh.
       *
       * \throw Exception if the CField is already allocated.
       *
-      * \param meshDimensions number of grid points in each direction
+      * \param meshDimensions number of grid points in each dimension
       */
       void allocate(IntVec<D> const & meshDimensions);
+
+      /**
+      * Associate this object with a slice of another DeviceArray.
+      *
+      * \throw Exception if the array is already allocated.
+      *
+      * \param arr parent array that owns the data
+      * \param beginId index in the parent array at which this array starts
+      * \param meshDimensions number of grid points in each dimension
+      */
+      void associate(DeviceArray<cudaComplex>& arr, int beginId, 
+                     IntVec<D> const & meshDimensions);
 
       /**
       * Return mesh dimensions by constant reference.
@@ -115,16 +127,16 @@ namespace Cuda {
 
    private:
 
-      // Vector containing number of grid points in each direction.
+      // Vector containing number of grid points in each dimension.
       IntVec<D> meshDimensions_;
 
       // Make private to prevent allocation without mesh dimensions.
       using DeviceArray<cudaComplex>::allocate;
 
-      // Make private to prevent association.
+      // Make private to prevent association without mesh dimensions.
       using DeviceArray<cudaComplex>::associate;
 
-      // Make private to prevent assignment without mesh dimensions
+      // Make private to prevent assignment without mesh dimensions.
       using DeviceArray<cudaComplex>::operator=;
 
    };

@@ -38,7 +38,7 @@ public:
 
    void setUp()
    {  
-      setVerbose(1); 
+      setVerbose(0); 
       rand_.setSeed(0);
    }
 

@@ -11,7 +11,5 @@ namespace Pscf {
 
    template class HostDArray<cudaReal>;
    template class HostDArray<cudaComplex>;
-   template class HostDArray<int>;
-   template class HostDArray<bool>;
 
 }
