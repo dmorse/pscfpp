@@ -13,6 +13,7 @@
 #include <prdc/cpu/FFT.h>
 #include <prdc/cpu/RField.h>
 #include <prdc/cpu/RFieldDft.h>
+
 #include <prdc/crystal/fieldHeader.h>
 #include <prdc/crystal/shiftToMinimum.h>
 #include <prdc/crystal/UnitCell.h>
@@ -99,16 +100,15 @@ namespace Rpc {
                                     DArray< DArray<double> >& fields,
                                     UnitCell<D>& unitCell) const
    {
-      // Precondition
+      // Preconditions
       UTIL_CHECK(hasGroup());
+      UTIL_CHECK(basis().isInitialized());
 
-      // Read header of field file, which must declare a group name
-      // consistent with that declared in the parameter file. 
+      // Read header of field file (also checks group name)
       int nMonomer;
       bool isSymmetric;
       FieldIo<D>::readFieldHeader(in, nMonomer, unitCell, isSymmetric);
       UTIL_CHECK(isSymmetric);
-      UTIL_CHECK(basis().isInitialized());
 
       // Read the number of stars into nStarIn
       std::string label;
@@ -449,6 +449,7 @@ namespace Rpc {
 
       // Read file containing a single field, allocate if needed.
       readFieldsBasis(filename, fields, unitCell);
+
       // Check that it only read 1 field
       UTIL_CHECK(fields.capacity() == 1);
 
@@ -611,13 +612,15 @@ namespace Rpc {
          temp[i].allocate(mesh().dimensions());
       }
 
-      // Read Fields;
+      // Read fields into temp array
       MeshIterator<D> itr(mesh().dimensions());
       for (itr.begin(); !itr.atEnd(); ++itr) {
          for (int i = 0; i < nMonomer; ++i) {
             in  >> std::setprecision(15) >> temp[i][itr.rank()];
          }
       }
+
+      // Re-order and copy into fields array
 
       int p = 0;
       int q = 0;
@@ -628,6 +631,7 @@ namespace Rpc {
       int n3 = 0;
 
       if (D == 3) {
+
          while (n1 < mesh().dimension(0)) {
             q = p;
             n2 = 0;
@@ -648,9 +652,9 @@ namespace Rpc {
             ++n1;
             ++p;
          }
-      }
 
-      else if (D == 2) {
+      } else if (D == 2) {
+
          while (n1 < mesh().dimension(0)) {
             r =q;
             n2 = 0;
@@ -665,9 +669,8 @@ namespace Rpc {
             ++q;
             ++n1;
          }
-      }
 
-      else if (D == 1) {
+      } else if (D == 1) {
 
          while (n1 < mesh().dimension(0)) {
             for (int i = 0; i < nMonomer; ++i) {
@@ -677,10 +680,11 @@ namespace Rpc {
             ++s;
             ++n1;
          }
-      }
 
-      else{
+      } else {
+
          Log::file() << "Invalid Dimensions";
+
       }
 
    }
@@ -821,9 +825,10 @@ namespace Rpc {
                                         int nMonomer)
    const
    {
-      // If "fields" parameter is allocated, check if mesh size match
-      // those of the system's mesh.  Otherwise, allocate.
 
+      // Check fields array allocation
+      // If "fields" parameter is allocated, check mesh size.
+      // Otherwise, allocate.
       if (fields.isAllocated()) {
          int nMonomerFields = fields.capacity();
 
@@ -840,14 +845,14 @@ namespace Rpc {
          }
       }
 
-      // Setup temporary workspace array.
+      // Allocate temp workspace array
       DArray<RField<D> > temp;
       temp.allocate(nMonomer);
       for (int i = 0; i < nMonomer; ++i) {
          temp[i].allocate(mesh().dimensions());
       }
 
-      // Read Fields;
+      // Read fields into temp array
       MeshIterator<D> itr(mesh().dimensions());
       for (itr.begin(); !itr.atEnd(); ++itr) {
          for (int i = 0; i < nMonomer; ++i) {
@@ -884,9 +889,7 @@ namespace Rpc {
             ++n1;
             ++p;
          }
-      }
-
-      else if (D == 2) {
+      } else if (D == 2) {
          while (n1 < mesh().dimension(0)) {
             r =q;
             n2 = 0;
@@ -901,10 +904,7 @@ namespace Rpc {
             ++q;
             ++n1;
          }
-      }
-
-      else if (D == 1) {
-
+      } else if (D == 1) {
          while (n1 < mesh().dimension(0)) {
             for (int i = 0; i < nMonomer; ++i) {
                fields[i][s] = temp[i][r];
@@ -913,9 +913,7 @@ namespace Rpc {
             ++s;
             ++n1;
          }
-      }
-
-      else{
+      } else{
          Log::file() << "Invalid Dimensions";
       }
    }
@@ -939,11 +937,11 @@ namespace Rpc {
          out << "mesh " <<  std::endl
              << "           " << meshDimensions << std::endl;
       }
-      
+     
+      // Allocate temp array of fields 
       DArray<RField<D> > temp;
       temp.allocate(nMonomer);
       for (int i = 0; i < nMonomer; ++i) {
-
          temp[i].allocate(meshDimensions);
       } 
 
@@ -977,8 +975,7 @@ namespace Rpc {
             ++n3;
             ++p;
          }
-      }
-      else if (D == 2) {
+      } else if (D == 2) {
          while (n2 < meshDimensions[1]) {
             r =q;
             n1 = 0;
@@ -993,8 +990,7 @@ namespace Rpc {
             ++q;
             ++n2;
          }
-      }
-      else if (D == 1) {
+      } else if (D == 1) {
          while (n1 < meshDimensions[0]) {
             for (int i = 0; i < nMonomer; ++i) {
                temp[i][s] = fields[i][r];
@@ -1028,7 +1024,8 @@ namespace Rpc {
       fileMaster().openOutputFile(filename, file);
       bool writeHeader = true;
       bool writeMeshSize = true;
-      writeFieldsRGrid(file, fields, unitCell, writeHeader, isSymmetric, writeMeshSize);
+      writeFieldsRGrid(file, fields, unitCell, 
+                       writeHeader, isSymmetric, writeMeshSize);
       file.close();
    }
 
@@ -1076,8 +1073,7 @@ namespace Rpc {
             ++n3;
             ++p;
          }
-      }
-      else if (D == 2) {
+      } else if (D == 2) {
          while (n2 < mesh().dimension(1)) {
             r =q;
             n1 = 0;
@@ -1090,8 +1086,7 @@ namespace Rpc {
             ++q;
             ++n2;
          }
-      }
-      else if (D == 1) {
+      } else if (D == 1) {
          while (n1 < mesh().dimension(0)) {
             temp[s] = field[r];
             ++r;
@@ -1102,12 +1097,13 @@ namespace Rpc {
          Log::file() << "Invalid Dimensions";
       }
 
-      // Write field
+      // Write field from temp array to file
       MeshIterator<D> itr(mesh().dimensions());
       for (itr.begin(); !itr.atEnd(); ++itr) {
          out << "  " << Dbl(temp[itr.rank()], 18, 15);
          out << std::endl;
       }
+
    }
 
    template <int D>
@@ -1599,7 +1595,7 @@ namespace Rpc {
          convertKGridToBasis(in[i], out[i], false);
       }
 
-      // Print warning if any input field is assymmetric
+      // Print warning if any input field is not symmetric
       if (!symmetric) {
          Log::file() << std::endl
             << "WARNING: non-negligible error in conversion to "
@@ -1610,6 +1606,7 @@ namespace Rpc {
             << "a symmetrized version of" << std::endl
             << "the input field." << std::endl << std::endl;
       }
+
    }
 
    template <int D>
@@ -1864,7 +1861,7 @@ namespace Rpc {
 
    template <int D>
    void FieldIo<D>::replicateUnitCell(std::ostream &out,
-                                      DArray<RField<D> > const & fields,
+                                      DArray< RField<D> > const & fields,
                                       UnitCell<D> const & unitCell,
                                       IntVec<D> const & replicas) const
 
