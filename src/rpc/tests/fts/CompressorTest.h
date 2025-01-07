@@ -10,7 +10,7 @@
 #include <rpc/fts/compressor/Compressor.h>
 #include <rpc/fts/compressor/AmCompressor.h>
 #include <rpc/fts/compressor/LrCompressor.h>
-#include <rpc/fts/compressor/LrAmPreCompressor.h>
+//#include <rpc/fts/compressor/LrAmPreCompressor.h>
 #include <rpc/fts/compressor/LrAmCompressor.h>
 
 #include <prdc/cpu/RFieldComparison.h>
@@ -195,6 +195,7 @@ public:
                      "out/testLrCompressor.log");
    }
 
+   #if 0
    void testLrAmPreCompressor()
    {
       printMethod(TEST_FUNC);
@@ -204,6 +205,7 @@ public:
                      "in/param_LrAmPreCompressor",
                      "out/testLrAmPreCompressor.log");
    }
+   #endif
    
    void testLrAmCompressor()
    {
@@ -220,7 +222,7 @@ public:
 TEST_BEGIN(CompressorTest)
 TEST_ADD(CompressorTest, testAmCompressor)
 TEST_ADD(CompressorTest, testLrCompressor)
-TEST_ADD(CompressorTest, testLrAmPreCompressor)
+//TEST_ADD(CompressorTest, testLrAmPreCompressor)
 TEST_ADD(CompressorTest, testLrAmCompressor)
 TEST_END(CompressorTest)
 

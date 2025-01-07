@@ -1,9 +1,9 @@
 BdSimulator{
-   LrAmPreCompressor{
+   LrAmCompressor{
       epsilon      1.0e-4
       maxItr       200
       maxHist      30
-      verbose	 0
+      verbose	   0
       errorType    rmsResid
    }
    

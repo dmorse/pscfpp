@@ -77,13 +77,13 @@ namespace Rpc {
       // Predictor value of fields (monomer fields)
       DArray< RField<D> > wp_;
 
-      // Correctd (new) values of fields (monomer fields)
+      // Corrected (final) values of fields (monomer fields)
       DArray< RField<D> > wf_;
 
-      // Initial deterministic forces (components)
+      // Initial deterministic forces (eigenvector components)
       DArray< RField<D> > dci_;
 
-      // Random displacement components (components)
+      // Random displacement components (eigenvector components)
       DArray< RField<D> > eta_;
 
       // Change in one component of wc 

@@ -9,8 +9,6 @@
 */
 
 #include "Field.h"
-#include <util/misc/Memory.h>
-
 #include <fftw3.h>
 
 namespace Pscf {
@@ -24,8 +22,7 @@ namespace Cpu {
    */
    template <typename Data>
    Field<Data>::Field()
-    : data_(0),
-      capacity_(0)
+    : Array<Data>()
    {}
 
    /*
@@ -43,7 +40,7 @@ namespace Cpu {
    /*
    * Allocate the underlying C array.
    *
-   * Throw an Exception if the Field has already allocated.
+   * Throw an Exception if the Field has already been allocated.
    *
    * \param capacity number of elements to allocate.
    */

@@ -1,0 +1,66 @@
+/*! 
+\page rpc_PredCorrBdStep_page Rpc::PredCorrBdStep
+
+The PredCorrBdStep classes used by both the pscf_pc and pscf_pg programs 
+implements a predictor corrector Brownian dynamics step algorithm.
+
+Two closely analogous classes named Pscf::Rpc::PredCorrBdStep and 
+Pscf::Rpg::PredCorrBdStep are used to implement this algorithm for the 
+pscf_pc program (using a standard CPU) and for the pscf_pg program
+(using GPU acceleration), respectively  These classes implement the 
+same algorithm and use the same parameter file format, as documented 
+below for both.
+
+\section rpc_PredCorrBdStep_algorithm_sec Step Algorithm
+
+A general discussion of conventions used in PSCF for BD step algorithms 
+is given \ref psfts_algorithm_page "here".  In what follows, we refer
+to the fields or fields that are stochastically sampled as \f$ W_{-} \f$,
+or as exchange fields, and the field or fields that are chosen to satisfy 
+a partial saddle point condition as \f$ W_{+} \f$.  All exchange fields
+must be associated with negative eigenvalues of the projecte chi matrix.
+Each step of the predictor corrector algorithm involves the following
+stages:
+<ul>
+<li> Generate and save random displacements of \f$ W_{-} \f$ at each
+grid point. These random displacements will be used for both the 
+predictor and corrector steps. </li>
+<li> Use an explicit Euler step algorithm to generate small changes in 
+\f$ W_{-} \f$, using forces (i.e., functional derivatives of the
+Hamiltonian) that were computed in the initial state. This is the
+"predictor" step. 
+<li> Use the compressor algorithm chosen by the user to adjust 
+\f$ W_{+} \f$ so as to satisfy the partial saddle-point condition 
+at the predicted state. </li>
+<li> Compute forces in the predicted state (i.e., i,e., compute 
+functional derivatives of the Hamiltonian with respect to components
+of \f$ W_{-} \f$). </li>
+<li> Apply an explict BD step to the initial configuration with 
+forces that are the average of those computed at the initial state
+and thosed computed in the predicted state, using the same random 
+field displacements as those used in the predictor step.  This is the 
+"corrector" step.
+<li> Use the compressor to adjust \f$ W_{+} \f$ so as to again satisfy
+the partial saddle-point condition in the final state.
+</ul>
+
+\section rpc_PredCorrBdStep_parameter_sec Parameter File
+
+The only parameter need by this algorithm is a required parameter named 
+"mobility", which gives the value of parameter denoted by \f$ \gamma \f$ 
+in the our description of an explicit Euler algorithm.  
+A typical example of the contents of the block is shown below:
+\code
+  PredCorrBdStep{
+    mobility     1e-3
+  }
+\endcode
+The format of this block is simply
+\code
+PredCorrBdStep{
+   mobility      float
+}
+\endcode
+The mobility parameter is requred.
+
+*/

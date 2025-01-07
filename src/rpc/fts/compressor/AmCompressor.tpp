@@ -20,8 +20,8 @@ namespace Rpc{
    // Constructor
    template <int D>
    AmCompressor<D>::AmCompressor(System<D>& system)
-   : Compressor<D>(system),
-     isAllocated_(false)
+    : Compressor<D>(system),
+      isAllocated_(false)
    {  setClassName("AmCompressor"); }
 
    // Destructor
@@ -37,18 +37,17 @@ namespace Rpc{
       AmIteratorTmpl<Compressor<D>, DArray<double> >::readParameters(in);
       AmIteratorTmpl<Compressor<D>, DArray<double> >::readErrorType(in);
    }
-   
-      
+
    // Initialize just before entry to iterative loop.
    template <int D>
    void AmCompressor<D>::setup(bool isContinuation)
-   {  
+   {
       const int nMonomer = system().mixture().nMonomer();
       const int meshSize = system().domain().mesh().size();
       IntVec<D> const & dimensions = system().domain().mesh().dimensions();
       // Allocate memory required by AM algorithm if not done earlier.
       AmIteratorTmpl<Compressor<D>, DArray<double> >::setup(isContinuation);
-      
+
       // Allocate memory required by compressor if not done earlier.
       if (!isAllocated_){
          newBasis_.allocate(meshSize);
@@ -60,7 +59,7 @@ namespace Rpc{
          }
          isAllocated_ = true;
       }
-      
+
       // Store value of initial guess chemical potential fields
       for (int i = 0; i < nMonomer; ++i) {
          for (int j = 0; j< meshSize; ++j){
@@ -68,7 +67,7 @@ namespace Rpc{
          }
       }
    }
-   
+
    template <int D>
    int AmCompressor<D>::compress()
    {
@@ -84,7 +83,7 @@ namespace Rpc{
 
    // Compute and return inner product of two vectors.
    template <int D>
-   double AmCompressor<D>::dotProduct(DArray<double> const & a, 
+   double AmCompressor<D>::dotProduct(DArray<double> const & a,
                                     DArray<double> const & b)
    {
       const int n = a.capacity();
@@ -92,7 +91,7 @@ namespace Rpc{
       double product = 0.0;
       for (int i = 0; i < n; i++) {
          // if either value is NaN, throw NanException
-         if (std::isnan(a[i]) || std::isnan(b[i])) { 
+         if (std::isnan(a[i]) || std::isnan(b[i])) {
             throw NanException("AmCompressor::dotProduct",__FILE__,__LINE__,0);
          }
          product += a[i] * b[i];
@@ -121,7 +120,7 @@ namespace Rpc{
 
    // Update basis
    template <int D>
-   void 
+   void
    AmCompressor<D>::updateBasis(RingBuffer< DArray<double> > & basis,
                               RingBuffer< DArray<double> > const & hists)
    {
@@ -132,7 +131,7 @@ namespace Rpc{
 
       // New basis vector is difference between two most recent states
       for (int i = 0; i < n; i++) {
-         newBasis_[i] = hists[0][i] - hists[1][i]; 
+         newBasis_[i] = hists[0][i] - hists[1][i];
       }
 
       basis.append(newBasis_);
@@ -182,23 +181,23 @@ namespace Rpc{
       // Straighten out fields into  linear arrays
       const int meshSize = system().domain().mesh().size();
       const DArray< RField<D> > * currSys = &system().w().rgrid();
-      
+
       /*
-      * The field that we are adjusting is the Langrange multiplier field 
-      * with number of grid pts components.The current value is the difference 
+      * The field that we are adjusting is the Langrange multiplier field
+      * with number of grid pts components.The current value is the difference
       * between w and w0_ for the first monomer (any monomer should give the same answer)
       */
       for (int i = 0; i < meshSize; i++){
          curr[i] = (*currSys)[0][i] - w0_[0][i];
-      }   
+      }
 
    }
 
    // Perform the main system computation (solve the MDE)
    template <int D>
    void AmCompressor<D>::evaluate()
-   {  
-      system().compute(); 
+   {
+      system().compute();
       ++mdeCounter_;
    }
 
@@ -231,7 +230,7 @@ namespace Rpc{
       // Convert back to field format
       const int nMonomer = system().mixture().nMonomer();
       const int meshSize = system().domain().mesh().size();
-      
+
       //New field is the w0_ + the newGuess for the Lagrange multiplier field
       for (int i = 0; i < nMonomer; i++){
          for (int k = 0; k < meshSize; k++){
@@ -240,7 +239,7 @@ namespace Rpc{
       }
       system().setWRGrid(wFieldTmp_);
    }
-   
+
    template<int D>
    double AmCompressor<D>::computeLambda(double r)
    {
@@ -250,7 +249,7 @@ namespace Rpc{
    template<int D>
    void AmCompressor<D>::outputToLog()
    {}
-   
+
    template<int D>
    void AmCompressor<D>::outputTimers(std::ostream& out)
    {
@@ -259,15 +258,15 @@ namespace Rpc{
       out << "AmCompressor time contributions:\n";
       AmIteratorTmpl<Compressor<D>, DArray<double> >::outputTimers(out);
    }
-   
-   // Clear timers and MDE counter 
+
+   // Clear timers and MDE counter
    template<int D>
    void AmCompressor<D>::clearTimers()
    {
       AmIteratorTmpl<Compressor<D>, DArray<double> >::clearTimers();
       mdeCounter_ = 0;
    }
-   
+
 }
 }
 #endif

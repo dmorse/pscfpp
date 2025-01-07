@@ -2,16 +2,33 @@ Question: Is there a simple way of coding discrete chains within the
 context of the current code, perhaps with some simple assumptions or
 restrictions?
 
-Possible model:
+Possible model A (lower order integrator):
+
+ - Don't try to create discrete chain model - instead allow for 
+   consistent use of a lower order Rasmussen-Kaloskas integrator.
+
+ - Vertices do not have an explicit type
+
+ - During integration, step associated with vertex is assigned the
+   half weight associated with the block, then convolution with a
+   Gaussian, then half-weight associated with block, as in original
+   algorithm.
+
+ - Choose algorithm for integrating to obtain phi that makes phi
+   an exact partial derivative of H with respect to w.
+
+Possible model B (attempt to create an actual discrete model):
 
  - Create a step algorithm flag that is a static variable of the 
-   Propagator class for each implementation. Within a given calculation,
+   Block class for each implementation. Within a given calculation,
    the same step algorithm thus must be used for all propagators on all
    chains.
 
  - Treat junctions as geometrical points that do not interact with fields.
-   Junctions would be connected to beads by bonds that are half as long
-   as those associated with normal bead-bead connections. 
+   Junctions could be connected to beads by bonds that are half as long
+   as those associated with normal bead-bead connections. For linear 
+   chains, this would allow us place junctions half-way between the
+   beads.
 
  - Require different rules for initial conditions and final conditions
    for chain ends and vertices. 

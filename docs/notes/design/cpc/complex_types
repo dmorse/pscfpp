@@ -1,0 +1,185 @@
+Goal: Plan to clean up treatment of complex number types in PSCF
+
+Problem: FFTW and cufft both define complex number types that are
+different from C++ std::complex<T> and different from each other.
+In the current code, we have dealt with this by using these complex 
+types throughout the CPU and GPU code. 
+
+Idea: We only actually need to use the types defined by these 
+libraries in the calls to FFT libraries. If we can define safe
+conversions for pointers to arrays between std::complex<T> and
+each of these types, we could do the relevant conversions inside
+the relevant versions of the FFT class, localizing the use of 
+these types to that context, and use std::complex<T> everywhere
+else.
+
+Information about Types:
+=======================
+
+Observations:
+
+1) The relevant data types used by the two FFT libraries and by the
+C++ standard library all seem use a data layout that is intentionally 
+consistent with that used in the ISO C99 _Complex data types, which 
+is a contiguous block of two real numbers in which the first element 
+is the real part and the second is the imaginary part.
+
+2) ISO C99 and later versions of ISO C define a keyword "_Complex" that 
+is defined in the <complex.h> header that allows one to define, for
+example:
+
+   float  _Complex a;
+   double _Complex b;
+
+Because _Complex is a C keyword, these are treated as elementary types,
+much like float and double. Real and imaginary parts are accessed by
+built in functions or macros, rather than using an array syntax.
+I'm having trouble finding a clear guarantee of the layout for the 
+resulting data type, but discussions of compatibility with C++ seem to 
+imply that it is laid out like an array of two real numbers with the 
+first being the real part and the second the imaginary part, with no
+padding. 
+
+The FFTW and cufft libraries were originally designed as C libraries,
+rather than C++, and can be compiled with very old versions of C, such
+as C89.  It would have been reasonable for them to have been designed 
+to promote the possibility of interoperability with the _Complex keyword 
+in C99 while defining types that can be compiled using only C89. 
+
+3) C++ standard library complex type template:
+
+The C++ standard library specification provides the following very clear
+guarantee about the std::complex<T> template:
+
+For any pointer to an element of an array of std::complex<T> named p 
+and any valid array index i, reinterpret_cast<T*>(p)[2 * i] is the real 
+part of the complex number p[i], and reinterpret_cast<T*>(p)[2 * i + 1] 
+is the imaginary part of the complex number p[i]. 
+
+The above snippet is copied from cppreference.com, from the page:
+https://en.cppreference.com/w/cpp/numeric/complex
+
+4) FFTW types:
+
+The FFTW library defines a data type fftw_complex which, by default, is 
+defined as a typedef
+
+   typedef double fftw_complex[2];
+
+for an array double[2], as discussed here:
+
+   https://fftw.org/doc/Complex-numbers.html
+
+The guarantee of the C++ standards committee that is referred to there
+as having been promised as of time of writing this FFTW documentation 
+appears to have since been adopted (see above note on std::complex). 
+The FFTW documentation says explicitly that, once this guarantee is
+adopted, a variable complex<double> ptr can be safely passed to FFTW 
+using reinterpret_cast<fftw_complex*>(ptr). I believe that means that
+the reverse cast will also work correctly, since the casts rely on
+layout compatibility in either direction.
+
+Conclusion: Casting std::complex<double> to and from fftw_complex using
+C++ reinterpret_cast seems to be safe within the CPU code.
+
+Single precision: Using single precision with FFTW seems to require 
+one to compile and linke to a separate single-precision version of 
+the library, in which types are defined differently. Full support for
+single precision in the CPU code would thus be a bit more of a pain.
+
+5) cufft types:
+
+Formal documentation of complex numbers for the CUDA math libraries is
+less complete. It appears that one just has to look into the source code 
+of the header files. The relevant type definitions are not restricted 
+to the cufft library - the same vector and complex types seem to be used
+in other cuda math libraries.  The lack of a formal library API or 
+guarantees about compatibility breaking changes makes use of the CUDA 
+libraries less secure, but I can't see a way around that, and think we 
+will have to hope that they won't make backwards-incompatible changes to 
+the most basic data types. Doing so would be screwing over their customers.
+
+The relevant header files are vector_types.h, cuComplex.h and cufft.h, which 
+should normally be available in a linux install in /usr/local/include/cuda .
+I found online versions of these in a github repository in files:
+
+https://github.com/tpn/cuda-samples/blob/master/v8.0/include/cuComplex.h
+https://github.com/tpn/cuda-samples/blob/master/v8.0/include/vector_types.h
+https://github.com/tpn/cuda-samples/blob/master/v8.0/include/cufft.h
+
+In vector_types.h, the underlying structs are defined as:
+
+   Lines 263- 266:
+
+   struct __device_builtin__ __attribute__((aligned(8))) float2
+   {
+       float x; float y; float __cuda_gnu_arm_ice_workaround[0];
+   };
+
+   Lines 334-337:
+
+   struct __device_builtin__ __builtin_align__(16) double2
+   {
+       double x, y;
+   };
+
+   These thus define structs in which, for example, if c is type double2,
+   then c.x is the real part and c.y is the imaginary part. 
+
+   I have not yet looked up the __device_builtin__ or __builtin_align__(16)
+   functions or macros, but hope that they somehow enforce alignment with no
+   padding.
+
+In cuComplex.h, two complex types are defined as:
+
+   Line 67:    typedef float2 cuFloatComplex;
+   Line 176:   typedef double2 cuDoubleComplex;
+
+   So these are just aliasew for float2 and double2 structs.
+
+   This file also defines various functions to do arithmetic on
+   complex types. Because this is C rather than C++, these are
+   necessarily implemented as functions rather than overloaded
+   operators. 
+   
+In cufft.h, these two complex types are typedef'd again as:
+
+   typedef cuComplex cufftComplex;
+   typedef cuDoubleComplex cufftDoubleComplex;
+
+   These types are thus also the same as float2 and double2
+
+Is layout compatibility guaranteed (or nearly so) ? :
+
+   This raises the question of whether float2 and double2 are guaranteed 
+   to be layout compatible with std::complex<T> types.
+
+   The C standard guarantees that the offset of the first member must be
+   zero (no padding before the first member) and that element addresses 
+   increase in the order listed (i.e., the address of x must be before the
+   address of y). It does not prohibit padding between x and y or at the 
+   end of the struct, after y. Any such padding seems extremely unlikely,
+   but is allowed by the language, and would destroy layout compatibility 
+   between these types and std::complex<T> types. It would also mess up
+   alignment requirements on which CUDA relies. Since CUDA is designed
+   to be used only with a limited set of parent C/C++ compilers, and they
+   could refuse to support a compiler that causes trouble, I hope that 
+   supported compilers all behave sensibly in this regard.
+
+   We could build in a compile or run time checks that the sizeof these 
+   data types are twice sizeof float or double (or sizeof Real, if we
+   define a typedef for Real). If this tests fail, it would at alert us 
+   to a problem with a particular problem, but wouldn't fix the problem. 
+
+   Conclusion: If the sizeof test works, the layouts must be the simple
+   unpadded one that is compatible with that guaranteed for std::complex<T>
+
+   Idea: Consistently using inline functions for operatins that require
+   the internal structure of complex numbers could completely isolate 
+   the dependence on the type to those functions, but would also remove 
+   any advantage of being able to write code that uses operator 
+   overloading. Writing everything in terms of such functions would 
+   actually make it irrelevant which complex type was used outside of 
+   the FFT classes.
+
+

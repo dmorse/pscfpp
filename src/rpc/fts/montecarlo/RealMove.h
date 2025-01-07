@@ -19,7 +19,10 @@ namespace Rpc {
    using namespace Pscf::Prdc::Cpu;
 
    /**
-   * RealMove is a Monte Carlo move in real space
+   * RealMove generates spatially uncorrelated random field changes.
+   *
+   * For a description of the algorithm and parameter file format, 
+   * see also \ref rpc_RealMove_page "here". 
    *
    * \ingroup Rpc_Fts_MonteCarlo_Module
    */

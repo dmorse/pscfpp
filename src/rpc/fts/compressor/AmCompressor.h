@@ -10,7 +10,7 @@
 
 #include "Compressor.h"
 #include <prdc/cpu/RField.h>
-#include <pscf/iterator/AmIteratorTmpl.h>                 
+#include <pscf/iterator/AmIteratorTmpl.h>
 
 namespace Pscf {
 namespace Rpc
@@ -23,12 +23,12 @@ namespace Rpc
    using namespace Pscf::Prdc::Cpu;
 
    /**
-   * Rpc implementation of the Anderson Mixing compressor.
+   * Anderson Mixing compressor.
    *
    * \ingroup Rpc_Fts_Compressor_Module
    */
    template <int D>
-   class AmCompressor 
+   class AmCompressor
          : public AmIteratorTmpl<Compressor<D>, DArray<double> >
    {
 
@@ -36,7 +36,7 @@ namespace Rpc
 
       /**
       * Constructor.
-      * 
+      *
       * \param system System object associated with this compressor.
       */
       AmCompressor(System<D>& system);
@@ -57,13 +57,13 @@ namespace Rpc
       * Initialize just before entry to iterative loop.
       *
       * This function is called by the solve function before entering the
-      * loop over iterations. Store the current values of the fields at the 
+      * loop over iterations. Store the current values of the fields at the
       * beginning of iteration
       *
       * \param isContinuation true iff continuation within a sweep
-      */ 
-      void setup(bool isContinuation);      
-      
+      */
+      void setup(bool isContinuation);
+
       /**
       * Compress to obtain partial saddle point w+
       *
@@ -74,8 +74,8 @@ namespace Rpc
       /**
       * Compute mixing parameter lambda
       */
-      double computeLambda(double r);     
-      
+      double computeLambda(double r);
+
       /**
       * Return compressor times contributions.
       */
@@ -85,47 +85,46 @@ namespace Rpc
       * Clear all timers (reset accumulated time to zero).
       */
       void clearTimers();
-      
+
       // Inherited public member functions
       using AmIteratorTmpl<Compressor<D>, DArray<double> >::setClassName;
-      
+
    protected:
-  
-      // Inherited protected members 
+
+      // Inherited protected members
       using ParamComposite::readOptional;
       using Compressor<D>::mdeCounter_;
 
    private:
-   
+
       /**
-      * How many times MDE has been solved for each mc move 
+      * How many times MDE has been solved for this stochastic move?
       */
       int itr_;
-      
+
       /**
       * Current values of the fields
       */
-      DArray< RField<D> > w0_;  
+      DArray< RField<D> > w0_;
 
       /**
       * Has the variable been allocated?
       */
       bool isAllocated_;
-      
+
       /**
-      * Template w Field used in update function
+      * Temporary w field used in update function
       */
-      
       DArray< RField<D> > wFieldTmp_;
-      
+
       /**
-      * New Basis variable used in updateBasis function 
+      * New Basis variable used in updateBasis function
       */
       DArray<double> newBasis_;
 
       /**
       * Assign one field to another.
-      * 
+      *
       * \param a the field to be set (lhs of assignment)
       * \param b the field for it to be set to (rhs of assigment)
       */
@@ -143,43 +142,43 @@ namespace Rpc
 
       /**
       * Update the basis for residual or field vectors.
-      * 
+      *
       * \param basis RingBuffer of residual or field basis vectors
       * \param hists RingBuffer of past residual or field vectors
       */
-      void updateBasis(RingBuffer<DArray<double> > & basis, 
+      void updateBasis(RingBuffer<DArray<double> > & basis,
                        RingBuffer<DArray<double> > const & hists);
 
       /**
       * Add linear combination of basis vectors to trial field.
-      * 
+      *
       * \param trial trial vector (input-output)
       * \param basis RingBuffer of basis vectors
       * \param coeffs array of coefficients of basis vectors
       * \param nHist number of histories stored at this iteration
       */
-      void addHistories(DArray<double>& trial, 
-                        RingBuffer<DArray<double> > const & basis, 
-                        DArray<double> coeffs, 
+      void addHistories(DArray<double>& trial,
+                        RingBuffer<DArray<double> > const & basis,
+                        DArray<double> coeffs,
                         int nHist);
 
       /**
       * Add predicted error to field trial.
-      * 
+      *
       * \param fieldTrial trial field (in-out)
       * \param resTrial predicted error for current trial
-      * \param lambda Anderson-Mixing mixing 
+      * \param lambda Anderson-Mixing mixing
       */
-      void addPredictedError(DArray<double>& fieldTrial, 
-                             DArray<double> const & resTrial, 
+      void addPredictedError(DArray<double>& fieldTrial,
+                             DArray<double> const & resTrial,
                              double lambda);
 
       /**
       * Does the system has an initial guess for the field?
       */
       bool hasInitialGuess();
-     
-      /** 
+
+      /**
       * Compute and returns the number of elements in field vector.
       *
       * Called during allocation and then stored.
@@ -188,9 +187,9 @@ namespace Rpc
 
       /**
       * Gets the current field vector from the system.
-      * 
+      *
       * \param curr current field vector
-      */ 
+      */
       void getCurrent(DArray<double>& curr);
 
       /**
@@ -219,12 +218,12 @@ namespace Rpc
       * Outputs relevant system details to the iteration log.
       */
       void outputToLog();
-    
-      // Inherited private members 
+
+      // Inherited private members
       using Compressor<D>::system;
 
    };
-   
+
    #ifndef RPC_AM_COMPRESSOR_TPP
    // Suppress implicit instantiation
    extern template class AmCompressor<1>;

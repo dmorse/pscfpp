@@ -1,0 +1,67 @@
+/*! 
+\page rpc_RealMove_page Rpc::RealMove
+
+The RealMove classes used by both the pscf_pc and pscf_pg programs 
+implements a simple MC move for which the attempted move is a random
+change at every grid point.
+
+Two closely analogous classes named Pscf::Rpc::RealMove and 
+Pscf::Rpg::RealMove that are defined in different namespaces are used 
+to implement this the same step algorithm for different programs. 
+The RealMove class defined in the Rpc namespace is used in the pscf_pc 
+program (using CPU hardware) and the class defined in the Rpg namespace 
+is used in the pscf_pg program (using GPU acceleration). These two 
+classes implement the same step algorithm and use the same parameter 
+file format, which are documented below.
+
+\section rpc_RealMove_algorithm_sec Step Algorithm
+
+A general discussion of MC move algorithms for PS-FTS is given 
+\ref psfts_algorithm_page "here". As discussed there, each move consists 
+of an unconstrained change in the fields, followed by application of a 
+compressor to re-impose the incompressibility constraint. The decision 
+about whether to accept or reject the move is based on the value of the 
+Hamiltonian after incompressibility has been restored. 
+
+The RealMove algorithm takes one parameter, denoted by stepsize in the 
+parameter file. The unconstrained move changes each monomer field 
+component by a random amount chosen from the range [-stepsize,+stepsize] 
+with a uniform probability distribution.
+
+\section rpc_RealMove_parameter_sec Parameter File
+
+The only parameter needed by this algorithm are the "probability" 
+parameter, which determines the probability that a move of this type 
+will be chosen on any step, and a required parameter named stepsize, 
+as described above.  A typical example of the contents of this is 
+shown below.
+\code
+  RealMove{
+    probability  0.05
+    stepsize     0.005
+  }
+\endcode
+The parameter file format is thus:
+\code
+RealMove{
+  probability  float (in range [0,1])
+  stepsize     float
+}
+\endcode
+Meanings of both parameters are described briefly below:
+<table>
+  <tr>
+    <td> <b> Label </b>  </td>
+    <td> <b> Description </b>  </td>
+  </tr>
+  <tr>
+    <td> probability </td>
+    <td> probability of attempting a step of this type  </td>
+  </tr>
+  <tr>
+    <td> stepsize </td>
+    <td> Maximum field change magnitude for any monomer field </td>
+  </tr>
+</table>
+
+*/
