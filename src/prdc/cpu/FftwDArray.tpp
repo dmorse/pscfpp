@@ -1,5 +1,5 @@
-#ifndef PRDC_CPU_FIELD_TPP
-#define PRDC_CPU_FIELD_TPP
+#ifndef PRDC_CPU_FFTW_D_ARRAY_TPP
+#define PRDC_CPU_FFTW_D_ARRAY_TPP
 
 /*
 * PSCF Package 
@@ -8,9 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "Field.h"
-#include <util/misc/Memory.h>
-
+#include "FftwDArray.h"
 #include <fftw3.h>
 
 namespace Pscf {
@@ -23,16 +21,15 @@ namespace Cpu {
    * Default constructor.
    */
    template <typename Data>
-   Field<Data>::Field()
-    : data_(0),
-      capacity_(0)
+   FftwDArray<Data>::FftwDArray()
+    : Array<Data>()
    {}
 
    /*
    * Destructor.
    */
    template <typename Data>
-   Field<Data>::~Field()
+   FftwDArray<Data>::~FftwDArray()
    {
       if (isAllocated()) {
          fftw_free(data_);
@@ -43,18 +40,18 @@ namespace Cpu {
    /*
    * Allocate the underlying C array.
    *
-   * Throw an Exception if the Field has already allocated.
+   * Throw an Exception if the FftwDArray has already been allocated.
    *
    * \param capacity number of elements to allocate.
    */
    template <typename Data>
-   void Field<Data>::allocate(int capacity)
+   void FftwDArray<Data>::allocate(int capacity)
    {
       if (isAllocated()) {
-         UTIL_THROW("Attempt to re-allocate a Field");
+         UTIL_THROW("Attempt to re-allocate a FftwDArray");
       }
       if (capacity <= 0) {
-         UTIL_THROW("Attempt to allocate Field with capacity <= 0");
+         UTIL_THROW("Attempt to allocate FftwDArray with capacity <= 0");
       }
       capacity_ = capacity;
       data_ = (Data*) fftw_malloc(sizeof(Data)*capacity);
@@ -63,10 +60,10 @@ namespace Cpu {
    /*
    * Deallocate the underlying C array.
    *
-   * Throw an Exception if this Field is not allocated.
+   * Throw an Exception if this FftwDArray is not allocated.
    */
    template <typename Data>
-   void Field<Data>::deallocate()
+   void FftwDArray<Data>::deallocate()
    {
       if (!isAllocated()) {
          UTIL_THROW("Array is not allocated");

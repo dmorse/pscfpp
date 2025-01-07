@@ -1,10 +1,10 @@
-#ifndef PRDC_CPU_FIELD_TEST_H
-#define PRDC_CPU_FIELD_TEST_H
+#ifndef PRDC_CPU_FFTW_D_ARRAY_TEST_H
+#define PRDC_CPU_FFTW_D_ARRAY_TEST_H
 
 #include <test/UnitTest.h>
 #include <test/UnitTestRunner.h>
 
-#include <prdc/cpu/Field.h>
+#include <prdc/cpu/FftwDArray.h>
 
 #include <util/archives/MemoryOArchive.h>
 #include <util/archives/MemoryIArchive.h>
@@ -16,7 +16,7 @@ using namespace Util;
 using namespace Pscf; 
 using namespace Pscf::Prdc; 
 
-class CpuFieldTest : public UnitTest 
+class CpuFftwDArrayTest : public UnitTest 
 {
 
 private:
@@ -40,32 +40,32 @@ public:
 };
 
 
-void CpuFieldTest::testConstructor()
+void CpuFftwDArrayTest::testConstructor()
 {
    printMethod(TEST_FUNC);
    {
-      Cpu::Field<double> v;
+      Cpu::FftwDArray<double> v;
       TEST_ASSERT(v.capacity() == 0 );
       TEST_ASSERT(!v.isAllocated() );
    }
 } 
 
-void CpuFieldTest::testAllocate()
+void CpuFftwDArrayTest::testAllocate()
 {
    printMethod(TEST_FUNC);
    {
-      Cpu::Field<double> v;
+      Cpu::FftwDArray<double> v;
       v.allocate(capacity);
       TEST_ASSERT(v.capacity() == capacity );
       TEST_ASSERT(v.isAllocated());
    }
 } 
 
-void CpuFieldTest::testSubscript()
+void CpuFftwDArrayTest::testSubscript()
 {
    printMethod(TEST_FUNC);
    {
-      Cpu::Field<double> v;
+      Cpu::FftwDArray<double> v;
       v.allocate(capacity);
       for (int i=0; i < capacity; i++ ) {
          v[i] = (i+1)*10.0 ;
@@ -76,11 +76,11 @@ void CpuFieldTest::testSubscript()
    }
 } 
 
-void CpuFieldTest::testSerialize1Memory()
+void CpuFftwDArrayTest::testSerialize1Memory()
 {
    printMethod(TEST_FUNC);
    {
-      Cpu::Field<double> v;
+      Cpu::FftwDArray<double> v;
       v.allocate(3);
       for (int i=0; i < capacity; i++ ) {
          v[i] = (i+1)*10.0;
@@ -101,7 +101,7 @@ void CpuFieldTest::testSerialize1Memory()
       TEST_ASSERT(v[1]==20.0);
       TEST_ASSERT(v.capacity() == 3);
    
-      Cpu::Field<double> u;
+      Cpu::FftwDArray<double> u;
       u.allocate(3);
    
       MemoryIArchive iArchive;
@@ -157,11 +157,11 @@ void CpuFieldTest::testSerialize1Memory()
 
 }
 
-void CpuFieldTest::testSerialize2Memory()
+void CpuFftwDArrayTest::testSerialize2Memory()
 {
    printMethod(TEST_FUNC);
    {
-      Cpu::Field<double> v;
+      Cpu::FftwDArray<double> v;
       v.allocate(capacity);
       for (int i=0; i < capacity; i++ ) {
          v[i] = (i+1)*10.0;
@@ -178,9 +178,9 @@ void CpuFieldTest::testSerialize2Memory()
       TEST_ASSERT(v[1] == 20.0);
       TEST_ASSERT(v.capacity() == capacity);
    
-      Cpu::Field<double> u;
+      Cpu::FftwDArray<double> u;
    
-      // Note: We do not allocate Cpu::Field<double> u in this test.
+      // Note: We do not allocate Cpu::FftwDArray<double> u in this test.
       // This is the main difference from testSerialize1Memory()
    
       MemoryIArchive iArchive;
@@ -198,11 +198,11 @@ void CpuFieldTest::testSerialize2Memory()
    }
 }
 
-void CpuFieldTest::testSerialize1File()
+void CpuFftwDArrayTest::testSerialize1File()
 {
    printMethod(TEST_FUNC);
    {
-      Cpu::Field<double> v;
+      Cpu::FftwDArray<double> v;
       v.allocate(3);
       for (int i=0; i < capacity; i++ ) {
          v[i] = (i+1)*10.0;
@@ -221,7 +221,7 @@ void CpuFieldTest::testSerialize1File()
       TEST_ASSERT(v[1]==20.0);
       TEST_ASSERT(v.capacity() == 3);
    
-      Cpu::Field<double> u;
+      Cpu::FftwDArray<double> u;
       u.allocate(3);
    
       BinaryFileIArchive iArchive;
@@ -251,11 +251,11 @@ void CpuFieldTest::testSerialize1File()
    }
 }
 
-void CpuFieldTest::testSerialize2File()
+void CpuFftwDArrayTest::testSerialize2File()
 {
    printMethod(TEST_FUNC);
    {
-      Cpu::Field<double> v;
+      Cpu::FftwDArray<double> v;
       v.allocate(3);
       for (int i=0; i < capacity; i++ ) {
          v[i] = (i+1)*10.0;
@@ -274,7 +274,7 @@ void CpuFieldTest::testSerialize2File()
       TEST_ASSERT(v[1] == 20.0);
       TEST_ASSERT(v.capacity() == 3);
    
-      Cpu::Field<double> u;
+      Cpu::FftwDArray<double> u;
    
       // u.allocate(3); -> 
       // Note: We do not allocate first. This is the difference 
@@ -307,14 +307,14 @@ void CpuFieldTest::testSerialize2File()
    }
 }
 
-TEST_BEGIN(CpuFieldTest)
-TEST_ADD(CpuFieldTest, testConstructor)
-TEST_ADD(CpuFieldTest, testAllocate)
-TEST_ADD(CpuFieldTest, testSubscript)
-TEST_ADD(CpuFieldTest, testSerialize1Memory)
-TEST_ADD(CpuFieldTest, testSerialize2Memory)
-TEST_ADD(CpuFieldTest, testSerialize1File)
-TEST_ADD(CpuFieldTest, testSerialize2File)
-TEST_END(CpuFieldTest)
+TEST_BEGIN(CpuFftwDArrayTest)
+TEST_ADD(CpuFftwDArrayTest, testConstructor)
+TEST_ADD(CpuFftwDArrayTest, testAllocate)
+TEST_ADD(CpuFftwDArrayTest, testSubscript)
+TEST_ADD(CpuFftwDArrayTest, testSerialize1Memory)
+TEST_ADD(CpuFftwDArrayTest, testSerialize2Memory)
+TEST_ADD(CpuFftwDArrayTest, testSerialize1File)
+TEST_ADD(CpuFftwDArrayTest, testSerialize2File)
+TEST_END(CpuFftwDArrayTest)
 
 #endif

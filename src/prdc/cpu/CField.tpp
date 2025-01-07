@@ -9,7 +9,6 @@
 */
 
 #include "CField.h"
-#include "Field.tpp"
 
 namespace Pscf {
 namespace Prdc {
@@ -22,7 +21,7 @@ namespace Cpu {
    */
    template <int D>
    CField<D>::CField()
-    : Field<fftw_complex>(),
+    : FftwDArray<fftw_complex>(),
       meshDimensions_()
    {}
 
@@ -42,11 +41,11 @@ namespace Cpu {
    */
    template <int D>
    CField<D>::CField(const CField<D>& other)
-    : Field<fftw_complex>(),
+    : FftwDArray<fftw_complex>(),
       meshDimensions_()
    {
       if (other.isAllocated() && other.capacity_ > 0) {
-         Field<fftw_complex>::allocate(other.capacity_);
+         FftwDArray<fftw_complex>::allocate(other.capacity_);
          meshDimensions_ = other.meshDimensions_;
          for (int i = 0; i < capacity_; ++i) {
             data_[i][0] = other.data_[i][0];
@@ -98,7 +97,7 @@ namespace Cpu {
          meshDimensions_[i] = meshDimensions[i];
          size *= meshDimensions[i];
       }
-      Field<fftw_complex>::allocate(size);
+      FftwDArray<fftw_complex>::allocate(size);
    }
 
    /*
@@ -107,7 +106,7 @@ namespace Cpu {
    template <int D>
    void CField<D>::deallocate()
    {
-      Field<fftw_complex>::deallocate();
+      FftwDArray<fftw_complex>::deallocate();
       for (int i = 0; i < D; ++i) {
          meshDimensions_[i] = 0;
       }
