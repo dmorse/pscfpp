@@ -8,7 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <prdc/cpu/Field.h>
+#include <prdc/cpu/FftwDArray.h>
 #include <prdc/cpu/complex.h>
 #include <pscf/math/IntVec.h>
 #include <util/global.h>
@@ -28,7 +28,7 @@ namespace Cpu {
    * \ingroup Prdc_Cpu_Module
    */
    template <int D>
-   class RFieldDft : public Field<fftw_complex>
+   class RFieldDft : public FftwDArray<fftw_complex>
    {
 
    public:
@@ -111,7 +111,7 @@ namespace Cpu {
       // Vector containing dimensions of dft (Fourier) grid.
       IntVec<D> dftDimensions_;
 
-      using Field<fftw_complex>::allocate;
+      using FftwDArray<fftw_complex>::allocate;
 
    };
 
@@ -134,7 +134,7 @@ namespace Cpu {
             size *= dftDimensions_[i];
          }
       }
-      Field<fftw_complex>::allocate(size);
+      FftwDArray<fftw_complex>::allocate(size);
    }
    #endif
 
@@ -159,7 +159,7 @@ namespace Cpu {
    template <class Archive>
    void RFieldDft<D>::serialize(Archive& ar, const unsigned int version)
    {
-      Field<fftw_complex>::serialize(ar, version);
+      FftwDArray<fftw_complex>::serialize(ar, version);
       ar & meshDimensions_;
       ar & dftDimensions_;
    }

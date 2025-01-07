@@ -1,5 +1,5 @@
-#ifndef PRDC_CPU_FIELD_H
-#define PRDC_CPU_FIELD_H
+#ifndef PRDC_CPU_FFTW_D_ARRAY_H
+#define PRDC_CPU_FFTW_D_ARRAY_H
 
 /*
 * PSCF Package 
@@ -29,7 +29,7 @@ namespace Cpu {
    * \ingroup Prdc_Cpu_Module
    */
    template <typename Data>
-   class Field : public Array<Data>
+   class FftwDArray : public Array<Data>
    {
 
    public:
@@ -37,19 +37,19 @@ namespace Cpu {
       /**
       * Default constructor.
       */
-      Field();
+      FftwDArray();
 
       /**
       * Destructor.
       *
       * Deletes underlying C array, if allocated previously.
       */
-      virtual ~Field();
+      virtual ~FftwDArray();
 
       /**
       * Allocate the underlying C array.
       *
-      * \throw Exception if the Field is already allocated.
+      * \throw Exception if the FftwDArray is already allocated.
       *
       * \param capacity number of elements to allocate.
       */
@@ -58,17 +58,17 @@ namespace Cpu {
       /**
       * Dellocate the underlying C array.
       *
-      * \throw Exception if the Field is not allocated.
+      * \throw Exception if the FftwDArray is not allocated.
       */
       virtual void deallocate();
 
       /**
-      * Return true if the Field has been allocated, false otherwise.
+      * Return true if the FftwDArray has been allocated, false otherwise.
       */
       bool isAllocated() const;
 
       /**
-      * Serialize a Field to/from an Archive.
+      * Serialize a FftwDArray to/from an Archive.
       *
       * \param ar       archive
       * \param version  archive version id
@@ -86,28 +86,28 @@ namespace Cpu {
       /**
       * Copy constructor (private and not implemented to prohibit).
       */
-      Field(Field<Data> const & other);
+      FftwDArray(FftwDArray<Data> const & other);
 
       /**
       * Assignment operator (private and non implemented to prohibit).
       */
-      Field<Data>& operator = (Field<Data> const & other);
+      FftwDArray<Data>& operator = (FftwDArray<Data> const & other);
 
    };
 
    /*
-   * Return true if the Field has been allocated, false otherwise.
+   * Return true if the FftwDArray has been allocated, false otherwise.
    */
    template <typename Data>
-   inline bool Field<Data>::isAllocated() const
+   inline bool FftwDArray<Data>::isAllocated() const
    {  return (bool) data_; }
 
    /*
-   * Serialize a Field to/from an Archive.
+   * Serialize a FftwDArray to/from an Archive.
    */
    template <typename Data>
    template <class Archive>
-   void Field<Data>::serialize(Archive& ar, const unsigned int version)
+   void FftwDArray<Data>::serialize(Archive& ar, const unsigned int version)
    {
       int capacity;
       if (Archive::is_saving()) {
@@ -121,7 +121,7 @@ namespace Cpu {
             }
          } else {
             if (capacity != capacity_) {
-               UTIL_THROW("Inconsistent Field capacities");
+               UTIL_THROW("Inconsistent FftwDArray capacities");
             }
          }
       }
@@ -135,5 +135,5 @@ namespace Cpu {
 }
 }
 }
-#include "Field.tpp"
+#include "FftwDArray.tpp"
 #endif

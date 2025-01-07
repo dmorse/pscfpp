@@ -9,7 +9,6 @@
 */
 
 #include "RFieldDft.h"
-#include "Field.tpp"
 
 namespace Pscf {
 namespace Prdc {
@@ -22,7 +21,7 @@ namespace Cpu {
    */
    template <int D>
    RFieldDft<D>::RFieldDft()
-    : Field<fftw_complex>(),
+    : FftwDArray<fftw_complex>(),
       meshDimensions_(0),
       dftDimensions_(0)
    {}
@@ -41,7 +40,7 @@ namespace Cpu {
    */
    template <int D>
    RFieldDft<D>::RFieldDft(const RFieldDft<D>& other)
-    : Field<fftw_complex>(),
+    : FftwDArray<fftw_complex>(),
       meshDimensions_(0),
       dftDimensions_(0)
    {
@@ -111,7 +110,7 @@ namespace Cpu {
             size *= dftDimensions_[i];
          }
       }
-      Field<fftw_complex>::allocate(size);
+      FftwDArray<fftw_complex>::allocate(size);
    }
 
    /*
@@ -120,7 +119,7 @@ namespace Cpu {
    template <int D>
    void RFieldDft<D>::deallocate()
    {
-      Field<fftw_complex>::deallocate();
+      FftwDArray<fftw_complex>::deallocate();
       for (int i = 0; i < D; ++i) {
          meshDimensions_[i] = 0;
          dftDimensions_[i] = 0;
