@@ -8,7 +8,9 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
+#include <util/containers/Array.h>
 #include <util/global.h>
+
 #include <fftw3.h>
 
 namespace Pscf {
@@ -18,12 +20,16 @@ namespace Cpu {
    using namespace Util;
 
    /**
-   * Dynamic array with aligned data, for use with FFTW library.
+   * Dynamic array with data aligned for use with FFTW library.
+   *
+   * The allocate and deallocate functions of this class use functions
+   * provided by the FFTW library to allocate and free aligned memory. 
+   * The class is otherwise similar in most respects to a Util::DArray.
    *
    * \ingroup Prdc_Cpu_Module
    */
    template <typename Data>
-   class Field
+   class Field : public Array<Data>
    {
 
    public:
@@ -62,43 +68,6 @@ namespace Cpu {
       bool isAllocated() const;
 
       /**
-      * Return allocated size.
-      *
-      * \return Number of elements allocated in array.
-      */
-      int capacity() const;
-
-      /**
-      * Get an element by non-const reference.
-      *
-      * Mimic C-array subscripting.
-      *
-      * \param  i array index
-      * \return non-const reference to element i
-      */
-      Data & operator[] (int i);
-
-      /**
-      * Get an element by const reference.
-      *
-      * Mimics C-array subscripting.
-      *
-      * \param i array index
-      * \return const reference to element i
-      */
-      Data const & operator[] (int i) const;
-
-      /**
-      * Return pointer to underlying C array.
-      */
-      Data* cField();
-
-      /**
-      * Return pointer to const to underlying C array.
-      */
-      Data const * cField() const;
-
-      /**
       * Serialize a Field to/from an Archive.
       *
       * \param ar       archive
@@ -109,11 +78,8 @@ namespace Cpu {
 
    protected:
 
-      /// Pointer to an array of Data elements.
-      Data* data_;
-
-      /// Allocated size of the data_ array.
-      int capacity_;
+       using Array<Data>:: data_;
+       using Array<Data>:: capacity_;
 
    private:
 
@@ -128,52 +94,6 @@ namespace Cpu {
       Field<Data>& operator = (Field<Data> const & other);
 
    };
-
-   /*
-   * Return allocated size.
-   */
-   template <typename Data>
-   inline int Field<Data>::capacity() const
-   {  return capacity_; }
-
-   /*
-   * Get an element by reference (C-array subscripting)
-   */
-   template <typename Data>
-   inline Data& Field<Data>::operator[] (int i)
-   {
-      assert(data_ != 0);
-      assert(i >= 0);
-      assert(i < capacity_);
-      return *(data_ + i);
-   }
-
-   /*
-   * Get an element by const reference (C-array subscripting)
-   */
-   template <typename Data>
-   inline Data const & Field<Data>::operator[] (int i) const
-   {
-      assert(data_ != 0);
-      assert(i >= 0 );
-      assert(i < capacity_);
-      return *(data_ + i);
-   }
-
-   /*
-   * Get a pointer to the underlying C array.
-   */
-   template <typename Data>
-   inline Data* Field<Data>::cField()
-   {  return data_; }
-
-   /*
-   * Get a pointer to const to the underlying C array.
-   */
-   template <typename Data>
-   inline 
-   Data const * Field<Data>::cField() const
-   {  return data_; }
 
    /*
    * Return true if the Field has been allocated, false otherwise.
