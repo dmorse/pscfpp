@@ -30,6 +30,45 @@
 namespace Pscf {
 namespace Prdc {
 
+   /*
+   * Check allocation of a single field of type FT, allocate if needed.
+   */
+   template <int D, class FT>
+   void checkAllocateField(FT& field, 
+                           IntVec<D> const& dimensions)
+   {
+      if (field.isAllocated()) {
+         UTIL_CHECK(field.meshDimensions() == dimensions);
+      } else {
+         field.allocate(dimensions);
+      }
+   }
+
+   /*
+   * Check allocation of an array of fields of type FT, allocate if needed.
+   */
+   template <int D, class FT>
+   void checkAllocateFields(DArray<FT>& fields,
+                            IntVec<D> const& dimensions,
+                            int nMonomer)
+   {
+      if (fields.isAllocated()) {
+         int nMonomerFields = fields.capacity();
+         UTIL_CHECK(nMonomerFields > 0)
+         UTIL_CHECK(nMonomerFields == nMonomer)
+         for (int i = 0; i < nMonomer; ++i) {
+            UTIL_CHECK(fields[i].meshDimensions() == dimensions);
+         }
+      } else {
+         fields.allocate(nMonomer);
+         for (int i = 0; i < nMonomer; ++i) {
+            fields[i].allocate(dimensions);
+         }
+      }
+   }
+
+   // RGrid File Io Templates
+
    template <int D, class AT>
    void readRGridData(std::istream& in,
                       DArray<AT>& fields,

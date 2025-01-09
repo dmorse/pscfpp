@@ -26,6 +26,55 @@ namespace Prdc {
    using namespace Util;
    using namespace Pscf;
 
+   // Utilities for checking field and array dimensions
+
+   /**
+   * Check allocation of a single field, allocate if necessary.
+   *
+   * Template parameter FT is a field type, such as RField<D> or 
+   * RFieldDft<D>, that has an allocate statement that takes an
+   * IntVec<D> of mesh dimensions.
+   *
+   * On successful exit, the mesh dimensions for the field are
+   * equal to those given in parameter meshDimensions.
+   *
+   * If the field is allocated on entry, the above condition is
+   * checked, and an Exception is thrown if is violated.  If the
+   * fields is not allocated on entry, it is allocated with the
+   * correct dimensions.
+   *
+   * \param field  field object of type FT
+   * \param dimensions  required mesh dimensions
+   */
+   template <int D, class FT>
+   void checkAllocateField(FT& field, IntVec<D> const& dimensions); 
+
+   /**
+   * Check allocation of an array of fields, allocate if necessary.
+   *
+   * Template parameter FT is a field type, such as RField<D> or 
+   * RFieldDft<D>, that has an allocate function that takes an 
+   * IntVec<D> of mesh dimensions.
+   *
+   * On successful exit, the capacity of the DArray fields is equal
+   * to nMonomer, and the mesh dimensions for each field are equal to
+   * those given in parameter meshDimensions.
+   *
+   * If the fields array is allocated on entry, the above conditions
+   * are checked, and an Exception is thrown if any are not met. 
+   * If the arrray is not allocated on entry, it is allocated with 
+   * the required dimensions.
+   *
+   * \param fields  DArray of fields of type FT
+   * \param dimensions  required mesh dimensions
+   * \param nMomoner  number of monomer types (in)
+   */
+   template <int D, class FT>
+   void checkAllocateFields(DArray< FT >& fields, 
+                            IntVec<D> const& dimensions,
+                            int nMonomer);
+
+
    // Templates for RGrid data IO
 
    /**

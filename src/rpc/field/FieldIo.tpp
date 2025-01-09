@@ -235,24 +235,6 @@ namespace Rpc {
 
       writeBasisData(out, fields, basis());
 
-      #if 0
-      // Write fields
-      int ib = 0;
-      for (int i = 0; i < nStar; ++i) {
-         if (!basis().star(i).cancel) {
-            for (int j = 0; j < nMonomer; ++j) {
-               out << Dbl(fields[j][ib], 20, 10);
-            }
-            out << "   ";
-            for (int j = 0; j < D; ++j) {
-               out << Int(basis().star(i).waveBz[j], 5);
-            }
-            out << Int(basis().star(i).size, 5) << std::endl;
-            ++ib;
-         }
-      }
-      #endif
-
    }
 
    /*
@@ -324,7 +306,7 @@ namespace Rpc {
       bool isSymmetric;
       FieldIo<D>::readFieldHeader(in, nMonomer, unitCell, isSymmetric);
       readMeshDimensions(in);
-      checkAllocationFields(fields, nMonomer);
+      checkAllocateFields(fields, mesh().dimensions(), nMonomer);
       readRGridData(in, fields, mesh().dimensions(), nMonomer);
 
    }
@@ -356,7 +338,7 @@ namespace Rpc {
       readMeshDimensions(in);
 
       // Read data
-      checkAllocationField(field);
+      checkAllocateField(field, mesh().dimensions());
       readRGridData(in, field, mesh().dimensions());
    }
 
@@ -378,7 +360,7 @@ namespace Rpc {
                                         int nMonomer)
    const
    {
-      checkAllocationFields(fields, nMonomer);
+      checkAllocateFields(fields, mesh().dimensions(), nMonomer);
       readRGridData(in, fields, mesh().dimensions(), nMonomer);
    }
 
@@ -460,7 +442,7 @@ namespace Rpc {
       FieldIo<D>::readFieldHeader(in, nMonomer, unitCell, isSymmetric);
       readMeshDimensions(in);
      
-      checkAllocationFields(fields, nMonomer);
+      checkAllocateFields(fields, mesh().dimensions(), nMonomer);
       readKGridData(in, fields, fields[0].dftDimensions(), nMonomer);
    }
 
@@ -918,7 +900,7 @@ namespace Rpc {
    FieldIo<D>::convertBasisToRGrid(DArray<double> const & in,
                                    RField<D>& out) const
    {
-      checkAllocationField(workDft_);
+      checkAllocateField(workDft_, mesh().dimensions());
       convertBasisToKGrid(in, workDft_);
       fft().inverseTransformSafe(workDft_, out);
    }
@@ -929,7 +911,7 @@ namespace Rpc {
                                    DArray< RField<D> >& out) const
    {
       UTIL_ASSERT(in.capacity() == out.capacity());
-      checkAllocationField(workDft_);
+      checkAllocateField(workDft_, mesh().dimensions());
 
       int n = in.capacity();
       for (int i = 0; i < n; ++i) {
@@ -945,7 +927,7 @@ namespace Rpc {
                                    bool checkSymmetry,
                                    double epsilon) const
    {
-      checkAllocationField(workDft_);
+      checkAllocateField(workDft_, mesh().dimensions());
       fft().forwardTransform(in, workDft_);
       convertKGridToBasis(workDft_, out, checkSymmetry, epsilon);
    }
@@ -958,7 +940,7 @@ namespace Rpc {
                                    double epsilon) const
    {
       UTIL_ASSERT(in.capacity() == out.capacity());
-      checkAllocationField(workDft_);
+      checkAllocateField(workDft_, mesh().dimensions());
 
       int n = in.capacity();
 
@@ -1047,7 +1029,7 @@ namespace Rpc {
    bool FieldIo<D>::hasSymmetry(RField<D> const & in, double epsilon,
                                 bool verbose) const
    {
-      checkAllocationField(workDft_);
+      checkAllocateField(workDft_, mesh().dimensions());
       fft().forwardTransform(in, workDft_);
       return hasSymmetry(workDft_, epsilon, verbose);
    }
@@ -1294,46 +1276,6 @@ namespace Rpc {
       fileMaster().openOutputFile(filename, file);
       replicateUnitCell(file, fields, unitCell, replicas);
       file.close();
-   }
-
-   // Protected utility functions
-
-   /*
-   * Check allocation of a single field of type FT, allocate if needed.
-   */
-   template <int D>
-   template <class FT>
-   void FieldIo<D>::checkAllocationField(FT& field) const
-   {
-      if (field.isAllocated()) {
-         UTIL_CHECK(field.meshDimensions() == mesh().dimensions());
-      } else {
-         field.allocate(mesh().dimensions());
-      }
-   }
-
-   /*
-   * Check allocation of an array of fields of type FT, allocate if needed.
-   */
-   template <int D>
-   template <class FT>
-   void FieldIo<D>::checkAllocationFields(DArray<FT>& fields,
-                                          int nMonomer) const
-   {
-      if (fields.isAllocated()) {
-         int nMonomerFields = fields.capacity();
-         UTIL_CHECK(nMonomerFields > 0)
-         UTIL_CHECK(nMonomerFields == nMonomer)
-         for (int i = 0; i < nMonomer; ++i) {
-            UTIL_CHECK(fields[i].meshDimensions() == mesh().dimensions());
-         }
-
-      } else {
-         fields.allocate(nMonomer);
-         for (int i = 0; i < nMonomer; ++i) {
-            fields[i].allocate(mesh().dimensions());
-         }
-      }
    }
 
 } // namespace Rpc

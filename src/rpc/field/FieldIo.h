@@ -815,51 +815,6 @@ namespace Rpc {
 
       ///@}
 
-   protected:
-  
-      /**
-      * Check allocation of a single field, allocate if necessary.
-      *
-      * Template parameter FT is a field type, such as RField<D> or 
-      * RFieldDft<D>, that has an allocate statement that takes an
-      * IntVec<D> of mesh dimensions.
-      *
-      * On successful exit, the mesh dimensions for the field is 
-      * equal to that of the associated Mesh.
-      *
-      * If the field is allocated on entry, the above condition is
-      * checked, and an Exception is thrown if is violated.  If the
-      * fields is not allocated on entry, it is allocated with the
-      * correct dimensions.
-      *
-      * \param field  field object of type FT
-      */
-      template <class FT>
-      void checkAllocationField(FT& field) const;
-
-      /**
-      * Check allocation of an array of fields, allocate if necessary.
-      *
-      * Template parameter FT is a field type, such as RField<D> or 
-      * RFieldDft<D>, that has an allocate function that takes an 
-      * IntVec<D> of mesh dimensions.
-      *
-      * On successful exit, the capacity of the DArray fields is equal
-      * to nMonomer, and the mesh dimensions for each field is equal to
-      * that of the associated Mesh.
-      *
-      * If the fields array is allocated on entry, the above conditions
-      * are checked, and an Exception is thrown if they are not met. 
-      * If fields is not allocated on entry, it is allocated with these
-      * dimensions.
-      *
-      * \param fields  array of fields of type FT
-      * \param nMomoner  number of monomer types (in)
-      */
-      template <class FT>
-      void checkAllocationFields(DArray< FT >& fields, int nMonomer) 
-      const;
-
    private:
 
       // DFT work array for conversions basis <-> kgrid <-> r-grid
