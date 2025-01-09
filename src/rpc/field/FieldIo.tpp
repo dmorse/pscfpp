@@ -14,7 +14,9 @@
 #include <prdc/cpu/RField.h>
 #include <prdc/cpu/RFieldDft.h>
 
+#include <prdc/field/fieldIoUtil.h>
 #include <prdc/crystal/fieldHeader.h>
+
 #include <prdc/crystal/shiftToMinimum.h>
 #include <prdc/crystal/UnitCell.h>
 #include <prdc/crystal/Basis.h>
@@ -23,6 +25,7 @@
 
 #include <pscf/mesh/Mesh.h>
 #include <pscf/mesh/MeshIterator.h>
+#include <pscf/mesh/MeshIteratorFortran.h>
 #include <pscf/math/IntVec.h>
 
 #include <util/misc/FileMaster.h>
@@ -102,13 +105,15 @@ namespace Rpc {
    {
       // Preconditions
       UTIL_CHECK(hasGroup());
-      UTIL_CHECK(basis().isInitialized());
 
       // Read header of field file (also checks group name)
       int nMonomer;
       bool isSymmetric;
       FieldIo<D>::readFieldHeader(in, nMonomer, unitCell, isSymmetric);
       UTIL_CHECK(isSymmetric);
+      UTIL_CHECK(basis().isInitialized());
+
+      //readBasisData(in, fields, unitCell, mesh(), basis());
 
       // Read the number of stars into nStarIn
       std::string label;
@@ -390,8 +395,7 @@ namespace Rpc {
    template <int D>
    void FieldIo<D>::readFieldsBasis(std::string filename,
                                     DArray<DArray<double> >& fields,
-                                    UnitCell<D>& unitCell)
-   const
+                                    UnitCell<D>& unitCell) const
    {
 
       std::ifstream file;
@@ -437,24 +441,10 @@ namespace Rpc {
                                    UnitCell<D>& unitCell)
    const
    {
-      // Local array, of data type required by readFieldsBasis
-      DArray<DArray<double> > fields;
-
-      // If field is allocated, allocate local array fields
-      // Otherwise, pass unallocated fields array to readFieldsBasis
-      if (field.isAllocated()) {
-         fields.allocate(1);
-         fields[0].allocate(field.capacity());
-      }
-
-      // Read file containing a single field, allocate if needed.
-      readFieldsBasis(filename, fields, unitCell);
-
-      // Check that it only read 1 field
-      UTIL_CHECK(fields.capacity() == 1);
-
-      // Copy data from local array to function parameter
-      field = fields[0];
+      std::ifstream file;
+      fileMaster().openInputFile(filename, file);
+      readFieldBasis(file, field, unitCell);
+      file.close();
    }
 
    /*
@@ -505,8 +495,7 @@ namespace Rpc {
    void
    FieldIo<D>::writeFieldsBasis(std::string filename,
                                 DArray<DArray<double> > const & fields,
-                                UnitCell<D> const & unitCell)
-   const
+                                UnitCell<D> const & unitCell) const
    {
        std::ofstream file;
        fileMaster().openOutputFile(filename, file);
@@ -534,6 +523,9 @@ namespace Rpc {
       writeFieldsBasis(out, fields, unitCell);
    }
 
+   /*
+   * Write a single field in basis format, open and close the file.
+   */
    template <int D>
    void
    FieldIo<D>::writeFieldBasis(std::string filename,
@@ -564,135 +556,16 @@ namespace Rpc {
       int nMonomer;
       bool isSymmetric;
       FieldIo<D>::readFieldHeader(in, nMonomer, unitCell, isSymmetric);
-
-      // If "fields" parameter is allocated, check if dimensions match
-      // those of the system's mesh.  Otherwise, allocate.
-
-      if (fields.isAllocated()) {
-         int nMonomerFields = fields.capacity();
-
-         UTIL_CHECK(nMonomerFields > 0);
-         UTIL_CHECK(nMonomerFields == nMonomer);
-
-         for (int i = 0; i < nMonomer; ++i) {
-            UTIL_CHECK(fields[i].meshDimensions() == mesh().dimensions());
-         }
-      } else {
-         fields.allocate(nMonomer);
-         for (int i = 0; i < nMonomer; ++i) {
-            fields[i].allocate(mesh().dimensions());
-         }
-      }
-
-      // Read and check input stream mesh dimensions
-      std::string label;
-      in >> label;
-      if (label != "mesh" && label != "ngrid") {
-         std::string msg =  "\n";
-         msg += "Error reading field file:\n";
-         msg += "Expected mesh or ngrid, but found [";
-         msg += label;
-         msg += "]";
-         UTIL_THROW(msg.c_str());
-      }
-      IntVec<D> nGrid;
-      in >> nGrid;
-      if (nGrid != mesh().dimensions()) {
-         Log::file()
-             << "In Rpc::FieldIo::readFieldsRGrid:\n"
-             << "mesh().dimensions() = " << mesh().dimensions() << "\n"
-             << "nGrid               = " << mesh().dimensions() << "\n";
-         UTIL_THROW("Inconsistent grid in mesh and field header");
-      }
-
-      // Setup temporary workspace array.
-      DArray<RField<D> > temp;
-      temp.allocate(nMonomer);
-      for (int i = 0; i < nMonomer; ++i) {
-         temp[i].allocate(mesh().dimensions());
-      }
-
-      // Read fields into temp array
-      MeshIterator<D> itr(mesh().dimensions());
-      for (itr.begin(); !itr.atEnd(); ++itr) {
-         for (int i = 0; i < nMonomer; ++i) {
-            in  >> std::setprecision(15) >> temp[i][itr.rank()];
-         }
-      }
-
-      // Re-order and copy into fields array
-
-      int p = 0;
-      int q = 0;
-      int r = 0;
-      int s = 0;
-      int n1 = 0;
-      int n2 = 0;
-      int n3 = 0;
-
-      if (D == 3) {
-
-         while (n1 < mesh().dimension(0)) {
-            q = p;
-            n2 = 0;
-            while (n2 < mesh().dimension(1)) {
-               r = q;
-               n3 = 0;
-               while (n3 < mesh().dimension(2)) {
-                  for (int i = 0; i < nMonomer; ++i) {
-                     fields[i][s] = temp[i][r];
-                  }
-                  r = r + (mesh().dimension(0) * mesh().dimension(1));
-                  ++s;
-                  ++n3;
-               }
-               q = q + mesh().dimension(0);
-               ++n2;
-            }
-            ++n1;
-            ++p;
-         }
-
-      } else if (D == 2) {
-
-         while (n1 < mesh().dimension(0)) {
-            r =q;
-            n2 = 0;
-            while (n2 < mesh().dimension(1)) {
-               for (int i = 0; i < nMonomer; ++i) {
-                  fields[i][s] = temp[i][r];
-               }
-               r = r + (mesh().dimension(0));
-               ++s;
-               ++n2;
-            }
-            ++q;
-            ++n1;
-         }
-
-      } else if (D == 1) {
-
-         while (n1 < mesh().dimension(0)) {
-            for (int i = 0; i < nMonomer; ++i) {
-               fields[i][s] = temp[i][r];
-            }
-            ++r;
-            ++s;
-            ++n1;
-         }
-
-      } else {
-
-         Log::file() << "Invalid Dimensions";
-
-      }
+      readMeshDimensions(in);
+      checkAllocationFields(fields, nMonomer);
+      readRGridData(in, fields, mesh().dimensions(), nMonomer);
 
    }
 
    template <int D>
    void FieldIo<D>::readFieldsRGrid(std::string filename,
                                     DArray< RField<D> >& fields,
-                                    UnitCell<D>& unitCell) 
+                                    UnitCell<D>& unitCell)
    const
    {
       std::ifstream file;
@@ -707,104 +580,17 @@ namespace Rpc {
                                    UnitCell<D>& unitCell)
    const
    {
+
+      // Read header
       int nMonomer;
       bool isSymmetric;
       FieldIo<D>::readFieldHeader(in, nMonomer, unitCell, isSymmetric);
-
-      // Only reading in a file with a single field.
       UTIL_CHECK(nMonomer == 1);
+      readMeshDimensions(in);
 
-      // If "field" parameter is allocated, check if dimensions match
-      // those of the system's mesh.  Otherwise, allocate.
-
-      if (field.isAllocated()) {
-         UTIL_CHECK(field.meshDimensions() == mesh().dimensions());
-      } else {
-         field.allocate(mesh().dimensions());
-      }
-
-      // Read and check input stream mesh dimensions
-      std::string label;
-      in >> label;
-      if (label != "mesh" && label != "ngrid") {
-         std::string msg =  "\n";
-         msg += "Error reading field file:\n";
-         msg += "Expected mesh or ngrid, but found [";
-         msg += label;
-         msg += "]";
-         UTIL_THROW(msg.c_str());
-      }
-      IntVec<D> nGrid;
-      in >> nGrid;
-      UTIL_CHECK(nGrid == mesh().dimensions());
-
-      // Setup temporary workspace.
-      RField<D> temp;
-      temp.allocate(mesh().dimensions());
-
-      // Read Field;
-      MeshIterator<D> itr(mesh().dimensions());
-      for (itr.begin(); !itr.atEnd(); ++itr) {
-         in  >> std::setprecision(15) >> temp[itr.rank()];
-      }
-
-      int p = 0;
-      int q = 0;
-      int r = 0;
-      int s = 0;
-      int n1 = 0;
-      int n2 = 0;
-      int n3 = 0;
-
-      if (D == 3) {
-         while (n1 < mesh().dimension(0)) {
-            q = p;
-            n2 = 0;
-            while (n2 < mesh().dimension(1)) {
-               r = q;
-               n3 = 0;
-               while (n3 < mesh().dimension(2)) {
-                  field[s] = temp[r];
-                  r = r + (mesh().dimension(0) * mesh().dimension(1));
-                  ++s;
-                  ++n3;
-               }
-               q = q + mesh().dimension(0);
-               ++n2;
-            }
-            ++n1;
-            ++p;
-         }
-      }
-
-      else if (D == 2) {
-         while (n1 < mesh().dimension(0)) {
-            r =q;
-            n2 = 0;
-            while (n2 < mesh().dimension(1)) {
-               field[s] = temp[r];
-               r = r + (mesh().dimension(0));
-               ++s;
-               ++n2;
-            }
-            ++q;
-            ++n1;
-         }
-      }
-
-      else if (D == 1) {
-
-         while (n1 < mesh().dimension(0)) {
-               field[s] = temp[r];
-            ++r;
-            ++s;
-            ++n1;
-         }
-      }
-
-      else{
-         Log::file() << "Invalid Dimensions";
-      }
+      // Read data
+      checkAllocationField(field);
+      readRGridData(in, field, mesh().dimensions());
    }
 
    template <int D>
@@ -825,97 +611,8 @@ namespace Rpc {
                                         int nMonomer)
    const
    {
-
-      // Check fields array allocation
-      // If "fields" parameter is allocated, check mesh size.
-      // Otherwise, allocate.
-      if (fields.isAllocated()) {
-         int nMonomerFields = fields.capacity();
-
-         UTIL_CHECK(nMonomerFields > 0);
-         UTIL_CHECK(nMonomerFields == nMonomer);
-
-         for (int i = 0; i < nMonomer; ++i) {
-            UTIL_CHECK(fields[i].capacity() == mesh().size());
-         }
-      } else {
-         fields.allocate(nMonomer);
-         for (int i = 0; i < nMonomer; ++i) {
-            fields[i].allocate(mesh().dimensions());
-         }
-      }
-
-      // Allocate temp workspace array
-      DArray<RField<D> > temp;
-      temp.allocate(nMonomer);
-      for (int i = 0; i < nMonomer; ++i) {
-         temp[i].allocate(mesh().dimensions());
-      }
-
-      // Read fields into temp array
-      MeshIterator<D> itr(mesh().dimensions());
-      for (itr.begin(); !itr.atEnd(); ++itr) {
-         for (int i = 0; i < nMonomer; ++i) {
-            in  >> std::setprecision(15) >> temp[i][itr.rank()];
-         }
-      }
-
-      int p = 0;
-      int q = 0;
-      int r = 0;
-      int s = 0;
-      int n1 = 0;
-      int n2 = 0;
-      int n3 = 0;
-
-      if (D == 3) {
-         while (n1 < mesh().dimension(0)) {
-            q = p;
-            n2 = 0;
-            while (n2 < mesh().dimension(1)) {
-               r = q;
-               n3 = 0;
-               while (n3 < mesh().dimension(2)) {
-                  for (int i = 0; i < nMonomer; ++i) {
-                     fields[i][s] = temp[i][r];
-                  }
-                  r = r + (mesh().dimension(0) * mesh().dimension(1));
-                  ++s;
-                  ++n3;
-               }
-               q = q + mesh().dimension(0);
-               ++n2;
-            }
-            ++n1;
-            ++p;
-         }
-      } else if (D == 2) {
-         while (n1 < mesh().dimension(0)) {
-            r =q;
-            n2 = 0;
-            while (n2 < mesh().dimension(1)) {
-               for (int i = 0; i < nMonomer; ++i) {
-                  fields[i][s] = temp[i][r];
-               }
-               r = r + (mesh().dimension(0));
-               ++s;
-               ++n2;
-            }
-            ++q;
-            ++n1;
-         }
-      } else if (D == 1) {
-         while (n1 < mesh().dimension(0)) {
-            for (int i = 0; i < nMonomer; ++i) {
-               fields[i][s] = temp[i][r];
-            }
-            ++r;
-            ++s;
-            ++n1;
-         }
-      } else{
-         Log::file() << "Invalid Dimensions";
-      }
+      checkAllocationFields(fields, nMonomer);
+      readRGridData(in, fields, mesh().dimensions(), nMonomer);
    }
 
    template <int D>
@@ -928,90 +625,18 @@ namespace Rpc {
    {
       int nMonomer = fields.capacity();
       UTIL_CHECK(nMonomer > 0);
+
+      // Header
       if (writeHeader){
          writeFieldHeader(out, nMonomer, unitCell, isSymmetric);
       }
-      
-      IntVec<D> meshDimensions = fields[0].meshDimensions();
       if (writeMeshSize){
-         out << "mesh " <<  std::endl
-             << "           " << meshDimensions << std::endl;
-      }
-     
-      // Allocate temp array of fields 
-      DArray<RField<D> > temp;
-      temp.allocate(nMonomer);
-      for (int i = 0; i < nMonomer; ++i) {
-         temp[i].allocate(meshDimensions);
-      } 
-
-      int p = 0;
-      int q = 0;
-      int r = 0;
-      int s = 0;
-      int n1 =0;
-      int n2 =0;
-      int n3 =0;
-
-      if (D == 3) {
-         while (n3 < meshDimensions[2]) {
-            q = p; 
-            n2 = 0; 
-            while (n2 < meshDimensions[1]) {
-               r =q;
-               n1 = 0; 
-               while (n1 < meshDimensions[0]) {
-                  for (int i = 0; i < nMonomer; ++i) {
-                     temp[i][s] = fields[i][r];
-                  }    
-                  r = r + (meshDimensions[1] * meshDimensions[2]);
-                  ++s; 
-                  ++n1;     
-               }    
-               q = q + meshDimensions[2];
-
-               ++n2;
-            }
-            ++n3;
-            ++p;
-         }
-      } else if (D == 2) {
-         while (n2 < meshDimensions[1]) {
-            r =q;
-            n1 = 0;
-            while (n1 < meshDimensions[0]) {
-               for (int i = 0; i < nMonomer; ++i) {
-                  temp[i][s] = fields[i][r];
-               }
-               r = r + (meshDimensions[1]);
-               ++s;
-               ++n1;
-            }
-            ++q;
-            ++n2;
-         }
-      } else if (D == 1) {
-         while (n1 < meshDimensions[0]) {
-            for (int i = 0; i < nMonomer; ++i) {
-               temp[i][s] = fields[i][r];
-            }
-            ++r;
-            ++s;
-            ++n1;
-         }
-      } else {
-         Log::file() << "Invalid Dimensions";
+         IntVec<D> meshDimensions = fields[0].meshDimensions();
+         writeMeshDimensions(out, meshDimensions);
       }
 
-      // Write fields
-      MeshIterator<D> itr(meshDimensions);
-      for (itr.begin(); !itr.atEnd(); ++itr) {
-         for (int j = 0; j < nMonomer; ++j) {
-            out << "  " << Dbl(temp[j][itr.rank()], 18, 15);
-         }
-         out << std::endl;
-      }
-
+      // Data
+      writeRGridData(out, fields, mesh().dimensions(), nMonomer);
    }
 
    template <int D>
@@ -1024,7 +649,7 @@ namespace Rpc {
       fileMaster().openOutputFile(filename, file);
       bool writeHeader = true;
       bool writeMeshSize = true;
-      writeFieldsRGrid(file, fields, unitCell, 
+      writeFieldsRGrid(file, fields, unitCell,
                        writeHeader, isSymmetric, writeMeshSize);
       file.close();
    }
@@ -1034,76 +659,13 @@ namespace Rpc {
                                     RField<D> const & field,
                                     UnitCell<D> const & unitCell,
                                     bool writeHeader,
-                                    bool isSymmetric)
-   const
+                                    bool isSymmetric) const
    {
       if (writeHeader) {
          writeFieldHeader(out, 1, unitCell, isSymmetric);
-         out << "mesh " <<  std::endl
-             << "           " << mesh().dimensions() << std::endl;
+         writeMeshDimensions(out, mesh().dimensions());
       }
-
-      RField<D> temp;
-      temp.allocate(mesh().dimensions());
-
-      int p = 0;
-      int q = 0;
-      int r = 0;
-      int s = 0;
-      int n1 =0;
-      int n2 =0;
-      int n3 =0;
-
-      if (D == 3) {
-         while (n3 < mesh().dimension(2)) {
-            q = p;
-            n2 = 0;
-            while (n2 < mesh().dimension(1)) {
-               r =q;
-               n1 = 0;
-               while (n1 < mesh().dimension(0)) {
-                  temp[s] = field[r];
-                  r = r + (mesh().dimension(1) * mesh().dimension(2));
-                  ++s;
-                  ++n1;
-               }
-               q = q + mesh().dimension(2);
-               ++n2;
-            }
-            ++n3;
-            ++p;
-         }
-      } else if (D == 2) {
-         while (n2 < mesh().dimension(1)) {
-            r =q;
-            n1 = 0;
-            while (n1 < mesh().dimension(0)) {
-               temp[s] = field[r];
-               r = r + (mesh().dimension(1));
-               ++s;
-               ++n1;
-            }
-            ++q;
-            ++n2;
-         }
-      } else if (D == 1) {
-         while (n1 < mesh().dimension(0)) {
-            temp[s] = field[r];
-            ++r;
-            ++s;
-            ++n1;
-         }
-      } else {
-         Log::file() << "Invalid Dimensions";
-      }
-
-      // Write field from temp array to file
-      MeshIterator<D> itr(mesh().dimensions());
-      for (itr.begin(); !itr.atEnd(); ++itr) {
-         out << "  " << Dbl(temp[itr.rank()], 18, 15);
-         out << std::endl;
-      }
-
+      writeRGridData(out, field, mesh().dimensions());
    }
 
    template <int D>
@@ -1129,60 +691,10 @@ namespace Rpc {
       int nMonomer;
       bool isSymmetric;
       FieldIo<D>::readFieldHeader(in, nMonomer, unitCell, isSymmetric);
-
-      // If "fields" parameter is allocated, check if dimensions match
-      // those of the system's mesh.  Otherwise, allocate.
-
-      if (fields.isAllocated()) {
-
-         int nMonomerFields = fields.capacity();
-
-         UTIL_CHECK(nMonomerFields > 0)
-         UTIL_CHECK(nMonomerFields == nMonomer)
-
-         for (int i = 0; i < nMonomer; ++i) {
-            UTIL_CHECK(fields[i].meshDimensions() == mesh().dimensions());
-         }
-
-      } else {
-
-         fields.allocate(nMonomer);
-         for (int i = 0; i < nMonomer; ++i) {
-            fields[i].allocate(mesh().dimensions());
-         }
-
-      }
-
-      // Read and check input stream mesh dimensions
-      std::string label;
-      in >> label;
-      if (label != "mesh" && label != "ngrid") {
-         std::string msg =  "\n";
-         msg += "Error reading field file:\n";
-         msg += "Expected mesh or ngrid, but found [";
-         msg += label;
-         msg += "]";
-         UTIL_THROW(msg.c_str());
-      }
-      IntVec<D> nGrid;
-      in >> nGrid;
-      UTIL_CHECK(nGrid == mesh().dimensions());
-
-      // Read fields;
-      int i, idum;
-      MeshIterator<D> itr(fields[0].dftDimensions());
-      i = 0;
-      for (itr.begin(); !itr.atEnd(); ++itr) {
-         in >> idum;
-         UTIL_CHECK(i == idum);
-         UTIL_CHECK(i == itr.rank());
-         for (int i = 0; i < nMonomer; ++i) {
-            for (int j = 0; j < 2; ++j) {
-               in >> fields[i][itr.rank()][j];
-            }
-         }
-         ++i;
-      }
+      readMeshDimensions(in);
+     
+      checkAllocationFields(fields, nMonomer);
+      readKGridData(in, fields, fields[0].dftDimensions(), nMonomer);
    }
 
    template <int D>
@@ -1196,7 +708,7 @@ namespace Rpc {
       readFieldsKGrid(file, fields, unitCell);
       file.close();
    }
-   
+
    template <int D>
    void FieldIo<D>::writeFieldsKGrid(std::ostream &out,
                                      DArray<RFieldDft<D> > const & fields,
@@ -1209,26 +721,13 @@ namespace Rpc {
       for (int i = 0; i < nMonomer; ++i) {
          UTIL_CHECK(fields[i].meshDimensions() == mesh().dimensions());
       }
+      IntVec<D> dftDimensions = fields[0].dftDimensions();
 
       // Write header
       writeFieldHeader(out, nMonomer, unitCell, isSymmetric);
-      out << "mesh " << std::endl
-          << "               " << mesh().dimensions() << std::endl;
+      writeMeshDimensions(out, mesh().dimensions());
 
-      // Write fields
-      MeshIterator<D> itr(fields[0].dftDimensions());
-      int i = 0;
-      for (itr.begin(); !itr.atEnd(); ++itr) {
-         UTIL_CHECK(i == itr.rank());
-         out << Int(itr.rank(), 5);
-         for (int j = 0; j < nMonomer; ++j) {
-               out << "  "
-                   << Dbl(fields[j][itr.rank()][0], 20, 12)
-                   << Dbl(fields[j][itr.rank()][1], 20, 12);
-         }
-         out << std::endl;
-         ++i;
-      }
+      writeKGridData(out, fields, dftDimensions, nMonomer);
    }
 
    template <int D>
@@ -1243,6 +742,8 @@ namespace Rpc {
       file.close();
    }
 
+   // File IO Utilities
+
    /*
    * Read common part of field header and extract
    * the number of monomers (number of fields) in the file.
@@ -1251,8 +752,7 @@ namespace Rpc {
    void FieldIo<D>::readFieldHeader(std::istream& in,
                                     int& nMonomer,
                                     UnitCell<D>& unitCell,
-                                    bool & isSymmetric)
-   const
+                                    bool & isSymmetric) const
    {
       // Preconditions
       UTIL_CHECK(latticePtr_);
@@ -1323,6 +823,31 @@ namespace Rpc {
    }
 
    template <int D>
+   void FieldIo<D>::readMeshDimensions(std::istream& in) const
+   {
+      // Read and check input stream mesh dimensions
+      std::string label;
+      in >> label;
+      if (label != "mesh" && label != "ngrid") {
+         std::string msg =  "\n";
+         msg += "Error reading field file:\n";
+         msg += "Expected mesh or ngrid, but found [";
+         msg += label;
+         msg += "]";
+         UTIL_THROW(msg.c_str());
+      }
+      IntVec<D> nGrid;
+      in >> nGrid;
+      if (nGrid != mesh().dimensions()) {
+         Log::file()
+             << "Inconsistent mesh dimensions:\n"
+             << "mesh().dimensions() = " << mesh().dimensions() << "\n"
+             << "nGrid (from file)   = " << mesh().dimensions() << "\n";
+         UTIL_THROW("Inconsistent dimensions in Mesh and field header");
+      }
+   }
+
+   template <int D>
    void FieldIo<D>::writeFieldHeader(std::ostream &out,
                                      int nMonomer,
                                      UnitCell<D> const & unitCell,
@@ -1339,6 +864,18 @@ namespace Rpc {
                                    gName, nMonomer);
       // Note: This function is defined in prdc/crystal/fieldHeader.tpp
    }
+
+   template <int D>
+   void
+   FieldIo<D>::writeMeshDimensions(std::ostream &out,
+                                   IntVec<D> const& meshDimensions)
+   const
+   {
+      out << "mesh " <<  std::endl
+          << "           " << meshDimensions << std::endl;
+   }
+
+   // Field Format Conversion Functions
 
    template <int D>
    void FieldIo<D>::convertBasisToKGrid(DArray<double> const & in,
@@ -1614,7 +1151,7 @@ namespace Rpc {
    FieldIo<D>::convertBasisToRGrid(DArray<double> const & in,
                                    RField<D>& out) const
    {
-      checkWorkDft();
+      checkAllocationField(workDft_);
       convertBasisToKGrid(in, workDft_);
       fft().inverseTransformSafe(workDft_, out);
    }
@@ -1625,7 +1162,7 @@ namespace Rpc {
                                    DArray< RField<D> >& out) const
    {
       UTIL_ASSERT(in.capacity() == out.capacity());
-      checkWorkDft();
+      checkAllocationField(workDft_);
 
       int n = in.capacity();
       for (int i = 0; i < n; ++i) {
@@ -1641,7 +1178,7 @@ namespace Rpc {
                                    bool checkSymmetry,
                                    double epsilon) const
    {
-      checkWorkDft();
+      checkAllocationField(workDft_);
       fft().forwardTransform(in, workDft_);
       convertKGridToBasis(workDft_, out, checkSymmetry, epsilon);
    }
@@ -1654,7 +1191,7 @@ namespace Rpc {
                                    double epsilon) const
    {
       UTIL_ASSERT(in.capacity() == out.capacity());
-      checkWorkDft();
+      checkAllocationField(workDft_);
 
       int n = in.capacity();
 
@@ -1743,7 +1280,7 @@ namespace Rpc {
    bool FieldIo<D>::hasSymmetry(RField<D> const & in, double epsilon,
                                 bool verbose) const
    {
-      checkWorkDft();
+      checkAllocationField(workDft_);
       fft().forwardTransform(in, workDft_);
       return hasSymmetry(workDft_, epsilon, verbose);
    }
@@ -1843,12 +1380,13 @@ namespace Rpc {
 
    // Grid Manipulation Utilities
 
-   // Note: explicit instantiations of expandRGridDimension 
+   // Note: explicit instantiations of expandRGridDimension
    // are defined in FieldIo.cpp
+
    template <int D>
    void
    FieldIo<D>::expandRGridDimension(std::string filename,
-                                    DArray<RField<D> > const & fields,
+                                    DArray< RField<D> > const & fields,
                                     UnitCell<D> const & unitCell,
                                     int d,
                                     DArray<int> newGridDimensions) const
@@ -1880,7 +1418,7 @@ namespace Rpc {
          replicateDimensions[i] = replicas[i] * meshDimensions[i];
       }
 
-      // Set up new Unit Cell
+      // Set up new UnitCell
       UnitCell<D> cell;
       FSArray<double, 6> parameters;
       int nParameter = unitCell.nParameter();
@@ -1889,8 +1427,8 @@ namespace Rpc {
       }
       cell.set(unitCell.lattice(), parameters);
 
-      DArray<RField<D> > outFields;
       // Allocate outFields
+      DArray<RField<D> > outFields;
       outFields.allocate(nMonomer);
       for (int i = 0; i < nMonomer; ++i) {
          outFields[i].allocate(replicateDimensions);
@@ -1947,7 +1485,7 @@ namespace Rpc {
                   n2 = 0;
                   while (n2 < meshDimensions[1]) {
                      ybeginPtr = zbeginPtr + n2 * meshDimensions[2];
-                     for (int xCounter = 0; xCounter < replicas[2]; xCounter++) 
+                     for (int xCounter = 0; xCounter < replicas[2]; xCounter++)
                      {
                         n3 = 0;
                         int r = ybeginPtr;
@@ -1968,16 +1506,15 @@ namespace Rpc {
          }
       }
 
-      // Write Header
+      // Write header
       int v1 = 1;
       int v2 = 0;
       std::string gName = "";
       Pscf::Prdc::writeFieldHeader(out, v1, v2, cell, gName, nMonomer);
-      out << "mesh " <<  std::endl
-          << "           " << replicateDimensions << std::endl;
+      writeMeshDimensions(out, replicateDimensions);
 
-      // Write Fields
-      FieldIo<D>::writeFieldsRGrid(out, outFields, cell, false, false, false);
+      // Write field data
+      writeRGridData(out, outFields, replicateDimensions, nMonomer);
    }
 
    template <int D>
@@ -1992,15 +1529,43 @@ namespace Rpc {
       file.close();
    }
 
-   // Private utility functions
+   // Protected utility functions
 
+   /*
+   * Check allocation of a single field of type FT, allocate if needed.
+   */
    template <int D>
-   void FieldIo<D>::checkWorkDft() const
+   template <class FT>
+   void FieldIo<D>::checkAllocationField(FT& field) const
    {
-      if (!workDft_.isAllocated()) {
-         workDft_.allocate(mesh().dimensions());
+      if (field.isAllocated()) {
+         UTIL_CHECK(field.meshDimensions() == mesh().dimensions());
       } else {
-         UTIL_CHECK(workDft_.meshDimensions() == fft().meshDimensions());
+         field.allocate(mesh().dimensions());
+      }
+   }
+
+   /*
+   * Check allocation of an array of fields of type FT, allocate if needed.
+   */
+   template <int D>
+   template <class FT>
+   void FieldIo<D>::checkAllocationFields(DArray<FT>& fields,
+                                          int nMonomer) const
+   {
+      if (fields.isAllocated()) {
+         int nMonomerFields = fields.capacity();
+         UTIL_CHECK(nMonomerFields > 0)
+         UTIL_CHECK(nMonomerFields == nMonomer)
+         for (int i = 0; i < nMonomer; ++i) {
+            UTIL_CHECK(fields[i].meshDimensions() == mesh().dimensions());
+         }
+
+      } else {
+         fields.allocate(nMonomer);
+         for (int i = 0; i < nMonomer; ++i) {
+            fields[i].allocate(mesh().dimensions());
+         }
       }
    }
 

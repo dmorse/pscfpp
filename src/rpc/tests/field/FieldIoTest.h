@@ -246,8 +246,8 @@ public:
 
       if (verbose() > 0) {
          std::cout  << std::endl;
-         std::cout  << Dbl(comparison.maxDiff(),21,13) << std::endl;
-         std::cout  << Dbl(comparison.rmsDiff(),21,13) << std::endl;
+         std::cout  << Dbl(comparison.maxDiff(), 21, 13) << std::endl;
+         std::cout  << Dbl(comparison.rmsDiff(), 21, 13) << std::endl;
       }
 
    }
@@ -564,7 +564,7 @@ public:
 
       RFieldDftComparison<3> comparison;
       comparison.compare(kf_0, kf_1);
-      TEST_ASSERT(comparison.maxDiff() < 1.0E-11);
+      TEST_ASSERT(comparison.maxDiff() < 1.0E-12);
 
       if (verbose() > 0) {
          std::cout  << "\n";
