@@ -195,58 +195,20 @@ namespace Prdc {
                       DArray< DArray<double> >& fields,
                       UnitCell<D> const& unitCell,
                       Mesh<D> const& mesh,
-                      Basis<D> const& basis) 
+                      Basis<D> const& basis,
+                      int nStarIn)
    {
       UTIL_CHECK(basis.isInitialized());
+      UTIL_CHECK(fields.isAllocated());
 
       int nMonomer = fields.capacity();
-
-      // Read the number of stars into nStarIn
-      std::string label;
-      in >> label;
-      if (label != "N_star" && label != "N_basis") {
-         std::string msg =  "\n";
-         msg += "Error reading field file:\n";
-         msg += "Expected N_basis or N_star, but found [";
-         msg += label;
-         msg += "]";
-         UTIL_THROW(msg.c_str());
-      }
-      int nStarIn;
-      in >> nStarIn;
-      UTIL_CHECK(nStarIn > 0);
-
-      // If "fields" parameter is allocated, check if dimensions
-      // match those of the system's mesh.  Otherwise, allocate.
-
-      int fieldCapacity;
-      if (fields.isAllocated()) {
-         // If outer DArray is allocated, require that it matches the
-         // number of inputted fields and that internal DArrays are also
-         // allocated all with the same dimensions.
-         int nMonomerFields = fields.capacity();
-
-         UTIL_CHECK(nMonomerFields > 0);
-         UTIL_CHECK(nMonomerFields == nMonomer);
-
-         // Check that all internal DArrays have same dimension.
-         fieldCapacity = fields[0].capacity();
-         for (int i = 0; i < nMonomer; ++i) {
-            UTIL_CHECK( fields[i].capacity() == fieldCapacity );
-         }
-      } else {
-         // Else, allocate fields to the number of inputted fields
-         // and the internal dimensions to the number of stars.
-         fields.allocate(nMonomer);
-         fieldCapacity = nStarIn;
-
-         for (int i = 0; i < nMonomer; ++i) {
-            fields[i].allocate(fieldCapacity);
-         }
-      }
+      UTIL_CHECK(nMonomer > 0);
 
       // Initialize all field array elements to zero
+      int fieldCapacity = fields[0].capacity();
+      UTIL_CHECK(fieldCapacity > 0);
       for (int i = 0; i < nMonomer; ++i) {
+         UTIL_CHECK(fields[i].capacity() == fieldCapacity);
          for (int j = 0; j < fieldCapacity; ++j) {
             fields[i][j] = 0.0;
          }
@@ -474,6 +436,44 @@ namespace Prdc {
       }
 
    }
+
+   /*
+   * Write an array of fields in basis format to an output stream.
+   */
+   template <int D>
+   void writeBasisData(std::ostream &out,
+                       DArray<DArray<double> > const & fields,
+                       Basis<D> const & basis)
+   {
+      // Preconditions, set nMonomer and fieldCapacity
+      int nMonomer = fields.capacity();
+      UTIL_CHECK(nMonomer > 0);
+      int fieldCapacity = fields[0].capacity();
+      for (int j = 0; j < nMonomer; ++j) {
+         UTIL_CHECK(fieldCapacity == fields[j].capacity());
+      }
+      UTIL_CHECK(basis.isInitialized());
+
+      // Write fields
+      int ib = 0; 
+      int nStar = basis.nStar();
+      for (int i = 0; i < nStar; ++i) {
+         if (ib >= fieldCapacity) break;
+         if (!basis.star(i).cancel) {
+            for (int j = 0; j < nMonomer; ++j) {
+               out << Dbl(fields[j][ib], 20, 10);
+            }
+            out << "   ";
+            for (int j = 0; j < D; ++j) {
+               out << Int(basis.star(i).waveBz[j], 5);
+            }
+            out << Int(basis.star(i).size, 5) << std::endl;
+            ++ib;
+         }
+      }
+
+   }
+
 
 } // namespace Prdc
 } // namespace Pscf
