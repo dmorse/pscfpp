@@ -5,6 +5,7 @@
 
 // Subclasses of Analyzer 
 #include "TrajectoryWriter.h"
+#include "ConcentrationWriter.h"
 #include "HamiltonianAnalyzer.h"
 #include "HamiltonianAutoCorr.h"
 #include "BinaryStructureFactorGrid.h"
@@ -46,6 +47,8 @@ namespace Rpc {
       // Try to match classname
       if (className == "TrajectoryWriter") {
          ptr = new TrajectoryWriter<D>(*simulatorPtr_, *sysPtr_);
+      } else if (className == "ConcentrationWriter") {
+         ptr = new ConcentrationWriter<D>(*simulatorPtr_, *sysPtr_);
       } else if (className == "HamiltonianAnalyzer") {
          ptr = new HamiltonianAnalyzer<D>(*simulatorPtr_, *sysPtr_);
       } else if (className == "HamiltonianAutoCorr") {
