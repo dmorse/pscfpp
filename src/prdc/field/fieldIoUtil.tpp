@@ -67,6 +67,29 @@ namespace Prdc {
       }
    }
 
+   /*
+   * Check allocation of an array of arrays of type AT, allocate if needed.
+   */
+   template <int D, class AT>
+   void checkAllocateArrays(DArray<AT>& arrays,
+                            int capacity,
+                            int nMonomer)
+   {
+      if (arrays.isAllocated()) {
+         int nMonomerArrays = arrays.capacity();
+         UTIL_CHECK(nMonomerArrays > 0)
+         UTIL_CHECK(nMonomerArrays == nMonomer)
+         for (int i = 0; i < nMonomer; ++i) {
+            UTIL_CHECK(arrays[i].capacity() == capacity);
+         }
+      } else {
+         arrays.allocate(nMonomer);
+         for (int i = 0; i < nMonomer; ++i) {
+            arrays[i].allocate(capacity);
+         }
+      }
+   }
+
    // RGrid File Io Templates
 
    template <int D, class AT>
@@ -511,6 +534,333 @@ namespace Prdc {
          }
       }
 
+   }
+
+   template <int D, class AT> 
+   void convertBasisToKGrid(DArray<double> const & in,
+                            AT& out,
+                            Basis<D> const& basis,
+                            IntVec<D> const& dftDimensions)
+   {
+      UTIL_CHECK(basis.isInitialized());
+
+      // Create Mesh<D> with dimensions of DFT Fourier grid.
+      Mesh<D> dftMesh(dftDimensions);
+
+      typename Basis<D>::Star const* starPtr; // pointer to current star
+      typename Basis<D>::Wave const* wavePtr; // pointer to current wave
+      std::complex<double> component;         // coefficient for star
+      std::complex<double> coeff;             // coefficient for wave
+      IntVec<D> indices;                      // dft grid indices of wave
+      int rank;                               // dft grid rank of wave
+      int is;                                 // star index
+      int ib;                                 // basis index
+      int iw;                                 // wave index
+
+      // Initialize all dft coponents to zero
+      for (rank = 0; rank < dftMesh.size(); ++rank) {
+         out[rank][0] = 0.0;
+         out[rank][1] = 0.0;
+      }
+
+      // Loop over stars, skipping cancelled stars
+      is = 0;
+      while (is < basis.nStar()) {
+         starPtr = &(basis.star(is));
+
+         if (starPtr->cancel) {
+            ++is;
+            continue;
+         }
+
+         // Set basisId for uncancelled star
+         ib = starPtr->basisId;
+
+         if (starPtr->invertFlag == 0) {
+
+            // Make complex coefficient for star basis function
+            component = std::complex<double>(in[ib], 0.0);
+
+            // Loop over waves in closed star
+            for (iw = starPtr->beginId; iw < starPtr->endId; ++iw) {
+               wavePtr = &basis.wave(iw);
+               if (!wavePtr->implicit) {
+                  coeff = component*(wavePtr->coeff);
+                  indices = wavePtr->indicesDft;
+                  rank = dftMesh.rank(indices);
+                  out[rank][0] = coeff.real();
+                  out[rank][1] = coeff.imag();
+               }
+            }
+            ++is;
+
+         } else
+         if (starPtr->invertFlag == 1) {
+
+            // Loop over waves in first star
+            component = std::complex<double>(in[ib], -in[ib+1]);
+            component /= sqrt(2.0);
+            starPtr = &(basis.star(is));
+            for (iw = starPtr->beginId; iw < starPtr->endId; ++iw) {
+               wavePtr = &basis.wave(iw);
+               if (!(wavePtr->implicit)) {
+                  coeff = component*(wavePtr->coeff);
+                  indices = wavePtr->indicesDft;
+                  rank = dftMesh.rank(indices);
+                  out[rank][0] = coeff.real();
+                  out[rank][1] = coeff.imag();
+               }
+            }
+
+            // Loop over waves in second star
+            starPtr = &(basis.star(is+1));
+            UTIL_CHECK(starPtr->invertFlag == -1);
+            component = std::complex<double>(in[ib], +in[ib+1]);
+            component /= sqrt(2.0);
+            for (iw = starPtr->beginId; iw < starPtr->endId; ++iw) {
+               wavePtr = &basis.wave(iw);
+               if (!(wavePtr->implicit)) {
+                  coeff = component*(wavePtr->coeff);
+                  indices = wavePtr->indicesDft;
+                  rank = dftMesh.rank(indices);
+                  out[rank][0] = coeff.real();
+                  out[rank][1] = coeff.imag();
+               }
+            }
+
+            // Increment is by 2 (two stars were processed)
+            is += 2;
+
+         } else {
+
+            UTIL_THROW("Invalid invertFlag value");
+
+         }
+
+      }
+
+   }
+
+   template <int D, class AT>
+   void convertKGridToBasis(AT const& in,
+                            DArray<double>& out,
+                            Basis<D> const& basis,
+                            IntVec<D> const& dftDimensions,
+                            bool checkSymmetry,
+                            double epsilon) 
+   {
+      UTIL_CHECK(basis.isInitialized());
+
+      if (checkSymmetry) {
+         // Check if kgrid has symmetry
+         bool symmetric;
+         symmetric = hasSymmetry(in, basis, dftDimensions, epsilon, true);
+         if (!symmetric) {
+            Log::file() << std::endl
+               << "WARNING: non-negligible error in conversion to "
+               << "symmetry-adapted basis format." << std::endl
+               << "   See error values printed above for each "
+               << "asymmetric field." << std::endl
+               << "   The field that is output by the above operation "
+               << "will be a" << std::endl
+               << "   symmetrized version of the input field."
+               << std::endl << std::endl;
+         }
+      }
+
+      // Create Mesh<D> with dimensions of DFT Fourier grid.
+      Mesh<D> dftMesh(dftDimensions);
+
+      typename Basis<D>::Star const* starPtr;  // pointer to current star
+      typename Basis<D>::Wave const* wavePtr;  // pointer to current wave
+      std::complex<double> component;          // coefficient for star
+      int rank;                                // dft grid rank of wave
+      int is;                                  // star index
+      int ib;                                  // basis index
+      int iw;                                  // wave index
+
+      // Initialize all components to zero
+      for (is = 0; is < basis.nBasis(); ++is) {
+         out[is] = 0.0;
+      }
+
+      // Loop over stars
+      is = 0;
+      while (is < basis.nStar()) {
+         starPtr = &(basis.star(is));
+
+         if (starPtr->cancel) {
+            ++is;
+            continue;
+         }
+
+         // Set basis id for uncancelled star
+         ib = starPtr->basisId;
+
+         if (starPtr->invertFlag == 0) {
+
+            // Choose a wave in the star that is not implicit
+            int beginId = starPtr->beginId;
+            int endId = starPtr->endId;
+            iw = 0;
+            bool isImplicit = true;
+            while (isImplicit) {
+               wavePtr = &basis.wave(beginId + iw);
+               if (!wavePtr->implicit) {
+                  isImplicit = false;
+               } else {
+                   UTIL_CHECK(beginId + iw < endId - 1 - iw);
+                   wavePtr = &basis.wave(endId - 1 - iw);
+                   if (!wavePtr->implicit) {
+                      isImplicit = false;
+                   }
+               }
+               ++iw;
+            }
+            UTIL_CHECK(wavePtr->starId == is);
+
+            // Compute component value
+            rank = dftMesh.rank(wavePtr->indicesDft);
+            component = std::complex<double>(in[rank][0], in[rank][1]);
+            component /= wavePtr->coeff;
+            out[ib] = component.real();
+            ++is;
+
+         } else
+         if (starPtr->invertFlag == 1) {
+
+            // Identify a characteristic wave that is not implicit:
+            // Either the first wave of the 1st star or its inverse
+            // in the second star
+            wavePtr = &basis.wave(starPtr->beginId);
+            UTIL_CHECK(wavePtr->starId == is);
+            if (wavePtr->implicit) {
+               iw = wavePtr->inverseId;
+               starPtr = &(basis.star(is+1));
+               UTIL_CHECK(starPtr->invertFlag == -1);
+               wavePtr = &basis.wave(iw);
+               UTIL_CHECK(!(wavePtr->implicit));
+               UTIL_CHECK(wavePtr->starId == is+1);
+            }
+            rank = dftMesh.rank(wavePtr->indicesDft);
+            component = std::complex<double>(in[rank][0], in[rank][1]);
+            UTIL_CHECK(std::abs(wavePtr->coeff) > 1.0E-8);
+            component /= wavePtr->coeff;
+            component *= sqrt(2.0);
+
+            // Compute basis function coefficient values
+            if (starPtr->invertFlag == 1) {
+               out[ib] = component.real();
+               out[ib+1] = -component.imag();
+            } else {
+               out[ib] = component.real();
+               out[ib+1] = component.imag();
+            }
+
+            is += 2;
+         } else {
+            UTIL_THROW("Invalid invertFlag value");
+         }
+
+      } //  loop over star index is
+   }
+
+   /*
+   * Test if an K-grid array has the declared space group symmetry.
+   * Return true if symmetric, false otherwise. Print error values
+   * if verbose == true and hasSymmetry == false.
+   */
+   template <int D, class AT>
+   bool hasSymmetry(AT const & in, 
+                    Basis<D> const& basis,
+                    IntVec<D> const& dftDimensions,
+                    double epsilon,
+                    bool verbose)
+   {
+      UTIL_CHECK(basis.isInitialized());
+
+      typename Basis<D>::Star const* starPtr; // pointer to current star
+      typename Basis<D>::Wave const* wavePtr; // pointer to current wave
+      std::complex<double> waveCoeff;         // coefficient from wave
+      std::complex<double> rootCoeff;         // coefficient from root
+      std::complex<double> diff;              // coefficient difference
+      int is;                                 // star index
+      int iw;                                 // wave index
+      int beginId, endId;                     // star begin, end ids
+      int rank;                               // dft grid rank of wave
+
+      double cancelledError(0.0);   // max error from cancelled stars
+      double uncancelledError(0.0); // max error from uncancelled stars
+
+      // Create Mesh<D> with dimensions of DFT Fourier grid.
+      Mesh<D> dftMesh(dftDimensions);
+
+      // Loop over all stars
+      for (is = 0; is < basis.nStar(); ++is) {
+         starPtr = &(basis.star(is));
+
+         if (starPtr->cancel) {
+
+            // Check that coefficients are zero for all waves in star
+            beginId = starPtr->beginId;
+            endId = starPtr->endId;
+            for (iw = beginId; iw < endId; ++iw) {
+               wavePtr = &basis.wave(iw);
+               if (!wavePtr->implicit) {
+                  rank = dftMesh.rank(wavePtr->indicesDft);
+                  waveCoeff 
+                     = std::complex<double>(in[rank][0], in[rank][1]);
+                  if (std::abs(waveCoeff) > cancelledError) {
+                     cancelledError = std::abs(waveCoeff);
+                     if ((!verbose) && (cancelledError > epsilon)) {
+                        return false;
+                     }
+                  }
+               }
+            }
+
+         } else {
+
+            // Check consistency of coeff values from all waves
+            bool hasRoot = false;
+            beginId = starPtr->beginId;
+            endId = starPtr->endId;
+            for (iw = beginId; iw < endId; ++iw) {
+               wavePtr = &basis.wave(iw);
+               if (!(wavePtr->implicit)) {
+                  rank = dftMesh.rank(wavePtr->indicesDft);
+                  waveCoeff 
+                     = std::complex<double>(in[rank][0], in[rank][1]);
+                  waveCoeff /= wavePtr->coeff;
+                  if (hasRoot) {
+                     diff = waveCoeff - rootCoeff;
+                     if (std::abs(diff) > uncancelledError) {
+                        uncancelledError = std::abs(diff);
+                        if ((!verbose) && (uncancelledError > epsilon)) {
+                           return false;
+                        }
+                     }
+                  } else {
+                     rootCoeff = waveCoeff;
+                     hasRoot = true;
+                  }
+               }
+            }
+
+         }
+
+      } //  end loop over star index is
+
+      if ((cancelledError < epsilon) && (uncancelledError < epsilon)) {
+         return true;
+      } else if (verbose) {
+         Log::file() << std::endl
+                     << "Maximum coefficient of a cancelled star: "
+                     << cancelledError << std::endl
+                     << "Maximum error of coefficient for uncancelled star: "
+                     << uncancelledError << std::endl;
+      }
+      return false;
    }
 
 

@@ -74,6 +74,30 @@ namespace Prdc {
                             IntVec<D> const& dimensions,
                             int nMonomer);
 
+   /**
+   * Check allocation of a DArray of 1D arrays, allocate if necessary.
+   *
+   * Template parameter AT is an allocatable array type, such as 
+   * Util::DArray<double> or Pscf::HostDArray<double>, that has an allocate 
+   * function that takes an integer capacity as its only parameter.
+   *
+   * On successful exit, the capacity of the container arrays is equal to 
+   * the parameter nMonomer, and the capacity for each element of type AT 
+   * is equal to the parameter capacity.
+   *
+   * If the container arrays is allocated on entry, the above conditions are
+   * checked, and an Exception is thrown if any are violated.  If arrays is
+   * not allocated on entry, it is allocated with the required dimensions.
+   *
+   * \param arrays  DArray of array of type AT (in/out)
+   * \param dimensions  required mesh dimensions (in)
+   * \param nMomoner  number of monomer types (in)
+   */
+   template <int D, class AT>
+   void checkAllocateArrays(DArray< AT >& arrays, 
+                            IntVec<D> const& dimensions,
+                            int nMonomer);
+
 
    // Templates for RGrid data IO
 
@@ -276,6 +300,60 @@ namespace Prdc {
    void writeBasisData(std::ostream &out,
                        DArray<DArray<double> > const & fields,
                        Basis<D> const & basis);
+
+   /**
+   * Convert a real field from symmetrized basis to Fourier grid.
+   *
+   * \param components coefficients of symmetry-adapted basis functions
+   * \param dft discrete Fourier transform of a real field
+   */
+   template <int D, class AT>
+   void convertBasisToKGrid(DArray<double> const & components,
+                            AT& dft,
+                            Basis<D> const& basis,
+                            IntVec<D> const& dftDimensions);
+
+   /**
+   * Convert a real field from Fourier grid to symmetrized basis.
+   *
+   * If the checkSymmetry parameter is true, this function checks if
+   * the input field satisfies the space group symmetry to within a
+   * tolerance given by the epsilon parameter, and prints a warning to
+   * Log::file() if it does not.
+   *
+   * \param in  discrete Fourier transform (k-grid) of a field
+   * \param out  components of field in asymmetry-adapted Fourier basis
+   * \param checkSymmetry  flag indicating whether to check symmetry
+   * \param epsilon  error tolerance for symmetry test (if any)
+   */
+   template <int D, class AT>
+   void convertKGridToBasis(AT const & in,
+                            DArray<double> & out,
+                            Basis<D> const& basis,
+                            IntVec<D> const& dftDimensions,
+                            bool checkSymmetry = true,
+                            double epsilon = 1.0e-8);
+
+   /**
+   * Check if a k-grid field has the declared space group symmetry.
+   *
+   * This function checks whether the discrete Fourier transform of
+   * a real field satisfies all the symmetries of a space group to
+   * within an error threshhold given by parameter epsilon. If the
+   * parameter verbose is true and the deviation from symmetry
+   * exceeds the error threshhold, errors are written to Log::file().
+   *
+   * \param in field in real space grid (r-grid) format
+   * \param epsilon error threshold used to test for symmetry
+   * \param verbose  if true, write error to Log::file()
+   * \return true if the field is symmetric, false otherwise
+   */
+   template <int D, class AT>
+   bool hasSymmetry(AT const& in, 
+                    Basis<D> const& basis,
+                    IntVec<D> const& dftDimensions,
+                    double epsilon = 1.0e-8,
+                    bool verbose = true);
 
 
 } // namespace Prdc
