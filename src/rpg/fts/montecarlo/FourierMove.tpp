@@ -10,12 +10,14 @@
 
 #include "FourierMove.h"
 #include "McMove.h" 
+#include <rpg/fts/VecOpFts.h>
 #include <rpg/System.h>      
 #include <prdc/crystal/shiftToMinimum.h>
 #include <pscf/mesh/MeshIterator.h>
 #include <pscf/math/IntVec.h>
 #include <util/random/Random.h>
 #include <pscf/cuda/CudaRandom.h>
+#include <pscf/cuda/GpuResources.h>
 #include <util/param/ParamComposite.h>
 #include <util/global.h>
 
@@ -172,35 +174,33 @@ namespace Rpg
    
       const int nMonomer = system().mixture().nMonomer();
       const int meshSize = system().domain().mesh().size();
-      // GPU resources
-      int nBlocks, nThreads;
-      ThreadGrid::setThreadsLogical(meshSize, nBlocks, nThreads);
+      
       for (int i = 0; i < nMonomer; ++i) {
-         assignReal<<<nBlocks, nThreads>>>
-            (wRGrid_[i].cArray(), system().w().rgrid(i).cArray(), meshSize);
+         VecOp::eqV(wRGrid_[i], system().w().rgrid(i));
       }
+
       // Convert real grid to KGrid format
       for (int i = 0; i < nMonomer; ++i) {
          system().fft().forwardTransform(wRGrid_[i], wKGrid_[i]);
       }
       
       for (int i = 0; i < nMonomer; ++i){
-         //Generate randome number for real part
+         // Generate random number for real part
          cudaRandom().uniform(randomFieldR_.cArray(), meshSize);
          // Generate random numbers between [-stepSize_,stepSize_]
-         mcftsScale<<<nBlocks, nThreads>>>(randomFieldR_.cArray(), stepSize_, meshSize);
+         VecOpFts::mcftsScale(randomFieldR_, stepSize_);
          // Generate random numbers between [-stepSize_*S(q)^(1/2), stepSize_*S(q)^(1/2)]
-         inPlacePointwiseMul<<<nBlocks, nThreads>>>(randomFieldR_.cArray(), sqrtSq_.cArray(), meshSize);
+         VecOp::mulEqV(randomFieldR_, sqrtSq_);
          
-         //Generate randome number for imagine part
+         // Generate random number for imaginary part
          cudaRandom().uniform(randomFieldK_.cArray(), meshSize);
          // Generate random numbers between [-stepSize_,stepSize_]
-         mcftsScale<<<nBlocks, nThreads>>>(randomFieldK_.cArray(), stepSize_, meshSize);
+         VecOpFts::mcftsScale(randomFieldK_, stepSize_);
          // Generate random numbers between [-stepSize_*S(q)^(1/2), stepSize_*S(q)^(1/2)]
-         inPlacePointwiseMul<<<nBlocks, nThreads>>>(randomFieldK_.cArray(), sqrtSq_.cArray(), meshSize);
+         VecOp::mulEqV(randomFieldK_, sqrtSq_);
    
          // Attempt Move in ourier (k-grid) format
-         fourierMove<<<nBlocks, nThreads>>>(wKGrid_[i].cArray(), randomFieldR_.cArray(), randomFieldK_.cArray(), meshSize);
+         VecOpFts::fourierMove(wKGrid_[i], randomFieldR_, randomFieldK_);
       }
       
       // Convert Fourier (k-grid) format back to Real grid format

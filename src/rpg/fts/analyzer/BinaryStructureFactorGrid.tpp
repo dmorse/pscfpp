@@ -7,7 +7,7 @@
 #include <rpg/System.h>
 #include <prdc/crystal/shiftToMinimum.h>
 #include <pscf/mesh/MeshIterator.h>
-#include <pscf/cuda/HostDArray.h>
+#include <pscf/cuda/GpuResources.h>
 #include <util/misc/FileMaster.h>
 #include <util/misc/ioUtil.h>
 #include <util/format/Dbl.h>
@@ -121,14 +121,9 @@ namespace Rpg {
       RField<D> wm;
       wm.allocate(dimensions);
       
-      // Compute W-
-      // GPU resources
-      int nBlocks, nThreads;
-      ThreadGrid::setThreadsLogical(wm.capacity(), nBlocks, nThreads);
-      
-      pointWiseBinarySubtract<<<nBlocks, nThreads>>>
-            (system().w().rgrid(0).cArray(), system().w().rgrid(1).cArray(), wm.cArray(), wm.capacity());
-      scaleReal<<<nBlocks, nThreads>>>(wm.cArray(), 0.5, wm.capacity());
+      // Compute W: (rgrid(0) - rgrid(1)) / 2
+      VecOp::addVcVc(wm, system().w().rgrid(0), 0.5, 
+                     system().w().rgrid(1), -0.5);
       
       // Convert real grid to KGrid format
       RFieldDft<D> wk;

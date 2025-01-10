@@ -10,10 +10,10 @@
 
 
 
-#include <prdc/cuda/RField.h>            // member template parameter
+#include <prdc/cuda/RField.h>              // member template parameter
 #include <prdc/crystal/UnitCell.h>         // function parameter
 #include <pscf/math/IntVec.h>              // function parameter
-#include <pscf/cuda/DeviceArray.h>        // function parameter
+#include <pscf/cuda/DeviceArray.h>         // function parameter
 #include <util/param/ParamComposite.h>     // base class
 #include <util/containers/DArray.h>        // member template
 

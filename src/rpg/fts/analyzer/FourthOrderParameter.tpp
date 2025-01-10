@@ -135,25 +135,12 @@ namespace Rpg {
       RField<D> psi;
       psi.allocate(kMeshDimensions_);
       
-      // GPU resources with meshSize threads
-      int nBlocks, nThreads;
-      ThreadGrid::setThreadsLogical(meshSize, nBlocks, nThreads);
-      
-      // Conver W_(r) to fourier mode W_(k)
-      assignReal<<<nBlocks, nThreads>>>
-            (wc0_.cArray(), simulator().wc(0).cArray(), meshSize);
+      // Convert W_(r) to fourier mode W_(k)
+      VecOp::eqV(wc0_, simulator().wc(0));
       system().fft().forwardTransform(wc0_, wK_);
       
-      // GPU resources with kSize threads
-      ThreadGrid::setThreadsLogical(kSize_, nBlocks, nThreads);
-      
-      // W_(k)^2
-      squaredMagnitudeComplex<<<nBlocks,nThreads>>>
-            (wK_.cArray(), psi.cArray(), kSize_);
-      
-      // W_(k)^4
-      inPlacePointwiseMul<<<nBlocks,nThreads>>>
-            (psi.cArray(), psi.cArray(), kSize_);
+      // psi = |wK_|^4
+      VecOp::sqSqNormV(psi, wK_);
             
       // Get sum over all wavevectors
       FourthOrderParameter_ = Reduce::sum(psi);

@@ -12,6 +12,7 @@
 #include "McMove.h" 
 #include <rpg/fts/montecarlo/McSimulator.h>
 #include <rpg/fts/compressor/Compressor.h>
+#include <rpg/fts/VecOpFts.h>
 #include <rpg/System.h>
 #include <pscf/cuda/CudaRandom.h>
 #include <pscf/cuda/GpuResources.h>
@@ -89,7 +90,6 @@ namespace Rpg {
 
       McMove<D>::setup();
       biasField_.allocate(dimensions);
-      dwd_.allocate(dimensions);
       gaussianField_.allocate(dimensions);
    }
  
@@ -112,9 +112,6 @@ namespace Rpg {
       const int meshSize = system().domain().mesh().size();
       int i, j;
       
-      // GPU resources
-      int nBlocks, nThreads;
-      ThreadGrid::setThreadsLogical(meshSize, nBlocks, nThreads);
 
       // Get current Hamiltonian
       double oldHamiltonian = simulator().hamiltonian();
@@ -128,17 +125,13 @@ namespace Rpg {
       attemptMoveTimer_.start();
       
       // Copy current W fields from parent system into wc_
-      DArray<RField<D>> const * Wr = &system().w().rgrid();
       for (i = 0; i < nMonomer; ++i) {
-         assignReal<<<nBlocks, nThreads>>>
-            (w_[i].cArray(), (*Wr)[i].cArray(), meshSize);
+         VecOp::eqV(w_[i], system().w().rgrid(i));
       }
 
       // Copy current derivative fields from into member variable dc_
-      DArray<RField<D>> const * Dc = &simulator().dc();
       for (i = 0; i < nMonomer - 1; ++i) {
-         assignReal<<<nBlocks, nThreads>>>
-            (dc_[i].cArray(), (*Dc)[i].cArray(), meshSize);
+         VecOp::eqV(dc_[i], simulator().dc(i));
       }
 
       // Constants for dynamics
@@ -157,25 +150,18 @@ namespace Rpg {
       for (j = 0; j < nMonomer - 1; ++j) {
          RField<D> & dwc = dwc_[j];
          
-         // Generagte normal distributed random floating point numbers
-         cudaRandom().normal(gaussianField_.cArray(), meshSize, (cudaReal)stddev, (cudaReal)mean);
-         
-         // dwr
-         scaleReal<<<nBlocks, nThreads>>>(gaussianField_.cArray(), b, meshSize);
-         
-         // dwd
-         assignReal<<<nBlocks, nThreads>>>(dwd_.cArray(), dc_[j].cArray(), meshSize);
-         scaleReal<<<nBlocks, nThreads>>>(dwd_.cArray(), a, meshSize);
+         // Generate normal distributed random floating point numbers
+         cudaRandom().normal(gaussianField_.cArray(), meshSize, stddev, mean);
          
          // dwc
-         pointWiseBinaryAdd<<<nBlocks, nThreads>>>(dwd_.cArray(), gaussianField_.cArray(), dwc.cArray(), meshSize);
+         VecOp::addVcVc(dwc, dc_[j], a, gaussianField_, b);
          
          // Loop over monomer types
          for (i = 0; i < nMonomer; ++i) {
             RField<D> const & dwc = dwc_[j];
             RField<D> & wn = w_[i];
             evec = simulator().chiEvecs(j,i);
-            pointWiseAddScale<<<nBlocks, nThreads>>>(wn.cArray(), dwc.cArray(), evec, meshSize);
+            VecOp::addEqVc(wn, dwc, evec);
          }
          
       }
@@ -220,8 +206,7 @@ namespace Rpg {
             RField<D> const & df = simulator().dc(j);
             RField<D> const & dwc = dwc_[j];
          
-            computeForceBias<<<nBlocks, nThreads>>>
-               (biasField_.cArray(), di.cArray(), df.cArray(), dwc.cArray(), mobility_, meshSize);
+            VecOpFts::computeForceBias(biasField_, di, df, dwc, mobility_);
             bias += Reduce::sum(biasField_);
          }
          bias *= vNode;

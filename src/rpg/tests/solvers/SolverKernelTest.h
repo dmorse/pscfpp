@@ -75,84 +75,6 @@ public:
       }
    }
 
-   void testMulVVPair()
-   {
-      printMethod(TEST_FUNC);
-
-      int n = 100000;
-
-      HostDArray<cudaReal> out1_h(n), out2_h(n), out1_ref(n), out2_ref(n), 
-                           shared_h(n), in1_h(n), in2_h(n); 
-      
-      double fourPi = 4.0 * Constants::Pi;
-
-      for (int i = 0; i < n; i++) {
-         double frac = (double)i / (double)n;
-
-         shared_h[i] = sin(fourPi * frac);
-         in1_h[i] = cos(frac);
-         in2_h[i] = erf(frac - 0.5);
-
-         // Calculate out1 and out2 on host
-         out1_ref[i] = shared_h[i] * in1_h[i];
-         out2_ref[i] = shared_h[i] * in2_h[i];
-      }
-
-      DeviceArray<cudaReal> out1(n), out2(n), shared(n), in1(n), in2(n); 
-      shared = shared_h;
-      in1 = in1_h;
-      in2 = in2_h;
-
-      // Perform calculation on device
-      mulVVPair(out1, out2, shared, in1, in2);
-      out1_h = out1;
-      out2_h = out2;
-
-      for (int i = 0; i < n; i++) {
-         TEST_ASSERT(abs(out1_h[i] - out1_ref[i]) < tolerance_);
-         TEST_ASSERT(abs(out2_h[i] - out2_ref[i]) < tolerance_);
-      }
-   }
-
-   void testMulEqVPair()
-   {
-      printMethod(TEST_FUNC);
-
-      int n = 100000;
-
-      HostDArray<cudaReal> out1_h(n), out2_h(n), out1_ref(n), out2_ref(n), 
-                           shared_h(n); 
-      
-      double fourPi = 4.0 * Constants::Pi;
-
-      for (int i = 0; i < n; i++) {
-         double frac = (double)i / (double)n;
-
-         shared_h[i] = sin(fourPi * frac);
-         out1_h[i] = cos(frac);
-         out2_h[i] = erf(frac - 0.5);
-
-         // Perform calculation on host
-         out1_ref[i] = shared_h[i] * out1_h[i];
-         out2_ref[i] = shared_h[i] * out2_h[i];
-      }
-
-      DeviceArray<cudaReal> out1(n), out2(n), shared(n); 
-      shared = shared_h;
-      out1 = out1_h;
-      out2 = out2_h;
-
-      // Perform calculation on device
-      mulEqVPair(out1, out2, shared);
-      out1_h = out1;
-      out2_h = out2;
-
-      for (int i = 0; i < n; i++) {
-         TEST_ASSERT(abs(out1_h[i] - out1_ref[i]) < tolerance_);
-         TEST_ASSERT(abs(out2_h[i] - out2_ref[i]) < tolerance_);
-      }
-   }
-
    void testRichardsonEx()
    {
       printMethod(TEST_FUNC);
@@ -228,8 +150,6 @@ public:
 
 TEST_BEGIN(SolverKernelTest)
 TEST_ADD(SolverKernelTest, testRealMulVConjVV)
-TEST_ADD(SolverKernelTest, testMulVVPair)
-TEST_ADD(SolverKernelTest, testMulEqVPair)
 TEST_ADD(SolverKernelTest, testRichardsonEx)
 TEST_ADD(SolverKernelTest, testAddEqMulVVc)
 TEST_END(SolverKernelTest)

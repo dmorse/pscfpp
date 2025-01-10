@@ -41,17 +41,13 @@ namespace Rpg {
    {
       int nx = meshPtr_->size(); // Number of grid points
 
-      // GPU Resources
-      int nBlocks, nThreads;
-      ThreadGrid::setThreadsLogical(nx, nBlocks, nThreads);
-
-      // Initialize concField_ to zero
-      assignUniformReal<<<nBlocks, nThreads>>>(concField_.cArray(), 0, nx);
-
       // Evaluate unnormalized integral and q_
       double s = size();
       q_ = 0.0;
-      assignExp<<<nBlocks, nThreads>>>(concField_.cArray(), wField.cArray(), s, nx);
+
+      // concField_ = exp(-size() * wField)
+      VecOp::expVc(concField_, wField, -1.0*size());
+
       q_ = Reduce::sum(concField_) / ((double) nx);
 
       // Compute mu_ or phi_ and prefactor
@@ -65,8 +61,7 @@ namespace Rpg {
       }
 
       // Normalize concentration 
-      scaleReal<<<nBlocks, nThreads>>>(concField_.cArray(), prefactor, nx);
-    
+      VecOp::mulEqS(concField_, prefactor);
    }
 
 }

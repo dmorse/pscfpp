@@ -74,7 +74,6 @@ namespace Rpg {
       
       // Allocate memory required by compressor if not done earlier.
       if (!isAllocated_){
-         newBasis_.allocate(meshSize);
          w0_.allocate(nMonomer);
          wFieldTmp_.allocate(nMonomer);
          error_.allocate(dimensions);
@@ -89,15 +88,8 @@ namespace Rpg {
       }
       
       // Store value of initial guess chemical potential fields
-      // GPU resources
-      int nBlocks, nThreads;
-      ThreadGrid::setThreadsLogical(meshSize, nBlocks, nThreads);
-
-      // Store current fields
-      DArray<RField<D>> const * currSys = &system().w().rgrid();
       for (int i = 0; i < nMonomer; ++i) {
-         assignReal<<<nBlocks,nThreads>>>(w0_[i].cArray(), 
-                                          (*currSys)[i].cArray(), meshSize);
+         VecOp::eqV(w0_[i], system().w().rgrid(i));
       }
       
       // Compute intramolecular correlation
@@ -119,12 +111,8 @@ namespace Rpg {
    void LrAmPreCompressor<D>::setEqual(DeviceArray<cudaReal>& a, 
                                        DeviceArray<cudaReal> const & b)
    {
-      // GPU resources
-      int nBlocks, nThreads;
-      ThreadGrid::setThreadsLogical(a.capacity(), nBlocks, nThreads);
-      
       UTIL_CHECK(b.capacity() == a.capacity());
-      assignReal<<<nBlocks, nThreads>>>(a.cArray(), b.cArray(), a.capacity());
+      VecOp::eqV(a, b); 
    }
 
    // Compute and return inner product of two vectors.
@@ -152,18 +140,14 @@ namespace Rpg {
       // Make sure at least two histories are stored
       UTIL_CHECK(hists.size() >= 2);
 
-      const int n = hists[0].capacity();
-      
-      // GPU resources
-      int nBlocks, nThreads;
-      ThreadGrid::setThreadsLogical(n, nBlocks, nThreads);
+      basis.advance();
+      if (basis[0].isAllocated()) {
+         UTIL_CHECK(basis[0].capacity() == hists[0].capacity());
+      } else {
+         basis[0].allocate(hists[0].capacity());
+      }
 
-      // New basis vector is difference between two most recent states
-      pointWiseBinarySubtract<<<nBlocks,nThreads>>>
-            (hists[0].cArray(), hists[1].cArray(), newBasis_.cArray(),n);
-
-      basis.append(newBasis_);
-
+      VecOp::subVV(basis[0], hists[0], hists[1]);
    }
 
    template <int D>
@@ -173,13 +157,8 @@ namespace Rpg {
                                    DArray<double> coeffs,
                                    int nHist)
    {
-      // GPU resources
-      int nBlocks, nThreads;
-      ThreadGrid::setThreadsLogical(trial.capacity(), nBlocks, nThreads);
-
       for (int i = 0; i < nHist; i++) {
-         pointWiseAddScale<<<nBlocks, nThreads>>>
-            (trial.cArray(), basis[i].cArray(), -1*coeffs[i], trial.capacity());
+         VecOp::addEqVc(trial, basis[i], -1.0 * coeffs[i]);
       }
    }
 
@@ -189,12 +168,7 @@ namespace Rpg {
                                            DeviceArray<cudaReal> const & resTrial,
                                            double lambda)
    {
-      // GPU resources
-      int nBlocks, nThreads;
-      ThreadGrid::setThreadsLogical(fieldTrial.capacity(), nBlocks, nThreads);
-
-      pointWiseAddScale<<<nBlocks, nThreads>>>
-         (fieldTrial.cArray(), resTrial.cArray(), lambda, fieldTrial.capacity());
+      VecOp::addEqVc(fieldTrial, resTrial, lambda);
    }
 
    // Does the system have an initial field guess?
@@ -211,23 +185,13 @@ namespace Rpg {
    template <int D>
    void LrAmPreCompressor<D>::getCurrent(DeviceArray<cudaReal>& curr)
    {
-      // Straighten out fields into  linear arrays
-      const int meshSize = system().domain().mesh().size();
-      
-      // Pointer to fields on system
-      DArray<RField<D>> const * currSys = &system().w().rgrid();
-      
-      // GPU resources
-      int nBlocks, nThreads;
-      ThreadGrid::setThreadsLogical(meshSize, nBlocks, nThreads);
-      
       /*
       * The field that we are adjusting is the Langrange multiplier field 
       * with number of grid pts components.The current value is the difference 
-      * between w and w0_ for the first monomer (any monomer should give the same answer)
+      * between w and w0_ for the first monomer (any monomer should give the 
+      * same answer)
       */
-      pointWiseBinarySubtract<<<nBlocks,nThreads>>>
-            ((*currSys)[0].cArray(), w0_[0].cArray(), curr.cArray(), meshSize); 
+      VecOp::subVV(curr, system().w().rgrid(0), w0_[0]); 
    }
 
    // Perform the main system computation (solve the MDE)
@@ -242,38 +206,26 @@ namespace Rpg {
    template <int D>
    void LrAmPreCompressor<D>::getResidual(DeviceArray<cudaReal>& resid)
    {
-      const int n = nElements();
       const int nMonomer = system().mixture().nMonomer();
-      const int meshSize = system().domain().mesh().size();
       const double vMonomer = system().mixture().vMonomer();  
-      
-      // GPU resources
-      int nBlocks, nThreads;
-      ThreadGrid::setThreadsLogical(meshSize, nBlocks, nThreads);
-      
-      // Initialize residuals to -1
-      assignUniformReal<<<nBlocks, nThreads>>>(resid_.cArray(), -1, meshSize);
 
       // Compute incompressibility constraint error vector elements
-      for (int i = 0; i < nMonomer; i++) {
-         pointWiseAdd<<<nBlocks, nThreads>>>
-            (resid_.cArray(), system().c().rgrid(i).cArray(), meshSize);
+      VecOp::subVS(resid_, system().c().rgrid(0), 1.0);
+      for (int i = 1; i < nMonomer; i++) {
+         VecOp::addEqV(resid_, system().c().rgrid(i));
       }
       
       // Convert residual to Fourier Space
       system().fft().forwardTransform(resid_, residK_);
       
       // Residual combine with Linear response factor
-      scaleComplex<<<nBlocks, nThreads>>>(residK_.cArray(), 1.0/vMonomer, kSize_);
-      inPlacePointwiseDivComplex<<<nBlocks, nThreads>>>(residK_.cArray(), 
-                                                        intraCorrelation_.cArray(), 
-                                                        kSize_);
+      VecOp::divEqVc(residK_, intraCorrelation_, vMonomer);
    
       // Convert back to real Space
       system().fft().inverseTransform(residK_, resid_);
       
       // Assign resid_ to resid
-      assignReal<<<nBlocks, nThreads>>>(resid.cArray(), resid_.cArray(), meshSize);
+      VecOp::eqV(resid, resid_);
       
    }
 
@@ -283,16 +235,10 @@ namespace Rpg {
    {
       // Convert back to field format
       const int nMonomer = system().mixture().nMonomer();
-      const int meshSize = system().domain().mesh().size();
-      
-      // GPU resources
-      int nBlocks, nThreads;
-      ThreadGrid::setThreadsLogical(meshSize, nBlocks, nThreads);
       
       // New field is the w0_ + the newGuess for the Lagrange multiplier field
-      for (int i = 0; i < nMonomer; i++){
-         pointWiseBinaryAdd<<<nBlocks, nThreads>>>
-            (w0_[i].cArray(), newGuess.cArray(), wFieldTmp_[i].cArray(), meshSize);
+      for (int i = 0; i < nMonomer; i++) {
+         VecOp::addVV(wFieldTmp_[i], w0_[i], newGuess);
       }
       
       // Set system r grid
@@ -335,19 +281,11 @@ namespace Rpg {
       double error = 0.0;
       const int n = nElements();
       const int nMonomer = system().mixture().nMonomer();
-      const int meshSize = system().domain().mesh().size();
       
-      // GPU resources
-      int nBlocks, nThreads;
-      ThreadGrid::setThreadsLogical(meshSize, nBlocks, nThreads);
-      
-      // Initialize residuals to -1
-      assignUniformReal<<<nBlocks, nThreads>>>(error_.cArray(), -1.0, meshSize);
-     
-      // Add composition of each monomer
-      for (int i = 0; i < nMonomer; i++) {
-         pointWiseAdd<<<nBlocks, nThreads>>>
-            (error_.cArray(), system().c().rgrid(i).cArray(), meshSize);
+      // Initialize residuals to sum of all monomer compositions minus 1
+      VecOp::subVS(error_, system().c().rgrid(0), 1.0);
+      for (int i = 1; i < nMonomer; i++) {
+         VecOp::addEqV(error_, system().c().rgrid(i));
       }
       
       // Find max residual vector element

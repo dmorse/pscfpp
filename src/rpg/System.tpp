@@ -903,10 +903,6 @@ namespace Rpg {
       int nm  = mixture_.nMonomer();
       int nx = domain_.mesh().size();
 
-      // GPU resources
-      int nBlocks, nThreads;
-      ThreadGrid::setThreadsLogical(nx, nBlocks, nThreads);
-
       // Compute Legendre transform subtraction
       double temp = 0.0;
       for (int i = 0; i < nm; i++) {

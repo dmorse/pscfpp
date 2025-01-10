@@ -29,8 +29,8 @@ namespace Rpg {
       * Element-wise calculation of a = real(b * conj(c) * d), CUDA kernel
       */
       __global__ void _realMulVConjVV(cudaReal* a, cudaComplex const * b,
-                                    cudaComplex const * c, 
-                                    cudaReal const * d, const int n) 
+                                      cudaComplex const * c, 
+                                      cudaReal const * d, const int n) 
       {
          int nThreads = blockDim.x * gridDim.x;
          int startID = blockIdx.x * blockDim.x + threadIdx.x;
@@ -45,40 +45,6 @@ namespace Rpg {
             
             // Perform calculation
             a[i] = ((bt.x * ct.x) + (bt.y * ct.y)) * d[i];
-         }
-      }
-
-      /*
-      * Performs out1=shared*in1 and out2=shared*in2 elementwise, CUDA kernel
-      */
-      __global__ void _mulVVPair(cudaReal* out1, cudaReal* out2, 
-                                 cudaReal const * shared, 
-                                 cudaReal const * in1, cudaReal const * in2,
-                                 const int n)
-      {
-         int nThreads = blockDim.x * gridDim.x;
-         int startID = blockIdx.x * blockDim.x + threadIdx.x;
-         cudaReal input;
-         for (int i = startID; i < n; i += nThreads) {
-            input = shared[i];
-            out1[i] = in1[i] * input;
-            out2[i] = in2[i] * input;
-         }
-      }
-
-      /*
-      * Performs out1 *= shared and out2 *= shared elementwise, CUDA kernel
-      */
-      __global__ void _mulEqVPair(cudaReal* out1, cudaReal* out2, 
-                                 cudaReal const * shared, const int n)
-      {
-         int nThreads = blockDim.x * gridDim.x;
-         int startID = blockIdx.x * blockDim.x + threadIdx.x;
-         cudaReal input;
-         for (int i = startID; i < n; i += nThreads) {
-            input = shared[i];
-            out1[i] *= input;
-            out2[i] *= input;
          }
       }
 
@@ -102,8 +68,8 @@ namespace Rpg {
       * Performs a[i] += b[i] * c[i] * d. CUDA kernel
       */
       __global__ void _addEqMulVVc(cudaReal* a, cudaReal const * b,
-                                 cudaReal const * c, cudaReal const d, 
-                                 const int n) 
+                                   cudaReal const * c, cudaReal const d, 
+                                   const int n) 
       {
          int nThreads = blockDim.x * gridDim.x;
          int startID = blockIdx.x * blockDim.x + threadIdx.x;
@@ -136,51 +102,6 @@ namespace Rpg {
       // Launch kernel
       _realMulVConjVV<<<nBlocks, nThreads>>>(a.cArray(), b.cArray(), 
                                              c.cArray(), d.cArray(), n);
-   }
-
-   /*
-   * Performs out1=shared*in1 and out2=shared*in2 elementwise, kernel wrapper
-   */
-   __host__ void mulVVPair(DeviceArray<cudaReal>& out1, 
-                           DeviceArray<cudaReal>& out2, 
-                           DeviceArray<cudaReal> const & shared, 
-                           DeviceArray<cudaReal> const & in1, 
-                           DeviceArray<cudaReal> const & in2)
-   {
-      int n = out1.capacity();
-      UTIL_CHECK(out2.capacity() == n);
-      UTIL_CHECK(shared.capacity() >= n);
-      UTIL_CHECK(in1.capacity() >= n);
-      UTIL_CHECK(in2.capacity() >= n);
-      
-      // GPU resources
-      int nBlocks, nThreads;
-      ThreadGrid::setThreadsLogical(n, nBlocks, nThreads);
-
-      // Launch kernel
-      _mulVVPair<<<nBlocks, nThreads>>>(out1.cArray(), out2.cArray(), 
-                                        shared.cArray(), in1.cArray(), 
-                                        in2.cArray(), n);
-   }
-
-   /*
-   * Performs out1 *= shared and out2 *= shared elementwise, kernel wrapper
-   */
-   __host__ void mulEqVPair(DeviceArray<cudaReal>& out1, 
-                            DeviceArray<cudaReal>& out2, 
-                            DeviceArray<cudaReal> const & shared)
-   {
-      int n = out1.capacity();
-      UTIL_CHECK(out2.capacity() == n);
-      UTIL_CHECK(shared.capacity() >= n);
-      
-      // GPU resources
-      int nBlocks, nThreads;
-      ThreadGrid::setThreadsLogical(n, nBlocks, nThreads);
-
-      // Launch kernel
-      _mulEqVPair<<<nBlocks, nThreads>>>(out1.cArray(), out2.cArray(), 
-                                         shared.cArray(), n);
    }
 
    /*
@@ -547,12 +468,12 @@ namespace Rpg {
       qk2.associate(qkPair_, kSize_, mesh().dimensions());
 
       // Apply pseudo-spectral algorithm
-      mulVVPair(qr, qr2, q, expW_, expW2_); // qr = q*expW, qr2 = q*expW2
+      VecOp::mulVVPair(qr, qr2, expW_, expW2_, q); // qr = expW*q, qr2 = expW2*q
       fftBatchedPair_.forwardTransform(qrPair_, qkPair_); // real to Fourier
       VecOp::mulEqV(qk, expKsq_); // qk *= expKsq
       VecOp::mulEqV(qk2, expKsq2_); // qk2 *= expKsq2
       fftBatchedPair_.inverseTransform(qkPair_, qrPair_); // Fourier to real
-      mulEqVPair(qr, qr2, expW_); // qr *= expW, qr2 *= expW
+      VecOp::mulEqVPair(qr, qr2, expW_); // qr *= expW, qr2 *= expW
       fft().forwardTransform(qr2, qk2); // real to Fourier, only qr2
       VecOp::mulEqV(qk2, expKsq2_); // qk2 *= expKsq2
       fft().inverseTransform(qk2, qr2); // Fourier to real, only qr2

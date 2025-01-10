@@ -10,7 +10,6 @@
 
 #include "FFT.h"
 #include <pscf/cuda/GpuResources.h>
-#include <pscf/cuda/LinearAlgebra.h>
 
 namespace Pscf {
 namespace Prdc {
@@ -118,10 +117,6 @@ namespace Cuda {
    void FFT<D>::forwardTransform(RField<D> & rField, RFieldDft<D>& kField)
    const
    {
-      // GPU resources
-      int nBlocks, nThreads;
-      ThreadGrid::setThreadsLogical(rSize_, nBlocks, nThreads);
-
       // Check dimensions or setup
       UTIL_CHECK(isSetup_);
       UTIL_CHECK(rField.capacity() == rSize_);
@@ -129,7 +124,7 @@ namespace Cuda {
 
       // Rescale outputted data. 
       cudaReal scale = 1.0/cudaReal(rSize_);
-      scaleReal<<<nBlocks, nThreads>>>(rField.cArray(), scale, rSize_);
+      VecOp::mulEqS(rField, scale);
       
       // Perform transform
       cufftResult result;
@@ -204,10 +199,6 @@ namespace Cuda {
    void FFT<D>::forwardTransform(CField<D> & rField, CField<D>& kField)
    const
    {
-      // GPU resources
-      int nBlocks, nThreads;
-      ThreadGrid::setThreadsLogical(rSize_, nBlocks, nThreads);
-
       // Check dimensions or setup
       UTIL_CHECK(isSetup_);
       UTIL_CHECK(rField.capacity() == rSize_);
@@ -215,7 +206,7 @@ namespace Cuda {
 
       // Rescale outputted data. 
       cudaReal scale = 1.0/cudaReal(rSize_);
-      scaleComplex<<<nBlocks, nThreads>>>(rField.cArray(), scale, rSize_);
+      VecOp::mulEqS(rField, scale);
       
       // Perform transform
       cufftResult result;

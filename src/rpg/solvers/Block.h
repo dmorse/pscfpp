@@ -44,32 +44,6 @@ namespace Rpg {
                                 DeviceArray<cudaReal> const & d);
    
    /**
-   * Performs out1=shared*in1 and out2=shared*in2 elementwise, kernel wrapper
-   * 
-   * \param out1  output array 1
-   * \param out2  output array 2
-   * \param shared  shared input array to be multiplied by both in1 and in2
-   * \param in1  input array 1
-   * \param in2  input array 2
-   */
-   __host__ void mulVVPair(DeviceArray<cudaReal>& out1, 
-                           DeviceArray<cudaReal>& out2, 
-                           DeviceArray<cudaReal> const & shared, 
-                           DeviceArray<cudaReal> const & in1, 
-                           DeviceArray<cudaReal> const & in2);
-   
-   /**
-   * Performs out1 *= shared and out2 *= shared elementwise, kernel wrapper
-   * 
-   * \param out1  output array 1
-   * \param out2  output array 2
-   * \param shared  shared input array to be multiplied by out1 and out2
-   */
-   __host__ void mulEqVPair(DeviceArray<cudaReal>& out1, 
-                            DeviceArray<cudaReal>& out2, 
-                            DeviceArray<cudaReal> const & shared);
-   
-   /**
    * Performs qNew = (4 * (qr2 * expW2) - qr) / 3 elementwise, kernel wrapper
    * 
    * \param qNew  output array (a propagator slice)

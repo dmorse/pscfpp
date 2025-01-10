@@ -126,11 +126,6 @@ namespace Rpg
       * Template w Field used in update function
       */
       DArray< RField<D> > wFieldTmp_;
-      
-      /**
-      * New Basis variable used in updateBasis function 
-      */
-      DeviceArray<cudaReal> newBasis_;
 
       /**
       * Assign one field to another.

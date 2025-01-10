@@ -60,7 +60,6 @@ namespace Rpg{
    void LrCompressor<D>::setup()
    {
       const int nMonomer = system().mixture().nMonomer();
-      const int meshSize = system().domain().mesh().size();
       IntVec<D> const & dimensions = system().mesh().dimensions();
       for (int i = 0; i < D; ++i) {
          if (i < D - 1) {
@@ -75,10 +74,6 @@ namespace Rpg{
       for (int i = 0; i < D; ++i) {
          kSize_ *= kMeshDimensions_[i];
       }
-      
-      // GPU resources
-      int nBlocks, nThreads;
-      ThreadGrid::setThreadsLogical(meshSize, nBlocks, nThreads);
       
       // Allocate memory required by AM algorithm if not done earlier.
       if (!isAllocated_){
@@ -183,51 +178,34 @@ namespace Rpg{
    void LrCompressor<D>::getResidual()
    {
       const int nMonomer = system().mixture().nMonomer();
-      const int meshSize = system().domain().mesh().size();
-      
-      // GPU resources
-      int nBlocks, nThreads;
-      ThreadGrid::setThreadsLogical(meshSize, nBlocks, nThreads);
 
-      // Initialize residuals to -1
-      assignUniformReal<<<nBlocks, nThreads>>>(resid_.cArray(), -1, meshSize);
+      // Initialize resid to c field of species 0 minus 1
+      VecOp::subVS(resid_, system().c().rgrid(0), 1.0);
 
-      // Compute incompressibility constraint error vector elements
-      for (int i = 0; i < nMonomer; i++) {
-         pointWiseAdd<<<nBlocks, nThreads>>>
-            (resid_.cArray(), system().c().rgrid(i).cArray(), meshSize);
+      // Add other c fields to get SCF residual vector elements
+      for (int i = 1; i < nMonomer; i++) {
+         VecOp::addEqV(resid_, system().c().rgrid(i));
       }
-      
    }
 
    // update system w field using linear response approximation
    template <int D>
    void LrCompressor<D>::updateWFields(){
       const int nMonomer = system().mixture().nMonomer();
-      const int meshSize = system().domain().mesh().size();
       const double vMonomer = system().mixture().vMonomer();
-      
-      // GPU resources
-      int nBlocks, nThreads;
-      ThreadGrid::setThreadsLogical(meshSize, nBlocks, nThreads);
       
       // Convert residual to Fourier Space
       system().fft().forwardTransform(resid_, residK_);
       
       // Compute change in fields using estimated Jacobian
-      scaleComplex<<<nBlocks, nThreads>>>(residK_.cArray(), 1.0/vMonomer, kSize_);
-      inPlacePointwiseDivComplex<<<nBlocks, nThreads>>>(residK_.cArray(), 
-                                                        intraCorrelationK_.cArray(), 
-                                                        kSize_);
+      VecOp::divEqVc(residK_, intraCorrelationK_, vMonomer);
    
       // Convert back to real Space
       system().fft().inverseTransform(residK_, resid_);
       
       // Update new fields
-      for (int i = 0; i < nMonomer; i++){
-         pointWiseBinaryAdd<<<nBlocks, nThreads>>>
-            (system().w().rgrid(i).cArray(), resid_.cArray(), 
-             wFieldTmp_[i].cArray(), meshSize);
+      for (int i = 0; i < nMonomer; i++) {
+         VecOp::addVV(wFieldTmp_[i], system().w().rgrid(i), resid_);
       }
       
       // Set system r grid

@@ -131,16 +131,11 @@ namespace Rpg
       int nm = nMonomer();
       int i, j;
 
-      // GPU resources
-      int nBlocks, nThreads;
-      ThreadGrid::setThreadsLogical(nMesh, nBlocks, nThreads);
-
       // Clear all monomer concentration fields
       for (i = 0; i < nm; ++i) {
          UTIL_CHECK(cFields[i].capacity() == nMesh);
          UTIL_CHECK(wFields[i].capacity() == nMesh);
-         assignUniformReal<<<nBlocks, nThreads>>>(cFields[i].cArray(), 
-                                                  0.0, nMesh);
+         VecOp::eqS(cFields[i], 0.0);
       }
 
       // Solve MDE for all polymers
@@ -157,9 +152,8 @@ namespace Rpg
             UTIL_CHECK(monomerId < nm);
             RField<D>& monomerField = cFields[monomerId];
             RField<D>& blockField = polymer(i).block(j).cField();
-            UTIL_CHECK(blockField.capacity()==nMesh);
-            pointWiseAdd<<<nBlocks, nThreads>>>(monomerField.cArray(), 
-                                                blockField.cArray(), nMesh);
+            UTIL_CHECK(blockField.capacity() == nMesh);
+            VecOp::addEqV(monomerField, blockField);
          }
       }
       
@@ -176,11 +170,7 @@ namespace Rpg
          RField<D>& monomerField = cFields[monomerId];
          RField<D> const & solventField = solvent(i).concField();
          UTIL_CHECK(solventField.capacity() == nMesh);
-         pointWiseAdd<<<nBlocks, nThreads>>>(monomerField.cArray(), 
-                                             solventField.cArray(), 
-                                             nMesh);
-
-
+         VecOp::addEqV(monomerField, solventField);
       }
       
       hasStress_ = false;
@@ -247,14 +237,10 @@ namespace Rpg
 
       UTIL_CHECK(blockCFields.capacity() == nBlock() + nSolvent());
 
-      // GPU resources
-      int nBlocks, nThreads;
-      ThreadGrid::setThreadsLogical(nx, nBlocks, nThreads);
-
       // Clear all monomer concentration fields, check capacities
       for (i = 0; i < np; ++i) {
          UTIL_CHECK(blockCFields[i].capacity() == nx);
-         assignUniformReal<<<nBlocks, nThreads>>>(blockCFields[i].cArray(), 0.0, nx);
+         VecOp::eqS(blockCFields[i], 0.0);
       }
 
       // Process polymer species
@@ -271,9 +257,7 @@ namespace Rpg
                UTIL_CHECK(sectionId < np);
                UTIL_CHECK(blockCFields[sectionId].capacity() == nx);
 
-               const cudaReal* blockField = polymer(i).block(j).cField().cArray();
-               cudaMemcpy(blockCFields[sectionId].cArray(), blockField, 
-                          mesh().size() * sizeof(cudaReal), cudaMemcpyDeviceToDevice);
+               blockCFields[sectionId] = polymer(i).block(j).cField();
             }
          }
       }
@@ -289,9 +273,7 @@ namespace Rpg
             UTIL_CHECK(sectionId < np);
             UTIL_CHECK(blockCFields[sectionId].capacity() == nx);
 
-            const cudaReal* solventField = solvent(i).concField().cArray();
-            cudaMemcpy(blockCFields[sectionId].cArray(), solventField, 
-                       mesh().size() * sizeof(cudaReal), cudaMemcpyDeviceToDevice);
+            blockCFields[sectionId] = solvent(i).concField();
          }
       }
    }

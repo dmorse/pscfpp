@@ -3,7 +3,9 @@
 
 #include "EinsteinCrystalPerturbation.h"
 #include <rpg/fts/simulator/Simulator.h>
+#include <rpg/fts/VecOpFts.h>
 #include <rpg/System.h>
+#include <pscf/cuda/VecOp.h>
 #include <util/global.h>
 
 namespace Pscf {
@@ -50,7 +52,6 @@ namespace Rpg {
    void EinsteinCrystalPerturbation<D>::setup()
    {
       const int nMonomer = system().mixture().nMonomer();
-      const int meshSize = system().domain().mesh().size();
       const IntVec<D> dimensions = system().domain().mesh().dimensions();
       
       UTIL_CHECK(nMonomer == 2);
@@ -90,18 +91,11 @@ namespace Rpg {
       wcs.allocate(dimensions);
       ecHamiltonian_ = 0.0;
       
-      // GPU resources
-      int nBlocks, nThreads;
-      ThreadGrid::setThreadsLogical(meshSize, nBlocks, nThreads);
-      
       for (int j = 0; j < nMonomer - 1; ++j) {
          RField<D> const & Wc = simulator().wc(j);
          prefactor = alpha_;
          s = simulator().sc(j);
-         assignRealSubtractDouble<<<nBlocks, nThreads>>>
-            (wcs.cArray(), Wc.cArray(), s, meshSize);
-         pointWiseSubtract<<<nBlocks, nThreads>>>
-            (wcs.cArray(), wc0_[j].cArray(), meshSize);
+         VecOp::subVVS(wcs, Wc, wc0_[j], s); // wcs = Wc - wc0_[j] - s
          double wSqure = 0;
          wSqure = Reduce::innerProduct(wcs, wcs);
          ecHamiltonian_ += prefactor * wSqure;
@@ -130,7 +124,6 @@ namespace Rpg {
    EinsteinCrystalPerturbation<D>::incrementDc(DArray< RField<D> > & dc)
    {
       double prefactor, s, b;
-      const int meshSize = system().domain().mesh().size();
       const IntVec<D> dimensions = system().domain().mesh().dimensions();
       const int nMonomer = system().mixture().nMonomer();
       const double vMonomer = system().mixture().vMonomer();   
@@ -140,10 +133,6 @@ namespace Rpg {
       wRef.allocate(dimensions);
       b = 1.0;
       
-      // GPU resources
-      int nBlocks, nThreads;
-      ThreadGrid::setThreadsLogical(meshSize, nBlocks, nThreads);
-      
       // Loop over composition eigenvectors (exclude the last)
       for (int i = 0; i < nMonomer - 1; ++i) {
          RField<D>& Dc = dc[i];
@@ -152,21 +141,17 @@ namespace Rpg {
          prefactor = 1.0*alpha_*double(nMonomer)/vMonomer;
          
          // Copy block copolymer derivative
-         assignReal<<<nBlocks,nThreads>>>(DcBCP.cArray(), 
-                                          Dc.cArray(), meshSize);
+         VecOp::eqV(DcBCP, Dc);
          
-         // Multiply reference field by -1.0
-         assignReal<<<nBlocks,nThreads>>>(wRef.cArray(), 
-                                          wc0_[i].cArray(), meshSize);
-         scaleReal<<<nBlocks,nThreads>>>(wRef.cArray(), -1.0, meshSize);
+         // Multiply reference field by -1.0 and store in wRef
+         VecOp::mulVS(wRef, wc0_[i], -1.0);
          
          // Compute EC derivative
-         computeDField<<<nBlocks, nThreads>>>
-            (DcEC.cArray(), Wc.cArray(), wRef.cArray(), prefactor, b, s, meshSize);
+         VecOpFts::computeDField(DcEC, Wc, wRef, prefactor, b, s);
        
          // Compute composite derivative
-         scaleReal<<<nBlocks, nThreads>>>(Dc.cArray(), lambda_, meshSize);
-         pointWiseAddScale<<<nBlocks, nThreads>>>(Dc.cArray(), DcEC.cArray(), 1.0 - lambda_, meshSize);
+         // Dc = (Dc * lambda_) + (DcEC * (1-lambda_))
+         VecOp::addVcVc(Dc, Dc, lambda_, DcEC, 1 - lambda_);
       }
    }
    
@@ -204,29 +189,23 @@ namespace Rpg {
    void EinsteinCrystalPerturbation<D>::computeWcReference()
    {
       const int nMonomer = system().mixture().nMonomer();
-      const int meshSize = system().domain().mesh().size();
       int i, j;
       
-      // GPU resources
-      int nBlocks, nThreads;
-      ThreadGrid::setThreadsLogical(meshSize, nBlocks, nThreads);
-      
-      DArray<RField<D>> const * Wr = &w0_;
       // Loop over eigenvectors (i is an eigenvector index)
       for (i = 0; i < nMonomer; ++i) {
 
          // Loop over grid points to zero out field wc0_[i]
          RField<D>& Wc = wc0_[i];
-         assignUniformReal<<<nBlocks, nThreads>>>(Wc.cArray(), 0, meshSize);
-         
+
+         VecOp::eqS(Wc, 0.0); // initialize to 0
+
          // Loop over monomer types (j is a monomer index)
          for (j = 0; j < nMonomer; ++j) {
             cudaReal vec;
             vec = (cudaReal) simulator().chiEvecs(i, j)/nMonomer;
 
             // Loop over grid points
-            pointWiseAddScale<<<nBlocks, nThreads>>>
-               (Wc.cArray(), (*Wr)[j].cArray(), vec, meshSize);
+            VecOp::addEqVc(Wc, w0_[j], vec);
          }
          
       }

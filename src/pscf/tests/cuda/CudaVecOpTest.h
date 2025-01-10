@@ -36,8 +36,8 @@ private:
    const static int n = 2048; 
 
    // Input and output arrays, real and complex
-   HostDArray<cudaReal> hInReal, hInReal2, hOutReal;
-   DeviceArray<cudaReal> dInReal, dInReal2, dOutReal;
+   HostDArray<cudaReal> hInReal, hInReal2, hOutReal, hOutReal2;
+   DeviceArray<cudaReal> dInReal, dInReal2, dOutReal, dOutReal2;
 
    HostDArray<cudaComplex> hInComplex, hInComplex2, hOutComplex;
    DeviceArray<cudaComplex> dInComplex, dInComplex2, dOutComplex;
@@ -47,7 +47,7 @@ private:
    cudaComplex scalarComplex;
 
    // Input and outputs using standard types, for comparison
-   DArray<numType> refInReal, refInReal2, refOutReal;
+   DArray<numType> refInReal, refInReal2, refOutReal, refOutReal2;
    DArray<std::complex<numType> > refInComplex, refInComplex2, 
                                   refOutComplex;
    numType refScalarReal;
@@ -61,9 +61,11 @@ public:
       hInReal.allocate(n);
       hInReal2.allocate(n);
       hOutReal.allocate(n);
+      hOutReal2.allocate(n);
       dInReal.allocate(n);
       dInReal2.allocate(n);
       dOutReal.allocate(n);
+      dOutReal2.allocate(n);
 
       hInComplex.allocate(n);
       hInComplex2.allocate(n);
@@ -75,6 +77,7 @@ public:
       refInReal.allocate(n);
       refInReal2.allocate(n);
       refOutReal.allocate(n);
+      refOutReal2.allocate(n);
       refInComplex.allocate(n);
       refInComplex2.allocate(n);
       refOutComplex.allocate(n);
@@ -1126,6 +1129,22 @@ public:
    {
       printMethod(TEST_FUNC);
 
+      // ~~~ Test addVcVc ~~~
+      VecOp::addVcVc(dOutReal, dInReal, scalarReal, dInReal2, -1.0);
+      hOutReal = dOutReal;
+      for (int i = 0; i < n; i++) { // get reference array
+         refOutReal[i] = refInReal[i] * refScalarReal - refInReal2[i];
+      }
+      checkEqualReal(hOutReal, refOutReal);
+
+      // ~~~ Test addVcVcVc ~~~
+      VecOp::addVcVcVc(dOutReal, dInReal, scalarReal, dInReal2, -1.0, dInReal, 1.0);
+      hOutReal = dOutReal;
+      for (int i = 0; i < n; i++) { // get reference array
+         refOutReal[i] = refInReal[i] * (refScalarReal + 1) - refInReal2[i];
+      }
+      checkEqualReal(hOutReal, refOutReal);
+
       // ~~~ Test addEqVc ~~~
       VecOp::eqV(dOutReal, dInReal);
       VecOp::addEqVc(dOutReal, dInReal2, scalarReal);
@@ -1136,31 +1155,23 @@ public:
       }
       checkEqualReal(hOutReal, refOutReal);
 
-      VecOp::eqV(dOutReal, dInReal);
-      VecOp::addEqVc(dOutReal, dInReal2, scalarReal, n/4, 0, n/2);
+      // ~~~ Test subVVS ~~~
+      VecOp::subVVS(dOutReal, dInReal, dInReal2, scalarReal);
       hOutReal = dOutReal;
       for (int i = 0; i < n; i++) { // get reference array
-         refOutReal[i] = refInReal[i];
-         if ((i < n*3/4) && (i >= n/4)) {
-            refOutReal[i] += refInReal2[i-(n/4)] * refScalarReal;
-         }
+         refOutReal[i] = refInReal[i] - refInReal2[i] - refScalarReal;
       }
       checkEqualReal(hOutReal, refOutReal);
 
-      // ~~~ Test sqNormV ~~~
-      VecOp::sqNormV(dOutReal, dInComplex);
-      hOutReal = dOutReal;
+      // ~~~ Test divEqVc ~~~
+      VecOp::eqV(dOutComplex, dInComplex);
+      VecOp::divEqVc(dOutComplex, dInReal2, scalarReal);
+      hOutComplex = dOutComplex;
       for (int i = 0; i < n; i++) { // get reference array
-         refOutReal[i] = norm(refInComplex[i]);
+         refOutComplex[i] = refInComplex[i];
+         refOutComplex[i] /= (refInReal2[i] * refScalarReal);
       }
-      checkEqualReal(hOutReal, refOutReal);
-
-      VecOp::sqNormV(dOutReal, dInComplex2, n/4, 0, n/2);
-      hOutReal = dOutReal;
-      for (int i = n/4; i < n*3/4; i++) { // get reference array
-         refOutReal[i] = norm(refInComplex2[i-(n/4)]);
-      }
-      checkEqualReal(hOutReal, refOutReal);
+      checkEqualComplex(hOutComplex, refOutComplex);
 
       // ~~~ Test expVc ~~~
       VecOp::expVc(dOutReal, dInReal, scalarReal);
@@ -1170,12 +1181,36 @@ public:
       }
       checkEqualReal(hOutReal, refOutReal);
 
-      VecOp::expVc(dOutReal, dInReal2, scalarReal, 0, n/4, n/2);
+      // ~~~ Test eqVPair ~~~
+      VecOp::eqVPair(dOutReal, dOutReal2, dInReal);
       hOutReal = dOutReal;
-      for (int i = 0; i < n/2; i++) { // get reference array
-         refOutReal[i] = exp(refInReal2[i+(n/4)] * refScalarReal);
+      hOutReal2 = dOutReal2;
+      for (int i = 0; i < n; i++) { // get reference array
+         refOutReal[i] = refInReal[i];
+         refOutReal2[i] = refInReal[i];
       }
       checkEqualReal(hOutReal, refOutReal);
+      checkEqualReal(hOutReal2, refOutReal2);
+
+      // ~~~ Test mulVVPair ~~~
+      VecOp::mulVVPair(dOutReal, dOutReal2, dInReal, dInReal2, dInReal2);
+      hOutReal = dOutReal;
+      hOutReal2 = dOutReal2;
+      for (int i = 0; i < n; i++) { // get reference array
+         refOutReal[i] = refInReal[i] * refInReal2[i];
+         refOutReal2[i] = refInReal2[i] * refInReal2[i];
+      }
+      checkEqualReal(hOutReal, refOutReal);
+      checkEqualReal(hOutReal2, refOutReal2);
+
+      // ~~~ Test mulEqVPair ~~~
+      VecOp::eqV(dOutReal, dInReal);
+      VecOp::eqV(dOutReal2, dInReal2);
+      VecOp::mulEqVPair(dOutReal, dOutReal2, dInReal2);
+      hOutReal = dOutReal;
+      hOutReal2 = dOutReal2;
+      checkEqualReal(hOutReal, refOutReal);   // same ref. array as above
+      checkEqualReal(hOutReal2, refOutReal2); // same ref. array as above
 
       // ~~~ Test addVMany ~~~
       DArray<DeviceArray<cudaReal> const *> inVecs;
@@ -1197,6 +1232,22 @@ public:
       for (int i = 0; i < n; i++) { // get reference array
          refOutReal[i] = refInReal[i] * refInReal[i] * 
                          refInReal2[i] * refInReal2[i];
+      }
+      checkEqualReal(hOutReal, refOutReal);
+
+      // ~~~ Test sqNormV ~~~
+      VecOp::sqNormV(dOutReal, dInComplex);
+      hOutReal = dOutReal;
+      for (int i = 0; i < n; i++) { // get reference array
+         refOutReal[i] = norm(refInComplex[i]);
+      }
+      checkEqualReal(hOutReal, refOutReal);
+
+      // ~~~ Test sqSqNormV ~~~
+      VecOp::sqSqNormV(dOutReal, dInComplex);
+      hOutReal = dOutReal;
+      for (int i = 0; i < n; i++) { // get reference array
+         refOutReal[i] = std::pow(std::norm(refInComplex[i]), 2.0);
       }
       checkEqualReal(hOutReal, refOutReal);
    }

@@ -3,7 +3,6 @@
 
 #include "GpuTypes.h"      // typedefs used in cuda code
 #include "ThreadGrid.h"    // Management of GPU execution configuration
-#include "LinearAlgebra.h" // Linear algebra kernels 
 #include "VecOp.h"         // Vector operation kernels and wrappers
 #include "Reduce.h"        // Functions using parallel reduction algorithms
 #include "DeviceArray.h"   // Array container stored on device

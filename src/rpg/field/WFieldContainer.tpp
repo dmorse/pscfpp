@@ -10,6 +10,7 @@
 
 #include "WFieldContainer.h"
 #include <rpg/field/FieldIo.h>
+#include <pscf/cuda/VecOp.h>
 
 namespace Pscf {
 namespace Rpg
@@ -199,15 +200,9 @@ namespace Rpg
       UTIL_CHECK(fields.capacity() == nMonomer_);
 
       // Update system wFieldsRGrid
-      // GPU resources
-      int nBlocks, nThreads;
-      ThreadGrid::setThreadsLogical(meshSize_, nBlocks, nThreads);
       for (int i = 0; i < nMonomer_; ++i) {
-         //UTIL_CHECK(fields[i].capacity() == nBasis_)
-         assignReal<<<nBlocks, nThreads>>>(rgrid_[i].cArray(), 
-                                           fields[i].cArray(), 
-                                           meshSize_);
-         //rgrid_[i] = fields[i];
+         UTIL_CHECK(fields[i].capacity() == meshSize_);
+         VecOp::eqV(rgrid_[i], fields[i]);
       }
 
       if (isSymmetric) {
@@ -219,21 +214,18 @@ namespace Rpg
    }
 
    /*
-   * Set new w-field values, using unfoldeded array of r-grid fields.
+   * Set new w-field values, using unfolded array of r-grid fields.
    */
    template <int D>
    void WFieldContainer<D>::setRGrid(DeviceArray<cudaReal> & fields)
    {
       UTIL_CHECK(isAllocatedRGrid_);
-
-      // GPU resources
-      int nBlocks, nThreads;
-      ThreadGrid::setThreadsLogical(meshSize_, nBlocks, nThreads);
+      UTIL_CHECK(fields.capacity() >= meshSize_ * nMonomer_);
 
       for (int i = 0; i < nMonomer_; i++) {
-         assignReal<<<nBlocks, nThreads>>>(rgrid_[i].cArray(), 
-                                           fields.cArray() + i*meshSize_, 
-                                           meshSize_);
+         RField<D> tmp;
+         tmp.associate(fields, i * meshSize_, meshDimensions_);
+         VecOp::eqV(rgrid_[i], tmp);
       }
 
       hasData_ = true;

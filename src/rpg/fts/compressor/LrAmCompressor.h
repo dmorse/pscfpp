@@ -123,11 +123,6 @@ namespace Rpg
       DArray< RField<D> > wFieldTmp_;
       
       /**
-      * New Basis variable used in updateBasis function 
-      */
-      DeviceArray<cudaReal> newBasis_;
-      
-      /**
       * Residual in real space used for linear response anderson mixing.
       */
       RField<D> resid_;

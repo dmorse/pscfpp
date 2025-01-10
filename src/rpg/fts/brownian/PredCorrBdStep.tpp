@@ -14,6 +14,7 @@
 #include <rpg/fts/compressor/Compressor.h>
 #include <rpg/System.h>
 #include <pscf/math/IntVec.h>
+#include <pscf/cuda/VecOp.h>
 #include <util/random/Random.h>
 
 namespace Pscf {
@@ -105,22 +106,14 @@ namespace Rpg {
       // Save current state
       simulator().saveState();
       
-      // GPU resources  
-      int nBlocks, nThreads;
-      ThreadGrid::setThreadsLogical(meshSize, nBlocks, nThreads);
-      
       // Copy current W fields from parent system
-      DArray<RField<D>> const * Wr = &system().w().rgrid();
       for (i = 0; i < nMonomer; ++i) {
-         assignReal<<<nBlocks, nThreads>>>
-            (wp_[i].cArray(), (*Wr)[i].cArray(), meshSize);
-         assignReal<<<nBlocks, nThreads>>>
-            (wf_[i].cArray(), wp_[i].cArray(), meshSize);
+         // wp_[i] and wf_[i] set equal to w-field i
+         VecOp::eqVPair(wp_[i], wf_[i], system().w().rgrid(i));
       }
 
       // Store initial value of pressure field
-      assignReal<<<nBlocks, nThreads>>>
-         (dwp_.cArray(), simulator().wc(nMonomer-1).cArray(), meshSize);
+      VecOp::eqV(dwp_, simulator().wc(nMonomer-1));
 
       // Constants for dynamics
       const double vSystem = system().domain().unitCell().volume();
@@ -133,9 +126,8 @@ namespace Rpg {
       
       // Construct all random displacement components
       for (j = 0; j < nMonomer - 1; ++j) {
-         RField<D> & eta = eta_[j];
-         cudaRandom().normal(eta.cArray(), meshSize, (cudaReal)stddev, (cudaReal)mean);
-         scaleReal<<<nBlocks, nThreads>>>(eta.cArray(), b, meshSize);
+         cudaRandom().normal(eta_[j].cArray(), meshSize, stddev, mean);
+         VecOp::mulEqS(eta_[j], b);
       }
 
       // Compute predicted state wp_, and store initial force dci_
@@ -148,17 +140,15 @@ namespace Rpg {
          RField<D> & dci = dci_[j];
          
          // dwc_[k] = a*dc[k] + eta[k];
-         assignReal<<<nBlocks, nThreads>>>(dwc_.cArray(), eta.cArray(), meshSize);
-         pointWiseAddScale<<<nBlocks, nThreads>>>(dwc_.cArray(), dc.cArray(), a, meshSize);
+         VecOp::addVcVc(dwc_, dc, a, eta, 1.0);
          
          // dci[k] = dc[k];
-         assignReal<<<nBlocks, nThreads>>>(dci.cArray(), dc.cArray(), meshSize);
+         VecOp::eqV(dci, dc);
 
          // Loop over monomer types
          for (i = 0; i < nMonomer; ++i) {
-            RField<D> & wp = wp_[i];
             evec = simulator().chiEvecs(j,i);
-            pointWiseAddScale<<<nBlocks, nThreads>>>(wp.cArray(), dwc_.cArray(), evec, meshSize);
+            VecOp::addEqVc(wp_[i], dwc_, evec);
          }
       }
 
@@ -183,12 +173,11 @@ namespace Rpg {
          RField<D> const & wp = simulator().wc(nMonomer-1);
          
          // dwp_[k] = wp[k] - dwp_[k]
-         pointWiseBinarySubtract<<<nBlocks, nThreads>>>(wp.cArray(), dwp_.cArray(), dwp_.cArray(), meshSize);
+         VecOp::subVV(dwp_, wp, dwp_);
 
          // Adjust pressure field
          for (i = 0; i < nMonomer; ++i) {
-            RField<D> & wf = wf_[i];
-            pointWiseAdd<<<nBlocks, nThreads>>>(wf.cArray(), dwp_.cArray(), meshSize);
+            VecOp::addEqV(wf_[i], dwp_);
          }
          
          // Full step (corrector)
@@ -199,14 +188,11 @@ namespace Rpg {
             RField<D> const & eta = eta_[j];
             
             // dwc_[k] = ha*( dci[k] + dcp[k]) + eta[k];
-            pointWiseBinaryAdd<<<nBlocks, nThreads>>>(dci.cArray(), dcp.cArray(), dwc_.cArray(), meshSize);
-            scaleReal<<<nBlocks, nThreads>>>(dwc_.cArray(), ha, meshSize);
-            pointWiseAdd<<<nBlocks, nThreads>>>(dwc_.cArray(), eta.cArray(), meshSize);
+            VecOp::addVcVcVc(dwc_, dci, ha, dcp, ha, eta, 1.0);
 
             for (i = 0; i < nMonomer; ++i) {
-               RField<D> & wf = wf_[i];
                evec = simulator().chiEvecs(j,i);
-               pointWiseAddScale<<<nBlocks, nThreads>>>(wf.cArray(), dwc_.cArray(), evec, meshSize);
+               VecOp::addEqVc(wf_[i], dwc_, evec);
             }
          }
          

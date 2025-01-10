@@ -14,6 +14,7 @@
 #include <rpg/fts/compressor/Compressor.h>
 #include <rpg/System.h>
 #include <pscf/math/IntVec.h>
+#include <pscf/cuda/VecOp.h>
 
 namespace Pscf {
 namespace Rpg {
@@ -72,7 +73,6 @@ namespace Rpg {
       }
       UTIL_CHECK(dwc_.capacity() == meshSize);
       gaussianField_.allocate(dimensions);
-      dwd_.allocate(dimensions);
    }
 
    template <int D>
@@ -85,16 +85,10 @@ namespace Rpg {
       
       // Save current state
       simulator().saveState();
-      
-      // GPU resources
-      int nBlocks, nThreads;
-      ThreadGrid::setThreadsLogical(meshSize, nBlocks, nThreads);
 
       // Copy current W fields from parent system into w_
-      DArray<RField<D>> const * Wr = &system().w().rgrid();
       for (i = 0; i < nMonomer; ++i) {
-         assignReal<<<nBlocks, nThreads>>>
-            (w_[i].cArray(), (*Wr)[i].cArray(), meshSize);
+         VecOp::eqV(w_[i], system().w().rgrid(i));
       }
       
       // Constants for dynamics
@@ -113,25 +107,16 @@ namespace Rpg {
          RField<D> const & dc = simulator().dc(j);
          
          // Generagte normal distributed random floating point numbers
-         cudaRandom().normal(gaussianField_.cArray(), meshSize, (cudaReal)stddev, (cudaReal)mean);
-         
-         // dwr
-         scaleReal<<<nBlocks, nThreads>>>(gaussianField_.cArray(), b, meshSize);
-         
-         // dwd
-         assignReal<<<nBlocks, nThreads>>>(dwd_.cArray(), dc.cArray(), meshSize);
-         scaleReal<<<nBlocks, nThreads>>>(dwd_.cArray(), a, meshSize);
+         cudaRandom().normal(gaussianField_.cArray(), meshSize, stddev, mean);
          
          // dwc
-         pointWiseBinaryAdd<<<nBlocks, nThreads>>>
-            (dwd_.cArray(), gaussianField_.cArray(), dwc_.cArray(), meshSize);
+         VecOp::addVcVc(dwc_, dc, a, gaussianField_, b);
          
          // Loop over monomer types
          for (i = 0; i < nMonomer; ++i) {
             RField<D> & w = w_[i];
             evec = simulator().chiEvecs(j,i);
-            pointWiseAddScale<<<nBlocks, nThreads>>>
-               (w.cArray(), dwc_.cArray(), evec, meshSize);
+            VecOp::addEqVc(w, dwc_, evec);
          }
          
       }
