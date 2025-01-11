@@ -35,7 +35,7 @@ namespace Rpc {
    * 
    * The order parameter is defined as
    * \f[
-   *     psi(G)  = sum[W_(G)^4]^(1/4)
+   *     \Psi_{\text{fourth}} \equiv \left[ \sum W_{-}(\bf G)^4 \right] ^{\frac{1}{4}}
    * \f]
    * where \f$W_(G)\f$ is a Fourier mode of fluctuating field 
    * 

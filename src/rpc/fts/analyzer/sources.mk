@@ -6,7 +6,6 @@ rpc_fts_analyzer_= \
   rpc/fts/analyzer/TrajectoryWriter.cpp \
   rpc/fts/analyzer/ConcentrationWriter.cpp \
   rpc/fts/analyzer/HamiltonianAnalyzer.cpp \
-  rpc/fts/analyzer/HamiltonianAutoCorr.cpp \
   rpc/fts/analyzer/BinaryStructureFactorGrid.cpp \
   rpc/fts/analyzer/StepLogger.cpp \
   rpc/fts/analyzer/ThermoDerivativeAnalyzer.cpp \

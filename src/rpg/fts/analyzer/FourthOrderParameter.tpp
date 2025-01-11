@@ -54,8 +54,8 @@ namespace Rpg {
    void FourthOrderParameter<D>::readParameters(std::istream& in) 
    {
       readInterval(in);
-      readOptional(in, "hasAverage", hasAverage_);
       readOutputFileName(in);
+      readOptional(in, "hasAverage", hasAverage_);
       readOptional(in,"nSamplePerBlock", nSamplePerBlock_);
       
       system().fileMaster().openOutputFile(outputFileName(), outputFile_);

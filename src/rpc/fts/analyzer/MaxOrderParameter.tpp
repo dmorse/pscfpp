@@ -53,8 +53,8 @@ namespace Rpc {
    void MaxOrderParameter<D>::readParameters(std::istream& in) 
    {
       readInterval(in);
-      readOptional(in, "hasAverage", hasAverage_);
       readOutputFileName(in);
+      readOptional(in, "hasAverage", hasAverage_);
       readOptional(in,"nSamplePerBlock", nSamplePerBlock_);
       
       system().fileMaster().openOutputFile(outputFileName(), outputFile_);
@@ -103,7 +103,7 @@ namespace Rpc {
    }
 
    /* 
-   * Increment structure factors for all wavevectors and modes.
+   * Compute a sampled max order parameter and update the accumulator.
    */
    template <int D>
    void MaxOrderParameter<D>::sample(long iStep) 

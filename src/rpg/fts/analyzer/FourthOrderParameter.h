@@ -37,9 +37,9 @@ namespace Rpg {
    * 
    * The order parameter is defined as
    * \f[
-   *     psi(k)  = sum[W_(k)^4]^(1/4)
+   *     \Psi_{\text{fourth}} \equiv \left[ \sum W_{-}(\bf G)^4 \right] ^{\frac{1}{4}}
    * \f]
-   * where \f$W_(k)\f$ is a Fourier mode of fluctuating field 
+   * where \f$W_(G)\f$ is a Fourier mode of fluctuating field 
    * 
    * \ingroup Rpg_Fts_Analyzer_Module
    */

@@ -33,7 +33,8 @@ namespace Rpg {
     : Analyzer<D>(),
       simulatorPtr_(&simulator),
       systemPtr_(&(simulator.system())),
-      isInitialized_(false)
+      isInitialized_(false),
+      nSamplePerBlock_(1)
    {  setClassName("BinaryStructureFactorGrid"); }
 
    /*
@@ -44,7 +45,7 @@ namespace Rpg {
    {
       readInterval(in);
       readOutputFileName(in);
-      read(in,"nSamplePerBlock", nSamplePerBlock_);
+      readOptional(in,"nSamplePerBlock", nSamplePerBlock_);
    }
    
    /*
