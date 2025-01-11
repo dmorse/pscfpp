@@ -1,0 +1,61 @@
+/*! 
+\page rpc_BinaryStructureFactorGrid_page Rpc::BinaryStructureFactorGrid
+
+This analyzer calculates the spherical average of structure factor 
+for all wavevectors for a AB diblock copolymer system. 
+
+\section rpc_BinaryStructureFactorGrid_algorithm_sec Mathematical Formula
+
+\f[
+   \frac{S(\mathbf {G})}{\rho_0 N} 
+   \equiv \frac{n}{\chi_{b} N^2} 
+   \left\langle
+   W_{-}(\mathbf {G})W_{-}(-\mathbf{G}) 
+   \right\rangle
+   - \frac{1}{2 \chi_b N}
+\f]
+where \f$ n \f$ denote the number of monomer in the system, 
+\f$ S(\mathbf {G}) \f$ denotes spherical average of structure 
+factor for wavevector \f$\bf G\f$, and \f$ \left\langle 
+W_{-}(\mathbf {G})W_{-}(-\mathbf{G}) \right\rangle\f$ denotes the
+ensemble average of Fourier components of the exchange field.
+The Fourier transformation is defined in \ref scft_fourier_page.
+
+\section rpc_BinaryStructureFactorGrid_parameter_sec Parameter File
+
+The full parameter file format, including all optional parameters, 
+is shown below:
+\code
+BinaryStructureFactorGrid{
+  interval           int
+  outputFileName     string
+  nSamplePerBlock*   int      (default 1)
+}
+\endcode
+Meanings of the parameters are described briefly below:
+<table>
+  <tr>
+    <td> <b> Label </b>  </td>
+    <td> <b> Description </b>  </td>
+  </tr>
+  <tr>
+    <td> interval </td>
+    <td> number of steps between data samples </td>
+  </tr>
+    <tr>
+     <td> outputFileName </td>
+     <td> name of output file </td>
+  </tr>
+  <tr>
+     <td>nSamplePerBlock</td>
+     <td>number of samples per block average</td>
+  </tr>
+</table>
+
+\section rpc_BinaryStructureFactorGrid_output_sec Output
+At the end of the simulation, \f$ \mathbf {G} R_{0} \f$, where 
+\f$ R_{0} = N^{1/2} b\f$ is the end-to-end length of the polymer 
+chain, and  \f$ \frac{S(\mathbf {G})}{\rho_0 N} \f$ for each wavevector 
+\f$ \mathbf {G}\f$ are output to {outputFileName}.
+
+*/

@@ -56,8 +56,8 @@ namespace Rpc
    void ThermoDerivativeAnalyzer<D>::readParameters(std::istream& in) 
    {
       readInterval(in);
+      read(in, "outputFileName", outputFileName_);
       readOptional(in, "hasAverage", hasAverage_);
-      readOptional(in, "outputFileName", outputFileName_);
       
       if (!outputFileName_.empty()) {
          hasOutputFile_ = true;
@@ -126,9 +126,7 @@ namespace Rpc
          
          std::string fileName;
          std::string type;
-         type = parameterType();
-         type.erase(std::remove(type.begin(), type.end(), ' '), type.end());
-         fileName = "out/" + type +  ".ave";
+         fileName = outputFileName_+  ".ave";
          system().fileMaster().openOutputFile(fileName, outputFile_);
          
          double ave, err;

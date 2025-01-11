@@ -85,7 +85,7 @@ namespace Rpc {
       int j, k;
       for (j = 0; j < nMonomer - 1; ++j) {
          RField<D>& eta = etaNew(j);
-         for (k = 0; k < meshSize - 1; ++k) {
+         for (k = 0; k < meshSize; ++k) {
             eta[k] = b*random().gaussian();
          }
       }

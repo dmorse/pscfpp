@@ -1,0 +1,37 @@
+/*! 
+\page rpc_TrajectoryWriter_page Rpc::TrajectoryWriter
+
+This analyzer periodically writes the field configuration 
+for each component to file. 
+
+\section rpc_TrajectoryWriter_parameter_sec Parameter File
+
+The full parameter file format is shown below:
+\code
+TrajectoryWriter{
+  interval           int
+  outputFileName     string
+}
+\endcode
+Meanings of the parameters are described briefly below:
+<table>
+  <tr>
+    <td> <b> Label </b>  </td>
+    <td> <b> Description </b>  </td>
+  </tr>
+  <tr>
+    <td> interval </td>
+    <td> number of steps between data samples </td>
+  </tr>
+    <tr>
+     <td> outputFileName </td>
+     <td> name of output file </td>
+  </tr>
+</table>
+
+\section rpc_TrajectoryWriter_output_sec Output
+
+During the simulation, the field configuration is output the 
+file {outputFileName} every interval simulation steps.
+
+*/

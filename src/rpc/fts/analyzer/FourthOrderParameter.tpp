@@ -7,10 +7,12 @@
 #include <rpc/System.h>
 
 #include <prdc/cpu/RField.h>
+#include <prdc/crystal/shiftToMinimum.h>
 
 #include <pscf/mesh/MeshIterator.h>
 #include <pscf/math/IntVec.h>
 
+#include <util/containers/DArray.h>
 #include <util/param/ParamComposite.h>
 #include <util/misc/FileMaster.h>
 #include <util/misc/ioUtil.h>
@@ -25,6 +27,7 @@
 #include <vector>
 #include <numeric>
 #include <cmath>
+#include <set>
 
 namespace Pscf {
 namespace Rpc {
@@ -54,8 +57,8 @@ namespace Rpc {
    void FourthOrderParameter<D>::readParameters(std::istream& in) 
    {
       readInterval(in);
-      readOptional(in, "hasAverage", hasAverage_);
       readOutputFileName(in);
+      readOptional(in, "hasAverage", hasAverage_);
       readOptional(in,"nSamplePerBlock", nSamplePerBlock_);
       
       system().fileMaster().openOutputFile(outputFileName(), outputFile_);
@@ -74,12 +77,8 @@ namespace Rpc {
          UTIL_THROW("The FourthOrderParameter Analyzer is designed specifically for diblock copolymer system. Please verify the number of monomer types in your system.");
       }
       
-      //Allocate variables
       IntVec<D> const & dimensions = system().domain().mesh().dimensions();
-      if (!isInitialized_){
-         wK_.allocate(dimensions);
-      }
-      
+
       // Compute Fourier space dimension
       for (int i = 0; i < D; ++i) {
          if (i < D - 1) {
@@ -90,7 +89,16 @@ namespace Rpc {
             kSize_ *= (dimensions[i]/2 + 1);
          }
       }
-      
+
+      // Allocate variables
+      if (!isInitialized_){
+         wK_.allocate(dimensions);
+         prefactor_.allocate(kSize_);
+         for (int i = 0; i < kSize_; ++i){
+            prefactor_[i] = 0;
+         }
+      }
+         
       isInitialized_ = true;
       
       // Clear accumulators
@@ -101,6 +109,8 @@ namespace Rpc {
       if (!isInitialized_) {
          UTIL_THROW("Error: object is not initialized");
       }
+      
+      computePrefactor();
    }
 
    /* 
@@ -141,11 +151,102 @@ namespace Rpc {
       for (itr.begin(); !itr.atEnd(); ++itr) {
          std::complex<double> wK(wK_[itr.rank()][0], wK_[itr.rank()][1]);
          psi[itr.rank()] = std::norm(wK) * std::norm(wK);
+         psi[itr.rank()] *= prefactor_[itr.rank()];
       }
       
       // Get sum over all wavevectors
       FourthOrderParameter_ = std::accumulate(psi.begin(), psi.end(), 0.0);
       FourthOrderParameter_ = std::pow(FourthOrderParameter_, 0.25);
+      
+      #if 0
+      // Debugging output
+      IntVec<D> meshDimensions = system().domain().mesh().dimensions(); 
+      UnitCell<D> const & unitCell = system().domain().unitCell();
+      IntVec<D> G; 
+      IntVec<D> Gmin;
+      IntVec<D> nGmin;
+      double kSq;
+      std::vector<double> k(kSize_);
+      
+      // Calculate GminList
+      for (itr.begin(); !itr.atEnd(); ++itr){
+         G = itr.position();
+         Gmin = shiftToMinimum(G, meshDimensions, unitCell);
+         kSq = unitCell.ksq(Gmin);
+         k[itr.rank()] = kSq;
+      }
+      
+      auto maxIt = std::max_element(psi.begin(), psi.end());
+      
+      // Calculate the index of the maximum element
+      size_t maxIndex = std::distance(psi.begin(), maxIt);
+      double kmax = k[maxIndex];
+      
+      Log::file() << std::endl;
+      for (itr.begin(); !itr.atEnd(); ++itr){
+         if (k[itr.rank()] == kmax){
+            G = itr.position();
+            Gmin = shiftToMinimum(G, meshDimensions, unitCell);
+            Log::file() << "ksq: " << k[itr.rank()] << std::endl;
+            Log::file() << " G: " << G<< std::endl;
+            Log::file() << " Gmin: " << Gmin<< std::endl;
+            Log::file() << " prefactor: " <<  prefactor_[itr.rank()]<< std::endl;
+            Log::file() << " psi: " <<  psi[itr.rank()]<< std::endl;
+         }
+      
+      }
+      #endif
+      
+   }
+   
+   template <int D>
+   void FourthOrderParameter<D>::computePrefactor()
+   {
+      IntVec<D> meshDimensions = system().domain().mesh().dimensions(); 
+      UnitCell<D> const & unitCell = system().domain().unitCell();
+      IntVec<D> G; 
+      IntVec<D> Gmin;
+      IntVec<D> nGmin;
+      DArray<IntVec<D>> GminList;
+      GminList.allocate(kSize_);
+      MeshIterator<D> itr(kMeshDimensions_);
+      MeshIterator<D> searchItr(kMeshDimensions_);
+      
+      // Calculate GminList
+      for (itr.begin(); !itr.atEnd(); ++itr){
+         G = itr.position();
+         Gmin = shiftToMinimum(G, meshDimensions, unitCell);
+         GminList[itr.rank()] = Gmin;
+      }
+      
+      // Compute prefactor for each G wavevector
+      for (itr.begin(); !itr.atEnd(); ++itr){
+         bool inverseFound = false;
+
+         // If prefactor of current wavevector has not been assigned
+         if (prefactor_[itr.rank()] == 0){
+            Gmin = GminList[itr.rank()];
+            
+            // Compute inverse of wavevector
+            nGmin.negate(Gmin);
+            
+            // Search for inverse of wavevector
+            searchItr = itr;
+            for (; !searchItr.atEnd(); ++searchItr){
+               if (nGmin == GminList[searchItr.rank()]){
+                  prefactor_[itr.rank()] = 1.0/2.0;
+                  prefactor_[searchItr.rank()] = 1.0/2.0;
+                  inverseFound = true;
+               }
+            }
+            
+            if (inverseFound == false){
+               prefactor_[itr.rank()]  = 1.0;
+            }
+            
+         }
+         
+      }
    }
    
    /*
