@@ -492,16 +492,6 @@ namespace Rpc {
                            bool & isSymmetric) const;
 
       /**
-      * Read and validate mesh dimensions from field file header.
-      *
-      * An Exception is thrown if mesh dimensions in the file do not 
-      * match those of the associated Mesh object.
-      *
-      * \param in input field file stream
-      */ 
-      void readMeshDimensions(std::istream& in) const;
-
-      /**
       * Write header for field file (fortran pscf format)
       *
       * \param out  output stream (i.e., output file)
@@ -512,18 +502,6 @@ namespace Rpc {
       void writeFieldHeader(std::ostream& out, int nMonomer,
                             UnitCell<D> const & unitCell,
                             bool isSymmetric = true) const;
-
-      /**
-      * Read and validate mesh dimensions from field file header.
-      *
-      * An Exception is thrown if mesh dimensions in the file do not 
-      * match those of the associated Mesh object.
-      *
-      * \param out  output stream for field file
-      * \param meshDimensions  dimensions of mesh used for field file
-      */ 
-      void writeMeshDimensions(std::ostream& out, 
-                               IntVec<D> const& meshDimensions) const;
 
       ///@}
       /// \name Field Format Conversion

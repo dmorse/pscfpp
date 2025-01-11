@@ -13,10 +13,10 @@
 #include <prdc/cpu/RField.h>
 #include <prdc/cpu/RFieldDft.h>
 
-#include <prdc/crystal/shiftToMinimum.h>
-#include <prdc/crystal/UnitCell.h>
 #include <prdc/crystal/Basis.h>
-
+#include <prdc/crystal/UnitCell.h>
+#include <prdc/crystal/shiftToMinimum.h>
+#include <prdc/crystal/fieldHeader.h>
 #include <pscf/mesh/Mesh.h>
 #include <pscf/mesh/MeshIterator.h>
 #include <pscf/mesh/MeshIteratorFortran.h>
@@ -26,6 +26,8 @@
 #include <util/misc/Log.h>
 #include <util/format/Int.h>
 #include <util/format/Dbl.h>
+
+#include <string>
 
 namespace Pscf {
 namespace Prdc {
@@ -68,9 +70,28 @@ namespace Prdc {
    }
 
    /*
+   * Inspect dimensions of a DArray of fields, each of type FT.
+   */
+   template <int D, class FT>
+   void inspectFields(DArray<FT> const& fields,
+                      IntVec<D> & dimensions,
+                      int & nMonomer)
+   {
+      UTIL_CHECK(fields.isAllocated());
+      nMonomer = fields.capacity();
+      UTIL_CHECK(nMonomer > 0);
+
+      dimensions = fields[0].dimensions();
+      for (int i = 0; i < nMonomer; ++i) {
+         UTIL_CHECK(dimensions[i] > 0);
+         UTIL_CHECK(fields[i].dimensions() == dimensions);
+      }
+   }
+
+   /*
    * Check allocation of an array of arrays of type AT, allocate if needed.
    */
-   template <int D, class AT>
+   template <class AT>
    void checkAllocateArrays(DArray<AT>& arrays,
                             int capacity,
                             int nMonomer)
@@ -90,7 +111,60 @@ namespace Prdc {
       }
    }
 
+   /*
+   * Inspect dimensions of an array of arrays of type AT.
+   */
+   template <class AT>
+   void inspectArrays(DArray<AT> const& arrays,
+                    int & capacity,
+                    int & nMonomer)
+   {
+      UTIL_CHECK(arrays.isAllocated());
+      nMonomer = arrays.capacity();
+      UTIL_CHECK(nMonomer > 0);
+
+      capacity = arrays[0].capacity();
+      UTIL_CHECK(capacity > 0);
+      for (int i = 0; i < nMonomer; ++i) {
+         UTIL_CHECK(arrays[i].capacity() == capacity);
+      }
+   }
+
    // RGrid File Io Templates
+
+   template <int D>
+   void readMeshDimensions(std::istream& in,
+                           IntVec<D> const& meshDimensions) 
+   {
+      // Read and check input stream mesh dimensions
+      std::string label;
+      in >> label;
+      if (label != "mesh" && label != "ngrid") {
+         std::string msg =  "\n";
+         msg += "Error reading field file:\n";
+         msg += "Expected mesh or ngrid, but found [";
+         msg += label;
+         msg += "]";
+         UTIL_THROW(msg.c_str());
+      }
+      IntVec<D> meshDimensionsIn;
+      in >> meshDimensionsIn;
+      if (meshDimensionsIn != meshDimensions) {
+         Log::file()
+           << "Inconsistent mesh dimensions:\n"
+           << "meshDimensions (expected)  = " << meshDimensions << "\n"
+           << "meshDimensions (from file) = " << meshDimensionsIn << "\n";
+         UTIL_THROW("Unexpected mesh dimensions in field file header");
+      }
+   }
+
+   template <int D>
+   void writeMeshDimensions(std::ostream &out,
+                            IntVec<D> const& meshDimensions)
+   {
+      out << "mesh " <<  std::endl
+          << "           " << meshDimensions << std::endl;
+   }
 
    template <int D, class AT>
    void readRGridData(std::istream& in,
@@ -249,8 +323,45 @@ namespace Prdc {
       }
    }
 
+   // Functions for files in symmetry-adapted basis format
+
    /*
-   * Read a set of fields in basis format.
+   * Read the number of basis functions from a field file header.
+   */
+   int readNBasis(std::istream& in)
+   {
+   
+      // Read the label, which can be N_star or N_basis
+      std::string label;
+      in >> label;
+      if (label != "N_star" && label != "N_basis") {
+         std::string msg =  "\n";
+         msg += "Error reading field file:\n";
+         msg += "Expected N_basis or N_star, but found [";
+         msg += label;
+         msg += "]";
+         UTIL_THROW(msg.c_str());
+      }
+ 
+      // Read the value of nBasis
+      int nBasis;
+      in >> nBasis;
+      UTIL_CHECK(nBasis > 0);
+
+      return nBasis;
+   }
+
+   /*
+   * Write the number of basis functions to a field file header.
+   */
+   void writeNBasis(std::ostream& out, int nBasis)
+   {
+      out << "N_basis      " << std::endl
+          << "             " << nBasis << std::endl;
+   }
+
+   /*
+   * Read the data section for an array of fields in basis format.
    */
    template <int D>
    void readBasisData(std::istream& in,
@@ -258,7 +369,7 @@ namespace Prdc {
                       UnitCell<D> const& unitCell,
                       Mesh<D> const& mesh,
                       Basis<D> const& basis,
-                      int nStarIn)
+                      int nBasisIn)
    {
       UTIL_CHECK(basis.isInitialized());
       UTIL_CHECK(fields.isAllocated());
@@ -276,9 +387,10 @@ namespace Prdc {
          }
       }
 
-      // Reset nStarIn = min(nStarIn, fieldCapacity)
-      if (fieldCapacity < nStarIn) {
-         nStarIn = fieldCapacity;
+      // Reset nBasis = min(nBasisIn, fieldCapacity)
+      int nBasis = nBasisIn;
+      if (fieldCapacity < nBasisIn) {
+         nBasis = fieldCapacity;
       }
 
       // Allocate temp arrays used to read in components
@@ -301,7 +413,7 @@ namespace Prdc {
 
       // Loop over stars in input file to read field components
       int i = 0;
-      while (i < nStarIn) {
+      while (i < nBasis) {
 
          // Read next line of data
          for (int j = 0; j < nMonomer; ++j) {
@@ -489,7 +601,7 @@ namespace Prdc {
 
          }   // if (waveExists && sizeMatches)
 
-      }   // end while (i < nStarIn)
+      }   // end while (i < nBasis)
 
       if (nReversedPair > 0) {
          Log::file() << "\n";
@@ -854,15 +966,92 @@ namespace Prdc {
       if ((cancelledError < epsilon) && (uncancelledError < epsilon)) {
          return true;
       } else if (verbose) {
-         Log::file() << std::endl
-                     << "Maximum coefficient of a cancelled star: "
-                     << cancelledError << std::endl
-                     << "Maximum error of coefficient for uncancelled star: "
-                     << uncancelledError << std::endl;
+         Log::file() 
+              << std::endl
+              << "Maximum coefficient of a cancelled star: "
+              << cancelledError << std::endl
+              << "Maximum error of coefficient for an uncancelled star: "
+              << uncancelledError << std::endl;
       }
       return false;
    }
 
+   // Field file manipulations
+
+   template <int D, class AT>
+   void replicateUnitCell(std::ostream &out,
+                          DArray< AT > const & fields,
+                          IntVec<D> const & meshDimensions,
+                          UnitCell<D> const & unitCell,
+                          IntVec<D> const & replicas)
+   {
+      // Obtain number of monomer types
+      int nMonomer = fields.capacity();
+      UTIL_CHECK(nMonomer > 0);
+
+      // Compute properties of mesh for replicated fields
+      IntVec<D> repDimensions;  // Dimensions
+      int repSize = 1;          // Total number of grid points
+      for (int i = 0; i < D; ++i) {
+         UTIL_CHECK(replicas[i] > 0);
+         UTIL_CHECK(meshDimensions[i] > 0);
+         repDimensions[i] = replicas[i] * meshDimensions[i];
+         repSize *= repDimensions[i];
+      }
+
+      // Allocate arrays for replicated fields
+      DArray< DArray<double> > repFields;
+      repFields.allocate(nMonomer);
+      for (int i = 0; i < nMonomer; ++i) {
+         repFields[i].allocate(repSize);
+      }
+
+      // Replicate data
+      Mesh<D> mesh(meshDimensions);
+      Mesh<D> cellMesh(replicas);
+      Mesh<D> repMesh(repDimensions);
+      MeshIterator<D> iter(meshDimensions);
+      MeshIterator<D> cellIter(replicas);
+      IntVec<D> position;
+      IntVec<D> cellPosition;
+      IntVec<D> repPosition;
+      double value;
+      int repRank;
+      for (int i = 0; i < nMonomer; ++i) {
+         for (iter.begin(); !iter.atEnd(); ++iter) {
+            position = iter.position();
+            value = fields[i][iter.rank()];
+            for (cellIter.begin(); !cellIter.atEnd(); ++cellIter) {
+               cellPosition = cellIter.position(); 
+               for (int i=0; i < D; ++i) {
+                  repPosition[i] = position[i] 
+                                 + meshDimensions[i]*cellPosition[i];
+               }
+               repRank = repMesh.rank(repPosition);
+               repFields[i][repRank] = value;
+            }
+         }
+      }
+
+      // Set up UnitCell for replicated fields
+      UnitCell<D> cell;
+      FSArray<double, 6> parameters;
+      int nParameter = unitCell.nParameter();
+      for (int i = 0; i < nParameter; i++) {
+         parameters[i]=  replicas[i]* unitCell.parameter(i);
+      }
+      cell.set(unitCell.lattice(), parameters);
+
+      // Write header
+      int v1 = 1;
+      int v2 = 0;
+      std::string gName = "";
+      Pscf::Prdc::writeFieldHeader(out, v1, v2, cell, gName, nMonomer);
+      writeMeshDimensions(out, repDimensions);
+
+      // Write field data
+      writeRGridData(out, repFields, repDimensions, nMonomer);
+   }
 
 } // namespace Prdc
 } // namespace Pscf

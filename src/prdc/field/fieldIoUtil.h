@@ -11,6 +11,8 @@
 #include <util/containers/DArray.h>   
 #include <pscf/math/IntVec.h>   
 
+#include <string>
+
 // Forward declarations for classes used only via references or pointers
 namespace Pscf {
    template <int D> class Mesh;
@@ -32,8 +34,9 @@ namespace Prdc {
    * Check allocation of a single field, allocate if necessary.
    *
    * Template parameter FT is a field type, such as RField<D> or 
-   * RFieldDft<D>, that has an allocate statement that takes an
-   * IntVec<D> of mesh dimensions.
+   * RFieldDft<D>, that has an allocate function that takes an 
+   * IntVec<D> of mesh dimensions, and a dimensions function that
+   * returns an IntVec<D> of mesh dimensions.
    *
    * On successful exit, the mesh dimensions for the field are
    * equal to those given in parameter meshDimensions.
@@ -54,7 +57,8 @@ namespace Prdc {
    *
    * Template parameter FT is a field type, such as RField<D> or 
    * RFieldDft<D>, that has an allocate function that takes an 
-   * IntVec<D> of mesh dimensions.
+   * IntVec<D> of mesh dimensions, and a dimensions function that
+   * returns an IntVec<D> of mesh dimensions.
    *
    * On successful exit, the capacity of the DArray fields is equal
    * to nMonomer, and the mesh dimensions for each field are equal to
@@ -65,14 +69,33 @@ namespace Prdc {
    * If the arrray is not allocated on entry, it is allocated with 
    * the required dimensions.
    *
-   * \param fields  DArray of fields of type FT
-   * \param dimensions  required mesh dimensions
-   * \param nMomoner  number of monomer types (in)
+   * \param fields  DArray of fields of type FT (in/out)
+   * \param dimensions  required mesh dimensions (in)
+   * \param nMomoner  required number of monomer types (in)
    */
    template <int D, class FT>
    void checkAllocateFields(DArray< FT >& fields, 
                             IntVec<D> const& dimensions,
                             int nMonomer);
+
+   /**
+   * Inspect dimensions of a DArray of fields, each of type FT.
+   *
+   * Template parameter AT is an allocatable array type, such as 
+   * Util::DArray<double> or Pscf::HostDArray<double>, that has an allocate 
+   * function that takes an integer capacity as its only parameter.
+   *
+   * An Exception is thrown if fields is not allocated, or if the fields
+   * do not all have the same positive list of dimensions.
+   *
+   * \param fields  DArray of fields (in)
+   * \param dimensions  dimensions mesh for each field (out)
+   * \param nMonomer  number of fields, or monomer types (out)
+   */
+   template <int D, class FT>
+   void inspectFields(DArray<FT> const & fields,
+                      IntVec<D> & dimensions,
+                      int & nMonomer);
 
    /**
    * Check allocation of a DArray of 1D arrays, allocate if necessary.
@@ -81,7 +104,7 @@ namespace Prdc {
    * Util::DArray<double> or Pscf::HostDArray<double>, that has an allocate 
    * function that takes an integer capacity as its only parameter.
    *
-   * On successful exit, the capacity of the container arrays is equal to 
+   * On successful exit, the capacity of the arrays container is equal to 
    * the parameter nMonomer, and the capacity for each element of type AT 
    * is equal to the parameter capacity.
    *
@@ -90,16 +113,54 @@ namespace Prdc {
    * not allocated on entry, it is allocated with the required dimensions.
    *
    * \param arrays  DArray of array of type AT (in/out)
-   * \param dimensions  required mesh dimensions (in)
-   * \param nMomoner  number of monomer types (in)
+   * \param capacity  required capacity of each array (in)
+   * \param nMonomer  required number of arrays, or monomer types (in)
    */
    template <int D, class AT>
    void checkAllocateArrays(DArray< AT >& arrays, 
-                            IntVec<D> const& dimensions,
+                            int capacity,
                             int nMonomer);
+
+   /**
+   * Inspect dimensions of a DArray of 1D arrays, each of type AT.
+   *
+   * An Exception is thrown if the arrays container is not allocated, or 
+   * if the 1D arrays do not all have the same positive capacity.
+   *
+   * \param arrays  DArray of arrays (in)
+   * \param capacity  capacity of each array (out)
+   * \param nMonomer  number of arrays, or monomer types (out)
+   */
+   template <class AT>
+   void inspectArrays(DArray<AT> const & arrays,
+                      int & capacity,
+                      int & nMonomer);
 
 
    // Templates for RGrid data IO
+
+   /**
+   * Read mesh dimensions from a field file header.
+   * 
+   * An Exception is thrown if the mesh dimensions in the file do not
+   * match those given by the input vector meshDimensions.
+   *
+   * \param in  input stream
+   * \param meshDimensions  expected values for mesh dimensions
+   */
+   template <int D>
+   void readMeshDimensions(std::istream& in,
+                           IntVec<D> const& meshDimensions);
+
+   /**
+   * Write mesh dimensions to a field file header.
+   * 
+   * \param in  input stream
+   * \param meshDimensions  vector of integer mesh dimensions
+   */
+   template <int D>
+   void writeMeshDimensions(std::ostream &out,
+                            IntVec<D> const& meshDimensions);
 
    /**
    * Read data for array of r-grid fields, with no header section.
@@ -253,6 +314,22 @@ namespace Prdc {
    // Templates for Io of symmetrized basis format
 
    /**
+   * Read the number of basis functions from a basis field file.
+   *
+   * \param in input stream
+   * \return value of nBasis obtained from the file
+   */
+   int readNBasis(std::istream& in);
+   
+   /**
+   * Write the number of basis functions to a basis field file.
+   *
+   * \param out output stream
+   * \param value  value of nBasis 
+   */
+   void writeNBasis(std::ostream& in, int nBasis);
+   
+   /**
    * Read a set of fields in basis format.
    *
    * The field header should be read before calling this function to 
@@ -355,6 +432,31 @@ namespace Prdc {
                     double epsilon = 1.0e-8,
                     bool verbose = true);
 
+   // Field manipulation utilities
+
+   /**
+   * Write r-grid fields in a replicated unit cell to std::ostream.
+   *
+   * This function takes an input array of periodic fields and outputs
+   * them within an expanded unit cell in which the original input unit 
+   * cell has been replicated a specified number of times in each 
+   * direction. Results are written to an std::ostream output stream.
+   *
+   * Element i of the replicas IntVec<D> parameter contains the 
+   * number of unit cell replicas along direction i. 
+   * 
+   * \param out  output stream (i.e., output file)
+   * \param fields  array of RField (r-space) fields to be replicated
+   * \param meshDimensions dimensions of original mesh for fields
+   * \param unitCell  original crystallographic unit cell
+   * \param replicas  number of unit cell replicas in each direction
+   */
+   template <int D, class AT>
+   void replicateUnitCell(std::ostream& out,
+                          DArray<AT > const & fields,
+                          IntVec<D> const & meshDimensions,
+                          UnitCell<D> const & unitCell,
+                          IntVec<D> const & replicas);
 
 } // namespace Prdc
 } // namespace Pscf
