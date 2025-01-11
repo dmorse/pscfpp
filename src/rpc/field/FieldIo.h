@@ -529,7 +529,7 @@ namespace Rpc {
                                DArray< RFieldDft<D> >& out) const;
 
       /**
-      * Convert a field from Fourier grid (k-grid) to symmetrized basis.
+      * Convert a field from Fourier (k-grid) to symmetrized basis form.
       *
       * If the checkSymmetry parameter is true, this function checks if
       * the input field satisfies the space group symmetry to within a
@@ -547,7 +547,7 @@ namespace Rpc {
                                double epsilon = 1.0e-8) const;
 
       /**
-      * Convert fields from Fourier grid (k-grid) to symmetrized basis.
+      * Convert multiple fields from Fourier (k-grid) to symmetrized basis.
       *
       * The in and out parameters are each an array of fields, in which
       * element i is the field associated with monomer type i.
@@ -555,7 +555,7 @@ namespace Rpc {
       * If the checkSymmetry parameter is true, this function checks if
       * the input fields all satisfies the space group symmetry to within
       * a tolerance given by the parameter epsilon, and prints a warning
-      * to Log::file() if one or more fields do not.
+      * to Log::file() for each field that does not.
       *
       * \param in  fields defined as discrete Fourier transforms (k-grid)
       * \param out  components of fields in symmetry adapted basis

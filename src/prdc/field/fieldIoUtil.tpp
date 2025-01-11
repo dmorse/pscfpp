@@ -8,8 +8,6 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "fieldIoUtil.h"
-
 #include <prdc/cpu/RField.h>
 #include <prdc/cpu/RFieldDft.h>
 
@@ -81,10 +79,9 @@ namespace Prdc {
       nMonomer = fields.capacity();
       UTIL_CHECK(nMonomer > 0);
 
-      dimensions = fields[0].dimensions();
+      dimensions = fields[0].meshDimensions();
       for (int i = 0; i < nMonomer; ++i) {
-         UTIL_CHECK(dimensions[i] > 0);
-         UTIL_CHECK(fields[i].dimensions() == dimensions);
+         UTIL_CHECK(fields[i].meshDimensions() == dimensions);
       }
    }
 
@@ -763,19 +760,14 @@ namespace Prdc {
    {
       UTIL_CHECK(basis.isInitialized());
 
+      // Check if input field in k-grid format has specified symmetry
       if (checkSymmetry) {
-         // Check if kgrid has symmetry
          bool symmetric;
          symmetric = hasSymmetry(in, basis, dftDimensions, epsilon, true);
          if (!symmetric) {
             Log::file() << std::endl
-               << "WARNING: non-negligible error in conversion to "
-               << "symmetry-adapted basis format." << std::endl
-               << "   See error values printed above for each "
-               << "asymmetric field." << std::endl
-               << "   The field that is output by the above operation "
-               << "will be a" << std::endl
-               << "   symmetrized version of the input field."
+               << "WARNING: Conversion of asymmetric field to"
+               << "symmetry-adapted basis in Prdc::convertKgridToBasis." 
                << std::endl << std::endl;
          }
       }
@@ -783,13 +775,13 @@ namespace Prdc {
       // Create Mesh<D> with dimensions of DFT Fourier grid.
       Mesh<D> dftMesh(dftDimensions);
 
-      typename Basis<D>::Star const* starPtr;  // pointer to current star
-      typename Basis<D>::Wave const* wavePtr;  // pointer to current wave
-      std::complex<double> component;          // coefficient for star
-      int rank;                                // dft grid rank of wave
-      int is;                                  // star index
-      int ib;                                  // basis index
-      int iw;                                  // wave index
+      typename Basis<D>::Star const* starPtr; // pointer to current star
+      typename Basis<D>::Wave const* wavePtr; // pointer to current wave
+      std::complex<double> component;         // coefficient for star
+      int rank;                               // dft grid rank of wave
+      int is;                                 // star index
+      int ib;                                 // basis index
+      int iw;                                 // wave index
 
       // Initialize all components to zero
       for (is = 0; is < basis.nBasis(); ++is) {
