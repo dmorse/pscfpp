@@ -1,0 +1,37 @@
+/*! 
+\page rpc_ConcentrationWriter_page Rpc::ConcentrationWriter
+
+This analyzer periodically writes the composition configuration 
+for each component to file. 
+
+\section rpc_ConcentrationWriter_parameter_sec Parameter File
+
+The full parameter file format is shown below:
+\code
+ConcentrationWriter{
+  interval           int
+  outputFileName     string
+}
+\endcode
+Meanings of the parameters are described briefly below:
+<table>
+  <tr>
+    <td> <b> Label </b>  </td>
+    <td> <b> Description </b>  </td>
+  </tr>
+  <tr>
+    <td> interval </td>
+    <td> number of steps between data samples </td>
+  </tr>
+    <tr>
+     <td> outputFileName </td>
+     <td> name of output file </td>
+  </tr>
+</table>
+
+\section rpc_ConcentrationWriter_output_sec Output
+
+During the simulation, the composition configuration is output the 
+file {outputFileName} every interval simulation steps.
+
+*/

@@ -54,8 +54,8 @@ namespace Rpg {
    void FourthOrderParameter<D>::readParameters(std::istream& in) 
    {
       readInterval(in);
-      readOptional(in, "hasAverage", hasAverage_);
       readOutputFileName(in);
+      readOptional(in, "hasAverage", hasAverage_);
       readOptional(in,"nSamplePerBlock", nSamplePerBlock_);
       
       system().fileMaster().openOutputFile(outputFileName(), outputFile_);
@@ -74,12 +74,7 @@ namespace Rpg {
          UTIL_THROW("The FourthOrderParameter Analyzer is designed specifically for diblock copolymer system. Please verify the number of monomer types in your system.");
       }
       
-      //Allocate variables
       IntVec<D> const & dimensions = system().mesh().dimensions();
-      if (!isInitialized_){
-         wc0_.allocate(dimensions);
-         wK_.allocate(dimensions);
-      }
       
       // Compute Fourier space dimension
       for (int i = 0; i < D; ++i) {
@@ -92,6 +87,18 @@ namespace Rpg {
          }
       }
       
+      // Allocate GPU resources with kSize threads
+      int nBlocks, nThreads;
+      ThreadGrid::setThreadsLogical(kSize_, nBlocks, nThreads);
+      
+      // Allocate variables
+      if (!isInitialized_){
+         wc0_.allocate(dimensions);
+         wK_.allocate(dimensions);
+         prefactor_.allocate(dimensions);
+         assignUniformReal<<<nBlocks, nThreads>>>(prefactor_.cArray(), 0, kSize_);
+      }
+      
       isInitialized_ = true;
       
       // Clear accumulators
@@ -102,6 +109,8 @@ namespace Rpg {
       if (!isInitialized_) {
          UTIL_THROW("Error: object is not initialized");
       }
+      
+      computePrefactor();
    }
 
    /* 
@@ -155,10 +164,74 @@ namespace Rpg {
       // W_(k)^4
       inPlacePointwiseMul<<<nBlocks,nThreads>>>
             (psi.cArray(), psi.cArray(), kSize_);
-            
+      
+      // W_(k)^4 * weight factor
+      inPlacePointwiseMul<<<nBlocks,nThreads>>>
+            (psi.cArray(), prefactor_.cArray(), kSize_);
+      
       // Get sum over all wavevectors
       FourthOrderParameter_ = (double)gpuSum(psi.cArray(), kSize_);
       FourthOrderParameter_ = std::pow(FourthOrderParameter_, 0.25);
+   }
+   
+   template <int D>
+   void FourthOrderParameter<D>::computePrefactor()
+   {
+      IntVec<D> meshDimensions = system().domain().mesh().dimensions(); 
+      UnitCell<D> const & unitCell = system().domain().unitCell();
+      cudaReal* prefactor_host;
+      prefactor_host = new cudaReal[kSize_];
+      for (int i = 0; i < kSize_; ++i){
+         prefactor_host[i] = 0;
+      }
+      IntVec<D> G; 
+      IntVec<D> Gmin;
+      IntVec<D> nGmin;
+      DArray<IntVec<D>> GminList;
+      GminList.allocate(kSize_);
+      MeshIterator<D> itr(kMeshDimensions_);
+      MeshIterator<D> searchItr(kMeshDimensions_);
+      
+      // Calculate GminList
+      for (itr.begin(); !itr.atEnd(); ++itr){
+         G = itr.position();
+         Gmin = shiftToMinimum(G, meshDimensions, unitCell);
+         GminList[itr.rank()] = Gmin;
+      }
+      
+      // Compute weight factor for each G wavevector
+      for (itr.begin(); !itr.atEnd(); ++itr){
+         bool inverseFound = false;
+
+         // If the weight factor of the current wavevector has not been assigned
+         if (prefactor_host[itr.rank()] == 0){
+            Gmin = GminList[itr.rank()];
+            
+            // Compute inverse of wavevector
+            nGmin.negate(Gmin);
+            
+            // Search for inverse of wavevector
+            searchItr = itr;
+            for (; !searchItr.atEnd(); ++searchItr){
+               if (nGmin == GminList[searchItr.rank()]){
+                  prefactor_host[itr.rank()] = 1.0/2.0;
+                  prefactor_host[searchItr.rank()] = 1.0/2.0;
+                  inverseFound = true;
+               }
+            }
+            
+            if (inverseFound == false){
+               prefactor_host[itr.rank()]  = 1.0;
+            }
+            
+         }
+         
+      }
+      
+      // Copy the weight factor from cpu(host) to gpu(device)
+      cudaMemcpy(prefactor_.cArray(), prefactor_host, kSize_ * sizeof(double), cudaMemcpyHostToDevice);
+      
+      delete[] prefactor_host;
    }
    
    /*

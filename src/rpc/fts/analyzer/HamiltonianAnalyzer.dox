@@ -1,0 +1,49 @@
+/*! 
+\page rpc_HamiltonianAnalyzer_page Rpc::HamiltonianAnalyzer
+
+This analyzer calculates the average of total hamiltonian and its components.
+
+\section rpc_HamiltonianAnalyzer_algorithm_sec Mathematical Formula
+The mathematical formula of hamiltonian can be found in \ref psfts_theory_page
+
+\section rpc_HamiltonianAnalyzer_parameter_sec Parameter File
+
+The full parameter file format is shown below:
+\code
+HamiltonianAnalyzer{
+  interval           int
+  outputFileName     string
+  nSamplePerBlock    int     
+}
+\endcode
+Meanings of the parameters are described briefly below:
+<table>
+  <tr>
+    <td> <b> Label </b>  </td>
+    <td> <b> Description </b>  </td>
+  </tr>
+  <tr>
+    <td> interval </td>
+    <td> number of steps between data samples </td>
+  </tr>
+    <tr>
+     <td> outputFileName </td>
+     <td> name of output file </td>
+  </tr>
+  <tr>
+     <td>nSamplePerBlock</td>
+     <td>number of samples per block average</td>
+  </tr>
+</table>
+
+\section rpc_HamiltonianAnalyzer_output_sec Output
+
+During the simulation, block average of total hamiltonian and 
+its components are output to the file {outputFileName} every 
+interval simulation steps. 
+
+At the end of the simulation,
+  - average info are output to {outputFileName}.ave
+  - error analysis info are output to {outputFileName}.aer
+
+*/

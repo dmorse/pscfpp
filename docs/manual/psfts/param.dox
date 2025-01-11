@@ -374,6 +374,31 @@ label "LrAmCompressor" before the opening bracket in the first line
 of the associated parameter file block. 
 
 \section psfts_param_analyzer_sec AnalyzerManager
+In both BD and MC simulations, the selectable "Compressor" block is 
+followed by an optional AnalyzerManager block. The AnalyzerManager
+is a container for a list of one or more analyzers that perform 
+statistical analysis operations or output data for field theoretic 
+simulations in a partial saddle-point approximation. The AnalyzerManager
+block contains an int parameter called "baseInterval" followed by
+one or more subblocks that each begin a line containing the name of 
+analyzer. The first parameter of each subblock is an int parameter 
+called "interval" that determined how often the analyzer is called.
+The analyzer is performed when the simulation step counter is a 
+multiple of its interval parameter. Note, the interval for each 
+analyzer is required to be a multiple of baseInterval.
+
+<ul>
+  <li> \subpage rpc_HamiltonianAnalyzer_page "HamiltonianAnalyzer" </li>
+  <li> \subpage rpc_BinaryStructureFactorGrid_page "BinaryStructureFactorGrid" </li>
+  <li> \subpage rpc_ChiDerivative_page "ChiDerivative" </li>
+  <li> \subpage rpc_ConcentrationDerivative_page "ConcentrationDerivative" </li>
+  <li> \subpage rpc_PerturbationDerivative_page "PerturbationDerivative" </li>
+  <li> \subpage rpc_MaxOrderParameter_page "MaxOrderParameter" </li>
+  <li> \subpage rpc_FourthOrderParameter_page "FourthOrderParameter" </li>
+  <li> \subpage rpc_TrajectoryWriter_page "TrajectoryWriter" </li>
+  <li> \subpage rpc_ConcentrationWriter_page "ConcentrationWriter" </li>
+  <li> \subpage rpc_StepLogger_page "StepLogger" </li>
+</ul>
 
 <BR>
 \ref psfts_algorithm_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp;

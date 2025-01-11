@@ -5,12 +5,12 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "HamiltonianAutoCorr.tpp"
+#include "ConcentrationWriter.tpp"
 
 namespace Pscf {
-namespace Rpc {
-   template class HamiltonianAutoCorr<1>;
-   template class HamiltonianAutoCorr<2>;
-   template class HamiltonianAutoCorr<3>;
+namespace Rpg {
+   template class ConcentrationWriter<1>;
+   template class ConcentrationWriter<2>;
+   template class ConcentrationWriter<3>;
 }
 }

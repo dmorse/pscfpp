@@ -1,0 +1,51 @@
+/*! 
+\page rpc_PerturbationDerivative_page Rpc::PerturbationDerivative
+
+This analyzer calculates the derivative of free energy with 
+respect to the perturbation parameter \f$\lambda \f$.
+
+\section rpc_PerturbationDerivative_algorithm_sec Mathematical Formula
+The mathematical formula can be found in the documentation of
+the perturbation class for different types of perturbation. 
+
+\section rpc_PerturbationDerivative_parameter_sec Parameter File
+
+The full parameter file format, including all optional parameters, 
+is shown below:
+\code
+PerturbationDerivative{
+  interval           int
+  outputFileName     string
+  hasAverage*        bool     (default true)
+}
+\endcode
+Meanings of the parameters are described briefly below:
+<table>
+  <tr>
+    <td> <b> Label </b>  </td>
+    <td> <b> Description </b>  </td>
+  </tr>
+  <tr>
+    <td> interval </td>
+    <td> number of steps between data samples </td>
+  </tr>
+    <tr>
+     <td> outputFileName </td>
+     <td> name of output file </td>
+  </tr>
+  <tr>
+     <td>hasAverage</td>
+     <td>whether the average and error analysis are needed?</td>
+  </tr>
+</table>
+
+\section rpc_PerturbationDerivative_output_sec Output
+During the simulation, the parameter \f$\lambda \f$ and 
+corresponding \f$  \frac{\partial F}{\partial \lambda}  \f$
+are output to the file {outputFileName} every interval
+simulation steps.
+
+At the end of the simulation, if hasAverage is true:
+  - average info and error analysis are output to {outputFileName}.ave
+
+*/

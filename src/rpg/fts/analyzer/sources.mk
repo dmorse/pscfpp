@@ -4,6 +4,7 @@ rpg_fts_analyzer_= \
   rpg/fts/analyzer/AnalyzerManager.cu \
   rpg/fts/analyzer/AnalyzerFactory.cu \
   rpg/fts/analyzer/TrajectoryWriter.cu \
+  rpg/fts/analyzer/ConcentrationWriter.cu \
   rpg/fts/analyzer/HamiltonianAnalyzer.cu \
   rpg/fts/analyzer/BinaryStructureFactorGrid.cu \
   rpg/fts/analyzer/StepLogger.cu \

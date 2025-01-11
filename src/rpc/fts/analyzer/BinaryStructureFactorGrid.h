@@ -174,7 +174,7 @@ namespace Rpc {
       Simulator<D>& simulator();
       
       using ParamComposite::setClassName;
-      using ParamComposite::read;
+      using ParamComposite::readOptional;
       using ParamComposite::readDArray;
       using Analyzer<D>::interval;
       using Analyzer<D>::isAtInterval;

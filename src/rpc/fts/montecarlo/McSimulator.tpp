@@ -288,10 +288,11 @@ namespace Rpc {
 
       // Main loop over trajectory frames
       Timer timer;
-      bool hasFrame = true;
+      bool hasFrame;
       timer.start();
+      hasFrame = trajectoryReaderPtr->readFrame();
+      
       for (iStep_ = 0; iStep_ <= max && hasFrame; ++iStep_) {
-         hasFrame = trajectoryReaderPtr->readFrame();
          if (hasFrame) {
             clearData();
 
@@ -306,6 +307,8 @@ namespace Rpc {
                analyzerManager_.sample(iStep_);
             }
          }
+         
+         hasFrame = trajectoryReaderPtr->readFrame();
       }
       timer.stop();
       Log::file() << "end main loop" << std::endl;

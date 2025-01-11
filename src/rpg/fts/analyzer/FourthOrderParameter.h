@@ -37,9 +37,9 @@ namespace Rpg {
    * 
    * The order parameter is defined as
    * \f[
-   *     psi(k)  = sum[W_(k)^4]^(1/4)
+   *     \Psi_{\text{fourth}} \equiv \left[ \sum W_{-}(\bf G)^4 \right] ^{\frac{1}{4}}
    * \f]
-   * where \f$W_(k)\f$ is a Fourier mode of fluctuating field 
+   * where \f$W_(G)\f$ is a Fourier mode of fluctuating field 
    * 
    * \ingroup Rpg_Fts_Analyzer_Module
    */
@@ -89,9 +89,22 @@ namespace Rpg {
       void output();
             
       /**
-      * Compute max order parameter
+      * Compute fourth order parameter
       */
       void computeFourthOrderParameter();
+      
+      /**
+      * Compute prefactor for each Fourier wavevector.
+      * 
+      * For the real-valued function W_, each Fourier 
+      * coefficient G satisfies W_(G) = W_(-G). This function
+      * uses Brillouin Zone (BZ) indices representation. After
+      * applying fftw, if both the wavevector G and its 
+      * inverse -G exist in k-space, the prefactor is
+      * assigned to be 1/2 for both G and -G. Otherwise, 
+      * it is assigned to be 1.
+      */
+      void computePrefactor();
    
    protected:
 
@@ -161,6 +174,9 @@ namespace Rpg {
       
       /// W_ in Real space
       RField<D> wc0_;
+      
+      /// Prefactor for each Fourier wavevector
+      RField<D> prefactor_;
 
    };
    

@@ -1,0 +1,28 @@
+/*! 
+\page rpc_StepLogger_page Rpc::StepLogger
+
+This analyzer periodic outputs the number of simulation step
+have been performed. 
+
+\section rpc_StepLogger_parameter_sec Parameter File
+
+The parameter file format is shown below:
+\code
+StepLogger{
+  interval           int
+}
+\endcode
+Meanings of the parameter is described briefly below:
+<table>
+  <tr>
+    <td> <b> Label </b>  </td>
+    <td> <b> Description </b>  </td>
+  </tr>
+  <tr>
+    <td> interval </td>
+    <td> number of steps between data samples </td>
+  </tr>
+</table>
+
+
+*/

@@ -1,0 +1,70 @@
+/*! 
+\page rpc_ConcentrationDerivative_page Rpc::ConcentrationDerivative
+
+This analyzer calculates the derivative of free energy with 
+respect to parameter \f$c_0 = 1/v \f$ at fixed united cell, fixed
+polymer volume fraction, and fixed \f$ \chi_b \f$ for AB diblock copolymer 
+system. 
+
+\section rpc_ConcentrationDerivative_algorithm_sec Mathematical Formula
+
+\f[
+  \frac{\partial F}{\partial c_0} 
+  = -\frac{\partial \ln Z}{\partial c_0}
+  = \left\langle \frac{\partial H}{\partial \chi_b} \right\rangle
+  + \frac{\partial \ln N}{\partial c_0}
+\f]
+
+\f[
+  \frac{\partial H}{\partial c_0} 
+  = \left\langle \frac{H}{c_0} \right\rangle
+\f]
+
+\f[
+  \frac{\partial \ln N}{\partial \chi_b}
+  = - \frac{\text{MeshSize}}{2 c_0}
+\f]
+where \f$ v \f$ denote the monomer reference volume and 
+\f$\text{MeshSize} \f$ denotes the total number of mesh size. 
+
+\section rpc_ConcentrationDerivative_parameter_sec Parameter File
+
+The full parameter file format, including all optional parameters, 
+is shown below:
+\code
+ConcentrationDerivative{
+  interval           int
+  outputFileName     string
+  hasAverage*        bool     (default true)
+}
+\endcode
+Meanings of the parameters are described briefly below:
+<table>
+  <tr>
+    <td> <b> Label </b>  </td>
+    <td> <b> Description </b>  </td>
+  </tr>
+  <tr>
+    <td> interval </td>
+    <td> number of steps between data samples </td>
+  </tr>
+    <tr>
+     <td> outputFileName </td>
+     <td> name of output file </td>
+  </tr>
+  <tr>
+     <td>hasAverage</td>
+     <td>whether the average and error analysis are needed?</td>
+  </tr>
+</table>
+
+\section rpc_ConcentrationDerivative_output_sec Output
+During the simulation, \f$ c_0 \f$ and corresponding
+\f$  \frac{\partial F}{\partial c_0}  \f$
+are output to the file {outputFileName} every interval
+simulation steps.
+
+At the end of the simulation, if hasAverage is true:
+  - average info and error analysis are output to {outputFileName}.ave
+
+*/
