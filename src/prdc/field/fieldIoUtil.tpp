@@ -8,8 +8,8 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <prdc/cpu/RField.h>
-#include <prdc/cpu/RFieldDft.h>
+//#include <prdc/cpu/RField.h>
+//#include <prdc/cpu/RFieldDft.h>
 
 #include <prdc/crystal/Basis.h>
 #include <prdc/crystal/UnitCell.h>
@@ -20,6 +20,7 @@
 #include <pscf/mesh/MeshIteratorFortran.h>
 #include <pscf/math/IntVec.h>
 
+#include <util/containers/DArray.h>
 #include <util/misc/FileMaster.h>
 #include <util/misc/Log.h>
 #include <util/format/Int.h>
@@ -1044,6 +1045,298 @@ namespace Prdc {
       // Write field data
       writeRGridData(out, repFields, repDimensions, nMonomer);
    }
+
+   template <int D, class AT>
+   void
+   expandRGridDimension(std::ostream &out,
+                        DArray<AT> const & fields,
+                        IntVec<D> const & meshDimensions,
+                        UnitCell<D> const & unitCell,
+                        int d,
+                        DArray<int> newGridDimensions)
+   {  UTIL_THROW("Unimplemented base template"); };
+
+   template <class AT>
+   void
+   expandRGridDimension(std::ostream &out,
+                        DArray<AT> const & fields,
+                        IntVec<1> const & meshDimensions,
+                        UnitCell<1> const & unitCell,
+                        int d,
+                        DArray<int> newGridDimensions)
+
+   {
+      // Check validity of expanded dimension d and newGridDimensions
+      UTIL_CHECK(d > 1);
+      UTIL_CHECK(d <= 3);
+      UTIL_CHECK(newGridDimensions.capacity() == (d - 1));
+
+      // Obtain number of monomer types
+      int nMonomer = fields.capacity();
+      UTIL_CHECK(nMonomer > 0);
+
+      // Set up necessary objects
+      FSArray<double, 6> cellParameters;
+      cellParameters.append(unitCell.parameter(0));
+      int v1 = 1;
+      int v2 = 0;
+      std::string gName = "";
+
+      if (d == 2) {
+
+         // 1D expanded to 2D
+
+         // Set dimensions
+         IntVec<2> dimensions;
+         dimensions[0] = meshDimensions[0];
+         dimensions[1] = newGridDimensions[0];
+         int capacity = dimensions[0]*dimensions[1];
+
+         // Assign unit cell
+         UnitCell<2> cell;
+         if (dimensions[0] == dimensions[1]) {
+            cell.set(UnitCell<2>::Square, cellParameters);
+         } else {
+            cellParameters.append((double)dimensions[1]/dimensions[0]
+                                                  * cellParameters[0]);
+            cell.set(UnitCell<2>::Rectangular, cellParameters);
+         }
+
+         // Write Header
+         Pscf::Prdc::writeFieldHeader(out, v1, v2, cell, gName, nMonomer);
+         out << "mesh " <<  std::endl
+             << "           " << dimensions << std::endl;
+
+         // Allocate and populate outFields
+         DArray< DArray<double> > outFields;
+         outFields.allocate(nMonomer);
+         for (int i = 0; i < nMonomer; ++i) {
+            outFields[i].allocate(capacity);
+            int rank = 0;
+            for (int j = 0; j < dimensions[1]; ++j) {
+               for (int k = 0; k < dimensions[0]; ++k) {
+                  outFields[i][rank] = fields[i][k];
+                  rank++;
+               }
+            }
+         }
+
+         // Write fields
+         MeshIterator<2> itr(dimensions);
+         for (itr.begin(); !itr.atEnd(); ++itr) {
+            for (int j = 0; j < nMonomer; ++j) {
+               out << "  " << Dbl(outFields[j][itr.rank()], 18, 15);
+            }
+            out << std::endl;
+         }
+
+      } else if (d == 3) {
+
+         // 1D expanded to 3D
+
+         // Set dimensions
+         IntVec<3> dimensions;
+         dimensions[0] = meshDimensions[0];
+         dimensions[1] = newGridDimensions[0];
+         dimensions[2] = newGridDimensions[1];
+         int capacity = dimensions[0]*dimensions[1]*dimensions[2];
+
+         // Assign unit cell
+         UnitCell<3> cell;
+         if (dimensions[2] == dimensions[1]) {
+            if (dimensions[1] == dimensions[0]) {
+               cell.set(UnitCell<3>::Cubic, cellParameters);
+            } else {
+               cellParameters.append((double)dimensions[1]/dimensions[0]
+                                                     * cellParameters[0]);
+               cellParameters.append((double)dimensions[2]/dimensions[0]
+                                                     * cellParameters[0]);
+               cell.set(UnitCell<3>::Orthorhombic, cellParameters);
+            }
+         } else {
+            if (dimensions[1] == dimensions[0]) {
+               cellParameters.append((double)dimensions[2]/dimensions[0]
+                                                     * cellParameters[0]);
+               cell.set(UnitCell<3>::Tetragonal, cellParameters);
+            } else {
+               cellParameters.append((double)dimensions[1]/dimensions[0]
+                                                     * cellParameters[0]);
+               cellParameters.append((double)dimensions[2]/dimensions[0]
+                                                     * cellParameters[0]);
+               cell.set(UnitCell<3>::Orthorhombic, cellParameters);
+            }
+         }
+
+         // Write Header
+         Pscf::Prdc::writeFieldHeader(out, v1, v2, cell, gName, nMonomer);
+         out << "mesh " <<  std::endl
+             << "           " << dimensions << std::endl;
+
+         // Allocate outFields
+         DArray< DArray<double> > outFields;
+         outFields.allocate(nMonomer);
+
+         // Populate outFields
+         for (int i = 0; i < nMonomer; ++i) {
+            outFields[i].allocate(capacity);
+         }
+         int rank = 0;
+         for (int l = 0; l < dimensions[2]; ++l) {
+            for (int k = 0; k < dimensions[1]; ++k) {
+               for (int j = 0; j < dimensions[0]; ++j) {
+                  for (int i = 0; i < nMonomer; ++i) {
+                     outFields[i][rank] = fields[i][j];
+                  }
+                  ++rank;
+               }
+            }
+         }
+
+         // Write fields
+         MeshIterator<3> itr(dimensions);
+         for (itr.begin(); !itr.atEnd(); ++itr) {
+            for (int j = 0; j < nMonomer; ++j) {
+               out << "  " << Dbl(outFields[j][itr.rank()], 18, 15);
+            }
+            out << std::endl;
+         }
+
+      } else {
+
+         UTIL_THROW("Invalid d value");
+
+      }
+   }
+
+   template <class AT>
+   void expandRGridDimension(std::ostream &out,
+                             DArray<AT> const & fields,
+                             IntVec<2> const & meshDimensions,
+                             UnitCell<2> const & unitCell,
+                             int d,
+                             DArray<int> newGridDimensions)
+   {
+      // 2D expanded to 3D
+
+      // Check validity of expanded dimension d and newGridDimensions
+      UTIL_CHECK(d == 3);
+      UTIL_CHECK(newGridDimensions.capacity() == (d - 2));
+
+      // Obtain number of monomer types
+      int nMonomer = fields.capacity();
+      UTIL_CHECK(nMonomer > 0);
+
+      // Set dimensions
+      IntVec<3> dimensions;
+      dimensions[0] = meshDimensions[0];
+      dimensions[1] = meshDimensions[1];
+      dimensions[2] = newGridDimensions[0];
+      int capacity = dimensions[0]*dimensions[1]*dimensions[2];
+
+      // Set unit cell
+      UnitCell<3> cell;
+      FSArray<double, 6> cellParameters;
+      cellParameters.append(unitCell.parameter(0));
+      if (unitCell.lattice() == UnitCell<2>::Square) {
+         if (newGridDimensions[0] == meshDimensions[0]){
+            cell.set(UnitCell<3>::Cubic, cellParameters);
+         } else {
+            cellParameters.append((double)dimensions[2]/dimensions[0]
+                                                  * cellParameters[0]);
+            cell.set(UnitCell<3>::Tetragonal, cellParameters);
+         }
+      } else if (unitCell.lattice() == UnitCell<2>::Rectangular) {
+         cellParameters.append(unitCell.parameter(1));
+         cellParameters.append((double)dimensions[2]/dimensions[0]
+                                               * cellParameters[0]);
+         cell.set(UnitCell<3>::Orthorhombic, cellParameters);
+      } else if (unitCell.lattice() == UnitCell<2>::Hexagonal){
+         cellParameters.append((double)dimensions[2]/dimensions[0]
+                                               * cellParameters[0]);
+         cell.set(UnitCell<3>::Hexagonal, cellParameters);
+      } else if (unitCell.lattice() == UnitCell<2>::Rhombic) {
+         cellParameters.append(unitCell.parameter(0));
+         cellParameters.append((double)dimensions[2]/dimensions[0]
+                                               * cellParameters[0]);
+         cellParameters.append(Constants::Pi / 2);
+         cellParameters.append(0.0);
+         cellParameters.append(unitCell.parameter(1));
+         cell.set(UnitCell<3>::Triclinic, cellParameters);
+      } else if (unitCell.lattice() == UnitCell<2>::Oblique) {
+         cellParameters.append(unitCell.parameter(1));
+         cellParameters.append((double)dimensions[2]/dimensions[0]
+                                               * cellParameters[0]);
+         cellParameters.append(Constants::Pi / 2);
+         cellParameters.append(0.0);
+         cellParameters.append(unitCell.parameter(2));
+         cell.set(UnitCell<3>::Triclinic, cellParameters);
+      } else {
+         UTIL_THROW("Unrecognized 2D lattice system.");
+      }
+
+      // Write Header
+      int v1 = 1;
+      int v2 = 0;
+      std::string gName = "";
+      Pscf::Prdc::writeFieldHeader(out, v1, v2, cell, gName, nMonomer);
+      out << "mesh " <<  std::endl
+          << "           " << dimensions << std::endl;
+
+      // Allocate outFields
+      DArray< DArray<double> > outFields;
+      outFields.allocate(nMonomer);
+      for (int i = 0; i < nMonomer; ++i) {
+         outFields[i].allocate(capacity);
+      }
+
+      // Populate outFields
+      int q = 0;
+      int r = 0;
+      int s = 0;
+      int n1 =0;
+      int n2 =0;
+      int n3 =0;
+
+      while (n3 < dimensions[2]) {
+         q = 0;
+         n2 = 0;
+         while (n2 < dimensions[1]) {
+            r = q;
+            n1 = 0;
+            while (n1 < dimensions[0]) {
+               for (int i = 0; i < nMonomer; ++i) {
+                  outFields[i][s] = fields[i][r];
+               }
+               r = r + dimensions[1];
+               ++s;
+               ++n1;
+            }
+            ++q;
+            ++n2;
+         }
+         ++n3;
+      }
+
+      // Write field data
+      MeshIterator<3> itr(dimensions);
+      for (itr.begin(); !itr.atEnd(); ++itr) {
+         for (int j = 0; j < nMonomer; ++j) {
+            out << "  " << Dbl(outFields[j][itr.rank()], 18, 15);
+         }
+         out << std::endl;
+      }
+
+   }
+
+   template <class AT>
+   void expandRGridDimension(std::ostream &out,
+                             DArray<AT > const & fields,
+                             IntVec<3> const & meshDimensions,
+                             UnitCell<3> const & unitCell,
+                             int d,
+                             DArray<int> newGridDimensions)
+
+   {  UTIL_THROW("expandRGridDimension is invalid when D = 3."); }
 
 } // namespace Prdc
 } // namespace Pscf

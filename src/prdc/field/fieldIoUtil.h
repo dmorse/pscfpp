@@ -8,12 +8,12 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <util/containers/DArray.h>   
 #include <pscf/math/IntVec.h>   
 
-#include <string>
-
-// Forward declarations for classes used only via references or pointers
+// Forward class declarations for classes used in function interfaces
+namespace Util {
+   template <typename T> class DArray;
+}
 namespace Pscf {
    template <int D> class Mesh;
    namespace Prdc {
@@ -457,6 +457,44 @@ namespace Prdc {
                           IntVec<D> const & meshDimensions,
                           UnitCell<D> const & unitCell,
                           IntVec<D> const & replicas);
+
+   /**
+   * Expand the dimensionality of space from D to d.
+   *
+   * The functions takes a list of fields defined in a D dimensional
+   * unit cell and creates and writes a set of fields in a d dimensional 
+   * unit cell, for D < d <= 3, by adding (d-D) additional Bravais lattice 
+   * vectors along directions orthogonal to the original D lattice 
+   * vectors. The output fields, which are defined on a d dimensional
+   * mesh are taken to be independent of the coordinates associated with 
+   * these d-D added directions. The resulting d dimensional fields are 
+   * written to an output stream in r-grid field file format.
+   *  
+   * For example, this can be used to take a SCFT solution for a 1D 
+   * lamellar structure and generate a corresponding 1D solution in 2D
+   * or 3D space. Similarly, a 2D hexagonal SCFT solution can be used
+   * to generate a hexagonal solution in 3D space.
+   *
+   * The DArray<int> parameter newGridDimensions must have a capacity
+   * d - D, and contains the number of grid points in the added 
+   * directions. The spacing between grid points in the added directions 
+   * is taken to be the same as that associated with the first Bravais
+   * lattice vector of the D dimensional unit cell of the input fields.
+   *
+   * \param out  out  output stream
+   * \param fields  input fields defined on a D dimensional grid
+   * \param meshDimensions dimensions of mesh for input fields
+   * \param unitCell  unit cell for input fields
+   * \param d  dimensionality of expanded space
+   * \param newGridDimensions  numbers of grid points in added directions
+   */
+   template <int D, class AT>
+   void expandRGridDimension(std::ostream &out,
+                             DArray< AT > const & fields,
+                             IntVec<D> const & meshDimensions,
+                             UnitCell<D> const & unitCell,
+                             int d,
+                             DArray<int> newGridDimensions);
 
 } // namespace Prdc
 } // namespace Pscf
