@@ -200,7 +200,8 @@ namespace Prdc {
 
       // Read data
       // Rpg:: Allocate host arrays
-      Prdc::readKGridData(in, fields, fields[0].dftDimensions(), nMonomer);
+      Prdc::readKGridData(in, fields, 
+                          fields[0].dftDimensions(), nMonomer);
       // Rpg:: Copy host -> device
    }
 
@@ -269,7 +270,8 @@ namespace Prdc {
    }
 
    template <int D, class RFRT, class RFKT, class FFTT>
-   void FieldIoReal<D,RFRT,RFKT,FFTT>::replicateUnitCell(std::ostream &out,
+   void FieldIoReal<D,RFRT,RFKT,FFTT>::replicateUnitCell(
+                              std::ostream &out,
                               DArray< RFRT > const & fields,
                               UnitCell<D> const & unitCell,
                               IntVec<D> const & replicas) const
@@ -337,8 +339,7 @@ namespace Prdc {
    * Create an association with a FileMaster.
    */
    template <int D, class RFRT, class RFKT, class FFTT>
-   void
-   FieldIoReal<D,RFRT,RFKT,FFTT>::setFileMaster(
+   void FieldIoReal<D,RFRT,RFKT,FFTT>::setFileMaster(
                               FileMaster const & fileMaster)
    {  fileMasterPtr_ = &fileMaster; }
 
@@ -414,8 +415,7 @@ namespace Prdc {
    * Write an array of fields in basis format to an output stream.
    */
    template <int D, class RFRT, class RFKT, class FFTT>
-   void
-   FieldIoReal<D,RFRT,RFKT,FFTT>::writeFieldsBasis(
+   void FieldIoReal<D,RFRT,RFKT,FFTT>::writeFieldsBasis(
                               std::ostream &out,
                               DArray< DArray<double> > const & fields,
                               UnitCell<D> const & unitCell) const
@@ -519,8 +519,7 @@ namespace Prdc {
    }
 
    template <int D, class RFRT, class RFKT, class FFTT>
-   void
-   FieldIoReal<D,RFRT,RFKT,FFTT>::convertBasisToRGrid(
+   void FieldIoReal<D,RFRT,RFKT,FFTT>::convertBasisToRGrid(
                               DArray<double> const & in,
                               RFRT& out) const
    {
@@ -530,8 +529,7 @@ namespace Prdc {
    }
 
    template <int D, class RFRT, class RFKT, class FFTT>
-   void
-   FieldIoReal<D,RFRT,RFKT,FFTT>::convertBasisToRGrid(
+   void FieldIoReal<D,RFRT,RFKT,FFTT>::convertBasisToRGrid(
                               DArray< DArray <double> > const & in,
                               DArray< RFRT >& out) const
    {
@@ -546,8 +544,7 @@ namespace Prdc {
    }
 
    template <int D, class RFRT, class RFKT, class FFTT>
-   void
-   FieldIoReal<D,RFRT,RFKT,FFTT>::convertRGridToBasis(
+   void FieldIoReal<D,RFRT,RFKT,FFTT>::convertRGridToBasis(
                               RFRT const & in,
                               DArray<double> & out,
                               bool checkSymmetry,
@@ -559,8 +556,7 @@ namespace Prdc {
    }
 
    template <int D, class RFRT, class RFKT, class FFTT>
-   void
-   FieldIoReal<D,RFRT,RFKT,FFTT>::convertRGridToBasis(
+   void FieldIoReal<D,RFRT,RFKT,FFTT>::convertRGridToBasis(
                               DArray< RFRT > const & in,
                               DArray< DArray <double> > & out,
                               bool checkSymmetry,
@@ -588,8 +584,7 @@ namespace Prdc {
    * Apply inverse FFT to an array of k-grid fields.
    */
    template <int D, class RFRT, class RFKT, class FFTT>
-   void
-   FieldIoReal<D,RFRT,RFKT,FFTT>::convertKGridToRGrid(
+   void FieldIoReal<D,RFRT,RFKT,FFTT>::convertKGridToRGrid(
                               DArray< RFKT > & in,
                               DArray< RFRT >& out) const
    {
@@ -604,8 +599,7 @@ namespace Prdc {
    * Apply inverse FFT to a single k-grid field.
    */
    template <int D, class RFRT, class RFKT, class FFTT>
-   void
-   FieldIoReal<D,RFRT,RFKT,FFTT>::convertKGridToRGrid(
+   void FieldIoReal<D,RFRT,RFKT,FFTT>::convertKGridToRGrid(
                               RFKT& in, RFRT& out) const
    {
       fft().inverseTransformSafe(in, out);
@@ -615,8 +609,7 @@ namespace Prdc {
    * Apply forward FFT to an array of r-grid fields.
    */
    template <int D, class RFRT, class RFKT, class FFTT>
-   void
-   FieldIoReal<D,RFRT,RFKT,FFTT>::convertRGridToKGrid(
+   void FieldIoReal<D,RFRT,RFKT,FFTT>::convertRGridToKGrid(
                               DArray< RFRT > const & in,
                               DArray< RFKT >& out) const
    {
@@ -631,8 +624,8 @@ namespace Prdc {
    * Apply forward FFT to a single r-grid field.
    */
    template <int D, class RFRT, class RFKT, class FFTT>
-   void
-   FieldIoReal<D,RFRT,RFKT,FFTT>::convertRGridToKGrid(RFRT const & in,
+   void FieldIoReal<D,RFRT,RFKT,FFTT>::convertRGridToKGrid(
+                              RFRT const & in,
                               RFKT& out) const
    {
       fft().forwardTransform(in, out);
@@ -684,8 +677,8 @@ namespace Prdc {
    * Open-close a file, and write an array of fields in basis format.
    */
    template <int D, class RFRT, class RFKT, class FFTT>
-   void
-   FieldIoReal<D,RFRT,RFKT,FFTT>::writeFieldsBasis(std::string filename,
+   void FieldIoReal<D,RFRT,RFKT,FFTT>::writeFieldsBasis(
+                              std::string filename,
                               DArray<DArray<double> > const & fields,
                               UnitCell<D> const & unitCell) const
    {
@@ -699,8 +692,8 @@ namespace Prdc {
    * Write a single field in basis format, open and close the file.
    */
    template <int D, class RFRT, class RFKT, class FFTT>
-   void
-   FieldIoReal<D,RFRT,RFKT,FFTT>::writeFieldBasis(std::string filename,
+   void FieldIoReal<D,RFRT,RFKT,FFTT>::writeFieldBasis( 
+                              std::string filename,
                               DArray<double> const & field,
                               UnitCell<D> const & unitCell) const
    {
@@ -711,7 +704,8 @@ namespace Prdc {
    }
 
    template <int D, class RFRT, class RFKT, class FFTT>
-   void FieldIoReal<D,RFRT,RFKT,FFTT>::readFieldsRGrid(std::string filename,
+   void FieldIoReal<D,RFRT,RFKT,FFTT>::readFieldsRGrid(
+                              std::string filename,
                               DArray< RFRT >& fields,
                               UnitCell<D>& unitCell) const
    {
@@ -876,7 +870,7 @@ namespace Prdc {
             if (groupNameIn != groupName()) {
                Log::file() << std::endl
                   << "Error - Mismatched group names in "
-                  << "function FieldIoReal<D,RFRT,RFKT,FFTT>::readFieldHeader:\n"
+                  << "FieldIo member function readFieldHeader:\n"
                   << "  FieldIo::groupName :" << groupName() << "\n"
                   << "  Field file header  :" << groupNameIn << "\n";
                UTIL_THROW("Mismatched group names");
@@ -895,8 +889,7 @@ namespace Prdc {
    }
 
    template <int D, class RFRT, class RFKT, class FFTT>
-   void
-   FieldIoReal<D,RFRT,RFKT,FFTT>::writeFieldHeader(
+   void FieldIoReal<D,RFRT,RFKT,FFTT>::writeFieldHeader(
                               std::ostream &out,
                               int nMonomer,
                               UnitCell<D> const & unitCell,

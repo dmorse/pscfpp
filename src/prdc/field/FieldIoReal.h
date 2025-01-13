@@ -244,6 +244,7 @@ namespace Prdc {
       * \param fields  array of RField fields (r-space grid)
       * \param unitCell  associated crystallographic unit cell
       */
+      virtual
       void readFieldsRGrid(std::istream& in,
                            DArray< RFRT >& fields,
                            UnitCell<D> & unitCell) const;
@@ -276,6 +277,7 @@ namespace Prdc {
       * \param fields  array of RField fields (r-space grid)
       * \param nMonomer  number of monomer types
       */
+      virtual
       void readFieldsRGridData(std::istream& in,
                                DArray< RFRT >& fields,
                                int nMonomer) const;
@@ -287,6 +289,7 @@ namespace Prdc {
       * \param field  fields defined on r-space grid
       * \param unitCell  associated crystallographic unit cell
       */
+      virtual
       void readFieldRGrid(std::istream &in,
                            RFRT & field,
                            UnitCell<D>& unitCell) const;
@@ -316,6 +319,7 @@ namespace Prdc {
       * \param isSymmetric  Do fields have a space group symmetry ?
       * \param writeMeshSize Should mesh size be written at end of header?
       */
+      virtual
       void writeFieldsRGrid(std::ostream& out,
                             DArray< RFRT > const & fields,
                             UnitCell<D> const & unitCell,
@@ -349,6 +353,7 @@ namespace Prdc {
       * \param writeHeader  should a file header be written?
       * \param isSymmetric  Does the field have a space group symmetry?
       */
+      virtual
       void writeFieldRGrid(std::ostream &out,
                            RFRT const & field,
                            UnitCell<D> const & unitCell,
@@ -387,6 +392,7 @@ namespace Prdc {
       * \param fields  array of RFieldDft fields (k-space grid)
       * \param unitCell  associated crystallographic unit cell
       */
+      virtual
       void readFieldsKGrid(std::istream& in,
                            DArray< RFKT >& fields,
                            UnitCell<D> & unitCell) const;
@@ -422,6 +428,7 @@ namespace Prdc {
       * \param unitCell  associated crystallographic unit cell
       * \param isSymmetric  Does this field have space group symmetry?
       */
+      virtual
       void writeFieldsKGrid(std::ostream& out,
                             DArray< RFKT > const & fields,
                             UnitCell<D> const & unitCell,
@@ -445,64 +452,6 @@ namespace Prdc {
                            bool isSymmetric = true) const;
 
       ///@}
-      /// \name Field File IO Utilities
-      ///@{
-
-      /**
-      * Reader header of field file (fortran pscf format)
-      *
-      * This reads the common part of the header for all field file
-      * formats. This contains the dimension of space, the lattice
-      * system, a list of unit cell parameters, the space group name
-      * as an optional parameter, and the number of monomer types.
-      * The unit cell data is read into the associated UnitCell<D>,
-      * which is thus updated.
-      *
-      * The value of "dim" in the header file must match the template
-      * parameter D, or an Exception is thrown.  If the UnitCell<D>
-      * object passed to this function already contains a non-null
-      * lattice type, it must match the lattice system in the header
-      * file, or an Exception is thrown.
-      *
-      * The isSymmetric parameter is set to true on return if a group 
-      * name is found in the header. Presence of a group name parameter in
-      * the header is optional. If the header does contain a group name
-      * and a group name was declared in the parameter file (i.e., if 
-      * hasGroup() is true), then these group names must match or an
-      * Exception is thrown. 
-      *
-      * If a space group was defined in the parameter file but the 
-      * associated Basis object is not been initialized, this function
-      * will initialize the basis by calling Basis<D>::makeBasis via a 
-      * private pointer, using the unit cell parameters found in the 
-      * file header.  This function thus can modify the associated
-      * Basis object as a side effect even though this function is marked 
-      * const. Because all of the member functions that read field files
-      * call this function to read the field file header, the same
-      * statement also applies to all of these read functions.
-      *
-      * \param in  input stream (i.e., input file)
-      * \param nMonomer  number of fields in the field file (output)
-      * \param unitCell  associated crystallographic unit cell (output)
-      * \param isSymmetric Is there a group name in the header? (output)
-      */
-      void readFieldHeader(std::istream& in, int& nMonomer,
-                           UnitCell<D> & unitCell,
-                           bool & isSymmetric) const;
-
-      /**
-      * Write header for field file (fortran pscf format)
-      *
-      * \param out  output stream (i.e., output file)
-      * \param nMonomer  number of monomer types or fields
-      * \param unitCell  associated crystallographic unit cell
-      * \param isSymmetric Do the fields have a space group symmetry?
-      */
-      void writeFieldHeader(std::ostream& out, int nMonomer,
-                            UnitCell<D> const & unitCell,
-                            bool isSymmetric = true) const;
-
-      ///@}
       /// \name Field Format Conversion
       ///@{
 
@@ -512,6 +461,7 @@ namespace Prdc {
       * \param components coefficients of symmetry-adapted basis functions
       * \param dft discrete Fourier transform of a real field
       */
+      virtual
       void convertBasisToKGrid(DArray<double> const & components,
                                RFKT& dft) const;
 
@@ -540,6 +490,7 @@ namespace Prdc {
       * \param checkSymmetry  flag indicating whether to check symmetry
       * \param epsilon  error tolerance for symmetry test (if any)
       */
+      virtual
       void convertKGridToBasis(RFKT const & in,
                                DArray<double> & out,
                                bool checkSymmetry = true,
@@ -672,6 +623,24 @@ namespace Prdc {
       ///@{
 
       /**
+      * Check if a k-grid field has the declared space group symmetry.
+      *
+      * This function checks whether the discrete Fourier transform of
+      * a real field satisfies all the symmetries of a space group to
+      * within an error threshhold given by parameter epsilon. If the
+      * parameter verbose is true and the deviation from symmetry
+      * exceeds the error threshhold, errors are written to Log::file().
+      *
+      * \param in field in real space grid (r-grid) format
+      * \param epsilon error threshold used to test for symmetry
+      * \param verbose  if true, write error to Log::file()
+      * \return true if the field is symmetric, false otherwise
+      */
+      virtual
+      bool hasSymmetry(RFKT const & in, double epsilon = 1.0e-8,
+                       bool verbose = true) const;
+
+      /**
       * Check if an r-grid field has the declared space group symmetry.
       *
       * This function checks whether a field defined on the nodes of a
@@ -686,23 +655,6 @@ namespace Prdc {
       * \return true if the field is symmetric, false otherwise
       */
       bool hasSymmetry(RFRT const & in, double epsilon = 1.0e-8,
-                       bool verbose = true) const;
-
-      /**
-      * Check if a k-grid field has the declared space group symmetry.
-      *
-      * This function checks whether the discrete Fourier transform of
-      * a real field satisfies all the symmetries of a space group to
-      * within an error threshhold given by parameter epsilon. If the
-      * parameter verbose is true and the deviation from symmetry
-      * exceeds the error threshhold, errors are written to Log::file().
-      *
-      * \param in field in real space grid (r-grid) format
-      * \param epsilon error threshold used to test for symmetry
-      * \param verbose  if true, write error to Log::file()
-      * \return true if the field is symmetric, false otherwise
-      */
-      bool hasSymmetry(RFKT const & in, double epsilon = 1.0e-8,
                        bool verbose = true) const;
 
       ///@}
@@ -790,6 +742,64 @@ namespace Prdc {
                              DArray<RFRT > const & fields,
                              UnitCell<D> const & unitCell,
                              IntVec<D> const & replicas) const;
+
+      ///@}
+      /// \name Field File IO Utilities
+      ///@{
+
+      /**
+      * Reader header of field file (fortran pscf format)
+      *
+      * This reads the common part of the header for all field file
+      * formats. This contains the dimension of space, the lattice
+      * system, a list of unit cell parameters, the space group name
+      * as an optional parameter, and the number of monomer types.
+      * The unit cell data is read into the associated UnitCell<D>,
+      * which is thus updated.
+      *
+      * The value of "dim" in the header file must match the template
+      * parameter D, or an Exception is thrown.  If the UnitCell<D>
+      * object passed to this function already contains a non-null
+      * lattice type, it must match the lattice system in the header
+      * file, or an Exception is thrown.
+      *
+      * The isSymmetric parameter is set to true on return if a group 
+      * name is found in the header. Presence of a group name parameter in
+      * the header is optional. If the header does contain a group name
+      * and a group name was declared in the parameter file (i.e., if 
+      * hasGroup() is true), then these group names must match or an
+      * Exception is thrown. 
+      *
+      * If a space group was defined in the parameter file but the 
+      * associated Basis object is not been initialized, this function
+      * will initialize the basis by calling Basis<D>::makeBasis via a 
+      * private pointer, using the unit cell parameters found in the 
+      * file header.  This function thus can modify the associated
+      * Basis object as a side effect even though this function is marked 
+      * const. Because all of the member functions that read field files
+      * call this function to read the field file header, the same
+      * statement also applies to all of these read functions.
+      *
+      * \param in  input stream (i.e., input file)
+      * \param nMonomer  number of fields in the field file (output)
+      * \param unitCell  associated crystallographic unit cell (output)
+      * \param isSymmetric Is there a group name in the header? (output)
+      */
+      void readFieldHeader(std::istream& in, int& nMonomer,
+                           UnitCell<D> & unitCell,
+                           bool & isSymmetric) const;
+
+      /**
+      * Write header for field file (fortran pscf format)
+      *
+      * \param out  output stream (i.e., output file)
+      * \param nMonomer  number of monomer types or fields
+      * \param unitCell  associated crystallographic unit cell
+      * \param isSymmetric Do the fields have a space group symmetry?
+      */
+      void writeFieldHeader(std::ostream& out, int nMonomer,
+                            UnitCell<D> const & unitCell,
+                            bool isSymmetric = true) const;
 
       ///@}
 
