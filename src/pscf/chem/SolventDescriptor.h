@@ -38,7 +38,7 @@ namespace Pscf {
       /**
       * Read and initialize.
       *
-      * \param in input parameter stream
+      * \param in  input parameter stream
       */
       virtual void readParameters(std::istream& in);
 
@@ -52,7 +52,7 @@ namespace Pscf {
       * initialization. An exception is thrown if this function is called
       * when the ensemble is open on entry.
       *
-      * \param phi desired volume fraction for this species
+      * \param phi  desired volume fraction for this species
       */
       void setPhi(double phi);
 
@@ -77,9 +77,9 @@ namespace Pscf {
       /**
       * Set the size or volume of this solvent species.
       *
-      * The ``size" is steric volume / reference volume.
+      * The ``size" is the ratio (steric volume) / (reference volume) .
       *
-      * \param size volume of solvent
+      * \param size  volume of solvent
       */ 
       void setSize(double size);
 

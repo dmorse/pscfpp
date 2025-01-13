@@ -63,17 +63,17 @@ namespace Pscf
    protected:
    
       /**
-      * Volume fraction, set by either setPhi or compute function.
+      * Volume fraction, set by either setPhi or a compute function.
       */
       double phi_;
    
       /**
-      * Chemical potential, set by either setPhi or compute function.
+      * Chemical potential, set by either setPhi or a compute function.
       */
       double mu_;
    
       /**
-      * Partition function, set by compute function.
+      * Partition function, set in subclass by a compute function.
       */
       double q_;
    
@@ -103,7 +103,7 @@ namespace Pscf
    {  return ensemble_; }
    
    /**
-   * istream extractor for a Species::Ensemble.
+   * istream extractor for a Species::Ensemble enumeration.
    *
    * \param  in       input stream
    * \param  policy   Species::Ensemble to be read
@@ -112,7 +112,9 @@ namespace Pscf
    std::istream& operator >> (std::istream& in, Species::Ensemble& policy);
 
    /**
-   * ostream inserter for an Species::Ensemble.
+   * ostream inserter for an Species::Ensemble enumeration.
+   *
+   * Text representations of allowed values are "Open" and "Closed".
    *
    * \param  out      output stream
    * \param  policy   Species::Ensemble to be written

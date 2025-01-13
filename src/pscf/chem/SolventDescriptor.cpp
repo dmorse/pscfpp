@@ -16,6 +16,9 @@ namespace Pscf {
    * Constructor
    */
    SolventDescriptor::SolventDescriptor()
+    : Species(),
+      monomerId_(-1),
+      size_(0.0)
    {  setClassName("SolventDescriptor"); }
 
    /*
@@ -63,13 +66,13 @@ namespace Pscf {
    }
 
    /*
-   * Set the id for this solvent.
+   * Set the monomer type id for this solvent species.
    */ 
    void SolventDescriptor::setMonomerId(int monomerId)
    {  monomerId_ = monomerId; }
   
    /*
-   * Set the id for this solvent.
+   * Set the size parameter for this solvent.
    */ 
    void SolventDescriptor::setSize(double size)
    {  size_ = size; }

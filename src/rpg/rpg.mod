@@ -2,16 +2,14 @@ namespace Pscf
 {
 
    /**
-   * Real periodic fields (GPU)
+   * SCFT and PS-FTS with real periodic fields (GPU)
    */
    namespace Rpg {
 
       /**
-      * \defgroup Pscf_Rpg_Module Real Periodic Fields (GPU)
+      * \defgroup Pscf_Rpg_Module Pscf::Rpg - Real Periodic Fields (GPU)
       *
-      * SCFT and FTS with real periodic fields on a GPU, namespace Pscf::Rpg.
-      * Field theoretic simulation (FTS) methods implemented in this namespace 
-      * all rely on a partial saddle-point approximation (PSPA).
+      * SCFT and PS-FTS with real periodic fields on a GPU, namespace Pscf::Rpg.
       *
       * \ingroup Pscf_NS_Module
       */
