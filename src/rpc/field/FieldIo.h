@@ -41,21 +41,26 @@ namespace Rpc {
    /**
    * File input/output operations and format conversions for fields.
    *
-   * This class provides functions to read and write arrays that contain
-   * fields in any of three representations (symmetry-adapted basis,
-   * r-space grid, or Fourier k-space grid), and functions to convert 
-   * among these representations. The member functions that implement 
-   * field IO operations define these three file formats.
+   * Please refer to the documentation of the base class Prdc::FieldIoReal 
+   * for more complete API documentation for this class template, for
+   * reasons discussed below.
    *
-   * Side effect of reading a field file: The member functions that read 
-   * fields from a file may all construct a symmetry adapted basis within
-   * an associated Basis object as a side effect of reading the field 
-   * header. All of these functions call member function readFieldHeader 
-   * to read the field file header. If a group has been declared in the 
-   * Domain block of the parameter file for the associated system but the 
-   * symmetry adapted basis has not been initialized before entry to this 
-   * function, the readFieldHeader function will construct the basis 
-   * before returning.
+   * Class template Rpc::FieldIo<int D> is derived from a partial 
+   * specialization of template Prdc::FieldIoReal<D, RFRT, RFKT, FFFT> 
+   * that is implemented using classes RField<D>, RFieldDft<D>, and 
+   * FFT<D> that are all defined in the Prdc::Cpu subspace, and that 
+   * use only conventional use CPU hardware. Rpc::FieldIo is thus a 
+   * specialization of FieldIoReal for CPU hardware. An analogous
+   * class template named named Rpg::FieldIo that is designed to use 
+   * a GPU is defined in the Pscf::Rpg namespace 
+   *
+   * The pubiic interface of Rpc::FieldIo is identical to that of the
+   * base class template Prdc::FieldIoReal. All member functions defined 
+   * in this class template are virtual functions that are defined and
+   * documented in Prdc::FieldIoReal, but provided nontrivial 
+   * implementations here. These are all functions for which different 
+   * implementations are required for the CPU and GPU variants, and
+   * which are thus also reimplemented in Rpg::FieldIo.
    *
    * \ingroup Rpc_Field_Module
    */
@@ -68,6 +73,7 @@ namespace Rpc {
 
       typedef FieldIoReal<D, RField<D>, RFieldDft<D>, FFT<D> > Base;
 
+      // Inherited public member functions
       using Base::associate;
       using Base::setFileMaster;
       using Base::readFieldsBasis;
@@ -104,10 +110,9 @@ namespace Rpc {
       ~FieldIo();
 
       /**
-      * Read array of RField objects (r-grid fields) from an istream.
+      * Read array of RField objects (r-grid fields) from a stream.
       *
-      * The capacity of array fields is equal to nMonomer, and element
-      * fields[i] is the RField<D> associated with monomer type i.
+      * See Pscf::Prdc::FieldIoReal::readFieldsRGrid .
       *
       * \param in  input stream (i.e., input file)
       * \param fields  array of RField fields (r-space grid)
@@ -118,10 +123,9 @@ namespace Rpc {
                            UnitCell<D> & unitCell) const;
 
       /**
-      * Read data for array of r-grid fields, with no header section.
+      * Read data for an array of r-grid fields, with no header section.
       *
-      * This function reads the data section of the rgrid-field format, 
-      * with no header.
+      * See Pscf::Prdc::FieldIoReal::readFieldsRGridData .
       *
       * \param in  input file stream
       * \param fields  array of RField fields (r-space grid)
@@ -132,7 +136,7 @@ namespace Rpc {
                                int nMonomer) const;
 
       /**
-      * Read single RField (field on an r-space grid) from an istream.
+      * Read a single RField (field on an r-space grid) from a stream.
       *
       * \param in  input stream (i.e., input file)
       * \param field  fields defined on r-space grid
@@ -143,7 +147,7 @@ namespace Rpc {
                            UnitCell<D>& unitCell) const;
 
       /**
-      * Write array of RField objects (fields on r-space grid) to ostream.
+      * Write array of RField objects (fields on r-space grid) to a stream.
       *
       * \param out  output stream (i.e., output file)
       * \param fields  array of RField objects (fields on r-space grid)
@@ -160,7 +164,7 @@ namespace Rpc {
                             bool writeMeshSize = true) const;
 
       /**
-      * Write a single RField (field on an r-space grid) to ostream.
+      * Write a single RField (field on an r-space grid) to a stream.
       *
       * \param out  output stream
       * \param field  field defined on r-space grid
@@ -175,11 +179,7 @@ namespace Rpc {
                            bool isSymmetric = true) const;
 
       /**
-      * Read array of RFieldDft objects (k-space fields) from istream.
-      *
-      * The capacity of the array is equal to nMonomer, and element
-      * fields[i] is the discrete Fourier transform of the field for
-      * monomer type i.
+      * Read array of RFieldDft objects (k-space fields) from a stream.
       *
       * \param in  input stream (i.e., input file)
       * \param fields  array of RFieldDft fields (k-space grid)
@@ -191,10 +191,6 @@ namespace Rpc {
 
       /**
       * Write array of RFieldDft objects (k-space fields) to file.
-      *
-      * The capacity of the array fields is equal to nMonomer. Element
-      * fields[i] is the discrete Fourier transform of the field for
-      * monomer type i.
       *
       * \param out  output stream (i.e., output file)
       * \param fields  array of RFieldDft fields
@@ -322,7 +318,7 @@ namespace Prdc {
    extern template class FieldIoReal<1, RField<1>, RFieldDft<1>, FFT<1>>;
    extern template class FieldIoReal<2, RField<2>, RFieldDft<2>, FFT<2>>;
    extern template class FieldIoReal<3, RField<3>, RFieldDft<3>, FFT<3>>;
-} // namespace Prdc
+} 
 #endif
 
 } // namespace Pscf

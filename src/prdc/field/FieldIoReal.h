@@ -54,7 +54,7 @@ namespace Prdc {
    * entry to this function, the readFieldHeader function will construct 
    * the basis before returning.
    *
-   * \ingroup Pscf_Field_Module
+   * \ingroup Prdc_Field_Module
    */
    template <int D, class RFRT, class RFKT, class FFTT>
    class FieldIoReal

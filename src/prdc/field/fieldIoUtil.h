@@ -8,9 +8,9 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/math/IntVec.h>   
+#include <pscf/math/IntVec.h>   // Template with a default parameter
 
-// Forward class declarations for classes used in function interfaces
+// Forward class declarations 
 namespace Util {
    template <typename T> class DArray;
 }
@@ -46,6 +46,8 @@ namespace Prdc {
    * fields is not allocated on entry, it is allocated with the
    * correct dimensions.
    *
+   * \ingroup Prdc_Field_Module
+   *
    * \param field  field object of type FT
    * \param dimensions  required mesh dimensions
    */
@@ -69,9 +71,11 @@ namespace Prdc {
    * If the arrray is not allocated on entry, it is allocated with 
    * the required dimensions.
    *
+   * \ingroup Prdc_Field_Module
+   *
    * \param fields  DArray of fields of type FT (in/out)
    * \param dimensions  required mesh dimensions (in)
-   * \param nMomoner  required number of monomer types (in)
+   * \param nMonomer  required number of monomer types (in)
    */
    template <int D, class FT>
    void checkAllocateFields(DArray< FT >& fields, 
@@ -87,6 +91,8 @@ namespace Prdc {
    *
    * An Exception is thrown if fields is not allocated, or if the fields
    * do not all have the same positive list of dimensions.
+   *
+   * \ingroup Prdc_Field_Module
    *
    * \param fields  DArray of fields (in)
    * \param dimensions  dimensions mesh for each field (out)
@@ -112,6 +118,8 @@ namespace Prdc {
    * checked, and an Exception is thrown if any are violated.  If arrays is
    * not allocated on entry, it is allocated with the required dimensions.
    *
+   * \ingroup Prdc_Field_Module
+   *
    * \param arrays  DArray of array of type AT (in/out)
    * \param capacity  required capacity of each array (in)
    * \param nMonomer  required number of arrays, or monomer types (in)
@@ -126,6 +134,8 @@ namespace Prdc {
    *
    * An Exception is thrown if the arrays container is not allocated, or 
    * if the 1D arrays do not all have the same positive capacity.
+   *
+   * \ingroup Prdc_Field_Module
    *
    * \param arrays  DArray of arrays (in)
    * \param capacity  capacity of each array (out)
@@ -145,6 +155,8 @@ namespace Prdc {
    * An Exception is thrown if the mesh dimensions in the file do not
    * match those given by the input vector meshDimensions.
    *
+   * \ingroup Prdc_Field_Module
+   *
    * \param in  input stream
    * \param meshDimensions  expected values for mesh dimensions
    */
@@ -154,8 +166,10 @@ namespace Prdc {
 
    /**
    * Write mesh dimensions to a field file header.
+   *
+   * \ingroup Prdc_Field_Module
    * 
-   * \param in  input stream
+   * \param out output stream
    * \param meshDimensions  vector of integer mesh dimensions
    */
    template <int D>
@@ -171,8 +185,11 @@ namespace Prdc {
    * The template parameter AT must be an array type that provides
    * an overloaded [] subscript operator.
    *
+   * \ingroup Prdc_Field_Module
+   *
    * \param in  input file stream
    * \param fields  array of r-grid fields (r-space grid) (out)
+   * \param dimensions  vector of mesh dimensions
    * \param nMonomer  number of monomer types (in)
    */
    template <int D, class AT>
@@ -190,8 +207,11 @@ namespace Prdc {
    * The template parameter AT must be an array type that provides
    * an overloaded [] subscript operator.
    *
+   * \ingroup Prdc_Field_Module
+   *
    * \param in  input file stream
    * \param field  array containing a single r-grid field (out)
+   * \param dimensions  vector of mesh dimensions
    */
    template <int D, class AT>
    void readRGridData(std::istream& in, 
@@ -207,8 +227,12 @@ namespace Prdc {
    * The template parameter AT must be an array type that provides 
    * an overloaded [] subscript operator.
    *
+   * \ingroup Prdc_Field_Module
+   *
    * \param out  output file stream
    * \param fields  array of r-grid fields (r-space grid) (in)
+   * \param dimensions  vector of mesh dimensions
+   * \param nMonomer  number of monomer types
    */
    template <int D, class AT>
    void writeRGridData(std::ostream& out, 
@@ -225,11 +249,14 @@ namespace Prdc {
    * The template parameter AT must be an array type that provides
    * an overloaded [] subscript operator.
    *
+   * \ingroup Prdc_Field_Module
+   *
    * \param out  output file stream
    * \param field  array containing a single r-grid field (out)
+   * \param dimensions  vector of mesh dimensions
    */
    template <int D, class AT>
-   void writeRGridData(std::ostream& in, 
+   void writeRGridData(std::ostream& out, 
                        AT const& field,
                        IntVec<D> const& dimensions);
 
@@ -238,11 +265,13 @@ namespace Prdc {
    /**
    * Read data for array of k-grid fields, with no header section.
    *
-   * This function reads the data section of the kgrid-field format
-   * for multiple monomer types, with no header. 
+   * This function reads the data section of the kgrid-field format for
+   * multiple monomer types, with no header. 
    *
-   * The template parameter AT must be an array type that provides
-   * an overloaded [] subscript operator.
+   * The template parameter AT must be an array type that provides an
+   * overloaded [] subscript operator.
+   *
+   * \ingroup Prdc_Field_Module
    *
    * \param in  input file stream
    * \param fields  array of k-grid fields (r-space grid) (out)
@@ -264,6 +293,8 @@ namespace Prdc {
    * The template parameter AT must be an array type that provides
    * an overloaded [] subscript operator.
    *
+   * \ingroup Prdc_Field_Module
+   *
    * \param in  input file stream
    * \param field  array containing a single k-grid field (out)
    * \param dftDimensions dimensions of real DFT mesh (in)
@@ -276,11 +307,13 @@ namespace Prdc {
    /**
    * Write data for array of k-grid fields, with no header section.
    *
-   * This function writes the data section of the kgrid-field format
-   * for a multiple monomer types, with no header section.
+   * This function writes the data section of a k-grid field file for a
+   * a multiple monomer type, with no header section.
    *
    * The template parameter AT must be an array type that provides 
    * an overloaded [] subscript operator.
+   *
+   * \ingroup Prdc_Field_Module
    *
    * \param out  output file stream
    * \param fields  array of k-grid fields (r-space grid) (in)
@@ -296,13 +329,15 @@ namespace Prdc {
    /**
    * Write data for a single k-grid field, with no header section.
    *
-   * This function writes the data section of an kgrid-field format
-   * for a single monomer type, with no header. 
+   * This function writes the data section of a k-grid field file for
+   * a single monomer type, with no header. 
    *
-   * The template parameter AT must be an array type that provides
-   * an overloaded [] subscript operator.
+   * The template parameter AT must be an array type that provides an
+   * overloaded [] subscript operator.
    *
-   * \param out  output file stream
+   * \ingroup Prdc_Field_Module
+   *
+   * \param in input file stream
    * \param field  array containing a single k-grid field (in)
    * \param dftDimensions dimensions of real DFT mesh (in)
    */
@@ -314,7 +349,9 @@ namespace Prdc {
    // Templates for Io of symmetrized basis format
 
    /**
-   * Read the number of basis functions from a basis field file.
+   * Read the number of basis functions from a basis field file header.
+   *
+   * \ingroup Prdc_Field_Module
    *
    * \param in input stream
    * \return value of nBasis obtained from the file
@@ -322,12 +359,14 @@ namespace Prdc {
    int readNBasis(std::istream& in);
    
    /**
-   * Write the number of basis functions to a basis field file.
+   * Write the number of basis functions to a basis field file header.
+   *
+   * \ingroup Prdc_Field_Module
    *
    * \param out output stream
-   * \param value  value of nBasis 
+   * \param nBasis  number of basis functions
    */
-   void writeNBasis(std::ostream& in, int nBasis);
+   void writeNBasis(std::ostream& out, int nBasis);
    
    /**
    * Read a set of fields in basis format.
@@ -343,6 +382,8 @@ namespace Prdc {
    * The number of basis functions that are processes is the smallar 
    * of nStarIn (the number available in the file) and fieldCapacity
    * (the number for which there is room in the arrays).
+   *
+   * \ingroup Prdc_Field_Module
    * 
    * \param in  input file stream
    * \param fields  array of field components
@@ -369,7 +410,9 @@ namespace Prdc {
    * lesser fieldCapacity and the number of uncancelled basis functions
    * in the basis. 
    *
-   * \param in  input file stream
+   * \ingroup Prdc_Field_Module
+   *
+   * \param out  output file stream
    * \param fields  array of field components
    * \param basis associated symmetry adapted basis
    */
@@ -381,8 +424,12 @@ namespace Prdc {
    /**
    * Convert a real field from symmetrized basis to Fourier grid.
    *
-   * \param components coefficients of symmetry-adapted basis functions
-   * \param dft discrete Fourier transform of a real field
+   * \ingroup Prdc_Field_Module
+   *
+   * \param components  coefficients of symmetry-adapted basis functions
+   * \param dft  discrete Fourier transform of a real field
+   * \param basis  associated symmetry adapted basis (in)
+   * \param dftDimensions  dimensions of real DFT mesh (in)
    */
    template <int D, class AT>
    void convertBasisToKGrid(DArray<double> const & components,
@@ -398,8 +445,12 @@ namespace Prdc {
    * tolerance given by the epsilon parameter, and prints a warning to
    * Log::file() if it does not.
    *
+   * \ingroup Prdc_Field_Module
+   *
    * \param in  discrete Fourier transform (k-grid) of a field
    * \param out  components of field in asymmetry-adapted Fourier basis
+   * \param basis  associated symmetry adapted basis (in)
+   * \param dftDimensions  dimensions of real DFT mesh (in)
    * \param checkSymmetry  flag indicating whether to check symmetry
    * \param epsilon  error tolerance for symmetry test (if any)
    */
@@ -420,9 +471,13 @@ namespace Prdc {
    * parameter verbose is true and the deviation from symmetry
    * exceeds the error threshhold, errors are written to Log::file().
    *
+   * \ingroup Prdc_Field_Module
+   *
    * \param in field in real space grid (r-grid) format
-   * \param epsilon error threshold used to test for symmetry
-   * \param verbose  if true, write error to Log::file()
+   * \param basis  associated symmetry adapted basis 
+   * \param dftDimensions  dimensions of real DFT mesh 
+   * \param epsilon error threshold used to test for symmetry 
+   * \param verbose  if true, write error to Log::file() 
    * \return true if the field is symmetric, false otherwise
    */
    template <int D, class AT>
@@ -442,8 +497,10 @@ namespace Prdc {
    * cell has been replicated a specified number of times in each 
    * direction. Results are written to an std::ostream output stream.
    *
-   * Element i of the replicas IntVec<D> parameter contains the 
+   * Element i of the IntVec<D> parameter named "replicas" contains the 
    * number of unit cell replicas along direction i. 
+   *
+   * \ingroup Prdc_Field_Module
    * 
    * \param out  output stream (i.e., output file)
    * \param fields  array of RField (r-space) fields to be replicated
@@ -475,17 +532,19 @@ namespace Prdc {
    * or 3D space. Similarly, a 2D hexagonal SCFT solution can be used
    * to generate a hexagonal solution in 3D space.
    *
-   * The DArray<int> parameter newGridDimensions must have a capacity
-   * d - D, and contains the number of grid points in the added 
-   * directions. The spacing between grid points in the added directions 
+   * The DArray<int> parameter newGridDimensions must have a capacity d-D,
+   * and each element contains the number of grid points in one added 
+   * direction. The spacing between grid points in the added directions 
    * is taken to be the same as that associated with the first Bravais
    * lattice vector of the D dimensional unit cell of the input fields.
    *
-   * \param out  out  output stream
+   * \ingroup Prdc_Field_Module
+   *
+   * \param out  output stream
    * \param fields  input fields defined on a D dimensional grid
    * \param meshDimensions dimensions of mesh for input fields
    * \param unitCell  unit cell for input fields
-   * \param d  dimensionality of expanded space
+   * \param d  dimensionality of expanded space (d > D)
    * \param newGridDimensions  numbers of grid points in added directions
    */
    template <int D, class AT>
