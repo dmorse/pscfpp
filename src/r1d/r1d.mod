@@ -2,12 +2,12 @@ namespace Pscf
 {
 
    /**
-   * Real 1D fields, SCFT.
+   * SCFT with real 1D fields.
    */
    namespace R1d {
 
       /**
-      * \defgroup Pscf_R1d_Module Real 1D fields
+      * \defgroup Pscf_R1d_Module Pscf::R1d - Real 1D fields
       *
       * One-dimensional SCFT, namespace Pscf::R1d.
       *

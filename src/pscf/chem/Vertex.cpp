@@ -35,7 +35,7 @@ namespace Pscf
    {  id_ = id; }
 
    /*
-   * Add this block to the list.
+   * Add a block to the vertex.
    */
    void Vertex::addBlock(const BlockDescriptor& block)
    {
