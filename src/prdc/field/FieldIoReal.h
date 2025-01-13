@@ -73,7 +73,7 @@ namespace Prdc {
       /**
       * Destructor.
       */
-      ~FieldIoReal();
+      virtual ~FieldIoReal();
 
       /**
       * Create association with other objects in parent Domain.

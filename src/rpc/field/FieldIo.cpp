@@ -9,6 +9,7 @@
 #include <util/math/Constants.h>
 
 namespace Pscf {
+
 namespace Prdc {
 
    using namespace Cpu;
@@ -18,6 +19,7 @@ namespace Prdc {
    template class FieldIoReal<2, RField<2>, RFieldDft<2>, FFT<2> >;
    template class FieldIoReal<3, RField<3>, RFieldDft<3>, FFT<3> >;
 }
+
 namespace Rpc {
 
    // Explicit instantiations
@@ -25,5 +27,6 @@ namespace Rpc {
    template class FieldIo<2>;
    template class FieldIo<3>;
 
-} // namespace Pscf::Rpc
+} 
+
 } // namespace Pscf

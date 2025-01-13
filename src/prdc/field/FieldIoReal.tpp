@@ -38,9 +38,6 @@ namespace Pscf {
 namespace Prdc {
 
    using namespace Util;
-   using namespace Pscf::Prdc;
-
-   // Functions that must be specialized in Rpc and Rpg
 
    /*
    * Constructor.
@@ -63,6 +60,20 @@ namespace Prdc {
    FieldIoReal<D,RFRT,RFKT,FFTT>::~FieldIoReal()
    {}
 
+   // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+   // %%%%%%% Dummy Functions : Not implemented in base class %%%%
+   // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+   /*
+   * These are virtual functions with a default implementation that 
+   * should never be called, and which throws an Exception. An unusable 
+   * implementation is provided rather than declaring these functions to
+   * be pure virtual (= 0 suffix) because, in the absence of an pure
+   * virtual functions, explicit instances of this template can be
+   * compiled for the few use cases of interest (1, 2 or 3 dimensions,
+   * with fields defined on the Cpu or Gpu). 
+   */
+
    /*
    * Read an array of fields in r-grid format.
    */
@@ -71,20 +82,7 @@ namespace Prdc {
                               std::istream &in,
                               DArray<RFRT >& fields,
                               UnitCell<D>& unitCell) const
-   {
-      // Read header
-      int nMonomer;
-      bool isSymmetric;
-      readFieldHeader(in, nMonomer, unitCell, isSymmetric);
-      readMeshDimensions(in, mesh().dimensions());
-      checkAllocateFields(fields, mesh().dimensions(), nMonomer);
-
-      // Read data
-      // Rpg:: Allocate host arrays
-      Prdc::readRGridData(in, fields, mesh().dimensions(), nMonomer);
-      // Rpg:: Copy host -> device
-
-   }
+   {  UTIL_THROW("Unimplemented function in FieldIoReal base class"); }
 
    /*
    * Read the data section of an array of fields in r-grid format.
@@ -94,12 +92,7 @@ namespace Prdc {
                               std::istream& in,
                               DArray< RFRT >& fields,
                               int nMonomer) const
-   {
-      checkAllocateFields(fields, mesh().dimensions(), nMonomer);
-      // Rpg:: Allocate host arrays
-      Prdc::readRGridData(in, fields, mesh().dimensions(), nMonomer);
-      // Rpg:: Copy host -> device
-   }
+   {  UTIL_THROW("Unimplemented function in FieldIoReal base class"); }
 
    /*
    * Read a single fields in r-grid format.
@@ -109,21 +102,7 @@ namespace Prdc {
                               std::istream &in,
                               RFRT & field,
                               UnitCell<D>& unitCell) const
-   {
-
-      // Read header
-      int nMonomer;
-      bool isSymmetric;
-      readFieldHeader(in, nMonomer, unitCell, isSymmetric);
-      UTIL_CHECK(nMonomer == 1);
-      readMeshDimensions(in, mesh().dimensions());
-
-      // Read data
-      // Rpg:: Allocate host arrays
-      checkAllocateField(field, mesh().dimensions());
-      Prdc::readRGridData(in, field, mesh().dimensions());
-      // Rpg:: Copy host -> device
-   }
+   {  UTIL_THROW("Unimplemented function in FieldIoReal base class"); }
 
    /*
    * Write an array of fields in r-grid format
@@ -136,25 +115,7 @@ namespace Prdc {
                               bool writeHeader,
                               bool isSymmetric,
                               bool writeMeshSize) const
-   {
-      // Inspect fields array, infer nMonomer and meshDimensions
-      int nMonomer;
-      IntVec<D> meshDimensions;
-      inspectFields(fields, meshDimensions, nMonomer);
-
-      // Write header
-      if (writeHeader){
-         writeFieldHeader(out, nMonomer, unitCell, isSymmetric);
-      }
-      if (writeMeshSize){
-         writeMeshDimensions(out, meshDimensions);
-      }
-      
-      // Write data section
-      // Rpg:: Allocate host arrays
-      // Rpg:: Copy device -> host 
-      Prdc::writeRGridData(out, fields, meshDimensions, nMonomer);
-   }
+   {  UTIL_THROW("Unimplemented function in FieldIoReal base class"); }
 
    /*
    * Read a single fields in r-grid format
@@ -166,20 +127,7 @@ namespace Prdc {
                               UnitCell<D> const & unitCell,
                               bool writeHeader,
                               bool isSymmetric) const
-   {
-      IntVec<D> meshDimensions = field.meshDimensions();
-
-      // Write header
-      if (writeHeader) {
-         writeFieldHeader(out, 1, unitCell, isSymmetric);
-         writeMeshDimensions(out, meshDimensions);
-      }
-
-      // Write data
-      // Rpg:: Allocate host arrays
-      // Rpg:: Copy device -> host
-      Prdc::writeRGridData(out, field, meshDimensions);
-   }
+   {  UTIL_THROW("Unimplemented function in FieldIoReal base class"); }
 
    /*
    * Read an array of fields in k-grid format
@@ -189,21 +137,7 @@ namespace Prdc {
                               std::istream &in,
                               DArray<RFKT >& fields,
                               UnitCell<D>& unitCell) const
-   {
-      // Read header
-      int nMonomer;
-      bool isSymmetric;
-      readFieldHeader(in, nMonomer, unitCell, isSymmetric);
-      readMeshDimensions(in, mesh().dimensions());
-
-      checkAllocateFields(fields, mesh().dimensions(), nMonomer);
-
-      // Read data
-      // Rpg:: Allocate host arrays
-      Prdc::readKGridData(in, fields, 
-                          fields[0].dftDimensions(), nMonomer);
-      // Rpg:: Copy host -> device
-   }
+   {  UTIL_THROW("Unimplemented function in FieldIoReal base class"); }
 
    template <int D, class RFRT, class RFKT, class FFTT>
    void
@@ -212,32 +146,13 @@ namespace Prdc {
                               DArray<RFKT > const & fields,
                               UnitCell<D> const & unitCell,
                               bool isSymmetric) const
-   {
-      // Inspect fields array - infer nMonomer and dimensions
-      int nMonomer;
-      IntVec<D> meshDimensions;
-      inspectFields(fields, meshDimensions, nMonomer);
-      IntVec<D> dftDimensions = fields[0].dftDimensions();
-
-      // Write file
-      writeFieldHeader(out, nMonomer, unitCell, isSymmetric);
-      writeMeshDimensions(out, meshDimensions);
-
-      // Write data
-      // Rpg:: Allocate host arrays
-      // Rpg:: Copy device -> host
-      Prdc::writeKGridData(out, fields, dftDimensions, nMonomer);
-   }
+   {  UTIL_THROW("Unimplemented function in FieldIoReal base class"); }
 
    template <int D, class RFRT, class RFKT, class FFTT>
    void FieldIoReal<D,RFRT,RFKT,FFTT>::convertBasisToKGrid(
                               DArray<double> const & in,
                               RFKT& out) const
-   {
-      // Rpg: Allocate host arrays  
-      Prdc::convertBasisToKGrid(in, out, basis(), out.dftDimensions()); 
-      // Rpg: Copy host -> device
-   }
+   {  UTIL_THROW("Unimplemented function in FieldIoReal base class"); }
 
    template <int D, class RFRT, class RFKT, class FFTT>
    void FieldIoReal<D,RFRT,RFKT,FFTT>::convertKGridToBasis(
@@ -245,29 +160,17 @@ namespace Prdc {
                               DArray<double>& out,
                               bool checkSymmetry,
                               double epsilon) const
-   {
-      // Rpg: Allocate host arrays
-      // Rpg: Copy device -> host 
-      Prdc::convertKGridToBasis(in, out, basis(), in.dftDimensions(),
-                                checkSymmetry, epsilon);
-   }
+   {  UTIL_THROW("Unimplemented function in FieldIoReal base class"); }
 
    /*
    * Test if an real field DFT has the declared space group symmetry.
-   * Return true if symmetric, false otherwise. Print error values
-   * if verbose == true and hasSymmetry == false.
    */
    template <int D, class RFRT, class RFKT, class FFTT>
    bool FieldIoReal<D,RFRT,RFKT,FFTT>::hasSymmetry(
                               RFKT const & in, 
                               double epsilon,
                               bool verbose) const
-   {
-      // Rpg:: Allocate host array
-      // Rpg: Copy device -> host 
-      return Prdc::hasSymmetry(in, basis(), in.dftDimensions(),
-                               epsilon, verbose);
-   }
+   {  UTIL_THROW("Unimplemented function in FieldIoReal base class"); }
 
    template <int D, class RFRT, class RFKT, class FFTT>
    void FieldIoReal<D,RFRT,RFKT,FFTT>::replicateUnitCell(
@@ -275,18 +178,7 @@ namespace Prdc {
                               DArray< RFRT > const & fields,
                               UnitCell<D> const & unitCell,
                               IntVec<D> const & replicas) const
-
-   {
-      // Inspect fields to obtain nMonomer and meshDimensions
-      int nMonomer;
-      IntVec<D> meshDimensions;
-      inspectFields(fields, meshDimensions, nMonomer);
-
-      // Rpg: Allocate hostArrays
-      // Rpg: Copy device -> host
-      Prdc::replicateUnitCell(out, fields, meshDimensions,
-                              unitCell, replicas);
-   }
+   {  UTIL_THROW("Unimplemented function in FieldIoReal base class"); }
 
    /*
    * Expand dimension of an array of r-grid fields, write to ostream.
@@ -298,19 +190,11 @@ namespace Prdc {
                               UnitCell<D> const & unitCell,
                               int d,
                               DArray<int> const& newGridDimensions) const
-   {
-      IntVec<D> meshDimensions = fields[0].meshDimensions();
-
-      // Rpg: Allocate hostArrays
-      // Rpg: Copy device -> host
-      Prdc::expandRGridDimension(out, fields, meshDimensions,
-                                 unitCell, d, newGridDimensions);
-   }
+   {  UTIL_THROW("Unimplemented function in FieldIoReal base class"); }
 
    // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-   // %%%%%%% Common Functions : Define in base class         %%%%
+   // %%%%%%% Shared Functions : Implemented in this template %%%%
    // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 
    /*
    * Create associations with other members of parent Domain.
