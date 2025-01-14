@@ -9,7 +9,6 @@
 */
 
 #include <prdc/field/FieldIoReal.h>     // base class template
-
 #include <prdc/cpu/RField.h>            // template parameter
 #include <prdc/cpu/RFieldDft.h>         // template parameter
 #include <prdc/cpu/FFT.h>               // template parameter
@@ -20,14 +19,8 @@ namespace Util {
    template <typename T> class DArray;
 }
 namespace Pscf {
-   template <int D> class Mesh;
    namespace Prdc {
-      template <int D> class Basis;
-      template <int D> class SpaceGroup;
       template <int D> class UnitCell;
-      namespace Cpu {
-         template <int D> class FFT;
-      }
    }
 }
 
@@ -42,25 +35,25 @@ namespace Rpc {
    * File input/output operations and format conversions for fields.
    *
    * Please refer to the documentation of the base class Prdc::FieldIoReal 
-   * for more complete API documentation for this class template, for
+   * for more complete API documentation for this class template, for 
    * reasons discussed below.
    *
    * Class template Rpc::FieldIo<int D> is derived from a partial 
    * specialization of template Prdc::FieldIoReal<D, RFRT, RFKT, FFFT> 
-   * that is implemented using classes RField<D>, RFieldDft<D>, and 
-   * FFT<D> that are all defined in the Prdc::Cpu subspace, and that 
-   * use only conventional use CPU hardware. Rpc::FieldIo is thus a 
-   * specialization of FieldIoReal for CPU hardware. An analogous
-   * class template named named Rpg::FieldIo that is designed to use 
-   * a GPU is defined in the Pscf::Rpg namespace 
+   * that is implemented using classes RFRT=RField<D>, RFKT=RFieldDft<D>, 
+   * and FFFT=FFT<D> that are all defined in the Prdc::Cpu subspace, and 
+   * that use only conventional use CPU hardware. Rpc::FieldIo is thus a 
+   * specialization of the FieldIoReal template for CPU hardware. An 
+   * analogous class template named named Rpg::FieldIo that is designed 
+   * to use a GPU is defined in the Pscf::Rpg namespace 
    *
    * The pubiic interface of Rpc::FieldIo is identical to that of the
    * base class template Prdc::FieldIoReal. All member functions defined 
-   * in this class template are virtual functions that are defined and
-   * documented in Prdc::FieldIoReal, but provided nontrivial 
-   * implementations here. These are all functions for which different 
-   * implementations are required for the CPU and GPU variants, and
-   * which are thus also reimplemented in Rpg::FieldIo.
+   * in this Rpc::FieldIo are reimplemented virtual functions that are 
+   * declared and documented in Prdc::FieldIoReal, but that have trivial
+   * do-nothing implementations in the base class. These are all functions 
+   * for which different implementations are required for the CPU and GPU 
+   * variants, and which are thus also reimplemented in Rpg::FieldIo.
    *
    * \ingroup Rpc_Field_Module
    */
@@ -100,7 +93,7 @@ namespace Rpc {
       using Base::writeFieldHeader;
 
       /**
-      * Constructor.
+      * Default constructor.
       */
       FieldIo();
 
@@ -112,9 +105,9 @@ namespace Rpc {
       /**
       * Read array of RField objects (r-grid fields) from a stream.
       *
-      * See Pscf::Prdc::FieldIoReal::readFieldsRGrid .
+      * See documentation of analogous function in Prdc::FieldIoReal.
       *
-      * \param in  input stream (i.e., input file)
+      * \param in  input file stream 
       * \param fields  array of RField fields (r-space grid)
       * \param unitCell  associated crystallographic unit cell
       */
@@ -125,7 +118,7 @@ namespace Rpc {
       /**
       * Read data for an array of r-grid fields, with no header section.
       *
-      * See Pscf::Prdc::FieldIoReal::readFieldsRGridData .
+      * See documentation of analogous function in Prdc::FieldIoReal.
       *
       * \param in  input file stream
       * \param fields  array of RField fields (r-space grid)
@@ -138,7 +131,9 @@ namespace Rpc {
       /**
       * Read a single RField (field on an r-space grid) from a stream.
       *
-      * \param in  input stream (i.e., input file)
+      * See documentation of analogous function in Prdc::FieldIoReal.
+      *
+      * \param in  input file stream 
       * \param field  fields defined on r-space grid
       * \param unitCell  associated crystallographic unit cell
       */
@@ -149,12 +144,14 @@ namespace Rpc {
       /**
       * Write array of RField objects (fields on r-space grid) to a stream.
       *
+      * See documentation of analogous function in Prdc::FieldIoReal.
+      *
       * \param out  output stream (i.e., output file)
       * \param fields  array of RField objects (fields on r-space grid)
       * \param unitCell  associated crystallographic unit cell
-      * \param writeHeader  flag to write header of file if true
+      * \param writeHeader  flag to write file header if true
       * \param isSymmetric  Do fields have a space group symmetry ?
-      * \param writeMeshSize Should mesh size be written in header?
+      * \param writeMeshSize  Should mesh size be written in header?
       */
       void writeFieldsRGrid(std::ostream& out,
                             DArray< RField<D> > const & fields,
@@ -166,10 +163,12 @@ namespace Rpc {
       /**
       * Write a single RField (field on an r-space grid) to a stream.
       *
+      * See documentation of analogous function in Prdc::FieldIoReal.
+      *
       * \param out  output stream
       * \param field  field defined on r-space grid
       * \param unitCell  associated crystallographic unit cell
-      * \param writeHeader  should a file header be written?
+      * \param writeHeader  Should a file header be written?
       * \param isSymmetric  Does the field have a space group symmetry?
       */
       void writeFieldRGrid(std::ostream &out,
@@ -181,6 +180,8 @@ namespace Rpc {
       /**
       * Read array of RFieldDft objects (k-space fields) from a stream.
       *
+      * See documentation of analogous function in Prdc::FieldIoReal.
+      *
       * \param in  input stream (i.e., input file)
       * \param fields  array of RFieldDft fields (k-space grid)
       * \param unitCell  associated crystallographic unit cell
@@ -191,6 +192,8 @@ namespace Rpc {
 
       /**
       * Write array of RFieldDft objects (k-space fields) to file.
+      *
+      * See documentation of analogous function in Prdc::FieldIoReal.
       *
       * \param out  output stream (i.e., output file)
       * \param fields  array of RFieldDft fields
@@ -205,6 +208,8 @@ namespace Rpc {
       /**
       * Convert a field from symmetrized basis to Fourier grid (k-grid).
       *
+      * See documentation of analogous function in Prdc::FieldIoReal.
+      *
       * \param components  coefficients of in symmetry-adapted basis
       * \param dft  discrete Fourier transform of a real field
       */
@@ -214,10 +219,7 @@ namespace Rpc {
       /**
       * Convert a field from Fourier (k-grid) to symmetrized basis form.
       *
-      * If the checkSymmetry parameter is true, this function checks if
-      * the input field satisfies the space group symmetry to within a
-      * tolerance given by the epsilon parameter, and prints a warning 
-      * to Log::file() if it does not.
+      * See documentation of analogous function in Prdc::FieldIoReal.
       *
       * \param in  discrete Fourier transform (k-grid) of a field
       * \param out  components of field in asymmetry-adapted Fourier basis
@@ -232,36 +234,27 @@ namespace Rpc {
       /**
       * Check if a k-grid field has the declared space group symmetry.
       *
-      * This function checks whether the discrete Fourier transform of
-      * a real field satisfies all the symmetries of a space group to
-      * within an error threshhold given by parameter epsilon. If the
-      * parameter verbose is true and the deviation from symmetry
-      * exceeds the error threshhold, errors are written to Log::file().
+      * See documentation of analogous function in Prdc::FieldIoReal.
       *
       * \param in field in real space grid (r-grid) format
       * \param epsilon error threshold used to test for symmetry
       * \param verbose  if true, write error to Log::file()
-      * \return true if the field is symmetric, false otherwise
+      * \return true iff the field is symmetric to within tolerance
       */
       bool hasSymmetry(RFieldDft<D> const & in, 
                        double epsilon = 1.0e-8,
                        bool verbose = true) const;
 
       /**
-      * Expand dimension of an array of r-grid fields, write to ostream.
+      * Expand spatial dimension of an array of r-grid fields.
       *
-      * This function is used for template dimension D < 3, and allows a
-      * 1D or 2D field to be expanded into a higher dimensional 2D or 3D
-      * field in which field values are independent of the values of
-      * coordinates associated with the added dimensions. For example, 
-      * it can output a lamellar computed with D=1 on a 3D grid (d=3)
-      * in a format that can be read by pscf_pc when invoked with D=3.
+      * See documentation of analogous function in Prdc::FieldIoReal.
       *
-      * \param out  output stream (i.e., output file)
-      * \param fields  input array of RField fields (r-space grid)
-      * \param unitCell  original crystallographic unit cell
-      * \param d  expanded dimension (greater than D)
-      * \param newGridDimensions number of grid points in added dimensions
+      * \param out  output file stream 
+      * \param fields  input array of D-dimensional r-grid fields
+      * \param unitCell  original D-dimensional unit cell
+      * \param d  expanded spatial dimension (d > D)
+      * \param newGridDimensions  number of grid points in added dimensions
       */
       void expandRGridDimension(
                           std::ostream &out,
@@ -271,25 +264,20 @@ namespace Rpc {
                           DArray<int> const& newGridDimensions) const;
 
       /**
-      * Write r-grid fields in a replicated unit cell to std::ostream.
+      * Write r-grid fields in a replicated unit cell to std::ostream.  
       *
-      * This function takes an input array of periodic fields and outputs
-      * them within an expanded unit cell in which the original input unit 
-      * cell has been replicated a specified number of times in each 
-      * direction. Results are written to an std::ostream output stream.
+      * See documentation of analogous function in Prdc::FieldIoReal.
       *
-      * Element i of the replicas IntVec<D> parameter contains the 
-      * number of unit cell replicas along direction i. 
-      * 
-      * \param out  output stream (i.e., output file)
+      * \param out  output file stream 
       * \param fields  array of RField (r-space) fields to be replicated
       * \param unitCell  original crystallographic unit cell
       * \param replicas  number of unit cell replicas in each direction
-      */
-      void replicateUnitCell(std::ostream& out,
-                             DArray< RField<D> > const & fields,
-                             UnitCell<D> const & unitCell,
-                             IntVec<D> const & replicas) const;
+      */ 
+      void replicateUnitCell(
+                          std::ostream& out,
+                          DArray< RField<D> > const & fields,
+                          UnitCell<D> const & unitCell,
+                          IntVec<D> const & replicas) const;
 
    protected:
 
@@ -314,7 +302,7 @@ namespace Rpc {
 
 #ifndef RPC_FIELD_IO_TPP
 namespace Prdc {
-   using namespace Cpu;
+   using namespace Pscf::Prdc::Cpu;
    extern template class FieldIoReal<1, RField<1>, RFieldDft<1>, FFT<1>>;
    extern template class FieldIoReal<2, RField<2>, RFieldDft<2>, FFT<2>>;
    extern template class FieldIoReal<3, RField<3>, RFieldDft<3>, FFT<3>>;

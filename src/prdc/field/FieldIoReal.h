@@ -246,7 +246,7 @@ namespace Prdc {
       */
       virtual
       void readFieldsRGrid(std::istream& in,
-                           DArray< RFRT >& fields,
+                           DArray<RFRT>& fields,
                            UnitCell<D> & unitCell) const;
 
       /**
@@ -264,7 +264,7 @@ namespace Prdc {
       * \param unitCell  associated crystallographic unit cell
       */
       void readFieldsRGrid(std::string filename,
-                           DArray< RFRT >& fields,
+                           DArray<RFRT>& fields,
                            UnitCell<D> & unitCell) const;
 
       /**
@@ -279,7 +279,7 @@ namespace Prdc {
       */
       virtual
       void readFieldsRGridData(std::istream& in,
-                               DArray< RFRT >& fields,
+                               DArray<RFRT>& fields,
                                int nMonomer) const;
 
       /**
@@ -321,7 +321,7 @@ namespace Prdc {
       */
       virtual
       void writeFieldsRGrid(std::ostream& out,
-                            DArray< RFRT > const & fields,
+                            DArray<RFRT> const & fields,
                             UnitCell<D> const & unitCell,
                             bool writeHeader = true,
                             bool isSymmetric = true,
@@ -340,7 +340,7 @@ namespace Prdc {
       * \param isSymmetric Do fields have a space group symmetry ?
       */
       void writeFieldsRGrid(std::string filename,
-                            DArray< RFRT > const & fields,
+                            DArray<RFRT> const & fields,
                             UnitCell<D> const & unitCell,
                             bool isSymmetric = true) const;
 
@@ -394,7 +394,7 @@ namespace Prdc {
       */
       virtual
       void readFieldsKGrid(std::istream& in,
-                           DArray< RFKT >& fields,
+                           DArray<RFKT>& fields,
                            UnitCell<D> & unitCell) const;
 
       /**
@@ -413,7 +413,7 @@ namespace Prdc {
       * \param unitCell  associated crystallographic unit cell
       */
       void readFieldsKGrid(std::string filename,
-                           DArray< RFKT >& fields,
+                           DArray<RFKT>& fields,
                            UnitCell<D> & unitCell) const;
 
       /**
@@ -430,7 +430,7 @@ namespace Prdc {
       */
       virtual
       void writeFieldsKGrid(std::ostream& out,
-                            DArray< RFKT > const & fields,
+                            DArray<RFKT> const & fields,
                             UnitCell<D> const & unitCell,
                             bool isSymmetric = true) const;
 
@@ -447,7 +447,7 @@ namespace Prdc {
       * \param isSymmetric  Does this field have space group symmetry?
       */
       void writeFieldsKGrid(std::string filename,
-                           DArray< RFKT > const & fields,
+                           DArray<RFKT> const & fields,
                            UnitCell<D> const & unitCell,
                            bool isSymmetric = true) const;
 
@@ -475,7 +475,7 @@ namespace Prdc {
       * \param out  fields defined as discrete Fourier transforms (k-grid)
       */
       void convertBasisToKGrid(DArray< DArray<double> > const & in,
-                               DArray< RFKT >& out) const;
+                               DArray<RFKT>& out) const;
 
       /**
       * Convert a field from Fourier (k-grid) to symmetrized basis form.
@@ -512,7 +512,7 @@ namespace Prdc {
       * \param checkSymmetry  flag indicate whether to check symmetry
       * \param epsilon  error tolerance for symmetry test (if any)
       */
-      void convertKGridToBasis(DArray< RFKT > const & in,
+      void convertKGridToBasis(DArray<RFKT> const & in,
                                DArray< DArray<double> > & out,
                                bool checkSymmetry = true,
                                double epsilon = 1.0e-8) const;
@@ -533,7 +533,7 @@ namespace Prdc {
       * \param out fields defined on real-space grid
       */
       void convertBasisToRGrid(DArray< DArray<double> > const & in,
-                               DArray< RFRT > & out) const ;
+                               DArray<RFRT> & out) const ;
 
       /**
       * Convert a field from spatial grid (r-grid) to symmetrized basis.
@@ -568,7 +568,7 @@ namespace Prdc {
       * \param checkSymmetry  if true, check space group symmetry
       * \param epsilon error threshhold for symmetry test
       */
-      void convertRGridToBasis(DArray< RFRT > const & in,
+      void convertRGridToBasis(DArray<RFRT> const & in,
                                DArray< DArray<double> > & out,
                                bool checkSymmetry = true,
                                double epsilon = 1.0e-8) const;
@@ -584,8 +584,8 @@ namespace Prdc {
       * \param in  fields in discrete Fourier format (k-grid)
       * \param out  fields defined on real-space grid (r-grid)
       */
-      void convertKGridToRGrid(DArray< RFKT > & in,
-                               DArray< RFRT > & out) const;
+      void convertKGridToRGrid(DArray<RFKT> & in,
+                               DArray<RFRT> & out) const;
 
       /**
       * Convert a field from k-grid (DFT) to real space (r-grid) format.
@@ -606,8 +606,8 @@ namespace Prdc {
       * \param in  fields defined on real-space grid (r-grid)
       * \param out  fields in discrete Fourier format (k-grid)
       */
-      void convertRGridToKGrid(DArray< RFRT > const & in,
-                               DArray< RFKT > & out) const;
+      void convertRGridToKGrid(DArray<RFRT> const & in,
+                               DArray<RFKT> & out) const;
 
       /**
       * Convert a field from spatial grid (r-grid) to k-grid format.
@@ -721,7 +721,7 @@ namespace Prdc {
       * \param replicas  number of unit cell replicas in each direction
       */
       void replicateUnitCell(std::ostream& out,
-                             DArray<RFRT > const & fields,
+                             DArray<RFRT> const & fields,
                              UnitCell<D> const & unitCell,
                              IntVec<D> const & replicas) const;
 
@@ -739,7 +739,7 @@ namespace Prdc {
       * \param replicas  number of unit cell replicas in each direction
       */
       void replicateUnitCell(std::string filename,
-                             DArray<RFRT > const & fields,
+                             DArray<RFRT> const & fields,
                              UnitCell<D> const & unitCell,
                              IntVec<D> const & replicas) const;
 
@@ -771,14 +771,14 @@ namespace Prdc {
       * Exception is thrown. 
       *
       * If a space group was defined in the parameter file but the 
-      * associated Basis object is not been initialized, this function
-      * will initialize the basis by calling Basis<D>::makeBasis via a 
-      * private pointer, using the unit cell parameters found in the 
-      * file header.  This function thus can modify the associated
-      * Basis object as a side effect even though this function is marked 
-      * const. Because all of the member functions that read field files
-      * call this function to read the field file header, the same
-      * statement also applies to all of these read functions.
+      * associated Basis object is not been initialized, this function will
+      * initialize the basis by calling Basis<D>::makeBasis via a private
+      * pointer, using the unit cell parameters found in the file header.
+      * This function thus can modify the associated Basis object as a 
+      * side effect (even though this function is marked const).  Because 
+      * all member functions that read entire field files call this 
+      * function to read the file header, the same statement about the
+      * Basis also applies to all such read functions.
       *
       * \param in  input stream (i.e., input file)
       * \param nMonomer  number of fields in the field file (output)

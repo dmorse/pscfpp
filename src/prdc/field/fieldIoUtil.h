@@ -74,13 +74,13 @@ namespace Prdc {
    * \ingroup Prdc_Field_Module
    *
    * \param fields  DArray of fields of type FT (in/out)
-   * \param dimensions  required mesh dimensions (in)
    * \param nMonomer  required number of monomer types (in)
+   * \param dimensions  required mesh dimensions (in)
    */
    template <int D, class FT>
    void checkAllocateFields(DArray< FT >& fields, 
-                            IntVec<D> const& dimensions,
-                            int nMonomer);
+                            int nMonomer,
+                            IntVec<D> const& dimensions);
 
    /**
    * Inspect dimensions of a DArray of fields, each of type FT.
@@ -95,13 +95,13 @@ namespace Prdc {
    * \ingroup Prdc_Field_Module
    *
    * \param fields  DArray of fields (in)
-   * \param dimensions  dimensions mesh for each field (out)
    * \param nMonomer  number of fields, or monomer types (out)
+   * \param dimensions  dimensions mesh for each field (out)
    */
    template <int D, class FT>
    void inspectFields(DArray<FT> const & fields,
-                      IntVec<D> & dimensions,
-                      int & nMonomer);
+                      int & nMonomer,
+                      IntVec<D> & dimensions);
 
    /**
    * Check allocation of a DArray of 1D arrays, allocate if necessary.
@@ -120,14 +120,14 @@ namespace Prdc {
    *
    * \ingroup Prdc_Field_Module
    *
-   * \param arrays  DArray of array of type AT (in/out)
-   * \param capacity  required capacity of each array (in)
+   * \param arrays  DArray of arrays, each of type AT (in/out)
    * \param nMonomer  required number of arrays, or monomer types (in)
+   * \param capacity  required capacity of each array (in)
    */
    template <int D, class AT>
    void checkAllocateArrays(DArray< AT >& arrays, 
-                            int capacity,
-                            int nMonomer);
+                            int nMonomer,
+                            int capacity);
 
    /**
    * Inspect dimensions of a DArray of 1D arrays, each of type AT.
@@ -138,13 +138,13 @@ namespace Prdc {
    * \ingroup Prdc_Field_Module
    *
    * \param arrays  DArray of arrays (in)
-   * \param capacity  capacity of each array (out)
    * \param nMonomer  number of arrays, or monomer types (out)
+   * \param capacity  capacity of each array (out)
    */
    template <class AT>
    void inspectArrays(DArray<AT> const & arrays,
-                      int & capacity,
-                      int & nMonomer);
+                      int & nMonomer, 
+                      int & capacity);
 
 
    // Templates for RGrid data IO
@@ -189,14 +189,14 @@ namespace Prdc {
    *
    * \param in  input file stream
    * \param fields  array of r-grid fields (r-space grid) (out)
-   * \param dimensions  vector of mesh dimensions
    * \param nMonomer  number of monomer types (in)
+   * \param dimensions  vector of mesh dimensions (in)
    */
    template <int D, class AT>
    void readRGridData(std::istream& in,
                       DArray<AT>& fields,
-                      IntVec<D> const& dimensions,
-                      int nMonomer);
+                      int nMonomer,
+                      IntVec<D> const& dimensions);
  
    /**
    * Read data for a single r-grid field, with no header section.
@@ -211,7 +211,7 @@ namespace Prdc {
    *
    * \param in  input file stream
    * \param field  array containing a single r-grid field (out)
-   * \param dimensions  vector of mesh dimensions
+   * \param dimensions  vector of mesh dimensions (in)
    */
    template <int D, class AT>
    void readRGridData(std::istream& in, 
@@ -231,14 +231,14 @@ namespace Prdc {
    *
    * \param out  output file stream
    * \param fields  array of r-grid fields (r-space grid) (in)
-   * \param dimensions  vector of mesh dimensions
-   * \param nMonomer  number of monomer types
+   * \param nMonomer  number of monomer types (in)
+   * \param dimensions  vector of mesh dimensions (in)
    */
    template <int D, class AT>
    void writeRGridData(std::ostream& out, 
                        DArray<AT> const& fields,
-                       IntVec<D> const& dimensions,
-                       int nMonomer);
+                       int nMonomer,
+                       IntVec<D> const& dimensions);
  
    /**
    * Write data for a single r-grid field, with no header section.
@@ -275,14 +275,14 @@ namespace Prdc {
    *
    * \param in  input file stream
    * \param fields  array of k-grid fields (r-space grid) (out)
-   * \param dftDimensions dimensions of real DFT mesh (in)
    * \param nMonomer  number of monomer types (in)
+   * \param dftDimensions dimensions of real DFT mesh (in)
    */
    template <int D, class AT>
    void readKGridData(std::istream& in,
                       DArray<AT>& fields,
-                      IntVec<D> const& dftDimensions,
-                      int nMonomer);
+                      int nMonomer,
+                      IntVec<D> const& dftDimensions);
  
    /**
    * Read data for a single k-grid field, with no header section.
@@ -317,14 +317,14 @@ namespace Prdc {
    *
    * \param out  output file stream
    * \param fields  array of k-grid fields (r-space grid) (in)
-   * \param dftDimensions dimensions of real DFT mesh (in)
    * \param nMonomer  number of monomer types (in)
+   * \param dftDimensions dimensions of real DFT mesh (in)
    */
    template <int D, class AT>
    void writeKGridData(std::ostream& out, 
                        DArray<AT> const& fields,
-                       IntVec<D> const& dftDimensions,
-                       int nMonomer);
+                       int nMonomer,
+                       IntVec<D> const& dftDimensions);
  
    /**
    * Write data for a single k-grid field, with no header section.

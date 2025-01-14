@@ -50,8 +50,8 @@ namespace Prdc {
    */
    template <int D, class FT>
    void checkAllocateFields(DArray<FT>& fields,
-                            IntVec<D> const& dimensions,
-                            int nMonomer)
+                            int nMonomer, 
+                            IntVec<D> const& dimensions)
    {
       if (fields.isAllocated()) {
          int nMonomerFields = fields.capacity();
@@ -73,8 +73,8 @@ namespace Prdc {
    */
    template <int D, class FT>
    void inspectFields(DArray<FT> const& fields,
-                      IntVec<D> & dimensions,
-                      int & nMonomer)
+                      int & nMonomer,
+                      IntVec<D> & dimensions)
    {
       UTIL_CHECK(fields.isAllocated());
       nMonomer = fields.capacity();
@@ -91,8 +91,8 @@ namespace Prdc {
    */
    template <class AT>
    void checkAllocateArrays(DArray<AT>& arrays,
-                            int capacity,
-                            int nMonomer)
+                            int nMonomer, 
+                            int capacity)
    {
       if (arrays.isAllocated()) {
          int nMonomerArrays = arrays.capacity();
@@ -114,8 +114,8 @@ namespace Prdc {
    */
    template <class AT>
    void inspectArrays(DArray<AT> const& arrays,
-                    int & capacity,
-                    int & nMonomer)
+                    int & nMonomer,
+                    int & capacity)
    {
       UTIL_CHECK(arrays.isAllocated());
       nMonomer = arrays.capacity();
@@ -167,8 +167,8 @@ namespace Prdc {
    template <int D, class AT>
    void readRGridData(std::istream& in,
                       DArray<AT>& fields,
-                      IntVec<D> const& dimensions,
-                      int nMonomer)
+                      int nMonomer,
+                      IntVec<D> const& dimensions)
    {
       UTIL_CHECK(nMonomer > 0);
       UTIL_CHECK(fields.capacity() == nMonomer);
@@ -199,8 +199,8 @@ namespace Prdc {
    template <int D, class AT>
    void writeRGridData(std::ostream& out,
                        DArray<AT> const& fields,
-                       IntVec<D> const& dimensions,
-                       int nMonomer)
+                       int nMonomer,
+                       IntVec<D> const& dimensions)
    {
       UTIL_CHECK(nMonomer > 0);
       UTIL_CHECK(nMonomer == fields.capacity());
@@ -236,8 +236,8 @@ namespace Prdc {
    template <int D, class AT>
    void readKGridData(std::istream& in,
                       DArray<AT> & fields,
-                      IntVec<D> const& dftDimensions,
-                      int nMonomer)
+                      int nMonomer,
+                      IntVec<D> const& dftDimensions)
    {
       MeshIterator<D> iter(dftDimensions);
       int rank, i, j, idum;
@@ -277,8 +277,8 @@ namespace Prdc {
    template <int D, class AT>
    void writeKGridData(std::ostream& out,
                        DArray<AT> const& fields,
-                       IntVec<D> const& dftDimensions,
-                       int nMonomer)
+                       int nMonomer,
+                       IntVec<D> const& dftDimensions)
    {
       UTIL_CHECK(nMonomer > 0);
       UTIL_CHECK(nMonomer == fields.capacity());
@@ -614,7 +614,7 @@ namespace Prdc {
    */
    template <int D>
    void writeBasisData(std::ostream &out,
-                       DArray<DArray<double> > const & fields,
+                       DArray< DArray<double> > const & fields,
                        Basis<D> const & basis)
    {
       // Preconditions, set nMonomer and fieldCapacity
@@ -1043,7 +1043,7 @@ namespace Prdc {
       writeMeshDimensions(out, repDimensions);
 
       // Write field data
-      writeRGridData(out, repFields, repDimensions, nMonomer);
+      writeRGridData(out, repFields, nMonomer, repDimensions);
    }
 
    template <int D, class AT>

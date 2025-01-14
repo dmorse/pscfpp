@@ -9,34 +9,23 @@
 */
 
 #include "FieldIo.h"
+#include <prdc/field/FieldIoReal.tpp>     // base class implementation 
 
-#include <prdc/field/FieldIoReal.tpp>
-#include <prdc/cpu/FFT.h>
-#include <prdc/cpu/RField.h>
-#include <prdc/cpu/RFieldDft.h>
+#include <rpc/field/Domain.h>
 
 #include <prdc/field/fieldIoUtil.h>
 #include <prdc/crystal/fieldHeader.h>
-#include <prdc/crystal/UnitCell.h>
 #include <prdc/crystal/Basis.h>
+#include <prdc/crystal/UnitCell.h>
 #include <pscf/mesh/Mesh.h>
-
-#if 0
-#include <prdc/crystal/shiftToMinimum.h>
-#include <prdc/crystal/SpaceGroup.h>
-
-#include <pscf/mesh/MeshIterator.h>
-#include <pscf/mesh/MeshIteratorFortran.h>
 #include <pscf/math/IntVec.h>
-
-#include <util/misc/Log.h>
-#endif
 
 namespace Pscf {
 namespace Rpc {
 
    using namespace Util;
-   using namespace Prdc::Cpu;
+   using namespace Pscf::Prdc;
+   using namespace Pscf::Prdc::Cpu;
 
    /*
    * Constructor.
@@ -67,11 +56,11 @@ namespace Rpc {
       bool isSymmetric;
       readFieldHeader(in, nMonomer, unitCell, isSymmetric);
       readMeshDimensions(in, mesh().dimensions());
-      checkAllocateFields(fields, mesh().dimensions(), nMonomer);
+      checkAllocateFields(fields, nMonomer, mesh().dimensions());
 
       // Read data
       // Rpg:: Allocate host arrays
-      Prdc::readRGridData(in, fields, mesh().dimensions(), nMonomer);
+      Prdc::readRGridData(in, fields, nMonomer, mesh().dimensions());
       // Rpg:: Copy host -> device
 
    }
@@ -85,14 +74,14 @@ namespace Rpc {
                               DArray< RField<D> >& fields,
                               int nMonomer) const
    {
-      checkAllocateFields(fields, mesh().dimensions(), nMonomer);
+      checkAllocateFields(fields, nMonomer, mesh().dimensions());
       // Rpg:: Allocate host arrays
-      Prdc::readRGridData(in, fields, mesh().dimensions(), nMonomer);
+      Prdc::readRGridData(in, fields, nMonomer, mesh().dimensions());
       // Rpg:: Copy host -> device
    }
 
    /*
-   * Read a single fields in r-grid format.
+   * Read a single field in r-grid format.
    */
    template <int D>
    void FieldIo<D>::readFieldRGrid(
@@ -116,7 +105,7 @@ namespace Rpc {
    }
 
    /*
-   * Write an array of fields in r-grid format
+   * Write an array of fields in r-grid format.
    */
    template <int D>
    void FieldIo<D>::writeFieldsRGrid(
@@ -130,7 +119,7 @@ namespace Rpc {
       // Inspect fields array, infer nMonomer and meshDimensions
       int nMonomer;
       IntVec<D> meshDimensions;
-      inspectFields(fields, meshDimensions, nMonomer);
+      inspectFields(fields, nMonomer, meshDimensions);
 
       // Write header
       if (writeHeader){
@@ -143,11 +132,11 @@ namespace Rpc {
       // Write data section
       // Rpg:: Allocate host arrays
       // Rpg:: Copy device -> host 
-      Prdc::writeRGridData(out, fields, meshDimensions, nMonomer);
+      Prdc::writeRGridData(out, fields, nMonomer, meshDimensions);
    }
 
    /*
-   * Read a single fields in r-grid format
+   * Write a single field in r-grid format.
    */
    template <int D>
    void FieldIo<D>::writeFieldRGrid(
@@ -166,7 +155,7 @@ namespace Rpc {
       }
 
       // Write data
-      // Rpg:: Allocate host arrays
+      // Rpg:: Allocate host array
       // Rpg:: Copy device -> host
       Prdc::writeRGridData(out, field, meshDimensions);
    }
@@ -186,18 +175,20 @@ namespace Rpc {
       readFieldHeader(in, nMonomer, unitCell, isSymmetric);
       readMeshDimensions(in, mesh().dimensions());
 
-      checkAllocateFields(fields, mesh().dimensions(), nMonomer);
+      checkAllocateFields(fields, nMonomer, mesh().dimensions());
+      IntVec<D> dftDimensions = fields[0].dftDimensions();
 
       // Read data
       // Rpg:: Allocate host arrays
-      Prdc::readKGridData(in, fields, 
-                          fields[0].dftDimensions(), nMonomer);
+      Prdc::readKGridData(in, fields, nMonomer, dftDimensions);
       // Rpg:: Copy host -> device
    }
 
+   /*
+   * Write an array of fields in k-grid format
+   */
    template <int D>
-   void
-   FieldIo<D>::writeFieldsKGrid(
+   void FieldIo<D>::writeFieldsKGrid(
                               std::ostream &out,
                               DArray<RFieldDft<D> > const & fields,
                               UnitCell<D> const & unitCell,
@@ -206,7 +197,7 @@ namespace Rpc {
       // Inspect fields array - infer nMonomer and dimensions
       int nMonomer;
       IntVec<D> meshDimensions;
-      inspectFields(fields, meshDimensions, nMonomer);
+      inspectFields(fields, nMonomer, meshDimensions);
       IntVec<D> dftDimensions = fields[0].dftDimensions();
 
       // Write file
@@ -216,19 +207,25 @@ namespace Rpc {
       // Write data
       // Rpg:: Allocate host arrays
       // Rpg:: Copy device -> host
-      Prdc::writeKGridData(out, fields, dftDimensions, nMonomer);
+      Prdc::writeKGridData(out, fields, nMonomer, dftDimensions);
    }
 
+   /*
+   * Write an array of fields from basis to k-grid format.
+   */
    template <int D>
    void FieldIo<D>::convertBasisToKGrid(
                               DArray<double> const & in,
                               RFieldDft<D>& out) const
    {
-      // Rpg: Allocate host arrays  
+      // Rpg: Allocate host array 
       Prdc::convertBasisToKGrid(in, out, basis(), out.dftDimensions()); 
       // Rpg: Copy host -> device
    }
 
+   /*
+   * Write an array of fields from k-grid to basis format.
+   */
    template <int D>
    void FieldIo<D>::convertKGridToBasis(
                               RFieldDft<D> const & in,
@@ -244,8 +241,6 @@ namespace Rpc {
 
    /*
    * Test if an real field DFT has the declared space group symmetry.
-   * Return true if symmetric, false otherwise. Print error values
-   * if verbose == true and hasSymmetry == false.
    */
    template <int D>
    bool FieldIo<D>::hasSymmetry(
@@ -259,6 +254,9 @@ namespace Rpc {
                                epsilon, verbose);
    }
 
+   /*
+   * Replicate the unit cell for an array of r-grid fields.
+   */
    template <int D>
    void FieldIo<D>::replicateUnitCell(
                               std::ostream &out,
@@ -270,7 +268,7 @@ namespace Rpc {
       // Inspect fields to obtain nMonomer and meshDimensions
       int nMonomer;
       IntVec<D> meshDimensions;
-      inspectFields(fields, meshDimensions, nMonomer);
+      inspectFields(fields, nMonomer, meshDimensions);
 
       // Rpg: Allocate hostArrays
       // Rpg: Copy device -> host
@@ -279,7 +277,7 @@ namespace Rpc {
    }
 
    /*
-   * Expand dimension of an array of r-grid fields, write to ostream.
+   * Expand spatial dimension of an array of r-grid fields.
    */
    template <int D>
    void FieldIo<D>::expandRGridDimension(
