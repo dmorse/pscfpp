@@ -212,6 +212,94 @@ public:
 
    }
 
+   void testBasisIo_lam() 
+   {
+      printMethod(TEST_FUNC);
+
+      // Create and initialize domain
+      Domain<1> domain;
+      domain.setFileMaster(fileMaster_);
+      readHeader("in/w_lam.rf", domain);
+
+      // Create required containers and stream
+      DArray< DArray<double> > bf_0;
+      allocateFields(nMonomer_, domain.basis().nBasis(), bf_0);
+      DArray< DArray<double> > bf_1;
+      allocateFields(nMonomer_, domain.basis().nBasis(), bf_1);
+      std::ifstream in;
+      std::ofstream out;
+
+      // Read in/w_lam.bf into bf_0 in basis format
+      openInputFile("in/w_lam.bf", in);
+      domain.fieldIo().readFieldsBasis(in, bf_0, domain.unitCell());
+      in.close();
+
+      // Write bf_0 to out/w_lam.bf in basis format
+      openOutputFile("out/w_lam.bf", out);
+      domain.fieldIo().writeFieldsBasis(out, bf_0, domain.unitCell());
+      out.close();
+
+      // Read out/w_lam.bf to bf_1 in basis format
+      openInputFile("out/w_lam.bf", in);
+      domain.fieldIo().readFieldsBasis(in, bf_1, domain.unitCell());
+      in.close();
+
+      // Compare initial and final fields in basis format
+      BFieldComparison comparison;
+      comparison.compare(bf_0, bf_1);
+      if (verbose() > 0) {
+         std::cout  << std::endl;
+         std::cout  << Dbl(comparison.maxDiff(), 21, 13) << std::endl;
+         std::cout  << Dbl(comparison.rmsDiff(), 21, 13) << std::endl;
+      }
+      TEST_ASSERT(comparison.maxDiff() < 1.0E-12);
+
+   }
+
+   void testBasisIo_hex() 
+   {
+      printMethod(TEST_FUNC);
+
+      // Create and initialize domain
+      Domain<2> domain;
+      domain.setFileMaster(fileMaster_);
+      readHeader("in/w_hex.rf", domain);
+
+      // Create required containers and stream
+      DArray< DArray<double> > bf_0;
+      allocateFields(nMonomer_, domain.basis().nBasis(), bf_0);
+      DArray< DArray<double> > bf_1;
+      allocateFields(nMonomer_, domain.basis().nBasis(), bf_1);
+      std::ifstream in;
+      std::ofstream out;
+
+      // Read in/w_hex.bf into bf_0 in basis format
+      openInputFile("in/w_hex.bf", in);
+      domain.fieldIo().readFieldsBasis(in, bf_0, domain.unitCell());
+      in.close();
+
+      // Write bf_0 to out/w_hex.bf in basis format
+      openOutputFile("out/w_hex.bf", out);
+      domain.fieldIo().writeFieldsBasis(out, bf_0, domain.unitCell());
+      out.close();
+
+      // Read out/w_hex.bf to bf_1 in basis format
+      openInputFile("out/w_hex.bf", in);
+      domain.fieldIo().readFieldsBasis(in, bf_1, domain.unitCell());
+      in.close();
+
+      // Compare initial and final fields in basis format
+      BFieldComparison comparison;
+      comparison.compare(bf_0, bf_1);
+      if (verbose() > 0) {
+         std::cout  << std::endl;
+         std::cout  << Dbl(comparison.maxDiff(), 21, 13) << std::endl;
+         std::cout  << Dbl(comparison.rmsDiff(), 21, 13) << std::endl;
+      }
+      TEST_ASSERT(comparison.maxDiff() < 1.0E-12);
+
+   }
+
    void testBasisIo_bcc() 
    {
       printMethod(TEST_FUNC);
@@ -222,16 +310,15 @@ public:
 
       DArray< DArray<double> > bf_0;
       allocateFields(nMonomer_, domain.basis().nBasis(), bf_0);
-
       DArray< DArray<double> > bf_1;
       allocateFields(nMonomer_, domain.basis().nBasis(), bf_1);
-
       std::ifstream in;
+      std::ofstream out;
+
       openInputFile("in/w_bcc.bf", in);
       domain.fieldIo().readFieldsBasis(in, bf_0, domain.unitCell());
       in.close();
 
-      std::ofstream out;
       openOutputFile("out/w_bcc.bf", out);
       domain.fieldIo().writeFieldsBasis(out, bf_0, domain.unitCell());
       out.close();
@@ -242,13 +329,12 @@ public:
 
       BFieldComparison comparison;
       comparison.compare(bf_0, bf_1);
-      TEST_ASSERT(comparison.maxDiff() < 1.0E-12);
-
       if (verbose() > 0) {
          std::cout  << std::endl;
          std::cout  << Dbl(comparison.maxDiff(),21,13) << std::endl;
          std::cout  << Dbl(comparison.rmsDiff(),21,13) << std::endl;
       }
+      TEST_ASSERT(comparison.maxDiff() < 1.0E-12);
 
    }
 
@@ -256,39 +342,43 @@ public:
    {
       printMethod(TEST_FUNC);
 
+      // Initialize domain by reading header of r-grid file
       Domain<3> domain;
       domain.setFileMaster(fileMaster_);
       readHeader("in/c_c15_1.rf", domain);
 
+      // Create containers and streams
       DArray< DArray<double> > bf_0;
       allocateFields(nMonomer_, domain.basis().nBasis(), bf_0);
-
       DArray< DArray<double> > bf_1;
       allocateFields(nMonomer_, domain.basis().nBasis(), bf_1);
-
       std::ifstream in;
+      std::ofstream out;
+
+      // Read to bf_0 from input file in basis format
       openInputFile("in/w_c15_1.bf", in);
       domain.fieldIo().readFieldsBasis(in, bf_0, domain.unitCell());
       in.close();
 
-      std::ofstream out;
+      // Write from bf_0 to output file in basis format
       openOutputFile("out/w_c15_1.bf", out);
       domain.fieldIo().writeFieldsBasis(out, bf_0, domain.unitCell());
       out.close();
 
+      // Read to bf_1 from output file in basis format
       openInputFile("out/w_c15_1.bf", in);
       domain.fieldIo().readFieldsBasis(in, bf_1, domain.unitCell());
       in.close();
 
+      // Compare bf_0 and bf_1
       BFieldComparison comparison;
       comparison.compare(bf_0, bf_1);
-      TEST_ASSERT(comparison.maxDiff() < 1.0E-12);
-
       if (verbose() > 0) {
          std::cout  << std::endl;
          std::cout  << Dbl(comparison.maxDiff(),21,13) << std::endl;
          std::cout  << Dbl(comparison.rmsDiff(),21,13) << std::endl;
       }
+      TEST_ASSERT(comparison.maxDiff() < 1.0E-12);
 
    }
 
@@ -359,7 +449,6 @@ public:
       domain.fieldIo().readFieldsBasis(in, bf_1, domain.unitCell());
       in.close();
 
-      #if 1
       //setVerbose(1);
       BFieldComparison comparison;
       comparison.compare(bf_0, bf_1);
@@ -369,8 +458,61 @@ public:
          std::cout  << Dbl(comparison.rmsDiff(), 21, 12) << std::endl;
       }
       TEST_ASSERT(comparison.rmsDiff() < 1.0E-11);
-      #endif
 
+   }
+
+   void testRGridIo_lam() 
+   {
+      printMethod(TEST_FUNC);
+
+      Domain<1> domain;
+      domain.setFileMaster(fileMaster_);
+      readHeader("in/w_lam.rf", domain);
+
+      DArray< RField<1> > rf_0;
+      allocateFields(nMonomer_, domain.mesh().dimensions(), rf_0);
+      DArray< RField<1> > rf_1;
+      allocateFields(nMonomer_, domain.mesh().dimensions(), rf_1);
+
+      readFields("in/w_lam.rf", domain, rf_0);
+      writeFields("out/w_lam.rf", domain, rf_0);
+      readFields("out/w_lam.rf", domain, rf_1);
+
+      RFieldComparison<1> comparison;
+      comparison.compare(rf_0, rf_1);
+      if (verbose() > 0) {
+         std::cout  << "\n";
+         std::cout  << Dbl(comparison.maxDiff(), 21, 13) << "\n";
+         std::cout  << Dbl(comparison.rmsDiff(), 21, 13) << "\n";
+      }
+      TEST_ASSERT(comparison.maxDiff() < 1.0E-12);
+   }
+
+   void testRGridIo_hex() 
+   {
+      printMethod(TEST_FUNC);
+
+      Domain<2> domain;
+      domain.setFileMaster(fileMaster_);
+      readHeader("in/w_hex.rf", domain);
+
+      DArray< RField<2> > rf_0;
+      allocateFields(nMonomer_, domain.mesh().dimensions(), rf_0);
+      DArray< RField<2> > rf_1;
+      allocateFields(nMonomer_, domain.mesh().dimensions(), rf_1);
+
+      readFields("in/w_hex.rf", domain, rf_0);
+      writeFields("out/w_hex.rf", domain, rf_0);
+      readFields("out/w_hex.rf", domain, rf_1);
+
+      RFieldComparison<2> comparison;
+      comparison.compare(rf_0, rf_1);
+      if (verbose() > 0) {
+         std::cout  << "\n";
+         std::cout  << Dbl(comparison.maxDiff(), 21, 13) << "\n";
+         std::cout  << Dbl(comparison.rmsDiff(), 21, 13) << "\n";
+      }
+      TEST_ASSERT(comparison.maxDiff() < 1.0E-12);
    }
 
    void testRGridIo_bcc() 
@@ -539,74 +681,6 @@ public:
       TEST_ASSERT(comparison.rmsDiff() < 1.0E-10);
    }
 
-   void testKGridIo_bcc() 
-   {
-      printMethod(TEST_FUNC);
-
-      Domain<3> domain;
-      domain.setFileMaster(fileMaster_);
-      readHeader("in/w_bcc.rf", domain);
-
-      DArray< DArray<double> > bf_0;
-      allocateFields(nMonomer_, domain.basis().nBasis(), bf_0);
-
-      DArray< RFieldDft<3> > kf_0;
-      allocateFields(nMonomer_, domain.mesh().dimensions(), kf_0);
-
-      DArray< RFieldDft<3> > kf_1;
-      allocateFields(nMonomer_, domain.mesh().dimensions(), kf_1);
-
-      readFields("in/w_bcc.bf", domain, bf_0);
-      domain.fieldIo().convertBasisToKGrid(bf_0, kf_0);
-
-      writeFields("out/w_bcc.kf", domain, kf_0);
-      readFields("out/w_bcc.kf", domain, kf_1);
-
-      RFieldDftComparison<3> comparison;
-      comparison.compare(kf_0, kf_1);
-      TEST_ASSERT(comparison.maxDiff() < 1.0E-11);
-
-      if (verbose() > 0) {
-         std::cout  << "\n";
-         std::cout  << Dbl(comparison.maxDiff(),21,13) << "\n";
-         std::cout  << Dbl(comparison.rmsDiff(),21,13) << "\n";
-      }
-   }
-
-   void testKGridIo_altG() 
-   {
-      printMethod(TEST_FUNC);
-
-      Domain<3> domain;
-      domain.setFileMaster(fileMaster_);
-      readHeader("in/w_altG.rf", domain);
-
-      DArray< DArray<double> > bf_0;
-      allocateFields(nMonomer_, domain.basis().nBasis(), bf_0);
-
-      DArray< RFieldDft<3> > kf_0;
-      allocateFields(nMonomer_, domain.mesh().dimensions(), kf_0);
-
-      DArray< RFieldDft<3> > kf_1;
-      allocateFields(nMonomer_, domain.mesh().dimensions(), kf_1);
-
-      readFields("in/w_altG.bf", domain, bf_0);
-      domain.fieldIo().convertBasisToKGrid(bf_0, kf_0);
-
-      writeFields("out/w_altG.kf", domain, kf_0);
-      readFields("out/w_altG.kf", domain, kf_1);
-
-      RFieldDftComparison<3> comparison;
-      comparison.compare(kf_0, kf_1);
-      TEST_ASSERT(comparison.maxDiff() < 1.0E-11);
-
-      if (verbose() > 0) {
-         std::cout  << "\n";
-         std::cout  << Dbl(comparison.maxDiff(),21,13) << "\n";
-         std::cout  << Dbl(comparison.rmsDiff(),21,13) << "\n";
-      }
-   }
-
    void testKGridIo_lam() 
    {
       printMethod(TEST_FUNC);
@@ -622,21 +696,86 @@ public:
       allocateFields(nMonomer_, domain.mesh().dimensions(), kf_0);
       allocateFields(nMonomer_, domain.mesh().dimensions(), kf_1);
 
+      // Read basis form to bf_0, convert to k-grid form kf_0
       readFields("in/w_lam.bf", domain, bf_0);
       domain.fieldIo().convertBasisToKGrid(bf_0, kf_0);
 
+      // Write kf_0 and read back into kf_1
       writeFields("out/w_lam.kf", domain, kf_0);
       readFields("out/w_lam.kf", domain, kf_1);
 
+      // Compare kf_0 and kf_1 in k-grid format
       RFieldDftComparison<1> comparison;
       comparison.compare(kf_0, kf_1);
-      TEST_ASSERT(comparison.maxDiff() < 1.0E-12);
-
       if (verbose() > 0) {
          std::cout  << std::endl;
          std::cout  << Dbl(comparison.maxDiff(), 21, 13) << "\n";
          std::cout  << Dbl(comparison.rmsDiff(), 21, 13) << "\n";
       }
+      TEST_ASSERT(comparison.maxDiff() < 1.0E-12);
+   }
+
+   void testKGridIo_bcc() 
+   {
+      printMethod(TEST_FUNC);
+
+      Domain<3> domain;
+      domain.setFileMaster(fileMaster_);
+      readHeader("in/w_bcc.rf", domain);
+
+      DArray< DArray<double> > bf_0;
+      allocateFields(nMonomer_, domain.basis().nBasis(), bf_0);
+      DArray< RFieldDft<3> > kf_0;
+      allocateFields(nMonomer_, domain.mesh().dimensions(), kf_0);
+      DArray< RFieldDft<3> > kf_1;
+      allocateFields(nMonomer_, domain.mesh().dimensions(), kf_1);
+
+      readFields("in/w_bcc.bf", domain, bf_0);
+      domain.fieldIo().convertBasisToKGrid(bf_0, kf_0);
+
+      writeFields("out/w_bcc.kf", domain, kf_0);
+      readFields("out/w_bcc.kf", domain, kf_1);
+
+      RFieldDftComparison<3> comparison;
+      comparison.compare(kf_0, kf_1);
+      if (verbose() > 0) {
+         std::cout  << "\n";
+         std::cout  << Dbl(comparison.maxDiff(),21,13) << "\n";
+         std::cout  << Dbl(comparison.rmsDiff(),21,13) << "\n";
+      }
+      TEST_ASSERT(comparison.maxDiff() < 1.0E-11);
+
+   }
+
+   void testKGridIo_altG() 
+   {
+      printMethod(TEST_FUNC);
+
+      Domain<3> domain;
+      domain.setFileMaster(fileMaster_);
+      readHeader("in/w_altG.rf", domain);
+
+      DArray< DArray<double> > bf_0;
+      allocateFields(nMonomer_, domain.basis().nBasis(), bf_0);
+      DArray< RFieldDft<3> > kf_0;
+      allocateFields(nMonomer_, domain.mesh().dimensions(), kf_0);
+      DArray< RFieldDft<3> > kf_1;
+      allocateFields(nMonomer_, domain.mesh().dimensions(), kf_1);
+
+      readFields("in/w_altG.bf", domain, bf_0);
+      domain.fieldIo().convertBasisToKGrid(bf_0, kf_0);
+
+      writeFields("out/w_altG.kf", domain, kf_0);
+      readFields("out/w_altG.kf", domain, kf_1);
+
+      RFieldDftComparison<3> comparison;
+      comparison.compare(kf_0, kf_1);
+      if (verbose() > 0) {
+         std::cout  << "\n";
+         std::cout  << Dbl(comparison.maxDiff(),21,13) << "\n";
+         std::cout  << Dbl(comparison.rmsDiff(),21,13) << "\n";
+      }
+      TEST_ASSERT(comparison.maxDiff() < 1.0E-11);
    }
 
    void testConvertBasisKGridRGridKGrid_bcc() 
@@ -867,13 +1006,15 @@ public:
       Mesh<3> mesh_exp(dimensions_exp);
       IntVec<3> p;
       int rank, rank_exp;
-      for (p[0] = 0; p[0] < dimensions_exp[0]; ++p[0]) {
-         rank = p[0];
-         for (p[1] = 0; p[1] < dimensions_exp[1]; ++p[1]) {
-            for (p[2] = 0; p[2] < dimensions_exp[2]; ++p[2]) {
-               rank_exp = mesh_exp.rank(p);
-               for (int i=0; i < nMonomer_; ++i) {
-                  TEST_ASSERT(eq(rf_0[i][rank], rf_1[i][rank_exp]));
+      double value;
+      for (int i=0; i < nMonomer_; ++i) {
+         for (p[0] = 0; p[0] < dimensions_exp[0]; ++p[0]) {
+            rank = p[0];
+            value = rf_0[i][rank];
+            for (p[1] = 0; p[1] < dimensions_exp[1]; ++p[1]) {
+               for (p[2] = 0; p[2] < dimensions_exp[2]; ++p[2]) {
+                  rank_exp = mesh_exp.rank(p);
+                  TEST_ASSERT(eq(value, rf_1[i][rank_exp]));
                }
             }
          }
@@ -881,15 +1022,85 @@ public:
 
    }
 
+   void testExpand_hex_23() 
+   {
+      printMethod(TEST_FUNC);
+
+      // Create domain and initialize by reading header
+      Domain<2> domain;
+      domain.setFileMaster(fileMaster_);
+      readHeader("in/w_hex.rf", domain);
+      IntVec<2> dimensions = domain.mesh().dimensions();
+
+      // Read fields into container rf_0
+      DArray< RField<2> > rf_0;
+      allocateFields(nMonomer_, dimensions, rf_0);
+      readFields("in/w_hex.rf", domain, rf_0);
+
+      // Setup extra dimensions
+      int d = 3;
+      DArray<int> newGridDimensions;
+      newGridDimensions.allocate(1);
+      newGridDimensions[0] = dimensions[0];
+
+      // Create and write expanded fields
+      std::ofstream  out;
+      openOutputFile("out/w_hex_exp.rf", out);
+      domain.fieldIo().expandRGridDimension(out, rf_0, 
+                                 domain.unitCell(), d,
+                                 newGridDimensions);
+
+      // Read header for expanded field (d=3)
+      Domain<3> domain_exp;
+      domain_exp.setFileMaster(fileMaster_);
+      readHeader("out/w_hex_exp.rf", domain_exp);
+      IntVec<3> dimensions_exp = domain_exp.mesh().dimensions();
+      TEST_ASSERT(dimensions_exp[0] == dimensions[0]);
+      TEST_ASSERT(dimensions_exp[1] == dimensions[1]);
+      TEST_ASSERT(dimensions_exp[2] == newGridDimensions[0]);
+
+      // Read data for expanded field (d=3)
+      DArray< RField<3> > rf_1;
+      allocateFields(nMonomer_, dimensions_exp, rf_1);
+      readFields("out/w_hex_exp.rf", domain_exp, rf_1);
+
+      // Compare fields
+      Mesh<2> mesh(dimensions);
+      Mesh<3> mesh_exp(dimensions_exp);
+      IntVec<2> p;
+      IntVec<3> p_exp;
+      int rank, rank_exp;
+      double value;
+      for (int i=0; i < nMonomer_; ++i) {
+         for (p_exp[0] = 0; p_exp[0] < dimensions_exp[0]; ++p_exp[0]) {
+            p[0] = p_exp[0];
+            for (p_exp[1] = 0; p_exp[1] < dimensions_exp[1]; ++p_exp[1]) {
+               p[1] = p_exp[1];
+               rank = mesh.rank(p);
+               value = rf_0[i][rank];
+               for (p_exp[2] = 0; p_exp[2] < dimensions_exp[2]; ++p_exp[2]){
+                  rank_exp = mesh_exp.rank(p_exp);
+                  TEST_ASSERT(eq(value, rf_1[i][rank_exp]));
+               }
+            }
+         }
+      }
+
+   }
 
 };
 
 TEST_BEGIN(FieldIoTest)
 TEST_ADD(FieldIoTest, testReadHeader)
+TEST_ADD(FieldIoTest, testBasisIo_lam)
+TEST_ADD(FieldIoTest, testBasisIo_hex)
+TEST_ADD(FieldIoTest, testBasisIo_hex)
 TEST_ADD(FieldIoTest, testBasisIo_bcc)
 TEST_ADD(FieldIoTest, testBasisIo_c15_1)
 TEST_ADD(FieldIoTest, testBasisIo_altG)
 TEST_ADD(FieldIoTest, testBasisIo_altG_fort)
+TEST_ADD(FieldIoTest, testRGridIo_lam)
+TEST_ADD(FieldIoTest, testRGridIo_hex)
 TEST_ADD(FieldIoTest, testRGridIo_bcc)
 TEST_ADD(FieldIoTest, testConvertBasisKGridBasis_bcc)
 TEST_ADD(FieldIoTest, testConvertBasisRGridBasis_bcc)
@@ -902,6 +1113,7 @@ TEST_ADD(FieldIoTest, testConvertBasisKGridRGridKGrid_bcc)
 TEST_ADD(FieldIoTest, testConvertBasisKGridRGridKGrid_c15_1)
 TEST_ADD(FieldIoTest, testReplicate_bcc)
 TEST_ADD(FieldIoTest, testExpand_lam_13)
+TEST_ADD(FieldIoTest, testExpand_hex_23)
 TEST_END(FieldIoTest)
 
 #endif
