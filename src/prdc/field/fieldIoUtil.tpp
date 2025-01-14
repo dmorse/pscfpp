@@ -1054,7 +1054,9 @@ namespace Prdc {
                         UnitCell<D> const & unitCell,
                         int d,
                         DArray<int> newGridDimensions)
-   {  UTIL_THROW("Unimplemented base template"); };
+   {
+      UTIL_THROW("Unimplemented base template"); 
+   }
 
    template <class AT>
    void
@@ -1071,17 +1073,18 @@ namespace Prdc {
       UTIL_CHECK(d <= 3);
       UTIL_CHECK(newGridDimensions.capacity() == (d - 1));
 
+
       // Obtain number of monomer types
       int nMonomer = fields.capacity();
       UTIL_CHECK(nMonomer > 0);
-
+ 
       // Set up necessary objects
       FSArray<double, 6> cellParameters;
       cellParameters.append(unitCell.parameter(0));
       int v1 = 1;
       int v2 = 0;
       std::string gName = "";
-
+ 
       if (d == 2) {
 
          // 1D expanded to 2D
@@ -1090,7 +1093,6 @@ namespace Prdc {
          IntVec<2> dimensions;
          dimensions[0] = meshDimensions[0];
          dimensions[1] = newGridDimensions[0];
-         int capacity = dimensions[0]*dimensions[1];
 
          // Assign unit cell
          UnitCell<2> cell;
@@ -1107,9 +1109,11 @@ namespace Prdc {
          out << "mesh " <<  std::endl
              << "           " << dimensions << std::endl;
 
+         #if 0
          // Allocate and populate outFields
          DArray< DArray<double> > outFields;
          outFields.allocate(nMonomer);
+         int capacity = dimensions[0]*dimensions[1];
          for (int i = 0; i < nMonomer; ++i) {
             outFields[i].allocate(capacity);
             int rank = 0;
@@ -1129,6 +1133,7 @@ namespace Prdc {
             }
             out << std::endl;
          }
+         #endif
 
       } else if (d == 3) {
 
@@ -1139,7 +1144,6 @@ namespace Prdc {
          dimensions[0] = meshDimensions[0];
          dimensions[1] = newGridDimensions[0];
          dimensions[2] = newGridDimensions[1];
-         int capacity = dimensions[0]*dimensions[1]*dimensions[2];
 
          // Assign unit cell
          UnitCell<3> cell;
@@ -1172,14 +1176,16 @@ namespace Prdc {
          out << "mesh " <<  std::endl
              << "           " << dimensions << std::endl;
 
+         #if 0
          // Allocate outFields
          DArray< DArray<double> > outFields;
          outFields.allocate(nMonomer);
-
-         // Populate outFields
+         int capacity = dimensions[0]*dimensions[1]*dimensions[2];
          for (int i = 0; i < nMonomer; ++i) {
             outFields[i].allocate(capacity);
          }
+
+         // Populate outFields
          int rank = 0;
          for (int l = 0; l < dimensions[2]; ++l) {
             for (int k = 0; k < dimensions[1]; ++k) {
@@ -1200,12 +1206,31 @@ namespace Prdc {
             }
             out << std::endl;
          }
+         #endif
 
       } else {
 
          UTIL_THROW("Invalid d value");
 
       }
+
+      // Write expanded fields
+      int nReplica = newGridDimensions[0];
+      if (d == 3) {
+         nReplica *= newGridDimensions[1];
+      }
+      MeshIteratorFortran<1> iter(meshDimensions);
+      int rank;
+      for (int i = 0; i < nReplica; ++i) {
+         for (iter.begin(); !iter.atEnd(); ++iter) {
+            rank = iter.rank();
+            for (int j = 0; j < nMonomer; ++j) {
+               out << "  " << Dbl(fields[j][rank], 21, 13);
+            }
+            out << std::endl;
+         }
+      }
+
    }
 
    template <class AT>
@@ -1220,20 +1245,19 @@ namespace Prdc {
 
       // Check validity of expanded dimension d and newGridDimensions
       UTIL_CHECK(d == 3);
-      UTIL_CHECK(newGridDimensions.capacity() == (d - 2));
+      UTIL_CHECK(newGridDimensions.capacity() == 1);
 
       // Obtain number of monomer types
       int nMonomer = fields.capacity();
       UTIL_CHECK(nMonomer > 0);
 
-      // Set dimensions
+      // Set dimensions of mesh for replicated fields
       IntVec<3> dimensions;
       dimensions[0] = meshDimensions[0];
       dimensions[1] = meshDimensions[1];
       dimensions[2] = newGridDimensions[0];
-      int capacity = dimensions[0]*dimensions[1]*dimensions[2];
 
-      // Set unit cell
+      // Set unit cell for replicated fields
       UnitCell<3> cell;
       FSArray<double, 6> cellParameters;
       cellParameters.append(unitCell.parameter(0));
@@ -1282,9 +1306,11 @@ namespace Prdc {
       out << "mesh " <<  std::endl
           << "           " << dimensions << std::endl;
 
+      #if 0
       // Allocate outFields
       DArray< DArray<double> > outFields;
       outFields.allocate(nMonomer);
+      int capacity = dimensions[0]*dimensions[1]*dimensions[2];
       for (int i = 0; i < nMonomer; ++i) {
          outFields[i].allocate(capacity);
       }
@@ -1324,6 +1350,21 @@ namespace Prdc {
             out << "  " << Dbl(outFields[j][itr.rank()], 18, 15);
          }
          out << std::endl;
+      }
+      #endif
+
+      // Write expanded fields
+      int nReplica = newGridDimensions[0];
+      MeshIteratorFortran<2> iter(meshDimensions);
+      int rank;
+      for (int i = 0; i < nReplica; ++i) {
+         for (iter.begin(); !iter.atEnd(); ++iter) {
+            rank = iter.rank();
+            for (int j = 0; j < nMonomer; ++j) {
+               out << "  " << Dbl(fields[j][rank], 21, 13);
+            }
+            out << std::endl;
+         }
       }
 
    }
