@@ -351,9 +351,10 @@ public:
                                      system.w().basis(), 
                                      system.domain().unitCell());
       system.domain().fieldIo().writeFieldsBasis(
-                                     "out/testIterate1D_lam_rigid_c.bf", 
-                                     system.c().basis(), 
-                                     system.domain().unitCell());
+                                   "out/testIterate1D_lam_rigid_c.bf", 
+                                   system.c().basis(), 
+                                   system.domain().unitCell());
+      system.writeWRGrid("out/testIterate1D_lam_rigid_w.rf");
 
       // Compare solution to original fields
       BFieldComparison comparison(1);
@@ -658,6 +659,7 @@ public:
                                        "out/testIterate2D_hex_rigid_c.bf", 
                                        system.c().basis(), 
                                        system.domain().unitCell());
+      system.writeWRGrid("out/testIterate2D_hex_rigid_w.rf");
 
       // Compare current solution to reference solution
       BFieldComparison comparison(1);
