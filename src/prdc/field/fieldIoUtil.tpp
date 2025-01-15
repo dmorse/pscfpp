@@ -239,6 +239,10 @@ namespace Prdc {
                       int nMonomer,
                       IntVec<D> const& dftDimensions)
    {
+      typedef typename AT::Complex CT;
+      typedef typename AT::Real    RT;
+
+      double x, y;
       MeshIterator<D> iter(dftDimensions);
       int rank, i, j, idum;
       i = 0;
@@ -248,8 +252,9 @@ namespace Prdc {
          UTIL_CHECK(i == idum);
          UTIL_CHECK(i == rank);
          for (j = 0; j < nMonomer; ++j) {
-            in >> fields[j][rank][0];
-            in >> fields[j][rank][1];
+            in >> x;
+            in >> y;
+            assign<CT, RT>(fields[j][rank], x, y);
          }
          ++i;
       }
@@ -260,6 +265,10 @@ namespace Prdc {
                       AT& field,
                       IntVec<D> const& dftDimensions)
    {
+      typedef typename AT::Complex CT;
+      typedef typename AT::Real    RT;
+
+      double x, y;
       MeshIterator<D> iter(dftDimensions);
       int rank, idum;
       int i = 0;
@@ -268,8 +277,11 @@ namespace Prdc {
          in >> idum;
          UTIL_CHECK(i == idum);
          UTIL_CHECK(i == rank);
-         in >> field[rank][0];
-         in >> field[rank][1];
+         //in >> field[rank][0];
+         //in >> field[rank][1];
+         in >> x;
+         in >> y;
+         assign<CT, RT>(field[rank], x, y);
          ++i;
       }
    }
@@ -283,6 +295,10 @@ namespace Prdc {
       UTIL_CHECK(nMonomer > 0);
       UTIL_CHECK(nMonomer == fields.capacity());
 
+      typedef typename AT::Complex CT;
+      typedef typename AT::Real    RT;
+
+      double x, y;
       MeshIterator<D> iter(dftDimensions);
       int rank;
       int i = 0;
@@ -291,9 +307,11 @@ namespace Prdc {
          UTIL_CHECK(i == rank);
          out << Int(rank, 5);
          for (int j = 0; j < nMonomer; ++j) {
+            x = real<CT, RT>(fields[j][rank]);
+            y = imag<CT, RT>(fields[j][rank]);
             out << "  "
-                << Dbl(fields[j][rank][0], 21, 13)
-                << Dbl(fields[j][rank][1], 21, 13);
+                << Dbl(x, 21, 13)
+                << Dbl(y, 21, 13);
          }
          out << std::endl;
          ++i;
@@ -306,16 +324,19 @@ namespace Prdc {
                        AT const& field,
                        IntVec<D> const& dftDimensions)
    {
+      double x, y;
       MeshIterator<D> iter(dftDimensions);
       int rank, i;
       i = 0;
       for (iter.begin(); !iter.atEnd(); ++iter) {
          rank = iter.rank();
          UTIL_CHECK(i == rank);
+         x = real<typename AT::Complex, typename AT::Real>(field[rank]);
+         y = imag<typename AT::Complex, typename AT::Real>(field[rank]);
          out << Int(rank, 5);
          out << "  "
-             << Dbl(field[rank][0], 21, 13)
-             << Dbl(field[rank][1], 21, 13);
+             << Dbl(x, 21, 13)
+             << Dbl(y, 21, 13);
          out << std::endl;
          ++i;
       }
@@ -654,6 +675,9 @@ namespace Prdc {
    {
       UTIL_CHECK(basis.isInitialized());
 
+      typedef typename AT::Complex CT;
+      typedef typename AT::Real    RT;
+
       // Create Mesh<D> with dimensions of DFT Fourier grid.
       Mesh<D> dftMesh(dftDimensions);
 
@@ -669,8 +693,9 @@ namespace Prdc {
 
       // Initialize all dft coponents to zero
       for (rank = 0; rank < dftMesh.size(); ++rank) {
-         out[rank][0] = 0.0;
-         out[rank][1] = 0.0;
+         //out[rank][0] = 0.0;
+         //out[rank][1] = 0.0;
+         assign<CT, RT>(out[rank], 0.0, 0.0);
       }
 
       // Loop over stars, skipping cancelled stars
@@ -698,8 +723,10 @@ namespace Prdc {
                   coeff = component*(wavePtr->coeff);
                   indices = wavePtr->indicesDft;
                   rank = dftMesh.rank(indices);
-                  out[rank][0] = coeff.real();
-                  out[rank][1] = coeff.imag();
+                  //out[rank][0] = coeff.real();
+                  //out[rank][1] = coeff.imag();
+                  //assign<CT,RT>(out[rank], coeff.real(), coeff.imag());
+                  assign<CT>(out[rank], coeff);
                }
             }
             ++is;
@@ -717,8 +744,10 @@ namespace Prdc {
                   coeff = component*(wavePtr->coeff);
                   indices = wavePtr->indicesDft;
                   rank = dftMesh.rank(indices);
-                  out[rank][0] = coeff.real();
-                  out[rank][1] = coeff.imag();
+                  //out[rank][0] = coeff.real();
+                  //out[rank][1] = coeff.imag();
+                  //assign<CT,RT>(out[rank], coeff.real(), coeff.imag());
+                  assign<CT>(out[rank], coeff);
                }
             }
 
@@ -733,8 +762,10 @@ namespace Prdc {
                   coeff = component*(wavePtr->coeff);
                   indices = wavePtr->indicesDft;
                   rank = dftMesh.rank(indices);
-                  out[rank][0] = coeff.real();
-                  out[rank][1] = coeff.imag();
+                  //out[rank][0] = coeff.real();
+                  //out[rank][1] = coeff.imag();
+                  //assign<CT,RT>(out[rank], coeff.real(), coeff.imag());
+                  assign<CT>(out[rank], coeff);
                }
             }
 
@@ -760,6 +791,8 @@ namespace Prdc {
                             double epsilon) 
    {
       UTIL_CHECK(basis.isInitialized());
+
+      typedef typename AT::Complex CT;
 
       // Check if input field in k-grid format has specified symmetry
       if (checkSymmetry) {
@@ -826,7 +859,8 @@ namespace Prdc {
 
             // Compute component value
             rank = dftMesh.rank(wavePtr->indicesDft);
-            component = std::complex<double>(in[rank][0], in[rank][1]);
+            //component = std::complex<double>(in[rank][0], in[rank][1]);
+            assign<CT>(component, in[rank]);
             component /= wavePtr->coeff;
             out[ib] = component.real();
             ++is;
@@ -848,7 +882,8 @@ namespace Prdc {
                UTIL_CHECK(wavePtr->starId == is+1);
             }
             rank = dftMesh.rank(wavePtr->indicesDft);
-            component = std::complex<double>(in[rank][0], in[rank][1]);
+            //component = std::complex<double>(in[rank][0], in[rank][1]);
+            assign<CT>(component, in[rank]); 
             UTIL_CHECK(std::abs(wavePtr->coeff) > 1.0E-8);
             component /= wavePtr->coeff;
             component *= sqrt(2.0);
@@ -884,6 +919,8 @@ namespace Prdc {
    {
       UTIL_CHECK(basis.isInitialized());
 
+      typedef typename AT::Complex CT;
+
       typename Basis<D>::Star const* starPtr; // pointer to current star
       typename Basis<D>::Wave const* wavePtr; // pointer to current wave
       std::complex<double> waveCoeff;         // coefficient from wave
@@ -913,8 +950,9 @@ namespace Prdc {
                wavePtr = &basis.wave(iw);
                if (!wavePtr->implicit) {
                   rank = dftMesh.rank(wavePtr->indicesDft);
-                  waveCoeff 
-                     = std::complex<double>(in[rank][0], in[rank][1]);
+                  //waveCoeff 
+                  //   = std::complex<double>(in[rank][0], in[rank][1]);
+                  assign<CT>(waveCoeff, in[rank]);
                   if (std::abs(waveCoeff) > cancelledError) {
                      cancelledError = std::abs(waveCoeff);
                      if ((!verbose) && (cancelledError > epsilon)) {
@@ -934,8 +972,9 @@ namespace Prdc {
                wavePtr = &basis.wave(iw);
                if (!(wavePtr->implicit)) {
                   rank = dftMesh.rank(wavePtr->indicesDft);
-                  waveCoeff 
-                     = std::complex<double>(in[rank][0], in[rank][1]);
+                  //waveCoeff 
+                  //   = std::complex<double>(in[rank][0], in[rank][1]);
+                  assign<CT>(waveCoeff, in[rank]);
                   waveCoeff /= wavePtr->coeff;
                   if (hasRoot) {
                      diff = waveCoeff - rootCoeff;

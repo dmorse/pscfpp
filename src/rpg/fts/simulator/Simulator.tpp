@@ -361,7 +361,7 @@ namespace Rpg {
       double val;
       for (i = 0; i < nMonomer; ++i) {
          val = gsl_vector_get(Avals, i);
-         if (abs(val) < 1.0E-8) {
+         if (std::abs(val) < 1.0E-8) {
             ++nNull;
             iNull = i;
             UTIL_CHECK(nNull <= 1);
@@ -410,7 +410,7 @@ namespace Rpg {
 
       // Check final eigenvector is (1, ..., 1)
       for (j = 0; j < nMonomer; ++j) {
-         UTIL_CHECK(abs(chiEvecs_(nMonomer-1, j) - 1.0) < 1.0E-8);
+         UTIL_CHECK(std::abs(chiEvecs_(nMonomer-1, j) - 1.0) < 1.0E-8);
       }
 
       // Compute vector s in monomer basis

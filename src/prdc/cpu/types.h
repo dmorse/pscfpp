@@ -1,5 +1,5 @@
-#ifndef PSCF_CPU_TYPES_H
-#define PSCF_CPU_TYPES_H
+#ifndef PRDC_CPU_TYPES_H
+#define PRDC_CPU_TYPES_H
 
 /*
 * PSCF Package - Polymer Self-Consistent Field 
@@ -11,6 +11,7 @@
 #include <fftw3.h>
 
 namespace Pscf {
+namespace Prdc {
 namespace Cpu {
 
    /**
@@ -23,6 +24,7 @@ namespace Cpu {
    */
    typedef double Real;
 
+}
 }
 }
 #endif

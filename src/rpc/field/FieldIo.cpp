@@ -22,6 +22,8 @@ namespace Prdc {
 
 namespace Rpc {
 
+   using namespace Prdc::Cpu;
+
    // Explicit instantiations
    template class FieldIo<1>;
    template class FieldIo<2>;
