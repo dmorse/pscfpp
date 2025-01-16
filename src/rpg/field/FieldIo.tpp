@@ -11,22 +11,29 @@
 #include "FieldIo.h"
 
 #include <rpg/solvers/WaveList.h>
+#include <rpg/field/HostDArrayComplex.h>
 
-#include <prdc/field/FieldIoReal.tpp>     // base class implementation 
-#include <prdc/field/fieldArrayUtil.h>
+#include <pscf/math/complex.h>
+
+#include <prdc/field/FieldIoReal.tpp>      // base class implementation 
 #include <prdc/field/fieldIoUtil.h>
+#include <prdc/field/fieldArrayUtil.h>
 #include <prdc/crystal/fieldHeader.h>
 #include <prdc/crystal/Basis.h>
 #include <prdc/crystal/UnitCell.h>
+#include <prdc/cuda/complex.h>
 
-#include <pscf/cuda/HostDArray.h>
 #include <pscf/mesh/Mesh.h>
 #include <pscf/math/IntVec.h>
+#include <pscf/cuda/HostDArray.h>
+#include <pscf/cuda/GpuTypes.h>
+
 
 namespace Pscf {
 namespace Rpg {
 
    using namespace Util;
+   using namespace Pscf;
    using namespace Pscf::Prdc;
    using namespace Pscf::Prdc::Cuda;
 
@@ -86,13 +93,13 @@ namespace Rpg {
 
       // Allocate host arrays
       DArray< HostDArray<cudaReal> > hostFields;
-      Prdc::allocateArrays(hostFields, nMonomer, mesh().size());
+      allocateArrays(hostFields, nMonomer, mesh().size());
 
       // Read data
       Prdc::readRGridData(in, hostFields, nMonomer, mesh().dimensions());
 
       // Copy device <- host 
-      Prdc::copyArrays(fields, hostFields);
+      copyArrays(fields, hostFields);
    }
 
    /*
@@ -108,13 +115,13 @@ namespace Rpg {
 
       // Allocate host arrays
       DArray< HostDArray<cudaReal> > hostFields;
-      Prdc::allocateArrays(hostFields, nMonomer, mesh().size());
+      allocateArrays(hostFields, nMonomer, mesh().size());
 
       // Read data section of file
       Prdc::readRGridData(in, hostFields, nMonomer, mesh().dimensions());
 
       // Copy device <- host 
-      Prdc::copyArrays(fields, hostFields);
+      copyArrays(fields, hostFields);
    }
 
    /*
@@ -227,17 +234,16 @@ namespace Rpg {
       int capacity = fields[0].capacity();
 
       // Allocate hostFields
-      DArray< HostDArray<cudaComplex> > hostFields;
+      DArray< HostDArrayComplex > hostFields;
       allocateArrays(hostFields, nMonomer, capacity);
 
       // Read data into hostFields
       Prdc::readKGridData(in, hostFields, nMonomer, dftDimensions);
 
       // Copy device <- host
-      copyArray(fields, hostFields);
+      copyArrays(fields, hostFields);
    }
 
-   #if 0
    /*
    * Write an array of fields in k-grid format
    */
@@ -260,25 +266,32 @@ namespace Rpg {
       writeMeshDimensions(out, meshDimensions);
 
       // Copy data from device to hostFields
-      DArray< HostDArray<cudaComplex> > hostFields;
+      DArray< HostDArrayComplex > hostFields;
       allocateArrays(hostFields, nMonomer, capacity);
-      copyArray(hostFields, fields);
+      copyArrays(hostFields, fields);
 
       // Write data from hostFields
       Prdc::writeKGridData(out, hostFields, nMonomer, dftDimensions);
    }
 
    /*
-   * Write an array of fields from basis to k-grid format.
+   * Write a fields from basis to k-grid format.
    */
    template <int D>
    void FieldIo<D>::convertBasisToKGrid(
                               DArray<double> const & in,
                               RFieldDft<D>& out) const
    {
-      // Rpg: Allocate host array 
-      Prdc::convertBasisToKGrid(in, out, basis(), out.dftDimensions()); 
-      // Rpg: Copy host -> device
+      // Allocate hostField
+      HostDArrayComplex hostField;
+      hostField.allocate(out.capacity());
+
+      // Convert basis to k-grid on hostField
+      Prdc::convertBasisToKGrid(in, hostField, basis(), 
+                                out.dftDimensions()); 
+
+      // Copy out (device) <- host
+      out = hostField;
    }
 
    /*
@@ -291,9 +304,14 @@ namespace Rpg {
                               bool checkSymmetry,
                               double epsilon) const
    {
-      // Rpg: Allocate host arrays
-      // Rpg: Copy device -> host 
-      Prdc::convertKGridToBasis(in, out, basis(), in.dftDimensions(),
+      // Copy k-grid input to hostField
+      HostDArrayComplex hostField;
+      hostField.allocate(in.capacity());
+      hostField = in;
+      
+      // Convert k-grid host field to basis format
+      Prdc::convertKGridToBasis(hostField, out, basis(), 
+                                in.dftDimensions(),
                                 checkSymmetry, epsilon);
    }
 
@@ -306,9 +324,13 @@ namespace Rpg {
                               double epsilon,
                               bool verbose) const
    {
-      // Rpg:: Allocate host array
-      // Rpg: Copy device -> host 
-      return Prdc::hasSymmetry(in, basis(), in.dftDimensions(),
+      // Copy k-grid input to hostField
+      HostDArrayComplex hostField;
+      hostField.allocate(in.capacity());
+      hostField = in;
+
+      // Check symmetry of hostField
+      return Prdc::hasSymmetry(hostField, basis(), in.dftDimensions(),
                                epsilon, verbose);
    }
 
@@ -327,10 +349,14 @@ namespace Rpg {
       int nMonomer;
       IntVec<D> meshDimensions;
       inspectFields(fields, nMonomer, meshDimensions);
+      int capacity = fields[0].capacity();
 
-      // Rpg: Allocate hostArrays
-      // Rpg: Copy device -> host
-      Prdc::replicateUnitCell(out, fields, meshDimensions,
+      // Copy k-grid input to hostField
+      DArray< HostDArray<cudaReal> > hostFields;
+      allocateArrays(hostFields, nMonomer, capacity);
+      copyArrays(hostFields, fields);
+
+      Prdc::replicateUnitCell(out, hostFields, meshDimensions,
                               unitCell, replicas);
    }
 
@@ -345,13 +371,22 @@ namespace Rpg {
                               int d,
                               DArray<int> const& newGridDimensions) const
    {
-      IntVec<D> meshDimensions = fields[0].meshDimensions();
+      // Inspect fields to obtain nMonomer and meshDimensions
+      int nMonomer;
+      IntVec<D> meshDimensions;
+      inspectFields(fields, nMonomer, meshDimensions);
+      int capacity = fields[0].capacity();
 
-      // Rpg: Allocate hostArrays
-      // Rpg: Copy device -> host
-      Prdc::expandRGridDimension(out, fields, meshDimensions,
+      // Copy k-grid input fields to hostFields
+      DArray< HostDArray<cudaReal> > hostFields;
+      allocateArrays(hostFields, nMonomer, capacity);
+      copyArrays(hostFields, fields);
+
+      Prdc::expandRGridDimension(out, hostFields, meshDimensions,
                                  unitCell, d, newGridDimensions);
    }
+
+   #if 0
    #endif
 
 }

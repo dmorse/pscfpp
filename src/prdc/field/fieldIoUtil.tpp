@@ -8,17 +8,16 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-//#include <prdc/cpu/RField.h>
-//#include <prdc/cpu/RFieldDft.h>
-
 #include <prdc/crystal/Basis.h>
 #include <prdc/crystal/UnitCell.h>
 #include <prdc/crystal/shiftToMinimum.h>
 #include <prdc/crystal/fieldHeader.h>
+
 #include <pscf/mesh/Mesh.h>
 #include <pscf/mesh/MeshIterator.h>
 #include <pscf/mesh/MeshIteratorFortran.h>
 #include <pscf/math/IntVec.h>
+#include <pscf/math/complex.h>
 
 #include <util/containers/DArray.h>
 #include <util/misc/FileMaster.h>

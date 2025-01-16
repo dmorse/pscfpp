@@ -10,6 +10,7 @@
 
 #include <pscf/cuda/DeviceDArray.h>
 #include <pscf/cuda/HostDArray.h>
+#include <pscf/cuda/GpuTypes.h>
 #include <pscf/cuda/GpuResources.h>
 #include <pscf/math/IntVec.h>
 #include <util/global.h>
@@ -35,6 +36,10 @@ namespace Cuda {
    {
 
    public:
+
+      typedef cudaComplex Complex;
+
+      typedef cudaReal    Real;
 
       /**
       * Default constructor.

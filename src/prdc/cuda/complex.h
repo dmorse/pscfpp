@@ -8,15 +8,14 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <prdc/cuda/types.h>
+#include <pscf/cuda/GpuTypes.h>
+#include <pscf/math/complex.h>
 #include <complex>
 
 namespace Pscf {
-namespace Prdc {
-namespace Cuda {
 
    /*
-   * Types Cuda::Complex and Cuda::Real are defined in prdc/cuda/GpuTypes.h
+   * Types cudaComplex and cudaReal are defined in pscf/cuda/GpuTypes.h
    * as aliases for cufft complex and real types.
    */
 
@@ -25,21 +24,23 @@ namespace Cuda {
    /**
    * Return the real part of a complex number.
    *
-   * \ingroup Pscf_Cuda_Complex_Module
+   * \ingroup Prdc_Cuda_Complex_Module
    *
    * \param a complex argument (input)
    */
-   inline Real real(Complex const& a)
+   template <> inline 
+   cudaReal real(cudaComplex const& a)
    {  return a.x; }
 
    /**
    * Return the imaginary part of a complex number.
    *
-   * \ingroup Pscf_Cuda_Complex_Module
+   * \ingroup Prdc_Cuda_Complex_Module
    *
    * \param a complex argument (input)
    */
-   inline Real imag(Complex const& a)
+   template <> inline 
+   cudaReal imag(cudaComplex const& a)
    {  return a.y; }
 
    // Absolute magnitude
@@ -47,35 +48,37 @@ namespace Cuda {
    /**
    * Return absolute magnitude of a complex number.
    *
-   * \ingroup Pscf_Cuda_Complex_Module
+   * \ingroup Prdc_Cuda_Complex_Module
    *
    * \param a complex argument (in)
    */
-   inline Real abs(Complex const& a)
+   template <> inline 
+   cudaReal abs(cudaComplex const& a)
    {  return sqrt(a.x * a.x + a.y * a.y); }
 
    /**
    * Return square of absolute magnitude of a complex number.
    *
-   * \ingroup Pscf_Cuda_Complex_Module
+   * \ingroup Prdc_Cuda_Complex_Module
    *
    * \param a complex argument (in)
    */
-   inline Real absSq(Complex const& a)
+   template <> inline 
+   cudaReal absSq(cudaComplex const& a)
    {  return (a.x * a.x + a.y * a.y); }
 
-   // Complex Conjugation
+   // cudaComplex Conjugation
 
    /**
    * Compute complex conjugate, z = a^*.
    *
-   * \ingroup Pscf_Cuda_Complex_Module
+   * \ingroup Prdc_Cuda_Complex_Module
    *
    * \param z complex conjugate of argument (out)
    * \param a complex argument (in)
    */
-   inline
-   void conj(Complex& z, Complex const& a)
+   template <> inline
+   void conj(cudaComplex& z, cudaComplex const& a)
    {
       z.x = a.x;
       z.y = -a.y;
@@ -84,12 +87,12 @@ namespace Cuda {
    /**
    * In-place complex conjugation of a complex number, a = a^* .
    *
-   * \ingroup Pscf_Cuda_Complex_Module
+   * \ingroup Prdc_Cuda_Complex_Module
    *
    * \param a argument (in) and complex conjugate (out)
    */
-   inline
-   void conj(Complex& a)
+   template <> inline
+   void conj(cudaComplex& a)
    {
       a.x = a.x;
       a.y = -a.y;
@@ -100,14 +103,14 @@ namespace Cuda {
    /**
    * Create a complex number from real and imaginary parts, z = a + ib.
    *
-   * \ingroup Pscf_Cuda_Complex_Module
+   * \ingroup Prdc_Cuda_Complex_Module
    *
    * \param z complex (out)
    * \param a real part (in)
    * \param b imaginary part (in)
    */
-   inline
-   void assign(Complex& z, Real const& a, Real const& b)
+   template <> inline
+   void assign(cudaComplex& z, cudaReal const& a, cudaReal const& b)
    {
       z.x = a;
       z.y = b;
@@ -116,13 +119,13 @@ namespace Cuda {
    /**
    * Assign a real input to a complex variable.
    *
-   * \ingroup Pscf_Cuda_Complex_Module
+   * \ingroup Prdc_Cuda_Complex_Module
    *
    * \param z complex (out)
    * \param a real (in)
    */
-   inline
-   void assign(Complex& z, Real const& a)
+   template <> inline
+   void assign(cudaComplex& z, cudaReal const& a)
    {
       z.x = a;
       z.y = 0;
@@ -131,13 +134,13 @@ namespace Cuda {
    /**
    * Assign a complex input to a complex variable.
    *
-   * \ingroup Pscf_Cuda_Complex_Module
+   * \ingroup Prdc_Cuda_Complex_Module
    *
    * \param z complex (out)
    * \param a complex (in)
    */
-   inline
-   void assign(Complex& z, Complex const& a)
+   template <> inline
+   void assign(cudaComplex& z, cudaComplex const& a)
    {
       z.x = a.x;
       z.y = a.y;
@@ -146,13 +149,13 @@ namespace Cuda {
    /**
    * Assign a std::complex input to a complex variable.
    *
-   * \ingroup Pscf_Cuda_Complex_Module
+   * \ingroup Prdc_Cuda_Complex_Module
    *
    * \param z complex (out)
    * \param a std::complex (in)
    */
-   inline
-   void assign(Complex & z, std::complex<Real> const& a)
+   template <> inline
+   void assign(cudaComplex & z, std::complex<cudaReal> const& a)
    {
       z.x = a.real();
       z.y = a.imag();
@@ -161,28 +164,28 @@ namespace Cuda {
    /**
    * Assign a complex input to a std::complex variable.
    *
-   * \ingroup Pscf_Cuda_Complex_Module
+   * \ingroup Prdc_Cuda_Complex_Module
    *
    * \param z std::complex (out)
    * \param a complex (in)
    */
-   inline
-   void assign(std::complex<Real> & z, Complex const& a)
-   {  z = std::complex<Real>(a.x, a.y); }
+   template <> inline
+   void assign(std::complex<cudaReal> & z, cudaComplex const& a)
+   {  z = std::complex<cudaReal>(a.x, a.y); }
 
    // Addition
 
    /**
    * Addition of two complex numbers, z = a + b.
    *
-   * \ingroup Pscf_Cuda_Complex_Module
+   * \ingroup Prdc_Cuda_Complex_Module
    *
    * \param z complex sum (out)
    * \param a complex summand (in)
    * \param b complex summand (in)
    */
-   inline
-   void add(Complex& z, Complex const& a, Complex const& b)
+   template <> inline
+   void add(cudaComplex& z, cudaComplex const& a, cudaComplex const& b)
    {
       z.x = a.x + b.x;
       z.y = a.y + b.y;
@@ -191,14 +194,14 @@ namespace Cuda {
    /**
    * Addition of a complex and real number, z = a + b.
    *
-   * \ingroup Pscf_Cuda_Complex_Module
+   * \ingroup Prdc_Cuda_Complex_Module
    *
    * \param z complex sum (out)
    * \param a complex summand (in)
    * \param b real summand (in)
    */
-   inline
-   void add(Complex& z, Complex const& a, Real const& b)
+   template <> inline
+   void add(cudaComplex& z, cudaComplex const& a, cudaReal const& b)
    {
       z.x = a.x + b;
       z.y = a.y;
@@ -207,13 +210,13 @@ namespace Cuda {
    /**
    * In place addition of complex numbers, a += b.
    *
-   * \ingroup Pscf_Cuda_Complex_Module
+   * \ingroup Prdc_Cuda_Complex_Module
    *
    * \param a complex summand (in) and sum (out)
    * \param b complex summand (in)
    */
-   inline
-   void addEq(Complex& a, Complex const& b)
+   template <> inline
+   void addEq(cudaComplex& a, cudaComplex const& b)
    {
       a.x += b.x;
       a.y += b.y;
@@ -222,13 +225,13 @@ namespace Cuda {
    /**
    * In place addition of a complex and real number, a += b.
    *
-   * \ingroup Pscf_Cuda_Complex_Module
+   * \ingroup Prdc_Cuda_Complex_Module
    *
    * \param a complex summand (in) and sum (out)
    * \param b real summand (in)
    */
-   inline
-   void addEq(Complex& a, Real const& b)
+   template <> inline
+   void addEq(cudaComplex& a, cudaReal const& b)
    {
       a.x += b;
    }
@@ -238,14 +241,14 @@ namespace Cuda {
    /**
    * Subtraction of two complex numbers, z = a - b.
    *
-   * \ingroup Pscf_Cuda_Complex_Module
+   * \ingroup Prdc_Cuda_Complex_Module
    *
    * \param z complex difference (out)
    * \param a complex 1st argument (in)
    * \param b complex 2nd argument (in)
    */
-   inline
-   void sub(Complex& z, Complex const& a, Complex const& b)
+   template <> inline
+   void sub(cudaComplex& z, cudaComplex const& a, cudaComplex const& b)
    {
       z.x = a.x - b.x;
       z.y = a.y - b.y;
@@ -254,14 +257,14 @@ namespace Cuda {
    /**
    * Subtraction of a real number from a complex number, z = a - b.
    *
-   * \ingroup Pscf_Cuda_Complex_Module
+   * \ingroup Prdc_Cuda_Complex_Module
    *
    * \param z complex difference (out)
    * \param a complex 1st argument (in)
    * \param b real 2nd argument (in)
    */
-   inline
-   void sub(Complex& z, Complex const& a, Real const& b)
+   template <> inline
+   void sub(cudaComplex& z, cudaComplex const& a, cudaReal const& b)
    {
       z.x = a.x - b;
       z.y = a.y;
@@ -270,13 +273,13 @@ namespace Cuda {
    /**
    * In place subtraction of two complex numbers, a -= b.
    *
-   * \ingroup Pscf_Cuda_Complex_Module
+   * \ingroup Prdc_Cuda_Complex_Module
    *
    * \param a complex argument (in) and difference (out)
    * \param b complex argument (in)
    */
-   inline
-   void subEq(Complex & a, Complex const& b)
+   template <> inline
+   void subEq(cudaComplex & a, cudaComplex const& b)
    {
       a.x -= b.x;
       a.y -= b.y;
@@ -285,13 +288,13 @@ namespace Cuda {
    /**
    * In place subtraction of real number from a complex number, a -= b.
    *
-   * \ingroup Pscf_Cuda_Complex_Module
+   * \ingroup Prdc_Cuda_Complex_Module
    *
    * \param a complex argument (in) and difference (out)
    * \param b real argument (in)
    */
-   inline
-   void subEq(Complex & a, Real const& b)
+   template <> inline
+   void subEq(cudaComplex & a, cudaReal const& b)
    {
       a.x -= b;
    }
@@ -301,16 +304,17 @@ namespace Cuda {
    *
    * This function returns |a-b|^2 for complex a and b.
    *
-   * \ingroup Pscf_Cuda_Complex_Module
+   * \ingroup Prdc_Cuda_Complex_Module
    *
    * \param a complex 1st argument (in)
    * \param b complex 2nd argument (in)
    */
-   inline Real absSqDiff(Complex const& a, Complex const& b)
+   template <> inline 
+   cudaReal absSqDiff(cudaComplex const& a, cudaComplex const& b)
    {
-      Complex z;
+      cudaComplex z;
       sub(z, a, b);
-      return absSq(z);
+      return absSq<cudaComplex, cudaReal>(z);
    }
 
    // Multiplication
@@ -318,14 +322,14 @@ namespace Cuda {
    /**
    * Multiplication of two complex numbers, z = a * b.
    *
-   * \ingroup Pscf_Cuda_Complex_Module
+   * \ingroup Prdc_Cuda_Complex_Module
    *
    * \param z complex product (out)
    * \param a complex factor (in)
    * \param b complex factor (in)
    */
-   inline
-   void mul(Complex& z, Complex const& a, Complex const& b)
+   template <> inline
+   void mul(cudaComplex& z, cudaComplex const& a, cudaComplex const& b)
    {
       z.x = a.x * b.x - a.y * b.y;
       z.y = a.y * b.x + a.x * b.y;
@@ -334,14 +338,14 @@ namespace Cuda {
    /**
    * Multiplication of complex and real numbers, z = a * b.
    *
-   * \ingroup Pscf_Cuda_Complex_Module
+   * \ingroup Prdc_Cuda_Complex_Module
    *
    * \param z complex product (out)
    * \param a complex factor (in)
    * \param b real factor (in)
    */
-   inline
-   void mul(Complex& z, Complex const& a, Real const& b)
+   template <> inline
+   void mul(cudaComplex& z, cudaComplex const& a, cudaReal const& b)
    {
       z.x = a.x*b;
       z.y = a.y*b;
@@ -350,15 +354,15 @@ namespace Cuda {
    /**
    * In place multiplication of two complex number, a *= b.
    *
-   * \ingroup Pscf_Cuda_Complex_Module
+   * \ingroup Prdc_Cuda_Complex_Module
    *
    * \param a complex factor (in) and product (out)
    * \param b complex factor (in)
    */
-   inline
-   void mulEq(Complex & a, Complex const& b)
+   template <> inline
+   void mulEq(cudaComplex & a, cudaComplex const& b)
    {
-      Real a0;
+      cudaReal a0;
       a0   = a.x * b.x - a.y * b.y;
       a.y = a.y * b.x + a.x * b.y;
       a.x = a0;
@@ -367,13 +371,13 @@ namespace Cuda {
    /**
    * In place multiplication of a complex and real number, a *= b.
    *
-   * \ingroup Pscf_Cuda_Complex_Module
+   * \ingroup Prdc_Cuda_Complex_Module
    *
    * \param a complex factor (in) and product (out)
    * \param b real factor (in)
    */
-   inline
-   void mulEq(Complex & a, Real const& b)
+   template <> inline
+   void mulEq(cudaComplex & a, cudaReal const& b)
    {
       a.x *= b;
       a.y *= b;
@@ -382,13 +386,13 @@ namespace Cuda {
    /**
    * Compute complex square of a complex number, z = a * a.
    *
-   * \ingroup Pscf_Cuda_Complex_Module
+   * \ingroup Prdc_Cuda_Complex_Module
    *
    * \param z complex product (out)
    * \param a complex factor (in)
    */
-   inline
-   void square(Complex& z, Complex const& a)
+   template <> inline
+   void square(cudaComplex& z, cudaComplex const& a)
    {
       z.x = a.x * a.x - a.y * a.y;
       z.y = 2.0 * a.y * a.x;
@@ -399,16 +403,16 @@ namespace Cuda {
    /**
    * Division of two complex numbers, z = a / b .
    *
-   * \ingroup Pscf_Cuda_Complex_Module
+   * \ingroup Prdc_Cuda_Complex_Module
    *
    * \param z complex ratio (out)
    * \param a complex numerator (in)
    * \param b complex denominator (in)
    */
-   inline
-   void div(Complex& z, Complex const& a, Complex const& b)
+   template <> inline
+   void div(cudaComplex& z, cudaComplex const& a, cudaComplex const& b)
    {
-      Real bSq = b.x * b.x + b.y * b.y;
+      cudaReal bSq = b.x * b.x + b.y * b.y;
       z.x = (a.x * b.x + a.y * b.y) / bSq;
       z.y = (a.y * b.x - a.x * b.y) / bSq;
    }
@@ -416,14 +420,14 @@ namespace Cuda {
    /**
    * Division of a complex number by a real number, z = a / b .
    *
-   * \ingroup Pscf_Cuda_Complex_Module
+   * \ingroup Prdc_Cuda_Complex_Module
    *
    * \param z complex ratio (out)
    * \param a complex numerator (in)
    * \param b real denominator (in)
    */
-   inline
-   void div(Complex& z, Complex const& a, Real const& b)
+   template <> inline
+   void div(cudaComplex& z, cudaComplex const& a, cudaReal const& b)
    {
       z.x = a.x / b;
       z.y = a.y / b;
@@ -432,16 +436,16 @@ namespace Cuda {
    /**
    * In place division of two complex number, a /= b.
    *
-   * \ingroup Pscf_Cuda_Complex_Module
+   * \ingroup Prdc_Cuda_Complex_Module
    *
    * \param a complex numerator (in) and ratio (out)
    * \param b complex denominator (in)
    */
-   inline
-   void divEq(Complex & a, Complex const & b)
+   template <> inline
+   void divEq(cudaComplex & a, cudaComplex const & b)
    {
-      Real bSq = b.x * b.x + b.y * b.y;
-      Real a0 = (a.x * b.x + a.y * b.y)/bSq;
+      cudaReal bSq = b.x * b.x + b.y * b.y;
+      cudaReal a0 = (a.x * b.x + a.y * b.y)/bSq;
       a.y = (a.y * b.x - a.x * b.y)/bSq;
       a.x = a0;
    }
@@ -449,19 +453,17 @@ namespace Cuda {
    /**
    * In place division of a complex number by a real number, a /= b.
    *
-   * \ingroup Pscf_Cuda_Complex_Module
+   * \ingroup Prdc_Cuda_Complex_Module
    *
    * \param a complex numerator (in) and ratio (out)
    * \param b real denominator (in)
    */
-   inline
-   void divEq(Complex & a, Real const& b)
+   template <> inline
+   void divEq(cudaComplex & a, cudaReal const& b)
    {
       a.x /= b;
       a.y /= b;
    }
 
-} // Pscf::Prdc::Cuda
-} // Pscf::Prdc
 } // Pscf
 #endif
