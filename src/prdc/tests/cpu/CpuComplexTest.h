@@ -4,7 +4,7 @@
 #include <test/UnitTest.h>
 #include <test/UnitTestRunner.h>
 
-#include <pscf/cpu/complex.h>
+#include <prdc/cpu/complex.h>
 
 using namespace Util;
 using namespace Pscf;
@@ -24,9 +24,9 @@ public:
    {
       printMethod(TEST_FUNC);
       {
-         Cpu::Complex z;
-         Cpu::Complex a;
-         Cpu::Complex b;
+         fftw_complex z;
+         fftw_complex a;
+         fftw_complex b;
          a[0] = 2.0;
          a[1] = 0.5;
          b[0] = 0.25;
@@ -43,9 +43,9 @@ public:
    {
       printMethod(TEST_FUNC);
       {
-         Cpu::Complex z;
-         Cpu::Complex a;
-         Cpu::Real b;
+         fftw_complex z;
+         fftw_complex a;
+         double b;
          a[0] = 2.0;
          a[1] = 0.5;
          b    = 0.25;
@@ -61,9 +61,9 @@ public:
    {
       printMethod(TEST_FUNC);
       {
-         Cpu::Complex z;
-         Cpu::Complex a;
-         Cpu::Complex b;
+         fftw_complex z;
+         fftw_complex a;
+         fftw_complex b;
          a[0] = 2.0;
          a[1] = 0.5;
          b[0] = 0.25;
@@ -82,9 +82,9 @@ public:
    {
       printMethod(TEST_FUNC);
       {
-         Cpu::Complex z;
-         Cpu::Complex a;
-         Cpu::Real b;
+         fftw_complex z;
+         fftw_complex a;
+         double b;
          a[0] = 2.0;
          a[1] = 0.5;
          b    = 0.25;
@@ -102,9 +102,9 @@ public:
    {
       printMethod(TEST_FUNC);
       {
-         Cpu::Complex z;
-         Cpu::Complex a;
-         Cpu::Complex b;
+         fftw_complex z;
+         fftw_complex a;
+         fftw_complex b;
          a[0] = 2.0;
          a[1] = 0.5;
          b[0] = 0.25;
@@ -121,9 +121,9 @@ public:
    {
       printMethod(TEST_FUNC);
       {
-         Cpu::Complex a;
-         Cpu::Real b;
-         Cpu::Complex z;
+         fftw_complex a;
+         double b;
+         fftw_complex z;
          a[0] = 2.0;
          a[1] = 0.5;
          b    = 0.25;
@@ -139,9 +139,9 @@ public:
    {
       printMethod(TEST_FUNC);
       {
-         Cpu::Complex z;
-         Cpu::Complex a;
-         Cpu::Complex b;
+         fftw_complex z;
+         fftw_complex a;
+         fftw_complex b;
          a[0] = 2.0;
          a[1] = 0.5;
          b[0] = 0.25;
@@ -160,9 +160,9 @@ public:
    {
       printMethod(TEST_FUNC);
       {
-         Cpu::Complex z;
-         Cpu::Complex a;
-         Cpu::Real b;
+         fftw_complex z;
+         fftw_complex a;
+         double b;
          a[0] = 2.0;
          a[1] = 0.5;
          b    = 0.25;
@@ -180,9 +180,9 @@ public:
    {
       printMethod(TEST_FUNC);
       {
-         Cpu::Complex z;
-         Cpu::Complex a;
-         Cpu::Complex b;
+         fftw_complex z;
+         fftw_complex a;
+         fftw_complex b;
          a[0] = 2.0;
          a[1] = 0.5;
          b[0] = 3.0;
@@ -203,9 +203,9 @@ public:
    {
       printMethod(TEST_FUNC);
       {
-         Cpu::Complex z;
-         Cpu::Complex a;
-         Cpu::Real b;
+         fftw_complex z;
+         fftw_complex a;
+         double b;
          a[0] = 2.0;
          a[1] = 0.5;
          b    = 0.25;
@@ -225,9 +225,9 @@ public:
    {
       printMethod(TEST_FUNC);
       {
-         Cpu::Complex z;
-         Cpu::Complex a;
-         Cpu::Complex b;
+         fftw_complex z;
+         fftw_complex a;
+         fftw_complex b;
          a[0] = 2.0;
          a[1] = 0.5;
          b[0] = 3.0;
@@ -246,9 +246,9 @@ public:
    {
       printMethod(TEST_FUNC);
       {
-         Cpu::Complex z;
-         Cpu::Complex a;
-         Cpu::Real b;
+         fftw_complex z;
+         fftw_complex a;
+         double b;
          a[0] = 2.0;
          a[1] = 0.5;
          b    = 0.25;
@@ -266,9 +266,9 @@ public:
    {
       printMethod(TEST_FUNC);
       {
-         Cpu::Complex z;
-         Cpu::Complex a;
-         Cpu::Complex b;
+         fftw_complex z;
+         fftw_complex a;
+         fftw_complex b;
          a[0] = 2.0;
          a[1] = 0.5;
          b[0] = 3.0;
@@ -277,7 +277,7 @@ public:
          TEST_ASSERT(eq(z[0], a[0]*b[0] - a[1]*b[1]));
          TEST_ASSERT(eq(z[1], a[1]*b[0] + a[0]*b[1]));
  
-         Cpu::Complex x;
+         fftw_complex x;
          Cpu::div(x, z, b);
          TEST_ASSERT(eq(x[0], a[0]));
          TEST_ASSERT(eq(x[1], a[1]));
@@ -288,9 +288,9 @@ public:
    {
       printMethod(TEST_FUNC);
       {
-         Cpu::Complex z;
-         Cpu::Complex a;
-         Cpu::Real b;
+         fftw_complex z;
+         fftw_complex a;
+         double b;
          a[0] = 2.0;
          a[1] = 0.5;
          b    = 0.25;
@@ -298,7 +298,7 @@ public:
          TEST_ASSERT(eq(z[0], a[0]*b));
          TEST_ASSERT(eq(z[1], a[1]*b));
 
-         Cpu::Complex x;
+         fftw_complex x;
          Cpu::div(x, z, b);
          TEST_ASSERT(eq(x[0], a[0]));
          TEST_ASSERT(eq(x[1], a[1]));
@@ -309,9 +309,9 @@ public:
    {
       printMethod(TEST_FUNC);
       {
-         Cpu::Complex z;
-         Cpu::Complex a;
-         Cpu::Complex b;
+         fftw_complex z;
+         fftw_complex a;
+         fftw_complex b;
          a[0] = 2.0;
          a[1] = 0.5;
          b[0] = 3.0;
@@ -332,9 +332,9 @@ public:
    {
       printMethod(TEST_FUNC);
       {
-         Cpu::Complex z;
-         Cpu::Complex a;
-         Cpu::Real b;
+         fftw_complex z;
+         fftw_complex a;
+         double b;
          a[0] = 2.0;
          a[1] = 0.5;
          b    = 0.25;

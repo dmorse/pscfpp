@@ -164,9 +164,9 @@ namespace Prdc {
           << "           " << meshDimensions << std::endl;
    }
 
-   template <int D, class AT>
+   template <int D, class ART>
    void readRGridData(std::istream& in,
-                      DArray<AT>& fields,
+                      DArray<ART>& fields,
                       int nMonomer,
                       IntVec<D> const& dimensions)
    {
@@ -183,9 +183,9 @@ namespace Prdc {
       }
    }
 
-   template <int D, class AT>
+   template <int D, class ART>
    void readRGridData(std::istream& in, 
-                      AT& field,
+                      ART& field,
                       IntVec<D> const& dimensions)
    {
       MeshIteratorFortran<D> iter(dimensions);
@@ -196,9 +196,9 @@ namespace Prdc {
       }
    }
 
-   template <int D, class AT>
+   template <int D, class ART>
    void writeRGridData(std::ostream& out,
-                       DArray<AT> const& fields,
+                       DArray<ART> const& fields,
                        int nMonomer,
                        IntVec<D> const& dimensions)
    {
@@ -217,9 +217,9 @@ namespace Prdc {
 
    }
 
-   template <int D, class AT>
+   template <int D, class ART>
    void writeRGridData(std::ostream& out,
-                       AT const& field,
+                       ART const& field,
                        IntVec<D> const& dimensions)
    {
       MeshIteratorFortran<D> iter(dimensions);
@@ -233,16 +233,16 @@ namespace Prdc {
 
    // KGrid file IO templates
 
-   template <int D, class AT>
+   template <int D, class ACT>
    void readKGridData(std::istream& in,
-                      DArray<AT> & fields,
+                      DArray<ACT> & fields,
                       int nMonomer,
                       IntVec<D> const& dftDimensions)
    {
-      typedef typename AT::Complex CT;
-      typedef typename AT::Real    RT;
+      typedef typename ACT::Complex CT;
+      typedef typename ACT::Real    RT;
 
-      double x, y;
+      RT x, y;
       MeshIterator<D> iter(dftDimensions);
       int rank, i, j, idum;
       i = 0;
@@ -260,15 +260,15 @@ namespace Prdc {
       }
    }
 
-   template <int D, class AT>
+   template <int D, class ACT>
    void readKGridData(std::istream& in, 
-                      AT& field,
+                      ACT& field,
                       IntVec<D> const& dftDimensions)
    {
-      typedef typename AT::Complex CT;
-      typedef typename AT::Real    RT;
+      typedef typename ACT::Complex CT;
+      typedef typename ACT::Real    RT;
 
-      double x, y;
+      RT x, y;
       MeshIterator<D> iter(dftDimensions);
       int rank, idum;
       int i = 0;
@@ -286,19 +286,19 @@ namespace Prdc {
       }
    }
 
-   template <int D, class AT>
+   template <int D, class ACT>
    void writeKGridData(std::ostream& out,
-                       DArray<AT> const& fields,
+                       DArray<ACT> const& fields,
                        int nMonomer,
                        IntVec<D> const& dftDimensions)
    {
       UTIL_CHECK(nMonomer > 0);
       UTIL_CHECK(nMonomer == fields.capacity());
 
-      typedef typename AT::Complex CT;
-      typedef typename AT::Real    RT;
+      typedef typename ACT::Complex CT;
+      typedef typename ACT::Real    RT;
 
-      double x, y;
+      RT x, y;
       MeshIterator<D> iter(dftDimensions);
       int rank;
       int i = 0;
@@ -319,20 +319,23 @@ namespace Prdc {
 
    }
 
-   template <int D, class AT>
+   template <int D, class ACT>
    void writeKGridData(std::ostream& out, 
-                       AT const& field,
+                       ACT const& field,
                        IntVec<D> const& dftDimensions)
    {
-      double x, y;
+      typedef typename ACT::Complex CT;
+      typedef typename ACT::Real    RT;
+
+      RT x, y;
       MeshIterator<D> iter(dftDimensions);
       int rank, i;
       i = 0;
       for (iter.begin(); !iter.atEnd(); ++iter) {
          rank = iter.rank();
          UTIL_CHECK(i == rank);
-         x = real<typename AT::Complex, typename AT::Real>(field[rank]);
-         y = imag<typename AT::Complex, typename AT::Real>(field[rank]);
+         x = real<CT, RT>(field[rank]);
+         y = imag<CT, RT>(field[rank]);
          out << Int(rank, 5);
          out << "  "
              << Dbl(x, 21, 13)
@@ -667,16 +670,16 @@ namespace Prdc {
 
    }
 
-   template <int D, class AT> 
+   template <int D, class ACT> 
    void convertBasisToKGrid(DArray<double> const & in,
-                            AT& out,
+                            ACT& out,
                             Basis<D> const& basis,
                             IntVec<D> const& dftDimensions)
    {
       UTIL_CHECK(basis.isInitialized());
 
-      typedef typename AT::Complex CT;
-      typedef typename AT::Real    RT;
+      typedef typename ACT::Complex CT;
+      typedef typename ACT::Real    RT;
 
       // Create Mesh<D> with dimensions of DFT Fourier grid.
       Mesh<D> dftMesh(dftDimensions);
@@ -725,8 +728,7 @@ namespace Prdc {
                   rank = dftMesh.rank(indices);
                   //out[rank][0] = coeff.real();
                   //out[rank][1] = coeff.imag();
-                  //assign<CT,RT>(out[rank], coeff.real(), coeff.imag());
-                  assign<CT>(out[rank], coeff);
+                  assign<CT, RT>(out[rank], coeff);
                }
             }
             ++is;
@@ -746,8 +748,7 @@ namespace Prdc {
                   rank = dftMesh.rank(indices);
                   //out[rank][0] = coeff.real();
                   //out[rank][1] = coeff.imag();
-                  //assign<CT,RT>(out[rank], coeff.real(), coeff.imag());
-                  assign<CT>(out[rank], coeff);
+                  assign<CT, RT>(out[rank], coeff);
                }
             }
 
@@ -764,8 +765,7 @@ namespace Prdc {
                   rank = dftMesh.rank(indices);
                   //out[rank][0] = coeff.real();
                   //out[rank][1] = coeff.imag();
-                  //assign<CT,RT>(out[rank], coeff.real(), coeff.imag());
-                  assign<CT>(out[rank], coeff);
+                  assign<CT, RT>(out[rank], coeff);
                }
             }
 
@@ -782,8 +782,8 @@ namespace Prdc {
 
    }
 
-   template <int D, class AT>
-   void convertKGridToBasis(AT const& in,
+   template <int D, class ACT>
+   void convertKGridToBasis(ACT const& in,
                             DArray<double>& out,
                             Basis<D> const& basis,
                             IntVec<D> const& dftDimensions,
@@ -792,7 +792,8 @@ namespace Prdc {
    {
       UTIL_CHECK(basis.isInitialized());
 
-      typedef typename AT::Complex CT;
+      typedef typename ACT::Complex CT;
+      typedef typename ACT::Real    RT;
 
       // Check if input field in k-grid format has specified symmetry
       if (checkSymmetry) {
@@ -860,7 +861,7 @@ namespace Prdc {
             // Compute component value
             rank = dftMesh.rank(wavePtr->indicesDft);
             //component = std::complex<double>(in[rank][0], in[rank][1]);
-            assign<CT>(component, in[rank]);
+            assign<CT,RT>(component, in[rank]);
             component /= wavePtr->coeff;
             out[ib] = component.real();
             ++is;
@@ -883,7 +884,7 @@ namespace Prdc {
             }
             rank = dftMesh.rank(wavePtr->indicesDft);
             //component = std::complex<double>(in[rank][0], in[rank][1]);
-            assign<CT>(component, in[rank]); 
+            assign<CT, RT>(component, in[rank]); 
             UTIL_CHECK(std::abs(wavePtr->coeff) > 1.0E-8);
             component /= wavePtr->coeff;
             component *= sqrt(2.0);
@@ -910,8 +911,8 @@ namespace Prdc {
    * Return true if symmetric, false otherwise. Print error values
    * if verbose == true and hasSymmetry == false.
    */
-   template <int D, class AT>
-   bool hasSymmetry(AT const & in, 
+   template <int D, class ACT>
+   bool hasSymmetry(ACT const & in, 
                     Basis<D> const& basis,
                     IntVec<D> const& dftDimensions,
                     double epsilon,
@@ -919,7 +920,8 @@ namespace Prdc {
    {
       UTIL_CHECK(basis.isInitialized());
 
-      typedef typename AT::Complex CT;
+      typedef typename ACT::Complex CT;
+      typedef typename ACT::Real    RT;
 
       typename Basis<D>::Star const* starPtr; // pointer to current star
       typename Basis<D>::Wave const* wavePtr; // pointer to current wave
@@ -952,7 +954,7 @@ namespace Prdc {
                   rank = dftMesh.rank(wavePtr->indicesDft);
                   //waveCoeff 
                   //   = std::complex<double>(in[rank][0], in[rank][1]);
-                  assign<CT>(waveCoeff, in[rank]);
+                  assign<CT, RT>(waveCoeff, in[rank]);
                   if (std::abs(waveCoeff) > cancelledError) {
                      cancelledError = std::abs(waveCoeff);
                      if ((!verbose) && (cancelledError > epsilon)) {
@@ -974,7 +976,7 @@ namespace Prdc {
                   rank = dftMesh.rank(wavePtr->indicesDft);
                   //waveCoeff 
                   //   = std::complex<double>(in[rank][0], in[rank][1]);
-                  assign<CT>(waveCoeff, in[rank]);
+                  assign<CT, RT>(waveCoeff, in[rank]);
                   waveCoeff /= wavePtr->coeff;
                   if (hasRoot) {
                      diff = waveCoeff - rootCoeff;
@@ -1010,9 +1012,9 @@ namespace Prdc {
 
    // Field file manipulations
 
-   template <int D, class AT>
+   template <int D, class ART>
    void replicateUnitCell(std::ostream &out,
-                          DArray< AT > const & fields,
+                          DArray<ART> const & fields,
                           IntVec<D> const & meshDimensions,
                           UnitCell<D> const & unitCell,
                           IntVec<D> const & replicas)
@@ -1085,10 +1087,10 @@ namespace Prdc {
       writeRGridData(out, repFields, nMonomer, repDimensions);
    }
 
-   template <int D, class AT>
+   template <int D, class ART>
    void
    expandRGridDimension(std::ostream &out,
-                        DArray<AT> const & fields,
+                        DArray<ART> const & fields,
                         IntVec<D> const & meshDimensions,
                         UnitCell<D> const & unitCell,
                         int d,
@@ -1097,10 +1099,10 @@ namespace Prdc {
       UTIL_THROW("Unimplemented base template"); 
    }
 
-   template <class AT>
+   template <class ART>
    void
    expandRGridDimension(std::ostream &out,
-                        DArray<AT> const & fields,
+                        DArray<ART> const & fields,
                         IntVec<1> const & meshDimensions,
                         UnitCell<1> const & unitCell,
                         int d,
@@ -1148,32 +1150,6 @@ namespace Prdc {
          out << "mesh " <<  std::endl
              << "           " << dimensions << std::endl;
 
-         #if 0
-         // Allocate and populate outFields
-         DArray< DArray<double> > outFields;
-         outFields.allocate(nMonomer);
-         int capacity = dimensions[0]*dimensions[1];
-         for (int i = 0; i < nMonomer; ++i) {
-            outFields[i].allocate(capacity);
-            int rank = 0;
-            for (int j = 0; j < dimensions[1]; ++j) {
-               for (int k = 0; k < dimensions[0]; ++k) {
-                  outFields[i][rank] = fields[i][k];
-                  rank++;
-               }
-            }
-         }
-
-         // Write fields
-         MeshIterator<2> itr(dimensions);
-         for (itr.begin(); !itr.atEnd(); ++itr) {
-            for (int j = 0; j < nMonomer; ++j) {
-               out << "  " << Dbl(outFields[j][itr.rank()], 18, 15);
-            }
-            out << std::endl;
-         }
-         #endif
-
       } else if (d == 3) {
 
          // 1D expanded to 3D
@@ -1215,38 +1191,6 @@ namespace Prdc {
          out << "mesh " <<  std::endl
              << "           " << dimensions << std::endl;
 
-         #if 0
-         // Allocate outFields
-         DArray< DArray<double> > outFields;
-         outFields.allocate(nMonomer);
-         int capacity = dimensions[0]*dimensions[1]*dimensions[2];
-         for (int i = 0; i < nMonomer; ++i) {
-            outFields[i].allocate(capacity);
-         }
-
-         // Populate outFields
-         int rank = 0;
-         for (int l = 0; l < dimensions[2]; ++l) {
-            for (int k = 0; k < dimensions[1]; ++k) {
-               for (int j = 0; j < dimensions[0]; ++j) {
-                  for (int i = 0; i < nMonomer; ++i) {
-                     outFields[i][rank] = fields[i][j];
-                  }
-                  ++rank;
-               }
-            }
-         }
-
-         // Write fields
-         MeshIterator<3> itr(dimensions);
-         for (itr.begin(); !itr.atEnd(); ++itr) {
-            for (int j = 0; j < nMonomer; ++j) {
-               out << "  " << Dbl(outFields[j][itr.rank()], 18, 15);
-            }
-            out << std::endl;
-         }
-         #endif
-
       } else {
 
          UTIL_THROW("Invalid d value");
@@ -1272,9 +1216,9 @@ namespace Prdc {
 
    }
 
-   template <class AT>
+   template <class ART>
    void expandRGridDimension(std::ostream &out,
-                             DArray<AT> const & fields,
+                             DArray<ART> const & fields,
                              IntVec<2> const & meshDimensions,
                              UnitCell<2> const & unitCell,
                              int d,
@@ -1345,53 +1289,6 @@ namespace Prdc {
       out << "mesh " <<  std::endl
           << "           " << dimensions << std::endl;
 
-      #if 0
-      // Allocate outFields
-      DArray< DArray<double> > outFields;
-      outFields.allocate(nMonomer);
-      int capacity = dimensions[0]*dimensions[1]*dimensions[2];
-      for (int i = 0; i < nMonomer; ++i) {
-         outFields[i].allocate(capacity);
-      }
-
-      // Populate outFields
-      int q = 0;
-      int r = 0;
-      int s = 0;
-      int n1 =0;
-      int n2 =0;
-      int n3 =0;
-
-      while (n3 < dimensions[2]) {
-         q = 0;
-         n2 = 0;
-         while (n2 < dimensions[1]) {
-            r = q;
-            n1 = 0;
-            while (n1 < dimensions[0]) {
-               for (int i = 0; i < nMonomer; ++i) {
-                  outFields[i][s] = fields[i][r];
-               }
-               r = r + dimensions[1];
-               ++s;
-               ++n1;
-            }
-            ++q;
-            ++n2;
-         }
-         ++n3;
-      }
-
-      // Write field data
-      MeshIterator<3> itr(dimensions);
-      for (itr.begin(); !itr.atEnd(); ++itr) {
-         for (int j = 0; j < nMonomer; ++j) {
-            out << "  " << Dbl(outFields[j][itr.rank()], 18, 15);
-         }
-         out << std::endl;
-      }
-      #endif
-
       // Write expanded fields
       int nReplica = newGridDimensions[0];
       MeshIteratorFortran<2> iter(meshDimensions);
@@ -1408,9 +1305,9 @@ namespace Prdc {
 
    }
 
-   template <class AT>
+   template <class ART>
    void expandRGridDimension(std::ostream &out,
-                             DArray<AT > const & fields,
+                             DArray<ART> const & fields,
                              IntVec<3> const & meshDimensions,
                              UnitCell<3> const & unitCell,
                              int d,
