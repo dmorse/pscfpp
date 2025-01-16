@@ -5,7 +5,6 @@
 #include <test/CompositeTestRunner.h>
 
 #include "math/MathTestComposite.h"
-#include "cpu/CpuTestComposite.h"
 #include "chem/ChemTestComposite.h"
 #include "solvers/SolversTestComposite.h"
 #include "inter/InterTestComposite.h"
@@ -17,7 +16,6 @@
 
 TEST_COMPOSITE_BEGIN(PscfNsTestComposite)
 addChild(new MathTestComposite, "math/");
-addChild(new CpuTestComposite, "cpu/");
 addChild(new ChemTestComposite, "chem/");
 addChild(new SolversTestComposite, "solvers/");
 addChild(new InterTestComposite, "inter/");

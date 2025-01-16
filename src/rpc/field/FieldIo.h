@@ -8,6 +8,9 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
+#include <prdc/cpu/types.h>
+#include <prdc/cpu/complex.h>
+
 #include <prdc/field/FieldIoReal.h>     // base class template
 #include <prdc/cpu/RField.h>            // template parameter
 #include <prdc/cpu/RFieldDft.h>         // template parameter

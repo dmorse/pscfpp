@@ -24,7 +24,6 @@ typedef cufftDoubleComplex hostComplex;
 #endif
 #endif
 
-
 #define gpuErrchk(ans) { gpuAssert((ans), __FILE__, __LINE__);}
 inline void gpuAssert(cudaError_t code, const char *file, int line, bool abort=true)
 {
@@ -35,30 +34,5 @@ inline void gpuAssert(cudaError_t code, const char *file, int line, bool abort=t
    }
 }
 
-namespace Cuda {
-
-   /**
-   * Complex number type used in CPU code that uses FFTW.
-   */
-   #ifdef SINGLE_PRECISION
-   typedef cufftComplex Complex;
-   #else
-   #ifdef DOUBLE_PRECISION
-   typedef cufftDoubleComplex Complex;
-   #endif
-   #endif
-
-   /**
-   * Real number type used in CPU code that uses FFTW.
-   */
-   #ifdef SINGLE_PRECISION
-   typedef cufftReal Real;
-   #else
-   #ifdef DOUBLE_PRECISION
-   typedef cufftDoubleReal Real;
-   #endif
-   #endif
-
-} // Pscf::Cpu
-} // Pscf
+} // namespace Pscf
 #endif

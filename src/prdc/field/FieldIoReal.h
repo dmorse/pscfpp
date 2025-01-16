@@ -44,6 +44,13 @@ namespace Prdc {
    * representations. The member functions that implement field IO 
    * operations define the file formats for these field representations.
    *
+   * Template parameters:
+   *
+   *    D     - dimension of space, i.e., 1, 2, or 3)
+   *    RFRT  - real field (r-grid) type, e.g., RField<D> 
+   *    RFKT  - real field (k-grid) type, e.g., RFieldDft<D> 
+   *    FFT   - fast Fouriert transform type, e.g., FFT<D> 
+   *
    * Side effect of reading a field file: The member functions that read 
    * fields from a file may all construct a symmetry adapted basis within
    * an associated Basis object as a side effect of reading the field 
