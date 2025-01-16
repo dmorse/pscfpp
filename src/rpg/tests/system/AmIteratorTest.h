@@ -125,8 +125,8 @@ public:
       if (error) {
          TEST_THROW("Iterator failed to converge.");
       };
-      system.writeWBasis("out/testIterate1D_lam_flex_w.bf");
-      system.writeCBasis("out/testIterate1D_lam_flex_c.bf");
+      system.writeWBasis("out/testIterate1D_lam_flex_noBatched_w.bf");
+      system.writeCBasis("out/testIterate1D_lam_flex_noBatched_c.bf");
 
       // Get test result
       DArray< DArray<double> > b_wFields;
@@ -427,8 +427,8 @@ public:
       if (error) {
          TEST_THROW("Iterator failed to converge.");
       };
-      system.writeWBasis("out/testIterate2D_hex_flex_w.bf");
-      system.writeCBasis("out/testIterate2D_hex_flex_c.bf");
+      system.writeWBasis("out/testIterate2D_hex_flex_noBatched_w.bf");
+      system.writeCBasis("out/testIterate2D_hex_flex_noBatched_c.bf");
 
       // Get test result
       DArray< DArray<double> > b_wFields;
@@ -553,8 +553,8 @@ public:
       if (error) {
          TEST_THROW("Iterator failed to converge.");
       };
-      system.writeWBasis("out/testIterate3D_bcc_flex_w.bf");
-      system.writeCBasis("out/testIterate3D_bcc_flex_c.bf");
+      system.writeWBasis("out/testIterate3D_bcc_flex_noBatched_w.bf");
+      system.writeCBasis("out/testIterate3D_bcc_flex_noBatched_c.bf");
 
       // Get test result
       DArray< DArray<double> > b_wFields;
