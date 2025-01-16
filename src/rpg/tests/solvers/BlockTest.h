@@ -1,11 +1,10 @@
-#ifndef RPG_SOLVER_KERNEL_TEST_H
-#define RPG_SOLVER_KERNEL_TEST_H
+#ifndef RPG_BLOCK_TEST_H
+#define RPG_BLOCK_TEST_H
 
 #include <test/UnitTest.h>
 #include <test/UnitTestRunner.h>
 
 #include <rpg/solvers/Block.h>
-#include <rpg/solvers/WaveList.h>
 #include <util/math/Constants.h>
 
 using namespace Util;
@@ -13,17 +12,17 @@ using namespace Pscf;
 using namespace Pscf::Prdc;
 using namespace Pscf::Rpg;
 
-class SolverKernelTest : public UnitTest
+class BlockTest : public UnitTest
 {
    
 private:
 
    // Error tolerance for array equality
    #ifdef SINGLE_PRECISION
-   constexpr static float tolerance_ = 1E-5;
+   constexpr static cudaReal tolerance_ = 1E-5;
    #else
    #ifdef DOUBLE_PRECISION
-   constexpr static double tolerance_ = 1E-10;
+   constexpr static cudaReal tolerance_ = 1E-10;
    #endif
    #endif
 
@@ -148,10 +147,10 @@ public:
    }
 };
 
-TEST_BEGIN(SolverKernelTest)
-TEST_ADD(SolverKernelTest, testRealMulVConjVV)
-TEST_ADD(SolverKernelTest, testRichardsonEx)
-TEST_ADD(SolverKernelTest, testAddEqMulVVc)
-TEST_END(SolverKernelTest)
+TEST_BEGIN(BlockTest)
+TEST_ADD(BlockTest, testRealMulVConjVV)
+TEST_ADD(BlockTest, testRichardsonEx)
+TEST_ADD(BlockTest, testAddEqMulVVc)
+TEST_END(BlockTest)
 
 #endif

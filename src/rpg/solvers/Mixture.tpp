@@ -180,13 +180,13 @@ namespace Rpg
    * Compute Total Stress.
    */  
    template <int D>
-   void Mixture<D>::computeStress(WaveList<D> const & wavelist)
+   void Mixture<D>::computeStress()
    {   
       int i, j;
 
       // Compute stress for each polymer.
       for (i = 0; i < nPolymer(); ++i) {
-         polymer(i).computeStress(wavelist);
+         polymer(i).computeStress();
       } 
 
       // Accumulate total stress 

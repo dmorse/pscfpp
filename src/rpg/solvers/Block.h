@@ -170,10 +170,9 @@ namespace Rpg {
       *
       * The prefactor is the same as that used in computeConcentration.
       *
-      * \param waveList  container for properties of wavevectors
       * \param prefactor  constant prefactor multiplying integral
       */
-      void computeStress(WaveList<D> const & waveList, double prefactor);
+      void computeStress(double prefactor);
 
       /**
       * Get derivative of free energy w/ respect to a unit cell parameter.

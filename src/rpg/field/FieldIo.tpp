@@ -981,9 +981,7 @@ namespace Rpg {
       }
 
       // Initialize WaveList minimum images if needed
-      if (!waveList().hasMinimumImages()) {
-         waveList().computeMinimumImages(mesh(), unitCell);
-      }
+      waveList().computeAll();
 
       // Check for non-empty group name in header
       isSymmetric = false;

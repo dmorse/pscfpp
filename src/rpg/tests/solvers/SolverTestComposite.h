@@ -4,12 +4,14 @@
 #include <test/CompositeTestRunner.h>
 
 #include "PropagatorTest.h"
-#include "SolverKernelTest.h"
+#include "BlockTest.h"
 #include "MixtureTest.h"
+#include "WaveListTest.h"
 
 TEST_COMPOSITE_BEGIN(SolverTestComposite)
+TEST_COMPOSITE_ADD_UNIT(WaveListTest);
 TEST_COMPOSITE_ADD_UNIT(PropagatorTest);
-TEST_COMPOSITE_ADD_UNIT(SolverKernelTest);
+TEST_COMPOSITE_ADD_UNIT(BlockTest);
 TEST_COMPOSITE_ADD_UNIT(MixtureTest);
 TEST_COMPOSITE_END
 

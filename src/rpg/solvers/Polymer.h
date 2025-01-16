@@ -81,7 +81,7 @@ namespace Rpg {
       void setMu(double mu);
 
       /**
-      * Compute solution to MDE and concentrations.
+      * Set unit cell parameters used in solver.
       *
       * \param unitCell crystallographic unit cell (input)
       * \param wavelist precomputed wavevector data (input)
@@ -90,7 +90,7 @@ namespace Rpg {
                          WaveList<D> const & wavelist);
       
       /**
-      * Compute solution to MDE and concentrations.
+      * Set unit cell parameters used in solver.
       *
       * \param unitCell crystallographic unit cell (input)
       */ 
@@ -105,10 +105,8 @@ namespace Rpg {
 
       /**
       * Compute stress from a polymer chain, needs a pointer to basis
-      *
-      * \param wavelist precomputed wavevector data (input)
       */
-      void computeStress(WaveList<D> const & wavelist);
+      void computeStress();
 
       /**
       * Get derivative of free energy w/ respect to a unit cell parameter.

@@ -7,18 +7,14 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <prdc/cuda/RFieldDft.h>
 #include <prdc/cuda/RField.h>
-
-#include <prdc/crystal/shiftToMinimum.h>
 #include <prdc/crystal/UnitCell.h>
 
 #include <pscf/mesh/Mesh.h>
-#include <pscf/mesh/MeshIterator.h>
 #include <pscf/math/IntVec.h>
+#include <pscf/cuda/DeviceArray.tpp> // tpp needed to use implicit instantiation
+
 #include <util/containers/DArray.h>
-#include <util/containers/GArray.h>
-#include <util/containers/DMatrix.h>
 
 namespace Pscf {
 namespace Rpg {
@@ -28,7 +24,13 @@ namespace Rpg {
    using namespace Pscf::Prdc::Cuda;
 
    /**
-   * Container for wavevector data.
+   * Class to calculate and store properties of wavevectors.
+   * 
+   * In particular, minimum images, square norms of wavevectors (kSq), and 
+   * derivatives of the square norms of wavevectors with respect to the 
+   * lattice parameters (dKSq) are calculated and stored by this class. 
+   * These properties will generally need to be updated any time the lattice
+   * parameters of the unit cell change.
    */
    template <int D>
    class WaveList
@@ -46,146 +48,176 @@ namespace Rpg {
       ~WaveList();
 
       /**
-      * Allocate memory for all arrays. 
+      * Allocate memory and set association with a Mesh and UnitCell object. 
       *
-      * \param mesh  spatial discretization mesh (input)
-      * \param unitCell  crystallographic unit cell (input)
+      * \param m  spatial discretization mesh (input)
+      * \param c  crystallographic unit cell (input)
       */
-      void allocate(Mesh<D> const & mesh, 
-                    UnitCell<D> const & unitCell);
+      void allocate(Mesh<D> const & m, UnitCell<D> const & c);
 
       /**
-      * Compute minimum images of wavevectors.
-      *
-      * This is only done once, at beginning, using mesh and the initial 
-      * unit cell. This can also be called in the readParameters function.
-      *
-      * \param mesh  spatial discretization Mesh<D> object
-      * \param unitCell  crystallographic UnitCell<D> object
+      * Compute minimum images (if necessary), kSq, and dKSq arrays.
       */
-      void computeMinimumImages(Mesh<D> const & mesh, 
-                                UnitCell<D> const & unitCell);
+      void computeAll();
 
       /**
-      * Compute square norm |k|^2 for all wavevectors.
+      * Compute minimum images of wavevectors. (Also calculates kSq.)
       *
-      * Called once per iteration with unit cell relaxation.
-      * Implementation can copy geometric data (rBasis, kBasis, etc.)
-      * into local data structures and implement the actual 
-      * calculation of kSq or dKSq for each wavevector on the GPU.
-      *
-      * \param unitCell crystallographic UnitCell<D>
+      * This should be called once, after the unit cell is initialized. 
+      * The minimum images may change if a lattice angle in the unit cell 
+      * is changed, so this method should be called whenever such changes
+      * occur. The method canMinImagesChange() identifies whether the
+      * minimum images may change under changes in the lattice parameters.
+      * 
+      * In the process of computing the minimum images, the square norm
+      * |k|^2 for all wavevectors is also calculated and stored, so it is
+      * not necessary to call computeKSq after calling this method. 
+      * computeKSq is provided to allow calculation of kSq without 
+      * recalculating minimum images.
       */
-      void computeKSq(UnitCell<D> const & unitCell);
+      void computeMinimumImages();
+
+      /**
+      * Compute sq. norm |k|^2 for all wavevectors, using existing min images.
+      * 
+      * Should be called each time the lattice parameters are changed, 
+      * unless computeMinimumImages is called, in which case this method
+      * is not necessary.
+      */
+      void computeKSq();
 
       /**
       * Compute derivatives of |k|^2 w/ respect to unit cell parameters.
       *
-      * Called once per iteration with unit cell relaxation.
-      *
-      * \param unitCell crystallographic UnitCell<D>
+      * Should be called each time the lattice parameters are changed.
       */
-      void computedKSq(UnitCell<D> const & unitCell);
+      void computedKSq();
 
       /**
-      * Get the minimum image vector for a specified wavevector.
-      *
-      * \param i index for wavevector
+      * Get the array of minimum images on the device by reference.
+      * 
+      * The array has size kSize * D, where kSize is the number of grid points 
+      * in reciprocal space. The array is unwrapped into a linear array in an
+      * index-by-index manner, in which the first kSize elements of the array 
+      * contain the first index of each minimum image, and so on. 
       */
-      const IntVec<D>& minImage(int i) const;
+      DeviceArray<int> const & minImages() const;
 
       /**
-      * Get the kSq array on the host by reference.
+      * Get the kSq array on the device by reference.
       */
-      HostDArray<cudaReal> const & kSq() const;
+      RField<D> const & kSq() const;
 
       /**
-      * Get the dkSq array on the device by reference.
+      * Get the full dKSq array on the device by reference.
+      * 
+      * The array has size kSize * nParams, where kSize is the number of grid 
+      * points in reciprocal space and nParams is the number of lattice 
+      * parameters. The array is unwrapped into a linear array in which the 
+      * first kSize elements of the array contain dKSq for the first lattice
+      * parameter, and so on. 
       */
-      DeviceArray<cudaReal> const & dkSq() const;
+      DeviceArray<cudaReal> const & dKSq() const;
 
       /**
-      * Return slice of the dkSq array for parameter i by reference.
+      * Get the slice of the dKSq array for parameter i by reference.
       * 
       * \param i index of lattice parameter
       */
-      RField<D> const & dkSq(int i) const;
+      RField<D> const & dKSq(int i) const;
 
       /**
-      * Get size of k-grid (number of wavewavectors).
-      */
-      int kSize() const;
+      * Can the minimum images change if the lattice parameters change?
+      * 
+      * The minimum images can only change if one of the lattice parameters
+      * is an angle that may vary. Therefore, this method checks the crystal
+      * system and returns true if there are any angles that may vary.
+      */ 
+      bool canMinImagesChange() const;
 
       /**
-      *  Has memory been allocated for arrays?
+      * Has memory been allocated for arrays?
       */ 
       bool isAllocated() const
       {  return isAllocated_; }
 
       /**
-      *  Have minimum images been computed?
+      * Have minimum images been computed?
       */ 
       bool hasMinimumImages() const
       {  return hasMinimumImages_; }
 
    private:
 
-      // Array containing precomputed minimum images
-      DeviceArray<int> minImage_;
-      DArray< IntVec<D> > minImage_h_;
+      /**
+      * Array containing minimum images for each wave, stored on device.
+      * 
+      * The array has size kSize * D, where kSize is the number of grid points 
+      * in reciprocal space. The array is unwrapped into a linear array in an
+      * index-by-index manner, in which the first kSize elements of the array 
+      * contain the first index of each minimum image, and so on. 
+      */ 
+      DeviceArray<int> minImages_;
 
-      // Array containing values of kSq_, stored on the host
-      HostDArray<cudaReal> kSq_h_;
+      /// Array containing values of kSq_, stored on the device.
+      RField<D> kSq_;
 
-      // Array containing values of dkSq_ stored on the device
-      DeviceArray<cudaReal> dkSq_;
-      DArray<RField<D> > dkSqSlices_;
+      /// Array containing all values of dKSq_, stored on the device.
+      DeviceArray<cudaReal> dKSq_;
 
-      DeviceArray<cudaReal> dkkBasis_;
-      HostDArray<cudaReal> dkkBasis_h_;
+      /// Array of RFields, where each RField is a slice of the dKSq_ array.
+      DArray<RField<D> > dKSqSlices_;
 
-      DeviceArray<int> partnerIdTable_;
-      HostDArray<int> partnerIdTable_h_;
+      /// Array indicating whether a given gridpoint has an implicit partner
+      DeviceArray<bool> hasPartner_;
 
-      DeviceArray<int> selfIdTable_;
-      HostDArray<int> selfIdTable_h_;
+      /// Dimensions of the mesh in reciprocal space.
+      IntVec<D> kMeshDimensions_;
 
-      DeviceArray<bool> implicit_;
-      HostDArray<bool> implicit_h_;
-
-      IntVec<D> dimensions_;
+      /// Number of grid points in reciprocal space.
       int kSize_;
-      int rSize_;
-      int nParams_;
 
+      /// Has memory been allocated for arrays?
       bool isAllocated_;
 
+      /// Have minimum images been computed?
       bool hasMinimumImages_;
+
+      /// Pointer to associated UnitCell<D> object
+      UnitCell<D> const * unitCellPtr_;
+
+      /// Pointer to associated Mesh<D> object
+      Mesh<D> const * meshPtr_;
+
+      /// Access associated UnitCell<D> by reference.
+      UnitCell<D> const & unitCell() const
+      {  return *unitCellPtr_; }
+
+      /// Access associated Mesh<D> by reference.
+      Mesh<D> const & mesh() const
+      {  return *meshPtr_; }
 
    };
 
+   // Get the array of minimum images on the device by reference.
    template <int D>
-   inline const IntVec<D>& WaveList<D>::minImage(int i) const
-   {  
-      UTIL_CHECK(hasMinimumImages_);
-      return minImage_h_[i]; 
-   }
+   inline DeviceArray<int> const & WaveList<D>::minImages() const
+   {  return minImages_; }
+   
+   // Get the kSq array on the device by reference.
+   template <int D>
+   inline RField<D> const & WaveList<D>::kSq() const
+   {  return kSq_; }
 
+   // Get the full dKSq array on the device by reference.
    template <int D>
-   inline HostDArray<cudaReal> const & WaveList<D>::kSq() const
-   {  return kSq_h_; }
+   inline DeviceArray<cudaReal> const & WaveList<D>::dKSq() const
+   {  return dKSq_; }
 
+   // Get a slice of the dKSq array on the device by reference.
    template <int D>
-   inline DeviceArray<cudaReal> const & WaveList<D>::dkSq() const
-   {  return dkSq_; }
-
-   template <int D>
-   inline RField<D> const & WaveList<D>::dkSq(int i) const
-   {  return dkSqSlices_[i]; }
-
-   template <int D>
-   inline int WaveList<D>::kSize() const
-   { return kSize_; }
+   inline RField<D> const & WaveList<D>::dKSq(int i) const
+   {  return dKSqSlices_[i]; }
 
    #ifndef RPG_WAVE_LIST_TPP
    // Suppress implicit instantiation

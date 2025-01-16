@@ -298,7 +298,7 @@ namespace Rpg {
    }
 
    /*
-   * Set or reset the the block length.
+   * Set or reset monomer statistical segment length.
    */
    template <int D>
    void Block<D>::setKuhn(double kuhn)
@@ -331,7 +331,7 @@ namespace Rpg {
    {
       nParams_ = unitCell.nParameter();
 
-      // store pointer to unit cell and wavelist
+      // store pointer to unit cell
       unitCellPtr_ = &unitCell;
       hasExpKsq_ = false;
    }
@@ -342,39 +342,13 @@ namespace Rpg {
       UTIL_CHECK(isAllocated_);
       UTIL_CHECK(unitCellPtr_);
       UTIL_CHECK(unitCellPtr_->isInitialized());
+      UTIL_CHECK(waveListPtr_->hasMinimumImages());
       
-      if (waveListPtr_) {
-         UTIL_CHECK(waveListPtr_->hasMinimumImages());
-      }
-      
-      MeshIterator<D> iter;
-      iter.setDimensions(kMeshDimensions_);
-      IntVec<D> G, Gmin;
-      double Gsq;
       double factor = -1.0*kuhn()*kuhn()*ds_/6.0;
 
-      // Setup expKsq values on Host then transfer to device
-      int kSize = 1;
-      for(int i = 0; i < D; ++i) {
-         kSize *= kMeshDimensions_[i];
-      }
-
-      int i;
-      for (iter.begin(); !iter.atEnd(); ++iter) {
-         i = iter.rank();
-         if (waveListPtr_ == 0) {
-            G = iter.position();
-            Gmin = shiftToMinimum(G, mesh().dimensions(), unitCell());
-            Gsq = unitCell().ksq(Gmin);
-         } else {
-            Gsq = unitCell().ksq(waveListPtr_->minImage(i));
-         }
-         expKsq_h_[i] = exp(Gsq*factor);
-         expKsq2_h_[i] = exp(Gsq*factor / 2);
-      }
-
-      expKsq_ = expKsq_h_;
-      expKsq2_ = expKsq2_h_;
+      // Calculate expKsq values on device
+      VecOp::expVc(expKsq_, waveListPtr_->kSq(), factor);
+      VecOp::expVc(expKsq2_, waveListPtr_->kSq(), factor / 2.0);
 
       hasExpKsq_ = true;
    }
@@ -413,9 +387,9 @@ namespace Rpg {
       UTIL_CHECK(nx > 0);
       UTIL_CHECK(ns_ > 0);
       UTIL_CHECK(ds_ > 0);
-      UTIL_CHECK(propagator(0).isAllocated());
-      UTIL_CHECK(propagator(1).isAllocated());
-      UTIL_CHECK(cField().capacity() == nx)
+      UTIL_CHECK(propagator(0).isSolved());
+      UTIL_CHECK(propagator(1).isSolved());
+      UTIL_CHECK(cField().capacity() == nx);
 
       // Initialize cField to zero at all points
       VecOp::eqS(cField(), 0.0);
@@ -484,8 +458,7 @@ namespace Rpg {
    * Compute stress contribution from this block. 
    */
    template <int D>
-   void Block<D>::computeStress(WaveList<D> const & wavelist, 
-                                double prefactor)
+   void Block<D>::computeStress(double prefactor)
    {
       int nx = mesh().size();
 
@@ -499,8 +472,7 @@ namespace Rpg {
       UTIL_CHECK(mesh().dimensions() == fft().meshDimensions());
       UTIL_CHECK(propagator(0).isSolved());
       UTIL_CHECK(propagator(1).isSolved());
-      UTIL_CHECK(wavelist.hasMinimumImages());
-      UTIL_CHECK(wavelist.kSize() == kSize_);
+      UTIL_CHECK(waveListPtr_->hasMinimumImages());
 
       // Workspace variables
       double dels, normal, increment;
@@ -556,7 +528,7 @@ namespace Rpg {
 
          for (n = 0; n < nParams_ ; ++n) {
             // Launch kernel to evaluate dQ for each basis function
-            realMulVConjVV(rTmp, qk, qk2, wavelist.dkSq(n));
+            realMulVConjVV(rTmp, qk, qk2, waveListPtr_->dKSq(n));
 
             // Get the sum of all elements
             increment = Reduce::sum(rTmp);

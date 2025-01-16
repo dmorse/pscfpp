@@ -84,7 +84,7 @@ namespace Rpg {
    */
 
    template <int D>
-   void Polymer<D>::computeStress(WaveList<D> const & wavelist)
+   void Polymer<D>::computeStress()
    {
       double prefactor;
       prefactor = 0;
@@ -96,7 +96,7 @@ namespace Rpg {
 
       for (int i = 0; i < nBlock(); ++i) {
          prefactor = exp(mu_)/length();
-         block(i).computeStress(wavelist, prefactor);
+         block(i).computeStress(prefactor);
        
          for (int j=0; j < nParams_; ++j){
             stress_ [j] += block(i).stress(j);

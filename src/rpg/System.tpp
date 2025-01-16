@@ -565,8 +565,7 @@ namespace Rpg {
       hasFreeEnergy_ = false;
 
       // Update wavelist and mixture
-      domain_.waveList().computeKSq(domain_.unitCell());
-      domain_.waveList().computedKSq(domain_.unitCell());
+      domain_.waveList().computeAll();
       mixture_.setupUnitCell(domain_.unitCell(), domain_.waveList());
    }
 
@@ -593,8 +592,7 @@ namespace Rpg {
       hasFreeEnergy_ = false;
 
       // Update waveList and mixture
-      domain_.waveList().computeKSq(domain_.unitCell());
-      domain_.waveList().computedKSq(domain_.unitCell());
+      domain_.waveList().computeAll();
       mixture_.setupUnitCell(domain_.unitCell(), domain_.waveList());
    }
 
@@ -654,8 +652,7 @@ namespace Rpg {
       hasFreeEnergy_ = false;
 
       // Update waveList and mixture
-      domain_.waveList().computeKSq(domain_.unitCell());
-      domain_.waveList().computedKSq(domain_.unitCell());
+      domain_.waveList().computeAll();
       mixture_.setupUnitCell(domain_.unitCell(), domain_.waveList());
    }
 
@@ -717,6 +714,7 @@ namespace Rpg {
       // Note - Domain::setUnitCell updates the WaveList
       mixture_.setupUnitCell(unitCell, domain_.waveList());
       if (domain_.hasGroup() && !isAllocatedBasis_) {
+         UTIL_CHECK(domain_.basis().isInitialized());
          allocateFieldsBasis();
       }
    }
@@ -733,6 +731,7 @@ namespace Rpg {
       // Note - Domain::setUnitCell updates the WaveList
       mixture_.setupUnitCell(domain_.unitCell(), domain_.waveList());
       if (domain_.hasGroup() && !isAllocatedBasis_) {
+         UTIL_CHECK(domain_.basis().isInitialized());
          allocateFieldsBasis();
       }
    }
@@ -747,6 +746,7 @@ namespace Rpg {
       // Note - Domain::setUnitCell updates the WaveList
       mixture_.setupUnitCell(domain_.unitCell(), domain_.waveList());
       if (domain_.hasGroup() && !isAllocatedBasis_) {
+         UTIL_CHECK(domain_.basis().isInitialized());
          allocateFieldsBasis();
       }
    }
@@ -776,7 +776,7 @@ namespace Rpg {
 
       // Compute stress if needed
       if (needStress) {
-         mixture_.computeStress(domain_.waveList());
+         mixture_.computeStress();
       }
    }
 
@@ -810,7 +810,7 @@ namespace Rpg {
 
       if (!error) {
          if (!iterator().isFlexible()) {
-            mixture_.computeStress(domain_.waveList());
+            mixture_.computeStress();
          }
          computeFreeEnergy();
          writeThermo(Log::file());

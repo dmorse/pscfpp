@@ -305,12 +305,8 @@ namespace Rpg {
    void AmIteratorBasis<D>::evaluate()
    {
       // Solve MDEs for current omega field
-      system().compute();
-
-      // If flexible, compute stress 
-      if (isFlexible_) {
-         system().mixture().computeStress(system().domain().waveList());
-      }
+      // (computes stress if isFlexible_ == true)
+      system().compute(isFlexible_);
    }
 
    // Compute the residual for the current system state

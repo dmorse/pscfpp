@@ -76,7 +76,7 @@ public:
       // Construct wavelist 
       WaveList<1> wavelist;
       wavelist.allocate(mesh, unitCell);
-      wavelist.computeMinimumImages(mesh, unitCell);
+      wavelist.computeAll();
 
       // Setup unit cell
       mixture.setupUnitCell(unitCell, wavelist);
@@ -151,7 +151,7 @@ public:
       // Construct wavelist 
       WaveList<2> wavelist;
       wavelist.allocate(mesh, unitCell);
-      wavelist.computeMinimumImages(mesh, unitCell);
+      wavelist.computeAll();
 
       // Setup unit cell
       mixture.setupUnitCell(unitCell, wavelist);
@@ -237,7 +237,7 @@ public:
       // Construct wavelist 
       WaveList<2> wavelist;
       wavelist.allocate(mesh, unitCell);
-      wavelist.computeMinimumImages(mesh, unitCell);
+      wavelist.computeAll();
 
       // Setup unit cell
       mixture.setupUnitCell(unitCell, wavelist);
@@ -323,7 +323,7 @@ public:
       // Construct wavelist 
       WaveList<3> wavelist;
       wavelist.allocate(mesh, unitCell);
-      wavelist.computeMinimumImages(mesh, unitCell);
+      wavelist.computeAll();
 
       // Setup unit cell
       mixture.setupUnitCell(unitCell, wavelist);

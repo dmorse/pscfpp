@@ -139,10 +139,8 @@ namespace Rpg
 
       /**
       * Get monomer reference volume.
-      *
-      * \param waveList container for wavevector data
       */
-      void computeStress(WaveList<D> const & waveList);
+      void computeStress();
 
       /**
       * Combine cFields for each block/solvent into one DArray.
