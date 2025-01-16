@@ -106,7 +106,7 @@ namespace Rpg {
       std::string filename_;
       
       /**
-      * Structure factor
+      * Max order parameter
       */
       double maxOrderParameter_;
    

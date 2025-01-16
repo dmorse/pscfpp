@@ -15,7 +15,7 @@ namespace Pscf
 {
 
    /**
-   * Descriptor for a monomer or particle type.
+   * Descriptor for a monomer type.
    *
    * Iostream extractor (>>) and inserter (<<) operators are defined for 
    * a Monomer, allowing the description of a monomer to be read from or
@@ -24,7 +24,8 @@ namespace Pscf
    * as described \ref pscf_Monomer_page "here".
    *
    * Data for all monomers in a system is normally read from a parameter
-   * file into an array-valued parameter named "monomers". 
+   * file into an array-valued parameter named "monomers". The id of each
+   * monomer is set to its element index within this array.
    *
    * \ingroup Pscf_Chem_Module
    */
@@ -45,6 +46,13 @@ namespace Pscf
       void setId(int id);
 
       /**
+      * Set statistical segment length. 
+      * 
+      * \param kuhn  value of statistical segment length
+      */
+      void setKuhn(double kuhn);
+
+      /**
       * Unique integer index for monomer type.
       */
       int id() const;
@@ -53,11 +61,6 @@ namespace Pscf
       * Statistical segment length (random walk step size).
       */
       double kuhn() const;
-
-      /**
-      * Set statistical segment length. 
-      */
-      void setKuhn(double kuhn);
 
       /**
       * Serialize to or from an archive.
@@ -87,7 +90,11 @@ namespace Pscf
    };
 
    /**
-   * istream extractor for a Monomer.
+   * Stream extractor (>>) for a Monomer.
+   *
+   * The text representation is given by the value of the kuhn data member
+   * (i.e., the monomer statistical segment length). The type id is thus 
+   * not read from a stream, and so must be set explicitly with setId.
    *
    * \param in  input stream
    * \param monomer  Monomer to be read from stream
@@ -96,7 +103,7 @@ namespace Pscf
    std::istream& operator >> (std::istream& in, Monomer& monomer);
 
    /**
-   * ostream inserter for a Monomer.
+   * Stream inserter (<<) for a Monomer.
    *
    * \param out  output stream
    * \param monomer  Monomer to be written to stream

@@ -34,6 +34,16 @@ namespace Cpu {
    public:
 
       /**
+      * Complex type of each element.
+      */
+      typedef fftw_complex Complex;
+
+      /**
+      * Real and imaginary parts of each element.
+      */
+      typedef double Real;
+
+      /**
       * Default constructor.
       */
       RFieldDft();

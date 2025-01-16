@@ -31,6 +31,8 @@ namespace Pscf
    /**
    * Input stream extractor for a PolymerType::Enum enumeration.
    *
+   * \ingroup Pscf_Chem_Module
+   *
    * \param in input stream
    * \param type value of PolymerType to be read from file
    */ 
@@ -39,6 +41,8 @@ namespace Pscf
    /**
    * Input stream extractor for a PolymerType::Enum enumeration.
    *
+   * \ingroup Pscf_Chem_Module
+   *
    * \param out  output stream
    * \param type  value of PolymerType to be written 
    */ 
@@ -46,6 +50,8 @@ namespace Pscf
 
    /**
    * Serialize a PolymerType::Enum enumeration.
+   *
+   * \ingroup Pscf_Chem_Module
    *
    * \param ar  archive
    * \param data  enumeration data to be serialized

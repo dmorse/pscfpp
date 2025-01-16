@@ -31,30 +31,5 @@ inline void gpuAssert(cudaError_t code, const char *file, int line,
    }
 }
 
-namespace Cuda {
-
-   /**
-   * Complex number type used in CPU code that uses FFTW.
-   */
-   #ifdef SINGLE_PRECISION
-   typedef cufftComplex Complex;
-   #else
-   #ifdef DOUBLE_PRECISION
-   typedef cufftDoubleComplex Complex;
-   #endif
-   #endif
-
-   /**
-   * Real number type used in CPU code that uses FFTW.
-   */
-   #ifdef SINGLE_PRECISION
-   typedef cufftReal Real;
-   #else
-   #ifdef DOUBLE_PRECISION
-   typedef cufftDoubleReal Real;
-   #endif
-   #endif
-
-} // Pscf::Cpu
-} // Pscf
+} // namespace Pscf
 #endif

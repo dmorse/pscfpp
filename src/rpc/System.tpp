@@ -1162,7 +1162,7 @@ namespace Rpc {
          for (int i = 0; i < nm; ++i) {
             for (int j = i; j < nm; ++j) {
                const double chi = interaction().chi(i,j);
-               if (abs(chi) > 1.0E-9) {
+               if (std::abs(chi) > 1.0E-9) {
                   double temp = 0.0;
                   for (int k = 0; k < nBasis; ++k) {
                      temp += c_.basis(i)[k] * c_.basis(j)[k];
@@ -1180,7 +1180,7 @@ namespace Rpc {
          for (int i = 0; i < nm; ++i) {
             for (int j = i; j < nm; ++j) {
                const double chi = interaction().chi(i,j);
-               if (abs(chi) > 1.0E-9) {
+               if (std::abs(chi) > 1.0E-9) {
                   double temp = 0.0;
                   for (int k = 0; k < meshSize; ++k) {
                      temp += c_.rgrid(i)[k] * c_.rgrid(j)[k];

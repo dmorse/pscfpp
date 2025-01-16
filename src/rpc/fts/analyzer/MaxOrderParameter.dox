@@ -1,0 +1,68 @@
+/*! 
+\page rpc_MaxOrderParameter_page Rpc::MaxOrderParameter
+
+This analyzer calculates the maximum amplitude of the 
+second power of Fourier modes of exchange fields, referred
+to as the max order parameter. This analyzer is commonly used 
+to identify order-disorder transition (ODT) in systems where
+the spontaneous phase transitions occur. In disordered phase, 
+the max order parameter approaches to 0. In ordered phase, 
+the max order parameter is a finite value.
+
+\section rpc_MaxOrderParameter_algorithm_sec Mathematical Formula
+
+\f[
+   \Psi_{\text{max}} \equiv \max_{\bf G} \left[ W_{-}(\mathbf{G}) W_{-}(-\mathbf{G}) \right]
+\f]
+where \f$ \Psi_{\text{max}} \f$ denotes max order parameter,\f$ W_{-}(\bf G)\f$ 
+denotes the Fourier components of the exchange field, and \f$\bf G\f$
+denotes the Fourier wavevector. Note, since \f$ W_{-} \f$ is 
+real-valued function, \f$ W_{-}(\mathbf {G}) = W_{-}(-\mathbf{G}) \f$. The 
+Fourier transformation is defined in \ref scft_fourier_page.
+
+\section rpc_MaxOrderParameter_parameter_sec Parameter File
+
+The full parameter file format, including all optional parameters, is shown
+below:
+\code
+MaxOrderParameter{
+  interval           int
+  outputFileName     string
+  hasAverage*        bool     (default true)
+  nSamplePerBlock*   int      (default 1)
+}
+\endcode
+Meanings of the parameters are described briefly below:
+<table>
+  <tr>
+    <td> <b> Label </b>  </td>
+    <td> <b> Description </b>  </td>
+  </tr>
+  <tr>
+    <td> interval </td>
+    <td> number of steps between data samples </td>
+  </tr>
+    <tr>
+     <td> outputFileName </td>
+     <td> name of output file </td>
+  </tr>
+  <tr>
+     <td>hasAverage</td>
+     <td>whether the average and error analysis are needed?</td>
+  </tr>
+  <tr>
+     <td>nSamplePerBlock</td>
+     <td>number of samples per block average</td>
+  </tr>
+</table>
+
+\section rpc_MaxOrderParameter_output_sec Output
+
+During the simulation, \f$\chi_b N \f$ and max order
+parameter are output to the file {outputFileName} every interval
+simulation steps.
+
+At the end of the simulation, if hasAverage is true:
+  - average and error analysis info are output to log file.
+
+*/

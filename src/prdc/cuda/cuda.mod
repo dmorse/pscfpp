@@ -15,6 +15,16 @@ namespace Cuda{
    * \ingroup Pscf_Prdc_Module
    */
 
+   /**
+   * \defgroup Prdc_Cuda_Complex_Module Complex Arithmetic (GPU)
+   *
+   * Typdedefs and functions for complex arithmetic using the complex 
+   * type used in Cuda GPU code that interfaces with cufft.
+   *
+   * \ingroup Prdc_Cuda_Module 
+   */
+
+}
 }
 }
 }

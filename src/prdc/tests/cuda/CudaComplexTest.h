@@ -4,7 +4,7 @@
 #include <test/UnitTest.h>
 #include <test/UnitTestRunner.h>
 
-#include <pscf/cuda/complex.h>
+#include <prdc/cuda/complex.h>
 
 using namespace Util;
 using namespace Pscf;
@@ -24,14 +24,14 @@ public:
    {
       printMethod(TEST_FUNC);
       {
-         Cuda::Complex z;
-         Cuda::Complex a;
-         Cuda::Complex b;
+         cudaComplex z;
+         cudaComplex a;
+         cudaComplex b;
          a.x = 2.0;
          a.y = 0.5;
          b.x = 0.25;
          b.y = 1.5;
-         Cuda::add(z, a, b);
+         add(z, a, b);
          TEST_ASSERT(eq(z.x, 2.25));
          TEST_ASSERT(eq(z.y, 2.00));
          TEST_ASSERT(eq(z.x, a.x + b.x));
@@ -43,13 +43,13 @@ public:
    {
       printMethod(TEST_FUNC);
       {
-         Cuda::Complex z;
-         Cuda::Complex a;
-         Cuda::Real b;
+         cudaComplex z;
+         cudaComplex a;
+         cudaReal b;
          a.x = 2.0;
          a.y = 0.5;
          b = 0.25;
-         Cuda::add(z, a, b);
+         add(z, a, b);
          TEST_ASSERT(eq(z.x, 2.25));
          TEST_ASSERT(eq(z.y, 0.50));
          TEST_ASSERT(eq(z.x, a.x + b));
@@ -61,16 +61,16 @@ public:
    {
       printMethod(TEST_FUNC);
       {
-         Cuda::Complex z;
-         Cuda::Complex a;
-         Cuda::Complex b;
+         cudaComplex z;
+         cudaComplex a;
+         cudaComplex b;
          a.x = 2.0;
          a.y = 0.5;
          b.x = 0.25;
          b.y = 1.5;
          z.x = a.x;
          z.y = a.y;
-         Cuda::addEq(z, b);
+         addEq(z, b);
          TEST_ASSERT(eq(z.x, 2.25));
          TEST_ASSERT(eq(z.y, 2.00));
          TEST_ASSERT(eq(z.x, a.x + b.x));
@@ -82,15 +82,15 @@ public:
    {
       printMethod(TEST_FUNC);
       {
-         Cuda::Complex z;
-         Cuda::Complex a;
-         Cuda::Real b;
+         cudaComplex z;
+         cudaComplex a;
+         cudaReal b;
          a.x = 2.0;
          a.y = 0.5;
          b = 0.25;
          z.x = a.x;
          z.y = a.y;
-         Cuda::addEq(z, b);
+         addEq(z, b);
          TEST_ASSERT(eq(z.x, 2.25));
          TEST_ASSERT(eq(z.y, 0.50));
          TEST_ASSERT(eq(z.x, a.x + b));
@@ -102,14 +102,14 @@ public:
    {
       printMethod(TEST_FUNC);
       {
-         Cuda::Complex z;
-         Cuda::Complex a;
-         Cuda::Complex b;
+         cudaComplex z;
+         cudaComplex a;
+         cudaComplex b;
          a.x = 2.0;
          a.y = 0.5;
          b.x = 0.25;
          b.y = 1.5;
-         Cuda::sub(z, a, b);
+         sub(z, a, b);
          TEST_ASSERT(eq(z.x, 1.75));
          TEST_ASSERT(eq(z.y, -1.00));
          TEST_ASSERT(eq(z.x, a.x - b.x));
@@ -121,13 +121,13 @@ public:
    {
       printMethod(TEST_FUNC);
       {
-         Cuda::Complex a;
-         Cuda::Real b;
-         Cuda::Complex z;
+         cudaComplex a;
+         cudaReal b;
+         cudaComplex z;
          a.x = 2.0;
          a.y = 0.5;
          b = 0.25;
-         Cuda::sub(z, a, b);
+         sub(z, a, b);
          TEST_ASSERT(eq(z.x, 1.75));
          TEST_ASSERT(eq(z.y, 0.50));
          TEST_ASSERT(eq(z.x, a.x - b));
@@ -139,16 +139,16 @@ public:
    {
       printMethod(TEST_FUNC);
       {
-         Cuda::Complex z;
-         Cuda::Complex a;
-         Cuda::Complex b;
+         cudaComplex z;
+         cudaComplex a;
+         cudaComplex b;
          a.x = 2.0;
          a.y = 0.5;
          b.x = 0.25;
          b.y = 1.5;
          z.x = a.x;
          z.y = a.y;
-         Cuda::subEq(z, b);
+         subEq(z, b);
          TEST_ASSERT(eq(z.x,  1.75));
          TEST_ASSERT(eq(z.y, -1.00));
          TEST_ASSERT(eq(z.x, a.x - b.x));
@@ -160,15 +160,15 @@ public:
    {
       printMethod(TEST_FUNC);
       {
-         Cuda::Complex z;
-         Cuda::Complex a;
-         Cuda::Real b;
+         cudaComplex z;
+         cudaComplex a;
+         cudaReal b;
          a.x = 2.0;
          a.y = 0.5;
          b = 0.25;
          z.x = a.x;
          z.y = a.y;
-         Cuda::subEq(z, b);
+         subEq(z, b);
          TEST_ASSERT(eq(z.x, 1.75));
          TEST_ASSERT(eq(z.y, 0.50));
          TEST_ASSERT(eq(z.x, a.x - b));
@@ -180,20 +180,20 @@ public:
    {
       printMethod(TEST_FUNC);
       {
-         Cuda::Complex z;
-         Cuda::Complex a;
-         Cuda::Complex b;
+         cudaComplex z;
+         cudaComplex a;
+         cudaComplex b;
          a.x = 2.0;
          a.y = 0.5;
          b.x = 3.0;
          b.y = 2.0;
-         Cuda::mul(z, a, b);
+         mul(z, a, b);
          TEST_ASSERT(eq(z.x, 5.0));
          TEST_ASSERT(eq(z.y, 5.5));
          TEST_ASSERT(eq(z.x, a.x * b.x - a.y * b.y));
          TEST_ASSERT(eq(z.y, a.y * b.x + a.x * b.y));
 
-         Cuda::mulEq(a, b);
+         mulEq(a, b);
          TEST_ASSERT(eq(z.x, a.x));
          TEST_ASSERT(eq(z.y, a.y));
       }
@@ -203,19 +203,19 @@ public:
    {
       printMethod(TEST_FUNC);
       {
-         Cuda::Complex z;
-         Cuda::Complex a;
-         Cuda::Real b;
+         cudaComplex z;
+         cudaComplex a;
+         cudaReal b;
          a.x = 2.0;
          a.y = 0.5;
          b = 0.25;
-         Cuda::mul(z, a, b);
+         mul(z, a, b);
          TEST_ASSERT(eq(z.x, 0.50));
          TEST_ASSERT(eq(z.y, 0.125));
          TEST_ASSERT(eq(z.x, a.x * b));
          TEST_ASSERT(eq(z.y, a.y * b));
 
-         Cuda::mulEq(a, b);
+         mulEq(a, b);
          TEST_ASSERT(eq(z.x, a.x));
          TEST_ASSERT(eq(z.y, a.y));
       }
@@ -225,16 +225,16 @@ public:
    {
       printMethod(TEST_FUNC);
       {
-         Cuda::Complex z;
-         Cuda::Complex a;
-         Cuda::Complex b;
+         cudaComplex z;
+         cudaComplex a;
+         cudaComplex b;
          a.x = 2.0;
          a.y = 0.5;
          b.x = 3.0;
          b.y = 2.0;
          z.x = a.x;
          z.y = a.y;
-         Cuda::mulEq(z, b);
+         mulEq(z, b);
          TEST_ASSERT(eq(z.x, 5.0));
          TEST_ASSERT(eq(z.y, 5.5));
          TEST_ASSERT(eq(z.x, a.x * b.x - a.y * b.y));
@@ -246,15 +246,15 @@ public:
    {
       printMethod(TEST_FUNC);
       {
-         Cuda::Complex z;
-         Cuda::Complex a;
-         Cuda::Real b;
+         cudaComplex z;
+         cudaComplex a;
+         cudaReal b;
          a.x = 2.0;
          a.y = 0.5;
          b = 0.25;
          z.x = a.x;
          z.y = a.y;
-         Cuda::mulEq(z, b);
+         mulEq(z, b);
          TEST_ASSERT(eq(z.x, 0.50));
          TEST_ASSERT(eq(z.y, 0.125));
          TEST_ASSERT(eq(z.x, a.x * b));
@@ -266,19 +266,19 @@ public:
    {
       printMethod(TEST_FUNC);
       {
-         Cuda::Complex z;
-         Cuda::Complex a;
-         Cuda::Complex b;
+         cudaComplex z;
+         cudaComplex a;
+         cudaComplex b;
          a.x = 2.0;
          a.y = 0.5;
          b.x = 3.0;
          b.y = 2.0;
-         Cuda::mul(z, a, b);
+         mul(z, a, b);
          TEST_ASSERT(eq(z.x, a.x * b.x - a.y * b.y));
          TEST_ASSERT(eq(z.y, a.y * b.x + a.x * b.y));
  
-         Cuda::Complex x;
-         Cuda::div(x, z, b);
+         cudaComplex x;
+         div(x, z, b);
          TEST_ASSERT(eq(x.x, a.x));
          TEST_ASSERT(eq(x.y, a.y));
       }
@@ -288,18 +288,18 @@ public:
    {
       printMethod(TEST_FUNC);
       {
-         Cuda::Complex z;
-         Cuda::Complex a;
-         Cuda::Real b;
+         cudaComplex z;
+         cudaComplex a;
+         cudaReal b;
          a.x = 2.0;
          a.y = 0.5;
          b = 0.25;
-         Cuda::mul(z, a, b);
+         mul(z, a, b);
          TEST_ASSERT(eq(z.x, a.x * b));
          TEST_ASSERT(eq(z.y, a.y * b));
 
-         Cuda::Complex x;
-         Cuda::div(x, z, b);
+         cudaComplex x;
+         div(x, z, b);
          TEST_ASSERT(eq(x.x, a.x));
          TEST_ASSERT(eq(x.y, a.y));
       }
@@ -309,20 +309,20 @@ public:
    {
       printMethod(TEST_FUNC);
       {
-         Cuda::Complex z;
-         Cuda::Complex a;
-         Cuda::Complex b;
+         cudaComplex z;
+         cudaComplex a;
+         cudaComplex b;
          a.x = 2.0;
          a.y = 0.5;
          b.x = 3.0;
          b.y = 2.0;
          z.x = a.x;
          z.y = a.y;
-         Cuda::mulEq(z, b);
+         mulEq(z, b);
          TEST_ASSERT(eq(z.x, 5.0));
          TEST_ASSERT(eq(z.y, 5.5));
 
-         Cuda::divEq(z, b);
+         divEq(z, b);
          TEST_ASSERT(eq(z.x, a.x));
          TEST_ASSERT(eq(z.y, a.y));
       }
@@ -332,19 +332,19 @@ public:
    {
       printMethod(TEST_FUNC);
       {
-         Cuda::Complex z;
-         Cuda::Complex a;
-         Cuda::Real b;
+         cudaComplex z;
+         cudaComplex a;
+         cudaReal b;
          a.x = 2.0;
          a.y = 0.5;
          b = 0.25;
          z.x = a.x;
          z.y = a.y;
-         Cuda::mulEq(z, b);
+         mulEq(z, b);
          TEST_ASSERT(eq(z.x, a.x * b));
          TEST_ASSERT(eq(z.y, a.y * b));
 
-         Cuda::divEq(z, b);
+         divEq(z, b);
          TEST_ASSERT(eq(z.x, a.x));
          TEST_ASSERT(eq(z.y, a.y));
       }

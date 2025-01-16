@@ -12,8 +12,14 @@ namespace Pscf
 
    using namespace Util;
 
+   /*
+   * Default constructor.
+   */
    Species::Species()
-    : ensemble_(Species::Closed)
+    : phi_(0.0),
+      mu_(0.0),
+      q_(0.0),
+      ensemble_(Species::Closed)
    {}
 
    /* 
