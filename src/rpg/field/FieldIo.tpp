@@ -386,9 +386,6 @@ namespace Rpg {
                                  unitCell, d, newGridDimensions);
    }
 
-   #if 0
-   #endif
-
 }
 }
 #endif

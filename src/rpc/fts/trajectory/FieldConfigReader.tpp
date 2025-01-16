@@ -111,14 +111,13 @@ namespace Rpc {
       
       // Read ITEM: NUMBER OF Mesh
       notEnd = getNextLine(inputfile_, line);
+      UTIL_CHECK(notEnd);
       checkString(line, "mesh");
-      if (!notEnd) {
-         UTIL_THROW("EOF reading ITEM: NUMBER OF Mesh");
-      }
       notEnd = getNextLine(inputfile_, line);
-      int nMonomer = system().mixture().nMonomer();
+      UTIL_CHECK(notEnd);
 
       // Read a single real-space grid field frame from trajectory file
+      int nMonomer = system().mixture().nMonomer();
       FieldIo<D> const & fieldIo = system().domain().fieldIo();
       fieldIo.readFieldsRGridData(inputfile_, wField_, nMonomer);
 

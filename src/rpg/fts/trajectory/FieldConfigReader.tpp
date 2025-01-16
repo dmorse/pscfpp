@@ -96,14 +96,21 @@ namespace Rpg
       line >> value;
       int step;
       step = std::stoi(value);
-      Log::file()<< "step "<< step <<"\n";
+      Log::file() << "step "<< step <<"\n";
       #endif
       
-      // Read ITEM: NUMBER OF Mesh
-      // notEnd = getNextLine(inputfile_, line);
-      int nMonomer = system().mixture().nMonomer();
+      // Read ITEM: Mesh size
+      notEnd = getNextLine(inputfile_, line);
+      UTIL_CHECK(notEnd);
+      checkString(line, "mesh");
+      notEnd = getNextLine(inputfile_, line);
+      UTIL_CHECK(notEnd);
+
       // Read a single real-space grid field frame from trajectory file
-      system().domain().fieldIo().readFieldsRGridData(inputfile_, wField_, nMonomer);
+      int nMonomer = system().mixture().nMonomer();
+      FieldIo<D> const & fieldIo = system().domain().fieldIo();
+      fieldIo.readFieldsRGridData(inputfile_, wField_, nMonomer);
+
       // Update system real-space grid field 
       system().setWRGrid(wField_);
 
