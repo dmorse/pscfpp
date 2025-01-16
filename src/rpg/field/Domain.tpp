@@ -34,8 +34,8 @@ namespace Rpg {
    {  
       setClassName("Domain"); 
       fieldIo_.associate(mesh_, fft_,
-                         lattice_, hasGroup_, groupName_, group_, 
-                         basis_, waveList_);
+                         lattice_, hasGroup_, groupName_, group_, basis_);
+      fieldIo_.setWaveList(waveList_);
    }
 
    /*

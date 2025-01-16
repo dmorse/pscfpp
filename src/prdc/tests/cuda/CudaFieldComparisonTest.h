@@ -51,14 +51,14 @@ public:
       }
 
       // Copy data to fields on the device
-      Cuda::RField<1> da, db;
+      Prdc::Cuda::RField<1> da, db;
       da.allocate(dimensions);
       db.allocate(dimensions);
       da = ha;
       db = hb;
 
       // Make comparison
-      Cuda::RFieldComparison<1> comparison;
+      Prdc::Cuda::RFieldComparison<1> comparison;
       comparison.compare(da, db);
 
 
@@ -102,14 +102,14 @@ public:
       }
 
       // Copy data to fields da and db on the GPU device
-      Cuda::RField<2> da, db;
+      Prdc::Cuda::RField<2> da, db;
       da.allocate(dimensions);
       db.allocate(dimensions);
       da = ha;
       db = hb;
 
       // Make comparison
-      Cuda::RFieldComparison<2> comparison;
+      Prdc::Cuda::RFieldComparison<2> comparison;
       comparison.compare(da, db);
 
       if (verbose() > 0) {
@@ -157,8 +157,8 @@ public:
       }
 
       // Copy data to fields da and db on the GPU device
-      DArray< Cuda::RField<2> > da;
-      DArray< Cuda::RField<2> > db;
+      DArray< Prdc::Cuda::RField<2> > da;
+      DArray< Prdc::Cuda::RField<2> > db;
       da.allocate(nMonomer);
       db.allocate(nMonomer);
       for (int i = 0; i < nMonomer; ++i) {
@@ -169,7 +169,7 @@ public:
       }
 
       // Make comparison
-      Cuda::RFieldComparison<2> comparison;
+      Prdc::Cuda::RFieldComparison<2> comparison;
       comparison.compare(da, db);
 
       //setVerbose(1);
@@ -198,8 +198,8 @@ public:
       d[2] = 3;
 
       // Allocate device arrays da and db
-      Cuda::RFieldDft<3> da;
-      Cuda::RFieldDft<3> db;
+      Prdc::Cuda::RFieldDft<3> da;
+      Prdc::Cuda::RFieldDft<3> db;
       da.allocate(d);
       db.allocate(d);
       int capacity = da.capacity();
@@ -226,7 +226,7 @@ public:
       TEST_ASSERT(da.capacity() == capacity);
 
       // Make comparison
-      Cuda::RFieldDftComparison<3> comparison;
+      Prdc::Cuda::RFieldDftComparison<3> comparison;
       comparison.compare(da, db);
 
       //setVerbose(1);
@@ -257,8 +257,8 @@ public:
       dimensions[2] = 3;
 
       // Allocate device arrays da and db
-      DArray< Cuda::RFieldDft<3> > da;
-      DArray< Cuda::RFieldDft<3> > db;
+      DArray< Prdc::Cuda::RFieldDft<3> > da;
+      DArray< Prdc::Cuda::RFieldDft<3> > db;
       da.allocate(nMonomer);
       db.allocate(nMonomer);
       for (int i = 0; i < nMonomer; ++i) {
@@ -297,7 +297,7 @@ public:
       }
 
       // Make comparison
-      Cuda::RFieldDftComparison<3> comparison;
+      Prdc::Cuda::RFieldDftComparison<3> comparison;
       comparison.compare(da, db);
 
       //setVerbose(1);
@@ -326,8 +326,8 @@ public:
       d[2] = 3;
 
       // Allocate device arrays da and db
-      Cuda::CField<3> da;
-      Cuda::CField<3> db;
+      Prdc::Cuda::CField<3> da;
+      Prdc::Cuda::CField<3> db;
       da.allocate(d);
       db.allocate(d);
       int capacity = da.capacity();
@@ -354,7 +354,7 @@ public:
       TEST_ASSERT(da.capacity() == capacity);
 
       // Make comparison
-      Cuda::CFieldComparison<3> comparison;
+      Prdc::Cuda::CFieldComparison<3> comparison;
       comparison.compare(da, db);
 
       //setVerbose(1);
@@ -385,8 +385,8 @@ public:
       dimensions[2] = 3;
 
       // Allocate device arrays da and db
-      DArray< Cuda::CField<3> > da;
-      DArray< Cuda::CField<3> > db;
+      DArray< Prdc::Cuda::CField<3> > da;
+      DArray< Prdc::Cuda::CField<3> > db;
       da.allocate(nMonomer);
       db.allocate(nMonomer);
       for (int i = 0; i < nMonomer; ++i) {
@@ -425,7 +425,7 @@ public:
       }
 
       // Make comparison
-      Cuda::CFieldComparison<3> comparison;
+      Prdc::Cuda::CFieldComparison<3> comparison;
       comparison.compare(da, db);
 
       //setVerbose(1);

@@ -37,9 +37,9 @@ void CudaFieldTest::testConstructors()
 {
    printMethod(TEST_FUNC);
    {
-      Cuda::RField<1> r;
-      Cuda::CField<1> c;
-      Cuda::RFieldDft<1> d;
+      Prdc::Cuda::RField<1> r;
+      Prdc::Cuda::CField<1> c;
+      Prdc::Cuda::RFieldDft<1> d;
       TEST_ASSERT(r.capacity() == 0 );
       TEST_ASSERT(!r.isAllocated() );
       TEST_ASSERT(c.capacity() == 0 );
@@ -53,9 +53,9 @@ void CudaFieldTest::testAllocate()
 {
    printMethod(TEST_FUNC);
    {
-      Cuda::RField<2> r;
-      Cuda::CField<2> c;
-      Cuda::RFieldDft<2> d;
+      Prdc::Cuda::RField<2> r;
+      Prdc::Cuda::CField<2> c;
+      Prdc::Cuda::RFieldDft<2> d;
       IntVec<2> meshDims, dftDims;
       meshDims[0] = 5;
       meshDims[1] = 7;
@@ -98,7 +98,7 @@ void CudaFieldTest::testRFieldRoundTrip()
       }
 
       // Copy host field vh1 to device field vd
-      Cuda::RField<3> vd;
+      Prdc::Cuda::RField<3> vd;
       vd.allocate(d);
       vd = vh1;
       TEST_ASSERT(vd.capacity() == vh1.capacity());
@@ -136,7 +136,7 @@ void CudaFieldTest::testCFieldRoundTrip()
       }
 
       // Copy host field vh1 to device field vd
-      Cuda::CField<3> vd;
+      Prdc::Cuda::CField<3> vd;
       vd.allocate(d);
       vd = vh1;
       TEST_ASSERT(vd.capacity() == vh1.capacity());
@@ -168,7 +168,7 @@ void CudaFieldTest::testRFieldDftRoundTrip()
       d[2] = 3;
 
       // Allocate memory on device
-      Cuda::RFieldDft<3> vd;
+      Prdc::Cuda::RFieldDft<3> vd;
       vd.allocate(d);
       int capacity = vd.capacity();
 

@@ -1016,9 +1016,9 @@ namespace Prdc {
             value = fields[i][iter.rank()];
             for (cellIter.begin(); !cellIter.atEnd(); ++cellIter) {
                cellPosition = cellIter.position(); 
-               for (int i=0; i < D; ++i) {
-                  repPosition[i] = position[i] 
-                                 + meshDimensions[i]*cellPosition[i];
+               for (int j=0; j < D; ++j) {
+                  repPosition[j] = position[j] 
+                                 + meshDimensions[j]*cellPosition[j];
                }
                repRank = repMesh.rank(repPosition);
                repFields[i][repRank] = value;

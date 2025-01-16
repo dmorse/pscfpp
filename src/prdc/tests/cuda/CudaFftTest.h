@@ -42,7 +42,7 @@ void CudaFftTest::testConstructor()
    printMethod(TEST_FUNC);
    {
       using namespace Pscf::Prdc::Cuda;
-      Cuda::FFT<1> v;
+      Prdc::Cuda::FFT<1> v;
    }
 } 
 
@@ -56,12 +56,12 @@ void CudaFftTest::testTransformReal1D()
    IntVec<1> d;
    d[0] = n;
 
-   Cuda::RField<1> d_rField;
-   Cuda::RFieldDft<1> d_kField;
+   Prdc::Cuda::RField<1> d_rField;
+   Prdc::Cuda::RFieldDft<1> d_kField;
    d_rField.allocate(d);
    d_kField.allocate(d);
 
-   Cuda::FFT<1> v;
+   Prdc::Cuda::FFT<1> v;
    v.setup(d);
 
    TEST_ASSERT(d_rField.capacity() == n);
@@ -84,7 +84,7 @@ void CudaFftTest::testTransformReal1D()
    v.forwardTransform(d_rField, d_kField);
 
    // Inverse transform, k to r
-   Cuda::RField<1> d_rField_out;
+   Prdc::Cuda::RField<1> d_rField_out;
    d_rField_out.allocate(d);
    v.inverseTransform(d_kField, d_rField_out);
 
@@ -109,13 +109,13 @@ void CudaFftTest::testTransformReal2D() {
    d[0] = n1;
    d[1] = n2;
 
-   Cuda::RField<2> d_rField;
-   Cuda::RFieldDft<2> d_kField;
+   Prdc::Cuda::RField<2> d_rField;
+   Prdc::Cuda::RFieldDft<2> d_kField;
    d_rField.allocate(d);
    d_kField.allocate(d);
    TEST_ASSERT(d_rField.capacity() == rSize);
 
-   Cuda::FFT<2> v;
+   Prdc::Cuda::FFT<2> v;
    v.setup(d);
 
    // Initialize input data in a temporary array in host memory 
@@ -142,7 +142,7 @@ void CudaFftTest::testTransformReal2D() {
    v.forwardTransform(d_rField, d_kField);
 
    // Inverse transform, k to r
-   Cuda::RField<2> d_rField_out;
+   Prdc::Cuda::RField<2> d_rField_out;
    d_rField_out.allocate(d);
    v.inverseTransform(d_kField, d_rField_out);
 
@@ -169,12 +169,12 @@ void CudaFftTest::testTransformReal3D() {
    d[1] = n2;
    d[2] = n3;
 
-   Cuda::RField<3> d_rField;
-   Cuda::RFieldDft<3> d_kField;
+   Prdc::Cuda::RField<3> d_rField;
+   Prdc::Cuda::RFieldDft<3> d_kField;
    d_rField.allocate(d);
    d_kField.allocate(d);
 
-   Cuda::FFT<3> v;
+   Prdc::Cuda::FFT<3> v;
    v.setup(d);
    //v.setup(d_rField, d_kField);
 
@@ -201,7 +201,7 @@ void CudaFftTest::testTransformReal3D() {
    v.forwardTransform(d_rField, d_kField);
 
    // Inverse transform, k to r
-   Cuda::RField<3> d_rField_out;
+   Prdc::Cuda::RField<3> d_rField_out;
    d_rField_out.allocate(d);
    v.inverseTransform(d_kField, d_rField_out);
      
@@ -226,12 +226,12 @@ void CudaFftTest::testTransformComplex1D()
    IntVec<1> d;
    d[0] = n;
 
-   Cuda::CField<1> d_rField;
-   Cuda::CField<1> d_kField;
+   Prdc::Cuda::CField<1> d_rField;
+   Prdc::Cuda::CField<1> d_kField;
    d_rField.allocate(d);
    d_kField.allocate(d);
 
-   Cuda::FFT<1> v;
+   Prdc::Cuda::FFT<1> v;
    v.setup(d);
 
    TEST_ASSERT(d_rField.capacity() == n);
@@ -257,7 +257,7 @@ void CudaFftTest::testTransformComplex1D()
    v.forwardTransform(d_rField, d_kField);
 
    // Inverse transform, k to r
-   Cuda::CField<1> d_rField_out;
+   Prdc::Cuda::CField<1> d_rField_out;
    d_rField_out.allocate(d);
    v.inverseTransform(d_kField, d_rField_out);
 
@@ -283,13 +283,13 @@ void CudaFftTest::testTransformComplex2D() {
    d[0] = n1;
    d[1] = n2;
 
-   Cuda::CField<2> d_rField;
-   Cuda::CField<2> d_kField;
+   Prdc::Cuda::CField<2> d_rField;
+   Prdc::Cuda::CField<2> d_kField;
    d_rField.allocate(d);
    d_kField.allocate(d);
    TEST_ASSERT(d_rField.capacity() == rSize);
 
-   Cuda::FFT<2> v;
+   Prdc::Cuda::FFT<2> v;
    v.setup(d);
 
    // Initialize input data in a temporary array in host memory 
@@ -319,7 +319,7 @@ void CudaFftTest::testTransformComplex2D() {
    v.forwardTransform(d_rField, d_kField);
 
    // Inverse transform, k to r
-   Cuda::CField<2> d_rField_out;
+   Prdc::Cuda::CField<2> d_rField_out;
    d_rField_out.allocate(d);
    v.inverseTransform(d_kField, d_rField_out);
 
@@ -347,12 +347,12 @@ void CudaFftTest::testTransformComplex3D() {
    d[1] = n2;
    d[2] = n3;
 
-   Cuda::CField<3> d_rField;
-   Cuda::CField<3> d_kField;
+   Prdc::Cuda::CField<3> d_rField;
+   Prdc::Cuda::CField<3> d_kField;
    d_rField.allocate(d);
    d_kField.allocate(d);
 
-   Cuda::FFT<3> v;
+   Prdc::Cuda::FFT<3> v;
    v.setup(d);
 
    TEST_ASSERT(d_rField.capacity() == rSize);
@@ -381,7 +381,7 @@ void CudaFftTest::testTransformComplex3D() {
    v.forwardTransform(d_rField, d_kField);
 
    // Inverse transform, k to r
-   Cuda::CField<3> d_rField_out;
+   Prdc::Cuda::CField<3> d_rField_out;
    d_rField_out.allocate(d);
    v.inverseTransform(d_kField, d_rField_out);
 

@@ -70,6 +70,24 @@ namespace Cpu {
       void forwardTransform(RField<D> const & in, RFieldDft<D>& out) const;
 
       /**
+      * Compute real-to-complex forward Fourier transform.
+      *
+      * This function is identical to the forwardTransform with the same
+      * interface. This alternate name is provided for consistency with 
+      * the interface of the analogous Rpg::FFT class, which provides a 
+      * function named forwardTransform that can corrupt input data and 
+      * a function named forwardTransformSafe that will not.  In this 
+      * class, both functions are identical, and are both "safe" in this
+      * sense.
+      * 
+      * \param in  array of real values on r-space grid
+      * \param out  array of complex values on k-space grid
+      */
+      void forwardTransformSafe(RField<D> const & in, RFieldDft<D>& out) 
+      const
+      {   forwardTransform(in, out); }
+
+      /**
       * Compute complex-to-real to real Fourier transform.
       *
       * This function computes the same unscaled inverse transform as the

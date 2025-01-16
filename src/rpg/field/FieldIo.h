@@ -4,24 +4,28 @@
 /*
 * PSCF - Polymer Self-Consistent Field Theory
 *
-* Copyright 2016 - 2022, The Regents of the University of Minnesota
+* Copyright 2016 - 2025, The Regents of the University of Minnesota
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <rpg/solvers/WaveList.h>        // member
+#include <prdc/field/FieldIoReal.h>     // base class template
+#include <prdc/cuda/RField.h>           // template parameter
+#include <prdc/cuda/RFieldDft.h>        // template parameter
+#include <prdc/cuda/FFT.h>              // template parameter
 
-#include <prdc/cuda/FFT.h>                // member
-#include <prdc/cuda/RField.h>             // function parameter
-#include <prdc/cuda/RFieldDft.h>          // function parameter
-#include <prdc/crystal/Basis.h>           // member
-#include <prdc/crystal/SpaceGroup.h>      // member
-#include <prdc/crystal/UnitCell.h>        // member
-
-#include <pscf/mesh/Mesh.h>               // member
-
-#include <util/misc/FileMaster.h>         // member
-#include <util/containers/DArray.h>       // function parameter
-#include <util/containers/Array.h>        // function parameter
+// Forward declarations for classes used only via references or pointers
+namespace Util {
+   class FileMaster;
+   template <typename T> class DArray;
+}
+namespace Pscf {
+   namespace Prdc {
+      template <int D> class UnitCell;
+   }
+   namespace Rpg {
+      template <int D> class WaveList;
+   }
+}
 
 namespace Pscf {
 namespace Rpg {
@@ -31,18 +35,68 @@ namespace Rpg {
    using namespace Pscf::Prdc::Cuda;
 
    /**
-   * File input/output operations for fields in several file formats.
+   * File input/output operations and format conversions for fields.
+   *
+   * Please refer to the documentation of the base class Prdc::FieldIoReal 
+   * for more complete API documentation for this class template, for 
+   * reasons discussed below.
+   *
+   * Class template Rpg::FieldIo<int D> is derived from a partial 
+   * specialization of template Prdc::FieldIoReal<D, RFRT, RFKT, FFFT> 
+   * that is implemented using classes RFRT=RField<D>, RFKT=RFieldDft<D>, 
+   * and FFFT=FFT<D> that are all defined in the Prdc::Cuda subspace, and 
+   * that can use GPU hardware. Rpg::FieldIo is thus a specialization of
+   * the FieldIoReal template with GPU acceleration. An analogous class
+   * named Rpc::FieldIo that is designed for standard CPU hardware is
+   * defined in the Pscf::Rpc namespace 
+   *
+   * The public interface of Rpg::FieldIo is identical to that of the
+   * base class template Prdc::FieldIoReal. All member functions defined 
+   * in this Rpg::FieldIo are reimplemented virtual functions that are 
+   * declared and documented in Prdc::FieldIoReal, but that have trivial
+   * do-nothing implementations in the base class. These are all functions 
+   * for which different implementations are required for the CPU and GPU 
+   * variants, and which are thus also reimplemented in Rpg::FieldIo.
    *
    * \ingroup Rpg_Field_Module
    */
    template <int D>
    class FieldIo 
+     : public  FieldIoReal< D, RField<D>, RFieldDft<D>, FFT<D> >
    {
 
    public:
 
+      typedef FieldIoReal<D, RField<D>, RFieldDft<D>, FFT<D> > Base;
+
+      // Inherited public member functions
+      using Base::associate;
+      using Base::setFileMaster;
+      using Base::readFieldsBasis;
+      using Base::readFieldBasis;
+      using Base::writeFieldBasis;
+      using Base::writeFieldsBasis;
+      using Base::readFieldsRGrid;
+      using Base::readFieldsRGridData;
+      using Base::readFieldRGrid;
+      using Base::writeFieldsRGrid;
+      using Base::writeFieldRGrid;
+      using Base::readFieldsKGrid;
+      using Base::writeFieldsKGrid;
+      using Base::convertBasisToKGrid;
+      using Base::convertKGridToBasis;
+      using Base::convertBasisToRGrid;
+      using Base::convertRGridToBasis;
+      using Base::convertKGridToRGrid;
+      using Base::convertRGridToKGrid;
+      using Base::hasSymmetry;
+      using Base::replicateUnitCell;
+      using Base::expandRGridDimension;
+      using Base::readFieldHeader;
+      using Base::writeFieldHeader;
+
       /**
-      * Constructor.
+      * Default constructor.
       */
       FieldIo();
 
@@ -52,518 +106,219 @@ namespace Rpg {
       ~FieldIo();
 
       /**
-      * Get and store addresses of associated objects.
+      * Create an association with a WaveList.
       *
-      * \param mesh  associated spatial discretization Mesh<D>
-      * \param fft   associated FFT object for fast transforms
-      * \param lattice  lattice system type (enumeration value)
-      * \param hasGroup true if a space group is declared
-      * \param groupName space group name string
-      * \param group  associated space group
-      * \param basis  associated Basis object
-      * \param waveList  associated WaveList object
+      * \param waveList associated WaveList<D> object
       */
-      void associate(Mesh<D> const & mesh,
-                     FFT<D> const & fft,
-                     typename UnitCell<D>::LatticeSystem const & lattice,
-                     bool const & hasGroup,
-                     std::string const & groupName,
-                     SpaceGroup<D> const & group,
-                     Basis<D>& basis,
-                     WaveList<D>& waveList);
+      void setWaveList(WaveList<D>& wavelist); 
 
       /**
-      * Create association with a FileMaster.
+      * Read header of a field file.
       *
-      * \param fileMaster  associated FileMaster (for file paths)
+      * \param in  input file stream
+      * \param nMonomer  number of monomer types from file header (out)
+      * \param unitCell  unit cell from file header (out)
+      * \param isSymmetric  Is a space group declared in the file (out)
       */
-      void setFileMaster(FileMaster const & fileMaster);
-
-      /// \name Field File IO - Symmetry Adapted Basis Format
-      ///@{
-
-      /**
-      * Read concentration or chemical potential field components from file.
-      *
-      * This function reads components in a symmetry adapted basis from 
-      * file in.
-      *
-      * The capacity of DArray fields is equal to nMonomer, and element
-      * fields[i] is a DArray containing components of the field 
-      * associated with monomer type i.
-      *
-      * \param in input stream (i.e., input file)
-      * \param fields array of fields (symmetry adapted basis components)
-      * \param unitCell  crystallographic unit cell (output)
-      */
-      void 
-      readFieldsBasis(std::istream& in, 
-                      DArray< DArray<double> >& fields,
-                      UnitCell<D>& unitCell) const;
+      void readFieldHeader(std::istream& in,
+                           int& nMonomer,
+                           UnitCell<D>& unitCell,
+                           bool& isSymmetric);
 
       /**
-      * Read concentration or chemical potential field components from file.
+      * Read array of RField objects (r-grid fields) from a stream.
       *
-      * This function opens an input file with the specified filename, 
-      * reads components in symmetry-adapted form from that file, and 
-      * closes the file.
+      * See documentation of analogous function in Prdc::FieldIoReal.
       *
-      * \param filename name of input file
-      * \param fields array of fields (symmetry adapted basis components)
-      * \param unitCell  crystallographic unit cell (output)
-      */
-      void readFieldsBasis(std::string filename, 
-                           DArray< DArray<double> >& fields,
-                           UnitCell<D>& unitCell) const;
-
-      /**
-      * Write concentration or chemical potential field components to file.
-      *
-      * This function writes components in a symmetry adapted basis.
-      *
-      * \param out output stream (i.e., output file)
-      * \param fields array of fields (symmetry adapted basis components)
-      * \param unitCell  crystallographic unit cell 
-      */
-      void writeFieldsBasis(std::ostream& out, 
-                            DArray< DArray<double> > const & fields,
-                            UnitCell<D> const & unitCell) const;
-
-      /**
-      * Write concentration or chemical potential field components to file.
-      *
-      * This function opens an output file with the specified filename, 
-      * writes components in symmetry-adapted form to that file, and then
-      * closes the file. 
-      *
-      * \param filename name of input file
-      * \param fields array of fields (symmetry adapted basis components)
-      * \param unitCell  crystallographic unit cell 
-      */
-      void writeFieldsBasis(std::string filename, 
-                            DArray< DArray<double> > const & fields,
-                            UnitCell<D> const & unitCell) const;
-
-      ///@}
-      /// \name Field File IO - Real Space Grid Format
-      ///@{
-      
-      /**
-      * Read array of RField objects (fields on an r-space grid) from file.
-      *
-      * The capacity of array fields is equal to nMonomer, and element
-      * fields[i] is the RField<D> associated with monomer type i.
-      * 
-      * \param in input stream (i.e., input file)
-      * \param fields array of RField fields (r-space grid)
-      * \param unitCell  crystallographic unit cell (output)
-      */
-      void readFieldsRGrid(std::istream& in, 
-                           DArray< RField<D> >& fields,
-                           UnitCell<D>& unitCell) const;
-
-      /**
-      * Read array of RField objects (fields on an r-space grid) from file.
-      *
-      * The capacity of array fields is equal to nMonomer, and element
-      * fields[i] is the RField<D> associated with monomer type i.
-      * 
-      * This function opens an input file with the specified filename, 
-      * reads fields in RField<D> real-space grid format from that file, 
-      * and then closes the file. 
-      *
-      * \param filename name of input file
-      * \param fields array of RField fields (r-space grid)
-      * \param unitCell  crystallographic unit cell (output)
-      */
-      void readFieldsRGrid(std::string filename, 
-                           DArray< RField<D> >& fields,
-                           UnitCell<D>& unitCell) const;
-      
-      /**
-      * Read single frame (field on an r-space grid) from ftmc trajectory file.
-      *
-      * This function opens an input trajectory file with the specified 
-      * filename, reads a field frame in RField<D> real-space grid format
-      *
-      * \param in  input stream for trajector file
+      * \param in  input file stream 
       * \param fields  array of RField fields (r-space grid)
-      * \param nMonomer number of monomer types
+      * \param unitCell  associated crystallographic unit cell
       */
-      void readFieldsRGridData(std::istream& in, 
+      void readFieldsRGrid(std::istream& in,
+                           DArray< RField<D> >& fields,
+                           UnitCell<D> & unitCell) const;
+
+      /**
+      * Read data for an array of r-grid fields, with no header section.
+      *
+      * See documentation of analogous function in Prdc::FieldIoReal.
+      *
+      * \param in  input file stream
+      * \param fields  array of RField fields (r-space grid)
+      * \param nMonomer  number of monomer types
+      */
+      void readFieldsRGridData(std::istream& in,
                                DArray< RField<D> >& fields,
                                int nMonomer) const;
 
       /**
-      * Read a single RField objects (field on an r-space grid) from file.
+      * Read a single RField (field on an r-space grid) from a stream.
       *
-      * \param in  input stream
-      * \param field   RField field (r-space grid)
-      * \param unitCell  crystallographic unit cell 
+      * See documentation of analogous function in Prdc::FieldIoReal.
+      *
+      * \param in  input file stream 
+      * \param field  fields defined on r-space grid
+      * \param unitCell  associated crystallographic unit cell
       */
-      void readFieldRGrid(std::istream& in, RField<D> &field,
-                          UnitCell<D>& unitCell) const;
+      void readFieldRGrid(std::istream &in,
+                           RField<D> & field,
+                           UnitCell<D>& unitCell) const;
 
       /**
-      * Read a single RField objects (field on an r-space grid).
+      * Write array of RField objects (fields on r-space grid) to a stream.
       *
-      * \param filename  name of input file
-      * \param field   RField field (r-space grid)
-      * \param unitCell  crystallographic unit cell 
+      * See documentation of analogous function in Prdc::FieldIoReal.
+      *
+      * \param out  output stream (i.e., output file)
+      * \param fields  array of RField objects (fields on r-space grid)
+      * \param unitCell  associated crystallographic unit cell
+      * \param writeHeader  flag to write file header if true
+      * \param isSymmetric  Do fields have a space group symmetry ?
+      * \param writeMeshSize  Should mesh size be written in header?
       */
-      void readFieldRGrid(std::string filename, RField<D> &field,
-                          UnitCell<D>& unitCell) const;
-                          
-      /**
-      * Write array of RField objects (fields on an r-space grid) to file.
-      *
-      * \param out output stream (i.e., output file)
-      * \param fields array of RField fields (r-space grid)
-      * \param unitCell  crystallographic unit cell 
-      * \param writeHeader flag to write header part of file iff true
-      * \param isSymmetric  Do fields have space group symmetry?
-      */
-      void writeFieldsRGrid(std::ostream& out, 
-                            DArray< RField<D> > const& fields,
-                            UnitCell<D> const & unitCell, 
-                            bool writeHeader = true,
-                            bool isSymmetric = true) const;
-
-      /**
-      * Write array of RField objects (fields on an r-space grid) to file.
-      *
-      * This function opens an output file with the specified filename, 
-      * writes fields in RField<D> real-space grid format to that file, 
-      * and then closes the file.
-      *
-      * \param filename  name of output file
-      * \param fields  array of RField fields (r-space grid)
-      * \param unitCell  crystallographic unit cell 
-      * \param isSymmetric  Do fields have space group symmetry?
-      */
-      void writeFieldsRGrid(std::string filename,
-                            DArray< RField<D> > const& fields,
+      void writeFieldsRGrid(std::ostream& out,
+                            DArray< RField<D> > const & fields,
                             UnitCell<D> const & unitCell,
-                            bool isSymmetric = true) const;
+                            bool writeHeader = true,
+                            bool isSymmetric = true,
+                            bool writeMeshSize = true) const;
 
       /**
-      * Write a single RField objects (field on an r-space grid) to file.
+      * Write a single RField (field on an r-space grid) to a stream.
+      *
+      * See documentation of analogous function in Prdc::FieldIoReal.
       *
       * \param out  output stream
-      * \param field   RField field (r-space grid)
-      * \param unitCell  crystallographic unit cell 
-      * \param writeHeader  should a file header be written?
-      * \param isSymmetric  Does the field have space group symmetry?
+      * \param field  field defined on r-space grid
+      * \param unitCell  associated crystallographic unit cell
+      * \param writeHeader  Should a file header be written?
+      * \param isSymmetric  Does the field have a space group symmetry?
       */
-      void writeFieldRGrid(std::ostream& out, 
+      void writeFieldRGrid(std::ostream &out,
                            RField<D> const & field,
                            UnitCell<D> const & unitCell,
                            bool writeHeader = true,
                            bool isSymmetric = true) const;
 
       /**
-      * Write a single RField objects (field on an r-space grid) to file.
+      * Read array of RFieldDft objects (k-space fields) from a stream.
       *
-      * \param filename  name of input file
-      * \param field   RField field (r-space grid)
-      * \param unitCell  crystallographic unit cell 
-      * \param isSymmetric  Does the field have space group symmetry?
-      */
-      void writeFieldRGrid(std::string filename, 
-                           RField<D> const & field,
-                           UnitCell<D> const & unitCell,
-                           bool isSymmetric = true) const;
-
-      ///@}
-      /// \name Field File IO - Fourier Space (K-Space) Grid Format
-      ///@{
-      
-      /**
-      * Read array of RFieldDft objects (k-space fields) from file.
+      * See documentation of analogous function in Prdc::FieldIoReal.
       *
-      * The capacity of the array is equal to nMonomer, and element
-      * fields[i] is the discrete Fourier transform of the field for 
-      * monomer type i.
-      * 
       * \param in  input stream (i.e., input file)
       * \param fields  array of RFieldDft fields (k-space grid)
-      * \param unitCell  crystallographic unit cell (output)
+      * \param unitCell  associated crystallographic unit cell
       */
-      void readFieldsKGrid(std::istream& in, 
+      void readFieldsKGrid(std::istream& in,
                            DArray< RFieldDft<D> >& fields,
-                           UnitCell<D>& unitCell) const;
-
-      /**
-      * Read array of RFieldDft objects (k-space fields) from file.
-      *
-      * This function opens a file with name filename, reads discrete
-      * Fourier components (Dft) of fields from that file, and closes 
-      * the file. 
-      *
-      * The capacity of the array is equal to nMonomer, and element
-      * fields[i] is the discrete Fourier transform of the field for 
-      * monomer type i.
-      * 
-      * \param filename  name of input file
-      * \param fields  array of RFieldDft fields (k-space grid)
-      * \param unitCell  crystallographic unit cell (output)
-      */
-      void readFieldsKGrid(std::string filename, 
-                           DArray< RFieldDft<D> >& fields,
-                           UnitCell<D>& unitCell) const;
+                           UnitCell<D> & unitCell) const;
 
       /**
       * Write array of RFieldDft objects (k-space fields) to file.
       *
-      * The capacity of the array fields is equal to nMonomer. Element
-      * fields[i] is the discrete Fourier transform of the field for 
-      * monomer type i.
-      * 
-      * \param out output stream (i.e., output file)
-      * \param fields array of RFieldDft fields 
-      * \param unitCell  crystallographic unit cell 
-      * \param isSymmetric  Do the fields have space group symmetry?
-      */
-      void writeFieldsKGrid(std::ostream& out, 
-                            DArray< RFieldDft<D> > const& fields,
-                            UnitCell<D> const & unitCell,
-                            bool isSymmetric = true) const;
-   
-      /**
-      * Write array of RFieldDft objects (k-space fields) to a file.
-      *
-      * This function opens a file with name filename, writes discrete
-      * Fourier transform components (DFT) components of fields to that 
-      * file, and closes the file. 
-      *
-      * \param filename  name of output file.
-      * \param fields  array of RFieldDft fields (k-space grid)
-      * \param unitCell  crystallographic unit cell 
-      * \param isSymmetric  Do the fields have space group symmetry?
-      */
-      void writeFieldsKGrid(std::string filename, 
-                           DArray< RFieldDft<D> > const& fields,
-                           UnitCell<D> const & unitCell,
-                           bool isSymmetric = true) const;
-
-      ///@}
-      /// \name Field File IO Utilities
-      ///@{
-
-      /**
-      * Reader header of field file (fortran pscf format)
-      *
-      * \param in input  stream (i.e., input file)
-      * \param nMonomer number of monomers read from file (output)
-      * \param unitCell  crystallographic unit cell (output)
-      * \param isSymmetric  true iff header has a space group (output)
-      */
-      void readFieldHeader(std::istream& in,
-                           int& nMonomer,
-                           UnitCell<D>& unitCell,
-                           bool& isSymmetric) const;
-
-      /**
-      * Write header for field file (fortran pscf format)
+      * See documentation of analogous function in Prdc::FieldIoReal.
       *
       * \param out  output stream (i.e., output file)
-      * \param nMonomer  number of monomer types
-      * \param unitCell  crystallographic unit cell 
-      * \param isSymmetric  true iff space group should be written
+      * \param fields  array of RFieldDft fields
+      * \param unitCell  associated crystallographic unit cell
+      * \param isSymmetric  Does this field have space group symmetry?
       */
-      void writeFieldHeader(std::ostream& out, 
-                            int nMonomer,
+      void writeFieldsKGrid(std::ostream& out,
+                            DArray< RFieldDft<D> > const & fields,
                             UnitCell<D> const & unitCell,
-                            bool isSymmetric) const;
-
-      ///@}
-      /// \name Field Format Conversion
-      ///@{
+                            bool isSymmetric = true) const;
 
       /**
-      * Convert field from symmetrized basis to Fourier transform (k-grid).
+      * Convert a field from symmetrized basis to Fourier grid (k-grid).
       *
-      * \param components coefficients of symmetry-adapted basis functions
-      * \param dft discrete Fourier transform of a real field
+      * See documentation of analogous function in Prdc::FieldIoReal.
+      *
+      * \param components  coefficients of in symmetry-adapted basis
+      * \param dft  discrete Fourier transform of a real field
       */
-      void convertBasisToKGrid(DArray<double> const& components, 
+      void convertBasisToKGrid(DArray<double> const & components,
                                RFieldDft<D>& dft) const;
-   
+
       /**
-      * Convert fields from symmetrized basis to Fourier transform (kgrid).
-      * 
-      * The in and out parameters are arrays of fields, in which element
-      * number i is the field associated with monomer type i. 
+      * Convert a field from Fourier (k-grid) to symmetrized basis form.
       *
-      * \param in  components of fields in symmetry adapted basis 
-      * \param out fields defined as discrete Fourier transforms (k-grid)
-      */
-      void convertBasisToKGrid(DArray< DArray<double> > const & in,
-                               DArray< RFieldDft<D> >& out) const;
-
-      /**
-      * Convert field from Fourier transform (k-grid) to symmetrized basis.
+      * See documentation of analogous function in Prdc::FieldIoReal.
       *
-      * \param dft complex DFT (k-grid) representation of a field.
-      * \param components coefficients of symmetry-adapted basis functions.
+      * \param in  discrete Fourier transform (k-grid) of a field
+      * \param out  components of field in asymmetry-adapted Fourier basis
+      * \param checkSymmetry  flag indicating whether to check symmetry
+      * \param epsilon  error tolerance for symmetry test (if any)
       */
-      void convertKGridToBasis(RFieldDft<D> const& dft, 
-                               DArray<double>& components) const;
+      void convertKGridToBasis(RFieldDft<D> const & in,
+                               DArray<double> & out,
+                               bool checkSymmetry = true,
+                               double epsilon = 1.0e-8) const;
 
       /**
-      * Convert fields from Fourier transform (kgrid) to symmetrized basis.
-      * 
-      * The in and out parameters are each an array of fields, in which
-      * element i is the field associated with monomer type i. 
+      * Check if a k-grid field has the declared space group symmetry.
       *
-      * \param in  fields defined as discrete Fourier transforms (k-grid)
-      * \param out  components of fields in symmetry adapted basis 
+      * See documentation of analogous function in Prdc::FieldIoReal.
+      *
+      * \param in field in real space grid (r-grid) format
+      * \param epsilon error threshold used to test for symmetry
+      * \param verbose  if true, write error to Log::file()
+      * \return true iff the field is symmetric to within tolerance
       */
-      void convertKGridToBasis(DArray< RFieldDft<D> > const & in,
-                               DArray< DArray<double> > & out) const;
+      bool hasSymmetry(RFieldDft<D> const & in, 
+                       double epsilon = 1.0e-8,
+                       bool verbose = true) const;
 
       /**
-      * Convert fields from symmetrized basis to spatial grid (rgrid).
-      * 
-      * \param in  fields in symmetry adapted basis form
-      * \param out fields defined on real-space grid
+      * Expand spatial dimension of an array of r-grid fields.
+      *
+      * See documentation of analogous function in Prdc::FieldIoReal.
+      *
+      * \param out  output file stream 
+      * \param fields  input array of D-dimensional r-grid fields
+      * \param unitCell  original D-dimensional unit cell
+      * \param d  expanded spatial dimension (d > D)
+      * \param newGridDimensions  number of grid points in added dimensions
       */
-      void convertBasisToRGrid(DArray< DArray<double> > const & in,
-                               DArray< RField<D> >& out) const;
+      void expandRGridDimension(
+                          std::ostream &out,
+                          DArray<RField<D> > const & fields,
+                          UnitCell<D> const & unitCell,
+                          int d,
+                          DArray<int> const& newGridDimensions) const;
 
       /**
-      * Convert fields from spatial grid (rgrid) to symmetrized basis.
-      * 
-      * \param in  fields defined on real-space grid
-      * \param out  fields in symmetry adapted basis form
-      */
-      void convertRGridToBasis(DArray< RField<D> > const & in,
-                               DArray< DArray<double> > & out) const;
+      * Write r-grid fields in a replicated unit cell to std::ostream.  
+      *
+      * See documentation of analogous function in Prdc::FieldIoReal.
+      *
+      * \param out  output file stream 
+      * \param fields  array of RField (r-space) fields to be replicated
+      * \param unitCell  original crystallographic unit cell
+      * \param replicas  number of unit cell replicas in each direction
+      */ 
+      void replicateUnitCell(
+                          std::ostream& out,
+                          DArray< RField<D> > const & fields,
+                          UnitCell<D> const & unitCell,
+                          IntVec<D> const & replicas) const;
 
-      /**
-      * Convert fields from k-grid (DFT) to real space (rgrid) format.
-      * 
-      * \param in  fields in discrete Fourier format (k-grid)
-      * \param out  fields defined on real-space grid (r-grid)
-      */
-      void convertKGridToRGrid(DArray< RFieldDft<D> > const & in,
-                               DArray< RField<D> > & out) const;
+   protected:
 
-      /**
-      * Convert fields from spatial grid (rgrid) to k-grid format.
-      * 
-      * \param in  fields defined on real-space grid (r-grid)
-      * \param out  fields in discrete Fourier format (k-grid)
-      */
-      void convertRGridToKGrid(DArray< RField<D> > const & in,
-                              DArray< RFieldDft<D> > & out) const;
-
-      ///@}
+      using Base::mesh;
+      using Base::fft;
+      using Base::lattice;
+      using Base::hasGroup;
+      using Base::groupName;
+      using Base::group;
+      using Base::basis;
+      using Base::fileMaster;
 
    private:
 
-      // DFT work array for two-step conversion basis <-> kgrid <-> rgrid.
-      mutable RFieldDft<D> workDft_;
+      WaveList<D>* waveListPtr_;
 
-      // Pointers to associated objects.
-
-      /// Pointer to spatial discretization mesh.
-      Mesh<D> const * meshPtr_;
-
-      /// Pointer to FFT object.
-      FFT<D> const * fftPtr_;
-
-      /// Pointer to lattice system
-      typename UnitCell<D>::LatticeSystem const * latticePtr_;
-
-      /// Pointer to boolean hasGroup (true if a space group is known).
-      bool const * hasGroupPtr_;
-
-      /// Pointer to group name string
-      std::string const * groupNamePtr_;
-
-      /// Pointer to a SpaceGroup object
-      SpaceGroup<D> const * groupPtr_;
-
-      /// Pointer to a Basis object
-      Basis<D> * basisPtr_;
-
-      /// Pointer to WaveList object.
-      WaveList<D> * waveListPtr_;
-
-      /// Pointer to Filemaster (holds paths to associated I/O files).
-      FileMaster const * fileMasterPtr_;
-
-      // Private accessor functions:
-
-      /// Get spatial discretization mesh by const reference.
-      Mesh<D> const & mesh() const
-      {  
-         UTIL_ASSERT(meshPtr_);  
-         return *meshPtr_; 
-      }
-
-      /// Get FFT object by const reference.
-      FFT<D> const & fft() const
-      {
-         UTIL_ASSERT(fftPtr_);  
-         return *fftPtr_; 
-      }
-
-      /// Get lattice system enumeration value by reference.
-      typename UnitCell<D>::LatticeSystem const & lattice() const
-      {
-         UTIL_ASSERT(latticePtr_);  
-         return *latticePtr_; 
-      }
-
-      /// Has a group been declared externally ?
-      bool hasGroup() const
-      {
-         UTIL_ASSERT(hasGroupPtr_);
-         return *hasGroupPtr_;
-      }
-
-
-      /// Get group name string 
-      std::string const & groupName() const
-      {  
-         UTIL_ASSERT(groupNamePtr_);  
-         return *groupNamePtr_; 
-      }
-
-      /// Get SpaceGroup by const reference.
-      SpaceGroup<D> const & group() const
-      {
-         UTIL_ASSERT(basisPtr_);  
-         return *groupPtr_; 
-      }
-
-      /// Get Basis by non-const reference.
-      Basis<D> & basis() const
-      {
-         UTIL_ASSERT(basisPtr_);  
-         return *basisPtr_; 
-      }
-
-      /// Get WaveList object by reference.
-      WaveList<D> & waveList() const
-      {
-         UTIL_ASSERT(waveListPtr_);  
-         return *waveListPtr_; 
-      }
-
-      /// Get FileMaster by const reference.
-      FileMaster const & fileMaster() const
-      {  
-         UTIL_ASSERT(fileMasterPtr_);  
-         return *fileMasterPtr_; 
-      }
-
-      /**
-      * Check state of work array, allocate if necessary.
-      */
-      void checkWorkDft() const;
+      WaveList<D>& waveList()
+      {  return *waveListPtr_; }
 
    };
 
@@ -573,6 +328,16 @@ namespace Rpg {
    extern template class FieldIo<3>;
    #endif
 
-} // namespace Rpc
+} // namespace Rpg
+
+#ifndef RPG_FIELD_IO_TPP
+namespace Prdc {
+   using namespace Pscf::Prdc::Cuda;
+   extern template class FieldIoReal<1, RField<1>, RFieldDft<1>, FFT<1>>;
+   extern template class FieldIoReal<2, RField<2>, RFieldDft<2>, FFT<2>>;
+   extern template class FieldIoReal<3, RField<3>, RFieldDft<3>, FFT<3>>;
+} 
+#endif
+
 } // namespace Pscf
 #endif
