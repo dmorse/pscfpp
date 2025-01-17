@@ -60,13 +60,6 @@ namespace Rpc {
    template <int D>
    void FieldConfigReader<D>::readHeader()
    { 
-      #if 0
-      //Skip the header
-      for (int i = 0; i < 13; ++i){
-         inputfile_.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-      }
-      #endif
-
       // Read Header
       int nMonomer = system().mixture().nMonomer();
       Domain<D> const & domain = system().domain();
@@ -76,6 +69,7 @@ namespace Rpc {
       fieldIo.readFieldHeader(inputfile_, nMonomer, tmpUnitCell, 
                               hasSymmetry);
       system().setUnitCell(tmpUnitCell);
+      Log::file() << "Read Header" << "\n";
    }
 
    /*
