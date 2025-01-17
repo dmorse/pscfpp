@@ -147,7 +147,8 @@ namespace Rpg {
       isAllocated_(false),
       hasExpKsq_(false),
       expKsq_host(0),
-      expKsq2_host(0)
+      expKsq2_host(0),
+      waveListPtr_(0)
    {
       propagator(0).setBlock(*this);
       propagator(1).setBlock(*this);
