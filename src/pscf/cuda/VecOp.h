@@ -18,10 +18,10 @@ namespace VecOp {
 /** 
 * Functions that perform element-wise vector operations on the GPU.
 *
-* CUDA kernels that perform the vector operations are defined here, as 
-* well as wrapper functions to be called by the host CPU, which call 
-* the kernel internally. The kernels should always be accessed through 
-* the wrapper functions when possible. 
+* The functions defined in this file are wrappers for CUDA kernels that 
+* perform the actual vector operations. The kernels themselves are only 
+* intended to be called through their wrappers, so they are defined in 
+* an anonymous namespace in VecOp.cu.
 *
 * The wrapper functions operate on DeviceArray objects containing 
 * elements of type cudaReal or cudaComplex. The operations that are 
@@ -33,17 +33,6 @@ namespace VecOp {
 * those that are performed using +=, -=, *=, and /= in C++. These 
 * functions have names that begin with "addEq", "subEq", "mulEq", and 
 * "divEq", respectively. 
-*
-* Additionally, a few miscellaneous functions are defined to perform 
-* multiple of these operations within a single kernel, though these 
-* are not overloaded to accommodate all input data types. In these 
-* functions, we use "Vc" in the function name to denote that every
-* element in the vector V is multiplied by a coefficient c. For 
-* example, addEqVc represents the operation a[i] += b[i] * c. We also
-* use "Many" to indicate that an undefined number of vectors (>2) are
-* involved in an operation. For example, addVMany adds >2 vectors 
-* together by passing an array of vectors, rather than a discrete set
-* of vectors.
 *
 * The functions are overloaded to perform their respective operations
 * on any combination of cudaReal and cudaComplex input arrays, except
@@ -74,6 +63,12 @@ namespace VecOp {
 *   functions check to ensure that the slices do not contain any indices
 *   that exceed the length of the corresponding arrays.
 * 
+* Additional functions that perform multiple operations within a single 
+* kernel are defined in VecOpMisc, which are not comprehensive and are
+* written as-needed during the development of this software. VecOpMisc.h
+* is included at the end of this file so that any code that includes
+* this header file will also include VecOpMisc.h.
+* 
 * \ingroup Pscf_Cuda_Module 
 * @{
 */
@@ -83,42 +78,6 @@ namespace VecOp {
 // ~~~~~~~~~~~~~~~~~~~~~~
 
 /**
-* Vector assignment, a[i] = b[i], GPU kernel (cudaReal).
-*
-* \param a  output array (LHS)
-* \param b  input array (RHS)
-* \param n  size of arrays
-*/
-__global__ void _eqV(cudaReal* a, cudaReal const * b, const int n);
-
-/**
-* Vector assignment, a[i] = b[i], GPU kernel (cudaComplex).
-*
-* \param a  output array (LHS)
-* \param b  input array (RHS)
-* \param n  size of arrays
-*/
-__global__ void _eqV(cudaComplex* a, cudaComplex const * b, const int n);
-
-/**
-* Vector assignment, a[i] = b, GPU kernel (cudaReal).
-*
-* \param a  output array (LHS)
-* \param b  input scalar (RHS)
-* \param n  size of arrays
-*/
-__global__ void _eqS(cudaReal* a, cudaReal const b, const int n);
-
-/**
-* Vector assignment, a[i] = b, GPU kernel (cudaComplex).
-*
-* \param a  output array (LHS)
-* \param b  input scalar (RHS)
-* \param n  size of arrays
-*/
-__global__ void _eqS(cudaComplex* a, cudaComplex const b, const int n);
-
-/**
 * Vector assignment, a[i] = b[i], kernel wrapper (cudaReal).
 *
 * \param a  output array (LHS)
@@ -127,9 +86,8 @@ __global__ void _eqS(cudaComplex* a, cudaComplex const b, const int n);
 * \param beginIdB  index of the first entry to evaluate in array b
 * \param n  the number of entries to evaluate
 */
-__host__ void eqV(DeviceArray<cudaReal>& a, 
-                  DeviceArray<cudaReal> const & b,
-                  const int beginIdA, const int beginIdB, const int n);
+void eqV(DeviceArray<cudaReal>& a, DeviceArray<cudaReal> const & b,
+         const int beginIdA, const int beginIdB, const int n);
 
 /**
 * Vector assignment, a[i] = b[i], kernel wrapper (cudaReal).
@@ -137,8 +95,7 @@ __host__ void eqV(DeviceArray<cudaReal>& a,
 * \param a  output array (LHS)
 * \param b  input array (RHS)
 */
-inline __host__ void eqV(DeviceArray<cudaReal>& a, 
-                         DeviceArray<cudaReal> const & b)
+inline void eqV(DeviceArray<cudaReal>& a, DeviceArray<cudaReal> const & b)
 {  eqV(a, b, 0, 0, a.capacity()); }
 
 /**
@@ -150,9 +107,8 @@ inline __host__ void eqV(DeviceArray<cudaReal>& a,
 * \param beginIdB  index of the first entry to evaluate in array b
 * \param n  the number of entries to evaluate
 */
-__host__ void eqV(DeviceArray<cudaComplex>& a, 
-                  DeviceArray<cudaComplex> const & b,
-                  const int beginIdA, const int beginIdB, const int n);
+void eqV(DeviceArray<cudaComplex>& a, DeviceArray<cudaComplex> const & b,
+         const int beginIdA, const int beginIdB, const int n);
 
 /**
 * Vector assignment, a[i] = b[i], kernel wrapper (cudaComplex).
@@ -160,8 +116,8 @@ __host__ void eqV(DeviceArray<cudaComplex>& a,
 * \param a  output array (LHS)
 * \param b  input array (RHS)
 */
-inline __host__ void eqV(DeviceArray<cudaComplex>& a, 
-                         DeviceArray<cudaComplex> const & b)
+inline void eqV(DeviceArray<cudaComplex>& a, 
+                DeviceArray<cudaComplex> const & b)
 {  eqV(a, b, 0, 0, a.capacity()); }
 
 /**
@@ -172,8 +128,8 @@ inline __host__ void eqV(DeviceArray<cudaComplex>& a,
 * \param beginIdA  index of the first entry to evaluate in array a
 * \param n  the number of entries to evaluate
 */
-__host__ void eqS(DeviceArray<cudaReal>& a, cudaReal const b,
-                  const int beginIdA, const int n);
+void eqS(DeviceArray<cudaReal>& a, cudaReal const b,
+         const int beginIdA, const int n);
 
 /**
 * Vector assignment, a[i] = b, kernel wrapper (cudaReal).
@@ -181,7 +137,7 @@ __host__ void eqS(DeviceArray<cudaReal>& a, cudaReal const b,
 * \param a  output array (LHS)
 * \param b  input scalar (RHS)
 */
-inline __host__ void eqS(DeviceArray<cudaReal>& a, cudaReal const b)
+inline void eqS(DeviceArray<cudaReal>& a, cudaReal const b)
 {  eqS(a, b, 0, a.capacity()); }
 
 /**
@@ -192,8 +148,8 @@ inline __host__ void eqS(DeviceArray<cudaReal>& a, cudaReal const b)
 * \param beginIdA  index of the first entry to evaluate in array a
 * \param n  the number of entries to evaluate
 */
-__host__ void eqS(DeviceArray<cudaComplex>& a, cudaComplex const b,
-                  const int beginIdA, const int n);
+void eqS(DeviceArray<cudaComplex>& a, cudaComplex const b,
+         const int beginIdA, const int n);
 
 /**
 * Vector assignment, a[i] = b, kernel wrapper (cudaComplex).
@@ -201,7 +157,7 @@ __host__ void eqS(DeviceArray<cudaComplex>& a, cudaComplex const b,
 * \param a  output array (LHS)
 * \param b  input scalar (RHS)
 */
-inline __host__ void eqS(DeviceArray<cudaComplex>& a, cudaComplex const b)
+inline void eqS(DeviceArray<cudaComplex>& a, cudaComplex const b)
 {  eqS(a, b, 0, a.capacity()); }
 
 
@@ -209,94 +165,6 @@ inline __host__ void eqS(DeviceArray<cudaComplex>& a, cudaComplex const b)
 // ~~~~~~~~~~~~~~~~~~~
 
 /**
-* Vector addition, a[i] = b[i] + c[i], GPU kernel (cudaReal).
-*
-* \param a  output array (LHS)
-* \param b  input array (RHS)
-* \param c  input array (RHS)
-* \param n  size of arrays
-*/
-__global__ void _addVV(cudaReal* a, cudaReal const * b, 
-                       cudaReal const * c, const int n);
-
-/**
-* Vector addition, a[i] = b[i] + c[i], GPU kernel (cudaComplex).
-*
-* \param a  output array (LHS)
-* \param b  input array (RHS)
-* \param c  input array (RHS)
-* \param n  size of arrays
-*/
-__global__ void _addVV(cudaComplex* a, cudaComplex const * b, 
-                       cudaComplex const * c, const int n);
-
-/**
-* Vector addition, a[i] = b[i] + c[i], GPU kernel (mixed, b = real).
-*
-* \param a  output array (LHS)
-* \param b  input array (RHS)
-* \param c  input array (RHS)
-* \param n  size of arrays
-*/
-__global__ void _addVV(cudaComplex* a, cudaReal const * b, 
-                       cudaComplex const * c, const int n);
-
-/**
-* Vector addition, a[i] = b[i] + c[i], GPU kernel (mixed, c = real).
-*
-* \param a  output array (LHS)
-* \param b  input array (RHS)
-* \param c  input array (RHS)
-* \param n  size of arrays
-*/
-__global__ void _addVV(cudaComplex* a, cudaComplex const * b, 
-                       cudaReal const * c, const int n);
-
-/**
-* Vector addition, a[i] = b[i] + c, GPU kernel (cudaReal).
-*
-* \param a  output array (LHS)
-* \param b  input array (RHS)
-* \param c  input scalar (RHS)
-* \param n  size of arrays
-*/
-__global__ void _addVS(cudaReal* a, cudaReal const * b, 
-                       cudaReal const c, const int n);
-
-/**
-* Vector addition, a[i] = b[i] + c, GPU kernel (cudaComplex).
-*
-* \param a  output array (LHS)
-* \param b  input array (RHS)
-* \param c  input scalar (RHS)
-* \param n  size of arrays
-*/
-__global__ void _addVS(cudaComplex* a, cudaComplex const * b, 
-                       cudaComplex const c, const int n);
-
-/**
-* Vector addition, a[i] = b[i] + c, GPU kernel (mixed, b = real).
-*
-* \param a  output array (LHS)
-* \param b  input array (RHS)
-* \param c  input scalar (RHS)
-* \param n  size of arrays
-*/
-__global__ void _addVS(cudaComplex* a, cudaReal const * b, 
-                       cudaComplex const c, const int n);
-
-/**
-* Vector addition, a[i] = b[i] + c, GPU kernel (mixed, c = real).
-*
-* \param a  output array (LHS)
-* \param b  input array (RHS)
-* \param c  input scalar (RHS)
-* \param n  size of arrays
-*/
-__global__ void _addVS(cudaComplex* a, cudaComplex const * b, 
-                       cudaReal const c, const int n);
-
-/**
 * Vector addition, a[i] = b[i] + c[i], kernel wrapper (cudaReal).
 *
 * \param a  output array (LHS)
@@ -307,11 +175,9 @@ __global__ void _addVS(cudaComplex* a, cudaComplex const * b,
 * \param beginIdC  index of the first entry to evaluate in array c
 * \param n  the number of entries to evaluate
 */
-__host__ void addVV(DeviceArray<cudaReal>& a, 
-                    DeviceArray<cudaReal> const & b, 
-                    DeviceArray<cudaReal> const & c,
-                    const int beginIdA, const int beginIdB, 
-                    const int beginIdC, const int n);
+void addVV(DeviceArray<cudaReal>& a, DeviceArray<cudaReal> const & b, 
+           DeviceArray<cudaReal> const & c, const int beginIdA, 
+           const int beginIdB, const int beginIdC, const int n);
 
 /**
 * Vector addition, a[i] = b[i] + c[i], kernel wrapper (cudaReal).
@@ -320,9 +186,8 @@ __host__ void addVV(DeviceArray<cudaReal>& a,
 * \param b  input array (RHS)
 * \param c  input array (RHS)
 */
-inline __host__ void addVV(DeviceArray<cudaReal>& a, 
-                           DeviceArray<cudaReal> const & b, 
-                           DeviceArray<cudaReal> const & c)
+inline void addVV(DeviceArray<cudaReal>& a, DeviceArray<cudaReal> const & b, 
+                  DeviceArray<cudaReal> const & c)
 {  addVV(a, b, c, 0, 0, 0, a.capacity()); }
 
 /**
@@ -336,11 +201,9 @@ inline __host__ void addVV(DeviceArray<cudaReal>& a,
 * \param beginIdC  index of the first entry to evaluate in array c
 * \param n  the number of entries to evaluate
 */
-__host__ void addVV(DeviceArray<cudaComplex>& a, 
-                    DeviceArray<cudaComplex> const & b, 
-                    DeviceArray<cudaComplex> const & c,
-                    const int beginIdA, const int beginIdB, 
-                    const int beginIdC, const int n);
+void addVV(DeviceArray<cudaComplex>& a, DeviceArray<cudaComplex> const & b, 
+           DeviceArray<cudaComplex> const & c, const int beginIdA, 
+           const int beginIdB, const int beginIdC, const int n);
 
 /**
 * Vector addition, a[i] = b[i] + c[i], kernel wrapper (cudaComplex).
@@ -349,9 +212,9 @@ __host__ void addVV(DeviceArray<cudaComplex>& a,
 * \param b  input array (RHS)
 * \param c  input array (RHS)
 */
-inline __host__ void addVV(DeviceArray<cudaComplex>& a, 
-                           DeviceArray<cudaComplex> const & b, 
-                           DeviceArray<cudaComplex> const & c)
+inline void addVV(DeviceArray<cudaComplex>& a, 
+                  DeviceArray<cudaComplex> const & b, 
+                  DeviceArray<cudaComplex> const & c)
 {  addVV(a, b, c, 0, 0, 0, a.capacity()); }
 
 /**
@@ -365,11 +228,9 @@ inline __host__ void addVV(DeviceArray<cudaComplex>& a,
 * \param beginIdC  index of the first entry to evaluate in array c
 * \param n  the number of entries to evaluate
 */
-__host__ void addVV(DeviceArray<cudaComplex>& a, 
-                    DeviceArray<cudaReal> const & b, 
-                    DeviceArray<cudaComplex> const & c,
-                    const int beginIdA, const int beginIdB, 
-                    const int beginIdC, const int n);
+void addVV(DeviceArray<cudaComplex>& a, DeviceArray<cudaReal> const & b, 
+           DeviceArray<cudaComplex> const & c, const int beginIdA, 
+           const int beginIdB, const int beginIdC, const int n);
 
 /**
 * Vector addition, a[i] = b[i] + c[i], kernel wrapper (mixed, b = real).
@@ -378,9 +239,9 @@ __host__ void addVV(DeviceArray<cudaComplex>& a,
 * \param b  input array (RHS)
 * \param c  input array (RHS)
 */
-inline __host__ void addVV(DeviceArray<cudaComplex>& a, 
-                           DeviceArray<cudaReal> const & b, 
-                           DeviceArray<cudaComplex> const & c)
+inline void addVV(DeviceArray<cudaComplex>& a, 
+                  DeviceArray<cudaReal> const & b, 
+                  DeviceArray<cudaComplex> const & c)
 {  addVV(a, b, c, 0, 0, 0, a.capacity()); }
 
 /**
@@ -394,11 +255,9 @@ inline __host__ void addVV(DeviceArray<cudaComplex>& a,
 * \param beginIdC  index of the first entry to evaluate in array c
 * \param n  the number of entries to evaluate
 */
-__host__ void addVV(DeviceArray<cudaComplex>& a, 
-                    DeviceArray<cudaComplex> const & b, 
-                    DeviceArray<cudaReal> const & c,
-                    const int beginIdA, const int beginIdB, 
-                    const int beginIdC, const int n);
+void addVV(DeviceArray<cudaComplex>& a, DeviceArray<cudaComplex> const & b, 
+           DeviceArray<cudaReal> const & c, const int beginIdA, 
+           const int beginIdB, const int beginIdC, const int n);
 
 /**
 * Vector addition, a[i] = b[i] + c[i], kernel wrapper (mixed, c = real).
@@ -407,9 +266,9 @@ __host__ void addVV(DeviceArray<cudaComplex>& a,
 * \param b  input array (RHS)
 * \param c  input array (RHS)
 */
-inline __host__ void addVV(DeviceArray<cudaComplex>& a, 
-                           DeviceArray<cudaComplex> const & b, 
-                           DeviceArray<cudaReal> const & c)
+inline void addVV(DeviceArray<cudaComplex>& a, 
+                  DeviceArray<cudaComplex> const & b, 
+                  DeviceArray<cudaReal> const & c)
 {  addVV(a, b, c, 0, 0, 0, a.capacity()); }
 
 /**
@@ -422,9 +281,9 @@ inline __host__ void addVV(DeviceArray<cudaComplex>& a,
 * \param beginIdB  index of the first entry to evaluate in array b
 * \param n  the number of entries to evaluate
 */
-__host__ void addVS(DeviceArray<cudaReal>& a, 
-                    DeviceArray<cudaReal> const & b, cudaReal const c,
-                    const int beginIdA, const int beginIdB, const int n);
+void addVS(DeviceArray<cudaReal>& a, DeviceArray<cudaReal> const & b, 
+           cudaReal const c, const int beginIdA, 
+           const int beginIdB, const int n);
 
 /**
 * Vector addition, a[i] = b[i] + c, kernel wrapper (cudaReal).
@@ -433,9 +292,8 @@ __host__ void addVS(DeviceArray<cudaReal>& a,
 * \param b  input array (RHS)
 * \param c  input scalar (RHS)
 */
-inline __host__ void addVS(DeviceArray<cudaReal>& a, 
-                           DeviceArray<cudaReal> const & b, 
-                           cudaReal const c)
+inline void addVS(DeviceArray<cudaReal>& a, DeviceArray<cudaReal> const & b, 
+                  cudaReal const c)
 {  addVS(a, b, c, 0, 0, a.capacity()); }
 
 /**
@@ -448,10 +306,9 @@ inline __host__ void addVS(DeviceArray<cudaReal>& a,
 * \param beginIdB  index of the first entry to evaluate in array b
 * \param n  the number of entries to evaluate
 */
-__host__ void addVS(DeviceArray<cudaComplex>& a, 
-                    DeviceArray<cudaComplex> const & b, 
-                    cudaComplex const c, const int beginIdA, 
-                    const int beginIdB, const int n);
+void addVS(DeviceArray<cudaComplex>& a, DeviceArray<cudaComplex> const & b, 
+           cudaComplex const c, const int beginIdA, 
+           const int beginIdB, const int n);
 
 /**
 * Vector addition, a[i] = b[i] + c, kernel wrapper (cudaComplex).
@@ -460,9 +317,8 @@ __host__ void addVS(DeviceArray<cudaComplex>& a,
 * \param b  input array (RHS)
 * \param c  input scalar (RHS)
 */
-inline __host__ void addVS(DeviceArray<cudaComplex>& a, 
-                           DeviceArray<cudaComplex> const & b, 
-                           cudaComplex const c)
+inline void addVS(DeviceArray<cudaComplex>& a, 
+                  DeviceArray<cudaComplex> const & b, cudaComplex const c)
 {  addVS(a, b, c, 0, 0, a.capacity()); }
 
 /**
@@ -475,9 +331,9 @@ inline __host__ void addVS(DeviceArray<cudaComplex>& a,
 * \param beginIdB  index of the first entry to evaluate in array b
 * \param n  the number of entries to evaluate
 */
-__host__ void addVS(DeviceArray<cudaComplex>& a, 
-                    DeviceArray<cudaReal> const & b, cudaComplex const c,
-                    const int beginIdA, const int beginIdB, const int n);
+void addVS(DeviceArray<cudaComplex>& a, DeviceArray<cudaReal> const & b, 
+           cudaComplex const c, const int beginIdA, 
+           const int beginIdB, const int n);
 
 /**
 * Vector addition, a[i] = b[i] + c, kernel wrapper (mixed, b = real).
@@ -486,9 +342,8 @@ __host__ void addVS(DeviceArray<cudaComplex>& a,
 * \param b  input array (RHS)
 * \param c  input scalar (RHS)
 */
-inline __host__ void addVS(DeviceArray<cudaComplex>& a, 
-                           DeviceArray<cudaReal> const & b, 
-                           cudaComplex const c)
+inline void addVS(DeviceArray<cudaComplex>& a, DeviceArray<cudaReal> const & b, 
+                  cudaComplex const c)
 {  addVS(a, b, c, 0, 0, a.capacity()); }
 
 /**
@@ -501,9 +356,9 @@ inline __host__ void addVS(DeviceArray<cudaComplex>& a,
 * \param beginIdB  index of the first entry to evaluate in array b
 * \param n  the number of entries to evaluate
 */
-__host__ void addVS(DeviceArray<cudaComplex>& a, 
-                    DeviceArray<cudaComplex> const & b, cudaReal const c,
-                    const int beginIdA, const int beginIdB, const int n);
+void addVS(DeviceArray<cudaComplex>& a, DeviceArray<cudaComplex> const & b, 
+           cudaReal const c, const int beginIdA, 
+           const int beginIdB, const int n);
 
 /**
 * Vector addition, a[i] = b[i] + c, kernel wrapper (mixed, c = real).
@@ -512,9 +367,8 @@ __host__ void addVS(DeviceArray<cudaComplex>& a,
 * \param b  input array (RHS)
 * \param c  input scalar (RHS)
 */
-inline __host__ void addVS(DeviceArray<cudaComplex>& a, 
-                           DeviceArray<cudaComplex> const & b, 
-                           cudaReal const c)
+inline void addVS(DeviceArray<cudaComplex>& a, 
+                  DeviceArray<cudaComplex> const & b, cudaReal const c)
 {  addVS(a, b, c, 0, 0, a.capacity()); }
 
 
@@ -522,94 +376,6 @@ inline __host__ void addVS(DeviceArray<cudaComplex>& a,
 // ~~~~~~~~~~~~~~~~~~~~~~
 
 /**
-* Vector subtraction, a[i] = b[i] - c[i], GPU kernel (cudaReal).
-*
-* \param a  output array (LHS)
-* \param b  input array (RHS)
-* \param c  input array (RHS)
-* \param n  size of arrays
-*/
-__global__ void _subVV(cudaReal* a, cudaReal const * b, 
-                       cudaReal const * c, const int n);
-
-/**
-* Vector subtraction, a[i] = b[i] - c[i], GPU kernel (cudaComplex).
-*
-* \param a  output array (LHS)
-* \param b  input array (RHS)
-* \param c  input array (RHS)
-* \param n  size of arrays
-*/
-__global__ void _subVV(cudaComplex* a, cudaComplex const * b, 
-                       cudaComplex const * c, const int n);
-
-/**
-* Vector subtraction, a[i] = b[i] - c[i], GPU kernel (mixed, b = real).
-*
-* \param a  output array (LHS)
-* \param b  input array (RHS)
-* \param c  input array (RHS)
-* \param n  size of arrays
-*/
-__global__ void _subVV(cudaComplex* a, cudaReal const * b, 
-                       cudaComplex const * c, const int n);
-
-/**
-* Vector subtraction, a[i] = b[i] - c[i], GPU kernel (mixed, c = real).
-*
-* \param a  output array (LHS)
-* \param b  input array (RHS)
-* \param c  input array (RHS)
-* \param n  size of arrays
-*/
-__global__ void _subVV(cudaComplex* a, cudaComplex const * b, 
-                       cudaReal const * c, const int n);
-
-/**
-* Vector subtraction, a[i] = b[i] - c, GPU kernel (cudaReal).
-*
-* \param a  output array (LHS)
-* \param b  input array (RHS)
-* \param c  input scalar (RHS)
-* \param n  size of arrays
-*/
-__global__ void _subVS(cudaReal* a, cudaReal const * b, 
-                       cudaReal const c, const int n);
-
-/**
-* Vector subtraction, a[i] = b[i] - c, GPU kernel (cudaComplex).
-*
-* \param a  output array (LHS)
-* \param b  input array (RHS)
-* \param c  input scalar (RHS)
-* \param n  size of arrays
-*/
-__global__ void _subVS(cudaComplex* a, cudaComplex const * b, 
-                       cudaComplex const c, const int n);
-
-/**
-* Vector subtraction, a[i] = b[i] - c, GPU kernel (mixed, b = real).
-*
-* \param a  output array (LHS)
-* \param b  input array (RHS)
-* \param c  input scalar (RHS)
-* \param n  size of arrays
-*/
-__global__ void _subVS(cudaComplex* a, cudaReal const * b, 
-                       cudaComplex const c, const int n);
-
-/**
-* Vector subtraction, a[i] = b[i] - c, GPU kernel (mixed, c = real).
-*
-* \param a  output array (LHS)
-* \param b  input array (RHS)
-* \param c  input scalar (RHS)
-* \param n  size of arrays
-*/
-__global__ void _subVS(cudaComplex* a, cudaComplex const * b, 
-                       cudaReal const c, const int n);
-
-/**
 * Vector subtraction, a[i] = b[i] - c[i], kernel wrapper (cudaReal).
 *
 * \param a  output array (LHS)
@@ -620,11 +386,9 @@ __global__ void _subVS(cudaComplex* a, cudaComplex const * b,
 * \param beginIdC  index of the first entry to evaluate in array c
 * \param n  the number of entries to evaluate
 */
-__host__ void subVV(DeviceArray<cudaReal>& a, 
-                    DeviceArray<cudaReal> const & b, 
-                    DeviceArray<cudaReal> const & c,
-                    const int beginIdA, const int beginIdB, 
-                    const int beginIdC, const int n);
+void subVV(DeviceArray<cudaReal>& a, DeviceArray<cudaReal> const & b, 
+           DeviceArray<cudaReal> const & c, const int beginIdA, 
+           const int beginIdB, const int beginIdC, const int n);
 
 /**
 * Vector subtraction, a[i] = b[i] - c[i], kernel wrapper (cudaReal).
@@ -633,9 +397,8 @@ __host__ void subVV(DeviceArray<cudaReal>& a,
 * \param b  input array (RHS)
 * \param c  input array (RHS)
 */
-inline __host__ void subVV(DeviceArray<cudaReal>& a, 
-                           DeviceArray<cudaReal> const & b, 
-                           DeviceArray<cudaReal> const & c)
+inline void subVV(DeviceArray<cudaReal>& a, DeviceArray<cudaReal> const & b, 
+                  DeviceArray<cudaReal> const & c)
 {  subVV(a, b, c, 0, 0, 0, a.capacity()); }
 
 /**
@@ -649,11 +412,9 @@ inline __host__ void subVV(DeviceArray<cudaReal>& a,
 * \param beginIdC  index of the first entry to evaluate in array c
 * \param n  the number of entries to evaluate
 */
-__host__ void subVV(DeviceArray<cudaComplex>& a, 
-                    DeviceArray<cudaComplex> const & b, 
-                    DeviceArray<cudaComplex> const & c,
-                    const int beginIdA, const int beginIdB, 
-                    const int beginIdC, const int n);
+void subVV(DeviceArray<cudaComplex>& a, DeviceArray<cudaComplex> const & b, 
+           DeviceArray<cudaComplex> const & c, const int beginIdA, 
+           const int beginIdB, const int beginIdC, const int n);
 
 /**
 * Vector subtraction, a[i] = b[i] - c[i], kernel wrapper (cudaComplex).
@@ -662,9 +423,9 @@ __host__ void subVV(DeviceArray<cudaComplex>& a,
 * \param b  input array (RHS)
 * \param c  input array (RHS)
 */
-inline __host__ void subVV(DeviceArray<cudaComplex>& a, 
-                           DeviceArray<cudaComplex> const & b, 
-                           DeviceArray<cudaComplex> const & c)
+inline void subVV(DeviceArray<cudaComplex>& a, 
+                  DeviceArray<cudaComplex> const & b, 
+                  DeviceArray<cudaComplex> const & c)
 {  subVV(a, b, c, 0, 0, 0, a.capacity()); }
 
 /**
@@ -678,11 +439,9 @@ inline __host__ void subVV(DeviceArray<cudaComplex>& a,
 * \param beginIdC  index of the first entry to evaluate in array c
 * \param n  the number of entries to evaluate
 */
-__host__ void subVV(DeviceArray<cudaComplex>& a, 
-                    DeviceArray<cudaReal> const & b, 
-                    DeviceArray<cudaComplex> const & c,
-                    const int beginIdA, const int beginIdB, 
-                    const int beginIdC, const int n);
+void subVV(DeviceArray<cudaComplex>& a, DeviceArray<cudaReal> const & b, 
+           DeviceArray<cudaComplex> const & c, const int beginIdA, 
+           const int beginIdB, const int beginIdC, const int n);
 
 /**
 * Vector subtraction, a[i] = b[i] - c[i], kernel wrapper (mixed, b = real).
@@ -691,9 +450,8 @@ __host__ void subVV(DeviceArray<cudaComplex>& a,
 * \param b  input array (RHS)
 * \param c  input array (RHS)
 */
-inline __host__ void subVV(DeviceArray<cudaComplex>& a, 
-                           DeviceArray<cudaReal> const & b, 
-                           DeviceArray<cudaComplex> const & c)
+inline void subVV(DeviceArray<cudaComplex>& a, DeviceArray<cudaReal> const & b, 
+                  DeviceArray<cudaComplex> const & c)
 {  subVV(a, b, c, 0, 0, 0, a.capacity()); }
 
 /**
@@ -707,11 +465,9 @@ inline __host__ void subVV(DeviceArray<cudaComplex>& a,
 * \param beginIdC  index of the first entry to evaluate in array c
 * \param n  the number of entries to evaluate
 */
-__host__ void subVV(DeviceArray<cudaComplex>& a, 
-                    DeviceArray<cudaComplex> const & b, 
-                    DeviceArray<cudaReal> const & c,
-                    const int beginIdA, const int beginIdB, 
-                    const int beginIdC, const int n);
+void subVV(DeviceArray<cudaComplex>& a, DeviceArray<cudaComplex> const & b, 
+           DeviceArray<cudaReal> const & c, const int beginIdA, 
+           const int beginIdB, const int beginIdC, const int n);
 
 /**
 * Vector subtraction, a[i] = b[i] - c[i], kernel wrapper (mixed, c = real).
@@ -720,9 +476,9 @@ __host__ void subVV(DeviceArray<cudaComplex>& a,
 * \param b  input array (RHS)
 * \param c  input array (RHS)
 */
-inline __host__ void subVV(DeviceArray<cudaComplex>& a, 
-                           DeviceArray<cudaComplex> const & b, 
-                           DeviceArray<cudaReal> const & c)
+inline void subVV(DeviceArray<cudaComplex>& a, 
+                  DeviceArray<cudaComplex> const & b, 
+                  DeviceArray<cudaReal> const & c)
 {  subVV(a, b, c, 0, 0, 0, a.capacity()); }
 
 /**
@@ -735,9 +491,9 @@ inline __host__ void subVV(DeviceArray<cudaComplex>& a,
 * \param beginIdB  index of the first entry to evaluate in array b
 * \param n  the number of entries to evaluate
 */
-__host__ void subVS(DeviceArray<cudaReal>& a, 
-                    DeviceArray<cudaReal> const & b, cudaReal const c,
-                    const int beginIdA, const int beginIdB, const int n);
+void subVS(DeviceArray<cudaReal>& a, DeviceArray<cudaReal> const & b, 
+           cudaReal const c, const int beginIdA, 
+           const int beginIdB, const int n);
 
 /**
 * Vector subtraction, a[i] = b[i] - c, kernel wrapper (cudaReal).
@@ -746,9 +502,8 @@ __host__ void subVS(DeviceArray<cudaReal>& a,
 * \param b  input array (RHS)
 * \param c  input scalar (RHS)
 */
-inline __host__ void subVS(DeviceArray<cudaReal>& a, 
-                           DeviceArray<cudaReal> const & b, 
-                           cudaReal const c)
+inline void subVS(DeviceArray<cudaReal>& a, DeviceArray<cudaReal> const & b, 
+                  cudaReal const c)
 {  subVS(a, b, c, 0, 0, a.capacity()); }
 
 /**
@@ -761,10 +516,9 @@ inline __host__ void subVS(DeviceArray<cudaReal>& a,
 * \param beginIdB  index of the first entry to evaluate in array b
 * \param n  the number of entries to evaluate
 */
-__host__ void subVS(DeviceArray<cudaComplex>& a, 
-                    DeviceArray<cudaComplex> const & b, 
-                    cudaComplex const c, const int beginIdA, 
-                    const int beginIdB, const int n);
+void subVS(DeviceArray<cudaComplex>& a, DeviceArray<cudaComplex> const & b, 
+           cudaComplex const c, const int beginIdA, 
+           const int beginIdB, const int n);
 
 /**
 * Vector subtraction, a[i] = b[i] - c, kernel wrapper (cudaComplex).
@@ -773,9 +527,8 @@ __host__ void subVS(DeviceArray<cudaComplex>& a,
 * \param b  input array (RHS)
 * \param c  input scalar (RHS)
 */
-inline __host__ void subVS(DeviceArray<cudaComplex>& a, 
-                           DeviceArray<cudaComplex> const & b, 
-                           cudaComplex const c)
+inline void subVS(DeviceArray<cudaComplex>& a, 
+                  DeviceArray<cudaComplex> const & b, cudaComplex const c)
 {  subVS(a, b, c, 0, 0, a.capacity()); }
 
 /**
@@ -788,9 +541,9 @@ inline __host__ void subVS(DeviceArray<cudaComplex>& a,
 * \param beginIdB  index of the first entry to evaluate in array b
 * \param n  the number of entries to evaluate
 */
-__host__ void subVS(DeviceArray<cudaComplex>& a, 
-                    DeviceArray<cudaReal> const & b, cudaComplex const c,
-                    const int beginIdA, const int beginIdB, const int n);
+void subVS(DeviceArray<cudaComplex>& a, DeviceArray<cudaReal> const & b, 
+           cudaComplex const c, const int beginIdA, 
+           const int beginIdB, const int n);
 
 /**
 * Vector subtraction, a[i] = b[i] - c, kernel wrapper (mixed, b = real).
@@ -799,9 +552,9 @@ __host__ void subVS(DeviceArray<cudaComplex>& a,
 * \param b  input array (RHS)
 * \param c  input scalar (RHS)
 */
-inline __host__ void subVS(DeviceArray<cudaComplex>& a, 
-                           DeviceArray<cudaReal> const & b, 
-                           cudaComplex const c)
+inline void subVS(DeviceArray<cudaComplex>& a, 
+                  DeviceArray<cudaReal> const & b, 
+                  cudaComplex const c)
 {  subVS(a, b, c, 0, 0, a.capacity()); }
 
 /**
@@ -814,9 +567,9 @@ inline __host__ void subVS(DeviceArray<cudaComplex>& a,
 * \param beginIdB  index of the first entry to evaluate in array b
 * \param n  the number of entries to evaluate
 */
-__host__ void subVS(DeviceArray<cudaComplex>& a, 
-                    DeviceArray<cudaComplex> const & b, cudaReal const c,
-                    const int beginIdA, const int beginIdB, const int n);
+void subVS(DeviceArray<cudaComplex>& a, DeviceArray<cudaComplex> const & b, 
+           cudaReal const c, const int beginIdA, 
+           const int beginIdB, const int n);
 
 /**
 * Vector subtraction, a[i] = b[i] - c, kernel wrapper (mixed, c = real).
@@ -825,9 +578,8 @@ __host__ void subVS(DeviceArray<cudaComplex>& a,
 * \param b  input array (RHS)
 * \param c  input scalar (RHS)
 */
-inline __host__ void subVS(DeviceArray<cudaComplex>& a, 
-                           DeviceArray<cudaComplex> const & b, 
-                           cudaReal const c)
+inline void subVS(DeviceArray<cudaComplex>& a, 
+                  DeviceArray<cudaComplex> const & b, cudaReal const c)
 {  subVS(a, b, c, 0, 0, a.capacity()); }
 
 
@@ -835,94 +587,6 @@ inline __host__ void subVS(DeviceArray<cudaComplex>& a,
 // ~~~~~~~~~~~~~~~~~~~~~~~~~
 
 /**
-* Vector multiplication, a[i] = b[i] * c[i], GPU kernel (cudaReal).
-*
-* \param a  output array (LHS)
-* \param b  input array (RHS)
-* \param c  input array (RHS)
-* \param n  size of arrays
-*/
-__global__ void _mulVV(cudaReal* a, cudaReal const * b, 
-                       cudaReal const * c, const int n);
-
-/**
-* Vector multiplication, a[i] = b[i] * c[i], GPU kernel (cudaComplex).
-*
-* \param a  output array (LHS)
-* \param b  input array (RHS)
-* \param c  input array (RHS)
-* \param n  size of arrays
-*/
-__global__ void _mulVV(cudaComplex* a, cudaComplex const * b, 
-                       cudaComplex const * c, const int n);
-
-/**
-* Vector multiplication, a[i] = b[i] * c[i], GPU kernel (mixed, b = real).
-*
-* \param a  output array (LHS)
-* \param b  input array (RHS)
-* \param c  input array (RHS)
-* \param n  size of arrays
-*/
-__global__ void _mulVV(cudaComplex* a, cudaReal const * b, 
-                       cudaComplex const * c, const int n);
-
-/**
-* Vector multiplication, a[i] = b[i] * c[i], GPU kernel (mixed, c = real).
-*
-* \param a  output array (LHS)
-* \param b  input array (RHS)
-* \param c  input array (RHS)
-* \param n  size of arrays
-*/
-__global__ void _mulVV(cudaComplex* a, cudaComplex const * b, 
-                       cudaReal const * c, const int n);
-
-/**
-* Vector multiplication, a[i] = b[i] * c, GPU kernel (cudaReal).
-*
-* \param a  output array (LHS)
-* \param b  input array (RHS)
-* \param c  input scalar (RHS)
-* \param n  size of arrays
-*/
-__global__ void _mulVS(cudaReal* a, cudaReal const * b, 
-                       cudaReal const c, const int n);
-
-/**
-* Vector multiplication, a[i] = b[i] * c, GPU kernel (cudaComplex).
-*
-* \param a  output array (LHS)
-* \param b  input array (RHS)
-* \param c  input scalar (RHS)
-* \param n  size of arrays
-*/
-__global__ void _mulVS(cudaComplex* a, cudaComplex const * b, 
-                       cudaComplex const c, const int n);
-
-/**
-* Vector multiplication, a[i] = b[i] * c, GPU kernel (mixed, b = real).
-*
-* \param a  output array (LHS)
-* \param b  input array (RHS)
-* \param c  input scalar (RHS)
-* \param n  size of arrays
-*/
-__global__ void _mulVS(cudaComplex* a, cudaReal const * b, 
-                       cudaComplex const c, const int n);
-
-/**
-* Vector multiplication, a[i] = b[i] * c, GPU kernel (mixed, c = real).
-*
-* \param a  output array (LHS)
-* \param b  input array (RHS)
-* \param c  input scalar (RHS)
-* \param n  size of arrays
-*/
-__global__ void _mulVS(cudaComplex* a, cudaComplex const * b, 
-                       cudaReal const c, const int n);
-
-/**
 * Vector multiplication, a[i] = b[i] * c[i], kernel wrapper (cudaReal).
 *
 * \param a  output array (LHS)
@@ -933,11 +597,9 @@ __global__ void _mulVS(cudaComplex* a, cudaComplex const * b,
 * \param beginIdC  index of the first entry to evaluate in array c
 * \param n  the number of entries to evaluate
 */
-__host__ void mulVV(DeviceArray<cudaReal>& a, 
-                    DeviceArray<cudaReal> const & b, 
-                    DeviceArray<cudaReal> const & c,
-                    const int beginIdA, const int beginIdB, 
-                    const int beginIdC, const int n);
+void mulVV(DeviceArray<cudaReal>& a, DeviceArray<cudaReal> const & b, 
+           DeviceArray<cudaReal> const & c, const int beginIdA, 
+           const int beginIdB, const int beginIdC, const int n);
 
 /**
 * Vector multiplication, a[i] = b[i] * c[i], kernel wrapper (cudaReal).
@@ -946,9 +608,8 @@ __host__ void mulVV(DeviceArray<cudaReal>& a,
 * \param b  input array (RHS)
 * \param c  input array (RHS)
 */
-inline __host__ void mulVV(DeviceArray<cudaReal>& a, 
-                           DeviceArray<cudaReal> const & b, 
-                           DeviceArray<cudaReal> const & c)
+inline void mulVV(DeviceArray<cudaReal>& a, DeviceArray<cudaReal> const & b, 
+                  DeviceArray<cudaReal> const & c)
 {  mulVV(a, b, c, 0, 0, 0, a.capacity()); }
 
 /**
@@ -962,11 +623,9 @@ inline __host__ void mulVV(DeviceArray<cudaReal>& a,
 * \param beginIdC  index of the first entry to evaluate in array c
 * \param n  the number of entries to evaluate
 */
-__host__ void mulVV(DeviceArray<cudaComplex>& a, 
-                    DeviceArray<cudaComplex> const & b, 
-                    DeviceArray<cudaComplex> const & c,
-                    const int beginIdA, const int beginIdB, 
-                    const int beginIdC, const int n);
+void mulVV(DeviceArray<cudaComplex>& a, DeviceArray<cudaComplex> const & b, 
+           DeviceArray<cudaComplex> const & c, const int beginIdA, 
+           const int beginIdB, const int beginIdC, const int n);
 
 /**
 * Vector multiplication, a[i] = b[i] * c[i], kernel wrapper (cudaComplex).
@@ -975,9 +634,9 @@ __host__ void mulVV(DeviceArray<cudaComplex>& a,
 * \param b  input array (RHS)
 * \param c  input array (RHS)
 */
-inline __host__ void mulVV(DeviceArray<cudaComplex>& a, 
-                           DeviceArray<cudaComplex> const & b, 
-                           DeviceArray<cudaComplex> const & c)
+inline void mulVV(DeviceArray<cudaComplex>& a, 
+                  DeviceArray<cudaComplex> const & b, 
+                  DeviceArray<cudaComplex> const & c)
 {  mulVV(a, b, c, 0, 0, 0, a.capacity()); }
 
 /**
@@ -991,11 +650,9 @@ inline __host__ void mulVV(DeviceArray<cudaComplex>& a,
 * \param beginIdC  index of the first entry to evaluate in array c
 * \param n  the number of entries to evaluate
 */
-__host__ void mulVV(DeviceArray<cudaComplex>& a, 
-                    DeviceArray<cudaReal> const & b, 
-                    DeviceArray<cudaComplex> const & c,
-                    const int beginIdA, const int beginIdB, 
-                    const int beginIdC, const int n);
+void mulVV(DeviceArray<cudaComplex>& a, DeviceArray<cudaReal> const & b, 
+           DeviceArray<cudaComplex> const & c, const int beginIdA, 
+           const int beginIdB, const int beginIdC, const int n);
 
 /**
 * Vector multiplication, a[i]=b[i]*c[i], kernel wrapper (mixed, b = real).
@@ -1004,9 +661,9 @@ __host__ void mulVV(DeviceArray<cudaComplex>& a,
 * \param b  input array (RHS)
 * \param c  input array (RHS)
 */
-inline __host__ void mulVV(DeviceArray<cudaComplex>& a, 
-                           DeviceArray<cudaReal> const & b, 
-                           DeviceArray<cudaComplex> const & c)
+inline void mulVV(DeviceArray<cudaComplex>& a, 
+                  DeviceArray<cudaReal> const & b, 
+                  DeviceArray<cudaComplex> const & c)
 {  mulVV(a, b, c, 0, 0, 0, a.capacity()); }
 
 /**
@@ -1020,11 +677,9 @@ inline __host__ void mulVV(DeviceArray<cudaComplex>& a,
 * \param beginIdC  index of the first entry to evaluate in array c
 * \param n  the number of entries to evaluate
 */
-__host__ void mulVV(DeviceArray<cudaComplex>& a, 
-                    DeviceArray<cudaComplex> const & b, 
-                    DeviceArray<cudaReal> const & c,
-                    const int beginIdA, const int beginIdB, 
-                    const int beginIdC, const int n);
+void mulVV(DeviceArray<cudaComplex>& a, DeviceArray<cudaComplex> const & b, 
+           DeviceArray<cudaReal> const & c, const int beginIdA, 
+           const int beginIdB, const int beginIdC, const int n);
 
 /**
 * Vector multiplication, a[i]=b[i]*c[i], kernel wrapper (mixed, c = real).
@@ -1033,9 +688,9 @@ __host__ void mulVV(DeviceArray<cudaComplex>& a,
 * \param b  input array (RHS)
 * \param c  input array (RHS)
 */
-inline __host__ void mulVV(DeviceArray<cudaComplex>& a, 
-                           DeviceArray<cudaComplex> const & b, 
-                           DeviceArray<cudaReal> const & c)
+inline void mulVV(DeviceArray<cudaComplex>& a, 
+                  DeviceArray<cudaComplex> const & b, 
+                  DeviceArray<cudaReal> const & c)
 {  mulVV(a, b, c, 0, 0, 0, a.capacity()); }
 
 /**
@@ -1048,9 +703,9 @@ inline __host__ void mulVV(DeviceArray<cudaComplex>& a,
 * \param beginIdB  index of the first entry to evaluate in array b
 * \param n  the number of entries to evaluate
 */
-__host__ void mulVS(DeviceArray<cudaReal>& a, 
-                    DeviceArray<cudaReal> const & b, cudaReal const c,
-                    const int beginIdA, const int beginIdB, const int n);
+void mulVS(DeviceArray<cudaReal>& a, DeviceArray<cudaReal> const & b, 
+           cudaReal const c, const int beginIdA, 
+           const int beginIdB, const int n);
 
 /**
 * Vector multiplication, a[i] = b[i] * c, kernel wrapper (cudaReal).
@@ -1059,9 +714,8 @@ __host__ void mulVS(DeviceArray<cudaReal>& a,
 * \param b  input array (RHS)
 * \param c  input scalar (RHS)
 */
-inline __host__ void mulVS(DeviceArray<cudaReal>& a, 
-                           DeviceArray<cudaReal> const & b, 
-                           cudaReal const c)
+inline void mulVS(DeviceArray<cudaReal>& a, DeviceArray<cudaReal> const & b, 
+                  cudaReal const c)
 {  mulVS(a, b, c, 0, 0, a.capacity()); }
 
 /**
@@ -1074,10 +728,9 @@ inline __host__ void mulVS(DeviceArray<cudaReal>& a,
 * \param beginIdB  index of the first entry to evaluate in array b
 * \param n  the number of entries to evaluate
 */
-__host__ void mulVS(DeviceArray<cudaComplex>& a, 
-                    DeviceArray<cudaComplex> const & b, 
-                    cudaComplex const c, const int beginIdA, 
-                    const int beginIdB, const int n);
+void mulVS(DeviceArray<cudaComplex>& a, DeviceArray<cudaComplex> const & b, 
+           cudaComplex const c, const int beginIdA, 
+           const int beginIdB, const int n);
 
 /**
 * Vector multiplication, a[i] = b[i] * c, kernel wrapper (cudaComplex).
@@ -1086,9 +739,8 @@ __host__ void mulVS(DeviceArray<cudaComplex>& a,
 * \param b  input array (RHS)
 * \param c  input scalar (RHS)
 */
-inline __host__ void mulVS(DeviceArray<cudaComplex>& a, 
-                           DeviceArray<cudaComplex> const & b, 
-                           cudaComplex const c)
+inline void mulVS(DeviceArray<cudaComplex>& a, 
+                  DeviceArray<cudaComplex> const & b, cudaComplex const c)
 {  mulVS(a, b, c, 0, 0, a.capacity()); }
 
 /**
@@ -1101,9 +753,9 @@ inline __host__ void mulVS(DeviceArray<cudaComplex>& a,
 * \param beginIdB  index of the first entry to evaluate in array b
 * \param n  the number of entries to evaluate
 */
-__host__ void mulVS(DeviceArray<cudaComplex>& a, 
-                    DeviceArray<cudaReal> const & b, cudaComplex const c,
-                    const int beginIdA, const int beginIdB, const int n);
+void mulVS(DeviceArray<cudaComplex>& a, DeviceArray<cudaReal> const & b, 
+           cudaComplex const c, const int beginIdA, 
+           const int beginIdB, const int n);
 
 /**
 * Vector multiplication, a[i] = b[i] * c, kernel wrapper (mixed, b = real).
@@ -1112,9 +764,8 @@ __host__ void mulVS(DeviceArray<cudaComplex>& a,
 * \param b  input array (RHS)
 * \param c  input scalar (RHS)
 */
-inline __host__ void mulVS(DeviceArray<cudaComplex>& a, 
-                           DeviceArray<cudaReal> const & b, 
-                           cudaComplex const c)
+inline void mulVS(DeviceArray<cudaComplex>& a, 
+                  DeviceArray<cudaReal> const & b, cudaComplex const c)
 {  mulVS(a, b, c, 0, 0, a.capacity()); }
 
 /**
@@ -1127,9 +778,9 @@ inline __host__ void mulVS(DeviceArray<cudaComplex>& a,
 * \param beginIdB  index of the first entry to evaluate in array b
 * \param n  the number of entries to evaluate
 */
-__host__ void mulVS(DeviceArray<cudaComplex>& a, 
-                    DeviceArray<cudaComplex> const & b, cudaReal const c,
-                    const int beginIdA, const int beginIdB, const int n);
+void mulVS(DeviceArray<cudaComplex>& a, DeviceArray<cudaComplex> const & b, 
+           cudaReal const c, const int beginIdA, 
+           const int beginIdB, const int n);
 
 /**
 * Vector multiplication, a[i] = b[i] * c, kernel wrapper (mixed, c = real).
@@ -1138,9 +789,8 @@ __host__ void mulVS(DeviceArray<cudaComplex>& a,
 * \param b  input array (RHS)
 * \param c  input scalar (RHS)
 */
-inline __host__ void mulVS(DeviceArray<cudaComplex>& a, 
-                           DeviceArray<cudaComplex> const & b, 
-                           cudaReal const c)
+inline void mulVS(DeviceArray<cudaComplex>& a, 
+                  DeviceArray<cudaComplex> const & b, cudaReal const c)
 {  mulVS(a, b, c, 0, 0, a.capacity()); }
 
 
@@ -1148,50 +798,6 @@ inline __host__ void mulVS(DeviceArray<cudaComplex>& a,
 // ~~~~~~~~~~~~~~~~~~~
 
 /**
-* Vector division, a[i] = b[i] / c[i], GPU kernel (cudaReal).
-*
-* \param a  output array (LHS)
-* \param b  input array (RHS)
-* \param c  input array (RHS)
-* \param n  size of arrays
-*/
-__global__ void _divVV(cudaReal* a, cudaReal const * b, 
-                       cudaReal const * c, const int n);
-
-/**
-* Vector division, a[i] = b[i] / c[i], GPU kernel (mixed, c = real).
-*
-* \param a  output array (LHS)
-* \param b  input array (RHS)
-* \param c  input array (RHS)
-* \param n  size of arrays
-*/
-__global__ void _divVV(cudaComplex* a, cudaComplex const * b, 
-                       cudaReal const * c, const int n);
-
-/**
-* Vector division, a[i] = b[i] / c, GPU kernel (cudaReal).
-*
-* \param a  output array (LHS)
-* \param b  input array (RHS)
-* \param c  input scalar (RHS)
-* \param n  size of arrays
-*/
-__global__ void _divVS(cudaReal* a, cudaReal const * b, 
-                       cudaReal const c, const int n);
-
-/**
-* Vector division, a[i] = b[i] / c, GPU kernel (mixed, c = real).
-*
-* \param a  output array (LHS)
-* \param b  input array (RHS)
-* \param c  input scalar (RHS)
-* \param n  size of arrays
-*/
-__global__ void _divVS(cudaComplex* a, cudaComplex const * b, 
-                       cudaReal const c, const int n);
-
-/**
 * Vector division, a[i] = b[i] / c[i], kernel wrapper (cudaReal).
 *
 * \param a  output array (LHS)
@@ -1202,11 +808,9 @@ __global__ void _divVS(cudaComplex* a, cudaComplex const * b,
 * \param beginIdC  index of the first entry to evaluate in array c
 * \param n  the number of entries to evaluate
 */
-__host__ void divVV(DeviceArray<cudaReal>& a, 
-                    DeviceArray<cudaReal> const & b, 
-                    DeviceArray<cudaReal> const & c,
-                    const int beginIdA, const int beginIdB, 
-                    const int beginIdC, const int n);
+void divVV(DeviceArray<cudaReal>& a, DeviceArray<cudaReal> const & b, 
+           DeviceArray<cudaReal> const & c, const int beginIdA, 
+           const int beginIdB, const int beginIdC, const int n);
 
 /**
 * Vector division, a[i] = b[i] / c[i], kernel wrapper (cudaReal).
@@ -1215,9 +819,8 @@ __host__ void divVV(DeviceArray<cudaReal>& a,
 * \param b  input array (RHS)
 * \param c  input array (RHS)
 */
-inline __host__ void divVV(DeviceArray<cudaReal>& a, 
-                           DeviceArray<cudaReal> const & b, 
-                           DeviceArray<cudaReal> const & c)
+inline void divVV(DeviceArray<cudaReal>& a, DeviceArray<cudaReal> const & b, 
+                  DeviceArray<cudaReal> const & c)
 {  divVV(a, b, c, 0, 0, 0, a.capacity()); }
 
 /**
@@ -1231,11 +834,9 @@ inline __host__ void divVV(DeviceArray<cudaReal>& a,
 * \param beginIdC  index of the first entry to evaluate in array c
 * \param n  the number of entries to evaluate
 */
-__host__ void divVV(DeviceArray<cudaComplex>& a, 
-                    DeviceArray<cudaComplex> const & b, 
-                    DeviceArray<cudaReal> const & c,
-                    const int beginIdA, const int beginIdB, 
-                    const int beginIdC, const int n);
+void divVV(DeviceArray<cudaComplex>& a, DeviceArray<cudaComplex> const & b, 
+           DeviceArray<cudaReal> const & c, const int beginIdA, 
+           const int beginIdB, const int beginIdC, const int n);
 
 /**
 * Vector division, a[i] = b[i] / c[i], kernel wrapper (mixed, c = real).
@@ -1244,9 +845,9 @@ __host__ void divVV(DeviceArray<cudaComplex>& a,
 * \param b  input array (RHS)
 * \param c  input array (RHS)
 */
-inline __host__ void divVV(DeviceArray<cudaComplex>& a, 
-                           DeviceArray<cudaComplex> const & b, 
-                           DeviceArray<cudaReal> const & c)
+inline void divVV(DeviceArray<cudaComplex>& a, 
+                  DeviceArray<cudaComplex> const & b, 
+                  DeviceArray<cudaReal> const & c)
 {  divVV(a, b, c, 0, 0, 0, a.capacity()); }
 
 /**
@@ -1259,9 +860,9 @@ inline __host__ void divVV(DeviceArray<cudaComplex>& a,
 * \param beginIdB  index of the first entry to evaluate in array b
 * \param n  the number of entries to evaluate
 */
-__host__ void divVS(DeviceArray<cudaReal>& a, 
-                    DeviceArray<cudaReal> const & b, cudaReal const c,
-                    const int beginIdA, const int beginIdB, const int n);
+void divVS(DeviceArray<cudaReal>& a, DeviceArray<cudaReal> const & b, 
+           cudaReal const c, const int beginIdA, 
+           const int beginIdB, const int n);
 
 /**
 * Vector division, a[i] = b[i] / c, kernel wrapper (cudaReal).
@@ -1270,9 +871,8 @@ __host__ void divVS(DeviceArray<cudaReal>& a,
 * \param b  input array (RHS)
 * \param c  input scalar (RHS)
 */
-inline __host__ void divVS(DeviceArray<cudaReal>& a, 
-                           DeviceArray<cudaReal> const & b, 
-                           cudaReal const c)
+inline void divVS(DeviceArray<cudaReal>& a, DeviceArray<cudaReal> const & b, 
+                  cudaReal const c)
 {  divVS(a, b, c, 0, 0, a.capacity()); }
 
 /**
@@ -1285,9 +885,9 @@ inline __host__ void divVS(DeviceArray<cudaReal>& a,
 * \param beginIdB  index of the first entry to evaluate in array b
 * \param n  the number of entries to evaluate
 */
-__host__ void divVS(DeviceArray<cudaComplex>& a, 
-                    DeviceArray<cudaComplex> const & b, cudaReal const c,
-                    const int beginIdA, const int beginIdB, const int n);
+void divVS(DeviceArray<cudaComplex>& a, DeviceArray<cudaComplex> const & b, 
+           cudaReal const c, const int beginIdA, 
+           const int beginIdB, const int n);
 
 /**
 * Vector division, a[i] = b[i] / c, kernel wrapper (mixed, c = real).
@@ -1296,9 +896,8 @@ __host__ void divVS(DeviceArray<cudaComplex>& a,
 * \param b  input array (RHS)
 * \param c  input scalar (RHS)
 */
-inline __host__ void divVS(DeviceArray<cudaComplex>& a, 
-                           DeviceArray<cudaComplex> const & b, 
-                           cudaReal const c)
+inline void divVS(DeviceArray<cudaComplex>& a, 
+                  DeviceArray<cudaComplex> const & b, cudaReal const c)
 {  divVS(a, b, c, 0, 0, a.capacity()); }
 
 
@@ -1306,24 +905,6 @@ inline __host__ void divVS(DeviceArray<cudaComplex>& a,
 // ~~~~~~~~~~~~~~~~~~~~~~
 
 /**
-* Vector exponentiation, a[i] = exp(b[i]), GPU kernel (cudaReal).
-*
-* \param a  output array (LHS)
-* \param b  input array (RHS)
-* \param n  size of arrays
-*/
-__global__ void _expV(cudaReal* a, cudaReal const * b, const int n);
-
-/**
-* Vector exponentiation, a[i] = exp(b[i]), GPU kernel (cudaComplex).
-*
-* \param a  output array (LHS)
-* \param b  input array (RHS)
-* \param n  size of arrays
-*/
-__global__ void _expV(cudaComplex* a, cudaComplex const * b, const int n);
-
-/**
 * Vector exponentiation, a[i] = exp(b[i]), kernel wrapper (cudaReal).
 *
 * \param a  output array (LHS)
@@ -1332,9 +913,8 @@ __global__ void _expV(cudaComplex* a, cudaComplex const * b, const int n);
 * \param beginIdB  index of the first entry to evaluate in array b
 * \param n  the number of entries to evaluate
 */
-__host__ void expV(DeviceArray<cudaReal>& a, 
-                   DeviceArray<cudaReal> const & b,
-                   const int beginIdA, const int beginIdB, const int n);
+void expV(DeviceArray<cudaReal>& a, DeviceArray<cudaReal> const & b,
+          const int beginIdA, const int beginIdB, const int n);
 
 /**
 * Vector exponentiation, a[i] = exp(b[i]), kernel wrapper (cudaReal).
@@ -1342,8 +922,7 @@ __host__ void expV(DeviceArray<cudaReal>& a,
 * \param a  output array (LHS)
 * \param b  input array (RHS)
 */
-inline __host__ void expV(DeviceArray<cudaReal>& a, 
-                          DeviceArray<cudaReal> const & b)
+inline void expV(DeviceArray<cudaReal>& a, DeviceArray<cudaReal> const & b)
 {  expV(a, b, 0, 0, a.capacity()); }
 
 /**
@@ -1355,9 +934,8 @@ inline __host__ void expV(DeviceArray<cudaReal>& a,
 * \param beginIdB  index of the first entry to evaluate in array b
 * \param n  the number of entries to evaluate
 */
-__host__ void expV(DeviceArray<cudaComplex>& a, 
-                   DeviceArray<cudaComplex> const & b,
-                   const int beginIdA, const int beginIdB, const int n);
+void expV(DeviceArray<cudaComplex>& a, DeviceArray<cudaComplex> const & b,
+          const int beginIdA, const int beginIdB, const int n);
 
 /**
 * Vector exponentiation, a[i] = exp(b[i]), kernel wrapper (cudaComplex).
@@ -1365,8 +943,8 @@ __host__ void expV(DeviceArray<cudaComplex>& a,
 * \param a  output array (LHS)
 * \param b  input array (RHS)
 */
-inline __host__ void expV(DeviceArray<cudaComplex>& a, 
-                          DeviceArray<cudaComplex> const & b)
+inline void expV(DeviceArray<cudaComplex>& a, 
+                 DeviceArray<cudaComplex> const & b)
 {  expV(a, b, 0, 0, a.capacity()); }
 
 
@@ -1374,60 +952,6 @@ inline __host__ void expV(DeviceArray<cudaComplex>& a,
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 /**
-* Vector addition in-place, a[i] += b[i], GPU kernel (cudaReal).
-*
-* \param a  output array (LHS)
-* \param b  input array (RHS)
-* \param n  size of arrays
-*/
-__global__ void _addEqV(cudaReal* a, cudaReal const * b, const int n);
-
-/**
-* Vector addition in-place, a[i] += b[i], GPU kernel (cudaComplex).
-*
-* \param a  output array (LHS)
-* \param b  input array (RHS)
-* \param n  size of arrays
-*/
-__global__ void _addEqV(cudaComplex* a, cudaComplex const * b, const int n);
-
-/**
-* Vector addition in-place, a[i] += b[i], GPU kernel (mixed, b = real).
-*
-* \param a  output array (LHS)
-* \param b  input array (RHS)
-* \param n  size of arrays
-*/
-__global__ void _addEqV(cudaComplex* a, cudaReal const * b, const int n);
-
-/**
-* Vector addition in-place, a[i] += b, GPU kernel (cudaReal).
-*
-* \param a  output array (LHS)
-* \param b  input scalar (RHS)
-* \param n  size of arrays
-*/
-__global__ void _addEqS(cudaReal* a, cudaReal const b, const int n);
-
-/**
-* Vector addition in-place, a[i] += b, GPU kernel (cudaComplex).
-*
-* \param a  output array (LHS)
-* \param b  input scalar (RHS)
-* \param n  size of arrays
-*/
-__global__ void _addEqS(cudaComplex* a, cudaComplex const b, const int n);
-
-/**
-* Vector addition in-place, a[i] += b, GPU kernel (mixed, b = real).
-*
-* \param a  output array (LHS)
-* \param b  input scalar (RHS)
-* \param n  size of arrays
-*/
-__global__ void _addEqS(cudaComplex* a, cudaReal const b, const int n);
-
-/**
 * Vector addition in-place, a[i] += b[i], kernel wrapper (cudaReal).
 *
 * \param a  output array (LHS)
@@ -1436,9 +960,8 @@ __global__ void _addEqS(cudaComplex* a, cudaReal const b, const int n);
 * \param beginIdB  index of the first entry to evaluate in array b
 * \param n  the number of entries to evaluate
 */
-__host__ void addEqV(DeviceArray<cudaReal>& a, 
-                     DeviceArray<cudaReal> const & b,
-                     const int beginIdA, const int beginIdB, const int n);
+void addEqV(DeviceArray<cudaReal>& a, DeviceArray<cudaReal> const & b,
+            const int beginIdA, const int beginIdB, const int n);
 
 /**
 * Vector addition in-place, a[i] += b[i], kernel wrapper (cudaReal).
@@ -1446,8 +969,7 @@ __host__ void addEqV(DeviceArray<cudaReal>& a,
 * \param a  output array (LHS)
 * \param b  input array (RHS)
 */
-inline __host__ void addEqV(DeviceArray<cudaReal>& a, 
-                            DeviceArray<cudaReal> const & b)
+inline void addEqV(DeviceArray<cudaReal>& a, DeviceArray<cudaReal> const & b)
 {  addEqV(a, b, 0, 0, a.capacity()); }
 
 /**
@@ -1459,9 +981,8 @@ inline __host__ void addEqV(DeviceArray<cudaReal>& a,
 * \param beginIdB  index of the first entry to evaluate in array b
 * \param n  the number of entries to evaluate
 */
-__host__ void addEqV(DeviceArray<cudaComplex>& a, 
-                     DeviceArray<cudaComplex> const & b,
-                     const int beginIdA, const int beginIdB, const int n);
+void addEqV(DeviceArray<cudaComplex>& a, DeviceArray<cudaComplex> const & b,
+            const int beginIdA, const int beginIdB, const int n);
 
 /**
 * Vector addition in-place, a[i] += b[i], kernel wrapper (cudaComplex).
@@ -1469,8 +990,8 @@ __host__ void addEqV(DeviceArray<cudaComplex>& a,
 * \param a  output array (LHS)
 * \param b  input array (RHS)
 */
-inline __host__ void addEqV(DeviceArray<cudaComplex>& a, 
-                            DeviceArray<cudaComplex> const & b)
+inline void addEqV(DeviceArray<cudaComplex>& a, 
+                   DeviceArray<cudaComplex> const & b)
 {  addEqV(a, b, 0, 0, a.capacity()); }
 
 /**
@@ -1482,9 +1003,8 @@ inline __host__ void addEqV(DeviceArray<cudaComplex>& a,
 * \param beginIdB  index of the first entry to evaluate in array b
 * \param n  the number of entries to evaluate
 */
-__host__ void addEqV(DeviceArray<cudaComplex>& a, 
-                     DeviceArray<cudaReal> const & b,
-                     const int beginIdA, const int beginIdB, const int n);
+void addEqV(DeviceArray<cudaComplex>& a, DeviceArray<cudaReal> const & b,
+            const int beginIdA, const int beginIdB, const int n);
 
 /**
 * Vector addition in-place, a[i] += b[i], kernel wrapper (mixed, b = real).
@@ -1492,8 +1012,8 @@ __host__ void addEqV(DeviceArray<cudaComplex>& a,
 * \param a  output array (LHS)
 * \param b  input array (RHS)
 */
-inline __host__ void addEqV(DeviceArray<cudaComplex>& a, 
-                            DeviceArray<cudaReal> const & b)
+inline void addEqV(DeviceArray<cudaComplex>& a, 
+                   DeviceArray<cudaReal> const & b)
 {  addEqV(a, b, 0, 0, a.capacity()); }
 
 /**
@@ -1504,8 +1024,8 @@ inline __host__ void addEqV(DeviceArray<cudaComplex>& a,
 * \param beginIdA  index of the first entry to evaluate in array a
 * \param n  the number of entries to evaluate
 */
-__host__ void addEqS(DeviceArray<cudaReal>& a, cudaReal const b,
-                     const int beginIdA, const int n);
+void addEqS(DeviceArray<cudaReal>& a, cudaReal const b,
+            const int beginIdA, const int n);
 
 /**
 * Vector addition in-place, a[i] += b, kernel wrapper (cudaReal).
@@ -1513,7 +1033,7 @@ __host__ void addEqS(DeviceArray<cudaReal>& a, cudaReal const b,
 * \param a  output array (LHS)
 * \param b  input scalar (RHS)
 */
-inline __host__ void addEqS(DeviceArray<cudaReal>& a, cudaReal const b)
+inline void addEqS(DeviceArray<cudaReal>& a, cudaReal const b)
 {  addEqS(a, b, 0, a.capacity()); }
 
 /**
@@ -1524,8 +1044,8 @@ inline __host__ void addEqS(DeviceArray<cudaReal>& a, cudaReal const b)
 * \param beginIdA  index of the first entry to evaluate in array a
 * \param n  the number of entries to evaluate
 */
-__host__ void addEqS(DeviceArray<cudaComplex>& a, cudaComplex const b,
-                     const int beginIdA, const int n);
+void addEqS(DeviceArray<cudaComplex>& a, cudaComplex const b,
+            const int beginIdA, const int n);
 
 /**
 * Vector addition in-place, a[i] += b, kernel wrapper (cudaComplex).
@@ -1533,8 +1053,7 @@ __host__ void addEqS(DeviceArray<cudaComplex>& a, cudaComplex const b,
 * \param a  output array (LHS)
 * \param b  input scalar (RHS)
 */
-inline __host__ void addEqS(DeviceArray<cudaComplex>& a, 
-                            cudaComplex const b)
+inline void addEqS(DeviceArray<cudaComplex>& a, cudaComplex const b)
 {  addEqS(a, b, 0, a.capacity()); }
 
 /**
@@ -1545,8 +1064,8 @@ inline __host__ void addEqS(DeviceArray<cudaComplex>& a,
 * \param beginIdA  index of the first entry to evaluate in array a
 * \param n  the number of entries to evaluate
 */
-__host__ void addEqS(DeviceArray<cudaComplex>& a, cudaReal const b,
-                     const int beginIdA, const int n);
+void addEqS(DeviceArray<cudaComplex>& a, cudaReal const b,
+            const int beginIdA, const int n);
 
 /**
 * Vector addition in-place, a[i] += b, kernel wrapper (mixed, b = real).
@@ -1554,7 +1073,7 @@ __host__ void addEqS(DeviceArray<cudaComplex>& a, cudaReal const b,
 * \param a  output array (LHS)
 * \param b  input scalar (RHS)
 */
-inline __host__ void addEqS(DeviceArray<cudaComplex>& a, cudaReal const b)
+inline void addEqS(DeviceArray<cudaComplex>& a, cudaReal const b)
 {  addEqS(a, b, 0, a.capacity()); }
 
 
@@ -1562,60 +1081,6 @@ inline __host__ void addEqS(DeviceArray<cudaComplex>& a, cudaReal const b)
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 /**
-* Vector subtraction in-place, a[i] -= b[i], GPU kernel (cudaReal).
-*
-* \param a  output array (LHS)
-* \param b  input array (RHS)
-* \param n  size of arrays
-*/
-__global__ void _subEqV(cudaReal* a, cudaReal const * b, const int n);
-
-/**
-* Vector subtraction in-place, a[i] -= b[i], GPU kernel (cudaComplex).
-*
-* \param a  output array (LHS)
-* \param b  input array (RHS)
-* \param n  size of arrays
-*/
-__global__ void _subEqV(cudaComplex* a, cudaComplex const * b, const int n);
-
-/**
-* Vector subtraction in-place, a[i] -= b[i], GPU kernel (mixed, b = real).
-*
-* \param a  output array (LHS)
-* \param b  input array (RHS)
-* \param n  size of arrays
-*/
-__global__ void _subEqV(cudaComplex* a, cudaReal const * b, const int n);
-
-/**
-* Vector subtraction in-place, a[i] -= b, GPU kernel (cudaReal).
-*
-* \param a  output array (LHS)
-* \param b  input scalar (RHS)
-* \param n  size of arrays
-*/
-__global__ void _subEqS(cudaReal* a, cudaReal const b, const int n);
-
-/**
-* Vector subtraction in-place, a[i] -= b, GPU kernel (cudaComplex).
-*
-* \param a  output array (LHS)
-* \param b  input scalar (RHS)
-* \param n  size of arrays
-*/
-__global__ void _subEqS(cudaComplex* a, cudaComplex const b, const int n);
-
-/**
-* Vector subtraction in-place, a[i] -= b, GPU kernel (mixed, b = real).
-*
-* \param a  output array (LHS)
-* \param b  input scalar (RHS)
-* \param n  size of arrays
-*/
-__global__ void _subEqS(cudaComplex* a, cudaReal const b, const int n);
-
-/**
 * Vector subtraction in-place, a[i] -= b[i], kernel wrapper (cudaReal).
 *
 * \param a  output array (LHS)
@@ -1624,9 +1089,8 @@ __global__ void _subEqS(cudaComplex* a, cudaReal const b, const int n);
 * \param beginIdB  index of the first entry to evaluate in array b
 * \param n  the number of entries to evaluate
 */
-__host__ void subEqV(DeviceArray<cudaReal>& a, 
-                     DeviceArray<cudaReal> const & b,
-                     const int beginIdA, const int beginIdB, const int n);
+void subEqV(DeviceArray<cudaReal>& a, DeviceArray<cudaReal> const & b,
+            const int beginIdA, const int beginIdB, const int n);
 
 /**
 * Vector subtraction in-place, a[i] -= b[i], kernel wrapper (cudaReal).
@@ -1634,8 +1098,7 @@ __host__ void subEqV(DeviceArray<cudaReal>& a,
 * \param a  output array (LHS)
 * \param b  input array (RHS)
 */
-inline __host__ void subEqV(DeviceArray<cudaReal>& a, 
-                            DeviceArray<cudaReal> const & b)
+inline void subEqV(DeviceArray<cudaReal>& a, DeviceArray<cudaReal> const & b)
 {  subEqV(a, b, 0, 0, a.capacity()); }
 
 /**
@@ -1647,9 +1110,8 @@ inline __host__ void subEqV(DeviceArray<cudaReal>& a,
 * \param beginIdB  index of the first entry to evaluate in array b
 * \param n  the number of entries to evaluate
 */
-__host__ void subEqV(DeviceArray<cudaComplex>& a, 
-                     DeviceArray<cudaComplex> const & b,
-                     const int beginIdA, const int beginIdB, const int n);
+void subEqV(DeviceArray<cudaComplex>& a, DeviceArray<cudaComplex> const & b,
+            const int beginIdA, const int beginIdB, const int n);
 
 /**
 * Vector subtraction in-place, a[i] -= b[i], kernel wrapper (cudaComplex).
@@ -1657,8 +1119,8 @@ __host__ void subEqV(DeviceArray<cudaComplex>& a,
 * \param a  output array (LHS)
 * \param b  input array (RHS)
 */
-inline __host__ void subEqV(DeviceArray<cudaComplex>& a, 
-                            DeviceArray<cudaComplex> const & b)
+inline void subEqV(DeviceArray<cudaComplex>& a, 
+                   DeviceArray<cudaComplex> const & b)
 {  subEqV(a, b, 0, 0, a.capacity()); }
 
 /**
@@ -1670,9 +1132,8 @@ inline __host__ void subEqV(DeviceArray<cudaComplex>& a,
 * \param beginIdB  index of the first entry to evaluate in array b
 * \param n  the number of entries to evaluate
 */
-__host__ void subEqV(DeviceArray<cudaComplex>& a, 
-                     DeviceArray<cudaReal> const & b,
-                     const int beginIdA, const int beginIdB, const int n);
+void subEqV(DeviceArray<cudaComplex>& a, DeviceArray<cudaReal> const & b,
+            const int beginIdA, const int beginIdB, const int n);
 
 /**
 * Vector subtraction in-place, a[i]-=b[i], kernel wrapper (mixed, b = real).
@@ -1680,8 +1141,8 @@ __host__ void subEqV(DeviceArray<cudaComplex>& a,
 * \param a  output array (LHS)
 * \param b  input array (RHS)
 */
-inline __host__ void subEqV(DeviceArray<cudaComplex>& a, 
-                            DeviceArray<cudaReal> const & b)
+inline void subEqV(DeviceArray<cudaComplex>& a, 
+                   DeviceArray<cudaReal> const & b)
 {  subEqV(a, b, 0, 0, a.capacity()); }
 
 /**
@@ -1692,8 +1153,8 @@ inline __host__ void subEqV(DeviceArray<cudaComplex>& a,
 * \param beginIdA  index of the first entry to evaluate in array a
 * \param n  the number of entries to evaluate
 */
-__host__ void subEqS(DeviceArray<cudaReal>& a, cudaReal const b,
-                     const int beginIdA, const int n);
+void subEqS(DeviceArray<cudaReal>& a, cudaReal const b,
+            const int beginIdA, const int n);
 
 /**
 * Vector subtraction in-place, a[i] -= b, kernel wrapper (cudaReal).
@@ -1701,7 +1162,7 @@ __host__ void subEqS(DeviceArray<cudaReal>& a, cudaReal const b,
 * \param a  output array (LHS)
 * \param b  input scalar (RHS)
 */
-inline __host__ void subEqS(DeviceArray<cudaReal>& a, cudaReal const b)
+inline void subEqS(DeviceArray<cudaReal>& a, cudaReal const b)
 {  subEqS(a, b, 0, a.capacity()); }
 
 /**
@@ -1712,8 +1173,8 @@ inline __host__ void subEqS(DeviceArray<cudaReal>& a, cudaReal const b)
 * \param beginIdA  index of the first entry to evaluate in array a
 * \param n  the number of entries to evaluate
 */
-__host__ void subEqS(DeviceArray<cudaComplex>& a, cudaComplex const b,
-                     const int beginIdA, const int n);
+void subEqS(DeviceArray<cudaComplex>& a, cudaComplex const b,
+            const int beginIdA, const int n);
 
 /**
 * Vector subtraction in-place, a[i] -= b, kernel wrapper (cudaComplex).
@@ -1721,8 +1182,7 @@ __host__ void subEqS(DeviceArray<cudaComplex>& a, cudaComplex const b,
 * \param a  output array (LHS)
 * \param b  input scalar (RHS)
 */
-inline __host__ void subEqS(DeviceArray<cudaComplex>& a, 
-                            cudaComplex const b)
+inline void subEqS(DeviceArray<cudaComplex>& a, cudaComplex const b)
 {  subEqS(a, b, 0, a.capacity()); }
 
 /**
@@ -1733,8 +1193,8 @@ inline __host__ void subEqS(DeviceArray<cudaComplex>& a,
 * \param beginIdA  index of the first entry to evaluate in array a
 * \param n  the number of entries to evaluate
 */
-__host__ void subEqS(DeviceArray<cudaComplex>& a, cudaReal const b,
-                     const int beginIdA, const int n);
+void subEqS(DeviceArray<cudaComplex>& a, cudaReal const b,
+            const int beginIdA, const int n);
 
 /**
 * Vector subtraction in-place, a[i] -= b, kernel wrapper (mixed, b = real).
@@ -1742,7 +1202,7 @@ __host__ void subEqS(DeviceArray<cudaComplex>& a, cudaReal const b,
 * \param a  output array (LHS)
 * \param b  input scalar (RHS)
 */
-inline __host__ void subEqS(DeviceArray<cudaComplex>& a, cudaReal const b)
+inline void subEqS(DeviceArray<cudaComplex>& a, cudaReal const b)
 {  subEqS(a, b, 0, a.capacity()); }
 
 
@@ -1750,60 +1210,6 @@ inline __host__ void subEqS(DeviceArray<cudaComplex>& a, cudaReal const b)
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 /**
-* Vector multiplication in-place, a[i] *= b[i], GPU kernel (cudaReal).
-*
-* \param a  output array (LHS)
-* \param b  input array (RHS)
-* \param n  size of arrays
-*/
-__global__ void _mulEqV(cudaReal* a, cudaReal const * b, const int n);
-
-/**
-* Vector multiplication in-place, a[i] *= b[i], GPU kernel (cudaComplex).
-*
-* \param a  output array (LHS)
-* \param b  input array (RHS)
-* \param n  size of arrays
-*/
-__global__ void _mulEqV(cudaComplex* a, cudaComplex const * b, const int n);
-
-/**
-* Vector multiplication in-place, a[i]*=b[i], GPU kernel (mixed, b = real).
-*
-* \param a  output array (LHS)
-* \param b  input array (RHS)
-* \param n  size of arrays
-*/
-__global__ void _mulEqV(cudaComplex* a, cudaReal const * b, const int n);
-
-/**
-* Vector multiplication in-place, a[i] *= b, GPU kernel (cudaReal).
-*
-* \param a  output array (LHS)
-* \param b  input scalar (RHS)
-* \param n  size of arrays
-*/
-__global__ void _mulEqS(cudaReal* a, cudaReal const b, const int n);
-
-/**
-* Vector multiplication in-place, a[i] *= b, GPU kernel (cudaComplex).
-*
-* \param a  output array (LHS)
-* \param b  input scalar (RHS)
-* \param n  size of arrays
-*/
-__global__ void _mulEqS(cudaComplex* a, cudaComplex const b, const int n);
-
-/**
-* Vector multiplication in-place, a[i] *= b, GPU kernel (mixed, b = real).
-*
-* \param a  output array (LHS)
-* \param b  input scalar (RHS)
-* \param n  size of arrays
-*/
-__global__ void _mulEqS(cudaComplex* a, cudaReal const b, const int n);
-
-/**
 * Vector multiplication in-place, a[i] *= b[i], kernel wrapper (cudaReal).
 *
 * \param a  output array (LHS)
@@ -1812,9 +1218,8 @@ __global__ void _mulEqS(cudaComplex* a, cudaReal const b, const int n);
 * \param beginIdB  index of the first entry to evaluate in array b
 * \param n  the number of entries to evaluate
 */
-__host__ void mulEqV(DeviceArray<cudaReal>& a, 
-                     DeviceArray<cudaReal> const & b,
-                     const int beginIdA, const int beginIdB, const int n);
+void mulEqV(DeviceArray<cudaReal>& a, DeviceArray<cudaReal> const & b,
+            const int beginIdA, const int beginIdB, const int n);
 
 /**
 * Vector multiplication in-place, a[i] *= b[i], kernel wrapper (cudaReal).
@@ -1822,8 +1227,8 @@ __host__ void mulEqV(DeviceArray<cudaReal>& a,
 * \param a  output array (LHS)
 * \param b  input array (RHS)
 */
-inline __host__ void mulEqV(DeviceArray<cudaReal>& a, 
-                            DeviceArray<cudaReal> const & b)
+inline void mulEqV(DeviceArray<cudaReal>& a, 
+                   DeviceArray<cudaReal> const & b)
 {  mulEqV(a, b, 0, 0, a.capacity()); }
 
 /**
@@ -1835,9 +1240,8 @@ inline __host__ void mulEqV(DeviceArray<cudaReal>& a,
 * \param beginIdB  index of the first entry to evaluate in array b
 * \param n  the number of entries to evaluate
 */
-__host__ void mulEqV(DeviceArray<cudaComplex>& a, 
-                     DeviceArray<cudaComplex> const & b,
-                     const int beginIdA, const int beginIdB, const int n);
+void mulEqV(DeviceArray<cudaComplex>& a, DeviceArray<cudaComplex> const & b,
+            const int beginIdA, const int beginIdB, const int n);
 
 /**
 * Vector multiplication in-place, a[i]*=b[i], kernel wrapper (cudaComplex).
@@ -1845,8 +1249,8 @@ __host__ void mulEqV(DeviceArray<cudaComplex>& a,
 * \param a  output array (LHS)
 * \param b  input array (RHS)
 */
-inline __host__ void mulEqV(DeviceArray<cudaComplex>& a, 
-                            DeviceArray<cudaComplex> const & b)
+inline void mulEqV(DeviceArray<cudaComplex>& a, 
+                   DeviceArray<cudaComplex> const & b)
 {  mulEqV(a, b, 0, 0, a.capacity()); }
 
 /**
@@ -1858,9 +1262,8 @@ inline __host__ void mulEqV(DeviceArray<cudaComplex>& a,
 * \param beginIdB  index of the first entry to evaluate in array b
 * \param n  the number of entries to evaluate
 */
-__host__ void mulEqV(DeviceArray<cudaComplex>& a, 
-                     DeviceArray<cudaReal> const & b,
-                     const int beginIdA, const int beginIdB, const int n);
+void mulEqV(DeviceArray<cudaComplex>& a, DeviceArray<cudaReal> const & b,
+            const int beginIdA, const int beginIdB, const int n);
 
 /**
 * Vector multiplication in-place, a[i]*=b[i], kernel wrapper (mixed, b=real).
@@ -1868,8 +1271,8 @@ __host__ void mulEqV(DeviceArray<cudaComplex>& a,
 * \param a  output array (LHS)
 * \param b  input array (RHS)
 */
-inline __host__ void mulEqV(DeviceArray<cudaComplex>& a, 
-                            DeviceArray<cudaReal> const & b)
+inline void mulEqV(DeviceArray<cudaComplex>& a, 
+                   DeviceArray<cudaReal> const & b)
 {  mulEqV(a, b, 0, 0, a.capacity()); }
 
 /**
@@ -1880,8 +1283,8 @@ inline __host__ void mulEqV(DeviceArray<cudaComplex>& a,
 * \param beginIdA  index of the first entry to evaluate in array a
 * \param n  the number of entries to evaluate
 */
-__host__ void mulEqS(DeviceArray<cudaReal>& a, cudaReal const b,
-                     const int beginIdA, const int n);
+void mulEqS(DeviceArray<cudaReal>& a, cudaReal const b,
+            const int beginIdA, const int n);
 
 /**
 * Vector multiplication in-place, a[i] *= b, kernel wrapper (cudaReal).
@@ -1889,7 +1292,7 @@ __host__ void mulEqS(DeviceArray<cudaReal>& a, cudaReal const b,
 * \param a  output array (LHS)
 * \param b  input scalar (RHS)
 */
-inline __host__ void mulEqS(DeviceArray<cudaReal>& a, cudaReal const b)
+inline void mulEqS(DeviceArray<cudaReal>& a, cudaReal const b)
 {  mulEqS(a, b, 0, a.capacity()); }
 
 /**
@@ -1900,8 +1303,8 @@ inline __host__ void mulEqS(DeviceArray<cudaReal>& a, cudaReal const b)
 * \param beginIdA  index of the first entry to evaluate in array a
 * \param n  the number of entries to evaluate
 */
-__host__ void mulEqS(DeviceArray<cudaComplex>& a, cudaComplex const b,
-                     const int beginIdA, const int n);
+void mulEqS(DeviceArray<cudaComplex>& a, cudaComplex const b,
+            const int beginIdA, const int n);
 
 /**
 * Vector multiplication in-place, a[i] *= b, kernel wrapper (cudaComplex).
@@ -1909,8 +1312,7 @@ __host__ void mulEqS(DeviceArray<cudaComplex>& a, cudaComplex const b,
 * \param a  output array (LHS)
 * \param b  input scalar (RHS)
 */
-inline __host__ void mulEqS(DeviceArray<cudaComplex>& a, 
-                            cudaComplex const b)
+inline void mulEqS(DeviceArray<cudaComplex>& a, cudaComplex const b)
 {  mulEqS(a, b, 0, a.capacity()); }
 
 /**
@@ -1921,8 +1323,8 @@ inline __host__ void mulEqS(DeviceArray<cudaComplex>& a,
 * \param beginIdA  index of the first entry to evaluate in array a
 * \param n  the number of entries to evaluate
 */
-__host__ void mulEqS(DeviceArray<cudaComplex>& a, cudaReal const b,
-                     const int beginIdA, const int n);
+void mulEqS(DeviceArray<cudaComplex>& a, cudaReal const b,
+            const int beginIdA, const int n);
 
 /**
 * Vector multiplication in-place, a[i]*=b, kernel wrapper (mixed, b = real).
@@ -1930,7 +1332,7 @@ __host__ void mulEqS(DeviceArray<cudaComplex>& a, cudaReal const b,
 * \param a  output array (LHS)
 * \param b  input scalar (RHS)
 */
-inline __host__ void mulEqS(DeviceArray<cudaComplex>& a, cudaReal const b)
+inline void mulEqS(DeviceArray<cudaComplex>& a, cudaReal const b)
 {  mulEqS(a, b, 0, a.capacity()); }
 
 
@@ -1938,42 +1340,6 @@ inline __host__ void mulEqS(DeviceArray<cudaComplex>& a, cudaReal const b)
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 /**
-* Vector division in-place, a[i] /= b[i], GPU kernel (cudaReal).
-*
-* \param a  output array (LHS)
-* \param b  input array (RHS)
-* \param n  size of arrays
-*/
-__global__ void _divEqV(cudaReal* a, cudaReal const * b, const int n);
-
-/**
-* Vector division in-place, a[i] /= b[i], GPU kernel (mixed, b = real).
-*
-* \param a  output array (LHS)
-* \param b  input array (RHS)
-* \param n  size of arrays
-*/
-__global__ void _divEqV(cudaComplex* a, cudaReal const * b, const int n);
-
-/**
-* Vector division in-place, a[i] /= b, GPU kernel (cudaReal).
-*
-* \param a  output array (LHS)
-* \param b  input scalar (RHS)
-* \param n  size of arrays
-*/
-__global__ void _divEqS(cudaReal* a, cudaReal const b, const int n);
-
-/**
-* Vector division in-place, a[i] /= b, GPU kernel (mixed, b = real).
-*
-* \param a  output array (LHS)
-* \param b  input scalar (RHS)
-* \param n  size of arrays
-*/
-__global__ void _divEqS(cudaComplex* a, cudaReal const b, const int n);
-
-/**
 * Vector division in-place, a[i] /= b[i], kernel wrapper (cudaReal).
 *
 * \param a  output array (LHS)
@@ -1982,9 +1348,8 @@ __global__ void _divEqS(cudaComplex* a, cudaReal const b, const int n);
 * \param beginIdB  index of the first entry to evaluate in array b
 * \param n  the number of entries to evaluate
 */
-__host__ void divEqV(DeviceArray<cudaReal>& a, 
-                     DeviceArray<cudaReal> const & b,
-                     const int beginIdA, const int beginIdB, const int n);
+void divEqV(DeviceArray<cudaReal>& a, DeviceArray<cudaReal> const & b,
+            const int beginIdA, const int beginIdB, const int n);
 
 /**
 * Vector division in-place, a[i] /= b[i], kernel wrapper (cudaReal).
@@ -1992,8 +1357,7 @@ __host__ void divEqV(DeviceArray<cudaReal>& a,
 * \param a  output array (LHS)
 * \param b  input array (RHS)
 */
-inline __host__ void divEqV(DeviceArray<cudaReal>& a, 
-                            DeviceArray<cudaReal> const & b)
+inline void divEqV(DeviceArray<cudaReal>& a, DeviceArray<cudaReal> const & b)
 {  divEqV(a, b, 0, 0, a.capacity()); }
 
 /**
@@ -2005,9 +1369,8 @@ inline __host__ void divEqV(DeviceArray<cudaReal>& a,
 * \param beginIdB  index of the first entry to evaluate in array b
 * \param n  the number of entries to evaluate
 */
-__host__ void divEqV(DeviceArray<cudaComplex>& a, 
-                     DeviceArray<cudaReal> const & b,
-                     const int beginIdA, const int beginIdB, const int n);
+void divEqV(DeviceArray<cudaComplex>& a, DeviceArray<cudaReal> const & b,
+            const int beginIdA, const int beginIdB, const int n);
 
 /**
 * Vector division in-place, a[i] /= b[i], kernel wrapper (mixed, b = real).
@@ -2015,8 +1378,8 @@ __host__ void divEqV(DeviceArray<cudaComplex>& a,
 * \param a  output array (LHS)
 * \param b  input array (RHS)
 */
-inline __host__ void divEqV(DeviceArray<cudaComplex>& a, 
-                            DeviceArray<cudaReal> const & b)
+inline void divEqV(DeviceArray<cudaComplex>& a, 
+                   DeviceArray<cudaReal> const & b)
 {  divEqV(a, b, 0, 0, a.capacity()); }
 
 /**
@@ -2027,8 +1390,8 @@ inline __host__ void divEqV(DeviceArray<cudaComplex>& a,
 * \param beginIdA  index of the first entry to evaluate in array a
 * \param n  the number of entries to evaluate
 */
-__host__ void divEqS(DeviceArray<cudaReal>& a, cudaReal const b,
-                     const int beginIdA, const int n);
+void divEqS(DeviceArray<cudaReal>& a, cudaReal const b,
+            const int beginIdA, const int n);
 
 /**
 * Vector division in-place, a[i] /= b, kernel wrapper (cudaReal).
@@ -2036,7 +1399,7 @@ __host__ void divEqS(DeviceArray<cudaReal>& a, cudaReal const b,
 * \param a  output array (LHS)
 * \param b  input scalar (RHS)
 */
-inline __host__ void divEqS(DeviceArray<cudaReal>& a, cudaReal const b)
+inline void divEqS(DeviceArray<cudaReal>& a, cudaReal const b)
 {  divEqS(a, b, 0, a.capacity()); }
 
 /**
@@ -2047,8 +1410,8 @@ inline __host__ void divEqS(DeviceArray<cudaReal>& a, cudaReal const b)
 * \param beginIdA  index of the first entry to evaluate in array a
 * \param n  the number of entries to evaluate
 */
-__host__ void divEqS(DeviceArray<cudaComplex>& a, cudaReal const b,
-                     const int beginIdA, const int n);
+void divEqS(DeviceArray<cudaComplex>& a, cudaReal const b,
+            const int beginIdA, const int n);
 
 /**
 * Vector division in-place, a[i] /= b, kernel wrapper (mixed, b = real).
@@ -2056,7 +1419,7 @@ __host__ void divEqS(DeviceArray<cudaComplex>& a, cudaReal const b,
 * \param a  output array (LHS)
 * \param b  input scalar (RHS)
 */
-inline __host__ void divEqS(DeviceArray<cudaComplex>& a, cudaReal const b)
+inline void divEqS(DeviceArray<cudaComplex>& a, cudaReal const b)
 {  divEqS(a, b, 0, a.capacity()); }
 
 /** @} */

@@ -38,10 +38,10 @@ namespace Rpg {
    * \param c  input array 2 (complex)
    * \param d  input array 3 (real)
    */
-   __host__ void realMulVConjVV(DeviceArray<cudaReal>& a, 
-                                DeviceArray<cudaComplex> const & b,
-                                DeviceArray<cudaComplex> const & c,
-                                DeviceArray<cudaReal> const & d);
+   void realMulVConjVV(DeviceArray<cudaReal>& a, 
+                       DeviceArray<cudaComplex> const & b,
+                       DeviceArray<cudaComplex> const & c,
+                       DeviceArray<cudaReal> const & d);
    
    /**
    * Performs qNew = (4 * (qr2 * expW2) - qr) / 3 elementwise, kernel wrapper
@@ -51,10 +51,10 @@ namespace Rpg {
    * \param qr2  input array 2 (a propagator slice)
    * \param expW2  input array 3 (exp(-W[i]*ds/4) array)
    */
-   __host__ void richardsonEx(DeviceArray<cudaReal>& qNew, 
-                              DeviceArray<cudaReal> const & qr,
-                              DeviceArray<cudaReal> const & qr2, 
-                              DeviceArray<cudaReal> const & expW2);
+   void richardsonEx(DeviceArray<cudaReal>& qNew, 
+                     DeviceArray<cudaReal> const & qr,
+                     DeviceArray<cudaReal> const & qr2, 
+                     DeviceArray<cudaReal> const & expW2);
    
    /**
    * Performs a[i] += b[i] * c[i] * d, kernel wrapper
@@ -64,10 +64,8 @@ namespace Rpg {
    * \param c  input array 2
    * \param d  input scalar
    */
-   __host__ void addEqMulVVc(DeviceArray<cudaReal>& a, 
-                             DeviceArray<cudaReal> const & b,
-                             DeviceArray<cudaReal> const & c, 
-                             cudaReal const d);
+   void addEqMulVVc(DeviceArray<cudaReal>& a, DeviceArray<cudaReal> const & b,
+                    DeviceArray<cudaReal> const & c, cudaReal const d);
 
    /**
    * Block within a branched polymer.

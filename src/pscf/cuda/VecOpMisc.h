@@ -21,16 +21,17 @@ namespace VecOp {
 * Note: this file is included at the end of VecOp.h, so any file that 
 * includes VecOp.h will also include this file.
 *
-* CUDA kernels that perform the vector operations are defined here, as 
-* well as wrapper functions to be called by the host CPU, which call 
-* the kernel internally. The kernels should always be accessed through 
-* the wrapper functions when possible. 
+* The functions defined in this file are wrappers for CUDA kernels that 
+* perform the actual vector operations. The kernels themselves are only 
+* intended to be called through their wrappers, so they are defined in 
+* an anonymous namespace in VecOpMisc.cu.
 *
-* These functions combine 2 or more element-wise vector operations into 
-* a single kernel launch, which will perform the operation much faster
-* than consecutively calling multiple of the functions in VecOp.h. These
-* functions are not intended to be comprehensive. Rather, they are 
-* written and included as needed during the development of other code.
+* The functions defined in this file combine 2 or more element-wise 
+* vector operations into a single kernel launch, which will perform the 
+* operation faster than consecutively calling multiple of the functions 
+* in VecOp.h. These functions are not intended to be comprehensive. 
+* Rather, they are written and included as needed during the development 
+* of other code.
 *
 * The names of these functions follow the same conventions as those in
 * VecOp, using add, sub, mul, div, exp, eq, and combinations thereof to
@@ -60,19 +61,6 @@ namespace VecOp {
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 /**
-* Vector addition w/ coefficient, a[i] = (b[i]*c) + (d[i]*e), GPU kernel.
-*
-* \param a  output array (LHS)
-* \param b  input array 1 (RHS)
-* \param c  input scalar 1 (RHS)
-* \param d  input array 2 (RHS)
-* \param e  input scalar 2 (RHS)
-* \param n  size of arrays
-*/
-__global__ void _addVcVc(cudaReal* a, cudaReal const * b, cudaReal const c, 
-                         cudaReal const * d, cudaReal const e, const int n);
-
-/**
 * Vector addition w/ coefficient, a[i] = (b[i]*c) + (d[i]*e), kernel wrapper.
 *
 * \param a  output array (LHS)
@@ -81,25 +69,9 @@ __global__ void _addVcVc(cudaReal* a, cudaReal const * b, cudaReal const c,
 * \param d  input array 2 (RHS)
 * \param e  input scalar 2 (RHS)
 */
-__host__ void addVcVc(DeviceArray<cudaReal>& a, 
-                      DeviceArray<cudaReal> const & b, cudaReal const c, 
-                      DeviceArray<cudaReal> const & d, cudaReal const e);
-
-/**
-* 3-vector addition w/ coeff, a[i] = (b[i]*c) + (d[i]*e) + (f[i]*g), GPU kernel.
-*
-* \param a  output array (LHS)
-* \param b  input array 1 (RHS)
-* \param c  input scalar 1 (RHS)
-* \param d  input array 2 (RHS)
-* \param e  input scalar 2 (RHS)
-* \param f  input array 3 (RHS)
-* \param g  input scalar 3 (RHS)
-* \param n  size of arrays
-*/
-__global__ void _addVcVcVc(cudaReal* a, cudaReal const * b, cudaReal const c, 
-                           cudaReal const * d, cudaReal const e, 
-                           cudaReal const * f, cudaReal const g, const int n);
+void addVcVc(DeviceArray<cudaReal>& a, 
+             DeviceArray<cudaReal> const & b, cudaReal const c, 
+             DeviceArray<cudaReal> const & d, cudaReal const e);
 
 /**
 * 3-vector add. w/ coeff, a[i] = (b[i]*c) + (d[i]*e) + (f[i]*g), kernel wrapper.
@@ -112,21 +84,10 @@ __global__ void _addVcVcVc(cudaReal* a, cudaReal const * b, cudaReal const c,
 * \param f  input array 3 (RHS)
 * \param g  input scalar 3 (RHS)
 */
-__host__ void addVcVcVc(DeviceArray<cudaReal>& a, 
-                        DeviceArray<cudaReal> const & b, cudaReal const c, 
-                        DeviceArray<cudaReal> const & d, cudaReal const e, 
-                        DeviceArray<cudaReal> const & f, cudaReal const g);
-
-/**
-* Vector addition in-place w/ coefficient, a[i] += b[i] * c, GPU kernel.
-*
-* \param a  output array (LHS)
-* \param b  input array (RHS)
-* \param c  input scalar
-* \param n  size of arrays
-*/
-__global__ void _addEqVc(cudaReal* a, cudaReal const * b, 
-                         cudaReal const c, const int n);
+void addVcVcVc(DeviceArray<cudaReal>& a, 
+               DeviceArray<cudaReal> const & b, cudaReal const c, 
+               DeviceArray<cudaReal> const & d, cudaReal const e, 
+               DeviceArray<cudaReal> const & f, cudaReal const g);
 
 /**
 * Vector addition in-place w/ coefficient, a[i] += b[i] * c, kernel wrapper.
@@ -135,21 +96,8 @@ __global__ void _addEqVc(cudaReal* a, cudaReal const * b,
 * \param b  input array (RHS)
 * \param c  input scalar
 */
-__host__ void addEqVc(DeviceArray<cudaReal>& a, 
-                      DeviceArray<cudaReal> const & b, 
-                      cudaReal const c);
-
-/**
-* Vector subtraction, a[i] = b[i] - c[i] - d, GPU kernel.
-*
-* \param a  output array (LHS)
-* \param b  input array (RHS)
-* \param c  input array (RHS)
-* \param d  input scalar (RHS)
-* \param n  size of arrays
-*/
-__global__ void _subVVS(cudaReal* a, cudaReal const * b, 
-                        cudaReal const * c, cudaReal const d, const int n);
+void addEqVc(DeviceArray<cudaReal>& a, DeviceArray<cudaReal> const & b, 
+             cudaReal const c);
 
 /**
 * Vector subtraction, a[i] = b[i] - c[i] - d, kernel wrapper.
@@ -159,20 +107,8 @@ __global__ void _subVVS(cudaReal* a, cudaReal const * b,
 * \param c  input array (RHS)
 * \param d  input scalar (RHS)
 */
-__host__ void subVVS(DeviceArray<cudaReal>& a, 
-                     DeviceArray<cudaReal> const & b, 
-                     DeviceArray<cudaReal> const & c, cudaReal const d);
-
-/**
-* Vector division in-place w/ coeff., a[i] /= (b[i] * c), GPU kernel.
-*
-* \param a  output array (LHS)
-* \param b  input array (RHS)
-* \param c  input scalar (RHS)
-* \param n  size of arrays
-*/
-__global__ void _divEqVc(cudaComplex* a, cudaReal const * b, 
-                         cudaReal const c, const int n);
+void subVVS(DeviceArray<cudaReal>& a, DeviceArray<cudaReal> const & b, 
+            DeviceArray<cudaReal> const & c, cudaReal const d);
 
 /**
 * Vector division in-place w/ coeff., a[i] /= (b[i] * c), kernel wrapper.
@@ -181,19 +117,8 @@ __global__ void _divEqVc(cudaComplex* a, cudaReal const * b,
 * \param b  input array (RHS)
 * \param c  input scalar (RHS)
 */
-__host__ void divEqVc(DeviceArray<cudaComplex>& a, 
-                      DeviceArray<cudaReal> const & b, cudaReal const c);
-
-/**
-* Vector exponentiation w/ coefficient, a[i] = exp(b[i]*c), GPU kernel.
-*
-* \param a  output array (LHS)
-* \param b  input array (RHS)
-* \param c  input scalar
-* \param n  size of arrays
-*/
-__global__ void _expVc(cudaReal* a, cudaReal const * b, 
-                       cudaReal const c, const int n);
+void divEqVc(DeviceArray<cudaComplex>& a, DeviceArray<cudaReal> const & b, 
+             cudaReal const c);
 
 /**
 * Vector exponentiation w/ coefficient, a[i] = exp(b[i]*c), kernel wrapper.
@@ -202,24 +127,12 @@ __global__ void _expVc(cudaReal* a, cudaReal const * b,
 * \param b  input array (RHS)
 * \param c  input scalar
 */
-__host__ void expVc(DeviceArray<cudaReal>& a, 
-                    DeviceArray<cudaReal> const & b, 
-                    cudaReal const c);
+void expVc(DeviceArray<cudaReal>& a, DeviceArray<cudaReal> const & b, 
+           cudaReal const c);
 
 
 // Pair functions
 // ~~~~~~~~~~~~~~
-
-/**
-* Vector assignment in pairs, a1[i] = b[i] and a2[i] = b[i], CUDA kernel.
-*
-* \param a1  output array 1 (LHS)
-* \param a2  output array 2 (LHS)
-* \param s  shared input array to be assigned to both a1 and a2
-* \param n  size of arrays
-*/
-__global__ void _eqVPair(cudaReal* a1, cudaReal* a2, 
-                         cudaReal const * s, const int n);
 
 /**
 * Vector assignment in pairs, ax[i] = b[i], kernel wrapper.
@@ -228,25 +141,11 @@ __global__ void _eqVPair(cudaReal* a1, cudaReal* a2,
 * \param a2  output array 2 (LHS)
 * \param s  shared input array to be assigned to both a1 and a2
 */
-__host__ void eqVPair(DeviceArray<cudaReal>& a1, DeviceArray<cudaReal>& a2, 
-                      DeviceArray<cudaReal> const & s);
+void eqVPair(DeviceArray<cudaReal>& a1, DeviceArray<cudaReal>& a2, 
+             DeviceArray<cudaReal> const & s);
 
 /**
-* Vec. mul. in pairs, ax[i] = bx[i] * s[i], CUDA kernel.
-* 
-* \param a1  output array 1 (LHS)
-* \param a2  output array 2 (LHS)
-* \param b1  input array 1 (RHS)
-* \param b2  input array 2 (RHS)
-* \param s  shared input array to be multiplied by both a1 and a2
-* \param n  size of arrays
-*/
-__global__ void _mulVVPair(cudaReal* a1, cudaReal * a2, 
-                           cudaReal const * b1, cudaReal const * b2, 
-                           cudaReal const * s, const int n);
-
-/**
-* Vec. mul. in pairs, ax[i] = bx[i] * s[i], kernel wrapper.
+* Vector multiplication in pairs, ax[i] = bx[i] * s[i], kernel wrapper.
 * 
 * \param a1  output array 1 (LHS)
 * \param a2  output array 2 (LHS)
@@ -254,109 +153,90 @@ __global__ void _mulVVPair(cudaReal* a1, cudaReal * a2,
 * \param b2  input array 2 (RHS)
 * \param s  shared input array to be multiplied by both b1 and b2
 */
-__host__ void mulVVPair(DeviceArray<cudaReal>& a1, DeviceArray<cudaReal>& a2, 
-                        DeviceArray<cudaReal> const & b1, 
-                        DeviceArray<cudaReal> const & b2, 
-                        DeviceArray<cudaReal> const & s);
+void mulVVPair(DeviceArray<cudaReal>& a1, DeviceArray<cudaReal>& a2, 
+               DeviceArray<cudaReal> const & b1, 
+               DeviceArray<cudaReal> const & b2, 
+               DeviceArray<cudaReal> const & s);
 
 /**
-* In-place vec. mul. in pairs, ax[i] *= s[i], CUDA kernel
-* 
-* \param a1  output array 1 (LHS)
-* \param a2  output array 2 (LHS)
-* \param s  shared input array to be multiplied by both a1 and a2
-* \param n  size of arrays
-*/
-__global__ void _mulEqVPair(cudaReal* a1, cudaReal* a2, 
-                            cudaReal const * s, const int n);
-
-/**
-* In-place vec. mul. in pairs, ax[i] *= s[i], kernel wrapper
+* In-place vector multiplication in pairs, ax[i] *= s[i], kernel wrapper
 * 
 * \param a1  output array 1 (LHS)
 * \param a2  output array 2 (LHS)
 * \param s  shared input array to be multiplied by both a1 and a2
 */
-__host__ void mulEqVPair(DeviceArray<cudaReal>& a1, 
-                         DeviceArray<cudaReal>& a2, 
-                         DeviceArray<cudaReal> const & s);
+void mulEqVPair(DeviceArray<cudaReal>& a1, DeviceArray<cudaReal>& a2, 
+                DeviceArray<cudaReal> const & s);
 
 
 // Functions of "many" vectors
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 /**
-* Add more than 2 vectors pointwise, GPU kernel.
+* Add an undefined number of vectors pointwise, kernel wrapper.
 *
-* The input const pointer 'vecs' points to an array of const pointers. In
-* other words, this is an array of arrays, where each array is represented
-* by its pointer. The size of vecs is nVecs, and the size of vecs[i] is
-* n (if i < nVecs). These nVecs vectors will be added and the result will
-* be stored in vector 'a'.
+* The input array 'vecs' contains the arrays that will be added together. 
+* The size of vecs determines the number of vectors that will ultimately
+* be added together by the GPU kernel.
 *
 * \param a  output array (LHS)
-* \param vecs  array of pointers to DeviceArrays to be added
-* \param nVecs  number of vectors to be added
-* \param n  size of arrays
+* \param vecs  array of DeviceArrays to be added
 */
-__global__ void _addVMany(cudaReal* a, cudaReal const ** vecs,
-                          const int nVecs, const int n);
+void addVMany(DeviceArray<cudaReal>& a, 
+              DArray<DeviceArray<cudaReal> > const & vecs);
 
 /**
-* Add more than 2 vectors pointwise, kernel wrapper.
+* Add an undefined number of vectors pointwise, kernel wrapper.
 *
 * The input array 'vecs' contains const pointers to each array that will be 
 * added together. The size of vecs determines the number of vectors that
 * will ultimately be added together by the GPU kernel.
 *
+* This version of addVMany is provided for cases in which one needs to add
+* many arrays that are not already stored together in a DArray. The caller 
+* must simply assemble an array of pointers to all of the arrays that should
+* be added, and then pass it to this method.
+*
 * \param a  output array (LHS)
 * \param vecs  array of pointers to DeviceArrays to be added
 */
-__host__ void addVMany(DeviceArray<cudaReal>& a, 
-                       DArray<DeviceArray<cudaReal> const *> const & vecs);
+void addVMany(DeviceArray<cudaReal>& a, 
+              DArray<DeviceArray<cudaReal> const *> const & vecs);
 
 /**
-* Multiply more than 2 vectors pointwise, GPU kernel.
+* Multiply an undefined number of vectors pointwise, kernel wrapper.
 *
-* The input const pointer 'vecs' points to an array of const pointers. In
-* other words, this is an array of arrays, where each array is represented
-* by its pointer. The size of vecs is nVecs, and the size of vecs[i] is
-* n (if i < nVecs). These nVecs vectors will be multiplied and the result 
-* will be stored in vector 'a'.
+* The input array 'vecs' contains the arrays that will be multiplied. 
+* The size of vecs determines the number of vectors that will ultimately
+* be multiplied together by the GPU kernel.
 *
 * \param a  output array (LHS)
-* \param vecs  array of pointers to DeviceArrays to be multiplied
-* \param nVecs  number of vectors to be multiplied
-* \param n  size of arrays
+* \param vecs  array of DeviceArrays to be multiplied
 */
-__global__ void _mulVMany(cudaReal* a, cudaReal const ** vecs,
-                          const int nVecs, const int n);
+void mulVMany(DeviceArray<cudaReal>& a, 
+              DArray<DeviceArray<cudaReal> > const & vecs);
 
 /**
-* Multiply more than 2 vectors pointwise, kernel wrapper.
+* Multiply an undefined number of vectors pointwise, kernel wrapper.
 *
 * The input array 'vecs' contains const pointers to each array that will be 
 * multiplied together. The size of vecs determines the number of vectors
 * that will ultimately be multiplied together by the GPU kernel.
+* 
+* This version of mulVMany is provided for cases in which one needs to 
+* multiply many arrays that are not already stored together in a DArray. 
+* The caller must simply assemble an array of pointers to all of the 
+* arrays that should be multiplied, and then pass it to this method.
 *
 * \param a  output array (LHS)
 * \param vecs  array of pointers to DeviceArrays to be multiplied
 */
-__host__ void mulVMany(DeviceArray<cudaReal>& a, 
-                       DArray<DeviceArray<cudaReal> const *> const & vecs);
+void mulVMany(DeviceArray<cudaReal>& a, 
+              DArray<DeviceArray<cudaReal> const *> const & vecs);
 
 
 // Other useful functions
 // ~~~~~~~~~~~~~~~~~~~~~~
-
-/**
-* Squared norm of complex number, a[i] = norm(b[i])^2, GPU kernel.
-*
-* \param a  output array (LHS)
-* \param b  input array (RHS)
-* \param n  size of arrays
-*/
-__global__ void _sqNormV(cudaReal* a, cudaComplex const * b, const int n);
 
 /**
 * Squared norm of complex number, a[i] = norm(b[i])^2, kernel wrapper.
@@ -364,17 +244,7 @@ __global__ void _sqNormV(cudaReal* a, cudaComplex const * b, const int n);
 * \param a  output array (LHS)
 * \param b  input array (RHS)
 */
-__host__ void sqNormV(DeviceArray<cudaReal>& a, 
-                      DeviceArray<cudaComplex> const & b);
-
-/**
-* Norm of complex number to the 4th power, a[i] = norm(b[i])^4, GPU kernel.
-*
-* \param a  output array (LHS)
-* \param b  input array (RHS)
-* \param n  size of arrays
-*/
-__global__ void _sqSqNormV(cudaReal* a, cudaComplex const * b, const int n);
+void sqNormV(DeviceArray<cudaReal>& a, DeviceArray<cudaComplex> const & b);
 
 /**
 * Norm of complex number to the 4th power, a[i] = norm(b[i])^4, kernel wrapper.
@@ -382,8 +252,7 @@ __global__ void _sqSqNormV(cudaReal* a, cudaComplex const * b, const int n);
 * \param a  output array (LHS)
 * \param b  input array (RHS)
 */
-__host__ void sqSqNormV(DeviceArray<cudaReal>& a, 
-                        DeviceArray<cudaComplex> const & b);
+void sqSqNormV(DeviceArray<cudaReal>& a, DeviceArray<cudaComplex> const & b);
 
 /** @} */
 

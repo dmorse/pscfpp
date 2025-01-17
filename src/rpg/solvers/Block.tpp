@@ -84,10 +84,10 @@ namespace Rpg {
    /*
    * Element-wise calculation of a = real(b * conj(c) * d), kernel wrapper
    */
-   __host__ void realMulVConjVV(DeviceArray<cudaReal>& a, 
-                                DeviceArray<cudaComplex> const & b,
-                                DeviceArray<cudaComplex> const & c,
-                                DeviceArray<cudaReal> const & d) 
+   void realMulVConjVV(DeviceArray<cudaReal>& a, 
+                       DeviceArray<cudaComplex> const & b,
+                       DeviceArray<cudaComplex> const & c,
+                       DeviceArray<cudaReal> const & d) 
    {
       int n = a.capacity();
       UTIL_CHECK(b.capacity() >= n);
@@ -106,10 +106,10 @@ namespace Rpg {
    /*
    * Performs qNew = (4 * (qr2 * expW2) - qr) / 3 elementwise, kernel wrapper
    */
-   __host__ void richardsonEx(DeviceArray<cudaReal>& qNew, 
-                              DeviceArray<cudaReal> const & qr,
-                              DeviceArray<cudaReal> const & qr2, 
-                              DeviceArray<cudaReal> const & expW2) 
+   void richardsonEx(DeviceArray<cudaReal>& qNew, 
+                     DeviceArray<cudaReal> const & qr,
+                     DeviceArray<cudaReal> const & qr2, 
+                     DeviceArray<cudaReal> const & expW2) 
    {
       int n = qNew.capacity();
       UTIL_CHECK(qr.capacity() == n);
@@ -128,10 +128,8 @@ namespace Rpg {
    /*
    * Performs a[i] += b[i] * c[i] * d, kernel wrapper
    */
-   __host__ void addEqMulVVc(DeviceArray<cudaReal>& a, 
-                             DeviceArray<cudaReal> const & b,
-                             DeviceArray<cudaReal> const & c, 
-                             cudaReal const d) 
+   void addEqMulVVc(DeviceArray<cudaReal>& a, DeviceArray<cudaReal> const & b,
+                    DeviceArray<cudaReal> const & c, cudaReal const d) 
    {
       int n = a.capacity();
       UTIL_CHECK(b.capacity() >= n);

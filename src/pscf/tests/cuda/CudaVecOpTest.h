@@ -1226,6 +1226,16 @@ public:
       }
       checkEqualReal(hOutReal, refOutReal);
 
+      DArray<DeviceArray<cudaReal> > inVecs2;
+      inVecs2.allocate(4);
+      inVecs2[0].associate(dInReal, 0, dInReal.capacity());
+      inVecs2[1].associate(dInReal2, 0, dInReal2.capacity());
+      inVecs2[2].associate(dInReal, 0, dInReal.capacity());
+      inVecs2[3].associate(dInReal2, 0, dInReal2.capacity());
+      VecOp::addVMany(dOutReal, inVecs2);
+      hOutReal = dOutReal;
+      checkEqualReal(hOutReal, refOutReal);
+
       // ~~~ Test mulVMany ~~~
       VecOp::mulVMany(dOutReal, inVecs);
       hOutReal = dOutReal;
@@ -1233,6 +1243,10 @@ public:
          refOutReal[i] = refInReal[i] * refInReal[i] * 
                          refInReal2[i] * refInReal2[i];
       }
+      checkEqualReal(hOutReal, refOutReal);
+
+      VecOp::mulVMany(dOutReal, inVecs2);
+      hOutReal = dOutReal;
       checkEqualReal(hOutReal, refOutReal);
 
       // ~~~ Test sqNormV ~~~
