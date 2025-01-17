@@ -42,7 +42,7 @@ namespace Rpg {
    * Set unit cell dimensions in all solvers.
    */ 
    template <int D>
-   void Polymer<D>::setupUnitCell(UnitCell<D> const & unitCell, const WaveList<D>& wavelist)
+   void Polymer<D>::setupUnitCell(UnitCell<D> const & unitCell, WaveList<D>& wavelist)
    {
       nParams_ = unitCell.nParameter();
       for (int j = 0; j < nBlock(); ++j) {

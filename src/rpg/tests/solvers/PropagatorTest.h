@@ -179,7 +179,6 @@ public:
       // Construct wavelist 
       WaveList<1> wavelist;
       wavelist.allocate(mesh, unitCell);
-      wavelist.computeAll();
 
       block.setupUnitCell(unitCell, wavelist);
       block.setupSolver(w);
@@ -225,7 +224,6 @@ public:
       // Construct wavelist 
       WaveList<2> wavelist;
       wavelist.allocate(mesh, unitCell);
-      wavelist.computeAll();
 
       block.setupUnitCell(unitCell, wavelist);
       block.setupSolver(w);
@@ -272,7 +270,6 @@ public:
       // Construct wavelist 
       WaveList<3> wavelist;
       wavelist.allocate(mesh, unitCell);
-      wavelist.computeAll();
 
       block.setupUnitCell(unitCell, wavelist);
       block.setupSolver(w);
@@ -317,7 +314,6 @@ public:
       // Construct wavelist 
       WaveList<1> wavelist;
       wavelist.allocate(mesh, unitCell);
-      wavelist.computeAll();
 
       block.setupUnitCell(unitCell, wavelist);
       block.setupSolver(w);
@@ -410,7 +406,6 @@ public:
       // Construct wavelist 
       WaveList<2> wavelist;
       wavelist.allocate(mesh, unitCell);
-      wavelist.computeAll();
 
       block.setupUnitCell(unitCell, wavelist);
       block.setupSolver(w);
@@ -513,7 +508,6 @@ public:
       // Construct wavelist 
       WaveList<3> wavelist;
       wavelist.allocate(mesh, unitCell);
-      wavelist.computeAll();
 
       block.setupUnitCell(unitCell, wavelist);
       block.setupSolver(w);

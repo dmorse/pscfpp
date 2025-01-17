@@ -73,7 +73,7 @@ namespace Rpg
 
    template <int D>
    void Mixture<D>::setupUnitCell(UnitCell<D> const & unitCell, 
-                                  WaveList<D> const& wavelist)
+                                  WaveList<D> & wavelist)
    {
       nUnitCellParams_ = unitCell.nParameter();
       for (int i = 0; i < nPolymer(); ++i) {

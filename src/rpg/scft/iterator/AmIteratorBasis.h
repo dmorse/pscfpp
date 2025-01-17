@@ -171,10 +171,6 @@ namespace Rpg
       */
       void outputToLog();
 
-      // --- Private member functions specific to this implementation --- 
-      
-      cudaReal findAverage(cudaReal * const field, int n);
-
    };
 
 } // namespace Rpg

@@ -10,7 +10,6 @@
 
 #include "Block.h"
 #include <pscf/cuda/GpuResources.h>
-#include <prdc/crystal/shiftToMinimum.h>
 #include <pscf/mesh/Mesh.h>
 #include <pscf/mesh/MeshIterator.h>
 
@@ -154,10 +153,10 @@ namespace Rpg {
    */
    template <int D>
    Block<D>::Block()
-    : meshPtr_(0),
-      fftPtr_(0),
-      unitCellPtr_(0),
-      waveListPtr_(0),
+    : meshPtr_(nullptr),
+      fftPtr_(nullptr),
+      unitCellPtr_(nullptr),
+      waveListPtr_(nullptr),
       kMeshDimensions_(0),
       kSize_(0),
       ds_(0.0),
@@ -312,7 +311,7 @@ namespace Rpg {
    */
    template <int D>
    void Block<D>::setupUnitCell(const UnitCell<D>& unitCell, 
-                                const WaveList<D>& wavelist)
+                                WaveList<D>& wavelist)
    {
       nParams_ = unitCell.nParameter();
 
@@ -342,7 +341,11 @@ namespace Rpg {
       UTIL_CHECK(isAllocated_);
       UTIL_CHECK(unitCellPtr_);
       UTIL_CHECK(unitCellPtr_->isInitialized());
-      UTIL_CHECK(waveListPtr_->hasMinimumImages());
+      
+      // Calculate kSq if necessary
+      if (!waveListPtr_->hasKSq()) {
+         waveListPtr_->computeKSq();
+      }
       
       double factor = -1.0*kuhn()*kuhn()*ds_/6.0;
 
@@ -472,7 +475,11 @@ namespace Rpg {
       UTIL_CHECK(mesh().dimensions() == fft().meshDimensions());
       UTIL_CHECK(propagator(0).isSolved());
       UTIL_CHECK(propagator(1).isSolved());
-      UTIL_CHECK(waveListPtr_->hasMinimumImages());
+
+      // Calculate dKSq if necessary
+      if (!waveListPtr_->hasdKSq()) {
+         waveListPtr_->computedKSq();
+      }
 
       // Workspace variables
       double dels, normal, increment;

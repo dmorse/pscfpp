@@ -12,7 +12,7 @@
 
 #include <pscf/mesh/Mesh.h>
 #include <pscf/math/IntVec.h>
-#include <pscf/cuda/DeviceArray.tpp> // tpp needed to use implicit instantiation
+#include <pscf/cuda/DeviceArray.h> 
 
 #include <util/containers/DArray.h>
 
@@ -29,8 +29,10 @@ namespace Rpg {
    * In particular, minimum images, square norms of wavevectors (kSq), and 
    * derivatives of the square norms of wavevectors with respect to the 
    * lattice parameters (dKSq) are calculated and stored by this class. 
-   * These properties will generally need to be updated any time the lattice
-   * parameters of the unit cell change.
+   * Any time the lattice parameters change the updateUnitCell() method 
+   * should be called, which will effectively reset the WaveList object so
+   * that the wavevector properties will need to be recalculated before 
+   * being used.
    */
    template <int D>
    class WaveList
@@ -56,17 +58,19 @@ namespace Rpg {
       void allocate(Mesh<D> const & m, UnitCell<D> const & c);
 
       /**
-      * Compute minimum images (if necessary), kSq, and dKSq arrays.
+      * Reset internal data assuming that lattice parameters have changed.
+      * 
+      * Sets hasKSq_ and hasdKSq_ to false, and sets hasMinimumImages_ to
+      * false if hasVariableAngle == true.
       */
-      void computeAll();
+      void updateUnitCell();
 
       /**
       * Compute minimum images of wavevectors. (Also calculates kSq.)
       *
-      * This should be called once, after the unit cell is initialized. 
       * The minimum images may change if a lattice angle in the unit cell 
       * is changed, so this method should be called whenever such changes
-      * occur. The method canMinImagesChange() identifies whether the
+      * occur. The method hasVariableAngle() identifies whether the
       * minimum images may change under changes in the lattice parameters.
       * 
       * In the process of computing the minimum images, the square norm
@@ -79,17 +83,11 @@ namespace Rpg {
 
       /**
       * Compute sq. norm |k|^2 for all wavevectors, using existing min images.
-      * 
-      * Should be called each time the lattice parameters are changed, 
-      * unless computeMinimumImages is called, in which case this method
-      * is not necessary.
       */
       void computeKSq();
 
       /**
       * Compute derivatives of |k|^2 w/ respect to unit cell parameters.
-      *
-      * Should be called each time the lattice parameters are changed.
       */
       void computedKSq();
 
@@ -127,13 +125,23 @@ namespace Rpg {
       RField<D> const & dKSq(int i) const;
 
       /**
-      * Can the minimum images change if the lattice parameters change?
+      * Get the implicitInverse array by reference.
+      * 
+      * This array is defined on a k-grid mesh, with a boolean value for 
+      * each gridpoint. The boolean represents whether the inverse of the
+      * wave at the given gridpoint is an implicit wave. Implicit here is
+      * used to mean any wave that is outside the bounds of the k-grid.
+      */
+      DeviceArray<bool> const & implicitInverse() const;
+
+      /**
+      * Does this unit cell have an angle that can change?
       * 
       * The minimum images can only change if one of the lattice parameters
       * is an angle that may vary. Therefore, this method checks the crystal
       * system and returns true if there are any angles that may vary.
       */ 
-      bool canMinImagesChange() const;
+      bool hasVariableAngle() const;
 
       /**
       * Has memory been allocated for arrays?
@@ -146,6 +154,18 @@ namespace Rpg {
       */ 
       bool hasMinimumImages() const
       {  return hasMinimumImages_; }
+
+      /**
+      * Has the kSq array been computed?
+      */ 
+      bool hasKSq() const
+      {  return hasKSq_; }
+
+      /**
+      * Has the dKSq array been computed?
+      */ 
+      bool hasdKSq() const
+      {  return hasdKSq_; }
 
    private:
 
@@ -169,7 +189,7 @@ namespace Rpg {
       DArray<RField<D> > dKSqSlices_;
 
       /// Array indicating whether a given gridpoint has an implicit partner
-      DeviceArray<bool> hasPartner_;
+      DeviceArray<bool> implicitInverse_;
 
       /// Dimensions of the mesh in reciprocal space.
       IntVec<D> kMeshDimensions_;
@@ -182,6 +202,12 @@ namespace Rpg {
 
       /// Have minimum images been computed?
       bool hasMinimumImages_;
+
+      /// Has the kSq array been computed?
+      bool hasKSq_;
+
+      /// Has the dKSq array been computed?
+      bool hasdKSq_;
 
       /// Pointer to associated UnitCell<D> object
       UnitCell<D> const * unitCellPtr_;
@@ -202,22 +228,42 @@ namespace Rpg {
    // Get the array of minimum images on the device by reference.
    template <int D>
    inline DeviceArray<int> const & WaveList<D>::minImages() const
-   {  return minImages_; }
+   {  
+      UTIL_CHECK(hasMinimumImages_);
+      return minImages_; 
+   }
    
    // Get the kSq array on the device by reference.
    template <int D>
    inline RField<D> const & WaveList<D>::kSq() const
-   {  return kSq_; }
+   {  
+      UTIL_CHECK(hasKSq_);
+      return kSq_; 
+   }
 
    // Get the full dKSq array on the device by reference.
    template <int D>
    inline DeviceArray<cudaReal> const & WaveList<D>::dKSq() const
-   {  return dKSq_; }
+   {  
+      UTIL_CHECK(hasdKSq_);
+      return dKSq_; 
+   }
 
    // Get a slice of the dKSq array on the device by reference.
    template <int D>
    inline RField<D> const & WaveList<D>::dKSq(int i) const
-   {  return dKSqSlices_[i]; }
+   {  
+      UTIL_CHECK(hasdKSq_);
+      return dKSqSlices_[i];
+   }
+
+   // Get the implicitInverse array by reference.
+   template <int D>
+   inline DeviceArray<bool> const & WaveList<D>::implicitInverse() const
+   {  
+      UTIL_CHECK(isAllocated_);
+      return implicitInverse_;
+   }
 
    #ifndef RPG_WAVE_LIST_TPP
    // Suppress implicit instantiation

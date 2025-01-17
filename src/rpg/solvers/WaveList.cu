@@ -15,11 +15,11 @@ namespace Rpg
 
    // Explicit specializations
    template <>
-   bool WaveList<1>::canMinImagesChange() const
+   bool WaveList<1>::hasVariableAngle() const
    {  return false; }
 
    template <>
-   bool WaveList<2>::canMinImagesChange() const
+   bool WaveList<2>::hasVariableAngle() const
    {
       UTIL_CHECK(unitCell().lattice() != UnitCell<2>::Null);
       if ((unitCell().lattice() == UnitCell<2>::Oblique) ||
@@ -31,7 +31,7 @@ namespace Rpg
    }
 
    template <>
-   bool WaveList<3>::canMinImagesChange() const
+   bool WaveList<3>::hasVariableAngle() const
    {
       UTIL_CHECK(unitCell().lattice() != UnitCell<3>::Null);
       if ((unitCell().lattice() == UnitCell<3>::Monoclinic) ||

@@ -35,7 +35,6 @@ namespace Rpg {
       setClassName("Domain"); 
       fieldIo_.associate(mesh_, fft_,
                          lattice_, hasGroup_, groupName_, group_, basis_);
-      fieldIo_.setWaveList(waveList_);
    }
 
    /*
@@ -163,7 +162,7 @@ namespace Rpg {
       unitCell_ = unitCell;
 
       UTIL_CHECK(waveList().isAllocated());
-      waveList().computeAll(); // compute min images, ksq, and dksq
+      waveList().updateUnitCell(); // reset wavelist
 
       if (hasGroup_ && !basis_.isInitialized()) {
          makeBasis();
@@ -185,7 +184,7 @@ namespace Rpg {
       unitCell_.set(lattice, parameters);
 
       UTIL_CHECK(waveList().isAllocated());
-      waveList().computeAll(); // compute min images, ksq, and dksq
+      waveList().updateUnitCell(); // reset wavelist
 
       if (hasGroup_ && !basis_.isInitialized()) {
          makeBasis();
@@ -203,7 +202,7 @@ namespace Rpg {
       unitCell_.setParameters(parameters);
       
       UTIL_CHECK(waveList().isAllocated());
-      waveList().computeAll(); // compute min images, ksq, and dksq
+      waveList().updateUnitCell(); // reset wavelist
 
       if (hasGroup_ && !basis_.isInitialized()) {
          makeBasis();

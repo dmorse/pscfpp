@@ -113,7 +113,7 @@ namespace Rpg {
       * \param waveList  container for properties of wavevectors (input)
       */
       void setupUnitCell(UnitCell<D> const & unitCell,
-                         WaveList<D> const & waveList);
+                         WaveList<D> & waveList);
 
       /**
       * Setup parameters that depend on the unit cell.
@@ -276,17 +276,17 @@ namespace Rpg {
       /// Array of elements containing exp(-K^2 b^2 ds/6) on k-grid on host
       HostDArray<cudaReal> expKsq2_h_;
 
-      /// Pointer to associated Mesh<D> object.
+      /// Const pointer to associated Mesh<D> object.
       Mesh<D> const * meshPtr_;
 
-      /// Pointer to associated FFT<D> object.
+      /// Const pointer to associated FFT<D> object.
       FFT<D> const * fftPtr_;
 
-      /// Pointer to associated UnitCell<D> object.
-      UnitCell<D> const* unitCellPtr_;
+      /// Const pointer to associated UnitCell<D> object.
+      UnitCell<D> const * unitCellPtr_;
 
       /// Pointer to associated WaveList<D> object.
-      WaveList<D> const * waveListPtr_;
+      WaveList<D> * waveListPtr_;
 
       /// Dimensions of wavevector mesh in real-to-complex transform
       IntVec<D> kMeshDimensions_;

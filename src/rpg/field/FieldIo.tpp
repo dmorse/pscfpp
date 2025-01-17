@@ -10,7 +10,6 @@
 
 #include "FieldIo.h"
 
-#include <rpg/solvers/WaveList.h>
 #include <rpg/field/HostDArrayComplex.h>
 
 #include <pscf/math/complex.h>
@@ -42,8 +41,7 @@ namespace Rpg {
    */
    template <int D>
    FieldIo<D>::FieldIo()
-    : FieldIoReal< D, Prdc::Cuda::RField<D>, Prdc::Cuda::RFieldDft<D>, Prdc::Cuda::FFT<D> >(),
-      waveListPtr_(0)
+    : FieldIoReal< D, Prdc::Cuda::RField<D>, Prdc::Cuda::RFieldDft<D>, Prdc::Cuda::FFT<D> >()
    {}
 
    /*
@@ -52,28 +50,6 @@ namespace Rpg {
    template <int D>
    FieldIo<D>::~FieldIo()
    {}
-  
-   /*
-   * Create an association with a WaveList.
-   */ 
-   template <int D>
-   void FieldIo<D>::setWaveList(WaveList<D>& waveList)
-   {  waveListPtr_ = &waveList; }
-
-   template <int D>
-   void FieldIo<D>::readFieldHeader(std::istream& in,
-                                    int& nMonomer,
-                                    UnitCell<D>& unitCell,
-                                    bool& isSymmetric)
-   {
-      Base::readFieldHeader(in, nMonomer, unitCell, isSymmetric);
-
-      // Initialize WaveList minimum images if needed
-      UTIL_CHECK(waveList().isAllocated());
-      if (!waveList().hasMinimumImages()) {
-         waveList().computeMinimumImages();
-      }
-   }
 
    /*
    * Read an array of fields in r-grid format.

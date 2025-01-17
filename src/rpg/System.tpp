@@ -552,7 +552,6 @@ namespace Rpg {
          readFieldHeader(filename);
       }
       UTIL_CHECK(domain_.unitCell().isInitialized());
-      UTIL_CHECK(domain_.waveList().hasMinimumImages());
       UTIL_CHECK(domain_.basis().isInitialized());
       UTIL_CHECK(domain_.basis().nBasis() > 0);
       if (!isAllocatedBasis_) {
@@ -565,7 +564,7 @@ namespace Rpg {
       hasFreeEnergy_ = false;
 
       // Update wavelist and mixture
-      domain_.waveList().computeAll();
+      domain_.waveList().updateUnitCell();
       mixture_.setupUnitCell(domain_.unitCell(), domain_.waveList());
    }
 
@@ -579,7 +578,6 @@ namespace Rpg {
          readFieldHeader(filename);
       }
       UTIL_CHECK(domain_.unitCell().isInitialized());
-      UTIL_CHECK(domain_.waveList().hasMinimumImages());
       if (domain_.hasGroup() && !isAllocatedBasis_) {
          UTIL_CHECK(domain_.basis().isInitialized());
          UTIL_CHECK(domain_.basis().nBasis() > 0);
@@ -592,7 +590,7 @@ namespace Rpg {
       hasFreeEnergy_ = false;
 
       // Update waveList and mixture
-      domain_.waveList().computeAll();
+      domain_.waveList().updateUnitCell();
       mixture_.setupUnitCell(domain_.unitCell(), domain_.waveList());
    }
 
@@ -616,7 +614,6 @@ namespace Rpg {
          readFieldHeader(filename);
       }
       UTIL_CHECK(domain_.unitCell().isInitialized());
-      UTIL_CHECK(domain_.waveList().hasMinimumImages());
       UTIL_CHECK(domain_.basis().isInitialized());
       if (!isAllocatedBasis_) {
          allocateFieldsBasis();
@@ -652,7 +649,7 @@ namespace Rpg {
       hasFreeEnergy_ = false;
 
       // Update waveList and mixture
-      domain_.waveList().computeAll();
+      domain_.waveList().updateUnitCell();
       mixture_.setupUnitCell(domain_.unitCell(), domain_.waveList());
    }
 
@@ -1549,7 +1546,6 @@ namespace Rpg {
       UTIL_CHECK(domain_.unitCell().nParameter() > 0);
       UTIL_CHECK(domain_.unitCell().lattice() != UnitCell<D>::Null);
       UTIL_CHECK(domain_.unitCell().isInitialized());
-      UTIL_CHECK(domain_.waveList().hasMinimumImages());
       if (domain_.hasGroup()) {
          UTIL_CHECK(domain_.basis().isInitialized());
          UTIL_CHECK(domain_.basis().nBasis() > 0);

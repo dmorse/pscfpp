@@ -87,7 +87,7 @@ namespace Rpg {
       * \param wavelist precomputed wavevector data (input)
       */ 
       void setupUnitCell(UnitCell<D> const & unitCell, 
-                         WaveList<D> const & wavelist);
+                         WaveList<D> & wavelist);
       
       /**
       * Set unit cell parameters used in solver.

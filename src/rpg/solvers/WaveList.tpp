@@ -10,7 +10,6 @@
 
 #include "WaveList.h"
 #include <pscf/cuda/GpuResources.h>
-#include <pscf/cuda/HostDArray.tpp>  // tpp needed for implicit instantiation
 #include <pscf/mesh/MeshIterator.h>
 
 namespace Pscf {
@@ -356,7 +355,7 @@ namespace Rpg
       template <int D>
       __global__ void _computedKSq(cudaReal* dKSq, int const * waveBz,
                                    cudaReal const * dkkBasis,
-                                   bool const * hasPartner, 
+                                   bool const * implicitInverse, 
                                    int const nParams, int const kSize) 
       {
          // Size of dKSq is kSize * nParams
@@ -396,7 +395,7 @@ namespace Rpg
                   } // D
                } // D
 
-               if (hasPartner[i]) { // if element i's partner is implicit
+               if (implicitInverse[i]) { // if element i's inverse is implicit
                   dKSqVal *= 2;
                }
 
@@ -412,6 +411,8 @@ namespace Rpg
     : kSize_(0),
       isAllocated_(false),
       hasMinimumImages_(false),
+      hasKSq_(false),
+      hasdKSq_(false),
       unitCellPtr_(nullptr),
       meshPtr_(nullptr)
    {}
@@ -452,42 +453,43 @@ namespace Rpg
          dKSqSlices_[i].associate(dKSq_, i*kSize_, kMeshDimensions_);
       }
 
-      // Set up hasPartner_ array (only depends on kMeshDimensions_)
-      hasPartner_.allocate(kSize_);
+      // Set up implicitInverse_ array (only depends on mesh dimensions)
+      implicitInverse_.allocate(kSize_);
       MeshIterator<D> kItr(kMeshDimensions_);
-      HostDArray<bool> hasPartner_h(kSize_);
-      int partnerId;
+      HostDArray<bool> implicitInverse_h(kSize_);
+      int inverseId;
       for (kItr.begin(); !kItr.atEnd(); ++kItr) {
          if (kItr.position(D-1) == 0) {
-            partnerId = 0;
+            inverseId = 0;
          } else {
-            partnerId = mesh().dimension(D-1) - kItr.position(D-1);
+            inverseId = mesh().dimension(D-1) - kItr.position(D-1);
          }
-         if (partnerId > kMeshDimensions_[D-1]) {
-            hasPartner_h[kItr.rank()] = true;
+         if (inverseId > kMeshDimensions_[D-1]) {
+            implicitInverse_h[kItr.rank()] = true;
          } else {
-            hasPartner_h[kItr.rank()] = false;
+            implicitInverse_h[kItr.rank()] = false;
          }
       }
-      hasPartner_ = hasPartner_h;
+      implicitInverse_ = implicitInverse_h; // transfer to device memory
 
       isAllocated_ = true;
    }
 
    template <int D>
-   void WaveList<D>::computeAll()
+   void WaveList<D>::updateUnitCell()
    {
-      if ((canMinImagesChange()) || (!hasMinimumImages())) {
-         computeMinimumImages();
-      } else {
-         computeKSq();
+      if (hasVariableAngle()) {
+         hasMinimumImages_ = false;
       }
-      computedKSq();
+      hasKSq_ = false;
+      hasdKSq_ = false;
    }
 
    template <int D>
    void WaveList<D>::computeMinimumImages() 
    {
+      if (hasMinimumImages_) return; // min images already calculated
+
       // Precondition
       UTIL_CHECK(isAllocated_);
       UTIL_CHECK(unitCell().lattice() != UnitCell<D>::Null);
@@ -552,13 +554,22 @@ namespace Rpg
           meshDims.cArray(), kSize_);
       
       hasMinimumImages_ = true;
+      hasKSq_ = true;
    }
 
    template <int D>
    void WaveList<D>::computeKSq() 
    {
+      if (hasKSq_) return; // kSq already calculated
+
+      if (!hasMinimumImages_) {
+         computeMinimumImages(); // compute both min images and kSq
+         return;
+      }
+
+      // If this point is reached, calculate kSq using _computeKSq kernel
+
       // Precondition
-      UTIL_CHECK(hasMinimumImages_);
       UTIL_CHECK(unitCell().nParameter() > 0);
       UTIL_CHECK(unitCell().lattice() != UnitCell<D>::Null);
       UTIL_CHECK(unitCell().isInitialized());
@@ -583,13 +594,21 @@ namespace Rpg
       _computeKSq<D><<<nBlocks, nThreads>>>
             (kSq_.cArray(), minImages_.cArray(), kBasis.cArray(), 
              unitCell().nParameter(), kSize_);
+      
+      hasKSq_ = true;
    }
 
    template <int D>
    void WaveList<D>::computedKSq()
    {
+      if (hasdKSq_) return; // dKSq already calculated
+
+      // Compute minimum images if needed
+      if (!hasMinimumImages_) {
+         computeMinimumImages(); 
+      }
+
       // Precondition
-      UTIL_CHECK(hasMinimumImages_);
       UTIL_CHECK(unitCell().nParameter() > 0);
       UTIL_CHECK(unitCell().lattice() != UnitCell<D>::Null);
       UTIL_CHECK(unitCell().isInitialized());
@@ -620,7 +639,9 @@ namespace Rpg
       size_t sz = sizeof(cudaReal)*dkkBasis.capacity();
       _computedKSq<D><<<nBlocks, nThreads, sz>>>
          (dKSq_.cArray(), minImages_.cArray(), dkkBasis.cArray(), 
-          hasPartner_.cArray(), unitCell().nParameter(), kSize_);
+          implicitInverse_.cArray(), unitCell().nParameter(), kSize_);
+      
+      hasdKSq_ = true;
    }
 
 }

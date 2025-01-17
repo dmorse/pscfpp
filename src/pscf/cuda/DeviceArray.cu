@@ -11,5 +11,7 @@ namespace Pscf {
 
    template class DeviceArray<cudaReal>;
    template class DeviceArray<cudaComplex>;
+   template class DeviceArray<int>;
+   template class DeviceArray<bool>;
 
 }
