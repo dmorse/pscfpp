@@ -3,7 +3,7 @@
 
 #include <rpc/fts/ramp/Ramp.h>           // base class
 #include <rpc/fts/ramp/RampParameter.h>  // member (templ parameter)
-#include <util/containers/DArray.h>           // member (template)
+#include <util/containers/DArray.h>      // member (template)
 
 namespace Pscf {
 namespace Rpc {
@@ -66,6 +66,7 @@ namespace Rpc {
    protected:
 
       using Ramp<D>::nStep_;
+      using Ramp<D>::simulator;
 
    private:
 

@@ -74,6 +74,12 @@ namespace Rpc {
       for (int i = 0; i < nParameter_; ++i) {
          newVal = parameters_[i].initial() + s*parameters_[i].change();
          parameters_[i].update(newVal);
+         
+         // Update chiEvals and chiEvecs if paramter is chi
+         if (parameters_[i].type() == "chi") {
+            simulator().analyzeChi();
+         }
+         
       }
    }
    

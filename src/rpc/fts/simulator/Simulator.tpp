@@ -439,7 +439,7 @@ namespace Rpc {
             Log::file() << chiEvecs_(i, j) << "   ";
          }
          Log::file() << "]\n";
-         Log::file() << " sc[i] = " << sc_{i] << std::endl;
+         Log::file() << " sc[i] = " << sc_[i] << std::endl;
       }
       #endif
 
