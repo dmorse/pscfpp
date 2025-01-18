@@ -18,7 +18,7 @@ namespace Pscf {
    /**
    * Return the real part of a complex number.
    *
-   * \ingroup Pscf_Cpu_Complex_Module
+   * \ingroup Pscf_Math_Complex_Module
    *
    * \param a complex argument (input)
    */

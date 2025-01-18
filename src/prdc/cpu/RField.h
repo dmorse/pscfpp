@@ -31,6 +31,11 @@ namespace Cpu {
    public:
 
       /**
+      * Type of each array element.
+      */
+      typedef double ElementType;
+
+      /**
       * Default constructor.
       */
       RField();

@@ -36,6 +36,11 @@ namespace Pscf {
    public:
 
       /**
+      * Data type of each element in array.
+      */
+      typedef Data ElementType;
+
+      /**
       * Default constructor.
       */
       DeviceDArray();
