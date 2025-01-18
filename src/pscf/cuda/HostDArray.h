@@ -42,6 +42,11 @@ namespace Pscf {
    public:
 
       /**
+      * Data type of each element.
+      */
+      typedef Data ElementType;
+
+      /**
       * Default constructor.
       */
       HostDArray();

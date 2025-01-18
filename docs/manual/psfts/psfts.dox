@@ -6,26 +6,26 @@
 
 The pscf_pc and pscf_pg programs can both be used to perform stochastic 
 field theoretic simulation (FTS) calculations in a partial saddle-point 
-(PS) approximation. Either of these programs can use either Brownian 
-dynamics (BD) or Monte Carlo (MC) sampling algorithms. The partial 
-saddle-point approximation for field theoretic simulation (PS-FTS) 
-yields a statistical ensemble for real valued monomer chemical potential 
-fields ("w fields") in which each field configuration is assigned a 
-real-valued statistical weight. The resulting theory yields fields that 
-tend to fluctuate around an SCFT solution when applied to systems of 
-very long, strongly overlapping polymers, corresponding to large values
-of the invariant degrees of polymerization \f$ \overline{N} \f$.
+(PS) approximation. Both programs can use either Brownian dynamics (BD) 
+or Monte Carlo (MC) sampling algorithms. The partial saddle-point 
+approximation for field theoretic simulation (PS-FTS) yields a statistical 
+ensemble for fluctuating monomer chemical potential fields ("w fields") 
+in which the fields are real-valued functions of position (as in SCFT),
+and in which each field configuration is assigned a real-valued
+statistical weight. The resulting theory yields field configurations 
+that tend to fluctuate around an SCFT solution when applied to systems 
+of very long, strongly overlapping polymers, corresponding to large 
+values of the invariant degrees of polymerization \f$ \overline{N} \f$.
 PS-FTS yields predictions for intensive thermodynamic properties that 
 approach those of SCFT in the limit of infinitely long chains 
 (\f$ \overline{N} \rightarrow \infty \f$), and that rather accurately 
-describe many effects of strong composition fluctuations that become
-important for typical experimental chain lengths.
+describe the most effects of composition fluctuations that are neglected
+by SCFT.
 
-The description of the implementation of PS-FTS in PSCF given in this
-section of the manual describes its implementation in both pscf_pc and 
-pscf_pg, which have equivalent features and identical interfaces for 
-this type of calculation. The first few pages of this discussion 
-provide an overview of the underlying theory.
+The discussion of of PS-FTS given in this section of the manual describes 
+its implementation in both pscf_pc and pscf_pg, which have equivalent 
+features and identical interfaces for such simulations.  The first few 
+pages of this discussion summarize the underlying theory.
 
 <h2> Contents:</h2>
 

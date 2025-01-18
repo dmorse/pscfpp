@@ -110,7 +110,7 @@ namespace Rpg {
       *
       * \param waveList associated WaveList<D> object
       */
-      void setWaveList(WaveList<D>& wavelist); 
+      void setWaveList(WaveList<D>& waveList); 
 
       /**
       * Read header of a field file.

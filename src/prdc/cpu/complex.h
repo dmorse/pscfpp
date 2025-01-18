@@ -2,7 +2,7 @@
 #define PRDC_CPU_COMPLEX_H
 
 /*
-* PSCF Package 
+* PSCF Package - Polymer Self-Consistent Field Theory
 *
 * Copyright 2016 - 2022, The Regents of the University of Minnesota
 * Distributed under the terms of the GNU General Public License.
@@ -26,7 +26,7 @@ namespace Pscf {
    /**
    * Return the real part of a complex number.
    *
-   * \ingroup Pscf_Cpu_Complex_Module
+   * \ingroup Prdc_Cpu_Complex_Module
    *
    * \param a complex argument (input)
    */

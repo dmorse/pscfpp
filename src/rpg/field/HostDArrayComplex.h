@@ -16,16 +16,37 @@ namespace Rpg {
 
    using namespace Util;
 
+   /**
+   * HostDArray containing cudaComplex elements.
+   *
+   * Defined to add typedefs.
+   */
    class HostDArrayComplex : public HostDArray<cudaComplex>
    {
 
    public:
 
+      /**
+      * Type of each element.
+      */
+      typedef cudaComplex ElementType;
+
+      /**
+      * Complex number type.
+      */
       typedef cudaComplex Complex;
 
+      /**
+      * Type of real or imaginary part of a Complex number.
+      */
       typedef cudaReal    Real;
 
+      /**
+      * Base class type.
+      */
       typedef HostDArray<cudaComplex> Base;
+
+      // Member functions
 
       /**
       * Default constructor.
@@ -34,11 +55,19 @@ namespace Rpg {
 
       /**
       * Allocating constructor.
+      *
+      * This constructor allocates memory for the array.
+      *
+      * \param capacity  desired capacity of array
       */
       HostDArrayComplex(int capacity);
 
       /**
       * Copy constructor.
+      *
+      * Perform a deep copy of all array elements.
+      *
+      * \param other  other object being copied to this one.
       */
       HostDArrayComplex(HostDArrayComplex const & other);
 
