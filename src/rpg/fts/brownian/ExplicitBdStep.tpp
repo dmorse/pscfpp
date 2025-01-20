@@ -106,8 +106,8 @@ namespace Rpg {
       for (j = 0; j < nMonomer - 1; ++j) {
          RField<D> const & dc = simulator().dc(j);
          
-         // Generagte normal distributed random floating point numbers
-         cudaRandom().normal(gaussianField_.cArray(), meshSize, stddev, mean);
+         // Generate normal distributed random floating point numbers
+         cudaRandom().normal(gaussianField_, stddev, mean);
          
          // dwc
          VecOp::addVcVc(dwc_, dc, a, gaussianField_, b);

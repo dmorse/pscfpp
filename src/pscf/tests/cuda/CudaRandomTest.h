@@ -51,7 +51,7 @@ public:
       random.setSeed(6712983651284);
       int n = 100000;
       allocate(n);
-      random.uniform(d_.cArray(), n);
+      random.uniform(d_);
 
       h_ = d_;
 
@@ -101,7 +101,7 @@ public:
 
       cudaReal mean = 1.0;
       cudaReal stddev = 0.5; 
-      random.normal(d_.cArray(), n, stddev, mean);
+      random.normal(d_, stddev, mean);
 
       h_ = d_;
 

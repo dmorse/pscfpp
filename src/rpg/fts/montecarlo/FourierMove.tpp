@@ -186,14 +186,14 @@ namespace Rpg
       
       for (int i = 0; i < nMonomer; ++i){
          // Generate random number for real part
-         cudaRandom().uniform(randomFieldR_.cArray(), meshSize);
+         cudaRandom().uniform(randomFieldR_);
          // Generate random numbers between [-stepSize_,stepSize_]
          VecOpFts::mcftsScale(randomFieldR_, stepSize_);
          // Generate random numbers between [-stepSize_*S(q)^(1/2), stepSize_*S(q)^(1/2)]
          VecOp::mulEqV(randomFieldR_, sqrtSq_);
          
          // Generate random number for imaginary part
-         cudaRandom().uniform(randomFieldK_.cArray(), meshSize);
+         cudaRandom().uniform(randomFieldK_);
          // Generate random numbers between [-stepSize_,stepSize_]
          VecOpFts::mcftsScale(randomFieldK_, stepSize_);
          // Generate random numbers between [-stepSize_*S(q)^(1/2), stepSize_*S(q)^(1/2)]

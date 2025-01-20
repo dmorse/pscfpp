@@ -77,7 +77,7 @@ public:
       for (int i = 0; i < nMonomer; i++){
 
          // Generate random numbers between 0.0 and 1.0 from uniform distribution
-         cudaRandom.uniform(randomField.cArray(), meshSize);
+         cudaRandom.uniform(randomField);
 
          // Generate random numbers between [-stepSize_,stepSize_]
          VecOpFts::mcftsScale(randomField, stepSize);
@@ -111,7 +111,7 @@ public:
       
       CudaRandom cudaRandom;
       cudaRandom.setSeed(0);
-      cudaRandom.uniform(randomField.cArray(), meshSize);
+      cudaRandom.uniform(randomField);
       double stepSize = 1e-1;
       VecOpFts::mcftsScale(randomField, stepSize);
       

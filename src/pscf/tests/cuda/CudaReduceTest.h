@@ -63,7 +63,7 @@ public:
 
          // Generate test data, normally distributed about 0.5 with stdev = 2
          DeviceArray<cudaReal> num(n);
-         rand_.normal(num.cArray(), n, (cudaReal)2.0, (cudaReal)0.5);
+         rand_.normal(num, (cudaReal)2.0, (cudaReal)0.5);
 
          // Copy test data to host
          HostDArray<cudaReal> num_h(n);
@@ -140,7 +140,7 @@ public:
 
          // Generate test data, normally distributed about 7.0 with stdev = 3
          DeviceArray<cudaReal> num(n);
-         rand_.normal(num.cArray(), n, (cudaReal)3.0, (cudaReal)7.0);
+         rand_.normal(num, (cudaReal)3.0, (cudaReal)7.0);
 
          // Copy test data to host
          HostDArray<cudaReal> num_h(n);
@@ -200,7 +200,7 @@ public:
 
          // Generate test data, normally distributed about -1.0 with stdev = 3
          DeviceArray<cudaReal> num(n);
-         rand_.normal(num.cArray(), n, (cudaReal)3.0, (cudaReal)-1.0);
+         rand_.normal(num, (cudaReal)3.0, (cudaReal)-1.0);
 
          // Copy test data to host
          HostDArray<cudaReal> num_h(n);
@@ -262,7 +262,7 @@ public:
 
          // Generate test data, normally distributed about 7.0 with stdev = 3
          DeviceArray<cudaReal> num(n);
-         rand_.normal(num.cArray(), n, (cudaReal)3.0, (cudaReal)7.0);
+         rand_.normal(num, (cudaReal)3.0, (cudaReal)7.0);
 
          // Copy test data to host
          HostDArray<cudaReal> num_h(n);
@@ -322,7 +322,7 @@ public:
 
          // Generate test data, normally distributed about -1.0 with stdev = 3
          DeviceArray<cudaReal> num(n);
-         rand_.normal(num.cArray(), n, (cudaReal)3.0, (cudaReal)-1.0);
+         rand_.normal(num, (cudaReal)3.0, (cudaReal)-1.0);
 
          // Copy test data to host
          HostDArray<cudaReal> num_h(n);
@@ -384,8 +384,8 @@ public:
 
          // Generate test data, normally distributed
          DeviceArray<cudaReal> a(n), b(n);
-         rand_.normal(a.cArray(), n, (cudaReal)2.0, (cudaReal)0.5);
-         rand_.normal(b.cArray(), n, (cudaReal)1.0, (cudaReal)2.0);
+         rand_.normal(a, (cudaReal)2.0, (cudaReal)0.5);
+         rand_.normal(b, (cudaReal)1.0, (cudaReal)2.0);
 
          // Copy test data to host
          HostDArray<cudaReal> a_h(n), b_h(n);

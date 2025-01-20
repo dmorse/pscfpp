@@ -78,8 +78,8 @@ namespace Rpg {
       // For multi-component copolymer
       for (int i = 0; i < nMonomer; i++){
 
-         // Generate random numbers between 0.0 and 1.0 from uniform distribution
-         cudaRandom().uniform(randomField_.cArray(), meshSize);
+         // Generate random numbers between 0.0 and 1.0 from uniform dist.
+         cudaRandom().uniform(randomField_);
 
          // Generate random numbers between [-stepSize_,stepSize_]
          VecOpFts::mcftsScale(randomField_, stepSize_);

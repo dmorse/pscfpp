@@ -94,8 +94,8 @@ namespace Rpg {
       for (j = 0; j < nMonomer - 1; ++j) {
          RField<D>& eta = etaNew(j);
         
-         // Generagte normal distributed random floating point numbers
-         cudaRandom().normal(gaussianField_.cArray(), meshSize, stddev, mean);
+         // Generate normal distributed random floating point numbers
+         cudaRandom().normal(gaussianField_, stddev, mean);
          VecOp::mulVS(eta, gaussianField_, b);
       
       }

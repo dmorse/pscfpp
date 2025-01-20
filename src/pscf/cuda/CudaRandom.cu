@@ -55,17 +55,18 @@ namespace Pscf {
    /*
    * Return uniformly distributed random number in [0,1]
    */
-   void CudaRandom::uniform(cudaReal* data, int n)
+   void CudaRandom::uniform(DeviceArray<cudaReal>& data)
    {
+      UTIL_CHECK(data.capacity() > 0);
       if (!isInitialized_) {
          setSeed(0);
       }
       #ifdef SINGLE_PRECISION
-      curandStatus_t status
-           = curandGenerateUniform(gen_, data, int n);
+      curandStatus_t status = curandGenerateUniform(gen_, data.cArray(), 
+                                                    data.capacity());
       #else
-      curandStatus_t status
-            = curandGenerateUniformDouble(gen_, data, n);
+      curandStatus_t status = curandGenerateUniformDouble(gen_, data.cArray(), 
+                                                          data.capacity());
       #endif
       errorCheck(status);
    }
@@ -73,21 +74,25 @@ namespace Pscf {
    /*
    * Return normal-distributed random floating point numbers.
    */
-   void CudaRandom::normal(cudaReal* data, int n, cudaReal stddev, cudaReal mean)
+   void CudaRandom::normal(DeviceArray<cudaReal>& data, 
+                           cudaReal stddev, cudaReal mean)
    {
+      UTIL_CHECK(data.capacity() > 0);
       if (!isInitialized_) {
          setSeed(0);
       }
+
+      int n = data.capacity();
       if (n % 2 == 1) {
          UTIL_THROW("normal() requires array size to be an even number.");
       }
       
       #ifdef SINGLE_PRECISION
-      curandStatus_t status
-           = curandGenerateNormal(gen_, data, n, mean, stddev);
+      curandStatus_t status = curandGenerateNormal(gen_, data.cArray(), 
+                                                   n, mean, stddev);
       #else
-      curandStatus_t status
-           = curandGenerateNormalDouble(gen_, data, n, mean, stddev);
+      curandStatus_t status = curandGenerateNormalDouble(gen_, data.cArray(), 
+                                                         n, mean, stddev);
       #endif
       errorCheck(status);
    }
