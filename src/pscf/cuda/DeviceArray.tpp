@@ -21,12 +21,11 @@ namespace Pscf {
    */
    template <typename Data>
    DeviceArray<Data>::DeviceArray()
-    : data_(0),
+    : dataPtr_(nullptr),
       capacity_(0),
-      isOwner_(true),
-      ownerPtr_(0),
+      ownerPtr_(nullptr),
       ownerCapacity_(0),
-      ownerData_(0)
+      ownerDataPtr_(nullptr)
    {}
 
    /*
@@ -34,12 +33,11 @@ namespace Pscf {
    */
    template <typename Data>
    DeviceArray<Data>::DeviceArray(int capacity)
-    : data_(0),
+    : dataPtr_(nullptr),
       capacity_(0),
-      isOwner_(true),
-      ownerPtr_(0),
+      ownerPtr_(nullptr),
       ownerCapacity_(0),
-      ownerData_(0)
+      ownerDataPtr_(nullptr)
    {  allocate(capacity); }
 
    /*
@@ -55,7 +53,7 @@ namespace Pscf {
       }
 
       allocate(other.capacity_);
-      cudaMemcpy(data_, other.cArray(), 
+      cudaMemcpy(dataPtr_, other.cArray(), 
                  capacity_ * sizeof(Data), cudaMemcpyDeviceToDevice);
    }
 
@@ -65,8 +63,8 @@ namespace Pscf {
    template <typename Data>
    DeviceArray<Data>::~DeviceArray()
    {
-      if (isAllocated() && isOwner_) {
-         cudaFree(data_);
+      if (isAllocated() && isOwner()) {
+         cudaFree(dataPtr_);
          capacity_ = 0;
       }
    }
@@ -80,16 +78,16 @@ namespace Pscf {
       if (isAllocated()) {
          UTIL_THROW("Attempt to re-allocate an array");
       }
-      if (!isOwner_) {
+      if (ownerPtr_) {
          UTIL_THROW("Attempt to allocate array already associated with data");
       }
       if (capacity <= 0) {
          UTIL_THROW("Attempt to allocate with capacity <= 0");
       }
-      gpuErrChk(cudaMalloc((void**) &data_, capacity * sizeof(Data)));
+      gpuErrChk(cudaMalloc((void**) &dataPtr_, capacity * sizeof(Data)));
       capacity_ = capacity;
 
-      isOwner_ = true;
+      ownerPtr_ = nullptr;
    }
 
    /*
@@ -100,6 +98,7 @@ namespace Pscf {
                                      int capacity)
    {
       UTIL_CHECK(arr.isAllocated());
+      UTIL_CHECK(arr.isOwner());
       UTIL_CHECK(beginId >= 0);
       UTIL_CHECK(capacity > 0);
       UTIL_CHECK(beginId + capacity <= arr.capacity());
@@ -108,12 +107,11 @@ namespace Pscf {
          UTIL_THROW("Attempt to associate an already-allocated array.");
       }
       
-      data_ = arr.cArray() + beginId;
+      dataPtr_ = arr.cArray() + beginId;
       capacity_ = capacity;
       ownerPtr_ = &arr;
       ownerCapacity_ = arr.capacity();
-      ownerData_ = arr.cArray();
-      isOwner_ = false;
+      ownerDataPtr_ = arr.cArray();
    }
 
    /*
@@ -127,11 +125,11 @@ namespace Pscf {
       if (!isAllocated()) {
          UTIL_THROW("Array is not allocated");
       }
-      if (!isOwner_) {
+      if (!isOwner()) {
          UTIL_THROW("Cannot deallocate, data not owned by this object.");
       }
-      cudaFree(data_);
-      data_ = 0; // reset to null ptr
+      cudaFree(dataPtr_);
+      dataPtr_ = nullptr; // reset to null
       capacity_ = 0;
    }
 
@@ -143,16 +141,17 @@ namespace Pscf {
    template <typename Data>
    void DeviceArray<Data>::dissociate()
    {
-      if (isOwner_) {
+      if (isOwner()) {
          UTIL_THROW("Cannot dissociate: this object owns the array.");
       }
       if (!isAllocated()) {
          UTIL_THROW("Cannot dissociate: no associated data found.");
       }
-      data_ = 0; // reset to null ptr
+      dataPtr_ = nullptr; // reset to null
       capacity_ = 0;
-      isOwner_ = true;
-      ownerPtr_ = 0; // reset to null ptr
+      ownerPtr_ = nullptr; // reset to null
+      ownerCapacity_ = 0;
+      ownerDataPtr_ = nullptr;
    }
 
    /*
@@ -181,10 +180,10 @@ namespace Pscf {
       }
 
       // Copy elements
-      cudaMemcpy(data_, other.cArray(), 
+      cudaMemcpy(dataPtr_, other.cArray(), 
                  capacity_ * sizeof(Data), cudaMemcpyDeviceToDevice);
-      
-      isOwner_ = true;
+
+      ownerPtr_ = nullptr;
 
       return *this;
    }
@@ -212,10 +211,10 @@ namespace Pscf {
       }
 
       // Copy elements
-      cudaMemcpy(data_, other.cArray(), 
+      cudaMemcpy(dataPtr_, other.cArray(), 
                  capacity_ * sizeof(Data), cudaMemcpyHostToDevice);
 
-      isOwner_ = true;
+      ownerPtr_ = nullptr;
 
       return *this;
    }
@@ -227,13 +226,13 @@ namespace Pscf {
    Data* DeviceArray<Data>::cArray()
    {  
       // Make sure that owner array has not been deallocated / reallocated
-      if (!isOwner_) {
+      if (ownerPtr_) {
          UTIL_CHECK(ownerPtr_->isAllocated());
          UTIL_CHECK(ownerPtr_->capacity() == ownerCapacity_);
-         UTIL_CHECK(ownerPtr_->cArray() == ownerData_);
+         UTIL_CHECK(ownerPtr_->cArray() == ownerDataPtr_);
       }
 
-      return data_; 
+      return dataPtr_; 
    }
 
    /*
@@ -243,13 +242,13 @@ namespace Pscf {
    const Data* DeviceArray<Data>::cArray() const
    {  
       // Make sure that owner array has not been deallocated / reallocated
-      if (!isOwner_) {
+      if (ownerPtr_) {
          UTIL_CHECK(ownerPtr_->isAllocated());
          UTIL_CHECK(ownerPtr_->capacity() == ownerCapacity_);
-         UTIL_CHECK(ownerPtr_->cArray() == ownerData_);
+         UTIL_CHECK(ownerPtr_->cArray() == ownerDataPtr_);
       }
 
-      return data_; 
+      return dataPtr_; 
    }
 
    /*
@@ -259,13 +258,13 @@ namespace Pscf {
    bool DeviceArray<Data>::isAllocated() const
    {  
       // Make sure that owner array has not been deallocated / reallocated
-      if (!isOwner_) {
+      if (ownerPtr_) {
          UTIL_CHECK(ownerPtr_->isAllocated());
          UTIL_CHECK(ownerPtr_->capacity() == ownerCapacity_);
-         UTIL_CHECK(ownerPtr_->cArray() == ownerData_);
+         UTIL_CHECK(ownerPtr_->cArray() == ownerDataPtr_);
       }
 
-      return (bool)data_; 
+      return (bool)dataPtr_; 
    }
 
 } // namespace Pscf

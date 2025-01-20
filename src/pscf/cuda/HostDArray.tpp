@@ -20,7 +20,7 @@ namespace Pscf {
    */
    template <typename Data>
    HostDArray<Data>::HostDArray()
-    : data_(0),
+    : dataPtr_(nullptr),
       capacity_(0)
    {}
 
@@ -29,7 +29,7 @@ namespace Pscf {
    */
    template <typename Data>
    HostDArray<Data>::HostDArray(int capacity)
-    : data_(0),
+    : dataPtr_(nullptr),
       capacity_(0)
    {  allocate(capacity); }
 
@@ -48,7 +48,7 @@ namespace Pscf {
       }
 
       allocate(other.capacity_);
-      cudaMemcpy(data_, other.cArray(), 
+      cudaMemcpy(dataPtr_, other.cArray(), 
                  capacity_ * sizeof(Data), cudaMemcpyHostToHost);
 
    }
@@ -60,7 +60,7 @@ namespace Pscf {
    HostDArray<Data>::~HostDArray()
    {
       if (isAllocated()) {
-         cudaFreeHost(data_);
+         cudaFreeHost(dataPtr_);
          capacity_ = 0;
       }
    }
@@ -77,7 +77,7 @@ namespace Pscf {
       if (capacity <= 0) {
          UTIL_THROW("Attempt to allocate with capacity <= 0");
       }
-      gpuErrChk(cudaMallocHost((void**) &data_, capacity * sizeof(Data)));
+      gpuErrChk(cudaMallocHost((void**) &dataPtr_, capacity * sizeof(Data)));
       capacity_ = capacity;
    }
 
@@ -92,8 +92,8 @@ namespace Pscf {
       if (!isAllocated()) {
          UTIL_THROW("Attempt to deallocate unallocated HostDArray");
       }
-      cudaFreeHost(data_);
-      data_ = 0; // reset to null ptr
+      cudaFreeHost(dataPtr_);
+      dataPtr_ = nullptr; // reset to null
       capacity_ = 0;
    }
 
@@ -123,7 +123,7 @@ namespace Pscf {
       }
 
       // Copy elements from RHS to LHS
-      cudaMemcpy(data_, other.cArray(), 
+      cudaMemcpy(dataPtr_, other.cArray(), 
                  capacity_ * sizeof(Data), cudaMemcpyHostToHost);
 
       return *this;
@@ -152,7 +152,7 @@ namespace Pscf {
       }
 
       // Copy all elements
-      cudaMemcpy(data_, other.cArray(), 
+      cudaMemcpy(dataPtr_, other.cArray(), 
                  capacity_ * sizeof(Data), cudaMemcpyDeviceToHost);
 
       return *this;

@@ -151,7 +151,7 @@ namespace Pscf {
       bool isAllocated() const;
 
       /**
-      * Does this object own the underlying array? 
+      * Does this object own the underlying data? 
       */
       bool isOwner() const;
 
@@ -168,13 +168,10 @@ namespace Pscf {
    protected:
 
       /// Pointer to a C array of Data elements on the GPU device.
-      Data* data_;
+      Data* dataPtr_;
 
-      /// Allocated size (capacity) of the data_ array.
+      /// Allocated size (capacity) of the array.
       int capacity_;
-
-      /// Does this object own the underlying array? 
-      bool isOwner_;
 
       /**
       * Pointer to array that owns this data, if isOwner_ == false.
@@ -198,7 +195,7 @@ namespace Pscf {
       * Used to check that parent array has not been deallocated and/or
       * reallocated.
       */
-      Data const * ownerData_;
+      Data const * ownerDataPtr_;
    };
 
    /*
@@ -209,11 +206,11 @@ namespace Pscf {
    {  return capacity_; }
 
    /*
-   * Does this object own the underlying array? 
+   * Does this object own the underlying data? 
    */
    template <typename Data>
    inline bool DeviceArray<Data>::isOwner() const
-   {  return isOwner_; }
+   {  return ((nullptr == ownerPtr_) && (nullptr != dataPtr_)); }
 
    #ifndef PSCF_DEVICE_ARRAY_TPP
    extern template class DeviceArray<cudaReal>;

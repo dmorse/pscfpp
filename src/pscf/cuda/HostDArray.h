@@ -170,9 +170,9 @@ namespace Pscf {
    private:
 
       /// Pointer to a C array of Data elements, allocated on host.
-      Data* data_;
+      Data* dataPtr_;
 
-      /// Allocated size of the data_ array.
+      /// Allocated size of the dataPtr_ array.
       int capacity_;
 
    };
@@ -183,10 +183,10 @@ namespace Pscf {
    template <typename Data>
    inline Data& HostDArray<Data>::operator[] (int i)
    {
-      assert(data_ != 0);
+      assert(dataPtr_);
       assert(i >= 0);
       assert(i < capacity_);
-      return *(data_ + i);
+      return *(dataPtr_ + i);
    }
 
    /*
@@ -195,10 +195,10 @@ namespace Pscf {
    template <typename Data>
    inline Data const & HostDArray<Data>::operator[] (int i) const
    {
-      assert(data_ != 0);
+      assert(dataPtr_);
       assert(i >= 0 );
       assert(i < capacity_);
-      return *(data_ + i);
+      return *(dataPtr_ + i);
    }
 
    /*
@@ -213,7 +213,7 @@ namespace Pscf {
    */
    template <typename Data>
    inline Data* HostDArray<Data>::cArray()
-   {  return data_; }
+   {  return dataPtr_; }
 
    /*
    * Get a pointer to const to the underlying C array.
@@ -221,14 +221,14 @@ namespace Pscf {
    template <typename Data>
    inline 
    Data const * HostDArray<Data>::cArray() const
-   {  return data_; }
+   {  return dataPtr_; }
 
    /*
    * Return true if the HostDArray has been allocated, false otherwise.
    */
    template <typename Data>
    inline bool HostDArray<Data>::isAllocated() const
-   {  return (bool) data_; }
+   {  return (bool) dataPtr_; }
 
    #ifndef PSCF_HOST_D_ARRAY_TPP
    extern template class HostDArray<cudaReal>;
