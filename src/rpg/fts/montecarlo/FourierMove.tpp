@@ -203,9 +203,9 @@ namespace Rpg
          VecOpFts::fourierMove(wKGrid_[i], randomFieldR_, randomFieldK_);
       }
       
-      // Convert Fourier (k-grid) format back to Real grid format
+      // Convert back to real space (destroys data in wKGrid_)
       for (int i = 0; i < nMonomer; ++i) {
-         system().fft().inverseTransform(wKGrid_[i], wFieldTmp_[i]);
+         system().fft().inverseTransformUnsafe(wKGrid_[i], wFieldTmp_[i]);
       }
       // Update attemptMove
       system().setWRGrid(wFieldTmp_);

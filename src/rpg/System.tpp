@@ -1360,7 +1360,7 @@ namespace Rpg {
       UnitCell<D> tmpUnitCell;
       fieldIo().readFieldsKGrid(inFileName, tmpFieldsKGrid_, tmpUnitCell);
       for (int i = 0; i < mixture_.nMonomer(); ++i) {
-         fft().inverseTransform(tmpFieldsKGrid_[i], tmpFieldsRGrid_[i]);
+         fft().inverseTransformUnsafe(tmpFieldsKGrid_[i], tmpFieldsRGrid_[i]);
       }
       fieldIo().writeFieldsRGrid(outFileName, tmpFieldsRGrid_,
                                  tmpUnitCell);

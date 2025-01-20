@@ -179,8 +179,8 @@ namespace Rpg{
       // Combine with Linear response factor to update second step
       VecOp::divEqVc(residK_, intraCorrelationK_, vMonomer);
       
-      // Convert back to real space
-      system().fft().inverseTransform(residK_, resid_);
+      // Convert back to real space (destroys residK_)
+      system().fft().inverseTransformUnsafe(residK_, resid_);
       
       // fieldTrial += resid_ * lambda
       VecOp::addEqVc(fieldTrial, resid_, lambda);

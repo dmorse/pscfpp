@@ -220,10 +220,10 @@ namespace Rpg {
 
       // Setup fftBatched objects
       UTIL_CHECK(!fftBatchedPair_.isSetup());
-      fftBatchedPair_.setup(mesh.dimensions(), kMeshDimensions_, 2);
+      fftBatchedPair_.setup(mesh.dimensions(), 2);
       if (useBatchedFFT_) {
          UTIL_CHECK(!fftBatchedAll_.isSetup());
-         fftBatchedAll_.setup(mesh.dimensions(), kMeshDimensions_, ns_);
+         fftBatchedAll_.setup(mesh.dimensions(), ns_);
       }
 
       // Allocate work arrays
@@ -286,7 +286,7 @@ namespace Rpg {
                qk2Batched_.deallocate();
                qkBatched_.allocate(ns_ * kSize_);
                qk2Batched_.allocate(ns_ * kSize_);
-               fftBatchedAll_.setBatchSize(ns_);
+               fftBatchedAll_.resetBatchSize(ns_);
             }
          }
       }
@@ -444,14 +444,14 @@ namespace Rpg {
 
       // Apply pseudo-spectral algorithm
       VecOp::mulVVPair(qr, qr2, expW_, expW2_, q); // qr = expW*q, qr2 = expW2*q
-      fftBatchedPair_.forwardTransform(qrPair_, qkPair_); // real to Fourier
+      fftBatchedPair_.forwardTransform(qrPair_, qkPair_); // to Fourier space
       VecOp::mulEqV(qk, expKsq_); // qk *= expKsq
       VecOp::mulEqV(qk2, expKsq2_); // qk2 *= expKsq2
-      fftBatchedPair_.inverseTransform(qkPair_, qrPair_); // Fourier to real
+      fftBatchedPair_.inverseTransformUnsafe(qkPair_, qrPair_); // to real space
       VecOp::mulEqVPair(qr, qr2, expW_); // qr *= expW, qr2 *= expW
-      fft().forwardTransform(qr2, qk2); // real to Fourier, only qr2
+      fft().forwardTransform(qr2, qk2); // to Fourier space, only qr2
       VecOp::mulEqV(qk2, expKsq2_); // qk2 *= expKsq2
-      fft().inverseTransform(qk2, qr2); // Fourier to real, only qr2
+      fft().inverseTransformUnsafe(qk2, qr2); // to real space, only qr2
       richardsonEx(qNew, qr, qr2, expW2_); // qNew=(4*(qr2*expW2)-qr)/3
    }
 

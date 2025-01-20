@@ -221,8 +221,8 @@ namespace Rpg {
       // Residual combine with Linear response factor
       VecOp::divEqVc(residK_, intraCorrelation_, vMonomer);
    
-      // Convert back to real Space
-      system().fft().inverseTransform(residK_, resid_);
+      // Convert back to real Space (destroys residK_)
+      system().fft().inverseTransformUnsafe(residK_, resid_);
       
       // Assign resid_ to resid
       VecOp::eqV(resid, resid_);

@@ -267,7 +267,7 @@ namespace Prdc {
                               bool verbose) const
    {
       checkAllocateField(workDft_, mesh().dimensions());
-      fft().forwardTransformSafe(in, workDft_);
+      fft().forwardTransform(in, workDft_);
       return hasSymmetry(workDft_, epsilon, verbose);
    }
 
@@ -304,7 +304,7 @@ namespace Prdc {
                               double epsilon) const
    {
       checkAllocateField(workDft_, mesh().dimensions());
-      fft().forwardTransformSafe(in, workDft_);
+      fft().forwardTransform(in, workDft_);
       convertKGridToBasis(workDft_, out, checkSymmetry, epsilon);
    }
 
@@ -326,7 +326,7 @@ namespace Prdc {
 
       // Convert RGrid -> KGrid -> Basis for each field
       for (int i = 0; i < nMonomer; ++i) {
-         fft().forwardTransformSafe(in[i], workDft_);
+         fft().forwardTransform(in[i], workDft_);
          convertKGridToBasis(workDft_, out[i], checkSymmetry, epsilon);
       }
    }
@@ -369,7 +369,7 @@ namespace Prdc {
       UTIL_ASSERT(in.capacity() == out.capacity());
       int n = in.capacity();
       for (int i = 0; i < n; ++i) {
-         fft().forwardTransformSafe(in[i], out[i]);
+         fft().forwardTransform(in[i], out[i]);
       }
    }
 
@@ -381,7 +381,7 @@ namespace Prdc {
                               RFRT const & in,
                               RFKT& out) const
    {
-      fft().forwardTransformSafe(in, out);
+      fft().forwardTransform(in, out);
    }
 
    // Grid Manipulation Utilities

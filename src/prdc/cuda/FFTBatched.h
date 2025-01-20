@@ -25,7 +25,7 @@ namespace Cuda {
    using namespace Util;
 
    /**
-   * Fourier transform wrapper for real data.
+   * Batched Fourier transform wrapper for real data.
    *
    * \ingroup Prdc_Cuda_Module
    */
@@ -48,30 +48,47 @@ namespace Cuda {
       /**
       * Set up FFT calculation (get grid dimensions and make FFT plan)
       *
-      * \param rDim  dimensions of r-space grid
-      * \param kDim  dimensions of k-space grid
+      * \param meshDimensions  dimensions of real-space grid
       * \param batchSize  number of simultaneous FFTs to perform
       */
-      void setup(const IntVec<D>& rDim, const IntVec<D>& kDim, 
-                 int batchSize);
-
+      void setup(IntVec<D> const & meshDimensions, int batchSize);
+      
       /**
-      * Compute forward (real-to-complex) Fourier transform.
+      * Compute batched forward (real-to-complex) DFTs.
+      * 
+      * The resulting complex array is the output of cuFFT's batched 
+      * forward transform method scaled by a factor of 1/N (where N is 
+      * the number of grid points). The scaling ensures that a round-trip
+      * Fourier transform (forward + inverse) reproduces the original
+      * input array.
+      * 
+      * The number of Fourier transforms performed per batch is pre-set
+      * by the setup() method.
+      * 
+      * This transform is inherently "safe", meaning that the input array 
+      * will not be modified during the DFT.
       *
-      * \param in  array of real values on r-grid (device mem)
-      * \param out  array of complex values on k-grid (device mem)
+      * \param rFields  real values on r-grid (input, gpu mem)
+      * \param kFields  complex values on k-grid (output, gpu mem)
       */
-      void forwardTransform(DeviceArray<cudaReal>& in, 
-                            DeviceArray<cudaComplex>& out) const;
+      void forwardTransform(DeviceArray<cudaReal> const & rFields, 
+                            DeviceArray<cudaComplex>& kFields) const;
 
       /**
       * Compute inverse (complex-to-real) Fourier transform.
+      * 
+      * The resulting real array is the unaltered output of cuFFT's inverse 
+      * transform function.
+      * 
+      * This transform is inherently "unsafe", meaning that the input array
+      * will be overwritten during the DFT. Accordingly, the input array
+      * kField is not const like it is in all the other transform methods.
       *
-      * \param in  ptr to array of complex values on k-grid (device mem)
-      * \param out  ptr to array of real values on r-grid (device mem)
+      * \param kFields  complex values on k-grid (input, gpu mem)
+      * \param rFields  real values on r-grid (output, gpu mem)
       */
-      void inverseTransform(DeviceArray<cudaComplex>& in, 
-                            DeviceArray<cudaReal>& out) const;
+      void inverseTransformUnsafe(DeviceArray<cudaComplex>& kFields, 
+                                  DeviceArray<cudaReal>& rFields) const;
 
       /**
       * Return the dimensions of the grid for which this was allocated.
@@ -83,7 +100,7 @@ namespace Cuda {
       * 
       * \param batchSize  The new batch size.
       */
-      void setBatchSize(int batchSize);
+      void resetBatchSize(int batchSize);
 
       /**
       * Has the setup method been called?
@@ -117,14 +134,11 @@ namespace Cuda {
       bool isSetup_;
 
       /**
-      * Make FFTW plans for transform and inverse transform.
+      * Make cuFFT plans for transform and inverse transform.
       * 
-      * \param rDim  dimensions of r-space grid
-      * \param kDim  dimensions of k-space grid
       * \param batchSize  number of simultaneous FFTs to perform
       */
-      void makePlans(const IntVec<D>& rDim, const IntVec<D>& kDim, 
-                     int batchSize);
+      void makePlans(int batchSize);
 
    };
 

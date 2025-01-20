@@ -200,8 +200,8 @@ namespace Rpg{
       // Compute change in fields using estimated Jacobian
       VecOp::divEqVc(residK_, intraCorrelationK_, vMonomer);
    
-      // Convert back to real Space
-      system().fft().inverseTransform(residK_, resid_);
+      // Convert back to real Space (destroys residK_)
+      system().fft().inverseTransformUnsafe(residK_, resid_);
       
       // Update new fields
       for (int i = 0; i < nMonomer; i++) {

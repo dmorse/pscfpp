@@ -54,13 +54,13 @@ namespace Cpu {
       // Real Data (Real <-> Complex Transforms)
 
       /**
-      * Compute real-to-complex forward Fourier transform.
+      * Compute forward (real-to-complex) discrete Fourier transform.
       *
-      * This function computes a scaled Fourier transform, which is 
-      * obtained by dividing the unscaled forward transform computed by 
-      * FFTW by the number of grid points elements. A scaled copy of 
-      * the input data is copied to a temporary real array before being 
-      * passed to the FFTW real-to-complex transform function.
+      * The resulting complex array is the output of FFTW's forward 
+      * transform method scaled by a factor of 1/N (where N is the
+      * number of grid points). The scaling ensures that a round-trip
+      * Fourier transform (forward + inverse) reproduces the original
+      * input array.
       *
       * This function does not overwrite or corrupt the input array.
       * 
@@ -70,28 +70,10 @@ namespace Cpu {
       void forwardTransform(RField<D> const & in, RFieldDft<D>& out) const;
 
       /**
-      * Compute real-to-complex forward Fourier transform.
-      *
-      * This function is identical to the forwardTransform with the same
-      * interface. This alternate name is provided for consistency with 
-      * the interface of the analogous Rpg::FFT class, which provides a 
-      * function named forwardTransform that can corrupt input data and 
-      * a function named forwardTransformSafe that will not.  In this 
-      * class, both functions are identical, and are both "safe" in this
-      * sense.
+      * Compute inverse (complex-to-real) DFT, overwriting the input.
       * 
-      * \param in  array of real values on r-space grid
-      * \param out  array of complex values on k-space grid
-      */
-      void forwardTransformSafe(RField<D> const & in, RFieldDft<D>& out) 
-      const
-      {   forwardTransform(in, out); }
-
-      /**
-      * Compute complex-to-real to real Fourier transform.
-      *
-      * This function computes the same unscaled inverse transform as the
-      * complex-to-real transforms of the FFTW library.
+      * The resulting real array is the unaltered output of FFTW's inverse 
+      * transform function.
       *
       * NOTE: The inverse transform generally overwrites and corrupts its 
       * input. This is the behavior of the complex-to-real (c2r) transform 
@@ -104,14 +86,16 @@ namespace Cpu {
       * \param in  array of complex values on k-space grid (overwritten)
       * \param out  array of real values on r-space grid
       */
-      void inverseTransform(RFieldDft<D>& in, RField<D>& out) const;
+      void inverseTransformUnsafe(RFieldDft<D>& in, RField<D>& out) const;
 
       /**
-      * Compute complex-to-real inverse transform without destroying input.
+      * Compute inverse (complex-to-real) DFT without overwriting input.
+      * 
+      * The resulting real array is the unaltered output of FFTW's inverse 
+      * transform function.
       *
       * This function makes a copy of the input data and passes the copy
-      * to the FFTW complex-to-real transform to avoid overwriting the
-      * input data.
+      * to inverseTransformUnsafe to avoid overwriting the input data.
       *
       * \param in  array of complex values on k-space grid 
       * \param out  array of real values on r-space grid 
@@ -122,15 +106,19 @@ namespace Cpu {
       // Complex Data (Complex <-> Complex Transforms)
 
       /**
-      * Compute complex-to-complex forward Fourier transform.
+      * Compute forward (complex-to-complex) discrete Fourier transform.
       *
-      * This function computes a scaled forward Fourier transform, which 
-      * is obtained by dividing the unscaled forward transform computed 
-      * by FFTW by the number of grid points elements. A scaled copy of 
-      * the input data is copied to a temporary real array before being 
-      * passed to the FFTW real-to-complex transform function.
+      * The resulting complex array is the output of FFTW's forward 
+      * transform method scaled by a factor of 1/N (where N is the
+      * number of grid points). The scaling ensures that a round-trip
+      * Fourier transform (forward + inverse) reproduces the original
+      * input array.
       *
       * This function does not overwrite or corrupt the input array.
+      * 
+      * Note that, in this transform, the k-space grid is the same size
+      * as the r-space grid, which differs from the real-to-complex 
+      * transform.
       * 
       * \param in  array of complex values on r-space grid
       * \param out  array of complex values on k-space grid
@@ -140,13 +128,17 @@ namespace Cpu {
       /**
       * Compute complex-to-complex inverse Fourier transform.
       *
-      * This function computes the same unscaled inverse transform as the
-      * complex-to-complex transforms of the FFTW library.
+      * The resulting complex array is the unaltered output of FFTW's 
+      * inverse transform function.
+      * 
+      * Note that, in this transform, the k-space grid is the same size
+      * as the r-space grid, which differs from the complex-to-real 
+      * transform.
       *
       * \param in  array of complex values on k-space grid 
       * \param out  array of complex values on r-space grid
       */
-      void inverseTransform(CField<D>& in, CField<D>& out) const;
+      void inverseTransform(CField<D> const & in, CField<D>& out) const;
 
       // Accessors
 
@@ -162,14 +154,8 @@ namespace Cpu {
 
    private:
 
-      /// Private r-space array for performing safe transforms.
-      mutable RField<D> rFieldCopy_;
-
       /// Private k-space array for performing safe transforms.
       mutable RFieldDft<D> kFieldCopy_;
-
-      /// Private complex field for performing safe transforms.
-      mutable CField<D> cFieldCopy_;
 
       /// Vector containing number of grid points in each direction.
       IntVec<D> meshDimensions_;

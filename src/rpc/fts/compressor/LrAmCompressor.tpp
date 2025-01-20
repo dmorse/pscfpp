@@ -217,7 +217,7 @@ namespace Rpc{
          resid_[i] = resTrial[i];
       }
 
-      // Fourier transfor r-grid residual resid_ to k-grid form residK_
+      // Fourier transform r-grid residual resid_ to k-grid form residK_
       system().domain().fft().forwardTransform(resid_, residK_);
 
       // Compute update on a k-grid, using quasi-Newton algorithm
@@ -232,8 +232,8 @@ namespace Rpc{
       // Field residK_ now stores k-grid update rather than residual
 
       // Convert field update back to r-grid (real space) form 
-      // On return, resid_ contains r-grid field update
-      system().domain().fft().inverseTransform(residK_, resid_);
+      // On return, resid_ contains r-grid field update, residK_ is destroyed
+      system().domain().fft().inverseTransformUnsafe(residK_, resid_);
 
       // Add update to obtain new fieldTrial
       for (int i = 0; i < n; i++) {
