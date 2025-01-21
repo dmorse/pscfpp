@@ -49,7 +49,7 @@ namespace Prdc {
    *    D     - dimension of space, i.e., 1, 2, or 3)
    *    RFRT  - real field (r-grid) type, e.g., RField<D> 
    *    RFKT  - real field (k-grid) type, e.g., RFieldDft<D> 
-   *    FFT   - fast Fouriert transform type, e.g., FFT<D> 
+   *    FFT   - fast Fourier transform type, e.g., FFT<D> 
    *
    * Side effect of reading a field file: The member functions that read 
    * fields from a file may all construct a symmetry adapted basis within
@@ -591,7 +591,7 @@ namespace Prdc {
       * \param in  fields in discrete Fourier format (k-grid)
       * \param out  fields defined on real-space grid (r-grid)
       */
-      void convertKGridToRGrid(DArray<RFKT> & in,
+      void convertKGridToRGrid(DArray<RFKT> const & in,
                                DArray<RFRT> & out) const;
 
       /**
@@ -604,7 +604,7 @@ namespace Prdc {
       * \param in  field in discrete Fourier format (k-grid)
       * \param out  field defined on real-space grid (r-grid)
       */
-      void convertKGridToRGrid(RFKT & in,
+      void convertKGridToRGrid(RFKT const & in,
                                RFRT & out) const;
 
       /**

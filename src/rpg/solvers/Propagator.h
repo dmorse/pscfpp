@@ -149,13 +149,6 @@ namespace Rpg {
       * for this propagator and the final / tail Qfield of its partner. 
       */ 
       double computeQ();
-
-      /**
-      * Return q-field at specified step by reference (after solving).
-      *
-      * \param i step index
-      */
-      RField<D>& q(int i);
       
       /**
       * Return const q-field at specified step by reference (after solving).
@@ -167,7 +160,7 @@ namespace Rpg {
       /**
       * Return q-field at beginning of block (initial condition).
       */
-      RField<D>& head();
+      RField<D> const & head();
 
       /**
       * Return q-field at end of block (after propagator is solved).
@@ -177,7 +170,7 @@ namespace Rpg {
       /**
       * Return the full array of q-fields (after propagator is solved).
       */
-      DeviceArray<cudaReal>& qAll();
+      DeviceArray<cudaReal> const & qAll();
 
       /**
       * Get the associated Block object by reference.
@@ -255,7 +248,7 @@ namespace Rpg {
    */
    template <int D>
    inline 
-   RField<D>& Propagator<D>::head()
+   RField<D> const & Propagator<D>::head()
    {  
       UTIL_CHECK(isAllocated());
       return qFields_[0];
@@ -270,17 +263,6 @@ namespace Rpg {
    {  
       UTIL_CHECK(isSolved());
       return qFields_[ns_-1];
-   }
-
-   /*
-   * Return q-field at specified step by reference.
-   */
-   template <int D>
-   inline 
-   RField<D> & Propagator<D>::q(int i)
-   {  
-      UTIL_CHECK(isSolved());
-      return qFields_[i];
    }
 
    /*
@@ -299,7 +281,7 @@ namespace Rpg {
    */
    template <int D>
    inline 
-   DeviceArray<cudaReal>& Propagator<D>::qAll()
+   DeviceArray<cudaReal> const & Propagator<D>::qAll()
    {  
       UTIL_CHECK(isSolved());
       return qFieldsAll_;
