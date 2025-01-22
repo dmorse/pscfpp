@@ -8,6 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
+#include <util/signal/Signal.h>
 #include <util/containers/FArray.h>
 #include <util/containers/FSArray.h>
 #include <util/containers/FMatrix.h>
@@ -141,6 +142,18 @@ namespace Prdc {
       bool isInitialized() const
       {  return isInitialized_; }
 
+      /**
+      * Add an Observer.
+      *
+      * If this does not have a Signal<> suboject, this function will
+      * create it. 
+      *
+      * \param observer  observer object (invokes member function)
+      * \param methodPtr  pointer to relevant member function
+      */
+      template <class Observer>
+      void addObserver(Observer& observer, void (Observer::*methodPtr)());
+
    protected:
 
       /**
@@ -198,6 +211,11 @@ namespace Prdc {
       int nParameter_;
 
       /**
+      * Pointer to a Signal<void> subobject.
+      */
+      Signal<void>* signalPtr_;
+
+      /**
       * Has this unit cell been fully initialized?
       */
       bool isInitialized_;
@@ -208,6 +226,11 @@ namespace Prdc {
       * Calls initializeToZero, setBasis, computeDerivatives internally.
       */
       void setLattice();
+
+      /**
+      * Does this object have a Signal<> subobject?
+      */
+      bool hasSignal() const;
 
    private:
 
@@ -321,6 +344,7 @@ namespace Prdc {
    template <int D>
    UnitCellBase<D>::UnitCellBase()
     : nParameter_(0),
+      signalPtr_(nullptr),
       isInitialized_(false)
    {}
 
@@ -329,7 +353,11 @@ namespace Prdc {
    */
    template <int D>
    UnitCellBase<D>::~UnitCellBase()
-   {}
+   {
+      if (hasSignal()) {
+         delete signalPtr_;
+      }
+   }
 
    /*
    * Set all the parameters in the unit cell.
@@ -463,6 +491,24 @@ namespace Prdc {
       setBasis();
       computeDerivatives();
       isInitialized_ = true;
+      if (hasSignal()) {
+         signalPtr_->notify();
+      }
+   }
+
+   template <int D>
+   bool UnitCellBase<D>::hasSignal() const
+   {  return bool(signalPtr_); }
+
+   template <int D>
+   template <class Observer>
+   void UnitCellBase<D>::addObserver(Observer& observer,
+                                     void (Observer::*methodPtr)())
+   {
+      if (!hasSignal()) {
+         signalPtr_ = new Signal<void>;
+      }
+      signalPtr_->addObserver(observer, methodPtr);
    }
 
 }
