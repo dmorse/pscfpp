@@ -51,25 +51,6 @@ namespace Prdc {
       void setParameters(FSArray<double, 6> const & parameters);
 
       /**
-      * Compute square magnitude of reciprocal lattice vector.
-      *
-      * \param k  vector of components of a reciprocal lattice vector
-      */
-      virtual double ksq(IntVec<D> const & k) const;
-
-      /**
-      * Compute derivative of square wavevector w/respect to cell parameter.
-      *
-      * This function computes and returns a derivative with respect to 
-      * unit cell parameter number n of the square of a reciprocal lattice
-      * vector with integer coefficients given by the elements of vec.
-      *
-      * \param vec  vector of components of a reciprocal lattice vector
-      * \param n  index of a unit cell parameter
-      */
-      virtual double dksq(IntVec<D> const & vec, int n) const;
-
-      /**
       * Get the number of parameters in the unit cell.
       */
       int nParameter() const;
@@ -137,10 +118,31 @@ namespace Prdc {
       double dkkBasis(int k, int i, int j) const;
 
       /**
-      * Has this unit cell been initialized?
+      * Compute square magnitude of reciprocal lattice vector.
+      *
+      * \param k  vector of components of a reciprocal lattice vector
       */
-      bool isInitialized() const
-      {  return isInitialized_; }
+      virtual double ksq(IntVec<D> const & k) const;
+
+      /**
+      * Compute derivative of square wavevector w/respect to cell parameter.
+      *
+      * This function computes and returns a derivative with respect to 
+      * unit cell parameter number n of the square of a reciprocal lattice
+      * vector with integer coefficients given by the elements of vec.
+      *
+      * \param vec  vector of components of a reciprocal lattice vector
+      * \param n  index of a unit cell parameter
+      */
+      virtual double dksq(IntVec<D> const & vec, int n) const;
+
+      /**
+      * Has this unit cell been initialized?
+      *
+      * A unit cell is initialized after both the lattice type and
+      * the lattice parameters have been set.
+      */
+      bool isInitialized() const;
 
       /**
       * Add an Observer.
@@ -153,6 +155,20 @@ namespace Prdc {
       */
       template <class Observer>
       void addObserver(Observer& observer, void (Observer::*methodPtr)());
+
+      /**
+      * Clear all observers and delete the Signal<> object.
+      */
+      void clearObservers();
+
+      /**
+      * Return the current number of observers.
+      *
+      * The number of observers is zero upon construction, is incremented
+      * by 1 every time addObserver() is called, and is reset to 0 by
+      * calling clearObservers().
+      */
+      int nObserver() const;
 
    protected:
 
@@ -223,14 +239,12 @@ namespace Prdc {
       /**
       * Compute all private data, given latticeSystem and parameters.
       *
-      * Calls initializeToZero, setBasis, computeDerivatives internally.
+      * Calls initializeToZero, setBasis, & computeDerivatives internally.
+      * Also sets isInitialized flag true and notifies any observers.
+      * All functions that reset unit cell parameters must call this 
+      * function, including stream insertion operators.
       */
       void setLattice();
-
-      /**
-      * Does this object have a Signal<> subobject?
-      */
-      bool hasSignal() const;
 
    private:
 
@@ -255,6 +269,11 @@ namespace Prdc {
       * Compute values of dkBasis_, drrBasis_, and dkkBasis_.
       */
       void computeDerivatives();
+
+      /**
+      * Does this object have a Signal<> subobject?
+      */
+      bool hasSignal() const;
 
    };
 
@@ -336,6 +355,14 @@ namespace Prdc {
    double UnitCellBase<D>::drrBasis(int k, int i, int j) const
    {  return drrBasis_[k](i, j);  }
 
+   /*
+   * Is this unit cell initialized?
+   */
+   template <int D>
+   inline
+   bool UnitCellBase<D>::isInitialized() const
+   {  return isInitialized_; }
+
    // Non-inline member functions
 
    /*
@@ -409,6 +436,39 @@ namespace Prdc {
       }
 
       return value;
+   }
+
+   // Functions to manage observers
+
+   template <int D>
+   template <class Observer>
+   void UnitCellBase<D>::addObserver(Observer& observer,
+                                     void (Observer::*methodPtr)())
+   {
+      if (!hasSignal()) {
+         signalPtr_ = new Signal<void>;
+      }
+      signalPtr_->addObserver(observer, methodPtr);
+   }
+
+   template <int D>
+   void UnitCellBase<D>::clearObservers() 
+   {
+      if (hasSignal()) {
+         signalPtr_->clear();
+         delete signalPtr_;
+         signalPtr_ = nullptr;
+      }
+   }
+
+   template <int D>
+   int UnitCellBase<D>::nObserver() const
+   {
+      if (hasSignal()) {
+         return signalPtr_->nObserver();
+      } else {
+         return 0;
+      }
    }
 
    // Protected member functions
@@ -499,17 +559,6 @@ namespace Prdc {
    template <int D>
    bool UnitCellBase<D>::hasSignal() const
    {  return bool(signalPtr_); }
-
-   template <int D>
-   template <class Observer>
-   void UnitCellBase<D>::addObserver(Observer& observer,
-                                     void (Observer::*methodPtr)())
-   {
-      if (!hasSignal()) {
-         signalPtr_ = new Signal<void>;
-      }
-      signalPtr_->addObserver(observer, methodPtr);
-   }
 
 }
 }
