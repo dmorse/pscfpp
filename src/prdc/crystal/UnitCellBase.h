@@ -41,6 +41,9 @@ namespace Prdc {
       */
       ~UnitCellBase();
 
+      /// \name Unit Cell Parameters
+      ///@{
+
       /**
       * Set all the parameters of unit cell.
       *
@@ -67,6 +70,18 @@ namespace Prdc {
       */
       double parameter(int i) const;
 
+      /**
+      * Has this unit cell been initialized?
+      *
+      * A unit cell is initialized after both the lattice type and
+      * the lattice parameters have been set.
+      */
+      bool isInitialized() const;
+
+      ///@}
+      /// \name Bravais Lattice Data
+      ///@{
+ 
       /**
       * Get Bravais basis vector i, denoted by a_i.
       *
@@ -117,6 +132,10 @@ namespace Prdc {
       */
       double dkkBasis(int k, int i, int j) const;
 
+      ///@}
+      /// \name Wavevector Properties
+      ///@{
+
       /**
       * Compute square magnitude of reciprocal lattice vector.
       *
@@ -136,13 +155,9 @@ namespace Prdc {
       */
       virtual double dksq(IntVec<D> const & vec, int n) const;
 
-      /**
-      * Has this unit cell been initialized?
-      *
-      * A unit cell is initialized after both the lattice type and
-      * the lattice parameters have been set.
-      */
-      bool isInitialized() const;
+      ///@}
+      /// \name Observer Interface
+      ///@{
 
       /**
       * Add an Observer.
@@ -169,6 +184,8 @@ namespace Prdc {
       * calling clearObservers().
       */
       int nObserver() const;
+
+      ///@}
 
    protected:
 
@@ -227,26 +244,29 @@ namespace Prdc {
       int nParameter_;
 
       /**
-      * Pointer to a Signal<void> subobject.
-      */
-      Signal<void>* signalPtr_;
-
-      /**
       * Has this unit cell been fully initialized?
       */
       bool isInitialized_;
 
       /**
-      * Compute all private data, given latticeSystem and parameters.
+      * Compute all protected data, given latticeSystem and parameters.
       *
-      * Calls initializeToZero, setBasis, & computeDerivatives internally.
-      * Also sets isInitialized flag true and notifies any observers.
       * All functions that reset unit cell parameters must call this 
-      * function, including stream insertion operators.
+      * function to reset depenent data, including stream insertion 
+      * operators.
+      *
+      * Calls initializeToZero, setBasis, & computeDerivatives functions
+      * internally. Also sets isInitialized flag true and notifies any 
+      * observers.
       */
       void setLattice();
 
    private:
+
+      /**
+      * Pointer to a Signal<void> subobject.
+      */
+      Signal<void>* signalPtr_;
 
       /**
       * Initialize all arrays to zero.
@@ -371,9 +391,9 @@ namespace Prdc {
    template <int D>
    UnitCellBase<D>::UnitCellBase()
     : nParameter_(0),
-      signalPtr_(nullptr),
-      isInitialized_(false)
-   {}
+      isInitialized_(false),
+      signalPtr_(nullptr)
+   {  initializeToZero(); }
 
    /*
    * Destructor.
