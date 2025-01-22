@@ -838,16 +838,21 @@ public:
       printMethod(TEST_FUNC);
       // printEndl();
 
-      Observer observer;
+      UnitCell<3> v;
+      TEST_ASSERT(v.nObserver() == 0);
+
+      Observer observer1;
+      Observer observer2;
       void (Observer::*functionPtr)() = nullptr;
       functionPtr = &Observer::receive;
 
-      UnitCell<3> v;
-
-      TEST_ASSERT(v.nObserver() == 0);
-      v.addObserver(observer, functionPtr);
+      v.addObserver(observer1, functionPtr);
       TEST_ASSERT(v.nObserver() == 1);
-      TEST_ASSERT(!observer.notified);
+      v.addObserver(observer2, &Observer::receive);
+      TEST_ASSERT(v.nObserver() == 2);
+
+      TEST_ASSERT(!observer1.notified);
+      TEST_ASSERT(!observer2.notified);
 
       std::ifstream in;
       openInputFile("in/Tetragonal", in);
@@ -856,22 +861,26 @@ public:
       TEST_ASSERT(v.nParameter() == 2);
       TEST_ASSERT(isValidReciprocal(v));
       TEST_ASSERT(isValidDerivative(v));
-      TEST_ASSERT(observer.notified);
-      TEST_ASSERT(v.nObserver() == 1);
+      TEST_ASSERT(observer1.notified);
+      TEST_ASSERT(observer2.notified);
+      TEST_ASSERT(v.nObserver() == 2);
 
-      observer.notified = false;
+      observer1.notified = false;
+      observer2.notified = false;
 
       FSArray<double, 6> parameters = v.parameters();
       TEST_ASSERT(parameters.size() == 2);
       parameters[1] *= 1.1;
 
-      TEST_ASSERT(!observer.notified);
       v.setParameters(parameters);
-      TEST_ASSERT(observer.notified);
-      TEST_ASSERT(v.nObserver() == 1);
+      TEST_ASSERT(observer1.notified);
+      TEST_ASSERT(observer2.notified);
+      TEST_ASSERT(v.nObserver() == 2);
 
       v.clearObservers();
       TEST_ASSERT(v.nObserver() == 0);
+      TEST_ASSERT(observer1.notified);
+      TEST_ASSERT(observer2.notified);
 
    }
 

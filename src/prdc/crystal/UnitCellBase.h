@@ -160,10 +160,39 @@ namespace Prdc {
       ///@{
 
       /**
-      * Add an Observer.
+      * Add an Observer to this unit cell.
       *
-      * If this does not have a Signal<> suboject, this function will
-      * create it. 
+      * This adds an instance of class "Observer" and a void member
+      * function of that class to the list of observers associated with
+      * this UnitCellBase<D> object. The methodPtr argument must be the
+      * relative address of a void function that takes no arguments.
+      * 
+      * Whenever the parameters of this unit cell are set or modified
+      * all observers are notified by calling the prescribed member
+      * function of each observer.
+      *
+      * <b> Usage </b> : Suppose Observer is a class that has a member 
+      * function named "receive" that should be called when the unit
+      * cell parameters are set or updated. The "receive" function must
+      * have a signature "void receive()". An instance of that class
+      * may be added to the list of observers for a UnitCellBase<3>
+      * using the following syntax:
+      * \code
+      *    UnitCellBase<3> unitCell;
+      *    Observer observer;
+      *    unitCell.addObserver(observer, &Observer::receive);
+      * \endcode
+      * Alternatively, one could explicitly create a pointer to the 
+      * member function and then pass that to the unit cell, like this:
+      * \code
+      *    UnitCellBase<3> unitCell;
+      *
+      *    Observer observer;
+      *    void (Observer::*functionPtr)() = nullptr;
+      *    functionPtr = &Observer::receive;
+      *
+      *    v.addObserver(observer, functionPtr);
+      * \endcode
       *
       * \param observer  observer object (invokes member function)
       * \param methodPtr  pointer to relevant member function
@@ -269,6 +298,11 @@ namespace Prdc {
       Signal<void>* signalPtr_;
 
       /**
+      * Does this object have a Signal<> subobject?
+      */
+      bool hasSignal() const;
+
+      /**
       * Initialize all arrays to zero.
       *
       * Sets all elements of the following arrays to zero:
@@ -291,9 +325,14 @@ namespace Prdc {
       void computeDerivatives();
 
       /**
-      * Does this object have a Signal<> subobject?
+      * Copy constructor - private and unimplemented to prohibit.
       */
-      bool hasSignal() const;
+      UnitCellBase(UnitCellBase<D> const & other);
+
+      /**
+      * Assignment operator - private and unimplemented to prohibit.
+      */
+      UnitCellBase<D>& operator = (UnitCellBase<D> const & other);
 
    };
 
