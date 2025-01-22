@@ -9,6 +9,7 @@
 */
 
 #include <pscf/cuda/HostDArray.h>     // base class
+#include <pscf/cuda/DeviceArray.h>    // needed to instantiate HostDArray
 #include <pscf/cuda/GpuTypes.h>       // template parameter
 
 namespace Pscf {

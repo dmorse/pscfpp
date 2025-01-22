@@ -2,8 +2,6 @@ pscf_cuda_ =\
    pscf/cuda/Reduce.cu \
    pscf/cuda/ThreadGrid.cu \
    pscf/cuda/CudaRandom.cu \
-   pscf/cuda/DeviceArray.cu \
-   pscf/cuda/HostDArray.cu \
    pscf/cuda/VecOp.cu \
    pscf/cuda/VecOpMisc.cu
 

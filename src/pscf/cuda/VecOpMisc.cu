@@ -8,8 +8,7 @@
 #include "VecOpMisc.h"
 #include "VecOp.h"
 #include "ThreadGrid.h"
-#include "HostDArray.tpp"  // tpp needed to use implicit instantiation
-#include "DeviceArray.tpp" // tpp needed to use implicit instantiation
+#include "HostDArray.h" 
 #include <cmath>
 
 namespace Pscf {
