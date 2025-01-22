@@ -16,6 +16,7 @@ namespace Rpg {
 
    template <int D>
    Polymer<D>::Polymer()
+    : nParams_(0)
    {  setClassName("Polymer"); }
 
    template <int D>
@@ -39,27 +40,12 @@ namespace Rpg {
    }
 
    /*
-   * Set unit cell dimensions in all solvers.
+   * Store the number of lattice parameters in the unit cell.
    */ 
    template <int D>
-   void Polymer<D>::setupUnitCell(UnitCell<D> const & unitCell, WaveList<D>& wavelist)
+   void Polymer<D>::setNParams(int nParams)
    {
-      nParams_ = unitCell.nParameter();
-      for (int j = 0; j < nBlock(); ++j) {
-         block(j).setupUnitCell(unitCell, wavelist);
-      }
-   }
-   
-   /*
-   * Set unit cell dimensions in all solvers.
-   */ 
-   template <int D>
-   void Polymer<D>::setupUnitCell(UnitCell<D> const & unitCell)
-   {
-      nParams_ = unitCell.nParameter();
-      for (int j = 0; j < nBlock(); ++j) {
-         block(j).setupUnitCell(unitCell);
-      }
+      nParams_ = nParams;
    }
 
    /*
@@ -86,8 +72,9 @@ namespace Rpg {
    template <int D>
    void Polymer<D>::computeStress()
    {
+      UTIL_CHECK(nParams_ > 0);
+      
       double prefactor;
-      prefactor = 0;
      
       // Initialize stress_ to 0
       for (int i = 0; i < nParams_; ++i) {

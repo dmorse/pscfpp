@@ -74,33 +74,36 @@ namespace Rpg
       void readParameters(std::istream& in);
 
       /**
-      * Create an association with the mesh and allocate memory.
+      * Create associations with a mesh, FFT, UnitCell, and WaveList object.
       * 
       * The Mesh<D> object must have already been initialized, e.g., by 
       * reading the dimensions from a file, so that the mesh dimensions 
       * are known on entry. The FFT<D> object must have been set up using
-      * the same mesh dimensions as those stored by the mesh. 
+      * the same mesh dimensions as those stored by the mesh. The UnitCell
+      * must have been assigned a lattice system, but does not yet need to 
+      * be initialized.
+      * 
+      * Must be called before allocate().
       *
-      * \param mesh  associated Mesh<D> object (defines spatial mesh)
-      * \param fft  associated FFT<D> object (for Fourier transforms)
+      * \param mesh  Mesh<D> object - spatial discretization mesh
+      * \param fft  FFT<D> object - Fourier transforms
+      * \param cell  UnitCell<D> object - crystallographic unit cell
+      * \param wavelist  WaveList<D> object - properties of wavevectors
       */
-      void setDiscretization(Mesh<D> const & mesh, FFT<D> const & fft);
+      void associate(Mesh<D> const & mesh, FFT<D> const & fft, 
+                     UnitCell<D> const & cell, WaveList<D>& wavelist);
 
       /**
-      * Set unit cell parameters used in solver.
+      * Allocate internal data containers in all solvers. 
       * 
-      * \param unitCell crystallographic unit cell
-      * \param waveList container for wavevector data
+      * associate() must have been called first.
       */
-      void setupUnitCell(UnitCell<D> const & unitCell, 
-                         WaveList<D> & waveList);
-      
+      void allocate();
+
       /**
-      * Set unit cell parameters used in solver.
-      * 
-      * \param unitCell crystallographic unit cell
+      * Update solvers to account for new lattice parameters.
       */
-      void setupUnitCell(UnitCell<D> const & unitCell);
+      void updateUnitCell();
 
       /**
       * Reset statistical segment length for one monomer type.
@@ -211,7 +214,7 @@ namespace Rpg
       bool useBatchedFFT_;
 
       /// Number of unit cell parameters.
-      int nUnitCellParams_;
+      int nParams_;
 
       /// Pointer to associated Mesh<D> object.
       Mesh<D> const * meshPtr_;

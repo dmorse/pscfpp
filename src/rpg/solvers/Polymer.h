@@ -56,24 +56,24 @@ namespace Rpg {
       */
       typedef PolymerTmpl< Block<D> > Base;
 
-      /*
+      /**
       * Constructor. 
       */
       Polymer();
 
-      /*
+      /**
       * Destructor. 
       */
       ~Polymer();
 
-      /*
+      /**
       * Set the phi (volume fraction) for this species.
       *
       * \param phi volume fraction (input)
       */
       void setPhi(double phi);
 
-      /*
+      /**
       * Set the mu (chemical potential) for this species.
       * 
       * \param mu chemical potential (input)
@@ -81,20 +81,11 @@ namespace Rpg {
       void setMu(double mu);
 
       /**
-      * Set unit cell parameters used in solver.
+      * Store the number of lattice parameters in the unit cell.
       *
-      * \param unitCell crystallographic unit cell (input)
-      * \param wavelist precomputed wavevector data (input)
+      * \param nParams  the number of lattice parameters in the unit cell
       */ 
-      void setupUnitCell(UnitCell<D> const & unitCell, 
-                         WaveList<D> & wavelist);
-      
-      /**
-      * Set unit cell parameters used in solver.
-      *
-      * \param unitCell crystallographic unit cell (input)
-      */ 
-      void setupUnitCell(UnitCell<D> const & unitCell);
+      void setNParams(int nParams);
 
       /**
       * Compute solution to MDE and concentrations.
@@ -132,10 +123,10 @@ namespace Rpg {
 
    private: 
 
-      // Stress contribution from this polymer species.
+      /// Stress contribution from this polymer species.
       FArray<double, 6> stress_;
      
-      // Number of unit cell parameters. 
+      /// Number of unit cell parameters. 
       int nParams_;
 
       using Base::phi_;

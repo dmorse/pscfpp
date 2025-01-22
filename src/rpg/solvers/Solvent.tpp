@@ -17,21 +17,12 @@ namespace Rpg {
 
    template <int D>
    Solvent<D>::Solvent()
+    : meshPtr_(nullptr)
    {  setClassName("Solvent"); }
 
    template <int D>
    Solvent<D>::~Solvent()
    {}
-
-   /*
-   * Create an association with a Mesh & allocate the concentration field.
-   */
-   template <int D>
-   void Solvent<D>::setDiscretization(Mesh<D> const & mesh)
-   {
-      meshPtr_ = &mesh;
-      concField_.allocate(mesh.dimensions());
-   }
 
    /*
    * Compute concentration, q, phi or mu.

@@ -71,14 +71,14 @@ public:
       mesh.setDimensions(d);
       FFT<1> fft;
       fft.setup(d);
-      mixture.setDiscretization(mesh, fft);
 
       // Construct wavelist 
       WaveList<1> wavelist;
       wavelist.allocate(mesh, unitCell);
 
-      // Setup unit cell
-      mixture.setupUnitCell(unitCell, wavelist);
+      // Set up mixture
+      mixture.associate(mesh, fft, unitCell, wavelist);
+      mixture.allocate();
 
       int nMonomer = mixture.nMonomer();
       DArray< RField<1> > wFields;
@@ -145,14 +145,14 @@ public:
       mesh.setDimensions(d);
       FFT<2> fft;
       fft.setup(d);
-      mixture.setDiscretization(mesh, fft);
 
       // Construct wavelist 
       WaveList<2> wavelist;
       wavelist.allocate(mesh, unitCell);
 
-      // Setup unit cell
-      mixture.setupUnitCell(unitCell, wavelist);
+      // Set up mixture
+      mixture.associate(mesh, fft, unitCell, wavelist);
+      mixture.allocate();
 
       int nMonomer = mixture.nMonomer();
       DArray< RField<2> > wFields;
@@ -230,14 +230,14 @@ public:
       mesh.setDimensions(d);
       FFT<2> fft;
       fft.setup(d);
-      mixture.setDiscretization(mesh, fft);
 
       // Construct wavelist 
       WaveList<2> wavelist;
       wavelist.allocate(mesh, unitCell);
 
-      // Setup unit cell
-      mixture.setupUnitCell(unitCell, wavelist);
+      // Set up mixture
+      mixture.associate(mesh, fft, unitCell, wavelist);
+      mixture.allocate();
 
       int nMonomer = mixture.nMonomer();
       DArray< RField<2> > wFields;
@@ -315,14 +315,14 @@ public:
       mesh.setDimensions(d);
       FFT<3> fft;
       fft.setup(d);
-      mixture.setDiscretization(mesh, fft);
 
       // Construct wavelist 
       WaveList<3> wavelist;
       wavelist.allocate(mesh, unitCell);
 
-      // Setup unit cell
-      mixture.setupUnitCell(unitCell, wavelist);
+      // Set up mixture
+      mixture.associate(mesh, fft, unitCell, wavelist);
+      mixture.allocate();
 
       int nMonomer = mixture.nMonomer();
       DArray< RField<3> > wFields;

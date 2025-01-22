@@ -92,33 +92,41 @@ namespace Rpg {
       ~Block();
 
       /**
-      * Initialize discretization and allocate required memory.
+      * Associate this object with a mesh, FFT, UnitCell, and WaveList object.
+      * 
+      * Must be called before allocate().
       *
-      * \param ds  desired (optimal) value for contour length step
       * \param mesh  Mesh<D> object - spatial discretization mesh
       * \param fft  FFT<D> object - Fourier transforms
+      * \param cell  UnitCell<D> object - crystallographic unit cell
+      * \param wavelist  WaveList<D> object - properties of wavevectors
+      */
+      void associate(Mesh<D> const & mesh, FFT<D> const & fft, 
+                     UnitCell<D> const & cell, WaveList<D>& wavelist);
+
+      /**
+      * Allocate internal data containers. 
+      * 
+      * associate() must have been called first.
+      *
+      * \param ds  desired (optimal) value for contour length step
       * \param useBatchedFFT  Flag indicating whether to use batched FFTs
       */
-      void setDiscretization(double ds,
-                             Mesh<D> const & mesh,
-                             FFT<D> const & fft, 
-                             bool useBatchedFFT = true);
+      void allocate(double ds, bool useBatchedFFT = true);
 
       /**
-      * Setup parameters that depend on the unit cell.
-      *
-      * \param unitCell  unit cell, defining cell dimensions (input)
-      * \param waveList  container for properties of wavevectors (input)
+      * Upon changing lattice parameters, update this object.
+      * 
+      * This method changes the internal hasExpKsq_ flag to false, so 
+      * that the expKsq arrays will need to be recalculated before 
+      * step() can be called. 
+      * 
+      * The relevant UnitCell object and corresponding WaveList should
+      * already be associated with this object, so this object can
+      * access the updated UnitCell and WaveList to recalculate expKsq
+      * when needed.
       */
-      void setupUnitCell(UnitCell<D> const & unitCell,
-                         WaveList<D> & waveList);
-
-      /**
-      * Setup parameters that depend on the unit cell.
-      *
-      * \param unitCell  unit cell, defining cell dimensions (input)
-      */
-      void setupUnitCell(UnitCell<D> const & unitCell);
+      void updateUnitCell();
 
       /**
       * Set or reset block length.
@@ -301,7 +309,7 @@ namespace Rpg {
       /// Number of chain contour positions (= # contour steps + 1).
       int ns_;
 
-      /// Have arrays been allocated in setDiscretization ?
+      /// Have arrays been allocated?
       bool isAllocated_;
 
       /// Are expKsq_ arrays up to date ? (initialize false)

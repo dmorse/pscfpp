@@ -71,7 +71,7 @@ public:
       Pscf::Rpg::Block<1> block;
    }
 
-   void testSetDiscretization1D()
+   void testSetup1D() // test allocate and associate methods
    {
       printMethod(TEST_FUNC);
 
@@ -85,8 +85,20 @@ public:
       FFT<1> fft;
       fft.setup(mesh.dimensions());
 
+      // Set up unit cell
+      UnitCell<1> unitCell;
+      setupUnitCell<1>(unitCell, "in/Lamellar");
+
+      // Create wavelist
+      WaveList<1> wavelist;
+
+      // Associate block
+      block.associate(mesh, fft, unitCell, wavelist);
+
+      // Allocate block
       double ds = 0.02;
-      block.setDiscretization(ds, mesh, fft);
+      block.allocate(ds);
+
       TEST_ASSERT(eq(block.length(), 2.0));
       TEST_ASSERT(eq(block.ds(), 0.02));
       TEST_ASSERT(block.ns() == 101);
@@ -94,21 +106,34 @@ public:
 
    }
 
-   void testSetDiscretization2D()
+   void testSetup2D() // test allocate and associate methods
    {
       printMethod(TEST_FUNC);
 
-      //Create and initialize block
+      // Create and initialize block
       Pscf::Rpg::Block<2> block;
       setupBlock<2>(block);
 
+      // Create and initialize mesh
       Mesh<2> mesh;
       setupMesh<2>(mesh);
       FFT<2> fft;
       fft.setup(mesh.dimensions());
 
+      // Set up unit cell
+      UnitCell<2> unitCell;
+      setupUnitCell<2>(unitCell, "in/Rectangular");
+
+      // Create wavelist 
+      WaveList<2> wavelist;
+
+      // Associate block
+      block.associate(mesh, fft, unitCell, wavelist);
+
+      // Allocate block
       double ds = 0.26;
-      block.setDiscretization(ds, mesh, fft);
+      block.allocate(ds);
+
       TEST_ASSERT(eq(block.length(), 2.0));
       TEST_ASSERT(eq(block.ds(), 0.25));
       TEST_ASSERT(block.ns() == 9);
@@ -116,21 +141,33 @@ public:
       TEST_ASSERT(block.mesh().dimensions()[1] == 32);
    }
 
-   void testSetDiscretization3D()
+   void testSetup3D() // test allocate and associate methods
    {
       printMethod(TEST_FUNC);
 
-      //Create and initialize block
+      // Create and initialize block
       Pscf::Rpg::Block<3> block;
       setupBlock<3>(block);
 
+      // Create and initialize mesh
       Mesh<3> mesh;
       setupMesh<3>(mesh);
       FFT<3> fft;
       fft.setup(mesh.dimensions());
 
+      // Set up unit cell
+      UnitCell<3> unitCell;
+      setupUnitCell<3>(unitCell, "in/Hexagonal");
+
+      // Create wavelist 
+      WaveList<3> wavelist;
+
+      // Associate block
+      block.associate(mesh, fft, unitCell, wavelist);
+
+      // Allocate block
       double ds = 0.3;
-      block.setDiscretization(ds, mesh, fft);
+      block.allocate(ds);
 
       TEST_ASSERT(eq(block.length(), 2.0));
       TEST_ASSERT(block.ns() == 7);
@@ -154,13 +191,21 @@ public:
       FFT<1> fft;
       fft.setup(mesh.dimensions());
 
-      double ds = 0.02;
-      block.setDiscretization(ds, mesh, fft);
-
+      // Set up unit cell
       UnitCell<1> unitCell;
       setupUnitCell<1>(unitCell, "in/Lamellar");
-
       TEST_ASSERT(eq(unitCell.rBasis(0)[0], 4.0));
+
+      // Construct wavelist
+      WaveList<1> wavelist;
+      wavelist.allocate(mesh, unitCell);
+
+      // Associate block
+      block.associate(mesh, fft, unitCell, wavelist);      
+
+      // Allocate block
+      double ds = 0.02;
+      block.allocate(ds);
 
       // Setup chemical potential field
       int nx = mesh.size();
@@ -170,17 +215,12 @@ public:
 
       TEST_ASSERT(w.capacity() == mesh.size());
       
-      for (int i=0; i < nx; ++i) {
+      for (int i = 0; i < nx; ++i) {
          w_h[i] = 1.0;
       }
 
       w = w_h; // copy to device
 
-      // Construct wavelist 
-      WaveList<1> wavelist;
-      wavelist.allocate(mesh, unitCell);
-
-      block.setupUnitCell(unitCell, wavelist);
       block.setupSolver(w);
    }
 
@@ -198,14 +238,23 @@ public:
       FFT<2> fft;
       fft.setup(mesh.dimensions());
 
-      double ds = 0.02;
-      block.setDiscretization(ds, mesh, fft);
-
+      // Set up unit cell
       UnitCell<2> unitCell;
       setupUnitCell<2>(unitCell, "in/Rectangular");
 
       TEST_ASSERT(eq(unitCell.rBasis(0)[0], 3.0));
       TEST_ASSERT(eq(unitCell.rBasis(1)[1], 4.0));
+
+      // Construct wavelist
+      WaveList<2> wavelist;
+      wavelist.allocate(mesh, unitCell);
+
+      // Associate block
+      block.associate(mesh, fft, unitCell, wavelist);      
+
+      // Allocate block
+      double ds = 0.02;
+      block.allocate(ds);
 
       // Setup chemical potential field
       int nx = mesh.size();
@@ -215,17 +264,12 @@ public:
 
       TEST_ASSERT(w.capacity() == mesh.size());
       
-      for (int i=0; i < nx; ++i) {
+      for (int i = 0; i < nx; ++i) {
          w_h[i] = 1.0;
       }
 
       w = w_h; // copy to device
 
-      // Construct wavelist 
-      WaveList<2> wavelist;
-      wavelist.allocate(mesh, unitCell);
-
-      block.setupUnitCell(unitCell, wavelist);
       block.setupSolver(w);
    }
 
@@ -243,15 +287,24 @@ public:
       FFT<3> fft;
       fft.setup(mesh.dimensions());
 
-      double ds = 0.02;
-      block.setDiscretization(ds, mesh, fft);
-
+      // Set up unit cell
       UnitCell<3> unitCell;
       setupUnitCell<3>(unitCell, "in/Orthorhombic");
 
       TEST_ASSERT(eq(unitCell.rBasis(0)[0], 3.0));
       TEST_ASSERT(eq(unitCell.rBasis(1)[1], 4.0));
       TEST_ASSERT(eq(unitCell.rBasis(2)[2], 5.0));
+
+      // Construct wavelist
+      WaveList<3> wavelist;
+      wavelist.allocate(mesh, unitCell);
+
+      // Associate block
+      block.associate(mesh, fft, unitCell, wavelist);      
+
+      // Allocate block
+      double ds = 0.02;
+      block.allocate(ds);
 
       // Setup chemical potential field
       int nx = mesh.size();
@@ -261,17 +314,12 @@ public:
 
       TEST_ASSERT(w.capacity() == mesh.size());
       
-      for (int i=0; i < nx; ++i) {
+      for (int i = 0; i < nx; ++i) {
          w_h[i] = 1.0;
       }
 
       w = w_h; // copy to device
 
-      // Construct wavelist 
-      WaveList<3> wavelist;
-      wavelist.allocate(mesh, unitCell);
-
-      block.setupUnitCell(unitCell, wavelist);
       block.setupSolver(w);
    }
 
@@ -289,13 +337,21 @@ public:
       FFT<1> fft;
       fft.setup(mesh.dimensions());
 
-      double ds = 0.02;
-      block.setDiscretization(ds, mesh, fft);
-
+      // Set up unit cell
       UnitCell<1> unitCell;
       setupUnitCell<1>(unitCell, "in/Lamellar");
-
       TEST_ASSERT(eq(unitCell.rBasis(0)[0], 4.0));
+
+      // Construct wavelist
+      WaveList<1> wavelist;
+      wavelist.allocate(mesh, unitCell);
+
+      // Associate block
+      block.associate(mesh, fft, unitCell, wavelist);      
+
+      // Allocate block
+      double ds = 0.02;
+      block.allocate(ds);
 
       // Setup chemical potential field
       int nx = mesh.size();
@@ -305,17 +361,12 @@ public:
 
       TEST_ASSERT(w.capacity() == mesh.size());
       double wc = 0.3;
-      for (int i=0; i < nx; ++i) {
+      for (int i = 0; i < nx; ++i) {
          w_h[i] = wc;
       }
 
       w = w_h; // copy to device
 
-      // Construct wavelist 
-      WaveList<1> wavelist;
-      wavelist.allocate(mesh, unitCell);
-
-      block.setupUnitCell(unitCell, wavelist);
       block.setupSolver(w);
 
       // Setup fields on host and device
@@ -327,7 +378,7 @@ public:
 
       // Run block step
       double twoPi = 2.0*Constants::Pi;
-      for (int i=0; i < nx; ++i) {
+      for (int i = 0; i < nx; ++i) {
          qin[i] = cos(twoPi*double(i)/double(nx));
       }
 
@@ -380,14 +431,22 @@ public:
       FFT<2> fft;
       fft.setup(mesh.dimensions());
 
-      double ds = 0.02;
-      block.setDiscretization(ds, mesh, fft);
-
+      // Set up unit cell
       UnitCell<2> unitCell;
       setupUnitCell<2>(unitCell, "in/Rectangular");
-
       TEST_ASSERT(eq(unitCell.rBasis(0)[0], 3.0));
       TEST_ASSERT(eq(unitCell.rBasis(1)[1], 4.0));
+
+      // Construct wavelist
+      WaveList<2> wavelist;
+      wavelist.allocate(mesh, unitCell);
+
+      // Associate block
+      block.associate(mesh, fft, unitCell, wavelist);      
+
+      // Allocate block
+      double ds = 0.02;
+      block.allocate(ds);
 
       // Setup chemical potential field
       int nx = mesh.size();
@@ -397,17 +456,12 @@ public:
 
       TEST_ASSERT(w.capacity() == mesh.size());
       double wc = 0.3;
-      for (int i=0; i < nx; ++i) {
+      for (int i = 0; i < nx; ++i) {
          w_h[i] = wc;
       }
 
       w = w_h; // copy to device
 
-      // Construct wavelist 
-      WaveList<2> wavelist;
-      wavelist.allocate(mesh, unitCell);
-
-      block.setupUnitCell(unitCell, wavelist);
       block.setupSolver(w);
 
       // Setup fields on host and device
@@ -481,15 +535,23 @@ public:
       FFT<3> fft;
       fft.setup(mesh.dimensions());
 
-      double ds = 0.02;
-      block.setDiscretization(ds, mesh, fft);
-
+      // Set up unit cell
       UnitCell<3> unitCell;
       setupUnitCell<3>(unitCell, "in/Orthorhombic");
-
       TEST_ASSERT(eq(unitCell.rBasis(0)[0], 3.0));
       TEST_ASSERT(eq(unitCell.rBasis(1)[1], 4.0));
       TEST_ASSERT(eq(unitCell.rBasis(2)[2], 5.0));
+
+      // Construct wavelist
+      WaveList<3> wavelist;
+      wavelist.allocate(mesh, unitCell);
+
+      // Associate block
+      block.associate(mesh, fft, unitCell, wavelist);      
+
+      // Allocate block
+      double ds = 0.02;
+      block.allocate(ds);
 
       // Setup chemical potential field
       int nx = mesh.size();
@@ -499,17 +561,12 @@ public:
 
       TEST_ASSERT(w.capacity() == mesh.size());
       double wc = 0.3;
-      for (int i=0; i < nx; ++i) {
+      for (int i = 0; i < nx; ++i) {
          w_h[i] = wc;
       }
 
       w = w_h; // copy to device
 
-      // Construct wavelist 
-      WaveList<3> wavelist;
-      wavelist.allocate(mesh, unitCell);
-
-      block.setupUnitCell(unitCell, wavelist);
       block.setupSolver(w);
 
       // Setup fields on host and device
@@ -575,9 +632,9 @@ public:
 
 TEST_BEGIN(PropagatorTest)
 TEST_ADD(PropagatorTest, testConstructor1D)
-TEST_ADD(PropagatorTest, testSetDiscretization1D)
-TEST_ADD(PropagatorTest, testSetDiscretization2D)
-TEST_ADD(PropagatorTest, testSetDiscretization3D)
+TEST_ADD(PropagatorTest, testSetup1D)
+TEST_ADD(PropagatorTest, testSetup2D)
+TEST_ADD(PropagatorTest, testSetup3D)
 TEST_ADD(PropagatorTest, testSetupSolver1D)
 TEST_ADD(PropagatorTest, testSetupSolver2D)
 TEST_ADD(PropagatorTest, testSetupSolver3D)

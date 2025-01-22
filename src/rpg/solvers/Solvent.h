@@ -44,11 +44,20 @@ namespace Rpg {
       ~Solvent();
 
       /**
-      * Set association with Mesh, allocate memory.
+      * Associate this object with a mesh.
+      * 
+      * Must be called before allocate().
       *
-      * \param mesh associated Mesh<D> object (input)
+      * \param mesh  Mesh<D> object - spatial discretization mesh
       */
-      void setDiscretization(Mesh<D> const & mesh);
+      void associate(Mesh<D> const & mesh);
+
+      /**
+      * Allocate internal data containers. 
+      * 
+      * associate() must have been called first.
+      */
+      void allocate();
    
       /**
       * Compute monomer concentration field and phi and/or mu.
@@ -91,6 +100,26 @@ namespace Rpg {
       Mesh<D> const *  meshPtr_;
 
    };
+
+   /*
+   * Associate this object with a mesh.
+   */
+   template <int D>
+   inline void Solvent<D>::associate(Mesh<D> const & mesh)
+   {
+      UTIL_CHECK(mesh.size() > 1);
+      meshPtr_ = &mesh;
+   }
+
+   /*
+   * Allocate internal data containers. 
+   */
+   template <int D>
+   inline void Solvent<D>::allocate()
+   {  
+      UTIL_CHECK(meshPtr_);
+      concField_.allocate(meshPtr_->dimensions()); 
+   }
 
    /*
    * Get monomer concentration field for this solvent.

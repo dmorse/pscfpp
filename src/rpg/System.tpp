@@ -242,8 +242,9 @@ namespace Rpg {
       UTIL_CHECK(domain_.unitCell().lattice() != UnitCell<D>::Null);
 
       // Setup mixture
-      mixture_.setDiscretization(domain_.mesh(), fft());
-      mixture_.setupUnitCell(domain_.unitCell());
+      mixture_.associate(domain_.mesh(), fft(), 
+                         domain_.unitCell(), domain_.waveList());
+      mixture_.allocate();
 
       // Allocate memory for w and c fields
       allocateFieldsGrid();
@@ -565,7 +566,7 @@ namespace Rpg {
 
       // Update wavelist and mixture
       domain_.waveList().updateUnitCell();
-      mixture_.setupUnitCell(domain_.unitCell(), domain_.waveList());
+      mixture_.updateUnitCell();
    }
 
    template <int D>
@@ -591,7 +592,7 @@ namespace Rpg {
 
       // Update waveList and mixture
       domain_.waveList().updateUnitCell();
-      mixture_.setupUnitCell(domain_.unitCell(), domain_.waveList());
+      mixture_.updateUnitCell();
    }
 
    /*
@@ -650,7 +651,7 @@ namespace Rpg {
 
       // Update waveList and mixture
       domain_.waveList().updateUnitCell();
-      mixture_.setupUnitCell(domain_.unitCell(), domain_.waveList());
+      mixture_.updateUnitCell();
    }
 
    /*
@@ -709,7 +710,7 @@ namespace Rpg {
    {
       domain_.setUnitCell(unitCell);
       // Note - Domain::setUnitCell updates the WaveList
-      mixture_.setupUnitCell(unitCell, domain_.waveList());
+      mixture_.updateUnitCell();
       if (domain_.hasGroup() && !isAllocatedBasis_) {
          UTIL_CHECK(domain_.basis().isInitialized());
          allocateFieldsBasis();
@@ -726,7 +727,7 @@ namespace Rpg {
    {
       domain_.setUnitCell(lattice, parameters);
       // Note - Domain::setUnitCell updates the WaveList
-      mixture_.setupUnitCell(domain_.unitCell(), domain_.waveList());
+      mixture_.updateUnitCell();
       if (domain_.hasGroup() && !isAllocatedBasis_) {
          UTIL_CHECK(domain_.basis().isInitialized());
          allocateFieldsBasis();
@@ -741,7 +742,7 @@ namespace Rpg {
    {
       domain_.setUnitCell(parameters);
       // Note - Domain::setUnitCell updates the WaveList
-      mixture_.setupUnitCell(domain_.unitCell(), domain_.waveList());
+      mixture_.updateUnitCell();
       if (domain_.hasGroup() && !isAllocatedBasis_) {
          UTIL_CHECK(domain_.basis().isInitialized());
          allocateFieldsBasis();

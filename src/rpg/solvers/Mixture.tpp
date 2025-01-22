@@ -17,19 +17,24 @@ namespace Pscf {
 namespace Rpg
 {
 
+   // Constructor
    template <int D>
    Mixture<D>::Mixture()
     : ds_(-1.0),
       useBatchedFFT_(true),
-      nUnitCellParams_(0),
-      meshPtr_(0),
+      nParams_(0),
+      meshPtr_(nullptr),
       hasStress_(false)
    {  setClassName("Mixture"); }
 
+   // Destructor
    template <int D>
    Mixture<D>::~Mixture()
    {}
 
+   /*
+   * Read all parameters and initialize.
+   */
    template <int D>
    void Mixture<D>::readParameters(std::istream& in)
    {
@@ -42,52 +47,78 @@ namespace Rpg
       UTIL_CHECK(ds_ > 0);
    }
 
+   /*
+   * Create associations with a mesh, FFT, UnitCell, and WaveList object.
+   */
    template <int D>
-   void Mixture<D>::setDiscretization(Mesh<D> const& mesh, FFT<D> const& fft)
+   void Mixture<D>::associate(Mesh<D> const & mesh, FFT<D> const & fft, 
+                              UnitCell<D> const & cell, WaveList<D>& wavelist)
+   {
+      UTIL_CHECK(nMonomer() > 0);
+      UTIL_CHECK(nPolymer() + nSolvent() > 0);
+      UTIL_CHECK(mesh.size() > 0);
+      UTIL_CHECK(fft.isSetup());
+      UTIL_CHECK(fft.meshDimensions() == mesh.dimensions());
+      UTIL_CHECK(cell.nParameter() > 0);
+
+      // Assign internal pointers and variables
+      meshPtr_ = &mesh;
+      nParams_ = cell.nParameter();
+
+      // Create associations for all blocks, set nParams in Polymer objects
+      int i, j;
+      for (i = 0; i < nPolymer(); ++i) {
+         polymer(i).setNParams(nParams_);
+         for (j = 0; j < polymer(i).nBlock(); ++j) {
+            polymer(i).block(j).associate(mesh, fft, cell, wavelist);
+         }
+      }
+
+      // Create associations for all solvents
+      if (nSolvent() > 0) {
+         for (int i = 0; i < nSolvent(); ++i) {
+            solvent(i).associate(mesh);
+         }
+      }
+   }
+
+   /*
+   * Allocate internal data containers in all solvers. 
+   */
+   template <int D>
+   void Mixture<D>::allocate()
    {
       UTIL_CHECK(nMonomer() > 0);
       UTIL_CHECK(nPolymer()+ nSolvent() > 0);
       UTIL_CHECK(ds_ > 0);
-      UTIL_CHECK(mesh.size() > 0);
-      UTIL_CHECK(fft.isSetup());
-      UTIL_CHECK(fft.meshDimensions() == mesh.dimensions());
+      UTIL_CHECK(mesh().size() > 0);
 
-      meshPtr_ = &mesh;
-
-      // Set discretization for all blocks
+      // Allocate memory in all Block objects
       int i, j;
       for (i = 0; i < nPolymer(); ++i) {
          for (j = 0; j < polymer(i).nBlock(); ++j) {
-            polymer(i).block(j).setDiscretization(ds_, mesh, fft, 
-                                                  useBatchedFFT_);
+            polymer(i).block(j).allocate(ds_, useBatchedFFT_);
          }
       }
 
-      // Set spatial discretization for solvents
+      // Allocate memory in all Solvent objects
       if (nSolvent() > 0) {
          for (int i = 0; i < nSolvent(); ++i) {
-            solvent(i).setDiscretization(mesh);
+            solvent(i).allocate();
          }
       }
    }
 
+   /*
+   * Update solvers to account for new lattice parameters.
+   */
    template <int D>
-   void Mixture<D>::setupUnitCell(UnitCell<D> const & unitCell, 
-                                  WaveList<D> & wavelist)
+   void Mixture<D>::updateUnitCell()
    {
-      nUnitCellParams_ = unitCell.nParameter();
       for (int i = 0; i < nPolymer(); ++i) {
-         polymer(i).setupUnitCell(unitCell, wavelist);
-      }
-      hasStress_ = false;
-   }
-   
-   template <int D>
-   void Mixture<D>::setupUnitCell(UnitCell<D> const & unitCell)
-   {
-      nUnitCellParams_ = unitCell.nParameter();
-      for (int i = 0; i < nPolymer(); ++i) {
-         polymer(i).setupUnitCell(unitCell);
+         for (int j = 0; j < polymer(i).nBlock(); ++j) {
+            polymer(i).block(j).updateUnitCell();
+         }
       }
       hasStress_ = false;
    }
@@ -111,7 +142,6 @@ namespace Rpg
       }
       hasStress_ = false;
    }
-
 
    /*
    * Compute concentrations (but not total free energy).
@@ -177,11 +207,13 @@ namespace Rpg
    }
 
    /*  
-   * Compute Total Stress.
+   * Compute total stress.
    */  
    template <int D>
    void Mixture<D>::computeStress()
    {   
+      UTIL_CHECK(nParams_ > 0);
+
       int i, j;
 
       // Compute stress for each polymer.
@@ -190,7 +222,7 @@ namespace Rpg
       } 
 
       // Accumulate total stress 
-      for (i = 0; i < nUnitCellParams_; ++i) {
+      for (i = 0; i < nParams_; ++i) {
          stress_[i] = 0.0;
          for (j = 0; j < nPolymer(); ++j) {
             stress_[i] += polymer(j).stress(i);
@@ -202,6 +234,9 @@ namespace Rpg
       hasStress_ = true;
    }
 
+   /*
+   * Is the ensemble canonical (i.e, closed for all species)?
+   */
    template <int D>
    bool Mixture<D>::isCanonical()
    {

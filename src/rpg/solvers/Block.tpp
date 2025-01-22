@@ -177,21 +177,44 @@ namespace Rpg {
    {}
 
    template <int D>
-   void Block<D>::setDiscretization(double ds, 
-                                    Mesh<D> const & mesh, 
-                                    FFT<D> const & fft, 
-                                    bool useBatchedFFT)
+   void Block<D>::associate(Mesh<D> const & mesh, FFT<D> const & fft, 
+                            UnitCell<D> const & cell, WaveList<D>& wavelist)
    {
-      int nx = mesh.size();
-      UTIL_CHECK(ds > 0.0);
       UTIL_CHECK(!isAllocated_);
-      UTIL_CHECK(nx > 1);
+      UTIL_CHECK(mesh.size() > 1);
       UTIL_CHECK(fft.isSetup());
       UTIL_CHECK(mesh.dimensions() == fft.meshDimensions());
 
-      // Save addresses of mesh and fft
+      nParams_ = cell.nParameter();
+      UTIL_CHECK(nParams_ > 0);
+
+      // store pointers to associated objects
       meshPtr_ = &mesh;
       fftPtr_ = &fft;
+      unitCellPtr_ = &cell;
+      waveListPtr_ = &wavelist;
+
+      // Compute Fourier space kMeshDimensions_ and kSize_
+      kSize_ = 1;
+      for (int i = 0; i < D; ++i) {
+         if (i < D - 1) {
+            kMeshDimensions_[i] = mesh.dimensions()[i];
+         } else {
+            kMeshDimensions_[i] = mesh.dimensions()[i]/2 + 1;
+         }
+         kSize_ *= kMeshDimensions_[i];
+      }
+
+      hasExpKsq_ = false;
+   }
+
+   template <int D>
+   void Block<D>::allocate(double ds, bool useBatchedFFT)
+   {
+      UTIL_CHECK(meshPtr_);
+      UTIL_CHECK(unitCellPtr_);
+      UTIL_CHECK(ds > 0.0);
+      UTIL_CHECK(!isAllocated_);
 
       // Store useBatchedFFT
       useBatchedFFT_ = useBatchedFFT;
@@ -207,39 +230,28 @@ namespace Rpg {
 
       ds_ = length()/double(ns_ - 1);
 
-      // Compute Fourier space kMeshDimensions_ and kSize_
-      kSize_ = 1;
-      for (int i = 0; i < D; ++i) {
-         if (i < D - 1) {
-            kMeshDimensions_[i] = mesh.dimensions()[i];
-         } else {
-            kMeshDimensions_[i] = mesh.dimensions()[i]/2 + 1;
-         }
-         kSize_ *= kMeshDimensions_[i];
-      }
-
       // Setup fftBatched objects
       UTIL_CHECK(!fftBatchedPair_.isSetup());
-      fftBatchedPair_.setup(mesh.dimensions(), 2);
+      fftBatchedPair_.setup(mesh().dimensions(), 2);
       if (useBatchedFFT_) {
          UTIL_CHECK(!fftBatchedAll_.isSetup());
-         fftBatchedAll_.setup(mesh.dimensions(), ns_);
+         fftBatchedAll_.setup(mesh().dimensions(), ns_);
       }
 
       // Allocate work arrays
       expKsq_.allocate(kMeshDimensions_);
       expKsq2_.allocate(kMeshDimensions_);
-      expW_.allocate(mesh.dimensions());
-      expW2_.allocate(mesh.dimensions());
-      qrPair_.allocate(2 * mesh.size());
+      expW_.allocate(mesh().dimensions());
+      expW2_.allocate(mesh().dimensions());
+      qrPair_.allocate(2 * mesh().size());
       qkPair_.allocate(2 * kSize_);
-      q1_.allocate(mesh.dimensions());
-      q2_.allocate(mesh.dimensions());
+      q1_.allocate(mesh().dimensions());
+      q2_.allocate(mesh().dimensions());
 
-      propagator(0).allocate(ns_, mesh);
-      propagator(1).allocate(ns_, mesh);
+      propagator(0).allocate(ns_, mesh());
+      propagator(1).allocate(ns_, mesh());
       
-      cField().allocate(mesh.dimensions());
+      cField().allocate(mesh().dimensions());
 
       if (useBatchedFFT_) {
          qkBatched_.allocate(ns_ * kSize_);
@@ -254,6 +266,17 @@ namespace Rpg {
    }
 
    /*
+   * Upon changing lattice parameters, update this object.
+   */
+   template <int D>
+   void Block<D>::updateUnitCell()
+   {
+      UTIL_CHECK(unitCellPtr_);
+      UTIL_CHECK(nParams_ == unitCell().nParameter());
+      hasExpKsq_ = false;
+   }
+
+   /*
    * Set or reset the the block length.
    */
    template <int D>
@@ -261,7 +284,7 @@ namespace Rpg {
    {
       BlockDescriptor::setLength(newLength);
       
-      if (isAllocated_) { // if setDiscretization has already been called
+      if (isAllocated_) { // if allocate() has already been called
          // Reset contour length discretization
          UTIL_CHECK(dsTarget_ > 0);
          int oldNs = ns_;
@@ -301,35 +324,6 @@ namespace Rpg {
    void Block<D>::setKuhn(double kuhn)
    {
       BlockTmpl< Propagator<D> >::setKuhn(kuhn);
-      hasExpKsq_ = false;
-   }
-
-   /*
-   * Setup data that depend on the unit cell parameters.
-   */
-   template <int D>
-   void Block<D>::setupUnitCell(const UnitCell<D>& unitCell, 
-                                WaveList<D>& wavelist)
-   {
-      nParams_ = unitCell.nParameter();
-
-      // store pointer to unit cell and wavelist
-      unitCellPtr_ = &unitCell;
-      waveListPtr_ = &wavelist;
-
-      hasExpKsq_ = false;
-   }
-   
-   /*
-   * Setup data that depend on the unit cell parameters.
-   */
-   template <int D>
-   void Block<D>::setupUnitCell(const UnitCell<D>& unitCell)
-   {
-      nParams_ = unitCell.nParameter();
-
-      // store pointer to unit cell
-      unitCellPtr_ = &unitCell;
       hasExpKsq_ = false;
    }
 
