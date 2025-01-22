@@ -9,6 +9,7 @@
 */
 
 #include "GpuTypes.h"
+#include <util/containers/DArray.h>
 #include <util/global.h>
 
 namespace Pscf {
@@ -27,16 +28,17 @@ namespace Pscf {
    * HostDArray<Data> stores data in a dynamically allocated array in 
    * host CPU memory, whereas a DeviceArray<Data> stores analogous 
    * data in global GPU device memory. Each of these classes defines  
-   * an assigment operation that allows assignment from the other, 
+   * an assignment operation that allows assignment from the other, 
    * which silently copies the underlying arrays between device and 
    * host memory.
    *
-   * The underlying array is allocated using cudaMallocHost.
+   * Otherwise, this class is identical to Util::DArray, with the
+   * addition of an allocating constructor.
    *
    * \ingroup Pscf_Cuda_Module
    */
    template <typename Data>
-   class HostDArray
+   class HostDArray : public DArray<Data>
    {
 
    public:
@@ -56,11 +58,11 @@ namespace Pscf {
       HostDArray(int capacity);
 
       /**
-      * Copy constructor.
+      * Copy constructor. (Copies from any DArray or HostDArray).
       * 
-      * \param other HostDArray<Data> to be copied (input)
+      * \param other DArray<Data> to be copied (input)
       */
-      HostDArray(HostDArray<Data> const & other);
+      HostDArray(DArray<Data> const & other);
 
       /**
       * Destructor.
@@ -68,42 +70,6 @@ namespace Pscf {
       * Deletes underlying C array, if allocated previously.
       */
       virtual ~HostDArray();
-
-      /**
-      * Allocate the underlying C array.
-      *
-      * \throw Exception if the HostDArray is already allocated.
-      *
-      * \param capacity number of elements to allocate
-      */
-      void allocate(int capacity);
-
-      /**
-      * Dellocate the underlying C array.
-      *
-      * \throw Exception if the HostDArray is not allocated
-      */
-      virtual void deallocate();
-
-      /**
-      * Assignment operator, assignment from another HostDArray<Data>.
-      *  
-      * Performs a deep copy, by copying all elements of the underlying
-      * C array from host memory to host memory.
-      *
-      * The RHS HostDArray<Data> object must be allocated.  If this LHS 
-      * HostDArray<D> is not allocated, the correct size block of memory 
-      * will be allocated. Otherwise, if this LHS object is allocated
-      * on entry, capacity values for LHS and RHS objects must be equal. 
-      *
-      * \throw Exception if other HostDArray<Data> is not allocated
-      * Exceptions are thrown if the RHS array is not allocated or if
-      * both arrays are allocated but have unequal capacities.
-      *
-      * \param other HostDArray<Data> on RHS of assignment (input)
-      */
-      virtual
-      HostDArray<Data>& operator = (const HostDArray<Data>& other);
 
       /**
       * Assignment operator, assign from DeviceArray<Data> device array.
@@ -125,110 +91,7 @@ namespace Pscf {
       virtual 
       HostDArray<Data>& operator = (const DeviceArray<Data>& other);
 
-      /**
-      * Get one element by non-const reference.
-      *
-      * Mimic C-array subscripting.
-      *
-      * \param  i array index
-      * \return non-const reference to element i
-      */
-      Data & operator[] (int i);
-
-      /**
-      * Get one element by const reference.
-      *
-      * Mimics C-array subscripting.
-      *
-      * \param i array index
-      * \return const reference to element i
-      */
-      Data const & operator[] (int i) const;
-
-      /**
-      * Return allocated array capacity.
-      *
-      * \return Number of elements allocated in the array
-      */
-      int capacity() const;
-
-      /**
-      * Return pointer to the underlying C array on the host.
-      */
-      Data* cArray();
-
-      /**
-      * Return pointer to const to the underlying C array on the host.
-      */
-      Data const * cArray() const;
-
-      /**
-      * Return true iff the HostDArray has been allocated.
-      */
-      bool isAllocated() const;
-
-   private:
-
-      /// Pointer to a C array of Data elements, allocated on host.
-      Data* dataPtr_;
-
-      /// Allocated size of the dataPtr_ array.
-      int capacity_;
-
    };
-
-   /*
-   * Get an element by reference (C-array subscripting)
-   */
-   template <typename Data>
-   inline Data& HostDArray<Data>::operator[] (int i)
-   {
-      assert(dataPtr_);
-      assert(i >= 0);
-      assert(i < capacity_);
-      return *(dataPtr_ + i);
-   }
-
-   /*
-   * Get an element by const reference (C-array subscripting)
-   */
-   template <typename Data>
-   inline Data const & HostDArray<Data>::operator[] (int i) const
-   {
-      assert(dataPtr_);
-      assert(i >= 0 );
-      assert(i < capacity_);
-      return *(dataPtr_ + i);
-   }
-
-   /*
-   * Return allocated array capacity.
-   */
-   template <typename Data>
-   inline int HostDArray<Data>::capacity() const
-   {  return capacity_; }
-
-   /*
-   * Get a pointer to the underlying C array.
-   */
-   template <typename Data>
-   inline Data* HostDArray<Data>::cArray()
-   {  return dataPtr_; }
-
-   /*
-   * Get a pointer to const to the underlying C array.
-   */
-   template <typename Data>
-   inline 
-   Data const * HostDArray<Data>::cArray() const
-   {  return dataPtr_; }
-
-   /*
-   * Return true if the HostDArray has been allocated, false otherwise.
-   */
-   template <typename Data>
-   inline bool HostDArray<Data>::isAllocated() const
-   {  return (bool) dataPtr_; }
 
    #ifndef PSCF_HOST_D_ARRAY_TPP
    extern template class HostDArray<cudaReal>;
