@@ -69,7 +69,7 @@ namespace Cuda {
    */
    template <int D>
    RFieldDft<D>& 
-   RFieldDft<D>::operator = (const HostDArray<cudaComplex>& other)
+   RFieldDft<D>::operator = (HostDArray<cudaComplex> const & other)
    {
       // Preconditions: both arrays must be allocated with equal capacities
       if (!other.isAllocated()) {

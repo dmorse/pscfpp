@@ -13,22 +13,22 @@
 
 namespace Pscf {
 namespace Rpg {
-namespace VecOpFts {
 
-   /** 
-   * Element-wise vector operations performed on the GPU for FTS classes.
-   *
-   * CUDA kernels that perform the operations are defined in VecOpFts.cu
-   * in an anonymous namespace, so they are not directly accessible. Kernel
-   * wrapper functions to be called by the host CPU, which call the kernel 
-   * internally, are public. 
-   *
-   * The output (the LHS of the vector operation) will always be the first
-   * parameter passed to the function. 
-   * 
-   * \ingroup Rpg_Fts_Module
-   * @{
-   */
+/** 
+* Element-wise vector operations performed on the GPU for FTS classes.
+*
+* CUDA kernels that perform the operations are defined in VecOpFts.cu
+* in an anonymous namespace, so they are not directly accessible. Kernel
+* wrapper functions to be called by the host CPU, which call the kernel 
+* internally, are public. 
+*
+* The output (the LHS of the vector operation) will always be the first
+* parameter passed to the function. 
+* 
+* \ingroup Rpg_Fts_Module
+* @{
+*/
+namespace VecOpFts {
 
    /**
    * Rescale array a from [0,1] to [-b, b], GPU kernel wrapper.
@@ -65,9 +65,9 @@ namespace VecOpFts {
                          DeviceArray<cudaReal> const & df, 
                          DeviceArray<cudaReal> const & dwc, cudaReal mobility);
 
-   /** @} */
-
 }
+/** @} */
+
 }
 }
 

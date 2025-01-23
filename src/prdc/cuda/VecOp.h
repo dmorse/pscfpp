@@ -66,8 +66,8 @@ namespace Cuda {
 * Additional functions that perform multiple operations within a single 
 * kernel are defined in VecOpMisc, which are not comprehensive and are
 * written as-needed during the development of this software. VecOpMisc.h
-* is included at the end of this file so that any code that includes
-* this header file will also include VecOpMisc.h.
+* is included at the end of VecOp.h so that any code that includes
+* VecOp.h will also include VecOpMisc.h.
 * 
 * \ingroup Prdc_Cuda_Module 
 * @{

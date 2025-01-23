@@ -72,7 +72,7 @@ void addVcVc(DeviceArray<cudaReal>& a,
              DeviceArray<cudaReal> const & d, cudaReal const e);
 
 /**
-* 3-vector add. w/ coeff, a[i] = (b[i]*c) + (d[i]*e) + (f[i]*g), kernel wrapper.
+* 3-vec addition w coeff, a[i] = (b[i]*c) + (d[i]*e) + (f[i]*g), kernel wrapper.
 *
 * \param a  output array (LHS)
 * \param b  input array 1 (RHS)
@@ -251,8 +251,6 @@ void sqNormV(DeviceArray<cudaReal>& a, DeviceArray<cudaComplex> const & b);
 * \param b  input array (RHS)
 */
 void sqSqNormV(DeviceArray<cudaReal>& a, DeviceArray<cudaComplex> const & b);
-
-/** @} */
 
 } // namespace VecOp
 } // namespace Cuda
