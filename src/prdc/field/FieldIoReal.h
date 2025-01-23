@@ -247,6 +247,9 @@ namespace Prdc {
       * The capacity of array fields is equal to nMonomer, and element
       * fields[i] is the RFRT associated with monomer type i.
       *
+      * The default version is unimplemented and throws an Exception. An
+      * implementation for this function must be defined in each subclass.
+      * 
       * \param in  input stream (i.e., input file)
       * \param fields  array of RField fields (r-space grid)
       * \param unitCell  associated crystallographic unit cell
@@ -278,8 +281,11 @@ namespace Prdc {
       * Read data for array of r-grid fields, with no header section.
       *
       * This function reads the data section of the rgrid-field format, with
-      * with no header.
+      * no header.
       *
+      * The default version is unimplemented and throws an Exception. An
+      * implementation for this function must be defined in each subclass.
+      * 
       * \param in  input file stream
       * \param fields  array of RField fields (r-space grid)
       * \param nMonomer  number of monomer types
@@ -292,6 +298,9 @@ namespace Prdc {
       /**
       * Read single RField (field on an r-space grid) from an istream.
       *
+      * The default version is unimplemented and throws an Exception. An
+      * implementation for this function must be defined in each subclass.
+      * 
       * \param in  input stream (i.e., input file)
       * \param field  fields defined on r-space grid
       * \param unitCell  associated crystallographic unit cell
@@ -319,6 +328,9 @@ namespace Prdc {
       /**
       * Write array of RField objects (fields on r-space grid) to ostream.
       *
+      * The default version is unimplemented and throws an Exception. An
+      * implementation for this function must be defined in each subclass.
+      * 
       * \param out  output stream (i.e., output file)
       * \param fields  array of RField objects (fields on r-space grid)
       * \param unitCell  associated crystallographic unit cell
@@ -338,8 +350,8 @@ namespace Prdc {
       * Write array of RField objects (fields on an r-space grid) to file.
       *
       * This function opens an output file with the specified filename,
-      * writes fields in RFRT real-space grid format to that file,
-      * and then closes the file.
+      * writes fields in RFRT real-space grid format to that file, and
+      * then closes the file.
       *
       * \param filename  name of output file
       * \param fields  array of RFRT objects (fields on r-space grid)
@@ -353,7 +365,10 @@ namespace Prdc {
 
       /**
       * Write a single RField (field on an r-space grid) to ostream.
-      *
+      * 
+      * The default version is unimplemented and throws an Exception. An
+      * implementation for this function must be defined in each subclass.
+      * 
       * \param out  output stream
       * \param field  field defined on r-space grid
       * \param unitCell  associated crystallographic unit cell
@@ -395,6 +410,9 @@ namespace Prdc {
       * fields[i] is the discrete Fourier transform of the field for
       * monomer type i.
       *
+      * The default version is unimplemented and throws an Exception. An
+      * implementation for this function must be defined in each subclass.
+      * 
       * \param in  input stream (i.e., input file)
       * \param fields  array of RFieldDft fields (k-space grid)
       * \param unitCell  associated crystallographic unit cell
@@ -430,6 +448,9 @@ namespace Prdc {
       * fields[i] is the discrete Fourier transform of the field for
       * monomer type i.
       *
+      * The default version is unimplemented and throws an Exception. An
+      * implementation for this function must be defined in each subclass.
+      * 
       * \param out  output stream (i.e., output file)
       * \param fields  array of RFieldDft fields
       * \param unitCell  associated crystallographic unit cell
@@ -465,6 +486,9 @@ namespace Prdc {
       /**
       * Convert a field from symmetrized basis to Fourier grid (k-grid).
       *
+      * The default version is unimplemented and throws an Exception. An
+      * implementation for this function must be defined in each subclass.
+      * 
       * \param components coefficients of symmetry-adapted basis functions
       * \param dft discrete Fourier transform of a real field
       */
@@ -492,6 +516,9 @@ namespace Prdc {
       * tolerance given by the epsilon parameter, and prints a warning to
       * Log::file() if it does not.
       *
+      * The default version is unimplemented and throws an Exception. An
+      * implementation for this function must be defined in each subclass.
+      * 
       * \param in  discrete Fourier transform (k-grid) of a field
       * \param out  components of field in asymmetry-adapted Fourier basis
       * \param checkSymmetry  flag indicating whether to check symmetry
@@ -638,6 +665,9 @@ namespace Prdc {
       * parameter verbose is true and the deviation from symmetry
       * exceeds the error threshhold, errors are written to Log::file().
       *
+      * The default version is unimplemented and throws an Exception. An
+      * implementation for this function must be defined in each subclass.
+      * 
       * \param in field in real space grid (r-grid) format
       * \param epsilon error threshold used to test for symmetry
       * \param verbose  if true, write error to Log::file()
@@ -669,6 +699,49 @@ namespace Prdc {
       ///@{
 
       /**
+      * Write r-grid fields in a replicated unit cell to std::ostream.
+      *
+      * This function takes an input array of periodic fields and outputs
+      * them within an expanded unit cell in which the original input unit 
+      * cell has been replicated a specified number of times in each 
+      * direction. Results are written to an std::ostream output stream.
+      *
+      * Element i of the replicas IntVec<D> parameter contains the number
+      * of unit cell replicas along direction i. 
+      *
+      * The default version is unimplemented and throws an Exception. An
+      * implementation for this function must be defined in each subclass.
+      * 
+      * \param out  output stream (i.e., output file)
+      * \param fields  array of RField (r-space) fields to be replicated
+      * \param unitCell  original crystallographic unit cell
+      * \param replicas  number of unit cell replicas in each direction
+      */
+      virtual
+      void replicateUnitCell(std::ostream& out,
+                             DArray<RFRT> const & fields,
+                             UnitCell<D> const & unitCell,
+                             IntVec<D> const & replicas) const;
+
+      /**
+      * Write r-grid fields in a replicated unit cell to named file.
+      *
+      * This function opens output file filename, writes fields within
+      * a replicated unit cell to the file, and closes the file. See
+      * documentation of the overloaded function of the same name with 
+      * a std::ostream parameter, which is called internally. 
+      *
+      * \param filename  output file name
+      * \param fields  array of RField fields (r-space grid) needs
+      * \param unitCell  original crystallographic unit cell
+      * \param replicas  number of unit cell replicas in each direction
+      */
+      void replicateUnitCell(std::string filename,
+                             DArray<RFRT> const & fields,
+                             UnitCell<D> const & unitCell,
+                             IntVec<D> const & replicas) const;
+
+      /**
       * Expand dimension of an array of r-grid fields, write to ostream.
       *
       * This function is used for template dimension D < 3, and allows a
@@ -678,12 +751,16 @@ namespace Prdc {
       * it can output a lamellar computed with D=1 on a 3D grid (d=3)
       * in a format that can be read by pscf_pc when invoked with D=3.
       *
+      * The default version is unimplemented and throws an Exception. An
+      * implementation for this function must be defined in each subclass.
+      * 
       * \param out  output stream (i.e., output file)
       * \param fields  input array of RField fields (r-space grid)
       * \param unitCell  original crystallographic unit cell
       * \param d  expanded dimension (greater than D)
       * \param newGridDimensions number of grid points in added dimensions
       */
+      virtual
       void expandRGridDimension(std::ostream &out,
                                 DArray<RFRT > const & fields,
                                 UnitCell<D> const & unitCell,
@@ -711,44 +788,6 @@ namespace Prdc {
                                 int d,
                                 DArray<int> newGridDimensions) const;
 
-      /**
-      * Write r-grid fields in a replicated unit cell to std::ostream.
-      *
-      * This function takes an input array of periodic fields and outputs
-      * them within an expanded unit cell in which the original input unit 
-      * cell has been replicated a specified number of times in each 
-      * direction. Results are written to an std::ostream output stream.
-      *
-      * Element i of the replicas IntVec<D> parameter contains the 
-      * number of unit cell replicas along direction i. 
-      * 
-      * \param out  output stream (i.e., output file)
-      * \param fields  array of RField (r-space) fields to be replicated
-      * \param unitCell  original crystallographic unit cell
-      * \param replicas  number of unit cell replicas in each direction
-      */
-      void replicateUnitCell(std::ostream& out,
-                             DArray<RFRT> const & fields,
-                             UnitCell<D> const & unitCell,
-                             IntVec<D> const & replicas) const;
-
-      /**
-      * Write r-grid fields in a replicated unit cell to named file.
-      *
-      * This function opens output file filename, writes fields within
-      * a replicated unit cell to the file, and closes the file. See
-      * documentation of the overloaded function of the same name with 
-      * a std::ostream parameter, which is called internally. 
-      *
-      * \param filename  output file name
-      * \param fields  array of RField fields (r-space grid) needs
-      * \param unitCell  original crystallographic unit cell
-      * \param replicas  number of unit cell replicas in each direction
-      */
-      void replicateUnitCell(std::string filename,
-                             DArray<RFRT> const & fields,
-                             UnitCell<D> const & unitCell,
-                             IntVec<D> const & replicas) const;
 
       ///@}
       /// \name Field File IO Utilities
