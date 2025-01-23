@@ -476,7 +476,7 @@ namespace Rpg
    }
 
    template <int D>
-   void WaveList<D>::updateUnitCell()
+   void WaveList<D>::clearUnitCellData()
    {
       if (hasVariableAngle()) {
          hasMinimumImages_ = false;

@@ -110,14 +110,14 @@ namespace Rpg
    }
 
    /*
-   * Update solvers to account for new lattice parameters.
+   * Clear data that depends on lattice parameters in all solvers.
    */
    template <int D>
-   void Mixture<D>::updateUnitCell()
+   void Mixture<D>::clearUnitCellData()
    {
       for (int i = 0; i < nPolymer(); ++i) {
          for (int j = 0; j < polymer(i).nBlock(); ++j) {
-            polymer(i).block(j).updateUnitCell();
+            polymer(i).block(j).clearUnitCellData();
          }
       }
       hasStress_ = false;

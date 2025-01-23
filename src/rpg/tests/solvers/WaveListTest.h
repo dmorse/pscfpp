@@ -216,7 +216,7 @@ public:
       HostDArray<cudaReal> ksq_h, ksq_h2;
       wavelist.computeMinimumImages(); // calculates kSq
       ksq_h = wavelist.kSq();
-      wavelist.updateUnitCell(); // resets kSq but not min images
+      wavelist.clearUnitCellData(); // resets kSq but not min images
       wavelist.computeKSq(); // recalculates kSq using a different kernel
       ksq_h2 = wavelist.kSq();
 
@@ -255,7 +255,7 @@ public:
       HostDArray<cudaReal> ksq_h, ksq_h2;
       wavelist.computeMinimumImages(); // calculates kSq
       ksq_h = wavelist.kSq();
-      wavelist.updateUnitCell(); // resets kSq but not min images
+      wavelist.clearUnitCellData(); // resets kSq but not min images
       wavelist.computeKSq(); // recalculates kSq using a different kernel
       ksq_h2 = wavelist.kSq();
 
@@ -294,7 +294,7 @@ public:
       HostDArray<cudaReal> ksq_h, ksq_h2;
       wavelist.computeMinimumImages(); // calculates kSq
       ksq_h = wavelist.kSq();
-      wavelist.updateUnitCell(); // resets kSq but not min images
+      wavelist.clearUnitCellData(); // resets kSq but not min images
       wavelist.computeKSq(); // recalculates kSq using a different kernel
       ksq_h2 = wavelist.kSq();
 

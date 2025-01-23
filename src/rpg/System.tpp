@@ -564,9 +564,9 @@ namespace Rpg {
       hasCFields_ = false;
       hasFreeEnergy_ = false;
 
-      // Update wavelist and mixture
-      domain_.waveList().updateUnitCell();
-      mixture_.updateUnitCell();
+      // Clear unit cell data from waveList and mixture
+      domain_.waveList().clearUnitCellData();
+      mixture_.clearUnitCellData();
    }
 
    template <int D>
@@ -590,9 +590,9 @@ namespace Rpg {
       hasCFields_ = false;
       hasFreeEnergy_ = false;
 
-      // Update waveList and mixture
-      domain_.waveList().updateUnitCell();
-      mixture_.updateUnitCell();
+      // Clear unit cell data from waveList and mixture
+      domain_.waveList().clearUnitCellData();
+      mixture_.clearUnitCellData();
    }
 
    /*
@@ -649,9 +649,9 @@ namespace Rpg {
       hasCFields_ = false;
       hasFreeEnergy_ = false;
 
-      // Update waveList and mixture
-      domain_.waveList().updateUnitCell();
-      mixture_.updateUnitCell();
+      // Clear unit cell data from waveList and mixture
+      domain_.waveList().clearUnitCellData();
+      mixture_.clearUnitCellData();
    }
 
    /*
@@ -710,7 +710,7 @@ namespace Rpg {
    {
       domain_.setUnitCell(unitCell);
       // Note - Domain::setUnitCell updates the WaveList
-      mixture_.updateUnitCell();
+      mixture_.clearUnitCellData();
       if (domain_.hasGroup() && !isAllocatedBasis_) {
          UTIL_CHECK(domain_.basis().isInitialized());
          allocateFieldsBasis();
@@ -727,7 +727,7 @@ namespace Rpg {
    {
       domain_.setUnitCell(lattice, parameters);
       // Note - Domain::setUnitCell updates the WaveList
-      mixture_.updateUnitCell();
+      mixture_.clearUnitCellData();
       if (domain_.hasGroup() && !isAllocatedBasis_) {
          UTIL_CHECK(domain_.basis().isInitialized());
          allocateFieldsBasis();
@@ -742,7 +742,7 @@ namespace Rpg {
    {
       domain_.setUnitCell(parameters);
       // Note - Domain::setUnitCell updates the WaveList
-      mixture_.updateUnitCell();
+      mixture_.clearUnitCellData();
       if (domain_.hasGroup() && !isAllocatedBasis_) {
          UTIL_CHECK(domain_.basis().isInitialized());
          allocateFieldsBasis();
