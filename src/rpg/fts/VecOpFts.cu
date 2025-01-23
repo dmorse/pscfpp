@@ -12,6 +12,8 @@ namespace Pscf {
 namespace Rpg {
 namespace VecOpFts {
 
+   using namespace Prdc::Cuda;
+
    // CUDA kernels: 
    // (defined in anonymous namespace, used only in this file)
 

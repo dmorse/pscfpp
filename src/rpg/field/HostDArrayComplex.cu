@@ -16,21 +16,21 @@ namespace Rpg {
    * Default constructor.
    */
    HostDArrayComplex::HostDArrayComplex() 
-    : HostDArray<cudaComplex>()
+    : HostDArray<Complex>()
    {}
 
    /*
    * Allocating constructor.
    */
    HostDArrayComplex::HostDArrayComplex(int capacity)
-    : HostDArray<cudaComplex>(capacity)
+    : HostDArray<Complex>(capacity)
    {}
 
    /*
    * Copy constructor.
    */
    HostDArrayComplex::HostDArrayComplex(HostDArrayComplex const& other)
-    : HostDArray<cudaComplex>(other)
+    : HostDArray<Complex>(other)
    {}
 
    /*

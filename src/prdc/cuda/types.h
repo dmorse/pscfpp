@@ -3,12 +3,14 @@
 
 #include <cufft.h>
 
-namespace Pscf {
+// Toggle single / double precision:
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//#define SINGLE_PRECISION
+#define DOUBLE_PRECISION
 
-   // Toggle single / double precision:
-   
-   //#define SINGLE_PRECISION
-   #define DOUBLE_PRECISION
+namespace Pscf {
+namespace Prdc {
+namespace Cuda {
 
    /**
    * Complex number type used in CPU code that uses FFTW.
@@ -36,5 +38,7 @@ namespace Pscf {
    #endif
    #endif
 
+} // Cuda
+} // Prdc
 } // Pscf
 #endif

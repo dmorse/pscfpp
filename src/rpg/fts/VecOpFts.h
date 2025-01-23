@@ -36,7 +36,8 @@ namespace VecOpFts {
    * \param a  array containing data between 0 and 1 (LHS)
    * \param b  scalar bound for rescaled array (RHS)
    */
-   void mcftsScale(DeviceArray<cudaReal>& a, cudaReal const b);
+   void mcftsScale(DeviceArray<Prdc::Cuda::cudaReal>& a, 
+                   Prdc::Cuda::cudaReal const b);
 
    /**
    * Add array b to real part of a and array c to imaginary part of a
@@ -45,25 +46,28 @@ namespace VecOpFts {
    * \param b  input array of cudaReal values
    * \param c  input array of cudaReal values
    */
-   void fourierMove(DeviceArray<cudaComplex>& a, 
-                    DeviceArray<cudaReal> const & b, 
-                    DeviceArray<cudaReal> const & c);
+   void fourierMove(DeviceArray<Prdc::Cuda::cudaComplex>& a, 
+                    DeviceArray<Prdc::Cuda::cudaReal> const & b, 
+                    DeviceArray<Prdc::Cuda::cudaReal> const & c);
 
    /**
    * Compute d field (functional derivative of H[w])
    */
-   void computeDField(DeviceArray<cudaReal>& d, 
-                      DeviceArray<cudaReal> const & Wc, 
-                      DeviceArray<cudaReal> const & Cc, 
-                      cudaReal const a, cudaReal const b, cudaReal const s);
+   void computeDField(DeviceArray<Prdc::Cuda::cudaReal>& d, 
+                      DeviceArray<Prdc::Cuda::cudaReal> const & Wc, 
+                      DeviceArray<Prdc::Cuda::cudaReal> const & Cc, 
+                      Prdc::Cuda::cudaReal const a, 
+                      Prdc::Cuda::cudaReal const b, 
+                      Prdc::Cuda::cudaReal const s);
 
    /**
    * Compute force bias
    */
-   void computeForceBias(DeviceArray<cudaReal>& result, 
-                         DeviceArray<cudaReal> const & di, 
-                         DeviceArray<cudaReal> const & df, 
-                         DeviceArray<cudaReal> const & dwc, cudaReal mobility);
+   void computeForceBias(DeviceArray<Prdc::Cuda::cudaReal>& result, 
+                         DeviceArray<Prdc::Cuda::cudaReal> const & di, 
+                         DeviceArray<Prdc::Cuda::cudaReal> const & df, 
+                         DeviceArray<Prdc::Cuda::cudaReal> const & dwc, 
+                         Prdc::Cuda::cudaReal mobility);
 
 }
 /** @} */
