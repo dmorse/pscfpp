@@ -7,11 +7,14 @@
 
 #include "VecOpMisc.h"
 #include "VecOp.h"
-#include "ThreadGrid.h"
-#include "HostDArray.h" 
+#include <pscf/cuda/ThreadGrid.h>
+#include <pscf/cuda/HostDArray.h>
+#include <pscf/cuda/cudaErrorCheck.h>
 #include <cmath>
 
 namespace Pscf {
+namespace Prdc {
+namespace Cuda {
 namespace VecOp {
 
 // CUDA kernels:
@@ -312,6 +315,7 @@ void addVcVc(DeviceArray<cudaReal>& a,
 
    // Launch kernel
    _addVcVc<<<nBlocks, nThreads>>>(a.cArray(), b.cArray(), c, d.cArray(), e, n);
+   cudaErrorCheck( cudaGetLastError() ); // ensure no CUDA errors
 }
 
 // 3-vector add. w/ coeff, a[i] = (b[i]*c) + (d[i]*e) + (f[i]*g), kernel wrapper
@@ -332,6 +336,7 @@ void addVcVcVc(DeviceArray<cudaReal>& a,
    // Launch kernel
    _addVcVcVc<<<nBlocks, nThreads>>>(a.cArray(), b.cArray(), c, d.cArray(), e, 
                                      f.cArray(), g, n);
+   cudaErrorCheck( cudaGetLastError() ); // ensure no CUDA errors
 }
 
 // Vector addition in-place w/ coefficient, a[i] += b[i] * c, kernel wrapper.
@@ -347,6 +352,7 @@ void addEqVc(DeviceArray<cudaReal>& a, DeviceArray<cudaReal> const & b,
 
    // Launch kernel
    _addEqVc<<<nBlocks, nThreads>>>(a.cArray(), b.cArray(), c, n);
+   cudaErrorCheck( cudaGetLastError() ); // ensure no CUDA errors
 }
 
 // Vector subtraction, a[i] = b[i] - c[i] - d, kernel wrapper.
@@ -364,6 +370,7 @@ void subVVS(DeviceArray<cudaReal>& a, DeviceArray<cudaReal> const & b,
    // Launch kernel
    _subVVS<<<nBlocks, nThreads>>>(a.cArray(), b.cArray(), 
                                   c.cArray(), d, n);
+   cudaErrorCheck( cudaGetLastError() ); // ensure no CUDA errors
 }
 
 // Vector division in-place w/ coeff., a[i] /= (b[i] * c), kernel wrapper.
@@ -379,6 +386,7 @@ void divEqVc(DeviceArray<cudaComplex>& a, DeviceArray<cudaReal> const & b,
 
    // Launch kernel
    _divEqVc<<<nBlocks, nThreads>>>(a.cArray(), b.cArray(), c, n);
+   cudaErrorCheck( cudaGetLastError() ); // ensure no CUDA errors
 }
 
 // Vector exponentiation w/ coefficient, a[i] = exp(b[i]*c), kernel wrapper.
@@ -394,6 +402,7 @@ void expVc(DeviceArray<cudaReal>& a, DeviceArray<cudaReal> const & b,
 
    // Launch kernel
    _expVc<<<nBlocks, nThreads>>>(a.cArray(), b.cArray(), c, n);
+   cudaErrorCheck( cudaGetLastError() ); // ensure no CUDA errors
 }
 
 // Vector assignment in pairs, ax[i] = s[i], kernel wrapper.
@@ -410,6 +419,7 @@ void eqVPair(DeviceArray<cudaReal>& a1, DeviceArray<cudaReal>& a2,
 
    // Launch kernel
    _eqVPair<<<nBlocks, nThreads>>>(a1.cArray(), a2.cArray(), s.cArray(), n);
+   cudaErrorCheck( cudaGetLastError() ); // ensure no CUDA errors
 }
 
 // Vec. mul. in pairs, ax[i] = bx[i] * s[i], kernel wrapper.
@@ -431,6 +441,7 @@ void mulVVPair(DeviceArray<cudaReal>& a1, DeviceArray<cudaReal>& a2,
    // Launch kernel
    _mulVVPair<<<nBlocks, nThreads>>>(a1.cArray(), a2.cArray(), b1.cArray(), 
                                      b2.cArray(), s.cArray(), n);
+   cudaErrorCheck( cudaGetLastError() ); // ensure no CUDA errors
 }
 
 // In-place vec. mul. in pairs, ax[i] *= s[i], kernel wrapper
@@ -447,6 +458,7 @@ void mulEqVPair(DeviceArray<cudaReal>& a1, DeviceArray<cudaReal>& a2,
 
    // Launch kernel
    _mulEqVPair<<<nBlocks, nThreads>>>(a1.cArray(), a2.cArray(), s.cArray(), n);
+   cudaErrorCheck( cudaGetLastError() ); // ensure no CUDA errors
 }
 
 // Add an undefined number of vectors pointwise, kernel wrapper.
@@ -476,6 +488,7 @@ void addVMany(DeviceArray<cudaReal>& a,
 
    // Launch kernel
    _addVMany<<<nBlocks, nThreads>>>(a.cArray(), vecs_d.cArray(), nVecs, n);
+   cudaErrorCheck( cudaGetLastError() ); // ensure no CUDA errors
 }
 
 // Add an undefined number of vectors pointwise, kernel wrapper.
@@ -505,6 +518,7 @@ void addVMany(DeviceArray<cudaReal>& a,
 
    // Launch kernel
    _addVMany<<<nBlocks, nThreads>>>(a.cArray(), vecs_d.cArray(), nVecs, n);
+   cudaErrorCheck( cudaGetLastError() ); // ensure no CUDA errors
 }
 
 // Multiply an undefined number of vectors pointwise, kernel wrapper.
@@ -534,6 +548,7 @@ void mulVMany(DeviceArray<cudaReal>& a,
 
    // Launch kernel
    _mulVMany<<<nBlocks, nThreads>>>(a.cArray(), vecs_d.cArray(), nVecs, n);
+   cudaErrorCheck( cudaGetLastError() ); // ensure no CUDA errors
 }
 
 // Multiply an undefined number of vectors pointwise, kernel wrapper.
@@ -563,6 +578,7 @@ void mulVMany(DeviceArray<cudaReal>& a,
 
    // Launch kernel
    _mulVMany<<<nBlocks, nThreads>>>(a.cArray(), vecs_d.cArray(), nVecs, n);
+   cudaErrorCheck( cudaGetLastError() ); // ensure no CUDA errors
 }
 
 // Squared norm of complex vector, a[i] = norm(b[i])^2, kernel wrapper.
@@ -577,6 +593,7 @@ void sqNormV(DeviceArray<cudaReal>& a, DeviceArray<cudaComplex> const & b)
 
    // Launch kernel
    _sqNormV<<<nBlocks, nThreads>>>(a.cArray(), b.cArray(), n);
+   cudaErrorCheck( cudaGetLastError() ); // ensure no CUDA errors
 }
 
 // Norm of complex number to the 4th power, a[i] = norm(b[i])^4, kernel wrapper.
@@ -591,7 +608,10 @@ void sqSqNormV(DeviceArray<cudaReal>& a, DeviceArray<cudaComplex> const & b)
 
    // Launch kernel
    _sqSqNormV<<<nBlocks, nThreads>>>(a.cArray(), b.cArray(), n);
+   cudaErrorCheck( cudaGetLastError() ); // ensure no CUDA errors
 }
 
-}
-}
+} // namespace VecOp
+} // namespace Cuda
+} // namespace Prdc
+} // namespace Pscf

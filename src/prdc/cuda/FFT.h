@@ -8,16 +8,15 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <prdc/cuda/RField.h>
-#include <prdc/cuda/CField.h>
-#include <prdc/cuda/RFieldDft.h>
+#include "RField.h"
+#include "CField.h"
+#include "RFieldDft.h"
+#include "types.h"
 
 #include <pscf/math/IntVec.h>
 #include <util/global.h>
 
 #include <cufft.h>
-#include <cuda.h>
-#include <cuda_runtime.h>
 
 namespace Pscf {
 namespace Prdc {

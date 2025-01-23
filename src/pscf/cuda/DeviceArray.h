@@ -8,9 +8,9 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "GpuTypes.h"
+#include "cudaErrorCheck.h"
 #include <util/global.h>
-#include <cuda.h>
+#include <cuda_runtime.h>
 
 namespace Pscf {
 
@@ -235,8 +235,9 @@ namespace Pscf {
       }
 
       allocate(other.capacity_);
-      cudaMemcpy(dataPtr_, other.cArray(), 
-                 capacity_ * sizeof(Data), cudaMemcpyDeviceToDevice);
+      cudaErrorCheck( cudaMemcpy(dataPtr_, other.cArray(), 
+                                 capacity_ * sizeof(Data), 
+                                 cudaMemcpyDeviceToDevice) );
    }
 
    /*
@@ -246,7 +247,7 @@ namespace Pscf {
    DeviceArray<Data>::~DeviceArray()
    {
       if (isAllocated() && isOwner()) {
-         cudaFree(dataPtr_);
+         cudaErrorCheck( cudaFree(dataPtr_) );
          capacity_ = 0;
       }
    }
@@ -266,7 +267,7 @@ namespace Pscf {
       if (capacity <= 0) {
          UTIL_THROW("Attempt to allocate with capacity <= 0");
       }
-      gpuErrChk(cudaMalloc((void**) &dataPtr_, capacity * sizeof(Data)));
+      cudaErrorCheck( cudaMalloc((void**) &dataPtr_, capacity * sizeof(Data)) );
       capacity_ = capacity;
 
       ownerPtr_ = nullptr;
@@ -310,7 +311,7 @@ namespace Pscf {
       if (!isOwner()) {
          UTIL_THROW("Cannot deallocate, data not owned by this object.");
       }
-      cudaFree(dataPtr_);
+      cudaErrorCheck( cudaFree(dataPtr_) );
       dataPtr_ = nullptr; // reset to null
       capacity_ = 0;
    }
@@ -362,10 +363,9 @@ namespace Pscf {
       }
 
       // Copy elements
-      cudaMemcpy(dataPtr_, other.cArray(), 
-                 capacity_ * sizeof(Data), cudaMemcpyDeviceToDevice);
-
-      ownerPtr_ = nullptr;
+      cudaErrorCheck( cudaMemcpy(dataPtr_, other.cArray(), 
+                                 capacity_ * sizeof(Data), 
+                                 cudaMemcpyDeviceToDevice) );
 
       return *this;
    }
@@ -393,10 +393,9 @@ namespace Pscf {
       }
 
       // Copy elements
-      cudaMemcpy(dataPtr_, other.cArray(), 
-                 capacity_ * sizeof(Data), cudaMemcpyHostToDevice);
-
-      ownerPtr_ = nullptr;
+      cudaErrorCheck( cudaMemcpy(dataPtr_, other.cArray(), 
+                                 capacity_ * sizeof(Data), 
+                                 cudaMemcpyHostToDevice) );
 
       return *this;
    }

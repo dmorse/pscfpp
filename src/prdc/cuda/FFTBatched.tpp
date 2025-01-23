@@ -9,7 +9,7 @@
 */
 
 #include "FFTBatched.h"
-#include <pscf/cuda/GpuResources.h>
+#include "VecOp.h"
 
 /*
 * A note about const_casts:

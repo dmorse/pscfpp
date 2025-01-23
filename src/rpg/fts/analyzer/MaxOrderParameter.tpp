@@ -7,8 +7,8 @@
 #include <rpg/System.h>
 
 #include <prdc/cuda/RField.h>
+#include <prdc/cuda/resources.h>
 
-#include <pscf/cuda/GpuResources.h>
 #include <pscf/mesh/MeshIterator.h>
 #include <pscf/math/IntVec.h>
 

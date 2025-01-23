@@ -6,7 +6,7 @@
 
 #include <rpg/System.h>
 #include <prdc/cuda/RField.h>
-#include <pscf/cuda/GpuResources.h>
+#include <prdc/cuda/resources.h>
 #include <prdc/crystal/BFieldComparison.h>
 #include <util/tests/LogFileUnitTest.h>
 

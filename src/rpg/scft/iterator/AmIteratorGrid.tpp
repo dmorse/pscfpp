@@ -12,8 +12,8 @@
 #include <rpg/System.h>
 #include <prdc/cuda/RField.h>
 #include <prdc/crystal/UnitCell.h>
+#include <prdc/cuda/resources.h>
 #include <pscf/inter/Interaction.h>
-#include <pscf/cuda/GpuResources.h>
 
 #include <util/global.h>
 

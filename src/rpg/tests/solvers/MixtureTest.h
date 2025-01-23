@@ -13,7 +13,7 @@
 #include <pscf/math/IntVec.h>
 #include <util/math/Constants.h>
 
-#include <pscf/cuda/GpuResources.h>
+#include <prdc/cuda/resources.h>
 
 #include <fstream>
 

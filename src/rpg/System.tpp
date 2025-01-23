@@ -19,8 +19,8 @@
 #include <rpg/scft/iterator/IteratorFactory.h>
 
 #include <prdc/cuda/RField.h>
+#include <prdc/cuda/resources.h>
 
-#include <pscf/cuda/GpuResources.h>
 #include <pscf/inter/Interaction.h>
 #include <pscf/math/IntVec.h>
 #include <pscf/homogeneous/Clump.h>

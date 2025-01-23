@@ -9,8 +9,8 @@
 */
 
 #include "Solvent.h"
+#include <prdc/cuda/resources.h>
 #include <pscf/mesh/Mesh.h>
-#include <pscf/cuda/GpuResources.h>
 
 namespace Pscf {
 namespace Rpg { 

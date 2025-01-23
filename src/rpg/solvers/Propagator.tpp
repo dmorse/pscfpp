@@ -10,7 +10,7 @@
 
 #include "Propagator.h"
 #include "Block.h"
-#include <pscf/cuda/GpuResources.h>
+#include <prdc/cuda/resources.h>
 #include <pscf/mesh/Mesh.h>
 #include <util/containers/DArray.h>
 

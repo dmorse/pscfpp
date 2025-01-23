@@ -15,9 +15,9 @@
 #include <rpg/fts/VecOpFts.h>
 
 #include <prdc/cuda/RFieldComparison.h>
+#include <prdc/cuda/resources.h>
 
 #include <pscf/cuda/CudaRandom.h> 
-#include <pscf/cuda/GpuResources.h>
 
 #include <util/tests/LogFileUnitTest.h>
 #include <util/random/Random.h> 

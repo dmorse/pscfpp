@@ -1,5 +1,5 @@
-#ifndef PSCF_VEC_OP_MISC_H
-#define PSCF_VEC_OP_MISC_H
+#ifndef PRDC_VEC_OP_MISC_H
+#define PRDC_VEC_OP_MISC_H
 
 /*
 * PSCF Package 
@@ -8,14 +8,16 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "GpuTypes.h"
-#include "DeviceArray.h"
+#include "types.h"
+#include <pscf/cuda/DeviceArray.h>
 #include <util/containers/DArray.h>
 
 namespace Pscf {
+namespace Prdc {
+namespace Cuda {
 namespace VecOp {
 
-/** 
+/*
 * Miscellaneous element-wise vector operations performed on the GPU.
 *
 * Note: this file is included at the end of VecOp.h, so any file that 
@@ -51,11 +53,7 @@ namespace VecOp {
 * indicating that an undefined number of vectors (>2) are involved in an 
 * operation. For example, addVMany adds >2 vectors together by passing 
 * an array of vectors, rather than a discrete set of vectors.
-* 
-* \ingroup Pscf_Cuda_Module 
-* @{
 */
-
 
 // Functions that combine multiple VecOp operations
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -257,5 +255,7 @@ void sqSqNormV(DeviceArray<cudaReal>& a, DeviceArray<cudaComplex> const & b);
 /** @} */
 
 } // namespace VecOp
+} // namespace Cuda
+} // namespace Prdc
 } // namespace Pscf
 #endif

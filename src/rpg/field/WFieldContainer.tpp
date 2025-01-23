@@ -10,13 +10,15 @@
 
 #include "WFieldContainer.h"
 #include <rpg/field/FieldIo.h>
-#include <pscf/cuda/VecOp.h>
+#include <prdc/cuda/VecOp.h>
 
 namespace Pscf {
 namespace Rpg
 {
 
    using namespace Util;
+   using namespace Pscf::Prdc;
+   using namespace Pscf::Prdc::Cuda;
 
    /*
    * Constructor.

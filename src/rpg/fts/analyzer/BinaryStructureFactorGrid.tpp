@@ -6,8 +6,9 @@
 #include <rpg/fts/simulator/Simulator.h>
 #include <rpg/System.h>
 #include <prdc/crystal/shiftToMinimum.h>
+#include <prdc/cuda/resources.h>
+#include <prdc/cuda/complex.h>
 #include <pscf/mesh/MeshIterator.h>
-#include <pscf/cuda/GpuResources.h>
 #include <util/misc/FileMaster.h>
 #include <util/misc/ioUtil.h>
 #include <util/format/Dbl.h>
@@ -24,6 +25,7 @@ namespace Rpg {
 
    using namespace Util;
    using namespace Pscf::Prdc;
+   using namespace Pscf::Prdc::Cuda;
 
    /*
    * Constructor.
@@ -131,10 +133,10 @@ namespace Rpg {
       wk.allocate(dimensions);
       system().fft().forwardTransform(wm, wk);
       
-      std::vector<std::complex<double>> wkCpu(kSize_);
-      cudaMemcpy(wkCpu.data(), wk.cArray(), kSize_ * sizeof(cudaComplex), cudaMemcpyDeviceToHost);
-      for (int k=0; k< wk.capacity(); k++) {
-         accumulators_[k].sample(norm(wkCpu[k]));
+      HostDArray<cudaComplex> wkCpu(kSize_);
+      wkCpu = wk; // copy from device to host
+      for (int k = 0; k < wk.capacity(); k++) {
+         accumulators_[k].sample(absSq<cudaComplex, cudaReal>(wkCpu[k]));
       }
       
    }

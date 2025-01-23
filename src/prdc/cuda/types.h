@@ -2,21 +2,24 @@
 #define PRDC_CUDA_TYPES_H
 
 #include <cufft.h>
-#include <stdio.h>
-#include <iostream>
 
 namespace Pscf {
-namespace Prdc {
-namespace Cuda {
+
+   // Toggle single / double precision:
+   
+   //#define SINGLE_PRECISION
+   #define DOUBLE_PRECISION
 
    /**
    * Complex number type used in CPU code that uses FFTW.
    */
    #ifdef SINGLE_PRECISION
    typedef cufftComplex Complex;
+   typedef cufftComplex cudaComplex;
    #else
    #ifdef DOUBLE_PRECISION
    typedef cufftDoubleComplex Complex;
+   typedef cufftDoubleComplex cudaComplex;
    #endif
    #endif
 
@@ -25,13 +28,13 @@ namespace Cuda {
    */
    #ifdef SINGLE_PRECISION
    typedef cufftReal Real;
+   typedef cufftReal cudaReal;
    #else
    #ifdef DOUBLE_PRECISION
    typedef cufftDoubleReal Real;
+   typedef cufftDoubleReal cudaReal;
    #endif
    #endif
 
-} // Pscf::Prdc::Cpu
-} // Pscf::Prdc
 } // Pscf
 #endif

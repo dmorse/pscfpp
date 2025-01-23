@@ -1,5 +1,5 @@
-#ifndef PSCF_REDUCE_H
-#define PSCF_REDUCE_H
+#ifndef PRDC_REDUCE_H
+#define PRDC_REDUCE_H
 
 /*
 * PSCF Package 
@@ -8,11 +8,12 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "GpuTypes.h"
-#include "DeviceArray.h"
+#include "types.h"
+#include <pscf/cuda/DeviceArray.h>
 
 namespace Pscf {
-namespace Reduce {
+namespace Prdc {
+namespace Cuda {
 
 /** 
 * Functions that perform parallel reductions on the GPU. 
@@ -51,9 +52,10 @@ namespace Reduce {
 * nearest multiple of the thread block size). The kernel wrapper 
 * properly determines the GPU configuration before calling the kernel.
 * 
-* \ingroup Pscf_Cuda_Module 
+* \ingroup Prdc_Cuda_Module 
 * @{
 */
+namespace Reduce {
 
 /**
 * Compute sum of array elements (GPU kernel wrapper).
@@ -101,6 +103,8 @@ cudaReal innerProduct(DeviceArray<cudaReal> const & a,
 
 /** @} */
 
+}
+}
 }
 }
 #endif

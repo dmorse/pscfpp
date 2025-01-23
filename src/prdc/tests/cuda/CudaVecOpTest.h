@@ -1,13 +1,11 @@
-#ifndef PSCF_CUDA_VEC_OP_TEST_H
-#define PSCF_CUDA_VEC_OP_TEST_H
+#ifndef PRDC_CUDA_VEC_OP_TEST_H
+#define PRDC_CUDA_VEC_OP_TEST_H
 
 #include <test/UnitTest.h>
 #include <test/UnitTestRunner.h>
 
-#include <pscf/cuda/VecOp.h>
-#include <pscf/cuda/HostDArray.h>
-#include <pscf/cuda/DeviceArray.h>
-#include <pscf/cuda/GpuResources.h>
+#include <prdc/cuda/resources.h>
+
 #include <pscf/math/FieldComparison.h>
 #include <util/math/Constants.h>
 #include <complex>
@@ -15,6 +13,8 @@
 
 using namespace Util;
 using namespace Pscf;
+using namespace Pscf::Prdc;
+using namespace Pscf::Prdc::Cuda;
 
 class CudaVecOpTest : public UnitTest
 {

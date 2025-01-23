@@ -6,6 +6,7 @@
 */
 
 #include "VecOpFts.h"
+#include <pscf/cuda/ThreadGrid.h>
 
 namespace Pscf {
 namespace Rpg {

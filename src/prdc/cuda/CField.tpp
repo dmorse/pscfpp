@@ -9,7 +9,6 @@
 */
 
 #include "CField.h"
-#include <pscf/cuda/HostDArray.h>
 
 namespace Pscf {
 namespace Prdc {

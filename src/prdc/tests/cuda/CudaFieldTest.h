@@ -7,9 +7,8 @@
 #include <prdc/cuda/RField.h>
 #include <prdc/cuda/CField.h>
 #include <prdc/cuda/RFieldDft.h>
+#include <prdc/cuda/resources.h>
 
-#include <pscf/cuda/HostDArray.h>
-#include <pscf/cuda/GpuResources.h>
 #include <pscf/math/IntVec.h>
 
 using namespace Util;

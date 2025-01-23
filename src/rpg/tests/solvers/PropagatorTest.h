@@ -9,12 +9,12 @@
 #include <rpg/solvers/Propagator.h>
 
 #include <prdc/crystal/UnitCell.h>
+#include <prdc/cuda/resources.h>
 
 #include <pscf/mesh/Mesh.h>
 #include <pscf/math/IntVec.h>
 #include <util/math/Constants.h>
 
-#include <pscf/cuda/GpuResources.h>
 #include <fstream>
 
 

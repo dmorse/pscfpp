@@ -1,5 +1,5 @@
-#ifndef PSCF_VEC_OP_H
-#define PSCF_VEC_OP_H
+#ifndef PRDC_VEC_OP_H
+#define PRDC_VEC_OP_H
 
 /*
 * PSCF Package 
@@ -8,12 +8,12 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "GpuTypes.h"
-#include "DeviceArray.h"
-#include <util/containers/DArray.h>
+#include "types.h"
+#include <pscf/cuda/DeviceArray.h>
 
 namespace Pscf {
-namespace VecOp {
+namespace Prdc {
+namespace Cuda {
 
 /** 
 * Functions that perform element-wise vector operations on the GPU.
@@ -69,10 +69,10 @@ namespace VecOp {
 * is included at the end of this file so that any code that includes
 * this header file will also include VecOpMisc.h.
 * 
-* \ingroup Pscf_Cuda_Module 
+* \ingroup Prdc_Cuda_Module 
 * @{
 */
-
+namespace VecOp {
 
 // Assignment operations:
 // ~~~~~~~~~~~~~~~~~~~~~~
@@ -1425,6 +1425,8 @@ inline void divEqS(DeviceArray<cudaComplex>& a, cudaReal const b)
 /** @} */
 
 } // namespace VecOp
+} // namespace Cuda
+} // namespace Prdc
 } // namespace Pscf
 
 #include "VecOpMisc.h" // Ensure that if VecOp is included, so is VecOpMisc

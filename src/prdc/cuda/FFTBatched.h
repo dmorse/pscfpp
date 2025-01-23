@@ -10,13 +10,11 @@
 
 #include "RField.h"
 #include "RFieldDft.h"
+#include "types.h"
 #include <pscf/math/IntVec.h>
-#include <pscf/cuda/GpuTypes.h>
 #include <util/global.h>
 
 #include <cufft.h>
-#include <cuda.h>
-#include <cuda_runtime.h>
 
 namespace Pscf {
 namespace Prdc {

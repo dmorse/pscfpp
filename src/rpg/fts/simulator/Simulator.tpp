@@ -17,7 +17,7 @@
 #include <rpg/fts/ramp/Ramp.h>
 #include <rpg/fts/ramp/RampFactory.h>
 #include <rpg/fts/VecOpFts.h>
-#include <pscf/cuda/GpuResources.h>
+#include <prdc/cuda/resources.h>
 #include <pscf/math/IntVec.h>
 #include <util/misc/Timer.h>
 #include <util/random/Random.h>

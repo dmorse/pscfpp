@@ -20,12 +20,12 @@
 #include <prdc/crystal/fieldHeader.h>
 #include <prdc/crystal/Basis.h>
 #include <prdc/crystal/UnitCell.h>
+#include <prdc/cuda/types.h>
 #include <prdc/cuda/complex.h>
 
 #include <pscf/mesh/Mesh.h>
 #include <pscf/math/IntVec.h>
 #include <pscf/cuda/HostDArray.h>
-#include <pscf/cuda/GpuTypes.h>
 
 
 namespace Pscf {

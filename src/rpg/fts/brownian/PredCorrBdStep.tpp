@@ -13,8 +13,8 @@
 #include <rpg/fts/brownian/BdSimulator.h>
 #include <rpg/fts/compressor/Compressor.h>
 #include <rpg/System.h>
+#include <prdc/cuda/VecOp.h>
 #include <pscf/math/IntVec.h>
-#include <pscf/cuda/VecOp.h>
 #include <util/random/Random.h>
 
 namespace Pscf {

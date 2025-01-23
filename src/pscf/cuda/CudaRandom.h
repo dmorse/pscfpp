@@ -1,7 +1,6 @@
 #ifndef PSCF_CUDA_RANDOM_H
 #define PSCF_CUDA_RANDOM_H
 
-#include "GpuTypes.h"
 #include "DeviceArray.h"
 
 #include <curand.h>
@@ -50,21 +49,21 @@ namespace Pscf {
       void setSeed(unsigned long long seed);
 
       /**
-      * Populate array with uniform random floating point numbers.
-      *   
-      * The array, which is stored on the device, is filled with random 
-      * numbers in the range 0 < x <= 1 (zero excluded and 1 is included)
+      * Populate array on device with random floats in (0, 1], uniform dist.
       *  
       * \param data  array to populate
       */
-      void uniform(DeviceArray<cudaReal>& data);
+      void uniform(DeviceArray<float>& data);
+
+      /**
+      * Populate array on device with random doubles in (0, 1], uniform dist.
+      *  
+      * \param data  array to populate
+      */
+      void uniform(DeviceArray<double>& data);
    
       /**
-      * Populate array with normal-distributed random floating point numbers.
-      *   
-      * The array, which is stored on the device, is filled with random 
-      * numbers chosen from a normal distribution with the specified mean 
-      * value and standard deviation.
+      * Populate array on device with normal-distributed random floats.
       * 
       * Note: the input array must have an even number of elements. This is a 
       * requirement imposed by cuRAND, the random number generator software 
@@ -74,8 +73,20 @@ namespace Pscf {
       * \param stddev  standard deviation (input)
       * \param mean  mean value (input, default = 0.0)
       */
-      void normal(DeviceArray<cudaReal>& data, 
-                  cudaReal stddev, cudaReal mean = 0.0);
+      void normal(DeviceArray<float>& data, float stddev, float mean = 0.0);
+
+      /**
+      * Populate array on device with normal-distributed random doubles.
+      * 
+      * Note: the input array must have an even number of elements. This is a 
+      * requirement imposed by cuRAND, the random number generator software 
+      * used by CudaRandom.
+      *
+      * \param data  array to populate
+      * \param stddev  standard deviation (input)
+      * \param mean  mean value (input, default = 0.0)
+      */
+      void normal(DeviceArray<double>& data, double stddev, double mean = 0.0);
    
       /**
       * Returns value of random seed (private member variable seed_).

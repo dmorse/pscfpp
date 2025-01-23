@@ -8,9 +8,9 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
+#include "types.h"
 #include <pscf/cuda/DeviceArray.h>
 #include <pscf/cuda/HostDArray.h>
-#include <pscf/cuda/GpuResources.h>
 #include <pscf/math/IntVec.h>
 #include <util/global.h>
 

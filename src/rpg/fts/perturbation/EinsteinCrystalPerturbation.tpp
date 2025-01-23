@@ -5,13 +5,14 @@
 #include <rpg/fts/simulator/Simulator.h>
 #include <rpg/fts/VecOpFts.h>
 #include <rpg/System.h>
-#include <pscf/cuda/VecOp.h>
+#include <prdc/cuda/resources.h>
 #include <util/global.h>
 
 namespace Pscf {
 namespace Rpg {
 
    using namespace Util;
+   using namespace Prdc::Cuda;
 
    /* 
    * Constructor.

@@ -13,11 +13,11 @@
 #include <rpg/fts/VecOpFts.h>
 #include <rpg/System.h>      
 #include <prdc/crystal/shiftToMinimum.h>
+#include <prdc/cuda/resources.h>
 #include <pscf/mesh/MeshIterator.h>
 #include <pscf/math/IntVec.h>
-#include <util/random/Random.h>
 #include <pscf/cuda/CudaRandom.h>
-#include <pscf/cuda/GpuResources.h>
+#include <util/random/Random.h>
 #include <util/param/ParamComposite.h>
 #include <util/global.h>
 

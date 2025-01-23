@@ -6,10 +6,13 @@
 */
 
 #include "VecOp.h"
-#include "ThreadGrid.h"
+#include <pscf/cuda/ThreadGrid.h>
+#include <pscf/cuda/cudaErrorCheck.h>
 #include <cmath>
 
 namespace Pscf {
+namespace Prdc {
+namespace Cuda {
 namespace VecOp {
 
 // CUDA kernels:
@@ -1027,6 +1030,7 @@ void eqV(DeviceArray<cudaReal>& a, DeviceArray<cudaReal> const & b,
    // Launch kernel
    _eqV<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, 
                                b.cArray()+beginIdB, n);
+   cudaErrorCheck( cudaGetLastError() ); // ensure no CUDA errors
 }
 
 // Vector assignment, a[i] = b[i], kernel wrapper (cudaComplex).
@@ -1043,6 +1047,7 @@ void eqV(DeviceArray<cudaComplex>& a, DeviceArray<cudaComplex> const & b,
    // Launch kernel
    _eqV<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, 
                                b.cArray()+beginIdB, n);
+   cudaErrorCheck( cudaGetLastError() ); // ensure no CUDA errors
 }
 
 // Vector assignment, a[i] = b, kernel wrapper (cudaReal).
@@ -1057,6 +1062,7 @@ void eqS(DeviceArray<cudaReal>& a, cudaReal const b,
 
    // Launch kernel
    _eqS<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, b, n);
+   cudaErrorCheck( cudaGetLastError() ); // ensure no CUDA errors
 }
 
 // Vector assignment, a[i] = b, kernel wrapper (cudaComplex).
@@ -1071,6 +1077,7 @@ void eqS(DeviceArray<cudaComplex>& a, cudaComplex const b,
 
    // Launch kernel
    _eqS<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, b, n);
+   cudaErrorCheck( cudaGetLastError() ); // ensure no CUDA errors
 }
 
 // Vector addition, a[i] = b[i] + c[i], kernel wrapper (cudaReal).
@@ -1089,6 +1096,7 @@ void addVV(DeviceArray<cudaReal>& a, DeviceArray<cudaReal> const & b,
    // Launch kernel
    _addVV<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, b.cArray()+beginIdB, 
                                  c.cArray()+beginIdC, n);
+   cudaErrorCheck( cudaGetLastError() ); // ensure no CUDA errors
 }
 
 // Vector addition, a[i] = b[i] + c[i], kernel wrapper (cudaComplex).
@@ -1107,6 +1115,7 @@ void addVV(DeviceArray<cudaComplex>& a, DeviceArray<cudaComplex> const & b,
    // Launch kernel
    _addVV<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, b.cArray()+beginIdB, 
                                  c.cArray()+beginIdC, n);
+   cudaErrorCheck( cudaGetLastError() ); // ensure no CUDA errors
 }
 
 // Vector addition, a[i] = b[i] + c[i], kernel wrapper (mixed, b = real).
@@ -1125,6 +1134,7 @@ void addVV(DeviceArray<cudaComplex>& a, DeviceArray<cudaReal> const & b,
    // Launch kernel
    _addVV<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, b.cArray()+beginIdB, 
                                  c.cArray()+beginIdC, n);
+   cudaErrorCheck( cudaGetLastError() ); // ensure no CUDA errors
 }
 
 // Vector addition, a[i] = b[i] + c[i], kernel wrapper (mixed, c = real).
@@ -1143,6 +1153,7 @@ void addVV(DeviceArray<cudaComplex>& a, DeviceArray<cudaComplex> const & b,
    // Launch kernel
    _addVV<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, b.cArray()+beginIdB, 
                                  c.cArray()+beginIdC, n);
+   cudaErrorCheck( cudaGetLastError() ); // ensure no CUDA errors
 }
 
 // Vector addition, a[i] = b[i] + c, kernel wrapper (cudaReal).
@@ -1159,6 +1170,7 @@ void addVS(DeviceArray<cudaReal>& a, DeviceArray<cudaReal> const & b,
    // Launch kernel
    _addVS<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, b.cArray()+beginIdB, 
                                  c, n);
+   cudaErrorCheck( cudaGetLastError() ); // ensure no CUDA errors
 }
 
 // Vector addition, a[i] = b[i] + c, kernel wrapper (cudaComplex).
@@ -1175,6 +1187,7 @@ void addVS(DeviceArray<cudaComplex>& a, DeviceArray<cudaComplex> const & b,
    // Launch kernel
    _addVS<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, b.cArray()+beginIdB, 
                                  c, n);
+   cudaErrorCheck( cudaGetLastError() ); // ensure no CUDA errors
 }
 
 // Vector addition, a[i] = b[i] + c, kernel wrapper (mixed, b = real).
@@ -1191,6 +1204,7 @@ void addVS(DeviceArray<cudaComplex>& a, DeviceArray<cudaReal> const & b,
    // Launch kernel
    _addVS<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, b.cArray()+beginIdB, 
                                  c, n);
+   cudaErrorCheck( cudaGetLastError() ); // ensure no CUDA errors
 }
 
 // Vector addition, a[i] = b[i] + c, kernel wrapper (mixed, c = real).
@@ -1207,6 +1221,7 @@ void addVS(DeviceArray<cudaComplex>& a, DeviceArray<cudaComplex> const & b,
    // Launch kernel
    _addVS<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, b.cArray()+beginIdB, 
                                  c, n);
+   cudaErrorCheck( cudaGetLastError() ); // ensure no CUDA errors
 }
 
 // Vector subtraction, a[i] = b[i] - c[i], kernel wrapper (cudaReal).
@@ -1225,6 +1240,7 @@ void subVV(DeviceArray<cudaReal>& a, DeviceArray<cudaReal> const & b,
    // Launch kernel
    _subVV<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, b.cArray()+beginIdB, 
                                  c.cArray()+beginIdC, n);
+   cudaErrorCheck( cudaGetLastError() ); // ensure no CUDA errors
 }
 
 // Vector subtraction, a[i] = b[i] - c[i], kernel wrapper (cudaComplex).
@@ -1243,6 +1259,7 @@ void subVV(DeviceArray<cudaComplex>& a, DeviceArray<cudaComplex> const & b,
    // Launch kernel
    _subVV<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, b.cArray()+beginIdB, 
                                  c.cArray()+beginIdC, n);
+   cudaErrorCheck( cudaGetLastError() ); // ensure no CUDA errors
 }
 
 // Vector subtraction, a[i]=b[i]-c[i], kernel wrapper (mixed, b=real).
@@ -1261,6 +1278,7 @@ void subVV(DeviceArray<cudaComplex>& a, DeviceArray<cudaReal> const & b,
    // Launch kernel
    _subVV<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, b.cArray()+beginIdB, 
                                  c.cArray()+beginIdC, n);
+   cudaErrorCheck( cudaGetLastError() ); // ensure no CUDA errors
 }
 
 // Vector subtraction, a[i]=b[i]-c[i], kernel wrapper (mixed, c=real).
@@ -1279,6 +1297,7 @@ void subVV(DeviceArray<cudaComplex>& a, DeviceArray<cudaComplex> const & b,
    // Launch kernel
    _subVV<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, b.cArray()+beginIdB, 
                                  c.cArray()+beginIdC, n);
+   cudaErrorCheck( cudaGetLastError() ); // ensure no CUDA errors
 }
 
 // Vector subtraction, a[i] = b[i] - c, kernel wrapper (cudaReal).
@@ -1296,6 +1315,7 @@ void subVS(DeviceArray<cudaReal>& a,
    // Launch kernel
    _subVS<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, b.cArray()+beginIdB, 
                                  c, n);
+   cudaErrorCheck( cudaGetLastError() ); // ensure no CUDA errors
 }
 
 // Vector subtraction, a[i] = b[i] - c, kernel wrapper (cudaComplex).
@@ -1313,6 +1333,7 @@ void subVS(DeviceArray<cudaComplex>& a, DeviceArray<cudaComplex> const & b,
    // Launch kernel
    _subVS<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, b.cArray()+beginIdB, 
                                  c, n);
+   cudaErrorCheck( cudaGetLastError() ); // ensure no CUDA errors
 }
 
 // Vector subtraction, a[i] = b[i] - c, kernel wrapper (mixed, b = real).
@@ -1330,6 +1351,7 @@ void subVS(DeviceArray<cudaComplex>& a, DeviceArray<cudaReal> const & b,
    // Launch kernel
    _subVS<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, b.cArray()+beginIdB, 
                                  c, n);
+   cudaErrorCheck( cudaGetLastError() ); // ensure no CUDA errors
 }
 
 // Vector subtraction, a[i] = b[i] - c, kernel wrapper (mixed, c = real).
@@ -1347,6 +1369,7 @@ void subVS(DeviceArray<cudaComplex>& a, DeviceArray<cudaComplex> const & b,
    // Launch kernel
    _subVS<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, b.cArray()+beginIdB, 
                                  c, n);
+   cudaErrorCheck( cudaGetLastError() ); // ensure no CUDA errors
 }
 
 // Vector multiplication, a[i] = b[i] * c[i], kernel wrapper (cudaReal).
@@ -1365,6 +1388,7 @@ void mulVV(DeviceArray<cudaReal>& a, DeviceArray<cudaReal> const & b,
    // Launch kernel
    _mulVV<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, b.cArray()+beginIdB, 
                                  c.cArray()+beginIdC, n);
+   cudaErrorCheck( cudaGetLastError() ); // ensure no CUDA errors
 }
 
 // Vector multiplication, a[i] = b[i] * c[i], kernel wrapper (cudaComplex).
@@ -1383,6 +1407,7 @@ void mulVV(DeviceArray<cudaComplex>& a, DeviceArray<cudaComplex> const & b,
    // Launch kernel
    _mulVV<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, b.cArray()+beginIdB, 
                                  c.cArray()+beginIdC, n);
+   cudaErrorCheck( cudaGetLastError() ); // ensure no CUDA errors
 }
 
 // Vector multiplication, a[i]=b[i]*c[i], kernel wrapper (mixed, b = real).
@@ -1401,6 +1426,7 @@ void mulVV(DeviceArray<cudaComplex>& a, DeviceArray<cudaReal> const & b,
    // Launch kernel
    _mulVV<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, b.cArray()+beginIdB, 
                                  c.cArray()+beginIdC, n);
+   cudaErrorCheck( cudaGetLastError() ); // ensure no CUDA errors
 }
 
 // Vector multiplication, a[i]=b[i]*c[i], kernel wrapper (mixed, c = real).
@@ -1419,6 +1445,7 @@ void mulVV(DeviceArray<cudaComplex>& a, DeviceArray<cudaComplex> const & b,
    // Launch kernel
    _mulVV<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, b.cArray()+beginIdB, 
                                  c.cArray()+beginIdC, n);
+   cudaErrorCheck( cudaGetLastError() ); // ensure no CUDA errors
 }
 
 // Vector multiplication, a[i] = b[i] * c, kernel wrapper (cudaReal).
@@ -1436,6 +1463,7 @@ void mulVS(DeviceArray<cudaReal>& a, DeviceArray<cudaReal> const & b,
    // Launch kernel
    _mulVS<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, b.cArray()+beginIdB, 
                                  c, n);
+   cudaErrorCheck( cudaGetLastError() ); // ensure no CUDA errors
 }
 
 // Vector multiplication, a[i] = b[i] * c, kernel wrapper (cudaComplex).
@@ -1453,6 +1481,7 @@ void mulVS(DeviceArray<cudaComplex>& a, DeviceArray<cudaComplex> const & b,
    // Launch kernel
    _mulVS<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, b.cArray()+beginIdB, 
                                  c, n);
+   cudaErrorCheck( cudaGetLastError() ); // ensure no CUDA errors
 }
 
 // Vector multiplication, a[i] = b[i] * c, kernel wrapper (mixed, b = real).
@@ -1470,6 +1499,7 @@ void mulVS(DeviceArray<cudaComplex>& a, DeviceArray<cudaReal> const & b,
    // Launch kernel
    _mulVS<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, b.cArray()+beginIdB, 
                                  c, n);
+   cudaErrorCheck( cudaGetLastError() ); // ensure no CUDA errors
 }
 
 // Vector multiplication, a[i] = b[i] * c, kernel wrapper (mixed, c = real).
@@ -1487,6 +1517,7 @@ void mulVS(DeviceArray<cudaComplex>& a, DeviceArray<cudaComplex> const & b,
    // Launch kernel
    _mulVS<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, b.cArray()+beginIdB, 
                                  c, n);
+   cudaErrorCheck( cudaGetLastError() ); // ensure no CUDA errors
 }
 
 // Vector division, a[i] = b[i] / c[i], kernel wrapper (cudaReal).
@@ -1505,6 +1536,7 @@ void divVV(DeviceArray<cudaReal>& a, DeviceArray<cudaReal> const & b,
    // Launch kernel
    _divVV<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, b.cArray()+beginIdB, 
                                  c.cArray()+beginIdC, n);
+   cudaErrorCheck( cudaGetLastError() ); // ensure no CUDA errors
 }
 
 // Vector division, a[i] = b[i] / c[i], kernel wrapper (mixed, c = real).
@@ -1523,6 +1555,7 @@ void divVV(DeviceArray<cudaComplex>& a, DeviceArray<cudaComplex> const & b,
    // Launch kernel
    _divVV<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, b.cArray()+beginIdB, 
                                  c.cArray()+beginIdC, n);
+   cudaErrorCheck( cudaGetLastError() ); // ensure no CUDA errors
 }
 
 // Vector division, a[i] = b[i] / c, kernel wrapper (cudaReal).
@@ -1540,6 +1573,7 @@ void divVS(DeviceArray<cudaReal>& a, DeviceArray<cudaReal> const & b,
    // Launch kernel
    _divVS<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, b.cArray()+beginIdB, 
                                  c, n);
+   cudaErrorCheck( cudaGetLastError() ); // ensure no CUDA errors
 }
 
 // Vector division, a[i] = b[i] / c, kernel wrapper (mixed, c = real).
@@ -1557,6 +1591,7 @@ void divVS(DeviceArray<cudaComplex>& a, DeviceArray<cudaComplex> const & b,
    // Launch kernel
    _divVS<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, b.cArray()+beginIdB, 
                                  c, n);
+   cudaErrorCheck( cudaGetLastError() ); // ensure no CUDA errors
 }
 
 // Vector exponentiation, a[i] = exp(b[i]), kernel wrapper (cudaReal).
@@ -1573,6 +1608,7 @@ void expV(DeviceArray<cudaReal>& a, DeviceArray<cudaReal> const & b,
    // Launch kernel
    _expV<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, 
                                 b.cArray()+beginIdB, n);
+   cudaErrorCheck( cudaGetLastError() ); // ensure no CUDA errors
 }
 
 // Vector exponentiation, a[i] = exp(b[i]), kernel wrapper (cudaComplex).
@@ -1589,6 +1625,7 @@ void expV(DeviceArray<cudaComplex>& a, DeviceArray<cudaComplex> const & b,
    // Launch kernel
    _expV<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, 
                                 b.cArray()+beginIdB, n);
+   cudaErrorCheck( cudaGetLastError() ); // ensure no CUDA errors
 }
 
 // Vector addition in-place, a[i] += b[i], kernel wrapper (cudaReal).
@@ -1605,6 +1642,7 @@ void addEqV(DeviceArray<cudaReal>& a, DeviceArray<cudaReal> const & b,
    // Launch kernel
    _addEqV<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, 
                                   b.cArray()+beginIdB, n);
+   cudaErrorCheck( cudaGetLastError() ); // ensure no CUDA errors
 }
 
 // Vector addition in-place, a[i] += b[i], kernel wrapper (cudaComplex).
@@ -1621,6 +1659,7 @@ void addEqV(DeviceArray<cudaComplex>& a, DeviceArray<cudaComplex> const & b,
    // Launch kernel
    _addEqV<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, 
                                   b.cArray()+beginIdB, n);
+   cudaErrorCheck( cudaGetLastError() ); // ensure no CUDA errors
 }
 
 // Vector addition in-place, a[i] += b[i], kernel wrapper (mixed).
@@ -1637,6 +1676,7 @@ void addEqV(DeviceArray<cudaComplex>& a, DeviceArray<cudaReal> const & b,
    // Launch kernel
    _addEqV<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, 
                                   b.cArray()+beginIdB, n);
+   cudaErrorCheck( cudaGetLastError() ); // ensure no CUDA errors
 }
 
 // Vector addition in-place, a[i] += b, kernel wrapper (cudaReal).
@@ -1651,6 +1691,7 @@ void addEqS(DeviceArray<cudaReal>& a, cudaReal const b,
 
    // Launch kernel
    _addEqS<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, b, n);
+   cudaErrorCheck( cudaGetLastError() ); // ensure no CUDA errors
 }
 
 // Vector addition in-place, a[i] += b, kernel wrapper (cudaComplex).
@@ -1665,6 +1706,7 @@ void addEqS(DeviceArray<cudaComplex>& a, cudaComplex const b,
 
    // Launch kernel
    _addEqS<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, b, n);
+   cudaErrorCheck( cudaGetLastError() ); // ensure no CUDA errors
 }
 
 // Vector addition in-place, a[i] += b, kernel wrapper (mixed).
@@ -1679,6 +1721,7 @@ void addEqS(DeviceArray<cudaComplex>& a, cudaReal const b,
 
    // Launch kernel
    _addEqS<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, b, n);
+   cudaErrorCheck( cudaGetLastError() ); // ensure no CUDA errors
 }
 
 // Vector subtraction in-place, a[i] -= b[i], kernel wrapper (cudaReal).
@@ -1695,6 +1738,7 @@ void subEqV(DeviceArray<cudaReal>& a, DeviceArray<cudaReal> const & b,
    // Launch kernel
    _subEqV<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, 
                                   b.cArray()+beginIdB, n);
+   cudaErrorCheck( cudaGetLastError() ); // ensure no CUDA errors
 }
 
 // Vector subtraction in-place, a[i] -= b[i], kernel wrapper (cudaComplex).
@@ -1711,6 +1755,7 @@ void subEqV(DeviceArray<cudaComplex>& a, DeviceArray<cudaComplex> const & b,
    // Launch kernel
    _subEqV<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, 
                                   b.cArray()+beginIdB, n);
+   cudaErrorCheck( cudaGetLastError() ); // ensure no CUDA errors
 }
 
 // Vector subtraction in-place, a[i] -= b[i], kernel wrapper (mixed).
@@ -1727,6 +1772,7 @@ void subEqV(DeviceArray<cudaComplex>& a, DeviceArray<cudaReal> const & b,
    // Launch kernel
    _subEqV<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, 
                                   b.cArray()+beginIdB, n);
+   cudaErrorCheck( cudaGetLastError() ); // ensure no CUDA errors
 }
 
 // Vector subtraction in-place, a[i] -= b, kernel wrapper (cudaReal).
@@ -1741,6 +1787,7 @@ void subEqS(DeviceArray<cudaReal>& a, cudaReal const b,
 
    // Launch kernel
    _subEqS<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, b, n);
+   cudaErrorCheck( cudaGetLastError() ); // ensure no CUDA errors
 }
 
 // Vector subtraction in-place, a[i] -= b, kernel wrapper (cudaComplex).
@@ -1755,6 +1802,7 @@ void subEqS(DeviceArray<cudaComplex>& a, cudaComplex const b,
 
    // Launch kernel
    _subEqS<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, b, n);
+   cudaErrorCheck( cudaGetLastError() ); // ensure no CUDA errors
 }
 
 // Vector subtraction in-place, a[i] -= b, kernel wrapper (mixed).
@@ -1769,6 +1817,7 @@ void subEqS(DeviceArray<cudaComplex>& a, cudaReal const b,
 
    // Launch kernel
    _subEqS<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, b, n);
+   cudaErrorCheck( cudaGetLastError() ); // ensure no CUDA errors
 }
 
 // Vector multiplication in-place, a[i] *= b[i], kernel wrapper (cudaReal).
@@ -1785,6 +1834,7 @@ void mulEqV(DeviceArray<cudaReal>& a, DeviceArray<cudaReal> const & b,
    // Launch kernel
    _mulEqV<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, 
                                   b.cArray()+beginIdB, n);
+   cudaErrorCheck( cudaGetLastError() ); // ensure no CUDA errors
 }
 
 // Vector multiplication in-place, a[i] *= b[i], kernel wrapper (cudaComplex).
@@ -1801,6 +1851,7 @@ void mulEqV(DeviceArray<cudaComplex>& a, DeviceArray<cudaComplex> const & b,
    // Launch kernel
    _mulEqV<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, 
                                   b.cArray()+beginIdB, n);
+   cudaErrorCheck( cudaGetLastError() ); // ensure no CUDA errors
 }
 
 // Vector multiplication in-place, a[i] *= b[i], kernel wrapper (mixed).
@@ -1817,6 +1868,7 @@ void mulEqV(DeviceArray<cudaComplex>& a, DeviceArray<cudaReal> const & b,
    // Launch kernel
    _mulEqV<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, 
                                   b.cArray()+beginIdB, n);
+   cudaErrorCheck( cudaGetLastError() ); // ensure no CUDA errors
 }
 
 // Vector multiplication in-place, a[i] *= b, kernel wrapper (cudaReal).
@@ -1831,6 +1883,7 @@ void mulEqS(DeviceArray<cudaReal>& a, cudaReal const b,
 
    // Launch kernel
    _mulEqS<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, b, n);
+   cudaErrorCheck( cudaGetLastError() ); // ensure no CUDA errors
 }
 
 // Vector multiplication in-place, a[i] *= b, kernel wrapper (cudaComplex).
@@ -1845,6 +1898,7 @@ void mulEqS(DeviceArray<cudaComplex>& a, cudaComplex const b,
 
    // Launch kernel
    _mulEqS<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, b, n);
+   cudaErrorCheck( cudaGetLastError() ); // ensure no CUDA errors
 }
 
 // Vector multiplication in-place, a[i] *= b, kernel wrapper (mixed).
@@ -1859,6 +1913,7 @@ void mulEqS(DeviceArray<cudaComplex>& a, cudaReal const b,
 
    // Launch kernel
    _mulEqS<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, b, n);
+   cudaErrorCheck( cudaGetLastError() ); // ensure no CUDA errors
 }
 
 // Vector division in-place, a[i] /= b[i], kernel wrapper (cudaReal).
@@ -1875,6 +1930,7 @@ void divEqV(DeviceArray<cudaReal>& a, DeviceArray<cudaReal> const & b,
    // Launch kernel
    _divEqV<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, 
                                   b.cArray()+beginIdB, n);
+   cudaErrorCheck( cudaGetLastError() ); // ensure no CUDA errors
 }
 
 // Vector division in-place, a[i] /= b[i], kernel wrapper (mixed).
@@ -1891,6 +1947,7 @@ void divEqV(DeviceArray<cudaComplex>& a, DeviceArray<cudaReal> const & b,
    // Launch kernel
    _divEqV<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, 
                                   b.cArray()+beginIdB, n);
+   cudaErrorCheck( cudaGetLastError() ); // ensure no CUDA errors
 }
 
 // Vector division in-place, a[i] /= b, kernel wrapper (cudaReal).
@@ -1905,6 +1962,7 @@ void divEqS(DeviceArray<cudaReal>& a, cudaReal const b,
 
    // Launch kernel
    _divEqS<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, b, n);
+   cudaErrorCheck( cudaGetLastError() ); // ensure no CUDA errors
 }
 
 // Vector division in-place, a[i] /= b, kernel wrapper (mixed).
@@ -1919,7 +1977,10 @@ void divEqS(DeviceArray<cudaComplex>& a, cudaReal const b,
 
    // Launch kernel
    _divEqS<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, b, n);
+   cudaErrorCheck( cudaGetLastError() ); // ensure no CUDA errors
 }
 
-}
-}
+} // namespace VecOp
+} // namespace Cuda
+} // namespace Prdc
+} // namespace Pscf

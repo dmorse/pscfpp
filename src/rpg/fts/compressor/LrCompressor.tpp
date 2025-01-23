@@ -12,8 +12,8 @@
 #include <rpg/System.h>
 #include <rpg/fts/compressor/intra/IntraCorrelation.h> 
 #include <prdc/crystal/shiftToMinimum.h>
+#include <prdc/cuda/resources.h>
 #include <pscf/mesh/MeshIterator.h>
-#include <pscf/cuda/GpuResources.h>
 #include <pscf/iterator/NanException.h>
 #include <util/global.h>
 #include <util/format/Dbl.h>

@@ -8,8 +8,8 @@
 #include <rpg/fts/simulator/Simulator.h>
 #include <prdc/cuda/RField.h> 
 #include <prdc/cuda/RFieldComparison.h>
+#include <prdc/cuda/resources.h>
 #include <pscf/math/IntVec.h>
-#include <pscf/cuda/GpuResources.h>
 #include <util/containers/DArray.h>  
 
 #include <util/tests/LogFileUnitTest.h>

@@ -3,6 +3,8 @@
 
 #include <test/CompositeTestRunner.h>
 
+#include "CudaReduceTest.h"
+#include "CudaVecOpTest.h"
 #include "CudaFieldTest.h"
 #include "CudaFieldComparisonTest.h"
 #include "CudaFieldTest.h"
@@ -10,6 +12,8 @@
 #include "CudaComplexTest.h"
 
 TEST_COMPOSITE_BEGIN(CudaTestComposite)
+TEST_COMPOSITE_ADD_UNIT(CudaReduceTest);
+TEST_COMPOSITE_ADD_UNIT(CudaVecOpTest);
 TEST_COMPOSITE_ADD_UNIT(CudaFieldTest);
 TEST_COMPOSITE_ADD_UNIT(CudaFieldComparisonTest);
 TEST_COMPOSITE_ADD_UNIT(CudaFftTest);

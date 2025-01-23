@@ -5,14 +5,10 @@
 
 #include "CudaArrayTest.h"
 #include "CudaRandomTest.h"
-#include "CudaReduceTest.h"
-#include "CudaVecOpTest.h"
 
 TEST_COMPOSITE_BEGIN(CudaTestComposite)
 TEST_COMPOSITE_ADD_UNIT(CudaArrayTest);
 TEST_COMPOSITE_ADD_UNIT(CudaRandomTest);
-TEST_COMPOSITE_ADD_UNIT(CudaReduceTest);
-TEST_COMPOSITE_ADD_UNIT(CudaVecOpTest);
 TEST_COMPOSITE_END
 
 #endif

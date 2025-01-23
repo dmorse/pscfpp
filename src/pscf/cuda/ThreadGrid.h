@@ -1,7 +1,6 @@
 #ifndef PSCF_THREADGRID_H
 #define PSCF_THREADGRID_H
 
-#include "GpuTypes.h"
 #include <util/global.h>
 
 namespace Pscf {

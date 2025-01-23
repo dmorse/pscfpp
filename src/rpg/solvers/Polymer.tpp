@@ -9,7 +9,6 @@
 */
 
 #include "Polymer.h"
-#include <pscf/cuda/GpuResources.h>
 
 namespace Pscf {
 namespace Rpg { 

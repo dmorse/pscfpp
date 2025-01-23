@@ -6,7 +6,6 @@
 
 #include <pscf/cuda/DeviceArray.h>
 #include <pscf/cuda/HostDArray.h>
-#include <pscf/cuda/GpuResources.h>
 #include <util/math/Constants.h>
 
 using namespace Util;
@@ -26,8 +25,8 @@ public:
    void testConstructors()
    {
       printMethod(TEST_FUNC);
-      HostDArray<cudaReal> h;
-      DeviceArray<cudaReal> d;
+      HostDArray<double> h;
+      DeviceArray<double> d;
 
       TEST_ASSERT(h.capacity() == 0 );
       TEST_ASSERT(!h.isAllocated() );
@@ -39,8 +38,8 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      HostDArray<cudaReal> h;
-      DeviceArray<cudaReal> d;
+      HostDArray<double> h;
+      DeviceArray<double> d;
 
       int capacity = 32;
       h.allocate(capacity);
@@ -64,8 +63,8 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      DeviceArray<cudaReal> d1;
-      DeviceArray<cudaReal> d2;
+      DeviceArray<double> d1;
+      DeviceArray<double> d2;
 
       int capacity = 128;
       d1.allocate(capacity);
@@ -87,14 +86,14 @@ public:
       int nx = 10;
 
       // Device arrays
-      DeviceArray<cudaReal> d1(nx);
-      DeviceArray<cudaReal> d2(nx);
+      DeviceArray<double> d1(nx);
+      DeviceArray<double> d2(nx);
 
       // Host arrays
-      HostDArray<cudaReal> in(nx);
-      HostDArray<cudaReal> out1(nx);
-      HostDArray<cudaReal> out2(nx);
-      HostDArray<cudaReal> out3(nx);
+      HostDArray<double> in(nx);
+      HostDArray<double> out1(nx);
+      HostDArray<double> out2(nx);
+      HostDArray<double> out3(nx);
 
       // Generate data
       double twoPi = 2.0*Constants::Pi;

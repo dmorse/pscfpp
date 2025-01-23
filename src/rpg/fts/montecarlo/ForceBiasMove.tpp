@@ -14,8 +14,8 @@
 #include <rpg/fts/compressor/Compressor.h>
 #include <rpg/fts/VecOpFts.h>
 #include <rpg/System.h>
+#include <prdc/cuda/resources.h>
 #include <pscf/cuda/CudaRandom.h>
-#include <pscf/cuda/GpuResources.h>
 #include <util/param/ParamComposite.h>
 #include <util/random/Random.h>
 

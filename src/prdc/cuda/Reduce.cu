@@ -6,11 +6,14 @@
 */
 
 #include "Reduce.h"
-#include "ThreadGrid.h"
-#include "HostDArray.h"
+#include <pscf/cuda/ThreadGrid.h>
+#include <pscf/cuda/HostDArray.h>
+#include <pscf/cuda/cudaErrorCheck.h>
 #include <cmath>
 
 namespace Pscf {
+namespace Prdc {
+namespace Cuda {
 namespace Reduce {
 
 // CUDA kernels:
@@ -514,15 +517,18 @@ cudaReal sum(DeviceArray<cudaReal> const & in)
          temp1.allocate(nBlocks);
          _sum<<<nBlocks, nThreads, nThreads*sizeof(cudaReal)>>>
                                     (temp1.cArray(), in.cArray(), n);
+         cudaErrorCheck( cudaGetLastError() ); // ensure no CUDA errors
       } else if (i % 2 == 1) { // i is odd: reduce temp1, store in temp2
          temp2.allocate(nBlocks);
          _sum<<<nBlocks, nThreads, nThreads*sizeof(cudaReal)>>>
                                     (temp2.cArray(), temp1.cArray(), n);
+         cudaErrorCheck( cudaGetLastError() ); // ensure no CUDA errors
          temp1.deallocate();
       } else {                 // i is even: reduce temp2, store in temp1
          temp1.allocate(nBlocks);
          _sum<<<nBlocks, nThreads, nThreads*sizeof(cudaReal)>>>
                                     (temp1.cArray(), temp2.cArray(), n);
+         cudaErrorCheck( cudaGetLastError() ); // ensure no CUDA errors
          temp2.deallocate();
       }
 
@@ -600,15 +606,18 @@ cudaReal max(DeviceArray<cudaReal> const & in)
          temp1.allocate(nBlocks);
          _max<<<nBlocks, nThreads, nThreads*sizeof(cudaReal)>>>
                                     (temp1.cArray(), in.cArray(), n);
+         cudaErrorCheck( cudaGetLastError() ); // ensure no CUDA errors
       } else if (i % 2 == 1) { // i is odd: reduce temp1, store in temp2
          temp2.allocate(nBlocks);
          _max<<<nBlocks, nThreads, nThreads*sizeof(cudaReal)>>>
                                     (temp2.cArray(), temp1.cArray(), n);
+         cudaErrorCheck( cudaGetLastError() ); // ensure no CUDA errors
          temp1.deallocate();
       } else {                 // i is even: reduce temp2, store in temp1
          temp1.allocate(nBlocks);
          _max<<<nBlocks, nThreads, nThreads*sizeof(cudaReal)>>>
                                     (temp1.cArray(), temp2.cArray(), n);
+         cudaErrorCheck( cudaGetLastError() ); // ensure no CUDA errors
          temp2.deallocate();
       }
 
@@ -679,15 +688,18 @@ cudaReal maxAbs(DeviceArray<cudaReal> const & in)
          temp1.allocate(nBlocks);
          _maxAbs<<<nBlocks, nThreads, nThreads*sizeof(cudaReal)>>>
                                     (temp1.cArray(), in.cArray(), n);
+         cudaErrorCheck( cudaGetLastError() ); // ensure no CUDA errors
       } else if (i % 2 == 1) { // i is odd: reduce temp1, store in temp2
          temp2.allocate(nBlocks);
          _max<<<nBlocks, nThreads, nThreads*sizeof(cudaReal)>>>
                                     (temp2.cArray(), temp1.cArray(), n);
+         cudaErrorCheck( cudaGetLastError() ); // ensure no CUDA errors
          temp1.deallocate();
       } else {                 // i is even: reduce temp2, store in temp1
          temp1.allocate(nBlocks);
          _max<<<nBlocks, nThreads, nThreads*sizeof(cudaReal)>>>
                                     (temp1.cArray(), temp2.cArray(), n);
+         cudaErrorCheck( cudaGetLastError() ); // ensure no CUDA errors
          temp2.deallocate();
       }
 
@@ -755,15 +767,18 @@ cudaReal min(DeviceArray<cudaReal> const & in)
          temp1.allocate(nBlocks);
          _min<<<nBlocks, nThreads, nThreads*sizeof(cudaReal)>>>
                                     (temp1.cArray(), in.cArray(), n);
+         cudaErrorCheck( cudaGetLastError() ); // ensure no CUDA errors
       } else if (i % 2 == 1) { // i is odd: reduce temp1, store in temp2
          temp2.allocate(nBlocks);
          _min<<<nBlocks, nThreads, nThreads*sizeof(cudaReal)>>>
                                     (temp2.cArray(), temp1.cArray(), n);
+         cudaErrorCheck( cudaGetLastError() ); // ensure no CUDA errors
          temp1.deallocate();
       } else {                 // i is even: reduce temp2, store in temp1
          temp1.allocate(nBlocks);
          _min<<<nBlocks, nThreads, nThreads*sizeof(cudaReal)>>>
                                     (temp1.cArray(), temp2.cArray(), n);
+         cudaErrorCheck( cudaGetLastError() ); // ensure no CUDA errors
          temp2.deallocate();
       }
 
@@ -834,15 +849,18 @@ cudaReal minAbs(DeviceArray<cudaReal> const & in)
          temp1.allocate(nBlocks);
          _minAbs<<<nBlocks, nThreads, nThreads*sizeof(cudaReal)>>>
                                     (temp1.cArray(), in.cArray(), n);
+         cudaErrorCheck( cudaGetLastError() ); // ensure no CUDA errors
       } else if (i % 2 == 1) { // i is odd: reduce temp1, store in temp2
          temp2.allocate(nBlocks);
          _min<<<nBlocks, nThreads, nThreads*sizeof(cudaReal)>>>
                                     (temp2.cArray(), temp1.cArray(), n);
+         cudaErrorCheck( cudaGetLastError() ); // ensure no CUDA errors
          temp1.deallocate();
       } else {                 // i is even: reduce temp2, store in temp1
          temp1.allocate(nBlocks);
          _min<<<nBlocks, nThreads, nThreads*sizeof(cudaReal)>>>
                                     (temp1.cArray(), temp2.cArray(), n);
+         cudaErrorCheck( cudaGetLastError() ); // ensure no CUDA errors
          temp2.deallocate();
       }
 
@@ -920,15 +938,18 @@ cudaReal innerProduct(DeviceArray<cudaReal> const & a,
          temp1.allocate(nBlocks);
          _innerProduct<<<nBlocks, nThreads, nThreads*sizeof(cudaReal)>>>
                               (temp1.cArray(), a.cArray(), b.cArray(), n);
+         cudaErrorCheck( cudaGetLastError() ); // ensure no CUDA errors
       } else if (i % 2 == 1) { // i is odd: reduce temp1, store in temp2
          temp2.allocate(nBlocks);
          _sum<<<nBlocks, nThreads, nThreads*sizeof(cudaReal)>>>
                                     (temp2.cArray(), temp1.cArray(), n);
+         cudaErrorCheck( cudaGetLastError() ); // ensure no CUDA errors
          temp1.deallocate();
       } else {                 // i is even: reduce temp2, store in temp1
          temp1.allocate(nBlocks);
          _sum<<<nBlocks, nThreads, nThreads*sizeof(cudaReal)>>>
                                     (temp1.cArray(), temp2.cArray(), n);
+         cudaErrorCheck( cudaGetLastError() ); // ensure no CUDA errors
          temp2.deallocate();
       }
 
@@ -961,5 +982,7 @@ cudaReal innerProduct(DeviceArray<cudaReal> const & a,
    }
 }
 
+}
+}
 }
 }

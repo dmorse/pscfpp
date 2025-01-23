@@ -8,16 +8,15 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "GpuTypes.h"
+#include "DeviceArray.h"
+#include "cudaErrorCheck.h"
 #include <util/containers/DArray.h>
 #include <util/global.h>
+#include <cuda_runtime.h>
 
 namespace Pscf {
 
    using namespace Util;
-
-   // Forward declaration of analogous container for data on the device.
-   template <typename Data> class DeviceArray;
 
    /**
    * Template for dynamic array stored in host CPU memory.
@@ -147,9 +146,9 @@ namespace Pscf {
       }
 
       // Copy all elements
-      cudaMemcpy(DArray<Data>::cArray(), other.cArray(), 
-                 DArray<Data>::capacity() * sizeof(Data), 
-                 cudaMemcpyDeviceToHost);
+      cudaErrorCheck( cudaMemcpy(DArray<Data>::cArray(), other.cArray(), 
+                                 DArray<Data>::capacity() * sizeof(Data), 
+                                 cudaMemcpyDeviceToHost) );
 
       return *this;
    }

@@ -8,14 +8,14 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/cuda/GpuTypes.h>
+#include "types.h"
 #include <pscf/math/complex.h>
 #include <complex>
 
 namespace Pscf {
 
    /*
-   * Types cudaComplex and cudaReal are defined in pscf/cuda/GpuTypes.h
+   * Types cudaComplex and cudaReal are defined in prdc/cuda/types.h
    * as aliases for cufft complex and real types.
    */
 

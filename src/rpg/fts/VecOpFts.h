@@ -8,7 +8,8 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/cuda/GpuResources.h>
+#include <prdc/cuda/types.h>
+#include <pscf/cuda/DeviceArray.h>
 
 namespace Pscf {
 namespace Rpg {

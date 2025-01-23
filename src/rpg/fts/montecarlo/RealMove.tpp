@@ -11,8 +11,8 @@
 #include "RealMove.h"
 #include "McMove.h" 
 #include <rpg/fts/VecOpFts.h>
+#include <prdc/cuda/VecOp.h>
 #include <pscf/math/IntVec.h>
-#include <pscf/cuda/VecOp.h>
 #include <util/param/ParamComposite.h>
 #include <rpg/System.h>
 

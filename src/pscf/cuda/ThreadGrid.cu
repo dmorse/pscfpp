@@ -2,6 +2,7 @@
 #define PSCF_THREADGRID_CU
 
 #include "ThreadGrid.h"
+#include <cuda_runtime.h>
 
 namespace {
 

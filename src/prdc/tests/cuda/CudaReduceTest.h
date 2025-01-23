@@ -4,9 +4,11 @@
 #include <test/UnitTest.h>
 #include <test/UnitTestRunner.h>
 
-#include <pscf/cuda/Reduce.h>
+#include <prdc/cuda/types.h>
+#include <prdc/cuda/Reduce.h>
 #include <pscf/cuda/CudaRandom.h>
-#include <pscf/cuda/GpuTypes.h>
+#include <pscf/cuda/DeviceArray.h>
+#include <pscf/cuda/HostDArray.h>
 #include <util/format/Dbl.h>
 #include <util/misc/Timer.h>
 
@@ -15,6 +17,8 @@
 
 using namespace Util;
 using namespace Pscf;
+using namespace Pscf::Prdc;
+using namespace Pscf::Prdc::Cuda;
 
 class CudaReduceTest : public UnitTest
 {

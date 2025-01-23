@@ -13,9 +13,9 @@
 #include <rpg/fts/brownian/BdSimulator.h>
 #include <rpg/fts/compressor/Compressor.h>
 #include <rpg/System.h>
+#include <prdc/cuda/VecOp.h>
 #include <pscf/math/IntVec.h>
 #include <pscf/cuda/CudaRandom.h>
-#include <pscf/cuda/VecOp.h>
 
 namespace Pscf {
 namespace Rpg {
