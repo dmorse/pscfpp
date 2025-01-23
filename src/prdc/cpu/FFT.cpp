@@ -67,7 +67,7 @@ namespace Cpu {
       ccfPlan_ = fftw_plan_dft_2d(n0, n1, &cFieldIn[0], &cFieldOut[0], 
                                   sign, flags);
       sign = FFTW_BACKWARD;
-      ccfPlan_ = fftw_plan_dft_2d(n0, n1, &cFieldOut[0], &cFieldIn[0], 
+      cciPlan_ = fftw_plan_dft_2d(n0, n1, &cFieldOut[0], &cFieldIn[0], 
                                   sign, flags);
    }
 

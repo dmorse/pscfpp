@@ -56,24 +56,24 @@ namespace Rpg {
       */
       typedef PolymerTmpl< Block<D> > Base;
 
-      /*
+      /**
       * Constructor. 
       */
       Polymer();
 
-      /*
+      /**
       * Destructor. 
       */
       ~Polymer();
 
-      /*
+      /**
       * Set the phi (volume fraction) for this species.
       *
       * \param phi volume fraction (input)
       */
       void setPhi(double phi);
 
-      /*
+      /**
       * Set the mu (chemical potential) for this species.
       * 
       * \param mu chemical potential (input)
@@ -81,20 +81,11 @@ namespace Rpg {
       void setMu(double mu);
 
       /**
-      * Compute solution to MDE and concentrations.
+      * Store the number of lattice parameters in the unit cell.
       *
-      * \param unitCell crystallographic unit cell (input)
-      * \param wavelist precomputed wavevector data (input)
+      * \param nParams  the number of lattice parameters in the unit cell
       */ 
-      void setupUnitCell(UnitCell<D> const & unitCell, 
-                         WaveList<D> const & wavelist);
-      
-      /**
-      * Compute solution to MDE and concentrations.
-      *
-      * \param unitCell crystallographic unit cell (input)
-      */ 
-      void setupUnitCell(UnitCell<D> const & unitCell);
+      void setNParams(int nParams);
 
       /**
       * Compute solution to MDE and concentrations.
@@ -105,10 +96,8 @@ namespace Rpg {
 
       /**
       * Compute stress from a polymer chain, needs a pointer to basis
-      *
-      * \param wavelist precomputed wavevector data (input)
       */
-      void computeStress(WaveList<D> const & wavelist);
+      void computeStress();
 
       /**
       * Get derivative of free energy w/ respect to a unit cell parameter.
@@ -134,10 +123,10 @@ namespace Rpg {
 
    private: 
 
-      // Stress contribution from this polymer species.
+      /// Stress contribution from this polymer species.
       FArray<double, 6> stress_;
      
-      // Number of unit cell parameters. 
+      /// Number of unit cell parameters. 
       int nParams_;
 
       using Base::phi_;

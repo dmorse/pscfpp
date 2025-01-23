@@ -22,9 +22,6 @@ namespace Pscf {
    namespace Prdc {
       template <int D> class UnitCell;
    }
-   namespace Rpg {
-      template <int D> class WaveList;
-   }
 }
 
 namespace Pscf {
@@ -104,26 +101,6 @@ namespace Rpg {
       * Destructor.
       */
       ~FieldIo();
-
-      /**
-      * Create an association with a WaveList.
-      *
-      * \param waveList associated WaveList<D> object
-      */
-      void setWaveList(WaveList<D>& waveList); 
-
-      /**
-      * Read header of a field file.
-      *
-      * \param in  input file stream
-      * \param nMonomer  number of monomer types from file header (out)
-      * \param unitCell  unit cell from file header (out)
-      * \param isSymmetric  Is a space group declared in the file (out)
-      */
-      void readFieldHeader(std::istream& in,
-                           int& nMonomer,
-                           UnitCell<D>& unitCell,
-                           bool& isSymmetric);
 
       /**
       * Read array of RField objects (r-grid fields) from a stream.
@@ -312,13 +289,6 @@ namespace Rpg {
       using Base::group;
       using Base::basis;
       using Base::fileMaster;
-
-   private:
-
-      WaveList<D>* waveListPtr_;
-
-      WaveList<D>& waveList()
-      {  return *waveListPtr_; }
 
    };
 

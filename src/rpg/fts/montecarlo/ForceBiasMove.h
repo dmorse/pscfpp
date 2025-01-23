@@ -116,9 +116,6 @@ namespace Rpg {
       /// Normal-distributed random fields
       RField<D> gaussianField_;
       
-      /// Brownian dynamics force contribution
-      RField<D> dwd_;
-      
       RField<D> biasField_;
       
       /// Prefactor of -dc_ in deterministic drift term

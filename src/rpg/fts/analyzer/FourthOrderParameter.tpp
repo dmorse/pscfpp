@@ -6,7 +6,8 @@
 #include <rpg/fts/simulator/Simulator.h>
 #include <rpg/System.h>
 
-#include <prdc/cuda/RField.h>
+#include <prdc/crystal/shiftToMinimum.h>
+#include <prdc/cuda/resources.h>
 
 #include <pscf/mesh/MeshIterator.h>
 #include <pscf/math/IntVec.h>
@@ -95,8 +96,8 @@ namespace Rpg {
       if (!isInitialized_){
          wc0_.allocate(dimensions);
          wK_.allocate(dimensions);
-         prefactor_.allocate(dimensions);
-         assignUniformReal<<<nBlocks, nThreads>>>(prefactor_.cArray(), 0, kSize_);
+         prefactor_.allocate(kMeshDimensions_);
+         VecOp::eqS(prefactor_, 0);
       }
       
       isInitialized_ = true;
@@ -145,32 +146,18 @@ namespace Rpg {
       RField<D> psi;
       psi.allocate(kMeshDimensions_);
       
-      // GPU resources with meshSize threads
-      int nBlocks, nThreads;
-      ThreadGrid::setThreadsLogical(meshSize, nBlocks, nThreads);
-      
-      // Conver W_(r) to fourier mode W_(k)
-      assignReal<<<nBlocks, nThreads>>>
-            (wc0_.cArray(), simulator().wc(0).cArray(), meshSize);
+      // Convert W_(r) to fourier mode W_(k)
+      VecOp::eqV(wc0_, simulator().wc(0));
       system().fft().forwardTransform(wc0_, wK_);
       
-      // GPU resources with kSize threads
-      ThreadGrid::setThreadsLogical(kSize_, nBlocks, nThreads);
-      
-      // W_(k)^2
-      squaredMagnitudeComplex<<<nBlocks,nThreads>>>
-            (wK_.cArray(), psi.cArray(), kSize_);
-      
-      // W_(k)^4
-      inPlacePointwiseMul<<<nBlocks,nThreads>>>
-            (psi.cArray(), psi.cArray(), kSize_);
+      // psi = |wK_|^4
+      VecOp::sqSqNormV(psi, wK_);
       
       // W_(k)^4 * weight factor
-      inPlacePointwiseMul<<<nBlocks,nThreads>>>
-            (psi.cArray(), prefactor_.cArray(), kSize_);
+      VecOp::mulEqV(psi, prefactor_);
       
       // Get sum over all wavevectors
-      FourthOrderParameter_ = (double)gpuSum(psi.cArray(), kSize_);
+      FourthOrderParameter_ = Reduce::sum(psi);
       FourthOrderParameter_ = std::pow(FourthOrderParameter_, 0.25);
    }
    
@@ -179,10 +166,9 @@ namespace Rpg {
    {
       IntVec<D> meshDimensions = system().domain().mesh().dimensions(); 
       UnitCell<D> const & unitCell = system().domain().unitCell();
-      cudaReal* prefactor_host;
-      prefactor_host = new cudaReal[kSize_];
+      HostDArray<cudaReal> prefactor_h(kSize_);
       for (int i = 0; i < kSize_; ++i){
-         prefactor_host[i] = 0;
+         prefactor_h[i] = 0;
       }
       IntVec<D> G; 
       IntVec<D> Gmin;
@@ -204,7 +190,7 @@ namespace Rpg {
          bool inverseFound = false;
 
          // If the weight factor of the current wavevector has not been assigned
-         if (prefactor_host[itr.rank()] == 0){
+         if (prefactor_h[itr.rank()] == 0){
             Gmin = GminList[itr.rank()];
             
             // Compute inverse of wavevector
@@ -214,14 +200,14 @@ namespace Rpg {
             searchItr = itr;
             for (; !searchItr.atEnd(); ++searchItr){
                if (nGmin == GminList[searchItr.rank()]){
-                  prefactor_host[itr.rank()] = 1.0/2.0;
-                  prefactor_host[searchItr.rank()] = 1.0/2.0;
+                  prefactor_h[itr.rank()] = 1.0/2.0;
+                  prefactor_h[searchItr.rank()] = 1.0/2.0;
                   inverseFound = true;
                }
             }
             
             if (inverseFound == false){
-               prefactor_host[itr.rank()]  = 1.0;
+               prefactor_h[itr.rank()]  = 1.0;
             }
             
          }
@@ -229,9 +215,7 @@ namespace Rpg {
       }
       
       // Copy the weight factor from cpu(host) to gpu(device)
-      cudaMemcpy(prefactor_.cArray(), prefactor_host, kSize_ * sizeof(double), cudaMemcpyHostToDevice);
-      
-      delete[] prefactor_host;
+      prefactor_ = prefactor_h;
    }
    
    /*

@@ -57,6 +57,9 @@ namespace Rpc {
       if (bdStepFactoryPtr_) {
          delete bdStepFactoryPtr_;
       }
+      if (bdStepPtr_) {
+         delete bdStepPtr_;
+      }
       if (trajectoryReaderFactoryPtr_) {
          delete trajectoryReaderFactoryPtr_;
       }

@@ -43,7 +43,11 @@ namespace Homogeneous {
    * Destructor.
    */
    Mixture::~Mixture()
-   {}
+   {
+      if (solverPtr_) {
+         delete solverPtr_;
+      }
+   }
 
    /*
    * Read all parameters and initialize.

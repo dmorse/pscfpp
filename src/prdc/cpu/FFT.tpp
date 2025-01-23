@@ -10,6 +10,40 @@
 
 #include "FFT.h"
 
+/*
+* A note about const_casts:
+* 
+* The FFTW library is used in this file to perform discrete Fourier 
+* transforms. FFTW's complex-to-real inverse transform overwrites its
+* input array, but all other out-of-place transforms leave the input 
+* array unaltered. However, all transforms in the FFTW library require
+* non-const pointers to the input array, even though they do not alter 
+* the array.
+*
+* In order to maintain const-correctness in PSCF, this FFT class accepts
+* const input arrays for its methods that perform a Fourier transform,
+* unless the transform is expected to modify / overwrite its input (as
+* is the case for complex-to-real inverse transforms). This denotes to
+* the caller of the method that the input array will not be altered,
+* which is an accurate representation of the expected behavior.
+* 
+* However, the const-correctness of this FFT class creates a conflict
+* with the FFTW library's requirement of non-const inputs. This conflict 
+* is resolved using a const_cast, in which the const pointer to the input 
+* array is made non-const when passed into FFTW functions. The use of
+* const_cast is reserved only for these few select cases in which we are
+* confident that the input array will not be modified.
+*
+* For more information about the relevant FFTW methods, see the FFTW 
+* documentation at https://www.fftw.org/fftw3_doc/index.html. In Section 
+* 4.3.2, it is stated that, by default, "an out-of-place transform must 
+* not change its input array," except for complex-to-real transforms, in 
+* which case "no input-preserving algorithms are implemented." Finally, 
+* we note that the unit tests for this FFT class check that the input 
+* array is unaltered, allowing developers to continually ensure that 
+* the FFTW functions do not modify their input unexpectedly.
+*/
+
 namespace Pscf {
 namespace Prdc {
 namespace Cpu {
@@ -21,8 +55,7 @@ namespace Cpu {
    */
    template <int D>
    FFT<D>::FFT()
-    : rFieldCopy_(),
-      meshDimensions_(0),
+    : meshDimensions_(0),
       rSize_(0),
       kSize_(0),
       rcfPlan_(0),
@@ -56,7 +89,7 @@ namespace Cpu {
    * Setup mesh dimensions, work memory and FFT plans.
    */
    template <int D>
-   void FFT<D>::setup(IntVec<D> const& meshDimensions)
+   void FFT<D>::setup(IntVec<D> const & meshDimensions)
    {
       // Precondition
       UTIL_CHECK(!isSetup_);
@@ -75,18 +108,6 @@ namespace Cpu {
          }
       }
 
-      // Allocate rFieldCopy_ array if necessary
-      if (!rFieldCopy_.isAllocated()) {
-          rFieldCopy_.allocate(meshDimensions);
-      } else {
-          if (rFieldCopy_.capacity() != rSize_) {
-             rFieldCopy_.deallocate();
-             rFieldCopy_.allocate(meshDimensions);
-          }
-      }
-      UTIL_CHECK(meshDimensions == rFieldCopy_.meshDimensions());
-      UTIL_CHECK(rFieldCopy_.capacity() == rSize_);
-
       // Allocate kFieldCopy_ array if necessary
       if (!kFieldCopy_.isAllocated()) {
           kFieldCopy_.allocate(meshDimensions);
@@ -99,44 +120,24 @@ namespace Cpu {
       UTIL_CHECK(meshDimensions == kFieldCopy_.meshDimensions());
       UTIL_CHECK(kFieldCopy_.capacity() == kSize_);
 
-      // Allocate cFieldCopy_ array if necessary
-      if (!cFieldCopy_.isAllocated()) {
-          cFieldCopy_.allocate(meshDimensions);
-      } else {
-          if (cFieldCopy_.capacity() != rSize_) {
-             cFieldCopy_.deallocate();
-             cFieldCopy_.allocate(meshDimensions);
-          }
-      }
-      UTIL_CHECK(meshDimensions == cFieldCopy_.meshDimensions());
-      UTIL_CHECK(cFieldCopy_.capacity() == rSize_);
-
-      #if 0
-      // Create local field objects used for plans
+      // Create temporary RField and CField objects used for plans
       RField<D> rField;
       rField.allocate(meshDimensions);
       UTIL_CHECK(meshDimensions == rField.meshDimensions());
       UTIL_CHECK(rField.capacity() == rSize_);
 
-      RFieldDft<D> kField;
-      kField.allocate(meshDimensions);
-      UTIL_CHECK(meshDimensions == kField.meshDimensions());
-      UTIL_CHECK(kField.capacity() == kSize_);
-
       CField<D> cFieldIn;
       cFieldIn.allocate(meshDimensions);
       UTIL_CHECK(meshDimensions == cFieldIn.meshDimensions());
       UTIL_CHECK(cFieldIn.capacity() == rSize_);
-      #endif
 
       CField<D> cFieldOut;
       cFieldOut.allocate(meshDimensions);
       UTIL_CHECK(meshDimensions == cFieldOut.meshDimensions());
       UTIL_CHECK(cFieldOut.capacity() == rSize_);
 
-      // Make FFTW plans (see explicit specializations FFT.cpp)
-      //makePlans(rField, kField, cFieldIn, cFieldOut);
-      makePlans(rFieldCopy_, kFieldCopy_, cFieldCopy_, cFieldOut);
+      // Make FFTW plans (see explicit specializations in FFT.cpp)
+      makePlans(rField, kFieldCopy_, cFieldIn, cFieldOut);
 
       isSetup_ = true;
    }
@@ -152,20 +153,22 @@ namespace Cpu {
    const
    {
       UTIL_CHECK(isSetup_)
-      UTIL_CHECK(rFieldCopy_.capacity() == rSize_);
       UTIL_CHECK(rField.capacity() == rSize_);
       UTIL_CHECK(kField.capacity() == kSize_);
       UTIL_CHECK(rField.meshDimensions() == meshDimensions_);
       UTIL_CHECK(kField.meshDimensions() == meshDimensions_);
-
-      // Copy rescaled input data prior to work array
-      double scale = 1.0/double(rSize_);
-      for (int i = 0; i < rSize_; ++i) {
-         rFieldCopy_[i] = rField[i]*scale;
-      }
      
       // Execute preplanned forward transform 
-      fftw_execute_dft_r2c(rcfPlan_, &rFieldCopy_[0], &kField[0]);
+      // (See note at top of file explaining this use of const_cast)
+      fftw_execute_dft_r2c(rcfPlan_, const_cast<double*>(&rField[0]), 
+                           &kField[0]);
+
+      // Rescale the resulting array
+      double scale = 1.0/double(rSize_);
+      for (int i = 0; i < kSize_; ++i) {
+         kField[i][0] *= scale;
+         kField[i][1] *= scale;
+      }
    }
 
    /*
@@ -173,7 +176,7 @@ namespace Cpu {
    */
    template <int D>
    void 
-   FFT<D>::inverseTransform(RFieldDft<D> & kField, RField<D>& rField)
+   FFT<D>::inverseTransformUnsafe(RFieldDft<D> & kField, RField<D>& rField)
    const
    {
       UTIL_CHECK(isSetup_)
@@ -182,8 +185,8 @@ namespace Cpu {
       UTIL_CHECK(rField.meshDimensions() == meshDimensions_);
       UTIL_CHECK(kField.meshDimensions() == meshDimensions_);
 
+      // Execute preplanned inverse transform 
       fftw_execute_dft_c2r(criPlan_, &kField[0], &rField[0]);
-
    }
 
    /*
@@ -195,10 +198,10 @@ namespace Cpu {
                                 RField<D>& rField) 
    const
    {
-      UTIL_CHECK(kFieldCopy_.capacity()==kField.capacity());
+      UTIL_CHECK(kFieldCopy_.capacity() == kField.capacity());
 
       kFieldCopy_ = kField;
-      inverseTransform(kFieldCopy_, rField);
+      inverseTransformUnsafe(kFieldCopy_, rField);
    }
 
    // Complex <-> Complex Transforms
@@ -212,30 +215,30 @@ namespace Cpu {
    const
    {
       UTIL_CHECK(isSetup_)
-      UTIL_CHECK(cFieldCopy_.capacity() == rSize_);
-      UTIL_CHECK(cFieldCopy_.meshDimensions() == meshDimensions_);
       UTIL_CHECK(rField.capacity() == rSize_);
       UTIL_CHECK(rField.meshDimensions() == meshDimensions_);
       UTIL_CHECK(kField.capacity() == rSize_);
       UTIL_CHECK(kField.meshDimensions() == meshDimensions_);
+     
+      // Execute preplanned forward transform
+      // (See note at top of file explaining this use of const_cast) 
+      fftw_execute_dft(ccfPlan_, const_cast<fftw_complex*>(&rField[0]), 
+                       &kField[0]);
 
-      // Copy rescaled input data prior to work array
+      // Rescale the resulting array
       double scale = 1.0/double(rSize_);
       for (int i = 0; i < rSize_; ++i) {
-         cFieldCopy_[i][0] = rField[i][0]*scale;
-         cFieldCopy_[i][1] = rField[i][1]*scale;
+         kField[i][0] *= scale;
+         kField[i][1] *= scale;
       }
-     
-      // Execute preplanned forward transform 
-      fftw_execute_dft(ccfPlan_, &cFieldCopy_[0], &kField[0]);
    }
 
    /*
-   * Execute inverse (complex-to-real) transform.
+   * Execute inverse (complex-to-complex) transform.
    */
    template <int D>
    void 
-   FFT<D>::inverseTransform(CField<D> & kField, CField<D>& rField)
+   FFT<D>::inverseTransform(CField<D> const & kField, CField<D>& rField)
    const
    {
       UTIL_CHECK(isSetup_)
@@ -244,7 +247,10 @@ namespace Cpu {
       UTIL_CHECK(rField.meshDimensions() == meshDimensions_);
       UTIL_CHECK(kField.meshDimensions() == meshDimensions_);
 
-      fftw_execute_dft(cciPlan_, &kField[0], &rField[0]);
+      // Execute preplanned inverse transform
+      // (See note at top of file explaining this use of const_cast) 
+      fftw_execute_dft(cciPlan_, const_cast<fftw_complex*>(&kField[0]), 
+                       &rField[0]);
    }
 
 }

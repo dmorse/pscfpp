@@ -9,6 +9,7 @@
 */
 
 #include "Solvent.h"
+#include <prdc/cuda/resources.h>
 #include <pscf/mesh/Mesh.h>
 
 namespace Pscf {
@@ -16,21 +17,12 @@ namespace Rpg {
 
    template <int D>
    Solvent<D>::Solvent()
+    : meshPtr_(nullptr)
    {  setClassName("Solvent"); }
 
    template <int D>
    Solvent<D>::~Solvent()
    {}
-
-   /*
-   * Create an association with a Mesh & allocate the concentration field.
-   */
-   template <int D>
-   void Solvent<D>::setDiscretization(Mesh<D> const & mesh)
-   {
-      meshPtr_ = &mesh;
-      concField_.allocate(mesh.dimensions());
-   }
 
    /*
    * Compute concentration, q, phi or mu.
@@ -40,19 +32,14 @@ namespace Rpg {
    {
       int nx = meshPtr_->size(); // Number of grid points
 
-      // GPU Resources
-      int nBlocks, nThreads;
-      ThreadGrid::setThreadsLogical(nx, nBlocks, nThreads);
-
-      // Initialize concField_ to zero
-      assignUniformReal<<<nBlocks, nThreads>>>(concField_.cArray(), 0, nx);
-
       // Evaluate unnormalized integral and q_
       double s = size();
       q_ = 0.0;
-      assignExp<<<nBlocks, nThreads>>>(concField_.cArray(), wField.cArray(), s, nx);
-      q_ = (double)gpuSum(concField_.cArray(),nx);
-      q_ = q_/double(nx);
+
+      // concField_ = exp(-size() * wField)
+      VecOp::expVc(concField_, wField, -1.0*size());
+
+      q_ = Reduce::sum(concField_) / ((double) nx);
 
       // Compute mu_ or phi_ and prefactor
       double prefactor;
@@ -65,8 +52,7 @@ namespace Rpg {
       }
 
       // Normalize concentration 
-      scaleReal<<<nBlocks, nThreads>>>(concField_.cArray(), prefactor, nx);
-    
+      VecOp::mulEqS(concField_, prefactor);
    }
 
 }

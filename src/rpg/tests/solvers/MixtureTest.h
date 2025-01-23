@@ -13,7 +13,7 @@
 #include <pscf/math/IntVec.h>
 #include <util/math/Constants.h>
 
-#include <pscf/cuda/GpuResources.h>
+#include <prdc/cuda/resources.h>
 
 #include <fstream>
 
@@ -71,42 +71,40 @@ public:
       mesh.setDimensions(d);
       FFT<1> fft;
       fft.setup(d);
-      mixture.setDiscretization(mesh, fft);
 
       // Construct wavelist 
       WaveList<1> wavelist;
       wavelist.allocate(mesh, unitCell);
-      wavelist.computeMinimumImages(mesh, unitCell);
 
-      // Setup unit cell
-      mixture.setupUnitCell(unitCell, wavelist);
+      // Set up mixture
+      mixture.associate(mesh, fft, unitCell, wavelist);
+      mixture.allocate();
 
       int nMonomer = mixture.nMonomer();
-      DArray< RField<1> > d_wFields;
-      DArray< RField<1> > d_cFields;
-      d_wFields.allocate(nMonomer);
-      d_cFields.allocate(nMonomer);
+      DArray< RField<1> > wFields;
+      DArray< RField<1> > cFields;
+      DArray< HostDArray<cudaReal> > wFields_h;
+      wFields.allocate(nMonomer);
+      cFields.allocate(nMonomer);
+      wFields_h.allocate(nMonomer);
       int nx = mesh.size();
       for (int i = 0; i < nMonomer; ++i) {
-         d_wFields[i].allocate(d);
-         d_cFields[i].allocate(d);
+         wFields[i].allocate(d);
+         cFields[i].allocate(d);
+         wFields_h[i].allocate(nx);
       }
 
       UTIL_CHECK(nMonomer == 2); // Hard-coded in here!
       double cs;
-      cudaReal* wFields0 = new cudaReal[nx];
-      cudaReal* wFields1 = new cudaReal[nx];
       for (int i = 0; i < nx; ++i) {
          cs = cos(2.0*Constants::Pi*double(i)/double(nx));
-         wFields0[i] = 0.5 + cs;
-         wFields1[i] = 0.5 - cs;
+         wFields_h[0][i] = 0.5 + cs;
+         wFields_h[1][i] = 0.5 - cs;
       }
-      cudaMemcpy(d_wFields[0].cArray(), wFields0, 
-                  nx*sizeof(cudaReal), cudaMemcpyHostToDevice);
-      cudaMemcpy(d_wFields[1].cArray(), wFields1, 
-                  nx*sizeof(cudaReal), cudaMemcpyHostToDevice);
+      wFields[0] = wFields_h[0];
+      wFields[1] = wFields_h[1];
 
-      mixture.compute(d_wFields, d_cFields);
+      mixture.compute(wFields, cFields);
 
       // Test if same Q is obtained from different methods
       double Q = mixture.polymer(0).propagator(1, 0).computeQ();
@@ -114,16 +112,16 @@ public:
       TEST_ASSERT(eq(Q, mixture.polymer(0).propagator(0, 0).computeQ()));
       TEST_ASSERT(eq(Q, mixture.polymer(0).propagator(1, 1).computeQ()));
 
-      #if 0
-      std::cout << "Propagator(0,0), Q = " 
-                << mixture.polymer(0).propagator(0, 0).computeQ() << "\n";
-      std::cout << "Propagator(1,0), Q = " 
-                << mixture.polymer(0).propagator(1, 0).computeQ() << "\n";
-      std::cout << "Propagator(1,1), Q = " 
-                << mixture.polymer(0).propagator(1, 1).computeQ() << "\n";
-      std::cout << "Propagator(0,1), Q = " 
-                << mixture.polymer(0).propagator(0, 1).computeQ() << "\n";
-      #endif 
+      if (verbose()) {
+         std::cout << "Propagator(0,0), Q = " 
+                   << mixture.polymer(0).propagator(0, 0).computeQ() << "\n";
+         std::cout << "Propagator(1,0), Q = " 
+                   << mixture.polymer(0).propagator(1, 0).computeQ() << "\n";
+         std::cout << "Propagator(1,1), Q = " 
+                   << mixture.polymer(0).propagator(1, 1).computeQ() << "\n";
+         std::cout << "Propagator(0,1), Q = " 
+                   << mixture.polymer(0).propagator(0, 1).computeQ() << "\n";
+      }
 
    }
 
@@ -147,30 +145,30 @@ public:
       mesh.setDimensions(d);
       FFT<2> fft;
       fft.setup(d);
-      mixture.setDiscretization(mesh, fft);
 
       // Construct wavelist 
       WaveList<2> wavelist;
       wavelist.allocate(mesh, unitCell);
-      wavelist.computeMinimumImages(mesh, unitCell);
 
-      // Setup unit cell
-      mixture.setupUnitCell(unitCell, wavelist);
+      // Set up mixture
+      mixture.associate(mesh, fft, unitCell, wavelist);
+      mixture.allocate();
 
       int nMonomer = mixture.nMonomer();
-      DArray< RField<2> > d_wFields;
-      DArray< RField<2> > d_cFields;
-      d_wFields.allocate(nMonomer);
-      d_cFields.allocate(nMonomer);
+      DArray< RField<2> > wFields;
+      DArray< RField<2> > cFields;
+      DArray< HostDArray<cudaReal> > wFields_h;
+      wFields.allocate(nMonomer);
+      cFields.allocate(nMonomer);
+      wFields_h.allocate(nMonomer);
       int nx = mesh.size();
       for (int i = 0; i < nMonomer; ++i) {
-         d_wFields[i].allocate(d);
-         d_cFields[i].allocate(d);
+         wFields[i].allocate(d);
+         cFields[i].allocate(d);
+         wFields_h[i].allocate(nx);
       }
 
       UTIL_CHECK(nMonomer == 2); // Hard-coded in here!
-      cudaReal* wFields0 = new cudaReal[nx];
-      cudaReal* wFields1 = new cudaReal[nx];
       // Generate oscillatory wField
       int dx = mesh.dimension(0);
       int dy = mesh.dimension(1);
@@ -182,18 +180,16 @@ public:
          cx = cos(fx*double(i));
          for (int j = 0; j < dy; ++j) {
             cy = cos(fy*double(j));
-            wFields0[k] = 0.5 + cx + cy;
-            wFields1[k] = 0.5 - cx - cy;
+            wFields_h[0][k] = 0.5 + cx + cy;
+            wFields_h[1][k] = 0.5 - cx - cy;
             ++k;
          }
       }
 
-      cudaMemcpy(d_wFields[0].cArray(), wFields0, 
-                  nx*sizeof(cudaReal), cudaMemcpyHostToDevice);
-      cudaMemcpy(d_wFields[1].cArray(), wFields1, 
-                  nx*sizeof(cudaReal), cudaMemcpyHostToDevice);
+      wFields[0] = wFields_h[0];
+      wFields[1] = wFields_h[1];
 
-      mixture.compute(d_wFields, d_cFields);
+      mixture.compute(wFields, cFields);
 
       // Test if same Q is obtained from different methods
       double Q = mixture.polymer(0).propagator(1, 0).computeQ();
@@ -201,16 +197,16 @@ public:
       TEST_ASSERT(eq(Q, mixture.polymer(0).propagator(0, 0).computeQ()));
       TEST_ASSERT(eq(Q, mixture.polymer(0).propagator(1, 1).computeQ()));
 
-      #if 0
-      std::cout << "Propagator(0,0), Q = " 
-                << mixture.polymer(0).propagator(0, 0).computeQ() << "\n";
-      std::cout << "Propagator(1,0), Q = " 
-                << mixture.polymer(0).propagator(1, 0).computeQ() << "\n";
-      std::cout << "Propagator(1,1), Q = " 
-                << mixture.polymer(0).propagator(1, 1).computeQ() << "\n";
-      std::cout << "Propagator(0,1), Q = " 
-                << mixture.polymer(0).propagator(0, 1).computeQ() << "\n";
-      #endif 
+      if (verbose()) {
+         std::cout << "Propagator(0,0), Q = " 
+                   << mixture.polymer(0).propagator(0, 0).computeQ() << "\n";
+         std::cout << "Propagator(1,0), Q = " 
+                   << mixture.polymer(0).propagator(1, 0).computeQ() << "\n";
+         std::cout << "Propagator(1,1), Q = " 
+                   << mixture.polymer(0).propagator(1, 1).computeQ() << "\n";
+         std::cout << "Propagator(0,1), Q = " 
+                   << mixture.polymer(0).propagator(0, 1).computeQ() << "\n";
+      }
 
    }
 
@@ -234,30 +230,30 @@ public:
       mesh.setDimensions(d);
       FFT<2> fft;
       fft.setup(d);
-      mixture.setDiscretization(mesh, fft);
 
       // Construct wavelist 
       WaveList<2> wavelist;
       wavelist.allocate(mesh, unitCell);
-      wavelist.computeMinimumImages(mesh, unitCell);
 
-      // Setup unit cell
-      mixture.setupUnitCell(unitCell, wavelist);
+      // Set up mixture
+      mixture.associate(mesh, fft, unitCell, wavelist);
+      mixture.allocate();
 
       int nMonomer = mixture.nMonomer();
-      DArray< RField<2> > d_wFields;
-      DArray< RField<2> > d_cFields;
-      d_wFields.allocate(nMonomer);
-      d_cFields.allocate(nMonomer);
+      DArray< RField<2> > wFields;
+      DArray< RField<2> > cFields;
+      DArray< HostDArray<cudaReal> > wFields_h;
+      wFields.allocate(nMonomer);
+      cFields.allocate(nMonomer);
+      wFields_h.allocate(nMonomer);
       int nx = mesh.size();
       for (int i = 0; i < nMonomer; ++i) {
-         d_wFields[i].allocate(d);
-         d_cFields[i].allocate(d);
+         wFields[i].allocate(d);
+         cFields[i].allocate(d);
+         wFields_h[i].allocate(nx);
       }
 
       UTIL_CHECK(nMonomer == 2); // Hard-coded in here!
-      cudaReal* wFields0 = new cudaReal[nx];
-      cudaReal* wFields1 = new cudaReal[nx];
       // Generate oscillatory wField
       int dx = mesh.dimension(0);
       int dy = mesh.dimension(1);
@@ -269,18 +265,16 @@ public:
          cx = cos(fx*double(i));
          for (int j = 0; j < dy; ++j) {
             cy = cos(fy*double(j));
-            wFields0[k] = 0.5 + cx + cy;
-            wFields1[k] = 0.5 - cx - cy;
+            wFields_h[0][k] = 0.5 + cx + cy;
+            wFields_h[1][k] = 0.5 - cx - cy;
             ++k;
          }
       }
 
-      cudaMemcpy(d_wFields[0].cArray(), wFields0, 
-                  nx*sizeof(cudaReal), cudaMemcpyHostToDevice);
-      cudaMemcpy(d_wFields[1].cArray(), wFields1, 
-                  nx*sizeof(cudaReal), cudaMemcpyHostToDevice);
+      wFields[0] = wFields_h[0];
+      wFields[1] = wFields_h[1];
 
-      mixture.compute(d_wFields, d_cFields);
+      mixture.compute(wFields, cFields);
 
       // Test if same Q is obtained from different methods
       double Q = mixture.polymer(0).propagator(1, 0).computeQ();
@@ -288,16 +282,16 @@ public:
       TEST_ASSERT(eq(Q, mixture.polymer(0).propagator(0, 0).computeQ()));
       TEST_ASSERT(eq(Q, mixture.polymer(0).propagator(1, 1).computeQ()));
 
-      #if 0
-      std::cout << "Propagator(0,0), Q = " 
-                << mixture.polymer(0).propagator(0, 0).computeQ() << "\n";
-      std::cout << "Propagator(1,0), Q = " 
-                << mixture.polymer(0).propagator(1, 0).computeQ() << "\n";
-      std::cout << "Propagator(1,1), Q = " 
-                << mixture.polymer(0).propagator(1, 1).computeQ() << "\n";
-      std::cout << "Propagator(0,1), Q = " 
-                << mixture.polymer(0).propagator(0, 1).computeQ() << "\n";
-      #endif 
+      if (verbose()) {
+         std::cout << "Propagator(0,0), Q = " 
+                   << mixture.polymer(0).propagator(0, 0).computeQ() << "\n";
+         std::cout << "Propagator(1,0), Q = " 
+                   << mixture.polymer(0).propagator(1, 0).computeQ() << "\n";
+         std::cout << "Propagator(1,1), Q = " 
+                   << mixture.polymer(0).propagator(1, 1).computeQ() << "\n";
+         std::cout << "Propagator(0,1), Q = " 
+                   << mixture.polymer(0).propagator(0, 1).computeQ() << "\n";
+      }
 
    }
 
@@ -321,43 +315,41 @@ public:
       mesh.setDimensions(d);
       FFT<3> fft;
       fft.setup(d);
-      mixture.setDiscretization(mesh, fft);
 
       // Construct wavelist 
       WaveList<3> wavelist;
       wavelist.allocate(mesh, unitCell);
-      wavelist.computeMinimumImages(mesh, unitCell);
 
-      // Setup unit cell
-      mixture.setupUnitCell(unitCell, wavelist);
+      // Set up mixture
+      mixture.associate(mesh, fft, unitCell, wavelist);
+      mixture.allocate();
 
       int nMonomer = mixture.nMonomer();
-      DArray< RField<3> > d_wFields;
-      DArray< RField<3> > d_cFields;
-      d_wFields.allocate(nMonomer);
-      d_cFields.allocate(nMonomer);
+      DArray< RField<3> > wFields;
+      DArray< RField<3> > cFields;
+      DArray< HostDArray<cudaReal> > wFields_h;
+      wFields.allocate(nMonomer);
+      cFields.allocate(nMonomer);
+      wFields_h.allocate(nMonomer);
       int nx = mesh.size();
       for (int i = 0; i < nMonomer; ++i) {
-         d_wFields[i].allocate(d);
-         d_cFields[i].allocate(d);
+         wFields[i].allocate(d);
+         cFields[i].allocate(d);
+         wFields_h[i].allocate(nx);
       }
 
       UTIL_CHECK(nMonomer == 2); // Hard-coded in here!
       double cs;
-      cudaReal* wFields0 = new cudaReal[nx];
-      cudaReal* wFields1 = new cudaReal[nx];
       for (int i = 0; i < nx; ++i) {
          cs = cos(2.0*Constants::Pi*double(i)/double(nx));
-         wFields0[i] = 0.5 + cs;
-         wFields1[i] = 0.5 - cs;
+         wFields_h[0][i] = 0.5 + cs;
+         wFields_h[1][i] = 0.5 - cs;
       }
 
-      cudaMemcpy(d_wFields[0].cArray(), wFields0, 
-                  nx*sizeof(cudaReal), cudaMemcpyHostToDevice);
-      cudaMemcpy(d_wFields[1].cArray(), wFields1, 
-                  nx*sizeof(cudaReal), cudaMemcpyHostToDevice);
+      wFields[0] = wFields_h[0];
+      wFields[1] = wFields_h[1];
 
-      mixture.compute(d_wFields, d_cFields);
+      mixture.compute(wFields, cFields);
 
       // Test if same Q is obtained from different methods
       double Q = mixture.polymer(0).propagator(1, 0).computeQ();
@@ -365,16 +357,16 @@ public:
       TEST_ASSERT(eq(Q, mixture.polymer(0).propagator(0, 0).computeQ()));
       TEST_ASSERT(eq(Q, mixture.polymer(0).propagator(1, 1).computeQ()));
 
-      #if 0
-      std::cout << "Propagator(0,0), Q = " 
-                << mixture.polymer(0).propagator(0, 0).computeQ() << "\n";
-      std::cout << "Propagator(1,0), Q = " 
-                << mixture.polymer(0).propagator(1, 0).computeQ() << "\n";
-      std::cout << "Propagator(1,1), Q = " 
-                << mixture.polymer(0).propagator(1, 1).computeQ() << "\n";
-      std::cout << "Propagator(0,1), Q = " 
-                << mixture.polymer(0).propagator(0, 1).computeQ() << "\n";
-      #endif 
+      if (verbose()) {
+         std::cout << "Propagator(0,0), Q = " 
+                   << mixture.polymer(0).propagator(0, 0).computeQ() << "\n";
+         std::cout << "Propagator(1,0), Q = " 
+                   << mixture.polymer(0).propagator(1, 0).computeQ() << "\n";
+         std::cout << "Propagator(1,1), Q = " 
+                   << mixture.polymer(0).propagator(1, 1).computeQ() << "\n";
+         std::cout << "Propagator(0,1), Q = " 
+                   << mixture.polymer(0).propagator(0, 1).computeQ() << "\n";
+      }
 
    }
 

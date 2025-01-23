@@ -12,11 +12,12 @@
 #include <rpg/fts/compressor/LrCompressor.h>
 #include <rpg/fts/compressor/LrAmPreCompressor.h>
 #include <rpg/fts/compressor/LrAmCompressor.h>
+#include <rpg/fts/VecOpFts.h>
 
 #include <prdc/cuda/RFieldComparison.h>
+#include <prdc/cuda/resources.h>
 
 #include <pscf/cuda/CudaRandom.h> 
-#include <pscf/cuda/GpuResources.h>
 
 #include <util/tests/LogFileUnitTest.h>
 #include <util/random/Random.h> 
@@ -67,10 +68,6 @@ public:
       RField<D> randomField;
       randomField.allocate(dimensions);
       
-      // GPU resources
-      int nBlocks, nThreads;
-      ThreadGrid::setThreadsLogical(meshSize, nBlocks, nThreads);
-      
       double stepSize = 1e-1;
       CudaRandom cudaRandom;
       cudaRandom.setSeed(0);
@@ -80,14 +77,13 @@ public:
       for (int i = 0; i < nMonomer; i++){
 
          // Generate random numbers between 0.0 and 1.0 from uniform distribution
-         cudaRandom.uniform(randomField.cArray(), meshSize);
+         cudaRandom.uniform(randomField);
 
          // Generate random numbers between [-stepSize_,stepSize_]
-         mcftsScale<<<nBlocks, nThreads>>>(randomField.cArray(), stepSize, meshSize);
+         VecOpFts::mcftsScale(randomField, stepSize);
 
          // Change the w field configuration
-         pointWiseBinaryAdd<<<nBlocks, nThreads>>>(w[i].cArray(), randomField.cArray(),
-                                                   w2[i].cArray(), meshSize);
+         VecOp::addVV(w2[i], w[i], randomField);
 
       }
       
@@ -110,22 +106,18 @@ public:
       }
       DArray< RField<3> > const & w = system.w().rgrid();
       
-      // GPU resources
-      int nBlocks, nThreads;
-      ThreadGrid::setThreadsLogical(meshSize, nBlocks, nThreads);
       RField<D> randomField;
       randomField.allocate(dimensions);
       
       CudaRandom cudaRandom;
       cudaRandom.setSeed(0);
-      cudaRandom.uniform(randomField.cArray(), meshSize);
+      cudaRandom.uniform(randomField);
       double stepSize = 1e-1;
-      mcftsScale<<<nBlocks, nThreads>>>(randomField.cArray(), stepSize, meshSize);
+      VecOpFts::mcftsScale(randomField, stepSize);
       
       // For multi-component copolymer
-      for (int i = 0; i < nMonomer; i++){
-         pointWiseBinaryAdd<<<nBlocks, nThreads>>>(w[i].cArray(), randomField.cArray(),
-                                                   w2[i].cArray(), meshSize);
+      for (int i = 0; i < nMonomer; i++) {
+         VecOp::addVV(w2[i], w[i], randomField);
       }
       system.setWRGrid(w2);
       
@@ -165,14 +157,8 @@ public:
          w0[i].allocate(dimensions);
       }
       
-      // GPU resources
-      int nBlocks, nThreads;
-      ThreadGrid::setThreadsLogical(meshSize, nBlocks, nThreads);
-      
-      DArray<RField<3>> const * currSys = &system.w().rgrid();
       for (int i = 0; i < nMonomer; ++i) {
-         assignReal<<<nBlocks,nThreads>>>(w0[i].cArray(), 
-                                          (*currSys)[i].cArray(), meshSize);
+         VecOp::eqV(w0[i], system.w().rgrid(i));
          
       }
       
@@ -184,12 +170,11 @@ public:
       // Compute incompressible error
       RField<3> error;
       error.allocate(dimensions);
-      assignUniformReal<<<nBlocks, nThreads>>>(error.cArray(), -1.0, meshSize);
+      VecOp::eqS(error, -1.0);
       for (int i = 0; i < nMonomer; i++) {
-         pointWiseAdd<<<nBlocks, nThreads>>>
-            (error.cArray(), system.c().rgrid(i).cArray(), meshSize);
+         VecOp::addEqV(error, system.c().rgrid(i));
       }
-      double product = (double)gpuInnerProduct(error.cArray(), error.cArray(), meshSize);
+      double product = Reduce::innerProduct(error, error); 
       
       TEST_ASSERT(sqrt(product)/sqrt(meshSize) < 1.0E-8);
       
@@ -207,8 +192,7 @@ public:
       }
       
       for (int i = 0; i < nMonomer; ++i) {
-         assignReal<<<nBlocks,nThreads>>>(w1[i].cArray(), 
-                                          (*currSys)[i].cArray(), meshSize);
+         VecOp::eqV(w1[i], system.w().rgrid(i));
       }
       
       RFieldComparison<3> comparison;

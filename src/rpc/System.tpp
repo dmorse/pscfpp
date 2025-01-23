@@ -1654,8 +1654,8 @@ namespace Rpc {
       FieldIo<D> const & fieldIo = domain().fieldIo();
       fieldIo.readFieldsKGrid(inFileName, tmpFieldsKGrid_, tmpUnitCell);
       for (int i = 0; i < mixture().nMonomer(); ++i) {
-         domain().fft().inverseTransform(tmpFieldsKGrid_[i],
-                                        tmpFieldsRGrid_[i]);
+         domain().fft().inverseTransformUnsafe(tmpFieldsKGrid_[i],
+                                               tmpFieldsRGrid_[i]);
       }
       fieldIo.writeFieldsRGrid(outFileName, tmpFieldsRGrid_,
                                  tmpUnitCell);

@@ -10,12 +10,14 @@
 
 #include "FourierMove.h"
 #include "McMove.h" 
+#include <rpg/fts/VecOpFts.h>
 #include <rpg/System.h>      
 #include <prdc/crystal/shiftToMinimum.h>
+#include <prdc/cuda/resources.h>
 #include <pscf/mesh/MeshIterator.h>
 #include <pscf/math/IntVec.h>
-#include <util/random/Random.h>
 #include <pscf/cuda/CudaRandom.h>
+#include <util/random/Random.h>
 #include <util/param/ParamComposite.h>
 #include <util/global.h>
 
@@ -143,7 +145,7 @@ namespace Rpg
    void FourierMove<D>::computeStructureFactor()
    {
       int meshSize = system().domain().mesh().size();
-      cudaReal* sqTemp = new cudaReal[meshSize];
+      HostDArray<cudaReal> sqTemp(meshSize);
       MeshIterator<D> itr;
       itr.setDimensions(system().mesh().dimensions());
       IntVec<D> G; IntVec<D> Gmin; 
@@ -160,8 +162,7 @@ namespace Rpg
             sqTemp[itr.rank()] = sqrt(S_);
          }
       }
-      cudaMemcpy(sqrtSq_.cArray(), sqTemp, meshSize * sizeof(cudaReal), cudaMemcpyHostToDevice);
-      delete[] sqTemp;
+      sqrtSq_ = sqTemp; // copy sqTemp to device
    }
    
    /*
@@ -173,40 +174,38 @@ namespace Rpg
    
       const int nMonomer = system().mixture().nMonomer();
       const int meshSize = system().domain().mesh().size();
-      // GPU resources
-      int nBlocks, nThreads;
-      ThreadGrid::setThreadsLogical(meshSize, nBlocks, nThreads);
+      
       for (int i = 0; i < nMonomer; ++i) {
-         assignReal<<<nBlocks, nThreads>>>
-            (wRGrid_[i].cArray(), system().w().rgrid(i).cArray(), meshSize);
+         VecOp::eqV(wRGrid_[i], system().w().rgrid(i));
       }
+
       // Convert real grid to KGrid format
       for (int i = 0; i < nMonomer; ++i) {
          system().fft().forwardTransform(wRGrid_[i], wKGrid_[i]);
       }
       
       for (int i = 0; i < nMonomer; ++i){
-         //Generate randome number for real part
-         cudaRandom().uniform(randomFieldR_.cArray(), meshSize);
+         // Generate random number for real part
+         cudaRandom().uniform(randomFieldR_);
          // Generate random numbers between [-stepSize_,stepSize_]
-         mcftsScale<<<nBlocks, nThreads>>>(randomFieldR_.cArray(), stepSize_, meshSize);
+         VecOpFts::mcftsScale(randomFieldR_, stepSize_);
          // Generate random numbers between [-stepSize_*S(q)^(1/2), stepSize_*S(q)^(1/2)]
-         inPlacePointwiseMul<<<nBlocks, nThreads>>>(randomFieldR_.cArray(), sqrtSq_.cArray(), meshSize);
+         VecOp::mulEqV(randomFieldR_, sqrtSq_);
          
-         //Generate randome number for imagine part
-         cudaRandom().uniform(randomFieldK_.cArray(), meshSize);
+         // Generate random number for imaginary part
+         cudaRandom().uniform(randomFieldK_);
          // Generate random numbers between [-stepSize_,stepSize_]
-         mcftsScale<<<nBlocks, nThreads>>>(randomFieldK_.cArray(), stepSize_, meshSize);
+         VecOpFts::mcftsScale(randomFieldK_, stepSize_);
          // Generate random numbers between [-stepSize_*S(q)^(1/2), stepSize_*S(q)^(1/2)]
-         inPlacePointwiseMul<<<nBlocks, nThreads>>>(randomFieldK_.cArray(), sqrtSq_.cArray(), meshSize);
+         VecOp::mulEqV(randomFieldK_, sqrtSq_);
    
          // Attempt Move in ourier (k-grid) format
-         fourierMove<<<nBlocks, nThreads>>>(wKGrid_[i].cArray(), randomFieldR_.cArray(), randomFieldK_.cArray(), meshSize);
+         VecOpFts::fourierMove(wKGrid_[i], randomFieldR_, randomFieldK_);
       }
       
-      // Convert Fourier (k-grid) format back to Real grid format
+      // Convert back to real space (destroys data in wKGrid_)
       for (int i = 0; i < nMonomer; ++i) {
-         system().fft().inverseTransform(wKGrid_[i], wFieldTmp_[i]);
+         system().fft().inverseTransformUnsafe(wKGrid_[i], wFieldTmp_[i]);
       }
       // Update attemptMove
       system().setWRGrid(wFieldTmp_);

@@ -8,8 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <prdc/cuda/RFieldDft.h>
-#include <pscf/cuda/GpuResources.h>
+#include "RFieldDft.h"
 #include <util/containers/DArray.h>
 
 namespace Pscf {

@@ -32,15 +32,6 @@ namespace Cuda {
       UTIL_CHECK(a.capacity() == b.capacity());
       int capacity = a.capacity();
 
-      #if 0
-      // Create temporary host arrays
-      int nPoints = a.capacity();
-      cudaComplex* ha = new cudaComplex[nPoints];
-      cudaComplex* hb = new cudaComplex[nPoints];
-      cudaMemcpy(ha, a.cArray(), nPoints*sizeof(cudaComplex), cudaMemcpyDeviceToHost);
-      cudaMemcpy(hb, b.cArray(), nPoints*sizeof(cudaComplex), cudaMemcpyDeviceToHost);
-      #endif
-
       HostDArray<cudaComplex> ha;
       HostDArray<cudaComplex> hb;
       ha.allocate(capacity);
@@ -76,20 +67,6 @@ namespace Cuda {
       UTIL_CHECK(a[0].capacity() > 0);
       int capacity = a[0].capacity();
       int nFields = a.capacity();
-
-      #if 0
-      // Create temporary host arrays
-      DArray< cudaComplex* > ha;
-      DArray< cudaComplex* > hb;
-      ha.allocate(nFields);
-      hb.allocate(nFields);
-      for (int i = 0; i < nFields; i++) {
-         ha[i] = new cudaComplex[capacity];
-         hb[i] = new cudaComplex[capacity];
-         cudaMemcpy(ha[i], a[i].cArray(), capacity*sizeof(cudaComplex), cudaMemcpyDeviceToHost);
-         cudaMemcpy(hb[i], b[i].cArray(), capacity*sizeof(cudaComplex), cudaMemcpyDeviceToHost);
-      }
-      #endif
 
       DArray< HostDArray<cudaComplex> > ha;
       DArray< HostDArray<cudaComplex> > hb;

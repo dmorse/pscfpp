@@ -3,7 +3,7 @@ namespace Pscf{
 namespace Prdc{
 
 /**
-* Fields and FFTs for periodic boundary conditions (CUDA)
+* Fields, FFTs, and utilities for periodic boundary conditions (CUDA)
 */
 namespace Cuda{
 
@@ -25,7 +25,6 @@ namespace Cuda{
    * \ingroup Prdc_Cuda_Module 
    */
 
-}
 }
 }
 }

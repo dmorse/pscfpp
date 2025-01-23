@@ -29,7 +29,7 @@
 // Forward references
 namespace Pscf {
    class Interaction;
-   template <typename Data> class DeviceDArray;
+   template <typename Data> class DeviceArray;
    namespace Prdc {
       template <int D> class UnitCell;
    }
@@ -231,7 +231,7 @@ namespace Rpg {
       *
       * \param fields  unfolded array of new chemical potential fields
       */
-      void setWRGrid(DeviceDArray<cudaReal> & fields);
+      void setWRGrid(DeviceArray<cudaReal> & fields);
 
       /**
       * Symmetrize r-grid w-fields, compute basis components.

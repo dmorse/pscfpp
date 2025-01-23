@@ -35,7 +35,6 @@ namespace Rpg {
       setClassName("Domain"); 
       fieldIo_.associate(mesh_, fft_,
                          lattice_, hasGroup_, groupName_, group_, basis_);
-      fieldIo_.setWaveList(waveList_);
    }
 
    /*
@@ -161,11 +160,10 @@ namespace Rpg {
          UTIL_CHECK(lattice_ == unitCell.lattice());
       }
       unitCell_ = unitCell;
-      if (!waveList_.hasMinimumImages()) {
-         waveList().computeMinimumImages(mesh_, unitCell_);
-      }
-      waveList_.computeKSq(unitCell_);
-      waveList_.computedKSq(unitCell_);
+
+      UTIL_CHECK(waveList().isAllocated());
+      waveList().updateUnitCell(); // reset wavelist
+
       if (hasGroup_ && !basis_.isInitialized()) {
          makeBasis();
       }
@@ -184,11 +182,10 @@ namespace Rpg {
          UTIL_CHECK(lattice_ == lattice);
       }
       unitCell_.set(lattice, parameters);
-      if (!waveList_.hasMinimumImages()) {
-         waveList().computeMinimumImages(mesh_, unitCell_);
-      }
-      waveList_.computeKSq(unitCell_);
-      waveList_.computedKSq(unitCell_);
+
+      UTIL_CHECK(waveList().isAllocated());
+      waveList().updateUnitCell(); // reset wavelist
+
       if (hasGroup_ && !basis_.isInitialized()) {
          makeBasis();
       }
@@ -203,11 +200,10 @@ namespace Rpg {
       UTIL_CHECK(unitCell_.lattice() != UnitCell<D>::Null);
       UTIL_CHECK(unitCell_.nParameter() == parameters.size());
       unitCell_.setParameters(parameters);
-      if (!waveList_.hasMinimumImages()) {
-         waveList().computeMinimumImages(mesh_, unitCell_);
-      }
-      waveList_.computeKSq(unitCell_);
-      waveList_.computedKSq(unitCell_);
+      
+      UTIL_CHECK(waveList().isAllocated());
+      waveList().updateUnitCell(); // reset wavelist
+
       if (hasGroup_ && !basis_.isInitialized()) {
          makeBasis();
       }

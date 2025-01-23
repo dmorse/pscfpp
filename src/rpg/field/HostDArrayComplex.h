@@ -8,8 +8,8 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
+#include <prdc/cuda/types.h>          // template parameter
 #include <pscf/cuda/HostDArray.h>     // base class
-#include <pscf/cuda/GpuTypes.h>       // template parameter
 
 namespace Pscf {
 namespace Rpg {
@@ -21,7 +21,7 @@ namespace Rpg {
    *
    * Defined to add typedefs.
    */
-   class HostDArrayComplex : public HostDArray<cudaComplex>
+   class HostDArrayComplex : public HostDArray<Prdc::Cuda::cudaComplex>
    {
 
    public:
@@ -29,22 +29,22 @@ namespace Rpg {
       /**
       * Type of each element.
       */
-      typedef cudaComplex ElementType;
+      typedef Prdc::Cuda::cudaComplex ElementType;
 
       /**
       * Complex number type.
       */
-      typedef cudaComplex Complex;
+      typedef Prdc::Cuda::cudaComplex Complex;
 
       /**
       * Type of real or imaginary part of a Complex number.
       */
-      typedef cudaReal    Real;
+      typedef Prdc::Cuda::cudaReal    Real;
 
       /**
       * Base class type.
       */
-      typedef HostDArray<cudaComplex> Base;
+      typedef HostDArray<Complex> Base;
 
       // Member functions
 

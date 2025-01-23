@@ -9,7 +9,7 @@
 */
 
 #include "Mixture.h"
-#include <pscf/cuda/GpuResources.h>
+#include <prdc/cuda/resources.h>
 
 #include <cmath>
 
@@ -17,74 +17,108 @@ namespace Pscf {
 namespace Rpg
 {
 
+   // Constructor
    template <int D>
    Mixture<D>::Mixture()
     : ds_(-1.0),
-      nUnitCellParams_(0),
-      meshPtr_(0),
+      useBatchedFFT_(true),
+      nParams_(0),
+      meshPtr_(nullptr),
       hasStress_(false)
    {  setClassName("Mixture"); }
 
+   // Destructor
    template <int D>
    Mixture<D>::~Mixture()
    {}
 
+   /*
+   * Read all parameters and initialize.
+   */
    template <int D>
    void Mixture<D>::readParameters(std::istream& in)
    {
       MixtureTmpl< Polymer<D>, Solvent<D> >::readParameters(in);
       read(in, "ds", ds_);
+      readOptional(in, "useBatchedFFT", useBatchedFFT_);
 
       UTIL_CHECK(nMonomer() > 0);
       UTIL_CHECK(nPolymer()+ nSolvent() > 0);
       UTIL_CHECK(ds_ > 0);
    }
 
+   /*
+   * Create associations with a mesh, FFT, UnitCell, and WaveList object.
+   */
    template <int D>
-   void Mixture<D>::setDiscretization(Mesh<D> const& mesh, FFT<D> const& fft)
+   void Mixture<D>::associate(Mesh<D> const & mesh, FFT<D> const & fft, 
+                              UnitCell<D> const & cell, WaveList<D>& wavelist)
    {
       UTIL_CHECK(nMonomer() > 0);
-      UTIL_CHECK(nPolymer()+ nSolvent() > 0);
-      UTIL_CHECK(ds_ > 0);
+      UTIL_CHECK(nPolymer() + nSolvent() > 0);
       UTIL_CHECK(mesh.size() > 0);
       UTIL_CHECK(fft.isSetup());
       UTIL_CHECK(fft.meshDimensions() == mesh.dimensions());
+      UTIL_CHECK(cell.nParameter() > 0);
 
+      // Assign internal pointers and variables
       meshPtr_ = &mesh;
+      nParams_ = cell.nParameter();
 
-      // Set discretization for all blocks
+      // Create associations for all blocks, set nParams in Polymer objects
+      int i, j;
+      for (i = 0; i < nPolymer(); ++i) {
+         polymer(i).setNParams(nParams_);
+         for (j = 0; j < polymer(i).nBlock(); ++j) {
+            polymer(i).block(j).associate(mesh, fft, cell, wavelist);
+         }
+      }
+
+      // Create associations for all solvents
+      if (nSolvent() > 0) {
+         for (int i = 0; i < nSolvent(); ++i) {
+            solvent(i).associate(mesh);
+         }
+      }
+   }
+
+   /*
+   * Allocate internal data containers in all solvers. 
+   */
+   template <int D>
+   void Mixture<D>::allocate()
+   {
+      UTIL_CHECK(nMonomer() > 0);
+      UTIL_CHECK(nPolymer()+ nSolvent() > 0);
+      UTIL_CHECK(ds_ > 0);
+      UTIL_CHECK(mesh().size() > 0);
+
+      // Allocate memory in all Block objects
       int i, j;
       for (i = 0; i < nPolymer(); ++i) {
          for (j = 0; j < polymer(i).nBlock(); ++j) {
-            polymer(i).block(j).setDiscretization(ds_, mesh, fft);
+            polymer(i).block(j).allocate(ds_, useBatchedFFT_);
          }
       }
 
-      // Set spatial discretization for solvents
+      // Allocate memory in all Solvent objects
       if (nSolvent() > 0) {
          for (int i = 0; i < nSolvent(); ++i) {
-            solvent(i).setDiscretization(mesh);
+            solvent(i).allocate();
          }
       }
    }
 
+   /*
+   * Update solvers to account for new lattice parameters.
+   */
    template <int D>
-   void Mixture<D>::setupUnitCell(UnitCell<D> const & unitCell, 
-                                  WaveList<D> const& wavelist)
+   void Mixture<D>::updateUnitCell()
    {
-      nUnitCellParams_ = unitCell.nParameter();
       for (int i = 0; i < nPolymer(); ++i) {
-         polymer(i).setupUnitCell(unitCell, wavelist);
-      }
-      hasStress_ = false;
-   }
-   
-   template <int D>
-   void Mixture<D>::setupUnitCell(UnitCell<D> const & unitCell)
-   {
-      nUnitCellParams_ = unitCell.nParameter();
-      for (int i = 0; i < nPolymer(); ++i) {
-         polymer(i).setupUnitCell(unitCell);
+         for (int j = 0; j < polymer(i).nBlock(); ++j) {
+            polymer(i).block(j).updateUnitCell();
+         }
       }
       hasStress_ = false;
    }
@@ -109,7 +143,6 @@ namespace Rpg
       hasStress_ = false;
    }
 
-
    /*
    * Compute concentrations (but not total free energy).
    */
@@ -128,16 +161,11 @@ namespace Rpg
       int nm = nMonomer();
       int i, j;
 
-      // GPU resources
-      int nBlocks, nThreads;
-      ThreadGrid::setThreadsLogical(nMesh, nBlocks, nThreads);
-
       // Clear all monomer concentration fields
       for (i = 0; i < nm; ++i) {
          UTIL_CHECK(cFields[i].capacity() == nMesh);
          UTIL_CHECK(wFields[i].capacity() == nMesh);
-         assignUniformReal<<<nBlocks, nThreads>>>(cFields[i].cArray(), 
-                                                  0.0, nMesh);
+         VecOp::eqS(cFields[i], 0.0);
       }
 
       // Solve MDE for all polymers
@@ -154,9 +182,8 @@ namespace Rpg
             UTIL_CHECK(monomerId < nm);
             RField<D>& monomerField = cFields[monomerId];
             RField<D>& blockField = polymer(i).block(j).cField();
-            UTIL_CHECK(blockField.capacity()==nMesh);
-            pointWiseAdd<<<nBlocks, nThreads>>>(monomerField.cArray(), 
-                                                blockField.cArray(), nMesh);
+            UTIL_CHECK(blockField.capacity() == nMesh);
+            VecOp::addEqV(monomerField, blockField);
          }
       }
       
@@ -173,31 +200,29 @@ namespace Rpg
          RField<D>& monomerField = cFields[monomerId];
          RField<D> const & solventField = solvent(i).concField();
          UTIL_CHECK(solventField.capacity() == nMesh);
-         pointWiseAdd<<<nBlocks, nThreads>>>(monomerField.cArray(), 
-                                             solventField.cArray(), 
-                                             nMesh);
-
-
+         VecOp::addEqV(monomerField, solventField);
       }
       
       hasStress_ = false;
    }
 
    /*  
-   * Compute Total Stress.
+   * Compute total stress.
    */  
    template <int D>
-   void Mixture<D>::computeStress(WaveList<D> const & wavelist)
+   void Mixture<D>::computeStress()
    {   
+      UTIL_CHECK(nParams_ > 0);
+
       int i, j;
 
       // Compute stress for each polymer.
       for (i = 0; i < nPolymer(); ++i) {
-         polymer(i).computeStress(wavelist);
+         polymer(i).computeStress();
       } 
 
       // Accumulate total stress 
-      for (i = 0; i < nUnitCellParams_; ++i) {
+      for (i = 0; i < nParams_; ++i) {
          stress_[i] = 0.0;
          for (j = 0; j < nPolymer(); ++j) {
             stress_[i] += polymer(j).stress(i);
@@ -209,6 +234,9 @@ namespace Rpg
       hasStress_ = true;
    }
 
+   /*
+   * Is the ensemble canonical (i.e, closed for all species)?
+   */
    template <int D>
    bool Mixture<D>::isCanonical()
    {
@@ -244,14 +272,10 @@ namespace Rpg
 
       UTIL_CHECK(blockCFields.capacity() == nBlock() + nSolvent());
 
-      // GPU resources
-      int nBlocks, nThreads;
-      ThreadGrid::setThreadsLogical(nx, nBlocks, nThreads);
-
       // Clear all monomer concentration fields, check capacities
       for (i = 0; i < np; ++i) {
          UTIL_CHECK(blockCFields[i].capacity() == nx);
-         assignUniformReal<<<nBlocks, nThreads>>>(blockCFields[i].cArray(), 0.0, nx);
+         VecOp::eqS(blockCFields[i], 0.0);
       }
 
       // Process polymer species
@@ -268,9 +292,7 @@ namespace Rpg
                UTIL_CHECK(sectionId < np);
                UTIL_CHECK(blockCFields[sectionId].capacity() == nx);
 
-               const cudaReal* blockField = polymer(i).block(j).cField().cArray();
-               cudaMemcpy(blockCFields[sectionId].cArray(), blockField, 
-                          mesh().size() * sizeof(cudaReal), cudaMemcpyDeviceToDevice);
+               blockCFields[sectionId] = polymer(i).block(j).cField();
             }
          }
       }
@@ -286,9 +308,7 @@ namespace Rpg
             UTIL_CHECK(sectionId < np);
             UTIL_CHECK(blockCFields[sectionId].capacity() == nx);
 
-            const cudaReal* solventField = solvent(i).concField().cArray();
-            cudaMemcpy(blockCFields[sectionId].cArray(), solventField, 
-                       mesh().size() * sizeof(cudaReal), cudaMemcpyDeviceToDevice);
+            blockCFields[sectionId] = solvent(i).concField();
          }
       }
    }

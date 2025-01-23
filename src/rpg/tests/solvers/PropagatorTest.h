@@ -9,12 +9,12 @@
 #include <rpg/solvers/Propagator.h>
 
 #include <prdc/crystal/UnitCell.h>
+#include <prdc/cuda/resources.h>
 
 #include <pscf/mesh/Mesh.h>
 #include <pscf/math/IntVec.h>
 #include <util/math/Constants.h>
 
-#include <pscf/cuda/GpuResources.h>
 #include <fstream>
 
 
@@ -71,7 +71,7 @@ public:
       Pscf::Rpg::Block<1> block;
    }
 
-   void testSetDiscretization1D()
+   void testSetup1D() // test allocate and associate methods
    {
       printMethod(TEST_FUNC);
 
@@ -85,8 +85,20 @@ public:
       FFT<1> fft;
       fft.setup(mesh.dimensions());
 
+      // Set up unit cell
+      UnitCell<1> unitCell;
+      setupUnitCell<1>(unitCell, "in/Lamellar");
+
+      // Create wavelist
+      WaveList<1> wavelist;
+
+      // Associate block
+      block.associate(mesh, fft, unitCell, wavelist);
+
+      // Allocate block
       double ds = 0.02;
-      block.setDiscretization(ds, mesh, fft);
+      block.allocate(ds);
+
       TEST_ASSERT(eq(block.length(), 2.0));
       TEST_ASSERT(eq(block.ds(), 0.02));
       TEST_ASSERT(block.ns() == 101);
@@ -94,21 +106,34 @@ public:
 
    }
 
-   void testSetDiscretization2D()
+   void testSetup2D() // test allocate and associate methods
    {
       printMethod(TEST_FUNC);
 
-      //Create and initialize block
+      // Create and initialize block
       Pscf::Rpg::Block<2> block;
       setupBlock<2>(block);
 
+      // Create and initialize mesh
       Mesh<2> mesh;
       setupMesh<2>(mesh);
       FFT<2> fft;
       fft.setup(mesh.dimensions());
 
+      // Set up unit cell
+      UnitCell<2> unitCell;
+      setupUnitCell<2>(unitCell, "in/Rectangular");
+
+      // Create wavelist 
+      WaveList<2> wavelist;
+
+      // Associate block
+      block.associate(mesh, fft, unitCell, wavelist);
+
+      // Allocate block
       double ds = 0.26;
-      block.setDiscretization(ds, mesh, fft);
+      block.allocate(ds);
+
       TEST_ASSERT(eq(block.length(), 2.0));
       TEST_ASSERT(eq(block.ds(), 0.25));
       TEST_ASSERT(block.ns() == 9);
@@ -116,21 +141,33 @@ public:
       TEST_ASSERT(block.mesh().dimensions()[1] == 32);
    }
 
-   void testSetDiscretization3D()
+   void testSetup3D() // test allocate and associate methods
    {
       printMethod(TEST_FUNC);
 
-      //Create and initialize block
+      // Create and initialize block
       Pscf::Rpg::Block<3> block;
       setupBlock<3>(block);
 
+      // Create and initialize mesh
       Mesh<3> mesh;
       setupMesh<3>(mesh);
       FFT<3> fft;
       fft.setup(mesh.dimensions());
 
+      // Set up unit cell
+      UnitCell<3> unitCell;
+      setupUnitCell<3>(unitCell, "in/Hexagonal");
+
+      // Create wavelist 
+      WaveList<3> wavelist;
+
+      // Associate block
+      block.associate(mesh, fft, unitCell, wavelist);
+
+      // Allocate block
       double ds = 0.3;
-      block.setDiscretization(ds, mesh, fft);
+      block.allocate(ds);
 
       TEST_ASSERT(eq(block.length(), 2.0));
       TEST_ASSERT(block.ns() == 7);
@@ -154,35 +191,37 @@ public:
       FFT<1> fft;
       fft.setup(mesh.dimensions());
 
-      double ds = 0.02;
-      block.setDiscretization(ds, mesh, fft);
-
+      // Set up unit cell
       UnitCell<1> unitCell;
       setupUnitCell<1>(unitCell, "in/Lamellar");
-
       TEST_ASSERT(eq(unitCell.rBasis(0)[0], 4.0));
+
+      // Construct wavelist
+      WaveList<1> wavelist;
+      wavelist.allocate(mesh, unitCell);
+
+      // Associate block
+      block.associate(mesh, fft, unitCell, wavelist);      
+
+      // Allocate block
+      double ds = 0.02;
+      block.allocate(ds);
 
       // Setup chemical potential field
       int nx = mesh.size();
-      RField<1> d_w;
-      d_w.allocate(mesh.dimensions());
-      cudaReal* w = new cudaReal[nx];
+      RField<1> w;
+      w.allocate(mesh.dimensions());
+      HostDArray<cudaReal> w_h(nx);
 
-      TEST_ASSERT(d_w.capacity() == mesh.size());
+      TEST_ASSERT(w.capacity() == mesh.size());
       
-      for (int i=0; i < nx; ++i) {
-         w[i] = 1.0;
+      for (int i = 0; i < nx; ++i) {
+         w_h[i] = 1.0;
       }
 
-      cudaMemcpy(d_w.cArray(), w, nx*sizeof(cudaReal), cudaMemcpyHostToDevice);
+      w = w_h; // copy to device
 
-      // Construct wavelist 
-      WaveList<1> wavelist;
-      wavelist.allocate(mesh, unitCell);
-      wavelist.computeMinimumImages(mesh, unitCell);
-
-      block.setupUnitCell(unitCell, wavelist);
-      block.setupSolver(d_w);
+      block.setupSolver(w);
    }
 
    void testSetupSolver2D()
@@ -199,36 +238,39 @@ public:
       FFT<2> fft;
       fft.setup(mesh.dimensions());
 
-      double ds = 0.02;
-      block.setDiscretization(ds, mesh, fft);
-
+      // Set up unit cell
       UnitCell<2> unitCell;
       setupUnitCell<2>(unitCell, "in/Rectangular");
 
       TEST_ASSERT(eq(unitCell.rBasis(0)[0], 3.0));
       TEST_ASSERT(eq(unitCell.rBasis(1)[1], 4.0));
 
-      // Setup chemical potential field
-      int nx = mesh.size();
-      RField<2> d_w;
-      d_w.allocate(mesh.dimensions());
-      cudaReal* w = new cudaReal[nx];
-
-      TEST_ASSERT(d_w.capacity() == mesh.size());
-      
-      for (int i=0; i < nx; ++i) {
-         w[i] = 1.0;
-      }
-
-      cudaMemcpy(d_w.cArray(), w, nx*sizeof(cudaReal), cudaMemcpyHostToDevice);
-
-      // Construct wavelist 
+      // Construct wavelist
       WaveList<2> wavelist;
       wavelist.allocate(mesh, unitCell);
-      wavelist.computeMinimumImages(mesh, unitCell);
 
-      block.setupUnitCell(unitCell, wavelist);
-      block.setupSolver(d_w);
+      // Associate block
+      block.associate(mesh, fft, unitCell, wavelist);      
+
+      // Allocate block
+      double ds = 0.02;
+      block.allocate(ds);
+
+      // Setup chemical potential field
+      int nx = mesh.size();
+      RField<2> w;
+      w.allocate(mesh.dimensions());
+      HostDArray<cudaReal> w_h(nx);
+
+      TEST_ASSERT(w.capacity() == mesh.size());
+      
+      for (int i = 0; i < nx; ++i) {
+         w_h[i] = 1.0;
+      }
+
+      w = w_h; // copy to device
+
+      block.setupSolver(w);
    }
 
    void testSetupSolver3D()
@@ -245,9 +287,7 @@ public:
       FFT<3> fft;
       fft.setup(mesh.dimensions());
 
-      double ds = 0.02;
-      block.setDiscretization(ds, mesh, fft);
-
+      // Set up unit cell
       UnitCell<3> unitCell;
       setupUnitCell<3>(unitCell, "in/Orthorhombic");
 
@@ -255,27 +295,32 @@ public:
       TEST_ASSERT(eq(unitCell.rBasis(1)[1], 4.0));
       TEST_ASSERT(eq(unitCell.rBasis(2)[2], 5.0));
 
-      // Setup chemical potential field
-      int nx = mesh.size();
-      RField<3> d_w;
-      d_w.allocate(mesh.dimensions());
-      cudaReal* w = new cudaReal[nx];
-
-      TEST_ASSERT(d_w.capacity() == mesh.size());
-      
-      for (int i=0; i < nx; ++i) {
-         w[i] = 1.0;
-      }
-
-      cudaMemcpy(d_w.cArray(), w, nx*sizeof(cudaReal), cudaMemcpyHostToDevice);
-
-      // Construct wavelist 
+      // Construct wavelist
       WaveList<3> wavelist;
       wavelist.allocate(mesh, unitCell);
-      wavelist.computeMinimumImages(mesh, unitCell);
 
-      block.setupUnitCell(unitCell, wavelist);
-      block.setupSolver(d_w);
+      // Associate block
+      block.associate(mesh, fft, unitCell, wavelist);      
+
+      // Allocate block
+      double ds = 0.02;
+      block.allocate(ds);
+
+      // Setup chemical potential field
+      int nx = mesh.size();
+      RField<3> w;
+      w.allocate(mesh.dimensions());
+      HostDArray<cudaReal> w_h(nx);
+
+      TEST_ASSERT(w.capacity() == mesh.size());
+      
+      for (int i = 0; i < nx; ++i) {
+         w_h[i] = 1.0;
+      }
+
+      w = w_h; // copy to device
+
+      block.setupSolver(w);
    }
 
    void testSolver1D()
@@ -292,55 +337,54 @@ public:
       FFT<1> fft;
       fft.setup(mesh.dimensions());
 
-      double ds = 0.02;
-      block.setDiscretization(ds, mesh, fft);
-
+      // Set up unit cell
       UnitCell<1> unitCell;
       setupUnitCell<1>(unitCell, "in/Lamellar");
-
       TEST_ASSERT(eq(unitCell.rBasis(0)[0], 4.0));
+
+      // Construct wavelist
+      WaveList<1> wavelist;
+      wavelist.allocate(mesh, unitCell);
+
+      // Associate block
+      block.associate(mesh, fft, unitCell, wavelist);      
+
+      // Allocate block
+      double ds = 0.02;
+      block.allocate(ds);
 
       // Setup chemical potential field
       int nx = mesh.size();
-      RField<1> d_w;
-      d_w.allocate(mesh.dimensions());
-      cudaReal* w = new cudaReal[nx];
+      RField<1> w;
+      w.allocate(mesh.dimensions());
+      HostDArray<cudaReal> w_h(nx);
 
-      TEST_ASSERT(d_w.capacity() == mesh.size());
+      TEST_ASSERT(w.capacity() == mesh.size());
       double wc = 0.3;
-      for (int i=0; i < nx; ++i) {
-         w[i] = wc;
+      for (int i = 0; i < nx; ++i) {
+         w_h[i] = wc;
       }
 
-      cudaMemcpy(d_w.cArray(), w, nx*sizeof(cudaReal), cudaMemcpyHostToDevice);
+      w = w_h; // copy to device
 
-      // Construct wavelist 
-      WaveList<1> wavelist;
-      wavelist.allocate(mesh, unitCell);
-      wavelist.computeMinimumImages(mesh, unitCell);
-
-      block.setupUnitCell(unitCell, wavelist);
-      block.setupSolver(d_w);
+      block.setupSolver(w);
 
       // Setup fields on host and device
       Propagator<1>::QField d_qin, d_qout;
-      cudaReal* qin = new cudaReal[nx];
-      cudaReal* qout = new cudaReal[nx];
       d_qin.allocate(mesh.dimensions());
       d_qout.allocate(mesh.dimensions());
+      HostDArray<cudaReal> qin(nx);
+      HostDArray<cudaReal> qout(nx);
 
       // Run block step
       double twoPi = 2.0*Constants::Pi;
-      for (int i=0; i < nx; ++i) {
+      for (int i = 0; i < nx; ++i) {
          qin[i] = cos(twoPi*double(i)/double(nx));
       }
 
-      cudaMemcpy(d_qin.cArray(), qin, nx*sizeof(cudaReal), 
-                 cudaMemcpyHostToDevice);
-      block.setupFFT();
-      block.step(d_qin.cArray(), d_qout.cArray());
-      cudaMemcpy(qout, d_qout.cArray(), nx*sizeof(cudaReal), 
-                 cudaMemcpyDeviceToHost);
+      d_qin = qin;
+      block.step(d_qin, d_qout);
+      qout = d_qout;
 
       // Test block step output against expected output
       double a = 4.0;
@@ -357,12 +401,10 @@ public:
       block.propagator(0).solve();
 
       // Copy results from propagator solve
-      cudaReal* propHead = new cudaReal[nx*block.ns()];
-      cudaReal* propTail = new cudaReal[nx*block.ns()];
-      cudaMemcpy(propHead, block.propagator(0).head(), 
-                 nx*sizeof(cudaReal), cudaMemcpyDeviceToHost);
-      cudaMemcpy(propTail, block.propagator(0).tail(), 
-                 nx*sizeof(cudaReal), cudaMemcpyDeviceToHost);
+      HostDArray<cudaReal> propHead(nx);
+      HostDArray<cudaReal> propTail(nx);
+      propHead = block.propagator(0).head();
+      propTail = block.propagator(0).tail();
 
       for (int i = 0; i < nx; ++i) {
          TEST_ASSERT(eq(propHead[i],1.0));
@@ -389,43 +431,45 @@ public:
       FFT<2> fft;
       fft.setup(mesh.dimensions());
 
-      double ds = 0.02;
-      block.setDiscretization(ds, mesh, fft);
-
+      // Set up unit cell
       UnitCell<2> unitCell;
       setupUnitCell<2>(unitCell, "in/Rectangular");
-
       TEST_ASSERT(eq(unitCell.rBasis(0)[0], 3.0));
       TEST_ASSERT(eq(unitCell.rBasis(1)[1], 4.0));
 
-      // Setup chemical potential field
-      int nx = mesh.size();
-      RField<2> d_w;
-      d_w.allocate(mesh.dimensions());
-      cudaReal* w = new cudaReal[nx];
-
-      TEST_ASSERT(d_w.capacity() == mesh.size());
-      double wc = 0.3;
-      for (int i=0; i < nx; ++i) {
-         w[i] = wc;
-      }
-
-      cudaMemcpy(d_w.cArray(), w, nx*sizeof(cudaReal), cudaMemcpyHostToDevice);
-
-      // Construct wavelist 
+      // Construct wavelist
       WaveList<2> wavelist;
       wavelist.allocate(mesh, unitCell);
-      wavelist.computeMinimumImages(mesh, unitCell);
 
-      block.setupUnitCell(unitCell, wavelist);
-      block.setupSolver(d_w);
+      // Associate block
+      block.associate(mesh, fft, unitCell, wavelist);      
+
+      // Allocate block
+      double ds = 0.02;
+      block.allocate(ds);
+
+      // Setup chemical potential field
+      int nx = mesh.size();
+      RField<2> w;
+      w.allocate(mesh.dimensions());
+      HostDArray<cudaReal> w_h(nx);
+
+      TEST_ASSERT(w.capacity() == mesh.size());
+      double wc = 0.3;
+      for (int i = 0; i < nx; ++i) {
+         w_h[i] = wc;
+      }
+
+      w = w_h; // copy to device
+
+      block.setupSolver(w);
 
       // Setup fields on host and device
       Propagator<2>::QField d_qin, d_qout;
-      cudaReal* qin = new cudaReal[nx];
-      cudaReal* qout = new cudaReal[nx];
       d_qin.allocate(mesh.dimensions());
       d_qout.allocate(mesh.dimensions());
+      HostDArray<cudaReal> qin(nx);
+      HostDArray<cudaReal> qout(nx);
 
       // Run block step
       MeshIterator<2> iter(mesh.dimensions());
@@ -436,10 +480,9 @@ public:
                          double(iter.position(1))/double(mesh.dimension(1)) ) );
       }
 
-      cudaMemcpy(d_qin.cArray(), qin, nx*sizeof(cudaReal), cudaMemcpyHostToDevice);
-      block.setupFFT();
-      block.step(d_qin.cArray(), d_qout.cArray());
-      cudaMemcpy(qout, d_qout.cArray(), nx*sizeof(cudaReal), cudaMemcpyDeviceToHost);
+      d_qin = qin;
+      block.step(d_qin, d_qout);
+      qout = d_qout;
 
       // Test block step output against expected output
       double b = block.kuhn();
@@ -462,10 +505,10 @@ public:
       block.propagator(0).solve();
 
       // Copy results from propagator solve
-      cudaReal* propHead = new cudaReal[nx*block.ns()];
-      cudaReal* propTail = new cudaReal[nx*block.ns()];
-      cudaMemcpy(propHead, block.propagator(0).head(), nx*sizeof(cudaReal), cudaMemcpyDeviceToHost);
-      cudaMemcpy(propTail, block.propagator(0).tail(), nx*sizeof(cudaReal), cudaMemcpyDeviceToHost);
+      HostDArray<cudaReal> propHead(nx);
+      HostDArray<cudaReal> propTail(nx);
+      propHead = block.propagator(0).head();
+      propTail = block.propagator(0).tail();
 
       for (iter.begin(); !iter.atEnd(); ++iter){
          TEST_ASSERT(eq(propHead[iter.rank()], 1.0));
@@ -492,44 +535,46 @@ public:
       FFT<3> fft;
       fft.setup(mesh.dimensions());
 
-      double ds = 0.02;
-      block.setDiscretization(ds, mesh, fft);
-
+      // Set up unit cell
       UnitCell<3> unitCell;
       setupUnitCell<3>(unitCell, "in/Orthorhombic");
-
       TEST_ASSERT(eq(unitCell.rBasis(0)[0], 3.0));
       TEST_ASSERT(eq(unitCell.rBasis(1)[1], 4.0));
       TEST_ASSERT(eq(unitCell.rBasis(2)[2], 5.0));
 
-      // Setup chemical potential field
-      int nx = mesh.size();
-      RField<3> d_w;
-      d_w.allocate(mesh.dimensions());
-      cudaReal* w = new cudaReal[nx];
-
-      TEST_ASSERT(d_w.capacity() == mesh.size());
-      double wc = 0.3;
-      for (int i=0; i < nx; ++i) {
-         w[i] = wc;
-      }
-
-      cudaMemcpy(d_w.cArray(), w, nx*sizeof(cudaReal), cudaMemcpyHostToDevice);
-
-      // Construct wavelist 
+      // Construct wavelist
       WaveList<3> wavelist;
       wavelist.allocate(mesh, unitCell);
-      wavelist.computeMinimumImages(mesh, unitCell);
 
-      block.setupUnitCell(unitCell, wavelist);
-      block.setupSolver(d_w);
+      // Associate block
+      block.associate(mesh, fft, unitCell, wavelist);      
+
+      // Allocate block
+      double ds = 0.02;
+      block.allocate(ds);
+
+      // Setup chemical potential field
+      int nx = mesh.size();
+      RField<3> w;
+      w.allocate(mesh.dimensions());
+      HostDArray<cudaReal> w_h(nx);
+
+      TEST_ASSERT(w.capacity() == mesh.size());
+      double wc = 0.3;
+      for (int i = 0; i < nx; ++i) {
+         w_h[i] = wc;
+      }
+
+      w = w_h; // copy to device
+
+      block.setupSolver(w);
 
       // Setup fields on host and device
       Propagator<3>::QField d_qin, d_qout;
-      cudaReal* qin = new cudaReal[nx];
-      cudaReal* qout = new cudaReal[nx];
       d_qin.allocate(mesh.dimensions());
       d_qout.allocate(mesh.dimensions());
+      HostDArray<cudaReal> qin(nx);
+      HostDArray<cudaReal> qout(nx);
 
       // Run block step
       MeshIterator<3> iter(mesh.dimensions());
@@ -541,10 +586,9 @@ public:
                          double(iter.position(2))/double(mesh.dimension(2)) ) );
       }
 
-      cudaMemcpy(d_qin.cArray(), qin, nx*sizeof(cudaReal), cudaMemcpyHostToDevice);
-      block.setupFFT();
-      block.step(d_qin.cArray(), d_qout.cArray());
-      cudaMemcpy(qout, d_qout.cArray(), nx*sizeof(cudaReal), cudaMemcpyDeviceToHost);
+      d_qin = qin;
+      block.step(d_qin, d_qout);
+      qout = d_qout;
 
       // Test block step output against expected output
       double b = block.kuhn();
@@ -569,10 +613,10 @@ public:
       block.propagator(0).solve();
 
       // Copy results from propagator solve
-      cudaReal* propHead = new cudaReal[nx*block.ns()];
-      cudaReal* propTail = new cudaReal[nx*block.ns()];
-      cudaMemcpy(propHead, block.propagator(0).head(), nx*sizeof(cudaReal), cudaMemcpyDeviceToHost);
-      cudaMemcpy(propTail, block.propagator(0).tail(), nx*sizeof(cudaReal), cudaMemcpyDeviceToHost);
+      HostDArray<cudaReal> propHead(nx);
+      HostDArray<cudaReal> propTail(nx);
+      propHead = block.propagator(0).head();
+      propTail = block.propagator(0).tail();
 
       for (iter.begin(); !iter.atEnd(); ++iter){
          TEST_ASSERT(eq(propHead[iter.rank()], 1.0));
@@ -588,9 +632,9 @@ public:
 
 TEST_BEGIN(PropagatorTest)
 TEST_ADD(PropagatorTest, testConstructor1D)
-TEST_ADD(PropagatorTest, testSetDiscretization1D)
-TEST_ADD(PropagatorTest, testSetDiscretization2D)
-TEST_ADD(PropagatorTest, testSetDiscretization3D)
+TEST_ADD(PropagatorTest, testSetup1D)
+TEST_ADD(PropagatorTest, testSetup2D)
+TEST_ADD(PropagatorTest, testSetup3D)
 TEST_ADD(PropagatorTest, testSetupSolver1D)
 TEST_ADD(PropagatorTest, testSetupSolver2D)
 TEST_ADD(PropagatorTest, testSetupSolver3D)

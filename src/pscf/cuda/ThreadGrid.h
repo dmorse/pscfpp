@@ -1,7 +1,6 @@
 #ifndef PSCF_THREADGRID_H
 #define PSCF_THREADGRID_H
 
-#include "GpuTypes.h"
 #include <util/global.h>
 
 namespace Pscf {
@@ -97,6 +96,11 @@ namespace ThreadGrid {
   * Return previously requested total number of threads.
   */
   int nThreadsLogical();
+
+  /**
+  * Get the warp size.
+  */
+  int warpSize();
 
   /**
   * Indicates whether there will be unused threads. 

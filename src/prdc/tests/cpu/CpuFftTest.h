@@ -45,7 +45,6 @@ void CpuFftTest::testConstructor()
 void CpuFftTest::testTransformReal1D() 
 {
    printMethod(TEST_FUNC);
-   //printEndl();
 
    int n = 10;
    IntVec<1> d;
@@ -66,48 +65,52 @@ void CpuFftTest::testTransformReal1D()
       in[i] = cos(x);
    }
 
+   // Save a copy of in (to ensure input to forwardTransform is preserved)
+   Cpu::RField<1> inCopy(in);
+
    // Transform in -> out
    Cpu::RFieldDft<1> out;
    out.allocate(d);
    v.forwardTransform(in, out);
 
-   // Save a copy of out (to check if input was overwritten)
+   // Save a copy of out (to ensure input to inverseTransformSafe is preserved)
    Cpu::RFieldDft<1> outCopy(out);
-   TEST_ASSERT(out.capacity() == outCopy.capacity());
 
-   // Inverse transform out -> inCopy
-   Cpu::RField<1> inCopy;
-   inCopy.allocate(d);
-   v.inverseTransform(out, inCopy);
+   // Inverse transform out -> in2
+   Cpu::RField<1> in2;
+   in2.allocate(d);
+   v.inverseTransformSafe(out, in2);
 
-   for (int i = 0; i < n; ++i) {
+   // Elementwise compare in, in2, and inCopy
+   for (int i = 0; i < in.capacity(); i++) {
+      TEST_ASSERT(eq(in[i], in2[i]));
       TEST_ASSERT(eq(in[i], inCopy[i]));
    }
 
-   #if 0
-   // Test if input of inverse transform was overwritten
-   for (int i = 0; i < out.capacity(); ++i) {
+   // Elementwise compare out and outCopy
+   for (int i = 0; i < out.capacity(); i++) {
       TEST_ASSERT(eq(out[i][0], outCopy[i][0]));
       TEST_ASSERT(eq(out[i][1], outCopy[i][1]));
    }
-   #endif
 
 }
 
 void CpuFftTest::testTransformReal2D() 
 {
    printMethod(TEST_FUNC);
-   //printEndl();
 
+   // Create mesh
    int n1 = 3;
    int n2 = 4;
    IntVec<2> d;
    d[0] = n1;
    d[1] = n2;
 
+   // Instantiate and initialize FFT
    Cpu::FFT<2> v;
    v.setup(d);
 
+   // Initialize input data
    Cpu::RField<2> in;
    in.allocate(d);
    int rank = 0;
@@ -124,6 +127,9 @@ void CpuFftTest::testTransformReal2D()
       }
    }
 
+   // Save a copy of in (to ensure input to forwardTransform is preserved)
+   Cpu::RField<2> inCopy(in);
+
    // Forward transform in -> out
    Cpu::RFieldDft<2> out;
    out.allocate(d);
@@ -131,43 +137,31 @@ void CpuFftTest::testTransformReal2D()
                   out.capacity() / (out.meshDimensions()[1]/2 + 1)));
    v.forwardTransform(in, out);
 
-   #if 1
-   // Save a copy of out
+   // Save a copy of out (to ensure input to inverseTransformSafe is preserved)
    Cpu::RFieldDft<2> outCopy(out);
-   TEST_ASSERT(out.capacity() == outCopy.capacity());
-   for (int i = 0; i < out.capacity(); ++i) {
+
+   // Inverse transform out -> in2
+   Cpu::RField<2> in2;
+   in2.allocate(d);
+   v.inverseTransformSafe(out, in2);
+
+   // Elementwise compare in, in2, and inCopy
+   for (int i = 0; i < in.capacity(); i++) {
+      TEST_ASSERT(eq(in[i], in2[i]));
+      TEST_ASSERT(eq(in[i], inCopy[i]));
+   }
+
+   // Elementwise compare out and outCopy
+   for (int i = 0; i < out.capacity(); i++) {
       TEST_ASSERT(eq(out[i][0], outCopy[i][0]));
       TEST_ASSERT(eq(out[i][1], outCopy[i][1]));
    }
-   #endif
-
-   // Inverse transform out -> inCopy
-   Cpu::RField<2> inCopy;
-   inCopy.allocate(d);
-   v.inverseTransform(out, inCopy);
-
-   // Check if in == inCopy
-   for (int i = 0; i < n1; i++) {
-      for (int j = 0; j < n2; j++) {
-         rank = j + (i * n2);
-         TEST_ASSERT(eq(in[rank], inCopy[rank]));
-      }
-   }
-
-   #if 0
-   // Check if out was not modified my inverseTransform
-   for (int i = 0; i < out.capacity(); ++i) {
-      TEST_ASSERT(eq(out[i][0], outCopy[i][0]));
-      TEST_ASSERT(eq(out[i][1], outCopy[i][1]));
-   }
-   #endif
 
 }
 
 void CpuFftTest::testTransformReal3D() 
 {
    printMethod(TEST_FUNC);
-   //printEndl();
 
    // Create mesh
    int n1 = 3;
@@ -201,39 +195,37 @@ void CpuFftTest::testTransformReal3D()
       }
    }
 
+   // Save a copy of in (to ensure input to forwardTransform is preserved)
+   Cpu::RField<3> inCopy(in);
+
    // Forward transform in -> out
    v.forwardTransform(in, out);
 
-   // Inverse transform out -> inCopy
-   Cpu::RField<3> inCopy;
-   inCopy.allocate(d);
-   v.inverseTransform(out, inCopy);
+   // Save a copy of out (to ensure input to inverseTransformSafe is preserved)
+   Cpu::RFieldDft<3> outCopy(out);
 
-   // Elementwise compare in and inCopy
-   for (int i = 0; i < n1; i++) {
-      for (int j = 0; j < n2; j++) {
-         for (int k = 0; k < n3; k++){
-            rank = k + ((j + (i * n1)) * n3);
-            TEST_ASSERT(eq(in[rank], inCopy[rank]));
-         }
-      }
+   // Inverse transform out -> in2
+   Cpu::RField<3> in2;
+   in2.allocate(d);
+   v.inverseTransformSafe(out, in2);
+
+   // Elementwise compare in, in2, and inCopy
+   for (int i = 0; i < in.capacity(); i++) {
+      TEST_ASSERT(eq(in[i], in2[i]));
+      TEST_ASSERT(eq(in[i], inCopy[i]));
    }
 
-   // Use RFieldComparison to compare in and inCopy
-   Cpu::RFieldComparison<3> comparison;
-   comparison.compare(in, inCopy);
-   //std::cout << std::endl;
-   //std::cout << "maxDiff = " 
-   //          << Dbl(comparison.maxDiff(), 20, 13)
-   //          << std::endl;
-   TEST_ASSERT(comparison.maxDiff() < 1.0E-12);
+   // Elementwise compare out and outCopy
+   for (int i = 0; i < out.capacity(); i++) {
+      TEST_ASSERT(eq(out[i][0], outCopy[i][0]));
+      TEST_ASSERT(eq(out[i][1], outCopy[i][1]));
+   }
 
 }
 
 void CpuFftTest::testTransformComplex1D() 
 {
    printMethod(TEST_FUNC);
-   //printEndl();
 
    int n = 10;
    IntVec<1> d;
@@ -257,27 +249,32 @@ void CpuFftTest::testTransformComplex1D()
       in[i][1] = c + s + 0.5*s*s;
    }
 
+   // Save a copy of in (to ensure input to forwardTransform is preserved)
+   Cpu::CField<1> inCopy(in);
+
    // Transform in -> out
    Cpu::CField<1> out;
    out.allocate(d);
    v.forwardTransform(in, out);
 
-   // Save a copy of out (to check if input was overwritten)
+   // Save a copy of out (to ensure input to inverseTransform is preserved)
    Cpu::CField<1> outCopy(out);
-   TEST_ASSERT(out.capacity() == outCopy.capacity());
 
-   // Inverse transform out -> inCopy
-   Cpu::CField<1> inCopy;
-   inCopy.allocate(d);
-   v.inverseTransform(out, inCopy);
+   // Inverse transform out -> in2
+   Cpu::CField<1> in2;
+   in2.allocate(d);
+   v.inverseTransform(out, in2);
 
-   for (int i = 0; i < n; ++i) {
+   // Elementwise compare in, in2, and inCopy
+   for (int i = 0; i < in.capacity(); i++) {
+      TEST_ASSERT(eq(in[i][0], in2[i][0]));
+      TEST_ASSERT(eq(in[i][1], in2[i][1]));
       TEST_ASSERT(eq(in[i][0], inCopy[i][0]));
       TEST_ASSERT(eq(in[i][1], inCopy[i][1]));
    }
 
-   // Test if input of inverse transform was overwritten
-   for (int i = 0; i < out.capacity(); ++i) {
+   // Elementwise compare out and outCopy
+   for (int i = 0; i < out.capacity(); i++) {
       TEST_ASSERT(eq(out[i][0], outCopy[i][0]));
       TEST_ASSERT(eq(out[i][1], outCopy[i][1]));
    }
@@ -287,7 +284,6 @@ void CpuFftTest::testTransformComplex1D()
 void CpuFftTest::testTransformComplex2D() 
 {
    printMethod(TEST_FUNC);
-   //printEndl();
 
    int n1 = 3;
    int n2 = 4;
@@ -318,49 +314,42 @@ void CpuFftTest::testTransformComplex2D()
       }
    }
 
+   // Save a copy of in (to ensure input to forwardTransform is preserved)
+   Cpu::CField<2> inCopy(in);
+
    // Forward transform in -> out
    Cpu::CField<2> out;
    out.allocate(d);
    v.forwardTransform(in, out);
 
-   #if 0
-   // Save a copy of out
+   // Save a copy of out (to ensure input to inverseTransform is preserved)
    Cpu::CField<2> outCopy(out);
-   //outCopy.allocate(d);
-   TEST_ASSERT(out.capacity() == outCopy.capacity());
-   for (int i = 0; i < out.capacity(); ++i) {
+
+   // Inverse transform out -> in2
+   Cpu::CField<2> in2;
+   in2.allocate(d);
+
+   v.inverseTransform(out, in2);
+
+   // Elementwise compare in, in2, and inCopy
+   for (int i = 0; i < in.capacity(); i++) {
+      TEST_ASSERT(eq(in[i][0], in2[i][0]));
+      TEST_ASSERT(eq(in[i][1], in2[i][1]));
+      TEST_ASSERT(eq(in[i][0], inCopy[i][0]));
+      TEST_ASSERT(eq(in[i][1], inCopy[i][1]));
+   }
+
+   // Elementwise compare out and outCopy
+   for (int i = 0; i < out.capacity(); i++) {
       TEST_ASSERT(eq(out[i][0], outCopy[i][0]));
       TEST_ASSERT(eq(out[i][1], outCopy[i][1]));
    }
-
-   // Inverse transform out -> inCopy
-   Cpu::CField<2> inCopy;
-   inCopy.allocate(d);
-
-   v.inverseTransform(out, inCopy);
-
-   // Check if in == inCopy
-   for (int i = 0; i < n1; i++) {
-      for (int j = 0; j < n2; j++) {
-         rank = j + (i * n2);
-         TEST_ASSERT(eq(in[rank][0], inCopy[rank][0]));
-         TEST_ASSERT(eq(in[rank][1], inCopy[rank][1]));
-      }
-   }
-
-   // Check if out was not modified my inverseTransform
-   for (int i = 0; i < out.capacity(); ++i) {
-      TEST_ASSERT(eq(out[i][0], outCopy[i][0]));
-      TEST_ASSERT(eq(out[i][1], outCopy[i][1]));
-   }
-   #endif
 
 }
 
 void CpuFftTest::testTransformComplex3D() 
 {
    printMethod(TEST_FUNC);
-   //printEndl();
 
    // Create mesh
    int n1 = 3;
@@ -394,35 +383,33 @@ void CpuFftTest::testTransformComplex3D()
       }
    }
 
+   // Save a copy of in (to ensure input to forwardTransform is preserved)
+   Cpu::CField<3> inCopy(in);
+
    // Forward transform in -> out
    v.forwardTransform(in, out);
 
-   // Inverse transform out -> inCopy
-   Cpu::CField<3> inCopy;
-   inCopy.allocate(d);
-   v.inverseTransform(out, inCopy);
+   // Save a copy of out (to ensure input to inverseTransform is preserved)
+   Cpu::CField<3> outCopy(out);
 
-   // Elementwise compare in and inCopy
-   for (int i = 0; i < n1; i++) {
-      for (int j = 0; j < n2; j++) {
-         for (int k = 0; k < n3; k++){
-            rank = k + ((j + (i * n1)) * n3);
-            TEST_ASSERT(eq(in[rank][0], inCopy[rank][0]));
-            TEST_ASSERT(eq(in[rank][1], inCopy[rank][1]));
-         }
-      }
+   // Inverse transform out -> in2
+   Cpu::CField<3> in2;
+   in2.allocate(d);
+   v.inverseTransform(out, in2);
+
+   // Elementwise compare in, in2, and inCopy
+   for (int i = 0; i < in.capacity(); i++) {
+      TEST_ASSERT(eq(in[i][0], in2[i][0]));
+      TEST_ASSERT(eq(in[i][1], in2[i][1]));
+      TEST_ASSERT(eq(in[i][0], inCopy[i][0]));
+      TEST_ASSERT(eq(in[i][1], inCopy[i][1]));
    }
 
-   #if 0
-   // Use CFieldComparison to compare in and inCopy
-   Cpu::CFieldComparison<3> comparison;
-   comparison.compare(in, inCopy);
-   //std::cout << std::endl;
-   //std::cout << "maxDiff = " 
-   //          << Dbl(comparison.maxDiff(), 20, 13)
-   //          << std::endl;
-   TEST_ASSERT(comparison.maxDiff() < 1.0E-12);
-   #endif
+   // Elementwise compare out and outCopy
+   for (int i = 0; i < out.capacity(); i++) {
+      TEST_ASSERT(eq(out[i][0], outCopy[i][0]));
+      TEST_ASSERT(eq(out[i][1], outCopy[i][1]));
+   }
 
 }
 

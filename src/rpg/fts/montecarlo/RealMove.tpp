@@ -10,6 +10,8 @@
 
 #include "RealMove.h"
 #include "McMove.h" 
+#include <rpg/fts/VecOpFts.h>
+#include <prdc/cuda/VecOp.h>
 #include <pscf/math/IntVec.h>
 #include <util/param/ParamComposite.h>
 #include <rpg/System.h>
@@ -73,23 +75,17 @@ namespace Rpg {
       const int nMonomer = system().mixture().nMonomer();
       const int meshSize = system().domain().mesh().size();
 
-      // GPU resources
-      int nBlocks, nThreads;
-      ThreadGrid::setThreadsLogical(meshSize, nBlocks, nThreads);
-      Array<RField<D>> const * currSys = &system().w().rgrid();
-
       // For multi-component copolymer
       for (int i = 0; i < nMonomer; i++){
 
-         // Generate random numbers between 0.0 and 1.0 from uniform distribution
-         cudaRandom().uniform(randomField_.cArray(), meshSize);
+         // Generate random numbers between 0.0 and 1.0 from uniform dist.
+         cudaRandom().uniform(randomField_);
 
          // Generate random numbers between [-stepSize_,stepSize_]
-         mcftsScale<<<nBlocks, nThreads>>>(randomField_.cArray(), stepSize_, meshSize);
+         VecOpFts::mcftsScale(randomField_, stepSize_);
 
          // Change the w field configuration
-         pointWiseBinaryAdd<<<nBlocks, nThreads>>>((*currSys)[i].cArray(), randomField_.cArray(),
-                                                      wFieldTmp_[i].cArray(), meshSize);
+         VecOp::addVV(wFieldTmp_[i], system().w().rgrid(i), randomField_);
 
       }
 

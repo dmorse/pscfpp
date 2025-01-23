@@ -7,6 +7,7 @@
 #include <rpg/System.h>
 
 #include <prdc/cuda/RField.h>
+#include <prdc/cuda/resources.h>
 
 #include <pscf/mesh/MeshIterator.h>
 #include <pscf/math/IntVec.h>
@@ -135,24 +136,15 @@ namespace Rpg {
       RField<D> psi;
       psi.allocate(kMeshDimensions_);
       
-      // GPU resources with meshSize threads
-      int nBlocks, nThreads;
-      ThreadGrid::setThreadsLogical(meshSize, nBlocks, nThreads);
-      
       // Conver W_(r) to fourier mode W_(k)
-      assignReal<<<nBlocks, nThreads>>>
-            (wc0_.cArray(), simulator().wc(0).cArray(), meshSize);
+      VecOp::eqV(wc0_, simulator().wc(0));
       system().fft().forwardTransform(wc0_, wK_);
       
-      // GPU resources with kSize threads
-      ThreadGrid::setThreadsLogical(kSize_, nBlocks, nThreads);
-      
       // Comput W_(k)^2
-      squaredMagnitudeComplex<<<nBlocks,nThreads>>>
-            (wK_.cArray(), psi.cArray(), kSize_);
+      VecOp::sqNormV(psi, wK_);
             
       // Obtain max[W_(k)^2]
-      maxOrderParameter_ = (double)gpuMaxAbs(psi.cArray(), kSize_);
+      maxOrderParameter_ = Reduce::maxAbs(psi);
    }
    
    /*

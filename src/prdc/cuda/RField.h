@@ -8,9 +8,9 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/cuda/DeviceDArray.h>
+#include "types.h"
+#include <pscf/cuda/DeviceArray.h>
 #include <pscf/cuda/HostDArray.h>
-#include <pscf/cuda/GpuResources.h>
 #include <pscf/math/IntVec.h>
 #include <util/global.h>
 
@@ -28,7 +28,7 @@ namespace Cuda {
    * \ingroup Prdc_Cuda_Module 
    */
    template <int D>
-   class RField : public DeviceDArray<cudaReal>
+   class RField : public DeviceArray<cudaReal>
    {
 
    public:
@@ -43,7 +43,7 @@ namespace Cuda {
       *
       * Allocates memory by calling allocate(meshDimensions) internally.
       *  
-      * \param meshDimensions dimensions of the associated Mesh<D>
+      * \param meshDimensions number of grid points in each dimension
       */
       RField(IntVec<D> const & meshDimensions);
 
@@ -64,13 +64,25 @@ namespace Cuda {
       virtual ~RField();
 
       /**
-      * Allocate the underlying C array for an FFT grid.
+      * Allocate the underlying C array for data on a regular mesh.
       *
       * \throw Exception if the RField is already allocated.
       *
-      * \param meshDimensions number of grid points in each direction
+      * \param meshDimensions number of grid points in each dimension
       */
       void allocate(IntVec<D> const & meshDimensions);
+
+      /**
+      * Associate this object with a slice of another DeviceArray.
+      *
+      * \throw Exception if the array is already allocated.
+      *
+      * \param arr parent array that owns the data
+      * \param beginId index in the parent array at which this array starts
+      * \param meshDimensions number of grid points in each dimension
+      */
+      void associate(DeviceArray<cudaReal>& arr, int beginId, 
+                     IntVec<D> const & meshDimensions);
 
       /**
       * Assignment operator, assignment from another RField<D>.
@@ -120,10 +132,13 @@ namespace Cuda {
       IntVec<D> meshDimensions_;
 
       // Make private to prevent allocation without mesh dimensions.
-      using DeviceDArray<cudaReal>::allocate;
+      using DeviceArray<cudaReal>::allocate;
 
-      // Make private to prevent assignment without mesh dimensions
-      using DeviceDArray<cudaReal>::operator=;
+      // Make private to prevent association without mesh dimensions.
+      using DeviceArray<cudaReal>::associate;
+
+      // Make private to prevent assignment without mesh dimensions.
+      using DeviceArray<cudaReal>::operator=;
 
    };
 
@@ -159,13 +174,11 @@ namespace Cuda {
       }
 
       if (isAllocated()) {
-         double* tempData = new double[capacity];
-         cudaMemcpy(tempData, data_, capacity * sizeof(cudaReal), 
-                    cudaMemcpyDeviceToHost);
+         HostDArray<cudaReal> tempData(capacity);
+         tempData = this; // copy this object's data from device to host
          for (int i = 0; i < capacity_; ++i) {
             ar & tempData[i];
          }
-         delete[] tempData;
       }
       ar & meshDimensions_;
    }

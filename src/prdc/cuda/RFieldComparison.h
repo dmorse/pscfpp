@@ -8,7 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <prdc/cuda/RField.h>
+#include "RField.h"
 #include <pscf/math/FieldComparison.h>
 
 namespace Pscf {

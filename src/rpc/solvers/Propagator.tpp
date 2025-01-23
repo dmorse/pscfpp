@@ -79,6 +79,8 @@ namespace Rpc {
       for (int i = 0; i < ns; ++i) {
          qFields_[i].allocate(meshPtr_->dimensions());
       }
+
+      setIsSolved(false);
    }
 
    /*

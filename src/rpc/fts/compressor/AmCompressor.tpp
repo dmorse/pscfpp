@@ -21,7 +21,7 @@ namespace Rpc{
    template <int D>
    AmCompressor<D>::AmCompressor(System<D>& system)
     : Compressor<D>(system),
-     isAllocated_(false)
+      isAllocated_(false)
    {  setClassName("AmCompressor"); }
 
    // Destructor

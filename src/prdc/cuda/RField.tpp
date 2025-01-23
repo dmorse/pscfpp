@@ -9,7 +9,6 @@
 */
 
 #include "RField.h"
-#include <pscf/cuda/HostDArray.h>
 
 namespace Pscf {
 namespace Prdc {
@@ -23,7 +22,7 @@ namespace Cuda {
    */
    template <int D>
    RField<D>::RField()
-    : DeviceDArray<cudaReal>()
+    : DeviceArray<cudaReal>()
    {}
 
    /**
@@ -31,19 +30,15 @@ namespace Cuda {
    */
    template <int D>
    RField<D>::RField(IntVec<D> const & meshDimensions)
-    : DeviceDArray<cudaReal>()
+    : DeviceArray<cudaReal>()
    {  allocate(meshDimensions); }
 
    /*
    * Copy constructor.
-   *
-   * Allocates new memory and copies all elements by value.
-   *
-   *\param other the Field to be copied.
    */
    template <int D>
    RField<D>::RField(const RField<D>& other)
-    : DeviceDArray<cudaReal>(other),
+    : DeviceArray<cudaReal>(other),
       meshDimensions_(0)
    {  meshDimensions_ = other.meshDimensions_; }
 
@@ -55,7 +50,7 @@ namespace Cuda {
    {}
 
    /*
-   * Allocate the underlying C array for an FFT grid.
+   * Allocate the underlying C array for data on a regular mesh.
    */
    template <int D>
    void RField<D>::allocate(IntVec<D> const & meshDimensions)
@@ -66,7 +61,23 @@ namespace Cuda {
          meshDimensions_[i] = meshDimensions[i];
          size *= meshDimensions[i];
       }
-      DeviceDArray<cudaReal>::allocate(size);
+      DeviceArray<cudaReal>::allocate(size);
+   }
+
+   /*
+   * Associate this object with a slice of another DeviceArray.
+   */
+   template <int D>
+   void RField<D>::associate(DeviceArray<cudaReal>& arr, int beginId, 
+                             IntVec<D> const & meshDimensions)
+   {
+      int size = 1;
+      for (int i = 0; i < D; ++i) {
+         UTIL_CHECK(meshDimensions[i] > 0);
+         meshDimensions_[i] = meshDimensions[i];
+         size *= meshDimensions[i];
+      }
+      DeviceArray<cudaReal>::associate(arr, beginId, size);
    }
 
    /*
@@ -75,7 +86,7 @@ namespace Cuda {
    template <int D>
    RField<D>& RField<D>::operator = (const RField<D>& other)
    {
-      DeviceDArray<cudaReal>::operator = (other);
+      DeviceArray<cudaReal>::operator = (other);
       meshDimensions_ = other.meshDimensions_;
 
       return *this;
@@ -99,7 +110,7 @@ namespace Cuda {
       }
 
       // Use base class assignment operator to copy elements
-      DeviceDArray<cudaReal>::operator = (other);
+      DeviceArray<cudaReal>::operator = (other);
 
       return *this;
    }

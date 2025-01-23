@@ -9,7 +9,6 @@
 */
 
 #include <prdc/cuda/CField.h>
-#include <pscf/cuda/GpuResources.h>
 #include <util/containers/DArray.h>
 
 namespace Pscf {

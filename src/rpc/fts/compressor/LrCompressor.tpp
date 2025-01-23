@@ -202,8 +202,8 @@ namespace Rpc{
          residK_[iter.rank()][1] *= 1.0 / (vMonomer * intraCorrelationK_[iter.rank()]);
       }
 
-      // Convert back to real Space
-      system().domain().fft().inverseTransform(residK_, resid_);
+      // Convert back to real Space (destroys residK_)
+      system().domain().fft().inverseTransformUnsafe(residK_, resid_);
 
       for (int i = 0; i < nMonomer; i++){
          for (int k = 0; k < meshSize; k++){

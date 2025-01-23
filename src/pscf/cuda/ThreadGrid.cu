@@ -2,6 +2,7 @@
 #define PSCF_THREADGRID_CU
 
 #include "ThreadGrid.h"
+#include <cuda_runtime.h>
 
 namespace {
 
@@ -20,6 +21,9 @@ namespace {
 
    // Total number of threads requested for execution. Set by setThreadsLogical.
    int THREADS_LOGICAL = -1;
+
+   // Number of threads per warp
+   int WARP_SIZE = -1;
 
    // Will threads go unused?
    bool UNUSED_THREADS;
@@ -58,11 +62,8 @@ namespace ThreadGrid {
       int threadsPerBlock = (maxThPerSM & (~(maxThPerSM - 1)));
       
       // Check for validity:
-      while (true) {
-         if (threadsPerBlock > dprop.maxThreadsPerBlock)
-            threadsPerBlock /= 2;
-         else
-            break;
+      while (threadsPerBlock > dprop.maxThreadsPerBlock) {
+         threadsPerBlock /= 2;
       }
 
       setThreadsPerBlock(threadsPerBlock);
@@ -125,33 +126,34 @@ namespace ThreadGrid {
       // Get relevant device hardware properties, assuming one device.
       cudaDeviceProp dprop;
       cudaGetDeviceProperties(&dprop, 0);
-      int warpSize = dprop.warpSize;
+      WARP_SIZE = dprop.warpSize;
       int maxThreadsPerMultiProcessor = dprop.maxThreadsPerMultiProcessor;
 
       // Check that threads per block is a power of two. 
       // This is required for parallel reductions.
       if ((MAX_THREADS_PER_BLOCK & (MAX_THREADS_PER_BLOCK - 1)) != 0) {
-         UTIL_THROW("Set number of threads per block must be a power of two.");
+         UTIL_THROW("Threads per block must be a power of two.");
       }
 
-      // Check that threads per block is multiple of warpSize.
+      // Check that threads per block is multiple of WARP_SIZE.
       // This is required because a warp is generally 32.
-      if (MAX_THREADS_PER_BLOCK%warpSize != 0)
+      if (MAX_THREADS_PER_BLOCK % WARP_SIZE != 0)
       {
          char buffer[100];
          sprintf(buffer, 
-           "Number of threads per block must be a multiple of warp size %d.\n",
-           warpSize);
+                 "Threads per block must be a multiple of warp size %d.\n",
+                 WARP_SIZE);
          UTIL_THROW(buffer);
       }
 
       // Check that the maximum number of threads per multiprocessor is an 
-      // integer multiple of the threads per block. This is not required for 
-      // validity, but performance will be suboptimal if not the case, as it 
-      // will limit the total number of threads that can be scheduled at any
-      // given time.
+      // integer multiple of the threads per block. This is not required 
+      // for validity, but performance will be suboptimal if not the case, 
+      // as it will limit the total number of threads that can be 
+      // scheduled at any given time.
 
-      if (maxThreadsPerMultiProcessor % MAX_THREADS_PER_BLOCK%warpSize != 0) {
+      if (maxThreadsPerMultiProcessor % MAX_THREADS_PER_BLOCK != 0) 
+      {
          std::cerr 
               << "WARNING: The number of threads per block (" 
               << MAX_THREADS_PER_BLOCK 
@@ -174,6 +176,9 @@ namespace ThreadGrid {
 
    int nThreadsLogical()
    { return THREADS_LOGICAL; }
+
+   int warpSize()
+   { return WARP_SIZE; }
 
    bool hasUnusedThreads()
    { return UNUSED_THREADS; }

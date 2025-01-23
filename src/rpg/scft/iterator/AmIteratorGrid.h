@@ -60,6 +60,7 @@ namespace Rpg
 
    protected:
 
+      using AmIteratorTmpl<Iterator<D>, FieldCUDA>::verbose;
       using ParamComposite::readOptional;
       using ParamComposite::setClassName;
       using Iterator<D>::system;
@@ -230,7 +231,7 @@ namespace Rpg
 
       // --- Private member functions specific to this implementation --- 
       
-      cudaReal findAverage(cudaReal const * field, int n);
+      cudaReal findAverage(FieldCUDA const & field);
 
    };
 

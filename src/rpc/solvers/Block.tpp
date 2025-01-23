@@ -440,8 +440,8 @@ namespace Rpc {
          qk2_[i][0] *= expKsq2_[i];
          qk2_[i][1] *= expKsq2_[i];
       }
-      fft().inverseTransform(qk_, qr_);
-      fft().inverseTransform(qk2_, qr2_);
+      fft().inverseTransformUnsafe(qk_, qr_); // destroys qk_
+      fft().inverseTransformUnsafe(qk2_, qr2_); // destroys qk2_
       for (i = 0; i < nx; ++i) {
          qr_[i] = qr_[i]*expW_[i];
          qr2_[i] = qr2_[i]*expW_[i];
@@ -453,7 +453,7 @@ namespace Rpc {
          qk2_[i][0] *= expKsq2_[i];
          qk2_[i][1] *= expKsq2_[i];
       }
-      fft().inverseTransform(qk2_, qr2_);
+      fft().inverseTransformUnsafe(qk2_, qr2_); // destroys qk2_
       for (i = 0; i < nx; ++i) {
          qr2_[i] = qr2_[i]*expW2_[i];
       }

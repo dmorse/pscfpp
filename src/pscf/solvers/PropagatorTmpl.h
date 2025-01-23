@@ -172,7 +172,7 @@ namespace Pscf
       bool isSolved() const;
  
       /**
-      * Are all source propagators are solved?
+      * Are all source propagators solved?
       */
       bool isReady() const;
  

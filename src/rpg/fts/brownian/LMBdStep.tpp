@@ -13,6 +13,7 @@
 #include <rpg/fts/brownian/BdSimulator.h>
 #include <rpg/fts/compressor/Compressor.h>
 #include <rpg/System.h>
+#include <prdc/cuda/VecOp.h>
 #include <pscf/math/IntVec.h>
 #include <pscf/cuda/CudaRandom.h>
 
@@ -81,13 +82,10 @@ namespace Rpg {
       const int nMonomer = system().mixture().nMonomer();
       const int meshSize = system().domain().mesh().size();
       
-      // GPU resources  
-      int nBlocks, nThreads;
-      ThreadGrid::setThreadsLogical(meshSize, nBlocks, nThreads);
-      
       // Prefactor b for displacements
       const double vSystem = system().domain().unitCell().volume();
       double b = sqrt(0.5*mobility_*double(meshSize)/vSystem);
+
       // Constants for normal distribution
       double stddev = 1.0;
       double mean = 0;
@@ -96,10 +94,9 @@ namespace Rpg {
       for (j = 0; j < nMonomer - 1; ++j) {
          RField<D>& eta = etaNew(j);
         
-         // Generagte normal distributed random floating point numbers
-         cudaRandom().normal(gaussianField_.cArray(), meshSize, (cudaReal)stddev, (cudaReal)mean);
-         scaleReal<<<nBlocks, nThreads>>>(gaussianField_.cArray(), b, meshSize);
-         assignReal<<<nBlocks, nThreads>>>(eta.cArray(), gaussianField_.cArray(), meshSize);
+         // Generate normal distributed random floating point numbers
+         cudaRandom().normal(gaussianField_, stddev, mean);
+         VecOp::mulVS(eta, gaussianField_, b);
       
       }
    }
@@ -153,15 +150,9 @@ namespace Rpg {
       // Save current state
       simulator().saveState();
       
-      // GPU resources
-      int nBlocks, nThreads;
-      ThreadGrid::setThreadsLogical(meshSize, nBlocks, nThreads);
-      
       // Copy current W fields from parent system into w_
-      DArray<RField<D>> const * Wr = &system().w().rgrid();
       for (i = 0; i < nMonomer; ++i) {
-         assignReal<<<nBlocks, nThreads>>>
-            (w_[i].cArray(), (*Wr)[i].cArray(), meshSize);
+         VecOp::eqV(w_[i], system().w().rgrid(i));
       }
 
       // Generate new random displacement values
@@ -176,15 +167,12 @@ namespace Rpg {
          RField<D> const & etaN = etaNew(j);
          RField<D> const & etaO = etaOld(j);
          RField<D> const & dc = simulator().dc(j);
-         pointWiseBinaryAdd<<<nBlocks, nThreads>>>
-            (etaN.cArray(), etaO.cArray(), dwc_.cArray(), meshSize);
-         pointWiseAddScale<<<nBlocks, nThreads>>>
-            (dwc_.cArray(), dc.cArray(), a, meshSize);
+         VecOp::addVcVcVc(dwc_, etaN, 1.0, etaO, 1.0, dc, a);
          // Loop over monomer types
          for (i = 0; i < nMonomer; ++i) {
             RField<D> & w = w_[i];
             evec = simulator().chiEvecs(j,i);
-            pointWiseAddScale<<<nBlocks, nThreads>>>(w.cArray(), dwc_.cArray(), evec, meshSize);
+            VecOp::addEqVc(w, dwc_, evec);
          }
       }
 

@@ -8,16 +8,21 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
+#include <prdc/cuda/RField.h>            // member array
+#include <pscf/cuda/DeviceArray.h>       // member array
 #include <pscf/solvers/PropagatorTmpl.h> // base class template
-#include <prdc/cuda/RField.h>          // member template
-#include <util/containers/DArray.h>      // member template
-
-namespace Pscf { template <int D> class Mesh; }
+#include <util/containers/DArray.h>      // member array
 
 namespace Pscf { 
+
+   // Forward declaration
+   template <int D> class Mesh;
+
 namespace Rpg { 
 
+   // Forward declaration
    template <int D> class Block;
+
    using namespace Util;
    using namespace Pscf::Prdc;
    using namespace Pscf::Prdc::Cuda;
@@ -49,7 +54,7 @@ namespace Rpg {
 
    public:
 
-      // Public typedefs
+      // Public typedefs (used by template classes)
 
       /**
       * Generic field (function of position).
@@ -91,12 +96,27 @@ namespace Rpg {
       void setBlock(Block<D>& block);
 
       /**
-      * Associate this propagator with a block.
+      * Allocate propagator arrays.
       * 
-      * \param ns number of contour length steps
+      * \param ns number of points along chain contour
       * \param mesh spatial discretization mesh
       */ 
       void allocate(int ns, const Mesh<D>& mesh);
+
+      /**
+      * Reallocate memory used by this propagator.
+      * 
+      * This function is used when the value of ns is changed,
+      * which occurs during some parameter sweeps. 
+      * 
+      * The parameter ns is the number of values of s at which
+      * q(r,s) is calculated, including the end values at the
+      * terminating vertices. This is one more than the number 
+      * of contour variable steps. 
+      * 
+      * \param ns number of points along chain contour
+      */ 
+      void reallocate(int ns);
 
       /**
       * Solve the modified diffusion equation (MDE) for this block.
@@ -119,7 +139,7 @@ namespace Rpg {
       *
       * \param head initial condition of QField at head of block
       */
-      void solve(const cudaReal * head);
+      void solve(RField<D> const & head);
  
       /**
       * Compute and return partition function for the molecule.
@@ -129,23 +149,28 @@ namespace Rpg {
       * for this propagator and the final / tail Qfield of its partner. 
       */ 
       double computeQ();
-
+      
       /**
-      * Return q-field at specified step.
+      * Return const q-field at specified step by reference (after solving).
       *
       * \param i step index
       */
-      const cudaReal* q(int i) const;
+      RField<D> const & q(int i) const;
 
       /**
       * Return q-field at beginning of block (initial condition).
       */
-      cudaReal* head() const;
+      RField<D> const & head();
 
       /**
-      * Return q-field at end of block.
+      * Return q-field at end of block (after propagator is solved).
       */
-      const cudaReal* tail() const;
+      RField<D> const & tail() const;
+
+      /**
+      * Return the full array of q-fields (after propagator is solved).
+      */
+      DeviceArray<cudaReal> const & qAll();
 
       /**
       * Get the associated Block object by reference.
@@ -158,7 +183,7 @@ namespace Rpg {
       Block<D> const & block() const;
 
       /**
-      * Get the number of contour grid points.
+      * Get the number of chain contour points.
       */
       int ns() const;
 
@@ -183,11 +208,24 @@ namespace Rpg {
 
    private:
 
-      // new array purely in device
-      cudaReal* qFields_d;
-      // Workspace
-      // removing this. Does not seem to be used anywhere
-      //QField work_;
+      /**
+      * Array containing the entire propagator, stored on the device.
+      * 
+      * The propagator data is stored contiguously to allow batched FFTs
+      * to be performed on all contour steps simultaneously, which occurs
+      * in Block::computeStress.
+      */
+      DeviceArray<cudaReal> qFieldsAll_;
+
+      /**
+      * Array of RFields, each associated with a slice of qFieldsAll_.
+      * 
+      * These RFields will act as reference arrays that point to slices of
+      * qFieldsAll_. Each slice will have Mesh.size() elements and 
+      * correspond to a single contour point, and there will be ns_ of
+      * these reference arrays.
+      */
+      DArray<RField<D> > qFields_;
 
       /// Pointer to associated Block.
       Block<D>* blockPtr_;
@@ -195,7 +233,7 @@ namespace Rpg {
       /// Pointer to associated Mesh
       Mesh<D> const * meshPtr_;
 
-      /// Number of contour length steps = # grid points - 1.
+      /// Number of chain contour positions (= # contour steps + 1).
       int ns_;
 
       /// Is this propagator allocated?
@@ -210,24 +248,44 @@ namespace Rpg {
    */
    template <int D>
    inline 
-   cudaReal* Propagator<D>::head() const
-   {  return qFields_d; }
+   RField<D> const & Propagator<D>::head()
+   {  
+      UTIL_CHECK(isAllocated());
+      return qFields_[0];
+   }
 
    /*
    * Return q-field at end of block, after solution.
    */
    template <int D>
    inline 
-   const cudaReal* Propagator<D>::tail() const
-   {  return qFields_d + ((ns_-1) * meshPtr_->size()); }
+   RField<D> const & Propagator<D>::tail() const
+   {  
+      UTIL_CHECK(isSolved());
+      return qFields_[ns_-1];
+   }
 
    /*
-   * Return q-field at specified step.
+   * Return const q-field at specified step by reference.
    */
    template <int D>
    inline 
-   const cudaReal* Propagator<D>::q(int i) const
-   {  return qFields_d + (i * meshPtr_->size()); }
+   RField<D> const & Propagator<D>::q(int i) const
+   {  
+      UTIL_CHECK(isSolved());
+      return qFields_[i];
+   }
+
+   /*
+   * Return the full array of q-fields.
+   */
+   template <int D>
+   inline 
+   DeviceArray<cudaReal> const & Propagator<D>::qAll()
+   {  
+      UTIL_CHECK(isSolved());
+      return qFieldsAll_;
+   }
 
    /*
    * Get the associated Block object (non-const reference)
@@ -252,7 +310,7 @@ namespace Rpg {
    }
 
    /*
-   * Get the number ns of contour grid points.
+   * Get the number ns of chain contour points.
    */
    template <int D>
    inline 
@@ -282,6 +340,4 @@ namespace Rpg {
 
 }
 }
-
-//#include "Propagator.tpp" 
 #endif

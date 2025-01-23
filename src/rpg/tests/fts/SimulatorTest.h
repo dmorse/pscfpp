@@ -8,6 +8,7 @@
 #include <rpg/fts/simulator/Simulator.h>
 #include <prdc/cuda/RField.h> 
 #include <prdc/cuda/RFieldComparison.h>
+#include <prdc/cuda/resources.h>
 #include <pscf/math/IntVec.h>
 #include <util/containers/DArray.h>  
 
@@ -141,36 +142,25 @@ public:
       wcTest1.allocate(dimensions);
       RField<3> wcTest2;
       wcTest2.allocate(dimensions);
-      int nBlocks, nThreads;
-      ThreadGrid::setThreadsLogical(meshSize, nBlocks, nThreads);
-      /// TEST_ASSERT(fabs( w[0][i] - wc[0][i] - wc[1][i] ) < 1.0E-6);
-      pointWiseBinarySubtract<<<nBlocks, nThreads>>>
-         (w[0].cArray(), wc[0].cArray(), wcTest1.cArray(), meshSize);
-      pointWiseSubtract<<<nBlocks, nThreads>>>
-         (wcTest1.cArray(), wc[1].cArray(), meshSize);
-      TEST_ASSERT((double)gpuMaxAbs(wcTest1.cArray(), meshSize)< 1.0E-6);
-      
-      /// TEST_ASSERT(fabs( w[0][i] - w[1][i] - 2.0*wc[0][i] ) < 1.0E-6);
-      pointWiseBinarySubtract<<<nBlocks, nThreads>>>
-         (w[0].cArray(), w[1].cArray(), wcTest2.cArray(), meshSize);
-      pointWiseAddScale<<<nBlocks, nThreads>>>
-         (wcTest2.cArray(), wc[0].cArray(), -2.0, meshSize);
-      TEST_ASSERT((double)gpuMaxAbs(wcTest2.cArray(), meshSize)< 1.0E-6);
 
+      // wcTest1 = w[0] - wc[0] - wc[1]
+      VecOp::addVcVcVc(wcTest1, w[0], 1.0, wc[0], -1.0, wc[1], -1.0);
+      TEST_ASSERT(Reduce::maxAbs(wcTest1) < 1.0E-6);
+      
+      // wcTest2 = w[0] - w[1] - 2.0*wc[0]
+      VecOp::addVcVcVc(wcTest2, w[0], 1.0, w[1], -1.0, wc[0], -2.0);
+      TEST_ASSERT(Reduce::maxAbs(wcTest2) < 1.0E-6);
 
       // Test cc field
       RField<3> ccTest;
       ccTest.allocate(dimensions);
-      ///TEST_ASSERT(fabs( c[0][i] - c[1][i] - cc[0][i] ) < 1.0E-6);
-      pointWiseBinarySubtract<<<nBlocks, nThreads>>>
-         (c[0].cArray(), c[1].cArray(), ccTest.cArray(), meshSize);
-      pointWiseSubtract<<<nBlocks, nThreads>>>
-         (ccTest.cArray(), cc[0].cArray(), meshSize);
-      TEST_ASSERT((double)gpuMaxAbs(ccTest.cArray(), meshSize)< 1.0E-6);
+      
+      // ccTest = c[0] - c[1] - cc[0]
+      VecOp::addVcVcVc(ccTest, c[0], 1.0, c[1], -1.0, cc[0], -1.0);
+      TEST_ASSERT(Reduce::maxAbs(ccTest) < 1.0E-6);
       
       // Test dc field
-      // diff = fabs( dc[0][i] );
-      TEST_ASSERT((double)gpuMaxAbs(dc[0].cArray(), meshSize) < 1.0E-8);
+      TEST_ASSERT(Reduce::maxAbs(dc[0]) < 1.0E-6);
 
       #if 0
       std::cout << std::endl;

@@ -19,9 +19,8 @@
 #include <rpg/scft/iterator/IteratorFactory.h>
 
 #include <prdc/cuda/RField.h>
+#include <prdc/cuda/resources.h>
 
-#include <pscf/cuda/GpuResources.h>
-#include <pscf/cuda/DeviceDArray.h>
 #include <pscf/inter/Interaction.h>
 #include <pscf/math/IntVec.h>
 #include <pscf/homogeneous/Clump.h>
@@ -243,8 +242,9 @@ namespace Rpg {
       UTIL_CHECK(domain_.unitCell().lattice() != UnitCell<D>::Null);
 
       // Setup mixture
-      mixture_.setDiscretization(domain_.mesh(), fft());
-      mixture_.setupUnitCell(domain_.unitCell());
+      mixture_.associate(domain_.mesh(), fft(), 
+                         domain_.unitCell(), domain_.waveList());
+      mixture_.allocate();
 
       // Allocate memory for w and c fields
       allocateFieldsGrid();
@@ -553,7 +553,6 @@ namespace Rpg {
          readFieldHeader(filename);
       }
       UTIL_CHECK(domain_.unitCell().isInitialized());
-      UTIL_CHECK(domain_.waveList().hasMinimumImages());
       UTIL_CHECK(domain_.basis().isInitialized());
       UTIL_CHECK(domain_.basis().nBasis() > 0);
       if (!isAllocatedBasis_) {
@@ -566,9 +565,8 @@ namespace Rpg {
       hasFreeEnergy_ = false;
 
       // Update wavelist and mixture
-      domain_.waveList().computeKSq(domain_.unitCell());
-      domain_.waveList().computedKSq(domain_.unitCell());
-      mixture_.setupUnitCell(domain_.unitCell(), domain_.waveList());
+      domain_.waveList().updateUnitCell();
+      mixture_.updateUnitCell();
    }
 
    template <int D>
@@ -581,7 +579,6 @@ namespace Rpg {
          readFieldHeader(filename);
       }
       UTIL_CHECK(domain_.unitCell().isInitialized());
-      UTIL_CHECK(domain_.waveList().hasMinimumImages());
       if (domain_.hasGroup() && !isAllocatedBasis_) {
          UTIL_CHECK(domain_.basis().isInitialized());
          UTIL_CHECK(domain_.basis().nBasis() > 0);
@@ -594,9 +591,8 @@ namespace Rpg {
       hasFreeEnergy_ = false;
 
       // Update waveList and mixture
-      domain_.waveList().computeKSq(domain_.unitCell());
-      domain_.waveList().computedKSq(domain_.unitCell());
-      mixture_.setupUnitCell(domain_.unitCell(), domain_.waveList());
+      domain_.waveList().updateUnitCell();
+      mixture_.updateUnitCell();
    }
 
    /*
@@ -619,7 +615,6 @@ namespace Rpg {
          readFieldHeader(filename);
       }
       UTIL_CHECK(domain_.unitCell().isInitialized());
-      UTIL_CHECK(domain_.waveList().hasMinimumImages());
       UTIL_CHECK(domain_.basis().isInitialized());
       if (!isAllocatedBasis_) {
          allocateFieldsBasis();
@@ -655,9 +650,8 @@ namespace Rpg {
       hasFreeEnergy_ = false;
 
       // Update waveList and mixture
-      domain_.waveList().computeKSq(domain_.unitCell());
-      domain_.waveList().computedKSq(domain_.unitCell());
-      mixture_.setupUnitCell(domain_.unitCell(), domain_.waveList());
+      domain_.waveList().updateUnitCell();
+      mixture_.updateUnitCell();
    }
 
    /*
@@ -691,7 +685,7 @@ namespace Rpg {
    * Set new w-field values, using unfoldeded array of r-grid fields.
    */
    template <int D>
-   void System<D>::setWRGrid(DeviceDArray<cudaReal> & fields)
+   void System<D>::setWRGrid(DeviceArray<cudaReal> & fields)
    {
       UTIL_CHECK(isAllocatedGrid_);
       w_.setRGrid(fields);
@@ -716,8 +710,9 @@ namespace Rpg {
    {
       domain_.setUnitCell(unitCell);
       // Note - Domain::setUnitCell updates the WaveList
-      mixture_.setupUnitCell(unitCell, domain_.waveList());
+      mixture_.updateUnitCell();
       if (domain_.hasGroup() && !isAllocatedBasis_) {
+         UTIL_CHECK(domain_.basis().isInitialized());
          allocateFieldsBasis();
       }
    }
@@ -732,8 +727,9 @@ namespace Rpg {
    {
       domain_.setUnitCell(lattice, parameters);
       // Note - Domain::setUnitCell updates the WaveList
-      mixture_.setupUnitCell(domain_.unitCell(), domain_.waveList());
+      mixture_.updateUnitCell();
       if (domain_.hasGroup() && !isAllocatedBasis_) {
+         UTIL_CHECK(domain_.basis().isInitialized());
          allocateFieldsBasis();
       }
    }
@@ -746,8 +742,9 @@ namespace Rpg {
    {
       domain_.setUnitCell(parameters);
       // Note - Domain::setUnitCell updates the WaveList
-      mixture_.setupUnitCell(domain_.unitCell(), domain_.waveList());
+      mixture_.updateUnitCell();
       if (domain_.hasGroup() && !isAllocatedBasis_) {
+         UTIL_CHECK(domain_.basis().isInitialized());
          allocateFieldsBasis();
       }
    }
@@ -777,7 +774,7 @@ namespace Rpg {
 
       // Compute stress if needed
       if (needStress) {
-         mixture_.computeStress(domain_.waveList());
+         mixture_.computeStress();
       }
    }
 
@@ -811,7 +808,7 @@ namespace Rpg {
 
       if (!error) {
          if (!iterator().isFlexible()) {
-            mixture_.computeStress(domain_.waveList());
+            mixture_.computeStress();
          }
          computeFreeEnergy();
          writeThermo(Log::file());
@@ -904,34 +901,30 @@ namespace Rpg {
       int nm  = mixture_.nMonomer();
       int nx = domain_.mesh().size();
 
-      // GPU resources
-      int nBlocks, nThreads;
-      ThreadGrid::setThreadsLogical(nx, nBlocks, nThreads);
-
       // Compute Legendre transform subtraction
       double temp = 0.0;
       for (int i = 0; i < nm; i++) {
-         pointWiseBinaryMultiply<<<nBlocks,nThreads>>>
-             (w_.rgrid(i).cArray(), c_.rgrid()[i].cArray(),
-              workArray_.cArray(), nx);
-         temp += gpuSum(workArray_.cArray(),nx) / double(nx);
+         temp += Reduce::innerProduct(w_.rgrid(i), c_.rgrid(i)) / double(nx);
       }
       fHelmholtz_ -= temp;
       fIdeal_ = fHelmholtz_;
 
       // Compute excess interaction free energy
+      fInter_ = 0.0;
       for (int i = 0; i < nm; ++i) {
-         for (int j = i + 1; j < nm; ++j) {
-           assignUniformReal<<<nBlocks, nThreads>>>
-               (workArray_.cArray(), interaction().chi(i, j), nx);
-           inPlacePointwiseMul<<<nBlocks, nThreads>>>
-               (workArray_.cArray(), c_.rgrid()[i].cArray(), nx);
-           inPlacePointwiseMul<<<nBlocks, nThreads>>>
-               (workArray_.cArray(), c_.rgrid()[j].cArray(), nx);
-           fHelmholtz_ += gpuSum(workArray_.cArray(), nx) / double(nx);
+         for (int j = i; j < nm; ++j) {
+            const double chi = interaction().chi(i,j);
+            if (fabs(chi) > 1.0E-9) {
+               temp = Reduce::innerProduct(c_.rgrid(i), c_.rgrid(j));
+               if (i == j) {
+                  fInter_ += 0.5 * chi * temp / nx;
+               } else {
+                  fInter_ += chi * temp / nx;
+               }
+            }
          }
       }
-      fInter_ = fHelmholtz_ - fIdeal_;
+      fHelmholtz_ += fInter_;
 
       // Initialize pressure
       pressure_ = -fHelmholtz_;
@@ -1157,14 +1150,8 @@ namespace Rpg {
       UTIL_CHECK(directionId <= 1);
       Propagator<D> const&
           propagator = polymer.propagator(blockId, directionId);
-      RField<D> field;
-      field.allocate(domain_.mesh().dimensions());
-      cudaMemcpy(field.cArray(), propagator.q(segmentId),
-                 domain_.mesh().size() * sizeof(cudaReal),
-                 cudaMemcpyDeviceToDevice);
-      fieldIo().writeFieldRGrid(filename, field,
-                                domain_.unitCell(),
-                                w_.isSymmetric());
+      fieldIo().writeFieldRGrid(filename, propagator.q(segmentId),
+                                domain_.unitCell(), w_.isSymmetric());
    }
 
    /*
@@ -1184,14 +1171,8 @@ namespace Rpg {
       UTIL_CHECK(directionId <= 1);
       Propagator<D> const&
           propagator = polymer.propagator(blockId, directionId);
-      RField<D> field;
-      field.allocate(domain_.mesh().dimensions());
-      cudaMemcpy(field.cArray(), propagator.tail(),
-                 domain_.mesh().size()*sizeof(cudaReal),
-                 cudaMemcpyDeviceToDevice);
-      fieldIo().writeFieldRGrid(filename, field,
-                                domain_.unitCell(),
-                                w_.isSymmetric());
+      fieldIo().writeFieldRGrid(filename, propagator.tail(),
+                                domain_.unitCell(), w_.isSymmetric());
    }
 
    /*
@@ -1226,15 +1207,10 @@ namespace Rpg {
            << "          " << ns << std::endl;
 
       // Write data
-      RField<D> field;
-      field.allocate(domain_.mesh().dimensions());
       bool hasHeader = false;
       for (int i = 0; i < ns; ++i) {
           file << "slice " << i << std::endl;
-          cudaMemcpy(field.cArray(), propagator.q(i),
-                     domain_.mesh().size() * sizeof(cudaReal),
-                     cudaMemcpyDeviceToDevice);
-          fieldIo().writeFieldRGrid(file, field,
+          fieldIo().writeFieldRGrid(file, propagator.q(i),
                                     domain_.unitCell(), hasHeader);
       }
    }
@@ -1385,7 +1361,7 @@ namespace Rpg {
       UnitCell<D> tmpUnitCell;
       fieldIo().readFieldsKGrid(inFileName, tmpFieldsKGrid_, tmpUnitCell);
       for (int i = 0; i < mixture_.nMonomer(); ++i) {
-         fft().inverseTransform(tmpFieldsKGrid_[i], tmpFieldsRGrid_[i]);
+         fft().inverseTransformUnsafe(tmpFieldsKGrid_[i], tmpFieldsRGrid_[i]);
       }
       fieldIo().writeFieldsRGrid(outFileName, tmpFieldsRGrid_,
                                  tmpUnitCell);
@@ -1571,7 +1547,6 @@ namespace Rpg {
       UTIL_CHECK(domain_.unitCell().nParameter() > 0);
       UTIL_CHECK(domain_.unitCell().lattice() != UnitCell<D>::Null);
       UTIL_CHECK(domain_.unitCell().isInitialized());
-      UTIL_CHECK(domain_.waveList().hasMinimumImages());
       if (domain_.hasGroup()) {
          UTIL_CHECK(domain_.basis().isInitialized());
          UTIL_CHECK(domain_.basis().nBasis() > 0);

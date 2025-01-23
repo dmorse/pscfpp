@@ -16,6 +16,8 @@
 #include <rpg/fts/perturbation/PerturbationFactory.h>
 #include <rpg/fts/ramp/Ramp.h>
 #include <rpg/fts/ramp/RampFactory.h>
+#include <rpg/fts/VecOpFts.h>
+#include <prdc/cuda/resources.h>
 #include <pscf/math/IntVec.h>
 #include <util/misc/Timer.h>
 #include <util/random/Random.h>
@@ -47,12 +49,12 @@ namespace Rpg {
       hasCc_(false),
       hasDc_(false),
       systemPtr_(&system),
-      compressorFactoryPtr_(0),
-      compressorPtr_(0),
-      perturbationFactoryPtr_(0),
-      perturbationPtr_(0),
-      rampFactoryPtr_(0),
-      rampPtr_(0),
+      compressorFactoryPtr_(nullptr),
+      compressorPtr_(nullptr),
+      perturbationFactoryPtr_(nullptr),
+      perturbationPtr_(nullptr),
+      rampFactoryPtr_(nullptr),
+      rampPtr_(nullptr),
       isAllocated_(false)
    {  
       setClassName("Simulator"); 
@@ -190,10 +192,6 @@ namespace Rpg {
       const int nMonomer = mixture.nMonomer();
       const int meshSize = domain.mesh().size();
       
-      // GPU resources
-      int nBlocks, nThreads;
-      ThreadGrid::setThreadsLogical(meshSize, nBlocks, nThreads);
-
       const int np = mixture.nPolymer();
       const int ns = mixture.nSolvent();
       double phi, mu;
@@ -232,8 +230,7 @@ namespace Rpg {
       }
       
       // Add average of pressure field wc_[nMonomer-1] to lnQ
-      double sum_xi = 
-           (double)gpuSum(wc_[nMonomer-1].cArray(), meshSize);
+      double sum_xi = Reduce::sum(wc_[nMonomer-1]);
       lnQ += sum_xi/double(meshSize);
       
       // lnQ now contains a value per monomer
@@ -248,14 +245,11 @@ namespace Rpg {
          prefactor = -0.5*double(nMonomer)/chiEvals_[j];
          // Obtain constant shift
          s = sc_[j];
-         // Subtract of constat shift s
-         assignRealSubtractDouble<<<nBlocks, nThreads>>>
-            (wcs_.cArray(), wc_[j].cArray(), s, meshSize);
+         // Subtract of constant shift s
+         VecOp::subVS(wcs_, wc_[j], s);
          // Compute quadratic field contribution to HW
          double wSqure = 0;
-         wSqure = 
-              (double)gpuInnerProduct(wcs_.cArray(), 
-                                      wcs_.cArray(), meshSize);
+         wSqure = Reduce::innerProduct(wcs_, wcs_);
          HW += prefactor * wSqure;
       }
       
@@ -459,20 +453,14 @@ namespace Rpg {
       UTIL_CHECK(isAllocated_);
 
       const int nMonomer = system().mixture().nMonomer();
-      const int meshSize = system().domain().mesh().size();
       int i,j;
 
-      // GPU resources
-      int nBlocks, nThreads;
-      ThreadGrid::setThreadsLogical(meshSize, nBlocks, nThreads);
-      
-      DArray<RField<D>> const * Wr = &system().w().rgrid();
       // Loop over eigenvectors (i is an eigenvector index)
       for (i = 0; i < nMonomer; ++i) {
 
          // Loop over grid points to zero out field wc_[i]
          RField<D>& Wc = wc_[i];
-         assignUniformReal<<<nBlocks, nThreads>>>(Wc.cArray(), 0, meshSize);
+         VecOp::eqS(Wc, 0.0);
 
          // Loop over monomer types (j is a monomer index)
          for (j = 0; j < nMonomer; ++j) {
@@ -480,8 +468,7 @@ namespace Rpg {
             vec = (cudaReal) chiEvecs_(i, j)/nMonomer;
 
             // Loop over grid points
-            pointWiseAddScale<<<nBlocks, nThreads>>>
-               (Wc.cArray(), (*Wr)[j].cArray(), vec, meshSize);
+            VecOp::addEqVc(Wc, system().w().rgrid(j), vec);
          }
       }
       
@@ -508,19 +495,14 @@ namespace Rpg {
       UTIL_CHECK(system().hasCFields());
 
       const int nMonomer = system().mixture().nMonomer();
-      const int meshSize = system().domain().mesh().size();
       int i, j;
-      // GPU resources
-      int nBlocks, nThreads;
-      ThreadGrid::setThreadsLogical(meshSize, nBlocks, nThreads);
 
-      DArray<RField<D>> const * Cr = &system().c().rgrid();
       // Loop over eigenvectors (i is an eigenvector index)
       for (i = 0; i < nMonomer; ++i) {
          
          // Set cc_[i] to zero
          RField<D>& Cc = cc_[i];
-         assignUniformReal<<<nBlocks, nThreads>>>(Cc.cArray(), 0, meshSize);
+         VecOp::eqS(Cc, 0.0);
 
          // Loop over monomer types 
          for (j = 0; j < nMonomer; ++j) {
@@ -528,8 +510,7 @@ namespace Rpg {
             vec = (cudaReal)chiEvecs_(i, j);
             
             // Loop over grid points
-            pointWiseAddScale<<<nBlocks, nThreads>>>
-               (Cc.cArray(), (*Cr)[j].cArray(), vec, meshSize);
+            VecOp::addEqVc(Cc, system().c().rgrid(j), vec);
          }
       }
       
@@ -555,16 +536,11 @@ namespace Rpg {
       if (!hasCc_) computeCc();
 
       // Local constants and variables
-      const int meshSize = system().domain().mesh().size();
       const int nMonomer = system().mixture().nMonomer();
       const double vMonomer = system().mixture().vMonomer();
       const double a = 1.0/vMonomer;
       double b, s;
       int i;
-      
-      // GPU resources
-      int nBlocks, nThreads;
-      ThreadGrid::setThreadsLogical(meshSize, nBlocks, nThreads);
       
       // Loop over composition eigenvectors (exclude the last)
       for (i = 0; i < nMonomer - 1; ++i) {
@@ -575,8 +551,7 @@ namespace Rpg {
          s = sc_[i];
           
          // Loop over grid points
-         computeDField<<<nBlocks, nThreads>>>
-            (Dc.cArray(), Wc.cArray(), Cc.cArray(), a, b, s, meshSize);
+         VecOpFts::computeDField(Dc, Wc, Cc, a, b, s);
       }
       
       // Add derivatives arising from a perturbation (if any).
@@ -602,26 +577,18 @@ namespace Rpg {
 
       // Set fields
       int nMonomer = system().mixture().nMonomer(); 
-      int meshSize = system().domain().mesh().size();
-      
-      // GPU resources
-      int nBlocks, nThreads;
-      ThreadGrid::setThreadsLogical(meshSize, nBlocks, nThreads);
       
       // Set field components
       for (int i = 0; i < nMonomer; ++i) {
-         assignReal<<<nBlocks, nThreads>>> (state_.w[i].cArray(), 
-             system().w().rgrid(i).cArray(), meshSize);
-         assignReal<<<nBlocks, nThreads>>>
-            (state_.wc[i].cArray(), wc_[i].cArray(), meshSize);
+         VecOp::eqV(state_.w[i], system().w().rgrid(i));
+         VecOp::eqV(state_.wc[i], wc_[i]);
       }
       
       // Save cc based on ccSavePolicy
       if (state_.needsCc) {
          UTIL_CHECK(hasCc());
          for (int i = 0; i < nMonomer; ++i) {
-            assignReal<<<nBlocks, nThreads>>>
-               (state_.cc[i].cArray(), cc_[i].cArray(), meshSize);
+            VecOp::eqV(state_.cc[i], cc_[i]);
          }
       }
       
@@ -629,8 +596,7 @@ namespace Rpg {
       if (state_.needsDc) {
          UTIL_CHECK(hasDc());
          for (int i = 0; i < nMonomer - 1; ++i) {
-            assignReal<<<nBlocks, nThreads>>>
-               (state_.dc[i].cArray(), dc_[i].cArray(), meshSize);
+            VecOp::eqV(state_.dc[i], dc_[i]);
          }
       }
       
@@ -663,10 +629,6 @@ namespace Rpg {
       UTIL_CHECK(state_.hasData);
       int nMonomer = system().mixture().nMonomer();
       int meshSize = system().domain().mesh().size();
-      
-      // GPU resources
-      int nBlocks, nThreads;
-      ThreadGrid::setThreadsLogical(meshSize, nBlocks, nThreads);
 
       // Restore fields
       system().setWRGrid(state_.w); 
@@ -681,23 +643,20 @@ namespace Rpg {
       }
       
       for (int i = 0; i < nMonomer; ++i) {
-         assignReal<<<nBlocks, nThreads>>>
-            (wc_[i].cArray(), state_.wc[i].cArray(), meshSize);
+         VecOp::eqV(wc_[i], state_.wc[i]);
       }
       hasWc_ = true;
       
       if (state_.needsCc) {
          for (int i = 0; i < nMonomer; ++i) {
-            assignReal<<<nBlocks, nThreads>>>
-               (cc_[i].cArray(), state_.cc[i].cArray(), meshSize);
+            VecOp::eqV(cc_[i], state_.cc[i]);
          }
          hasCc_ = true;
       }
       
       if (state_.needsDc) {
          for (int i = 0; i < nMonomer - 1; ++i) {
-            assignReal<<<nBlocks, nThreads>>>
-               (dc_[i].cArray(), state_.dc[i].cArray(), meshSize);
+            VecOp::eqV(dc_[i], state_.dc[i]);
          }
          hasDc_ = true;
       }

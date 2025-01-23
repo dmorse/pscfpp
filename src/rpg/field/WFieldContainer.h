@@ -10,10 +10,10 @@
 
 
 
-#include <prdc/cuda/RField.h>            // member template parameter
+#include <prdc/cuda/RField.h>              // member template parameter
 #include <prdc/crystal/UnitCell.h>         // function parameter
 #include <pscf/math/IntVec.h>              // function parameter
-#include <pscf/cuda/DeviceDArray.h>        // function parameter
+#include <pscf/cuda/DeviceArray.h>         // function parameter
 #include <util/param/ParamComposite.h>     // base class
 #include <util/containers/DArray.h>        // member template
 
@@ -159,7 +159,7 @@ namespace Rpg {
       *
       * \param fields  unfolded array of new w (chemical potential) fields
       */
-      void setRGrid(DeviceDArray<cudaReal> & fields);
+      void setRGrid(DeviceArray<cudaReal> & fields);
 
       /**
       * Read field component values from input stream, in symmetrized 
