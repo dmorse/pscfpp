@@ -101,9 +101,9 @@ namespace Rpg
       void allocate();
 
       /**
-      * Update solvers to account for new lattice parameters.
+      * Clear data that depends on lattice parameters in all solvers.
       */
-      void updateUnitCell();
+      void clearUnitCellData();
 
       /**
       * Reset statistical segment length for one monomer type.

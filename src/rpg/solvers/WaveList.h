@@ -29,7 +29,7 @@ namespace Rpg {
    * In particular, minimum images, square norms of wavevectors (kSq), and 
    * derivatives of the square norms of wavevectors with respect to the 
    * lattice parameters (dKSq) are calculated and stored by this class. 
-   * Any time the lattice parameters change the updateUnitCell() method 
+   * Any time the lattice parameters change the clearUnitCellData() method 
    * should be called, which will effectively reset the WaveList object so
    * that the wavevector properties will need to be recalculated before 
    * being used.
@@ -58,12 +58,12 @@ namespace Rpg {
       void allocate(Mesh<D> const & m, UnitCell<D> const & c);
 
       /**
-      * Reset internal data assuming that lattice parameters have changed.
+      * Clear all internal data that depends on lattice parameters.
       * 
       * Sets hasKSq_ and hasdKSq_ to false, and sets hasMinimumImages_ to
       * false if hasVariableAngle == true.
       */
-      void updateUnitCell();
+      void clearUnitCellData();
 
       /**
       * Compute minimum images of wavevectors. (Also calculates kSq.)

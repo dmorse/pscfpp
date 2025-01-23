@@ -162,7 +162,7 @@ namespace Rpg {
       unitCell_ = unitCell;
 
       UTIL_CHECK(waveList().isAllocated());
-      waveList().updateUnitCell(); // reset wavelist
+      waveList().clearUnitCellData(); // reset wavelist
 
       if (hasGroup_ && !basis_.isInitialized()) {
          makeBasis();
@@ -184,7 +184,7 @@ namespace Rpg {
       unitCell_.set(lattice, parameters);
 
       UTIL_CHECK(waveList().isAllocated());
-      waveList().updateUnitCell(); // reset wavelist
+      waveList().clearUnitCellData(); // reset wavelist
 
       if (hasGroup_ && !basis_.isInitialized()) {
          makeBasis();
@@ -202,7 +202,7 @@ namespace Rpg {
       unitCell_.setParameters(parameters);
       
       UTIL_CHECK(waveList().isAllocated());
-      waveList().updateUnitCell(); // reset wavelist
+      waveList().clearUnitCellData(); // reset wavelist
 
       if (hasGroup_ && !basis_.isInitialized()) {
          makeBasis();

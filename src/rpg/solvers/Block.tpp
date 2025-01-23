@@ -266,10 +266,10 @@ namespace Rpg {
    }
 
    /*
-   * Upon changing lattice parameters, update this object.
+   * Clear all internal data that depends on lattice parameters.
    */
    template <int D>
-   void Block<D>::updateUnitCell()
+   void Block<D>::clearUnitCellData()
    {
       UTIL_CHECK(unitCellPtr_);
       UTIL_CHECK(nParams_ == unitCell().nParameter());

@@ -115,18 +115,13 @@ namespace Rpg {
       void allocate(double ds, bool useBatchedFFT = true);
 
       /**
-      * Upon changing lattice parameters, update this object.
+      * Clear all internal data that depends on lattice parameters.
       * 
       * This method changes the internal hasExpKsq_ flag to false, so 
       * that the expKsq arrays will need to be recalculated before 
       * step() can be called. 
-      * 
-      * The relevant UnitCell object and corresponding WaveList should
-      * already be associated with this object, so this object can
-      * access the updated UnitCell and WaveList to recalculate expKsq
-      * when needed.
       */
-      void updateUnitCell();
+      void clearUnitCellData();
 
       /**
       * Set or reset block length.
