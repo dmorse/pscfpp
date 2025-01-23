@@ -130,6 +130,10 @@ namespace Prdc {
 
       /**
       *  Assignment operator. 
+      * 
+      * Copies lattice type and unit cell parameters, and recomputes
+      * all data that depends on the unit cell parameters, but does
+      * not copy any associated Signal<> object.
       *      
       * \param other UnitCell<1> object to be cloned.
       */
@@ -263,6 +267,10 @@ namespace Prdc {
       /**
       *  Assignment operator. 
       *      
+      * Copies lattice type and unit cell parameters, and recomputes
+      * all data that depends on the unit cell parameters, but does
+      * not copy any associated Signal<> object.
+      *      
       * \param other UnitCell<2> object to be cloned.
       */
       UnitCell<2>& operator = (const UnitCell<2>& other);
@@ -394,6 +402,10 @@ namespace Prdc {
 
       /**
       *  Assignment operator. 
+      *      
+      * Copies lattice type and unit cell parameters, and recomputes
+      * all data that depends on the unit cell parameters, but does
+      * not copy any associated Signal<> object.
       *      
       * \param other UnitCell<3> object to be cloned.
       */

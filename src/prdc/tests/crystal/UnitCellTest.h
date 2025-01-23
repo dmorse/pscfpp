@@ -22,6 +22,17 @@ class UnitCellTest : public UnitTest
 
 public:
 
+   class Observer {
+   public:
+
+      Observer() : notified(false) {}
+
+      void receive() { notified = true; }
+
+      bool notified;
+
+   };
+
    void setUp()
    { 
       //setVerbose(1); 
@@ -822,6 +833,58 @@ public:
 
    }
 
+   void test3DSignal() 
+   {
+      printMethod(TEST_FUNC);
+      // printEndl();
+
+      UnitCell<3> v;
+      TEST_ASSERT(v.nObserver() == 0);
+
+      Observer observer1;
+      Observer observer2;
+      void (Observer::*functionPtr)() = nullptr;
+      functionPtr = &Observer::receive;
+
+      v.addObserver(observer1, functionPtr);
+      TEST_ASSERT(v.nObserver() == 1);
+      v.addObserver(observer2, &Observer::receive);
+      TEST_ASSERT(v.nObserver() == 2);
+
+      TEST_ASSERT(!observer1.notified);
+      TEST_ASSERT(!observer2.notified);
+
+      std::ifstream in;
+      openInputFile("in/Tetragonal", in);
+      in >> v;
+
+      TEST_ASSERT(v.nParameter() == 2);
+      TEST_ASSERT(isValidReciprocal(v));
+      TEST_ASSERT(isValidDerivative(v));
+      TEST_ASSERT(observer1.notified);
+      TEST_ASSERT(observer2.notified);
+      TEST_ASSERT(v.nObserver() == 2);
+
+      observer1.notified = false;
+      observer2.notified = false;
+
+      FSArray<double, 6> parameters = v.parameters();
+      TEST_ASSERT(parameters.size() == 2);
+      parameters[1] *= 1.1;
+
+      v.setParameters(parameters);
+      TEST_ASSERT(observer1.notified);
+      TEST_ASSERT(observer2.notified);
+      TEST_ASSERT(v.nObserver() == 2);
+
+      v.clearObservers();
+      TEST_ASSERT(v.nObserver() == 0);
+      TEST_ASSERT(observer1.notified);
+      TEST_ASSERT(observer2.notified);
+
+   }
+
+
 };
 
 TEST_BEGIN(UnitCellTest)
@@ -838,6 +901,7 @@ TEST_ADD(UnitCellTest, test3DHexagonal)
 TEST_ADD(UnitCellTest, test3DRhombohedral)
 TEST_ADD(UnitCellTest, test3DMonoclinic)
 TEST_ADD(UnitCellTest, test3DTriclinic)
+TEST_ADD(UnitCellTest, test3DSignal)
 TEST_END(UnitCellTest)
 
 #endif

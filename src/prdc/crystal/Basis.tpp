@@ -1263,7 +1263,7 @@ namespace Prdc {
                   return false;
                }
                if (!cancel) {
-                  cdel = conj(waves_[iwp].coeff);
+                  cdel = std::conj(waves_[iwp].coeff);
                   cdel -= waves_[iw].coeff;
                   if (std::abs(cdel) > 1.0E-8) {
                      std::cout << "\n";
@@ -1351,7 +1351,7 @@ namespace Prdc {
                   return false;
                }
                if (!cancel) {
-                  cdel = conj(waves_[iwp].coeff);
+                  cdel = std::conj(waves_[iwp].coeff);
                   cdel -= waves_[iw].coeff;
                   if (std::abs(cdel) > 1.0E-8) {
                      std::cout << "\n";

@@ -8,6 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
+#include <util/signal/Signal.h>
 #include <util/containers/FArray.h>
 #include <util/containers/FSArray.h>
 #include <util/containers/FMatrix.h>
@@ -40,6 +41,9 @@ namespace Prdc {
       */
       ~UnitCellBase();
 
+      /// \name Unit Cell Parameters
+      ///@{
+
       /**
       * Set all the parameters of unit cell.
       *
@@ -48,25 +52,6 @@ namespace Prdc {
       * \param parameters array of unit cell parameters
       */
       void setParameters(FSArray<double, 6> const & parameters);
-
-      /**
-      * Compute square magnitude of reciprocal lattice vector.
-      *
-      * \param k  vector of components of a reciprocal lattice vector
-      */
-      virtual double ksq(IntVec<D> const & k) const;
-
-      /**
-      * Compute derivative of square wavevector w/respect to cell parameter.
-      *
-      * This function computes and returns a derivative with respect to 
-      * unit cell parameter number n of the square of a reciprocal lattice
-      * vector with integer coefficients given by the elements of vec.
-      *
-      * \param vec  vector of components of a reciprocal lattice vector
-      * \param n  index of a unit cell parameter
-      */
-      virtual double dksq(IntVec<D> const & vec, int n) const;
 
       /**
       * Get the number of parameters in the unit cell.
@@ -85,6 +70,18 @@ namespace Prdc {
       */
       double parameter(int i) const;
 
+      /**
+      * Has this unit cell been initialized?
+      *
+      * A unit cell is initialized after both the lattice type and
+      * the lattice parameters have been set.
+      */
+      bool isInitialized() const;
+
+      ///@}
+      /// \name Bravais Lattice Data
+      ///@{
+ 
       /**
       * Get Bravais basis vector i, denoted by a_i.
       *
@@ -135,11 +132,89 @@ namespace Prdc {
       */
       double dkkBasis(int k, int i, int j) const;
 
+      ///@}
+      /// \name Wavevector Properties
+      ///@{
+
       /**
-      * Has this unit cell been initialized?
+      * Compute square magnitude of reciprocal lattice vector.
+      *
+      * \param k  vector of components of a reciprocal lattice vector
       */
-      bool isInitialized() const
-      {  return isInitialized_; }
+      virtual double ksq(IntVec<D> const & k) const;
+
+      /**
+      * Compute derivative of square wavevector w/respect to cell parameter.
+      *
+      * This function computes and returns a derivative with respect to 
+      * unit cell parameter number n of the square of a reciprocal lattice
+      * vector with integer coefficients given by the elements of vec.
+      *
+      * \param vec  vector of components of a reciprocal lattice vector
+      * \param n  index of a unit cell parameter
+      */
+      virtual double dksq(IntVec<D> const & vec, int n) const;
+
+      ///@}
+      /// \name Observer Interface
+      ///@{
+
+      /**
+      * Add an Observer to this unit cell.
+      *
+      * This adds an instance of class "Observer" and a void member
+      * function of that class to the list of observers associated with
+      * this UnitCellBase<D> object. The methodPtr argument must be the
+      * relative address of a void function that takes no arguments.
+      * 
+      * Whenever the parameters of this unit cell are set or modified
+      * all observers are notified by calling the prescribed member
+      * function of each observer.
+      *
+      * <b> Usage </b> : Suppose Observer is a class that has a member 
+      * function named "receive" that should be called when the unit
+      * cell parameters are set or updated. The "receive" function must
+      * have a signature "void receive()". An instance of that class
+      * may be added to the list of observers for a UnitCellBase<3>
+      * using the following syntax:
+      * \code
+      *    UnitCellBase<3> unitCell;
+      *    Observer observer;
+      *    unitCell.addObserver(observer, &Observer::receive);
+      * \endcode
+      * Alternatively, one could explicitly create a pointer to the 
+      * member function and then pass that to the unit cell, like this:
+      * \code
+      *    UnitCellBase<3> unitCell;
+      *
+      *    Observer observer;
+      *    void (Observer::*functionPtr)() = nullptr;
+      *    functionPtr = &Observer::receive;
+      *
+      *    v.addObserver(observer, functionPtr);
+      * \endcode
+      *
+      * \param observer  observer object (invokes member function)
+      * \param methodPtr  pointer to relevant member function
+      */
+      template <class Observer>
+      void addObserver(Observer& observer, void (Observer::*methodPtr)());
+
+      /**
+      * Clear all observers and delete the Signal<> object.
+      */
+      void clearObservers();
+
+      /**
+      * Return the current number of observers.
+      *
+      * The number of observers is zero upon construction, is incremented
+      * by 1 every time addObserver() is called, and is reset to 0 by
+      * calling clearObservers().
+      */
+      int nObserver() const;
+
+      ///@}
 
    protected:
 
@@ -203,13 +278,29 @@ namespace Prdc {
       bool isInitialized_;
 
       /**
-      * Compute all private data, given latticeSystem and parameters.
+      * Compute all protected data, given latticeSystem and parameters.
       *
-      * Calls initializeToZero, setBasis, computeDerivatives internally.
+      * All functions that reset unit cell parameters must call this 
+      * function to reset depenent data, including stream insertion 
+      * operators.
+      *
+      * Calls initializeToZero, setBasis, & computeDerivatives functions
+      * internally. Also sets isInitialized flag true and notifies any 
+      * observers.
       */
       void setLattice();
 
    private:
+
+      /**
+      * Pointer to a Signal<void> subobject.
+      */
+      Signal<void>* signalPtr_;
+
+      /**
+      * Does this object have a Signal<> subobject?
+      */
+      bool hasSignal() const;
 
       /**
       * Initialize all arrays to zero.
@@ -232,6 +323,16 @@ namespace Prdc {
       * Compute values of dkBasis_, drrBasis_, and dkkBasis_.
       */
       void computeDerivatives();
+
+      /**
+      * Copy constructor - private and unimplemented to prohibit.
+      */
+      UnitCellBase(UnitCellBase<D> const & other);
+
+      /**
+      * Assignment operator - private and unimplemented to prohibit.
+      */
+      UnitCellBase<D>& operator = (UnitCellBase<D> const & other);
 
    };
 
@@ -313,6 +414,14 @@ namespace Prdc {
    double UnitCellBase<D>::drrBasis(int k, int i, int j) const
    {  return drrBasis_[k](i, j);  }
 
+   /*
+   * Is this unit cell initialized?
+   */
+   template <int D>
+   inline
+   bool UnitCellBase<D>::isInitialized() const
+   {  return isInitialized_; }
+
    // Non-inline member functions
 
    /*
@@ -321,15 +430,20 @@ namespace Prdc {
    template <int D>
    UnitCellBase<D>::UnitCellBase()
     : nParameter_(0),
-      isInitialized_(false)
-   {}
+      isInitialized_(false),
+      signalPtr_(nullptr)
+   {  initializeToZero(); }
 
    /*
    * Destructor.
    */
    template <int D>
    UnitCellBase<D>::~UnitCellBase()
-   {}
+   {
+      if (hasSignal()) {
+         delete signalPtr_;
+      }
+   }
 
    /*
    * Set all the parameters in the unit cell.
@@ -381,6 +495,39 @@ namespace Prdc {
       }
 
       return value;
+   }
+
+   // Functions to manage observers
+
+   template <int D>
+   template <class Observer>
+   void UnitCellBase<D>::addObserver(Observer& observer,
+                                     void (Observer::*methodPtr)())
+   {
+      if (!hasSignal()) {
+         signalPtr_ = new Signal<void>;
+      }
+      signalPtr_->addObserver(observer, methodPtr);
+   }
+
+   template <int D>
+   void UnitCellBase<D>::clearObservers() 
+   {
+      if (hasSignal()) {
+         signalPtr_->clear();
+         delete signalPtr_;
+         signalPtr_ = nullptr;
+      }
+   }
+
+   template <int D>
+   int UnitCellBase<D>::nObserver() const
+   {
+      if (hasSignal()) {
+         return signalPtr_->nObserver();
+      } else {
+         return 0;
+      }
    }
 
    // Protected member functions
@@ -463,7 +610,14 @@ namespace Prdc {
       setBasis();
       computeDerivatives();
       isInitialized_ = true;
+      if (hasSignal()) {
+         signalPtr_->notify();
+      }
    }
+
+   template <int D>
+   bool UnitCellBase<D>::hasSignal() const
+   {  return bool(signalPtr_); }
 
 }
 }

@@ -31,6 +31,25 @@ namespace Cpu {
 
    public:
 
+      // Typedefs
+
+      /**
+      * Type of each element.
+      */
+      typedef fftw_complex ElementType;
+
+      /**
+      * Complex number type.
+      */
+      typedef fftw_complex Complex;
+
+      /**
+      * Real and imaginary parts of a Complex number.
+      */
+      typedef double Real;
+
+      // Member functions
+
       /**
       * Default constructor.
       */

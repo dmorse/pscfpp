@@ -99,7 +99,7 @@ namespace Rpg
       Log::file() << "step "<< step <<"\n";
       #endif
       
-      // Read ITEM: Mesh size
+      // Read ITEM: NUMBER OF Mesh
       notEnd = getNextLine(inputfile_, line);
       UTIL_CHECK(notEnd);
       checkString(line, "mesh");
