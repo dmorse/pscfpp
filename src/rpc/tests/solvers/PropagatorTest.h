@@ -55,7 +55,7 @@ public:
    }
 
    template <int D>
-   void setUnitCell(UnitCell<D>& unitCell, std::string fname)
+   void setupUnitCell(UnitCell<D>& unitCell, std::string fname)
    {
       std::ifstream in;
       openInputFile(fname, in);
@@ -69,7 +69,7 @@ public:
       Block<1> block;
    }
 
-   void testSetDiscretization1D()
+   void testSetup1D()
    {
       printMethod(TEST_FUNC);
 
@@ -83,8 +83,14 @@ public:
       FFT<1> fft;
       fft.setup(mesh.dimensions());
 
+      // Set up unit cell
+      UnitCell<1> unitCell;
+      setupUnitCell<1>(unitCell, "in/Lamellar");
+
       double ds = 0.02;
-      block.setDiscretization(ds, mesh, fft);
+      block.associate(mesh, fft, unitCell);
+      block.allocate(ds);
+
       TEST_ASSERT(eq(block.length(), 2.0));
       TEST_ASSERT(eq(block.ds(), 0.02));
       TEST_ASSERT(block.ns() == 101);
@@ -92,7 +98,7 @@ public:
 
    }
 
-   void testSetDiscretization2D()
+   void testSetup2D()
    {
       printMethod(TEST_FUNC);
 
@@ -105,8 +111,15 @@ public:
       FFT<2> fft;
       fft.setup(mesh.dimensions());
 
+      // Set up unit cell
+      UnitCell<2> unitCell;
+      setupUnitCell<2>(unitCell, "in/Rectangular");
+
+      block.associate(mesh, fft, unitCell);
+
       double ds = 0.26;
-      block.setDiscretization(ds, mesh, fft);
+      block.allocate(ds);
+
       TEST_ASSERT(eq(block.length(), 2.0));
       TEST_ASSERT(eq(block.ds(), 0.25));
       TEST_ASSERT(block.ns() == 9);
@@ -114,7 +127,7 @@ public:
       TEST_ASSERT(block.mesh().dimensions()[1] == 32);
    }
 
-   void testSetDiscretization3D()
+   void testSetup3D()
    {
       printMethod(TEST_FUNC);
 
@@ -127,8 +140,16 @@ public:
       FFT<3> fft;
       fft.setup(mesh.dimensions());
 
+      // Set up unit cell
+      UnitCell<3> unitCell;
+      setupUnitCell<3>(unitCell, "in/Hexagonal");
+
+      // Associate block
+      block.associate(mesh, fft, unitCell);
+
+      // Allocate block
       double ds = 0.3;
-      block.setDiscretization(ds, mesh, fft);
+      block.allocate(ds);
 
       TEST_ASSERT(eq(block.length(), 2.0));
       TEST_ASSERT(block.ns() == 7);
@@ -152,11 +173,12 @@ public:
       FFT<1> fft;
       fft.setup(mesh.dimensions());
 
-      double ds = 0.02;
-      block.setDiscretization(ds, mesh, fft);
-
       UnitCell<1> unitCell;
-      setUnitCell<1>(unitCell, "in/Lamellar");
+      setupUnitCell<1>(unitCell, "in/Lamellar");
+
+      double ds = 0.02;
+      block.associate(mesh, fft, unitCell);
+      block.allocate(ds);
 
       TEST_ASSERT(eq(unitCell.rBasis(0)[0], 4.0));
 
@@ -186,11 +208,12 @@ public:
       FFT<2> fft;
       fft.setup(mesh.dimensions());
 
-      double ds = 0.02;
-      block.setDiscretization(ds, mesh, fft);
-
       UnitCell<2> unitCell;
-      setUnitCell<2>(unitCell, "in/Rectangular");
+      setupUnitCell<2>(unitCell, "in/Rectangular");
+
+      double ds = 0.02;
+      block.associate(mesh, fft, unitCell);
+      block.allocate(ds);
 
       TEST_ASSERT(eq(unitCell.rBasis(0)[0], 3.0));
       TEST_ASSERT(eq(unitCell.rBasis(1)[1], 4.0));
@@ -218,14 +241,16 @@ public:
       // Create and initialize mesh
       Mesh<3> mesh;
       setupMesh<3>(mesh);
+
       FFT<3> fft;
       fft.setup(mesh.dimensions());
 
-      double ds = 0.02;
-      block.setDiscretization(ds, mesh, fft);
-
       UnitCell<3> unitCell;
-      setUnitCell<3>(unitCell, "in/Orthorhombic");
+      setupUnitCell<3>(unitCell, "in/Orthorhombic");
+
+      double ds = 0.02;
+      block.associate(mesh, fft, unitCell);
+      block.allocate(ds);
 
       TEST_ASSERT(eq(unitCell.rBasis(0)[0], 3.0));
       TEST_ASSERT(eq(unitCell.rBasis(1)[1], 4.0));
@@ -257,11 +282,12 @@ public:
       FFT<1> fft;
       fft.setup(mesh.dimensions());
 
-      double ds = 0.02;
-      block.setDiscretization(ds, mesh, fft);
-
       UnitCell<1> unitCell;
-      setUnitCell<1>(unitCell, "in/Lamellar");
+      setupUnitCell<1>(unitCell, "in/Lamellar");
+
+      double ds = 0.02;
+      block.associate(mesh, fft, unitCell);
+      block.allocate(ds);
 
       // Setup chemical potential field
       RField<1> w;
@@ -324,14 +350,16 @@ public:
       // Create and initialize mesh
       Mesh<2> mesh;
       setupMesh<2>(mesh);
+
       FFT<2> fft;
       fft.setup(mesh.dimensions());
 
-      double ds = 0.02;
-      block.setDiscretization(ds, mesh, fft);
-
       UnitCell<2> unitCell;
-      setUnitCell<2>(unitCell, "in/Rectangular");
+      setupUnitCell<2>(unitCell, "in/Rectangular");
+
+      double ds = 0.02;
+      block.associate(mesh, fft, unitCell);
+      block.allocate(ds);
 
       TEST_ASSERT(eq(unitCell.rBasis(0)[0], 3.0));
       TEST_ASSERT(eq(unitCell.rBasis(1)[1], 4.0));
@@ -408,14 +436,16 @@ public:
       // Create and initialize mesh
       Mesh<3> mesh;
       setupMesh<3>(mesh);
+
       FFT<3> fft;
       fft.setup(mesh.dimensions());
 
-      double ds = 0.02;
-      block.setDiscretization(ds, mesh, fft);
-
       UnitCell<3> unitCell;
-      setUnitCell<3>(unitCell, "in/Orthorhombic");
+      setupUnitCell<3>(unitCell, "in/Orthorhombic");
+
+      double ds = 0.02;
+      block.associate(mesh, fft, unitCell);
+      block.allocate(ds);
 
       TEST_ASSERT(eq(unitCell.rBasis(0)[0], 3.0));
       TEST_ASSERT(eq(unitCell.rBasis(1)[1], 4.0));
@@ -486,9 +516,9 @@ public:
 
 TEST_BEGIN(PropagatorTest)
 TEST_ADD(PropagatorTest, testConstructor1D)
-TEST_ADD(PropagatorTest, testSetDiscretization1D)
-TEST_ADD(PropagatorTest, testSetDiscretization2D)
-TEST_ADD(PropagatorTest, testSetDiscretization3D)
+TEST_ADD(PropagatorTest, testSetup1D)
+TEST_ADD(PropagatorTest, testSetup2D)
+TEST_ADD(PropagatorTest, testSetup3D)
 TEST_ADD(PropagatorTest, testSetupSolver1D)
 TEST_ADD(PropagatorTest, testSetupSolver3D)
 TEST_ADD(PropagatorTest, testSolver1D)

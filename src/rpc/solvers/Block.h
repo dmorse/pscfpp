@@ -60,10 +60,23 @@ namespace Rpc {
       /**
       * Initialize discretization and allocate required memory.
       *
-      * This function creates associations with the mesh and fft objects
-      * (i.e., stores addresses), choses a value for the number ns of 
-      * contour variable grid points for this block and the associated 
-      * step size length/(ns-1) for this block, and allocates memory for 
+      * This function creates associations of this block with the mesh, 
+      * fft, and unit cell objects.
+      *
+      * \param mesh  spatial discretization mesh
+      * \param fft  Fast Fourier Transform object
+      * \param cell  unit cell object
+      */
+      void associate(Mesh<D> const& mesh, 
+                     FFT<D> const& fft, 
+                     UnitCell<D> const& cell);
+
+      /**
+      * Allocate memory and set contour step size.
+      *
+      * This function choses values for the number ns of contour 
+      * variable grid points for this block and the associated step 
+      * size length/(ns-1) for this block, and allocates memory for 
       * a variety of private arrays. 
       * 
       * The value for the number ns of contour variable grid points for 
@@ -75,11 +88,8 @@ namespace Rpc {
       * compute monomer concentration fields and stress contributions.
       *
       * \param ds desired (optimal) value for contour length step
-      * \param mesh  spatial discretization mesh
-      * \param fft  Fast Fourier Transform object
       */
-      void 
-      setDiscretization(double ds, const Mesh<D>& mesh, const FFT<D>& fft);
+      void allocate(double dst);
 
       /**
       * Set the unit cell.
@@ -265,6 +275,9 @@ namespace Rpc {
       // Dimensions of wavevector mesh in real-to-complex transform
       IntVec<D> kMeshDimensions_;
 
+      // Number of wavevectors in wavevector mesh 
+      int kSize_;
+
       // Contour length step size (actual step size for this block)
       double ds_;
 
@@ -274,7 +287,7 @@ namespace Rpc {
       // Number of contour grid points = # of contour steps + 1
       int ns_;
 
-      // Have arrays been allocated in setDiscretization ?
+      // Have arrays been allocated ?
       bool isAllocated_;
 
       // Are expKsq_ arrays up to date ? (initialize false)

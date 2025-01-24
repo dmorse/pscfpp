@@ -71,7 +71,9 @@ public:
       mesh.setDimensions(d);
       FFT<1> fft;
       fft.setup(d);
-      mixture.setDiscretization(mesh, fft);
+
+      mixture.associate(mesh, fft, unitCell);
+      mixture.allocate();
       mixture.setUnitCell(unitCell);
 
       #if 0
@@ -148,7 +150,9 @@ public:
       mesh.setDimensions(d);
       FFT<2> fft;
       fft.setup(d);
-      mixture.setDiscretization(mesh, fft);
+
+      mixture.associate(mesh, fft, unitCell);
+      mixture.allocate();
       mixture.setUnitCell(unitCell);
 
       #if 0
@@ -245,7 +249,9 @@ public:
       mesh.setDimensions(d);
       FFT<2> fft;
       fft.setup(d);
-      mixture.setDiscretization(mesh, fft);
+
+      mixture.associate(mesh, fft, unitCell);
+      mixture.allocate();
       mixture.setUnitCell(unitCell);
 
       #if 0
@@ -331,7 +337,9 @@ public:
       mesh.setDimensions(d);
       FFT<3> fft;
       fft.setup(d);
-      mixture.setDiscretization(mesh, fft);
+
+      mixture.associate(mesh, fft, unitCell);
+      mixture.allocate();
       mixture.setUnitCell(unitCell);
 
       #if 0

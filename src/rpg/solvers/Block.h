@@ -292,7 +292,7 @@ namespace Rpg {
       /// Dimensions of wavevector mesh in real-to-complex transform
       IntVec<D> kMeshDimensions_;
 
-      /// Number of wavevectors in discrete Fourier transform (DFT) k-grid
+      /// Number of wavevectors in wavevector mesh
       int kSize_;
 
       /// Contour length step size (actual step size for this block)

@@ -98,9 +98,16 @@ namespace Rpc {
       *
       * \param mesh  associated Mesh<D> object (stores address).
       * \param fft  associated FFT<D> object (stores address).
+      * \param cell  associated UnitCell<D> object (stores address).
       */
-      void setDiscretization(Mesh<D> const & mesh,
-                             FFT<D> const & fft);
+      void associate(Mesh<D> const & mesh,
+                     FFT<D> const & fft,
+                     UnitCell<D> const & cell);
+
+      /**
+      * Allocate required internal memory for all solvers.
+      */
+      void allocate();
 
       /**
       * Set unit cell parameters used in solver.

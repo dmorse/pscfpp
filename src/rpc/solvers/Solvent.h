@@ -43,11 +43,16 @@ namespace Rpc {
       ~Solvent();
   
       /**
-      * Set association with Mesh and allocate concentration field array.
+      * Create an association with the mesh.
       *
       * \param mesh associated Mesh<D> object
       */
-      void setDiscretization(Mesh<D> const & mesh);
+      void associate(Mesh<D> const & mesh);
+
+      /**
+      * Allocate memory for concentrationf field.
+      */
+      void allocate();
 
       /**
       * Compute monomer concentration field, q and phi and/or mu.

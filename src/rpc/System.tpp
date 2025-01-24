@@ -250,7 +250,8 @@ namespace Rpc {
       UTIL_CHECK(domain().unitCell().lattice() != UnitCell<D>::Null);
 
       // Setup mixture
-      mixture_.setDiscretization(domain().mesh(), domain().fft());
+      mixture_.associate(domain().mesh(), domain().fft(), domain().unitCell());
+      mixture_.allocate();
       mixture_.setUnitCell(domain().unitCell());
 
       // Allocate memory for w and c fields

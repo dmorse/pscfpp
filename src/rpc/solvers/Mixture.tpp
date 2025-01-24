@@ -43,13 +43,16 @@ namespace Rpc
       UTIL_CHECK(ds_ > 0);
    }
 
+   /*
+   * Create associations with mesh, fft, and unit cell.
+   */
    template <int D>
-   void Mixture<D>::setDiscretization(Mesh<D> const & mesh,
-                                      FFT<D> const & fft)
+   void Mixture<D>::associate(Mesh<D> const & mesh,
+                              FFT<D> const & fft,
+                              UnitCell<D> const & cell)
    {
       UTIL_CHECK(nMonomer() > 0);
       UTIL_CHECK(nPolymer()+ nSolvent() > 0);
-      UTIL_CHECK(ds_ > 0);
       UTIL_CHECK(mesh.size() > 0);
       UTIL_CHECK(fft.isSetup());
       UTIL_CHECK(mesh.dimensions() == fft.meshDimensions());
@@ -57,12 +60,12 @@ namespace Rpc
       // Save addresses of mesh
       meshPtr_ = &mesh;
 
-      // Set discretization in space and s for all polymer blocks
+      // Create associations for all polymer blocks
       if (nPolymer() > 0) {
          int i, j;
          for (i = 0; i < nPolymer(); ++i) {
             for (j = 0; j < polymer(i).nBlock(); ++j) {
-               polymer(i).block(j).setDiscretization(ds_, mesh, fft);
+               polymer(i).block(j).associate(mesh, fft, cell);
             }
          }
       }
@@ -70,7 +73,39 @@ namespace Rpc
       // Set spatial discretization for solvents
       if (nSolvent() > 0) {
          for (int i = 0; i < nSolvent(); ++i) {
-            solvent(i).setDiscretization(mesh);
+            solvent(i).associate(mesh);
+         }
+      }
+
+   }
+
+
+   /*
+   * Allocate internal data containers for all solvers.
+   */
+   template <int D>
+   void Mixture<D>::allocate()
+   {
+      UTIL_CHECK(meshPtr_);
+      UTIL_CHECK(nMonomer() > 0);
+      UTIL_CHECK(nPolymer()+ nSolvent() > 0);
+      UTIL_CHECK(meshPtr_->size() > 0);
+      UTIL_CHECK(ds_ > 0);
+
+      // Allocate memory for all Block objects
+      if (nPolymer() > 0) {
+         int i, j;
+         for (i = 0; i < nPolymer(); ++i) {
+            for (j = 0; j < polymer(i).nBlock(); ++j) {
+               polymer(i).block(j).allocate(ds_);
+            }
+         }
+      }
+
+      // Set spatial discretization for solvents
+      if (nSolvent() > 0) {
+         for (int i = 0; i < nSolvent(); ++i) {
+            solvent(i).allocate();
          }
       }
 
