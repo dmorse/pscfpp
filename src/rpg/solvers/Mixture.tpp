@@ -148,7 +148,8 @@ namespace Rpg
    */
    template <int D>
    void Mixture<D>::compute(DArray< RField<D> > const & wFields, 
-                            DArray< RField<D> > & cFields)
+                            DArray< RField<D> > & cFields,
+                            double phiTot)
    {
       UTIL_CHECK(meshPtr_);
       UTIL_CHECK(mesh().size() > 0);
@@ -170,7 +171,7 @@ namespace Rpg
 
       // Solve MDE for all polymers
       for (i = 0; i < nPolymer(); ++i) {
-         polymer(i).compute(wFields);
+         polymer(i).compute(wFields, phiTot);
       }
 
       // Accumulate monomer concentration fields
@@ -194,11 +195,11 @@ namespace Rpg
          UTIL_CHECK(monomerId < nm);
 
          // Compute solvent concentration
-         solvent(i).compute(wFields[monomerId]);
+         solvent(i).compute(wFields[monomerId], phiTot);
 
          // Add solvent contribution to relevant monomer concentration
          RField<D>& monomerField = cFields[monomerId];
-         RField<D> const & solventField = solvent(i).concField();
+         RField<D> const & solventField = solvent(i).cField();
          UTIL_CHECK(solventField.capacity() == nMesh);
          VecOp::addEqV(monomerField, solventField);
       }
@@ -210,7 +211,7 @@ namespace Rpg
    * Compute total stress.
    */  
    template <int D>
-   void Mixture<D>::computeStress()
+   void Mixture<D>::computeStress(double phiTot)
    {   
       UTIL_CHECK(nParams_ > 0);
 
@@ -228,6 +229,12 @@ namespace Rpg
             stress_[i] += polymer(j).stress(i);
          }   
       }
+
+      // Correct for partial occupation of the unit cell
+      for (i = 0; i < nParams_; ++i) {
+         stress_[i] /= phiTot;
+      }
+
       // Note: Solvent does not contribute to derivatives of f_Helmholtz
       // with respect to unit cell parameters at fixed volume fractions.
 
@@ -308,7 +315,7 @@ namespace Rpg
             UTIL_CHECK(sectionId < np);
             UTIL_CHECK(blockCFields[sectionId].capacity() == nx);
 
-            blockCFields[sectionId] = solvent(i).concField();
+            blockCFields[sectionId] = solvent(i).cField();
          }
       }
    }

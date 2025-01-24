@@ -145,7 +145,7 @@ namespace Rpc {
       *
       * The optional parameter phiTot is only relevant to problems such as 
       * thin films in which the material is excluded from part of the unit
-      * cell by imposing an inhomogeneous constrain on the sum of mononer 
+      * cell by imposing an inhomogeneous constraint on the sum of monomer 
       * concentrations, (i.e., a "mask"). 
       *
       * \param wFields array of chemical potential fields (input)

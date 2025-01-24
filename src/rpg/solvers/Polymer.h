@@ -88,11 +88,25 @@ namespace Rpg {
       void setNParams(int nParams);
 
       /**
-      * Compute solution to MDE and concentrations.
+      * Compute solution to MDE and block concentrations.
+      * 
+      * This function sets up w-fields in the MDE solvers for all blocks
+      * and then calls the base class PolymerTmpl solve function. This
+      * solves the MDE for all propagators and computes the properly 
+      * scaled volume fraction fields for all blocks. After this function 
+      * is called, the associated Block objects store pre-computed 
+      * propagator solutions and block volume fraction fields. 
       *
-      * \param wFields chemical potential fields for all monomers (input)
+      * The parameter phiTot is only relevant to problems such as thin
+      * films in which the material is excluded from part of the unit
+      * cell by imposing an inhogeneous constraint on the sum of the
+      * monomer concentrations (i.e., a "mask"). 
+      *
+      * \param wFields array of chemical potential fields.
+      * \param phiTot  volume fraction of unit cell occupied by material
       */ 
-      void compute(DArray< RField<D> > const & wFields);
+      void compute(DArray< RField<D> > const & wFields, 
+                   double phiTot = 1.0);
 
       /**
       * Compute stress from a polymer chain, needs a pointer to basis

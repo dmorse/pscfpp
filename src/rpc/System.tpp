@@ -54,13 +54,13 @@ namespace Rpc {
       domain_(),
       fileMaster_(),
       homogeneous_(),
-      interactionPtr_(0),
-      iteratorPtr_(0),
-      iteratorFactoryPtr_(0),
-      sweepPtr_(0),
-      sweepFactoryPtr_(0),
-      simulatorPtr_(0),
-      simulatorFactoryPtr_(0),
+      interactionPtr_(nullptr),
+      iteratorPtr_(nullptr),
+      iteratorFactoryPtr_(nullptr),
+      sweepPtr_(nullptr),
+      sweepFactoryPtr_(nullptr),
+      simulatorPtr_(nullptr),
+      simulatorFactoryPtr_(nullptr),
       w_(),
       c_(),
       h_(),
@@ -1107,6 +1107,7 @@ namespace Rpc {
       // and the Legendre transform component of fIdeal_ all require
       // this scaling. If no mask is present, mask.phiTot() = 1 and no
       // scaling occurs.
+      const double phiTot = mask().phiTot();
 
       // Compute Legendre transform subtraction from fIdeal_
       double temp = 0.0;
@@ -1128,7 +1129,7 @@ namespace Rpc {
          }
          temp /= double(meshSize);
       }
-      temp /= mask().phiTot();
+      temp /= phiTot;
       fIdeal_ += temp;
       fHelmholtz_ += fIdeal_;
 
@@ -1152,7 +1153,7 @@ namespace Rpc {
             }
             fExt_ /= double(meshSize);
          }
-         fExt_ /= mask().phiTot();
+         fExt_ /= phiTot;
          fHelmholtz_ += fExt_;
       }
 
@@ -1195,7 +1196,7 @@ namespace Rpc {
          }
          fInter_ /= double(meshSize);
       }
-      fInter_ /= mask().phiTot();
+      fInter_ /= phiTot;
       fHelmholtz_ += fInter_;
 
       // Initialize pressure (-1 x grand-canonical free energy / monomer)
@@ -1211,7 +1212,7 @@ namespace Rpc {
             mu = polymerPtr->mu();
             length = polymerPtr->length();
             if (phi > 1.0E-08) {
-               pressure_ += mu * phi /length;
+               pressure_ += mu * phi / length;
             }
          }
       }
@@ -1226,7 +1227,7 @@ namespace Rpc {
             mu = solventPtr->mu();
             size = solventPtr->size();
             if (phi > 1.0E-08) {
-               pressure_ += mu * phi /size;
+               pressure_ += mu * phi / size;
             }
          }
       }
@@ -2025,9 +2026,6 @@ namespace Rpc {
             homogeneous_.molecule(i).computeSize();
          }
       }
-
-      hasCFields_ = false;
-      hasFreeEnergy_ = false;
    }
 
 } // namespace Rpc

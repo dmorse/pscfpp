@@ -16,6 +16,7 @@
 #include <rpg/field/FieldIo.h>             // member
 #include <rpg/field/WFieldContainer.h>     // member
 #include <rpg/field/CFieldContainer.h>     // member
+#include <rpg/field/Mask.h>                // member
 
 #include <prdc/cuda/RField.h>              // member
 #include <prdc/cuda/RFieldDft.h>           // member
@@ -173,7 +174,7 @@ namespace Rpg {
       * and also computes and resets the system w fields in r-space
       * format. On exit, both w().basis() and w().rgrid() have been
       * reset, w().hasData and w().isSymmetric() are true, and
-      * hasCFields() is false.
+      * hasCFields() and hasFreeEnergy() are is false.
       *
       * \param filename name of input w-field basis file
       */
@@ -189,7 +190,8 @@ namespace Rpg {
       * field values in symmetry-adapted basis format, because it cannot
       * be known whether the r-grid field exhibits the declared space
       * group symmetry.  On exit, w().rgrid() is reset and w().hasData()
-      * is true, while w().isSymmetric() and hasCFields() are false.
+      * is true, while w().isSymmetric(), hasCFields(), and 
+      * hasFreeEnergy() are false.
       *
       * \param filename  name of input w-field basis file
       */
@@ -201,7 +203,7 @@ namespace Rpg {
       * This function sets values for w fields in both symmetry adapted
       * and r-grid format.  On exit, values of both w().basis() and
       * w().rgrid() are reset, w().hasData() and w().isSymmetric() are
-      * true, and hasCFields() is false.
+      * true, and hasCFields() and hasFreeEnergy() are false.
       *
       * \param fields  array of new w (chemical potential) fields
       */
@@ -212,8 +214,8 @@ namespace Rpg {
       *
       * This function set values for w fields in r-grid format, but does
       * not set components the symmetry-adapted basis format.  On exit,
-      * w.rgrid() is reset, w().hasData() is true, hasCFields() is false
-      * and w().isSymmetric() is false.
+      * w.rgrid() is reset, w().hasData() is true, and hasCFields(),
+      * hasFreeEnergy(), and w().isSymmetric() are false.
       *
       * \param fields  array of new w (chemical potential) fields
       */
@@ -226,8 +228,8 @@ namespace Rpg {
       * r-grid fields for all monomer types in a single array, with the
       * field for monomer 0 first, followed by the field for monomer 1,
       * etc. This function sets w().rgrid() but does not set w().basis().
-      * On exit, w().hasData is true, while w().isSymmetric() and
-      * hasCFields() are both false.
+      * On exit, w().hasData() is true, while w().isSymmetric(),
+      * hasFreeEnergy(), and hasCFields() are false.
       *
       * \param fields  unfolded array of new chemical potential fields
       */
@@ -671,6 +673,26 @@ namespace Rpg {
       CFieldContainer<D> const & c() const;
 
       /**
+      * Get all of the external potential fields (reference).
+      */
+      WFieldContainer<D>& h();
+
+      /**
+      * Get all of the external potential fields (const reference).
+      */
+      WFieldContainer<D> const & h() const;
+
+      /**
+      * Get the mask (field to which total density is constrained).
+      */
+      Mask<D>& mask();
+
+      /**
+      * Get the mask by const reference.
+      */
+      Mask<D> const & mask() const;
+
+      /**
       * Get Mixture by reference.
       */
       Mixture<D>& mixture();
@@ -759,6 +781,21 @@ namespace Rpg {
       bool hasCFields() const;
 
       /**
+      * Has the free energy been computed from the current w fields?
+      */
+      bool hasFreeEnergy() const;
+
+      /**
+      * Does this system have external potential fields?
+      */
+      bool hasExternalFields() const;
+
+      /**
+      * Does this system have a mask (inhomogeneous density constraint)
+      */
+      bool hasMask() const;
+
+      /**
       * Does this system have an associated Sweep object?
       */
       bool hasSweep() const;
@@ -838,6 +875,16 @@ namespace Rpg {
       CFieldContainer<D> c_;
 
       /**
+      * External potential fields.
+      */
+      WFieldContainer<D> h_;
+
+      /**
+      * Field to which the total density is constrained.
+      */
+      Mask<D> mask_;
+
+      /**
       * Work array of field coefficients for all monomer types.
       *
       * Indexed by monomer typeId, size = nMonomer.
@@ -877,6 +924,10 @@ namespace Rpg {
       */
       double fInter_;
 
+      /**
+      * External field contribution to fHelmholtz_ (if any).
+      */
+      double fExt_;
 
       /**
       * Pressure times monomer volume / kT.
@@ -1066,6 +1117,26 @@ namespace Rpg {
    CFieldContainer<D> const & System<D>::c() const
    {  return c_; }
 
+   // Get container of external potential fields (reference)
+   template <int D>
+   inline WFieldContainer<D>& System<D>::h()
+   {  return h_; }
+
+   // Get container of external potential fields (const reference)
+   template <int D>
+   inline WFieldContainer<D> const & System<D>::h() const
+   {  return h_; }
+
+   // Get mask field (reference)
+   template <int D>
+   inline Mask<D>& System<D>::mask()
+   {  return mask_; }
+
+   // Get mask field (const reference)
+   template <int D>
+   inline Mask<D> const & System<D>::mask() const
+   {  return mask_; }
+
    // Get precomputed Helmoltz free energy per monomer / kT.
    template <int D>
    inline double System<D>::fHelmholtz() const
@@ -1082,6 +1153,11 @@ namespace Rpg {
       return pressure_;
    }
 
+   // Has the free energy been computed for the current w fields?
+   template <int D>
+   inline bool System<D>::hasFreeEnergy() const
+   {  return hasFreeEnergy_; }
+
    // Have the c fields been computed for the current w fields?
    template <int D>
    inline bool System<D>::hasCFields() const
@@ -1090,17 +1166,27 @@ namespace Rpg {
    // Does the system have an Iterator object?
    template <int D>
    inline bool System<D>::hasIterator() const
-   {  return (iteratorPtr_ != 0); }
+   {  return (iteratorPtr_); }
 
    // Does this system have an associated Sweep object?
    template <int D>
    inline bool System<D>::hasSweep() const
-   {  return (sweepPtr_ != 0); }
+   {  return (sweepPtr_); }
+
+   // Does this system have external potential fields?
+   template <int D>
+   inline bool System<D>::hasExternalFields() const
+   {  return h_.hasData(); }
+
+   // Does this system have a mask?
+   template <int D>
+   inline bool System<D>::hasMask() const
+   {  return mask_.hasData(); }
 
    // Does the system have an initialized Simulator ?
    template <int D>
    inline bool System<D>::hasSimulator() const
-   {  return (simulatorPtr_ != 0); }
+   {  return (simulatorPtr_); }
 
    #ifndef RPG_SYSTEM_TPP
    // Suppress implicit instantiation

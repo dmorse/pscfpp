@@ -118,7 +118,7 @@ namespace Rpg
       void setKuhn(int monomerId, double kuhn);
 
       /**
-      * Compute concentrations.
+      * Compute partition functions and concentrations.
       *
       * This function calls the compute function of every molecular
       * species, and then adds the resulting block concentration
@@ -128,22 +128,38 @@ namespace Rpg
       * potential (mu) members of each species, and for the 
       * concentration fields for each Block and Solvent. The total
       * concentration for each monomer type is returned in the
-      * cFields output parameter. 
+      * cFields output parameter. Monomer "concentrations" are returned 
+      * in units of inverse steric volume per monomer in an incompressible
+      * mixture, and are thus also volume fractions.
       *
       * The arrays wFields and cFields must each have size nMonomer(),
       * and contain fields that are indexed by monomer type index. 
+      * 
+      * The optional parameter phiTot is only relevant to problems such as 
+      * thin films in which the material is excluded from part of the unit
+      * cell by imposing an inhomogeneous constraint on the sum of monomer 
+      * concentrations, (i.e., a "mask"). 
       *
       * \param wFields array of chemical potential fields (input)
       * \param cFields array of monomer concentration fields (output)
+      * \param phiTot  volume fraction of unit cell occupied by material
       */
-      void 
-      compute(DArray< RField<D> > const & wFields, 
-              DArray< RField<D> > & cFields);
+      void compute(DArray< RField<D> > const & wFields, 
+                   DArray< RField<D> > & cFields, 
+                   double phiTot = 1.0);
 
       /**
-      * Get monomer reference volume.
+      * Compute derivatives of free energy w/ respect to cell parameters.
+      * 
+      * The optional parameter phiTot is only relevant to problems with a 
+      * mask, in which the material is excluded from part of the unit cell
+      * by imposing an inhomogeneous constrain on the sum of monomer 
+      * concentrations. In such cases, the stress needs to be scaled by 
+      * a factor of 1/phiTot.
+      * 
+      * \param phiTot  volume fraction of unit cell occupied by material
       */
-      void computeStress();
+      void computeStress(double phiTot = 1.0);
 
       /**
       * Combine cFields for each block/solvent into one DArray.
