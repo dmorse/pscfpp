@@ -1,5 +1,5 @@
-#ifndef RPC_MASK_TPP
-#define RPC_MASK_TPP
+#ifndef RPG_MASK_TPP
+#define RPG_MASK_TPP
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory
@@ -9,15 +9,15 @@
 */
 
 #include "Mask.h"
-#include <prdc/cpu/RFieldDft.h>
+#include <prdc/cuda/Reduce.h>
 
 namespace Pscf {
-namespace Rpc
+namespace Rpg
 {
 
    using namespace Util;
    using namespace Pscf::Prdc;
-   using namespace Pscf::Prdc::Cpu;
+   using namespace Pscf::Prdc::Cuda;
 
    /*
    * Constructor.
@@ -35,28 +35,15 @@ namespace Rpc
    {}
 
    /*
-   * Return volume fraction of the unit cell occupied by the 
-   * polymers/solvents.
+   * Calculate the average value of the rgrid_ member.
    */
    template <int D>
    double Mask<D>::rGridAverage() const
    {
       RField<D> const & rg = MaskTmpl< D, FieldIo<D>, RField<D> >::rgrid();
-
-      // Sum up elements of rg.
-      // Use Kahan summation to reduce accumulation of error
-      double sum(0.0), err(0.0), tempVal, tempSum;
-      int n = rg.capacity();
-      for (int i = 0; i < n; ++i) {
-         tempVal = rg[i] - err;
-         tempSum = sum + tempVal;
-         err = tempSum - sum - tempVal;
-         sum = tempSum;
-      }
-
-      return (sum / ((double)rg.capacity()));
+      return (Reduce::sum(rg) / ((double)rg.capacity()));
    }
 
-} // namespace Rpc
+} // namespace Rpg
 } // namespace Pscf
 #endif

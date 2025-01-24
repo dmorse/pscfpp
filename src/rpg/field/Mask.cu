@@ -13,18 +13,18 @@ namespace Pscf {
 namespace Prdc {
 
    // Explicit instantiation
-   template class MaskTmpl< 1, Rpc::FieldIo<1>, Cpu::RField<1> >;
-   template class MaskTmpl< 2, Rpc::FieldIo<2>, Cpu::RField<2> >;
-   template class MaskTmpl< 3, Rpc::FieldIo<3>, Cpu::RField<3> >;
+   template class MaskTmpl< 1, Rpg::FieldIo<1>, Cuda::RField<1> >;
+   template class MaskTmpl< 2, Rpg::FieldIo<2>, Cuda::RField<2> >;
+   template class MaskTmpl< 3, Rpg::FieldIo<3>, Cuda::RField<3> >;
 
 } // namespace Prdc
 
-namespace Rpc {
+namespace Rpg {
 
    template class Mask<1>;
    template class Mask<2>;
    template class Mask<3>;
    
-} // namespace Rpc
+} // namespace Rpg
 
 } // namespace Pscf
