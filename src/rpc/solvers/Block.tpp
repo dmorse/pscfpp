@@ -173,14 +173,11 @@ namespace Rpc {
    }
 
    /*
-   * Set data that depend on the unit cell parameters.
+   * Mark data that depend on the unit cell parameters as invalid.
    */
    template <int D>
-   void Block<D>::setUnitCell(const UnitCell<D>& unitCell)
-   {
-      unitCellPtr_ = &unitCell;
-      hasExpKsq_ = false;
-   }
+   void Block<D>::clearUnitCellData()
+   {  hasExpKsq_ = false; }
 
    /*
    * Compute all elements of expKsq_ and expKsq2_ arrays

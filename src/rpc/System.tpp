@@ -249,10 +249,11 @@ namespace Rpc {
       UTIL_CHECK(domain().unitCell().nParameter() > 0);
       UTIL_CHECK(domain().unitCell().lattice() != UnitCell<D>::Null);
 
-      // Setup mixture
-      mixture_.associate(domain().mesh(), domain().fft(), domain().unitCell());
+      // Setup  the mixture
+      mixture_.associate(domain().mesh(), domain().fft(), 
+                         domain().unitCell());
       mixture_.allocate();
-      mixture_.setUnitCell(domain().unitCell());
+      mixture_.clearUnitCellData();
 
       // Allocate memory for w and c fields
       allocateFieldsGrid();
@@ -737,7 +738,7 @@ namespace Rpc {
       w_.readBasis(filename, domain_.unitCell());
 
       // Update UnitCell in Mixture
-      mixture_.setUnitCell(domain().unitCell());
+      mixture_.clearUnitCellData();
 
       hasCFields_ = false;
       hasFreeEnergy_ = false;
@@ -767,7 +768,7 @@ namespace Rpc {
       w_.readRGrid(filename, domain_.unitCell());
 
       // Update UnitCell in Mixture
-      mixture_.setUnitCell(domain().unitCell());
+      mixture_.clearUnitCellData();
 
       hasCFields_ = false;
       hasFreeEnergy_ = false;
@@ -803,7 +804,7 @@ namespace Rpc {
                                          domain_.unitCell());
 
       // Update UnitCell in Mixture
-      mixture_.setUnitCell(domain().unitCell());
+      mixture_.clearUnitCellData();
 
       // Allocate work space array
       DArray<double> wtmp;
@@ -867,7 +868,7 @@ namespace Rpc {
    {
       domain_.setUnitCell(unitCell);
       // Note: Domain::setUnitCell checks agreement of lattice system 
-      mixture_.setUnitCell(domain().unitCell());
+      mixture_.clearUnitCellData();
       if (domain().hasGroup() && !isAllocatedBasis_) {
          allocateFieldsBasis();
       }
@@ -883,7 +884,7 @@ namespace Rpc {
    {
       domain_.setUnitCell(lattice, parameters);
       // Note: Domain::setUnitCell checks agreement of lattice system
-      mixture_.setUnitCell(domain().unitCell());
+      mixture_.clearUnitCellData();
       if (domain().hasGroup() && !isAllocatedBasis_) {
          allocateFieldsBasis();
       }
@@ -897,7 +898,7 @@ namespace Rpc {
    {
       domain_.setUnitCell(parameters);
       // Note: Domain::setUnitCell requires lattice system is set on entry
-      mixture_.setUnitCell(domain().unitCell());
+      mixture_.clearUnitCellData();
       if (domain().hasGroup() && !isAllocatedBasis_) {
          allocateFieldsBasis();
       }

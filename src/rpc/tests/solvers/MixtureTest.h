@@ -74,7 +74,7 @@ public:
 
       mixture.associate(mesh, fft, unitCell);
       mixture.allocate();
-      mixture.setUnitCell(unitCell);
+      mixture.clearUnitCellData();
 
       #if 0
       std::cout << "\n";
@@ -153,7 +153,7 @@ public:
 
       mixture.associate(mesh, fft, unitCell);
       mixture.allocate();
-      mixture.setUnitCell(unitCell);
+      mixture.clearUnitCellData();
 
       #if 0
       std::cout << "\n";
@@ -252,7 +252,7 @@ public:
 
       mixture.associate(mesh, fft, unitCell);
       mixture.allocate();
-      mixture.setUnitCell(unitCell);
+      mixture.clearUnitCellData();
 
       #if 0
       std::cout << "\n";
@@ -340,7 +340,7 @@ public:
 
       mixture.associate(mesh, fft, unitCell);
       mixture.allocate();
-      mixture.setUnitCell(unitCell);
+      mixture.clearUnitCellData();
 
       #if 0
       std::cout << "\n";

@@ -25,6 +25,7 @@ namespace Rpc
     : ds_(-1.0),
       meshPtr_(0),
       unitCellPtr_(0),
+      nParam_(0),
       hasStress_(false)
    {  setClassName("Mixture"); }
 
@@ -56,21 +57,25 @@ namespace Rpc
       UTIL_CHECK(mesh.size() > 0);
       UTIL_CHECK(fft.isSetup());
       UTIL_CHECK(mesh.dimensions() == fft.meshDimensions());
+      UTIL_CHECK(cell.nParameter() > 0);
 
-      // Save addresses of mesh
+      // Save addresses of mesh and unit cell
       meshPtr_ = &mesh;
+      unitCellPtr_ = &cell;
+      nParam_ = cell.nParameter();
 
       // Create associations for all polymer blocks
       if (nPolymer() > 0) {
          int i, j;
          for (i = 0; i < nPolymer(); ++i) {
+            polymer(i).setNParams(nParam_);
             for (j = 0; j < polymer(i).nBlock(); ++j) {
                polymer(i).block(j).associate(mesh, fft, cell);
             }
          }
       }
 
-      // Set spatial discretization for solvents
+      // Create associations for all solvents (if any)
       if (nSolvent() > 0) {
          for (int i = 0; i < nSolvent(); ++i) {
             solvent(i).associate(mesh);
@@ -111,23 +116,19 @@ namespace Rpc
 
    }
 
+   /*
+   * Clear all data that depends on the unit cell parameters.
+   */
    template <int D>
-   void Mixture<D>::setUnitCell(const UnitCell<D>& unitCell)
+   void Mixture<D>::clearUnitCellData()
    {
-
-      // Set association of unitCell to this Mixture
-      unitCellPtr_ = &unitCell;
-
-      // SetupUnitCell for all polymers
       if (nPolymer() > 0) {
          for (int i = 0; i < nPolymer(); ++i) {
-            polymer(i).setUnitCell(unitCell);
+            polymer(i).clearUnitCellData();
          }
       }
-
       hasStress_ = false;
    }
-
 
    /*
    * Reset statistical segment length for one monomer type.
@@ -244,7 +245,7 @@ namespace Rpc
          }
    
          // Accumulate stress for all the polymer chains
-         for (i = 0; i < unitCellPtr_->nParameter(); ++i) {
+         for (i = 0; i < nParam_; ++i) {
             for (j = 0; j < nPolymer(); ++j) {
                stress_[i] += polymer(j).stress(i);
             }
@@ -252,8 +253,9 @@ namespace Rpc
 
       }
 
-      // Correct for partial occupation of the unit cell
-      for (i = 0; i < unitCellPtr_->nParameter(); ++i) {
+      // Correct for possible partial occupation of the unit cell.
+      // Used in problems that contain a Mask, e.g., thin films.
+      for (i = 0; i < nParam_; ++i) {
          stress_[i] /= phiTot;
       }
 

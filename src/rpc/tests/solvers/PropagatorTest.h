@@ -190,7 +190,7 @@ public:
          w[i] = 1.0;
       }
 
-      block.setUnitCell(unitCell);
+      block.clearUnitCellData();
       block.setupSolver(w);
    }
    
@@ -226,7 +226,7 @@ public:
          w[i] = 1.0;
       }
 
-      block.setUnitCell(unitCell);
+      block.clearUnitCellData();
       block.setupSolver(w);
    }
 
@@ -264,7 +264,7 @@ public:
          w[i] = 1.0;
       }
 
-      block.setUnitCell(unitCell);
+      block.clearUnitCellData();
       block.setupSolver(w);
    }
 
@@ -299,7 +299,7 @@ public:
          w[i] = wc;
       }
 
-      block.setUnitCell(unitCell);
+      block.clearUnitCellData();
       block.setupSolver(w);
 
       // Test step
@@ -375,7 +375,7 @@ public:
          w[i] = wc;
       }
 
-      block.setUnitCell(unitCell);
+      block.clearUnitCellData();
       block.setupSolver(w);
 
       // Test step
@@ -462,7 +462,7 @@ public:
          w[i] = wc;
       }
 
-      block.setUnitCell(unitCell);
+      block.clearUnitCellData();
       block.setupSolver(w);
 
       // Test step

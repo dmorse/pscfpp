@@ -92,21 +92,16 @@ namespace Rpc {
       void allocate(double dst);
 
       /**
-      * Set the unit cell.
+      * Clear all internal data that depends on the unit cell parameters
       *
-      * This should be called once after every change in unit cell
-      * parameters. The function stores the address of the unitCell object 
-      * and sets a flag that marks internal variables that depends on the
-      * unit cell parameters as being "dirty" or invalid. These internal
-      * variables are actually recomputed later, just before they are 
-      * needed, within the setupSolver member function. The setupSolver 
-      * function is called by the Polymer<D>::compute function just before 
-      * solving the modified diffusion equation (MDE) for all propagators 
-      * associated with the polymer.
+      * This function should be called once after every change in unit cell
+      * parameters. The function marks all variables that depend on the 
+      * unit cell parameters as being outdated, and thus invalid. Such
+      * variables are recomputed later, just before they are needed.
       *
       * \param unitCell  crystal unit cell, defining cell parameters
       */
-      void setUnitCell(const UnitCell<D>& unitCell);
+      void clearUnitCellData();
 
       /**
       * Set or reset block length.
