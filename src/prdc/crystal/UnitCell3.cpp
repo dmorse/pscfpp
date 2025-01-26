@@ -395,6 +395,9 @@ namespace Prdc {
    */
    UnitCell<3>& UnitCell<3>::operator = (UnitCell<3> const & other)
    {
+      if (lattice_ != UnitCell<3>::Null) {
+         UTIL_CHECK(other.lattice_ == lattice_);
+      }
       isInitialized_ = false;
       lattice_ = other.lattice_;
       setNParameter();
@@ -411,6 +414,10 @@ namespace Prdc {
    */
    void UnitCell<3>::set(UnitCell<3>::LatticeSystem lattice)
    {
+      UTIL_CHECK(lattice != UnitCell<3>::Null);
+      if (lattice_ != UnitCell<3>::Null) {
+         UTIL_CHECK(lattice == lattice_);
+      }
       isInitialized_ = false;
       lattice_ = lattice;
       setNParameter();
@@ -422,9 +429,7 @@ namespace Prdc {
    void UnitCell<3>::set(UnitCell<3>::LatticeSystem lattice,
                          FSArray<double, 6> const & parameters)
    {
-      isInitialized_ = false;
-      lattice_ = lattice;
-      setNParameter();
+      set(lattice);
       for (int i = 0; i < nParameter_; ++i) {
          parameters_[i] = parameters[i];
       }   

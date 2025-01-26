@@ -22,9 +22,9 @@ namespace Prdc {
    std::istream& operator >> (std::istream& in,
                               UnitCell<D>& cell)
    {
-      cell.isInitialized_ = false;
-      in >> cell.lattice_;
-      cell.setNParameter();
+      typename UnitCell<D>::LatticeSystem lattice;
+      in >> lattice;
+      cell.set(lattice);
       for (int i = 0; i < cell.nParameter_; ++i) {
          in >> cell.parameters_[i];
       }
