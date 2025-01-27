@@ -38,8 +38,7 @@ public:
 
       // Make reference copy of w fields in basis format
       DArray< DArray<double> > b_wFields_check;
-      copyFieldsBasis(b_wFields_check, system.w().basis());
-    
+      b_wFields_check = system.w().basis();
      
       // Iterate and output solution
       int error = system.iterate();
@@ -50,10 +49,7 @@ public:
       system.writeCBasis("out/testIterate1D_lam_rigid_c.bf");
 
       // Compare result to original in basis format
-      // DArray< DArray<double> > b_wFields;
-      // copyFieldsBasis(b_wFields, system.w().basis());
       BFieldComparison comparison(1);
-      // comparison.compare(b_wFields_check, b_wFields);
       comparison.compare(b_wFields_check, system.w().basis());
       if (verbose() > 0) {
          Log::file() << "\n";
@@ -74,7 +70,7 @@ public:
 
       // Make reference copy of w fields
       DArray< DArray<double> > b_wFields_check;
-      copyFieldsBasis(b_wFields_check, system.w().basis());
+      b_wFields_check = system.w().basis();
 
       // Read input w-fields, iterate and output solution
       system.readWBasis("in/diblock/lam/omega.in");
@@ -87,7 +83,7 @@ public:
 
       // Get test result
       DArray< DArray<double> > b_wFields;
-      copyFieldsBasis(b_wFields, system.w().basis());
+      b_wFields = system.w().basis();
 
       // Compare result to original
       BFieldComparison comparison (1);
@@ -117,7 +113,7 @@ public:
 
       // Make reference copy of w fields
       DArray< DArray<double> > b_wFields_check;
-      copyFieldsBasis(b_wFields_check, system.w().basis());
+      b_wFields_check = system.w().basis();
 
       // Read input w-fields, iterate and output solution
       system.readWBasis("in/diblock/lam/omega.in");
@@ -130,7 +126,7 @@ public:
 
       // Get test result
       DArray< DArray<double> > b_wFields;
-      copyFieldsBasis(b_wFields, system.w().basis());
+      b_wFields = system.w().basis();
 
       // Compare result to original
       BFieldComparison comparison (1);
@@ -159,7 +155,7 @@ public:
       // Make reference copy of w fields
       system.readWBasis("in/solution/lam/w.bf");
       DArray< DArray<double> > b_wFields_check;
-      copyFieldsBasis(b_wFields_check, system.w().basis());
+      b_wFields_check = system.w().basis();
 
       // iterate and output solution
       int error = system.iterate();
@@ -171,7 +167,7 @@ public:
 
       // Get test result
       DArray< DArray<double> > b_wFields;
-      copyFieldsBasis(b_wFields, system.w().basis());
+      b_wFields = system.w().basis();
 
       // Compare result to original
       BFieldComparison comparison (1);
@@ -200,7 +196,7 @@ public:
       // Make reference copy of w fields
       system.readWBasis("in/blend/lam/w.ref");
       DArray< DArray<double> > b_wFields_check;
-      copyFieldsBasis(b_wFields_check, system.w().basis());
+      b_wFields_check = system.w().basis();
 
       // Read input w-fields, iterate and output solution
       system.readWBasis("in/blend/lam/w.bf");
@@ -213,7 +209,7 @@ public:
 
       // Get test result
       DArray< DArray<double> > b_wFields;
-      copyFieldsBasis(b_wFields, system.w().basis());
+      b_wFields = system.w().basis();
 
       // Compare result to original
       BFieldComparison comparison (1);
@@ -241,7 +237,7 @@ public:
       // Make reference copy of w fields
       system.readWBasis("in/solution/lam_open/w.ref");
       DArray< DArray<double> > b_wFields_check;
-      copyFieldsBasis(b_wFields_check, system.w().basis());
+      b_wFields_check = system.w().basis();
 
       // Read input w-fields, iterate and output solution
       system.readWBasis("in/solution/lam_open/w.bf");
@@ -255,7 +251,7 @@ public:
 
       // Get test result
       DArray< DArray<double> > b_wFields;
-      copyFieldsBasis(b_wFields, system.w().basis());
+      b_wFields = system.w().basis();
 
       // Compare result to original
       BFieldComparison comparison (1);
@@ -285,7 +281,7 @@ public:
       // Make reference copy of w fields
       system.readWBasis("in/blend/lam/w.ref");
       DArray< DArray<double> > b_wFields_check;
-      copyFieldsBasis(b_wFields_check, system.w().basis());
+      b_wFields_check = system.w().basis();
 
       // Read input w-fields, iterate and output solution
       system.readWBasis("in/blend/lam/w.bf");
@@ -298,7 +294,7 @@ public:
 
       // Get test result
       DArray< DArray<double> > b_wFields;
-      copyFieldsBasis(b_wFields, system.w().basis());
+      b_wFields = system.w().basis();
 
       // Compare result to original
       BFieldComparison comparison (1);
@@ -330,7 +326,7 @@ public:
 
       // Make reference copy of w fields
       DArray< DArray<double> > b_wFields_check;
-      copyFieldsBasis(b_wFields_check, system.w().basis());
+      b_wFields_check = system.w().basis();
 
       // Read initial guess, iterate, output solution
       // RPC tests start from the reference solution, 
@@ -346,7 +342,7 @@ public:
 
       // Get test result
       DArray< DArray<double> > b_wFields;
-      copyFieldsBasis(b_wFields, system.w().basis());
+      b_wFields = system.w().basis();
 
       // Compare result to original
       BFieldComparison comparison (1);
@@ -377,7 +373,7 @@ public:
 
       // Make reference copy of w fields
       DArray< DArray<double> > b_wFields_check;
-      copyFieldsBasis(b_wFields_check, system.w().basis());
+      b_wFields_check = system.w().basis();
 
       system.readWBasis("in/diblock/hex/omega.in");
       int error = system.iterate();
@@ -389,7 +385,7 @@ public:
 
       // Get test result
       DArray< DArray<double> > b_wFields;
-      copyFieldsBasis(b_wFields, system.w().basis());
+      b_wFields = system.w().basis();
 
       // Compare result to original
       BFieldComparison comparison (1);
@@ -420,7 +416,7 @@ public:
 
       // Make reference copy of w fields
       DArray< DArray<double> > b_wFields_check;
-      copyFieldsBasis(b_wFields_check, system.w().basis());
+      b_wFields_check = system.w().basis();
 
       system.readWBasis("in/diblock/hex/omega.in");
       int error = system.iterate();
@@ -432,7 +428,7 @@ public:
 
       // Get test result
       DArray< DArray<double> > b_wFields;
-      copyFieldsBasis(b_wFields, system.w().basis());
+      b_wFields = system.w().basis();
 
       // Compare result to original
       BFieldComparison comparison (1);
@@ -462,7 +458,7 @@ public:
 
       // Make reference copy of w fields
       DArray< DArray<double> > b_wFields_check;
-      copyFieldsBasis(b_wFields_check, system.w().basis());
+      b_wFields_check = system.w().basis();
 
       system.readWBasis("in/diblock/bcc/omega.in");
       int error = system.iterate();
@@ -474,7 +470,7 @@ public:
 
       // Get test result
       DArray< DArray<double> > b_wFields;
-      copyFieldsBasis(b_wFields, system.w().basis());
+      b_wFields = system.w().basis();
 
       // Compare result to original
       BFieldComparison comparison (1);
@@ -504,7 +500,7 @@ public:
 
       // Make reference copy of w fields
       DArray< DArray<double> > b_wFields_check;
-      copyFieldsBasis(b_wFields_check, system.w().basis());
+      b_wFields_check = system.w().basis();
 
       system.readWBasis("in/diblock/bcc/omega.in");
       int error = system.iterate();
@@ -516,7 +512,7 @@ public:
 
       // Get test result
       DArray< DArray<double> > b_wFields;
-      copyFieldsBasis(b_wFields, system.w().basis());
+      b_wFields = system.w().basis();
 
       // Compare result to original
       BFieldComparison comparison (1);
@@ -546,7 +542,7 @@ public:
 
       // Make reference copy of w fields
       DArray< DArray<double> > b_wFields_check;
-      copyFieldsBasis(b_wFields_check, system.w().basis());
+      b_wFields_check = system.w().basis();
 
       system.readWBasis("in/diblock/bcc/omega.in");
       int error = system.iterate();
@@ -558,7 +554,7 @@ public:
 
       // Get test result
       DArray< DArray<double> > b_wFields;
-      copyFieldsBasis(b_wFields, system.w().basis());
+      b_wFields = system.w().basis();
 
       // Compare result to original
       BFieldComparison comparison (1);
@@ -588,66 +584,56 @@ public:
       in.close();
    }
 
-   void copyFieldsBasis(DArray< DArray<double> > & out, 
-                        DArray< DArray<double> > const & in)
+   void testIterateWithMaskAndH() // test manual entry of mask and h fields
    {
-      UTIL_CHECK(in.isAllocated());
-      int nField = in.capacity();
-      UTIL_CHECK(nField > 0);
+      printMethod(TEST_FUNC);
+      openLogFile("out/testIterateWithMaskAndH.log");
+      
+      // Set up system
+      System<1> system;
+      system.fileMaster().setInputPrefix(filePrefix());
+      system.fileMaster().setOutputPrefix(filePrefix());
+      std::ifstream in;
+      openInputFile("in/maskAndH/param", in);
+      system.readParam(in);
+      in.close();
 
-      // If array out is not allocated, allocate
-      if (!out.isAllocated()) {
-         out.allocate(nField);
-      }
-      int nPoint = in[0].capacity();
-      for (int i = 0; i < nField; i++) {
-         UTIL_CHECK(in[i].capacity() == nPoint);
-         if (!out[i].isAllocated()) {
-            out[i].allocate(nPoint);
-         } else {
-            UTIL_CHECK(out[i].capacity() == nPoint);
-         }
-      }
+      // Read initial guess
+      system.readWBasis("in/maskAndH/w.bf");
 
-      // Copy arrays
-      for (int i = 0; i < nField; i++) {
-         UTIL_CHECK(out[i].capacity() == in[i].capacity());
-         out[i] = in[i];
+      // Read in the mask and external fields from file
+      UnitCell<1> unitCell; // UnitCell object to pass to FieldIo functions
+      unitCell = system.domain().unitCell();
+      system.mask().setFieldIo(system.domain().fieldIo());
+      system.mask().allocate(system.domain().basis().nBasis(), 
+                             system.domain().mesh().dimensions());
+      system.mask().readBasis("in/maskAndH/mask.bf", unitCell);
+      TEST_ASSERT(eq(system.mask().phiTot(), 8.0951532073e-01));
+
+      system.h().setFieldIo(system.domain().fieldIo());
+      system.h().allocateBasis(system.domain().basis().nBasis());
+      system.h().allocateRGrid(system.domain().mesh().dimensions());
+      system.h().readBasis("in/maskAndH/h.bf", unitCell);
+
+      // Run the solve function
+      system.iterate();
+
+      // Check converged field is correct by comparing to files in in/maskAndH
+      DArray< DArray<double> > wFieldsCheck; // Copy of reference field
+      system.domain().fieldIo().readFieldsBasis("in/maskAndH/w.ref", 
+                                                wFieldsCheck, unitCell);
+      BFieldComparison bComparison(0); // object to compare fields
+      bComparison.compare(system.w().basis(), wFieldsCheck);
+
+      double diff = bComparison.maxDiff();
+      double epsilon = 1.0E-5; 
+      if (verbose() > 0 || diff > epsilon) {
+         std::cout << "\n";
+         std::cout << "diff    = " << diff << "\n";
+         std::cout << "epsilon = " << epsilon << "\n";
       }
+      TEST_ASSERT(diff < epsilon);
    }
-
-   #if 0
-   template <int D>
-   void copyFieldsRGrid(DArray< RField<D> > & out, 
-                        DArray< RField<D> > const & in)
-   {
-      UTIL_CHECK(in.isAllocated());
-      int nField = in.capacity();
-      UTIL_CHECK(nField > 0);
-
-      // If array out is not allocated, allocate
-      if (!out.isAllocated()) {
-         out.allocate(nField);
-      }
-      IntVec<D> dim = in[0].meshDimensions();
-      for (int i = 0; i < nField; i++) {
-         UTIL_CHECK(in[i].meshDimensions() == dim);
-         if (!out[i].isAllocated()) {
-            out[i].allocate(dim);
-         } else {
-            UTIL_CHECK(out[i].meshDimensions() == dim);
-         }
-      }
-
-      // Copy arrays
-      for (int i = 0; i < nField; i++) {
-         UTIL_CHECK(out[i].capacity() == in[i].capacity());
-         UTIL_CHECK(out[i].meshDimensions() == in[i].meshDimensions());
-         out[i] = in[i];
-      }
-
-   }
-   #endif
 
 };
 
@@ -665,6 +651,7 @@ TEST_ADD(AmIteratorTest, testIterate2D_hex_flex_noBatched)
 TEST_ADD(AmIteratorTest, testIterate3D_bcc_rigid)
 TEST_ADD(AmIteratorTest, testIterate3D_bcc_flex)
 TEST_ADD(AmIteratorTest, testIterate3D_bcc_flex_noBatched)
+TEST_ADD(AmIteratorTest, testIterateWithMaskAndH)
 
 TEST_END(AmIteratorTest)
 

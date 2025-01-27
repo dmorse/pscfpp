@@ -1623,6 +1623,8 @@ namespace Rpg {
       c_.setNMonomer(nMonomer);
       c_.allocateRGrid(dimensions);
 
+      h_.setNMonomer(nMonomer);
+
       // Allocate work space field arrays
       tmpFieldsRGrid_.allocate(nMonomer);
       tmpFieldsKGrid_.allocate(nMonomer);

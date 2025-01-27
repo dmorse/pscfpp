@@ -1,12 +1,12 @@
-#ifndef RPC_MASK_TEST_H
-#define RPC_MASK_TEST_H
+#ifndef RPG_MASK_TEST_H
+#define RPG_MASK_TEST_H
 
 #include <test/UnitTest.h>
 #include <test/UnitTestRunner.h>
 
-#include <rpc/field/Mask.h>
-#include <rpc/field/Domain.h>
-#include <rpc/field/FieldIo.h>
+#include <rpg/field/Mask.h>
+#include <rpg/field/Domain.h>
+#include <rpg/field/FieldIo.h>
 
 #include <prdc/cpu/RField.h>
 #include <prdc/cpu/RFieldDft.h>
@@ -27,7 +27,7 @@
 
 using namespace Util;
 using namespace Pscf;
-using namespace Pscf::Rpc;
+using namespace Pscf::Rpg;
 
 class MaskTest : public UnitTest 
 {
