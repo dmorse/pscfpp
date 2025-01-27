@@ -89,17 +89,15 @@ namespace Rpc {
       *
       * \param ds desired (optimal) value for contour length step
       */
-      void allocate(double dst);
+      void allocate(double ds);
 
       /**
       * Clear all internal data that depends on the unit cell parameters
       *
       * This function should be called once after every change in unit cell
       * parameters. The function marks all variables that depend on the 
-      * unit cell parameters as being outdated, and thus invalid. Such
-      * variables are recomputed later, just before they are needed.
-      *
-      * \param unitCell  crystal unit cell, defining cell parameters
+      * unit cell parameters as being outdated and invalid. Such variables
+      * are recomputed by lazy evaluation, just before they are needed.
       */
       void clearUnitCellData();
 
