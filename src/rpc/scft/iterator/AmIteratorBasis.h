@@ -54,7 +54,7 @@ namespace Rpc
       void readParameters(std::istream& in);
 
       /**
-      * Return compressor times contributions.
+      * Output timing results to log file.
       *
       * \param out  output stream for timer report
       */
@@ -106,6 +106,7 @@ namespace Rpc
       using AmIteratorTmpl< Iterator<D>, DArray<double> >::verbose;
       using AmIteratorTmpl< Iterator<D>, DArray<double> >::residual;
       using Iterator<D>::system;
+      using Iterator<D>::isSymmetric_;
       using Iterator<D>::isFlexible_;
       using Iterator<D>::flexibleParams_;
 
@@ -191,7 +192,7 @@ namespace Rpc
       int nElements();
 
       /**
-      * Gets the current field vector from the system.
+      * Get the current w fields and lattice parameters.
       *
       * \param curr current field vector
       */

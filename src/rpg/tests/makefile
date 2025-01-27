@@ -24,6 +24,9 @@ clean-outputs:
 ifeq ($(SRC_DIR),$(BLD_DIR))
 	-cd system; $(MAKE) clean-outputs
 	-cd field; $(MAKE) clean-outputs
+	-cd fts; $(MAKE) clean-outputs
+	-cd solvers; $(MAKE) clean-outputs
+	-cd sweep; $(MAKE) clean-outputs
 endif
 
 clean:
@@ -33,6 +36,9 @@ clean:
 ifeq ($(SRC_DIR),$(BLD_DIR))
 	-cd system; $(MAKE) clean
 	-cd field; $(MAKE) clean
+	-cd fts; $(MAKE) clean
+	-cd solvers; $(MAKE) clean
+	-cd sweep; $(MAKE) clean
 	rm -f */Test */*.o */*.d 
 endif
 

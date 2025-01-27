@@ -22,10 +22,8 @@ namespace Rpg
    class System;
 
    using namespace Util;
-   using namespace Pscf::Prdc;
-   using namespace Pscf::Prdc::Cuda;
 
-   typedef DeviceArray<cudaReal> FieldCUDA;
+   typedef Prdc::Cuda::DeviceArray<Prdc::Cuda::cudaReal> FieldCUDA;
 
    /**
    * Base class for iterative solvers for SCF equations.
@@ -38,12 +36,10 @@ namespace Rpg
 
    public:
 
-      #if 0
       /**
       * Default constructor.
       */
       Iterator();
-      #endif
 
       /**
       * Constructor.
@@ -108,6 +104,14 @@ namespace Rpg
       System<D>* sysPtr_;
       
    };
+
+   // Default constructor
+   template<int D>
+   inline Iterator<D>::Iterator()
+   : isSymmetric_(false),
+     isFlexible_(false),
+     sysPtr_(nullptr)
+   {  setClassName("Iterator"); }
 
    // Constructor
    template<int D>

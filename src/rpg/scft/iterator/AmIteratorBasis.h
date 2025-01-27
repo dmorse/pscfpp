@@ -11,6 +11,8 @@
 #include "Iterator.h"
 #include <pscf/iterator/AmIteratorTmpl.h>                 
 #include <pscf/iterator/AmbdInteraction.h>   // member variable
+#include <util/containers/DArray.h>          // base class argument
+#include <util/containers/RingBuffer.h>      // method input variable
 
 namespace Pscf {
 namespace Rpg
@@ -20,8 +22,6 @@ namespace Rpg
    class System;
 
    using namespace Util;
-   using namespace Pscf::Prdc;
-   using namespace Pscf::Prdc::Cuda;
 
    /**
    * Rpg implementation of the Anderson Mixing iterator.
@@ -53,19 +53,27 @@ namespace Rpg
       */
       void readParameters(std::istream& in);
 
+      /**
+      * Output timing results to log file.
+      *
+      * \param out  output stream for timer report
+      */
+      void outputTimers(std::ostream& out);
+
+      // Inherited public member functions
       using Iterator<D>::isFlexible;
       using AmIteratorTmpl<Iterator<D>, DArray<double> >::solve;
+      using AmIteratorTmpl<Iterator<D>, DArray<double> >::clearTimers;
 
    protected:
 
+      // Inherited protected members
       using ParamComposite::readOptional;
       using Iterator<D>::system;
       using Iterator<D>::isSymmetric_;
       using Iterator<D>::isFlexible_;
       using AmIteratorTmpl<Iterator<D>, DArray<double> >::setClassName;
       using AmIteratorTmpl<Iterator<D>, DArray<double> >::verbose;
-      using AmIteratorTmpl<Iterator<D>, DArray<double> >::outputTimers;
-      using AmIteratorTmpl<Iterator<D>, DArray<double> >::clearTimers;
 
       /**
       * Setup iterator just before entering iteration loop.
@@ -76,7 +84,7 @@ namespace Rpg
 
    private:
 
-      // Local copy of interaction, adapted for use AMBD residual definition
+      /// Local copy of interaction, adapted for use AMBD residual definition
       AmbdInteraction interaction_;
 
       /// How are stress residuals scaled in error calculation?
@@ -136,12 +144,12 @@ namespace Rpg
       bool hasInitialGuess();
      
       /** 
-      * Compute the number of elements in field or residual.
+      * Compute the number of elements in the residual vector.
       */
       int nElements();
 
-      /*
-      * Get the current state of the system.
+      /**
+      * Get the current w fields and lattice parameters.
       *
       * \param curr current field vector (output)
       */
@@ -155,7 +163,7 @@ namespace Rpg
       /**
       * Gets the residual vector from system.
       *  
-      * \param curr current residual vector (output)
+      * \param resid current residual vector (output)
       */
       void getResidual(DArray<double>& resid);
 
@@ -172,6 +180,13 @@ namespace Rpg
       void outputToLog();
 
    };
+
+   #ifndef RPG_AM_ITERATOR_BASIS_TPP
+   // Suppress implicit instantiation
+   extern template class AmIteratorBasis<1>;
+   extern template class AmIteratorBasis<2>;
+   extern template class AmIteratorBasis<3>;
+   #endif
 
 } // namespace Rpg
 } // namespace Pscf

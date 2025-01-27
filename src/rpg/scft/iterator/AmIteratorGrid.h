@@ -11,6 +11,8 @@
 #include "Iterator.h"                        // base class
 #include <pscf/iterator/AmIteratorTmpl.h>    // base class template
 #include <pscf/iterator/AmbdInteraction.h>   // member variable
+#include <util/containers/DArray.h>          // base class argument
+#include <util/containers/RingBuffer.h>      // method input variable
 
 namespace Pscf {
 namespace Rpg
@@ -20,8 +22,6 @@ namespace Rpg
    class System;
 
    using namespace Util;
-   using namespace Pscf::Prdc;
-   using namespace Pscf::Prdc::Cuda;
 
    /**
    * Rpg implementation of the Anderson Mixing iterator.
@@ -53,13 +53,21 @@ namespace Rpg
       */
       void readParameters(std::istream& in);
 
+      /**
+      * Output timing results to log file.
+      *
+      * \param out  output stream for timer report
+      */
+      void outputTimers(std::ostream& out);
+
+      // Inherited public member functions
       using AmIteratorTmpl<Iterator<D>, FieldCUDA>::solve;
-      using AmIteratorTmpl<Iterator<D>, FieldCUDA>::outputTimers;
       using AmIteratorTmpl<Iterator<D>, FieldCUDA>::clearTimers;
       using Iterator<D>::isFlexible;
 
    protected:
 
+      // Inherited protected members
       using AmIteratorTmpl<Iterator<D>, FieldCUDA>::verbose;
       using ParamComposite::readOptional;
       using ParamComposite::setClassName;
@@ -104,60 +112,6 @@ namespace Rpg
       */
       double maxAbs(FieldCUDA const & a);
 
-      #if 0
-      /**
-      * Find norm of a residual vector.
-      *  
-      * \param a input vector
-      */
-      double norm(FieldCUDA const & a);
-
-      /**
-      * Compute the dot product for an element of the U matrix.
-      * 
-      * \param resBasis RingBuffer of residual basis vectors.
-      * \param m row of the U matrix
-      * \param n column of the U matrix
-      */
-      double computeUDotProd(RingBuffer<FieldCUDA> const & resBasis, 
-                             int m, int n);
-
-      /**
-      * Compute the dot product for an element of the v vector.
-      * 
-      * \param resCurrent current residual vector
-      * \param resBasis RingBuffer of residual basis vectors
-      * \param m row index for element of the v vector
-      */
-      double computeVDotProd(FieldCUDA const & resCurrent, 
-                             RingBuffer<FieldCUDA> const & resBasis, 
-                             int m);
-
-      /**
-      * Update the U matrix.
-      * 
-      * \param U U matrix (dot products of residual basis vectors)
-      * \param resBasis RingBuffer residual basis vectors
-      * \param nHist current number of previous states
-      */
-      void updateU(DMatrix<double> & U, 
-                   RingBuffer<FieldCUDA> const & resBasis, 
-                   int nHist);
-
-      /**
-      * Update the v vector.
-      * 
-      * \param v v vector
-      * \param resCurrent current residual vector 
-      * \param resBasis RingBuffer of residual basis vectors
-      * \param nHist number of histories stored at this iteration
-      */
-      void updateV(DArray<double> & v, 
-                   FieldCUDA const & resCurrent, 
-                   RingBuffer<FieldCUDA> const & resBasis, 
-                   int nHist);
-      #endif
-
       /**
       * Update the series of residual vectors.
       * 
@@ -194,12 +148,12 @@ namespace Rpg
       bool hasInitialGuess();
      
       /** 
-      * Compute the number of elements in field or residual.
+      * Compute the number of elements in the residual vector.
       */
       int nElements();
 
-      /*
-      * Get the current state of the system.
+      /**
+      * Get the current w fields and lattice parameters.
       *
       * \param curr current field vector (output)
       */
@@ -213,7 +167,7 @@ namespace Rpg
       /**
       * Gets the residual vector from system.
       *  
-      * \param curr current residual vector (output)
+      * \param resid current residual vector (output)
       */
       void getResidual(FieldCUDA& resid);
 
@@ -231,9 +185,21 @@ namespace Rpg
 
       // --- Private member functions specific to this implementation --- 
       
+      /**
+      * Calculate the average value of an array.
+      * 
+      * \param field  input array
+      */
       cudaReal findAverage(FieldCUDA const & field);
 
    };
+
+   #ifndef RPG_AM_ITERATOR_GRID_TPP
+   // Suppress implicit instantiation
+   extern template class AmIteratorGrid<1>;
+   extern template class AmIteratorGrid<2>;
+   extern template class AmIteratorGrid<3>;
+   #endif
 
 } // namespace Rpg
 } // namespace Pscf

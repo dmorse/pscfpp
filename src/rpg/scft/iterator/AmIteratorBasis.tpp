@@ -10,7 +10,6 @@
 
 #include "AmIteratorBasis.h"
 #include <rpg/System.h>
-#include <prdc/cuda/RField.h>
 
 #include <prdc/crystal/UnitCell.h>
 #include <prdc/crystal/Basis.h>
@@ -60,6 +59,16 @@ namespace Rpg {
       readOptional(in, "scaleStress", scaleStress_);
    }
 
+   // Output timing results to log file.
+   template<int D>
+   void AmIteratorBasis<D>::outputTimers(std::ostream& out)
+   {
+      // Output timing results, if requested.
+      out << "\n";
+      out << "Iterator times contributions:\n";
+      AmIteratorTmpl<Iterator<D>, DArray<double> >::outputTimers(out);
+   }
+
    // -- Protected virtual function -- //
 
    // Setup before entering iteration loop
@@ -76,11 +85,13 @@ namespace Rpg {
 
    // -- Private virtual functions used to implement AM algorithm --  //
 
+   // Set a vector equal to another (assign a = b)
    template <int D>
    void AmIteratorBasis<D>::setEqual(DArray<double>& a, 
                                      DArray<double> const & b)
    {  a = b; }
 
+   // Compute the inner product of two real vectors.
    template <int D>
    double AmIteratorBasis<D>::dotProduct(DArray<double> const & a,
                                          DArray<double> const & b) 
@@ -118,90 +129,7 @@ namespace Rpg {
       return max;
    }
 
-   #if 0
-   template <int D>
-   double AmIteratorBasis<D>::norm(DArray<double>  const & a) 
-   {
-      const int n = a.capacity();
-      double data;
-      double normSq = 0.0;
-      for (int i=0; i < n; ++i) {
-         data = a[i];
-         normSq += data*data;
-      }
-      return sqrt(normSq);
-   }
-
-   // Compute one element of U matrix of by computing a dot product
-   template <int D>
-   double
-   AmIteratorBasis<D>::computeUDotProd(RingBuffer<DArray<double> > const & resBasis,
-                                  int m, int n)
-   {
-      const int length = resBasis[0].capacity();
-
-      double dotprod = 0.0;
-      for(int i = 0; i < length; i++) {
-         dotprod += resBasis[m][i] * resBasis[n][i];
-      }
-
-      return dotprod;
-   }
-
-   // Compute one element of V vector by computing a dot product
-   template <int D>
-   double
-   AmIteratorBasis<D>::computeVDotProd(DArray<double> const & resCurrent,
-                                  RingBuffer<DArray<double> > const & resBasis,
-                                  int m)
-   {
-      const int length = resBasis[0].capacity();
-
-      double dotprod = 0.0;
-      for(int i = 0; i < length; i++) {
-         dotprod += resCurrent[i] * resBasis[m][i];
-      }
-
-      return dotprod;
-   }
-
-   // Update entire U matrix
-   template <int D>
-   void AmIteratorBasis<D>::updateU(DMatrix<double> & U,
-                               RingBuffer<DArray<double> > const & resBasis,
-                               int nHist)
-   {
-      // Update matrix U by shifting elements diagonally
-      int maxHist = U.capacity1();
-      for (int m = maxHist-1; m > 0; --m) {
-         for (int n = maxHist-1; n > 0; --n) {
-            U(m,n) = U(m-1,n-1);
-         }
-      }
-
-      // Compute U matrix's new row 0 and col 0
-      for (int m = 0; m < nHist; ++m) {
-         double dotprod = computeUDotProd(resBasis,0,m);
-         U(m,0) = dotprod;
-         U(0,m) = dotprod;
-      }
-   }
-
-   template <int D>
-   void AmIteratorBasis<D>::updateV(DArray<double> & v,
-                               DArray<double> const & resCurrent,
-                               RingBuffer<DArray<double> > const & resBasis,
-                               int nHist)
-   {
-      // Compute U matrix's new row 0 and col 0
-      // Also, compute each element of v_ vector
-      for (int m = 0; m < nHist; ++m) {
-         v[m] = computeVDotProd(resCurrent,resBasis,m);
-      }
-   }
-   #endif
-
-   // Update basis
+   // Update the series of residual vectors.
    template <int D>
    void 
    AmIteratorBasis<D>::updateBasis(RingBuffer<DArray<double> > & basis,
@@ -214,20 +142,21 @@ namespace Rpg {
       DArray<double> newbasis;
       newbasis.allocate(n);
 
+      // New basis vector is difference between two most recent states
       for (int i = 0; i < n; i++) {
-         // sequential histories basis vectors
          newbasis[i] = hists[0][i] - hists[1][i]; 
       }
 
       basis.append(newbasis);
    }
 
+   // Compute trial field so as to minimize L2 norm of residual.
    template <int D>
    void
    AmIteratorBasis<D>::addHistories(DArray<double>& trial,
-                               RingBuffer<DArray<double> > const & basis,
-                               DArray<double> coeffs,
-                               int nHist)
+                                    RingBuffer<DArray<double> > const & basis,
+                                    DArray<double> coeffs,
+                                    int nHist)
    {
       int n = trial.capacity();
       for (int i = 0; i < nHist; i++) {
@@ -238,10 +167,11 @@ namespace Rpg {
       }
    }
 
+   // Add predicted error to the trial field.
    template <int D>
    void AmIteratorBasis<D>::addPredictedError(DArray<double>& fieldTrial,
-                                         DArray<double> const & resTrial,
-                                         double lambda)
+                                              DArray<double> const & resTrial,
+                                              double lambda)
    {
       int n = fieldTrial.capacity();
       for (int i = 0; i < n; i++) {
@@ -256,7 +186,7 @@ namespace Rpg {
       return system().w().hasData();
    }
 
-   // Compute and return the number of elements in a field vector
+   // Compute the number of elements in the residual vector.
    template <int D>
    int AmIteratorBasis<D>::nElements()
    {
@@ -272,7 +202,7 @@ namespace Rpg {
       return nEle;
    }
 
-   // Get the current field from the system
+   // Get the current w fields and lattice parameters
    template <int D>
    void AmIteratorBasis<D>::getCurrent(DArray<double>& curr)
    {
@@ -280,11 +210,11 @@ namespace Rpg {
 
       const int nMonomer = system().mixture().nMonomer();
       const int nBasis = system().basis().nBasis();
-      const DArray< DArray<double> > * currSys = &system().w().basis();
+      const DArray< DArray<double> > & currSys = system().w().basis();
 
       for (int i = 0; i < nMonomer; i++) {
          for (int k = 0; k < nBasis; k++) {
-            curr[i*nBasis+k] = (*currSys)[i][k];
+            curr[i*nBasis+k] = currSys[i][k];
          }
       }
 
@@ -326,11 +256,40 @@ namespace Rpg {
       // Compute SCF residual vector elements
       for (int i = 0; i < nMonomer; ++i) {
          for (int j = 0; j < nMonomer; ++j) {
+            double chi = interaction_.chi(i,j);
+            double p = interaction_.p(i,j);
+            DArray<double> const & c = system().c().basis(j);
+            DArray<double> const & w = system().w().basis(j);
             for (int k = 0; k < nBasis; ++k) {
                int idx = i*nBasis + k;
-               resid[idx] +=
-                  interaction_.chi(i,j)*system().c().basis(j)[k] -
-                  interaction_.p(i,j)*system().w().basis(j)[k];
+               resid[idx] += chi*c[k] - p*w[k];
+            }
+         }
+      }
+
+      // If iterator has mask, account for it in residual values
+      if (system().hasMask()) {
+         DArray<double> const & mask = system().mask().basis();
+         double sumChiInv = interaction_.sumChiInverse();
+         for (int i = 0; i < nMonomer; ++i) {
+            for (int k = 0; k < nBasis; ++k) {
+               int idx = i*nBasis + k;
+               resid[idx] -= mask[k] / sumChiInv;
+            }
+         }
+      }
+
+      // If iterator has external fields, account for them in the values 
+      // of the residuals
+      if (system().hasExternalFields()) {
+         for (int i = 0; i < nMonomer; ++i) {
+            for (int j = 0; j < nMonomer; ++j) {
+               double p = interaction_.p(i,j);
+               DArray<double> const & h = system().h().basis(j);
+               for (int k = 0; k < nBasis; ++k) {
+                  int idx = i*nBasis + k;
+                  resid[idx] += p * h[k];
+               }
             }
          }
       }
@@ -338,7 +297,7 @@ namespace Rpg {
       // If not canonical, account for incompressibility
       if (!system().mixture().isCanonical()) {
          for (int i = 0; i < nMonomer; ++i) {
-            resid[i*nBasis] -= 1.0/interaction_.sumChiInverse();
+            resid[i*nBasis] -= 1.0 / interaction_.sumChiInverse();
          }
       } else {
          // Explicitly set homogeneous residual components
@@ -389,11 +348,18 @@ namespace Rpg {
 
       // If canonical, explicitly set homogeneous field components
       if (system().mixture().isCanonical()) {
+         double chi;
          for (int i = 0; i < nMonomer; ++i) {
             wField[i][0] = 0.0; // initialize to 0
             for (int j = 0; j < nMonomer; ++j) {
-               wField[i][0] +=
-                 interaction_.chi(i,j) * system().c().basis(j)[0];
+               chi = interaction_.chi(i,j);
+               wField[i][0] += chi * system().c().basis(j)[0];
+            }
+         }
+         // If iterator has external fields, include them in homogeneous field
+         if (system().hasExternalFields()) {
+            for (int i = 0; i < nMonomer; ++i) {
+               wField[i][0] += system().h().basis(i)[0];
             }
          }
       }
@@ -413,6 +379,7 @@ namespace Rpg {
 
    }
 
+   // Output relevant system details to the iteration log file.
    template<int D>
    void AmIteratorBasis<D>::outputToLog()
    {
