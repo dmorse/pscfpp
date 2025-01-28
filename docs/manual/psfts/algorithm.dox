@@ -8,62 +8,65 @@ The pscf_pc and pscf_pg programs allow PS-FTS simulations to be performed
 using either Brownian dynamics (BD) or Monte Carlo (MC) algorithms to 
 stochastically sample a fluctuating field or fields.
 
-BD and MC sampling algorithms for PS-FTS have a similar structure, both 
-of which involve a random change in one or more fields follows by use of 
-an iterative algorithm to find a partial-saddle point configuration. 
-Throughout the PSCF documentation and source code, an iterative algorithm 
-that is used to identify a partial saddle-point configuration, and thus 
-satisfy the incompressibility constraint, is referred to as a "compressor" 
+BD and MC sampling algorithms for PS-FTS have a similar structure.  A 
+single BD step or MC move generally requires generation of a random 
+change in one or more exchange fields, followed by use of an iterative 
+algorithm to find a new partial-saddle point configuration.
+Throughout the PSCF documentation and source code, iterative algorithms 
+that are used to identify partial saddle-point configurations, and thus 
+satisfy an incompressibility constraint, are referred to as a "compressor" 
 algorithm.
 
-For example, consider a simulation of a standard AB system with two monomer
-types. Such a system has an exchange field \f$ W_{-}({\bf r}) \f$ 
-that undergoes random fluctuations and a pressure-like field 
-\f$ W_{-}({\bf r}) \f$ that must be chosen to satisfy the partial 
-saddle-point condition. At the beginning of either a BD step or MC move 
-for such as system, a small random change is added to the exchange field 
-\f$ W_{-} \f$.  Next, an iterative compressor algorithm is used to 
-adjust the presssure-like field \f$ W_{+}({\bf r}) \f$ so as to satisfy 
-the partial saddle-point condition, thus re-imposing incompressibility 
-at a mean-field level.  Finally, for an MC simulation, a decision is made 
-about whether to accept or reject the resulting MC move, based on the 
-value of the Hamiltonian at the new partial saddle-point state. 
+For example, consider a PS-FTS simulation of a standard AB system with 
+two monomer types. Such a system has a real exchange field 
+\f$ W_{-}({\bf r}) = \omega_{-}({\bf r}) \f$ that undergoes random 
+fluctuations and a real pressure-like field 
+\f$ W_{+}({\bf r}) = i \omega_{+}({\bf r})\f$ that must be chosen to 
+satisfy the partial saddle-point condition. At the beginning of either a 
+BD step or MC move for such as system, a small random change is added to 
+the exchange field \f$ W_{-} \f$.  Next, an iterative compressor algorithm 
+is used to adjust the presssure-like field \f$ W_{+}({\bf r}) \f$ so as 
+to satisfy the partial saddle-point condition, thus imposing 
+incompressibility at a mean-field level.  Finally, for an MC simulation, 
+a decision is made about whether to accept or reject the resulting MC 
+move, based on the value of the Hamiltonian in the resulting new partial 
+saddle-point state. 
 
-PSCF allows users to specify a set of data analysis and data output
-operations that will be performed during a stochastic simulation. The 
-C++ classes that implement such operations are subclasses of a base 
-class named "Analyzer", and are referred to generically as analyzers 
-or analyzer classes. Each analyzer class performs a specified operation 
-at some regular interval during a simulation (e.g., every 10 or 100 
-simulation steps).  Analyzer classes may compute physical quantities 
-of interest, accumulate statistical properties of such properties,
-such as average values and variances, and periodically output data to 
-file. The simplest type of analyzer is one that periodically writes 
-the entire field configuration to file for later analysis.
+PSCF allows users to specify a set of data output and data analysis 
+operations that will be performed during a BD or MC simulation. The 
+C++ classes that implement such operations are referred to generically
+analyzers or analyzer classes. Each analyzer class performs a specified 
+operation at some regular interval during a simulation (e.g., every 10 
+or 100 simulation steps).  Analyzer classes may compute physical 
+quantities of interest, periodically output data to a file, and/or
+accumulate statistical properties such as average values and variances
+for properties of interest. 
 
 The format of a PSCF parameter file is thus designed to allow a user 
 to choose at run time from sets of available choices for three different 
 types of simulation and anaysis algorithms:
 
-   - **BD or MC Sampling** :  BD or MC stochastic sampling algorithms,
+   - **BD or MC Sampling** :  BD or MC stochastic sampling algorithm(s),
      which are used to update the fluctuating field or fields.
 
    - **Compressor** :  A compressor algorithm that is used to adjust
-     the pressure-like field \f$ W_{+} \f$ so as to again satisfy 
-     the partial saddle-point condition after a change in the 
-     fluctuating field. 
+     the pressure-like field \f$ W_{+} \f$ so as to always satisfy the 
+     partial saddle-point condition.
 
-   - **Analyzers** :  Data analysis and/or data output operations
-     that are performed at regular intervals during a simulation.
+   - **Analyzers** :  Data analysis and/or data output operations that 
+     are performed at regular intervals during a simulation.
 
 The format for parameter files used by pscf_pc and pscf_pg programs 
 contains an optional "Simulator" block that must be present to enable 
 PS-FTS calculations. This block is normally omitted in parameter 
 files for SCFT calculations. The Simulator block contains three main 
 subblocks that specify choices and associated parameter values for 
-sampling, compressor, and analysis algorithms, respectively.
+sampling, compressor, and analysis algorithms, respectively. The 
+available options for BD or MC sampling algorithms and compressor 
+algorithms are discussed below. Data analysis algorithms are discussed
+on a separate page. 
 
-\section psfts_algorithm_BD Brownian Dynamics (BD) Sampling
+\section psfts_algorithm_BD_sec Brownian Dynamics (BD) Simulation
 
 The description of BD step algorithms used to define parameters is 
 based on units in which the fictitious "time" is measured in units of 
@@ -128,7 +131,7 @@ algorithms:
 We recommand the Leimkuhler-Matthews algorithm for general use as 
 the most accurate and efficient of these options. 
 
-\section psfts_algorithm_MC Monte Carlo (MC) Sampling
+\section psfts_algorithm_MC Monte Carlo (MC) Simulation
 
 The PSCF implementation of MC sampling allows the user to specify a set 
 of Monte Carlo move types to be used during an MC simulation. When more
@@ -137,26 +140,23 @@ at random at the beginning of each step, using probabilities that are
 specified by the user.  The algorithm for each attempted step of an MC 
 simulation is thus:
 
-   - Choose a type of MC move at random from among a set
-     of choices specified by the user.
+   - Choose a type of MC move at random from among a set of choices
+     specified by the user.
 
-   - Use the chosen MC move to generate a random change in
-     \f$ W_{-} \f$.
+   - Use the chosen MC move to generate a random change in \f$ W_{-} \f$.
 
-   - Use the chosen compressor algorithm to adjust the
-     real pressure like field \f$ W_{+}({\bf r}) \f$
-     so as to satisfy the partial saddle-point condition.
+   - Use the chosen compressor algorithm to adjust the real pressure-like 
+     field \f$ W_{+}({\bf r}) \f$ so as to satisfy the partial 
+     saddle-point condition.
 
-   - Evaluate the Hamiltonian in the new partial saddle
-     point state.
+   - Evaluate the Hamiltonian in the new partial saddle point state.
 
-   - Use a Metropolis criterion that is designed to
-     satisfy detailed balance to decide whether to
-     accept or reject the move.
+   - Use a Metropolis criterion that is designed to satisfy detailed 
+     balance to decide whether to accept or reject the move.
 
-   - If the move is rejected, restore the system to
-     the field configuration it had before the
-     beginning of the attempted step.
+   - If the move is rejected, restore the system to the field 
+     configuration that had existed before the beginning of the 
+     attempted move.
 
 The block of the parameter file for an MC simulation that contains 
 information about MC moves, which is labelled "McMoveManager", contains 
@@ -176,23 +176,23 @@ PSCF currently provides the following two MC step algorithms:
   \f$ W_{-} \f$ at different grid points </li> 
 </ul>
 The ForceBiasMove move generally leads to much more efficient sampling 
-than the simpler real move.
+than the simpler real move, and is recommended as the workhorse method
+for MC simulations.
 
 Acceptance rates for both of these types of MC moves decrease rapidly
 with increasing system size, leading MC to be less inefficient than BD 
-for large systems. We generally recommend the use of BD rather than MC 
-simulation for 3D systems with roughly \f$ 10^{4} \f$ or more grid points. 
+for large systems. We thus generally recommend the use of BD rather than 
+MC simulation for 3D systems with roughly \f$ 10^{4} \f$ or more grid 
+points. 
 
 One virtue of MC simulations over BD simulations is that, because MC 
 algorithms are designed to satisfy a detailed balance condition, they 
-do not exhibit any systematic sampling error: An infinitely long MC 
+do not exhibit any systematic sampling error. An infinitely long MC 
 simulation should, in principle, yield exact results for any average 
-value obtained from a model with a specific choice of spatial 
-discretization (though calculations computed with the same input 
-parameters on different meshes do yield measurably different results). 
-The only sampling errors in MC simulations are true statistical errors 
-arising from the finite length of a simulation, which can be estimated 
-by standard statistical methods, and errors arising from round off of 
+value obtained from a particular model on a specified computational
+mesh.  The only sampling errors in MC simulations are true statistical 
+errors arising from the finite length of a simulation, which can be 
+estimated by standard methods, and errors arising from round off of 
 floating point numbers, which are usually small.  BD simulations
 instead exhibit an systematic error due to discretization of the time 
 coordinate in the Langevin equation, an error that increases with 
@@ -222,21 +222,18 @@ the compressor algorithm requires multiple solutions of the MDE
 for each BD or MC step, almost all of the computational time of
 PS-FTS calculation is spent within the compressor algorithm. 
 
-The available compressor algorithms are listed below. Users may click
-on the link associated with each algorithm label to access more a
-detailed description of each the algorithm, and of the format of the 
-associated parameter file block. 
+The available compressor algorithms are listed below. Users may 
+click on the link associated with each algorithm label to access 
+more a detailed description of each the algorithm, and of the format 
+of the associated parameter file block. 
 <ul>
-  <li> \ref rpc_AmCompressor_page "AmCompressor" </li>
-  <li> \ref rpc_LrCompressor_page "LrCompressor" </li>
   <li> \ref rpc_LrAmCompressor_page "LrAmCompressor" </li>
+  <li> \ref rpc_LrCompressor_page "LrCompressor" </li>
+  <li> \ref rpc_AmCompressor_page "AmCompressor" </li>
 </ul>
-The LrAmCompressor is recommended for general use. 
+The LrAmCompressor is the default choice, and is recommended for 
+general use. 
 
-
-\section psfts_algorithm_analyer_sec Analysis Algorithms
-
-Describe roles for analyzer classes
 
 <BR>
 \ref psfts_psa_page    (Prev) &nbsp; &nbsp; &nbsp; &nbsp;

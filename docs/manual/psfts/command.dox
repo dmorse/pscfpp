@@ -1,7 +1,7 @@
 /*! \page psfts_command_page Command File
 
-\ref psfts_param_page         (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
-\ref psfts_postprocess_page   (Next)
+\ref psfts_param_page      (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref psfts_analysis_page   (Next)
 <BR>
 
 The input files required to run a field theoretic simulation (FTS) 
@@ -10,8 +10,8 @@ periodic system. The pscf_pc or pscf_pg program must be invoked
 with command line parameters that specify the names of a parameter 
 file and a command file.  The main difference in the command file 
 is simply that a SIMULATE command is used to run a stochastic 
-simulation, rather than the ITERATE or SWEEP command used to run 
-an SCFT calculation or an SCFT parameter sweep.
+simulation, rather than the ITERATE or SWEEP command used to run an 
+SCFT calculation or an SCFT parameter sweep.
 
 \section psfts_command_example_sec FTS Example
 
@@ -146,7 +146,7 @@ subblock of the McSimulator block.
 THE ANALYZE command reads a field trajectory file that was written by a 
 previous field-theoretic simulation, and postprocesses the contents of 
 that file.  This postprocessing procedure is discussed in more detail 
-on a \ref psfts_postprocess_page "separate page".
+\ref psfts_analysis_page "elsewhere".
 
 The trajectory file with a name given by the "filename" parameter is 
 read and parsed by an instance of a subclass of the TrajectoryReader 
@@ -173,6 +173,6 @@ associated with different monomer types.
 <BR>
 \ref psfts_param_page        (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
 \ref psfts_page              (Up)   &nbsp; &nbsp; &nbsp; &nbsp;
-\ref psfts_postprocess_page  (Next)
+\ref psfts_analysis_page  (Next)
 
 */

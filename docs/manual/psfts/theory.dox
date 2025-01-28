@@ -335,7 +335,7 @@ Saddle points thus correspond to SCFT solutions.
 The implementation of PS-FTS in PSCF for arbitrary values of 
 \f$ M \geq 2 \f$ is based on a "symmetric" formulation of the field 
 theory for incompressible models that is presented in the following
-reference:
+reference by Morse, Yong and Chen (MYC):
 
 "Polymer Field Theory for Multimonomer Incompressible Systems: 
 Symmetric Formation and ABC Systems",
@@ -660,23 +660,23 @@ generalization of that obtained for standard AB systems, after
 generalizing the definitions of both \f$ H_{\rm f} \f$ and 
 \f$ H_{\rm c} \f$. 
 
-<em> Comment (for users that read the source code> </em>: Most of the
-algorithms that are required to implement this formulation of polymer 
-field theory, but that are not needed for SCFT, are located in the 
-Rpc::Simulator and Rpg::Simulator class templates.  These are closely 
-analogous class templates designed to use Cpu and Gpu hardware, respectively, 
-each of which takes the dimension D of space as a template parameter. 
-Both of these class templates provide code to construct and diagonalize 
+<em> Comment (for users that read the source code) </em>: Many of the data
+structures and algorithms that are required to implement this formulation 
+of polymer field theory, but that are not needed for SCFT, are provided by
+the in the Rpc::Simulator and Rpg::Simulator class templates. These two
+closely analogous class templates are designed to use Cpu and Gpu hardware, 
+respectively, and each takes the dimension D of space as a template parameter. 
+Each of these class templates provides code to construct and diagonalize 
 the projected chi matrix and code to compute the field theoretic Hamiltonian 
-and its functional derivatives.  Instances of these templates are used as 
-base classes for more specialized BdSimulator and McSimulator classes that 
-provide other algorithms and data structures that are specific to Brownian 
-dynamics and MonteCarlo samplying algorithms.  If a PSCF parameter file 
-contains the information needed to perform a Brownian dynamics or 
-Monte Carlo simulation, the parent System<D> object will instantiate
-instantiate an associated BdSimulator<D> or McSimulator<D> object 
-while reading the parameter file, and that object provides a framework
-for the chosen type of simulation.
+\f$ H \f$ and its functional derivatives.  Instances of these templates are 
+used as base classes for more specialized BdSimulator and McSimulator 
+classes that provide other algorithms and data structures that are specific 
+to Brownian dynamics and MonteCarlo samplying algorithms, respectively. 
+If the pscf_pc or pscf_pg program reads a parameter file contains the 
+information needed to enable Brownian dynamics (BD) or Monte Carlo (MC)
+simulation, the program will instantiate a BdSimulator<D> or McSimulator<D> 
+object while reading the parameter file, and the resulting object provides 
+a framework for the chosen type of simulation.
 
 <BR>
 \ref psfts_page  (Prev, Up) &nbsp; &nbsp; &nbsp; &nbsp;

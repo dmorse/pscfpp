@@ -11,7 +11,7 @@ total density. When it is applicable, the approximation yields a
 theory with real statistical weights for all allowed field 
 configurations.
 
-\section psfts_psa_ab_sec AB Systems
+\section psfts_psa_ab_sec AB Systems (\f$ M = 2 \f$)
 
 We first consider the PSA for an incompressible standard AB system with 
 \f$ \chi > 0 \f$.  In the fully fluctuating theory for such a system, 
@@ -64,13 +64,13 @@ the Hamiltonian \f$ H \f$.
 
 \section psfts_psa_general_sec General Case (\f$ M \geq 2 \f$)
 
-The current version of PSCF allow PS-FTS simulations of some systems with 
-M > 2, subject to a condition on allowed values of the \f$ \chi \f$ 
-parameters.  The generalized PSA used in the current version of PSCF is 
-applicable if and only if the nontrivial eigenvalues of the projected 
-\f$ \chi \f$ matrix, \f$ \lambda_{1}, \ldots \lambda_{M-1} \f$, are all
-negative.  This requirement is a generalization of the requirement that 
-\f$ \chi > 0 \f$ in a standard AB system, which leads in this special
+The current version of PSCF (v1.2) allows PS-FTS simulations of some 
+systems with M > 2, subject to a constraint on allowed values of the 
+\f$ \chi \f$ parameters:  The implementation of the PSA in the current 
+version of PSCF is applicable if the nontrivial eigenvalues of the 
+projected \f$ \chi \f$ matrix, \f$ \lambda_{1}, \ldots \lambda_{M-1} \f$, 
+are all negative.  This requirement is a generalization of the requirement 
+that \f$ \chi > 0 \f$ in a standard AB system, which leads in this special
 case to a value for \f$ \lambda_{1} < 0\f$.
 
 To discuss the generalized PSA for such systems, it is convenient to 
@@ -88,14 +88,15 @@ PSA for such systems as an integral
 \f]
 in which \f$ \int D\omega_{-} \f$ denotes a functional integral over 
 the \f$ M - 1 \f$ exchange fields 
-\f$ \omega_{-} = [\omega_1, \ldots, \omega_{M-1}] \f$, 
-and in which \f$ \omega_{+}^{*} \f$ denotes a configuration of 
+\f$ \omega_{-} = [\omega_1, \ldots, \omega_{M-1}] \f$, and in which 
+\f$ \omega_{+}^{*} \f$ denotes a configuration of 
 \f$ \omega_{+}({\bf r}) \f$ that is chosen to satisfy a criterion 
 requiring that 
 \f[
+     0 = \frac{1}{i}
      \left . 
      \frac{ \delta H[\omega_{-}, \omega_{+} ] }
-          { \delta \omega_{+}({\bf r}) } = 0
+          { \delta \omega_{+}({\bf r}) } 
      \right |_{\omega_{+} = \omega_{+}^{*}}
      \quad.
 \f]
@@ -103,13 +104,18 @@ As for an AB system, the requirement that
 \f$ \delta H[\omega]/\delta \omega_{M}({\bf r}) = 0 \f$ can be shown to 
 be equivalent to a requirement that 
 \f[
-    \sum_{i=}^{M} \langle c_{i}({\bf r}) \rangle_{\rm id} = c_{0}
+    \sum_{i=}^{M} \phi_{i}({\bf r}) = 1
     \quad.
 \f]
-In the cases to which this approximation applies (when
+In cases to which this approximation applies (for which
 \f$ \lambda_{1}, \ldots, \lambda_{M-1} \f$ are all negative) this 
 approximation leads to real values for all monomer fields and for 
 the Hamiltonian \f$ H \f$. 
+
+Morse, Yong and Chen (<https://pubs.acs.org/doi/10.1021/acs.macromol.4c02636>)
+have proposed a further generalization of the PSA so as to treat cases in which 
+one or more eigenvalues of the projected \f$ \chi \f$ matrix are positive. This 
+further generalization is not implemented in v1.2 of PSCF. 
 
 <BR>
 \ref psfts_psa_page         (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 

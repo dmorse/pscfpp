@@ -1,0 +1,29 @@
+/*! \page psfts_analysis_page Data Analysis 
+
+\ref psfts_command_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref psfts_perturb_page        (Next)
+<BR>
+
+Describe postprocessing of data
+
+\section psfts_analysis_analyzers_sec Analysis Algorithms
+
+<ul>
+  <li> \subpage rpc_HamiltonianAnalyzer_page "HamiltonianAnalyzer" </li>
+  <li> \subpage rpc_BinaryStructureFactorGrid_page "BinaryStructureFactorGrid" </li>
+  <li> \subpage rpc_ChiDerivative_page "ChiDerivative" </li>
+  <li> \subpage rpc_ConcentrationDerivative_page "ConcentrationDerivative" </li>
+  <li> \subpage rpc_PerturbationDerivative_page "PerturbationDerivative" </li>
+  <li> \subpage rpc_MaxOrderParameter_page "MaxOrderParameter" </li>
+  <li> \subpage rpc_FourthOrderParameter_page "FourthOrderParameter" </li>
+  <li> \subpage rpc_TrajectoryWriter_page "TrajectoryWriter" </li>
+  <li> \subpage rpc_ConcentrationWriter_page "ConcentrationWriter" </li>
+  <li> \subpage rpc_StepLogger_page "StepLogger" </li>
+</ul>
+
+<BR>
+\ref psfts_command_page   (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
+\ref psfts_page           (Up)   &nbsp; &nbsp; &nbsp; &nbsp;
+\ref psfts_perturb_page   (Next)
+
+*/
