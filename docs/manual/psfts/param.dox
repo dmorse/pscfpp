@@ -62,14 +62,14 @@ System{
     AnalyzerManager{
       baseInterval    10
 
+      StepLogger{
+        interval        20
+      }
+
       HamiltonianAnalyzer{
         interval        10
         outputFileName  out/hamiltonian
         nSamplePerBlock 5
-      }
-
-      StepLogger{
-        interval        20
       }
 
     }
@@ -187,7 +187,7 @@ internal structure, except for differences in the sub-block that
 specifies details of the BD or MC sampling algorithm. BD and MC 
 simulations are described separately below.
 
-\section psfts_param_brownian_sec Brownian Dynamics
+\section psfts_param_brownian_sec Brownian Dynamics: BdSimulator Block
 
 The overall structure for a typical BdSimulator block in a parameter 
 file that enables BD simulation may be described schematically as 
@@ -262,7 +262,7 @@ associated parameter file format.
   <li> \subpage rpc_ExplicitBdStep_page "ExplicitBdStep" </li>
 </ul>
 
-\section psfts_param_montecarlo_sec Monte Carlo
+\section psfts_param_montecarlo_sec Monte Carlo: McSimulator Block
 
 The typical structure of the McSimulator block in a parameter file 
 for MC simulation may be described schematically as follows:
@@ -381,57 +381,89 @@ MC move type can be obtained by clicking on the associated link.
   <li> \subpage rpc_RealMove_page "RealMove" </li>
 </ul>
 
-\section psfts_param_compressor_sec Compressor Algorithms
+\section psfts_param_compressor_sec Compressor Block
 
 In both BD and MC simulations, the block that describes the sampling
 algorithm (i.e., the BdStep or McMoveManager block) is followed by a 
 selectable "Compressor" block. Users may choose from among several 
-available compressor algorithms by including a block for which the 
-label in the first line identifies one of the available algorithms.
+available compressor algorithms, the name of which is always given 
+by the first line in the associated block. 
 
 The available compressor algorithms are listed below. Users may click
 on the link associated with each algorithm label to access more a
 detailed description of each the algorithm, and of the format of the 
 associated parameter file block. 
 <ul>
-  <li> \subpage rpc_AmCompressor_page "AmCompressor" </li>
-  <li> \subpage rpc_LrCompressor_page "LrCompressor" </li>
   <li> \subpage rpc_LrAmCompressor_page "LrAmCompressor" </li>
+  <li> \subpage rpc_LrCompressor_page "LrCompressor" </li>
+  <li> \subpage rpc_AmCompressor_page "AmCompressor" </li>
 </ul>
-The LrAmCompressor is the default choice, we may thus be selected
+The LrAmCompressor is the default choice, and is generally the most
+efficient of these three options. The LrAmCompressor may thus be
 either by using the generic label "Compressor" or the more specific
 label "LrAmCompressor" in the first line of the associated parameter 
 file block. 
 
 \section psfts_param_analyzer_sec AnalyzerManager
-In both BD and MC simulations, the selectable "Compressor" block is 
-followed by an optional AnalyzerManager block. An AnalyzerManager is 
-a container for a list of one or more Analyzer objects that each 
-perform a statistical analysis or data output operation during a
-simulation.  
+
+In both BD and MC simulations, the selectable "Compressor" block 
+is followed by an optional AnalyzerManager block. In the C++ source
+code, the AnalyzerManager is a container for a list of one or more 
+objects that each perform a statistical analysis or data output 
+operation during a simulation.  These objects are instances of
+subclasses of a base class named "Analyzer", and are generically
+referred to in the PSCF source code and documentation as "analyzers".
 
 The first parameter in an AnalyzerManager block is an int parameter 
 called "baseInterval". This is followed by one or more subblocks 
-that each specify a particular type of Analyzer. The first parameter 
+that each specify a particular type of analyzer. The first parameter 
 of each such subblock is an int parameter called "interval" that 
 determines how often the analyzer is called. The interval parameter
 for each Analyzer must be an integer multiple of the "baseInterval". 
-The operation defined by each Analyzer is performed when a counter 
-that keeps track of the number of steps attempted thus far is an 
-integer multipe of its interval parameter. 
+The operation defined by each analyzer is performed when the 
+internal counter that keeps track of the number of BD steps or
+attempted MC moves is an integer multipe of its interval parameter. 
 
-<ul>
-  <li> \subpage rpc_HamiltonianAnalyzer_page "HamiltonianAnalyzer" </li>
-  <li> \subpage rpc_BinaryStructureFactorGrid_page "BinaryStructureFactorGrid" </li>
-  <li> \subpage rpc_ChiDerivative_page "ChiDerivative" </li>
-  <li> \subpage rpc_ConcentrationDerivative_page "ConcentrationDerivative" </li>
-  <li> \subpage rpc_PerturbationDerivative_page "PerturbationDerivative" </li>
-  <li> \subpage rpc_MaxOrderParameter_page "MaxOrderParameter" </li>
-  <li> \subpage rpc_FourthOrderParameter_page "FourthOrderParameter" </li>
-  <li> \subpage rpc_TrajectoryWriter_page "TrajectoryWriter" </li>
-  <li> \subpage rpc_ConcentrationWriter_page "ConcentrationWriter" </li>
-  <li> \subpage rpc_StepLogger_page "StepLogger" </li>
-</ul>
+Below, we show the AnalyzerManager block for the BD simulation 
+parameter file shown at the beginning of this page:
+\code
+    AnalyzerManager{
+      baseInterval    10
+
+      StepLogger{
+        interval      100
+      }
+
+      HamiltonianAnalyzer{
+        interval        10
+        outputFileName  out/hamiltonian
+        nSamplePerBlock 5
+      }
+
+    }
+\endcode
+In this example, the baseInterval is 10. After the baseInterval, the 
+block contains subblocks for two analyzers named StepLogger and 
+HamiltonianAnalyzer, each of which contains an "interval" parameter 
+with a value that is an integer multiple of the baseInterval of 10.  
+The StepLogger is a trivial analyzer that periodically outputs the 
+current value of the BD or MC step counter to the standard output 
+(i.e., to the screen, unless it is redirected).  The purpose of this 
+is simply to record the progress of the simulation.  
+The HamiltonianAnalyzer accumulates statistical information about 
+the value of the field theoretic Hamiltonian, including the average 
+value, the variance, and a reasonably sophisticated estimate of the 
+statistical error on the average value. The outputFileName parameter 
+gives the base name for a set of files to which the information 
+accumulated by HamiltonianAnalyzer will be written. 
+
+The parameter file block for most analyzers contains a string named 
+outputFileName or something similar that specifies the name of a file 
+to which results will be written. Different analyzers thus generally
+write results to separate files. 
+
+A list of all of the available analyzers, including links to detailed 
+documentation, is given on the \ref psfts_command_page "next page" . 
 
 <BR>
 \ref psfts_algorithm_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp;

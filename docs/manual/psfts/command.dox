@@ -153,7 +153,7 @@ read and parsed by an instance of a subclass of the TrajectoryReader
 class with a name specified by the className parameter.  Different
 subclasses can be used to read files with different formats.
 
-The associated parameter file must contain BdSimulator or McSimulator 
+The associated parameter file must contain a BdSimulator or McSimulator 
 block with an AnalyzerManager subblock that specifies what analysis 
 operations should be applied to the chosen frames of the trajectory 
 file. Every Analyzer in the AnalyzerManager block is applied to frames 

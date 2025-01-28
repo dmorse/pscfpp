@@ -44,10 +44,10 @@ for properties of interest.
 
 The format of a PSCF parameter file is thus designed to allow a user 
 to choose at run time from sets of available choices for three different 
-types of simulation and anaysis algorithms:
+types of simulation and analysis algorithms:
 
-   - **BD or MC Sampling** :  BD or MC stochastic sampling algorithm(s),
-     which are used to update the fluctuating field or fields.
+   - **Sampling** :  A BD step algorithm or a set of MC step algorithms
+     is used to update the fluctuating field components.
 
    - **Compressor** :  A compressor algorithm that is used to adjust
      the pressure-like field \f$ W_{+} \f$ so as to always satisfy the 
@@ -58,28 +58,30 @@ types of simulation and anaysis algorithms:
 
 The format for parameter files used by pscf_pc and pscf_pg programs 
 contains an optional "Simulator" block that must be present to enable 
-PS-FTS calculations. This block is normally omitted in parameter 
-files for SCFT calculations. The Simulator block contains three main 
-subblocks that specify choices and associated parameter values for 
+PS-FTS calculations. Because it contains information that is only
+needed for FTS, this block is normally omitted in parameter files for 
+SCFT calculations. The Simulator block contains three main subblocks 
+that specify choices algorithms and associated parameter values for 
 sampling, compressor, and analysis algorithms, respectively. The 
 available options for BD or MC sampling algorithms and compressor 
-algorithms are discussed below. Data analysis algorithms are discussed
-on a separate page. 
+algorithms are all listed below, with links to more detailed 
+descriptions. Data analysis algorithms are discussed a 
+\ref psfts_analysis_page "separate page". 
 
 \section psfts_algorithm_BD_sec Brownian Dynamics (BD) Simulation
 
 The description of BD step algorithms used to define parameters is 
 based on units in which the fictitious "time" is measured in units of 
-BD steps and energy is measured in units in which \f$ kT = 1 \f$. The 
-typical magnitude of changes in the exchange field(s) per time step 
-is controlled by a "mobility" parameter, which is denoted by the label 
-"mobility" in the parameter file, and by the symbol \f$ \gamma \f$ in 
+BD steps, while energy is measured in units in which \f$ kT = 1 \f$. 
+The typical magnitude of changes in the exchange field(s) per time step 
+is controlled by a parameter that is denoted by the label "mobility" 
+in the parameter file, and denoted by the symbol \f$ \gamma \f$ in 
 these notes.
 
-As an example, an explicit Euler BD step algorithm for a standard AB 
-system yields a change \f$ \Delta W_{-}({\bf r}) \f$ per time 
-step in the exchange field \f$ W_{-}({\bf r}) \f$ at grid point 
-\f$ {\bf r} \f$ that is given by
+As an example, consider the explicit Euler BD step algorithm for a 
+standard AB system. This algorithm yields a change 
+\f$ \Delta W_{-}({\bf r}) \f$ per time step in the exchange field 
+\f$ W_{-}({\bf r}) \f$ at grid point \f$ {\bf r} \f$ that is given by
 \f[
   \Delta W_{-}({\bf r}) =
   - \gamma \frac{\delta H}{\delta W_{-}({\bf r})}
@@ -95,23 +97,24 @@ is a random field displacement, and
     \quad.
 \f]
 The random displacement \f$ g({\bf r}) \f$ is chosen independently at 
-each grid point and each BD step from a Gaussian distribution with a 
-vanishing mean value, \f$ \overline{g({\bf r})} = 0 \f$, and with a 
-variance
+each node of the computational mesh and each BD step from a Gaussian 
+distribution with a vanishing mean value, \f$ \overline{g({\bf r})} = 0 \f$, 
+and with a variance
 \f[
   \overline{g^{2}({\bf r})} = \gamma \Delta V \quad.
 \f]
-Here, \f$ \Delta V \f$ is the volume per grid point of the computational 
-mesh, given by \f$ \Delta V = V/G \f$, where \f$ V \f$ is the total 
-system volume and \f$ G \f$ is the number of grid points on the mesh.
+Here, \f$ \Delta V \f$ is the volume per node (or grid point) of the 
+computational mesh, given by \f$ \Delta V = V/G \f$, where \f$ V \f$ 
+is the total system volume and \f$ G \f$ is the total number of nodes 
+in the mesh.
 
-The mobility parameter has an analogous meeting in more complicated 
-BD step algorithms, and always appears as a prefactor of 
-\f$ \delta H/\delta W_{-}({\bf r}) \f$ in expressions for 
-changes in \f$ W_{-}({\bf r}) \f$.
+The mobility parameter has an analogous meaning in more sophisticated
+BD step algorithms, and always appears as a prefactor of the "force"
+\f$ \delta H/\delta W_{-}({\bf r}) \f$ in expressions for changes in 
+\f$ W_{-}({\bf r}) \f$.
 
 Other authors have sometimes referred to what we call a "mobility" as 
-a time step, sometimes indicated by a s symbol such \f$ \Delta t \f$ or
+a time step, sometimes indicated by a symbol such \f$ \Delta t \f$ or
 \f$ \delta t \f$.  We refer to this parameter as a mobility rather 
 than a time step because there is no natural definition of time or 
 units of time in this context, in which an inertialess BD algorithm 
@@ -120,16 +123,22 @@ is simply being used to sample an equilibrium distribution.
 PSCF currently allows users to choose from among three BD step 
 algorithms: 
 <ul>
-  <li>
   <li> The \ref rpc_LMBdStep_page "Leimkuhler-Matthews (LM)" BD step 
   algorithm </li>
   <li> A \ref rpc_PredCorrBdStep_page "predictor corrector" algorithm,
   </li>
+  <li>
   The \ref rpc_ExplicitBdStep_page "explicit Euler" algorithm 
   described above,  </li>
 </ul>
-We recommand the Leimkuhler-Matthews algorithm for general use as 
-the most accurate and efficient of these options. 
+We recommand the Leimkuhler-Matthews (LM)algorithm for general use 
+as the most accurate and efficient of these options. The accuracy 
+of the LM step algorithm is found to be better than that of the 
+predictor-corrector algorithm (though both provide the same order 
+of weak convergence). The cost per step is nearly identical to 
+that of an explicit Euler algorithm (involving one MDE solution
+per step), and approximately half the cost of the predictor 
+corrector algorithm (which requires two MDE solutions per step).
 
 \section psfts_algorithm_MC Monte Carlo (MC) Simulation
 
@@ -168,22 +177,24 @@ required parameters.
 
 PSCF currently provides the following two MC step algorithms: 
 <ul>
-  <li> A \ref rpc_ForceBiasMove_page "force bias" MC move
-  that uses an explicit Euler BD step to generate a proposed
-  MC move. </li>
-  <li> A simple MC move named \ref rpc_RealMove_page "RealMove" 
-  that generates spatially uncorrelated random changes of 
+  <li> \ref rpc_ForceBiasMove_page "ForceBiasMove": A "smart MC" or
+  "force bias" MC move that uses an explicit Euler BD step to 
+  generate a proposed MC move. </li>
+  <li> \ref rpc_RealMove_page "RealMcMove" : A simple MC move that 
+  generates spatially uncorrelated random changes of 
   \f$ W_{-} \f$ at different grid points </li> 
 </ul>
-The ForceBiasMove move generally leads to much more efficient sampling 
-than the simpler real move, and is recommended as the workhorse method
-for MC simulations.
+The ForceBiasMove algorithm generally leads to much more efficient 
+sampling than the simpler real move, and is recommended as the workhorse 
+method for MC simulations.
 
 Acceptance rates for both of these types of MC moves decrease rapidly
-with increasing system size, leading MC to be less inefficient than BD 
-for large systems. We thus generally recommend the use of BD rather than 
-MC simulation for 3D systems with roughly \f$ 10^{4} \f$ or more grid 
-points. 
+with increasing system size, though the effect is much more severe with
+the simple real-space MC move. Because BD simulation does not suffer 
+from a similar problem, this phenomena causes MC to become less 
+efficient than BD for sufficiently large systems. We thus generally 
+recommend the use of BD rather than MC simulation for 3D systems with 
+roughly \f$ 10^{4} \f$ or more grid points. 
 
 One virtue of MC simulations over BD simulations is that, because MC 
 algorithms are designed to satisfy a detailed balance condition, they 

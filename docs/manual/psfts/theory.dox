@@ -246,9 +246,23 @@ auxiliary fields (so that the subscript f denotes "field"), while
 the monomer concentrations (so that the subscript c denotes 
 "concentration" or "coupling").  
 
-The quantity \f$ H_{\rm c} \f$ can also be expressed in terms of the 
-original monomer concentrations \f$ c_{1} \f$ and \f$ c_{2} \f$ as a 
-sum
+It is convenient for some purposes to defined "Wick rotated" fields
+\f[
+   W_{+}({\bf r}) \equiv i \omega_{+}({\bf r})
+   \quad\quad, \quad
+   W_{-}({\bf r}) \equiv \omega_{-}({\bf r}) \quad,
+
+\f]
+defined such that
+\f[
+   H_{\rm c}  = \int \! d{\bf r} \; 
+   \left [ W_{-}({\bf r}) C_{-}({\bf r}) 
+     +  W_{+}({\bf r}) C_{+}({\bf r}) \right ]
+   \quad.  
+\f]
+Hamiltonian component \f$ H_{\rm c} \f$ can also be expressed in terms 
+of the original monomer concentrations \f$ c_{1} \f$ and \f$ c_{2} \f$ 
+as a sum
 \f[
    H_{\rm c}  = 
    \int \! d{\bf r} \; 
@@ -257,10 +271,10 @@ sum
 \f]
 in which 
 \f[
-   w_{1}({\bf r}) =  i\omega_{+}({\bf r}) + \omega_{-}({\bf r}) \;
+   w_{1}({\bf r}) =  W_{+}({\bf r}) + W_{-}({\bf r}) \;
 \f]
 \f[
-   w_{2}({\bf r}) =  i\omega_{+}({\bf r}) - \omega_{-}({\bf r}) .
+   w_{2}({\bf r}) =  W_{+}({\bf r}) - W_{-}({\bf r}) .
 \f]
 are complex fields that act on monomers of types \f$ 1 \f$ and 
 \f$ 2 \f$, respectively.
@@ -302,7 +316,7 @@ respect to these fields are given by
     \quad \left . \frac{\delta H}{\delta \omega_{-}({\bf r})}  
     \right |_{\omega_{+}} = 
     \frac{1}{v} 
-    \left [ \Phi_{-}({\bf r}) - 2 \omega_{-}({\bf r})/\chi \right ] 
+    \left [ \phi_{1}({\bf r}) - \phi_{2}({\bf r}) - 2 \omega_{-}({\bf r})/\chi \right ] 
     \quad
 \f]
 \f[
@@ -310,17 +324,12 @@ respect to these fields are given by
    \left .  \frac{\delta H}{\delta \omega_{+}({\bf r}) } 
    \right |_{\omega_{-}}
     = \frac{1}{v} 
-       \left [ \Phi_{+}({\bf r}) - 1 \right ] \quad,
-\f]
-where \f$\Phi_{+} \f$ and \f$ \Phi_{-} \f$ are defined as 
-non-dimensional average concentrations
-\f[
-   \Phi_{\pm}({\bf r}) \equiv
-   v \langle C_{\pm}({\bf r}) \rangle_{\rm id} \quad.
+       \left [ \phi_{1}({\bf r}) + \phi_{2}({\bf r}) - 1 \right ] \quad.
 \f]
 Note that \f$ \delta H/\delta \omega_{+}({\bf r}) = 0 \f$ when
-\f$ \Phi_{+}({\bf r}) = 1 \f$, which is a mean-field version of
-the incompressibility constraint similar to that used in SCFT.
+\f$ \phi_{1}({\bf r}) + \phi_{2}({\bf r}) = 1 \f$. This is a mean-field 
+version of the incompressibility constraint that is identical to the 
+constraint used in SCFT.
 
 A saddle-point of the Hamiltonian is defined to be a field configuration 
 in which functional derivatives with respect to both fields vanish for 
