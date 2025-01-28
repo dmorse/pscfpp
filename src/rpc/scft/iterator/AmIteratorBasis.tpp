@@ -395,14 +395,16 @@ namespace Rpc {
 
       if (isFlexible()) {
          const int nParam = system().domain().unitCell().nParameter();
-         FSArray<double,6> parameters 
-                                  = system().domain().unitCell().parameters();
-         int counter = 0;
+         const int begin = nMonomer*nBasis;
 
+         FSArray<double,6> parameters;
+         parameters = system().domain().unitCell().parameters();
+
+         double coeff = 1.0 / scaleStress_;
+         int counter = 0;
          for (int i = 0; i < nParam; i++) {
             if (flexibleParams_[i]) {
-               parameters[i] = 1.0/scaleStress_ * 
-                               newGuess[nMonomer*nBasis + counter];
+               parameters[i] = coeff * newGuess[begin + counter];
                counter++;
             }
          }

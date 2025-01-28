@@ -62,6 +62,9 @@ namespace Rpg
 
       // Inherited public member functions
       using Iterator<D>::isFlexible;
+      using Iterator<D>::flexibleParams;
+      using Iterator<D>::setFlexibleParams;
+      using Iterator<D>::nFlexibleParams;
       using AmIteratorTmpl<Iterator<D>, DArray<double> >::solve;
       using AmIteratorTmpl<Iterator<D>, DArray<double> >::clearTimers;
 
@@ -69,11 +72,14 @@ namespace Rpg
 
       // Inherited protected members
       using ParamComposite::readOptional;
+      using ParamComposite::readOptionalFSArray;
       using Iterator<D>::system;
       using Iterator<D>::isSymmetric_;
       using Iterator<D>::isFlexible_;
+      using Iterator<D>::flexibleParams_;
       using AmIteratorTmpl<Iterator<D>, DArray<double> >::setClassName;
       using AmIteratorTmpl<Iterator<D>, DArray<double> >::verbose;
+      using AmIteratorTmpl<Iterator<D>, DArray<double> >::residual;
 
       /**
       * Setup iterator just before entering iteration loop.

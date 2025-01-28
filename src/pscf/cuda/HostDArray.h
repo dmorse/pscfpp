@@ -29,7 +29,9 @@ namespace Pscf {
    * data in global GPU device memory. Each of these classes defines  
    * an assignment operation that allows assignment from the other, 
    * which silently copies the underlying arrays between device and 
-   * host memory.
+   * host memory. Additionally, a method HostDArray::copySlice is
+   * provided, which populates the HostDArray with a slice of the 
+   * data from a larger DeviceArray.
    *
    * Otherwise, this class is identical to Util::DArray, with the
    * addition of an allocating constructor.
@@ -95,6 +97,23 @@ namespace Pscf {
       virtual 
       HostDArray<Data>& operator = (const DeviceArray<Data>& other);
 
+      /**
+       * Copy a slice of the data from a larger DeviceArray into this array.
+       * 
+       * This method will populate this HostDArray with data from a slice
+       * of a DeviceArray. The size of the slice is the capacity of this
+       * HostDArray (i.e., this entire array will be populated), and the
+       * position of the slice within the DeviceArray is indicated by 
+       * the input parameter beginId. 
+       * 
+       * Therefore, the capacity of the DeviceArray must be >= the 
+       * capacity of this HostDArray plus beginId.
+       * 
+       * \param other DeviceArray<Data> object from which to copy slice
+       * \param beginId  index of other array at which slice begins
+       */
+      void copySlice(DeviceArray<Data> const & other, int beginId);
+
    };
 
    /*
@@ -156,6 +175,35 @@ namespace Pscf {
                                  cudaMemcpyDeviceToHost) );
 
       return *this;
+   }
+
+   /*
+   * Copy a slice of the data from a larger DeviceArray into this array.
+   */
+   template <typename Data>
+   void HostDArray<Data>::copySlice(DeviceArray<Data> const & other,
+                                    int beginId)
+   {
+      // Precondition - device array must be allocated
+      if (!other.isAllocated()) {
+         UTIL_THROW("RHS DeviceArray<Data> must be allocated.");
+      }
+
+      // Precondition - host array must be allocated
+      if (!DArray<Data>::isAllocated()) {
+         UTIL_THROW("LHS HostDArray<Data> must be allocated.");
+      } 
+
+      // Slice must not exceed the capacity of device array
+      if (DArray<Data>::capacity() + beginId > other.capacity()) {
+         UTIL_THROW("Slice must not exceed the capacity of device array.");
+      }
+
+      // Copy all elements
+      cudaErrorCheck( cudaMemcpy(DArray<Data>::cArray(), 
+                                 other.cArray() + beginId, 
+                                 DArray<Data>::capacity() * sizeof(Data), 
+                                 cudaMemcpyDeviceToHost) );
    }
 
 }

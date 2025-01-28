@@ -64,16 +64,22 @@ namespace Rpg
       using AmIteratorTmpl<Iterator<D>, FieldCUDA>::solve;
       using AmIteratorTmpl<Iterator<D>, FieldCUDA>::clearTimers;
       using Iterator<D>::isFlexible;
+      using Iterator<D>::flexibleParams;
+      using Iterator<D>::setFlexibleParams;
+      using Iterator<D>::nFlexibleParams;
 
    protected:
 
       // Inherited protected members
       using AmIteratorTmpl<Iterator<D>, FieldCUDA>::verbose;
+      using AmIteratorTmpl<Iterator<D>, FieldCUDA>::residual;
       using ParamComposite::readOptional;
+      using ParamComposite::readOptionalFSArray;
       using ParamComposite::setClassName;
       using Iterator<D>::system;
       using Iterator<D>::isSymmetric_;
       using Iterator<D>::isFlexible_;
+      using Iterator<D>::flexibleParams_;
 
       /**
       * Setup iterator just before entering iteration loop.

@@ -54,8 +54,32 @@ namespace Rpg {
       isFlexible_ = 1;
       scaleStress_ = 10.0;
 
-      // Read in additional parameters
+      int np = system().domain().unitCell().nParameter();
+      UTIL_CHECK(np > 0);
+      UTIL_CHECK(np <= 6);
+      UTIL_CHECK(system().domain().unitCell().lattice() != UnitCell<D>::Null);
+
+      // Read in optional isFlexible value
       readOptional(in, "isFlexible", isFlexible_);
+
+      // Populate flexibleParams_ based on isFlexible_ (all 0s or all 1s),
+      // then optionally overwrite with user input from param file
+      if (isFlexible_) {
+         flexibleParams_.clear();
+         for (int i = 0; i < np; i++) {
+            flexibleParams_.append(true); // Set all values to true
+         }
+         // Read optional flexibleParams_ array to overwrite current array
+         readOptionalFSArray(in, "flexibleParams", flexibleParams_, np);
+         if (nFlexibleParams() == 0) isFlexible_ = false;
+      } else { // isFlexible_ = false
+         flexibleParams_.clear();
+         for (int i = 0; i < np; i++) {
+            flexibleParams_.append(false); // Set all values to false
+         }
+      }
+
+      // Read optional scaleStress value
       readOptional(in, "scaleStress", scaleStress_);
    }
 
@@ -196,7 +220,7 @@ namespace Rpg {
       int nEle = nMonomer*nBasis;
 
       if (isFlexible_) { 
-         nEle += system().unitCell().nParameter();
+         nEle += nFlexibleParams();
       }
 
       return nEle;
@@ -223,9 +247,14 @@ namespace Rpg {
          const int nParam = system().unitCell().nParameter();
          FSArray<double,6> const & parameters
                                   = system().unitCell().parameters();
+         int counter = 0;
          for (int i = 0; i < nParam; i++) {
-            curr[begin + i] = scaleStress_ * parameters[i];
+            if (flexibleParams_[i]) {
+               curr[begin + counter] = scaleStress_ * parameters[i];
+               counter++;
+            }
          }
+         UTIL_CHECK(counter == nFlexibleParams());
       }
 
    }
@@ -309,10 +338,6 @@ namespace Rpg {
       // If variable unit cell, compute stress residuals
       if (isFlexible_) {
          const int nParam = system().unitCell().nParameter();
-         for (int i = 0; i < nParam ; i++) {
-            resid[nMonomer*nBasis + i] = -1.0 * scaleStress_ 
-                                       * system().mixture().stress(i);
-         }
 
          //  Note: 
          //  Combined -1 factor and stress scaling here.  This is okay:
@@ -323,6 +348,16 @@ namespace Rpg {
          //  - The scaling is applied here and to the unit cell param
          //    storage, so that updating is done on the same scale,
          //    and then undone right before passing to the unit cell.
+
+         int counter = 0;
+         for (int i = 0; i < nParam ; i++) {
+            if (flexibleParams_[i]) {
+               double stress = system().mixture().stress(i);
+               resid[nMonomer*nBasis + counter] = -1 * scaleStress_ * stress;
+               counter++;
+            }
+         }
+         UTIL_CHECK(counter == nFlexibleParams());
       }
 
    }
@@ -368,12 +403,20 @@ namespace Rpg {
       if (isFlexible_) {
          const int nParam = system().unitCell().nParameter();
          const int begin = nMonomer*nBasis;
+
          FSArray<double,6> parameters;
-         double value;
+         parameters = system().domain().unitCell().parameters();
+
+         const double coeff = 1.0 / scaleStress_;
+         int counter = 0;
          for (int i = 0; i < nParam; i++) {
-            value = newGuess[begin + i]/scaleStress_;
-            parameters.append(value);
+            if (flexibleParams_[i]) {
+               parameters[i] = coeff * newGuess[begin + counter];
+               counter++;
+            }
          }
+         UTIL_CHECK(counter == nFlexibleParams());
+
          system().setUnitCell(parameters);
       }
 
@@ -384,11 +427,22 @@ namespace Rpg {
    void AmIteratorBasis<D>::outputToLog()
    {
       if (isFlexible_ && verbose() > 1) {
-         const int nParam = system().unitCell().nParameter();
+         const int nParam = system().domain().unitCell().nParameter();
+         const int nMonomer = system().mixture().nMonomer();
+         const int nBasis = system().domain().basis().nBasis();
+         int counter = 0;
          for (int i = 0; i < nParam; i++) {
-            Log::file() << "Parameter " << i << " = "
-                        << Dbl(system().unitCell().parameters()[i])
-                        << "\n";
+            if (flexibleParams_[i]) {
+               double stress = residual()[nMonomer*nBasis + counter] /
+                               (-1.0 * scaleStress_);
+               Log::file() 
+                      << " Cell Param  " << i << " = "
+                      << Dbl(system().domain().unitCell().parameters()[i], 15)
+                      << " , stress = " 
+                      << Dbl(stress, 15)
+                      << "\n";
+               counter++;
+            }
          }
       }
    }

@@ -53,8 +53,32 @@ namespace Rpg {
       isFlexible_ = 1;
       scaleStress_ = 10.0;
 
-      // Read in additional parameters
+      int np = system().domain().unitCell().nParameter();
+      UTIL_CHECK(np > 0);
+      UTIL_CHECK(np <= 6);
+      UTIL_CHECK(system().domain().unitCell().lattice() != UnitCell<D>::Null);
+
+      // Read in optional isFlexible value
       readOptional(in, "isFlexible", isFlexible_);
+
+      // Populate flexibleParams_ based on isFlexible_ (all 0s or all 1s),
+      // then optionally overwrite with user input from param file
+      if (isFlexible_) {
+         flexibleParams_.clear();
+         for (int i = 0; i < np; i++) {
+            flexibleParams_.append(true); // Set all values to true
+         }
+         // Read optional flexibleParams_ array to overwrite current array
+         readOptionalFSArray(in, "flexibleParams", flexibleParams_, np);
+         if (nFlexibleParams() == 0) isFlexible_ = false;
+      } else { // isFlexible_ = false
+         flexibleParams_.clear();
+         for (int i = 0; i < np; i++) {
+            flexibleParams_.append(false); // Set all values to false
+         }
+      }
+
+      // Read optional scaleStress value
       readOptional(in, "scaleStress", scaleStress_);
    }
 
@@ -169,7 +193,7 @@ namespace Rpg {
       int nEle = nMonomer*nMesh;
 
       if (isFlexible_) {
-         nEle += system().unitCell().nParameter();
+         nEle += nFlexibleParams();
       }
 
       return nEle;
@@ -192,18 +216,23 @@ namespace Rpg {
       // If flexible unit cell, also store unit cell parameters
       if (isFlexible_) {
          const int nParam = system().unitCell().nParameter();
-         const FSArray<double, 6> currParam = 
-                                       system().unitCell().parameters();
+         FSArray<double,6> const & parameters
+                                  = system().unitCell().parameters();
 
          // convert into a cudaReal array
-         HostDArray<cudaReal> tempH(nParam);
-         for (int k = 0; k < nParam; k++) {
-            tempH[k] = scaleStress_ * currParam[k];
+         HostDArray<cudaReal> tempH(nFlexibleParams());
+         int counter = 0;
+         for (int i = 0; i < nParam; i++) {
+            if (flexibleParams_[i]) {
+               tempH[counter] = scaleStress_ * parameters[i];
+               counter++;
+            }
          }
+         UTIL_CHECK(counter == tempH.capacity());
          
          // Copy parameters to the end of the curr array
          FieldCUDA tempD;
-         tempD.associate(curr, nMonomer*nMesh, nParam);
+         tempD.associate(curr, nMonomer*nMesh, tempH.capacity());
          tempD = tempH; // copy from host to device
       }
    }
@@ -280,15 +309,20 @@ namespace Rpg {
       // If variable unit cell, compute stress residuals
       if (isFlexible_) {
          const int nParam = system().unitCell().nParameter();
-         HostDArray<cudaReal> stressH(nParam);
+         HostDArray<cudaReal> stressH(nFlexibleParams());
 
+         int counter = 0;
          for (int i = 0; i < nParam; i++) {
-            stressH[i] = (cudaReal)(-1 * scaleStress_ * 
-                                   system().mixture().stress(i));
+            if (flexibleParams_[i]) {
+               double stress = system().mixture().stress(i);
+               stressH[counter] = -1 * scaleStress_ * stress;
+               counter++;
+            }
          }
+         UTIL_CHECK(counter == stressH.capacity());
 
          FieldCUDA stressD;
-         stressD.associate(resid, nMonomer*nMesh, nParam);
+         stressD.associate(resid, nMonomer*nMesh, stressH.capacity());
          stressD = stressH; // copy from host to device
       }
    }
@@ -346,14 +380,23 @@ namespace Rpg {
       // If flexible unit cell, update cell parameters 
       if (isFlexible_) {
          FSArray<double,6> parameters;
+         parameters = system().domain().unitCell().parameters();
          const int nParam = system().unitCell().nParameter();
-         HostDArray<cudaReal> tempH(nParam);
-         FieldCUDA tempD;
-         tempD.associate(newGuess, nMonomer*nMesh, nParam);
-         tempH = tempD; // transfer from device to host
+
+         // transfer from device to host
+         HostDArray<cudaReal> tempH(nFlexibleParams());
+         tempH.copySlice(newGuess, nMonomer*nMesh);
+
+         const double coeff = 1.0 / scaleStress_;
+         int counter = 0;
          for (int i = 0; i < nParam; i++) {
-            parameters.append(1/scaleStress_ * (double)tempH[i]);
+            if (flexibleParams_[i]) {
+               parameters[i] = coeff * tempH[i];
+            }
+            counter++;
          }
+         UTIL_CHECK(counter == tempH.capacity());
+
          system().setUnitCell(parameters);
       }
 
@@ -364,11 +407,26 @@ namespace Rpg {
    void AmIteratorGrid<D>::outputToLog()
    {
       if (isFlexible_ && verbose() > 1) {
-         const int nParam = system().unitCell().nParameter();
+         const int nParam = system().domain().unitCell().nParameter();
+         const int nMonomer = system().mixture().nMonomer();
+         const int nMesh = system().mesh().size();
+
+         // transfer stress residuals from device to host
+         HostDArray<cudaReal> tempH(nFlexibleParams());
+         tempH.copySlice(residual(), nMonomer*nMesh);
+
+         int counter = 0;
          for (int i = 0; i < nParam; i++) {
-            Log::file() << "Parameter " << i << " = "
-                        << Dbl(system().unitCell().parameters()[i])
-                        << "\n";
+            if (flexibleParams_[i]) {
+               double stress = tempH[counter] / (-1.0 * scaleStress_);
+               Log::file() 
+                      << " Cell Param  " << i << " = "
+                      << Dbl(system().domain().unitCell().parameters()[i], 15)
+                      << " , stress = " 
+                      << Dbl(stress, 15)
+                      << "\n";
+               counter++;
+            }
          }
       }
    }

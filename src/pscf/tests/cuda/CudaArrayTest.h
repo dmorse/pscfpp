@@ -94,6 +94,7 @@ public:
       HostDArray<double> out1(nx);
       HostDArray<double> out2(nx);
       HostDArray<double> out3(nx);
+      HostDArray<double> out4(nx/2);
 
       // Generate data
       double twoPi = 2.0*Constants::Pi;
@@ -117,6 +118,12 @@ public:
          TEST_ASSERT(eq(in[i], out1[i]));
          TEST_ASSERT(eq(in[i], out2[i]));
          TEST_ASSERT(eq(in[i], out3[i]));
+      }
+
+      // Copy a slice of d1, check that it is correct
+      out4.copySlice(d1, 3);
+      for (int i = 0; i < nx/2; ++i ) {
+         TEST_ASSERT(eq(in[i+3], out4[i]));
       }
    }
 
