@@ -1,14 +1,14 @@
 /*! \page psfts_perturb_page Perturbations and Ramps
 
-\ref psfts_analysis_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
-\ref developer_page    (Next)
+\ref psfts_command_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref developer_page      (Next)
 <BR>
 
 Describe postprocessing of data
 
 <BR>
-\ref psfts_analysis_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
-\ref psfts_page         (Up)   &nbsp; &nbsp; &nbsp; &nbsp;
-\ref developer_page     (Next)
+\ref psfts_command_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
+\ref psfts_page          (Up)   &nbsp; &nbsp; &nbsp; &nbsp;
+\ref developer_page      (Next)
 
 */

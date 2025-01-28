@@ -1,7 +1,7 @@
 /*! \page psfts_command_page Command File
 
-\ref psfts_param_page      (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
-\ref psfts_analysis_page   (Next)
+\ref psfts_analysis_page    (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref psfts_perturb_page     (Next)
 <BR>
 
 The input files required to run a field theoretic simulation (FTS) 
@@ -171,8 +171,8 @@ associated with different monomer types.
 
 
 <BR>
-\ref psfts_param_page        (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
+\ref psfts_analysis_page        (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
 \ref psfts_page              (Up)   &nbsp; &nbsp; &nbsp; &nbsp;
-\ref psfts_analysis_page  (Next)
+\ref psfts_perturb_page  (Next)
 
 */

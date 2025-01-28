@@ -1,7 +1,7 @@
 /*! \page psfts_param_page Parameter File
 
 \ref psfts_algorithm_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
-\ref psfts_command_page    (Next)
+\ref psfts_analysis_page    (Next)
 <BR>
 
 PSCF can perform partial saddle-point field theoretic simulation 
@@ -468,6 +468,6 @@ documentation, is given on the \ref psfts_command_page "next page" .
 <BR>
 \ref psfts_algorithm_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
 \ref psfts_page            (Up) &nbsp; &nbsp; &nbsp; &nbsp;
-\ref psfts_command_page    (Next)
+\ref psfts_analysis_page    (Next)
 
 */

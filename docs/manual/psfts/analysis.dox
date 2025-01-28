@@ -1,7 +1,7 @@
 /*! \page psfts_analysis_page Data Analysis 
 
-\ref psfts_command_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
-\ref psfts_perturb_page        (Next)
+\ref psfts_param_page      (Prev)  &nbsp; &nbsp; &nbsp; &nbsp;
+\ref psfts_command_page    (Next)
 <BR>
 
 \section psfts_analysis_overview_sec Overview
@@ -86,8 +86,8 @@ during a simulation or during postprocessing.
 To be written
 
 <BR>
-\ref psfts_command_page   (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
+\ref psfts_param_page   (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
 \ref psfts_page           (Up)   &nbsp; &nbsp; &nbsp; &nbsp;
-\ref psfts_perturb_page   (Next)
+\ref psfts_command_page   (Next)
 
 */
