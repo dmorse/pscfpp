@@ -70,5 +70,6 @@ simulation steps.
 
 At the end of the simulation, if hasAverage is true:
   - average info and error analysis are output to {outputFileName}.ave
+  - error analysis info are output to {outputFileName}.aer
 
 */
