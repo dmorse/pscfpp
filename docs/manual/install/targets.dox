@@ -74,14 +74,14 @@ make pscf_1d
 \endcode
 If entered before compiling any other code, this command will:
 
-  - Compile a large number *.cpp files in the util/, pscf/ and r1d/
+  - Compile a large number \*.cpp files in the util/, pscf/ and r1d/
     namespace-level subdirectories of the src/ directory.
 
-  - Install corresponding object (*.o) and dependency (*.d) files in
+  - Install corresponding object (\*.o) and dependency (\*.d) files in
     corresponding locations within the chosen build directory (i.e.,
     in either the bld/ or src/ directory)
 
-  - Create a static library (with file extension *.a) in each of these
+  - Create a static library (with file extension \*.a) in each of these
     three namespace-level subdirectories of the build directory.
 
   - Compile and link the main program file src/r1d/pscf_1d.cpp and
@@ -103,11 +103,11 @@ make pscf_pc
 from the PSCF root, bld/ or src/ directory.
 This command will cause the system to:
 
-  - If needed, compile all *.cpp files in the src/util/, src/pscf/, and
+  - If needed, compile all \*.cpp files in the src/util/, src/pscf/, and
     src/prdc directories that have not been previously compiled, and
     create associated static library files in these directories.
 
-  - Compile all of the *.cpp class files in the src/rpc/ directory, and '
+  - Compile all of the \*.cpp class files in the src/rpc/ directory, and '
     create a corresponding static library file named librpc.a.
 
   - Compile and link the main program pscf_pc.cpp, and install an 
@@ -177,7 +177,7 @@ or from namespace level subdirectories of the bld/ directory.
 
 <h2> clean-bin: </h2>
 The "clean-bin" command removes all pscf executable files with names
-of the form pscf_* from the PSCF bin/ directory, which is where they
+of the form pscf_\* from the PSCF bin/ directory, which is where they
 are normally installed.  It does not remove any other executable 
 files that are installed in the bin/ directory by the configure 
 script.
@@ -230,12 +230,12 @@ any code outside of that subdirectory.
 
 Invoking "make all" from a subdirectory of a namespace level directory
 (i.e., a subdirectory of the src/util, src/pscf, src/r1d, src/prdc, 
-src/rpc, or src/rpg directory) will generally compile all the *.cpp 
-and (if CUDA is enabled) *.cu source files in that directory and any 
+src/rpc, or src/rpg directory) will generally compile all the \*.cpp 
+and (if CUDA is enabled) \*.cu source files in that directory and any 
 nested subdirectories.
 
 Invoking "make all" from any namespace level subdirectory of src/ will
-compile of all the *.cpp and (as appropriate) *.cu source files in the 
+compile of all the \*.cpp and (as appropriate) \*.cu source files in the 
 directory tree, and also create a static library file containing all 
 of the resulting object code. In addition, invoking "make all" from
 the r1d/, rpc/ or rpg/ subdirectories of src/ will compile, link 
@@ -248,31 +248,32 @@ named pscf_1d in the bin/ directory.
 subdirectory of src/ is designed to allow developers to use the command 
 line to easily recompile a a few recently modified files from within 
 the directory in which they are working.  Typically, when a developer 
-is adding a new feature or fixing a bug, he or she will be usually be 
+is adding a new feature or fixing a bug, they will be usually be 
 actively editing only a few files within a single subdirectory of the 
 src/ directory. Other files in the same subdirectory will often be 
 left untouched during this process.  The system for keeping track of 
 dependencies used by the PSCF build system guarantees that invoking 
 "make all" from the directory containing the files of immediate 
 interest will only cause recompilation of source files that have been
-modified since they were last compiled, or that include header files 
-that have recently been modified, or that have not already been 
-compiled. A common work flow during development for those who use a 
-command line interface for development is thus to edit a file, exit 
-the editor, and then invoke "make all" from the directory containing 
-that file to check if the modified file compiles.
+modified since they were last compiled or include header files that 
+have recently been modified.  A common work flow during development for 
+those who use a command line interface for development is thus to edit 
+a file, exit the editor, and then invoke "make all" from the directory 
+containing the modified file to attempt compilation of the modified 
+file. 
 
 <em> Comment </em>: Invoking make with the name of a single file as a
-target (e.g., with the name of a *.o object file) generally does *not*
-work as intended, unless one uses the absolute path to the file as a
-target. The reason for this is that patterns and dependency files used 
-by the PSCF makefile system all use absolute paths. The build system 
-thus may not recognize a relative path to a file as equivalent to the 
-absolute paths used in the files that define makefile patterns and 
-dependencies among files. Consistent use of "make all" for in-source 
-compilation avoids this limitation, because "make all" causes the "make" 
-utility to try to compile a list of source files whose locations are 
-specified within the makefile system as absolute paths.
+target (e.g., with the name of a \*.o object file) generally does *not*
+work as intended, unless one uses the full absolute path to the file as 
+the make target. The reason for this is that patterns and dependency 
+files used by the PSCF makefile system all use absolute paths. The build 
+system thus may not recognize a relative path to a file as equivalent to 
+the absolute paths used in the files that define makefile patterns and 
+dependencies among files. Consistent use of "make all" from within a 
+subdirectory of src/ for in-source compilation avoids this problem, 
+because "make all" causes the "make" utility to try to compile a list 
+of source files whose locations are specified within the makefile 
+system as absolute paths.
 
 <BR>
 \ref install_setopts_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp;

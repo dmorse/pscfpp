@@ -10,8 +10,8 @@
 
 #include <util/param/ParamComposite.h>     // base class
 
-#include <rpc/fts/simulator/SimState.h>         // member
-#include <prdc/cpu/RField.h>               // memmber (template arg)
+#include <rpc/fts/simulator/SimState.h>    // member
+#include <prdc/cpu/RField.h>               // member (template arg)
 #include <util/random/Random.h>            // member
 #include <util/containers/DArray.h>        // member (template)
 #include <util/containers/DMatrix.h>       // member (template)
@@ -19,7 +19,7 @@
 namespace Pscf {
 namespace Rpc {
 
-   // Forward declarations
+   // Forward declarations 
    template <int D> class System;
    template <int D> class Compressor;
    template <int D> class CompressorFactory;
@@ -35,15 +35,18 @@ namespace Rpc {
    /**
    * Field theoretic simulator (base class).
    *
-   * The Simulator base class provides tools needed in all field-theoretic
+   * The Simulator base class provides tools needed in field-theoretic
    * simulations that are based on a partial saddle-point approximation.
    * Subclasses designed for field theoretic Monte Carlo (MC) and Brownian
-   * dynamics (BD) simulations provide algorithms and more specialized 
-   * data structures needed by specific sampling methods. This class
-   * provided functions to compute and diagonalze a projected chi matrix,
-   * functions to access components of several types of fields in a basis
-   * of eigenvectors of the projected chi matrix, and functions to compute 
-   * and return contributions to the field theoretic Hamiltonian.
+   * dynamics (BD) simulations, named McSimulator and BdSimulator, provide
+   * more specialized algorithms and data structures needed by these two
+   * sampling methods. 
+   *
+   * The Simulator class provides functions to compute and diagonalze a 
+   * projected chi matrix, functions to access components of several 
+   * types of fields in a basis of eigenvectors of the projected chi 
+   * matrix, and functions to compute and return contributions to the 
+   * field theoretic Hamiltonian.
    *
    * The analyzeChi function constructs and diagonalizes the projected
    * chi matrix. This is a singular nMonomer x nMonomer matrix defined 
@@ -66,6 +69,8 @@ namespace Rpc {
    {
 
    public:
+
+      Simulator() = delete;
 
       /**
       * Constructor.

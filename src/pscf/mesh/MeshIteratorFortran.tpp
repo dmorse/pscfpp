@@ -13,6 +13,9 @@
 namespace Pscf 
 {
 
+   /*
+   * Default constructor
+   */
    template <int D>
    MeshIteratorFortran<D>::MeshIteratorFortran()
     : dimensions_(0),
@@ -23,6 +26,9 @@ namespace Pscf
       atEnd_(false)
    {}
 
+   /*
+   * Constructor that sets mesh dimensions and initializes the iterator.
+   */
    template <int D>
    MeshIteratorFortran<D>::MeshIteratorFortran(IntVec<D> const& dimensions)
     : dimensions_(0),
@@ -33,6 +39,9 @@ namespace Pscf
       atEnd_(false)
    {  setDimensions(dimensions); }
 
+   /*
+   * Set the dimensions and initialize the iterator.
+   */
    template <int D>
    void MeshIteratorFortran<D>::setDimensions(IntVec<D> const& dimensions)
    {
@@ -58,6 +67,9 @@ namespace Pscf
       begin();
    }
 
+   /*
+   * Initialize the iterator to the first grid point, with rank 0.
+   */
    template <int D>
    void MeshIteratorFortran<D>::begin()
    {
@@ -69,6 +81,9 @@ namespace Pscf
       atEnd_ = false;
    }
 
+   /*
+   * Increment the iterator to the next grid point.
+   */
    template <int D>
    void MeshIteratorFortran<D>::operator++ () 
    {

@@ -7,24 +7,25 @@
 * **Common features for SCFT and FTS (all programs):**
 
   - Ability to treat mixtures containing any number of block polymer 
-    and solvent molecular species. Linear homopolymers are treated 
-    as special case of block polymers with only one block
+    and solvent molecular species. Linear homopolymers are treated as 
+    a special case of a block polymer with only one block
 
   - Ability to treat acyclic branched block polymers of arbitrary
     complexity, as well as linear block polymers
 
   - Ability to use canonical, grand-canonical or mixed statistical
-    ensembles - users specify either a volume fraction or a chemical
+    ensembles. Users may specify either a volume fraction or a chemical
     potential value for each molecular species
 
-  - Thorough user and developer documentation is provided via an 
+  - Thorough user and developer documentation provided via an 
     integrated web manual
 
   - Well documented open source code written in object oriented C++
 
   - A library of examples of input files for many types of calculation
 
-  - Python tools for data analysis and manipulation of input files
+  - Python tools for data analysis and manipulation of input and output
+    files
 
 * **Features for SCFT (all programs):**
 
@@ -35,13 +36,12 @@
     initial guesses
 
 The pscf_pc and pscf_pg programs are designed for systems with periodic
-boundary conditions and provide very similar feature sets. Both of these
-programs can perform either SCFT calculations or FTS calculations that 
-rely on a partial saddle-point approximation. In SCFT calculations of
-a periodic ordered phase, the periodic simulation unit cell is usually
-used to represent a single crystallographic unit cell of the ordered 
-structure. In FTS simulations, the simulation unit cell is usually taken
-to represent a larger region that, for simulations of ordered phases, may 
+boundary conditions and provide very similar features. Both of these
+programs can perform either SCFT or PS-FTS calculations. In SCFT
+calculations of a periodic ordered phase, the periodic simulation unit 
+cell is usually used to represent a single crystallographic unit cell of 
+the ordered structure. In FTS simulations, the simulation unit cell often
+represents a larger region that, for simulations of ordered phases, may 
 contain multiple crystallographic unit cells.  
 
 * **Features for SCFT or FTS on periodic systems (pscf_pc and pscf_pg):**
@@ -69,17 +69,18 @@ contain multiple crystallographic unit cells.
   - Built-in database of symmetry operations for all 230 3D space groups
     and 17 2D plane groups for use in SCFT
 
-* **Features for FTS with periodic boundary conditions(pscf_pc and pscf_pg):**
+* **Features for PS-FTS (pscf_pc and pscf_pg):**
 
   - Implementation of both Monte Carlo (MC) and Brownian dynamics (BD) 
-    sampling algorithms, 
+    sampling algorithms
 
   - Several efficient algorithms for adjusting the pressure field so as
-    to find a partial saddle-point (i.e., to impose incompressibility).
+    to find a partial saddle-point (i.e., to impose incompressibility)
 
-  - MC moves: real-space, Fourier-space, and "smart"/force-bias moves 
+  - MC moves: real-space and "smart"/force-bias moves 
 
-  - BD algorithms: predictor corrector and Leimkuhler-Matthews steppers
+  - BD algorithms: predictor corrector and Leimkuhler-Matthews step 
+    algorithms
 
 * **SCFT features unique to pscf_pc:**
 
@@ -89,11 +90,10 @@ contain multiple crystallographic unit cells.
 
   - Thin polymer films
 
-The mask and external field features are used in pscf_pc to implement
+The mask and external field features are combined in pscf_pc to enable
 simulations of thin films. A mask is used to constrain a polymer material
-to a slit within a periodic supercell, and localized external fields are
-used to represent selective interactions with the top and bottom
-surfaces.
+to a slit within a periodic supercell, and localized external fields are 
+used to represent selective interactions with the top and bottom surfaces.
 
 <BR>
 \ref about_programs_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
