@@ -121,21 +121,29 @@ namespace Rpg
          outputFile_.close();
       }
       
-      // Output average results to average file 
+      // Write average (*.ave) file and error analysis (*.aer) file 
       if (hasAverage_){
          
+         // Output average results to average file 
          std::string fileName;
          std::string type;
-         fileName = outputFileName_ +  ".ave";
+         fileName = outputFileName_+  ".ave";
          system().fileMaster().openOutputFile(fileName, outputFile_);
-         
          double ave, err;
          ave = accumulator_.average();
          err = accumulator_.blockingError();
-         outputFile_ << " " << std::left << std::setw(2) 
-                      << parameterType() << "   ";
+         outputFile_ << parameterType() << "   ";
          outputFile_ << Dbl(ave) << " +- " << Dbl(err, 9, 2) << "\n";
          outputFile_.close();
+         
+         // Write error analysis (*.aer) file
+         fileName = outputFileName_+  ".aer";
+         system().fileMaster().openOutputFile(fileName, outputFile_);
+         outputFile_ << parameterType() << ":"<< std::endl;
+         accumulator_.output(outputFile_);
+         outputFile_ << std::endl;
+         outputFile_.close();
+         
       }
       
    }
