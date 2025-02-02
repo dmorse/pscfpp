@@ -22,9 +22,9 @@ namespace Rpc
 
    template <int D>
    Mixture<D>::Mixture()
-    : ds_(-1.0),
-      meshPtr_(0),
-      unitCellPtr_(0),
+    : stress_(),
+      ds_(-1.0),
+      meshPtr_(nullptr),
       nParam_(0),
       hasStress_(false)
    {  setClassName("Mixture"); }
@@ -61,7 +61,6 @@ namespace Rpc
 
       // Save addresses of mesh and unit cell
       meshPtr_ = &mesh;
-      unitCellPtr_ = &cell;
       nParam_ = cell.nParameter();
 
       // Create associations for all polymer blocks

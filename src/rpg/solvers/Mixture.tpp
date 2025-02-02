@@ -17,14 +17,17 @@ namespace Pscf {
 namespace Rpg
 {
 
-   // Constructor
+   /*
+   * Constructor.
+   */
    template <int D>
    Mixture<D>::Mixture()
-    : ds_(-1.0),
-      useBatchedFFT_(true),
-      nParams_(0),
+    : stress_(),
+      ds_(-1.0),
       meshPtr_(nullptr),
-      hasStress_(false)
+      nParams_(0),
+      hasStress_(false),
+      useBatchedFFT_(true)
    {  setClassName("Mixture"); }
 
    // Destructor
@@ -80,6 +83,7 @@ namespace Rpg
             solvent(i).associate(mesh);
          }
       }
+
    }
 
    /*

@@ -242,17 +242,14 @@ namespace Rpc {
 
    private:
 
-      /// Optimal contour length step size.
-      double ds_;
-
       /// Array to store total stress
       FArray<double, 6> stress_;
 
+      /// Optimal contour length step size.
+      double ds_;
+
       /// Pointer to associated Mesh<D> object.
       Mesh<D> const * meshPtr_;
-
-      /// Pointer to associated UnitCell<D>
-      UnitCell<D> const * unitCellPtr_;
 
       /// Number of unit cell parameters.
       int nParam_;
@@ -260,6 +257,8 @@ namespace Rpc {
       /// Has stress been computed for current w fields?
       bool hasStress_;
 
+      // Private function
+      
       /// Return associated Mesh<D> by const reference.
       Mesh<D> const & mesh() const;
 
