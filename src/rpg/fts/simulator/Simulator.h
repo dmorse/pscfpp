@@ -36,24 +36,24 @@ namespace Rpg {
    *
    * The Simulator base class provides tools needed in field-theoretic
    * simulations that are based on a partial saddle-point approximation,
-   * including field theoretic Monte Carlo and field-theoretic Langevin 
-   * simulations. Subclasses of this class provide algorithms and 
-   * more specialized data structures needed by specific sampling 
+   * including field theoretic Monte Carlo and field-theoretic Langevin
+   * simulations. Subclasses of this class provide algorithms and
+   * more specialized data structures needed by specific sampling
    * methods.
    *
    * The analyzeChi() function constructs and diagonalizes the projected
-   * chi matrix. This is a singular nMonomer x nMonomer matrix defined 
-   * by evaluating the projection of the chi matrix into the subspace 
-   * of fluctuations that preserves total monomer concentration. The 
+   * chi matrix. This is a singular nMonomer x nMonomer matrix defined
+   * by evaluating the projection of the chi matrix into the subspace
+   * of fluctuations that preserves total monomer concentration. The
    * eigenvalues and eigenvectors of this matrix via the chiEvals and
    * chiEvecs functions, respectively.
    *
    * The functions computeWc, computeCc and computeDc compute components
    * components of various types of multi-component fields (i.e., fields
-   * that are associated with a monomer type index) in a basis of 
-   * eigenvectors of the projected chi matrix. Names such as wc, cc and 
-   * dc that end with a suffix "c" refer to components of multi-component 
-   * fields that are defined using this eigenvector basis. 
+   * that are associated with a monomer type index) in a basis of
+   * eigenvectors of the projected chi matrix. Names such as wc, cc and
+   * dc that end with a suffix "c" refer to components of multi-component
+   * fields that are defined using this eigenvector basis.
    *
    * \ingroup Rpg_Fts_Module
    */
@@ -134,7 +134,7 @@ namespace Rpg {
       /**
       * Clear field eigen-components and hamiltonian components.
       *
-      * Immediately calling this function, hasHamiltonian(), hasWc(), 
+      * Immediately calling this function, hasHamiltonian(), hasWc(),
       * hasCc(), and hasDc() will all return false.
       */
       void clearData();
@@ -151,7 +151,7 @@ namespace Rpg {
       /**
       * Output MDE counter.
       *
-      * Output the number of times the modified diffusion equation has 
+      * Output the number of times the modified diffusion equation has
       * been solved.
       *
       * \param out  output stream
@@ -169,7 +169,7 @@ namespace Rpg {
       * Return the current converged simulation step index.
       */
       long iStep();
-      
+
       /**
       * Return the current simulation step index.
       */
@@ -191,10 +191,10 @@ namespace Rpg {
       * Get an array of the eigenvalues of the projected chi matrix.
       *
       * The projected chi matrix is given by the matrix product P*chi*P,
-      * where P is the symmetric projection matrix that projects onto 
-      * the subspace orthogonal to the vector e = (1,1,...,1). The 
+      * where P is the symmetric projection matrix that projects onto
+      * the subspace orthogonal to the vector e = (1,1,...,1). The
       * projected chi matrix is singular, and has a zero eigenvalue with
-      * associated eigenvector e. By convention, this zero eigenvalue 
+      * associated eigenvector e. By convention, this zero eigenvalue
       * and its eigenvector e are listed last, with index nMonomer - 1.
       */
       DArray<double> const & chiEvals() const;
@@ -213,15 +213,15 @@ namespace Rpg {
       * eigenvectors of the projected chi matrix, in which each row is an
       * eigenvector. The first (row) index of this matrix thus identifies
       * an eigenvector, while the second (column) index identifies the
-      * monomer type associated with one component of an eigen-vector. 
+      * monomer type associated with one component of an eigen-vector.
       *
-      * Each eigenvector is normalized such that the sum of the squares 
-      * of its elements is equal to nMonomer, the number of monomer types. 
-      * The sign of each vector is chosen so as to make the first (0) 
-      * component non-negative.  The last eigenvector is always the null 
+      * Each eigenvector is normalized such that the sum of the squares
+      * of its elements is equal to nMonomer, the number of monomer types.
+      * The sign of each vector is chosen so as to make the first (0)
+      * component non-negative.  The last eigenvector is always the null
       * vector e = (1,1,...,1).
-      * 
-      * For the case nMonomer = 2 of an AB system, the resulting two 
+      *
+      * For the case nMonomer = 2 of an AB system, the resulting two
       * eigenvectors are (1,-1) and (1,1).
       */
       DMatrix<double> const & chiEvecs() const;
@@ -239,13 +239,13 @@ namespace Rpg {
       /**
       * Get all components of the vector S.
       *
-      * The value of component \f$ S_{a} \f$ may be expressed using 
+      * The value of component \f$ S_{a} \f$ may be expressed using
       * Einstein summation convention as
       * \f[
       *     S_{a} \equiv \frac{1}{M^2} v_{ai}\chi_{ij}e_{j}
       * \f]
       * for any \f$ a = 0, \ldots, M - 1 \f$, where M = nMonomer (the
-      * number of monomer types), \f$ e_{j} =1 \f$ for any j, and 
+      * number of monomer types), \f$ e_{j} =1 \f$ for any j, and
       * \f$ v_{ai} \f$ is component associated with monomer type i of
       * eigenvector a of the projected chi matrix, with the convention
       * \f$ v_{ia} = e_{i} = 1 \f$ for a = nMonomer - 1.
@@ -257,13 +257,13 @@ namespace Rpg {
       *
       * This function retrieves on component of the vector defined in
       * the documentation for function sc().
-      * 
+      *
       * \param a  eigenvector index (0, ..., nMonomer - 1)
       */
       double sc(int a) const;
 
       ///@}
-      /// \name Field Theoretic Hamiltonian 
+      /// \name Field Theoretic Hamiltonian
       ///@{
 
       /**
@@ -289,11 +289,11 @@ namespace Rpg {
       * Get the quadratic field contribution (HW) to MC Hamiltonian.
       */
       double fieldHamiltonian() const;
-      
+
       /**
       * Get the perturbation to the standard Hamiltonian (if any).
       *
-      * A perturbation to the Hamiltonian, if any, is computed by an 
+      * A perturbation to the Hamiltonian, if any, is computed by an
       * associated Perturbation object. When a perturbation exists, as
       * indicated by the return value of hasPerturbation(), the
       * perturbationHamiltonian component is added to the idealHamiltonian
@@ -320,7 +320,7 @@ namespace Rpg {
       * \f$ W_{a}({\bf r}) \f$ at grid point \f$ {\bf r} \f$ is given
       * using Einstein summation by
       * \f[
-      *    W_{a}({\bf r}) = 
+      *    W_{a}({\bf r}) =
       *    v_{ai} w_{i}({\bf r}) / M
       * \f]
       * where \f$ w_{i}({\bf r}) \f$ is the w-field associated with
@@ -361,29 +361,29 @@ namespace Rpg {
       *
       * Compute and store the components of the values of the c fields
       * on nodes of a real-space grid (r-grid) in a basis of the
-      * eigenvectors of the projected chi matrix. 
+      * eigenvectors of the projected chi matrix.
       */
       void computeCc();
 
       /**
       * Get all eigenvector components of the current c fields.
       *
-      * Each component \f$C_{a}({\bf r}) \f$ is a point-wise projection 
-      * of the monomer c fields onto a corresponding eigenvector of the 
-      * projected chi matrix. The resulting value \f$ C_{a}({\bf r}) \f$ 
-      * for eigen-component a at grid point \f$ {\bf r} \f$ is given 
+      * Each component \f$C_{a}({\bf r}) \f$ is a point-wise projection
+      * of the monomer c fields onto a corresponding eigenvector of the
+      * projected chi matrix. The resulting value \f$ C_{a}({\bf r}) \f$
+      * for eigen-component a at grid point \f$ {\bf r} \f$ is given
       * using Einstein notation as
       * \f[
-      *    C_{a}({\bf r}) = v_{ai} c_{i}({\bf r}) 
+      *    C_{a}({\bf r}) = v_{ai} c_{i}({\bf r})
       * \f]
-      * where \f$ c_{i}({\bf r}) \f$ is the concentration / volume 
-      * fraction field associated with monomer type i.  
+      * where \f$ c_{i}({\bf r}) \f$ is the concentration / volume
+      * fraction field associated with monomer type i.
       *
-      * Note: The above definition \f$ C_{a} \f$ uses a different 
-      * prefactor than that used to define the corresponding w-field 
+      * Note: The above definition \f$ C_{a} \f$ uses a different
+      * prefactor than that used to define the corresponding w-field
       * component \f$ W_{a} \f$ given in the documentation of the
-      * function wc(), without the prefactor of 1/nMonomer. This is 
-      * intentional, and is convenient for other aspects of the 
+      * function wc(), without the prefactor of 1/nMonomer. This is
+      * intentional, and is convenient for other aspects of the
       * underlying theory.
       */
       DArray< RField<D> > const & cc() const;
@@ -411,7 +411,7 @@ namespace Rpg {
       * Compute functional derivatives of the Hamiltonian.
       *
       * Compute and store the functional derivatives of the field
-      * theoretic Hamiltonian with respect to eigenvector components of 
+      * theoretic Hamiltonian with respect to eigenvector components of
       * the w fields (i.e., with respect to components of wc).
       */
       void computeDc();
@@ -437,36 +437,36 @@ namespace Rpg {
       * Are the current d fields valid ?
       */
       bool hasDc() const;
-      
+
       ///@}
       /// \name Utilities for moves
       ///@{
-      
+
       /**
       * Save a copy of the fts move state.
       *
-      * This function and restoreState() are intended for use 
-      * in the implementation of field theoretic moves. 
+      * This function and restoreState() are intended for use
+      * in the implementation of field theoretic moves.
       * This function stores the current w fields and the corresponding
-      * Hamiltonian value. Current cc fields and dc fields are saved 
+      * Hamiltonian value. Current cc fields and dc fields are saved
       * based on save policy. This is normally the first step of a fts
       * move, prior to an attempted modification of the fields stored
       * in the system w field container.
       */
       void saveState();
-      
+
       /**
       * Restore the saved copy of the fts move state.
       *
       * This function and saveState() are intended to be used
       * together in the implementation of fts moves. If an
-      * attempted Monte-Carle move is rejected or an fts move 
-      * fails to converge restoreState() is called to restore 
+      * attempted Monte-Carle move is rejected or an fts move
+      * fails to converge restoreState() is called to restore
       * the fields and Hamiltonian value that were saved
       * by a previous call to the function saveState().
       */
       void restoreState();
-      
+
       /**
       * Clear the saved copy of the fts state.
       *
@@ -500,12 +500,12 @@ namespace Rpg {
       * Get random number generator by reference.
       */
       Random& random();
-      
+
       /**
       * Get cuda random number generator by reference.
       */
       CudaRandom& cudaRandom();
-      
+
       /**
       * Does this Simulator have a Perturbation?
       */
@@ -520,7 +520,7 @@ namespace Rpg {
       * Get the perturbation factory by non-const reference.
       */
       Perturbation<D>& perturbation();
-      
+
       /**
       * Does this Simulator have a Ramp?
       */
@@ -530,7 +530,7 @@ namespace Rpg {
       * Get the associated Ramp by const reference.
       */
       Ramp<D> const & ramp() const;
-      
+
       /**
       * Get the ramp by non-const reference.
       */
@@ -541,16 +541,32 @@ namespace Rpg {
    protected:
 
       // Protected member functions
- 
+
       using Util::ParamComposite::setClassName;
 
       /**
-      * Read the compressor block of the parameter file. 
+      * Read random seed and initialize random number generators.
       *
-      * \param in input parameter stream
+      * \param in  input parameter stream
       */
-      void readCompressor(std::istream& in);
-      
+      void readRandomSeed(std::istream& in);
+
+      /**
+      * Get the compressor factory by reference.
+      */
+      CompressorFactory<D>& compressorFactory();
+
+      /**
+      * Read the compressor block of the parameter file.
+      *
+      * If isEnd is true on entry, this function returns without
+      * attempting to read the Compressor block.
+      *
+      * \param in  input parameter stream
+      * \param isEnd  Has the end bracket of Simulator block been read?
+      */
+      void readCompressor(std::istream& in, bool& isEnd);
+
       /**
       * Get the perturbation factory by reference.
       */
@@ -559,9 +575,13 @@ namespace Rpg {
       /**
       * Optionally read an associated perturbation.
       *
+      * If isEnd is true on entry, this function returns without
+      * attempting to read the Perturbation block.
+      *
       * \param in input parameter stream
+      * \param isEnd  Has the end bracket of Simulator block been read?
       */
-      void readPerturbation(std::istream& in);
+      void readPerturbation(std::istream& in, bool& isEnd);
 
       /**
       * Set the associated perturbation.
@@ -569,7 +589,7 @@ namespace Rpg {
       * \param ptr pointer to a new Perturbation<D> object.
       */
       void setPerturbation(Perturbation<D>* ptr);
-      
+
       /**
       * Get the ramp factory by reference.
       */
@@ -578,9 +598,13 @@ namespace Rpg {
       /**
       * Optionally read an associated ramp.
       *
+      * If isEnd is true on entry, this function returns without
+      * attempting to read the Ramp block.
+      *
       * \param in input parameter stream
+      * \param isEnd  Has the end bracket of Simulator block been read?
       */
-      void readRamp(std::istream& in);
+      void readRamp(std::istream& in, bool& isEnd);
 
       /**
       * Set the associated ramp.
@@ -590,7 +614,7 @@ namespace Rpg {
       void setRamp(Ramp<D>* ptr);
 
       // Protected data members
-  
+
       /**
       * Random number generator
       */
@@ -600,7 +624,7 @@ namespace Rpg {
       * Random number generator
       */
       CudaRandom cudaRandom_;
-      
+
       /**
       * Eigenvector components of w fields on a real space grid.
       *
@@ -624,7 +648,7 @@ namespace Rpg {
       * with respect to one eigenvector w-field component.
       */
       DArray< RField<D> > dc_;
-      
+
       /**
       * State saved during fts simulation.
       */
@@ -644,13 +668,13 @@ namespace Rpg {
       * Field contribution (H_W) to Hamiltonian
       */
       double fieldHamiltonian_;
-      
+
       /**
       * Perturbation to the standard Hamiltonian (if any).
       *
-      * A perturbation to the Hamiltonian, if any, is computed by an 
+      * A perturbation to the Hamiltonian, if any, is computed by an
       * associated Perturbation object and added to the ideal and field
-      * components to obtain the total hamiltonian_ value. 
+      * components to obtain the total hamiltonian_ value.
       */
       double perturbationHamiltonian_;
 
@@ -658,7 +682,7 @@ namespace Rpg {
       * Simulation step counter.
       */
       long iStep_;
-      
+
       /**
       * Simulation step counter.
       */
@@ -703,7 +727,7 @@ namespace Rpg {
       /**
       * Eigenvectors of the projected chi matrix.
       *
-      * Each row (identified by first index) is an eigenvector. 
+      * Each row (identified by first index) is an eigenvector.
       * The last eigenvector, with index nMonomer - 1, is always the
       * vector e = [1, 1, ...., 1].
       */
@@ -719,16 +743,16 @@ namespace Rpg {
       /**
       * Components of vector s = chi*e in a basis of eigenvectors.
       *
-      * Component sc_[a] is given by sc_[a] = v_{a} chi e / M^2, 
+      * Component sc_[a] is given by sc_[a] = v_{a} chi e / M^2,
       * where e = [1 1 ... 1]^{T}, v_{a} is a row vector representation
-      * of eigenvector a of the projected chi matrix, given by row a of 
+      * of eigenvector a of the projected chi matrix, given by row a of
       * chiEvecs_, and M = nMonomer.
       */
       DArray<double>  sc_;
-      
+
       /**
       * A single eigenvector component of w fields after constant shift.
-      */ 
+      */
       RField<D> wcs_;
 
       /**
@@ -745,7 +769,7 @@ namespace Rpg {
       * Pointer to an compressor.
       */
       Compressor<D>* compressorPtr_;
-      
+
       /**
       * Pointer to the perturbation Factory.
       */
@@ -755,7 +779,7 @@ namespace Rpg {
       * Pointer to the perturbation (if any)
       */
       Perturbation<D>* perturbationPtr_;
-      
+
       /**
       * Pointer to the Ramp Factory.
       */
@@ -775,69 +799,30 @@ namespace Rpg {
 
    // Inline functions
 
-   // Get the random number generator.
-   template <int D>
-   inline Random& Simulator<D>::random()
-   {  return random_; }
-   
-   template <int D>
-   inline CudaRandom& Simulator<D>::cudaRandom()
-   {  return cudaRandom_; }
-   
-   // Get the perturbation (if any) by const reference.
-   template <int D>
-   inline Perturbation<D> const & Simulator<D>::perturbation() const
-   {
-      UTIL_CHECK(perturbationPtr_);  
-      return *perturbationPtr_; 
-   }
-
-   // Get the perturbation (if any) by non-const reference.
-   template <int D>
-   inline Perturbation<D>& Simulator<D>::perturbation()
-   {
-      UTIL_CHECK(perturbationPtr_);  
-      return *perturbationPtr_; 
-   }
-   
-   // Get the perturbation factory.
-   template <int D>
-   inline PerturbationFactory<D>& Simulator<D>::perturbationFactory()
-   {
-      UTIL_CHECK(perturbationFactoryPtr_);  
-      return *perturbationFactoryPtr_; 
-   }
-   
-   // Get the ramp (if any) by const reference.
-   template <int D>
-   inline Ramp<D> const & Simulator<D>::ramp() const
-   {
-      UTIL_CHECK(rampPtr_);  
-      return *rampPtr_; 
-   }
-
-   // Get the ramp (if any) by non-const reference.
-   template <int D>
-   inline Ramp<D>& Simulator<D>::ramp()
-   {
-      UTIL_CHECK(rampPtr_);  
-      return *rampPtr_; 
-   }
-
-   // Get the ramp factory.
-   template <int D>
-   inline RampFactory<D>& Simulator<D>::rampFactory()
-   {
-      UTIL_CHECK(rampFactoryPtr_);  
-      return *rampFactoryPtr_; 
-   }
-
    // Get the parent System.
    template <int D>
    inline System<D>& Simulator<D>::system()
-   {  return *systemPtr_; }
+   {
+      UTIL_CHECK(systemPtr_);
+      return *systemPtr_;
+   }
 
-   // Get the Compressor
+   // Get the CPU random number generator.
+   template <int D>
+   inline Random& Simulator<D>::random()
+   {  return random_; }
+
+   // Get the GPU random number generator.
+   template <int D>
+   inline CudaRandom& Simulator<D>::cudaRandom()
+   {  return cudaRandom_; }
+
+   // Does this Simulator have a Compressor?
+   template <int D>
+   inline bool Simulator<D>::hasCompressor() const
+   {  return (bool)compressorPtr_; }
+
+   // Get the Compressor by reference.
    template <int D>
    inline Compressor<D>& Simulator<D>::compressor()
    {
@@ -845,20 +830,81 @@ namespace Rpg {
       return *compressorPtr_;
    }
 
-   // Does the simulator have a Compressor object?
+   // Get the Compressor factory.
    template <int D>
-   inline bool Simulator<D>::hasCompressor() const
-   {  return (compressorPtr_ != 0); }
+   inline CompressorFactory<D>& Simulator<D>::compressorFactory()
+   {
+      UTIL_CHECK(compressorFactoryPtr_);
+      return *compressorFactoryPtr_;
+   }
 
-   // Return an array of eigenvalues of projected chi matrix.
+   // Does this Simulator have an associated Perturbation?
    template <int D>
-   inline DArray<double> const & Simulator<D>::chiEvals() const
-   {  return chiEvals_; }
+   inline bool Simulator<D>::hasPerturbation() const
+   {  return (bool)perturbationPtr_; }
+
+   // Get the perturbation (if any) by const reference.
+   template <int D>
+   inline Perturbation<D> const & Simulator<D>::perturbation() const
+   {
+      UTIL_CHECK(perturbationPtr_);
+      return *perturbationPtr_;
+   }
+
+   // Get the perturbation (if any) by non-const reference.
+   template <int D>
+   inline Perturbation<D>& Simulator<D>::perturbation()
+   {
+      UTIL_CHECK(perturbationPtr_);
+      return *perturbationPtr_;
+   }
+
+   // Get the perturbation factory.
+   template <int D>
+   inline PerturbationFactory<D>& Simulator<D>::perturbationFactory()
+   {
+      UTIL_CHECK(perturbationFactoryPtr_);
+      return *perturbationFactoryPtr_;
+   }
+
+   // Does this Simulator have an associated Ramp?
+   template <int D>
+   inline bool Simulator<D>::hasRamp() const
+   {  return (bool)rampPtr_; }
+
+   // Get the ramp by const reference.
+   template <int D>
+   inline Ramp<D> const & Simulator<D>::ramp() const
+   {
+      UTIL_CHECK(rampPtr_);
+      return *rampPtr_;
+   }
+
+   // Get the ramp by non-const reference.
+   template <int D>
+   inline Ramp<D>& Simulator<D>::ramp()
+   {
+      UTIL_CHECK(rampPtr_);
+      return *rampPtr_;
+   }
+
+   // Get the ramp factory.
+   template <int D>
+   inline RampFactory<D>& Simulator<D>::rampFactory()
+   {
+      UTIL_CHECK(rampFactoryPtr_);
+      return *rampFactoryPtr_;
+   }
 
    // Return an array of eigenvalues of projected chi matrix.
    template <int D>
    inline double Simulator<D>::chiEval(int a) const
    {  return chiEvals_[a]; }
+
+   // Return an array of eigenvalues of projected chi matrix.
+   template <int D>
+   inline DArray<double> const & Simulator<D>::chiEvals() const
+   {  return chiEvals_; }
 
    // Return a matrix of eigenvectors of the projected chi matrix.
    template <int D>
@@ -879,6 +925,11 @@ namespace Rpg {
    template <int D>
    inline double Simulator<D>::sc(int a) const
    {  return sc_[a]; }
+
+   // Has the Hamiltonian been computed for the current w fields ?
+   template <int D>
+   inline bool Simulator<D>::hasHamiltonian() const
+   {  return hasHamiltonian_; }
 
    // Get the precomputed Hamiltonian
    template <int D>
@@ -903,7 +954,7 @@ namespace Rpg {
       UTIL_CHECK(hasHamiltonian_);
       return fieldHamiltonian_;
    }
-   
+
    // Get the perturbation component of the precomputed Hamiltonian.
    template <int D>
    inline double Simulator<D>::perturbationHamiltonian() const
@@ -911,11 +962,6 @@ namespace Rpg {
       UTIL_CHECK(hasHamiltonian_);
       return perturbationHamiltonian_;
    }
-
-   // Has the Hamiltonian been computed for the current w fields ?
-   template <int D>
-   inline bool Simulator<D>::hasHamiltonian() const
-   {  return hasHamiltonian_; }
 
    // Return all eigencomponents of the w fields.
    template <int D>
@@ -961,16 +1007,6 @@ namespace Rpg {
    template <int D>
    inline bool Simulator<D>::hasDc() const
    {  return hasDc_; }
-   
-   // Does this Simulator have an associated Perturbation?
-   template <int D>
-   inline bool Simulator<D>::hasPerturbation() const
-   {  return (perturbationPtr_ != 0); }
-   
-   // Does this Simulator have an associated Ramp?
-   template <int D>
-   inline bool Simulator<D>::hasRamp() const
-   {  return (rampPtr_ != 0); }
 
    // Clear all data (eigen-components of w field and Hamiltonian)
    template <int D>
@@ -986,7 +1022,7 @@ namespace Rpg {
    template <int D>
    inline long Simulator<D>::iStep()
    {  return iStep_; }
-   
+
    // Return the current simulation step index.
    template <int D>
    inline long Simulator<D>::iTotalStep()

@@ -66,17 +66,28 @@ namespace Rpg {
    template <int D>
    void McSimulator<D>::readParameters(std::istream &in)
    {
-      // Read compressor block and optional random number seed
-      Simulator<D>::readParameters(in);
+      // Optionally read random seed, initialize random number generators
+      readRandomSeed(in);
 
-      // Read block of McMove parameters
-      readParamComposite(in, mcMoveManager_);
+      // Attempt to read optional McMoveManager block 
+      readParamCompositeOptional(in, mcMoveManager_);
 
-      // Read block of Analyzers
+      // Attempt to read optional Compressor, Perturbation and Ramp blocks
+      bool isEnd = false;
+      readCompressor(in, isEnd);
+      readPerturbation(in, isEnd);
+      if (hasMcMoves()) {
+         UTIL_CHECK(hasCompressor());
+         readRamp(in, isEnd);
+      }
+      // Tthe Compressor is required if McMoves are declared
+      // Ramp is allowed only if McMoves are declared
+
+      // Optionally read AnalyzerManager block
       Analyzer<D>::baseInterval = 0; // default value
       readParamCompositeOptional(in, analyzerManager_);
 
-      // Figure out what needs to be saved
+      // Figure out what needs to be saved in stored state
       state_.needsCc = false;
       state_.needsDc = false;
       state_.needsHamiltonian = true;
@@ -89,7 +100,6 @@ namespace Rpg {
 
       // Initialize Simulator<D> base class
       allocate();
-
    }
 
    /*
@@ -98,7 +108,6 @@ namespace Rpg {
    template <int D>
    void McSimulator<D>::setup(int nStep)
    {
-      UTIL_CHECK(hasCompressor());
       UTIL_CHECK(system().w().hasData());
 
       // Eigenanalysis of the projected chi matrix.
@@ -112,12 +121,14 @@ namespace Rpg {
          ramp().setup(nStep);
       }
 
-      // Compute field components and MC Hamiltonian for initial state
+      // Solve the MDE for the initial state
       system().compute();
 
       // Compress the initial field before entering simulate loop. 
-      compressor().compress();
-      compressor().clearTimers();
+      if (hasCompressor()) {
+         compressor().compress();
+         compressor().clearTimers();
+      }
 
       // Compute field components and Hamiltonian
       computeWc();
@@ -129,7 +140,12 @@ namespace Rpg {
       }
       computeHamiltonian();
 
-      mcMoveManager_.setup();
+      // Setup MC moves (if any)
+      if (hasMcMoves()) {
+         mcMoveManager_.setup();
+      }
+
+      // Setup analyzers (if any)
       if (analyzerManager_.size() > 0){
          analyzerManager_.setup();
       }
@@ -142,7 +158,8 @@ namespace Rpg {
    template <int D>
    void McSimulator<D>::simulate(int nStep)
    {
-      UTIL_CHECK(mcMoveManager_.size() > 0);
+      UTIL_CHECK(hasMcMoves());
+      UTIL_CHECK(hasCompressor());
       
       // Initial setup
       setup(nStep);

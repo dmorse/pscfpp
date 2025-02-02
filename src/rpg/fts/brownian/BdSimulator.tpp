@@ -72,71 +72,75 @@ namespace Rpg {
    template <int D>
    void BdSimulator<D>::readParameters(std::istream &in)
    {
+      // Optionally read random seed, initialize random number generators
+      readRandomSeed(in);
 
-      // Read compressor block, and optionally random seed, optional perturbation
-      Simulator<D>::readParameters(in);
-
-      #if 0
-      // Read random seed. Default is seed_(0), taken from the clock time
-      readOptional(in, "seed", seed_);
-
-      // Set random seed
-      random().setSeed(seed_);
-      cudaRandom().setSeed(seed_);
-      #endif
-
-      // Read and instantiate a BdStep object (required)
+      // Optionally read and instantiate a BdStep object
+      bool isEnd = false;
       std::string className;
-      bool isEnd;
-      bdStepPtr_ =
-          bdStepFactoryPtr_->readObject(in, *this, className, isEnd);
+      UTIL_CHECK(!hasBdStep());
+      UTIL_CHECK(bdStepFactoryPtr_);
+      bdStepPtr_ = bdStepFactoryPtr_->readObjectOptional(in, *this,
+                                                         className, isEnd);
+
+      // Attempt to read the optional Compressor, Perturbation and Ramp blocks
+      readCompressor(in, isEnd);
+      readPerturbation(in, isEnd);
+      if (hasBdStep()) {
+         UTIL_CHECK(hasCompressor());
+         readRamp(in, isEnd);
+      }
+      // Compressor is required if a BdStep exists
+      // A Ramp is allowed only if a BdStep exists
 
       // Read AnalyzerManager block
       Analyzer<D>::baseInterval = 0; // default value
       readParamCompositeOptional(in, analyzerManager_);
 
-      // Figure out what variables need to be saved
+      // Figure out what variables need to be saved in stored state
       state_.needsCc = false;
       state_.needsDc = false;
       state_.needsHamiltonian = false;
-      if (stepper().needsCc()){
-         state_.needsCc = true;
-      }
-      if (stepper().needsDc()){
-         state_.needsDc = true;
+      if (hasBdStep()) {
+         if (stepper().needsCc()){
+            state_.needsCc = true;
+         }
+         if (stepper().needsDc()){
+            state_.needsDc = true;
+         }
       }
 
       // Initialize Simulator<D> base class
       allocate();
-
    }
 
    /*
-   * Perform a field theoretic MC simulation of nStep steps.
+   * Setup before the main loop of a simulate or analyze command.
    */
    template <int D>
    void BdSimulator<D>::setup(int nStep)
    {
-      UTIL_CHECK(hasCompressor());
       UTIL_CHECK(system().w().hasData());
 
       // Eigenanalysis of the projected chi matrix.
       analyzeChi();
-      
+
       if (hasPerturbation()) {
          perturbation().setup();
       }
-      
+
       if (hasRamp()) {
          ramp().setup(nStep);
       }
-   
+
       // Solve MDE and compute c-fields for the intial state
       system().compute();
 
       // Compress the initial state (adjust pressure-like field)
-      compressor().compress();
-      compressor().clearTimers();
+      if (hasCompressor()) {
+         compressor().compress();
+         compressor().clearTimers();
+      }
 
       // Compute field components and Hamiltonian for initial state.
       computeWc();
@@ -144,11 +148,14 @@ namespace Rpg {
       computeDc();
       computeHamiltonian();
 
-      stepper().setup();
+      if (hasBdStep()) {
+         stepper().setup();
+      }
+
       if (analyzerManager_.size() > 0){
          analyzerManager_.setup();
       }
-      
+
    }
 
    /*
@@ -158,6 +165,8 @@ namespace Rpg {
    void BdSimulator<D>::simulate(int nStep)
    {
       UTIL_CHECK(system().w().hasData());
+      UTIL_CHECK(hasBdStep());
+      UTIL_CHECK(hasCompressor());
 
       // Initial setup
       setup(nStep);
@@ -184,9 +193,9 @@ namespace Rpg {
 
          if (converged){
             iStep_++;
-            
+
             if (hasRamp()) {
-               ramp().setParameters(iStep_);               
+               ramp().setParameters(iStep_);
             }
 
             // Analysis (if any)
@@ -214,7 +223,7 @@ namespace Rpg {
       if (Analyzer<D>::baseInterval > 0){
          analyzerManager_.output();
       }
-      
+
       // Output results of ramp
       if (hasRamp()){
          Log::file() << std::endl;
@@ -225,7 +234,7 @@ namespace Rpg {
       Log::file() << std::endl;
       Log::file() << "nStep               " << nStep << std::endl;
       if (iStep_ != nStep){
-         Log::file() << "nFail Step          " << (nStep - iStep_) 
+         Log::file() << "nFail Step          " << (nStep - iStep_)
                      << std::endl;
       }
       Log::file() << "Total run time      " << time
@@ -236,14 +245,12 @@ namespace Rpg {
       Log::file() << "Analyzer run time   " << analyzerTime
                   << " sec" << std::endl;
       Log::file() << std::endl;
-      
+
       // Output number of times MDE has been solved for the simulation run
       Log::file() << "MDE counter   "
                   << compressor().mdeCounter() << std::endl;
       Log::file() << std::endl;
 
-      // Output compressor timer results
-      // compressor().outputTimers(Log::file());
    }
 
    /*
@@ -278,14 +285,13 @@ namespace Rpg {
       bool hasFrame;
       timer.start();
       hasFrame = trajectoryReaderPtr->readFrame();
-      
+
       for (iStep_ = 0; iStep_ <= max && hasFrame; ++iStep_) {
          if (hasFrame) {
             clearData();
 
             // Initialize analyzers
             if (iStep_ == min) {
-               //analyzerManager_.setup();
                setup(iStep_);
             }
 
@@ -294,7 +300,7 @@ namespace Rpg {
                analyzerManager_.sample(iStep_);
             }
          }
-         
+
          hasFrame = trajectoryReaderPtr->readFrame();
       }
       timer.stop();
