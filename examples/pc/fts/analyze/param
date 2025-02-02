@@ -28,13 +28,6 @@ System{
     lattice     cubic   
   }
   McSimulator{
-    AmCompressor{
-      epsilon      1.0e-4
-      maxItr       200
-      maxHist      30     
-      verbose	 0
-      errorType    normResid
-    }
     McMoveManager{
       RealMove{
         probability     1
@@ -43,11 +36,6 @@ System{
     }
     AnalyzerManager{
       baseInterval    1
-
-      TrajectoryWriter{
-        interval        1
-        outputFileName  out/trajectory_read
-      }
 
       HamiltonianAnalyzer{
         interval        1
@@ -65,6 +53,3 @@ System{
   }
 }
 
-
-  groupName   P_-1
-  unitCell cubic   3.2

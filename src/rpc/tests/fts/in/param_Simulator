@@ -28,14 +28,6 @@ System{
     lattice     cubic   
   }
   McSimulator{
-    AmCompressor{
-      epsilon      1.0e-4
-      maxItr       200
-      maxHist      30     
-      verbose	 0
-      errorType    rmsResid
-    }
-
     McMoveManager{
       
       ForceBiasMove{
@@ -48,6 +40,13 @@ System{
         A               0.4
       }
 
+    }
+    AmCompressor{
+      epsilon      1.0e-4
+      maxItr       200
+      maxHist      30     
+      verbose	 0
+      errorType    rmsResid
     }
     AnalyzerManager{
       baseInterval    1

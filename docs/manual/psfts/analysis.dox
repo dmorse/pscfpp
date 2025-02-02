@@ -6,63 +6,42 @@
 
 \section psfts_analysis_overview_sec Overview
 
-PSCF provides tools to allow users to analyze data in either of two 
-methods. Physical quantities of interest can be computed and analyzed 
-either:
+The pscf_pc and pscf_pg can be used to analyze simulation data by either
+of different methods.  Data analysis may be carried out either:
 
-   - During a simulation, "on the fly"
+   - During a simulation
 
-   - After a simulation, by postprocessing a field trajectory
+   - After the simulation, by postprocessing a field trajectory
 
-To analyze and/or output data during a simlation, one must simply include
-subblocks that list the desired data analysis within the AnalyzerManager
-block of the parameter file used to initialize the simulation.
+To analyze data during a simulation, one simply specifies a desired
+set of analyzer subblocks within the AnalyzerManager block of a parameter 
+file used to initialize a BD or MC simulation. Such a simulation is 
+performed when a SIMULATE command is read from the command file.
 
-Postprocessing of a field trajectory involves two steps. First, one must use 
-the SIMULATE command to perform a PS-FTS simulation in which the AnalyzerManager 
-block includes an analyzer named TrajectoryWriter that periodically writes 
-field configuration to a field trajectory file.  Later, one performs a separate 
-calculation, which is usually initialized with a different parameter file, in 
-which the ANALYZE command is used to order pscf_pc or pscf_pg to reads in and 
-analyze each frame of the trajectory file created during the earlier 
-simulation. 
+To postprocess a field, one normally invokes pscf_pc or pscf_pg twice, 
+once to perform the simulation, and a second time to analyze a field
+trajectory file that was written during the simulation. Such a file
+a file consists of a sequence of frames that were written at regular 
+intervals, each of which configuration of w fields at the end of a 
+particular BD or MC step. Postprocessing of a trajectory is performed 
+when an ANALYZE command is read from the command file. 
 
-In either mode of operation, the data analysis and IO operations that should
-be performed are specified by the contents of the AnalyzerManager block of 
-the parameter file that is used to initialize calculation performed using 
-the pscf_pc or pscf_pg program. Both of these programs are thus designed to
-be used both for simulation and postprocess data analysis. When postprocessing
-is used, the original simulation and the postprocessing calculation are 
-normally performed by separate calculations that are normally initialized 
-by different parameter files that differ primarily in the contents of the
-ManagerAnalyzer block.  In this case, the parameter file that is used to 
-initialize the simulation must contain an analyzer that writes the field 
-trajectory file, but may lack analyzers that perform other computations 
-that will instead be performed via postprocessing.
-
-The main advantage of postprocessing a trajectory file is it allows the 
-same data to be analyzed repeatedly, thus allowing the the user to delay 
-or revise decisions about what types of analysis might be useful. 
-The main disadvantage of postprocessing is the amount of disk space required 
-to store trajectories. Disk space limitations may limit the frequency with 
-which users choose to write field configurations during a simulation, thus 
-limiting the frequency with which physical observables may be sampled during 
-postprocessing. Data analysis operations that benefit from very frequent 
-sampling are thus natural candidates for analysis operations that might
-profitably be performed during a simulation, rather than only during 
-postprocessing.
+In either mode of operation, the set of analysis operations that should 
+be performed is specified by the contents of the AnalyzerManager block 
+of the parameter file used to initialize the program. 
+The same set of "analyzer" classes are available for use either during
+during simulation or during postprocessing.
 
 \section psfts_analysis_analyzers_sec Analyzer Classes
 
-The same set of "analyzer" classes are available for use either during a
-simulation or during postprocessing of a trajectory file. All of the analyzer
-classes that are provided with the current version of PSCF (v1.2) are listed 
-below.  More details about the purpose of each class and the format of the 
-corresponding paramet file block can be obtained by clicking on link in this 
-list:
+All of the analyzer classes that are provided with the current version 
+of PSCF (v1.2) are listed below.  More details about the purpose of each 
+class and the format of the corresponding paramet file block can be 
+obtained by clicking on link in this list:
 <ul>
   <li> \subpage rpc_StepLogger_page "StepLogger" </li>
   <li> \subpage rpc_TrajectoryWriter_page "TrajectoryWriter" </li>
+  <li> \subpage rpc_ConcentrationWriter_page "ConcentrationWriter" </li>
   <li> \subpage rpc_HamiltonianAnalyzer_page "HamiltonianAnalyzer" </li>
   <li> \subpage rpc_BinaryStructureFactorGrid_page "BinaryStructureFactorGrid" </li>
   <li> \subpage rpc_ChiDerivative_page "ChiDerivative" </li>
@@ -70,20 +49,74 @@ list:
   <li> \subpage rpc_PerturbationDerivative_page "PerturbationDerivative" </li>
   <li> \subpage rpc_MaxOrderParameter_page "MaxOrderParameter" </li>
   <li> \subpage rpc_FourthOrderParameter_page "FourthOrderParameter" </li>
-  <li> \subpage rpc_ConcentrationWriter_page "ConcentrationWriter" </li>
 </ul>
-The first two of these classes are commonly used during a simulation run, but
-would not normally be used during a postprocessing calculation.
-The "StepLogger" class records the progress of a simulation by periodically 
-writing the current number of BD or MC steps to a log file.
-The TrajectoryWriter class periodically writes field configurations to a field
-trajectory file, thus enabling postprocessing of the resulting file. 
-The other classes perform data analysis operations that could be applied either
-during a simulation or during postprocessing.
+The "StepLogger" class simply records the progress of a simulation by 
+periodically writing the current number of BD or MC steps to standard 
+output.  The TrajectoryWriter class periodically writes w-field 
+configurations to a field trajectory file, thus enabling later 
+postprocessing of that file.  Information about other analyzer classes 
+can be obtained by clicking on the associated links. 
 
 \section psfts_analysis_postprocessing_sec Postprocessing a Trajectory File
 
-To be written
+Analysis of simulation data by postprocessing of a trajectory file involves
+two steps:
+
+- Invoke pscf_pc or pscf_pg to perform a BD or MC simulation, using 
+  a parameter file that includes a TrajectoryWriter that is used to
+  output a trajectory file. The command file for this must contain
+  a SIMULATE command.
+
+- Invoke pscf_pc or pscf_pg again with a slightly different 
+  parameter file, using a command file that contains an ANALYZE command.
+
+The parameter file used to initialize a simulation and the one used 
+to initialize a later postprocessing calculation usually differ only 
+slightly. Two such parameter files would normally contain identical 
+Mixture, Interaction, and Domain blocks, since these specify physical 
+information that is needed either during a simulation or during
+postprocessing. The main differences are:
+
+  - A parameter file used to initialize a simulation must contain a
+    TrajectoryWriter analyzer to write a trajectory file for later 
+    postprocessing. This analyzer would, however, rarely be enabled 
+    in a parameter file designed for postprocessing.
+
+  - A parameter file used only for postprocessing may omit blocks that 
+    enable sampling and compressor algorithms, since these algorithms 
+    will not be used during postprocessing Such a file can thus omit 
+    the BdStep block of BdSimulator or the McMoveManager block of an 
+    McSimulator, as well as the Compressor block used in either type
+    of simulation.
+
+  - A parameter file used for postprocessing would normally enable
+    one or more analyzers that were not enabled during the original
+    simulation. 
+
+The interval used in the TrajectoryWriter class during the simulation
+determines the number of BD or MC steps between frames of the trajectory
+file. The choice for this parameters thus determines the finest time
+resolution that will be possible during postprocessing. 
+
+When an ANALYZE command executed, the program reads in a trajectory
+file one frame at a time, and applies the operations performed by 
+the analyzer classes at regular intervals. During this operation,
+the "interval" parameter associated with each analyzer is interpreted 
+as a number of trajectory file frames between successive operations, 
+rather than as a number of BD or MC simulation steps.  Trajectory 
+file frames are usually written somewhat infrequently, at interval 
+of 10 to 100 simulations steps. Parameter files for postprocessing
+thus usually use a baseInterval of 1, and often use an interval of 
+1 for most analyzers, in order to make maximum use of limited 
+available data. 
+
+The main advantage of postprocessing a trajectory file is it allows 
+the user to delay or revise decisions about what types of analysis 
+might be useful.  The main disadvantage of postprocessing is the 
+amount of disk space required to store trajectories, particularly
+if frames are written at frequent intervals. The main advantage of 
+analyzing some observables during a simulation is doing so may allow 
+more frequent sampling of data without using excessive disk space.
 
 <BR>
 \ref psfts_param_page   (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 

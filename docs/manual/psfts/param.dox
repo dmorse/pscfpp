@@ -182,37 +182,61 @@ thus usually omitted from a parameter file for FTS.
 
 </ul>
 
-The BdSimulator and McSimulator parameter blocks share a common 
-internal structure, except for differences in the sub-block that 
-specifies details of the BD or MC sampling algorithm. BD and MC 
-simulations are described separately below.
-
 \section psfts_param_brownian_sec Brownian Dynamics: BdSimulator Block
 
-The overall structure for a typical BdSimulator block in a parameter 
-file that enables BD simulation may be described schematically as 
-follows:
+The BdSimulator and McSimulator parameter blocks share a common 
+internal structure, except for differences in the sub-block that 
+specifies details of the BD or MC sampling algorithm. 
+
+Parameter format for both types of Simulator block include two 
+optional blocks, a Perturbation block and a Ramp block, that are not
+needed for standard simulations but are included in the format 
+descriptions given here for the sake of completeness.  The purposes 
+of these two optional blocks will be described separately.
+
+The parameter file format for the BdSimulator block in a file that
+enables BD simulation is given in skeleton form below:
 \code
   BdSimulator{
     seed* int
-    BdStep#{ ... }
-    Compressor#{..}
+    BdStep*#{ ... }
+    Compressor*#{..}
+    Perturbation*#{..}
+    Ramp*#{..}
     AnalyzerManager*{ .... }
   }
 \endcode
-The optional seed parameter may be used to set a seed for the random 
-number generator. The BdStep, Compressor, and AnalyzerManager blocks 
-contain parameters for, respectively, the BD step algorithm, the 
-compressor algorithm, and any associated analysis operations.  Because 
-the BdStep and Compressor blocks are selectable, the actual block label 
-for these blocks may refer to the names of classes that implement 
-particular choices of BD step algorithm and compressor algorithms, 
-rather than the generic names BdStep and Compressor.  The AnalyzerManager 
-block contains nested one or more nested subblocks for chosen analysis 
-operations, as shown below.
+The optional seed parameter may be used to set an integer seed for a 
+random number generator. If it omitted, a seed will be generated
+automatically.
 
-For reference, here is the BdSsimulator block of the example given 
-above :
+The BdStep, Compressor, and AnalyzerManager blocks contain parameters 
+for, respectively, the BD step algorithm, the compressor algorithm, 
+and any associated analysis operations.  The AnalyzerManager block, 
+if present, contains one or more nested subblocks that each specify 
+a specific analysis operations, as discussed below.
+
+Ramp and Perturbation blocks are optional blocks that are not needed
+for simple simulations, and that are omitted from examples discussed
+here. 
+
+The BdStep and Compressor blocks are marked as optional in the above
+format description, but must actually both be present in order to run 
+a BD simulation. If either is absent, the program can successfully
+read the parameter file, but an error will occur if a SIMULATE command 
+is encountered in the command file in order to actually run a BD 
+simulation.  These two blocks are treated as optional during processing 
+of the parameter file because they are not needed for other possible 
+types of calculation, such as post processing of a field trajectory.
+
+The BdStep and Compressor blocks are both selectable. The actual block 
+labels for these parameter file blocks may thus refer to the names of 
+classes that implement particular choices of BD step algorithm and 
+compressor algorithms, rather than the generic names BdStep and 
+Compressor used in the above description.
+
+For reference, here is the BdSsimulator block of the complete parameter
+file given above :
 \code
   BdSimulator{
     seed           486893701
@@ -239,16 +263,16 @@ above :
     }
   }
 \endcode
-In is example, the file indicates use of a Leimkuhler-Mathews (LM) 
-Brownian dynamics step algorithm, as indicated by block label LMBDStep 
-for the selectable BdStep block.
-This file also chooses an LRAM compressor algorithm, as indicated by 
-the block label LrAmCompressor for the selectable Compressor block.
-We recommend these LM BD step and the LRAM compressor algorithm as the 
-current methods of choice for almost all BD simulations.  These two
-algorithms are also the default choices for the BdStep and Compressor, 
-and so could also be selected using the generic "BdStep" and/or
-"Compressor" labels for these two blocks.
+This example uses a Leimkuhler-Mathews (LM) Brownian dynamics step 
+algorithm, as indicated by block label LMBDStep in the first line of 
+the selectable BdStep block. This example also uses an LRAM compressor 
+algorithm, as indicated by the block label LrAmCompressor for the 
+selectable Compressor block.  We recommend these two algorithm as 
+the current methods of choice for almost all BD simulations. These 
+LMBdStep and LrAmCompressor algorithms are also the default choices 
+for the BdStep and Compressor blocks, respectively and so could also 
+be selected using the generic "BdStep" or "Compressor" block labels 
+rather than the more specific names of the algorithms.
 
 <b> BD Step Algorithms: </b>
 The BD step algorithms that are available for use with pscf_pc or pscf_pg 
@@ -264,44 +288,45 @@ associated parameter file format.
 
 \section psfts_param_montecarlo_sec Monte Carlo: McSimulator Block
 
-The typical structure of the McSimulator block in a parameter file 
-for MC simulation may be described schematically as follows:
+The parameter file format for the McSimulator block of a parameter file 
+used to initialize an MC simulation may be described schematically as 
+follows:
 \code
   McSimulator{
     seed* int
-    McMoveManager{ ... }
-    Compressor#{..}
+    McMoveManager*{ ... }
+    Compressor*#{..}
+    Perturbation*#{..}
+    Ramp*#{..}
     AnalyzerManager*{ .... }
   }
 \endcode
-The only difference between this format for McSimulator and the
+The only difference between this format for McSimulator and the 
 corresponding format for a BdSimulator is the existence of an 
-McMoveManager block in the McSimulator block where a Bdsimulator 
-block would have a selectable BdStep block. 
+McMoveManager block in the McSimulator block where a Bdsimulator block 
+would have a selectable BdStep block. 
 
-The McMoveManager contains information about a set of MC moves 
-that will be used during a simulation.
-An McMoveManager is a container for a list of one one or more
-MC moves that are chosen at random at the beginning of each step
-of a simulation. The McMoveManager parameter file block contains 
-one or more subblocks that each begin with a line containing the 
-name for a specific MC move type. The name of each MC move type 
-is also the name of the C++ class that implements that move. 
-The block associated with each MC move type contains parameters
-parameters required to define the move. The first parameter in 
-the subblock associated with each MC move type is a parameter 
-named "probability" that gives the probability of randomly 
-choosing a move of that type at the beginning of each MC step.
+The McMoveManager contains information about a set of MC moves that will 
+be used during a simulation.  An McMoveManager is a container for a set
+of MC moves from which one is chosen at random at the beginning of each 
+MC step. The McMoveManager parameter file block contains one or more 
+subblocks that each begin with a line containing the name for a specific 
+MC move type. The name of each MC move type is also the name of the C++ 
+class that implements that move.  The block associated with each MC move 
+type contains parameters parameters required to define the move. 
+The first parameter in the subblock associated with each MC move type 
+is a parameter named "probability" that gives the probability of 
+choosing that type of move at the beginning of each MC step.
 
-The only types of move that are currently implemented in PSCF 
-are a simple MC move named RealMove that applies independent
-random changes to the exchange field values on all grid points,
-and a "smart MC" or "force bias" move named ForceBiasMove that 
-uses an explicit Euler BD step to generate a proposed MC move. 
+Only types of MC move that are currently implemented in PSCF, which
+are named RealMove and ForceBiasMove. RealMove is a simple MC move 
+that generates an attempted move by adding independent random changes 
+to the exchange field values at all grid points, The ForceBiasMove
+is "smart MC" or "force bias" that uses an explicit Euler BD step to 
+generate a proposed MC move. 
 
-Below, we show an example of an McSimulator block for a MC
-simulation analogous to the BdSimulator block of the previous 
-example:
+Below, we show an example of an McSimulator block for a MC simulation 
+analogous to the BdSimulator block of the previous example:
 \code
   McSimulator{
     seed           486893701
@@ -338,8 +363,7 @@ example:
 \endcode
 The only difference between this McSimulator block and the BdSimulator 
 block shown previously is the appearance of a McMmoveManager block 
-where BD example contains a LMBdStep block that described the choice
-of BD step algorithm. 
+in the same location where a BdSimulator would contain a BdStep block.
 
 The McMoveManager block from the above example is show separately below:
 \code
@@ -364,18 +388,18 @@ probability at the beginning of each step, and a RealMove is chosen with
 25\% probability.  
 
 Other parameters of each MC move are required to specify the typical
-magnitude of random changes.  The "mobility" parameter of the  
-ForceBiasMove gives the value of the Brownian dynamics mobility 
+magnitude of random changes in field values.  The "mobility" parameter 
+of the  ForceBiasMove gives the value of the Brownian dynamics mobility 
 parameter for the explicit Euler BD step that is used by this algorithm 
-to generate a proposed MC move.  The parameter of a RealMove named "A" 
+to generate a proposed MC move. The parameter of a RealMove named "A" 
 specifies the root-mean-squared change in the proposed value of the 
 exchange field at each grid point.
 
 <b> MC Move Algorithms: </b>
-The MC move algorithms that are available for use with pscf_pc or pscf_pg 
-are listed below, labelled by the name that is used in the first line of
-a corresponding parameter file block. Further information about each
-MC move type can be obtained by clicking on the associated link.
+The MC move algorithms that are available for use with pscf_pc or 
+pscf_pg are listed below, labelled by the name that is used in the first 
+line of a corresponding parameter file block. Further information about 
+each MC move can be obtained by clicking on the associated link.
 <ul>
   <li> \subpage rpc_ForceBiasMove_page "ForceBiasMove" </li>
   <li> \subpage rpc_RealMove_page "RealMove" </li>
@@ -391,28 +415,27 @@ by the first line in the associated block.
 
 The available compressor algorithms are listed below. Users may click
 on the link associated with each algorithm label to access more a
-detailed description of each the algorithm, and of the format of the 
-associated parameter file block. 
+detailed description of each the algorithm, and the format of the
+associated parameter file block.
 <ul>
   <li> \subpage rpc_LrAmCompressor_page "LrAmCompressor" </li>
   <li> \subpage rpc_LrCompressor_page "LrCompressor" </li>
   <li> \subpage rpc_AmCompressor_page "AmCompressor" </li>
 </ul>
 The LrAmCompressor is the default choice, and is generally the most
-efficient of these three options. The LrAmCompressor may thus be
-either by using the generic label "Compressor" or the more specific
-label "LrAmCompressor" in the first line of the associated parameter 
-file block. 
+efficient of these three options. As the default, the LrAmCompressor 
+may thus be chosen either by using the generic label "Compressor" or 
+the more specific label "LrAmCompressor" in the first line of the 
+relevant parameter file block. 
 
 \section psfts_param_analyzer_sec AnalyzerManager
 
-In both BD and MC simulations, the selectable "Compressor" block 
-is followed by an optional AnalyzerManager block. In the C++ source
-code, the AnalyzerManager is a container for a list of one or more 
-objects that each perform a statistical analysis or data output 
-operation during a simulation.  These objects are instances of
-subclasses of a base class named "Analyzer", and are generically
-referred to in the PSCF source code and documentation as "analyzers".
+The AnalyzerManager block, if present, contains one or more subblocks
+that each enable use of an object that performs a data analysis and/or 
+data output operation at regular intervals during a simulation.  
+The underlying C++ objects are instances of subclasses of a base 
+class named "Analyzer", and are generically referred to in the PSCF 
+source code and documentation as "analyzers".
 
 The first parameter in an AnalyzerManager block is an int parameter 
 called "baseInterval". This is followed by one or more subblocks 
@@ -442,25 +465,27 @@ parameter file shown at the beginning of this page:
 
     }
 \endcode
-In this example, the baseInterval is 10. After the baseInterval, the 
-block contains subblocks for two analyzers named StepLogger and 
-HamiltonianAnalyzer, each of which contains an "interval" parameter 
-with a value that is an integer multiple of the baseInterval of 10.  
-The StepLogger is a trivial analyzer that periodically outputs the 
-current value of the BD or MC step counter to the standard output 
-(i.e., to the screen, unless it is redirected).  The purpose of this 
-is simply to record the progress of the simulation.  
-The HamiltonianAnalyzer accumulates statistical information about 
-the value of the field theoretic Hamiltonian, including the average 
-value, the variance, and a reasonably sophisticated estimate of the 
-statistical error on the average value. The outputFileName parameter 
-gives the base name for a set of files to which the information 
-accumulated by HamiltonianAnalyzer will be written. 
+In this example, the baseInterval is 10. The AnalyzerManager block 
+contains subblocks for two analyzers named StepLogger and 
+HamiltonianAnalyzer. Both of these contain "interval" parameter that 
+is an integer multiple of the baseInterval of 10, as they must.  
 
-The parameter file block for most analyzers contains a string named 
-outputFileName or something similar that specifies the name of a file 
-to which results will be written. Different analyzers thus generally
-write results to separate files. 
+The StepLogger is a simple analyzer that periodically outputs the current 
+value of the step counter (the number of completed BD or MC steps) to 
+the standard output (i.e., to the screen, unless it is redirected).  
+The purpose of this is simply to record the progress of the simulation.  
+
+The HamiltonianAnalyzer accumulates statistical information about the 
+value of the field theoretic Hamiltonian, including the mean value, 
+the variance, and a reasonably sophisticated estimate of the statistical 
+error on the mean value. The outputFileName parameter gives the base 
+name for a set of files to which the information accumulated by 
+HamiltonianAnalyzer will be written. 
+
+The parameter file block for many analyzers contains a string, often
+named outputFileName, that specifies the name of a file or the base
+name of set of files to which results will be written. Different 
+analyzers generally write results to different files. 
 
 A list of all of the available analyzers, including links to detailed 
 documentation, is given on the \ref psfts_command_page "next page" . 

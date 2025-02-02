@@ -93,6 +93,7 @@ https://dmorse.github.io/pscfpp-man </a>.
     <li> \ref psfts_param_page  </li>
     <li> \ref psfts_analysis_page  </li>
     <li> \ref psfts_command_page  </li>
+    <li> \ref psfts_ramp_page   </li>
     <li> \ref psfts_perturb_page  </li>
     </ol>
   </li>

@@ -71,31 +71,41 @@ namespace Rpc {
    template <int D>
    void BdSimulator<D>::readParameters(std::istream &in)
    {
-      // Read compressor, optional random seed, optional perturbation
-      Simulator<D>::readParameters(in);
-
-      // Instantiate an BdStep object (required)
-      std::string className;
+      // Optionally read a random seed value
+      readRandomSeed(in);
+   
+      // Optionally read a BdStep 
       bool isEnd = false;
+      std::string className;
       bdStepPtr_ =
-          bdStepFactoryPtr_->readObject(in, *this, className, isEnd);
-      UTIL_CHECK(bdStepPtr_);
-
-      // Read analyzer block (optional)
-      if (!isEnd) {
-         Analyzer<D>::baseInterval = 0; // default value
-         readParamCompositeOptional(in, analyzerManager_);
+         bdStepFactoryPtr_->readObject(in, *this, className, isEnd);
+      if (!hasBdStep() && ParamComponent::echo()) {
+         Log::file() << indent() << "  BdStep{ [absent] }\n";
       }
+
+      // Optionally read Compressor, Perturbation and/or Ramp blocks
+      readCompressor(in, isEnd);
+      readPerturbation(in, isEnd);
+      if (hasBdStep()) {
+         UTIL_CHECK(hasCompressor());
+         readRamp(in, isEnd);
+      }
+
+      // Optionally read an AnalyzerManager
+      Analyzer<D>::baseInterval = 0; // default value
+      readParamCompositeOptional(in, analyzerManager_);
 
       // Figure out what variables need to be saved
       state_.needsCc = false;
       state_.needsDc = false;
       state_.needsHamiltonian = false;
-      if (stepper().needsCc()){
-         state_.needsCc = true;
-      }
-      if (stepper().needsDc()){
-         state_.needsDc = true;
+      if (hasBdStep()) {
+         if (bdStep().needsCc()){
+            state_.needsCc = true;
+         }
+         if (bdStep().needsDc()){
+            state_.needsDc = true;
+         }
       }
 
       // Allocate memory for Simulator<D> base class
@@ -109,7 +119,6 @@ namespace Rpc {
    template <int D>
    void BdSimulator<D>::setup(int nStep)
    {
-      UTIL_CHECK(hasCompressor());
       UTIL_CHECK(system().w().hasData());
 
       // Eigenanalysis of the projected chi matrix.
@@ -127,8 +136,10 @@ namespace Rpc {
       system().compute();
 
       // Compress the initial state (adjust pressure-like field)
-      compressor().compress();
-      compressor().clearTimers();
+      if (hasCompressor()) {
+         compressor().compress();
+         compressor().clearTimers();
+      }
 
       // Compute field components and Hamiltonian for initial state.
       computeWc();
@@ -136,7 +147,7 @@ namespace Rpc {
       computeDc();
       computeHamiltonian();
 
-      stepper().setup();
+      bdStep().setup();
       if (analyzerManager_.size() > 0){
          analyzerManager_.setup();
       }
@@ -149,6 +160,7 @@ namespace Rpc {
    template <int D>
    void BdSimulator<D>::simulate(int nStep)
    {
+      UTIL_CHECK(hasBdStep());
       UTIL_CHECK(hasCompressor());
       UTIL_CHECK(system().w().hasData());
 
@@ -175,7 +187,7 @@ namespace Rpc {
 
          // Take a step (modifies W fields)
          bool converged;
-         converged = stepper().step();
+         converged = bdStep().step();
 
          if (converged){
             iStep_++;
