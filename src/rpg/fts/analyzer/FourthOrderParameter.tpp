@@ -88,10 +88,6 @@ namespace Rpg {
          }
       }
       
-      // Allocate GPU resources with kSize threads
-      int nBlocks, nThreads;
-      ThreadGrid::setThreadsLogical(kSize_, nBlocks, nThreads);
-      
       // Allocate variables
       if (!isInitialized_){
          wc0_.allocate(dimensions);

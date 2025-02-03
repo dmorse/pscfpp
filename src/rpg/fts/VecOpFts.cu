@@ -6,7 +6,7 @@
 */
 
 #include "VecOpFts.h"
-#include <pscf/cuda/ThreadGrid.h>
+#include <pscf/cuda/ThreadArray.h>
 
 namespace Pscf {
 namespace Rpg {
@@ -80,7 +80,7 @@ namespace VecOpFts {
       
       // GPU resources
       int nBlocks, nThreads;
-      ThreadGrid::setThreadsLogical(n, nBlocks, nThreads);
+      ThreadArray::setThreadsLogical(n, nBlocks, nThreads);
 
       // Launch kernel
       _mcftsScale<<<nBlocks, nThreads>>>(a.cArray(), b, n);
@@ -99,7 +99,7 @@ namespace VecOpFts {
       
       // GPU resources
       int nBlocks, nThreads;
-      ThreadGrid::setThreadsLogical(n, nBlocks, nThreads);
+      ThreadArray::setThreadsLogical(n, nBlocks, nThreads);
 
       // Launch kernel
       _fourierMove<<<nBlocks, nThreads>>>(a.cArray(), b.cArray(), 
@@ -120,7 +120,7 @@ namespace VecOpFts {
       
       // GPU resources
       int nBlocks, nThreads;
-      ThreadGrid::setThreadsLogical(n, nBlocks, nThreads);
+      ThreadArray::setThreadsLogical(n, nBlocks, nThreads);
 
       // Launch kernel
       _computeDField<<<nBlocks, nThreads>>>(d.cArray(), Wc.cArray(), 
@@ -142,7 +142,7 @@ namespace VecOpFts {
       
       // GPU resources
       int nBlocks, nThreads;
-      ThreadGrid::setThreadsLogical(n, nBlocks, nThreads);
+      ThreadArray::setThreadsLogical(n, nBlocks, nThreads);
 
       // Launch kernel
       _computeForceBias<<<nBlocks, nThreads>>>(result.cArray(), di.cArray(), 

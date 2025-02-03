@@ -82,7 +82,7 @@ namespace Rpg {
       sweepFactoryPtr_ = new SweepFactory<D>(*this);
       simulatorFactoryPtr_ = new SimulatorFactory<D>(*this);
       BracketPolicy::set(BracketPolicy::Optional);
-      ThreadGrid::init();
+      ThreadArray::init();
    }
 
    /*
@@ -210,7 +210,8 @@ namespace Rpg {
 
       // If option -t, set the threads per block.
       if (tFlag) {
-         ThreadGrid::setThreadsPerBlock(tArg);
+         ThreadArray::setThreadsPerBlock(tArg);
+         ThreadMesh::setThreadsPerBlock(tArg);
       }
 
    }
@@ -1633,8 +1634,6 @@ namespace Rpg {
          tmpFieldsKGrid_[i].allocate(dimensions);
       }
       workArray_.allocate(dimensions);
-
-      ThreadGrid::setThreadsLogical(domain_.mesh().size());
 
       isAllocatedGrid_ = true;
    }
