@@ -69,12 +69,15 @@ public:
       in.close();
 
       // Check that everything was read in correctly
+      TEST_ASSERT(ext.normalVecId() == 0);
+      TEST_ASSERT(eq(ext.interfaceThickness(), 0.2));
+      TEST_ASSERT(eq(ext.excludedThickness(), 0.4));
       TEST_ASSERT(ext.chiBottom().capacity() == 2);
       TEST_ASSERT(ext.chiTop().capacity() == 2);
-      TEST_ASSERT(eq(ext.chiBottom(0),5.0));
-      TEST_ASSERT(eq(ext.chiBottom(1),0.0));
-      TEST_ASSERT(eq(ext.chiTop(0),2.0));
-      TEST_ASSERT(eq(ext.chiTop(1),10.0));
+      TEST_ASSERT(eq(ext.chiBottom(0), 5.0));
+      TEST_ASSERT(eq(ext.chiBottom(1), 0.0));
+      TEST_ASSERT(eq(ext.chiTop(0), 2.0));
+      TEST_ASSERT(eq(ext.chiTop(1), 10.0));
       TEST_ASSERT(ext.type() == FieldGenerator::External);
    }
 
@@ -123,7 +126,7 @@ public:
       system3.mask().readBasis("in/maskRef3.bf",tmpUnitCell2);
 
       ExtGenFilm<3> ext3(system3);
-      createExtGenFilm(ext3, "in/filmExt1");
+      createExtGenFilm(ext3, "in/filmExt3_2");
 
       Log::file() << "Testing system 3:" << std::endl;
       TEST_ASSERT(checkCheckCompatibility(ext3,false));
@@ -153,7 +156,7 @@ public:
 
       // Set up external field
       ExtGenFilm<3> ext1(system1);
-      createExtGenFilm(ext1, "in/filmExt1");
+      createExtGenFilm(ext1, "in/filmExt3_2");
       ext1.setup();
       TEST_ASSERT(ext1.isGenerated());
       TEST_ASSERT(system1.h().isAllocatedRGrid());

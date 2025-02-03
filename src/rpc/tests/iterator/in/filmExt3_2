@@ -1,7 +1,6 @@
-normalVecId        0
+normalVecId          2
 interfaceThickness 0.2
 excludedThickness  0.4
-fBulk              2.98468253989
 chiBottom[
             5.0   0.0
 ]

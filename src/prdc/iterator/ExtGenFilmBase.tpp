@@ -27,9 +27,14 @@ namespace Prdc
       chiBottomCurrent_(),
       chiTopCurrent_(),
       normalVecId_(-1),
+      interfaceThickness_(-1.0),
+      excludedThickness_(-1.0),
       chiBottom_(),
       chiTop_()
-   {  type_ = External; }
+   {
+      type_ = External; 
+      isDependent_ = true;
+   }
 
    /*
    * Destructor
@@ -44,13 +49,19 @@ namespace Prdc
    template <int D>
    void ExtGenFilmBase<D>::readParameters(std::istream& in)
    {
-      // Allocate chiBottom_ and chiTop_ and set to zero before 
-      // reading them in
+      // First, read data defining the mask
+      read(in, "normalVecId", normalVecId_);
+      read(in, "interfaceThickness", interfaceThickness_);
+      read(in, "excludedThickness", excludedThickness_);
+      double fBulk; // will not be used
+      readOptional(in, "fBulk", fBulk);
+
+      // Allocate chiBottom_ and chiTop_
       int nm = systemNMonomer();
       chiBottom_.allocate(nm);
       chiTop_.allocate(nm);
 
-      // Read arrays
+      // Read chiBottom_ and chiTop_ arrays
       readDArray(in, "chiBottom", chiBottom_, nm);
       readDArray(in, "chiTop", chiTop_, nm);
    }
@@ -75,9 +86,6 @@ namespace Prdc
 
       // Open and read file containing space group's symmetry operations
       readGroup(groupName, group);
-
-      // Get normalVecId from mask
-      maskNormalVecId();
 
       // Make sure all symmetry operations are allowed
       std::string msg = "Space group contains forbidden symmetry operations";

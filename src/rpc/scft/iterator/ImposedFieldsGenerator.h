@@ -95,6 +95,13 @@ namespace Rpc {
       System<D>* sysPtr_;
 
    };
-}
-}
+
+   #ifndef RPC_IMPOSED_FIELDS_GENERATOR_TPP
+   extern template class ImposedFieldsGenerator<1>;
+   extern template class ImposedFieldsGenerator<2>;
+   extern template class ImposedFieldsGenerator<3>;
+   #endif
+
+} // namespace Rpc
+} // namespace Pscf
 #endif

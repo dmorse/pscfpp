@@ -1,3 +1,6 @@
+normalVecId          2
+interfaceThickness 0.2
+excludedThickness  0.4
 chiBottom[
             0.0   0.0
 ]
