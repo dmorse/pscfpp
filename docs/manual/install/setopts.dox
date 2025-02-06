@@ -109,7 +109,7 @@ PSCF bld/ directory and then enter
 \code
 ./setopts -q
 \endcode
-This should result in the output
+This should result, for example, in the output
 \code
 -d  OFF - debugging
 -c  OFF - CUDA compilation

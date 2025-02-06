@@ -6,7 +6,7 @@
 
 \section install_inout_build Intermediate files and build directories
 
-All C++ and CUDA header and source files for PSCF are contained in within
+All C++ and CUDA header and source files for PSCF are contained within
 the PSCF src/ directory tree.  When the PSCF build system is used to 
 compile a program or set of programs, it generates a large number of 
 intermediate files that are used to construct the executable files, 
@@ -15,7 +15,7 @@ in their final locations.  These intermediate files are placed in a
 directory that we will refer as the "build" directory.  The build 
 directory used by PSCF may either be the same as the src/ directory, 
 if the package is built "in-source", or the build directory may be a 
-separate directory, if PSCF is built "out-of-source" 
+separate directory, if PSCF is built "out-of-source". 
 
 The types of intermediate files that are created when any part of PSCF 
 is compiled include:

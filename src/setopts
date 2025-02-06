@@ -108,9 +108,9 @@ while getopts "a:c:d:m:qh" opt; do
          echo "-c OFF    - CUDA compilation" >&2
       fi
       if [ `grep "^ *PSCF_OPENMP *= *1" config.mk` ]; then
-         echo "-c ON     - OPENMP compilation" >&2
+         echo "-m ON     - OPENMP compilation" >&2
       else
-         echo "-c OFF    - OPENMP compilation" >&2
+         echo "-m OFF    - OPENMP compilation" >&2
       fi
       ;;
     h)
@@ -140,7 +140,7 @@ while getopts "a:c:d:m:qh" opt; do
       echo "  "
       echo "   -d (0|1)   debugging         (defines/undefines UTIL_DEBUG)"
       echo "   -c (0|1)   CUDA code         (defines/undefines PSCF_CUDA)"
-      echo "   -c (0|1)   OpenMP code       (defines/undefines PSCF_OPENMP)"
+      echo "   -m (0|1)   OpenMP code       (defines/undefines PSCF_OPENMP)"
       echo " "
       echo " The -a option sets an identifier for the NVIDIA GPU architecture"
       echo " to be targeted by the NVIDIA CUDA compiler. The argument of this"
