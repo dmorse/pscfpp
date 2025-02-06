@@ -84,33 +84,32 @@ capabilities for PS-FTS calculations.
 
 A parameter file that enables either BD or MC PS-FTS calculations 
 must begin with Mixture, Interaction and Domain blocks similar to those
-used for an SCFT parameter file, as in the above example. The enable
-stochastic simulations, the Mixture, Interaction, and Domain blocks must 
-be followed by a selectable "Simulator" block, which may be either a 
-"BdSimulator" block, to enable BD simulation, or an "McSimulator" block
-to enable MC simulation.  The BdSimulator and McSimulator blocks use 
-analogous but slightly different param file formats, because they 
-contain computational parameters for different types of sampling 
-algorithms.
+used for an SCFT parameter file, as in the above example. To enable
+stochastic simulations, the file must also contain a selectable
+"Simulator" block, which may be either a "BdSimulator" block, for 
+BD simulations, or an "McSimulator" block, for MC simulation.  The 
+BdSimulator and McSimulator blocks use analogous but slightly 
+different param file formats, because they contain computational 
+parameters for different types of sampling algorithms.
 
-The arrangement of the blocks in a typical parameter file for a PS-FTS
-simulation performed using either pscf_pc or pscf_pg may thus be shown
-in the following skeleton form:
+The format of the main System block, including all allowed subblocks,
+is shown below in skeleton form:
 \code
 System{
   Mixture{ ... }
   Interaction{ ... }
   Domain{ ... }
+  Iterator*#{ ... }
+  Sweep*#{ ... }
   Simulator#*{ ... }
 }
 \endcode
 Note that only the Mixture, Interaction, and Domain blocks are required. 
-The Iterator and Sweep blocks that may be used for SCFT calculations 
-are optional, selectable blocks that are normally omitted in parameter
-files use for PS-FTS, and and so are not shown above. The "Simulator" 
-block is optional, selectable block that is instead used only for FTS,
-and so is normally omitted omitted in parameter files that are used to 
-initialized SCFT calculations.
+The optional Iterator and Sweep blocks are only used for SCFT calculations 
+and so would normally be omitted from a parameter used to initialize a
+BD or MC field theoretic simulation.  The "Simulator" block is an optional, 
+selectable block that is only used only for FTS, and so is normally 
+omitted from parameter files that are only used for SCFT calculations.
 
 The typical format for a parameter file that enables Brownian dynamics 
 FTS, but that not does enable SCFT, is thus, in skeleton form:
@@ -135,49 +134,49 @@ Formats of the various blocks of these skeleton are discussed below.
 
 \section psfts_param_Mixture_sec Mixture, Interaction and Domain Blocks
 
-The contents of the Mixture, Interaction, and Domain blocks in a 
-parameter file for PS-FTS calculation are nearly identical to those
-of corresponding blocks of an SCFT parameter file, except for the
-following differences:
+The Mixture, Interaction, and Domain blocks in a parameter file for 
+PS-FTS are nearly identical to the corresponding blocks of an SCFT 
+parameter file. The only differences are noted below:
 
 <ul>
 
 <li>
 **vMonomer** : The Mixture block used for a PS-FTS calculation must 
-include a value for a parameter vMonomer that represents the monomer 
+include a value for a parameter named vMonomer that gives the monomer 
 reference volume in an incompressible system.  This is an optional 
-parameter is not normally needed for SCFT calculations, and so is 
-usually omitted from SCFT parameter files.  In FTS, however, the value 
-given for vMonomer determines the invariant degree of polymerization, 
-and thus controls the magnitude of field fluctuations. The optional 
-vMonomer parameter appears immediately after the Polymer blocks and 
-Solvent blocks (if any) that describe the chemical constituents of 
-the system. It appears just before the the ds parameter.  
-If the vMonomer parameter is omitted, it is set to vMonomer = 1.0 by 
-default, which is rarely what one wants.
+parameter is not needed for most SCFT calculations, and so is usually 
+omitted from SCFT parameter files.  In a FTS of a copolymer melt, 
+however, the value of vMonomer determines the invariant degree of 
+polymerization, and thus controls the magnitude of field fluctuations. 
+The optional vMonomer parameter appears immediately after the Polymer 
+blocks and Solvent blocks (if any) that describe the chemical 
+constituents of the system. It appears just before the the required 
+ds parameter.  If the vMonomer parameter is omitted, it is set to 
+vMonomer = 1.0 by default, which is rarely what one wants.
 </li>
 
 <li>
-** Unit cell** : The parameters required to describe a unit cell for 
-a PS-FTS calculation are the same as those required by an SCFT 
-calculation, but the interpretation is usually different.  In a FTS, 
-the Domain block describes the overall periodic computational unit 
-cell. In eitehr SCFT or FTS calculations, the type of the unit cell 
-is specified in the parameter file, and unit cell dimensions are 
-given in the header of the file containing the initial w fields. 
-In FTS, these dimensions are usually taken to be large enough to 
+** Unit cell parameters** : The parameters required to describe a unit 
+cell for a PS-FTS calculation usually have a different interpretation
+than those used for an SCFT calculation.  In a FTS, the unit cell 
+parameters describe the overall periodic computational unit cell. 
+In FTS, the unit cell is usually taken to be large enough to 
 contain multiple unit cells of any expected ordered microstructure,
 where in SCFT calculations, they computational unit cell is often
 designed to contain a single crystallographic unit cell. 
+In either type of calculation, the lattice type of the computational
+unit cell is specified in the parameter file by the "latice" string 
+parameter, but values for unit cell dimensions are usually given in 
+the header of the file containing the initial w fields. 
 </li>
 
 <li>
-**Sspace group (absence)** : In a FTS, one generally does not impose 
-any strict space group symmetry on the fields, since stochastically 
-fluctuating fields will generally not exactly preserve any of the 
-nontrivial space group symmetries characteristic of many SCFT 
-solutions. The optional spaceGroup parameter of the Domain block is 
-thus usually omitted from a parameter file for FTS. 
+**Sspace group (absence)** : In a FTS, one generally does not assume
+the existence of any space group symmetry for the fields, since 
+stochastically fluctuating fields will almost never preserve any of 
+the space group symmetries characteristic of many SCFT solutions. 
+The optional spaceGroup parameter of the Domain block is thus usually 
+omitted from parameter files for FTS. 
 </li>
 
 </ul>
@@ -190,9 +189,8 @@ specifies details of the BD or MC sampling algorithm.
 
 Parameter format for both types of Simulator block include two 
 optional blocks, a Perturbation block and a Ramp block, that are not
-needed for standard simulations but are included in the format 
-descriptions given here for the sake of completeness.  The purposes 
-of these two optional blocks will be described separately.
+needed for simple simulations but are included in the format 
+descriptions given here for the sake of completeness.  
 
 The parameter file format for the BdSimulator block in a file that
 enables BD simulation is given in skeleton form below:
@@ -206,6 +204,8 @@ enables BD simulation is given in skeleton form below:
     AnalyzerManager*{ .... }
   }
 \endcode
+Elements of this block are discussed below.
+
 The optional seed parameter may be used to set an integer seed for a 
 random number generator. If it omitted, a seed will be generated
 automatically.
@@ -216,24 +216,25 @@ and any associated analysis operations.  The AnalyzerManager block,
 if present, contains one or more nested subblocks that each specify 
 a specific analysis operations, as discussed below.
 
-Ramp and Perturbation blocks are optional blocks that are not needed
-for simple simulations, and that are omitted from examples discussed
-here. 
-
 The BdStep and Compressor blocks are marked as optional in the above
 format description, but must actually both be present in order to run 
-a BD simulation. If either is absent, the program can successfully
-read the parameter file, but an error will occur if a SIMULATE command 
-is encountered in the command file in order to actually run a BD 
-simulation.  These two blocks are treated as optional during processing 
-of the parameter file because they are not needed for other possible 
-types of calculation, such as post processing of a field trajectory.
+a BD simulation. If either is absent, the program may be able to 
+successfully read the parameter file, but an error will occur if a 
+SIMULATE command is encountered in the command file in order to 
+actually run a BD simulation.  These two blocks are treated as 
+optional during processing of the parameter file because they are not 
+needed for other possible types of calculation, such as post 
+processing of a field trajectory.
 
 The BdStep and Compressor blocks are both selectable. The actual block 
 labels for these parameter file blocks may thus refer to the names of 
 classes that implement particular choices of BD step algorithm and 
 compressor algorithms, rather than the generic names BdStep and 
 Compressor used in the above description.
+
+Perturbation and Ramp blocks are optional blocks that are not needed
+for simple simulations of a standard model with fixed parameters, 
+and that are omitted from examples discussed on this page. 
 
 For reference, here is the BdSsimulator block of the complete parameter
 file given above :
@@ -272,9 +273,10 @@ the current methods of choice for almost all BD simulations. These
 LMBdStep and LrAmCompressor algorithms are also the default choices 
 for the BdStep and Compressor blocks, respectively and so could also 
 be selected using the generic "BdStep" or "Compressor" block labels 
-rather than the more specific names of the algorithms.
+rather than the more specific labels for these algorithms.
 
 <b> BD Step Algorithms: </b>
+
 The BD step algorithms that are available for use with pscf_pc or pscf_pg 
 are listed below, with each indicated by the name that would be used as 
 the label of the BdStep parameter file block. Each such label is a 
