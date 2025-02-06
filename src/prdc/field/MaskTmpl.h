@@ -82,15 +82,22 @@ namespace Prdc {
       void setFieldIo(FieldIo const & fieldIo);
 
       /**
-      * Allocate memory for the field.
+      * Allocate memory for the field in basis format.
       *
-      * A Mask may only be allocated once. An Exception will
-      * be thrown if this function is called more than once.
+      * An Exception will be thrown if this is called more than once.
       *
       * \param nBasis  number of basis functions 
+      */
+      void allocateBasis(int nBasis);
+
+      /**
+      * Allocate memory for the field in rgrid format.
+      *
+      * An Exception will be thrown if this is called more than once.
+      *
       * \param dimensions  dimensions of spatial mesh
       */
-      void allocate(int nBasis, IntVec<D> const & dimensions);
+      void allocateRGrid(IntVec<D> const & dimensions);
 
       ///@}
       /// \name Field Mutators
@@ -230,9 +237,14 @@ namespace Prdc {
       ///@{
 
       /**
-      * Has memory been allocated?
+      * Has memory been allocated in basis format?
       */
-      bool isAllocated() const;
+      bool isAllocatedBasis() const;
+
+      /**
+      * Has memory been allocated in rgrid format?
+      */
+      bool isAllocatedRGrid() const;
 
       /**
       * Has field data been set in either format?
@@ -303,9 +315,14 @@ namespace Prdc {
       int nMonomer_;
 
       /**
-      * Has memory been allocated for field?
+      * Has memory been allocated for field in basis format?
       */
-      bool isAllocated_;
+      bool isAllocatedBasis_;
+
+      /**
+      * Has memory been allocated for field in rgrid format?
+      */
+      bool isAllocatedRGrid_;
 
       /**
       * Has field data been initialized ?
@@ -341,10 +358,15 @@ namespace Prdc {
       return rgrid_;
    }
 
-   // Has memory been allocated?
+   // Has memory been allocated in basis format?
    template <int D, typename FieldIo, typename RField>
-   inline bool MaskTmpl<D, FieldIo, RField>::isAllocated() const
-   {  return isAllocated_; }
+   inline bool MaskTmpl<D, FieldIo, RField>::isAllocatedBasis() const
+   {  return isAllocatedBasis_; }
+
+   // Has memory been allocated in rgrid format?
+   template <int D, typename FieldIo, typename RField>
+   inline bool MaskTmpl<D, FieldIo, RField>::isAllocatedRGrid() const
+   {  return isAllocatedRGrid_; }
 
    // Have the field data been set?
    template <int D, typename FieldIo, typename RField>

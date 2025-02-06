@@ -698,6 +698,11 @@ namespace Rpg {
       Mixture<D>& mixture();
 
       /**
+      * Get Mixture by const reference.
+      */
+      Mixture<D> const & mixture() const;
+
+      /**
       * Get interaction (i.e., excess free energy model) by reference.
       */
       Interaction & interaction();
@@ -716,6 +721,11 @@ namespace Rpg {
       * Get Domain by nonconst reference.
       */
       Domain<D> & domain();
+
+      /**
+      * Get the iterator by const reference.
+      */
+      Iterator<D> const & iterator() const;
 
       /**
       * Get the iterator by reference.
@@ -1029,6 +1039,11 @@ namespace Rpg {
    inline Mixture<D>& System<D>::mixture()
    { return mixture_; }
 
+   // Get the associated Mixture<D> object by const reference.
+   template <int D>
+   inline Mixture<D> const & System<D>::mixture() const
+   { return mixture_; }
+
    // Get the Interaction (excess free energy model).
    template <int D>
    inline Interaction & System<D>::interaction()
@@ -1078,7 +1093,15 @@ namespace Rpg {
    inline FieldIo<D> const & System<D>::fieldIo() const
    {  return domain_.fieldIo(); }
 
-   // Get the Iterator.
+   // Get the Iterator by const reference.
+   template <int D>
+   inline Iterator<D> const & System<D>::iterator() const
+   {
+      UTIL_ASSERT(iteratorPtr_);
+      return *iteratorPtr_;
+   }
+
+   // Get the Iterator by reference.
    template <int D>
    inline Iterator<D>& System<D>::iterator()
    {

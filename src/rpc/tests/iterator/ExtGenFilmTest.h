@@ -64,7 +64,7 @@ public:
       ExtGenFilm<1> ext(system);
 
       std::ifstream in;
-      openInputFile("in/filmExt1", in);
+      openInputFile("in/filmExt1Asym", in);
       ext.readParameters(in);
       in.close();
 
@@ -94,7 +94,7 @@ public:
       createSystem(system1, "in/system1D");
       
       ExtGenFilm<1> ext1(system1);
-      createExtGenFilm(ext1, "in/filmExt2");
+      createExtGenFilm(ext1, "in/filmExt1Sym");
       
       Log::file() << "Testing system 1:" << std::endl;
       TEST_ASSERT(checkCheckCompatibility(ext1,false));
@@ -106,12 +106,13 @@ public:
       // incompatible space group
       System<2> system2;
       createSystem(system2, "in/system2D_1");
-      system2.mask().allocate(1225, system2.domain().mesh().dimensions());
+      system2.mask().allocateBasis(1225);
+      system2.mask().allocateRGrid(system2.domain().mesh().dimensions());
       UnitCell<2> tmpUnitCell;
       system2.mask().readBasis("in/maskRef2.bf",tmpUnitCell);
 
       ExtGenFilm<2> ext2(system2);
-      createExtGenFilm(ext2, "in/filmExt1");
+      createExtGenFilm(ext2, "in/filmExt2Asym");
 
       Log::file() << "Testing system 2:" << std::endl;
       TEST_ASSERT(checkCheckCompatibility(ext2,true));
@@ -121,12 +122,13 @@ public:
       // space group
       System<3> system3;
       createSystem(system3, "in/system3D_3");
-      system3.mask().allocate(1920, system3.domain().mesh().dimensions());
+      system3.mask().allocateBasis(1920);
+      system3.mask().allocateRGrid(system3.domain().mesh().dimensions());
       UnitCell<3> tmpUnitCell2;
       system3.mask().readBasis("in/maskRef3.bf",tmpUnitCell2);
 
       ExtGenFilm<3> ext3(system3);
-      createExtGenFilm(ext3, "in/filmExt3_2");
+      createExtGenFilm(ext3, "in/filmExt3Asym");
 
       Log::file() << "Testing system 3:" << std::endl;
       TEST_ASSERT(checkCheckCompatibility(ext3,false));
@@ -144,7 +146,8 @@ public:
       // Set up 3D external field with a compatible system
       System<3> system1;
       createSystem(system1, "in/system3D_3");
-      system1.mask().allocate(1920, system1.domain().mesh().dimensions());
+      system1.mask().allocateBasis(1920);
+      system1.mask().allocateRGrid(system1.domain().mesh().dimensions());
       UnitCell<3> tmpUnitCell1;
       system1.mask().readBasis("in/maskRef3.bf",tmpUnitCell1);
 
@@ -156,7 +159,7 @@ public:
 
       // Set up external field
       ExtGenFilm<3> ext1(system1);
-      createExtGenFilm(ext1, "in/filmExt3_2");
+      createExtGenFilm(ext1, "in/filmExt3Asym");
       ext1.setup();
       TEST_ASSERT(ext1.isGenerated());
       TEST_ASSERT(system1.h().isAllocatedRGrid());
@@ -180,12 +183,13 @@ public:
       // Set up 3D system with athermal walls
       System<3> system2;
       createSystem(system2, "in/system3D_3");
-      system2.mask().allocate(1920, system2.domain().mesh().dimensions());
+      system2.mask().allocateBasis(1920);
+      system2.mask().allocateRGrid(system2.domain().mesh().dimensions());
       system2.setUnitCell(UnitCell<3>::Hexagonal, parameters);
 
       // Set up external field
       ExtGenFilm<3> ext2(system2);
-      createExtGenFilm(ext2, "in/filmExt3");
+      createExtGenFilm(ext2, "in/filmExt3Athermal");
       ext2.setup();
 
       TEST_ASSERT(!ext2.isGenerated());
@@ -211,13 +215,14 @@ public:
       FSArray<double, 6> parameters;
       parameters.append(2.9);
       system.setUnitCell(UnitCell<1>::Lamellar, parameters);
-      system.mask().allocate(37, system.domain().mesh().dimensions());
+      system.mask().allocateBasis(37);
+      system.mask().allocateRGrid(system.domain().mesh().dimensions());
       UnitCell<1> tmpUnitCell;
       system.mask().readBasis("in/maskRef1.bf",tmpUnitCell);
 
       // Set up external field generator
       ExtGenFilm<1> ext(system);
-      createExtGenFilm(ext, "in/filmExt2");
+      createExtGenFilm(ext, "in/filmExt2Sym");
       ext.setup();
 
       // Change lattice parameter and update
@@ -293,7 +298,7 @@ public:
 
       // Set up external field generator
       ExtGenFilm<2> ext(system);
-      createExtGenFilm(ext, "in/filmExt2");
+      createExtGenFilm(ext, "in/filmExt2Sym");
       ext.setup();
 
       // Read w field and solve MDEs, so system can calculate fHelmholtz

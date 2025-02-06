@@ -467,16 +467,16 @@ public:
 
       // Read in the mask and external fields from file
       UnitCell<1> unitCell; // UnitCell object to pass to FieldIo functions
-      unitCell = system.domain().unitCell();
-      system.mask().setFieldIo(system.domain().fieldIo());
-      system.mask().allocate(system.domain().basis().nBasis(), 
-                             system.domain().mesh().dimensions());
+      unitCell = system.unitCell();
+      system.mask().setFieldIo(system.fieldIo());
+      system.mask().allocateBasis(system.basis().nBasis()); 
+      system.mask().allocateRGrid(system.mesh().dimensions());
       system.mask().readBasis("in/maskAndH/mask.bf", unitCell);
       TEST_ASSERT(eq(system.mask().phiTot(), 8.0951532073e-01));
 
-      system.h().setFieldIo(system.domain().fieldIo());
-      system.h().allocateBasis(system.domain().basis().nBasis());
-      system.h().allocateRGrid(system.domain().mesh().dimensions());
+      system.h().setFieldIo(system.fieldIo());
+      system.h().allocateBasis(system.basis().nBasis());
+      system.h().allocateRGrid(system.mesh().dimensions());
       system.h().readBasis("in/maskAndH/h.bf", unitCell);
 
       // Run the solve function

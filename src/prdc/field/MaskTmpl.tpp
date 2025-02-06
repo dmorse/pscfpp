@@ -26,7 +26,8 @@ namespace Prdc {
       meshDimensions_(),
       meshSize_(0),
       nBasis_(0),
-      isAllocated_(false),
+      isAllocatedBasis_(false),
+      isAllocatedRGrid_(false),
       hasData_(false),
       isSymmetric_(false)
    {}
@@ -46,16 +47,31 @@ namespace Prdc {
    {  fieldIoPtr_ = &fieldIo; }
 
    /*
-   * Allocate memory for field.
+   * Allocate memory for field in basis format.
    */
    template <int D, typename FieldIo, typename RField>
-   void MaskTmpl<D, FieldIo, RField>::allocate(int nBasis, 
-                                               IntVec<D> const & meshDimensions)
+   void MaskTmpl<D, FieldIo, RField>::allocateBasis(int nBasis)
    {
-      UTIL_CHECK(!isAllocated_);
+      UTIL_CHECK(!isAllocatedBasis_);
 
-      // Set mesh and basis dimensions
+      // Set basis dimensions
       nBasis_ = nBasis;
+  
+      // Allocate field array, basis format 
+      basis_.allocate(nBasis);
+      isAllocatedBasis_ = true;
+   }
+
+   /*
+   * Allocate memory for field in basis format.
+   */
+   template <int D, typename FieldIo, typename RField>
+   void 
+   MaskTmpl<D, FieldIo, RField>::allocateRGrid(IntVec<D> const & meshDimensions)
+   {
+      UTIL_CHECK(!isAllocatedRGrid_);
+
+      // Set mesh dimensions
       meshDimensions_ = meshDimensions;
       meshSize_ = 1;
       for (int i = 0; i < D; ++i) {
@@ -63,10 +79,9 @@ namespace Prdc {
          meshSize_ *= meshDimensions[i];
       }
   
-      // Allocate field arrays 
-      basis_.allocate(nBasis);
+      // Allocate field array, rgrid format
       rgrid_.allocate(meshDimensions);
-      isAllocated_ = true;
+      isAllocatedRGrid_ = true;
    }
 
    /*

@@ -82,6 +82,16 @@ namespace Rpc {
       readParamCompositeOptional(in, imposedFields_);
    }
 
+   // Output timing results to log file.
+   template<int D>
+   void AmIteratorBasis<D>::outputTimers(std::ostream& out)
+   {
+      // Output timing results, if requested.
+      out << "\n";
+      out << "Iterator times contributions:\n";
+      AmIteratorTmpl<Iterator<D>, DArray<double> >::outputTimers(out);
+   }
+
    // Protected virtual function
 
    // Setup before entering iteration loop
@@ -442,16 +452,6 @@ namespace Rpc {
             }
          }
       }
-   }
-   
-   // Output timing results to log file.
-   template<int D>
-   void AmIteratorBasis<D>::outputTimers(std::ostream& out)
-   {
-      // Output timing results, if requested.
-      out << "\n";
-      out << "Iterator times contributions:\n";
-      AmIteratorTmpl<Iterator<D>, DArray<double> >::outputTimers(out);
    }
    
    // Return specialized sweep parameter types to add to the Sweep object

@@ -76,6 +76,8 @@ namespace Rpg {
       setClassName("System");
       domain_.setFileMaster(fileMaster_);
       w_.setFieldIo(domain_.fieldIo());
+      h_.setFieldIo(domain_.fieldIo());
+      mask_.setFieldIo(domain_.fieldIo());
 
       interactionPtr_ = new Interaction();
       iteratorFactoryPtr_ = new IteratorFactory<D>(*this);
@@ -539,6 +541,9 @@ namespace Rpg {
             if (!h_.isAllocatedRGrid()) {
                h_.allocateRGrid(domain().mesh().dimensions());
             }
+            if (iterator().isSymmetric() && !h_.isAllocatedBasis()) {
+               mask_.allocateBasis(domain().basis().nBasis());
+            }
             UnitCell<D> tmpUnitCell;
             h_.readRGrid(filename, tmpUnitCell);
          } else
@@ -556,23 +561,28 @@ namespace Rpg {
                                                 domain().unitCell());
          } else
          if (command == "READ_MASK_BASIS") {
-            UTIL_CHECK(domain().basis().isInitialized());
             readEcho(in, filename);
-            if (!mask_.isAllocated()) {
-               mask_.allocate(domain().basis().nBasis(), 
-                              domain().mesh().dimensions());
+            UTIL_CHECK(domain().basis().isInitialized());
+            if (!mask_.isAllocatedBasis()) {
+               mask_.allocateBasis(domain().basis().nBasis());
+            }
+            if (!mask_.isAllocatedRGrid()) {
+               mask_.allocateRGrid(domain().mesh().dimensions());
             }
             UnitCell<D> tmpUnitCell;
             mask_.readBasis(filename, tmpUnitCell);
          } else
          if (command == "READ_MASK_RGRID") {
             readEcho(in, filename);
-            if (!mask_.isAllocated()) {
-               mask_.allocate(domain().basis().nBasis(), 
-                              domain().mesh().dimensions());
+            if (!mask_.isAllocatedRGrid()) {
+               mask_.allocateRGrid(domain().mesh().dimensions());
+            }
+            if (iterator().isSymmetric() && !mask_.isAllocatedBasis()) {
+               UTIL_CHECK(domain().basis().isInitialized());
+               mask_.allocateBasis(domain().basis().nBasis());
             }
             UnitCell<D> tmpUnitCell;
-            mask_.readBasis(filename, tmpUnitCell);
+            mask_.readRGrid(filename, tmpUnitCell);
          } else
          if (command == "WRITE_MASK_BASIS") {
             readEcho(in, filename);

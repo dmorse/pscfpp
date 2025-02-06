@@ -113,8 +113,10 @@ public:
 
       Mask<1> mask;
       mask.setFieldIo(domain.fieldIo());
-      mask.allocate(nBasis, dimensions);
-      TEST_ASSERT(mask.isAllocated());
+      mask.allocateBasis(nBasis);
+      mask.allocateRGrid(dimensions);
+      TEST_ASSERT(mask.isAllocatedBasis());
+      TEST_ASSERT(mask.isAllocatedRGrid());
       TEST_ASSERT(!mask.hasData());
       TEST_ASSERT(!mask.isSymmetric());
 
@@ -150,8 +152,11 @@ public:
 
       Mask<1> mask;
       mask.setFieldIo(domain.fieldIo());
-      mask.allocate(nBasis, dimensions);
-      TEST_ASSERT(mask.isAllocated());
+      
+      mask.allocateBasis(nBasis);
+      mask.allocateRGrid(dimensions);
+      TEST_ASSERT(mask.isAllocatedBasis());
+      TEST_ASSERT(mask.isAllocatedRGrid());
       TEST_ASSERT(!mask.hasData());
       TEST_ASSERT(!mask.isSymmetric());
 
@@ -184,8 +189,10 @@ public:
 
       Mask<1> mask;
       mask.setFieldIo(domain.fieldIo());
-      mask.allocate(nBasis, dimensions);
-      TEST_ASSERT(mask.isAllocated());
+      mask.allocateBasis(nBasis);
+      mask.allocateRGrid(dimensions);
+      TEST_ASSERT(mask.isAllocatedBasis());
+      TEST_ASSERT(mask.isAllocatedRGrid());
       TEST_ASSERT(!mask.hasData());
       TEST_ASSERT(!mask.isSymmetric());
 
@@ -215,8 +222,10 @@ public:
 
       Mask<1> mask;
       mask.setFieldIo(domain.fieldIo());
-      mask.allocate(nBasis, dimensions);
-      TEST_ASSERT(mask.isAllocated());
+      mask.allocateBasis(nBasis);
+      mask.allocateRGrid(dimensions);
+      TEST_ASSERT(mask.isAllocatedBasis());
+      TEST_ASSERT(mask.isAllocatedRGrid());
       TEST_ASSERT(!mask.hasData());
       TEST_ASSERT(!mask.isSymmetric());
 
@@ -254,8 +263,10 @@ public:
 
       Mask<1> mask;
       mask.setFieldIo(domain.fieldIo());
-      mask.allocate(nBasis, dimensions);
-      TEST_ASSERT(mask.isAllocated());
+      mask.allocateBasis(nBasis);
+      mask.allocateRGrid(dimensions);
+      TEST_ASSERT(mask.isAllocatedBasis());
+      TEST_ASSERT(mask.isAllocatedRGrid());
       TEST_ASSERT(!mask.hasData());
       TEST_ASSERT(!mask.isSymmetric());
 
@@ -287,8 +298,10 @@ public:
 
       Mask<1> mask;
       mask.setFieldIo(domain.fieldIo());
-      mask.allocate(nBasis, dimensions);
-      TEST_ASSERT(mask.isAllocated());
+      mask.allocateBasis(nBasis);
+      mask.allocateRGrid(dimensions);
+      TEST_ASSERT(mask.isAllocatedBasis());
+      TEST_ASSERT(mask.isAllocatedRGrid());
       TEST_ASSERT(!mask.hasData());
       TEST_ASSERT(!mask.isSymmetric());
 
@@ -316,8 +329,10 @@ public:
       // Create empty mask object, check phiTot
       Mask<1> mask;
       mask.setFieldIo(domain.fieldIo());
-      mask.allocate(nBasis, dimensions);
-      TEST_ASSERT(mask.isAllocated());
+      mask.allocateBasis(nBasis);
+      mask.allocateRGrid(dimensions);
+      TEST_ASSERT(mask.isAllocatedBasis());
+      TEST_ASSERT(mask.isAllocatedRGrid());
       TEST_ASSERT(!mask.hasData());
       TEST_ASSERT(!mask.isSymmetric());
       TEST_ASSERT(eq(mask.phiTot(), 1.0));

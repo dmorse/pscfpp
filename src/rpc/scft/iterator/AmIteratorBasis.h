@@ -8,11 +8,12 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <rpc/scft/iterator/Iterator.h>               // base class argument
-#include <rpc/scft/iterator/ImposedFieldsGenerator.h> // member variable
+#include "Iterator.h"                            // base class argument
+#include "ImposedFieldsGenerator.h"              // member variable
 #include <pscf/iterator/AmIteratorTmpl.h>        // base class template
 #include <pscf/iterator/AmbdInteraction.h>       // member variable
 #include <util/containers/DArray.h>              // base class argument
+#include <util/containers/RingBuffer.h>          // method input variable
 
 namespace Pscf {
 namespace Rpc
@@ -74,7 +75,7 @@ namespace Rpc
       * \param success  boolean flag used to indicate if parameter was set
       */
       void setParameter(std::string name, DArray<int> ids, 
-                                          double value, bool& success);
+                        double value, bool& success);
 
       /**
       * Get the value of a specialized sweep parameter

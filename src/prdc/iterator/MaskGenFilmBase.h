@@ -8,8 +8,9 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
+#include <prdc/crystal/UnitCell.h>         // Function parameter
 #include <pscf/iterator/FieldGenerator.h>  // Base class
-#include <pscf/math/RealVec.h>        // container
+#include <pscf/math/RealVec.h>             // container
 #include <iostream>
 #include <string>
 
@@ -145,6 +146,33 @@ namespace Prdc {
       void checkSpaceGroup() const;
 
       /**
+      * Modifies a flexibleParams array to be compatible with this mask.
+      * 
+      * An iterator that is compatible with a mask should either have a 
+      * strictly rigid unit cell (lattice parameters are fixed), or 
+      * should allow some lattice parameters to be flexible while others
+      * are rigid. In the latter case, an FSArray<bool,6> will be used
+      * to keep track of which parameters are flexible and which are not.
+      *  
+      * This "flexibleParams" array may not be compatible with the 
+      * constraints of this mask, so this method will read the current
+      * array, modify it for compatibility, and then return the corrected
+      * version. In particular, this method will ensure that the lattice
+      * parameter defining the film thickness is rigid, unless the 
+      * optional input parameter fBulk is provided (since this parameter
+      * is necessary to compute the stress in the direction normal to
+      * the film). Further, all angles between basis vectors should be 
+      * fixed except the angle in the plane of the film.
+      * 
+      * Subclasses should use this method in generate() to set the
+      * flexibleParams array of the iterator.
+      * 
+      * \current  current flexibleParams array 
+      */
+      FSArray<bool,6> modifyFlexibleParams(FSArray<bool,6> current,
+                                           UnitCell<D> const & cell) const;
+
+      /**
       * Check that lattice vectors are compatible with thin film constraint.
       * 
       * Check that user-defined lattice basis vectors (stored in the
@@ -153,7 +181,7 @@ namespace Prdc {
       * normalVecId should be normal to the walls, while any other lattice
       * basis vectors must be parallel to the walls.
       */
-      virtual void checkLatticeVectors() const;
+      void checkLatticeVectors() const;
 
       /**
       * Allocate container necessary to generate and store field.
@@ -168,22 +196,17 @@ namespace Prdc {
       /**
       * Sets flexible lattice parameters to be compatible with the mask.
       * 
-      * An iterator for a thin film SCFT calculation should allow for
-      * some lattice parameters to be fixed, while others are held 
-      * constant. Subclasses should define this method to set the 
-      * flexibility of these lattice parameters appropriately so that 
-      * the film thickness is held constant, as are all but one of the 
-      * angles between basis vectors (the angle in the plane of the film
-      * may vary). The other lattice parameters are allowed to be 
-      * flexible if the user specified that they are flexible in the 
-      * Iterator parameters. 
+      * If the iterator allows for flexible lattice parameters, this 
+      * method will access the "flexibleParams" array of the iterator
+      * (a FSArray<bool,6> that indicates which parameters are flexible),
+      * modify it using modifyFlexibleParams to be compatible with this 
+      * mask, and then update the flexibleParams array owned by the 
+      * iterator.
       * 
-      * Note that the lattice parameter that defines the film thickness
-      * may be flexible if the optional input parameter fBulk is provided.
-      * This parameter is necessary to compute the stress in the direction
-      * normal to the film.
+      * Because this requires access to the iterator, it must be 
+      * implemented by subclasses.
       */
-      virtual void setFlexibleParams() = 0;
+      virtual void setFlexibleParams() const = 0;
 
       /**
       * Get the space group name for this system.

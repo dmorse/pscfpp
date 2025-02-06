@@ -5,6 +5,7 @@
 #include <test/CompositeTestRunner.h>
 
 #include "field/FieldTestComposite.h"
+#include "iterator/IteratorTestComposite.h"
 #include "solvers/SolverTestComposite.h"
 #include "system/SystemTestComposite.h"
 #include "sweep/SweepTestComposite.h"
@@ -14,6 +15,7 @@
 TEST_COMPOSITE_BEGIN(RpgNsTestComposite)
 addChild(new FieldTestComposite, "field/");
 addChild(new SolverTestComposite, "solvers/");
+addChild(new IteratorTestComposite, "iterator/");
 addChild(new SystemTestComposite, "system/");
 addChild(new SweepTestComposite, "sweep/");
 addChild(new FtsTestComposite, "fts/");

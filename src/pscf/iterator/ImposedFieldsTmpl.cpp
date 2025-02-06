@@ -34,6 +34,8 @@ namespace Pscf {
       // Read first FieldGenerator (optional)
       if (fieldGenPtr1_) {
 
+         UTIL_CHECK(!fieldGenPtr1_->isDependent());
+
          // Make fieldGenPtr1_ a child paramComponent of this object, so that 
          // it will be read/written correctly to/from param file with correct 
          // indentation

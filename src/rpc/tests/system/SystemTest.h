@@ -960,8 +960,8 @@ public:
       UnitCell<1> unitCell; // UnitCell object to pass to FieldIo functions
       unitCell = system.domain().unitCell();
       system.mask().setFieldIo(system.domain().fieldIo());
-      system.mask().allocate(system.domain().basis().nBasis(), 
-                             system.domain().mesh().dimensions());
+      system.mask().allocateBasis(system.domain().basis().nBasis()); 
+      system.mask().allocateRGrid(system.domain().mesh().dimensions());
       system.mask().readBasis("in/maskAndH/mask.bf", unitCell);
       TEST_ASSERT(eq(system.mask().phiTot(), 8.0951532073e-01));
 

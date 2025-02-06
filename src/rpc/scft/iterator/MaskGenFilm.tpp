@@ -9,6 +9,7 @@
 */
 
 #include "MaskGenFilm.h"
+#include "Iterator.h"
 #include <rpc/field/FieldIo.h>
 #include <prdc/cpu/RField.h>
 #include <prdc/crystal/UnitCell.h>
@@ -59,109 +60,102 @@ namespace Rpc
       int normalVecParamId = convertFullParamIdToReduced<D>(normalVecId(),
                                                 system().domain().lattice());
 
-      if (normalVecParamId == paramId) {
-         UTIL_CHECK(system().hasMask());
-         
-         // Get the length L of the lattice basis vector normal to the walls
-         double L = system().domain().unitCell().parameter(paramId);
+      // If paramId is not normalVecId, there is no stress contribution
+      if (normalVecParamId != paramId) return 0.0;
 
-         // Get the volume fraction of the unit cell occupied by polymers
-         double phiTot = system().mask().phiTot();
+      // If this point is reached, stress contribution must be calculated
+      UTIL_CHECK(system().hasMask());
+      
+      // Get the length of the lattice basis vector normal to the walls
+      double nvLength = system().domain().unitCell().parameter(paramId);
 
-         // Create a 3 element vector 'dim' that contains the grid dimensions.
-         // If system is 2D (1D), then the z (y & z) dimensions are set to 1.
-         IntVec<3> dim;
-         for (int ind = 0; ind < 3; ind++) {
-            if (ind < D) {
-               dim[ind] = system().domain().mesh().dimensions()[ind];
-            } else {
-               dim[ind] = 1;
-            }
-         }
+      // Get the volume fraction of the unit cell occupied by polymers
+      double phiTot = system().mask().phiTot();
 
-         // Create the field d\phi_m / dL in rgrid format
-         RField<D> rGrid;
-         FArray<int,3> coords;
-         int x, y, z;
-         int counter = 0;
-         double d, maskVal;
-
-         rGrid.allocate(system().domain().mesh().dimensions());
-         RField<D> const & maskRGrid = system().mask().rgrid();
-         
-         for (x = 0; x < dim[0]; x++) {
-            coords[0] = x;
-            for (y = 0; y < dim[1]; y++) {
-               coords[1] = y;
-               for (z = 0; z < dim[2]; z++) {
-                  coords[2] = z;
-                  maskVal = maskRGrid[counter];
-
-                  // Get the distance 'd' traveled along the lattice basis 
-                  // vector normal to the walls, in reduced coordinates
-                  d = (double)coords[normalVecId()] / 
-                      (double)dim[normalVecId()];
-
-                  rGrid[counter] = maskVal * (maskVal - 1) * 8.0
-                                   * (std::abs(d - 0.5) - 0.5)
-                                   / interfaceThickness();
-                  counter++;
-               }
-            }
-         }
-
-         // Convert above field into basis format
-         DArray<double> basis;
-         int nBasis = system().domain().basis().nBasis();
-         int nMonomer = system().mixture().nMonomer();
-         basis.allocate(nBasis);
-         system().domain().fieldIo().convertRGridToBasis(rGrid, basis);
-
-         // Get the integral term in the stress
-         double intTerm = 0.0;
-         DArray<double> xi;
-         xi.allocate(nBasis);
-         DArray<double> wVals;
-         wVals.allocate(nMonomer);
-
-         if (system().hasExternalFields()) {
-            for (int i = 0; i < nBasis; i++) {
-               xi[i] = system().w().basis(0)[i] - system().h().basis(0)[i];
-               for (int j = 1; j < nMonomer; j++) {
-                  xi[i] -= system().c().basis(j)[i] * 
-                        system().interaction().chi(0,j);
-               }
-               intTerm += xi[i] * basis[i];
-            }
+      // Create a 3 element vector 'dim' that contains the grid dimensions.
+      // If system is 2D (1D), then the z (y & z) dimensions are set to 1.
+      IntVec<3> dim;
+      for (int ind = 0; ind < 3; ind++) {
+         if (ind < D) {
+            dim[ind] = system().domain().mesh().dimensions()[ind];
          } else {
-            for (int i = 0; i < nBasis; i++) {
-               xi[i] = system().w().basis(0)[i];
-               for (int j = 1; j < nMonomer; j++) {
-                  xi[i] -= system().c().basis(j)[i] * 
-                        system().interaction().chi(0,j);
-               }
-               intTerm += xi[i] * basis[i];
+            dim[ind] = 1;
+         }
+      }
+
+      // Create the derivative field in rgrid format
+      RField<D> deriv;
+      FArray<int,3> coords;
+      int x, y, z;
+      int counter = 0;
+      double d, maskVal;
+
+      deriv.allocate(system().domain().mesh().dimensions());
+      RField<D> const & maskRGrid = system().mask().rgrid();
+      
+      for (x = 0; x < dim[0]; x++) {
+         coords[0] = x;
+         for (y = 0; y < dim[1]; y++) {
+            coords[1] = y;
+            for (z = 0; z < dim[2]; z++) {
+               coords[2] = z;
+               maskVal = maskRGrid[counter];
+
+               // Get the distance 'd' traveled along the lattice basis 
+               // vector normal to the walls, in reduced coordinates
+               d = (double)coords[normalVecId()] / 
+                     (double)dim[normalVecId()];
+
+               deriv[counter] = maskVal * (maskVal - 1) * 8.0
+                                 * (std::abs(d - 0.5) - 0.5)
+                                 / interfaceThickness();
+               counter++;
             }
          }
-
-         intTerm /= phiTot;
-
-         // Get the pressure term in the stress
-         if (!sysPtr_->hasFreeEnergy()) {
-            sysPtr_->computeFreeEnergy();
-         }
-         double pSys = sysPtr_->pressure();
-         double pTerm = pSys * excludedThickness() / 
-                        (phiTot * L * L);
-
-         double term = pTerm - intTerm;
-         return term;
-
-      } else {
-
-         return 0.0;
-
       }
+
+      // Get xi, the Lagrange multiplier field, in rgrid format
+      int nMonomer = system().mixture().nMonomer();
+      int nx = system().domain().mesh().size();
+      double chi;
+      RField<D> xi;
+      xi.allocate(system().domain().mesh().dimensions());
+
+      for (int i = 0; i < nx; i++) {
+         xi[i] = system().w().rgrid(0)[i];
+      }
+      
+      for (int in = 0; in < nMonomer; in++) {
+         chi = system().interaction().chi(0,in);
+         if (fabs(chi) > 1e-6) { // if chi is nonzero
+            for (int i = 0; i < nx; i++) {
+               xi[i] -= system().c().rgrid(in)[i] * chi;
+            }
+         }
+      }
+
+      if (system().hasExternalFields()) {
+         for (int i = 0; i < nx; i++) {
+            xi[i] -= system().h().rgrid(0)[i];
+         }
+      }
+
+      // Get the integral term in the stress
+      double intTerm = 0.0;
+      for (int i = 0; i < nx; i++) {
+         intTerm += xi[i] * deriv[i];
+      }
+      intTerm /= (phiTot * nx);
+
+      // Get the pressure term in the stress
+      if (!sysPtr_->hasFreeEnergy()) {
+         sysPtr_->computeFreeEnergy();
+      }
+      double pSys = sysPtr_->pressure();
+      double pTerm = pSys * excludedThickness() / 
+                     (phiTot * nvLength * nvLength);
+      
+      return pTerm - intTerm;
    }
 
    template <int D>
@@ -201,15 +195,20 @@ namespace Rpc
    template <int D>
    void MaskGenFilm<D>::allocate()
    {
-      UTIL_CHECK(system().domain().basis().isInitialized());
       UTIL_CHECK(system().domain().unitCell().isInitialized());
 
+      // Make sure mask has access to a fieldIo
       system().mask().setFieldIo(system().domain().fieldIo());
 
       // Allocate the mask containers if needed
-      if (!system().mask().isAllocated()) {
-         system().mask().allocate(system().domain().basis().nBasis(), 
-                                  system().domain().mesh().dimensions());
+      if (!system().mask().isAllocatedRGrid()) {
+         system().mask().allocateRGrid(system().domain().mesh().dimensions());
+      }
+      if (system().iterator().isSymmetric()) {
+         UTIL_CHECK(system().domain().basis().isInitialized());
+         if (!system().mask().isAllocatedBasis()) {
+            system().mask().allocateBasis(system().domain().basis().nBasis());
+         }
       }
    }
 
@@ -221,8 +220,11 @@ namespace Rpc
    {
       UTIL_CHECK(interfaceThickness() > 0);
       UTIL_CHECK(excludedThickness() > interfaceThickness());
-      UTIL_CHECK(system().mask().isAllocated());
-
+      UTIL_CHECK(system().mask().isAllocatedRGrid());
+      if (system().iterator().isSymmetric()) {
+         UTIL_CHECK(system().mask().isAllocatedBasis());
+      }
+      
       // Get the length L of the lattice basis vector normal to the walls
       int paramId = convertFullParamIdToReduced<D>(normalVecId(),
                                                 system().domain().lattice());
@@ -267,14 +269,27 @@ namespace Rpc
       }
 
       // Store this mask in System
-      system().mask().setRGrid(rGrid,true);
+      system().mask().setRGrid(rGrid, system().iterator().isSymmetric());
 
       // Store lattice vector normal to film used to construct this mask
       normalVecCurrent_ = systemLatticeVector(normalVecId());
 
    }
 
-   // Explicit Specializations for setFlexibleParams are in MaskGenFilm.cpp
-}
-}
+   /*
+   * Sets flexible lattice parameters to be compatible with the mask.
+   */
+   template <int D>
+   void MaskGenFilm<D>::setFlexibleParams() const
+   {
+      if (system().iterator().isFlexible()) {
+         FSArray<bool,6> updated;
+         updated = modifyFlexibleParams(system().iterator().flexibleParams(),
+                                        system().domain().unitCell());
+         sysPtr_->iterator().setFlexibleParams(updated);
+      }
+   }
+   
+} // namespace Rpc
+} // namespace Pscf
 #endif

@@ -9,6 +9,7 @@
 */
 
 #include "ExtGenFilm.h"
+#include "Iterator.h"
 #include <rpc/field/FieldIo.h>
 #include <prdc/cpu/RField.h>
 #include <prdc/crystal/paramIdConversions.h>
@@ -58,103 +59,93 @@ namespace Rpc
       // If walls are athermal then there is no external field, so no
       // contribution to the stress.
       if (isAthermal()) return 0.0;
-
-      // If walls are not athermal, calculate the stress contribution
-      // from the external fields.
-      UTIL_CHECK(isGenerated());
+      
+      // If paramId is not normalVecId, there is no stress contribution
       UTIL_CHECK(normalVecId() >= 0); // normalVecId has been set
-      UTIL_CHECK(interfaceThickness() > 0); // interfaceThickness has been set
       int nvParamId = convertFullParamIdToReduced<D>(normalVecId(),
                                                  system().domain().lattice());
+      if (nvParamId != paramId) return 0.0;
 
-      if ((nvParamId == paramId) && (!isAthermal())) {
-         UTIL_CHECK(system().hasMask());
-         UTIL_CHECK(system().hasExternalFields());
+      // If this point is reached, calculate the stress contribution
+      // from the external fields.
+      UTIL_CHECK(isGenerated());
+      UTIL_CHECK(interfaceThickness() > 0); 
+      UTIL_CHECK(system().hasMask());
+      UTIL_CHECK(system().hasExternalFields());
 
-         // Setup
-         int nMonomer = system().mixture().nMonomer();
-         int nBasis = system().domain().basis().nBasis();
-         RField<D> const & maskRGrid = system().mask().rgrid();
-         RField<D> rGrid, wRGrid;
-         rGrid.allocate(system().domain().mesh().dimensions());
-         wRGrid.allocate(system().domain().mesh().dimensions());
-         DArray<double> wBasis;
-         wBasis.allocate(nBasis);
-         FArray<int,3> coords;
-         int x, y, z;
-         int counter = 0;
-         double d, maskVal;
-         double term = 0.0;
+      // Setup
+      int nMonomer = system().mixture().nMonomer();
+      int nx = system().domain().mesh().size();
+      RField<D> const & maskRGrid = system().mask().rgrid();
+      RField<D> maskDeriv, hDeriv;
+      maskDeriv.allocate(system().domain().mesh().dimensions());
+      hDeriv.allocate(system().domain().mesh().dimensions());
+      FArray<int,3> coords;
+      int x, y, z;
+      int counter = 0;
+      double d, maskVal;
+      double term = 0.0;
 
-         // Create a 3 element vector 'dim' that contains the grid dimensions.
-         // If system is 2D (1D), then the z (y & z) dimensions are set to 1.
-         IntVec<3> dim;
-         for (int ind = 0; ind < 3; ind++) {
-            if (ind < D) {
-               dim[ind] = system().domain().mesh().dimensions()[ind];
-            } else {
-               dim[ind] = 1;
+      // Create a 3 element vector 'dim' that contains the grid dimensions.
+      // If system is 2D (1D), then the z (y & z) dimensions are set to 1.
+      IntVec<3> dim;
+      for (int ind = 0; ind < 3; ind++) {
+         if (ind < D) {
+            dim[ind] = system().domain().mesh().dimensions()[ind];
+         } else {
+            dim[ind] = 1;
+         }
+      }
+
+      // Compute the derivative of the mask with respect to film thickness
+      for (x = 0; x < dim[0]; x++) {
+         coords[0] = x;
+         for (y = 0; y < dim[1]; y++) {
+            coords[1] = y;
+            for (z = 0; z < dim[2]; z++) {
+               coords[2] = z;
+               maskVal = maskRGrid[counter];
+
+               // Get the distance 'd' traveled along the lattice basis 
+               // vector normal to the walls, in reduced coordinates
+               d = (double)coords[normalVecId()] / 
+                     (double)dim[normalVecId()];
+
+               maskDeriv[counter] = maskVal * (maskVal - 1) * 8.0
+                                    * (std::abs(d - 0.5) - 0.5)
+                                    / interfaceThickness();
+               counter++;
             }
          }
+      }
 
-         // Create the field d\phi_m / dL in rgrid format
+      for (int i = 0; i < nMonomer; i++) {
+         // Compute the h field derivative with respect to film thickness
+         counter = 0;
          for (x = 0; x < dim[0]; x++) {
             coords[0] = x;
             for (y = 0; y < dim[1]; y++) {
                coords[1] = y;
                for (z = 0; z < dim[2]; z++) {
                   coords[2] = z;
-                  maskVal = maskRGrid[counter];
-
-                  // Get the distance 'd' traveled along the lattice basis 
-                  // vector normal to the walls, in reduced coordinates
-                  d = (double)coords[normalVecId()] / 
-                      (double)dim[normalVecId()];
-
-                  rGrid[counter] = maskVal * (maskVal - 1) * 8.0
-                                   * (std::abs(d - 0.5) - 0.5)
-                                   / interfaceThickness();
+                  if (coords[normalVecId()] < (dim[normalVecId()] / 2)) {
+                     hDeriv[counter] = -1.0 * maskDeriv[counter] * chiBottom(i);
+                  } else {
+                     hDeriv[counter] = -1.0 * maskDeriv[counter] * chiTop(i);
+                  }
                   counter++;
                }
             }
          }
 
-         for (int i = 0; i < nMonomer; i++) {
-            // Construct w_ext for species i in r-grid format
-            counter = 0;
-            for (x = 0; x < dim[0]; x++) {
-               coords[0] = x;
-               for (y = 0; y < dim[1]; y++) {
-                  coords[1] = y;
-                  for (z = 0; z < dim[2]; z++) {
-                     coords[2] = z;
-                     if (coords[normalVecId()] < (dim[normalVecId()] / 2)) {
-                        wRGrid[counter] = -1.0 * rGrid[counter] * chiBottom(i);
-                     } else {
-                        wRGrid[counter] = -1.0 * rGrid[counter] * chiTop(i);
-                     }
-                     counter++;
-                  }
-               }
-            }
-            
-            // Convert above field into basis format
-            system().domain().fieldIo().convertRGridToBasis(wRGrid, wBasis);
-
-            // Get the integral term in the stress
-            DArray<double> const & cBasis = system().c().basis(i);
-            for (int i = 0; i < nBasis; i++) {
-               term += cBasis[i] * wBasis[i];
-            }
+         // Get the integral term in the stress
+         RField<D> const & c = system().c().rgrid(i);
+         for (int i = 0; i < nx; i++) {
+            term += c[i] * hDeriv[i];
          }
-         term /= system().mask().phiTot();
-         return term;
-
-      } else {
-
-         return 0.0;
-
       }
+      term /= (system().mask().phiTot() * nx);
+      return term;
    }
 
    /*
@@ -163,9 +154,9 @@ namespace Rpc
    template <int D>
    void ExtGenFilm<D>::allocate()
    {
-      UTIL_CHECK(system().domain().basis().isInitialized());
       UTIL_CHECK(system().domain().unitCell().isInitialized());
 
+      // Make sure h field container has access to a fieldIo
       system().h().setFieldIo(system().domain().fieldIo());
 
       // Allocate the external field containers if needed
@@ -173,8 +164,11 @@ namespace Rpc
          if (!system().h().isAllocatedRGrid()) {
             system().h().allocateRGrid(system().domain().mesh().dimensions());
          }
-         if (!system().h().isAllocatedBasis()) {
-            system().h().allocateBasis(system().domain().basis().nBasis());
+         if (system().iterator().isSymmetric()) {
+            UTIL_CHECK(system().domain().basis().isInitialized());
+            if (!system().h().isAllocatedBasis()) {
+               system().h().allocateBasis(system().domain().basis().nBasis());
+            }
          }
       }
    }
@@ -197,8 +191,11 @@ namespace Rpc
 
       // If this point is reached, external field must be generated
       UTIL_CHECK(system().h().isAllocatedRGrid());
-      UTIL_CHECK(system().h().isAllocatedBasis());
-      UTIL_CHECK(system().mask().isAllocated());
+      UTIL_CHECK(system().mask().isAllocatedRGrid());
+      if (system().iterator().isSymmetric()) {
+         UTIL_CHECK(system().h().isAllocatedBasis());
+         UTIL_CHECK(system().mask().isAllocatedBasis());
+      }
 
       int nm = systemNMonomer();
 
@@ -251,7 +248,7 @@ namespace Rpc
       } 
 
       // Pass h into the System
-      system().h().setRGrid(hRGrid,true);
+      system().h().setRGrid(hRGrid, system().iterator().isSymmetric());
    }
 
 }

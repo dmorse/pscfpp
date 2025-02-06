@@ -18,6 +18,7 @@
 #include <pscf/iterator/NanException.h>
 
 #include <util/global.h>
+#include <cmath>
 
 namespace Pscf {
 namespace Rpg {
@@ -28,7 +29,8 @@ namespace Rpg {
    // Constructor
    template <int D>
    AmIteratorBasis<D>::AmIteratorBasis(System<D>& system)
-    : Iterator<D>(system)
+    : Iterator<D>(system),
+      imposedFields_(system)
    {
       isSymmetric_ = true;  
       setClassName("AmIteratorBasis"); 
@@ -81,6 +83,9 @@ namespace Rpg {
 
       // Read optional scaleStress value
       readOptional(in, "scaleStress", scaleStress_);
+
+      // Read optional ImposedFieldsGenerator object
+      readParamCompositeOptional(in, imposedFields_);
    }
 
    // Output timing results to log file.
@@ -99,7 +104,11 @@ namespace Rpg {
    template <int D>
    void AmIteratorBasis<D>::setup(bool isContinuation)
    {
-      // Setup by AM algorithm
+      if (imposedFields_.isActive()) {
+         imposedFields_.setup();
+      }
+
+      // Call parent setup method
       AmIteratorTmpl<Iterator<D>, DArray<double> >::setup(isContinuation);
 
       // Update chi matrix and related properties in member interaction_
@@ -353,6 +362,12 @@ namespace Rpg {
          for (int i = 0; i < nParam ; i++) {
             if (flexibleParams_[i]) {
                double stress = system().mixture().stress(i);
+
+               // Correct stress to account for effect of imposed fields
+               if (imposedFields_.isActive()) {
+                  stress = imposedFields_.correctedStress(i,stress);
+               } 
+
                resid[nMonomer*nBasis + counter] = -1 * scaleStress_ * stress;
                counter++;
             }
@@ -420,6 +435,10 @@ namespace Rpg {
          system().setUnitCell(parameters);
       }
 
+      // Update imposed fields if needed
+      if (imposedFields_.isActive()) {
+         imposedFields_.update();
+      }
    }
 
    // Output relevant system details to the iteration log file.
@@ -444,6 +463,43 @@ namespace Rpg {
                counter++;
             }
          }
+      }
+   }
+
+   // Return specialized sweep parameter types to add to the Sweep object
+   template<int D>
+   GArray<ParameterType> AmIteratorBasis<D>::getParameterTypes()
+   {
+      GArray<ParameterType> arr;
+      if (imposedFields_.isActive()) {
+         arr = imposedFields_.getParameterTypes();
+      } 
+      return arr;
+   }
+
+   // Set the value of a specialized sweep parameter
+   template<int D>
+   void AmIteratorBasis<D>::setParameter(std::string name, DArray<int> ids, 
+                                         double value, bool& success)
+   {
+      if (imposedFields_.isActive()) {
+         imposedFields_.setParameter(name, ids, value, success);
+      } else {
+         success = false;
+      }
+   }
+
+   // Get the value of a specialized sweep parameter
+   template<int D>
+   double AmIteratorBasis<D>::getParameter(std::string name, 
+                                           DArray<int> ids, bool& success)
+   const
+   {
+      if (imposedFields_.isActive()) {
+         return imposedFields_.getParameter(name, ids, success);
+      } else {
+         success = false;
+         return 0.0;
       }
    }
 
