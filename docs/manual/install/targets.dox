@@ -125,7 +125,7 @@ This is equivalent to entering "make pscf_1d" followed by "make pscf_pc".
 <h2> pscf_pg: </h2>
 
 This pscf_pg target only functions if CUDA has been enabled (e.g., by 
-entering "./setopts -c1") on a computer with an appropriate NVIDA GPU
+entering "./setopts -c1") on a computer with an appropriate NVIDIA GPU
 and CUDA development kit.  To compile the pscf_pg GPU-enabled program 
 for periodic structures on such a computer, enter
 \code
