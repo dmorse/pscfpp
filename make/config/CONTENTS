@@ -26,9 +26,8 @@ Namespace level makefiles:
 The file util_config is a repository version of a namespace level
 configuration file for the Util namespace. The configure script copies 
 this file unaltered to create a file named config.mk in the corresponding
-namespace level subdirectory of the bld/ and src/ directories. Other
-namespace level subdirectories do not require a unique configuration 
-file.
+util/ subdirectory of the bld/ and src/ directories. Other namespace level
+subdirectories do not require a unique configuration file.
 
 File paths.h:
 

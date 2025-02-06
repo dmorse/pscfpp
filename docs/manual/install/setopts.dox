@@ -114,7 +114,7 @@ This should result, for example, in the output
 -d  OFF - debugging
 -c  OFF - CUDA compilation
 \endcode
-if debugging and CUDA compilation are all disabled (the default
+if debugging and CUDA compilation are both disabled (the default 
 configuration), or
 \code
 -d  OFF - debugging

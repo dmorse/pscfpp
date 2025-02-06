@@ -71,12 +71,13 @@ CXXFLAGS_FAST= -Wall $(CXX_STD) -O3
 #
 # In our experience, -ffast-math reduces the runtime of a pscfpp
 # calculation by 1-4%, and the lower numerical accuracy does not
-# meaningfully affect the results. The only notable side-effect occurs when
-# a calculation diverges (i.e., when the solver becomes unstable and the
-# error blows up to infinity). In such cases, the program may encounter an
-# error value of NaN or Inf, but will not properly handle that value. We
-# have found that this often leads the program to mistakenly assert that
-# the calculation converged, when in reality it diverged. 
+# meaningfully affect the results. The only notable side-effect from using
+# -ffast-math occurs when a calculation diverges (i.e., when the solver
+# becomes unstable and the error blows up to infinity). In such cases, the
+# program may encounter an error value of NaN or Inf, but will not properly
+# handle that value. We have found that this often leads the program to
+# mistakenly assert that the calculation converged, when in reality it
+# diverged. 
 #
 # Users who wish to use -ffast-math can comment/uncomment the above lines
 # accordingly, so that CXXFLAGS_FAST is defined to include -ffast-math.
