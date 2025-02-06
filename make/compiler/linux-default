@@ -58,7 +58,28 @@ CXX_STD = --std=c++11
 CXXFLAGS_DEBUG= -Wall $(CXX_STD)
 
 # C++ compiler options used when debugging is disabled (fast)
-CXXFLAGS_FAST= -Wall $(CXX_STD) -O3 -ffast-math 
+#CXXFLAGS_FAST= -Wall $(CXX_STD) -O3 -ffast-math 
+CXXFLAGS_FAST= -Wall $(CXX_STD) -O3 
+
+# NOTE: Two options are provided above for compiling "fast", which differ
+# by the inclusion of the -ffast-math flag. This flag permits the compiler
+# to take several shortcuts that accelerate floating-point arithmetic, at
+# the expense of some numerical precision. Most notably, -ffast-math
+# assumes that floating-point numbers will never have a value of NaN or
+# Inf, and the program will therefore have undefined behavior if such a 
+# number does appear. 
+#
+# In our experience, -ffast-math reduces the runtime of a pscfpp
+# calculation by 1-4%, and the lower numerical accuracy does not
+# meaningfully affect the results. The only notable side-effect occurs when
+# a calculation diverges (i.e., when the solver becomes unstable and the
+# error blows up to infinity). In such cases, the program may encounter an
+# error value of NaN or Inf, but will not properly handle that value. We
+# have found that this often leads the program to mistakenly assert that
+# the calculation converged, when in reality it diverged. 
+#
+# Users who wish to use -ffast-math can comment/uncomment the above lines
+# accordingly, so that CXXFLAGS_FAST is defined to include -ffast-math.
 
 # Compiler flags used in unit tests
 TESTFLAGS= -Wall $(CXX_STD)
@@ -80,7 +101,7 @@ OPENMP_LIB+=-lfftw3_omp
 #-----------------------------------------------------------------------
 # CUDA compiler and options (for *.cu files)
 
-# NVIDA CUDA compiler command
+# NVIDIA CUDA compiler command
 NVXX=nvcc
 
 # NVCC architecture identifier, argument of -arch compiler option.

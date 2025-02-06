@@ -15,7 +15,7 @@ once, before the first time you compile any code.
 The configure script installs several files that are needed to compile 
 PSCF but that are not installed by cloning the github repository. Most 
 of the files installed by this script are files that the user may need to 
-modify in order to customize or extend the package. These include include 
+modify in order to customize or extend the package. These include 
 configuration files that a user may need to modify in order to adapt the 
 PSCF build system to a particular environment or to enable optional 
 features. 
@@ -25,10 +25,10 @@ config.mk that is installed in the root directory of both the bld/ and
 src/ directory trees. This is a makefile fragment that acts as the main 
 configuration file for compilation. It assigns values to makefile variables 
 that define the compiler executable names for C++ and CUDA code, command 
-line options passed to the compilers, paths to various 
-directories used by the package during compilation or execution (e.g.,
-paths to source code, build, installation and data directories), and 
-paths for required external libraries. 
+line options passed to the compilers, paths to various directories used by
+the package during compilation or execution (e.g., paths to source code,
+build, installation and data directories), and paths for required external
+libraries. 
 
 The copy of the config.mk file that is installed in the the PSCF bld/
 directory is used as the main configuration file for an out-of-source 
@@ -44,16 +44,16 @@ to the PSCF root directory (i.e., the pscfpp/ directory), and then enter:
 \code
 ./configure
 \endcode
-Note the dot and backslash ("./") before the name of the script.  These
-two characters must usually be included to tell the unix shell to look 
-for an executable file named configure in the current working directory, 
-rather than searching the directories listed in the PATH environment 
-variable for an executable with this name.
+Note the dot and slash ("./") before the name of the script.  These two
+characters must usually be included to tell the unix shell to look for an
+executable file named configure in the current working directory, rather
+than searching the directories listed in the PATH environment variable for
+an executable with this name.
 
 When the configure script is invoked with no command line arguments, as 
 shown above, the script examines the operating system and environment, 
 and attempts to choose setting appropriate to the detected environment. 
-In our experience, this normally works  for standard linux environments, 
+In our experience, this normally works for standard linux environments, 
 and for Apple Mac computers on which the 
 <a href="https://brew.sh/"> Homebrew </a> package manager has been
 used to install GSL and FFTW.  
@@ -75,12 +75,12 @@ so-called "compiler configuration file" from among several such files
 in the make/compiler directory and copies the contents of that file 
 into a middle section of each of the config.mk files.  For example, the 
 compiler configuration file used for most linux environment is named 
-make/compiler/linux-default.  The compiler configuration file is a relatively 
-short makefile fragment that defines all of the makefile variables that 
-could require different values in different environments.  Among these 
-are makefile variables that define the C++ compiler name, a variety of 
-compiler options, and paths that the compiler uses to find header and 
-library files for external packages used by PSCF.
+make/compiler/linux-default.  The compiler configuration file is a
+relatively short makefile fragment that defines all of the makefile
+variables that could require different values in different environments.
+Among these are makefile variables that define the C++ compiler name, a
+variety of compiler options, and paths that the compiler uses to find
+header and library files for external packages used by PSCF.
 
 <b> Letting the script choose a configuration file:</b>
 
