@@ -78,11 +78,7 @@ LinearRamp).  These two classes may be used separately or combined to
 perform a Einstein crystal calculation using continuous thermodynamic
 integration. 
 
-\section psfts_perturb_ramp_sec Ramp
-
-\section psfts_perturb_perturb_sec Perturbation
-
-\section psfts_perturb_Einstein_sec Einstein Crystal Calculations
+\section psfts_perturb_Einstein_sec Einstein Crystal Perturbation
 
 <BR>
 \ref psfts_ramp_page   (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 

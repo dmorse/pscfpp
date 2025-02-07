@@ -184,9 +184,9 @@ the PSCF bld/ sub-directory tree. One can instead perform an "in-source"
 build in which these files are instead placed in the PSCF src/ directory
 that also contains all C++ and CUDA source code files. The option of
 in-source compilation is discussed in more detail \ref install_inout_page
-"here".  We recommend the use of out-of-source compilation for package 
-users who are not actively working on development. Some programmers may
-prefer to use in-source compilation during development.
+"here".  We recommend out-of-source compilation for users who are not 
+actively working on development. Some programmers may prefer to use 
+in-source compilation during development.
 
 <BR>
 \ref install_source_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp;

@@ -1,6 +1,6 @@
 /*! \page psfts_ramp_page Parameter Ramps
 
-\ref psfts_command_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref psfts_analysis_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
 \ref psfts_perturb_page   (Next)
 <BR>
 
@@ -87,8 +87,8 @@ integration.
 \section psfts_perturb_Einstein_sec Einstein Crystal Calculations
 
 <BR>
-\ref psfts_command_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
-\ref psfts_page          (Up)   &nbsp; &nbsp; &nbsp; &nbsp;
-\ref psfts_perturb_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
+\ref psfts_analysis_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
+\ref psfts_page           (Up)   &nbsp; &nbsp; &nbsp; &nbsp;
+\ref psfts_perturb_page   (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
 
 */
