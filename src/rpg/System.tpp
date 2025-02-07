@@ -1018,7 +1018,7 @@ namespace Rpg {
 
       // Compute contribution from external fields, if they exist
       if (hasExternalFields()) {
-         if (w_.isSymmetric()) {
+         if (iterator().isSymmetric()) {
             // Use expansion in symmetry-adapted orthonormal basis
             const int nBasis = domain_.basis().nBasis();
             for (int i = 0; i < nm; ++i) {

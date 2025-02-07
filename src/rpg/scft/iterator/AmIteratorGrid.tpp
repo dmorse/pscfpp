@@ -16,6 +16,7 @@
 #include <pscf/iterator/NanException.h>
 
 #include <util/global.h>
+#include <cmath>
 
 namespace Pscf {
 namespace Rpg {
@@ -27,7 +28,8 @@ namespace Rpg {
    // Constructor
    template <int D>
    AmIteratorGrid<D>::AmIteratorGrid(System<D>& system)
-    : Iterator<D>(system)
+    : Iterator<D>(system),
+      imposedFields_(system)
    {
       setClassName("AmIteratorGrid");
       isSymmetric_ = false; 
@@ -80,6 +82,9 @@ namespace Rpg {
 
       // Read optional scaleStress value
       readOptional(in, "scaleStress", scaleStress_);
+
+      // Read optional ImposedFieldsGenerator object
+      readParamCompositeOptional(in, imposedFields_);
    }
 
    // Output timing results to log file.
@@ -98,6 +103,10 @@ namespace Rpg {
    template <int D>
    void AmIteratorGrid<D>::setup(bool isContinuation)
    {
+      if (imposedFields_.isActive()) {
+         imposedFields_.setup();
+      }
+
       AmIteratorTmpl<Iterator<D>, FieldCUDA>::setup(isContinuation);
       interaction_.update(system().interaction());
    }
@@ -315,6 +324,12 @@ namespace Rpg {
          for (int i = 0; i < nParam; i++) {
             if (flexibleParams_[i]) {
                double stress = system().mixture().stress(i);
+
+               // Correct stress to account for effect of imposed fields
+               if (imposedFields_.isActive()) {
+                  stress = imposedFields_.correctedStress(i,stress);
+               } 
+
                stressH[counter] = -1 * scaleStress_ * stress;
                counter++;
             }
@@ -392,14 +407,18 @@ namespace Rpg {
          for (int i = 0; i < nParam; i++) {
             if (flexibleParams_[i]) {
                parameters[i] = coeff * tempH[i];
+               counter++;
             }
-            counter++;
          }
          UTIL_CHECK(counter == tempH.capacity());
 
          system().setUnitCell(parameters);
       }
 
+      // Update imposed fields if needed
+      if (imposedFields_.isActive()) {
+         imposedFields_.update();
+      }
    }
 
    // Output relevant system details to the iteration log file.
@@ -428,6 +447,41 @@ namespace Rpg {
                counter++;
             }
          }
+      }
+   }
+
+   // Return specialized sweep parameter types to add to the Sweep object
+   template<int D>
+   GArray<ParameterType> AmIteratorGrid<D>::getParameterTypes()
+   {
+      GArray<ParameterType> arr;
+      if (imposedFields_.isActive()) {
+         arr = imposedFields_.getParameterTypes();
+      } 
+      return arr;
+   }
+   // Set the value of a specialized sweep parameter
+   template<int D>
+   void AmIteratorGrid<D>::setParameter(std::string name, DArray<int> ids, 
+                                         double value, bool& success)
+   {
+      if (imposedFields_.isActive()) {
+         imposedFields_.setParameter(name, ids, value, success);
+      } else {
+         success = false;
+      }
+   }
+   // Get the value of a specialized sweep parameter
+   template<int D>
+   double AmIteratorGrid<D>::getParameter(std::string name, 
+                                           DArray<int> ids, bool& success)
+   const
+   {
+      if (imposedFields_.isActive()) {
+         return imposedFields_.getParameter(name, ids, success);
+      } else {
+         success = false;
+         return 0.0;
       }
    }
 

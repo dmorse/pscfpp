@@ -9,6 +9,7 @@
 */
 
 #include "Iterator.h"                        // base class
+#include "ImposedFieldsGenerator.h"          // member variable
 #include <pscf/iterator/AmIteratorTmpl.h>    // base class template
 #include <pscf/iterator/AmbdInteraction.h>   // member variable
 #include <util/containers/DArray.h>          // base class argument
@@ -60,6 +61,30 @@ namespace Rpg
       */
       void outputTimers(std::ostream& out);
 
+      /**
+      * Return specialized sweep parameter types to add to the Sweep object
+      */
+      GArray<ParameterType> getParameterTypes();
+      /**
+      * Set the value of a specialized sweep parameter
+      * 
+      * \param name  name of the specialized parameter
+      * \param ids  array of integer indices specifying the value to set
+      * \param value  the value to which the parameter is set
+      * \param success  boolean flag used to indicate if parameter was set
+      */
+      void setParameter(std::string name, DArray<int> ids, 
+                        double value, bool& success);
+      /**
+      * Get the value of a specialized sweep parameter
+      * 
+      * \param name  name of the specialized parameter
+      * \param ids  array of integer indices specifying the value to get
+      * \param success  boolean flag used to indicate if parameter was gotten
+      */
+      double getParameter(std::string name, DArray<int> ids, bool& success)
+      const;
+
       // Inherited public member functions
       using AmIteratorTmpl<Iterator<D>, FieldCUDA>::solve;
       using AmIteratorTmpl<Iterator<D>, FieldCUDA>::clearTimers;
@@ -67,15 +92,18 @@ namespace Rpg
       using Iterator<D>::flexibleParams;
       using Iterator<D>::setFlexibleParams;
       using Iterator<D>::nFlexibleParams;
+      using ParameterModifier::setParameter; // overloaded method
+      using ParameterModifier::getParameter; // overloaded method
 
    protected:
 
       // Inherited protected members
-      using AmIteratorTmpl<Iterator<D>, FieldCUDA>::verbose;
-      using AmIteratorTmpl<Iterator<D>, FieldCUDA>::residual;
       using ParamComposite::readOptional;
+      using ParamComposite::readParamCompositeOptional;
       using ParamComposite::readOptionalFSArray;
       using ParamComposite::setClassName;
+      using AmIteratorTmpl<Iterator<D>, FieldCUDA>::verbose;
+      using AmIteratorTmpl<Iterator<D>, FieldCUDA>::residual;
       using Iterator<D>::system;
       using Iterator<D>::isSymmetric_;
       using Iterator<D>::isFlexible_;
@@ -89,6 +117,9 @@ namespace Rpg
       void setup(bool isContinuation);
 
    private:
+
+      /// ImposedFieldsGenerator object
+      ImposedFieldsGenerator<D> imposedFields_;
 
       /// Local copy of interaction, adapted for use AMBD residual definition
       AmbdInteraction interaction_;

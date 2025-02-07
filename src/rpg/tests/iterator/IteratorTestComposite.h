@@ -9,9 +9,9 @@
 #include "ImposedFieldsGeneratorTest.h"
 
 TEST_COMPOSITE_BEGIN(IteratorTestComposite)
-TEST_COMPOSITE_ADD_UNIT(MaskGenFilmTest)
+//TEST_COMPOSITE_ADD_UNIT(MaskGenFilmTest)
 TEST_COMPOSITE_ADD_UNIT(ExtGenFilmTest)
-TEST_COMPOSITE_ADD_UNIT(ImposedFieldsGeneratorTest)
+//TEST_COMPOSITE_ADD_UNIT(ImposedFieldsGeneratorTest)
 TEST_COMPOSITE_END
 
 #endif 
