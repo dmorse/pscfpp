@@ -1,0 +1,279 @@
+
+Overview of Current PSCF Code Structure (for collaborators):
+------------------------------------------------------------
+
+The C++ version of PSCF was designed as a package that that could contain 
+several largely largely independent implementations of SCFT, while minimizing
+duplication of code for algorithms and data structures that can be used by
+two or more implementations.  Different "implementations" of SCFT are code
+bases that are compiled to created collections of code that are used to 
+create separate programs that differ may differ in, among other things:
+
+   - The type of spatial domain for which they are defined 
+   - The hardware on which they are designed to run
+   - The type of molecular model they are designed to treat
+   - The algorithm used to solve the modified diffusion equation, if 
+     this effects the choice of data structure used to describe fields
+
+The package currently contains the following three implementations:
+
+   - pscf_1d: Finite-difference code for 1D problems
+   - pscf_pc: CPU code for real periodic fields
+   - pscf_pg: GPU code for real periodic fields
+
+The decision of whether the addition of some new capability requires the 
+creation of a entirely new SCFT implementation depends in large part on 
+whether it can be implemented without making incompatible changes to the
+data structures used by some existing implementation. 
+
+For example, the GPU and CPU codes for periodic microstructures are 
+closely analogous, but were written as separate implementations because 
+they require different types of containers to represent fields. The GPU 
+code is built around a set of containers for fields and discrete Fourier 
+transforms of fields in which the data is stored in large arrays in GPU 
+global memory (for which one must prohibit element-by-element access 
+from the host CPU), while the CPU code uses containers in which the 
+data is stored in dynamically allocated memory on the CPU (for which
+access of elements via a subscript operator [] is allowed).  It is 
+possible that these two implementations could have been combined with 
+enough thought about how to encapsulate operations that involve access 
+to data that might be stored on the GPU, but I found it easier develop 
+them as separate but closely analogous codes.  We have concluded, 
+however, that it will be straightforward for us to develop field 
+theoretic Monte Carlo sampling algorithms based on a partial saddle-point 
+approximation as added features of the existing pscf_pc and pscf_pg 
+programs. This is possible because this algorithm uses real fields, 
+and thus requires data structures that are compatible with those 
+already used by these programs. Conversely, we plan to create another
+separate GPU-based implementation to implement complex Langevin
+sampling, because the modified diffusion equation (MDE) solvers and
+data structures for this method require the use of variables and data 
+structures that can accomodate complex chemical potential and propagator 
+fields.
+
+Namespaces and Libraries
+------------------------
+
+PSCF uses a system of C++ namespaces to separate code associated with
+different SCFT implementations. All code that is specific to the PSCF
+package (i.e., not shared with other entirely separate projects) is 
+defined within a namespace named Pscf. A nested sub-namespace of Pscf
+is defined for each SCFT implementation. For example, the package
+currently contains namespaces:
+ 
+   Pscf::R1d - Classes for the pscf_1d finite difference 1D code
+   Pscf::Rpc - Classes for the pscf_pc periodic CPU code
+   Pscf::Rpg - Classes for the pscf_pc periodic CPU code
+
+The name Rpc was intended to mean "real periodic fields on CPU" while 
+Rpg was intended to mean "real periodic fields on GPU".  Classes that 
+I expected to be usable in two or more implementations are defined 
+directly in the Pscf namespaces, while classes that are only used in 
+one implementation are defined directly in the subnamespace for that 
+implementation.  
+
+In addition to the Pscf namespace, the package uses code defined in a 
+separate namespace named Util that contains more generally useful code 
+for scientfic computation. The code in the Util namespace is maintained 
+in a separate public github repository (dmorse/util), and is included 
+within the pscf code as a git sub-module. 
+
+This namespace structure is designed to allow the use of identical
+names for analogous classes within different SCFT implementations. 
+For example, each of the three existing implementations currently 
+has classes or class templates named:
+
+     System   - parent object (entire simulation)
+     Mixture  - Container holding MDE solvers for molecular species
+     Polymer  - MDE solver for one polymer type
+     Solvent  - statistical mechanics solver for one solvent type
+     Block    - one block of a block polymer
+     Iterator - base class for iterators in one implementation
+     Domain   - description of the spatial domain and discretization
+
+among others. The same name can be used for analogous classes or 
+class templates in different SCFT implementations without causing 
+name clashes as long as we are careful to prohibit any sharing of
+code between implementation-level sub-namespaces of the higher 
+level Pscf namespace.
+
+Almost every source code file throughout the project contains a
+"using namespace Util" declaration in order to allow classes that 
+are defined in the Util namespace to be used without qualifying 
+the name with the prefixes "Util::" or "Pscf::". 
+
+Currently, all of the classes that are defined directly in the Pscf 
+namespace (rather than a sub-namespace) and all of the classes in 
+the Pscf::R1d and Pscf::Rpc enclosed namespaces can be compiled 
+with a C++ compiler, while a CUDA compiler is only required to 
+compile the code in the Pscf::Rpg namespace. 
+
+Use of Dimension D of Space as a C++ Template Parameter
+-------------------------------------------------------
+
+The code for periodic structures in namespaces Pscf::Rpc and Pscf::Rpg
+consistently treats the dimension of space as C++ parameter, and is
+designed to produce different executable files for programs designed
+treat structures that are periodic in 1D (e.g., lamellar), 2D (e.g.,
+hexagonal), or 3D (e.g., BCC, gyroid, etc.). This is done by defining
+almost all of the classes in these implementation-level namespaces as
+class templates in which the dimension D of space is provided as a 
+template parameter. Thus, for example, the parent System class is
+actually defined as a class template
+
+    template <int D>
+    class System {
+      ...
+    }
+
+A similar type of class template is used for most other classes, 
+including Mixture, Polymer, Block, Iterator, Domain, etc. For these
+implementations, the  actual type of the main system object for a 
+3D simulation is thus System<3>, rather than just System, and the
+type of the Mixture object is actually Mixture<3>. The treatment of 
+D as a template parameter allows us to generate efficient code with 
+appropriate data structures for, e.g., vectors and space group
+operations, for each value of D without any code duplication. The
+cost is the heavy use of templates, which complicates compilation.
+
+More technical note: To simplify the build process for code that makes 
+such heavy us of templates, template instances with D=1, D=2, and D=3 
+are explicitly instantiated and compiled for every class template that
+takes D as its only template parameter. An "extern template" 
+declaration is used for each such template instance to prevent 
+implicit instantiation and allow linkage to these precompiled template
+instances.
+
+Comments on Current Class Organization 
+---------------------------------------
+
+The current organization of namespaces is designed to allow for two
+different types of classes, namely, classes that are available for
+use in any SCFT implementation, and classes that are used only in a
+single implementation.  
+
+Classes that are available for use in any SCFT implementation, are 
+defined in the root namespace Pscf, and are currently placed in the 
+src/pscf directory.  Different subdirectories of src/pscf contain 
+classes designed for different purposes. The most important 
+subdirectories are:
+
+  src/pscf/mesh    - regular spatial mesh and mesh iterators
+  src/pscf/crystal - unit cell, space groups, and symmetry-adapted basis
+  src/pscf/chem    - description of chemical structure
+  src/pscf/solvers - base classes for MDE solvers
+
+Classes that are available for use in a single implementation are 
+defined in the sub-namespace associated with that implementation. 
+The use of different namespaces for different implementations is 
+designed to allow for the use of identical names for closely analogous 
+classes without causing name clashes.
+For example, the solver and field classes for CPU and GPU codes for 
+periodic structures are separate classes with similar or identical 
+names, but are defined in the Pscf::Rpc and Pscf::Rpg namespaces,
+respectively. 
+
+One limitation of this design is that it does not allow for the
+existence of classes that might be needed in two or more different
+implementations, but that are closely analogous to classes used in
+a different subset of implememtations. The specific case of concern
+here would arise if we wanted to develop CPU and GPU variants of
+the PSCF+ GPU code, while avoiding forking of the PSCF code (as
+done currently) and while avoiding unnecessary code repetition. 
+Such a redesigned variant of PSCF+ would be designed for periodic
+structures but would use a molecular model with discrete atoms 
+and compressible, finite range interactions rather than an
+incompressible model of continuous Gaussian chains. 
+
+Because PSCF+ is designed for periodic structures, it should be able 
+re-use some of the container classes that are used to represent fields, 
+and classes such as the FFT classes that define operations on fields.  
+Reuse is made difficult, however, by the fact that these classes are 
+currently defined in Rpc and Rpg namespaces that were designed to 
+be used only with a single SCFT implementation. 
+
+Because PSCF+ is designed for a discrete chains, it may not be able
+to re-use the classes and class templates in the src/pscf/chem and 
+src/pscf/solvers directories. All of these classes were designed 
+specifically for simulations of the  "standard model" of an 
+incompressible mixture of polymer chains that are represented as 
+continuous random walks and of solvent molecules that are represented 
+as point particles that occupy a specified volume. It appears to me 
+that variants of some or all of these should be created that are 
+designed specifically for molecular models with discrete atoms. 
+If classes for continous and discrete chemical models were defined
+in different namespaces, however, it might be possible to use the
+same names for analogous classes without causing name clashes.
+
+The natural solution appears to be to add some subnamespaces of
+Pscf that contain classes that are designed for specific types
+of models (continuous vs. discrete chains, and periodic on CPU
+vs. periodic on GPU) but that are available for use in multiple
+SCFT implementations.
+    
+Proposals Regarding Design for a DFT Package
+--------------------------------------------
+
+I assume that the DFT program or programs will try to re-use existing
+parts of PSCF when possible, but that the new programs will be designed
+to simulate models of molecules with discrete atoms. I recommend that
+each such program be designed as if it were another "implementation" 
+of PSCF, that re-uses classes that are defined in the Pscf main 
+namespace and the Util mainspace, but that either avoids the use of
+classes defined in the Pscf::R1d, Pscf::Rpc, or Pscf::Rpg namespaces,
+or uses these classes only with fully qualified names.
+
+The most important protential problems one might encounter when trying
+to do this using the current design of PSCF are:
+
+1) The new code would need to be able to re-use the classes that define
+data structure and FFT operations for real fields on a regular mesh.
+These are currently located in pscf/rpg/fields and pscf/rpc/fields, 
+and are (unfortunately) currently defined in the Pscf::Rpc and 
+Pscf::Rpg namespaces.  implementation-level namespaces.
+
+2) The new code may need new variants of the classes that describe 
+chemical structure or the classes that implement MDE solvers that use 
+data structures that are not compatible with those designed for use 
+with the standard model of continuous chains.
+
+I recommend that, if you pursue your project in earnest (i.e., if it 
+is funded, or if you decide to pursue it even without funding) and 
+you decide to try to coordinate closely with PSCF, we try to solve 
+these problems as follows:
+
+1) Define a new subnamespace of Pscf named something like Pscf::Prdc 
+to contain code that is intended for use by any code that uses periodic 
+boundary conditions. Define subnamespaces Pscf::Prdc::Cpu and 
+Pscf::Prdc:Gpu for analogous classes that are defined to store field
+data in CPU or GPU memory. Move all or almost all of the classes that 
+are currently located in rpg/fields from namespace Pscf::Rpc to 
+Pscf::Prdc::Gpu. Similarly, move most of the classes that are currently 
+in rpg/fields to from namespace Pscf::Rpg to Pscf::Prdc::Cpu.  In the 
+new GPU code, you can then using "using namespace Pscf::Prdc::Gpu" to 
+allow you to access these classes by name without needing to qualify 
+names with a prefix such as "Prdc::Gpu".
+
+2) Define a new subnamespace of Pscf named Pscf::Cont to contain
+classes that are defined only for use with the standard model of
+continuous chains. Then define all of the classes and class 
+templates in pscf/chem and pscf/solvers within this subnamespace.
+These classes all define chemical structures or provide templates
+or base classes for solvers using data structures and variable
+name that were designed specificially for a continuous random walk 
+model, but that may not be appropriate for the type of discrete model 
+you want to consider (though I'm still not sure how general that model
+will be). Change code in the existing PSCF implementations so as to 
+access these classes, either by using qualified names or by adding
+"using namespace" declarations to specify that we implicitly mean 
+the versions defined in that sub-namespace within the context of 
+our existing PSCF code.
+
+3) In your new code, define a namespace named Disc or something
+similar that is designed to accomodate a fairly general model of 
+discrete molecules, and create analogous classes there for that 
+purpose. You can access these classes within your own code either
+by using fully qualified names, include "Disc::", or by using an
+appropriate "using namespace" declaration to allow you to access
+these names without this qualifier. 
+
