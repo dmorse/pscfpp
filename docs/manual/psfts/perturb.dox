@@ -4,7 +4,6 @@
 \ref developer_page      (Next)
 <BR>
 
-\section psfts_perturb_overview_sec Overview
 
 The ramp and perturbation features of PSCF can both be used, together or
 separately, to implement calculations in which free energy differences 
@@ -78,7 +77,6 @@ LinearRamp).  These two classes may be used separately or combined to
 perform a Einstein crystal calculation using continuous thermodynamic
 integration. 
 
-\section psfts_perturb_Einstein_sec Einstein Crystal Perturbation
 
 <BR>
 \ref psfts_ramp_page   (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 

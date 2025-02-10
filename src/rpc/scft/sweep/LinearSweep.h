@@ -23,7 +23,8 @@ namespace Rpc {
    /**
    * Sweep in which parameters vary linearly with sweep variable s.
    *
-   * \ref scft_param_sweep_linear_sec "Parameter File Format"
+   * See also: \ref scft_param_sweep_linear_sec "Parameter file format"
+   *
    * \ingroup Rpc_Scft_Sweep_Module
    */
    template <int D>

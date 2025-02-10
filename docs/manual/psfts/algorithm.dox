@@ -389,22 +389,21 @@ A "ramp" is an optional feature for FTS that allows a user to continuously
 vary one or more model parameters during a simulation.  The main uses for 
 parameter ramps are:
 
-  - Inducing a spontaneous phase transformation during a slow parameter 
-    ramp to identify the approximate location of an equilibrium phase 
-    boundary (e.g., an order-disorder transition).
+  - To induce a spontaneous phase transformation during a slow parameter 
+    ramp in order identify the approximate location of an equilibrium 
+    phase boundary (e.g., an order-disorder transition).
 
-  - Evaluating the integral of some ensemble average with respect to 
+  - To evaluate the integral of some ensemble average with respect to 
     changes in a model parameter in order to implement continuous 
     thermodynamic integration.
 
-The only ramp algorithm provided by the current version of PSCF is a
-implemented by the LinearRamp class. This is algorithm allow the users to 
-perform a ramp in which any set of of the standard physical parameters 
-vary linearly with the BD or MC step counter.  The interface for a 
-LinearRamp is closely analogous to that of the LinearSweep class used 
-for SCFT sweep calculations, as discussed on a \ref psfts_ramp_page 
-"separate manual page". 
-
+The only ramp algorithm currently provided by PSCF is implemented by 
+the LinearRamp class. The LinearRamp algorithm can perform a ramp in
+in which any specified set of of the standard physical parameters are
+taken to vary linearly with the BD or MC step counter.  The interface 
+for a LinearRamp is closely analogous to that of the LinearSweep class 
+used for SCFT sweep calculations, as discussed on a 
+\ref psfts_ramp_page "separate manual page". 
 
 \section psfts_algorithm_perturbation_sec Perturbation
 

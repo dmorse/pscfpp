@@ -4,87 +4,31 @@
 \ref psfts_perturb_page   (Next)
 <BR>
 
-\section psfts_perturb_overview_sec Overview
-
-The ramp features of PSCF allows the user to perform a calculation in
-which one or more of the parameters that define a field theoretic
-Hamiltonian vary continuously over the course of the simulation. One 
-possible reason to do this is as an attempt to approximately identify 
-a phase transition, such as an order-disorder transition, by looking 
+The "ramp" feature allows a user to perform a simulation in which one 
+or more of the parameters of the field theoretic Hamiltonian vary 
+continuously over the course of the simulation. One possible reason to
+this is as an attempt to approximately identify a phase transition, such 
+as an order-disorder transition, by looking 
 for evidence of a spontaneous phase transformation that occurs during 
 such a simulation. Another possible purpose of a ramp is to implement 
-continuous thermodynamic integration calculations, as discussed in 
-greater detail below.
+continuous thermodynamic integration calculations.
 
-A parameter ramp is enabled by adding an optional, selectable Ramp block 
-within the Simulator block of the parameter file.  Though the Ramp block 
-has been programmed as a selectable block, to facilitate later extension
-of this concept, only one type of Ramp is actually provided in the current 
-version of PSCF, known as a LinearRamp.  The LinearRamp class is closely 
-analogous to the LinearSweep class used for SCFT calculations, and allows 
-any of the standard parameters of the Hamiltonian, or any subset of these 
-parameters, to vary linearly with the number of BD steps or attempted MC 
-moves.
+A parameter ramp is enabled by adding an optional, selectable Ramp 
+block within the Simulator block of the parameter file.  When present, 
+this Ramp block must appear with the BdSimulator or McSimulator block 
+immediately after the Compressor block, as discussed on a 
+\ref psfts_param_page "previous page".  
 
-If present, a Ramp block must appear after the Compressor block and before 
-any AnalyzerManger block.  The typical skeleton format for BdSimulator for 
-a BD simulation that performs a LinearRamp class to vary one or more 
-parameters is thus
-\code
-  BdSimulator{
-    seed*    int
-    BdStep#{ ... }
-    Compressor#{ ... }
-    Ramp*#{ ... }
-    AnalyzerManager*{ ... }
-  }
-\endcode
-The corresponding format for an McSimulator is
-\code
-  McSimulator{
-    seed*    int
-    McMoveManager{ ... }
-    Compressor*#{ ... }
-    Ramp*#{ ... }
-    AnalyzerManager*{ ... }
-  }
-\endcode
-Here, as elsewhere in this documentation, the symbol "\*\#" after the 
-generic name Ramp indicates that this block is both  optional (i.e.,
-it may be omitted) and selectable. 
+The only type of ramp that is currently available is a linear ramp 
+algorithm that is implemented by the class LinearRamp.  The Ramp block 
+has been programmed as a selectable block simply to allow for later
+extension. The LinearRamp class allows the user to perform a simulation 
+in which almost any physical parameter of the Hamiltonian, or any subset 
+of these parameters, varies linearly with the number of BD or MC steps
+completed the beginning of the simulation. 
 
-
-The ramp feature may also be used in combined with a "perturbation" 
-feature that allows the user to modify the form of the field theoretic 
-Hamiltonian. This combination is currently used to implement the
-Einstein crystal method of computing free energies.  The perturbation 
-feature and the Einstein crystal method are discussed on the following 
-page.
-
-Introduction of a perturbation allows the user to define an arbitrary 
-modification of the field theoretic Hamiltonian, thus creating a model
-with a field theoretic Hamiltonian that may have a different functional
-form than that obtained in the standard model used in PSCF. Thus far, 
-the main use for this has been as a framework for implementing the 
-Einstein crystal method of computing free energies. 
-
-The ramp and perturbation features may be combined by using a ramp to 
-vary a parameter that governs the magnitude of a perturbation.  
-Application of this technique to the Einstein crystal method is
-described below.
-
-Though both Perturbation and Ramp are implemented as selectable blocks, 
-there is currently only on type of Perturbation available (named 
-EinsteinCrystalPerturbation) and only one type of Ramp (named 
-LinearRamp).  These two classes may be used separately or combined to 
-perform a Einstein crystal calculation using continuous thermodynamic
-integration. 
-
-\section psfts_perturb_ramp_sec Ramp
-
-\section psfts_perturb_perturb_sec Perturbation
-
-\section psfts_perturb_Einstein_sec Einstein Crystal Calculations
+A full description of the parameter file format for LinearSweep class 
+is given \subpage rpc_LinearRamp_page "here" .
 
 <BR>
 \ref psfts_analysis_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
