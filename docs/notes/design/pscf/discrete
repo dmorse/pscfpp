@@ -32,10 +32,10 @@ Implementation stategy:
       and Rpg::Block classes will still also have values for ns_ and ds_. 
       In a thread model, nBead_ = ns_. In a bead model, length = ds*nBead_. 
 
-   2) Internally, each propagator stores ns_ + 1 slices, indexed 
-      0, ..., ns, as in the current thread model.  Slice 0 is associated 
-      with the head vertex and field n is associated with the tail 
-      vertex.  The number nBead can vary from ns-1 to ns+1, depending 
+   2) Internally, each propagator stores ns_ slices, indexed 
+      0, ..., ns - 1, as in the current thread model.  Slice 0 is 
+      associated with the head vertex and field ns - 1 is associated with 
+      the tail vertex.  The number nBead can vary from ns-2 to ns, depending 
       on whether the block owns both, one or none of the two terminating 
       vertex beads.
 
@@ -92,45 +92,92 @@ Proposed Implementation:
 namespace Pscf{
 namespace PolymerModel{
 
-  enum Enum = {Null, Thread, Bead};
+  enum Enum = {Thread, Bead};
 
-  void setModel(PolymerModel::Enum );
+  void setModel(PolymerModel::Enum);
 
   PolymerModel::Enum model();
 
-  bool isNull();
   bool isThread();
   bool isBead();
 
+  void lock();
+  bool isLocked();
+
 }
 }
 
-These functions set and query values of a pseudo-private variable polymerModel_ 
-that is defined and initialized in an anonymous namespace in PolymerModel.cpp.
+Define extractor and inserter (>> and <<) operators to read and write 
+values of this new enum type.
 
-Define extractor and inserter (>> and <<) operators to read and write values 
-of this new enum type.
+The functions in the namespace set, query and lock values of a 
+pseudo-private enumration variable model_ that is defined and initialized 
+in an anonymous namespace in PolymerModel.cpp.
+
+The lock() function can be called after the model type is initialized to
+make it immutable thereafter.  It should not be used in unit tests, since
+it would apply to all subsequent tests.
 
 Rules: 
 
-   - The variable polymerModel_ is initialized to PolymerModel::Null
+   - The variable polymerModel_ is initialized to PolymerModel::Thread
 
-   - A non-null value may only be assigned once.
+   - A non-null value should only be assigned once. Use the lock()
+     function to enforce this. 
 
-   - Attempts to reset a non-null variable to the same value are silently
-     accepted as harmless.
+Note: We could use this pattern later to define enum classes to specify 
+whether the interaction is compressible and/or has a nonzero range.
 
-   - Attempts to reset this variable to a different non-null value
-     after it has been set to a non-null value are an error and cause
-     execution to stop with an error message. 
+Done
 
-Note: We could use this pattern later to define enum classes to specify whether 
-the interaction is compressible and/or has a nonzer range.
+2) Create a member nBead_ in the BlockDescriptor class. 
+When PolymerModel::isBead(), have the inserter and extractor operators 
+for the BlockDescriptor, read nBead rather than length. For a bead model,
+compute ns_ from nBead once it is known which end beads the block owns, 
+if any. Allow access to functions that get or set nBead only if 
+PolymerModel::isBead().
 
-2) Add a private member polymerModel_ to the System class. If 
-PolymerModel::isNull(), optionally read this as the first member of the 
-block, before the beginning of the Mixture class. The file format would 
-thus be:
+Done
+
+3) For the BlockDescriptor class, add a private member array Pair<bool> 
+isOwner_ , a set function void setVertexOwnership(int i, bool) and a get 
+function bool isOwner(int i). Allow access to functions that get or set
+isOwner only if PolymerModel::isBead(), since these variables are 
+meaningless in a thread model. 
+
+Change the text representation of a block for a branched polymer for 
+the bead model so as to read values of isOwner(0) and isOwner(1). 
+
+Note: For linear molecules, values of ownsVertex for each block can be 
+set before reading the blocks. 
+
+Done
+
+4) In the PropagatorTmpl class template, define private bool member
+variables named ownsHead_ and ownsTail_, and define public accessor 
+functions bool ownsHead() and bool ownsTail(). Also define a set
+function setVertexOwnwership(ownsHead, ownsTail);
+
+Done
+
+5) In Pscf::PolymerTmpl::readParameters add code to
+
+   - Set vertex ownership for blocks in a linear polymer (before reading blocks)
+   - Set head and tail ownership in propagators
+   - For each vertex, check that one incoming propagator owns its tail.
+   - For each vertex, check that one outgoing propagator owns its head.
+
+Done
+
+6) In Mixture::readParameters, if PolymerModel::isBead(), make reading of 
+ds_ optional, and set ds_ = 1.0 by default. 
+
+Done in Rpc
+
+7) Add a private member polymerModel_ to the System class. If 
+!PolymerModel::islocked(), optionally read this as the first member 
+of the block, before the beginning of the Mixture class. The file 
+format would thus be:
 
   System{
      polymerModel*  PolymerModel::Enum
@@ -140,71 +187,178 @@ thus be:
   }
  
 Set System::polymerModel_ to PolymerModel::Thread by default.  When the 
-value is known (after it is optionally read), set the global variable
-to the same value. 
+value is known (after it is optionally read), set the global variable to 
+the same value. 
 
-3) In Mixture::readParameters, if PolymerModel::isBead(), make reading of 
-ds_ optional, and set ds_ = 1.0 by default. 
+Done in Rpc
 
-4) Create a member nBead_ in the BlockDescriptor class. In the inserter 
-and extractor operators for the block function, read this rather than 
-length. For a bead model, set length = ds*double(nBead), and compute ns_ 
-from nBead once it is known which end beads the block owns, if any. For 
-a thread model, set nBead_ = ns_. 
+8) In Rpc::Block::allocate and re-allocate functions, for bead model, 
+compute ns from nBead. ns is equal to nBead when both vertices are
+owned by the block, and  larger than nBead when one or both vertices 
+are not owned by the block.
 
-5) For the BlockDescriptor class, add a private member array Pair<int> 
-ownsVertex_ , a set function void setVertexOwnership(int i, bool) and 
-a get function bool ownsVertex(int i). Set both values to true by 
-default for the thread model, which does not use vertex ownership.
+Done in Rpc
 
-6) In the PropagatorTmpl class template, define private bool member
-variables named ownsHead_ and ownsTail_, and define public accessor 
-functions bool ownsHead() and bool ownsTail().
+9) Modified private data structures in Rpc::Block:
 
-Make BlockDescriptor::setVertexOwnership a friend of PropagatorTmpl 
-so that this function can set Propagator vertex ownership flags when 
-it sets flags for the block.
+In Rpc::Block class, use expW_ to store exp(-W(r)ds) in the case of the
+bead model, but use expW_ to store exp(-W(r)ds/2) in the case of a thread 
+model. The value of expKsq_ is the same for the thread and bead models.  
+For the bead model, arrays expW2_ and expKSq2_ are left unallocated and 
+unused.
 
-For linear molecules, values of ownsVertex for each block can be set 
-before reading the blocks. 
+Add field expWInv_ that stores exp(+W(r)ds), for use in summations used
+to compute monomer concentrations and partition function. This is only
+allocated if PolymerModel::isBead().
 
-7) The file format for a branched polymer will eventually have to be 
-changed to specify which of the attached vertices it owns. Initially, 
-set it to throw an error if a molecule is declared branched and 
-PolymerModel::isBead() is true.  Go back later and change the file 
-format.
+Modify functions:
 
-8) In the Block class, change the name of the current step function to 
-stepThread.  Add several additional public member functions to give:
+     allocate :
+       - Conditionally allocate some private member fields
+       - Modify definition ns and ds for different models
+     setLength :
+       - Make PolymerModel::isThread a precondition 
+     setupSolver :
+       - If blocks around computations of expW_, expW2_, expWInv_
+     computeKSq :
+       - Compute expKsq2 only if isThread
 
-   void stepThread(Propagaor const & in, Propagator & out) 
-   void stepBead(Propagaor const & in, Propagator & out) 
-   void stepBondBead(Propagaor const & in, Propagator & out) 
+Done in Rpc
+
+10) Block step functions: 
+
+In Rpc::Block class, change the name of the current step function to 
+stepThread.  Add three additional public member functions to give:
+
+   void stepThread(Propagaor const & qin, Propagator & qout) 
+   void stepBead(Propagaor const & qin, Propagator & qout) 
+   void stepBondBead(Propagaor const & qin, Propagator & qout) 
    void stepFieldBead(Propagator & q)
 
-Note that the stepFieldBead function applies an in-place scaling while 
-the stepFieldBead has an input and output argument. We may be able to
-construct the stepBead class from stepBondBead and stepFieldBead.
+The function stepFieldBead applies the field weight exp(-W[i]*ds).
+Function stepBondBead applies a bond weight by applying an FFT, scaling 
+in k space and an inverse FFT.  Note that the stepFieldBead function 
+applies the scaling in-place scaling, while other functions have 
+distinct input and output field arguments. 
 
-9) In Block class, use expW_ to store exp(W(r)ds) in the case of a
-bead model, but use expW_ to store exp(W(r)ds/2) in the case of a
-thread model. For a bead model, array expW2_ is simply unallocated
-and unused.
+The function stepBead simply calls stepBondBead, then stepFieldBead.
 
-10) In the Propagator class change the name of the current computeHead
-function to computeHeadThread() and add an additional function
-computeHeadBead(). The computeHeadBead function can call 
-computeHeadThread internally, then call Block::stepFieldBead.
+Rationale: Separate functions stepBondBead and stepFieldBead are needed
+to correctly treat slices associated with head and tail vertices that
+may or may not be owned by the propagator. The function stepBondBead 
+is needed by Propagator to compute the weight for a tail bead that is 
+not owned. The stepFieldBeadFunction is need as part of the 
+computation in computeHeadBead for a head bead that is owned by the 
+propagator.
 
-11) In Propagator::solve, simply include a single if statement to
-separate the code for the thread model. The thread model calls 
-computeHeadThread and stepThread. Code for the bead model uses
-computeHeadBead and stepBead, while also using stepBondBead for
-the tail bead and stepFieldBead only if the tail bead is owned.
+Done in Rpc
 
-12) In Block::computeConcentrations, place the code for thread
-model and bead model in separate blocks of an if-else. The 
-code for the bead model is a simple sum (with no Simpson' rule
-or trapezoidal rul) that includes any bead vertex that is owned
-by the block. 
+11) Propagator computeHead functions for both models:
 
+In the Propagator class change the name of the current computeHead
+function to computeHeadThread() and define an additional function
+computeHeadBead(). The computeHeadBead function call computeHeadThread 
+internally, then apply Block::stepFieldBead iff the propagator owns 
+the head vertex bead.
+
+Done in Rpc
+
+12) Block averageProduct functions:
+
+In the Rpc::Block class, add two functions that can be used by 
+Propagator::computeQ to compute the partition function from the 
+product of complementary incoming and outgoing slices at a vertex.
+
+   double averageProduct(RField<D> const& qh, RField<D> const& qt)
+   double averageProductBead(RField<D> const& qh, RField<D> const& qt)
+
+Function averageProduct returns the spatial average of qh[i]*qt[i], 
+and can be used with the thread model or for the bead model for a
+bead that is not owned by the propagator. 
+
+Function averageProductBead computes the spatial average of 
+qh[i]*qt[i]/exp(W[i]*ds), and is designed for a vertex bead that 
+is owned by the propagator.
+
+In Propagator::computeQ, call the appropriate choice of one of these 
+two functions.
+
+Done in Rpc
+
+13) Propagator::solve function:
+
+In Propagator::solve, use an if-else statement to separate 
+MDE solver code for the thread model from corresponding code for
+the bead model . Code for the thread model invokes computeHeadThread 
+and stepThread. Code for the bead model uses computeHeadBead and 
+stepBead, while using stepBondBead for the tail bead if this 
+propagator does does not own the tail vertex bead.
+
+Done in Rpc
+
+14) Move responsibility for block concentrations to subclasses:
+
+In PolymerTmpl, remove code that computes all block concentrations by 
+calling Block::computeConcentratiosn for all blocks from the 
+PolymerTmpl::solve() function. Leave this computation as the 
+responsibility of the Polymer::compute function in each 
+implementation-level subclass (r1d, rpc, and rpg). Thus add 
+corresponding code to the end of the Polymer::compute function in 
+each implementation of Polymer. 
+
+The code added to the end of R1d::Polymer::compute and 
+Rpg::Polymer::compute is almost identical to the code removed from 
+PolymerTmpl::solve. 
+
+The code in Rpc::Polymer::compute allows for thread and bead models, as 
+will corresponding code in Rpg::Polymer::compute when converted later.
+
+Rationale: Different implementations of this calculation are needed 
+for codes that only support a thread model and those that support 
+both thread and bead models. The definitions of prefactors that are 
+computed by the Polymer class are different for these models, for
+reasons that are discussed below.  Delegating responsibility for 
+computation of block concentrations to a Polymer subclass makes it 
+easier to distinguish these cases in implementations that support 
+both models. 
+
+Done in Rpc
+
+14) Computation of block concentration in Block class:
+
+In Block class, define two public functions:
+
+    computeConcentrationThread(double prefactor)
+    computeConcentrationBead(double prefactor)
+
+One or the other of these functions is called with an appropriate value 
+for the prefactor within the Rpc::Polymer::compute class.
+
+In the thread model, the prefactor must be phi/(q L), where L is the sum 
+of the lengths of all the blocks, while computeConcentrationThread 
+computes an integral over s (including factors of ds in contributions
+to the sum, and using Simpson's rule) and multiplies it by a prefactor
+
+In the bead model, the prefactor must be phi/(q N), where N is the total 
+number of beads owned by all blocks, computeConcentrationBead computes 
+a sum over all beads that are owned by the block and multiplies it by 
+this prefactor.  The summation in computeConcentrationBead is a simple 
+sum over all beads that are owned by the block, including a factor of
+exp(W[i]*ds) for each bead to correct for overcounting of bead weight 
+factors.
+
+Rationale: We use different conventions for the prefactor for the thread 
+and the bead model because the Polymer class that computes the prefactor 
+knows the length of each block in the thread model and the number nBead
+of beads in each block in the bead model, but does not know a value for 
+ds that it could use to convert the number of beads to an equivalent 
+length.
+
+Done in Rpc
+
+15) Figure out how to modify the computeStress function. We need to
+work through this analysis for the discrete model before making
+corresponding changes in the code.  We can test code that uses 
+rigid unit cells in the meantime.
+
+TODO

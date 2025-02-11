@@ -313,7 +313,7 @@ public:
          qin[i] = cos(twoPi*double(i)/double(nx));
       }
 
-      block.step(qin, qout);
+      block.stepThread(qin, qout);
       double a = 4.0;
       double b = block.kuhn();
       double Gb = twoPi*b/a;
@@ -391,7 +391,7 @@ public:
                          double(iter.position(1))/double(mesh.dimension(1)) ) );
       }
       
-      block.step(qin, qout);
+      block.stepThread(qin, qout);
       double b = block.kuhn();
       double Gb;
       double expected;
@@ -479,7 +479,7 @@ public:
                          double(iter.position(2))/double(mesh.dimension(2)) ) );
       }
       
-      block.step(qin, qout);
+      block.stepThread(qin, qout);
       double b = block.kuhn();
       double Gb;
       double expected;

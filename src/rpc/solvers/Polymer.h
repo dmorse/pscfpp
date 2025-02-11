@@ -145,17 +145,18 @@ namespace Rpc {
       double stress(int n) const;
 
       // Inherited public functions
-      using Base::nBlock;
       using Base::block;
-      using Base::ensemble;
-      using Base::solve;
+      using Base::nBlock;
       using Base::length;
+      using Base::nBead;
+      using Species::ensemble;
+      using Species::phi;
+      using Species::mu;
+      using Species::q;
 
    protected:
 
       using ParamComposite::setClassName;
-      using Base::phi_;
-      using Base::mu_;
 
    private: 
 
@@ -164,6 +165,12 @@ namespace Rpc {
 
       /// Number of unit cell parameters.
       int nParam_;
+
+      // Restricting access
+      using Base::solve;
+      using Species::phi_;
+      using Species::mu_;
+      using Species::q_;
 
    };
 

@@ -5,6 +5,7 @@
 #include <test/UnitTestRunner.h>
 
 #include <pscf/chem/PolymerType.h>
+#include <util/param/ScalarParam.h>
 
 #include <fstream>
 
@@ -49,10 +50,19 @@ public:
       //in >> b;
    }
 
+   void testParam() {
+      printMethod(TEST_FUNC);
+
+      PolymerType::Enum type;
+      bool isRequired = true;
+      Util::ScalarParam<PolymerType::Enum> param("type", type, isRequired);
+   } 
+
 };
 
 TEST_BEGIN(PolymerTypeTest)
 TEST_ADD(PolymerTypeTest, testReadWrite)
+TEST_ADD(PolymerTypeTest, testParam)
 TEST_END(PolymerTypeTest)
 
 #endif

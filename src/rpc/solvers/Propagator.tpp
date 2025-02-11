@@ -84,12 +84,11 @@ namespace Rpc {
    }
 
    /*
-   * Compute initial head QField from final tail QFields of sources.
+   * Compute initial head QField for the thread model.
    */
    template <int D>
-   void Propagator<D>::computeHead()
+   void Propagator<D>::computeHeadThread()
    {
-
       // Reference to head of this propagator
       QField& qh = qFields_[0];
 
@@ -113,21 +112,72 @@ namespace Rpc {
    }
 
    /*
+   * Compute initial head QField for the bead model.
+   */
+   template <int D>
+   void Propagator<D>::computeHeadBead()
+   {
+      UTIL_CHECK(PolymerModel::isBead());
+
+      // Set head slice to product of source tail slices
+      computeHeadThread();
+
+      // If propagator owns the head vertex, apply the bead field weight
+      if (ownsHead()) {
+         QField& qh = qFields_[0]; // Head slice of this propagator
+         block().stepFieldBead(qh);
+      }
+
+   }
+
+   /*
    * Solve the modified diffusion equation for this block.
    */
    template <int D>
    void Propagator<D>::solve()
    {
       UTIL_CHECK(isAllocated());
-      computeHead();
-      for (int iStep = 0; iStep < ns_ - 1; ++iStep) {
-         block().step(qFields_[iStep], qFields_[iStep + 1]);
+      if (PolymerModel::isThread()) {
+
+         // Initialize head as pointwise product of source propagators
+         computeHeadThread();
+
+         // MDE step loop for thread model
+         for (int iStep = 0; iStep < ns_ - 1; ++iStep) {
+            block().stepThread(qFields_[iStep], qFields_[iStep + 1]);
+         }
+
+      } else 
+      if (PolymerModel::isBead()) {
+
+         // Initialize head slice, starting with product of sources
+         computeHeadBead();
+
+         // MDE step loop for bead model (stop before tail vertex)
+         int iStep;
+         for (iStep = 0; iStep < ns_ - 2; ++iStep) {
+            block().stepBead(qFields_[iStep], qFields_[iStep + 1]);
+         }
+
+         // Compute q for the tail vertex
+         iStep = ns_ - 2;
+         if (ownsTail()) {
+            // Include bead weight exp(W[i]*ds) for tail vertex
+            block().stepBead(qFields_[iStep], qFields_[iStep + 1]);
+         } else {
+            // Exclude bead weight for tail vertex
+            block().stepBondBead(qFields_[iStep], qFields_[iStep + 1]);
+         }
+
+      } else {
+         // This should be impossible
+         UTIL_THROW("Unexpected PolymerModel type");
       }
       setIsSolved(true);
    }
 
    /*
-   * Solve the modified diffusion equation with a specified initial condition.
+   * Solve the MDE with a specified initial condition at the head.
    */
    template <int D>
    void Propagator<D>::solve(QField const & head)
@@ -141,10 +191,38 @@ namespace Rpc {
          qh[i] = head[i];
       }
 
-      // Setup solver and solve
-      for (int iStep = 0; iStep < ns_ - 1; ++iStep) {
-         block().step(qFields_[iStep], qFields_[iStep + 1]);
+      // Loop over steps to solve
+      if (PolymerModel::isThread()) {
+
+         // MDE step loop for thread model
+         for (int iStep = 0; iStep < ns_ - 1; ++iStep) {
+            block().stepThread(qFields_[iStep], qFields_[iStep + 1]);
+         }
+
+      } else 
+      if (PolymerModel::isBead()) {
+
+         // MDE step loop for bead model (step before the tail vertex)
+         int iStep;
+         for (iStep = 0; iStep < ns_ - 2; ++iStep) {
+            block().stepBead(qFields_[iStep], qFields_[iStep + 1]);
+         }
+
+         // Compute q for the tail vertex
+         iStep = ns_ - 2;
+         if (ownsTail()) {
+            // Include bead weight exp(W[i]*ds) for tail vertex
+            block().stepBead(qFields_[iStep], qFields_[iStep + 1]);
+         } else {
+            // Exclude bead weight for tail vertex
+            block().stepBondBead(qFields_[iStep], qFields_[iStep + 1]);
+         }
+
+      } else {
+         // This should be impossible
+         UTIL_THROW("Unexpected PolymerModel type");
       }
+
       setIsSolved(true);
    }
 
@@ -170,12 +248,19 @@ namespace Rpc {
       UTIL_CHECK(qt.capacity() == nx);
       UTIL_CHECK(qh.capacity() == nx);
 
-      // Take inner product of head and partner tail fields
-      double Q = 0;
-      for (int i =0; i < nx; ++i) {
-         Q += qh[i]*qt[i];
+      // Compute average product of head slice and partner tail slice
+      double Q;
+      if (PolymerModel::isThread()) {
+         Q = block().averageProduct(qh, qt);
+      } else {
+         UTIL_CHECK(ownsHead() == partner().ownsTail());
+         if (ownsHead()) {
+            Q = block().averageProductBead(qh, qt);
+         } else {
+            Q = block().averageProduct(qh, qt);
+         }
       }
-      Q /= double(nx);
+
       return Q;
    }
 

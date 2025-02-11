@@ -90,14 +90,15 @@ namespace Pscf
    *
    * \endcode
    *
-   * The step and computeConcentration functions both use private
-   * variables that depend on the monomer type and contour length of 
-   * a particular block, and that apply to both of the two associated 
-   * propagators.  Parameters that depend upon the step size used to
-   * discretize the MDE for a particular block generally cannot, however, 
-   * be re-used by other blocks, because the MDE solver algorithm may 
-   * use slightly different step sizes in different blocks in order to 
-   * divide each block into an integer number of steps of equal length. 
+   * The step and computeConcentration functions in this example can both 
+   * use private variables that depend on the monomer type and contour 
+   * length of a particular block, and that apply to both of the two 
+   * associated propagators.  Parameters that depend upon the step size 
+   * used to discretize the MDE for a particular block generally cannot, 
+   * however, be re-used by other blocks, because the MDE solver algorithm 
+   * for a thread model may use slightly different step sizes in different 
+   * blocks in order to divide each block into an even integer number of 
+   * steps of equal length. 
    * 
    * \ingroup Pscf_Solver_Module
    */

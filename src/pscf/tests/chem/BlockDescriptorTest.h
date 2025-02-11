@@ -22,7 +22,9 @@ public:
    }
 
    void tearDown()
-   {}
+   {
+      PolymerModel::setModel(PolymerModel::Thread);
+   }
 
   
    void testConstructor()
@@ -33,6 +35,9 @@ public:
 
    void testReadWrite() {
       printMethod(TEST_FUNC);
+
+      // Test Thread model
+      PolymerModel::setModel(PolymerModel::Thread);
 
       std::ifstream in;
       openInputFile("in/BlockDescriptor", in);
@@ -72,6 +77,24 @@ public:
       if (verbose() > 0) {
          std::cout << v << std::endl ;
       }
+
+      // Test format for PolymerModel::Bead model
+      PolymerModel::setModel(PolymerModel::Bead);
+
+      // Linear polymer
+      v.setPolymerType(PolymerType::Linear);
+      v.setId(3);
+      v.setVertexIds(3, 4);
+      TEST_ASSERT(v.vertexId(0) == 3);
+      TEST_ASSERT(v.vertexId(1) == 4);
+      in >> v;
+      TEST_ASSERT(v.id() == 3);
+      TEST_ASSERT(v.monomerId() == 2);
+      TEST_ASSERT(v.nBead() == 50);
+
+      // Would cause run time error
+      // cout << v.length();
+      
    }
 
 };

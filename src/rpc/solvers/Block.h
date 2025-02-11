@@ -128,39 +128,121 @@ namespace Rpc {
       void setupSolver(RField<D> const & w);
 
       /**
-      * Compute one step of solution of MDE, from step i to i+1.
+      * Compute one step of solution of MDE for the thread model.
       *
       * This function is called internally by the PropagatorTmpl solve
       * function within a loop over steps. It is implemented in the
       * Block class because the same private data structures are needed
       * for the two propagators associated with a Block.
       *
-      * \param q  input slic of q, from step i
-      * \param qNew  ouput slice of q, from step i+1
+      * \param qin  input slice of q, from step i
+      * \param qout  output slice of q, from step i+1
       */
-      void step(RField<D> const & q, RField<D>& qNew);
+      void stepThread(RField<D> const & qin, RField<D>& qout);
 
+      /**
+      * Compute one step of solution of MDE for the bead model.
+      *
+      * This function is called internally by the PropagatorTmpl solve
+      * function within a loop over steps. It is implemented in the
+      * Block class because the same private data structures are needed
+      * for the two propagators associated with a Block.
+      *
+      * \param qin  input slice of q, from step i
+      * \param qout  output slice of q, for step i+1
+      */
+      void stepBead(RField<D> const & qin, RField<D>& qout);
+
+      /**
+      * Apply bond operator for the bead model. 
+      *
+      * \param qin  input slice of q, from step i
+      * \param qout  ouptut slice of q, for step i+1
+      */
+      void stepBondBead(RField<D> const & qin, RField<D>& qout);
+
+      /**
+      * Apply the exponential field operator for the bead model. 
+      *
+      * \param q  slice of propagator q, modified in place.
+      */
+      void stepFieldBead(RField<D> & q);
+
+      #if 0
       /**
       * Compute concentration (volume fraction) for block by integration.
       *
       * This should be called after both associated propagators are known.
+      * This function is called by Polymer<D>::compute().
+      *
+      * Thread Model: 
+      *
+      * Bead Model:
+      *
+      *
+      * \param prefactor  constant multiplying integral or sum
+      */
+      void computeConcentration(double prefactor);
+      #endif
+
+      /**
+      * Compute the concentration for this block, for the thread model.
+      *
+      * This function is called by Polymer::compute if a thread model is
+      * is used.
+      *
+      * The "prefactor" parameter must equal phi/(L q), where L is the 
+      * total length of all blocks in the polymer species and q is the 
+      * species partition function as
+      *
       * Upon return, grid point r of array cField() contains the integal,
       * int ds q(r,s)q^{*}(r,L-s) times the prefactor parameter, where
-      * q(r,s) is the solution obtained from propagator(0), q^{*}(r,s) is
-      * the solution of propagator(1),  and s is a contour variable that
-      * is integrated over the domain 0 < s < length(), where length()
-      * is the block length. 
-      * 
-      * In a closed ensemble, the "prefactor" parameter for a system with
-      * a constant total density should be set to prefactor = phi/(L q),
-      * where phi is the overall volume fraction for this molecular species,
-      * L is the total number of monomers in the polymer species, and q is
-      * the species partition function, i.e., the spatial average of q(r,L).
-      * This function is called by Polymer<D>::compute().
+      * q(r,s) and q^{*}(r,s) are propagators associated with different
+      * directions, and the integral is taken over the length of the 
+      * block. Simpson's rule is used for the integral.
       *
       * \param prefactor  constant multiplying integral over s
       */
-      void computeConcentration(double prefactor);
+      void computeConcentrationThread(double prefactor);
+
+      /**
+      * Compute the concentration for this block, using the bead model.
+      *
+      * This function is called by Polymer::compute if a bead model is
+      * is used.
+      *
+      * The "prefactor" parameter must equal phi/(N q), where N is the 
+      * total number of beads owned by all blocks of the polymer, and 
+      * q is the species partition function.
+      *
+      * Upon return, grid point r of array cField() contains the sum
+      * sum_s ds q(r,s) q^{*}(r,N-s) exp(W(r)*ds) over beads owned by 
+      * this block times the "prefactor" parameter, where q(r,s) and 
+      * q^{*}(r,s) are propagators associated with different directions.
+      *
+      * \param prefactor  constant multiplying sum over beads
+      */
+      void computeConcentrationBead(double prefactor);
+
+      /**
+      * Compute the spatial average of the product used to compute Q.
+      *
+      * This funciton computes the spatial average of the product 
+      * q0[i]*q1[i], where q0 and q1 and are complementary propagator 
+      * slices, and i is grid rank.
+      */
+      double averageProduct(RField<D> const& q0, RField<D> const& q1);
+
+      /**
+      * Compute the spatial average of the product used to compute Q.
+      *
+      * This computes the spatial average of the product 
+      * q0[i]*q1[i]/exp(W[i]*ds), where q0 and q1 and are complementary 
+      * propagator slices for a bead model, and i is grid rank. This is
+      * used in the bead model for computation of Q from propagator 
+      * slices associated with a bead that is owned by the propagator.
+      */
+      double averageProductBead(RField<D> const& q0, RField<D> const& q1);
 
       /**
       * Compute stress contribution for this block.
@@ -219,7 +301,9 @@ namespace Rpc {
       using BlockDescriptor::monomerId;
       using BlockDescriptor::vertexIds;
       using BlockDescriptor::vertexId;
+      using BlockDescriptor::ownsVertex;
       using BlockDescriptor::length;
+      using BlockDescriptor::nBead;
 
    private:
 
@@ -235,25 +319,29 @@ namespace Rpc {
       // Array of elements containing exp(-K^2 b^2 ds/6)
       RField<D> expKsq_;
 
-      // Array of elements containing exp(-W[i] ds/2)
+      // Array of elements containing exp(-W[i] ds/2) in thread model
+      // or exp(-W[i] ds) in the bead model
       RField<D> expW_;
 
-      // Array of elements containing exp(-K^2 b^2 ds/(6*2))
+      // Array of elements containing exp(-K^2 b^2 ds/(6*2)) (thread model)
       RField<D> expKsq2_;
 
-      // Array of elements containing exp(-W[i] (ds/2)*0.5)
+      // Array of elements containing exp(-W[i] (ds/2)*0.5) (thread model)
       RField<D> expW2_;
+
+      // Array of elements containing exp(+W[i] ds) in bead model
+      RField<D> expWInv_;
 
       // Work array for real-space field (step size ds)
       RField<D> qr_;
 
-      // Work array for real-space field (step size ds/2)
+      // Work array for real-space field (step size ds/2, thread model)
       RField<D> qr2_;
 
       // Work array for wavevector space field (step size ds)
       RFieldDft<D> qk_;
 
-      // Work array for wavevector space field (step size ds/2)
+      // Work array for wavevector space field (step size ds/2, thread model)
       RFieldDft<D> qk2_;
 
       // Pointer to associated Mesh<D> object

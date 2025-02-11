@@ -17,6 +17,7 @@
 #include <rpc/field/Mask.h>               // member
 #include <prdc/cpu/RField.h>              // member (tmpFieldsRGrid_)
 #include <prdc/cpu/RFieldDft.h>           // member (tmpFieldSKGrid_)
+#include <pscf/chem/PolymerModel.h>       // member (polymerModel_)
 #include <pscf/homogeneous/Mixture.h>     // member
 #include <util/misc/FileMaster.h>         // member
 #include <util/containers/DArray.h>       // member (tmpFields...)
@@ -45,6 +46,7 @@ namespace Rpc {
 
    // Namespaces names that may be used implicitly in Pscf::Rpc
    using namespace Util;
+   using namespace Pscf;
    using namespace Prdc;
    using namespace Prdc::Cpu;
 
@@ -1005,7 +1007,7 @@ namespace Rpc {
       */
       double pressure_;
 
-      // Boolean flags 
+      // Boolean enumerations variables
 
       /**
       * Has memory been allocated for fields in grid format?
@@ -1039,6 +1041,11 @@ namespace Rpc {
       * Has fHelmholtz been computed for the current w and c fields?
       */
       bool hasFreeEnergy_;
+
+      /**
+      * Value for polymer model (thread or bead) read from file.
+      */
+      PolymerModel::Type polymerModel_;
 
       // Private member functions
 

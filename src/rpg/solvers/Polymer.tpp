@@ -61,7 +61,16 @@ namespace Rpg {
       }
 
       // Call generic solver() method base class template.
+      // This solves the MDE for all propagators in a precalculated order
       solve();
+
+      // Compute block concentration fields
+      double prefactor;
+      prefactor = phi() / ( q() * length() );
+      for (int i = 0; i < nBlock(); ++i) {
+         block(i).computeConcentration(prefactor);
+      }
+
    }
 
    /*

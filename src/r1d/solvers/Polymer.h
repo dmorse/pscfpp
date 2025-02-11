@@ -12,8 +12,10 @@
 #include <pscf/solvers/PolymerTmpl.h>
 
 namespace Pscf { 
-namespace R1d
-{ 
+namespace R1d {
+
+   using namespace Util; 
+   using namespace Pscf; 
 
    /**
    * Descriptor and solver for a branched polymer species.
@@ -72,6 +74,14 @@ namespace R1d
       * \param wFields  array of chemica potential fields.
       */ 
       void compute(DArray<Block::WField> const & wFields);
+
+   private:
+
+      // Restrict access to some base class members
+      using Species::q_;
+      using Species::mu_;
+      using Species::phi_;
+      using PolymerTmpl<Block>::solve;
 
    };
 

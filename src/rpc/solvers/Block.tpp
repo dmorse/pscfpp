@@ -84,17 +84,6 @@ namespace Rpc {
       UTIL_CHECK(mesh().size() > 1);
       UTIL_CHECK(mesh().dimensions() == fft().meshDimensions());
       UTIL_CHECK(!isAllocated_);
-      UTIL_CHECK(length() > 0);
-
-      // Set contour length discretization for this block
-      dsTarget_ = ds;
-      int tempNs;
-      tempNs = floor( length()/(2.0 *ds) + 0.5 );
-      if (tempNs == 0) {
-         tempNs = 1;
-      }
-      ns_ = 2*tempNs + 1;
-      ds_ = length()/double(ns_-1);
 
       // Compute Fourier space kMeshDimensions_ and kSize_
       kSize_ = 1;
@@ -109,19 +98,50 @@ namespace Rpc {
 
       // Allocate work arrays for MDE solution
       expKsq_.allocate(kMeshDimensions_);
-      expKsq2_.allocate(kMeshDimensions_);
       expW_.allocate(mesh().dimensions());
-      expW2_.allocate(mesh().dimensions());
       qr_.allocate(mesh().dimensions());
       qk_.allocate(mesh().dimensions());
       qr2_.allocate(mesh().dimensions());
       qk2_.allocate(mesh().dimensions());
+      if (PolymerModel::isThread()) {
+         expKsq2_.allocate(kMeshDimensions_);
+         expW2_.allocate(mesh().dimensions());
+      } else 
+      if (PolymerModel::isBead()) {
+         expWInv_.allocate(mesh().dimensions());
+      }
 
       // Allocate work array for stress calculation
       dGsq_.allocate(kSize_, 6);
 
       // Allocate block concentration field
       cField().allocate(mesh().dimensions());
+
+      // Compute ns_ and ds_
+      if (PolymerModel::isThread()) {
+
+         dsTarget_ = ds;
+
+         // Set contour length discretization for this block
+         UTIL_CHECK(length() > 0);
+         int tempNs;
+         tempNs = floor( length()/(2.0 *ds) + 0.5 );
+         if (tempNs == 0) {
+            tempNs = 1;
+         }
+         ns_ = 2*tempNs + 1;
+         ds_ = length()/double(ns_-1);
+
+      } else
+      if (PolymerModel::isBead()) {
+
+         dsTarget_ = ds;
+         ds_ = ds;
+         ns_ = nBead();
+         if (!ownsVertex(0)) ++ns_;
+         if (!ownsVertex(1)) ++ns_;
+
+      }
 
       // Allocate memory for solutions to MDE (requires ns_)
       propagator(0).allocate(ns_, mesh());
@@ -137,9 +157,11 @@ namespace Rpc {
    template <int D>
    void Block<D>::setLength(double newLength)
    {
+      UTIL_CHECK(PolymerModel::isThread());
+
       BlockDescriptor::setLength(newLength);
 
-      if (isAllocated_) { 
+      if (isAllocated_) {
          // Reset contour length discretization
          UTIL_CHECK(dsTarget_ > 0);
          int oldNs = ns_;
@@ -189,19 +211,24 @@ namespace Rpc {
       UTIL_CHECK(unitCellPtr_);
       UTIL_CHECK(unitCellPtr_->isInitialized());
 
+      bool isThread = PolymerModel::isThread();
+      double factor = -1.0*kuhn()*kuhn()*ds_/6.0;
+
       MeshIterator<D> iter;
       iter.setDimensions(kMeshDimensions_);
       IntVec<D> G, Gmin;
-      double Gsq;
-      double factor = -1.0*kuhn()*kuhn()*ds_/6.0;
+      double Gsq, arg;
       int i;
       for (iter.begin(); !iter.atEnd(); ++iter) {
          i = iter.rank();
          G = iter.position();
          Gmin = shiftToMinimum(G, mesh().dimensions(), unitCell());
          Gsq = unitCell().ksq(Gmin);
-         expKsq_[i] = exp(Gsq*factor);
-         expKsq2_[i] = exp(Gsq*factor*0.5);
+         arg = Gsq*factor;
+         expKsq_[i] = exp(arg);
+         if (isThread) {
+            expKsq2_[i] = exp(0.5*arg);
+         }
       }
 
       hasExpKsq_ = true;
@@ -220,16 +247,24 @@ namespace Rpc {
       UTIL_CHECK(isAllocated_);
 
       // Compute expW arrays
-      for (int i = 0; i < nx; ++i) {
-
-         // First, check that w[i]*ds_ is not unreasonably large:
-         // (if this condition is not met, solution will have large
-         // error, and user should consider using a smaller ds_)
-         //UTIL_CHECK(std::abs(w[i]*ds_) < 1.0);
-
-         // Calculate values
-         expW_[i] = exp(-0.5*w[i]*ds_);
-         expW2_[i] = exp(-0.5*0.5*w[i]*ds_);
+      double arg, c;
+      if (PolymerModel::isThread()) {
+         c = -0.5*ds_;
+         for (int i = 0; i < nx; ++i) {
+            arg = c*w[i];
+            // UTIL_CHECK(std::abs(arg) < 0.5);
+            expW_[i]  = exp(arg);
+            expW2_[i] = exp(0.5*arg);
+         } 
+      } else
+      if (PolymerModel::isBead()) {
+         double c = -1.0*ds_;
+         for (int i = 0; i < nx; ++i) {
+            arg = c*w[i];
+            // UTIL_CHECK(std::abs(arg) < 1.0);
+            expW_[i]  = exp(arg);
+            expWInv_[i] = 1.0/expW_[i];
+         }
       }
 
       // Compute expKsq arrays if necessary
@@ -243,7 +278,7 @@ namespace Rpc {
    * Integrate to calculate monomer concentration for this block
    */
    template <int D>
-   void Block<D>::computeConcentration(double prefactor)
+   void Block<D>::computeConcentrationThread(double prefactor)
    {
       // Preconditions
       UTIL_CHECK(isAllocated_);
@@ -261,6 +296,7 @@ namespace Rpc {
          cField()[i] = 0.0;
       }
 
+      // References to forward and reverse propagators
       Propagator<D> const & p0 = propagator(0);
       Propagator<D> const & p1 = propagator(1);
 
@@ -293,6 +329,99 @@ namespace Rpc {
          cField()[i] *= prefactor;
       }
 
+   }
+
+   /*
+   * Calculate monomer concentration for this block, bead model.
+   */
+   template <int D>
+   void Block<D>::computeConcentrationBead(double prefactor)
+   {
+      // Preconditions
+      UTIL_CHECK(isAllocated_);
+      int nx = mesh().size();
+      UTIL_CHECK(nx > 0);
+      UTIL_CHECK(ns_ > 0);
+      UTIL_CHECK(ds_ > 0);
+      UTIL_CHECK(propagator(0).isAllocated());
+      UTIL_CHECK(propagator(1).isAllocated());
+      UTIL_CHECK(cField().capacity() == nx);
+
+      // Initialize cField to zero at all points
+      int i;
+      for (i = 0; i < nx; ++i) {
+         cField()[i] = 0.0;
+      }
+   
+      // References to forward and reverse propagators
+      Propagator<D> const & p0 = propagator(0);
+      Propagator<D> const & p1 = propagator(1);
+
+      // Vertex 0 contribution (if owned by block)
+      if (ownsVertex(0)) {
+         for (i = 0; i < nx; ++i) {
+            cField()[i] += p0.q(0)[i]*p1.q(ns_ - 1)[i]*expWInv_[i];
+         }
+      }
+
+      // Internal beads
+      int j;
+      for (j = 1; j < (ns_ -1); ++j) {
+         for (i = 0; i < nx; ++i) {
+            cField()[i] += p0.q(j)[i] * p1.q(ns_ - 1 - j)[i]*expWInv_[i];
+         }
+      }
+
+      // Vertex 1 contribution (if owned by block)
+      if (ownsVertex(1)) {
+         for (i = 0; i < nx; ++i) {
+            cField()[i] += p0.q(ns_ -1)[i]*p1.q(0)[i]*expWInv_[i];
+         }
+      }
+
+      // Normalize the integral
+      for (i = 0; i < nx; ++i) {
+         cField()[i] *= prefactor;
+      }
+
+   }
+
+   /*
+   * Average of a product of complementary propagator slices.
+   */
+   template <int D>
+   double 
+   Block<D>::averageProduct(RField<D> const& q0, RField<D> const& q1)
+   {
+      int nx = mesh().size();
+      UTIL_CHECK(nx == q0.capacity());
+      UTIL_CHECK(nx == q1.capacity());
+
+      double Q = 0.0; 
+      for (int i =0; i < nx; ++i) {
+         Q += q0[i]*q1[i];
+      }
+      Q /= double(nx);
+      return Q;
+   }
+
+   /*
+   * Spatial integral of a product of complementary propagator slices.
+   */
+   template <int D>
+   double 
+   Block<D>::averageProductBead(RField<D> const& q0, RField<D> const& q1)
+   {
+      int nx = mesh().size();
+      UTIL_CHECK(nx == q0.capacity());
+      UTIL_CHECK(nx == q1.capacity());
+
+      double Q = 0.0; 
+      for (int i =0; i < nx; ++i) {
+         Q += q0[i]*q1[i]*expWInv_[i];
+      }
+      Q /= double(nx);
+      return Q;
    }
 
    /*
@@ -406,12 +535,16 @@ namespace Rpc {
       }
    }
 
+
+
    /*
-   * Propagate solution by one step.
+   * Propagate solution by one step for the thread model.
    */
    template <int D>
-   void Block<D>::step(RField<D> const & q, RField<D>& qNew)
+   void Block<D>::stepThread(RField<D> const & q, RField<D>& qout)
    {
+      UTIL_CHECK(PolymerModel::isThread());
+
       // Prereconditions on mesh and fft
       int nx = mesh().size();
       UTIL_CHECK(nx > 0);
@@ -424,14 +557,16 @@ namespace Rpc {
       UTIL_CHECK(nk > 0);
       UTIL_CHECK(qr_.capacity() == nx);
       UTIL_CHECK(expW_.capacity() == nx);
+      UTIL_CHECK(expW2_.capacity() == nx);
       UTIL_CHECK(expKsq_.capacity() == nk);
+      UTIL_CHECK(expKsq2_.capacity() == nk);
       UTIL_CHECK(hasExpKsq_);
 
       // Preconditions on parameters
       UTIL_CHECK(q.isAllocated());
       UTIL_CHECK(q.capacity() == nx);
-      UTIL_CHECK(qNew.isAllocated());
-      UTIL_CHECK(qNew.capacity() == nx);
+      UTIL_CHECK(qout.isAllocated());
+      UTIL_CHECK(qout.capacity() == nx);
 
       // Apply pseudo-spectral algorithm
 
@@ -469,8 +604,71 @@ namespace Rpc {
 
       // Richardson extrapolation
       for (i = 0; i < nx; ++i) {
-         qNew[i] = (4.0*qr2_[i] - qr_[i])/3.0;
+         qout[i] = (4.0*qr2_[i] - qr_[i])/3.0;
       }
+   }
+
+   /*
+   * Apply one step of MDE solution for the bead model.
+   */
+   template <int D>
+   void Block<D>::stepBead(RField<D> const & q, RField<D>& qout)
+   {
+      UTIL_CHECK(PolymerModel::isBead());
+      stepBondBead(q, qout);
+      stepFieldBead(qout);
+   }
+
+   /*
+   * Apply the bond operator for the bead model.
+   */
+   template <int D>
+   void Block<D>::stepBondBead(RField<D> const & q, RField<D>& qout)
+   {
+      UTIL_CHECK(isAllocated_);
+      UTIL_CHECK(hasExpKsq_);
+
+      // Prereconditions on mesh and fft
+      int nx = mesh().size();
+      UTIL_CHECK(nx > 0);
+      UTIL_CHECK(fft().isSetup());
+      UTIL_CHECK(mesh().dimensions() == fft().meshDimensions());
+      UTIL_CHECK(q.capacity() == nx);
+      UTIL_CHECK(qout.capacity() == nx);
+
+      int nk = qk_.capacity();
+      UTIL_CHECK(nk > 0);
+      UTIL_CHECK(expKsq_.capacity() == nk);
+
+      // Preconditions on parameters
+
+      // Apply bond operator
+      fft().forwardTransform(q, qk_);
+      for (int i = 0; i < nk; ++i) {
+         qk_[i][0] *= expKsq_[i];
+         qk_[i][1] *= expKsq_[i];
+      }
+      fft().inverseTransformUnsafe(qk_, qout); // destroys qk_
+
+   }
+
+   /*
+   * Apply one step of MDE solution for the bead model.
+   */
+   template <int D>
+   void Block<D>::stepFieldBead(RField<D>& q)
+   {
+      // Preconditions 
+      int nx = mesh().size();
+      UTIL_CHECK(nx > 0);
+      UTIL_CHECK(expW_.capacity() == nx);
+      UTIL_CHECK(q.capacity() == nx);
+
+      // Apply field operator
+      for (int i = 0; i < nx; ++i) {
+         q[i] *= expW_[i];
+      }
+
    }
 
 }

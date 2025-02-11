@@ -39,14 +39,14 @@ namespace Pscf
    std::istream& operator >> (std::istream& in, PolymerType::Enum& type); 
 
    /**
-   * Input stream extractor for a PolymerType::Enum enumeration.
+   * Output stream extractor for a PolymerType::Enum enumeration.
    *
    * \ingroup Pscf_Chem_Module
    *
    * \param out  output stream
    * \param type  value of PolymerType to be written 
    */ 
-   std::ostream& operator << (std::ostream& out, PolymerType::Enum& type); 
+   std::ostream& operator << (std::ostream& out, PolymerType::Enum const& type); 
 
    /**
    * Serialize a PolymerType::Enum enumeration.

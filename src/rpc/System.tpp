@@ -74,7 +74,8 @@ namespace Rpc {
       isAllocatedBasis_(false),
       hasMixture_(false),
       hasCFields_(false),
-      hasFreeEnergy_(false)
+      hasFreeEnergy_(false),
+      polymerModel_(PolymerModel::Thread)
    {
       setClassName("System");
       domain_.setFileMaster(fileMaster_);
@@ -227,6 +228,15 @@ namespace Rpc {
    template <int D>
    void System<D>::readParameters(std::istream& in)
    {
+      // Optionally read the polymer model enum value, set global value
+      if (!PolymerModel::isLocked()) {
+         polymerModel_ = PolymerModel::Thread;
+         readOptional(in, "polymerModel", polymerModel_);
+
+         // Set the global enumeration value
+         PolymerModel::setModel(polymerModel_);
+      }
+
       // Read the Mixture{ ... } block
       readParamComposite(in, mixture_);
       hasMixture_ = true;

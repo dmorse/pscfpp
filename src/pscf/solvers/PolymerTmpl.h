@@ -13,15 +13,17 @@
 
 #include <pscf/chem/Monomer.h>           // member template argument
 #include <pscf/chem/Vertex.h>            // member template argument
-#include <pscf/chem/PolymerType.h>       // member 
+#include <pscf/chem/PolymerType.h>       // member
 #include <util/containers/Pair.h>        // member template
 #include <util/containers/DArray.h>      // member template
+
+#include <pscf/chem/PolymerModel.h>
 #include <util/containers/DMatrix.h>
 
 #include <cmath>
 
 namespace Pscf
-{ 
+{
 
    class Block;
    using namespace Util;
@@ -32,8 +34,7 @@ namespace Pscf
    * A PolymerTmpl<Block> object has arrays of Block and Vertex
    * objects. Each Block has two propagator MDE solver objects.
    * The solve() member function solves the modified diffusion
-   * equation (MDE) for the entire molecule and computes monomer
-   * concentration fields for all blocks.
+   * equation (MDE) for all propagators in molecule.
    *
    * \ingroup Pscf_Solver_Module
    */
@@ -48,7 +49,7 @@ namespace Pscf
 
       // Monomer concentration field.
       typedef typename Propagator::CField CField;
- 
+
       // Chemical potential field.
       typedef typename Propagator::WField WField;
 
@@ -56,7 +57,7 @@ namespace Pscf
       * Constructor.
       */
       PolymerTmpl();
- 
+
       /**
       * Destructor.
       */
@@ -73,30 +74,33 @@ namespace Pscf
       * Solve modified diffusion equation.
       *
       * Upon return, propagators for all blocks, molecular partition
-      * function q, phi and mu, and the block concentration fields for
-      * all blocks are set. 
+      * function q, phi and mu are all set.  The implementation of 
+      * PolymerTmpl::solve() the calls the solve() function for all 
+      * propagators in the molecule in a predeternined order, then
+      * computes q, and finally computes mu from phi or phi from mu,
+      * depending on the ensemble.
       *
       * This function should be called within a member function named
-      * "compute" of each concrete subclass.  This compute function must 
-      * take an array of chemical potential fields (w-fields) as an 
-      * argument. Before calling the solve() function declared here, 
-      * the compute() function of each such subclass must store 
-      * information required to solve the MDE within each block within
-      * a set of implementation dependent private members of the class 
-      * class that represents a block of a block polymer. The 
-      * implementation of PolymerTmpl::solve() the calls the solve()
-      * function for all propagators in the molecule in a predeternined
-      * order.
+      * "compute" of each concrete subclass.  This compute function must
+      * take an array of chemical potential fields (w-fields) as an
+      * argument. Before calling the solve() function declared here,
+      * the compute() function of each such subclass must setup the 
+      * solvers by storing information required to solve the MDE within 
+      * each block within a set of implementation dependent private 
+      * members of the class that represents a block of a block polymer. 
+      * After calling this solve() function, the compute function must
+      * loop over blocks to compute the monomer concentration fields 
+      * for all blocks.
       *
-      * The optional parameter phiTot is only relevant to problems 
-      * such as thin films in which the material is excluded from part 
-      * of the unit cell by an inhogeneous constraint on the sum of 
-      * monomer concentration (i.e., a "mask"). 
+      * The optional parameter phiTot is only relevant to problems
+      * such as thin films in which the material is excluded from part
+      * of the unit cell by an inhogeneous constraint on the sum of
+      * monomer concentration (i.e., a "mask").
       *
       * \param phiTot  fraction of volume occupied by material
-      */ 
+      */
       virtual void solve(double phiTot = 1.0);
- 
+
       /// \name Accessors (objects, by reference)
       ///@{
 
@@ -118,7 +122,7 @@ namespace Pscf
       * Get a specified Vertex by const reference.
       *
       * Both chain ends and junctions are vertices.
-      * 
+      *
       * \param id vertex index, 0 <= id < nVertex
       */
       const Vertex& vertex(int id) const;
@@ -130,7 +134,7 @@ namespace Pscf
       * \param directionId integer index for direction (0 or 1)
       */
       Propagator& propagator(int blockId, int directionId);
-   
+
       /**
       * Get a const propagator for a specific block and direction.
       *
@@ -138,7 +142,7 @@ namespace Pscf
       * \param directionId integer index for direction (0 or 1)
       */
       Propagator const & propagator(int blockId, int directionId) const;
-   
+
       /**
       * Get propagator indexed in order of computation.
       *
@@ -166,12 +170,12 @@ namespace Pscf
       /**
       * Number of blocks.
       */
-      int nBlock() const; 
+      int nBlock() const;
 
       /**
       * Number of vertices (junctions and chain ends).
       *
-      * A theorem of graph theory tells us that, for any linear or 
+      * A theorem of graph theory tells us that, for any linear or
       * acyclic branched polymer, nVertex = nBlock + 1.
       */
       int nVertex() const;
@@ -182,15 +186,24 @@ namespace Pscf
       int nPropagator() const;  //
 
       /**
-      * Sum of the lengths of all blocks in the polymer.
+      * Sum of the lengths of all blocks in the polymer (thread model).
+      *
+      * Precondition: PolymerModel::isThread()
       */
       double length() const;
-      
+
+      /**
+      * Total number of beads in the polymer (bead model).
+      *
+      * Precondition: PolymerModel::isBead()
+      */
+      int nBead() const;
+
       /**
       * Get Polymer type (Branched or Linear)
       */
       PolymerType::Enum type() const;
-      
+
       ///@}
 
    protected:
@@ -202,7 +215,7 @@ namespace Pscf
       * that guarantees that the inital conditions required for each
       * propagator are known before it is processed. The algorithm is
       * works for any acyclic branched block copolymer. This function
-      * is called in the default implementation of readParameters, 
+      * is called in the default implementation of readParameters,
       * and must be called the readParameters method of any subclass.
       */
       virtual void makePlan();
@@ -258,7 +271,8 @@ namespace Pscf
    */
    template <class Block>
    inline double PolymerTmpl<Block>::length() const
-   {  
+   {
+      UTIL_CHECK(PolymerModel::isThread());
       double value = 0.0;
       for (int blockId = 0; blockId < nBlock_; ++blockId) {
          value += blocks_[blockId].length();
@@ -267,10 +281,24 @@ namespace Pscf
    }
 
    /*
+   * Total length of all blocks = volume / reference volume
+   */
+   template <class Block>
+   inline int PolymerTmpl<Block>::nBead() const
+   {
+      UTIL_CHECK(PolymerModel::isBead());
+      int value = 0.0;
+      for (int blockId = 0; blockId < nBlock_; ++blockId) {
+         value += blocks_[blockId].nBead();
+      }
+      return value;
+   }
+
+   /*
    * Get a specified Vertex.
    */
    template <class Block>
-   inline 
+   inline
    const Vertex& PolymerTmpl<Block>::vertex(int id) const
    {  return vertices_[id]; }
 
@@ -292,20 +320,20 @@ namespace Pscf
    * Get a propagator id, indexed in order of computation.
    */
    template <class Block>
-   inline 
+   inline
    Pair<int> const & PolymerTmpl<Block>::propagatorId(int id) const
    {
-      UTIL_CHECK(id >= 0);  
-      UTIL_CHECK(id < nPropagator_);  
-      return propagatorIds_[id]; 
+      UTIL_CHECK(id >= 0);
+      UTIL_CHECK(id < nPropagator_);
+      return propagatorIds_[id];
    }
 
    /*
    * Get a propagator indexed by block and direction.
    */
    template <class Block>
-   inline 
-   typename Block::Propagator& 
+   inline
+   typename Block::Propagator&
    PolymerTmpl<Block>::propagator(int blockId, int directionId)
    {  return block(blockId).propagator(directionId); }
 
@@ -313,8 +341,8 @@ namespace Pscf
    * Get a const propagator indexed by block and direction.
    */
    template <class Block>
-   inline 
-   typename Block::Propagator const & 
+   inline
+   typename Block::Propagator const &
    PolymerTmpl<Block>::propagator(int blockId, int directionId) const
    {  return block(blockId).propagator(directionId); }
 
@@ -322,13 +350,13 @@ namespace Pscf
    * Get a propagator indexed in order of computation.
    */
    template <class Block>
-   inline 
+   inline
    typename Block::Propagator& PolymerTmpl<Block>::propagator(int id)
    {
       Pair<int> propId = propagatorId(id);
-      return propagator(propId[0], propId[1]); 
+      return propagator(propId[0], propId[1]);
    }
-   
+
    /*
    * Get Polymer type (Branched or Linear).
    */
@@ -388,53 +416,116 @@ namespace Pscf
       }
 
       // If polymer is linear polymer, set all block vertex Ids:
-      // In a linear chain, block i connects vertex i and vertex i+1.
       if (type_ == PolymerType::Linear) {
+         // In a linear chain, block i connects vertices i and i+1.
          for (int blockId = 0; blockId < nBlock_; ++blockId) {
             blocks_[blockId].setVertexIds(blockId, blockId + 1);
          }
+         if (PolymerModel::isBead()) {
+            // For bead model, set vertex ownership. For a linear chain:
+            //    - block i owns vertex i+1.
+            //    - block i owns vertex i iff i == 0.
+            bool own0, own1;
+            for (int blockId = 0; blockId < nBlock_; ++blockId) {
+               own1 = true;
+               own0 = false;
+               if (blockId == 0) own0 = true;
+               blocks_[blockId].setVertexOwnership(own0, own1);
+            }
+         }
       }
 
-      // Read all other required block data 
+      // Read all other required block data
       readDArray<Block>(in, "blocks", blocks_, nBlock_);
 
       /*
       * The parameter file format for each block in the array blocks_
-      * is different for branched and linear polymer. These formats
-      * are defined in >> and << stream io operators for a Pscf::Block.
-      * The choice of format is controlled by the Block::polymerType.
-      *
-      * For a branched polymer, the text format for each block is:
-      * 
-      *   monomerId length vertexId(0) vertexId(1) 
-      *
-      * where monomerId is the index of the block monomer type, length
-      * is the block length, and vertexId(0) and vertexId(1) are the
-      * indices of the two vertices to which the block is attached. 
-      *
-      * For a linear polymer, blocks must be entered sequentially, in
-      * their order along the chain, and block vertex id values are
-      * set automatically. In this case, the format for one block is:
-      *
-      *   monomerId length
-      *
-      * with no need for explicit vertex ids.
+      * is different for branched and linear polymer, and different for
+      * thread and bead models. These formats * are defined in >> and
+      * << stream io operators for a Pscf::Block.
       */
+
+      // If using bead model, set propagator vertex ownership
+      Block* blockPtr;
+      if (PolymerModel::isBead()) {
+         //std::cout << "Incoming" << std::endl;
+         bool own0, own1;
+         for (int blockId = 0; blockId < nBlock_; ++blockId) {
+            blockPtr = &(blocks_[blockId]);
+            own0 = blockPtr->ownsVertex(0);
+            own1 = blockPtr->ownsVertex(1);
+            blockPtr->propagator(0).setVertexOwnership(own0, own1);
+            blockPtr->propagator(1).setVertexOwnership(own1, own0);
+            //std::cout << blockId << own0 << own1 << std::endl;
+         }
+      }
 
       // Add blocks to attached vertices
       int vertexId0, vertexId1;
-      Block* blockPtr;
       for (int blockId = 0; blockId < nBlock_; ++blockId) {
-          blockPtr = &(blocks_[blockId]);
-          vertexId0 = blockPtr->vertexId(0);
-          vertexId1 = blockPtr->vertexId(1);
-          vertices_[vertexId0].addBlock(*blockPtr);
-          vertices_[vertexId1].addBlock(*blockPtr);
+         blockPtr = &(blocks_[blockId]);
+         vertexId0 = blockPtr->vertexId(0);
+         vertexId1 = blockPtr->vertexId(1);
+         vertices_[vertexId0].addBlock(*blockPtr);
+         vertices_[vertexId1].addBlock(*blockPtr);
       }
+
+      // If using bead model, check ownership of vertex beads
+      if (PolymerModel::isBead()) {
+         int vSize, ib, id, nOwner;
+         Pair<int> propId;
+
+         // Loop over vertices
+         for (int vertexId = 0; vertexId < nVertex_; ++vertexId) {
+            vSize = vertices_[vertexId].size();
+
+            // Incoming propagators
+            //std::cout << "Incoming" << std::endl;
+            nOwner = 0;
+            for (int ip = 0; ip < vSize; ++ip) {
+               propId = vertices_[vertexId].inPropagatorId(ip);
+               ib = propId[0];
+               id = propId[1];
+               if (blocks_[ib].propagator(id).ownsTail()) {
+                 ++nOwner;
+                 //std::cout << vertexId << ib << id << std::endl;
+               }
+            }
+            UTIL_CHECK(nOwner == 1);
+
+            // Outgoing propagators
+            //std::cout << "Outgoing" << std::endl;
+            nOwner = 0;
+            for (int i = 0; i < vSize; ++i) {
+               propId = vertices_[vertexId].outPropagatorId(i);
+               ib = propId[0];
+               id = propId[1];
+               if (blocks_[ib].propagator(id).ownsHead()) {
+                 ++nOwner;
+                 //std::cout << vertexId << ib << id << std::endl;
+               }
+            }
+            UTIL_CHECK(nOwner == 1);
+
+         } // end loop over vertices
+
+         // Check consistency of block and propagator ownership flags
+         bool own0, own1;
+         for (int blockId = 0; blockId < nBlock_; ++blockId) {
+            blockPtr = &(blocks_[blockId]);
+            own0 = blockPtr->ownsVertex(0);
+            own1 = blockPtr->ownsVertex(1);
+            UTIL_CHECK(blockPtr->propagator(0).ownsHead() == own0);
+            UTIL_CHECK(blockPtr->propagator(1).ownsTail() == own0);
+            UTIL_CHECK(blockPtr->propagator(0).ownsTail() == own1);
+            UTIL_CHECK(blockPtr->propagator(1).ownsHead() == own1);
+         } 
+
+      } // end if (PolymerModel::isBead())
 
       // Polymer topology is now fully specified.
 
-      // Construct a plan for the order in which block propagators 
+      // Construct a plan for the order in which block propagators
       // should be computed when solving the MDE.
       makePlan();
 
@@ -464,14 +555,13 @@ namespace Pscf
                if (propagatorId[0] == blockId) {
                   UTIL_CHECK(propagatorId[1] != directionId);
                } else {
-                  sourcePtr = 
+                  sourcePtr =
                      &block(propagatorId[0]).propagator(propagatorId[1]);
                   propagatorPtr->addSource(*sourcePtr);
                }
-            }
-         }
-
-      }
+            } // end loop over inputs to head vertex
+         } // end loop over directionId
+      } // end loop over blockId
 
    }
 
@@ -529,7 +619,7 @@ namespace Pscf
 
    /*
    * Compute a solution to the MDE and block concentrations.
-   */ 
+   */
    template <class Block>
    void PolymerTmpl<Block>::solve(double phiTot)
    {
@@ -547,8 +637,8 @@ namespace Pscf
       }
 
       // Compute molecular partition function q_
-      q_ = block(0).propagator(0).computeQ(); 
-  
+      q_ = block(0).propagator(0).computeQ();
+
       // The Propagator::computeQ function returns a spatial average.
       // Correct for partial occupation of the unit cell.
       q_ = q_/phiTot;
@@ -556,18 +646,26 @@ namespace Pscf
       // Compute mu_ or phi_, depending on ensemble
       if (ensemble() == Species::Closed) {
          mu_ = log(phi_/q_);
-      } else 
+      } else
       if (ensemble() == Species::Open) {
          phi_ = exp(mu_)*q_;
       }
 
+      #if 0
       // Compute block concentration fields
-      double prefactor = phi_ / ( q_ * length() );
+      double prefactor;
+      if (PolymerModel::isThread()) {
+         prefactor = phi_ / ( q_ * length() );
+      } else 
+      if (PolymerModel::isBead()) {
+         prefactor = phi_ / ( q_ * (double)nBead() );
+      }
       for (int i = 0; i < nBlock(); ++i) {
          block(i).computeConcentration(prefactor);
       }
+      #endif
 
    }
- 
+
 }
 #endif

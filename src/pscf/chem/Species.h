@@ -10,16 +10,16 @@
 
 #include <util/global.h>
 namespace Pscf
-{ 
+{
 
    /**
    * Base class for a molecular species (polymer or solvent).
    *
    * Species is a base class for both polymeric and solvent species.
    * Each Species has values of phi, mu and q, and an ensemble that are
-   * defined as protected variables. The value of either phi or mu must 
+   * defined as protected variables. The value of either phi or mu must
    * be provided as an input parameter, and value of the other variable
-   * must then be computed. The class that actually solves the 
+   * must then be computed. The class that actually solves the
    * single-molecule statistical mechanics problem must be a subclass
    * of Species so that it may directly modify the protected variable
    * phi or mu (depending on the ensemble) and q.
@@ -29,59 +29,59 @@ namespace Pscf
    class Species
    {
    public:
-  
+
       /**
       * Statistical ensemble for number of molecules.
-      */ 
+      */
       enum Ensemble {Unknown, Closed, Open};
 
       /**
       * Default constructor.
-      */    
+      */
       Species();
-   
+
       /**
       * Get the overall volume fraction for this species.
       */
       double phi() const;
-   
+
       /**
       * Get the chemical potential for this species (units kT=1).
       */
       double mu() const;
-   
+
       /**
       * Get the molecular partition function for this species.
       */
       double q() const;
-   
+
       /**
       * Get the statistical ensemble for this species (open or closed).
       */
       Ensemble ensemble();
-   
+
    protected:
-   
+
       /**
-      * Volume fraction, set by either setPhi or a compute function.
+      * Volume fraction, set by either setPhi or a solve function.
       */
       double phi_;
-   
+
       /**
-      * Chemical potential, set by either setPhi or a compute function.
+      * Chemical potential, set by either setPhi or a solve function.
       */
       double mu_;
-   
+
       /**
-      * Partition function, set in subclass by a compute function.
+      * Partition function, set in subclass by a solve function.
       */
       double q_;
-   
+
       /**
       * Statistical ensemble for this species (open or closed).
       */
       Ensemble ensemble_;
-   
+
    };
 
    /*
@@ -89,19 +89,25 @@ namespace Pscf
    */
    inline double Species::phi() const
    {  return phi_; }
-   
+
    /*
    * Get species chemical potential.
    */
    inline double Species::mu() const
    {  return mu_; }
-   
+
+   /*
+   * Get species partition function q.
+   */
+   inline double Species::q() const
+   {  return q_; }
+
    /*
    * Get statistical ensemble for this species (open or closed).
    */
    inline Species::Ensemble Species::ensemble()
    {  return ensemble_; }
-   
+
    /**
    * istream extractor for a Species::Ensemble enumeration.
    *
@@ -130,9 +136,9 @@ namespace Pscf
    * \param version archive version id
    */
    template <class Archive>
-   void serialize(Archive& ar, Species::Ensemble& policy, 
+   void serialize(Archive& ar, Species::Ensemble& policy,
                   const unsigned int version)
-   { serializeEnum(ar, policy, version); }
+   {  serializeEnum(ar, policy, version); }
 
 }
-#endif 
+#endif

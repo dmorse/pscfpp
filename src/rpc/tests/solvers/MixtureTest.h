@@ -13,17 +13,19 @@
 #include <prdc/cpu/FFT.h>
 #include <prdc/crystal/UnitCell.h>
 
+#include <pscf/chem/PolymerModel.h>
 #include <pscf/mesh/Mesh.h>
 #include <pscf/math/IntVec.h>
+
 #include <util/math/Constants.h>
 
 #include <fstream>
 
 using namespace Util;
 using namespace Pscf;
-using namespace Pscf::Rpc;
 using namespace Pscf::Prdc;
 using namespace Pscf::Prdc::Cpu;
+using namespace Pscf::Rpc;
 
 class MixtureTest : public UnitTest
 {
@@ -31,10 +33,10 @@ class MixtureTest : public UnitTest
 public:
 
    void setUp()
-   {}
+   {  PolymerModel::setModel(PolymerModel::Thread); }
 
    void tearDown()
-   {}
+   {  PolymerModel::setModel(PolymerModel::Thread); }
 
    void testConstructor1D()
    {
@@ -46,11 +48,25 @@ public:
    {
       printMethod(TEST_FUNC);
       Mixture<1> mixture;
-
+    
       std::ifstream in;
-      openInputFile("in/Mixture", in);
+      openInputFile("in/Mixture1d_bead", in);
       mixture.readParam(in);
       in.close();
+   }
+
+   void testReadParameters1D_bead()
+   {
+      printMethod(TEST_FUNC);
+      Mixture<1> mixture;
+      PolymerModel::setModel(PolymerModel::Bead); 
+
+      std::ifstream in;
+      openInputFile("in/Mixture1d_bead", in);
+      mixture.readParam(in);
+      in.close();
+
+      PolymerModel::setModel(PolymerModel::Thread); 
    }
 
    void testSolver1D()
@@ -59,7 +75,7 @@ public:
       Mixture<1> mixture;
 
       std::ifstream in;
-      openInputFile("in/Mixture", in);
+      openInputFile("in/Mixture1d", in);
       mixture.readParam(in);
       UnitCell<1> unitCell;
       in >> unitCell;
@@ -403,6 +419,7 @@ public:
 TEST_BEGIN(MixtureTest)
 TEST_ADD(MixtureTest, testConstructor1D)
 TEST_ADD(MixtureTest, testReadParameters1D)
+TEST_ADD(MixtureTest, testReadParameters1D_bead)
 TEST_ADD(MixtureTest, testSolver1D)
 TEST_ADD(MixtureTest, testSolver2D)
 TEST_ADD(MixtureTest, testSolver2D_hex)

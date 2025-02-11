@@ -72,7 +72,24 @@ namespace Rpc {
       }
 
       // Call base class PolymerTmpl solve() function
+      // Solve MDE for all propagators
       solve(phiTot);
+
+      // Compute block concentration fields
+      double prefactor;
+      if (PolymerModel::isThread()) {
+         prefactor = phi() / ( q() * length() );
+         for (int i = 0; i < nBlock(); ++i) {
+            block(i).computeConcentrationThread(prefactor);
+         }
+      } else 
+      if (PolymerModel::isBead()) {
+         prefactor = phi() / ( q() * (double)nBead() );
+         for (int i = 0; i < nBlock(); ++i) {
+            block(i).computeConcentrationBead(prefactor);
+         }
+      }
+
    }
 
    /*
@@ -88,7 +105,7 @@ namespace Rpc {
       }
 
       // Compute and accumulate stress contributions from all blocks
-      double prefactor = exp(mu_)/length();
+      double prefactor = exp(mu())/length();
       for (int i = 0; i < nBlock(); ++i) {
          block(i).computeStress(prefactor);
          for (int j = 0; j < nParam_ ; ++j){

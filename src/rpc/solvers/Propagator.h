@@ -131,11 +131,7 @@ namespace Rpc {
       *
       * This function computes an initial QField at the head of this 
       * block, and then solves the modified diffusion equation (MDE) to
-      * propagate the solution from the head to the tail. The initial
-      * QField at the head is computed by pointwise multiplication of
-      * the tail QFields of all source propagators. The MDE is solved
-      * by repeatedly calling the step() function of the associated
-      * Block<D> .
+      * propagate the solution from the head to the tail. 
       */
       void solve();
   
@@ -143,9 +139,8 @@ namespace Rpc {
       * Solve the MDE for a specified initial condition.
       *
       * This function solves the modified diffusion equation (MDE) for 
-      * this block with a specified initial condition, which is given by 
-      * the function parameter "head". The MDE is solved by repeatedly
-      * calling the step() function of the associated Block<D>.
+      * this block with a specified initial condition, which is given 
+      * by the function parameter "head". 
       *
       * \param head  initial condition of QField at head of block
       */
@@ -208,13 +203,28 @@ namespace Rpc {
       using PropagatorTmpl< Propagator<D> >::setIsSolved;
       using PropagatorTmpl< Propagator<D> >::isSolved;
       using PropagatorTmpl< Propagator<D> >::hasPartner;
+      using PropagatorTmpl< Propagator<D> >::ownsHead;
+      using PropagatorTmpl< Propagator<D> >::ownsTail;
 
    protected:
 
       /**
-      * Compute initial QField at head from tail QFields of sources.
+      * Compute initial QField at head for the thread model. 
+      * 
+      * In the thread model, the head slice of each propagator is the 
+      * product of tail slices for incoming propagators from other bonds 
+      * that terminate at the head vertex.
       */
-      void computeHead();
+      void computeHeadThread();
+
+      /**
+      * Compute initial QField at head for the bead model. 
+      *
+      * In the bond model, the head slice for each propagator is given
+      * by the product of tails slices for source propagators, times an
+      * additional bond weight if the propagator owns the head vertex.
+      */
+      void computeHeadBead();
 
    private:
      

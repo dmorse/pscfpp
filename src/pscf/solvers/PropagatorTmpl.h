@@ -8,6 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
+#include <pscf/chem/PolymerModel.h>
 #include <util/containers/GArray.h>
 
 namespace Pscf
@@ -134,6 +135,22 @@ namespace Pscf
       * Set the isSolved flag to true or false.
       */
       void setIsSolved(bool isSolved);
+
+      /**
+      * Set whether the propagator owns the head and tail (bead model).
+      *
+      * The concept of "ownership" of an attached vertex is meaningful
+      * in a bead-spring model, in which we require that each vertex
+      * bead be treated as part of exactly one of the attached blocks.
+      * Because it is meaningless in the context of a thread model, it
+      * is an error to call this function when PolymerModel::isThread().
+      *
+      * Precondition: PolymerModel::isBead() must be true.
+      *
+      * \param ownsHead  Does this propagator own the head vertex bead?
+      * \param ownsHead  Does this propagator own the tail vertex bead?
+      */
+      void setVertexOwnership(bool ownsHead, bool ownsTail);
  
       ///@}
       /// \name Accessors
@@ -167,6 +184,20 @@ namespace Pscf
       bool hasPartner() const;
 
       /**
+      * Does this propagator own the attached head vertex bead?
+      *
+      * Precondition: PolymerModel::isBead()
+      */
+      bool ownsHead() const;
+
+      /**
+      * Does this propagator own the attached tail vertex bead?
+      *
+      * Precondition: PolymerModel::isBead()
+      */
+      bool ownsTail() const;
+
+      /**
       * Has the modified diffusion equation been solved?
       */
       bool isSolved() const;
@@ -188,6 +219,14 @@ namespace Pscf
 
       /// Pointers to propagators that feed source vertex.
       GArray<TP const *> sourcePtrs_;
+
+      /// Does this propagator own the head vertex bead (bead model)?
+      /// Only used or meaningful for the bead model
+      bool ownsHead_;
+
+      /// Does this propagator own the tail vertex bead (bead model)?
+      /// Only used or meaningful for the bead model
+      bool ownsTail_;
 
       /// Set true after solving modified diffusion equation.
       bool isSolved_;
@@ -268,6 +307,19 @@ namespace Pscf
    {  sourcePtrs_.append(&source); }
 
    /*
+   * Set vertex ownership.
+   */
+   template <class TP>
+   void PropagatorTmpl<TP>::setVertexOwnership(bool ownsHead, bool ownsTail)
+   {
+      UTIL_CHECK(PolymerModel::isBead());
+      ownsHead_ = ownsHead;  
+      ownsTail_ = ownsTail;  
+   }
+
+   // Accessors
+
+   /*
    * Get partner propagator.
    */
    template <class TP>
@@ -297,6 +349,26 @@ namespace Pscf
          }
       }
       return true;
+   }
+
+   /*
+   * Does this propagator own the head vertex bead?
+   */
+   template <class TP>
+   inline bool PropagatorTmpl<TP>::ownsHead() const
+   {
+      UTIL_CHECK(PolymerModel::isBead());
+      return ownsHead_; 
+   }
+
+   /*
+   * Does this propagator own the tail vertex bead?
+   */
+   template <class TP>
+   inline bool PropagatorTmpl<TP>::ownsTail() const
+   {
+      UTIL_CHECK(PolymerModel::isBead());
+      return ownsTail_; 
    }
 
 }

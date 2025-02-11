@@ -44,7 +44,16 @@ namespace R1d
          block(j).setupSolver(wFields[monomerId]);
       }
 
+      // Solve MDE for all propagators
       solve();
+
+      // Compute block concentration fields (thread model)
+      double prefactor;
+      prefactor = phi() / ( q() * length() );
+      for (int i = 0; i < nBlock(); ++i) {
+         block(i).computeConcentration(prefactor);
+      }
+
    }
 
 }

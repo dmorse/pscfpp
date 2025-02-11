@@ -109,12 +109,12 @@ namespace Rpg {
       */
       double stress(int n);
 
-      // public inherited functions with non-dependent names
+      // Public inherited functions with non-dependent names
       using Base::nBlock;
       using Base::block;
-      using Base::ensemble;
       using Base::solve;
       using Base::length;
+      using Species::ensemble;
 
    protected:
 
@@ -129,8 +129,9 @@ namespace Rpg {
       /// Number of unit cell parameters. 
       int nParams_;
 
-      using Base::phi_;
-      using Base::mu_;
+      using Species::phi_;
+      using Species::mu_;
+      using Species::q_;
 
    };
 

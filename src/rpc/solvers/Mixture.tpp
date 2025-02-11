@@ -11,6 +11,7 @@
 #include "Mixture.h"
 #include <prdc/cpu/RField.h>
 #include <pscf/mesh/Mesh.h>
+#include <pscf/chem/PolymerModel.h>
 
 #include <cmath>
 
@@ -36,8 +37,16 @@ namespace Rpc
    template <int D>
    void Mixture<D>::readParameters(std::istream& in)
    {
+      // Read majority of mixture
       MixtureTmpl< Polymer<D>, Solvent<D> >::readParameters(in);
-      read(in, "ds", ds_);
+
+      // Read ds parameter
+      if (PolymerModel::isThread()) {
+         read(in, "ds", ds_);
+      } else {
+         ds_ = 1.0;
+         readOptional(in, "ds", ds_);
+      }
 
       UTIL_CHECK(nMonomer() > 0);
       UTIL_CHECK(nPolymer()+ nSolvent() > 0);
