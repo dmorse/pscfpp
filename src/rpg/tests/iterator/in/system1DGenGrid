@@ -10,12 +10,12 @@ System{
       type    linear
       nBlock  2
       blocks[
-              0  0.50
-              1  0.50
+              0  0.40
+              1  0.60
       ]
       phi     1.0
     }
-    ds   0.0025
+    ds   0.005
   }
   Interaction{
     chi(  
@@ -25,13 +25,12 @@ System{
   Domain{
     mesh           96
     lattice        lamellar
-    groupName      P_1
+    groupName      P_-1
   }
   AmIteratorGrid{
-    epsilon      1.0e-12
+    epsilon      1.0e-6
     maxItr       2000
-    maxHist      100 
-    verbose      2
+    maxHist      50 
     isFlexible   0
     ImposedFieldsGenerator{
       type               film
@@ -39,23 +38,23 @@ System{
       interfaceThickness 0.2
       excludedThickness  0.4
       chiBottom[
-                          0.0
+                          10.0
                           0.0
       ]
       chiTop[
-                          40.0
+                          10.0
                           0.0
       ]
     }
   }
   LinearSweep{
     ns            5   
-    baseFileName  out/sweep/
+    baseFileName  out/sweepGrid/
     nParameter    3   
     parameters[
-                  cell_param  0  +0.1
-                  chi_bottom  0  +20.0
-                  chi_top     0  -20.0
+                  cell_param  0  +0.05
+                  chi_bottom  0  +1.0
+                  chi_top     0  +1.0
     ]
   }
 }

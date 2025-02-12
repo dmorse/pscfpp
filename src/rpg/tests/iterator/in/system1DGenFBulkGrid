@@ -10,8 +10,8 @@ System{
       type    linear
       nBlock  2
       blocks[
-              0  0.50
-              1  0.50
+              0  0.40
+              1  0.60
       ]
       phi     1.0
     }
@@ -23,40 +23,29 @@ System{
     )
   }
   Domain{
-    mesh           72
+    mesh           96
     lattice        lamellar
-    groupName      P_1
+    groupName      P_-1
   }
   AmIteratorGrid{
-    epsilon      1.0e-12
+    epsilon      1.0e-6
     maxItr       2000
     maxHist      100 
-    verbose      2
     isFlexible   1
     ImposedFieldsGenerator{
       type               film
       normalVecId        0
       interfaceThickness 0.2
       excludedThickness  0.4
-      fBulk              2.98468227541
+      fBulk              2.96693316774
       chiBottom[
-                          2.0
-                         -5.0
+                          10.0
+                          0.0
       ]
       chiTop[
+                          10.0
                           0.0
-                         -1.0
       ]
     }
-  }
-  LinearSweep{
-    ns            5   
-    baseFileName  out/sweep/
-    nParameter    3   
-    parameters[
-                  cell_param  0  +0.1
-                  chi_bottom  0  +20.0
-                  chi_top     0  -20.0
-    ]
   }
 }

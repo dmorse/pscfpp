@@ -7,7 +7,8 @@
 #include <rpg/scft/iterator/ImposedFieldsGenerator.h>
 #include <rpg/System.h>
 
-#include <prdc/crystal/BFieldComparison.h>
+#include <prdc/cuda/RField.h>
+#include <prdc/cuda/RFieldComparison.h>
 
 #include <pscf/iterator/FieldGenerator.h>
 
@@ -96,42 +97,29 @@ public:
 
       // Iterate to a solution
       system.iterate();
-      TEST_ASSERT(eq(system.mask().phiTot(), 8.0951532073e-01));
+      TEST_ASSERT(eq(system.mask().phiTot(), 8.0539149468e-01));
 
       // Check converged field is correct by comparing to ref files in in/
       UnitCell<1> unitCell; // UnitCell object to pass to FieldIo functions
-      DArray< DArray<double> > wFieldsCheck; // Copy of reference field
-      system.domain().fieldIo().readFieldsBasis("in/wRef1D.bf", 
-                                                wFieldsCheck, unitCell);
-      BFieldComparison bComparison(0); // object to compare fields
-      bComparison.compare(system.w().basis(), wFieldsCheck);
+      DArray< RField<1> > cFieldsCheck; // reference fields
+      system.domain().fieldIo().readFieldsRGrid("in/cRef1D.rf", 
+                                                cFieldsCheck, unitCell);
+      RFieldComparison<1> rComparison; // object to compare fields
+      rComparison.compare(system.c().rgrid(), cFieldsCheck);
       if (verbose() > 0) {
-         std::cout << "\nMax error = " << bComparison.maxDiff() << "\n";
+         std::cout << "\nMax error = " << rComparison.maxDiff() << "\n";
       }
-      system.domain().fieldIo().writeFieldsBasis("out/w1D.bf", 
-                                                 system.w().basis(), 
-                                                 system.domain().unitCell());
-      TEST_ASSERT(bComparison.maxDiff() < 1.0E-5);
+      TEST_ASSERT(rComparison.maxDiff() < 1.0E-5);
 
       // Check thermo parameters
       if (verbose() > 0) {
-         std::cout << "\nFree energy error = " 
-                   << (system.fHelmholtz() - 3.87784944222) << "\n";
-         std::cout << "\nPressure error = " 
-                   << (system.pressure() + 12.1117881919) << "\n";
+         std::cout << "Free energy error = " 
+                   << (system.fHelmholtz() - 3.89135835701) << "\n";
+         std::cout << "Pressure error = " 
+                   << (system.pressure() + 11.7328996670) << "\n";
       }
-      TEST_ASSERT(abs(system.fHelmholtz() - 3.87784944222) < 1e-5);
-      TEST_ASSERT(abs(system.pressure() + 12.1117881919) < 1e-4);
-
-      // output mask field for reference
-      system.domain().fieldIo().writeFieldBasis("out/mask_1D.bf", 
-                                                system.mask().basis(),
-                                                system.domain().unitCell());
-      
-      // output external field for reference
-      system.domain().fieldIo().writeFieldsBasis("out/h_1D.bf", 
-                                                 system.h().basis(),
-                                                 system.domain().unitCell());
+      TEST_ASSERT(abs(system.fHelmholtz() - 3.89135835701) < 1e-5);
+      TEST_ASSERT(abs(system.pressure() + 11.7328996670) < 1e-4);
    }
 
    void testSolve2D() // solve a 2D system with an ImposedFieldsGenerator
@@ -149,7 +137,6 @@ public:
 
       // Solve
       system.iterate();
-      system.writeWBasis("out/w2D.bf");
       TEST_ASSERT(eq(system.mask().phiTot(), 7.99990525324e-01));
       
       // Check that lattice parameters are correct
@@ -159,27 +146,26 @@ public:
 
       // Check converged field is correct by comparing to reference
       UnitCell<2> unitCell; // UnitCell object to pass to FieldIo functions
-      DArray< DArray<double> > wFieldsCheck; // Copy of reference field
-      system.domain().fieldIo().readFieldsBasis("in/wRef2D.bf", 
-                                                wFieldsCheck, unitCell);
-      BFieldComparison bComparison(0); // object to compare fields
-      bComparison.compare(system.w().basis(), wFieldsCheck);
+      DArray< RField<2> > cFieldsCheck; // reference fields
+      system.domain().fieldIo().readFieldsRGrid("in/cRef2D.rf", 
+                                                cFieldsCheck, unitCell);
+      RFieldComparison<2> rComparison; // object to compare fields
+      rComparison.compare(system.c().rgrid(), cFieldsCheck);
      
       double epsilon = 1.0E-4; 
-      double diff = bComparison.maxDiff();
+      double diff = rComparison.maxDiff();
 
       if (verbose() > 0 || diff > epsilon) {
          std::cout << "\n";
-         std::cout << "diff    = " << diff << "\n";
-         std::cout << "epsilon = " << epsilon << "\n";
+         std::cout << "Max field error = " << diff << "\n";
       }
       TEST_ASSERT(diff < epsilon);
 
       // Check thermo parameters
       if (verbose() > 0) {
-         std::cout << "\nFree energy error = " 
+         std::cout << "Free energy error = " 
                    << (system.fHelmholtz() - 3.91021919092) << "\n";
-         std::cout << "\nPressure error = " 
+         std::cout << "Pressure error = " 
                    << (system.pressure() + 12.4986763317) << "\n";
       }
       TEST_ASSERT(abs(system.fHelmholtz() - 3.91021919092) < 1e-5);
@@ -198,37 +184,36 @@ public:
       createSystem(system, "in/system1DGen");
 
       // Read initial guess
-      system.readWBasis("out/w1D.bf");
+      system.readWBasis("in/wIn1D.bf");
 
       // Run the sweep function
       system.sweep();
 
       // Check converged field is correct by comparing to reference
       UnitCell<1> unitCell; // UnitCell object to pass to FieldIo functions
-      DArray< DArray<double> > wFieldsCheck; // Copy of reference field
-      system.domain().fieldIo().readFieldsBasis("in/wRefSweep.bf", 
-                                                wFieldsCheck, unitCell);
-      BFieldComparison bComparison(0); // object to compare fields
-      bComparison.compare(system.w().basis(), wFieldsCheck);
-      double diff = bComparison.maxDiff();
+      DArray< RField<1> > cFieldsCheck; // reference fields
+      system.domain().fieldIo().readFieldsRGrid("in/cRefSweep.rf", 
+                                                cFieldsCheck, unitCell);
+      RFieldComparison<1> rComparison; // object to compare fields
+      rComparison.compare(system.c().rgrid(), cFieldsCheck);
+      double diff = rComparison.maxDiff();
 
       double epsilon = 1.0E-5; 
       if (verbose() > 0 || diff > epsilon) {
          std::cout << "\n";
-         std::cout << "diff    = " << diff << "\n";
-         std::cout << "epsilon = " << epsilon << "\n";
+         std::cout << "Max field error = " << diff << "\n";
       }
       TEST_ASSERT(diff < epsilon);
 
       // Check thermo parameters
       if (verbose() > 0) {
-         std::cout << "\nFree energy error = " 
-                   << (system.fHelmholtz() - 3.84231924345) << "\n";
-         std::cout << "\nPressure error = " 
-                   << (system.pressure() + 11.5127288016) << "\n";
+         std::cout << "Free Energy error = " 
+                   << (system.fHelmholtz() - 3.86654196623) << "\n";
+         std::cout << "Pressure error = " 
+                   << (system.pressure() + 11.4844864688) << "\n";
       }
-      TEST_ASSERT(abs(system.fHelmholtz() - 3.84231924345) < 1e-5);
-      TEST_ASSERT(abs(system.pressure() + 11.5127288016) < 1e-4);
+      TEST_ASSERT(abs(system.fHelmholtz() - 3.86654196623) < 1e-5);
+      TEST_ASSERT(abs(system.pressure() + 11.4844864688) < 1e-4);
    }
 
    void testSolveWithFBulk() // solve a 1D system w/ flexible film thickness
@@ -242,43 +227,41 @@ public:
       createSystem(system, "in/system1DGenFBulk");
 
       // Read initial guess
-      system.readWBasis("in/wIn1D_3.bf");
+      system.readWBasis("in/wIn1DFBulk.bf");
 
       // Iterate to a solution
       system.iterate();
       
       // Check that the right film thickness was found
-      double paramErr = system.domain().unitCell().parameter(0) - 2.061207269;
+      double paramErr = system.domain().unitCell().parameter(0) - 2.05584596449;
       if (verbose() > 0) {
          std::cout << "\nFilm thickness error = " << paramErr << "\n";
       }
       TEST_ASSERT(abs(paramErr) < 1e-5);
-      TEST_ASSERT(abs(system.mask().phiTot() - 0.8059299672) < 1e-5);
+      TEST_ASSERT(abs(system.mask().phiTot() - 0.80542424387) < 1e-5);
 
       // Check converged field is correct by comparing to ref files in in/
       UnitCell<1> unitCell; // UnitCell object to pass to FieldIo functions
-      DArray< DArray<double> > wFieldsCheck; // Copy of reference field
-      system.domain().fieldIo().readFieldsBasis("in/wRef1D_2.bf", 
-                                                wFieldsCheck, unitCell);
-      BFieldComparison bComparison(0); // object to compare fields
-      bComparison.compare(system.w().basis(), wFieldsCheck);
+      DArray< RField<1> > cFieldsCheck; // reference fields
+      system.domain().fieldIo().readFieldsRGrid("in/cRef1DFBulk.rf", 
+                                                cFieldsCheck, unitCell);
+      RFieldComparison<1> rComparison; // object to compare fields
+      rComparison.compare(system.c().rgrid(), cFieldsCheck);
+      double diff = rComparison.maxDiff();
       if (verbose() > 0) {
-         std::cout << "\nMax field error = " << bComparison.maxDiff() << "\n";
+         std::cout << "Max field error = " << diff << "\n";
       }
-      system.domain().fieldIo().writeFieldsBasis("out/w1D_fBulk.bf", 
-                                                 system.w().basis(), 
-                                                 system.domain().unitCell());
-      TEST_ASSERT(bComparison.maxDiff() < 1.0E-5);
+      TEST_ASSERT(diff < 1.0E-5);
 
       // Check thermo parameters
       if (verbose() > 0) {
-         std::cout << "\nFree energy error = " 
-                   << (system.fHelmholtz() - 3.80033554388) << "\n";
-         std::cout << "\nPressure error = " 
-                   << (system.pressure() + 12.9408830685) << "\n";
+         std::cout << "Free Energy error = " 
+                   << (system.fHelmholtz() - 3.89123697966) << "\n";
+         std::cout << "Pressure error = " 
+                   << (system.pressure() + 11.8931100854) << "\n";
       }
-      TEST_ASSERT(abs(system.fHelmholtz() - 3.80033554388) < 1e-5);
-      TEST_ASSERT(abs(system.pressure() + 12.9408830685) < 1e-4);
+      TEST_ASSERT(abs(system.fHelmholtz() - 3.89123697966) < 1e-5);
+      TEST_ASSERT(abs(system.pressure() + 11.8931100854) < 1e-4);
    }
 
    void testSolve1DGrid() // solve a 1D system with an ImposedFieldsGenerator
@@ -296,30 +279,29 @@ public:
 
       // Iterate to a solution
       system.iterate();
-      TEST_ASSERT(eq(system.mask().phiTot(), 8.0951532073e-01));
+      TEST_ASSERT(eq(system.mask().phiTot(), 8.0539149468e-01));
 
       // Check converged field is correct by comparing to ref files in in/
       UnitCell<1> unitCell; // UnitCell object to pass to FieldIo functions
-      DArray< DArray<double> > wFieldsCheck; // Copy of reference field
-      system.domain().fieldIo().readFieldsBasis("in/wRef1D.bf", 
-                                                wFieldsCheck, unitCell);
-      BFieldComparison bComparison(0); // object to compare fields
-      bComparison.compare(system.w().basis(), wFieldsCheck);
+      DArray< RField<1> > cFieldsCheck; // reference fields
+      system.domain().fieldIo().readFieldsRGrid("in/cRef1D.rf", 
+                                                cFieldsCheck, unitCell);
+      RFieldComparison<1> rComparison; // object to compare fields
+      rComparison.compare(system.c().rgrid(), cFieldsCheck);
       if (verbose() > 0) {
-         std::cout << "\nMax error = " << bComparison.maxDiff();
+         std::cout << "\nMax error = " << rComparison.maxDiff() << "\n";
       }
-      system.writeWBasis("out/w1DGrid.bf");
-      TEST_ASSERT(bComparison.maxDiff() < 1.0E-5);
+      TEST_ASSERT(rComparison.maxDiff() < 1.0E-5);
 
       // Check thermo parameters
       if (verbose() > 0) {
-         std::cout << "\nFree energy error = " 
-                   << (system.fHelmholtz() - 3.87784944222);
-         std::cout << "\nPressure error = " 
-                   << (system.pressure() + 12.1117881919);
+         std::cout << "Free Energy error = " 
+                   << (system.fHelmholtz() - 3.89135835701) << "\n";
+         std::cout << "Pressure error = " 
+                   << (system.pressure() + 11.7328996670) << "\n";
       }
-      TEST_ASSERT(abs(system.fHelmholtz() - 3.87784944222) < 1e-5);
-      TEST_ASSERT(abs(system.pressure() + 12.1117881919) < 1e-4);
+      TEST_ASSERT(abs(system.fHelmholtz() - 3.89135835701) < 1e-5);
+      TEST_ASSERT(abs(system.pressure() + 11.7328996670) < 1e-4);
    }
 
    void testSolve2DGrid() // solve a 2D system with an ImposedFieldsGenerator
@@ -337,7 +319,6 @@ public:
 
       // Solve
       system.iterate();
-      system.writeWBasis("out/w2DGrid.bf");
       TEST_ASSERT(eq(system.mask().phiTot(), 7.99990525324e-01));
       
       // Check that lattice parameters are correct
@@ -347,28 +328,27 @@ public:
 
       // Check converged field is correct by comparing to reference
       UnitCell<2> unitCell; // UnitCell object to pass to FieldIo functions
-      DArray< DArray<double> > wFieldsCheck; // Copy of reference field
-      system.domain().fieldIo().readFieldsBasis("in/wRef2DGrid.bf", 
-                                                wFieldsCheck, unitCell);
-      BFieldComparison bComparison(0); // object to compare fields
-      bComparison.compare(system.w().basis(), wFieldsCheck);
+      DArray< RField<2> > cFieldsCheck; // reference fields
+      system.domain().fieldIo().readFieldsRGrid("in/cRef2D.rf", 
+                                                cFieldsCheck, unitCell);
+      RFieldComparison<2> rComparison; // object to compare fields
+      rComparison.compare(system.c().rgrid(), cFieldsCheck);
      
       double epsilon = 1.0E-4; 
-      double diff = bComparison.maxDiff();
+      double diff = rComparison.maxDiff();
 
       if (verbose() > 0 || diff > epsilon) {
          std::cout << "\n";
-         std::cout << "diff    = " << diff << "\n";
-         std::cout << "epsilon = " << epsilon;
+         std::cout << "Max field error = " << diff << "\n";
       }
       TEST_ASSERT(diff < epsilon);
 
       // Check thermo parameters
       if (verbose() > 0) {
-         std::cout << "\nFree energy error = " 
-                   << (system.fHelmholtz() - 3.91022221196);
-         std::cout << "\nPressure error = " 
-                   << (system.pressure() + 12.4995705392);
+         std::cout << "Free Energy error = " 
+                   << (system.fHelmholtz() - 3.91022221196) << "\n";
+         std::cout << "Pressure error = " 
+                   << (system.pressure() + 12.4995705392) << "\n";
       }
       TEST_ASSERT(abs(system.fHelmholtz() - 3.91022221196) < 1e-5);
       TEST_ASSERT(abs(system.pressure() + 12.4995705392) < 1e-4);
@@ -386,37 +366,36 @@ public:
       createSystem(system, "in/system1DGenGrid");
 
       // Read initial guess
-      system.readWBasis("out/w1DGrid.bf");
+      system.readWBasis("in/wIn1D.bf");
 
       // Run the sweep function
       system.sweep();
 
       // Check converged field is correct by comparing to reference
       UnitCell<1> unitCell; // UnitCell object to pass to FieldIo functions
-      DArray< DArray<double> > wFieldsCheck; // Copy of reference field
-      system.domain().fieldIo().readFieldsBasis("in/wRefSweep.bf", 
-                                                wFieldsCheck, unitCell);
-      BFieldComparison bComparison(0); // object to compare fields
-      bComparison.compare(system.w().basis(), wFieldsCheck);
-      double diff = bComparison.maxDiff();
+      DArray< RField<1> > cFieldsCheck; // reference fields
+      system.domain().fieldIo().readFieldsRGrid("in/cRefSweep.rf", 
+                                                cFieldsCheck, unitCell);
+      RFieldComparison<1> rComparison; // object to compare fields
+      rComparison.compare(system.c().rgrid(), cFieldsCheck);
+      double diff = rComparison.maxDiff();
 
       double epsilon = 1.0E-5; 
       if (verbose() > 0 || diff > epsilon) {
          std::cout << "\n";
-         std::cout << "diff    = " << diff << "\n";
-         std::cout << "epsilon = " << epsilon;
+         std::cout << "Max field error = " << diff << "\n";
       }
       TEST_ASSERT(diff < epsilon);
 
       // Check thermo parameters
       if (verbose() > 0) {
-         std::cout << "\nFree energy error = " 
-                   << (system.fHelmholtz() - 3.84231924345);
-         std::cout << "\nPressure error = " 
-                   << (system.pressure() + 11.5127288016);
+         std::cout << "Free Energy error = " 
+                   << (system.fHelmholtz() - 3.86656498107) << "\n";
+         std::cout << "Pressure error = " 
+                   << (system.pressure() + 11.4994801703) << "\n";
       }
-      TEST_ASSERT(abs(system.fHelmholtz() - 3.84231924345) < 1e-5);
-      TEST_ASSERT(abs(system.pressure() + 11.5127288016) < 1e-4);
+      TEST_ASSERT(abs(system.fHelmholtz() - 3.86656498107) < 1e-5);
+      TEST_ASSERT(abs(system.pressure() + 11.4994801703) < 1e-4);
    }
 
    void testSolveWithFBulkGrid() // solve a 1D system w flexible film thickness
@@ -430,42 +409,41 @@ public:
       createSystem(system, "in/system1DGenFBulkGrid");
 
       // Read initial guess
-      system.readWBasis("in/wIn1D_3.bf");
+      system.readWBasis("in/wIn1DFBulk.bf");
 
       // Iterate to a solution
       system.iterate();
       
       // Check that the right film thickness was found
-      double paramErr = system.domain().unitCell().parameter(0) - 2.061207269;
+      double paramErr = system.domain().unitCell().parameter(0) - 2.05584596449;
       if (verbose() > 0) {
-         std::cout << "\nFilm thickness error = " << paramErr;
+         std::cout << "\nFilm thickness error = " << paramErr << "\n";
       }
       TEST_ASSERT(abs(paramErr) < 1e-5);
-      TEST_ASSERT(abs(system.mask().phiTot() - 0.8059299672) < 1e-5);
+      TEST_ASSERT(abs(system.mask().phiTot() - 0.80542424387) < 1e-5);
 
       // Check converged field is correct by comparing to ref files in in/
       UnitCell<1> unitCell; // UnitCell object to pass to FieldIo functions
-      DArray< DArray<double> > wFieldsCheck; // Copy of reference field
-      system.domain().fieldIo().readFieldsBasis("in/wRef1D_2.bf", 
-                                                wFieldsCheck, unitCell);
-      BFieldComparison bComparison(0); // object to compare fields
-      bComparison.compare(system.w().basis(), wFieldsCheck);
+      DArray< RField<1> > cFieldsCheck; // reference fields
+      system.domain().fieldIo().readFieldsRGrid("in/cRef1DFBulk.rf", 
+                                                cFieldsCheck, unitCell);
+      RFieldComparison<1> rComparison; // object to compare fields
+      rComparison.compare(system.c().rgrid(), cFieldsCheck);
+      double diff = rComparison.maxDiff();
       if (verbose() > 0) {
-         std::cout << "\nMax field error = " << bComparison.maxDiff();
+         std::cout << "Max field error = " << diff << "\n";
       }
-      system.writeWBasis("out/w1DGrid_fBulk.bf");
-      
-      TEST_ASSERT(bComparison.maxDiff() < 1.0E-5);
+      TEST_ASSERT(diff < 1.0E-5);
 
       // Check thermo parameters
       if (verbose() > 0) {
-         std::cout << "\nFree energy error = " 
-                   << (system.fHelmholtz() - 3.80033554388) << "\n";
-         std::cout << "\nPressure error = " 
-                   << (system.pressure() + 12.9408830685);
+         std::cout << "Free Energy error = " 
+                   << (system.fHelmholtz() - 3.89123697966) << "\n";
+         std::cout << "Pressure error = " 
+                   << (system.pressure() + 11.8931100854) << "\n";
       }
-      TEST_ASSERT(abs(system.fHelmholtz() - 3.80033554388) < 1e-5);
-      TEST_ASSERT(abs(system.pressure() + 12.9408830685) < 1e-4);
+      TEST_ASSERT(abs(system.fHelmholtz() - 3.89123697966) < 1e-5);
+      TEST_ASSERT(abs(system.pressure() + 11.8931100854) < 1e-4);
    }
 
    // Read parameter file to create a System object
