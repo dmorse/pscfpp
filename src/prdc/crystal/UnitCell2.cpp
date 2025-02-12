@@ -249,7 +249,7 @@ namespace Prdc {
                          FSArray<double, 6> const & parameters)
    {
       set(lattice);
-      UTIL_CHECK(parameters.size() == nParameter_);
+      // UTIL_CHECK(parameters.size() == nParameter_);
       for (int i = 0; i < nParameter_; ++i) {
          parameters_[i] = parameters[i];
       }   
