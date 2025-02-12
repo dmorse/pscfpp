@@ -1,0 +1,86 @@
+/*! \page psfts_perturb_page Perturbation
+
+\ref psfts_ramp_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref developer_page      (Next)
+<BR>
+
+
+The ramp and perturbation features of PSCF can both be used, together or
+separately, to implement calculations in which free energy differences 
+are computed by thermodynamic integration. Thermodynamic integration is 
+a technique in which the difference in free energies between two states 
+characterized by different values for some parameter are computed by 
+numerically evaluating the integral of a quantity that is equal to the
+derivative of the free energy with respect to the parameter of interest. 
+
+Introduction of a ramp allows the user to perform a calculation in 
+which one or more of the parameters that define the Hamiltonian vary 
+continuously over the course of the simulation. One reason to do this is 
+as a method of approximately identifying a phase transition, such as an 
+order-disorder transition, by looking for evidence of a spontaneous phase 
+transformation that occurs during such a simulation. Another possible 
+purpose of this is to allow implementation of continuous thermodynamic 
+integration calculations. Continuous thermodynamic integration is a 
+technique in which the integral of some property with respect to 
+variation of a parameter is approximately computed by slowly varying 
+the relevant parameter during the simulation and computing the time 
+integral of the quantity of interest. 
+
+Introduction of a perturbation allows the user to define an arbitrary 
+modification of the field theoretic Hamiltonian, thus creating a model
+with a field theoretic Hamiltonian that may have a different functional
+form than that obtained in the standard model used in PSCF. Thus far, 
+the main use for this has been as a framework for implementing the 
+Einstein crystal method of computing free energies. 
+
+The ramp and perturbation features may be combined by using a ramp to 
+vary a parameter that governs the magnitude of a perturbation.  
+Application of this technique to the Einstein crystal method is
+described below.
+
+Use of a Perturbation and/or Ramp may be enabled by adding a corresponding
+block or blocks within the Simulator block of the parameter file. The
+Perturbation and Ramp blocks are optional selectable subblocks of the
+BdSimulator or McSimulator block that, if present, appear after the
+Compressor. If both a Perturbation and a Ramp are present, the 
+Perturbation appears before the Ramp.  The format for BdSimulator that 
+uses both a perturbation and a Ramp is thus
+\code
+  BdSimulator{
+    seed*    int
+    BdStep#{ ... }
+    Compressor#{ ... }
+    Perturbation*#{ ... }
+    Ramp*#{ ... }
+    AnalyzerManager*{ ... }
+  }
+\endcode
+The corresponding format for an McSimulator is
+\code
+  McSimulator{
+    seed*    int
+    McMoveManager{ ... }
+    Compressor*#{ ... }
+    Perturbation*#{ ... }
+    Ramp*#{ ... }
+    AnalyzerManager*{ ... }
+  }
+\endcode
+Here, as elsewhere in this documentation, the symbol "\*\#" after the 
+generic names Perturbation and Ramp indicates that these blocks are
+both optional (i.e., may be omitted) and selectable.
+
+Though both Perturbation and Ramp are implemented as selectable blocks, 
+there is currently only on type of Perturbation available (named 
+EinsteinCrystalPerturbation) and only one type of Ramp (named 
+LinearRamp).  These two classes may be used separately or combined to 
+perform a Einstein crystal calculation using continuous thermodynamic
+integration. 
+
+
+<BR>
+\ref psfts_ramp_page   (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
+\ref psfts_page        (Up)   &nbsp; &nbsp; &nbsp; &nbsp;
+\ref developer_page    (Next)
+
+*/

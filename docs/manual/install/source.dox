@@ -33,33 +33,35 @@ invoked this command. See the discussion of the reason for use of the
 
 The above instructions are intended for users who simply want to get a 
 copy of PSCF their own use, but who are not (or not yet) interested in 
-contributing to its development. Users that want to be able to contribute 
-to the project or share their extensions or improvements of PSCF with 
-others should go through a slightly more complicated procedure. Such 
+contributing to development. Users that want to be able to contribute 
+code to the project or share their extensions or improvements of PSCF 
+with others should go through a slightly more complicated procedure. Such 
 user/developers should instead:
 <ul>
 <li> 
-  Create a user account on github.com, if they do not already have one.
+  Create a personal user account on github.com, if they do not already 
+  have one.
 </li>
 <li> 
-  Create a fork (i.e., a personal version) of the PSCF repository in 
-  their github user account</li>
+  Create a fork (i.e., a personal version) of the PSCF repository in their 
+  github user account</li>
 <li> 
   Clone their personal fork of the PSCF repository to a computer on 
   which they can compile and edit the code, using the "--recursive" option 
   as described above. 
 </li>
 </ul>
-The URL for dmorse/pscfpp used in the command to clone user's github 
-fork to a local computer may use a prefix that selects either the https 
-(prefix https://github.com/) or ssh (prefix git@github.com: ) communication 
-protocol. Cloning with either of these protocols creates a connection with
-the github server that will allow the user write access to their personal 
-fork of the PSCF repository on github.  The https protocol was used in the 
-above instructions for general users who clone the main pscfpp directory 
-directly, in which the repository URL starts with "https://github.com/..." 
-The command to use ssh to clone a fork of PSCF created by a user with 
-a github username JaneDoe would generally look like
+The repository URL used in the command to clone user's github fork to a 
+local computer may use a prefix that selects either the https 
+(prefix https://github.com/) or ssh (prefix git@github.com: ) 
+communication protocol. Cloning with either of these protocols creates 
+a connection with the github server that will allow the user write access 
+to their personal fork of the PSCF repository on github.  The https 
+protocol was used in the above instructions for general users who clone 
+the main pscfpp directory directly, in which the repository URL starts 
+with "https://github.com/...".  The command to use ssh to clone a fork 
+of PSCF created by a user with a github username JaneDoe would generally 
+look like
 \code
 git clone --recursive git@github.com:JaneDoe/pscfpp.git
 \endcode
@@ -73,7 +75,6 @@ authentication for every push command. See the github documentation on
 <a href="https://docs.github.com/en/authentication"> authentication </a>
 for further details about how to set up public keys for use with ssh, 
 among other issues related to github account security.
-
 
 Hereafter, we refer to the root directory of the PSCF repository, which
 is named pscfpp by default, as simply the PSCF root directory. References 
@@ -97,20 +98,20 @@ should automatically create clones of these submodules in the appropriate
 locations within the PSCF directory tree, thus creating a complete 
 functional copy of the source code. Cloning a copy of PSCF without 
 using the "--recursive" option, however, would create a version of the 
-PSCF directory tree in which the src/util and src/tests directories 
-are empty. If you find yourself with a repository clone in which one or 
-both of these repositories is empty, you can either clone PSCF again 
-with the recursive option, or initialize and update the submodules by calling
+PSCF directory tree in which the src/util and src/tests directories are 
+empty. If you find yourself with a repository clone in which one or both 
+of these directories is empty, you can either clone PSCF again with the 
+recursive option, or initialize and update the submodules by calling
 \code
 git submodule update --init
 \endcode
 
-Also note that git does not update submodules automatically when you switch
-to a different version or branch of the main software. Because of this, you
-may need to manually update the submodules if you switch to a different 
-version of PSCF, since different versions of this software are associated 
-with different versions of the submodules. An error will likely occur during 
-compilation of the software if any submodule is not properly updated. 
+Note that git does not update submodules automatically when you switch
+to a different version or branch of the parent PSCF repository. Because 
+of this, you may need to manually update the submodules if you switch to 
+a different version of PSCF, since different versions of the parent
+repository software may be associated with different versions of the 
+submodules. 
 
 You can check if you have the correct version of the submodules by running 
 "git status" from the PSCF root directory. If, for example, your util 
@@ -122,9 +123,9 @@ submodule is the wrong version, you will see the following output:
 #
 #	modified:   src/util (new commits)
 \endcode
-This indicates that your submodule is different ("modified") from the version
-that is associated with your current version of PSCF. To update the submodule
-to the appropriate version, run 
+This indicates that your submodule is different ("modified") from the 
+version that is associated with your current version of PSCF. To update 
+the submodule to the appropriate version, run 
 \code
 git submodule update
 \endcode

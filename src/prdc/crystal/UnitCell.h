@@ -23,19 +23,29 @@ namespace Prdc {
    * Explicit specializations are defined for D=1, 2, and 3. In each 
    * case, class UnitCell<D> is derived from UnitCellBase<D> and defines 
    * an enumeration UnitCell<D>::LatticeSystem of the possible types of 
-   * Bravais lattice systems in D-dimensional space. Each explicit
-   * specialization UnitCell<D> has a member variable of this type that
-   * is returned by a function named lattice(). The value of the lattice
-   * variable is initialized to an enumeration value named Null, which 
-   * denotes unknown or unitialized.
+   * Bravais lattice systems in D-dimensional space.  Iostream inserter 
+   * (<<) and extractor (>>) operators are defined for each
+   * UnitCell<D>::LatticeSystem enumeration. These operators define a 
+   * standard text representation of each allowed unit cell type, as
+   * described \ref scft_unitcell_page "here".
    *
-   * Iostream inserter (<<) and extractor (>>) operators are defined for
-   * all explicit specializations of UnitCell<D>, allowing a UnitCell
-   * to be read from or written to file like a primitive variable.
-   * The text representation for a UnitCell<D> contains a text 
-   * representation of the LatticeSystem<D> enumeration (i.e., the
-   * unit cell type) and a list of one or more unit cell parameters 
-   * (lengths and angles), as described \ref scft_unitcell_page "here".
+   * Each explicit specialization UnitCell<D> has a member variable of 
+   * type UnitCell<D>::LatticeSystem, the value of which is returned by
+   * a function named lattice().  The value of the lattice variable is 
+   * initialized to an enumeration value named Null, which denotes 
+   * unknown or uninitialized. This variable may only be set once. Any
+   * attempt to reset the lattice type to a different non-null after it 
+   * has been set will cause an Exception to be thrown and program 
+   * execution to halt. Each UnitCell<D> object may thus only be used 
+   * to represent one lattice type during its lifetime. 
+   *
+   * A template defines iostream inserter (<<) and extractor (>>) 
+   * operators each explicit specializations of UnitCell<D>, allowing 
+   * a UnitCell<D> to be read from or written to file like a primitive 
+   * variable. The text representation for a UnitCell<D> contains a text
+   * representation of the LatticeSystem<D> enumeration (i.e., the unit
+   * cell type) and a list of one or more unit cell parameters (lengths
+   * and angles), as described \ref scft_unitcell_page "here".
    *
    * \ingroup Prdc_Crystal_Module
    */
@@ -47,6 +57,9 @@ namespace Prdc {
 
    /**
    * istream input extractor for a UnitCell<D>.
+   *
+   * If cell.lattice() is not Null, the lattice type read from stream
+   * must match the existing lattice type, or an Exception is thrown.
    *
    * \param  in  input stream
    * \param  cell  UnitCell<D> to be read
@@ -144,12 +157,20 @@ namespace Prdc {
       *
       * Upon return, values of lattice and nParameter are set. 
       *
+      * If cell.lattice() is not Null, the new lattice type must match
+      * match the existing lattice type, or an Exception is thrown. 
+      * The lattice type may thus only be set once.
+      *
       * \param lattice  lattice system enumeration value
       */
       void set(UnitCell<1>::LatticeSystem lattice);
 
       /**
       * Set the unit cell state (lattice system and parameters).
+      *
+      * This function calls set(UnitCell<1>::Lattice System) internally.
+      * If cell.lattice() is not Null, the new lattice type must match
+      * match the existing lattice type, or an Exception is thrown. 
       *
       * \param lattice  lattice system enumeration value
       * \param parameters  array of unit cell parameters
@@ -280,12 +301,21 @@ namespace Prdc {
       *
       * Upon return, values of lattice and nParameter are set. 
       *
+      * If cell.lattice() is not Null, the new lattice type must match
+      * match the existing lattice type, or an Exception is thrown. 
+      * The lattice type may thus only be set once.
+      *
       * \param lattice  lattice system enumeration value
       */
       void set(UnitCell<2>::LatticeSystem lattice);
 
       /**
       * Set the unit cell state (lattice system and parameters).
+      *
+      * This function calls set(UnitCell<2>::LatticeSystem) internally.
+      * If cell.lattice() is not Null, the new lattice type must match
+      * match the existing lattice type, or an Exception is thrown. 
+      * The lattice type may thus only be set once.
       *
       * \param lattice  lattice system enumeration value
       * \param parameters  array of unit cell parameters
@@ -416,12 +446,21 @@ namespace Prdc {
       *
       * Upon return, values of lattice and nParameter are set. 
       *
+      * If cell.lattice() is not Null, the new lattice type must match
+      * match the existing lattice type, or an Exception is thrown. 
+      * The lattice type may thus only be set once.
+      *
       * \param lattice  lattice system enumeration value
       */
       void set(UnitCell<3>::LatticeSystem lattice);
 
       /**
-      * Set the unit cell state.
+      * Set the unit cell state (lattice type and cell parameters).
+      *
+      * This function calls set(UnitCell<3>::LatticeSystem) internally.
+      * If cell.lattice() is not Null, the new lattice type must match
+      * match the existing lattice type, or an Exception is thrown. 
+      * The lattice type may thus only be set once.
       *
       * \param lattice  lattice system enumeration value
       * \param parameters  array of unit cell parameters

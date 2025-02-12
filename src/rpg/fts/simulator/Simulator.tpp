@@ -24,7 +24,6 @@
 #include <util/global.h>
 #include <gsl/gsl_eigen.h>
 
-
 namespace Pscf {
 namespace Rpg {
 
@@ -56,8 +55,8 @@ namespace Rpg {
       rampFactoryPtr_(nullptr),
       rampPtr_(nullptr),
       isAllocated_(false)
-   {  
-      setClassName("Simulator"); 
+   {
+      setClassName("Simulator");
       compressorFactoryPtr_ = new CompressorFactory<D>(system);
       perturbationFactoryPtr_ = new PerturbationFactory<D>(*this);
       rampFactoryPtr_ = new RampFactory<D>(*this);
@@ -89,7 +88,7 @@ namespace Rpg {
       }
    }
 
-   /* 
+   /*
    * Allocate required memory.
    */
    template <int D>
@@ -119,29 +118,28 @@ namespace Rpg {
       for (int i = 0; i < nMonomer - 1; ++i) {
          dc_[i].allocate(dimensions);
       }
-      
-      // Allocate memory for single eigenvector components of w 
+
+      // Allocate memory for single eigenvector components of w
       // after constant shift
       wcs_.allocate(dimensions);
-      
+
       // Allocate state_, if necessary.
       if (!state_.isAllocated) {
          state_.allocate(nMonomer, dimensions);
       }
-      
+
       isAllocated_ = true;
    }
 
-   /* 
-   * Virtual function to read parameters - unimplemented.
+   /*
+   * Virtual function - this version is only used for testing.
    */
    template <int D>
    void Simulator<D>::readParameters(std::istream &in)
-   { 
-      // Read required Compressor block
-      readCompressor(in);
-      UTIL_CHECK(compressorPtr_);
+   {
+      readRandomSeed(in);
 
+      #if 0
       // Optionally random seed
       seed_ = 0;
       readOptional(in, "seed", seed_);
@@ -150,12 +148,18 @@ namespace Rpg {
       // Default value seed_ = 0 uses clock time.
       random().setSeed(seed_);
       cudaRandom().setSeed(seed_);
-      
+      #endif
+
+      bool isEnd = false;
+
+      // Read required Compressor block
+      readCompressor(in, isEnd);
+
       // Optionally read a Perturbation
-      readPerturbation(in);
-      
+      readPerturbation(in, isEnd);
+
       // Optionally read a Ramp
-      readRamp(in);
+      readRamp(in, isEnd);
    }
 
    /*
@@ -173,7 +177,7 @@ namespace Rpg {
                               std::string classname,
                               std::string filename)
    {  UTIL_THROW("Error: Unimplemented function Simulator<D>::analyze"); }
-   
+
    /*
    * Compute field theoretic Hamiltonian H[W].
    */
@@ -191,7 +195,7 @@ namespace Rpg {
 
       const int nMonomer = mixture.nMonomer();
       const int meshSize = domain.mesh().size();
-      
+
       const int np = mixture.nPolymer();
       const int ns = mixture.nSolvent();
       double phi, mu;
@@ -228,11 +232,11 @@ namespace Rpg {
             }
          }
       }
-      
+
       // Add average of pressure field wc_[nMonomer-1] to lnQ
       double sum_xi = Reduce::sum(wc_[nMonomer-1]);
       lnQ += sum_xi/double(meshSize);
-      
+
       // lnQ now contains a value per monomer
 
       // Initialize field contribution HW
@@ -252,14 +256,14 @@ namespace Rpg {
          wSqure = Reduce::innerProduct(wcs_, wcs_);
          HW += prefactor * wSqure;
       }
-      
+
       // Normalize HW to equal a value per monomer
       HW /= double(meshSize);
 
       // Add constant term K/2 per monomer (K=s=e^{T}chi e/M^2)
       HW += 0.5*sc_[nMonomer - 1];
 
-      // Compute number of monomers in the system (nMonomerSystem)      
+      // Compute number of monomers in the system (nMonomerSystem)
       const double vSystem  = domain.unitCell().volume();
       const double vMonomer = mixture.vMonomer();
       const double nMonomerSystem = vSystem / vMonomer;
@@ -268,14 +272,14 @@ namespace Rpg {
       fieldHamiltonian_ = nMonomerSystem * HW;
       idealHamiltonian_ = -1.0 * nMonomerSystem * lnQ;
       hamiltonian_ = idealHamiltonian_ + fieldHamiltonian_;
-      
+
       if (hasPerturbation()) {
         perturbationHamiltonian_ = perturbation().hamiltonian(hamiltonian_);
         hamiltonian_ += perturbationHamiltonian_;
       } else {
         perturbationHamiltonian_ = 0.0;
       }
-      
+
       hasHamiltonian_ = true;
    }
 
@@ -323,7 +327,7 @@ namespace Rpg {
          }
       }
 
-      // Eigenvalue calculations use data structures and 
+      // Eigenvalue calculations use data structures and
       // functions from the Gnu Scientific Library (GSL)
 
       // Allocate GSL matrix A that will hold a copy of chiP
@@ -344,7 +348,7 @@ namespace Rpg {
       error = gsl_eigen_symmv(A, Avals, Avecs, work);
       UTIL_CHECK(error == 0);
 
-      // Requirements: 
+      // Requirements:
       // - A has exactly one zero eigenvalue, with eigenvector (1,...,1)
       // - All other eigenvalues must be negative.
 
@@ -375,8 +379,8 @@ namespace Rpg {
       }
       UTIL_CHECK(nNull == 1);
       UTIL_CHECK(iNull >= 0);
-    
-      // Set eigenpair with zero eigenvalue 
+
+      // Set eigenpair with zero eigenvalue
       i = nMonomer - 1;
       chiEvals_[i] = 0.0;
       for (j = 0; j < nMonomer; ++j) {
@@ -395,11 +399,11 @@ namespace Rpg {
          for (j = 0;  j < nMonomer; ++j) {
             vec = chiEvecs_(i, j);
             norm += vec*vec;
-         } 
+         }
          prefactor = sqrt( double(nMonomer)/norm );
          for (j = 0;  j < nMonomer; ++j) {
             chiEvecs_(i, j) *= prefactor;
-         } 
+         }
       }
 
       // Check final eigenvector is (1, ..., 1)
@@ -414,7 +418,7 @@ namespace Rpg {
          s[i] = 0.0;
          for (j = 0; j < nMonomer; ++j) {
            s[i] += chi(i,j);
-         } 
+         }
          s[i] = s[i]/double(nMonomer);
       }
 
@@ -432,7 +436,7 @@ namespace Rpg {
       for (i = 0; i < nMonomer; ++i) {
          Log::file() << "Eigenpair " << i << "\n";
          Log::file() << "value  =  " << chiEvals_[i] << "\n";
-         Log::file() << "vector = [ "; 
+         Log::file() << "vector = [ ";
          for (j = 0; j < nMonomer; ++j) {
             Log::file() << chiEvecs_(i, j) << "   ";
          }
@@ -471,17 +475,17 @@ namespace Rpg {
             VecOp::addEqVc(Wc, system().w().rgrid(j), vec);
          }
       }
-      
+
       #if 0
       // Debugging output
       std::string filename = "wc";
-      system().fieldIo().writeFieldsRGrid(filename, wc_, 
+      system().fieldIo().writeFieldsRGrid(filename, wc_,
                                           system().domain().unitCell());
       #endif
 
       hasWc_ = true;
    }
-   
+
    /*
    * Compute the eigenvector components of the c-fields, using the
    * eigenvectors chiEvecs_ of the projected chi matrix as a basis.
@@ -499,25 +503,25 @@ namespace Rpg {
 
       // Loop over eigenvectors (i is an eigenvector index)
       for (i = 0; i < nMonomer; ++i) {
-         
+
          // Set cc_[i] to zero
          RField<D>& Cc = cc_[i];
          VecOp::eqS(Cc, 0.0);
 
-         // Loop over monomer types 
+         // Loop over monomer types
          for (j = 0; j < nMonomer; ++j) {
             cudaReal vec;
             vec = (cudaReal)chiEvecs_(i, j);
-            
+
             // Loop over grid points
             VecOp::addEqVc(Cc, system().c().rgrid(j), vec);
          }
       }
-      
+
       #if 0
       // Debugging output
       std::string filename = "cc";
-      system().fieldIo().writeFieldsRGrid(filename, cc_, 
+      system().fieldIo().writeFieldsRGrid(filename, cc_,
                                           system().domain().unitCell());
       #endif
 
@@ -541,7 +545,7 @@ namespace Rpg {
       const double a = 1.0/vMonomer;
       double b, s;
       int i;
-      
+
       // Loop over composition eigenvectors (exclude the last)
       for (i = 0; i < nMonomer - 1; ++i) {
          RField<D>& Dc = dc_[i];
@@ -549,11 +553,11 @@ namespace Rpg {
          RField<D> const & Cc = cc_[i];
          b = -1.0*double(nMonomer)/chiEvals_[i];
          s = sc_[i];
-          
+
          // Loop over grid points
          VecOpFts::computeDField(Dc, Wc, Cc, a, b, s);
       }
-      
+
       // Add derivatives arising from a perturbation (if any).
       if (hasPerturbation()) {
          perturbation().incrementDc(dc_);
@@ -561,7 +565,7 @@ namespace Rpg {
 
       hasDc_ = true;
    }
-   
+
    /*
    * Save the current state prior to a next move.
    *
@@ -576,14 +580,14 @@ namespace Rpg {
       UTIL_CHECK(!state_.hasData);
 
       // Set fields
-      int nMonomer = system().mixture().nMonomer(); 
-      
+      int nMonomer = system().mixture().nMonomer();
+
       // Set field components
       for (int i = 0; i < nMonomer; ++i) {
          VecOp::eqV(state_.w[i], system().w().rgrid(i));
          VecOp::eqV(state_.wc[i], wc_[i]);
       }
-      
+
       // Save cc based on ccSavePolicy
       if (state_.needsCc) {
          UTIL_CHECK(hasCc());
@@ -591,7 +595,7 @@ namespace Rpg {
             VecOp::eqV(state_.cc[i], cc_[i]);
          }
       }
-      
+
       // Save dc based on dcSavePolicy
       if (state_.needsDc) {
          UTIL_CHECK(hasDc());
@@ -599,7 +603,7 @@ namespace Rpg {
             VecOp::eqV(state_.dc[i], dc_[i]);
          }
       }
-      
+
       // Save Hamiltonian based on hamiltonianSavePolicy
       if (state_.needsHamiltonian){
          UTIL_CHECK(hasHamiltonian());
@@ -608,7 +612,7 @@ namespace Rpg {
          state_.fieldHamiltonian  = fieldHamiltonian();
          state_.perturbationHamiltonian  = perturbationHamiltonian();
       }
-      
+
       if (hasPerturbation()) {
          perturbation().saveState();
       }
@@ -619,7 +623,7 @@ namespace Rpg {
    /*
    * Restore a saved fts state.
    *
-   * Invoked after an attempted Monte-Carlo move is rejected 
+   * Invoked after an attempted Monte-Carlo move is rejected
    * or an fts move fails to converge
    */
    template <int D>
@@ -631,7 +635,7 @@ namespace Rpg {
       int meshSize = system().domain().mesh().size();
 
       // Restore fields
-      system().setWRGrid(state_.w); 
+      system().setWRGrid(state_.w);
 
       // Restore Hamiltonian and components
       if (state_.needsHamiltonian){
@@ -641,33 +645,33 @@ namespace Rpg {
          perturbationHamiltonian_ = state_.perturbationHamiltonian;
          hasHamiltonian_ = true;
       }
-      
+
       for (int i = 0; i < nMonomer; ++i) {
          VecOp::eqV(wc_[i], state_.wc[i]);
       }
       hasWc_ = true;
-      
+
       if (state_.needsCc) {
          for (int i = 0; i < nMonomer; ++i) {
             VecOp::eqV(cc_[i], state_.cc[i]);
          }
          hasCc_ = true;
       }
-      
+
       if (state_.needsDc) {
          for (int i = 0; i < nMonomer - 1; ++i) {
             VecOp::eqV(dc_[i], state_.dc[i]);
          }
          hasDc_ = true;
       }
-      
+
       if (hasPerturbation()) {
          perturbation().restoreState();
       }
-      
+
       state_.hasData = false;
    }
- 
+
    /*
    * Clear the saved Monte-Carlo state.
    *
@@ -676,23 +680,23 @@ namespace Rpg {
    template <int D>
    void Simulator<D>::clearState()
    {  state_.hasData = false; }
-   
+
    /*
    * Output all timer results.
-   */ 
+   */
    template<int D>
    void Simulator<D>::outputTimers(std::ostream& out)
-   {  
-      outputMdeCounter(out); 
+   {
+      outputMdeCounter(out);
       compressor().outputTimers(out);
    }
- 
+
    /*
    * Output modified diffusion equation (MDE) counter.
-   */ 
+   */
    template<int D>
    void Simulator<D>::outputMdeCounter(std::ostream& out)
-   { 
+   {
       //out << std::endl;
       out << "MDE counter   "
           << compressor().mdeCounter() << std::endl;
@@ -704,49 +708,69 @@ namespace Rpg {
    */
    template<int D>
    void Simulator<D>::clearTimers()
-   {  
-      UTIL_CHECK(compressorPtr_);
-      compressor().clearTimers(); 
+   {
+      UTIL_CHECK(hasCompressor());
+      compressor().clearTimers();
    }
 
    // Protected Functions
 
    /*
+   * Read random seed and initialize random number generators.
+   */
+   template <int D>
+   void Simulator<D>::readRandomSeed(std::istream &in)
+   {
+      // Optionally random seed
+      seed_ = 0;
+      readOptional(in, "seed", seed_);
+
+      // Set seed values for both random number generators
+      // Default value seed_ = 0 uses clock time.
+      random().setSeed(seed_);
+      cudaRandom().setSeed(seed_);
+   }
+
+   /*
    * Read the required Compressor parameter file block.
    */
    template<int D>
-   void Simulator<D>::readCompressor(std::istream& in)
+   void Simulator<D>::readCompressor(std::istream& in, bool& isEnd)
    {
-      UTIL_CHECK(compressorFactoryPtr_);
-      std::string className;
-      bool isEnd = false;
-      compressorPtr_ =
-         compressorFactoryPtr_->readObject(in, *this, className, isEnd);
-      UTIL_CHECK(compressorPtr_);
+      if (!isEnd) {
+         UTIL_CHECK(!hasCompressor());
+         UTIL_CHECK(compressorFactoryPtr_);
+         std::string className;
+         compressorPtr_ =
+            compressorFactory().readObjectOptional(in, *this,
+                                                   className, isEnd);
+      }
+      if (!hasCompressor() && ParamComponent::echo()) {
+         Log::file() << indent() << "  Compressor{ [absent] }\n";
+      }
    }
-   
+
    // Functions related to an associated Perturbation
 
    /*
    * Optionally read a Perturbation parameter file block.
    */
    template<int D>
-   void Simulator<D>::readPerturbation(std::istream& in)
+   void Simulator<D>::readPerturbation(std::istream& in, bool& isEnd)
    {
-      UTIL_CHECK(!perturbationPtr_);
-
-      std::string className;
-      bool isEnd = false;
-
-      perturbationPtr_ =
-         perturbationFactory().readObjectOptional(in, *this,
-                                                  className, isEnd);
-      UTIL_CHECK(!isEnd);
-      if (!perturbationPtr_ && ParamComponent::echo()) {
+      if (!isEnd) {
+         UTIL_CHECK(!hasPerturbation());
+         UTIL_CHECK(perturbationFactoryPtr_);
+         std::string className;
+         perturbationPtr_ =
+            perturbationFactory().readObjectOptional(in, *this,
+                                                     className, isEnd);
+      }
+      if (!hasPerturbation() && ParamComponent::echo()) {
          Log::file() << indent() << "  Perturbation{ [absent] }\n";
       }
    }
-   
+
    /*
    * Set the associated Perturbation<D> object.
    */
@@ -756,22 +780,22 @@ namespace Rpg {
       UTIL_CHECK(ptr != 0);
       perturbationPtr_ = ptr;
    }
-   
+
    /*
    * Optionally read a parameter file block for an associated Ramp.
    */
    template<int D>
-   void Simulator<D>::readRamp(std::istream& in)
+   void Simulator<D>::readRamp(std::istream& in, bool& isEnd)
    {
-      UTIL_CHECK(!rampPtr_);
-
-      std::string className;
-      bool isEnd = false;
-
-      rampPtr_ =
-         rampFactory().readObjectOptional(in, *this, className, isEnd);
-      UTIL_CHECK(!isEnd);
-      if (!rampPtr_ && ParamComponent::echo()) {
+      if (!isEnd) {
+         UTIL_CHECK(!hasRamp());
+         UTIL_CHECK(rampFactoryPtr_);
+         std::string className;
+         rampPtr_ =
+            rampFactory().readObjectOptional(in, *this, 
+                                             className, isEnd);
+      }
+      if (!hasRamp() && ParamComponent::echo()) {
          Log::file() << indent() << "  Ramp{ [absent] }\n";
       }
    }

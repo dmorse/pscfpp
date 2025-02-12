@@ -105,6 +105,13 @@ namespace Rpg {
       ///@{
 
       /**
+      * Does this McSimulator have any MC moves defined?
+      *
+      * Equivalent to a test for mcMoveManager().size() > 0.
+      */
+      bool hasMcMoves() const;
+
+      /**
       * Get McMoveManger
       */
       McMoveManager<D>& mcMoveManager();
@@ -123,10 +130,6 @@ namespace Rpg {
 
       // Inherited public functions
 
-      using Simulator<D>::system;
-      using Simulator<D>::compressor;
-      using Simulator<D>::random;
-      using Simulator<D>::cudaRandom;
       using Simulator<D>::allocate;
       using Simulator<D>::analyzeChi;
       using Simulator<D>::computeWc;
@@ -135,14 +138,23 @@ namespace Rpg {
       using Simulator<D>::wc;
       using Simulator<D>::hasWc;
       using Simulator<D>::clearData;
+
+      using Simulator<D>::hasHamiltonian;
       using Simulator<D>::computeHamiltonian;
       using Simulator<D>::hamiltonian;
       using Simulator<D>::idealHamiltonian;
       using Simulator<D>::fieldHamiltonian;
+
+      using Simulator<D>::system;
+      using Simulator<D>::random;
+      using Simulator<D>::cudaRandom;
       using Simulator<D>::hasCompressor;
-      using Simulator<D>::hasHamiltonian;
+      using Simulator<D>::compressor;
       using Simulator<D>::hasPerturbation;
+      using Simulator<D>::perturbation;
       using Simulator<D>::hasRamp;
+      using Simulator<D>::ramp;
+
       using Simulator<D>::saveState;
       using Simulator<D>::restoreState;
       using Simulator<D>::clearState;
@@ -153,15 +165,18 @@ namespace Rpg {
       // Inherited protected functions
 
       using ParamComposite::setClassName;
+      using ParamComposite::read;
+      using ParamComposite::readOptional;
       using ParamComposite::readParamComposite;
       using ParamComposite::readParamCompositeOptional;
-      using ParamComposite::readOptional;
+
+      using Simulator<D>::readRandomSeed;
       using Simulator<D>::readCompressor;
-      using Simulator<D>::perturbation;
       using Simulator<D>::perturbationFactory;
+      using Simulator<D>::readPerturbation;
       using Simulator<D>::setPerturbation;
-      using Simulator<D>::ramp;
       using Simulator<D>::rampFactory;
+      using Simulator<D>::readRamp;
       using Simulator<D>::setRamp;
 
       // Inherited protected data members
@@ -203,6 +218,11 @@ namespace Rpg {
       void setup(int nStep);
 
    };
+
+   // Does this McSimulator have any MC moves defined?
+   template <int D>
+   inline bool McSimulator<D>::hasMcMoves() const
+   {  return (bool)(mcMoveManager_.size() > 0); }
 
    // Get the Monte-Carlo move manager.
    template <int D>

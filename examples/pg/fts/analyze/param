@@ -28,13 +28,18 @@ System{
     lattice     cubic   
   }
   McSimulator{
-    AmCompressor{
-      epsilon      1.0e-4
-      maxItr       200
-      maxHist      30     
-      verbose	 0
-      errorType    normResid
+    AnalyzerManager{
+      baseInterval    1
+      HamiltonianAnalyzer{
+        interval        1
+        outputFileName  out/mcHamiltonian
+        nSamplePerBlock 2
+      }
     }
+  }
+}
+
+
     McMoveManager{
 
         RealMove{
@@ -43,25 +48,16 @@ System{
       }
 
     }
-    AnalyzerManager{
-      baseInterval    1
+    AmCompressor{
+      epsilon      1.0e-4
+      maxItr       200
+      maxHist      30     
+      verbose	 0
+      errorType    normResid
+    }
 
       TrajectoryWriter{
             interval        1
             outputFileName  out/trajectory_read
       }
 
-      HamiltonianAnalyzer{
-            interval        1
-            outputFileName  out/mcHamiltonian
-            nSamplePerBlock 2
-      }
-
-    }
-
-  }
-
-}
-
-    unitCell cubic   1.3835952906
-    groupName   P_-1

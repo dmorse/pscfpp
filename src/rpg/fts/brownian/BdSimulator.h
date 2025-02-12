@@ -90,6 +90,11 @@ namespace Rpg {
       ///@{
       
       /**
+      * Does this BdSimulator have an associated BdStep?
+      */
+      bool hasBdStep() const;
+
+      /**
       * Get BdStep.
       */
       BdStep<D>& stepper();
@@ -108,12 +113,9 @@ namespace Rpg {
 
       // Inherited public functions
 
-      using Simulator<D>::system;
-      using Simulator<D>::compressor;
-      using Simulator<D>::random;
-      using Simulator<D>::cudaRandom;
       using Simulator<D>::allocate;
       using Simulator<D>::analyzeChi;
+
       using Simulator<D>::computeWc;
       using Simulator<D>::computeCc;
       using Simulator<D>::computeDc;
@@ -123,19 +125,28 @@ namespace Rpg {
       using Simulator<D>::hasWc;
       using Simulator<D>::hasCc;
       using Simulator<D>::hasDc;
+
       using Simulator<D>::clearData;
       using Simulator<D>::computeHamiltonian;
+      using Simulator<D>::hasHamiltonian;
       using Simulator<D>::hamiltonian;
       using Simulator<D>::idealHamiltonian;
       using Simulator<D>::fieldHamiltonian;
-      using Simulator<D>::hasCompressor;
-      using Simulator<D>::hasHamiltonian;
-      using Simulator<D>::hasPerturbation;
-      using Simulator<D>::hasRamp;
+
       using Simulator<D>::saveState;
       using Simulator<D>::restoreState;
       using Simulator<D>::clearState;
       using Simulator<D>::clearTimers;
+
+      using Simulator<D>::system;
+      using Simulator<D>::random;
+      using Simulator<D>::cudaRandom;
+      using Simulator<D>::hasCompressor;
+      using Simulator<D>::compressor;
+      using Simulator<D>::hasRamp;
+      using Simulator<D>::ramp;
+      using Simulator<D>::hasPerturbation;
+      using Simulator<D>::perturbation;
 
    protected:
 
@@ -145,11 +156,13 @@ namespace Rpg {
       using ParamComposite::readParamComposite;
       using ParamComposite::readParamCompositeOptional;
       using ParamComposite::readOptional;
+
+      using Simulator<D>::readRandomSeed;
       using Simulator<D>::readCompressor;
-      using Simulator<D>::perturbation;
       using Simulator<D>::perturbationFactory;
+      using Simulator<D>::readPerturbation;
       using Simulator<D>::setPerturbation;
-      using Simulator<D>::ramp;
+      using Simulator<D>::readRamp;
       using Simulator<D>::rampFactory;
       using Simulator<D>::setRamp;
 
@@ -201,7 +214,12 @@ namespace Rpg {
 
    };
 
-   // Get the Brownian dynamics stepper.
+   // Does this BdSimulator have a BdStep?
+   template <int D>
+   inline bool BdSimulator<D>::hasBdStep() const
+   {  return (bool)bdStepPtr_; }
+
+   // Get the BdStep (Brownian dynamics stepper) by reference.
    template <int D>
    inline BdStep<D>& BdSimulator<D>::stepper()
    {  return *bdStepPtr_; }

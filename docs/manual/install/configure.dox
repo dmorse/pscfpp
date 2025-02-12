@@ -15,27 +15,28 @@ once, before the first time you compile any code.
 The configure script installs several files that are needed to compile 
 PSCF but that are not installed by cloning the github repository. Most 
 of the files installed by this script are files that the user may need to 
-modify in order to customize or extend the package. These include include 
+modify in order to customize or extend the package. These include 
 configuration files that a user may need to modify in order to adapt the 
 PSCF build system to a particular environment or to enable optional 
 features. 
 
-The most important file created by the configure script is a file named 
-config.mk that is installed in the root directory of both the bld/ and 
-src/ directory trees. This is a makefile fragment that acts as the main 
+The most important type of file created by the configure script is a file 
+named config.mk that is installed in the root directory of both the bld/ 
+and src/ directory trees. This is a makefile fragment that acts as the main 
 configuration file for compilation. It assigns values to makefile variables 
 that define the compiler executable names for C++ and CUDA code, command 
-line options passed to the compilers, paths to various 
-directories used by the package during compilation or execution (e.g.,
-paths to source code, build, installation and data directories), and 
-paths for required external libraries. 
+line options passed to the compilers, paths to various directories used by
+the package during compilation or execution (e.g., paths to source code,
+build, installation and data directories), and paths for required external
+libraries. 
 
 The copy of the config.mk file that is installed in the the PSCF bld/
 directory is used as the main configuration file for an out-of-source 
 build, in which intermediate files are created in the bld/ directory 
 tree. The copy in the src/ directory is the main configuration file for 
-an in-source build.  The brief overview of directions for compilation 
-given on a previous page give instructions for an out-of-source build.
+an in-source build.  The overview of directions for compilation given 
+on a \ref install_overview_page "previous page" are instructions for an 
+out-of-source build.
 
 \section install_configure_default_sec Default configuration 
 
@@ -44,16 +45,16 @@ to the PSCF root directory (i.e., the pscfpp/ directory), and then enter:
 \code
 ./configure
 \endcode
-Note the dot and backslash ("./") before the name of the script.  These
-two characters must usually be included to tell the unix shell to look 
-for an executable file named configure in the current working directory, 
-rather than searching the directories listed in the PATH environment 
-variable for an executable with this name.
+Note the dot and slash ("./") before the name of the script.  These two
+characters should be included to tell the unix shell to look for an
+executable file named configure in the current working directory, rather
+than searching the directories listed in the PATH environment variable 
+for an executable with this name.
 
 When the configure script is invoked with no command line arguments, as 
 shown above, the script examines the operating system and environment, 
-and attempts to choose setting appropriate to the detected environment. 
-In our experience, this normally works  for standard linux environments, 
+and attempts to choose settings appropriate to the detected environment. 
+In our experience, this normally works for standard linux environments, 
 and for Apple Mac computers on which the 
 <a href="https://brew.sh/"> Homebrew </a> package manager has been
 used to install GSL and FFTW.  
@@ -70,17 +71,17 @@ created by the configure script or created by compiling PSCF.
 \section install_configure_compiler_file_sec Compiler configuration files
 
 The configure script creates the main config.mk files that are installed 
-in the pscfpp/bld and pscfpp/src directory. To do so, it chooses a 
+in the pscfpp/bld and pscfpp/src directories. To do so, it chooses a 
 so-called "compiler configuration file" from among several such files
 in the make/compiler directory and copies the contents of that file 
 into a middle section of each of the config.mk files.  For example, the 
 compiler configuration file used for most linux environment is named 
-make/compiler/linux-default.  The compiler configuration file is a relatively 
-short makefile fragment that defines all of the makefile variables that 
-could require different values in different environments.  Among these 
-are makefile variables that define the C++ compiler name, a variety of 
-compiler options, and paths that the compiler uses to find header and 
-library files for external packages used by PSCF.
+make/compiler/linux-default.  The compiler configuration file is a
+relatively short makefile fragment that defines all of the makefile
+variables that might require different values in different environments.
+Among these are makefile variables that define the C++ compiler name, a
+variety of compiler options, and paths that the compiler uses to find
+header and library files for external packages used by PSCF.
 
 <b> Letting the script choose a configuration file:</b>
 
@@ -128,9 +129,9 @@ for this case.
  
 <b> Explicitly choosing a configuration file:</b>
 
-The configure script may be invoked with a command line argument that 
-explicitly specifies the name of a compiler configuration file located 
-in the make/compiler directory. For example, the command 
+The configure script may also be invoked with a command line argument 
+that explicitly specifies the name of a compiler configuration file 
+located in the make/compiler directory. For example, the command 
 \code
    ./configure linux-default
 \endcode
@@ -145,9 +146,9 @@ or choose an appropriate file.
 
 The only compiler configuration files that are currently distributed as
 part of the PSCF package are the files linux-default and mac-si-homebrew.
-If neither of these files proves sufficient, a user can create an 
-new customized compiler configuration file in the make/compiler 
-directory to adapt compiler and paths to their computer environment.
+If neither of these files proves sufficient, a user can create an new 
+customized compiler configuration file in the make/compiler directory 
+to adapt the compiler options and paths to their computer environment.
 
 For example, suppose that a user created a file named make/compiler/local 
 by making a copy of the "linux-default" file from the same directory, and 
@@ -161,16 +162,15 @@ make/compiler/local file into the config.mk files that it creates in
 both the src/ and bld/ directories.
 
 In order to create a customized compiler configuration file, a user will 
-need to understand the meanings of some of the variables defined in such 
-files. Towards this end, we recommend that such a user first read the
-comments in the file make/compiler/linux-default that explain the meaning
-and use of each of the makefile variables. The user should then run the
-configure script with no argument and inspect the file bld/config.mk 
-and/or src/config.mk that will be created by the configure script. 
-Upon comparing the contents of the files bld/config.mk and 
-make/compiler/linux-default, one should see that the contents of the 
-linux-default file have been copied verbatim into the middle section 
-of both of these config.mk files.
+need to understand the meanings of the variables defined in such files. 
+Towards that end, we recommend that any such user first read the comments 
+in the file make/compiler/linux-default that explain the meaning and use 
+of each of the basic makefile variables. The user should then run the
+configure script with no argument and inspect the file bld/config.mk and/or 
+src/config.mk that will be created by the configure script.  Upon comparing 
+the contents of the files bld/config.mk and make/compiler/linux-default, 
+one should see that the contents of the linux-default file have been 
+copied verbatim into the middle section of both config.mk files.
 
 For most users, the first step in creating a customized compiler 
 configuration file should be to copy either the linux-default or 
@@ -180,63 +180,63 @@ this copy as a starting point for customization.
 
 <b> Editing compiler configuration files vs. editing config.mk files: </b>
 
-Users can use either of two methods to change values of variables 
-that are defined in the main config.mk files in the src/ and bld/ 
-directories. They may either:
+Users can use either of two methods to change values of variables that 
+are defined in the main config.mk files in the src/ and bld/ directories. 
+They may either:
 
   - Create and modify a customized compiler configuration file in 
     the make/compiler directory, before running the configure script, 
     and pass the name of this file as an argument to the configure 
     script, as described above.
 
-  - Directly edit the config.mk files that the configure script
-    creates in the bld and/or src directories, after running the
-    configure script.
+  - Directly edit the config.mk files that the configure script creates
+    in the bld and/or src directories, after running the configure 
+    script.
 
-In order to figure out what modifications work on your system, some
-users may find it useful to first run the configure script with one 
-of the existing compiler configuration files (linux-default or 
-mac-si-homebrew), then edit the resulting config.mk file in the bld/ 
-or src/ directory, and compile in that build directory to test 
-changes. After the required modifications have been identified, 
-however, we recommend that one copy any modified makefile definitions 
-to a new compiler configuration file in the make/compiler directory, 
-run "make veryclean", and then rerun the configure script to 
-recreate modified config.mk files. 
+In order to figure out what modifications work on your system, users 
+may find it useful to first run the configure script with one of the 
+existing compiler configuration files (linux-default or mac-si-homebrew), 
+then edit the resulting config.mk file in the bld/ or src/ directory, 
+and compile in that build directory to test changes. After all required 
+modifications have been identified, however, we recommend that users 
+copy any required modifications to a new compiler configuration file 
+in the make/compiler directory, run "make veryclean" from the PSCF 
+root directory, and then rerun the configure script to recreate 
+modified config.mk files. 
 
-The advantages of putting required changes in such a compiler 
-configuration file are that:
+The advantages of putting required changes in a compiler configuration 
+file in the make/compiler directory are that:
 
-   - Changes made in a compiler configuration file in the make/compiler
-     directory will be copied verbatim into both the src/config.mk 
-     and bld/config.mk files by the configure script, and will thus 
-     be used for both in-source and out-of-source builds.
+   - Changes made in a compiler configuration file will be copied into 
+     both the src/config.mk and bld/config.mk files by the configure 
+     script, and will thus be used for both in-source and out-of-source 
+     builds.
 
-   - The src/config.mk and bld/config.mk makefile fragments are erased 
-     when the "make veryclean" command is invoked from the PSCF root 
-     directory, but user-created compiler configuration files that are
-     placed in the make/compiler directory are *not* erased by this 
-     command. 
+   - The src/config.mk and bld/config.mk files are both erased when 
+     "make veryclean" is invoked from the PSCF root directory, but 
+     user-created compiler configuration files in the make/compiler 
+     directory are *not* erased by this command. 
 
-By creating a customized compiler configuration file in make/compiler
-directory, users can thus store required changes in a form can survive 
-possible repeated cycles of "make veryclean" and "configure" commands.
+By creating a customized compiler configuration file, users can thus store 
+required changes in a form that can survive possible repeated cycles of 
+"make veryclean" and "./configure" commands.
 
 \section install_configure_moving_sec Reconfigure after moving the root directory
 
-If you ever decide to rename or move the root directory for your local
-PSCF repository, you should run "make veryclean" from the old root
-directory location before doing so, and then rerun the configure script 
-after moving the directory.
+Users can move or rename the root directory of their local PSCF repository
+at any time after the repository is created.  To do so after having run 
+the configure script, one should first run "make veryclean" from the old 
+root directory location, then move or rename the root repository, and 
+finally rerun the configure script after moving the directory.
 
 <em>Rationale</em>: The configure script queries the operating system 
 to identify the absolute path to the PSCF root directory, which is the 
-directory that contains the configure script. This path is then stored 
-in a variable that is used as a prefix to assign values to makefile 
-variables that contain absolute paths to various subdirectories such as 
-the src/, bld/, data/, and bin/ directories.  The configure script thus 
-must to be rerun after the root directory is moved in order to update 
-values of these stored path variables.
+directory that contains the configure script. This path is then used as a 
+prefix to construct values for makefile variables that represent absolute 
+paths to several subdirectories of the root directory, such as the src/, 
+bld/, data/, and bin/ directories.  The configure script thus must be 
+rerun after the root directory is moved or renamed in order to update 
+values of these path variables.
 
 <BR>
 \ref install_environment_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 

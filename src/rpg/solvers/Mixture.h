@@ -218,41 +218,29 @@ namespace Rpg
       /// Derivatives of free energy w/ respect to cell parameters.
       FArray<double, 6> stress_;
    
-      #if 0 
-      /// Monomer reference volume (set to 1.0 by default).
-      double vMonomer_;
-      #endif
-
       /// Optimal contour length step size.
       double ds_;
-
-      /// Use batched FFTs to compute stress? (faster, but doubles memory use)
-      bool useBatchedFFT_;
-
-      /// Number of unit cell parameters.
-      int nParams_;
 
       /// Pointer to associated Mesh<D> object.
       Mesh<D> const * meshPtr_;
 
+      /// Number of unit cell parameters.
+      int nParams_;
+
       /// Has the stress been computed?
       bool hasStress_;
 
+      /// Use batched FFTs to compute stress? (faster, but doubles memory)
+      bool useBatchedFFT_;
+
+      // Private function
+      
       /// Return associated domain by reference.
       Mesh<D> const & mesh() const;
 
    };
 
    // Inline member function
-
-   #if 0
-   /*
-   * Get monomer reference volume (public).
-   */
-   template <int D>
-   inline double Mixture<D>::vMonomer() const
-   {  return vMonomer_; }
-   #endif
 
    /*
    * Get Mesh<D> by constant reference (private).

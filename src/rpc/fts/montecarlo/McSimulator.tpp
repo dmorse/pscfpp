@@ -64,14 +64,22 @@ namespace Rpc {
    template <int D>
    void McSimulator<D>::readParameters(std::istream &in)
    {
-      // Read compressor block, optional random number generator seed,
-      // optional Perturbation and optional Ramp.
-      Simulator<D>::readParameters(in);
+      // Read optional random seed value
+      readRandomSeed(in);
 
-      // Read block of McMove parameters
+      // Read McMoveManager block
       readParamComposite(in, mcMoveManager_);
 
-      // Read block of Analyzers
+      // Read optional Compressor, Perturbation and Ramp blocks
+      bool isEnd = false;
+      readCompressor(in, isEnd);
+      readPerturbation(in, isEnd);
+      if (hasMcMoves()) {
+         UTIL_CHECK(hasCompressor());
+         readRamp(in, isEnd);
+      }
+
+      // Read optional AnalyzerManager block
       Analyzer<D>::baseInterval = 0; // default value
       readParamCompositeOptional(in, analyzerManager_);
 
@@ -97,7 +105,6 @@ namespace Rpc {
    template <int D>
    void McSimulator<D>::setup(int nStep)
    {
-      UTIL_CHECK(hasCompressor());
       UTIL_CHECK(system().w().hasData());
 
       // Eigenanalysis of the projected chi matrix.
@@ -115,8 +122,10 @@ namespace Rpc {
       system().compute();
       
       // Compress the initial state (adjust pressure-like field)
-      compressor().compress();
-      compressor().clearTimers();
+      if (hasCompressor()) {
+         compressor().compress();
+         compressor().clearTimers();
+      }
       
       // Compute field components and Hamiltonian
       computeWc();
@@ -141,7 +150,8 @@ namespace Rpc {
    template <int D>
    void McSimulator<D>::simulate(int nStep)
    {
-      UTIL_CHECK(mcMoveManager_.size() > 0);
+      UTIL_CHECK(hasMcMoves());
+      UTIL_CHECK(hasCompressor());
       
       // Initial setup
       setup(nStep);
@@ -298,7 +308,6 @@ namespace Rpc {
 
             // Initialize analyzers
             if (iStep_ == min) {
-               //analyzerManager_.setup();
                setup(iStep_);
             }
 

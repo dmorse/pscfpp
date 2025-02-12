@@ -1,279 +1,210 @@
 
-Overview of Current PSCF Code Structure (for collaborators):
-------------------------------------------------------------
+Model (simple bead-spring model):
+---------------------------------
 
-The C++ version of PSCF was designed as a package that that could contain 
-several largely largely independent implementations of SCFT, while minimizing
-duplication of code for algorithms and data structures that can be used by
-two or more implementations.  Different "implementations" of SCFT are code
-bases that are compiled to created collections of code that are used to 
-create separate programs that differ may differ in, among other things:
+   1) Every vertex bead must be "owned" by exactly one of the attached 
+      blocks. An end bead is always owned by the single attached block
 
-   - The type of spatial domain for which they are defined 
-   - The hardware on which they are designed to run
-   - The type of molecular model they are designed to treat
-   - The algorithm used to solve the modified diffusion equation, if 
-     this effects the choice of data structure used to describe fields
+   2) The bond attaching a vertex to a block is always of the same type 
+      as the attached block.
 
-The package currently contains the following three implementations:
+   3) In a linear chain, by default, every block owns its last bead, and 
+      the first block also owns its first bead.
 
-   - pscf_1d: Finite-difference code for 1D problems
-   - pscf_pc: CPU code for real periodic fields
-   - pscf_pg: GPU code for real periodic fields
+   4) In the parameter file for a linear chain, the user sets the number 
+      of beads owned by the block.
 
-The decision of whether the addition of some new capability requires the 
-creation of a entirely new SCFT implementation depends in large part on 
-whether it can be implemented without making incompatible changes to the
-data structures used by some existing implementation. 
+What new information is required in implementation:
 
-For example, the GPU and CPU codes for periodic microstructures are 
-closely analogous, but were written as separate implementations because 
-they require different types of containers to represent fields. The GPU 
-code is built around a set of containers for fields and discrete Fourier 
-transforms of fields in which the data is stored in large arrays in GPU 
-global memory (for which one must prohibit element-by-element access 
-from the host CPU), while the CPU code uses containers in which the 
-data is stored in dynamically allocated memory on the CPU (for which
-access of elements via a subscript operator [] is allowed).  It is 
-possible that these two implementations could have been combined with 
-enough thought about how to encapsulate operations that involve access 
-to data that might be stored on the GPU, but I found it easier develop 
-them as separate but closely analogous codes.  We have concluded, 
-however, that it will be straightforward for us to develop field 
-theoretic Monte Carlo sampling algorithms based on a partial saddle-point 
-approximation as added features of the existing pscf_pc and pscf_pg 
-programs. This is possible because this algorithm uses real fields, 
-and thus requires data structures that are compatible with those 
-already used by these programs. Conversely, we plan to create another
-separate GPU-based implementation to implement complex Langevin
-sampling, because the modified diffusion equation (MDE) solvers and
-data structures for this method require the use of variables and data 
-structures that can accomodate complex chemical potential and propagator 
-fields.
+   1) Which polymer model is being used (thread or bead model) ? 
+      [Globally accessible enumeration variable]
 
-Namespaces and Libraries
+   2) Which block and/or propagator contains the vertex bead.
+      [Define bool member variables in BlockDescriptor and 
+       PropagatorTmpl classes]
+
+Implementation stategy:
+-----------------------
+
+   1) In class BlockDesriptor, each block has a value for nBead_ (the 
+      number of beads that it owns). For a discrete bead model, the
+      parameter file should contain values for nBead.  The Rpc::Block 
+      and Rpg::Block classes will still also have values for ns_ and ds_. 
+      In a thread model, nBead_ = ns_. In a bead model, length = ds*nBead_. 
+
+   2) Internally, each propagator stores ns_ + 1 slices, indexed 
+      0, ..., ns, as in the current thread model.  Slice 0 is associated 
+      with the head vertex and field n is associated with the tail 
+      vertex.  The number nBead can vary from ns-1 to ns+1, depending 
+      on whether the block owns both, one or none of the two terminating 
+      vertex beads.
+
+   3) Propagator slice i associated with bead i contains the field
+      weight factor associated with bead i for the head slice (i=0)
+      all non-vertex beads (i=1, ..., ns-1). The slice associated with
+      the tail vertex bead (i=ns) includes this factor if and only if the 
+      propagator owns the tail vertex bead. If propagator does not own 
+      the tail vertex, then the slice associated with the tail is treated 
+      as a dangling bond, with no weight function arising from the tail 
+      vertex bead.
+      
+   4) A function Block:: stepBead that will be used for steps from
+      i-1 to i for i = 1, ..., ns_ - 1 will first apply a bond operator 
+      exp(-k^2 b^2 *ds/6) and then a field weight operator exp(W*ds). 
+
+   5) The tail weight for bead ns is obtained by applying a bond operator
+      to bead ns - 1, and then applying a field weight if and only if
+      the propagator owns the tail vertex bead. 
+
+   6) The head slice for a head vertex that not owned by a propagator 
+      is given by the pointwise product of tail fields associated with 
+      sources, exactly as in the current code. In this case, this product 
+      will always include a weight function for the vertex bead that 
+      arises from the tail slice for the source propagator that owns the 
+      vertex bead. The head for a propagator that owns the head bead 
+      must instead acquire an additional weight factor for the bead.
+      This additional weight factor must be applied by the propagator
+      that owns the bead, as part of the computation of the slice for
+      the head. 
+
+   7) Computation of contributions to monomer concentrations from 
+      non-vertex beads must include a factor of the inverse of the
+      weight factor associated with that bead, as in Matsen's algorithm. 
+      This inverse weight factor should be stored separately, because it
+      is applied repeatedly, and because division is 2-3 times more 
+      expensive than multiplication.  
+
+   8) The contribution of each vertex bead to overall concentration 
+      is only included in summations for the block that owns it. 
+      Each such bead has an associated head slice from one propagator 
+      and a tail slice from the other associated with the same block
+      that both include the weight factor for that vertex bead. The 
+      contribution from such a vertex bead must thus include a factor 
+      of the inverse of the bead field weight, exactly as for non-vertex 
+      beads. 
+
+Proposed Implementation:
 ------------------------
 
-PSCF uses a system of C++ namespaces to separate code associated with
-different SCFT implementations. All code that is specific to the PSCF
-package (i.e., not shared with other entirely separate projects) is 
-defined within a namespace named Pscf. A nested sub-namespace of Pscf
-is defined for each SCFT implementation. For example, the package
-currently contains namespaces:
- 
-   Pscf::R1d - Classes for the pscf_1d finite difference 1D code
-   Pscf::Rpc - Classes for the pscf_pc periodic CPU code
-   Pscf::Rpg - Classes for the pscf_pc periodic CPU code
+1) Define an namespace Pscf::PolymerModel that contains an unscoped
+   (C-style) enumeration and several functions to set and get a value:
 
-The name Rpc was intended to mean "real periodic fields on CPU" while 
-Rpg was intended to mean "real periodic fields on GPU".  Classes that 
-I expected to be usable in two or more implementations are defined 
-directly in the Pscf namespaces, while classes that are only used in 
-one implementation are defined directly in the subnamespace for that 
-implementation.  
+namespace Pscf{
+namespace PolymerModel{
 
-In addition to the Pscf namespace, the package uses code defined in a 
-separate namespace named Util that contains more generally useful code 
-for scientfic computation. The code in the Util namespace is maintained 
-in a separate public github repository (dmorse/util), and is included 
-within the pscf code as a git sub-module. 
+  enum Enum = {Null, Thread, Bead};
 
-This namespace structure is designed to allow the use of identical
-names for analogous classes within different SCFT implementations. 
-For example, each of the three existing implementations currently 
-has classes or class templates named:
+  void setModel(PolymerModel::Enum );
 
-     System   - parent object (entire simulation)
-     Mixture  - Container holding MDE solvers for molecular species
-     Polymer  - MDE solver for one polymer type
-     Solvent  - statistical mechanics solver for one solvent type
-     Block    - one block of a block polymer
-     Iterator - base class for iterators in one implementation
-     Domain   - description of the spatial domain and discretization
+  PolymerModel::Enum model();
 
-among others. The same name can be used for analogous classes or 
-class templates in different SCFT implementations without causing 
-name clashes as long as we are careful to prohibit any sharing of
-code between implementation-level sub-namespaces of the higher 
-level Pscf namespace.
+  bool isNull();
+  bool isThread();
+  bool isBead();
 
-Almost every source code file throughout the project contains a
-"using namespace Util" declaration in order to allow classes that 
-are defined in the Util namespace to be used without qualifying 
-the name with the prefixes "Util::" or "Pscf::". 
+}
+}
 
-Currently, all of the classes that are defined directly in the Pscf 
-namespace (rather than a sub-namespace) and all of the classes in 
-the Pscf::R1d and Pscf::Rpc enclosed namespaces can be compiled 
-with a C++ compiler, while a CUDA compiler is only required to 
-compile the code in the Pscf::Rpg namespace. 
+These functions set and query values of a pseudo-private variable polymerModel_ 
+that is defined and initialized in an anonymous namespace in PolymerModel.cpp.
 
-Use of Dimension D of Space as a C++ Template Parameter
--------------------------------------------------------
+Define extractor and inserter (>> and <<) operators to read and write values 
+of this new enum type.
 
-The code for periodic structures in namespaces Pscf::Rpc and Pscf::Rpg
-consistently treats the dimension of space as C++ parameter, and is
-designed to produce different executable files for programs designed
-treat structures that are periodic in 1D (e.g., lamellar), 2D (e.g.,
-hexagonal), or 3D (e.g., BCC, gyroid, etc.). This is done by defining
-almost all of the classes in these implementation-level namespaces as
-class templates in which the dimension D of space is provided as a 
-template parameter. Thus, for example, the parent System class is
-actually defined as a class template
+Rules: 
 
-    template <int D>
-    class System {
+   - The variable polymerModel_ is initialized to PolymerModel::Null
+
+   - A non-null value may only be assigned once.
+
+   - Attempts to reset a non-null variable to the same value are silently
+     accepted as harmless.
+
+   - Attempts to reset this variable to a different non-null value
+     after it has been set to a non-null value are an error and cause
+     execution to stop with an error message. 
+
+Note: We could use this pattern later to define enum classes to specify whether 
+the interaction is compressible and/or has a nonzer range.
+
+2) Add a private member polymerModel_ to the System class. If 
+PolymerModel::isNull(), optionally read this as the first member of the 
+block, before the beginning of the Mixture class. The file format would 
+thus be:
+
+  System{
+     polymerModel*  PolymerModel::Enum
+     Mixture{ ... }
+     Interaction{ ... }
       ...
-    }
+  }
+ 
+Set System::polymerModel_ to PolymerModel::Thread by default.  When the 
+value is known (after it is optionally read), set the global variable
+to the same value. 
 
-A similar type of class template is used for most other classes, 
-including Mixture, Polymer, Block, Iterator, Domain, etc. For these
-implementations, the  actual type of the main system object for a 
-3D simulation is thus System<3>, rather than just System, and the
-type of the Mixture object is actually Mixture<3>. The treatment of 
-D as a template parameter allows us to generate efficient code with 
-appropriate data structures for, e.g., vectors and space group
-operations, for each value of D without any code duplication. The
-cost is the heavy use of templates, which complicates compilation.
+3) In Mixture::readParameters, if PolymerModel::isBead(), make reading of 
+ds_ optional, and set ds_ = 1.0 by default. 
 
-More technical note: To simplify the build process for code that makes 
-such heavy us of templates, template instances with D=1, D=2, and D=3 
-are explicitly instantiated and compiled for every class template that
-takes D as its only template parameter. An "extern template" 
-declaration is used for each such template instance to prevent 
-implicit instantiation and allow linkage to these precompiled template
-instances.
+4) Create a member nBead_ in the BlockDescriptor class. In the inserter 
+and extractor operators for the block function, read this rather than 
+length. For a bead model, set length = ds*double(nBead), and compute ns_ 
+from nBead once it is known which end beads the block owns, if any. For 
+a thread model, set nBead_ = ns_. 
 
-Comments on Current Class Organization 
----------------------------------------
+5) For the BlockDescriptor class, add a private member array Pair<int> 
+ownsVertex_ , a set function void setVertexOwnership(int i, bool) and 
+a get function bool ownsVertex(int i). Set both values to true by 
+default for the thread model, which does not use vertex ownership.
 
-The current organization of namespaces is designed to allow for two
-different types of classes, namely, classes that are available for
-use in any SCFT implementation, and classes that are used only in a
-single implementation.  
+6) In the PropagatorTmpl class template, define private bool member
+variables named ownsHead_ and ownsTail_, and define public accessor 
+functions bool ownsHead() and bool ownsTail().
 
-Classes that are available for use in any SCFT implementation, are 
-defined in the root namespace Pscf, and are currently placed in the 
-src/pscf directory.  Different subdirectories of src/pscf contain 
-classes designed for different purposes. The most important 
-subdirectories are:
+Make BlockDescriptor::setVertexOwnership a friend of PropagatorTmpl 
+so that this function can set Propagator vertex ownership flags when 
+it sets flags for the block.
 
-  src/pscf/mesh    - regular spatial mesh and mesh iterators
-  src/pscf/crystal - unit cell, space groups, and symmetry-adapted basis
-  src/pscf/chem    - description of chemical structure
-  src/pscf/solvers - base classes for MDE solvers
+For linear molecules, values of ownsVertex for each block can be set 
+before reading the blocks. 
 
-Classes that are available for use in a single implementation are 
-defined in the sub-namespace associated with that implementation. 
-The use of different namespaces for different implementations is 
-designed to allow for the use of identical names for closely analogous 
-classes without causing name clashes.
-For example, the solver and field classes for CPU and GPU codes for 
-periodic structures are separate classes with similar or identical 
-names, but are defined in the Pscf::Rpc and Pscf::Rpg namespaces,
-respectively. 
+7) The file format for a branched polymer will eventually have to be 
+changed to specify which of the attached vertices it owns. Initially, 
+set it to throw an error if a molecule is declared branched and 
+PolymerModel::isBead() is true.  Go back later and change the file 
+format.
 
-One limitation of this design is that it does not allow for the
-existence of classes that might be needed in two or more different
-implementations, but that are closely analogous to classes used in
-a different subset of implememtations. The specific case of concern
-here would arise if we wanted to develop CPU and GPU variants of
-the PSCF+ GPU code, while avoiding forking of the PSCF code (as
-done currently) and while avoiding unnecessary code repetition. 
-Such a redesigned variant of PSCF+ would be designed for periodic
-structures but would use a molecular model with discrete atoms 
-and compressible, finite range interactions rather than an
-incompressible model of continuous Gaussian chains. 
+8) In the Block class, change the name of the current step function to 
+stepThread.  Add several additional public member functions to give:
 
-Because PSCF+ is designed for periodic structures, it should be able 
-re-use some of the container classes that are used to represent fields, 
-and classes such as the FFT classes that define operations on fields.  
-Reuse is made difficult, however, by the fact that these classes are 
-currently defined in Rpc and Rpg namespaces that were designed to 
-be used only with a single SCFT implementation. 
+   void stepThread(Propagaor const & in, Propagator & out) 
+   void stepBead(Propagaor const & in, Propagator & out) 
+   void stepBondBead(Propagaor const & in, Propagator & out) 
+   void stepFieldBead(Propagator & q)
 
-Because PSCF+ is designed for a discrete chains, it may not be able
-to re-use the classes and class templates in the src/pscf/chem and 
-src/pscf/solvers directories. All of these classes were designed 
-specifically for simulations of the  "standard model" of an 
-incompressible mixture of polymer chains that are represented as 
-continuous random walks and of solvent molecules that are represented 
-as point particles that occupy a specified volume. It appears to me 
-that variants of some or all of these should be created that are 
-designed specifically for molecular models with discrete atoms. 
-If classes for continous and discrete chemical models were defined
-in different namespaces, however, it might be possible to use the
-same names for analogous classes without causing name clashes.
+Note that the stepFieldBead function applies an in-place scaling while 
+the stepFieldBead has an input and output argument. We may be able to
+construct the stepBead class from stepBondBead and stepFieldBead.
 
-The natural solution appears to be to add some subnamespaces of
-Pscf that contain classes that are designed for specific types
-of models (continuous vs. discrete chains, and periodic on CPU
-vs. periodic on GPU) but that are available for use in multiple
-SCFT implementations.
-    
-Proposals Regarding Design for a DFT Package
---------------------------------------------
+9) In Block class, use expW_ to store exp(W(r)ds) in the case of a
+bead model, but use expW_ to store exp(W(r)ds/2) in the case of a
+thread model. For a bead model, array expW2_ is simply unallocated
+and unused.
 
-I assume that the DFT program or programs will try to re-use existing
-parts of PSCF when possible, but that the new programs will be designed
-to simulate models of molecules with discrete atoms. I recommend that
-each such program be designed as if it were another "implementation" 
-of PSCF, that re-uses classes that are defined in the Pscf main 
-namespace and the Util mainspace, but that either avoids the use of
-classes defined in the Pscf::R1d, Pscf::Rpc, or Pscf::Rpg namespaces,
-or uses these classes only with fully qualified names.
+10) In the Propagator class change the name of the current computeHead
+function to computeHeadThread() and add an additional function
+computeHeadBead(). The computeHeadBead function can call 
+computeHeadThread internally, then call Block::stepFieldBead.
 
-The most important protential problems one might encounter when trying
-to do this using the current design of PSCF are:
+11) In Propagator::solve, simply include a single if statement to
+separate the code for the thread model. The thread model calls 
+computeHeadThread and stepThread. Code for the bead model uses
+computeHeadBead and stepBead, while also using stepBondBead for
+the tail bead and stepFieldBead only if the tail bead is owned.
 
-1) The new code would need to be able to re-use the classes that define
-data structure and FFT operations for real fields on a regular mesh.
-These are currently located in pscf/rpg/fields and pscf/rpc/fields, 
-and are (unfortunately) currently defined in the Pscf::Rpc and 
-Pscf::Rpg namespaces.  implementation-level namespaces.
-
-2) The new code may need new variants of the classes that describe 
-chemical structure or the classes that implement MDE solvers that use 
-data structures that are not compatible with those designed for use 
-with the standard model of continuous chains.
-
-I recommend that, if you pursue your project in earnest (i.e., if it 
-is funded, or if you decide to pursue it even without funding) and 
-you decide to try to coordinate closely with PSCF, we try to solve 
-these problems as follows:
-
-1) Define a new subnamespace of Pscf named something like Pscf::Prdc 
-to contain code that is intended for use by any code that uses periodic 
-boundary conditions. Define subnamespaces Pscf::Prdc::Cpu and 
-Pscf::Prdc:Gpu for analogous classes that are defined to store field
-data in CPU or GPU memory. Move all or almost all of the classes that 
-are currently located in rpg/fields from namespace Pscf::Rpc to 
-Pscf::Prdc::Gpu. Similarly, move most of the classes that are currently 
-in rpg/fields to from namespace Pscf::Rpg to Pscf::Prdc::Cpu.  In the 
-new GPU code, you can then using "using namespace Pscf::Prdc::Gpu" to 
-allow you to access these classes by name without needing to qualify 
-names with a prefix such as "Prdc::Gpu".
-
-2) Define a new subnamespace of Pscf named Pscf::Cont to contain
-classes that are defined only for use with the standard model of
-continuous chains. Then define all of the classes and class 
-templates in pscf/chem and pscf/solvers within this subnamespace.
-These classes all define chemical structures or provide templates
-or base classes for solvers using data structures and variable
-name that were designed specificially for a continuous random walk 
-model, but that may not be appropriate for the type of discrete model 
-you want to consider (though I'm still not sure how general that model
-will be). Change code in the existing PSCF implementations so as to 
-access these classes, either by using qualified names or by adding
-"using namespace" declarations to specify that we implicitly mean 
-the versions defined in that sub-namespace within the context of 
-our existing PSCF code.
-
-3) In your new code, define a namespace named Disc or something
-similar that is designed to accomodate a fairly general model of 
-discrete molecules, and create analogous classes there for that 
-purpose. You can access these classes within your own code either
-by using fully qualified names, include "Disc::", or by using an
-appropriate "using namespace" declaration to allow you to access
-these names without this qualifier. 
+12) In Block::computeConcentrations, place the code for thread
+model and bead model in separate blocks of an if-else. The 
+code for the bead model is a simple sum (with no Simpson' rule
+or trapezoidal rul) that includes any bead vertex that is owned
+by the block. 
 

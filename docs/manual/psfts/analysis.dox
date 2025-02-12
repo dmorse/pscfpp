@@ -1,0 +1,76 @@
+/*! \page psfts_analysis_page Trajectory Postprocessing
+
+\ref psfts_command_page      (Prev)  &nbsp; &nbsp; &nbsp; &nbsp;
+\ref psfts_ramp_page    (Next)
+<BR>
+
+The pscf_pc and pscf_pg can both use the analyzer classes to 
+compute, output and analyze some set of physical variables by 
+either of two methods. Data analysis may be carried out either:
+
+   - During a simulation (on the fly)
+
+   - After the simulation, by postprocessing a field trajectory
+
+The first method has been already been discussed: To analyze and
+output data during a simulation, one simply includes a chosen 
+set of analyzer subblocks to parameter file used to initialize 
+a simulation.
+
+We focus in the remainder of this page on postprcessing of a field 
+trajectory files that was generated during an earlier simulation.
+A field trajectory file is a file that contains a sequence of 
+frames, each of which contains the configuration of the w-fields
+at the completion of a particular BD or MD step. The content of
+each frame is the same as the data section of the r-grid field
+file format.  
+
+To generate a trajectory file during a BD or MC simulation, one 
+invoke pscf_pc or pscf_pc with a parameter file that contains an
+TrajectoryWriter block in the AnalyzerManager block, and with a
+command file that contains a SIMULATE command.  The interval 
+parameter of the TrajectoryWriter block determines the number of 
+BD or MC steps between frames of the trajectory file. 
+Trajectory file frames are usually written somewhat infrequently, 
+with an interval of 10 to 100 steps, rather than writing after
+every step.
+
+To postprocess such a trajectory file, one must invoke pscf_pc or 
+pscf_pg a second time, using a parameter file that is slightly
+different from the one used to initialize the earlier simulation,
+and using and a command file that contains an ANALYZE command. 
+When the ANALYZE command is encountered, the program reads a
+sequences of from frames the trajectory file and applies a set
+of data analysis operations specified by analyzer blocks of the
+associated parameter file.  
+
+The parameter file used to initialize a postprocessing operation 
+normally contains one or more analyzer blocks within the 
+AnalyzerManager block that specify which data analysis operations 
+should be applied to frames of the trajectory file. The same set
+of Analyzer objects can be used for either on-the-fly analysis 
+or postprocessing.
+
+When the ANALYZE command is executed, the "interval" parameter 
+associated with each analyzer is interpreted as a number of 
+trajectory file frames between successive data analysis of file
+output operations, rather than as a number of BD or MC simulation.
+Because frames are usually output somewhat infrequently (typically
+every 10 to 100 steps), the interval values for this purpose are
+often set to 1. 
+
+The main advantage of postprocessing a trajectory file is that it
+allows the user to delay or revise decisions about what types of 
+analysis might be useful.  The main disadvantage of postprocessing 
+is the amount of disk space required to store trajectories, 
+particularly if frames are written at frequent intervals. The main 
+advantage of analyzing some observables during a simulation is that
+doing so may allow more frequent sampling of data without using 
+excessive disk space.
+
+<BR>
+\ref psfts_command_page   (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
+\ref psfts_page           (Up)   &nbsp; &nbsp; &nbsp; &nbsp;
+\ref psfts_ramp_page   (Next)
+
+*/

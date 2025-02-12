@@ -28,6 +28,10 @@ System{
     lattice      cubic   
   }
   BdSimulator{
+    seed           486394701
+    LMBdStep{
+      mobility  5.0E-2
+    }
     LrAmCompressor{
       epsilon      1.0e-4
       maxItr       200
@@ -35,23 +39,16 @@ System{
       verbose	   0
       errorType    normResid
     }
-    seed           486394701
-    LMBdStep{
-      mobility  5.0E-2
-    }
     AnalyzerManager{
       baseInterval    10
-
+      StepLogger{
+        interval        20
+      }
       HamiltonianAnalyzer{
         interval        10
         outputFileName  out/hamiltonian
         nSamplePerBlock 5
       }
-
-      StepLogger{
-        interval        20
-      }
-
     }
   }
 }
@@ -61,4 +58,3 @@ System{
         outputFileName  out/trajectory
       }
 
-  unitCell cubic   1.3835952906

@@ -1,7 +1,7 @@
 /*! \page psfts_command_page Command File
 
-\ref psfts_param_page         (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
-\ref psfts_postprocess_page   (Next)
+\ref psfts_param_page    (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref psfts_analysis_page     (Next)
 <BR>
 
 The input files required to run a field theoretic simulation (FTS) 
@@ -10,8 +10,8 @@ periodic system. The pscf_pc or pscf_pg program must be invoked
 with command line parameters that specify the names of a parameter 
 file and a command file.  The main difference in the command file 
 is simply that a SIMULATE command is used to run a stochastic 
-simulation, rather than the ITERATE or SWEEP command used to run 
-an SCFT calculation or an SCFT parameter sweep.
+simulation, rather than the ITERATE or SWEEP command used to run an 
+SCFT calculation or an SCFT parameter sweep.
 
 \section psfts_command_example_sec FTS Example
 
@@ -111,26 +111,6 @@ can be used for SCFT calculations.
 
 </table>
 
-  <tr>
-    <td> nStep </td>
-    <td> Perform a field-theoretic simulation of nStep steps.  </td>
-  </tr>
-  <tr>
-    <td> min, max, className, filename </td>
-    <td> Postprocess a field trajectory output by looping over frames
-         of a field trajectory file output by a previous simulation. 
-         Analyze frames with frame numbers min to max from file 
-         filename, using a TrajectoryReader object that is an instance 
-         of class className.  </td>
-  </tr>
-  <tr>
-    <td> </td>
-    <td> Iteratively adjust the Lagrange multiplier pressure field
-         component of the current w fields so as to satisfy the 
-         incompressibility constraint. </td>
-  </tr>
-
-
 \anchor psfts_command_pc_simulate_sub
 <b> SIMULATE </b>:
 THE SIMULATE command performs a field-theoretic simulation of a
@@ -142,18 +122,17 @@ subblock of the McSimulator block.
 
 \anchor psfts_command_pc_analyze_sub
 <b> ANALYZE </b>:
-
 THE ANALYZE command reads a field trajectory file that was written by a 
 previous field-theoretic simulation, and postprocesses the contents of 
 that file.  This postprocessing procedure is discussed in more detail 
-on a \ref psfts_postprocess_page "separate page".
+\ref psfts_analysis_page "elsewhere".
 
 The trajectory file with a name given by the "filename" parameter is 
 read and parsed by an instance of a subclass of the TrajectoryReader 
 class with a name specified by the className parameter.  Different
 subclasses can be used to read files with different formats.
 
-The associated parameter file must contain BdSimulator or McSimulator 
+The associated parameter file must contain a BdSimulator or McSimulator 
 block with an AnalyzerManager subblock that specifies what analysis 
 operations should be applied to the chosen frames of the trajectory 
 file. Every Analyzer in the AnalyzerManager block is applied to frames 
@@ -173,6 +152,6 @@ associated with different monomer types.
 <BR>
 \ref psfts_param_page        (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
 \ref psfts_page              (Up)   &nbsp; &nbsp; &nbsp; &nbsp;
-\ref psfts_postprocess_page  (Next)
+\ref psfts_analysis_page  (Next)
 
 */

@@ -1,5 +1,5 @@
 This directory contains default versions of configuration files and
-fragments of configuration files that the pscfpp/setup script 
+fragments of configuration files that the pscfpp/configure script 
 concatenates and/or copies to appropriate locations in the standard 
 build directories (src/ and bld/) to create the config.mk files used 
 during compilation. Users may modify the resulting files that are 
@@ -17,23 +17,23 @@ directories.
 
 The file main_config.1 contains placeholder values for the path ROOT_DIR 
 to the main pscfpp and a path BLD_DIR to a particular build directory 
-(i.e., to the bld/ or src/ directory). The setup script must be called 
-from the root pscfpp/ directory, and replaces these placeholders by the 
-actual absolute paths to the relevant directories.
+(i.e., to the bld/ or src/ directory). The configure script must be 
+called from the root pscfpp/ directory, and replaces these placeholders 
+by the actual absolute paths to the relevant directories.
 
 Namespace level makefiles:
 
-The files util_config, pscf_config, fd1d_config, rpc_config and 
-pspg_config are repository versions of namespace level configuration 
-files. The setup script copies these files unalterted to create files 
-named config.mk in each corresponding namespace level subdirectory of
-the bld/ and src/ directories.
+The file util_config is a repository version of a namespace level
+configuration file for the Util namespace. The configure script copies 
+this file unaltered to create a file named config.mk in the corresponding
+util/ subdirectory of the bld/ and src/ directories. Other namespace level
+subdirectories do not require a unique configuration file.
 
-File paths.h :
+File paths.h:
 
-The setup script copies a modified version of the file file paths.h 
-into the directory pscfpp/src/pscf . This file contains placeholders 
-for paths to pscfpp/data and pscfpp/examples directories that the setup 
+The configure script copies a modified version of the file file paths.h
+into the directory pscfpp/src/pscf. This file contains placeholders for 
+paths to pscfpp/data and pscfpp/examples directories that the configure 
 file replaces with corresponding absolute paths in the installed version.
 The path to the data directory is used by the function makeGroupFileName
 to construct appropriate paths for files that contain symmetry operations 

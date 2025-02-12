@@ -19,7 +19,8 @@ namespace Rpc {
    */
    template <int D>
    Solvent<D>::Solvent()
-    : SolventDescriptor()
+    : SolventDescriptor(),
+      meshPtr_(nullptr)
    {  setClassName("Solvent"); }
 
    /*
@@ -33,10 +34,19 @@ namespace Rpc {
    * Create an association with a Mesh & allocate the concentration field.
    */
    template <int D>
-   void Solvent<D>::setDiscretization(Mesh<D> const & mesh)
+   void Solvent<D>::associate(Mesh<D> const & mesh)
    {
       meshPtr_ = &mesh;
-      cField_.allocate(mesh.dimensions());
+   }
+
+   /*
+   * Allocate the concentration field (cField).
+   */
+   template <int D>
+   void Solvent<D>::allocate()
+   {
+      UTIL_CHECK(meshPtr_);
+      cField_.allocate(meshPtr_->dimensions());
    }
 
    /*

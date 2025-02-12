@@ -4,8 +4,8 @@
 \ref install_page       (Next)
 <BR>
 
-The following people have contributed to the development of the
-current C++ version of PSCF 
+The following people have contributed to the development of the current 
+C++ version of PSCF:
 
   - David Morse
   - Guo Kang Cheong
@@ -15,11 +15,13 @@ current C++ version of PSCF
   - Kexin Chen
   - Ying Zheng
 
-Contributors to the legacy Fortran version, who helped develop
-algorithms used in both versions, include
+The following people contributing to the legacy Fortran version, and 
+helped develop algorithms that are now used in both versions:
 
   - Chris Tyler
   - Jian Qin
+  - Amit Ranjan
+  - Akash Arora
 
 <BR>
 \ref about_features_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp;

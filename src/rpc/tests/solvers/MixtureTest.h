@@ -71,8 +71,10 @@ public:
       mesh.setDimensions(d);
       FFT<1> fft;
       fft.setup(d);
-      mixture.setDiscretization(mesh, fft);
-      mixture.setUnitCell(unitCell);
+
+      mixture.associate(mesh, fft, unitCell);
+      mixture.allocate();
+      mixture.clearUnitCellData();
 
       #if 0
       std::cout << "\n";
@@ -148,8 +150,10 @@ public:
       mesh.setDimensions(d);
       FFT<2> fft;
       fft.setup(d);
-      mixture.setDiscretization(mesh, fft);
-      mixture.setUnitCell(unitCell);
+
+      mixture.associate(mesh, fft, unitCell);
+      mixture.allocate();
+      mixture.clearUnitCellData();
 
       #if 0
       std::cout << "\n";
@@ -245,8 +249,10 @@ public:
       mesh.setDimensions(d);
       FFT<2> fft;
       fft.setup(d);
-      mixture.setDiscretization(mesh, fft);
-      mixture.setUnitCell(unitCell);
+
+      mixture.associate(mesh, fft, unitCell);
+      mixture.allocate();
+      mixture.clearUnitCellData();
 
       #if 0
       std::cout << "\n";
@@ -331,8 +337,10 @@ public:
       mesh.setDimensions(d);
       FFT<3> fft;
       fft.setup(d);
-      mixture.setDiscretization(mesh, fft);
-      mixture.setUnitCell(unitCell);
+
+      mixture.associate(mesh, fft, unitCell);
+      mixture.allocate();
+      mixture.clearUnitCellData();
 
       #if 0
       std::cout << "\n";

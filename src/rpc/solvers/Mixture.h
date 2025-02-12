@@ -53,9 +53,9 @@ namespace Rpc {
    *
    * A Mixture is associated with a Mesh<D> object, which models a spatial
    * discretization mesh, and a UnitCell<D> object, which describes the
-   * the periodic unit cell. The Mixture::setUnitCell function sets up
-   * all parameters that depend on the unit cell, and must be called once
-   * once after every time the unit cell is initialized or modified, 
+   * periodic unit cell. The Mixture::clearUnitCellData function clears
+   * parameters that depend on the unit cell as invalid, and must be called
+   * once after every time the unit cell parameters are set or modified, 
    * before the next call to Mixture::compute.
    *
    * \ref user_param_mixture_page "Parameter File Format" 
@@ -98,20 +98,28 @@ namespace Rpc {
       *
       * \param mesh  associated Mesh<D> object (stores address).
       * \param fft  associated FFT<D> object (stores address).
+      * \param cell  associated UnitCell<D> object (stores address).
       */
-      void setDiscretization(Mesh<D> const & mesh,
-                             FFT<D> const & fft);
+      void associate(Mesh<D> const & mesh,
+                     FFT<D> const & fft,
+                     UnitCell<D> const & cell);
 
       /**
-      * Set unit cell parameters used in solver.
-      * 
-      * This function resets unit cell information in the solvers for 
-      * every species in the system. It should be called once after
-      * every change in the unit cell.
-      *
-      * \param unitCell UnitCell<D> object that contains Bravais lattice.
+      * Allocate required internal memory for all solvers.
       */
-      void setUnitCell(const UnitCell<D>& unitCell);
+      void allocate();
+
+      /**
+      * Clear all data in solvers that depends on the unit cell parameters.
+      * 
+      * This function marks all private data that is maintained by solvers
+      * and that depends on values of the unit cell parameters as invalid.
+      * It should be called once after every change in the unit cell and
+      * before the next call to compute or computeStress. Such outdated
+      * internal data is then recomputed just before it is needed for 
+      * solution of the MDE or calculation of the stress. 
+      */
+      void clearUnitCellData();
 
       /**
       * Reset statistical segment length for one monomer type.
@@ -146,7 +154,10 @@ namespace Rpc {
       * The optional parameter phiTot is only relevant to problems such as 
       * thin films in which the material is excluded from part of the unit
       * cell by imposing an inhomogeneous constraint on the sum of monomer 
-      * concentrations, (i.e., a "mask"). 
+      * concentrations, (i.e., a "mask"). In such cases, the volume 
+      * fraction phi associated with each species is interpreted as a 
+      * fraction of the volume that is occupied by material, rather than 
+      * as a fraction of the computational unit cell.
       *
       * \param wFields array of chemical potential fields (input)
       * \param cFields array of monomer concentration fields (output)
@@ -207,9 +218,9 @@ namespace Rpc {
       /**
       * Is this mixture being treated in canonical ensemble?
       *
-      * Returns true iff an closed ensemble is used for every polymer
+      * Returns true iff a closed ensemble is used for every polymer
       * and solve species, by specifying a volume fraction phi rather
-      * than a chemical potential mu for every species.
+      * than a chemical potential mu for every species in the mixture.
       */
       bool isCanonical();
 
@@ -231,23 +242,25 @@ namespace Rpc {
 
    private:
 
-      /// Optimal contour length step size.
-      double ds_;
-
       /// Array to store total stress
       FArray<double, 6> stress_;
+
+      /// Optimal contour length step size.
+      double ds_;
 
       /// Pointer to associated Mesh<D> object.
       Mesh<D> const * meshPtr_;
 
-      /// Pointer to associated UnitCell<D>
-      UnitCell<D> const * unitCellPtr_;
-
-      /// Return associated Mesh<D> by const reference.
-      Mesh<D> const & mesh() const;
+      /// Number of unit cell parameters.
+      int nParam_;
 
       /// Has stress been computed for current w fields?
       bool hasStress_;
+
+      // Private function
+      
+      /// Return associated Mesh<D> by const reference.
+      Mesh<D> const & mesh() const;
 
    };
 

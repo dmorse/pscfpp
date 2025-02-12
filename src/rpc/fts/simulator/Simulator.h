@@ -10,8 +10,8 @@
 
 #include <util/param/ParamComposite.h>     // base class
 
-#include <rpc/fts/simulator/SimState.h>         // member
-#include <prdc/cpu/RField.h>               // memmber (template arg)
+#include <rpc/fts/simulator/SimState.h>    // member
+#include <prdc/cpu/RField.h>               // member (template arg)
 #include <util/random/Random.h>            // member
 #include <util/containers/DArray.h>        // member (template)
 #include <util/containers/DMatrix.h>       // member (template)
@@ -19,7 +19,7 @@
 namespace Pscf {
 namespace Rpc {
 
-   // Forward declarations
+   // Forward declarations 
    template <int D> class System;
    template <int D> class Compressor;
    template <int D> class CompressorFactory;
@@ -35,15 +35,18 @@ namespace Rpc {
    /**
    * Field theoretic simulator (base class).
    *
-   * The Simulator base class provides tools needed in all field-theoretic
+   * The Simulator base class provides tools needed in field-theoretic
    * simulations that are based on a partial saddle-point approximation.
    * Subclasses designed for field theoretic Monte Carlo (MC) and Brownian
-   * dynamics (BD) simulations provide algorithms and more specialized 
-   * data structures needed by specific sampling methods. This class
-   * provided functions to compute and diagonalze a projected chi matrix,
-   * functions to access components of several types of fields in a basis
-   * of eigenvectors of the projected chi matrix, and functions to compute 
-   * and return contributions to the field theoretic Hamiltonian.
+   * dynamics (BD) simulations, named McSimulator and BdSimulator, provide
+   * more specialized algorithms and data structures needed by these two
+   * sampling methods. 
+   *
+   * The Simulator class provides functions to compute and diagonalze a 
+   * projected chi matrix, functions to access components of several 
+   * types of fields in a basis of eigenvectors of the projected chi 
+   * matrix, and functions to compute and return contributions to the 
+   * field theoretic Hamiltonian.
    *
    * The analyzeChi function constructs and diagonalizes the projected
    * chi matrix. This is a singular nMonomer x nMonomer matrix defined 
@@ -66,6 +69,8 @@ namespace Rpc {
    {
 
    public:
+
+      Simulator() = delete;
 
       /**
       * Constructor.
@@ -142,8 +147,8 @@ namespace Rpc {
       /**
       * Clear field eigen-components and hamiltonian components.
       *
-      * Immediately after calling this function, hasHamiltonian(), hasWc(), 
-      * hasCc(), and hasDc() will all return false.
+      * On return from this function, hasHamiltonian(), hasWc(), hasCc(),
+      * and hasDc() all return false.
       */
       void clearData();
 
@@ -499,20 +504,20 @@ namespace Rpc {
       System<D>& system();
 
       /**
-      * Get the compressor by reference.
-      */
-      Compressor<D>& compressor();
-
-      /**
-      * Does this Simulator have a Compressor object?
-      */
-      bool hasCompressor() const;
-
-      /**
       * Get random number generator by reference.
       */
       Random& random();
       
+      /**
+      * Does this Simulator have a Compressor?
+      */
+      bool hasCompressor() const;
+
+      /**
+      * Get the compressor by reference.
+      */
+      Compressor<D>& compressor();
+
       /**
       * Does this Simulator have a Perturbation?
       */
@@ -559,11 +564,19 @@ namespace Rpc {
       void readRandomSeed(std::istream& in);
 
       /**
+      * Get the compressor factory by reference.
+      */
+      CompressorFactory<D>& compressorFactory();
+
+      /**
       * Read the compressor block of the parameter file. 
       *
-      * \param in input parameter stream
+      * If isEnd it true on entry, the function returns immediately. 
+      *
+      * \param in  input parameter stream
+      * \param isEnd  Was the end bracket of the Simulator block read?
       */
-      void readCompressor(std::istream& in);
+      void readCompressor(std::istream& in, bool& isEnd);
 
       /**
       * Get the perturbation factory by reference.
@@ -573,9 +586,12 @@ namespace Rpc {
       /**
       * Optionally read an associated perturbation.
       *
-      * \param in input parameter stream
+      * If isEnd it true on entry, this function returns immediately. 
+      *
+      * \param in  input parameter stream
+      * \param isEnd  Was the end bracket of the Simulator block read?
       */
-      void readPerturbation(std::istream& in);
+      void readPerturbation(std::istream& in, bool& isEnd);
 
       /**
       * Set the associated perturbation.
@@ -592,9 +608,12 @@ namespace Rpc {
       /**
       * Optionally read an associated ramp.
       *
-      * \param in input parameter stream
+      * If isEnd it true on entry, this function returns immediately. 
+      *
+      * \param in  input parameter stream
+      * \param isEnd  Was the end bracket of the Simulator block read?
       */
-      void readRamp(std::istream& in);
+      void readRamp(std::istream& in, bool& isEnd);
 
       /**
       * Set the associated ramp.
@@ -800,6 +819,8 @@ namespace Rpc {
 
    // Inline functions
 
+   // Management of owned and associated objects
+
    // Get the parent System by reference.
    template <int D>
    inline System<D>& Simulator<D>::system()
@@ -808,6 +829,24 @@ namespace Rpc {
       return *systemPtr_; 
    }
 
+   // Get the random number generator by reference.
+   template <int D>
+   inline Random& Simulator<D>::random()
+   {  return random_; }
+
+   // Get the compressor factory by reference.
+   template <int D>
+   inline CompressorFactory<D>& Simulator<D>::compressorFactory()
+   {
+      UTIL_CHECK(compressorFactoryPtr_);  
+      return *compressorFactoryPtr_; 
+   }
+
+   // Does this Simulator have an associated Compressor?
+   template <int D>
+   inline bool Simulator<D>::hasCompressor() const
+   {  return (bool)compressorPtr_; }
+   
    // Get the Compressor by reference.
    template <int D>
    inline Compressor<D>& Simulator<D>::compressor()
@@ -816,16 +855,11 @@ namespace Rpc {
       return *compressorPtr_;
    }
 
-   // Does the simulator have a Compressor object?
+   // Does this Simulator have an associated Perturbation?
    template <int D>
-   inline bool Simulator<D>::hasCompressor() const
-   {  return (compressorPtr_ != 0); }
-
-   // Get the random number generator by reference.
-   template <int D>
-   inline Random& Simulator<D>::random()
-   {  return random_; }
-
+   inline bool Simulator<D>::hasPerturbation() const
+   {  return (bool)perturbationPtr_; }
+   
    // Get the perturbation (if any) by const reference.
    template <int D>
    inline Perturbation<D> const & Simulator<D>::perturbation() const
@@ -850,6 +884,11 @@ namespace Rpc {
       return *perturbationFactoryPtr_; 
    }
 
+   // Does this Simulator have an associated Ramp?
+   template <int D>
+   inline bool Simulator<D>::hasRamp() const
+   {  return (bool)rampPtr_; }
+   
    // Get the ramp (if any) by const reference.
    template <int D>
    inline Ramp<D> const & Simulator<D>::ramp() const
@@ -873,6 +912,8 @@ namespace Rpc {
       UTIL_CHECK(rampFactoryPtr_);  
       return *rampFactoryPtr_; 
    }
+
+   // Projected Chi Matrix
 
    // Return an array of eigenvalues of the projected chi matrix.
    template <int D>
@@ -903,6 +944,8 @@ namespace Rpc {
    template <int D>
    inline double Simulator<D>::sc(int a) const
    {  return sc_[a]; }
+
+   // Hamiltonian and its derivatives
 
    // Get the precomputed Hamiltonian.
    template <int D>
@@ -940,6 +983,8 @@ namespace Rpc {
    template <int D>
    inline bool Simulator<D>::hasHamiltonian() const
    {  return hasHamiltonian_; }
+
+   // Fields
 
    // Return all eigencomponents of the w fields.
    template <int D>
@@ -986,16 +1031,6 @@ namespace Rpc {
    inline bool Simulator<D>::hasDc() const
    {  return hasDc_; }
 
-   // Does this Simulator have an associated Perturbation?
-   template <int D>
-   inline bool Simulator<D>::hasPerturbation() const
-   {  return (perturbationPtr_ != 0); }
-   
-   // Does this Simulator have an associated Ramp?
-   template <int D>
-   inline bool Simulator<D>::hasRamp() const
-   {  return (rampPtr_ != 0); }
-   
    // Return the current converged simulation step index.
    template <int D>
    inline long Simulator<D>::iStep()

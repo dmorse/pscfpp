@@ -119,13 +119,16 @@ namespace Rpc {
       */
       Factory<TrajectoryReader<D>>& trajectoryReaderFactory();
 
+      /**
+      * Have any McMove algorithms been defined?
+      */
+      bool hasMcMoves() const;
+
       ///@}
 
       // Inherited public functions
 
       using Simulator<D>::system;
-      using Simulator<D>::compressor;
-      using Simulator<D>::random;
       using Simulator<D>::analyzeChi;
       using Simulator<D>::chiEval;
       using Simulator<D>::chiEvecs;
@@ -140,14 +143,18 @@ namespace Rpc {
       using Simulator<D>::hasDc;
       using Simulator<D>::clearData;
       using Simulator<D>::computeHamiltonian;
+      using Simulator<D>::hasHamiltonian;
       using Simulator<D>::hamiltonian;
       using Simulator<D>::idealHamiltonian;
       using Simulator<D>::fieldHamiltonian;
       using Simulator<D>::perturbationHamiltonian;
+      using Simulator<D>::random;
       using Simulator<D>::hasCompressor;
-      using Simulator<D>::hasHamiltonian;
+      using Simulator<D>::compressor;
       using Simulator<D>::hasPerturbation;
+      using Simulator<D>::perturbation;
       using Simulator<D>::hasRamp;
+      using Simulator<D>::ramp;
       using Simulator<D>::saveState;
       using Simulator<D>::restoreState;
       using Simulator<D>::clearState;
@@ -161,11 +168,14 @@ namespace Rpc {
       using ParamComposite::readParamComposite;
       using ParamComposite::readParamCompositeOptional;
       using ParamComposite::readOptional;
+
+      using Simulator<D>::readRandomSeed;
       using Simulator<D>::readCompressor;
-      using Simulator<D>::perturbation;
+      using Simulator<D>::readPerturbation;
+      using Simulator<D>::readRamp;
+      using Simulator<D>::compressorFactory;
       using Simulator<D>::perturbationFactory;
       using Simulator<D>::setPerturbation;
-      using Simulator<D>::ramp;
       using Simulator<D>::rampFactory;
       using Simulator<D>::setRamp;
 
@@ -227,19 +237,20 @@ namespace Rpc {
       return *trajectoryReaderFactoryPtr_;
    }
    
-   // Return the simulations whether needs to store Cc fields
+   // Have any MC moves been defined?
+   template <int D>
+   inline bool McSimulator<D>::hasMcMoves() const
+   {  return (bool)(mcMoveManager_.size() > 0); }
+
+   // Does the stored state need to include Cc fields ?
    template <int D>
    inline bool McSimulator<D>::needsCc()
-   {
-      return state_.needsCc;
-   }
+   {  return state_.needsCc; }
    
-   // Return the simulations whether needs to store Dc fields
+   // Does the stored state need to include Dc fields ?
    template <int D>
    inline bool McSimulator<D>::needsDc()
-   {
-      return state_.needsDc;
-   }
+   {  return state_.needsDc; }
       
    #ifndef RPC_MC_SIMULATOR_TPP
    // Suppress implicit instantiation

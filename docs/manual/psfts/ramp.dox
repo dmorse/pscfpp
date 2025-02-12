@@ -1,0 +1,38 @@
+/*! \page psfts_ramp_page Parameter Ramps
+
+\ref psfts_analysis_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref psfts_perturb_page   (Next)
+<BR>
+
+The "ramp" feature allows a user to perform a simulation in which one 
+or more of the parameters of the field theoretic Hamiltonian vary 
+continuously over the course of the simulation. One possible reason to
+this is as an attempt to approximately identify a phase transition, such 
+as an order-disorder transition, by looking 
+for evidence of a spontaneous phase transformation that occurs during 
+such a simulation. Another possible purpose of a ramp is to implement 
+continuous thermodynamic integration calculations.
+
+A parameter ramp is enabled by adding an optional, selectable Ramp 
+block within the Simulator block of the parameter file.  When present, 
+this Ramp block must appear with the BdSimulator or McSimulator block 
+immediately after the Compressor block, as discussed on a 
+\ref psfts_param_page "previous page".  
+
+The only type of ramp that is currently available is a linear ramp 
+algorithm that is implemented by the class LinearRamp.  The Ramp block 
+has been programmed as a selectable block simply to allow for later
+extension. The LinearRamp class allows the user to perform a simulation 
+in which almost any physical parameter of the Hamiltonian, or any subset 
+of these parameters, varies linearly with the number of BD or MC steps
+completed the beginning of the simulation. 
+
+A full description of the parameter file format for LinearSweep class 
+is given \subpage rpc_LinearRamp_page "here" .
+
+<BR>
+\ref psfts_analysis_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
+\ref psfts_page           (Up)   &nbsp; &nbsp; &nbsp; &nbsp;
+\ref psfts_perturb_page   (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
+
+*/

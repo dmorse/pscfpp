@@ -28,33 +28,23 @@ System{
     lattice     cubic   
   }
   McSimulator{
-    LrAmCompressor{
-      epsilon      1.0e-4
-      maxItr       200
-      maxHist      30     
-      verbose	   0
-      errorType    normResid
-    }
     seed              1784106389
     McMoveManager{
       ForceBiasMove{
-        probability     0.50
+        probability     0.75
         mobility        4.0E-3
       }
       RealMove{
         probability     0.25
         A               0.15
       }
-      FourierMove{
-        probability     0.25
-        A               0.0008
-        F*              20.990
-        tau             2.64737
-        N               1.0
-        volumeFraction  0.5
-        statisticalSegmentLength 1
-      }
-
+    }
+    LrAmCompressor{
+      epsilon      1.0e-4
+      maxItr       200
+      maxHist      30     
+      verbose	   0
+      errorType    normResid
     }
     AnalyzerManager{
       baseInterval    10

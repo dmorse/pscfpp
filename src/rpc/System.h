@@ -689,6 +689,28 @@ namespace Rpc {
                                    double epsilon = 1.0E-8);
 
       /**
+      * Multiply all components of an array of basis fields by a scalar.
+      *
+      * \param inFileName  name of input field file 
+      * \param outFileName  name of file for rescaled output fields
+      * \param factor  factor by which to multiply all field elements
+      */
+      void scaleFieldsBasis(const std::string & inFileName,
+                            const std::string & outFileName,
+                            double factor);
+
+      /**
+      * Multiply all elements of an array of r-grid fields by a scalar.
+      *
+      * \param inFileName  name of input field file 
+      * \param outFileName  name of file for rescaled output fields
+      * \param factor  factor by which to multiply all field elements
+      */
+      void scaleFieldsRGrid(const std::string & inFileName,
+                            const std::string & outFileName,
+                            double factor) const;
+
+      /**
       * Expand the number of spatial dimensions of an r-grid field.
       *
       * This function reads a D-dimensional field and outputs a field

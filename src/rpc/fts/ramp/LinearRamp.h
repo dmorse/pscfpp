@@ -14,6 +14,12 @@ namespace Rpc {
 
    /**
    * Linear ramp - parameters vary linearly with step index.
+   * 
+   * See also:
+   * <ul>
+   *   <li> \ref rpc_LinearRamp_page "Parameter File Format" </li>
+   *   <li> \ref psfts_ramp_page "Manual Page" </li>
+   * </ul>
    *
    * \ingroup Rpc_Fts_Ramp_Module
    */

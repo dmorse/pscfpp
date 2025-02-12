@@ -84,12 +84,17 @@ namespace Rpc {
       ///@{
 
       /**
-      * Get BdStep.
+      * Does this BdSimulator have a BdStep object?
       */
-      BdStep<D>& stepper();
+      bool hasBdStep() const;
 
       /**
-      * Get AnalyzerManger
+      * Get the BdStep by reference.
+      */
+      BdStep<D>& bdStep();
+
+      /**
+      * Get the AnalyzerManager by reference.
       */
       AnalyzerManager<D>& analyzerManager();
 
@@ -103,7 +108,6 @@ namespace Rpc {
       // Inherited public functions
 
       using Simulator<D>::system;
-      using Simulator<D>::compressor;
       using Simulator<D>::random;
       using Simulator<D>::analyzeChi;
       using Simulator<D>::chiEval;
@@ -123,10 +127,13 @@ namespace Rpc {
       using Simulator<D>::idealHamiltonian;
       using Simulator<D>::fieldHamiltonian;
       using Simulator<D>::perturbationHamiltonian;
-      using Simulator<D>::hasCompressor;
       using Simulator<D>::hasHamiltonian;
+      using Simulator<D>::hasCompressor;
+      using Simulator<D>::compressor;
       using Simulator<D>::hasPerturbation;
+      using Simulator<D>::perturbation;
       using Simulator<D>::hasRamp;
+      using Simulator<D>::ramp;
       using Simulator<D>::saveState;
       using Simulator<D>::restoreState;
       using Simulator<D>::clearState;
@@ -141,13 +148,15 @@ namespace Rpc {
       using ParamComposite::readParamComposite;
       using ParamComposite::readParamCompositeOptional;
       using ParamComposite::readOptional;
+      using Simulator<D>::readRandomSeed;
       using Simulator<D>::readCompressor;
-      using Simulator<D>::perturbation;
+      using Simulator<D>::readPerturbation;
+      using Simulator<D>::readRamp;
+      using Simulator<D>::compressorFactory;
       using Simulator<D>::perturbationFactory;
-      using Simulator<D>::setPerturbation;
-      using Simulator<D>::ramp;
       using Simulator<D>::rampFactory;
       using Simulator<D>::setRamp;
+      using Simulator<D>::setPerturbation;
 
       // Inherited protected data members
 
@@ -195,8 +204,16 @@ namespace Rpc {
 
    // Get the Brownian dynamics stepper.
    template <int D>
-   inline BdStep<D>& BdSimulator<D>::stepper()
-   {  return *bdStepPtr_; }
+   inline bool BdSimulator<D>::hasBdStep() const
+   {  return (bool)bdStepPtr_; }
+
+   // Get the Brownian dynamics stepper.
+   template <int D>
+   inline BdStep<D>& BdSimulator<D>::bdStep()
+   {
+      UTIL_CHECK(hasBdStep());  
+      return *bdStepPtr_; 
+   }
 
    // Get the analyzer manager.
    template <int D>

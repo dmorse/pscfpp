@@ -30,13 +30,6 @@ System{
 }
 
   McSimulator{
-    AmCompressor{
-      epsilon      1.0e-4
-      maxItr       200
-      maxHist      30     
-      verbose	 0
-      errorType    normResid
-    }
     McMoveManager{
 
       RealMove{
@@ -55,8 +48,19 @@ System{
       }
 
     }
+    AmCompressor{
+      epsilon      1.0e-4
+      maxItr       200
+      maxHist      30     
+      verbose	 0
+      errorType    normResid
+    }
     AnalyzerManager{
       baseInterval    1
+
+      StepLogger{
+        interval        50
+      }
 
       TrajectoryWriter{
         interval        10
@@ -69,12 +73,5 @@ System{
         nSamplePerBlock 2
       }
 
-      StepLogger{
-        interval        50
-      }
-
     }
   }
-
-  unitCell cubic   1.3835952906
-  groupName   P_-1

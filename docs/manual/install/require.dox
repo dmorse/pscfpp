@@ -143,10 +143,10 @@ which python
 and confirm that it returns a non-empty path such as /user/bin/python3. 
 We recommend using of the command "python3" rather than "python" to make 
 sure that you access a python 3 interpreter on any system in which a
-Python 2.* interpreter may still also are installed. A Python 3 
+Python 2.* interpreter may still also be installed. A Python 3 
 interpreter should be available from the command line in any common 
-linux distribution (e.g., Fedora or Ubuntu), and should be available in 
-Mac OS X after installation of the command line tools package.
+linux distribution (e.g., Fedora or Ubuntu), and should be available 
+in Mac OS X after installation of the command line tools package.
 
 \section install_require_compiler_cpp C++ compiler
 
@@ -231,17 +231,17 @@ To also install doxygen, issue the command
 brew install doxygen
 \endcode
 
-Mac users should be aware that Homebrew installs files in different
+Mac users should be aware that Homebrew installs files in different 
 locations on newer Macs that use Apple silicon (e.g., an M1 or M2 chip)
-than the file locations used by Homebrew on older Macs that use Intel 
-cpus:
+than the file locations used by Homebrew on older Macs that use an Intel
+CPU.
 
-On Macs with Intel cpus, Homebrew installed links to required header 
-and library files in subdirectories of the /usr/local directory.
-Because /usr/local is  one of the standard directories in which a unix
-shell normally looks for such files, PSCF can be installed on such
-machines using a default configuration for the makefile system that 
-is the same as the default used on linux machines.
+On Macs with an Intel CPU, Homebrew installed links to required header 
+and library files in subdirectories of the /usr/local directory. Because 
+/usr/local is  one of the standard directories in which a unix shell 
+normally looks for such files, PSCF can be installed on such machines 
+using a default configuration for the makefile system that is the same 
+as the default used on linux machines.
 
 On Macs with Apple silicon, Homebrew instead installs all files in
 /opt/homebrew.  This requires users to add paths to this directory and/or
@@ -261,13 +261,13 @@ to the "Modules" package, which is a system for automating changes in a
 users unix shell environment that are required in order to use particular
 software packages.
 
-On a unix system that uses modules, the command
+On a multi-user system that uses linux modules, the command
 \code
 module avail
 \endcode
 should give a listing of all software modules available for use on a
-particular system. The syntax for the command to load a particular module
-is
+particular system. The syntax for the command to load a particular 
+module is
 \code
 module load  module-name
 \endcode

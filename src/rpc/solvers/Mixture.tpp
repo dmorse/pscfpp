@@ -22,9 +22,10 @@ namespace Rpc
 
    template <int D>
    Mixture<D>::Mixture()
-    : ds_(-1.0),
-      meshPtr_(0),
-      unitCellPtr_(0),
+    : stress_(),
+      ds_(-1.0),
+      meshPtr_(nullptr),
+      nParam_(0),
       hasStress_(false)
    {  setClassName("Mixture"); }
 
@@ -43,26 +44,64 @@ namespace Rpc
       UTIL_CHECK(ds_ > 0);
    }
 
+   /*
+   * Create associations with mesh, fft, and unit cell.
+   */
    template <int D>
-   void Mixture<D>::setDiscretization(Mesh<D> const & mesh,
-                                      FFT<D> const & fft)
+   void Mixture<D>::associate(Mesh<D> const & mesh,
+                              FFT<D> const & fft,
+                              UnitCell<D> const & cell)
    {
       UTIL_CHECK(nMonomer() > 0);
       UTIL_CHECK(nPolymer()+ nSolvent() > 0);
-      UTIL_CHECK(ds_ > 0);
       UTIL_CHECK(mesh.size() > 0);
       UTIL_CHECK(fft.isSetup());
       UTIL_CHECK(mesh.dimensions() == fft.meshDimensions());
+      UTIL_CHECK(cell.nParameter() > 0);
 
-      // Save addresses of mesh
+      // Save addresses of mesh and unit cell
       meshPtr_ = &mesh;
+      nParam_ = cell.nParameter();
 
-      // Set discretization in space and s for all polymer blocks
+      // Create associations for all polymer blocks
+      if (nPolymer() > 0) {
+         int i, j;
+         for (i = 0; i < nPolymer(); ++i) {
+            polymer(i).setNParams(nParam_);
+            for (j = 0; j < polymer(i).nBlock(); ++j) {
+               polymer(i).block(j).associate(mesh, fft, cell);
+            }
+         }
+      }
+
+      // Create associations for all solvents (if any)
+      if (nSolvent() > 0) {
+         for (int i = 0; i < nSolvent(); ++i) {
+            solvent(i).associate(mesh);
+         }
+      }
+
+   }
+
+
+   /*
+   * Allocate internal data containers for all solvers.
+   */
+   template <int D>
+   void Mixture<D>::allocate()
+   {
+      UTIL_CHECK(meshPtr_);
+      UTIL_CHECK(nMonomer() > 0);
+      UTIL_CHECK(nPolymer()+ nSolvent() > 0);
+      UTIL_CHECK(meshPtr_->size() > 0);
+      UTIL_CHECK(ds_ > 0);
+
+      // Allocate memory for all Block objects
       if (nPolymer() > 0) {
          int i, j;
          for (i = 0; i < nPolymer(); ++i) {
             for (j = 0; j < polymer(i).nBlock(); ++j) {
-               polymer(i).block(j).setDiscretization(ds_, mesh, fft);
+               polymer(i).block(j).allocate(ds_);
             }
          }
       }
@@ -70,29 +109,25 @@ namespace Rpc
       // Set spatial discretization for solvents
       if (nSolvent() > 0) {
          for (int i = 0; i < nSolvent(); ++i) {
-            solvent(i).setDiscretization(mesh);
+            solvent(i).allocate();
          }
       }
 
    }
 
+   /*
+   * Clear all data that depends on the unit cell parameters.
+   */
    template <int D>
-   void Mixture<D>::setUnitCell(const UnitCell<D>& unitCell)
+   void Mixture<D>::clearUnitCellData()
    {
-
-      // Set association of unitCell to this Mixture
-      unitCellPtr_ = &unitCell;
-
-      // SetupUnitCell for all polymers
       if (nPolymer() > 0) {
          for (int i = 0; i < nPolymer(); ++i) {
-            polymer(i).setUnitCell(unitCell);
+            polymer(i).clearUnitCellData();
          }
       }
-
       hasStress_ = false;
    }
-
 
    /*
    * Reset statistical segment length for one monomer type.
@@ -209,7 +244,7 @@ namespace Rpc
          }
    
          // Accumulate stress for all the polymer chains
-         for (i = 0; i < unitCellPtr_->nParameter(); ++i) {
+         for (i = 0; i < nParam_; ++i) {
             for (j = 0; j < nPolymer(); ++j) {
                stress_[i] += polymer(j).stress(i);
             }
@@ -217,8 +252,9 @@ namespace Rpc
 
       }
 
-      // Correct for partial occupation of the unit cell
-      for (i = 0; i < unitCellPtr_->nParameter(); ++i) {
+      // Correct for possible partial occupation of the unit cell.
+      // Used in problems that contain a Mask, e.g., thin films.
+      for (i = 0; i < nParam_; ++i) {
          stress_[i] /= phiTot;
       }
 

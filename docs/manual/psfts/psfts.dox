@@ -30,12 +30,14 @@ pages of this discussion summarize the underlying theory.
 <h2> Contents:</h2>
 
    <ol>
-   <li> \subpage psfts_theory_page         </li>
-   <li> \subpage psfts_psa_page            </li>
-   <li> \subpage psfts_algorithm_page      </li>
-   <li> \subpage psfts_param_page          </li>
-   <li> \subpage psfts_command_page        </li>
-   <li> \subpage psfts_postprocess_page    </li>
+   <li> \subpage psfts_theory_page      </li>
+   <li> \subpage psfts_psa_page         </li>
+   <li> \subpage psfts_algorithm_page   </li>
+   <li> \subpage psfts_param_page       </li>
+   <li> \subpage psfts_command_page     </li>
+   <li> \subpage psfts_analysis_page    </li>
+   <li> \subpage psfts_ramp_page        </li>
+   <li> \subpage psfts_perturb_page     </li>
    </ol>
 
 <BR>

@@ -16,8 +16,8 @@ as an SCFT program.
 The Fortran version of PSCF is maintained in a separate github.com 
 repository at
 <a href= https://github.com/dmorse/pscf/>https://github.com/dmorse/pscf</a> ,
-but is no longer being actively developed. The name "pscfpp" that is
-that is used for the repository containing the current version was 
+but is no longer being actively developed. The name "pscfpp" that is that 
+is used for the github repository containing the current version was 
 chosen to avoid a clash with the name "pscf" that is used for the 
 repository containing the older Fortran code.
 
@@ -34,9 +34,10 @@ Features of the current version of PSCF that distinguish it from the
 legacy Fortran version include the following:
 <ul>
   <li>
-  The current version is extensible package of several programs designed 
-  for different geometries, algorithms and/or hardware. The Fortran code
-  is a single SCFT program for periodic structure and linear polymers.
+  The current version was designed as an extensible package of several 
+  programs intended for different geometries, algorithms and/or computer
+  hardware. The Fortran code is a single SCFT program designed for 
+  periodic structures and linear polymers.
   </li>
   <li>
   The current version enables simulations of mixtures containing acyclic
@@ -48,8 +49,8 @@ legacy Fortran version include the following:
   to dramatically accelerate some applications.
   </li>
   <li>
-  The current version enables field theoretic simulation (FTS) calculations
-  in a partial-saddle point approximation in addition to SCFT calculations.
+  The current version enables partial-saddle point field theoretic 
+  simulation (PS-FTS) calculations in addition to SCFT.
   </li>
 </ul>
 
@@ -82,10 +83,10 @@ from being applied to larger problems.
 The Fortran PSCF program has the ability to perform generalized RPA
 calculations to compute the self-consistent linear response of a periodic 
 structure to an infinitesimal inhomogeneous external field. This algorithm 
-allowed description of limits of stability of ordered phases and composition
-fluctuations within such phases. This feature has not been ported to the 
-new C++ version, but will remain available within the legacy Fortran 
-program, via the github repository for that program.  The required 
+allowed description of limits of stability of ordered phases and of 
+composition fluctuations within such phases. This feature has not been 
+ported to the new C++ version, but will remain available within the legacy 
+Fortran program, via the github repository for that program. The required 
 algorithm and some application are described in the following reference: 
 
 Ranjan, A. and Qin, J. and Morse, D.C., 

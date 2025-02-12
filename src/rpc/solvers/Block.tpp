@@ -34,6 +34,7 @@ namespace Rpc {
     : meshPtr_(0),
       fftPtr_(0),
       kMeshDimensions_(0),
+      kSize_(0),
       ds_(0.0),
       dsTarget_(0.0),
       ns_(0),
@@ -51,18 +52,41 @@ namespace Rpc {
    Block<D>::~Block()
    {}
 
+   /*
+   * Store addresses of mesh, FFT and unit cell.
+   */
    template <int D>
-   void Block<D>::setDiscretization(double ds, const Mesh<D>& mesh,
-                                                const FFT<D>& fft)
+   void Block<D>::associate(Mesh<D> const & mesh,
+                            FFT<D> const& fft,
+                            UnitCell<D> const& cell)
    {
       // Preconditions
-      UTIL_CHECK(ds > 0.0);
-      UTIL_CHECK(mesh.size() > 1);
-      UTIL_CHECK(fft.isSetup());
-      UTIL_CHECK(mesh.dimensions() == fft.meshDimensions());
       UTIL_CHECK(!isAllocated_);
 
-      // Set contour length discretization
+      // Set pointers to mesh and fft
+      meshPtr_ = &mesh;
+      fftPtr_ = &fft;
+      unitCellPtr_ = &cell;
+
+      hasExpKsq_ = false;
+   }
+
+   /*
+   * Compute number of contour steps and allocate all memory.
+   */
+   template <int D>
+   void Block<D>::allocate(double ds)
+   {
+      UTIL_CHECK(ds > 0.0);
+      UTIL_CHECK(meshPtr_);
+      UTIL_CHECK(fftPtr_);
+      UTIL_CHECK(unitCellPtr_);
+      UTIL_CHECK(mesh().size() > 1);
+      UTIL_CHECK(mesh().dimensions() == fft().meshDimensions());
+      UTIL_CHECK(!isAllocated_);
+      UTIL_CHECK(length() > 0);
+
+      // Set contour length discretization for this block
       dsTarget_ = ds;
       int tempNs;
       tempNs = floor( length()/(2.0 *ds) + 0.5 );
@@ -72,45 +96,37 @@ namespace Rpc {
       ns_ = 2*tempNs + 1;
       ds_ = length()/double(ns_-1);
 
-      // Set pointers to mesh and fft
-      meshPtr_ = &mesh;
-      fftPtr_ = &fft;
-
-      // Compute Fourier space kMeshDimensions_
+      // Compute Fourier space kMeshDimensions_ and kSize_
+      kSize_ = 1;
       for (int i = 0; i < D; ++i) {
          if (i < D - 1) {
-            kMeshDimensions_[i] = mesh.dimensions()[i];
+            kMeshDimensions_[i] = mesh().dimensions()[i];
          } else {
-            kMeshDimensions_[i] = mesh.dimensions()[i]/2 + 1;
+            kMeshDimensions_[i] = mesh().dimensions()[i]/2 + 1;
          }
-      }
-
-      // Set number kSize of points in k-space mesh
-      int kSize = 1;
-      for (int i = 0; i < D; ++i) {
-           kSize *= kMeshDimensions_[i];
+         kSize_ *= kMeshDimensions_[i];
       }
 
       // Allocate work arrays for MDE solution
       expKsq_.allocate(kMeshDimensions_);
       expKsq2_.allocate(kMeshDimensions_);
-      expW_.allocate(mesh.dimensions());
-      expW2_.allocate(mesh.dimensions());
-      qr_.allocate(mesh.dimensions());
-      qk_.allocate(mesh.dimensions());
-      qr2_.allocate(mesh.dimensions());
-      qk2_.allocate(mesh.dimensions());
+      expW_.allocate(mesh().dimensions());
+      expW2_.allocate(mesh().dimensions());
+      qr_.allocate(mesh().dimensions());
+      qk_.allocate(mesh().dimensions());
+      qr2_.allocate(mesh().dimensions());
+      qk2_.allocate(mesh().dimensions());
 
       // Allocate work array for stress calculation
-      dGsq_.allocate(kSize, 6);
+      dGsq_.allocate(kSize_, 6);
 
       // Allocate block concentration field
-      cField().allocate(mesh.dimensions());
+      cField().allocate(mesh().dimensions());
 
       // Allocate memory for solutions to MDE (requires ns_)
-      propagator(0).allocate(ns_, mesh);
-      propagator(1).allocate(ns_, mesh);
-      
+      propagator(0).allocate(ns_, mesh());
+      propagator(1).allocate(ns_, mesh());
+
       isAllocated_ = true;
       hasExpKsq_ = false;
    }
@@ -123,7 +139,7 @@ namespace Rpc {
    {
       BlockDescriptor::setLength(newLength);
 
-      if (isAllocated_) { // if setDiscretization has already been called
+      if (isAllocated_) { 
          // Reset contour length discretization
          UTIL_CHECK(dsTarget_ > 0);
          int oldNs = ns_;
@@ -136,13 +152,13 @@ namespace Rpc {
          ds_ = length()/double(ns_-1);
 
          if (oldNs != ns_) {
-            // If propagators are already allocated and ns_ has changed, 
+            // If propagators are already allocated and ns_ has changed,
             // reallocate memory for solutions to MDE
             propagator(0).reallocate(ns_);
             propagator(1).reallocate(ns_);
          }
       }
-      
+
       hasExpKsq_ = false;
    }
 
@@ -157,18 +173,15 @@ namespace Rpc {
    }
 
    /*
-   * Set data that depend on the unit cell parameters.
+   * Mark data that depend on the unit cell parameters as invalid.
    */
    template <int D>
-   void Block<D>::setUnitCell(const UnitCell<D>& unitCell)
-   {
-      unitCellPtr_ = &unitCell;
-      hasExpKsq_ = false;
-   }
+   void Block<D>::clearUnitCellData()
+   {  hasExpKsq_ = false; }
 
    /*
    * Compute all elements of expKsq_ and expKsq2_ arrays
-   */ 
+   */
    template <int D>
    void Block<D>::computeExpKsq()
    {
@@ -297,7 +310,7 @@ namespace Rpc {
       UTIL_CHECK(ds_ > 0);
       UTIL_CHECK(propagator(0).isAllocated());
       UTIL_CHECK(propagator(1).isAllocated());
-      
+
       stress_.clear();
 
       double dels, normal, increment;
@@ -305,10 +318,6 @@ namespace Rpc {
 
       normal = 3.0*6.0;
 
-      int kSize_ = 1;
-      for (int i = 0; i < D; ++i) {
-           kSize_ *= kMeshDimensions_[i];
-      }
       nParam = unitCell().nParameter();
       c = kSize_;
 

@@ -21,15 +21,19 @@ namespace Pscf
    * This mesh iterator iterates over the points of a mesh in "Fortran"
    * order, in which the first array index varies most rapidly. During 
    * iteration, the class keeps track of both the IntVec<D> position 
-   * and the integer rank of that point in the mesh. 
+   * and the integer rank of the current point in a mesh of specified
+   * dimensions. The MeshIterator class instead iterates over points of
+   * mesh in "C" order, in which the last index is most rapidly varying.
    *
-   * Ranges of the position components and the rank are defined using
-   * C conventions, exactly as in the Mesh and MeshIterator classes. 
-   * Each component of the position vector is indexed from zero, and the 
-   * scalar rank of each mesh point is defined using the C convention 
-   * for the rank of a multi-dimensional array, in which the last index 
-   * varies most rapidly.  The sequence of points visited by this iterator
-   * thus do not have sequential values for the rank.
+   * Ranges of the position vector components and the scalar rank are 
+   * defined using C/C++ conventions, exactly as in the Mesh and 
+   * MeshIterator classes: Each component of the position vector is 
+   * indexed from zero, and the scalar scalar rank of each mesh point is
+   * defined using the C convention for the rank of a multi-dimensional 
+   * array, in which the last index varies most rapidly. Because this
+   * iterator visits points of mesh in Fortran order, in which the first
+   * index varies most rapidly, the sequence of points visited by this 
+   * iterator thus do not have sequential values for the rank.
    *
    * Typical usage:
    * \code
@@ -54,7 +58,12 @@ namespace Pscf
       MeshIteratorFortran();
 
       /**
-      * Constructor, set mesh dimensions
+      * Constructor, set mesh dimensions and initial iterator.
+      *
+      * Construction by this function is equivalent to construction by
+      * the default constructor followed by a call to the setDimensions
+      * function. On return, mesh dimensions are set and the iterator
+      * is initialized to the first point in the mesh. 
       *
       * \param dimensions dimensions of the associated mesh
       */
@@ -63,9 +72,9 @@ namespace Pscf
       /**
       * Set or reset the mesh dimensions, and initialize iterator.
       *
-      * This fuction calls begin() internally. Upon return the
-      * iterator thus points to the first grid point, with all
-      * position coordinates equal to zero.
+      * This fuction calls begin() internally. Upon return, the iterator
+      * thus points to the first grid point, for which all position vector
+      * components are equal to zero.
       *
       * \param dimensions dimensions of the associated mesh
       */
@@ -74,12 +83,12 @@ namespace Pscf
       /**
       * Initialize the iterator to the first grid point.
       *
-      * On return, rank and position components are all zero.
+      * On return, the rank and all position components are all zero.
       */
       void begin();
 
       /**
-      * Increment the position and rank to the next grid point.
+      * Increment the iterator to the next grid point.
       */
       void operator ++ ();
 
@@ -89,17 +98,21 @@ namespace Pscf
       bool atEnd() const;
 
       /**
-      * Return the array rank of the associated grid point.
+      * Return the scalar array rank of the associated grid point.
       */
       int rank() const;
 
       /**
-      * Return integer coordinates of the associated grid point.
+      * Return a vector of coordinates of the associated grid point.
+      *
+      * Component i of the position varies from 0 to dimension[i] - 1,
+      * for i = 0, ..., D - 1, where dimension[i] is the dimension of
+      * the mesh in direction i. 
       */
       IntVec<D> const& position() const;
 
       /**
-      * Return mesh dimensions.
+      * Return the mesh dimensions as an vector of integers.
       */
       IntVec<D> const& dimensions() const;
 
@@ -109,7 +122,7 @@ namespace Pscf
       int size() const;
 
       /**
-      * Return vector of offsets.
+      * Return the vector of offsets.
       */
       IntVec<D> const& offsets() const;
 

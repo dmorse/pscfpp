@@ -5,13 +5,13 @@
 <BR>
 
 In a field theoretic treatment of an incompressible system, the
-partial-saddle approximation (PSA) an approximation for the
+partial-saddle approximation (PSA) is an approximation for the
 treatment of the pressure like field that acts to constrain the 
 total density. When it is applicable, the approximation yields a
 theory with real statistical weights for all allowed field 
 configurations.
 
-\section psfts_psa_ab_sec AB Systems
+\section psfts_psa_ab_sec AB Systems (\f$ M = 2 \f$)
 
 We first consider the PSA for an incompressible standard AB system with 
 \f$ \chi > 0 \f$.  In the fully fluctuating theory for such a system, 
@@ -19,32 +19,32 @@ the partition function can be expressed as an functional integral over
 a real exchange field \f$ \omega_{-} \f$ and an pressure-like field 
 \f$ \omega_{+} \f$.  
 
-In the PSA for such a system, \f$ Z \f$ is approximated a functional
-integral with respect to \f$ \omega_{-} \f$ alone in which the Hamiltonian 
-\f$ H \f$ is evaluated in a field configuration in which the partial 
-derivative of \f$ \delta H / \delta W_{+}({\bf r}) \f$ vanishes,
-yielding a so-called partial saddle-point configuration.  
-This yields an approximation
+In the PSA for such a system, \f$ Z \f$ is approximated by functional
+integral with respect to \f$ \omega_{-} \f$ in which the Hamiltonian 
+\f$ H \f$ is evaluated in a configuration in which \f$ \omega_{+} \f$ 
+is chosen so as to give a vanishing partial functional derivative of
+\f$H \f$ with respect to \f$ \omega_{+}({\bf r}) \f$. 
+This yields an approximate for the partition function as an integal
 \f[
    Z = \frac{1}{N} \int D\omega_{-} \; e^{-H[ \omega_{-}, \omega_{+}^{*}]}
 \f]
 in which \f$ \int D \omega_{-} \f$ denotes a functional integral over 
 the exchange field \f$ \omega_{-} \f$, while \f$ \omega_{+}^{*} \f$ 
 denotes a configuration of \f$ \omega_{+}({\bf r}) \f$ that is chosen 
-to satisfy the partial-saddle point condition
+to satisfy the so-called partial-saddle point condition
 \f[
     0 = \frac{1}{i} \left . 
     \frac{ \delta H }
          { \delta \omega_{+}({\bf r}) } 
     \right |_{\omega_{+}}
-    =  \frac{1}{v} \left [ \Phi_{+}({\bf r}) - 1\right ]
+    =  \frac{1}{v} \left [ \phi_{1}{\bf r}) + \phi_{2}({\bf r}) - 1\right ]
 \f]
-for all \f$ {\bf r} \f$ in the simulation domain.
-Partial saddle-point field configuration thus satisfy a mean-field
-version of the incompressibility constraint identical to that used
-in SCFT for incompressible systems. 
+for all \f$ {\bf r} \f$.
+Partial saddle-point fields configuration thus satisfy a mean-field
+version of the incompressibility constraint similar to that used in 
+SCFT for incompressible systems. 
 
-The partial saddle-point configuration of \f$ W_{+} \f$ in a system 
+The partial saddle-point configuration of \f$ \omega_{+} \f$ in a system 
 with a real-valued field \f$ \omega_{-}({\bf r}) \f$ is found to 
 always yield a pure imaginary value for \f$ \omega_{+}({\bf r})\f$
 corresponding to a real value for a Wick rotated saddle-point field
@@ -59,19 +59,19 @@ given by
 \f[
    w_{2}({\bf r}) =  W^{*}_{+}({\bf r}) - \omega_{+}({\bf r})  \quad,
 \f]
-while also yielding real values for \f$\ln Z_{\rm id}[w]\f$ and for 
+while also yielding real values for \f$\ln Z_{\rm id}[w] \f$ and for 
 the Hamiltonian \f$ H \f$. 
 
 \section psfts_psa_general_sec General Case (\f$ M \geq 2 \f$)
 
-The current version of PSCF allow PS-FTS simulations of some systems with 
-M > 2, subject to a condition on allowed values of the \f$ \chi \f$ 
-parameters.  The generalized PSA currently used in PSCF is applicable if 
-and only if the values of the \f$ \chi \f$ parameters yield negative values
-for all of nontrivial eigenvalues \f$ \lambda_{1}, \ldots \lambda_{M} \f$ 
-of the projected \f$ \chi \f$ matrix.  This requirement is a generalization 
-of the requirement that \f$ \chi > 0 \f$ in a standard AB system, which 
-leads in this case to a negative value for \f$ \lambda_{1} \f$.
+The current version of PSCF (v1.2) allows PS-FTS simulations of some 
+systems with M > 2, subject to a constraint on allowed values of the 
+\f$ \chi \f$ parameters:  The implementation of the PSA in the current 
+version of PSCF is applicable if the nontrivial eigenvalues of the 
+projected \f$ \chi \f$ matrix, \f$ \lambda_{1}, \ldots \lambda_{M-1} \f$, 
+are all negative.  This requirement is a generalization of the requirement 
+that \f$ \chi > 0 \f$ in a standard AB system, which leads in this special
+case to a value for \f$ \lambda_{1} < 0\f$.
 
 To discuss the generalized PSA for such systems, it is convenient to 
 adopt a modified notation analogous to that used for AB systems, in
@@ -86,54 +86,36 @@ PSA for such systems as an integral
 \f[
    Z = \frac{1}{N} \int D\omega_{-} \; e^{-H[\omega_{-}, \omega_{+}^{*}]}
 \f]
-in which \f$ \int D\omega_{-} \f$ denotes a functional integral over the 
-\f$ M - 1 \f$ exchange fields 
-\f$ \omega_{-} = [\omega_1, \ldots, \omega_{M-1}]\f$, 
-and in which \f$ \omega_{+}^{*} \f$ denotes a configuration of 
+in which \f$ \int D\omega_{-} \f$ denotes a functional integral over 
+the \f$ M - 1 \f$ exchange fields 
+\f$ \omega_{-} = [\omega_1, \ldots, \omega_{M-1}] \f$, and in which 
+\f$ \omega_{+}^{*} \f$ denotes a configuration of 
 \f$ \omega_{+}({\bf r}) \f$ that is chosen to satisfy a criterion 
 requiring that 
 \f[
+     0 = \frac{1}{i}
      \left . 
      \frac{ \delta H[\omega_{-}, \omega_{+} ] }
-          { \delta \omega_{+}({\bf r}) } = 0
+          { \delta \omega_{+}({\bf r}) } 
      \right |_{\omega_{+} = \omega_{+}^{*}}
      \quad.
 \f]
 As for an AB system, the requirement that 
-\f$ \delta H[\omega]/\delta \omega_{M}({\bf r}) = 0 \f$ 
-can be shown to be equivalent to a requirement that 
-\f$ \langle C_{M}({\bf r}) \rangle_{\rm id} = c_{0} \f$ or, 
-equivalently, that
+\f$ \delta H[\omega]/\delta \omega_{M}({\bf r}) = 0 \f$ can be shown to 
+be equivalent to a requirement that 
 \f[
-    \sum_{i=}^{M} \langle c_{i}({\bf r}) \rangle_{\rm id} = c_{0}
+    \sum_{i=}^{M} \phi_{i}({\bf r}) = 1
     \quad.
 \f]
-In the cases to which this approximation applies, in which
-\f$ \lambda_{1}, \ldots, \lambda_{M-1} \f$ are all negative, this 
-approximation leads to positive values for all monomer fields and to 
-a positive value for the Hamiltonian \f$ H \f$. 
+In cases to which this approximation applies (for which
+\f$ \lambda_{1}, \ldots, \lambda_{M-1} \f$ are all negative) this 
+approximation leads to real values for all monomer fields and for 
+the Hamiltonian \f$ H \f$. 
 
-\section psfts_psa_phi_sec Definition of Phi
-
-Hereafter, we use the notation \f$ \langle \cdots \rangle_{\rm id} \f$ 
-to denote averages evaluated for a hypothetical ideal gas subjected to 
-an external potential \f$ H_{\rm c} \f$, as in the definition of 
-\f$ Z_{\rm id} \f$ . We define average volume fraction fields as
-\f[
-    \phi_{i}({\bf r}) = v \langle c_{i}({\bf r}) \rangle_{\rm id} 
-\f]
-\f[
-    \Phi_{\alpha}({\bf r}) 
-                   =  v \langle C_{\alpha}({\bf r}) \rangle_{\rm id}
-                    = v_{\alpha i}\phi_{i}({\bf r})
-    \quad. 
-\f]
-for all \f$ i, \alpha = 1, \ldots, M \f$ .
-Because these are evaluated for a gas with an external potential 
-\f$ H_{\rm c} \f$, these volume fraction fields are functionals of 
-the \f$ w \f$ fields.
-
-
+Morse, Yong and Chen (<https://pubs.acs.org/doi/10.1021/acs.macromol.4c02636>)
+have proposed a further generalization of the PSA so as to treat cases in which 
+one or more eigenvalues of the projected \f$ \chi \f$ matrix are positive. This 
+further generalization is not implemented in v1.2 of PSCF. 
 
 <BR>
 \ref psfts_psa_page         (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 

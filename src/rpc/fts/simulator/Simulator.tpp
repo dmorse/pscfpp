@@ -135,18 +135,19 @@ namespace Rpc {
    template <int D>
    void Simulator<D>::readParameters(std::istream &in)
    {
-      // Read required Compressor block
-      readCompressor(in);
-      UTIL_CHECK(compressorPtr_);
-
       // Optionally read a random number generator seed
       readRandomSeed(in);
 
+      bool isEnd = false;
+
+      // Read required Compressor block
+      readCompressor(in, isEnd);
+
       // Optionally read a Perturbation
-      readPerturbation(in);
+      readPerturbation(in, isEnd);
 
       // Optionally read a Ramp
-      readRamp(in);
+      readRamp(in, isEnd);
    }
 
    /*
@@ -731,17 +732,21 @@ namespace Rpc {
    }
 
    /*
-   * Read the required Compressor parameter file block.
+   * Optionally read the Compressor parameter file block.
    */
    template<int D>
-   void Simulator<D>::readCompressor(std::istream& in)
+   void Simulator<D>::readCompressor(std::istream& in, bool& isEnd)
    {
+      if (isEnd) return;
       UTIL_CHECK(compressorFactoryPtr_);
+      UTIL_CHECK(!hasCompressor());
       std::string className;
-      bool isEnd = false;
       compressorPtr_ =
-         compressorFactoryPtr_->readObject(in, *this, className, isEnd);
-      UTIL_CHECK(compressorPtr_);
+         compressorFactory().readObjectOptional(in, *this, 
+                                                className, isEnd);
+      if (!compressorPtr_ && ParamComponent::echo()) {
+         Log::file() << indent() << "  Compressor{ [absent] }\n";
+      }
    }
 
    // Functions related to an associated Perturbation
@@ -750,17 +755,15 @@ namespace Rpc {
    * Optionally read a Perturbation parameter file block.
    */
    template<int D>
-   void Simulator<D>::readPerturbation(std::istream& in)
+   void Simulator<D>::readPerturbation(std::istream& in, bool& isEnd)
    {
-      UTIL_CHECK(!perturbationPtr_);
-
+      if (isEnd) return;
+      UTIL_CHECK(perturbationFactoryPtr_);
+      UTIL_CHECK(!hasPerturbation());
       std::string className;
-      bool isEnd = false;
-
       perturbationPtr_ =
          perturbationFactory().readObjectOptional(in, *this,
                                                   className, isEnd);
-      UTIL_CHECK(!isEnd);
       if (!perturbationPtr_ && ParamComponent::echo()) {
          Log::file() << indent() << "  Perturbation{ [absent] }\n";
       }
@@ -782,16 +785,14 @@ namespace Rpc {
    * Optionally read a parameter file block for an associated Ramp.
    */
    template<int D>
-   void Simulator<D>::readRamp(std::istream& in)
+   void Simulator<D>::readRamp(std::istream& in, bool& isEnd)
    {
+      if (isEnd) return;
       UTIL_CHECK(!rampPtr_);
 
       std::string className;
-      bool isEnd = false;
-
       rampPtr_ =
          rampFactory().readObjectOptional(in, *this, className, isEnd);
-      UTIL_CHECK(!isEnd);
       if (!rampPtr_ && ParamComponent::echo()) {
          Log::file() << indent() << "  Ramp{ [absent] }\n";
       }

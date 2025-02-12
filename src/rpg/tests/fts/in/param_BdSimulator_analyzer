@@ -1,4 +1,7 @@
 BdSimulator{
+   LMBdStep{
+      mobility        1.0E-3
+   }
    LrAmPreCompressor{
       epsilon      1.0e-4
       maxItr       200
@@ -6,30 +9,23 @@ BdSimulator{
       verbose	 0
       errorType    rmsResid
    }
-   
-   LMBdStep{
-      mobility        1.0E-3
-   }
- 
    AnalyzerManager{
       baseInterval    1
-      FourthOrderParameter{
-         interval        1
-         outputFileName  out/fourthOrder_analyzer
+      StepLogger{
+         interval        5
       }
       TrajectoryWriter{
          interval        1
          outputFileName  out/trajectory_analyzer
       }
-      
       HamiltonianAnalyzer{
          interval        1
          outputFileName  out/hamiltonian_analyzer
          nSamplePerBlock 1
       }
-
-      StepLogger{
-         interval        5
+      FourthOrderParameter{
+         interval        1
+         outputFileName  out/fourthOrder_analyzer
       }
    }
 }

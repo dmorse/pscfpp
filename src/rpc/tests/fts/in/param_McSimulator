@@ -1,12 +1,4 @@
 McSimulator{
-   LrAmCompressor{
-      epsilon      1.0e-4
-      maxItr       200
-      maxHist      30     
-      verbose	   0
-      errorType    normResid
-   }
-    
    seed              1784106389
    McMoveManager{
       ForceBiasMove{
@@ -20,7 +12,13 @@ McSimulator{
       }
       
    }
-   
+   LrAmCompressor{
+      epsilon      1.0e-4
+      maxItr       200
+      maxHist      30     
+      verbose	   0
+      errorType    normResid
+   }
    AnalyzerManager{
       baseInterval    10
 
@@ -35,6 +33,5 @@ McSimulator{
       }
 
    }
-   
 }
 

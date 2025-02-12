@@ -1,0 +1,165 @@
+namespace Pscf{
+namespace Rpc{
+/*! 
+\page rpc_LinearRamp_page Rpc::LinearRamp
+
+A LinearRamp allows a user to vary a set of one or more parameters 
+over the course of a simulation, such that each of the chosen parameters
+varies linear with the simulation step counter. This is the default 
+ramp algorithm for both pscf_pc and pscf_pg, and so may be selected
+by including a parameter file block with either the specific label
+"LinearRamp" or the generic label "Ramp". 
+
+\section rpc_LinearRamp_param_sec Parameter File Format
+
+The parameter file format for a LinearRamp is closely analogous to that
+used for SCFT calculations by the \ref scft_param_sweep_page "LinearSweep" 
+class.  An example of the parameter file block for a LinearRamp is shown 
+below:
+\code
+  LinearRamp{
+     nParameters      2
+     parameters[
+        chi            0     1    2.0
+        v_monomer                 0.005
+     ]
+  }
+\endcode
+This parameter file block varies the parameter chi(0,1) (i.e., the 
+Flory-Huggins interaction parameter controlling interactions between 
+monomers of types \f$ 0 \f$ and \f$ 1 \f$, and the length of block 1 
+of polymer species 1 (i.e., the second block of the first species).
+The last parameter in each line specifies how much the associated
+parameter will be changed over the course of a simulation.
+
+The parameter file format for a LinearRamp is as show below,
+\code
+  LinearRamp{
+       nParameter        int
+       parameters        Array [ RampParameter ]
+  }
+\endcode
+with parameters described in the following table:
+<table>
+  <tr>
+    <td> <b> Label </b>  </td>
+    <td> <b> Description </b>  </td>
+  </tr>
+  <tr>
+    <td> nParameter </td>
+    <td> number of parameters that are modified during the ramp </td>
+  </tr>
+  <tr>
+    <td> parameters </td>
+    <td> Array in which each element specifies a parameter and the amount 
+         it should be changed over the course of the simulation
+         </td>
+  </tr>
+</table>
+The array "parameters" must contain nParameter lines, each on a
+separate line, each of which contains an identifier for a single
+parameter and a value for the amount that parameter will be changed
+over the course of a simulation. Parameters that are not listed in 
+this array are unmodified during the simulation.
+
+\subsection psfts_ramp_linear_parameters_sec Ramp Parameters
+
+The file format each line of the "parameters" array (corresponding to
+a single parameter) in a LinearRamp contains an identifier for a specific
+input parameter followed by amount by which the value of that parameter
+should change over the course of a simulation.  The parameter identifier
+in each such entry contains a name string that identifies the type of
+variable, such as "block" for a block length or "chi" for an interaction
+parameter. This string is followed by zero, one or two integer indices
+that specify which variable of that type should be changed.  For example,
+the string "block" must be followed by two integers, the first of which
+is an index for the polymer species the block belongs to, and the second
+of which is an index for that block within that polymer. Some other types
+of parameter can be uniqued identified using only a single index. For
+example the description of a parameter that specifies a volume fraction
+or chemical potential of a polymer or solvent molecular species requires
+a single index to identify the polymer or solvent species of interest.
+Other parameters, such as v_monomer, do not have any associated indices.
+
+The general format for a line in the parameters array for a parameter
+that is specified by two indices is:
+\code
+     type   id0    id1    change
+\endcode
+where "type" denotes the parameter type identifier string (e.g., block or
+chi), "id0" and "id1" denote associated integer indices, and "change" is 
+a real number that specifies the total amount that the specified parameter
+should be changed over the course of the ramp. The format for a parameter
+that has only one associated index (such as a molecular volume fraction)
+simply omits the second integer index.
+
+The table shown below gives all allowed values for the parameter type
+string identifer for a LinearRamp for a periodic microstructure with
+with the number and meaning of any associated index or indices. All
+but one of these types of parameter are also valid in a linear ramp
+performed by pscf_1d one-dimensional finite difference program, as
+discussed below.  To indicate the meaning of each index in this table,
+we use the following notation:
+
+   - mId denote a monomer type index
+   - pId denotes a polymer species index
+   - bId denote the index of a block within a polymer
+   - sId denotes a solvent species index
+   - uId denotes an index for a unit cell parameter for a periodic
+     structure.
+
+If only one index is required for a particular parameter type, then no
+entry is is given for the the second index.
+<table>
+  <tr>
+    <td> Type         </td><td> Meaning                    </td>
+    <td> id0        </td><td> id1 </tr>
+  <tr>
+    <td> kuhn         </td><td> monomer segment length     </td>
+    <td> mId          </td> <td>      </td>
+  </tr>
+  <tr>
+    <td> chi          </td><td> Flory-Huggins parameter    </td>
+    <td> mId          </td><td> mId   </td>
+  </tr>
+  <tr>
+    <td> block        </td><td> block length               </td>
+    <td> pId          </td><td> bId   </td>
+  </tr>
+  <tr>
+    <td> solvent      </td><td> solvent size               </td>
+    <td> sId          </td><td>       </td>
+  </tr>
+  <tr>
+    <td> phi_polymer  </td><td> polymer volume fraction    </td>
+    <td> pId          </td><td>       </td>
+  </tr>
+  <tr>
+    <td> mu_polymer   </td><td> polymer chemical potential </td>
+    <td> pId          </td><td>       </td>
+  </tr>
+  <tr>
+    <td> phi_solvent  </td><td> solvent volume fraction    </td>
+    <td> sId          </td><td>       </td>
+  </tr>
+  <tr>
+    <td> mu_solvent  </td><td> solvent chemical potential  </td>
+    <td> sId         </td><td>        </td>
+  </tr>
+  <tr>
+    <td> cell_param  </td><td> unit cell lattice parameter  </td>
+    <td> uId         </td><td>        </td>
+  </tr>
+  <tr>
+    <td> v_monomer   </td><td> monomer reference volume  </td>
+    <td>         </td><td>        </td>
+  </tr>
+</table>
+The two indices for a Flory-Huggins chi parameter refer to indices in
+the chi matrix maintained by Interaction. Changes to element chi(i, j)
+automatically also update chi(j, i) for \f$ i \neq j \f$, thus 
+preserving the symmetry of the matrix.
+
+*/
+}
+}

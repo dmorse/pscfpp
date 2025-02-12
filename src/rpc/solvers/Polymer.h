@@ -88,15 +88,20 @@ namespace Rpc {
       void setMu(double mu);
 
       /**
-      * Set up the unit cell after a change in unit cell parameters.
+      * Store the number of unit cell parameters.
       *
-      * This function should be called after each change in the unit
-      * cell. It sets unit cell information for all blocks in this
+      * \param nParam  the number of unit cell parameters
+      */
+      void setNParams(int nParam);
+
+      /**
+      * Clear all data that depends on unit cell parameters.
+      *
+      * This function should be called after each change in the unit cell.
+      * It calls Block<D>::clearUnitCellData() for all blocks in this 
       * polymer.
-      *
-      * \param unitCell crystallographic unit cell
       */ 
-      void setUnitCell(UnitCell<D> const & unitCell);
+      void clearUnitCellData();
 
       /**
       * Compute solution to MDE and block concentrations.
@@ -157,8 +162,8 @@ namespace Rpc {
       /// Stress contribution from this polymer species
       FArray<double, 6> stress_;
 
-      /// Pointer to associated UnitCell<D>
-      const UnitCell<D>* unitCellPtr_;
+      /// Number of unit cell parameters.
+      int nParam_;
 
    };
 

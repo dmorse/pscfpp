@@ -15,6 +15,8 @@ namespace Rpc {
 
    template <int D>
    Polymer<D>::Polymer()
+    : stress_(),
+      nParam_(0)
    {  setClassName("Polymer");}
 
    template <int D>
@@ -38,16 +40,20 @@ namespace Rpc {
    }
 
    /*
+   * Set the number of unit cell parameters.
+   */ 
+   template <int D>
+   void Polymer<D>::setNParams(int nParam)
+   {   nParam_ = nParam; }
+
+   /*
    * Set unit cell dimensions in all solvers.
    */ 
    template <int D>
-   void Polymer<D>::setUnitCell(UnitCell<D> const & unitCell)
+   void Polymer<D>::clearUnitCellData()
    {
-      // Set association to unitCell
-      unitCellPtr_ = &unitCell;
-
       for (int j = 0; j < nBlock(); ++j) {
-         block(j).setUnitCell(unitCell);
+         block(j).clearUnitCellData();
       }
    }
 
@@ -85,7 +91,7 @@ namespace Rpc {
       double prefactor = exp(mu_)/length();
       for (int i = 0; i < nBlock(); ++i) {
          block(i).computeStress(prefactor);
-         for (int j = 0; j < unitCellPtr_->nParameter() ; ++j){
+         for (int j = 0; j < nParam_ ; ++j){
             stress_[j] += block(i).stress(j);
          }
       }

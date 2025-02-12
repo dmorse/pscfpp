@@ -249,9 +249,11 @@ namespace Rpc {
       UTIL_CHECK(domain().unitCell().nParameter() > 0);
       UTIL_CHECK(domain().unitCell().lattice() != UnitCell<D>::Null);
 
-      // Setup mixture
-      mixture_.setDiscretization(domain().mesh(), domain().fft());
-      mixture_.setUnitCell(domain().unitCell());
+      // Setup  the mixture
+      mixture_.associate(domain().mesh(), domain().fft(), 
+                         domain().unitCell());
+      mixture_.allocate();
+      mixture_.clearUnitCellData();
 
       // Allocate memory for w and c fields
       allocateFieldsGrid();
@@ -582,6 +584,20 @@ namespace Rpc {
             compare(Rfield1, Rfield2);
 
          } else
+         if (command == "SCALE_BASIS") {
+            double factor;
+            readEcho(in, inFileName);
+            readEcho(in, outFileName);
+            readEcho(in, factor);
+            scaleFieldsBasis(inFileName, outFileName, factor);
+         } else
+         if (command == "SCALE_RGRID") {
+            double factor;
+            readEcho(in, inFileName);
+            readEcho(in, outFileName);
+            readEcho(in, factor);
+            scaleFieldsRGrid(inFileName, outFileName, factor);
+         } else
          if (command == "EXPAND_RGRID_DIMENSION") {
             readEcho(in, inFileName);
             readEcho(in, outFileName);
@@ -744,7 +760,7 @@ namespace Rpc {
       w_.readBasis(filename, domain_.unitCell());
 
       // Update UnitCell in Mixture
-      mixture_.setUnitCell(domain().unitCell());
+      mixture_.clearUnitCellData();
 
       hasCFields_ = false;
       hasFreeEnergy_ = false;
@@ -774,7 +790,7 @@ namespace Rpc {
       w_.readRGrid(filename, domain_.unitCell());
 
       // Update UnitCell in Mixture
-      mixture_.setUnitCell(domain().unitCell());
+      mixture_.clearUnitCellData();
 
       hasCFields_ = false;
       hasFreeEnergy_ = false;
@@ -810,7 +826,7 @@ namespace Rpc {
                                          domain_.unitCell());
 
       // Update UnitCell in Mixture
-      mixture_.setUnitCell(domain().unitCell());
+      mixture_.clearUnitCellData();
 
       // Allocate work space array
       DArray<double> wtmp;
@@ -874,7 +890,7 @@ namespace Rpc {
    {
       domain_.setUnitCell(unitCell);
       // Note: Domain::setUnitCell checks agreement of lattice system 
-      mixture_.setUnitCell(domain().unitCell());
+      mixture_.clearUnitCellData();
       if (domain().hasGroup() && !isAllocatedBasis_) {
          allocateFieldsBasis();
       }
@@ -890,7 +906,7 @@ namespace Rpc {
    {
       domain_.setUnitCell(lattice, parameters);
       // Note: Domain::setUnitCell checks agreement of lattice system
-      mixture_.setUnitCell(domain().unitCell());
+      mixture_.clearUnitCellData();
       if (domain().hasGroup() && !isAllocatedBasis_) {
          allocateFieldsBasis();
       }
@@ -904,7 +920,7 @@ namespace Rpc {
    {
       domain_.setUnitCell(parameters);
       // Note: Domain::setUnitCell requires lattice system is set on entry
-      mixture_.setUnitCell(domain().unitCell());
+      mixture_.clearUnitCellData();
       if (domain().hasGroup() && !isAllocatedBasis_) {
          allocateFieldsBasis();
       }
@@ -1782,6 +1798,46 @@ namespace Rpc {
       }
       return true;
 
+   }
+
+   /*
+   * Rescale a field by a constant, write rescaled field to a file.
+   */
+   template <int D>
+   void System<D>::scaleFieldsBasis(std::string const & inFileName,
+                                    std::string const & outFileName,
+                                    double factor) 
+   {
+      // If basis fields are not allocated, peek at field file header to
+      // get unit cell parameters, initialize basis and allocate fields.
+      if (!isAllocatedBasis_) {
+         readFieldHeader(inFileName);
+         allocateFieldsBasis();
+      }
+
+      UnitCell<D> tmpUnitCell;
+      FieldIo<D> const & fieldIo = domain().fieldIo();
+      fieldIo.readFieldsBasis(inFileName, tmpFieldsBasis_, tmpUnitCell);
+      fieldIo.scaleFieldsBasis(tmpFieldsBasis_, factor);
+      fieldIo.writeFieldsBasis(outFileName, tmpFieldsBasis_,
+                                            tmpUnitCell);
+   }
+
+   /*
+   * Rescale a field by a constant, write rescaled field to a file.
+   */
+   template <int D>
+   void System<D>::scaleFieldsRGrid(std::string const & inFileName,
+                                    std::string const & outFileName,
+                                    double factor) const
+   {
+      UnitCell<D> tmpUnitCell;
+      FieldIo<D> const & fieldIo = domain().fieldIo();
+      fieldIo.readFieldsRGrid(inFileName, tmpFieldsRGrid_,
+                                tmpUnitCell);
+      fieldIo.scaleFieldsRGrid(tmpFieldsRGrid_, factor);
+      fieldIo.writeFieldsRGrid(outFileName, tmpFieldsRGrid_,
+                                            tmpUnitCell);
    }
 
    /*
