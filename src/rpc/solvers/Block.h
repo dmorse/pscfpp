@@ -35,8 +35,8 @@ namespace Rpc {
    /**
    * Block within a branched polymer.
    *
-   * Derived from BlockTmpl< Propagator<D> >. A BlockTmpl< Propagator<D> >
-   * has two Propagator<D> members and is derived from BlockDescriptor.
+   * Derived from BlockTmpl< Propagator<D> >. BlockTmpl< Propagator<D> >
+   * has two Propagator<D> members, and is derived from BlockDescriptor.
    *
    * \ref user_param_block_sec "Parameter File Format"
    * \ingroup Rpc_Solver_Module
@@ -58,10 +58,11 @@ namespace Rpc {
       ~Block();
 
       /**
-      * Initialize discretization and allocate required memory.
+      * Create permanent associations with related objects.
       *
       * This function creates associations of this block with the mesh, 
-      * fft, and unit cell objects.
+      * fft, and unit cell objects by storing the addresses of these
+      * objects. It must be called before allocate.
       *
       * \param mesh  spatial discretization mesh
       * \param fft  Fast Fourier Transform object
@@ -74,18 +75,26 @@ namespace Rpc {
       /**
       * Allocate memory and set contour step size.
       *
-      * This function choses values for the number ns of contour 
-      * variable grid points for this block and the associated step 
-      * size length/(ns-1) for this block, and allocates memory for 
-      * a variety of private arrays. 
+      * This function choses a value for the number ns of contour 
+      * variable grid points for this block, sets the step size, and
+      * allocates memory for several private arrays. Spatial grid 
+      * dimensions are obtained from a pointers to the associated mesh.
+      * The associate function must be called before this function.
       * 
-      * The value for the number ns of contour variable grid points for 
-      * this block so as to yield a value for the the actual step size 
+      * For the thread model, if PolymerModel::isThread() is true, the 
+      * value for the number ns of contour variable grid points for this
+      * block so as to yield a value for the the actual step size 
       * length/(ns-1) as close as possible to the input parameter ds (the 
-      * desired step size) consistent with the requirements that ns be an
+      * target step size) consistent with the requirements that ns be an
       * odd integer and ns > 1. These requirements allow use of Simpson's 
       * rule for integration with respect to the contour variable s to
       * compute monomer concentration fields and stress contributions.
+      * 
+      * For the bead model, if PolymerModel::isThread() is true, the
+      * value of ns is given by nBead (the number of beads owned by the
+      * block) plus one for each terminal vertex that this block does 
+      * not own. The value of ds is take equal to the value given as a 
+      * parameter to this function.
       *
       * \param ds desired (optimal) value for contour length step
       */
@@ -94,15 +103,17 @@ namespace Rpc {
       /**
       * Clear all internal data that depends on the unit cell parameters
       *
-      * This function should be called once after every change in unit cell
-      * parameters. The function marks all variables that depend on the 
-      * unit cell parameters as being outdated and invalid. Such variables
-      * are recomputed by lazy evaluation, just before they are needed.
+      * This function must be called once after every time thr unit cell
+      * parameters change. The function marks all variables that depend 
+      * on the unit cell parameters as being outdated. All such variables
+      * are later recomputed shortly before they are needed.
       */
       void clearUnitCellData();
 
       /**
       * Set or reset block length.
+      *
+      * Precondition: PolymerModel::isThread()
       *
       * \param newLength  new block length
       */
@@ -116,7 +127,7 @@ namespace Rpc {
       void setKuhn(double kuhn);
 
       /**
-      * Set solver for this block.
+      * Set up the MDE solver for this block.
       *
       * This should be called once after every change in w fields, the
       * unit cell parameters, block length or kuhn length, before
@@ -130,7 +141,7 @@ namespace Rpc {
       /**
       * Compute one step of solution of MDE for the thread model.
       *
-      * This function is called internally by the PropagatorTmpl solve
+      * This function is called internally by the Propagator::solve
       * function within a loop over steps. It is implemented in the
       * Block class because the same private data structures are needed
       * for the two propagators associated with a Block.
@@ -143,7 +154,7 @@ namespace Rpc {
       /**
       * Compute one step of solution of MDE for the bead model.
       *
-      * This function is called internally by the PropagatorTmpl solve
+      * This function is called internally by the Propagator::solve
       * function within a loop over steps. It is implemented in the
       * Block class because the same private data structures are needed
       * for the two propagators associated with a Block.
@@ -154,7 +165,11 @@ namespace Rpc {
       void stepBead(RField<D> const & qin, RField<D>& qout);
 
       /**
-      * Apply bond operator for the bead model. 
+      * Apply a bond operator for the bead model. 
+      *
+      * This function applies exp( nabla^2 b^2 ds / 6 ), where nabla^2
+      * denotes a Laplacian operator with eigenvalues given by -G^2 for
+      * reciprocal lattice vectors.
       *
       * \param qin  input slice of q, from step i
       * \param qout  ouptut slice of q, for step i+1
@@ -164,26 +179,12 @@ namespace Rpc {
       /**
       * Apply the exponential field operator for the bead model. 
       *
+      * This function applies exp( -w(r) ds ), where w(r) is the
+      * w-field for the monomer type of this block. 
+      *
       * \param q  slice of propagator q, modified in place.
       */
       void stepFieldBead(RField<D> & q);
-
-      #if 0
-      /**
-      * Compute concentration (volume fraction) for block by integration.
-      *
-      * This should be called after both associated propagators are known.
-      * This function is called by Polymer<D>::compute().
-      *
-      * Thread Model: 
-      *
-      * Bead Model:
-      *
-      *
-      * \param prefactor  constant multiplying integral or sum
-      */
-      void computeConcentration(double prefactor);
-      #endif
 
       /**
       * Compute the concentration for this block, for the thread model.
@@ -229,7 +230,7 @@ namespace Rpc {
       *
       * This funciton computes the spatial average of the product 
       * q0[i]*q1[i], where q0 and q1 and are complementary propagator 
-      * slices, and i is grid rank.
+      * slices, and i is a spatial mesh rank.
       */
       double averageProduct(RField<D> const& q0, RField<D> const& q1);
 
@@ -238,7 +239,7 @@ namespace Rpc {
       *
       * This computes the spatial average of the product 
       * q0[i]*q1[i]/exp(W[i]*ds), where q0 and q1 and are complementary 
-      * propagator slices for a bead model, and i is grid rank. This is
+      * propagator slices for a bead model, and i is mesh rank. This is
       * used in the bead model for computation of Q from propagator 
       * slices associated with a bead that is owned by the propagator.
       */
@@ -271,7 +272,7 @@ namespace Rpc {
       double ds() const;
 
       /**
-      * Get the number of contour length steps in this block.
+      * Get the number of contour grid points, include end points.
       */
       int ns() const;
 
@@ -307,13 +308,13 @@ namespace Rpc {
 
    private:
 
-      // Matrix to store derivatives of plane waves
+      // Matrix to store derivatives of squared wavevectors
       DMatrix<double> dGsq_;
 
       // Stress arising from this block
       FSArray<double, 6> stress_;
 
-      // Fourier transform plan
+      // Fast Fourier transform 
       // FFT<D> fft_;
 
       // Array of elements containing exp(-K^2 b^2 ds/6)
@@ -323,13 +324,13 @@ namespace Rpc {
       // or exp(-W[i] ds) in the bead model
       RField<D> expW_;
 
-      // Array of elements containing exp(-K^2 b^2 ds/(6*2)) (thread model)
+      // Array of elements containing exp(-K^2 b^2 ds/(6*2)) 
       RField<D> expKsq2_;
 
       // Array of elements containing exp(-W[i] (ds/2)*0.5) (thread model)
       RField<D> expW2_;
 
-      // Array of elements containing exp(+W[i] ds) in bead model
+      // Array of elements containing exp(+W[i] ds) (bead model)
       RField<D> expWInv_;
 
       // Work array for real-space field (step size ds)
@@ -341,7 +342,7 @@ namespace Rpc {
       // Work array for wavevector space field (step size ds)
       RFieldDft<D> qk_;
 
-      // Work array for wavevector space field (step size ds/2, thread model)
+      // Work array for wavevector space field (step size ds/2)
       RFieldDft<D> qk2_;
 
       // Pointer to associated Mesh<D> object
@@ -394,7 +395,7 @@ namespace Rpc {
 
    // Inline member functions
 
-   /// Get number of contour steps.
+   /// Get number of contour grid points, including ends.
    template <int D>
    inline int Block<D>::ns() const
    {  return ns_; }

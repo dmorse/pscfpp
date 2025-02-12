@@ -48,8 +48,7 @@ namespace Rpc {
    * by invoking the Mixture::compute function.  The Mixture::compute 
    * function takes an arrays of monomer chemical potential fields 
    * (w fields) as an input argument and an array of monomer concentration 
-   * fields (c fields) as an output. The objects that store these fields 
-   * are owned by the parent System.
+   * fields (c fields) as an output. 
    *
    * A Mixture is associated with a Mesh<D> object, which models a spatial
    * discretization mesh, and a UnitCell<D> object, which describes the

@@ -28,20 +28,21 @@ namespace Rpc {
    * MDE solver for one direction of one block.
    *
    * A fully initialized Propagator<D> has an association with a 
-   * Block<D> that owns this propagator and its partner, and has an 
-   * association with a Mesh<D> that describes a spatial grid, in 
-   * addition to associations with partner and source Propagator<D>
-   * objects that are managed by the PropagatorTmpl base class template. 
+   * Block<D> that owns this propagator and with a partner Propagator.
+   * It also has an association with a Mesh<D> that describes a spatial 
+   * grid, and to source Propagator<D> objects that are used to compute
+   * an initial condition for the propagator at the head vertex.
    *
    * The associated Block<D> stores information required to numerically
    * solve the modified diffusion equation (MDE), including the contour
-   * step size ds and all parameters that depend on ds. These quantities 
+   * step size ds and all parameters that depend on ds, unit cell 
+   * parameters and the w-field associated with the block. These quantities 
    * are set and stored by the block because their values must be the 
    * same for the two propagators owned by each block (i.e., this 
    * propagator and its partner). The algorithm used by a propagator 
-   * to solve the the MDE simply repeatedly calls the step() function 
-   * of the associated block, because that function has access to all 
-   * the parameters used in the numerical solution.
+   * to solve the the MDE simply repeatedly calls step functions 
+   * provided by associated block, because that object has access to 
+   * all the parameters used in the numerical solution.
    *
    * \ingroup Rpc_Solver_Module
    */
@@ -86,7 +87,7 @@ namespace Rpc {
       ~Propagator();
 
       /**
-      * Associate this propagator with a unique block.
+      * Associate this propagator with a block.
       *
       * \param block associated Block object.
       */ 
@@ -131,7 +132,9 @@ namespace Rpc {
       *
       * This function computes an initial QField at the head of this 
       * block, and then solves the modified diffusion equation (MDE) to
-      * propagate the solution from the head to the tail. 
+      * propagate the solution from the head to the tail. Algorithms for
+      * the thread or bead model may be used, depending on the value of
+      * PolymerModel::model().
       */
       void solve();
   
@@ -139,8 +142,9 @@ namespace Rpc {
       * Solve the MDE for a specified initial condition.
       *
       * This function solves the modified diffusion equation (MDE) for 
-      * this block with a specified initial condition, which is given 
-      * by the function parameter "head". 
+      * this block with a specified initial condition, which is given by
+      * the function parameter "head". Algorithms for the thread or bead
+      * model may be used, depending on value of PolymerModel::model().
       *
       * \param head  initial condition of QField at head of block
       */
@@ -150,9 +154,11 @@ namespace Rpc {
       * Compute and return partition function for the polymer.
       *
       * This function computes the partition function Q for the 
-      * molecule as a spatial average of pointwise product of the 
+      * molecule as a spatial average of pointwise product of the
       * initial/head Qfield for this propagator and the final/tail 
-      * Qfield of its partner. 
+      * Qfield of its partner. An algorithm appropriate to the 
+      * thread or bead model is chosen based on the value of
+      * PolymerModel::model().
       *
       * \return value of Q (spatial average of q*q^{+} at head)
       */ 
@@ -185,8 +191,9 @@ namespace Rpc {
       *
       * The value of ns is the number of values of s at which q(r,s) is
       * calculated, including the end values at the terminating vertices
-      * (the head and tail).  This is one more than the number of contour 
-      * variable steps. 
+      * (the head and tail).  This is one more than the number of 
+      * contour variable steps. If the propagator does not own both
+      * terminal vertex beads, it ns may exceed nBead.
       */
       int ns() const;
 
@@ -222,7 +229,8 @@ namespace Rpc {
       *
       * In the bond model, the head slice for each propagator is given
       * by the product of tails slices for source propagators, times an
-      * additional bond weight if the propagator owns the head vertex.
+      * additional bond weight exp(-W(r)*ds) if this propagator owns the 
+      * head vertex bead.
       */
       void computeHeadBead();
 
