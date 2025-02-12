@@ -50,7 +50,7 @@ public:
       Mixture<1> mixture;
     
       std::ifstream in;
-      openInputFile("in/Mixture1d_bead", in);
+      openInputFile("in/Mixture1d", in);
       mixture.readParam(in);
       in.close();
    }
@@ -126,6 +126,96 @@ public:
       TEST_ASSERT(eq(Q, mixture.polymer(0).propagator(0, 1).computeQ()));
       TEST_ASSERT(eq(Q, mixture.polymer(0).propagator(0, 0).computeQ()));
       TEST_ASSERT(eq(Q, mixture.polymer(0).propagator(1, 1).computeQ()));
+
+      #if 0
+      std::cout << "Propagator(0,0), Q = " 
+                << mixture.polymer(0).propagator(0, 0).computeQ() << "\n";
+      std::cout << "Propagator(1,0), Q = " 
+                << mixture.polymer(0).propagator(1, 0).computeQ() << "\n";
+      std::cout << "Propagator(1,1), Q = " 
+                << mixture.polymer(0).propagator(1, 1).computeQ() << "\n";
+      std::cout << "Propagator(0,1), Q = " 
+                << mixture.polymer(0).propagator(0, 1).computeQ() << "\n";
+      #endif
+
+      #if 0
+      // Test spatial integral of block concentration
+      double sum0 = domain.spatialAverage(cFields[0]);
+      double sum1 = domain.spatialAverage(cFields[1]);
+      std::cout << "Volume fraction of block 0 = " << sum0 << "\n";
+      std::cout << "Volume fraction of block 1 = " << sum1 << "\n";
+      #endif
+      
+   }
+
+   void testSolver1D_bead()
+   {
+      printMethod(TEST_FUNC);
+      Mixture<1> mixture;
+      PolymerModel::setModel(PolymerModel::Bead); 
+
+      std::ifstream in;
+      openInputFile("in/Mixture1d_bead", in);
+      mixture.readParam(in);
+      UnitCell<1> unitCell;
+      in >> unitCell;
+      IntVec<1> d;
+      in >> d;
+      in.close();
+
+      Polymer<1>& polymer = mixture.polymer(0);
+      TEST_ASSERT(polymer.block(0).nBead() == 20);
+      TEST_ASSERT(polymer.block(1).nBead() == 30);
+      TEST_ASSERT(polymer.nBead() == 50);
+
+      // Vertex ownership for a diblock
+      TEST_ASSERT(polymer.block(0).ownsVertex(0));
+      TEST_ASSERT(polymer.block(0).ownsVertex(1));
+      TEST_ASSERT(!polymer.block(1).ownsVertex(0));
+      TEST_ASSERT(polymer.block(1).ownsVertex(1));
+      TEST_ASSERT(polymer.block(0).propagator(0).ownsHead());
+      TEST_ASSERT(polymer.block(0).propagator(0).ownsTail());
+      TEST_ASSERT(polymer.block(0).propagator(1).ownsTail());
+      TEST_ASSERT(polymer.block(0).propagator(1).ownsHead());
+      TEST_ASSERT(!polymer.block(1).propagator(0).ownsHead());
+      TEST_ASSERT(polymer.block(1).propagator(0).ownsTail());
+      TEST_ASSERT(!polymer.block(1).propagator(1).ownsTail());
+      TEST_ASSERT(polymer.block(1).propagator(1).ownsHead());
+
+      Mesh<1> mesh;
+      mesh.setDimensions(d);
+      FFT<1> fft;
+      fft.setup(d);
+
+      mixture.associate(mesh, fft, unitCell);
+      mixture.allocate();
+      mixture.clearUnitCellData();
+
+      int nMonomer = mixture.nMonomer();
+      DArray< RField<1> > wFields;
+      DArray< RField<1> > cFields;
+      wFields.allocate(nMonomer);
+      cFields.allocate(nMonomer);
+      double nx = (double)mesh.size();
+      for (int i = 0; i < nMonomer; ++i) {
+         wFields[i].allocate(d);
+         cFields[i].allocate(d);
+      }
+
+      double cs;
+      for (int i = 0; i < nx; ++i) {
+         cs = cos(2.0*Constants::Pi*double(i)/double(nx));
+         wFields[0][i] = 0.5 + cs;
+         wFields[1][i] = 0.5 - cs;
+      }
+
+      mixture.compute(wFields, cFields);
+
+      // Test if same Q is obtained from different methods
+      double Q = polymer.propagator(1, 0).computeQ();
+      TEST_ASSERT(eq(Q, polymer.propagator(0, 1).computeQ()));
+      TEST_ASSERT(eq(Q, polymer.propagator(0, 0).computeQ()));
+      TEST_ASSERT(eq(Q, polymer.propagator(1, 1).computeQ()));
 
       #if 0
       std::cout << "Propagator(0,0), Q = " 
@@ -421,6 +511,7 @@ TEST_ADD(MixtureTest, testConstructor1D)
 TEST_ADD(MixtureTest, testReadParameters1D)
 TEST_ADD(MixtureTest, testReadParameters1D_bead)
 TEST_ADD(MixtureTest, testSolver1D)
+TEST_ADD(MixtureTest, testSolver1D_bead)
 TEST_ADD(MixtureTest, testSolver2D)
 TEST_ADD(MixtureTest, testSolver2D_hex)
 TEST_ADD(MixtureTest, testSolver3D)
