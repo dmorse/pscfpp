@@ -209,7 +209,11 @@ namespace Rpc {
             polymerPtr = &mixture.polymer(i);
             phi = polymerPtr->phi();
             mu = polymerPtr->mu();
-            length = polymerPtr->length();
+            if (PolymerModel::isThread()) {
+               length = polymerPtr->length();
+            } else {
+               length = polymerPtr->nBead();
+            }
             // Recall: mu = ln(phi/q)
             if (phi > 1.0E-08) {
                lnQ += phi*( -mu + 1.0 )/length;

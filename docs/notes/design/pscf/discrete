@@ -414,9 +414,42 @@ length.
 
 Done in Rpc
 
-15) Figure out how to modify the computeStress function. We need to
-work through this analysis for the discrete model before making
-corresponding changes in the code.  We can test code that uses 
-rigid unit cells in the meantime.
+15) Computation of stress in Block and Polymer classes:
 
-TODO
+In Block class, define two public functions:
+
+    computeStressThread(double prefactor)
+    computeStressBead(double prefactor)
+
+One or the other of these functions is called with an appropriate 
+value for the prefactor within the Rpc::Polymer::computeStress 
+function.  Mixture computeStress calls the Polymer::computeStress 
+function and thus requires no modification.
+
+Prefactors for the thread and bead model use the same conventions
+as for the calculation of concentration: The prefactor is phi/(q L) 
+for the thread model and phi/(q N) for the bead model, where L is 
+total length (sum of values of length for all blocks) and N is total 
+number of beads (sum of values of nBead for all blocks). 
+
+16) Calculation of free energies per monomer in System class:
+
+The free energies that are computed in the System class are 
+free energies per monomer reference volume in the thread model and
+per bead in the bead model. In the System<D>::computeFreeEnergy
+function, in calculation of the free energy of a non-interacting
+gas, there is a factor of 1/length or 1/nBead that is used to 
+convert a free energy per chain into a free energy per monomer.
+This now uses Polymer::length() in the thread model and 
+Polymer::nBead() in the bead model, surrounded by an 
+if (PolymerModel::isThread) { .... } else { .... }
+
+Done in Rpc
+
+16) Calculation of free energies in Simulator class:
+
+The Simulator::computeHamiltonian function does the same calculation
+of an ideal gas energy as System::computeFreeEnergy, and the length
+is treated the same way. 
+
+
