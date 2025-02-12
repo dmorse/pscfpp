@@ -246,7 +246,7 @@ namespace Rpc {
       double averageProductBead(RField<D> const& q0, RField<D> const& q1);
 
       /**
-      * Compute stress contribution for this block.
+      * Compute stress contribution for this block, using thread model.
       *
       * This function is called by Polymer<D>::computeStress. The parameter
       * prefactor should be the same as that passed to the member function
@@ -254,7 +254,18 @@ namespace Rpc {
       *
       * \param prefactor  constant multiplying integral over s
       */
-      void computeStress(double prefactor);
+      void computeStressThread(double prefactor);
+
+      /**
+      * Compute stress contribution for this block, using bead model.
+      *
+      * This function is called by Polymer<D>::computeStress. The parameter
+      * prefactor should be the same as that passed to the member function
+      * computeConcentration.
+      *
+      * \param prefactor constant multiplying sum over beads
+      */
+      void computeStressBead(double prefactor);
 
       /**
       * Get associated spatial Mesh by const reference.

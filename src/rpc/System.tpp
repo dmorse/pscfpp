@@ -1086,7 +1086,11 @@ namespace Rpc {
             polymerPtr = &mixture_.polymer(i);
             phi = polymerPtr->phi();
             mu = polymerPtr->mu();
-            length = polymerPtr->length();
+            if (PolymerModel::isThread()) {
+               length = polymerPtr->length();
+            } else {
+               length = polymerPtr->nBead();
+            }
             // Recall: mu = ln(phi/q)
             if (phi > 1.0E-08) {
                fIdeal_ += phi*( mu - 1.0 )/length;
@@ -1221,7 +1225,11 @@ namespace Rpc {
             polymerPtr = &mixture_.polymer(i);
             phi = polymerPtr->phi();
             mu = polymerPtr->mu();
-            length = polymerPtr->length();
+            if (PolymerModel::isThread()) {
+               length = polymerPtr->length();
+            } else {
+               length = polymerPtr->nBead();
+            }
             if (phi > 1.0E-08) {
                pressure_ += mu * phi /length;
             }
@@ -1997,7 +2005,11 @@ namespace Rpc {
             for (k = 0; k < nb; ++k) {
                Block<D>& block = mixture_.polymer(i).block(k);
                j = block.monomerId();
-               s[j] += block.length();
+               if (PolymerModel::isThread()) {
+                  s[j] += block.length();
+               } else {
+                  s[j] += block.nBead();
+               }
             }
 
             // Count the number of clumps of nonzero size

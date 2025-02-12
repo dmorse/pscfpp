@@ -105,11 +105,21 @@ namespace Rpc {
       }
 
       // Compute and accumulate stress contributions from all blocks
-      double prefactor = exp(mu())/length();
-      for (int i = 0; i < nBlock(); ++i) {
-         block(i).computeStress(prefactor);
-         for (int j = 0; j < nParam_ ; ++j){
-            stress_[j] += block(i).stress(j);
+      if (PolymerModel::isThread()) {
+         double prefactor = exp(mu())/length();
+         for (int i = 0; i < nBlock(); ++i) {
+            block(i).computeStressThread(prefactor);
+            for (int j = 0; j < nParam_ ; ++j){
+               stress_[j] += block(i).stress(j);
+            }
+         }
+      } else {
+         double prefactor = exp(mu())/nBead();
+         for (int i = 0; i < nBlock(); ++i) {
+            block(i).computeStressBead(prefactor);
+            for (int j = 0; j < nParam_ ; ++j){
+               stress_[j] += block(i).stress(j);
+            }
          }
       }
 

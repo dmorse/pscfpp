@@ -117,10 +117,10 @@ namespace Rpc {
       // Allocate block concentration field
       cField().allocate(mesh().dimensions());
 
-      // Compute ns_ and ds_
-      if (PolymerModel::isThread()) {
+      dsTarget_ = ds;
 
-         dsTarget_ = ds;
+      // Compute ns_ 
+      if (PolymerModel::isThread()) {
 
          // Set contour length discretization for this block
          UTIL_CHECK(length() > 0);
@@ -135,7 +135,6 @@ namespace Rpc {
       } else
       if (PolymerModel::isBead()) {
 
-         dsTarget_ = ds;
          ds_ = ds;
          ns_ = nBead();
          if (!ownsVertex(0)) ++ns_;
@@ -212,7 +211,13 @@ namespace Rpc {
       UTIL_CHECK(unitCellPtr_->isInitialized());
 
       bool isThread = PolymerModel::isThread();
-      double factor = -1.0*kuhn()*kuhn()*ds_/6.0;
+      double factor;
+      if (isThread) {
+         factor = -1.0*kuhn()*kuhn() * ds_ / 6.0;
+      } else {
+         factor = -1.0*kuhn()*kuhn() * ds_ / 6.0;
+      }
+
 
       MeshIterator<D> iter;
       iter.setDimensions(kMeshDimensions_);
@@ -342,7 +347,6 @@ namespace Rpc {
       int nx = mesh().size();
       UTIL_CHECK(nx > 0);
       UTIL_CHECK(ns_ > 0);
-      UTIL_CHECK(ds_ > 0);
       UTIL_CHECK(propagator(0).isAllocated());
       UTIL_CHECK(propagator(1).isAllocated());
       UTIL_CHECK(cField().capacity() == nx);
@@ -424,13 +428,18 @@ namespace Rpc {
       return Q;
    }
 
+
+
+
+
    /*
    * Integrate to Stress exerted by the chain for this block
    */
    template <int D>
-   void Block<D>::computeStress(double prefactor)
+   void Block<D>::computeStressThread(double prefactor)
    {
       // Preconditions
+      UTIL_CHECK(PolymerModel::isThread());
       int nx = mesh().size();
       UTIL_CHECK(nx > 0);
       UTIL_CHECK(fft().isSetup());
@@ -440,31 +449,25 @@ namespace Rpc {
       UTIL_CHECK(propagator(0).isAllocated());
       UTIL_CHECK(propagator(1).isAllocated());
 
+      computedGsq();
       stress_.clear();
 
-      double dels, normal, increment;
-      int nParam, c, m;
-
-      normal = 3.0*6.0;
-
-      nParam = unitCell().nParameter();
-      c = kSize_;
-
-      FSArray<double, 6> dQ;
-
       // Initialize work array and stress_ to zero at all points
-      int i;
-      for (i = 0; i < nParam; ++i) {
-         dQ.append(0.0);
+      FSArray<double, 6> dQ;
+      int nParam = unitCell().nParameter();
+      for (int i = 0; i < nParam; ++i) {
          stress_.append(0.0);
+         dQ.append(0.0);
       }
-
-      computedGsq();
 
       Propagator<D> const & p0 = propagator(0);
       Propagator<D> const & p1 = propagator(1);
 
-      // Evaluate unnormalized integral
+      double dels, prod, increment;
+      double bSq = kuhn()*kuhn()/6.0;
+      int n, m;
+
+      // Evaluate unnormalized integral over contour 
       for (int j = 0; j < ns_ ; ++j) {
 
          qr_ = p0.q(j);
@@ -473,32 +476,99 @@ namespace Rpc {
          qr2_ = p1.q(ns_ - 1 - j);
          fft().forwardTransform(qr2_, qk2_);
 
-         dels = ds_;
-
+         // Compute prefactor dels for Simpson's rule
+         dels = ds_ / 3.0;
          if (j != 0 && j != ns_ - 1) {
             if (j % 2 == 0) {
-               dels = dels*2.0;
+               dels *= 2.0;
             } else {
-               dels = dels*4.0;
+               dels *= 4.0;
             }
          }
 
-         for (int n = 0; n < nParam ; ++n) {
+         // Loop over unit cell parameters
+         for (n = 0; n < nParam ; ++n) {
             increment = 0.0;
 
-            for (m = 0; m < c ; ++m) {
-               double prod = 0;
+            // Loop over wavevectors
+            for (m = 0; m < kSize_ ; ++m) {
                prod = (qk2_[m][0] * qk_[m][0]) + (qk2_[m][1] * qk_[m][1]);
                prod *= dGsq_(m,n);
                increment += prod;
             }
-            increment = (increment * kuhn() * kuhn() * dels)/normal;
+            increment *= bSq * dels;
+            dQ[n] = dQ[n] - increment;
+         }
+
+      }
+
+      // Normalize
+      for (int i = 0; i < nParam; ++i) {
+         stress_[i] = stress_[i] - (dQ[i] * prefactor);
+      }
+
+   }
+
+   /*
+   * Compute contribution of this block to stress for bead model.
+   */
+   template <int D>
+   void Block<D>::computeStressBead(double prefactor)
+   {
+      // Preconditions
+      UTIL_CHECK(PolymerModel::isBead());
+      int nx = mesh().size();
+      UTIL_CHECK(nx > 0);
+      UTIL_CHECK(fft().isSetup());
+      UTIL_CHECK(mesh().dimensions() == fft().meshDimensions());
+      UTIL_CHECK(ns_ > 0);
+      UTIL_CHECK(propagator(0).isAllocated());
+      UTIL_CHECK(propagator(1).isAllocated());
+
+      computedGsq();
+      stress_.clear();
+
+      // Initialize dQ and stress_ to zero at all points
+      FSArray<double, 6> dQ;
+      int nParam = unitCell().nParameter();
+      for (int i = 0; i < nParam; ++i) {
+         dQ.append(0.0);
+         stress_.append(0.0);
+      }
+
+      Propagator<D> const & p0 = propagator(0);
+      Propagator<D> const & p1 = propagator(1);
+      double increment, prod;
+      double bSq = kuhn()*kuhn()/6.0;
+
+      // Loop over bonds in block
+      for (int j = 0; j < ns_ - 1 ; ++j) {
+
+         // Bead j, forward propagator
+         qr_ = p0.q(j);
+         fft().forwardTransform(qr_, qk_);
+
+         // Bead j + 1, reverse propagator
+         qr2_ = p1.q(ns_ - 2 - j);
+         fft().forwardTransform(qr2_, qk2_);
+
+         // Loop over unit cell parameters
+         for (int n = 0; n < nParam ; ++n) {
+            increment = 0.0;
+
+            // Loop over wavevectors
+            for (int m = 0; m < kSize_ ; ++m) {
+               prod = (qk2_[m][0] * qk_[m][0]) + (qk2_[m][1] * qk_[m][1]);
+               prod *= dGsq_(m, n)*expKsq_[m];
+               increment += prod;
+            }
+            increment *= bSq;
             dQ[n] = dQ[n] - increment;
          }
       }
 
       // Normalize
-      for (i = 0; i < nParam; ++i) {
+      for (int i = 0; i < nParam; ++i) {
          stress_[i] = stress_[i] - (dQ[i] * prefactor);
       }
 
