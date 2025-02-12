@@ -46,9 +46,9 @@ namespace Prdc {
    *
    * Template parameters:
    *
-   *    D     - dimension of space, i.e., 1, 2, or 3)
-   *    RFRT  - real field (r-grid) type, e.g., RField<D> 
-   *    RFKT  - real field (k-grid) type, e.g., RFieldDft<D> 
+   *    D     - dimension of space, i.e., 1, 2, or 3
+   *    RFRT  - real field r-grid type, e.g., RField<D> 
+   *    RFKT  - real field k-grid type, e.g., RFieldDft<D> 
    *    FFT   - fast Fourier transform type, e.g., FFT<D> 
    *
    * Side effect of reading a field file: The member functions that read 
@@ -693,6 +693,61 @@ namespace Prdc {
       */
       bool hasSymmetry(RFRT const & in, double epsilon = 1.0e-8,
                        bool verbose = true) const;
+
+      ///@}
+      /// \name Field Scaling Utilities
+      ///@{
+
+      /**
+      * Multiply a single field in basis format by a real scalar.
+      *
+      * This function takes a single real periodic field and multiplies all
+      * components in place by a common real factor, thereby modifying the 
+      * input.
+      * 
+      * \param field  field in basis form to be rescaled
+      * \param factor  factor by which to multiply every field element
+      */
+      virtual
+      void scaleFieldBasis(DArray<double>& field, double factor) const;
+
+      /**
+      * Scale an array of fields in basis format by a real scalar.
+      *
+      * This function takes an array of real periodic fields and multiplies
+      * all components in place by a common real scalar, thereby modifying 
+      * the input.
+      * 
+      * \param fields  array of fields in basis form to be rescaled
+      * \param factor  factor by which to multiply every field element
+      */
+      void scaleFieldsBasis(DArray< DArray<double> >& fields, double factor) 
+      const;
+
+      /**
+      * Multiply a single field in r-grid format by a real scalar.
+      *
+      * This function takes a single real periodic field and multiplies all
+      * elements in place by a common real factor, thereby modifying the 
+      * input.
+      * 
+      * \param field  RField (r-space) field to be rescaled
+      * \param factor  factor by which to multiply every field element
+      */
+      virtual
+      void scaleFieldRGrid(RFRT& field, double factor) const;
+
+      /**
+      * Scale an array of r-grid fields by a real scalar.
+      *
+      * This function takes an array of real periodic fields and multiplies
+      * all elements in place by a common real scalar, thereby modifying 
+      * the input.
+      * 
+      * \param fields  array of RField (r-space) fields to be rescaled
+      * \param factor  factor by which to multiply every field element
+      */
+      void scaleFieldsRGrid(DArray<RFRT> & fields, double factor) const;
 
       ///@}
       /// \name Grid Manipulation Utilities

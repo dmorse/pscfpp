@@ -213,7 +213,7 @@ namespace Rpc {
    }
 
    /*
-   * Write an array of fields from basis to k-grid format.
+   * Convert an array of fields from basis to k-grid format.
    */
    template <int D>
    void FieldIo<D>::convertBasisToKGrid(
@@ -226,7 +226,7 @@ namespace Rpc {
    }
 
    /*
-   * Write an array of fields from k-grid to basis format.
+   * Convert an array of fields from k-grid to basis format.
    */
    template <int D>
    void FieldIo<D>::convertKGridToBasis(
@@ -254,6 +254,34 @@ namespace Rpc {
       // Rpg: Copy device -> host 
       return Prdc::hasSymmetry(in, basis(), in.dftDimensions(),
                                epsilon, verbose);
+   }
+
+   /*
+   * Test if an real field DFT has the declared space group symmetry.
+   */
+   template <int D>
+   void FieldIo<D>::scaleFieldBasis(
+                              DArray<double> & field, 
+                              double factor) const
+   {
+      int n = field.capacity();
+      for (int i = 0; i < n; ++i) {
+         field[i] *= factor;
+      }
+   }
+
+   /*
+   * Test if an real field DFT has the declared space group symmetry.
+   */
+   template <int D>
+   void FieldIo<D>::scaleFieldRGrid(
+                              RField<D> & field, 
+                              double factor) const
+   {
+      int n = field.capacity();
+      for (int i = 0; i < n; ++i) {
+         field[i] *= factor;
+      }
    }
 
    /*
