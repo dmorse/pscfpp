@@ -22,10 +22,8 @@ namespace Rpg
    class System;
 
    using namespace Util;
-   using namespace Pscf::Prdc;
-   using namespace Pscf::Prdc::Cuda;
 
-   typedef DeviceArray<cudaReal> FieldCUDA;
+   typedef Prdc::Cuda::DeviceArray<Prdc::Cuda::cudaReal> FieldCUDA;
 
    /**
    * Base class for iterative solvers for SCF equations.
@@ -38,12 +36,10 @@ namespace Rpg
 
    public:
 
-      #if 0
       /**
       * Default constructor.
       */
       Iterator();
-      #endif
 
       /**
       * Constructor.
@@ -85,6 +81,26 @@ namespace Rpg
       */
       bool isFlexible() const;
 
+      /**
+      * Get the array indicating which lattice parameters are flexible.
+      *
+      * This array should be nParameters long, where the i-th entry is a 
+      * boolean indicating whether parameter i is flexible. 
+      */
+      FSArray<bool,6> flexibleParams() const;
+
+      /**
+      * Get the number of flexible lattice parameters.
+      */
+      int nFlexibleParams() const;
+
+      /**
+      * Set the array indicating which lattice parameters are flexible.
+      *
+      * \param flexParams input boolean array
+      */ 
+      void setFlexibleParams(FSArray<bool,6> const & flexParams);
+
    protected:
 
       /**
@@ -98,9 +114,19 @@ namespace Rpg
       bool isFlexible_;
 
       /**
+      * Array of indices of the lattice parameters that are flexible.
+      */
+      FSArray<bool,6> flexibleParams_;
+
+      /**
       * Return reference to parent system.
       */
       System<D>& system();
+
+      /**
+      * Return const reference to parent system.
+      */
+      System<D> const & system() const;
 
    private:
 
@@ -108,6 +134,14 @@ namespace Rpg
       System<D>* sysPtr_;
       
    };
+
+   // Default constructor
+   template<int D>
+   inline Iterator<D>::Iterator()
+   : isSymmetric_(false),
+     isFlexible_(false),
+     sysPtr_(nullptr)
+   {  setClassName("Iterator"); }
 
    // Constructor
    template<int D>
@@ -133,8 +167,44 @@ namespace Rpg
    inline bool Iterator<D>::isFlexible() const
    {  return isFlexible_; }
 
+   // Get the array indicating which lattice parameters are flexible.
+   template<int D>
+   inline FSArray<bool,6> Iterator<D>::flexibleParams() const
+   {  return flexibleParams_; }
+
+   // Get the number of flexible lattice parameters
+   template <int D>
+   int Iterator<D>::nFlexibleParams() const
+   {
+      UTIL_CHECK(flexibleParams_.size() == 
+                                 system().unitCell().nParameter());
+      int nFlexParams = 0;
+      for (int i = 0; i < flexibleParams_.size(); i++) {
+         if (flexibleParams_[i]) nFlexParams++;
+      }
+      return nFlexParams;
+   }
+
+   // Set the array indicating which lattice parameters are flexible.
+   template <int D>
+   void Iterator<D>::setFlexibleParams(FSArray<bool,6> const & flexParams)
+   {  
+      flexibleParams_ = flexParams; 
+      if (nFlexibleParams() == 0) {
+         isFlexible_ = false;
+      } else {
+         isFlexible_ = true;
+      }
+   }
+
+   // Return reference to parent system.
    template<int D>
    inline System<D>& Iterator<D>::system() 
+   {  return *sysPtr_; }
+
+   // Return const reference to parent system.
+   template<int D>
+   inline System<D> const & Iterator<D>::system() const
    {  return *sysPtr_; }
 
 } // namespace Rpg

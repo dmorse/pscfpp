@@ -51,7 +51,8 @@ namespace Rpg {
    * Compute solution to MDE and concentrations.
    */ 
    template <int D>
-   void Polymer<D>::compute(DArray< RField<D> > const & wFields)
+   void Polymer<D>::compute(DArray< RField<D> > const & wFields, 
+                            double phiTot)
    {
       // Setup solvers for all blocks
       int monomerId;
@@ -60,8 +61,8 @@ namespace Rpg {
          block(j).setupSolver(wFields[monomerId]);
       }
 
-      // Call generic solver() method base class template.
-      solve();
+      // Call base class PolymerTmpl solve() function
+      solve(phiTot);
    }
 
    /*

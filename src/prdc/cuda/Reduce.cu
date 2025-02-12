@@ -6,7 +6,7 @@
 */
 
 #include "Reduce.h"
-#include <pscf/cuda/ThreadGrid.h>
+#include <pscf/cuda/ThreadArray.h>
 #include <pscf/cuda/HostDArray.h>
 #include <pscf/cuda/cudaErrorCheck.h>
 #include <cmath>
@@ -495,13 +495,13 @@ cudaReal sum(DeviceArray<cudaReal> const & in)
       int nBlocks, nThreads;
       int halvedSize = ceil((float)n/2);
 
-      ThreadGrid::setThreadsLogical(halvedSize,nBlocks,nThreads);
+      ThreadArray::setThreadsLogical(halvedSize,nBlocks,nThreads);
       // Note: setThreadsLogical ensures that nThreads is a power of 2
 
       if (nThreads < 64) {
          // Thread blocks too small. Manually set nThreads to 64
-         ThreadGrid::setThreadsPerBlock(64);
-         ThreadGrid::setThreadsLogical(halvedSize,nBlocks,nThreads);
+         ThreadArray::setThreadsPerBlock(64);
+         ThreadArray::setThreadsLogical(halvedSize,nBlocks,nThreads);
 
          // If the above was successful, print warning
          Log::file() << "Warning: " 
@@ -510,7 +510,7 @@ cudaReal sum(DeviceArray<cudaReal> const & in)
       }
 
       // Warp size must be 32
-      UTIL_CHECK(ThreadGrid::warpSize() == 32);
+      UTIL_CHECK(ThreadArray::warpSize() == 32);
 
       // Perform parallel reduction
       if (i == 0) { // first reduction, use input array
@@ -584,13 +584,13 @@ cudaReal max(DeviceArray<cudaReal> const & in)
       int nBlocks, nThreads;
       int halvedSize = ceil((float)n/2);
 
-      ThreadGrid::setThreadsLogical(halvedSize,nBlocks,nThreads);
+      ThreadArray::setThreadsLogical(halvedSize,nBlocks,nThreads);
       // Note: setThreadsLogical ensures that nThreads is a power of 2
 
       if (nThreads < 64) {
          // Thread blocks too small. Manually set nThreads to 64
-         ThreadGrid::setThreadsPerBlock(64);
-         ThreadGrid::setThreadsLogical(halvedSize,nBlocks,nThreads);
+         ThreadArray::setThreadsPerBlock(64);
+         ThreadArray::setThreadsLogical(halvedSize,nBlocks,nThreads);
 
          // If the above was successful, print warning
          Log::file() << "Warning: " 
@@ -599,7 +599,7 @@ cudaReal max(DeviceArray<cudaReal> const & in)
       }
 
       // Warp size must be 32
-      UTIL_CHECK(ThreadGrid::warpSize() == 32);
+      UTIL_CHECK(ThreadArray::warpSize() == 32);
 
       // Perform parallel reduction
       if (i == 0) { // first reduction, use input array
@@ -666,13 +666,13 @@ cudaReal maxAbs(DeviceArray<cudaReal> const & in)
       int nBlocks, nThreads;
       int halvedSize = ceil((float)n/2);
 
-      ThreadGrid::setThreadsLogical(halvedSize,nBlocks,nThreads);
+      ThreadArray::setThreadsLogical(halvedSize,nBlocks,nThreads);
       // Note: setThreadsLogical ensures that nThreads is a power of 2
 
       if (nThreads < 64) {
          // Thread blocks too small. Manually set nThreads to 64
-         ThreadGrid::setThreadsPerBlock(64);
-         ThreadGrid::setThreadsLogical(halvedSize,nBlocks,nThreads);
+         ThreadArray::setThreadsPerBlock(64);
+         ThreadArray::setThreadsLogical(halvedSize,nBlocks,nThreads);
 
          // If the above was successful, print warning
          Log::file() << "Warning: " 
@@ -681,7 +681,7 @@ cudaReal maxAbs(DeviceArray<cudaReal> const & in)
       }
 
       // Warp size must be 32
-      UTIL_CHECK(ThreadGrid::warpSize() == 32);
+      UTIL_CHECK(ThreadArray::warpSize() == 32);
 
       // Perform parallel reduction
       if (i == 0) { // first reduction, use input array
@@ -745,13 +745,13 @@ cudaReal min(DeviceArray<cudaReal> const & in)
       int nBlocks, nThreads;
       int halvedSize = ceil((float)n/2);
 
-      ThreadGrid::setThreadsLogical(halvedSize,nBlocks,nThreads);
+      ThreadArray::setThreadsLogical(halvedSize,nBlocks,nThreads);
       // Note: setThreadsLogical ensures that nThreads is a power of 2
 
       if (nThreads < 64) {
          // Thread blocks too small. Manually set nThreads to 64
-         ThreadGrid::setThreadsPerBlock(64);
-         ThreadGrid::setThreadsLogical(halvedSize,nBlocks,nThreads);
+         ThreadArray::setThreadsPerBlock(64);
+         ThreadArray::setThreadsLogical(halvedSize,nBlocks,nThreads);
 
          // If the above was successful, print warning
          Log::file() << "Warning: " 
@@ -760,7 +760,7 @@ cudaReal min(DeviceArray<cudaReal> const & in)
       }
 
       // Warp size must be 32
-      UTIL_CHECK(ThreadGrid::warpSize() == 32);
+      UTIL_CHECK(ThreadArray::warpSize() == 32);
 
       // Perform parallel reduction
       if (i == 0) { // first reduction, use input array
@@ -827,13 +827,13 @@ cudaReal minAbs(DeviceArray<cudaReal> const & in)
       int nBlocks, nThreads;
       int halvedSize = ceil((float)n/2);
 
-      ThreadGrid::setThreadsLogical(halvedSize,nBlocks,nThreads);
+      ThreadArray::setThreadsLogical(halvedSize,nBlocks,nThreads);
       // Note: setThreadsLogical ensures that nThreads is a power of 2
 
       if (nThreads < 64) {
          // Thread blocks too small. Manually set nThreads to 64
-         ThreadGrid::setThreadsPerBlock(64);
-         ThreadGrid::setThreadsLogical(halvedSize,nBlocks,nThreads);
+         ThreadArray::setThreadsPerBlock(64);
+         ThreadArray::setThreadsLogical(halvedSize,nBlocks,nThreads);
 
          // If the above was successful, print warning
          Log::file() << "Warning: " 
@@ -842,7 +842,7 @@ cudaReal minAbs(DeviceArray<cudaReal> const & in)
       }
 
       // Warp size must be 32
-      UTIL_CHECK(ThreadGrid::warpSize() == 32);
+      UTIL_CHECK(ThreadArray::warpSize() == 32);
 
       // Perform parallel reduction
       if (i == 0) { // first reduction, use input array
@@ -912,13 +912,13 @@ cudaReal innerProduct(DeviceArray<cudaReal> const & a,
       int nBlocks, nThreads;
       int halvedSize = ceil((float)n/2);
 
-      ThreadGrid::setThreadsLogical(halvedSize,nBlocks,nThreads);
+      ThreadArray::setThreadsLogical(halvedSize,nBlocks,nThreads);
       // Note: setThreadsLogical ensures that nThreads is a power of 2
 
       if (nThreads < 64) {
          // Thread blocks too small. Manually set nThreads to 64
-         ThreadGrid::setThreadsPerBlock(64);
-         ThreadGrid::setThreadsLogical(halvedSize,nBlocks,nThreads);
+         ThreadArray::setThreadsPerBlock(64);
+         ThreadArray::setThreadsLogical(halvedSize,nBlocks,nThreads);
 
          // If the above was successful, print warning
          Log::file() << "Warning: " 
@@ -927,7 +927,7 @@ cudaReal innerProduct(DeviceArray<cudaReal> const & a,
       }
 
       // Warp size must be 32
-      UTIL_CHECK(ThreadGrid::warpSize() == 32);
+      UTIL_CHECK(ThreadArray::warpSize() == 32);
 
       // Perform parallel reduction
 

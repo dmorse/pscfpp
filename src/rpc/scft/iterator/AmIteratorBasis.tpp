@@ -26,8 +26,8 @@ namespace Rpc {
     : Iterator<D>(system),
       imposedFields_(system)
    {
-     isFlexible_ = true;  
-     setClassName("AmIteratorBasis"); 
+      isSymmetric_ = true;  
+      setClassName("AmIteratorBasis"); 
    }
 
    // Destructor
@@ -82,6 +82,16 @@ namespace Rpc {
       readParamCompositeOptional(in, imposedFields_);
    }
 
+   // Output timing results to log file.
+   template<int D>
+   void AmIteratorBasis<D>::outputTimers(std::ostream& out)
+   {
+      // Output timing results, if requested.
+      out << "\n";
+      out << "Iterator times contributions:\n";
+      AmIteratorTmpl<Iterator<D>, DArray<double> >::outputTimers(out);
+   }
+
    // Protected virtual function
 
    // Setup before entering iteration loop
@@ -100,7 +110,8 @@ namespace Rpc {
 
    // Assign one array to another
    template <int D>
-   void AmIteratorBasis<D>::setEqual(DArray<double>& a, DArray<double> const & b)
+   void AmIteratorBasis<D>::setEqual(DArray<double>& a, 
+                                     DArray<double> const & b)
    {  a = b; }
 
    // Compute and return inner product of two vectors.
@@ -114,7 +125,8 @@ namespace Rpc {
       for (int i = 0; i < n; i++) {
          // if either value is NaN, throw NanException
          if (std::isnan(a[i]) || std::isnan(b[i])) { 
-            throw NanException("AmIteratorBasis::dotProduct",__FILE__,__LINE__,0);
+            throw NanException("AmIteratorBasis::dotProduct", __FILE__, 
+                               __LINE__, 0);
          }
          product += a[i] * b[i];
       }
@@ -131,7 +143,8 @@ namespace Rpc {
       for (int i = 0; i < n; i++) {
          value = a[i];
          if (std::isnan(value)) { // if value is NaN, throw NanException
-            throw NanException("AmIteratorBasis::dotProduct",__FILE__,__LINE__,0);
+            throw NanException("AmIteratorBasis::dotProduct", __FILE__, 
+                               __LINE__, 0);
          }
          if (fabs(value) > max) {
             max = fabs(value);
@@ -160,12 +173,13 @@ namespace Rpc {
       basis.append(newbasis);
    }
 
+   // Add linear combination of basis vectors to trial field.
    template <int D>
    void
    AmIteratorBasis<D>::addHistories(DArray<double>& trial,
-                               RingBuffer<DArray<double> > const & basis,
-                               DArray<double> coeffs,
-                               int nHist)
+                                    RingBuffer<DArray<double> > const & basis,
+                                    DArray<double> coeffs,
+                                    int nHist)
    {
       int n = trial.capacity();
       for (int i = 0; i < nHist; i++) {
@@ -176,10 +190,11 @@ namespace Rpc {
       }
    }
 
+   // Add predicted error to field trial.
    template <int D>
    void AmIteratorBasis<D>::addPredictedError(DArray<double>& fieldTrial,
-                                         DArray<double> const & resTrial,
-                                         double lambda)
+                                              DArray<double> const & resTrial,
+                                              double lambda)
    {
       int n = fieldTrial.capacity();
       for (int i = 0; i < n; i++) {
@@ -209,18 +224,18 @@ namespace Rpc {
       return nEle;
    }
 
-   // Get the current field from the system
+   // Get the current w fields and lattice parameters
    template <int D>
    void AmIteratorBasis<D>::getCurrent(DArray<double>& curr)
    {
       const int nMonomer = system().mixture().nMonomer();
       const int nBasis = system().domain().basis().nBasis();
-      const DArray< DArray<double> > * currSys = &system().w().basis();
+      const DArray< DArray<double> > & currSys = system().w().basis();
 
       // Straighten out fields into linear arrays
       for (int i = 0; i < nMonomer; i++) {
          for (int k = 0; k < nBasis; k++) {
-            curr[i*nBasis+k] = (*currSys)[i][k];
+            curr[i*nBasis+k] = currSys[i][k];
          }
       }
 
@@ -246,12 +261,8 @@ namespace Rpc {
    void AmIteratorBasis<D>::evaluate()
    {
       // Solve MDEs for current omega field
-      system().compute();
-
-      // Compute stress if required
-      if (isFlexible()) {
-         system().mixture().computeStress(system().mask().phiTot());
-      }
+      // (computes stress if isFlexible_ == true)
+      system().compute(isFlexible_);
    }
 
    // Compute the residual for the current system state
@@ -283,11 +294,12 @@ namespace Rpc {
 
       // If iterator has mask, account for it in residual values
       if (system().hasMask()) {
+         DArray<double> const & mask = system().mask().basis();
+         double sumChiInv = interaction_.sumChiInverse();
          for (int i = 0; i < nMonomer; ++i) {
             for (int k = 0; k < nBasis; ++k) {
                int idx = i*nBasis + k;
-               resid[idx] -= system().mask().basis()[k] / 
-                             interaction_.sumChiInverse();
+               resid[idx] -= mask[k] / sumChiInv;
             }
          }
       }
@@ -297,10 +309,11 @@ namespace Rpc {
       if (system().hasExternalFields()) {
          for (int i = 0; i < nMonomer; ++i) {
             for (int j = 0; j < nMonomer; ++j) {
+               double p = interaction_.p(i,j);
+               DArray<double> const & h = system().h().basis(j);
                for (int k = 0; k < nBasis; ++k) {
                   int idx = i*nBasis + k;
-                  resid[idx] += interaction_.p(i,j) * 
-                                system().h().basis(j)[k];
+                  resid[idx] += p * h[k];
                }
             }
          }
@@ -392,14 +405,16 @@ namespace Rpc {
 
       if (isFlexible()) {
          const int nParam = system().domain().unitCell().nParameter();
-         FSArray<double,6> parameters 
-                                  = system().domain().unitCell().parameters();
-         int counter = 0;
+         const int begin = nMonomer*nBasis;
 
+         FSArray<double,6> parameters;
+         parameters = system().domain().unitCell().parameters();
+
+         double coeff = 1.0 / scaleStress_;
+         int counter = 0;
          for (int i = 0; i < nParam; i++) {
             if (flexibleParams_[i]) {
-               parameters[i] = 1.0/scaleStress_ * 
-                               newGuess[nMonomer*nBasis + counter];
+               parameters[i] = coeff * newGuess[begin + counter];
                counter++;
             }
          }
@@ -414,6 +429,7 @@ namespace Rpc {
       }
    }
 
+   // Output relevant system details to the iteration log.
    template<int D>
    void AmIteratorBasis<D>::outputToLog()
    {
@@ -436,15 +452,6 @@ namespace Rpc {
             }
          }
       }
-   }
-   
-   template<int D>
-   void AmIteratorBasis<D>::outputTimers(std::ostream& out)
-   {
-      // Output timing results, if requested.
-      out << "\n";
-      out << "Iterator times contributions:\n";
-      AmIteratorTmpl<Iterator<D>, DArray<double> >::outputTimers(out);
    }
    
    // Return specialized sweep parameter types to add to the Sweep object

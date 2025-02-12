@@ -154,9 +154,19 @@ namespace Prdc {
       double chiTop(int s) const;
 
       /**
-      * Get value of normalVecId_ stored in this object
+      * Get value of normalVecId.
       */
       int normalVecId() const;
+
+      /**
+      * Get value of interfaceThickness.
+      */
+      double interfaceThickness() const;
+
+      /**
+      * Get value of excludedThickness.
+      */
+      double excludedThickness() const;
 
       /**
       * Check whether the fields have been generated.
@@ -212,11 +222,6 @@ namespace Prdc {
       virtual int systemNMonomer() const = 0;
 
       /**
-      * Use mask to determine normalVecId and store value in this object.
-      */
-      virtual void maskNormalVecId() = 0;
-
-      /**
       * The lattice vector normal to the film used to generate these fields.
       * 
       * This vector is set to be equal to the system's lattice vector with
@@ -249,10 +254,19 @@ namespace Prdc {
       */
       DArray<double> chiTopCurrent_;
 
-      /// value of normalVecId for the mask, determined via maskNormalVecId()
-      int normalVecId_;
+      using FieldGenerator::isDependent_;
+      using FieldGenerator::type_;
 
    private:
+
+      /// Lattice basis vector that is normal to the walls
+      int normalVecId_;
+
+      /// Interface thickness
+      double interfaceThickness_;
+
+      /// Excluded (wall) thickness
+      double excludedThickness_;
 
       /**
       * chiBottom array.
@@ -267,8 +281,6 @@ namespace Prdc {
       * This array can be modified using the setParameter() method.
       */
       DArray<double> chiTop_;
-
-      using FieldGenerator::type_;
 
    };
 
@@ -294,10 +306,20 @@ namespace Prdc {
    inline double ExtGenFilmBase<D>::chiTop(int s) const
    {  return chiTop_[s]; }
 
-   // Get the value of normalVecId_ stored in this object
-   template <int D>
+   // Get value of normalVecId.
+   template <int D> 
    inline int ExtGenFilmBase<D>::normalVecId() const
    {  return normalVecId_; }
+
+   // Get value of interfaceThickness.
+   template <int D> 
+   inline double ExtGenFilmBase<D>::interfaceThickness() const
+   {  return interfaceThickness_; }
+
+   // Get value of excludedThickness.
+   template <int D> 
+   inline double ExtGenFilmBase<D>::excludedThickness() const
+   {  return excludedThickness_; }
 
 }
 }

@@ -153,7 +153,7 @@ namespace Rpc {
       *
       * The optional parameter phiTot is only relevant to problems such as 
       * thin films in which the material is excluded from part of the unit
-      * cell by imposing an inhomogeneous constrain on the sum of mononer 
+      * cell by imposing an inhomogeneous constraint on the sum of monomer 
       * concentrations, (i.e., a "mask"). In such cases, the volume 
       * fraction phi associated with each species is interpreted as a 
       * fraction of the volume that is occupied by material, rather than 

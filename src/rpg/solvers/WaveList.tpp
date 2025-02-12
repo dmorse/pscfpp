@@ -534,12 +534,12 @@ namespace Rpg
 
       // GPU resources
       int nBlocks, nThreads;
-      ThreadGrid::setThreadsLogical(kSize_*threadsPerGP, nBlocks, nThreads);
+      ThreadArray::setThreadsLogical(kSize_*threadsPerGP, nBlocks, nThreads);
 
       if ((D == 3) && (nThreads < 128)) {
          // Thread blocks too small. Manually set nThreads to 128
-         ThreadGrid::setThreadsPerBlock(128);
-         ThreadGrid::setThreadsLogical(kSize_*threadsPerGP, nBlocks, nThreads);
+         ThreadArray::setThreadsPerBlock(128);
+         ThreadArray::setThreadsLogical(kSize_*threadsPerGP, nBlocks, nThreads);
 
          // If the above was successful, print warning
          Log::file() << "Warning: " 
@@ -588,7 +588,7 @@ namespace Rpg
 
       // GPU resources
       int nBlocks, nThreads;
-      ThreadGrid::setThreadsLogical(kSize_, nBlocks, nThreads);
+      ThreadArray::setThreadsLogical(kSize_, nBlocks, nThreads);
       
       // Launch kernel to calculate kSq on device
       _computeKSq<D><<<nBlocks, nThreads>>>
@@ -629,7 +629,7 @@ namespace Rpg
 
       // GPU resources
       int nBlocks, nThreads;
-      ThreadGrid::setThreadsLogical(kSize_, nBlocks, nThreads);
+      ThreadArray::setThreadsLogical(kSize_, nBlocks, nThreads);
 
       // Kernel requires block size to be >= the size of dkkBasis.
       // Max size of dkkBasis is 54, so this should always be satisfied

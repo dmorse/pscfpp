@@ -10,7 +10,6 @@
 
 #include "AmIteratorBasis.h"
 #include <rpg/System.h>
-#include <prdc/cuda/RField.h>
 
 #include <prdc/crystal/UnitCell.h>
 #include <prdc/crystal/Basis.h>
@@ -19,6 +18,7 @@
 #include <pscf/iterator/NanException.h>
 
 #include <util/global.h>
+#include <cmath>
 
 namespace Pscf {
 namespace Rpg {
@@ -29,7 +29,8 @@ namespace Rpg {
    // Constructor
    template <int D>
    AmIteratorBasis<D>::AmIteratorBasis(System<D>& system)
-    : Iterator<D>(system)
+    : Iterator<D>(system),
+      imposedFields_(system)
    {
       isSymmetric_ = true;  
       setClassName("AmIteratorBasis"); 
@@ -55,9 +56,46 @@ namespace Rpg {
       isFlexible_ = 1;
       scaleStress_ = 10.0;
 
-      // Read in additional parameters
+      int np = system().domain().unitCell().nParameter();
+      UTIL_CHECK(np > 0);
+      UTIL_CHECK(np <= 6);
+      UTIL_CHECK(system().domain().unitCell().lattice() != UnitCell<D>::Null);
+
+      // Read in optional isFlexible value
       readOptional(in, "isFlexible", isFlexible_);
+
+      // Populate flexibleParams_ based on isFlexible_ (all 0s or all 1s),
+      // then optionally overwrite with user input from param file
+      if (isFlexible_) {
+         flexibleParams_.clear();
+         for (int i = 0; i < np; i++) {
+            flexibleParams_.append(true); // Set all values to true
+         }
+         // Read optional flexibleParams_ array to overwrite current array
+         readOptionalFSArray(in, "flexibleParams", flexibleParams_, np);
+         if (nFlexibleParams() == 0) isFlexible_ = false;
+      } else { // isFlexible_ = false
+         flexibleParams_.clear();
+         for (int i = 0; i < np; i++) {
+            flexibleParams_.append(false); // Set all values to false
+         }
+      }
+
+      // Read optional scaleStress value
       readOptional(in, "scaleStress", scaleStress_);
+
+      // Read optional ImposedFieldsGenerator object
+      readParamCompositeOptional(in, imposedFields_);
+   }
+
+   // Output timing results to log file.
+   template<int D>
+   void AmIteratorBasis<D>::outputTimers(std::ostream& out)
+   {
+      // Output timing results, if requested.
+      out << "\n";
+      out << "Iterator times contributions:\n";
+      AmIteratorTmpl<Iterator<D>, DArray<double> >::outputTimers(out);
    }
 
    // -- Protected virtual function -- //
@@ -66,7 +104,11 @@ namespace Rpg {
    template <int D>
    void AmIteratorBasis<D>::setup(bool isContinuation)
    {
-      // Setup by AM algorithm
+      if (imposedFields_.isActive()) {
+         imposedFields_.setup();
+      }
+
+      // Call parent setup method
       AmIteratorTmpl<Iterator<D>, DArray<double> >::setup(isContinuation);
 
       // Update chi matrix and related properties in member interaction_
@@ -76,11 +118,13 @@ namespace Rpg {
 
    // -- Private virtual functions used to implement AM algorithm --  //
 
+   // Set a vector equal to another (assign a = b)
    template <int D>
    void AmIteratorBasis<D>::setEqual(DArray<double>& a, 
                                      DArray<double> const & b)
    {  a = b; }
 
+   // Compute the inner product of two real vectors.
    template <int D>
    double AmIteratorBasis<D>::dotProduct(DArray<double> const & a,
                                          DArray<double> const & b) 
@@ -118,90 +162,7 @@ namespace Rpg {
       return max;
    }
 
-   #if 0
-   template <int D>
-   double AmIteratorBasis<D>::norm(DArray<double>  const & a) 
-   {
-      const int n = a.capacity();
-      double data;
-      double normSq = 0.0;
-      for (int i=0; i < n; ++i) {
-         data = a[i];
-         normSq += data*data;
-      }
-      return sqrt(normSq);
-   }
-
-   // Compute one element of U matrix of by computing a dot product
-   template <int D>
-   double
-   AmIteratorBasis<D>::computeUDotProd(RingBuffer<DArray<double> > const & resBasis,
-                                  int m, int n)
-   {
-      const int length = resBasis[0].capacity();
-
-      double dotprod = 0.0;
-      for(int i = 0; i < length; i++) {
-         dotprod += resBasis[m][i] * resBasis[n][i];
-      }
-
-      return dotprod;
-   }
-
-   // Compute one element of V vector by computing a dot product
-   template <int D>
-   double
-   AmIteratorBasis<D>::computeVDotProd(DArray<double> const & resCurrent,
-                                  RingBuffer<DArray<double> > const & resBasis,
-                                  int m)
-   {
-      const int length = resBasis[0].capacity();
-
-      double dotprod = 0.0;
-      for(int i = 0; i < length; i++) {
-         dotprod += resCurrent[i] * resBasis[m][i];
-      }
-
-      return dotprod;
-   }
-
-   // Update entire U matrix
-   template <int D>
-   void AmIteratorBasis<D>::updateU(DMatrix<double> & U,
-                               RingBuffer<DArray<double> > const & resBasis,
-                               int nHist)
-   {
-      // Update matrix U by shifting elements diagonally
-      int maxHist = U.capacity1();
-      for (int m = maxHist-1; m > 0; --m) {
-         for (int n = maxHist-1; n > 0; --n) {
-            U(m,n) = U(m-1,n-1);
-         }
-      }
-
-      // Compute U matrix's new row 0 and col 0
-      for (int m = 0; m < nHist; ++m) {
-         double dotprod = computeUDotProd(resBasis,0,m);
-         U(m,0) = dotprod;
-         U(0,m) = dotprod;
-      }
-   }
-
-   template <int D>
-   void AmIteratorBasis<D>::updateV(DArray<double> & v,
-                               DArray<double> const & resCurrent,
-                               RingBuffer<DArray<double> > const & resBasis,
-                               int nHist)
-   {
-      // Compute U matrix's new row 0 and col 0
-      // Also, compute each element of v_ vector
-      for (int m = 0; m < nHist; ++m) {
-         v[m] = computeVDotProd(resCurrent,resBasis,m);
-      }
-   }
-   #endif
-
-   // Update basis
+   // Update the series of residual vectors.
    template <int D>
    void 
    AmIteratorBasis<D>::updateBasis(RingBuffer<DArray<double> > & basis,
@@ -214,20 +175,21 @@ namespace Rpg {
       DArray<double> newbasis;
       newbasis.allocate(n);
 
+      // New basis vector is difference between two most recent states
       for (int i = 0; i < n; i++) {
-         // sequential histories basis vectors
          newbasis[i] = hists[0][i] - hists[1][i]; 
       }
 
       basis.append(newbasis);
    }
 
+   // Compute trial field so as to minimize L2 norm of residual.
    template <int D>
    void
    AmIteratorBasis<D>::addHistories(DArray<double>& trial,
-                               RingBuffer<DArray<double> > const & basis,
-                               DArray<double> coeffs,
-                               int nHist)
+                                    RingBuffer<DArray<double> > const & basis,
+                                    DArray<double> coeffs,
+                                    int nHist)
    {
       int n = trial.capacity();
       for (int i = 0; i < nHist; i++) {
@@ -238,10 +200,11 @@ namespace Rpg {
       }
    }
 
+   // Add predicted error to the trial field.
    template <int D>
    void AmIteratorBasis<D>::addPredictedError(DArray<double>& fieldTrial,
-                                         DArray<double> const & resTrial,
-                                         double lambda)
+                                              DArray<double> const & resTrial,
+                                              double lambda)
    {
       int n = fieldTrial.capacity();
       for (int i = 0; i < n; i++) {
@@ -256,7 +219,7 @@ namespace Rpg {
       return system().w().hasData();
    }
 
-   // Compute and return the number of elements in a field vector
+   // Compute the number of elements in the residual vector.
    template <int D>
    int AmIteratorBasis<D>::nElements()
    {
@@ -266,13 +229,13 @@ namespace Rpg {
       int nEle = nMonomer*nBasis;
 
       if (isFlexible_) { 
-         nEle += system().unitCell().nParameter();
+         nEle += nFlexibleParams();
       }
 
       return nEle;
    }
 
-   // Get the current field from the system
+   // Get the current w fields and lattice parameters
    template <int D>
    void AmIteratorBasis<D>::getCurrent(DArray<double>& curr)
    {
@@ -280,11 +243,11 @@ namespace Rpg {
 
       const int nMonomer = system().mixture().nMonomer();
       const int nBasis = system().basis().nBasis();
-      const DArray< DArray<double> > * currSys = &system().w().basis();
+      const DArray< DArray<double> > & currSys = system().w().basis();
 
       for (int i = 0; i < nMonomer; i++) {
          for (int k = 0; k < nBasis; k++) {
-            curr[i*nBasis+k] = (*currSys)[i][k];
+            curr[i*nBasis+k] = currSys[i][k];
          }
       }
 
@@ -293,9 +256,14 @@ namespace Rpg {
          const int nParam = system().unitCell().nParameter();
          FSArray<double,6> const & parameters
                                   = system().unitCell().parameters();
+         int counter = 0;
          for (int i = 0; i < nParam; i++) {
-            curr[begin + i] = scaleStress_ * parameters[i];
+            if (flexibleParams_[i]) {
+               curr[begin + counter] = scaleStress_ * parameters[i];
+               counter++;
+            }
          }
+         UTIL_CHECK(counter == nFlexibleParams());
       }
 
    }
@@ -326,11 +294,40 @@ namespace Rpg {
       // Compute SCF residual vector elements
       for (int i = 0; i < nMonomer; ++i) {
          for (int j = 0; j < nMonomer; ++j) {
+            double chi = interaction_.chi(i,j);
+            double p = interaction_.p(i,j);
+            DArray<double> const & c = system().c().basis(j);
+            DArray<double> const & w = system().w().basis(j);
             for (int k = 0; k < nBasis; ++k) {
                int idx = i*nBasis + k;
-               resid[idx] +=
-                  interaction_.chi(i,j)*system().c().basis(j)[k] -
-                  interaction_.p(i,j)*system().w().basis(j)[k];
+               resid[idx] += chi*c[k] - p*w[k];
+            }
+         }
+      }
+
+      // If iterator has mask, account for it in residual values
+      if (system().hasMask()) {
+         DArray<double> const & mask = system().mask().basis();
+         double sumChiInv = interaction_.sumChiInverse();
+         for (int i = 0; i < nMonomer; ++i) {
+            for (int k = 0; k < nBasis; ++k) {
+               int idx = i*nBasis + k;
+               resid[idx] -= mask[k] / sumChiInv;
+            }
+         }
+      }
+
+      // If iterator has external fields, account for them in the values 
+      // of the residuals
+      if (system().hasExternalFields()) {
+         for (int i = 0; i < nMonomer; ++i) {
+            for (int j = 0; j < nMonomer; ++j) {
+               double p = interaction_.p(i,j);
+               DArray<double> const & h = system().h().basis(j);
+               for (int k = 0; k < nBasis; ++k) {
+                  int idx = i*nBasis + k;
+                  resid[idx] += p * h[k];
+               }
             }
          }
       }
@@ -338,7 +335,7 @@ namespace Rpg {
       // If not canonical, account for incompressibility
       if (!system().mixture().isCanonical()) {
          for (int i = 0; i < nMonomer; ++i) {
-            resid[i*nBasis] -= 1.0/interaction_.sumChiInverse();
+            resid[i*nBasis] -= 1.0 / interaction_.sumChiInverse();
          }
       } else {
          // Explicitly set homogeneous residual components
@@ -350,10 +347,6 @@ namespace Rpg {
       // If variable unit cell, compute stress residuals
       if (isFlexible_) {
          const int nParam = system().unitCell().nParameter();
-         for (int i = 0; i < nParam ; i++) {
-            resid[nMonomer*nBasis + i] = -1.0 * scaleStress_ 
-                                       * system().mixture().stress(i);
-         }
 
          //  Note: 
          //  Combined -1 factor and stress scaling here.  This is okay:
@@ -364,6 +357,22 @@ namespace Rpg {
          //  - The scaling is applied here and to the unit cell param
          //    storage, so that updating is done on the same scale,
          //    and then undone right before passing to the unit cell.
+
+         int counter = 0;
+         for (int i = 0; i < nParam ; i++) {
+            if (flexibleParams_[i]) {
+               double stress = system().mixture().stress(i);
+
+               // Correct stress to account for effect of imposed fields
+               if (imposedFields_.isActive()) {
+                  stress = imposedFields_.correctedStress(i,stress);
+               } 
+
+               resid[nMonomer*nBasis + counter] = -1 * scaleStress_ * stress;
+               counter++;
+            }
+         }
+         UTIL_CHECK(counter == nFlexibleParams());
       }
 
    }
@@ -389,11 +398,18 @@ namespace Rpg {
 
       // If canonical, explicitly set homogeneous field components
       if (system().mixture().isCanonical()) {
+         double chi;
          for (int i = 0; i < nMonomer; ++i) {
             wField[i][0] = 0.0; // initialize to 0
             for (int j = 0; j < nMonomer; ++j) {
-               wField[i][0] +=
-                 interaction_.chi(i,j) * system().c().basis(j)[0];
+               chi = interaction_.chi(i,j);
+               wField[i][0] += chi * system().c().basis(j)[0];
+            }
+         }
+         // If iterator has external fields, include them in homogeneous field
+         if (system().hasExternalFields()) {
+            for (int i = 0; i < nMonomer; ++i) {
+               wField[i][0] += system().h().basis(i)[0];
             }
          }
       }
@@ -402,27 +418,88 @@ namespace Rpg {
       if (isFlexible_) {
          const int nParam = system().unitCell().nParameter();
          const int begin = nMonomer*nBasis;
+
          FSArray<double,6> parameters;
-         double value;
+         parameters = system().domain().unitCell().parameters();
+
+         const double coeff = 1.0 / scaleStress_;
+         int counter = 0;
          for (int i = 0; i < nParam; i++) {
-            value = newGuess[begin + i]/scaleStress_;
-            parameters.append(value);
+            if (flexibleParams_[i]) {
+               parameters[i] = coeff * newGuess[begin + counter];
+               counter++;
+            }
          }
+         UTIL_CHECK(counter == nFlexibleParams());
+
          system().setUnitCell(parameters);
       }
 
+      // Update imposed fields if needed
+      if (imposedFields_.isActive()) {
+         imposedFields_.update();
+      }
    }
 
+   // Output relevant system details to the iteration log file.
    template<int D>
    void AmIteratorBasis<D>::outputToLog()
    {
       if (isFlexible_ && verbose() > 1) {
-         const int nParam = system().unitCell().nParameter();
+         const int nParam = system().domain().unitCell().nParameter();
+         const int nMonomer = system().mixture().nMonomer();
+         const int nBasis = system().domain().basis().nBasis();
+         int counter = 0;
          for (int i = 0; i < nParam; i++) {
-            Log::file() << "Parameter " << i << " = "
-                        << Dbl(system().unitCell().parameters()[i])
-                        << "\n";
+            if (flexibleParams_[i]) {
+               double stress = residual()[nMonomer*nBasis + counter] /
+                               (-1.0 * scaleStress_);
+               Log::file() 
+                      << " Cell Param  " << i << " = "
+                      << Dbl(system().domain().unitCell().parameters()[i], 15)
+                      << " , stress = " 
+                      << Dbl(stress, 15)
+                      << "\n";
+               counter++;
+            }
          }
+      }
+   }
+
+   // Return specialized sweep parameter types to add to the Sweep object
+   template<int D>
+   GArray<ParameterType> AmIteratorBasis<D>::getParameterTypes()
+   {
+      GArray<ParameterType> arr;
+      if (imposedFields_.isActive()) {
+         arr = imposedFields_.getParameterTypes();
+      } 
+      return arr;
+   }
+
+   // Set the value of a specialized sweep parameter
+   template<int D>
+   void AmIteratorBasis<D>::setParameter(std::string name, DArray<int> ids, 
+                                         double value, bool& success)
+   {
+      if (imposedFields_.isActive()) {
+         imposedFields_.setParameter(name, ids, value, success);
+      } else {
+         success = false;
+      }
+   }
+
+   // Get the value of a specialized sweep parameter
+   template<int D>
+   double AmIteratorBasis<D>::getParameter(std::string name, 
+                                           DArray<int> ids, bool& success)
+   const
+   {
+      if (imposedFields_.isActive()) {
+         return imposedFields_.getParameter(name, ids, success);
+      } else {
+         success = false;
+         return 0.0;
       }
    }
 

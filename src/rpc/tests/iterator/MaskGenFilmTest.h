@@ -229,7 +229,8 @@ public:
       createMaskGenFilm(mask, "in/filmMask2");
       mask.setup();
       TEST_ASSERT(mask.isGenerated());
-      TEST_ASSERT(system.mask().isAllocated());
+      TEST_ASSERT(system.mask().isAllocatedBasis());
+      TEST_ASSERT(system.mask().isAllocatedRGrid());
       TEST_ASSERT(system.mask().hasData());
       TEST_ASSERT(system.mask().isSymmetric());
       TEST_ASSERT(eq(system.mask().phiTot(), 7.99990525324e-01));

@@ -28,7 +28,7 @@ namespace Rpg {
    * Compute concentration, q, phi or mu.
    */ 
    template <int D>
-   void Solvent<D>::compute(RField<D> const & wField)
+   void Solvent<D>::compute(RField<D> const & wField, double phiTot)
    {
       int nx = meshPtr_->size(); // Number of grid points
 
@@ -36,10 +36,14 @@ namespace Rpg {
       double s = size();
       q_ = 0.0;
 
-      // concField_ = exp(-size() * wField)
-      VecOp::expVc(concField_, wField, -1.0*size());
+      // cField_ = exp(-size() * wField)
+      VecOp::expVc(cField_, wField, -1.0*size());
 
-      q_ = Reduce::sum(concField_) / ((double) nx);
+      q_ = Reduce::sum(cField_) / ((double) nx); // spatial average
+      q_ /= phiTot; // correct for partial occupation
+
+      // Note: phiTot = 1.0 except in the case of a mask that confines
+      // material to a fraction of the unit cell. 
 
       // Compute mu_ or phi_ and prefactor
       double prefactor;
@@ -52,7 +56,7 @@ namespace Rpg {
       }
 
       // Normalize concentration 
-      VecOp::mulEqS(concField_, prefactor);
+      VecOp::mulEqS(cField_, prefactor);
    }
 
 }

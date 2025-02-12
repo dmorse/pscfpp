@@ -12,7 +12,8 @@ namespace Pscf
    
    // Constructor
    FieldGenerator::FieldGenerator()
-    : type_(None)
+    : type_(None),
+      isDependent_(false)
    {}
 
    // Destructor

@@ -1,0 +1,8 @@
+READ_W_BASIS       out/w.bf
+ITERATE          
+WRITE_W_BASIS      out_flex/w.bf
+WRITE_C_RGRID      out_flex/c.rf
+WRITE_PARAM        out_flex/data
+WRITE_THERMO       out_flex/data
+FINISH
+

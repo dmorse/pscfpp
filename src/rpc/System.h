@@ -1220,12 +1220,12 @@ namespace Rpc {
    // Does the system have an Iterator object?
    template <int D>
    inline bool System<D>::hasIterator() const
-   {  return (iteratorPtr_ != 0); }
+   {  return (iteratorPtr_); }
 
    // Does the system have a Sweep object?
    template <int D>
    inline bool System<D>::hasSweep() const
-   {  return (sweepPtr_ != 0); }
+   {  return (sweepPtr_); }
 
    // Does this system have external potential fields?
    template <int D>
@@ -1240,7 +1240,7 @@ namespace Rpc {
    // Does the system have an initialized Simulator ?
    template <int D>
    inline bool System<D>::hasSimulator() const
-   {  return (simulatorPtr_ != 0); }
+   {  return (simulatorPtr_); }
 
    // Have the c fields been computed for the current w fields?
    template <int D>

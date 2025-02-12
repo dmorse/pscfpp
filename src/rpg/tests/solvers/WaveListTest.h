@@ -335,7 +335,7 @@ public:
          temp = iter.position();
          vec = shiftToMinimum(temp, mesh1.dimensions(), cell1);
          dksq = cell1.dksq(vec, 0);
-         if (mesh1.dimension(2) - temp[2] > mesh1.dimension(2)/2 + 1) {
+         if (mesh1.dimension(0) - temp[0] > mesh1.dimension(0)/2 + 1) {
             dksq *= 2;
          }
          TEST_ASSERT(abs(dksq - dksq_h[iter.rank()]) < tolerance_);

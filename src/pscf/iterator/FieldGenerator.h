@@ -60,6 +60,30 @@ namespace Pscf {
       void update();
 
       /**
+      * Is this object dependent on the parameters of another FieldGenerator?
+      * 
+      * The parent ImposedFieldsGenerator object can contain up to two 
+      * FieldGenerator objects: a mask and an external field. In some cases, 
+      * the properties of one may be dependent on the properties of the 
+      * other. isDependent allows a FieldGenerator to indicate to the 
+      * parent object that it needs to read the parameters of the other
+      * FieldGenerator in addition to its own. 
+      * 
+      * During readParameters, the parent object will first allow the 
+      * independent FieldGenerator to read its own parameters. It will 
+      * then rewind the istream to allow the dependent FieldGenerator
+      * to read the parameters of the object on which it is dependent,
+      * followed by its own parameters.
+      * 
+      * Therefore, a dependent FieldGenerator must be the second of two
+      * FieldGenerators stored in a parent ImposedFieldsGenerator, and 
+      * two FieldGenerators may not be dependent on each other. In
+      * such a circumstance, a single FieldGenerator of type "Both" 
+      * should be used instead. 
+      */
+      bool isDependent() const;
+
+      /**
       * Check that the system is compatible with these fields
       * 
       * This may, for example, involve checking that the fields satisfy
@@ -153,7 +177,14 @@ namespace Pscf {
       */
       Type type_;
 
+      /// Is this object dependent on the parameters of another FieldGenerator?
+      bool isDependent_;
+
    };
+
+   // Is this object dependent on the parameters of another FieldGenerator?
+   inline bool FieldGenerator::isDependent() const
+   {  return isDependent_; }
 
 }
 #endif

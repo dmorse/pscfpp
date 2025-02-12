@@ -6,7 +6,7 @@
 */
 
 #include "VecOp.h"
-#include <pscf/cuda/ThreadGrid.h>
+#include <pscf/cuda/ThreadArray.h>
 #include <pscf/cuda/cudaErrorCheck.h>
 #include <cmath>
 
@@ -1025,7 +1025,7 @@ void eqV(DeviceArray<cudaReal>& a, DeviceArray<cudaReal> const & b,
    
    // GPU resources
    int nBlocks, nThreads;
-   ThreadGrid::setThreadsLogical(n, nBlocks, nThreads);
+   ThreadArray::setThreadsLogical(n, nBlocks, nThreads);
 
    // Launch kernel
    _eqV<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, 
@@ -1042,7 +1042,7 @@ void eqV(DeviceArray<cudaComplex>& a, DeviceArray<cudaComplex> const & b,
    
    // GPU resources
    int nBlocks, nThreads;
-   ThreadGrid::setThreadsLogical(n, nBlocks, nThreads);
+   ThreadArray::setThreadsLogical(n, nBlocks, nThreads);
 
    // Launch kernel
    _eqV<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, 
@@ -1058,7 +1058,7 @@ void eqS(DeviceArray<cudaReal>& a, cudaReal const b,
    
    // GPU resources
    int nBlocks, nThreads;
-   ThreadGrid::setThreadsLogical(n, nBlocks, nThreads);
+   ThreadArray::setThreadsLogical(n, nBlocks, nThreads);
 
    // Launch kernel
    _eqS<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, b, n);
@@ -1073,7 +1073,7 @@ void eqS(DeviceArray<cudaComplex>& a, cudaComplex const b,
    
    // GPU resources
    int nBlocks, nThreads;
-   ThreadGrid::setThreadsLogical(n, nBlocks, nThreads);
+   ThreadArray::setThreadsLogical(n, nBlocks, nThreads);
 
    // Launch kernel
    _eqS<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, b, n);
@@ -1091,7 +1091,7 @@ void addVV(DeviceArray<cudaReal>& a, DeviceArray<cudaReal> const & b,
    
    // GPU resources
    int nBlocks, nThreads;
-   ThreadGrid::setThreadsLogical(n, nBlocks, nThreads);
+   ThreadArray::setThreadsLogical(n, nBlocks, nThreads);
 
    // Launch kernel
    _addVV<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, b.cArray()+beginIdB, 
@@ -1110,7 +1110,7 @@ void addVV(DeviceArray<cudaComplex>& a, DeviceArray<cudaComplex> const & b,
    
    // GPU resources
    int nBlocks, nThreads;
-   ThreadGrid::setThreadsLogical(n, nBlocks, nThreads);
+   ThreadArray::setThreadsLogical(n, nBlocks, nThreads);
 
    // Launch kernel
    _addVV<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, b.cArray()+beginIdB, 
@@ -1129,7 +1129,7 @@ void addVV(DeviceArray<cudaComplex>& a, DeviceArray<cudaReal> const & b,
    
    // GPU resources
    int nBlocks, nThreads;
-   ThreadGrid::setThreadsLogical(n, nBlocks, nThreads);
+   ThreadArray::setThreadsLogical(n, nBlocks, nThreads);
 
    // Launch kernel
    _addVV<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, b.cArray()+beginIdB, 
@@ -1148,7 +1148,7 @@ void addVV(DeviceArray<cudaComplex>& a, DeviceArray<cudaComplex> const & b,
    
    // GPU resources
    int nBlocks, nThreads;
-   ThreadGrid::setThreadsLogical(n, nBlocks, nThreads);
+   ThreadArray::setThreadsLogical(n, nBlocks, nThreads);
 
    // Launch kernel
    _addVV<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, b.cArray()+beginIdB, 
@@ -1165,7 +1165,7 @@ void addVS(DeviceArray<cudaReal>& a, DeviceArray<cudaReal> const & b,
    
    // GPU resources
    int nBlocks, nThreads;
-   ThreadGrid::setThreadsLogical(n, nBlocks, nThreads);
+   ThreadArray::setThreadsLogical(n, nBlocks, nThreads);
 
    // Launch kernel
    _addVS<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, b.cArray()+beginIdB, 
@@ -1182,7 +1182,7 @@ void addVS(DeviceArray<cudaComplex>& a, DeviceArray<cudaComplex> const & b,
    
    // GPU resources
    int nBlocks, nThreads;
-   ThreadGrid::setThreadsLogical(n, nBlocks, nThreads);
+   ThreadArray::setThreadsLogical(n, nBlocks, nThreads);
 
    // Launch kernel
    _addVS<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, b.cArray()+beginIdB, 
@@ -1199,7 +1199,7 @@ void addVS(DeviceArray<cudaComplex>& a, DeviceArray<cudaReal> const & b,
    
    // GPU resources
    int nBlocks, nThreads;
-   ThreadGrid::setThreadsLogical(n, nBlocks, nThreads);
+   ThreadArray::setThreadsLogical(n, nBlocks, nThreads);
 
    // Launch kernel
    _addVS<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, b.cArray()+beginIdB, 
@@ -1216,7 +1216,7 @@ void addVS(DeviceArray<cudaComplex>& a, DeviceArray<cudaComplex> const & b,
    
    // GPU resources
    int nBlocks, nThreads;
-   ThreadGrid::setThreadsLogical(n, nBlocks, nThreads);
+   ThreadArray::setThreadsLogical(n, nBlocks, nThreads);
 
    // Launch kernel
    _addVS<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, b.cArray()+beginIdB, 
@@ -1235,7 +1235,7 @@ void subVV(DeviceArray<cudaReal>& a, DeviceArray<cudaReal> const & b,
    
    // GPU resources
    int nBlocks, nThreads;
-   ThreadGrid::setThreadsLogical(n, nBlocks, nThreads);
+   ThreadArray::setThreadsLogical(n, nBlocks, nThreads);
 
    // Launch kernel
    _subVV<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, b.cArray()+beginIdB, 
@@ -1254,7 +1254,7 @@ void subVV(DeviceArray<cudaComplex>& a, DeviceArray<cudaComplex> const & b,
    
    // GPU resources
    int nBlocks, nThreads;
-   ThreadGrid::setThreadsLogical(n, nBlocks, nThreads);
+   ThreadArray::setThreadsLogical(n, nBlocks, nThreads);
 
    // Launch kernel
    _subVV<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, b.cArray()+beginIdB, 
@@ -1273,7 +1273,7 @@ void subVV(DeviceArray<cudaComplex>& a, DeviceArray<cudaReal> const & b,
    
    // GPU resources
    int nBlocks, nThreads;
-   ThreadGrid::setThreadsLogical(n, nBlocks, nThreads);
+   ThreadArray::setThreadsLogical(n, nBlocks, nThreads);
 
    // Launch kernel
    _subVV<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, b.cArray()+beginIdB, 
@@ -1292,7 +1292,7 @@ void subVV(DeviceArray<cudaComplex>& a, DeviceArray<cudaComplex> const & b,
    
    // GPU resources
    int nBlocks, nThreads;
-   ThreadGrid::setThreadsLogical(n, nBlocks, nThreads);
+   ThreadArray::setThreadsLogical(n, nBlocks, nThreads);
 
    // Launch kernel
    _subVV<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, b.cArray()+beginIdB, 
@@ -1310,7 +1310,7 @@ void subVS(DeviceArray<cudaReal>& a,
    
    // GPU resources
    int nBlocks, nThreads;
-   ThreadGrid::setThreadsLogical(n, nBlocks, nThreads);
+   ThreadArray::setThreadsLogical(n, nBlocks, nThreads);
 
    // Launch kernel
    _subVS<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, b.cArray()+beginIdB, 
@@ -1328,7 +1328,7 @@ void subVS(DeviceArray<cudaComplex>& a, DeviceArray<cudaComplex> const & b,
    
    // GPU resources
    int nBlocks, nThreads;
-   ThreadGrid::setThreadsLogical(n, nBlocks, nThreads);
+   ThreadArray::setThreadsLogical(n, nBlocks, nThreads);
 
    // Launch kernel
    _subVS<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, b.cArray()+beginIdB, 
@@ -1346,7 +1346,7 @@ void subVS(DeviceArray<cudaComplex>& a, DeviceArray<cudaReal> const & b,
    
    // GPU resources
    int nBlocks, nThreads;
-   ThreadGrid::setThreadsLogical(n, nBlocks, nThreads);
+   ThreadArray::setThreadsLogical(n, nBlocks, nThreads);
 
    // Launch kernel
    _subVS<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, b.cArray()+beginIdB, 
@@ -1364,7 +1364,7 @@ void subVS(DeviceArray<cudaComplex>& a, DeviceArray<cudaComplex> const & b,
    
    // GPU resources
    int nBlocks, nThreads;
-   ThreadGrid::setThreadsLogical(n, nBlocks, nThreads);
+   ThreadArray::setThreadsLogical(n, nBlocks, nThreads);
 
    // Launch kernel
    _subVS<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, b.cArray()+beginIdB, 
@@ -1383,7 +1383,7 @@ void mulVV(DeviceArray<cudaReal>& a, DeviceArray<cudaReal> const & b,
    
    // GPU resources
    int nBlocks, nThreads;
-   ThreadGrid::setThreadsLogical(n, nBlocks, nThreads);
+   ThreadArray::setThreadsLogical(n, nBlocks, nThreads);
 
    // Launch kernel
    _mulVV<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, b.cArray()+beginIdB, 
@@ -1402,7 +1402,7 @@ void mulVV(DeviceArray<cudaComplex>& a, DeviceArray<cudaComplex> const & b,
    
    // GPU resources
    int nBlocks, nThreads;
-   ThreadGrid::setThreadsLogical(n, nBlocks, nThreads);
+   ThreadArray::setThreadsLogical(n, nBlocks, nThreads);
 
    // Launch kernel
    _mulVV<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, b.cArray()+beginIdB, 
@@ -1421,7 +1421,7 @@ void mulVV(DeviceArray<cudaComplex>& a, DeviceArray<cudaReal> const & b,
    
    // GPU resources
    int nBlocks, nThreads;
-   ThreadGrid::setThreadsLogical(n, nBlocks, nThreads);
+   ThreadArray::setThreadsLogical(n, nBlocks, nThreads);
 
    // Launch kernel
    _mulVV<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, b.cArray()+beginIdB, 
@@ -1440,7 +1440,7 @@ void mulVV(DeviceArray<cudaComplex>& a, DeviceArray<cudaComplex> const & b,
    
    // GPU resources
    int nBlocks, nThreads;
-   ThreadGrid::setThreadsLogical(n, nBlocks, nThreads);
+   ThreadArray::setThreadsLogical(n, nBlocks, nThreads);
 
    // Launch kernel
    _mulVV<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, b.cArray()+beginIdB, 
@@ -1458,7 +1458,7 @@ void mulVS(DeviceArray<cudaReal>& a, DeviceArray<cudaReal> const & b,
    
    // GPU resources
    int nBlocks, nThreads;
-   ThreadGrid::setThreadsLogical(n, nBlocks, nThreads);
+   ThreadArray::setThreadsLogical(n, nBlocks, nThreads);
 
    // Launch kernel
    _mulVS<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, b.cArray()+beginIdB, 
@@ -1476,7 +1476,7 @@ void mulVS(DeviceArray<cudaComplex>& a, DeviceArray<cudaComplex> const & b,
    
    // GPU resources
    int nBlocks, nThreads;
-   ThreadGrid::setThreadsLogical(n, nBlocks, nThreads);
+   ThreadArray::setThreadsLogical(n, nBlocks, nThreads);
 
    // Launch kernel
    _mulVS<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, b.cArray()+beginIdB, 
@@ -1494,7 +1494,7 @@ void mulVS(DeviceArray<cudaComplex>& a, DeviceArray<cudaReal> const & b,
    
    // GPU resources
    int nBlocks, nThreads;
-   ThreadGrid::setThreadsLogical(n, nBlocks, nThreads);
+   ThreadArray::setThreadsLogical(n, nBlocks, nThreads);
 
    // Launch kernel
    _mulVS<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, b.cArray()+beginIdB, 
@@ -1512,7 +1512,7 @@ void mulVS(DeviceArray<cudaComplex>& a, DeviceArray<cudaComplex> const & b,
    
    // GPU resources
    int nBlocks, nThreads;
-   ThreadGrid::setThreadsLogical(n, nBlocks, nThreads);
+   ThreadArray::setThreadsLogical(n, nBlocks, nThreads);
 
    // Launch kernel
    _mulVS<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, b.cArray()+beginIdB, 
@@ -1531,7 +1531,7 @@ void divVV(DeviceArray<cudaReal>& a, DeviceArray<cudaReal> const & b,
    
    // GPU resources
    int nBlocks, nThreads;
-   ThreadGrid::setThreadsLogical(n, nBlocks, nThreads);
+   ThreadArray::setThreadsLogical(n, nBlocks, nThreads);
 
    // Launch kernel
    _divVV<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, b.cArray()+beginIdB, 
@@ -1550,7 +1550,7 @@ void divVV(DeviceArray<cudaComplex>& a, DeviceArray<cudaComplex> const & b,
    
    // GPU resources
    int nBlocks, nThreads;
-   ThreadGrid::setThreadsLogical(n, nBlocks, nThreads);
+   ThreadArray::setThreadsLogical(n, nBlocks, nThreads);
 
    // Launch kernel
    _divVV<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, b.cArray()+beginIdB, 
@@ -1568,7 +1568,7 @@ void divVS(DeviceArray<cudaReal>& a, DeviceArray<cudaReal> const & b,
    
    // GPU resources
    int nBlocks, nThreads;
-   ThreadGrid::setThreadsLogical(n, nBlocks, nThreads);
+   ThreadArray::setThreadsLogical(n, nBlocks, nThreads);
 
    // Launch kernel
    _divVS<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, b.cArray()+beginIdB, 
@@ -1586,7 +1586,7 @@ void divVS(DeviceArray<cudaComplex>& a, DeviceArray<cudaComplex> const & b,
    
    // GPU resources
    int nBlocks, nThreads;
-   ThreadGrid::setThreadsLogical(n, nBlocks, nThreads);
+   ThreadArray::setThreadsLogical(n, nBlocks, nThreads);
 
    // Launch kernel
    _divVS<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, b.cArray()+beginIdB, 
@@ -1603,7 +1603,7 @@ void expV(DeviceArray<cudaReal>& a, DeviceArray<cudaReal> const & b,
    
    // GPU resources
    int nBlocks, nThreads;
-   ThreadGrid::setThreadsLogical(n, nBlocks, nThreads);
+   ThreadArray::setThreadsLogical(n, nBlocks, nThreads);
 
    // Launch kernel
    _expV<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, 
@@ -1620,7 +1620,7 @@ void expV(DeviceArray<cudaComplex>& a, DeviceArray<cudaComplex> const & b,
    
    // GPU resources
    int nBlocks, nThreads;
-   ThreadGrid::setThreadsLogical(n, nBlocks, nThreads);
+   ThreadArray::setThreadsLogical(n, nBlocks, nThreads);
 
    // Launch kernel
    _expV<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, 
@@ -1637,7 +1637,7 @@ void addEqV(DeviceArray<cudaReal>& a, DeviceArray<cudaReal> const & b,
    
    // GPU resources
    int nBlocks, nThreads;
-   ThreadGrid::setThreadsLogical(n, nBlocks, nThreads);
+   ThreadArray::setThreadsLogical(n, nBlocks, nThreads);
 
    // Launch kernel
    _addEqV<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, 
@@ -1654,7 +1654,7 @@ void addEqV(DeviceArray<cudaComplex>& a, DeviceArray<cudaComplex> const & b,
    
    // GPU resources
    int nBlocks, nThreads;
-   ThreadGrid::setThreadsLogical(n, nBlocks, nThreads);
+   ThreadArray::setThreadsLogical(n, nBlocks, nThreads);
 
    // Launch kernel
    _addEqV<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, 
@@ -1671,7 +1671,7 @@ void addEqV(DeviceArray<cudaComplex>& a, DeviceArray<cudaReal> const & b,
    
    // GPU resources
    int nBlocks, nThreads;
-   ThreadGrid::setThreadsLogical(n, nBlocks, nThreads);
+   ThreadArray::setThreadsLogical(n, nBlocks, nThreads);
 
    // Launch kernel
    _addEqV<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, 
@@ -1687,7 +1687,7 @@ void addEqS(DeviceArray<cudaReal>& a, cudaReal const b,
    
    // GPU resources
    int nBlocks, nThreads;
-   ThreadGrid::setThreadsLogical(n, nBlocks, nThreads);
+   ThreadArray::setThreadsLogical(n, nBlocks, nThreads);
 
    // Launch kernel
    _addEqS<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, b, n);
@@ -1702,7 +1702,7 @@ void addEqS(DeviceArray<cudaComplex>& a, cudaComplex const b,
    
    // GPU resources
    int nBlocks, nThreads;
-   ThreadGrid::setThreadsLogical(n, nBlocks, nThreads);
+   ThreadArray::setThreadsLogical(n, nBlocks, nThreads);
 
    // Launch kernel
    _addEqS<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, b, n);
@@ -1717,7 +1717,7 @@ void addEqS(DeviceArray<cudaComplex>& a, cudaReal const b,
    
    // GPU resources
    int nBlocks, nThreads;
-   ThreadGrid::setThreadsLogical(n, nBlocks, nThreads);
+   ThreadArray::setThreadsLogical(n, nBlocks, nThreads);
 
    // Launch kernel
    _addEqS<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, b, n);
@@ -1733,7 +1733,7 @@ void subEqV(DeviceArray<cudaReal>& a, DeviceArray<cudaReal> const & b,
    
    // GPU resources
    int nBlocks, nThreads;
-   ThreadGrid::setThreadsLogical(n, nBlocks, nThreads);
+   ThreadArray::setThreadsLogical(n, nBlocks, nThreads);
 
    // Launch kernel
    _subEqV<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, 
@@ -1750,7 +1750,7 @@ void subEqV(DeviceArray<cudaComplex>& a, DeviceArray<cudaComplex> const & b,
    
    // GPU resources
    int nBlocks, nThreads;
-   ThreadGrid::setThreadsLogical(n, nBlocks, nThreads);
+   ThreadArray::setThreadsLogical(n, nBlocks, nThreads);
 
    // Launch kernel
    _subEqV<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, 
@@ -1767,7 +1767,7 @@ void subEqV(DeviceArray<cudaComplex>& a, DeviceArray<cudaReal> const & b,
    
    // GPU resources
    int nBlocks, nThreads;
-   ThreadGrid::setThreadsLogical(n, nBlocks, nThreads);
+   ThreadArray::setThreadsLogical(n, nBlocks, nThreads);
 
    // Launch kernel
    _subEqV<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, 
@@ -1783,7 +1783,7 @@ void subEqS(DeviceArray<cudaReal>& a, cudaReal const b,
    
    // GPU resources
    int nBlocks, nThreads;
-   ThreadGrid::setThreadsLogical(n, nBlocks, nThreads);
+   ThreadArray::setThreadsLogical(n, nBlocks, nThreads);
 
    // Launch kernel
    _subEqS<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, b, n);
@@ -1798,7 +1798,7 @@ void subEqS(DeviceArray<cudaComplex>& a, cudaComplex const b,
    
    // GPU resources
    int nBlocks, nThreads;
-   ThreadGrid::setThreadsLogical(n, nBlocks, nThreads);
+   ThreadArray::setThreadsLogical(n, nBlocks, nThreads);
 
    // Launch kernel
    _subEqS<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, b, n);
@@ -1813,7 +1813,7 @@ void subEqS(DeviceArray<cudaComplex>& a, cudaReal const b,
    
    // GPU resources
    int nBlocks, nThreads;
-   ThreadGrid::setThreadsLogical(n, nBlocks, nThreads);
+   ThreadArray::setThreadsLogical(n, nBlocks, nThreads);
 
    // Launch kernel
    _subEqS<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, b, n);
@@ -1829,7 +1829,7 @@ void mulEqV(DeviceArray<cudaReal>& a, DeviceArray<cudaReal> const & b,
    
    // GPU resources
    int nBlocks, nThreads;
-   ThreadGrid::setThreadsLogical(n, nBlocks, nThreads);
+   ThreadArray::setThreadsLogical(n, nBlocks, nThreads);
 
    // Launch kernel
    _mulEqV<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, 
@@ -1846,7 +1846,7 @@ void mulEqV(DeviceArray<cudaComplex>& a, DeviceArray<cudaComplex> const & b,
    
    // GPU resources
    int nBlocks, nThreads;
-   ThreadGrid::setThreadsLogical(n, nBlocks, nThreads);
+   ThreadArray::setThreadsLogical(n, nBlocks, nThreads);
 
    // Launch kernel
    _mulEqV<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, 
@@ -1863,7 +1863,7 @@ void mulEqV(DeviceArray<cudaComplex>& a, DeviceArray<cudaReal> const & b,
    
    // GPU resources
    int nBlocks, nThreads;
-   ThreadGrid::setThreadsLogical(n, nBlocks, nThreads);
+   ThreadArray::setThreadsLogical(n, nBlocks, nThreads);
 
    // Launch kernel
    _mulEqV<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, 
@@ -1879,7 +1879,7 @@ void mulEqS(DeviceArray<cudaReal>& a, cudaReal const b,
    
    // GPU resources
    int nBlocks, nThreads;
-   ThreadGrid::setThreadsLogical(n, nBlocks, nThreads);
+   ThreadArray::setThreadsLogical(n, nBlocks, nThreads);
 
    // Launch kernel
    _mulEqS<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, b, n);
@@ -1894,7 +1894,7 @@ void mulEqS(DeviceArray<cudaComplex>& a, cudaComplex const b,
    
    // GPU resources
    int nBlocks, nThreads;
-   ThreadGrid::setThreadsLogical(n, nBlocks, nThreads);
+   ThreadArray::setThreadsLogical(n, nBlocks, nThreads);
 
    // Launch kernel
    _mulEqS<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, b, n);
@@ -1909,7 +1909,7 @@ void mulEqS(DeviceArray<cudaComplex>& a, cudaReal const b,
    
    // GPU resources
    int nBlocks, nThreads;
-   ThreadGrid::setThreadsLogical(n, nBlocks, nThreads);
+   ThreadArray::setThreadsLogical(n, nBlocks, nThreads);
 
    // Launch kernel
    _mulEqS<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, b, n);
@@ -1925,7 +1925,7 @@ void divEqV(DeviceArray<cudaReal>& a, DeviceArray<cudaReal> const & b,
    
    // GPU resources
    int nBlocks, nThreads;
-   ThreadGrid::setThreadsLogical(n, nBlocks, nThreads);
+   ThreadArray::setThreadsLogical(n, nBlocks, nThreads);
 
    // Launch kernel
    _divEqV<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, 
@@ -1942,7 +1942,7 @@ void divEqV(DeviceArray<cudaComplex>& a, DeviceArray<cudaReal> const & b,
    
    // GPU resources
    int nBlocks, nThreads;
-   ThreadGrid::setThreadsLogical(n, nBlocks, nThreads);
+   ThreadArray::setThreadsLogical(n, nBlocks, nThreads);
 
    // Launch kernel
    _divEqV<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, 
@@ -1958,7 +1958,7 @@ void divEqS(DeviceArray<cudaReal>& a, cudaReal const b,
    
    // GPU resources
    int nBlocks, nThreads;
-   ThreadGrid::setThreadsLogical(n, nBlocks, nThreads);
+   ThreadArray::setThreadsLogical(n, nBlocks, nThreads);
 
    // Launch kernel
    _divEqS<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, b, n);
@@ -1973,7 +1973,7 @@ void divEqS(DeviceArray<cudaComplex>& a, cudaReal const b,
    
    // GPU resources
    int nBlocks, nThreads;
-   ThreadGrid::setThreadsLogical(n, nBlocks, nThreads);
+   ThreadArray::setThreadsLogical(n, nBlocks, nThreads);
 
    // Launch kernel
    _divEqS<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, b, n);

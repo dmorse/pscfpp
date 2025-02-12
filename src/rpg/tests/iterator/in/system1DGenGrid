@@ -1,0 +1,60 @@
+System{
+  Mixture{
+    nMonomer  2
+    monomers[
+              1.0  
+              1.0 
+    ]
+    nPolymer  1
+    Polymer{
+      type    linear
+      nBlock  2
+      blocks[
+              0  0.40
+              1  0.60
+      ]
+      phi     1.0
+    }
+    ds   0.005
+  }
+  Interaction{
+    chi(  
+         1   0   20.0
+    )
+  }
+  Domain{
+    mesh           96
+    lattice        lamellar
+    groupName      P_-1
+  }
+  AmIteratorGrid{
+    epsilon      1.0e-6
+    maxItr       2000
+    maxHist      50 
+    isFlexible   0
+    ImposedFieldsGenerator{
+      type               film
+      normalVecId        0
+      interfaceThickness 0.2
+      excludedThickness  0.4
+      chiBottom[
+                          10.0
+                          0.0
+      ]
+      chiTop[
+                          10.0
+                          0.0
+      ]
+    }
+  }
+  LinearSweep{
+    ns            5   
+    baseFileName  out/sweepGrid/
+    nParameter    3   
+    parameters[
+                  cell_param  0  +0.05
+                  chi_bottom  0  +1.0
+                  chi_top     0  +1.0
+    ]
+  }
+}

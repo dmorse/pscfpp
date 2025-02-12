@@ -1,0 +1,3 @@
+(cd 1D; ./clean)
+(cd 2D; ./clean)
+(cd 3D; ./clean)

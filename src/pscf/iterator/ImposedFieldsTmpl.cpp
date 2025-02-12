@@ -6,6 +6,7 @@
 */
 
 #include "ImposedFieldsTmpl.h"
+#include <util/param/Label.h>
 
 namespace Pscf {
 
@@ -27,8 +28,13 @@ namespace Pscf {
       read(in, "type", type_);
       createGenerators();
 
+      // Save current istream position
+      std::streampos pos = in.tellg();
+
       // Read first FieldGenerator (optional)
       if (fieldGenPtr1_) {
+
+         UTIL_CHECK(!fieldGenPtr1_->isDependent());
 
          // Make fieldGenPtr1_ a child paramComponent of this object, so that 
          // it will be read/written correctly to/from param file with correct 
@@ -58,6 +64,12 @@ namespace Pscf {
                                             FieldGenerator::External);
          } else {
             UTIL_THROW("fieldGenPtr2_ must have type Mask or External.");
+         }
+
+         // If this FieldGenerator is dependent, rewind the istream
+         if (fieldGenPtr2_->isDependent()) {
+            in.seekg(pos);
+            Label::clear();
          }
          
          // Read parameters for external fields

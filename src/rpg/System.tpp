@@ -51,18 +51,21 @@ namespace Rpg {
       domain_(),
       fileMaster_(),
       homogeneous_(),
-      interactionPtr_(0),
-      iteratorPtr_(0),
-      iteratorFactoryPtr_(0),
-      sweepPtr_(0),
-      sweepFactoryPtr_(0),
-      simulatorPtr_(0),
-      simulatorFactoryPtr_(0),
+      interactionPtr_(nullptr),
+      iteratorPtr_(nullptr),
+      iteratorFactoryPtr_(nullptr),
+      sweepPtr_(nullptr),
+      sweepFactoryPtr_(nullptr),
+      simulatorPtr_(nullptr),
+      simulatorFactoryPtr_(nullptr),
       w_(),
       c_(),
+      h_(),
+      mask_(),
       fHelmholtz_(0.0),
       fIdeal_(0.0),
       fInter_(0.0),
+      fExt_(0.0),
       pressure_(0.0),
       hasMixture_(false),
       isAllocatedGrid_(false),
@@ -73,13 +76,15 @@ namespace Rpg {
       setClassName("System");
       domain_.setFileMaster(fileMaster_);
       w_.setFieldIo(domain_.fieldIo());
+      h_.setFieldIo(domain_.fieldIo());
+      mask_.setFieldIo(domain_.fieldIo());
 
       interactionPtr_ = new Interaction();
       iteratorFactoryPtr_ = new IteratorFactory<D>(*this);
       sweepFactoryPtr_ = new SweepFactory<D>(*this);
       simulatorFactoryPtr_ = new SimulatorFactory<D>(*this);
       BracketPolicy::set(BracketPolicy::Optional);
-      ThreadGrid::init();
+      ThreadArray::init();
    }
 
    /*
@@ -207,7 +212,8 @@ namespace Rpg {
 
       // If option -t, set the threads per block.
       if (tFlag) {
-         ThreadGrid::setThreadsPerBlock(tArg);
+         ThreadArray::setThreadsPerBlock(tArg);
+         ThreadMesh::setThreadsPerBlock(tArg);
       }
 
    }
@@ -518,6 +524,79 @@ namespace Rpg {
             readEcho(in, inFileName);
             readEcho(in, outFileName);
             basisToKGrid(inFileName, outFileName);
+         } else 
+         if (command == "READ_H_BASIS") {
+            readEcho(in, filename);
+            if (!h_.isAllocatedBasis()) {
+               h_.allocateBasis(domain().basis().nBasis());
+            }
+            if (!h_.isAllocatedRGrid()) {
+               h_.allocateRGrid(domain().mesh().dimensions());
+            }
+            UnitCell<D> tmpUnitCell;
+            h_.readBasis(filename, tmpUnitCell);
+         } else
+         if (command == "READ_H_RGRID") {
+            readEcho(in, filename);
+            if (!h_.isAllocatedRGrid()) {
+               h_.allocateRGrid(domain().mesh().dimensions());
+            }
+            if (iterator().isSymmetric() && !h_.isAllocatedBasis()) {
+               mask_.allocateBasis(domain().basis().nBasis());
+            }
+            UnitCell<D> tmpUnitCell;
+            h_.readRGrid(filename, tmpUnitCell);
+         } else
+         if (command == "WRITE_H_BASIS") {
+            readEcho(in, filename);
+            UTIL_CHECK(h_.hasData());
+            UTIL_CHECK(h_.isSymmetric());
+            domain().fieldIo().writeFieldsBasis(filename, h_.basis(), 
+                                                domain().unitCell());
+         } else
+         if (command == "WRITE_H_RGRID") {
+            readEcho(in, filename);
+            UTIL_CHECK(h_.hasData());
+            domain().fieldIo().writeFieldsRGrid(filename, h_.rgrid(), 
+                                                domain().unitCell());
+         } else
+         if (command == "READ_MASK_BASIS") {
+            readEcho(in, filename);
+            UTIL_CHECK(domain().basis().isInitialized());
+            if (!mask_.isAllocatedBasis()) {
+               mask_.allocateBasis(domain().basis().nBasis());
+            }
+            if (!mask_.isAllocatedRGrid()) {
+               mask_.allocateRGrid(domain().mesh().dimensions());
+            }
+            UnitCell<D> tmpUnitCell;
+            mask_.readBasis(filename, tmpUnitCell);
+         } else
+         if (command == "READ_MASK_RGRID") {
+            readEcho(in, filename);
+            if (!mask_.isAllocatedRGrid()) {
+               mask_.allocateRGrid(domain().mesh().dimensions());
+            }
+            if (iterator().isSymmetric() && !mask_.isAllocatedBasis()) {
+               UTIL_CHECK(domain().basis().isInitialized());
+               mask_.allocateBasis(domain().basis().nBasis());
+            }
+            UnitCell<D> tmpUnitCell;
+            mask_.readRGrid(filename, tmpUnitCell);
+         } else
+         if (command == "WRITE_MASK_BASIS") {
+            readEcho(in, filename);
+            UTIL_CHECK(mask_.hasData());
+            UTIL_CHECK(mask_.isSymmetric());
+            domain().fieldIo().writeFieldBasis(filename, mask_.basis(), 
+                                               domain().unitCell());
+         } else
+         if (command == "WRITE_MASK_RGRID") {
+            readEcho(in, filename);
+            UTIL_CHECK(mask_.hasData());
+            domain().fieldIo().writeFieldRGrid(filename, mask_.rgrid(), 
+                                               domain().unitCell(),
+                                               mask_.isSymmetric());
          } else {
             Log::file() << "Error: Unknown command  "
                         << command << std::endl;
@@ -762,7 +841,7 @@ namespace Rpg {
       UTIL_CHECK(w_.hasData());
 
       // Solve the modified diffusion equation (without iteration)
-      mixture_.compute(w_.rgrid(), c_.rgrid());
+      mixture_.compute(w_.rgrid(), c_.rgrid(), mask_.phiTot());
       hasCFields_ = true;
       hasFreeEnergy_ = false;
 
@@ -774,7 +853,7 @@ namespace Rpg {
 
       // Compute stress if needed
       if (needStress) {
-         mixture_.computeStress();
+         mixture_.computeStress(mask().phiTot());
       }
    }
 
@@ -796,21 +875,21 @@ namespace Rpg {
       Log::file() << std::endl;
       Log::file() << std::endl;
 
-      // Call iterator
+      // Call iterator (return 0 for convergence, 1 for failure)
       int error = iterator().solve(isContinuation);
 
       hasCFields_ = true;
-      hasFreeEnergy_ = false;
 
       if (w_.isSymmetric()) {
          fieldIo().convertRGridToBasis(c_.rgrid(), c_.basis());
       }
 
+      // If converged, compute related thermodynamic properties
       if (!error) {
          if (!iterator().isFlexible()) {
-            mixture_.computeStress();
+            mixture_.computeStress(mask().phiTot());
          }
-         computeFreeEnergy();
+         computeFreeEnergy(); // Sets hasFreeEnergy_ = true
          writeThermo(Log::file());
       }
       return error;
@@ -824,7 +903,6 @@ namespace Rpg {
    {
       UTIL_CHECK(w_.hasData());
       UTIL_CHECK(w_.isSymmetric());
-      UTIL_CHECK(sweepPtr_);
       UTIL_CHECK(hasSweep());
       Log::file() << std::endl;
       Log::file() << std::endl;
@@ -856,29 +934,35 @@ namespace Rpg {
    template <int D>
    void System<D>::computeFreeEnergy()
    {
+      if (hasFreeEnergy_) return;
+
       UTIL_CHECK(w_.hasData());
       UTIL_CHECK(hasCFields_);
 
-      // Initialize to zero
+      int nm = mixture().nMonomer();   // number of monomer types
+      int np = mixture().nPolymer();   // number of polymer species
+      int ns = mixture().nSolvent();   // number of solvent species
+
+      // Initialize all free energy contributions to zero
       fHelmholtz_ = 0.0;
+      fIdeal_ = 0.0;
+      fInter_ = 0.0;
+      fExt_ = 0.0;
 
       double phi, mu;
-      int np = mixture_.nPolymer();
-      int ns = mixture_.nSolvent();
 
-      // Compute polymer ideal gas contributions to fHelhmoltz_
+      // Compute polymer ideal gas contributions to fIdeal_
       if (np > 0) {
          Polymer<D>* polymerPtr;
-         double phi, mu, length;
-         int np = mixture_.nPolymer();
+         double length;
          for (int i = 0; i < np; ++i) {
             polymerPtr = &mixture_.polymer(i);
             phi = polymerPtr->phi();
             mu = polymerPtr->mu();
             // Recall: mu = ln(phi/q)
             length = polymerPtr->length();
-            if (phi > 1E-08) {
-               fHelmholtz_ += phi*( mu - 1.0 )/length;
+            if (phi > 1.0E-08) {
+               fIdeal_ += phi*( mu - 1.0 )/length;
             }
          }
       }
@@ -892,38 +976,105 @@ namespace Rpg {
             phi = solventPtr->phi();
             mu = solventPtr->mu();
             size = solventPtr->size();
-            if (phi > 1E-08) {
-               fHelmholtz_ += phi*( mu - 1.0 )/size;
+            if (phi > 1.0E-08) {
+               fIdeal_ += phi*( mu - 1.0 )/size;
             }
          }
       }
 
-      int nm  = mixture_.nMonomer();
-      int nx = domain_.mesh().size();
+      // Volume integrals with a mask: If the system has a mask, then the
+      // volume that should be used in calculating free energy/pressure
+      // is the volume available to the material, not the total unit cell
+      // volume. We thus divide all terms that involve integrating over
+      // the unit cell volume by quantity mask().phiTot(), which is the
+      // volume fraction of the unit cell that is occupied by material.
+      // This properly scales them to the correct value. fExt_, fInter_,
+      // and the Legendre transform component of fIdeal_ all require
+      // this scaling. If no mask is present, mask.phiTot() = 1 and no
+      // scaling occurs.
+      const double phiTot = mask().phiTot();
 
-      // Compute Legendre transform subtraction
+      // Compute Legendre transform subtraction from fIdeal_
       double temp = 0.0;
-      for (int i = 0; i < nm; i++) {
-         temp += Reduce::innerProduct(w_.rgrid(i), c_.rgrid(i)) / double(nx);
+      if (w_.isSymmetric()) {
+         // Use expansion in symmetry-adapted orthonormal basis
+         const int nBasis = domain_.basis().nBasis();
+         for (int i = 0; i < nm; ++i) {
+            for (int k = 0; k < nBasis; ++k) {
+               temp -= w_.basis(i)[k] * c_.basis(i)[k];
+            }
+         }
+      } else {
+         // Use summation over grid points
+         const int meshSize = domain().mesh().size();
+         for (int i = 0; i < nm; ++i) {
+            temp -= Reduce::innerProduct(w_.rgrid(i), c_.rgrid(i));
+         }
+         temp /= double(meshSize);
       }
-      fHelmholtz_ -= temp;
-      fIdeal_ = fHelmholtz_;
+      temp /= phiTot;
+      fIdeal_ += temp;
+      fHelmholtz_ += fIdeal_;
 
-      // Compute excess interaction free energy
-      fInter_ = 0.0;
-      for (int i = 0; i < nm; ++i) {
-         for (int j = i; j < nm; ++j) {
-            const double chi = interaction().chi(i,j);
-            if (fabs(chi) > 1.0E-9) {
-               temp = Reduce::innerProduct(c_.rgrid(i), c_.rgrid(j));
-               if (i == j) {
-                  fInter_ += 0.5 * chi * temp / nx;
-               } else {
-                  fInter_ += chi * temp / nx;
+      // Compute contribution from external fields, if they exist
+      if (hasExternalFields()) {
+         if (iterator().isSymmetric()) {
+            // Use expansion in symmetry-adapted orthonormal basis
+            const int nBasis = domain_.basis().nBasis();
+            for (int i = 0; i < nm; ++i) {
+               for (int k = 0; k < nBasis; ++k) {
+                  fExt_ += h_.basis(i)[k] * c_.basis(i)[k];
+               }
+            }
+         } else {
+            // Use summation over grid points
+            const int meshSize = domain().mesh().size();
+            for (int i = 0; i < nm; ++i) {
+               fExt_ += Reduce::innerProduct(h_.rgrid(i), c_.rgrid(i));
+            }
+            fExt_ /= double(meshSize);
+         }
+         fExt_ /= phiTot;
+         fHelmholtz_ += fExt_;
+      }
+
+      // Compute excess interaction free energy [ phi^{T}*chi*phi/2 ]
+      if (w_.isSymmetric()) {
+         const int nBasis = domain_.basis().nBasis();
+         for (int i = 0; i < nm; ++i) {
+            for (int j = i; j < nm; ++j) {
+               const double chi = interaction().chi(i,j);
+               if (std::abs(chi) > 1.0E-9) {
+                  double temp = 0.0;
+                  for (int k = 0; k < nBasis; ++k) {
+                     temp += c_.basis(i)[k] * c_.basis(j)[k];
+                  }
+                  if (i == j) {
+                     fInter_ += 0.5*chi*temp;
+                  } else {
+                     fInter_ += chi*temp;
+                  }
                }
             }
          }
+      } else {
+         const int meshSize = domain().mesh().size();
+         for (int i = 0; i < nm; ++i) {
+            for (int j = i; j < nm; ++j) {
+               const double chi = interaction().chi(i,j);
+               if (std::abs(chi) > 1.0E-9) {
+                  double temp = Reduce::innerProduct(c_.rgrid(i), c_.rgrid(j));
+                  if (i == j) {
+                     fInter_ += 0.5*chi*temp;
+                  } else {
+                     fInter_ += chi*temp;
+                  }
+               }
+            }
+         }
+         fInter_ /= double(meshSize);
       }
+      fInter_ /= phiTot;
       fHelmholtz_ += fInter_;
 
       // Initialize pressure
@@ -938,8 +1089,8 @@ namespace Rpg {
             phi = polymerPtr->phi();
             mu = polymerPtr->mu();
             length = polymerPtr->length();
-            if (phi > 1E-08) {
-               pressure_ += mu * phi /length;
+            if (phi > 1.0E-08) {
+               pressure_ += mu * phi / length;
             }
          }
       }
@@ -953,8 +1104,8 @@ namespace Rpg {
             phi = solventPtr->phi();
             mu = solventPtr->mu();
             size = solventPtr->size();
-            if (phi > 1E-08) {
-               pressure_ += mu * phi /size;
+            if (phi > 1.0E-08) {
+               pressure_ += mu * phi / size;
             }
          }
       }
@@ -1008,15 +1159,25 @@ namespace Rpg {
       out << "}" << std::endl;
    }
 
+   /*
+   * Write thermodynamic properties to file.
+   */
    template <int D>
    void System<D>::writeThermo(std::ostream& out)
    {
+      if (!hasFreeEnergy_) {
+         computeFreeEnergy();
+      }
+
       out << std::endl;
       out << "fHelmholtz    " << Dbl(fHelmholtz(), 18, 11) << std::endl;
       out << "pressure      " << Dbl(pressure(), 18, 11) << std::endl;
       out << std::endl;
       out << "fIdeal        " << Dbl(fIdeal_, 18, 11) << std::endl;
       out << "fInter        " << Dbl(fInter_, 18, 11) << std::endl;
+      if (hasExternalFields()) {
+         out << "fExt          " << Dbl(fExt_, 18, 11) << std::endl;
+      }
       out << std::endl;
 
       int np = mixture_.nPolymer();
@@ -1473,6 +1634,8 @@ namespace Rpg {
       c_.setNMonomer(nMonomer);
       c_.allocateRGrid(dimensions);
 
+      h_.setNMonomer(nMonomer);
+
       // Allocate work space field arrays
       tmpFieldsRGrid_.allocate(nMonomer);
       tmpFieldsKGrid_.allocate(nMonomer);
@@ -1481,8 +1644,6 @@ namespace Rpg {
          tmpFieldsKGrid_[i].allocate(dimensions);
       }
       workArray_.allocate(dimensions);
-
-      ThreadGrid::setThreadsLogical(domain_.mesh().size());
 
       isAllocatedGrid_ = true;
    }
