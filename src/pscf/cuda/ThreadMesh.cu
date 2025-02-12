@@ -150,13 +150,9 @@ namespace ThreadMesh {
       // (Note: we restrict block dimensions to powers of 2.)
       if (MESH_DIMS.x % WARP_SIZE == 0) {
          // If MESH_DIMS.x is a multiple of WARP_SIZE, BLOCK_DIMS.x can be 
-         // set to MESH_DIMS.x, resulting in no unused threads along x and
+         // set to WARP_SIZE, resulting in no unused threads along x and
          // optimal coalescence.
-         BLOCK_DIMS.x = MESH_DIMS.x;
-         while (BLOCK_DIMS.x > THREADS_PER_BLOCK) {
-            // Shrink BLOCK_DIMS.x if larger than desired block size
-            BLOCK_DIMS.x /= 2;
-         }
+         BLOCK_DIMS.x = WARP_SIZE;
       } else if ((MESH_DIMS.x & (MESH_DIMS.x - 1)) == 0) {
          // MESH_DIMS.x is a small power of two, so we can set BLOCK_DIMS.x
          // equal to MESH_DIMS.x and have no unused threads along x, 

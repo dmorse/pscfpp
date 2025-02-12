@@ -1,4 +1,5 @@
 rm -f out/*
+rm -f out_flex/*
 rm -f in/w.bf
 rm -f in/c.bf
 rm -f in/c.kf

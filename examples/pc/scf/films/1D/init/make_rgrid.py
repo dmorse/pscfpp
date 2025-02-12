@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import math
+from pscfpp.param import Composite
 
 n_interfaces = 2
 
@@ -10,12 +11,11 @@ rgrid.close()
 grid = list(map(int,lines[14].split())) 
 params = list(map(float,lines[8].split()))
 
-paramfile = open('../param','r')
-paramlines = list(paramfile)
-paramfile.close()
-normalVecId = int(paramlines[34].split()[1])
-t = float(paramlines[35].split()[1])
-T = float(paramlines[36].split()[1])
+paramfile = Composite("../param")
+ifg = paramfile.AmIteratorBasis.ImposedFieldsGenerator
+normalVecId = ifg.normalVecId
+t = ifg.interfaceThickness
+T = ifg.excludedThickness
 L = params[normalVecId]
 
 linenum = 15

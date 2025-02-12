@@ -28,15 +28,16 @@ System{
     groupName      P_-1
   }
   AmIteratorBasis{
-    epsilon      1.0e-8
+    epsilon      1.0e-10
     maxItr       5000
     maxHist      50 
-    isFlexible   0
+    isFlexible   1
     ImposedFieldsGenerator{
       type                 film
       normalVecId          0
       interfaceThickness   0.2    
       excludedThickness    0.4
+      fBulk                2.96693316774
       chiBottom[ 10 0 ]
       chiTop[    10 0 ]
     }

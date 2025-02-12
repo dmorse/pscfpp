@@ -3,6 +3,7 @@
 # Imports
 import math
 import numpy as np
+from pscfpp.param import Composite
 
 # Number of A/B interfaces in unit cell
 n_interfaces = 2
@@ -15,13 +16,12 @@ grid_new = list(map(int,lines[14].split()))
 params = list(map(float,lines[8].split()))
 
 # Get data from param file
-paramfile = open('../param','r')
-paramlines = list(paramfile)
-paramfile.close()
-normalVec = int(paramlines[34].split()[1])
-t = float(paramlines[35].split()[1])
-T = float(paramlines[36].split()[1])
-L = params[normalVec]
+paramfile = Composite("../param")
+ifg = paramfile.AmIteratorBasis.ImposedFieldsGenerator
+normalVecId = ifg.normalVecId
+t = ifg.interfaceThickness
+T = ifg.excludedThickness
+L = params[normalVecId]
 
 # Setup to loop through gridpoints
 linenum = 15

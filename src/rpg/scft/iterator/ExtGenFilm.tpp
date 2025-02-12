@@ -14,8 +14,6 @@
 #include <prdc/cpu/RField.h>
 #include <prdc/crystal/paramIdConversions.h>
 #include <prdc/cuda/resources.h>
-#include <pscf/math/IntVec.h>
-#include <util/containers/FArray.h>
 #include <cmath>
 
 namespace Pscf {

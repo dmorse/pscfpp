@@ -2,23 +2,25 @@
 
 # Imports
 import math
+from pscfpp.param import Composite
 
 # Read data for bcc in the bulk
-rgrid = open('bcc.rgrid','r')
+rgrid = open('bcc.rf','r')
 lines = list(rgrid)
 rgrid.close()
+params = [float(lines[8].strip())]
 
 # Get data from param file
-paramfile = open('../param','r')
-paramlines = list(paramfile)
-paramfile.close()
-params = [float(lines[8].strip())]
-grid = list(map(int,paramlines[25].split()[1:])) 
-normalVecId = int(paramlines[34].split()[1])
-t = float(paramlines[35].split()[1])
-T = float(paramlines[36].split()[1])
+paramfile = Composite("../param")
+ifg = paramfile.AmIteratorBasis.ImposedFieldsGenerator
+normalVecId = ifg.normalVecId
+t = ifg.interfaceThickness
+T = ifg.excludedThickness
+grid = paramfile.Domain.mesh
+
+# add lattice parameter (going from cubic -> tetragonal)
 params.append(params[0] * 2 + T)
-L = params[1]
+L = params[-1]
 
 # Write header for rgrid file
 lines_new = []
@@ -26,7 +28,7 @@ for i in range(0,15):
     lines_new.append(lines[i])
 lines_new[4]  = "          tetragonal\n"
 lines_new[6]  = "                   2\n"
-lines_new[8]  = "    2.0000000000E+00      {:.10f}E+00\n".format(L)
+lines_new[8]  = "    {:.10e}      {:.10e}\n".format(params[0], params[1])
 lines_new[10] = "           P_4%m_m_m\n"
 lines_new[14] = "                  {}          {}          {}\n".format(grid[0],grid[1],grid[2])
 

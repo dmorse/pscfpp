@@ -351,11 +351,11 @@ public:
 };
 
 TEST_BEGIN(ExtGenFilmTest)
-//TEST_ADD(ExtGenFilmTest, testConstructor)
-//TEST_ADD(ExtGenFilmTest, testReadParameters)
-//TEST_ADD(ExtGenFilmTest, testCheckCompatibility)
-//TEST_ADD(ExtGenFilmTest, testSetup)
-//TEST_ADD(ExtGenFilmTest, testUpdate)
+TEST_ADD(ExtGenFilmTest, testConstructor)
+TEST_ADD(ExtGenFilmTest, testReadParameters)
+TEST_ADD(ExtGenFilmTest, testCheckCompatibility)
+TEST_ADD(ExtGenFilmTest, testSetup)
+TEST_ADD(ExtGenFilmTest, testUpdate)
 TEST_ADD(ExtGenFilmTest, testStressTerm)
 TEST_END(ExtGenFilmTest)
 

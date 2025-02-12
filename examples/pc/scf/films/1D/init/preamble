@@ -6,10 +6,10 @@ crystal_system
 N_cell_param                            
                    1
 cell_param                              
-    2.0000000000E+00
+    2.1000000000E+00
 group_name                              
-                 P_1
+                P_-1
 N_monomer                               
                    2
 mesh                                    
-                  72
+                  96
