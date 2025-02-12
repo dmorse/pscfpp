@@ -1071,7 +1071,7 @@ namespace Prdc {
       FSArray<double, 6> parameters;
       int nParameter = unitCell.nParameter();
       for (int i = 0; i < nParameter; i++) {
-         parameters[i]=  replicas[i]* unitCell.parameter(i);
+         parameters.append(replicas[i] * unitCell.parameter(i));
       }
       cell.set(unitCell.lattice(), parameters);
 
