@@ -92,6 +92,9 @@ namespace Prdc
    template <int D>
    bool MaskGenFilmBase<D>::updateNeeded() const
    {
+      UTIL_CHECK(isGenerated());
+      UTIL_CHECK(normalVecId_ >= 0);
+      
       // Check if system normalVec differ from normalVecCurrent_
       if (normalVecCurrent_ == systemLatticeVector(normalVecId_)) {
          return false;

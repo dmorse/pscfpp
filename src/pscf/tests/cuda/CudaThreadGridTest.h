@@ -228,7 +228,7 @@ public:
                      << std::endl;
       }
 
-      TEST_ASSERT(blockDims.x == mesh[1]); 
+      TEST_ASSERT(blockDims.x == dprop.warpSize); 
       TEST_ASSERT(blockDims.x * gridDims.x == mesh[1]); 
       TEST_ASSERT(blockDims.y * gridDims.y >= mesh[0]); 
       TEST_ASSERT(blockDims.y * (gridDims.y-1) < mesh[0]); 
@@ -327,7 +327,7 @@ public:
                      << std::endl;
       }
 
-      TEST_ASSERT(blockDims.x == mesh[2]); 
+      TEST_ASSERT(blockDims.x == dprop.warpSize); 
       TEST_ASSERT(blockDims.x * gridDims.x == mesh[2]); 
       TEST_ASSERT(blockDims.y * gridDims.y == mesh[1]); 
       TEST_ASSERT(blockDims.z * gridDims.z >= mesh[0]); 
@@ -355,11 +355,11 @@ public:
                      << std::endl;
       }
 
-      TEST_ASSERT(blockDims.x == mesh[2]/2); 
+      TEST_ASSERT(blockDims.x == dprop.warpSize); 
       TEST_ASSERT(blockDims.x * gridDims.x == mesh[2]); 
-      TEST_ASSERT(blockDims.y == 1); 
+      TEST_ASSERT(blockDims.y == 2); 
       TEST_ASSERT(blockDims.z == 1); 
-      TEST_ASSERT(gridDims.y == meshDims.y); 
+      TEST_ASSERT(gridDims.y == meshDims.y / 2); 
       TEST_ASSERT(gridDims.z == meshDims.z); 
       TEST_ASSERT(meshDims.x == mesh[2]);
       TEST_ASSERT(meshDims.y == mesh[1]);

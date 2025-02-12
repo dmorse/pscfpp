@@ -179,11 +179,6 @@ namespace Rpc
    template <int D>
    void ExtGenFilm<D>::generate()
    {
-      // Set chiBottomCurrent_, chiTopCurrent_, and parametersCurrent_
-      chiBottomCurrent_ = chiBottom();
-      chiTopCurrent_ = chiTop();
-      normalVecCurrent_ = systemLatticeVector(normalVecId());
-
       // If walls are athermal then there is no external field needed.
       // If an external field already exists in the System, we need to
       // overwrite it with a field of all zeros, otherwise do nothing
@@ -196,6 +191,13 @@ namespace Rpc
          UTIL_CHECK(system().h().isAllocatedBasis());
          UTIL_CHECK(system().mask().isAllocatedBasis());
       }
+
+      UTIL_CHECK(normalVecId() >= 0);
+
+      // Set chiBottomCurrent_, chiTopCurrent_, and parametersCurrent_
+      chiBottomCurrent_ = chiBottom();
+      chiTopCurrent_ = chiTop();
+      normalVecCurrent_ = systemLatticeVector(normalVecId());
 
       int nm = systemNMonomer();
 

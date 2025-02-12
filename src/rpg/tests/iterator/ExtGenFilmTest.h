@@ -213,7 +213,7 @@ public:
 
       // Set up external field generator
       ExtGenFilm<1> ext(system);
-      createExtGenFilm(ext, "in/filmExt2Sym");
+      createExtGenFilm(ext, "in/filmExt1Sym");
       ext.setup();
 
       // Change lattice parameter and update

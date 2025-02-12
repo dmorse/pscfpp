@@ -56,6 +56,17 @@ namespace Prdc
       double fBulk; // will not be used
       readOptional(in, "fBulk", fBulk);
 
+      // Make sure inputs are valid
+      if (normalVecId_ > D || normalVecId_ < 0) {
+         UTIL_THROW("bad value for normalVecId, must be in [0,D)");
+      }
+      if (interfaceThickness_ > excludedThickness_) {
+         UTIL_THROW("excludedThickness must be larger than interfaceThickness");
+      }
+      if ((excludedThickness_ <= 0) || (interfaceThickness_ <= 0)) {
+         UTIL_THROW("excludedThickness and interfaceThickness must be >0");
+      }
+
       // Allocate chiBottom_ and chiTop_
       int nm = systemNMonomer();
       chiBottom_.allocate(nm);
@@ -114,6 +125,9 @@ namespace Prdc
    template <int D>
    bool ExtGenFilmBase<D>::updateNeeded() const
    {
+      UTIL_CHECK(isGenerated());
+      UTIL_CHECK(normalVecId_ >= 0);
+      
       // Check if chiBottom or chiTop have been changed
       for (int i = 0; i < chiBottom_.capacity(); i++) {
          if ((chiBottom_[i] != chiBottomCurrent_[i]) || 

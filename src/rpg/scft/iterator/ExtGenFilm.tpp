@@ -281,11 +281,6 @@ namespace Rpg
    template <int D>
    void ExtGenFilm<D>::generate()
    {
-      // Set chiBottomCurrent_, chiTopCurrent_, and parametersCurrent_
-      chiBottomCurrent_ = chiBottom();
-      chiTopCurrent_ = chiTop();
-      normalVecCurrent_ = systemLatticeVector(normalVecId());
-
       // If walls are athermal then there is no external field needed.
       // If an external field already exists in the System, we need to
       // overwrite it with a field of all zeros, otherwise do nothing
@@ -300,6 +295,11 @@ namespace Rpg
       }
       
       UTIL_CHECK(normalVecId() >= 0);
+
+      // Set chiBottomCurrent_, chiTopCurrent_, and parametersCurrent_
+      chiBottomCurrent_ = chiBottom();
+      chiTopCurrent_ = chiTop();
+      normalVecCurrent_ = systemLatticeVector(normalVecId());
 
       // Setup
       int nMonomer = system().mixture().nMonomer();
