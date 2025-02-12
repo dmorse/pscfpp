@@ -1,0 +1,5 @@
+if [ ! -f out/w.bf ]; then 
+   echo "Error: 'run_flex' uses the result of 'run' as initial guess. Call ./run first.";
+else 
+   pscf_pg -d 1 -p param_flex -c command_flex -e;
+fi

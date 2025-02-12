@@ -1,0 +1,44 @@
+System{
+  Mixture{
+    nMonomer  2
+    monomers[
+              1.0  
+              1.0 
+    ]
+    nPolymer  1
+    Polymer{
+      type    linear
+      nBlock  2
+      blocks[
+              0  0.5
+              1  0.5
+      ]
+      phi     1.0
+    }
+    ds   0.005
+  }
+  Interaction{
+    chi(  
+         1   0   20.0
+    )
+  }
+  Domain{
+    mesh           48    96
+    lattice        rectangular
+    groupName      p_2_m_m
+  }
+  AmIteratorBasis{
+    epsilon      1.0e-6
+    maxItr       1000
+    maxHist      50 
+    isFlexible   1
+    ImposedFieldsGenerator{
+      type                 film
+      normalVecId          1
+      interfaceThickness   0.2     
+      excludedThickness    0.4
+      chiBottom[   5  0  ]
+      chiTop[      5  0  ]
+    }
+  }
+}

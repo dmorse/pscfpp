@@ -1,2 +1,3 @@
 (cd diblock; ./clean)
 (cd sweep; ./clean)
+(cd films; ./clean)
