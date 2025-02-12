@@ -535,6 +535,28 @@ namespace Prdc {
    }
 
    template <int D, class RFRT, class RFKT, class FFTT>
+   void FieldIoReal<D,RFRT,RFKT,FFTT>::scaleFieldsBasis(
+                              DArray< DArray<double> >& fields,
+                              double factor) const
+   { 
+      int n = fields.capacity();
+      for (int i = 0; i < n; ++i) {
+         scaleFieldBasis(fields[i], factor);
+      }
+   }
+
+   template <int D, class RFRT, class RFKT, class FFTT>
+   void FieldIoReal<D,RFRT,RFKT,FFTT>::scaleFieldsRGrid(
+                              DArray< RFRT > & fields,
+                              double factor) const
+   { 
+      int n = fields.capacity();
+      for (int i = 0; i < n; ++i) {
+         scaleFieldRGrid(fields[i], factor);
+      }
+   }
+
+   template <int D, class RFRT, class RFKT, class FFTT>
    void FieldIoReal<D,RFRT,RFKT,FFTT>::replicateUnitCell(
                               std::string filename,
                               DArray<RFRT> const & fields,
@@ -770,6 +792,18 @@ namespace Prdc {
                               RFKT const & in, 
                               double epsilon,
                               bool verbose) const
+   {  UTIL_THROW("Unimplemented function in FieldIoReal base class"); }
+
+   template <int D, class RFRT, class RFKT, class FFTT>
+   void FieldIoReal<D,RFRT,RFKT,FFTT>::scaleFieldBasis(
+                              DArray<double>& field,
+                              double factor) const
+   {  UTIL_THROW("Unimplemented function in FieldIoReal base class"); }
+
+   template <int D, class RFRT, class RFKT, class FFTT>
+   void FieldIoReal<D,RFRT,RFKT,FFTT>::scaleFieldRGrid(
+                              RFRT & field,
+                              double factor) const
    {  UTIL_THROW("Unimplemented function in FieldIoReal base class"); }
 
    template <int D, class RFRT, class RFKT, class FFTT>

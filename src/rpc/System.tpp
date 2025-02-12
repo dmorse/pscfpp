@@ -594,6 +594,20 @@ namespace Rpc {
             compare(Rfield1, Rfield2);
 
          } else
+         if (command == "SCALE_BASIS") {
+            double factor;
+            readEcho(in, inFileName);
+            readEcho(in, outFileName);
+            readEcho(in, factor);
+            scaleFieldsBasis(inFileName, outFileName, factor);
+         } else
+         if (command == "SCALE_RGRID") {
+            double factor;
+            readEcho(in, inFileName);
+            readEcho(in, outFileName);
+            readEcho(in, factor);
+            scaleFieldsRGrid(inFileName, outFileName, factor);
+         } else
          if (command == "EXPAND_RGRID_DIMENSION") {
             readEcho(in, inFileName);
             readEcho(in, outFileName);
@@ -1793,6 +1807,46 @@ namespace Rpc {
       }
       return true;
 
+   }
+
+   /*
+   * Rescale a field by a constant, write rescaled field to a file.
+   */
+   template <int D>
+   void System<D>::scaleFieldsBasis(std::string const & inFileName,
+                                    std::string const & outFileName,
+                                    double factor) 
+   {
+      // If basis fields are not allocated, peek at field file header to
+      // get unit cell parameters, initialize basis and allocate fields.
+      if (!isAllocatedBasis_) {
+         readFieldHeader(inFileName);
+         allocateFieldsBasis();
+      }
+
+      UnitCell<D> tmpUnitCell;
+      FieldIo<D> const & fieldIo = domain().fieldIo();
+      fieldIo.readFieldsBasis(inFileName, tmpFieldsBasis_, tmpUnitCell);
+      fieldIo.scaleFieldsBasis(tmpFieldsBasis_, factor);
+      fieldIo.writeFieldsBasis(outFileName, tmpFieldsBasis_,
+                                            tmpUnitCell);
+   }
+
+   /*
+   * Rescale a field by a constant, write rescaled field to a file.
+   */
+   template <int D>
+   void System<D>::scaleFieldsRGrid(std::string const & inFileName,
+                                    std::string const & outFileName,
+                                    double factor) const
+   {
+      UnitCell<D> tmpUnitCell;
+      FieldIo<D> const & fieldIo = domain().fieldIo();
+      fieldIo.readFieldsRGrid(inFileName, tmpFieldsRGrid_,
+                                tmpUnitCell);
+      fieldIo.scaleFieldsRGrid(tmpFieldsRGrid_, factor);
+      fieldIo.writeFieldsRGrid(outFileName, tmpFieldsRGrid_,
+                                            tmpUnitCell);
    }
 
    /*

@@ -337,15 +337,29 @@ that command or of a group of closely related commands.
     <td> \ref scft_command_pc_compare_sub "COMPARE_BASIS" </td>
     <td> file1 [string], file2 [string] </td>
     <td> Read fields from files file1 and file2 in basis format,
-         compares all component of all fields and write a report
+         compare all component of all fields and write a report
          of the magnitude of differences to the log output. </td>
   </tr>
   <tr>
     <td> \ref scft_command_pc_compare_sub "COMPARE_RGRID" </td>
     <td> file1 [string], file2 [string] </td>
     <td> Read fields from files file1 and file2 in r-grid format,
-         compares values at all grid nodes and writes a report
+         compare values at all grid nodes and writes a report
          of the magnitude of differences to the log output. </td>
+  </tr>
+  <tr>
+    <td> \ref scft_command_pc_scale_sub "SCALE_BASIS" </td>
+    <td> inFile [string], outFile [string], factor [real] </td>
+    <td> Read fields from file inFile in basis format, multiply all 
+         components by the value of parameter "factor", and write 
+         the rescaled field to file outFile. </td>
+  </tr>
+  <tr>
+    <td> \ref scft_command_pc_scale_sub "SCALE_RGRID" </td>
+    <td> inFile [string], outFile [string], factor [real] </td>
+    <td> Read fields from file inFile in r-grid format, multiply 
+         all elements by the value of parameter "factor", and write 
+         the rescaled field to file outFile. </td>
   </tr>
   <tr>
     <td> \ref scft_command_pc_grid_sub "EXPAND_RGRID_DIMENSION" </td>
@@ -965,6 +979,15 @@ a pair of field files in the same format (basis or rgrid format,
 respectively), computes differences between corresponding fields, 
 and write a report to the log file summarizing several measures of 
 the magnitude of the differences. 
+
+\subsection scft_command_pc_scale_sub Field Rescaling
+
+The <b>SCALE_BASIS</b> and <b>SCALE_RGRID</b> commands each read 
+an field file (in basis or rgrid format, respectively), generates
+a field by multiplying all components or elements of the fields 
+by a common scalar factor, and writes the resulting re-scaled fields
+to an output file.  The field is multiplied by the value of the 
+command argument "factor" to obtain the re-scaled field. 
 
 \subsection scft_command_pc_grid_sub Field Grid Manipulations
 
