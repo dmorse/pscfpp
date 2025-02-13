@@ -3,9 +3,9 @@
 
 PSCF is a package of software for field-theoretic simulation of
 inhomogeneous equilibrium states of polymer liquids, with a focus
-on microstructures formed by block polymers. PSCF can currently
-perform both self-consistent field theory (SCFT) calculations and 
-some types of stochastic field-theoretic simulation (FTS).
+on microstructures formed by block polymers. PSCF can perform both
+self-consistent field theory (SCFT) calculations and some types of 
+stochastic field-theoretic simulation (FTS).
 
 This current version of PSCF is written primarily in C++, supplemented
 by CUDA code to enable the use of a graphics processing unit (GPU).
@@ -19,28 +19,29 @@ extensive set of tools for this.  The acronym PSCF stands for Polymer
 Self Consistent Field, reflecting this origin.
 
 The current version of PSCF (v1.2) is the first to also provide a set
-of tools for field theoretic simulations (FTS) based on Monte-Carlo (MC)
-and Brownian dynamics (BD) sampling algorithms. The FTS algorithms in
-the current version all rely the partial saddle-point approximation
-(PSA) to the exact or "fully fluctuating" formulation of the partititon
-function as a functional integral.
+of tools for field theoretic simulations (FTS) that rely on a partial
+saddle point approximation (PS-FTS). Such simulations can be performed
+using ether Brownian dynamics (BD) or Monte-Carlo (MC) sampling
+algorithms. 
 
 The fully-fluctuating formulation of polymer field theory (which is 
 not yet implemented in PSCF) requires the stochastic sampling of 
-complex-valued fields. The PSA used in the current version uses an
-approximation for incompressible models in which a Langrange multiplier 
-pressure-like field that imposes a constraint on the total monomer 
-density is approximated at a mean-field (i.e., saddle-point) level, 
-while fields that couple to composition fluctuations are allowed to 
+complex-valued fields. The partial saddle-point approximation for
+FTS in the current version of PSCF is an approximation for 
+incompressible models in which a Langrange multiplier pressure-like 
+field that imposes a constraint on the total monomer density is 
+approximated at a mean-field (i.e., saddle-point) level, while 
+fields that couple to composition fluctuations are allowed to freely
 fluctuate. The resulting approximation yields a theory that involves 
 only real-valued fields.
 
 ## History
 
-The current C++/CUDA version of PSCF is intended to supersede an 
-older Fortran SCFT program of the same name. The Fortran PSCF program 
-is maintained in a separate github.com repository at 
-https://github.com/dmorse/pscf.
+The current C++/CUDA version of PSCF originated as a complete rewrite
+of an older Fortran SCFT program of the same name. The C++/CUDA is
+intended to supersed the Fortran version, which is no longer being
+developed or actively maintained.  The Fortran PSCF program is available 
+in a separate github.com repository at https://github.com/dmorse/pscf.
 The current C++/CUDA version provides almost all of the capabilities 
 of the older Fortran program, and many important new capabilities, as
 discussed below.
@@ -55,25 +56,25 @@ Fortran version include:
 
    - The current version enables simulations of mixtures containing
      both linear and acyclic branched block polymers, while the Fortran
-     PSCF program allowed only linear polymers.
+     PSCF program only allowed linear polymers.
 
-   - The current version enables use of a graphics processing unit (GPU)
-     to dramatically accelerate some applications.
+   - The current version enables use of a graphics processing unit 
+     (GPU) to dramatically accelerate some applications.
 
-   - PSCF can now perform FTS calculations that rely on the PSA.  A
-     variety of MC and BD sampling algorithms have been implemented.
+   - PSCF can perform stochastic PS-FTS calculations in addition to 
+     SCFT.
 
 The most important capability of the Fortran PSCF program that has not 
 been ported to the current version is the ability to perform generalized
 random-phase approximation (RPA) calculations for periodic ordered 
-phases to characterize composition fluctuations and limit of stability 
-for such phases.
+phases to characterize composition fluctuations and SCFT limits of 
+stability for such phases.
 
 ## Programs
 
-PSCF currently contains three programs:
+PSCF currently provides three executable programs:
 
-   - **pscf_1d** : The program pscf_1d is is designed to perform SCFT
+   - **pscf_1d** : The pscf_1d program is is designed to perform SCFT
      calculations for one-dimensional (1d) problems in Cartesian,
      cylindrical or spherical coordinates. A finite difference method is
      used to solve the underlying partial differential equation, known
@@ -83,10 +84,10 @@ PSCF currently contains three programs:
 
    - **pscf_pc** : The pscf_pc rogram is designed to perform SCFT
      and PS-FTS calculations for structures systems that are periodic
-     in 1, 2 or 3 dimensions, using conventional CPU hardware. A 
+     in 1, 2 or 3 dimensions, using standard CPU hardware. An accurate
      pseudo-spectral algorithm is used to solve the MDE. This program 
      provides capabilities for SCFT calculations analogous to those 
-     of the older PSCF Fortran program, as well as algorithms for
+     of the older Fortran PSCF program, as well as algorithms for
      PS-FTS simulations.  The suffix "pc" stands for "periodic CPU".
 
    - **pscf_pg** : The pscf_pg program is a GPU-accelerated version
@@ -100,9 +101,9 @@ PSCF currently contains three programs:
 
 All three PSCF programs are designed to treat an incompressible mixture
 containing any number of block polymers, homopolymers and small molecule
-(point-like) solvent molecular species. All polymeric species are
-treated using the standard Gaussian model of each polymer block as a
-continuous random walk.
+(point-like) solvent molecular species. All polymeric species are treated 
+using the standard Gaussian model of each polymer block as a continuous 
+random walk.
 
 Features that are common to all PSCF programs, and which apply to both 
 SCFT and FTS calculations, include:
@@ -140,6 +141,10 @@ include:
 
   - Ability to perform both SCFT and PS-FTS calculations
 
+  - Availability of a companion Matlab package
+    [Polymer Visual](<https://github.com/kdorfmanUMN/polymer_visual/>)
+    for visualization of periodic structures
+
   - Accurate pseudo-spectral solution of the modified diffusion equation
 
   - Periodic boundary conditions with 1, 2 or 3 dimensional periodicity
@@ -147,37 +152,40 @@ include:
   - Unit cells with all possible 2D and 3D Bravais lattice systems (e.g.,
     cubic, orthorhombic, monoclinic, etc.)
 
-  - Automatic optimization of unit parameters in SCFT so as to minimize
-    free energy density
+Features specific to SCFT calculations performed by pscf_pc and pscf_pg 
+programs for periodic systems include:
 
-  - Imposition of any user-selected space-group symmetry in SCFT
+  - Automatic optimization of unit cell parameters so as to minimize 
+    the SCFT free energy density
+
+  - Imposition of any user-selected space-group symmetry on solutions
 
   - Built-in database of symmetry operations for all 230 3D space groups
-    and 17 2D plane groups for use in SCFT
+    and 17 2D plane groups 
 
-  - Availability of a companion Matlab package
-    [Polymer Visual](<https://github.com/kdorfmanUMN/polymer_visual/>)
-    for visualization of periodic structures
+  - Inhomogeneous density constraints (a "mask") for SCFT of systems in
+    a confined geometry (e.g., thin films)
 
-Features specific to SCFT calculations performed with the pscf_pc CPU
-program are:
+  - External fields 
 
-  - Inhomogeneous density constraints (a "mask")
+  - Thin polymer films (implemented using the mask and external field 
+    features)
 
-  - External fields
+Features specific to PS-FTS calculations performed by pscf_pc and 
+pscf_pg include:
 
-  - Thin polymer films
+  - Efficient Brownian dynamics (BD) and Monte-Carlo (MC) sampling
+    methods.
 
-The mask and external field features are used in pscf_pc to implement
-simulations of thin films - A mask is used to constrain a polymer
-material to a slit within a periodic supercell, and localized external
-fields are used to represent selective interactions with the top and
-bottom surfaces.
+  - Efficient algorithms for locating partial saddle-point field
+    configurations
 
-The pscf_pc program also provides a few utilities for manipulating input
-field files that have not been reproduced in pscf_pg. Because the two 
-programs use the same field file formats, input files used by pscf_pg 
-can be manipulated by using pscf_pc. 
+  - Data analysis classes for measuring the structure factor and other
+    observables, either during or
+
+  - Tools for computing free energy differences by thermodynamic 
+    integration, including tools for the Einstein crystal method.  
+
 
 ## Getting the source code
 
