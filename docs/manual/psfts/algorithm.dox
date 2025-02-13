@@ -5,25 +5,26 @@
 <BR>
 
 This page discusses several types of algorithm that are used to perform and
-analyze PS-FTS calculations , but that are not needed for SCFT calculations.
-A discussion of the file format for parts of the parameter file that 
-specify choices for these algorithms and associated parameters is given 
-on the \ref psfts_param_page "following page" of 
+analyze PS-FTS calculations, but that are not needed for SCFT calculations.
+The file format for the parameter file blocks that specify choices and 
+parameters for such algorithms is discussed separately on the 
+\ref psfts_param_page "following page" of 
 
-The pscf_pc and pscf_pg programs allow PS-FTS simulations to be performed 
-using either Brownian dynamics (BD) or Monte Carlo (MC) algorithms to 
+The pscf_pc and pscf_pg programs can perform PS-FTS calculations using 
+either a Brownian dynamics (BD) or Monte Carlo (MC) method to 
 stochastically sample a fluctuating field or fields.  BD and MC sampling 
 algorithms for PS-FTS have a similar structure.  A single BD step or MC 
-move generally requires generation of a random change in one or more 
-exchange fields, followed by use of an iterative algorithm to identify
-a new partial-saddle point configuration. Throughout the PSCF 
+move generally involves generation of a random change in one or more 
+exchange fields, followed by use of an iterative algorithm to identify a 
+new partial-saddle point field configuration. Throughout the PSCF 
 documentation and source code, iterative algorithms that are used to 
 identify partial saddle-point configurations, and thus satisfy the 
-menan-field incompressibility constraint, are referred to as "compressor" 
+mean-field incompressibility constraint, are referred to as "compressor" 
 algorithms.
 
-For example, consider a PS-FTS simulation of a standard AB system 
-with two monomer types. Such a system has a real exchange field 
+For example, consider a PS-FTS simulation of a standard AB system with 
+two monomer types and a positive Flory-Huggins interaction parameter. 
+Such a system has a real exchange field 
 \f$ W_{-}({\bf r}) = \omega_{-}({\bf r}) \f$ that undergoes random 
 fluctuations and a real pressure-like field 
 \f$ W_{+}({\bf r}) = i \omega_{+}({\bf r})\f$ that must be chosen to 
@@ -37,11 +38,12 @@ a decision is made about whether to accept or reject the resulting MC
 move, based on the value of the Hamiltonian in the new partial 
 saddle-point configuration.
 
-PSCF also provides tools for data analysis. Users may use the parameter 
-file to choose from among a set classes that can periodically compute 
-specific physical quantitites, output data to a file, and/or perform 
-statistical analyses during a simulation to compute time averages and 
-other statistical properties.  
+PSCF also provides tools for analysis of simulation data. Users may 
+use the parameter file to enable one or more of a set classes that can 
+periodically compute specific physical quantitites, output data to a 
+file, and/or perform statistical analyses during a simulation. We 
+refer to C++ classes that perform these sorts of periodic data output 
+and analysis operations "analyzer" classes.
 
 The parameter file for a typical PS-FTS calculation will thus normally
 contain a choice of algorithms for the following three purposes:
@@ -59,11 +61,12 @@ contain a choice of algorithms for the following three purposes:
 In addition to these basic building blocks, users may also enable two
 other types of optional elements:
 
-   - **Ramp** : A Ramp is a optional feature that allows a user to
-     perform a simulation in which one or more model parameters are
-     varied continuously over the course of a simulation.
+   - **Ramp** : A "ramp" is a optional feature that allows a user to
+     perform a simulation in which one or more parameters of the 
+     simulation model are varied continuously over the course of a 
+     simulation.
 
-   - **Perturbation** : A Perturbation is an optional feature that
+   - **Perturbation** : A "perturbation" is an optional feature that
      allows the user to modify the form of the field theoretic
      Hamiltonian by adding a perturbation to the standard form
 
@@ -72,19 +75,26 @@ All of these features are discussed separately below.
 In the source code of PSCF, different algorithms of the same type are 
 generally implemented by C++ classes that are subclasses of a common 
 base class. The generic names that we use in this documentation to 
-describe different types of algorithm usuall correspond to the names 
-of the corresponding base classes. For example, each Brownian dynamics 
-step algorithms is implemented by a subclasses of a base class named 
-BdStep, while Monte Carlo moves are implemented by subclasses of base 
-class named McMove. Classes that perform file IO and data analysis
-operations are subclasses of a class named Analyzer. Classes that
-perform parameter ramps or define perturbations are subclasses of 
-base classes named Ramp and Perturbation.
+describe different types of algorithm generally correspond to the 
+names of the corresponding base classes. Specifically:
+
+   - Brownian dynamics step algorithms are implemented by subclasses of a base class named BdStep
+
+   - Monte Carlo moves are implemented by subclasses of McMove
+
+   - File Io and data analysis operations are implemented by
+     subclasses of Analyzer.
+
+   - Algorithms for continuous variation of parameters are
+     implemented by subclasses of Ramp
+
+   - Classes that define additive changes to the field theoretic
+     Hamiltonian are subclasses of Perturbation
 
 The PSCF parameter file format uses selectable parameter file blocks
 to allow a user to choose one from a set of different algorithms of 
 the same type (as is appropriate for BdStep an Compressor algorithms) 
-or to user to choose one or algorithms from among a list of available 
+or to choose a set one or algorithms from among a list of available 
 algorithms of the same type (as is appropriate for McMove and Analyzer 
 algorithms).
 
@@ -227,13 +237,14 @@ value obtained from a particular model on a specified computational
 mesh. The only sampling errors in MC simulations are true statistical 
 errors arising from the finite length of a simulation, which can be 
 estimated by standard methods, and errors arising from round off of 
-floating point numbers, which are usually negligible.  BD simulations
-instead exhibit an systematic error due to discretization of the time 
-coordinate in the Langevin equation, an error that increases with 
-increases in the mobility parameter. Results of MC simulations of 
-small systems can thus be useful for comparison when evaluating 
-correctness of new MC and BD algorithms, and when evaluating systematic 
-errors in BD algorithms.
+floating point numbers, which are usually negligible.  
+
+BD simulations instead exhibit a systematic error arising from 
+discretization of a time-like coordinate in a diffusion model, an 
+error that increases with increases in the mobility parameter. Results 
+of MC simulations of small systems can thus be useful for comparison 
+when evaluating correctness of new MC and BD algorithms, and when 
+evaluating systematic errors in BD algorithms.
 
 \section psfts_algorithm_compressor_sec Compressor Algorithms
 
@@ -249,12 +260,13 @@ algorithm may be used in the context of any BD or MC step algorithm.
 Solution of the saddle-point condition normally requires multiple
 iterations of \f$ W_{+} \f$. Each iteration normally involves a 
 proposed adjustment of \f$ W_{+} \f$ followed by solution of the 
-modified diffusion equation (MDE) in the resulting state, which 
-is necessary to evaluate the remaining error. Because repeated
-solution of the MDE is the most expensive operation in a FTS, and
-the compressor algorithm requires multiple solutions of the MDE 
-for each BD or MC step, almost all of the computational time of
-PS-FTS calculation is spent within the compressor algorithm. 
+modified diffusion equation (MDE) in the resulting state, which is 
+necessary to evaluate the remaining error. Because repeated solution 
+of the MDE is the most expensive operation in a FTS, and the 
+compressor algorithm requires multiple solutions of the MDE for 
+each BD or MC step, almost all of the computational time of a PS-FTS 
+calculation is actually spent within the iterative loop of a
+compressor algorithm. 
 
 The available compressor algorithms are listed below. Users may 
 click on the link associated with each algorithm label to access 
@@ -268,14 +280,22 @@ of the associated parameter file block.
   <li> \ref rpc_AmCompressor_page "AmCompressor":
         An Anderson-mixing algorithm </li>
 </ul>
-The LrAmCompressor is the default choice, and is recommended for general 
-use.  The AmCompressor algorithm is similar to the Anderson mixing 
-algorithm used in most previously published PS-FTS calculations. 
-The LrAmCompressor and LrCompressor algorithms both use the analytically 
-calculated linear response of a hypothetical homogeneous state as an 
-approximation to the actual linear response of the monomer concentration 
-in an inhomgeneous state to small changes in the pressure-like field 
-(i.e., for the Jacobian of the relevant system of equations). 
+The LrAmCompressor is the default choice, and is recommended for 
+general use.  
+
+The AmCompressor algorithm is similar to the Anderson mixing 
+algorithm used in most previously published PS-FTS calculations.
+This algorithm uses information from previous iterations to guide the 
+choice of a new field configuration during each iteration after the first.
+The LrAmCompressor and LrCompressor algorithms both use a quasi-Newton
+approximation that uses the analytically calculated linear response of 
+a hypothetical homogeneous state as an approximation to the actual 
+linear response of the monomer concentration in an inhomgeneous state 
+to small changes in the pressure-like field. The Lr algorithm is a
+straightforward quasi-Newton algorithm based on this approximation.
+The LrAm uses this quasi-Newton step as one stage of a modified
+mixing algorithm, which thus also uses information from previous
+steps. 
 
 \section psfts_analyzer_BD_sec Analyzer Algorithms
 
@@ -297,9 +317,10 @@ command, as discussed in more detail \ref psfts_analysis_page "here".
 All of the analyzer classes that are provided with the current version 
 of PSCF (v1.2) are listed below.  A brief description of the purpose of 
 each class is provided below, and further details can be obtained by 
-clicking on the class name: The first few classes listed here simply write 
-available information to a file or standard output (e.g., the screen) at 
-regular intervals, rather than doing any nontrivial data analysis.  
+clicking on the class name: The first few classes listed here simply 
+write available information to a file or standard output (e.g., the 
+screen) at regular intervals, rather than doing any nontrivial data 
+analysis.  
 <ul>
   <li> \subpage rpc_StepLogger_page "StepLogger": Record progress of a
         simulation by periodically writing the number of completed BD 
