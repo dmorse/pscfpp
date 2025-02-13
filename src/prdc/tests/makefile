@@ -31,11 +31,9 @@ run-quiet: $(prdc_tests_OBJS) $(BLD_DIR)/$(TEST)
 
 clean-outputs:
 	rm -f log count 
-ifeq ($(BLD_DIR),$(SRC_DIR))
-	-cd crystal; $(MAKE) clean-outputs
-else
 	-cd $(SRC_DIR)/prdc/tests/crystal; $(MAKE) clean-outputs
-endif
+	-cd $(SRC_DIR)/prdc/tests/cpu; $(MAKE) clean-outputs
+	-cd $(SRC_DIR)/prdc/tests/cuda; $(MAKE) clean-outputs
 
 clean:
 	rm -f $(prdc_tests_OBJS) $(prdc_tests_OBJS:.o=.d)
@@ -44,6 +42,8 @@ clean:
 	rm -f *Test.o *Test.d
 	rm -f log count
 	-cd $(SRC_DIR)/prdc/tests/crystal; $(MAKE) clean
+	-cd $(SRC_DIR)/prdc/tests/cpu; $(MAKE) clean
+	-cd $(SRC_DIR)/prdc/tests/cuda; $(MAKE) clean
 
 -include $(prdc_tests_OBJS:.o=.d)
 -include $(prdc_OBJS:.o=.d)
