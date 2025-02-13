@@ -403,7 +403,7 @@ public:
       UnitCell<1> unitCell;
       setupUnitCell<1>(unitCell, "in/Lamellar");
 
-      double ds = 0.50;
+      double ds = 1.00;
       block.associate(mesh, fft, unitCell);
       bool own0 = true;
       bool own1 = true;
@@ -441,8 +441,7 @@ public:
       double b = block.kuhn();
       double Gb = twoPi*b/a;
       double r = Gb*Gb/6.0;
-      ds = block.ds();
-      double expected = exp(-(wc + r)*ds);
+      double expected = exp(-(wc + r));
       for (int i = 0; i < nx; ++i) {
          TEST_ASSERT(eq(qout[i], qin[i]*expected));
       }

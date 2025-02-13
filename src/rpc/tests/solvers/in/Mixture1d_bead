@@ -9,7 +9,6 @@ Mixture{
               1  30
       phi     1.0
    }
-   ds  0.5
 }
 lamellar  1.0
 32

@@ -237,6 +237,11 @@ namespace Rpc {
          PolymerModel::setModel(polymerModel_);
       }
 
+      // Number of times the global polymer model has been set.
+      // Retain this value so we can check at the end of this
+      // function that it wasn't set again within the function.
+      int nSetPolymerModel = PolymerModel::nSet();
+
       // Read the Mixture{ ... } block
       readParamComposite(in, mixture_);
       hasMixture_ = true;
@@ -307,6 +312,8 @@ namespace Rpc {
       homogeneous_.setNMonomer(nm);
       initHomogeneous();
 
+      // Check that polymer model was never reset after initialization
+      UTIL_CHECK(PolymerModel::nSet() == nSetPolymerModel);
    }
 
    /*
@@ -1111,7 +1118,7 @@ namespace Rpc {
             if (PolymerModel::isThread()) {
                length = polymerPtr->length();
             } else {
-               length = polymerPtr->nBead();
+               length = (double) polymerPtr->nBead();
             }
             // Recall: mu = ln(phi/q)
             if (phi > 1.0E-08) {

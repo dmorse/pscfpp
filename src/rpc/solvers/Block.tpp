@@ -211,11 +211,11 @@ namespace Rpc {
       UTIL_CHECK(unitCellPtr_->isInitialized());
 
       bool isThread = PolymerModel::isThread();
-      double factor;
+      double bSqFactor;
       if (isThread) {
-         factor = -1.0*kuhn()*kuhn() * ds_ / 6.0;
+         bSqFactor = -1.0*kuhn()*kuhn() * ds_ / 6.0;
       } else {
-         factor = -1.0*kuhn()*kuhn() * ds_ / 6.0;
+         bSqFactor = -1.0*kuhn()*kuhn() / 6.0;
       }
 
 
@@ -229,7 +229,7 @@ namespace Rpc {
          G = iter.position();
          Gmin = shiftToMinimum(G, mesh().dimensions(), unitCell());
          Gsq = unitCell().ksq(Gmin);
-         arg = Gsq*factor;
+         arg = Gsq*bSqFactor;
          expKsq_[i] = exp(arg);
          if (isThread) {
             expKsq2_[i] = exp(0.5*arg);
@@ -252,9 +252,9 @@ namespace Rpc {
       UTIL_CHECK(isAllocated_);
 
       // Compute expW arrays
-      double arg, c;
+      double arg;
       if (PolymerModel::isThread()) {
-         c = -0.5*ds_;
+         double c = -0.5*ds_;
          for (int i = 0; i < nx; ++i) {
             arg = c*w[i];
             // UTIL_CHECK(std::abs(arg) < 0.5);
@@ -263,9 +263,8 @@ namespace Rpc {
          } 
       } else
       if (PolymerModel::isBead()) {
-         double c = -1.0*ds_;
          for (int i = 0; i < nx; ++i) {
-            arg = c*w[i];
+            arg = -w[i];
             // UTIL_CHECK(std::abs(arg) < 1.0);
             expW_[i]  = exp(arg);
             expWInv_[i] = 1.0/expW_[i];

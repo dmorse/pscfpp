@@ -56,16 +56,19 @@ public:
 
       TEST_ASSERT(PolymerModel::model() == PolymerModel::Thread);
       TEST_ASSERT(PolymerModel::isThread());
+      int nSetInit = PolymerModel::nSet();
 
       PolymerModel::setModel(PolymerModel::Thread);
       TEST_ASSERT(PolymerModel::model() == PolymerModel::Thread);
       TEST_ASSERT(PolymerModel::isThread());
       TEST_ASSERT(!PolymerModel::isBead());
+      TEST_ASSERT(nSetInit + 1 == PolymerModel::nSet());
 
       PolymerModel::setModel(PolymerModel::Bead);
       TEST_ASSERT(PolymerModel::model() == PolymerModel::Bead);
       TEST_ASSERT(!PolymerModel::isThread());
       TEST_ASSERT(PolymerModel::isBead());
+      TEST_ASSERT(nSetInit + 2 == PolymerModel::nSet());
    }
 
    void testParam() {

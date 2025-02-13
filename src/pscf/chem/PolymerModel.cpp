@@ -22,6 +22,8 @@ namespace {
 
   bool isLocked_ = false;
 
+  int nSet_ = 0;
+
 }
 
 namespace Pscf { 
@@ -39,6 +41,7 @@ namespace Pscf {
       {  
          UTIL_CHECK(!isLocked_);
          model_ = model; 
+         ++nSet_;
       }
 
       /*
@@ -72,6 +75,12 @@ namespace Pscf {
       */
       bool isLocked() 
       {  return isLocked_; }
+
+      /*
+      * How many times has the choice of model been set ? 
+      */
+      int nSet() 
+      {  return nSet_; }
 
    /*
    * Input stream extractor for a PolymerModel::Type enumeration.

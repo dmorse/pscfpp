@@ -78,6 +78,7 @@ namespace Rpc {
                      buffer.begin(), ::tolower);
 
       if (buffer == "block" || buffer == "block_length") {
+         UTIL_CHECK(PolymerModel::isThread());
          type_ = Block;
          nId_ = 2; // polymer and block identifiers
       } else if (buffer == "chi") {
@@ -149,6 +150,7 @@ namespace Rpc {
    std::string RampParameter<D>::type() const
    {
       if (type_ == Block) {
+         UTIL_CHECK(PolymerModel::isThread());
          return "block";
       } else if (type_ == Chi) {
          return "chi";
@@ -179,6 +181,7 @@ namespace Rpc {
    double RampParameter<D>::get_()
    {
       if (type_ == Block) {
+         UTIL_CHECK(PolymerModel::isThread());
          return systemPtr_->mixture().polymer(id(0)).block(id(1)).length();
       } else if (type_ == Chi) {
          return systemPtr_->interaction().chi(id(0), id(1));
@@ -210,6 +213,7 @@ namespace Rpc {
    void RampParameter<D>::set_(double newVal)
    {
       if (type_ == Block) {
+         UTIL_CHECK(PolymerModel::isThread());
          systemPtr_->mixture().polymer(id(0)).block(id(1)).setLength(newVal);
       } else if (type_ == Chi) {
          systemPtr_->interaction().setChi(id(0), id(1), newVal);
@@ -228,6 +232,7 @@ namespace Rpc {
       } else if (type_ == Cell_Param) {
          FSArray<double,6> params 
                             = systemPtr_->domain().unitCell().parameters();
+         UTIL_CHECK(id(0) < params.size());
          params[id(0)] = newVal;
          systemPtr_->setUnitCell(params);
       } else if (type_ == Lambda_Pert) {

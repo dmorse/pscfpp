@@ -212,7 +212,7 @@ namespace Rpc {
             if (PolymerModel::isThread()) {
                length = polymerPtr->length();
             } else {
-               length = polymerPtr->nBead();
+               length = (double)polymerPtr->nBead();
             }
             // Recall: mu = ln(phi/q)
             if (phi > 1.0E-08) {

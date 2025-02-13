@@ -5,8 +5,9 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <prdc/crystal/getDimension.h>
 #include <rpc/System.h>
+#include <prdc/crystal/getDimension.h>
+#include <pscf/chem/PolymerModel.h>
 
 #ifdef PSCF_OPENMP
 #include <pscf/openmp/getNThread.h>
@@ -35,7 +36,10 @@ namespace Rpc {
       // Read parameters from default parameter file
       system.readParam();
 
-      // Read command script to run system
+      // Prohibit later changes to global polymer model
+      PolymerModel::lock();
+
+      // Read command script and execute commands
       system.readCommands();
    }
 

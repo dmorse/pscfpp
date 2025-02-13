@@ -39,18 +39,17 @@ namespace Rpc
    {
       // Read majority of mixture
       MixtureTmpl< Polymer<D>, Solvent<D> >::readParameters(in);
+      UTIL_CHECK(nMonomer() > 0);
+      UTIL_CHECK(nPolymer()+ nSolvent() > 0);
 
       // Read ds parameter
       if (PolymerModel::isThread()) {
          read(in, "ds", ds_);
+         UTIL_CHECK(ds_ > 0);
       } else {
          ds_ = 1.0;
-         readOptional(in, "ds", ds_);
       }
 
-      UTIL_CHECK(nMonomer() > 0);
-      UTIL_CHECK(nPolymer()+ nSolvent() > 0);
-      UTIL_CHECK(ds_ > 0);
    }
 
    /*

@@ -102,6 +102,14 @@ namespace Pscf{
       bool isLocked();
 
       /**
+      * How many times has the choice of model been set?
+      *
+      * This returns a counter that is initialized to zero, and is incremented
+      * every times setModel is invoked.
+      */
+      int nSet();
+
+      /**
       * Input stream extractor for a PolymerModel::Type enumeration.
       *
       * \ingroup Pscf_Chem_Module
