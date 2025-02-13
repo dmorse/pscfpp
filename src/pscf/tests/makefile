@@ -31,6 +31,8 @@ run-quiet: $(pscf_tests_OBJS) $(BLD_DIR)/$(TEST)
 clean-outputs:
 	rm -f log count 
 	-cd $(SRC_DIR)/pscf/tests/chem; $(MAKE) clean-outputs
+	-cd $(SRC_DIR)/pscf/tests/cuda; $(MAKE) clean-outputs
+	-cd $(SRC_DIR)/pscf/tests/homogeneous; $(MAKE) clean-outputs
 	-cd $(SRC_DIR)/pscf/tests/inter; $(MAKE) clean-outputs
 	-cd $(SRC_DIR)/pscf/tests/math; $(MAKE) clean-outputs
 	-cd $(SRC_DIR)/pscf/tests/mesh; $(MAKE) clean-outputs
@@ -43,6 +45,8 @@ clean:
 	rm -f *.o *.d 
 	rm -f log count 
 	-cd $(SRC_DIR)/pscf/tests/chem; $(MAKE) clean
+	-cd $(SRC_DIR)/pscf/tests/cuda; $(MAKE) clean
+	-cd $(SRC_DIR)/pscf/tests/homogeneous; $(MAKE) clean
 	-cd $(SRC_DIR)/pscf/tests/inter; $(MAKE) clean
 	-cd $(SRC_DIR)/pscf/tests/math; $(MAKE) clean
 	-cd $(SRC_DIR)/pscf/tests/mesh; $(MAKE) clean

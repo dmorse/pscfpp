@@ -138,7 +138,6 @@ public:
       // Set unit cell parameters
       parameters.clear();
       parameters.append(2.0);
-      parameters.append(2.0);
       system3.setUnitCell(UnitCell<2>::Square, parameters);
 
       MaskGenFilm<2> mask3(system3);
