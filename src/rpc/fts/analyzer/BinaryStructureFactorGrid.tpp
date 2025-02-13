@@ -242,7 +242,11 @@ namespace Rpc {
             for (j = 0; j < nb; ++j) {
                Block<D>& block = system().mixture().polymer(i).block(j);
                kuhn = block.kuhn();
-               length = block.length();
+               if (PolymerModel::isThread()) {
+                  length = block.length();
+               } else {
+                  length = (double) block.nBead();
+               }
                roSquare_ += length * kuhn * kuhn;
             }
          }
