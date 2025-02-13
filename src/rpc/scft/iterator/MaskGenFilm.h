@@ -110,7 +110,7 @@ namespace Rpc {
       /**
       * Modifies iterator().flexibleParams_ to be compatible with the mask.
       */
-      void setFlexibleParams();
+      void setFlexibleParams() const;
 
       /**
       * Get the System associated with this object by reference.
@@ -133,6 +133,7 @@ namespace Rpc {
       */
       RealVec<D> systemLatticeVector(int id) const;
 
+      using MaskGenFilmBase<D>::modifyFlexibleParams;
       using MaskGenFilmBase<D>::normalVecCurrent_;
       using MaskGenFilmBase<D>::fBulk_;
       using ParamComposite::setClassName;
@@ -171,6 +172,13 @@ namespace Rpc {
    inline RealVec<D> MaskGenFilm<D>::systemLatticeVector(int id) const
    {  return system().domain().unitCell().rBasis(id); }
 
-}
-}
+   #ifndef RPC_MASK_GEN_FILM_TPP
+   extern template class MaskGenFilm<1>;
+   extern template class MaskGenFilm<2>;
+   extern template class MaskGenFilm<3>;
+   #endif
+
+} // namespace Rpc
+} // namespace Pscf
+
 #endif

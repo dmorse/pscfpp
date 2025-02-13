@@ -52,7 +52,6 @@ public:
 
       // Get reference field
       DArray< DArray<double> > b_wFields_check;
-      //copyFieldsBasis(b_wFields_check, system.w().basis());
       b_wFields_check = system.w().basis();
 
       // Round trip conversion basis -> rgrid -> basis, read result
@@ -64,7 +63,6 @@ public:
 
       // Get test result
       DArray< DArray<double> > b_wFields;
-      //copyFieldsBasis(b_wFields, system.w().basis());
       b_wFields = system.w().basis();
 
       // Compare result to original
@@ -90,7 +88,6 @@ public:
 
       // Get reference field
       DArray< DArray<double> > b_wFields_check;
-      //copyFieldsBasis(b_wFields_check, system.w().basis());
       b_wFields_check = system.w().basis();
 
       // Round trip basis -> rgrid -> basis, read resulting wField
@@ -103,7 +100,6 @@ public:
 
       // Get test result
       DArray< DArray<double> > b_wFields;
-      //copyFieldsBasis(b_wFields, system.w().basis());
       b_wFields = system.w().basis();
 
       // Compare result to original
@@ -130,7 +126,7 @@ public:
 
       // Get reference field
       DArray< DArray<double> > b_wFields_check;
-      copyFieldsBasis(b_wFields_check, system.w().basis());
+      b_wFields_check = system.w().basis();
 
       // Complete round trip basis -> rgrid -> basis
       system.basisToRGrid("in/diblock/bcc/omega.in",
@@ -141,7 +137,7 @@ public:
 
       // Get test result
       DArray< DArray<double> > b_wFields;
-      copyFieldsBasis(b_wFields, system.w().basis());
+      b_wFields = system.w().basis();
 
       // Compare result to original
       BFieldComparison comparison (1);
@@ -191,67 +187,6 @@ public:
       system.readParam(in);
       in.close();
    }
-
-   void copyFieldsBasis(DArray< DArray<double> > & out, 
-                        DArray< DArray<double> > const & in)
-   {
-      UTIL_CHECK(in.isAllocated());
-      int nField = in.capacity();
-      UTIL_CHECK(nField > 0);
-
-      // If array out is not allocated, allocate
-      if (!out.isAllocated()) {
-         out.allocate(nField);
-      }
-      int nPoint = in[0].capacity();
-      for (int i = 0; i < nField; i++) {
-         UTIL_CHECK(in[i].capacity() == nPoint);
-         if (!out[i].isAllocated()) {
-            out[i].allocate(nPoint);
-         } else {
-            UTIL_CHECK(out[i].capacity() == nPoint);
-         }
-      }
-
-      // Copy arrays
-      for (int i = 0; i < nField; i++) {
-         UTIL_CHECK(out[i].capacity() == in[i].capacity());
-         out[i] = in[i];
-      }
-   }
-
-   #if 0
-   template <int D>
-   void copyFieldsRGrid(DArray< RField<D> > & out, 
-                        DArray< RField<D> > const & in)
-   {
-      UTIL_CHECK(in.isAllocated());
-      int nField = in.capacity();
-      UTIL_CHECK(nField > 0);
-
-      // If array out is not allocated, allocate
-      if (!out.isAllocated()) {
-         out.allocate(nField);
-      }
-      IntVec<D> dim = in[0].meshDimensions();
-      for (int i = 0; i < nField; i++) {
-         UTIL_CHECK(in[i].meshDimensions() == dim);
-         if (!out[i].isAllocated()) {
-            out[i].allocate(dim);
-         } else {
-            UTIL_CHECK(out[i].meshDimensions() == dim);
-         }
-      }
-
-      // Copy arrays
-      for (int i = 0; i < nField; i++) {
-         UTIL_CHECK(out[i].capacity() == in[i].capacity());
-         UTIL_CHECK(out[i].meshDimensions() == in[i].meshDimensions());
-         out[i] = in[i];
-      }
-
-   }
-   #endif
 
 };
 

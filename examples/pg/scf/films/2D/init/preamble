@@ -1,0 +1,15 @@
+ format  1  0
+dim                                     
+                   2
+crystal_system                          
+         rectangular
+N_cell_param                            
+                   2
+cell_param                              
+    1.6000000000E+00    3.1000000000E+00
+group_name                              
+             p_2_m_m
+N_monomer                               
+                   2
+mesh                               
+                  48                 96

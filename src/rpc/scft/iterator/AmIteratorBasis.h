@@ -8,11 +8,12 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <rpc/scft/iterator/Iterator.h>               // base class argument
-#include <rpc/scft/iterator/ImposedFieldsGenerator.h> // member variable
+#include "Iterator.h"                            // base class argument
+#include "ImposedFieldsGenerator.h"              // member variable
 #include <pscf/iterator/AmIteratorTmpl.h>        // base class template
 #include <pscf/iterator/AmbdInteraction.h>       // member variable
 #include <util/containers/DArray.h>              // base class argument
+#include <util/containers/RingBuffer.h>          // method input variable
 
 namespace Pscf {
 namespace Rpc
@@ -54,7 +55,7 @@ namespace Rpc
       void readParameters(std::istream& in);
 
       /**
-      * Return compressor times contributions.
+      * Output timing results to log file.
       *
       * \param out  output stream for timer report
       */
@@ -74,7 +75,7 @@ namespace Rpc
       * \param success  boolean flag used to indicate if parameter was set
       */
       void setParameter(std::string name, DArray<int> ids, 
-                                          double value, bool& success);
+                        double value, bool& success);
 
       /**
       * Get the value of a specialized sweep parameter
@@ -106,6 +107,7 @@ namespace Rpc
       using AmIteratorTmpl< Iterator<D>, DArray<double> >::verbose;
       using AmIteratorTmpl< Iterator<D>, DArray<double> >::residual;
       using Iterator<D>::system;
+      using Iterator<D>::isSymmetric_;
       using Iterator<D>::isFlexible_;
       using Iterator<D>::flexibleParams_;
 
@@ -191,7 +193,7 @@ namespace Rpc
       int nElements();
 
       /**
-      * Gets the current field vector from the system.
+      * Get the current w fields and lattice parameters.
       *
       * \param curr current field vector
       */

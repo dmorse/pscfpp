@@ -60,18 +60,28 @@ namespace Rpg {
       void allocate();
    
       /**
-      * Compute monomer concentration field and phi and/or mu.
+      * Compute monomer concentration field, q and phi and/or mu.
       *
-      * Upon return, concentration field, phi and mu are all set.
+      * Computes monomer concentration field cField, partition function
+      * q, and either the solvent volume fraction phi or solvent chemical 
+      * potential mu, depending on ensemble. The function takes the
+      * chemical potential field wField for the relevant monomer type as 
+      * its only input argument.
       *
-      * \param wField monomer chemical potential field
+      * The optional parameter phiTot is only relevant to problems such 
+      * as thin films in which the material is excluded from part of the 
+      * unit cell by imposing an inhomogeneous constraint on the sum of 
+      * monomer concentrations (i.e., a "mask"). 
+      *
+      * \param wField  monomer chemical potential field of relevant type.
+      * \param phiTot  volume fraction of unit cell occupied by material
       */
-      void compute(RField<D> const & wField );
+      void compute(RField<D> const & wField, double phiTot = 1.0);
 
       /**
       * Get the monomer concentration field for this solvent.
       */
-      RField<D> const & concField() const;
+      RField<D> const & cField() const;
   
       // Inherited public accessor functions 
       using Pscf::Species::phi;
@@ -94,7 +104,7 @@ namespace Rpg {
    private:
 
       /// Concentration field for this solvent
-      RField<D> concField_;
+      RField<D> cField_;
  
       /// Pointer to associated mesh
       Mesh<D> const *  meshPtr_;
@@ -118,15 +128,15 @@ namespace Rpg {
    inline void Solvent<D>::allocate()
    {  
       UTIL_CHECK(meshPtr_);
-      concField_.allocate(meshPtr_->dimensions()); 
+      cField_.allocate(meshPtr_->dimensions()); 
    }
 
    /*
    * Get monomer concentration field for this solvent.
    */
    template <int D>
-   inline RField<D> const & Solvent<D>::concField() const
-   {  return concField_;  }
+   inline RField<D> const & Solvent<D>::cField() const
+   {  return cField_;  }
 
 }
 } 

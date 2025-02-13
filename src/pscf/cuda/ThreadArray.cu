@@ -1,25 +1,27 @@
-#ifndef PSCF_THREADGRID_CU
-#define PSCF_THREADGRID_CU
+#ifndef PSCF_THREAD_ARRAY_CU
+#define PSCF_THREAD_ARRAY_CU
 
-#include "ThreadGrid.h"
+#include "ThreadArray.h"
 #include <cuda_runtime.h>
 
 namespace {
 
    // Anonymous namespace containing "static" variables only used by global
-   // functions defined in namespace ThreadGrid. These are thus persistent
+   // functions defined in namespace ThreadArray. These are thus persistent
    // pseudo-private variables, much like private static class variables.
 
    // Maximum threads per block, either set by querying hardware or by user.
    int MAX_THREADS_PER_BLOCK = -1;
 
-   // Number of threads per block for execution. Determined by setThreadsLogical.
+   // Number of threads per block for execution. 
+   // Determined by setThreadsLogical.
    int THREADS_PER_BLOCK = -1;
 
    // Number of blocks for execution. Determined by setThreadsLogical.
    int BLOCKS = -1;
 
-   // Total number of threads requested for execution. Set by setThreadsLogical.
+   // Total number of threads requested for execution. 
+   // Set by setThreadsLogical.
    int THREADS_LOGICAL = -1;
 
    // Number of threads per warp
@@ -31,7 +33,7 @@ namespace {
 }
 
 namespace Pscf {
-namespace ThreadGrid {
+namespace ThreadArray {
 
    using namespace Util;
 
@@ -41,8 +43,13 @@ namespace ThreadGrid {
       int count = 0;
       cudaGetDeviceCount(&count);
 
-      if (count == 0) 
+      if (count == 0) {
          UTIL_THROW("No CUDA devices found.");
+      } else if (count > 1) {
+         Log::file() << "\nWarning: multiple GPUs detected.\n"
+            << "This program is not compatible with multiple devices.\n"
+            << "Only the first device will be used." << std::endl;
+      }
 
       // Set a default maximum threads per block by querying hardware.
       setThreadsPerBlock();

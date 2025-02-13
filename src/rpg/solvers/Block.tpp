@@ -96,7 +96,7 @@ namespace Rpg {
       
       // GPU resources
       int nBlocks, nThreads;
-      ThreadGrid::setThreadsLogical(n, nBlocks, nThreads);
+      ThreadArray::setThreadsLogical(n, nBlocks, nThreads);
 
       // Launch kernel
       _realMulVConjVV<<<nBlocks, nThreads>>>(a.cArray(), b.cArray(), 
@@ -118,7 +118,7 @@ namespace Rpg {
       
       // GPU resources
       int nBlocks, nThreads;
-      ThreadGrid::setThreadsLogical(n, nBlocks, nThreads);
+      ThreadArray::setThreadsLogical(n, nBlocks, nThreads);
 
       // Launch kernel
       _richardsonEx<<<nBlocks, nThreads>>>(qNew.cArray(), qr.cArray(), 
@@ -137,7 +137,7 @@ namespace Rpg {
       
       // GPU resources
       int nBlocks, nThreads;
-      ThreadGrid::setThreadsLogical(n, nBlocks, nThreads);
+      ThreadArray::setThreadsLogical(n, nBlocks, nThreads);
 
       // Launch kernel
       _addEqMulVVc<<<nBlocks, nThreads>>>(a.cArray(), b.cArray(), 

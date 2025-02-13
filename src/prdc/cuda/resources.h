@@ -6,6 +6,7 @@
 #include "Reduce.h"        // Functions using parallel reduction algorithms
 #include <pscf/cuda/DeviceArray.h> // Array container stored on device
 #include <pscf/cuda/HostDArray.h>  // Array container stored on host
-#include <pscf/cuda/ThreadGrid.h>  // Management of GPU execution configuration
+#include <pscf/cuda/ThreadArray.h>  // Manager of GPU execution configuration
+#include <pscf/cuda/ThreadMesh.h>   // Manager of GPU execution configuration
 
 #endif

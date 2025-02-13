@@ -79,6 +79,9 @@ namespace Rpc {
       using ExtGenFilmBase<D>::isAthermal;
       using ExtGenFilmBase<D>::chiBottom;
       using ExtGenFilmBase<D>::chiTop;
+      using ExtGenFilmBase<D>::normalVecId;
+      using ExtGenFilmBase<D>::interfaceThickness;
+      using ExtGenFilmBase<D>::excludedThickness;
 
    protected:
 
@@ -118,20 +121,9 @@ namespace Rpc {
       */
       int systemNMonomer() const;
 
-      /**
-      * Use the mask to determine and store the value of normalVecId
-      */
-      void maskNormalVecId();
-
-      /**
-      * Use the mask to determine and store the value of interfaceThickness
-      */
-      void maskInterfaceThickness();
-
       using ExtGenFilmBase<D>::normalVecCurrent_;
       using ExtGenFilmBase<D>::chiBottomCurrent_;
       using ExtGenFilmBase<D>::chiTopCurrent_;
-      using ExtGenFilmBase<D>::normalVecId_;
       using ParamComposite::setClassName;
 
    private:
@@ -175,7 +167,14 @@ namespace Rpc {
    template <int D>
    inline int ExtGenFilm<D>::systemNMonomer() const
    {  return system().mixture().nMonomer(); }
+   
+   #ifndef RPC_EXT_GEN_FILM_TPP
+   extern template class ExtGenFilm<1>;
+   extern template class ExtGenFilm<2>;
+   extern template class ExtGenFilm<3>;
+   #endif
 
-}
-}
+} // namespace Rpc
+} // namespace Pscf
+
 #endif

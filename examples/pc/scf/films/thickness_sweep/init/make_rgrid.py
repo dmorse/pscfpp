@@ -2,6 +2,7 @@
 
 # Imports
 import math
+from pscfpp.param import Composite
 
 # Number of A/B interfaces between the walls
 n_interfaces = 3
@@ -14,12 +15,11 @@ grid = list(map(int,lines[14].split()))
 params = list(map(float,lines[8].split()))
 
 # Get data from param file
-paramfile = open('../param','r')
-paramlines = list(paramfile)
-paramfile.close()
-normalVecId = int(paramlines[34].split()[1])
-t = float(paramlines[35].split()[1])
-T = float(paramlines[36].split()[1])
+paramfile = Composite("../param")
+ifg = paramfile.AmIteratorBasis.ImposedFieldsGenerator
+normalVecId = ifg.normalVecId
+t = ifg.interfaceThickness
+T = ifg.excludedThickness
 L = params[normalVecId]
 
 # Setup to loop over gridpoints

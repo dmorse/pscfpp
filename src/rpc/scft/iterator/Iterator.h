@@ -98,7 +98,7 @@ namespace Rpc
       /**
       * Set the array indicating which lattice parameters are flexible.
       *
-      * \param flexParams array of indices of flexible lattice parameters
+      * \param flexParams input boolean array
       */ 
       void setFlexibleParams(FSArray<bool,6> const & flexParams);
 
@@ -115,6 +115,11 @@ namespace Rpc
       bool isFlexible_;
 
       /**
+      * Array of indices of the lattice parameters that are flexible.
+      */
+      FSArray<bool,6> flexibleParams_;
+
+      /**
       * Get parent system by const reference.
       */
       System<D> const & system() const
@@ -125,11 +130,6 @@ namespace Rpc
       */
       System<D>& system() 
       {  return *sysPtr_; }
-
-      /**
-      * Array of indices of the lattice parameters that are flexible.
-      */
-      FSArray<bool,6> flexibleParams_;
 
    private:
 
@@ -165,7 +165,8 @@ namespace Rpc
    template <int D>
    int Iterator<D>::nFlexibleParams() const
    {
-      UTIL_CHECK(flexibleParams_.size() == system().domain().unitCell().nParameter());
+      UTIL_CHECK(flexibleParams_.size() == 
+                                 system().domain().unitCell().nParameter());
       int nFlexParams = 0;
       for (int i = 0; i < flexibleParams_.size(); i++) {
          if (flexibleParams_[i]) nFlexParams++;

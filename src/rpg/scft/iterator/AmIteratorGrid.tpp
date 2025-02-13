@@ -10,23 +10,26 @@
 
 #include "AmIteratorGrid.h"
 #include <rpg/System.h>
-#include <prdc/cuda/RField.h>
 #include <prdc/crystal/UnitCell.h>
 #include <prdc/cuda/resources.h>
 #include <pscf/inter/Interaction.h>
+#include <pscf/iterator/NanException.h>
 
 #include <util/global.h>
+#include <cmath>
 
 namespace Pscf {
 namespace Rpg {
 
    using namespace Util;
    using namespace Prdc;
+   using namespace Prdc::Cuda;
 
    // Constructor
    template <int D>
    AmIteratorGrid<D>::AmIteratorGrid(System<D>& system)
-    : Iterator<D>(system)
+    : Iterator<D>(system),
+      imposedFields_(system)
    {
       setClassName("AmIteratorGrid");
       isSymmetric_ = false; 
@@ -52,9 +55,46 @@ namespace Rpg {
       isFlexible_ = 1;
       scaleStress_ = 10.0;
 
-      // Read in additional parameters
+      int np = system().domain().unitCell().nParameter();
+      UTIL_CHECK(np > 0);
+      UTIL_CHECK(np <= 6);
+      UTIL_CHECK(system().domain().unitCell().lattice() != UnitCell<D>::Null);
+
+      // Read in optional isFlexible value
       readOptional(in, "isFlexible", isFlexible_);
+
+      // Populate flexibleParams_ based on isFlexible_ (all 0s or all 1s),
+      // then optionally overwrite with user input from param file
+      if (isFlexible_) {
+         flexibleParams_.clear();
+         for (int i = 0; i < np; i++) {
+            flexibleParams_.append(true); // Set all values to true
+         }
+         // Read optional flexibleParams_ array to overwrite current array
+         readOptionalFSArray(in, "flexibleParams", flexibleParams_, np);
+         if (nFlexibleParams() == 0) isFlexible_ = false;
+      } else { // isFlexible_ = false
+         flexibleParams_.clear();
+         for (int i = 0; i < np; i++) {
+            flexibleParams_.append(false); // Set all values to false
+         }
+      }
+
+      // Read optional scaleStress value
       readOptional(in, "scaleStress", scaleStress_);
+
+      // Read optional ImposedFieldsGenerator object
+      readParamCompositeOptional(in, imposedFields_);
+   }
+
+   // Output timing results to log file.
+   template<int D>
+   void AmIteratorGrid<D>::outputTimers(std::ostream& out)
+   {
+      // Output timing results, if requested.
+      out << "\n";
+      out << "Iterator times contributions:\n";
+      AmIteratorTmpl<Iterator<D>, FieldCUDA >::outputTimers(out);
    }
 
    // Protected virtual function
@@ -63,12 +103,17 @@ namespace Rpg {
    template <int D>
    void AmIteratorGrid<D>::setup(bool isContinuation)
    {
+      if (imposedFields_.isActive()) {
+         imposedFields_.setup();
+      }
+
       AmIteratorTmpl<Iterator<D>, FieldCUDA>::setup(isContinuation);
       interaction_.update(system().interaction());
    }
 
    // Private virtual functions used to implement AM algorithm
 
+   // Set vector a equal to vector b (a = b).
    template <int D>
    void AmIteratorGrid<D>::setEqual(FieldCUDA& a, FieldCUDA const & b)
    {
@@ -76,20 +121,32 @@ namespace Rpg {
       VecOp::eqV(a, b);
    }
 
+   // Compute and return inner product of two real fields.
    template <int D>
    double AmIteratorGrid<D>::dotProduct(FieldCUDA const & a, 
                                         FieldCUDA const & b) 
    {
       UTIL_CHECK(a.capacity() == b.capacity());
-      return Reduce::innerProduct(a, b);
+      double val = Reduce::innerProduct(a, b);
+      if (std::isnan(val)) { // if value is NaN, throw NanException
+         throw NanException("AmIteratorGrid::dotProduct", __FILE__, 
+                            __LINE__, 0);
+      }
+      return val;
    }
 
+   // Find the maximum magnitude element of a residual vector.
    template <int D>
    double AmIteratorGrid<D>::maxAbs(FieldCUDA const & a)
    {
-      return Reduce::maxAbs(a);
+      double val = Reduce::maxAbs(a);
+      if (std::isnan(val)) { // if value is NaN, throw NanException
+         throw NanException("AmIteratorGrid::maxAbs", __FILE__, __LINE__, 0);
+      }
+      return val;
    }
 
+   // Update the series of residual vectors.
    template <int D>
    void AmIteratorGrid<D>::updateBasis(RingBuffer<FieldCUDA> & basis, 
                                        RingBuffer<FieldCUDA> const & hists)
@@ -97,6 +154,7 @@ namespace Rpg {
       // Make sure at least two histories are stored
       UTIL_CHECK(hists.size() >= 2);
 
+      // Set up array to store new basis
       basis.advance();
       if (basis[0].isAllocated()) {
          UTIL_CHECK(basis[0].capacity() == hists[0].capacity());
@@ -104,9 +162,11 @@ namespace Rpg {
          basis[0].allocate(hists[0].capacity());
       }
 
+      // New basis vector is difference between two most recent states
       VecOp::subVV(basis[0], hists[0], hists[1]);
    }
 
+   // Compute trial field so as to minimize L2 norm of residual.
    template <int D>
    void 
    AmIteratorGrid<D>::addHistories(FieldCUDA& trial, 
@@ -118,6 +178,7 @@ namespace Rpg {
       }
    }
 
+   // Add predicted error to the trial field.
    template <int D>
    void AmIteratorGrid<D>::addPredictedError(FieldCUDA& fieldTrial, 
                                              FieldCUDA const & resTrial, 
@@ -126,10 +187,12 @@ namespace Rpg {
       VecOp::addEqVc(fieldTrial, resTrial, lambda);
    }
 
+   // Checks if the system has an initial guess
    template <int D>
    bool AmIteratorGrid<D>::hasInitialGuess()
    { return system().w().hasData(); }
-   
+
+   // Compute the number of elements in the residual vector.
    template <int D>
    int AmIteratorGrid<D>::nElements()
    {
@@ -139,12 +202,13 @@ namespace Rpg {
       int nEle = nMonomer*nMesh;
 
       if (isFlexible_) {
-         nEle += system().unitCell().nParameter();
+         nEle += nFlexibleParams();
       }
 
       return nEle;
    }
 
+   // Get the current w fields and lattice parameters.
    template <int D>
    void AmIteratorGrid<D>::getCurrent(FieldCUDA& curr)
    {
@@ -161,22 +225,28 @@ namespace Rpg {
       // If flexible unit cell, also store unit cell parameters
       if (isFlexible_) {
          const int nParam = system().unitCell().nParameter();
-         const FSArray<double, 6> currParam = 
-                                       system().unitCell().parameters();
+         FSArray<double,6> const & parameters
+                                  = system().unitCell().parameters();
 
          // convert into a cudaReal array
-         HostDArray<cudaReal> tempH(nParam);
-         for (int k = 0; k < nParam; k++) {
-            tempH[k] = scaleStress_ * currParam[k];
+         HostDArray<cudaReal> tempH(nFlexibleParams());
+         int counter = 0;
+         for (int i = 0; i < nParam; i++) {
+            if (flexibleParams_[i]) {
+               tempH[counter] = scaleStress_ * parameters[i];
+               counter++;
+            }
          }
+         UTIL_CHECK(counter == tempH.capacity());
          
          // Copy parameters to the end of the curr array
          FieldCUDA tempD;
-         tempD.associate(curr, nMonomer*nMesh, nParam);
+         tempD.associate(curr, nMonomer*nMesh, tempH.capacity());
          tempD = tempH; // copy from host to device
       }
    }
 
+   // Solve MDE for current state of system.
    template <int D>
    void AmIteratorGrid<D>::evaluate()
    {
@@ -184,6 +254,7 @@ namespace Rpg {
       system().compute(isFlexible_);
    }
 
+   // Gets the residual vector from system.
    template <int D>
    void AmIteratorGrid<D>::getResidual(FieldCUDA& resid)
    {
@@ -212,6 +283,25 @@ namespace Rpg {
          }
       }
 
+      // If iterator has mask, account for it in residual values
+      if (system().hasMask()) {
+         double coeff = -1.0 / interaction_.sumChiInverse();
+         for (int i = 0; i < nMonomer; ++i) {
+            VecOp::addEqVc(residSlices[i], system().mask().rgrid(), coeff);
+         }
+      }
+
+      // If iterator has external fields, account for them in the values 
+      // of the residuals
+      if (system().hasExternalFields()) {
+         for (int i = 0; i < nMonomer; ++i) {
+            for (int j = 0; j < nMonomer; ++j) {
+               double p = interaction_.p(i,j);
+               VecOp::addEqVc(residSlices[i], system().h().rgrid(j), p);
+            }
+         }
+      }
+
       // If ensemble is not canonical, account for incompressibility. 
       if (!system().mixture().isCanonical()) {
          cudaReal factor = 1.0 / interaction_.sumChiInverse();
@@ -228,19 +318,31 @@ namespace Rpg {
       // If variable unit cell, compute stress residuals
       if (isFlexible_) {
          const int nParam = system().unitCell().nParameter();
-         HostDArray<cudaReal> stressH(nParam);
+         HostDArray<cudaReal> stressH(nFlexibleParams());
 
+         int counter = 0;
          for (int i = 0; i < nParam; i++) {
-            stressH[i] = (cudaReal)(-1 * scaleStress_ * 
-                                   system().mixture().stress(i));
+            if (flexibleParams_[i]) {
+               double stress = system().mixture().stress(i);
+
+               // Correct stress to account for effect of imposed fields
+               if (imposedFields_.isActive()) {
+                  stress = imposedFields_.correctedStress(i,stress);
+               } 
+
+               stressH[counter] = -1 * scaleStress_ * stress;
+               counter++;
+            }
          }
+         UTIL_CHECK(counter == stressH.capacity());
 
          FieldCUDA stressD;
-         stressD.associate(resid, nMonomer*nMesh, nParam);
+         stressD.associate(resid, nMonomer*nMesh, stressH.capacity());
          stressD = stressH; // copy from host to device
       }
    }
 
+   // Update the system with a new trial field vector.
    template <int D>
    void AmIteratorGrid<D>::update(FieldCUDA& newGuess)
    {
@@ -261,13 +363,28 @@ namespace Rpg {
             // Subtract average from field, setting average to zero
             VecOp::subEqS(ngSlice, average);
             
-            // Compute the new average omega value, add it to all elements
+            // Compute the new average omega value
             wAverage = 0;
             for (int j = 0; j < nMonomer; j++) {
                // Find average concentration for j monomers
-               cAverage = findAverage(system().c().rgrid(j));
+               if (system().w().isSymmetric()) { // c().basis() has data
+                  cAverage = system().c().basis(j)[0];
+               } else { // average must be calculated
+                  cAverage = findAverage(system().c().rgrid(j));
+               }
                wAverage += interaction_.chi(i,j) * cAverage;
             }
+
+            // If system has external fields, include them in homogeneous field
+            if (system().hasExternalFields()) {
+               if (system().h().isSymmetric()) { // h().basis() has data
+                  wAverage += system().h().basis(i)[0];
+               } else { // average must be calculated
+                  wAverage += findAverage(system().h().rgrid(i));
+               }
+            }
+
+            // Add new average omega value to the field
             VecOp::addEqS(ngSlice, wAverage);
          }
       }
@@ -278,34 +395,99 @@ namespace Rpg {
       // If flexible unit cell, update cell parameters 
       if (isFlexible_) {
          FSArray<double,6> parameters;
+         parameters = system().domain().unitCell().parameters();
          const int nParam = system().unitCell().nParameter();
-         HostDArray<cudaReal> tempH(nParam);
-         FieldCUDA tempD;
-         tempD.associate(newGuess, nMonomer*nMesh, nParam);
-         tempH = tempD; // transfer from device to host
+
+         // transfer from device to host
+         HostDArray<cudaReal> tempH(nFlexibleParams());
+         tempH.copySlice(newGuess, nMonomer*nMesh);
+
+         const double coeff = 1.0 / scaleStress_;
+         int counter = 0;
          for (int i = 0; i < nParam; i++) {
-            parameters.append(1/scaleStress_ * (double)tempH[i]);
+            if (flexibleParams_[i]) {
+               parameters[i] = coeff * tempH[i];
+               counter++;
+            }
          }
+         UTIL_CHECK(counter == tempH.capacity());
+
          system().setUnitCell(parameters);
       }
 
+      // Update imposed fields if needed
+      if (imposedFields_.isActive()) {
+         imposedFields_.update();
+      }
    }
 
+   // Output relevant system details to the iteration log file.
    template<int D>
    void AmIteratorGrid<D>::outputToLog()
    {
       if (isFlexible_ && verbose() > 1) {
-         const int nParam = system().unitCell().nParameter();
+         const int nParam = system().domain().unitCell().nParameter();
+         const int nMonomer = system().mixture().nMonomer();
+         const int nMesh = system().mesh().size();
+
+         // transfer stress residuals from device to host
+         HostDArray<cudaReal> tempH(nFlexibleParams());
+         tempH.copySlice(residual(), nMonomer*nMesh);
+
+         int counter = 0;
          for (int i = 0; i < nParam; i++) {
-            Log::file() << "Parameter " << i << " = "
-                        << Dbl(system().unitCell().parameters()[i])
-                        << "\n";
+            if (flexibleParams_[i]) {
+               double stress = tempH[counter] / (-1.0 * scaleStress_);
+               Log::file() 
+                      << " Cell Param  " << i << " = "
+                      << Dbl(system().domain().unitCell().parameters()[i], 15)
+                      << " , stress = " 
+                      << Dbl(stress, 15)
+                      << "\n";
+               counter++;
+            }
          }
+      }
+   }
+
+   // Return specialized sweep parameter types to add to the Sweep object
+   template<int D>
+   GArray<ParameterType> AmIteratorGrid<D>::getParameterTypes()
+   {
+      GArray<ParameterType> arr;
+      if (imposedFields_.isActive()) {
+         arr = imposedFields_.getParameterTypes();
+      } 
+      return arr;
+   }
+   // Set the value of a specialized sweep parameter
+   template<int D>
+   void AmIteratorGrid<D>::setParameter(std::string name, DArray<int> ids, 
+                                         double value, bool& success)
+   {
+      if (imposedFields_.isActive()) {
+         imposedFields_.setParameter(name, ids, value, success);
+      } else {
+         success = false;
+      }
+   }
+   // Get the value of a specialized sweep parameter
+   template<int D>
+   double AmIteratorGrid<D>::getParameter(std::string name, 
+                                           DArray<int> ids, bool& success)
+   const
+   {
+      if (imposedFields_.isActive()) {
+         return imposedFields_.getParameter(name, ids, success);
+      } else {
+         success = false;
+         return 0.0;
       }
    }
 
    // --- Private member functions specific to this implementation --- 
 
+   // Calculate the average value of an array.
    template<int D> 
    cudaReal AmIteratorGrid<D>::findAverage(FieldCUDA const & field) 
    {

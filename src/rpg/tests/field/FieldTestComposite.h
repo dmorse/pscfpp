@@ -5,10 +5,12 @@
 
 #include "DomainTest.h"
 #include "FieldIoTest.h"
+#include "MaskTest.h"
 
 TEST_COMPOSITE_BEGIN(FieldTestComposite)
 TEST_COMPOSITE_ADD_UNIT(DomainTest);
 TEST_COMPOSITE_ADD_UNIT(FieldIoTest);
+TEST_COMPOSITE_ADD_UNIT(MaskTest);
 TEST_COMPOSITE_END
 
 #endif
