@@ -39,7 +39,9 @@ namespace Rpc {
    * Constructor.
    */
    template <int D>
-   BinaryStructureFactorGrid<D>::BinaryStructureFactorGrid(Simulator<D>& simulator, System<D>& system) 
+   BinaryStructureFactorGrid<D>::BinaryStructureFactorGrid(
+                                          Simulator<D>& simulator,
+                                          System<D>& system)
     : Analyzer<D>(),
       simulatorPtr_(&simulator),
       systemPtr_(&(simulator.system())),
@@ -54,28 +56,31 @@ namespace Rpc {
    * Read parameters from file, and allocate memory.
    */
    template <int D>
-   void BinaryStructureFactorGrid<D>::readParameters(std::istream& in) 
+   void BinaryStructureFactorGrid<D>::readParameters(std::istream& in)
    {
+      // Precondition: Require that the system has two monomer types
+      UTIL_CHECK(2 == system().mixture().nMonomer());
+
       readInterval(in);
       readOutputFileName(in);
       readOptional(in,"nSamplePerBlock", nSamplePerBlock_);
    }
-   
+
    /*
    * BinaryStructureFactorGrid setup
    */
    template <int D>
-   void BinaryStructureFactorGrid<D>::setup() 
+   void BinaryStructureFactorGrid<D>::setup()
    {
-      //Check if the system is AB diblock copolymer
+      // Check if the system has two monomer types
       const int nMonomer = system().mixture().nMonomer();
       if (nMonomer != 2) {
-         UTIL_THROW("The BinaryStructureFactorGrid Analyzer is designed specifically for diblock copolymer system. Please verify the number of monomer types in your system.");
+         UTIL_THROW("nMonomer != 2 in BinaryStructureFactorGrid");
       }
 
       //Allocate variables
       IntVec<D> const & dimensions = system().domain().mesh().dimensions();
-      
+
       // Compute Fourier space kMeshDimensions_ and kSize_
       kSize_ = 1;
       for (int i = 0; i < D; ++i) {
@@ -97,8 +102,8 @@ namespace Rpc {
 
          // Compute qList
          qList_.resize(kSize_);
-         IntVec<D> G; 
-         IntVec<D> Gmin; 
+         IntVec<D> G;
+         IntVec<D> Gmin;
          UnitCell<D> const & unitCell = system().domain().unitCell();
          MeshIterator<D> itr(kMeshDimensions_);
          double Gsq;
@@ -111,12 +116,12 @@ namespace Rpc {
          }
 
       }
-      
+
       nWave_ = kSize_;
       structureFactors_.allocate(nWave_);
       accumulators_.allocate(nWave_);
       isInitialized_ = true;
-      
+
       // Clear accumulators
       for (int i = 0; i < nWave_; ++i) {
          structureFactors_[i] = 0.0;
@@ -128,33 +133,34 @@ namespace Rpc {
       }
    }
 
-   /* 
+   /*
    * Increment structure factors for all wavevectors and modes.
    */
    template <int D>
-   void BinaryStructureFactorGrid<D>::sample(long iStep) 
+   void BinaryStructureFactorGrid<D>::sample(long iStep)
    {
       UTIL_CHECK(system().w().hasData());
 
       if (isAtInterval(iStep))  {
 
-      // Compute W-
-      for (int i = 0; i < wm_.capacity(); ++i) {
-          wm_[i] = (system().w().rgrid(0)[i] - system().w().rgrid(1)[i])/2;
-      }
+         // Compute W-
+         for (int i = 0; i < wm_.capacity(); ++i) {
+             wm_[i] = (system().w().rgrid(0)[i] - system().w().rgrid(1)[i])/2;
+         }
 
-      system().domain().fft().forwardTransform(wm_, wk_);
+         // Convert real grid to KGrid format
+         system().domain().fft().forwardTransform(wm_, wk_);
 
-      // Convert real grid to KGrid format
-      for (int k=0; k< wk_.capacity(); k++) {
-         std::complex<double> wmKGrid(wk_[k][0], wk_[k][1]);
-         double squared_magnitude = std::norm(wmKGrid);
-         accumulators_[k].sample(squared_magnitude);
-      }
+         // Pass square magnitudes of Fourier components to accumulators
+         for (int k=0; k< wk_.capacity(); k++) {
+            std::complex<double> wmKGrid(wk_[k][0], wk_[k][1]);
+            double squared_magnitude = std::norm(wmKGrid);
+            accumulators_[k].sample(squared_magnitude);
+         }
 
       }
    }
-   
+
    template <int D>
    void BinaryStructureFactorGrid<D>::computeStructureFactor()
    {
@@ -168,21 +174,21 @@ namespace Rpc {
          structureFactors_[itr.rank()] = n / (chi * chi) * accumulators_[itr.rank()].average() - 1.0/(2.0*chi);
       }
    }
-   
+
    // Average S(k) over k of equal magnitude
-   template <int D>   
-   void BinaryStructureFactorGrid<D>::averageStructureFactor() 
+   template <int D>
+   void BinaryStructureFactorGrid<D>::averageStructureFactor()
    {
       // Convert real grid to KGrid format
       const int nMonomer = system().mixture().nMonomer();
       for (int i = 0; i < nMonomer; ++i) {
-         system().domain().fft().forwardTransform(system().w().rgrid()[i], 
+         system().domain().fft().forwardTransform(system().w().rgrid()[i],
                                                   wKGrid_[i]);
       }
-     
+
       std::map<double, double> SMap;
       {
-         int qListcapacity = (int)qList_.capacity(); 
+         int qListcapacity = (int)qList_.capacity();
          double q, s;
          UTIL_CHECK(qListcapacity == structureFactors_.capacity());
          for (int i = 0; i < qListcapacity; ++i) {
@@ -191,7 +197,7 @@ namespace Rpc {
            SMap[q] += s;
          }
       }
-      
+
       // Average structure factor with same magnitude value of q
       for (auto& i : SMap) {
         double q = i.first;
@@ -199,7 +205,7 @@ namespace Rpc {
         int count = std::count(qList_.begin(), qList_.end(), q);
         i.second = sum / count;
       }
-      
+
       // Average structure factor for q in range of +-tolerance
       double tolerance  = 1e-5;
       auto it = SMap.begin();
@@ -223,12 +229,12 @@ namespace Rpc {
       // Add last batch of data (last number within tolerance)
       averageSMap_[currentq] = sumS / count;
    }
-   
+
    /*
    * Output final results to output file.
    */
-   template <int D>  
-   void BinaryStructureFactorGrid<D>::output() 
+   template <int D>
+   void BinaryStructureFactorGrid<D>::output()
    {
       computeStructureFactor();
       averageStructureFactor();
@@ -250,4 +256,4 @@ namespace Rpc {
 
 }
 }
-#endif 
+#endif
