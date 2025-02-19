@@ -1,7 +1,7 @@
 /*! \page scft_imposed_page Confinement and External Fields
 
  \ref scft_groups_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
- \ref scft_visualize_page   (Next) 
+ \ref scft_thin_films_page   (Next) 
 <BR>
 
 \section scft_imposed_overview_sec Overview
@@ -49,7 +49,7 @@ generate imposed fields for simulating thin films with preferential
 wetting.  Thin films are simulated using a "supercell" that contains 
 alternating regions of polymer and vaccum, as defined by a periodic 
 "mask" field.  This thin film field generator is described in detail 
-on the \subpage scft_thin_films_page "Thin Films" page. 
+on the \ref scft_thin_films_page "Thin Films" page. 
 
 The declared space-group symmetry of an SCFT calculation with imposed 
 fields must be chosen so as to guarantee that the mask and external 
@@ -293,5 +293,5 @@ describe systems in the absence of imposed fields
 <BR>
  \ref scft_groups_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
  \ref scft_page          (Up) &nbsp; &nbsp; &nbsp; &nbsp; 
- \ref scft_visualize_page   (Next) 
+ \ref scft_thin_films_page   (Next) 
 */
