@@ -19,6 +19,7 @@
 #include <string>
 #include <iostream>
 #include <map>
+#include <vector>
 
 namespace Pscf {
 namespace Rpg {
@@ -107,11 +108,6 @@ namespace Rpg {
       void output();
       
       /**
-      * Update W_ square
-      */
-      void updateAccumulators();
-      
-      /**
       * Compute structure factor
       */
       void computeStructureFactor();
@@ -121,11 +117,6 @@ namespace Rpg {
       */
       void averageStructureFactor();
       
-      /**
-      * Compute radius of gyration Rg^2 = Nb^2/6
-      */
-      void computeRoSquare();
-
    protected:
 
       /**
@@ -153,7 +144,7 @@ namespace Rpg {
       DArray<double> structureFactors_;
    
       /// Number of wavevectors.
-      int  nWave_;
+      int nWave_;
 
       /**
       * Pointer to parent Simulator
@@ -193,24 +184,24 @@ namespace Rpg {
       /// Number of samples per block average output.
       int nSamplePerBlock_;
       
-      /// Array of Average objects (only allocated on master processor)
-      DArray<Average> accumulators_;
-      
-      /// wField in real grid
-      DArray< RField<D> > wrGrid_;
-      
-      /// wField in Fourier mode
-      DArray< RFieldDft<D> > wkGrid_;
-      
       /// Dimensions of wavevector mesh in real-to-complex transform
       IntVec<D> kMeshDimensions_;
 
       /// Number of wavevectors in discrete Fourier transform (DFT) k-grid
       int kSize_;
       
-      /// Square of radius of gyration 
-      double roSquare_;
+      /// Array of Average objects (only allocated on master processor)
+      DArray<Average> accumulators_;
+   
+      /// W_ for diblock copolymer (wm = (wa-wb)/2)
+      RField<D> wm_;
+
+      /// W_ in Fourier mode
+      RFieldDft<D> wk_;
       
+      /// Bare wavenumber value q = sqrt(kSq) lists
+      std::vector<double> qList_;
+   
       /// Map key to be qsquare and value to be average structure factor over k of equal magnitude
       std::map<double, double> averageSMap_;
    };
