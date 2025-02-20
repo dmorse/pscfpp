@@ -10,6 +10,7 @@
 
 #include "ExtGenFilmBase.h"
 #include "prdc/crystal/SpaceGroup.h"
+#include <util/param/ParamComponent.h>
 
 namespace Pscf {
 namespace Prdc
@@ -49,12 +50,19 @@ namespace Prdc
    template <int D>
    void ExtGenFilmBase<D>::readParameters(std::istream& in)
    {
-      // First, read data defining the mask
+      // First, read data defining the mask (quietly, with echo = false)
+      bool echo = ParamComponent::echo();
+      ParamComponent::setEcho(false);
       read(in, "normalVecId", normalVecId_);
       read(in, "interfaceThickness", interfaceThickness_);
       read(in, "excludedThickness", excludedThickness_);
-      double fBulk; // will not be used
-      readOptional(in, "fBulk", fBulk);
+      double tmp; 
+      readOptional(in, "fBulk", tmp); // will not be used
+      ParamComponent::setEcho(echo);
+
+      // Remove all of these parameters from this ParamComposite, since
+      // they are already managed by the MaskGenFilm ParamComposite
+      ParamComposite::resetParam();
 
       // Make sure inputs are valid
       if (normalVecId_ > D || normalVecId_ < 0) {

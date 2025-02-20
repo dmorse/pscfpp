@@ -1,18 +1,20 @@
 /*! 
 \page rpc_TrajectoryWriter_page Rpc::TrajectoryWriter
 
-This analyzer periodically writes the field configuration 
-for each component to file. 
+This analyzer periodically writes the w-field configuration to
+frames of a trajectory file.  The resulting file can be read and 
+postprocessed using the ANALYZE command of pscf_pc or pscf_pg.
 
 \section rpc_TrajectoryWriter_parameter_sec Parameter File
 
-The full parameter file format is shown below:
+The parameter file format for the associated block is shown below:
 \code
 TrajectoryWriter{
   interval           int
   outputFileName     string
 }
 \endcode
+Both parameters are required. The interval must be positive
 Meanings of the parameters are described briefly below:
 <table>
   <tr>
@@ -31,7 +33,14 @@ Meanings of the parameters are described briefly below:
 
 \section rpc_TrajectoryWriter_output_sec Output
 
-During the simulation, the field configuration is output the 
-file {outputFileName} every interval simulation steps.
+During the simulation, the w-field configuration is output to file 
+{outputFileName} every interval simulation steps.
+
+The resulting file contains a header section followed by a sequence
+of frames. The format of the header is the same as that used for an
+r-grid field file, and each frame uses the same format as that used
+for the data section of an r-grid field file. 
+
+*/
 
 */

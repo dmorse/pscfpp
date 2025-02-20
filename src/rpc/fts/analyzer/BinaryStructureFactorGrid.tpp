@@ -39,12 +39,16 @@ namespace Rpc {
    * Constructor.
    */
    template <int D>
-   BinaryStructureFactorGrid<D>::BinaryStructureFactorGrid(Simulator<D>& simulator, System<D>& system) 
+   BinaryStructureFactorGrid<D>::BinaryStructureFactorGrid(
+                                          Simulator<D>& simulator,
+                                          System<D>& system)
     : Analyzer<D>(),
       simulatorPtr_(&simulator),
       systemPtr_(&(simulator.system())),
       isInitialized_(false),
-      nSamplePerBlock_(1)
+      nSamplePerBlock_(1),
+      kMeshDimensions_(0),
+      kSize_(0)
    {  setClassName("BinaryStructureFactorGrid"); }
 
 
@@ -52,44 +56,72 @@ namespace Rpc {
    * Read parameters from file, and allocate memory.
    */
    template <int D>
-   void BinaryStructureFactorGrid<D>::readParameters(std::istream& in) 
+   void BinaryStructureFactorGrid<D>::readParameters(std::istream& in)
    {
+      // Precondition: Require that the system has two monomer types
+      UTIL_CHECK(2 == system().mixture().nMonomer());
+
       readInterval(in);
       readOutputFileName(in);
       readOptional(in,"nSamplePerBlock", nSamplePerBlock_);
    }
-   
+
    /*
    * BinaryStructureFactorGrid setup
    */
    template <int D>
-   void BinaryStructureFactorGrid<D>::setup() 
+   void BinaryStructureFactorGrid<D>::setup()
    {
-      //Check if the system is AB diblock copolymer
+      // Check if the system has two monomer types
       const int nMonomer = system().mixture().nMonomer();
       if (nMonomer != 2) {
-         UTIL_THROW("The BinaryStructureFactorGrid Analyzer is designed specifically for diblock copolymer system. Please verify the number of monomer types in your system.");
+         UTIL_THROW("nMonomer != 2 in BinaryStructureFactorGrid");
       }
-      
+
       //Allocate variables
       IntVec<D> const & dimensions = system().domain().mesh().dimensions();
+
+      // Compute Fourier space kMeshDimensions_ and kSize_
+      kSize_ = 1;
+      for (int i = 0; i < D; ++i) {
+         if (i < D - 1) {
+            kMeshDimensions_[i] = dimensions[i];
+         } else {
+            kMeshDimensions_[i] = dimensions[i]/2 + 1;
+         }
+         kSize_ *= kMeshDimensions_[i];
+      }
+
       if (!isInitialized_){
          wKGrid_.allocate(nMonomer);
+         wm_.allocate(dimensions);
+         wk_.allocate(dimensions);
          for (int i = 0; i < nMonomer; ++i) {
             wKGrid_[i].allocate(dimensions);
          }
+
+         // Compute qList
+         qList_.resize(kSize_);
+         IntVec<D> G;
+         IntVec<D> Gmin;
+         UnitCell<D> const & unitCell = system().domain().unitCell();
+         MeshIterator<D> itr(kMeshDimensions_);
+         double Gsq;
+         for (itr.begin(); !itr.atEnd(); ++itr){
+            // Obtain square magnitude of reciprocal basis vector
+            G = itr.position();
+            Gmin = shiftToMinimum(G, dimensions, unitCell);
+            Gsq = unitCell.ksq(Gmin);
+            qList_[itr.rank()] = sqrt(Gsq);
+         }
+
       }
-      
-      for (int i = 0; i < nMonomer; ++i) {
-         system().domain().fft().forwardTransform(system().w().rgrid()[i], 
-                                                  wKGrid_[i]);
-      }
-      
-      nWave_ = wKGrid_[0].capacity();
+
+      nWave_ = kSize_;
       structureFactors_.allocate(nWave_);
       accumulators_.allocate(nWave_);
       isInitialized_ = true;
-      
+
       // Clear accumulators
       for (int i = 0; i < nWave_; ++i) {
          structureFactors_[i] = 0.0;
@@ -101,44 +133,34 @@ namespace Rpc {
       }
    }
 
-   /* 
+   /*
    * Increment structure factors for all wavevectors and modes.
    */
    template <int D>
-   void BinaryStructureFactorGrid<D>::sample(long iStep) 
+   void BinaryStructureFactorGrid<D>::sample(long iStep)
    {
       UTIL_CHECK(system().w().hasData());
+
       if (isAtInterval(iStep))  {
-         updateAccumulators();
+
+         // Compute W-
+         for (int i = 0; i < wm_.capacity(); ++i) {
+             wm_[i] = (system().w().rgrid(0)[i] - system().w().rgrid(1)[i])/2;
+         }
+
+         // Convert real grid to KGrid format
+         system().domain().fft().forwardTransform(wm_, wk_);
+
+         // Pass square magnitudes of Fourier components to accumulators
+         for (int k=0; k< wk_.capacity(); k++) {
+            std::complex<double> wmKGrid(wk_[k][0], wk_[k][1]);
+            double squared_magnitude = std::norm(wmKGrid);
+            accumulators_[k].sample(squared_magnitude);
+         }
+
       }
    }
-   
-   /*
-   * Update accumulators for all current values.
-   */
-   template <int D>   
-   void BinaryStructureFactorGrid<D>::updateAccumulators() 
-   {
-      IntVec<D> const & dimensions = system().domain().mesh().dimensions();
-      RField<D> wm;
-      wm.allocate(dimensions);
 
-      // Compute W-
-      for (int i = 0; i < wm.capacity(); ++i) {
-          wm[i] = (system().w().rgrid(0)[i] - system().w().rgrid(1)[i])/2;
-      }
-      RFieldDft<D> wk;
-      wk.allocate(dimensions);
-      system().domain().fft().forwardTransform(wm, wk);
-
-      // Convert real grid to KGrid format
-      for (int k=0; k< wk.capacity(); k++) {
-         std::complex<double> wmKGrid(wk[k][0], wk[k][1]);
-         double squared_magnitude = std::norm(wmKGrid);
-         accumulators_[k].sample(squared_magnitude);
-      }
-   }
-   
    template <int D>
    void BinaryStructureFactorGrid<D>::computeStructureFactor()
    {
@@ -152,126 +174,80 @@ namespace Rpc {
          structureFactors_[itr.rank()] = n / (chi * chi) * accumulators_[itr.rank()].average() - 1.0/(2.0*chi);
       }
    }
-   
+
    // Average S(k) over k of equal magnitude
-   template <int D>   
-   void BinaryStructureFactorGrid<D>::averageStructureFactor() 
+   template <int D>
+   void BinaryStructureFactorGrid<D>::averageStructureFactor()
    {
       // Convert real grid to KGrid format
       const int nMonomer = system().mixture().nMonomer();
       for (int i = 0; i < nMonomer; ++i) {
-         system().domain().fft().forwardTransform(system().w().rgrid()[i], 
+         system().domain().fft().forwardTransform(system().w().rgrid()[i],
                                                   wKGrid_[i]);
       }
 
-      IntVec<D> G; 
-      IntVec<D> Gmin; 
-      IntVec<D> meshDimensions = system().domain().mesh().dimensions(); 
-      UnitCell<D> const & unitCell = system().domain().unitCell();
-      MeshIterator<D> itr(wKGrid_[0].dftDimensions());
-      double kSq;
-      std::vector<double> qRoList(wKGrid_[0].capacity());
-      computeRoSquare();
-      for (itr.begin(); !itr.atEnd(); ++itr){
-         // Obtain square magnitude of reciprocal basis vector
-         G = itr.position();
-         Gmin = shiftToMinimum(G, meshDimensions, unitCell);
-         kSq = unitCell.ksq(Gmin);
-         qRoList[itr.rank()] = sqrt(kSq * roSquare_);
-      }
-     
       std::map<double, double> SMap;
       {
-         int qRoListcapacity = (int)qRoList.capacity(); 
-         double qRo, s;
-         UTIL_CHECK(qRoListcapacity == structureFactors_.capacity());
-         for (int i = 0; i < qRoListcapacity; ++i) {
-           qRo = qRoList[i];
+         int qListcapacity = (int)qList_.capacity();
+         double q, s;
+         UTIL_CHECK(qListcapacity == structureFactors_.capacity());
+         for (int i = 0; i < qListcapacity; ++i) {
+           q = qList_[i];
            s = structureFactors_[i];
-           SMap[qRo] += s;
+           SMap[q] += s;
          }
       }
-      
-      // Average structure factor with same magnitude value of qRo
+
+      // Average structure factor with same magnitude value of q
       for (auto& i : SMap) {
-        double qRo = i.first;
+        double q = i.first;
         double sum = i.second;
-        int count = std::count(qRoList.begin(), qRoList.end(), qRo);
+        int count = std::count(qList_.begin(), qList_.end(), q);
         i.second = sum / count;
       }
-      
-      // Average structure factor for qRo in range of +-tolerance
+
+      // Average structure factor for q in range of +-tolerance
       double tolerance  = 1e-5;
       auto it = SMap.begin();
-      double currentqRo = it->first;
+      double currentq = it->first;
       double sumS = it->second;
       int count = 1;
       for (++it; it != SMap.end(); ++it) {
          double key = it->first;
          double s = it->second;
-         if (std::abs(key - currentqRo) <= tolerance) {
+         if (std::abs(key - currentq) <= tolerance) {
             sumS += s;
             count++;
          } else {
-            averageSMap_[currentqRo] = sumS / count;
-            currentqRo = key;
+            averageSMap_[currentq] = sumS / count;
+            currentq = key;
             sumS = s;
             count = 1;
          }
       }
+
       // Add last batch of data (last number within tolerance)
-      averageSMap_[currentqRo] = sumS / count;
+      averageSMap_[currentq] = sumS / count;
    }
-   
-   /**
-   * Compute radius of gyration Ro^2 = Nb^2
-   */
-   template <int D>
-   void BinaryStructureFactorGrid<D>::computeRoSquare()
-   {
-      int np = system().mixture().nPolymer();
-      if (np > 0) {
-         double nb; // number of monomer in each polymer
-         double length; // fraction of monomer
-         double kuhn; // statistical segment length of monomer
-         int i; // molecule index
-         int j; // block index
-         for (i = 0; i < np; ++i) {
-            nb = system().mixture().polymer(i).nBlock();
-            roSquare_ = 0;
-            for (j = 0; j < nb; ++j) {
-               Block<D>& block = system().mixture().polymer(i).block(j);
-               kuhn = block.kuhn();
-               if (PolymerModel::isThread()) {
-                  length = block.length();
-               } else {
-                  length = (double) block.nBead();
-               }
-               roSquare_ += length * kuhn * kuhn;
-            }
-         }
-      }      
-   }
-      
-   
+
    /*
    * Output final results to output file.
    */
-   template <int D>  
-   void BinaryStructureFactorGrid<D>::output() 
+   template <int D>
+   void BinaryStructureFactorGrid<D>::output()
    {
       computeStructureFactor();
       averageStructureFactor();
 
       // Output structure factors to one file
       system().fileMaster().openOutputFile(outputFileName(), outputFile_);
-      outputFile_ << "\t" << "kRO";
-      outputFile_ << "\t" <<"\t" <<"S(k)/(\u03C1 N)";
+      outputFile_ << "\t" << "q";
+      outputFile_ << "\t" <<"\t" <<"S(q)/(\u03C1 N)";
       outputFile_<< std::endl;
       for (const auto& i : averageSMap_) {
-         double qRo = i.first;
+         double q = i.first;
          double averageS = i.second;
-         outputFile_ << Dbl(qRo, 18, 8);
+         outputFile_ << Dbl(q, 18, 8);
          outputFile_ << Dbl(averageS, 18, 8);
          outputFile_ << std::endl;
       }
@@ -280,4 +256,4 @@ namespace Rpc {
 
 }
 }
-#endif 
+#endif

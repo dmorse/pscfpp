@@ -37,11 +37,8 @@
    <li> \subpage scft_thermo_page         </li>
    <li> \subpage scft_unitcell_page       </li>
    <li> \subpage scft_groups_page         </li>
-   <li> \subpage scft_imposed_page 
-     <ul>
-       <li> \ref scft_thin_films_page </li>
-     </ul>
-  </li>
+   <li> \subpage scft_imposed_page        </li>
+   <li> \subpage scft_thin_films_page     </li>
    <li> \subpage scft_visualize_page      </li>
    <li> \subpage scft_python_page         </li>
    <li> \subpage scft_propagator_page     </li>

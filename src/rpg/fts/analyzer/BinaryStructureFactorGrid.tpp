@@ -65,12 +65,8 @@ namespace Rpg {
       //Allocate variables
       IntVec<D> const & dimensions = system().mesh().dimensions();
       if (!isInitialized_){
-         wkGrid_.allocate(nMonomer);
-         wrGrid_.allocate(nMonomer);
-         for (int i = 0; i < nMonomer; ++i) {
-            wkGrid_[i].allocate(dimensions);
-            wrGrid_[i].allocate(dimensions);
-         }
+         wm_.allocate(dimensions);
+         wk_.allocate(dimensions);
       }
       
       // Compute Fourier space kMeshDimensions_
@@ -89,6 +85,18 @@ namespace Rpg {
       nWave_ = kSize_;
       structureFactors_.allocate(nWave_);
       accumulators_.allocate(nWave_);
+      
+      // Convert real grid to KGrid format
+      qList_.resize(kSize_);
+      RField<D> const & kSq = system().domain().waveList().kSq();
+      HostDArray<cudaReal> kSqHost(kSize_);
+      kSqHost = kSq;
+      MeshIterator<D> itr;
+      itr.setDimensions(kMeshDimensions_);
+      for (itr.begin(); !itr.atEnd(); ++itr){
+         qList_[itr.rank()] = sqrt(double(kSqHost[itr.rank()]));
+      }
+      
       isInitialized_ = true;
       
       // Clear accumulators
@@ -97,6 +105,7 @@ namespace Rpg {
          accumulators_[i].setNSamplePerBlock(nSamplePerBlock_);
          accumulators_[i].clear();
       }
+      
       if (!isInitialized_) {
          UTIL_THROW("Error: object is not initialized");
       }
@@ -109,34 +118,22 @@ namespace Rpg {
    void BinaryStructureFactorGrid<D>::sample(long iStep) 
    {
       UTIL_CHECK(system().w().hasData());
+      
       if (isAtInterval(iStep))  {
-         updateAccumulators();
-      }
-   }
-   
-   /*
-   * Update accumulators for all current values.
-   */
-   template <int D>   
-   void BinaryStructureFactorGrid<D>::updateAccumulators() 
-   {
-      IntVec<D> const & dimensions = system().mesh().dimensions();
-      RField<D> wm;
-      wm.allocate(dimensions);
-      
-      // Compute W: (rgrid(0) - rgrid(1)) / 2
-      VecOp::addVcVc(wm, system().w().rgrid(0), 0.5, 
-                     system().w().rgrid(1), -0.5);
-      
-      // Convert real grid to KGrid format
-      RFieldDft<D> wk;
-      wk.allocate(dimensions);
-      system().fft().forwardTransform(wm, wk);
-      
-      HostDArray<cudaComplex> wkCpu(kSize_);
-      wkCpu = wk; // copy from device to host
-      for (int k = 0; k < wk.capacity(); k++) {
-         accumulators_[k].sample(absSq<cudaComplex, cudaReal>(wkCpu[k]));
+         IntVec<D> const & dimensions = system().mesh().dimensions();
+         
+         // Compute W: (rgrid(0) - rgrid(1)) / 2
+         VecOp::addVcVc(wm_, system().w().rgrid(0), 0.5, 
+                        system().w().rgrid(1), -0.5);
+         
+         // Convert real grid to KGrid format
+         system().fft().forwardTransform(wm_, wk_);
+         
+         HostDArray<cudaComplex> wkCpu(kSize_);
+         wkCpu = wk_; // copy from device to host
+         for (int k = 0; k < wk_.capacity(); k++) {
+            accumulators_[k].sample(absSq<cudaComplex, cudaReal>(wkCpu[k]));
+         }
       }
       
    }
@@ -159,85 +156,48 @@ namespace Rpg {
    template <int D>   
    void BinaryStructureFactorGrid<D>::averageStructureFactor() 
    {
-      // Convert real grid to KGrid format
-      const int nMonomer = system().mixture().nMonomer();
-      IntVec<D> G; IntVec<D> Gmin; 
-      MeshIterator<D> itr(kMeshDimensions_);
-      double kSq;
-      std::vector<double> qRoList(kSize_);
-      computeRoSquare();
-      for (itr.begin(); !itr.atEnd(); ++itr){
-         // Obtain square magnitude of reciprocal basis vector
-         G = itr.position();
-         Gmin = shiftToMinimum(G, system().mesh().dimensions(), system().unitCell());
-         kSq = system().unitCell().ksq(Gmin);
-         qRoList[itr.rank()] = sqrt(kSq * roSquare_);
-      }
+      UTIL_CHECK(qList_.capacity() == structureFactors_.capacity());
       
-      UTIL_CHECK(qRoList.capacity() == structureFactors_.capacity());
       std::map<double, double> SMap;
-      for (int i = 0; i < qRoList.capacity(); ++i) {
-        double qRo = qRoList[i];
+      for (int i = 0; i < qList_.capacity(); ++i) {
+        double q = qList_[i];
         double  s = structureFactors_[i];
-        SMap[qRo] += s;
+        SMap[q] += s;
       }
       
-      // Average structure factor with same magnitude value of qRo
+      // Average structure factor with same magnitude value of q
       for (auto& i : SMap) {
-        double qRo = i.first;
+        double q = i.first;
         double sum = i.second;
-        int count = std::count(qRoList.begin(), qRoList.end(), qRo);
+        int count = std::count(qList_.begin(), qList_.end(), q);
         i.second = sum / count;
       }
       
-      // Average structure factor for qRo in range of +-tolerance
+      // Average structure factor for q in range of +-tolerance
       double tolerance  = 1e-5;
       auto it = SMap.begin();
-      double currentqRo = it->first;
+      double currentq = it->first;
       double sumS = it->second;
       int count = 1;
       for (++it; it != SMap.end(); ++it) {
          double key = it->first;
          double s = it->second;
-         if (std::abs(key - currentqRo) <= tolerance) {
+         if (std::abs(key - currentq) <= tolerance) {
             sumS += s;
             count++;
          } else {
-            averageSMap_[currentqRo] = sumS / count;
-            currentqRo = key;
+            averageSMap_[currentq] = sumS / count;
+            currentq = key;
             sumS = s;
             count = 1;
          }
       }
+      
       // Add last batch of data (last number within tolerance)
-      averageSMap_[currentqRo] = sumS / count;
+      averageSMap_[currentq] = sumS / count;
    }
    
-   /**
-   * Compute radius of gyration Ro^2 = Nb^2
-   */
-   template <int D>
-   void BinaryStructureFactorGrid<D>::computeRoSquare()
-   {
-      int np = system().mixture().nPolymer();
-      if (np > 0) {
-         double nb; // number of monomer in each polymer
-         double length; // fraction of monomer
-         double kuhn; // statistical segment length of monomer
-         int i; // molecule index
-         int j; // block index
-         for (i = 0; i < np; ++i) {
-            nb = system().mixture().polymer(i).nBlock();
-            roSquare_ = 0;
-            for (j = 0; j < nb; ++j) {
-               Block<D>& block = system().mixture().polymer(i).block(j);
-               kuhn = block.kuhn();
-               length = block.length();
-               roSquare_ += length * kuhn * kuhn;
-            }
-         }
-      }      
-   }
+
       
    
    /*
@@ -251,13 +211,13 @@ namespace Rpg {
 
       // Output structure factors to one file
       system().fileMaster().openOutputFile(outputFileName(), outputFile_);
-      outputFile_ << "\t" << "kRO";
-      outputFile_ << "\t" <<"\t" <<"S(k)/(\u03C1 N)";
+      outputFile_ << "\t" << "q";
+      outputFile_ << "\t" <<"\t" <<"S(q)/(\u03C1 N)";
       outputFile_<< std::endl;
       for (const auto& i : averageSMap_) {
-         double qRo = i.first;
+         double q = i.first;
          double averageS = i.second;
-         outputFile_ << Dbl(qRo, 18, 8);
+         outputFile_ << Dbl(q, 18, 8);
          outputFile_ << Dbl(averageS, 18, 8);
          outputFile_ << std::endl;
       }

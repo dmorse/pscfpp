@@ -50,6 +50,13 @@ namespace Rpc {
       
    };
 
+   #ifndef RPC_TRAJECTORY_READER_FACTORY_TPP
+   // Suppress implicit instantiation
+   extern template class TrajectoryReaderFactory<1>;
+   extern template class TrajectoryReaderFactory<2>;
+   extern template class TrajectoryReaderFactory<3>;
+   #endif
+
 }
 }
 #endif

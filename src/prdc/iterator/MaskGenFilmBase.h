@@ -167,7 +167,8 @@ namespace Prdc {
       * Subclasses should use this method in generate() to set the
       * flexibleParams array of the iterator.
       * 
-      * \current  current flexibleParams array 
+      * \param current flexibleParams array 
+      * \param cell unit cell (read only)
       */
       FSArray<bool,6> modifyFlexibleParams(FSArray<bool,6> current,
                                            UnitCell<D> const & cell) const;

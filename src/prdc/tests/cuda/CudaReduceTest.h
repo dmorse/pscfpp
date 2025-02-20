@@ -9,6 +9,7 @@
 #include <pscf/cuda/CudaRandom.h>
 #include <pscf/cuda/DeviceArray.h>
 #include <pscf/cuda/HostDArray.h>
+#include <pscf/math/IntVec.h>
 #include <util/format/Dbl.h>
 #include <util/misc/Timer.h>
 

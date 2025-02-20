@@ -1,5 +1,5 @@
-#ifndef RPC_FIELD_CONFIG_READER_H
-#define RPC_FIELD_CONFIG_READER_H
+#ifndef RPC_RGRID_TRAJECTORY_READER_H
+#define RPC_RGRID_TRAJECTORY_READER_H
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory
@@ -31,7 +31,7 @@ namespace Rpc {
    * \ingroup Rpc_Fts_Trajectory_Module
    */
    template <int D>
-   class FieldConfigReader : public TrajectoryReader<D>
+   class RGridTrajectoryReader : public TrajectoryReader<D>
    {
 
    public:
@@ -39,12 +39,12 @@ namespace Rpc {
       /**
       * Constructor.
       */
-      FieldConfigReader<D>(System<D>& system);
+      RGridTrajectoryReader<D>(System<D>& system);
 
       /**
       * Destructor.
       */
-      virtual ~FieldConfigReader(){};
+      virtual ~RGridTrajectoryReader(){};
 
       /**
       * Open trajectory file and read header, if any.
@@ -52,9 +52,7 @@ namespace Rpc {
       * By convention, this function treats the trajectory filename
       * as the name of an input file, and opens the file using the 
       * FileMaster:openInutFile function. This function prepends the 
-      * input prefix (if any) to the file path. If compiled with MPI 
-      * enabled, so that each processor simulates a different system, 
-      * it also prepends a processor id prefix before the input prefix.
+      * input prefix (if any) to the file path.
       *
       * \param filename trajectory input file name.
       */
@@ -74,7 +72,7 @@ namespace Rpc {
       * Close the trajectory file.
       */
       void close();
-      
+ 
       /**
       * Read header of trajectory file.
       */
@@ -83,43 +81,37 @@ namespace Rpc {
       void readFieldsRGrid(std::istream &in, DArray<RField<D> >& fields);
 
    protected:
+
       /**
       * Allocate memory required by trajectory reader
       */
       void allocate();
-      
-      /** 
-      * Return reference to parent system.
-      */      
-      System<D>& system();
-      
-      // Pointer to the parent system.
-      System<D>* systemPtr_; 
-      
-      
+
+      using TrajectoryReader<D>::system;
+
    private:
 
-      //
-      IntVec<D> meshDimensions_;
-      
-      // Trajectory file.
-      std::ifstream inputfile_;
-      
-      // Readl Grid Field configuration      
+      // Field configuration  
       DArray< RField<D> > wField_;
       
-      // Has the variable been allocated?
+      // Dimensions of computational mesh (# of points in each direction)
+      IntVec<D> meshDimensions_;
+  
+      // Trajectory file input stream
+      std::ifstream inputfile_;
+      
+      // Has wField_ been allocated?
       bool isAllocated_;
-        
 
    }; 
-   
-   // Get the parent system.
-   template <int D>
-   inline System<D>& FieldConfigReader<D>::system()
-   {  return *systemPtr_; }
 
-   
+   #ifndef RPC_RGRID_TRAJECTORY_READER_TPP
+   // Suppress implicit instantiation
+   extern template class RGridTrajectoryReader<1>;
+   extern template class RGridTrajectoryReader<2>;
+   extern template class RGridTrajectoryReader<3>;
+   #endif
+
 }
 }
 #endif

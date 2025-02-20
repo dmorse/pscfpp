@@ -26,12 +26,18 @@ We assume that the parameter file "param" contains a BdSimulator block
 that specifies appropriate choices of algorithms and parameters for a 
 BD step algorithm, a compressor algorithm, and any desired analyzers. 
 
-Before begininng performing a FTS, we must read in an initial field 
-configuration from a field file.  Field files used to initialize a
-FTS must be input and output in the r-grid file format, which gives 
-values for the w fields on the nodes of a grid, and does not impose 
-any space group symmetry. This is done using the READ_W_GRID command,
-as shown in the following example. 
+Before begininng a FTS, we must read in an initial field configuration 
+from a field file.  Field files used to initialize a FTS must be input 
+and output in the r-grid file format, which gives values for the w fields 
+on the nodes of a grid, and does not impose any space group symmetry. 
+This is done using the READ_W_GRID command, as shown in the following 
+example. 
+
+Unlike field files for SCFT, field files used for FTS generally do not 
+contain a line in the field file header that declare a space group.
+This is because the randomly fluctuating fields characteristic of a FTS 
+are generally not exactly invariant under any nontrivial space group 
+symmetry operations.
 
 Suppose that we run a simulation from a directory that contains 
 subdirectories named 'in' and 'out', in which directory 'in' contains
@@ -60,8 +66,10 @@ and takes the number of steps as a parameter.  In this example, the
 SIMULATE command thus runs a simulation of 30000 steps.  The type of 
 simulation that is performed (i.e., BD vs. MC) and the choice of 
 algorithms and parameter values used in that simulation are all 
-specified in the parameter file, which is always processed before the 
-command file. 
+specified in the parameter file, which is always processed before 
+the command file. A FTS simulation must thus be initialized by a 
+parameter file that contains either a BdSimulation block, for a BD 
+simulation, or an McSimulation block, for an MC simulation
 
 \section psfts_command_commands_sec Commands for FTS
 
@@ -72,7 +80,7 @@ Many of the commands that are used to setup or process SCFT calculations
 can also be used in the context of an FTS calculation.  Specifically, 
 commands for reading and writing field files such as READ_W_GRID and 
 WRITE_W_GRID can be used in either context, as can the timer commands
-and some of the commands for manipulating field files.
+and some of the utility commands for manipulating field files.
 
 The following table lists a set of commands that are accepted by either
 pscf_pc or and pscf_pg that are only meaningful in the context of an
@@ -115,7 +123,7 @@ can be used for SCFT calculations.
 <b> SIMULATE </b>:
 THE SIMULATE command performs a field-theoretic simulation of a
 specified number nStep of attempted MC moves or BD steps. The 
-associated parameter file must contain Compressor and Simulator 
+associated parameter file must contain a BdSimulator or McSimulator
 blocks.  Field trajectories may be written to file by including a 
 trajectory writer among the analyzers listed in the AnalyzerManager 
 subblock of the McSimulator block.

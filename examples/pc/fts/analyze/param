@@ -28,12 +28,6 @@ System{
     lattice     cubic   
   }
   McSimulator{
-    McMoveManager{
-      RealMove{
-        probability     1
-        A               0.5
-      }
-    }
     AnalyzerManager{
       baseInterval    1
 
@@ -53,3 +47,9 @@ System{
   }
 }
 
+    McMoveManager{
+      RealMove{
+        probability     1
+        A               0.5
+      }
+    }

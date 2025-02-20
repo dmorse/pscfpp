@@ -1,5 +1,6 @@
-#ifndef RPG_FIELD_CONFIG_READER_TPP
-#define RPG_FIELD_CONFIG_READER_TPP
+#ifndef RPC_RGRID_TRAJECTORY_READER_TPP
+#define RPC_RGRID_TRAJECTORY_READER_TPP
+
 /*
 * PSCF - Polymer Self-Consistent Field Theory
 *
@@ -7,88 +8,91 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "FieldConfigReader.h"
-#include <rpg/System.h>
-#include <pscf/math/IntVec.h>
+#include "RGridTrajectoryReader.h"
+
+#include <rpc/System.h>
 #include <pscf/mesh/MeshIterator.h>
 #include <util/misc/ioUtil.h>
+
+#include <sstream>
 #include <iostream>
 #include <string>
 
 namespace Pscf {
-namespace Rpg
-{
+namespace Rpc {
 
    using namespace Util;
 
    /*
-   * Constructor. 
+   * Constructor.
    */
    template <int D>
-   FieldConfigReader<D>::FieldConfigReader(System<D>& system)
+   RGridTrajectoryReader<D>::RGridTrajectoryReader(System<D>& system)
     : TrajectoryReader<D>(system),
-      systemPtr_(&system),
       isAllocated_(false)
    {}
 
    template <int D>
-   void FieldConfigReader<D>::allocate()
-   {  
+   void RGridTrajectoryReader<D>::allocate()
+   {
       const int nMonomer = system().mixture().nMonomer();
       UTIL_CHECK(nMonomer > 0);
-      const IntVec<D> dimensions = system().domain().mesh().dimensions();
+
+      meshDimensions_ = system().domain().mesh().dimensions();
       if (!isAllocated_){
          wField_.allocate(nMonomer);
          for (int i = 0; i < nMonomer; ++i) {
-            wField_[i].allocate(dimensions);
+            wField_[i].allocate(meshDimensions_);
          }
          isAllocated_ = true;
       }
    }
-   
+
    /*
    * Open file and setup memory.
    */
    template <int D>
-   void FieldConfigReader<D>::open(std::string filename)
+   void RGridTrajectoryReader<D>::open(std::string filename)
    {
       system().fileMaster().open(filename, inputfile_);
       allocate();
    }
- 
+
    template <int D>
-   void FieldConfigReader<D>::readHeader()
-   { 
+   void RGridTrajectoryReader<D>::readHeader()
+   {
       // Read Header
       int nMonomer = system().mixture().nMonomer();
-      Domain<D> & domain = system().domain();
-      FieldIo<D> & fieldIo = domain.fieldIo();
-      UnitCell<D> & unitcell = domain.unitCell();
-      bool isSymmetric;
-      fieldIo.readFieldHeader(inputfile_, nMonomer, unitcell, isSymmetric);
+      FieldIo<D> const & fieldIo = system().domain().fieldIo();
+      UnitCell<D> tmpUnitCell;
+      bool hasSymmetry;
+      fieldIo.readFieldHeader(inputfile_, nMonomer, tmpUnitCell,
+                              hasSymmetry);
+      system().setUnitCell(tmpUnitCell);
       Log::file() << "Read Header" << "\n";
    }
+
    /*
    * Read frame, return false if end-of-file
    */
    template <int D>
-   bool FieldConfigReader<D>::readFrame()
+   bool RGridTrajectoryReader<D>::readFrame()
    {
       // Preconditions
       if (!isAllocated_) {
-         UTIL_THROW("Real Grid Field is not allocated");
+         UTIL_THROW("R-grid Field is not allocated");
       }
-      
+
       bool notEnd;
       std::stringstream line;
 
-      // Attempt to read first line
+      // Attempt to read first line, check for end of file
       notEnd = getNextLine(inputfile_, line);
       if (!notEnd) {
          return false;
       }
-     
-      // Process ITEM: TIMESTEP
+
+      // Read line containing time step
       checkString(line, "i");
       checkString(line, "=");
       #if 0
@@ -96,34 +100,36 @@ namespace Rpg
       line >> value;
       int step;
       step = std::stoi(value);
-      Log::file() << "step "<< step <<"\n";
+      Log::file()<< "step "<< step <<"\n";
       #endif
-      
-      // Read ITEM: NUMBER OF Mesh
+
+      // Read mesh dimensions 
       notEnd = getNextLine(inputfile_, line);
       UTIL_CHECK(notEnd);
       checkString(line, "mesh");
+
+      // Read empty line
       notEnd = getNextLine(inputfile_, line);
       UTIL_CHECK(notEnd);
 
-      // Read a single real-space grid field frame from trajectory file
+      // Read w-field configuration in r-grid format
       int nMonomer = system().mixture().nMonomer();
       FieldIo<D> const & fieldIo = system().domain().fieldIo();
       fieldIo.readFieldsRGridData(inputfile_, wField_, nMonomer);
 
-      // Update system real-space grid field 
+      // Update system r-grid field
       system().setWRGrid(wField_);
 
       return true;
    }
-   
+
    /*
    * Close trajectory file.
    */
    template <int D>
-   void FieldConfigReader<D>::close()
+   void RGridTrajectoryReader<D>::close()
    {  inputfile_.close();}
-   
-} 
+
+}
 }
 #endif

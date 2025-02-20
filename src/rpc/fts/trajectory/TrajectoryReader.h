@@ -29,7 +29,7 @@ namespace Rpc {
       /**
       * Constructor.
       */
-       TrajectoryReader<D>(System<D>& system);
+      TrajectoryReader<D>(System<D>& system);
 
       /**
       * Destructor.
@@ -58,7 +58,7 @@ namespace Rpc {
       *
       * \return true if a frame is avaiable, false if at end of file
       */
-       virtual bool readFrame() = 0;
+      virtual bool readFrame() = 0;
 
       /**
       * Close the trajectory file.
@@ -73,23 +73,27 @@ namespace Rpc {
       * Return reference to parent system.
       */
       System<D>& system();
-        
+      
+   private:
+  
       /**
       * Pointer to the parent system.
       */
       System<D>* systemPtr_;
 
-
    }; // end class TrajectoryReader
-   
 
    // Get the parent system.
    template <int D>
    inline System<D>& TrajectoryReader<D>::system()
    {  return *systemPtr_; }
-   
-   
-   
+
+   #ifndef RPC_TRAJECTORY_READER_TPP
+   // Suppress implicit instantiation
+   extern template class TrajectoryReader<1>;
+   extern template class TrajectoryReader<2>;
+   extern template class TrajectoryReader<3>;
+   #endif
 
 }
 }

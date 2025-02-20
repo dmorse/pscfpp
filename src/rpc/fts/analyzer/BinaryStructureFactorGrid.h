@@ -12,11 +12,13 @@
 
 #include <util/containers/DArray.h>               // member
 #include <util/accumulators/Average.h>            // member
+#include <prdc/cpu/RField.h>                      // member
 #include <prdc/cpu/RFieldDft.h>                   // member
 #include <map>                                    // member
 
 #include <string>
 #include <iostream>
+#include <vector>
 
 namespace Pscf {
 namespace Rpc {
@@ -105,11 +107,6 @@ namespace Rpc {
       void output();
       
       /**
-      * Update W_ square
-      */
-      void updateAccumulators();
-      
-      /**
       * Compute structure factor
       */
       void computeStructureFactor();
@@ -118,12 +115,7 @@ namespace Rpc {
       * Compute average S(k) over k of equal magnitude
       */
       void averageStructureFactor();
-      
-      /**
-      * Compute radius of gyration Rg^2 = Nb^2/6
-      */
-      void computeRoSquare();
-
+   
    protected:
 
       /**
@@ -151,7 +143,7 @@ namespace Rpc {
       DArray<double> structureFactors_;
    
       /// Number of wavevectors.
-      int  nWave_;
+      int nWave_;
 
       /**
       * Pointer to parent Simulator
@@ -190,15 +182,27 @@ namespace Rpc {
       
       /// Number of samples per block average output.
       int nSamplePerBlock_;
-      
+
+      /// Dimensions of wavevector mesh in real-to-complex transform
+      IntVec<D> kMeshDimensions_;
+
+      /// Number of wavevectors in wavevector mesh 
+      int kSize_;
+
       /// Array of Average objects (only allocated on master processor)
       DArray<Average> accumulators_;
       
       /// wField in Fourier mode
       DArray< RFieldDft<D> > wKGrid_;
-      
-      /// Square of radius of gyration 
-      double roSquare_;
+
+      /// W_ for diblock copolymer (wm = (wa-wb)/2)
+      RField<D> wm_;
+
+      /// W_ in Fourier mode
+      RFieldDft<D> wk_;
+
+      /// Bare wavenumber value q = sqrt(kSq) lists
+      std::vector<double> qList_;
       
       /// Map key to be qsquare and value to be average structure factor over k of equal magnitude
       std::map<double, double> averageSMap_;

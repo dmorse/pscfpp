@@ -1,5 +1,5 @@
-#ifndef RPG_FIELD_CONFIG_READER_H
-#define RPG_FIELD_CONFIG_READER_H
+#ifndef RPG_RGRID_TRAJECTORY_READER_H
+#define RPG_RGRID_TRAJECTORY_READER_H
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory
@@ -15,7 +15,6 @@
 #include <prdc/cuda/RField.h>
 #include <util/containers/DArray.h>
 
-
 namespace Pscf {
 namespace Rpg
 {
@@ -29,7 +28,7 @@ namespace Rpg
    * \ingroup Rpg_Fts_Trajectory_Module
    */
    template <int D>
-   class FieldConfigReader : public TrajectoryReader<D>
+   class RGridTrajectoryReader : public TrajectoryReader<D>
    {
 
    public:
@@ -39,12 +38,12 @@ namespace Rpg
       *
       * \param system  parent System<D> object
       */
-      FieldConfigReader<D>(System<D>& system);
+      RGridTrajectoryReader<D>(System<D>& system);
 
       /**
       * Destructor.
       */
-      virtual ~FieldConfigReader(){};
+      virtual ~RGridTrajectoryReader(){};
 
       /**
       * Open trajectory file and read header, if any.
@@ -96,6 +95,7 @@ namespace Rpg
       
       
    private:
+
       //
       IntVec<D> meshDimensions_;
       
@@ -113,9 +113,15 @@ namespace Rpg
    
    // Get the parent system.
    template <int D>
-   inline System<D>& FieldConfigReader<D>::system()
+   inline System<D>& RGridTrajectoryReader<D>::system()
    {  return *systemPtr_; }
 
+   #ifndef RPG_RGRID_TRAJECTORY_READER_TPP
+   // Suppress implicit instantiation
+   extern template class RGridTrajectoryReader<1>;
+   extern template class RGridTrajectoryReader<2>;
+   extern template class RGridTrajectoryReader<3>;
+   #endif
    
 }
 }
