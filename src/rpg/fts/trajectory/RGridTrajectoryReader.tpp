@@ -1,5 +1,6 @@
-#ifndef RPG_FIELD_CONFIG_READER_TPP
-#define RPG_FIELD_CONFIG_READER_TPP
+#ifndef RPG_RGRID_TRAJECTORY_READER_TPP
+#define RPG_RGRID_TRAJECTORY_READER_TPP
+
 /*
 * PSCF - Polymer Self-Consistent Field Theory
 *
@@ -7,7 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "FieldConfigReader.h"
+#include "RGridTrajectoryReader.h"
 #include <rpg/System.h>
 #include <pscf/math/IntVec.h>
 #include <pscf/mesh/MeshIterator.h>
@@ -25,14 +26,14 @@ namespace Rpg
    * Constructor. 
    */
    template <int D>
-   FieldConfigReader<D>::FieldConfigReader(System<D>& system)
+   RGridTrajectoryReader<D>::RGridTrajectoryReader(System<D>& system)
     : TrajectoryReader<D>(system),
       systemPtr_(&system),
       isAllocated_(false)
    {}
 
    template <int D>
-   void FieldConfigReader<D>::allocate()
+   void RGridTrajectoryReader<D>::allocate()
    {  
       const int nMonomer = system().mixture().nMonomer();
       UTIL_CHECK(nMonomer > 0);
@@ -50,14 +51,14 @@ namespace Rpg
    * Open file and setup memory.
    */
    template <int D>
-   void FieldConfigReader<D>::open(std::string filename)
+   void RGridTrajectoryReader<D>::open(std::string filename)
    {
       system().fileMaster().open(filename, inputfile_);
       allocate();
    }
  
    template <int D>
-   void FieldConfigReader<D>::readHeader()
+   void RGridTrajectoryReader<D>::readHeader()
    { 
       // Read Header
       int nMonomer = system().mixture().nMonomer();
@@ -72,7 +73,7 @@ namespace Rpg
    * Read frame, return false if end-of-file
    */
    template <int D>
-   bool FieldConfigReader<D>::readFrame()
+   bool RGridTrajectoryReader<D>::readFrame()
    {
       // Preconditions
       if (!isAllocated_) {
@@ -121,7 +122,7 @@ namespace Rpg
    * Close trajectory file.
    */
    template <int D>
-   void FieldConfigReader<D>::close()
+   void RGridTrajectoryReader<D>::close()
    {  inputfile_.close();}
    
 } 

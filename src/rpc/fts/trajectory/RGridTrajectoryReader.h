@@ -105,6 +105,13 @@ namespace Rpc {
 
    }; 
 
+   #ifndef RPC_RGRID_TRAJECTORY_READER_TPP
+   // Suppress implicit instantiation
+   extern template class RGridTrajectoryReader<1>;
+   extern template class RGridTrajectoryReader<2>;
+   extern template class RGridTrajectoryReader<3>;
+   #endif
+
 }
 }
 #endif

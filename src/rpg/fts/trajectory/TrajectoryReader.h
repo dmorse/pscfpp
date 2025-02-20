@@ -79,7 +79,9 @@ namespace Rpg
       * Return reference to parent system.
       */
       System<D>& system();
-        
+   
+   private:
+     
       /**
       * Pointer to the parent system.
       */
@@ -87,15 +89,18 @@ namespace Rpg
 
 
    }; // end class TrajectoryReader
-   
 
    // Get the parent system.
    template <int D>
    inline System<D>& TrajectoryReader<D>::system()
    {  return *systemPtr_; }
    
-   
-   
+   #ifndef RPG_TRAJECTORY_READER_TPP
+   // Suppress implicit instantiation
+   extern template class TrajectoryReader<1>;
+   extern template class TrajectoryReader<2>;
+   extern template class TrajectoryReader<3>;
+   #endif
 
 }
 }

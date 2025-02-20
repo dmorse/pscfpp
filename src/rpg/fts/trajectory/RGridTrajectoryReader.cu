@@ -5,12 +5,12 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "FieldConfigReader.tpp"
+#include "RGridTrajectoryReader.tpp"
 
 namespace Pscf {
 namespace Rpg {
-   template class FieldConfigReader<1>;
-   template class FieldConfigReader<2>;
-   template class FieldConfigReader<3>;
+   template class RGridTrajectoryReader<1>;
+   template class RGridTrajectoryReader<2>;
+   template class RGridTrajectoryReader<3>;
 }
 }

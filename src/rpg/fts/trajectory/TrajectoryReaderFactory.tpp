@@ -4,7 +4,7 @@
 #include "TrajectoryReaderFactory.h"
 
 // Subclasses of ConfigIo
-#include "FieldConfigReader.h"
+#include "RGridTrajectoryReader.h"
 
 namespace Pscf {
 namespace Rpg {
@@ -20,7 +20,7 @@ namespace Rpg {
    {}
 
    /*
-   * Return a pointer to a instance of Trajectory subclass className.
+   * Return a pointer to a instance of TrajectoryReader subclass className.
    */
    template <int D>
    TrajectoryReader<D>* 
@@ -32,8 +32,9 @@ namespace Rpg {
       ptr = trySubfactories(className);
       if (ptr) return ptr;
 
-      if (className == "FieldConfigReader") {
-        ptr = new FieldConfigReader<D>(*sysPtr_);
+      if (className == "RGridTrajectoryReader" 
+          || className == "TrajectoryReader") {
+        ptr = new RGridTrajectoryReader<D>(*sysPtr_);
       } 
       return ptr;
    }
