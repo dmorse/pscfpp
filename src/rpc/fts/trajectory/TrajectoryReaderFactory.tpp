@@ -1,5 +1,5 @@
-#ifndef RPC_TRAJECTORY_READER_TPP
-#define RPC_TRAJECTORY_READER_TPP
+#ifndef RPC_TRAJECTORY_READER_FACTORY_TPP
+#define RPC_TRAJECTORY_READER_FACTORY_TPP
 
 #include "TrajectoryReaderFactory.h"
 
@@ -34,7 +34,8 @@ namespace Rpc {
       ptr = trySubfactories(className);
       if (ptr) return ptr;
 
-      if (className == "RGridTrajectoryReader" || className == "TrajectoryReader") {
+      if (className == "RGridTrajectoryReader" 
+          || className == "TrajectoryReader") {
          ptr = new RGridTrajectoryReader<D>(*sysPtr_);
       }
  

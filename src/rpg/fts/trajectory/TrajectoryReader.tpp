@@ -22,8 +22,6 @@ namespace Rpg
    TrajectoryReader<D>::TrajectoryReader(System<D>& system)
     : systemPtr_(&system)
    {}
-   
-
   
 }
 }
