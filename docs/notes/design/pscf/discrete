@@ -109,6 +109,8 @@ Model details / implementation stategy:
 Proposed Implementation:
 ------------------------
 
+  --- Modifications applied in Pscf, which then work in both Rpc and Rpg
+ 
 1) Define an namespace Pscf::PolymerModel that contains an unscoped
    (C-style) enumeration and several functions to set and get a global
    value of this enumeration. Use the global value throughout the code
@@ -160,7 +162,7 @@ however, since it would apply to all subsequent tests. I'm still trying
 to figure out a better way of enforcing immutability in production code
 while allowing mutability in unit tests.
 
-Done
+Done (in Pscf)
 
 2) Create a member nBead_ in the BlockDescriptor class. 
 When PolymerModel::isBead(), have the inserter and extractor operators 
@@ -172,7 +174,7 @@ get or set Block::length only if PolymerModel::length. The nBead and
 length properties are each meaningful only within one model, and may
 not be used in the other. 
 
-Done
+Done (in Pscf)
 
 3) For the BlockDescriptor class, add a private member array Pair<bool> 
 ownsVertex_ , a set function void setVertexOwnership(int i, bool) and a 
@@ -189,7 +191,7 @@ the PolymerType but before reading the blocks, by using a standard
 convention in which block i owns the vertex between block i and block 
 i+1 and in which any end vertex is owned by the block it terminates.
 
-Done
+Done (inPscf)
 
 4) In the PropagatorTmpl class template, define private bool member
 variables named ownsHead_ and ownsTail_, and define public accessor 
@@ -198,7 +200,7 @@ function setVertexOwnwership(ownsHead, ownsTail). These functions may
 only be called when PolymerModel::isBead() is true, because they are
 only meaningful in this case.
 
-Done
+Done (in Pscf)
 
 5) In Pscf::PolymerTmpl::readParameters add code that, if 
 PolymerModel::isBead() is true:
@@ -216,10 +218,21 @@ All information about which blocks owns which vertices is thus implemented
 in the base class function PolymerTmpl::readParameters, and so can be used
 in both Rpc and Rpg.
 
-Done
+In Pscf::PolymerTmpl, create function nBead() that returns number of
+beads for the polymer in the bead model. The member function length() 
+may only be called if PolymerModel::isThread(), while nBead() may only
+be called if PolymerModel::isThread(). Rationale: Each of these
+variables is only meaningful in the context of one model or the other,
+and so these properties may only be queried when the appropriate model
+is in use. 
 
-6) In Rpc::Mixture::readParameters, if PolymerModel::isBead(), make 
-reading of ds_ optional, and set ds_ = 1.0 by default. 
+Done (in Pscf)
+
+   --- Modifications that must be duplicated in Rpc and Rpg 
+
+6) In Rpc::Mixture::readParameters, if PolymerModel::isBead(), allow 
+reading of ds_ only for the thread model, and set ds_ = 1.0 by default
+in the bead model.
 
 Done in Rpc
 
@@ -251,14 +264,15 @@ Done in Rpc
 
 9) Modified private data structures in Rpc::Block:
 
-In Rpc::Block class, use expW_ to store exp(-W(r)ds) in the case of the
+In Rpc::Block class, use expW_ to store exp(-W(r)) in the case of the
 bead model, but use expW_ to store exp(-W(r)ds/2) in the case of a thread 
-model. The value of expKsq_ is the same for the thread and bead models.  
+model. Use expKsq_ to store exp(-b^2 K^2 / 6) for the bead model and 
+exp( -b^2 K^2 ds / 6) for the thread models.  
 
 Only allocate arrays expW2_ and expKSq2_ if PolymerModel::isThread().
 These are not used by the bead model. 
 
-Add field expWInv_ that stores exp(+W(r)ds), for use in summations used
+Add field expWInv_ that stores exp(+W(r)), for use in summations used
 to compute monomer concentrations and partition function. This is only
 allocated if PolymerModel::isBead().
 
@@ -266,15 +280,17 @@ Modify functions in Block:
 
      allocate :
 
-       - Conditionally allocate some private member fields
-       - Modify definition ns and ds for different models
+       - Conditionally allocate some private member fields.
+         expW2_, expKsq2_ and expWInv_ are only used by one model.
+
+       - Modify definition of ns for different models
 
      setLength :
        - Make PolymerModel::isThread a precondition 
 
      setupSolver :
-       - If blocks around computations of expW_, expW2_, expWInv_,
-         since these are each only allocated and used for one model.
+       - Create blocks around computations of expW_, expW2_, expWInv_.
+         Two of these are only allocated and used in one model. 
 
      computeKSq :
        - Compute expKsq2 only if is a thread model
@@ -314,8 +330,8 @@ Done in Rpc
 In the Propagator class change the name of the current computeHead
 function to computeHeadThread() and define an additional function
 computeHeadBead(). The computeHeadBead function call computeHeadThread 
-internally, then applies Block::stepFieldBead iff the propagator 
-owns the head vertex bead.
+internally, then applies Block::stepFieldBead if and only if the 
+propagator owns the head vertex bead.
 
 Done in Rpc
 
@@ -382,7 +398,7 @@ both models.
 
 Done in Rpc
 
-14) Computation of block concentration in Block class:
+15) Computation of block concentration in Block class:
 
 In Block class, define two public functions:
 
@@ -414,7 +430,7 @@ length.
 
 Done in Rpc
 
-15) Computation of stress in Block and Polymer classes:
+16) Computation of stress in Block and Polymer classes:
 
 In Block class, define two public functions:
 
@@ -432,7 +448,7 @@ for the thread model and phi/(q N) for the bead model, where L is
 total length (sum of values of length for all blocks) and N is total 
 number of beads (sum of values of nBead for all blocks). 
 
-16) Calculation of free energies per monomer in System class:
+17) Calculation of SCFT free energies per monomer in System class:
 
 The free energies that are computed in the System class are 
 free energies per monomer reference volume in the thread model and
@@ -446,10 +462,12 @@ if (PolymerModel::isThread) { .... } else { .... }
 
 Done in Rpc
 
-16) Calculation of free energies in Simulator class:
+18) Calculation of Hamiltonian values in Simulator class:
 
 The Simulator::computeHamiltonian function does the same calculation
-of an ideal gas energy as System::computeFreeEnergy, and the length
-is treated the same way. 
+of an ideal gas free energy as System::computeFreeEnergy, and the 
+length should be treated the same way. Where the total length of a
+polymer is needed, use polymer length in the thread model and nBead 
+in the bead model. 
 
 
