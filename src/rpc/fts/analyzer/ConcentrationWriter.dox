@@ -2,7 +2,11 @@
 \page rpc_ConcentrationWriter_page Rpc::ConcentrationWriter
 
 This analyzer periodically writes the composition configuration 
-for each component to file. 
+for each component to file. The output is analogous to that of a 
+TrajectoryWriter, except that it outputs frames containing monomer
+monomer concentration / volume fraction fields (c-fields) for all 
+monomer types at regular intervals, rather than monomer chemical
+potential fields (w-fields).
 
 \section rpc_ConcentrationWriter_parameter_sec Parameter File
 
@@ -31,7 +35,12 @@ Meanings of the parameters are described briefly below:
 
 \section rpc_ConcentrationWriter_output_sec Output
 
-During the simulation, the composition configuration is output the 
-file {outputFileName} every interval simulation steps.
+During the simulation, frames containing the monomer concentration
+fields (c-fields0 for all monomer types are output the to file 
+{outputFileName} every interval simulation steps. The format of the
+resulting file is analogous to that of a w-field trajectory file:
+It contains a header with the same format as that used for an r-grid
+field file, following by a sequence frames, in which each frame uses
+the format of the data section of an r-grid field file. 
 
 */

@@ -1,25 +1,47 @@
 /*! 
 \page rpc_BinaryStructureFactorGrid_page Rpc::BinaryStructureFactorGrid
 
-This analyzer calculates the spherical average of structure factor 
+This analyzer calculates the spherical average of the structure factor 
 for all wavevectors for a AB diblock copolymer system. 
 
 \section rpc_BinaryStructureFactorGrid_algorithm_sec Mathematical Formula
 
+This class computes the structure factor \f$ S({\bf q}) \f$ for an 
+incompressible system containing two monomer types of monomer type indices 
+0 and 1, defined as
 \f[
-   \frac{S(\mathbf {G})}{\rho_0 N} 
-   \equiv \frac{n}{\chi_{b} N^2} 
-   \left\langle
-   W_{-}(\mathbf {G})W_{-}(-\mathbf{G}) 
-   \right\rangle
-   - \frac{1}{2 \chi_b N}
+  S(\mathbf{q}) 
+  = \frac{1}{V}\langle |\hat{C}_{-}({\bf q})|^{2} \rangle / 4
 \f]
-where \f$ n \f$ denote the number of monomer in the system, 
-\f$ S(\mathbf {G}) \f$ denotes spherical average of structure 
-factor for wavevector \f$\bf G\f$, and \f$ \left\langle 
-W_{-}(\mathbf {G})W_{-}(-\mathbf{G}) \right\rangle\f$ denotes the
-ensemble average of Fourier components of the exchange field.
-The Fourier transformation is defined in \ref scft_fourier_page.
+where
+\f$ v \f$ is monomer volume, \f$ V \f$ is total system volume, and 
+\f[
+  \hat{C}_{-}({\bf q}) \equiv \int \! d{\bf r} 
+                       \; e^{-i{\bf q}\cdot {\bf r}}
+                       [ c_{0}{\bf r}) - c_{1}({\bf r}) ] 
+  \quad.
+\f]
+Here, \f$ c_{i}({\bf r}) \f$ is the local concentration of monomers of 
+type i, for i = 0 and i =1.
+
+In a field-theoretic simulation, this is computed using the identity
+\f[
+  S(\mathbf{q}) = 
+  \frac{1}{v^2\chi_{b}^2} \frac{1}{V}
+  \left\langle |\hat{W}_{-}(\mathbf {q})|^{2} \right\rangle
+   - \frac{1}{2v \chi_b} 
+\f]
+where \f$ \chi_{b} \f$ is the bare Flory-Huggins parameter, and
+\f[
+  \hat{W}_{-}({\bf q}) = \int d^{3}r e^{-i{\bf q}\cdot {\bf r}} 
+  W_{-}({\bf r}) 
+\f]
+is the transform of the exchange field 
+\f$ W_{-}({\bf r}) = [w_{0}({\bf r}) - w_{1}({\bf r})]/2 \f$.
+The Fourier transform \f$ \hat{W}_{-}({\bf q}) \f$ defined above as
+an integral is approximated internally by \f$ V \f$ times the normalized 
+discrete Fourier transform (DFT) of \f$ W_{-}({\bf r}) \f$ as computed 
+by the function FFT::forwardTransform .
 
 \section rpc_BinaryStructureFactorGrid_parameter_sec Parameter File
 
@@ -52,10 +74,16 @@ Meanings of the parameters are described briefly below:
   </tr>
 </table>
 
-\section rpc_BinaryStructureFactorGrid_output_sec Output
-At the end of the simulation, \f$ \mathbf {G} R_{0} \f$, where 
-\f$ R_{0} = N^{1/2} b\f$ is the end-to-end length of the polymer 
-chain, and  \f$ \frac{S(\mathbf {G})}{\rho_0 N} \f$ for each wavevector 
-\f$ \mathbf {G}\f$ are output to {outputFileName}.
+At the end of the simulation, time-averaged values of \f$ S({\bf q}) \f$ 
+are averaged over groups of wavevectors of the same magnitude to obtain 
+a spherically averaged structure factor \f$ S(q) \f$ at a discrete set 
+of values of the wavenumber \f$ q \equiv |{\bf q}| \f$. 
+
+\section rpc_BinaryStructureFactorGrid_output_sec Output File
+After completion fo the simulation, the output file {outputFileName} 
+will contain two columns of numbers, in which the first column contains 
+an ordered list of values of wavenumber \f$ q \f$, and the second column
+contains a corresponding list of values of the dimensionless, spherically 
+averaged structure factor \f$ v S(q) \f$. 
 
 */

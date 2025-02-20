@@ -58,7 +58,7 @@ public:
       BdSimulator<3> simulator(system);
       initSimulator(simulator, "in/param_BdSimulator_analyzer");
       std::string filename = filePrefix() + "in/w_dis_trajectory.rf";
-      simulator.analyze(0, 10, "FieldConfigReader", filename);
+      simulator.analyze(0, 10, "RGridTrajectoryReader", filename);
    }
    
    void testFourthOrderParameter()

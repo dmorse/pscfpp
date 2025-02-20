@@ -23,7 +23,7 @@
 #include <algorithm>
 
 namespace Pscf {
-namespace Rpc 
+namespace Rpc
 {
 
    using namespace Util;
@@ -33,74 +33,74 @@ namespace Rpc
    */
    template <int D>
    ThermoDerivativeAnalyzer<D>::ThermoDerivativeAnalyzer(
-                                Simulator<D>& simulator, System<D>& system) 
+                                Simulator<D>& simulator, System<D>& system)
     : Analyzer<D>(),
       outputFileName_(""),
-      hasAverage_(true),
-      hasOutputFile_(false),
       simulatorPtr_(&simulator),
-      systemPtr_(&(simulator.system()))
+      systemPtr_(&(simulator.system())),
+      hasAverage_(true),
+      hasOutputFile_(false)
    { setClassName("ThermoDerivativeAnalyzer"); }
 
    /*
    * Destructor.
    */
    template <int D>
-   ThermoDerivativeAnalyzer<D>::~ThermoDerivativeAnalyzer() 
+   ThermoDerivativeAnalyzer<D>::~ThermoDerivativeAnalyzer()
    {}
 
    /*
-   * Read interval and outputFileName. 
+   * Read interval and outputFileName.
    */
    template <int D>
-   void ThermoDerivativeAnalyzer<D>::readParameters(std::istream& in) 
+   void ThermoDerivativeAnalyzer<D>::readParameters(std::istream& in)
    {
       readInterval(in);
       read(in, "outputFileName", outputFileName_);
       readOptional(in, "hasAverage", hasAverage_);
-      
+
       if (!outputFileName_.empty()) {
          hasOutputFile_ = true;
       }
-      
+
       if (hasOutputFile_){
          system().fileMaster().openOutputFile(outputFileName_, outputFile_);
          outputFile_ << "    Variable       " << "Derivative" << "\n";
-         
+
       }
    }
-   
+
    /*
    * Setup before simulation loop.
-   */ 
+   */
    template <int D>
    void ThermoDerivativeAnalyzer<D>::setup()
    {
       if (hasAverage_){
          accumulator_.clear();
       }
-      
+
    }
-   
+
    template <int D>
    void ThermoDerivativeAnalyzer<D>::sample(long iStep)
    {
       if (!isAtInterval(iStep)) return;
-      
+
       double derivative;
       derivative = computeDerivative();
       if (hasAverage_){
          accumulator_.sample(derivative);
       }
-      
+
       if (hasOutputFile_){
           UTIL_CHECK(outputFile_.is_open());
           outputFile_ << Dbl(variable());
           outputFile_ << Dbl(derivative);
           outputFile_<< "\n";
       }
-   } 
-   
+   }
+
    /*
    * Output results after a simulation is completed.
    */
@@ -110,21 +110,21 @@ namespace Rpc
       if (hasAverage_){
          Log::file() << std::endl;
          Log::file() << parameterType() << " : "<< std::endl;
-         Log::file() << "Time average of the derivative is: "
+         Log::file() << "Average of derivative : "
                      << Dbl(accumulator_.average())
-                     << " +- " << Dbl(accumulator_.blockingError(), 9, 2) 
+                     << " +- " << Dbl(accumulator_.blockingError(), 9, 2)
                      << "\n";
       }
-      
+
       // Close data file, if any
       if (outputFile_.is_open()) {
          outputFile_.close();
       }
-      
-      // Write average (*.ave) file and error analysis (*.aer) file 
+
+      // Write average (*.ave) file and error analysis (*.aer) file
       if (hasAverage_){
-         
-         // Output average results to average file 
+
+         // Output average results to average file
          std::string fileName;
          std::string type;
          fileName = outputFileName_+  ".ave";
@@ -135,17 +135,19 @@ namespace Rpc
          outputFile_ << parameterType() << "   ";
          outputFile_ << Dbl(ave) << " +- " << Dbl(err, 9, 2) << "\n";
          outputFile_.close();
-         
-         // Write error analysis (*.aer) file
-         fileName = outputFileName_+  ".aer";
-         system().fileMaster().openOutputFile(fileName, outputFile_);
-         outputFile_ << parameterType() << ":"<< std::endl;
-         accumulator_.output(outputFile_);
-         outputFile_ << std::endl;
-         outputFile_.close();
-         
+
+         // Write error analysis (*.aer) file, if there is no Ramp
+         if (!simulator().hasRamp()) {
+            fileName = outputFileName_+  ".aer";
+            system().fileMaster().openOutputFile(fileName, outputFile_);
+            outputFile_ << parameterType() << ":"<< std::endl;
+            accumulator_.output(outputFile_);
+            outputFile_ << std::endl;
+            outputFile_.close();
+         }
+
       }
-      
+
    }
 
 }

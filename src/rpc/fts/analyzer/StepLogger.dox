@@ -1,8 +1,10 @@
 /*! 
 \page rpc_StepLogger_page Rpc::StepLogger
 
-This analyzer periodic outputs the number of simulation step
-have been performed. 
+The StepLogger class periodically outputs the current value of the
+simulation step counter, to indicate the progress of a calculation.
+Output is written to standard output, i.e., to screen unless 
+redirected to a file. 
 
 \section rpc_StepLogger_parameter_sec Parameter File
 
