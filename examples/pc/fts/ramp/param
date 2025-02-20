@@ -1,69 +1,75 @@
 System{
   Mixture{
-     nMonomer  2
-     monomers[
-               1.0  
-               1.0 
-     ]
-     nPolymer  1
-     Polymer{
-        type    linear
-        nBlock  2
-        blocks[
+    nMonomer  2
+    monomers[
+              1.0  
+              1.0 
+    ]
+    nPolymer  1
+    Polymer{
+      type    linear
+      nBlock  2
+      blocks[
                 0   0.5
                 1   0.5
-        ]
-        phi     1.0
-     }
-     vMonomer  0.001
-     ds   0.02
+      ]
+      phi     1.0
+    }
+    vMonomer  0.01 
+    ds      0.02
   }
   Interaction{
-     chi(
-          1   0   8.0
-     )
+    chi(
+        1   0   8.0
+    )
   }
   Domain{
     mesh           16    16    16
     lattice     cubic   
-    
   }
   BdSimulator{
-    LrAmPreCompressor{
-    epsilon      1.0e-4
-    maxItr       200
-    maxHist      30
-    verbose    0
-    errorType    normResid
-  }
-   seed 12345
-   LinearRamp{
-     nParameter         1
-     parameters      chi 0 1   0.01
-   }
-   LMBdStep{
-      mobility  4.0E-3
+    seed 12345
+    LMBdStep{
+      mobility  1.0E-2
+    }
+    LrAmCompressor{
+      epsilon      1.0e-4
+      maxItr       200
+      maxHist      30
+      verbose      0
+      errorType    normResid
+    }
+    LinearRamp{
+      nParameter    1
+      parameters    chi  0  1   0.1 
     }
     AnalyzerManager{
       baseInterval    1
+
+      StepLogger{
+        interval        100
+      }
+
       ChiDerivative{
-            interval        1
-            outputFileName  out/dHdchi
+        interval        1
+        outputFileName  out/dHdchi
       }
+
       HamiltonianAnalyzer{
-            interval        1
-            outputFileName  out/mcHamiltonian
-            nSamplePerBlock 1
+        interval        1
+        outputFileName  out/mcHamiltonian
+        nSamplePerBlock 1
       }
+
       BinaryStructureFactorGrid{
-            interval        1000
-            outputFileName  out/structureFactor
-            nSamplePerBlock 2
+        interval        1000
+        outputFileName  out/structureFactor
+        nSamplePerBlock 2
       }
 
     }
+
   }
 
 }
 
-    unitCell cubic   3.2
