@@ -78,7 +78,9 @@ namespace Rpc {
       bool isEnd = false;
       std::string className;
       bdStepPtr_ =
-         bdStepFactoryPtr_->readObject(in, *this, className, isEnd);
+         bdStepFactoryPtr_->readObjectOptional(in, *this, 
+                                               className, 
+                                               isEnd);
       if (!hasBdStep() && ParamComponent::echo()) {
          Log::file() << indent() << "  BdStep{ [absent] }\n";
       }

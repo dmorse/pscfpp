@@ -1,5 +1,6 @@
-#ifndef RPC_FIELD_CONFIG_READER_TPP
-#define RPC_FIELD_CONFIG_READER_TPP
+#ifndef RPG_RGRID_TRAJECTORY_READER_TPP
+#define RPG_RGRID_TRAJECTORY_READER_TPP
+
 /*
 * PSCF - Polymer Self-Consistent Field Theory
 *
@@ -7,18 +8,17 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "FieldConfigReader.h"
-
-#include <rpc/System.h>
+#include "RGridTrajectoryReader.h"
+#include <rpg/System.h>
+#include <pscf/math/IntVec.h>
 #include <pscf/mesh/MeshIterator.h>
 #include <util/misc/ioUtil.h>
-
-#include <sstream>
 #include <iostream>
 #include <string>
 
 namespace Pscf {
-namespace Rpc {
+namespace Rpg
+{
 
    using namespace Util;
 
@@ -26,22 +26,22 @@ namespace Rpc {
    * Constructor. 
    */
    template <int D>
-   FieldConfigReader<D>::FieldConfigReader(System<D>& system)
+   RGridTrajectoryReader<D>::RGridTrajectoryReader(System<D>& system)
     : TrajectoryReader<D>(system),
       systemPtr_(&system),
       isAllocated_(false)
    {}
 
    template <int D>
-   void FieldConfigReader<D>::allocate()
+   void RGridTrajectoryReader<D>::allocate()
    {  
       const int nMonomer = system().mixture().nMonomer();
       UTIL_CHECK(nMonomer > 0);
-      meshDimensions_ = system().domain().mesh().dimensions();
+      const IntVec<D> dimensions = system().domain().mesh().dimensions();
       if (!isAllocated_){
          wField_.allocate(nMonomer);
          for (int i = 0; i < nMonomer; ++i) {
-            wField_[i].allocate(meshDimensions_);
+            wField_[i].allocate(dimensions);
          }
          isAllocated_ = true;
       }
@@ -51,32 +51,29 @@ namespace Rpc {
    * Open file and setup memory.
    */
    template <int D>
-   void FieldConfigReader<D>::open(std::string filename)
+   void RGridTrajectoryReader<D>::open(std::string filename)
    {
       system().fileMaster().open(filename, inputfile_);
       allocate();
    }
  
    template <int D>
-   void FieldConfigReader<D>::readHeader()
+   void RGridTrajectoryReader<D>::readHeader()
    { 
       // Read Header
       int nMonomer = system().mixture().nMonomer();
-      Domain<D> const & domain = system().domain();
-      FieldIo<D> const & fieldIo = domain.fieldIo();
-      UnitCell<D> tmpUnitCell;
-      bool hasSymmetry;
-      fieldIo.readFieldHeader(inputfile_, nMonomer, tmpUnitCell, 
-                              hasSymmetry);
-      system().setUnitCell(tmpUnitCell);
+      Domain<D> & domain = system().domain();
+      FieldIo<D> & fieldIo = domain.fieldIo();
+      UnitCell<D> & unitcell = domain.unitCell();
+      bool isSymmetric;
+      fieldIo.readFieldHeader(inputfile_, nMonomer, unitcell, isSymmetric);
       Log::file() << "Read Header" << "\n";
    }
-
    /*
    * Read frame, return false if end-of-file
    */
    template <int D>
-   bool FieldConfigReader<D>::readFrame()
+   bool RGridTrajectoryReader<D>::readFrame()
    {
       // Preconditions
       if (!isAllocated_) {
@@ -100,7 +97,7 @@ namespace Rpc {
       line >> value;
       int step;
       step = std::stoi(value);
-      Log::file()<< "step "<< step <<"\n";
+      Log::file() << "step "<< step <<"\n";
       #endif
       
       // Read ITEM: NUMBER OF Mesh
@@ -125,7 +122,7 @@ namespace Rpc {
    * Close trajectory file.
    */
    template <int D>
-   void FieldConfigReader<D>::close()
+   void RGridTrajectoryReader<D>::close()
    {  inputfile_.close();}
    
 } 

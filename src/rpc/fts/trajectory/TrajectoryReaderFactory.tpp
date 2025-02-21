@@ -6,7 +6,7 @@
 #include <rpc/System.h>
 
 // Subclasses of ConfigIo
-#include "FieldConfigReader.h"
+#include "RGridTrajectoryReader.h"
 
 namespace Pscf {
 namespace Rpc {
@@ -34,9 +34,10 @@ namespace Rpc {
       ptr = trySubfactories(className);
       if (ptr) return ptr;
 
-      if (className == "FieldConfigReader") {
-        ptr = new FieldConfigReader<D>(*sysPtr_);
-      } 
+      if (className == "RGridTrajectoryReader" || className == "TrajectoryReader") {
+         ptr = new RGridTrajectoryReader<D>(*sysPtr_);
+      }
+ 
       return ptr;
    }
 
