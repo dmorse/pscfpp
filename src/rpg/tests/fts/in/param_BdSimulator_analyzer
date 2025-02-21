@@ -1,22 +1,8 @@
 BdSimulator{
-   LMBdStep{
-      mobility        1.0E-3
-   }
-   LrAmPreCompressor{
-      epsilon      1.0e-4
-      maxItr       200
-      maxHist      30
-      verbose	 0
-      errorType    rmsResid
-   }
    AnalyzerManager{
       baseInterval    1
       StepLogger{
          interval        5
-      }
-      TrajectoryWriter{
-         interval        1
-         outputFileName  out/trajectory_analyzer
       }
       HamiltonianAnalyzer{
          interval        1
@@ -29,3 +15,18 @@ BdSimulator{
       }
    }
 }
+
+   LMBdStep{
+      mobility        1.0E-3
+   }
+   LrAmPreCompressor{
+      epsilon      1.0e-4
+      maxItr       200
+      maxHist      30
+      verbose	 0
+      errorType    rmsResid
+   }
+      TrajectoryWriter{
+         interval        1
+         outputFileName  out/trajectory_analyzer
+      }

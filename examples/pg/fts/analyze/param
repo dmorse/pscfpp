@@ -30,11 +30,17 @@ System{
   McSimulator{
     AnalyzerManager{
       baseInterval    1
+
+      StepLogger{
+        interval       10
+      }
+
       HamiltonianAnalyzer{
         interval        1
         outputFileName  out/mcHamiltonian
         nSamplePerBlock 2
       }
+
     }
   }
 }
