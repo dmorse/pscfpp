@@ -286,12 +286,8 @@ namespace Rpg {
       system().fileMaster().openOutputFile(outFileName, out);
 
       // Write data file, with thermodynamic properties at end
-      out << "System{" << std::endl;
-      system().mixture().writeParam(out);
-      system().interaction().writeParam(out);
-      out << "}" << std::endl;
+      system().writeParamNoSweep(out);
       out << std::endl;
-      out << "unitCell       " << system().unitCell();
       system().writeThermo(out);
       out.close();
 
