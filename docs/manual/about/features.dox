@@ -44,7 +44,7 @@ the ordered structure. In FTS simulations, the simulation unit cell often
 represents a larger region that, for simulations of ordered phases, may 
 contain multiple crystallographic unit cells.  
 
-* **Features for SCFT or FTS on periodic systems (pscf_pc and pscf_pg):**
+* **Features for SCFT or PS-FTS on periodic systems (pscf_pc and pscf_pg):**
 
   - Accurate pseudo-spectral solution of the modified diffusion equation
     using an algorithm that is accurate to 4th order in the contour
@@ -69,6 +69,12 @@ contain multiple crystallographic unit cells.
   - Built-in database of symmetry operations for all 230 3D space groups
     and 17 2D plane groups for use in SCFT
 
+  - Inhomogeneous density constraints (a "mask")
+
+  - External fields
+
+  - Thin polymer films (implemented using mask and external field features)
+
 * **Features for PS-FTS (pscf_pc and pscf_pg):**
 
   - Implementation of both Monte Carlo (MC) and Brownian dynamics (BD) 
@@ -81,19 +87,6 @@ contain multiple crystallographic unit cells.
 
   - BD algorithms: predictor corrector and Leimkuhler-Matthews step 
     algorithms
-
-* **SCFT features unique to pscf_pc:**
-
-  - Inhomogeneous density constraints (a "mask")
-
-  - External fields
-
-  - Thin polymer films
-
-The mask and external field features are combined in pscf_pc to enable
-simulations of thin films. A mask is used to constrain a polymer material
-to a slit within a periodic supercell, and localized external fields are 
-used to represent selective interactions with the top and bottom surfaces.
 
 <BR>
 \ref about_programs_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp;

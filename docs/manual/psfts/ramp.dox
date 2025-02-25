@@ -1,47 +1,82 @@
+
+
 /*! \page psfts_ramp_page Parameter Ramps
 
 \ref psfts_analysis_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
 \ref psfts_perturb_page   (Next)
 <BR>
 
-The "ramp" feature allows a user to perform a simulation in which 
+\section psfts_ramp_concept_sec Ramp Concept
+
+The "ramp" feature of PSCF allows a user to perform a simulation in which 
 one or more of the parameters of the field theoretic Hamiltonian vary 
 continuously over the course of the simulation. One possible reason to
-this is as an attempt to approximately identify a phase transition, 
-such as an order-disorder transition, by looking for evidence of a 
-spontaneous phase transformation that occurs during such a simulation. 
-Another possible purpose of a ramp is to implement continuous 
-thermodynamic integration calculations.
+this is as an attempt to approximately identify a phase transition, such 
+as an order-disorder transition, by looking for evidence that a phase
+phase transition occurs spontaneously during such a simulation. 
+Another possible purpose of a ramp is to implement a continuous 
+thermodynamic integration calculation.
 
 A parameter ramp is enabled by adding an optional, selectable Ramp 
 block within the Simulator block of the parameter file.  When present, 
-this Ramp block must appear with the BdSimulator or McSimulator block 
-immediately after the Compressor block, as discussed on a 
-\ref psfts_param_page "previous page".  
+this Ramp block must appear within the BdSimulator or McSimulator block 
+after the Compressor block, and after any Perturbation block, as 
+discussed \ref psfts_param_page "previously".  
+
+The Ramp block has been programmed as a selectable block to allow for
+later extension, but only one type of ramp algorithm is provided with
+the current version of PSCF, as discussed below.
+
+\section psfts_ramp_linear_sec Linear Ramp 
 
 The only type of ramp that is currently available is a linear ramp 
-algorithm that is implemented by the class LinearRamp. The Ramp block 
-has been programmed as a selectable block simply to allow for later
-extension, though there is currently only one choice. The LinearRamp 
-class allows the user to perform a simulation in which almost any 
-physical parameter of the Hamiltonian, or any subset of these 
-parameters, varies linearly with the number of BD or MC steps 
-completed the beginning of the simulation.  The LinearRamp class 
-is the default ramp algorithm (since it is currently the only one). 
-The opening line of the parameter block for this class may thus
-contain either the generic block label "Ramp" or a specific block 
-label "LinearRamp". 
+algorithm that is implemented by class LinearRamp.  The LinearRamp class 
+allows a user to perform a simulation in which almost any physical 
+parameter of the Hamiltonian that is represented by a real number, or 
+any subset of these parameters, varies linearly with the number of 
+BD or MC steps completed since the beginning of the simulation. The 
+design and interface of the LinearRamp class are closely analogous 
+to those of the LinearSweep class, which is used to program SCFT 
+parameter sweeps.  Because the LinearRamp class is the default Ramp 
+algorithm (since it is currently the only one), the opening line of 
+the associated parameter block may contain either the generic block 
+label "Ramp" (thus choosing the default) or the specific class name 
+"LinearRamp". 
 
-A full description of the parameter file format for LinearSweep class 
-is given \subpage rpc_LinearRamp_page "here" .
+A full description of the parameter file format for a LinearRamp block 
+is given \subpage rpc_LinearRamp_page "here" . As already noted, this
+format is very similar to that of the LinearSweep class. The parameter
+block contains an 1D array in which each line contains an identifier 
+for a parameter that should ramped and value that indicates how much 
+that parameter should be changed. 
+
+A more detailed description of the syntax for a LinearRamp block, given 
+\subpage rpc_LinearRamp_page "here", gives a complete list of the string 
+labels that are used to different types of parameters that can be varied 
+during such a ramp.
+
+The initial value of each parameter that is varied by a LinearRamp is 
+given by the value that would have been used if the Ramp block were 
+absent. This value must be knwon from on parameters defined earlier in 
+the parameter file or (in the case of unit cell parameters) may be given
+in a field file that is read before beginning a simulation.  The final 
+value at the end of a simulations is given by the sum of that initial 
+value and the range specified in the Ramp block.  The change per step 
+required to accomplish this is computed for each ramped parameter just 
+before beginning a simulation, based on the planned number of steps 
+for the simulation is known. The number of BD or MC steps is supplied 
+as a parameter to the SIMULATE command.
+
+\section psfts_ramp_example_sec Example
 
 Below, we show an example of parameter file for BD simulation for a 
-diblock copolymer melt in which the chi parameter is ramped from 
-chi = 14 to 18 over the course of a simulation.  The main difference
-from previous examples is the presence of a Ramp subblock within the 
-BdSimulation block, immediately after the Compressor block. In this
-example, we have used the generic name Ramp as the label for this
-block in order to choose LinearRamp as the default ramp algorithm.
+diblock copolymer melt containing chains of total length 1.0 in which 
+the chi parameter is ramped from chi = 14 to 18 over the course of a 
+simulation.  The main difference from previous examples is the 
+presence of a Ramp subblock within the BdSimulation block. In this
+example, the Ramp block appears immediately after the Compressor 
+block, and this block uses the generic block label Ramp in order to 
+choose a LinearRamp by default.
 \code
 System{
   Mixture{
@@ -104,25 +139,22 @@ System{
   }
 }
 \endcode
+
+<b> Discussion </b>:
 Within the Ramp block, the first parameter, named nParameters, gives
 the number of parameters that will be varied during the simulation.
 In this example, nParameter = 1 because we only want to vary a single
 chi parameter. The next element is an array named parameters[ ... ] 
 in which each line specifies a parameter that will be varied, and how
-much it should be changed. In this example, the array only contains
-one line, which specifies that the chi parameter chi(0, 1) that controls 
-interaction between monomers of types 0 and 1 (i.e., A and B) should be 
-increased by 4.0 over the course of the simulation. Because chi(0,1) 
-is given an initial value of 14.0 in the Interaction block, the chi
-parameter will thus increase from 14 to 18 over the course of a
-simulation.  The change per step required to accomplish this is
-computed after the planned number of steps for the simulation is 
-known. The number of steps given as a parameter to the SIMULATE 
-command.
+much it should be changed. The number of elements (or lines) in this
+array must be equal to nParameters.  In this example, because 
+nParameter = 1 , the array only contains one line, which specifies 
+that the chi parameter chi(0, 1) that controls interaction between 
+monomers of types 0 and 1 (i.e., A and B) should be increased by 4.0 
+over the course of the simulation. Because chi(0,1) is given an initial 
+value of 14.0 in the Interaction block, the chi parameter will thus 
+increase from 14 to 18 over the course of a simulation.  
 
-The more detailed description of the syntax for the Ramp block 
-given \subpage rpc_LinearRamp_page "here" shows all the different
-types of parameters that can be varied during a ramp.
 
 <BR>
 \ref psfts_analysis_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 

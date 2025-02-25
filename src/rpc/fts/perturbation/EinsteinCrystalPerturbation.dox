@@ -1,0 +1,69 @@
+/*! 
+\page rpc_EinsteinCrystalPerturbation_page Rpc::EinsteinCrystalPerturbation
+
+This class is designed to enable use of Einstein crystal method of 
+computing free energies by thermodynamic integration.
+
+\section rpc_EinsteinCrystalPerturbation_algorithm_sec Mathematical Definition
+
+The EinsteinCrystalPerturbation class defines a perturbation for a system 
+with two types of monomer (nMonomer = 2) of the form
+\f[
+  H_{1} = (1-\lambda)[ H_{{\rm EC}} - H_{0} ]
+\f]
+in which \f$ \lambda \f$ is a parameter in the range 
+\f$ \lambda \in [0, 1] \f$,
+\f$ H_{0} \f$ is the standard unperturbed Hamiltonian and
+\f$ H_{{\rm EC}} \f$ is the Einstein crystal Hamiltonian, described
+below. Adding this to the unperturbed Hamiltonian gives a total
+Hamiltonian
+\f[
+   H = \lambda H_{0} + (1-\lambda) H_{{\rm EC}}
+\f]
+that interpolates linearly between the Einstein crystal Hamiltonian
+and unperturbed Hamiltonians, giving the Einstein crystal in the limit
+\f$ \lambda = 0 \f$ and recovering the unperturbed standared model in
+the limit \f$ \lambda = 1 \f$.
+
+The Einstein crystal Hamiltonian used here is defined as an integral
+\f[
+  H_{{\rm EC}} = \frac{\alpha}{v} \int d{\bf r} 
+  [ W_{-}({\bf r}) - W_{-}^{({\bf r})}({\bf r}) ]^2
+\f]
+in which \f$ W_{-}({\bf r}) = [w_{0}({\bf r}) - w_{1}({\bf r})]/2 \f$
+is the exchange field,
+\f$ W_{-}^{({\bf r})}({\bf r}) \f$ is a "reference" exchange field 
+configuration, and \f$ \alpha \f$ is a user-supplied parameter that 
+controls the strength of fluctuations about the reference field. 
+
+The reference field configuration must be read from a file during
+setup of a simulation, and so the name of that file must be 
+provided as parameter.
+
+\section rpc_EinsteinCrystalPerturbation_parameter_sec Parameter File
+
+The parameter file format for this class is shown below:
+\code
+EinsteinCrystalPerturbation{
+  referenceFieldFile   string
+  lambda               real
+  alpha                real
+}
+\endcode
+Meanings of the parameters are described briefly below:
+<table>
+  <tr>
+    <td> <b> Label </b>  </td>
+    <td> <b> Description </b>  </td>
+  </tr>
+  <tr>
+    <td> lambda </td>
+    <td> charging parameter in range 0 [Einstein Crystal] to 1 [unperturbed] </td>
+  </tr>
+  <tr>
+    <td> alpha </td>
+    <td> prefactor in harmonic penalty </td>
+  </tr>
+</table>
+
+*/

@@ -151,7 +151,11 @@ entry is is given for the the second index.
     <td> uId         </td><td>        </td>
   </tr>
   <tr>
-    <td> v_monomer   </td><td> monomer reference volume  </td>
+    <td> v_monomer   </td><td> monomer reference volume    </td>
+    <td>         </td><td>        </td>
+  </tr>
+  <tr>
+    <td> lambda_pert   </td><td> perturbation parameter    </td>
     <td>         </td><td>        </td>
   </tr>
 </table>
@@ -159,6 +163,15 @@ The two indices for a Flory-Huggins chi parameter refer to indices in
 the chi matrix maintained by Interaction. Changes to element chi(i, j)
 automatically also update chi(j, i) for \f$ i \neq j \f$, thus 
 preserving the symmetry of the matrix.
+The parameter types v_monomer and lambda_pert are global values that
+are not associated with any indices. All other parameter types are
+identified by at least one associated index.
+
+\section rpc_LinearRamp_perturbation_sec Perturbation Parameter
+
+The parameter type "lambda_pert" is designed for use with an 
+Perturbation, and allows the user to ramp the value of the parameter 
+that controls the strength of the perturbation, denoted by "lambda".
 
 */
 }

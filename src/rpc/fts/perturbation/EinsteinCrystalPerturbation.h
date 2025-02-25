@@ -107,17 +107,17 @@ namespace Rpc {
       // Eigenvector components of the reference w fields
       DArray< RField<D> > wc0_;
       
-      // Current Einstein Crystal hamiltonian 
+      // Current Einstein crystal Hamiltonian 
       double ecHamiltonian_;
       
-      // Current Block copolymer hamiltonian 
-      double bcpHamiltonian_;
+      // Current unperturbed Hamiltonian 
+      double unperturbedHamiltonian_;
       
-      // Saved Einstein Crystal hamiltonian  
+      // Saved Einstein crystal Hamiltonian  
       double stateEcHamiltonian_;
       
-      // Saved Block copolymer hamiltonian 
-      double stateBcpHamiltonian_;
+      // Saved unperturbed Hamiltonian 
+      double stateUnperturbedHamiltonian_;
       
       // Reference FieldFileName
       std::string referenceFieldFileName_;

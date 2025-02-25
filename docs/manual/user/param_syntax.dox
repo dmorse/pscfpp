@@ -332,49 +332,55 @@ default.
 
 \section user_param_syntax_selectable_sec Selectable Blocks
 
-Some blocks in a PSCF parameter file are "selectable".  A selectable 
-block is one that may contain any of several blocks that are associated 
-with C++ classes that serve analogous purposes but that rely on 
-different algorithms.  (See technical note below for a discussion of
-the relationship between selectable block labels and C++ subclass 
-names). As already noted, the block that represents an iterator in a 
-PSCF program is always a selectable block. The use of a selectable 
-block for the iterator allows users to specify a choice from among 
-several different available iterator algorithms. 
+Some blocks within a PSCF parameter file are "selectable".  A selectable 
+block is one that may start with the block label for any of a limited 
+number of algorithms that serve analogous purposes, but that are 
+implemented by instances of different C++ classes.  (See technical note 
+below for a discussion of the relationship between selectable block 
+labels and C++ subclass names). 
 
-A user's choice of one of several options for a selectable block is 
-specified by the label used in the opening line of the block, before
-the opening curly bracket. That block label is compared to a list of 
-label strings for available options.  If the label for a selectable 
-block in the parameter files matches one such string, the option 
-corresponding to that label is selected. Different possible options 
-for a selectable block generally require different parameters, and 
-thus require different formats for the contents of the body of the
-block.  The format of the body of a selectable block must match the 
-format expected for the type of block declared in the block label. 
+As already noted, the block that selects an SCFT iterator algorithm is 
+always a selectable block. The use of a selectable block for the iterator 
+allows users to specify a choice from among several different available 
+iterator algorithms. 
 
-A default choice is normally defined for each selectable block. The
-default choice may be selected either by using the generic name for 
-the type of element (e.g., "Iterator") or the name for a specific 
+A user's choice of one options for a selectable block from a set of one or 
+more possible options is specified by the label used in the opening line 
+of the block, in the line that ends with an opening curly bracket.  That 
+block label is compared to a list of label strings for available options. 
+If the label for a selectable block in the parameter files matches one 
+such string, the option corresponding to that label is selected. 
+
+Different possible options for a selectable block generally require 
+different input parameters, and so require different formats for the 
+contents of the body of the block.  The format of the body of a selectable 
+block must match the format expected for the type of block declared in 
+the block label. 
+
+A default choice of algorithm is defined for every selectable block. 
+The default choice may be selected either by using the generic name for 
+the type of element (e.g., "Iterator") or the label for the specific 
 algorithm.  In the example shown on the previous page, the default 
 choice of a iterator is an Anderson-Mixing iterator that is implemented 
 by a class named AmIterator. Because it is the default choice, this 
-algorithm may be selected by using a parameter file in which the 
-block begins with the generic label "Iterator", as in the example. 
-The same algorithm may also be selected, however, by using a block 
-that starts with the specific label "AmIterator".
+algorithm may be selected by using a parameter file in which the block 
+begins with the generic label "Iterator", as is done in the example. 
+The same algorithm could also have been selected, however, by using a 
+block that starts with the specific label "AmIterator".
  
 <i> Technical comments (for users familiar with C++): </i>
 
-The implementation of selectable parameter file blocks in PSCF is
-based on C++ inheritance and polymorphism. The different options for 
-a selectable block are always implemented by different subclasses of 
-a common base class. The base class defines a shared C++ interface 
-for objects of the relevant type.  The generic name of the block in 
-the parameter file (i.e., the name that can also be used as a label 
-to select the default option) is always the name of the relevant base 
-class.  The parent object (e.g., the System) has a member variable 
-which is a pointer to an instance of the base class.
+The implementation of selectable parameter file blocks in PSCF is 
+based on C++ inheritance and polymorphism. The different options for a 
+selectable block are always implemented by different subclasses of a 
+common base class. The base class defines a required C++ class interface 
+for objects of the relevant type, thus allowing them to be used 
+interchangeably.  The generic name of the block in the parameter file 
+(i.e., the name that can also be used as a label to select the default 
+option) is always the name of the relevant base class.  The parent 
+object (e.g., the System) has a member variable which is a pointer to 
+an instance of that base class, which normally points to an instance
+of the subclass declared in the block label. 
 
 For example, different iteration algorithms for a particular PSCF
 program are implemented by subclasses of a base class named "Iterator".
@@ -383,15 +389,17 @@ algorithms. The parent System object has a private member variable
 that is a pointer of type Iterator* that can point to an instance of 
 any subclass of class Iterator.
 
-If the block label input for a selectable block matches the name of 
-an available subclass of the relevant base class (e.g., a subclass
-of Iterator), then an instance of the selected subclass is constructed 
-after the opening line of the block is read and interpreted.  The 
-address of that new object is then assigned to the base class pointer 
-owned by the parent class (i.e., the Iterator* pointer variable owned 
-by the parent System).  The "readParameters" member function of the 
-new object is then invoked to read the body of the selectable block, 
-using the format appropriate to the chosen subclass. 
+If the block label for a selectable block matches the name of an 
+available subclass of the relevant base class (e.g., a subclass of 
+Iterator), then an instance of the selected subclass is constructed 
+after the opening line of the block is read and interpreted.  If the
+block label matches the name of the base class (e.g., "Iterator") then
+an instance of the default subsclass is constructed. The address of that 
+new object is then assigned to the base class pointer owned by the 
+parent class (i.e., the Iterator* pointer variable owned by the parent 
+System).  The "readParameters" member function of the new object is 
+then invoked to read the body of the selectable block, using the format 
+appropriate to the chosen subclass. 
 
 <BR>
 \ref user_param_example_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 

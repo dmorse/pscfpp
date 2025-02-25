@@ -4,16 +4,16 @@
 \ref user_param_mixture_page  (Next)
 <BR>
 
-Users of PSCF require precise and complete documentation of the required 
-format for each block that can appear with a parameter file of a PSCF 
+Users of PSCF require precise and complete documentation of the required
+format for each block that can appear with a parameter file of a PSCF
 program.  This page describes a representation that is used in the PSCF
-documentation to indicate the format of each parameter file block. This 
-format representation is similar to that of the actual block, supplemented 
-by notation to indicate data types of parameter values, and by the use of 
-special symbols to indicate syntactical elements such as array-valued 
+documentation to indicate the format of each parameter file block. This
+format representation is similar to that of the actual block, supplemented
+by notation to indicate data types of parameter values, and by the use of
+special symbols to indicate syntactical elements such as array-valued
 parameters, optional elements and selectable subblocks.
 
-\section user_format_example1_sec Example 1
+\section user_format_example1_sec Example 1: pscf_1d
 
 As a simple first example of this sort of description, the overall syntax
 for a pscf_1d parameter file is shown in skeleton form below:
@@ -22,23 +22,23 @@ System{
    Mixture{ ... }
    Interaction{ .... }
    Domain{ ... }
-   Iterator#*{ ... }
+   Iterator#{ ... }
    Sweep#*{ ... }
 }
 \endcode
 This description should look familiar, except for the inclusion of a
 Sweep{...} block, which is an optional element that was omitted from our
 example file.  In such a description, the syntax Label{...} is used to
-indicate a nested subblock, for which the format of the subblock must be 
-described separately somewhere else.  The appearance of an asterisk (*) 
-after any block or parameter label is used to indicate that the element is 
-optional (i.e., omittable).  Parameters and subblock labels that are not 
+indicate a nested subblock, for which the format of the subblock must be
+described separately somewhere else.  The appearance of an asterisk (*)
+after any block or parameter label is used to indicate that the element is
+optional (i.e., omittable).  Parameters and subblock labels that are not
 followed by an asterisk thus indicate required elements. The appearance
-of a "#" symbol after a block label indicate that the block is selectable. 
-The above description thus indicates that the Iterator and Sweep blocks 
-are both selectable optional elements.
+of a "#" symbol after a block label indicate that the block is selectable.
+The above description thus indicates that the Iterator block is selectable
+but required, and that the Sweep block is both selectable and optional.
 
-\section user_format_example2_sec Example 2
+\section user_format_example2_sec Example 2: Mixture Block
 
 As a second example, the format for a Mixture block in any PSCF parameter
 file can be given compactly as follows:
@@ -76,7 +76,7 @@ of parameter values, and any other required supplementary information.
 The following conventions, most of which are illustrated in the above
 examples, are used in this type of parameter file format summary:
 
- - <b> Parameters </b>: Individual parameters are indicated using the 
+ - <b> Parameters </b>: Individual parameters are indicated using the
    syntax
    \code
        label   type
@@ -85,10 +85,10 @@ examples, are used in this type of parameter file format summary:
    "type" is a string that identifies the data type of the parameter
    value (e.g., int, real, string, etc.).
 
-   The main labels used to indicate elementary data types are "int" for 
+   The main labels used to indicate elementary data types are "int" for
    integer, "real" for a real (i.e., floating point) number, "bool" for
-   a boolean value, a "string" for a string.  Values of boolean variables 
-   are given as 0 for false and 1 for true.  String parameters may not 
+   a boolean value, a "string" for a string.  Values of boolean variables
+   are given as 0 for false and 1 for true.  String parameters may not
    contain any whitespace.
 
  - <b> Arrays </b>: Parameters that represent one-dimensional arrays are
@@ -97,9 +97,9 @@ examples, are used in this type of parameter file format summary:
        label  Array[ type ]
    \endcode
    where "label" is the name of the array, and "type" is a string that
-   identifies the data type of a single element.  For example, 
-   "monomers Array[real]" indicates that monomers is a one-dimensional 
-   array in which each element is a real floating point number. 
+   identifies the data type of a single element.  For example,
+   "monomers Array[real]" indicates that monomers is a one-dimensional
+   array in which each element is a real floating point number.
 
  - <b> Matrices </b>: Parameters that represent two-dimensional arrays
    or matrices that must be input in element format are indicated using
@@ -125,10 +125,10 @@ examples, are used in this type of parameter file format summary:
    \code
       label*   type
    \endcode
-   where "label" denotes the actual label string. 
+   where "label" denotes the actual label string.
 
- - <b> Default values </b>: Default values for optional parameters may 
-   be indicated by a comment enclosed in parentheses after the label and 
+ - <b> Default values </b>: Default values for optional parameters may
+   be indicated by a comment enclosed in parentheses after the label and
    data type. The comment is often of the form "( ... by default)", where
    ... denotes the actual default value.  The default value is the value
    assigned to the associated variable if the parameter is omitted from
@@ -140,14 +140,24 @@ examples, are used in this type of parameter file format summary:
    \code
        Label#{ ... }
    \endcode
-   for a required but selectable subblock.  The label for an selectable 
-   subblock that is also optional place an asterisk after the # symbol, 
-   giving Label#*{ .... }.  The label for a selectable subblock in a 
-   format description should be the generic name for the subblock 
-   (e.g., the generic name "Iterator", rather than the name of a 
-   class that implements a specific iterator algorithm). This generic 
-   name can also be used as a block label to select the default choice 
+   for a required but selectable subblock.
+   The label for a selectable subblock in a
+   format description should be the generic name for the subblock
+   (e.g., the generic name "Iterator", rather than the name of a
+   class that implements a specific iterator algorithm). This generic
+   name can also be used as a block label to select the default choice
    for this block.
+
+ - <b> Selectable optional subblocks </b>: The label for a selectable
+   block that is also optional should contain an asterisk after the #
+   symbol, giving a format description of the form
+   \code
+      Label#*{ ... }
+   \endcode
+   where Label denotes the generic name of the block.  For example, the
+   Sweep block of a pscf_1d parameter file is both selectable and optional,
+   and so is described in the first of the above examples by a line of the
+   form "Sweep#*{ ... }.
 
 <BR>
 \ref user_param_syntax_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp;

@@ -4,69 +4,101 @@
 \ref psfts_ramp_page    (Next)
 <BR>
 
-The pscf_pc and pscf_pg can both use the analyzer classes to 
-compute, output and analyze some set of physical variables by 
-either of two methods. Data analysis may be carried out either:
+The pscf_pc and pscf_pg can both use the available analyzer classes 
+to compute, output and analyze some set of physical variables by 
+either of two methods. 
 
-   - During a simulation (on the fly)
+   - <b> On-the-fly </b> : By analyzing data during a simulation 
 
-   - After the simulation, by postprocessing a field trajectory
+   - <b> Postprocessing </b> : Analyzing data after a simulation is 
+     completed, by postprocess analysis of a field trajectory file
 
-The first method has been already been discussed: To analyze and
-output data during a simulation, one simply includes a chosen 
-set of analyzer subblocks to parameter file used to initialize 
-a simulation.
+On-the-fly data analysis already been discussed, as part of the discussion 
+of parameter files used to initialize a simulation: To periodically 
+perform data analysis and file IO operations during a simulation, one 
+must include an appropriate set of analyzer subblocks within the
+AnalyzerManager block of the parameter file used to initialize the 
+simulation.
 
-We focus in the remainder of this page on postprcessing of a field 
-trajectory files that was generated during an earlier simulation.
-A field trajectory file is a file that contains a sequence of 
-frames, each of which contains the configuration of the w-fields
-at the completion of a particular BD or MD step. The content of
-each frame is the same as the data section of the r-grid field
-file format.  
+We focus in the remainder of this page on generation and postprocess
+analysis of field trajectory files.
 
-To generate a trajectory file during a BD or MC simulation, one 
-invoke pscf_pc or pscf_pc with a parameter file that contains an
-TrajectoryWriter block in the AnalyzerManager block, and with a
-command file that contains a SIMULATE command.  The interval 
-parameter of the TrajectoryWriter block determines the number of 
-BD or MC steps between frames of the trajectory file. 
+\section psfts_algorith_trajectory_sec Field Trajectory Files
+
+A field trajectory file is a file that is output during a simulation 
+that contains a sequence of w-field configurations obtained at regular
+intervals during the simulation. This is analogous to the kind of 
+trajectory file produced during an MD simulation of a particle based 
+model, which contains lists of particle positions and velocities. 
+A trajectory file for a field theoretic simulation contains a sequence 
+of frames that are written to file at regular intervals, in which each 
+frame contains the configuration of the w-fields at the completion of 
+a particular BD or MD step. 
+
+To generate a trajectory file during a BD or MC simulation, one must
+initialize the simulation using a parameter file that contains a
+TrajectoryWriter subblock within the AnalyzerManager block.  The 
+"interval" parameter of the TrajectoryWriter block determines the 
+number of BD or MC steps between frames of the trajectory file.  
 Trajectory file frames are usually written somewhat infrequently, 
-with an interval of 10 to 100 steps, rather than writing after
-every step.
+with an interval of 10 to 100 steps, rather than writing the field 
+configuration after every step.
+
+\section psfts_analysis_postprocess_sec Postprocess Analysis
 
 To postprocess such a trajectory file, one must invoke pscf_pc or 
-pscf_pg a second time, using a parameter file that is slightly
-different from the one used to initialize the earlier simulation,
-and using and a command file that contains an ANALYZE command. 
-When the ANALYZE command is encountered, the program reads a
-sequences of from frames the trajectory file and applies a set
-of data analysis operations specified by analyzer blocks of the
-associated parameter file.  
+pscf_pg a second time, using a command file that contains an ANALYZE 
+command. ANALYZE command is encountered, pscf_pc or pscf_pg to reads 
+and process a sequence of frames from a specified trajectory file.
 
 The parameter file used to initialize a postprocessing operation 
-normally contains one or more analyzer blocks within the 
-AnalyzerManager block that specify which data analysis operations 
-should be applied to frames of the trajectory file. The same set
-of Analyzer objects can be used for either on-the-fly analysis 
-or postprocessing.
+normally has an AnalyzerManager block containing a set of analyzer 
+subblocks that specify data analysis operations that should be 
+applied to frames of the trajectory file. The same set of Analyzer
+classes are available for use during either on-the-fly analysis or 
+postprocessing. 
 
-When the ANALYZE command is executed, the "interval" parameter 
-associated with each analyzer is interpreted as a number of 
-trajectory file frames between successive data analysis of file
-output operations, rather than as a number of BD or MC simulation.
-Because frames are usually output somewhat infrequently (typically
-every 10 to 100 steps), the interval values for this purpose are
-often set to 1. 
+The ANALYZE command takes four command arguments, named min, max,
+className, and fileName. This command always causes the program to
+read the entire trajectory file, but data analysis operations are
+only applied to frames with a frame index between min and max, 
+inclusive. The className parameter is a string that gives the name
+of a class that wil be used to read the parameter file. In the 
+current version of PSCF, there is only one such class, which should 
+be invoked by using the value "TrajectoryReader". The "fileName"
+parameter gives the name of the trajectory file that should be
+read and processed, given as a path defined relative to the 
+directory from which the pscf_pc or pscf_pg command was invoked.
 
-The main advantage of postprocessing a trajectory file is that it
-allows the user to delay or revise decisions about what types of 
-analysis might be useful.  The main disadvantage of postprocessing 
-is the amount of disk space required to store trajectories, 
-particularly if frames are written at frequent intervals. The main 
-advantage of analyzing some observables during a simulation is that
-doing so may allow more frequent sampling of data without using 
-excessive disk space.
+The "interval" parameter associated with each analyzer is interpreted
+somewhat differently postprocessing of a trajectory file than during
+a simulation. During postprocessing,  each such interval parameter is 
+interpreted as a number of trajectory file frames between successive 
+data analysis or file output operations, rather than as a number of BD 
+or MC simulation steps.  Because frames are usually output somewhat 
+infrequently, the interval values are often set to 1 in parameter files
+used to initialize a postprocessing operation, in order to analyze 
+every frame of available data.
+
+A parameter file that is used to initialize a postprocessing operation
+generally has a slightly different format than one used to initialize
+a simulation. Both types of parameter file must include Mixture, 
+Domain, and Interaction blocks, since the information given in these
+blocks is needed either during a simulation or during postprocessing.
+Such a file must also contain either a BdSimulator or McSimulator 
+block with an AnalyzerManager subblock containing one or more 
+analyzer subblocks. The BdStep or McMoveManager, Compressor, and Ramp 
+subblocks of the Simulator block are not used during postprocessing,
+of a trajectory file, however, and so can all be omitted from a 
+parameter file used for this purpose. 
+
+The main advantage of postprocessing a trajectory file is that it allows 
+a user to delay and revise decisions about what types of analysis might 
+be useful. The main disadvantage of postprocessing is the amount of disk 
+space required to store trajectories, particularly if frames are written 
+at frequent intervals.  Conversely, the main advantage of doing some 
+types of data analysis during a simulation is that doing so may allow 
+more frequent sampling of data without using excessive disk space.
 
 <BR>
 \ref psfts_command_page   (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 

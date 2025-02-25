@@ -7,37 +7,28 @@ An instance of the class Pscf::Rpc::BdSimulator<D> contains all of the
 algorithms and parameters that are needed to enable a partial saddle-point
 field theoretic simulation (PS-FTS) using Brownian dynamic sampling, but 
 that are not needed for self-consistent field (SCFT) calculation. The
-associated parameter file block is one of two possible options 
-(BdSimulator or McSimulator) for the optional, selectable "Simulator" 
-subblock of the main \ref rpc_System_page "System: block of the parameter 
-file. 
+associated parameter file block is one of two possible options (BdSimulato
+r or McSimulator) for the optional, selectable "Simulator" subblock of the 
+main \ref rpc_System_page "System" block of the parameter file. 
 
 The format of a BdSimulator block is given below in skeleton form:
 \code
 BdSimulator{
   seed* int
-  BdStep#{ ... }
-  Compressor#{ ... }
+  BdStep#*{ ... }
+  Compressor#*{ ... }
   Perturbation#*{ ... }
   Ramp#*{ ... }
   AnalyzerManager*{ ... }
 }
 \endcode
-Here, as elsewhere in this documentation, the suffixes # and * after a 
-sub-block name denote selectable and optional elements, respectively. 
+Here, as elsewhere in this documentation, the suffix # after a subblock
+name indicates a selectable subblock, and a * star after any parameter
+file element indicates an optional element.
 
 Each allowed element of a BdSimulator block is described in more detail 
 below:
 <table>
-  <tr>
-    <td> Compressor# </td>
-    <td>
-    A Compressor is an iterative solver that adjusts the Lagrange
-    multiplier chemical potential field in order to satisfy the 
-    incompressibility constraint, thus finding a partial-saddle point 
-    field condition. (selectable and required)
-    </td>
-  </tr>
   <tr>
     <td> seed* </td>
     <td> Optional random seed, which must be a positive integer. If no 
@@ -45,10 +36,27 @@ below:
     a seed generated from the system clock. (optional)
   </tr>
   <tr>
+    <td> BdStep#* </td>
+    <td>
+    The BdStep block prescribes an algorithm for a Brownian dynamics setp,
+    and gives values for the step size and any other parameters required
+    by that algorithm. (selectable and optional)
+    </td>
+  </tr>
+  <tr>
+    <td> Compressor#* </td>
+    <td>
+    A Compressor is an iterative solver that adjusts the pressure-like
+    chemical potential field component in order to satisfy the mean-field
+    incompressibility constraint, thus satisfying the partial-saddle point 
+    criterion. (selectable and optional)
+    </td>
+  </tr>
+  <tr>
     <td> Perturbation#* </td>
     <td>
-    An optional Perturbation block defines a perturbation or modification
-    of the field theoretic Hamiltonian, as for, e.g., the Einstein crystal
+    An optional Perturbation block defines an additive perturbation of 
+    the field theoretic Hamiltonian, as for, e.g., the Einstein crystal
     thermodynamic integration method.  (selectable and optional)
     </td>
   </tr>
@@ -58,18 +66,10 @@ below:
     An optional Ramp block prescribes a continuous change in one or more
     system parameters during the course of a simulation, as used during
     continuous thermodynamic integration. Though this is coded as an
-    optional selectable block, the only option that is currently implemented 
-    is a LinearRamp which prescribes a change in one or more parameters that 
-    change linearly with time (i.e., with the simulation step counter).
-    (selectable and optional)
-    </td>
-  </tr>
-  <tr>
-    <td> BdStep# </td>
-    <td>
-    The BdStep block prescribes an algorithm for a Brownian dynamics 
-    step, and gives values for the step size and any other parameters 
-    required by that algorithm. (selectable and required)
+    optional selectable block, the only option that is currently 
+    implemented is a LinearRamp which prescribes a change in one or more 
+    parameters that change linearly with BD step index (selectable and 
+    optional)
     </td>
   </tr>
   <tr>
@@ -83,11 +83,19 @@ below:
     </td>
   </tr>
 </table>
-The Compressor and BdStep must both be present in order to perform a 
-field theoretic simulation (command SIMULATE), but are not needed for 
-postprocessing of a field trajectory file. The AnalyzerManager block 
-must be present in order to perform postprocess analysis of a 
-trajectory file (command ANALYZE).
+Relationships among blocks:
+
+  - The BdStep and Compressor blocks must both be present in order to
+    perform a BD simulation (command SIMULATE), but may both be omitted 
+    from a parameter file that is used to initialize postprocessing of a 
+    field trajectory file. 
+
+  - If a BdStep is present, the Compressor block is required.
+
+  - A Ramp is only allowed if a BdStep is present.
+
+  - The AnalyzerManager block must be present in order to postprocess
+    a trajectory file (command ANALYZE).
 
 */
 }
