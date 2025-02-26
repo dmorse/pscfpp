@@ -1,40 +1,269 @@
-/*! \page psfts_perturb_page Perturbation
+/*! \page psfts_perturb_page Perturbations and Einstein Crystal Integration
 
 \ref psfts_ramp_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
 \ref developer_page      (Next)
 <BR>
 
-Introduction of a perturbation allows the user to define an arbitrary 
-modification of the field theoretic Hamiltonian, thus creating a model
-with a field theoretic Hamiltonian that may have a different functional
-form than that obtained in the standard model used in PSCF. Thus far, 
-the main use for this has been as a framework for implementing the 
-Einstein crystal method of computing free energies. 
+A perturbation is an optional feature that allows a user to define a 
+modification of the form of the standard field theoretic Hamiltonian.
+Thus far, it has only been used as a framework for implementing the
+Einstein crystal method of computing free energies.
 
-The ramp and perturbation features may be combined by using a ramp to 
-vary a parameter that governs the magnitude of a perturbation.  
-Application of this technique to the Einstein crystal method is
-described below.
+\section psfts_perturb_concept_sec Perturbation Concept
 
-The ramp and perturbation features of PSCF can both be used, together or
-separately, to implement calculations in which free energy differences 
-are computed by thermodynamic integration. Thermodynamic integration is 
-a technique in which the difference in free energies between two states 
-characterized by different values for some parameter are computed by 
-numerically evaluating the integral of a quantity that is equal to the
-derivative of the free energy with respect to the parameter of interest. 
+Any perturbation of the Hamiltonian must be implemented by a subclass
+of a base class named Perturbation. A Perturbation defines a functional
+of the fields, denoted here by \f$ H_{1} \f$, that is added to the
+standard Hamiltonian \f$ H_{0} \f$ to obtain a total Hamiltonian
+\f$ H_{0} + H_{1} \f$.  The perturbation Hamiltonian must depend upon
+a single real parameter, denoted by \f$ \lambda \f$, giving a modified
+Hamiltonian of the form
+\f[
+   H(\lambda) = H_{0} + H_{1}(\lambda)
+\f]
+A Perturbation class must provide methods to compute \f$ H_{1} \f$,
+and to compute its functional derivatives with respect to the fields
+(which are needed to compute forces in Brownian dynamics simulation)
+and the the partial derivative of \f$ H_{1} \f$ with respect to the
+parameter \f$ \lambda \f$ at fixed field values (which is needed for
+thermodynamic integration).
 
+A perturbation is an optional element of a simulation that may be
+added by including a Perturbation subblock of the BdSimulator or
+McSimulator block of a parameter file. If present, the Perturbation
+block must appear immediately after the Compressor block (if any).
+Full descriptions of formats of for the BdSimulator and McSimulator
+parameter file blocks are given \ref rpc_BdSimulator_page "here"
+and \ref rpc_McSimulator_page "here", respectively.
 
-Though both Perturbation and Ramp are implemented as selectable blocks, 
-there is currently only on type of Perturbation available (named 
-EinsteinCrystalPerturbation) and only one type of Ramp (named 
-LinearRamp).  These two classes may be used separately or combined to 
-perform a Einstein crystal calculation using continuous thermodynamic
-integration. 
+The PerturbationDerivative analyzer class is designed to enable
+thermodynamic integration with respect to the \f$ \lambda \f$ parameter
+associated with a perturbation. This analyzer is designed to work with 
+any subclass of Perturbation, and relies on the fact that any such 
+Perturbation is required to define a functions to compute the value 
+of the partial derivative \f$ \partial H_{1} / \partial \lambda \f$ .
+The PerturbationDerivative class provides tools to periodically
+evaluate this partial derivative, compute its time average, and write
+values or block averages of this quantity to a file.
 
+Continuous thermodynamic integration with respect to the parameter lambda 
+asssociated with a perturbation may be performed by using the parameter 
+type *lambda_pert* in the parameter block for the ramp to perform. A ramp 
+that uses this parameter type performs a linear variation of the lambda 
+parameter over the course of a simulation, as discussed 
+\ref rpc_LinearRamp_perturbation_sec "here" .
+The implementation of this feature of the LinearRamp class only uses the
+interface defined by the Perturbation base class, and so is designed to 
+work with any type of perturbation (i.e., any subclass of this base class).
+
+\section psfts_perturb_einstein_sec Einstein Crystal
+
+<b> EinsteinCrystalPerturbation </b>:
+The only type of Perturbation that is provided in PSCF v1.2 is a class
+named EinsteinCrystalPerturbation that enables calculation of free 
+energies by the Einstein crystal method. The resulting perturbation 
+is a functional of the form
+\f[
+   H_{1}(\lambda) = (1 - \lambda)( H_{{\rm EC}} - H_{0} )
+\f]
+in which \f$ H_{0} \f$ is the unperturbed Hamiltonian functional,
+\f$ H_{{\rm EC}} \f$ is the Hamiltonian for an Einstein crystal model
+(described below), and \f$ \lambda \f$ is a parameter that must be in
+the range \f$ 0 \leq f \leq 1 \f$. 
+The EinsteinCrystalPerturbation class currently only works with systems 
+with two monomer types (nMonomer = 2), and it defines a harmonic
+functional
+\f[
+   H_{{\rm EC}} = \frac{\alpha}{v} \int \! d {\bf r} \;
+                  [ W_{-}({\bf r}) - W^{({\rm r})}_{-}({\bf r}) ]^2
+\f]
+in which \f$ W^{({\rm r})}_{-}({\bf r}) \f$ is a reference exchange 
+field provided by the user and \f$ \alpha \f$ is a scalar parameter 
+that controls the magnitude of fluctuations. 
+
+When a perturbation of this form is added to the unperturbed Hamiltonian 
+\f$ H_{0} \f$, it yields a total Hamiltonian
+\f[
+  H(\lambda) = \lambda H_{0} + (1-\lambda) H_{{\rm EC}}
+\f]
+By construction, \f$ H(\lambda) \f$ is thus equal to the Einstein crystal
+Hamiltonian \f$ H_{{\rm EC}} \f$ when \f$ \lambda = 0 \f$ and equal to
+the unperturbed Hamiltonian \f$ H_{0} \f$ when \f$ \lambda = 1 \f$. The
+derivative of \f$ H(\lambda) \f$ with respect to \f$ \lambda \f$, which
+is used in thermodynamic integration, is given by the difference
+\f[
+   \frac{\partial H_{1}(\lambda)}{\partial \lambda}
+   =  H_{0} - H_{{\rm EC}}
+\f]
+where the partial derivative is evaluated at fixed field values.
+
+The parameter file block for an EinsteinCrystalPerturbation allows a
+user to enter a value for the perturbation parameter \f$ \lambda \f$,
+a value for penalty parameter \f$ \alpha \f$, and the name of a file
+that contains the reference field configuration in r-grid format, as 
+described \ref rpc_EinsteinCrystalPerturbation_page "here".
+The reference field configuration is usually taken to be a SCFT 
+solution for the phase of interest. When applied to a disordered phase, 
+this yields homogeneous reference field values.
+
+The EinsteinCrystalPerturbation and PerturbationDerivative classes may 
+be used together to compute free energies by the Einstein crystal method. 
+When applied to a standard AB system, with chi(0,0) = chi(1,1) = 0.0, we 
+normally setting alpha equal to the value of the Flory-Huggins interaction 
+parameter chi(0,1), because this can be shown to simplify analysis of 
+terms arising from harmonic fluctuations of the field around the 
+reference field. With this convention, the free energy \f$ F \f$ of the 
+interacting system with \f$ \lambda = 1 \f$ can be expressed as a sum
+\f[
+   F = H_{0}^{({\rm r})} + \int\limits_{0}^{1}\! d \lambda \;
+       \left \langle
+        \frac{\partial H(\lambda)}{\partial \lambda}
+        \right \rangle \quad.
+\f]
+in which \f$ H_{0}^{({\rm r})} \f$ denotes the value of the standard 
+unperturbed Hamiltonian in the reference state used by the Einstein 
+crystal Hamiltonian.  In this expression, the value of the integrand 
+at each value of \f$ \lambda \in [0, 1]\f$ is an equilibrium average 
+for a system governed by a perturbed Hamiltonian 
+\f$ H(\lambda) \rangle \f$. 
+
+The required integral with respect to \f$ \lambda \f$ can be evaluated
+by either of two methods:
+
+   - <b> Multiple equilibrium simulations </b>: Perform separate
+     equilibrium simulations with an EinsteinCrystalPerturbation at
+     multiple values of \f$ \lambda \in [0,1] \f$ and use a standard
+     numerical integration scheme to approximate the integral. For
+     example, one can obtain the integral over \f$ [0, 1] \f$ or any
+     subinterval thereof by performing simulations at an odd number of
+     evenly spaced values of \f$ \lambda \f$ (including the endpoints)
+     that divide the interval into an even number of subintervals, and 
+     then use Simpson's rule for integration.
+
+   - <b> Continuous integration </b>: Perform a very slow linear ramp 
+     of \f$ \lambda \f$ from 0 to 1 by using the LinearRamp class with a 
+     parameter of type lambda_pert. The integral can then be approximated
+     by the time average of \f$ \partial H(\lambda)/\partial \lambda \f$
+     over the course of this ramp.
+
+Ramps can also be applied to subdomains of the domain \f$ [0 1] \f$ in
+order to use different ramp rates over different ranges. When computing
+the free energy of an ordered phase using an inhomogeneous reference 
+field, special attention to accuracy is required for a range of values 
+near the final value \f$ \lambda = 1 \f$.  In either method, the required 
+values of \f$ \partial H(\lambda)/\partial \lambda \f$ can be sampled by 
+the PerturbationDerivative analyzer.
+
+\section psfts_perturb_example_sec Example
+
+Below, we show a complete parameter file for a calculation that uses
+continuous Einstein crystal integration to compute a free energy
+difference.
+
+\code
+System{
+  Mixture{
+    nMonomer  2
+    monomers[
+             1.0  
+             1.0 
+    ]
+    nPolymer  1
+    Polymer{
+      type    linear
+      nBlock  2
+      blocks[
+              0   0.5
+              1   0.5
+      ]
+      phi     1.0
+    }
+    vMonomer  0.01
+    ds   0.02
+  }
+  Interaction{
+    chi(
+        1   0   14.0
+    )
+  }
+  Domain{
+    mesh         40    40    40
+    lattice      cubic   
+  }
+  BdSimulator{
+    seed           486893701
+    BdStep{
+      mobility  5.0E-2
+    }
+    Compressor{
+      epsilon      1.0e-4
+      maxHist      40
+    }
+    EinsteinCrystalPerturbation{
+      lambda            0.0
+      alpha            14.0
+      fieldFileName    in/ecReference.rf
+    }
+    Ramp{
+      nParameters  1 
+      parameters[
+         lambda_pert    1.0
+      ]
+    }
+    AnalyzerManager{
+      baseInterval    5
+
+      StepLogger{
+        interval         50
+      }
+
+      PerturbationDerivative{
+        interval          5
+        outputFileName    out/derivative
+        nSamplePerBlock   4
+      }
+
+    }
+  }
+}
+\endcode
+
+<b> Discussion </b>:
+The main new elements in this example, compared to simpler previous 
+examples, are the presence of an EinsteinCrystalPerturbation block and a 
+PerturbationDerivative analyzer, as well as a linear Ramp that is used 
+to perform continuous integration. Here, we have used generic block labels
+BdStep, Compressor, and Ramp to select default algorithms for these 
+blocks, but have used the specific class name EinsteinCrystalPerturbation 
+for the Perturbation block. Because EinsteinCrystalPerturbation is the
+default perturbation algorithm, we could instead have used a generic
+label Perturbation for this block without changing the result. 
+
+In the EinsteinCrystalPerturbation block, we set an initial value 
+lambda = 0.0 for the perturbation parameter, corresponding to a pure 
+Einstein crystal Hamiltonian.  The alpha parameter has been set equal to
+the value 14.0 that is assigned to chi(0,1) in the interaction block, 
+using the convention alpha = chi(0,1) recommended above.  The reference 
+field is read from an r-grid field file named ecReference.rf in 
+subdirectory in/ of the current working directory (i.e., the directory 
+from which the program was invoked).
+
+The Ramp block uses the parameter identifier lambda_pert to indicate that 
+the lambda parameter of the associated Perturbation should be varied, and 
+gives a range 1.0 to creat a ramp from the initial value of 0 to a final
+value of 1.0. 
+
+In the \ref rpc_PerturbationDerivative_page "PerturbationDerivative" 
+block of the AnalyzerManager, this analyzer is programmed to sample 
+the partial derivative \f$ \partial H/\partial \lambda \f$ every 5 
+simulation steps, and to output block averages of blocks of 4 
+consecutive sampled values, thus outputting a block average value 
+every 20 simulation steps.  The file name out/derivative will be used
+as a base file name for the file containing these block averages and
+for another file that contains information about the time average.
 
 <BR>
-\ref psfts_ramp_page   (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
+\ref psfts_ramp_page   (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
 \ref psfts_page        (Up)   &nbsp; &nbsp; &nbsp; &nbsp;
 \ref developer_page    (Next)
 

@@ -87,9 +87,13 @@ namespace Rpc {
 
       // Optionally read Compressor, Perturbation and/or Ramp blocks
       readCompressor(in, isEnd);
-      readPerturbation(in, isEnd);
       if (hasBdStep()) {
          UTIL_CHECK(hasCompressor());
+      }
+
+      // Optionally Perturbation and/or Ramp blocks
+      readPerturbation(in, isEnd);
+      if (hasBdStep()) {
          readRamp(in, isEnd);
       }
 

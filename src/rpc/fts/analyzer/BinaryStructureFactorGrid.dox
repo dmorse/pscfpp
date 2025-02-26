@@ -11,14 +11,14 @@ incompressible system containing two monomer types of monomer type indices
 0 and 1, defined as
 \f[
   S(\mathbf{q}) 
-  = \frac{1}{V}\langle |\hat{C}_{-}({\bf q})|^{2} \rangle / 4
+  = \frac{1}{4V}\langle |\hat{C}_{-}({\bf q})|^{2} \rangle \quad,
 \f]
 where
 \f$ v \f$ is monomer volume, \f$ V \f$ is total system volume, and 
 \f[
   \hat{C}_{-}({\bf q}) \equiv \int \! d{\bf r} 
                        \; e^{-i{\bf q}\cdot {\bf r}}
-                       [ c_{0}{\bf r}) - c_{1}({\bf r}) ] 
+                       [ c_{0}({\bf r}) - c_{1}({\bf r}) ] 
   \quad.
 \f]
 Here, \f$ c_{i}({\bf r}) \f$ is the local concentration of monomers of 
@@ -33,7 +33,7 @@ In a field-theoretic simulation, this is computed using the identity
 \f]
 where \f$ \chi_{b} \f$ is the bare Flory-Huggins parameter, and
 \f[
-  \hat{W}_{-}({\bf q}) = \int d^{3}r e^{-i{\bf q}\cdot {\bf r}} 
+  \hat{W}_{-}({\bf q}) = \int \! d{\bf r} \; e^{-i{\bf q}\cdot {\bf r}} 
   W_{-}({\bf r}) 
 \f]
 is the transform of the exchange field 

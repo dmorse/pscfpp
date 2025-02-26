@@ -297,7 +297,7 @@ The LrAm uses this quasi-Newton step as one stage of a modified
 mixing algorithm, which thus also uses information from previous
 steps. 
 
-\section psfts_analyzer_BD_sec Analyzer Algorithms
+\section psfts_algorithm_analyzer_sec Analyzer Algorithms
 
 PSCF provides an extensible set of C++ classes for analysis of field
 theoretic simulations, which we refer to generically as analyzers or
