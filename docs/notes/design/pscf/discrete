@@ -470,4 +470,9 @@ length should be treated the same way. Where the total length of a
 polymer is needed, use polymer length in the thread model and nBead 
 in the bead model. 
 
-
+19) In Analyzer classes, the Intramolecular class, and elsewhere, look 
+for uses of the Block::length() function. Anywhere this function is 
+called, create an if statement if (PolymerModel::isThread) { .... } 
+else { .... }, and replace the call to thread() by a call to nBead() 
+and then cast the value to double. Throughout, values of block length
+are replaced by (double)nBead as needed. 

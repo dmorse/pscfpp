@@ -13,6 +13,7 @@
 #include <util/global.h>
 #include <pscf/mesh/MeshIterator.h>
 #include <pscf/chem/PolymerType.h>
+#include <pscf/chem/PolymerModel.h>
 #include <prdc/crystal/shiftToMinimum.h>
 
 namespace Pscf {
@@ -51,8 +52,8 @@ namespace Rpc{
       // Overall intramolecular correlation
       double omega = 0;
       int monomerId; int nBlock;
-      double phi; double kuhn; double length; 
-      double totalN; double avgKuhn; double g; double rg2;
+      double phi, kuhn, length;
+      double totalN, avgKuhn, g, rg2;
       Polymer<D> const * polymerPtr;
       PolymerType::Enum type;
       for (int i = 0; i < np; i++){
@@ -67,12 +68,12 @@ namespace Rpc{
          totalN = 0;
          avgKuhn = 0;
          for (int j = 0; j < nBlock; j++) {
-            monomerId = polymerPtr-> block(j).monomerId();
+            monomerId = polymerPtr->block(j).monomerId();
             kuhn = system().mixture().monomer(monomerId).kuhn();
             if (PolymerModel::isThread()) {
                length = polymerPtr->block(j).length();
             } else {
-               length = (double) polymerPtr->block(j).length();
+               length = (double) polymerPtr->block(j).nBead();
             }
             totalN += length;
             avgKuhn += kuhn/nBlock;
