@@ -31,7 +31,7 @@ namespace {
    {
       int nThreads = blockDim.x * gridDim.x;
       int startID = blockIdx.x * blockDim.x + threadIdx.x;
-      for(int i = startID; i < n; i += nThreads) {
+      for (int i = startID; i < n; i += nThreads) {
          a[i] = b[i];
       }
    }
@@ -47,7 +47,7 @@ namespace {
    {
       int nThreads = blockDim.x * gridDim.x;
       int startID = blockIdx.x * blockDim.x + threadIdx.x;
-      for(int i = startID; i < n; i += nThreads) {
+      for (int i = startID; i < n; i += nThreads) {
          a[i].x = b[i].x;
          a[i].y = b[i].y;
       }
@@ -60,11 +60,11 @@ namespace {
    * \param b  input scalar (RHS)
    * \param n  size of arrays
    */
-   __global__ void _eqS(cudaReal* a, cudaReal const b, const int n) 
+   __global__ void _eqS(cudaReal* a, const cudaReal b, const int n) 
    {
       int nThreads = blockDim.x * gridDim.x;
       int startID = blockIdx.x * blockDim.x + threadIdx.x;
-      for(int i = startID; i < n; i += nThreads) {
+      for (int i = startID; i < n; i += nThreads) {
          a[i] = b;
       }
    }
@@ -76,11 +76,11 @@ namespace {
    * \param b  input scalar (RHS)
    * \param n  size of arrays
    */
-   __global__ void _eqS(cudaComplex* a, cudaComplex const b, const int n) 
+   __global__ void _eqS(cudaComplex* a, const cudaComplex b, const int n) 
    {
       int nThreads = blockDim.x * gridDim.x;
       int startID = blockIdx.x * blockDim.x + threadIdx.x;
-      for(int i = startID; i < n; i += nThreads) {
+      for (int i = startID; i < n; i += nThreads) {
          a[i].x = b.x;
          a[i].y = b.y;
       }
@@ -95,11 +95,11 @@ namespace {
    * \param n  size of arrays
    */
    __global__ void _addVV(cudaReal* a, cudaReal const * b, 
-                        cudaReal const * c, const int n)
+                          cudaReal const * c, const int n)
    {
       int nThreads = blockDim.x * gridDim.x;
       int startID = blockIdx.x * blockDim.x + threadIdx.x;
-      for(int i = startID; i < n; i += nThreads) {
+      for (int i = startID; i < n; i += nThreads) {
          a[i] = b[i] + c[i];
       }
    }
@@ -113,11 +113,11 @@ namespace {
    * \param n  size of arrays
    */
    __global__ void _addVV(cudaComplex* a, cudaComplex const * b, 
-                        cudaComplex const * c, const int n)
+                          cudaComplex const * c, const int n)
    {
       int nThreads = blockDim.x * gridDim.x;
       int startID = blockIdx.x * blockDim.x + threadIdx.x;
-      for(int i = startID; i < n; i += nThreads) {
+      for (int i = startID; i < n; i += nThreads) {
          a[i].x = b[i].x + c[i].x;
          a[i].y = b[i].y + c[i].y;
       }
@@ -132,11 +132,11 @@ namespace {
    * \param n  size of arrays
    */
    __global__ void _addVV(cudaComplex* a, cudaReal const * b, 
-                        cudaComplex const * c, const int n)
+                          cudaComplex const * c, const int n)
    {
       int nThreads = blockDim.x * gridDim.x;
       int startID = blockIdx.x * blockDim.x + threadIdx.x;
-      for(int i = startID; i < n; i += nThreads) {
+      for (int i = startID; i < n; i += nThreads) {
          a[i].x = b[i] + c[i].x;
          a[i].y = c[i].y;
       }
@@ -155,7 +155,7 @@ namespace {
    {
       int nThreads = blockDim.x * gridDim.x;
       int startID = blockIdx.x * blockDim.x + threadIdx.x;
-      for(int i = startID; i < n; i += nThreads) {
+      for (int i = startID; i < n; i += nThreads) {
          a[i].x = b[i].x + c[i];
          a[i].y = b[i].y;
       }
@@ -170,11 +170,11 @@ namespace {
    * \param n  size of arrays
    */
    __global__ void _addVS(cudaReal* a, cudaReal const * b, 
-                        cudaReal const c, const int n)
+                          const cudaReal c, const int n)
    {
       int nThreads = blockDim.x * gridDim.x;
       int startID = blockIdx.x * blockDim.x + threadIdx.x;
-      for(int i = startID; i < n; i += nThreads) {
+      for (int i = startID; i < n; i += nThreads) {
          a[i] = b[i] + c;
       }
    }
@@ -188,11 +188,11 @@ namespace {
    * \param n  size of arrays
    */
    __global__ void _addVS(cudaComplex* a, cudaComplex const * b, 
-                        cudaComplex const c, const int n)
+                          const cudaComplex c, const int n)
    {
       int nThreads = blockDim.x * gridDim.x;
       int startID = blockIdx.x * blockDim.x + threadIdx.x;
-      for(int i = startID; i < n; i += nThreads) {
+      for (int i = startID; i < n; i += nThreads) {
          a[i].x = b[i].x + c.x;
          a[i].y = b[i].y + c.y;
       }
@@ -207,11 +207,11 @@ namespace {
    * \param n  size of arrays
    */
    __global__ void _addVS(cudaComplex* a, cudaReal const * b, 
-                        cudaComplex const c, const int n)
+                          const cudaComplex c, const int n)
    {
       int nThreads = blockDim.x * gridDim.x;
       int startID = blockIdx.x * blockDim.x + threadIdx.x;
-      for(int i = startID; i < n; i += nThreads) {
+      for (int i = startID; i < n; i += nThreads) {
          a[i].x = b[i] + c.x;
          a[i].y = c.y;
       }
@@ -226,11 +226,11 @@ namespace {
    * \param n  size of arrays
    */
    __global__ void _addVS(cudaComplex* a, cudaComplex const * b, 
-                        cudaReal const c, const int n)
+                          const cudaReal c, const int n)
    {
       int nThreads = blockDim.x * gridDim.x;
       int startID = blockIdx.x * blockDim.x + threadIdx.x;
-      for(int i = startID; i < n; i += nThreads) {
+      for (int i = startID; i < n; i += nThreads) {
          a[i].x = b[i].x + c;
          a[i].y = b[i].y;
       }
@@ -245,11 +245,11 @@ namespace {
    * \param n  size of arrays
    */
    __global__ void _subVV(cudaReal* a, cudaReal const * b, 
-                        cudaReal const * c, const int n)
+                          cudaReal const * c, const int n)
    {
       int nThreads = blockDim.x * gridDim.x;
       int startID = blockIdx.x * blockDim.x + threadIdx.x;
-      for(int i = startID; i < n; i += nThreads) {
+      for (int i = startID; i < n; i += nThreads) {
          a[i] = b[i] - c[i];
       }
    }
@@ -263,11 +263,11 @@ namespace {
    * \param n  size of arrays
    */
    __global__ void _subVV(cudaComplex* a, cudaComplex const * b, 
-                        cudaComplex const * c, const int n)
+                          cudaComplex const * c, const int n)
    {
       int nThreads = blockDim.x * gridDim.x;
       int startID = blockIdx.x * blockDim.x + threadIdx.x;
-      for(int i = startID; i < n; i += nThreads) {
+      for (int i = startID; i < n; i += nThreads) {
          a[i].x = b[i].x - c[i].x;
          a[i].y = b[i].y - c[i].y;
       }
@@ -282,11 +282,11 @@ namespace {
    * \param n  size of arrays
    */
    __global__ void _subVV(cudaComplex* a, cudaReal const * b, 
-                        cudaComplex const * c, const int n)
+                          cudaComplex const * c, const int n)
    {
       int nThreads = blockDim.x * gridDim.x;
       int startID = blockIdx.x * blockDim.x + threadIdx.x;
-      for(int i = startID; i < n; i += nThreads) {
+      for (int i = startID; i < n; i += nThreads) {
          a[i].x = b[i] - c[i].x;
          a[i].y = 0.0 - c[i].y;
       }
@@ -301,11 +301,11 @@ namespace {
    * \param n  size of arrays
    */
    __global__ void _subVV(cudaComplex* a, cudaComplex const * b, 
-                        cudaReal const * c, const int n)
+                          cudaReal const * c, const int n)
    {
       int nThreads = blockDim.x * gridDim.x;
       int startID = blockIdx.x * blockDim.x + threadIdx.x;
-      for(int i = startID; i < n; i += nThreads) {
+      for (int i = startID; i < n; i += nThreads) {
          a[i].x = b[i].x - c[i];
          a[i].y = b[i].y;
       }
@@ -320,11 +320,11 @@ namespace {
    * \param n  size of arrays
    */
    __global__ void _subVS(cudaReal* a, cudaReal const * b, 
-                        cudaReal const c, const int n)
+                          const cudaReal c, const int n)
    {
       int nThreads = blockDim.x * gridDim.x;
       int startID = blockIdx.x * blockDim.x + threadIdx.x;
-      for(int i = startID; i < n; i += nThreads) {
+      for (int i = startID; i < n; i += nThreads) {
          a[i] = b[i] - c;
       }
    }
@@ -338,11 +338,11 @@ namespace {
    * \param n  size of arrays
    */
    __global__ void _subVS(cudaComplex* a, cudaComplex const * b, 
-                        cudaComplex const c, const int n)
+                          const cudaComplex c, const int n)
    {
       int nThreads = blockDim.x * gridDim.x;
       int startID = blockIdx.x * blockDim.x + threadIdx.x;
-      for(int i = startID; i < n; i += nThreads) {
+      for (int i = startID; i < n; i += nThreads) {
          a[i].x = b[i].x - c.x;
          a[i].y = b[i].y - c.y;
       }
@@ -357,11 +357,11 @@ namespace {
    * \param n  size of arrays
    */
    __global__ void _subVS(cudaComplex* a, cudaReal const * b, 
-                        cudaComplex const c, const int n)
+                          const cudaComplex c, const int n)
    {
       int nThreads = blockDim.x * gridDim.x;
       int startID = blockIdx.x * blockDim.x + threadIdx.x;
-      for(int i = startID; i < n; i += nThreads) {
+      for (int i = startID; i < n; i += nThreads) {
          a[i].x = b[i] - c.x;
          a[i].y = 0.0 - c.y;
       }
@@ -376,11 +376,11 @@ namespace {
    * \param n  size of arrays
    */
    __global__ void _subVS(cudaComplex* a, cudaComplex const * b, 
-                        cudaReal const c, const int n)
+                          const cudaReal c, const int n)
    {
       int nThreads = blockDim.x * gridDim.x;
       int startID = blockIdx.x * blockDim.x + threadIdx.x;
-      for(int i = startID; i < n; i += nThreads) {
+      for (int i = startID; i < n; i += nThreads) {
          a[i].x = b[i].x - c;
          a[i].y = b[i].y;
       }
@@ -395,11 +395,11 @@ namespace {
    * \param n  size of arrays
    */
    __global__ void _mulVV(cudaReal* a, cudaReal const * b, 
-                        cudaReal const * c, const int n)
+                          cudaReal const * c, const int n)
    {
       int nThreads = blockDim.x * gridDim.x;
       int startID = blockIdx.x * blockDim.x + threadIdx.x;
-      for(int i = startID; i < n; i += nThreads) {
+      for (int i = startID; i < n; i += nThreads) {
          a[i] = b[i] * c[i];
       }
    }
@@ -413,11 +413,11 @@ namespace {
    * \param n  size of arrays
    */
    __global__ void _mulVV(cudaComplex* a, cudaComplex const * b, 
-                        cudaComplex const * c, const int n)
+                          cudaComplex const * c, const int n)
    {
       int nThreads = blockDim.x * gridDim.x;
       int startID = blockIdx.x * blockDim.x + threadIdx.x;
-      for(int i = startID; i < n; i += nThreads) {
+      for (int i = startID; i < n; i += nThreads) {
          a[i].x = (b[i].x * c[i].x) - (b[i].y * c[i].y);
          a[i].y = (b[i].x * c[i].y) + (b[i].y * c[i].x);
       }
@@ -432,11 +432,11 @@ namespace {
    * \param n  size of arrays
    */
    __global__ void _mulVV(cudaComplex* a, cudaReal const * b, 
-                        cudaComplex const * c, const int n)
+                          cudaComplex const * c, const int n)
    {
       int nThreads = blockDim.x * gridDim.x;
       int startID = blockIdx.x * blockDim.x + threadIdx.x;
-      for(int i = startID; i < n; i += nThreads) {
+      for (int i = startID; i < n; i += nThreads) {
          a[i].x = b[i] * c[i].x;
          a[i].y = b[i] * c[i].y;
       }
@@ -451,11 +451,11 @@ namespace {
    * \param n  size of arrays
    */
    __global__ void _mulVV(cudaComplex* a, cudaComplex const * b, 
-                        cudaReal const * c, const int n)
+                          cudaReal const * c, const int n)
    {
       int nThreads = blockDim.x * gridDim.x;
       int startID = blockIdx.x * blockDim.x + threadIdx.x;
-      for(int i = startID; i < n; i += nThreads) {
+      for (int i = startID; i < n; i += nThreads) {
          a[i].x = b[i].x * c[i];
          a[i].y = b[i].y * c[i];
       }
@@ -470,11 +470,11 @@ namespace {
    * \param n  size of arrays
    */
    __global__ void _mulVS(cudaReal* a, cudaReal const * b, 
-                        cudaReal const c, const int n)
+                          const cudaReal c, const int n)
    {
       int nThreads = blockDim.x * gridDim.x;
       int startID = blockIdx.x * blockDim.x + threadIdx.x;
-      for(int i = startID; i < n; i += nThreads) {
+      for (int i = startID; i < n; i += nThreads) {
          a[i] = b[i] * c;
       }
    }
@@ -488,11 +488,11 @@ namespace {
    * \param n  size of arrays
    */
    __global__ void _mulVS(cudaComplex* a, cudaComplex const * b, 
-                        cudaComplex const c, const int n)
+                          const cudaComplex c, const int n)
    {
       int nThreads = blockDim.x * gridDim.x;
       int startID = blockIdx.x * blockDim.x + threadIdx.x;
-      for(int i = startID; i < n; i += nThreads) {
+      for (int i = startID; i < n; i += nThreads) {
          a[i].x = (b[i].x * c.x) - (b[i].y * c.y);
          a[i].y = (b[i].x * c.y) + (b[i].y * c.x);
       }
@@ -507,11 +507,11 @@ namespace {
    * \param n  size of arrays
    */
    __global__ void _mulVS(cudaComplex* a, cudaReal const * b, 
-                        cudaComplex const c, const int n)
+                          const cudaComplex c, const int n)
    {
       int nThreads = blockDim.x * gridDim.x;
       int startID = blockIdx.x * blockDim.x + threadIdx.x;
-      for(int i = startID; i < n; i += nThreads) {
+      for (int i = startID; i < n; i += nThreads) {
          a[i].x = b[i] * c.x;
          a[i].y = b[i] * c.y;
       }
@@ -526,11 +526,11 @@ namespace {
    * \param n  size of arrays
    */
    __global__ void _mulVS(cudaComplex* a, cudaComplex const * b, 
-                        cudaReal const c, const int n)
+                          const cudaReal c, const int n)
    {
       int nThreads = blockDim.x * gridDim.x;
       int startID = blockIdx.x * blockDim.x + threadIdx.x;
-      for(int i = startID; i < n; i += nThreads) {
+      for (int i = startID; i < n; i += nThreads) {
          a[i].x = b[i].x * c;
          a[i].y = b[i].y * c;
       }
@@ -545,11 +545,11 @@ namespace {
    * \param n  size of arrays
    */
    __global__ void _divVV(cudaReal* a, cudaReal const * b, 
-                        cudaReal const * c, const int n)
+                          cudaReal const * c, const int n)
    {
       int nThreads = blockDim.x * gridDim.x;
       int startID = blockIdx.x * blockDim.x + threadIdx.x;
-      for(int i = startID; i < n; i += nThreads) {
+      for (int i = startID; i < n; i += nThreads) {
          a[i] = b[i] / c[i];
       }
    }
@@ -563,11 +563,11 @@ namespace {
    * \param n  size of arrays
    */
    __global__ void _divVV(cudaComplex* a, cudaComplex const * b, 
-                        cudaReal const * c, const int n)
+                          cudaReal const * c, const int n)
    {
       int nThreads = blockDim.x * gridDim.x;
       int startID = blockIdx.x * blockDim.x + threadIdx.x;
-      for(int i = startID; i < n; i += nThreads) {
+      for (int i = startID; i < n; i += nThreads) {
          a[i].x = b[i].x / c[i];
          a[i].y = b[i].y / c[i];
       }
@@ -582,11 +582,11 @@ namespace {
    * \param n  size of arrays
    */
    __global__ void _divVS(cudaReal* a, cudaReal const * b, 
-                        cudaReal const c, const int n)
+                          const cudaReal c, const int n)
    {
       int nThreads = blockDim.x * gridDim.x;
       int startID = blockIdx.x * blockDim.x + threadIdx.x;
-      for(int i = startID; i < n; i += nThreads) {
+      for (int i = startID; i < n; i += nThreads) {
          a[i] = b[i] / c;
       }
    }
@@ -600,13 +600,32 @@ namespace {
    * \param n  size of arrays
    */
    __global__ void _divVS(cudaComplex* a, cudaComplex const * b, 
-                        cudaReal const c, const int n)
+                          const cudaReal c, const int n)
    {
       int nThreads = blockDim.x * gridDim.x;
       int startID = blockIdx.x * blockDim.x + threadIdx.x;
-      for(int i = startID; i < n; i += nThreads) {
+      for (int i = startID; i < n; i += nThreads) {
          a[i].x = b[i].x / c;
          a[i].y = b[i].y / c;
+      }
+   }
+
+   /*
+   * Vector division, a[i] = b / c[i], GPU kernel (cudaReal).
+   *
+   * \param a  output array (LHS)
+   * \param b  input scalar (RHS)
+   * \param c  input array (RHS)
+   * \param n  size of arrays
+   */
+   __global__ void _divSV(cudaReal* a, 
+                          const cudaReal b, 
+                          cudaReal const * c, const int n)
+   {
+      int nThreads = blockDim.x * gridDim.x;
+      int startID = blockIdx.x * blockDim.x + threadIdx.x;
+      for (int i = startID; i < n; i += nThreads) {
+         a[i] = b / c[i];
       }
    }
 
@@ -621,7 +640,7 @@ namespace {
    {
       int nThreads = blockDim.x * gridDim.x;
       int startID = blockIdx.x * blockDim.x + threadIdx.x;
-      for(int i = startID; i < n; i += nThreads) {
+      for (int i = startID; i < n; i += nThreads) {
          a[i] = exp(b[i]);
       }
    }
@@ -637,7 +656,7 @@ namespace {
    {
       int nThreads = blockDim.x * gridDim.x;
       int startID = blockIdx.x * blockDim.x + threadIdx.x;
-      for(int i = startID; i < n; i += nThreads) {
+      for (int i = startID; i < n; i += nThreads) {
          a[i].x = exp(b[i].x) * cos(b[i].y);
          a[i].y = exp(b[i].x) * sin(b[i].y);
       }
@@ -654,7 +673,7 @@ namespace {
    {
       int nThreads = blockDim.x * gridDim.x;
       int startID = blockIdx.x * blockDim.x + threadIdx.x;
-      for(int i = startID; i < n; i += nThreads) {
+      for (int i = startID; i < n; i += nThreads) {
          a[i] += b[i];
       }
    }
@@ -670,7 +689,7 @@ namespace {
    {
       int nThreads = blockDim.x * gridDim.x;
       int startID = blockIdx.x * blockDim.x + threadIdx.x;
-      for(int i = startID; i < n; i += nThreads) {
+      for (int i = startID; i < n; i += nThreads) {
          a[i].x += b[i].x;
          a[i].y += b[i].y;
       }
@@ -687,7 +706,7 @@ namespace {
    {
       int nThreads = blockDim.x * gridDim.x;
       int startID = blockIdx.x * blockDim.x + threadIdx.x;
-      for(int i = startID; i < n; i += nThreads) {
+      for (int i = startID; i < n; i += nThreads) {
          a[i].x += b[i];
       }
    }
@@ -699,11 +718,11 @@ namespace {
    * \param b  input scalar (RHS)
    * \param n  size of arrays
    */
-   __global__ void _addEqS(cudaReal* a, cudaReal const b, const int n)
+   __global__ void _addEqS(cudaReal* a, const cudaReal b, const int n)
    {
       int nThreads = blockDim.x * gridDim.x;
       int startID = blockIdx.x * blockDim.x + threadIdx.x;
-      for(int i = startID; i < n; i += nThreads) {
+      for (int i = startID; i < n; i += nThreads) {
          a[i] += b;
       }
    }
@@ -715,11 +734,12 @@ namespace {
    * \param b  input scalar (RHS)
    * \param n  size of arrays
    */
-   __global__ void _addEqS(cudaComplex* a, cudaComplex const b, const int n)
+   __global__ void _addEqS(cudaComplex* a, const cudaComplex b, 
+                           const int n)
    {
       int nThreads = blockDim.x * gridDim.x;
       int startID = blockIdx.x * blockDim.x + threadIdx.x;
-      for(int i = startID; i < n; i += nThreads) {
+      for (int i = startID; i < n; i += nThreads) {
          a[i].x += b.x;
          a[i].y += b.y;
       }
@@ -732,11 +752,11 @@ namespace {
    * \param b  input scalar (RHS)
    * \param n  size of arrays
    */
-   __global__ void _addEqS(cudaComplex* a, cudaReal const b, const int n)
+   __global__ void _addEqS(cudaComplex* a, const cudaReal b, const int n)
    {
       int nThreads = blockDim.x * gridDim.x;
       int startID = blockIdx.x * blockDim.x + threadIdx.x;
-      for(int i = startID; i < n; i += nThreads) {
+      for (int i = startID; i < n; i += nThreads) {
          a[i].x += b;
       }
    }
@@ -752,7 +772,7 @@ namespace {
    {
       int nThreads = blockDim.x * gridDim.x;
       int startID = blockIdx.x * blockDim.x + threadIdx.x;
-      for(int i = startID; i < n; i += nThreads) {
+      for (int i = startID; i < n; i += nThreads) {
          a[i] -= b[i];
       }
    }
@@ -768,7 +788,7 @@ namespace {
    {
       int nThreads = blockDim.x * gridDim.x;
       int startID = blockIdx.x * blockDim.x + threadIdx.x;
-      for(int i = startID; i < n; i += nThreads) {
+      for (int i = startID; i < n; i += nThreads) {
          a[i].x -= b[i].x;
          a[i].y -= b[i].y;
       }
@@ -785,7 +805,7 @@ namespace {
    {
       int nThreads = blockDim.x * gridDim.x;
       int startID = blockIdx.x * blockDim.x + threadIdx.x;
-      for(int i = startID; i < n; i += nThreads) {
+      for (int i = startID; i < n; i += nThreads) {
          a[i].x -= b[i];
       }
    }
@@ -797,11 +817,11 @@ namespace {
    * \param b  input scalar (RHS)
    * \param n  size of arrays
    */
-   __global__ void _subEqS(cudaReal* a, cudaReal const b, const int n)
+   __global__ void _subEqS(cudaReal* a, const cudaReal b, const int n)
    {
       int nThreads = blockDim.x * gridDim.x;
       int startID = blockIdx.x * blockDim.x + threadIdx.x;
-      for(int i = startID; i < n; i += nThreads) {
+      for (int i = startID; i < n; i += nThreads) {
          a[i] -= b;
       }
    }
@@ -813,11 +833,11 @@ namespace {
    * \param b  input scalar (RHS)
    * \param n  size of arrays
    */
-   __global__ void _subEqS(cudaComplex* a, cudaComplex const b, const int n)
+   __global__ void _subEqS(cudaComplex* a, const cudaComplex b, const int n)
    {
       int nThreads = blockDim.x * gridDim.x;
       int startID = blockIdx.x * blockDim.x + threadIdx.x;
-      for(int i = startID; i < n; i += nThreads) {
+      for (int i = startID; i < n; i += nThreads) {
          a[i].x -= b.x;
          a[i].y -= b.y;
       }
@@ -830,11 +850,11 @@ namespace {
    * \param b  input scalar (RHS)
    * \param n  size of arrays
    */
-   __global__ void _subEqS(cudaComplex* a, cudaReal const b, const int n)
+   __global__ void _subEqS(cudaComplex* a, const cudaReal b, const int n)
    {
       int nThreads = blockDim.x * gridDim.x;
       int startID = blockIdx.x * blockDim.x + threadIdx.x;
-      for(int i = startID; i < n; i += nThreads) {
+      for (int i = startID; i < n; i += nThreads) {
          a[i].x -= b;
       }
    }
@@ -850,7 +870,7 @@ namespace {
    {
       int nThreads = blockDim.x * gridDim.x;
       int startID = blockIdx.x * blockDim.x + threadIdx.x;
-      for(int i = startID; i < n; i += nThreads) {
+      for (int i = startID; i < n; i += nThreads) {
          a[i] *= b[i];
       }
    }
@@ -867,7 +887,7 @@ namespace {
       int nThreads = blockDim.x * gridDim.x;
       int startID = blockIdx.x * blockDim.x + threadIdx.x;
       cudaComplex c;
-      for(int i = startID; i < n; i += nThreads) {
+      for (int i = startID; i < n; i += nThreads) {
          c.x = (a[i].x * b[i].x) - (a[i].y * b[i].y);
          c.y = (a[i].x * b[i].y) + (a[i].y * b[i].x);
          a[i].x = c.x;
@@ -886,7 +906,7 @@ namespace {
    {
       int nThreads = blockDim.x * gridDim.x;
       int startID = blockIdx.x * blockDim.x + threadIdx.x;
-      for(int i = startID; i < n; i += nThreads) {
+      for (int i = startID; i < n; i += nThreads) {
          a[i].x *= b[i];
          a[i].y *= b[i];
       }
@@ -899,11 +919,11 @@ namespace {
    * \param b  input scalar (RHS)
    * \param n  size of arrays
    */
-   __global__ void _mulEqS(cudaReal* a, cudaReal const b, const int n)
+   __global__ void _mulEqS(cudaReal* a, const cudaReal b, const int n)
    {
       int nThreads = blockDim.x * gridDim.x;
       int startID = blockIdx.x * blockDim.x + threadIdx.x;
-      for(int i = startID; i < n; i += nThreads) {
+      for (int i = startID; i < n; i += nThreads) {
          a[i] *= b;
       }
    }
@@ -915,12 +935,12 @@ namespace {
    * \param b  input scalar (RHS)
    * \param n  size of arrays
    */
-   __global__ void _mulEqS(cudaComplex* a, cudaComplex const b, const int n)
+   __global__ void _mulEqS(cudaComplex* a, const cudaComplex b, const int n)
    {
       int nThreads = blockDim.x * gridDim.x;
       int startID = blockIdx.x * blockDim.x + threadIdx.x;
       cudaComplex c;
-      for(int i = startID; i < n; i += nThreads) {
+      for (int i = startID; i < n; i += nThreads) {
          c.x = (a[i].x * b.x) - (a[i].y * b.y);
          c.y = (a[i].x * b.y) + (a[i].y * b.x);
          a[i].x = c.x;
@@ -935,11 +955,11 @@ namespace {
    * \param b  input scalar (RHS)
    * \param n  size of arrays
    */
-   __global__ void _mulEqS(cudaComplex* a, cudaReal const b, const int n)
+   __global__ void _mulEqS(cudaComplex* a, const cudaReal b, const int n)
    {
       int nThreads = blockDim.x * gridDim.x;
       int startID = blockIdx.x * blockDim.x + threadIdx.x;
-      for(int i = startID; i < n; i += nThreads) {
+      for (int i = startID; i < n; i += nThreads) {
          a[i].x *= b;
          a[i].y *= b;
       }
@@ -956,7 +976,7 @@ namespace {
    {
       int nThreads = blockDim.x * gridDim.x;
       int startID = blockIdx.x * blockDim.x + threadIdx.x;
-      for(int i = startID; i < n; i += nThreads) {
+      for (int i = startID; i < n; i += nThreads) {
          a[i] /= b[i];
       }
    }
@@ -972,7 +992,7 @@ namespace {
    {
       int nThreads = blockDim.x * gridDim.x;
       int startID = blockIdx.x * blockDim.x + threadIdx.x;
-      for(int i = startID; i < n; i += nThreads) {
+      for (int i = startID; i < n; i += nThreads) {
          a[i].x /= b[i];
          a[i].y /= b[i];
       }
@@ -985,11 +1005,11 @@ namespace {
    * \param b  input scalar (RHS)
    * \param n  size of arrays
    */
-   __global__ void _divEqS(cudaReal* a, cudaReal const b, const int n)
+   __global__ void _divEqS(cudaReal* a, const cudaReal b, const int n)
    {
       int nThreads = blockDim.x * gridDim.x;
       int startID = blockIdx.x * blockDim.x + threadIdx.x;
-      for(int i = startID; i < n; i += nThreads) {
+      for (int i = startID; i < n; i += nThreads) {
          a[i] /= b;
       }
    }
@@ -1001,11 +1021,11 @@ namespace {
    * \param b  input scalar (RHS)
    * \param n  size of arrays
    */
-   __global__ void _divEqS(cudaComplex* a, cudaReal const b, const int n)
+   __global__ void _divEqS(cudaComplex* a, const cudaReal b, const int n)
    {
       int nThreads = blockDim.x * gridDim.x;
       int startID = blockIdx.x * blockDim.x + threadIdx.x;
-      for(int i = startID; i < n; i += nThreads) {
+      for (int i = startID; i < n; i += nThreads) {
          a[i].x /= b;
          a[i].y /= b;
       }
@@ -1051,7 +1071,7 @@ void eqV(DeviceArray<cudaComplex>& a, DeviceArray<cudaComplex> const & b,
 }
 
 // Vector assignment, a[i] = b, kernel wrapper (cudaReal).
-void eqS(DeviceArray<cudaReal>& a, cudaReal const b,
+void eqS(DeviceArray<cudaReal>& a, const cudaReal b,
          const int beginIdA, const int n)
 {
    UTIL_CHECK(a.capacity() >= n + beginIdA);
@@ -1066,7 +1086,7 @@ void eqS(DeviceArray<cudaReal>& a, cudaReal const b,
 }
 
 // Vector assignment, a[i] = b, kernel wrapper (cudaComplex).
-void eqS(DeviceArray<cudaComplex>& a, cudaComplex const b,
+void eqS(DeviceArray<cudaComplex>& a, const cudaComplex b,
          const int beginIdA, const int n)
 {
    UTIL_CHECK(a.capacity() >= n + beginIdA);
@@ -1158,7 +1178,7 @@ void addVV(DeviceArray<cudaComplex>& a, DeviceArray<cudaComplex> const & b,
 
 // Vector addition, a[i] = b[i] + c, kernel wrapper (cudaReal).
 void addVS(DeviceArray<cudaReal>& a, DeviceArray<cudaReal> const & b, 
-           cudaReal const c, const int beginIdA, const int beginIdB,int n)
+           const cudaReal c, const int beginIdA, const int beginIdB,int n)
 {
    UTIL_CHECK(a.capacity() >= n + beginIdA);
    UTIL_CHECK(b.capacity() >= n + beginIdB);
@@ -1175,7 +1195,7 @@ void addVS(DeviceArray<cudaReal>& a, DeviceArray<cudaReal> const & b,
 
 // Vector addition, a[i] = b[i] + c, kernel wrapper (cudaComplex).
 void addVS(DeviceArray<cudaComplex>& a, DeviceArray<cudaComplex> const & b, 
-           cudaComplex const c, const int beginIdA, const int beginIdB,int n)
+           const cudaComplex c, const int beginIdA, const int beginIdB,int n)
 {
    UTIL_CHECK(a.capacity() >= n + beginIdA);
    UTIL_CHECK(b.capacity() >= n + beginIdB);
@@ -1192,7 +1212,7 @@ void addVS(DeviceArray<cudaComplex>& a, DeviceArray<cudaComplex> const & b,
 
 // Vector addition, a[i] = b[i] + c, kernel wrapper (mixed, b = real).
 void addVS(DeviceArray<cudaComplex>& a, DeviceArray<cudaReal> const & b, 
-           cudaComplex const c, const int beginIdA, const int beginIdB,int n)
+           const cudaComplex c, const int beginIdA, const int beginIdB,int n)
 {
    UTIL_CHECK(a.capacity() >= n + beginIdA);
    UTIL_CHECK(b.capacity() >= n + beginIdB);
@@ -1209,7 +1229,7 @@ void addVS(DeviceArray<cudaComplex>& a, DeviceArray<cudaReal> const & b,
 
 // Vector addition, a[i] = b[i] + c, kernel wrapper (mixed, c = real).
 void addVS(DeviceArray<cudaComplex>& a, DeviceArray<cudaComplex> const & b, 
-           cudaReal const c, const int beginIdA, const int beginIdB,int n)
+           const cudaReal c, const int beginIdA, const int beginIdB,int n)
 {
    UTIL_CHECK(a.capacity() >= n + beginIdA);
    UTIL_CHECK(b.capacity() >= n + beginIdB);
@@ -1302,7 +1322,7 @@ void subVV(DeviceArray<cudaComplex>& a, DeviceArray<cudaComplex> const & b,
 
 // Vector subtraction, a[i] = b[i] - c, kernel wrapper (cudaReal).
 void subVS(DeviceArray<cudaReal>& a, 
-                    DeviceArray<cudaReal> const & b, cudaReal const c,
+                    DeviceArray<cudaReal> const & b, const cudaReal c,
                     const int beginIdA, const int beginIdB, const int n)
 {
    UTIL_CHECK(a.capacity() >= n + beginIdA);
@@ -1320,7 +1340,7 @@ void subVS(DeviceArray<cudaReal>& a,
 
 // Vector subtraction, a[i] = b[i] - c, kernel wrapper (cudaComplex).
 void subVS(DeviceArray<cudaComplex>& a, DeviceArray<cudaComplex> const & b, 
-           cudaComplex const c, const int beginIdA, const int beginIdB, 
+           const cudaComplex c, const int beginIdA, const int beginIdB, 
            const int n)
 {
    UTIL_CHECK(a.capacity() >= n + beginIdA);
@@ -1338,7 +1358,7 @@ void subVS(DeviceArray<cudaComplex>& a, DeviceArray<cudaComplex> const & b,
 
 // Vector subtraction, a[i] = b[i] - c, kernel wrapper (mixed, b = real).
 void subVS(DeviceArray<cudaComplex>& a, DeviceArray<cudaReal> const & b, 
-           cudaComplex const c, const int beginIdA, const int beginIdB, 
+           const cudaComplex c, const int beginIdA, const int beginIdB, 
            const int n)
 {
    UTIL_CHECK(a.capacity() >= n + beginIdA);
@@ -1356,7 +1376,7 @@ void subVS(DeviceArray<cudaComplex>& a, DeviceArray<cudaReal> const & b,
 
 // Vector subtraction, a[i] = b[i] - c, kernel wrapper (mixed, c = real).
 void subVS(DeviceArray<cudaComplex>& a, DeviceArray<cudaComplex> const & b, 
-           cudaReal const c, const int beginIdA, const int beginIdB, 
+           const cudaReal c, const int beginIdA, const int beginIdB, 
            const int n)
 {
    UTIL_CHECK(a.capacity() >= n + beginIdA);
@@ -1450,7 +1470,7 @@ void mulVV(DeviceArray<cudaComplex>& a, DeviceArray<cudaComplex> const & b,
 
 // Vector multiplication, a[i] = b[i] * c, kernel wrapper (cudaReal).
 void mulVS(DeviceArray<cudaReal>& a, DeviceArray<cudaReal> const & b, 
-           cudaReal const c, const int beginIdA, const int beginIdB, 
+           const cudaReal c, const int beginIdA, const int beginIdB, 
            const int n)
 {
    UTIL_CHECK(a.capacity() >= n + beginIdA);
@@ -1468,7 +1488,7 @@ void mulVS(DeviceArray<cudaReal>& a, DeviceArray<cudaReal> const & b,
 
 // Vector multiplication, a[i] = b[i] * c, kernel wrapper (cudaComplex).
 void mulVS(DeviceArray<cudaComplex>& a, DeviceArray<cudaComplex> const & b, 
-           cudaComplex const c, const int beginIdA, const int beginIdB, 
+           const cudaComplex c, const int beginIdA, const int beginIdB, 
            const int n)
 {
    UTIL_CHECK(a.capacity() >= n + beginIdA);
@@ -1485,9 +1505,10 @@ void mulVS(DeviceArray<cudaComplex>& a, DeviceArray<cudaComplex> const & b,
 }
 
 // Vector multiplication, a[i] = b[i] * c, kernel wrapper (mixed, b = real).
-void mulVS(DeviceArray<cudaComplex>& a, DeviceArray<cudaReal> const & b, 
-           cudaComplex const c, const int beginIdA, const int beginIdB, 
-           const int n)
+void mulVS(DeviceArray<cudaComplex>& a, 
+           DeviceArray<cudaReal> const & b, 
+           const cudaComplex c, 
+           const int beginIdA, const int beginIdB, const int n)
 {
    UTIL_CHECK(a.capacity() >= n + beginIdA);
    UTIL_CHECK(b.capacity() >= n + beginIdB);
@@ -1504,7 +1525,7 @@ void mulVS(DeviceArray<cudaComplex>& a, DeviceArray<cudaReal> const & b,
 
 // Vector multiplication, a[i] = b[i] * c, kernel wrapper (mixed, c = real).
 void mulVS(DeviceArray<cudaComplex>& a, DeviceArray<cudaComplex> const & b, 
-           cudaReal const c, const int beginIdA, const int beginIdB, 
+           const cudaReal c, const int beginIdA, const int beginIdB, 
            const int n)
 {
    UTIL_CHECK(a.capacity() >= n + beginIdA);
@@ -1560,7 +1581,7 @@ void divVV(DeviceArray<cudaComplex>& a, DeviceArray<cudaComplex> const & b,
 
 // Vector division, a[i] = b[i] / c, kernel wrapper (cudaReal).
 void divVS(DeviceArray<cudaReal>& a, DeviceArray<cudaReal> const & b, 
-           cudaReal const c, const int beginIdA, const int beginIdB, 
+           const cudaReal c, const int beginIdA, const int beginIdB, 
            const int n)
 {
    UTIL_CHECK(a.capacity() >= n + beginIdA);
@@ -1577,8 +1598,9 @@ void divVS(DeviceArray<cudaReal>& a, DeviceArray<cudaReal> const & b,
 }
 
 // Vector division, a[i] = b[i] / c, kernel wrapper (mixed, c = real).
-void divVS(DeviceArray<cudaComplex>& a, DeviceArray<cudaComplex> const & b, 
-           cudaReal const c, const int beginIdA, const int beginIdB, 
+void divVS(DeviceArray<cudaComplex>& a, 
+           DeviceArray<cudaComplex> const & b, 
+           const cudaReal c, const int beginIdA, const int beginIdB, 
            const int n)
 {
    UTIL_CHECK(a.capacity() >= n + beginIdA);
@@ -1591,6 +1613,26 @@ void divVS(DeviceArray<cudaComplex>& a, DeviceArray<cudaComplex> const & b,
    // Launch kernel
    _divVS<<<nBlocks, nThreads>>>(a.cArray()+beginIdA, b.cArray()+beginIdB, 
                                  c, n);
+   cudaErrorCheck( cudaGetLastError() ); // ensure no CUDA errors
+}
+
+// Division of scalar by  vector, a[i] = b / c[i], kernel wrapper (cudaReal).
+void divSV(DeviceArray<cudaReal>& a, 
+           const cudaReal b, 
+           DeviceArray<cudaReal> const & c, 
+           const int beginIdA, const int beginIdC, 
+           const int n)
+{
+   UTIL_CHECK(a.capacity() >= n + beginIdA);
+   UTIL_CHECK(c.capacity() >= n + beginIdC);
+   
+   // GPU resources
+   int nBlocks, nThreads;
+   ThreadArray::setThreadsLogical(n, nBlocks, nThreads);
+
+   // Launch kernel
+   _divSV<<<nBlocks, nThreads>>>(a.cArray() + beginIdA, b, 
+                                 c.cArray() + beginIdC, n);
    cudaErrorCheck( cudaGetLastError() ); // ensure no CUDA errors
 }
 
@@ -1646,7 +1688,8 @@ void addEqV(DeviceArray<cudaReal>& a, DeviceArray<cudaReal> const & b,
 }
 
 // Vector addition in-place, a[i] += b[i], kernel wrapper (cudaComplex).
-void addEqV(DeviceArray<cudaComplex>& a, DeviceArray<cudaComplex> const & b,
+void addEqV(DeviceArray<cudaComplex>& a, 
+            DeviceArray<cudaComplex> const & b,
             const int beginIdA, const int beginIdB, const int n)
 {
    UTIL_CHECK(a.capacity() >= n + beginIdA);
@@ -1680,7 +1723,7 @@ void addEqV(DeviceArray<cudaComplex>& a, DeviceArray<cudaReal> const & b,
 }
 
 // Vector addition in-place, a[i] += b, kernel wrapper (cudaReal).
-void addEqS(DeviceArray<cudaReal>& a, cudaReal const b, 
+void addEqS(DeviceArray<cudaReal>& a, const cudaReal b, 
             const int beginIdA, const int n)
 {
    UTIL_CHECK(a.capacity() >= n + beginIdA);
@@ -1695,7 +1738,7 @@ void addEqS(DeviceArray<cudaReal>& a, cudaReal const b,
 }
 
 // Vector addition in-place, a[i] += b, kernel wrapper (cudaComplex).
-void addEqS(DeviceArray<cudaComplex>& a, cudaComplex const b,
+void addEqS(DeviceArray<cudaComplex>& a, const cudaComplex b,
             const int beginIdA, const int n)
 {
    UTIL_CHECK(a.capacity() >= n + beginIdA);
@@ -1710,7 +1753,7 @@ void addEqS(DeviceArray<cudaComplex>& a, cudaComplex const b,
 }
 
 // Vector addition in-place, a[i] += b, kernel wrapper (mixed).
-void addEqS(DeviceArray<cudaComplex>& a, cudaReal const b,
+void addEqS(DeviceArray<cudaComplex>& a, const cudaReal b,
             const int beginIdA, const int n)
 {
    UTIL_CHECK(a.capacity() >= n + beginIdA);
@@ -1725,7 +1768,8 @@ void addEqS(DeviceArray<cudaComplex>& a, cudaReal const b,
 }
 
 // Vector subtraction in-place, a[i] -= b[i], kernel wrapper (cudaReal).
-void subEqV(DeviceArray<cudaReal>& a, DeviceArray<cudaReal> const & b,
+void subEqV(DeviceArray<cudaReal>& a, 
+            DeviceArray<cudaReal> const & b,
             const int beginIdA, const int beginIdB, const int n)
 {
    UTIL_CHECK(a.capacity() >= n + beginIdA);
@@ -1742,7 +1786,8 @@ void subEqV(DeviceArray<cudaReal>& a, DeviceArray<cudaReal> const & b,
 }
 
 // Vector subtraction in-place, a[i] -= b[i], kernel wrapper (cudaComplex).
-void subEqV(DeviceArray<cudaComplex>& a, DeviceArray<cudaComplex> const & b,
+void subEqV(DeviceArray<cudaComplex>& a, 
+            DeviceArray<cudaComplex> const & b,
             const int beginIdA, const int beginIdB, const int n)
 {
    UTIL_CHECK(a.capacity() >= n + beginIdA);
@@ -1776,7 +1821,7 @@ void subEqV(DeviceArray<cudaComplex>& a, DeviceArray<cudaReal> const & b,
 }
 
 // Vector subtraction in-place, a[i] -= b, kernel wrapper (cudaReal).
-void subEqS(DeviceArray<cudaReal>& a, cudaReal const b,
+void subEqS(DeviceArray<cudaReal>& a, const cudaReal b,
             const int beginIdA, const int n)
 {
    UTIL_CHECK(a.capacity() >= n + beginIdA);
@@ -1791,7 +1836,7 @@ void subEqS(DeviceArray<cudaReal>& a, cudaReal const b,
 }
 
 // Vector subtraction in-place, a[i] -= b, kernel wrapper (cudaComplex).
-void subEqS(DeviceArray<cudaComplex>& a, cudaComplex const b,
+void subEqS(DeviceArray<cudaComplex>& a, const cudaComplex b,
             const int beginIdA, const int n)
 {
    UTIL_CHECK(a.capacity() >= n + beginIdA);
@@ -1806,7 +1851,7 @@ void subEqS(DeviceArray<cudaComplex>& a, cudaComplex const b,
 }
 
 // Vector subtraction in-place, a[i] -= b, kernel wrapper (mixed).
-void subEqS(DeviceArray<cudaComplex>& a, cudaReal const b,
+void subEqS(DeviceArray<cudaComplex>& a, const cudaReal b,
             const int beginIdA, const int n)
 {
    UTIL_CHECK(a.capacity() >= n + beginIdA);
@@ -1872,7 +1917,7 @@ void mulEqV(DeviceArray<cudaComplex>& a, DeviceArray<cudaReal> const & b,
 }
 
 // Vector multiplication in-place, a[i] *= b, kernel wrapper (cudaReal).
-void mulEqS(DeviceArray<cudaReal>& a, cudaReal const b,
+void mulEqS(DeviceArray<cudaReal>& a, const cudaReal b,
             const int beginIdA, const int n)
 {
    UTIL_CHECK(a.capacity() >= n + beginIdA);
@@ -1887,7 +1932,8 @@ void mulEqS(DeviceArray<cudaReal>& a, cudaReal const b,
 }
 
 // Vector multiplication in-place, a[i] *= b, kernel wrapper (cudaComplex).
-void mulEqS(DeviceArray<cudaComplex>& a, cudaComplex const b,
+void mulEqS(DeviceArray<cudaComplex>& a, 
+            const cudaComplex b,
             const int beginIdA, const int n)
 {
    UTIL_CHECK(a.capacity() >= n + beginIdA);
@@ -1902,7 +1948,7 @@ void mulEqS(DeviceArray<cudaComplex>& a, cudaComplex const b,
 }
 
 // Vector multiplication in-place, a[i] *= b, kernel wrapper (mixed).
-void mulEqS(DeviceArray<cudaComplex>& a, cudaReal const b,
+void mulEqS(DeviceArray<cudaComplex>& a, const cudaReal b,
             const int beginIdA, const int n)
 {
    UTIL_CHECK(a.capacity() >= n + beginIdA);
@@ -1951,7 +1997,7 @@ void divEqV(DeviceArray<cudaComplex>& a, DeviceArray<cudaReal> const & b,
 }
 
 // Vector division in-place, a[i] /= b, kernel wrapper (cudaReal).
-void divEqS(DeviceArray<cudaReal>& a, cudaReal const b,
+void divEqS(DeviceArray<cudaReal>& a, const cudaReal b,
             const int beginIdA, const int n)
 {
    UTIL_CHECK(a.capacity() >= n + beginIdA);
@@ -1966,7 +2012,7 @@ void divEqS(DeviceArray<cudaReal>& a, cudaReal const b,
 }
 
 // Vector division in-place, a[i] /= b, kernel wrapper (mixed).
-void divEqS(DeviceArray<cudaComplex>& a, cudaReal const b,
+void divEqS(DeviceArray<cudaComplex>& a, const cudaReal b,
             const int beginIdA, const int n)
 {
    UTIL_CHECK(a.capacity() >= n + beginIdA);

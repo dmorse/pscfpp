@@ -123,7 +123,7 @@ namespace Rpc {
       if (PolymerModel::isThread()) {
 
          // Set contour length discretization for this block
-         UTIL_CHECK(length() > 0);
+         UTIL_CHECK(length() > 0.0);
          int tempNs;
          tempNs = floor( length()/(2.0 *ds) + 0.5 );
          if (tempNs == 0) {
@@ -279,6 +279,139 @@ namespace Rpc {
    }
 
    /*
+   * Propagate solution by one step for the thread model.
+   */
+   template <int D>
+   void Block<D>::stepThread(RField<D> const & q, RField<D>& qout)
+   {
+      UTIL_CHECK(PolymerModel::isThread());
+
+      // Prereconditions on mesh and fft
+      int nx = mesh().size();
+      UTIL_CHECK(nx > 0);
+      UTIL_CHECK(fft().isSetup());
+      UTIL_CHECK(mesh().dimensions() == fft().meshDimensions());
+
+      // Internal preconditions
+      UTIL_CHECK(isAllocated_);
+      int nk = qk_.capacity();
+      UTIL_CHECK(nk > 0);
+      UTIL_CHECK(qr_.capacity() == nx);
+      UTIL_CHECK(expW_.capacity() == nx);
+      UTIL_CHECK(expW2_.capacity() == nx);
+      UTIL_CHECK(expKsq_.capacity() == nk);
+      UTIL_CHECK(expKsq2_.capacity() == nk);
+      UTIL_CHECK(hasExpKsq_);
+
+      // Preconditions on parameters
+      UTIL_CHECK(q.isAllocated());
+      UTIL_CHECK(q.capacity() == nx);
+      UTIL_CHECK(qout.isAllocated());
+      UTIL_CHECK(qout.capacity() == nx);
+
+      // Apply pseudo-spectral algorithm
+
+      // Full step for ds, half-step for ds/2
+      int i;
+      for (i = 0; i < nx; ++i) {
+         qr_[i] = q[i]*expW_[i];
+         qr2_[i] = q[i]*expW2_[i];
+      }
+      fft().forwardTransform(qr_, qk_);
+      fft().forwardTransform(qr2_, qk2_);
+      for (i = 0; i < nk; ++i) {
+         qk_[i][0] *= expKsq_[i];
+         qk_[i][1] *= expKsq_[i];
+         qk2_[i][0] *= expKsq2_[i];
+         qk2_[i][1] *= expKsq2_[i];
+      }
+      fft().inverseTransformUnsafe(qk_, qr_); // destroys qk_
+      fft().inverseTransformUnsafe(qk2_, qr2_); // destroys qk2_
+      for (i = 0; i < nx; ++i) {
+         qr_[i] = qr_[i]*expW_[i];
+         qr2_[i] = qr2_[i]*expW_[i];
+      }
+
+      // Finish second half-step for ds/2
+      fft().forwardTransform(qr2_, qk2_);
+      for (i = 0; i < nk; ++i) {
+         qk2_[i][0] *= expKsq2_[i];
+         qk2_[i][1] *= expKsq2_[i];
+      }
+      fft().inverseTransformUnsafe(qk2_, qr2_); // destroys qk2_
+      for (i = 0; i < nx; ++i) {
+         qr2_[i] = qr2_[i]*expW2_[i];
+      }
+
+      // Richardson extrapolation
+      for (i = 0; i < nx; ++i) {
+         qout[i] = (4.0*qr2_[i] - qr_[i])/3.0;
+      }
+   }
+
+   /*
+   * Apply one step of MDE solution for the bead model.
+   */
+   template <int D>
+   void Block<D>::stepBead(RField<D> const & q, RField<D>& qout)
+   {
+      UTIL_CHECK(PolymerModel::isBead());
+      stepBondBead(q, qout);
+      stepFieldBead(qout);
+   }
+
+   /*
+   * Apply the bond operator for the bead model.
+   */
+   template <int D>
+   void Block<D>::stepBondBead(RField<D> const & q, RField<D>& qout)
+   {
+      UTIL_CHECK(isAllocated_);
+      UTIL_CHECK(hasExpKsq_);
+
+      // Prereconditions on mesh and fft
+      int nx = mesh().size();
+      UTIL_CHECK(nx > 0);
+      UTIL_CHECK(fft().isSetup());
+      UTIL_CHECK(mesh().dimensions() == fft().meshDimensions());
+      UTIL_CHECK(q.capacity() == nx);
+      UTIL_CHECK(qout.capacity() == nx);
+
+      int nk = qk_.capacity();
+      UTIL_CHECK(nk > 0);
+      UTIL_CHECK(expKsq_.capacity() == nk);
+
+      // Preconditions on parameters
+
+      // Apply bond operator
+      fft().forwardTransform(q, qk_);
+      for (int i = 0; i < nk; ++i) {
+         qk_[i][0] *= expKsq_[i];
+         qk_[i][1] *= expKsq_[i];
+      }
+      fft().inverseTransformUnsafe(qk_, qout); // destroys qk_
+
+   }
+
+   /*
+   * Apply one step of MDE solution for the bead model.
+   */
+   template <int D>
+   void Block<D>::stepFieldBead(RField<D>& q)
+   {
+      // Preconditions 
+      int nx = mesh().size();
+      UTIL_CHECK(nx > 0);
+      UTIL_CHECK(expW_.capacity() == nx);
+      UTIL_CHECK(q.capacity() == nx);
+
+      // Apply field operator
+      for (int i = 0; i < nx; ++i) {
+         q[i] *= expW_[i];
+      }
+   }
+
+   /*
    * Integrate to calculate monomer concentration for this block
    */
    template <int D>
@@ -426,10 +559,6 @@ namespace Rpc {
       Q /= double(nx);
       return Q;
    }
-
-
-
-
 
    /*
    * Integrate to Stress exerted by the chain for this block
@@ -602,142 +731,6 @@ namespace Rpc {
             }
          }
       }
-   }
-
-
-
-   /*
-   * Propagate solution by one step for the thread model.
-   */
-   template <int D>
-   void Block<D>::stepThread(RField<D> const & q, RField<D>& qout)
-   {
-      UTIL_CHECK(PolymerModel::isThread());
-
-      // Prereconditions on mesh and fft
-      int nx = mesh().size();
-      UTIL_CHECK(nx > 0);
-      UTIL_CHECK(fft().isSetup());
-      UTIL_CHECK(mesh().dimensions() == fft().meshDimensions());
-
-      // Internal preconditions
-      UTIL_CHECK(isAllocated_);
-      int nk = qk_.capacity();
-      UTIL_CHECK(nk > 0);
-      UTIL_CHECK(qr_.capacity() == nx);
-      UTIL_CHECK(expW_.capacity() == nx);
-      UTIL_CHECK(expW2_.capacity() == nx);
-      UTIL_CHECK(expKsq_.capacity() == nk);
-      UTIL_CHECK(expKsq2_.capacity() == nk);
-      UTIL_CHECK(hasExpKsq_);
-
-      // Preconditions on parameters
-      UTIL_CHECK(q.isAllocated());
-      UTIL_CHECK(q.capacity() == nx);
-      UTIL_CHECK(qout.isAllocated());
-      UTIL_CHECK(qout.capacity() == nx);
-
-      // Apply pseudo-spectral algorithm
-
-      // Full step for ds, half-step for ds/2
-      int i;
-      for (i = 0; i < nx; ++i) {
-         qr_[i] = q[i]*expW_[i];
-         qr2_[i] = q[i]*expW2_[i];
-      }
-      fft().forwardTransform(qr_, qk_);
-      fft().forwardTransform(qr2_, qk2_);
-      for (i = 0; i < nk; ++i) {
-         qk_[i][0] *= expKsq_[i];
-         qk_[i][1] *= expKsq_[i];
-         qk2_[i][0] *= expKsq2_[i];
-         qk2_[i][1] *= expKsq2_[i];
-      }
-      fft().inverseTransformUnsafe(qk_, qr_); // destroys qk_
-      fft().inverseTransformUnsafe(qk2_, qr2_); // destroys qk2_
-      for (i = 0; i < nx; ++i) {
-         qr_[i] = qr_[i]*expW_[i];
-         qr2_[i] = qr2_[i]*expW_[i];
-      }
-
-      // Finish second half-step for ds/2
-      fft().forwardTransform(qr2_, qk2_);
-      for (i = 0; i < nk; ++i) {
-         qk2_[i][0] *= expKsq2_[i];
-         qk2_[i][1] *= expKsq2_[i];
-      }
-      fft().inverseTransformUnsafe(qk2_, qr2_); // destroys qk2_
-      for (i = 0; i < nx; ++i) {
-         qr2_[i] = qr2_[i]*expW2_[i];
-      }
-
-      // Richardson extrapolation
-      for (i = 0; i < nx; ++i) {
-         qout[i] = (4.0*qr2_[i] - qr_[i])/3.0;
-      }
-   }
-
-   /*
-   * Apply one step of MDE solution for the bead model.
-   */
-   template <int D>
-   void Block<D>::stepBead(RField<D> const & q, RField<D>& qout)
-   {
-      UTIL_CHECK(PolymerModel::isBead());
-      stepBondBead(q, qout);
-      stepFieldBead(qout);
-   }
-
-   /*
-   * Apply the bond operator for the bead model.
-   */
-   template <int D>
-   void Block<D>::stepBondBead(RField<D> const & q, RField<D>& qout)
-   {
-      UTIL_CHECK(isAllocated_);
-      UTIL_CHECK(hasExpKsq_);
-
-      // Prereconditions on mesh and fft
-      int nx = mesh().size();
-      UTIL_CHECK(nx > 0);
-      UTIL_CHECK(fft().isSetup());
-      UTIL_CHECK(mesh().dimensions() == fft().meshDimensions());
-      UTIL_CHECK(q.capacity() == nx);
-      UTIL_CHECK(qout.capacity() == nx);
-
-      int nk = qk_.capacity();
-      UTIL_CHECK(nk > 0);
-      UTIL_CHECK(expKsq_.capacity() == nk);
-
-      // Preconditions on parameters
-
-      // Apply bond operator
-      fft().forwardTransform(q, qk_);
-      for (int i = 0; i < nk; ++i) {
-         qk_[i][0] *= expKsq_[i];
-         qk_[i][1] *= expKsq_[i];
-      }
-      fft().inverseTransformUnsafe(qk_, qout); // destroys qk_
-
-   }
-
-   /*
-   * Apply one step of MDE solution for the bead model.
-   */
-   template <int D>
-   void Block<D>::stepFieldBead(RField<D>& q)
-   {
-      // Preconditions 
-      int nx = mesh().size();
-      UTIL_CHECK(nx > 0);
-      UTIL_CHECK(expW_.capacity() == nx);
-      UTIL_CHECK(q.capacity() == nx);
-
-      // Apply field operator
-      for (int i = 0; i < nx; ++i) {
-         q[i] *= expW_[i];
-      }
-
    }
 
 }

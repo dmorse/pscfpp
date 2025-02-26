@@ -10,15 +10,19 @@
 
 // Header file includes 
 #include <util/param/ParamComposite.h>    // base class
+
 #include <rpc/solvers/Mixture.h>          // member
 #include <rpc/field/Domain.h>             // member
 #include <rpc/field/WFieldContainer.h>    // member
 #include <rpc/field/CFieldContainer.h>    // member
 #include <rpc/field/Mask.h>               // member
+
 #include <prdc/cpu/RField.h>              // member (tmpFieldsRGrid_)
-#include <prdc/cpu/RFieldDft.h>           // member (tmpFieldSKGrid_)
+#include <prdc/cpu/RFieldDft.h>           // member (tmpFieldsKGrid_)
+
 #include <pscf/chem/PolymerModel.h>       // member (polymerModel_)
 #include <pscf/homogeneous/Mixture.h>     // member
+
 #include <util/misc/FileMaster.h>         // member
 #include <util/containers/DArray.h>       // member (tmpFields...)
 

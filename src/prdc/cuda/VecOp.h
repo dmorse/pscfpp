@@ -900,6 +900,31 @@ inline void divVS(DeviceArray<cudaComplex>& a,
                   DeviceArray<cudaComplex> const & b, cudaReal const c)
 {  divVS(a, b, c, 0, 0, a.capacity()); }
 
+/**
+* Vector division, a[i] = b / c[i], kernel wrapper (cudaReal).
+*
+* \param a  output array (LHS)
+* \param b  input scalar (RHS)
+* \param c  input array (RHS)
+* \param beginIdA  index of the first entry to evaluate in array a
+* \param beginIdC  index of the first entry to evaluate in array c
+* \param n  the number of entries to evaluate
+*/
+void divSV(DeviceArray<cudaReal>& a, '
+           cudaReal const b, 
+           DeviceArray<cudaReal> const & c, 
+           const int beginIdA, const int beginIdC, const int n);
+
+/**
+* Vector division, a[i] = b / c[i], kernel wrapper (cudaReal).
+*
+* \param a  output array (LHS)
+* \param b  input scalar (RHS)
+* \param c  input array (RHS)
+*/
+inline void divSV(DeviceArray<cudaReal>& a, cudaReal const b,
+                  DeviceArray<cudaReal> const & b)
+{  divSV(a, b, c, 0, 0, a.capacity()); }
 
 // Exponentiation operations:
 // ~~~~~~~~~~~~~~~~~~~~~~
