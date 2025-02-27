@@ -1,13 +1,17 @@
 Mixture{
    nMonomer  2
-   monomers  1.0  
-             1.0 
+   monomers[
+             1.0
+             1.0
+   ]
    nPolymer  1
    Polymer{
       type    branched
       nBlock  2
-      blocks  0  2.0  0  1 
-              1  3.0  1  2  
+      blocks[
+              0   2.0   0  1
+              1   3.0   1  2
+      ]
       phi     1.0
    }
    ds   0.001

@@ -29,17 +29,22 @@ class PropagatorTest : public UnitTest
 public:
 
    void setUp()
-   {}
+   {  PolymerModel::setModel(PolymerModel::Thread); }
 
    void tearDown()
-   {}
+   {  PolymerModel::setModel(PolymerModel::Thread); }
 
    template <int D> 
    void setupBlock(Pscf::Rpg::Block<D>& block)
    {
       block.setId(0);
-      double length = 2.0;
-      block.setLength(length);
+      if (PolymerModel::isThread()) {
+         double length = 2.0;
+         block.setLength(length);
+      } else {
+         int nBead = 20;
+         block.setNBead(nBead);
+      }
       block.setMonomerId(1);
       double step = sqrt(6.0);
       block.setKuhn(step);
@@ -294,6 +299,7 @@ public:
 
       // Create wavelist 
       WaveList<2> wavelist;
+      wavelist.allocate(mesh, unitCell);
 
       double ds = 0.5;
       block.associate(mesh, fft, unitCell, wavelist);
@@ -509,6 +515,7 @@ public:
       qin.allocate(mesh.dimensions());
       qout.allocate(mesh.dimensions());
 
+      // Initialize qin as a cosine(kx)
       HostDArray<cudaReal> qin_h(nx);
       double twoPi = 2.0*Constants::Pi;
       for (int i=0; i < nx; ++i) {
@@ -516,15 +523,18 @@ public:
       }
       qin = qin_h;
 
+      // Take a step
       block.stepBead(qin, qout);
+      HostDArray<cudaReal> qout_h(nx);
+      qout_h = qout;
+
+      // Test qout_h
       //double a = 4.0;
       double a = unitCell.parameter(0);
       double b = block.kuhn();
       double Gb = twoPi*b/a;
       double r = Gb*Gb/6.0;
       double expected = exp(-(wc + r));
-      HostDArray<cudaReal> qout_h(nx);
-      qout_h = qout;
       for (int i = 0; i < nx; ++i) {
          TEST_ASSERT(eq(qout_h[i], qin_h[i]*expected));
       }
@@ -541,17 +551,17 @@ public:
       q0.solve();
 
       // Check head slice
-      expected = exp(-wc*ds);
       HostDArray<cudaReal> qh_h(nx);
       qh_h = q0.head();
+      expected = exp(-wc*ds);
       for (int i = 0; i < nx; ++i) {
          TEST_ASSERT(eq(qh_h[i], expected));
       }
       
       // Check tail slice
-      expected = exp(-wc*ds*block.nBead());
       HostDArray<cudaReal> qt_h(nx);
       qt_h = q0.tail();
+      expected = exp(-wc*ds*block.nBead());
       for (int i = 0; i < nx; ++i) {
          TEST_ASSERT(eq(qt_h[i], expected));
       }
@@ -785,8 +795,10 @@ TEST_ADD(PropagatorTest, testSetup2D)
 TEST_ADD(PropagatorTest, testSetup3D)
 TEST_ADD(PropagatorTest, testSetupSolver1D)
 TEST_ADD(PropagatorTest, testSetupSolver2D)
+TEST_ADD(PropagatorTest, testSetupSolver2D_bead)
 TEST_ADD(PropagatorTest, testSetupSolver3D)
 TEST_ADD(PropagatorTest, testSolver1D)
+TEST_ADD(PropagatorTest, testSolver1D_bead)
 TEST_ADD(PropagatorTest, testSolver2D)
 TEST_ADD(PropagatorTest, testSolver3D)
 TEST_END(PropagatorTest)

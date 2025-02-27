@@ -3,9 +3,12 @@
 
 #include <test/TestRunner.h>
 #include <test/CompositeTestRunner.h>
+#include <util/param/BracketPolicy.h>
 
 int main(int argc, char* argv[])
 {
+   BracketPolicy::set(BracketPolicy::Optional);
+
    SolverTestComposite runner;
 
    if (argc > 2) {
