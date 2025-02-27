@@ -978,9 +978,13 @@ namespace Rpg {
             phi = polymerPtr->phi();
             mu = polymerPtr->mu();
             // Recall: mu = ln(phi/q)
-            length = polymerPtr->length();
+            if (PolymerModel::isThread()) {
+               length = polymerPtr->length();
+            } else {
+               length = (double) polymerPtr->nBead();
+            }
             if (phi > 1.0E-08) {
-               fIdeal_ += phi*( mu - 1.0 )/length;
+               fIdeal_ += phi*( mu - 1.0 ) / length;
             }
          }
       }
@@ -1106,7 +1110,11 @@ namespace Rpg {
             polymerPtr = &mixture_.polymer(i);
             phi = polymerPtr->phi();
             mu = polymerPtr->mu();
-            length = polymerPtr->length();
+            if (PolymerModel::isThread()) {
+               length = polymerPtr->length();
+            } else {
+               length = (double) polymerPtr->nBead();
+            }
             if (phi > 1.0E-08) {
                pressure_ += mu * phi / length;
             }
@@ -1762,6 +1770,7 @@ namespace Rpg {
    {
 
       // Set number of molecular species and monomers
+      double length;
       int nm = mixture_.nMonomer();
       int np = mixture_.nPolymer();
       int ns = mixture_.nSolvent();
@@ -1793,7 +1802,12 @@ namespace Rpg {
             for (k = 0; k < nb; ++k) {
                Block<D>& block = mixture_.polymer(i).block(k);
                j = block.monomerId();
-               cTmp[j] += block.length();
+               if (PolymerModel::isThread()) {
+                  length = block.length();
+               } else {
+                  length = (double) block.nBead();
+               } 
+               cTmp[j] += length;
             }
 
             // Count the number of clumps of nonzero size

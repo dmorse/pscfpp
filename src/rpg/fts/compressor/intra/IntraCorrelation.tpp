@@ -71,7 +71,11 @@ namespace Rpg{
          for (int j = 0; j < nBlock; j++) {
             monomerId = polymerPtr-> block(j).monomerId();
             kuhn = system().mixture().monomer(monomerId).kuhn();
-            length = polymerPtr-> block(j).length();
+            if (PolymerModel::isThread()) {
+               length = polymerPtr-> block(j).length();
+            } else {
+               length = (double) polymerPtr-> block(j).nBead();
+            }
             totalN += length;
             avgKuhn += kuhn/nBlock;
          }
