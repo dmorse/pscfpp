@@ -128,7 +128,7 @@ inline void eqV(DeviceArray<cudaComplex>& a,
 * \param beginIdA  index of the first entry to evaluate in array a
 * \param n  the number of entries to evaluate
 */
-void eqS(DeviceArray<cudaReal>& a, cudaReal const b,
+void eqS(DeviceArray<cudaReal>& a, const cudaReal b,
          const int beginIdA, const int n);
 
 /**
@@ -137,7 +137,7 @@ void eqS(DeviceArray<cudaReal>& a, cudaReal const b,
 * \param a  output array (LHS)
 * \param b  input scalar (RHS)
 */
-inline void eqS(DeviceArray<cudaReal>& a, cudaReal const b)
+inline void eqS(DeviceArray<cudaReal>& a, const cudaReal b)
 {  eqS(a, b, 0, a.capacity()); }
 
 /**
@@ -148,7 +148,7 @@ inline void eqS(DeviceArray<cudaReal>& a, cudaReal const b)
 * \param beginIdA  index of the first entry to evaluate in array a
 * \param n  the number of entries to evaluate
 */
-void eqS(DeviceArray<cudaComplex>& a, cudaComplex const b,
+void eqS(DeviceArray<cudaComplex>& a, const cudaComplex b,
          const int beginIdA, const int n);
 
 /**
@@ -157,7 +157,7 @@ void eqS(DeviceArray<cudaComplex>& a, cudaComplex const b,
 * \param a  output array (LHS)
 * \param b  input scalar (RHS)
 */
-inline void eqS(DeviceArray<cudaComplex>& a, cudaComplex const b)
+inline void eqS(DeviceArray<cudaComplex>& a, const cudaComplex b)
 {  eqS(a, b, 0, a.capacity()); }
 
 
@@ -282,7 +282,7 @@ inline void addVV(DeviceArray<cudaComplex>& a,
 * \param n  the number of entries to evaluate
 */
 void addVS(DeviceArray<cudaReal>& a, DeviceArray<cudaReal> const & b, 
-           cudaReal const c, const int beginIdA, 
+           const cudaReal c, const int beginIdA, 
            const int beginIdB, const int n);
 
 /**
@@ -293,7 +293,7 @@ void addVS(DeviceArray<cudaReal>& a, DeviceArray<cudaReal> const & b,
 * \param c  input scalar (RHS)
 */
 inline void addVS(DeviceArray<cudaReal>& a, DeviceArray<cudaReal> const & b, 
-                  cudaReal const c)
+                  const cudaReal c)
 {  addVS(a, b, c, 0, 0, a.capacity()); }
 
 /**
@@ -307,7 +307,7 @@ inline void addVS(DeviceArray<cudaReal>& a, DeviceArray<cudaReal> const & b,
 * \param n  the number of entries to evaluate
 */
 void addVS(DeviceArray<cudaComplex>& a, DeviceArray<cudaComplex> const & b, 
-           cudaComplex const c, const int beginIdA, 
+           const cudaComplex c, const int beginIdA, 
            const int beginIdB, const int n);
 
 /**
@@ -318,7 +318,7 @@ void addVS(DeviceArray<cudaComplex>& a, DeviceArray<cudaComplex> const & b,
 * \param c  input scalar (RHS)
 */
 inline void addVS(DeviceArray<cudaComplex>& a, 
-                  DeviceArray<cudaComplex> const & b, cudaComplex const c)
+                  DeviceArray<cudaComplex> const & b, const cudaComplex c)
 {  addVS(a, b, c, 0, 0, a.capacity()); }
 
 /**
@@ -332,7 +332,7 @@ inline void addVS(DeviceArray<cudaComplex>& a,
 * \param n  the number of entries to evaluate
 */
 void addVS(DeviceArray<cudaComplex>& a, DeviceArray<cudaReal> const & b, 
-           cudaComplex const c, const int beginIdA, 
+           const cudaComplex c, const int beginIdA, 
            const int beginIdB, const int n);
 
 /**
@@ -343,7 +343,7 @@ void addVS(DeviceArray<cudaComplex>& a, DeviceArray<cudaReal> const & b,
 * \param c  input scalar (RHS)
 */
 inline void addVS(DeviceArray<cudaComplex>& a, DeviceArray<cudaReal> const & b, 
-                  cudaComplex const c)
+                  const cudaComplex c)
 {  addVS(a, b, c, 0, 0, a.capacity()); }
 
 /**
@@ -357,7 +357,7 @@ inline void addVS(DeviceArray<cudaComplex>& a, DeviceArray<cudaReal> const & b,
 * \param n  the number of entries to evaluate
 */
 void addVS(DeviceArray<cudaComplex>& a, DeviceArray<cudaComplex> const & b, 
-           cudaReal const c, const int beginIdA, 
+           const cudaReal c, const int beginIdA, 
            const int beginIdB, const int n);
 
 /**
@@ -368,7 +368,7 @@ void addVS(DeviceArray<cudaComplex>& a, DeviceArray<cudaComplex> const & b,
 * \param c  input scalar (RHS)
 */
 inline void addVS(DeviceArray<cudaComplex>& a, 
-                  DeviceArray<cudaComplex> const & b, cudaReal const c)
+                  DeviceArray<cudaComplex> const & b, const cudaReal c)
 {  addVS(a, b, c, 0, 0, a.capacity()); }
 
 
@@ -492,7 +492,7 @@ inline void subVV(DeviceArray<cudaComplex>& a,
 * \param n  the number of entries to evaluate
 */
 void subVS(DeviceArray<cudaReal>& a, DeviceArray<cudaReal> const & b, 
-           cudaReal const c, const int beginIdA, 
+           const cudaReal c, const int beginIdA, 
            const int beginIdB, const int n);
 
 /**
@@ -503,7 +503,7 @@ void subVS(DeviceArray<cudaReal>& a, DeviceArray<cudaReal> const & b,
 * \param c  input scalar (RHS)
 */
 inline void subVS(DeviceArray<cudaReal>& a, DeviceArray<cudaReal> const & b, 
-                  cudaReal const c)
+                  const cudaReal c)
 {  subVS(a, b, c, 0, 0, a.capacity()); }
 
 /**
@@ -517,7 +517,7 @@ inline void subVS(DeviceArray<cudaReal>& a, DeviceArray<cudaReal> const & b,
 * \param n  the number of entries to evaluate
 */
 void subVS(DeviceArray<cudaComplex>& a, DeviceArray<cudaComplex> const & b, 
-           cudaComplex const c, const int beginIdA, 
+           const cudaComplex c, const int beginIdA, 
            const int beginIdB, const int n);
 
 /**
@@ -528,7 +528,7 @@ void subVS(DeviceArray<cudaComplex>& a, DeviceArray<cudaComplex> const & b,
 * \param c  input scalar (RHS)
 */
 inline void subVS(DeviceArray<cudaComplex>& a, 
-                  DeviceArray<cudaComplex> const & b, cudaComplex const c)
+                  DeviceArray<cudaComplex> const & b, const cudaComplex c)
 {  subVS(a, b, c, 0, 0, a.capacity()); }
 
 /**
@@ -542,7 +542,7 @@ inline void subVS(DeviceArray<cudaComplex>& a,
 * \param n  the number of entries to evaluate
 */
 void subVS(DeviceArray<cudaComplex>& a, DeviceArray<cudaReal> const & b, 
-           cudaComplex const c, const int beginIdA, 
+           const cudaComplex c, const int beginIdA, 
            const int beginIdB, const int n);
 
 /**
@@ -554,7 +554,7 @@ void subVS(DeviceArray<cudaComplex>& a, DeviceArray<cudaReal> const & b,
 */
 inline void subVS(DeviceArray<cudaComplex>& a, 
                   DeviceArray<cudaReal> const & b, 
-                  cudaComplex const c)
+                  const cudaComplex c)
 {  subVS(a, b, c, 0, 0, a.capacity()); }
 
 /**
@@ -568,7 +568,7 @@ inline void subVS(DeviceArray<cudaComplex>& a,
 * \param n  the number of entries to evaluate
 */
 void subVS(DeviceArray<cudaComplex>& a, DeviceArray<cudaComplex> const & b, 
-           cudaReal const c, const int beginIdA, 
+           const cudaReal c, const int beginIdA, 
            const int beginIdB, const int n);
 
 /**
@@ -579,7 +579,7 @@ void subVS(DeviceArray<cudaComplex>& a, DeviceArray<cudaComplex> const & b,
 * \param c  input scalar (RHS)
 */
 inline void subVS(DeviceArray<cudaComplex>& a, 
-                  DeviceArray<cudaComplex> const & b, cudaReal const c)
+                  DeviceArray<cudaComplex> const & b, const cudaReal c)
 {  subVS(a, b, c, 0, 0, a.capacity()); }
 
 
@@ -704,7 +704,7 @@ inline void mulVV(DeviceArray<cudaComplex>& a,
 * \param n  the number of entries to evaluate
 */
 void mulVS(DeviceArray<cudaReal>& a, DeviceArray<cudaReal> const & b, 
-           cudaReal const c, const int beginIdA, 
+           const cudaReal c, const int beginIdA, 
            const int beginIdB, const int n);
 
 /**
@@ -715,7 +715,7 @@ void mulVS(DeviceArray<cudaReal>& a, DeviceArray<cudaReal> const & b,
 * \param c  input scalar (RHS)
 */
 inline void mulVS(DeviceArray<cudaReal>& a, DeviceArray<cudaReal> const & b, 
-                  cudaReal const c)
+                  const cudaReal c)
 {  mulVS(a, b, c, 0, 0, a.capacity()); }
 
 /**
@@ -729,7 +729,7 @@ inline void mulVS(DeviceArray<cudaReal>& a, DeviceArray<cudaReal> const & b,
 * \param n  the number of entries to evaluate
 */
 void mulVS(DeviceArray<cudaComplex>& a, DeviceArray<cudaComplex> const & b, 
-           cudaComplex const c, const int beginIdA, 
+           const cudaComplex c, const int beginIdA, 
            const int beginIdB, const int n);
 
 /**
@@ -740,7 +740,7 @@ void mulVS(DeviceArray<cudaComplex>& a, DeviceArray<cudaComplex> const & b,
 * \param c  input scalar (RHS)
 */
 inline void mulVS(DeviceArray<cudaComplex>& a, 
-                  DeviceArray<cudaComplex> const & b, cudaComplex const c)
+                  DeviceArray<cudaComplex> const & b, const cudaComplex c)
 {  mulVS(a, b, c, 0, 0, a.capacity()); }
 
 /**
@@ -753,9 +753,10 @@ inline void mulVS(DeviceArray<cudaComplex>& a,
 * \param beginIdB  index of the first entry to evaluate in array b
 * \param n  the number of entries to evaluate
 */
-void mulVS(DeviceArray<cudaComplex>& a, DeviceArray<cudaReal> const & b, 
-           cudaComplex const c, const int beginIdA, 
-           const int beginIdB, const int n);
+void mulVS(DeviceArray<cudaComplex>& a, 
+           DeviceArray<cudaReal> const & b, 
+           const cudaComplex c, 
+           const int beginIdA, const int beginIdB, const int n);
 
 /**
 * Vector multiplication, a[i] = b[i] * c, kernel wrapper (mixed, b = real).
@@ -765,7 +766,7 @@ void mulVS(DeviceArray<cudaComplex>& a, DeviceArray<cudaReal> const & b,
 * \param c  input scalar (RHS)
 */
 inline void mulVS(DeviceArray<cudaComplex>& a, 
-                  DeviceArray<cudaReal> const & b, cudaComplex const c)
+                  DeviceArray<cudaReal> const & b, const cudaComplex c)
 {  mulVS(a, b, c, 0, 0, a.capacity()); }
 
 /**
@@ -778,9 +779,10 @@ inline void mulVS(DeviceArray<cudaComplex>& a,
 * \param beginIdB  index of the first entry to evaluate in array b
 * \param n  the number of entries to evaluate
 */
-void mulVS(DeviceArray<cudaComplex>& a, DeviceArray<cudaComplex> const & b, 
-           cudaReal const c, const int beginIdA, 
-           const int beginIdB, const int n);
+void mulVS(DeviceArray<cudaComplex>& a, 
+           DeviceArray<cudaComplex> const & b, 
+           const cudaReal c, 
+           const int beginIdA, const int beginIdB, const int n);
 
 /**
 * Vector multiplication, a[i] = b[i] * c, kernel wrapper (mixed, c = real).
@@ -790,7 +792,8 @@ void mulVS(DeviceArray<cudaComplex>& a, DeviceArray<cudaComplex> const & b,
 * \param c  input scalar (RHS)
 */
 inline void mulVS(DeviceArray<cudaComplex>& a, 
-                  DeviceArray<cudaComplex> const & b, cudaReal const c)
+                  DeviceArray<cudaComplex> const & b, 
+                  const cudaReal c)
 {  mulVS(a, b, c, 0, 0, a.capacity()); }
 
 
@@ -861,7 +864,7 @@ inline void divVV(DeviceArray<cudaComplex>& a,
 * \param n  the number of entries to evaluate
 */
 void divVS(DeviceArray<cudaReal>& a, DeviceArray<cudaReal> const & b, 
-           cudaReal const c, const int beginIdA, 
+           const cudaReal c, const int beginIdA, 
            const int beginIdB, const int n);
 
 /**
@@ -872,7 +875,7 @@ void divVS(DeviceArray<cudaReal>& a, DeviceArray<cudaReal> const & b,
 * \param c  input scalar (RHS)
 */
 inline void divVS(DeviceArray<cudaReal>& a, DeviceArray<cudaReal> const & b, 
-                  cudaReal const c)
+                  const cudaReal c)
 {  divVS(a, b, c, 0, 0, a.capacity()); }
 
 /**
@@ -886,7 +889,7 @@ inline void divVS(DeviceArray<cudaReal>& a, DeviceArray<cudaReal> const & b,
 * \param n  the number of entries to evaluate
 */
 void divVS(DeviceArray<cudaComplex>& a, DeviceArray<cudaComplex> const & b, 
-           cudaReal const c, const int beginIdA, 
+           const cudaReal c, const int beginIdA, 
            const int beginIdB, const int n);
 
 /**
@@ -897,7 +900,7 @@ void divVS(DeviceArray<cudaComplex>& a, DeviceArray<cudaComplex> const & b,
 * \param c  input scalar (RHS)
 */
 inline void divVS(DeviceArray<cudaComplex>& a, 
-                  DeviceArray<cudaComplex> const & b, cudaReal const c)
+                  DeviceArray<cudaComplex> const & b, const cudaReal c)
 {  divVS(a, b, c, 0, 0, a.capacity()); }
 
 /**
@@ -910,8 +913,7 @@ inline void divVS(DeviceArray<cudaComplex>& a,
 * \param beginIdC  index of the first entry to evaluate in array c
 * \param n  the number of entries to evaluate
 */
-void divSV(DeviceArray<cudaReal>& a, '
-           cudaReal const b, 
+void divSV(DeviceArray<cudaReal>& a, const cudaReal b, 
            DeviceArray<cudaReal> const & c, 
            const int beginIdA, const int beginIdC, const int n);
 
@@ -922,8 +924,8 @@ void divSV(DeviceArray<cudaReal>& a, '
 * \param b  input scalar (RHS)
 * \param c  input array (RHS)
 */
-inline void divSV(DeviceArray<cudaReal>& a, cudaReal const b,
-                  DeviceArray<cudaReal> const & b)
+inline void divSV(DeviceArray<cudaReal>& a, const cudaReal b,
+                  DeviceArray<cudaReal> const & c)
 {  divSV(a, b, c, 0, 0, a.capacity()); }
 
 // Exponentiation operations:
@@ -1049,7 +1051,7 @@ inline void addEqV(DeviceArray<cudaComplex>& a,
 * \param beginIdA  index of the first entry to evaluate in array a
 * \param n  the number of entries to evaluate
 */
-void addEqS(DeviceArray<cudaReal>& a, cudaReal const b,
+void addEqS(DeviceArray<cudaReal>& a, const cudaReal b,
             const int beginIdA, const int n);
 
 /**
@@ -1058,7 +1060,7 @@ void addEqS(DeviceArray<cudaReal>& a, cudaReal const b,
 * \param a  output array (LHS)
 * \param b  input scalar (RHS)
 */
-inline void addEqS(DeviceArray<cudaReal>& a, cudaReal const b)
+inline void addEqS(DeviceArray<cudaReal>& a, const cudaReal b)
 {  addEqS(a, b, 0, a.capacity()); }
 
 /**
@@ -1069,7 +1071,7 @@ inline void addEqS(DeviceArray<cudaReal>& a, cudaReal const b)
 * \param beginIdA  index of the first entry to evaluate in array a
 * \param n  the number of entries to evaluate
 */
-void addEqS(DeviceArray<cudaComplex>& a, cudaComplex const b,
+void addEqS(DeviceArray<cudaComplex>& a, const cudaComplex b,
             const int beginIdA, const int n);
 
 /**
@@ -1078,7 +1080,7 @@ void addEqS(DeviceArray<cudaComplex>& a, cudaComplex const b,
 * \param a  output array (LHS)
 * \param b  input scalar (RHS)
 */
-inline void addEqS(DeviceArray<cudaComplex>& a, cudaComplex const b)
+inline void addEqS(DeviceArray<cudaComplex>& a, const cudaComplex b)
 {  addEqS(a, b, 0, a.capacity()); }
 
 /**
@@ -1089,7 +1091,7 @@ inline void addEqS(DeviceArray<cudaComplex>& a, cudaComplex const b)
 * \param beginIdA  index of the first entry to evaluate in array a
 * \param n  the number of entries to evaluate
 */
-void addEqS(DeviceArray<cudaComplex>& a, cudaReal const b,
+void addEqS(DeviceArray<cudaComplex>& a, const cudaReal b,
             const int beginIdA, const int n);
 
 /**
@@ -1098,7 +1100,7 @@ void addEqS(DeviceArray<cudaComplex>& a, cudaReal const b,
 * \param a  output array (LHS)
 * \param b  input scalar (RHS)
 */
-inline void addEqS(DeviceArray<cudaComplex>& a, cudaReal const b)
+inline void addEqS(DeviceArray<cudaComplex>& a, const cudaReal b)
 {  addEqS(a, b, 0, a.capacity()); }
 
 
@@ -1178,7 +1180,7 @@ inline void subEqV(DeviceArray<cudaComplex>& a,
 * \param beginIdA  index of the first entry to evaluate in array a
 * \param n  the number of entries to evaluate
 */
-void subEqS(DeviceArray<cudaReal>& a, cudaReal const b,
+void subEqS(DeviceArray<cudaReal>& a, const cudaReal b,
             const int beginIdA, const int n);
 
 /**
@@ -1187,7 +1189,7 @@ void subEqS(DeviceArray<cudaReal>& a, cudaReal const b,
 * \param a  output array (LHS)
 * \param b  input scalar (RHS)
 */
-inline void subEqS(DeviceArray<cudaReal>& a, cudaReal const b)
+inline void subEqS(DeviceArray<cudaReal>& a, const cudaReal b)
 {  subEqS(a, b, 0, a.capacity()); }
 
 /**
@@ -1198,7 +1200,7 @@ inline void subEqS(DeviceArray<cudaReal>& a, cudaReal const b)
 * \param beginIdA  index of the first entry to evaluate in array a
 * \param n  the number of entries to evaluate
 */
-void subEqS(DeviceArray<cudaComplex>& a, cudaComplex const b,
+void subEqS(DeviceArray<cudaComplex>& a, const cudaComplex b,
             const int beginIdA, const int n);
 
 /**
@@ -1207,7 +1209,7 @@ void subEqS(DeviceArray<cudaComplex>& a, cudaComplex const b,
 * \param a  output array (LHS)
 * \param b  input scalar (RHS)
 */
-inline void subEqS(DeviceArray<cudaComplex>& a, cudaComplex const b)
+inline void subEqS(DeviceArray<cudaComplex>& a, const cudaComplex b)
 {  subEqS(a, b, 0, a.capacity()); }
 
 /**
@@ -1218,7 +1220,7 @@ inline void subEqS(DeviceArray<cudaComplex>& a, cudaComplex const b)
 * \param beginIdA  index of the first entry to evaluate in array a
 * \param n  the number of entries to evaluate
 */
-void subEqS(DeviceArray<cudaComplex>& a, cudaReal const b,
+void subEqS(DeviceArray<cudaComplex>& a, const cudaReal b,
             const int beginIdA, const int n);
 
 /**
@@ -1227,7 +1229,7 @@ void subEqS(DeviceArray<cudaComplex>& a, cudaReal const b,
 * \param a  output array (LHS)
 * \param b  input scalar (RHS)
 */
-inline void subEqS(DeviceArray<cudaComplex>& a, cudaReal const b)
+inline void subEqS(DeviceArray<cudaComplex>& a, const cudaReal b)
 {  subEqS(a, b, 0, a.capacity()); }
 
 
@@ -1308,7 +1310,7 @@ inline void mulEqV(DeviceArray<cudaComplex>& a,
 * \param beginIdA  index of the first entry to evaluate in array a
 * \param n  the number of entries to evaluate
 */
-void mulEqS(DeviceArray<cudaReal>& a, cudaReal const b,
+void mulEqS(DeviceArray<cudaReal>& a, const cudaReal b,
             const int beginIdA, const int n);
 
 /**
@@ -1317,7 +1319,7 @@ void mulEqS(DeviceArray<cudaReal>& a, cudaReal const b,
 * \param a  output array (LHS)
 * \param b  input scalar (RHS)
 */
-inline void mulEqS(DeviceArray<cudaReal>& a, cudaReal const b)
+inline void mulEqS(DeviceArray<cudaReal>& a, const cudaReal b)
 {  mulEqS(a, b, 0, a.capacity()); }
 
 /**
@@ -1328,7 +1330,7 @@ inline void mulEqS(DeviceArray<cudaReal>& a, cudaReal const b)
 * \param beginIdA  index of the first entry to evaluate in array a
 * \param n  the number of entries to evaluate
 */
-void mulEqS(DeviceArray<cudaComplex>& a, cudaComplex const b,
+void mulEqS(DeviceArray<cudaComplex>& a, const cudaComplex b,
             const int beginIdA, const int n);
 
 /**
@@ -1337,7 +1339,7 @@ void mulEqS(DeviceArray<cudaComplex>& a, cudaComplex const b,
 * \param a  output array (LHS)
 * \param b  input scalar (RHS)
 */
-inline void mulEqS(DeviceArray<cudaComplex>& a, cudaComplex const b)
+inline void mulEqS(DeviceArray<cudaComplex>& a, const cudaComplex b)
 {  mulEqS(a, b, 0, a.capacity()); }
 
 /**
@@ -1348,7 +1350,7 @@ inline void mulEqS(DeviceArray<cudaComplex>& a, cudaComplex const b)
 * \param beginIdA  index of the first entry to evaluate in array a
 * \param n  the number of entries to evaluate
 */
-void mulEqS(DeviceArray<cudaComplex>& a, cudaReal const b,
+void mulEqS(DeviceArray<cudaComplex>& a, const cudaReal b,
             const int beginIdA, const int n);
 
 /**
@@ -1357,7 +1359,7 @@ void mulEqS(DeviceArray<cudaComplex>& a, cudaReal const b,
 * \param a  output array (LHS)
 * \param b  input scalar (RHS)
 */
-inline void mulEqS(DeviceArray<cudaComplex>& a, cudaReal const b)
+inline void mulEqS(DeviceArray<cudaComplex>& a, const cudaReal b)
 {  mulEqS(a, b, 0, a.capacity()); }
 
 
@@ -1415,7 +1417,7 @@ inline void divEqV(DeviceArray<cudaComplex>& a,
 * \param beginIdA  index of the first entry to evaluate in array a
 * \param n  the number of entries to evaluate
 */
-void divEqS(DeviceArray<cudaReal>& a, cudaReal const b,
+void divEqS(DeviceArray<cudaReal>& a, const cudaReal b,
             const int beginIdA, const int n);
 
 /**
@@ -1424,7 +1426,7 @@ void divEqS(DeviceArray<cudaReal>& a, cudaReal const b,
 * \param a  output array (LHS)
 * \param b  input scalar (RHS)
 */
-inline void divEqS(DeviceArray<cudaReal>& a, cudaReal const b)
+inline void divEqS(DeviceArray<cudaReal>& a, const cudaReal b)
 {  divEqS(a, b, 0, a.capacity()); }
 
 /**
@@ -1435,7 +1437,7 @@ inline void divEqS(DeviceArray<cudaReal>& a, cudaReal const b)
 * \param beginIdA  index of the first entry to evaluate in array a
 * \param n  the number of entries to evaluate
 */
-void divEqS(DeviceArray<cudaComplex>& a, cudaReal const b,
+void divEqS(DeviceArray<cudaComplex>& a, const cudaReal b,
             const int beginIdA, const int n);
 
 /**
@@ -1444,7 +1446,7 @@ void divEqS(DeviceArray<cudaComplex>& a, cudaReal const b,
 * \param a  output array (LHS)
 * \param b  input scalar (RHS)
 */
-inline void divEqS(DeviceArray<cudaComplex>& a, cudaReal const b)
+inline void divEqS(DeviceArray<cudaComplex>& a, const cudaReal b)
 {  divEqS(a, b, 0, a.capacity()); }
 
 /** @} */

@@ -10,6 +10,7 @@
 
 #include "Mixture.h"
 #include <prdc/cuda/resources.h>
+#include <pscf/chem/PolymerModel.h>
 
 #include <cmath>
 
@@ -42,12 +43,20 @@ namespace Rpg
    void Mixture<D>::readParameters(std::istream& in)
    {
       MixtureTmpl< Polymer<D>, Solvent<D> >::readParameters(in);
-      read(in, "ds", ds_);
-      readOptional(in, "useBatchedFFT", useBatchedFFT_);
-
       UTIL_CHECK(nMonomer() > 0);
       UTIL_CHECK(nPolymer()+ nSolvent() > 0);
-      UTIL_CHECK(ds_ > 0);
+
+      // Set ds_ parameter (only used in thread model)
+      if (PolymerModel::isThread()) {
+         read(in, "ds", ds_);
+         UTIL_CHECK(ds_ > 0);
+      } else {
+         ds_ = 1.0;
+      }
+
+      // Optionally read useBatchedFFT boolean
+      useBatchedFFT_ = true;
+      readOptional(in, "useBatchedFFT", useBatchedFFT_);
    }
 
    /*

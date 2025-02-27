@@ -128,7 +128,11 @@ namespace Rpg {
       using Base::block;
       using Base::solve;
       using Base::length;
+      using Base::nBead;
       using Species::ensemble;
+      using Species::phi;
+      using Species::mu;
+      using Species::q;
 
    protected:
 

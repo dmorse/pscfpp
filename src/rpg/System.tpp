@@ -25,6 +25,7 @@
 #include <pscf/math/IntVec.h>
 #include <pscf/homogeneous/Clump.h>
 
+#include <util/containers/FSArray.h>
 #include <util/param/BracketPolicy.h>
 #include <util/param/ParamComponent.h>
 #include <util/format/Str.h>
@@ -71,7 +72,8 @@ namespace Rpg {
       isAllocatedGrid_(false),
       isAllocatedBasis_(false),
       hasCFields_(false),
-      hasFreeEnergy_(false)
+      hasFreeEnergy_(false),
+      polymerModel_(PolymerModel::Thread)
    {
       setClassName("System");
       domain_.setFileMaster(fileMaster_);
@@ -224,6 +226,19 @@ namespace Rpg {
    template <int D>
    void System<D>::readParameters(std::istream& in)
    {
+      // Optionally read the polymer model enum value, set global value
+      if (!PolymerModel::isLocked()) {
+         polymerModel_ = PolymerModel::Thread;
+         readOptional(in, "polymerModel", polymerModel_);
+
+         // Set the global enumeration value
+         PolymerModel::setModel(polymerModel_);
+      }
+
+      // Number of times the global polymer model has been set.
+      // Retain this value so we can check at the end of this
+      // function that it wasn't set again within the function.
+      int nSetPolymerModel = PolymerModel::nSet();
 
       // Read the Mixture{ ... } block
       readParamComposite(in, mixture_);
@@ -290,6 +305,9 @@ namespace Rpg {
       homogeneous_.setNMolecule(np+ns);
       homogeneous_.setNMonomer(nm);
       initHomogeneous();
+
+      // Check that the polymer model was never reset after initialization
+      UTIL_CHECK(PolymerModel::nSet() == nSetPolymerModel);
 
    }
 
@@ -1643,7 +1661,6 @@ namespace Rpg {
          tmpFieldsRGrid_[i].allocate(dimensions);
          tmpFieldsKGrid_[i].allocate(dimensions);
       }
-      workArray_.allocate(dimensions);
 
       isAllocatedGrid_ = true;
    }

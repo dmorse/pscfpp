@@ -92,9 +92,11 @@ namespace Rpg {
       ~Block();
 
       /**
-      * Associate this object with a mesh, FFT, UnitCell, and WaveList object.
-      * 
-      * Must be called before allocate().
+      * Create permanent associations with related objects.
+      *
+      * This function creates associations of this block with the Mesh, 
+      * FFT, UnitCell, and WaveList objects by storing their addresses.
+      * It must be called before allocate().
       *
       * \param mesh  Mesh<D> object - spatial discretization mesh
       * \param fft  FFT<D> object - Fourier transforms
@@ -106,8 +108,27 @@ namespace Rpg {
 
       /**
       * Allocate internal data containers. 
-      * 
-      * associate() must have been called first.
+      *
+      * This function choses a value for the number ns of contour
+      * variable grid points for this block, sets the step size, and
+      * allocates memory for several private arrays. Spatial grid
+      * dimensions are obtained from a pointers to the associated mesh.
+      *
+      * For the thread model, if PolymerModel::isThread() is true, the
+      * value for the number ns of contour variable grid points for this
+      * block is chosen to yield a value for the the actual step size
+      * length/(ns-1) as close as possible to the input parameter ds (the
+      * target step size), consistent with the requirements that ns be an
+      * odd integer and ns > 1. These requirements allow use of Simpson's
+      * rule for integration with respect to the contour variable s to
+      * compute monomer concentration fields and stress contributions.
+      *
+      * For the bead model, if PolymerModel::isThread() is true, the
+      * value of ns is given by nBead (the number of beads owned by the
+      * block) plus one for each terminal vertex that this block does
+      * not own. The value of ds is not used for the bead model. 
+      *
+      * Precondition: associate() must be called before this function
       *
       * \param ds  desired (optimal) value for contour length step
       * \param useBatchedFFT  Flag indicating whether to use batched FFTs
@@ -119,12 +140,14 @@ namespace Rpg {
       * 
       * This method changes the internal hasExpKsq_ flag to false, so 
       * that the expKsq arrays will need to be recalculated before 
-      * step() can be called. 
+      * a step function can be called. 
       */
       void clearUnitCellData();
 
       /**
-      * Set or reset block length.
+      * Set or reset block length (only used in thread model).
+      *
+      * Precondition: PolymerModel::isThread()
       *
       * \param newLength  new block length
       */
@@ -139,6 +162,11 @@ namespace Rpg {
 
       /**
       * Set solver for this block.
+      *       
+      * This should be called once after every change in w fields, the
+      * unit cell parameters, the block length or kuhn length, before
+      * entering the loop used to solve the MDE for either propagator.
+      * This function is called by Polymer<D>::compute.
       *
       * \param w  chemical potential field for this monomer type
       */
@@ -146,14 +174,46 @@ namespace Rpg {
 
       /**
       * Compute step of integration loop, from i to i+1.
+      * 
+      * This function is called internally by the Propagator::solve
+      * function within a loop over steps. It is implemented in the
+      * Block class because the same private data structures are needed
+      * for the two propagators associated with a Block.
       *
-      * \param q  pointer to slice i of propagator q (input)
-      * \param qNew pointer to slice i+1 of propagator q (output)
+      * \param qin  slice i of propagator q (input)
+      * \param qout  slice i+1 of propagator q (output)
       */
-      void step(RField<D> const & q, RField<D>& qNew);
+      void stepThread(RField<D> const & qin, RField<D>& qout);
+
+      /**
+      * Compute step of integration loop, from i to i+1.
+      *
+      * \param qin  slice i of propagator q (input)
+      * \param qout  slice i+1 of propagator q (output)
+      */
+      void stepBead(RField<D> const & qin, RField<D>& qout);
+
+      /**
+      * Compute step of integration loop, from i to i+1.
+      *
+      * \param qin  slice i of propagator q (input)
+      * \param qout  slice i+1 of propagator q (output)
+      */
+      void stepBondBead(RField<D> const & qin, RField<D>& qout);
+
+      /**
+      * Compute step of integration loop, from i to i+1.
+      *
+      * \param q  slice of propagator q (input)
+      */
+      void stepFieldBead(RField<D> & q);
 
       /**
       * Compute unnormalized concentration for block by integration.
+      *
+      * The "prefactor" parameter must equal phi/(L q), where L is the
+      *  total length of all blocks in the polymer species and q is the
+      * species partition function.
       *
       * Upon return, grid point r of array cField() contains the
       * integral int ds q(r,s)q^{*}(r,L-s) times the prefactor,
@@ -162,18 +222,68 @@ namespace Rpg {
       * a contour variable that is integrated over the domain
       * 0 < s < length(), where length() is the block length.
       *
-      * \param prefactor  constant prefactor multiplying integral
+      * \param prefactor  constant multiplying integral over s
       */
-      void computeConcentration(double prefactor);
+      void computeConcentrationThread(double prefactor);
 
       /**
-      * Compute derivatives of free energy w/ respect to cell parameters.
+      * Compute the concentration for this block, using the bead model.
       *
-      * The prefactor is the same as that used in computeConcentration.
+      * This function is called by Polymer::compute if a bead model is
+      * is used.
       *
-      * \param prefactor  constant prefactor multiplying integral
+      * The "prefactor" parameter must equal phi/(N q), where N is the
+      * total number of beads owned by all blocks of the polymer, and
+      * q is the species partition function.
+      *
+      * Upon return, grid point r of array cField() contains the sum
+      * sum_s ds q(r,s) q^{*}(r,N-s) exp(W(r)*ds) over beads owned by
+      * this block times the "prefactor" parameter, where q(r,s) and
+      * q^{*}(r,s) are propagators associated with different directions.
+      *
+      * \param prefactor  constant multiplying sum over beads
       */
-      void computeStress(double prefactor);
+      void computeConcentrationBead(double prefactor);
+
+      /**
+      * Compute the spatial average of the product used to compute Q.
+      *
+      * This function computes the spatial average of the product
+      * q0[i]*q1[i], where q0 and q1 and are complementary propagator
+      * slices, and i is a spatial mesh rank.
+      */
+      double averageProduct(RField<D> const& q0, RField<D> const& q1);
+
+      /**
+      * Compute the spatial average of the product used to compute Q.
+      *
+      * This computes the spatial average of the product
+      * q0[i]*q1[i]/exp(-W[i]), where q0 and q1 and are complementary
+      * propagator slices for a bead model, and i is mesh rank. This is
+      * used in the bead model for computation of Q from propagator
+      * slices associated with a bead that is owned by the propagator.
+      */
+      double averageProductBead(RField<D> const& q0, RField<D> const& q1);
+
+      /**
+      * Compute stress contribution for this block, using thread model.
+      *
+      * This function is called by Polymer<D>::computeStress. The
+      * prefactor is equal to that used in computeConcentrationThread.
+      *
+      * \param prefactor  constant multiplying integral over s
+      */
+      void computeStressThread(double prefactor);
+
+      /**
+      * Compute stress contribution for this block, using bead model.
+      *
+      * This function is called by Polymer<D>::computeStress. The
+      * prefactor is equal to that used in computeConcentrationBead.
+      *
+      * \param prefactor  constant multiplying sum over beads
+      */
+      void computeStressBead(double prefactor);
 
       /**
       * Get derivative of free energy w/ respect to a unit cell parameter.
@@ -206,7 +316,6 @@ namespace Rpg {
       using BlockTmpl< Pscf::Rpg::Propagator<D> >::setKuhn;
       using BlockTmpl< Pscf::Rpg::Propagator<D> >::propagator;
       using BlockTmpl< Pscf::Rpg::Propagator<D> >::cField;
-      using BlockTmpl< Pscf::Rpg::Propagator<D> >::length;
       using BlockTmpl< Pscf::Rpg::Propagator<D> >::kuhn;
 
       // Functions with non-dependent names from BlockDescriptor
@@ -218,7 +327,9 @@ namespace Rpg {
       using BlockDescriptor::monomerId;
       using BlockDescriptor::vertexIds;
       using BlockDescriptor::vertexId;
+      using BlockDescriptor::ownsVertex;
       using BlockDescriptor::length;
+      using BlockDescriptor::nBead;
 
    private:
 
@@ -231,24 +342,29 @@ namespace Rpg {
       /// Stress contribution from this block
       FSArray<double, 6> stress_;
 
-      /// exp(-K^2 b^2 ds/6) array on k-grid
+      /// Array containing exp(-K^2 b^2 ds / 6) for the thread model
+      /// or exp(-K^2 b^2 /6) for the bead model
       RField<D> expKsq_;
 
-      /// exp(-K^2 b^2 ds/12) array on k-grid
-      RField<D> expKsq2_;
-
-      /// exp(-W[i] ds/2) array on r-grid
+      /// Array containing exp(-W[i] ds/2) for the thread model
+      /// or exp(-W[i]) for the bead model
       RField<D> expW_;
 
-      /// exp(-W[i] ds/4) array on r-grid
+      /// Array containing exp(-K^2 b^2 ds/12) (thread model)
+      RField<D> expKsq2_;
+
+      /// Array containing exp(-W[i] ds/4) (thread model)
       RField<D> expW2_;
+
+      /// Array containing exp(+W[i]) (bead model)
+      RField<D> expWInv_;
 
       /**
       * Workspace array containing two r-grid fields, stored on the device.
       * 
       * These workspace fields are stored contiguously in a single array to 
       * allow batched FFTs to be performed on both fields simultaneously, 
-      * which occurs in step().
+      * which occurs in stepThread().
       */
       DeviceArray<cudaReal> qrPair_;
 
@@ -257,25 +373,25 @@ namespace Rpg {
       * 
       * These workspace fields are stored contiguously in a single array to 
       * allow batched FFTs to be performed on both fields simultaneously, 
-      * which occurs in step().
+      * which occurs in stepThread().
       */
       DeviceArray<cudaComplex> qkPair_;
 
-      /// Container to store batched FFTs of q in contiguous memory
-      DeviceArray<cudaComplex> qkBatched_;
+      // R-grid work space (used in productAverage)
+      RField<D> qr_; 
 
-      /// Container to store batched FFTs of q in contiguous memory
-      DeviceArray<cudaComplex> qk2Batched_;
+      // K-grid work space (used for FFT of q in stepBondBead)
+      RFieldDft<D> qk_; 
 
-      // Propagators on r-grid
-      RField<D> q1_;
-      RField<D> q2_;
+      /// Container for batched FFTs of q0 (forward) in contiguous memory
+      DeviceArray<cudaComplex> q0kBatched_;
 
-      /// Array of elements containing exp(-K^2 b^2 ds/6) on k-grid on host
-      HostDArray<cudaReal> expKsq_h_;
+      /// Container for batched FFTs of q1 (reverse) in contiguous memory
+      DeviceArray<cudaComplex> q1kBatched_;
 
-      /// Array of elements containing exp(-K^2 b^2 ds/6) on k-grid on host
-      HostDArray<cudaReal> expKsq2_h_;
+      // Slices of forward and reverse propagator on a k-grid (for stress)
+      RFieldDft<D> q0k_; 
+      RFieldDft<D> q1k_;
 
       /// Const pointer to associated Mesh<D> object.
       Mesh<D> const * meshPtr_;
