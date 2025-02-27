@@ -383,7 +383,7 @@ public:
       }
 
       d_qin = qin;
-      block.step(d_qin, d_qout);
+      block.stepThread(d_qin, d_qout);
       qout = d_qout;
 
       // Test block step output against expected output
@@ -481,7 +481,7 @@ public:
       }
 
       d_qin = qin;
-      block.step(d_qin, d_qout);
+      block.stepThread(d_qin, d_qout);
       qout = d_qout;
 
       // Test block step output against expected output
@@ -587,7 +587,7 @@ public:
       }
 
       d_qin = qin;
-      block.step(d_qin, d_qout);
+      block.stepThread(d_qin, d_qout);
       qout = d_qout;
 
       // Test block step output against expected output

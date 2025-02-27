@@ -618,8 +618,7 @@ namespace {
    * \param c  input array (RHS)
    * \param n  size of arrays
    */
-   __global__ void _divSV(cudaReal* a, 
-                          const cudaReal b, 
+   __global__ void _divSV(cudaReal* a, const cudaReal b, 
                           cudaReal const * c, const int n)
    {
       int nThreads = blockDim.x * gridDim.x;
@@ -1620,8 +1619,7 @@ void divVS(DeviceArray<cudaComplex>& a,
 void divSV(DeviceArray<cudaReal>& a, 
            const cudaReal b, 
            DeviceArray<cudaReal> const & c, 
-           const int beginIdA, const int beginIdC, 
-           const int n)
+           const int beginIdA, const int beginIdC, const int n)
 {
    UTIL_CHECK(a.capacity() >= n + beginIdA);
    UTIL_CHECK(c.capacity() >= n + beginIdC);

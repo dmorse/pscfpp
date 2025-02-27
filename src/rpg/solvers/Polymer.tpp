@@ -67,38 +67,54 @@ namespace Rpg {
 
       // Compute block concentration fields
       double prefactor;
-      prefactor = phi() / ( q() * length() );
-      for (int i = 0; i < nBlock(); ++i) {
-         block(i).computeConcentration(prefactor);
+      if (PolymerModel::isThread()) {
+         prefactor = phi() / ( q() * length() );
+         for (int i = 0; i < nBlock(); ++i) {
+            block(i).computeConcentrationThread(prefactor);
+         }
+      } else {
+         prefactor = phi() / ( q() * (double)nBead() );
+         for (int i = 0; i < nBlock(); ++i) {
+            block(i).computeConcentrationBead(prefactor);
+         }
       }
 
    }
 
    /*
-   * Compute stress from a polymer chain.
+   * Compute stress contribution from a polymer species.
    */
-
    template <int D>
    void Polymer<D>::computeStress()
    {
       UTIL_CHECK(nParams_ > 0);
       
+      // Compute stress contributions for all blocks
       double prefactor;
-     
-      // Initialize stress_ to 0
-      for (int i = 0; i < nParams_; ++i) {
-        stress_ [i] = 0.0;
-      }
-
-      for (int i = 0; i < nBlock(); ++i) {
-         prefactor = exp(mu_)/length();
-         block(i).computeStress(prefactor);
-       
-         for (int j=0; j < nParams_; ++j){
-            stress_ [j] += block(i).stress(j);
-            //std::cout<<"stress_[j] "<<stress_[j]<<std::endl;
+      if (PolymerModel::isThread()) {
+         prefactor = phi() / ( q() * length() );
+         for (int i = 0; i < nBlock(); ++i) {
+            block(i).computeStressThread(prefactor);
+         }
+      } else {
+         prefactor = phi() / ( q() * (double)nBead() );
+         for (int i = 0; i < nBlock(); ++i) {
+            block(i).computeStressBead(prefactor);
          }
       }
+
+      // Initialize all stress_ elements to zero
+      for (int i = 0; i < nParams_; ++i) {
+        stress_[i] = 0.0;
+      }
+
+      // Sum over all block stress contributions
+      for (int i = 0; i < nBlock(); ++i) {
+         for (int j=0; j < nParams_; ++j){
+            stress_[j] += block(i).stress(j);
+         }
+      }
+
    }
 
 }

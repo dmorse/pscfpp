@@ -18,16 +18,20 @@
 #include <rpg/field/CFieldContainer.h>     // member
 #include <rpg/field/Mask.h>                // member
 
-#include <prdc/cuda/RField.h>              // member
-#include <prdc/cuda/RFieldDft.h>           // member
+#include <prdc/cuda/RField.h>              // member (tmpFieldsRGrid))
+#include <prdc/cuda/RFieldDft.h>           // member (tmpFieldsKGrid_)
 
+#include <pscf/chem/PolymerModel.h>        // member (polymerModel_)
 #include <pscf/homogeneous/Mixture.h>      // member
 
 #include <util/misc/FileMaster.h>          // member
 #include <util/containers/DArray.h>        // member template
-#include <util/containers/FSArray.h>       // member template
+//#include <util/containers/FSArray.h>       // member template
 
 // Forward references
+namespace Util {
+   template <typename T, int N> class FSArray;
+}
 namespace Pscf {
    class Interaction;
    template <typename Data> class DeviceArray;
@@ -915,6 +919,8 @@ namespace Rpg {
       */
       mutable DArray<RFieldDft<D> > tmpFieldsKGrid_;
 
+      // Thermodynamic properties
+      
       /**
       * Helmholtz free energy per monomer / kT.
       */
@@ -947,6 +953,8 @@ namespace Rpg {
       */
       double pressure_;
 
+      // Boolean and enumeration variables
+      
       /**
       * Has the mixture been initialized?
       */
@@ -973,14 +981,9 @@ namespace Rpg {
       bool hasFreeEnergy_;
 
       /**
-      * Dimemsions of the k-grid (discrete Fourier transform grid).
+      * Value for polymer model (thread or bead), to be read from file.
       */
-      IntVec<D> kMeshDimensions_;
-
-      /**
-      * Work array for r-grid field.
-      */
-      RField<D> workArray_;
+      PolymerModel::Type polymerModel_;
 
       // Private member functions
 

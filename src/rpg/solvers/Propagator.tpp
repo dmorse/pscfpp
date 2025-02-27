@@ -90,8 +90,9 @@ namespace Rpg {
    * Compute initial head QField from final tail QFields of sources.
    */
    template <int D>
-   void Propagator<D>::computeHead()
+   void Propagator<D>::computeHeadThread()
    {
+
       // Initialize head field (s=0) to 1.0 at all grid points
       int nx = meshPtr_->size();
       VecOp::eqS(qFields_[0], 1.0);
@@ -103,12 +104,31 @@ namespace Rpg {
          tails[0] = &qFields_[0]; 
          for (int is = 0; is < nSource(); ++is) {
             if (!source(is).isSolved()) {
-               UTIL_THROW("Source not solved in computeHead");
+               UTIL_THROW("Source not solved in computeHeadThread");
             }
             tails[is+1] = &(source(is).tail());
          }
          VecOp::mulVMany(qFields_[0], tails);
       }
+   }
+
+   /*
+   * Compute initial head QField from final tail QFields of sources.
+   */
+   template <int D>
+   void Propagator<D>::computeHeadBead()
+   {
+      UTIL_CHECK(PolymerModel::isBead());
+
+      // Set head slice to product to source tail slices
+      computeHeadThread();
+
+      // If propagator owns the head vertex, apply the bead field weight
+      if (ownsHead()) {
+         QField& qh = qFields_[0]; // Head slice of this propagator
+         block().stepFieldBead(qh);
+      }
+
    }
 
    /*
@@ -118,11 +138,44 @@ namespace Rpg {
    void Propagator<D>::solve()
    {
       UTIL_CHECK(isAllocated());
+      
+      if (PolymerModel::isThread()) {
 
-      computeHead();
-      for (int iStep = 0; iStep < ns_ - 1; ++iStep) {
-         block().step(qFields_[iStep], qFields_[iStep+1]);
+         // Initialize head as pointwise product of source propagators
+         computeHeadThread();
+
+         // MDE step loop for thread model
+         for (int iStep = 0; iStep < ns_ - 1; ++iStep) {
+            block().stepThread(qFields_[iStep], qFields_[iStep + 1]);
+         }
+
+      } else
+      if (PolymerModel::isBead()) {
+
+         // Initialize head, starting with product of source propagators
+         computeHeadBead();
+
+         // MDE step loop for bead model (stop before tail vertex)
+         int iStep;
+         for (iStep = 0; iStep < ns_ - 2; ++iStep) {
+            block().stepBead(qFields_[iStep], qFields_[iStep + 1]);
+         }
+
+         // Compute q for the tail vertex
+         iStep = ns_ - 2;
+         if (ownsTail()) {
+            // Full step, including bead weight for tail vertex
+            block().stepBead(qFields_[iStep], qFields_[iStep + 1]);
+         } else {
+            // Bond operator, excluding bead weight for tail vertex
+            block().stepBondBead(qFields_[iStep], qFields_[iStep + 1]);
+         }
+
+      } else {
+         // This should be impossible
+         UTIL_THROW("Unexpected PolymerModel type");
       }
+
       setIsSolved(true);
    }
 
@@ -138,7 +191,7 @@ namespace Rpg {
       VecOp::eqV(qFields_[0], head);
 
       for (int iStep = 0; iStep < ns_ - 1; ++iStep) {
-         block().step(qFields_[iStep], qFields_[iStep+1]);
+         block().stepThread(qFields_[iStep], qFields_[iStep+1]);
       }
       setIsSolved(true);
    }
@@ -160,11 +213,25 @@ namespace Rpg {
          UTIL_THROW("Partner propagator is not solved");
       }
 
-      // Take inner product of head and partner tail fields
-      // cannot reduce assuming one propagator, qh == 1
-      // polymers are divided into blocks midway through
+      QField const & qh = head();
+      QField const & qt = partner().tail();
       int nx = meshPtr_->size();
-      double Q = Reduce::innerProduct(head(), partner().tail()) / double(nx);
+      UTIL_CHECK(nx == qh.capacity());
+      UTIL_CHECK(nx == qt.capacity());
+
+      // Compute average product of head slice and partner tail slice
+      double Q = 1.0;
+      if (PolymerModel::isThread()) {
+         Q = block().averageProduct(qh, qt);
+      } else {
+         UTIL_CHECK(ownsHead() == partner().ownsTail());
+         if (ownsHead()) {
+            Q = block().averageProductBead(qh, qt);
+         } else {
+            Q = block().averageProduct(qh, qt);
+         }
+      }
+
       return Q;
    }
 

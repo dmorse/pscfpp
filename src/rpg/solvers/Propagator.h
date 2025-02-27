@@ -192,19 +192,37 @@ namespace Rpg {
       */
       bool isAllocated() const;
 
+      // Inherited public members with non-dependent names
+      
       using PropagatorTmpl< Propagator<D> >::nSource;
       using PropagatorTmpl< Propagator<D> >::source;
       using PropagatorTmpl< Propagator<D> >::partner;
       using PropagatorTmpl< Propagator<D> >::setIsSolved;
       using PropagatorTmpl< Propagator<D> >::isSolved;
       using PropagatorTmpl< Propagator<D> >::hasPartner;
+      using PropagatorTmpl< Propagator<D> >::ownsHead;
+      using PropagatorTmpl< Propagator<D> >::ownsTail;
 
    protected:
 
       /**
-      * Compute initial QField at head from tail QFields of sources.
+      * Compute initial QField at head for the thread model. 
+      *
+      * In the thread model, the head slice of each propagator is the
+      * product of tail slices for incoming propagators from other bonds
+      * that terminate at the head vertex.
       */
-      void computeHead();
+      void computeHeadThread();
+
+      /**
+      * Compute initial QField at head for the bead model.
+      *
+      * In the bond model, the head slice for each propagator is given
+      * by the product of tails slices for source propagators, times an
+      * additional bond weight exp(-W(r)*ds) if this propagator owns the
+      * head vertex bead.
+      */
+      void computeHeadBead();
 
    private:
 
