@@ -10,6 +10,9 @@
 
 int main(int argc, char* argv[])
 {
+
+   BracketPolicy::set(BracketPolicy::Optional);
+
    SolverTestComposite runner;
 
    #if 0
