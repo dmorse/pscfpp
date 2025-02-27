@@ -466,7 +466,7 @@ This now uses Polymer::length() in the thread model and
 Polymer::nBead() in the bead model, surrounded by an 
 if (PolymerModel::isThread) { .... } else { .... }
 
-Done in Rpc
+Done in Rpc and Rpg
 
 18) Calculation of Hamiltonian values in Simulator class:
 
@@ -475,6 +475,8 @@ of an ideal gas free energy as System::computeFreeEnergy, and the
 length should be treated the same way. Where the total length of a
 polymer is needed, use polymer length in the thread model and nBead 
 in the bead model. 
+
+Done in Rpc and Rpg
 
 19) In Analyzer classes, the Intramolecular class, and elsewhere, look 
 for uses of the Block::length() function. Anywhere this function is 

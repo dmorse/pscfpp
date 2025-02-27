@@ -273,6 +273,48 @@ public:
       block.setupSolver(w);
    }
 
+   void testSetupSolver2D_bead()
+   {
+      printMethod(TEST_FUNC);
+
+      PolymerModel::setModel(PolymerModel::Bead);
+
+      // Create and initialize block
+      Block<2> block;
+      setupBlock<2>(block);
+
+      // Create and initialize mesh
+      Mesh<2> mesh;
+      setupMesh<2>(mesh);
+      FFT<2> fft;
+      fft.setup(mesh.dimensions());
+
+      UnitCell<2> unitCell;
+      setupUnitCell<2>(unitCell, "in/Rectangular");
+
+      // Create wavelist 
+      WaveList<2> wavelist;
+
+      double ds = 0.5;
+      block.associate(mesh, fft, unitCell, wavelist);
+      block.allocate(ds);
+
+      TEST_ASSERT(eq(unitCell.rBasis(0)[0], 3.0));
+      TEST_ASSERT(eq(unitCell.rBasis(1)[1], 4.0));
+
+      // Setup chemical potential field
+      RField<2> w;
+      w.allocate(mesh.dimensions());
+      TEST_ASSERT(w.capacity() == mesh.size());
+      VecOp::eqS(w, 1.0);
+      //for (int i=0; i < w.capacity(); ++i) {
+      //   w[i] = 1.0;
+      //}
+
+      block.clearUnitCellData();
+      block.setupSolver(w);
+   }
+
    void testSetupSolver3D()
    {
       printMethod(TEST_FUNC);
@@ -415,6 +457,112 @@ public:
          TEST_ASSERT(eq(propTail[i], expected));
       }
 
+   }
+
+   void testSolver1D_bead()
+   {
+      printMethod(TEST_FUNC);
+
+      PolymerModel::setModel(PolymerModel::Bead);
+
+      // Create and initialize block
+      Block<1> block;
+      setupBlock<1>(block);
+
+      // Create and initialize mesh
+      Mesh<1> mesh;
+      setupMesh<1>(mesh);
+      FFT<1> fft;
+      fft.setup(mesh.dimensions());
+
+      UnitCell<1> unitCell;
+      setupUnitCell<1>(unitCell, "in/Lamellar");
+
+      WaveList<1> wavelist;
+      wavelist.allocate(mesh, unitCell);
+
+      double ds = 1.00;
+      block.associate(mesh, fft, unitCell, wavelist);
+      bool own0 = true;
+      bool own1 = true;
+      block.setVertexOwnership(own0, own1);
+      block.allocate(ds);
+      TEST_ASSERT(block.ns() == block.nBead());
+
+      // Setup chemical potential field
+      RField<1> w;
+      w.allocate(mesh.dimensions());
+      int nx = mesh.size();
+      TEST_ASSERT(w.capacity() == nx);
+      double wc = 0.3;
+      VecOp::eqS(w, wc);
+      //for (int i=0; i < nx; ++i) {
+      //   w[i] = wc;
+      //}
+
+      block.clearUnitCellData();
+      block.setupSolver(w);
+
+      // Test step
+      Propagator<1>::QField qin;
+      Propagator<1>::QField qout;
+      qin.allocate(mesh.dimensions());
+      qout.allocate(mesh.dimensions());
+
+      HostDArray<cudaReal> qin_h(nx);
+      double twoPi = 2.0*Constants::Pi;
+      for (int i=0; i < nx; ++i) {
+         qin_h[i] = cos(twoPi*double(i)/double(nx));
+      }
+      qin = qin_h;
+
+      block.stepBead(qin, qout);
+      //double a = 4.0;
+      double a = unitCell.parameter(0);
+      double b = block.kuhn();
+      double Gb = twoPi*b/a;
+      double r = Gb*Gb/6.0;
+      double expected = exp(-(wc + r));
+      HostDArray<cudaReal> qout_h(nx);
+      qout_h = qout;
+      for (int i = 0; i < nx; ++i) {
+         TEST_ASSERT(eq(qout_h[i], qin_h[i]*expected));
+      }
+   
+      block.propagator(0).setVertexOwnership(own0, own1);
+      block.propagator(1).setVertexOwnership(own1, own0);
+      TEST_ASSERT(block.propagator(0).ownsHead() == own0);
+      TEST_ASSERT(block.propagator(0).ownsTail() == own1);
+      TEST_ASSERT(block.propagator(1).ownsHead() == own1);
+      TEST_ASSERT(block.propagator(1).ownsTail() == own0);
+
+      // Test propagator solve, block owns both vertices
+      Propagator<1>& q0 = block.propagator(0);
+      q0.solve();
+
+      // Check head slice
+      expected = exp(-wc*ds);
+      HostDArray<cudaReal> qh_h(nx);
+      qh_h = q0.head();
+      for (int i = 0; i < nx; ++i) {
+         TEST_ASSERT(eq(qh_h[i], expected));
+      }
+      
+      // Check tail slice
+      expected = exp(-wc*ds*block.nBead());
+      HostDArray<cudaReal> qt_h(nx);
+      qt_h = q0.tail();
+      for (int i = 0; i < nx; ++i) {
+         TEST_ASSERT(eq(qt_h[i], expected));
+      }
+
+      Propagator<1>& q1 = block.propagator(1);
+      q1.solve();
+
+      double qh = block.averageProductBead(q0.head(), q1.tail());
+      double qt = block.averageProductBead(q0.tail(), q1.head());
+      TEST_ASSERT(eq( log(qh), log(qt) )) ;
+      TEST_ASSERT(eq( log(qh), -wc*ds*block.nBead() )) ;
    }
 
    void testSolver2D()
