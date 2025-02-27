@@ -93,33 +93,35 @@ namespace Rpc {
    }
 
    /*
-   * Compute stress from a polymer chain.
+   * Compute stress contribution from a polymer species.
    */
    template <int D>
    void Polymer<D>::computeStress()
    {
      
+      // Compute stress contributions for all blocks
+      double prefactor;
+      if (PolymerModel::isThread()) {
+         prefactor = phi() / ( q() * length() );
+         for (int i = 0; i < nBlock(); ++i) {
+            block(i).computeStressThread(prefactor);
+         }
+      } else {
+         prefactor = phi() / ( q() * (double)nBead() );
+         for (int i = 0; i < nBlock(); ++i) {
+            block(i).computeStressBead(prefactor);
+         }
+      }
+
       // Initialize all stress_ elements zero
       for (int i = 0; i < 6; ++i) {
         stress_[i] = 0.0;
       }
 
-      // Compute and accumulate stress contributions from all blocks
-      if (PolymerModel::isThread()) {
-         double prefactor = exp(mu())/length();
-         for (int i = 0; i < nBlock(); ++i) {
-            block(i).computeStressThread(prefactor);
-            for (int j = 0; j < nParam_ ; ++j){
-               stress_[j] += block(i).stress(j);
-            }
-         }
-      } else {
-         double prefactor = exp(mu())/nBead();
-         for (int i = 0; i < nBlock(); ++i) {
-            block(i).computeStressBead(prefactor);
-            for (int j = 0; j < nParam_ ; ++j){
-               stress_[j] += block(i).stress(j);
-            }
+      // Sum over all block stress contributions
+      for (int i = 0; i < nBlock(); ++i) {
+         for (int j = 0; j < nParam_ ; ++j){
+            stress_[j] += block(i).stress(j);
          }
       }
 

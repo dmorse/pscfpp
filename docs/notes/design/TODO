@@ -1,64 +1,29 @@
 ------------------------------------------------------------------------
-v1.2
-
-Rpc:  
------
-
-Field Theoretic simulation with real fields (FTS-R) (done):
-
-  - Create AMCompressor and LrAmCompressor 
-  - Create Simulation classes and subclasses 
-  - Create Analyzer and simple subclasses 
-  - Add commands to System 
-  - Create classes to read and write trajectories 
-  - Create real-space and Fourier space MC moves 
-  - Create Explicit, PredCorr and Leimkuhler-Matthews bd steps
-
-Improve encapsulation (ongoing)
-
-Rpg:  
------
-
-Field Theoretic simulation with real fields (FTS-R) (done):
-
-  - Create AMCompressor and LrAmCompressor 
-  - Create Simulation classes and subclasses 
-  - Create Analyzer and simple subclasses 
-  - Add commands to System 
-  - Create classes to read and write trajectories 
-  - Create real-space and Fourier space MC moves 
-  - Create Explicit, PredCorr and Leimkuhler-Matthews bd steps 
-
-Docs:
------
-
-Field-theoretic simulation with real fields (FTS-R)
-
-  - Write section of manual devoted to FTS simulation (real fields)
-
-  - Document underlying theory for FTS with real fields
-
-  - Document commands
-
-  - Document MC moves and Bd step algorithms
-
-------------------------------------------------------------------------
 v1.3
+
+1) Pseudospectral bead model for Rpc and Rpg
+
+2) "Environment" member to encapsulate imposed fields in Rpc and Rpg
+
+3) Generalized partial-saddle approximation and Anderson mixing
+
+4) Back-tracking in Anderson Mixing ?
+
+5) LrAM iterator for SCFT ?
+
 
 Pscf
 -----
 
-1) Review and clean up redundant GPU kernels 
-
-2) Change treatment of phases in Basis to explicitly store and 
+1) Change treatment of phases in Basis to explicitly store and 
 manipulate Rational number phases, compute floating point coefficients 
 only at the very end.
 
-3) Introduce a convention in Basis in which pairs of related open 
+2) Introduce a convention in Basis in which pairs of related open 
 stars are always listed in the same order (this helps complete the 
 basis field API).
 
-4) Introducing new v2.0 field file formats for basis and rgrid. 
+3) Introducing new v2.0 field file formats for basis and rgrid. 
 Basis would contain the mesh. Rgrid would be output in convention C 
 order.
 

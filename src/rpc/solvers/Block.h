@@ -83,9 +83,9 @@ namespace Rpc {
       * 
       * For the thread model, if PolymerModel::isThread() is true, the 
       * value for the number ns of contour variable grid points for this
-      * block so as to yield a value for the the actual step size 
+      * block is chosen to yield a value for the the actual step size 
       * length/(ns-1) as close as possible to the input parameter ds (the 
-      * target step size) consistent with the requirements that ns be an
+      * target step size), consistent with the requirements that ns be an
       * odd integer and ns > 1. These requirements allow use of Simpson's 
       * rule for integration with respect to the contour variable s to
       * compute monomer concentration fields and stress contributions.
@@ -93,8 +93,7 @@ namespace Rpc {
       * For the bead model, if PolymerModel::isThread() is true, the
       * value of ns is given by nBead (the number of beads owned by the
       * block) plus one for each terminal vertex that this block does 
-      * not own. The value of ds is take equal to the value given as a 
-      * parameter to this function.
+      * not own. The value of ds is not used for the bead model.
       *
       * \param ds desired (optimal) value for contour length step
       */
@@ -111,7 +110,7 @@ namespace Rpc {
       void clearUnitCellData();
 
       /**
-      * Set or reset block length.
+      * Set or reset block length (only used in thread model).
       *
       * Precondition: PolymerModel::isThread()
       *
@@ -167,7 +166,7 @@ namespace Rpc {
       /**
       * Apply a bond operator for the bead model. 
       *
-      * This function applies exp( nabla^2 b^2 ds / 6 ), where nabla^2
+      * This function applies exp( nabla^2 b^2 / 6 ), where nabla^2
       * denotes a Laplacian operator with eigenvalues given by -G^2 for
       * reciprocal lattice vectors.
       *
@@ -179,7 +178,7 @@ namespace Rpc {
       /**
       * Apply the exponential field operator for the bead model. 
       *
-      * This function applies exp( -w(r) ds ), where w(r) is the
+      * This function applies exp( -w(r) ), where w(r) is the
       * w-field for the monomer type of this block. 
       *
       * \param q  slice of propagator q, modified in place.
@@ -194,7 +193,7 @@ namespace Rpc {
       *
       * The "prefactor" parameter must equal phi/(L q), where L is the 
       * total length of all blocks in the polymer species and q is the 
-      * species partition function as
+      * species partition function.
       *
       * Upon return, grid point r of array cField() contains the integal,
       * int ds q(r,s)q^{*}(r,L-s) times the prefactor parameter, where
@@ -228,7 +227,7 @@ namespace Rpc {
       /**
       * Compute the spatial average of the product used to compute Q.
       *
-      * This funciton computes the spatial average of the product 
+      * This function computes the spatial average of the product 
       * q0[i]*q1[i], where q0 and q1 and are complementary propagator 
       * slices, and i is a spatial mesh rank.
       */
@@ -238,7 +237,7 @@ namespace Rpc {
       * Compute the spatial average of the product used to compute Q.
       *
       * This computes the spatial average of the product 
-      * q0[i]*q1[i]/exp(W[i]*ds), where q0 and q1 and are complementary 
+      * q0[i]*q1[i]*exp(W[i]), where q0 and q1 and are complementary 
       * propagator slices for a bead model, and i is mesh rank. This is
       * used in the bead model for computation of Q from propagator 
       * slices associated with a bead that is owned by the propagator.
@@ -248,9 +247,8 @@ namespace Rpc {
       /**
       * Compute stress contribution for this block, using thread model.
       *
-      * This function is called by Polymer<D>::computeStress. The parameter
-      * prefactor should be the same as that passed to the member function
-      * computeConcentration.
+      * This function is called by Polymer<D>::computeStress. The 
+      * prefactor is equal to that passed to computeConcentrationThread.
       *
       * \param prefactor  constant multiplying integral over s
       */
@@ -259,13 +257,22 @@ namespace Rpc {
       /**
       * Compute stress contribution for this block, using bead model.
       *
-      * This function is called by Polymer<D>::computeStress. The parameter
-      * prefactor should be the same as that passed to the member function
-      * computeConcentration.
+      * This function is called by Polymer<D>::computeStress. The 
+      * prefactor is equal to that passed to computeConcentrationBead.
       *
       * \param prefactor constant multiplying sum over beads
       */
       void computeStressBead(double prefactor);
+
+      /**
+      * Get derivative of free energy w/ respect to unit cell parameter n.
+      *
+      * This function returns a value computed by a previous call to the
+      * computeStress function.
+      *
+      * \param n index of unit cell parameter
+      */
+      double stress(int n) const;
 
       /**
       * Get associated spatial Mesh by const reference.
@@ -287,21 +294,10 @@ namespace Rpc {
       */
       int ns() const;
 
-      /**
-      * Get derivative of free energy w/ respect to unit cell parameter n.
-      *
-      * This function returns a value computed by a previous call to the
-      * computeStress function.
-      *
-      * \param n index of unit cell parameter
-      */
-      double stress(int n) const;
-
       // Functions with non-dependent names from BlockTmpl< Propagator<D> >
       using BlockTmpl< Propagator<D> >::setKuhn;
       using BlockTmpl< Propagator<D> >::propagator;
       using BlockTmpl< Propagator<D> >::cField;
-      using BlockTmpl< Propagator<D> >::length;
       using BlockTmpl< Propagator<D> >::kuhn;
 
       // Functions with non-dependent names from BlockDescriptor

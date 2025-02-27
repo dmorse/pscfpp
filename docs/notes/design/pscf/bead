@@ -234,7 +234,7 @@ Done (in Pscf)
 reading of ds_ only for the thread model, and set ds_ = 1.0 by default
 in the bead model.
 
-Done in Rpc
+Done in Rpc and Rpg
 
 7) Add a private member polymerModel_ to the Rpc::System class. 
 Optionally read this as the first member of the block, before the 
@@ -252,15 +252,15 @@ Set Rpc::System::polymerModel_ to PolymerModel::Thread by default.  When
 the value is known (after it is optionally read), set the global variable 
 to the same value by calling PolymerModel::setModel
 
-Done in Rpc
+Done in Rpc and Rpg
 
 8) In Rpc::Block::allocate and re-allocate functions, for bead model, 
-compute ns from nBead. ns is equal to nBead when both vertices are
-owned by the block, and  larger than nBead when one or both vertices 
-are not owned by the block. For this model, seet ds for each block 
-equal to the global value this input to the allocate function.
+compute ns from nBead. In the bead model, ns is equal to nBead when 
+both vertices are owned by the block, and  larger than nBead when one 
+or both vertices are not owned by the block. The value of ds is set to
+1.0 for this model, but ds is not actually ever used in the bead model.
 
-Done in Rpc
+Done in Rpc and Rpg
 
 9) Modified private data structures in Rpc::Block:
 
@@ -289,23 +289,27 @@ Modify functions in Block:
        - Make PolymerModel::isThread a precondition 
 
      setupSolver :
+
        - Create blocks around computations of expW_, expW2_, expWInv_.
          Two of these are only allocated and used in one model. 
+       - Use ds = 1.0 for bead model.
 
      computeKSq :
-       - Compute expKsq2 only if is a thread model
 
-Done in Rpc
+       - Compute expKsq2 only for the thread model
+       - Use ds = 1.0 for bead model.
+
+Done in Rpc and Rpg
 
 10) Block step functions: 
 
 In Rpc::Block class, change the name of the current step function to 
 stepThread.  Add three additional public member functions to give:
 
-   void stepThread(Propagaor const & qin, Propagator & qout) 
-   void stepBead(Propagaor const & qin, Propagator & qout) 
-   void stepBondBead(Propagaor const & qin, Propagator & qout) 
-   void stepFieldBead(Propagator & q)
+   void stepThread(RField<D> const & qin, RField<D> & qout) 
+   void stepBead(RField<D> const & qin, RField<D> & qout) 
+   void stepBondBead(RField<D> const & qin, RField<D> & qout) 
+   void stepFieldBead(RField<D> & q)
 
 The function stepFieldBead applies the field weight exp(-W[i]*ds).
 Function stepBondBead applies a bond weight by applying an FFT, scaling 
@@ -323,7 +327,7 @@ not owned. The stepFieldBeadFunction is need as part of the
 computation in computeHeadBead for a head bead that is owned by the 
 propagator.
 
-Done in Rpc
+Done in Rpc and Rpg
 
 11) Distinct Propagator computeHead functions for both models:
 
@@ -355,7 +359,7 @@ bead that is owned by the propagator.
 In Propagator::computeQ, call the appropriate choice of one of these 
 two functions to compute the molecular partition function.
 
-Done in Rpc
+Done in Rpc and Rpg
 
 13) Propagator::solve function:
 
@@ -366,7 +370,7 @@ and stepThread. Code for the bead model uses computeHeadBead and
 stepBead, while using stepBondBead for the tail bead if this 
 propagator does does not own the tail vertex bead.
 
-Done in Rpc
+Done in Rpc and Rpg
 
 14) Move responsibility for computing all block concentrations to 
 subclasses of PolymerTmpl :
@@ -428,7 +432,7 @@ of beads in each block in the bead model, but does not know a value for
 ds that it could use to convert the number of beads to an equivalent 
 length.
 
-Done in Rpc
+Done in Rpc and Rpg
 
 16) Computation of stress in Block and Polymer classes:
 
@@ -447,6 +451,8 @@ as for the calculation of concentration: The prefactor is phi/(q L)
 for the thread model and phi/(q N) for the bead model, where L is 
 total length (sum of values of length for all blocks) and N is total 
 number of beads (sum of values of nBead for all blocks). 
+
+Done in Rpc and Rpg
 
 17) Calculation of SCFT free energies per monomer in System class:
 

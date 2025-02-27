@@ -162,10 +162,10 @@ namespace Rpc {
          // Compute q for the tail vertex
          iStep = ns_ - 2;
          if (ownsTail()) {
-            // Include bead weight exp(W[i]*ds) for tail vertex
+            // Full step, including bead weight for tail vertex
             block().stepBead(qFields_[iStep], qFields_[iStep + 1]);
          } else {
-            // Exclude bead weight for tail vertex
+            // Bond operator, excluding bead weight for tail vertex
             block().stepBondBead(qFields_[iStep], qFields_[iStep + 1]);
          }
 
@@ -242,14 +242,15 @@ namespace Rpc {
       if (!partner().isSolved()) {
          UTIL_THROW("Partner propagator is not solved");
       }
+
       QField const& qh = head();
       QField const& qt = partner().tail();
       int nx = meshPtr_->size();
-      UTIL_CHECK(qt.capacity() == nx);
-      UTIL_CHECK(qh.capacity() == nx);
+      UTIL_CHECK(nx == qh.capacity());
+      UTIL_CHECK(nx == qt.capacity());
 
       // Compute average product of head slice and partner tail slice
-      double Q;
+      double Q = 1.0;
       if (PolymerModel::isThread()) {
          Q = block().averageProduct(qh, qt);
       } else {
