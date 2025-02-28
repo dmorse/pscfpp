@@ -12,6 +12,7 @@
 
 #include <rpg/System.h>
 #include <rpg/fts/simulator/Simulator.h>
+#include <pscf/inter/Interaction.h>
 
 namespace Pscf {
 namespace Rpg 
@@ -24,9 +25,9 @@ namespace Rpg
    */
    template <int D>
    ChiDerivative<D>::ChiDerivative(Simulator<D>& simulator, 
-                                                     System<D>& system) 
+                                   System<D>& system) 
     : ThermoDerivativeAnalyzer<D>(simulator, system)
-   { setClassName("ChiDerivative"); }
+   {  setClassName("ChiDerivative"); }
 
    /*
    * Destructor.
@@ -40,9 +41,7 @@ namespace Rpg
    */
    template <int D>
    void ChiDerivative<D>::readParameters(std::istream& in) 
-   {
-      ThermoDerivativeAnalyzer<D>::readParameters(in);
-   }
+   {  ThermoDerivativeAnalyzer<D>::readParameters(in); }
    
    /*
    * Setup before simulation loop.
@@ -95,11 +94,11 @@ namespace Rpg
    
    template <int D>
    double ChiDerivative<D>::variable()
-   { return system().interaction().chi(0,1);  }
+   {  return system().interaction().chi(0,1);  }
    
    template <int D>
    std::string ChiDerivative<D>::parameterType()
-   { return "Chi Derivative";  }
+   {  return "Chi Derivative";  }
 
 }
 }

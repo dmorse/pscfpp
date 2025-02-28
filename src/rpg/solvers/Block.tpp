@@ -9,7 +9,12 @@
 */
 
 #include "Block.h"
+#include <rpg/solvers/WaveList.h>
+
 #include <prdc/cuda/resources.h>
+#include <prdc/cuda/FFT.h>
+#include <prdc/crystal/UnitCell.h>
+
 #include <pscf/mesh/Mesh.h>
 #include <pscf/mesh/MeshIterator.h>
 
@@ -18,6 +23,7 @@ namespace Rpg {
 
    using namespace Util;
    using namespace Pscf::Prdc;
+   using namespace Pscf::Prdc::Cuda;
 
    // CUDA kernels:
    // (defined in anonymous namespace, used only in this file)
@@ -102,6 +108,11 @@ namespace Rpg {
 
    /*
    * Element-wise calculation of a = real(b * conj(c) * d), kernel wrapper
+   * 
+   * \param a  output array (real)
+   * \param b  input array 1 (complex)
+   * \param c  input array 2 (complex)
+   * \param d  input array 3 (real)
    */
    void realMulVConjVV(DeviceArray<cudaReal>& a,
                        DeviceArray<cudaComplex> const & b,
@@ -124,6 +135,11 @@ namespace Rpg {
 
    /*
    * Performs qNew = (4 * (qr2 * expW2) - qr) / 3 elementwise, kernel wrapper
+   * 
+   * \param qNew  output array (a propagator slice)
+   * \param qr  input array 1 (a propagator slice)
+   * \param qr2  input array 2 (a propagator slice)
+   * \param expW2  input array 3 (exp(-W[i]*ds/4) array)
    */
    void richardsonEx(DeviceArray<cudaReal>& qNew,
                      DeviceArray<cudaReal> const & qr,
@@ -146,6 +162,11 @@ namespace Rpg {
 
    /*
    * Performs a[i] += b[i] * c[i] * d, kernel wrapper
+   * 
+   * \param a  output array
+   * \param b  input array 1
+   * \param c  input array 2
+   * \param d  input scalar
    */
    void addEqMulVVc(DeviceArray<cudaReal>& a, DeviceArray<cudaReal> const & b,
                     DeviceArray<cudaReal> const & c, cudaReal const d)

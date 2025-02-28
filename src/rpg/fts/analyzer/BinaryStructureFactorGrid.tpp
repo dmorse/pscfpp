@@ -5,10 +5,14 @@
 
 #include <rpg/fts/simulator/Simulator.h>
 #include <rpg/System.h>
+
 #include <prdc/crystal/shiftToMinimum.h>
 #include <prdc/cuda/resources.h>
 #include <prdc/cuda/complex.h>
+
+#include <pscf/inter/Interaction.h>
 #include <pscf/mesh/MeshIterator.h>
+
 #include <util/misc/FileMaster.h>
 #include <util/misc/ioUtil.h>
 #include <util/format/Dbl.h>

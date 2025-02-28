@@ -8,64 +8,40 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
+#include <pscf/solvers/BlockTmpl.h>      // base class template
 #include "Propagator.h"                  // base class argument
+
 #include <prdc/cuda/RField.h>            // member
 #include <prdc/cuda/RFieldDft.h>         // member
-#include <prdc/cuda/FFT.h>               // member
+//#include <prdc/cuda/FFT.h>               // member
 #include <prdc/cuda/FFTBatched.h>        // member
-#include <rpg/solvers/WaveList.h>
-#include <prdc/crystal/UnitCell.h>
-#include <pscf/solvers/BlockTmpl.h>      // base class template
-#include <util/containers/FSArray.h>
+
+#include <pscf/cuda/DeviceArray.h>       // member
+#include <util/containers/FSArray.h>     // member
+
+#include <prdc/cuda/resources.h>        
+
+// Forward declarations
+namespace Pscf {
+   template <int D> class Mesh;
+   namespace Prdc {
+      template <int D> class UnitCell;
+      namespace Cuda {
+         template <int D> class FFT;
+      }
+   }
+   namespace Rpg {
+      template <int D> class WaveList;
+   }
+}
 
 namespace Pscf {
-
-   template <int D> class Mesh;
-
 namespace Rpg {
+
 
    using namespace Util;
    using namespace Pscf::Prdc;
    using namespace Pscf::Prdc::Cuda;
-
-   // Wrappers for the CUDA kernels used internally
-   
-   /**
-   * Element-wise calculation of a = real(b * conj(c) * d), kernel wrapper
-   * 
-   * \param a  output array (real)
-   * \param b  input array 1 (complex)
-   * \param c  input array 2 (complex)
-   * \param d  input array 3 (real)
-   */
-   void realMulVConjVV(DeviceArray<cudaReal>& a, 
-                       DeviceArray<cudaComplex> const & b,
-                       DeviceArray<cudaComplex> const & c,
-                       DeviceArray<cudaReal> const & d);
-   
-   /**
-   * Performs qNew = (4 * (qr2 * expW2) - qr) / 3 elementwise, kernel wrapper
-   * 
-   * \param qNew  output array (a propagator slice)
-   * \param qr  input array 1 (a propagator slice)
-   * \param qr2  input array 2 (a propagator slice)
-   * \param expW2  input array 3 (exp(-W[i]*ds/4) array)
-   */
-   void richardsonEx(DeviceArray<cudaReal>& qNew, 
-                     DeviceArray<cudaReal> const & qr,
-                     DeviceArray<cudaReal> const & qr2, 
-                     DeviceArray<cudaReal> const & expW2);
-   
-   /**
-   * Performs a[i] += b[i] * c[i] * d, kernel wrapper
-   * 
-   * \param a  output array
-   * \param b  input array 1
-   * \param c  input array 2
-   * \param d  input scalar
-   */
-   void addEqMulVVc(DeviceArray<cudaReal>& a, DeviceArray<cudaReal> const & b,
-                    DeviceArray<cudaReal> const & c, cudaReal const d);
 
    /**
    * Block within a branched polymer.

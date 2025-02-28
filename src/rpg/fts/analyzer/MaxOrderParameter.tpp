@@ -9,6 +9,7 @@
 #include <prdc/cuda/RField.h>
 #include <prdc/cuda/resources.h>
 
+#include <pscf/inter/Interaction.h>
 #include <pscf/mesh/MeshIterator.h>
 #include <pscf/math/IntVec.h>
 

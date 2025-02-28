@@ -8,25 +8,34 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "Polymer.h"
-#include "Solvent.h"
-#include <pscf/solvers/MixtureTmpl.h>
-#include <pscf/inter/Interaction.h>
-#include <util/containers/DArray.h>
+#include <pscf/solvers/MixtureTmpl.h>     // base class template
+#include "Polymer.h"                      // base class parameter
+#include "Solvent.h"                      // base class parameter
 
+#include <util/containers/FSArray.h>      // member (stress_)
+
+// Forward declarations
+namespace Util { 
+   template <typename T> class DArray;
+}
 namespace Pscf { 
    template <int D> class Mesh; 
    namespace Prdc {
+      template <int D> class UnitCell; 
       namespace Cuda {
          template <int D> class FFT; 
+         template <int D> class RField; 
       }
+   }
+   namespace Rpg {
+      template <int D> class WaveList;
    }
 }
  
 namespace Pscf {
-namespace Rpg
-{
+namespace Rpg {
 
+   using namespace Util;
    using namespace Pscf::Prdc;
    using namespace Pscf::Prdc::Cuda;
 

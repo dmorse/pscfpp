@@ -34,6 +34,9 @@ public:
    void tearDown()
    {}
 
+   // Note: These functions have been made pseudo-private,
+   // making the tests obsolete.
+   
    void testRealMulVConjVV()
    {
       printMethod(TEST_FUNC);

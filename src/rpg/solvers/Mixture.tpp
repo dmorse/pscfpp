@@ -9,10 +9,20 @@
 */
 
 #include "Mixture.h"
+
+//#include <rpg/solvers/WaveList.h>
+
 #include <prdc/cuda/resources.h>
+#include <prdc/cuda/FFT.h>
+#include <prdc/cuda/RField.h>
+#include <prdc/crystal/UnitCell.h>
+
+#include <pscf/mesh/Mesh.h>
 #include <pscf/chem/PolymerModel.h>
 
-#include <cmath>
+#include <util/containers/DArray.h>
+
+//#include <cmath>
 
 namespace Pscf { 
 namespace Rpg

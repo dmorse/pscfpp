@@ -9,6 +9,7 @@
 */
 
 #include "Simulator.h"
+
 #include <rpg/System.h>
 #include <rpg/fts/compressor/Compressor.h>
 #include <rpg/fts/compressor/CompressorFactory.h>
@@ -17,11 +18,17 @@
 #include <rpg/fts/ramp/Ramp.h>
 #include <rpg/fts/ramp/RampFactory.h>
 #include <rpg/fts/VecOpFts.h>
+
 #include <prdc/cuda/resources.h>
+
+#include <pscf/cuda/CudaRandom.h>
+#include <pscf/inter/Interaction.h>
 #include <pscf/math/IntVec.h>
-#include <util/misc/Timer.h>
+
 #include <util/random/Random.h>
+#include <util/misc/Timer.h>
 #include <util/global.h>
+
 #include <gsl/gsl_eigen.h>
 
 namespace Pscf {

@@ -5,18 +5,21 @@
 #include <test/UnitTestRunner.h>
 
 #include <rpg/solvers/Block.h>
-#include <pscf/mesh/MeshIterator.h>
 #include <rpg/solvers/Propagator.h>
+#include <rpg/solvers/WaveList.h>
 
 #include <prdc/crystal/UnitCell.h>
+#include <prdc/cuda/FFT.h>
 #include <prdc/cuda/resources.h>
 
+#include <pscf/chem/PolymerModel.h>
+#include <pscf/mesh/MeshIterator.h>
 #include <pscf/mesh/Mesh.h>
 #include <pscf/math/IntVec.h>
+
 #include <util/math/Constants.h>
 
 #include <fstream>
-
 
 using namespace Util;
 using namespace Pscf;
@@ -285,7 +288,7 @@ public:
       PolymerModel::setModel(PolymerModel::Bead);
 
       // Create and initialize block
-      Block<2> block;
+      Pscf::Rpg::Block<2> block;
       setupBlock<2>(block);
 
       // Create and initialize mesh
@@ -472,7 +475,7 @@ public:
       PolymerModel::setModel(PolymerModel::Bead);
 
       // Create and initialize block
-      Block<1> block;
+      Pscf::Rpg::Block<1> block;
       setupBlock<1>(block);
 
       // Create and initialize mesh

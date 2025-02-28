@@ -9,15 +9,24 @@
 */
 
 #include "Polymer.h"
+#include <rpg/solvers/Block.h>
+#include <prdc/cuda/RField.h>
+#include <pscf/chem/PolymerModel.h>
 
 namespace Pscf {
 namespace Rpg { 
 
+   /*
+   * Constructor.
+   */
    template <int D>
    Polymer<D>::Polymer()
     : nParams_(0)
    {  setClassName("Polymer"); }
 
+   /*
+   * Destructor.
+   */
    template <int D>
    Polymer<D>::~Polymer()
    {}

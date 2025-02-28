@@ -40,7 +40,7 @@ namespace Rpg
       hasOutputFile_(false),
       simulatorPtr_(&simulator),
       systemPtr_(&(simulator.system()))
-   { setClassName("ThermoDerivativeAnalyzer"); }
+   {  setClassName("ThermoDerivativeAnalyzer"); }
 
    /*
    * Destructor.
@@ -69,7 +69,7 @@ namespace Rpg
          
       }
    }
-   
+
    /*
    * Setup before simulation loop.
    */ 
@@ -94,13 +94,13 @@ namespace Rpg
       }
       
       if (hasOutputFile_){
-          UTIL_CHECK(outputFile_.is_open());
-          outputFile_ << Dbl(variable());
-          outputFile_ << Dbl(derivative);
-          outputFile_<< "\n";
+         UTIL_CHECK(outputFile_.is_open());
+         outputFile_ << Dbl(variable());
+         outputFile_ << Dbl(derivative);
+         outputFile_<< "\n";
       }
-   } 
-   
+   }
+ 
    /*
    * Output results after a simulation is completed.
    */

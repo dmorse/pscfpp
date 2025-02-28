@@ -8,20 +8,30 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "Block.h"
-#include <prdc/cuda/RField.h>
-#include <pscf/solvers/PolymerTmpl.h>
+#include <pscf/solvers/PolymerTmpl.h>      // base class template
+#include <rpg/solvers/Block.h>             // base class argument
+
+//#include <prdc/cuda/RField.h>
 #include <util/containers/FArray.h> 
 
+// Forward declarations
+namespace Util {
+   template <typename T> class DArray;
+}
 namespace Pscf { 
-
    namespace Prdc {
       template <int D> class UnitCell;
+      namespace Cuda {
+         template <int D> class RField;
+      }
    }
+   namespace Rpg { 
+      template <int D> class WaveList;
+   }
+}
 
+namespace Pscf { 
 namespace Rpg { 
-
-   template <int D> class WaveList;
 
    using namespace Util;
    using namespace Pscf::Prdc;
@@ -168,3 +178,5 @@ namespace Rpg {
 }
 //#include "Polymer.tpp"
 #endif
+
+
