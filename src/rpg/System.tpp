@@ -419,6 +419,14 @@ namespace Rpg {
             writeThermo(file);
             file.close();
          } else
+         if (command == "WRITE_STRESS") {
+            readEcho(in, filename);
+            std::ofstream file;
+            fileMaster_.openOutputFile(filename, file,
+                                       std::ios_base::app);
+            writeStress(file);
+            file.close();
+         } else
          if (command == "WRITE_W_BASIS") {
             readEcho(in, filename);
             writeWBasis(filename);
@@ -891,6 +899,9 @@ namespace Rpg {
          }
          computeFreeEnergy(); // Sets hasFreeEnergy_ = true
          writeThermo(Log::file());
+         if (!iterator().isFlexible()) {
+            writeStress(Log::file());
+         }
       }
       return error;
    }
@@ -1218,6 +1229,22 @@ namespace Rpg {
          out << Int(i, 5)
              << "  "
              << Dbl(domain_.unitCell().parameter(i), 18, 11)
+             << std::endl;
+      }
+      out << std::endl;
+   }
+   
+   /*
+   * Write stress properties to file.
+   */
+   template <int D>
+   void System<D>::writeStress(std::ostream& out)
+   {
+      out << "stress:" << std::endl;
+      for (int i = 0; i < domain().unitCell().nParameter(); ++i) {
+         out << Int(i, 5)
+             << "  "
+             << Dbl(mixture_.stress(i), 18, 11)
              << std::endl;
       }
       out << std::endl;
