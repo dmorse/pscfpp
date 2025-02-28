@@ -5,12 +5,57 @@
 #include <test/UnitTestRunner.h>
 
 #include <rpg/solvers/Block.h>
+#include <prdc/cuda/types.h>
+#include <pscf/cuda/DeviceArray.h>
 #include <util/math/Constants.h>
 
 using namespace Util;
 using namespace Pscf;
 using namespace Pscf::Prdc;
 using namespace Pscf::Rpg;
+
+namespace Pscf {
+namespace Rpg {
+  
+   /**
+   * Element-wise calculation of a = real(b * conj(c) * d), kernel wrapper
+   * 
+   * \param a  output array (real)
+   * \param b  input array 1 (complex)
+   * \param c  input array 2 (complex)
+   * \param d  input array 3 (real)
+   */
+   void realMulVConjVV(DeviceArray<cudaReal>& a, 
+                       DeviceArray<cudaComplex> const & b,
+                       DeviceArray<cudaComplex> const & c,
+                       DeviceArray<cudaReal> const & d);
+   
+   /**
+   * Performs qNew = (4 * (qr2 * expW2) - qr) / 3 elementwise, kernel wrapper
+   * 
+   * \param qNew  output array (a propagator slice)
+   * \param qr  input array 1 (a propagator slice)
+   * \param qr2  input array 2 (a propagator slice)
+   * \param expW2  input array 3 (exp(-W[i]*ds/4) array)
+   */
+   void richardsonEx(DeviceArray<cudaReal>& qNew, 
+                     DeviceArray<cudaReal> const & qr,
+                     DeviceArray<cudaReal> const & qr2, 
+                     DeviceArray<cudaReal> const & expW2);
+   
+   /**
+   * Performs a[i] += b[i] * c[i] * d, kernel wrapper
+   * 
+   * \param a  output array
+   * \param b  input array 1
+   * \param c  input array 2
+   * \param d  input scalar
+   */
+   void addEqMulVVc(DeviceArray<cudaReal>& a, DeviceArray<cudaReal> const & b,
+                    DeviceArray<cudaReal> const & c, cudaReal const d);
+
+}
+}
 
 class BlockTest : public UnitTest
 {
@@ -34,9 +79,6 @@ public:
    void tearDown()
    {}
 
-   // Note: These functions have been made pseudo-private,
-   // making the tests obsolete.
-   
    void testRealMulVConjVV()
    {
       printMethod(TEST_FUNC);
