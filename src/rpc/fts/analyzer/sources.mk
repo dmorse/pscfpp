@@ -1,5 +1,6 @@
 rpc_fts_analyzer_= \
   rpc/fts/analyzer/Analyzer.cpp \
+  rpc/fts/analyzer/AverageAnalyzer.cpp \
   rpc/fts/analyzer/AverageListAnalyzer.cpp \
   rpc/fts/analyzer/AnalyzerManager.cpp \
   rpc/fts/analyzer/AnalyzerFactory.cpp \
