@@ -59,7 +59,7 @@ System{
       HamiltonianAnalyzer{
         interval        10
         outputFileName  out/hamiltonian
-        nSamplePerBlock 2
+        nSamplePerOutput 2
       }
 
       StepLogger{

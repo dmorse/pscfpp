@@ -12,7 +12,7 @@
 #include <util/accumulators/Average.h>           // member
 
 namespace Pscf {
-namespace Rpc 
+namespace Rpc
 {
 
    template <int D> class System;
@@ -23,41 +23,41 @@ namespace Rpc
    * Analyze averages and block averages of several real variables.
    *
    * This class evaluates the average of several sampled real variables, and
-   * optionally writes block averages to a data file during a simulation. 
-   * It is intended for use as a base class for Analyzers that evaluate 
-   * averages and (optionally) block averages for specific physical variables.
+   * optionally writes block averages to a data file during a simulation.
+   * It is intended for use as a base class for Analyzers that evaluate
+   * averages and (optionally) block averages for several physical variables.
    *
    * \ingroup Rpc_Fts_Analyzer_Module
    */
    template <int D>
    class AverageListAnalyzer : public Analyzer<D>
    {
-   
+
    public:
-   
+
       /**
       * Constructor.
       *
-      * \param system parent SystemType object. 
+      * \param system parent SystemType object.
       */
       AverageListAnalyzer(System<D>& system);
-   
+
       /**
       * Destructor.
       */
-      virtual ~AverageListAnalyzer(); 
+      virtual ~AverageListAnalyzer();
 
       /**
-      * Read interval, outputFileName and (optionally) nSamplePerBlock.
+      * Read interval, outputFileName and (optionally) nSamplePerOutput.
       *
-      * The optional variable nSamplePerBlock defaults to 0, which disables
-      * computation and output of block averages. Setting nSamplePerBlock = 1
-      * outputs every sampled value. 
+      * The optional variable nSamplePerOutput defaults to 0, which disables
+      * computation and output of block averages. Setting nSamplePerOutput = 1
+      * outputs every sampled value.
       *
       * \param in  input parameter file
       */
       virtual void readParameters(std::istream& in);
-   
+
       #if 0
       /**
       * Load internal state from an input archive.
@@ -73,14 +73,16 @@ namespace Rpc
       */
       virtual void save(Serializable::OArchive &ar);
       #endif
-      
+
       /**
-      * Clear accumulator on master, do nothing on other processors.
+      * Clear accumulators.
       */
       virtual void clear();
-  
+
       /**
-      * Setup before loop. Opens an output file, if any.
+      * Setup before loop.
+      *
+      * Opens an output file, if nSamplePerOutput > 0.
       */
       virtual void setup();
 
@@ -95,23 +97,21 @@ namespace Rpc
       * Write final results to file after a simulation.
       */
       virtual void output();
-      
+
       /**
-      * Get value of nSamplePerBlock.
-      * 
-      * If nSamplePerBlock == 0, output of block averages is disabled.
-      * For nSamplePerBlock > 0, the value is the number of sampled values
-      * averaged in each block. 
+      * Get value of nSamplePerOutput.
+      *
+      * If nSamplePerOutput == 0, output of block averages is disabled.
+      * For nSamplePerOutput > 0, the value is the number of sampled values
+      * averaged in each block.
       */
-      int nSamplePerBlock() const;
-      
+      int nSamplePerOutput() const;
+
       /**
       * Get number of variables.
-      *
-      * Call only on processors that have accumulators.
       */
       int nValue() const;
-      
+
       /**
       * Get name associated with value.
       *
@@ -120,50 +120,47 @@ namespace Rpc
       * \param i integer index of name/value pair.
       */
       const std::string& name(int i) const;
-      
+
       /**
       * Get Average accumulator for a specific value.
-      *
-      * Call only on processors that have accumulators.
       *
       * \param i integer index of value.
       */
       const Average& accumulator(int i) const;
-      
+
       /**
       * Pointer to the parent system.
       */
-      System<D>* systemPtr_;  
-      
-      using ParamComposite::read;
+      System<D>* systemPtr_;
+
       using Analyzer<D>::interval;
       using Analyzer<D>::isAtInterval;
       using Analyzer<D>::outputFileName;
-      
+      using ParamComposite::read;
+      using ParamComposite::readOptional;
 
    protected:
-   
+
       using Analyzer<D>::setClassName;
       using Analyzer<D>::readInterval;
-      using Analyzer<D>::readOutputFileName;
-      
+
       /**
-      * Instantiate Average accumulators and set nSamplePerBlock set nValue.
+      * Instantiate Average accumulators and set nSamplePerOutput set nValue.
       *
       * \pre hasAccumulator == false
-      * \pre nSamplePerBlock >= 0
-      */ 
+      * \pre nSamplePerOutput >= 0
+      */
       void initializeAccumulators(int nValue);
-      
+
       /**
       * Clear internal state of the accumulator.
       *
       * \pre hasAccumulator == true
-      */ 
+      */
       void clearAccumulators();
-      
+
       /**
-      * Set name of variable. 
+      * Set name of variable.
       *
       * Call only on master.
       *
@@ -179,14 +176,14 @@ namespace Rpc
       * \param value current value of variable
       */
       void setValue(int i, double value);
-      
+
       /**
       * Compute value of sampled quantity.
       *
       * Call on all processors.
       */
       virtual void compute() = 0;
-      
+
       /**
       * Get current value of a specific variable.
       *
@@ -199,33 +196,25 @@ namespace Rpc
       /**
       * Add current value to accumulator, output block average if needed.
       *
-      * \pre hasAccumulator() == true
       * \param iStep simulation step counter
-      * \param interval analyzer interval, in simulation steps
       */
-      void updateAccumulators(long iStep, int interval);
+      void updateAccumulators(long iStep);
 
       /**
       * Write results of statistical analysis to files.
-      *
-      * \pre hasAccumulator == true
-      * \param outputFileName base output file name for analyzer
       */
-      void outputAccumulators(std::string outputFileName);      
-            
-      /** 
+      void outputAccumulators();
+
+      /**
       * Return reference to parent system.
-      */      
+      */
       System<D>& system();
-      
+
       // Output file stream
       std::ofstream outputFile_;
-      
-      // Output filename
-      std::string filename_;
-      
+
    private:
-      
+
       /// Array of Average objects (only allocated on master processor)
       DArray<Average> accumulators_;
 
@@ -236,36 +225,36 @@ namespace Rpc
       DArray<std::string> names_;
 
       /// Number of samples per block average output.
-      int nSamplePerBlock_;
+      int nSamplePerOutput_;
 
       /// Number of values.
       int nValue_;
- 
+
       /// Does this processor have accumulators ?
       bool hasAccumulators_;
 
 
    };
-   
+
    // Inline functions
 
    /*
-   * Get nSamplePerBlock.
+   * Get nSamplePerOutput.
    */
    template <int D>
-   inline int AverageListAnalyzer<D>::nSamplePerBlock() const
-   {  return nSamplePerBlock_; }
-   
+   inline int AverageListAnalyzer<D>::nSamplePerOutput() const
+   {  return nSamplePerOutput_; }
+
    /*
    * Get nValue (number of variables).
    */
    template <int D>
    inline int AverageListAnalyzer<D>::nValue() const
-   {  
+   {
       UTIL_CHECK(hasAccumulators_);
-      return nValue_; 
+      return nValue_;
    }
-   
+
    /*
    * Get current value of a variable, set by compute function.
    */
@@ -276,7 +265,7 @@ namespace Rpc
       UTIL_CHECK(i >= 0 && i < nValue_);
       return values_[i];
    }
-   
+
    /*
    * Get name of specific variable.
    */
@@ -309,13 +298,19 @@ namespace Rpc
       UTIL_CHECK(i >= 0 && i < nValue_);
       values_[i] = value;
    }
-   
+
    // Get the parent system.
    template <int D>
    inline System<D>& AverageListAnalyzer<D>::system()
    {  return *systemPtr_; }
-   
+
+   #ifndef RPC_AVERAGE_LIST_ANALYZER_TPP
+   // Suppress implicit instantiation
+   extern template class AverageListAnalyzer<1>;
+   extern template class AverageListAnalyzer<2>;
+   extern template class AverageListAnalyzer<3>;
+   #endif
 
 }
 }
-#endif 
+#endif

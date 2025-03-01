@@ -56,15 +56,15 @@ System{
       }
 
       HamiltonianAnalyzer{
-        interval        1
-        outputFileName  out/mcHamiltonian
-        nSamplePerBlock 1
+        interval         1
+        outputFileName   out/mcHamiltonian
+        nSamplePerOutput 1
       }
 
       BinaryStructureFactorGrid{
-        interval        1000
-        outputFileName  out/structureFactor
-        nSamplePerBlock 2
+        interval         1000
+        outputFileName   out/structureFactor
+        nSamplePerBlock  2
       }
 
     }

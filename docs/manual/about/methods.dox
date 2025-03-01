@@ -5,22 +5,8 @@
 \ref about_history_page  (Next)
 <BR>
 
-
 PSCF is a package of several programs that are designed to predict 
 equilibrium properties of inhomogeneous states in polymer liquids. 
-All PSCF programs currently use a standard coarse-grained model that 
-treat polymer conformations as continuous random walks, and that treats 
-the material as rigorously incompressible. Systems modeled by PSCF may 
-be either one-component block polymer melts or mixtures that contains 
-one or more block polymer or homopolymers species.  Such a mixture 
-may also contain zero or more small molecule solvent species that are 
-treated as pointlike particles.  Polymeric species may be linear or 
-have any user-specified acyclic branched structure.  All molecular
-species in a system are constructed from a list of available monomer
-types, in which each monomer is assigned a statistical segment length. 
-Interactions among different types of monomer are described by binary 
-Flory-Huggins interaction parameters.
-
 PSCF is designed primarily to predict structures and free energies 
 of inhomogeneous equilibrium states of polymer liquids in which 
 inhomogeneity is driven a tendency of different types of monomer to 
@@ -29,7 +15,22 @@ perform either self-consistent field theory calculations or stochastic
 field-theoretic simulations that rely on a partial-saddle point
 approximation, as discussed below. 
 
-\section about_methods_scft_sec Self-consistent field theory
+\section about_methods_model_sec Coarse-grained model
+
+All PSCF programs currently use a standard coarse-grained model that 
+treat polymer conformations as continuous random walks, and that treats 
+the polymer material as incompressible. Systems modeled by PSCF may be 
+either one-component block polymer melts or mixtures that contains one 
+or more block polymer or homopolymer species.  Such a mixture may also 
+contain zero or more small molecule solvent species that are treated 
+as structureless particles that occupy a specified volume. Polymeric 
+species may be linear or have any user-specified acyclic branched 
+structure.  All molecular species in a system are constructed from 
+a set of monomer types, in which each monomer type is assigned a 
+statistical segment length. Interactions among different types of 
+monomer are described by binary Flory-Huggins interaction parameters.
+
+\section about_methods_scft_sec Self-consistent field theory (SCFT)
 
 Self-consistent field theory (SCFT) is a form of mean field theory for
 polymeric liquids. In SCFT, conformational statistics of individual 
@@ -71,34 +72,35 @@ inhomogeneous polymer liquids:
 
 The reference by Arora et al. is particularly appropriate as an 
 introduction to the implementation of SCFT in PSCF because it was written,
-in part, as a description of the earlier Fortran version of PSCF, and so
-uses conventions and working equations consistent with those used 
-throughout the PSCF documentation and source code.
+in part, as a description of the earlier Fortran version of PSCF. As a
+result, it uses conventions and working equations consistent with those 
+used throughout the PSCF documentation and source code.
 
-\section about_methods_fts_sec Field-theoretic simulation
+\section about_methods_fts_sec Field-theoretic simulation (FTS)
 
 Field-theoretic simulation (FTS) methods are a family of closely related
 stochastic simulation methods that sample an equilibrium ensemble of
-possible configurations of fluctuating chemical potential fields
-("w fields"), rather than solving for a single field configuration as
-in SCFT.  The theory underlying these methods is based upon a 
-mathematically exact transformation of the partition function for a system 
-of interacting particles from an integral over particle positions into a
-functional integral over configurations of a set of fluctuating 
-auxiliary fields.  There are two distinct classes of FTS methods, which 
-are discussed separately below:
+possible configurations of a set of fluctuating chemical potential fields
+("w fields"), rather than solving for a single optimal field configuration,
+as done in SCFT.  The theory underlying these methods is based upon a 
+mathematically exact transformation of the partition function for a 
+system of interacting particles from an integral over particle positions 
+into a functional integral over configurations of a set of fluctuating 
+auxiliary fields.  There are two distinct classes of FTS methods, which we 
+refer to as fully fluctuating (FF-FTS) and partial-saddle point (PS-FTS) 
+field theoretic simulations. Both are discussed below for context, but 
+only the PS-FTS method is implemented in the current version of PSCF.
 
-<b> Fully Fluctuating Field Theoretic Simulations (FF-FTS): </b>
+<b> Fully-fluctuating field theoretic simulation (FF-FTS): </b>
 
-An exact formulation of the particle-to-field transformation leads
-to an expression for the partition function as a functional integral
-in which the fields and the integrand of the functional integral are 
-complex-valued rather than real-valued quantities. The complex Langevin 
-sampling method, which is not yet implemented in PSCF, is designed to 
-sample the resulting complex functional integral. Complex Langevin 
-simulations of this "fully fluctuating" field theory are believed to 
-yield results that are statistically equivalent to those obtained 
-from simulations of a corresponding particle based model.
+An exact formulation of the particle-to-field transformation leads to an 
+expression for the partition function as a functional integral in which 
+the fields and the integrand of the functional integral are complex-valued 
+rather than real-valued quantities. The complex Langevin sampling method
+is the best available algorithm for sampling the resulting ensemble. When
+complex Langevin simulations reach a state of statistical equilibrium, 
+their results are statistically equivalent to those which would be obtained 
+from simulations of the corresponding particle based model.
 
 The following references discuss the transformation of the partition
 function into a functional integral, and the formulation of various
@@ -120,24 +122,24 @@ are based directly on the resulting formulation:
     of Polymer Melts and Solutions", </a>
     *J. Phys. Chem. B* **2016**, <i>120</i> 7615.
 
-The current version PSCF does not provide code for complex Langevin 
-FF-FTS.
+Complex Langevin simulations of the fully fluctuating theory are not 
+yet implemented in PSCF, but are planned for a future release.
 
-<b> Partial-Saddle Point Field Theoretic Simulations (PS-FTS): </b>
+<b> Partial saddle-point field theoretic simulation (PS-FTS): </b>
 
-FTS methods that are implemented in v1.2 of PSCF are instead all based
-on a so-called "partial saddle point" approximation to the fully
-fluctuating field theory. This is an approximation in which a field
-component component that enforces the incompressibility constraint,
-sometimes referred to as a "pressure" field, is treated at a
-self-consistent field level, while the other field component or components
-are allowed to fluctuate. The use of a self-consistent field approximation
-for the pressure field is mathematically equivalent to approximating this 
-field by its value at a partial saddle-point, which is a field 
-configuration in which the partial functional derivative of the field
-theoretic Hamiltonian with respect to this field vanishes. We refer 
-to field theoretic simulations based on this approximation as 
-partial saddle-point field theoretic simulations (PS-FTS).
+FTS methods that are implemented in v1.2 of PSCF are all based on a 
+so-called "partial saddle point" approximation to the fully fluctuating 
+field theory. This is an approximation in which a field component that 
+enforces the incompressibility constraint, sometimes referred to as a 
+pressure field, is treated at a self-consistent field level, while the
+other field component or components are allowed to fluctuate. The use 
+of a self-consistent field approximation for the pressure field is 
+mathematically equivalent to approximating this field by its value at 
+a partial saddle-point, which is a field configuration in which the 
+partial functional derivative of the field theoretic Hamiltonian with 
+respect to this field component vanishes. We refer to any type of
+simulation that relies on this approximation as a partial saddle-point 
+field theoretic simulation (PS-FTS).
 
 When the partial saddle-point approximation is applicable, it leads to
 an expression for the partition function as a functional integral in 
@@ -145,22 +147,24 @@ which all of quantities of interest have real (rather than complex)
 values. Simulations that rely on the partial-saddle point approximation
 also seem thus far to be substantially more efficient than complex
 Langevin simulations, at a modest cost in accuracy. PSCF v1.2 implements
-several Monte-Carlo and Brownian dynamics algorithms for sampling the 
-ensemble defined by the partial saddle-point approximation.
+several Brownian dynamics and Monte-Carlo algorithms for sampling the 
+ensemble defined by the partial saddle-point approximation. The 
+Brownian dynamics method is generally more efficient that Monte-Carlo
+for large systems.
 
 The PS-FTS method cannot be applied to as wide a range of different 
-types of systems as the complex Langevin FF-FTS.  It has thus far
-been applied in published work only to systems with only two monomer 
-types (AB systems) with a positive Flory-Huggins interaction parameter. 
-The implemention of partial-saddle point approximation that is 
-currently used in PSCF allows application to a somewhat wider range 
+types of systems as the complex Langevin method.  At the time of writing, 
+it had only been applied in published work only to systems with only two 
+monomer types (AB systems) with a positive Flory-Huggins interaction 
+parameter. The implemention of partial-saddle point approximation that 
+is currently used in PSCF allows application to a somewhat wider range 
 of systems, including some systems with three monomer types, but also 
 requires imposes some constraints on the allowed values of interaction 
 parameters.
 
 The following reference provides a good overview of simulations based 
-on the partial saddle-point approximation up to 2021, with references to
-earlier work:
+on the partial saddle-point approximation up to 2021, with references 
+to earlier work:
 
   - M.W. Matsen and T.M. Beardsley, 
     <a href="https://doi.org/10.3390/polym13152437">
