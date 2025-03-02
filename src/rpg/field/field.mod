@@ -5,7 +5,7 @@ namespace Rpg{
    /**
    * \defgroup Rpg_Field_Module Fields
    *
-   * Fields and FFT plans for use with pseudo-spectral algorithm on a GPU.
+   * Field containers, FieldIo and Domain classes.
    *
    * \ingroup Pscf_Rpg_Module
    */

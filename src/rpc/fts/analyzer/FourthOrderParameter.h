@@ -37,7 +37,9 @@ namespace Rpc {
    * \f[
    *     \Psi_{\text{fourth}} \equiv \left[ \sum W_{-}(\bf G)^4 \right] ^{\frac{1}{4}}
    * \f]
-   * where \f$W_(G)\f$ is a Fourier mode of fluctuating field 
+   * where \f$W_(G)\f$ is a Fourier mode of fluctuating field.
+   *
+   * \see \ref rpc_FourthOrderParameter_page "Parameter File Format"
    * 
    * \ingroup Rpc_Fts_Analyzer_Module
    */

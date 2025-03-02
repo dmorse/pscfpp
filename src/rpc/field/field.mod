@@ -5,7 +5,7 @@ namespace Rpc{
    /**
    * \defgroup Rpc_Field_Module Fields
    *
-   * Fields and FFT plan for use with pseudo-spectral solver algorithms.
+   * Field containers, FieldIo and Domain classes.
    *
    * \ingroup Pscf_Rpc_Module
    */

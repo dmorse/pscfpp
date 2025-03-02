@@ -20,6 +20,12 @@ namespace Rpc {
    /**
    * Class for storing data about an individual ramp parameter.
    *
+   * \see 
+   * <ul>
+   *   <li> LinearRamp </li>
+   *   <li> \ref rpc_LinearRamp_page "Parameter File Format" </li>
+   * </ul>
+   *
    * This class stores the information required to ramp a single 
    * parameter value of any of several types.  The type of parameter
    * is indicated in the public interface and parameter file format
@@ -47,8 +53,8 @@ namespace Rpc {
    *  | phi_solvent | solvent volume fraction            | sId   |
    *  | mu_solvent  | solvent chemical potential         | sId   |
    *  | cell_param  | lattice parameter                  | lId   |
-   *  | lambda_pert | perturbation strength              |  -    |
    *  | v_monomer   | monomer reference volume           |  -    |
+   *  | lambda_pert | perturbation parameter             |  -    |
    * \endcode
    * The two indices for a Flory-Huggins chi parameter refer to indices
    * in the chi matrix maintained by Interaction. Changes to element

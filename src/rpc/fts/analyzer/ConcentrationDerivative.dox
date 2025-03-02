@@ -1,3 +1,6 @@
+namespace Pscf {
+namespace Rpc {
+
 /*! 
 \page rpc_ConcentrationDerivative_page Rpc::ConcentrationDerivative
 
@@ -5,6 +8,8 @@ This analyzer calculates the derivative of free energy with
 respect to parameter \f$c_0 = 1/v \f$ at fixed united cell, fixed
 polymer volume fraction, and fixed \f$ \chi_b \f$ for AB diblock copolymer 
 system. 
+
+\see ConcentrationDerivative (Class API)
 
 \section rpc_ConcentrationDerivative_algorithm_sec Mathematical Formula
 
@@ -69,3 +74,6 @@ At the end of the simulation, if hasAverage is true:
   - error analysis info are output to {outputFileName}.aer
 
 */
+
+}
+}

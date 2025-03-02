@@ -1,3 +1,6 @@
+namespace Pscf {
+namespace Rpc {
+
 /*! 
 \page rpc_ConcentrationWriter_page Rpc::ConcentrationWriter
 
@@ -7,6 +10,8 @@ TrajectoryWriter, except that it outputs frames containing monomer
 monomer concentration / volume fraction fields (c-fields) for all 
 monomer types at regular intervals, rather than monomer chemical
 potential fields (w-fields).
+
+\see ConcentrationWriter (class API)
 
 \section rpc_ConcentrationWriter_parameter_sec Parameter File
 
@@ -44,3 +49,5 @@ field file, following by a sequence frames, in which each frame uses
 the format of the data section of an r-grid field file. 
 
 */
+}
+}

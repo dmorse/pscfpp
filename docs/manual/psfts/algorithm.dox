@@ -78,23 +78,24 @@ base class. The generic names that we use in this documentation to
 describe different types of algorithm generally correspond to the 
 names of the corresponding base classes. Specifically:
 
-   - Brownian dynamics step algorithms are implemented by subclasses of a base class named BdStep
+   - Brownian dynamics step algorithms are implemented by subclasses of a 
+     base class named BdStep
 
    - Monte Carlo moves are implemented by subclasses of McMove
 
-   - File Io and data analysis operations are implemented by
-     subclasses of Analyzer.
+   - File Io and data analysis operations are implemented by subclasses 
+     of Analyzer.
 
-   - Algorithms for continuous variation of parameters are
-     implemented by subclasses of Ramp
+   - Algorithms for continuous variation of parameters are implemented by 
+     subclasses of Ramp
 
    - Classes that define additive changes to the field theoretic
      Hamiltonian are subclasses of Perturbation
 
-The PSCF parameter file format uses selectable parameter file blocks
-to allow a user to choose one from a set of different algorithms of 
-the same type (as is appropriate for BdStep an Compressor algorithms) 
-or to choose a set one or algorithms from among a list of available 
+The PSCF parameter file format uses selectable parameter file blocks to 
+allow a user to either choose one from a set of different algorithms of 
+the same type (as is appropriate for BdStep an Compressor algorithms) or 
+to choose a set one or more algorithms from among a list of available 
 algorithms of the same type (as is appropriate for McMove and Analyzer 
 algorithms).
 
@@ -209,10 +210,10 @@ that type of move being chosen at the start of each step.
 
 PSCF currently only provides the following two MC step algorithms: 
 <ul>
-  <li> \ref rpc_ForceBiasMove_page "ForceBiasMove": A "smart MC" or
+  <li> \subpage rpc_ForceBiasMove_page "ForceBiasMove": A "smart MC" or
   "force bias" MC move that uses an explicit Euler BD step to 
   generate a proposed MC move. </li>
-  <li> \ref rpc_RealMove_page "RealMcMove" : A simple MC move that 
+  <li> \subpage rpc_RealMove_page "RealMcMove" : A simple MC move that 
   generates spatially uncorrelated random changes of 
   \f$ W_{-} \f$ at different grid points </li> 
 </ul>
@@ -273,11 +274,11 @@ click on the link associated with each algorithm label to access
 more a detailed description of each the algorithm, and of the format 
 of the associated parameter file block. 
 <ul>
-  <li> \ref rpc_LrAmCompressor_page "LrAmCompressor": 
+  <li> \subpage rpc_LrAmCompressor_page "LrAmCompressor": 
         A linear-response Anderson mixing algorithm </li>
-  <li> \ref rpc_LrCompressor_page "LrCompressor": 
+  <li> \subpage rpc_LrCompressor_page "LrCompressor": 
         A simple linear-response algorithm </li>
-  <li> \ref rpc_AmCompressor_page "AmCompressor":
+  <li> \subpage rpc_AmCompressor_page "AmCompressor":
         An Anderson-mixing algorithm </li>
 </ul>
 The LrAmCompressor is the default choice, and is recommended for 
@@ -407,37 +408,28 @@ form of the Hamiltonian (as done in Einstein crystal integration).
 \section psfts_algorithm_ramp_sec Parameter Ramp
 
 A "ramp" is an optional feature for FTS that allows a user to continuously
-vary one or more model parameters during a simulation.  The main uses for 
-parameter ramps are:
+vary one or more model parameters during a simulation.  Parameter ramps are
+discussed in more detail on a \ref psfts_ramp_page "separate manual page". 
 
-  - To induce a spontaneous phase transformation during a slow parameter 
-    ramp in order identify the approximate location of an equilibrium 
-    phase boundary (e.g., an order-disorder transition).
-
-  - To evaluate the integral of some ensemble average with respect to 
-    changes in a model parameter in order to implement continuous 
-    thermodynamic integration.
-
-The only ramp algorithm currently provided by PSCF is implemented by 
-the LinearRamp class. The LinearRamp algorithm can perform a ramp in
-in which any specified set of of the standard physical parameters are
-taken to vary linearly with the BD or MC step counter.  The interface 
-for a LinearRamp is closely analogous to that of the LinearSweep class 
-used for SCFT sweep calculations, as discussed on a 
-\ref psfts_ramp_page "separate manual page". 
+The only ramp algorithm currently provided by PSCF is implemented by the 
+class LinearRamp. The LinearRamp algorithm can perform a ramp in which 
+one or more of the physical parameters of a model are taken to vary linearly
+with the BD or MC simulation step counter.  The interface for a LinearRamp 
+is closely analogous to that of the LinearSweep class used for SCFT sweep 
+calculations, as discussed \ref rpc_LinearRamp_page "here".
 
 \section psfts_algorithm_perturbation_sec Perturbation
 
-A "perturbation" is an optional feature that allows the user to modify 
-the form of the field theoretic Hamiltonian by adding an arbitrary
-additional functional of the w-fields to the standard Hamiltonian.
+A "perturbation" is an optional feature that allows a user to modify the 
+form of the field theoretic Hamiltonian by adding an arbitrary additional 
+functional of the w-fields to the standard Hamiltonian.  Perturbations 
+are discussed on a \ref psfts_perturb_page "separate manual page". 
 
-The only type of perturbation is currently available is implemented
-by the EinsteinCrystalPerturbation class. This class is designed to 
-enable the Einstein crystal method of computing absolute free 
-energies. The interface for EinsteinCrystalPerturbation is discussed 
-in detail on a \ref psfts_perturb_page "separate manual page". 
-
+The only type of perturbation that is currently available is implemented 
+by the EinsteinCrystalPerturbation class. This class is designed to enable 
+the Einstein crystal method of computing absolute free energies. The 
+parameter file format for an EinsteinCrystalPerturbation is discussed in 
+detail on a \ref rpc_EinsteinCrystalPerturbation_page "separate page". 
 
 <BR>
 \ref psfts_psa_page    (Prev) &nbsp; &nbsp; &nbsp; &nbsp;

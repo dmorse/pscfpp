@@ -1,5 +1,6 @@
 namespace Pscf{
 namespace Rpc{
+
 /*! 
 \page rpc_LinearRamp_page Rpc::LinearRamp
 
@@ -9,6 +10,13 @@ varies linear with the simulation step counter. This is the default
 ramp algorithm for both pscf_pc and pscf_pg, and so may be selected
 by including a parameter file block with either the specific label
 "LinearRamp" or the generic label "Ramp". 
+
+\see 
+<ul>
+  <li> LinearRamp </li>
+  <li> RampParameter </li>
+  <li> \ref psfts_ramp_page "Manual Page" </li>
+</ul>
 
 \section rpc_LinearRamp_param_sec Parameter File Format
 
@@ -174,5 +182,6 @@ Perturbation, and allows the user to ramp the value of the parameter
 that controls the strength of the perturbation, denoted by "lambda".
 
 */
+
 }
 }

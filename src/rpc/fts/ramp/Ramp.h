@@ -13,6 +13,8 @@ namespace Rpc {
    /**
    * Class that varies parameters during a simulation (abstract).
    *
+   * \see \ref psfts_ramp_page "Manual Page"
+   *
    * \ingroup Rpc_Fts_Ramp_Module
    */
    template <int D>

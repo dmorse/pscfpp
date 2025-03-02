@@ -28,6 +28,8 @@ namespace Rpc {
    /**
    * Base class for additive perturbations of standard FTS Hamiltonian.
    *
+   * \see \ref psfts_perturb_page "Manual Page"
+   *
    * \ingroup Rpc_Fts_Perturbation_Module
    */
    template <int D>

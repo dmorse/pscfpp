@@ -1,8 +1,18 @@
+namespace Pscf {
+namespace Rpc {
+
 /*! 
 \page rpc_EinsteinCrystalPerturbation_page Rpc::EinsteinCrystalPerturbation
 
 This class is designed to enable use of Einstein crystal method of 
 computing free energies by thermodynamic integration.
+
+\see 
+<ul>
+  <li> EinsteinCrystalPerturbation (Class) </li>
+  <li> \ref psfts_perturb_page "Manual Page" </li>
+</ul>
+
 
 \section rpc_EinsteinCrystalPerturbation_algorithm_sec Mathematical Definition
 
@@ -64,6 +74,13 @@ Meanings of the parameters are described briefly below:
     <td> alpha </td>
     <td> prefactor in harmonic penalty </td>
   </tr>
+  <tr>
+    <td> referenceFieldName  </td>
+    <td> name of file containing reference field configuration </td>
+  </tr>
 </table>
 
 */
+
+}
+}

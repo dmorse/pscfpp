@@ -27,6 +27,12 @@ namespace Rpc {
    /**
    * Perturbation for Einstein crystal thermodynamic integration method.
    *
+   * \see
+   * <ul>
+   * <li> \ref rpc_EinsteinCrystalPerturbation_page "Parameter File Format" </li>
+   * <li> \ref psfts_perturb_page "Manual Page" </li>
+   * </ul>
+   *
    * \ingroup Rpc_Fts_Perturbation_Module
    */
    template <int D>

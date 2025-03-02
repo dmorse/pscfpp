@@ -1,8 +1,13 @@
+namespace Pscf {
+namespace Rpc {
+
 /*! 
 \page rpc_PerturbationDerivative_page Rpc::PerturbationDerivative
 
 This analyzer calculates the derivative of free energy with 
 respect to the perturbation parameter \f$\lambda \f$.
+
+\see PerturbationDerivative (class API)
 
 \section rpc_PerturbationDerivative_algorithm_sec Mathematical Formula
 The mathematical formula can be found in the documentation of
@@ -50,3 +55,6 @@ At the end of the simulation, if hasAverage is true:
   - error analysis info are output to {outputFileName}.aer
 
 */
+
+}
+}

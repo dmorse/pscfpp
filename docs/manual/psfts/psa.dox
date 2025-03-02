@@ -16,50 +16,51 @@ configurations.
 We first consider the PSA for an incompressible standard AB system with 
 \f$ \chi > 0 \f$.  In the fully fluctuating theory for such a system, 
 the partition function can be expressed as an functional integral over 
-a real exchange field \f$ \omega_{-} \f$ and an pressure-like field 
-\f$ \omega_{+} \f$.  
+a real exchange field \f$ W_{-} \f$ and an imaginary pressure-like 
+field \f$ W_{-}({\bf r}) = i\omega_{+} \f$.  
 
 In the PSA for such a system, \f$ Z \f$ is approximated by functional
-integral with respect to \f$ \omega_{-} \f$ in which the Hamiltonian 
-\f$ H \f$ is evaluated in a configuration in which \f$ \omega_{+} \f$ 
-is chosen so as to give a vanishing partial functional derivative of
-\f$H \f$ with respect to \f$ \omega_{+}({\bf r}) \f$. 
+integral with respect to \f$ W_{-} \f$ in which the Hamiltonian 
+\f$ H \f$ is evaluated in a configuration in which \f$ W_{+} \f$ is 
+chosen so as to give a vanishing partial functional derivative of
+\f$ H \f$ with respect to \f$ W_{+}({\bf r}) \f$. 
 This yields an approximate for the partition function as an integal
 \f[
-   Z = \frac{1}{N} \int D\omega_{-} \; e^{-H[ \omega_{-}, \omega_{+}^{*}]}
+   Z = \frac{1}{N} \int DW_{-} \; e^{-H[ W_{-}, W_{+}^{*}]}
 \f]
-in which \f$ \int D \omega_{-} \f$ denotes a functional integral over 
-the exchange field \f$ \omega_{-} \f$, while \f$ \omega_{+}^{*} \f$ 
-denotes a configuration of \f$ \omega_{+}({\bf r}) \f$ that is chosen 
-to satisfy the so-called partial-saddle point condition
+in which \f$ \int D W_{-} \f$ denotes a functional integral over 
+the exchange field \f$ W_{-} \f$, while \f$ W_{+}^{*} \f$ denotes 
+a configuration of \f$ W_{+}({\bf r}) \f$ that is chosen to satisfy 
+the so-called partial-saddle point condition
 \f[
-    0 = \frac{1}{i} \left . 
-    \frac{ \delta H }
-         { \delta \omega_{+}({\bf r}) } 
-    \right |_{\omega_{+}}
-    =  \frac{1}{v} \left [ \phi_{1}{\bf r}) + \phi_{2}({\bf r}) - 1\right ]
+    0 = \left .  \frac{ \delta H } { \delta W_{+}({\bf r}) } 
+    \right |_{W_{-}}
+    =  \frac{1}{v} 
+   \left [ \phi_{1}{\bf r}) + \phi_{2}({\bf r}) - 1\right ]
 \f]
 for all \f$ {\bf r} \f$.
-Partial saddle-point fields configuration thus satisfy a mean-field
-version of the incompressibility constraint similar to that used in 
-SCFT for incompressible systems. 
+Note that this condition is satisfied if and only if
+\f$ \phi_{1}({\bf r}) + \phi_{2}({\bf r}) = 1 \f$. 
+Partial saddle-point field configurations thus satisfy a mean-field
+version of the incompressibility constraint that is identical to 
+the form of this constraint used in SCFT. SCFT solutions also satisfy
+the requirement that \f$ \delta H/\delta W_{-}({\bf r}) = 0 \f$, 
+however, while PS-FTS methods allow \f$ W_{-}({\bf r}) \f$ to 
+fluctuate.
 
-The partial saddle-point configuration of \f$ \omega_{+} \f$ in a system 
-with a real-valued field \f$ \omega_{-}({\bf r}) \f$ is found to 
-always yield a pure imaginary value for \f$ \omega_{+}({\bf r})\f$
-corresponding to a real value for a Wick rotated saddle-point field
+Partial saddle-point field configuration for states characterized
+by a real-valued exchange field \f$ W_{-}({\bf r}) \f$ always have
+a real-valued field \f$ W_{+}({\bf r}) \f$, corresponding to a pure 
+imaginary value of \f$ \omega_{+}({\bf r}) \f$.
+Such a field configurations always yields real monomer w-fields 
+fields, given by
 \f[
-    W_{+}^{*}({\bf r}) \equiv i \omega_{+}^{*}({\bf r}) \quad.
-\f]
-Such a partial saddle-point configuration yields real monomer fields
-given by
-\f[
-   w_{1}({\bf r}) =  W^{*}_{+}({\bf r}) + \omega_{-}({\bf r})  \quad
+   w_{1}({\bf r}) =  W^{*}_{+}({\bf r}) + W_{-}({\bf r})  \quad
 \f]
 \f[
    w_{2}({\bf r}) =  W^{*}_{+}({\bf r}) - \omega_{+}({\bf r})  \quad,
 \f]
-while also yielding real values for \f$\ln Z_{\rm id}[w] \f$ and for 
+and also yields real values for \f$ \ln Z_{\rm id}[w] \f$ and 
 the Hamiltonian \f$ H \f$. 
 
 \section psfts_psa_general_sec General Case (\f$ M \geq 2 \f$)
@@ -67,11 +68,13 @@ the Hamiltonian \f$ H \f$.
 The current version of PSCF (v1.2) allows PS-FTS simulations of some 
 systems with M > 2, subject to a constraint on allowed values of the 
 \f$ \chi \f$ parameters:  The implementation of the PSA in the current 
-version of PSCF is applicable if the nontrivial eigenvalues of the 
-projected \f$ \chi \f$ matrix, \f$ \lambda_{1}, \ldots \lambda_{M-1} \f$, 
-are all negative.  This requirement is a generalization of the requirement 
-that \f$ \chi > 0 \f$ in a standard AB system, which leads in this special
-case to a value for \f$ \lambda_{1} < 0\f$.
+version of PSCF is applicable if and only if the nontrivial eigenvalues 
+of the projected \f$ \chi \f$ matrix, 
+\f$ \lambda_{1}, \ldots \lambda_{M-1} \f$,
+are all negative.  This requirement is a generalization of the 
+requirement that \f$ \chi > 0 \f$ in a standard AB system, which can be 
+shown to be equivalent in that case to a requirement that 
+\f$ \lambda_{1} < 0 \f$.
 
 To discuss the generalized PSA for such systems, it is convenient to 
 adopt a modified notation analogous to that used for AB systems, in
@@ -80,42 +83,42 @@ which we use \f$ \omega_{-} \f$ as short-hand for the list of fields
    \omega_{-} = [\omega_{1}, \ldots, \omega_{M-1}] \quad,
 \f]
 which we refer to collectively as exchange fields, while using 
-\f$ \omega_{+} \f$ as an alternate symbol for the pressure-like field 
-\f$ \omega_{M} \f$. Using this notation, we may express the generalized 
+\f$ W_{+} \f$ as an alternate symbol for the pressure-like field 
+\f$ W_{M} \f$. Using this notation, we may express the generalized 
 PSA for such systems as an integral 
 \f[
-   Z = \frac{1}{N} \int D\omega_{-} \; e^{-H[\omega_{-}, \omega_{+}^{*}]}
+   Z = \frac{1}{N} \int D\omega_{-} \; e^{-H[\omega_{-}, W_{+}^{*}]}
 \f]
 in which \f$ \int D\omega_{-} \f$ denotes a functional integral over 
-the \f$ M - 1 \f$ exchange fields 
+the \f$ M - 1 \f$ real exchange fields 
 \f$ \omega_{-} = [\omega_1, \ldots, \omega_{M-1}] \f$, and in which 
-\f$ \omega_{+}^{*} \f$ denotes a configuration of 
-\f$ \omega_{+}({\bf r}) \f$ that is chosen to satisfy a criterion 
+\f$ W_{+}^{*} \f$ denotes a real configuration of 
+\f$ W_{+}({\bf r}) \f$ that is chosen to satisfy a criterion 
 requiring that 
 \f[
-     0 = \frac{1}{i}
-     \left . 
-     \frac{ \delta H[\omega_{-}, \omega_{+} ] }
-          { \delta \omega_{+}({\bf r}) } 
-     \right |_{\omega_{+} = \omega_{+}^{*}}
-     \quad.
+    0 = \left . 
+    \frac{ \delta H }
+         { \delta W_{+}({\bf r}) } 
+    \right |_{\omega_{-}}
+    \quad.
 \f]
 As for an AB system, the requirement that 
-\f$ \delta H[\omega]/\delta \omega_{M}({\bf r}) = 0 \f$ can be shown to 
+\f$ \delta H[\omega]/\delta W_{+}({\bf r}) = 0 \f$ can be shown to 
 be equivalent to a requirement that 
 \f[
     \sum_{i=}^{M} \phi_{i}({\bf r}) = 1
     \quad.
 \f]
-In cases to which this approximation applies (for which
+In cases to which this approximation applies (those for which
 \f$ \lambda_{1}, \ldots, \lambda_{M-1} \f$ are all negative) this 
 approximation leads to real values for all monomer fields and for 
 the Hamiltonian \f$ H \f$. 
 
-Morse, Yong and Chen (<https://pubs.acs.org/doi/10.1021/acs.macromol.4c02636>)
-have proposed a further generalization of the PSA so as to treat cases in which 
-one or more eigenvalues of the projected \f$ \chi \f$ matrix are positive. This 
-further generalization is not implemented in v1.2 of PSCF. 
+Morse, Yong and Chen 
+(<https://pubs.acs.org/doi/10.1021/acs.macromol.4c02636>)
+have proposed a further generalization of the PSA so as to treat cases in 
+which one or more eigenvalues of the projected \f$ \chi \f$ matrix are 
+positive. This further generalization is not implemented in v1.2 of PSCF. 
 
 <BR>
 \ref psfts_psa_page         (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
