@@ -24,7 +24,7 @@ namespace Rpc
    /**
    * Evaluate the derivative of H with respect to chi.
    *
-   * \see \ref rpc_ChiDerivative_page "Parameter File Format"
+   * \see \ref rpc_ChiDerivative_page "Manual Page"
    *
    * \ingroup Rpc_Fts_Analyzer_Module
    */

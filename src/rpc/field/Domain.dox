@@ -1,24 +1,44 @@
 namespace Pscf{
 namespace Rpc{
+
 /*! 
-\page rpc_Domain_page Rpc::Domain
+\page rpc_Domain_page Domain
 
-Pscf::Rpc::Domain<D> and Pscf::Pspg::Domain<D> are closely analogous
-class templates that are used to represent a periodic unit cell and 
-discretization mesh for a D-dimensional periodic structure, as used 
-in the pscf_pc and pscf_pg programs, respectively. These closely 
-analogous classes use the same parameter file input format.
+The Domain block of the parameter file for pscf_pc or pscf_pg contains 
+information about the periodic unit cell and discretization mesh for a 
+D-dimensional periodic structure. Here D is the dimension of space
+specified by the argument of the "-d" command line option used to 
+invoked pscf_pc or pscf_pg.
 
-The parameter file format for a Domain<D> object is:
+An example of a Domain block used for an SCFT calculation for a three 
+dimensional (D=3) gyroid structure is shown below:
 \code
 Domain{
-  mesh         Array[Int]
+  mesh         32  32  32
+  lattice      cubic
+  groupName    Ia-3d
+}
+\endcode
+The parameter file format is:
+\code
+Domain{
+  mesh         IntVec<D>
   lattice      string
   groupName*   string
 }
 \endcode
-Parameters and subblocks are described below:
+Here, the data type IntVec<D> denotes a D-dimensional vector represented 
+in the parameter file by a list of D positive integers. The meaning of 
+each parameter is described below:
 <table>
+  <tr>
+    <td> mesh </td>
+    <td> 
+    A list of D integers on a single line, in which component i is the 
+    number of mesh points along direction (Bravais basis vector) i of a
+    a regular computational mesh.
+    </td>
+  </tr>
   <tr>
     <td> lattice </td>
     <td> 
@@ -27,12 +47,6 @@ Parameters and subblocks are described below:
     UnitCell<D>::LatticeSype enum value.  A discussion of allowed
     crystal system identifiers and associated unit cell parameters is 
     given \ref scft_unitcell_page "here".  
-    </td>
-  <tr>
-    <td> mesh </td>
-    <td> 
-    A list of D integers on a single line, in which component i is the 
-    number of grid points along direction (Bravais basis vector) i. 
     </td>
   </tr>
   <tr>
@@ -44,22 +58,40 @@ Parameters and subblocks are described below:
     </td> 
   </tr>
 </table>
+The mesh and lattice parameter are needed for both SCFT and PS-FTS
+calculations, and are required.
 
-The optional groupName parameter must be present to enable reading 
-and writing of fields in symmetry adapted basis format, or use of any 
-algorithm that relies on that field representation. Specifically, the 
-groupName parameter must be present to enable iterative solution of SCFT 
-equations for structures of known symmetry using any Iterator class 
-that uses a symmetry-adapted basis to update the fields, and that thus 
-automatically preserves the symmetry.  The groupName parameter can, 
-however, generally be left out of parameter files intended for use 
-with field theoretic Monte-Carlo (FTMC) calculations, for which the 
-fields generally do not exhbit any nontrivial symmetry, as well as 
-for "large-cell" SCFT calculations in which no symmetry is imposed.
-Fields for simulations or SCFT calculations that do not impose a 
-space group symmetry are normally input and output using the r-grid 
-field file format.
+The optional groupName parameter may only be used for SCFT, but not 
+for stochastic FTS calculations.  This optional parameter must be 
+present to enable reading and writing of fields in symmetry adapted 
+basis format, and to enable use of any algorithm that relies on that 
+symmetry-adapted field representation. Specifically, the groupName 
+parameter must be present to enable iterative solution of SCFT 
+equations for structures of known symmetry using an iterator 
+algorithm that uses a symmetry-adapted basis to update the fields, 
+such as the AmIteratorBasis algorithm. 
+
+The groupName parameter should, however, be omitted from parameter 
+files used to initialize field theoretic BD or MC simulations. The 
+fields generated during the course of such a stochastic simulation 
+generally do not exactly preserve any nontrivial symmetry. 
+The groupName parameter may also be omitted for "large-cell" SCFT 
+calculations performed with pscf_pg in which no symmetry is imposed. 
+Fields for PS-FTS calculations or large SCFT calculations that do 
+not impose a space group symmetry are normally input and output 
+using the r-grid field file format.
+
+Because the \ref rpc_AmIteratorBasis_page "AmIteratorBasis" algorithm 
+is currently the only iterator algorithm provided for use with pscf_pc, 
+the groupName parameter actually **must** be included in any parameter 
+file that is used to perform SCFT calculations with this program. 
+The groupName parameter may be omitted from a parameter file used to 
+perfom an SCFT calculation with pscf_pg, however, if the calculation
+is performed using the \ref rpc_AmIteratorGrid_page "AmIteratorGrid"
+algorithm, which does not impose any space group symmetry.
+the AmIteratorGrid
 
 */
+
 }
 }

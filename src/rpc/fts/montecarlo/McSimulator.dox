@@ -98,6 +98,17 @@ Relationships among blocks:
   - The AnalyzerManager block must be present in order to postprocess
     a trajectory file (command ANALYZE).
 
+\see
+<ul>
+  <li> \ref psfts_algorithm_MC_sec "McMove algorithms" </li>
+  <li> \ref psfts_algorithm_compressor_sec "Compressor algorithms" </li>
+  <li> \ref psfts_perturb_page "Perturbations" </li>
+     <ul> <li> \ref rpc_EinsteinCrystalPerturbation_page </li> </ul>
+  <li> \ref psfts_ramp_page "Parameter Ramps" </li>
+     <ul> <li> \ref rpc_LinearRamp_page </li> </ul>
+  <li> \ref psfts_algorithm_analyzer_sec "Analyzer algorithms" </li>
+</ul>
+
 */
 }
 }

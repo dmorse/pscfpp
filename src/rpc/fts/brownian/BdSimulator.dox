@@ -83,7 +83,7 @@ below:
     </td>
   </tr>
 </table>
-Relationships among blocks:
+Relationships among subblocks of BdSimulator:
 
   - The BdStep and Compressor blocks must both be present in order to
     perform a BD simulation (command SIMULATE), but may both be omitted 
@@ -92,10 +92,21 @@ Relationships among blocks:
 
   - If a BdStep is present, the Compressor block is required.
 
-  - A Ramp is only allowed if a BdStep is present.
+  - A Ramp is allowed only if a BdStep is present.
 
   - The AnalyzerManager block must be present in order to postprocess
     a trajectory file (command ANALYZE).
+
+\see
+<ul>
+  <li> \ref psfts_algorithm_BD_sec "BdStep algorithms" </li>
+  <li> \ref psfts_algorithm_compressor_sec "Compressor algorithms" </li>
+  <li> \ref psfts_perturb_page "Perturbations" </li>
+     <ul> <li> \ref rpc_EinsteinCrystalPerturbation_page </li> </ul>
+  <li> \ref psfts_ramp_page "Parameter Ramps" </li>
+     <ul> <li> \ref rpc_LinearRamp_page </li> </ul>
+  <li> \ref psfts_algorithm_analyzer_sec "Analyzer algorithms" </li>
+</ul>
 
 */
 }

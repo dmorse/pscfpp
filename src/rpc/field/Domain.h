@@ -34,7 +34,7 @@ namespace Rpc
    *
    * A Domain has (among other components):
    *
-   *    - a Mesh spatial discretization mesh
+   *    - a Pscf::Mesh spatial discretization mesh
    *    - a Prdc::UnitCell crystallographic unit cell
    *    - a Prdc::SpaceGroup crystallographic space group
    *    - a Prdc::Basis symmetry-adapated Fourier basis
@@ -43,8 +43,11 @@ namespace Rpc
    *    - a lattice system enum (type Prdc::UnitCell::LatticeSystem)
    *    - a groupName string
    *
-   * Note: Class names Mesh, UnitCell, etc. mentioned above are actually
-   * all templates with a template parameter D.
+   * Note: Class names Pscf::Mesh, Prdc::UnitCell, etc. mentioned above are
+   * actually all class templates with a template parameter D. Actual class
+   * names are Mesh \<D\>, UnitCell \<D\>, etc. with D=1, 2, or 3.
+   *
+   * \see \ref rpc_Domain_page "Manual Page"
    *
    * \ingroup Rpc_Field_Module
    */

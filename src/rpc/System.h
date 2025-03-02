@@ -54,7 +54,7 @@ namespace Rpc {
    * System is a class template with an integer template parameter 
    * D = 1, 2, or 3 that represents the dimension of space.
    *
-   * A System has (among other components):
+   * A System has (among other member components):
    *
    *    - a Mixture (container for polymer and solvent solvers)
    *    - an Interaction (list of binary chi parameters)
@@ -62,11 +62,16 @@ namespace Rpc {
    *    - a container of monomer chemical potential fields
    *    - a container of monomer concentration fields
    *
-   * A System may also optionally contain Iterator, Sweep, and
-   * Simulator objects. Iterator and Sweep objects are only used 
-   * for SCFT calculations. A Simulator object is only used for
-   * PS-FTS calculations (i.e., field theoretic simulations in
-   * a partial saddle-point approximation).
+   * A System may also optionally have Iterator, Sweep, and Simulator
+   * components. Iterator and Sweep objects are only used for SCFT
+   * calculations.  A Simulator object is only used for PS-FTS 
+   * calculations (i.e., field theoretic simulations that use a partial 
+   * saddle-point approximation).
+   *
+   * Note: The names Mixture, Interaction, etc. mentioned above are names
+   * of class templates that each have a integer template parameter D 
+   * that is the dimension of space. Actual class names are of the form
+   * Mixture\<D\>, Interaction\<D\>, etc. with D=1, 2, or 3.
    *
    * Usage of a System\<D\> object in the main program looks something 
    * like this:
@@ -83,9 +88,10 @@ namespace Rpc {
    *
    * See also:
    * <ul>
-   *  <li> \ref scft_param_pc_page   "Parameter File Format (SCFT)" </li>
-   *  <li> \ref rpc_System_page      "Parameter File Format (Full)" </li>
-   *  <li> \ref scft_command_pc_page "Command File Format" </li>
+   *  <li> \ref scft_param_pc_page    "Manual Page (SCFT)" </li>
+   *  <li> \ref psfts_param_page      "Manual Page (PS-FTS)" </li>
+   *  <li> \ref rpc_System_page       "Manual Page (Parameter format)" </li>
+   *  <li> \ref scft_command_pc_page  "Command File Format" </li>
    * </ul>
    *
    * \ingroup Pscf_Rpc_Module

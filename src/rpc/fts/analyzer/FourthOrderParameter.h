@@ -39,7 +39,7 @@ namespace Rpc {
    * \f]
    * where \f$W_(G)\f$ is a Fourier mode of fluctuating field.
    *
-   * \see \ref rpc_FourthOrderParameter_page "Parameter File Format"
+   * \see \ref rpc_FourthOrderParameter_page "Manual Page"
    * 
    * \ingroup Rpc_Fts_Analyzer_Module
    */

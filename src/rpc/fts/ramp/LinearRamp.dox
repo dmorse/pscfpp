@@ -2,27 +2,31 @@ namespace Pscf{
 namespace Rpc{
 
 /*! 
-\page rpc_LinearRamp_page Rpc::LinearRamp
+\page rpc_LinearRamp_page LinearRamp
 
-A LinearRamp allows a user to vary a set of one or more parameters 
-over the course of a simulation, such that each of the chosen parameters
-varies linear with the simulation step counter. This is the default 
-ramp algorithm for both pscf_pc and pscf_pg, and so may be selected
-by including a parameter file block with either the specific label
-"LinearRamp" or the generic label "Ramp". 
+A LinearRamp allows a user to vary a set of one or more parameters over 
+the course of a simulation, such that each of the chosen parameters varies 
+linear with the simulation step counter. This is the default ramp algorithm
+for both pscf_pc and pscf_pg, and so may be selected by including a 
+parameter file block with either the specific label "LinearRamp" or the 
+generic label "Ramp" in the appropriate location within a
+\ref rpc_BdSimulator_page "BdSimulator" or 
+\ref rpc_McSimulator_page "McSimulator" parameter file block.
 
 \see 
 <ul>
-  <li> LinearRamp </li>
-  <li> RampParameter </li>
-  <li> \ref psfts_ramp_page "Manual Page" </li>
+  <li> LinearRamp (class API) </li>
+  <li> RampParameter (class API) </li>
+  <li> \ref psfts_ramp_page "Ramp page" </li>
 </ul>
 
 \section rpc_LinearRamp_param_sec Parameter File Format
 
 The parameter file format for a LinearRamp is closely analogous to that
 used for SCFT calculations by the \ref scft_param_sweep_page "LinearSweep" 
-class.  An example of the parameter file block for a LinearRamp is shown 
+class.  
+
+A simple example of the parameter file block for a LinearRamp is shown 
 below:
 \code
   LinearRamp{
@@ -40,14 +44,16 @@ of polymer species 1 (i.e., the second block of the first species).
 The last parameter in each line specifies how much the associated
 parameter will be changed over the course of a simulation.
 
-The parameter file format for a LinearRamp is as show below,
+The parameter file format for a LinearRamp is specified below:
 \code
   LinearRamp{
-       nParameter        int
-       parameters        Array [ RampParameter ]
+     nParameter        int
+     parameters        Array [ RampParameter ]
   }
 \endcode
-with parameters described in the following table:
+Each element of the "parameters" array is stored internally in an
+instance of a class RampParameter, as discussed in more detail below.
+The meaning of the two parameters are described in the following table:
 <table>
   <tr>
     <td> <b> Label </b>  </td>
@@ -68,7 +74,17 @@ The array "parameters" must contain nParameter lines, each on a
 separate line, each of which contains an identifier for a single
 parameter and a value for the amount that parameter will be changed
 over the course of a simulation. Parameters that are not listed in 
-this array are unmodified during the simulation.
+this array are not modified during the simulation.
+
+<em> Technical comment (for users who read the source code):  </em>
+The "parameters" array is implemented as an array in which each element 
+is an instance of a class RampParameter\<D\>, which is defined by a class
+template RampParameter that takes the dimension D of space as a template
+argument.  The information about a single parameter given in each line
+of the "parameters" array in parameter file is read into and stored by
+a corresponding RampParameter\<D\> object. Class RampParameter\<D\> has
+an overloaded stream extraction (>>) operator that defines the allowed
+text format for each line in this array.
 
 \subsection psfts_ramp_linear_parameters_sec Ramp Parameters
 
@@ -170,16 +186,22 @@ entry is is given for the the second index.
 The two indices for a Flory-Huggins chi parameter refer to indices in
 the chi matrix maintained by Interaction. Changes to element chi(i, j)
 automatically also update chi(j, i) for \f$ i \neq j \f$, thus 
-preserving the symmetry of the matrix.
+preserving the symmetry of the chi matrix.
 The parameter types v_monomer and lambda_pert are global values that
 are not associated with any indices. All other parameter types are
 identified by at least one associated index.
 
 \section rpc_LinearRamp_perturbation_sec Perturbation Parameter
 
-The parameter type "lambda_pert" is designed for use with an 
-Perturbation, and allows the user to ramp the value of the parameter 
-that controls the strength of the perturbation, denoted by "lambda".
+The parameter type "lambda_pert" is designed specifically for use with 
+a \ref psfts_perturb_page "Perturbation", and allows the user to ramp 
+the value of the parameter that controls the strength of a perturbation, 
+denoted by "lambda". This parameter may not be used if the parameter 
+file does not contain a Perturbation block. 
+
+The most important use of a linear ramp with parameter type lambda_pert 
+is to perform continuous \ref psfts_perturb_page "Einstein crystal" 
+integration.
 
 */
 

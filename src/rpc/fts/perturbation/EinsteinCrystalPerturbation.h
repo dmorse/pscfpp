@@ -29,7 +29,7 @@ namespace Rpc {
    *
    * \see
    * <ul>
-   * <li> \ref rpc_EinsteinCrystalPerturbation_page "Parameter File Format" </li>
+   * <li> \ref rpc_EinsteinCrystalPerturbation_page "Manual Page" </li>
    * <li> \ref psfts_perturb_page "Manual Page" </li>
    * </ul>
    *

@@ -23,7 +23,7 @@ namespace Rpc {
    /**
    * Solver and descriptor for a solvent species.
    *
-   * \ref user_param_solvent_sec "Parameter File Format"
+   * \ref user_param_solvent_sec "Manual Page"
    * \ingroup Rpc_Solver_Module
    */
    template <int D>

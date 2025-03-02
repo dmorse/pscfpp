@@ -38,7 +38,7 @@ namespace Rpc {
    * Derived from BlockTmpl< Propagator<D> >. A BlockTmpl< Propagator<D> >
    * has two Propagator<D> members and is derived from BlockDescriptor.
    *
-   * \ref user_param_block_sec "Parameter File Format"
+   * \ref user_param_block_sec "Manual Page"
    * \ingroup Rpc_Solver_Module
    */
    template <int D>

@@ -21,8 +21,8 @@ System{
 }
 \endcode
 Here, as elsewhere in this documentation, the suffixes # and * after a 
-name denote selectable and optional elements, respectively. Subblocks are 
-described below:
+name denote selectable and optional elements, respectively. Subblocks 
+are described below:
 <table>
   <tr>
     <td> Mixture </td>
@@ -71,17 +71,35 @@ described below:
   <tr>
     <td> Simulator#* </td>
     <td>
-    A Simulator block contains parameters for all of the objects and
-    algorithms that required to perform a partial saddle-point field 
-    theoretic simulation (PS-FTS), but that are not required for SCFT.  
-    Users may currently between a BdSimulator{ ... } block (which
-    creates an instance of class Pscf::Rpc::BdSimulator \<D\> ) to perform 
-    a Brownian dynamics simulation or an McSimulator{ ... } block (class 
-    Pscf::Rpc::McSimulator \<D\>) to perform a field theoretic Monte-Carlo 
-    simulation.
+    The selectable \ref psfts_param_page "Simulator" block contains parameters 
+    for all of the objects and algorithms that required to perform a partial 
+    saddle-point field theoretic simulation (PS-FTS), but that are not 
+    required for SCFT.  Users may currently select either a 
+    \ref rpc_BdSimulator_page "BdSimulator" block (which creates an instance 
+    of class Pscf::Rpc::BdSimulator \<D\> ) to perform a field theoretic 
+    Brownian dynamics simulation or a \ref rpc_McSimulator_page McSimulator 
+    block (which creates an instance of class Pscf::Rpc::McSimulator \<D\>) 
+    to perform a Monte-Carlo simulation.
     </td>
   </tr>
 </table>
+
+\see
+<ul>
+  <li> System (class API) </li>
+  <li> \ref user_param_mixture_page "Mixture" </li>
+  <li> \ref user_param_example_interaction "Interaction" </li>
+  <li> \ref rpc_Domain_page "Domain" </li>
+  <li> \ref scft_param_pc_iterator_sec "Iterator" </li>
+     <ul> <li> \ref rpc_AmIteratorBasis_page </li></ul>
+  <li> \ref scft_param_sweep_page "Sweep" </li>
+     <ul> <li> \ref scft_param_sweep_linear_sec "LinearSweep" </li></ul>
+  <li> \ref psfts_param_page "Simulator" </li>
+  <ul>
+     <li> \ref rpc_BdSimulator_page "BdSimulator" </li>
+     <li> \ref rpc_McSimulator_page "McSimulator" </li>
+  </ul>
+</ul>
 
 */
 }

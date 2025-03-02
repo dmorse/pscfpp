@@ -8,9 +8,9 @@ The parameter file format for SCFT calculations using the pscf_pg
 GPU-accelerated program is almost identical to the parameter file 
 format for the \ref scft_param_pc_page "pscf_pc".
 The Mixture and Interaction blocks use the same format as that used
-by both pscf_1d and pscf_pc, and the Domain block has the same 
-format as that used by pscf_pc. The only differences are differences 
-in the available iterators.
+by both pscf_1d and pscf_pc, and the Domain block has the same format 
+as that used by pscf_pc. The only differences are differences in the 
+available iterators.
 
 \section scft_param_pg_iterator_sec Iterators
 
@@ -58,12 +58,20 @@ can be found by following the links in the table below:
 
 \section scft_param_pg_sweep_sec Sweep
 
-The only sweep algorithm currently available for use with rpc_pg is a
-general linear sweep algorithm. This can be invoked by including a block 
-that starts either with the generic label Sweep or the specific label 
-LinearSweep.  The required parameter file format for a linear sweep has 
-been described \ref scft_param_sweep_linear_sec "here". 
+The only sweep algorithm currently available for use with pscf_pg is a
+general linear sweep algorithm identical to that used by pscf_pc. This 
+can be ensabled by including a block that starts either with the generic 
+label Sweep or the specific label LinearSweep.  The required parameter 
+file format for a linear sweep is described 
+\ref scft_param_sweep_linear_sec "here". 
 
+\see
+<ul>
+  <li> \ref scft_param_pc_page "Parameter file for pscf_pc (SCFT)" </li>
+  <li> \ref rpc_System_page "Rpc::System" </li>
+  <li> \subpage rpg_AmIteratorBasis_page "Rpg::AmIteratorBasis" </li>
+  <li> \subpage rpg_AmIteratorGrid_page "Rpg::AmIteratorGrid" </li>
+</ul>
 
 <BR>
 \ref scft_param_pc_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 

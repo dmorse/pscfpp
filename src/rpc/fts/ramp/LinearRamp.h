@@ -17,7 +17,7 @@ namespace Rpc {
    * 
    * \see
    * <ul>
-   *   <li> \ref rpc_LinearRamp_page "Parameter File Format" </li>
+   *   <li> \ref rpc_LinearRamp_page "Manual Page" </li>
    *   <li> \ref psfts_ramp_page "Manual Page" </li>
    *   <li> Ramp </li>
    * </ul>

@@ -24,7 +24,7 @@ namespace Rpc
    /**
    * Evaluate the derivative of H with respect to concentration.
    *
-   * \see \ref rpc_ConcentrationDerivative_page "Parameter File Format"
+   * \see \ref rpc_ConcentrationDerivative_page "Manual Page"
    *
    * \ingroup Rpc_Fts_Analyzer_Module
    */

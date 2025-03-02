@@ -23,7 +23,7 @@ namespace Rpc {
    * \see 
    * <ul>
    *   <li> LinearRamp </li>
-   *   <li> \ref rpc_LinearRamp_page "Parameter File Format" </li>
+   *   <li> \ref rpc_LinearRamp_page "Manual Page" </li>
    * </ul>
    *
    * This class stores the information required to ramp a single 

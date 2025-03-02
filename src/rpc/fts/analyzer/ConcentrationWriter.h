@@ -22,7 +22,7 @@ namespace Rpc {
    /**
    * Periodically write snapshots to a trajectory file.
    *
-   * \see \ref rpc_ConcentrationWriter_page "Parameter File Format"
+   * \see \ref rpc_ConcentrationWriter_page "Manual Page"
    *
    * \ingroup Rpc_Fts_Analyzer_Module
    */

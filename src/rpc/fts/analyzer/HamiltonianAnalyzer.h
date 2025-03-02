@@ -26,7 +26,7 @@ namespace Rpc {
    * Field contribution (HW)) as well as for the total, and 
    * periodically outputs block averages of each to a file.
    *
-   * \see \ref rpc_HamiltonianAnalyzer_page "Parameter File Format"
+   * \see \ref rpc_HamiltonianAnalyzer_page "Manual Page"
    *
    * \ingroup Rpc_Fts_Analyzer_Module
    */
