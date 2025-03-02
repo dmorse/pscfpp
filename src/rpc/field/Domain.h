@@ -40,12 +40,12 @@ namespace Rpc
    *    - a Prdc::Basis symmetry-adapated Fourier basis
    *    - a Prdc::Cpu::FFT Fast Fourier Transform
    *    - a Rpc::FieldIo object for field IO and conversion operations
-   *    - a lattice system enum (type Prdc::UnitCell::LatticeSystem)
+   *    - a lattice system enum (type Prdc::UnitCell\<D\>::LatticeSystem)
    *    - a groupName string
    *
    * Note: Class names Pscf::Mesh, Prdc::UnitCell, etc. mentioned above are
    * actually all class templates with a template parameter D. Actual class
-   * names are Mesh \<D\>, UnitCell \<D\>, etc. with D=1, 2, or 3.
+   * names are Mesh \<D\>, Prdc::UnitCell \<D\>, etc. with D=1, 2, or 3.
    *
    * \see \ref rpc_Domain_page "Manual Page"
    *

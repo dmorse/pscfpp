@@ -87,7 +87,7 @@ the groupName parameter actually **must** be included in any parameter
 file that is used to perform SCFT calculations with this program. 
 The groupName parameter may be omitted from a parameter file used to 
 perfom an SCFT calculation with pscf_pg, however, if the calculation
-is performed using the \ref rpc_AmIteratorGrid_page "AmIteratorGrid"
+is performed using the \ref rpg_AmIteratorGrid_page "AmIteratorGrid"
 algorithm, which does not impose any space group symmetry.
 the AmIteratorGrid
 

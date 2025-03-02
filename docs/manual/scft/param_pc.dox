@@ -254,7 +254,8 @@ include a sweep block) or the specific label "LinearSweep". The format
 of the associated parameter file block is described 
 \ref scft_param_sweep_linear_sec "here".
 
-\see
+\section scft_param_pc_seealso_sec See Also:
+
 <ul>
  <li> \subpage rpc_System_page "System"  </li>
  <li> \ref user_param_mixture_page "Mixture"  </li>

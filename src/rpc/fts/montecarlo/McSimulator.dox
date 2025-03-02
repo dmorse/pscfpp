@@ -1,5 +1,6 @@
 namespace Pscf{
 namespace Rpc{
+
 /*! 
 \page rpc_McSimulator_page Rpc::McSimulator
 
@@ -88,12 +89,15 @@ below:
 Relationships among blocks:
 
   - The McMoveManager and Compressor must both be present in order to
-    perform an MC simulation (command SIMULATE), but may both be omitted 
-    from a parameter file used to initialize postprocessing of a field 
+    perform an MC simulation (command SIMULATE). Both be omitted,
+    however, from a parameter file used for postprocessing of a field
     trajectory file. 
 
   - If an McMoveManager containing one or more MC moves is present, the 
-    Compressor block is required
+    Compressor block is required.
+
+  - The Ramp block is only allowed if an McMoveManager and Compressor 
+    blocks are present.
 
   - The AnalyzerManager block must be present in order to postprocess
     a trajectory file (command ANALYZE).
@@ -101,6 +105,10 @@ Relationships among blocks:
 \see
 <ul>
   <li> \ref psfts_algorithm_MC_sec "McMove algorithms" </li>
+  <ul>
+     <li> \ref rpc_ForceBiasMove_page </li> 
+     <li> \ref rpc_RealMove_page </li> 
+  </ul>
   <li> \ref psfts_algorithm_compressor_sec "Compressor algorithms" </li>
   <li> \ref psfts_perturb_page "Perturbations" </li>
      <ul> <li> \ref rpc_EinsteinCrystalPerturbation_page </li> </ul>
@@ -110,5 +118,6 @@ Relationships among blocks:
 </ul>
 
 */
+
 }
 }

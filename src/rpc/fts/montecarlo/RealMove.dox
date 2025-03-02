@@ -1,3 +1,6 @@
+namespace Pscf {
+namespace Rpc {
+
 /*! 
 \page rpc_RealMove_page Rpc::RealMove
 
@@ -65,3 +68,6 @@ Meanings of both parameters are described briefly below:
 </table>
 
 */
+
+}
+}

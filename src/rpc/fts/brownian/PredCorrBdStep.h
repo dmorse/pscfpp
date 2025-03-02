@@ -24,6 +24,8 @@ namespace Rpc {
    /**
    * Predictor-corrector Brownian dynamics stepper.
    *
+   * \see \ref rpc_PredCorrBdStep_page "Manual Page"
+   *
    * \ingroup Rpc_Fts_Brownian_Module
    */
    template <int D>
