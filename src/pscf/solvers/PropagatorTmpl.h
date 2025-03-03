@@ -148,7 +148,7 @@ namespace Pscf
       * Precondition: PolymerModel::isBead() must be true.
       *
       * \param ownsHead  Does this propagator own the head vertex bead?
-      * \param ownsHead  Does this propagator own the tail vertex bead?
+      * \param ownsTail  Does this propagator own the tail vertex bead?
       */
       void setVertexOwnership(bool ownsHead, bool ownsTail);
  

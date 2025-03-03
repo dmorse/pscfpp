@@ -119,32 +119,62 @@ unperturbed coil sizes (i.e., RMS end-to-end lengths or radii of
 gyration) of polymers or blocks of the polymer species present
 within a system.
 
-\section user_model_continuous_sec Continuous chain model
+\section user_model_polymer_sec Polymer Species
 
-PSCF uses a model of polymers as continuous random walks. In this model,
-a specific configuration of a single block of length \f$ L \f$ within
-a block polymer can be characterized by a continous path
-\f$ \textbf{R}(s) \f$ that gives the position \f$ {\bf R} \f$ of a point
-along the polymer as a function of a dimensionless contour coordinate
-\f$ s \f$, for values of \f$ s \in [0, L] \f$.  A chain segment between
-points with contour coordinates \f$ s \f$ and \f$ s' \f$ within a block
-of monomer type \f$ \alpha \f$ is assumed to exhibit a mean-squared
-end-to-end length in a homogeneous mixture given by
+The pscf_pc and pscf_pg programs can treat polymers using either of two 
+slightly different mathematical models, which we refer to as the "thread" 
+and "bead" model. 
+
+<ul>
+<li>
+The **thread** model idealizes each block of a polymer as a continuous 
+random walk, with no discrete beads or monomers. In the threat model
+the length of each block is specified by a real (i.e., floating
+point) number.  </li>
+
+<li> The **bead** model is instead based on a physical picture of each 
+block as a sequence of discrete point-like particles, or "beads", 
+connected by harmonic springs. In the bead model, the length of each 
+block is specified by an integer number of beads.</li>
+
+</ul>
+The pscf_1d program only uses the thread model.
+
+We generally recommend the use of the thread model for SCFT calculations,
+because of this models greater univerality. Either model can be used in
+FTS calculations, and both have been used in published FTS studies. 
+
+\subsection user_model_continuous_sub Continuous "thread" model
+
+In the thread model, we imagine that any conformation of a single block 
+of contour length \f$ L \f$ within a block polymer can be characterized 
+by a continous path \f$ \textbf{R}(s) \f$ that gives the position 
+\f$ {\bf R} \f$ of a point along the polymer as a function of a 
+dimensionless contour coordinate \f$ s \f$, for \f$ s \in [0, L] \f$.  
+
+In this model, a chain segment between points with contour coordinates 
+\f$ s \f$ and \f$ s' \f$ within a block of monomer type \f$ \alpha \f$ 
+is assumed to exhibit a mean-squared end-to-end length in a homogeneous 
+system given by
 \f[
     \langle |{\bf R}(s) - {\bf R}(s')|^{2} \rangle_{0}
     = |s-s'| b_{\alpha}^{2} \quad,
 \f]
 in which \f$ b_{\alpha} \f$ is a statistical segment length for chain
 segments of type \f$ \alpha \f$. Here, \f$ \langle \cdots \rangle_{0} \f$
-denotes a statistical average over random-walk configurations within
-a homogeneous mixture.  In an incompressible mixture, each such segment
-of contour length \f$ |s-s'| \f$ is assumed to occupy a volume
-\f$ V(s,s') \f$ given by
+denotes a statistical average over random-walk configurations within a 
+homogeneous mixture.  
+
+In an incompressible mixture, each linear chain segment of contour length 
+\f$ |s-s'| \f$ is also assumed to occupy a volume \f$ V(s,s') \f$ given by
 \f[
     V(s,s') = v|s-s'| \quad,
 \f]
-where \f$ v \f$ is a constant steric volume per polymer contour length.
-We refer to the parameter \f$ v \f$ as the monomer reference volume.
+where \f$ v \f$ is a monomer volume parameter.
+We sometimes refer to the parameter \f$ v \f$ as the monomer reference 
+volume, but in the thread model it is better understood as steric volume 
+per unit polymer contour length. By convention, PSCF requires that this 
+volume parameter be the same for all monomer types.
 
 In the above discussion of the continuous chain model, we introduced
 the notion of a dimensionless "contour length" of a chemically homogeneous
@@ -165,14 +195,14 @@ one-carbon monomers or 50 units for two-carbon monomers, using
 different values for the statistical segment length \f$ b \f$ and
 the volume \f$ v \f$ per monomer in these two cases.
 
-In the continuous chain model used in PSCF, we implicitly assume that
-the number of elementary chemical repeat units in any chain segment of
-interest is sufficiently large that we may ignore details of chemical
-structure and characterize positions along a polymer by some sort of
-real (rather than integer) contour coordinate \f$ s \f$.  The contour
-length \f$ |s-s'| \f$ of a segment between two points on the same
-chain with contour coordinates \f$ s \f$ and \f$ s' \f$ is then assumed
-to be proportional, but generally not equal, to the number of elementary
+In the continuous thread model, we implicitly assume that the number 
+of elementary chemical repeat units in any chain segment of interest 
+is sufficiently large that we may ignore details of chemical structure 
+and characterize positions along a polymer by some sort of real 
+(rather than integer) contour coordinate \f$ s \f$.  The contour length 
+\f$ |s-s'| \f$ of a segment between two points on the same chain with 
+contour coordinates \f$ s \f$ and \f$ s' \f$ is then assumed to be 
+proportional, but generally not equal, to the number of elementary
 chemical repeat units contained in the chain segment between those
 points. As a result, the dimensionless contour length of a chain
 segment is also proportional to the molecular weight of that segment.
@@ -221,26 +251,27 @@ for which it is known that which predictions of relevant thermodynamic
 properties can be parameterized by a small set of dimensionless
 parameters.
 
-\subsection user_model_experimentalist_sub "Experimentalist" Conventions
-
-In an "experimentalist" convention, a monomer (or unit of contour
+\anchor user_model_thread_experimentalist
+<b> "Experimentalist" Conventions: </b>
+In the "experimentalist" convention, a monomer (i.e., a unit of contour
 length) is defined for each monomer type so as to correspond to a
-segment with a molecular weight chosen so that the volume occupied
-by that segment in a polymer melt is equal to a chosen value for a
-monomer reference volume \f$ v \f$. This is a standard approach used
-in the literature in studies that compare experimental results to
-predictions of the Flory-Huggins theory for polymer solutions and
-mixtures, the random-phase approximation (RPA) theory of small-angle
-scattering and/or to SCFT predictions for inhomogeneous structures.
-In such studies, the reference volume \f$ v \f$ is usually chosen
-to have a value of of order 50 - 100 cubic Angstrom that is comparable
-to the volume of some common hydrocarbon chemical repeat unit, but
-the choice of an exact value is arbitrary. In a system that contains
-two or more different types of monomer, it generally not possible to
-choose a single value for the reference volume that corresponds to
-the volume per chemical repeat unit of every monomer type, because
-the volume per repeat unit is generally different for different
-types of monomer.
+segment with a molecular weight chosen so that the volume occupied by 
+that segment in a polymer melt is equal to a chosen value for a monomer 
+reference volume \f$ v \f$. This is a standard approach used in the 
+literature in studies that compare experimental results to predictions 
+of the Flory-Huggins theory for polymer solutions and mixtures, the 
+random-phase approximation (RPA) theory of small-angle scattering 
+and/or to SCFT predictions for inhomogeneous structures.  
+
+In such studies, the reference volume \f$ v \f$ is usually chosen to 
+have a value of of order 50 - 100 cubic Angstrom that is comparable to 
+the volume of some common hydrocarbon chemical repeat unit containing a
+few carbon atoms. Ultimately, however, choice of a value for \f$ v \f$ 
+is arbitrary. In a system that contains two or more different types of 
+monomer, it generally not possible to choose a single value for the 
+reference volume that corresponds to the volume per chemical repeat 
+unit of every monomer type, because volumes different types of repeat 
+units are generally different. 
 
 The contour length \f$ L \f$ of a chemically homogeneous polymer segment
 of some known molecular weight \f$ M \f$ and monomers of type \f$ a \f$
@@ -252,8 +283,8 @@ in which \f$ m_{\alpha} \f$ is a molecular weight per unit contour length
 (or per monomer reference volume) for monomers of type \f$ a \f$. The
 quantity \f$ m_{\alpha} \f$ must be defined for each monomer type such
 that the volume occupied per chain segment of molecular weight
-\f$ m_{\alpha} \f$ in a polymer melt corresponds to the chosen value
-of \f$ v \f$. If a melt of homopolymers containing monomers of type
+\f$ m_{\alpha} \f$ in a polymer melt corresponds to the value chosen 
+for \f$ v \f$. If a melt of homopolymers containing monomers of type
 \f$ \alpha \f$ exhibits a density \f$ \rho_{\alpha} \f$ in grams per
 volume at the tempeature and pressure of interest, then the value of
 \f$ m_{\alpha} \f$ for that monomer type is given in grams per mole as
@@ -284,8 +315,8 @@ statistical segment length for that monomer definition divided by the
 molecular weight per monomer. In experimentalist conventions, Angstrom
 or nanometer units are usually used for all lengths.
 
-\subsection user_model_theorist_sub "Theorist" Conventions
-
+\anchor user_model_thread_theorist
+<b> "Theorist" Conventions </b>:
 In a "theorist" convention, contour coordinates are scaled so as to
 define the overall contour length of some reference chain or chain segment
 to be equal to 1.0 by convention.  The reference chain is often chosen
@@ -322,10 +353,58 @@ changes in one's convention for the monomer reference volume.
 
 All of the examples shown in this user's manual use a theorist convention
 in which the overall length of one type of polymer (i.e., the sum of the
-length of the blocks for a block polymer) is set to 1.0, and in which
-the statistical segment length of at least one monomer type is set to
-1.0. This type of convention is also used in the input files for all of
-the examples provided with PSCF.
+length of the blocks for a block polymer) is set to 1.0, and in which the 
+statistical segment length of at least one monomer type is set to 1.0. 
+This type of convention is also used in the input files for all of the 
+examples provided with PSCF.
+
+\subsection user_model_bead_sub Discrete "bead" model
+
+In the "bead", each block of a polymer as a sequence of discrete
+beads connected by harmonic springs. In this model, the user must
+specify the integer number of beads in each block of the polymer.
+Suppose the beads in a block containing \f$ N \f$ beads are indexed
+an integer \f$ s 0, \ldots, N-1 \f$. Let \f$ {\bf R}(s) \f$ denote
+the position of bead number s.  In this model, a chain segment 
+connecting beads \f$ s \f$ and \f$ s' \f$ within a block of monomer 
+type \f$ \alpha \f$ is assumed to exhibit a mean-squared end-to-end 
+length in a homogeneous system given by
+\f[
+    \langle |{\bf R}(s) - {\bf R}(s')|^{2} \rangle_{0}
+    = [ |s-s'| - 1 ] b_{\alpha}^{2} \quad,
+\f]
+in which \f$ b_{\alpha} \f$ is a mean-squared length of each 
+bond that connects neighboring beads of type \f$ \alpha \f$.  
+Similarly to the thread model, all beads are assumed to occupy 
+an equal volume given by the monomer volume parameter \f$ v \f$,
+which has the same value for all monomer types.
+
+In block polymers composed of monomers with different statistical
+segment length, a convention is need for the bond type of the 
+"junction" bonds that connect beads belong to neighboring blocks. 
+For a linear block polymer in which blocks are labelled with 
+indices that start from one end of the polymer, the bond that
+the last bead of block \f$ i \f$ to the first bead of block 
+\f$ i + 1 \f$ has taken to be a bond of type \f$ i + 1 \f$, 
+characterized by a statistical segment length \f$ b_{i+1} \f$. 
+
+PSCF can be used to treat acyclic branched polymers as well as 
+linear polymers. When more than two blocks meet at a vertex, PSCF
+requires that the vertex bead (the bead that is attached to more 
+than two other beads) be "owned" by one of the attached blocks, 
+and thus have the same type as other beads in the block that owns 
+this vertex bead. For simplicity, such a vertex bead is thus 
+required to have a monomer type that corresponds to that of one 
+of the attached blocks. A bond that attaches a vertex bead to 
+the first bead of a block that does not contain the vertex bead
+is taken to have a bond type given by the type of the bead that 
+is not part of the same block as the vertex bead.
+
+A junction between two blocks in a linear polymer is treated as 
+a special type of vertex. In this case, ownership of the vertex 
+bead is treated by the by convention described above: By default, 
+the last bead of each block in a linear block polymer is treated 
+as a vertex bead.
 
 \section user_model_solvent_sec Solvent species
 

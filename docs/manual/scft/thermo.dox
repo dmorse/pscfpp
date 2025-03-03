@@ -56,7 +56,7 @@ system with a total Helmholtz free energy \f$ F \f$ and associated volume
 where \f$ v \f$ is the monomer reference volume.
 
 In the special case of a one-component block polymer melt for which the
-input parameters are given using the \ref user_model_theorist_sub
+input parameters are given using the \ref user_model_thread_theorist
 "theorists convention" that overall chain length is equal to 1.0, the
 monomer reference volume is equal to the volume per chain. In this case,
 the value reported for "fHelmholtz" is also the free energy per chain
