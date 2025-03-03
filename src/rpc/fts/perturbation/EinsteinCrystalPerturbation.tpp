@@ -20,7 +20,6 @@ namespace Rpc {
    EinsteinCrystalPerturbation<D>::EinsteinCrystalPerturbation(
                                                    Simulator<D>& simulator)
     : Perturbation<D>(simulator),
-      alpha_(0.0),
       ecHamiltonian_(0.0),
       unperturbedHamiltonian_(0.0),
       stateEcHamiltonian_(0.0),
@@ -41,7 +40,15 @@ namespace Rpc {
    void EinsteinCrystalPerturbation<D>::readParameters(std::istream& in)
    {
       read(in, "lambda", lambda_);
-      read(in, "alpha", alpha_);
+      
+      // Optionally read the parameters used in Einstein crystal integration
+      const int nMonomer = system().mixture().nMonomer();
+      epsilon_.allocate(nMonomer - 1);
+      for (int i = 0; i < nMonomer - 1 ; ++i) {
+         epsilon_[i] = 0.0;
+      }
+      readOptionalDArray(in, "epsilon", epsilon_, nMonomer -1);
+      
       read(in, "referenceFieldFileName", referenceFieldFileName_);
    }
 
@@ -64,6 +71,17 @@ namespace Rpc {
          w0_[i].allocate(meshDimensions);
          wc0_[i].allocate(meshDimensions);
       }
+      
+      /* 
+      * If the user does not input values for epsilon, set 
+      * the values of epsilon_ to the nontrivial -1.0 * eigenvalues 
+      * of the projected chi matrix by default.
+      */ 
+      if (epsilon_[0] == 0){
+         for (int i = 0; i < nMonomer - 1 ; ++i) {
+            epsilon_[i] = -1.0 * simulator().chiEval(i);
+         }
+      }
 
       // Read in reference field from a file
       UnitCell<D> tempUnitCell;
@@ -83,21 +101,18 @@ namespace Rpc {
    EinsteinCrystalPerturbation<D>::hamiltonian(double unperturbedHamiltonian)
    {
       // Compute Einstein crystal Hamiltonian
-      double prefactor, w;
-      //double prefactor, w, s;
       const int nMonomer = system().mixture().nMonomer();
       const int meshSize = system().domain().mesh().size();
       const double vSystem  = system().domain().unitCell().volume();
       const double vMonomer = system().mixture().vMonomer();
       const double nMonomerSystem = vSystem / vMonomer;
+      double prefactor, w;
       ecHamiltonian_ = 0.0;
 
       for (int j = 0; j < nMonomer - 1; ++j) {
          RField<D> const & Wc = simulator().wc(j);
-         prefactor = alpha_;
-         // s = simulator().sc(j);
+         prefactor = double(nMonomer)/(2 * epsilon_[j] );
          for (int i = 0; i < meshSize; ++i) {
-            //w = Wc[i] - s - wc0_[j][i];
             w = Wc[i] - wc0_[j][i];
             ecHamiltonian_ += prefactor*w*w;
          }
@@ -112,12 +127,6 @@ namespace Rpc {
       // Obtain block copolymer hamiltonian
       unperturbedHamiltonian_ = unperturbedHamiltonian;
 
-      // Compute perturbation to Hamiltonian
-      // double compH;
-      // compH = lambda_ * unperturbedHamiltonian_
-      //      + (1.0-lambda_) * ecHamiltonian_;
-      //return compH - unperturbedHamiltonian;
-
       return (1.0 - lambda_)*(ecHamiltonian_ - unperturbedHamiltonian_);
    }
 
@@ -128,13 +137,10 @@ namespace Rpc {
    void
    EinsteinCrystalPerturbation<D>::incrementDc(DArray< RField<D> > & dc)
    {
-      double DcEC;
-      //double DcBCP, DcEC;
-      //double prefactor, s;
       const int meshSize = system().domain().mesh().size();
       const int nMonomer = system().mixture().nMonomer();
       const double vMonomer = system().mixture().vMonomer();
-      const double prefactor = 2.0 * alpha_ / vMonomer;
+      double DcEC, prefactor;
 
       // Loop over composition eigenvectors (exclude the last)
       for (int i = 0; i < nMonomer - 1; ++i) {
@@ -143,18 +149,10 @@ namespace Rpc {
 
          // Loop over grid points
          for (int k = 0; k < meshSize; ++k) {
-
-            // Copy block copolymer derivative
-            //DcBCP = Dc[k];
-
-            // Compute EC derivative
-            //prefactor = 1.0*alpha_*double(nMonomer)/vMonomer;
-            //s = simulator().sc(i);
-            //DcEC = prefactor * (Wc[k] - s - wc0_[i][k]);
+            prefactor = double(nMonomer) / (epsilon_[i] * vMonomer);
             DcEC = prefactor * (Wc[k] - wc0_[i][k]);
 
             // Compute composite derivative
-            // Dc[k] = lambda_* DcBCP + (1.0 - lambda_) * DcEC;
             Dc[k] += (1.0 - lambda_) * (DcEC - Dc[k]);
          }
       }
@@ -209,6 +207,7 @@ namespace Rpc {
          // Loop over monomer types (k is a monomer index)
          for (k = 0; k < nMonomer; ++k) {
             double vec = simulator().chiEvecs(j, k)/double(nMonomer);
+            
             // Loop over grid points
             RField<D> const & Wr = w0_[k];
             for (i = 0; i < meshSize; ++i) {
