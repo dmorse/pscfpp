@@ -8,7 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "ThermoDerivativeAnalyzer.h"
+#include "AverageAnalyzer.h"
 #include <rpc/System.h>
 #include <rpc/fts/simulator/Simulator.h>
 
@@ -29,7 +29,7 @@ namespace Rpc
    * \ingroup Rpc_Fts_Analyzer_Module
    */
    template <int D>
-   class ConcentrationDerivative : public ThermoDerivativeAnalyzer<D>
+   class ConcentrationDerivative : public AverageAnalyzer<D>
    {
    
    public:
@@ -43,40 +43,22 @@ namespace Rpc
       * Destructor.
       */
       virtual ~ConcentrationDerivative(); 
-
-      /**
-      * Read parameters from archive.
-      * 
-      * \param in input parameter file
-      */
-      virtual void readParameters(std::istream& in);
-      
-      /**
-      * Setup before simulation loop.
-      */
-      virtual void setup();
       
       /**
       * Compute and return the derivative of H w/ respect to concentration.
       */
-      virtual double computeDerivative();
-      
-      /**
-      * Return current vMonomer value.
-      */
-      virtual double variable();
-      
-      /**
-      * Return the derivative parameter type string "Concentration Derivative".
-      */
-      virtual std::string parameterType();
+      virtual double compute();
       
       using ParamComposite::setClassName;
+      using AverageAnalyzer<D>::setup;
+      using AverageAnalyzer<D>::readParameters;         
+      using AverageAnalyzer<D>::sample;         
+      using AverageAnalyzer<D>::output;         
       
    protected:
  
-      using ThermoDerivativeAnalyzer<D>::simulator;
-      using ThermoDerivativeAnalyzer<D>::system;         
+      using AverageAnalyzer<D>::simulator;
+      using AverageAnalyzer<D>::system;         
    };
    
    // Suppress implicit instantiation

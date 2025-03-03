@@ -26,7 +26,7 @@ namespace Rpc
    template <int D>
    ConcentrationDerivative<D>::ConcentrationDerivative(Simulator<D>& simulator, 
                                                      System<D>& system) 
-    : ThermoDerivativeAnalyzer<D>(simulator, system)
+    : AverageAnalyzer<D>(simulator, system)
    { setClassName("ConcentrationDerivative"); }
 
    /*
@@ -36,24 +36,8 @@ namespace Rpc
    ConcentrationDerivative<D>::~ConcentrationDerivative() 
    {}
 
-   /*
-   * Read interval and outputFileName. 
-   */
    template <int D>
-   void ConcentrationDerivative<D>::readParameters(std::istream& in) 
-   {
-      ThermoDerivativeAnalyzer<D>::readParameters(in);
-   }
-   
-   /*
-   * Setup before simulation loop.
-   */ 
-   template <int D>
-   void ConcentrationDerivative<D>::setup()
-   {}
-   
-   template <int D>
-   double ConcentrationDerivative<D>::computeDerivative()
+   double ConcentrationDerivative<D>::compute()
    { 
       UTIL_CHECK(system().w().hasData());
       
@@ -74,7 +58,7 @@ namespace Rpc
          simulator().computeHamiltonian();
       }
       
-      // Obteain Hamiltonian
+      // Obtain Hamiltonian
       double h = simulator().hamiltonian();
       
       // Calculate derivative with respect to concentration
@@ -87,14 +71,6 @@ namespace Rpc
       return dfdc;
    }
    
-   template <int D>
-   double ConcentrationDerivative<D>::variable()
-   { return system().mixture().vMonomer(); }
-   
-   template <int D>
-   std::string ConcentrationDerivative<D>::parameterType()
-   { return "Concentration Derivative"; }
-
 }
 }
 #endif

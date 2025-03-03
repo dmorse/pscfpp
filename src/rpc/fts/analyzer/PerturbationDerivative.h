@@ -8,7 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "ThermoDerivativeAnalyzer.h"
+#include "AverageAnalyzer.h"
 #include <rpc/System.h>
 #include <rpc/fts/simulator/Simulator.h>
 
@@ -28,56 +28,46 @@ namespace Rpc {
    * \ingroup Rpc_Fts_Analyzer_Module
    */
    template <int D>
-   class PerturbationDerivative : public ThermoDerivativeAnalyzer<D>
+   class PerturbationDerivative : public AverageAnalyzer<D>
    {
-   
+
    public:
-   
+
       /**
       * Constructor.
       */
       PerturbationDerivative(Simulator<D>& simulator, System<D>& system);
-   
+
       /**
       * Destructor.
       */
       virtual ~PerturbationDerivative();
-   
+
       /**
       * Read parameters from archive.
       *
       * \param in  input parameter file
       */
       virtual void readParameters(std::istream& in);
-      
-      /**
-      * Setup before simulation loop.
-      */
-      virtual void setup();
-      
+
       /**
       * Compute and return the derivative of H w/ respect to lambda.
       */
-      virtual double computeDerivative();
-      
-      /**
-      * Return current lambda value.
-      */
-      virtual double variable();
-      
-      /**
-      * Return derivative parameter type "Perturbation Derivatie".
-      */
-      virtual std::string parameterType();
-      
-      using ParamComposite::setClassName;
-      
+      virtual double compute();
+
+      using AverageAnalyzer<D>::readParameters;
+      using AverageAnalyzer<D>::setup;
+      using AverageAnalyzer<D>::sample;
+      using AverageAnalyzer<D>::output;
+
    protected:
- 
-      using ThermoDerivativeAnalyzer<D>::simulator;
-      using ThermoDerivativeAnalyzer<D>::system;         
+
+      using AverageAnalyzer<D>::simulator;
+      using AverageAnalyzer<D>::system;
+      using ParamComposite::setClassName;
+
    };
-   
+
    // Suppress implicit instantiation
    #ifndef RPC_PERTURBATION_DERIVATIVE_TPP
    extern template class PerturbationDerivative<1>;
@@ -87,4 +77,4 @@ namespace Rpc {
 
 }
 }
-#endif 
+#endif

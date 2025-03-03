@@ -24,9 +24,9 @@ namespace Rpc
    */
    template <int D>
    ChiDerivative<D>::ChiDerivative(Simulator<D>& simulator, 
-                                                     System<D>& system) 
-    : ThermoDerivativeAnalyzer<D>(simulator, system)
-   { setClassName("ChiDerivative"); }
+                                   System<D>& system) 
+    : AverageAnalyzer<D>(simulator, system)
+   {  setClassName("ChiDerivative"); }
 
    /*
    * Destructor.
@@ -35,24 +35,8 @@ namespace Rpc
    ChiDerivative<D>::~ChiDerivative() 
    {}
 
-   /*
-   * Read interval and outputFileName. 
-   */
    template <int D>
-   void ChiDerivative<D>::readParameters(std::istream& in) 
-   {
-      ThermoDerivativeAnalyzer<D>::readParameters(in);
-   }
-   
-   /*
-   * Setup before simulation loop.
-   */ 
-   template <int D>
-   void ChiDerivative<D>::setup()
-   {}
-   
-   template <int D>
-   double ChiDerivative<D>::computeDerivative()
+   double ChiDerivative<D>::compute()
    {
       UTIL_CHECK(system().w().hasData());
       
@@ -67,7 +51,7 @@ namespace Rpc
       double chi= system().interaction().chi(0,1);
       
       /* 
-      * Obteain field Hamiltonian per monomer.
+      * Compute field Hamiltonian per monomer.
       * The fieldHamitonian is calculated in the computeHamiltonian() function,
       * located in rpc/fts/Simulator.tpp 
       */
@@ -93,14 +77,6 @@ namespace Rpc
       return dfdchi;
    }
    
-   template <int D>
-   double ChiDerivative<D>::variable()
-   { return system().interaction().chi(0,1);  }
-   
-   template <int D>
-   std::string ChiDerivative<D>::parameterType()
-   { return "Chi Derivative";  }
-
 }
 }
 #endif
