@@ -83,15 +83,15 @@ PSCF currently provides three executable programs:
      as cylindrical or spherical copolymer micelles.
 
    - **pscf_pc** : The pscf_pc rogram is designed to perform SCFT
-     and PS-FTS calculations for structures systems that are periodic
-     in 1, 2 or 3 dimensions, using standard CPU hardware. An accurate
+     and PS-FTS calculations for systems that are periodic in 1, 2 or 3 
+     spatial dimensions, using standard CPU hardware. An accurate
      pseudo-spectral algorithm is used to solve the MDE. This program 
      provides capabilities for SCFT calculations analogous to those 
      of the older Fortran PSCF program, as well as algorithms for
      PS-FTS simulations.  The suffix "pc" stands for "periodic CPU".
 
    - **pscf_pg** : The pscf_pg program is a GPU-accelerated version
-     of pscf_pc that can also perform SCFT and PS-FTS calculations 
+     of pscf_pc, which can also perform SCFT and PS-FTS calculations 
      for periodic systems. It is based on algorithms similar to those
      used in pscf_pc and provides almost identical features, but
      provides higher performance for large systems. The suffix "pg" 
@@ -105,8 +105,7 @@ containing any number of block polymers, homopolymers and small molecule
 using the standard Gaussian model of each polymer block as a continuous 
 random walk.
 
-Features that are common to all PSCF programs, and which apply to both 
-SCFT and FTS calculations, include:
+Features for both SCFT and FTS (all programs):
 
   - Ability to treat mixtures of any number of block polymers and
     solvent species.
@@ -127,8 +126,7 @@ SCFT and FTS calculations, include:
 
   - Well documented, open source code written in object oriented C++
 
-Features used only in SCFT calculations that are common to all three 
-PSCF programs include:
+Features for SCFT (all programs):
 
   - Efficient Anderson-mixing SCFT iteration algorithms
 
@@ -136,14 +134,7 @@ PSCF programs include:
     a path in parameter space (parameter "sweeps"), using extrapolation 
     to construct accurate initial guesses
 
-Features specific to the pscf_pc and pscf_pg programs for periodic systems
-include:
-
-  - Ability to perform both SCFT and PS-FTS calculations
-
-  - Availability of a companion Matlab package
-    [Polymer Visual](<https://github.com/kdorfmanUMN/polymer_visual/>)
-    for visualization of periodic structures
+Features for SCFT or PS-FTS for periodic systems (pscf_pc and pscf_pg):
 
   - Accurate pseudo-spectral solution of the modified diffusion equation
 
@@ -152,13 +143,16 @@ include:
   - Unit cells with all possible 2D and 3D Bravais lattice systems (e.g.,
     cubic, orthorhombic, monoclinic, etc.)
 
-Features specific to SCFT calculations performed by pscf_pc and pscf_pg 
-programs for periodic systems include:
+  - A companion Matlab package
+    [Polymer Visual](<https://github.com/kdorfmanUMN/polymer_visual/>)
+    for visualization of periodic structures
+
+Features for SCFT on periodic systems (pscf_pc and pscf_pg): 
 
   - Automatic optimization of unit cell parameters so as to minimize 
     the SCFT free energy density
 
-  - Imposition of any user-selected space-group symmetry on solutions
+  - Imposition of any user-selected space-group symmetry on SCFT solutions
 
   - Built-in database of symmetry operations for all 230 3D space groups
     and 17 2D plane groups 
@@ -168,23 +162,36 @@ programs for periodic systems include:
 
   - External fields 
 
-  - Thin polymer films (implemented using the mask and external field 
-    features)
+  - Tools for treating thin polymer films (implemented using a mask and 
+    external fields)
 
-Features specific to PS-FTS calculations performed by pscf_pc and 
-pscf_pg include:
+Features for PS-FTS (pscf_pc and pscf_pg):
 
-  - Efficient Brownian dynamics (BD) and Monte-Carlo (MC) sampling
-    methods.
+  - Brownian dynamics (BD) and Monte Carlo (MC) sampling 
 
-  - Efficient algorithms for locating partial saddle-point field
-    configurations
+  - BD algorithms: Leimkuhler-Matthews and predictor-corrector step
+    algorithms
 
-  - Data analysis classes for measuring the structure factor and other
-    observables, either during or
+  - MC move algorithms: real-space and "smart"/force-bias moves 
 
-  - Tools for computing free energy differences by thermodynamic 
-    integration, including tools for the Einstein crystal method.  
+  - Efficient algorithms for adjusting the pressure field so as to 
+    find a partial saddle-point (i.e., to impose incompressibility)
+
+  - Tools for calculation of free energy differences by thermodynamic 
+    integration, including the Einstein-crystal integration method
+
+  - Parameter "ramps" in which one or more parameters change continuously
+    during a simulation, which can be used for continuous thermodynamic 
+    integration
+
+  - "Analyzer" classes to compute and analyze quantities of physical
+    interest, including the structure factor, order parameters used 
+    to identify phase transitions, and derivatives of the Hamiltonian
+    needed to for thermodynamic integration calculations
+
+  - Data analysis tools that can applied either during a simulation
+    (on-the-fly) or by reading and analyzing field trajectory files 
+    that are created during a simulation (postprocessing).
 
 
 ## Getting the source code
@@ -206,7 +213,7 @@ pscfpp/ that contains all of the source code and associated documentation,
 including the required git submodules.
 
 We do *not* recommend that users obtain the source code by simply
-downloading an unpackng a zip or tar file of a tagged release from the 
+downloading and unpackng a zip or tar file of a tagged release from the 
 PSCF github repository. Doing so would create a directory that does
 not contain source code for two git repositories that are automatically 
 downloaded and installed as submodules by the above git command. It is 
@@ -234,7 +241,7 @@ PATH. To generate documentation:
 
 This should create many html files in the docs/html subdirectory of the
 pscfpp/ root directory.  To begin reading the resulting documentation,
-point a web browser at the file pscfpp/docs/html/index.html .  This is
+point a web browser at the file pscfpp/docs/html/index.html . This is
 the main page of the web manual.
 
 ## Dependencies
@@ -268,14 +275,14 @@ web manual.
 ## Compiling
 
 The PSCF source code is written using C++ as the primary language, with
-CUDA used in pscf_pg for GPU acceleration. PSCF is only provided in
-source file format, and must be compiled from source.
+CUDA used in pscf_pg for GPU acceleration. PSCF is only provided in source 
+file format, and must be compiled from source.
 
 The build system used to compile and install PSCF relies on standard unix
-utilities that are available in any unix-like command-line environment,
-and requires access to a Python 3 interpreter.  To compile and run this
-or any other unix software on Mac OS X, the user must first install the
-Mac OS X unix command line tools.
+utilities that are available in any unix-like command-line environment, and 
+requires access to a Python 3 interpreter.  To compile and run this or any 
+other unix software on Mac OS X, the user must first install the Mac OS X 
+unix command line tools.
 
 Complete directions for compiling and installing PSCF are provided in
 section 2 of the [web manual](<https://dmorse.github.io/pscfpp-man>).
