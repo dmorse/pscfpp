@@ -66,8 +66,6 @@ namespace Rpc {
       const IntVec<D>
       meshDimensions = system().domain().mesh().dimensions();
 
-      UTIL_CHECK(nMonomer == 2);
-
       // Allocate memory for reference field
       w0_.allocate(nMonomer);
       wc0_.allocate(nMonomer);
@@ -120,7 +118,7 @@ namespace Rpc {
 
       for (int j = 0; j < nMonomer - 1; ++j) {
          RField<D> const & Wc = simulator().wc(j);
-         prefactor = double(nMonomer)/(2.0 * epsilon_[j] );
+         prefactor = double(nMonomer)/(2.0 * epsilon_[j]);
          for (int i = 0; i < meshSize; ++i) {
             w = Wc[i] - wc0_[j][i];
             ecHamiltonian_ += prefactor*w*w;
