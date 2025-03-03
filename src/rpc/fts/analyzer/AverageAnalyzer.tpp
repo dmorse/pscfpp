@@ -48,7 +48,10 @@ namespace Rpc {
    template <int D>
    void AverageAnalyzer<D>::readParameters(std::istream& in)
    {
+      // Read interval and outputFileName
       Analyzer<D>::readParameters(in);
+
+      // Read nSamplePerOutput_
       nSamplePerOutput_ = 1;
       readOptional(in,"nSamplePerOutput", nSamplePerOutput_);
       if (nSamplePerOutput_ > 0) {
@@ -84,9 +87,9 @@ namespace Rpc {
          if (accumulator_.isBlockComplete()) {
             UTIL_CHECK(outputFile_.is_open());
             int beginStep = iStep - (nSamplePerOutput_ - 1)*interval();
-            double block = accumulator_.blockAverage();
+            value = accumulator_.blockAverage();
             outputFile_ << Int(beginStep);
-            outputFile_ << Dbl(block);
+            outputFile_ << Dbl(value);
             outputFile_ << "\n";
          }
       }

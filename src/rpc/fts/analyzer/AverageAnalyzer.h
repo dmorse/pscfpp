@@ -51,9 +51,10 @@ namespace Rpc {
       /**
       * Read interval, outputFileName and (optionally) nSamplePerOutput.
       *
-      * The optional variable nSamplePerOutput defaults to 0, which disables
-      * computation and output of block averages. Setting nSamplePerOutput = 1
-      * outputs every sampled value.
+      * The optional variable nSamplePerOutput defaults to 1, which 
+      * causes every sampled value to be written to file.  Setting 
+      * nSamplePerOutput = 0 suppresses output of block averages to
+      * file. 
       *
       * \param in  input parameter file
       */
@@ -88,8 +89,8 @@ namespace Rpc {
       * Get value of nSamplePerOutput.
       *
       * If nSamplePerOutput == 0, output of block averages is disabled.
-      * For nSamplePerOutput > 0, the value is the number of sampled values
-      * averaged in each block.
+      * For nSamplePerOutput > 0, nSamplePerOutput is the number of 
+      * sampled values averaged in each block average.
       */
       int nSamplePerOutput() const;
 
@@ -141,15 +142,20 @@ namespace Rpc {
 
    // Inline functions
 
+   // Get the parent Simulator.
+   template <int D>
+   inline Simulator<D>& AverageAnalyzer<D>::simulator()
+   {  return *simulatorPtr_; }
+
+   // Get the parent System.
+   template <int D>
+   inline System<D>& AverageAnalyzer<D>::system()
+   {  return *systemPtr_; }
+
    // Get nSamplePerOutput.
    template <int D>
    inline int AverageAnalyzer<D>::nSamplePerOutput() const
    {  return nSamplePerOutput_; }
-
-   // Get the parent system.
-   template <int D>
-   inline System<D>& AverageAnalyzer<D>::system()
-   {  return *systemPtr_; }
 
    #ifndef RPC_AVERAGE_ANALYZER_TPP
    // Suppress implicit instantiation
