@@ -1,5 +1,6 @@
 rpg_fts_analyzer_= \
   rpg/fts/analyzer/Analyzer.cu \
+  rpg/fts/analyzer/AverageAnalyzer.cu \
   rpg/fts/analyzer/AverageListAnalyzer.cu \
   rpg/fts/analyzer/AnalyzerManager.cu \
   rpg/fts/analyzer/AnalyzerFactory.cu \
