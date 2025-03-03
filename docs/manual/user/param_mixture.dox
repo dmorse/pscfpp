@@ -231,7 +231,7 @@ The meaning of different parameters is summarized in the table below:
     <td> <b> Description </b>  </td>
   </tr>
   <tr>
-    <td> type </td>
+    <td> type* </td>
     <td> enumeration with allowed values "linear" or "branched"
          (optional,  "linear" by default).  </td>
   </tr>
@@ -259,7 +259,7 @@ The meaning of different parameters is summarized in the table below:
 Comments:
 
   - The "type" parameter is an optional enumeration value that can be
-    assigned a value "linear", to specify a linear block polymer, or
+    assigned a text value "linear", to specify a linear block polymer, or
     "branched" to specify a general acyclic branched block polymer. If
     absent, this parameter is set to "linear" by default.
 
@@ -275,11 +275,11 @@ Comments:
     or \ref user_param_block_branched_sub "branched", as discussed 
     \ref user_param_block_sec "below" .
 
-  - The last parameter in a Polymer block must be either a value for
-    phi, which is the volume fraction occupied by the polymer species,
-    or a value for mu, which is the chemical potential for that species. 
-    The block must contain either a phi parameter or a mu parameter in 
-    this location, but may not contain both.
+  - The last parameter in a Polymer block must be either a value for phi, 
+    which is the volume fraction occupied by the polymer species, or a
+    value for mu, which is the chemical potential for that species.  The 
+    Polymer block must contain either a phi parameter or a mu parameter 
+    in this location, and may not contain both.
 
   - When the volume fraction parameter phi is present, its value must lie 
     in the range [0,1].
@@ -288,18 +288,19 @@ Descriptions of parameter file formats for individual blocks of linear and
 branched polymers are discussed separately below.
 
 <i> Technical comment (for users who examine the source code)</i>:
-A Class or class template named Polymer is defined in each
+A class or class template named Polymer is defined in each
 implementation-level namespace of the top-level Pscf namespace (i.e., in
-the R1d, Rpc and Rpg sub-namespaces of Pscf). These Polymer classes
-all use the same parameter file format, which is described above. Each
-of these Polymer classes is a subclass of an instances of a common class
+the R1d, Rpc and Rpg sub-namespaces of Pscf). These Polymer classes all 
+use the same parameter file format, which is described above. Each of 
+these Polymer classes is a subclass of an instances of a common class
 template named Pscf::PolymerTmpl. The readParameters function of this
 base class template defines the common file format.
 
 \section user_param_block_sec  Block
 
 The text representation of a block within the "blocks" array in a Polymer
-parameter file block is different for linear and branched polymers.
+parameter file block is different depending on whether the polymer type
+is "linear" or "branched".
 
 \subsection user_param_block_linear_sub Linear Polymers
 

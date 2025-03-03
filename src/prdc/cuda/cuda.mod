@@ -8,7 +8,7 @@ namespace Prdc{
 namespace Cuda{
 
    /**
-   * \defgroup Prdc_Cuda_Module Fields (CUDA)
+   * \defgroup Prdc_Cuda_Module Fields and FFT (CUDA)
    *
    * Fields and FFT plan for use in CUDA code, based around the cufft
    * GPU-accelerated fast Fourier transform library.

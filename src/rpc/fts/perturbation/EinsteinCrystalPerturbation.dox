@@ -1,10 +1,20 @@
+namespace Pscf {
+namespace Rpc {
+
 /*! 
-\page rpc_EinsteinCrystalPerturbation_page Rpc::EinsteinCrystalPerturbation
+\page rpc_EinsteinCrystalPerturbation_page EinsteinCrystalPerturbation
 
-This class is designed to enable use of Einstein crystal method of 
-computing free energies by thermodynamic integration.
+EinsteinCrystalPerturbation class templates in namespaces Rpc and Rpg
+are designed to enable use of Einstein crystal method of computing free 
+energies by thermodynamic integration.
 
-\section rpc_EinsteinCrystalPerturbation_algorithm_sec Mathematical Definition
+\see 
+<ul>
+  <li> Rpc::EinsteinCrystalPerturbation (Class) </li>
+  <li> \ref psfts_perturb_page "Manual Page" </li>
+</ul>
+
+\section rpc_EinsteinCrystalPerturbation_algorithm_sec Theory
 
 The EinsteinCrystalPerturbation class defines a perturbation for a system 
 with two types of monomer (nMonomer = 2) of the form
@@ -45,12 +55,13 @@ provided as parameter.
 The parameter file format for this class is shown below:
 \code
 EinsteinCrystalPerturbation{
-  referenceFieldFile   string
   lambda               real
   alpha                real
+  referenceFieldFile   string
 }
 \endcode
-Meanings of the parameters are described briefly below:
+All three parameters are required.
+Meanings of these parameters are described briefly below:
 <table>
   <tr>
     <td> <b> Label </b>  </td>
@@ -64,6 +75,13 @@ Meanings of the parameters are described briefly below:
     <td> alpha </td>
     <td> prefactor in harmonic penalty </td>
   </tr>
+  <tr>
+    <td> referenceFieldName  </td>
+    <td> name of file containing reference field configuration </td>
+  </tr>
 </table>
 
 */
+
+}
+}

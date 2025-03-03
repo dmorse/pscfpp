@@ -82,7 +82,7 @@ The iterative loop exits if the number of iterations has reaches
 maxItr or if the magnitude of the scalar error drops below epsilon. 
 
 The Rpg::AmIteratorBasis class is nearly identical to the corresponding
-Rpc::AmIteratorBasis class used by the pscf_pc programs. The same 
+Rpc::AmIteratorBasis class used by the pscf_pc program. The same 
 definition of the the residual vector is used in both classes.  Please 
 see the documentation of the Rpc \ref rpc_AmIteratorBasis_page 
 "AmIteratorBasis" class for the residual definition and some other 

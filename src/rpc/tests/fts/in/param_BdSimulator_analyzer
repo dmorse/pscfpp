@@ -22,7 +22,7 @@ BdSimulator{
       HamiltonianAnalyzer{
          interval        1
          outputFileName  out/hamiltonian_analyzer
-         nSamplePerBlock 1
+         nSamplePerOutput 1
       }
       StepLogger{
          interval        5

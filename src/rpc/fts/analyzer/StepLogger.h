@@ -19,6 +19,8 @@ namespace Rpc {
    /**
    * Periodically write snapshots to a trajectory file.
    *
+   * \see rpc_StepLogger_page "Manual Page"
+   *
    * \ingroup Rpc_Fts_Analyzer_Module
    */
    template <int D>

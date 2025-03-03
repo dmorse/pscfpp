@@ -34,7 +34,7 @@ namespace Rpc {
    * in the most recent call of the compute function. These can be 
    * accessed using the Block<D>::cField() function.
    *
-   * \ref user_param_polymer_sec "Parameter File Format"
+   * \ref user_param_polymer_sec "Manual Page"
    *
    * \ingroup Rpc_Solver_Module
    */

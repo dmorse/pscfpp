@@ -162,16 +162,18 @@ namespace Rpc {
 
       /**
       * Return outputFileName string with added suffix.
+      * 
+      * \param suffix  suffix that is appended to base outputFileName
       */
-      std::string outputFileName(const std::string& suffix) const;
-
-      /// Base name of output file(s).
-      std::string outputFileName_;
+      std::string outputFileName(std::string suffix) const;
 
       /// Number of simulation steps between subsequent actions.
       long interval_;
 
    private:
+
+      /// Base name of output file(s).
+      std::string outputFileName_;
 
       /// Pointer to fileMaster for opening output file(s).
       FileMaster* fileMasterPtr_;

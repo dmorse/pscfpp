@@ -13,8 +13,7 @@
 #include <rpc/fts/simulator/Simulator.h>
 
 namespace Pscf {
-namespace Rpc 
-{
+namespace Rpc {
 
    template <int D> class System;
    template <int D> class Simulator;
@@ -23,6 +22,8 @@ namespace Rpc
 
    /**
    * Evaluate the derivative of H w/ respect to perturbation parameter lambda.
+   *
+   * \see rpc_PerturbationDerivative_page "ParameterFileFormat"
    *
    * \ingroup Rpc_Fts_Analyzer_Module
    */

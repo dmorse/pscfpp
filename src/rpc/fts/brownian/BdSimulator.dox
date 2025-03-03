@@ -24,7 +24,9 @@ BdSimulator{
 \endcode
 Here, as elsewhere in this documentation, the suffix # after a subblock
 name indicates a selectable subblock, and a * star after any parameter
-file element indicates an optional element.
+file element indicates an optional element. Every element of this block 
+is formally optional, but particular commands (such as the SIMULATE)
+command require the presence of a minimal set of elements.
 
 Each allowed element of a BdSimulator block is described in more detail 
 below:
@@ -63,39 +65,50 @@ below:
   <tr>
     <td> Ramp#* </td>
     <td>
-    An optional Ramp block prescribes a continuous change in one or more
-    system parameters during the course of a simulation, as used during
-    continuous thermodynamic integration. Though this is coded as an
-    optional selectable block, the only option that is currently 
-    implemented is a LinearRamp which prescribes a change in one or more 
-    parameters that change linearly with BD step index (selectable and 
-    optional)
+    An optional Ramp block initializes an algorithm to continuously change 
+    one or more system parameters during the course of a simulation.  Though 
+    this is coded as an optional selectable block, the only option that is 
+    currently implemented is a LinearRamp that causes one or more parameters
+    to vary linearly with BD step index. (selectable and optional)
     </td>
   </tr>
   <tr>
     <td> AnalyzerManager#* </td>
     <td>
-    The optional AnalyzerManager block contains subblocks that 
-    initialize one or Analyzer objects, each of which implements a 
-    data analysis and/or data output operation that will be carried 
-    out periodically during a simulation (on-the-fly) or during 
-    analysis of a field trajectory file (postprocessing). (optional).
+    The optional AnalyzerManager block contains one or more subblocks 
+    that each initialize an analyzer algorithm. Each each analyzer 
+    implements a data analysis and/or data output operation that 
+    will be carried out periodically during a simulation (on-the-fly) 
+    or during analysis of a field trajectory file (postprocessing). 
+    (optional).
     </td>
   </tr>
 </table>
-Relationships among blocks:
+Relationships among subblocks of BdSimulator:
 
   - The BdStep and Compressor blocks must both be present in order to
-    perform a BD simulation (command SIMULATE), but may both be omitted 
-    from a parameter file that is used to initialize postprocessing of a 
-    field trajectory file. 
+    perform a BD simulation (command SIMULATE). Both of these elements
+    may be omitted, however, from a parameter file that is used to 
+    initialize postprocessing of a field trajectory file. 
 
   - If a BdStep is present, the Compressor block is required.
 
-  - A Ramp is only allowed if a BdStep is present.
+  - A Ramp is allowed only if a BdStep and Compressor are present,
+    since these are algorithms that are only used during a simulation.
 
   - The AnalyzerManager block must be present in order to postprocess
     a trajectory file (command ANALYZE).
+
+\see
+<ul>
+  <li> \ref psfts_algorithm_BD_sec "BdStep algorithms" </li>
+  <li> \ref psfts_algorithm_compressor_sec "Compressor algorithms" </li>
+  <li> \ref psfts_perturb_page "Perturbations" </li>
+     <ul> <li> \ref rpc_EinsteinCrystalPerturbation_page </li> </ul>
+  <li> \ref psfts_ramp_page "Parameter Ramps" </li>
+     <ul> <li> \ref rpc_LinearRamp_page </li> </ul>
+  <li> \ref psfts_algorithm_analyzer_sec "Analyzer algorithms" </li>
+</ul>
 
 */
 }

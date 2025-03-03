@@ -1,10 +1,14 @@
+namespace Pscf {
+namespace Rpc {
+
 /*! 
 \page rpc_HamiltonianAnalyzer_page Rpc::HamiltonianAnalyzer
 
-This analyzer calculates the average of total hamiltonian and its components.
+This analyzer calculates the average of total hamiltonian and its 
+components. The relevant mathematical formulas can be found in the relevant 
+\ref psfts_theory_page "manual page" about the theory.
 
-\section rpc_HamiltonianAnalyzer_algorithm_sec Mathematical Formula
-The mathematical formula of hamiltonian can be found in \ref psfts_theory_page
+\see HamiltonianAnalyzer (class API)
 
 \section rpc_HamiltonianAnalyzer_parameter_sec Parameter File
 
@@ -47,3 +51,6 @@ At the end of the simulation,
   - error analysis info are output to {outputFileName}.aer
 
 */
+
+}
+}

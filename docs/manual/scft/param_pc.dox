@@ -1,3 +1,6 @@
+namespace Pscf {
+namespace Rpc {
+
 /*! \page scft_param_pc_page Parameter File - pscf_pc 
 
 \ref scft_param_1d_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
@@ -12,6 +15,7 @@ of these programs, including optional elements that not relevant to SCFT, is
 given \ref rpc_System_page "here". 
 
 \section scft_param_pc_example_sec Example
+
 The example show below is a typical parameter file for setting up an SCFT 
 calculation for a perodic structure of known space group symmetry of a 
 diblock copolymer melt using either pscf_pc or pscf_pg.
@@ -73,9 +77,9 @@ System{
 As for pscf_1d, the Sweep block is optional, and Iterator and Sweep blocks
 (if present) are both selectable blocks.  The above skeleton includes only
 blocks that are relevant for SCFT calculations, and excludes some optional
-elements that are used for FTS calculations. A more complete description 
-of the format for the main System block of pscf_pc parameter file is given 
-\subpage rpc_System_page "here". 
+elements that are used for FTS calculations. A complete description of the 
+format for the main System block of pscf_pc parameter file is given 
+\ref rpc_System_page "here". 
 
 Formats of the Mixture and Interaction blocks are the same for all PSCF 
 programs, and have thus been discussed previously. Below, we discuss the 
@@ -239,13 +243,28 @@ not needed to peform a field theoretic simulation.
 
 \section scft_param_pc_sweep_sec Sweep
 
-The only sweep algorithm currently avaiable for use with pscf_pc is a
-general linear sweep algorithm, which is also the default option. Such
-a sweep can thus be initialized by including a block that starts either 
-with the generic label "Sweep" (as done in all examples that define a
-sweep) or the specific label "LinearSweep". The format of the 
-associated parameter file block is described 
+The Sweep block is another a block that (like the Iterator block for 
+pscf_pc) has been programmed as a selectable block, but for which there is 
+currently only one available algorithm.  The only sweep algorithm that is 
+currently available for use with either pscf_pc or pscf_pg is a general 
+linear sweep algorithm, which is also the default algorithm.  Such a 
+linear sweep can thus be enabled by including a block that starts either 
+with the generic label "Sweep" (as done in any examples shown here that 
+include a sweep block) or the specific label "LinearSweep". The format 
+of the associated parameter file block is described 
 \ref scft_param_sweep_linear_sec "here".
+
+\section scft_param_pc_seealso_sec See Also:
+
+<ul>
+ <li> \subpage rpc_System_page "System"  </li>
+ <li> \ref user_param_mixture_page "Mixture"  </li>
+ <li> \ref user_param_example_interaction "Interaction"  </li>
+ <li> \subpage rpc_Domain_page "Domain" </li>
+ <li> \subpage rpc_AmIteratorBasis_page "AmIteratorBasis" </li>
+ <li> \ref scft_param_sweep_page "Sweep" </li>
+ <ul> <li> \ref scft_param_sweep_linear_sec "LinearSweep" </li> </ul>
+</ul>
 
 <BR>
 \ref scft_param_1d_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
@@ -253,3 +272,6 @@ associated parameter file block is described
 \ref scft_param_pg_page  (Next)
 
 */
+
+}
+}

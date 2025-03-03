@@ -1,3 +1,6 @@
+namespace Pscf {
+namespace Rpc {
+
 /*! 
 \page rpc_FourthOrderParameter_page Rpc::FourthOrderParameter
 
@@ -8,6 +11,8 @@ order-disorder transition (ODT) in systems where the spontaneous
 phase transitions occur. In disordered phase, the fourth order 
 parameter approaches to 0. In ordered phase, the fourth order 
 parameter is a finite value.
+
+\see FourthOrderParameter (class API)
 
 \section rpc_FourthOrderParameter_algorithm_sec Mathematical Formula
 
@@ -65,3 +70,6 @@ At the end of the simulation, if hasAverage is true:
   - average and error analysis info are output to log file.
 
 */
+
+}
+}

@@ -57,7 +57,7 @@ namespace Rpc {
    * once after every time the unit cell parameters are set or modified, 
    * before the next call to Mixture::compute.
    *
-   * \ref user_param_mixture_page "Parameter File Format" 
+   * \ref user_param_mixture_page "Manual Page" 
    * \ingroup Rpc_Solver_Module
    */
    template <int D>

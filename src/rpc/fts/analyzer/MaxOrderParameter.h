@@ -28,16 +28,19 @@ namespace Rpc {
    using namespace Pscf::Prdc::Cpu;
 
    /**
-   * MaxOrderParameter is used to detect the ODT.
+   * MaxOrderParameter is used to detect an order-disorder transition.
    *
-   * This class evalutaes maximum amplitude of the 
-   * second power of Fourier modes of fluctuating fields.
+   * This class evalutaes maximum amplitude of the second power of the
+   * Fourier mode amplitude of fluctuating fields.
    * 
    * The order parameter is defined as
    * \f[
-   *     psi(k)  = max[W_(k)W_(-k)]
+   *     \psi(k)  = \max [ |W_{-}({\bf k})|^{2} ]
    * \f]
-   * where \f$W_(k)\f$ is fluctuating field at Fourier mode k 
+   * where \f$ W_{-}({\bf k})\f$ is fluctuating field component with
+   * wavevector \f$ {\bf k} \f$.
+   *
+   * \see \ref rpc_MaxOrderParameter_page "Manual Page"
    * 
    * \ingroup Rpc_Fts_Analyzer_Module
    */

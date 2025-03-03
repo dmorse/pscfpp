@@ -451,6 +451,21 @@ namespace Rpg {
       * \param out output stream
       */
       void writeThermo(std::ostream& out);
+      
+      /**
+      * Write stress properties to a file.
+      *
+      * This function outputs derivatives of free energy w/ respect to 
+      * each unit cell parameters.
+      *
+      * Call writeStress after writeThermo if and only if the iterator 
+      * is not flexible. If parameter "out" is a file that already exists, 
+      * this function will append this information to the end of the file, 
+      * rather than overwriting that file.
+      *
+      * \param out output stream
+      */
+      void writeStress(std::ostream& out);
 
       ///@}
       /// \name Field Output

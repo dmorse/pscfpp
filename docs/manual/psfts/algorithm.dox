@@ -78,23 +78,24 @@ base class. The generic names that we use in this documentation to
 describe different types of algorithm generally correspond to the 
 names of the corresponding base classes. Specifically:
 
-   - Brownian dynamics step algorithms are implemented by subclasses of a base class named BdStep
+   - Brownian dynamics step algorithms are implemented by subclasses of a 
+     base class named BdStep
 
    - Monte Carlo moves are implemented by subclasses of McMove
 
-   - File Io and data analysis operations are implemented by
-     subclasses of Analyzer.
+   - File Io and data analysis operations are implemented by subclasses 
+     of Analyzer.
 
-   - Algorithms for continuous variation of parameters are
-     implemented by subclasses of Ramp
+   - Algorithms for continuous variation of parameters are implemented by 
+     subclasses of Ramp
 
    - Classes that define additive changes to the field theoretic
      Hamiltonian are subclasses of Perturbation
 
-The PSCF parameter file format uses selectable parameter file blocks
-to allow a user to choose one from a set of different algorithms of 
-the same type (as is appropriate for BdStep an Compressor algorithms) 
-or to choose a set one or algorithms from among a list of available 
+The PSCF parameter file format uses selectable parameter file blocks to 
+allow a user to either choose one from a set of different algorithms of 
+the same type (as is appropriate for BdStep an Compressor algorithms) or 
+to choose a set one or more algorithms from among a list of available 
 algorithms of the same type (as is appropriate for McMove and Analyzer 
 algorithms).
 
@@ -173,7 +174,7 @@ more accurate results than the competing predictor-corrector algorithm,
 allowing the use of larger time steps.  The explicit Euler algorithm is 
 signficantly less accurate than the other two alternatives.
 
-\section psfts_algorithm_MC Monte Carlo (MC) Move Algorithms
+\section psfts_algorithm_MC_sec Monte Carlo (MC) Move Algorithms
 
 The PSCF implementation of MC sampling allows the user to specify a set 
 of Monte Carlo move types to be used during an MC simulation. When more
@@ -183,110 +184,110 @@ specified by the user.  The algorithm for each attempted step of a MC
 simulation is thus as follows:
 
    - Choose a type of MC move at random from among a set of choices
-     specified by the user.
+     specified in the parameter file.
 
    - Use the chosen MC move to generate a random change in \f$ W_{-} \f$.
 
    - Use the chosen compressor algorithm to adjust the real pressure-like 
-     field \f$ W_{+}({\bf r}) \f$ so as to satisfy the partial 
-     saddle-point condition.
+     field \f$ W_{+}({\bf r}) \f$ so as to satisfy the partial saddle-point
+     condition.
 
    - Evaluate the Hamiltonian in the new partial saddle point state.
 
    - Use a Metropolis criterion that is designed to satisfy detailed 
      balance to decide whether to accept or reject the move.
 
-   - If the move is rejected, restore the system to the field 
-     configuration that had existed before the beginning of the 
-     attempted move.
+   - If the move is rejected, restore the field configuration that 
+     existed at the beginning of the attempted move.
 
 The block of the parameter file for an MC simulation that contains 
 information about MC moves, which is labelled "McMoveManager", contains 
 one or more subblocks that are associated with different types of move.  
-The parameter file block associated with each such MC move type always
-contains a "probability" parameter that specifies the probability of 
-that type of move being chosen at the start of each step.
+The parameter file block associated with each such MC move type contains
+a parameter named "probability" that specifies the probability of that 
+type of move being chosen at the start of each step.
 
-PSCF currently only provides the following two MC step algorithms: 
+PSCF currently provides the following two MC step algorithms: 
 <ul>
-  <li> \ref rpc_ForceBiasMove_page "ForceBiasMove": A "smart MC" or
+  <li> \subpage rpc_ForceBiasMove_page "ForceBiasMove": A "smart MC" or
   "force bias" MC move that uses an explicit Euler BD step to 
   generate a proposed MC move. </li>
-  <li> \ref rpc_RealMove_page "RealMcMove" : A simple MC move that 
+  <li> \subpage rpc_RealMove_page "RealMcMove" : A simple MC move that 
   generates spatially uncorrelated random changes of 
   \f$ W_{-} \f$ at different grid points </li> 
 </ul>
-The ForceBiasMove algorithm generally leads to much more efficient 
-sampling than the simpler real move, and is recommended as the 
-workhorse method for MC simulations.
+The ForceBiasMove algorithm generally leads to much more efficient sampling
+than the simpler real move, and is recommended as the workhorse method for 
+MC simulations.
 
-Acceptance rates for MC moves generally decrease rapidly with 
-increasing system size. This effect is particularly severe with the 
-simple real-space MC move, but also occurs for the force bias move.
-Because BD simulation does not suffer from a similar problem, this 
-phenomena causes MC to always become less efficient than BD for 
-sufficiently large systems. We thus generally recommend the use of BD 
-rather than MC simulation for 3D systems with roughly \f$ 10^{4} \f$ 
-or more grid points. 
+Acceptance rates for MC moves generally decrease rapidly with increasing 
+system size. This effect is particularly severe with the simple real-space 
+move (RealMcMove), but also occurs for the force-bias move.  Because BD 
+simulation does not suffer from any analogous problem, this phenomena 
+causes MC to always become less efficient than BD for sufficiently large 
+systems. We thus generally recommend the use of BD rather than MC 
+simulation for 3D systems with roughly \f$ 10^{4} \f$ or more grid points. 
 
-One virtue of MC simulations over BD simulations is that, because MC 
-algorithms are designed to satisfy a detailed balance condition, they 
-do not exhibit any systematic sampling error. An infinitely long MC 
-simulation should, in principle, yield exact results for any average 
-value obtained from a particular model on a specified computational
-mesh. The only sampling errors in MC simulations are true statistical 
-errors arising from the finite length of a simulation, which can be 
-estimated by standard methods, and errors arising from round off of 
-floating point numbers, which are usually negligible.  
+One virtue of MC over BD simulation is that, because MC algorithms are 
+designed to satisfy a detailed balance condition, they do not exhibit any 
+systematic sampling error. An infinitely long MC simulation would, in 
+in the absence of round-off error, yield exact results for any average 
+value obtained from a particular model on a specified computational mesh. 
+The only sampling errors in MC simulations are true statistical errors 
+arising from the finite length of a simulation, which can be estimated 
+by standard methods, and errors arising from round off of floating point 
+numbers, which are usually negligible.  
 
 BD simulations instead exhibit a systematic error arising from 
-discretization of a time-like coordinate in a diffusion model, an 
-error that increases with increases in the mobility parameter. Results 
-of MC simulations of small systems can thus be useful for comparison 
-when evaluating correctness of new MC and BD algorithms, and when 
-evaluating systematic errors in BD algorithms.
+discretization of a time-like coordinate in a diffusion model. The
+magnitude of this error increases with increases in the mobility parameter.
+Results of MC simulations of small systems can thus sometimes be useful for 
+comparison when testing new BD algorithms, and when evaluating systematic 
+errors in BD algorithms. Systematic errors in BD simulations can also be
+estimated by running simulations with several different values of the
+mobility parameter.
 
 \section psfts_algorithm_compressor_sec Compressor Algorithms
 
 The PSCF paramater file format allows the user to choose from among
 several "compressor" algorithms. As discussed above, a compressor is 
-an iterative algorithms that adjust the \f$ W_{+} \f$ field so as to 
+an iterative algorithm that adjusts the \f$ W_{+} \f$ field so as to 
 satisfy a partial saddle-point condition. This algorithm must applied 
-at last once per BD or MC stochastic step after each change in 
+at last once per BD or MC stochastic step, after each change in 
 \f$ W_{-} \f$. Users may choose a compressor algorithm independently 
 of their choice for a BD step or MC move algorithms: Any compressor 
 algorithm may be used in the context of any BD or MC step algorithm. 
 
-Solution of the saddle-point condition normally requires multiple
-iterations of \f$ W_{+} \f$. Each iteration normally involves a 
-proposed adjustment of \f$ W_{+} \f$ followed by solution of the 
-modified diffusion equation (MDE) in the resulting state, which is 
-necessary to evaluate the remaining error. Because repeated solution 
-of the MDE is the most expensive operation in a FTS, and the 
-compressor algorithm requires multiple solutions of the MDE for 
-each BD or MC step, almost all of the computational time of a PS-FTS 
-calculation is actually spent within the iterative loop of a
-compressor algorithm. 
+Solution of the saddle-point condition normally requires multiple 
+iterations of \f$ W_{+} \f$. Each iteration normally involves a proposed 
+adjustment of \f$ W_{+} \f$ followed by solution of the modified diffusion 
+equation (MDE) in the resulting state, which is necessary to evaluate the 
+remaining error. Because repeated solution of the MDE is the most 
+expensive operation in a FTS, and the compressor algorithm requires 
+multiple solutions of the MDE for each BD or MC step, almost all of the 
+computational time of a PS-FTS calculation is actually spent within the 
+iterative loop of a compressor algorithm. 
 
-The available compressor algorithms are listed below. Users may 
-click on the link associated with each algorithm label to access 
-more a detailed description of each the algorithm, and of the format 
-of the associated parameter file block. 
+The available compressor algorithms are listed below. Users may click on 
+the link associated with each algorithm label to access more a detailed 
+description of each algorithm, and of the format of the associated 
+parameter file block. 
 <ul>
-  <li> \ref rpc_LrAmCompressor_page "LrAmCompressor": 
+  <li> \subpage rpc_LrAmCompressor_page "LrAmCompressor": 
         A linear-response Anderson mixing algorithm </li>
-  <li> \ref rpc_LrCompressor_page "LrCompressor": 
+  <li> \subpage rpc_LrCompressor_page "LrCompressor": 
         A simple linear-response algorithm </li>
-  <li> \ref rpc_AmCompressor_page "AmCompressor":
+  <li> \subpage rpc_AmCompressor_page "AmCompressor":
         An Anderson-mixing algorithm </li>
 </ul>
-The LrAmCompressor is the default choice, and is recommended for 
-general use.  
+The LrAmCompressor is the default choice, and is recommended for general 
+use.  
 
 The AmCompressor algorithm is similar to the Anderson mixing 
 algorithm used in most previously published PS-FTS calculations.
 This algorithm uses information from previous iterations to guide the 
 choice of a new field configuration during each iteration after the first.
+
 The LrAmCompressor and LrCompressor algorithms both use a quasi-Newton
 approximation that uses the analytically calculated linear response of 
 a hypothetical homogeneous state as an approximation to the actual 
@@ -294,20 +295,20 @@ linear response of the monomer concentration in an inhomgeneous state
 to small changes in the pressure-like field. The Lr algorithm is a
 straightforward quasi-Newton algorithm based on this approximation.
 The LrAm uses this quasi-Newton step as one stage of a modified
-mixing algorithm, which thus also uses information from previous
+Anderson mixing algorithm, which also uses information from previous
 steps. 
 
 \section psfts_algorithm_analyzer_sec Analyzer Algorithms
 
 PSCF provides an extensible set of C++ classes for analysis of field
-theoretic simulations, which we refer to generically as analyzers or
-analyzer classes.  Each analyzer class performs a specified analysis 
+theoretic simulations. These are referred to here as analyzers classes,
+or simply analyzers.  Each analyzer class performs a specified analysis 
 and/or file IO operation at some regular interval during a simulation 
-(e.g., every 10 or 100 simulation steps). Analyzer classes can be
-designed to periodically compute physical quantities of interest, 
-output data to file, or compute statistical properties such as averages
-and variances, or any combination of these types of operation. The
-PSCF parameter file allows the user to enables a set of zero or more 
+(e.g., every 10 or 100 simulation steps). Analyzer classes can be 
+designed to periodically compute physical quantities of interest, output 
+data to file, or compute statistical properties such as averages and 
+variances, or any combination of these types of operation. The PSCF 
+parameter file format allows the user to enables a set of zero or more 
 analyzers in order to specify which such operations should be performed
 during a simulation that is run with the SIMULATE command, and how often 
 each should be performed. The same set of analyzer classes may also be 
@@ -315,12 +316,9 @@ used during a postprocessing operation that is performed by the ANALYZE
 command, as discussed in more detail \ref psfts_analysis_page "here".
 
 All of the analyzer classes that are provided with the current version 
-of PSCF (v1.2) are listed below.  A brief description of the purpose of 
-each class is provided below, and further details can be obtained by 
-clicking on the class name: The first few classes listed here simply 
-write available information to a file or standard output (e.g., the 
-screen) at regular intervals, rather than doing any nontrivial data 
-analysis.  
+of PSCF are listed below.  A brief description of the purpose of each 
+class is provided below, and further details can be obtained by clicking 
+on the class name. 
 <ul>
   <li> \subpage rpc_StepLogger_page "StepLogger": Record progress of a
         simulation by periodically writing the number of completed BD 
@@ -331,67 +329,83 @@ analysis.
        postprocessing. </li>
   <li> \subpage rpc_ConcentrationWriter_page "ConcentrationWriter" : 
        Periodically write all monomer concentration fields (c-fields) to 
-       a file, in r-grid format.
-     </li>
+       a file, in r-grid format. </li>
   <li> \subpage rpc_HamiltonianAnalyzer_page "HamiltonianAnalyzer" :
        Compute average value of the field theoretic Hamiltonian, and 
        optionally output Hamiltonian values. </li>
   <li> \subpage rpc_BinaryStructureFactorGrid_page "BinaryStructureFactorGrid":
-       Compute the structure factor of a system with two monomer types. </li>
+       Compute the structure factor of a system with two monomer types. 
+       </li>
   <li> \subpage rpc_MaxOrderParameter_page "MaxOrderParameter" :
-       Compute an order parameter that is useful for identifying spontaneous 
-       phase transitions. </li>
+       Compute an order parameter that is useful for identifying 
+       spontaneous phase transitions. </li>
   <li> \subpage rpc_FourthOrderParameter_page "FourthOrderParameter": 
        Compute another order parameter that is useful for identifying 
        spontaneous phase transitions. </li>
   <li> \subpage rpc_ChiDerivative_page "ChiDerivative": 
        Compute the derivative of free energy with respect to changes in a 
        chi parameter, for use in 
-       \ref psfts_algorithm_thermoint_sec "thermodynamic integration".  </li>
+       \ref psfts_algorithm_thermoint_sec "thermodynamic integration". </li>
   <li> \subpage rpc_ConcentrationDerivative_page "ConcentrationDerivative" 
        Compute the derivative of free energy with respect to changes in 
        total monomer concentation (the inverse of vMonomer), for use in 
-       \ref psfts_algorithm_thermoint_sec "thermodynamic integration".  </li>
+       \ref psfts_algorithm_thermoint_sec "thermodynamic integration". </li>
   <li> \subpage rpc_PerturbationDerivative_page "PerturbationDerivative":
        Compute the derivative of free energy with respect to the strength 
        of a perturbation (the lambda parameter), for use in
-       \ref psfts_algorithm_thermoint_sec "thermodynamic integration".  </li>
+       \ref psfts_algorithm_thermoint_sec "thermodynamic integration". </li>
 </ul>
 
-Note that several of the analyzers listed above are designed specifically 
-for use in thermodynamic integration calculations. 
+Note that the first three classes listed above (StepLogger, 
+TrajectoryWriter, and ConcentrationWriter) simply write readily available 
+information to a file or standard output (e.g., the screen) at regular 
+intervals, rather than doing any nontrivial data analysis.  
+
+The analyzers named MaxOrderParameter and FourthOrderParameter) are
+designed specifically as tools for identifying spontaneous phase 
+transitions. Specifically, these analyzers may be used to analyze a 
+parameter ramp that is designed to induce a spotaneous disorder-to-order
+(crystallization) or order-to-disorder (melting) transition.
+
+The last three analyzers listed above (ChiDerivative, 
+ConcentrationDerivative, and PerturbationDerivative) are designed
+specifically for use in thermodynamic integration calculations of 
+free energy differences, which are discussed in the next section.  
+Specifically, a PerturbationDerivative analyzer may be used to implement 
+\ref psfts_perturb_page "Einstein crystal" free energy calculations.
 
 \section psfts_algorithm_thermoint_sec Thermodynamic Integration
 
 Thermodynamic integration is a technique for computing a difference in 
-values of the free energy in states characterized by different values of 
-a model parameter. This free energy difference is computed by numerically 
-integrating the derivative of the free energy \f$ F \f$ with respect model 
-parameter. Suppose \f$ \lambda \f$ is a parameter that appears in the 
-field theoretic Hamiltonian \f$ H \f$. The method is based on a theorem
-which states that the derivative fo the free energy \f$ F \f$ is given
-by an average value
+values of the free energy in two states characterized by different values 
+of a parameter. This free energy difference is computed by numerically 
+integrating the derivative of the free energy \f$ F \f$ with respect to
+the relevant model parameter. Suppose \f$ \lambda \f$ is a parameter that 
+appears in the field theoretic Hamiltonian \f$ H \f$. The method is based 
+on a theorem which states that the derivative of free energy \f$ F \f$ 
+with respect to \f$ \lambda \f$ is given by an equilibrium average value
 \f[
    \frac{\partial F}{\partial \lambda}
    = \left \langle \frac{\partial H}{\partial \lambda} \right \rangle
   \quad,
 \f]
-where \f$ \partial H/\partial \lambda \f$ is a derivative evaluated 
-with fields held fixed, and \f$ \langle \cdots \rangle \f$ denotes an 
-equilibrium ensemble average evaluated using a specified value of 
+where \f$ \partial H/\partial \lambda \f$ is a derivative evaluated in
+a fixed field configuration, and \f$ \langle \cdots \rangle \f$ denotes 
+an equilibrium ensemble average evaluated using the specified value of 
 \f$ \lambda \f$. 
 
-The change in \f$ F \f$ associated with a change in \f$ \lambda \f$ 
-from \f$ \lambda_{0} \f$ to \f$ \lambda_{1} \f$ is obtained by 
-integrating the derivative \f$ \partial F/ \partial \lambda \f$ over 
-this range. The integral can be computed by either of two methods:
+The change in \f$ F \f$ associated with a change in \f$ \lambda \f$ from 
+an initial value \f$ \lambda_{0} \f$ to a final value \f$ \lambda_{1} \f$ 
+is obtained by integrating the derivative 
+\f$ \partial F/ \partial \lambda \f$ over this range. This sort of 
+integral can be computed by either of two methods:
 
   - **Separate simulations** : Equilibrium simulations can be performed 
     at a set of values of \f$ \lambda \f$ within the range of interest, 
     each of which yields a value of \f$ \partial F/\partial \lambda \f$ 
     at a single value as an ensemble average. The required integral is 
-    then approximately computed by numerical integration of the resulting 
-    values. 
+    then approximated by numerical integration of the resulting sequence
+    of values. 
 
   - **Continuous integration** : The integral may be computed by using a
     \ref psfts_algorithm_ramp_sec "ramp" to continuously vary the parameter 
@@ -399,45 +413,38 @@ this range. The integral can be computed by either of two methods:
 
 Continuous integration may be used either to compute the change in free
 energy associated with a change in a parameter of the standard field
-theoretic Hamiltonian (such as an interaction parameters or monomer 
-concentration) or a change in free energy associated with a 
-\ref psfts_algorithm_perturbation_sec "perturbation" that modifies the 
-form of the Hamiltonian (as done in Einstein crystal integration).
+theoretic Hamiltonian (such as an interaction parameter or the monomer 
+concentration) or as change in free energy associated with changes in
+the strength of a \ref psfts_algorithm_perturbation_sec "perturbation" 
+that modifies the form of the Hamiltonian (as done in Einstein crystal 
+integration).
 
 \section psfts_algorithm_ramp_sec Parameter Ramp
 
 A "ramp" is an optional feature for FTS that allows a user to continuously
-vary one or more model parameters during a simulation.  The main uses for 
-parameter ramps are:
+vary one or more model parameters during a simulation.  Parameter ramps are
+discussed in more detail on a \ref psfts_ramp_page "separate manual page". 
 
-  - To induce a spontaneous phase transformation during a slow parameter 
-    ramp in order identify the approximate location of an equilibrium 
-    phase boundary (e.g., an order-disorder transition).
-
-  - To evaluate the integral of some ensemble average with respect to 
-    changes in a model parameter in order to implement continuous 
-    thermodynamic integration.
-
-The only ramp algorithm currently provided by PSCF is implemented by 
-the LinearRamp class. The LinearRamp algorithm can perform a ramp in
-in which any specified set of of the standard physical parameters are
-taken to vary linearly with the BD or MC step counter.  The interface 
-for a LinearRamp is closely analogous to that of the LinearSweep class 
-used for SCFT sweep calculations, as discussed on a 
-\ref psfts_ramp_page "separate manual page". 
+The only ramp algorithm currently provided by PSCF is implemented by the 
+class LinearRamp. The LinearRamp class performs a ramp in which one or 
+more of the parameters of a model are taken to vary linearly with the BD 
+or MC simulation step counter during a simulation.  The interface for a 
+LinearRamp is closely analogous to that of the LinearSweep class that is
+used for SCFT sweep calculations, as discussed 
+\ref rpc_LinearRamp_page "here".
 
 \section psfts_algorithm_perturbation_sec Perturbation
 
-A "perturbation" is an optional feature that allows the user to modify 
-the form of the field theoretic Hamiltonian by adding an arbitrary
-additional functional of the w-fields to the standard Hamiltonian.
+A "perturbation" is an optional feature that allows a user to modify the 
+form of the field theoretic Hamiltonian by adding an arbitrary additional 
+functional of the w-fields to the standard Hamiltonian.  Perturbations are 
+discussed on a \ref psfts_perturb_page "separate manual page". 
 
-The only type of perturbation is currently available is implemented
-by the EinsteinCrystalPerturbation class. This class is designed to 
-enable the Einstein crystal method of computing absolute free 
-energies. The interface for EinsteinCrystalPerturbation is discussed 
-in detail on a \ref psfts_perturb_page "separate manual page". 
-
+The only type of perturbation that is available in the current version 
+of PSCF is implemented by a class named EinsteinCrystalPerturbation, 
+which is designed to enable the Einstein crystal method of computing 
+free energies. The parameter file format is discussed in detail on a 
+\ref rpc_EinsteinCrystalPerturbation_page "separate page". 
 
 <BR>
 \ref psfts_psa_page    (Prev) &nbsp; &nbsp; &nbsp; &nbsp;

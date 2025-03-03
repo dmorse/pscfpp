@@ -1,3 +1,6 @@
+namespace Pscf {
+namespace Rpc {
+
 /*! 
 \page rpc_ForceBiasMove_page Rpc::ForceBiasMove
 
@@ -13,6 +16,8 @@ pscf_pc program (using CPU hardware) and the class defined in the Rpg
 namespace is used in the pscf_pg program (using GPU acceleration). 
 These two classes implement the same step algorithm and use the same 
 parameter file format, which are documented below.
+
+\see ForceBiasMove (class API)
 
 \section rpc_ForceBiasMove_algorithm_sec Step Algorithm
 
@@ -68,3 +73,6 @@ The meanings of both parameter are summarized briefly below:
 </table>
 
 */
+
+}
+}

@@ -1,22 +1,23 @@
 /*! 
 \page rpc_AmIteratorBasis_page Rpc::AmIteratorBasis
 
-The AmIteratorBasis algorithm used by the pscf_pc programs solves 
+The AmIteratorBasis algorithm used by the pscf_pc program solves 
 the SCFT equations for a periodic system using the Anderson Mixing 
-algorithm. A
+algorithm. 
 
 The variant of this algorithm implemented here is almost identical to that 
-described by Arora et al. [Arora, Morse, Bates, and Dorfman, J. Chem.
-Phys. vol. 146, 244902 (2017)], which described the implementation of
-this algorithm in the earlier Fortran version of PSCF.  The version of
-this algorithm used here adjusts the fields by adjusting the compoments 
-of the field in a basis of symmetry adapated basis functions, thus 
-preserving the space-group symmetry of the fields throughout the 
+described in the paper by Arora et al. [Arora, Morse, Bates, and Dorfman, 
+J. Chem.  Phys. vol. 146, 244902 (2017)], which was written as a description
+of the algorithm used in the earlier Fortran version of PSCF.  The version 
+of this algorithm used by AmIteratorBasis adjusts the fields by adjusting 
+the compoments of each field in a basis of symmetry adapated basis functions, 
+thus preserving the space-group symmetry of the fields throughout the 
 iteration process.  The algorithm can be used to either solve the SCFT 
 equations for a rigid unit cell or to solve the SCFT equations and also 
 optimize some or all of the unit cell parameters of a flexible unit cell 
-so as to minimize the free energy density, depending on the value of 
-"isFlexible" and "flexibleParams", as described below. 
+so as to minimize the free energy density. The treatment of unit cell
+parameters depends on the values of the "isFlexible" and "flexibleParams"
+parameters, as described below. 
 
 \section rpc_AmIteratorBasis_parameter_sec Parameter File
 
@@ -113,7 +114,7 @@ or if the magnitude of the scalar error drops below epsilon.
 <b> errorType </b>: Several different definitions may be used for 
 the scalar error, depending on the value of the identifier errorType.  
 All of them ar based on computation of different types of norm of the
-residual vector, defined as discussed 
+residual vector, as discussed 
 \ref rpc_AmIteratorBasis_residual_sec "below".
 
   - If errorType == norm, then the scalar error is take to be the L2 
@@ -201,7 +202,7 @@ species, giving a closed system, or a canonical statistical ensemble.  In
 this case, the solution of the SCF problem is not unique, becase the values
 of the residuals defined above can be shown to be invariant under a shift 
 in all of the chemical potential fields at all grid point points by any 
-spatially homgeneous constant.  To obtain a unique solution, in this case
+spatially homgeneous constant. To obtain a unique solution, in this case
 the spatial average of the Laplace multiplier field \f$ \xi({\bf r}) \f$ 
 is implicitly set to zero by convention.
 

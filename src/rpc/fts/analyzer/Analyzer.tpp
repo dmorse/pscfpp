@@ -22,8 +22,8 @@ namespace Rpc {
    template <int D>
    Analyzer<D>::Analyzer()
     : ParamComposite(),
-      outputFileName_(""),
       interval_(1),
+      outputFileName_(""),
       fileMasterPtr_(0)
    {}
    
@@ -99,7 +99,7 @@ namespace Rpc {
    */
    template <int D>
    std::string 
-   Analyzer<D>::outputFileName(const std::string& suffix) const
+   Analyzer<D>::outputFileName(std::string suffix) const
    {
       std::string filename = outputFileName_;
       filename += suffix;

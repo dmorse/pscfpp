@@ -180,24 +180,24 @@ yields
 \f[
    e^{-U_{\rm int} }
    =  \frac{1}{N} 
-   \int {\cal D}\omega_{-}
+   \int {\cal D} W_{-}
    \exp \left \{ - 
    \int \! d{\bf r} \; \left [  \;
-    \frac{ \omega_{-}^{2}}{ v \chi}
-          + \omega_{-} C_{-} 
+    \frac{ W_{-}^{2}}{ v \chi}
+          + W_{-} C_{-} 
           + \frac{\chi}{4 v} \;
    \right ] \right \}
    \; ,
 \f]
-where \f$ \int {\cal D} \omega_{-} \f$ denotes a functional integral 
-over a real-valued auxiliary field \f$ \omega_{-}({\bf r}) \f$, and 
+where \f$ \int {\cal D} W_{-} \f$ denotes a functional integral 
+over a real-valued auxiliary field \f$ W_{-}({\bf r}) \f$, and 
 where
 \f[
    N \equiv
-   \int {\cal D} \omega_{-}
+   \int {\cal D} W_{-}
    \exp \left \{ 
    - \int \! d{\bf r} \; 
-   \frac{ \omega_{-}^{2}({\bf r}) }{v \chi }  
+   \frac{ W_{-}^{2}({\bf r}) }{v \chi }  
    \right \}
 \f]
 is a constant.
@@ -219,10 +219,10 @@ this field.
 By substituting the above functional integral expressions for the 
 Boltzmann factor \f$ e^{-U_{\rm int}} \f$ and the \f$ \delta \f$-function 
 into the definition of the \f$ Z \f$, we obtain a functional integral
-over both \f$ \omega_{-} \f$ and \f$ \omega_{+} \f$, giving
+over both \f$ W_{-} \f$ and \f$ \omega_{+} \f$, giving
 \f[
    Z = N^{-1} 
-   \int {\cal D}\omega_{-} \int {\cal D}\omega_{+}  \; e^{ -H_{\rm f} }
+   \int {\cal D}W_{-} \int {\cal D}\omega_{+}  \; e^{ -H_{\rm f} }
    \int \! {\cal D}{\bf r} \; e^{-U_{\rm id} - H_{\rm c}}
    \quad,
 \f]
@@ -230,13 +230,13 @@ in which
 \f[
    H_{\rm f}  = 
    \int \! d{\bf r} \; \left \{
-   \frac{\omega_{-}^{2}({\bf r}) }{v \chi}
+   \frac{W_{-}^{2}({\bf r}) }{v \chi}
    - i \omega_{+}({\bf r}) c_{0} 
    + \frac{\chi}{4v} \right \}  
 \f]
 \f[
    H_{\rm c}  = \int \! d{\bf r} \; 
-   \left [ \omega_{-}({\bf r}) C_{-}({\bf r}) 
+   \left [ W_{-}({\bf r}) C_{-}({\bf r}) 
      + i \omega_{+}({\bf r}) C_{+}({\bf r}) \right ]
    \quad.  
 \f]
@@ -246,12 +246,9 @@ auxiliary fields (so that the subscript f denotes "field"), while
 the monomer concentrations (so that the subscript c denotes 
 "concentration" or "coupling").  
 
-It is convenient for some purposes to defined "Wick rotated" fields
+It is convenient for some purposes to defined a "Wick rotated" field
 \f[
    W_{+}({\bf r}) \equiv i \omega_{+}({\bf r})
-   \quad\quad, \quad
-   W_{-}({\bf r}) \equiv \omega_{-}({\bf r}) \quad,
-
 \f]
 defined such that
 \f[
@@ -287,7 +284,7 @@ integral over the fields. The resulting expression for \f$ Z \f$ obtained
 above can be summarized as a functional integral of the form
 \f[
    Z = N^{-1} 
-   \int {\cal D}\omega_{-} 
+   \int {\cal D}W_{-} 
    \int {\cal D}\omega_{+} \; e^{-H}
    \quad,
 \f]
@@ -296,7 +293,7 @@ in which
    H  = -\ln Z_{\rm id}[w] + H_{\rm f} \quad.
 \f]
 is a field theoretic Hamiltonian that is a functional of the fields 
-\f$ \omega_{-} \f$ and \f$ \omega_{+} \f$, and in which
+\f$ W_{-} \f$ and \f$ \omega_{+} \f$, and in which
 \f[
    Z_{\rm id}[w]
    = \int \! {\cal D}{\bf r} \; e^{-U_{\rm id} - H_{\rm c}}
@@ -304,40 +301,34 @@ is a field theoretic Hamiltonian that is a functional of the fields
 is the partition function for a hypothetical gas of non-interacting 
 molecules subjected to fluctuating external fields, in which monomers 
 of type \f$ i \f$ are subjected to a field \f$ w_{i}({\bf r}) \f$, with 
-\f$ w_1 = i\omega_{+} + \omega_{-} \f$ and 
-\f$ w_2 = i\omega_{+} - \omega_{-} \f$.
+\f$ w_1 = i\omega_{+} + W_{-} \f$ and 
+\f$ w_2 = i\omega_{+} - W_{-} \f$.
 
-The field theoretic Hamiltonian \f$ H \f$ defined above is an analytic 
-functional of the fields \f$ \omega_{-}({\bf r}) \f$ and 
-\f$ \omega_{+}({\bf r}) \f$.  It is straightforward to show that the
-functional derivatives of \f$ H[ \omega_{-}, \omega_{+}] \f$ with 
-respect to these fields are given by
+The field theoretic Hamiltonian \f$ H \f$ defined above can be expressed
+as an analytic functional of the fields \f$ W_{-}({\bf r}) \f$ and 
+\f$ W_{+}({\bf r}) \f$.  It is straightforward to show that the
+functional derivatives of \f$ H[ W_{-}, W_{+}] \f$ with respect to these 
+fields are given by
 \f[
-    \quad \left . \frac{\delta H}{\delta \omega_{-}({\bf r})}  
+    \quad \left . \frac{\delta H}{\delta W_{-}({\bf r})}  
     \right |_{\omega_{+}} = 
     \frac{1}{v} 
-    \left [ \phi_{1}({\bf r}) - \phi_{2}({\bf r}) - 2 \omega_{-}({\bf r})/\chi \right ] 
+    \left [ \phi_{1}({\bf r}) - \phi_{2}({\bf r}) - 2 W_{-}({\bf r})/\chi \right ] 
     \quad
 \f]
 \f[
-   \frac{1}{i} 
-   \left .  \frac{\delta H}{\delta \omega_{+}({\bf r}) } 
-   \right |_{\omega_{-}}
+   \left .  \frac{\delta H}{\delta W_{+}({\bf r}) } 
+   \right |_{W_{-}}
     = \frac{1}{v} 
        \left [ \phi_{1}({\bf r}) + \phi_{2}({\bf r}) - 1 \right ] \quad.
 \f]
-Note that \f$ \delta H/\delta \omega_{+}({\bf r}) = 0 \f$ when
-\f$ \phi_{1}({\bf r}) + \phi_{2}({\bf r}) = 1 \f$. This is a mean-field 
-version of the incompressibility constraint that is identical to the 
-constraint used in SCFT.
-
 A saddle-point of the Hamiltonian is defined to be a field configuration 
 in which functional derivatives with respect to both fields vanish for 
 all \f$ {\bf r} \f$. It is straightforward to show that the resulting 
 saddle point equations are equivalent to the self-consistent field 
 equations used in SCFT for such system, and that the value of the 
 Hamiltonian at such a saddle point is equal to the SCFT free energy.
-Saddle points thus correspond to SCFT solutions.
+Saddle-point field configurations thus correspond to SCFT solutions.
 
 \section psfts_theory_general_sec Field Theory: General Case (\f$ M \geq 2 \f$)
 
@@ -536,10 +527,10 @@ eigenvalues \f$ L+1, \ldots, M - 1 \f$ to be non-negative, while
 <b> Particle-Field Transformation </b>
 
 A Hubbard-Stratonovich transformation may used to transform the
-Boltzmann factor \f$ \exp( -U_{\rm int} ) \f$ given above into 
-a functional integral over \f$ M - 1 \f$ real-valued auxiliary 
-fields \f$ \omega_{1}({\bf r}), \ldots, \omega_{M-1}({\bf r}) \f$, 
-of the form
+Boltzmann factor \f$ \exp( -U_{\rm int} ) \f$ given above into a 
+functional integral over \f$ M - 1 \f$ real-valued auxiliary fields 
+\f$ \omega_{1}({\bf r}), \ldots, \omega_{M-1}({\bf r}) \f$, of the 
+form
 \f[
    e^{-U_{\rm int} }
    =  \frac{1}{N} 
@@ -552,9 +543,9 @@ of the form
    \right ] \right \}
    \; , 
 \f]
-where \f$ \int {\cal D} \omega' \f$ denotes a functional integral over 
-the \f$ M-1 \f$ auxiliary fields \f$ \omega_{1}, \ldots, \omega_{M-1} \f$, 
-and where
+where \f$ \int {\cal D} \omega' \f$ denotes a functional integral over the 
+\f$ M-1 \f$ auxiliary fields \f$ \omega_{1}, \ldots, \omega_{M-1} \f$, and 
+where
 \f[
    N \equiv
    \int {\cal D}\omega'

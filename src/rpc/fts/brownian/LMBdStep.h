@@ -29,9 +29,6 @@ namespace Rpc {
    * given by a sum of random numbers generated at this step and the
    * previous step. 
    *
-   * For a detailed description of the algorithm, references, and a 
-   * parameter file format, look \ref rpc_LMBdStep_page "here". 
-   *
    * As described in:
    * 
    *   B. Vorselaars, J. Chemical Physics, 158 114117 (2023)
@@ -43,6 +40,8 @@ namespace Rpc {
    *   B. Leimkuhler and C. Matthews, J. Chemical Physics, 
    *   vol. 138, 174102 (2013) [ https://doi.org/10.1063/1.4802990 ] 
    * 
+   * \see \ref rpc_LMBdStep_page "Manual Page"
+   *
    * \ingroup Rpc_Fts_Brownian_Module
    */
    template <int D>

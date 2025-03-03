@@ -42,6 +42,8 @@ namespace Rpc {
    * \f]
    * where, V is system volume, and \f$W_(k)\f$ is a Fourier mode of 
    * fluctuating field 
+   *
+   * \see \ref rpc_BinaryStructureFactorGrid_page "Manual Page"
    * 
    * \ingroup Rpc_Fts_Analyzer_Module
    */
