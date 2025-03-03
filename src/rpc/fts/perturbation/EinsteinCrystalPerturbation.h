@@ -93,6 +93,7 @@ namespace Rpc {
       // Inherited functions
       using ParamComposite::setClassName;
       using ParamComposite::read;
+      using ParamComposite::readOptionalDArray;
       using Perturbation<D>::simulator;
       using Perturbation<D>::system;
       using Perturbation<D>::lambda;
@@ -104,8 +105,8 @@ namespace Rpc {
       
    private:
       
-      // Spring constant for the einstein crystal. alpha = 1/chi
-      double alpha_;
+      // Parameters used in Einstein crystal integration
+      DArray<double> epsilon_;
       
       // Reference w field
       DArray< RField<D> > w0_;
