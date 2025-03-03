@@ -23,7 +23,8 @@ namespace Rpc {
       ecHamiltonian_(0.0),
       unperturbedHamiltonian_(0.0),
       stateEcHamiltonian_(0.0),
-      stateUnperturbedHamiltonian_(0.0)
+      stateUnperturbedHamiltonian_(0.0),
+      hasEpsilon_(false)
    {  setClassName("EinsteinCrystal"); }
 
    /*
@@ -40,14 +41,17 @@ namespace Rpc {
    void EinsteinCrystalPerturbation<D>::readParameters(std::istream& in)
    {
       read(in, "lambda", lambda_);
-      
-      // Optionally read the parameters used in Einstein crystal integration
+     
+      // Allocate and initialize epsilon_ array 
       const int nMonomer = system().mixture().nMonomer();
       epsilon_.allocate(nMonomer - 1);
       for (int i = 0; i < nMonomer - 1 ; ++i) {
          epsilon_[i] = 0.0;
       }
-      readOptionalDArray(in, "epsilon", epsilon_, nMonomer -1);
+
+      // Optionally read the parameters used in Einstein crystal integration
+      hasEpsilon_ =
+        readOptionalDArray(in, "epsilon", epsilon_, nMonomer-1).isActive();
       
       read(in, "referenceFieldFileName", referenceFieldFileName_);
    }
@@ -73,14 +77,19 @@ namespace Rpc {
       }
       
       /* 
-      * If the user does not input values for epsilon, set 
+      * If the user did not input values for epsilon, set 
       * the values of epsilon_ to the nontrivial -1.0 * eigenvalues 
       * of the projected chi matrix by default.
       */ 
-      if (epsilon_[0] == 0){
+      if (!hasEpsilon_){
          for (int i = 0; i < nMonomer - 1 ; ++i) {
             epsilon_[i] = -1.0 * simulator().chiEval(i);
          }
+      }
+
+      // Check that all epsilon values are positive
+      for (int i = 0; i < nMonomer - 1 ; ++i) {
+         UTIL_CHECK(epsilon_[i] > 0.0);
       }
 
       // Read in reference field from a file
@@ -111,7 +120,7 @@ namespace Rpc {
 
       for (int j = 0; j < nMonomer - 1; ++j) {
          RField<D> const & Wc = simulator().wc(j);
-         prefactor = double(nMonomer)/(2 * epsilon_[j] );
+         prefactor = double(nMonomer)/(2.0 * epsilon_[j] );
          for (int i = 0; i < meshSize; ++i) {
             w = Wc[i] - wc0_[j][i];
             ecHamiltonian_ += prefactor*w*w;
@@ -124,7 +133,7 @@ namespace Rpc {
       // Compute EC hamiltonian of system
       ecHamiltonian_ *= nMonomerSystem;
 
-      // Obtain block copolymer hamiltonian
+      // Set unperturbedHamiltonian_ member variable
       unperturbedHamiltonian_ = unperturbedHamiltonian;
 
       return (1.0 - lambda_)*(ecHamiltonian_ - unperturbedHamiltonian_);
@@ -146,15 +155,14 @@ namespace Rpc {
       for (int i = 0; i < nMonomer - 1; ++i) {
          RField<D>& Dc = dc[i];
          RField<D> const & Wc = simulator().wc(i);
+         prefactor = double(nMonomer) / (epsilon_[i] * vMonomer);
 
-         // Loop over grid points
+         // Loop over grid points, compute composite derivative
          for (int k = 0; k < meshSize; ++k) {
-            prefactor = double(nMonomer) / (epsilon_[i] * vMonomer);
             DcEC = prefactor * (Wc[k] - wc0_[i][k]);
-
-            // Compute composite derivative
             Dc[k] += (1.0 - lambda_) * (DcEC - Dc[k]);
          }
+
       }
    }
 
