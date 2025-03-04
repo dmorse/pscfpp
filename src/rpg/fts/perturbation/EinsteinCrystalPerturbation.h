@@ -77,6 +77,7 @@ namespace Rpg {
       // Inherited functions
       using ParamComposite::setClassName;
       using ParamComposite::read;
+      using ParamComposite::readOptionalDArray;
       using Perturbation<D>::simulator;
       using Perturbation<D>::system;
       using Perturbation<D>::lambda;
@@ -88,8 +89,8 @@ namespace Rpg {
       
    private:
       
-      // Spring constant for the einstein crystal. alpha = 1/chi
-      double alpha_;
+      // Parameters used in Einstein crystal integration
+      DArray<double> epsilon_;
       
       // Reference w field
       DArray< RField<D> > w0_;
@@ -97,17 +98,20 @@ namespace Rpg {
       // Eigenvector components of the reference w fields
       DArray< RField<D> > wc0_;
       
-      // Current Einstein Crystal hamiltonian 
+      // Current Einstein crystal Hamiltonian 
       double ecHamiltonian_;
       
-      // Current Block copolymer hamiltonian 
-      double bcpHamiltonian_;
+      // Current unperturbed Hamiltonian 
+      double unperturbedHamiltonian_;
       
-      // Saved Einstein Crystal hamiltonian  
+      // Saved Einstein crystal Hamiltonian  
       double stateEcHamiltonian_;
       
-      // Saved Block copolymer hamiltonian 
-      double stateBcpHamiltonian_;
+      // Saved unperturbed Hamiltonian 
+      double stateUnperturbedHamiltonian_;
+      
+      // Have epsilon values been set?
+      bool hasEpsilon_;
       
       // Reference FieldFileName
       std::string referenceFieldFileName_;

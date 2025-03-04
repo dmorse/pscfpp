@@ -87,6 +87,8 @@ namespace Rpg {
       using Base::convertKGridToRGrid;
       using Base::convertRGridToKGrid;
       using Base::hasSymmetry;
+      using Base::scaleFieldsBasis;
+      using Base::scaleFieldsRGrid;
       using Base::replicateUnitCell;
       using Base::expandRGridDimension;
       using Base::readFieldHeader;
@@ -245,6 +247,28 @@ namespace Rpg {
                        double epsilon = 1.0e-8,
                        bool verbose = true) const;
 
+      /**
+      * Rescale a single field in basis format by a scalar factor.
+      *
+      * See documentation of analogous function in Prdc::FieldIoReal.
+      * Multiplication is done in-place, and so modifies the input.
+      *
+      * \param field  field in basis format (in-out)
+      * \param factor  real scalar by which to multiply all components
+      */
+      void scaleFieldBasis(DArray<double>& field, double factor) const;
+
+      /**
+      * Rescale a single r-grid field by a scalar factor.
+      *
+      * See documentation of analogous function in Prdc::FieldIoReal.
+      * Multiplication is done in-place, and so modifies the input.
+      *
+      * \param field  real space (r-grid) field (in-out)
+      * \param factor  real scalar by which to multiply all elements
+      */
+      void scaleFieldRGrid(RField<D>& field, double factor) const;
+      
       /**
       * Expand spatial dimension of an array of r-grid fields.
       *

@@ -129,7 +129,7 @@ namespace Rpc {
       // Reference FieldFileName
       std::string referenceFieldFileName_;
       
-      // Have epsilon values been set ?
+      // Have epsilon values been set?
       bool hasEpsilon_;
       
       // Compute eigenvector components of the reference field
