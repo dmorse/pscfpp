@@ -44,13 +44,6 @@ namespace Rpc {
       virtual ~PerturbationDerivative();
 
       /**
-      * Read parameters from archive.
-      *
-      * \param in  input parameter file
-      */
-      virtual void readParameters(std::istream& in);
-
-      /**
       * Compute and return the derivative of H w/ respect to lambda.
       */
       virtual double compute();
