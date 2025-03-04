@@ -16,7 +16,8 @@ namespace Rpg {
    * Constructor.
    */
    template <int D>
-   AnalyzerManager<D>::AnalyzerManager(Simulator<D>& simulator, System<D>& system)
+   AnalyzerManager<D>::AnalyzerManager(Simulator<D>& simulator, 
+                                       System<D>& system)
    : Manager< Analyzer<D> >(),
      simulatorPtr_(&simulator),
      systemPtr_(&system)
@@ -35,6 +36,7 @@ namespace Rpg {
    template <int D>
    Factory< Analyzer<D> >* AnalyzerManager<D>::newDefaultFactory() const
    {  return new AnalyzerFactory<D>(*simulatorPtr_, *systemPtr_); }
+
    /*
    * Read parameter file. 
    *
@@ -43,7 +45,9 @@ namespace Rpg {
    template <int D>
    void AnalyzerManager<D>::readParameters(std::istream &in)
    {
-      read(in,"baseInterval", Analyzer<D>::baseInterval);
+      Analyzer<D>::baseInterval = 1;
+      readOptional(in,"baseInterval", Analyzer<D>::baseInterval);
+
       Manager< Analyzer<D> >::readParameters(in);
    }
 

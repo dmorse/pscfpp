@@ -42,7 +42,8 @@ namespace Rpc {
    template <int D>
    void AnalyzerManager<D>::readParameters(std::istream &in)
    {
-      read(in,"baseInterval", Analyzer<D>::baseInterval);
+      Analyzer<D>::baseInterval = 1;
+      readOptional(in,"baseInterval", Analyzer<D>::baseInterval);
       Manager< Analyzer<D> >::readParameters(in);
    }
 

@@ -22,6 +22,7 @@
 #include <prdc/crystal/UnitCell.h>
 #include <prdc/cuda/types.h>
 #include <prdc/cuda/complex.h>
+#include <prdc/cuda/resources.h>
 
 #include <pscf/mesh/Mesh.h>
 #include <pscf/math/IntVec.h>
@@ -308,6 +309,31 @@ namespace Rpg {
       // Check symmetry of hostField
       return Prdc::hasSymmetry(hostField, basis(), in.dftDimensions(),
                                epsilon, verbose);
+   }
+   
+   /*
+   * Test if an real field DFT has the declared space group symmetry.
+   */
+   template <int D>
+   void FieldIo<D>::scaleFieldBasis(
+                              DArray<double> & field, 
+                              double factor) const
+   {
+      int n = field.capacity();
+      for (int i = 0; i < n; ++i) {
+         field[i] *= factor;
+      }
+   }
+
+   /*
+   * Test if an real field DFT has the declared space group symmetry.
+   */
+   template <int D>
+   void FieldIo<D>::scaleFieldRGrid(
+                              RField<D> & field, 
+                              double factor) const
+   {
+      VecOp::mulEqS(field, factor);
    }
 
    /*

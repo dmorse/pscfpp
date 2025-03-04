@@ -112,6 +112,14 @@ namespace Rpc {
       virtual double compute() = 0;
 
       /**
+      * Output a sampled or block average value.
+      *
+      * \param step  value for step counter
+      * \param value  value of physical observable
+      */
+      virtual void outputValue(int step, double value);
+
+      /**
       * Return reference to parent simulator.
       */
       Simulator<D>& simulator();

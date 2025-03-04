@@ -14,36 +14,47 @@ namespace Rpg {
    using namespace Util;
    using namespace Prdc::Cuda;
 
-   /* 
+   /*
    * Constructor.
    */
    template <int D>
-   EinsteinCrystalPerturbation<D>::EinsteinCrystalPerturbation(Simulator<D>& simulator)
+   EinsteinCrystalPerturbation<D>::EinsteinCrystalPerturbation(
+                                                   Simulator<D>& simulator)
     : Perturbation<D>(simulator),
-      alpha_(0.0),
       ecHamiltonian_(0.0),
-      bcpHamiltonian_(0.0),
+      unperturbedHamiltonian_(0.0),
       stateEcHamiltonian_(0.0),
-      stateBcpHamiltonian_(0.0)
-   { setClassName("EinsteinCrystal"); }
-   
-   /* 
+      stateUnperturbedHamiltonian_(0.0),
+      hasEpsilon_(false)
+   {  setClassName("EinsteinCrystalPerturbation"); }
+
+   /*
    * Destructor.
    */
    template <int D>
    EinsteinCrystalPerturbation<D>::~EinsteinCrystalPerturbation()
    {}
-   
+
    /*
    * Read parameters from stream, empty default implementation.
    */
    template <int D>
    void EinsteinCrystalPerturbation<D>::readParameters(std::istream& in)
-   {  
-      // Readin
-      read(in, "referenceFieldFileName", referenceFieldFileName_);
+   {
       read(in, "lambda", lambda_);
-      read(in, "alpha", alpha_);
+
+      // Allocate and initialize epsilon_ array
+      const int nMonomer = system().mixture().nMonomer();
+      epsilon_.allocate(nMonomer - 1);
+      for (int i = 0; i < nMonomer - 1 ; ++i) {
+         epsilon_[i] = 0.0;
+      }
+
+      // Optionally read the parameters used in Einstein crystal integration
+      hasEpsilon_ =
+        readOptionalDArray(in, "epsilon", epsilon_, nMonomer-1).isActive();
+
+      read(in, "referenceFieldFileName", referenceFieldFileName_);
    }
 
    /*
@@ -53,22 +64,37 @@ namespace Rpg {
    void EinsteinCrystalPerturbation<D>::setup()
    {
       const int nMonomer = system().mixture().nMonomer();
-      const IntVec<D> dimensions = system().domain().mesh().dimensions();
-      
-      UTIL_CHECK(nMonomer == 2);
-      
+      const IntVec<D>
+      meshDimensions = system().domain().mesh().dimensions();
+
       // Allocate memory for reference field
       w0_.allocate(nMonomer);
       wc0_.allocate(nMonomer);
       for (int i = 0; i < nMonomer; ++i) {
-         w0_[i].allocate(dimensions);
-         wc0_[i].allocate(dimensions);
+         w0_[i].allocate(meshDimensions);
+         wc0_[i].allocate(meshDimensions);
       }
-      
-      // Read in reference field 
-      system().fieldIo().readFieldsRGrid(referenceFieldFileName_, w0_, 
-                                         system().domain().unitCell());
-      
+
+      /*
+      * If the user did not input values for epsilon, set values to -1.0
+      * times the nontrivial eigenvalues of the projected chi matrix.
+      */
+      if (!hasEpsilon_){
+         for (int i = 0; i < nMonomer - 1 ; ++i) {
+            epsilon_[i] = -1.0 * simulator().chiEval(i);
+         }
+      }
+
+      // Check that all epsilon values are positive
+      for (int i = 0; i < nMonomer - 1 ; ++i) {
+         UTIL_CHECK(epsilon_[i] > 0.0);
+      }
+
+      // Read in reference field from a file
+      FieldIo<D> const & fieldIo = system().domain().fieldIo();
+      fieldIo.readFieldsRGrid(referenceFieldFileName_,
+                              w0_, system().domain().unitCell());
+
       // Compute eigenvector components of the reference field
       computeWcReference();
    }
@@ -77,111 +103,99 @@ namespace Rpg {
    * Compute and return perturbation to Hamiltonian.
    */
    template <int D>
-   double 
+   double
    EinsteinCrystalPerturbation<D>::hamiltonian(double unperturbedHamiltonian)
    {
       // Compute Einstein crystal Hamiltonian
-      double prefactor, s;
       const int nMonomer = system().mixture().nMonomer();
       const int meshSize = system().domain().mesh().size();
-      const IntVec<D> dimensions = system().domain().mesh().dimensions();
+      const IntVec<D> meshDimensions = system().domain().mesh().dimensions();
       const double vSystem  = system().domain().unitCell().volume();
       const double vMonomer = system().mixture().vMonomer();
       const double nMonomerSystem = vSystem / vMonomer;
+      double prefactor;
       RField<D> wcs;
-      wcs.allocate(dimensions);
+      wcs.allocate(meshDimensions);
       ecHamiltonian_ = 0.0;
-      
+
       for (int j = 0; j < nMonomer - 1; ++j) {
          RField<D> const & Wc = simulator().wc(j);
-         prefactor = alpha_;
-         s = simulator().sc(j);
-         VecOp::subVVS(wcs, Wc, wc0_[j], s); // wcs = Wc - wc0_[j] - s
+         prefactor = double(nMonomer)/(2.0 * epsilon_[j]);
+         VecOp::subVV(wcs, Wc, wc0_[j]); // wcs = Wc - wc0_[j]
          double wSqure = 0;
          wSqure = Reduce::innerProduct(wcs, wcs);
          ecHamiltonian_ += prefactor * wSqure;
       }
-      
+
       // Normalize EC hamiltonian to equal a value per monomer
       ecHamiltonian_ /= double(meshSize);
-      
+
       // Compute EC hamiltonian of system
       ecHamiltonian_ *= nMonomerSystem;
-      
-      // Obtain block copolymer hamiltonian
-      bcpHamiltonian_ = unperturbedHamiltonian;
-      
-      // Compute perturbation to Hamiltonian
-      double compH;
-      compH = lambda_* bcpHamiltonian_ + (1.0-lambda_) * ecHamiltonian_; 
-      return compH - unperturbedHamiltonian;
+
+      // Set unperturbedHamiltonian_ member variable
+      unperturbedHamiltonian_ = unperturbedHamiltonian;
+
+      return (1.0 - lambda_)*(ecHamiltonian_ - unperturbedHamiltonian_);
    }
 
    /*
    * Modify functional derivatives, empty default implementation.
    */
    template <int D>
-   void 
+   void
    EinsteinCrystalPerturbation<D>::incrementDc(DArray< RField<D> > & dc)
    {
-      double prefactor, s, b;
-      const IntVec<D> dimensions = system().domain().mesh().dimensions();
+      const IntVec<D> meshDimensions = system().domain().mesh().dimensions();
       const int nMonomer = system().mixture().nMonomer();
-      const double vMonomer = system().mixture().vMonomer();   
-      RField<D> DcBCP, DcEC, wRef;
-      DcBCP.allocate(dimensions);
-      DcEC.allocate(dimensions);
-      wRef.allocate(dimensions);
-      b = 1.0;
-      
+      const double vMonomer = system().mixture().vMonomer();
+      double prefactor;
+      RField<D> DcEC;
+      DcEC.allocate(meshDimensions);
+
       // Loop over composition eigenvectors (exclude the last)
       for (int i = 0; i < nMonomer - 1; ++i) {
          RField<D>& Dc = dc[i];
          RField<D> const & Wc = simulator().wc(i);
-         s = simulator().sc(i);
-         prefactor = 1.0*alpha_*double(nMonomer)/vMonomer;
-         
-         // Copy block copolymer derivative
-         VecOp::eqV(DcBCP, Dc);
-         
-         // Multiply reference field by -1.0 and store in wRef
-         VecOp::mulVS(wRef, wc0_[i], -1.0);
-         
+         prefactor = double(nMonomer) / (epsilon_[i] * vMonomer);
+
          // Compute EC derivative
-         VecOpFts::computeDField(DcEC, Wc, wRef, prefactor, b, s);
-       
+         // DcEC = prefactor * (Wc - wc0_);
+         VecOp::subVV(DcEC, Wc, wc0_[i]);
+         VecOp::mulEqS(DcEC, prefactor);
+
          // Compute composite derivative
          // Dc = (Dc * lambda_) + (DcEC * (1-lambda_))
          VecOp::addVcVc(Dc, Dc, lambda_, DcEC, 1 - lambda_);
       }
    }
-   
+
    /*
    * Compute and return derivative of free energy with respect to lambda.
-   */ 
+   */
    template <int D>
    double EinsteinCrystalPerturbation<D>::df(){
-      return bcpHamiltonian_ - ecHamiltonian_;
+      return unperturbedHamiltonian_ - ecHamiltonian_;
    }
-   
+
    /*
    * Save any required internal state variables.
    */
    template <int D>
    void EinsteinCrystalPerturbation<D>::saveState(){
       stateEcHamiltonian_ = ecHamiltonian_;
-      stateBcpHamiltonian_ = bcpHamiltonian_;
+      stateUnperturbedHamiltonian_ = unperturbedHamiltonian_;
    }
-   
+
    /*
    * Save any required internal state variables.
    */
    template <int D>
    void EinsteinCrystalPerturbation<D>::restoreState(){
       ecHamiltonian_ = stateEcHamiltonian_;
-      bcpHamiltonian_ = stateBcpHamiltonian_;
+      unperturbedHamiltonian_ = stateUnperturbedHamiltonian_;
    }
-   
+
    /*
    * Compute the eigenvector components of the w fields, using the
    * eigenvectors chiEvecs of the projected chi matrix as a basis.
@@ -191,7 +205,7 @@ namespace Rpg {
    {
       const int nMonomer = system().mixture().nMonomer();
       int i, j;
-      
+
       // Loop over eigenvectors (i is an eigenvector index)
       for (i = 0; i < nMonomer; ++i) {
 
@@ -208,17 +222,17 @@ namespace Rpg {
             // Loop over grid points
             VecOp::addEqVc(Wc, w0_[j], vec);
          }
-         
+
       }
-      
+
       #if 0
       // Debugging output
       std::string filename = "wc";
-      system().fieldIo().writeFieldsRGrid(filename, wc0_, 
+      system().fieldIo().writeFieldsRGrid(filename, wc0_,
                                           system().domain().unitCell(), false);
       #endif
    }
 
 }
 }
-#endif 
+#endif

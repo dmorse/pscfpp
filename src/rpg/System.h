@@ -672,7 +672,103 @@ namespace Rpg {
       */
       void basisToKGrid(const std::string & inFileName,
                         const std::string & outFileName);
+                        
+      /**
+      * Compare arrays of fields in basis format, output a report.
+      *
+      * Outputs maximum and root-mean-squared differences to the
+      * standard Log file. 
+      *
+      * \param field1  first array of fields (basis format)
+      * \param field2  second array of fields (basis format)
+      */
+      void compare(const DArray< DArray<double> > field1,
+                   const DArray< DArray<double> > field2);
 
+      /**
+      * Compare two fields in r-grid format, output a report.
+      *
+      * Outputs maximum and root-mean-squared differences to the
+      * standard Log file. 
+      *
+      * \param field1  first array of fields (r-grid format)
+      * \param field2  second array of fields (r-grid format)
+      */
+      void compare(const DArray< RField<D> > field1,
+                   const DArray< RField<D> > field2);
+                   
+      /**
+      * Check if r-grid fields have the declared space group symmetry.
+      *
+      * \param inFileName name of input file
+      * \param epsilon error threshold used when testing for symmetry
+      * \return true if fields all have symmetry, false otherwise
+      */
+      bool checkRGridFieldSymmetry(const std::string & inFileName,
+                                   double epsilon = 1.0E-8);
+                                   
+      /**
+      * Multiply all components of an array of basis fields by a scalar.
+      *
+      * \param inFileName  name of input field file 
+      * \param outFileName  name of file for rescaled output fields
+      * \param factor  factor by which to multiply all field elements
+      */
+      void scaleFieldsBasis(const std::string & inFileName,
+                            const std::string & outFileName,
+                            double factor);
+
+      /**
+      * Multiply all elements of an array of r-grid fields by a scalar.
+      *
+      * \param inFileName  name of input field file 
+      * \param outFileName  name of file for rescaled output fields
+      * \param factor  factor by which to multiply all field elements
+      */
+      void scaleFieldsRGrid(const std::string & inFileName,
+                            const std::string & outFileName,
+                            double factor) const;
+                            
+      /**
+      * Expand the number of spatial dimensions of an r-grid field.
+      *
+      * This function reads a D-dimensional field and outputs a field
+      * in a format appropriate for d-dimensional space, for d > D, by
+      * assuming that all field values are independent of coordinates
+      * associated with the added dimensions. It can thus create a file
+      * representing a field with lamellar (D=1) or hexagonal (D=2)
+      * symmetry on a 3D (d=3) grid.
+      *
+      * Element i of array newGridDimensions contains the number of
+      * grid points in added dimension D + i. This array must have a
+      * capacity d - D.
+      *
+      * \param inFileName filename name of input field file
+      * \param outFileName filename name of output field file
+      * \param d  intended dimensions (d > D)
+      * \param newGridDimensions number of grid points in added dimensions
+      */
+      void expandRGridDimension(const std::string & inFileName,
+                                const std::string & outFileName,
+                                int d,
+                                DArray<int> newGridDimensions);
+      /**
+      * Replicate the crystal unit cell to create a larger cell. 
+      *
+      * This function reads a D-dimensional field and replicates the
+      * unit cell a specified number of times in each D direction
+      *
+      * Element i of array replicas contains the number of replication
+      * times in direction i.
+      *
+      * \param inFileName filename name of input field file
+      * \param outFileName filename name of output field file
+      * \param replicas  the number of replicas in each D direction
+      */
+      void replicateUnitCell(const std::string & inFileName,
+                             const std::string & outFileName,
+                             IntVec<D> const & replicas);
+                             
       ///@}
       /// \name Member Object Accessors
       ///@{
