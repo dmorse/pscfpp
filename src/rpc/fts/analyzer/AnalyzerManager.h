@@ -96,18 +96,19 @@ namespace Rpc {
 
       using ParamComposite::setClassName;
       using ParamComposite::read;
+      using ParamComposite::readOptional;
    
    private:
+
       /**
-       * Pointer to parent Simulator
-       */
+      * Pointer to parent Simulator
+      */
       Simulator<D>* simulatorPtr_;
       
       /**
       * Pointer to parent System.
       */
       System<D>* systemPtr_;
-
 
       /**
       * Return pointer to a new AnalyzerFactory.

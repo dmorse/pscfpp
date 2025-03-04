@@ -17,29 +17,16 @@ namespace Rpc {
    /**
    * Abstract base for periodic output and/or analysis actions.
    *
-   * The periodic action associated with an Analyzer can involve sampling
-   * of a physical property and adding it to statistical accumulator, 
-   * outputting it to file, or both. This periodic action must be 
+   * The periodic action associated with an Analyzer can involve retrieval
+   * or computation of a physical property, adding it to statistical 
+   * accumulator, and/or outputting it to file. This periodic action must be 
    * implemented by the pure virtual sample() method.
    *
    * The sample() method should take the desired action only when the
    * simulation step index is an integer multiple of the associated interval
-   * parameter.  The interval must be a positive integer that is a multiple 
-   * of the static member Analyzer::baseInterval.
-   *
-   * The virtual sample() method does not take any parameters. An Analyzer
-   * must thus access its parent Simulation and/or System via a pointer, 
-   * which is usually initialized in its subclass constructor.
-   *
-   * Analyzer subclasses that are associated with one System, McSystem 
-   * or MdSystem (i.e., almost all of them) should be derived from the
-   * SystemAnalyzer<class SystemType> class template. This takes a 
-   * reference to the parent system as parameter to its constructor. 
-   * An Analyzer subclass that can be used with any System should be
-   * derived from SystemAnalyzer<System>, and one that can be used 
-   * only with a MdSystem or McSystem should be derived from 
-   * SystemAnalyzer<MdSystem> or SystemAnalyzer<MdSystem>, 
-   * respectively.
+   * parameter.  The interval of each Analyzer must be a positive integer 
+   * that is a multiple of the static member Analyzer::baseInterval, which 
+   * is set to 1 by default. 
    *
    * \ingroup Rpc_Fts_Analyzer_Module
    */

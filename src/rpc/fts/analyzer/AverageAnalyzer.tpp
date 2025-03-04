@@ -85,15 +85,24 @@ namespace Rpc {
       // Output block averages
       if (nSamplePerOutput_ > 0) {
          if (accumulator_.isBlockComplete()) {
-            UTIL_CHECK(outputFile_.is_open());
             int beginStep = iStep - (nSamplePerOutput_ - 1)*interval();
             value = accumulator_.blockAverage();
-            outputFile_ << Int(beginStep);
-            outputFile_ << Dbl(value);
-            outputFile_ << "\n";
+            outputValue(beginStep, value);
          }
       }
 
+   }
+
+   /*
+   * Write a sampled or block average value to file.
+   */
+   template <int D>
+   void AverageAnalyzer<D>::outputValue(int step, double value) 
+   {
+      UTIL_CHECK(outputFile_.is_open());
+      outputFile_ << Int(step);
+      outputFile_ << Dbl(value);
+      outputFile_ << "\n";
    }
 
    /*

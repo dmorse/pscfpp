@@ -211,7 +211,6 @@ System{
       ]
     }
     AnalyzerManager{
-      baseInterval    5
 
       StepLogger{
         interval         50

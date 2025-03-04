@@ -23,12 +23,13 @@ Development (CSSI) under Grant No. 2103627.
 
 This manual is constructed as a set of linked web pages that provide 
 both documentation designed for users and more detailed API documentation
-that is aimed primarily at developers.  Basic information about how to
-install and use PSCF is provided through the set of web pages that is 
-outlined and linked below. Full documentation of class and function
-interfaces is instead accessible via the "Topics", "Namespaces" and
-"Classes" tabs at the top of each manual page.  The web manual for
-the most recent numbered release of PSCF (currently v1.2) is available
+that is aimed primarily at developers.  Information for users about how 
+to install and use PSCF is provided through the set of web pages that 
+is outlined and linked below. Full documentation of class and function
+interfaces as well as html versions of all source files is instead 
+accessible via the "Topics", "Namespaces", "Classes", and "Files" tabs 
+that appear at the top of every manual page.  The web manual for the 
+most recent numbered release of PSCF (currently v1.2) is available
 online at: <a ref=https://dmorse.github.io/pscfpp-man/>
 https://dmorse.github.io/pscfpp-man </a>.
 

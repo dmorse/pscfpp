@@ -13,12 +13,19 @@ of simulation and discussion of the differences.
 
 \section psfts_param_example_sec Example: BD Simulation
 
-Shown below is an example of a complete parameter file for a BD
-simulation of a symmetric diblock copolymer melt. Note that the
-Mixture, Interaction and Domain blocks with contents very similar
-to those used for a corresponding SCFT calculation. Additional
-information about algorithms used by the BD simulation are given
-within the BdSimulator block.
+Shown below is an example of a complete parameter file for a BD simulation 
+of a symmetric diblock copolymer melt. The first three blocks within the
+main System block are Mixture, Interaction and Domain blocks that are
+very similar to the corresponding blocks of an SCFT parameter file. These 
+three blocks specify all of the physical parameters and the computational
+domain for the problem of interest.  The new element, relative to an
+analogous SCFT parameter file, is the existence of a large BdSimulator 
+block after the Domain block. In a parameter file for BD simulation, the 
+BdSimulator block contains all information that is required by algorithms 
+used in a BD simulation, but that is not needed for an SCFT calculation. 
+A parameter file an MC simulation would instead contain a block labelled 
+"McSimulator" in this location, which would contain analogous information 
+required by MC simulation algorithms.
 
 \code
 System{
@@ -60,7 +67,6 @@ System{
       maxHist      40
     }
     AnalyzerManager{
-      baseInterval    10
 
       StepLogger{
         interval        20
@@ -69,31 +75,31 @@ System{
       HamiltonianAnalyzer{
         interval        10
         outputFileName  out/hamiltonian
-        nSamplePerBlock 5
       }
 
     }
   }
 }
 \endcode
-The above parameter file could be used without modification by either
-the pscf_pc or pscf_pg program, which provide nearly identical
-capabilities for PS-FTS calculations.
+The above parameter file could be used by either the pscf_pc or pscf_pg 
+program, which provide identical capabilities and identical user 
+interfaces for PS-FTS calculations.
 
 \section psfts_param_overview_sec Parameter File Structure (Overview)
 
-A parameter file that enables either BD or MC PS-FTS calculations
-must begin with Mixture, Interaction and Domain blocks similar to those
-used for an SCFT parameter file, as in the above example. To enable
-stochastic simulations, the file must also contain a selectable
-"Simulator" block, which may be either a "BdSimulator" block, for
-BD simulations, or an "McSimulator" block, for MC simulation.  The
-BdSimulator and McSimulator blocks use analogous but slightly
-different param file formats, because they contain computational
-parameters for different types of sampling algorithms.
+A parameter file used to initialize a BD or MC PS-FTS calculation must 
+begin with Mixture, Interaction and Domain blocks similar to those in a 
+corresponding SCFT parameter file, as in the above example. To enable 
+either type of stochastic simulations, the file must also contain a 
+selectable "Simulator" block. This Simulator block may be either a 
+"BdSimulator" block, for BD simulations, or an "McSimulator" block, for 
+MC simulation.  The BdSimulator and McSimulator blocks use analogous 
+but slightly different formats, which must differ somewhat because 
+they contain computational parameters for different types of sampling 
+algorithms.
 
-The format of the main System block, including all allowed subblocks,
-is shown below in skeleton form:
+The format of the main System block of any pscf_pc or pscf_pg parameter
+file, including all allowed elements, is shown below in skeleton form:
 \code
 System{
   Mixture{ ... }
@@ -105,14 +111,14 @@ System{
 }
 \endcode
 Note that only the Mixture, Interaction, and Domain blocks are required.
-The optional Iterator and Sweep blocks are only used for SCFT calculations
-and so would normally be omitted from a parameter used to initialize a
-BD or MC field theoretic simulation.  The "Simulator" block is an optional,
-selectable block that is only used only for FTS, and so is normally
-omitted from parameter files that are only used for SCFT calculations.
+The optional Iterator and Sweep blocks are only used for SCFT calculations,
+and so would normally be omitted from a parameter file used to initialize 
+a BD or MC simulation.  The "Simulator" block is an optional, selectable 
+block that is only used only for FTS, and is thus normally omitted from 
+parameter files used for SCFT calculations.
 
-The typical format for a parameter file that enables Brownian dynamics
-FTS, but that not does enable SCFT, is thus, in skeleton form:
+The typical format of a parameter file for a Brownian dynamics simulation,
+is thus, in skeleton form:
 \code
 System{
   Mixture{ ... }
@@ -121,7 +127,9 @@ System{
   BdSimulator{ ... }
 }
 \endcode
-The corresponding format for a parameter file for MC simulation is:
+This is a skeleton representation of the format used in the example shown 
+above.  The corresponding format of a typical parameter file for MC 
+simulation is:
 \code
 System{
   Mixture{ ... }
@@ -130,44 +138,40 @@ System{
   McSimulator{ ... }
 }
 \endcode
-Formats of the various blocks of these skeleton are discussed below.
+Formats of the various blocks within these skeletons are discussed below.
 
-\section psfts_param_Mixture_sec Common Features: Mixture, Interaction and Domain Blocks
+\section psfts_param_Mixture_sec Mixture, Interaction and Domain Blocks
 
 The Mixture, Interaction, and Domain blocks of a parameter file for a
-PS-FTS are nearly identical to the corresponding blocks of an SCFT
-parameter file.  The only differences are noted below:
+PS-FTS calculation are nearly identical to the corresponding blocks of 
+an SCFT parameter file. The required format for the Interaction block 
+is identical to that used for an SCFT calculation. The only differences 
+in the Mixture and Domain blocks are noted below:
 
 <ul>
 
 <li>
-<b> vMonomer (presence) </b> : The Mixture block used for a FTS
-calculation must include a value for a parameter named vMonomer that
-gives the monomer reference volume in an incompressible system.  This
-is an optional parameter is not needed for most SCFT calculations, and
-so is usually omitted from SCFT parameter files.  In a FTS of a copolymer
-melt, however, the value of vMonomer determines the invariant degree of
-polymerization, and thus controls the magnitude of field fluctuations.
-The optional vMonomer parameter appears immediately after the Polymer
-blocks and Solvent blocks (if any) that describe the chemical constituents
-of the system.  If the vMonomer parameter is omitted, it is set to
-vMonomer = 1.0 by default, which is often not what one wants.
-</li>
-
-<li>
-<b> Unit cell parameters (interpretation) </b> : The parameters required
-to describe a unit cell for a PS-FTS calculation often have a different
-interpretation than those used for an SCFT calculation.  In either context,
-the unit cell parameters describe the overall periodic computational unit
-cell.  In SCFT calculations, this computational unit cell is usually
-designed to contain a single crystallographic unit cell.  In a FTS,
-however, the unit cell is often taken to be large enough to contain
-multiple unit cells of any expected ordered microstructure.  In either
-type of calculation, the lattice type of the computational unit cell
-(cubic, orthorhombic, etc.) is specified in the parameter file by the
-"latice" string parameter, but values for unit cell dimensions are
-normally given in the header of the file containing the initial w
-fields.
+<b> vMonomer (presence) </b> : The Mixture block used for a PS-FTS
+calculation must include a value for a parameter named vMonomer, which
+gives the monomer reference volume in an incompressible system, also 
+denoted in mathematical formalus by \f$ v \f$ .  This is an optional 
+parameter that is not needed for most SCFT calculations, and so is 
+usually omitted from SCFT parameter files.  In a FTS, however, the 
+value of \f$ v \f$ (or vMonomer) controls the magnitude of field 
+fluctuations about a saddle-point configuration, which become small 
+in the limit \f$ v \rightarrow 0 \f$. In a simulation of a melt of 
+block polymers of length \f$ N \f$ in which all monomers have a common 
+statistical segment length \f$ b \f$, the value of vMonomer determines
+the so-called invariant degree of polymerization 
+\f[
+   \overline{N} = N (b^{3}/v)^{2} \quad,
+\f]
+which is a dimensionless parameter that controls the magnitude of 
+deviations from SCFT.  The vMonomer parameter appears immediately 
+after the Polymer blocks and Solvent blocks (if any) that describe 
+the chemical constituents of the system.  If the vMonomer parameter 
+is omitted, it is set to vMonomer = 1.0 by default, which is usually
+not what one wants.
 </li>
 
 <li>
@@ -176,24 +180,39 @@ the existence of any space group symmetry for the fields, because the
 stochastic field fluctuations will never exactly preserve any of the
 space group symmetries characteristic of many SCFT solutions.  The
 optional spaceGroup parameter of the Domain block must thus be omitted
-from a FTS parameter file.
+from an FTS parameter file.
 </li>
 
 </ul>
+
+The periodic unit cell used in a PS-FTS calculation is often larger than
+that used for SCFT calculations.  In either context, the lattice type
+and unit cell parameters describe the overall periodic computational 
+unit cell. In SCFT calculations, this computational unit cell is usually 
+designed to contain a single crystallographic unit cell of a periodic 
+structure, using lattice parameters that are adjusted to minimize the
+free energy density. In a FTS, however, the computational unit cell is 
+often taken to be large enough to contain multiple unit cells of any
+expected ordered structure.  In either type of calculation, the lattice 
+type of the computational unit cell (cubic, orthorhombic, etc.) is 
+specified in the parameter file by the "latice" string parameter, while 
+values for unit cell parameters (i.e., lengths and angles) are normally 
+given in the header of the file containing the initial w field 
+configuration.
 
 \section psfts_param_brownian_sec Brownian Dynamics: BdSimulator Block
 
 The BdSimulator and McSimulator parameter blocks share a common internal
 structure, except for differences in the sub-block that specifies details
-of the BD or MC sampling algorithm.
+of the actual BD or MC sampling algorithm.
 
-Parameter format for both types of Simulator block include several
-optional blocks, including Perturbation and Ramp blocks, that are not
-needed for simple simulations but are included in the format descriptions
-given here for the sake of completeness.
+Parameter formats for both types of Simulator block include optional 
+Perturbation and Ramp blocks that are not needed for simple simulations 
+but are included in the format descriptions given here for the sake of 
+completeness.
 
-The parameter file format for the BdSimulator block in a file that
-enables BD simulation is given in skeleton form below:
+The parameter file format for the BdSimulator block in a parameter file 
+for a BD simulation is given in skeleton form below:
 \code
   BdSimulator{
     seed* int
@@ -206,25 +225,27 @@ enables BD simulation is given in skeleton form below:
 \endcode
 Elements of this block are discussed below.
 
-The optional seed parameter may be used to set an integer seed for a
-random number generator. If it omitted, a seed will be generated
-automatically.
+** seed **: The optional seed parameter provides an integer seed for 
+a random number generator. If it omitted, a seed will be generated
+automatically, using a clock time as an input.  This parameter is often
+omitted.
 
-The BdStep, Compressor, and AnalyzerManager blocks contain parameters
-for, respectively, the BD step algorithm, the compressor algorithm,
-and any associated analysis operations.  The AnalyzerManager block,
-if present, contains one or more nested subblocks that each specify
-a specific analysis operations, as discussed below.
+The BdStep, Compressor, and AnalyzerManager blocks contain parameters for, 
+respectively, the BD step algorithm, the compressor algorithm, and any 
+associated data analysis operations.  The AnalyzerManager block, if 
+present, contains one or more nested subblocks that each specify a 
+specific analysis operations, as discussed below.
 
 The BdStep and Compressor blocks are marked as optional in the above
-format description, but must actually both be present in order to run
-a BD simulation. If either is absent, the program may be able to
-successfully read the parameter file, but an error will occur if a
-SIMULATE command is encountered in the command file in order to
-actually run a BD simulation.  These two blocks are treated as
-optional during processing of the parameter file because they are not
-needed for other possible types of calculation, such as post
-processing of a field trajectory.
+format description, but must both be present in order to actually 
+run a BD simulation. If the BdStep block is present, then the Compressor
+block is required. If both of these block are absent, the program will
+be able to successfully read the parameter file, but an error will 
+occur if a SIMULATE command is encountered in the command file. These
+two blocks are treated as optional during processing of the parameter 
+file because they are not needed for other possible types of 
+calculation. Specifically, they are not needed during postprocessing
+of a field trajectory file. 
 
 The BdStep and Compressor blocks are both selectable. The actual block
 labels for these parameter file blocks may thus refer to the names of
@@ -232,12 +253,13 @@ classes that implement particular choices of BD step algorithm and
 compressor algorithms, rather than the generic names BdStep and
 Compressor used in the above description.
 
-Perturbation and Ramp blocks are optional blocks that are not needed
-for simple simulations of a standard model with fixed parameters,
-and that are omitted from examples discussed on this page.
+Perturbation and Ramp blocks are selectable, optional blocks that are 
+not needed for simple simulations of a standard model with fixed 
+parameters. These blocks are omitted from examples discussed on this 
+page.
 
-For reference, here is the BdSsimulator block of the complete parameter
-file given above :
+For reference, here is the BdSsimulator block of the example BD 
+parameter file given above :
 \code
   BdSimulator{
     seed           486893701
@@ -249,16 +271,14 @@ file given above :
       maxHist      40
     }
     AnalyzerManager{
-      baseInterval    10
+
+      StepLogger{
+        interval        20
+      }
 
       HamiltonianAnalyzer{
         interval        10
         outputFileName  out/hamiltonian
-        nSamplePerBlock 5
-      }
-
-      StepLogger{
-        interval        20
       }
 
     }
@@ -268,13 +288,13 @@ This example uses the default BdStep algorithm, as indicated by the
 generic label BdStsep in the first line of the selectable BdStep block.
 The default algorithm is a Leimkuhler-Mathews (LM) Brownian dynamics
 step algorithm, which could also be selected using the specific class
-name LMBDStep as block label in the first line of this block.  This
-example also uses the default compressor algorithm, as indicated by
-generic label "Compressor".  The default compressor algorithm is a
+name LMBDStep as a label for this block.  This example also uses the 
+default compressor algorithm, as indicated by the use of the generic 
+block label "Compressor".  The default compressor algorithm is a
 linear-response Anderson mixing (LRAM) algorithm that was devised as
 part of the development of PSCF, which can also be selected using the
-class label LrAmCompressor.  We recommend these two algorithm as the
-current methods of choice for almost all BD simulations.
+specific class label LrAmCompressor.  We recommend these two algorithm 
+as the current methods of choice for almost all BD simulations.
 
 See also: \ref rpc_BdSimulator_page "BdSimulator parameter file format"
 
@@ -286,9 +306,9 @@ the label of the BdStep parameter file block. Each such label is a
 clickable link to a file containing documentation of the algorithm and
 associated parameter file format.
 <ul>
-  <li> \subpage rpc_LMBdStep_page "LMBdStep" </li> (default)
-  <li> \subpage rpc_PredCorrBdStep_page "PredCorrBdStep" </li>
-  <li> \subpage rpc_ExplicitBdStep_page "ExplicitBdStep" </li>
+  <li> \ref rpc_LMBdStep_page "LMBdStep" </li> (default)
+  <li> \ref rpc_PredCorrBdStep_page "PredCorrBdStep" </li>
+  <li> \ref rpc_ExplicitBdStep_page "ExplicitBdStep" </li>
 </ul>
 
 \section psfts_param_montecarlo_sec Monte Carlo: McSimulator Block
@@ -350,12 +370,10 @@ analogous to the BdSimulator block of the previous example:
       maxHist      40
     }
     AnalyzerManager{
-      baseInterval    10
 
       HamiltonianAnalyzer{
         interval        10
         outputFileName  out/hamiltonian
-        nSamplePerBlock 5
       }
 
       StepLogger{
@@ -367,8 +385,8 @@ analogous to the BdSimulator block of the previous example:
 }
 \endcode
 The only difference between this McSimulator block and the BdSimulator
-block shown previously is the appearance of a McMmoveManager block
-in the same location where a BdSimulator would contain a BdStep block.
+block shown previously is the appearance of a McMmoveManager block in 
+the location where a BdSimulator would instead contain a BdStep block.
 Like the BD example, this example uses the default LrAmCompressor
 algorithm, which is selected by using "Compressor" as a generic block
 label.
@@ -414,8 +432,8 @@ pscf_pg are listed below, labelled by the name that is used in the first
 line of a corresponding parameter file block. Further information about
 each MC move can be obtained by clicking on the associated link.
 <ul>
-  <li> \subpage rpc_ForceBiasMove_page "ForceBiasMove" </li>
-  <li> \subpage rpc_RealMove_page "RealMove" </li>
+  <li> \ref rpc_ForceBiasMove_page "ForceBiasMove" </li>
+  <li> \ref rpc_RealMove_page "RealMove" </li>
 </ul>
 
 \section psfts_param_compressor_sec Compressor Block
@@ -431,9 +449,9 @@ on the link associated with each algorithm label to access more a
 detailed description of each the algorithm, and the format of the
 associated parameter file block.
 <ul>
-  <li> \subpage rpc_LrAmCompressor_page "LrAmCompressor" (default) </li>
-  <li> \subpage rpc_LrCompressor_page "LrCompressor" </li>
-  <li> \subpage rpc_AmCompressor_page "AmCompressor" </li>
+  <li> \ref rpc_LrAmCompressor_page "LrAmCompressor" (default) </li>
+  <li> \ref rpc_LrCompressor_page "LrCompressor" </li>
+  <li> \ref rpc_AmCompressor_page "AmCompressor" </li>
 </ul>
 The LrAmCompressor is the default choice, and is generally the most
 efficient of these three options. As the default, the LrAmCompressor
@@ -448,23 +466,27 @@ that each enable use of an object that performs a data analysis and/or
 data output operation at regular intervals during a simulation.
 The underlying C++ objects are instances of subclasses of a base
 class named "Analyzer", and are generically referred to in the PSCF
-source code and documentation as analyzers.
+source code and documentation as analyzer classes or analyzers.
 
-The first parameter in an AnalyzerManager block is an int parameter
-called "baseInterval". This is followed by one or more subblocks
-that each specify a particular type of analyzer. The first parameter
-of each such subblock is an int parameter called "interval" that
-determines how often the analyzer is called. The interval parameter
-for each Analyzer must be an integer multiple of the "baseInterval".
-The operation defined by each analyzer is performed when the
-internal counter that keeps track of the number of BD steps or
-attempted MC moves is an integer multipe of its interval parameter.
+The AnalyzerManager block contains one or more subblocks, each of which 
+enables a particular analyzer algorithm (or class). The first line of
+each subblock must contain the label of a known analyzer class, followed
+immediately by a opening bracket. 
 
-Below, we show the AnalyzerManager block for the BD simulation
-parameter file shown at the beginning of this page:
+The first parameter of each such analyzer block is an int parameter 
+called "interval" that determines how often the action performed by
+the analyzer is performed.  The action defined by each analyzer is 
+performed when the internal step counter that keeps track of the 
+number of BD steps or attempted MC moves is an integer multipe of its 
+interval parameter.
+
+The full format for an AnalyzerManager parameter file block is given
+\ref rpc_AnalyzerManager_page "here". 
+
+Below, we show the AnalyzerManager block for the BD simulation parameter 
+file shown at the beginning of this page:
 \code
     AnalyzerManager{
-      baseInterval    10
 
       StepLogger{
         interval      100
@@ -473,15 +495,12 @@ parameter file shown at the beginning of this page:
       HamiltonianAnalyzer{
         interval        10
         outputFileName  out/hamiltonian
-        nSamplePerBlock 5
       }
 
     }
 \endcode
-In this example, the baseInterval is 10. The AnalyzerManager block
-contains subblocks for two analyzers named StepLogger and
-HamiltonianAnalyzer. Both of these contain "interval" parameter that
-is an integer multiple of the baseInterval of 10, as they must.
+In this example, the AnalyzerManager block contains subblocks for two 
+analyzers named StepLogger and HamiltonianAnalyzer. 
 
 The StepLogger is a simple analyzer that periodically outputs the current
 value of the step counter (the number of completed BD or MC steps) to
@@ -503,6 +522,14 @@ analyzers generally write results to different files.
 A list of all of the available analyzers, including links to detailed
 documentation, was given in earlier the discussion of
 \ref psfts_algorithm_analyzer_sec "algorithms" .
+
+\section psfts_param_analyzer_sec See Also:
+
+<ul>
+<li> \subpage rpc_BdSimulator_page "BdSimulator"  </li>
+<li> \subpage rpc_McSimulator_page "BdSimulator" </li>
+<li> \subpage rpc_AnalyzerManager_page "AnalyzerManager" </li>
+</ul>
 
 <BR>
 \ref psfts_algorithm_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
