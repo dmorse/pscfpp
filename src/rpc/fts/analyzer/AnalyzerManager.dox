@@ -35,7 +35,7 @@ must start with an opening line that contains the label (or class
 name) for a known analyzer algorithm that is implemented by a 
 subclass of the Analyzer base class. 
 
-** baseInterval **: The baseInterval paratmer is an optional integer 
+<b> baseInterval </b> : The baseInterval parameter is an optional integer 
 parameter that is set equal to 1 by default. If the baseInterval is set 
 to a value greater than 1, then the interval parameter for every analyzer 
 is required to be a multiple of the baseInterval. If the baseInterval

@@ -1,4 +1,4 @@
-/*! \page psfts_analysis_page Trajectory Postprocessing
+/*! \page psfts_analysis_page Field Trajectory Files
 
 \ref psfts_command_page      (Prev)  &nbsp; &nbsp; &nbsp; &nbsp;
 \ref psfts_ramp_page    (Next)
@@ -13,36 +13,59 @@ either of two methods.
    - <b> Postprocessing </b> : Analyzing data after a simulation is 
      completed, by reading and processing a field trajectory file
 
+A field trajectory file is a file that contains a sequence of w-field 
+configurations that are output at regular intervals during a simulation. 
+This is analogous to the kind of "trajectory" file produced during an 
+MD simulation of a particle based model, which contains lists of particle 
+positions and velocities.  A trajectory file for a field theoretic 
+simulation contains a sequence of "frames" that are written to the file
+at regular intervals, in which each frame contains the configuration of 
+the w-fields at end completion of a particular BD or MD step. 
+
+The main advantage of postprocessing a trajectory file is that it allows 
+a user to delay or revise decisions about what types of analysis might 
+be useful. The main disadvantage of postprocessing is the amount of disk 
+space required to store field trajectories, particularly if frames are 
+written frequently.  Conversely, the main advantage of doing some data
+analysis during a simulation is that doing so may allow more frequent 
+sampling of values while requiring less disk space.
+
 On-the-fly data analysis already been discussed, as part of the discussion 
-of parameter files used to initialize a simulation. To periodically 
-perform data analysis and file IO operations during a simulation, one 
-must include an appropriate set of analyzer subblocks within the
-AnalyzerManager block of the parameter file that is used to initialize 
-the simulation.
+of parameter files used to initialize a simulation: To perform data 
+analysis and file output operations during a simulatio, one must include 
+an appropriate set of analyzer subblocks within the AnalyzerManager block 
+of the parameter file that is used to initialize the simulation.
 
 We focus in the remainder of this page on generation and postprocessing
 of field trajectory files.
 
-\section psfts_algorith_trajectory_sec Field Trajectory Files
+\section psfts_algorith_trajectory_sec Creating a Field Trajectory File
 
-A field trajectory file is a file that is output during a simulation 
-that contains a sequence of w-field configurations obtained at regular
-intervals during the simulation. This is analogous to the kind of 
-trajectory file produced during an MD simulation of a particle based 
-model, which contains lists of particle positions and velocities. 
-A trajectory file for a field theoretic simulation contains a sequence 
-of frames that are written to file at regular intervals, in which each 
-frame contains the configuration of the w-fields at the completion of 
-a particular BD or MD step. 
-
+A trajectory file can be created by the TrajectoryWriter analyzer class.
 To generate a trajectory file during a BD or MC simulation, one must
-initialize the simulation using a parameter file that contains a
-TrajectoryWriter subblock within the AnalyzerManager block.  The 
-"interval" parameter of the TrajectoryWriter block determines the 
-number of BD or MC steps between frames of the trajectory file.  
-Trajectory file frames are usually written somewhat infrequently, 
-with an interval of 10 to 100 steps, rather than writing the field 
-configuration after every step.
+thus include a TrajectoryWriter subblock within the AnalyzerManager 
+block of the parameter file that is used to initialize the simulation.
+The "interval" parameter of the TrajectoryWriter block gives the number 
+of BD steps or atttempted MC steps between frames of the trajectory 
+file.  Trajectory file frames are usually written somewhat infrequently,
+with a typical interval of 10 to 100 steps, rather than writing the 
+field configuration after every step.
+
+The file format used by the TrajectoryWriter class contains a header
+with information that does not change during the simulation, followed
+by a sequence of frames. The format of the header is similar to that
+of used in an r-grid field file such as that used to read an initial
+field configuration. The format of each frame is similar to that of
+the data section of an r-grid field file. 
+
+The current version of PSCF only supports one file format for 
+trajectory files, which is written by a class named TrajectoryWriter
+and read by a class named TrajectoryReader. The file formats used
+for the parameter and command file are, however, designed to make
+it relatively simple for users to define other formats by adding 
+classes that read and write whatever format they wish. 
+
+\see rpc_TrajectoryWriter_page
 
 \section psfts_analysis_postprocess_sec Postprocess Analysis
 
@@ -60,46 +83,46 @@ classes are available for use during either on-the-fly analysis or
 postprocessing. 
 
 The ANALYZE command takes four command arguments, named min, max, 
-className, and fileName. This command always causes the program to read 
-the entire trajectory file, but data analysis operations are only applied 
-to frames with a frame index between min and max, inclusive. The className 
-parameter is a string that gives the name of a class that wil be used to 
-read the parameter file. In the current version of PSCF, there is only 
-one such class, which should be invoked by using the string value
-"TrajectoryReader". The "fileName" parameter gives the name of the 
-trajectory file that should be read and processed, given as a path 
-defined relative to the directory from which the pscf_pc or pscf_pg 
-command was invoked.
+className, and fileName. This command always causes the program to 
+read the entire trajectory file starting with the first frame, but 
+data analysis operations are only applied to frames with a frame 
+index between min and max, inclusive. 
 
-The "interval" parameter associated with each analyzer is interpreted
-somewhat differently postprocessing of a trajectory file than during
-a simulation. During postprocessing,  each such interval parameter is 
-interpreted as a number of trajectory file frames between successive 
-data analysis or file output operations, rather than as a number of BD 
-or MC simulation steps.  Because frames are usually output somewhat 
-infrequently, the interval values are often set to 1 in parameter files
-used to initialize a postprocessing operation, in order to analyze 
-every frame of available data.
+The className parameter is a string that gives the name of a class that 
+will be used to read the parameter file. In the current version of PSCF, 
+there is only one such class, named "TrajectoryReader", which reads the
+output format that is written by the "TrajectoryWriter" class. Currently, 
+this parameter should thus always be set to "TrajectoryReader". The 
+name of this class is treated as parameter to allow the possibility
+of future extension to files other file formats.
+
+The "fileName" parameter gives the name of the trajectory file that 
+should be read and processed. This file name is given as a path that,
+is defined relative to the directory from which the pscf_pc or 
+pscf_pg command was invoked. 
+
+During postprocessing, the "interval" parameter associated with each 
+analyzer is interpreted somewhat differently than during a simulation. 
+During postprocessing,  each such interval parameter is interpreted 
+as a number of trajectory file frames between successive data analysis 
+or file output operations, rather than as a number of BD or MC 
+simulation steps.  Because frames are usually output somewhat 
+infrequently, the interval values are often set to 1 in parameter 
+files used to initialize a postprocessing operation, in order to 
+analyze every frame of available data.
 
 A parameter file that is used to initialize a postprocessing operation
 generally has a slightly different format than one used to initialize
-a simulation. Both types of parameter file must include Mixture, Domain, 
-and Interaction blocks, since the information given in these blocks may 
-be needed during postprocessing, as well as during a simulation.  Such 
-a file must also contain either a BdSimulator or McSimulator block with 
-an AnalyzerManager subblock containing one or more analyzer subblocks. 
-The BdStep or McMoveManager, Compressor, and Ramp subblocks of the 
-Simulator block are not used during postprocessing, of a trajectory file, 
-however, and so can all be omitted from a parameter file used for this 
-purpose. 
-
-The main advantage of postprocessing a trajectory file is that it allows 
-a user to delay and revise decisions about what types of analysis might 
-be useful. The main disadvantage of postprocessing is the amount of disk 
-space required to store field trajectories, particularly if frames are 
-written frequently.  Conversely, the main advantage of doing some types 
-of data analysis during a simulation is that doing so may allow more 
-frequent sampling of values without requiring excessive disk space.
+a simulation. Both types of parameter file must include Mixture, 
+Interaction and Domain blocks, since the basic information about the
+system given in these blocks is often needed by analyzers during 
+postprocessing, as well as during a simulation.  Such a file must 
+also contain either a BdSimulator or McSimulator block with ana
+AnalyzerManager subblock that contains one or more analyzer subblocks. 
+The BdStep or McMoveManager block, Compressor block, and Ramp block
+within the BdSimulator or McSimulator block are not needed during 
+postprocessing of a trajectory file, however, and so can all be 
+safely omitted from a parameter file used for this purpose.
 
 <BR>
 \ref psfts_command_page   (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 

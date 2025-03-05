@@ -523,11 +523,11 @@ A list of all of the available analyzers, including links to detailed
 documentation, was given in earlier the discussion of
 \ref psfts_algorithm_analyzer_sec "algorithms" .
 
-\section psfts_param_analyzer_sec See Also:
+\section psfts_param_seealso_sec See Also:
 
 <ul>
 <li> \subpage rpc_BdSimulator_page "BdSimulator"  </li>
-<li> \subpage rpc_McSimulator_page "BdSimulator" </li>
+<li> \subpage rpc_McSimulator_page "McSimulator" </li>
 <li> \subpage rpc_AnalyzerManager_page "AnalyzerManager" </li>
 </ul>
 

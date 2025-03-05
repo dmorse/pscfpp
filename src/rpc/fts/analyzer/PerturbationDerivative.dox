@@ -2,7 +2,7 @@ namespace Pscf {
 namespace Rpc {
 
 /*! 
-\page rpc_PerturbationDerivative_page Rpc::PerturbationDerivative
+\page rpc_PerturbationDerivative_page PerturbationDerivative
 
 This analyzer calculates the derivative of free energy with 
 respect to the perturbation parameter \f$\lambda \f$.
