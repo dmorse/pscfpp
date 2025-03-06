@@ -64,23 +64,23 @@ public:
    void testFourthOrderParameter()
    {
       printMethod(TEST_FUNC);
-      std::string filename = filePrefix() + "out/fourthOrder_analyzer";
+      std::string filename = filePrefix() + "out/fourthOrder_analyzer.ave";
       std::ifstream file(filename);
       if (!file.is_open()) {
-        std::cout << "Error: Could not open file out/fourthOrder" 
+        std::cout << "Error: Could not open file out/fourthOrder_analyzer.ave" 
                   << std::endl;
 
       }
+      
+      // Obtain the average value of fourthOrder parameter
       std::string line;
-      
-      // Skip the first line
-      std::getline(file, line);
-      
-      double chi; double fourthorder;
+      double fourthorder;
+      std::string x;
       std::getline(file, line);
       std::istringstream iss(line);
-      iss >> chi >> fourthorder;
-      double diff = fabs(0.42383968 - fourthorder);
+      iss >> x  >> x >> fourthorder;
+      
+      double diff = fabs(0.40320774 - fourthorder);
       TEST_ASSERT(diff < 1.0E-2);
    }
 

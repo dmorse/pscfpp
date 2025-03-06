@@ -54,37 +54,6 @@ namespace Rpg {
       */
       virtual void readParameters(std::istream& in);
 
-      #if 0
-      /**
-      * Load parameters from archive.
-      *
-      * Default implementation, loads interval and outputFileName.
-      *
-      * \param ar input/loading archive
-      */
-      virtual void loadParameters(Serializable::IArchive& ar);
-
-      /**
-      * Load parameters to archive.
-      *
-      * Default implementation saves interval and outputFileName.
-      *
-      * \param ar loading/saving archive
-      */
-      virtual void save(Serializable::OArchive& ar);
-  
-      /**
-      * Serialize to/from an archive. 
-      *
-      * Saves interval and outputFileName.
-      * 
-      * \param ar      archive
-      * \param version archive version id
-      */
-      template <class Archive>
-      void serialize(Archive& ar, const unsigned int version);
-      #endif
-
       /**
       * Complete any required initialization.
       *
@@ -162,22 +131,6 @@ namespace Rpg {
       */
       void readOutputFileName(std::istream &in);
 
-      #if 0
-      /**
-      * Load interval from archive, with error checking.
-      *
-      * \param ar input/loading archive
-      */
-      void loadInterval(Serializable::IArchive& ar);
-
-      /**
-      * Load output file name from archive.
-      *
-      * \param ar input/loading archive
-      */
-      void loadOutputFileName(Serializable::IArchive& ar);
-      #endif
-
       /**
       * Get the FileMaster by reference.
       *
@@ -195,14 +148,14 @@ namespace Rpg {
       */
       std::string outputFileName(const std::string& suffix) const;
 
-      /// Base name of output file(s).
-      std::string outputFileName_;
-
       /// Number of simulation steps between subsequent actions.
       long interval_;
 
    private:
 
+      /// Base name of output file(s).
+      std::string outputFileName_;
+      
       /// Pointer to fileMaster for opening output file(s).
       FileMaster* fileMasterPtr_;
 
