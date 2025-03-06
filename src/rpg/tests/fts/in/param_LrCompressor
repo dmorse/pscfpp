@@ -1,6 +1,6 @@
 LrCompressor{
-     epsilon      1.0e-8
-     maxItr       200
-     verbose	  1
-     errorType    rmsResid
+   epsilon      1.0e-8
+   maxItr       200
+   verbose	1
+   errorType    rmsResid
 }
