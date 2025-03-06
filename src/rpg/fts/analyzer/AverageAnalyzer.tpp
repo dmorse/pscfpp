@@ -1,5 +1,5 @@
-#ifndef RPC_AVERAGE_ANALYZER_TPP
-#define RPC_AVERAGE_ANALYZER_TPP
+#ifndef RPG_AVERAGE_ANALYZER_TPP
+#define RPG_AVERAGE_ANALYZER_TPP
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory
@@ -10,8 +10,8 @@
 
 #include "AverageAnalyzer.h"
 
-#include <rpc/System.h>
-#include <rpc/fts/simulator/Simulator.h>
+#include <rpg/System.h>
+#include <rpg/fts/simulator/Simulator.h>
 
 #include <util/format/Int.h>
 #include <util/format/Dbl.h>
@@ -19,7 +19,7 @@
 #include <util/misc/ioUtil.h>
 
 namespace Pscf {
-namespace Rpc {
+namespace Rpg {
 
    using namespace Util;
 
@@ -92,7 +92,7 @@ namespace Rpc {
       }
 
    }
-
+   
    /*
    * Write a sampled or block average value to file.
    */
@@ -148,7 +148,7 @@ namespace Rpc {
          outputFile_ << std::endl;
       }
       
-      outputFile_.close();
+       outputFile_.close();
 
    }
 

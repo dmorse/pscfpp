@@ -8,7 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "Analyzer.h"                             // base class
+#include "AverageAnalyzer.h"                      // base class
 
 #include <util/containers/DArray.h>               // member
 #include <util/accumulators/Average.h>            // member
@@ -45,7 +45,7 @@ namespace Rpc {
    * \ingroup Rpc_Fts_Analyzer_Module
    */
    template <int D>
-   class MaxOrderParameter : public Analyzer<D>
+   class MaxOrderParameter : public AverageAnalyzer<D>
    {
 
    public:
@@ -58,86 +58,40 @@ namespace Rpc {
       /**	
       * Destructor.
       */
-      ~MaxOrderParameter(){};
-
-      /**
-      * Read parameters from file.
-      *
-      * Input format:
-      *
-      *   - int               interval        sampling interval 
-      *   - string            outputFileName  output file base name
-      *
-      * \param in input parameter stream
-      */
-      void readParameters(std::istream& in);
+      virtual ~MaxOrderParameter();
    
       /** 
       * Setup before simulation loop.
       */
-      void setup();
-   
+      virtual void setup();
+      
       /**
-      * Compute a sampled value and update the accumulator.
+      * Compute and return the max order parameter.
+      */
+      virtual double compute();
+      
+      /**
+      * Output a sampled or block average value.
       *
-      * \param iStep step counter
+      * \param step  value for step counter
+      * \param value  value of physical observable
       */
-      void sample(long iStep);
-
-      /**
-      * Output results to predefined output file.
-      */
-      void output();
+      virtual void outputValue(int step, double value);
             
-      /**
-      * Compute max order parameter
-      */
-      void computeMaxOrderParameter();
+      using AverageAnalyzer<D>::readParameters;
+      using AverageAnalyzer<D>::nSamplePerOutput;
+      using AverageAnalyzer<D>::setup;
+      using AverageAnalyzer<D>::sample;
+      using AverageAnalyzer<D>::output;
    
    protected:
 
-      /**
-      * Output file stream.
-      */
-      std::ofstream outputFile_;
-      
-      /**
-      * Output filename
-      */
-      std::string filename_;
-      
-      /**
-      * Max order parameter
-      */
-      double maxOrderParameter_;
-   
-      /** 
-      * Return reference to parent system.
-      */      
-      System<D>& system();
-      
-      /** 
-      * Return reference to parent Simulator.
-      */
-      Simulator<D>& simulator();
-      
+      using AverageAnalyzer<D>::simulator;
+      using AverageAnalyzer<D>::system;
+      using AverageAnalyzer<D>::outputFile_;
       using ParamComposite::setClassName;
-      using ParamComposite::read;
-      using ParamComposite::readOptional;
-      using Analyzer<D>::interval;
-      using Analyzer<D>::isAtInterval;
-      using Analyzer<D>::outputFileName;
-      using Analyzer<D>::setClassName;
-      using Analyzer<D>::readInterval;
-      using Analyzer<D>::readOutputFileName;
-
-   private:
-
-      /// Pointer to parent Simulator
-      Simulator<D>* simulatorPtr_;     
       
-      /// Pointer to the parent system.
-      System<D>* systemPtr_; 
+   private:
       
       /// Number of wavevectors in fourier mode.
       int  kSize_;
@@ -145,33 +99,17 @@ namespace Rpc {
       /// Dimensions of fourier space 
       IntVec<D> kMeshDimensions_;
       
-      /// Statistical accumulator.
-      Average accumulator_;
-      
-      /// Whether the Average object is needed?
-      bool hasAverage_;
-      
-      /// Number of samples per block average output.
-      int nSamplePerBlock_;
-      
       /// Has readParam been called?
       bool isInitialized_;
       
       /// W_ in Fourier mode
       RFieldDft<D> wK_;
 
+      /// Max order parameter
+      double maxOrderParameter_;
+
    };
    
-   // Get the parent system.
-   template <int D>
-   inline System<D>& MaxOrderParameter<D>::system()
-   {  return *systemPtr_; }
-   
-   //Get parent Simulator object.
-   template <int D>
-   inline Simulator<D>& MaxOrderParameter<D>::simulator()
-   {  return *simulatorPtr_; }
-
    #ifndef RPC_MAX_ORDER_PARAMETER_TPP
    // Suppress implicit instantiation
    extern template class MaxOrderParameter<1>;

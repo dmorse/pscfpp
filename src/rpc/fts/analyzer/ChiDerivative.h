@@ -8,12 +8,12 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "ThermoDerivativeAnalyzer.h"
+#include "AverageAnalyzer.h"
 #include <rpc/System.h>
 #include <rpc/fts/simulator/Simulator.h>
 
 namespace Pscf {
-namespace Rpc 
+namespace Rpc
 {
 
    template <int D> class System;
@@ -29,56 +29,49 @@ namespace Rpc
    * \ingroup Rpc_Fts_Analyzer_Module
    */
    template <int D>
-   class ChiDerivative : public ThermoDerivativeAnalyzer<D>
+   class ChiDerivative : public AverageAnalyzer<D>
    {
-   
+
    public:
-   
+
       /**
       * Constructor.
       */
       ChiDerivative(Simulator<D>& simulator, System<D>& system);
-   
+
       /**
       * Destructor.
       */
-      virtual ~ChiDerivative(); 
+      virtual ~ChiDerivative();
 
-      /**
-      * Read parameters from archive.
-      * 
-      * \param in input parameter file
-      */
-      virtual void readParameters(std::istream& in);
-      
-      /**
-      * Setup before simulation loop.
-      */
-      virtual void setup();
-      
       /**
       * Compute and return the derivative of H w/ respect to chi.
       */
-      virtual double computeDerivative();
+      virtual double compute();
       
       /**
-      * Return current chi value.
+      * Output a sampled or block average value.
+      *
+      * \param step  value for step counter
+      * \param value  value of physical observable
       */
-      virtual double variable();
-      
-      /**
-      * Return the derivative parameter type string "Chi Derivative".
-      */
-      virtual std::string parameterType();
-      
-      using ParamComposite::setClassName;
-      
+      virtual void outputValue(int step, double value);
+
+      using AverageAnalyzer<D>::readParameters;
+      using AverageAnalyzer<D>::nSamplePerOutput;
+      using AverageAnalyzer<D>::setup;
+      using AverageAnalyzer<D>::sample;
+      using AverageAnalyzer<D>::output;
+
    protected:
- 
-      using ThermoDerivativeAnalyzer<D>::simulator;
-      using ThermoDerivativeAnalyzer<D>::system;         
+
+      using AverageAnalyzer<D>::simulator;
+      using AverageAnalyzer<D>::system;
+      using AverageAnalyzer<D>::outputFile_;
+      using ParamComposite::setClassName;
+
    };
-   
+
    // Suppress implicit instantiation
    #ifndef RPC_CHI_DERIVATIVE_TPP
    extern template class ChiDerivative<1>;
@@ -88,4 +81,4 @@ namespace Rpc
 
 }
 }
-#endif 
+#endif
