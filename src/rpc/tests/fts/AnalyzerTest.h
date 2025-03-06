@@ -47,12 +47,9 @@ public:
       simulator.readParam(in);
       in.close();
    }
-
-   void testAnalyzeTrajectory()
+   
+   void analyzeTrajectory()
    {
-      printMethod(TEST_FUNC);
-      
-      openLogFile("out/testAnalyzer.log");
       System<3> system;
       initSystem(system, "in/param_system_disordered");
       BdSimulator<3> simulator(system);
@@ -60,10 +57,22 @@ public:
       std::string filename = filePrefix() + "in/w_dis_trajectory.rf";
       simulator.analyze(0, 10, "RGridTrajectoryReader", filename);
    }
+
+   void testAnalyzeTrajectory()
+   {
+      printMethod(TEST_FUNC);
+      openLogFile("out/testAnalyzer.log");
+      
+      analyzeTrajectory();
+   }
    
    void testFourthOrderParameter()
    {
       printMethod(TEST_FUNC);
+      openLogFile("out/testAnalyzer.log");
+      
+      analyzeTrajectory();
+      
       std::string filename = filePrefix() + "out/fourthOrder_analyzer.ave";
       std::ifstream file(filename);
       if (!file.is_open()) {
