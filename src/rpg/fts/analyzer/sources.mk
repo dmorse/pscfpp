@@ -9,7 +9,6 @@ rpg_fts_analyzer_= \
   rpg/fts/analyzer/HamiltonianAnalyzer.cu \
   rpg/fts/analyzer/BinaryStructureFactorGrid.cu \
   rpg/fts/analyzer/StepLogger.cu \
-  rpg/fts/analyzer/ThermoDerivativeAnalyzer.cu \
   rpg/fts/analyzer/PerturbationDerivative.cu \
   rpg/fts/analyzer/ChiDerivative.cu \
   rpg/fts/analyzer/ConcentrationDerivative.cu \

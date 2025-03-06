@@ -47,8 +47,17 @@ namespace Rpc {
       * Compute and return the derivative of H w/ respect to lambda.
       */
       virtual double compute();
-
+      
+      /**
+      * Output a sampled or block average value.
+      *
+      * \param step  value for step counter
+      * \param value  value of physical observable
+      */
+      virtual void outputValue(int step, double value);
+      
       using AverageAnalyzer<D>::readParameters;
+      using AverageAnalyzer<D>::nSamplePerOutput;
       using AverageAnalyzer<D>::setup;
       using AverageAnalyzer<D>::sample;
       using AverageAnalyzer<D>::output;
@@ -57,6 +66,7 @@ namespace Rpc {
 
       using AverageAnalyzer<D>::simulator;
       using AverageAnalyzer<D>::system;
+      using AverageAnalyzer<D>::outputFile_;
       using ParamComposite::setClassName;
 
    };

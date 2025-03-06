@@ -68,13 +68,29 @@ namespace Rpc
       
       // Compute derivative of free energy with repect to chi_bare per monomer
       double dfdchi = -(hField - 0.5*simulator().sc(nMonomer - 1))/chi + 1.0/4.0;
-      
+
       dfdchi *= nMonomerSystem;
  
       // With N term
       dfdchi += double(meshSize)/(2.0 * chi);
       
       return dfdchi;
+   }
+   
+   template <int D>
+   void ChiDerivative<D>::outputValue(int step, double value)
+   {
+      if (simulator().hasRamp() && nSamplePerOutput() == 1) {
+         double chi= system().interaction().chi(0,1);
+         
+         UTIL_CHECK(outputFile_.is_open());
+         outputFile_ << Int(step);
+         outputFile_ << Dbl(chi);
+         outputFile_ << Dbl(value);
+         outputFile_ << "\n";
+       } else {
+         AverageAnalyzer<D>::outputValue(step, value);
+       }
    }
    
 }

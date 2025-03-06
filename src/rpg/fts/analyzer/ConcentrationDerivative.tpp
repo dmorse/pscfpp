@@ -48,8 +48,10 @@ namespace Rpg {
       const int meshSize = system().domain().mesh().size();
       
       // Compute hamiltonian, if necessary
-      if (!simulator().hasWc()){
+      if (!system().hasCFields()) {
          system().compute();
+      }
+      if (!simulator().hasWc()){
          simulator().computeWc();
       }
       if (!simulator().hasHamiltonian()) {
@@ -67,6 +69,22 @@ namespace Rpg {
       dfdc -= Hh;
       
       return dfdc;
+   }
+   
+   template <int D>
+   void ConcentrationDerivative<D>::outputValue(int step, double value)
+   {
+      if (simulator().hasRamp() && nSamplePerOutput() == 1) {
+         double vMonomer = system().mixture().vMonomer();
+         
+         UTIL_CHECK(outputFile_.is_open());
+         outputFile_ << Int(step);
+         outputFile_ << Dbl(vMonomer);
+         outputFile_ << Dbl(value);
+         outputFile_ << "\n";
+       } else {
+         AverageAnalyzer<D>::outputValue(step, value);
+       }
    }
 
 }

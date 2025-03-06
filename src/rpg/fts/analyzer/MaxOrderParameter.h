@@ -8,7 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "Analyzer.h"                             // base class
+#include "AverageAnalyzer.h"                      // base class
 
 #include <util/containers/DArray.h>               // member
 #include <util/accumulators/Average.h>            // member
@@ -30,21 +30,22 @@ namespace Rpg {
    using namespace Pscf::Prdc::Cuda;
 
    /**
-   * MaxOrderParameter is used to detect the ODT.
+   * MaxOrderParameter is used to detect an order-disorder transition.
    *
-   * This class evalutaes maximum amplitude of the 
-   * second power of Fourier modes of fluctuating fields.
+   * This class evalutaes maximum amplitude of the second power of the
+   * Fourier mode amplitude of fluctuating fields.
    * 
    * The order parameter is defined as
    * \f[
-   *     psi(k)  = max[W_(k)W_(-k)]
+   *     \psi(k)  = \max [ |W_{-}({\bf k})|^{2} ]
    * \f]
-   * where \f$W_(k)\f$ is fluctuating field at Fourier mode k 
+   * where \f$ W_{-}({\bf k})\f$ is fluctuating field component with
+   * wavevector \f$ {\bf k} \f$.
    * 
    * \ingroup Rpg_Fts_Analyzer_Module
    */
    template <int D>
-   class MaxOrderParameter : public Analyzer<D>
+   class MaxOrderParameter : public AverageAnalyzer<D>
    {
 
    public:
@@ -54,105 +55,50 @@ namespace Rpg {
       */
       MaxOrderParameter(Simulator<D>& simulator, System<D>& system);
 
-      /**	
+      /**
       * Destructor.
       */
-      ~MaxOrderParameter(){};
-
-      /**
-      * Read parameters from file.
-      *
-      * Input format:
-      *
-      *   - int               interval        sampling interval 
-      *   - string            outputFileName  output file base name
-      *
-      * \param in input parameter stream
-      */
-      void readParameters(std::istream& in);
+      virtual ~MaxOrderParameter();
    
       /** 
       * Setup before simulation loop.
       */
       void setup();
-   
+      
       /**
-      * Compute a sampled value and update the accumulator.
+      * Compute and return the max order parameter.
+      */
+      virtual double compute();
+      
+      /**
+      * Output a sampled or block average value.
       *
-      * \param iStep step counter
+      * \param step  value for step counter
+      * \param value  value of physical observable
       */
-      void sample(long iStep);
-
-      /**
-      * Output results to predefined output file.
-      */
-      void output();
-            
-      /**
-      * Compute max order parameter
-      */
-      void computeMaxOrderParameter();
+      virtual void outputValue(int step, double value);
+      
+      using AverageAnalyzer<D>::readParameters;
+      using AverageAnalyzer<D>::nSamplePerOutput;
+      using AverageAnalyzer<D>::setup;
+      using AverageAnalyzer<D>::sample;
+      using AverageAnalyzer<D>::output;
    
    protected:
 
-      /**
-      * Output file stream.
-      */
-      std::ofstream outputFile_;
-      
-      /**
-      * Output filename
-      */
-      std::string filename_;
-      
-      /**
-      * Max order parameter
-      */
-      double maxOrderParameter_;
-   
-      /** 
-      * Return reference to parent system.
-      */      
-      System<D>& system();
-      
-      /** 
-      * Return reference to parent Simulator.
-      */
-      Simulator<D>& simulator();
-      
+      using AverageAnalyzer<D>::simulator;
+      using AverageAnalyzer<D>::system;
+      using AverageAnalyzer<D>::outputFile_;
       using ParamComposite::setClassName;
-      using ParamComposite::read;
-      using ParamComposite::readOptional;
-      using Analyzer<D>::interval;
-      using Analyzer<D>::isAtInterval;
-      using Analyzer<D>::outputFileName;
-      using Analyzer<D>::setClassName;
-      using Analyzer<D>::readInterval;
-      using Analyzer<D>::readOutputFileName;
 
    private:
-
-      /// Pointer to parent Simulator
-      Simulator<D>* simulatorPtr_;     
-      
-      /// Pointer to the parent system.
-      System<D>* systemPtr_; 
       
       /// Number of wavevectors in fourier mode.
       int  kSize_;
       
       /// Dimensions of fourier space 
       IntVec<D> kMeshDimensions_;
-      
-      /// Statistical accumulator.
-      Average accumulator_;
-      
-      /// Whether the Average object is needed?
-      bool hasAverage_;
-      
-      /// Number of samples per block average output.
-      int nSamplePerBlock_;
-      
+   
       /// Has readParam been called?
       bool isInitialized_;
       
@@ -161,19 +107,12 @@ namespace Rpg {
       
       /// W_ in Real space
       RField<D> wc0_;
+      
+      /// Max order parameter
+      double maxOrderParameter_;
 
    };
    
-   // Get the parent system.
-   template <int D>
-   inline System<D>& MaxOrderParameter<D>::system()
-   {  return *systemPtr_; }
-   
-   //Get parent Simulator object.
-   template <int D>
-   inline Simulator<D>& MaxOrderParameter<D>::simulator()
-   {  return *simulatorPtr_; }
-
    #ifndef RPG_MAX_ORDER_PARAMETER_TPP
    // Suppress implicit instantiation
    extern template class MaxOrderParameter<1>;

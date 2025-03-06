@@ -71,6 +71,22 @@ namespace Rpc
       return dfdc;
    }
    
+   template <int D>
+   void ConcentrationDerivative<D>::outputValue(int step, double value)
+   {
+      if (simulator().hasRamp() && nSamplePerOutput() == 1) {
+         double vMonomer = system().mixture().vMonomer();
+         
+         UTIL_CHECK(outputFile_.is_open());
+         outputFile_ << Int(step);
+         outputFile_ << Dbl(vMonomer);
+         outputFile_ << Dbl(value);
+         outputFile_ << "\n";
+       } else {
+         AverageAnalyzer<D>::outputValue(step, value);
+       }
+   }
+   
 }
 }
 #endif

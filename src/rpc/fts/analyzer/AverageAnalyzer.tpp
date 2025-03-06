@@ -136,7 +136,6 @@ namespace Rpc {
          outputFile_ << " +- " << Dbl(err, 10, 3);
       }
       outputFile_ << "\n";
-      outputFile_.close();
 
       // Write error analysis to file
       if (!simulator().hasRamp()) {
@@ -147,8 +146,9 @@ namespace Rpc {
          outputFile_ << line << std::endl;
          accumulator_.output(outputFile_);
          outputFile_ << std::endl;
-         outputFile_.close();
       }
+      
+      outputFile_.close();
 
    }
 

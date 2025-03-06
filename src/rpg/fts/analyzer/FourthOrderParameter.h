@@ -8,7 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "Analyzer.h"                             // base class
+#include "AverageAnalyzer.h"                      // base class
 
 #include <util/containers/DArray.h>               // member
 #include <util/accumulators/Average.h>            // member
@@ -30,10 +30,10 @@ namespace Rpg {
    using namespace Pscf::Prdc::Cuda;
 
    /**
-   * FourthOrderParameter is used to detect the ODT.
+   * FourthOrderParameter is used to detect an order-disorder transition.
    *
-   * This class evalutaes the sum of fourth power of 
-   * fluctuating field in fourier mode
+   * This class evaluates the sum of fourth power of the
+   * Fourier mode amplitude of fluctuating fields.
    * 
    * The order parameter is defined as
    * \f[
@@ -44,7 +44,7 @@ namespace Rpg {
    * \ingroup Rpg_Fts_Analyzer_Module
    */
    template <int D>
-   class FourthOrderParameter : public Analyzer<D>
+   class FourthOrderParameter : public AverageAnalyzer<D>
    {
 
    public:
@@ -54,45 +54,29 @@ namespace Rpg {
       */
       FourthOrderParameter(Simulator<D>& simulator, System<D>& system);
 
-      /**	
+      /**
       * Destructor.
       */
-      ~FourthOrderParameter(){};
-
-      /**
-      * Read parameters from file.
-      *
-      * Input format:
-      *
-      *   - int               interval        sampling interval 
-      *   - string            outputFileName  output file base name
-      *
-      * \param in input parameter stream
-      */
-      void readParameters(std::istream& in);
+      virtual ~FourthOrderParameter();
    
       /** 
       * Setup before simulation loop.
       */
-      void setup();
-   
-      /**
-      * Compute a sampled value and update the accumulator.
-      *
-      * \param iStep step counter
-      */
-      void sample(long iStep);
-
-      /**
-      * Output results to predefined output file.
-      */
-      void output();
-            
-      /**
-      * Compute fourth order parameter
-      */
-      void computeFourthOrderParameter();
+      virtual void setup();
       
+      /**
+      * Compute and return the fourth order parameter.
+      */
+      virtual double compute();
+      
+      /**
+      * Output a sampled or block average value.
+      *
+      * \param step  value for step counter
+      * \param value  value of physical observable
+      */
+      virtual void outputValue(int step, double value);
+            
       /**
       * Compute prefactor for each Fourier wavevector.
       * 
@@ -105,66 +89,27 @@ namespace Rpg {
       * it is assigned to be 1.
       */
       void computePrefactor();
+      
+      using AverageAnalyzer<D>::readParameters;
+      using AverageAnalyzer<D>::nSamplePerOutput;
+      using AverageAnalyzer<D>::setup;
+      using AverageAnalyzer<D>::sample;
+      using AverageAnalyzer<D>::output;
    
    protected:
 
-      /**
-      * Output file stream.
-      */
-      std::ofstream outputFile_;
-      
-      /**
-      * Output filename
-      */
-      std::string filename_;
-      
-      /**
-      * Structure factor
-      */
-      double FourthOrderParameter_;
-   
-      /** 
-      * Return reference to parent system.
-      */      
-      System<D>& system();
-      
-      /** 
-      * Return reference to parent Simulator.
-      */
-      Simulator<D>& simulator();
-      
+      using AverageAnalyzer<D>::simulator;
+      using AverageAnalyzer<D>::system;
+      using AverageAnalyzer<D>::outputFile_;
       using ParamComposite::setClassName;
-      using ParamComposite::read;
-      using ParamComposite::readOptional;
-      using Analyzer<D>::interval;
-      using Analyzer<D>::isAtInterval;
-      using Analyzer<D>::outputFileName;
-      using Analyzer<D>::setClassName;
-      using Analyzer<D>::readInterval;
-      using Analyzer<D>::readOutputFileName;
-
-   private:
-
-      /// Pointer to parent Simulator
-      Simulator<D>* simulatorPtr_;     
       
-      /// Pointer to the parent system.
-      System<D>* systemPtr_; 
+   private:
       
       /// Number of wavevectors in fourier mode.
       int  kSize_;
       
       /// Dimensions of fourier space 
       IntVec<D> kMeshDimensions_;
-      
-      /// Statistical accumulator.
-      Average accumulator_;
-      
-      /// Whether the Average object is needed?
-      bool hasAverage_;
-      
-      /// Number of samples per block average output.
-      int nSamplePerBlock_;
       
       /// Has readParam been called?
       bool isInitialized_;
@@ -177,19 +122,12 @@ namespace Rpg {
       
       /// Prefactor for each Fourier wavevector
       RField<D> prefactor_;
+      
+      /// Structure factor
+      double FourthOrderParameter_;
 
    };
    
-   // Get the parent system.
-   template <int D>
-   inline System<D>& FourthOrderParameter<D>::system()
-   {  return *systemPtr_; }
-   
-   //Get parent Simulator object.
-   template <int D>
-   inline Simulator<D>& FourthOrderParameter<D>::simulator()
-   {  return *simulatorPtr_; }
-
    #ifndef RPG_FOURTH_ORDER_PARAMETER_TPP
    // Suppress implicit instantiation
    extern template class FourthOrderParameter<1>;

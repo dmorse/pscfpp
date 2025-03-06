@@ -54,6 +54,22 @@ namespace Rpc {
       return simulator().perturbation().df(); 
    }
    
+   template <int D>
+   void PerturbationDerivative<D>::outputValue(int step, double value)
+   {
+      if (simulator().hasRamp() && nSamplePerOutput() == 1) {
+         double lambda = simulator().perturbation().lambda(); 
+         
+         UTIL_CHECK(outputFile_.is_open());
+         outputFile_ << Int(step);
+         outputFile_ << Dbl(lambda);
+         outputFile_ << Dbl(value);
+         outputFile_ << "\n";
+       } else {
+         AverageAnalyzer<D>::outputValue(step, value);
+       }
+   }
+   
 }
 }
 #endif
