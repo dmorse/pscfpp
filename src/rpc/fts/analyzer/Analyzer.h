@@ -18,15 +18,15 @@ namespace Rpc {
    * Abstract base for periodic output and/or analysis actions.
    *
    * The periodic action associated with an Analyzer can involve retrieval
-   * or computation of a physical property, adding it to statistical 
-   * accumulator, and/or outputting it to file. This periodic action must be 
-   * implemented by the pure virtual sample() method.
+   * or computation of a physical property value, adding it to statistical 
+   * accumulator, and/or outputting it to file. This periodic action must 
+   * be implemented by the pure virtual sample() method.
    *
    * The sample() method should take the desired action only when the
    * simulation step index is an integer multiple of the associated interval
-   * parameter.  The interval of each Analyzer must be a positive integer 
-   * that is a multiple of the static member Analyzer::baseInterval, which 
-   * is set to 1 by default. 
+   * parameter, and should return immediately otherwise. The interval of 
+   * each Analyzer must be a positive integer that is a multiple of the 
+   * static member Analyzer::baseInterval, which is set to 1 by default. 
    *
    * \ingroup Rpc_Fts_Analyzer_Module
    */
@@ -122,7 +122,11 @@ namespace Rpc {
       void setFileMaster(FileMaster& fileMaster);
 
       /**
-      * Read interval from file, with error checking.
+      * Optionally read interval from file, with error checking.
+      *
+      * If no interval parameter is present, the interval is set to 1
+      * by default. The default thus calls the sample function after 
+      * every simulation step.
       *
       * \param in input parameter file stream
       */
@@ -154,10 +158,13 @@ namespace Rpc {
       */
       std::string outputFileName(std::string suffix) const;
 
-      /// Number of simulation steps between subsequent actions.
-      long interval_;
+      using ParamComposite::read;
+      using ParamComposite::readOptional;
 
    private:
+
+      /// Number of simulation steps between subsequent actions.
+      long interval_;
 
       /// Base name of output file(s).
       std::string outputFileName_;

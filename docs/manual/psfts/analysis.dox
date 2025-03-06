@@ -107,9 +107,9 @@ During postprocessing,  each such interval parameter is interpreted
 as a number of trajectory file frames between successive data analysis 
 or file output operations, rather than as a number of BD or MC 
 simulation steps.  Because frames are usually output somewhat 
-infrequently, the interval values are often set to 1 in parameter 
-files used to initialize a postprocessing operation, in order to 
-analyze every frame of available data.
+infrequently, the default value of interval = 1 is often used in 
+parameter files used to initialize a postprocessing analysis, in
+order to analyze every frame of available data. 
 
 A parameter file that is used to initialize a postprocessing operation
 generally has a slightly different format than one used to initialize
@@ -122,7 +122,76 @@ AnalyzerManager subblock that contains one or more analyzer subblocks.
 The BdStep or McMoveManager block, Compressor block, and Ramp block
 within the BdSimulator or McSimulator block are not needed during 
 postprocessing of a trajectory file, however, and so can all be 
-safely omitted from a parameter file used for this purpose.
+safely omitted from a parameter file used for this purpose. The
+interval parameters associated with many analyzers may also often
+omitted in such files, in order to use the default interval value 
+of 1.
+
+\section psfts_analysis_example_sec Example
+
+Suppose that a BD simulation similar to one used in a previous example
+used a TrajectoryWriter analyzer to create a trajectory file named
+"out/trajectory". A parameter file used for an analysis of this file in 
+which the user computes the average Hamiltonian value and the structure 
+factor might look something like this:
+\code
+System{
+  Mixture{
+    nMonomer  2
+    monomers[
+             1.0
+             1.0
+    ]
+    nPolymer  1
+    Polymer{
+      type    linear
+      nBlock  2
+      blocks[
+              0   0.5
+              1   0.5
+      ]
+      phi     1.0
+    }
+    vMonomer  0.01
+    ds   0.02
+  }
+  Interaction{
+    chi(
+        1   0   18.0
+    )
+  }
+  Domain{
+    mesh         40    40    40
+    lattice      cubic
+  }
+  BdSimulator{
+    AnalyzerManager{
+
+      HamiltonianAnalyzer{
+        outputFileName  out/hamiltonian
+      }
+
+      BinaryStructureFactoryGrid{
+        outputFileName  out/hamiltonian
+      }
+
+      StepLogger{
+         interval 10
+      }
+
+    }
+  }
+}
+\endcode
+Note that we have omitted the interval parameter from the primary
+analyzers in order to use the default value of interval = 1, and
+thus analyze every frame, but have chosen to use the StepLogger to 
+output the counter every 10 frames.  The corresponding minimal 
+command file is shown below:
+\code
+ANALYZE  out/trajectory
+FINISH
+\endcode
 
 <BR>
 \ref psfts_command_page   (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
