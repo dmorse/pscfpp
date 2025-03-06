@@ -40,7 +40,6 @@ System{
       errorType    normResid
     }
     AnalyzerManager{
-      baseInterval    10
 
       HamiltonianAnalyzer{
         interval         10
