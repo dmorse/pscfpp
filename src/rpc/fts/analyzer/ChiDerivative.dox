@@ -2,7 +2,7 @@ namespace Pscf {
 namespace Rpc {
 
 /*! 
-\page rpc_ChiDerivative_page Rpc::ChiDerivative
+\page rpc_ChiDerivative_page ChiDerivative
 
 This analyzer calculates the derivative of free energy with 
 respect to parameter \f$\chi_b N \f$ at fixed united cell, fixed

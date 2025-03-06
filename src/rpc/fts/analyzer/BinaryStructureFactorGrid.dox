@@ -2,7 +2,7 @@ namespace Pscf {
 namespace Rpc {
 
 /*! 
-\page rpc_BinaryStructureFactorGrid_page Rpc::BinaryStructureFactorGrid
+\page rpc_BinaryStructureFactorGrid_page BinaryStructureFactorGrid
 
 This analyzer calculates the spherical average of the structure factor 
 for all wavevectors for a AB diblock copolymer system. 

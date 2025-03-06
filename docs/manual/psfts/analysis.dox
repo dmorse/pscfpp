@@ -65,7 +65,7 @@ for the parameter and command file are, however, designed to make
 it relatively simple for users to define other formats by adding 
 classes that read and write whatever format they wish. 
 
-\see rpc_TrajectoryWriter_page
+\see \ref rpc_TrajectoryWriter_page (manual page)
 
 \section psfts_analysis_postprocess_sec Postprocess Analysis
 
@@ -101,39 +101,48 @@ should be read and processed. This file name is given as a path that,
 is defined relative to the directory from which the pscf_pc or 
 pscf_pg command was invoked. 
 
+Each frame in a trajectory file is assigned an integer frame index 
+that increments by 1 per frame, starting from zero. The frame index 
+for a frame is thus generally not equal to the simulation step 
+counter for the time step that the frame was written, since the number 
+of time steps between neighboring frames (i.e., the interval of the 
+TrajectoryWriter) is usually greater than 1. 
+
 During postprocessing, the "interval" parameter associated with each 
-analyzer is interpreted somewhat differently than during a simulation. 
-During postprocessing,  each such interval parameter is interpreted 
-as a number of trajectory file frames between successive data analysis 
-or file output operations, rather than as a number of BD or MC 
-simulation steps.  Because frames are usually output somewhat 
-infrequently, the default value of interval = 1 is often used in 
-parameter files used to initialize a postprocessing analysis, in
+analyzer is interpreted as a number of trajectory file frames between 
+successive data analysis or file output operations, rather than as a 
+number of BD or MC simulation steps.  Because frames are usually 
+output somewhat infrequently, the default value of interval = 1 is 
+often used in parameter files used for postprocessing analysis, in
 order to analyze every frame of available data. 
 
 A parameter file that is used to initialize a postprocessing operation
-generally has a slightly different format than one used to initialize
-a simulation. Both types of parameter file must include Mixture, 
-Interaction and Domain blocks, since the basic information about the
-system given in these blocks is often needed by analyzers during 
-postprocessing, as well as during a simulation.  Such a file must 
-also contain either a BdSimulator or McSimulator block with ana
-AnalyzerManager subblock that contains one or more analyzer subblocks. 
-The BdStep or McMoveManager block, Compressor block, and Ramp block
-within the BdSimulator or McSimulator block are not needed during 
-postprocessing of a trajectory file, however, and so can all be 
-safely omitted from a parameter file used for this purpose. The
-interval parameters associated with many analyzers may also often
-omitted in such files, in order to use the default interval value 
-of 1.
+usually has a different format than one used to initialize a simulation. 
+Both types of parameter file must include Mixture, Interaction and 
+Domain blocks, since the basic information about the system given in 
+these blocks is often needed by analyzers, as well as by the algorithms
+that perform a simulation.  Such a parameter file must also contain
+either a BdSimulator or McSimulator block with an AnalyzerManager 
+subblock. The AnalyzerManager block should contain one or more 
+analyzer subblocks that specify actions that should be taken during
+postprocessing.  No BdStep or McMoveManager block, Compressor block, 
+or Ramp block is needed during postprocessing of a trajectory file, 
+however, and so these blocks can all be safely omitted from a parameter 
+file used for this purpose. A Perturbation block may be needed if the
+original simulation defined a Perturbation and any of the analyzers
+require access to information about the perturbation. The interval
+parameters associated with many analyzers may be omitted in such 
+files, in order to use the default interval value of 1 and thus
+analyze every frame.
 
 \section psfts_analysis_example_sec Example
 
 Suppose that a BD simulation similar to one used in a previous example
 used a TrajectoryWriter analyzer to create a trajectory file named
-"out/trajectory". A parameter file used for an analysis of this file in 
-which the user computes the average Hamiltonian value and the structure 
-factor might look something like this:
+"out/trajectory" that contains 5000 frames. The parameter file shown
+below could be used to setup pscf_pc or pscf_pg to analyze this file, 
+and to enable compution of  the average Hamiltonian value and the 
+structure factor:
 \code
 System{
   Mixture{
@@ -186,16 +195,29 @@ System{
 Note that we have omitted the interval parameter from the primary
 analyzers in order to use the default value of interval = 1, and
 thus analyze every frame, but have chosen to use the StepLogger to 
-output the counter every 10 frames.  The corresponding minimal 
-command file is shown below:
+output the counter every 10 frames.  
+
+A corresponding minimal command file is shown below for a trajectory 
+file that contains 5000 frames:
 \code
-ANALYZE  out/trajectory
+ANALYZE 0 5000 TrajectoryReader out/trajectory
 FINISH
 \endcode
+The first two arguments of the ANALYZE command (0 and 5000 in this
+example) give the frame indices for the first and last frame that should 
+be read analyzed. The choices used here are chosen so as to read and 
+analyze every frame in the file.  The string "TrajectoryReader" is an 
+identifier for the class that will be used to read the trajectory, which 
+in this case uses a default choice that reads the format written by the 
+TrajectoryWriter class. In the current version of PSCF there is only one 
+such "reader" class, so this parameter should always be given by the 
+string literal "TrajectoryReader". The last argument of the ANALYZE 
+commmand is the name of the trajectory file that will be read and 
+analyzed.
 
 <BR>
-\ref psfts_command_page   (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
-\ref psfts_page           (Up)   &nbsp; &nbsp; &nbsp; &nbsp;
-\ref psfts_ramp_page   (Next)
+\ref psfts_command_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
+\ref psfts_page          (Up)   &nbsp; &nbsp; &nbsp; &nbsp;
+\ref psfts_ramp_page     (Next)
 
 */

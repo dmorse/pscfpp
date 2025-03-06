@@ -2,7 +2,7 @@ namespace Pscf {
 namespace Rpc {
 
 /*! 
-\page rpc_FourthOrderParameter_page Rpc::FourthOrderParameter
+\page rpc_FourthOrderParameter_page FourthOrderParameter
 
 This analyzer calculates the sum of fourth power of 
 exchange field in fourier mode, referred to as the fourth order 

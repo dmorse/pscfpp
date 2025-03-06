@@ -2,7 +2,7 @@ namespace Pscf {
 namespace Rpc {
 
 /*! 
-\page rpc_MaxOrderParameter_page Rpc::MaxOrderParameter
+\page rpc_MaxOrderParameter_page MaxOrderParameter
 
 This analyzer calculates the maximum amplitude of the 
 second power of Fourier modes of exchange fields, referred
