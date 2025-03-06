@@ -473,12 +473,14 @@ enables a particular analyzer algorithm (or class). The first line of
 each subblock must contain the label of a known analyzer class, followed
 immediately by a opening bracket. 
 
-The first parameter of each such analyzer block is an int parameter 
-called "interval" that determines how often the action performed by
-the analyzer is performed.  The action defined by each analyzer is 
-performed when the internal step counter that keeps track of the 
-number of BD steps or attempted MC moves is an integer multipe of its 
-interval parameter.
+Each analyzer has a parameter named "interval" that determines determines 
+how frequently the action performed by the analyzer is performed.  The 
+action defined by each analyzer is performed when the internal step 
+counter that keeps track of the number of BD steps or attempted MC moves 
+is an integer multipe of its interval parameter. The interval is an 
+optional parameter that is set to 1 by default, but it is often
+present and set to a value greater than 1 for each analyzer within a 
+parameter file for a BD or MC simulation.
 
 The full format for an AnalyzerManager parameter file block is given
 \ref rpc_AnalyzerManager_page "here". 
@@ -523,11 +525,11 @@ A list of all of the available analyzers, including links to detailed
 documentation, was given in earlier the discussion of
 \ref psfts_algorithm_analyzer_sec "algorithms" .
 
-\section psfts_param_analyzer_sec See Also:
+\section psfts_param_seealso_sec See Also:
 
 <ul>
 <li> \subpage rpc_BdSimulator_page "BdSimulator"  </li>
-<li> \subpage rpc_McSimulator_page "BdSimulator" </li>
+<li> \subpage rpc_McSimulator_page "McSimulator" </li>
 <li> \subpage rpc_AnalyzerManager_page "AnalyzerManager" </li>
 </ul>
 

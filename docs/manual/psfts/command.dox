@@ -136,15 +136,17 @@ that file.  This postprocessing procedure is discussed in more detail
 
 The trajectory file with a name given by the "filename" parameter is
 read and parsed by an instance of a subclass of the TrajectoryReader
-class with a name specified by the className parameter.  Different
-subclasses can be used to read files with different formats.
+class with a name specified by the className parameter.  Currently,
+the className parameter should always be set to "TrajectoryReader", 
+which selects a default choice that reads the file format that is 
+written by the "TrajectoryWriter" analyzer class.
 
-The associated parameter file must contain a BdSimulator or McSimulator
-block with an AnalyzerManager subblock that specifies what analysis
-operations should be applied to the chosen frames of the trajectory
-file. Every Analyzer in the AnalyzerManager block is applied to frames
-with frame indices between the values specified by the min and max
-parameters.
+The parameter file used to initialize a postprocessing operation must
+contain a BdSimulator or McSimulator block with an AnalyzerManager 
+subblock that specifies what analysis operations should be applied to 
+the chosen frames of the trajectory file. Every Analyzer in the 
+AnalyzerManager block is applied to frames with frame indices between 
+the values specified by the min and max command parameters.
 
 \anchor psfts_command_pc_compress_sub
 <b> COMPRESS </b>:

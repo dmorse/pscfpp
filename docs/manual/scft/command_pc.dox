@@ -81,10 +81,13 @@ automatically for each state in the sweep.
 \section scft_command_pc_commands_sec Commands
 
 The following table shows a list of available commands for pscf_pc
-that are relevant to SCFT calculations. 
+that are relevant to SCFT calculations. A few additional commands 
+that are only relevant to PS-FTS calculations are discussed on a
+\ref psfts_command_page "separate page". 
 
 Each clickable command name links to a more detailed discussion of 
-that command or of a group of closely related commands.
+that command or a group of closely related commands.
+
 <table>
   <tr>
     <td> <b>command     </b> </td>
@@ -140,27 +143,6 @@ that command or of a group of closely related commands.
     <td> Perform a SCFT parameter sweep.
          The associated parameter file must contain an Iterator block
          and a Sweep block. </td>
-  </tr>
-  <tr>
-    <td> \ref scft_command_pc_simulate_sub "SIMULATE" </td>
-    <td> nStep </td>
-    <td> Perform a field-theoretic simulation of nStep steps.  </td>
-  </tr>
-  <tr>
-    <td> \ref scft_command_pc_analyze_sub "ANALYZE" </td>
-    <td> min, max, className, filename </td>
-    <td> Postprocess a field trajectory output by looping over frames
-         of a field trajectory file output by a previous simulation. 
-         Analyze frames with frame numbers min to max from file 
-         filename, using a TrajectoryReader object that is an instance 
-         of class className.  </td>
-  </tr>
-  <tr>
-    <td> \ref scft_command_pc_compress_sub "COMPRESS" </td>
-    <td> </td>
-    <td> Iteratively adjust the Lagrange multiplier pressure field
-         component of the current w fields so as to satisfy the 
-         incompressibility constraint. </td>
   </tr>
 
   <tr>
@@ -634,40 +616,6 @@ values). The SWEEP command uses the current w fields and unit cell
 parameters as initial guesses for the first state point in the 
 sequence, and then generates initial guesses for subsequent points 
 by extrapolation of the solutions obtained at previous points.
-
-\anchor scft_command_pc_simulate_sub
-<b> SIMULATE </b>:
-THE SIMULATE command performs a field-theoretic simulation of a
-specified number nStep of attempted MC moves or BD steps. The 
-associated parameter file must contain Compressor and Simulator 
-blocks.  Field trajectories may be written to file by including a 
-trajectory writer among the analyzers listed in the AnalyzerManager 
-subblock of the McSimulator block.
-
-\anchor scft_command_pc_analyze_sub
-<b> ANALYZE </b>:
-THE ANALYZE command reads a field trajectory file that was written 
-by a previous field-theoretic simulation, and postprocesses the 
-contents of that file. The associated parameter file must contain
-an McSimulator block with an AnalyzerManager block that specifies 
-what analysis operations should be applied to the chosen frames 
-of the trajectory file.  The file is read an parsed by an 
-instance of the class specified by the className parameter, which 
-thus specifies the expected format of the trajectory file. Every 
-Analyzer in the AnalyzerManager block is applied to frames with 
-frame indices between the values specified by the min and max 
-parameters. 
-
-\anchor scft_command_pc_compress_sub
-<b> COMPRESS </b>:
-The COMPRESS command applies the Compressor iterator algorithm 
-to the current w-fields.  The associated parameter file must
-contain a Compressor block. The compressor adjusts the Lagrange
-multiplier pressure component of the w fields so as to satisfy
-the incompressibility constraint without changing any of the
-difference between chemical potential fields associated with
-different monomer types. 
-
 
 \section scft_command_pc_dataout_sec Data output commands
 

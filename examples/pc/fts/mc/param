@@ -30,14 +30,17 @@ System{
   McSimulator{
     seed              1784106389
     McMoveManager{
+
       ForceBiasMove{
         probability     0.75
         mobility        7.0E-3
       }
+
       RealMove{
         probability     0.25
         A               0.15
       }
+
     }
     LrAmCompressor{
       epsilon      1.0e-4
@@ -47,7 +50,6 @@ System{
       errorType    normResid
     }
     AnalyzerManager{
-      baseInterval    10
 
       HamiltonianAnalyzer{
         interval         10
