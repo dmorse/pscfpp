@@ -11,17 +11,17 @@ either of two methods.
    - <b> On-the-fly </b> : By analyzing data during a simulation 
 
    - <b> Postprocessing </b> : Analyzing data after a simulation is 
-     completed, by postprocess analysis of a field trajectory file
+     completed, by reading and processing a field trajectory file
 
 On-the-fly data analysis already been discussed, as part of the discussion 
-of parameter files used to initialize a simulation: To periodically 
+of parameter files used to initialize a simulation. To periodically 
 perform data analysis and file IO operations during a simulation, one 
 must include an appropriate set of analyzer subblocks within the
-AnalyzerManager block of the parameter file used to initialize the 
-simulation.
+AnalyzerManager block of the parameter file that is used to initialize 
+the simulation.
 
-We focus in the remainder of this page on generation and postprocess
-analysis of field trajectory files.
+We focus in the remainder of this page on generation and postprocessing
+of field trajectory files.
 
 \section psfts_algorith_trajectory_sec Field Trajectory Files
 
@@ -48,8 +48,9 @@ configuration after every step.
 
 To postprocess such a trajectory file, one must invoke pscf_pc or 
 pscf_pg a second time, using a command file that contains an ANALYZE 
-command. ANALYZE command is encountered, pscf_pc or pscf_pg to reads 
-and process a sequence of frames from a specified trajectory file.
+command. When an ANALYZE command is encountered, pscf_pc or pscf_pg 
+reads and processes a sequence of frames from a trajectory file whose
+name is given as an argument of the command.
 
 The parameter file used to initialize a postprocessing operation 
 normally has an AnalyzerManager block containing a set of analyzer 
@@ -58,17 +59,17 @@ applied to frames of the trajectory file. The same set of Analyzer
 classes are available for use during either on-the-fly analysis or 
 postprocessing. 
 
-The ANALYZE command takes four command arguments, named min, max,
-className, and fileName. This command always causes the program to
-read the entire trajectory file, but data analysis operations are
-only applied to frames with a frame index between min and max, 
-inclusive. The className parameter is a string that gives the name
-of a class that wil be used to read the parameter file. In the 
-current version of PSCF, there is only one such class, which should 
-be invoked by using the value "TrajectoryReader". The "fileName"
-parameter gives the name of the trajectory file that should be
-read and processed, given as a path defined relative to the 
-directory from which the pscf_pc or pscf_pg command was invoked.
+The ANALYZE command takes four command arguments, named min, max, 
+className, and fileName. This command always causes the program to read 
+the entire trajectory file, but data analysis operations are only applied 
+to frames with a frame index between min and max, inclusive. The className 
+parameter is a string that gives the name of a class that wil be used to 
+read the parameter file. In the current version of PSCF, there is only 
+one such class, which should be invoked by using the string value
+"TrajectoryReader". The "fileName" parameter gives the name of the 
+trajectory file that should be read and processed, given as a path 
+defined relative to the directory from which the pscf_pc or pscf_pg 
+command was invoked.
 
 The "interval" parameter associated with each analyzer is interpreted
 somewhat differently postprocessing of a trajectory file than during
@@ -82,23 +83,23 @@ every frame of available data.
 
 A parameter file that is used to initialize a postprocessing operation
 generally has a slightly different format than one used to initialize
-a simulation. Both types of parameter file must include Mixture, 
-Domain, and Interaction blocks, since the information given in these
-blocks is needed either during a simulation or during postprocessing.
-Such a file must also contain either a BdSimulator or McSimulator 
-block with an AnalyzerManager subblock containing one or more 
-analyzer subblocks. The BdStep or McMoveManager, Compressor, and Ramp 
-subblocks of the Simulator block are not used during postprocessing,
-of a trajectory file, however, and so can all be omitted from a 
-parameter file used for this purpose. 
+a simulation. Both types of parameter file must include Mixture, Domain, 
+and Interaction blocks, since the information given in these blocks may 
+be needed during postprocessing, as well as during a simulation.  Such 
+a file must also contain either a BdSimulator or McSimulator block with 
+an AnalyzerManager subblock containing one or more analyzer subblocks. 
+The BdStep or McMoveManager, Compressor, and Ramp subblocks of the 
+Simulator block are not used during postprocessing, of a trajectory file, 
+however, and so can all be omitted from a parameter file used for this 
+purpose. 
 
 The main advantage of postprocessing a trajectory file is that it allows 
 a user to delay and revise decisions about what types of analysis might 
 be useful. The main disadvantage of postprocessing is the amount of disk 
-space required to store trajectories, particularly if frames are written 
-at frequent intervals.  Conversely, the main advantage of doing some 
-types of data analysis during a simulation is that doing so may allow 
-more frequent sampling of data without using excessive disk space.
+space required to store field trajectories, particularly if frames are 
+written frequently.  Conversely, the main advantage of doing some types 
+of data analysis during a simulation is that doing so may allow more 
+frequent sampling of values without requiring excessive disk space.
 
 <BR>
 \ref psfts_command_page   (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 

@@ -10,9 +10,9 @@
 namespace Pscf {
 namespace Rpc {
 
-   template<> long Analyzer<1>::baseInterval = 0;
-   template<> long Analyzer<2>::baseInterval = 0;
-   template<> long Analyzer<3>::baseInterval = 0;
+   template<> long Analyzer<1>::baseInterval = 1;
+   template<> long Analyzer<2>::baseInterval = 1;
+   template<> long Analyzer<3>::baseInterval = 1;
 
    template class Analyzer<1>;
    template class Analyzer<2>;

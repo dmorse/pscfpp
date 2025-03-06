@@ -24,9 +24,9 @@ namespace Rpc
    */
    template <int D>
    ChiDerivative<D>::ChiDerivative(Simulator<D>& simulator, 
-                                                     System<D>& system) 
-    : ThermoDerivativeAnalyzer<D>(simulator, system)
-   { setClassName("ChiDerivative"); }
+                                   System<D>& system) 
+    : AverageAnalyzer<D>(simulator, system)
+   {  setClassName("ChiDerivative"); }
 
    /*
    * Destructor.
@@ -35,24 +35,8 @@ namespace Rpc
    ChiDerivative<D>::~ChiDerivative() 
    {}
 
-   /*
-   * Read interval and outputFileName. 
-   */
    template <int D>
-   void ChiDerivative<D>::readParameters(std::istream& in) 
-   {
-      ThermoDerivativeAnalyzer<D>::readParameters(in);
-   }
-   
-   /*
-   * Setup before simulation loop.
-   */ 
-   template <int D>
-   void ChiDerivative<D>::setup()
-   {}
-   
-   template <int D>
-   double ChiDerivative<D>::computeDerivative()
+   double ChiDerivative<D>::compute()
    {
       UTIL_CHECK(system().w().hasData());
       
@@ -67,7 +51,7 @@ namespace Rpc
       double chi= system().interaction().chi(0,1);
       
       /* 
-      * Obteain field Hamiltonian per monomer.
+      * Compute field Hamiltonian per monomer.
       * The fieldHamitonian is calculated in the computeHamiltonian() function,
       * located in rpc/fts/Simulator.tpp 
       */
@@ -84,7 +68,7 @@ namespace Rpc
       
       // Compute derivative of free energy with repect to chi_bare per monomer
       double dfdchi = -(hField - 0.5*simulator().sc(nMonomer - 1))/chi + 1.0/4.0;
-      
+
       dfdchi *= nMonomerSystem;
  
       // With N term
@@ -94,13 +78,21 @@ namespace Rpc
    }
    
    template <int D>
-   double ChiDerivative<D>::variable()
-   { return system().interaction().chi(0,1);  }
+   void ChiDerivative<D>::outputValue(int step, double value)
+   {
+      if (simulator().hasRamp() && nSamplePerOutput() == 1) {
+         double chi= system().interaction().chi(0,1);
+         
+         UTIL_CHECK(outputFile_.is_open());
+         outputFile_ << Int(step);
+         outputFile_ << Dbl(chi);
+         outputFile_ << Dbl(value);
+         outputFile_ << "\n";
+       } else {
+         AverageAnalyzer<D>::outputValue(step, value);
+       }
+   }
    
-   template <int D>
-   std::string ChiDerivative<D>::parameterType()
-   { return "Chi Derivative";  }
-
 }
 }
 #endif

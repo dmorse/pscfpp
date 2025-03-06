@@ -1,5 +1,5 @@
-#ifndef RPC_AVERAGE_ANALYZER_H
-#define RPC_AVERAGE_ANALYZER_H
+#ifndef RPG_AVERAGE_ANALYZER_H
+#define RPG_AVERAGE_ANALYZER_H
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory
@@ -12,7 +12,7 @@
 #include <util/accumulators/Average.h>           // member
 
 namespace Pscf {
-namespace Rpc {
+namespace Rpg {
 
    template <int D> class System;
    template <int D> class Simulator;
@@ -27,7 +27,7 @@ namespace Rpc {
    * simulation.  It is intended for use as a base class for any Analyzer
    * that computes and evaluates an average for a single physical variable.
    *
-   * \ingroup Rpc_Fts_Analyzer_Module
+   * \ingroup Rpg_Fts_Analyzer_Module
    */
    template <int D>
    class AverageAnalyzer : public Analyzer<D>
@@ -110,7 +110,7 @@ namespace Rpc {
       * Compute value of sampled quantity.
       */
       virtual double compute() = 0;
-
+      
       /**
       * Output a sampled or block average value.
       *
@@ -165,7 +165,7 @@ namespace Rpc {
    inline int AverageAnalyzer<D>::nSamplePerOutput() const
    {  return nSamplePerOutput_; }
 
-   #ifndef RPC_AVERAGE_ANALYZER_TPP
+   #ifndef RPG_AVERAGE_ANALYZER_TPP
    // Suppress implicit instantiation
    extern template class AverageAnalyzer<1>;
    extern template class AverageAnalyzer<2>;

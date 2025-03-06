@@ -156,13 +156,12 @@ PSCF currently allows users to choose from among three BD step
 algorithms, which are labelled below by the names of the C++ classes
 that implement them:
 <ul>
-  <li> \ref rpc_LMBdStep_page "LMBdStep" : A "Leimkuhler-Matthews" (LM) 
+  <li> \subpage rpc_LMBdStep_page "LMBdStep" : A "Leimkuhler-Matthews" (LM) 
   BD step algorithm </li>
-  <li> \ref rpc_PredCorrBdStep_page "PredCorrBdStep": A predictor 
+  <li> \subpage rpc_PredCorrBdStep_page "PredCorrBdStep": A predictor 
   corrector algorithm,
   </li>
-  <li> 
-  \ref rpc_ExplicitBdStep_page "ExplicitBdStep" : An explicit
+  <li> \subpage rpc_ExplicitBdStep_page "ExplicitBdStep" : An explicit
   Euler algorithm like that described above,  </li>
 </ul>
 More details about each of these algorithms can be obtained by clicking

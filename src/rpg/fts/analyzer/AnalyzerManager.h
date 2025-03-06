@@ -95,9 +95,11 @@ namespace Rpg {
    protected:
 
       using ParamComposite::setClassName;
+      using ParamComposite::readOptional;
       using ParamComposite::read;
    
    private:
+
       /**
       * Pointer to parent Simulator
       */
@@ -107,7 +109,6 @@ namespace Rpg {
       * Pointer to parent System.
       */
       System<D>* systemPtr_;
-
 
       /**
       * Return pointer to a new AnalyzerFactory.

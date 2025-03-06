@@ -26,7 +26,7 @@ namespace Rpc
    template <int D>
    ConcentrationDerivative<D>::ConcentrationDerivative(Simulator<D>& simulator, 
                                                      System<D>& system) 
-    : ThermoDerivativeAnalyzer<D>(simulator, system)
+    : AverageAnalyzer<D>(simulator, system)
    { setClassName("ConcentrationDerivative"); }
 
    /*
@@ -36,24 +36,8 @@ namespace Rpc
    ConcentrationDerivative<D>::~ConcentrationDerivative() 
    {}
 
-   /*
-   * Read interval and outputFileName. 
-   */
    template <int D>
-   void ConcentrationDerivative<D>::readParameters(std::istream& in) 
-   {
-      ThermoDerivativeAnalyzer<D>::readParameters(in);
-   }
-   
-   /*
-   * Setup before simulation loop.
-   */ 
-   template <int D>
-   void ConcentrationDerivative<D>::setup()
-   {}
-   
-   template <int D>
-   double ConcentrationDerivative<D>::computeDerivative()
+   double ConcentrationDerivative<D>::compute()
    { 
       UTIL_CHECK(system().w().hasData());
       
@@ -74,7 +58,7 @@ namespace Rpc
          simulator().computeHamiltonian();
       }
       
-      // Obteain Hamiltonian
+      // Obtain Hamiltonian
       double h = simulator().hamiltonian();
       
       // Calculate derivative with respect to concentration
@@ -88,13 +72,21 @@ namespace Rpc
    }
    
    template <int D>
-   double ConcentrationDerivative<D>::variable()
-   { return system().mixture().vMonomer(); }
+   void ConcentrationDerivative<D>::outputValue(int step, double value)
+   {
+      if (simulator().hasRamp() && nSamplePerOutput() == 1) {
+         double vMonomer = system().mixture().vMonomer();
+         
+         UTIL_CHECK(outputFile_.is_open());
+         outputFile_ << Int(step);
+         outputFile_ << Dbl(vMonomer);
+         outputFile_ << Dbl(value);
+         outputFile_ << "\n";
+       } else {
+         AverageAnalyzer<D>::outputValue(step, value);
+       }
+   }
    
-   template <int D>
-   std::string ConcentrationDerivative<D>::parameterType()
-   { return "Concentration Derivative"; }
-
 }
 }
 #endif
