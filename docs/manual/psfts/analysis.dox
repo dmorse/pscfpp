@@ -36,8 +36,8 @@ analysis and file output operations during a simulatio, one must include
 an appropriate set of analyzer subblocks within the AnalyzerManager block 
 of the parameter file that is used to initialize the simulation.
 
-We focus in the remainder of this page on generation and postprocessing
-of field trajectory files.
+We focus in the remainder of this page on procedures for creating and 
+postprocessing field trajectory files.
 
 \section psfts_algorith_trajectory_sec Creating a Field Trajectory File
 
@@ -84,37 +84,37 @@ postprocessing.
 
 The ANALYZE command takes four command arguments, named min, max, 
 className, and fileName. This command always causes the program to 
-read the entire trajectory file starting with the first frame, but 
-data analysis operations are only applied to frames with a frame 
-index between min and max, inclusive. 
+begin reading the rajectory file starting with the first frame, but 
+data analysis operations are only applied to frames with a frame index 
+between min and max, inclusive. 
 
 The className parameter is a string that gives the name of a class that 
 will be used to read the parameter file. In the current version of PSCF, 
 there is only one such class, named "TrajectoryReader", which reads the
 output format that is written by the "TrajectoryWriter" class. Currently, 
-this parameter should thus always be set to "TrajectoryReader". The 
-name of this class is treated as parameter to allow the possibility
-of future extension to files other file formats.
+this parameter should thus always be set to "TrajectoryReader". The name 
+of this class is treated as parameter to allow the possibility of future 
+extension to files other file formats.
 
 The "fileName" parameter gives the name of the trajectory file that 
 should be read and processed. This file name is given as a path that,
 is defined relative to the directory from which the pscf_pc or 
 pscf_pg command was invoked. 
 
-Each frame in a trajectory file is assigned an integer frame index 
-that increments by 1 per frame, starting from zero. The frame index 
-for a frame is thus generally not equal to the simulation step 
-counter for the time step that the frame was written, since the number 
-of time steps between neighboring frames (i.e., the interval of the 
-TrajectoryWriter) is usually greater than 1. 
+Each frame in a trajectory file is assigned an integer frame index that
+increments by 1 per frame, starting from zero. The frame index for a 
+frame is thus generally not equal to the simulation step counter for the 
+time step that the frame was written, since the number of time steps 
+between neighboring frames (i.e., the interval of the TrajectoryWriter) 
+is usually greater than 1. 
 
 During postprocessing, the "interval" parameter associated with each 
 analyzer is interpreted as a number of trajectory file frames between 
 successive data analysis or file output operations, rather than as a 
-number of BD or MC simulation steps.  Because frames are usually 
-output somewhat infrequently, the default value of interval = 1 is 
-often used in parameter files used for postprocessing analysis, in
-order to analyze every frame of available data. 
+number of BD or MC simulation steps.  Because frames are usually output 
+somewhat infrequently, the default value of interval = 1 is often used 
+in parameter files used for postprocessing analysis, in order to analyze 
+every frame of available data. 
 
 A parameter file that is used to initialize a postprocessing operation
 usually has a different format than one used to initialize a simulation. 

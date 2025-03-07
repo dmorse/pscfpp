@@ -2,12 +2,11 @@ System{
   Mixture{
      nMonomer  2
      monomers[
-               1.0  
-               1.0 
+               1.0
+               1.0
      ]
      nPolymer  1
      Polymer{
-        type    linear
         nBlock  2
         blocks[
                 0   0.5
@@ -25,45 +24,20 @@ System{
   }
   Domain{
     mesh           16    16    16
-    lattice     cubic   
+    lattice     cubic
   }
   McSimulator{
     AnalyzerManager{
-      baseInterval    1
 
       StepLogger{
         interval       10
       }
 
       HamiltonianAnalyzer{
-        interval        1
-        outputFileName  out/mcHamiltonian
-        nSamplePerBlock 2
+        outputFileName    out/mcHamiltonian
       }
 
     }
   }
 }
-
-
-    McMoveManager{
-
-        RealMove{
-            probability     1
-            A               0.5
-      }
-
-    }
-    AmCompressor{
-      epsilon      1.0e-4
-      maxItr       200
-      maxHist      30     
-      verbose	 0
-      errorType    normResid
-    }
-
-      TrajectoryWriter{
-            interval        1
-            outputFileName  out/trajectory_read
-      }
 

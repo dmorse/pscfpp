@@ -28,7 +28,6 @@ System{
     lattice      cubic   
   }
   BdSimulator{
-    seed           486394701
     LMBdStep{
       mobility  5.0E-2
     }
@@ -40,15 +39,16 @@ System{
       errorType    normResid
     }
     AnalyzerManager{
-      baseInterval    10
+
       StepLogger{
         interval        20
       }
+
       HamiltonianAnalyzer{
         interval        10
         outputFileName  out/hamiltonian
-        nSamplePerBlock 5
       }
+
     }
   }
 }

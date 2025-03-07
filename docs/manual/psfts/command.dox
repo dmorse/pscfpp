@@ -120,12 +120,14 @@ can be used for SCFT calculations.
 
 \anchor psfts_command_pc_simulate_sub
 <b> SIMULATE </b>:
-THE SIMULATE command performs a field-theoretic simulation of a
-specified number nStep of attempted MC moves or BD steps. The
-associated parameter file must contain a BdSimulator or McSimulator
-blocks.  Field trajectories may be written to file by including a
-trajectory writer among the analyzers listed in the AnalyzerManager
-subblock of the McSimulator block.
+THE SIMULATE command performs a field-theoretic MC or BD simulation of
+a specified number of steps. The number nStep of BD steps or attempted
+MC moves is given as the only command parameter.  The associated 
+parameter file (which is read before the command file) must contain a 
+BdSimulator or McSimulator blocks that contains all of the elements 
+necessary to run a simulation.  Field trajectories may be written to 
+file by including a TrajectoryWriter among the analyzers listed in 
+the AnalyzerManager subblock of the BdSimulator or McSimulator block.
 
 \anchor psfts_command_pc_analyze_sub
 <b> ANALYZE </b>:
@@ -139,14 +141,20 @@ read and parsed by an instance of a subclass of the TrajectoryReader
 class with a name specified by the className parameter.  Currently,
 the className parameter should always be set to "TrajectoryReader", 
 which selects a default choice that reads the file format that is 
-written by the "TrajectoryWriter" analyzer class.
+written by the "TrajectoryWriter" analyzer class. Analysis operations
+are performed only for frames of the trajectory file with frame 
+indices indices between min and max (inclusive).  The max parameter
+may be set to any value greater than or equal to the number of frames
+in trajectory file in order to instruct the program to read and
+process frames until the end of file is reached. 
 
 The parameter file used to initialize a postprocessing operation must
 contain a BdSimulator or McSimulator block with an AnalyzerManager 
 subblock that specifies what analysis operations should be applied to 
 the chosen frames of the trajectory file. Every Analyzer in the 
 AnalyzerManager block is applied to frames with frame indices between 
-the values specified by the min and max command parameters.
+the values specified by the min and max command parameters when the
+frame index is a multiple of the interval parameter of the Analyzer.
 
 \anchor psfts_command_pc_compress_sub
 <b> COMPRESS </b>:

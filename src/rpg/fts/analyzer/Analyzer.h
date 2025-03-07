@@ -148,10 +148,10 @@ namespace Rpg {
       */
       std::string outputFileName(const std::string& suffix) const;
 
+   private:
+
       /// Number of simulation steps between subsequent actions.
       long interval_;
-
-   private:
 
       /// Base name of output file(s).
       std::string outputFileName_;
