@@ -47,7 +47,7 @@ periodic microstructures.
 In order to compile the GPU-enabled pscf_pg program, the user's system 
 must also have:
 
-   - an CUDA-enabled NVIDIA graphics card
+   - a CUDA-enabled NVIDIA graphics card
    - the <a href="https://developer.nvidia.com/cuda-toolkit">
      NVIDIA CUDA Toolkit</a>
 
@@ -55,7 +55,7 @@ The CUDA Toolkit is a development environment that provides the
 nvcc C++/CUDA compiler and a variety of GPU-accelerated libraries,
 including the cuFFT fast Fourier transform library.
 
-Users who wish to generate a local copy of this web manual, as a set
+Users who wish to generate a local copy of this web manual as a set
 of html pages that reside on the user's computer, will also need to 
 install the "doxygen" documentation utility.
 

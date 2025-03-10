@@ -160,7 +160,7 @@ near the final value \f$ \lambda = 1 \f$.  In either method, the required
 values of \f$ \partial H(\lambda)/\partial \lambda \f$ can be sampled by 
 the PerturbationDerivative analyzer.
 
-\section psfts_perturb_example_sec Example
+\section psfts_perturb_example_sec Example: Continuous Einstein Crystal Integration
 
 Below, we show a complete parameter file for a calculation that uses
 continuous Einstein crystal integration to compute a free energy

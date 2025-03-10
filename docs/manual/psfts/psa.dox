@@ -114,14 +114,31 @@ In cases to which this approximation applies (those for which
 approximation leads to real values for all monomer fields and for 
 the Hamiltonian \f$ H \f$. 
 
-Morse, Yong and Chen 
-(<https://pubs.acs.org/doi/10.1021/acs.macromol.4c02636>)
-have proposed a further generalization of the PSA so as to treat cases in 
-which one or more eigenvalues of the projected \f$ \chi \f$ matrix are 
-positive. This further generalization is not implemented in v1.2 of PSCF. 
+\anchor psfts_psa_status
+<b> Status of Algorithms for \f$ M > 2 \f$: </b>
+
+As noted above, the BD and MC algorithms provided in v1.2 of PS-FTS can 
+perform simulations of systems with \f$ M \geq 2 \f$ if the projected chi 
+matrix has no positive eigenvalues.  For ABC systems, this requirement 
+imposes a constraint on the allowed range of values of the chi parameters 
+that is described in the article by Morse, Yong and Chen
+(<https://pubs.acs.org/doi/10.1021/acs.macromol.4c02636>) that was
+references previously. 
+
+Some of the data analysis algorithms provided in the current version of 
+PSCF were, however, written for systems with \f$ M = 2 \f$ and are only 
+usable with such systems. The class that implements each such algorithm 
+checks whether \f$ M = 2 \f$, and will print an error message and then 
+halt execution before entering the main simulation loop a user attempts
+to apply it to a system with \f$ M > 2 \f$.
+
+Morse, Yong and Chen have proposed a further generalization of the PSA 
+so as to treat cases in which one or more eigenvalues of the projected 
+\f$ \chi \f$ matrix are positive. This further generalization is not 
+implemented in v1.2 of PSCF. 
 
 <BR>
-\ref psfts_psa_page         (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
+\ref psfts_theory_page         (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
 \ref psfts_page             (Up)   &nbsp; &nbsp; &nbsp; &nbsp;
 \ref psfts_algorithm_page   (Next)
 

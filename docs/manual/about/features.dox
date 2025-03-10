@@ -97,14 +97,14 @@ region.
     during a simulation, which can be used for continuous thermodynamic 
     integration
 
-  - "Analyzer" classes to compute and analyze quantities of physical
-    interest, including the structure factor, order parameters used 
-    to identify phase transitions, and derivatives of the Hamiltonian
-    needed to for thermodynamic integration calculations
+  - Analysis tools to compute several quantities of interest, including
+    the structure factor, order parameters used to identify phase 
+    transitions, and derivatives of the Hamiltonian needed for 
+    thermodynamic integration calculations
 
-  - Data analysis tools that can applied either during a simulation
-    (on-the-fly) or by reading and analyzing field trajectory files 
-    that are created during a simulation (postprocessing).
+  - Analysis tools can applied either during a simulation or during 
+    postprocessing of field trajectory files that are created during 
+    an earlier simulation.
 
 <BR>
 \ref about_programs_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp;

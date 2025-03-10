@@ -1,36 +1,37 @@
 /*! \mainpage PSCF - Polymer Self-Consistent Field Theory
 
-PSCF is a C++ package for field-theoretic simulation of inhomogeneous
-equilibrium structures formed by polymer liquids with components that
-tend to phase separate. The package enables both self-consistent field
-theory (SCFT) calculations and some types of stochastic field theoretic
-simulation (FTS).
+PSCF is a software package for field-theoretic simulation of inhomogeneous
+equilibrium structures formed by polymer liquids with components that 
+tend to phase separate. This version of PSCF can be used to perform 
+self-consistent field theory (SCFT) calculations and stochastic field 
+theoretic simulations that are rely on a partial saddle-point 
+approximation (PS-FTS).
 
-PSCF is distributed only in source code form, and so must be compiled 
-by the user. It is designed for use in a unix-like environment, and is
-regularly tested on Linux and Mac OS X operating systems.
-PSCF can take advantage of a CUDA-capable Nvidia graphics processing 
-unit if one is available. 
+PSCF is written primarily in C++, supplemented by CUDA to enable use of 
+a graphics processing unit (GPU) if one is available.  It is distributed 
+only in source code form, and so must be compiled by the user. PSCF is 
+designed for a unix-like environment, and is regularly tested on Linux 
+and Mac OS X operating systems.
 
-PSCF is free, open source software. It is distributed under the terms 
-of the GNU General Public License as (GPL) published by the Free
-Software Foundation, either version 3 of the License or (at your 
-option) any later version.  See the LICENSE file or the
+PSCF is free, open source software. It is distributed under the 
+terms of the GNU General Public License as (GPL) published by the 
+Free Software Foundation, either version 3 of the License or (at 
+your option) any later version.  See the LICENSE file or the
 <a href=http://www.gnu.org/licenses/>gnu web page</a> for details.
 Development of PSCF is currently supported by the National Science
 Foundation program for Cyberinfrastructure for Sustained Scientific
 Development (CSSI) under Grant No. 2103627.
 
-This manual is constructed as a set of linked web pages that provide 
-both documentation designed for users and more detailed API documentation
-that is aimed primarily at developers.  Information for users about how 
-to install and use PSCF is provided through the set of web pages that 
-is outlined and linked below. Full documentation of class and function
-interfaces as well as html versions of all source files is instead 
-accessible via the "Topics", "Namespaces", "Classes", and "Files" tabs 
-that appear at the top of every manual page.  The web manual for the 
-most recent numbered release of PSCF (currently v1.2) is available
-online at: <a ref=https://dmorse.github.io/pscfpp-man/>
+This web manual is designed to provide both introductory information 
+for users who never look at the source code and programming interface 
+documentation aimed primarily developers. Information for users about 
+how to install and use PSCF is provided through the sequence of web pages 
+that is outlined and linked below.  Information aimed at developers is 
+instead accessible via the "Topics", "Namespaces", "Classes", and "Files" 
+tabs that appear at the top of every web manual page, as well as in the
+"Developer Information" chapter of the manual.  The web manual for the 
+most recent numbered release of PSCF (currently v1.2) is available 
+online at: <a ref=https://dmorse.github.io/pscfpp-man/> 
 https://dmorse.github.io/pscfpp-man </a>.
 
 <h2>Contents:</h2>
