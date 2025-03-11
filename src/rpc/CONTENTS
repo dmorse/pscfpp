@@ -4,11 +4,11 @@ and periodic boundary conditions, using conventional CPU hardware.  All
 stochastic FTS algorithms implemented in this directory rely on a partial 
 saddle point approximation (PS-FTS), which allows the use of real fields. 
 
-All code in this directory is defined in the C++ namespace Pscf::Rpc. The
-symbol Rpc stands for 'real periodic CPU' Code defined in Pscf::Rpc may
-use classes and functions defined in namespace Util (directory src/util), 
-parent namespace Pscf (directory src/pscf), and namespace Pscf::Prdc 
-(directory src/prdc).
+All code in this directory (src/rpc) is defined in the C++ namespace 
+Pscf::Rpc. The symbol Rpc stands for 'real periodic CPU'. Code defined in
+namespace Pscf::Rpc may use classes and functions defined in namespace 
+Util (directory src/util), parent namespace Pscf (directory src/pscf), and 
+namespace Pscf::Prdc (directory src/prdc).
 
 Subdirectories:
 
