@@ -16,6 +16,8 @@ namespace Rpc {
    /**
    * Manager for a list of Analyzer objects.
    *
+   * \see rpc_AnalyzerManager_page Manual Page
+   *
    * \ingroup Rpc_Fts_Analyzer_Module
    */
    template <int D>

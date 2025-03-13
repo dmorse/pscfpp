@@ -1,17 +1,21 @@
 namespace Pscf{
 namespace Rpc{
 /*! 
-\page rpc_BdSimulator_page Rpc::BdSimulator
+\page rpc_BdSimulator_page BdSimulator
 
-An instance of the class Pscf::Rpc::BdSimulator<D> contains all of the
-algorithms and parameters that are needed to enable a partial saddle-point
-field theoretic simulation (PS-FTS) using Brownian dynamic sampling, but 
-that are not needed for self-consistent field (SCFT) calculation. The
-associated parameter file block is one of two possible options (BdSimulato
-r or McSimulator) for the optional, selectable "Simulator" subblock of the 
-main \ref rpc_System_page "System" block of the parameter file. 
+An instance of the class BdSimulator<D> in namespace Pscf::Rpc (for pscf_pc)
+or Pscf::Rpg (for pscf_pg) contains all of the algorithms and parameters 
+that are needed to enable a partial saddle-point field theoretic simulation 
+(PS-FTS) using Brownian dynamic sampling, but that are not needed for 
+self-consistent field (SCFT) calculation. The associated parameter file 
+block is one of two possible options (BdSimulator or McSimulator) for 
+the optional, selectable "Simulator" subblock of the main 
+\ref rpc_System_page "System" block of the parameter file. 
 
-The format of a BdSimulator block is given below in skeleton form:
+\section rpc_BdSimulator_parameter_page Parameter File
+
+The format of a BdSimulator parameter file block is given below in skeleton 
+form:
 \code
 BdSimulator{
   seed* int

@@ -100,12 +100,12 @@ can be used for SCFT calculations.
   </tr>
   <tr>
     <td> \ref psfts_command_pc_analyze_sub "ANALYZE" </td>
-    <td> min, max, className, filename </td>
+    <td> min, max, readerName, filename </td>
     <td> Postprocess a field trajectory output by looping over frames
          of a field trajectory file output by a previous simulation.
          Analyze frames with frame numbers min to max from file
          filename, using a TrajectoryReader object that is an instance
-         of class className.  </td>
+         of class readerName.  </td>
   </tr>
   <tr>
     <td> \ref psfts_command_pc_compress_sub "COMPRESS" </td>
@@ -131,22 +131,24 @@ the AnalyzerManager subblock of the BdSimulator or McSimulator block.
 
 \anchor psfts_command_pc_analyze_sub
 <b> ANALYZE </b>:
-THE ANALYZE command reads a field trajectory file that was written by a
-previous field-theoretic simulation, and postprocesses the contents of
-that file.  This postprocessing procedure is discussed in more detail
-\ref psfts_analysis_page "elsewhere".
+THE ANALYZE command reads and analyzes a field trajectory file with the 
+name given by the "filename" parameter that was written by a previous 
+field-theoretic simulation.  This postprocess analysis procedure is 
+discussed in more detail \ref psfts_analysis_page "elsewhere".
+
+Analysis operations listed in the parameter file are performed only for 
+frames of the trajectory file with frame index values that lie between 
+min and max (inclusive).  Setting the max parameter to any value greater 
+than or equal to the number of frames in the trajectory file, while min 
+is less than the number of frames in the file, will cause the program 
+to read and process frames until the end of file is reached. 
 
 The trajectory file with a name given by the "filename" parameter is
 read and parsed by an instance of a subclass of the TrajectoryReader
-class with a name specified by the className parameter.  Currently,
-the className parameter should always be set to "TrajectoryReader", 
-which selects a default choice that reads the file format that is 
-written by the "TrajectoryWriter" analyzer class. Analysis operations
-are performed only for frames of the trajectory file with frame 
-indices indices between min and max (inclusive).  The max parameter
-may be set to any value greater than or equal to the number of frames
-in trajectory file in order to instruct the program to read and
-process frames until the end of file is reached. 
+class with a name specified by the "readerName" parameter.  Currently,
+the readerName parameter should always be set to "TrajectoryReader", 
+which selects a default reader algorithm that can read the file format 
+that is written by the "TrajectoryWriter" analyzer class. 
 
 The parameter file used to initialize a postprocessing operation must
 contain a BdSimulator or McSimulator block with an AnalyzerManager 
@@ -158,15 +160,16 @@ frame index is a multiple of the interval parameter of the Analyzer.
 
 \anchor psfts_command_pc_compress_sub
 <b> COMPRESS </b>:
-The COMPRESS command applies the Compressor iterator algorithm that is 
-specified in the parameter file to the current w-fields.  The compressor 
-adjusts the Lagrange multiplier pressure-like field component so as to 
-satisfy the mean-field incompressibility constraint, without changing
-any of the other w-field components.
+The COMPRESS command applies the compressor algorithm that is specified 
+in the parameter file to the current w-fields.  The compressor iteratively
+adjusts the pressure-like field component \f$ W_{+}({\bf r}) \f$ so as 
+to satisfy the mean-field incompressibility constraint to within a 
+tolerance that is specified in the parameter file, without changing any 
+of the other w-field components. 
 
 <BR>
-\ref psfts_param_page        (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
-\ref psfts_page              (Up)   &nbsp; &nbsp; &nbsp; &nbsp;
+\ref psfts_param_page     (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref psfts_page           (Up)   &nbsp; &nbsp; &nbsp; &nbsp;
 \ref psfts_analysis_page  (Next)
 
 */

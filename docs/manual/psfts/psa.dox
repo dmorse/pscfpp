@@ -52,16 +52,17 @@ Partial saddle-point field configuration for states characterized
 by a real-valued exchange field \f$ W_{-}({\bf r}) \f$ always have
 a real-valued field \f$ W_{+}({\bf r}) \f$, corresponding to a pure 
 imaginary value of \f$ \omega_{+}({\bf r}) \f$.
-Such a field configurations always yields real monomer w-fields 
-fields, given by
+Such a field configurations always yield real monomer w-fields fields, 
+given by
 \f[
    w_{1}({\bf r}) =  W^{*}_{+}({\bf r}) + W_{-}({\bf r})  \quad
 \f]
 \f[
-   w_{2}({\bf r}) =  W^{*}_{+}({\bf r}) - \omega_{+}({\bf r})  \quad,
+   w_{2}({\bf r}) =  W^{*}_{+}({\bf r}) - W_{-}({\bf r})  \quad.
 \f]
-and also yields real values for \f$ \ln Z_{\rm id}[w] \f$ and 
-the Hamiltonian \f$ H \f$. 
+Partial saddle-point field configurations are also characterized
+by real values for \f$ \ln Z_{\rm id}[w] \f$ and the Hamiltonian 
+\f$ H \f$. 
 
 \section psfts_psa_general_sec General Case (\f$ M \geq 2 \f$)
 
@@ -72,8 +73,8 @@ version of PSCF is applicable if and only if the nontrivial eigenvalues
 of the projected \f$ \chi \f$ matrix, 
 \f$ \lambda_{1}, \ldots \lambda_{M-1} \f$,
 are all negative.  This requirement is a generalization of the 
-requirement that \f$ \chi > 0 \f$ in a standard AB system, which can be 
-shown to be equivalent in that case to a requirement that 
+requirement that \f$ \chi > 0 \f$ in a standard AB system, which can 
+be shown to be equivalent in that case to a requirement that 
 \f$ \lambda_{1} < 0 \f$.
 
 To discuss the generalized PSA for such systems, it is convenient to 
@@ -117,20 +118,24 @@ the Hamiltonian \f$ H \f$.
 \anchor psfts_psa_status
 <b> Status of Algorithms for \f$ M > 2 \f$: </b>
 
-As noted above, the BD and MC algorithms provided in v1.2 of PS-FTS can 
-perform simulations of systems with \f$ M \geq 2 \f$ if the projected chi 
-matrix has no positive eigenvalues.  For ABC systems, this requirement 
+The BD and MC algorithms provided in v1.2 of PS-FTS can perform simulations 
+of systems with \f$ M \geq 2 \f$ if and only if the projected chi matrix 
+has no positive eigenvalues. This statement applies both to the actual BD 
+and MC algorithms used to generate random changes in exchange fields and 
+to the \ref psfts_algorithm_compressor_sec ``compressor" algorithms used 
+to identify partial saddle points. For ABC systems, this requirement 
 imposes a constraint on the allowed range of values of the chi parameters 
 that is described in the article by Morse, Yong and Chen
-(<https://pubs.acs.org/doi/10.1021/acs.macromol.4c02636>) that was
-references previously. 
+(<https://pubs.acs.org/doi/10.1021/acs.macromol.4c02636>).
 
 Some of the data analysis algorithms provided in the current version of 
-PSCF were, however, written for systems with \f$ M = 2 \f$ and are only 
-usable with such systems. The class that implements each such algorithm 
-checks whether \f$ M = 2 \f$, and will print an error message and then 
-halt execution before entering the main simulation loop a user attempts
-to apply it to a system with \f$ M > 2 \f$.
+PSCF were, however, designed specifically for systems with \f$ M = 2 \f$ 
+and are only usable with such systems.  The class that implements each 
+such algorithm checks whether \f$ M = 2 \f$, and will print an error 
+message and then halt execution before entering the main simulation loop 
+if a user attempts to apply it to a system with \f$ M > 2 \f$. Currently,
+it is thus possible to perform PS-FTS calculations on some ABC systems, 
+but some data analysis algorithms cannot be used for this purpose.
 
 Morse, Yong and Chen have proposed a further generalization of the PSA 
 so as to treat cases in which one or more eigenvalues of the projected 

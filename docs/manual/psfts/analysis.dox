@@ -83,23 +83,24 @@ classes are available for use during either on-the-fly analysis or
 postprocessing. 
 
 The ANALYZE command takes four command arguments, named min, max, 
-className, and fileName. This command always causes the program to 
+readerName, and fileName. This command always causes the program to 
 begin reading the rajectory file starting with the first frame, but 
 data analysis operations are only applied to frames with a frame index 
 between min and max, inclusive. 
-
-The className parameter is a string that gives the name of a class that 
-will be used to read the parameter file. In the current version of PSCF, 
-there is only one such class, named "TrajectoryReader", which reads the
-output format that is written by the "TrajectoryWriter" class. Currently, 
-this parameter should thus always be set to "TrajectoryReader". The name 
-of this class is treated as parameter to allow the possibility of future 
-extension to files other file formats.
 
 The "fileName" parameter gives the name of the trajectory file that 
 should be read and processed. This file name is given as a path that,
 is defined relative to the directory from which the pscf_pc or 
 pscf_pg command was invoked. 
+
+The readerName parameter is a string that gives the name of a class that 
+will be used to read the parameter file. In the current version of PSCF, 
+there is only one such class, which reads the output format that is 
+written by the "TrajectoryWriter" class. Currently, this parameter 
+should always be set to "TrajectoryReader" to select this algorithm by
+default. The name of this class has been treated as command parameter 
+to allow the possibility of future extension to allow use of other 
+trajectory file formats.
 
 Each frame in a trajectory file is assigned an integer frame index that
 increments by 1 per frame, starting from zero. The frame index for a 
@@ -125,15 +126,21 @@ that perform a simulation.  Such a parameter file must also contain
 either a BdSimulator or McSimulator block with an AnalyzerManager 
 subblock. The AnalyzerManager block should contain one or more 
 analyzer subblocks that specify actions that should be taken during
-postprocessing.  No BdStep or McMoveManager block, Compressor block, 
-or Ramp block is needed during postprocessing of a trajectory file, 
-however, and so these blocks can all be safely omitted from a parameter 
-file used for this purpose. A Perturbation block may be needed if the
-original simulation defined a Perturbation and any of the analyzers
-require access to information about the perturbation. The interval
-parameters associated with many analyzers may be omitted in such 
-files, in order to use the default interval value of 1 and thus
-analyze every frame.
+postprocessing.  
+
+Components of a BdSimulator or McSimulator that are not used during
+postprocessing can be omitted from a parameter file that is used for
+postprocessing. Specifically, the BdStep or McMoveManager block, 
+Compressor block, and Ramp block are generally not needed during 
+postprocessing of a trajectory file, and so these blocks can all 
+normally be omitted from a parameter file used for this purpose. A 
+Perturbation block may be needed if the original simulation defined 
+a Perturbation and any of the analyzers require access to information 
+about the perturbation. 
+
+The interval parameters associated with analyzers are also often 
+omitted in parameter files for postprocessing, in order to use the 
+default interval value of 1 and thus analyze every frame.
 
 \section psfts_analysis_example_sec Example
 

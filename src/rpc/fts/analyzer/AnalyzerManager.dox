@@ -10,6 +10,8 @@ involving data analysis or output of data to a file during a simulation
 or postprocessing operation.
 
 \see AnalyzerManager (class API)
+\see \ref rpc_BdSimulator_page  (manual page)
+\see \ref rpc_McSimulator_page  (manual page)
 
 \section rpc_AnalyzerManager_parameter_sec Parameter File
 
@@ -17,7 +19,7 @@ The parameter file format, including all optional parameters, is shown
 below:
 \code
 AnalyzerManager{
-  baseInterval*      int
+  baseInterval*      int (1 by default)
 
   Analyzer#*{ .... }
   Analyzer#*{ .... }

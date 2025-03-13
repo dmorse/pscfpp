@@ -1,0 +1,39 @@
+namespace Pscf {
+namespace Rpc {
+
+/*! 
+\page rpc_McMoveManager_page McMoveManager
+
+An McMoveManager is a container for McMove objects (i.e., instances 
+of subclasses of McMove) that perform different types of Monte Carlo 
+moves. 
+
+\see McMoveManager (class API)
+\see \ref rpc_McSimulator_page  (manual page)
+
+\section rpc_McMoveManager_parameter_sec Parameter File
+
+The parameter file format, including all optional parameters, is shown 
+below:
+\code
+McMoveManager{
+
+  McMove#*{ .... }
+  McMove#*{ .... }
+     .
+     .
+     .
+ 
+}
+\endcode
+The McMoveManager block contains a sequence of any number of 
+selectable McMove subblocks that ends when the closing bracket 
+for the McMoveManager block is reached. Each such McMove subblock 
+must start with an opening line that contains the label (or class 
+name) for a known analyzer algorithm that is implemented by a 
+subclass of the McMove base class. 
+
+*/
+
+}
+}
