@@ -171,7 +171,11 @@ namespace Rpc {
       MeshIterator<D> itr;
       itr.setDimensions(wKGrid_[0].dftDimensions());
       for (itr.begin(); !itr.atEnd(); ++itr) {
+         // Compute vS(q)
          structureFactors_[itr.rank()] = n / (chi * chi) * accumulators_[itr.rank()].average() - 1.0/(2.0*chi);
+         
+         // Compute S(q)
+         structureFactors_[itr.rank()] /= vMonomer;
       }
    }
 
