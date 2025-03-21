@@ -71,49 +71,57 @@ systems with M > 2, subject to a constraint on allowed values of the
 \f$ \chi \f$ parameters:  The implementation of the PSA in the current 
 version of PSCF is applicable if and only if the nontrivial eigenvalues 
 of the projected \f$ \chi \f$ matrix, 
-\f$ \lambda_{1}, \ldots \lambda_{M-1} \f$,
-are all negative.  This requirement is a generalization of the 
-requirement that \f$ \chi > 0 \f$ in a standard AB system, which can 
-be shown to be equivalent in that case to a requirement that 
-\f$ \lambda_{1} < 0 \f$.
+\f$ \lambda_{1}, \ldots , \lambda_{M-1} \f$,
+are all negative.  When applied a standard AB system, this is 
+equivalent to a requirement that \f$ \chi > 0 \f$. In general, when
+this condition is satisfied, then \f$ \sigma_{i} = 1 \f$, and thus
+\f[ 
+   W_{\alpha}({\bf r}) = \omega_{\alpha}({\bf r}) + S_{\alpha}
+\f]
+for all \f$ \alpha = 1, \ldots, M - 1 \f$, giving real values for all 
+these fields. Because \f$ W_{\alpha} \f$ and \f$ \omega_{\alpha} \f$
+then only differ by a constant shift for these fields, any 
+functional integrals with respect to \f$ \omega_{\alpha} \f$ with 
+\f$ \alpha < M \f$ can be re-written as an integral with respect 
+to \f$ W_{\alpha} \f$ without changing the integral.
 
 To discuss the generalized PSA for such systems, it is convenient to 
 adopt a modified notation analogous to that used for AB systems, in
-which we use \f$ \omega_{-} \f$ as short-hand for the list of fields
+which we use \f$ W_{-} \f$ as short-hand for the list of fields
 \f[
-   \omega_{-} = [\omega_{1}, \ldots, \omega_{M-1}] \quad,
+   W_{-} = [W_{1}, \ldots, W_{M-1}] \quad,
 \f]
 which we refer to collectively as exchange fields, while using 
 \f$ W_{+} \f$ as an alternate symbol for the pressure-like field 
 \f$ W_{M} \f$. Using this notation, we may express the generalized 
 PSA for such systems as an integral 
 \f[
-   Z = \frac{1}{N} \int D\omega_{-} \; e^{-H[\omega_{-}, W_{+}^{*}]}
+   Z = \frac{1}{N} \int D W_{-} \; e^{-H[W_{-}, W_{+}^{*}]}
 \f]
-in which \f$ \int D\omega_{-} \f$ denotes a functional integral over 
+in which \f$ \int DW_{-} \f$ denotes a functional integral over 
 the \f$ M - 1 \f$ real exchange fields 
-\f$ \omega_{-} = [\omega_1, \ldots, \omega_{M-1}] \f$, and in which 
-\f$ W_{+}^{*} \f$ denotes a real configuration of 
-\f$ W_{+}({\bf r}) \f$ that is chosen to satisfy a criterion 
-requiring that 
+\f$ W_{-} = [W_1, \ldots, W_{M-1}] \f$, and in which 
+\f$ W_{+}^{*} \f$ denotes a real-valued configuration of 
+\f$ W_{+}({\bf r}) \f$ that is chosen to satisfy a partial
+saddle-point condition requiring that
 \f[
     0 = \left . 
     \frac{ \delta H }
          { \delta W_{+}({\bf r}) } 
-    \right |_{\omega_{-}}
-    \quad.
+    \right |_{W_{-}}
 \f]
-As for an AB system, the requirement that 
-\f$ \delta H[\omega]/\delta W_{+}({\bf r}) = 0 \f$ can be shown to 
-be equivalent to a requirement that 
+for all \f$ {\bf r} \f$.
+This partial saddle-point criterion can be shown to be equivalent 
+to a requirement that 
 \f[
     \sum_{i=}^{M} \phi_{i}({\bf r}) = 1
     \quad.
 \f]
-In cases to which this approximation applies (those for which
-\f$ \lambda_{1}, \ldots, \lambda_{M-1} \f$ are all negative) this 
-approximation leads to real values for all monomer fields and for 
-the Hamiltonian \f$ H \f$. 
+In the case considered here, for which 
+\f$ \lambda_{1}, \ldots, \lambda_{M-1} \f$ are all negative, the 
+partial saddle-point approximation yields real values for all average 
+monomer fields \f$ \phi_{1}({\bf r}), \ldots \phi_{M}({\bf r}) \f$ and
+for the Hamiltonian \f$ H \f$ in all allowed field configurations.
 
 \anchor psfts_psa_status
 <b> Status of Algorithms for \f$ M > 2 \f$: </b>
@@ -124,23 +132,27 @@ has no positive eigenvalues. This statement applies both to the actual BD
 and MC algorithms used to generate random changes in exchange fields and 
 to the \ref psfts_algorithm_compressor_sec ``compressor" algorithms used 
 to identify partial saddle points. For ABC systems, this requirement 
-imposes a constraint on the allowed range of values of the chi parameters 
-that is described in the article by Morse, Yong and Chen
+imposes a constraint on the allowed range of values of the chi parameters, 
+as discussed in the article by Morse, Yong and Chen
 (<https://pubs.acs.org/doi/10.1021/acs.macromol.4c02636>).
 
 Some of the data analysis algorithms provided in the current version of 
 PSCF were, however, designed specifically for systems with \f$ M = 2 \f$ 
-and are only usable with such systems.  The class that implements each 
-such algorithm checks whether \f$ M = 2 \f$, and will print an error 
-message and then halt execution before entering the main simulation loop 
-if a user attempts to apply it to a system with \f$ M > 2 \f$. Currently,
-it is thus possible to perform PS-FTS calculations on some ABC systems, 
-but some data analysis algorithms cannot be used for this purpose.
+and are only usable with such systems.  The "analyzer" class that implements 
+each such restricted algorithm checks whether \f$ M = 2 \f$, and will print 
+an error message and then halt execution before entering the main simulation
+loop if a user attempts to apply it to a system with \f$ M > 2 \f$. 
+Currently, it is thus possible to perform PS-FTS calculations on some ABC 
+systems, but some data analysis algorithms cannot be used for this purpose.
 
 Morse, Yong and Chen have proposed a further generalization of the PSA 
-so as to treat cases in which one or more eigenvalues of the projected 
-\f$ \chi \f$ matrix are positive. This further generalization is not 
-implemented in v1.2 of PSCF. 
+so as to treat cases in which one or more of the \f$ M - 1 \f$ nontrival 
+eigenvalues of the projected \f$ \chi \f$ matrix are positive. 
+Specificially, they proposed treating the auxiliary fields associated with 
+such eigenvalues in a PSA, in addition to the use of the PSA for the 
+pressure-like field \f$ W_{M} \f$.  This generalized version of the PSA 
+is not implemented in v1.2 of PSCF, in which the PSA is currently only 
+applied to \f$ W_{M} \f$.
 
 <BR>
 \ref psfts_theory_page         (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 

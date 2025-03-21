@@ -1,23 +1,33 @@
 /*! 
-\page rpc_AmIteratorBasis_page Rpc::AmIteratorBasis
+\page rpc_AmIteratorBasis_page AmIteratorBasis
 
-The AmIteratorBasis algorithm used by the pscf_pc program solves 
-the SCFT equations for a periodic system using the Anderson Mixing 
-algorithm. 
+The AmIteratorBasis algorithm used by either the pscf_pc program or
+pscf_pg solves the SCFT equations for a periodic system using the 
+Anderson Mixing algorithm. Closely analogous classes to implement
+this algorithm are defined in the Pscf::Rpc and Pscf::Rpg namespaces.
 
-The variant of this algorithm implemented here is almost identical to that 
-described in the paper by Arora et al. [Arora, Morse, Bates, and Dorfman, 
-J. Chem.  Phys. vol. 146, 244902 (2017)], which was written as a description
-of the algorithm used in the earlier Fortran version of PSCF.  The version 
-of this algorithm used by AmIteratorBasis adjusts the fields by adjusting 
-the compoments of each field in a basis of symmetry adapated basis functions, 
-thus preserving the space-group symmetry of the fields throughout the 
-iteration process.  The algorithm can be used to either solve the SCFT 
-equations for a rigid unit cell or to solve the SCFT equations and also 
-optimize some or all of the unit cell parameters of a flexible unit cell 
-so as to minimize the free energy density. The treatment of unit cell
-parameters depends on the values of the "isFlexible" and "flexibleParams"
-parameters, as described below. 
+Class API documentation:
+<ul>
+   <li> Pscf::Rpc::AmIteratorBasis </li>
+   <li> Pscf::Rpg::AmIteratorBasis </li>
+</ul>
+
+\section rpc_AmIteratorBasis_algorithm_sec Algorithm
+
+The variant of Anderson mixing algorithm implemented in PSCF is almost 
+identical to that described in the paper by Arora et al. 
+[Arora, Morse, Bates, and Dorfman, J. Chem.  Phys. vol. 146, 244902 (2017)], 
+which was written as a description of an algorithm used in the earlier 
+Fortran version of PSCF.  The version of this algorithm used by 
+AmIteratorBasis adjusts the fields by adjusting the compoments of each 
+field in a basis of symmetry adapated basis functions, thus preserving 
+the space-group symmetry of the fields throughout the iteration process. 
+The algorithm can be used to either solve the SCFT equations for a rigid 
+unit cell or to solve the SCFT equations and also optimize some or all 
+of the unit cell parameters of a flexible unit cell so as to minimize 
+the free energy density. The treatment of unit cell parameters depends 
+on the values of the "isFlexible" and "flexibleParams" parameters, as 
+described below. 
 
 \section rpc_AmIteratorBasis_parameter_sec Parameter File
 

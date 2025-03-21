@@ -90,8 +90,8 @@ namespace Rpc {
    * <ul>
    *  <li> \ref scft_param_pc_page    "Manual Page (SCFT)" </li>
    *  <li> \ref psfts_param_page      "Manual Page (PS-FTS)" </li>
-   *  <li> \ref rpc_System_page       "Manual Page (Parameter format)" </li>
-   *  <li> \ref scft_command_pc_page  "Command File Format" </li>
+   *  <li> \ref rpc_System_page       "Manual Page (Parameter File Format)" </li>
+   *  <li> \ref scft_command_pc_page  "Manual Page (Command File Format)" </li>
    * </ul>
    *
    * \ingroup Pscf_Rpc_Module

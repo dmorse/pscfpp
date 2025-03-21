@@ -34,32 +34,35 @@ yields a theory that involves only real-valued fields.
 
 ## History
 
-The current C++/CUDA version of PSCF originated as a complete rewrite
-of an older Fortran SCFT program of the same name. The C++/CUDA is
-intended to supersed the Fortran version, which is no longer being
-developed or actively maintained. The Fortran PSCF program is available 
-in a separate github.com repository at https://github.com/dmorse/pscf.
-The current C++/CUDA version provides almost all of the capabilities 
-of the older Fortran program, and some important new capabilities, as
-discussed below.
+The current C++/CUDA version of PSCF originated as a complete rewrite of an
+older Fortran SCFT program of the same name. The Fortran PSCF version is a
+single program that was designed for SCFT calculations on systems that can
+contain any mixture of linear block polymers and small-molecule solvents 
+in a domain with periodic boundary conditions.  The C++/CUDA version is 
+intended to supersede the Fortran version, which is no longer being 
+developed or actively maintained. The Fortran PSCF program is available in 
+a separate github.com repository at https://github.com/dmorse/pscf.  The 
+current C++/CUDA version provides almost all of the capabilities of the 
+Fortran PSCF program, and some important new capabilities, as discussed 
+below.
 
-Differences between the current C++/CUDA version of PSCF and the legacy
-Fortran version include:
+Functional differences between the current C++/CUDA version of PSCF and 
+the legacy Fortran version include:
 
    - The current version is an extensible package of several programs
      that are designed for use with different types of spatial domain,
      different algorithms and/or different hardware, implemented within 
      a common framework.
 
-   - The current version can perform stochastic PS-FTS calculations 
-     as well as SCFT.
+   - The current version can now perform stochastic PS-FTS calculations, as
+     well as SCFT.
 
    - The current version allows simulations of mixtures containing
-     acyclic branched block polymers, while the Fortran program 
-     could only treat linear polymers.
+     acyclic branched block polymers, while the Fortran program could
+     only treat linear polymers.
 
-   - The current version enables use of a graphics processing unit 
-     (GPU) to dramatically accelerate some applications.
+   - The current version enables use of a graphics processing unit (GPU)
+     to dramatically accelerate some applications.
 
 The only important capability of the Fortran PSCF program that has not 
 been ported to the C++/Cuda version is the ability to perform generalized
@@ -75,9 +78,9 @@ PSCF currently provides three executable programs:
      calculations for one-dimensional (1D) problems in Cartesian,
      cylindrical or spherical coordinates. A finite difference method is
      used to solve the underlying partial differential equation, known
-     as the modified diffusion equation (MDE). This program is useful
-     for treating problems involving flat and curved interfaces, as
-     well as cylindrical and spherical micelles.
+     as the modified diffusion equation (MDE). This program can be used
+     to treat problems involving flat and curved interfaces, as well as
+     cylindrical and spherical micelles.
 
    - **pscf_pc** : The pscf_pc rogram is designed to perform SCFT and
      PS-FTS calculations for systems that are periodic in 1, 2 or 3 
@@ -99,13 +102,13 @@ PSCF currently provides three executable programs:
 All three PSCF programs are designed to treat an incompressible mixture
 containing any number of block polymer, homopolymer and small molecule
 (point-like) solvent molecular species. All polymer species are treated 
-using the standard Gaussian model of polymer conformations as a 
-continuous random walks.
+using the standard Gaussian model of polymer conformations as continuous
+random walks.
 
 Features for both SCFT and FTS (all programs):
 
-  - Ability to treat mixtures of any number of block polymer and
-    solvent species.
+  - Ability to treat mixtures of any number of block polymer and solvent
+    species.
 
   - Ability to treat acyclic branched block polymers of arbitrary
     topology, in addition to linear polymers
@@ -440,17 +443,18 @@ initial chemical potential field, but may contain two or more different
 sets of parameter or command files for use in different examples.
 
 Example directories that contain files for a single example usually
-contain a shell script named "run" that can be executed to run the
-example using the supplied input files.  The simplest way to run such an
-example is thus to change directory (cd) to the relevant example directory
-and enter "./run" from within that directory. (Note the use of the
+contain a shell script named "run" that can be executed to run the example
+using the supplied input files.  The simplest way to run such an example
+is thus to change directory (cd) to the relevant example directory and 
+enter "./run" from within that directory. (Note the use of the prefix
 prefix "./", which tells the operating system to look for the run script
-in the current working directory).  Users may also inspect the text of
-such a run script to see the command and command line options used to
-run the example.  Example directories that contain input files for two
-or more closely related examples may contain several such scripts with
-names that are variants of "run", each of which can be execute to run a
-specific example.
+in the current working directory). Users may also inspect the text of such
+a run script to see the command and command line options that are being
+used to run the example.  Example directories that contain input files
+for two or more closely related examples may contain several such scripts
+with names that are variants of "run", each of which can be executed to 
+run a specific example. Such directories also usually contain a file 
+named contents that explains the purposes of different run scripts.
 
 Almost every example directory also contains a script named "clean" that 
 can be used to remove all of the output files that are created by running 

@@ -57,7 +57,7 @@ PSCF root directory are given briefly below:
 </tr>
 <tr>
   <td> examples </td>
-  <td> Examples input files for a variety of calculations types </td>
+  <td> Examples input files for various types of calculation </td>
 </tr>
 <tr>
   <td> data </td>
@@ -77,7 +77,7 @@ extension using the \* (asterisk) symbol to represent a wildcard that can
 represent any string of characters.  For example, the pattern \*.h can
 represent any file name that ends in extension .h, which is a standard
 file name extension for C++ header files. We sometimes refer to file
-names that match such a pattern either as, for example, "\*.h files".
+names that match such a pattern either as, for example, \*.h files.
 
 \section developer_directory_blddir_sec Overview of build process
 
@@ -86,28 +86,28 @@ Compilation and installation of the package involves the following steps:
 
   - Compiling all source files in the src directory
 
-  - Collecting the resulting assembly code into several static library files
+  - Creating several static library files
 
   - Creating executable files (pscf_1d, pscf_pc, and pscf_pg)
 
 Several aspects of this process are described in more detail below.
 
-All C++ and CUDA C++ source files for PSCF are located in the src
+All C++ and C++/CUDA source files for PSCF are located in the src
 directory tree. When a source file in this directory is compiled, the
 build system creates two associated files that we refer to as an object
 file and a dependency file.  
 
   - An object file is a file with file name extension .o that contains 
-    the assembly code created by compiling an associated source file.  
+    the object code created by compiling the associated source file.  
 
-  - A dependency file is a makefile fragment with file name extension .d 
+  - A dependency file is a makefile fragment with file name extension .d
     that contains a makefile rule that lists all the the pre-requisites 
     of the associated source file.
 
-The object and dependency file that are created by compiling a source
-file have the same base file name as the associated source file.
+The object and dependency file that are created by compiling a source file 
+have the same base file name as the associated source file.
 
-The PSCF build system also creates several static libraries with file
+The PSCF build system also creates several static libraries with file 
 names of the form lib\*.a. Each such library contains all of the
 assembly code created by compiling the source files in one top-level
 subdirectory of the src directory.
@@ -144,33 +144,32 @@ from the src directory instead causes make to be built in-source.
 
 \section developer_directory_src_sec Source file (src) directory
 
-The src directory contains all of the C++ source code files for PSCF.
-The structure of subdirectories of src reflects the organization of
-entities defined in the source code (i.e., classes and functions) into
+The src directory contains all of the C++ and C++/CUDA source code files 
+for PSCF.  The structure of subdirectories of src reflects the organization
+of entities defined in the source code (i.e., classes and functions) into
 several C++ namespaces.
 
 * **C++ namespaces:**
 
-The source code for PSCF is divided among two top-level C++ namespaces,
+The source code for PSCF is divided between two top-level C++ namespaces,
 named Util and Pscf.
 
 The Util namespace contains a collection of general utilities for
-scientific computation that are also used by projects other than PSCF.
-The code is maintained in a separate github repository (project
-dmorse/util) and imported into the pscfpp repository as a git submodule.
-All source code files for entities that are defined in the Util namespace
-are located in the src/util directory.
+scientific computation that are also used by projects other than PSCF. The 
+code is maintained in a separate github repository (project dmorse/util) 
+and imported into the pscfpp repository as a git submodule.  All source 
+code files for entities that are defined in the Util namespace are located 
+in the src/util directory.
 
-The Pscf namespace contains all of source code files that are
-contained in the dmorse/pscfpp github repository, all of which are
-specific to the PSCF package.  The Pscf namespace contains several
-enclosed sub-namespaces. All source code for each such enclosed
-namespace is located within a specific subdirectory of the src
-directory, as discussed below.
+The Pscf namespace contains all of source code files that are contained in 
+the dmorse/pscfpp github repository, all of which are specific to the PSCF 
+package.  The Pscf namespace contains several enclosed sub-namespaces. 
+All source code for each such enclosed namespace is located within a 
+specific subdirectory of the src directory, as discussed below.
 
 * **Namespace-level directories:**
 
-The src directory contains six subdirectories that each contain code
+The src directory contains six subdirectories that each contain code 
 defined in a specific C++ namespace.  These six directories will be
 referred to in what follows as "namespace" level subdirectories of src.
 These six namespace-level subdirectories are listed below:
@@ -212,30 +211,31 @@ These six namespace-level subdirectories are listed below:
   <td> Code used only by the pscf_pg GPU program for periodic structures </td>
 </tr>
 </table>
-The src/pscf directory contains all of the C++ and CUDA C++ files that
-contain code for of class and functions that are defined directly in the
-Pscf namespace, rather than in one of the enclosed sub namespaces of
-PSCF. The src/prdc, src/r1d, src/rpc, and src/rpg instead each contain
-code for entities that are defined in a specific sub-namespace of Pscf.
+The src/pscf directory contains files that contain code for class and 
+functions that are defined directly in the Pscf namespace, rather than 
+in one of the enclosed sub namespaces of Pscf. The src/prdc, src/r1d, 
+src/rpc, and src/rpg instead each contain code for entities that are 
+defined in a specific sub-namespace of Pscf.
 
-The PSCF makefile system constructs a static library in each of these
-namespace level directories. Each static library file is a file with a
-name of the form lib[namespace].a, where [namespace] represents the
-name of the relevant static library. For example, the build system
-creates a library file named libprdc.a in the src/prdc directory.
+The PSCF makefile system constructs a static library in each of these 
+six namespace level directories. Each static library file is a file with 
+a name of the form lib[namespace].a, where [namespace] represents the 
+name of the relevant subdirectory. For example, the build system creates 
+a library file named libprdc.a in the src/prdc directory.
 
 The r1d, rpc and rpg subdirectories of src each contain code is only used 
-in a single executable program. Specifically r1d contains code that is
-only used by pscf_1d, rpc contains all code that only used by pscf_pc,
-and rpg contains code that only used by pscf_pg.  Each of these three 
-directories also contains a source code file that defines the main 
-function for the associated program, which we refer to as a main 
-program file.  The directories util, pscf and prdc do not contain 
-any main program files, and instead all contain code for classes and 
-functions that can be used in more than program. 
+in a one executable program. Specifically r1d contains code that is only 
+used by pscf_1d, rpc contains all code that only used by pscf_pc, and rpg 
+contains code that only used by pscf_pg.  Each of these three directories 
+also contains a main program file that defines the main function for the 
+associated program. The directories util, pscf and prdc do not contain 
+any main program files, and instead contain code for classes and functions 
+that can be used in more than program. 
+
+* **Dependencies among namespace level directories:**
 
 PSCF imposes a set of rules for dependencies among the various namespace
-level directories. A namespace level directory named A is said to depend 
+level directories. A namespace level directory named A is said to *depend* 
 on another such directory named B if C++ files in directory A are allowed
 to use entities (i.e., classes, class templates or functions) that are 
 defined by files in directory B.  The following table lists the directories
