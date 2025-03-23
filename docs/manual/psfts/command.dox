@@ -4,45 +4,45 @@
 \ref psfts_analysis_page     (Next)
 <BR>
 
-The input files required to run a field theoretic simulation (FTS) 
-are closely analogous to those required an SCFT calculation for a 
-periodic system. The pscf_pc or pscf_pg program must be invoked 
-with command line parameters that specify the names of a parameter 
-file and a command file.  The main difference in the command file 
-is simply that a SIMULATE command is used to run a stochastic 
-simulation, rather than the ITERATE or SWEEP command used to run an 
+The input files required to run a field theoretic simulation (FTS)
+are closely analogous to those required an SCFT calculation for a
+periodic system. The pscf_pc or pscf_pg program must be invoked
+with command line parameters that specify the names of a parameter
+file and a command file.  The main difference in the command file
+is simply that a SIMULATE command is used to run a stochastic
+simulation, rather than the ITERATE or SWEEP command used to run an
 SCFT calculation or an SCFT parameter sweep.
 
 \section psfts_command_example_sec FTS Example
 
 For example, suppose that we want to use pscf_pg to run a GPU-accelerated
-BD simulation of 30,000 BD steps in a 3D domain, using a parameter file 
-named param and a command file named command. To do so, we might invoke 
+BD simulation of 30,000 BD steps in a 3D domain, using a parameter file
+named param and a command file named command. To do so, we might invoke
 the pscf_pg executable as
 \code
-   pscf_pg -e -d 3 -p param -c command > log 
+   pscf_pg -e -d 3 -p param -c command > log
 \endcode
-We assume that the parameter file "param" contains a BdSimulator block 
-that specifies appropriate choices of algorithms and parameters for a 
-BD step algorithm, a compressor algorithm, and any desired analyzers. 
+We assume that the parameter file "param" contains a BdSimulator block
+that specifies appropriate choices of algorithms and parameters for a
+BD step algorithm, a compressor algorithm, and any desired analyzers.
 
-Before begininng a FTS, we must read in an initial field configuration 
-from a field file.  Field files used to initialize a FTS must be input 
-and output in the r-grid file format, which gives values for the w fields 
-on the nodes of a grid, and does not impose any space group symmetry. 
-This is done using the READ_W_GRID command, as shown in the following 
-example. 
+Before begininng a FTS, we must read in an initial field configuration
+from a field file.  Field files used to initialize a FTS must be input
+and output in the r-grid file format, which gives values for the w fields
+on the nodes of a grid, and does not impose any space group symmetry.
+This is done using the READ_W_GRID command, as shown in the following
+example.
 
-Unlike field files for SCFT, field files used for FTS generally do not 
+Unlike field files for SCFT, field files used for FTS generally do not
 contain a line in the field file header that declare a space group.
-This is because the randomly fluctuating fields characteristic of a FTS 
-are generally not exactly invariant under any nontrivial space group 
+This is because the randomly fluctuating fields characteristic of a FTS
+are generally not exactly invariant under any nontrivial space group
 symmetry operations.
 
-Suppose that we run a simulation from a directory that contains 
+Suppose that we run a simulation from a directory that contains
 subdirectories named 'in' and 'out', in which directory 'in' contains
-an initial field file named 'in/w.rf', while all output files are 
-written to subdirectory named 'out'.  A simple command file for 
+an initial field file named 'in/w.rf', while all output files are
+written to subdirectory named 'out'.  A simple command file for
 such a simulation might look something like the following:
 \code
 READ_W_RGRID   in/w.rf
@@ -52,35 +52,34 @@ WRITE_C_RGRID  out/c.rf
 WRITE_TIMERS   out/timers
 FINISH
 \endcode
-In this example, the READ_W_GRID command reads in the specified
-w-field file, and the SIMULATE command actually runs the simulation.  
-After the simulation is complete, the WRITE_W_RGRID and WRITE_C_GRID 
-commands then writes the final w and and c field configurations to 
-files within the out/ directory.  The WRITE_TIMERS command writes 
-a report about the amount of time taken by various computational 
-operations to a file named 'out/timers'. 
+In this example, the READ_W_RGRID command reads in a specified
+w-field file named in/w.rf. The SIMULATE command actually runs the
+simulation.  After the simulation is complete, the WRITE_W_RGRID and
+WRITE_C_RGRID commands writes the final w and and c field configurations
+to files within the out/ directory.  The WRITE_TIMERS command writes a
+report about the amount of time taken by various computational
+operations to a file named 'out/timers'.
 
-The most important new command in this example is the SIMULATE command. 
-This command runs a simulation of a specified number of BD or MC steps, 
-and takes the number of steps as a parameter.  In this example, the 
-SIMULATE command thus runs a simulation of 30000 steps.  The type of 
-simulation that is performed (i.e., BD vs. MC) and the choice of 
-algorithms and parameter values used in that simulation are all 
-specified in the parameter file, which is always processed before 
-the command file. A FTS simulation must thus be initialized by a 
-parameter file that contains either a BdSimulation block, for a BD 
-simulation, or an McSimulation block, for an MC simulation
+The most important new command in this example is the SIMULATE command.
+This command runs a simulation of a specified number of BD or MC steps,
+and takes the number of steps as a parameter.  In this example, the
+SIMULATE command thus runs a simulation of 30000 steps.  The type of
+simulation that is performed (i.e., BD vs. MC) and the choice of
+algorithms and parameter values used in that simulation are all specified
+in the parameter file, which is always read and processed before the
+command file. A FTS simulation must thus be initialized by a parameter
+file that contains either a BdSimulation block for a BD simulation, or
+an McSimulation block for an MC simulation.
 
 \section psfts_command_commands_sec Commands for FTS
 
-The commands that can be used SCFT calculations performed with pscf_pc 
-have already been listed here \ref scft_command_pc_page "here". Most
-of these commands can also be used in a command file for pscf_pg.
-Many of the commands that are used to setup or process SCFT calculations
-can also be used in the context of an FTS calculation.  Specifically, 
-commands for reading and writing field files such as READ_W_GRID and 
-WRITE_W_GRID can be used in either context, as can the timer commands
-and some of the utility commands for manipulating field files.
+The commands that can be used for SCFT calculations performed with
+pscf_pc have already been listed here \ref scft_command_pc_page "here".
+Most of these commands can also be used in a command file for pscf_pg.
+Specifically, commands for reading and writing field files such as
+READ_W_RGRID and WRITE_W_RGRID can be used in either context, as can
+the timer commands and many of the utility commands for manipulating
+field files.
 
 The following table lists a set of commands that are accepted by either
 pscf_pc or and pscf_pg that are only meaningful in the context of an
@@ -101,18 +100,18 @@ can be used for SCFT calculations.
   </tr>
   <tr>
     <td> \ref psfts_command_pc_analyze_sub "ANALYZE" </td>
-    <td> min, max, className, filename </td>
+    <td> min, max, readerName, filename </td>
     <td> Postprocess a field trajectory output by looping over frames
-         of a field trajectory file output by a previous simulation. 
-         Analyze frames with frame numbers min to max from file 
-         filename, using a TrajectoryReader object that is an instance 
-         of class className.  </td>
+         of a field trajectory file output by a previous simulation.
+         Analyze frames with frame numbers min to max from file
+         filename, using a TrajectoryReader object that is an instance
+         of class readerName.  </td>
   </tr>
   <tr>
     <td> \ref psfts_command_pc_compress_sub "COMPRESS" </td>
     <td> </td>
     <td> Iteratively adjust the Lagrange multiplier pressure field
-         component of the current w fields so as to satisfy the 
+         component of the current w fields so as to satisfy the
          incompressibility constraint (i.e., the partial saddle
          point condition). </td>
   </tr>
@@ -121,45 +120,56 @@ can be used for SCFT calculations.
 
 \anchor psfts_command_pc_simulate_sub
 <b> SIMULATE </b>:
-THE SIMULATE command performs a field-theoretic simulation of a
-specified number nStep of attempted MC moves or BD steps. The 
-associated parameter file must contain a BdSimulator or McSimulator
-blocks.  Field trajectories may be written to file by including a 
-trajectory writer among the analyzers listed in the AnalyzerManager 
-subblock of the McSimulator block.
+THE SIMULATE command performs a field-theoretic MC or BD simulation of
+a specified number of steps. The number nStep of BD steps or attempted
+MC moves is given as the only command parameter.  The associated 
+parameter file (which is read before the command file) must contain a 
+BdSimulator or McSimulator blocks that contains all of the elements 
+necessary to run a simulation.  Field trajectories may be written to 
+file by including a TrajectoryWriter among the analyzers listed in 
+the AnalyzerManager subblock of the BdSimulator or McSimulator block.
 
 \anchor psfts_command_pc_analyze_sub
 <b> ANALYZE </b>:
-THE ANALYZE command reads a field trajectory file that was written by a 
-previous field-theoretic simulation, and postprocesses the contents of 
-that file.  This postprocessing procedure is discussed in more detail 
-\ref psfts_analysis_page "elsewhere".
+THE ANALYZE command reads and analyzes a field trajectory file with the 
+name given by the "filename" parameter that was written by a previous 
+field-theoretic simulation.  This postprocess analysis procedure is 
+discussed in more detail \ref psfts_analysis_page "elsewhere".
 
-The trajectory file with a name given by the "filename" parameter is 
-read and parsed by an instance of a subclass of the TrajectoryReader 
-class with a name specified by the className parameter.  Different
-subclasses can be used to read files with different formats.
+Analysis operations listed in the parameter file are performed only for 
+frames of the trajectory file with frame index values that lie between 
+min and max (inclusive).  Setting the max parameter to any value greater 
+than or equal to the number of frames in the trajectory file, while min 
+is less than the number of frames in the file, will cause the program 
+to read and process frames until the end of file is reached. 
 
-The associated parameter file must contain a BdSimulator or McSimulator 
-block with an AnalyzerManager subblock that specifies what analysis 
-operations should be applied to the chosen frames of the trajectory 
-file. Every Analyzer in the AnalyzerManager block is applied to frames 
-with frame indices between the values specified by the min and max 
-parameters. 
+The trajectory file with a name given by the "filename" parameter is
+read and parsed by an instance of a subclass of the TrajectoryReader
+class with a name specified by the "readerName" parameter.  Currently,
+the readerName parameter should always be set to "TrajectoryReader", 
+which selects a default reader algorithm that can read the file format 
+that is written by the "TrajectoryWriter" analyzer class. 
+
+The parameter file used to initialize a postprocessing operation must
+contain a BdSimulator or McSimulator block with an AnalyzerManager 
+subblock that specifies what analysis operations should be applied to 
+the chosen frames of the trajectory file. Every Analyzer in the 
+AnalyzerManager block is applied to frames with frame indices between 
+the values specified by the min and max command parameters when the
+frame index is a multiple of the interval parameter of the Analyzer.
 
 \anchor psfts_command_pc_compress_sub
 <b> COMPRESS </b>:
-The COMPRESS command applies the Compressor iterator algorithm that
-is specified in the parameter file to the current w-fields.  
-The compressor adjusts the Lagrange multiplier pressure component of 
-the w fields so as to satisfy the incompressibility constraint without 
-changing any of the difference between chemical potential fields 
-associated with different monomer types. 
-
+The COMPRESS command applies the compressor algorithm that is specified 
+in the parameter file to the current w-fields.  The compressor iteratively
+adjusts the pressure-like field component \f$ W_{+}({\bf r}) \f$ so as 
+to satisfy the mean-field incompressibility constraint to within a 
+tolerance that is specified in the parameter file, without changing any 
+of the other w-field components. 
 
 <BR>
-\ref psfts_param_page        (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
-\ref psfts_page              (Up)   &nbsp; &nbsp; &nbsp; &nbsp;
+\ref psfts_param_page     (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref psfts_page           (Up)   &nbsp; &nbsp; &nbsp; &nbsp;
 \ref psfts_analysis_page  (Next)
 
 */

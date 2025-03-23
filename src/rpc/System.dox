@@ -1,12 +1,22 @@
 namespace Pscf{
 namespace Rpc{
 /*! 
-\page rpc_System_page Rpc::System
+\page rpc_System_page System
 
-The main object in a pscf_pc program is an instance of a class
-Pscf::Rpc::System<D>, in which the integer template parameter D is the 
-dimension of space specified by the argument of the "-d" command line 
-option. The outermost block of the parameter file for pscf_pc, which 
+The main object in a pscf_pc or pscf_pg program is an instance of a class
+System<D>, in which the integer template parameter D is the dimension of 
+space specified by the argument of the "-d" command line option.  Closely 
+analogous class templates with this name are defined in the Pscf::Rpc and 
+Pscf::Rpg namespaces.
+
+Class API Documentation:
+<ul> 
+    <li> Pscf::Rpc::System </li>
+    <li> Pscf::Rpg::System </li>
+</ul>
+
+\section rpc_System_param_sec Parameter File format
+The outermost block of the parameter file for pscf_pc or pscf_pg, which 
 encloses all of the data in the file, is a block labelled "System". The 
 parameter file format for this file block (and thus for the entire file)
 is given in skeleton form below
@@ -86,7 +96,6 @@ are described below:
 
 \see
 <ul>
-  <li> System (class API) </li>
   <li> \ref user_param_mixture_page "Mixture" </li>
   <li> \ref user_param_example_interaction "Interaction" </li>
   <li> \ref rpc_Domain_page "Domain" </li>

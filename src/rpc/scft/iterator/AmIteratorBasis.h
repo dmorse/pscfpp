@@ -25,6 +25,8 @@ namespace Rpc
 
    /**
    * Rpc implementation of the Anderson Mixing iterator with symmetry.
+   * 
+   * \see \ref rpc_AmIteratorBasis_page "Manual Page"
    *
    * \ingroup Rpc_Scft_Iterator_Module
    */

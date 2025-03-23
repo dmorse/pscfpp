@@ -2,7 +2,7 @@ namespace Pscf {
 namespace Rpc {
 
 /*! 
-\page rpc_HamiltonianAnalyzer_page Rpc::HamiltonianAnalyzer
+\page rpc_HamiltonianAnalyzer_page HamiltonianAnalyzer
 
 This analyzer calculates the average of total hamiltonian and its 
 components. The relevant mathematical formulas can be found in the relevant 

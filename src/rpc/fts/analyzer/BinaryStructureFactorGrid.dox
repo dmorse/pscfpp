@@ -2,7 +2,7 @@ namespace Pscf {
 namespace Rpc {
 
 /*! 
-\page rpc_BinaryStructureFactorGrid_page Rpc::BinaryStructureFactorGrid
+\page rpc_BinaryStructureFactorGrid_page BinaryStructureFactorGrid
 
 This analyzer calculates the spherical average of the structure factor 
 for all wavevectors for a AB diblock copolymer system. 
@@ -46,7 +46,7 @@ is the transform of the exchange field
 The Fourier transform \f$ \hat{W}_{-}({\bf q}) \f$ defined above as
 an integral is approximated internally by \f$ V \f$ times the normalized 
 discrete Fourier transform (DFT) of \f$ W_{-}({\bf r}) \f$ as computed 
-by the function FFT::forwardTransform .
+by the function FFT::forwardTransform.
 
 \section rpc_BinaryStructureFactorGrid_parameter_sec Parameter File
 
@@ -89,7 +89,7 @@ After completion fo the simulation, the output file {outputFileName}
 will contain two columns of numbers, in which the first column contains 
 an ordered list of values of wavenumber \f$ q \f$, and the second column
 contains a corresponding list of values of the dimensionless, spherically 
-averaged structure factor \f$ v S(q) \f$. 
+averaged structure factor \f$ S(q) \f$. 
 
 */
 

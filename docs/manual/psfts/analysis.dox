@@ -1,4 +1,4 @@
-/*! \page psfts_analysis_page Trajectory Postprocessing
+/*! \page psfts_analysis_page Field Trajectory Files
 
 \ref psfts_command_page      (Prev)  &nbsp; &nbsp; &nbsp; &nbsp;
 \ref psfts_ramp_page    (Next)
@@ -11,45 +11,69 @@ either of two methods.
    - <b> On-the-fly </b> : By analyzing data during a simulation 
 
    - <b> Postprocessing </b> : Analyzing data after a simulation is 
-     completed, by postprocess analysis of a field trajectory file
+     completed, by reading and processing a field trajectory file
+
+A field trajectory file is a file that contains a sequence of w-field 
+configurations that are output at regular intervals during a simulation. 
+This is analogous to the kind of "trajectory" file produced during an 
+MD simulation of a particle based model, which contains lists of particle 
+positions and velocities.  A trajectory file for a field theoretic 
+simulation contains a sequence of "frames" that are written to the file
+at regular intervals, in which each frame contains the configuration of 
+the w-fields at end completion of a particular BD or MD step. 
+
+The main advantage of postprocessing a trajectory file is that it allows 
+a user to delay or revise decisions about what types of analysis might 
+be useful. The main disadvantage of postprocessing is the amount of disk 
+space required to store field trajectories, particularly if frames are 
+written frequently.  Conversely, the main advantage of doing some data
+analysis during a simulation is that doing so may allow more frequent 
+sampling of values while requiring less disk space.
 
 On-the-fly data analysis already been discussed, as part of the discussion 
-of parameter files used to initialize a simulation: To periodically 
-perform data analysis and file IO operations during a simulation, one 
-must include an appropriate set of analyzer subblocks within the
-AnalyzerManager block of the parameter file used to initialize the 
-simulation.
+of parameter files used to initialize a simulation: To perform data 
+analysis and file output operations during a simulatio, one must include 
+an appropriate set of analyzer subblocks within the AnalyzerManager block 
+of the parameter file that is used to initialize the simulation.
 
-We focus in the remainder of this page on generation and postprocess
-analysis of field trajectory files.
+We focus in the remainder of this page on procedures for creating and 
+postprocessing field trajectory files.
 
-\section psfts_algorith_trajectory_sec Field Trajectory Files
+\section psfts_algorith_trajectory_sec Creating a Field Trajectory File
 
-A field trajectory file is a file that is output during a simulation 
-that contains a sequence of w-field configurations obtained at regular
-intervals during the simulation. This is analogous to the kind of 
-trajectory file produced during an MD simulation of a particle based 
-model, which contains lists of particle positions and velocities. 
-A trajectory file for a field theoretic simulation contains a sequence 
-of frames that are written to file at regular intervals, in which each 
-frame contains the configuration of the w-fields at the completion of 
-a particular BD or MD step. 
-
+A trajectory file can be created by the TrajectoryWriter analyzer class.
 To generate a trajectory file during a BD or MC simulation, one must
-initialize the simulation using a parameter file that contains a
-TrajectoryWriter subblock within the AnalyzerManager block.  The 
-"interval" parameter of the TrajectoryWriter block determines the 
-number of BD or MC steps between frames of the trajectory file.  
-Trajectory file frames are usually written somewhat infrequently, 
-with an interval of 10 to 100 steps, rather than writing the field 
-configuration after every step.
+thus include a TrajectoryWriter subblock within the AnalyzerManager 
+block of the parameter file that is used to initialize the simulation.
+The "interval" parameter of the TrajectoryWriter block gives the number 
+of BD steps or atttempted MC steps between frames of the trajectory 
+file.  Trajectory file frames are usually written somewhat infrequently,
+with a typical interval of 10 to 100 steps, rather than writing the 
+field configuration after every step.
+
+The file format used by the TrajectoryWriter class contains a header
+with information that does not change during the simulation, followed
+by a sequence of frames. The format of the header is similar to that
+of used in an r-grid field file such as that used to read an initial
+field configuration. The format of each frame is similar to that of
+the data section of an r-grid field file. 
+
+The current version of PSCF only supports one file format for 
+trajectory files, which is written by a class named TrajectoryWriter
+and read by a class named TrajectoryReader. The file formats used
+for the parameter and command file are, however, designed to make
+it relatively simple for users to define other formats by adding 
+classes that read and write whatever format they wish. 
+
+\see \ref rpc_TrajectoryWriter_page (manual page)
 
 \section psfts_analysis_postprocess_sec Postprocess Analysis
 
 To postprocess such a trajectory file, one must invoke pscf_pc or 
 pscf_pg a second time, using a command file that contains an ANALYZE 
-command. ANALYZE command is encountered, pscf_pc or pscf_pg to reads 
-and process a sequence of frames from a specified trajectory file.
+command. When an ANALYZE command is encountered, pscf_pc or pscf_pg 
+reads and processes a sequence of frames from a trajectory file whose
+name is given as an argument of the command.
 
 The parameter file used to initialize a postprocessing operation 
 normally has an AnalyzerManager block containing a set of analyzer 
@@ -58,51 +82,149 @@ applied to frames of the trajectory file. The same set of Analyzer
 classes are available for use during either on-the-fly analysis or 
 postprocessing. 
 
-The ANALYZE command takes four command arguments, named min, max,
-className, and fileName. This command always causes the program to
-read the entire trajectory file, but data analysis operations are
-only applied to frames with a frame index between min and max, 
-inclusive. The className parameter is a string that gives the name
-of a class that wil be used to read the parameter file. In the 
-current version of PSCF, there is only one such class, which should 
-be invoked by using the value "TrajectoryReader". The "fileName"
-parameter gives the name of the trajectory file that should be
-read and processed, given as a path defined relative to the 
-directory from which the pscf_pc or pscf_pg command was invoked.
+The ANALYZE command takes four command arguments, named min, max, 
+readerName, and fileName. This command always causes the program to 
+begin reading the rajectory file starting with the first frame, but 
+data analysis operations are only applied to frames with a frame index 
+between min and max, inclusive. 
 
-The "interval" parameter associated with each analyzer is interpreted
-somewhat differently postprocessing of a trajectory file than during
-a simulation. During postprocessing,  each such interval parameter is 
-interpreted as a number of trajectory file frames between successive 
-data analysis or file output operations, rather than as a number of BD 
-or MC simulation steps.  Because frames are usually output somewhat 
-infrequently, the interval values are often set to 1 in parameter files
-used to initialize a postprocessing operation, in order to analyze 
-every frame of available data.
+The "fileName" parameter gives the name of the trajectory file that 
+should be read and processed. This file name is given as a path that,
+is defined relative to the directory from which the pscf_pc or 
+pscf_pg command was invoked. 
+
+The readerName parameter is a string that gives the name of a class that 
+will be used to read the parameter file. In the current version of PSCF, 
+there is only one such class, which reads the output format that is 
+written by the "TrajectoryWriter" class. Currently, this parameter 
+should always be set to "TrajectoryReader" to select this algorithm by
+default. The name of this class has been treated as command parameter 
+to allow the possibility of future extension to allow use of other 
+trajectory file formats.
+
+Each frame in a trajectory file is assigned an integer frame index that
+increments by 1 per frame, starting from zero. The frame index for a 
+frame is thus generally not equal to the simulation step counter for the 
+time step that the frame was written, since the number of time steps 
+between neighboring frames (i.e., the interval of the TrajectoryWriter) 
+is usually greater than 1. 
+
+During postprocessing, the "interval" parameter associated with each 
+analyzer is interpreted as a number of trajectory file frames between 
+successive data analysis or file output operations, rather than as a 
+number of BD or MC simulation steps.  Because frames are usually output 
+somewhat infrequently, the default value of interval = 1 is often used 
+in parameter files used for postprocessing analysis, in order to analyze 
+every frame of available data. 
 
 A parameter file that is used to initialize a postprocessing operation
-generally has a slightly different format than one used to initialize
-a simulation. Both types of parameter file must include Mixture, 
-Domain, and Interaction blocks, since the information given in these
-blocks is needed either during a simulation or during postprocessing.
-Such a file must also contain either a BdSimulator or McSimulator 
-block with an AnalyzerManager subblock containing one or more 
-analyzer subblocks. The BdStep or McMoveManager, Compressor, and Ramp 
-subblocks of the Simulator block are not used during postprocessing,
-of a trajectory file, however, and so can all be omitted from a 
-parameter file used for this purpose. 
+usually has a different format than one used to initialize a simulation. 
+Both types of parameter file must include Mixture, Interaction and 
+Domain blocks, since the basic information about the system given in 
+these blocks is often needed by analyzers, as well as by the algorithms
+that perform a simulation.  Such a parameter file must also contain
+either a BdSimulator or McSimulator block with an AnalyzerManager 
+subblock. The AnalyzerManager block should contain one or more 
+analyzer subblocks that specify actions that should be taken during
+postprocessing.  
 
-The main advantage of postprocessing a trajectory file is that it allows 
-a user to delay and revise decisions about what types of analysis might 
-be useful. The main disadvantage of postprocessing is the amount of disk 
-space required to store trajectories, particularly if frames are written 
-at frequent intervals.  Conversely, the main advantage of doing some 
-types of data analysis during a simulation is that doing so may allow 
-more frequent sampling of data without using excessive disk space.
+Components of a BdSimulator or McSimulator that are not used during
+postprocessing can be omitted from a parameter file that is used for
+postprocessing. Specifically, the BdStep or McMoveManager block, 
+Compressor block, and Ramp block are generally not needed during 
+postprocessing of a trajectory file, and so these blocks can all 
+normally be omitted from a parameter file used for this purpose. A 
+Perturbation block may be needed if the original simulation defined 
+a Perturbation and any of the analyzers require access to information 
+about the perturbation. 
+
+The interval parameters associated with analyzers are also often 
+omitted in parameter files for postprocessing, in order to use the 
+default interval value of 1 and thus analyze every frame.
+
+\section psfts_analysis_example_sec Example
+
+Suppose that a BD simulation similar to one used in a previous example
+used a TrajectoryWriter analyzer to create a trajectory file named
+"out/trajectory" that contains 5000 frames. The parameter file shown
+below could be used to setup pscf_pc or pscf_pg to analyze this file, 
+and to enable compution of  the average Hamiltonian value and the 
+structure factor:
+\code
+System{
+  Mixture{
+    nMonomer  2
+    monomers[
+             1.0
+             1.0
+    ]
+    nPolymer  1
+    Polymer{
+      type    linear
+      nBlock  2
+      blocks[
+              0   0.5
+              1   0.5
+      ]
+      phi     1.0
+    }
+    vMonomer  0.01
+    ds   0.02
+  }
+  Interaction{
+    chi(
+        1   0   18.0
+    )
+  }
+  Domain{
+    mesh         40    40    40
+    lattice      cubic
+  }
+  BdSimulator{
+    AnalyzerManager{
+
+      HamiltonianAnalyzer{
+        outputFileName  out/hamiltonian
+      }
+
+      BinaryStructureFactoryGrid{
+        outputFileName  out/hamiltonian
+      }
+
+      StepLogger{
+         interval 10
+      }
+
+    }
+  }
+}
+\endcode
+Note that we have omitted the interval parameter from the primary
+analyzers in order to use the default value of interval = 1, and
+thus analyze every frame, but have chosen to use the StepLogger to 
+output the counter every 10 frames.  
+
+A corresponding minimal command file is shown below for a trajectory 
+file that contains 5000 frames:
+\code
+ANALYZE 0 5000 TrajectoryReader out/trajectory
+FINISH
+\endcode
+The first two arguments of the ANALYZE command (0 and 5000 in this
+example) give the frame indices for the first and last frame that should 
+be read analyzed. The choices used here are chosen so as to read and 
+analyze every frame in the file.  The string "TrajectoryReader" is an 
+identifier for the class that will be used to read the trajectory, which 
+in this case uses a default choice that reads the format written by the 
+TrajectoryWriter class. In the current version of PSCF there is only one 
+such "reader" class, so this parameter should always be given by the 
+string literal "TrajectoryReader". The last argument of the ANALYZE 
+commmand is the name of the trajectory file that will be read and 
+analyzed.
 
 <BR>
-\ref psfts_command_page   (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
-\ref psfts_page           (Up)   &nbsp; &nbsp; &nbsp; &nbsp;
-\ref psfts_ramp_page   (Next)
+\ref psfts_command_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
+\ref psfts_page          (Up)   &nbsp; &nbsp; &nbsp; &nbsp;
+\ref psfts_ramp_page     (Next)
 
 */

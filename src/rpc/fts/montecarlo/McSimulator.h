@@ -24,7 +24,7 @@ namespace Rpc {
    /**
    * Monte-Carlo simulation coordinator.
    *
-   * \see rpc_McSimulator_page "Manual Page"
+   * \see \ref rpc_McSimulator_page (Manual Page)
    *
    * \ingroup Rpc_Fts_MonteCarlo_Module
    */

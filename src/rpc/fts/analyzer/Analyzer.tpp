@@ -58,8 +58,9 @@ namespace Rpc {
          UTIL_THROW("baseInterval < 0");
       }
    
-      // Read interval value (inherited from Interval)
-      read<long>(in, "interval", interval_);
+      // Optionally interval value (set to 1 by default)
+      interval_ = 1;
+      readOptional<long>(in, "interval", interval_);
    
       // Postconditons
       if (interval_ == 0) {

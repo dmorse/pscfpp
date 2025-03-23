@@ -5,10 +5,10 @@
 <BR>
 
 The pscf_pc and pscf_pg programs can both be used to perform stochastic 
-field theoretic simulation (FTS) calculations in a partial saddle-point 
+field theoretic simulation (FTS) calculations using a partial saddle-point 
 (PS) approximation. Both programs can use either Brownian dynamics (BD) 
-or Monte Carlo (MC) sampling algorithms. The partial saddle-point 
-approximation for field theoretic simulation (PS-FTS) yields a statistical 
+or Monte Carlo (MC) sampling algorithms. The resulting type of partial 
+saddle-point field theoretic simulation (PS-FTS) yields a statistical 
 ensemble for fluctuating monomer chemical potential fields ("w fields") 
 in which the fields are real-valued functions of position (as in SCFT),
 and in which each field configuration is assigned a real-valued
@@ -18,14 +18,13 @@ of very long, strongly overlapping polymers, corresponding to large
 values of the invariant degrees of polymerization \f$ \overline{N} \f$.
 PS-FTS yields predictions for intensive thermodynamic properties that 
 approach those of SCFT in the limit of infinitely long chains 
-(\f$ \overline{N} \rightarrow \infty \f$), and that rather accurately 
-describe the most effects of composition fluctuations that are neglected
-by SCFT.
+(\f$ \overline{N} \rightarrow \infty \f$), and that accurately describe 
+some of the most important effects of composition fluctuations that are 
+neglected by SCFT.
 
-The discussion of of PS-FTS given in this section of the manual describes 
-its implementation in both pscf_pc and pscf_pg, which have equivalent 
-features and identical interfaces for such simulations.  The first few 
-pages of this discussion summarize the underlying theory.
+Instructions for performing PS-FTS calculations given in this manual
+section apply equally well to pscf_pc or pscf_pg, since these two programs
+offer identical capabilities and interfaces for such calculations.
 
 <h2> Contents:</h2>
 

@@ -265,7 +265,7 @@ namespace Rpc {
       UTIL_CHECK(domain().unitCell().lattice() != UnitCell<D>::Null);
 
       // Setup  the mixture
-      mixture_.associate(domain().mesh(), domain().fft(), 
+      mixture_.associate(domain().mesh(), domain().fft(),
                          domain().unitCell());
       mixture_.allocate();
       mixture_.clearUnitCellData();
@@ -694,13 +694,13 @@ namespace Rpc {
             readEcho(in, filename);
             UTIL_CHECK(h_.hasData());
             UTIL_CHECK(h_.isSymmetric());
-            domain().fieldIo().writeFieldsBasis(filename, h_.basis(), 
+            domain().fieldIo().writeFieldsBasis(filename, h_.basis(),
                                                 domain().unitCell());
          } else
          if (command == "WRITE_H_RGRID") {
             readEcho(in, filename);
             UTIL_CHECK(h_.hasData());
-            domain().fieldIo().writeFieldsRGrid(filename, h_.rgrid(), 
+            domain().fieldIo().writeFieldsRGrid(filename, h_.rgrid(),
                                                 domain().unitCell());
          } else
          if (command == "READ_MASK_BASIS") {
@@ -731,13 +731,13 @@ namespace Rpc {
             readEcho(in, filename);
             UTIL_CHECK(mask_.hasData());
             UTIL_CHECK(mask_.isSymmetric());
-            domain().fieldIo().writeFieldBasis(filename, mask_.basis(), 
+            domain().fieldIo().writeFieldBasis(filename, mask_.basis(),
                                                domain().unitCell());
          } else
          if (command == "WRITE_MASK_RGRID") {
             readEcho(in, filename);
             UTIL_CHECK(mask_.hasData());
-            domain().fieldIo().writeFieldRGrid(filename, mask_.rgrid(), 
+            domain().fieldIo().writeFieldRGrid(filename, mask_.rgrid(),
                                                domain().unitCell(),
                                                mask_.isSymmetric());
          } else {
@@ -914,7 +914,7 @@ namespace Rpc {
    void System<D>::setUnitCell(UnitCell<D> const & unitCell)
    {
       domain_.setUnitCell(unitCell);
-      // Note: Domain::setUnitCell checks agreement of lattice system 
+      // Note: Domain::setUnitCell checks agreement of lattice system
       mixture_.clearUnitCellData();
       if (domain().hasGroup() && !isAllocatedBasis_) {
          allocateFieldsBasis();
@@ -971,7 +971,7 @@ namespace Rpc {
       // If w fields are symmetric, compute basis components for c-fields
       if (w_.isSymmetric()) {
          UTIL_CHECK(c_.isAllocatedBasis());
-         domain().fieldIo().convertRGridToBasis(c_.rgrid(), c_.basis(), 
+         domain().fieldIo().convertRGridToBasis(c_.rgrid(), c_.basis(),
                                                 false);
       }
 
@@ -1019,13 +1019,12 @@ namespace Rpc {
    }
 
    /*
-   * Perform sweep of SCFT calculations along a line in parameter space.
+   * Perform sweep of SCFT calculations along a path in parameter space.
    */
    template <int D>
    void System<D>::sweep()
    {
       UTIL_CHECK(w_.hasData());
-      UTIL_CHECK(w_.isSymmetric());
       UTIL_CHECK(hasSweep());
       Log::file() << std::endl;
       Log::file() << std::endl;
@@ -1062,8 +1061,8 @@ namespace Rpc {
 
       // Read fields
       UnitCell<D> tmpUnitCell;
-      domain().fieldIo().readFieldsRGrid(inFileName, 
-                                         tmpFieldsRGrid_, 
+      domain().fieldIo().readFieldsRGrid(inFileName,
+                                         tmpFieldsRGrid_,
                                          tmpUnitCell);
 
       // Expand Fields
@@ -1083,7 +1082,7 @@ namespace Rpc {
    {
       // Read fields
       UnitCell<D> tmpUnitCell;
-      domain().fieldIo().readFieldsRGrid(inFileName, tmpFieldsRGrid_, 
+      domain().fieldIo().readFieldsRGrid(inFileName, tmpFieldsRGrid_,
                                          tmpUnitCell);
 
       // Replicate fields
@@ -1102,7 +1101,7 @@ namespace Rpc {
    void System<D>::computeFreeEnergy()
    {
       if (hasFreeEnergy_) return;
-      
+
       UTIL_CHECK(w_.hasData());
       UTIL_CHECK(hasCFields_);
 
@@ -1406,7 +1405,7 @@ namespace Rpc {
       }
       out << std::endl;
    }
-   
+
    /*
    * Write stress properties to file.
    */
@@ -1422,7 +1421,7 @@ namespace Rpc {
       }
       out << std::endl;
    }
-   
+
    /*
    * Write w-fields in symmetry-adapted basis format.
    */
@@ -1490,7 +1489,7 @@ namespace Rpc {
       // Construct array to hold block and solvent c-field data
       DArray< RField<D> > blockCFields;
 
-      // Get c-field data from the Mixture 
+      // Get c-field data from the Mixture
       // Note: blockCFields container is allocated within this function
       mixture_.createBlockCRGrid(blockCFields);
 
@@ -1582,7 +1581,7 @@ namespace Rpc {
       for (int i = 0; i < ns; ++i) {
           file << "slice " << i << std::endl;
           domain().fieldIo().writeFieldRGrid(file, propagator.q(i),
-                                             domain().unitCell(), 
+                                             domain().unitCell(),
                                              hasHeader);
       }
       file.close();
@@ -1626,7 +1625,7 @@ namespace Rpc {
       fileMaster_.openOutputFile(filename, file);
       bool isSymmetric = true;
       domain().fieldIo().writeFieldHeader(file, mixture().nMonomer(),
-                                          domain().unitCell(), 
+                                          domain().unitCell(),
                                           isSymmetric);
       domain_.basis().outputStars(file);
       file.close();
@@ -1644,7 +1643,7 @@ namespace Rpc {
       fileMaster_.openOutputFile(filename, file);
       bool isSymmetric = true;
       domain().fieldIo().writeFieldHeader(file, mixture().nMonomer(),
-                                          domain().unitCell(), 
+                                          domain().unitCell(),
                                           isSymmetric);
       domain_.basis().outputWaves(file);
       file.close();
@@ -1708,7 +1707,7 @@ namespace Rpc {
       FieldIo<D> const & fieldIo = domain().fieldIo();
       fieldIo.readFieldsRGrid(inFileName, tmpFieldsRGrid_, tmpUnitCell);
       fieldIo.convertRGridToBasis(tmpFieldsRGrid_, tmpFieldsBasis_);
-      fieldIo.writeFieldsBasis(outFileName, tmpFieldsBasis_, 
+      fieldIo.writeFieldsBasis(outFileName, tmpFieldsBasis_,
                                tmpUnitCell);
    }
 
@@ -1858,7 +1857,7 @@ namespace Rpc {
    template <int D>
    void System<D>::scaleFieldsBasis(std::string const & inFileName,
                                     std::string const & outFileName,
-                                    double factor) 
+                                    double factor)
    {
       // If basis fields are not allocated, peek at field file header to
       // get unit cell parameters, initialize basis and allocate fields.

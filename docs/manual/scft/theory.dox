@@ -19,8 +19,8 @@ number of block polymer species and point-like solvent molecular
 species.
 
 In what follows, we consider a system with \f$ C \f$ distinct monomer
-types, \f$ P \f$ block polymer species, \f$ S\f$ solvent species. We use
-a convention in which the symbols \f$ \alpha, \beta = 0, \ldots, C-1\f$
+types, \f$ P \f$ block polymer species, and \f$ S\f$ solvent species. We 
+use a convention in which the symbols \f$ \alpha, \beta = 0, \ldots, C-1\f$
 are used as indices for monomer types, symbols \f$ a, b \f$ are used to
 denote indices for blocks within a specific block polymer species, and
 symbols \f$ i, j\f$ are used to denote molecular species indices.  In
@@ -90,8 +90,8 @@ for all \f$ \alpha = 0,\ldots,C-1 \f$, in which \f$ \chi_{\alpha\beta}\f$
 is a binary Flory-Huggins dimensionless interaction parameter, defined
 such that \f$ \chi_{\alpha\beta} = \chi_{\beta\alpha} \f$.
 Here, \f$ \xi({\bf r}) \f$ is a dimensionless Lagrange multiplier
-pressure field that must be chosen so that the monomer concentrations
-in the ideal gas reference system satisfy the
+pressure field that must be chosen so that the average monomer 
+concentrations in the ideal gas reference system satisfy the
 \ref scft_theory_incompressibility_eqn "incompressibility constraint"
 given above.
 

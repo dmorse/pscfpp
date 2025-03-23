@@ -4,31 +4,10 @@
  \ref scft_thermo_page (Next) 
 <BR>
 
-Most of the available commands for the pscf_pg programs GPU programs 
-are similar to those used by the pscf_pc CPU programs.  Users of 
-pscf_pg programs should thus consult the documentation for
-\ref scft_command_pc_page "pscf_pc commands" for a list of commands,
-while noting the difference listed below.
-
-The only differences between pscf_pg and pscf_pg commands are that the 
-following following pscf_pc commands are currently not available in 
-pscf_pg programs:
-
-   - Commands for reading and writing external fields
-     (READ_H_BASIS, READ_H_RGRID, WRITE_H_BASIS, and WRITE_H_RGRID) .
-
-   - Commands for reading and writing mask fields 
-     (READ_MASK_BASIS, READ_MASK_RGRID, WRITE_MASK_BASIS, WRITE_MASK_RGRID).
-
-   - Field file manipulation commands CHECK_RGRID_SYMMETRY, COMPARE_BASIS, 
-     COMPARE_RGRID, EXPAND_RGRID_DIMENSION, and REPLICATE_UNIT_CELL.
-
-The commands to read and write external fields and mask fields are not 
-available for pscf_pg programs because the underlying features have not 
-yet been implemented. Operations performed by the unimplemented 
-commands for manipulation of field files can be readily performed with 
-pscf_pc, since the pscf_pc and pscf_pg programs use the same field file 
-formats.
+The pscf_pg GPU-accelerated program provides all of the same capabilities
+as the pscf_pc CPU program, and accepts all of the same commands. Users 
+of pscf_pg programs should thus consult the documentation for
+\ref scft_command_pc_page "pscf_pc commands" for a list of commands.
 
  <BR>
  \ref scft_command_pc_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 

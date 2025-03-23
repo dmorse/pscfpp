@@ -2,7 +2,7 @@ namespace Pscf {
 namespace Rpc {
 
 /*! 
-\page rpc_ConcentrationDerivative_page Rpc::ConcentrationDerivative
+\page rpc_ConcentrationDerivative_page ConcentrationDerivative
 
 This analyzer calculates the derivative of free energy with 
 respect to parameter \f$c_0 = 1/v \f$ at fixed united cell, fixed

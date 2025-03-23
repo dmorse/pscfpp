@@ -2,15 +2,18 @@ namespace Pscf{
 namespace Rpc{
 
 /*! 
-\page rpc_McSimulator_page Rpc::McSimulator
+\page rpc_McSimulator_page McSimulator
 
-An instance of the class Pscf::Rpc::McSimulator<D> contains all of the
-algorithms and objects that are needed to implement a partial saddle-point
-field theoretic simulation (PS-FTS) using Monte-Carlo sampling, but that 
-are not needed for self-consistent field (SCFT) calculation. The associated 
-parameter file block is one of two possible option (McSimulator or 
-BdSimulator) for the optional, selectable "Simulator" subblock of the main 
-System block of the parameter file. 
+An instance of a class McSimulator<D> in namespace Pscf::Rpc (for pscf_pc)
+or Pscf::Rpg (for pscf_pg) contains all of the algorithms and objects that 
+are needed to implement a partial saddle-point field theoretic simulation 
+(PS-FTS) using Monte-Carlo sampling, but that are not needed for 
+self-consistent field (SCFT) calculation. The associated parameter file 
+block is one of two possible option (McSimulator or BdSimulator) for the 
+optional, selectable "Simulator" subblock of the main System block of the 
+parameter file. 
+
+\section rpc_McSimulator_parameter_sec Parameter File
 
 The format of this parameter file block is given below in skeleton form:
 \code
@@ -102,8 +105,10 @@ Relationships among blocks:
   - The AnalyzerManager block must be present in order to postprocess
     a trajectory file (command ANALYZE).
 
-\see
+\section rpc_McSimulator_seealso_sec See Also:
+
 <ul>
+  <li> \ref rpc_McMoveManager_page </li>
   <li> \ref psfts_algorithm_MC_sec "McMove algorithms" </li>
   <ul>
      <li> \ref rpc_ForceBiasMove_page </li> 

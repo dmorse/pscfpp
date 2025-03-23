@@ -124,22 +124,25 @@ System{
       maxHist      40
     }
     Ramp{
-       nParameters  1 
+       nParameter  1 
        parameters[
           chi     0    1   4.0
        ]
     }
     AnalyzerManager{
-      baseInterval    10
 
       StepLogger{
         interval        20
       }
 
+      MaxOrderParameter{
+        interval         10
+        outputFileName   out/maxOrderParameter
+      }
+
       HamiltonianAnalyzer{
-        interval        10
-        outputFileName  out/hamiltonian
-        nSamplePerBlock 5
+        interval         10
+        outputFileName   out/hamiltonian
       }
 
     }
@@ -148,13 +151,13 @@ System{
 \endcode
 
 <b> Discussion </b>:
-Within the Ramp block, the first parameter, named nParameters, gives
+Within the Ramp block, the first parameter, named nParameter, gives
 the number of parameters that will be varied during the simulation.
 In this example, nParameter = 1 because we only want to vary a single
 chi parameter. The next element is an array named parameters[ ... ] 
 in which each line specifies a parameter that will be varied, and how
 much it should be changed. The number of elements (or lines) in this
-array must be equal to nParameters.  In this example, because 
+array must be equal to nParameter.  In this example, because 
 nParameter = 1 , the array only contains one line, which specifies 
 that the chi parameter chi(0, 1) that controls interaction between 
 monomers of types 0 and 1 (i.e., A and B) should be increased by 4.0 

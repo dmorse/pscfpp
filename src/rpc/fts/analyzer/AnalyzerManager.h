@@ -16,6 +16,8 @@ namespace Rpc {
    /**
    * Manager for a list of Analyzer objects.
    *
+   * \see rpc_AnalyzerManager_page Manual Page
+   *
    * \ingroup Rpc_Fts_Analyzer_Module
    */
    template <int D>
@@ -96,18 +98,19 @@ namespace Rpc {
 
       using ParamComposite::setClassName;
       using ParamComposite::read;
+      using ParamComposite::readOptional;
    
    private:
+
       /**
-       * Pointer to parent Simulator
-       */
+      * Pointer to parent Simulator
+      */
       Simulator<D>* simulatorPtr_;
       
       /**
       * Pointer to parent System.
       */
       System<D>* systemPtr_;
-
 
       /**
       * Return pointer to a new AnalyzerFactory.

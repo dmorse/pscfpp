@@ -2,7 +2,7 @@ namespace Pscf {
 namespace Rpc {
 
 /*! 
-\page rpc_ConcentrationWriter_page Rpc::ConcentrationWriter
+\page rpc_ConcentrationWriter_page ConcentrationWriter
 
 This analyzer periodically writes the composition configuration 
 for each component to file. The output is analogous to that of a 

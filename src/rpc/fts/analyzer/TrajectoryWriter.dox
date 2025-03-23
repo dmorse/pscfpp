@@ -2,7 +2,7 @@ namespace Pscf {
 namespace Rpc {
 
 /*! 
-\page rpc_TrajectoryWriter_page Rpc::TrajectoryWriter
+\page rpc_TrajectoryWriter_page TrajectoryWriter
 
 This analyzer periodically writes the w-field configuration to
 frames of a trajectory file.  The resulting file can be read and 

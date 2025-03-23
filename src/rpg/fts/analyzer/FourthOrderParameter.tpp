@@ -38,31 +38,19 @@ namespace Rpg {
    * Constructor.
    */
    template <int D>
-   FourthOrderParameter<D>::FourthOrderParameter(Simulator<D>& simulator, System<D>& system)
-    : Analyzer<D>(),
-      simulatorPtr_(&simulator),
-      systemPtr_(&(simulator.system())),
+   FourthOrderParameter<D>::FourthOrderParameter(Simulator<D>& simulator,
+                                                 System<D>& system)
+    : AverageAnalyzer<D>(simulator, system),
       kSize_(1),
-      hasAverage_(true),
-      nSamplePerBlock_(1),
       isInitialized_(false)
    {  setClassName("FourthOrderParameter"); }
 
-
    /*
-   * Read parameters from file, and allocate memory.
+   * Destructor.
    */
    template <int D>
-   void FourthOrderParameter<D>::readParameters(std::istream& in)
-   {
-      readInterval(in);
-      readOutputFileName(in);
-      readOptional(in, "hasAverage", hasAverage_);
-      readOptional(in,"nSamplePerBlock", nSamplePerBlock_);
-
-      system().fileMaster().openOutputFile(outputFileName(), outputFile_);
-      outputFile_ << "    chi       " << "FourthOrderParameter" << "\n";
-   }
+   FourthOrderParameter<D>::~FourthOrderParameter()
+   {}
 
    /*
    * FourthOrderParameter setup
@@ -70,11 +58,11 @@ namespace Rpg {
    template <int D>
    void FourthOrderParameter<D>::setup()
    {
-      //Check if the system is AB diblock copolymer
+      // Check if the system is AB system
       const int nMonomer = system().mixture().nMonomer();
-      if (nMonomer != 2) {
-         UTIL_THROW("The FourthOrderParameter Analyzer is designed specifically for diblock copolymer system. Please verify the number of monomer types in your system.");
-      }
+      UTIL_CHECK(nMonomer == 2);
+
+      AverageAnalyzer<D>::setup();
 
       IntVec<D> const & dimensions = system().mesh().dimensions();
 
@@ -111,6 +99,7 @@ namespace Rpg {
       computePrefactor();
    }
 
+   #if 0
    /*
    * Increment structure factors for all wavevectors and modes.
    */
@@ -130,11 +119,17 @@ namespace Rpg {
       outputFile_ << Dbl(FourthOrderParameter_);
       outputFile_<< "\n";
    }
+   #endif
 
    template <int D>
-   void FourthOrderParameter<D>::computeFourthOrderParameter()
+   double FourthOrderParameter<D>::compute()
    {
       UTIL_CHECK(system().w().hasData());
+
+      // For AB diblock
+      const int nMonomer = system().mixture().nMonomer();
+      UTIL_CHECK(nMonomer == 2);
+
       if (!simulator().hasWc()){
          simulator().computeWc();
       }
@@ -156,6 +151,24 @@ namespace Rpg {
       // Get sum over all wavevectors
       FourthOrderParameter_ = Reduce::sum(psi);
       FourthOrderParameter_ = std::pow(FourthOrderParameter_, 0.25);
+
+      return FourthOrderParameter_;
+   }
+
+   template <int D>
+   void FourthOrderParameter<D>::outputValue(int step, double value)
+   {
+      if (simulator().hasRamp() && nSamplePerOutput() == 1) {
+         double chi= system().interaction().chi(0,1);
+
+         UTIL_CHECK(outputFile_.is_open());
+         outputFile_ << Int(step);
+         outputFile_ << Dbl(chi);
+         outputFile_ << Dbl(value);
+         outputFile_ << "\n";
+       } else {
+         AverageAnalyzer<D>::outputValue(step, value);
+       }
    }
 
    template <int D>
@@ -215,6 +228,7 @@ namespace Rpg {
       prefactor_ = prefactor_h;
    }
 
+   #if 0
    /*
    * Output final results to output file.
    */
@@ -231,6 +245,7 @@ namespace Rpg {
       }
 
    }
+   #endif
 
 }
 }

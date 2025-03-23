@@ -35,20 +35,49 @@ and unperturbed Hamiltonians, giving the Einstein crystal in the limit
 \f$ \lambda = 0 \f$ and recovering the unperturbed standared model in
 the limit \f$ \lambda = 1 \f$.
 
-The Einstein crystal Hamiltonian used here is defined as an integral
+The Einstein crystal Hamiltonian for a standard AB system with two
+monomer types and chi(0,0) = chi(1,1) = 0 is defined as an integral
 \f[
-  H_{{\rm EC}} = \frac{\alpha}{v} \int d{\bf r} 
+  H_{{\rm EC}} =
+  \int d{\bf r} \frac{1}{v \epsilon} 
   [ W_{-}({\bf r}) - W_{-}^{({\bf r})}({\bf r}) ]^2
 \f]
 in which \f$ W_{-}({\bf r}) = [w_{0}({\bf r}) - w_{1}({\bf r})]/2 \f$
 is the exchange field,
 \f$ W_{-}^{({\bf r})}({\bf r}) \f$ is a "reference" exchange field 
-configuration, and \f$ \alpha \f$ is a user-supplied parameter that 
+configuration, and \f$ \epsilon \f$ is a user-supplied parameter that 
 controls the strength of fluctuations about the reference field. 
+By default, if the user does not supply a value for \f$ \epsilon \f$,
+it is set equal to \f$ \chi \f$. 
+
+The current version of the Einstein crystal method can also be applied
+to systems with more than two types of monomer if the projected chi
+matrix has no positive eigenvalues. In this more general situation,
+the Einstein crystal Hamiltonian is
+\f[
+  H_{{\rm EC}} = \sum_{i=0}^{M-2} 
+  \int d{\bf r} 
+   \frac{M}{2 v \epsilon_{i}} 
+  [ W_{i}({\bf r}) - W_{i}^{({\bf r})}({\bf r}) ]^2
+\f]
+in which \f$ M \f$ is the number of monomer types (i.e., nMonomer),
+\f$ W_{i}({\bf r}) \f$ is the field component associated with eigenvector 
+\f$ i \f$ of the projected \f$ \chi \f$ matrix, 
+\f$ W_{i}^{({\bf r})}({\bf r}) \f$ is the corresponding component of the 
+"reference" field configuration, and 
+\f$ \epsilon_{0}, \ldots \epsilon_{M-2} \f$ are parameters that controls 
+the strength of fluctuations about the reference field.  
+By default, if the user does not provide values for the \f$ M - 1 \f$
+required \f$ \epsilon \f$ parameters, then 
+\f$ \epsilon_{i} = -\lambda_{i} \f$ for all \f$ i = 0, \ldots, M -2 \f$, 
+where \f$ \lambda_{i} \f$ is eigenvalue \f$ i \f$ of the projected chi 
+matrix. This generalized definition, and default values for parameters, 
+includes the description of a standard AB system that is given above 
+as a special case, with \f$ \epsilon = \epsilon_{0} \f$.
 
 The reference field configuration must be read from a file during
 setup of a simulation, and so the name of that file must be 
-provided as parameter.
+provided as parameter in the parameter file. 
 
 \section rpc_EinsteinCrystalPerturbation_parameter_sec Parameter File
 
@@ -56,11 +85,13 @@ The parameter file format for this class is shown below:
 \code
 EinsteinCrystalPerturbation{
   lambda               real
-  alpha                real
+  epsilon*             Array[ real ] 
   referenceFieldFile   string
 }
 \endcode
-All three parameters are required.
+Note that the epsilon parameter array is optional. If this array is 
+absent, \f$ \epsilon_i = -\lambda_{i} \f$ by default, which reduces to a 
+\f$ \epsilon_{0} = \chi \f$ for a standard AB system.
 Meanings of these parameters are described briefly below:
 <table>
   <tr>
@@ -72,8 +103,9 @@ Meanings of these parameters are described briefly below:
     <td> charging parameter in range 0 [Einstein Crystal] to 1 [unperturbed] </td>
   </tr>
   <tr>
-    <td> alpha </td>
-    <td> prefactor in harmonic penalty </td>
+    <td> epsilon </td>
+    <td> array of values for coefficients used in harmonic penalty 
+    (optional) </td>
   </tr>
   <tr>
     <td> referenceFieldName  </td>

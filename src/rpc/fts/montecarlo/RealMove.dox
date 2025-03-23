@@ -2,7 +2,7 @@ namespace Pscf {
 namespace Rpc {
 
 /*! 
-\page rpc_RealMove_page Rpc::RealMove
+\page rpc_RealMove_page RealMove
 
 The RealMove classes used by both the pscf_pc and pscf_pg programs 
 implements a simple MC move for which the attempted move is a random

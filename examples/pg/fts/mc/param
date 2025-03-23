@@ -1,9 +1,9 @@
 System{
   Mixture{
-    nMonomer  2
+    nMonomer   2
     monomers[
-             1.0  
-             1.0 
+             1.0
+             1.0
     ]
     nPolymer  1
     Polymer{
@@ -25,37 +25,41 @@ System{
   }
   Domain{
     mesh           16    16    16
-    lattice     cubic   
+    lattice     cubic
   }
   McSimulator{
-    seed              1784106389
     McMoveManager{
+
       ForceBiasMove{
         probability     0.50
         mobility        4.0E-3
       }
+
       RealMove{
         probability     0.25
         A               0.15
       }
+
     }
     LrAmCompressor{
       epsilon      1.0e-4
       maxItr       200
-      maxHist      30     
+      maxHist      30
       verbose	   0
       errorType    normResid
     }
     AnalyzerManager{
-      baseInterval    10
+
       StepLogger{
         interval        20
       }
+
       HamiltonianAnalyzer{
-        interval        10
-        outputFileName  out/hamiltonian
-        nSamplePerBlock 2
+        interval          10
+        outputFileName    out/hamiltonian
+        nSamplePerOutput  2
       }
+
     }
   }
 }

@@ -69,6 +69,16 @@ file syntax errors output both the expected label string and the label
 string that was actually read from file. This error message is usually 
 enough to allow a user to identify and fix such an error.
 
+Another advantage of using the echo option is that it creates an output
+that indicates the existence of optional elements that are allowed by 
+the parameter file format but that were omitted in a particular 
+parameter file. If an optional parameter or subblock is omitted, the 
+label of the omitted element is echoed to standard output followed by 
+the string "[absent]". The inclusion of omitted optional elements in
+the echoed output may help users more quickly become familiar with the
+full format of each parameter file block, including optional elements 
+that are omitted from some examples.
+
 \section user_usage_options_sec Command Line Options 
 
 The table shown below lists all command line options accepted by PSCF

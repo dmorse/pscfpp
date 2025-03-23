@@ -1,0 +1,56 @@
+namespace Pscf {
+namespace Rpc {
+
+/*! 
+\page rpc_AnalyzerManager_page AnalyzerManager
+
+An AnalyzerManager is a container for Analyzer objects (i.e., instances 
+of subclasses of Analyzer) that can be used to perform periodic actions
+involving data analysis or output of data to a file during a simulation
+or postprocessing operation.
+
+\see AnalyzerManager (class API)
+\see \ref rpc_BdSimulator_page  (manual page)
+\see \ref rpc_McSimulator_page  (manual page)
+
+\section rpc_AnalyzerManager_parameter_sec Parameter File
+
+The parameter file format, including all optional parameters, is shown 
+below:
+\code
+AnalyzerManager{
+  baseInterval*      int (1 by default)
+
+  Analyzer#*{ .... }
+  Analyzer#*{ .... }
+     .
+     .
+     .
+ 
+}
+\endcode
+After the optional baseInterval parameter (which is usually omitted),
+the AnalyzerManager block contains a sequence of any number of 
+selectable Analyzer subblocks that ends when the closing bracket
+for the AnalyzerManager block is reached. Each such Analyzer subblock 
+must start with an opening line that contains the label (or class 
+name) for a known analyzer algorithm that is implemented by a 
+subclass of the Analyzer base class. 
+
+<b> baseInterval </b> : The baseInterval parameter is an optional integer 
+parameter that is set equal to 1 by default. If the baseInterval is set 
+to a value greater than 1, then the interval parameter for every analyzer 
+is required to be a multiple of the baseInterval. If the baseInterval
+parameter is omitted, and the default is used, then this requirement 
+does not impose any constraint on the allowed values of the interval 
+parameters. The baseInterval parameter was introduced to allow an 
+optimization in which the interval values for the individual analyzers 
+are checked only during time steps that are multiples of the 
+baseInterval. The amount of time saved by this optimization is normally 
+negligible, and so users should feel free to omit this parameter and 
+use the default. 
+
+*/
+
+}
+}

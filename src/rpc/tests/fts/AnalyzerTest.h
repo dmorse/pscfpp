@@ -47,12 +47,9 @@ public:
       simulator.readParam(in);
       in.close();
    }
-
-   void testAnalyzeTrajectory()
+   
+   void analyzeTrajectory()
    {
-      printMethod(TEST_FUNC);
-      
-      openLogFile("out/testAnalyzer.log");
       System<3> system;
       initSystem(system, "in/param_system_disordered");
       BdSimulator<3> simulator(system);
@@ -60,27 +57,39 @@ public:
       std::string filename = filePrefix() + "in/w_dis_trajectory.rf";
       simulator.analyze(0, 10, "RGridTrajectoryReader", filename);
    }
+
+   void testAnalyzeTrajectory()
+   {
+      printMethod(TEST_FUNC);
+      openLogFile("out/testAnalyzer.log");
+      
+      analyzeTrajectory();
+   }
    
    void testFourthOrderParameter()
    {
       printMethod(TEST_FUNC);
-      std::string filename = filePrefix() + "out/fourthOrder_analyzer";
+      openLogFile("out/testAnalyzer.log");
+      
+      analyzeTrajectory();
+      
+      std::string filename = filePrefix() + "out/fourthOrder_analyzer.ave";
       std::ifstream file(filename);
       if (!file.is_open()) {
-        std::cout << "Error: Could not open file out/fourthOrder" 
+        std::cout << "Error: Could not open file out/fourthOrder_analyzer.ave" 
                   << std::endl;
 
       }
+      
+      // Obtain the average value of fourthOrder parameter
       std::string line;
-      
-      // Skip the first line
-      std::getline(file, line);
-      
-      double chi; double fourthorder;
+      double fourthorder;
+      std::string x;
       std::getline(file, line);
       std::istringstream iss(line);
-      iss >> chi >> fourthorder;
-      double diff = fabs(0.42383968 - fourthorder);
+      iss >> x  >> x >> fourthorder;
+      
+      double diff = fabs(0.40320774 - fourthorder);
       TEST_ASSERT(diff < 1.0E-2);
    }
 

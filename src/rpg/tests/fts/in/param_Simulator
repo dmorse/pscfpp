@@ -10,50 +10,56 @@ System{
       type    linear
       nBlock  2
       blocks[
-              0   0.5
-              1   0.5
+              0   0.35
+              1   0.65
       ]
       phi     1.0
     }
     vMonomer  0.01
-    ds   0.02
+    ds   0.01
   }
   Interaction{
     chi(
-        1   0   12.0
+        1   0   15
     )
   }
   Domain{
-    mesh           16    16    16
+    mesh           32    32    32
     lattice     cubic   
   }
   McSimulator{
-    seed              1784106389
     McMoveManager{
-
+      
       ForceBiasMove{
-        probability     0.75
-        mobility        7.0E-3
+        probability     0.5
+        mobility        4.0E-3
       }
 
       RealMove{
-        probability     0.25
-        A               0.15
+        probability     0.5
+        A               0.4
       }
 
     }
-    LrAmCompressor{
+    AmCompressor{
       epsilon      1.0e-4
       maxItr       200
       maxHist      30     
-      verbose	   0
-      errorType    normResid
+      verbose	 0
+      errorType    rmsResid
     }
     AnalyzerManager{
+      baseInterval    1
+
+      TrajectoryWriter{
+        interval        10
+        outputFileName  out/trajectory
+      }
 
       HamiltonianAnalyzer{
-        interval         10
+        interval        10
         outputFileName  out/hamiltonian
+        nSamplePerOutput 2
       }
 
       StepLogger{
@@ -64,10 +70,5 @@ System{
   }
 }
 
-      TrajectoryWriter{
-        interval        200
-        outputFileName  out/trajectory
-      }
-
-  unitCell cubic   1.3835952906
+  unitCell cubic   3.29
   groupName   P_-1

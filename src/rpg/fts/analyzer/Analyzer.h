@@ -16,29 +16,16 @@ namespace Rpg {
    /**
    * Abstract base for periodic output and/or analysis actions.
    *
-   * The periodic action associated with an Analyzer can involve sampling
-   * of a physical property and adding it to statistical accumulator, 
-   * outputting it to file, or both. This periodic action must be 
-   * implemented by the pure virtual sample() method.
+   * The periodic action associated with an Analyzer may involve retrieval
+   * or computation of a physical property, adding it to a statistical 
+   * accumulator, and/or outputting it to file. This periodic action must
+   * be implemented by the pure virtual sample() method.
    *
    * The sample() method should take the desired action only when the
    * simulation step index is an integer multiple of the associated interval
    * parameter.  The interval must be a positive integer that is a multiple 
-   * of the static member Analyzer::baseInterval.
-   *
-   * The virtual sample() method does not take any parameters. An Analyzer
-   * must thus access its parent Simulation and/or System via a pointer, 
-   * which is usually initialized in its subclass constructor.
-   *
-   * Analyzer subclasses that are associated with one System, McSystem 
-   * or MdSystem (i.e., almost all of them) should be derived from the
-   * SystemAnalyzer<class SystemType> class template. This takes a 
-   * reference to the parent system as parameter to its constructor. 
-   * An Analyzer subclass that can be used with any System should be
-   * derived from SystemAnalyzer<System>, and one that can be used 
-   * only with a MdSystem or McSystem should be derived from 
-   * SystemAnalyzer<MdSystem> or SystemAnalyzer<MdSystem>, 
-   * respectively.
+   * of the static member Analyzer::baseInterval, which is set equal to 1 
+   * by default.
    *
    * \ingroup Rpg_Fts_Analyzer_Module
    */
@@ -47,8 +34,6 @@ namespace Rpg {
    {
 
    public:
-
-      // Non-static Methods
 
       /**
       * Default constructor.
@@ -69,45 +54,13 @@ namespace Rpg {
       */
       virtual void readParameters(std::istream& in);
 
-      #if 0
-      /**
-      * Load parameters from archive.
-      *
-      * Default implementation, loads interval and outputFileName.
-      *
-      * \param ar input/loading archive
-      */
-      virtual void loadParameters(Serializable::IArchive& ar);
-
-      /**
-      * Load parameters to archive.
-      *
-      * Default implementation saves interval and outputFileName.
-      *
-      * \param ar loading/saving archive
-      */
-      virtual void save(Serializable::OArchive& ar);
-  
-      /**
-      * Serialize to/from an archive. 
-      *
-      * Saves interval and outputFileName.
-      * 
-      * \param ar      archive
-      * \param version archive version id
-      */
-      template <class Archive>
-      void serialize(Archive& ar, const unsigned int version);
-      #endif
-
       /**
       * Complete any required initialization.
       *
-      * This method must be called just before the beginning of
-      * the main simulation loop, after an initial configuration 
-      * is known. It may be used to complete any initialization
-      * that cannot be completed in the readParam method, because
-      * knowledge of the configuration is needed. 
+      * This method will be called just before the beginning of the
+      * main simulation loop, after an initial field configuration 
+      * is known. It may be used to complete any initialization that
+      * cannot be completed in the readParameters method.
       *
       * The default implementation is an empty function.
       */
@@ -148,7 +101,7 @@ namespace Rpg {
       // Static members
 
       /**
-      * The interval for an Analyzer must be a multiple of baseInterval.
+      * The interval for every Analyzer must be a multiple of baseInterval.
       */
       static long baseInterval;
 
@@ -178,22 +131,6 @@ namespace Rpg {
       */
       void readOutputFileName(std::istream &in);
 
-      #if 0
-      /**
-      * Load interval from archive, with error checking.
-      *
-      * \param ar input/loading archive
-      */
-      void loadInterval(Serializable::IArchive& ar);
-
-      /**
-      * Load output file name from archive.
-      *
-      * \param ar input/loading archive
-      */
-      void loadOutputFileName(Serializable::IArchive& ar);
-      #endif
-
       /**
       * Get the FileMaster by reference.
       *
@@ -211,14 +148,14 @@ namespace Rpg {
       */
       std::string outputFileName(const std::string& suffix) const;
 
-      /// Base name of output file(s).
-      std::string outputFileName_;
+   private:
 
       /// Number of simulation steps between subsequent actions.
       long interval_;
 
-   private:
-
+      /// Base name of output file(s).
+      std::string outputFileName_;
+      
       /// Pointer to fileMaster for opening output file(s).
       FileMaster* fileMasterPtr_;
 
