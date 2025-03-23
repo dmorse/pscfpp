@@ -12,7 +12,6 @@
 
 #include <rpg/System.h>
 #include <rpg/fts/simulator/Simulator.h>
-#include <pscf/inter/Interaction.h>
 
 namespace Pscf {
 namespace Rpg
@@ -41,7 +40,7 @@ namespace Rpg
    {
       UTIL_CHECK(system().w().hasData());
 
-      // Check that nMonomer == 2
+      // For AB diblock
       const int nMonomer = system().mixture().nMonomer();
       UTIL_CHECK(nMonomer == 2);
 
@@ -89,9 +88,9 @@ namespace Rpg
          outputFile_ << Dbl(chi);
          outputFile_ << Dbl(value);
          outputFile_ << "\n";
-      } else {
+       } else {
          AverageAnalyzer<D>::outputValue(step, value);
-      }
+       }
    }
 
 }
