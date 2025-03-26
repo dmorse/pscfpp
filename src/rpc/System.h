@@ -43,16 +43,13 @@ namespace Pscf {
 namespace Pscf {
 namespace Rpc {
 
-   // Namespaces names that may be used implicitly in Pscf::Rpc
+   // Namespaces that are implicitly available, without qualification
    using namespace Util;
    using namespace Prdc;
    using namespace Prdc::Cpu;
 
    /**
    * Main class for SCFT or PS-FTS simulation of one system.
-   *
-   * System is a class template with an integer template parameter 
-   * D = 1, 2, or 3 that represents the dimension of space.
    *
    * A System has (among other member components):
    *
@@ -62,15 +59,17 @@ namespace Rpc {
    *    - a container of monomer chemical potential fields
    *    - a container of monomer concentration fields
    *
-   * A System may also optionally have Iterator, Sweep, and Simulator
-   * components. Iterator and Sweep objects are only used for SCFT
-   * calculations.  A Simulator object is only used for PS-FTS 
-   * calculations (i.e., field theoretic simulations that use a partial 
-   * saddle-point approximation).
+   * A System may also optionally own Iterator, Sweep, and Simulator
+   * (BdSimulator or McSimulator) components. Iterator and Sweep objects 
+   * are only used for SCFT calculations.  A Simulator object is only 
+   * used for PS-FTS calculations (i.e., field theoretic simulations that 
+   * use a partial saddle-point approximation).
    *
-   * Note: The names Mixture, Interaction, etc. mentioned above are names
-   * of class templates that each have a integer template parameter D 
-   * that is the dimension of space. Actual class names are of the form
+   * System is a class template with an integer template parameter 
+   * D = 1, 2, or 3 that represents the dimension of space. Many related
+   * components are also class templates of the same type. Names such as
+   * System, Mixture, Domain, etc. mentioned above are thus names of 
+   * class templates, whereas actual class names are of the form
    * Mixture\<D\>, Interaction\<D\>, etc. with D=1, 2, or 3.
    *
    * Usage of a System\<D\> object in the main program looks something 
@@ -88,10 +87,10 @@ namespace Rpc {
    *
    * See also:
    * <ul>
-   *  <li> \ref scft_param_pc_page    "Manual Page (SCFT)" </li>
-   *  <li> \ref psfts_param_page      "Manual Page (PS-FTS)" </li>
-   *  <li> \ref rpc_System_page       "Manual Page (Parameter File Format)" </li>
-   *  <li> \ref scft_command_pc_page  "Manual Page (Command File Format)" </li>
+   *  <li> \ref scft_param_pc_page    "Parameter File: SCFT" </li>
+   *  <li> \ref psfts_param_page      "Parameter File: PS-FTS" </li>
+   *  <li> \ref rpc_System_page       "Parameter File: Full Format" </li>
+   *  <li> \ref scft_command_pc_page  "Command File Format" </li>
    * </ul>
    *
    * \ingroup Pscf_Rpc_Module
@@ -155,9 +154,9 @@ namespace Rpc {
       virtual void readParameters(std::istream& in);
 
       /**
-      * Read and process commands from a specific file.
+      * Read and process commands from an input stream.
       *
-      * \param in command script file
+      * \param in command script input stream
       */
       void readCommands(std::istream& in);
 
@@ -188,10 +187,10 @@ namespace Rpc {
       * hasFreeEnergy() return false. Unit cell parameters are set to 
       * values read from the field file header.
       * 
-      * SCFT calculations that use an iterator that preserves space 
-      * group symmetry must set an initial field using a function that
-      * creates fields can be represented in symmetry adapted basis 
-      * form, such as this function, estimateWFromC, or setWBasis.
+      * SCFT calculations that use an iterator that preserves space group
+      * symmetry must set an initial field using a function that creates
+      * fields that can be represented in symmetry adapted basis form,
+      * such as this function, setWBasis, or estimateWFromC.
       *
       * \param filename name of input w-field file in basis format
       */
@@ -223,10 +222,11 @@ namespace Rpc {
       * Set chemical potential fields, in symmetry-adapted basis format.
       *
       * This function sets values for w fields in both symmetry adapted
-      * and r-grid format by copying values provided in the "fields"
-      * container that is passed as an argument. Upon return, values 
-      * of both w().basis() and w().rgrid() are set, w().hasData() 
-      * and w().isSymmetric() return true, while hasCFields() and 
+      * and r-grid format by copying coefficient values provided in the 
+      * "fields" container that is passed as an argument, and computing
+      * values on a real-space grid. Upon return, values of both 
+      * w().basis() and w().rgrid() are set, while w().hasData() and 
+      * w().isSymmetric() return true, and hasCFields() and hasFreeEnergy()
       * hasFreeEnergy() return false. Unit cell parameters are left 
       * unchanged.
       *
@@ -237,11 +237,11 @@ namespace Rpc {
       /**
       * Set new w fields, in real-space (r-grid) format.
       *
-      * This function set values for w fields in r-grid format, but 
-      * does not set components the symmetry-adapted basis format. On 
-      * return, w.rgrid() is reset and w().hasData() is true, while
-      * w().isSymmetric(), hasCFields() and hasFreeEnergy() are false.
-      * Unit cell parameters are left unchanged.
+      * This function set values for w fields in r-grid format, but does
+      * not set components the symmetry-adapted basis format. Upon return,
+      * w.rgrid() is reset and w().hasData() returns true, while
+      * w().isSymmetric(), hasCFields() and hasFreeEnergy() all return
+      * false.  Unit cell parameters are left unchanged.
       *
       * \param fields  array of new w (chemical potential) fields
       */
@@ -255,8 +255,8 @@ namespace Rpc {
       * potential fields by setting the Lagrange multiplier field xi to
       * zero. The result is stored in the System w fields container.
       *
-      * Upon return, w().hasData() and w().isSymmetric() are set true, 
-      * while hasCFields() and hasFreeEnergy() are set false. Unit
+      * Upon return, w().hasData() and w().isSymmetric() return true, 
+      * while hasCFields() and hasFreeEnergy() return false. Unit
       * cell parameters are set to those read from the c field file
       * header.
       *
@@ -272,13 +272,14 @@ namespace Rpc {
       * Set parameters of the associated unit cell.
       *
       * The lattice (i.e., lattice system type) set in the UnitCell<D>
-      * input parameter must agree with any lattice enum value that was 
-      * set previously in the parameter file, or an Exception is thrown.
+      * unitCell input parameter must agree with any lattice enum value 
+      * that was set previously in the parameter file, or an Exception 
+      * is thrown.
       *
-      * If a space group is set, then this and the other setUnitCell 
-      * member functions all construct a symmetry-adapted basis if not
-      * done previously, and allocate memory for fields in a symmetry
-      * adapted basis format if not done previously. 
+      * If a space group has been set but a basis has not yet been
+      * constructed, then this and the other setUnitCell member functions 
+      * wll all construct a symmetry-adapted basis and then allocate
+      * memory for fields stored in a symmetry adapted basis format.
       *
       * \param unitCell  new UnitCell<D> (i.e., new parameters)
       */

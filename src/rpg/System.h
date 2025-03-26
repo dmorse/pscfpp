@@ -10,22 +10,18 @@
 
 // Header file includes
 #include <util/param/ParamComposite.h>     // base class
-
 #include <rpg/solvers/Mixture.h>           // member
 #include <rpg/field/Domain.h>              // member
 #include <rpg/field/FieldIo.h>             // member
 #include <rpg/field/WFieldContainer.h>     // member
 #include <rpg/field/CFieldContainer.h>     // member
 #include <rpg/field/Mask.h>                // member
-
-#include <prdc/cuda/RField.h>              // member
-#include <prdc/cuda/RFieldDft.h>           // member
-
+#include <prdc/cuda/RField.h>              // member (tmpFieldsRGrid_)
+#include <prdc/cuda/RFieldDft.h>           // member (tmpFieldsKGrid_)
 #include <pscf/homogeneous/Mixture.h>      // member
-
 #include <util/misc/FileMaster.h>          // member
-#include <util/containers/DArray.h>        // member template
-#include <util/containers/FSArray.h>       // member template
+#include <util/containers/DArray.h>        // member (tmpFields ...)
+#include <util/containers/FSArray.h>       // ????
 
 // Forward references
 namespace Pscf {
@@ -64,8 +60,18 @@ namespace Rpg {
    *    - a container of monomer chemical potential fields (w fields)
    *    - a container of monomer concentration fields (c fields)
    *
-   * A System may also optionally contain Iterator, Sweep and
-   * Simulator (BdSimulator or McSimulator) objects.
+   * A System may also optionally own Iterator, Sweep and Simulator
+   * (BdSimulator or McSimulator) componennts. Iterator and Sweep objects
+   * are only used for SCFT calculations. A Simulator objects is only used
+   * for PS-FTS calculations (i.e., field theoretic simulations that use
+   * a partial saddle-point approximation).
+   *
+   * System is a class template with an integer template parameter
+   * D = 1, 2, or 3 that represents the dimensions of space. Many related
+   * components are also class templates of the same type. Names such as
+   * System, Mixture, Domain, etc. mentioned above are thus names of
+   * class templates, whereas actual class names are of the form
+   * Mixture\<D\>, Domain\<D\>, etc. with D=1, 2 or 3.
    *
    * Usage of a System<D> object within the pscf_pg main program looks 
    * like this:
@@ -83,8 +89,14 @@ namespace Rpg {
    * Parameter file format is the same as for corresponding object
    * Pscf::Rpc::System<D> used in the analogous pscf_pc CPU program.
    *
-   * \ref scft_param_pc_page "Parameter File Format"
-   * \ref scft_command_pc_page "Command File Format"
+   * See also:
+   * <ul>
+   *  <li> \ref scft_param_pc_page   "Parameter File: SCFT" </li>
+   *  <li> \ref psfts_param_page     "Parameter File: PS-FTS" </li>
+   *  <li> \ref scft_param_pc_page   "Parameter File: Full Format" </li>
+   *  <li> \ref scft_command_pc_page "Command File Format" </li>
+   * </ul>
+   *
    * \ingroup Pscf_Rpg_Module
    */
    template <int D>
@@ -107,7 +119,7 @@ namespace Rpg {
       ~System();
 
       ///@}
-      /// \name Lifetime (Actions)
+      /// \name Lifetime (Main Actions)
       ///@{
 
       /**
@@ -146,14 +158,14 @@ namespace Rpg {
       virtual void readParameters(std::istream& in);
 
       /**
-      * Read command script.
+      * Read and process commands from an input stream.
       *
-      * \param in command script file.
+      * \param in command script input stream
       */
       void readCommands(std::istream& in);
 
       /**
-      * Read commands from default command file.
+      * Read and process commands from the default command file.
       *
       * This function reads the parameter file set by the -c command
       * line option.
@@ -169,12 +181,20 @@ namespace Rpg {
       *
       * This function opens and reads the file with the name given by the
       * "filename" string, which must contain chemical potential fields
-      * in symmetry-adapted basis format. The function copies these
-      * fields to set new values for the system w fields in basis format,
-      * and also computes and resets the system w fields in r-space
-      * format. On exit, both w().basis() and w().rgrid() have been
-      * reset, w().hasData and w().isSymmetric() are true, and
-      * hasCFields() and hasFreeEnergy() are is false.
+      * in symmetry-adapted basis format. This function sets the system
+      * w fields equal to those given in this file, by copying the
+      * coefficients of the basis expansion and computing values on a
+      * real-space grid (r-grid format). 
+      * 
+      * On exit, both w().basis() and w().rgrid() are set, w().hasData()
+      * and w(). isSymmetric() return true, while hasCFields() and
+      * hasFreeEnergy() return false. System unit cell parameters are
+      * set to values read from the field file header.
+      *
+      * SCFT calculations that use an iterator that preserves space group
+      * symmetry must set an initial field using a function that creates
+      * fields that can be represented in symmetry-adapted basis form,
+      * such as this function, setWBasis, or estimateWFromC.
       *
       * \param filename name of input w-field basis file
       */
@@ -188,10 +208,15 @@ namespace Rpg {
       * in real space grid (r-grid) format. The function sets values for
       * system w fields in r-grid format. It does not set attempt to set
       * field values in symmetry-adapted basis format, because it cannot
-      * be known whether the r-grid field exhibits the declared space
-      * group symmetry.  On exit, w().rgrid() is reset and w().hasData()
-      * is true, while w().isSymmetric(), hasCFields(), and 
-      * hasFreeEnergy() are false.
+      * assume that the r-grid field exhibits the declared space group
+      * symmetry.  On exit, w().rgrid() is reset and w().hasData() 
+      * returns true, while w().isSymmetric(), hasCFields(), and 
+      * hasFreeEnergy() return false. Unit cell parameters are set to
+      * values read from the field file header.
+      *
+      * Initial chemical potential fields for field theoretic simulations
+      * are normally initialized using a function that sets the fields 
+      * in r-grid format, such as as this function or setWRGrid.
       *
       * \param filename  name of input w-field basis file
       */
@@ -201,9 +226,13 @@ namespace Rpg {
       * Set chemical potential fields, in symmetry-adapted basis format.
       *
       * This function sets values for w fields in both symmetry adapted
-      * and r-grid format.  On exit, values of both w().basis() and
-      * w().rgrid() are reset, w().hasData() and w().isSymmetric() are
-      * true, and hasCFields() and hasFreeEnergy() are false.
+      * and r-grid format by copying coefficient values provided in the
+      * "fields" container that is passed as and argument, and computing
+      * values on a real-space grid.  Upon return, values of both 
+      * w().basis() and w().rgrid() are set, while w().hasData() and 
+      * w().isSymmetric() return true, and hasCFields() and 
+      * hasFreeEnergy() return false. Unit cell parameters are left
+      * unchanged.
       *
       * \param fields  array of new w (chemical potential) fields
       */
@@ -213,9 +242,10 @@ namespace Rpg {
       * Set new w fields, in real-space (r-grid) format.
       *
       * This function set values for w fields in r-grid format, but does
-      * not set components the symmetry-adapted basis format.  On exit,
-      * w.rgrid() is reset, w().hasData() is true, and hasCFields(),
-      * hasFreeEnergy(), and w().isSymmetric() are false.
+      * not set components the symmetry-adapted basis format.  Upon return
+      * return w.rgrid() is set, w().hasData() returns true, while
+      * hasCFields(), hasFreeEnergy(), and w().isSymmetric() all return 
+      * false. Unit cell parameters are unchanged.
       *
       * \param fields  array of new w (chemical potential) fields
       */
@@ -228,8 +258,8 @@ namespace Rpg {
       * r-grid fields for all monomer types in a single array, with the
       * field for monomer 0 first, followed by the field for monomer 1,
       * etc. This function sets w().rgrid() but does not set w().basis().
-      * On exit, w().hasData() is true, while w().isSymmetric(),
-      * hasFreeEnergy(), and hasCFields() are false.
+      * On exit, w().hasData() returns true, while w().isSymmetric(),
+      * hasFreeEnergy(), and hasCFields() all return false.
       *
       * \param fields  unfolded array of new chemical potential fields
       */
@@ -251,8 +281,8 @@ namespace Rpg {
       * potential fields by setting the Lagrange multiplier field xi to
       * zero. The result is stored in the system w field container.
       *
-      * Upon return, w().hasData() and w().isSymmetric() are true, while
-      * hasCFields() is false.
+      * Upon return, w().hasData() and w().isSymmetric() return true, 
+      * while hasCFields() and hasFreeEnergy() return false.
       *
       * \param filename  name of input c-field file (basis format)
       */
@@ -265,8 +295,15 @@ namespace Rpg {
       /**
       * Set parameters of the associated unit cell.
       *
-      * The lattice system declared within the input unitCell must agree
-      * with Domain::lattice() on input if Domain::lattice() is not null.
+      * The lattice (i.e., lattice system type) set in the UnitCell<D>
+      * unitCell input parameter must agree with any lattice enum value
+      * that was set previously in the parameter file, or an Exception 
+      * is thrown. 
+      * 
+      * If a space group has been set but a basis has not yet been
+      * constructed, then this and the other setUnitCell member functions
+      * all will construct a symmetry-adapted basis and then allocate 
+      * memory for fields stored in a symmetry-adapted basis format. 
       *
       * \param unitCell  new UnitCell<D> (i.e., new parameters)
       */
