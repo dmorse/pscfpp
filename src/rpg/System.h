@@ -33,7 +33,7 @@ namespace Pscf {
    namespace Prdc {
       template <int D> class UnitCell;
    }
-   namespace Rpg { 
+   namespace Rpg {
       template <int D> class Iterator;
       template <int D> class IteratorFactory;
       template <int D> class Sweep;
@@ -64,7 +64,7 @@ namespace Rpg {
    *    - a container of monomer concentration fields (c fields)
    *
    * A System may also optionally own Iterator, Sweep and Simulator
-   * (BdSimulator or McSimulator) componennts. Iterator and Sweep objects
+   * (BdSimulator or McSimulator) components. Iterator and Sweep objects
    * are only used for SCFT calculations. A Simulator objects is only used
    * for PS-FTS calculations (i.e., field theoretic simulations that use
    * a partial saddle-point approximation).
@@ -76,7 +76,7 @@ namespace Rpg {
    * class templates, whereas actual class names are of the form
    * Mixture\<D\>, Domain\<D\>, etc. with D=1, 2 or 3.
    *
-   * Usage of a System<D> object within the pscf_pg main program looks 
+   * Usage of a System<D> object within the pscf_pg main program looks
    * like this:
    * \code
    *    System<D> system;
@@ -187,8 +187,8 @@ namespace Rpg {
       * in symmetry-adapted basis format. This function sets the system
       * w fields equal to those given in this file, by copying the
       * coefficients of the basis expansion and computing values on a
-      * real-space grid (r-grid format). 
-      * 
+      * real-space grid (r-grid format).
+      *
       * On exit, both w().basis() and w().rgrid() are set, w().hasData()
       * and w(). isSymmetric() return true, while hasCFields() and
       * hasFreeEnergy() return false. System unit cell parameters are
@@ -212,13 +212,13 @@ namespace Rpg {
       * system w fields in r-grid format. It does not set attempt to set
       * field values in symmetry-adapted basis format, because it cannot
       * assume that the r-grid field exhibits the declared space group
-      * symmetry.  On exit, w().rgrid() is reset and w().hasData() 
-      * returns true, while w().isSymmetric(), hasCFields(), and 
+      * symmetry.  Upon exit, w().rgrid() is reset and w().hasData()
+      * returns true, while w().isSymmetric(), hasCFields(), and
       * hasFreeEnergy() return false. Unit cell parameters are set to
       * values read from the field file header.
       *
       * Initial chemical potential fields for field theoretic simulations
-      * are normally initialized using a function that sets the fields 
+      * are normally initialized using a function that sets the fields
       * in r-grid format, such as as this function or setWRGrid.
       *
       * \param filename  name of input w-field basis file
@@ -231,9 +231,9 @@ namespace Rpg {
       * This function sets values for w fields in both symmetry adapted
       * and r-grid format by copying coefficient values provided in the
       * "fields" container that is passed as and argument, and computing
-      * values on a real-space grid.  Upon return, values of both 
-      * w().basis() and w().rgrid() are set, while w().hasData() and 
-      * w().isSymmetric() return true, and hasCFields() and 
+      * values on a real-space grid.  Upon return, values of both
+      * w().basis() and w().rgrid() are set, while w().hasData() and
+      * w().isSymmetric() return true, and hasCFields() and
       * hasFreeEnergy() return false. Unit cell parameters are left
       * unchanged.
       *
@@ -247,7 +247,7 @@ namespace Rpg {
       * This function set values for w fields in r-grid format, but does
       * not set components the symmetry-adapted basis format.  Upon return
       * return w.rgrid() is set, w().hasData() returns true, while
-      * hasCFields(), hasFreeEnergy(), and w().isSymmetric() all return 
+      * hasCFields(), hasFreeEnergy(), and w().isSymmetric() all return
       * false. Unit cell parameters are unchanged.
       *
       * \param fields  array of new w (chemical potential) fields
@@ -284,7 +284,7 @@ namespace Rpg {
       * potential fields by setting the Lagrange multiplier field xi to
       * zero. The result is stored in the system w field container.
       *
-      * Upon return, w().hasData() and w().isSymmetric() return true, 
+      * Upon return, w().hasData() and w().isSymmetric() return true,
       * while hasCFields() and hasFreeEnergy() return false.
       *
       * \param filename  name of input c-field file (basis format)
@@ -300,13 +300,13 @@ namespace Rpg {
       *
       * The lattice (i.e., lattice system type) set in the UnitCell<D>
       * unitCell input parameter must agree with any lattice enum value
-      * that was set previously in the parameter file, or an Exception 
-      * is thrown. 
-      * 
+      * that was set previously in the parameter file, or an Exception
+      * is thrown.
+      *
       * If a space group has been set but a basis has not yet been
       * constructed, then this and the other setUnitCell member functions
-      * all will construct a symmetry-adapted basis and then allocate 
-      * memory for fields stored in a symmetry-adapted basis format. 
+      * all will construct a symmetry-adapted basis and then allocate
+      * memory for fields stored in a symmetry-adapted basis format.
       *
       * \param unitCell  new UnitCell<D> (i.e., new parameters)
       */
@@ -377,13 +377,15 @@ namespace Rpg {
       * energy and pressure are computed if and only if convergence is
       * obtained.
       *
-      * \pre The w().hasData() flag must be true on entry, to confirm
+      * \pre Function hasIterator() must return true.
+      *
+      * \pre Function w().hasData() flag must return true, to confirm
       * that chemical potential fields have been set.
       *
-      * \pre The w().isSymmetric() flag must be set true if the chosen
-      * iterator uses a basis representation, and thus requires this.
+      * \pre Function w().isSymmetric() flag must return true if the
+      * chosen iterator uses a basis representation, and so requires this.
       *
-      * \param isContinuation  true iff continuation within a sweep
+      * \param isContinuation  true iff a continuation within a sweep
       * \return returns 0 for successful convergence, 1 for failure
       */
       int iterate(bool isContinuation = false);
@@ -397,32 +399,27 @@ namespace Rpg {
       * is determined by implementation of a subclass of Sweep and the
       * parameters passed to the sweep object in the parameter file.
       *
-      * \pre The w().hasData() flag must be true on entry.
-      * \pre A sweep object must have been created in the parameter file.
+      * \pre Function hasSweep() must return true.
+      * \pre All preconditions of the iterate function must be satisfied
       */
       void sweep();
 
       /**
-      * Perform a field theoretic Monte-Carlo simulation.
+      * Perform a field theoretic simulation.
       *
-      * Perform a field theoretic Monte-Carlo simulation using the
-      * partial saddle-point approximation.
+      * Perform a field theoretic simulation using the partial saddle-point
+      * approximation (PS-FTS). The type of simulation (BD or MC) is
+      * determined by the type of Simulator (BdSimulator or McSimulator)
+      * created in the parameter file. The number of BD steps or
+      * atttempted MC moves to be performed is given by the parameter
+      * "nStep".
       *
-      * \param nStep  number of Monte-Carlo steps
+      * \pre Function hasSimulator() must return true.
+      * \pre Function w().hasData() must return true.
+      *
+      * \param nStep  number of simulation (BD or MC) steps
       */
       void simulate(int nStep);
-
-      /**
-      * Write timer file to an ostream
-      *
-      * \param out output stream
-      */
-      void writeTimers(std::ostream& out);
-
-      /**
-      * Clear timers
-      */
-      void clearTimers();
 
       ///@}
       /// \name Thermodynamic Properties
@@ -435,8 +432,8 @@ namespace Rpg {
       * iterator().solve(). Resulting values are returned by the
       * freeEnergy() and pressure() accessor functions.
       *
-      * \pre w().hasData must be true.
-      * \pre hasCFields must be true.
+      * \pre w().hasData must return true.
+      * \pre hasCFields() must return true.
       */
       void computeFreeEnergy();
 
@@ -487,16 +484,16 @@ namespace Rpg {
       * \param out output stream
       */
       void writeThermo(std::ostream& out);
-      
+
       /**
       * Write stress properties to a file.
       *
-      * This function outputs derivatives of free energy w/ respect to 
+      * This function outputs derivatives of free energy w/ respect to
       * each unit cell parameters.
       *
-      * Call writeStress after writeThermo if and only if the iterator 
-      * is not flexible. If parameter "out" is a file that already exists, 
-      * this function will append this information to the end of the file, 
+      * Call writeStress after writeThermo if and only if the iterator
+      * is not flexible. If parameter "out" is a file that already exists,
+      * this function will append this information to the end of the file,
       * rather than overwriting that file.
       *
       * \param out output stream
@@ -712,12 +709,12 @@ namespace Rpg {
       */
       void basisToKGrid(const std::string & inFileName,
                         const std::string & outFileName);
-                        
+
       /**
       * Compare arrays of fields in basis format, output a report.
       *
       * Outputs maximum and root-mean-squared differences to the
-      * standard Log file. 
+      * standard Log file.
       *
       * \param field1  first array of fields (basis format)
       * \param field2  second array of fields (basis format)
@@ -729,14 +726,14 @@ namespace Rpg {
       * Compare two fields in r-grid format, output a report.
       *
       * Outputs maximum and root-mean-squared differences to the
-      * standard Log file. 
+      * standard Log file.
       *
       * \param field1  first array of fields (r-grid format)
       * \param field2  second array of fields (r-grid format)
       */
       void compare(const DArray< RField<D> > field1,
                    const DArray< RField<D> > field2);
-                   
+
       /**
       * Check if r-grid fields have the declared space group symmetry.
       *
@@ -746,11 +743,11 @@ namespace Rpg {
       */
       bool checkRGridFieldSymmetry(const std::string & inFileName,
                                    double epsilon = 1.0E-8);
-                                   
+
       /**
       * Multiply all components of an array of basis fields by a scalar.
       *
-      * \param inFileName  name of input field file 
+      * \param inFileName  name of input field file
       * \param outFileName  name of file for rescaled output fields
       * \param factor  factor by which to multiply all field elements
       */
@@ -761,14 +758,14 @@ namespace Rpg {
       /**
       * Multiply all elements of an array of r-grid fields by a scalar.
       *
-      * \param inFileName  name of input field file 
+      * \param inFileName  name of input field file
       * \param outFileName  name of file for rescaled output fields
       * \param factor  factor by which to multiply all field elements
       */
       void scaleFieldsRGrid(const std::string & inFileName,
                             const std::string & outFileName,
                             double factor) const;
-                            
+
       /**
       * Expand the number of spatial dimensions of an r-grid field.
       *
@@ -793,7 +790,7 @@ namespace Rpg {
                                 int d,
                                 DArray<int> newGridDimensions);
       /**
-      * Replicate the crystal unit cell to create a larger cell. 
+      * Replicate the crystal unit cell to create a larger cell.
       *
       * This function reads a D-dimensional field and replicates the
       * unit cell a specified number of times in each D direction
@@ -808,28 +805,44 @@ namespace Rpg {
       void replicateUnitCell(const std::string & inFileName,
                              const std::string & outFileName,
                              IntVec<D> const & replicas);
-                             
+
       ///@}
-      /// \name Member Object Accessors
+      /// \name Timers
       ///@{
 
       /**
-      * Get container of chemical potential fields.
+      * Write timer file to an ostream
+      *
+      * \param out output stream
+      */
+      void writeTimers(std::ostream& out);
+
+      /**
+      * Clear timers
+      */
+      void clearTimers();
+
+      ///@}
+      /// \name Field Accessors
+      ///@{
+
+      /**
+      * Get container of chemical potential fields (w fields).
       */
       WFieldContainer<D> const & w() const;
 
       /**
-      * Get container of monomer concentration / volume fration fields.
+      * Get container of monomer concentration fields (c fields)
       */
       CFieldContainer<D> const & c() const;
 
       /**
-      * Get all of the external potential fields (reference).
+      * Get container of external potential fields (non-const reference).
       */
       WFieldContainer<D>& h();
 
       /**
-      * Get all of the external potential fields (const reference).
+      * Get container of external potential fields (const reference).
       */
       WFieldContainer<D> const & h() const;
 
@@ -843,6 +856,10 @@ namespace Rpg {
       */
       Mask<D> const & mask() const;
 
+      ///@}
+      /// \name Member Object Accessors
+      ///@{
+
       /**
       * Get Mixture by reference.
       */
@@ -854,24 +871,29 @@ namespace Rpg {
       Mixture<D> const & mixture() const;
 
       /**
-      * Get interaction (i.e., excess free energy model) by reference.
+      * Get interaction (i.e., excess free energy) by reference.
       */
       Interaction & interaction();
 	
       /**
-      * Get interaction (i.e., excess free energy model) by const ref.
+      * Get interaction (i.e., excess free energy) by const reference.
       */
       Interaction const & interaction() const;
 	
+      /**
+      * Get Domain by non const reference.
+      */
+      Domain<D> & domain();
+
       /**
       * Get Domain by const reference.
       */
       Domain<D> const & domain() const;
 
       /**
-      * Get Domain by nonconst reference.
+      * Get the iterator by non-const reference.
       */
-      Domain<D> & domain();
+      Iterator<D>& iterator();
 
       /**
       * Get the iterator by const reference.
@@ -879,12 +901,7 @@ namespace Rpg {
       Iterator<D> const & iterator() const;
 
       /**
-      * Get the iterator by reference.
-      */
-      Iterator<D>& iterator();
-
-      /**
-      * Get Simulator container for Monte Carlo moves.
+      * Get Simulator for field theoretic simulation..
       */
       Simulator<D>& simulator();
 
@@ -909,7 +926,7 @@ namespace Rpg {
       FieldIo<D> const & fieldIo() const;
 
       /**
-      * Get the FFT object by reference.
+      * Get the FFT object by const reference.
       */
       FFT<D> const & fft() const ;
 
@@ -924,37 +941,13 @@ namespace Rpg {
       FileMaster& fileMaster();
 
       ///@}
-      /// \name Queries
+      /// \name Boolean Queries
       ///@{
 
       /**
       * Does this system have an Iterator object?
       */
       bool hasIterator() const;
-
-      /**
-      * Have monomer concentration fields (c fields) been computed?
-      *
-      * Returns  true if and only if monomer concentration fields have
-      * been computed by solving the modified diffusion equation for the
-      * current w fields.
-      */
-      bool hasCFields() const;
-
-      /**
-      * Has the free energy been computed from the current w fields?
-      */
-      bool hasFreeEnergy() const;
-
-      /**
-      * Does this system have external potential fields?
-      */
-      bool hasExternalFields() const;
-
-      /**
-      * Does this system have a mask (inhomogeneous density constraint)
-      */
-      bool hasMask() const;
 
       /**
       * Does this system have an associated Sweep object?
@@ -965,6 +958,26 @@ namespace Rpg {
       * Does this system have an initialized Simulator?
       */
       bool hasSimulator() const;
+
+      /**
+      * Does this system have external potential fields?
+      */
+      bool hasExternalFields() const;
+
+      /**
+      * Does this system have a mask (inhomogeneous density constraint) ?
+      */
+      bool hasMask() const;
+
+      /**
+      * Have c fields been computed from the current w fields ?
+      */
+      bool hasCFields() const;
+
+      /**
+      * Has the free energy been computed from the current w fields?
+      */
+      bool hasFreeEnergy() const;
 
       ///@}
 
@@ -1169,7 +1182,7 @@ namespace Rpg {
       /**
       * Read a floating point number and echo to log file.
       *
-      * Used to read filenames in readCommands.
+      * Used to read numerical values in readCommands.
       *
       * \param in  input stream (i.e., input file)
       * \param value  number to read and echo
@@ -1195,7 +1208,7 @@ namespace Rpg {
    inline Mixture<D> const & System<D>::mixture() const
    { return mixture_; }
 
-   // Get the Interaction (excess free energy model).
+   // Get the Interaction (excess free energy) by non-const reference.
    template <int D>
    inline Interaction & System<D>::interaction()
    {
@@ -1203,7 +1216,7 @@ namespace Rpg {
       return *interactionPtr_;
    }
 
-   // Get the Interaction (excess free energy model).
+   // Get the Interaction (excess free energy ) by const reference.
    template <int D>
    inline Interaction const & System<D>::interaction() const
    {
@@ -1211,38 +1224,47 @@ namespace Rpg {
       return *interactionPtr_;
    }
 
-   template <int D>
-   inline Domain<D> const & System<D>::domain() const
-   { return domain_; }
-
-   // Get the Domain by nonconst reference.
+   // Get the Domain by non-const reference.
    template <int D>
    inline Domain<D> & System<D>::domain()
+   { return domain_; }
+
+   // Get the Domain by const reference.
+   template <int D>
+   inline Domain<D> const & System<D>::domain() const
    { return domain_; }
 
    template <int D>
    inline UnitCell<D> const & System<D>::unitCell() const
    { return domain_.unitCell(); }
 
-   // get the const Mesh<D> object.
+   // Get the Mesh<D> by const reference.
    template <int D>
    inline Mesh<D> const & System<D>::mesh() const
    { return domain_.mesh(); }
 
-   // Get the Basis<D> object.
+   // Get the Basis<D>  by const reference.
    template <int D>
    inline Basis<D> const & System<D>::basis() const
    {  return domain_.basis(); }
 
-   // Get the FFT<D> object.
+   // Get the FFT<D> object by const reference.
    template <int D>
    inline FFT<D> const & System<D>::fft() const
    {  return domain_.fft(); }
 
-   // Get the const FieldIo<D> object.
+   // Get the const FieldIo<D> object by const reference.
    template <int D>
    inline FieldIo<D> const & System<D>::fieldIo() const
    {  return domain_.fieldIo(); }
+
+   // Get the Iterator by non-const reference.
+   template <int D>
+   inline Iterator<D>& System<D>::iterator()
+   {
+      UTIL_ASSERT(iteratorPtr_);
+      return *iteratorPtr_;
+   }
 
    // Get the Iterator by const reference.
    template <int D>
@@ -1252,15 +1274,7 @@ namespace Rpg {
       return *iteratorPtr_;
    }
 
-   // Get the Iterator by reference.
-   template <int D>
-   inline Iterator<D>& System<D>::iterator()
-   {
-      UTIL_ASSERT(iteratorPtr_);
-      return *iteratorPtr_;
-   }
-
-   // Get the Simulator.
+   // Get the Simulator by non-const reference.
    template <int D>
    inline Simulator<D>& System<D>::simulator()
    {
@@ -1347,6 +1361,11 @@ namespace Rpg {
    inline bool System<D>::hasSweep() const
    {  return (sweepPtr_); }
 
+   // Does the system have an associated Simulator ?
+   template <int D>
+   inline bool System<D>::hasSimulator() const
+   {  return (simulatorPtr_); }
+
    // Does this system have external potential fields?
    template <int D>
    inline bool System<D>::hasExternalFields() const
@@ -1356,11 +1375,6 @@ namespace Rpg {
    template <int D>
    inline bool System<D>::hasMask() const
    {  return mask_.hasData(); }
-
-   // Does the system have an initialized Simulator ?
-   template <int D>
-   inline bool System<D>::hasSimulator() const
-   {  return (simulatorPtr_); }
 
    #ifndef RPG_SYSTEM_TPP
    // Suppress implicit instantiation
