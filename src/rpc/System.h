@@ -356,15 +356,10 @@ namespace Rpc {
       * The Helmholtz free energy and pressure are computed only if
       * convergence is obtained.
       *
-      * \pre An Iterator must have been created while reading the 
-      * parameter file, so hasIterator() must return true.
-      *
-      * \pre The w().hasData() flag must be true on entry, to confirm
-      * that chemical potential fields have been set.
-      *
-      * \pre The w().isSymmetric() flag must be set true if the chosen
-      * iterator uses a symmetry adapted basis representation, and thus
-      * preserves symmetry.
+      * \pre Function hasIterator() must return true.
+      * \pre Function w().hasData() flag must return true.
+      * \pre Function w().isSymmetric() flag must return true if the chosen
+      * iterator uses a symmetry adapted basis, and so requires this.
       *
       * \return returns 0 for successful convergence, 1 for failure.
       *
@@ -383,29 +378,23 @@ namespace Rpc {
       * file.  The Iterator that is initialized in the parameter file
       * is called at each state point.
       *
-      * \pre A Sweep must have been created while reading the parameter 
-      * file, so hasSweep() must return true.
-      *
-      * \pre All preconditions of the iterate() member function must be 
-      * satisfied, since this function is called repeatedly during a sweep.
+      * \pre Function hasSweep() must return true.
+      * \pre All preconditions of the iterate() function must be satisfied
       */
       void sweep();
 
       /**
-      * Perform a field theoretic Monte-Carlo simulation.
+      * Perform a field theoretic simulation (PS-FTS).
       *
-      * Perform a field theoretic Monte-Carlo simulation using the partial
-      * saddle-point approximation. The type of calculation (BD or MC) is
-      * determined by the type of Simulator block (BdSimulator or 
-      * McSimulator) that appears in the parameter file. The number of
-      * BD steps or attempted MC moves to be performed is given by 
-      * parameter "nStep" .
+      * Perform a field theoretic simulation using the partial saddle-point
+      * approximation (PS-FTS). The type of calculation (BD or MC) is
+      * determined by the type of Simulator (BdSimulator or McSimulator)
+      * that created in the parameter file. The number of BD steps or 
+      * attempted MC moves to be performed is given by the parameter
+      * "nStep" .
       *
-      * \pre A Simulator must have been created while reading the 
-      * parameter file, so hasSimulator() must return true.
-      *
-      * \pre The w().hasData() flag must be true on entry, to confirm
-      * that chemical potential fields have been set.
+      * \pre Function hasSimulator() must return true. 
+      * \pre Function w().hasData() must return true. 
       *
       * \param nStep  number of simulation steps
       */
@@ -453,10 +442,10 @@ namespace Rpc {
       *
       * This function writes the Mixture, Interaction, and Domain blocks 
       * of a parameter file, as well as any Iterator block, but omits any
-      * Sweep or Simulator blocks. The intent is for produce an output during
-      * an SCFT sweep that only refers to parameters relevant to a single
-      * state point, in form that could be used a a parameter file for a
-      * a single SCFT calculation.
+      * Sweep or Simulator blocks. The intent is to produce an output 
+      * during an SCFT sweep that only refers to parameters relevant to a 
+      * single state point, in form that could be used a a parameter file 
+      * for a a single SCFT calculation.
       *
       * \param out output stream
       */
@@ -470,8 +459,8 @@ namespace Rpc {
       * chemical potential of each species, and all unit cell parameters.
       *
       * Calling writeParamNoSweep and writeThermo in succession with the 
-      * same output stream will produce a single file containing both input 
-      * parameters and resulting thermodynamic properties.
+      * same output stream will produce a single file containing both 
+      * input parameters and resulting thermodynamic properties.
       *
       * \param out output stream
       */
@@ -825,22 +814,22 @@ namespace Rpc {
       ///@{
 
       /**
-      * Get all of the chemical potential fields (const reference).
+      * Get container of chemical potential fields (w fields).
       */
       WFieldContainer<D> const & w() const;
 
       /**
-      * Get all of the monomer concentration fields (const reference).
+      * Get container of monomer concentration fields (c fields).
       */
       CFieldContainer<D> const & c() const;
 
       /**
-      * Get all of the external potential fields (reference).
+      * Get container of external potential fields (reference).
       */
       WFieldContainer<D>& h();
 
       /**
-      * Get all of the external potential fields (const reference).
+      * Get container of external potential fields (const reference).
       */
       WFieldContainer<D> const & h() const;
 
@@ -940,6 +929,16 @@ namespace Rpc {
       bool hasSimulator() const;
 
       /**
+      * Does this system have external potential fields?
+      */
+      bool hasExternalFields() const;
+
+      /**
+      * Does this system have a mask (inhomogeneous density constraint)?
+      */
+      bool hasMask() const;
+
+      /**
       * Have c fields been computed from the current w fields?
       */
       bool hasCFields() const;
@@ -948,16 +947,6 @@ namespace Rpc {
       * Has the free energy been computed from the current w fields?
       */
       bool hasFreeEnergy() const;
-
-      /**
-      * Does this system have external potential fields?
-      */
-      bool hasExternalFields() const;
-
-      /**
-      * Does this system have a mask (inhomogeneous density constraint)
-      */
-      bool hasMask() const;
 
       ///@}
 
@@ -1119,13 +1108,14 @@ namespace Rpc {
       /**
       * Have c fields been computed for the current w fields?
       *
-      * Set true when c fields are computed by solving the MDEs for
-      * all blocks, and set false whenever w fields or the unit cell
-      * parameters are reset. When hasCFields_ is true, both the
-      * c fields for individual blocks and solvent species in the
-      * Mixture and the fields for different monomer types the
-      * System::c_ container are those obtained from the current w
-      * fields in System::w_ container.
+      * Set this true when c fields are computed by solving the MDEs for
+      * for all blocks. Set this false whenever the system w fields in
+      * w_ or the unit cell parameters in the Domain are modified. When 
+      * hasCFields_ is true, both the c fields for individual blocks and 
+      * solvent species in the Mixture and the total fields for different 
+      * monomer types in the System::c_ container are those computed from 
+      * the current w fields in System::w_ container, using the current
+      * unit cell parameters.
       */
       bool hasCFields_;
 
