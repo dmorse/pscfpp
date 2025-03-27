@@ -18,20 +18,24 @@ namespace Rpg {
    using namespace Util;
 
    /**
-   * A field to which the total density is constrained.
+   * A field to which the total monomer concentration is constrained.
    *
-   * Please refer to the documentation of the base class Prdc::MaskTmpl
-   * for more complete API documentation for this class template.
-   * The public interface of Rpg::Mask is identical to that of the
-   * base class template Prdc::MaskTmpl. 
+   * Please refer to the documentation of the Prdc::MaskTmpl base class
+   * template for more complete API documentation for this class template.
+   * The public interface of Rpg::Mask is identical to that of the base
+   * class template Prdc::MaskTmpl. 
    *
    * \ingroup Rpg_Field_Module
    */
    template <int D>
-   class Mask : public Prdc::MaskTmpl< D, FieldIo<D>, Prdc::Cuda::RField<D> >
+   class Mask 
+     : public Prdc::MaskTmpl< D, FieldIo<D>, Prdc::Cuda::RField<D> >
    {
 
    public:
+
+      /// Base class typedef
+      typedef Prdc::MaskTmpl< D, FieldIo<D>, Prdc::Cuda::RField<D> > Base;
 
       /**
       * Constructor.
@@ -42,6 +46,22 @@ namespace Rpg {
       * Destructor.
       */
       ~Mask();
+
+      // Inherited public member functions
+      using Base::setFieldIo;
+      using Base::allocateBasis;
+      using Base::allocateRGrid;
+      using Base::setBasis;
+      using Base::setRGrid;
+      using Base::readBasis;
+      using Base::readRGrid;
+      using Base::basis;
+      using Base::rgrid;
+      using Base::phiTot;
+      using Base::isAllocatedBasis;
+      using Base::isAllocatedRGrid;
+      using Base::hasData;
+      using Base::isSymmetric;
 
    protected:
 

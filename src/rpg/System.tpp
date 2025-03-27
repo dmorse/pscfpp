@@ -17,9 +17,11 @@
 #include <rpg/scft/sweep/SweepFactory.h>
 #include <rpg/scft/iterator/Iterator.h>
 #include <rpg/scft/iterator/IteratorFactory.h>
+#include <rpg/solvers/Polymer.h>
+#include <rpg/solvers/Solvent.h>
 
-#include <prdc/cuda/RField.h>
 #include <prdc/cuda/resources.h>
+#include <prdc/cuda/RField.h>
 #include <prdc/cuda/RFieldComparison.h>
 #include <prdc/crystal/BFieldComparison.h>
 
@@ -27,6 +29,7 @@
 #include <pscf/math/IntVec.h>
 #include <pscf/homogeneous/Clump.h>
 
+#include <util/containers/FSArray.h>
 #include <util/param/BracketPolicy.h>
 #include <util/param/ParamComponent.h>
 #include <util/format/Str.h>
@@ -69,9 +72,9 @@ namespace Rpg {
       fInter_(0.0),
       fExt_(0.0),
       pressure_(0.0),
-      hasMixture_(false),
       isAllocatedGrid_(false),
       isAllocatedBasis_(false),
+      hasMixture_(false),
       hasCFields_(false),
       hasFreeEnergy_(false)
    {
@@ -226,7 +229,6 @@ namespace Rpg {
    template <int D>
    void System<D>::readParameters(std::istream& in)
    {
-
       // Read the Mixture{ ... } block
       readParamComposite(in, mixture_);
       hasMixture_ = true;
@@ -249,12 +251,13 @@ namespace Rpg {
       UTIL_CHECK(domain_.unitCell().nParameter() > 0);
       UTIL_CHECK(domain_.unitCell().lattice() != UnitCell<D>::Null);
 
-      // Setup mixture
+      // Setup the mixture
       mixture_.associate(domain_.mesh(), fft(), 
                          domain_.unitCell(), domain_.waveList());
       mixture_.allocate();
+      // mixture_.clearUnitCellData();
 
-      // Allocate memory for w and c fields
+      // Allocate memory for r-grid w and c fields
       allocateFieldsGrid();
 
       // Optionally instantiate an Iterator object

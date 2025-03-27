@@ -21,9 +21,12 @@
 #include <pscf/homogeneous/Mixture.h>      // member
 #include <util/misc/FileMaster.h>          // member
 #include <util/containers/DArray.h>        // member (tmpFields ...)
-#include <util/containers/FSArray.h>       // ????
+//#include <util/containers/FSArray.h>       // ????
 
 // Forward references
+namespace Util {
+   template <typename T, int N> class FSArray;
+}
 namespace Pscf {
    class Interaction;
    template <typename Data> class DeviceArray;
@@ -55,7 +58,7 @@ namespace Rpg {
    * A System has (among other components):
    *
    *    - a Mixture (a container for polymer and solvent solvers)
-   *    - an Interaction (list of chi parameters)
+   *    - an Interaction (list of binary interaction parameters)
    *    - a Domain (description of unit cell and discretization)
    *    - a container of monomer chemical potential fields (w fields)
    *    - a container of monomer concentration fields (c fields)
@@ -1096,11 +1099,6 @@ namespace Rpg {
       double pressure_;
 
       /**
-      * Has the mixture been initialized?
-      */
-      bool hasMixture_;
-
-      /**
       * Has memory been allocated for fields in FFT grid formats?
       */
       bool isAllocatedGrid_;
@@ -1109,6 +1107,11 @@ namespace Rpg {
       * Has memory been allocated for fields in basis format?
       */
       bool isAllocatedBasis_;
+
+      /**
+      * Has the mixture been initialized?
+      */
+      bool hasMixture_;
 
       /**
       * Have C fields been computed for the current w fields?

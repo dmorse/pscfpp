@@ -20,6 +20,8 @@
 #include <rpc/solvers/Polymer.h>
 #include <rpc/solvers/Solvent.h>
 
+
+#include <prdc/cpu/RField.h>
 #include <prdc/cpu/RFieldComparison.h>
 #include <prdc/crystal/BFieldComparison.h>
 
@@ -81,11 +83,13 @@ namespace Rpc {
       w_.setFieldIo(domain().fieldIo());
       h_.setFieldIo(domain().fieldIo());
       mask_.setFieldIo(domain().fieldIo());
+
       interactionPtr_ = new Interaction();
       iteratorFactoryPtr_ = new IteratorFactory<D>(*this);
       sweepFactoryPtr_ = new SweepFactory<D>(*this);
       simulatorFactoryPtr_ = new SimulatorFactory<D>(*this);
       BracketPolicy::set(BracketPolicy::Optional);
+
    }
 
    /*
@@ -214,8 +218,6 @@ namespace Rpc {
       if (tFlag) {
          if (tArg <= 0) {
             UTIL_THROW("Error: Non-positive thread count -t option");
-         } else {
-            // Set thread count
          }
       }
 
@@ -255,11 +257,8 @@ namespace Rpc {
       mixture_.allocate();
       mixture_.clearUnitCellData();
 
-      // Allocate memory for w and c fields
+      // Allocate memory for r-grid w and c fields
       allocateFieldsGrid();
-      if (domain().basis().isInitialized()) {
-         allocateFieldsBasis();
-      }
 
       // Optionally instantiate an Iterator object
       std::string className;

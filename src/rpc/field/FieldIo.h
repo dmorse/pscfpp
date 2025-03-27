@@ -69,34 +69,6 @@ namespace Rpc {
 
       typedef FieldIoReal<D, RField<D>, RFieldDft<D>, FFT<D> > Base;
 
-      // Inherited public member functions
-      using Base::associate;
-      using Base::setFileMaster;
-      using Base::readFieldsBasis;
-      using Base::readFieldBasis;
-      using Base::writeFieldBasis;
-      using Base::writeFieldsBasis;
-      using Base::readFieldsRGrid;
-      using Base::readFieldsRGridData;
-      using Base::readFieldRGrid;
-      using Base::writeFieldsRGrid;
-      using Base::writeFieldRGrid;
-      using Base::readFieldsKGrid;
-      using Base::writeFieldsKGrid;
-      using Base::convertBasisToKGrid;
-      using Base::convertKGridToBasis;
-      using Base::convertBasisToRGrid;
-      using Base::convertRGridToBasis;
-      using Base::convertKGridToRGrid;
-      using Base::convertRGridToKGrid;
-      using Base::hasSymmetry;
-      using Base::scaleFieldsBasis;
-      using Base::scaleFieldsRGrid;
-      using Base::replicateUnitCell;
-      using Base::expandRGridDimension;
-      using Base::readFieldHeader;
-      using Base::writeFieldHeader;
-
       /**
       * Default constructor.
       */
@@ -315,8 +287,37 @@ namespace Rpc {
                           UnitCell<D> const & unitCell,
                           IntVec<D> const & replicas) const override;
 
+      // Inherited public member functions
+      using Base::associate;
+      using Base::setFileMaster;
+      using Base::readFieldsBasis;
+      using Base::readFieldBasis;
+      using Base::writeFieldBasis;
+      using Base::writeFieldsBasis;
+      using Base::readFieldsRGrid;
+      using Base::readFieldsRGridData;
+      using Base::readFieldRGrid;
+      using Base::writeFieldsRGrid;
+      using Base::writeFieldRGrid;
+      using Base::readFieldsKGrid;
+      using Base::writeFieldsKGrid;
+      using Base::convertBasisToKGrid;
+      using Base::convertKGridToBasis;
+      using Base::convertBasisToRGrid;
+      using Base::convertRGridToBasis;
+      using Base::convertKGridToRGrid;
+      using Base::convertRGridToKGrid;
+      using Base::hasSymmetry;
+      using Base::scaleFieldsBasis;
+      using Base::scaleFieldsRGrid;
+      using Base::replicateUnitCell;
+      using Base::expandRGridDimension;
+      using Base::readFieldHeader;
+      using Base::writeFieldHeader;
+
    protected:
 
+      // Inherited protected member functions
       using Base::mesh;
       using Base::fft;
       using Base::lattice;
