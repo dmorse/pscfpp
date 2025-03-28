@@ -33,6 +33,9 @@ namespace Rpc {
 
    public:
 
+      /// Base class typedef
+      typedef Prdc::MaskTmpl< D, FieldIo<D>, Prdc::Cpu::RField<D> > Base;
+
       /**
       * Constructor.
       */
@@ -42,6 +45,22 @@ namespace Rpc {
       * Destructor.
       */
       ~Mask();
+
+      // Inherited public member functions
+      using Base::setFieldIo;
+      using Base::allocateBasis;
+      using Base::allocateRGrid;
+      using Base::setBasis;
+      using Base::setRGrid;
+      using Base::readBasis;
+      using Base::readRGrid;
+      using Base::basis;
+      using Base::rgrid;
+      using Base::phiTot;
+      using Base::isAllocatedBasis;
+      using Base::isAllocatedRGrid;
+      using Base::hasData;
+      using Base::isSymmetric;
 
    protected:
 

@@ -17,9 +17,11 @@
 #include <rpg/scft/sweep/SweepFactory.h>
 #include <rpg/scft/iterator/Iterator.h>
 #include <rpg/scft/iterator/IteratorFactory.h>
+#include <rpg/solvers/Polymer.h>
+#include <rpg/solvers/Solvent.h>
 
-#include <prdc/cuda/RField.h>
 #include <prdc/cuda/resources.h>
+#include <prdc/cuda/RField.h>
 #include <prdc/cuda/RFieldComparison.h>
 #include <prdc/crystal/BFieldComparison.h>
 
@@ -70,9 +72,9 @@ namespace Rpg {
       fInter_(0.0),
       fExt_(0.0),
       pressure_(0.0),
-      hasMixture_(false),
       isAllocatedGrid_(false),
       isAllocatedBasis_(false),
+      hasMixture_(false),
       hasCFields_(false),
       hasFreeEnergy_(false),
       polymerModel_(PolymerModel::Thread)
@@ -228,7 +230,7 @@ namespace Rpg {
    template <int D>
    void System<D>::readParameters(std::istream& in)
    {
-      // Optionally read the polymer model enum value, set global value
+      // Optionally read polymerModel_ enum value, set the global value
       if (!PolymerModel::isLocked()) {
          polymerModel_ = PolymerModel::Thread;
          readOptional(in, "polymerModel", polymerModel_);
@@ -237,9 +239,10 @@ namespace Rpg {
          PolymerModel::setModel(polymerModel_);
       }
 
-      // Number of times the global polymer model has been set.
-      // Retain this value so we can check at the end of this
-      // function that it wasn't set again within the function.
+      // Set number of times the global polymer model has been set.
+      // Retain this value so we can check at the end of this function
+      // that it was not set again within the function.
+
       int nSetPolymerModel = PolymerModel::nSet();
 
       // Read the Mixture{ ... } block
@@ -264,12 +267,13 @@ namespace Rpg {
       UTIL_CHECK(domain_.unitCell().nParameter() > 0);
       UTIL_CHECK(domain_.unitCell().lattice() != UnitCell<D>::Null);
 
-      // Setup mixture
+      // Setup the mixture
       mixture_.associate(domain_.mesh(), fft(), 
                          domain_.unitCell(), domain_.waveList());
       mixture_.allocate();
+      // mixture_.clearUnitCellData();
 
-      // Allocate memory for w and c fields
+      // Allocate memory for r-grid w and c fields
       allocateFieldsGrid();
 
       // Optionally instantiate an Iterator object
@@ -308,7 +312,7 @@ namespace Rpg {
       homogeneous_.setNMonomer(nm);
       initHomogeneous();
 
-      // Check that the polymer model was never reset after initialization
+      // Check that the polymer model was not reset after initialization
       UTIL_CHECK(PolymerModel::nSet() == nSetPolymerModel);
 
    }
@@ -1045,9 +1049,16 @@ namespace Rpg {
    template <int D>
    void System<D>::sweep()
    {
+      UTIL_CHECK(hasIterator());
       UTIL_CHECK(w_.hasData());
-      UTIL_CHECK(w_.isSymmetric());
+      if (iterator().isSymmetric()) {
+         UTIL_CHECK(w_.isSymmetric());
+         UTIL_CHECK(isAllocatedBasis_);
+      }
       UTIL_CHECK(hasSweep());
+      hasCFields_ = false;
+      hasFreeEnergy_ = false;
+
       Log::file() << std::endl;
       Log::file() << std::endl;
 
@@ -2146,6 +2157,7 @@ namespace Rpg {
             homogeneous_.molecule(i).computeSize();
          }
       }
+
    }
 
 } // namespace Rpg

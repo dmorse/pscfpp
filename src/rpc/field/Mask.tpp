@@ -9,7 +9,6 @@
 */
 
 #include "Mask.h"
-#include <prdc/cpu/RFieldDft.h>
 
 namespace Pscf {
 namespace Rpc
@@ -43,7 +42,7 @@ namespace Rpc
    {
       RField<D> const & rg = MaskTmpl< D, FieldIo<D>, RField<D> >::rgrid();
 
-      // Sum up elements of rg.
+      // Sum up elements of r-grid mask field.
       // Use Kahan summation to reduce accumulation of error
       double sum(0.0), err(0.0), tempVal, tempSum;
       int n = rg.capacity();

@@ -48,7 +48,7 @@ namespace Pscf {
 namespace Pscf {
 namespace Rpc {
 
-   // Namespaces names that may be used implicitly in Pscf::Rpc
+   // Namespaces that are implicitly available, without qualification
    using namespace Util;
    using namespace Pscf;
    using namespace Prdc;
@@ -56,9 +56,6 @@ namespace Rpc {
 
    /**
    * Main class for SCFT or PS-FTS simulation of one system.
-   *
-   * System is a class template with an integer template parameter 
-   * D = 1, 2, or 3 that represents the dimension of space.
    *
    * A System has (among other member components):
    *
@@ -68,15 +65,17 @@ namespace Rpc {
    *    - a container of monomer chemical potential fields
    *    - a container of monomer concentration fields
    *
-   * A System may also optionally have Iterator, Sweep, and Simulator
-   * components. Iterator and Sweep objects are only used for SCFT
-   * calculations.  A Simulator object is only used for PS-FTS 
-   * calculations (i.e., field theoretic simulations that use a partial 
-   * saddle-point approximation).
+   * A System may also optionally own Iterator, Sweep, and Simulator
+   * (BdSimulator or McSimulator) components. Iterator and Sweep objects 
+   * are only used for SCFT calculations.  A Simulator object is only 
+   * used for PS-FTS calculations (i.e., field theoretic simulations that 
+   * use a partial saddle-point approximation).
    *
-   * Note: The names Mixture, Interaction, etc. mentioned above are names
-   * of class templates that each have a integer template parameter D 
-   * that is the dimension of space. Actual class names are of the form
+   * System is a class template with an integer template parameter 
+   * D = 1, 2, or 3 that represents the dimension of space. Many related
+   * components are also class templates of the same type. Names such as
+   * System, Mixture, Domain, etc. mentioned above are thus names of 
+   * class templates, whereas actual class names are of the form
    * Mixture\<D\>, Interaction\<D\>, etc. with D=1, 2, or 3.
    *
    * Usage of a System\<D\> object in the main program looks something 
@@ -94,10 +93,10 @@ namespace Rpc {
    *
    * See also:
    * <ul>
-   *  <li> \ref scft_param_pc_page    "Manual Page (SCFT)" </li>
-   *  <li> \ref psfts_param_page      "Manual Page (PS-FTS)" </li>
-   *  <li> \ref rpc_System_page       "Manual Page (Parameter File Format)" </li>
-   *  <li> \ref scft_command_pc_page  "Manual Page (Command File Format)" </li>
+   *  <li> \ref scft_param_pc_page    "Parameter File: SCFT" </li>
+   *  <li> \ref psfts_param_page      "Parameter File: PS-FTS" </li>
+   *  <li> \ref rpc_System_page       "Parameter File: Full Format" </li>
+   *  <li> \ref scft_command_pc_page  "Command File Format" </li>
    * </ul>
    *
    * \ingroup Pscf_Rpc_Module
@@ -161,9 +160,9 @@ namespace Rpc {
       virtual void readParameters(std::istream& in);
 
       /**
-      * Read and process commands from a specific file.
+      * Read and process commands from an input stream.
       *
-      * \param in command script file
+      * \param in command script input stream
       */
       void readCommands(std::istream& in);
 
@@ -194,10 +193,10 @@ namespace Rpc {
       * hasFreeEnergy() return false. Unit cell parameters are set to 
       * values read from the field file header.
       * 
-      * SCFT calculations that use an iterator that preserves space 
-      * group symmetry must set an initial field using a function that
-      * creates fields can be represented in symmetry adapted basis 
-      * form, such as this function, estimateWFromC, or setWBasis.
+      * SCFT calculations that use an iterator that preserves space group
+      * symmetry must set an initial field using a function that creates
+      * fields that can be represented in symmetry adapted basis form,
+      * such as this function, setWBasis, or estimateWFromC.
       *
       * \param filename name of input w-field file in basis format
       */
@@ -229,10 +228,11 @@ namespace Rpc {
       * Set chemical potential fields, in symmetry-adapted basis format.
       *
       * This function sets values for w fields in both symmetry adapted
-      * and r-grid format by copying values provided in the "fields"
-      * container that is passed as an argument. Upon return, values 
-      * of both w().basis() and w().rgrid() are set, w().hasData() 
-      * and w().isSymmetric() return true, while hasCFields() and 
+      * and r-grid format by copying coefficient values provided in the 
+      * "fields" container that is passed as an argument, and computing
+      * values on a real-space grid. Upon return, values of both 
+      * w().basis() and w().rgrid() are set, while w().hasData() and 
+      * w().isSymmetric() return true, and hasCFields() and hasFreeEnergy()
       * hasFreeEnergy() return false. Unit cell parameters are left 
       * unchanged.
       *
@@ -243,11 +243,11 @@ namespace Rpc {
       /**
       * Set new w fields, in real-space (r-grid) format.
       *
-      * This function set values for w fields in r-grid format, but 
-      * does not set components the symmetry-adapted basis format. On 
-      * return, w.rgrid() is reset and w().hasData() is true, while
-      * w().isSymmetric(), hasCFields() and hasFreeEnergy() are false.
-      * Unit cell parameters are left unchanged.
+      * This function set values for w fields in r-grid format, but does
+      * not set components the symmetry-adapted basis format. Upon return,
+      * w.rgrid() is reset and w().hasData() returns true, while
+      * w().isSymmetric(), hasCFields() and hasFreeEnergy() all return
+      * false.  Unit cell parameters are left unchanged.
       *
       * \param fields  array of new w (chemical potential) fields
       */
@@ -261,8 +261,8 @@ namespace Rpc {
       * potential fields by setting the Lagrange multiplier field xi to
       * zero. The result is stored in the System w fields container.
       *
-      * Upon return, w().hasData() and w().isSymmetric() are set true, 
-      * while hasCFields() and hasFreeEnergy() are set false. Unit
+      * Upon return, w().hasData() and w().isSymmetric() return true, 
+      * while hasCFields() and hasFreeEnergy() return false. Unit
       * cell parameters are set to those read from the c field file
       * header.
       *
@@ -278,13 +278,14 @@ namespace Rpc {
       * Set parameters of the associated unit cell.
       *
       * The lattice (i.e., lattice system type) set in the UnitCell<D>
-      * input parameter must agree with any lattice enum value that was 
-      * set previously in the parameter file, or an Exception is thrown.
+      * unitCell input parameter must agree with any lattice enum value 
+      * that was set previously in the parameter file, or an Exception 
+      * is thrown.
       *
-      * If a space group is set, then this and the other setUnitCell 
-      * member functions all construct a symmetry-adapted basis if not
-      * done previously, and allocate memory for fields in a symmetry
-      * adapted basis format if not done previously. 
+      * If a space group has been set but a basis has not yet been
+      * constructed, then this and the other setUnitCell member functions 
+      * wll all construct a symmetry-adapted basis and then allocate
+      * memory for fields stored in a symmetry adapted basis format.
       *
       * \param unitCell  new UnitCell<D> (i.e., new parameters)
       */
@@ -361,15 +362,10 @@ namespace Rpc {
       * The Helmholtz free energy and pressure are computed only if
       * convergence is obtained.
       *
-      * \pre An Iterator must have been created while reading the 
-      * parameter file, so hasIterator() must return true.
-      *
-      * \pre The w().hasData() flag must be true on entry, to confirm
-      * that chemical potential fields have been set.
-      *
-      * \pre The w().isSymmetric() flag must be set true if the chosen
-      * iterator uses a symmetry adapted basis representation, and thus
-      * preserves symmetry.
+      * \pre Function hasIterator() must return true.
+      * \pre Function w().hasData() flag must return true.
+      * \pre Function w().isSymmetric() flag must return true if the chosen
+      * iterator uses a symmetry adapted basis, and so requires this.
       *
       * \return returns 0 for successful convergence, 1 for failure.
       *
@@ -388,29 +384,23 @@ namespace Rpc {
       * file.  The Iterator that is initialized in the parameter file
       * is called at each state point.
       *
-      * \pre A Sweep must have been created while reading the parameter 
-      * file, so hasSweep() must return true.
-      *
-      * \pre All preconditions of the iterate() member function must be 
-      * satisfied, since this function is called repeatedly during a sweep.
+      * \pre Function hasSweep() must return true.
+      * \pre All preconditions of the iterate() function must be satisfied
       */
       void sweep();
 
       /**
-      * Perform a field theoretic Monte-Carlo simulation.
+      * Perform a field theoretic simulation (PS-FTS).
       *
-      * Perform a field theoretic Monte-Carlo simulation using the partial
-      * saddle-point approximation. The type of calculation (BD or MC) is
-      * determined by the type of Simulator block (BdSimulator or 
-      * McSimulator) that appears in the parameter file. The number of
-      * BD steps or attempted MC moves to be performed is given by 
-      * parameter "nStep" .
+      * Perform a field theoretic simulation using the partial saddle-point
+      * approximation (PS-FTS). The type of calculation (BD or MC) is
+      * determined by the type of Simulator (BdSimulator or McSimulator)
+      * that created in the parameter file. The number of BD steps or 
+      * attempted MC moves to be performed is given by the parameter
+      * "nStep" .
       *
-      * \pre A Simulator must have been created while reading the 
-      * parameter file, so hasSimulator() must return true.
-      *
-      * \pre The w().hasData() flag must be true on entry, to confirm
-      * that chemical potential fields have been set.
+      * \pre Function hasSimulator() must return true. 
+      * \pre Function w().hasData() must return true. 
       *
       * \param nStep  number of simulation steps
       */
@@ -458,10 +448,10 @@ namespace Rpc {
       *
       * This function writes the Mixture, Interaction, and Domain blocks 
       * of a parameter file, as well as any Iterator block, but omits any
-      * Sweep or Simulator blocks. The intent is for produce an output during
-      * an SCFT sweep that only refers to parameters relevant to a single
-      * state point, in form that could be used a a parameter file for a
-      * a single SCFT calculation.
+      * Sweep or Simulator blocks. The intent is to produce an output 
+      * during an SCFT sweep that only refers to parameters relevant to a 
+      * single state point, in form that could be used a a parameter file 
+      * for a a single SCFT calculation.
       *
       * \param out output stream
       */
@@ -475,8 +465,8 @@ namespace Rpc {
       * chemical potential of each species, and all unit cell parameters.
       *
       * Calling writeParamNoSweep and writeThermo in succession with the 
-      * same output stream will produce a single file containing both input 
-      * parameters and resulting thermodynamic properties.
+      * same output stream will produce a single file containing both 
+      * input parameters and resulting thermodynamic properties.
       *
       * \param out output stream
       */
@@ -830,22 +820,22 @@ namespace Rpc {
       ///@{
 
       /**
-      * Get all of the chemical potential fields (const reference).
+      * Get container of chemical potential fields (w fields).
       */
       WFieldContainer<D> const & w() const;
 
       /**
-      * Get all of the monomer concentration fields (const reference).
+      * Get container of monomer concentration fields (c fields).
       */
       CFieldContainer<D> const & c() const;
 
       /**
-      * Get all of the external potential fields (reference).
+      * Get container of external potential fields (reference).
       */
       WFieldContainer<D>& h();
 
       /**
-      * Get all of the external potential fields (const reference).
+      * Get container of external potential fields (const reference).
       */
       WFieldContainer<D> const & h() const;
 
@@ -945,6 +935,16 @@ namespace Rpc {
       bool hasSimulator() const;
 
       /**
+      * Does this system have external potential fields?
+      */
+      bool hasExternalFields() const;
+
+      /**
+      * Does this system have a mask (inhomogeneous density constraint)?
+      */
+      bool hasMask() const;
+
+      /**
       * Have c fields been computed from the current w fields?
       */
       bool hasCFields() const;
@@ -953,16 +953,6 @@ namespace Rpc {
       * Has the free energy been computed from the current w fields?
       */
       bool hasFreeEnergy() const;
-
-      /**
-      * Does this system have external potential fields?
-      */
-      bool hasExternalFields() const;
-
-      /**
-      * Does this system have a mask (inhomogeneous density constraint)
-      */
-      bool hasMask() const;
 
       ///@}
 
@@ -1124,13 +1114,14 @@ namespace Rpc {
       /**
       * Have c fields been computed for the current w fields?
       *
-      * Set true when c fields are computed by solving the MDEs for
-      * all blocks, and set false whenever w fields or the unit cell
-      * parameters are reset. When hasCFields_ is true, both the
-      * c fields for individual blocks and solvent species in the
-      * Mixture and the fields for different monomer types the
-      * System::c_ container are those obtained from the current w
-      * fields in System::w_ container.
+      * Set this true when c fields are computed by solving the MDEs for
+      * for all blocks. Set this false whenever the system w fields in
+      * w_ or the unit cell parameters in the Domain are modified. When 
+      * hasCFields_ is true, both the c fields for individual blocks and 
+      * solvent species in the Mixture and the total fields for different 
+      * monomer types in the System::c_ container are those computed from 
+      * the current w fields in System::w_ container, using the current
+      * unit cell parameters.
       */
       bool hasCFields_;
 
