@@ -324,7 +324,7 @@ namespace Rpg {
       * array must agree with the expected number of lattice parameters.
       *
       * \param lattice  lattice system
-      * \param parameters  array of new unit cell parameters.
+      * \param parameters  array of new unit cell parameters
       */
       void setUnitCell(typename UnitCell<D>::LatticeSystem lattice,
                        FSArray<double, 6> const & parameters);
@@ -335,7 +335,7 @@ namespace Rpg {
       * The size of the FSArray<double, 6> parameters must agree with the
       * expected number of parameters for the current lattice type.
       *
-      * \param parameters  array of new unit cell parameters.
+      * \param parameters  array of new unit cell parameters
       */
       void setUnitCell(FSArray<double, 6> const & parameters);
 
@@ -381,13 +381,13 @@ namespace Rpg {
       * energy and pressure are computed if and only if convergence is
       * obtained.
       *
-      * \pre Function hasIterator() must return true.
+      * \pre Function hasIterator() must return true
       *
       * \pre Function w().hasData() flag must return true, to confirm
-      * that chemical potential fields have been set.
+      * that chemical potential fields have been set
       *
       * \pre Function w().isSymmetric() flag must return true if the
-      * chosen iterator uses a basis representation, and so requires this.
+      * chosen iterator uses a basis representation, and so requires thi
       *
       * \param isContinuation  true iff a continuation within a sweep
       * \return returns 0 for successful convergence, 1 for failure
@@ -403,7 +403,7 @@ namespace Rpg {
       * is determined by implementation of a subclass of Sweep and the
       * parameters passed to the sweep object in the parameter file.
       *
-      * \pre Function hasSweep() must return true.
+      * \pre Function hasSweep() must return true
       * \pre All preconditions of the iterate function must be satisfied
       */
       void sweep();
@@ -418,8 +418,8 @@ namespace Rpg {
       * atttempted MC moves to be performed is given by the parameter
       * "nStep".
       *
-      * \pre Function hasSimulator() must return true.
-      * \pre Function w().hasData() must return true.
+      * \pre Function hasSimulator() must return true
+      * \pre Function w().hasData() must return true
       *
       * \param nStep  number of simulation (BD or MC) steps
       */
@@ -436,8 +436,8 @@ namespace Rpg {
       * iterator().solve(). Resulting values are returned by the
       * freeEnergy() and pressure() accessor functions.
       *
-      * \pre w().hasData must return true.
-      * \pre hasCFields() must return true.
+      * \pre w().hasData must return true
+      * \pre hasCFields() must return true
       */
       void computeFreeEnergy();
 
@@ -836,7 +836,7 @@ namespace Rpg {
       WFieldContainer<D> const & w() const;
 
       /**
-      * Get container of monomer concentration fields (c fields)
+      * Get container of monomer concentration fields (c fields).
       */
       CFieldContainer<D> const & c() const;
 
@@ -905,7 +905,7 @@ namespace Rpg {
       Iterator<D> const & iterator() const;
 
       /**
-      * Get Simulator for field theoretic simulation..
+      * Get Simulator for field theoretic simulation.
       */
       Simulator<D>& simulator();
 
@@ -1230,21 +1230,21 @@ namespace Rpg {
    // Get the Domain by non-const reference.
    template <int D>
    inline Domain<D> & System<D>::domain()
-   { return domain_; }
+   {  return domain_; }
 
    // Get the Domain by const reference.
    template <int D>
    inline Domain<D> const & System<D>::domain() const
-   { return domain_; }
+   {  return domain_; }
 
    template <int D>
    inline UnitCell<D> const & System<D>::unitCell() const
-   { return domain_.unitCell(); }
+   {  return domain_.unitCell(); }
 
    // Get the Mesh<D> by const reference.
    template <int D>
    inline Mesh<D> const & System<D>::mesh() const
-   { return domain_.mesh(); }
+   {  return domain_.mesh(); }
 
    // Get the Basis<D>  by const reference.
    template <int D>
