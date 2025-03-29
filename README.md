@@ -13,24 +13,24 @@ same name.
 
 ## SCFT and FTS
 
-PSCF was originally designed for SCFT calculations, and provides an 
+PSCF was originally designed for SCFT calculations, and provides an
 extensive set of tools for this purpose .  The acronym PSCF stands for 
 Polymer Self-Consistent Field, reflecting this origin.
 
-The current version of PSCF (v1.2) is the first to also provide tools
-for field theoretic simulations (FTS) that rely on a partial saddle-point 
-approximation (PS-FTS). Such simulations can be performed using ether 
-Brownian dynamics (BD) or Monte-Carlo (MC) sampling algorithms. 
+PSCF now also provides tools for field theoretic simulation (FTS) using
+a partial saddle-point approximation (PS-FTS). Such simulations can be 
+performed using ether Brownian dynamics (BD) or Monte-Carlo (MC) sampling 
+algorithms. 
 
-The fully-fluctuating formulation of polymer field theory (which is 
-not yet implemented in PSCF) requires the stochastic sampling of 
-complex-valued fields. The partial saddle-point approximation for FTS 
-used in this release of PSCF is an approximation for incompressible 
-models in which a Langrange multiplier pressure-like field that imposes 
-a constraint on the total monomer density is approximated at a mean-field 
-(or saddle-point) level, while fields that couple to composition 
-fluctuations are allowed to fluctuate. The resulting approximation 
-yields a theory that involves only real-valued fields.
+The fully-fluctuating formulation of polymer field theory (which is not yet
+implemented in PSCF) requires the stochastic sampling of complex-valued 
+fields. The partial saddle-point approximation for FTS currently used in 
+PSCF is an approximation for incompressible models in which a Langrange 
+multiplier pressure-like field that imposes a constraint on the total 
+monomer density is approximated at a mean-field (or saddle-point) level, 
+while fields that couple to composition fluctuations are allowed to 
+fluctuate. The resulting approximation yields a theory that involves only 
+real-valued fields.
 
 ## History
 
@@ -54,18 +54,18 @@ the legacy Fortran version include:
      different algorithms and/or different hardware, implemented within 
      a common framework.
 
-   - The current version can now perform stochastic PS-FTS calculations, as
+   - The current version can perform stochastic PS-FTS calculations, as
      well as SCFT.
 
-   - The current version allows simulations of mixtures containing
-     acyclic branched block polymers, while the Fortran program could
-     only treat linear polymers.
+   - The current version allows simulations of mixtures containing acyclic
+     branched block polymers, while the Fortran program can only treat
+     linear polymers.
 
    - The current version enables use of a graphics processing unit (GPU)
      to dramatically accelerate some applications.
 
 The only important capability of the Fortran PSCF program that has not 
-been ported to the C++/Cuda version is the ability to perform generalized
+been ported to the current version is the ability to perform generalized
 random-phase approximation (RPA) calculations for periodic ordered phases. 
 Such calculations can be used to characterize composition fluctuations 
 and SCFT limits of stability for ordered phases.
@@ -136,6 +136,8 @@ Features for SCFT (all programs):
 Features for SCFT or PS-FTS for periodic systems (pscf_pc and pscf_pg):
 
   - Accurate pseudo-spectral solution of the modified diffusion equation
+    based on either a continuous chain model or a discrete bead-spring
+    model.
 
   - Periodic boundary conditions with 1, 2 or 3 dimensional periodicity
 
