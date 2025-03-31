@@ -37,7 +37,7 @@ System{
 
       RealMove{
         probability     0.5
-        A               0.4
+        sigma           0.4
       }
 
     }

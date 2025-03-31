@@ -49,10 +49,10 @@ public:
       in.close();
    }
    
-   void testLMBdSimulate()
+   void testLMBdSimulateDiblocks()
    {
       printMethod(TEST_FUNC);
-      openLogFile("out/testLMBdSimulate.log");
+      openLogFile("out/testLMBdSimulateDiblocks.log");
       
       System<3> system;
       initSystem(system, "in/param_system_disordered");
@@ -65,10 +65,27 @@ public:
       simulator.simulate(50);
    }
 
+   void testLMBdSimulateTriblocks()
+   {
+      printMethod(TEST_FUNC);
+      openLogFile("out/testLMBdSimulateTriblocks.log");
+      
+      System<3> system;
+      initSystem(system, "in/param_system_triblock");
+      
+      BdSimulator<3> simulator(system);
+      initSimulator(simulator, "in/param_BdSimulator");
+      
+      system.readWRGrid("in/w_triblock.rf");
+      simulator.compressor().compress();
+      simulator.simulate(50);
+   }
+
 };
 
 TEST_BEGIN(BdSimulatorTest)
-TEST_ADD(BdSimulatorTest, testLMBdSimulate)
+TEST_ADD(BdSimulatorTest, testLMBdSimulateDiblocks)
+TEST_ADD(BdSimulatorTest, testLMBdSimulateTriblocks)
 TEST_END(BdSimulatorTest)
 
 #endif

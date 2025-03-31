@@ -57,6 +57,13 @@ namespace Rpg {
    void MaxOrderParameter<D>::setup() 
    {
       UTIL_CHECK(system().w().hasData());
+     
+      // Precondition: Require that the system has two monomer types
+      const int nMonomer = system().mixture().nMonomer();
+      UTIL_CHECK(nMonomer == 2);
+
+      AverageAnalyzer<D>::setup();
+
       if (!simulator().hasWc()){
          simulator().computeWc();
       }
@@ -90,10 +97,6 @@ namespace Rpg {
    double MaxOrderParameter<D>::compute() 
    {
       UTIL_CHECK(system().w().hasData());
-  
-      // For AB diblock
-      const int nMonomer = system().mixture().nMonomer();
-      UTIL_CHECK(nMonomer == 2);
    
       const int meshSize = system().domain().mesh().size();
       RField<D> psi;

@@ -59,7 +59,7 @@ namespace Rpc {
    void BinaryStructureFactorGrid<D>::readParameters(std::istream& in)
    {
       // Precondition: Require that the system has two monomer types
-      UTIL_CHECK(2 == system().mixture().nMonomer());
+      UTIL_CHECK(system().mixture().nMonomer() == 2);
 
       readInterval(in);
       readOutputFileName(in);
@@ -72,13 +72,8 @@ namespace Rpc {
    template <int D>
    void BinaryStructureFactorGrid<D>::setup()
    {
-      // Check if the system has two monomer types
-      const int nMonomer = system().mixture().nMonomer();
-      if (nMonomer != 2) {
-         UTIL_THROW("nMonomer != 2 in BinaryStructureFactorGrid");
-      }
-
       //Allocate variables
+      const int nMonomer = system().mixture().nMonomer();
       IntVec<D> const & dimensions = system().domain().mesh().dimensions();
 
       // Compute Fourier space kMeshDimensions_ and kSize_

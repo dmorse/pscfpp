@@ -38,7 +38,7 @@ System{
 
       RealMove{
         probability     0.25
-        A               0.15
+        sigma           0.15
       }
 
     }
@@ -63,11 +63,6 @@ System{
     }
   }
 }
-
-      TrajectoryWriter{
-        interval        200
-        outputFileName  out/trajectory
-      }
 
   unitCell cubic   1.3835952906
   groupName   P_-1
