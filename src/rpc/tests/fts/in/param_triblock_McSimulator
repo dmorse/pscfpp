@@ -3,12 +3,12 @@ McSimulator{
    McMoveManager{
       ForceBiasMove{
         probability     0.50
-        mobility        4.0E-3
+        mobility        2.0E-3
       }
       
       RealMove{
         probability     0.5
-        sigma           0.08
+        sigma           0.06
       }
       
    }

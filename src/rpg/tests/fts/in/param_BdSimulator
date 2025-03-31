@@ -11,10 +11,6 @@ BdSimulator{
    }
    AnalyzerManager{
       baseInterval    1
-      FourthOrderParameter{
-         interval        1
-         outputFileName  out/fourthOrder
-      }
       TrajectoryWriter{
          interval        1
          outputFileName  out/trajectory
