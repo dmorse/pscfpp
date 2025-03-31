@@ -60,6 +60,10 @@ namespace Rpc {
    void FourthOrderParameter<D>::setup() 
    {
       AverageAnalyzer<D>::setup();
+      
+      // Precondition: Require that the system has two monomer types
+      const int nMonomer = system().mixture().nMonomer();
+      UTIL_CHECK(nMonomer == 2);
        
       IntVec<D> const & dimensions = system().domain().mesh().dimensions();
 
@@ -96,10 +100,6 @@ namespace Rpc {
    double FourthOrderParameter<D>::compute() 
    {
       UTIL_CHECK(system().w().hasData());
-      
-      // For AB diblock
-      const int nMonomer = system().mixture().nMonomer();
-      UTIL_CHECK(nMonomer == 2);
       
       if (!simulator().hasWc()){
          simulator().computeWc();
