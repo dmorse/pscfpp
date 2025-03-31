@@ -49,10 +49,10 @@ public:
       in.close();
    }
    
-   void testMcSimulate()
+   void testMcSimulateDiblocks()
    {
       printMethod(TEST_FUNC);
-      openLogFile("out/testMcSimulate.log");
+      openLogFile("out/testMcSimulateDiblocks.log");
       
       System<3> system;
       initSystem(system, "in/param_system_disordered");
@@ -65,10 +65,27 @@ public:
       simulator.simulate(50);
    }
 
+   void testMcSimulateTriblocks()
+   {
+      printMethod(TEST_FUNC);
+      openLogFile("out/testMcSimulateTriblocks.log");
+      
+      System<3> system;
+      initSystem(system, "in/param_system_triblock");
+      
+      McSimulator<3> simulator(system);
+      initSimulator(simulator, "in/param_triblock_McSimulator");
+      
+      system.readWRGrid("in/w_triblock.rf");
+      simulator.compressor().compress();
+      simulator.simulate(50);
+   }
+
 };
 
 TEST_BEGIN(McSimulatorTest)
-TEST_ADD(McSimulatorTest, testMcSimulate)
+TEST_ADD(McSimulatorTest, testMcSimulateDiblocks)
+TEST_ADD(McSimulatorTest, testMcSimulateTriblocks)
 TEST_END(McSimulatorTest)
 
 #endif

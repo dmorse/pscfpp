@@ -55,6 +55,11 @@ namespace Rpc {
    template <int D>
    void MaxOrderParameter<D>::setup() 
    {
+      
+      // Precondition: Require that the system has two monomer types
+      const int nMonomer = system().mixture().nMonomer();
+      UTIL_CHECK(nMonomer == 2);
+      
       AverageAnalyzer<D>::setup();
       
       // Allocate variables
@@ -86,10 +91,6 @@ namespace Rpc {
    {
       UTIL_CHECK(system().w().hasData());
   
-      // For AB diblock
-      const int nMonomer = system().mixture().nMonomer();
-      UTIL_CHECK(nMonomer == 2);
-      
       if (!simulator().hasWc()){
          simulator().computeWc();
       }

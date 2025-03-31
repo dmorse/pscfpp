@@ -79,6 +79,7 @@ namespace Rpg {
    protected:
       
       using McMove<D>::system;
+      using McMove<D>::simulator;
       using McMove<D>::random;
       using McMove<D>::cudaRandom;
 
@@ -94,17 +95,20 @@ namespace Rpg {
       void attemptMove();
 
    private:
+            
+      // Change in one component of wc
+      RField<D> dwc_;
       
-      /// Move step size is randomly selected from uniform distribution [-stepSize_, stepSize_]
-      float stepSize_;
+      // New field values
+      DArray< RField<D> > w_;
       
-      /// Random fields between [-stepSize_, stepSize_]
-      RField<D> randomField_;
+      // Normal-distributed random fields
+      RField<D> gaussianField_;
       
-      /// wField after attempt McMove. local variable wFieldTmp_ used in attemptMove() function
-      DArray< RField<D> > wFieldTmp_;
+      // The standard deviation of the Gaussian distribution
+      double sigma_;
       
-      /// Has the variable been allocated?
+      // Has the variable been allocated?
       bool isAllocated_;
       
    };

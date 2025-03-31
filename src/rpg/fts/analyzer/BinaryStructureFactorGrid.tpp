@@ -49,6 +49,9 @@ namespace Rpg {
    template <int D>
    void BinaryStructureFactorGrid<D>::readParameters(std::istream& in) 
    {
+      // Precondition: Require that the system has two monomer types
+      UTIL_CHECK(system().mixture().nMonomer() == 2);
+
       readInterval(in);
       readOutputFileName(in);
       readOptional(in,"nSamplePerBlock", nSamplePerBlock_);
@@ -60,13 +63,8 @@ namespace Rpg {
    template <int D>
    void BinaryStructureFactorGrid<D>::setup() 
    {
-      //Check if the system is AB diblock copolymer
-      const int nMonomer = system().mixture().nMonomer();
-      if (nMonomer != 2) {
-         UTIL_THROW("The BinaryStructureFactorGrid Analyzer is designed specifically for diblock copolymer system. Please verify the number of monomer types in your system.");
-      }
-      
       //Allocate variables
+      const int nMonomer = system().mixture().nMonomer();
       IntVec<D> const & dimensions = system().mesh().dimensions();
       if (!isInitialized_){
          wm_.allocate(dimensions);

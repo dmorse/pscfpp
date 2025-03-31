@@ -46,9 +46,3 @@ System{
   }
 }
 
-    McMoveManager{
-      RealMove{
-        probability     1
-        A               0.5
-      }
-    }
