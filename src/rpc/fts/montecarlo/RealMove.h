@@ -77,6 +77,7 @@ namespace Rpc {
    protected:
       
       using McMove<D>::system;
+      using McMove<D>::simulator;
       using McMove<D>::random;
 
       /**
@@ -92,15 +93,16 @@ namespace Rpc {
 
    private:
       
-      /// Move step size, step is selected from [-stepSize_, stepSize_]
-      double stepSize_;
+      // Change in one field component
+      RField<D> dwc_;
       
-      /// wField after attempted McMove. used in attemptMove() function
-      DArray< RField<D> > wFieldTmp_;
+      // New field values
+      DArray< RField<D> > w_;
       
-      /**
-      * Has the variable been allocated?
-      */
+      // The standard deviation of the Gaussian distribution
+      double sigma_;
+      
+      // Has the variable been allocated?
       bool isAllocated_;
    
    };

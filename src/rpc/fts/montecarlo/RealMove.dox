@@ -26,29 +26,29 @@ compressor to re-impose the incompressibility constraint. The decision
 about whether to accept or reject the move is based on the value of the 
 Hamiltonian after incompressibility has been restored. 
 
-The RealMove algorithm takes one parameter, denoted by stepsize in the 
+The RealMove algorithm takes one parameter, denoted by sigma in the 
 parameter file. The unconstrained move changes each monomer field 
-component by a random amount chosen from the range [-stepsize,+stepsize] 
-with a uniform probability distribution.
+component by a random amount chosen from the Gaussian distribution 
+with zero mean and a standard deviation of a sigma. 
 
 \section rpc_RealMove_parameter_sec Parameter File
 
 The only parameter needed by this algorithm are the "probability" 
 parameter, which determines the probability that a move of this type 
-will be chosen on any step, and a required parameter named stepsize, 
+will be chosen on any step, and a required parameter named sigma, 
 as described above.  A typical example of the contents of this is 
 shown below.
 \code
   RealMove{
     probability  0.05
-    stepsize     0.005
+    sigma     0.005
   }
 \endcode
 The parameter file format is thus:
 \code
 RealMove{
   probability  float (in range [0,1])
-  stepsize     float
+  sigma        float
 }
 \endcode
 Meanings of both parameters are described briefly below:
@@ -62,8 +62,9 @@ Meanings of both parameters are described briefly below:
     <td> probability of attempting a step of this type  </td>
   </tr>
   <tr>
-    <td> stepsize </td>
-    <td> Maximum field change magnitude for any monomer field </td>
+    <td> sigma </td>
+    <td> the standard deviation of the Gaussian distribution from which 
+         the step size is chosen </td>
   </tr>
 </table>
 

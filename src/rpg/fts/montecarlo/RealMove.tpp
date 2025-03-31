@@ -10,11 +10,13 @@
 
 #include "RealMove.h"
 #include "McMove.h" 
+#include <rpg/fts/montecarlo/McSimulator.h>
 #include <rpg/fts/VecOpFts.h>
 #include <prdc/cuda/VecOp.h>
 #include <pscf/math/IntVec.h>
 #include <util/param/ParamComposite.h>
 #include <rpg/System.h>
+#include <pscf/cuda/CudaRandom.h>
 
 namespace Pscf {
 namespace Rpg {
@@ -27,6 +29,9 @@ namespace Rpg {
    template <int D>
    RealMove<D>::RealMove(McSimulator<D>& simulator) 
     : McMove<D>(simulator),
+      w_(),
+      dwc_(),
+      sigma_(0.0),
       isAllocated_(false)
    { setClassName("RealMove"); }
 
@@ -43,10 +48,12 @@ namespace Rpg {
    template <int D>
    void RealMove<D>::readParameters(std::istream &in)
    {
-      //Read the probability
+      // Read the probability
       readProbability(in);
-      // attampt move range [A, -A]
-      read(in, "A", stepSize_);
+      
+      // The standard deviation of the Gaussian distribution
+      read(in, "sigma", sigma_);
+   
    }
    
 
@@ -55,13 +62,15 @@ namespace Rpg {
    {
       McMove<D>::setup();
       const int nMonomer = system().mixture().nMonomer();
-      const IntVec<D> dimensions = system().domain().mesh().dimensions();
+      IntVec<D> meshDimensions = system().domain().mesh().dimensions();
+
       if (!isAllocated_){
-         wFieldTmp_.allocate(nMonomer);
-         randomField_.allocate(dimensions);
-         for (int i = 0; i < nMonomer; ++i) {
-            wFieldTmp_[i].allocate(dimensions);
+         w_.allocate(nMonomer);
+         for (int i=0; i < nMonomer; ++i) {
+            w_[i].allocate(meshDimensions);
          }
+         dwc_.allocate(meshDimensions);
+         gaussianField_.allocate(meshDimensions);
          isAllocated_ = true;
       }
    }
@@ -74,23 +83,34 @@ namespace Rpg {
    {
       const int nMonomer = system().mixture().nMonomer();
       const int meshSize = system().domain().mesh().size();
-
-      // For multi-component copolymer
-      for (int i = 0; i < nMonomer; i++){
-
-         // Generate random numbers between 0.0 and 1.0 from uniform dist.
-         cudaRandom().uniform(randomField_);
-
-         // Generate random numbers between [-stepSize_,stepSize_]
-         VecOpFts::mcftsScale(randomField_, stepSize_);
-
-         // Change the w field configuration
-         VecOp::addVV(wFieldTmp_[i], system().w().rgrid(i), randomField_);
+      int i, j;
+      
+      // Copy current W fields from parent system into w_
+      for (i = 0; i < nMonomer; ++i) {
+         VecOp::eqV(w_[i], system().w().rgrid(i));
+      }
+      
+      double evec;
+      double mean = 0.0;
+      
+      // Loop over composition eigenvectors of projected chi matrix
+      for (j = 0; j < nMonomer - 1; ++j) {
+         
+         // Generate random numbers between 0.0 and sigma.
+         cudaRandom().normal(gaussianField_, sigma_, mean);
+         VecOp::eqV(dwc_, gaussianField_);
+         
+         // Loop over monomer types
+         for (i = 0; i < nMonomer; ++i) {
+            RField<D> & w = w_[i];
+            evec = simulator().chiEvecs(j,i);
+            VecOp::addEqVc(w, dwc_, evec);
+         }
 
       }
 
       // set system r grid
-      system().setWRGrid(wFieldTmp_);
+      system().setWRGrid(w_);
 
    }
 
