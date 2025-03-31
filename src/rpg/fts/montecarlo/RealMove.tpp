@@ -96,7 +96,7 @@ namespace Rpg {
       // Loop over composition eigenvectors of projected chi matrix
       for (j = 0; j < nMonomer - 1; ++j) {
          
-         // Generate random numbers between 0.0 and sigma.
+         // Generate Gaussian distributed random numbers 
          cudaRandom().normal(gaussianField_, sigma_, mean);
          VecOp::eqV(dwc_, gaussianField_);
          
@@ -109,7 +109,7 @@ namespace Rpg {
 
       }
 
-      // set system r grid
+      // Set w-fields of parent System
       system().setWRGrid(w_);
 
    }

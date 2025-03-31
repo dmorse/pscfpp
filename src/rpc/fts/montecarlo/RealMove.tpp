@@ -84,22 +84,27 @@ namespace Rpc {
          w_[i] = system().w().rgrid(i);
       }
       
-      double evec;
       // Loop over composition eigenvectors of projected chi matrix
       for (int j = 0; j < nMonomer - 1; j++){
+
+         // Generate Gaussian distributed random numbers
          for (int k = 0; k < meshSize; k++){
             dwc_[k] = sigma_* random().gaussian();
          }
          
          // Loop over monomer types
+         double evec;
          for (int i = 0; i < nMonomer; ++i) {
             RField<D> & w = w_[i];
-            evec = simulator().chiEvecs(j,i);
+            evec = simulator().chiEvecs(j, i);
             for (int k = 0; k < meshSize; ++k) {
                w[k] += evec*dwc_[k];
             }
          }
+
       }
+
+      // Update w-fields in parent system
       system().setWRGrid(w_);
    }
 
