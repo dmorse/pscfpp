@@ -15,6 +15,8 @@
 
 #include <pscf/mesh/Mesh.h>
 #include <pscf/math/IntVec.h>
+
+#include <util/param/BracketPolicy.h>
 #include <util/math/Constants.h>
 
 #include <fstream>
@@ -31,10 +33,41 @@ class MixtureTest : public UnitTest
 public:
 
    void setUp()
-   {}
+   {  BracketPolicy::set(BracketPolicy::Optional); }
 
    void tearDown()
    {}
+
+   template <int D>
+   bool tracePath(Polymer<D> const & polymer, int is, int it)
+   {
+      if (is == it) return true;
+
+      Pair<int> pair;
+      int ib, id;
+      bool done = false;
+      while (!done) {
+         // std::cout << std::endl << is;
+         if (is == it) return false;
+         pair = polymer.path(is, it);
+         ib = pair[0];
+         id = pair[1];
+         if (polymer.block(ib).vertexId(id) != is) return false;
+         if (id == 0) {
+            is = polymer.block(ib).vertexId(1);
+         } else {
+            is = polymer.block(ib).vertexId(0);
+         }
+         if (is == it) {
+           // std::cout << std::endl << is;
+           // std::cout << std::endl;
+           done = true;
+         } else {
+           if (polymer.vertex(is).size() <= 1) return false;
+         }
+      }
+      return true;
+   }
 
    void testConstructor1D()
    {
@@ -51,6 +84,68 @@ public:
       openInputFile("in/Mixture", in);
       mixture.readParam(in);
       in.close();
+
+      Polymer<1>& polymer = mixture.polymer(0);
+      TEST_ASSERT(tracePath(polymer, 2, 0));
+   }
+
+   void testReadParameters1DBranched()
+   {
+      printMethod(TEST_FUNC);
+      Mixture<1> mixture;
+
+      std::ifstream in;
+      openInputFile("in/MixtureBranched", in);
+      mixture.readParam(in);
+      in.close();
+
+      // Graph:
+      //
+      // 0       2
+      //  \     /
+      //   4 - 5 
+      //  /     \
+      // 1       3
+
+      Polymer<1>& polymer = mixture.polymer(0);
+      Pair<int> pair;
+
+      pair = polymer.path(0, 1);
+      TEST_ASSERT(pair[0] == 0);
+      TEST_ASSERT(pair[1] == 0);
+
+      pair = polymer.path(5, 4);
+      TEST_ASSERT(pair[0] == 4);
+      TEST_ASSERT(pair[1] == 1);
+
+      TEST_ASSERT(tracePath(polymer, 1, 3));
+      TEST_ASSERT(tracePath(polymer, 2, 4));
+      TEST_ASSERT(tracePath(polymer, 5, 4));
+
+      #if 0
+      int ib, id;
+      bool done = false;
+      while (!done) {
+         std::cout << std::endl << is;
+         UTIL_ASSERT(is != it);
+         pair = polymer.path(is, it);
+         ib = pair[0];
+         id = pair[1];
+         TEST_ASSERT(polymer.block(ib).vertexId(id) == is);
+         if (id == 0) {
+            is = polymer.block(ib).vertexId(1);
+         } else {
+            is = polymer.block(ib).vertexId(0);
+         }
+         if (is == it) {
+           std::cout << std::endl << is;
+           done = true;
+         } else {
+           TEST_ASSERT(polymer.vertex(is).size() > 1);
+         }
+      }
+      #endif
+
    }
 
    void testSolver1D()
@@ -403,6 +498,7 @@ public:
 TEST_BEGIN(MixtureTest)
 TEST_ADD(MixtureTest, testConstructor1D)
 TEST_ADD(MixtureTest, testReadParameters1D)
+TEST_ADD(MixtureTest, testReadParameters1DBranched)
 TEST_ADD(MixtureTest, testSolver1D)
 TEST_ADD(MixtureTest, testSolver2D)
 TEST_ADD(MixtureTest, testSolver2D_hex)
