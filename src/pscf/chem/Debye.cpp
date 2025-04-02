@@ -41,5 +41,5 @@ namespace Debye {
       return length*h;
    }
 
-}
-}
+} // namespace Debye
+} // namespace Pscf

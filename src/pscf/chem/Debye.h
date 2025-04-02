@@ -19,8 +19,8 @@ namespace Debye {
    * length. The result for the thread model can be expressed as a
    * function 
    * \f[
-   *   d = N^2 g(x)
-   * \] 
+   *   d = (length)^2 g(x)
+   * \f] 
    * where x =  ksq * length * kuhn * kuhn / 6 and
    * \f[
    *     g(x) \equiv 2[ e^{-x} - 1 + x ]/x^2
@@ -28,7 +28,7 @@ namespace Debye {
    * is the Debye function.
    *
    * \param ksq  square of wavenumber
-   * \param length  contour length of block
+   * \param length  contour length of polymer or block
    * \param kuhn  statistical segement length
    */
    double d(double ksq, double length, double kuhn);
@@ -38,12 +38,13 @@ namespace Debye {
    *
    * This function returns the function
    * \f[
-   *   e = N h(x)
+   *   e = (length) h(x)
    * \f]
-   * where x =  ksq * length * kuhn * kuhn / 6
+   * where x =  ksq * length * kuhn * kuhn / 6, and
    * \f[
-   *     h(x) \equiv [ 1 - e^{-x} ]/x \quad.
+   *     h(x) \equiv [ 1 - e^{-x} ]/x 
    * \f]
+   * is another dimensionless function of x.
    *
    * \param ksq  square of wavenumber
    * \param length  contour length of block
