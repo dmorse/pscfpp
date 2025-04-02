@@ -18,6 +18,8 @@
 #include <util/containers/DArray.h>      // member template
 
 #include <pscf/chem/PolymerModel.h>
+#include <util/containers/GArray.h>
+#include <util/containers/FArray.h>
 #include <util/containers/DMatrix.h>
 
 #include <cmath>
@@ -128,7 +130,7 @@ namespace Pscf
       const Vertex& vertex(int id) const;
 
       /**
-      * Get propagator for a specific block and direction.
+      * Get propagator for a specific block and direction (non-const).
       *
       * \param blockId integer index of associated block
       * \param directionId integer index for direction (0 or 1)
@@ -136,7 +138,7 @@ namespace Pscf
       Propagator& propagator(int blockId, int directionId);
 
       /**
-      * Get a const propagator for a specific block and direction.
+      * Get a propagator for a specific block and direction (const).
       *
       * \param blockId integer index of associated block
       * \param directionId integer index for direction (0 or 1)
@@ -144,7 +146,7 @@ namespace Pscf
       Propagator const & propagator(int blockId, int directionId) const;
 
       /**
-      * Get propagator indexed in order of computation.
+      * Get propagator indexed in order of computation (non-const).
       *
       * The propagator index must satisfy 0 <= id < 2*nBlock.
       *
@@ -161,7 +163,25 @@ namespace Pscf
       *
       * \param id  propagator index, in order of computation plan
       */
-      const Pair<int>& propagatorId(int id) const;
+      Pair<int> const & propagatorId(int id) const;
+
+      /**
+      * Get propagator identifier from one vertex towards a target.
+      *
+      * For is != it, the return value is an identifier for an outgoing
+      * propagator that begins at the source vertex (vertex index is) 
+      * and is part of the directed path that leads towards the 
+      * target vertex. In this case, the return value is a propagator
+      * identifier similar to that returned by the propagatorId(int)
+      * member function, for which the first element is an int block id
+      * and the second is a direction id for an outgoing propagator.
+      *
+      * For is == it, the return value is a pair [-1, -1]. 
+      *
+      * \param is  vertex index of the source vertex
+      * \param it  vertex index of the target vertex
+      */
+      Pair<int> const & path(int is, int it) const;
 
       ///@}
       /// \name Accessors (by value)
@@ -220,6 +240,10 @@ namespace Pscf
       */
       virtual void makePlan();
 
+      void makePaths();
+
+      void isValid();
+
    private:
 
       /// Array of Block objects in this polymer.
@@ -230,6 +254,9 @@ namespace Pscf
 
       /// Propagator ids, indexed in order of computation.
       DArray< Pair<int> > propagatorIds_;
+
+      /// Container for path-to-vertex signposts
+      DArray< DArray< Pair<int> > > paths_;
 
       /// Number of blocks in this polymer
       int nBlock_;
@@ -281,7 +308,7 @@ namespace Pscf
    }
 
    /*
-   * Total length of all blocks = volume / reference volume
+   * Total number of beads all blocks.
    */
    template <class Block>
    inline int PolymerTmpl<Block>::nBead() const
@@ -303,18 +330,47 @@ namespace Pscf
    {  return vertices_[id]; }
 
    /*
-   * Get a specified Block.
+   * Get a specified Block (non-const)
    */
    template <class Block>
    inline Block& PolymerTmpl<Block>::block(int id)
    {  return blocks_[id]; }
 
    /*
-   * Get a specified Block by const reference.
+   * Get a specified Block (const).
    */
    template <class Block>
    inline Block const & PolymerTmpl<Block>::block(int id) const
    {  return blocks_[id]; }
+
+   /*
+   * Get a propagator indexed by block and direction (non-const).
+   */
+   template <class Block>
+   inline
+   typename Block::Propagator&
+   PolymerTmpl<Block>::propagator(int blockId, int directionId)
+   {  return block(blockId).propagator(directionId); }
+
+   /*
+   * Get a propagator indexed by block and direction (const).
+   */
+   template <class Block>
+   inline
+   typename Block::Propagator const &
+   PolymerTmpl<Block>::propagator(int blockId, int directionId) const
+   {  return block(blockId).propagator(directionId); }
+
+   /*
+   * Get a propagator indexed in order of computation (non-const).
+   */
+   template <class Block>
+   inline
+   typename Block::Propagator& PolymerTmpl<Block>::propagator(int id)
+   {
+      Pair<int> propId = propagatorId(id);
+      return propagator(propId[0], propId[1]);
+   }
 
    /*
    * Get a propagator id, indexed in order of computation.
@@ -329,32 +385,17 @@ namespace Pscf
    }
 
    /*
-   * Get a propagator indexed by block and direction.
+   * Get a propagator id that leads from one vertex towards another.
    */
    template <class Block>
    inline
-   typename Block::Propagator&
-   PolymerTmpl<Block>::propagator(int blockId, int directionId)
-   {  return block(blockId).propagator(directionId); }
-
-   /*
-   * Get a const propagator indexed by block and direction.
-   */
-   template <class Block>
-   inline
-   typename Block::Propagator const &
-   PolymerTmpl<Block>::propagator(int blockId, int directionId) const
-   {  return block(blockId).propagator(directionId); }
-
-   /*
-   * Get a propagator indexed in order of computation.
-   */
-   template <class Block>
-   inline
-   typename Block::Propagator& PolymerTmpl<Block>::propagator(int id)
+   Pair<int> const & PolymerTmpl<Block>::path(int is, int it) const
    {
-      Pair<int> propId = propagatorId(id);
-      return propagator(propId[0], propId[1]);
+      UTIL_CHECK(is >= 0);
+      UTIL_CHECK(is < nVertex_);
+      UTIL_CHECK(it >= 0);
+      UTIL_CHECK(it < nVertex_);
+      return paths_[is][it];
    }
 
    /*
@@ -362,7 +403,7 @@ namespace Pscf
    */
    template <class Block>
    inline PolymerType::Enum PolymerTmpl<Block>::type() const
-   { return type_; }
+   {  return type_; }
 
    // Non-inline functions
 
@@ -442,7 +483,31 @@ namespace Pscf
       * The parameter file format for each block in the array blocks_
       * is different for branched and linear polymer, and different for
       * thread and bead models. These formats * are defined in >> and
-      * << stream io operators for a Pscf::Block.
+      * << stream io operators for a Pscf::Block and discussed in the
+      * web manual
+      *
+      * For a linear polymer in the thread model, blocks must be entered 
+      * sequentially, in the order they appear along the chain, and block 
+      * vertex id values are set automatically. In this case, the format 
+      * for one block is:
+      *
+      *   monomerId length
+      *
+      * By convention block i connects vertex i to vertex i+1. In the 
+      * thread model, the block length is a real (i.e., floating point)
+      * number. For a linear polymer in the bead model, the floating
+      * point length parameter is replaced in this format by an integer
+      * nBead that gives the number of beads in the block. 
+      *
+      * For a branched polymer in the thread model, the text format for 
+      * each block is:
+      *
+      *   monomerId length vertexId(0) vertexId(1)
+      *
+      * where monomerId is the index of the block monomer type, length
+      * is the block length, and vertexId(0) and vertexId(1) are the 
+      * integer indices of the two vertices to which the block is 
+      * attached.
       */
 
       // If using bead model, set propagator vertex ownership
@@ -529,6 +594,9 @@ namespace Pscf
       // should be computed when solving the MDE.
       makePlan();
 
+      // Construct paths
+      makePaths();
+
       // Read phi or mu (but not both)
       bool hasPhi = readOptional(in, "phi", phi_).isActive();
       if (hasPhi) {
@@ -562,6 +630,9 @@ namespace Pscf
             } // end loop over inputs to head vertex
          } // end loop over directionId
       } // end loop over blockId
+
+      // Check internal consistency of data structures
+      isValid();
 
    }
 
@@ -665,6 +736,244 @@ namespace Pscf
       }
       #endif
 
+   }
+
+   /*
+   * Identify paths between vertices.
+   */
+   template <class Block>
+   void PolymerTmpl<Block>::makePaths()
+   {
+      UTIL_CHECK(nVertex_ > 0);
+
+      // Local variables
+      DArray< GArray< FArray<int, 3> > >  sendPaths;
+      DArray< GArray< FArray<int, 3> > >  recvPaths;
+      DArray< GArray< FArray<int, 3> > >  oldPaths;
+      FArray<int, 3> path;
+      Pair<int> pId;
+      int is; // sender vertex id
+      int ir; // receiver vertex id
+      int ib; // bond id
+      int io; // outgoing (source) direction id
+      int ii; // incoming (receiver) direction id
+      int j, k, n;
+
+      // Allocate and clear path containers
+      sendPaths.allocate(nVertex_);
+      recvPaths.allocate(nVertex_);
+      oldPaths.allocate(nVertex_);
+      for (is = 0; is < nVertex_; ++is) {
+         sendPaths[is].clear();
+         recvPaths[is].clear();
+         oldPaths[is].clear();
+      }
+
+      // Initialize sendPaths with path-to-self entries
+      for (is = 0; is < nVertex_; ++is) {
+         path[0] = is;
+         path[1] = -1;
+         path[2] = -1;
+         sendPaths[is].append(path);
+      }
+
+      // While loop to completion
+      bool done = false;
+      int iter = 0;
+      while (!done) {
+         UTIL_CHECK(iter < nBlock_ + 2);
+
+         // Check that recvPaths container is empty
+         for (ir = 0; is < nVertex_; ++is) {
+            UTIL_CHECK(recvPaths[ir].size() == 0);
+         }
+
+         // Loop over source vertices for sending
+         done = true;
+         for (is = 0; is < nVertex_; ++is) {
+
+            // Send any sendPaths data to neighbors
+            int n = sendPaths[is].size();
+            if (n > 0) {
+               done = false;
+               Vertex const & sender = vertex(is);
+
+               // Send sendPaths data to all new neighbors
+               for (j = 0; j < sender.size(); ++j) {
+                  pId = sender.outPropagatorId(j);
+                  ib = pId[0];   // block identifier
+                  io = pId[1];   // outgoing direction identifier
+                  if (io == 0) {
+                     UTIL_CHECK(block(ib).vertexId(0) == is);
+                     ii = 1;
+                  } else {
+                     UTIL_CHECK(block(ib).vertexId(1) == is);
+                     ii = 0;
+                  }
+                  ir = block(ib).vertexId(ii);
+                  for (k = 0; k < n; ++k) {
+                     path = sendPaths[is][k];
+                     // Send unless just received along same bond
+                     if (ib != path[1]) {
+                        path[1] = ib;
+                        path[2] = ii;
+                        recvPaths[ir].append(path);
+                     }
+                  }
+               }
+
+            } // if (n > 0)
+         } // Loop over source vertices
+
+         // Loop over vertices to transfer data structures
+         for (is = 0; is < nVertex_; ++is) {
+
+            // Move sendPaths to oldPaths, clear sendPaths
+            n = sendPaths[is].size();
+            if (n > 0) {
+               for (k = 0; k < n; ++k) {
+                  path = sendPaths[is][k];
+                  oldPaths[is].append(path);
+               }
+            }
+            sendPaths[is].clear();
+
+            // Move recvPaths to sendPaths, clear recvPaths
+            n = recvPaths[is].size();
+            if (n > 0) {
+               for (k = 0; k < n; ++k) {
+                  sendPaths[is].append(recvPaths[is][k]);
+               }
+            }
+            recvPaths[is].clear();
+
+         }
+
+         ++iter;
+      } // while not done
+
+      // Allocate and initialize member variable paths_
+      paths_.allocate(nVertex_);
+      for (is = 0; is < nVertex_; ++is) {
+         paths_[is].allocate(nVertex_);
+         for (j = 0; j < nVertex_; ++j) {
+            paths_[is][j][0] = -1;
+            paths_[is][j][1] = -1;
+         }
+      }
+
+      // Assign values to all elements of paths_ container
+      for (is = 0; is < nVertex_; ++is) {
+         n = oldPaths[is].size();
+         UTIL_CHECK(n == nVertex_);
+         for (k = 0; k < n; ++k) {
+            path = oldPaths[is][k];
+            ir = path[0]; // id of target vertex
+            UTIL_CHECK(ir >= 0);
+            UTIL_CHECK(ir < nVertex_);
+            // Check that element was not set previously
+            UTIL_CHECK(paths_[is][ir][0] == -1);
+            UTIL_CHECK(paths_[is][ir][1] == -1);
+            if (ir == is) {
+               UTIL_CHECK(path[1] == -1);
+               UTIL_CHECK(path[2] == -1);
+            } else {
+               UTIL_CHECK(path[1] >= 0);
+               UTIL_CHECK(path[1] < nBlock_);
+               UTIL_CHECK(path[2] >= 0);
+               UTIL_CHECK(path[2] < 2);
+            }
+            paths_[is][ir][0] = path[1];
+            paths_[is][ir][1] = path[2];
+         }
+      }
+
+      #if 0
+      std::cout << std::endl << "Paths:" ;
+      for (is = 0; is < nVertex_; ++is) {
+         for (ir = 0; ir < nVertex_; ++ir) {
+            pId = paths_[is][ir];
+            std::cout << std::endl;
+            std::cout << is << ir << pId[0] << pId[1];
+         }
+      }
+      std::cout << std::endl;
+      #endif
+
+   }
+
+   /*
+   * Check consistency of data structures.
+   */
+   template <class Block>
+   void PolymerTmpl<Block>::isValid()
+   {
+      Pair<int> pair;
+      int ib, iv, ip, id, iv0, iv1, n;
+
+      // Check validity of ids owned by blocks
+      for (ib = 0; ib < nBlock_; ++ib) {
+         UTIL_CHECK(block(ib).id() == ib);
+         iv0 = block(ib).vertexId(0);
+         iv1 = block(ib).vertexId(1);
+         UTIL_CHECK(iv0 != iv1);
+         UTIL_CHECK(iv0 >= 0);
+         UTIL_CHECK(iv0 < nVertex_);
+         UTIL_CHECK(iv1 >= 0);
+         UTIL_CHECK(iv1 < nVertex_);
+      }
+
+      // Check consistency of vertex::outPropagatorId
+      for (iv = 0; iv < nVertex_; ++iv) {
+         UTIL_CHECK(vertex(iv).id() == iv);
+         n = vertex(iv).size();
+         for (ip = 0; ip < n; ++ip) {
+            pair = vertex(iv).outPropagatorId(ip);
+            ib = pair[0];
+            id = pair[1];
+            UTIL_CHECK(ib >= 0);
+            UTIL_CHECK(ib < nBlock_);
+            UTIL_CHECK(id >= 0);
+            UTIL_CHECK(id < 2);
+            UTIL_CHECK(block(ib).vertexId(id) == iv);
+         }
+      }
+
+      // Check consistency of vertex::inPropagatorId
+      for (iv = 0; iv < nVertex_; ++iv) {
+         UTIL_CHECK(vertex(iv).id() == iv);
+         n = vertex(iv).size();
+         for (ip = 0; ip < n; ++ip) {
+            pair = vertex(iv).inPropagatorId(ip);
+            ib = pair[0];
+            id = pair[1];
+            UTIL_CHECK(ib >= 0);
+            UTIL_CHECK(ib < nBlock_);
+            UTIL_CHECK(id >= 0);
+            UTIL_CHECK(id < 2);
+            if (id == 0) {
+               UTIL_CHECK(block(ib).vertexId(1) == iv);
+            } else {
+               UTIL_CHECK(block(ib).vertexId(0) == iv);
+            }
+         }
+      }
+
+      // Check consistency of vertex ids in paths
+      for (iv0 = 0; iv0 < nVertex_; ++iv0) {
+         for (iv1 = 0; iv1 < nVertex_; ++iv1) {
+            pair = path(iv0, iv1);
+            ib = pair[0];
+            id = pair[1];
+            if (iv0 == iv1) {
+               UTIL_CHECK(ib = -1);
+               UTIL_CHECK(ip = -1);
+            } else {
+               UTIL_CHECK(block(ib).vertexId(id) == iv0);
+            }
+         }
+      }
+     
    }
 
 }
