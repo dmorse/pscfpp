@@ -12,6 +12,8 @@
 
 #include <rpc/System.h>
 #include <rpc/fts/simulator/Simulator.h>
+#include <rpc/solvers/Mixture.h>
+#include <rpc/field/Domain.h>
 #include <rpc/fts/perturbation/Perturbation.h>
 
 namespace Pscf {

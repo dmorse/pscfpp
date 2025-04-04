@@ -9,11 +9,18 @@
 
 #include "ConcentrationWriter.h"
 #include "Analyzer.h"
-#include <rpc/fts/simulator/Simulator.h>
+
 #include <rpc/System.h>
+#include <rpc/fts/simulator/Simulator.h>
+#include <rpc/solvers/Mixture.h>
+#include <rpc/field/Domain.h>
+
 #include <util/misc/FileMaster.h>
 #include <util/misc/ioUtil.h>
-#include <sstream>
+
+#include <string>
+#include <iostream>
+//#include <sstream>
 
 namespace Pscf {
 namespace Rpc 

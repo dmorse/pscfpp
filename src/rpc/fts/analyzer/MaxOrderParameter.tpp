@@ -3,11 +3,14 @@
 
 #include "MaxOrderParameter.h"
 
-#include <rpc/fts/simulator/Simulator.h>
 #include <rpc/System.h>
+#include <rpc/fts/simulator/Simulator.h>
+#include <rpc/solvers/Mixture.h>
+#include <rpc/field/Domain.h>
 
 #include <prdc/cpu/RField.h>
 
+#include <pscf/inter/Interaction.h>
 #include <pscf/mesh/MeshIterator.h>
 #include <pscf/math/IntVec.h>
 

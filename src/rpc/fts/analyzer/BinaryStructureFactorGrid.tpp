@@ -5,10 +5,13 @@
 
 #include <rpc/fts/simulator/Simulator.h>
 #include <rpc/System.h>
+#include <rpc/solvers/Mixture.h>
+#include <rpc/field/Domain.h>
 
 #include <prdc/cpu/RField.h>
 #include <prdc/crystal/shiftToMinimum.h>
 
+#include <pscf/inter/Interaction.h>
 #include <pscf/mesh/MeshIterator.h>
 #include <pscf/math/IntVec.h>
 #include <pscf/math/RealVec.h>
@@ -25,6 +28,7 @@
 #include <iostream>
 #include <complex>
 #include <vector>
+#include <map>
 #include <algorithm>
 
 //#include <unordered_map>

@@ -12,7 +12,8 @@
 
 #include <rpc/System.h>
 #include <rpc/fts/simulator/Simulator.h>
-//#include <util/accumulators/Average.h>
+
+#include <iostream>
 
 namespace Pscf {
 namespace Rpc {
