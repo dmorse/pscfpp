@@ -856,9 +856,9 @@ namespace Pscf
       paths_.allocate(nVertex_);
       for (is = 0; is < nVertex_; ++is) {
          paths_[is].allocate(nVertex_);
-         for (j = 0; j < nVertex_; ++j) {
-            paths_[is][j][0] = -1;
-            paths_[is][j][1] = -1;
+         for (ir = 0; ir < nVertex_; ++ir) {
+            paths_[is][ir][0] = -1;
+            paths_[is][ir][1] = -1;
          }
       }
 
@@ -874,6 +874,8 @@ namespace Pscf
             // Check that element was not set previously
             UTIL_CHECK(paths_[is][ir][0] == -1);
             UTIL_CHECK(paths_[is][ir][1] == -1);
+	    //std::cout << std::endl << is << " " << ir << " " 
+            //          << path[1] << " " << path[2];
             if (ir == is) {
                UTIL_CHECK(path[1] == -1);
                UTIL_CHECK(path[2] == -1);
@@ -966,8 +968,8 @@ namespace Pscf
             ib = pair[0];
             id = pair[1];
             if (iv0 == iv1) {
-               UTIL_CHECK(ib = -1);
-               UTIL_CHECK(ip = -1);
+               UTIL_CHECK(ib == -1);
+               UTIL_CHECK(id == -1);
             } else {
                UTIL_CHECK(block(ib).vertexId(id) == iv0);
             }
