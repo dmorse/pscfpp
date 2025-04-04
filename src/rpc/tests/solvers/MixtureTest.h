@@ -99,13 +99,16 @@ public:
       mixture.readParam(in);
       in.close();
 
-      // Graph:
-      //
-      // 0       2
-      //  \     /
-      //   4 - 5 
-      //  /     \
-      // 1       3
+      /*
+      * Polymer graph topology (MixtureBranched file)
+      *  
+      *  0       2
+      *   \     /
+      *    4 - 5 
+      *   /     \
+      *  1       3
+      * 
+      */
 
       Polymer<1>& polymer = mixture.polymer(0);
       Pair<int> pair;
@@ -114,7 +117,7 @@ public:
       TEST_ASSERT(pair[0] == 0);
       TEST_ASSERT(pair[1] == 0);
 
-      pair = polymer.path(5, 4);
+      pair = polymer.path(5, 1);
       TEST_ASSERT(pair[0] == 4);
       TEST_ASSERT(pair[1] == 1);
 
