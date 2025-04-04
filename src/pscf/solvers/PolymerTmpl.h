@@ -17,6 +17,7 @@
 #include <util/containers/Pair.h>        // member template
 #include <util/containers/DArray.h>      // member template
 
+#include <pscf/chem/Edge.h>             
 #include <util/containers/GArray.h>
 #include <util/containers/FArray.h>
 #include <util/containers/DMatrix.h>
@@ -104,6 +105,20 @@ namespace Pscf
       ///@{
 
       /**
+      * Get a specified Edge (block descriptor) by non-const reference.
+      *
+      * \param id block index, 0 <= id < nBlock
+      */
+      Edge& edge(int id);
+
+      /**
+      * Get a specified Edge (block descriptor) by const reference.
+      *
+      * \param id block index, 0 <= id < nBlock
+      */
+      Edge const& edge(int id) const;
+
+      /**
       * Get a specified Block.
       *
       * \param id block index, 0 <= id < nBlock
@@ -135,21 +150,21 @@ namespace Pscf
       Propagator& propagator(int blockId, int directionId);
 
       /**
-      * Get propagator indexed in order of computation (non-const).
-      *
-      * The propagator index must satisfy 0 <= id < 2*nBlock.
-      *
-      * \param id propagator index, in order of computation plan
-      */
-      Propagator&  propagator(int id);
-
-      /**
       * Get a propagator for a specific block and direction (const).
       *
       * \param blockId integer index of associated block
       * \param directionId integer index for direction (0 or 1)
       */
       Propagator const & propagator(int blockId, int directionId) const;
+
+      /**
+      * Get propagator indexed in order of computation (non-const).
+      *
+      * The propagator index must satisfy 0 <= id < 2*nBlock.
+      *
+      * \param id propagator index, in order of computation plan
+      */
+      Propagator& propagator(int id);
 
       /**
       * Get propagator identifier, indexed by order of computation.
@@ -289,35 +304,67 @@ namespace Pscf
    {
       double value = 0.0;
       for (int blockId = 0; blockId < nBlock_; ++blockId) {
-         value += blocks_[blockId].length();
+         value += edge(blockId).length();
       }
       return value;
    }
 
    /*
-   * Get a specified Vertex.
+   * Get a specified Edge (block descriptor) by non-const reference.
    */
    template <class Block>
-   inline
-   const Vertex& PolymerTmpl<Block>::vertex(int id) const
-   {  return vertices_[id]; }
+   inline Edge& PolymerTmpl<Block>::edge(int id)
+   {  return blocks_[id]; }
 
    /*
-   * Get a specified Block.
+   * Get a specified Edge (block descriptor) by const reference.
+   */
+   template <class Block>
+   inline Edge const & PolymerTmpl<Block>::edge(int id) const
+   {  return blocks_[id]; }
+
+   /*
+   * Get a specified Block solver by non-const reference.
    */
    template <class Block>
    inline Block& PolymerTmpl<Block>::block(int id)
    {  return blocks_[id]; }
 
    /*
-   * Get a specified Block by const reference.
+   * Get a specified Block solver by const reference.
    */
    template <class Block>
    inline Block const & PolymerTmpl<Block>::block(int id) const
    {  return blocks_[id]; }
 
    /*
-   * Get a propagator id, indexed in order of computation.
+   * Get a specified Vertex by const reference.
+   */
+   template <class Block>
+   inline
+   Vertex const & PolymerTmpl<Block>::vertex(int id) const
+   {  return vertices_[id]; }
+
+   /*
+   * Get a Propagator indexed by block and direction (non-const).
+   */
+   template <class Block>
+   inline
+   typename Block::Propagator&
+   PolymerTmpl<Block>::propagator(int blockId, int directionId)
+   {  return block(blockId).propagator(directionId); }
+
+   /*
+   * Get a Propagator indexed by block and direction (const).
+   */
+   template <class Block>
+   inline
+   typename Block::Propagator const &
+   PolymerTmpl<Block>::propagator(int blockId, int directionId) const
+   {  return block(blockId).propagator(directionId); }
+
+   /*
+   * Get a propagator id, indexed in order of computation (const).
    */
    template <class Block>
    inline
@@ -327,24 +374,6 @@ namespace Pscf
       UTIL_CHECK(id < nPropagator_);
       return propagatorIds_[id];
    }
-
-   /*
-   * Get a propagator indexed by block and direction.
-   */
-   template <class Block>
-   inline
-   typename Block::Propagator&
-   PolymerTmpl<Block>::propagator(int blockId, int directionId)
-   {  return block(blockId).propagator(directionId); }
-
-   /*
-   * Get a const propagator indexed by block and direction.
-   */
-   template <class Block>
-   inline
-   typename Block::Propagator const &
-   PolymerTmpl<Block>::propagator(int blockId, int directionId) const
-   {  return block(blockId).propagator(directionId); }
 
    /*
    * Get a propagator indexed in order of computation.
@@ -358,7 +387,7 @@ namespace Pscf
    }
 
    /*
-   * Get a propagator id that leads from one vertex towards another.
+   * Get a propagator id that leads from a source vertex towards a target.
    */
    template <class Block>
    inline
@@ -372,7 +401,7 @@ namespace Pscf
    }
 
    /*
-   * Get Polymer type (Branched or Linear).
+   * Get the polymer type enumeration value (Branched or Linear).
    */
    template <class Block>
    inline PolymerType::Enum PolymerTmpl<Block>::type() const
@@ -420,8 +449,8 @@ namespace Pscf
 
       // Set block id and polymerType for all blocks
       for (int blockId = 0; blockId < nBlock_; ++blockId) {
-         blocks_[blockId].setId(blockId);
-         blocks_[blockId].setPolymerType(type_);
+         edge(blockId).setId(blockId);
+         edge(blockId).setPolymerType(type_);
       }
 
       // Set all vertex ids
@@ -433,7 +462,7 @@ namespace Pscf
       // In a linear chain, block i connects vertex i and vertex i+1.
       if (type_ == PolymerType::Linear) {
          for (int blockId = 0; blockId < nBlock_; ++blockId) {
-            blocks_[blockId].setVertexIds(blockId, blockId + 1);
+            edge(blockId).setVertexIds(blockId, blockId + 1);
          }
       }
 
@@ -463,26 +492,6 @@ namespace Pscf
       * with no need for explicit vertex ids.
       */
 
-      // Add blocks to attached vertices
-      int vertexId0, vertexId1;
-      Block* blockPtr;
-      for (int blockId = 0; blockId < nBlock_; ++blockId) {
-         blockPtr = &(blocks_[blockId]);
-         vertexId0 = blockPtr->vertexId(0);
-         vertexId1 = blockPtr->vertexId(1);
-         vertices_[vertexId0].addEdge(*blockPtr);
-         vertices_[vertexId1].addEdge(*blockPtr);
-      }
-
-      // Polymer topology is now fully specified.
-
-      // Construct a plan for the order in which block propagators
-      // should be computed when solving the MDE.
-      makePlan();
-
-      // Construct paths
-      makePaths();
-
       // Read phi or mu (but not both)
       bool hasPhi = readOptional(in, "phi", phi_).isActive();
       if (hasPhi) {
@@ -491,6 +500,31 @@ namespace Pscf
          ensemble_ = Species::Open;
          read(in, "mu", mu_);
       }
+
+      // Reading of parameter file is now complete
+
+      // Add edges to attached vertices
+      int vertexId0, vertexId1;
+      Edge* edgePtr;
+      for (int blockId = 0; blockId < nBlock_; ++blockId) {
+         edgePtr = &(edge(blockId));
+         vertexId0 = edgePtr->vertexId(0);
+         vertexId1 = edgePtr->vertexId(1);
+         vertices_[vertexId0].addEdge(*edgePtr);
+         vertices_[vertexId1].addEdge(*edgePtr);
+      }
+
+      // Polymer graph topology is now fully specified.
+
+      // Construct a plan for the order in which block propagators
+      // should be computed when solving the MDE.
+      makePlan();
+
+      // Construct paths
+      makePaths();
+
+      // Check internal consistency of edge and vertex data
+      isValid();
 
       // Set sources for all propagators
       Vertex const * vertexPtr = 0;
@@ -517,9 +551,6 @@ namespace Pscf
          }
 
       }
-
-      // Check internal consistency of data structures
-      isValid();
 
    }
 
@@ -550,7 +581,7 @@ namespace Pscf
          for (int iBlock = 0; iBlock < nBlock_; ++iBlock) {
             for (int iDirection = 0; iDirection < 2; ++iDirection) {
                if (isFinished(iBlock, iDirection) == false) {
-                  inVertexId = blocks_[iBlock].vertexId(iDirection);
+                  inVertexId = edge(iBlock).vertexId(iDirection);
                   inVertexPtr = &vertices_[inVertexId];
                   isReady = true;
                   for (int j = 0; j < inVertexPtr->size(); ++j) {
