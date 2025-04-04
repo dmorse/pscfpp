@@ -705,7 +705,7 @@ namespace Pscf
                   for (int j = 0; j < inVertexPtr->size(); ++j) {
                      propagatorId = inVertexPtr->inPropagatorId(j);
                      if (propagatorId[0] != iBlock) {
-                        if (!isFinished(propagatorId[0], propagatorId[1])) {
+                        if (!isFinished(propagatorId[0], propagatorId[1])){
                            isReady = false;
                            break;
                         }
@@ -840,13 +840,13 @@ namespace Pscf
                   ib = pId[0];   // block identifier
                   io = pId[1];   // outgoing direction identifier
                   if (io == 0) {
-                     UTIL_CHECK(block(ib).vertexId(0) == is);
+                     UTIL_CHECK(edge(ib).vertexId(0) == is);
                      ii = 1;
                   } else {
-                     UTIL_CHECK(block(ib).vertexId(1) == is);
+                     UTIL_CHECK(edge(ib).vertexId(1) == is);
                      ii = 0;
                   }
-                  ir = block(ib).vertexId(ii);
+                  ir = edge(ib).vertexId(ii);
                   for (k = 0; k < n; ++k) {
                      path = sendPaths[is][k];
                      // Send unless just received along same bond
@@ -951,9 +951,9 @@ namespace Pscf
 
       // Check validity of ids owned by blocks
       for (ib = 0; ib < nBlock_; ++ib) {
-         UTIL_CHECK(block(ib).id() == ib);
-         iv0 = block(ib).vertexId(0);
-         iv1 = block(ib).vertexId(1);
+         UTIL_CHECK(edge(ib).id() == ib);
+         iv0 = edge(ib).vertexId(0);
+         iv1 = edge(ib).vertexId(1);
          UTIL_CHECK(iv0 != iv1);
          UTIL_CHECK(iv0 >= 0);
          UTIL_CHECK(iv0 < nVertex_);
@@ -973,7 +973,7 @@ namespace Pscf
             UTIL_CHECK(ib < nBlock_);
             UTIL_CHECK(id >= 0);
             UTIL_CHECK(id < 2);
-            UTIL_CHECK(block(ib).vertexId(id) == iv);
+            UTIL_CHECK(edge(ib).vertexId(id) == iv);
          }
       }
 
@@ -990,9 +990,9 @@ namespace Pscf
             UTIL_CHECK(id >= 0);
             UTIL_CHECK(id < 2);
             if (id == 0) {
-               UTIL_CHECK(block(ib).vertexId(1) == iv);
+               UTIL_CHECK(edge(ib).vertexId(1) == iv);
             } else {
-               UTIL_CHECK(block(ib).vertexId(0) == iv);
+               UTIL_CHECK(edge(ib).vertexId(0) == iv);
             }
          }
       }
@@ -1007,7 +1007,7 @@ namespace Pscf
                UTIL_CHECK(ib == -1);
                UTIL_CHECK(id == -1);
             } else {
-               UTIL_CHECK(block(ib).vertexId(id) == iv0);
+               UTIL_CHECK(edge(ib).vertexId(id) == iv0);
             }
          }
       }
