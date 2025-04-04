@@ -36,7 +36,7 @@ namespace Rpc {
    * Block within a branched polymer.
    *
    * Derived from BlockTmpl< Propagator<D> >. A BlockTmpl< Propagator<D> >
-   * has two Propagator<D> members and is derived from BlockDescriptor.
+   * has two Propagator<D> members and is derived from Edge.
    *
    * \ref user_param_block_sec "Manual Page"
    * \ingroup Rpc_Solver_Module
@@ -210,16 +210,16 @@ namespace Rpc {
       using BlockTmpl< Propagator<D> >::length;
       using BlockTmpl< Propagator<D> >::kuhn;
 
-      // Functions with non-dependent names from BlockDescriptor
-      using BlockDescriptor::setId;
-      using BlockDescriptor::setVertexIds;
-      using BlockDescriptor::setMonomerId;
-      using BlockDescriptor::setLength;
-      using BlockDescriptor::id;
-      using BlockDescriptor::monomerId;
-      using BlockDescriptor::vertexIds;
-      using BlockDescriptor::vertexId;
-      using BlockDescriptor::length;
+      // Functions with non-dependent names from Edge
+      using Edge::setId;
+      using Edge::setVertexIds;
+      using Edge::setMonomerId;
+      using Edge::setLength;
+      using Edge::id;
+      using Edge::monomerId;
+      using Edge::vertexIds;
+      using Edge::vertexId;
+      using Edge::length;
 
    private:
 

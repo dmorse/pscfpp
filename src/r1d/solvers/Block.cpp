@@ -67,7 +67,7 @@ namespace R1d
 
    void Block::setLength(double newLength)
    {
-      BlockDescriptor::setLength(newLength);  
+      Edge::setLength(newLength);  
       if (dsTarget_ > 0) { // if setDiscretization has already been called
          // Reset contour length discretization
          UTIL_CHECK(ns_ > 0);

@@ -8,7 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/chem/BlockDescriptor.h> // base class
+#include <pscf/chem/Edge.h> // base class
 #include <util/containers/Pair.h>      // member template
 
 #include <cmath>
@@ -102,7 +102,7 @@ namespace Pscf
    * \ingroup Pscf_Solver_Module
    */
    template <class TP>
-   class BlockTmpl : public BlockDescriptor
+   class BlockTmpl : public Edge
    {
 
    public:

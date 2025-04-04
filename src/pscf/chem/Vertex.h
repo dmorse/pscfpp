@@ -14,7 +14,7 @@
 namespace Pscf
 { 
 
-   class BlockDescriptor;
+   class Edge;
    using namespace Util;
 
    /**
@@ -51,9 +51,9 @@ namespace Pscf
       * must match one of the ids for the two vertices attached to the
       * block.
       * 
-      * \param block attached BlockDescriptor object
+      * \param block attached Edge object
       */ 
-      void addBlock(BlockDescriptor const & block);
+      void addEdge(Edge const & block);
 
       /**
       * Get the id of this vertex.

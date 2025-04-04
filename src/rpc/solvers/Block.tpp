@@ -137,7 +137,7 @@ namespace Rpc {
    template <int D>
    void Block<D>::setLength(double newLength)
    {
-      BlockDescriptor::setLength(newLength);
+      Edge::setLength(newLength);
 
       if (isAllocated_) { 
          // Reset contour length discretization

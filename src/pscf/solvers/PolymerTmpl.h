@@ -470,8 +470,8 @@ namespace Pscf
          blockPtr = &(blocks_[blockId]);
          vertexId0 = blockPtr->vertexId(0);
          vertexId1 = blockPtr->vertexId(1);
-         vertices_[vertexId0].addBlock(*blockPtr);
-         vertices_[vertexId1].addBlock(*blockPtr);
+         vertices_[vertexId0].addEdge(*blockPtr);
+         vertices_[vertexId1].addEdge(*blockPtr);
       }
 
       // Polymer topology is now fully specified.

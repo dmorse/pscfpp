@@ -1,5 +1,5 @@
-#ifndef PSCF_BLOCK_DESCRIPTOR_H
-#define PSCF_BLOCK_DESCRIPTOR_H
+#ifndef PSCF_EDGE_H
+#define PSCF_EDGE_H
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory
@@ -19,13 +19,13 @@ namespace Pscf
    using namespace Util;
 
    /**
-   * Description of a linear homopolymer block within a block polymer.
+   * Descriptor for a block within an acyclic block polymer.
    *
    * This class defines the block id, monomerId, length and vertexIds of
    * a block within a block polymer. It serves as a base class for the
    * BlockTmpl class template, which is a base class for a class named 
    * Block in each implementation level namespace. Each such Block class 
-   * is thus a subclass of BlockDescriptor.
+   * is thus a subclass of Edge.
    *
    * Block objects associated with a polymer are normally stored in an
    * array named blocks. The id value of each block should be set to the
@@ -36,19 +36,19 @@ namespace Pscf
    * \ref user_param_block_sec "Parameter File Format"
    * \ingroup Pscf_Chem_Module
    */
-   class BlockDescriptor
+   class Edge
    {
    public:
 
       /**
       * Constructor.
       */
-      BlockDescriptor();
+      Edge();
 
       /**
       * Destructor.
       */
-      virtual ~BlockDescriptor();
+      virtual ~Edge();
 
       /**
       * Serialize to/from archive.
@@ -98,7 +98,7 @@ namespace Pscf
       *
       * By convention, if the polymer type of a block with block index id is
       * PolymerType::Linear, then vertexId(0) = id and vertexId(1) = id + 1.
-      * The stream insertion and extraction operators for a BlockDescriptor
+      * The stream insertion and extraction operators for a Edge
       * can thus use a shorter string representation for linear polymers in
       * in which vertex ids are omitted.
       *
@@ -162,16 +162,16 @@ namespace Pscf
       PolymerType::Enum polymerType_;
 
       friend
-      std::istream& operator >> (std::istream& in, BlockDescriptor &block);
+      std::istream& operator >> (std::istream& in, Edge &block);
 
       friend
       std::ostream& operator << (std::ostream& out,
-                                 const BlockDescriptor &block);
+                                 const Edge &block);
 
    };
 
    /**
-   * Input stream extractor (>>) for a BlockDescriptor.
+   * Input stream extractor (>>) for a Edge.
    *
    * Different text representations are used for linear and branched
    * polymers, based on the value of the polymerType enumeratin value.
@@ -183,7 +183,7 @@ namespace Pscf
    * polymer, because the vertex ids for a linear polymer must be equal
    * to id and id + 1, where id denotes the block id.
    *
-   * The polymerType must be set before a BlockDescriptor can be read
+   * The polymerType must be set before a Edge can be read
    * from a stream. The block id must be set explicitly by calling
    * setId, rather than read from an istream. Vertex id values for blocks 
    * in a linear polymer must be set explicitly by calling setVertexIds
@@ -191,13 +191,13 @@ namespace Pscf
    * Pscf::PolymerTmpl::readParameters.
    *
    * \param in  input stream
-   * \param block  BlockDescriptor to be read from stream
+   * \param block  Edge to be read from stream
    * \return  modified input stream
    */
-   std::istream& operator >> (std::istream& in, BlockDescriptor &block);
+   std::istream& operator >> (std::istream& in, Edge &block);
 
    /**
-   * Output stream inserter (<<) for a BlockDescriptor.
+   * Output stream inserter (<<) for a Edge.
    *
    * Different text representations are used for linear and branched
    * polymers, as discussed in documentation for the stream extractor
@@ -205,55 +205,55 @@ namespace Pscf
    * polymers.
    *
    * \param out  output stream
-   * \param block  BlockDescriptor to be written to stream
+   * \param block  Edge to be written to stream
    * \return modified output stream
    */
    std::ostream&
-   operator << (std::ostream& out, const BlockDescriptor &block);
+   operator << (std::ostream& out, const Edge &block);
 
    // Inline member functions
 
    /*
    * Get the id of this block.
    */
-   inline int BlockDescriptor::id() const
+   inline int Edge::id() const
    {  return id_; }
 
    /*
    * Get the monomer type id.
    */
-   inline int BlockDescriptor::monomerId() const
+   inline int Edge::monomerId() const
    {  return monomerId_; }
 
    /*
    * Get the pair of associated vertex ids.
    */
-   inline const Pair<int>& BlockDescriptor::vertexIds() const
+   inline const Pair<int>& Edge::vertexIds() const
    {  return vertexIds_; }
 
    /*
    * Get id of an associated vertex.
    */
-   inline int BlockDescriptor::vertexId(int i) const
+   inline int Edge::vertexId(int i) const
    {  return vertexIds_[i]; }
 
    /*
    * Get the length (number of monomers) in this block.
    */
-   inline double BlockDescriptor::length() const
+   inline double Edge::length() const
    {  return length_; }
 
    /*
    * Get the polymer type (branched or linear).
    */
-   inline PolymerType::Enum BlockDescriptor::polymerType() const
+   inline PolymerType::Enum Edge::polymerType() const
    {  return polymerType_; }
 
    /*
    * Serialize to/from an archive.
    */
    template <class Archive>
-   void BlockDescriptor::serialize(Archive& ar, unsigned int)
+   void Edge::serialize(Archive& ar, unsigned int)
    {
       ar & id_;
       ar & monomerId_;

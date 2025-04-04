@@ -5,7 +5,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "BlockDescriptor.h"
+#include "Edge.h"
 
 namespace Pscf
 {
@@ -13,7 +13,7 @@ namespace Pscf
    /*
    * Constructor.
    */
-   BlockDescriptor::BlockDescriptor()
+   Edge::Edge()
     : id_(-1),
       monomerId_(-1),
       length_(-1.0),
@@ -28,19 +28,19 @@ namespace Pscf
    /*
    * Destructor (virtual)
    */
-   BlockDescriptor::~BlockDescriptor()
+   Edge::~Edge()
    {}
 
    /*
    * Set the id for this block.
    */
-   void BlockDescriptor::setId(int id)
+   void Edge::setId(int id)
    {  id_ = id; }
 
    /*
    * Set indices of associated vertices.
    */
-   void BlockDescriptor::setVertexIds(int vertexId0, int vertexId1)
+   void Edge::setVertexIds(int vertexId0, int vertexId1)
    {
       vertexIds_[0] = vertexId0;
       vertexIds_[1] = vertexId1;
@@ -49,25 +49,25 @@ namespace Pscf
    /*
    * Set the monomer id.
    */
-   void BlockDescriptor::setMonomerId(int monomerId)
+   void Edge::setMonomerId(int monomerId)
    {  monomerId_ = monomerId; }
 
    /*
    * Set the length of this block.
    */
-   void BlockDescriptor::setLength(double length)
+   void Edge::setLength(double length)
    {  length_ = length; }
 
    /*
    * Set the type of the polymer containing this block.
    */
-   void BlockDescriptor::setPolymerType(PolymerType::Enum type)
+   void Edge::setPolymerType(PolymerType::Enum type)
    {  polymerType_ = type; }
 
    /*
-   * Extract a BlockDescriptor from an istream.
+   * Extract a Edge from an istream.
    */
-   std::istream& operator >> (std::istream& in, BlockDescriptor& block)
+   std::istream& operator >> (std::istream& in, Edge& block)
    {
       in >> block.monomerId_;
       in >> block.length_;
@@ -79,10 +79,10 @@ namespace Pscf
    }
 
    /*
-   * Output a BlockDescriptor to an ostream, without line breaks.
+   * Output a Edge to an ostream, without line breaks.
    */
    std::ostream& operator  << (std::ostream& out, 
-                               BlockDescriptor const & block)
+                               Edge const & block)
    {
       out << "  " << block.monomerId_;
       out << "  ";

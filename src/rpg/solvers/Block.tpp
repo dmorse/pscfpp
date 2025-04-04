@@ -282,7 +282,7 @@ namespace Rpg {
    template <int D>
    void Block<D>::setLength(double newLength)
    {
-      BlockDescriptor::setLength(newLength);
+      Edge::setLength(newLength);
       
       if (isAllocated_) { // if allocate() has already been called
          // Reset contour length discretization
