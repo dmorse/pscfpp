@@ -12,6 +12,7 @@
 
 #include <rpg/System.h>
 #include <rpg/fts/simulator/Simulator.h>
+#include <pscf/inter/Interaction.h>
 
 namespace Pscf {
 namespace Rpg
