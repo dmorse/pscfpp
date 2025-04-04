@@ -24,7 +24,7 @@ namespace R1d
    * Block within a branched polymer.
    *
    * Derived from BlockTmpl<Propagator>. A BlockTmpl<Propagator> has two 
-   * Propagator members and is derived from BlockDescriptor.
+   * Propagator members and is derived from Edge.
    *
    * \ingroup R1d_Solver_Module
    */

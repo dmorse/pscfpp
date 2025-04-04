@@ -6,7 +6,7 @@
 */
 
 #include "Vertex.h"
-#include "BlockDescriptor.h"
+#include "Edge.h"
 #include <util/global.h>
 
 namespace Pscf
@@ -35,42 +35,42 @@ namespace Pscf
    {  id_ = id; }
 
    /*
-   * Add a block to the vertex.
+   * Add a edge to the vertex.
    */
-   void Vertex::addBlock(const BlockDescriptor& block)
+   void Vertex::addEdge(const Edge& edge)
    {
       // Preconditions
       if (id_ < 0) {
          UTIL_THROW("Negative vertex id");
       }
-      if (block.id() < 0) {
-         UTIL_THROW("Negative block id");
+      if (edge.id() < 0) {
+         UTIL_THROW("Negative edge id");
       }
-      if (block.vertexId(0) < 0) {
-         UTIL_THROW("Error: Negative block vertexId 0");
+      if (edge.vertexId(0) < 0) {
+         UTIL_THROW("Error: Negative edge vertexId 0");
       }
-      if (block.vertexId(1) < 0) {
-         UTIL_THROW("Error: Negative block vertexId 1");
+      if (edge.vertexId(1) < 0) {
+         UTIL_THROW("Error: Negative edge vertexId 1");
       }
-      if (block.vertexId(0) == block.vertexId(1)) {
-         UTIL_THROW("Error: Equal vertex indices in block");
+      if (edge.vertexId(0) == edge.vertexId(1)) {
+         UTIL_THROW("Error: Equal vertex indices in edge");
       }
 
       Pair<int> propagatorId;
-      propagatorId[0] = block.id();
-      if (block.vertexId(0) == id_) {
+      propagatorId[0] = edge.id();
+      if (edge.vertexId(0) == id_) {
          propagatorId[1] = 0;
          outPropagatorIds_.append(propagatorId);
          propagatorId[1] = 1;
          inPropagatorIds_.append(propagatorId);
       } else
-      if (block.vertexId(1) == id_) {
+      if (edge.vertexId(1) == id_) {
          propagatorId[1] = 1;
          outPropagatorIds_.append(propagatorId);
          propagatorId[1] = 0;
          inPropagatorIds_.append(propagatorId);
       } else {
-         UTIL_THROW("Neither block vertex id matches this vertex");
+         UTIL_THROW("Neither edge vertex id matches this vertex");
       }
    }
 

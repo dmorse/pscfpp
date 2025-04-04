@@ -41,7 +41,7 @@ public:
 
       BlockStub v;
       std::ifstream in;
-      openInputFile("in/BlockDescriptor", in);
+      openInputFile("in/Edge", in);
 
       in >> v;
       TEST_ASSERT(v.monomerId() == 1);

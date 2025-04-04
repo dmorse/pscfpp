@@ -20,7 +20,7 @@ namespace Pscf {
    *
    * \ingroup Pscf_Chem_Module
    */
-   class SolventDescriptor : public Species, public ParamComposite
+   class SolventSpecies : public Species, public ParamComposite
    {
 
    public:
@@ -28,12 +28,12 @@ namespace Pscf {
       /**
       * Constructor.
       */
-      SolventDescriptor();
+      SolventSpecies();
    
       /**
       * Constructor.
       */
-      ~SolventDescriptor();
+      ~SolventSpecies();
    
       /**
       * Read and initialize.
@@ -126,13 +126,13 @@ namespace Pscf {
    /*
    * Get the monomer type id.
    */ 
-   inline int SolventDescriptor::monomerId() const
+   inline int SolventSpecies::monomerId() const
    {  return monomerId_; }
 
    /*
    * Get the size (number of monomers) in this block.
    */
-   inline double SolventDescriptor::size() const
+   inline double SolventSpecies::size() const
    {  return size_; }
 
 }

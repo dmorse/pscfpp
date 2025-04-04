@@ -18,6 +18,7 @@
 #include <util/containers/DArray.h>      // member template
 
 #include <pscf/chem/PolymerModel.h>
+#include <pscf/chem/Edge.h>  
 #include <util/containers/GArray.h>
 #include <util/containers/FArray.h>
 #include <util/containers/DMatrix.h>
@@ -31,12 +32,12 @@ namespace Pscf
    using namespace Util;
 
    /**
-   * Descriptor and MDE solver for an acyclic block polymer.
+   * Descriptor and MDE solver for a block polymer.
    *
-   * A PolymerTmpl<Block> object has arrays of Block and Vertex
-   * objects. Each Block has two propagator MDE solver objects.
-   * The solve() member function solves the modified diffusion
-   * equation (MDE) for all propagators in molecule.
+   * A PolymerTmpl<Block> object has arrays of Block and Vertex objects.
+   * Each Block has two propagator MDE solver objects.  The solve() 
+   * member function solves the modified diffusion equation (MDE) for 
+   * all propagators in molecule.
    *
    * \ingroup Pscf_Solver_Module
    */
@@ -107,6 +108,20 @@ namespace Pscf
       ///@{
 
       /**
+      * Get a specified Edge (block descriptor) by non-const reference.
+      *
+      * \param id block index, 0 <= id < nBlock
+      */
+      Edge& edge(int id);
+
+      /**
+      * Get a specified Edge (block descriptor) by const reference.
+      *
+      * \param id block index, 0 <= id < nBlock
+      */
+      Edge const& edge(int id) const;
+
+      /**
       * Get a specified Block.
       *
       * \param id block index, 0 <= id < nBlock
@@ -152,7 +167,7 @@ namespace Pscf
       *
       * \param id propagator index, in order of computation plan
       */
-      Propagator&  propagator(int id);
+      Propagator& propagator(int id);
 
       /**
       * Get propagator identifier, indexed by order of computation.
@@ -166,15 +181,15 @@ namespace Pscf
       Pair<int> const & propagatorId(int id) const;
 
       /**
-      * Get propagator identifier from one vertex towards a target.
+      * Get propagator id from a source vertex towards a target.
       *
       * For is != it, the return value is an identifier for an outgoing
       * propagator that begins at the source vertex (vertex index is) 
-      * and is part of the directed path that leads towards the 
-      * target vertex. In this case, the return value is a propagator
-      * identifier similar to that returned by the propagatorId(int)
-      * member function, for which the first element is an int block id
-      * and the second is a direction id for an outgoing propagator.
+      * and is part of the directed path that leads towards the target
+      * vertex. In this case, the return value is a propagator identifier
+      * similar to that returned by the propagatorId(int) member function,
+      * which is a pair of integers in which the first element is block 
+      * id and the second is a direction id for an outgoing propagator.
       *
       * For is == it, the return value is a pair [-1, -1]. 
       *
@@ -240,8 +255,14 @@ namespace Pscf
       */
       virtual void makePlan();
 
+      /**
+      * Construct the paths data structure.
+      */
       void makePaths();
 
+      /**
+      * Check the validity of the polymer graph.
+      */
       void isValid();
 
    private:
@@ -255,7 +276,7 @@ namespace Pscf
       /// Propagator ids, indexed in order of computation.
       DArray< Pair<int> > propagatorIds_;
 
-      /// Container for path-to-vertex signposts
+      /// Container for path-to-vertex signposts.
       DArray< DArray< Pair<int> > > paths_;
 
       /// Number of blocks in this polymer
@@ -272,6 +293,8 @@ namespace Pscf
 
    };
 
+   // Inline functions
+
    /*
    * Number of vertices (ends and/or junctions)
    */
@@ -280,7 +303,7 @@ namespace Pscf
    {  return nVertex_; }
 
    /*
-   * Number of blocks.
+   * Number of blocks (or edges of the graph).
    */
    template <class Block>
    inline int PolymerTmpl<Block>::nBlock() const
@@ -302,13 +325,13 @@ namespace Pscf
       UTIL_CHECK(PolymerModel::isThread());
       double value = 0.0;
       for (int blockId = 0; blockId < nBlock_; ++blockId) {
-         value += blocks_[blockId].length();
+         value += edge(blockId).length();
       }
       return value;
    }
 
    /*
-   * Total number of beads all blocks.
+   * Total number of beads in all blocks.
    */
    template <class Block>
    inline int PolymerTmpl<Block>::nBead() const
@@ -316,35 +339,49 @@ namespace Pscf
       UTIL_CHECK(PolymerModel::isBead());
       int value = 0.0;
       for (int blockId = 0; blockId < nBlock_; ++blockId) {
-         value += blocks_[blockId].nBead();
+         value += edge(blockId).nBead();
       }
       return value;
    }
 
    /*
-   * Get a specified Vertex.
+   * Get a specified Edge (block descriptor) by non-const reference.
    */
    template <class Block>
-   inline
-   const Vertex& PolymerTmpl<Block>::vertex(int id) const
-   {  return vertices_[id]; }
+   inline Edge& PolymerTmpl<Block>::edge(int id)
+   {  return blocks_[id]; }
 
    /*
-   * Get a specified Block (non-const)
+   * Get a specified Edge (block descriptor) by const reference.
+   */
+   template <class Block>
+   inline Edge const & PolymerTmpl<Block>::edge(int id) const
+   {  return blocks_[id]; }
+
+   /*
+   * Get a specified Block solver by non-const reference.
    */
    template <class Block>
    inline Block& PolymerTmpl<Block>::block(int id)
    {  return blocks_[id]; }
 
    /*
-   * Get a specified Block (const).
+   * Get a specified Block solver by const reference.
    */
    template <class Block>
    inline Block const & PolymerTmpl<Block>::block(int id) const
    {  return blocks_[id]; }
 
    /*
-   * Get a propagator indexed by block and direction (non-const).
+   * Get a specified Vertex by const reference.
+   */
+   template <class Block>
+   inline
+   Vertex const & PolymerTmpl<Block>::vertex(int id) const
+   {  return vertices_[id]; }
+
+   /*
+   * Get a Propagator, indexed by block and direction ids (non-const).
    */
    template <class Block>
    inline
@@ -353,7 +390,7 @@ namespace Pscf
    {  return block(blockId).propagator(directionId); }
 
    /*
-   * Get a propagator indexed by block and direction (const).
+   * Get a Propagator, indexed by block and direction ids (const).
    */
    template <class Block>
    inline
@@ -385,7 +422,7 @@ namespace Pscf
    }
 
    /*
-   * Get a propagator id that leads from one vertex towards another.
+   * Get a propagator id that leads from a source vertex towards a target.
    */
    template <class Block>
    inline
@@ -399,7 +436,7 @@ namespace Pscf
    }
 
    /*
-   * Get Polymer type (Branched or Linear).
+   * Get the polymer type enumeration value (Branched or Linear).
    */
    template <class Block>
    inline PolymerType::Enum PolymerTmpl<Block>::type() const
@@ -447,8 +484,8 @@ namespace Pscf
 
       // Set block id and polymerType for all blocks
       for (int blockId = 0; blockId < nBlock_; ++blockId) {
-         blocks_[blockId].setId(blockId);
-         blocks_[blockId].setPolymerType(type_);
+         edge(blockId).setId(blockId);
+         edge(blockId).setPolymerType(type_);
       }
 
       // Set all vertex ids
@@ -460,7 +497,7 @@ namespace Pscf
       if (type_ == PolymerType::Linear) {
          // In a linear chain, block i connects vertices i and i+1.
          for (int blockId = 0; blockId < nBlock_; ++blockId) {
-            blocks_[blockId].setVertexIds(blockId, blockId + 1);
+            edge(blockId).setVertexIds(blockId, blockId + 1);
          }
          if (PolymerModel::isBead()) {
             // For bead model, set vertex ownership. For a linear chain:
@@ -471,7 +508,7 @@ namespace Pscf
                own1 = true;
                own0 = false;
                if (blockId == 0) own0 = true;
-               blocks_[blockId].setVertexOwnership(own0, own1);
+               edge(blockId).setVertexOwnership(own0, own1);
             }
          }
       }
@@ -482,8 +519,8 @@ namespace Pscf
       /*
       * The parameter file format for each block in the array blocks_
       * is different for branched and linear polymer, and different for
-      * thread and bead models. These formats * are defined in >> and
-      * << stream io operators for a Pscf::Block and discussed in the
+      * thread and bead models. These formats are defined by the >> and
+      * << stream io operators for a Pscf::Block and are discussed in the
       * web manual
       *
       * For a linear polymer in the thread model, blocks must be entered 
@@ -510,93 +547,6 @@ namespace Pscf
       * attached.
       */
 
-      // If using bead model, set propagator vertex ownership
-      Block* blockPtr;
-      if (PolymerModel::isBead()) {
-         //std::cout << "Incoming" << std::endl;
-         bool own0, own1;
-         for (int blockId = 0; blockId < nBlock_; ++blockId) {
-            blockPtr = &(blocks_[blockId]);
-            own0 = blockPtr->ownsVertex(0);
-            own1 = blockPtr->ownsVertex(1);
-            blockPtr->propagator(0).setVertexOwnership(own0, own1);
-            blockPtr->propagator(1).setVertexOwnership(own1, own0);
-            //std::cout << blockId << own0 << own1 << std::endl;
-         }
-      }
-
-      // Add blocks to attached vertices
-      int vertexId0, vertexId1;
-      for (int blockId = 0; blockId < nBlock_; ++blockId) {
-         blockPtr = &(blocks_[blockId]);
-         vertexId0 = blockPtr->vertexId(0);
-         vertexId1 = blockPtr->vertexId(1);
-         vertices_[vertexId0].addBlock(*blockPtr);
-         vertices_[vertexId1].addBlock(*blockPtr);
-      }
-
-      // If using bead model, check ownership of vertex beads
-      if (PolymerModel::isBead()) {
-         int vSize, ib, id, nOwner;
-         Pair<int> propId;
-
-         // Loop over vertices
-         for (int vertexId = 0; vertexId < nVertex_; ++vertexId) {
-            vSize = vertices_[vertexId].size();
-
-            // Incoming propagators
-            //std::cout << "Incoming" << std::endl;
-            nOwner = 0;
-            for (int ip = 0; ip < vSize; ++ip) {
-               propId = vertices_[vertexId].inPropagatorId(ip);
-               ib = propId[0];
-               id = propId[1];
-               if (blocks_[ib].propagator(id).ownsTail()) {
-                 ++nOwner;
-                 //std::cout << vertexId << ib << id << std::endl;
-               }
-            }
-            UTIL_CHECK(nOwner == 1);
-
-            // Outgoing propagators
-            //std::cout << "Outgoing" << std::endl;
-            nOwner = 0;
-            for (int i = 0; i < vSize; ++i) {
-               propId = vertices_[vertexId].outPropagatorId(i);
-               ib = propId[0];
-               id = propId[1];
-               if (blocks_[ib].propagator(id).ownsHead()) {
-                 ++nOwner;
-                 //std::cout << vertexId << ib << id << std::endl;
-               }
-            }
-            UTIL_CHECK(nOwner == 1);
-
-         } // end loop over vertices
-
-         // Check consistency of block and propagator ownership flags
-         bool own0, own1;
-         for (int blockId = 0; blockId < nBlock_; ++blockId) {
-            blockPtr = &(blocks_[blockId]);
-            own0 = blockPtr->ownsVertex(0);
-            own1 = blockPtr->ownsVertex(1);
-            UTIL_CHECK(blockPtr->propagator(0).ownsHead() == own0);
-            UTIL_CHECK(blockPtr->propagator(1).ownsTail() == own0);
-            UTIL_CHECK(blockPtr->propagator(0).ownsTail() == own1);
-            UTIL_CHECK(blockPtr->propagator(1).ownsHead() == own1);
-         } 
-
-      } // end if (PolymerModel::isBead())
-
-      // Polymer topology is now fully specified.
-
-      // Construct a plan for the order in which block propagators
-      // should be computed when solving the MDE.
-      makePlan();
-
-      // Construct paths
-      makePaths();
-
       // Read phi or mu (but not both)
       bool hasPhi = readOptional(in, "phi", phi_).isActive();
       if (hasPhi) {
@@ -605,6 +555,33 @@ namespace Pscf
          ensemble_ = Species::Open;
          read(in, "mu", mu_);
       }
+
+      // Reading of parameter file is now complete
+
+      // Add edges to attached vertices
+      int vertexId0, vertexId1;
+      Edge* edgePtr;
+      for (int blockId = 0; blockId < nBlock_; ++blockId) {
+         edgePtr = &(edge(blockId));
+         vertexId0 = edgePtr->vertexId(0);
+         vertexId1 = edgePtr->vertexId(1);
+         vertices_[vertexId0].addEdge(*edgePtr);
+         vertices_[vertexId1].addEdge(*edgePtr);
+      }
+
+      // Polymer graph topology is now fully specified.
+
+      // Construct a plan for the order in which block propagators
+      // should be computed when solving the MDE.
+      makePlan();
+
+      // Construct path signposts
+      makePaths();
+
+      // Check internal consistency of edge and vertex data
+      isValid();
+
+      // Remainder of function - set and check propagator data
 
       // Set sources for all propagators
       Vertex const * vertexPtr = 0;
@@ -631,8 +608,67 @@ namespace Pscf
          } // end loop over directionId
       } // end loop over blockId
 
-      // Check internal consistency of data structures
-      isValid();
+      // If using bead model, set propagator vertex ownership
+      Block* blockPtr;
+      if (PolymerModel::isBead()) {
+         bool own0, own1;
+         for (int blockId = 0; blockId < nBlock_; ++blockId) {
+            blockPtr = &(blocks_[blockId]);
+            own0 = blockPtr->ownsVertex(0);
+            own1 = blockPtr->ownsVertex(1);
+            blockPtr->propagator(0).setVertexOwnership(own0, own1);
+            blockPtr->propagator(1).setVertexOwnership(own1, own0);
+         }
+      }
+
+      // If using bead model, check ownership of vertex beads
+      if (PolymerModel::isBead()) {
+         int vSize, ib, id, nOwner;
+         Pair<int> propId;
+
+         // Loop over vertices
+         for (int vertexId = 0; vertexId < nVertex_; ++vertexId) {
+            vSize = vertices_[vertexId].size();
+
+            // Incoming propagators
+            nOwner = 0;
+            for (int ip = 0; ip < vSize; ++ip) {
+               propId = vertices_[vertexId].inPropagatorId(ip);
+               ib = propId[0];
+               id = propId[1];
+               if (blocks_[ib].propagator(id).ownsTail()) {
+                 ++nOwner;
+               }
+            }
+            UTIL_CHECK(nOwner == 1);
+
+            // Outgoing propagators
+            nOwner = 0;
+            for (int i = 0; i < vSize; ++i) {
+               propId = vertices_[vertexId].outPropagatorId(i);
+               ib = propId[0];
+               id = propId[1];
+               if (blocks_[ib].propagator(id).ownsHead()) {
+                 ++nOwner;
+               }
+            }
+            UTIL_CHECK(nOwner == 1);
+
+         } // end loop over vertices
+
+         // Check consistency of block and propagator ownership flags
+         bool own0, own1;
+         for (int blockId = 0; blockId < nBlock_; ++blockId) {
+            blockPtr = &(blocks_[blockId]);
+            own0 = blockPtr->ownsVertex(0);
+            own1 = blockPtr->ownsVertex(1);
+            UTIL_CHECK(blockPtr->propagator(0).ownsHead() == own0);
+            UTIL_CHECK(blockPtr->propagator(1).ownsTail() == own0);
+            UTIL_CHECK(blockPtr->propagator(0).ownsTail() == own1);
+            UTIL_CHECK(blockPtr->propagator(1).ownsHead() == own1);
+         } 
+
+      } // end if (PolymerModel::isBead())
 
    }
 
@@ -663,7 +699,7 @@ namespace Pscf
          for (int iBlock = 0; iBlock < nBlock_; ++iBlock) {
             for (int iDirection = 0; iDirection < 2; ++iDirection) {
                if (isFinished(iBlock, iDirection) == false) {
-                  inVertexId = blocks_[iBlock].vertexId(iDirection);
+                  inVertexId = edge(iBlock).vertexId(iDirection);
                   inVertexPtr = &vertices_[inVertexId];
                   isReady = true;
                   for (int j = 0; j < inVertexPtr->size(); ++j) {

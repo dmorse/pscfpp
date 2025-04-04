@@ -362,9 +362,9 @@ namespace Rpg {
       // Precondition
       UTIL_CHECK(PolymerModel::isThread());
 
-      BlockDescriptor::setLength(newLength);
+      Edge::setLength(newLength);
 
-      if (isAllocated_) {
+      if (isAllocated_) { // if allocate() has already been called
          // Reset contour length discretization
          UTIL_CHECK(dsTarget_ > 0);
          int oldNs = ns_;

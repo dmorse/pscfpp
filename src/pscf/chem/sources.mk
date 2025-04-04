@@ -1,9 +1,9 @@
 pscf_chem_= \
   pscf/chem/Monomer.cpp \
   pscf/chem/Vertex.cpp \
-  pscf/chem/BlockDescriptor.cpp \
-  pscf/chem/SolventDescriptor.cpp \
+  pscf/chem/Edge.cpp \
   pscf/chem/Species.cpp \
+  pscf/chem/SolventSpecies.cpp \
   pscf/chem/PolymerType.cpp \
   pscf/chem/PolymerModel.cpp \
   pscf/chem/Debye.cpp 

@@ -4,14 +4,14 @@
 #include <test/UnitTest.h>
 #include <test/UnitTestRunner.h>
 
-#include <pscf/chem/BlockDescriptor.h>
+#include <pscf/chem/Edge.h>
 
 #include <fstream>
 
 using namespace Pscf;
 using namespace Util;
 
-class BlockDescriptorTest : public UnitTest 
+class EdgeTest : public UnitTest 
 {
 
 public:
@@ -30,7 +30,7 @@ public:
    void testConstructor()
    {
       printMethod(TEST_FUNC);
-      BlockDescriptor v;
+      Edge v;
    } 
 
    void testReadWrite() {
@@ -40,9 +40,9 @@ public:
       PolymerModel::setModel(PolymerModel::Thread);
 
       std::ifstream in;
-      openInputFile("in/BlockDescriptor", in);
+      openInputFile("in/Edge", in);
 
-      BlockDescriptor v;
+      Edge v;
       TEST_ASSERT(v.polymerType() == PolymerType::Branched);
 
       v.setId(5);
@@ -99,9 +99,9 @@ public:
 
 };
 
-TEST_BEGIN(BlockDescriptorTest)
-TEST_ADD(BlockDescriptorTest, testConstructor)
-TEST_ADD(BlockDescriptorTest, testReadWrite)
-TEST_END(BlockDescriptorTest)
+TEST_BEGIN(EdgeTest)
+TEST_ADD(EdgeTest, testConstructor)
+TEST_ADD(EdgeTest, testReadWrite)
+TEST_END(EdgeTest)
 
 #endif

@@ -4,7 +4,7 @@
 #include <test/UnitTest.h>
 #include <test/UnitTestRunner.h>
 
-#include <pscf/chem/BlockDescriptor.h>
+#include <pscf/chem/Edge.h>
 #include <pscf/chem/Vertex.h>
 
 #include <fstream>
@@ -35,9 +35,9 @@ public:
       //printEndl();
 
       std::ifstream in;
-      openInputFile("in/BlockDescriptor", in);
+      openInputFile("in/Edge", in);
 
-      BlockDescriptor b;
+      Edge b;
       b.setId(5);
       in >> b;
       TEST_ASSERT(b.id() == 5);
@@ -49,7 +49,7 @@ public:
 
       Vertex v;
       v.setId(3);
-      v.addBlock(b);
+      v.addEdge(b);
       TEST_ASSERT(v.size() == 1);
       TEST_ASSERT(v.outPropagatorId(0)[0] == 5);
       TEST_ASSERT(v.outPropagatorId(0)[1] == 0);

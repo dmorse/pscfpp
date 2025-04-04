@@ -8,7 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/chem/SolventDescriptor.h>   // base class
+#include <pscf/chem/SolventSpecies.h>   // base class
 #include <rpg/solvers/Propagator.h>       // typedefs
 #include <prdc/cuda/RField.h>
 
@@ -29,7 +29,7 @@ namespace Rpg {
    * \ingroup Rpg_Solvers_Module
    */
    template <int D>
-   class Solvent : public SolventDescriptor
+   class Solvent : public SolventSpecies
    {
    public:
 
@@ -88,8 +88,8 @@ namespace Rpg {
       using Pscf::Species::mu;
       using Pscf::Species::q;
       using Pscf::Species::ensemble;
-      using Pscf::SolventDescriptor::monomerId;
-      using Pscf::SolventDescriptor::size;
+      using Pscf::SolventSpecies::monomerId;
+      using Pscf::SolventSpecies::size;
 
    protected:
 
@@ -98,8 +98,8 @@ namespace Rpg {
       using Pscf::Species::mu_;
       using Pscf::Species::q_;
       using Pscf::Species::ensemble_;
-      using Pscf::SolventDescriptor::monomerId_;
-      using Pscf::SolventDescriptor::size_;
+      using Pscf::SolventSpecies::monomerId_;
+      using Pscf::SolventSpecies::size_;
    
    private:
 

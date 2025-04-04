@@ -5,7 +5,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "BlockDescriptor.h"
+#include "Edge.h"
 
 namespace Pscf
 {
@@ -13,7 +13,7 @@ namespace Pscf
    /*
    * Constructor.
    */
-   BlockDescriptor::BlockDescriptor()
+   Edge::Edge()
     : id_(-1),
       monomerId_(-1),
       nBead_(-1),
@@ -30,25 +30,25 @@ namespace Pscf
    /*
    * Destructor (virtual)
    */
-   BlockDescriptor::~BlockDescriptor()
+   Edge::~Edge()
    {}
 
    /*
    * Set the id for this block.
    */
-   void BlockDescriptor::setId(int id)
+   void Edge::setId(int id)
    {  id_ = id; }
 
    /*
    * Set the monomer type id.
    */
-   void BlockDescriptor::setMonomerId(int monomerId)
+   void Edge::setMonomerId(int monomerId)
    {  monomerId_ = monomerId; }
 
    /*
    * Set the indices of the two associated vertices.
    */
-   void BlockDescriptor::setVertexIds(int vertexId0, int vertexId1)
+   void Edge::setVertexIds(int vertexId0, int vertexId1)
    {
       vertexIds_[0] = vertexId0;
       vertexIds_[1] = vertexId1;
@@ -57,7 +57,7 @@ namespace Pscf
    /*
    * Set ownership of the two associated vertices.
    */
-   void BlockDescriptor::setVertexOwnership(bool own0, bool own1)
+   void Edge::setVertexOwnership(bool own0, bool own1)
    {
       ownsVertex_[0] = own0;
       ownsVertex_[1] = own1;
@@ -66,7 +66,7 @@ namespace Pscf
    /*
    * Set the number of beads in the block.
    */
-   void BlockDescriptor::setNBead(int nBead)
+   void Edge::setNBead(int nBead)
    {
       UTIL_CHECK(PolymerModel::isBead());  
       nBead_ = nBead; 
@@ -75,7 +75,7 @@ namespace Pscf
    /*
    * Set the length of this block.
    */
-   void BlockDescriptor::setLength(double length)
+   void Edge::setLength(double length)
    {  
       UTIL_CHECK(PolymerModel::isThread());  
       length_ = length; 
@@ -84,13 +84,13 @@ namespace Pscf
    /*
    * Set the type of the polymer containing this block.
    */
-   void BlockDescriptor::setPolymerType(PolymerType::Enum type)
+   void Edge::setPolymerType(PolymerType::Enum type)
    {  polymerType_ = type; }
 
    /*
-   * Extract a BlockDescriptor from an istream.
+   * Extract a Edge from an istream.
    */
-   std::istream& operator >> (std::istream& in, BlockDescriptor& block)
+   std::istream& operator >> (std::istream& in, Edge& block)
    {
       // Read monomer type id
       in >> block.monomerId_;
@@ -117,10 +117,10 @@ namespace Pscf
    }
 
    /*
-   * Output a BlockDescriptor to an ostream, without line breaks.
+   * Output a Edge to an ostream, without line breaks.
    */
    std::ostream& operator  << (std::ostream& out, 
-                               BlockDescriptor const & block)
+                               Edge const & block)
    {
       // Write monomer type id
       out << "  " << block.monomerId_;

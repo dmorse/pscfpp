@@ -11,6 +11,7 @@
 #include "Block.h"
 #include <prdc/crystal/UnitCell.h>
 #include <prdc/crystal/shiftToMinimum.h>
+#include <pscf/chem/Edge.h>
 #include <pscf/mesh/Mesh.h>
 #include <pscf/mesh/MeshIterator.h>
 #include <pscf/math/IntVec.h>
@@ -157,8 +158,7 @@ namespace Rpc {
    void Block<D>::setLength(double newLength)
    {
       UTIL_CHECK(PolymerModel::isThread());
-
-      BlockDescriptor::setLength(newLength);
+      Edge::setLength(newLength);
 
       if (isAllocated_) {
          // Reset contour length discretization
