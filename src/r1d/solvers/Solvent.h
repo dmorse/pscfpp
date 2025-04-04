@@ -8,7 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/chem/SolventDescriptor.h>   // base class
+#include <pscf/chem/SolventSpecies.h>   // base class
 //#include <pscf/chem/Species.h>             // base class
 //#include <util/param/ParamComposite.h>     // base class
 #include <r1d/solvers/Propagator.h>
@@ -26,7 +26,7 @@ namespace R1d {
    * \ingroup R1d_Solver_Module
    */
    //class Solvent : public Species, public ParamComposite
-   class Solvent : public SolventDescriptor
+   class Solvent : public SolventSpecies
    {
 
    public:
@@ -95,8 +95,8 @@ namespace R1d {
       using Pscf::Species::mu_;
       using Pscf::Species::q_;
       using Pscf::Species::ensemble_;
-      using Pscf::SolventDescriptor::monomerId_;
-      using Pscf::SolventDescriptor::size_;
+      using Pscf::SolventSpecies::monomerId_;
+      using Pscf::SolventSpecies::size_;
 
    private:
 

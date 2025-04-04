@@ -1,6 +1,3 @@
-#ifndef PSCF_SOLVENT_DESCRIPTOR_TPP
-#define PSCF_SOLVENT_DESCRIPTOR_TPP
-
 /*
 * PSCF - Polymer Self-Consistent Field Theory
 *
@@ -8,29 +5,29 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "SolventDescriptor.h"
+#include "SolventSpecies.h"
 
 namespace Pscf {
 
    /*
    * Constructor
    */
-   SolventDescriptor::SolventDescriptor()
+   SolventSpecies::SolventSpecies()
     : Species(),
       monomerId_(-1),
       size_(0.0)
-   {  setClassName("SolventDescriptor"); }
+   {  setClassName("SolventSpecies"); }
 
    /*
    * Destructor
    */
-   SolventDescriptor::~SolventDescriptor()
+   SolventSpecies::~SolventSpecies()
    {}
 
    /*
    * Read contents of parameter file block
    */
-   void SolventDescriptor::readParameters(std::istream& in)
+   void SolventSpecies::readParameters(std::istream& in)
    {
       read<int>(in, "monomerId", monomerId_);
       read<double>(in, "size", size_);
@@ -48,7 +45,7 @@ namespace Pscf {
    /*
    * Rest phi to a new value, if closed ensemble.
    */
-   void SolventDescriptor::setPhi(double phi)
+   void SolventSpecies::setPhi(double phi)
    {
       UTIL_CHECK(ensemble() == Species::Closed);  
       UTIL_CHECK(phi >= 0.0);  
@@ -59,7 +56,7 @@ namespace Pscf {
    /*
    * Rest mu to a new value, if open ensemble.
    */
-   void SolventDescriptor::setMu(double mu)
+   void SolventSpecies::setMu(double mu)
    {
       UTIL_CHECK(ensemble() == Species::Open);  
       mu_ = mu; 
@@ -68,14 +65,13 @@ namespace Pscf {
    /*
    * Set the monomer type id for this solvent species.
    */ 
-   void SolventDescriptor::setMonomerId(int monomerId)
+   void SolventSpecies::setMonomerId(int monomerId)
    {  monomerId_ = monomerId; }
   
    /*
    * Set the size parameter for this solvent.
    */ 
-   void SolventDescriptor::setSize(double size)
+   void SolventSpecies::setSize(double size)
    {  size_ = size; }
 
 }
-#endif

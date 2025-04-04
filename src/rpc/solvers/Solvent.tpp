@@ -19,7 +19,7 @@ namespace Rpc {
    */
    template <int D>
    Solvent<D>::Solvent()
-    : SolventDescriptor(),
+    : SolventSpecies(),
       meshPtr_(nullptr)
    {  setClassName("Solvent"); }
 

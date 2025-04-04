@@ -15,7 +15,7 @@ namespace Pscf {
 namespace R1d { 
 
    Solvent::Solvent() 
-    : SolventDescriptor()  
+    : SolventSpecies()  
    {  setClassName("Solvent"); }
 
    Solvent::~Solvent()
