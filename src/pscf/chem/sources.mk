@@ -4,6 +4,7 @@ pscf_chem_= \
   pscf/chem/Edge.cpp \
   pscf/chem/Species.cpp \
   pscf/chem/SolventSpecies.cpp \
+  pscf/chem/PolymerSpecies.cpp \
   pscf/chem/PolymerType.cpp \
   pscf/chem/PolymerModel.cpp \
   pscf/chem/Debye.cpp 
