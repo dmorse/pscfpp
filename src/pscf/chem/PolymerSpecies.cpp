@@ -24,9 +24,11 @@ namespace Pscf
     : Species(),
       vertices_(),
       propagatorIds_(),
+      paths_(),
       nBlock_(0),
       nVertex_(0),
-      nPropagator_(0)
+      nPropagator_(0),
+      type_(PolymerType::Linear)
    {  setClassName("PolymerSpecies"); }
 
    /*
@@ -36,7 +38,7 @@ namespace Pscf
    {}
 
    /*
-   * Read parameter file block
+   * Read parameter file block.
    */
    void PolymerSpecies::readParameters(std::istream& in)
    {
@@ -142,7 +144,7 @@ namespace Pscf
          }
       }
 
-      Pair<int> propagatorId;
+      Pair<int> propId;
       Vertex* inVertexPtr = 0;
       int inVertexId = -1;
       bool isReady;
@@ -154,9 +156,9 @@ namespace Pscf
                   inVertexPtr = &vertices_[inVertexId];
                   isReady = true;
                   for (int j = 0; j < inVertexPtr->size(); ++j) {
-                     propagatorId = inVertexPtr->inPropagatorId(j);
-                     if (propagatorId[0] != iBlock) {
-                        if (!isFinished(propagatorId[0], propagatorId[1])){
+                     propId = inVertexPtr->inPropagatorId(j);
+                     if (propId[0] != iBlock) {
+                        if (!isFinished(propId[0], propId[1])){
                            isReady = false;
                            break;
                         }

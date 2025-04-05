@@ -11,27 +11,46 @@
 #include <pscf/chem/Species.h>           // base class
 #include <util/param/ParamComposite.h>   // base class
 
-#include <pscf/chem/Vertex.h>            // member 
+#include <pscf/chem/Vertex.h>            // member
 #include <pscf/chem/PolymerType.h>       // member
 #include <pscf/chem/PolymerModel.h>      // member
-#include <util/containers/Pair.h>        // member 
-#include <util/containers/DArray.h>      // member 
-
-#include <cmath>
+#include <util/containers/Pair.h>        // member
+#include <util/containers/DArray.h>      // member
 
 namespace Pscf
 {
 
+   // Forward declaration
    class Edge;
+
    using namespace Util;
 
    /**
    * Descriptor for an acyclic branched block polymer.
    *
-   * A PolymerSpecies object has arrays of Block and Vertex objects.
-   * Each Block has two propagator MDE solver objects.  The solve() 
-   * member function solves the modified diffusion equation (MDE) for 
-   * all propagators in molecule.
+   * A PolymerSpecies has access to arrays of Edge and Vertex objects
+   * that provide a description of the polymer graph, i.e,. of the
+   * connectivity and properties of blocks with the polymer.
+   *
+   * PolymerSpecies is an abstract base class for subclasses that can act
+   * as both descriptors and MDE solvers for a polymer. The implementation
+   * of PolymerSpecies class does not contain a member that is an array
+   * of Edge objects. Instead, each instance of the PolymerTmpl<Block>
+   * class template, which is a subclass of PolymerSpecies, has a member
+   * variable that is array of Block objects, where the template argument
+   * Block is the name of a block solver class that must be a subclass of
+   * Edge. The PolymerTmpl<Block> class template also implements the pure
+   * virtual edge(int ) member functions declared by PolymerSpecies, thus
+   * allowing access to any element of this array of Block objects as a
+   * reference to an Edge.  Each implementation of field theory defines
+   * a concrete subclass of PolymerTmpl<Block> named Polymer in which
+   * Block is the block solver class appropriate to that implementation.
+   *
+   * The PolymerSpecies abstract base class thereby provides an interface
+   * for operations that require a description of a polymer, and that
+   * need access to constituent Edge objects, but that do not need access
+   * to the additional member functions of a Block solver subclass that
+   * are used to actually solve the MDE.
    *
    * \ingroup Pscf_Chem_Module
    */
@@ -51,7 +70,7 @@ namespace Pscf
       ~PolymerSpecies();
 
       /**
-      * Read and initialize.
+      * Read parameters and initialize.
       *
       * \param in input parameter stream
       */
@@ -84,28 +103,34 @@ namespace Pscf
       const Vertex& vertex(int id) const;
 
       /**
-      * Get propagator identifier, indexed by order of computation.
+      * Get a propagator identifier, indexed by order of computation.
       *
-      * The return value is a pair of integers. The first integer
-      * is a block index between 0 and nBlock - 1, and the second
-      * is a propagator direction id, which must be 0 or 1.
+      * The return value is a pair of integers that identifies a
+      * directed edge, or a propagator. The first integer is a block
+      * index between 0 and nBlock - 1, and the second is a propagator
+      * direction id, which must be 0 or 1. By convention, direction 0
+      * of edge propagates from vertex edge(i).vertexId(0) to vertex
+      * edge(i).vertexId(1), while direction 1 propagates in the
+      * reverse direction.
       *
       * \param id  propagator index, in order of computation plan
       */
       Pair<int> const & propagatorId(int id) const;
 
       /**
-      * Get propagator id from a source vertex towards a target.
+      * Get an id for a propagator from one vertex towards a target.
       *
       * For is != it, the return value is an identifier for an outgoing
-      * propagator that begins at the source vertex (vertex index is) 
-      * and is part of the directed path that leads towards the target
-      * vertex. In this case, the return value is a propagator identifier
-      * similar to that returned by the propagatorId(int) member function,
-      * which is a pair of integers in which the first element is block 
-      * id and the second is a direction id for an outgoing propagator.
+      * propagator that begins at the source vertex (vertex index is)
+      * and is the first edge of the directed path that leads from the
+      * source vertex to the target vertex (vertex id it). The return
+      * value is a pair of integers analogous to that returned by the
+      * propagatorId(int) member function, for which the first element
+      * is a block index and the second element is a direction id (0 or 1)
+      * for the propagator direction for that block that is outgoing
+      * from the source vertex.
       *
-      * For is == it, the return value is a pair [-1, -1]. 
+      * For the case is == it, the return value is a pair [-1, -1].
       *
       * \param is  vertex index of the source vertex
       * \param it  vertex index of the target vertex
@@ -163,7 +188,9 @@ namespace Pscf
       virtual void allocateBlocks() = 0;
 
       /**
-      * Read array of block data.
+      * Read array of blocks from parameter file. 
+      *
+      * \param in  parameter input stream
       */
       virtual void readBlocks(std::istream& in) = 0;
 
@@ -180,12 +207,15 @@ namespace Pscf
       virtual void makePlan();
 
       /**
-      * Construct the paths data structure.
+      * Create a matrix of vertex-to-vertex path signposts.
+      *
+      * This function constructs the data structure that is accessed
+      * by the paths member function.
       */
       void makePaths();
 
       /**
-      * Check the validity of the polymer graph.
+      * Check the validity of graph.
       */
       void isValid();
 
@@ -197,7 +227,7 @@ namespace Pscf
       /// Propagator ids, indexed in order of computation.
       DArray< Pair<int> > propagatorIds_;
 
-      /// Container for path-to-vertex signposts.
+      /// Container for path-to-vertex signposts (see paths function).
       DArray< DArray< Pair<int> > > paths_;
 
       /// Number of blocks in this polymer
@@ -223,7 +253,7 @@ namespace Pscf
    {  return nVertex_; }
 
    /*
-   * Number of blocks (or edges of the graph).
+   * Number of blocks.
    */
    inline int PolymerSpecies::nBlock() const
    {  return nBlock_; }
@@ -268,7 +298,7 @@ namespace Pscf
    /*
    * Get the polymer type enumeration value (Branched or Linear).
    */
-   inline 
+   inline
    PolymerType::Enum PolymerSpecies::type() const
    {  return type_; }
 
