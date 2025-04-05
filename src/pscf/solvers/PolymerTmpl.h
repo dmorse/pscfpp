@@ -17,9 +17,8 @@
 
 #include <pscf/chem/Edge.h>  
 #include <pscf/chem/Vertex.h>          
+#include <pscf/chem/PolymerType.h>       
 #include <pscf/chem/PolymerModel.h>
-
-#include <cmath>
 
 namespace Pscf
 {
@@ -107,16 +106,14 @@ namespace Pscf
       *
       * \param id block index, 0 <= id < nBlock
       */
-      virtual 
-      Edge& edge(int id);
+      virtual Edge& edge(int id);
 
       /**
       * Get a specified Edge (block descriptor) by const reference.
       *
       * \param id block index, 0 <= id < nBlock
       */
-      virtual
-      Edge const& edge(int id) const;
+      virtual Edge const& edge(int id) const;
 
       /**
       * Get a specified Block.
@@ -159,25 +156,21 @@ namespace Pscf
 
       ///@}
 
-      using PolymerSpecies::nBlock;
-      using PolymerSpecies::nVertex;
-      using PolymerSpecies::nPropagator;
+      using PolymerSpecies::edge;
       using PolymerSpecies::vertex;
       using PolymerSpecies::propagatorId;
       using PolymerSpecies::path;
+      using PolymerSpecies::nBlock;
+      using PolymerSpecies::nVertex;
+      using PolymerSpecies::nPropagator;
       using PolymerSpecies::length;
       using PolymerSpecies::nBead;
       using PolymerSpecies::type;
 
-      using Species::mu;
       using Species::phi;
+      using Species::mu;
       using Species::q;
       using Species::ensemble;
-
-      using ParamComposite::read;
-      using ParamComposite::readParam;
-      using ParamComposite::writeParam;
-      using ParamComposite::setClassName;
 
    protected:
 
@@ -187,7 +180,9 @@ namespace Pscf
       virtual void allocateBlocks();
 
       /**
-      * Read array of block data.
+      * Read array of data for blocks from parameter file
+      *
+      * \param in parameter input stream
       */
       virtual void readBlocks(std::istream& in);
 
@@ -204,28 +199,32 @@ namespace Pscf
    * Get a specified Edge (block descriptor) by non-const reference.
    */
    template <class Block>
-   inline Edge& PolymerTmpl<Block>::edge(int id)
+   inline 
+   Edge& PolymerTmpl<Block>::edge(int id)
    {  return blocks_[id]; }
 
    /*
    * Get a specified Edge (block descriptor) by const reference.
    */
    template <class Block>
-   inline Edge const & PolymerTmpl<Block>::edge(int id) const
+   inline 
+   Edge const & PolymerTmpl<Block>::edge(int id) const
    {  return blocks_[id]; }
 
    /*
    * Get a specified Block solver by non-const reference.
    */
    template <class Block>
-   inline Block& PolymerTmpl<Block>::block(int id)
+   inline 
+   Block& PolymerTmpl<Block>::block(int id)
    {  return blocks_[id]; }
 
    /*
    * Get a specified Block solver by const reference.
    */
    template <class Block>
-   inline Block const & PolymerTmpl<Block>::block(int id) const
+   inline 
+   Block const & PolymerTmpl<Block>::block(int id) const
    {  return blocks_[id]; }
 
    /*
@@ -247,7 +246,7 @@ namespace Pscf
    {  return block(blockId).propagator(directionId); }
 
    /*
-   * Get a propagator indexed in order of computation (non-const).
+   * Get a Propagator, indexed in order of computation.
    */
    template <class Block>
    inline

@@ -8,6 +8,7 @@
 #include "PolymerSpecies.h"
 
 #include <pscf/chem/Edge.h>  
+
 #include <util/containers/GArray.h>
 #include <util/containers/FArray.h>
 #include <util/containers/DMatrix.h>
@@ -57,9 +58,9 @@ namespace Pscf
       propagatorIds_.allocate(2*nBlock_);
 
       // Set block id and polymerType for all blocks
-      for (int blockId = 0; blockId < nBlock_; ++blockId) {
-         edge(blockId).setId(blockId);
-         edge(blockId).setPolymerType(type_);
+      for (int edgeId = 0; edgeId < nBlock_; ++edgeId) {
+         edge(edgeId).setId(edgeId);
+         edge(edgeId).setPolymerType(type_);
       }
 
       // Set all vertex ids
@@ -104,8 +105,8 @@ namespace Pscf
       // Add edges to attached vertices
       int vertexId0, vertexId1;
       Edge* edgePtr;
-      for (int blockId = 0; blockId < nBlock_; ++blockId) {
-         edgePtr = &(edge(blockId));
+      for (int edgeId = 0; edgeId < nBlock_; ++edgeId) {
+         edgePtr = &(edge(edgeId));
          vertexId0 = edgePtr->vertexId(0);
          vertexId1 = edgePtr->vertexId(1);
          vertices_[vertexId0].addEdge(*edgePtr);
@@ -118,7 +119,7 @@ namespace Pscf
       // should be computed when solving the MDE.
       makePlan();
 
-      // Construct path signposts
+      // Construct vertex-to-vertex path signposts
       makePaths();
 
       // Check internal consistency of edge and vertex data
@@ -350,7 +351,7 @@ namespace Pscf
       Pair<int> pair;
       int ib, iv, ip, id, iv0, iv1, n;
 
-      // Check validity of ids owned by blocks
+      // Check validity of ids owned by edges
       for (ib = 0; ib < nBlock_; ++ib) {
          UTIL_CHECK(edge(ib).id() == ib);
          iv0 = edge(ib).vertexId(0);

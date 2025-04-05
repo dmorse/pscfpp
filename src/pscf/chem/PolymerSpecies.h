@@ -188,7 +188,7 @@ namespace Pscf
       virtual void allocateBlocks() = 0;
 
       /**
-      * Read array of blocks from parameter file. 
+      * Read array of blocks from parameter file.
       *
       * \param in  parameter input stream
       */
@@ -215,7 +215,7 @@ namespace Pscf
       void makePaths();
 
       /**
-      * Check the validity of graph.
+      * Check validity of the polymer graph.
       */
       void isValid();
 

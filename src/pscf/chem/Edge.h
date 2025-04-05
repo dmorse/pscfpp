@@ -47,8 +47,8 @@ namespace Pscf
    * Block objects associated with a polymer are normally stored in an
    * array named blocks. The id value of each block should be set to the
    * element index of the Block within that array.  VertexIds should be 
-   * set for all blocks in a block polymer before the associated Vertex 
-   * objects are initialized.
+   * set for all blocks in a block polymer before the associated edges
+   * are added to the Vertex objects.
    *
    * \ref user_param_block_sec "Parameter File Format"
    * \ingroup Pscf_Chem_Module
