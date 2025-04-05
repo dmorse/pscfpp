@@ -8,8 +8,8 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/chem/Edge.h> // base class
-#include <util/containers/Pair.h>      // member template
+#include <pscf/chem/Edge.h>         // base class
+#include <util/containers/Pair.h>   // member template
 
 #include <cmath>
 
@@ -19,21 +19,21 @@ namespace Pscf
    using namespace Util;
 
    /**
-   * Class template for a block in a block copolymer.
+   * Class template for a block solver in a block copolymer.
    *
-   * Class TP is a concrete propagator class. A BlockTmpl<TP> object
-   * has:
+   * Class template argument TP is a concrete propagator class. A 
+   * BlockTmpl<TP> object has:
    *
    *   - two TP propagator objects, one per direction
-   *   - a single monomer concentration field 
-   *   - a single kuhn length
+   *   - a monomer concentration field for the block
+   *   - a kuhn length
    * 
-   * Each implementation of self-consistent field theory (SCFT) is defined
-   * in a different sub-namespace of Pscf. Each such implementation defines
-   * a concrete propagator class and a concrete Block class that are named
-   * Propagator and Block by convention. The Block class in each 
-   * implementation is derived from BlockTmpl<Propagator>, using the 
-   * following syntax:
+   * Each implementation of SCFT and/or FTS is defined in a different
+   * enclosed namespace of Pscf. Each such implementation defines a
+   * concrete propagator class and a concrete Block class. By convention,
+   * these are named Propagator and Block, respectively. The Block class 
+   * in each implementation is derived from BlockTmpl<Propagator>, using 
+   * the following syntax:
    * \code
    *  
    *    class Block : public BlockTmpl<Propagator>
@@ -45,14 +45,14 @@ namespace Pscf
    *
    * Design notes:
    *
-   * The Block class of a polymer field theory implementation has
-   * member variables that specify all the data that is needed to
-   * describe the block. This includes but is not limited to the
-   * monomer type and Kuhn length that are defined in this base class
-   * template. In addition, subclasses may define a variety of member 
-   * variables that define the numerical discretization of the block 
-   * and any related parameters need by the algorithm that solves the 
-   * modified diffusion equation. 
+   * The Block class of a polymer field theory implementation has member
+   * variables that specify all the data that is needed to describe the 
+   * block. This includes but is not limited to the monomer type id and
+   * block length (defined by the Edge base class) and the kuhn length
+   * (defined by this class template). In addition, each such Block class
+   * may define a variety of member variables that define the numerical 
+   * discretization of the block and any related parameters needed by 
+   * the algorithm that solves the modified diffusion equation. 
    *   
    * The Block class will normally define one or more public 
    * functions that can be called repeatedly by the Propagator::solve() 

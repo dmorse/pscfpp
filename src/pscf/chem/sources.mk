@@ -3,6 +3,7 @@ pscf_chem_= \
   pscf/chem/Vertex.cpp \
   pscf/chem/Edge.cpp \
   pscf/chem/SolventSpecies.cpp \
+  pscf/chem/PolymerSpecies.cpp \
   pscf/chem/PolymerType.cpp \
   pscf/chem/Species.cpp \
   pscf/chem/Debye.cpp \
