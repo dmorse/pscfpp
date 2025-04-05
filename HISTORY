@@ -16,7 +16,7 @@ programs are affected by specific changes:
 Versions before v1.2 use program name pscf_fd and label fd for the 1D
 finite difference code that is now called pscf_1d.
 
-Version 1.2.0  (in development)
+Version 1.2.0 (4/8/2025)
 =========================================
 
 User-visible features
@@ -42,7 +42,7 @@ User-visible features
 
 * Commands to manipulate field files by replicating the unit cell,
   increasing number spatial dimensions (e.g., create a lamellar phase 
-  in 3D), or scale fields by a constant.
+  in 3D), or scaling fields by a constant.
 
 User-visible changes
 --------------------
@@ -50,7 +50,7 @@ User-visible changes
 * Added -d command line option to specify spatial dimension (pc, pg)
 * Renamed initialization script to "configure" (was named "setup")
 * Renamed script for compile time options to "setopts" (was "configure")
-* Declaration of a space group made optional in the parameter file
+* Declaration of space group made optional in parameter and field files
 
 Documentation
 -------------
