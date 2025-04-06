@@ -20,6 +20,18 @@ namespace Pscf {
    /**
    * Vertex iterator for graph associated with a polymer.
    *
+   * Usage: Suppose that object p is an instance of a subclass of 
+   * PolymerSpecies. The following snippet illustrates how to iterate 
+   * from vertex iSource to vertex iTarget of the associated polymer:
+   * \code
+   *    VertexIterator = iter(p);
+   *    int iVertex;
+   *    for (iter.begin(iSource, iTarget); iter.notEnd(); ++iter) {
+   *       iVertex = iter.currentId();
+   *       // do something with vertex number iVertex
+   *    }
+   * \endcode
+   *
    * \ingroup Pscf_Chem_Module
    */
    class VertexIterator 

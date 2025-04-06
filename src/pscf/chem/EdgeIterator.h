@@ -20,6 +20,19 @@ namespace Pscf {
    /**
    * Edge iterator for graph associated with a polymer.
    *
+   * Usage: Suppose that object p is an instance of a subclass of 
+   * PolymerSpecies. The following snippet illustrates how to iterate 
+   * from edge (or block) iSource to edge iTarget of the associated 
+   * polymer:
+   * \code
+   *    EdgeIterator = iter(p);
+   *    int iEdge;
+   *    for (iter.begin(iSource, iTarget); iter.notEnd(); ++iter) {
+   *       iEdge = iter.currentEdgeId();
+   *       // do something with edge iEdge
+   *    }
+   * \endcode
+   *
    * \ingroup Pscf_Chem_Module
    */
    class EdgeIterator 
