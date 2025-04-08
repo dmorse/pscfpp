@@ -110,6 +110,24 @@ public:
    }
 
    /*
+   * Compare Helmoltz and grand free energies to prior results
+   *
+   * On output, fHelhmoltz and pressure contain absolute differences
+   */
+   template <int D>
+   void compareFreeEnergies(System<D> const & system,
+                            double& fHelmholtz, double& pressure)
+   {
+      UTIL_CHECK(system.hasFreeEnergy());
+      fHelmholtz = std::abs(fHelmholtz - system.fHelmholtz());
+      pressure   = std::abs(pressure - system.pressure());
+      if (verbose() > 0) {
+         std::cout << "\nfHelmholtz diff = " << fHelmholtz;
+         std::cout << "\npressure diff   = " << pressure;
+      }
+   }
+
+   /*
    * Template for an iteration test, with regression testing.
    */
    template <int D>
@@ -520,6 +538,13 @@ public:
       wMaxDiff = readCompareWBasis(system, "in/diblock/lam/omega.ref");
       TEST_ASSERT(wMaxDiff < 2.0E-7);
 
+      // Compare free energies to output of modified unit test from v1.1
+      double fHelmholtz = 2.42932542391e+00;  // Value from v1.1
+      double pressure = 3.01212693885e+00;    // Value from v1.1
+      compareFreeEnergies(system, fHelmholtz, pressure);
+      TEST_ASSERT(fHelmholtz < 1.0E-7);
+      TEST_ASSERT(pressure < 1.0E-7);
+
       // Check stress value
       FSArray<double, 6> stress = computeStress(system);
       TEST_ASSERT(std::abs(stress[0]) < 1.0E-8);
@@ -542,6 +567,13 @@ public:
                   cMaxDiff);
       TEST_ASSERT(wMaxDiff < 5.0E-8);
       TEST_ASSERT(cMaxDiff < 1.0E-8);
+
+      // Compare free energies to output of modified unit test from v1.1
+      double fHelmholtz =  2.42932542391e+00;
+      double pressure   =  3.01212693880e+00;
+      compareFreeEnergies(system, fHelmholtz, pressure);
+      TEST_ASSERT(fHelmholtz < 1.0E-7);
+      TEST_ASSERT(pressure < 1.0E-7);
 
       // Compare to reference omega.ref
       wMaxDiff = readCompareWBasis(system, "in/diblock/lam/omega.ref");
@@ -571,6 +603,13 @@ public:
       TEST_ASSERT(wMaxDiff < 5.0E-8);
       TEST_ASSERT(cMaxDiff < 1.0E-8);
 
+      // Compare free energies to output of modified unit test from v1.1
+      double fHelmholtz =  -2.75154924314e+01;
+      double pressure   =  3.24415250702e+01;
+      compareFreeEnergies(system, fHelmholtz, pressure);
+      TEST_ASSERT(fHelmholtz < 1.0E-7);
+      TEST_ASSERT(pressure < 1.0E-7);
+
       // Compare to input w.bf
       wMaxDiff = readCompareWBasis(system, "in/solution/lam/w.bf");
       TEST_ASSERT(wMaxDiff < 2.0E-6);
@@ -599,6 +638,13 @@ public:
       TEST_ASSERT(wMaxDiff < 1.0E-7);
       TEST_ASSERT(cMaxDiff < 1.0E-8);
 
+      // Compare free energies to output of modified unit test from v1.1
+      double fHelmholtz = -2.75154924224e+01;
+      double pressure   =  3.24415250699e+01;
+      compareFreeEnergies(system, fHelmholtz, pressure);
+      TEST_ASSERT(fHelmholtz < 1.0E-7);
+      TEST_ASSERT(pressure < 1.0E-7);
+
       // Compare to reference w.ref
       wMaxDiff = readCompareWBasis(system, "in/solution/lam_open/w.ref");
       TEST_ASSERT(wMaxDiff < 2.0E-6);
@@ -625,6 +671,13 @@ public:
                   cMaxDiff);
       TEST_ASSERT(wMaxDiff < 1.0E-7);
       TEST_ASSERT(cMaxDiff < 1.0E-8);
+
+      // Compare free energies to output of modified unit test from v1.1
+      double fHelmholtz = -3.30485085194e+00;
+      double pressure = 5.10158598280e+00;
+      compareFreeEnergies(system, fHelmholtz, pressure);
+      TEST_ASSERT(fHelmholtz < 1.0E-7);
+      TEST_ASSERT(pressure < 1.0E-7);
 
       // Compare to reference w.ref
       wMaxDiff = readCompareWBasis(system, "in/blend/lam/w.ref");
@@ -726,6 +779,13 @@ public:
       TEST_ASSERT(wMaxDiff < 1.0E-7);
       TEST_ASSERT(cMaxDiff < 1.0E-8);
 
+      // Compare free energies to output of modified unit test from v1.1
+      double fHelmholtz = 2.80222103795e+00;
+      double pressure = 3.19716573940e+00;
+      compareFreeEnergies(system, fHelmholtz, pressure);
+      TEST_ASSERT(fHelmholtz < 1.0E-7);
+      TEST_ASSERT(pressure < 1.0E-7);
+
       // Compare to input omega.ref
       wMaxDiff = readCompareWBasis(system, "in/diblock/hex/omega.ref");
       TEST_ASSERT(wMaxDiff < 5.0E-7);
@@ -752,6 +812,13 @@ public:
                   cMaxDiff);
       TEST_ASSERT(wMaxDiff < 1.0E-7);
       TEST_ASSERT(cMaxDiff < 1.0E-8);
+
+      // Compare free energies to output of modified unit test from v1.1
+      double fHelmholtz =   2.80222103517e+00;
+      double pressure =     3.19716584873e+00;
+      compareFreeEnergies(system, fHelmholtz, pressure);
+      TEST_ASSERT(fHelmholtz < 1.0E-7);
+      TEST_ASSERT(pressure < 1.0E-7);
 
       // Compare to input omega.ref
       wMaxDiff = readCompareWBasis(system, "in/diblock/hex/omega.ref");
@@ -780,6 +847,13 @@ public:
       TEST_ASSERT(wMaxDiff < 1.0E-8);
       TEST_ASSERT(cMaxDiff < 1.0E-8);
 
+      // Compare free energies to output of modified unit test from v1.1
+      double fHelmholtz =   3.36918380842e+00;
+      double pressure =     4.03176984344e+00;
+      compareFreeEnergies(system, fHelmholtz, pressure);
+      TEST_ASSERT(fHelmholtz < 1.0E-7);
+      TEST_ASSERT(pressure < 1.0E-7);
+
       // Compare to input omega.ref
       wMaxDiff = readCompareWBasis(system, "in/diblock/bcc/omega.ref");
       TEST_ASSERT(wMaxDiff < 1.0E-8);
@@ -807,6 +881,13 @@ public:
       //std::cout << "\n cMaxDiff = " << cMaxDiff;
       TEST_ASSERT(wMaxDiff < 1.0E-6);
       TEST_ASSERT(cMaxDiff < 1.0E-8);
+
+      // Compare free energies to output of modified unit test from v1.1
+      double fHelmholtz =   3.36918376624e+00;
+      double pressure =     4.03176988267e+00;
+      compareFreeEnergies(system, fHelmholtz, pressure);
+      TEST_ASSERT(fHelmholtz < 1.0E-7);
+      TEST_ASSERT(pressure < 1.0E-7);
 
       // Compare to input omega.ref
       wMaxDiff = readCompareWBasis(system, "in/diblock/bcc/omega.ref");
@@ -882,6 +963,13 @@ public:
                   cMaxDiff);
       TEST_ASSERT(wMaxDiff < 1.0E-6);
       TEST_ASSERT(cMaxDiff < 1.0E-8);
+
+      // Compare free energies to output of modified unit test from v1.1
+      double fHelmholtz =   3.21902602858e+00;
+      double pressure =     3.37292021160e+00;
+      compareFreeEnergies(system, fHelmholtz, pressure);
+      TEST_ASSERT(fHelmholtz < 1.0E-7);
+      TEST_ASSERT(pressure < 1.0E-7);
 
       // Compare to input w.bf
       wMaxDiff = readCompareWBasis(system, "in/diblock/c15_1/w_ref.bf");
