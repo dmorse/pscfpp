@@ -5,7 +5,7 @@ include bld/config.mk
          clean clean-tests clean-bin clean-html veryclean 
 
 # =========================================================================
-# Main targets 
+# Main targets - build out of source in bld/
 
 # All main targets in this file perform out-of-source compilation in which
 # intermediate files are created in the bld/ directory. Each of these 
@@ -36,6 +36,20 @@ pscf_pg:
 	cd bld; $(MAKE) pscf_pg
 endif
 
+# =========================================================================
+# Test Targets 
+#
+# Test code built out of source in bld/
+
+test:
+	cd bld; $(MAKE) test
+ 
+test-cpu:
+	cd bld; $(MAKE) test-cpu
+ 
+test-gpu:
+	cd bld; $(MAKE) test-gpu
+ 
 
 # =========================================================================
 # HTML Documentation
