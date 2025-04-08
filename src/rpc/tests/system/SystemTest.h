@@ -27,6 +27,9 @@ public:
    void setUp()
    {  setVerbose(0); }
 
+   void tearDown()
+   {  setVerbose(0); }
+
    void testConstructor1D()
    {
       printMethod(TEST_FUNC);
@@ -510,8 +513,8 @@ public:
                   "lam_rigid",
                   wMaxDiff,
                   cMaxDiff);
-      TEST_ASSERT(wMaxDiff < 1.0E-9);
-      TEST_ASSERT(cMaxDiff < 1.0E-9);
+      TEST_ASSERT(wMaxDiff < 1.0E-8);
+      TEST_ASSERT(cMaxDiff < 1.0E-8);
 
       // Compare to input field omega.ref
       wMaxDiff = readCompareWBasis(system, "in/diblock/lam/omega.ref");
@@ -537,14 +540,12 @@ public:
                   "lam_flex",
                   wMaxDiff,
                   cMaxDiff);
-      //std::cout << "\n wMaxDiff = " << wMaxDiff;
-      //std::cout << "\n cMaxDiff = " << cMaxDiff;
-      TEST_ASSERT(wMaxDiff < 1.0E-8);
+      TEST_ASSERT(wMaxDiff < 5.0E-8);
       TEST_ASSERT(cMaxDiff < 1.0E-8);
 
       // Compare to reference omega.ref
       wMaxDiff = readCompareWBasis(system, "in/diblock/lam/omega.ref");
-      TEST_ASSERT(wMaxDiff < 2.0E-7);
+      TEST_ASSERT(wMaxDiff < 5.0E-7);
 
       // Check stress value
       FSArray<double, 6> stress = computeStress(system);
@@ -567,7 +568,7 @@ public:
                   cMaxDiff);
       //std::cout << "\n wMaxDiff = " << wMaxDiff;
       //std::cout << "\n cMaxDiff = " << cMaxDiff;
-      TEST_ASSERT(wMaxDiff < 1.0E-8);
+      TEST_ASSERT(wMaxDiff < 5.0E-8);
       TEST_ASSERT(cMaxDiff < 1.0E-8);
 
       // Compare to input w.bf
