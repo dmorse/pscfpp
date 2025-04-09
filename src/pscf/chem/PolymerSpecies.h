@@ -26,32 +26,32 @@ namespace Pscf
    using namespace Util;
 
    /**
-   * Descriptor for an acyclic branched block polymer.
+   * Descriptor for a linear or acyclic branched block polymer.
    *
-   * A PolymerSpecies has access to arrays of Edge and Vertex objects
-   * that provide a description of the polymer graph, i.e,. of the
-   * connectivity and properties of blocks with the polymer.
+   * A PolymerSpecies has an array of Vertex objects and an associated
+   * array of Edge objects that, together, provide a description of the
+   * connectivity and properties of blocks with a polymer polymer, and of 
+   * the associated graph.  A PolymerSpecies object is a descriptor for
+   * for a polymer species, but does not contain functions or data 
+   * structures required to solve the modified diffusion equation (MDE), 
+   * and so is not a solver class.
    *
-   * PolymerSpecies is an abstract base class for subclasses that can act
-   * as both descriptors and MDE solvers for a polymer. The implementation
-   * of PolymerSpecies class does not contain a member that is an array
-   * of Edge objects. Instead, each instance of the PolymerTmpl<Block>
-   * class template, which is a subclass of PolymerSpecies, has a member
-   * variable that is array of Block objects, where the template argument
-   * Block is the name of a block solver class that must be a subclass of
-   * Edge. The PolymerTmpl<Block> class template also implements the pure
-   * virtual edge(int ) member functions declared by PolymerSpecies, thus
-   * allowing access to any element of this array of Block objects as a
-   * reference to an Edge.  Each implementation of field theory defines
-   * a concrete subclass of PolymerTmpl<Block> named Polymer in which
-   * Block is the block solver class appropriate to that implementation.
-   *
-   * The PolymerSpecies abstract base class thereby provides an interface
-   * for operations that require a description of a polymer, and that
-   * need access to constituent Edge objects, but that do not need access
-   * to the additional member functions of a Block solver subclass that
-   * are used to actually solve the MDE.
-   *
+   * Each implementation level sub-namespace of Pscf (R1d, Rpc or
+   * Rpg) contains a concrete class named Polymer that is a subclass of
+   * Pscf::Polymer species, and that acts as both a descriptor and MDE 
+   * solver for the associated species.  Each such implementation level 
+   * sub-namespace also contains a class named Block that is a subclass
+   * of Pscf::Edge, and that is a descriptor and MDE solver for a single 
+   * block. The Polymer class in each such namespace is a subclass of 
+   * a class template instantiation PolymerTmpl<Block> that is itself a
+   * subclass of PolymerSpecies. 
+   * 
+   * A PolymerTmpl<Block> class has a private member variable that
+   * is an array of Block objects.  The PolymerTmpl class template 
+   * defines implementations of the pure virtual edge(int id) member 
+   * functions declared by PolymerSpecies, which return a single element
+   * of this array as a reference to an Edge. 
+   * 
    * \ingroup Pscf_Chem_Module
    */
    class PolymerSpecies : public Species, public ParamComposite
@@ -82,12 +82,18 @@ namespace Pscf
       /**
       * Get a specified Edge (block descriptor) by non-const reference.
       *
+      * This function is implemented by the class template 
+      * Pscf::PolymerTmpl<class Block>, which is derived from Pscf::Edge.
+      *
       * \param id block index, 0 <= id < nBlock
       */
       virtual Edge& edge(int id) = 0;
 
       /**
       * Get a specified Edge (block descriptor) by const reference.
+      *
+      * This function is implemented by the class template 
+      * Pscf::PolymerTmpl<class Block>, which is derived from Pscf::Edge.
       *
       * \param id block index, 0 <= id < nBlock
       */
@@ -155,7 +161,7 @@ namespace Pscf
       int nVertex() const;
 
       /**
-      * Number of propagators (nBlock*2).
+      * Number of propagators (2*nBlock).
       */
       int nPropagator() const;  //
 
@@ -233,7 +239,7 @@ namespace Pscf
       /// Number of blocks in this polymer
       int nBlock_;
 
-      /// Number of vertices (ends or junctions) in this polymer
+      /// Number of vertices (ends and junctions) in this polymer
       int nVertex_;
 
       /// Number of propagators (two per block).
@@ -253,13 +259,13 @@ namespace Pscf
    {  return nVertex_; }
 
    /*
-   * Number of blocks.
+   * Number of blocks in this polymer.
    */
    inline int PolymerSpecies::nBlock() const
    {  return nBlock_; }
 
    /*
-   * Number of propagators.
+   * Number of propagators in this polymer.
    */
    inline int PolymerSpecies::nPropagator() const
    {  return nPropagator_; }

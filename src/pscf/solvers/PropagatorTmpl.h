@@ -36,30 +36,29 @@ namespace Pscf
    * \endcode
    * This usage is an example of the so-called "curiously recurring 
    * template pattern" (CRTP). It is used here to allow the template 
-   * PropagatorTmpl<Propagator> to have a member variables that store 
-   * pointers to other instances of derived class Propagator (or TP).
+   * PropagatorTmpl<Propagator> to have member variables that store 
+   * pointers to other instances of the derived class Propagator (or TP).
    *
    * The concrete Propagator class is used in templates BlockTmpl, 
    * PolymerTmpl and SystemTmpl. The usage in those templates require 
-   * that this class define typedefs named WField and CField and member
-   * functions named solve() and computeQ(), neither of which takes any 
-   * arguments.
+   * that the Propagator class define typedefs named WField and CField.
+   * Propagator must also provide member functions named solve() and 
+   * computeQ(), neither of which takes any arguments.
    * 
-   * The typedefs WField and CField must be aliases for a type container 
-   * used represent chemical potential and concentration fields, 
-   * respectively.
+   * The typedefs WField and CField must be aliases for the type of 
+   * containers used to a single chemical potential or concentration 
+   * field, respectively.
    * 
    * The function void solve() must solve the modified diffusion equation 
    * for this propapagator, using information that is accessible to the
    * concrete propagator class. Upon return, the solution must be stored
-   * in internal data structures that store the propagator field at 
-   * different values of a contour variable, and the function isSolved() 
-   * must return true.
+   * in an internal data structures that is read-accessible through the 
+   * public class interface, and the function isSolved() must return true.
    *
    * The function computeQ() must compute and return the molecular 
    * partition function Q using information available to this propagator. 
+   *
    * An example of the required interface is shown below:
-   * 
    * \code
    *
    *    class Propagator : public PropagatorTmpl<Propagator> 

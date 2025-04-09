@@ -30,7 +30,7 @@ namespace Pscf
    * 
    * Each implementation of SCFT and/or FTS is defined in a different
    * enclosed namespace of Pscf. Each such implementation defines a
-   * concrete propagator class and a concrete Block class. By convention,
+   * concrete propagator class and a concrete block class. By convention,
    * these are named Propagator and Block, respectively. The Block class 
    * in each implementation is derived from BlockTmpl<Propagator>, using 
    * the following syntax:
@@ -54,10 +54,10 @@ namespace Pscf
    * discretization of the block and any related parameters needed by 
    * the algorithm that solves the modified diffusion equation. 
    *   
-   * The Block class will normally define one or more public 
-   * functions that can be called repeatedly by the Propagator::solve() 
-   * function in order to implement individual steps of the stepping
-   * algorithm used to solve the MDE. 
+   * The Block class will normally define one or more public functions
+   * that can be called repeatedly by the Propagator::solve() function in
+   * order to implement individual steps of the stepping algorithm used to
+   * solve the MDE. 
    *  
    * The Block class also normally provides a void function named 
    * computeConcentration() that integrates the product of the two
@@ -108,7 +108,7 @@ namespace Pscf
 
    public:
 
-      // Modified diffusion equation propagator for one block.
+      // Modified diffusion equation propagator for one block direction.
       typedef TP Propagator;
 
       // Monomer concentration field.

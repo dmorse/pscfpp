@@ -22,33 +22,39 @@ namespace Pscf
    /**
    * Descriptor for a block within an acyclic block polymer.
    *
-   * This class defines the block id, monomerId, and vertexIds of a block 
-   * within a block polymer. It also defines either the length of a block,
-   * for a continuous thread model, or the number of beads in the block
-   * for a discrete bead model. 
+   * An Edge has:
    *
-   * This class serves as a base class for the BlockTmpl class template, 
-   * which is a base class for a class named Block in each implementation 
-   * level namespace. Each such implementation-levl Block class is thus 
-   * a subclass of Edge.
+   *    - a monomer type id
+   *    - a length (thread model) or number of beads (bead model)
+   *    - a block id (unique with the polymer)
+   *    - ids of the two vertices at which it terminates
    *
-   * The class is designed to store either a value for length (the length
+   * Edge is a base class for the BlockTmpl class template, which is a
+   * a base class for a class named Block in each implementation-level 
+   * sub-namespace of Pscf (i.e., in R1d, Rpc, or Rpg).
+   *
+   * An Edge is a descriptor for a block within a block polymer, but
+   * does not provide functions or data structure needed to solve the
+   * modified diffusion equation (MDE).  The Block class defined in 
+   * each implementation-level namespace is designed to be used as an
+   * MDE solver as well as a descriptor.
+   *
+   * An Edge can store either a value for length (the contour length
    * of the block) when PolymerModel::isThread(), or a value for nBead
    * (the number of beads in the block) when PolymerModel::isBead(). In
-   * the case of a bead model, it also stores a pair of boolean flags 
+   * the case of the bead model, it also stores a pair of boolean flags 
    * to indicate whether the block owns either or both of the associated
-   * vertices It is an error to try to set or get a value for nBead or
-   * the vertex ownership flags when a thread model is in use, because
+   * vertices. It is an error to try to set or get a value for nBead or
+   * the vertex ownership flags when the thread model is in use, because
    * these variables are only meaningful for a bead model. Similarly,
    * it is an error to get or set a value for the block length when a
    * bead model is in use, because the length variable is only meaningful
    * in the context of a thread model. 
    *
-   * Block objects associated with a polymer are normally stored in an
-   * array named blocks. The id value of each block should be set to the
-   * element index of the Block within that array.  VertexIds should be 
-   * set for all blocks in a block polymer before the associated edges
-   * are added to the Vertex objects.
+   * Block objects associated with a polymer are normally stored in 
+   * an array that is a private member of the Pscf::PolymerTmpl class 
+   * template. The block id for each edge be set to the element index
+   * of the Block within that array.  
    *
    * \ref user_param_block_sec "Parameter File Format"
    * \ingroup Pscf_Chem_Module

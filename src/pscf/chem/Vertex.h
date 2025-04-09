@@ -20,6 +20,11 @@ namespace Pscf
    /**
    * A junction or chain end in a block polymer.
    *
+   * A vertex represents a vertex within the graph associated with a 
+   * linear or acyclic branched polymer. Each vertex is either a free
+   * end of a block or a junction at which two or more blocks (or edges)
+   * are connected. 
+   *
    * \ingroup Pscf_Chem_Module
    */
    class Vertex
