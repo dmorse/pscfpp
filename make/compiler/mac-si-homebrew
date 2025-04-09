@@ -40,16 +40,8 @@
 # C++ compiler and options (*.cpp files)
 
 # C++ Compiler Command name 
-ifndef PSCF_OPENMP
-   # Default: On OS X, g++ calls the Apple installed clang compiler
-   # This does not support OpenMP
-   CXX=g++
-else
-   # For OpenMp, use a homebrew-installed GNU compiler 
-   GCC_VERSION=12
-   CXX=g++-$(GCC_VERSION)
-   #CXX=/opt/homebrew/Cellar/gcc/12.2.0/bin/c++-12
-endif
+# On OS X, g++ calls the Apple installed clang compiler
+CXX=g++
 
 # Flags for C/C++ preprocessor, including standard header search paths
 CPPFLAGS=-I/opt/homebrew/include
@@ -90,17 +82,6 @@ TESTFLAGS= -Wall $(CXX_STD)
 
 # Compiler command used to generate dependencies
 MAKEDEP_CMD="-C$(CXX) -MM -MF"
-
-#-----------------------------------------------------------------------
-# OpenMP flags and paths
-
-OPENMP_FLAGS=-fopenmp
-OPENMP_INC=
-OPENMP_LIB=
-
-#ifdef PSCF_OPENMP
-OPENMP_LIB+=-lfftw3_omp
-#endif
 
 #-----------------------------------------------------------------------
 # CUDA compiler and options (*.cu files)

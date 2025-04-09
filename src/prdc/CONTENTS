@@ -17,4 +17,18 @@ Subdirectories:
    crystal/  - unit cells, space groups, and symmetrized basis
    cpu/      - classes that define fields, only used on a CPU
    cuda/     - classes that define fields, only used on a GPU
+   field/    - shared base classes and utilities for fields
+   iterator/ - tools and base classes for iterators
+   tests/    - unit tests for code in src/prdc
+
+Makefile and makefile fragments:
+
+makefile     - main makefile for src/prdc directory tree
+sources.mk   - list of source files in src/prdc (makefile fragment)
+patterns.mk  - pattern rules for use in src/prdc (makefile fragment)
+include.mk   - header of makefile file includes (makefile fragment)
+
+Doxygen documentation files:
+
+prdc.mod     - definition of Pscf_Prdc_Module doxygen topics module 
 

@@ -17,14 +17,6 @@ LIBS=$(PSCF_LIBS)
 INCLUDES+=$(GSL_INC)
 LIBS+=$(GSL_LIB) 
 
-# Conditionally enable OpenMP
-ifdef PSCF_OPENMP
-  CXXFLAGS+=$(OPENMP_FLAGS)
-  LDFLAGS+=(OPENMP_FLAGS)
-  INCLUDES+=$(OPENMP_INC)
-  LIBS+=$(OPENMP_LIB) 
-endif
-
 # Conditionally add CUDA header include and library paths
 ifdef PSCF_CUDA
   INCLUDES+=$(CUDA_INC)
@@ -45,9 +37,6 @@ MAKEDEP_ARGS+= -B$(BLD_DIR)
 
 # Arguments for MAKEDEP for C++
 MAKEDEP_CXX_ARGS=$(MAKEDEP_ARGS)
-ifdef PSCF_OPENMP
-  MAKEDEP_CXX_ARGS+=$(OPENMP_FLAGS)
-endif
 
 # Pattern rule to compile *.cpp C++ source files in src/pscf
 # Note: Creates a *.d dependency file as a side effect of compilation
