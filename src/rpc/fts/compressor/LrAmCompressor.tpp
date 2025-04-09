@@ -24,7 +24,7 @@ namespace Rpc{
    LrAmCompressor<D>::LrAmCompressor(System<D>& system)
     : Compressor<D>(system),
       intra_(system),
-      intra_(false),
+      isIntraCalculated_(false),
       isAllocated_(false)
    {  setClassName("LrAmCompressor"); }
 
