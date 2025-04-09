@@ -32,17 +32,3 @@ Doxygen documentation files:
 r1d.mod      - definition of R1d doxygen module 
 pscf_fd.dox  - command line interface documentation for pscf_fd
 
-
-Main Program Usage:
-
-The usual command line usage is to invoke
-
-     pscf_fd -e -p param -c command
-
-from the directory containing the files "param" and "command". Here, 
-"param" denotes the name of a parameter file and "command" denotes 
-the name of a command file.  The -e option causes the parameter file to 
-be echoed to standard output as it is read.  
-
-See the html documentation for information about the format of the
-parameter and command files. 
