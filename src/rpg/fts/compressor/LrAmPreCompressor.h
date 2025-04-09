@@ -171,12 +171,7 @@ namespace Rpg
       * Number of points in k-space grid
       */
       int kSize_;
-      
-      /**
-      * Has the variable been allocated?
-      */
-      bool isAllocated_;
-      
+   
       /**
       * Template w Field used in update function.
       */
@@ -286,9 +281,19 @@ namespace Rpg
       double computeLambda(double r);
       
       /**
-      * IntraCorrelation (homopolymer) object
+      * IntraCorrelation object
       */
       IntraCorrelation<D> intra_;
+      
+      /**
+      * Has the IntraCorrelation been calculated?
+      */
+      bool isIntraCalculated_;
+      
+      /**
+      * Has the variable been allocated?
+      */
+      bool isAllocated_;
       
    };
    

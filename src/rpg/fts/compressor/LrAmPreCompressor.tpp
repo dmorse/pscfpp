@@ -27,8 +27,9 @@ namespace Rpg {
    template <int D>
    LrAmPreCompressor<D>::LrAmPreCompressor(System<D>& system)
     : Compressor<D>(system),
-      isAllocated_(false),
-      intra_(system)
+      intra_(system),
+      isIntraCalculated_(false),
+      isAllocated_(false)
    {  setClassName("LrAmPreCompressor"); }
 
    // Destructor
@@ -87,13 +88,17 @@ namespace Rpg {
          isAllocated_ = true;
       }
       
+      // Compute intraCorrelation
+      if (!isIntraCalculated_){
+         intra_.computeIntraCorrelations(intraCorrelation_);
+         isIntraCalculated_ = true;
+      }
+      
       // Store value of initial guess chemical potential fields
       for (int i = 0; i < nMonomer; ++i) {
          VecOp::eqV(w0_[i], system().w().rgrid(i));
       }
       
-      // Compute intramolecular correlation
-      intraCorrelation_ = intra_.computeIntraCorrelations();
    }
   
    // Iterative solver (AM algorithm) 

@@ -33,8 +33,9 @@ namespace Rpc{
       totalItr_(0),
       errorType_("rmsResid"),
       verbose_(0),
-      isAllocated_(false),
-      intraCorrelation_(system)
+      intra_(system),
+      isIntraCalculated_(false),
+      isAllocated_(false)
    { setClassName("LrCompressor"); }
 
    // Destructor
@@ -79,8 +80,11 @@ namespace Rpc{
          isAllocated_ = true;
       }
 
-      // Compute intraCorrelation (homopolymer)
-      intraCorrelationK_ = intraCorrelation_.computeIntraCorrelations();
+      // Compute intraCorrelation
+      if (!isIntraCalculated_){
+         intra_.computeIntraCorrelations(intraCorrelationK_);
+         isIntraCalculated_ = true;
+      }
    }
 
    template <int D>
