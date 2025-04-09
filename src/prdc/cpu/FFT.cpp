@@ -6,9 +6,6 @@
 */
 
 #include "FFT.tpp"
-#ifdef PSCF_OPENMP
-#include <omp.h>
-#endif
 
 namespace Pscf {
 namespace Prdc {
@@ -28,13 +25,6 @@ namespace Cpu {
    void FFT<1>::makePlans(RField<1>& rField, RFieldDft<1>& kField, 
                           CField<1>& cFieldIn, CField<1>& cFieldOut)
    {
-      #ifdef PSCF_OPENMP
-      int nThread = omp_get_max_threads();
-      if (nThread > 1) {
-         // std::cout << "Planning 1D FFT with " << nThread << " threads\n";
-         fftw_plan_with_nthreads(nThread);
-      }
-      #endif
       int n0 = rSize_;
       unsigned int flags = FFTW_ESTIMATE;
       rcfPlan_ = fftw_plan_dft_r2c_1d(n0, &rField[0], &kField[0], flags);
@@ -51,13 +41,6 @@ namespace Cpu {
    void FFT<2>::makePlans(RField<2>& rField, RFieldDft<2>& kField,
                           CField<2>& cFieldIn, CField<2>& cFieldOut)
    {
-      #ifdef PSCF_OPENMP
-      int nThread = omp_get_max_threads();
-      if (nThread > 1) {
-         // std::cout << "Planning 2D FFT with " << nThread << " threads\n";
-         fftw_plan_with_nthreads(nThread);
-      }
-      #endif
       unsigned int flags = FFTW_ESTIMATE;
       int n0 = meshDimensions_[0];
       int n1 = meshDimensions_[1];
@@ -75,13 +58,6 @@ namespace Cpu {
    void FFT<3>::makePlans(RField<3>& rField, RFieldDft<3>& kField,
                           CField<3>& cFieldIn, CField<3>& cFieldOut)
    {
-      #ifdef PSCF_OPENMP
-      int nThread = omp_get_max_threads();
-      if (nThread > 1) {
-         // std::cout << "Planning 3D FFT with " << nThread << " threads\n";
-         fftw_plan_with_nthreads(nThread);
-      }
-      #endif
       unsigned int flags = FFTW_ESTIMATE;
       int n0 = meshDimensions_[0];
       int n1 = meshDimensions_[1];

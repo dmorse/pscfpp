@@ -89,17 +89,6 @@ TESTFLAGS= -Wall $(CXX_STD)
 MAKEDEP_CMD="-C$(CXX) -MM -MF"
 
 #-----------------------------------------------------------------------
-# OpenMP flags and paths
-
-OPENMP_FLAGS=-fopenmp
-OPENMP_INC=
-OPENMP_LIB=
-
-#ifdef PSCF_OPENMP
-OPENMP_LIB+=-lfftw3_omp
-#endif
-
-#-----------------------------------------------------------------------
 # CUDA compiler and options (for *.cu files)
 
 # NVIDIA CUDA compiler command

@@ -17,11 +17,6 @@ pscf_CPP= \
   $(pscf_mesh_) $(pscf_crystal_) $(pscf_homogeneous_) \
   $(pscf_iterator_) $(pscf_sweep_)
 
-ifdef PSCF_OPENMP
-  include $(SRC_DIR)/pscf/openmp/sources.mk
-  pscf_CPP+= $(pscf_openmp_)
-endif
-
 pscf_CPP_OBJS=\
     $(addprefix $(BLD_DIR)/, $(pscf_CPP:.cpp=.o))
 

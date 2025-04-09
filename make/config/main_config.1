@@ -22,8 +22,6 @@
 #
 #  - A variable PSCF_CUDA that, if defined, enables building of CUDA code
 #
-#  - A variable PSCF_OPENMP that, if defined, enables OpenMP in C++ code
-#
 #  - A string PSCF_DEFS of C/C++ macro definitions that is passed to the
 #    compiler
 #
@@ -76,15 +74,6 @@ DAT_DIR=$(ROOT_DIR)/data
 # definition, by entering "./setopts -c1" to enable CUDA (uncomment) or 
 # "./setopts -c0" to disable (comment out).
 #======================================================================
-# Conditional compilation of C++ with OpenMP 
- 
-# Defining PSCF_OPENMP enables compilation of C++ with OpenMP.
-#PSCF_OPENMP=1
- 
-# Note: The setopts script may be used to uncomment or comment out this
-# definition, by entering "./setopts -m1" to enable OpenMP (uncomment)
-# or "./setopts -m0" to disable (comment out).
-#======================================================================
 # Define PSCF_DEFS : list of preprocessor definitions pased to compiler
 #
 # The variable PSCF_DEFS is part of the string of command line
@@ -94,10 +83,5 @@ DAT_DIR=$(ROOT_DIR)/data
  
 # Initialize to default empty string
 PSCF_DEFS=
-
-# Conditionally enable OpenMP compilation
-ifdef PSCF_OPENMP
-PSCF_DEFS+= -DPSCF_OPENMP
-endif
 
 #-----------------------------------------------------------------------

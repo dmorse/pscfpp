@@ -22,14 +22,6 @@ LIBS+=$(GSL_LIB)
 INCLUDES+=$(FFTW_INC)
 LIBS+=$(FFTW_LIB) 
 
-# Conditionally enable OpenMP
-ifdef PSCF_OPENMP
-  CXXFLAGS+=$(OPENMP_FLAGS)
-  LDFLAGS+=$(OPENMP_FLAGS)
-  INCLUDES+=$(OPENMP_INC)
-  LIBS+=$(OPENMP_LIB) 
-endif
-
 # List of all preprocessor macro definitions needed in src/rpc
 # UTIL_DEFS is defined in src/util/config.mk
 # PSCF_DEFS is defined in src/config.mk
@@ -44,9 +36,6 @@ MAKEDEP_ARGS+= -B$(BLD_DIR)
 
 # Arguments for MAKEDEP for C++
 MAKEDEP_CXX_ARGS=$(MAKEDEP_ARGS)
-ifdef PSCF_OPENMP
-  MAKEDEP_CXX_ARGS+=$(OPENMP_FLAGS)
-endif
 
 # Pattern rule to compile *.cpp class source files in src/rpc
 # Note: Creates a *.d dependency file as a side effect

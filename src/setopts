@@ -38,7 +38,6 @@
 #
 #   -d (0|1)   debugging           (defines/undefines UTIL_DEBUG)
 #   -c (0|1)   CUDA code           (defines/undefines PSCF_CUDA) 
-#   -m (0|1)   OpenMp code         (defines/undefines PSCF_OPENMP) 
 #
 # This -a option sets an identifier for the NVIDIA GPU architecture to be 
 # targeted by the NVIDIA CUDA compiler. The argument of this command line 
@@ -91,11 +90,6 @@ while getopts "a:c:d:m:qh" opt; do
       VALUE=1
       FILE=config.mk
       ;;
-    m)
-      MACRO=PSCF_OPENMP
-      VALUE=1
-      FILE=config.mk
-      ;;
     q)
       if [ `grep "^ *UTIL_DEBUG *= *1" config.mk` ]; then
          echo "-d ON     - debugging" >&2
@@ -106,11 +100,6 @@ while getopts "a:c:d:m:qh" opt; do
          echo "-c ON     - CUDA compilation" >&2
       else
          echo "-c OFF    - CUDA compilation" >&2
-      fi
-      if [ `grep "^ *PSCF_OPENMP *= *1" config.mk` ]; then
-         echo "-m ON     - OPENMP compilation" >&2
-      else
-         echo "-m OFF    - OPENMP compilation" >&2
       fi
       ;;
     h)
@@ -140,7 +129,6 @@ while getopts "a:c:d:m:qh" opt; do
       echo "  "
       echo "   -d (0|1)   debugging         (defines/undefines UTIL_DEBUG)"
       echo "   -c (0|1)   CUDA code         (defines/undefines PSCF_CUDA)"
-      echo "   -m (0|1)   OpenMP code       (defines/undefines PSCF_OPENMP)"
       echo " "
       echo " The -a option sets an identifier for the NVIDIA GPU architecture"
       echo " to be targeted by the NVIDIA CUDA compiler. The argument of this"
