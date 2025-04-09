@@ -21,17 +21,27 @@ namespace Pscf
    /**
    * Descriptor for a block within an acyclic block polymer.
    *
-   * This class defines the block id, monomerId, length and vertexIds of
-   * a block within a block polymer. It serves as a base class for the
-   * BlockTmpl class template, which is a base class for a class named 
-   * Block in each implementation level namespace. Each such Block class 
-   * is thus a subclass of Edge.
+   * An Edge has:
    *
-   * Block objects associated with a polymer are normally stored in an
-   * array named blocks. The id value of each block should be set to the
-   * element index of the Block within that array.  VertexIds should be 
-   * set for all blocks in a block polymer before the associated edges
-   * are added to the Vertex objects.
+   *    - a monomer type id
+   *    - a length
+   *    - a block id (unique with the polymer)
+   *    - ids of the two vertices at which it terminates
+   *
+   * An Edge is a descriptor for a block within a block polymer, but
+   * does not provide functions or data structure needed to solve the
+   * modified diffusion equation (MDE).  The Edge class is used as a 
+   * base class for subclasses that are block MDE solvers as well as 
+   * descriptors. Each implementation level sub-namespace of Pscf (i.e., 
+   * R1d, Rpc and Rpg) contains a class named Block that is both a 
+   * descriptor and an MDE solver for the associated block.  Each such 
+   * Block class is a subclass of an instance of a class template
+   *  Pscf::BlockTmpl, which is itself a subclass of the Edge class.
+   *
+   * Block objects associated with a polymer are normally stored in 
+   * an array that is a private member of the Pscf::PolymerTmpl class 
+   * template. The block id for each edge be set to the element index
+   * of the Block within that array.  
    *
    * \ref user_param_block_sec "Parameter File Format"
    * \ingroup Pscf_Chem_Module

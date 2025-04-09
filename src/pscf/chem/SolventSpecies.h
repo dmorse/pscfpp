@@ -11,12 +11,18 @@
 #include <pscf/chem/Species.h>             // base class
 #include <util/param/ParamComposite.h>     // base class
 
-namespace Pscf { 
+namespace Pscf {
 
    using namespace Util;
 
    /**
    * Descriptor for a solvent species.
+   *
+   * A SolventSpecies has values for monomer type index (monomerId) and
+   * steric volume per molecule of a solvent species (size), in addition
+   * to properties phi, mu, q, and ensemble inherited from the Species
+   * base class. The size parameter is defined to be the ratio of solvent
+   * molecule volume to the monomer reference volume.
    *
    * \ingroup Pscf_Chem_Module
    */
@@ -29,12 +35,12 @@ namespace Pscf {
       * Constructor.
       */
       SolventSpecies();
-   
+
       /**
       * Constructor.
       */
       ~SolventSpecies();
-   
+
       /**
       * Read and initialize.
       *
@@ -49,7 +55,7 @@ namespace Pscf {
       * Set input value of phi (volume fraction), if ensemble is closed.
       *
       * This function may be used to modify phi during a sweep, after
-      * initialization. An exception is thrown if this function is called
+      * initialization. An Exception is thrown if this function is called
       * when the ensemble is open on entry.
       *
       * \param phi  desired volume fraction for this species
@@ -71,27 +77,29 @@ namespace Pscf {
       * Set the monomer id for this solvent.
       *
       * \param monomerId  integer id of monomer type, in [0,nMonomer-1]
-      */ 
+      */
       void setMonomerId(int monomerId);
-  
+
       /**
-      * Set the size or volume of this solvent species.
+      * Set the molecular volume of this solvent species.
       *
-      * The ``size" is the ratio (steric volume) / (reference volume) .
+      * The ``size" is the ratio (solvent molecule volume) / vMonomer,
+      * where vMonomer is the monomer reference volume, i.e., the 
+      * volume per monomer (or unit contour length) of any polymer.
       *
       * \param size  volume of solvent
-      */ 
+      */
       void setSize(double size);
 
       ///@}
       /// \name Accessors (getters)
       ///@{
- 
+
       /**
       * Get the monomer type id.
-      */ 
+      */
       int monomerId() const;
-  
+
       /**
       * Get the size (number of monomers) in this solvent.
       */
@@ -99,7 +107,7 @@ namespace Pscf {
 
       ///@}
 
-      // Inherited accessor functions 
+      // Inherited accessor functions
       using Pscf::Species::phi;
       using Pscf::Species::mu;
       using Pscf::Species::q;
@@ -116,16 +124,16 @@ namespace Pscf {
       /// Identifier for the associated monomer type.
       int monomerId_;
 
-      /// Size of this block = volume / monomer reference volume. 
+      /// Size of this block = volume / monomer reference volume.
       double size_;
 
    };
-   
+
    // Inline member functions
 
    /*
    * Get the monomer type id.
-   */ 
+   */
    inline int SolventSpecies::monomerId() const
    {  return monomerId_; }
 
@@ -136,4 +144,4 @@ namespace Pscf {
    {  return size_; }
 
 }
-#endif 
+#endif

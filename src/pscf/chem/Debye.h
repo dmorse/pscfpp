@@ -9,6 +9,12 @@
 */
 
 namespace Pscf {
+
+/**
+* Functions used to compute intramolecular correlation functions.
+* 
+* \ingroup Pscf_Chem_Module
+*/
 namespace Debye {
 
    /**
@@ -26,6 +32,8 @@ namespace Debye {
    *     g(x) \equiv 2[ e^{-x} - 1 + x ]/x^2
    * \f]
    * is the Debye function.
+   *
+   * \ingroup Pscf_Chem_Module
    *
    * \param ksq  square of wavenumber
    * \param length  contour length of polymer or block
@@ -45,6 +53,8 @@ namespace Debye {
    *     h(x) \equiv [ 1 - e^{-x} ]/x 
    * \f]
    * is another dimensionless function of x.
+   *
+   * \ingroup Pscf_Chem_Module
    *
    * \param ksq  square of wavenumber
    * \param length  contour length of block

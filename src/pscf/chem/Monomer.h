@@ -17,6 +17,11 @@ namespace Pscf
    /**
    * Descriptor for a monomer type.
    *
+   * A Monomer has:
+   *
+   *  - a unique integer monomer id
+   *  - a statistical segment length
+   *
    * Iostream extractor (>>) and inserter (<<) operators are defined for 
    * a Monomer, allowing the description of a monomer to be read from or
    * written to file like a primitive variable. The text representation 
@@ -24,8 +29,9 @@ namespace Pscf
    * as described \ref pscf_Monomer_page "here".
    *
    * Data for all monomers in a system is normally read from a parameter
-   * file into an array-valued parameter named "monomers". The id of each
-   * monomer is set to its element index within this array.
+   * file into an array-valued parameter named "monomers" in which each
+   * element is a Monomer object. The id of each Monomer should be set 
+   * to its element index within this array.
    *
    * \ingroup Pscf_Chem_Module
    */

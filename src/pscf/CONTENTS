@@ -6,6 +6,7 @@ C++ namespace.
 Subdirectories:
 
    chem/        - molecular structure descriptors
+   cuda/        - utilities for graphics processing units (GPUs)
    homogeneous/ - spatially homogeneous mixtures
    inter/       - models of interaction (excess) free energy 
    iterator/    - templates for iterator algorithms
