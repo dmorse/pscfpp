@@ -23,8 +23,9 @@ namespace Rpc{
    template <int D>
    LrAmCompressor<D>::LrAmCompressor(System<D>& system)
     : Compressor<D>(system),
-      isAllocated_(false),
-      intraCorrelation_(system)
+      intra_(system),
+      intra_(false),
+      isAllocated_(false)
    {  setClassName("LrAmCompressor"); }
 
    // Destructor
@@ -39,19 +40,21 @@ namespace Rpc{
       // Call parent class readParameters
       AmIteratorTmpl<Compressor<D>, DArray<double> >::readParameters(in);
       AmIteratorTmpl<Compressor<D>, DArray<double> >::readErrorType(in);
+   
    }
 
    // Initialize just before entry to iterative loop.
    template <int D>
    void LrAmCompressor<D>::setup(bool isContinuation)
    {
+      
+      // Allocate memory required by AM algorithm if not done earlier.
+      AmIteratorTmpl<Compressor<D>, DArray<double> >::setup(isContinuation);
+      
       const int nMonomer = system().mixture().nMonomer();
       const int meshSize = system().domain().mesh().size();
       IntVec<D> const & dimensions = system().domain().mesh().dimensions();
-
-      // Allocate memory required by AM algorithm if not done earlier.
-      AmIteratorTmpl<Compressor<D>, DArray<double> >::setup(isContinuation);
-
+      
       // Compute Fourier space kMeshDimensions_
       for (int i = 0; i < D; ++i) {
          if (i < D - 1) {
@@ -60,7 +63,7 @@ namespace Rpc{
             kMeshDimensions_[i] = dimensions[i]/2 + 1;
          }
       }
-
+      
       // Allocate memory required by compressor, if not done previously
       if (!isAllocated_){
          newBasis_.allocate(meshSize);
@@ -76,16 +79,20 @@ namespace Rpc{
 
          isAllocated_ = true;
       }
-
+      
+      // Compute intraCorrelation
+      if (!isIntraCalculated_){
+         intra_.computeIntraCorrelations(intraCorrelationK_);
+         isIntraCalculated_ = true;
+      }
+      
       // Store initial values of monomer chemical potential fields in w0_
       for (int i = 0; i < nMonomer; ++i) {
          for (int j = 0; j< meshSize; ++j){
             w0_[i][j] = system().w().rgrid(i)[j];
          }
       }
-
-      // Compute homopolymer intraCorrelation
-      intraCorrelationK_ = intraCorrelation_.computeIntraCorrelations();
+      
    }
 
    /*

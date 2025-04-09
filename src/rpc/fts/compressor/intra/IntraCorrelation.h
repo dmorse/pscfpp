@@ -46,19 +46,9 @@ namespace Rpc
       ~IntraCorrelation();
 
       /**
-      * Compute Debye function
+      * Compute and modify intramolecular correlations 
       */
-      double computeDebye(double x);
-
-      /**
-      * Compute intramolecular correlation at specific sqSquare
-      */
-      double computeIntraCorrelation(double qSquare);
-
-      /**
-      * Compute and return intramolecular correlations 
-      */
-      RField<D> computeIntraCorrelations();
+      void computeIntraCorrelations(RField<D>& intraCorrelations);
 
    protected:
 
@@ -77,7 +67,7 @@ namespace Rpc
       
       /// Size of fourier space
       int kSize_;
-   
+      
    };
    
    // Get the parent system.

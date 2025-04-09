@@ -110,11 +110,6 @@ namespace Rpc
       * Current values of the fields
       */
       DArray< RField<D> > w0_;  
-
-      /**
-      * Has the variable been allocated?
-      */
-      bool isAllocated_;
       
       /**
       * Template w Field used in update function
@@ -249,10 +244,20 @@ namespace Rpc
       double computeLambda(double r);;
       
       /**
-      * IntraCorrelation (homopolymer) object
+      * IntraCorrelation object
       */
-      IntraCorrelation<D> intraCorrelation_;
-    
+      IntraCorrelation<D> intra_;
+      
+      /**
+      * Has the IntraCorrelation been calculated?
+      */
+      bool isIntraCalculated_;
+      
+      /**
+      * Has the variable been allocated?
+      */
+      bool isAllocated_;
+      
       // Inherited private members 
       using Compressor<D>::system;
 
