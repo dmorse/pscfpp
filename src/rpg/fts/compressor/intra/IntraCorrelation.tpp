@@ -101,7 +101,7 @@ namespace Rpg{
             totalN += length;
          }
          
-         prefactor = phi*totalN/vMonomer;
+         prefactor = phi/(totalN*vMonomer);
             
          // Compute diagonal (j = k) contributions
          for (int j = 0; j < nBlock; j++) {

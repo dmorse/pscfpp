@@ -23,7 +23,7 @@ namespace Rpc
    using namespace Pscf::Prdc::Cpu;
 
    /**
-   * Base class for iterators that impose incompressibility.
+   * Intramolecular correlation analysis for LR compressors.
    *
    * \ingroup Rpc_Compressor_Intra_Module
    */
@@ -46,7 +46,9 @@ namespace Rpc
       ~IntraCorrelation();
 
       /**
-      * Compute and modify intramolecular correlations 
+      * Compute and modify intramolecular correlations.
+      *
+      * \param intraCorrelations k-space grid of omega values
       */
       void computeIntraCorrelations(RField<D>& intraCorrelations);
 
