@@ -2,6 +2,7 @@ This is the root directory of PSCF C++/Cuda package. See the README.md
 file for basic instructions on usage.
 
 Subdirectories:
+
   bin/       default installation directory for executables
   bld/       build directory for out-of-source builds 
   data/      read-only data files (i.e., space group description files)
@@ -12,6 +13,7 @@ Subdirectories:
   src/       C++ and CUDA source code files
 
 Files: 
+
   CONTENTS  - this file
   HISTORY   - summary package version development
   LICENSE   - GNU GPL v3 license
