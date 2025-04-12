@@ -11,26 +11,30 @@ Util (directory src/util), parent namespace Pscf (directory src/pscf), and
 namespace Pscf::Prdc (directory src/prdc).
 
 Subdirectories:
+---------------
 
 field/       - classes to represent or manipulate fields
-solvers/     - modified diffusion equation (MDE) solvers
-scft/        - self-consistent field theory (SCFT)
 fts/         - stochastic field-theoretic simulation (FTS)
+scft/        - self-consistent field theory (SCFT)
+solvers/     - modified diffusion equation (MDE) solvers
 tests/       - unit tests for code in src/rpc
 
-C++ Files (file extensions .h, .tpp and .cpp):
+C++ files (file extensions .h, .tpp and .cpp):
+----------------------------------------------
 
 System.*     - System<D> class template (main object)
 pscf_pc.cpp  - main program for periodic structures on CPU hardware
 
 Makefile and makefile fragments:
+--------------------------------
 
 makefile     - main makefile for src/rpc directory tree
 sources.mk   - list of source files in src/rpc (makefile fragment)
 patterns.mk  - pattern rules for use in src/rpc (makefile fragment)
-include.mk   - header of makefile file includes (makefile fragment)
+include.mk   - makefile include statements (makefile fragment)
 
 Doxygen documentation files:
+----------------------------
 
 pscf_pc.dox  - command line interface for pscf_pc executable
 System.dox   - parameter file format for main System block

@@ -16,7 +16,7 @@ namespace R1d {
    using namespace Util;
 
    /**
-   * Concise accesss to an associated System
+   * Concise accesss to an associated System.
    *
    * This class is intended to be a base class for classes that
    * maintain a pointer to an associated system, and that implement

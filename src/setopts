@@ -32,22 +32,25 @@
 #   -q     query: prints report of options that are enabled / disabled.
 #   -h     help: prints a list of available options 
 #
-# The -d, -c and -m options each enable or disable a feature. Each such
+# The -d and -c options each enable or disable a feature. Each such
 # option takes 0 or 1 as a required argument, using 1 to denote "enable"
 # and 0 to denote "disable".
 #
 #   -d (0|1)   debugging           (defines/undefines UTIL_DEBUG)
 #   -c (0|1)   CUDA code           (defines/undefines PSCF_CUDA) 
 #
-# This -a option sets an identifier for the NVIDIA GPU architecture to be 
-# targeted by the NVIDIA CUDA compiler. The argument of this command line 
-# option is passed as the argument of the "-arch" option of the NVIDIA 
+# The -a option sets an identifier for the NVIDIA GPU architecture to be 
+# targeted by the nvcc NVIDIA CUDA compiler. The argument of this command 
+# line option is passed as the argument of the "-arch" option of the nvcc
 # C++ / CUDA compiler. Allowed values are string of the form sm_NN, where 
 # NN is a number that gives the major and minor version number for the CUDA 
-# "compute capability" for the target GPU. For example, the K40 GPU has a 
-# compute capability 3.5, and requires an architecture code sm_35.
+# "compute capability" for the target GPU. For example, the V100 GPU has 
+# a compute capability 7.0, and requires an architecture code sm_70. 
 #
 #  -a [architecture code]          (defines NVARCH)
+#
+# See the NVIDIA web page https://developer.nvidia.com/cuda-gpus#compute 
+# for a list of compute capabibilities for different GPU chips. 
 #
 # Examples:
 #
@@ -59,14 +62,14 @@
 #
 #   >  ./setopts -d0
 #
-# To enable conditional compilation of CUDA code (disabled by default)
-# and set the GPU architecture option to sm_70 (compute capability 7.0,
+# To enable compilation of CUDA code (which is disabled by default) and
+# set the GPU architecture option to sm_70 (compute capability 7.0,
 # appropriate for a V100 chip) one could enter
 #
 #   >  ./setopts -c1  -a sm_70
 #
 #-----------------------------------------------------------------------
-while getopts "a:c:d:m:qh" opt; do
+while getopts "a:c:d:qh" opt; do
 
   if [ -n "$MACRO" ]; then 
     MACRO=""
@@ -123,7 +126,7 @@ while getopts "a:c:d:m:qh" opt; do
       echo "   -q   query: prints list of options that are enabled / disabled"
       echo "   -h   help: prints a list of available options"
       echo " "
-      echo " The -d, -c, and -m options each enable or disable a feature."
+      echo " The -d and -c options each enable or disable a feature."
       echo " Each such option takes 0 or 1 as a required argument, using 1"
       echo " to enable and 0 to disable the feature"
       echo "  "
@@ -136,10 +139,13 @@ while getopts "a:c:d:m:qh" opt; do
       echo " option of the C++ / CUDA compiler. Allowed values are strings"
       echo " of the form sm_NN, where NN is a number that gives the major and"
       echo " minor version number for the CUDA compute capability for the"
-      echo " target architecture. For example, the K40 GPU has a compute"
-      echo " compute capability 3.5, and requires an architecture code sm_35."
+      echo " target architecture. For example, the V100 GPU has a compute"
+      echo " compute capability 7.0, and requires an architecture code sm_70."
       echo " "
       echo "  -a [architecture code]          (defines NVARCH)"
+      echo " "
+      echo " See the web page https://developer.nvidia.com/cuda-gpus#compute"
+      echo " for a list of compute capabibilities for different NVIDIA chips."
       echo " "
       echo " Examples:"
       echo " ---------"
