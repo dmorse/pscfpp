@@ -47,9 +47,11 @@ namespace Rpg
       ~IntraCorrelation();
 
       /**
-      * Compute and return intramolecular correlations 
+      * Compute and return intramolecular correlations. 
+      *
+      * \param correlations  k-space grid of intramolecular correlations
       */
-      void computeIntraCorrelations(RField<D>& intraCorrelations);
+      void computeIntraCorrelations(RField<D>& correlations);
 
    protected:
 

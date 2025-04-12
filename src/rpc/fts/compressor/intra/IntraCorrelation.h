@@ -48,9 +48,9 @@ namespace Rpc
       /**
       * Compute and modify intramolecular correlations.
       *
-      * \param intraCorrelations k-space grid of omega values
+      * \param correlations  k-space grid of omega values
       */
-      void computeIntraCorrelations(RField<D>& intraCorrelations);
+      void computeIntraCorrelations(RField<D>& correlations);
 
    protected:
 
@@ -64,10 +64,10 @@ namespace Rpc
       /// Pointer to the associated system object.
       System<D>* systemPtr_;
       
-      /// Dimensions of fourier space 
+      /// Dimensions of Fourier grid for DFT of a real function
       IntVec<D> kMeshDimensions_;
       
-      /// Size of fourier space
+      /// Number of elements in the Fourier grid
       int kSize_;
       
    };

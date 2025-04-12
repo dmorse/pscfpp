@@ -35,7 +35,7 @@ namespace Rpc{
 
    template<int D>
    void
-   IntraCorrelation<D>::computeIntraCorrelations(RField<D>& intraCorrelations)
+   IntraCorrelation<D>::computeIntraCorrelations(RField<D>& correlations)
    {
       // Local copies of system properties
       Mixture<D> const & mixture = system().mixture();
@@ -54,7 +54,7 @@ namespace Rpc{
             kSize_ *= (dimensions[i]/2 + 1);
          }
       }
-      UTIL_CHECK(intraCorrelations.capacity() == kSize_);
+      UTIL_CHECK(correlations.capacity() == kSize_);
 
       // Allocate Gsq (k-space array of square wavenumber values)
       DArray<double> Gsq;
@@ -75,9 +75,9 @@ namespace Rpc{
       double kuhn, kuhnA, kuhnB, eA, eB;
       int monomerId, monomerIdA, monomerIdB, rank;
 
-      // Initialize intraCorrelations to zero
-      for (int i = 0; i < intraCorrelations.capacity(); ++i){
-         intraCorrelations[i] = 0.0;
+      // Initialize correlations to zero
+      for (int i = 0; i < correlations.capacity(); ++i){
+         correlations[i] = 0.0;
       }
 
       // Loop over polymer species
@@ -105,11 +105,11 @@ namespace Rpc{
             kuhn = mixture.monomer(monomerId).kuhn();
             length = polymer.block(j).length();
 
-            // Loop over ksq to increment intraCorrelations
+            // Loop over ksq to increment correlations
             for (iter.begin(); !iter.atEnd(); ++iter) {
                rank = iter.rank();
                ksq = Gsq[rank];
-               intraCorrelations[rank] += cPolymer * Debye::d(ksq, length, kuhn);
+               correlations[rank] += cPolymer * Debye::d(ksq, length, kuhn);
             }
 
          }
@@ -152,15 +152,16 @@ namespace Rpc{
                      ++EdgeItr;
                   }
 
-                  // Loop over ksq to increment intraCorrelations
+                  // Loop over ksq to increment correlations
                   double x;
+                  double prefactor = 2.0*cPolymer;
                   for (iter.begin(); !iter.atEnd(); ++iter) {
                      rank = iter.rank();
                      ksq = Gsq[rank];
                      x = std::exp( -d * ksq / 6.0);
                      eA = Debye::e(ksq, lengthA, kuhnA);
                      eB = Debye::e(ksq, lengthB, kuhnB);
-                     intraCorrelations[rank] += 2.0 * cPolymer * x * eA * eB;
+                     correlations[rank] += prefactor * x * eA * eB;
                   }
 
                } // loop: block ib
