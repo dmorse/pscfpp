@@ -16,23 +16,22 @@ programs are affected by specific changes:
 Versions before v1.2 use program name pscf_fd and label fd for the 1D
 finite difference code that is now called pscf_1d.
 
-Version 1.2.0 (4/8/2025)
+Version 1.2.0 (4/16/2025)
 =========================================
 
 User-visible features
 ---------------------
-* Stochastic field theoretic simulation (FTS) with real fields in a 
-  partial saddle-point approximation (FTS-PS) (pc, pg)
+* Stochastic field theoretic simulation (FTS) using real-valued fields 
+  and a partial saddle-point approximation (PS-FTS) (pc, pg)
 
-  Implementation of FTS-PS includes:
+  Implementation of PS-FTS includes:
 
-   - Framework for FTS-PS simulations
-   - Brownian Dynamics (BD) or Monte-Carlo (MC) simulations
+   - Brownian Dynamics (BD) and Monte-Carlo (MC) simulations
    - BD Steps: Euler, Predictor-Corrector and Leimkuhler-Matthews
-   - MC Moves: Real-space and Force-Bias/"Smart" MC moves
+   - MC Moves: Real-space and Force-bias/"Smart" MC moves
    - Compressor algorithms to efficiently find partial saddle-points
-   - Analyzer classes to measure structure factor, other observables
-   - ANALYZE command to postprocess field trajectories
+   - Analyzer classes to measure structure factor and other observables
+   - Tools for creating and postprocessing field trajectory files
    - Continuous variation ("Ramp") of one or more parameters
    - Extensible modification ("Perturbation") of FTS Hamiltonian
    - Einstein-crystal method of free energy calculation
@@ -67,12 +66,11 @@ Developer-visible changes
 * Moved CPU and CUDA field and FFT classes to prdc/cpu and prdc/cuda
 * Added Pscf::CudaRandom wrapper class for nVidia RNG
 * Added ParameterModifier interface for sweeping specialized parameters
-* Added test if field is invariant under all space group elements
 * Added inverseId member to Pscf::Basis::Wave
-* Reorganization of FieldIo in Rpc and Rpg to reduce code duplication
+* Reorganized FieldIo classes in Rpc and Rpg to reduce code duplication
 * Reorganized functions for simple mathematical operations on GPU
 * Simplified GPU <-> CPU data copying via DeviceArray and HostDArray
-* Reduced use of bare pointers in GPU code
+* Replaced use of bare pointers to arrays in GPU code by containers
 
 Version 1.1.0  (9/20/2023)
 =========================================
