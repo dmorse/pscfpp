@@ -42,6 +42,7 @@ namespace Rpc{
       UnitCell<D> const & unitCell = system().domain().unitCell();
       IntVec<D> const & dimensions = system().domain().mesh().dimensions();
       const int nPolymer = mixture.nPolymer();
+      const int nSolvent = mixture.nSolvent();
       const double vMonomer = mixture.vMonomer();
 
       // Compute Fourier space kMeshDimensions_
@@ -168,7 +169,21 @@ namespace Rpc{
             } // loop: block ia
          } // if (nBlock > 1)
 
-      } // loop over polymers
+      } // loop over polymer species
+
+      // Loop over solvent species (if any)
+      if (nSolvent > 0) {
+         double size, dcorr;
+         for (int i = 0; i < nSolvent; i++){
+            Solvent<D> const & solvent = mixture.solvent(i);
+            phi = solvent.phi();
+            size = solvent.size();
+            dcorr = phi*size/vMonomer;
+            for (iter.begin(); !iter.atEnd(); ++iter) {
+               correlations[iter.rank()] += dcorr;
+            }
+         }
+      }
 
    }
 
