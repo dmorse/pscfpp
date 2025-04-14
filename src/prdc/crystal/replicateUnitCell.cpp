@@ -59,15 +59,18 @@ namespace Prdc {
       // Choose lattice type and parameters
       UnitCell<2>::LatticeSystem lattice = UnitCell<2>::Null;
       FArray<double, 6> param;
+      int nParameter;
       if (cellIn.lattice() == UnitCell<2>::Square) {
          UTIL_CHECK(cellIn.nParameter() == 1);
          if (replicas[0] == replicas[1]) {
             lattice = UnitCell<2>::Square;
             param[0] = replicas[0]*paramIn[0];
+            nParameter = 1;
          } else {
             lattice = UnitCell<2>::Rectangular;
             param[0] = replicas[0]*paramIn[0];
             param[1] = replicas[1]*paramIn[0];
+            nParameter = 2;
          }
       } else
       if (cellIn.lattice() == UnitCell<2>::Rectangular) {
@@ -75,12 +78,14 @@ namespace Prdc {
          lattice = UnitCell<2>::Rectangular;
          param[0] = replicas[0]*paramIn[0];
          param[1] = replicas[1]*paramIn[1];
+         nParameter = 2;
       } else
       if (cellIn.lattice() == UnitCell<2>::Hexagonal) {
          UTIL_CHECK(cellIn.nParameter() == 1);
          if (replicas[0] == replicas[1]) {
             lattice = UnitCell<2>::Hexagonal;
             param[0] = replicas[0]*paramIn[0];
+            nParameter = 1;
          } else {
             UTIL_THROW("Prohibited unit cell replication");
          }
@@ -91,11 +96,13 @@ namespace Prdc {
             lattice = UnitCell<2>::Rhombic;
             param[0] = replicas[0]*paramIn[0];
             param[1] = paramIn[1];
+            nParameter = 2;
          } else {
             lattice = UnitCell<2>::Oblique;
             param[0] = replicas[0]*paramIn[0];
             param[1] = replicas[1]*paramIn[0];
-            param[2] = paramIn[2];
+            param[2] = paramIn[1];
+            nParameter = 3;
          }
       } else
       if (cellIn.lattice() == UnitCell<2>::Oblique) {
@@ -104,12 +111,14 @@ namespace Prdc {
          param[0] = replicas[0]*paramIn[0];
          param[1] = replicas[1]*paramIn[1];
          param[2] = paramIn[2];
+         nParameter = 3;
       } else {
          UTIL_THROW("Invalid lattice system value");
       }
 
       // Set cellOut object
       cellOut.set(lattice);
+      UTIL_CHECK(cellOut.nParameter() == nParameter);
       FSArray<double, 6> paramOut;
       for (int i=0; i < cellOut.nParameter(); ++i) {
          paramOut.append(param[i]);
@@ -178,16 +187,12 @@ namespace Prdc {
       } else
       if (cellIn.lattice() == UnitCell<3>::Monoclinic) {
          UTIL_CHECK(cellIn.nParameter() == 4);
-         if (replicas[0] == replicas[1]) {
-            lattice = UnitCell<3>::Monoclinic;
-            param[0] = replicas[0]*paramIn[0];
-            param[1] = replicas[1]*paramIn[1];
-            param[2] = replicas[2]*paramIn[2];
-            param[3] = paramIn[3];
-            nParameter = 4;
-         } else {
-            UTIL_THROW("Prohibited unit cell replication");
-         }
+         lattice = UnitCell<3>::Monoclinic;
+         param[0] = replicas[0]*paramIn[0];
+         param[1] = replicas[1]*paramIn[1];
+         param[2] = replicas[2]*paramIn[2];
+         param[3] = paramIn[3];
+         nParameter = 4;
       } else
       if (cellIn.lattice() == UnitCell<3>::Triclinic) {
          UTIL_CHECK(cellIn.nParameter() == 6);
@@ -203,7 +208,7 @@ namespace Prdc {
       if (cellIn.lattice() == UnitCell<3>::Rhombohedral) {
          UTIL_CHECK(cellIn.nParameter() == 2);
          if (replicas[0] == replicas[1] && replicas[1] == replicas[2]) {
-            lattice = UnitCell<3>::Triclinic;
+            lattice = UnitCell<3>::Rhombohedral;
             param[0] = replicas[0]*paramIn[0];
             param[1] = paramIn[1];
             nParameter = 2;

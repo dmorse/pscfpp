@@ -6,6 +6,7 @@
 
 #include <prdc/crystal/UnitCell.h>
 #include <prdc/crystal/shiftToMinimum.h>
+#include <prdc/crystal/replicateUnitCell.h>
 #include <util/math/Constants.h>
 #include <util/format/Int.h>
 #include <util/format/Dbl.h>
@@ -148,6 +149,17 @@ public:
       }
       #endif
 
+      // Test replication
+      IntVec<1> replicas;
+      {
+         UnitCell<1> w;
+         replicas[0] = 2;
+         replicateUnitCell(replicas, v, w);
+         TEST_ASSERT(w.lattice() == UnitCell<1>::Lamellar);
+         TEST_ASSERT(w.nParameter() == 1);
+         TEST_ASSERT(eq(w.parameter(0), 2.0*v.parameter(0)));
+      }
+
    }
 
    void test2DSquare() 
@@ -219,6 +231,32 @@ public:
       TEST_ASSERT(isValidReciprocal(u));
       TEST_ASSERT(isValidDerivative(u));
 
+      // Test replication
+      IntVec<2> replicas;
+
+      // Square replica
+      {
+         UnitCell<2> w;
+         replicas[0] = 2;
+         replicas[1] = 2;
+         replicateUnitCell(replicas, v, w);
+         TEST_ASSERT(w.lattice() == UnitCell<2>::Square);
+         TEST_ASSERT(w.nParameter() == 1);
+         TEST_ASSERT(eq(w.parameter(0), 2.0*v.parameter(0)));
+      }
+
+      // Rectangular replica
+      {
+         UnitCell<2> w;
+         replicas[0] = 1;
+         replicas[1] = 3;
+         replicateUnitCell(replicas, v, w);
+         TEST_ASSERT(w.lattice() == UnitCell<2>::Rectangular);
+         TEST_ASSERT(w.nParameter() == 2);
+         TEST_ASSERT(eq(w.parameter(0), 1.0*v.parameter(0)));
+         TEST_ASSERT(eq(w.parameter(1), 3.0*v.parameter(0)));
+      }
+
    }
 
    void test2DHexagonal() 
@@ -286,6 +324,18 @@ public:
       TEST_ASSERT(isValidReciprocal(u));
       TEST_ASSERT(isValidDerivative(u));
 
+      // Test replication
+      IntVec<2> replicas;
+      {
+         UnitCell<2> w;
+         replicas[0] = 2;
+         replicas[1] = 2;
+         replicateUnitCell(replicas, v, w);
+         TEST_ASSERT(w.lattice() == UnitCell<2>::Hexagonal);
+         TEST_ASSERT(w.nParameter() == 1);
+         TEST_ASSERT(eq(w.parameter(0), 2.0*v.parameter(0)));
+      }
+
    }
 
    void test2DRectangular() 
@@ -318,6 +368,19 @@ public:
       }
       TEST_ASSERT(isValidReciprocal(u));
       TEST_ASSERT(isValidDerivative(u));
+
+      // Test replication
+      IntVec<2> replicas;
+      {
+         UnitCell<2> w;
+         replicas[0] = 2;
+         replicas[1] = 2;
+         replicateUnitCell(replicas, v, w);
+         TEST_ASSERT(w.lattice() == UnitCell<2>::Rectangular);
+         TEST_ASSERT(w.nParameter() == 2);
+         TEST_ASSERT(eq(w.parameter(0), 2.0*v.parameter(0)));
+         TEST_ASSERT(eq(w.parameter(1), 2.0*v.parameter(1)));
+      }
 
    }
 
@@ -360,6 +423,19 @@ public:
       TEST_ASSERT(isValidReciprocal(u));
       TEST_ASSERT(isValidDerivative(u));
 
+      // Test replication
+      IntVec<2> replicas;
+      {
+         UnitCell<2> w;
+         replicas[0] = 2;
+         replicas[1] = 2;
+         replicateUnitCell(replicas, v, w);
+         TEST_ASSERT(w.lattice() == UnitCell<2>::Rhombic);
+         TEST_ASSERT(w.nParameter() == 2);
+         TEST_ASSERT(eq(w.parameter(0), 2.0*v.parameter(0)));
+         TEST_ASSERT(eq(w.parameter(1), v.parameter(1)));
+      }
+
    }
 
    void test2DOblique() 
@@ -401,6 +477,20 @@ public:
       }
       TEST_ASSERT(isValidReciprocal(u));
       TEST_ASSERT(isValidDerivative(u));
+
+      // Test replication
+      IntVec<2> replicas;
+      {
+         UnitCell<2> w;
+         replicas[0] = 2;
+         replicas[1] = 3;
+         replicateUnitCell(replicas, v, w);
+         TEST_ASSERT(w.lattice() == UnitCell<2>::Oblique);
+         TEST_ASSERT(w.nParameter() == 3);
+         TEST_ASSERT(eq(w.parameter(0), 2.0*v.parameter(0)));
+         TEST_ASSERT(eq(w.parameter(1), 3.0*v.parameter(1)));
+         TEST_ASSERT(eq(w.parameter(2), v.parameter(2)));
+      }
 
    }
 
@@ -496,6 +586,48 @@ public:
       TEST_ASSERT(isValidReciprocal(u));
       TEST_ASSERT(isValidDerivative(u));
 
+      // Test replication
+      IntVec<3> replicas;
+
+      // Cubic replica
+      {
+         UnitCell<3> w;
+         replicas[0] = 2;
+         replicas[1] = 2;
+         replicas[2] = 2;
+         replicateUnitCell(replicas, v, w);
+         TEST_ASSERT(w.lattice() == UnitCell<3>::Cubic);
+         TEST_ASSERT(w.nParameter() == 1);
+         TEST_ASSERT(eq(w.parameter(0), 2.0*v.parameter(0)));
+      }
+
+      // Tetragonal replica
+      {
+         UnitCell<3> w;
+         replicas[0] = 2;
+         replicas[1] = 2;
+         replicas[2] = 3;
+         replicateUnitCell(replicas, v, w);
+         TEST_ASSERT(w.lattice() == UnitCell<3>::Tetragonal);
+         TEST_ASSERT(w.nParameter() == 2);
+         TEST_ASSERT(eq(w.parameter(0), 2.0*v.parameter(0)));
+         TEST_ASSERT(eq(w.parameter(1), 3.0*v.parameter(0)));
+      }
+
+      // Orthorhombic replica
+      {
+         UnitCell<3> w;
+         replicas[0] = 1;
+         replicas[1] = 2;
+         replicas[2] = 3;
+         replicateUnitCell(replicas, v, w);
+         TEST_ASSERT(w.lattice() == UnitCell<3>::Orthorhombic);
+         TEST_ASSERT(w.nParameter() == 3);
+         TEST_ASSERT(eq(w.parameter(0), 1.0*v.parameter(0)));
+         TEST_ASSERT(eq(w.parameter(1), 2.0*v.parameter(0)));
+         TEST_ASSERT(eq(w.parameter(2), 3.0*v.parameter(0)));
+      }
+
    }
 
    void test3DTetragonal() 
@@ -540,6 +672,36 @@ public:
       }
       TEST_ASSERT(isValidReciprocal(u));
       TEST_ASSERT(isValidDerivative(u));
+
+      // Test replication
+      IntVec<3> replicas;
+
+      // Tetragonal replica
+      {
+         UnitCell<3> w;
+         replicas[0] = 2;
+         replicas[1] = 2;
+         replicas[2] = 3;
+         replicateUnitCell(replicas, v, w);
+         TEST_ASSERT(w.lattice() == UnitCell<3>::Tetragonal);
+         TEST_ASSERT(w.nParameter() == 2);
+         TEST_ASSERT(eq(w.parameter(0), 2.0*v.parameter(0)));
+         TEST_ASSERT(eq(w.parameter(1), 3.0*v.parameter(1)));
+      }
+
+      // Orthorhombic replica
+      {
+         UnitCell<3> w;
+         replicas[0] = 1;
+         replicas[1] = 2;
+         replicas[2] = 3;
+         replicateUnitCell(replicas, v, w);
+         TEST_ASSERT(w.lattice() == UnitCell<3>::Orthorhombic);
+         TEST_ASSERT(w.nParameter() == 3);
+         TEST_ASSERT(eq(w.parameter(0), 1.0*v.parameter(0)));
+         TEST_ASSERT(eq(w.parameter(1), 2.0*v.parameter(0)));
+         TEST_ASSERT(eq(w.parameter(2), 3.0*v.parameter(1)));
+      }
 
    }
 
@@ -626,6 +788,23 @@ public:
       TEST_ASSERT(isValidReciprocal(u));
       TEST_ASSERT(isValidDerivative(u));
 
+      // Test replication
+      IntVec<3> replicas;
+
+      {
+         UnitCell<3> w;
+         replicas[0] = 2;
+         replicas[1] = 2;
+         replicas[2] = 1;
+         replicateUnitCell(replicas, v, w);
+         TEST_ASSERT(w.lattice() == UnitCell<3>::Orthorhombic);
+         TEST_ASSERT(w.nParameter() == 3);
+         TEST_ASSERT(eq(w.parameter(0), 2.0*v.parameter(0)));
+         TEST_ASSERT(eq(w.parameter(1), 2.0*v.parameter(1)));
+         TEST_ASSERT(eq(w.parameter(2), 1.0*v.parameter(2)));
+      }
+
+
    }
 
 
@@ -674,6 +853,20 @@ public:
       TEST_ASSERT(isValidReciprocal(u));
       TEST_ASSERT(isValidDerivative(u));
 
+      // Test replication
+      IntVec<3> replicas;
+      {
+         UnitCell<3> w;
+         replicas[0] = 2;
+         replicas[1] = 2;
+         replicas[2] = 3;
+         replicateUnitCell(replicas, v, w);
+         TEST_ASSERT(w.lattice() == UnitCell<3>::Hexagonal);
+         TEST_ASSERT(w.nParameter() == 2);
+         TEST_ASSERT(eq(w.parameter(0), 2.0*v.parameter(0)));
+         TEST_ASSERT(eq(w.parameter(1), 3.0*v.parameter(1)));
+      }
+
    }
 
 
@@ -687,6 +880,7 @@ public:
       openInputFile("in/Rhombohedral", in);
       in >> v;
 
+      TEST_ASSERT(v.lattice() == UnitCell<3>::Rhombohedral);
       TEST_ASSERT(v.nParameter() == 2);
 
       // Check rBasis, and interpretation of parameter a and beta
@@ -739,6 +933,20 @@ public:
       TEST_ASSERT(isValidReciprocal(u));
       TEST_ASSERT(isValidDerivative(u));
 
+      // Test replication
+      IntVec<3> replicas;
+      {
+         UnitCell<3> w;
+         replicas[0] = 2;
+         replicas[1] = 2;
+         replicas[2] = 2;
+         replicateUnitCell(replicas, v, w);
+         TEST_ASSERT(w.lattice() == UnitCell<3>::Rhombohedral);
+         TEST_ASSERT(w.nParameter() == 2);
+         TEST_ASSERT(eq(w.parameter(0), 2.0*v.parameter(0)));
+         TEST_ASSERT(eq(w.parameter(1), v.parameter(1)));
+      }
+
    }
 
    void test3DMonoclinic() 
@@ -751,6 +959,7 @@ public:
       openInputFile("in/Monoclinic", in);
       in >> v;
 
+      TEST_ASSERT(v.lattice() == UnitCell<3>::Monoclinic);
       TEST_ASSERT(v.nParameter() == 4);
 
       bool isReciprocal = isValidReciprocal(v);          // Quiet test
@@ -788,6 +997,22 @@ public:
       TEST_ASSERT(isValidReciprocal(u));
       TEST_ASSERT(isValidDerivative(u));
 
+      // Test replication
+      IntVec<3> replicas;
+      {
+         UnitCell<3> w;
+         replicas[0] = 2;
+         replicas[1] = 1;
+         replicas[2] = 3;
+         replicateUnitCell(replicas, v, w);
+         TEST_ASSERT(w.lattice() == UnitCell<3>::Monoclinic);
+         TEST_ASSERT(w.nParameter() == 4);
+         TEST_ASSERT(eq(w.parameter(0), 2.0*v.parameter(0)));
+         TEST_ASSERT(eq(w.parameter(1), 1.0*v.parameter(1)));
+         TEST_ASSERT(eq(w.parameter(2), 3.0*v.parameter(2)));
+         TEST_ASSERT(eq(w.parameter(3), v.parameter(3)));
+      }
+
    }
 
    void test3DTriclinic() 
@@ -800,6 +1025,7 @@ public:
       openInputFile("in/Triclinic", in);
       in >> v;
 
+      TEST_ASSERT(v.lattice() == UnitCell<3>::Triclinic);
       TEST_ASSERT(v.nParameter() == 6);
 
       bool isReciprocal = isValidReciprocal(v);          // Quiet test
@@ -830,6 +1056,24 @@ public:
       }
       TEST_ASSERT(isValidReciprocal(u));
       TEST_ASSERT(isValidDerivative(u));
+
+      // Test replication
+      IntVec<3> replicas;
+      {
+         UnitCell<3> w;
+         replicas[0] = 2;
+         replicas[1] = 1;
+         replicas[2] = 3;
+         replicateUnitCell(replicas, v, w);
+         TEST_ASSERT(w.lattice() == UnitCell<3>::Triclinic);
+         TEST_ASSERT(w.nParameter() == 6);
+         TEST_ASSERT(eq(w.parameter(0), 2.0*v.parameter(0)));
+         TEST_ASSERT(eq(w.parameter(1), 1.0*v.parameter(1)));
+         TEST_ASSERT(eq(w.parameter(2), 3.0*v.parameter(2)));
+         TEST_ASSERT(eq(w.parameter(3), v.parameter(3)));
+         TEST_ASSERT(eq(w.parameter(4), v.parameter(4)));
+         TEST_ASSERT(eq(w.parameter(5), v.parameter(5)));
+      }
 
    }
 
