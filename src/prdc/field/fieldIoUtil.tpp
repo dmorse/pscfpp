@@ -10,6 +10,7 @@
 
 #include <prdc/crystal/Basis.h>
 #include <prdc/crystal/UnitCell.h>
+#include <prdc/crystal/replicateUnitCell.h>
 #include <prdc/crystal/shiftToMinimum.h>
 #include <prdc/crystal/fieldHeader.h>
 
@@ -1066,14 +1067,10 @@ namespace Prdc {
          }
       }
 
-      // Set up UnitCell for replicated fields
+      // Create a replicated UnitCell<D> object 
+      // Use function declared in prdc/crystal/replicateUnitCell.h
       UnitCell<D> cell;
-      FSArray<double, 6> parameters;
-      int nParameter = unitCell.nParameter();
-      for (int i = 0; i < nParameter; i++) {
-         parameters.append(replicas[i] * unitCell.parameter(i));
-      }
-      cell.set(unitCell.lattice(), parameters);
+      replicateUnitCell(replicas, unitCell, cell);
 
       // Write header
       int v1 = 1;
