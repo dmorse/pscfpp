@@ -1,15 +1,15 @@
 The src/pscf directory contains source files in namespace Pscf that can be 
-used in several different implementations of self-consistent field theory. 
-All entities defined in files in this directory are defined in the Pscf 
-C++ namespace.
+used by any program in the PSCF package.  All entities defined in files in 
+this directory are defined in the Pscf C++ namespace.
 
 Subdirectories:
+---------------
 
    chem/        - molecular structure descriptors
    cuda/        - utilities for graphics processing units (GPUs)
    homogeneous/ - spatially homogeneous mixtures
    inter/       - models of interaction (excess) free energy 
-   iterator/    - templates for iterator algorithms
+   iterator/    - utilities for iterator algorithms
    math/        - mathematical utilities
    mesh/        - spatial mesh
    solvers/     - templates for modified diffusion eqn (MDE) solvers 
@@ -20,17 +20,20 @@ All classes in subdirectory pscf/homogeneous are defined in a nested
 namespace Pscf::Homogeneous 
 
 C++ file:
+---------
 
 paths.h  - directory paths used in C++ (edited by configure script)
 
 Makefile and makefile fragments:
+--------------------------------
 
 makefile     - main makefile for src/pscf directory tree
 sources.mk   - list of source files in src/pscf (makefile fragment)
 patterns.mk  - pattern rules for use in src/pscf (makefile fragment)
 include.mk   - header of makefile file includes (makefile fragment)
 
-Doxygen documentation files:
+Doxygen documentation file:
+---------------------------
 
 pscf.mod     - definition of Pscf_NS_Module doxygen topics module 
 

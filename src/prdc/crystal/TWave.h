@@ -1,5 +1,6 @@
-#ifndef PSSP_TWAVE_H
-#define PSSP_TWAVE_H
+#ifndef PRDC_TWAVE_H
+#define PRDC_TWAVE_H
+
 /*
 * PSCF - Polymer Self-Consistent Field Theory
 *
@@ -40,7 +41,7 @@ namespace Prdc {
 
       /**
       * Function (a, b) returns true iff a.sqNorm < b.sqNorm.
-      */ 
+      */
       bool operator() (const TWave<D>& a, const TWave<D>& b) const
       {  return (a.sqNorm < b.sqNorm); }
 
@@ -58,7 +59,7 @@ namespace Prdc {
 
       /**
       * Function (a, b) returns true iff a.indicesDft < b.indicesDft
-      */ 
+      */
       bool operator() (const TWave<D>& a, const TWave<D>& b) const
       {  return (a.indicesDft < b.indicesDft); }
 
@@ -76,7 +77,7 @@ namespace Prdc {
 
       /**
       * Function (a, b) returns true iff a.indicesBz > b.indicesBz
-      */ 
+      */
       bool operator() (const TWave<D>& a, const TWave<D>& b) const
       {  return (a.indicesBz > b.indicesBz); }
 

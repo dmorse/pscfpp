@@ -15,6 +15,7 @@ Pscf::Prdc (directory src/prdc).
 
 
 Subdirectories:
+---------------
 
 field/      - classes to represent or manipulate fields
 solvers/    - modified diffusion equation (MDE) solvers
@@ -22,19 +23,22 @@ scft/       - self-consistent field theory (SCFT)
 fts/        - stochastic field theoretic simulation (FTS)
 tests/      - unit tests for code in src/rpg
 
-C++/CUDA Source Files (file extensions .h, .tpp and .cu)
+C++/CUDA Source Files (file extensions .h, .tpp and .cu):
+---------------------------------------------------------
 
 System.*    - System<D> class template (main object)
 pscf_pg.cu  - Main program for real perodic fields using a GPU
 
 Makefile and makefile fragments:
+--------------------------------
 
 makefile    - main makefile for src/rpg directory tree
 sources.mk  - list of source files in src/rpg (makefile fragment)
 patterns.mk - pattern rules for src/rpg (makefile fragment)
-include.mk  - header of makefile includes (makefile fragment)
+include.mk  - makefile include statements (makefile fragment)
 
 Doxygen documentation files:
+----------------------------
 
 pscf_pg.dox - command line interface for pscf_pg main program
 rpg.mod     - definition of Pscf_Rpg_Module doxygen topic module 

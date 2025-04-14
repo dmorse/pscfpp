@@ -47,19 +47,11 @@ namespace Rpg
       ~IntraCorrelation();
 
       /**
-      * Compute Debye function
+      * Compute and return intramolecular correlations. 
+      *
+      * \param correlations  k-space grid of intramolecular correlations
       */
-      double computeDebye(double x);
-
-      /**
-      * Compute intramolecular correlation at specific sqSquare
-      */
-      double computeIntraCorrelation(double qSquare);
-
-      /**
-      * Compute and return intramolecular correlations 
-      */
-      RField<D> computeIntraCorrelations();
+      void computeIntraCorrelations(RField<D>& correlations);
 
    protected:
 

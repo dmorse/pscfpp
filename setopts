@@ -5,20 +5,22 @@
 #
 # Purpose: Globally change compile-time options.
 #
-# This script should be called after setup but prior to compiling in order
-# to enable or disable particular compile time features. This version of 
-# the script must be called from the pscfpp/ root directory, and applies 
-# all changes to config.mk files used for code compiled in either the 
-# bld/ directory (for out-of-source compilation) or in the src/ directory
-# (for in-source compilation).  To instead apply changes only to code
-# compiled in one build directory (i.e., only in bld/ or src/), one must
-# change directory (cd) to that build directory and invoke the local 
-# setopts script located there.
+# This script should be called after calling the configure script to set 
+# up the build system but prior to compiling in order to enable or disable 
+# particular compile time features. This version of the script must be 
+# called from the pscfpp/ root directory, and applies all changes to 
+# config.mk files used for code compiled in either the bld/ directory (for 
+# out-of-source compilation) or in the src/ directory (for in-source 
+# compilation).  To instead apply changes only to code compiled in one
+# build directory (i.e., only in bld/ or src/), one must change directory 
+# (cd) to that build directory and invoke the local setopts script located 
+# there.
 #
 # This "global" version of the setopts script works by simply recursively
-# invoking the local setopts scripts in the bld/ and src/ directories.
-# It accepts all of the same  options that are accepted by the setopts
-# scripts in the src/ and bld/ directories.
+# invoking the local setopts scripts in the bld/ and src/ directories to
+# apply changes in both build directories.  It accepts all of the same  
+# options as those accepted by the setopts scripts in the src/ and bld/ 
+# directories.
 #
 # Synopsis:
 # --------
@@ -46,8 +48,8 @@
 # option is passed as the argument of the "-arch" option of the NVIDIA
 # C++ / CUDA compiler. Allowed values are string of the form sm_NN, where
 # NN is a number that gives the major and minor version number for the CUDA
-# "compute capability" for the target GPU. For example, the K40 GPU has a
-# compute capability 3.5, and requires an architecture code sm_35.
+# "compute capability" for the target GPU. For example, the V100 GPU has a
+# compute capability 7.0, and requires an architecture code sm_70.
 #
 #  -a (architecture code)          (defines NVARCH)
 #
@@ -123,10 +125,13 @@ while getopts "a:c:d:m:qh" opt; do
       echo " Allowed values are strings of the form sm_MN, where MN is a"
       echo " number that gives the major (M) and minor (N) version number"
       echo " for the CUDA compute capability of the target architecture."
-      echo " For example, the K40 GPU has a compute capability 3.5, and"
-      echo " and thus requires an architecture identifier sm_35."
+      echo " For example, the V100 GPU has a compute capability 7.0, and"
+      echo " and thus requires an architecture identifier sm_70."
       echo " "
       echo "  -a [architecture id]    (defines NVARCH)"
+      echo " "
+      echo " See web page https://developer.nvidia.com/cuda-gpus#compute"
+      echo " for a list of compute capabibilities for different NVIDIA GPUs." 
       echo " "
       echo " Examples:"
       echo " ---------"

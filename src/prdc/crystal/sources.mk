@@ -10,7 +10,8 @@ prdc_crystal_= \
   prdc/crystal/groupFile.cpp \
   prdc/crystal/BFieldComparison.cpp \
   prdc/crystal/getDimension.cpp \
-  prdc/crystal/paramIdConversions.cpp
+  prdc/crystal/paramIdConversions.cpp \
+  prdc/crystal/replicateUnitCell.cpp 
 
 prdc_crystal_OBJS=\
      $(addprefix $(BLD_DIR)/, $(prdc_crystal_:.cpp=.o))

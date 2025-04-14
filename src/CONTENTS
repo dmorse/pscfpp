@@ -1,27 +1,33 @@
 This src/ directory contains all C++ and CUDA source code for the PSCF 
-package.  Each of the subdirectories util/, pscf/, prdc/, r1d/, rpc/, and 
-rpg/ contain source code from a particular C++ namespace.  Subdirectories 
-util/ and test/ are maintained as separate github repositories that are 
-installed as submodules of the pscfpp respository. 
+package.  The subdirectories util/, pscf/, prdc/, r1d/, rpc/, and rpg/ 
+each contain source code for classes and functions defined in a particular 
+C++ namespace.  Subdirectories util/ and test/ are maintained as separate 
+github repositories that are installed as submodules of the pscfpp 
+respository. 
 
 Subdirectories (corresponding namespace names in parentheses):
 
   util/  general utilities for scientific computation (Util)
-  pscf/  shared classes for entire package PSCF (Pscf)
+  pscf/  shared classes accessible to the entire PSCF package (Pscf)
   prdc/  shared classes for periodic structures (Pscf::Prdc)
   r1d/   real fields, one-dimensional SCFT (Pscf::R1d)
-  rpc/   real periodic fields, SCFT & FTS on CPU (Pscf::Rpc)
-  rpg/   real periodic fields, SCFT & FTMC on GPU (Pscf::Rpg)
+  rpc/   real periodic fields, SCFT & PS-FTS on CPU (Pscf::Rpc)
+  rpg/   real periodic fields, SCFT & PS-FTS on GPU (Pscf::Rpg)
   test/  unit testing framework (base classes)
 
-Files (in repository):
+  Directories r1d, rpc, and rpg each contain code that is only used by
+  and accessible to a single executable program, namely pscf_1d, pscf_pc 
+  or pscf_pg, respectively. Directories util, pscf, and prdc each contain
+  code that is used by two or more programs.
+
+Files (maintained in git repository):
 
   setopts  - script for managing compile-time options
   makefile - main makefile for in-source compilation (build in src/)
   programs.mod - doxygen page for program command-line interfaces
   CONTENTS - this file
 
-Files (installed by configure script):
+Files (installed by the configure script):
 
-  config.mk - main configuration file (editable)
+  config.mk - main configuration file (editable makefile fragment)
 

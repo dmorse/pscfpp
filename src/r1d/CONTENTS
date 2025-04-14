@@ -3,6 +3,7 @@ a one-dimensional finite difference implementation of polymer SCFT.
 All code in this directory is defined in C++ namespace Pscf::R1d.
 
 Subdirectories:
+---------------
 
 domain/    - classes that define the spatial domain
 iterator/  - iterative SCF equation solvers
@@ -12,23 +13,25 @@ sweep/     - classes to implement continuation of solutions ("sweep")
 tests/     - unit cell tests for R1d code
 
 C++ Files:
+----------
 
-pscf_fd.cpp - Main program 
+pscf_1d.cpp - Main program 
 System.h    - System class (main object)
 System.cpp  - System class (main object) 
 SystemAccess.h   - base class for concise access to a System 
 SystemAccess.cpp - base class for concise access to a System
 
 Makefile and makefile fragments:
+--------------------------------
 
+makefile     - main makefile for src/r1d directory tree
 source.mk    - list of source files (makefile fragment)
-patterns.mk  - pattern rules for src/fd1d (makefile fragment)
-include.mk   - header of makefile includes (makefile fragment)
-makefile     - main makefile for src/fd1d directory tree
-config.mk    - configuration file (installed by setup script)
+patterns.mk  - pattern rules for src/r1d (makefile fragment)
+include.mk   - makefile include statements (makefile fragment)
 
 Doxygen documentation files:
+----------------------------
 
-r1d.mod      - definition of R1d doxygen module 
-pscf_fd.dox  - command line interface documentation for pscf_fd
+r1d.mod      - definition of R1d doxygen topic module 
+pscf_1d.dox  - command line interface for pscf_1d
 

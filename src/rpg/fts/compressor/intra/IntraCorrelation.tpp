@@ -12,6 +12,8 @@
 #include <rpg/System.h>
 #include <util/global.h>
 #include <pscf/mesh/MeshIterator.h>
+#include <pscf/chem/Debye.h>
+#include <pscf/chem/EdgeIterator.h>
 #include <pscf/iterator/NanException.h>
 #include <pscf/chem/PolymerType.h>
 #include <pscf/cuda/HostDArray.h>
@@ -34,67 +36,19 @@ namespace Rpg{
    IntraCorrelation<D>::~IntraCorrelation()
    {}
 
-   template<int D>
-   double IntraCorrelation<D>::computeDebye(double x)
-   {
-      if (x == 0){
-         return 1.0;
-      } else {
-         return 2.0 * (std::exp(-x) - 1.0 + x) / (x * x);
-      }
-   }
 
    template<int D>
-   double IntraCorrelation<D>::computeIntraCorrelation(double qSquare)
+   void 
+   IntraCorrelation<D>::computeIntraCorrelations(RField<D>& correlations)
    {
-      const int np = system().mixture().nPolymer();
-      const double vMonomer = system().mixture().vMonomer();
-      
-      // Overall intramolecular correlation
-      double omega = 0;
-      int monomerId; int nBlock;
-      double phi; double kuhn; double length; 
-      double totalN; double avgKuhn; double g; double rg2;
-      Polymer<D> const * polymerPtr;
-      PolymerType::Enum type;
-      for (int i = 0; i < np; i++){
-         polymerPtr = &system().mixture().polymer(i);
-         
-         // Ensure this function only works for linear polymers
-         type = polymerPtr->type();
-         UTIL_CHECK(type == PolymerType::Linear);
-         
-         phi = polymerPtr->phi();
-         nBlock = polymerPtr->nBlock();
-         totalN = 0;
-         avgKuhn = 0;
-         for (int j = 0; j < nBlock; j++) {
-            monomerId = polymerPtr-> block(j).monomerId();
-            kuhn = system().mixture().monomer(monomerId).kuhn();
-            if (PolymerModel::isThread()) {
-               length = polymerPtr-> block(j).length();
-            } else {
-               length = (double) polymerPtr-> block(j).nBead();
-            }
-            totalN += length;
-            avgKuhn += kuhn/nBlock;
-         }
-         rg2 = totalN* avgKuhn* avgKuhn /6.0;
-         g = computeDebye(qSquare*rg2);
-         omega += phi*totalN*g/ vMonomer;
-      }
-      
-      return omega;
-   }
+      // Local copies of system properties
+      Mixture<D> const & mixture = system().mixture();
+      UnitCell<D> const & unitCell = system().domain().unitCell();
+      IntVec<D> const & dimensions = system().domain().mesh().dimensions();
+      const int nPolymer = mixture.nPolymer();
+      const double vMonomer = mixture.vMonomer();
 
-   template<int D>
-   RField<D> IntraCorrelation<D>::computeIntraCorrelations()
-   {
-      
-      IntVec<D> const & dimensions = system().mesh().dimensions();
-      
       // Compute Fourier space kMeshDimensions_
-      kSize_ = 1;
       for (int i = 0; i < D; ++i) {
          if (i < D - 1) {
             kMeshDimensions_[i] = dimensions[i];
@@ -104,32 +58,129 @@ namespace Rpg{
             kSize_ *= (dimensions[i]/2 + 1);
          }
       }
-      
-      // Define IntraCorrelations.
-      RField<D> intraCorrelations;
-      intraCorrelations.allocate(kMeshDimensions_);
-      
-      // CudaReal array
-      HostDArray<cudaReal> hostField;
-      hostField.allocate(kSize_);
-      
-      // Define iterator
+      UTIL_CHECK(correlations.capacity() == kSize_);
+
+      // Allocate Gsq (k-space array of square wavenumber values)
+      DArray<double> Gsq;
+      Gsq.allocate(kSize_);
+
+      // Compute Gsq
+      IntVec<D> G, Gmin;
       MeshIterator<D> iter;
       iter.setDimensions(kMeshDimensions_);
-      IntVec<D> G, Gmin;
-      double Gsq;
       for (iter.begin(); !iter.atEnd(); ++iter) {
          G = iter.position();
-         Gmin = shiftToMinimum(G, system().mesh().dimensions(), 
-                                  system().unitCell());
-         Gsq = system().unitCell().ksq(Gmin);
-         hostField[iter.rank()] = (cudaReal) computeIntraCorrelation(Gsq);
+         Gmin = shiftToMinimum(G, dimensions, unitCell);
+         Gsq[iter.rank()] = unitCell.ksq(Gmin);
       }
+
+      double phi, cPolymer, polymerLength;
+      double length, lengthA, lengthB, ksq;
+      double kuhn, kuhnA, kuhnB, eA, eB;
+      int monomerId, monomerIdA, monomerIdB, rank;
+
+      // Allocate local array
+      HostDArray<cudaReal> correlations_h;
+      correlations_h.allocate(kSize_);
       
-      // Copy to device (gpu) memory
-      intraCorrelations = hostField;
-   
-      return intraCorrelations;
+      // Initialize correlations_h to zero
+      for (int i = 0; i < correlations_h.capacity(); ++i){
+         correlations_h[i] = 0.0;
+      }
+
+      // Loop over polymer species
+      for (int i = 0; i < nPolymer; i++){
+
+         // Local copies of polymer properties
+         Polymer<D> const & polymer = mixture.polymer(i);
+         const int nBlock = polymer.nBlock();
+         phi = polymer.phi();
+
+         // Compute polymerLength (sum of lengths of all blocks)
+         polymerLength = 0.0;
+         for (int j = 0; j < nBlock; j++) {
+            length = polymer.block(j).length();
+            polymerLength += length;
+         }
+
+         // Compute cPolymer (polymer number concentration)
+         cPolymer = phi/(polymerLength*vMonomer);
+
+         // Compute diagonal (j = k) contributions
+         for (int j = 0; j < nBlock; j++) {
+
+            monomerId = polymer.block(j).monomerId();
+            kuhn = mixture.monomer(monomerId).kuhn();
+            length = polymer.block(j).length();
+
+            // Loop over ksq to increment correlations_h
+            for (iter.begin(); !iter.atEnd(); ++iter) {
+               rank = iter.rank();
+               ksq = Gsq[rank];
+               correlations_h[rank] += cPolymer * Debye::d(ksq, length, kuhn);
+            }
+
+         }
+
+         // Compute off-diagonal contributions
+         if (nBlock > 1) {
+            EdgeIterator EdgeItr(polymer);
+
+            // Outer loop over blocks
+            for (int ia = 1; ia < nBlock; ++ia) {
+
+               // Block A properties
+               Block<D> const & blockA = polymer.block(ia);
+               lengthA = blockA.length();
+               monomerIdA = blockA.monomerId();
+               kuhnA = mixture.monomer(monomerIdA).kuhn();
+
+               // Inner loop over blocks
+               for (int ib = 0; ib < ia; ++ib)  {
+
+                  // Block B properties
+                  Block<D> const & blockB = polymer.block(ib);
+                  lengthB = blockB.length();
+                  monomerIdB = blockB.monomerId();
+                  kuhnB = mixture.monomer(monomerIdB).kuhn();
+
+                  // Mean-square end-to-end length of segment between blocks
+                  double d = 0.0;
+                  int edgeId;
+                  EdgeItr.begin(ia, ib);
+                  while (EdgeItr.notEnd()) {
+                     edgeId = EdgeItr.currentEdgeId();
+                     if (edgeId != ia && edgeId != ib){
+                        Block<D> const & blockK = polymer.block(edgeId);
+                        double lengthK = blockK.length();
+                        double monomerIdK = blockK.monomerId();
+                        double kuhnK = mixture.monomer(monomerIdK).kuhn();
+                        d += lengthK * kuhnK * kuhnK;
+                     }
+                     ++EdgeItr;
+                  }
+
+                  // Loop over ksq to increment correlations_h
+                  double x;
+                  double prefactor = 2.0*cPolymer;
+                  for (iter.begin(); !iter.atEnd(); ++iter) {
+                     rank = iter.rank();
+                     ksq = Gsq[rank];
+                     x = std::exp( -d * ksq / 6.0);
+                     eA = Debye::e(ksq, lengthA, kuhnA);
+                     eB = Debye::e(ksq, lengthB, kuhnB);
+                     correlations_h[rank] += prefactor * x * eA * eB;
+                  }
+
+               } // loop: block ib
+            } // loop: block ia
+         } // if (nBlock > 1)
+
+      } // loop over polymers
+
+      // Copy local array to device (gpu) memory
+      correlations = correlations_h;
+
    }
 
 }

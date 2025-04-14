@@ -14,35 +14,35 @@ programs are affected by specific changes:
   all - all programs (1d, pc, and pg)
 
 Versions before v1.2 use program name pscf_fd and label fd for the 1D
-finite difference code that is now called pscf_1d.
+finite difference SCFT code that is now called pscf_1d.
 
-Version 1.2.0 (4/8/2025)
+Version 1.2.0 (4/14/2025)
 =========================================
 
 User-visible features
 ---------------------
-* Stochastic field theoretic simulation (FTS) with real fields in a 
-  partial saddle-point approximation (FTS-PS) (pc, pg)
+* Stochastic field theoretic simulation (FTS) using real-valued fields 
+  and a partial saddle-point approximation (PS-FTS) in programs with
+  periodic boundary conditions (pc, pg)
 
-  Implementation of FTS-PS includes:
+  Implementation of PS-FTS includes:
 
-   - Framework for FTS-PS simulations
-   - Brownian Dynamics (BD) or Monte-Carlo (MC) simulations
-   - BD Steps: Euler, Predictor-Corrector and Leimkuhler-Matthews
-   - MC Moves: Real-space and Force-Bias/"Smart" MC moves
-   - Compressor algorithms to efficiently find partial saddle-points
-   - Analyzer classes to measure structure factor, other observables
-   - ANALYZE command to postprocess field trajectories
+   - Brownian Dynamics (BD) and Monte-Carlo (MC) simulations
+   - BD Steps: Leimkuhler-Matthews, predictor-corrector and explicit steps
+   - MC Moves: Real-space and Force-bias/"Smart" MC moves
+   - Efficient "Compressor" algorithms to find partial saddle-points
+   - "Analyzer" classes to measure structure factor and other observables
+   - Tools for creating and postprocessing field trajectory files
    - Continuous variation ("Ramp") of one or more parameters
    - Extensible modification ("Perturbation") of FTS Hamiltonian
    - Einstein-crystal method of free energy calculation
 
-* Porting of code for confinement, external fields and thin films
-  to pscf_pg GPU code (pg)
+* Addition of confinement, external fields and thin films to the pscf_pg
+  GPU code (pg)
 
-* Commands to manipulate field files by replicating the unit cell,
-  increasing number spatial dimensions (e.g., create a lamellar phase 
-  in 3D), or scaling fields by a constant.
+* Commands to manipulate field files by replicating the unit cell, 
+  increasing the number of spatial dimensions (e.g., create a 1D lamellar 
+  of 2D hexagonal phase in 3D), or scaling fields by a constant (pc, pg).
 
 User-visible changes
 --------------------
@@ -63,16 +63,15 @@ Developer-visible changes
 * Created namespace Pscf::Prdc in directory src/prdc
 * Code for PS-FTS added in new directories src/rpc/fts and src/rpg/fts
 * Moved some CUDA utility classes to src/pscf/cuda
-* Created Cpu and Cuda subnamespaces of Pscf::Prdc
-* Moved CPU and CUDA field and FFT classes to prdc/cpu and prdc/cuda
+* Created Cpu and Cuda subnamespaces within Pscf::Prdc
+* Moved CPU and GPU field and FFT classes to prdc/cpu and prdc/cuda
 * Added Pscf::CudaRandom wrapper class for nVidia RNG
 * Added ParameterModifier interface for sweeping specialized parameters
-* Added test if field is invariant under all space group elements
 * Added inverseId member to Pscf::Basis::Wave
-* Reorganization of FieldIo in Rpc and Rpg to reduce code duplication
-* Reorganized functions for simple mathematical operations on GPU
+* Reorganized FieldIo classes in Rpc and Rpg to reduce code duplication
+* Reorganized functions for basic mathematical operations on GPU
 * Simplified GPU <-> CPU data copying via DeviceArray and HostDArray
-* Reduced use of bare pointers in GPU code
+* Replaced use of bare pointers to arrays in GPU code by containers
 
 Version 1.1.0  (9/20/2023)
 =========================================

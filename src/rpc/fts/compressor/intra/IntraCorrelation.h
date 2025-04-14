@@ -23,7 +23,7 @@ namespace Rpc
    using namespace Pscf::Prdc::Cpu;
 
    /**
-   * Base class for iterators that impose incompressibility.
+   * Intramolecular correlation analysis for LR compressors.
    *
    * \ingroup Rpc_Compressor_Intra_Module
    */
@@ -46,19 +46,11 @@ namespace Rpc
       ~IntraCorrelation();
 
       /**
-      * Compute Debye function
+      * Compute and modify intramolecular correlations.
+      *
+      * \param correlations  k-space grid of omega values
       */
-      double computeDebye(double x);
-
-      /**
-      * Compute intramolecular correlation at specific sqSquare
-      */
-      double computeIntraCorrelation(double qSquare);
-
-      /**
-      * Compute and return intramolecular correlations 
-      */
-      RField<D> computeIntraCorrelations();
+      void computeIntraCorrelations(RField<D>& correlations);
 
    protected:
 
@@ -72,12 +64,12 @@ namespace Rpc
       /// Pointer to the associated system object.
       System<D>* systemPtr_;
       
-      /// Dimensions of fourier space 
+      /// Dimensions of Fourier grid for DFT of a real function
       IntVec<D> kMeshDimensions_;
       
-      /// Size of fourier space
+      /// Number of elements in the Fourier grid
       int kSize_;
-   
+      
    };
    
    // Get the parent system.

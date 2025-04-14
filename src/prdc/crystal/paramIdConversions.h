@@ -13,7 +13,8 @@
 namespace Pscf { 
 namespace Prdc { 
 
-   /** Convert full lattice parameter index to a reduced index
+   /** 
+   * Convert full lattice parameter index to a reduced index.
    * 
    * Here, we define the "full" list of lattice parameters to be
    * {a, b, c, alpha, beta, gamma}, and we define the "reduced"
@@ -34,15 +35,17 @@ namespace Prdc {
    * fixed at 90° in a tetragonal lattice, so a fullId value of 3, 
    * 4, or 5 would result in a reducedId of -1.
    * 
+   * \ingroup Prdc_Crystal_Module 
+   *
    * \param fullId  the value of fullId to convert
    * \param lattice  the lattice system
-   * \ingroup Prdc_Crystal_Module 
    */
    template <int D>
    int convertFullParamIdToReduced(const int fullId, 
                   const typename UnitCell<D>::LatticeSystem lattice);
 
-   /** Convert reduced lattice parameter index to a full index
+   /** 
+   * Convert reduced lattice parameter index to a full index.
    * 
    * Here, we define the "full" list of lattice parameters to be
    * {a, b, c, alpha, beta, gamma}, and we define the "reduced"
@@ -52,9 +55,10 @@ namespace Prdc {
    * index of a parameter in the reduced list, reducedId, into the 
    * corresponding index in the full list, fullId. 
    * 
+   * \ingroup Prdc_Crystal_Module
+   *
    * \param reducedId  the value of reducedId to convert
    * \param lattice  the lattice system 
-   * \ingroup Prdc_Crystal_Module
    */
    template <int D>
    int convertReducedParamIdToFull(const int reducedId, 

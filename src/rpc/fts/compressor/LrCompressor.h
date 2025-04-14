@@ -120,9 +120,6 @@ namespace Rpc
       // Verbosity level.
       int verbose_;
 
-      // Has required memory been allocated.
-      bool isAllocated_;
-
       /**
       * Dimensions of wavevector mesh in real-to-complex transform
       */
@@ -197,9 +194,15 @@ namespace Rpc
       void outputToLog();
       
       /**
-      * IntraCorrelation (homopolymer) object
+      * IntraCorrelation object
       */
-      IntraCorrelation<D> intraCorrelation_;
+      IntraCorrelation<D> intra_;
+      
+      // Has the IntraCorrelation been calculated?
+      bool isIntraCalculated_;
+      
+      // Has required memory been allocated.
+      bool isAllocated_;
       
       // Private inherited members
       using Compressor<D>::system;
