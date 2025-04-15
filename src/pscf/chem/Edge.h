@@ -20,13 +20,13 @@ namespace Pscf
    using namespace Util;
 
    /**
-   * Descriptor for a block within an acyclic block polymer.
+   * Descriptor for a block within a block polymer.
    *
    * An Edge has:
    *
    *    - a monomer type id
    *    - a length (thread model) or number of beads (bead model)
-   *    - a block id (unique with the polymer)
+   *    - a block id (unique among blocks of the same polymer species)
    *    - ids of the two vertices at which it terminates
    *
    * Edge is a base class for the BlockTmpl class template, which is a
@@ -41,20 +41,23 @@ namespace Pscf
    *
    * An Edge can store either a value for length (the contour length
    * of the block) when PolymerModel::isThread(), or a value for nBead
-   * (the number of beads in the block) when PolymerModel::isBead(). In
-   * the case of the bead model, it also stores a pair of boolean flags 
-   * to indicate whether the block owns either or both of the associated
-   * vertices. It is an error to try to set or get a value for nBead or
-   * the vertex ownership flags when the thread model is in use, because
-   * these variables are only meaningful for a bead model. Similarly,
-   * it is an error to get or set a value for the block length when a
-   * bead model is in use, because the length variable is only meaningful
-   * in the context of a thread model. 
+   * (the number of beads in the block) when PolymerModel::isBead(), but
+   * not both.  It is an error to get or set a value for the length 
+   * when a bead model is in use or a value for nBead when a thread 
+   * model is in use, because these variables are each meaningful only
+   * in the context of a specific model. 
+   *
+   * In the case of the bead model, and Edge also stores a pair of 
+   * boolean flags to indicate whether the block owns either or both of 
+   * the associated terminating vertex beads. It is an error to try to 
+   * set or get a value for nBead or the vertex ownership flags when the 
+   * thread model is in use, because these variables are only meaningful 
+   * for a bead model. 
    *
    * Block objects associated with a polymer are normally stored in 
    * an array that is a private member of the Pscf::PolymerTmpl class 
-   * template. The block id for each edge be set to the element index
-   * of the Block within that array.  
+   * template. The block id for each Edge should be set to the element 
+   * index of the associated Block within that array.  
    *
    * \ref user_param_block_sec "Parameter File Format"
    * \ingroup Pscf_Chem_Module
@@ -108,6 +111,27 @@ namespace Pscf
       void setVertexIds(int vertexId0, int vertexId1);
 
       /**
+      * Set the length of this block (only valid for thread model).
+      *
+      * In the continuous thread model, the length of a block is given by
+      * the ratio of block steric volume / monomer reference volume. 
+      *
+      * Precondition: PolymerModel::isThread()
+      *
+      * \param length  block length (thread model).
+      */
+      virtual void setLength(double length);
+
+      /**
+      * Set the number of beads in this block (only valid for bead model).
+      *
+      * Precondition: PolymerModel::isBead()
+      *
+      * \param nBead  number of beads (bead model)
+      */
+      virtual void setNBead(int nBead);
+
+      /**
       * Set ownership of associated vertices (only valid for bead model).
       *
       * The concept of "ownership" of vertex beads is only meaningful in
@@ -123,36 +147,16 @@ namespace Pscf
       void setVertexOwnership(bool own0, bool own1);
 
       /**
-      * Set the number of beads in this block (only valid for bead model).
+      * Set the type of the parent polymer (branched or linear).
       *
-      * Precondition: PolymerModel::isBead()
-      *
-      * \param nBead  number of beads (bead model)
-      */
-      virtual void setNBead(int nBead);
-
-      /**
-      * Set the length of this block (only valid for thread model).
-      *
-      * In the continuous thread model, the length of a block is given by
-      * the ratio of block steric volume / monomer reference volume. 
-      *
-      * Precondition: PolymerModel::isThread()
-      *
-      * \param length  block length (thread model).
-      */
-      virtual void setLength(double length);
-
-      /**
-      * Set the polymer type (branched or linear).
-      *
-      * By convention, if the polymer type of a block with index id is
-      * PolymerType::Linear, then vertexId(0) = id and vertexId(1) = id + 1.
-      * In the case of a bead model, a standard convention also exists for
-      * ownership of the two attached vertices.  The stream insertion and 
-      * extraction operators for an Edge can thus use a shorter string
-      * representation for linear polymers in which vertex ids and (when
-      * relevant) owhership flags are omitted.
+      * By convention, if the polymer type is PolymerType::Linear, then
+      * vertexId(0) = id and vertexId(1) = id + 1 for block number id.
+      * In the case of a bead model for a linear polymer, block id owns 
+      * vertex id+1, while block 0 also owns vertex 0. By using these 
+      * conventions, the stream insertion and extraction operators for 
+      * an Edge can thus use a shorter string representation for linear 
+      * polymers in which vertex ids and (for bead models) vertex 
+      * owhership flags are omitted.
       *
       * \param type  type of polymer (branched or linear)
       */
@@ -163,12 +167,12 @@ namespace Pscf
       //@{
 
       /**
-      * Get the id of this block.
+      * Get the id of this block (unique within the polymer).
       */
       int id() const;
 
       /**
-      * Get the monomer type id.
+      * Get the monomer type id for this block.
       */
       int monomerId() const;
 
@@ -178,7 +182,7 @@ namespace Pscf
       const Pair<int>& vertexIds() const;
 
       /**
-      * Get id of an associated vertex.
+      * Get the id of one associated vertex.
       *
       * \param i index of vertex (0 or 1)
       */
@@ -194,18 +198,18 @@ namespace Pscf
       bool ownsVertex(int i) const;
 
       /**
-      * Get the number of beads in this block, in the bead model.
-      *
-      * Precondition: PolymerModel::isBead()
-      */
-      double nBead() const;
-
-      /**
       * Get the length of this block, in the thread model.
       *
       * Precondition: PolymerModel::isThread()
       */
       double length() const;
+
+      /**
+      * Get the number of beads in this block, in the bead model.
+      *
+      * Precondition: PolymerModel::isBead()
+      */
+      int nBead() const;
 
       /**
       * Get the type of the parent polymer (branched or linear).
@@ -348,7 +352,7 @@ namespace Pscf
    /*
    * Get the number of beads in this block (bead model).
    */
-   inline double Edge::nBead() const
+   inline int Edge::nBead() const
    {
       UTIL_CHECK(PolymerModel::isBead());  
       return nBead_; 

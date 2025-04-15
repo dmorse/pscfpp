@@ -7,6 +7,7 @@
 
 #include "Block.h"
 #include <r1d/domain/Domain.h>
+#include <r1d/domain/GeometryMode.h>
 
 namespace Pscf { 
 namespace R1d

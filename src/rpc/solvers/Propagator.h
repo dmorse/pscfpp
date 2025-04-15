@@ -8,8 +8,8 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <prdc/cpu/RField.h>             // member template
 #include <pscf/solvers/PropagatorTmpl.h> // base class template
+#include <prdc/cpu/RField.h>             // member template and typedef
 #include <util/containers/DArray.h>      // member template
 #include <util/containers/FArray.h>      // member template
 
@@ -27,22 +27,21 @@ namespace Rpc {
    /**
    * MDE solver for one direction of one block.
    *
-   * A fully initialized Propagator<D> has an association with a 
-   * Block<D> that owns this propagator and with a partner Propagator.
+   * A fully initialized Propagator<D> has associations with a 
+   * Block<D> that owns this propagator and with a partner Propagator<D>.
    * It also has an association with a Mesh<D> that describes a spatial 
    * grid, and to source Propagator<D> objects that are used to compute
    * an initial condition for the propagator at the head vertex.
    *
    * The associated Block<D> stores information required to numerically
-   * solve the modified diffusion equation (MDE), including the contour
-   * step size ds and all parameters that depend on ds, unit cell 
-   * parameters and the w-field associated with the block. These quantities 
-   * are set and stored by the block because their values must be the 
-   * same for the two propagators owned by each block (i.e., this 
-   * propagator and its partner). The algorithm used by a propagator 
-   * to solve the the MDE simply repeatedly calls step functions 
-   * provided by associated block, because that object has access to 
-   * all the parameters used in the numerical solution.
+   * solve the modified diffusion equation (MDE) within the block, 
+   * including the contour step size ds (in the thread model) and all 
+   * parameters that depend on ds, unit cell parameters and the w-field
+   * associated with this block. These quantities are set and stored by 
+   * the block because their values must be the same for both of the two 
+   * propagators owned by each block (i.e., this propagator and its 
+   * partner). The algorithm used by a propagator to solve the MDE 
+   * repeatedly calls step functions provided by the associated block.
    *
    * \ingroup Rpc_Solver_Module
    */
@@ -236,7 +235,7 @@ namespace Rpc {
 
    private:
      
-      /// Array of statistical weight fields 
+      /// Array of propagator slices at different contour variable values.
       DArray<QField> qFields_;
 
       /// Workspace

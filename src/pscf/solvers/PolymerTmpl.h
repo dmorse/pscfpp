@@ -9,13 +9,11 @@
 */
 
 #include <pscf/chem/PolymerSpecies.h>    // base class
-#include <pscf/chem/Species.h>           // base class
 #include <util/param/ParamComposite.h>   // base class
 
 #include <util/containers/Pair.h>        // member template
 #include <util/containers/DArray.h>      // member template
 
-#include <pscf/chem/Edge.h>
 #include <pscf/chem/Vertex.h>
 #include <pscf/chem/PolymerType.h>
 #include <pscf/chem/PolymerModel.h>
@@ -23,23 +21,24 @@
 namespace Pscf
 {
 
+   class Edge;
    using namespace Util;
 
    /**
-   * Descriptor and MDE solver for a block polymer.
+   * Template for an MDE solver and descriptor for a block polymer.
    *
-   * A PolymerTmpl<Block> object has an array of Block objects and an
-   * array of Vertex objects that it inherits from the PolymerSpecies base
-   * class.  Each Block has two propagator MDE solver objects associated
-   * with the two directions along each block of a block polymer.
+   * A PolymerTmpl<Block> object has an array of Block objects, as well 
+   * as an array of Vertex objects inherited from the PolymerSpecies base
+   * class.  Each Block has two Propagator MDE solver objects associated
+   * with the two directions along each block.
    *
    * The solve() member function solves the modified diffusion equation
    * (MDE) for all propagators in the molecule (i.e., all blocks, in both
-   * directions).
+   * directions) in a pre-defined order.
    *
-   * Each implementation-level subclass of Pscf contains a class named
-   * Block that derived from Pscf::Edge, and a class named Polymer that
-   * is derived from PolymerTmpl<Block>.
+   * Each implementation-level sub-namespace of Pscf contains a class 
+   * named Block that is derived from Pscf::Edge, and a class named 
+   * Polymer that is derived from PolymerTmpl<Block>.
    *
    * \ingroup Pscf_Solver_Module
    */
@@ -84,6 +83,8 @@ namespace Pscf
       * propagators in the molecule in a predeternined order, then
       * computes q, and finally computes mu from phi or phi from mu,
       * depending on the ensemble (open or closed) for this species.
+      * This solve() function does not compute monomer concentration
+      * field.
       *
       * Each implementation-level namespace defines a concrete subclass
       * of PolymerTmpl<Block> that is named Polymer by convention. Each
@@ -94,12 +95,12 @@ namespace Pscf
       * must pass the w-fields and any other required mutable data to all 
       * Block objects in order to set up the MDE solver for each block. 
       * After calling the solve() function, the Polymer::compute function 
-      * must also compute concentrations for all blocks, each of which is 
-      * a field container owned by the associated Block object.
+      * must also compute monomer concentrations for all blocks, each of 
+      * which is stored in a field container owned by the associated Block.
       *
-      * The optional parameter phiTot is only relevant to problems
-      * involving a mask that excludes material from part of the unit
-      * cell, as for thin film problems.
+      * The optional parameter phiTot is only relevant to problems 
+      * involving a Mask that excludes material from part of the unit
+      * cell, as done to define thin film problems.
       *
       * \param phiTot  fraction of unit cell volume occupied by material
       */

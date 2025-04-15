@@ -8,30 +8,28 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "Block.h"
-#include <pscf/solvers/PolymerTmpl.h>
+#include <pscf/solvers/PolymerTmpl.h>   // Base class template
+#include "Block.h"                      // Base class template parameter
 
 namespace Pscf { 
 namespace R1d {
 
    using namespace Util; 
-   using namespace Pscf; 
 
    /**
-   * Descriptor and solver for a branched polymer species.
+   * Descriptor and solver for a block polymer species.
    *
-   * The block concentrations stored in the constituent Block
-   * objects contain the block concentrations (i.e., volume 
-   * fractions) computed in the most recent call of the compute 
-   * function.
+   * The block concentrations stored in the constituent Block objects
+   * contain the block concentrations (i.e., volume fraction) fields
+   * computed in the most recent call of the compute function.
    *
-   * The phi() and mu() accessor functions, which are inherited 
-   * from PolymerTmp<Block>, return the value of phi (spatial 
-   * average volume fraction of a species) or mu (chemical
-   * potential) computed in the last call of the compute function.
-   * If the ensemble for this species is closed, phi is read from 
-   * the parameter file and mu is computed. If the ensemble is
-   * open, mu is read from the parameter file and phi is computed.
+   * The phi() and mu() accessor functions, which are inherited from
+   * Pscf::PolymerSpecies, return the value of phi (spatial average volume
+   * fraction of a species) or mu (species chemical potential) computed in 
+   * the last call of the compute function.  If the ensemble for this 
+   * species is closed, phi is read from the parameter file and mu is 
+   * computed. If the ensemble is open, mu is read from the parameter 
+   * file and phi is computed.
    *
    * \ref user_param_polymer_sec "Parameter File Format"
    * \ingroup R1d_Solver_Module
@@ -66,10 +64,11 @@ namespace R1d {
       void setMu(double mu);
 
       /**
-      * Compute solution to modified diffusion equation.
+      * Compute solution to modified diffusion equation and concentrations.
       *
-      * Upon return, q functions and block concentration fields
-      * are computed for all propagators and blocks. 
+      * Upon return, propagator solutions and block concentration fields
+      * are computed for all propagators and blocks, along with molecular
+      * partition function q and phi or mu.
       *
       * \param wFields  array of chemica potential fields.
       */ 

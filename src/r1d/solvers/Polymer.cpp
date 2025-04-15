@@ -11,12 +11,21 @@ namespace Pscf {
 namespace R1d 
 { 
 
+   /*
+   * Constructor
+   */
    Polymer::Polymer()
    {  setClassName("Polymer"); }
 
+   /*
+   * Destructor
+   */
    Polymer::~Polymer()
    {}
 
+   /*
+   * Set phi if ensemble is closed.
+   */
    void Polymer::setPhi(double phi)
    {
       UTIL_CHECK(ensemble() == Species::Closed);  
@@ -25,6 +34,9 @@ namespace R1d
       phi_ = phi; 
    }
 
+   /*
+   * Set mu if the ensemble is open.
+   */
    void Polymer::setMu(double mu)
    {
       UTIL_CHECK(ensemble() == Species::Open);  

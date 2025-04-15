@@ -33,10 +33,11 @@ namespace Pscf
    *
    * \ingroup Pscf_Chem_Module
    *
-   * \param in input stream
-   * \param type value of PolymerType to be read from file
+   * \param in  input stream
+   * \param type  value of PolymerType enumeration to be read from in
    */ 
-   std::istream& operator >> (std::istream& in, PolymerType::Enum& type); 
+   std::istream& operator >> (std::istream& in, 
+                              PolymerType::Enum& type); 
 
    /**
    * Output stream extractor for a PolymerType::Enum enumeration.
@@ -44,9 +45,10 @@ namespace Pscf
    * \ingroup Pscf_Chem_Module
    *
    * \param out  output stream
-   * \param type  value of PolymerType to be written 
+   * \param type  value of PolymerType enumeration to be written to out
    */ 
-   std::ostream& operator << (std::ostream& out, PolymerType::Enum const& type); 
+   std::ostream& operator << (std::ostream& out, 
+                              PolymerType::Enum const& type); 
 
    /**
    * Serialize a PolymerType::Enum enumeration.
@@ -59,7 +61,8 @@ namespace Pscf
    */ 
    template <class Archive>
    inline void 
-   serialize(Archive& ar, PolymerType::Enum& data, const unsigned int version)
+   serialize(Archive& ar, PolymerType::Enum& data, 
+             const unsigned int version)
    {  serializeEnum(ar, data, version); }
 
 }

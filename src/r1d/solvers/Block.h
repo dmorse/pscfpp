@@ -9,7 +9,6 @@
 */
 
 #include "Propagator.h"                   // base class argument
-#include <r1d/domain/GeometryMode.h>     // argument (enum)
 #include <pscf/solvers/BlockTmpl.h>       // base class template
 #include <pscf/math/TridiagonalSolver.h>  // member
 

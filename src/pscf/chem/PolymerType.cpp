@@ -37,7 +37,8 @@ namespace Pscf
    /*
    * Output stream inserter for a PolymerType enumeration.
    */ 
-   std::ostream& operator << (std::ostream& out, PolymerType::Enum const & type)
+   std::ostream& operator << (std::ostream& out, 
+                              PolymerType::Enum const & type)
    {
       if (type == PolymerType::Branched) {
          out << "branched";

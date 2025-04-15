@@ -65,8 +65,8 @@ namespace Rpc {
       * An initial value for phi or mu is normally read from a parameter
       * file. This function is provided for use by a sweep or other
       * procedure in which phi for a species with a closed enesmble is
-      * modified after initialization. It is an error to call setPhi
-      * for a polymer species with an open ensemble.
+      * modified after initialization. It is an error to call setPhi for
+      * a polymer species with an open ensemble.
       *
       * \throw Exception if ensemble is open
       * \param phi  new volume fraction value for this species
@@ -79,8 +79,8 @@ namespace Rpc {
       * An initial value for phi or mu is normally read from a parameter
       * file. This function is provided for use in a sweep or other
       * procedure in which mu for a species with an open enesmble is
-      * modified after initialization. It is an error to call setMu
-      * for a polymer species with a closed ensemble.
+      * modified after initialization. It is an error to call setMu for
+      * a polymer species with a closed ensemble.
       *
       * \throw Exception if ensemble is closed
       * \param mu  new chemical potential value for this species

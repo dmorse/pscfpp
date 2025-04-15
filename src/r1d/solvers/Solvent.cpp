@@ -1,6 +1,3 @@
-#ifndef R1D_SOLVENT_TPP
-#define R1D_SOLVENT_TPP
-
 /*
 * PSCF - Polymer Self-Consistent Field Theory
 *
@@ -14,10 +11,16 @@
 namespace Pscf {
 namespace R1d { 
 
+   /*
+   * Constructor.
+   */
    Solvent::Solvent() 
     : SolventSpecies()  
    {  setClassName("Solvent"); }
 
+   /*
+   * Destructor.
+   */
    Solvent::~Solvent()
    {}
 
@@ -34,7 +37,7 @@ namespace R1d {
    }
 
    /*
-   * Compute concentration, q, phi or mu.
+   * Compute concentration, q, and phi or mu.
    */ 
    void Solvent::compute(WField const & wField)
    {
@@ -69,4 +72,3 @@ namespace R1d {
 
 }
 }
-#endif

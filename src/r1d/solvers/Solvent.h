@@ -9,14 +9,12 @@
 */
 
 #include <pscf/chem/SolventSpecies.h>   // base class
-//#include <pscf/chem/Species.h>             // base class
-//#include <util/param/ParamComposite.h>     // base class
-#include <r1d/solvers/Propagator.h>
-#include <r1d/domain/Domain.h>
+#include <r1d/solvers/Propagator.h>     // typedefs
 
 namespace Pscf { 
 namespace R1d { 
 
+   class Domain;
    using namespace Util;
 
    /**

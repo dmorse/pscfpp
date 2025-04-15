@@ -9,8 +9,6 @@
 */
 
 #include <pscf/chem/MixtureBase.h>
-#include <pscf/chem/SolventSpecies.h>
-#include <pscf/chem/PolymerSpecies.h>
 #include <util/param/ParamComposite.h>
 #include <util/containers/DArray.h>
 
