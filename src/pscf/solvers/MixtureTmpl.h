@@ -8,7 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/chem/Monomer.h>
+#include <pscf/chem/MixtureBase.h>
 #include <util/param/ParamComposite.h>
 #include <util/containers/DArray.h>
 
@@ -18,12 +18,12 @@ namespace Pscf
    using namespace Util;
 
    /**
-   * A mixture of polymer and solvent species.
+   * Solver for a mixture of polymer and solvent species.
    *
    * \ingroup Pscf_Solver_Module
    */
    template <class TP, class TS>
-   class MixtureTmpl : public ParamComposite
+   class MixtureTmpl : public MixtureBase, public ParamComposite
    {
    public:
 
@@ -58,101 +58,56 @@ namespace Pscf
       */
       virtual void readParameters(std::istream& in);
 
-      /// \name Accessors (by non-const reference)
+      /// \name Accessors 
       ///@{
- 
-      /**
-      * Get a Monomer type descriptor (const reference).
-      *
-      * \param id integer monomer type index (0 <= id < nMonomer)
-      */
-      Monomer const & monomer(int id) const;
 
       /**
-      * Get a polymer object.
+      * Get a Polymer solver object.
       *
       * \param id integer polymer species index (0 <= id < nPolymer)
       */
       Polymer& polymer(int id);
 
       /**
-      * Get a polymer object by const reference.
+      * Get a Polymer solver by const reference.
       *
       * \param id integer polymer species index (0 <= id < nPolymer)
       */
       Polymer const & polymer(int id) const;
 
       /**
-      * Set a solvent solver object.
+      * Get a PolymerSpecies descriptor by const reference.
+      *
+      * \param id integer polymer species index (0 <= id < nPolymer)
+      */
+      virtual
+      PolymerSpecies const & polymerSpecies(int id) const;
+
+      /**
+      * Set a Solvent solver object.
       *
       * \param id integer solvent species index (0 <= id < nSolvent)
       */
       Solvent& solvent(int id);
 
       /**
-      * Set a solvent solver object.
+      * Set a Solvent solver object by constant reference.
       *
       * \param id integer solvent species index (0 <= id < nSolvent)
       */
       Solvent const & solvent(int id) const;
 
-      ///@}
-      /// \name Accessors (by value)
-      ///@{
- 
       /**
-      * Get number of monomer types.
-      */
-      int nMonomer() const;
-
-      /**
-      * Get number of polymer species.
-      */
-      int nPolymer() const;
-
-      /** 
-      * Get number of total blocks in the mixture across all polymers.
-      */
-      int nBlock() const;
-
-      /**
-      * Get number of solvent (point particle) species.
-      */
-      int nSolvent() const;
-
-      /**
-      * Get monomer reference volume (set to 1.0 by default).
-      */
-      double vMonomer() const;
-      
-      /**
-      * Set value of monomer reference volume.
-      * 
-      * An initial value is normally read from a parameter file. 
-      * This function is provided for use by a ramp in which 
-      * monomer reference volume is modified after initialization.
-      * 
-      * \param vMonomer new monomer reference volume.
-      */
-      void setVmonomer(double vMonomer);
-
-      ///@}
-
-   protected:
-
-      /**
-      * Get a Monomer type descriptor (non-const reference).
+      * Set a SolventSpecies descriptor object by const reference.
       *
-      * \param id integer monomer type index (0 <= id < nMonomer)
+      * \param id integer solvent species index (0 <= id < nSolvent)
       */
-      Monomer& monomer(int id);
+      virtual
+      SolventSpecies const & solventSpecies(int id) const;
+
+      ///@}
 
    private:
-
-      /**
-      * Array of monomer type descriptors.
-      */
-      DArray<Monomer> monomers_;
 
       /**
       * Array of polymer species solver objects.
@@ -168,64 +123,16 @@ namespace Pscf
       */
       DArray<Solvent> solvents_;
 
-      /**
-      * Number of monomer types.
-      */
-      int nMonomer_; 
-
-      /**
-      * Number of polymer species.
-      */
-      int nPolymer_;
-
-      /**
-      * Number of solvent species.
-      */
-      int nSolvent_;
-
-      /**
-      * Number of blocks total, across all polymers.
-      */
-      int nBlock_;
-
-      /**
-      * Monomer reference volume (set to 1.0 by default).
-      */
-      double vMonomer_;
+      using MixtureBase::monomers_;
+      using MixtureBase::nMonomer_;
+      using MixtureBase::nPolymer_;
+      using MixtureBase::nSolvent_;
+      using MixtureBase::nBlock_;
+      using MixtureBase::vMonomer_;
 
    };
 
    // Inline member functions
-
-   template <class TP, class TS>
-   inline int MixtureTmpl<TP,TS>::nMonomer() const
-   {  return nMonomer_; }
-
-   template <class TP, class TS>
-   inline int MixtureTmpl<TP,TS>::nPolymer() const
-   {  return nPolymer_; }
-
-   template <class TP, class TS>
-   inline int MixtureTmpl<TP,TS>::nSolvent() const
-   {  return nSolvent_; }
-
-   template <class TP, class TS>
-   inline int MixtureTmpl<TP,TS>::nBlock() const
-   {  return nBlock_; }
-
-   template <class TP, class TS>
-   inline Monomer const & MixtureTmpl<TP,TS>::monomer(int id) const
-   {  
-      UTIL_CHECK(id < nMonomer_);
-      return monomers_[id]; 
-   }
-
-   template <class TP, class TS>
-   inline Monomer& MixtureTmpl<TP,TS>::monomer(int id)
-   {  
-      UTIL_CHECK(id < nMonomer_);
-      return monomers_[id]; 
-   }
 
    template <class TP, class TS>
    inline TP& MixtureTmpl<TP,TS>::polymer(int id)
@@ -255,14 +162,6 @@ namespace Pscf
       return solvents_[id]; 
    }
 
-   template <class TP, class TS>
-   inline double MixtureTmpl<TP,TS>::vMonomer() const
-   {  return vMonomer_; }
-   
-   template <class TP, class TS>
-   inline void MixtureTmpl<TP,TS>::setVmonomer(double vMonomer)
-   { vMonomer_ = vMonomer; }
-   
    // Non-inline member functions
 
    /*
@@ -270,15 +169,10 @@ namespace Pscf
    */
    template <class TP, class TS>
    MixtureTmpl<TP,TS>::MixtureTmpl()
-    : ParamComposite(),
-      monomers_(),
+    : MixtureBase(),
+      ParamComposite(),
       polymers_(),
-      solvents_(),
-      nMonomer_(0), 
-      nPolymer_(0),
-      nSolvent_(0),
-      nBlock_(0),
-      vMonomer_(1.0)
+      solvents_()
    {}
 
    /*
@@ -287,6 +181,20 @@ namespace Pscf
    template <class TP, class TS>
    MixtureTmpl<TP,TS>::~MixtureTmpl()
    {}
+
+   template <class TP, class TS>
+   PolymerSpecies const & MixtureTmpl<TP,TS>::polymerSpecies(int id) const
+   {  
+      UTIL_CHECK(id < nPolymer_);
+      return polymers_[id];
+   }
+
+   template <class TP, class TS>
+   SolventSpecies const & MixtureTmpl<TP,TS>::solventSpecies(int id) const
+   {  
+      UTIL_CHECK(id < nSolvent_);
+      return solvents_[id]; 
+   }
 
    /*
    * Read all parameters and initialize.
