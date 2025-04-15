@@ -18,7 +18,7 @@ namespace Pscf
    using namespace Util;
 
    /**
-   * Solver for a mixture of polymer and solvent species.
+   * Solvers for a mixture of polymer and solvent species.
    *
    * \ingroup Pscf_Solver_Module
    */
@@ -54,46 +54,60 @@ namespace Pscf
       /**
       * Read parameters from file and initialize.
       *
-      * \param in input parameter file
+      * \param in  input parameter file
       */
       virtual void readParameters(std::istream& in);
 
       /// \name Accessors 
       ///@{
 
+      /*
+      * Public member functions inherited from MixtureBase:
+      *
+      *   int nMonomer() const;
+      *   int nPolymer() const;
+      *   int nSolvent() const;
+      *   int nBlock() const;
+      *   double vMonomer() const;
+      *   Monomer const & monomer(int id) const;
+      *
+      *   void setVmonomer(double);
+      */
+
       /**
       * Get a Polymer solver object.
       *
-      * \param id integer polymer species index (0 <= id < nPolymer)
+      * \param id  integer polymer species index (0 <= id < nPolymer)
       */
       Polymer& polymer(int id);
 
       /**
       * Get a Polymer solver by const reference.
       *
-      * \param id integer polymer species index (0 <= id < nPolymer)
+      * \param id  integer polymer species index (0 <= id < nPolymer)
       */
       Polymer const & polymer(int id) const;
 
       /**
       * Get a PolymerSpecies descriptor by const reference.
       *
-      * \param id integer polymer species index (0 <= id < nPolymer)
+      * Implements pure virtual function
+      *
+      * \param id  integer polymer species index (0 <= id < nPolymer)
       */
-      virtual
-      PolymerSpecies const & polymerSpecies(int id) const;
+      PolymerSpecies const & polymerSpecies(int id) const final;
 
       /**
       * Set a Solvent solver object.
       *
-      * \param id integer solvent species index (0 <= id < nSolvent)
+      * \param id  integer solvent species index (0 <= id < nSolvent)
       */
       Solvent& solvent(int id);
 
       /**
       * Set a Solvent solver object by constant reference.
       *
-      * \param id integer solvent species index (0 <= id < nSolvent)
+      * \param id  integer solvent species index (0 <= id < nSolvent)
       */
       Solvent const & solvent(int id) const;
 
@@ -102,8 +116,7 @@ namespace Pscf
       *
       * \param id integer solvent species index (0 <= id < nSolvent)
       */
-      virtual
-      SolventSpecies const & solventSpecies(int id) const;
+      SolventSpecies const & solventSpecies(int id) const final;
 
       ///@}
 
@@ -123,6 +136,7 @@ namespace Pscf
       */
       DArray<Solvent> solvents_;
 
+      // Change inherited data member access from protected to private
       using MixtureBase::monomers_;
       using MixtureBase::nMonomer_;
       using MixtureBase::nPolymer_;

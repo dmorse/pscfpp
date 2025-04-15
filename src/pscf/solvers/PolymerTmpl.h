@@ -29,9 +29,9 @@ namespace Pscf
    * Descriptor and MDE solver for a block polymer.
    *
    * A PolymerTmpl<Block> object has an array of Block objects and an
-   * array of Vertex objects that it inherits from the PolymerSpecies
-   * base class.  Each Block has two propagator MDE solver objects
-   * associated with the two directions along each block.
+   * array of Vertex objects that it inherits from the PolymerSpecies base
+   * class.  Each Block has two propagator MDE solver objects associated
+   * with the two directions along each block of a block polymer.
    *
    * The solve() member function solves the modified diffusion equation
    * (MDE) for all propagators in the molecule (i.e., all blocks, in both
@@ -86,14 +86,16 @@ namespace Pscf
       * depending on the ensemble.
       *
       * The concrete subclass of PolymerTmpl<Block> in each implemenation
-      * level namespace, which is named Polymer by convention, defines a
-      * function named "compute" that calls PolymerTmpl<Block>::solve.
+      * level namespace, which is named Polymer by convention, defines 
+      * a function named "compute" that calls PolymerTmpl<Block>::solve.
       * This compute function takes an array of chemical potential fields
       * (w-fields) as an argument. Before calling the solve() function
       * declared here, the compute() function of each such Polymer class
-      * must pass the w-fields and any other required mutable data to all
-      * Block objects in order to set up the solution of the MDE within
-      * each block.
+      * must pass the w-fields and any other required mutable data to 
+      * all Block objects in order to set up the solution of the MDE 
+      * within each block. After calling the solve() function, the 
+      * Polymer::compute function must also compute concentrations for 
+      * all blocks, each of which is owned by associated Block objects.
       *
       * The optional parameter phiTot is only relevant to problems
       * involving a mask that excludes material from part of the unit
@@ -115,14 +117,14 @@ namespace Pscf
       *
       * \param id block index, 0 <= id < nBlock
       */
-      virtual Edge& edge(int id);
+      Edge& edge(int id) final;
 
       /**
       * Get a specified Edge (block descriptor) by const reference.
       *
       * \param id block index, 0 <= id < nBlock
       */
-      virtual Edge const& edge(int id) const;
+      Edge const& edge(int id) const final;
 
       /**
       * Get a specified Block (block solver and descriptor)
@@ -171,7 +173,6 @@ namespace Pscf
       ///@}
 
       // Inherited public members
-      using PolymerSpecies::edge;
       using PolymerSpecies::vertex;
       using PolymerSpecies::propagatorId;
       using PolymerSpecies::path;

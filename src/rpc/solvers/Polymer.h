@@ -106,17 +106,17 @@ namespace Rpc {
       /**
       * Compute solution to MDE and block concentrations.
       * 
-      * This function sets up w-fields in the MDE solvers for all blocks
-      * and then calls the base class PolymerTmpl solve function. This
-      * solves the MDE for all propagators and computes the properly 
-      * scaled volume fraction fields for all blocks. After this function 
-      * is called, the associated Block objects store pre-computed 
-      * propagator solutions and block volume fraction fields. 
+      * This function sets up w-fields in the MDE solvers for all blocks,
+      * calls the base class PolymerTmpl solve function to solve the MDE
+      * for all blocks, and then computes concentrations associated with 
+      * all blocks. On return, the associated Block objects all contain
+      * propagator solutions and block volume fraction fields, while q and
+      * phi or mu are set to new values.
       *
       * The parameter phiTot is only relevant to problems such as thin
-      * films in which the material is excluded from part of the unit
-      * cell by imposing an inhogeneous constraint on the sum of the
-      * monomer concentrations (i.e., a "mask"). 
+      * films in which the material is excluded from part of the unit cell
+      * by imposing an inhogeneous constraint on the sum of the monomer
+      * concentrations (i.e., a "Mask"). 
       *
       * \param wFields array of chemical potential fields.
       * \param phiTot  volume fraction of unit cell occupied by material
@@ -145,14 +145,22 @@ namespace Rpc {
       double stress(int n) const;
 
       // Inherited public functions
+      using Base::edge;
       using Base::block;
-      using Base::nBlock;
-      using Base::length;
-      using Base::nBead;
-      using Species::ensemble;
+      using Base::propagator;
+      using PolymerSpecies::vertex;
+      using PolymerSpecies::propagatorId;
+      using PolymerSpecies::path;
+      using PolymerSpecies::nBlock;
+      using PolymerSpecies::nVertex;
+      using PolymerSpecies::nPropagator;
+      using PolymerSpecies::length;
+      using PolymerSpecies::nBead;
+      using PolymerSpecies::type;
       using Species::phi;
       using Species::mu;
       using Species::q;
+      using Species::ensemble;
 
    protected:
 
@@ -168,6 +176,7 @@ namespace Rpc {
 
       // Restricting access
       using Base::solve;
+      using Species::ensemble_;
       using Species::phi_;
       using Species::mu_;
       using Species::q_;

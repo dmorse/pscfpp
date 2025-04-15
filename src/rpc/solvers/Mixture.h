@@ -135,7 +135,7 @@ namespace Rpc {
       /**
       * Compute partition functions and concentrations.
       *
-      * This function calls the compute function of every molecular
+      * This function calls the solve function of every molecular
       * species, and then adds the resulting block concentration fields
       * for blocks of the same monomer type to compute a total monomer
       * concentration (or volume fraction) for each monomer type.

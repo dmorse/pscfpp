@@ -29,6 +29,9 @@ namespace Pscf
    {}
 
    void MixtureBase::setVmonomer(double vMonomer)
-   {  vMonomer_ = vMonomer; }
+   {
+      UTIL_CHECK(vMonomer > 0.0);  
+      vMonomer_ = vMonomer; 
+   }
 
 }

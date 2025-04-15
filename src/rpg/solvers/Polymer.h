@@ -40,18 +40,17 @@ namespace Rpg {
    /**
    * Descriptor and solver for a branched polymer species.
    *
-   * The block concentrations stored in the constituent Block<D>
-   * objects contain the block concentrations (i.e., volume 
-   * fractions) computed in the most recent call of the compute 
-   * function.
+   * The propagator solutions and block concentrations stored in the
+   * constituent Block<D> objects contain solutions computed in the most
+   * recent call of the compute function.
    *
-   * The phi() and mu() accessor functions, which are inherited 
-   * from PolymerTmp< Block<D> >, return the value of phi (spatial 
-   * average volume fraction of a species) or mu (chemical
-   * potential) computed in the last call of the compute function.
-   * If the ensemble for this species is closed, phi is read from 
-   * the parameter file and mu is computed. If the ensemble is
-   * open, mu is read from the parameter file and phi is computed.
+   * The phi() and mu() accessor functions, which are inherited from
+   * PolymerSpecies, return the value of phi (spatial average volume
+   * fraction of a species) or mu (species chemical potential) computed 
+   * in the last call of the compute function.  If the ensemble for this 
+   * species is closed, phi is read from the parameter file and mu is 
+   * computed. If the ensemble is open, mu is read from the parameter 
+   * file and phi is computed.
    *
    * \ingroup Rpg_Solvers_Module
    */
@@ -98,7 +97,7 @@ namespace Rpg {
       void setNParams(int nParams);
 
       /**
-      * Compute solution to MDE and block concentrations.
+      * Compute MDE solutions and block concentrations.
       * 
       * This function sets up w-fields in the MDE solvers for all blocks
       * and then calls the base class PolymerTmpl solve function. This
@@ -119,7 +118,7 @@ namespace Rpg {
                    double phiTot = 1.0);
 
       /**
-      * Compute stress from a polymer chain, needs a pointer to basis
+      * Compute stress contribution from this polymer species.
       */
       void computeStress();
 
@@ -133,20 +132,27 @@ namespace Rpg {
       */
       double stress(int n);
 
-      // Public inherited functions with non-dependent names
-      using Base::nBlock;
+      // Inherited public functions
+      using Base::edge;
       using Base::block;
-      using Base::solve;
-      using Base::length;
-      using Base::nBead;
-      using Species::ensemble;
+      using Base::propagator;
+      using PolymerSpecies::vertex;
+      using PolymerSpecies::propagatorId;
+      using PolymerSpecies::path;
+      using PolymerSpecies::nBlock;
+      using PolymerSpecies::nVertex;
+      using PolymerSpecies::nPropagator;
+      using PolymerSpecies::length;
+      using PolymerSpecies::nBead;
+      using PolymerSpecies::type;
       using Species::phi;
       using Species::mu;
       using Species::q;
+      using Species::ensemble;
 
    protected:
 
-      // protected inherited function with non-dependent names
+      // Protected inherited function with non-dependent names
       using ParamComposite::setClassName;
 
    private: 
@@ -157,9 +163,12 @@ namespace Rpg {
       /// Number of unit cell parameters. 
       int nParams_;
 
+      // Restrict access
+      using Base::solve;
       using Species::phi_;
       using Species::mu_;
       using Species::q_;
+      using Species::ensemble_;
 
    };
 

@@ -21,8 +21,8 @@ namespace Pscf
    *
    * The template argument TP should be a concrete propagator class that 
    * is derived from the template PropagatorTmpl<TP>. By convention, each
-   * implementation of SCFT is defined in a different sub-namespace of
-   * namespace Pscf. For each such implementation, there is a concrete
+   * implementation of field theory is defined in a different sub-namespace
+   * of namespace Pscf. For each such implementation, there is a concrete
    * propagator class, named Propagator by convention, that is a subclass
    * of the template instance PropagatorTmpl<Propagator>, using the syntax 
    * shown below:
@@ -40,7 +40,7 @@ namespace Pscf
    * pointers to other instances of the derived class Propagator (or TP).
    *
    * The concrete Propagator class is used in templates BlockTmpl, 
-   * PolymerTmpl and SystemTmpl. The usage in those templates require 
+   * PolymerTmpl and MixtureTmpl. The usage in those templates require 
    * that the Propagator class define typedefs named WField and CField.
    * Propagator must also provide member functions named solve() and 
    * computeQ(), neither of which takes any arguments.

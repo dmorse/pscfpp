@@ -20,8 +20,35 @@ namespace Pscf
    using namespace Util;
 
    /**
-   * Interface for a Mixture descriptor.
+   * Abstract descriptor for a mixture of polymer and solvent species.
    *
+   * A MixtureBase has an array of Monomer objects and provides access
+   * to PolymerSpecies and SolventSpecies objects describing all species
+   * in a mixture.  The MixtureBase class does not provide functions or 
+   * data structures needed to solve the modified diffusion equation 
+   * (MDE), and is thus a descriptor but not a solver for the mixture. 
+   *
+   * Each implementation level sub-namespace of Pscf (R1d, Rpc or Rpg)
+   * contains a concrete class named Mixture that is derived from 
+   * Pscf::MixtureBase, and that acts as both a descriptor and solver.
+   * Each such subspace also defines an polymer MDE solver class named 
+   * Polymer that is a subclass of PolymerSpecies and a solvent solver 
+   * class named Solvent that is subclass of SolventSpecies.  A reference 
+   * or pointer to a Mixture as a MixtureBase can be used to implement 
+   * algorithms that require access to a description of a mixture but 
+   * that do solve the MDE.
+   * 
+   * The Mixture class in each such subspace is a subclass of a class 
+   * template instantiation Pscf::PolymerTmpl<Polymer, Solvent> that is 
+   * itself a subclass of MixtureBase. A PolymerTmpl<Polymer, Solvent> 
+   * has two private member variables that are arrays of Polymer and 
+   * Solvent solver objects.  The PolymerTmpl class template defines 
+   * implementations of the pure virtual functions polymerSpecies(int id) 
+   * and solventSpecies(int id) that are declared by MixtureBase. These
+   * functions return a single Polymer solver object as a reference to
+   * a PolymerSpecies descriptor, or a Solvent solver object as a 
+   * reference to a SolventSpecies descriptor, respectively.
+   * 
    * \ingroup Pscf_Chem_Module
    */
    class MixtureBase 
@@ -65,7 +92,7 @@ namespace Pscf
       int nSolvent() const;
 
       /** 
-      * Get number of total blocks in the mixture across all polymers.
+      * Get total number blocks among all polymer species.
       */
       int nBlock() const;
 
@@ -79,16 +106,16 @@ namespace Pscf
       ///@{
 
       /**
-      * Get a Monomer type descriptor (const reference).
+      * Get a Monomer type descriptor by const reference.
       *
       * \param id integer monomer type index (0 <= id < nMonomer)
       */
       Monomer const & monomer(int id) const;
 
       /**
-      * Get a PolymerSpecies (const reference).
+      * Get a PolymerSpecies by const reference.
       *
-      * \param id integer polymer species index (0 <= id < nPolymer)
+      * \param id  integer polymer species index (0 <= id < nPolymer)
       */
       virtual
       PolymerSpecies const & polymerSpecies(int id) const = 0;
@@ -96,7 +123,7 @@ namespace Pscf
       /**
       * Set a solvent solver object by const reference.
       *
-      * \param id integer solvent species index (0 <= id < nSolvent)
+      * \param id  integer solvent species index (0 <= id < nSolvent)
       */
       virtual
       SolventSpecies const & solventSpecies(int id) const = 0;
@@ -104,6 +131,13 @@ namespace Pscf
       ///@}
 
    protected:
+
+      /**
+      * Get a Monomer type descriptor (non-const reference).
+      *
+      * \param id integer monomer type index (0 <= id < nMonomer)
+      */
+      Monomer& monomer(int id);
 
       /**
       * Array of monomer type descriptors.
@@ -135,16 +169,9 @@ namespace Pscf
       */
       double vMonomer_;
 
-      /**
-      * Get a Monomer type descriptor (non-const reference).
-      *
-      * \param id integer monomer type index (0 <= id < nMonomer)
-      */
-      Monomer& monomer(int id);
-
    };
 
-   // Inline member functions
+   // Inline public member functions
 
    inline int MixtureBase::nMonomer() const
    {  return nMonomer_; }
@@ -158,6 +185,9 @@ namespace Pscf
    inline int MixtureBase::nBlock() const
    {  return nBlock_; }
 
+   inline 
+   double MixtureBase::vMonomer() const
+   {  return vMonomer_; }
 
    inline 
    Monomer const & MixtureBase::monomer(int id) const
@@ -166,16 +196,14 @@ namespace Pscf
       return monomers_[id]; 
    }
 
+   // Inline protected member function
+
    inline 
    Monomer& MixtureBase::monomer(int id)
    {  
       UTIL_CHECK(id < nMonomer_);
       return monomers_[id]; 
    }
-
-   inline 
-   double MixtureBase::vMonomer() const
-   {  return vMonomer_; }
 
 }
 #endif
