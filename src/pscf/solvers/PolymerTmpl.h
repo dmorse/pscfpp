@@ -76,26 +76,26 @@ namespace Pscf
       virtual void readParameters(std::istream& in);
 
       /**
-      * Solve modified diffusion equation.
+      * Solve modified diffusion equation for all propagators.
       *
-      * Upon return, propagators for all blocks, molecular partition
+      * Upon return, all propagators for all blocks, molecular partition
       * function q, phi and mu are all set.  The implementation of
       * PolymerTmpl::solve() the calls the solve() function for all
       * propagators in the molecule in a predeternined order, then
       * computes q, and finally computes mu from phi or phi from mu,
-      * depending on the ensemble.
+      * depending on the ensemble (open or closed) for this species.
       *
-      * The concrete subclass of PolymerTmpl<Block> in each implemenation
-      * level namespace, which is named Polymer by convention, defines 
-      * a function named "compute" that calls PolymerTmpl<Block>::solve.
-      * This compute function takes an array of chemical potential fields
-      * (w-fields) as an argument. Before calling the solve() function
-      * declared here, the compute() function of each such Polymer class
-      * must pass the w-fields and any other required mutable data to 
-      * all Block objects in order to set up the solution of the MDE 
-      * within each block. After calling the solve() function, the 
-      * Polymer::compute function must also compute concentrations for 
-      * all blocks, each of which is owned by associated Block objects.
+      * Each implementation-level namespace defines a concrete subclass
+      * of PolymerTmpl<Block> that is named Polymer by convention. Each
+      * such Polymer class defines a function named "compute" that takes
+      * an array of chemical fields (w-fields) as an argument, and that
+      * calls PolymerTmpl<Block>::solve internally.  Before calling the 
+      * solve() function declared here, the Polymer::compute() function 
+      * must pass the w-fields and any other required mutable data to all 
+      * Block objects in order to set up the MDE solver for each block. 
+      * After calling the solve() function, the Polymer::compute function 
+      * must also compute concentrations for all blocks, each of which is 
+      * a field container owned by the associated Block object.
       *
       * The optional parameter phiTot is only relevant to problems
       * involving a mask that excludes material from part of the unit
@@ -111,7 +111,7 @@ namespace Pscf
       /**
       * Get a specified Edge (block descriptor) by non-const reference.
       *
-      * The edge member functions implement pure virtual functions
+      * The edge member functions implements pure virtual functions
       * defined by the PolymerSpecies base class, and provide access to
       * each Block as a reference to an Edge (a block descriptor).
       *
@@ -127,7 +127,7 @@ namespace Pscf
       Edge const& edge(int id) const final;
 
       /**
-      * Get a specified Block (block solver and descriptor)
+      * Get a specified Block (block solver and descriptor).
       *
       * \param id block index, 0 <= id < nBlock
       */
@@ -145,6 +145,7 @@ namespace Pscf
       *
       * For an edge that terminates at vertices with vertex indices given
       * by the return values of Edge::vertexId(0) and Edge::vertexId(1):
+      *
       *    - direction 0 propagates from vertexId(0) to vertexId(1)
       *    - direction 1 propagates from vertexId(1) to vertexId(0)
       *
@@ -162,7 +163,7 @@ namespace Pscf
       Propagator const & propagator(int blockId, int directionId) const;
 
       /**
-      * Get propagator indexed in order of computation (non-const).
+      * Get a propagator indexed in order of computation (non-const).
       *
       * The propagator index argument must satisfy 0 <= id < 2*nBlock.
       *
@@ -193,14 +194,14 @@ namespace Pscf
       /**
       * Allocate array of Block objects.
       */
-      virtual void allocateBlocks();
+      void allocateBlocks() final;
 
       /**
       * Read array of data for blocks from parameter file
       *
       * \param in parameter input stream
       */
-      virtual void readBlocks(std::istream& in);
+      void readBlocks(std::istream& in) final;
 
    private:
 
@@ -394,7 +395,7 @@ namespace Pscf
    }
 
    /*
-   * Compute a solution to the MDE and block concentrations.
+   * Solve the MDE for all blocks.
    */
    template <class Block>
    void PolymerTmpl<Block>::solve(double phiTot)
@@ -426,20 +427,6 @@ namespace Pscf
       if (ensemble() == Species::Open) {
          phi_ = exp(mu_)*q_;
       }
-
-      #if 0
-      // Compute block concentration fields
-      double prefactor;
-      if (PolymerModel::isThread()) {
-         prefactor = phi_ / ( q_ * length() );
-      } else
-      if (PolymerModel::isBead()) {
-         prefactor = phi_ / ( q_ * (double)nBead() );
-      }
-      for (int i = 0; i < nBlock(); ++i) {
-         block(i).computeConcentration(prefactor);
-      }
-      #endif
 
    }
 
