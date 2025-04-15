@@ -76,20 +76,6 @@ namespace Rpg {
       ~Polymer();
 
       /**
-      * Set the phi (volume fraction) for this species.
-      *
-      * \param phi volume fraction (input)
-      */
-      void setPhi(double phi);
-
-      /**
-      * Set the mu (chemical potential) for this species.
-      * 
-      * \param mu chemical potential (input)
-      */
-      void setMu(double mu);
-
-      /**
       * Store the number of lattice parameters in the unit cell.
       *
       * \param nParams  the number of lattice parameters in the unit cell

@@ -60,34 +60,6 @@ namespace Rpc {
       ~Polymer();
 
       /**
-      * Set value of phi (volume fraction), if ensemble is closed.
-      *
-      * An initial value for phi or mu is normally read from a parameter
-      * file. This function is provided for use by a sweep or other
-      * procedure in which phi for a species with a closed enesmble is
-      * modified after initialization. It is an error to call setPhi for
-      * a polymer species with an open ensemble.
-      *
-      * \throw Exception if ensemble is open
-      * \param phi  new volume fraction value for this species
-      */
-      void setPhi(double phi);
-
-      /**
-      * Set value of mu (chemical potential), if ensemble is closed.
-      *
-      * An initial value for phi or mu is normally read from a parameter
-      * file. This function is provided for use in a sweep or other
-      * procedure in which mu for a species with an open enesmble is
-      * modified after initialization. It is an error to call setMu for
-      * a polymer species with a closed ensemble.
-      *
-      * \throw Exception if ensemble is closed
-      * \param mu  new chemical potential value for this species
-      */
-      void setMu(double mu);
-
-      /**
       * Store the number of unit cell parameters.
       *
       * \param nParam  the number of unit cell parameters
@@ -145,9 +117,11 @@ namespace Rpc {
       double stress(int n) const;
 
       // Inherited public functions
+      
       using Base::edge;
       using Base::block;
       using Base::propagator;
+
       using PolymerSpecies::vertex;
       using PolymerSpecies::propagatorId;
       using PolymerSpecies::path;
@@ -157,10 +131,13 @@ namespace Rpc {
       using PolymerSpecies::length;
       using PolymerSpecies::nBead;
       using PolymerSpecies::type;
+
       using Species::phi;
       using Species::mu;
       using Species::q;
       using Species::ensemble;
+      using Species::setPhi;
+      using Species::setMu;
 
    protected:
 

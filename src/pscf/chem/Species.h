@@ -61,6 +61,34 @@ namespace Pscf
       */
       Ensemble ensemble() const;
 
+      /**
+      * Set value of phi (volume fraction), if ensemble is closed.
+      *
+      * An initial value for phi or mu is normally read from a parameter
+      * file. This function is provided for use by a sweep or other
+      * procedure in which phi for a species with a closed enesmble is
+      * modified after initialization. It is an error to call setPhi for
+      * a polymer species with an open ensemble.
+      *
+      * \throw Exception if ensemble is open
+      * \param phi  new volume fraction value for this species
+      */
+      void setPhi(double phi);
+
+      /**
+      * Set value of mu (chemical potential), if ensemble is closed.
+      *
+      * An initial value for phi or mu is normally read from a parameter
+      * file. This function is provided for use in a sweep or other
+      * procedure in which mu for a species with an open enesmble is
+      * modified after initialization. It is an error to call setMu for
+      * a polymer species with a closed ensemble.
+      *
+      * \throw Exception if ensemble is closed
+      * \param mu  new chemical potential value for this species
+      */
+      void setMu(double mu);
+
    protected:
 
       /**
@@ -69,7 +97,7 @@ namespace Pscf
       double phi_;
 
       /**
-      * Chemical potential, set by either setPhi or a solve function.
+      * Chemical potential, set by either setMu or a solve function.
       */
       double mu_;
 

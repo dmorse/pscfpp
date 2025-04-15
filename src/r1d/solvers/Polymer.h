@@ -50,20 +50,6 @@ namespace R1d {
       ~Polymer();
 
       /**
-      * Set volume fraction (if ensemble is closed).
-      *
-      * \param phi  new volume fraction for this species
-      */
-      void setPhi(double phi);
-
-      /**
-      * Set chemical potential mu (if ensemble is open).
-      *
-      * \param mu  new chemical potential for this species
-      */
-      void setMu(double mu);
-
-      /**
       * Compute solution to modified diffusion equation and concentrations.
       *
       * Upon return, propagator solutions and block concentration fields

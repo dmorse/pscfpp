@@ -9,8 +9,8 @@
 */
 
 #include <pscf/chem/SolventSpecies.h>   // base class
-#include <rpg/solvers/Propagator.h>       // typedefs
-#include <prdc/cuda/RField.h>
+#include <rpg/solvers/Propagator.h>     // typedefs
+#include <prdc/cuda/RField.h>           // member variable
 
 namespace Pscf {
    template <int D> class Mesh;

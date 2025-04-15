@@ -31,30 +31,12 @@ namespace Rpg {
    Polymer<D>::~Polymer()
    {}
 
-   template <int D>
-   void Polymer<D>::setPhi(double phi)
-   {
-      UTIL_CHECK(ensemble() == Species::Closed);  
-      UTIL_CHECK(phi >= 0.0);  
-      UTIL_CHECK(phi <= 1.0);  
-      phi_ = phi; 
-   }
-
-   template <int D>
-   void Polymer<D>::setMu(double mu)
-   {
-      UTIL_CHECK(ensemble() == Species::Open);  
-      mu_ = mu; 
-   }
-
    /*
    * Store the number of lattice parameters in the unit cell.
    */ 
    template <int D>
    void Polymer<D>::setNParams(int nParams)
-   {
-      nParams_ = nParams;
-   }
+   {  nParams_ = nParams; }
 
    /*
    * Compute solution to MDE and concentrations.
