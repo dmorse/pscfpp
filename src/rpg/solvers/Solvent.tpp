@@ -48,17 +48,6 @@ namespace Rpg {
       // Set q and compute mu or phi (depending on ensemble)
       Species::setQ(Q);
 
-      #if 0
-      double prefactor;
-      if (ensemble_ == Species::Closed) {
-         prefactor = phi_/q_;
-         mu_ = log(prefactor);
-      } else {
-         prefactor = exp(mu_);
-         phi_ = prefactor*q_;
-      }
-      #endif
-
       // Normalize concentration 
       double prefactor = phi()/Q;
       VecOp::mulEqS(cField_, prefactor);

@@ -93,6 +93,7 @@ namespace Rpg {
 
    protected:
 
+      #if 0
       // Inherited protected data members
       using Pscf::Species::phi_;
       using Pscf::Species::mu_;
@@ -100,6 +101,7 @@ namespace Rpg {
       using Pscf::Species::ensemble_;
       using Pscf::SolventSpecies::monomerId_;
       using Pscf::SolventSpecies::size_;
+      #endif
    
    private:
 

@@ -22,7 +22,7 @@ namespace Rpg {
    template <int D>
    Polymer<D>::Polymer()
     : nParams_(0)
-   {  setClassName("Polymer"); }
+   {  ParamComposite::setClassName("Polymer"); }
 
    /*
    * Destructor.

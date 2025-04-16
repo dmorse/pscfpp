@@ -424,17 +424,6 @@ namespace Pscf
       // Set q and compute phi or mu, depending on the ensemble
       Species::setQ(Q);
 
-      #if 0
-      // Compute mu_ or phi_, depending on ensemble
-      q_ = Q;
-      if (ensemble() == Species::Closed) {
-         mu_ = log(phi_/q_);
-      } else
-      if (ensemble() == Species::Open) {
-         phi_ = exp(mu_)*q_;
-      }
-      #endif
-
    }
 
 }

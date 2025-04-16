@@ -136,11 +136,6 @@ namespace Rpg {
       using Species::q;
       using Species::ensemble;
 
-   protected:
-
-      // Protected inherited function with non-dependent names
-      using ParamComposite::setClassName;
-
    private: 
 
       /// Stress contribution from this polymer species.
@@ -151,10 +146,6 @@ namespace Rpg {
 
       // Restrict access
       using Base::solve;
-      using Species::phi_;
-      using Species::mu_;
-      using Species::q_;
-      using Species::ensemble_;
 
    };
 

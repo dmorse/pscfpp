@@ -20,18 +20,7 @@ namespace Pscf
       mu_(0.0),
       q_(0.0),
       ensemble_(Species::Closed)
-   {}
-
-   /*
-   *  Set volume fraction (if ensemble is closed).
-   */ 
-   void Species::setPhi(double phi)
-   {
-      UTIL_CHECK(ensemble() == Species::Closed);  
-      UTIL_CHECK(phi >= 0.0);  
-      UTIL_CHECK(phi <= 1.0);  
-      phi_ = phi;
-   }
+   {  setClassName("Species"); }
 
    /*
    * Read phi or mu (but not both) and set ensemble.
@@ -46,6 +35,17 @@ namespace Pscf
          ensemble_ = Species::Open;
          read(in, "mu", mu_);
       }
+   }
+
+   /*
+   *  Set volume fraction (if ensemble is closed).
+   */ 
+   void Species::setPhi(double phi)
+   {
+      UTIL_CHECK(ensemble() == Species::Closed);  
+      UTIL_CHECK(phi >= 0.0);  
+      UTIL_CHECK(phi <= 1.0);  
+      phi_ = phi;
    }
 
    /*

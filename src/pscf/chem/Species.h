@@ -24,9 +24,9 @@ namespace Pscf {
    * variables.  The value of either phi or mu must be provided as an 
    * input parameter, and value of the other variable must then be 
    * computed. The class that actually solves the single single-molecule 
-   * statistical mechanics problem must be a subclass of Species so that 
-   * it may directly modify the protected variable phi or mu (depending 
-   * on the ensemble) and q.
+   * statistical mechanics problem must use the function setQ to set
+   * set the value of the molecular partition function and use it to
+   * compute a new value for mu or phi, depending on the ensemble. 
    *
    * \ingroup Pscf_Chem_Module
    */
@@ -50,9 +50,9 @@ namespace Pscf {
       * This function either reads a value for either phi (species volume 
       * fraction) and sets the ensemble to Closed or reads mu (species 
       * chemical potential) and sets the ensemble to Open. An Exception is
-      * thrown if neither a phi or mu parameter is found.
+      * thrown if neither a phi or mu parameter appears in the input stream.
       * 
-      * \param in  input stream (parameter file stream)
+      * \param in  input stream (parameter file)
       */
       virtual void readParameters(std::istream& in);
 
@@ -109,13 +109,16 @@ namespace Pscf {
       /**
       * Set q and compute phi or mu (depending on the ensemble).
       *
-      * This function sets the molecular partition function value q
-      * and uses this to compute and set the value of either mu (for 
-      * a closed ensemble) or phi (for an open ensemble).
+      * This function alllows a subclass to set the value of the 
+      * molecular partition function q, and use this value to compute a
+      * corresponding value for either mu (for a closed ensemble) or phi 
+      * (for an open ensemble).
       *
       * \param q  new value of molecular partition function q
       */ 
       void setQ(double q);
+
+   private:
 
       /**
       * Species volume fraction.
@@ -128,11 +131,9 @@ namespace Pscf {
       double mu_;
 
       /**
-      * Molecular partition function, set in subclass by a solve function.
+      * Molecular partition function.
       */
       double q_;
-
-   private:
 
       /**
       * Statistical ensemble for this species (open or closed).

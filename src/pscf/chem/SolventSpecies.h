@@ -84,13 +84,7 @@ namespace Pscf {
 
       ///@}
 
-      // Inherited accessor functions
-      using Pscf::Species::phi;
-      using Pscf::Species::mu;
-      using Pscf::Species::q;
-      using Pscf::Species::ensemble;
-
-   protected:
+   private:
 
       /// Identifier for the associated monomer type.
       int monomerId_;
