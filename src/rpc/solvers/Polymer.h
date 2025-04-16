@@ -139,9 +139,9 @@ namespace Rpc {
       using Species::setPhi;
       using Species::setMu;
 
-   protected:
+   protected: 
 
-      using ParamComposite::setClassName;
+      using Species::setQ;
 
    private: 
 
@@ -153,10 +153,11 @@ namespace Rpc {
 
       // Restricting access
       using Base::solve;
-      using Species::ensemble_;
-      using Species::phi_;
-      using Species::mu_;
-      using Species::q_;
+
+      //using Species::ensemble_;
+      //using Species::phi_;
+      //using Species::mu_;
+      //using Species::q_;
 
    };
 

@@ -9,7 +9,6 @@
 */
 
 #include <pscf/chem/Species.h>           // base class
-#include <util/param/ParamComposite.h>   // base class
 
 #include <pscf/chem/Vertex.h>            // member
 #include <pscf/chem/PolymerType.h>       // member
@@ -54,7 +53,7 @@ namespace Pscf
    * 
    * \ingroup Pscf_Chem_Module
    */
-   class PolymerSpecies : public Species, public ParamComposite
+   class PolymerSpecies : public Species
    {
 
    public:

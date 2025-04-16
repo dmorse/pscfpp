@@ -91,14 +91,8 @@ namespace Pscf
       // Read array of block data from parameter file
       readBlocks(in);
 
-      // Read phi or mu (but not both)
-      bool hasPhi = readOptional(in, "phi", phi_).isActive();
-      if (hasPhi) {
-         ensemble_ = Species::Closed;
-      } else {
-         ensemble_ = Species::Open;
-         read(in, "mu", mu_);
-      }
+      // Read phi or mu (but not both) and set ensemble accordingly
+      Species::readParameters(in);
 
       // Reading of parameter file is now complete
 

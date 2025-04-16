@@ -34,12 +34,41 @@ namespace Pscf
    }
 
    /*
+   * Read phi or mu (but not both) and set ensemble.
+   */
+   void Species::readParameters(std::istream& in)
+   {
+      // Read phi or mu (but not both)
+      bool hasPhi = readOptional(in, "phi", phi_).isActive();
+      if (hasPhi) {
+         ensemble_ = Species::Closed;
+      } else {
+         ensemble_ = Species::Open;
+         read(in, "mu", mu_);
+      }
+   }
+
+   /*
    *  Set chemical potential (if ensemble is open).
    */ 
    void Species::setMu(double mu)
    {
       UTIL_CHECK(ensemble() == Species::Open);  
       mu_ = mu;
+   }
+
+   /*
+   * Set q and compute mu or phi (depending on ensemble).
+   */
+   void Species::setQ(double q)
+   {
+      q_ = q;
+      if (ensemble() == Species::Closed) {
+         mu_ = log(phi_/q_);
+      } else
+      if (ensemble() == Species::Open) {
+         phi_ = exp(mu_)*q_;
+      }
    }
 
    /* 
@@ -74,7 +103,8 @@ namespace Pscf
       if (policy == Species::Unknown) {
          out << "Unknown";
       } else {
-         std::cout << "Invalid Species::Ensemble value on input" << std::endl;
+         std::cout << "Invalid Species::Ensemble value on input" 
+                   << std::endl;
          UTIL_THROW("Unrecognized value for Species::Ensemble");
       } 
       return out; 

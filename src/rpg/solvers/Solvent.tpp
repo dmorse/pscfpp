@@ -32,20 +32,23 @@ namespace Rpg {
    {
       int nx = meshPtr_->size(); // Number of grid points
 
-      // Evaluate unnormalized integral and q_
+      // Evaluate unnormalized integral and Q
       double s = size();
-      q_ = 0.0;
+      double Q = 0.0;
 
       // cField_ = exp(-size() * wField)
       VecOp::expVc(cField_, wField, -1.0*size());
 
-      q_ = Reduce::sum(cField_) / ((double) nx); // spatial average
-      q_ /= phiTot; // correct for partial occupation
+      Q = Reduce::sum(cField_) / ((double) nx); // spatial average
+      Q /= phiTot; // correct for partial occupation
 
       // Note: phiTot = 1.0 except in the case of a mask that confines
       // material to a fraction of the unit cell. 
 
-      // Compute mu_ or phi_ and prefactor
+      // Set q and compute mu or phi (depending on ensemble)
+      Species::setQ(Q);
+
+      #if 0
       double prefactor;
       if (ensemble_ == Species::Closed) {
          prefactor = phi_/q_;
@@ -54,8 +57,10 @@ namespace Rpg {
          prefactor = exp(mu_);
          phi_ = prefactor*q_;
       }
+      #endif
 
       // Normalize concentration 
+      double prefactor = phi()/Q;
       VecOp::mulEqS(cField_, prefactor);
    }
 

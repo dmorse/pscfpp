@@ -23,7 +23,6 @@ namespace R1d {
    * \ref user_param_solvent_sec "Parameter File Format"
    * \ingroup R1d_Solver_Module
    */
-   //class Solvent : public Species, public ParamComposite
    class Solvent : public SolventSpecies
    {
 
@@ -79,22 +78,6 @@ namespace R1d {
       const CField& cField() const;
   
       ///@}
-
-      // Inherited accessor functions 
-      using Pscf::Species::phi;
-      using Pscf::Species::mu;
-      using Pscf::Species::q;
-      using Pscf::Species::ensemble;
-
-   protected:
-
-      // Inherited data members
-      using Pscf::Species::phi_;
-      using Pscf::Species::mu_;
-      using Pscf::Species::q_;
-      using Pscf::Species::ensemble_;
-      using Pscf::SolventSpecies::monomerId_;
-      using Pscf::SolventSpecies::size_;
 
    private:
 

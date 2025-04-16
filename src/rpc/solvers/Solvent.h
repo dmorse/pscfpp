@@ -88,20 +88,15 @@ namespace Rpc {
 
    protected:
 
-      // Inherited protected data members
-      using Pscf::Species::phi_;
-      using Pscf::Species::mu_;
-      using Pscf::Species::q_;
-      using Pscf::Species::ensemble_;
-      using Pscf::SolventSpecies::monomerId_;
-      using Pscf::SolventSpecies::size_;
-
+      // Inherited protected functions
+      using Pscf::Species::setQ;
+      
    private:
 
-      /// Concentration field for this solvent
+      /// Concentration field for this solvent.
       RField<D> cField_;
  
-      /// Pointer to associated mesh
+      /// Pointer to associated mesh.
       Mesh<D> const *  meshPtr_;
 
    };

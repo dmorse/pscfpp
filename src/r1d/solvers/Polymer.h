@@ -62,10 +62,7 @@ namespace R1d {
 
    private:
 
-      // Restrict access to some base class members
-      using Species::q_;
-      using Species::mu_;
-      using Species::phi_;
+      // Restrict access 
       using PolymerTmpl<Block>::solve;
 
    };

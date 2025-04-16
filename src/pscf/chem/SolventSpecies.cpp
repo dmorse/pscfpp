@@ -32,34 +32,8 @@ namespace Pscf {
       read<int>(in, "monomerId", monomerId_);
       read<double>(in, "size", size_);
 
-      // Read phi or mu (but not both)
-      bool hasPhi = readOptional(in, "phi", phi_).isActive();
-      if (hasPhi) {
-         ensemble_ = Species::Closed;
-      } else {
-         ensemble_ = Species::Open;
-         read(in, "mu", mu_);
-      }
-   }
-
-   /*
-   * Rest phi to a new value, if closed ensemble.
-   */
-   void SolventSpecies::setPhi(double phi)
-   {
-      UTIL_CHECK(ensemble() == Species::Closed);  
-      UTIL_CHECK(phi >= 0.0);  
-      UTIL_CHECK(phi <= 1.0);  
-      phi_ = phi;
-   }
-
-   /*
-   * Rest mu to a new value, if open ensemble.
-   */
-   void SolventSpecies::setMu(double mu)
-   {
-      UTIL_CHECK(ensemble() == Species::Open);  
-      mu_ = mu; 
+      // Read phi or mu (but not both) and set ensemble accordingly
+      Species::readParameters(in);
    }
 
    /*

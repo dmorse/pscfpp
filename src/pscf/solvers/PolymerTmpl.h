@@ -414,20 +414,26 @@ namespace Pscf
          propagator(j).solve();
       }
 
-      // Compute molecular partition function q_
-      q_ = block(0).propagator(0).computeQ();
+      // Compute molecular partition function Q
+      double Q = block(0).propagator(0).computeQ();
 
       // The Propagator::computeQ function returns a spatial average.
       // Correct for partial occupation of the unit cell.
-      q_ = q_/phiTot;
+      Q = Q/phiTot;
 
+      // Set q and compute phi or mu, depending on the ensemble
+      Species::setQ(Q);
+
+      #if 0
       // Compute mu_ or phi_, depending on ensemble
+      q_ = Q;
       if (ensemble() == Species::Closed) {
          mu_ = log(phi_/q_);
       } else
       if (ensemble() == Species::Open) {
          phi_ = exp(mu_)*q_;
       }
+      #endif
 
    }
 

@@ -8,9 +8,12 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
+#include <util/param/ParamComposite.h>   // base class
 #include <util/global.h>
-namespace Pscf
-{
+
+namespace Pscf {
+
+   using namespace Util;
 
    /**
    * Base class for a molecular species (polymer or solvent).
@@ -27,7 +30,7 @@ namespace Pscf
    *
    * \ingroup Pscf_Chem_Module
    */
-   class Species
+   class Species : public ParamComposite
    {
    public:
 
@@ -40,6 +43,18 @@ namespace Pscf
       * Default constructor.
       */
       Species();
+
+      /**
+      * Read phi or mu (but not both) and set ensemble accordingly.
+      * 
+      * This function either reads a value for either phi (species volume 
+      * fraction) and sets the ensemble to Closed or reads mu (species 
+      * chemical potential) and sets the ensemble to Open. An Exception is
+      * thrown if neither a phi or mu parameter is found.
+      * 
+      * \param in  input stream (parameter file stream)
+      */
+      virtual void readParameters(std::istream& in);
 
       /**
       * Get the overall volume fraction for this species.
@@ -92,19 +107,32 @@ namespace Pscf
    protected:
 
       /**
-      * Volume fraction, set by either setPhi or a solve function.
+      * Set q and compute phi or mu (depending on the ensemble).
+      *
+      * This function sets the molecular partition function value q
+      * and uses this to compute and set the value of either mu (for 
+      * a closed ensemble) or phi (for an open ensemble).
+      *
+      * \param q  new value of molecular partition function q
+      */ 
+      void setQ(double q);
+
+      /**
+      * Species volume fraction.
       */
       double phi_;
 
       /**
-      * Chemical potential, set by either setMu or a solve function.
+      * Species chemical potential.
       */
       double mu_;
 
       /**
-      * Partition function, set in subclass by a solve function.
+      * Molecular partition function, set in subclass by a solve function.
       */
       double q_;
+
+   private:
 
       /**
       * Statistical ensemble for this species (open or closed).

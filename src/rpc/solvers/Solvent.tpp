@@ -62,34 +62,40 @@ namespace Rpc {
           cField_[i] = 0.0;
       }
 
-      // Evaluate unnormalized integral and q_
+      // Evaluate unnormalized integral and Q
       double s = size();
-      q_ = 0.0;
+      double Q = 0.0;
       for (int i = 0; i < nx; ++i) {
           cField_[i] = exp(-s*wField[i]);
-          q_ += cField_[i];
+          Q += cField_[i];
       }
-      q_ = q_/double(nx);  // spatial average
-      q_ = q_/phiTot;      // correct for partial occupation
+      Q = Q/double(nx);  // spatial average
+      Q = Q/phiTot;      // correct for partial occupation
 
       // Note: phiTot = 1.0 except in the case of a mask that confines
       // material to a fraction of the unit cell. 
 
-      // Compute mu_ or phi_ and prefactor
+      // Set q and compute mu or phi 
+      Species::setQ(Q);
+
+      #if 0
+      q_ = Q;
       double prefactor;
-      if (ensemble_ == Species::Closed) {
+      if (ensemble() == Species::Closed) {
          prefactor = phi_/q_;
          mu_ = log(prefactor);
       } else {
          prefactor = exp(mu_);
          phi_ = prefactor*q_;
       }
+      #endif
 
       // Normalize concentration 
+      double prefactor = phi()/Q;
       for (int i = 0; i < nx; ++i) {
           cField_[i] *= prefactor;
       }
-    
+ 
    }
 
 }

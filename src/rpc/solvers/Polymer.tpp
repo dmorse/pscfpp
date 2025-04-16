@@ -17,7 +17,7 @@ namespace Rpc {
    Polymer<D>::Polymer()
     : stress_(),
       nParam_(0)
-   {  setClassName("Polymer");}
+   {  ParamComposite::setClassName("Polymer");}
 
    template <int D>
    Polymer<D>::~Polymer()

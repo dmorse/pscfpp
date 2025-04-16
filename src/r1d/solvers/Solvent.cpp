@@ -50,20 +50,25 @@ namespace R1d {
           cField_[i] = exp(-s*wField[i]);
       }
 
-      // Compute spatial average q_
-      q_ = domain().spatialAverage(cField_);
+      // Compute spatial average q
+      double Q = domain().spatialAverage(cField_);
 
-      // Compute mu_ or phi_ and prefactor
+      // Set q and compute mu or phi (depending on ensemble)
+      Species::setQ(Q);
+
+      #if 0
       double prefactor;
-      if (ensemble_ == Species::Closed) {
+      if (ensemble() == Species::Closed) {
          prefactor = phi_/q_;
          mu_ = log(prefactor);
       } else {
          prefactor = exp(mu_);
          phi_ = prefactor*q_;
       }
+      #endif
 
       // Normalize concentration 
+      double prefactor = phi()/Q;
       for (int i = 0; i < nx; ++i) {
           cField_[i] *= prefactor;
       }

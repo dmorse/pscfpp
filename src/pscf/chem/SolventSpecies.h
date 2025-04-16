@@ -9,7 +9,6 @@
 */
 
 #include <pscf/chem/Species.h>             // base class
-#include <util/param/ParamComposite.h>     // base class
 
 namespace Pscf {
 
@@ -26,7 +25,7 @@ namespace Pscf {
    *
    * \ingroup Pscf_Chem_Module
    */
-   class SolventSpecies : public Species, public ParamComposite
+   class SolventSpecies : public Species
    {
 
    public:
@@ -42,7 +41,7 @@ namespace Pscf {
       ~SolventSpecies();
 
       /**
-      * Read and initialize.
+      * Read parameters and initialize.
       *
       * \param in  input parameter stream
       */
@@ -50,28 +49,6 @@ namespace Pscf {
 
       /// \name Setters (set member data)
       ///@{
-
-      /**
-      * Set input value of phi (volume fraction), if ensemble is closed.
-      *
-      * This function may be used to modify phi during a sweep, after
-      * initialization. An Exception is thrown if this function is called
-      * when the ensemble is open on entry.
-      *
-      * \param phi  desired volume fraction for this species
-      */
-      void setPhi(double phi);
-
-      /**
-      * Set input value of mu (chemical potential), if ensemble is open.
-      *
-      * This function may be used to modify mu during a sweep, after
-      * initialization. An Exception is thrown if this function is called
-      * when the ensemble is closed on entry.
-      *
-      * \param mu  desired chemical potential for this species
-      */
-      void setMu(double mu);
 
       /**
       * Set the monomer id for this solvent.
@@ -114,12 +91,6 @@ namespace Pscf {
       using Pscf::Species::ensemble;
 
    protected:
-
-      // Inherited data members
-      using Pscf::Species::phi_;
-      using Pscf::Species::mu_;
-      using Pscf::Species::q_;
-      using Pscf::Species::ensemble_;
 
       /// Identifier for the associated monomer type.
       int monomerId_;
