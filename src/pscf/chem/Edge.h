@@ -27,7 +27,7 @@ namespace Pscf
    *    - a monomer type id
    *    - a length (thread model) or number of beads (bead model)
    *    - a block id (unique among blocks of the same polymer species)
-   *    - ids of the two vertices at which it terminates
+   *    - vertex ids for the two vertices at which it terminates
    *
    * Edge is a base class for the BlockTmpl class template, which is a
    * a base class for a class named Block in each implementation-level 
@@ -43,16 +43,16 @@ namespace Pscf
    * of the block) when PolymerModel::isThread(), or a value for nBead
    * (the number of beads in the block) when PolymerModel::isBead(), but
    * not both.  It is an error to get or set a value for the length 
-   * when a bead model is in use or a value for nBead when a thread 
-   * model is in use, because these variables are each meaningful only
-   * in the context of a specific model. 
+   * when a bead model is in use or to get or set a value for nBead when 
+   * a thread model is in use, because these variables are each meaningful 
+   * only in the context of a specific model. 
    *
-   * In the case of the bead model, and Edge also stores a pair of 
-   * boolean flags to indicate whether the block owns either or both of 
-   * the associated terminating vertex beads. It is an error to try to 
-   * set or get a value for nBead or the vertex ownership flags when the 
-   * thread model is in use, because these variables are only meaningful 
-   * for a bead model. 
+   * In the case of the bead model, an Edge also stores a pair of boolean
+   * flags to indicate whether the block contains either or both of the
+   * associated terminating vertex beads. It is an error to try to set or
+   * get a value for the vertex ownership flags when the thread model is 
+   * in use (i.e., when PolymerModel::isThread() == true), because these 
+   * variables are only meaningful for a bead model. 
    *
    * Block objects associated with a polymer are normally stored in 
    * an array that is a private member of the Pscf::PolymerTmpl class 

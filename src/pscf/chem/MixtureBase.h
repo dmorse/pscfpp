@@ -22,29 +22,31 @@ namespace Pscf
    /**
    * Abstract descriptor for a mixture of polymer and solvent species.
    *
-   * A MixtureBase has an array of Monomer objects and provides access
-   * to PolymerSpecies and SolventSpecies objects describing all species
-   * in a mixture.  The MixtureBase class does not provide functions or 
-   * data structures needed to solve the modified diffusion equation 
-   * (MDE), and is thus a descriptor but not a solver for the mixture. 
+   * A MixtureBase has an array of Monomer objects and provides access to
+   * PolymerSpecies and SolventSpecies objects describing all molecular
+   * species in in a mixture.  The MixtureBase class does not have 
+   * functions or data structures needed to solve the modified diffusion 
+   * equation (MDE), and is thus a descriptor but not a solver for the 
+   * mixture. 
    *
-   * Each implementation level sub-namespace of Pscf (R1d, Rpc or Rpg)
-   * contains a concrete class named Mixture that is derived from 
-   * Pscf::MixtureBase, and that acts as both a descriptor and solver.
-   * Each such subspace also defines an polymer MDE solver class named 
-   * Polymer that is a subclass of PolymerSpecies and a solvent solver 
-   * class named Solvent that is subclass of SolventSpecies.  A reference 
-   * or pointer to a Mixture as a MixtureBase can be used to implement 
-   * algorithms that require access to a description of a mixture but 
-   * that do solve the MDE.
+   * MixtureBase is an abstract base class for "solver" classes that can 
+   * actually solve the single-molecule statistical mechanics problem for 
+   * very species in a mixture. Each implementation level sub-namespace 
+   * of Pscf (R1d, Rpc or Rpg) contains a concrete class named Mixture 
+   * that is derived from Pscf::MixtureBase, and that acts as both a 
+   * solver and descriptor for the mixture.  Each such subspace also 
+   * defines an polymer MDE solver class named Polymer that is a subclass 
+   * of PolymerSpecies and a solvent solver class named Solvent that is 
+   * subclass of SolventSpecies.  
    * 
-   * The Mixture class in each such subspace is a subclass of a class 
-   * template instantiation Pscf::PolymerTmpl<Polymer, Solvent> that is 
-   * itself a subclass of MixtureBase. A PolymerTmpl<Polymer, Solvent> 
-   * has two private member variables that are arrays of Polymer and 
-   * Solvent solver objects.  The PolymerTmpl class template defines 
-   * implementations of the pure virtual functions polymerSpecies(int id) 
-   * and solventSpecies(int id) that are declared by MixtureBase. These
+   * The Mixture class in each such implementation-level namespace is a 
+   * subclass of an instantiation Pscf::PolymerTmpl<Polymer, Solvent> of 
+   * the class template Pscf::PolymerTmpl. This template is derived 
+   * directly from MixtureBase. A PolymerTmpl<Polymer, Solvent> object has 
+   * two member private variables that are arrays of Polymer and Solvent 
+   * solver objects.  The PolymerTmpl template defines implementations of 
+   * functions polymerSpecies(int id) and solventSpecies(int id) that are
+   * declared as pure virtual member functions of MixtureBase. These
    * functions return a single Polymer solver object as a reference to
    * a PolymerSpecies descriptor, or a Solvent solver object as a 
    * reference to a SolventSpecies descriptor, respectively.
