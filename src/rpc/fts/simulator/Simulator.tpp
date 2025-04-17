@@ -48,12 +48,12 @@ namespace Rpc {
       hasCc_(false),
       hasDc_(false),
       systemPtr_(&system),
-      compressorFactoryPtr_(0),
-      compressorPtr_(0),
-      perturbationFactoryPtr_(0),
-      perturbationPtr_(0),
-      rampFactoryPtr_(0),
-      rampPtr_(0),
+      compressorFactoryPtr_(nullptr),
+      compressorPtr_(nullptr),
+      perturbationFactoryPtr_(nullptr),
+      perturbationPtr_(nullptr),
+      rampFactoryPtr_(nullptr),
+      rampPtr_(nullptr),
       isAllocated_(false)
    {
       setClassName("Simulator");
@@ -779,7 +779,7 @@ namespace Rpc {
    template<int D>
    void Simulator<D>::setPerturbation(Perturbation<D>* ptr)
    {
-      UTIL_CHECK(ptr != 0);
+      UTIL_CHECK(ptr);
       perturbationPtr_ = ptr;
    }
 
@@ -808,7 +808,7 @@ namespace Rpc {
    template<int D>
    void Simulator<D>::setRamp(Ramp<D>* ptr)
    {
-      UTIL_CHECK(ptr != 0);
+      UTIL_CHECK(ptr);
       rampPtr_ = ptr;
    }
 

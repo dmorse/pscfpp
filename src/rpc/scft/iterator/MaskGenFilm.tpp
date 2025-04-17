@@ -32,7 +32,7 @@ namespace Rpc
    template <int D>
    MaskGenFilm<D>::MaskGenFilm()
     : MaskGenFilmBase<D>::MaskGenFilmBase(),
-      sysPtr_(0)
+      sysPtr_(nullptr)
    {  setClassName("MaskGenFilm"); }
    
    /*
@@ -57,6 +57,7 @@ namespace Rpc
    template <int D>
    double MaskGenFilm<D>::stressTerm(int paramId) const
    {
+      UTIL_CHECK(sysPtr_);
       int normalVecParamId = convertFullParamIdToReduced<D>(normalVecId(),
                                                 system().domain().lattice());
 
@@ -162,6 +163,7 @@ namespace Rpc
    double MaskGenFilm<D>::modifyStress(int paramId, double stress) 
    const
    {
+      UTIL_CHECK(sysPtr_);
       int nvParamId = convertFullParamIdToReduced<D>(normalVecId(),
                                              system().domain().lattice());
       if (nvParamId == paramId) {
@@ -195,6 +197,7 @@ namespace Rpc
    template <int D>
    void MaskGenFilm<D>::allocate()
    {
+      UTIL_CHECK(sysPtr_);
       UTIL_CHECK(system().domain().unitCell().isInitialized());
 
       // Make sure mask has access to a fieldIo
@@ -218,6 +221,7 @@ namespace Rpc
    template <int D>
    void MaskGenFilm<D>::generate()
    {
+      UTIL_CHECK(sysPtr_);
       UTIL_CHECK(interfaceThickness() > 0);
       UTIL_CHECK(excludedThickness() > interfaceThickness());
       UTIL_CHECK(system().mask().isAllocatedRGrid());
@@ -282,6 +286,7 @@ namespace Rpc
    template <int D>
    void MaskGenFilm<D>::setFlexibleParams() const
    {
+      UTIL_CHECK(sysPtr_);
       if (system().iterator().isFlexible()) {
          FSArray<bool,6> updated;
          updated = modifyFlexibleParams(system().iterator().flexibleParams(),

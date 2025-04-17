@@ -32,8 +32,8 @@ namespace Rpc {
    */
    template <int D>
    Block<D>::Block()
-    : meshPtr_(0),
-      fftPtr_(0),
+    : meshPtr_(nullptr),
+      fftPtr_(nullptr),
       kMeshDimensions_(0),
       kSize_(0),
       ds_(0.0),

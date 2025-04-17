@@ -23,8 +23,8 @@ namespace Rpc {
    */
    template <int D>
    Propagator<D>::Propagator()
-    : blockPtr_(0),
-      meshPtr_(0),
+    : blockPtr_(nullptr),
+      meshPtr_(nullptr),
       ns_(0),
       isAllocated_(false)
    {}
@@ -59,6 +59,7 @@ namespace Rpc {
    template <int D>
    void Propagator<D>::reallocate(int ns)
    {
+      UTIL_CHECK(meshPtr_);
       UTIL_CHECK(isAllocated_);
       UTIL_CHECK(ns_ != ns);
       ns_ = ns;
@@ -89,6 +90,8 @@ namespace Rpc {
    template <int D>
    void Propagator<D>::computeHeadThread()
    {
+      UTIL_CHECK(meshPtr_);
+
       // Reference to head of this propagator
       QField& qh = qFields_[0];
 
@@ -117,6 +120,7 @@ namespace Rpc {
    template <int D>
    void Propagator<D>::computeHeadBead()
    {
+      UTIL_CHECK(blockPtr_);
       UTIL_CHECK(PolymerModel::isBead());
 
       // Set head slice to product of source tail slices
@@ -136,6 +140,7 @@ namespace Rpc {
    template <int D>
    void Propagator<D>::solve()
    {
+      UTIL_CHECK(blockPtr_);
       UTIL_CHECK(isAllocated());
       if (PolymerModel::isThread()) {
 
@@ -182,6 +187,8 @@ namespace Rpc {
    template <int D>
    void Propagator<D>::solve(QField const & head)
    {
+      UTIL_CHECK(blockPtr_);
+      UTIL_CHECK(meshPtr_);
       int nx = meshPtr_->size();
       UTIL_CHECK(head.capacity() == nx);
 
@@ -242,6 +249,8 @@ namespace Rpc {
       if (!partner().isSolved()) {
          UTIL_THROW("Partner propagator is not solved");
       }
+      UTIL_CHECK(blockPtr_);
+      UTIL_CHECK(meshPtr_);
 
       QField const& qh = head();
       QField const& qt = partner().tail();

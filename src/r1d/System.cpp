@@ -177,9 +177,10 @@ namespace R1d
       int nm = mixture().nMonomer(); 
       int np = mixture().nPolymer(); 
       int ns = mixture().nSolvent(); 
-      homogeneous_.setNMolecule(np+ns);
-      homogeneous_.setNMonomer(nm);
-      initHomogeneous();
+      //homogeneous_.setNMolecule(np+ns);
+      //homogeneous_.setNMonomer(nm);
+      //initHomogeneous();
+      homogeneous_.initialize(mixture());
 
       interaction().setNMonomer(mixture().nMonomer());
       readParamComposite(in, interaction());
@@ -601,10 +602,6 @@ namespace R1d
 
    void System::initHomogeneous()
    {
-
-      homogeneous_.initialize(mixture());
-
-      #if 0
       // Set number of molecular species and monomers
       int nm = mixture().nMonomer(); 
       int np = mixture().nPolymer(); 
@@ -679,7 +676,6 @@ namespace R1d
             homogeneous_.molecule(i).computeSize();
          }
       }
-      #endif
 
    }
 

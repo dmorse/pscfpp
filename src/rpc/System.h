@@ -21,7 +21,6 @@
 #include <prdc/cpu/RFieldDft.h>           // member (tmpFieldsKGrid_)
 
 #include <pscf/chem/PolymerModel.h>       // member (polymerModel_)
-#include <pscf/homogeneous/Mixture.h>     // member
 
 #include <util/misc/FileMaster.h>         // member
 #include <util/containers/DArray.h>       // member (tmpFields...)
@@ -905,16 +904,6 @@ namespace Rpc {
       */
       FileMaster const & fileMaster() const;
 
-      /**
-      * Get homogeneous mixture (for reference calculations).
-      */
-      Homogeneous::Mixture& homogeneous();
-
-      /**
-      * Get const homogeneous mixture (for reference calculations).
-      */
-      Homogeneous::Mixture const & homogeneous() const;
-
       ///@}
       /// \name Boolean Queries
       ///@{
@@ -974,11 +963,6 @@ namespace Rpc {
       * Filemaster (holds paths to associated I/O files).
       */
       FileMaster fileMaster_;
-
-      /**
-      * Homogeneous mixture, for reference.
-      */
-      Homogeneous::Mixture homogeneous_;
 
       // Pointers to objects owned by the System
 
@@ -1177,11 +1161,6 @@ namespace Rpc {
       */
       void readEcho(std::istream& in, double& value) const;
 
-      /**
-      * Initialize Homogeneous::Mixture object.
-      */
-      void initHomogeneous();
-
    };
 
    // Inline member functions
@@ -1215,16 +1194,6 @@ namespace Rpc {
    template <int D>
    inline FileMaster const & System<D>::fileMaster() const
    {  return fileMaster_; }
-
-   // Get the Homogeneous::Mixture object.
-   template <int D>
-   inline Homogeneous::Mixture& System<D>::homogeneous()
-   {  return homogeneous_; }
-
-   // Get the const Homogeneous::Mixture object.
-   template <int D>
-   inline Homogeneous::Mixture const & System<D>::homogeneous() const
-   {  return homogeneous_; }
 
    // Get the Interaction (excess free energy model).
    template <int D>

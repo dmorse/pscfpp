@@ -321,9 +321,6 @@ namespace Rpc {
       // Stress arising from this block
       FSArray<double, 6> stress_;
 
-      // Fast Fourier transform 
-      // FFT<D> fft_;
-
       // Array of elements containing exp(-K^2 b^2 ds/6)
       RField<D> expKsq_;
 
@@ -353,10 +350,10 @@ namespace Rpc {
       RFieldDft<D> qk2_;
 
       // Pointer to associated Mesh<D> object
-      Mesh<D> const* meshPtr_;
+      Mesh<D> const * meshPtr_;
 
       // Pointer to associated FFT<D> object
-      FFT<D> const* fftPtr_;
+      FFT<D> const * fftPtr_;
 
       // Pointer to associated UnitCell<D> object
       UnitCell<D> const* unitCellPtr_;
@@ -421,7 +418,7 @@ namespace Rpc {
    template <int D>
    inline Mesh<D> const & Block<D>::mesh() const
    {
-      UTIL_ASSERT(meshPtr_);
+      UTIL_CHECK(meshPtr_);
       return *meshPtr_;
    }
 
@@ -429,9 +426,8 @@ namespace Rpc {
    template <int D>
    inline FFT<D> const & Block<D>::fft() const
    {
-      UTIL_ASSERT(fftPtr_);
-      return *fftPtr_;
-      // return fft_;
+      UTIL_CHECK(fftPtr_);
+      return * fftPtr_;
    }
 
    #ifndef RPC_BLOCK_TPP

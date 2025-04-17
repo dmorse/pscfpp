@@ -38,9 +38,9 @@ namespace Rpc {
    BdSimulator<D>::BdSimulator(System<D>& system)
     : Simulator<D>(system),
       analyzerManager_(*this, system),
-      bdStepPtr_(0),
-      bdStepFactoryPtr_(0),
-      trajectoryReaderFactoryPtr_(0)
+      bdStepPtr_(nullptr),
+      bdStepFactoryPtr_(nullptr),
+      trajectoryReaderFactoryPtr_(nullptr)
    {
       setClassName("BdSimulator");
       bdStepFactoryPtr_ = new BdStepFactory<D>(*this);

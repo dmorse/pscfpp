@@ -825,7 +825,7 @@ namespace Rpc {
    template <int D>
    inline System<D>& Simulator<D>::system()
    {
-      assert(systemPtr_);  
+      UTIL_ASSERT(systemPtr_);  
       return *systemPtr_; 
    }
 

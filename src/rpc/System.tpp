@@ -27,7 +27,6 @@
 
 #include <pscf/inter/Interaction.h>
 #include <pscf/math/IntVec.h>
-#include <pscf/homogeneous/Clump.h>
 
 #include <util/containers/FSArray.h>
 #include <util/param/BracketPolicy.h>
@@ -55,7 +54,6 @@ namespace Rpc {
     : mixture_(),
       domain_(),
       fileMaster_(),
-      homogeneous_(),
       interactionPtr_(nullptr),
       iteratorPtr_(nullptr),
       iteratorFactoryPtr_(nullptr),
@@ -304,12 +302,6 @@ namespace Rpc {
             Log::file() << indent() << "  Simulator{ [absent] }\n";
          }
       }
-
-      // Initialize homogeneous object
-      // NOTE: THIS OBJECT IS NOT USED AT ALL.
-      homogeneous_.setNMolecule(np+ns);
-      homogeneous_.setNMonomer(nm);
-      initHomogeneous();
 
       // Check that polymer model was never reset after initialization
       UTIL_CHECK(PolymerModel::nSet() == nSetPolymerModel);
@@ -2056,94 +2048,6 @@ namespace Rpc {
           UTIL_THROW("Unable to read floating point parameter.");
       }
       Log::file() << " " << Dbl(value, 20) << std::endl;
-   }
-
-   /*
-   * Initialize the homogeneous_ member object, which describes
-   * thermodynamics of a homogeneous reference system.
-   */
-   template <int D>
-   void System<D>::initHomogeneous()
-   {
-      // Set number of molecular species and monomers
-      UTIL_CHECK(hasMixture_);
-      int nm = mixture().nMonomer();
-      int np = mixture().nPolymer();
-      int ns = mixture().nSolvent();
-      UTIL_CHECK(homogeneous_.nMolecule() == np + ns);
-      UTIL_CHECK(homogeneous_.nMonomer() == nm);
-
-      int i;   // molecule index
-      int j;   // monomer index
-
-      // Loop over polymer molecule species
-      if (np > 0) {
-
-         // Allocate array of clump sizes
-         DArray<double> s;
-         s.allocate(nm);
-
-         int k;   // block or clump index
-         int nb;  // number of blocks
-         int nc;  // number of clumps
-
-         // Loop over polymer species
-         for (i = 0; i < np; ++i) {
-
-            // Initial array of clump sizes for this polymer
-            for (j = 0; j < nm; ++j) {
-               s[j] = 0.0;
-            }
-
-            // Compute clump sizes for all monomer types.
-            nb = mixture_.polymer(i).nBlock();
-            for (k = 0; k < nb; ++k) {
-               Block<D>& block = mixture_.polymer(i).block(k);
-               j = block.monomerId();
-               if (PolymerModel::isThread()) {
-                  s[j] += block.length();
-               } else {
-                  s[j] += block.nBead();
-               }
-            }
-
-            // Count the number of clumps of nonzero size
-            nc = 0;
-            for (j = 0; j < nm; ++j) {
-               if (s[j] > 1.0E-8) {
-                  ++nc;
-               }
-            }
-            homogeneous_.molecule(i).setNClump(nc);
-
-            // Set clump properties for this Homogeneous::Molecule
-            k = 0; // Clump index
-            for (j = 0; j < nm; ++j) {
-               if (s[j] > 1.0E-8) {
-                  homogeneous_.molecule(i).clump(k).setMonomerId(j);
-                  homogeneous_.molecule(i).clump(k).setSize(s[j]);
-                  ++k;
-               }
-            }
-            homogeneous_.molecule(i).computeSize();
-
-         }
-      }
-
-      // Add solvent contributions
-      if (ns > 0) {
-         double size;
-         int monomerId;
-         for (int is = 0; is < ns; ++is) {
-            i = is + np;
-            monomerId = mixture_.solvent(is).monomerId();
-            size = mixture_.solvent(is).size();
-            homogeneous_.molecule(i).setNClump(1);
-            homogeneous_.molecule(i).clump(0).setMonomerId(monomerId);
-            homogeneous_.molecule(i).clump(0).setSize(size);
-            homogeneous_.molecule(i).computeSize();
-         }
-      }
    }
 
 } // namespace Rpc

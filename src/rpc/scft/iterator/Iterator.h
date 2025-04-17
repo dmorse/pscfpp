@@ -123,13 +123,19 @@ namespace Rpc
       * Get parent system by const reference.
       */
       System<D> const & system() const
-      {  return *sysPtr_; }
+      {
+         UTIL_CHECK(sysPtr_);  
+         return *sysPtr_; 
+      }
 
       /**
       * Get parent system by non-const reference.
       */
       System<D>& system() 
-      {  return *sysPtr_; }
+      {  
+         UTIL_CHECK(sysPtr_);  
+         return *sysPtr_; 
+      }
 
    private:
 
@@ -145,7 +151,7 @@ namespace Rpc
    inline Iterator<D>::Iterator()
     : isSymmetric_(false),
       isFlexible_(false),
-      sysPtr_(0)
+      sysPtr_(nullptr)
    {  setClassName("Iterator"); }
 
    // Constructor

@@ -40,7 +40,7 @@ namespace Rpc {
     : Simulator<D>(system),
       mcMoveManager_(*this, system),
       analyzerManager_(*this, system),
-      trajectoryReaderFactoryPtr_(0)
+      trajectoryReaderFactoryPtr_(nullptr)
    {
       setClassName("McSimulator");
       trajectoryReaderFactoryPtr_

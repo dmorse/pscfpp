@@ -34,7 +34,7 @@ namespace Rpc
    FieldState<D, FT>::FieldState()
     : fields_(),
       unitCell_(),
-      systemPtr_(0)
+      systemPtr_(nullptr)
    {}
   
    /*
@@ -44,7 +44,7 @@ namespace Rpc
    FieldState<D, FT>::FieldState(System<D>& system)
     : fields_(),
       unitCell_(),
-      systemPtr_(0)
+      systemPtr_(nullptr)
    { setSystem(system); }
 
    /*
@@ -61,7 +61,7 @@ namespace Rpc
    void FieldState<D, FT>::setSystem(System<D>& system)
    {
       if (hasSystem()) {
-         UTIL_CHECK(systemPtr_ = &system);
+         UTIL_CHECK(systemPtr_ == &system);
       } else {
          systemPtr_ = &system;
       }

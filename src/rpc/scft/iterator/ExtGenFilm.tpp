@@ -31,7 +31,7 @@ namespace Rpc
    template <int D>
    ExtGenFilm<D>::ExtGenFilm()
     : ExtGenFilmBase<D>::ExtGenFilmBase(),
-      sysPtr_(0)
+      sysPtr_(nullptr)
    {  setClassName("ExtGenFilm"); }
    
    /*

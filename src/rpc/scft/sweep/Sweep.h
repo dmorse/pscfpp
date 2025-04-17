@@ -141,13 +141,16 @@ namespace Rpc {
       * Does an association with the parent System exist?
       */
       bool hasSystem()
-      {  return (systemPtr_ != 0); }
+      {  return (bool)(systemPtr_); }
 
       /**
       * Return the parent system by reference.
       */
       System<D>& system()
-      {  return *systemPtr_; }
+      {
+         UTIL_CHECK(systemPtr_);  
+         return *systemPtr_; 
+      }
 
       // Protected variables writeCGrid_, writeCBasis_ and writeWGrid_
       // control which converged fields will be written to files after

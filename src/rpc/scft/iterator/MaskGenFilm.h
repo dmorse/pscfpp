@@ -155,12 +155,18 @@ namespace Rpc {
    // Get parent System by non-const reference.
    template <int D>
    System<D>& MaskGenFilm<D>::system() 
-   {  return *sysPtr_; }
+   {
+      UTIL_CHECK(sysPtr_);  
+      return *sysPtr_; 
+   }
 
    // Get parent System by const reference.
    template <int D>
    System<D> const & MaskGenFilm<D>::system() const
-   {  return *sysPtr_; }
+   {  
+      UTIL_CHECK(sysPtr_);  
+      return *sysPtr_; 
+   }
 
    // Get space group name for this system.
    template <int D>

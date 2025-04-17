@@ -31,7 +31,7 @@ namespace Rpc {
       writeCRGrid_(false),
       writeCBasis_(false),
       writeWRGrid_(false),
-      systemPtr_(0)
+      systemPtr_(nullptr)
    {}
 
    /*

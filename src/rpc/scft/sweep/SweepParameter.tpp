@@ -36,8 +36,8 @@ namespace Rpc {
       id_(),
       initial_(0.0),
       change_(0.0),
-      systemPtr_(0),
-      parameterTypesPtr_(0),
+      systemPtr_(nullptr),
+      parameterTypesPtr_(nullptr),
       parameterTypeId_(-1)
    {}
 
@@ -52,7 +52,7 @@ namespace Rpc {
       initial_(0.0),
       change_(0.0),
       systemPtr_(&system),
-      parameterTypesPtr_(0),
+      parameterTypesPtr_(nullptr),
       parameterTypeId_(-1)
    {}
 
@@ -97,14 +97,16 @@ namespace Rpc {
       } else {
          // Search in parameterTypes array for this sweep parameter
          bool found = false;
-         for (int i = 0; i < parameterTypesPtr_->size(); i++) {
-            ParameterType& pType = (*parameterTypesPtr_)[i];
-            if (buffer == pType.name) {
-               type_ = Special;
-               nId_ = pType.nId;
-               parameterTypeId_ = i;
-               found = true;
-               break;
+         if (parameterTypesPtr_) {
+            for (int i = 0; i < parameterTypesPtr_->size(); i++) {
+               ParameterType& pType = (*parameterTypesPtr_)[i];
+               if (buffer == pType.name) {
+                  type_ = Special;
+                  nId_ = pType.nId;
+                  parameterTypeId_ = i;
+                  found = true;
+                  break;
+               }
             }
          }
          if (!found) {
@@ -132,6 +134,7 @@ namespace Rpc {
    template <int D>
    ParameterType& SweepParameter<D>::parameterType() const
    {  
+      UTIL_CHECK(parameterTypesPtr_);
       UTIL_CHECK(isSpecialized());
       return (*parameterTypesPtr_)[parameterTypeId_]; 
    }
