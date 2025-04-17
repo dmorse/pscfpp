@@ -602,6 +602,9 @@ namespace R1d
    void System::initHomogeneous()
    {
 
+      homogeneous_.initialize(mixture());
+
+      #if 0
       // Set number of molecular species and monomers
       int nm = mixture().nMonomer(); 
       int np = mixture().nPolymer(); 
@@ -676,6 +679,7 @@ namespace R1d
             homogeneous_.molecule(i).computeSize();
          }
       }
+      #endif
 
    }
 

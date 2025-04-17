@@ -18,6 +18,7 @@
 namespace Pscf {
    class Interaction;
    class LuSolver;
+   class MixtureBase;
 }
 
 namespace Pscf {
@@ -53,6 +54,13 @@ namespace Homogeneous {
       * \param in input parameter file
       */
       virtual void readParameters(std::istream& in);
+
+      /**
+      * Initialize to properties of a MixtureBase Mixture descriptor.
+      *
+      * \param mixture  descriptor for a SCFT or FTS mixture
+      */
+      void initialize(MixtureBase const& mixture);
 
       /**
       * Set the number of molecular species and allocate memory.

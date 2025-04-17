@@ -136,7 +136,7 @@ namespace Pscf
       */
       DArray<Solvent> solvents_;
 
-      // Change inherited data member access from protected to private
+      // Restrict access to inherited protected data
       using MixtureBase::monomers_;
       using MixtureBase::nMonomer_;
       using MixtureBase::nPolymer_;

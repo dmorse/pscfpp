@@ -20,13 +20,13 @@ namespace Pscf {
    *
    * Species is a base class for both polymeric and solvent species 
    * descriptors and solvers.  Each Species has values of phi, mu and q, 
-   * and an ensemble enumeration value that are defined as protected 
-   * variables.  The value of either phi or mu must be provided as an 
-   * input parameter, and value of the other variable must then be 
-   * computed. The class that actually solves the single single-molecule 
-   * statistical mechanics problem must use the function setQ to set
-   * set the value of the molecular partition function and use it to
-   * compute a new value for mu or phi, depending on the ensemble. 
+   * and an ensemble enumeration value.  The value of either phi or mu 
+   * must be provided as a parameter in the parameter file, thereby also
+   * determining the choice of ensemble.  A subclass of Species that 
+   * actually solves the single single-molecule statistical mechanics 
+   * problem must use the function setQ(double) to set set the value 
+   * of the molecular partition function q and to compute a new value 
+   * for either mu or phi, depending on the ensemble. 
    *
    * \ingroup Pscf_Chem_Module
    */
@@ -112,7 +112,8 @@ namespace Pscf {
       * This function alllows a subclass to set the value of the 
       * molecular partition function q, and use this value to compute a
       * corresponding value for either mu (for a closed ensemble) or phi 
-      * (for an open ensemble).
+      * (for an open ensemble). Upon return these variables are related
+      * by the equation: \f$ \phi = \exp(\mu) q \f$. 
       *
       * \param q  new value of molecular partition function q
       */ 
