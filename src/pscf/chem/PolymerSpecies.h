@@ -99,9 +99,9 @@ namespace Pscf
       /**
       * Get a specified Edge (block descriptor) by non-const reference.
       *
-      * This function is implemented by the class template 
-      * Pscf::PolymerTmpl<class Block>, in which Block must be a subclass
-      * of Pscf::Edge.
+      * This function is implemented by class template PolymerTmpl<Block>,
+      * which is a subclass of PolmerSpecies, in which the template 
+      * argument Block must be a subclass of class Pscf::Edge.
       *
       * \param id block index, 0 <= id < nBlock
       */

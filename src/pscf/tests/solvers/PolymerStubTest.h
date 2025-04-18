@@ -111,7 +111,23 @@ public:
       EdgeIterator iter(p);
       iter.begin(sourceId, targetId);
       int nEdge = 1;
+      int edgeId, dirId, vertexId, vpId, vnId;
       while (iter.notEnd()) {
+         edgeId = iter.currentEdgeId();
+         dirId = iter.currentDirectionId();
+         if (dirId == 0) {
+            vpId = p.edge(edgeId).vertexId(0);
+            vnId = p.edge(edgeId).vertexId(1);
+         } else
+         if (dirId == 1) {
+            vpId = p.edge(edgeId).vertexId(1);
+            vnId = p.edge(edgeId).vertexId(0);
+         }
+         if (nEdge > 1) {
+            TEST_ASSERT(vpId == vertexId);
+         }
+         vertexId = iter.currentVertexId();
+         TEST_ASSERT(vnId == vertexId);
          if (verbose() > 0) {
             std::cout << iter.currentEdgeId() << "  "
                       << iter.currentVertexId() << std::endl;

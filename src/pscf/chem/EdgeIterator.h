@@ -71,6 +71,11 @@ namespace Pscf {
       int currentEdgeId() const;
 
       /**
+      * Get direction index for the path within the current edge.
+      */
+      int currentDirectionId() const;
+
+      /**
       * Get index of the current vertex.
       *
       * When the current edge is not the target edge, the current vertex
@@ -97,6 +102,9 @@ namespace Pscf {
 
       // Index of current edge.
       int currentEdgeId_;
+
+      // Direction index for the current edge.
+      int currentDirectionId_;
 
       // Index of current vertex.
       int currentVertexId_;

@@ -12,33 +12,73 @@ namespace Pscf {
 namespace Debye {
 
    /*
-   * Homopolymer correlation function.
+   * Intrablock correlation function (thread model)
    */
-   double d(double ksq, double length, double kuhn)
+   double dt(double ksq, double length, double kuhn)
    {
-      double x = ksq*length*kuhn*kuhn/6.0;
-      double g;
+      double x = length*ksq*kuhn*kuhn/6.0;
+      double d;
       if (x < 1.0E-5) {
-         g = 1.0 - x*x/3.0;
+         d = 1.0 - ((x*x)/3.0);
       } else {
-         g = 2.0 * (std::exp(-x) - 1.0 + x) / (x * x);
+         d = 2.0 * (std::exp(-x) - 1.0 + x) / (x * x);
       }
-      return length*length*g;
+      d *= length*length;
+      return d;
    }
 
    /*
-   * End factor for one block. 
+   * Intrablock correlation function (bead model)
    */
-   double e(double ksq, double length, double kuhn)
+   double db(double ksq, double nBead, double kuhn)
+   {
+      double y = ksq*kuhn*kuhn/6.0;
+      double x = nBead*y;
+      double d;
+      if (x < 1.0E-5) {
+         d = 1.0 - (x*x)/3.0;
+         d *= nBead*nBead;
+      } else {
+         double z = std::exp(-y);
+         double u = 1 - z;
+         d = 2.0 * z * (std::exp(-x) + nBead*u - 1.0) / (u*u);
+         d += nBead;
+      }
+      return d;
+   }
+
+   /*
+   * End factor for one block (thread model)
+   */
+   double et(double ksq, double length, double kuhn)
    {
       double x = ksq*length*kuhn*kuhn/6.0;
-      double h;
+      double e;
       if (x < 1.0E-5) {
-         h = 1.0 - x/2.0 + x*x/6.0;
+         e = 1.0 - x/2.0 + x*x/6.0;
       } else {
-         h = (1.0 - std::exp(-x)) / x;
+         e = (1.0 - std::exp(-x)) / x;
       }
-      return length*h;
+      e *= length;
+      return e;
+   }
+
+   /*
+   * End factor for one block (bead model)
+   */
+   double eb(double ksq, double nBead, double kuhn)
+   {
+      double y = ksq*kuhn*kuhn/6.0;
+      double x = nBead*y;
+      double e;
+      if (x < 1.0E-5) {
+         e = 1.0 - x/2.0 + x*x/6.0;
+         e *= nBead;
+      } else {
+         double z = std::exp(-y);
+         e = z * (1.0 - std::exp(-x)) / (1 - z);
+      }
+      return e;
    }
 
 } // namespace Debye

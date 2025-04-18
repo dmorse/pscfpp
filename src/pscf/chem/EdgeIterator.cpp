@@ -56,12 +56,14 @@ namespace Pscf {
          UTIL_CHECK(p10[0] != currentEdgeId_);
          UTIL_CHECK(p11[0] != currentEdgeId_);
          currentVertexId_ = s1;
+         currentDirectionId_ = 0;
       } else 
       if (p10[0] == currentEdgeId_) {
          UTIL_CHECK(p11[0] == currentEdgeId_);
          UTIL_CHECK(p00[0] != currentEdgeId_);
          UTIL_CHECK(p01[0] != currentEdgeId_);
          currentVertexId_ = s0;
+         currentDirectionId_ = 1;
       } else {
          UTIL_THROW("Error in finding leading vertex for source");
       }
@@ -104,11 +106,11 @@ namespace Pscf {
       UTIL_CHECK(dirId < 2);
       Edge const & edge = polymerPtr_->edge(edgeId);
       UTIL_CHECK(edge.vertexId(dirId) == currentVertexId_);
+      currentEdgeId_ = edgeId;
+      currentDirectionId_ = dirId;
       if (dirId == 0) {
-         currentEdgeId_ = edgeId;
          currentVertexId_ = edge.vertexId(1);
       } else {
-         currentEdgeId_ = edgeId;
          currentVertexId_ = edge.vertexId(0);
       }
       return *this;
@@ -121,13 +123,19 @@ namespace Pscf {
    {  return currentEdgeId_; }
 
    /*
+   * Get the current direction id.
+   */ 
+   int EdgeIterator::currentDirectionId() const
+   {  return currentDirectionId_; }
+
+   /*
    * Get the current vertex id.
    */ 
    int EdgeIterator::currentVertexId() const
    {  return currentVertexId_; }
 
    /*
-   * Is the current vertex equal to the target:
+   * Is the current vertex equal to the target.
    */
    bool EdgeIterator::isEnd() const
    {

@@ -10,11 +10,13 @@
 
 #include "IntraCorrelation.h"
 #include <rpc/System.h>
-#include <util/global.h>
+#include <prdc/crystal/shiftToMinimum.h>
 #include <pscf/mesh/MeshIterator.h>
+#include <pscf/chem/PolymerSpecies.h>
+#include <pscf/chem/Edge.h>
 #include <pscf/chem/Debye.h>
 #include <pscf/chem/EdgeIterator.h>
-#include <prdc/crystal/shiftToMinimum.h>
+#include <util/global.h>
 
 namespace Pscf {
 namespace Rpc{
@@ -72,9 +74,10 @@ namespace Rpc{
       }
 
       double phi, cPolymer, polymerLength;
-      double length, lengthA, lengthB, ksq;
-      double kuhn, kuhnA, kuhnB, eA, eB;
-      int monomerId, monomerIdA, monomerIdB, rank;
+      double length, lengthA, lengthB, lengthC, ksq;
+      double kuhn, kuhnA, kuhnB, kuhnC, eA, eB;
+      int monomerId, monomerIdA, monomerIdB, monomerIdC;
+      int rank;
 
       // Initialize correlations to zero
       for (int i = 0; i < correlations.capacity(); ++i){
@@ -85,14 +88,18 @@ namespace Rpc{
       for (int i = 0; i < nPolymer; i++){
 
          // Local copies of polymer properties
-         Polymer<D> const & polymer = mixture.polymer(i);
+         PolymerSpecies const & polymer = mixture.polymerSpecies(i);
          const int nBlock = polymer.nBlock();
          phi = polymer.phi();
 
          // Compute polymerLength (sum of lengths of all blocks)
          polymerLength = 0.0;
          for (int j = 0; j < nBlock; j++) {
-            length = polymer.block(j).length();
+            if (PolymerModel::isThread()) {
+               length = polymer.edge(j).length();
+            } else {
+               length = (double) polymer.edge(j).nBead();
+            }
             polymerLength += length;
          }
 
@@ -102,67 +109,134 @@ namespace Rpc{
          // Compute diagonal (j = k) contributions
          for (int j = 0; j < nBlock; j++) {
 
-            monomerId = polymer.block(j).monomerId();
+            monomerId = polymer.edge(j).monomerId();
             kuhn = mixture.monomer(monomerId).kuhn();
-            length = polymer.block(j).length();
 
             // Loop over ksq to increment correlations
-            for (iter.begin(); !iter.atEnd(); ++iter) {
-               rank = iter.rank();
-               ksq = Gsq[rank];
-               correlations[rank] += cPolymer * Debye::d(ksq, length, kuhn);
+            if (PolymerModel::isThread()) {
+               length = polymer.edge(j).length();
+               for (iter.begin(); !iter.atEnd(); ++iter) {
+                  rank = iter.rank();
+                  ksq = Gsq[rank];
+                  correlations[rank] +=
+                                 cPolymer * Debye::dt(ksq, length, kuhn);
+               }
+            } else {
+               length = (double) polymer.edge(j).nBead();
+               for (iter.begin(); !iter.atEnd(); ++iter) {
+                  rank = iter.rank();
+                  ksq = Gsq[rank];
+                  correlations[rank] +=
+                                 cPolymer * Debye::db(ksq, length, kuhn);
+               }
             }
 
          }
 
          // Compute off-diagonal contributions
          if (nBlock > 1) {
-            EdgeIterator EdgeItr(polymer);
+            EdgeIterator edgeItr(polymer);
 
             // Outer loop over blocks
             for (int ia = 1; ia < nBlock; ++ia) {
 
                // Block A properties
-               Block<D> const & blockA = polymer.block(ia);
-               lengthA = blockA.length();
-               monomerIdA = blockA.monomerId();
+               Edge const & edgeA = polymer.edge(ia);
+               if (PolymerModel::isThread()) {
+                  lengthA = edgeA.length();
+               } else {
+                  lengthA = (double) edgeA.nBead();
+               }
+               monomerIdA = edgeA.monomerId();
                kuhnA = mixture.monomer(monomerIdA).kuhn();
 
                // Inner loop over blocks
                for (int ib = 0; ib < ia; ++ib)  {
 
                   // Block B properties
-                  Block<D> const & blockB = polymer.block(ib);
-                  lengthB = blockB.length();
-                  monomerIdB = blockB.monomerId();
+                  Edge const & edgeB = polymer.edge(ib);
+                  if (PolymerModel::isThread()) {
+                     lengthB = edgeB.length();
+                  } else {
+                     lengthB = (double) edgeB.nBead();
+                  }
+                  monomerIdB = edgeB.monomerId();
                   kuhnB = mixture.monomer(monomerIdB).kuhn();
 
                   // Mean-square end-to-end length of segment between blocks
                   double d = 0.0;
-                  int edgeId;
-                  EdgeItr.begin(ia, ib);
-                  while (EdgeItr.notEnd()) {
-                     edgeId = EdgeItr.currentEdgeId();
-                     if (edgeId != ia && edgeId != ib){
-                        Block<D> const & blockK = polymer.block(edgeId);
-                        double lengthK = blockK.length();
-                        double monomerIdK = blockK.monomerId();
-                        double kuhnK = mixture.monomer(monomerIdK).kuhn();
-                        d += lengthK * kuhnK * kuhnK;
+                  int edgeId, vertexId;
+                  edgeItr.begin(ia, ib);
+                  while (edgeItr.notEnd()) {
+                     edgeId = edgeItr.currentEdgeId();
+                     Edge const & edgeC = polymer.edge(edgeId);
+                     monomerIdC = edgeC.monomerId();
+                     kuhnC = mixture.monomer(monomerIdC).kuhn();
+                     if (edgeId == ia) {
+                        if (PolymerModel::isBead()) {
+                           vertexId = edgeItr.currentVertexId();
+                           if (vertexId == edgeC.vertexId(0)) {
+                              if (!edgeC.ownsVertex(0)) {
+                                 d += kuhnC*kuhnC;
+                              }
+                           } else 
+                           if (vertexId == edgeC.vertexId(1)) {
+                              if (!edgeC.ownsVertex(1)) {
+                                 d += kuhnC*kuhnC;
+                              }
+                           } else {
+                              UTIL_THROW("Error: Edge does not contain vertex");
+                           }
+                        }
+                     } else 
+                     if (edgeId == ib) {
+                        if (PolymerModel::isBead()) {
+                           vertexId = edgeItr.currentVertexId();
+                           if (vertexId == edgeC.vertexId(0)) {
+                              if (!edgeC.ownsVertex(1)) {
+                                 d += kuhnC*kuhnC;
+                              }
+                           } else 
+                           if (vertexId == edgeC.vertexId(1)) {
+                              if (!edgeC.ownsVertex(0)) {
+                                 d += kuhnC*kuhnC;
+                              }
+                           } else {
+                              UTIL_THROW("Error: Edge does not contain vertex");
+                           }
+                        }
+                     } else {
+                        if (PolymerModel::isThread()) {
+                           lengthC = edgeC.length();
+                        } else {
+                           lengthC = (double)(edgeC.nBead() - 1);
+                        }
+                        d += lengthC * kuhnC * kuhnC;
                      }
-                     ++EdgeItr;
+                     ++edgeItr;
                   }
 
-                  // Loop over ksq to increment correlations
+                  // Loop over ksq to increment intra-block correlations
                   double x;
                   double prefactor = 2.0*cPolymer;
-                  for (iter.begin(); !iter.atEnd(); ++iter) {
-                     rank = iter.rank();
-                     ksq = Gsq[rank];
-                     x = std::exp( -d * ksq / 6.0);
-                     eA = Debye::e(ksq, lengthA, kuhnA);
-                     eB = Debye::e(ksq, lengthB, kuhnB);
-                     correlations[rank] += prefactor * x * eA * eB;
+                  if (PolymerModel::isThread()) {
+                     for (iter.begin(); !iter.atEnd(); ++iter) {
+                        rank = iter.rank();
+                        ksq = Gsq[rank];
+                        x = std::exp( -d * ksq / 6.0);
+                        eA = Debye::et(ksq, lengthA, kuhnA);
+                        eB = Debye::et(ksq, lengthB, kuhnB);
+                        correlations[rank] += prefactor * x * eA * eB;
+                     }
+                  } else {
+                     for (iter.begin(); !iter.atEnd(); ++iter) {
+                        rank = iter.rank();
+                        ksq = Gsq[rank];
+                        x = std::exp( -d * ksq / 6.0);
+                        eA = Debye::eb(ksq, lengthA, kuhnA);
+                        eB = Debye::eb(ksq, lengthB, kuhnB);
+                        correlations[rank] += prefactor * x * eA * eB;
+                     }
                   }
 
                } // loop: block ib

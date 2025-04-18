@@ -174,9 +174,9 @@ namespace R1d
       hasMixture_ = true;
 
       // Initialize homogeneous object
-      int nm = mixture().nMonomer(); 
-      int np = mixture().nPolymer(); 
-      int ns = mixture().nSolvent(); 
+      //int nm = mixture().nMonomer(); 
+      //int np = mixture().nPolymer(); 
+      //int ns = mixture().nSolvent(); 
       //homogeneous_.setNMolecule(np+ns);
       //homogeneous_.setNMonomer(nm);
       //initHomogeneous();
