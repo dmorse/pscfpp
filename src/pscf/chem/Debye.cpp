@@ -76,7 +76,7 @@ namespace Debye {
          e *= nBead;
       } else {
          double z = std::exp(-y);
-         e = z * (1.0 - std::exp(-x)) / (1 - z);
+         e = (1.0 - std::exp(-x)) / (1 - z);
       }
       return e;
    }

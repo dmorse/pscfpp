@@ -118,7 +118,7 @@ namespace Rpg{
             for (iter.begin(); !iter.atEnd(); ++iter) {
                rank = iter.rank();
                ksq = Gsq[rank];
-               correlations_h[rank] += cPolymer * Debye::d(ksq, length, kuhn);
+               correlations_h[rank] += cPolymer * Debye::dt(ksq, length, kuhn);
             }
 
          }
@@ -168,8 +168,8 @@ namespace Rpg{
                      rank = iter.rank();
                      ksq = Gsq[rank];
                      x = std::exp( -d * ksq / 6.0);
-                     eA = Debye::e(ksq, lengthA, kuhnA);
-                     eB = Debye::e(ksq, lengthB, kuhnB);
+                     eA = Debye::et(ksq, lengthA, kuhnA);
+                     eB = Debye::et(ksq, lengthB, kuhnB);
                      correlations_h[rank] += prefactor * x * eA * eB;
                   }
 
