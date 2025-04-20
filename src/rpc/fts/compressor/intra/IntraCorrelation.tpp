@@ -73,16 +73,16 @@ namespace Rpc{
          Gsq[iter.rank()] = unitCell.ksq(Gmin);
       }
 
-      double phi, cPolymer, polymerLength;
-      double length, lengthA, lengthB, lengthC, ksq;
-      double kuhn, kuhnA, kuhnB, kuhnC, eA, eB;
-      int monomerId, monomerIdA, monomerIdB, monomerIdC;
-      int rank;
-
       // Initialize correlations to zero
       for (int i = 0; i < correlations.capacity(); ++i){
          correlations[i] = 0.0;
       }
+
+      double phi, cPolymer, polymerLength, rsqAB;
+      double length, lengthA, lengthB, lengthC, ksq;
+      double kuhn, kuhnA, kuhnB, kuhnC, eA, eB;
+      int monomerId, monomerIdA, monomerIdB, monomerIdC;
+      int rank;
 
       // Loop over polymer species
       for (int i = 0; i < nPolymer; i++){
@@ -164,7 +164,7 @@ namespace Rpc{
                   kuhnB = mixture.monomer(monomerIdB).kuhn();
 
                   // Mean-square end-to-end length of segment between blocks
-                  double d = 0.0;
+                  rsqAB = 0.0;
                   int edgeId, vertexId;
                   edgeItr.begin(ia, ib);
                   while (edgeItr.notEnd()) {
@@ -177,12 +177,12 @@ namespace Rpc{
                            vertexId = edgeItr.currentVertexId();
                            if (vertexId == edgeC.vertexId(0)) {
                               if (!edgeC.ownsVertex(0)) {
-                                 d += kuhnC*kuhnC;
+                                 rsqAB += kuhnC*kuhnC;
                               }
                            } else 
                            if (vertexId == edgeC.vertexId(1)) {
                               if (!edgeC.ownsVertex(1)) {
-                                 d += kuhnC*kuhnC;
+                                 rsqAB += kuhnC*kuhnC;
                               }
                            } else {
                               UTIL_THROW("Error: Edge does not contain vertex");
@@ -194,12 +194,12 @@ namespace Rpc{
                            vertexId = edgeItr.currentVertexId();
                            if (vertexId == edgeC.vertexId(0)) {
                               if (!edgeC.ownsVertex(1)) {
-                                 d += kuhnC*kuhnC;
+                                 rsqAB += kuhnC*kuhnC;
                               }
                            } else 
                            if (vertexId == edgeC.vertexId(1)) {
                               if (!edgeC.ownsVertex(0)) {
-                                 d += kuhnC*kuhnC;
+                                 rsqAB += kuhnC*kuhnC;
                               }
                            } else {
                               UTIL_THROW("Error: Edge does not contain vertex");
@@ -211,7 +211,7 @@ namespace Rpc{
                         } else {
                            lengthC = (double)(edgeC.nBead() - 1);
                         }
-                        d += lengthC * kuhnC * kuhnC;
+                        rsqAB += lengthC * kuhnC * kuhnC;
                      }
                      ++edgeItr;
                   }
@@ -223,7 +223,7 @@ namespace Rpc{
                      for (iter.begin(); !iter.atEnd(); ++iter) {
                         rank = iter.rank();
                         ksq = Gsq[rank];
-                        x = std::exp( -d * ksq / 6.0);
+                        x = std::exp( -rsqAB * ksq / 6.0);
                         eA = Debye::et(ksq, lengthA, kuhnA);
                         eB = Debye::et(ksq, lengthB, kuhnB);
                         correlations[rank] += prefactor * x * eA * eB;
@@ -232,7 +232,7 @@ namespace Rpc{
                      for (iter.begin(); !iter.atEnd(); ++iter) {
                         rank = iter.rank();
                         ksq = Gsq[rank];
-                        x = std::exp( -d * ksq / 6.0);
+                        x = std::exp( -rsqAB * ksq / 6.0);
                         eA = Debye::eb(ksq, lengthA, kuhnA);
                         eB = Debye::eb(ksq, lengthB, kuhnB);
                         correlations[rank] += prefactor * x * eA * eB;

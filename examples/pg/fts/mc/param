@@ -32,12 +32,12 @@ System{
 
       ForceBiasMove{
         probability     0.50
-        mobility        4.0E-3
+        mobility        5.0E-3
       }
 
       RealMove{
         probability     0.25
-        A               0.15
+        sigma           0.08
       }
 
     }
