@@ -253,6 +253,27 @@ namespace Cpu {
                        &rField[0]);
    }
 
+   // Static function
+
+   /*
+   * Compute dimensions and size of the k-size mesh (static)
+   */
+   template <int D>
+   void FFT<D>::computeKMesh(IntVec<D> const & rMeshDimensions,
+                             IntVec<D> & kMeshDimensions,
+                             int & kSize )
+   {
+      kSize = 1;
+      for (int i = 0; i < D; ++i) {
+         if (i < D - 1) {
+            kMeshDimensions[i] = rMeshDimensions[i];
+         } else {
+            kMeshDimensions[i] = rMeshDimensions[i]/2 + 1;
+         }
+         kSize *= kMeshDimensions[i];
+      }
+   }
+
 }
 }
 }

@@ -152,6 +152,20 @@ namespace Cpu {
       */
       bool isSetup() const;
 
+      // Static
+
+      /*
+      * Compute dimensions and size of the k-size mesh.
+      *
+      * \param rMeshDimensions  dimensions of real space grid
+      * \param kMeshDimensions  dimensions of k-space grid
+      * \param kSize  number of point in k-space grid
+      */
+      static 
+      void computeKMesh(IntVec<D> const & rMeshDimensions,
+                        IntVec<D> & kMeshDimensions,
+                        int & kSize );
+
    private:
 
       /// Private k-space array for performing safe transforms.
