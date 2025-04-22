@@ -10,8 +10,15 @@
 
 #include "Mixture.h"
 #include <prdc/cpu/RField.h>
+
+#include <prdc/cpu/FFT.h>
+#include <prdc/crystal/UnitCell.h>
+
 #include <pscf/mesh/Mesh.h>
+#include <pscf/chem/Monomer.h>
 #include <pscf/chem/PolymerModel.h>
+
+#include <util/containers/DArray.h>
 
 #include <cmath>
 

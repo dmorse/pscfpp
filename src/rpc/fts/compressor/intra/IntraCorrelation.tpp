@@ -10,12 +10,17 @@
 
 #include "IntraCorrelation.h"
 #include <rpc/System.h>
+
+#include <prdc/cpu/FFT.h>
+#include <prdc/cpu/RField.h>
 #include <prdc/crystal/shiftToMinimum.h>
+
 #include <pscf/mesh/MeshIterator.h>
 #include <pscf/chem/PolymerSpecies.h>
 #include <pscf/chem/Edge.h>
 #include <pscf/chem/Debye.h>
 #include <pscf/chem/EdgeIterator.h>
+
 #include <util/global.h>
 
 namespace Pscf {
@@ -28,7 +33,7 @@ namespace Rpc{
    IntraCorrelation<D>::IntraCorrelation(System<D>& system)
     : systemPtr_(&system),
       kSize_(1)
-   {  setClassName("IntraCorrelation"); }
+   {}
 
    // Destructor
    template <int D>
@@ -47,6 +52,7 @@ namespace Rpc{
       const int nSolvent = mixture.nSolvent();
       const double vMonomer = mixture.vMonomer();
 
+      #if 0
       // Compute Fourier space kMeshDimensions_
       for (int i = 0; i < D; ++i) {
          if (i < D - 1) {
@@ -57,6 +63,10 @@ namespace Rpc{
             kSize_ *= (dimensions[i]/2 + 1);
          }
       }
+      #endif
+
+      // Compute Fourier space kMeshDimensions_ and kSize_
+      FFT<D>::computeKMesh(dimensions, kMeshDimensions_, kSize_);
       UTIL_CHECK(correlations.capacity() == kSize_);
 
       // Allocate Gsq (k-space array of square wavenumber values)

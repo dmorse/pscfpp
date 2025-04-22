@@ -9,6 +9,7 @@
 */
 
 #include "RFieldDft.h"
+#include <prdc/cpu/FFT.h>
 
 namespace Pscf {
 namespace Prdc {
@@ -93,11 +94,19 @@ namespace Cpu {
    }
 
    /*
-   * Allocate the underlying C array for an FFT grid.
+   * Allocate the underlying array for an FFT grid.
    */
    template <int D>
    void RFieldDft<D>::allocate(IntVec<D> const & meshDimensions)
    {
+      for (int i = 0; i < D; ++i) {
+         UTIL_CHECK(meshDimensions[i] > 0);
+         meshDimensions_[i] = meshDimensions[i];
+      }
+      int size;
+      FFT<D>::computeKMesh(meshDimensions, dftDimensions_, size);
+
+      #if 0
       int size = 1;
       for (int i = 0; i < D; ++i) {
          UTIL_CHECK(meshDimensions[i] > 0);
@@ -110,6 +119,8 @@ namespace Cpu {
             size *= dftDimensions_[i];
          }
       }
+      #endif
+
       FftwDArray<fftw_complex>::allocate(size);
    }
 

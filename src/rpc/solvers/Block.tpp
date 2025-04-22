@@ -11,6 +11,7 @@
 #include "Block.h"
 #include <prdc/crystal/UnitCell.h>
 #include <prdc/crystal/shiftToMinimum.h>
+#include <prdc/cpu/FFT.h>
 #include <pscf/chem/Edge.h>
 #include <pscf/mesh/Mesh.h>
 #include <pscf/mesh/MeshIterator.h>
@@ -34,11 +35,11 @@ namespace Rpc {
    Block<D>::Block()
     : meshPtr_(nullptr),
       fftPtr_(nullptr),
-      kMeshDimensions_(0),
-      kSize_(0),
-      ds_(0.0),
-      dsTarget_(0.0),
-      ns_(0),
+      kMeshDimensions_(-1),
+      kSize_(-1),
+      ds_(-1.0),
+      dsTarget_(-1.0),
+      ns_(-1),
       isAllocated_(false),
       hasExpKsq_(false)
    {
@@ -86,16 +87,8 @@ namespace Rpc {
       UTIL_CHECK(mesh().dimensions() == fft().meshDimensions());
       UTIL_CHECK(!isAllocated_);
 
-      // Compute Fourier space kMeshDimensions_ and kSize_
-      kSize_ = 1;
-      for (int i = 0; i < D; ++i) {
-         if (i < D - 1) {
-            kMeshDimensions_[i] = mesh().dimensions()[i];
-         } else {
-            kMeshDimensions_[i] = mesh().dimensions()[i]/2 + 1;
-         }
-         kSize_ *= kMeshDimensions_[i];
-      }
+      // Compute DFT grid dimensions kMeshDimensions_ and size kSize_
+      FFT<D>::computeKMesh(mesh().dimensions(), kMeshDimensions_, kSize_);
 
       // Allocate work arrays for MDE solution
       expKsq_.allocate(kMeshDimensions_);
@@ -136,7 +129,7 @@ namespace Rpc {
       } else
       if (PolymerModel::isBead()) {
 
-         ds_ = ds;
+         ds_ = 1.0;
          ns_ = nBead();
          if (!ownsVertex(0)) ++ns_;
          if (!ownsVertex(1)) ++ns_;
@@ -161,9 +154,11 @@ namespace Rpc {
       Edge::setLength(newLength);
 
       if (isAllocated_) {
+
+         int oldNs = ns_;
+
          // Reset contour length discretization
          UTIL_CHECK(dsTarget_ > 0);
-         int oldNs = ns_;
          int tempNs;
          tempNs = floor( length()/(2.0 *dsTarget_) + 0.5 );
          if (tempNs == 0) {
@@ -240,7 +235,7 @@ namespace Rpc {
    }
 
    /*
-   * Setup the contour length step algorithm.
+   * Setup the the step algorithm for a specific field configuration.
    */
    template <int D>
    void
@@ -260,7 +255,7 @@ namespace Rpc {
             // UTIL_CHECK(std::abs(arg) < 0.5);
             expW_[i]  = exp(arg);
             expW2_[i] = exp(0.5*arg);
-         } 
+         }
       } else
       if (PolymerModel::isBead()) {
          for (int i = 0; i < nx; ++i) {
@@ -311,7 +306,7 @@ namespace Rpc {
 
       // Apply pseudo-spectral algorithm
 
-      // Full step for ds, half-step for ds/2
+      // Step by ds/2 for qr_, step by ds/4 for qr2_
       int i;
       for (i = 0; i < nx; ++i) {
          qr_[i] = q[i]*expW_[i];
@@ -325,20 +320,24 @@ namespace Rpc {
          qk2_[i][0] *= expKsq2_[i];
          qk2_[i][1] *= expKsq2_[i];
       }
-      fft().inverseTransformUnsafe(qk_, qr_); // destroys qk_
-      fft().inverseTransformUnsafe(qk2_, qr2_); // destroys qk2_
+      fft().inverseTransformUnsafe(qk_, qr_); // overwrites qk_
+      fft().inverseTransformUnsafe(qk2_, qr2_); // overwrites qk2_
       for (i = 0; i < nx; ++i) {
          qr_[i] = qr_[i]*expW_[i];
          qr2_[i] = qr2_[i]*expW_[i];
       }
 
-      // Finish second half-step for ds/2
+      // Above, multiplying qr2_ by expW_ rather than expW2_ combines
+      // required multiplications by expW2_ at the end of first half-step 
+      // and at the beginning of the second.
+
+      // Finish second half-step of ds/2 for qr2_
       fft().forwardTransform(qr2_, qk2_);
       for (i = 0; i < nk; ++i) {
          qk2_[i][0] *= expKsq2_[i];
          qk2_[i][1] *= expKsq2_[i];
       }
-      fft().inverseTransformUnsafe(qk2_, qr2_); // destroys qk2_
+      fft().inverseTransformUnsafe(qk2_, qr2_); // overwrites qk2_
       for (i = 0; i < nx; ++i) {
          qr2_[i] = qr2_[i]*expW2_[i];
       }
@@ -381,8 +380,6 @@ namespace Rpc {
       UTIL_CHECK(nk > 0);
       UTIL_CHECK(expKsq_.capacity() == nk);
 
-      // Preconditions on parameters
-
       // Apply bond operator
       fft().forwardTransform(q, qk_);
       for (int i = 0; i < nk; ++i) {
@@ -394,7 +391,7 @@ namespace Rpc {
    }
 
    /*
-   * Apply one step of MDE solution for the bead model.
+   * Apply the local field operator for the bead model.
    */
    template <int D>
    void Block<D>::stepFieldBead(RField<D>& q)
@@ -448,15 +445,21 @@ namespace Rpc {
       // Odd indices
       int j;
       for (j = 1; j < (ns_ -1); j += 2) {
+         RField<D> const & qf = p0.q(j);
+         RField<D> const & qr = p1.q(ns_ - 1 - j);
          for (i = 0; i < nx; ++i) {
-            cField()[i] += p0.q(j)[i] * p1.q(ns_ - 1 - j)[i] * 4.0;
+            //cField()[i] += p0.q(j)[i] * p1.q(ns_ - 1 - j)[i] * 4.0;
+            cField()[i] += qf[i] * qr[i] * 4.0;
          }
       }
 
       // Even indices
       for (j = 2; j < (ns_ -2); j += 2) {
+         RField<D> const & qf = p0.q(j);
+         RField<D> const & qr = p1.q(ns_ - 1 - j);
          for (i = 0; i < nx; ++i) {
-            cField()[i] += p0.q(j)[i] * p1.q(ns_ - 1 - j)[i] * 2.0;
+            // cField()[i] += p0.q(j)[i] * p1.q(ns_ - 1 - j)[i] * 2.0;
+            cField()[i] += qf[i] * qr[i] * 2.0;
          }
       }
 
@@ -495,23 +498,32 @@ namespace Rpc {
 
       // Vertex 0 contribution (if owned by block)
       if (ownsVertex(0)) {
+         RField<D> const & qf = p0.q(0);
+         RField<D> const & qr = p1.q(ns_ - 1);
          for (i = 0; i < nx; ++i) {
-            cField()[i] += p0.q(0)[i]*p1.q(ns_ - 1)[i]*expWInv_[i];
+            //cField()[i] += p0.q(0)[i]*p1.q(ns_ - 1)[i]*expWInv_[i];
+            cField()[i] += qf[i] * qr[i] * expWInv_[i];
          }
       }
 
-      // Internal beads
+      // Internal beads (j = 1, ... , ns_ -2)
       int j;
       for (j = 1; j < (ns_ -1); ++j) {
+         RField<D> const & qf = p0.q(j);
+         RField<D> const & qr = p1.q(ns_ - 1 - j);
          for (i = 0; i < nx; ++i) {
-            cField()[i] += p0.q(j)[i] * p1.q(ns_ - 1 - j)[i]*expWInv_[i];
+            //cField()[i] += p0.q(j)[i] * p1.q(ns_ - 1 - j)[i]*expWInv_[i];
+            cField()[i] += qf[i] * qr[i] * expWInv_[i];
          }
       }
 
       // Vertex 1 contribution (if owned by block)
       if (ownsVertex(1)) {
+         RField<D> const & qf = p0.q(ns_ - 1);
+         RField<D> const & qr = p1.q(0);
          for (i = 0; i < nx; ++i) {
-            cField()[i] += p0.q(ns_ -1)[i]*p1.q(0)[i]*expWInv_[i];
+            //cField()[i] += p0.q(ns_ -1)[i]*p1.q(0)[i]*expWInv_[i];
+            cField()[i] += qf[i] * qr[i] * expWInv_[i];
          }
       }
 
@@ -534,8 +546,8 @@ namespace Rpc {
       UTIL_CHECK(nx == q1.capacity());
 
       double Q = 0.0; 
-      for (int i =0; i < nx; ++i) {
-         Q += q0[i]*q1[i];
+      for (int i = 0; i < nx; ++i) {
+         Q += q0[i] * q1[i];
       }
       Q /= double(nx);
       return Q;
@@ -553,8 +565,8 @@ namespace Rpc {
       UTIL_CHECK(nx == q1.capacity());
 
       double Q = 0.0; 
-      for (int i =0; i < nx; ++i) {
-         Q += q0[i]*q1[i]*expWInv_[i];
+      for (int i = 0; i < nx; ++i) {
+         Q += q0[i] * q1[i] * expWInv_[i];
       }
       Q /= double(nx);
       return Q;

@@ -7,6 +7,7 @@
 #include <rpc/solvers/Block.h>
 #include <rpc/solvers/Propagator.h>
 
+#include <prdc/cpu/FFT.h>
 #include <prdc/crystal/UnitCell.h>
 
 #include <pscf/chem/PolymerModel.h>

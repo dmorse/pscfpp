@@ -8,19 +8,21 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "Polymer.h"
-#include "Solvent.h"
-#include <pscf/solvers/MixtureTmpl.h>
-#include <pscf/inter/Interaction.h>
-#include <pscf/chem/Monomer.h>
-#include <util/containers/DArray.h>
-#include <util/containers/FArray.h>
+#include <pscf/solvers/MixtureTmpl.h>    // base class template
+#include "Polymer.h"                     // base class argument
+#include "Solvent.h"                     // base class argument
+#include <util/containers/FArray.h>      // member
 
 #include <iostream>
 
+// Forward declarations
+namespace Util { 
+   template <typename T> class DArray;
+}
 namespace Pscf { 
    template <int D> class Mesh; 
    namespace Prdc {
+      template <int D> class UnitCell;
       namespace Cpu {
          template <int D> class FFT;
          template <int D> class RField;

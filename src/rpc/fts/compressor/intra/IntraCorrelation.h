@@ -8,18 +8,24 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <util/param/ParamComposite.h>    // base class
-#include <prdc/cpu/RField.h>              // member
-#include <prdc/cpu/RFieldDft.h>           // member
-#include <util/containers/DArray.h>       // member
+#include <pscf/math/IntVec.h>
+
+// Forward references
+namespace Pscf {
+   namespace Prdc {
+      namespace Cpu {
+         template <int D> class RField;
+      }
+   }
+   namespace Rpc {
+      template <int D> class System;
+   }
+}
+
 
 namespace Pscf {
-namespace Rpc
-{
+namespace Rpc {
 
-   template <int D> class System;
-
-   using namespace Util;
    using namespace Pscf::Prdc::Cpu;
 
    /**
@@ -28,7 +34,7 @@ namespace Rpc
    * \ingroup Rpc_Compressor_Intra_Module
    */
    template <int D>
-   class IntraCorrelation : public ParamComposite
+   class IntraCorrelation 
    {
 
    public:
