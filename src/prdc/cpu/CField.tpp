@@ -2,7 +2,7 @@
 #define PRDC_CPU_C_FIELD_TPP
 
 /*
-* PSCF Package 
+* PSCF Package
 *
 * Copyright 2016 - 2022, The Regents of the University of Minnesota
 * Distributed under the terms of the GNU General Public License.
@@ -36,8 +36,6 @@ namespace Cpu {
    * Copy constructor.
    *
    * Allocates new memory and copies all elements by value.
-   *
-   *\param other the Field to be copied.
    */
    template <int D>
    CField<D>::CField(const CField<D>& other)
@@ -72,7 +70,7 @@ namespace Cpu {
 
       if (!isAllocated()) {
          allocate(other.meshDimensions_);
-      } 
+      }
       UTIL_CHECK(capacity_ == other.capacity_);
       UTIL_CHECK(meshDimensions_ == other.meshDimensions_);
 

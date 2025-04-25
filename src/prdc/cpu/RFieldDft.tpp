@@ -17,7 +17,7 @@ namespace Cpu {
 
    using namespace Util;
 
-   /**
+   /*
    * Default constructor.
    */
    template <int D>
@@ -99,12 +99,17 @@ namespace Cpu {
    template <int D>
    void RFieldDft<D>::allocate(IntVec<D> const & meshDimensions)
    {
+
+      // Copy real space grid dimensions
       for (int i = 0; i < D; ++i) {
          UTIL_CHECK(meshDimensions[i] > 0);
          meshDimensions_[i] = meshDimensions[i];
       }
+
+      // Compute k-space grid dimensions and allocate memory
       int size;
       FFT<D>::computeKMesh(meshDimensions, dftDimensions_, size);
+      FftwDArray<fftw_complex>::allocate(size);
 
       #if 0
       int size = 1;
@@ -120,8 +125,6 @@ namespace Cpu {
          }
       }
       #endif
-
-      FftwDArray<fftw_complex>::allocate(size);
    }
 
    /*

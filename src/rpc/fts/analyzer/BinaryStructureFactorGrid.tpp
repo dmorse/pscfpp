@@ -9,6 +9,7 @@
 #include <rpc/field/Domain.h>
 
 #include <prdc/cpu/RField.h>
+#include <prdc/cpu/FFT.h>
 #include <prdc/crystal/shiftToMinimum.h>
 
 #include <pscf/inter/Interaction.h>
@@ -23,7 +24,7 @@
 #include <util/format/Dbl.h>
 #include <util/global.h>
 
-#include <fftw3.h>
+//#include <fftw3.h>
 
 #include <iostream>
 #include <complex>
@@ -76,11 +77,13 @@ namespace Rpc {
    template <int D>
    void BinaryStructureFactorGrid<D>::setup()
    {
-      //Allocate variables
       const int nMonomer = system().mixture().nMonomer();
       IntVec<D> const & dimensions = system().domain().mesh().dimensions();
 
       // Compute Fourier space kMeshDimensions_ and kSize_
+      FFT<D>::computeKMesh(dimensions, kMeshDimensions_, kSize_);
+
+      #if 0
       kSize_ = 1;
       for (int i = 0; i < D; ++i) {
          if (i < D - 1) {
@@ -90,6 +93,7 @@ namespace Rpc {
          }
          kSize_ *= kMeshDimensions_[i];
       }
+      #endif
 
       if (!isInitialized_){
          wKGrid_.allocate(nMonomer);
@@ -127,6 +131,7 @@ namespace Rpc {
          accumulators_[i].setNSamplePerBlock(nSamplePerBlock_);
          accumulators_[i].clear();
       }
+
       if (!isInitialized_) {
          UTIL_THROW("Error: object is not initialized");
       }
