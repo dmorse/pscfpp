@@ -11,6 +11,10 @@ BdSimulator{
    }
    AnalyzerManager{
       baseInterval    1
+      MaxOrderParameter{
+         interval        1
+         outputFileName  out/maxOrder_analyzer
+      }
       FourthOrderParameter{
          interval        1
          outputFileName  out/fourthOrder_analyzer

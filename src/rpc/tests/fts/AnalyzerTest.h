@@ -92,12 +92,40 @@ public:
       double diff = fabs(0.40320774 - fourthorder);
       TEST_ASSERT(diff < 1.0E-2);
    }
+   
+   void testMaxOrderParameter()
+   {
+      printMethod(TEST_FUNC);
+      openLogFile("out/testMaxOrderParameter.log");
+      analyzeTrajectory();
+
+      std::string filename = filePrefix() + "out/maxOrder_analyzer.ave";
+      std::ifstream file(filename);
+      if (!file.is_open()) {
+        std::cout << "Error: Could not open file out/maxOrder_analyzer.ave" 
+                  << std::endl;
+
+      }
+      
+      // Obtain the average value of maxOrder parameter
+      std::string line;
+      double maxorder;
+      std::string x;
+      std::getline(file, line);
+      std::istringstream iss(line);
+      iss >> x  >> x >> maxorder;
+      
+      double diff = fabs(4.1664699e-02 - maxorder);
+      TEST_ASSERT(diff < 1.0E-4);
+   }
+   
 
 };
 
 TEST_BEGIN(AnalyzerTest)
 TEST_ADD(AnalyzerTest, testAnalyzeTrajectory)
 TEST_ADD(AnalyzerTest, testFourthOrderParameter)
+TEST_ADD(AnalyzerTest, testMaxOrderParameter)
 TEST_END(AnalyzerTest)
 
 #endif

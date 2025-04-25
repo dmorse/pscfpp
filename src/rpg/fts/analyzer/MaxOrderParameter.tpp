@@ -98,6 +98,10 @@ namespace Rpg {
    double MaxOrderParameter<D>::compute() 
    {
       UTIL_CHECK(system().w().hasData());
+      
+      if (!simulator().hasWc()){
+         simulator().computeWc();
+      }
    
       const int meshSize = system().domain().mesh().size();
       RField<D> psi;
