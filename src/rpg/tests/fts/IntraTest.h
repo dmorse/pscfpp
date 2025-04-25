@@ -1,30 +1,28 @@
-#ifndef RPC_INTRA_TEST_H
-#define RPC_INTRA_TEST_H
+#ifndef RPG_INTRA_TEST_H
+#define RPG_INTRA_TEST_H
 
 #include <test/UnitTest.h>
 #include <test/UnitTestRunner.h>
 
-#include <rpc/System.h>
-#include <rpc/fts/simulator/Simulator.h>
-#include <rpc/fts/brownian/BdSimulator.h>
-#include <rpc/fts/compressor/intra/IntraCorrelation.h>
-#include <prdc/cpu/RField.h>
-#include <prdc/cpu/RFieldDft.h>
-#include <prdc/cpu/RFieldComparison.h>
+#include <rpg/System.h>
+#include <rpg/fts/simulator/Simulator.h>
+#include <rpg/fts/compressor/intra/IntraCorrelation.h>
+#include <prdc/cuda/RField.h>
+#include <prdc/cuda/RFieldDft.h>
+#include <prdc/cuda/RFieldComparison.h>
 #include <pscf/mesh/MeshIterator.h>
 #include <pscf/chem/PolymerSpecies.h>
 #include <pscf/chem/PolymerModel.h>
 
 #include <util/tests/LogFileUnitTest.h>
-#include <util/random/Random.h> 
 
 #include <fstream>
 
 using namespace Util;
 using namespace Pscf;
 using namespace Pscf::Prdc;
-using namespace Pscf::Prdc::Cpu;
-using namespace Pscf::Rpc;
+using namespace Pscf::Prdc::Cuda;
+using namespace Pscf::Rpg;
 
 class IntraTest : public LogFileUnitTest
 {
@@ -59,23 +57,26 @@ public:
       IntVec<1> const & dimensions = system.domain().mesh().dimensions();
       int nMonomer = system.mixture().nMonomer();
       double vMonomer = system.mixture().vMonomer();
-     
+      
       // Cos pressure field perturbation per chain: A * cos(2pi * f* i/meshSize)
       RField<1> cosF;
       RFieldDft<1> cosFK;
       cosF.allocate(dimensions);
       cosFK.allocate(dimensions);
+      HostDArray<cudaReal> cosF_h;
+      cosF_h.allocate(meshSize);
       PolymerSpecies const & polymer = system.mixture().polymerSpecies(0);
       for (int k = 0; k < meshSize; k++){
-         cosF[k] = A * std::cos(2 * M_PI * k * f / meshSize);
+         cosF_h[k] = A * std::cos(2 * M_PI * k * f / meshSize);
          
          // Apply to each monomer
          if (PolymerModel::isBead()) {
-            cosF[k] /= polymer.nBead();
+            cosF_h[k] /= polymer.nBead();
          } else {
-            cosF[k] /= polymer.length();
+            cosF_h[k] /= polymer.length();
          }
       }
+      cosF = cosF_h;
       
       // Convert to Fourier Space
       system.domain().fft().forwardTransform(cosF, cosFK);
@@ -84,14 +85,12 @@ public:
       w2.allocate(nMonomer);
       for (int i = 0; i < nMonomer; ++i) {
          w2[i].allocate(dimensions);
-         w2[i] = system.w().rgrid(i);
       }      
       
       // Loop over monomer types add pressure perturbation
+      DArray< RField<1> > const & w = system.w().rgrid();
       for (int i = 0; i < nMonomer; ++i) {
-         for (int k = 0; k < meshSize; ++k) {
-            w2[i][k] += cosF[k];
-         }
+         VecOp::addVV(w2[i], w[i], cosF);
       }
       system.setWRGrid(w2);
       
@@ -100,11 +99,13 @@ public:
       // Incompressibility error
       RField<1> error;
       error.allocate(dimensions);
-      for (int k = 0; k <  meshSize; k++){
-         error[k] = -1.0;
-         for (int i = 0; i <nMonomer; i++){
-            error[k] +=  system.c().rgrid(i)[k];
-         }
+       
+      // Initialize resid to c field of species 0 minus 1
+      VecOp::subVS(error, system.c().rgrid(0), 1.0);
+      
+      // Add other c fields to get SCF residual vector elements
+      for (int i = 1; i < nMonomer; i++) {
+         VecOp::addEqV(error, system.c().rgrid(i));
       }
       
       // Intra analytical
@@ -114,18 +115,14 @@ public:
       intraCorrelationK.allocate(kMeshDimensions);
       IntraCorrelation<1> intra_(system);
       intra_.computeIntraCorrelations(intraCorrelationK);
-   
+      
       // Compute analytical dphi using Intra
       RField<1> analyticalError;
       RFieldDft<1> analyticalErrorK;
       analyticalError.allocate(dimensions);
       analyticalErrorK.allocate(dimensions);
-      MeshIterator<1> iter;
-      iter.setDimensions(kMeshDimensions);
-      for (iter.begin(); !iter.atEnd(); ++iter) {
-         analyticalErrorK[iter.rank()][0] = -cosFK[iter.rank()][0] *  vMonomer * intraCorrelationK[iter.rank()];
-         analyticalErrorK[iter.rank()][1] = -cosFK[iter.rank()][1] *  vMonomer * intraCorrelationK[iter.rank()];
-      }
+      VecOp::mulVV(analyticalErrorK, cosFK, intraCorrelationK);
+      VecOp::mulEqS(analyticalErrorK, -1 * vMonomer);
       
       system.domain().fft().inverseTransformUnsafe(analyticalErrorK, analyticalError);
       
