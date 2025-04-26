@@ -28,6 +28,11 @@ namespace Cuda {
    /**
    * Fourier transform wrapper for real or complex data.
    *
+   * This class is a wrapper for plan creation and discrete Fourier 
+   * transform (DFT) functions provided by the NVIDIA cufft library, 
+   * providing an interface to the field container classes RField<D>, 
+   * RField<Dft>, and CField<D> in namespace Pscf::Prdc::Cuda.
+   *
    * \ingroup Prdc_Cuda_Module
    */
    template <int D>
@@ -154,6 +159,24 @@ namespace Cuda {
       */
       bool isSetup() const;
 
+      // Static function
+
+      /**
+      * Compute dimensions and size of k-space mesh for DFT of real data.
+      * 
+      * A corresponding function is not needed for complex-to-complex
+      * transforms because the real-space and Fourier-space grids have
+      * the same dimensions in this case.
+      *
+      * \param rMeshDimensions  dimensions of real space grid (real data)
+      * \param kMeshDimensions  dimensions of k-space grid (complex data)
+      * \param kSize  number of point in k-space grid
+      */
+      static 
+      void computeKMesh(IntVec<D> const & rMeshDimensions,
+                        IntVec<D> & kMeshDimensions,
+                        int & kSize );
+
    private:
 
       /// Vector containing number of grid points in each direction.
@@ -198,12 +221,18 @@ namespace Cuda {
    template <>
    void FFT<3>::makePlans();
 
-   // Return the dimensions of the grid for which this was allocated.
+   // Inline functions
+
+   /*
+   * Return the dimensions of the grid for which this was allocated.
+   */
    template <int D>
    inline IntVec<D> const & FFT<D>::meshDimensions() const
    {  return meshDimensions_; }
 
-   // Has this FFT object been setup? 
+   /*
+   * Has this FFT object been setup? 
+   */
    template <int D>
    inline bool FFT<D>::isSetup() const
    { return isSetup_; }

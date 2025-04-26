@@ -9,6 +9,7 @@
 */
 
 #include "RFieldDft.h"
+#include "FFT.h"
 
 namespace Pscf {
 namespace Prdc {
@@ -56,8 +57,10 @@ namespace Cuda {
    template <int D>
    RFieldDft<D>& RFieldDft<D>::operator = (const RFieldDft<D>& other)
    {
-      
+      // Assign data and size of underlying array
       DeviceArray<cudaComplex>::operator = (other);
+
+      // Assign more specialized data members
       meshDimensions_ = other.meshDimensions_;
       dftDimensions_ = other.dftDimensions_;
 
@@ -89,11 +92,22 @@ namespace Cuda {
    }
 
    /*
-   * Allocate the underlying C array for the dftDimensions mesh.
+   * Allocate underlying DeviceArray<cudaComplex> for the DFT mesh.
    */
    template <int D>
    void RFieldDft<D>::allocate(const IntVec<D>& meshDimensions)
    {
+      // Copy and validate dimensions of real space grid
+      for (int i = 0; i < D; ++i) {
+         UTIL_CHECK(meshDimensions[i] > 0);
+         meshDimensions_[i] = meshDimensions[i];
+      }
+
+      // Compute dimensions and size of Fourier space mesh 
+      int size;
+      FFT<D>::computeKMesh(meshDimensions, dftDimensions_, size);
+
+      #if 0
       int size = 1;
       for (int i = 0; i < D; ++i) {
          UTIL_CHECK(meshDimensions[i] > 0);
@@ -106,17 +120,31 @@ namespace Cuda {
             size *= (meshDimensions[i]/2 + 1);
          }
       }
-      // Note: size denotes size of mesh with dftDimensions 
+      #endif
+
+      // Allocate complex array on the GPU with size of DFT mesh 
       DeviceArray<cudaComplex>::allocate(size);
    }
 
    /*
-   * Associate this object with a slice of another DeviceArray.
+   * Associate this object with a slice of another DeviceArray<cudaComplex>.
    */
    template <int D>
-   void RFieldDft<D>::associate(DeviceArray<cudaComplex>& arr, int beginId, 
+   void RFieldDft<D>::associate(DeviceArray<cudaComplex>& arr, 
+                                int beginId, 
                                 IntVec<D> const & meshDimensions)
    {
+      // Copy and validate dimensions of real space grid
+      for (int i = 0; i < D; ++i) {
+         UTIL_CHECK(meshDimensions[i] > 0);
+         meshDimensions_[i] = meshDimensions[i];
+      }
+
+      // Compute dimensions and size of Fourier space mesh 
+      int size;
+      FFT<D>::computeKMesh(meshDimensions, dftDimensions_, size);
+
+      #if 0
       int size = 1;
       for (int i = 0; i < D; ++i) {
          UTIL_CHECK(meshDimensions[i] > 0);
@@ -129,11 +157,13 @@ namespace Cuda {
             size *= (meshDimensions[i]/2 + 1);
          }
       }
-      // Note: size denotes size of mesh with dftDimensions
+      #endif
+
+      // Associate data with a slice of input array arr
       DeviceArray<cudaComplex>::associate(arr, beginId, size);
    }
 
-}
-}
-}
+} // namespace Cuda
+} // namespace Prdc
+} // namespace Pscf
 #endif
