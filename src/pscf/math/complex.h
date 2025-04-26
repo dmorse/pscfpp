@@ -13,6 +13,36 @@
 
 namespace Pscf {
 
+   /**
+   * \defgroup Pscf_Math_Complex_Module Complex Arithmetic 
+   *
+   * Declarations of function templates for complex arithmetic using 
+   * an unspecified complex data type. No definition is given for the
+   * general template for any of these functions. Instantiations of these
+   * templates must instead be explicit specializations for specific 
+   * complex data types. Explicit specializations of these templates 
+   * for the complex data types used by the FFT and cufft FFT libraries 
+   * are declared in files named complex.h in directories src/prdc/cpu 
+   * and src/prdc/cuda, respectively.
+   *
+   * Convention: Functions for which the result or output is a complex
+   * number provide this as a modified value of the first parameter of the
+   * function, which must be passed as a non-const reference. Functions 
+   * for which the output is a real value (such as an absolute value 
+   * function) instead provide this as the function return value. 
+   *
+   * \ingroup Pscf_Math_Module 
+   */
+
+   /*
+   * The remainder of this file contains declarations of function
+   * templates for complex arithmetic that all belong to doxygen topic
+   * module Pscf_Math_Complex_Module, which is documented above.
+   * Throughout, the template argument CT represents an unspecified 
+   * complex data type, while RT represents a corresponding real data
+   * type. 
+   */
+
    // Real and imaginary components
 
    /**
@@ -57,7 +87,7 @@ namespace Pscf {
    template <typename CT, typename RT> 
    RT absSq(CT const& a);
 
-   // CT Conjugation
+   // Complex Conjugation
 
    /**
    * Compute complex conjugate, z = a^*.
@@ -68,7 +98,7 @@ namespace Pscf {
    * \param a complex argument (in)
    */
    template <typename CT>
-   void conj(CT& z, CT const& a);
+   void conj(CT & z, CT const& a);
 
    /**
    * In-place complex conjugation of a complex number, a = a^* .
@@ -78,7 +108,7 @@ namespace Pscf {
    * \param a argument (in) and complex conjugate (out)
    */
    template <typename CT>
-   void conj(CT& a);
+   void conj(CT & a);
 
    // Assignment
 
@@ -92,7 +122,7 @@ namespace Pscf {
    * \param b imaginary part (in)
    */
    template <typename CT, typename RT>
-   void assign(CT& z, RT const& a, RT const& b);
+   void assign(CT & z, RT const& a, RT const& b);
 
    /**
    * Assign a real input to a complex variable.
@@ -103,7 +133,7 @@ namespace Pscf {
    * \param a real (in)
    */
    template <typename CT, typename RT>
-   void assign(CT& z, RT const& a);
+   void assign(CT & z, RT const& a);
 
    /**
    * Assign a complex input to a complex variable, z=a.
@@ -114,7 +144,7 @@ namespace Pscf {
    * \param a complex (in)
    */
    template <typename CT>
-   void assign(CT& z, CT const& a);
+   void assign(CT & z, CT const& a);
 
    /**
    * Assign a std::complex input to a complex variable, z=a.
@@ -150,7 +180,7 @@ namespace Pscf {
    * \param b complex summand (in)
    */
    template <typename CT>
-   void add(CT& z, CT const& a, CT const& b);
+   void add(CT & z, CT const& a, CT const& b);
 
    /**
    * Addition of a complex and real number, z = a + b.
@@ -162,7 +192,7 @@ namespace Pscf {
    * \param b real summand (in)
    */
    template <typename CT, typename RT>
-   void add(CT& z, CT const& a, RT const& b);
+   void add(CT & z, CT const& a, RT const& b);
 
    /**
    * In place addition of complex numbers, a += b.
@@ -173,7 +203,7 @@ namespace Pscf {
    * \param b complex summand (in)
    */
    template <typename CT>
-   void addEq(CT& a, CT const& b);
+   void addEq(CT & a, CT const& b);
 
    /**
    * In place addition of a complex and real number, a += b.
@@ -184,7 +214,7 @@ namespace Pscf {
    * \param b real summand (in)
    */
    template <typename CT, typename RT>
-   void addEq(CT& a, RT const& b);
+   void addEq(CT & a, RT const& b);
 
    // Subtraction
 
@@ -198,7 +228,7 @@ namespace Pscf {
    * \param b complex 2nd argument (in)
    */
    template <typename CT>
-   void sub(CT& z, CT const& a, CT const& b);
+   void sub(CT & z, CT const& a, CT const& b);
 
    /**
    * Subtraction of a real number from a complex number, z = a - b.
@@ -210,7 +240,7 @@ namespace Pscf {
    * \param b real 2nd argument (in)
    */
    template <typename CT, typename RT>
-   void sub(CT& z, CT const& a, RT const& b);
+   void sub(CT & z, CT const& a, RT const& b);
 
    /**
    * In place subtraction of two complex numbers, a -= b.
@@ -259,7 +289,7 @@ namespace Pscf {
    * \param b complex factor (in)
    */
    template <typename CT>
-   void mul(CT& z, CT const& a, CT const& b);
+   void mul(CT & z, CT const& a, CT const& b);
 
    /**
    * Multiplication of complex and real numbers, z = a * b.
@@ -271,7 +301,7 @@ namespace Pscf {
    * \param b real factor (in)
    */
    template <typename CT, typename RT>
-   void mul(CT& z, CT const& a, RT const& b);
+   void mul(CT & z, CT const& a, RT const& b);
 
    /**
    * In place multiplication of two complex number, a *= b.
@@ -304,7 +334,7 @@ namespace Pscf {
    * \param a complex factor (in)
    */
    template <typename CT>
-   void square(CT& z, CT const& a);
+   void square(CT & z, CT const& a);
 
    // Division
 
@@ -318,7 +348,7 @@ namespace Pscf {
    * \param b complex denominator (in)
    */
    template <typename CT>
-   void div(CT& z, CT const& a, CT const& b);
+   void div(CT & z, CT const& a, CT const& b);
 
    /**
    * Division of a complex number by a real number, z = a / b .
@@ -330,7 +360,7 @@ namespace Pscf {
    * \param b real denominator (in)
    */
    template <typename CT, typename RT>
-   void div(CT& z, CT const& a, RT const& b);
+   void div(CT & z, CT const& a, RT const& b);
 
    /**
    * In place division of two complex number, a /= b.
