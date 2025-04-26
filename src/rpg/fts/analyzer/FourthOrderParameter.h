@@ -10,14 +10,10 @@
 
 #include "AverageAnalyzer.h"                      // base class
 
-#include <util/containers/DArray.h>               // member
-#include <util/accumulators/Average.h>            // member
 #include <prdc/cuda/RField.h>                     // member
 #include <prdc/cuda/RFieldDft.h>                  // member
-#include <map>                                    // member
+#include <pscf/math/IntVec.h>                     // member
 
-#include <string>
-#include <iostream>
 
 namespace Pscf {
 namespace Rpg {

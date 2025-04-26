@@ -270,16 +270,8 @@ namespace Rpg {
       // Store useBatchedFFT
       useBatchedFFT_ = useBatchedFFT;
 
-      // Compute Fourier space kMeshDimensions_ and kSize_
-      kSize_ = 1;
-      for (int i = 0; i < D; ++i) {
-         if (i < D - 1) {
-            kMeshDimensions_[i] = mesh().dimensions()[i];
-         } else {
-            kMeshDimensions_[i] = mesh().dimensions()[i]/2 + 1;
-         }
-         kSize_ *= kMeshDimensions_[i];
-      }
+      // Compute k-space grid dimensions (kMeshDimensions_) and size_ 
+      FFT<D>::computeKMesh(mesh().dimensions(), kMeshDimensions_, kSize_);
 
       // Allocate work arrays
       expW_.allocate(mesh().dimensions());

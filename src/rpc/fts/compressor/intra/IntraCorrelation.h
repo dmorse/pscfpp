@@ -8,7 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/math/IntVec.h>
+#include <pscf/math/IntVec.h>      // memmber variable type
 
 // Forward references
 namespace Pscf {

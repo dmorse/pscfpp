@@ -9,11 +9,15 @@
 */
 
 #include "IntraCorrelation.h"
+
 #include <rpc/System.h>
+#include <rpc/solvers/Mixture.h>
+#include <rpc/field/Domain.h>
 
 #include <prdc/cpu/FFT.h>
 #include <prdc/cpu/RField.h>
 #include <prdc/crystal/shiftToMinimum.h>
+#include <prdc/crystal/UnitCell.h>
 
 #include <pscf/mesh/MeshIterator.h>
 #include <pscf/chem/PolymerSpecies.h>
@@ -28,18 +32,25 @@ namespace Rpc{
 
    using namespace Util;
 
-   // Constructor
+   /*
+   * Constructor.
+   */
    template <int D>
    IntraCorrelation<D>::IntraCorrelation(System<D>& system)
     : systemPtr_(&system),
       kSize_(1)
    {}
 
-   // Destructor
+   /*
+   * Destructor.
+   */
    template <int D>
    IntraCorrelation<D>::~IntraCorrelation()
    {}
 
+   /*
+   * Compute k-space array of intramolecular correlation functions.
+   */
    template<int D>
    void
    IntraCorrelation<D>::computeIntraCorrelations(RField<D>& correlations)
@@ -51,19 +62,6 @@ namespace Rpc{
       const int nPolymer = mixture.nPolymer();
       const int nSolvent = mixture.nSolvent();
       const double vMonomer = mixture.vMonomer();
-
-      #if 0
-      // Compute Fourier space kMeshDimensions_
-      for (int i = 0; i < D; ++i) {
-         if (i < D - 1) {
-            kMeshDimensions_[i] = dimensions[i];
-            kSize_ *= dimensions[i];
-         } else {
-            kMeshDimensions_[i] = dimensions[i]/2 + 1;
-            kSize_ *= (dimensions[i]/2 + 1);
-         }
-      }
-      #endif
 
       // Compute Fourier space kMeshDimensions_ and kSize_
       FFT<D>::computeKMesh(dimensions, kMeshDimensions_, kSize_);

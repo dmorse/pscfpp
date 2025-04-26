@@ -107,21 +107,6 @@ namespace Cuda {
       int size;
       FFT<D>::computeKMesh(meshDimensions, dftDimensions_, size);
 
-      #if 0
-      int size = 1;
-      for (int i = 0; i < D; ++i) {
-         UTIL_CHECK(meshDimensions[i] > 0);
-         meshDimensions_[i] = meshDimensions[i];
-         if (i < D - 1) {
-            dftDimensions_[i] = meshDimensions[i];
-            size *= meshDimensions[i];
-         } else {
-            dftDimensions_[i] = (meshDimensions[i]/2 + 1); 
-            size *= (meshDimensions[i]/2 + 1);
-         }
-      }
-      #endif
-
       // Allocate complex array on the GPU with size of DFT mesh 
       DeviceArray<cudaComplex>::allocate(size);
    }
@@ -143,21 +128,6 @@ namespace Cuda {
       // Compute dimensions and size of Fourier space mesh 
       int size;
       FFT<D>::computeKMesh(meshDimensions, dftDimensions_, size);
-
-      #if 0
-      int size = 1;
-      for (int i = 0; i < D; ++i) {
-         UTIL_CHECK(meshDimensions[i] > 0);
-         meshDimensions_[i] = meshDimensions[i];
-         if (i < D - 1) {
-            dftDimensions_[i] = meshDimensions[i];
-            size *= meshDimensions[i];
-         } else {
-            dftDimensions_[i] = (meshDimensions[i]/2 + 1); 
-            size *= (meshDimensions[i]/2 + 1);
-         }
-      }
-      #endif
 
       // Associate data with a slice of input array arr
       DeviceArray<cudaComplex>::associate(arr, beginId, size);

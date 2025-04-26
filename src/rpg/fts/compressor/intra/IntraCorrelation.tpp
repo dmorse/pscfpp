@@ -9,15 +9,22 @@
 */
 
 #include "IntraCorrelation.h"
+
 #include <rpg/System.h>
-#include <util/global.h>
+#include <rpg/field/Domain.h>
+#include <rpg/solvers/Mixture.h>
+
+#include <prdc/cuda/FFT.h>
+#include <prdc/crystal/UnitCell.h>
+#include <prdc/crystal/shiftToMinimum.h>
+
 #include <pscf/mesh/MeshIterator.h>
 #include <pscf/chem/Debye.h>
 #include <pscf/chem/EdgeIterator.h>
-#include <pscf/iterator/NanException.h>
 #include <pscf/chem/PolymerType.h>
 #include <pscf/cuda/HostDArray.h>
-#include <prdc/crystal/shiftToMinimum.h>
+
+#include <util/global.h>
 
 namespace Pscf {
 namespace Rpg{
@@ -36,7 +43,6 @@ namespace Rpg{
    IntraCorrelation<D>::~IntraCorrelation()
    {}
 
-
    template<int D>
    void 
    IntraCorrelation<D>::computeIntraCorrelations(RField<D>& correlations)
@@ -49,16 +55,8 @@ namespace Rpg{
       const int nSolvent = mixture.nSolvent();
       const double vMonomer = mixture.vMonomer();
 
-      // Compute Fourier space kMeshDimensions_
-      for (int i = 0; i < D; ++i) {
-         if (i < D - 1) {
-            kMeshDimensions_[i] = dimensions[i];
-            kSize_ *= dimensions[i];
-         } else {
-            kMeshDimensions_[i] = dimensions[i]/2 + 1;
-            kSize_ *= (dimensions[i]/2 + 1);
-         }
-      }
+      // Compute k-space mesh dimensions kMeshDimensions_ & size kSize_
+      FFT<D>::computeKMesh(dimensions, kMeshDimensions_, kSize_);
       UTIL_CHECK(correlations.capacity() == kSize_);
 
       // Allocate Gsq (k-space array of square wavenumber values)

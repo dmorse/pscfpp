@@ -99,32 +99,18 @@ namespace Cpu {
    template <int D>
    void RFieldDft<D>::allocate(IntVec<D> const & meshDimensions)
    {
-
       // Copy real space grid dimensions
       for (int i = 0; i < D; ++i) {
          UTIL_CHECK(meshDimensions[i] > 0);
          meshDimensions_[i] = meshDimensions[i];
       }
 
-      // Compute k-space grid dimensions and allocate memory
-      int size;
+      // Compute dimensions and size for k-space grid
+      int size; 
       FFT<D>::computeKMesh(meshDimensions, dftDimensions_, size);
-      FftwDArray<fftw_complex>::allocate(size);
 
-      #if 0
-      int size = 1;
-      for (int i = 0; i < D; ++i) {
-         UTIL_CHECK(meshDimensions[i] > 0);
-         meshDimensions_[i] = meshDimensions[i];
-         if (i < D - 1) {
-            dftDimensions_[i] = meshDimensions[i];
-            size *= meshDimensions[i];
-         } else {
-            dftDimensions_[i] = (meshDimensions[i]/2 + 1);
-            size *= dftDimensions_[i];
-         }
-      }
-      #endif
+      // Allocate memory
+      FftwDArray<fftw_complex>::allocate(size);
    }
 
    /*

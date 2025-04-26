@@ -8,16 +8,10 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "AverageAnalyzer.h"                      // base class
-
-#include <util/containers/DArray.h>               // member
-#include <util/accumulators/Average.h>            // member
-#include <prdc/cuda/RField.h>                     // member
-#include <prdc/cuda/RFieldDft.h>                  // member
-#include <map>                                    // member
-
-#include <string>
-#include <iostream>
+#include "AverageAnalyzer.h"                     // base class
+#include <prdc/cuda/RField.h>                    // member
+#include <prdc/cuda/RFieldDft.h>                 // member
+#include <pscf/math/IntVec.h>                    // member
 
 namespace Pscf {
 namespace Rpg {
