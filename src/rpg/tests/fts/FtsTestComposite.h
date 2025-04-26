@@ -9,6 +9,7 @@
 #include "McSimulatorTest.h"
 #include "BdSimulatorTest.h"
 #include "AnalyzerTest.h"
+#include "IntraTest.h"
 
 TEST_COMPOSITE_BEGIN(FtsTestComposite)
 TEST_COMPOSITE_ADD_UNIT(SimulatorTest)
@@ -16,6 +17,7 @@ TEST_COMPOSITE_ADD_UNIT(CompressorTest)
 TEST_COMPOSITE_ADD_UNIT(AnalyzerTest)
 TEST_COMPOSITE_ADD_UNIT(McSimulatorTest)
 TEST_COMPOSITE_ADD_UNIT(BdSimulatorTest)
+TEST_COMPOSITE_ADD_UNIT(IntraTest)
 TEST_COMPOSITE_END
 
 #endif 

@@ -3,14 +3,14 @@
 */ 
 
 #include <util/global.h>
-#include "SystemTest.h"
+#include "SystemTestComposite.h"
 
 #include <test/TestRunner.h>
 #include <test/CompositeTestRunner.h>
 
 int main(int argc, char* argv[])
 {
-   TEST_RUNNER(SystemTest) runner;
+   SystemTestComposite runner;
 
    if (argc > 2) {
       UTIL_THROW("Too many arguments");

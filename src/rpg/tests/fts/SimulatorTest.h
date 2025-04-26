@@ -10,6 +10,7 @@
 #include <prdc/cuda/RFieldComparison.h>
 #include <prdc/cuda/resources.h>
 #include <pscf/math/IntVec.h>
+#include <pscf/inter/Interaction.h>
 #include <util/containers/DArray.h>  
 
 #include <util/tests/LogFileUnitTest.h>
