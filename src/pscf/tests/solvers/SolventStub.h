@@ -8,7 +8,6 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/chem/Species.h>
 #include <pscf/chem/SolventSpecies.h>
 #include <util/param/ParamComposite.h>
 
