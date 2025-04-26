@@ -8,20 +8,21 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "Propagator.h"                   // base class argument
-#include <prdc/cpu/FFT.h>                 // member
+#include <pscf/solvers/BlockTmpl.h>       // base class template
+#include <rpc/solvers/Propagator.h>       // base class argument
+
 #include <prdc/cpu/RField.h>              // member
 #include <prdc/cpu/RFieldDft.h>           // member
-#include <prdc/crystal/UnitCell.h>        // member
-#include <pscf/solvers/BlockTmpl.h>       // base class template
-#include <pscf/mesh/Mesh.h>               // member
-#include <util/containers/FArray.h>       // member template
 #include <util/containers/DMatrix.h>      // member template
+#include <util/containers/FSArray.h>      // member template
 
 namespace Pscf {
    template <int D> class Mesh;
    namespace Prdc{
      template <int D> class UnitCell;
+     namespace Cpu {
+        template <int D> class FFT;
+     }
    }
 }
 
@@ -290,7 +291,18 @@ namespace Rpc {
       double ds() const;
 
       /**
-      * Get the number of contour grid points, include end points.
+      * Get the number of contour grid points, including end points.
+      *
+      * Bead model: For the bead model, ns is equal to nBead plus the 
+      * number of vertex beads that this block does not own, because the 
+      * end-points of the mesh always correspond to the terminating beads, 
+      * whichever block they are part of.
+      * 
+      * Thread mdoel: For the thread model, ns is always an odd number 
+      * ns >= 3 chosen to give an even number of steps of length 
+      * ds = length()/(ns() - 1) as close as possible to the target value 
+      * of ds passed to the allocate function.
+      *
       */
       int ns() const;
 
@@ -300,7 +312,7 @@ namespace Rpc {
       using BlockTmpl< Propagator<D> >::cField;
       using BlockTmpl< Propagator<D> >::kuhn;
 
-      // Functions with non-dependent names from Edge
+      // Functions with non-dependent names inherited from Edge
       using Edge::setId;
       using Edge::setVertexIds;
       using Edge::setMonomerId;
@@ -399,22 +411,22 @@ namespace Rpc {
 
    // Inline member functions
 
-   /// Get number of contour grid points, including ends.
+   // Get number of contour grid points, including end points.
    template <int D>
    inline int Block<D>::ns() const
    {  return ns_; }
 
-   /// Get number of contour steps.
+   // Get contour step size.
    template <int D>
    inline double Block<D>::ds() const
    {  return ds_; }
 
-   /// Stress with respect to unit cell parameter n.
+   // Stress with respect to unit cell parameter n.
    template <int D>
    inline double Block<D>::stress(int n) const
    {  return stress_[n]; }
 
-   /// Get Mesh by reference.
+   // Get associated Mesh<D> object by reference.
    template <int D>
    inline Mesh<D> const & Block<D>::mesh() const
    {
@@ -422,7 +434,7 @@ namespace Rpc {
       return *meshPtr_;
    }
 
-   /// Get FFT by reference.
+   // Get associated FFT<D> object by reference.
    template <int D>
    inline FFT<D> const & Block<D>::fft() const
    {

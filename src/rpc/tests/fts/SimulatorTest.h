@@ -13,6 +13,8 @@
 #include <prdc/crystal/BFieldComparison.h>
 #include <prdc/crystal/UnitCell.h>
 
+#include <pscf/inter/Interaction.h>
+
 #include <util/tests/LogFileUnitTest.h>
 #include <util/misc/FileMaster.h>
 

@@ -26,6 +26,11 @@ namespace Cpu {
    /**
    * Fourier transform wrapper.
    *
+   * This class is a wrapper for plan creation and discrete Fourier 
+   * transform (DFT) functions provided by the FFTW library, providing 
+   * an interface to the field container classes RField<D>, RField<Dft>, 
+   * and CField<D>.
+   *
    * \ingroup Prdc_Cpu_Module
    */
    template <int D>
@@ -54,7 +59,7 @@ namespace Cpu {
       // Real Data (Real <-> Complex Transforms)
 
       /**
-      * Compute forward (real-to-complex) discrete Fourier transform.
+      * Compute forward (real-to-complex) discrete Fourier transform (DFT).
       *
       * The resulting complex array is the output of FFTW's forward 
       * transform method scaled by a factor of 1/N (where N is the
@@ -151,6 +156,24 @@ namespace Cpu {
       * Has this FFT object been setup?
       */
       bool isSetup() const;
+
+      // Static function
+
+      /**
+      * Compute dimensions and size of k-space mesh for DFT of real data.
+      * 
+      * A corresponding function is not needed for complex-to-complex
+      * transforms because the real-space and Fourier-space grids have
+      * the same dimensions in this case.
+      *
+      * \param rMeshDimensions  dimensions of real space grid (real data)
+      * \param kMeshDimensions  dimensions of k-space grid (complex data)
+      * \param kSize  number of point in k-space grid
+      */
+      static 
+      void computeKMesh(IntVec<D> const & rMeshDimensions,
+                        IntVec<D> & kMeshDimensions,
+                        int & kSize );
 
    private:
 
