@@ -22,7 +22,6 @@
 #include <prdc/cuda/RFieldDft.h>           // member (tmpFieldsKGrid_)
 
 #include <pscf/chem/PolymerModel.h>        // member (polymerModel_)
-#include <pscf/homogeneous/Mixture.h>      // member
 
 #include <util/misc/FileMaster.h>          // member
 #include <util/containers/DArray.h>        // member template
@@ -935,11 +934,6 @@ namespace Rpg {
       FFT<D> const & fft() const ;
 
       /**
-      * Get homogeneous mixture (for reference calculations).
-      */
-      Homogeneous::Mixture& homogeneous();
-
-      /**
       * Get FileMaster by reference.
       */
       FileMaster& fileMaster();
@@ -1001,11 +995,6 @@ namespace Rpg {
       * Filemaster (holds paths to associated I/O files).
       */
       FileMaster fileMaster_;
-
-      /**
-      * Homogeneous mixture, for reference.
-      */
-      Homogeneous::Mixture homogeneous_;
 
       /**
       * Pointer to Interaction (excess free energy model).
@@ -1192,11 +1181,6 @@ namespace Rpg {
       */
       void readEcho(std::istream& in, double& value) const;
 
-      /**
-      * Initialize Homogeneous::Mixture object (private).
-      */
-      void initHomogeneous();
-
    };
 
    // Inline member functions
@@ -1256,10 +1240,12 @@ namespace Rpg {
    inline FFT<D> const & System<D>::fft() const
    {  return domain_.fft(); }
 
+   #if 0
    // Get the const FieldIo<D> object by const reference.
    template <int D>
    inline FieldIo<D> const & System<D>::fieldIo() const
    {  return domain_.fieldIo(); }
+   #endif
 
    // Get the Iterator by non-const reference.
    template <int D>
@@ -1289,12 +1275,6 @@ namespace Rpg {
    template <int D>
    inline FileMaster& System<D>::fileMaster()
    {  return fileMaster_; }
-
-   // Get the Homogeneous::Mixture object.
-   template <int D>
-   inline
-   Homogeneous::Mixture& System<D>::homogeneous()
-   {  return homogeneous_; }
 
    // Get container of w fields (const reference)
    template <int D>

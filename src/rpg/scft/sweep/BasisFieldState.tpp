@@ -80,7 +80,8 @@ namespace Rpg
    void BasisFieldState<D>::read(const std::string & filename)
    {
       allocate();
-      system().fieldIo().readFieldsBasis(filename, fields(), unitCell());
+      system().domain().fieldIo().readFieldsBasis(filename, fields(), 
+                                                  unitCell());
    }
 
    /**
@@ -89,7 +90,8 @@ namespace Rpg
    template <int D>
    void BasisFieldState<D>::write(const std::string & filename)
    {
-      system().fieldIo().writeFieldsBasis(filename, fields(), unitCell());
+      system().domain().fieldIo().writeFieldsBasis(filename, fields(), 
+                                                   unitCell());
    }
 
    /*

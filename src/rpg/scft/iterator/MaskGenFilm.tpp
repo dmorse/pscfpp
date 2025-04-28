@@ -277,7 +277,7 @@ namespace Rpg
       UTIL_CHECK(system().unitCell().isInitialized());
 
       // Make sure mask has access to a fieldIo
-      system().mask().setFieldIo(system().fieldIo());
+      system().mask().setFieldIo(system().domain().fieldIo());
 
       // Allocate the mask containers if needed
       if (!system().mask().isAllocatedRGrid()) {

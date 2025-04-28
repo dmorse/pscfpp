@@ -487,13 +487,6 @@ namespace Rpg {
          }
       }
 
-      #if 0
-      // Debugging output
-      std::string filename = "wc";
-      system().fieldIo().writeFieldsRGrid(filename, wc_,
-                                          system().domain().unitCell());
-      #endif
-
       hasWc_ = true;
    }
 
@@ -528,13 +521,6 @@ namespace Rpg {
             VecOp::addEqVc(Cc, system().c().rgrid(j), vec);
          }
       }
-
-      #if 0
-      // Debugging output
-      std::string filename = "cc";
-      system().fieldIo().writeFieldsRGrid(filename, cc_,
-                                          system().domain().unitCell());
-      #endif
 
       hasCc_ = true;
    }
