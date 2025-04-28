@@ -61,7 +61,11 @@ namespace Rpg{
    void LrCompressor<D>::setup()
    {
       const int nMonomer = system().mixture().nMonomer();
-      IntVec<D> const & dimensions = system().mesh().dimensions();
+      IntVec<D> const & dimensions = system().domain().mesh().dimensions();
+
+      FFT<D>::computeKMesh(dimensions, kMeshDimensions_, kSize_);
+
+      #if 0
       for (int i = 0; i < D; ++i) {
          if (i < D - 1) {
             kMeshDimensions_[i] = dimensions[i];
@@ -75,6 +79,7 @@ namespace Rpg{
       for (int i = 0; i < D; ++i) {
          kSize_ *= kMeshDimensions_[i];
       }
+      #endif
       
       // Allocate memory required by AM algorithm if not done earlier.
       if (!isAllocated_){
@@ -200,13 +205,13 @@ namespace Rpg{
       const double vMonomer = system().mixture().vMonomer();
       
       // Convert residual to Fourier Space
-      system().fft().forwardTransform(resid_, residK_);
+      system().domain().fft().forwardTransform(resid_, residK_);
       
       // Compute change in fields using estimated Jacobian
       VecOp::divEqVc(residK_, intraCorrelationK_, vMonomer);
    
       // Convert back to real Space (destroys residK_)
-      system().fft().inverseTransformUnsafe(residK_, resid_);
+      system().domain().fft().inverseTransformUnsafe(residK_, resid_);
       
       // Update new fields
       for (int i = 0; i < nMonomer; i++) {

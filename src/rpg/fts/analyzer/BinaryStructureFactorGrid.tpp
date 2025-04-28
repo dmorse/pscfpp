@@ -7,6 +7,7 @@
 #include <rpg/System.h>
 
 #include <prdc/crystal/shiftToMinimum.h>
+#include <prdc/cuda/FFT.h>
 #include <prdc/cuda/resources.h>
 #include <prdc/cuda/complex.h>
 
@@ -63,14 +64,13 @@ namespace Rpg {
    template <int D>
    void BinaryStructureFactorGrid<D>::setup() 
    {
-      //Allocate variables
+      // Copies of system properties
       const int nMonomer = system().mixture().nMonomer();
-      IntVec<D> const & dimensions = system().mesh().dimensions();
-      if (!isInitialized_){
-         wm_.allocate(dimensions);
-         wk_.allocate(dimensions);
-      }
-      
+      IntVec<D> const & dimensions = system().domain().mesh().dimensions();
+
+      FFT<D>::computeKMesh(dimensions, kMeshDimensions_, kSize_);
+
+      #if 0 
       // Compute Fourier space kMeshDimensions_
       for (int i = 0; i < D; ++i) {
          if (i < D - 1) {
@@ -83,8 +83,15 @@ namespace Rpg {
       for(int i = 0; i < D; ++i) {
          kSize_ *= kMeshDimensions_[i];
       }
+      #endif
       
       nWave_ = kSize_;
+
+      if (!isInitialized_){
+         wm_.allocate(dimensions);
+         wk_.allocate(dimensions);
+      }
+     
       structureFactors_.allocate(nWave_);
       accumulators_.allocate(nWave_);
       
@@ -99,8 +106,6 @@ namespace Rpg {
          qList_[itr.rank()] = sqrt(double(kSqHost[itr.rank()]));
       }
       
-      isInitialized_ = true;
-      
       // Clear accumulators
       for (int i = 0; i < nWave_; ++i) {
          structureFactors_[i] = 0.0;
@@ -108,9 +113,8 @@ namespace Rpg {
          accumulators_[i].clear();
       }
       
-      if (!isInitialized_) {
-         UTIL_THROW("Error: object is not initialized");
-      }
+      isInitialized_ = true;
+      
    }
 
    /* 
@@ -122,14 +126,15 @@ namespace Rpg {
       UTIL_CHECK(system().w().hasData());
       
       if (isAtInterval(iStep))  {
-         IntVec<D> const & dimensions = system().mesh().dimensions();
+         //IntVec<D> const & dimensions 
+         //                       = system().domain().mesh().dimensions();
          
          // Compute W: (rgrid(0) - rgrid(1)) / 2
          VecOp::addVcVc(wm_, system().w().rgrid(0), 0.5, 
                         system().w().rgrid(1), -0.5);
          
          // Convert real grid to KGrid format
-         system().fft().forwardTransform(wm_, wk_);
+         system().domain().fft().forwardTransform(wm_, wk_);
          
          HostDArray<cudaComplex> wkCpu(kSize_);
          wkCpu = wk_; // copy from device to host

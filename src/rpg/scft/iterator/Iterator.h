@@ -177,7 +177,7 @@ namespace Rpg
    int Iterator<D>::nFlexibleParams() const
    {
       UTIL_CHECK(flexibleParams_.size() == 
-                                 system().unitCell().nParameter());
+                                system().domain().unitCell().nParameter());
       int nFlexParams = 0;
       for (int i = 0; i < flexibleParams_.size(); i++) {
          if (flexibleParams_[i]) nFlexParams++;

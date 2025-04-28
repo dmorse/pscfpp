@@ -224,7 +224,7 @@ namespace Rpg {
    int AmIteratorBasis<D>::nElements()
    {
       const int nMonomer = system().mixture().nMonomer();
-      const int nBasis = system().basis().nBasis();
+      const int nBasis = system().domain().basis().nBasis();
 
       int nEle = nMonomer*nBasis;
 
@@ -242,7 +242,7 @@ namespace Rpg {
       // Straighten out fields into linear arrays
 
       const int nMonomer = system().mixture().nMonomer();
-      const int nBasis = system().basis().nBasis();
+      const int nBasis = system().domain().basis().nBasis();
       const DArray< DArray<double> > & currSys = system().w().basis();
 
       for (int i = 0; i < nMonomer; i++) {
@@ -253,9 +253,9 @@ namespace Rpg {
 
       if (isFlexible_) {
          const int begin = nMonomer*nBasis;
-         const int nParam = system().unitCell().nParameter();
+         const int nParam = system().domain().unitCell().nParameter();
          FSArray<double,6> const & parameters
-                                  = system().unitCell().parameters();
+                                  = system().domain().unitCell().parameters();
          int counter = 0;
          for (int i = 0; i < nParam; i++) {
             if (flexibleParams_[i]) {
@@ -281,9 +281,9 @@ namespace Rpg {
    template <int D>
    void AmIteratorBasis<D>::getResidual(DArray<double>& resid)
    {
-      UTIL_CHECK(system().basis().isInitialized());
+      UTIL_CHECK(system().domain().basis().isInitialized());
       const int nMonomer = system().mixture().nMonomer();
-      const int nBasis = system().basis().nBasis();
+      const int nBasis = system().domain().basis().nBasis();
       const int n = nElements();
 
       // Initialize residuals
@@ -346,7 +346,7 @@ namespace Rpg {
 
       // If variable unit cell, compute stress residuals
       if (isFlexible_) {
-         const int nParam = system().unitCell().nParameter();
+         const int nParam = system().domain().unitCell().nParameter();
 
          //  Note: 
          //  Combined -1 factor and stress scaling here.  This is okay:
@@ -381,9 +381,9 @@ namespace Rpg {
    template <int D>
    void AmIteratorBasis<D>::update(DArray<double>& newGuess)
    {
-      UTIL_CHECK(system().basis().isInitialized());
+      UTIL_CHECK(system().domain().basis().isInitialized());
       const int nMonomer = system().mixture().nMonomer();
-      const int nBasis = system().basis().nBasis();
+      const int nBasis = system().domain().basis().nBasis();
 
       DArray< DArray<double> > wField;
       wField.allocate(nMonomer);
@@ -416,7 +416,7 @@ namespace Rpg {
       system().setWBasis(wField);
 
       if (isFlexible_) {
-         const int nParam = system().unitCell().nParameter();
+         const int nParam = system().domain().unitCell().nParameter();
          const int begin = nMonomer*nBasis;
 
          FSArray<double,6> parameters;

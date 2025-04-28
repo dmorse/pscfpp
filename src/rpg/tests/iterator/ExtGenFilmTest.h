@@ -206,7 +206,7 @@ public:
       parameters.append(2.9);
       system.setUnitCell(UnitCell<1>::Lamellar, parameters);
       system.mask().allocateBasis(37);
-      system.mask().allocateRGrid(system.mesh().dimensions());
+      system.mask().allocateRGrid(system.domain().mesh().dimensions());
       system.mask().setFieldIo(system.domain().fieldIo());
       UnitCell<1> tmpUnitCell;
       system.mask().readBasis("in/maskRef1.bf",tmpUnitCell);
@@ -282,7 +282,7 @@ public:
 
       // Set up mask
       system.mask().allocateBasis(561);
-      system.mask().allocateRGrid(system.mesh().dimensions());
+      system.mask().allocateRGrid(system.domain().mesh().dimensions());
       system.mask().setFieldIo(system.domain().fieldIo());
       UnitCell<2> tmpUnitCell;
       system.mask().readBasis("in/maskRef2.bf",tmpUnitCell);

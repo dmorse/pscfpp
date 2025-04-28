@@ -216,7 +216,7 @@ namespace Rpg
 
       hDerivatives.allocate(nMonomer);
       for (int i = 0; i < nMonomer; i++) {
-         hDerivatives[i].allocate(system().mesh().dimensions());
+         hDerivatives[i].allocate(system().domain().mesh().dimensions());
          hDerivPtrs_h[i] = hDerivatives[i].cArray();
       }
       hDerivPtrs = hDerivPtrs_h;
@@ -231,7 +231,7 @@ namespace Rpg
       chiTop_d = chiTop_h;
 
       // Set D-dimensional GPU configuration
-      ThreadMesh::setConfig(system().mesh().dimensions(), true);
+      ThreadMesh::setConfig(system().domain().mesh().dimensions(), true);
       dim3 gridDims = ThreadMesh::gridDims();
       dim3 blockDims = ThreadMesh::blockDims();
 
@@ -256,20 +256,21 @@ namespace Rpg
    template <int D>
    void ExtGenFilm<D>::allocate()
    {
-      UTIL_CHECK(system().unitCell().isInitialized());
+      UTIL_CHECK(system().domain().unitCell().isInitialized());
+      Domain<D> const & domain = system().domain();
 
       // Make sure h field container has access to a fieldIo
-      system().h().setFieldIo(system().domain().fieldIo());
+      system().h().setFieldIo(domain.fieldIo());
 
       // Allocate the external field containers if needed
       if (!isAthermal()) {
          if (!system().h().isAllocatedRGrid()) {
-            system().h().allocateRGrid(system().mesh().dimensions());
+            system().h().allocateRGrid(domain.mesh().dimensions());
          }
          if (system().iterator().isSymmetric()) {
-            UTIL_CHECK(system().basis().isInitialized());
+            UTIL_CHECK(domain.basis().isInitialized());
             if (!system().h().isAllocatedBasis()) {
-               system().h().allocateBasis(system().basis().nBasis());
+               system().h().allocateBasis(domain.basis().nBasis());
             }
          }
       }
@@ -310,7 +311,7 @@ namespace Rpg
 
       hFields.allocate(nMonomer);
       for (int i = 0; i < nMonomer; i++) {
-         hFields[i].allocate(system().mesh().dimensions());
+         hFields[i].allocate(system().domain().mesh().dimensions());
          hPtrs_h[i] = hFields[i].cArray();
       }
       hPtrs = hPtrs_h;
@@ -325,7 +326,7 @@ namespace Rpg
       chiTop_d = chiTop_h;
 
       // Set D-dimensional GPU configuration
-      ThreadMesh::setConfig(system().mesh().dimensions(), true);
+      ThreadMesh::setConfig(system().domain().mesh().dimensions(), true);
       dim3 gridDims = ThreadMesh::gridDims();
       dim3 blockDims = ThreadMesh::blockDims();
 
