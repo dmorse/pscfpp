@@ -237,9 +237,10 @@ namespace Rpc {
          PolymerModel::setModel(polymerModel_);
       }
 
-      // Number of times the global polymer model has been set.
-      // Retain this value so we can check at the end of this
-      // function that it wasn't set again within the function.
+      // Check number of times the global polymer model has been set.
+      // Retain this value so we can check at the end of this function
+      // that it wasn't set again within the function.
+
       int nSetPolymerModel = PolymerModel::nSet();
 
       // Read the Mixture{ ... } block
@@ -774,13 +775,11 @@ namespace Rpc {
 
       // Read w fields
       w_.readBasis(filename, domain_.unitCell());
-
-      // Update UnitCell in Mixture
-      mixture_.clearUnitCellData();
-
       hasCFields_ = false;
       hasFreeEnergy_ = false;
 
+      // Clear unit cell data in Mixture
+      mixture_.clearUnitCellData();
    }
 
    /*
@@ -804,12 +803,11 @@ namespace Rpc {
 
       // Read w fields
       w_.readRGrid(filename, domain_.unitCell());
-
-      // Update UnitCell in Mixture
-      mixture_.clearUnitCellData();
-
       hasCFields_ = false;
       hasFreeEnergy_ = false;
+
+      // Clear unit cell data in mixture
+      mixture_.clearUnitCellData();
    }
 
    /*
@@ -841,9 +839,6 @@ namespace Rpc {
       domain().fieldIo().readFieldsBasis(filename, tmpFieldsBasis_,
                                          domain_.unitCell());
 
-      // Update UnitCell in Mixture
-      mixture_.clearUnitCellData();
-
       // Allocate work space array
       DArray<double> wtmp;
       wtmp.allocate(nm);
@@ -864,9 +859,12 @@ namespace Rpc {
 
       // Set estimated w fields in system w-field container
       w_.setBasis(tmpFieldsBasis_);
-
       hasCFields_ = false;
       hasFreeEnergy_ = false;
+
+      // Clear unit cell data from mixture
+      mixture_.clearUnitCellData();
+
    }
 
    /*
@@ -979,10 +977,11 @@ namespace Rpc {
    template <int D>
    int System<D>::iterate(bool isContinuation)
    {
-      UTIL_CHECK(iteratorPtr_);
+      UTIL_CHECK(hasIterator());
       UTIL_CHECK(w_.hasData());
       if (iterator().isSymmetric()) {
          UTIL_CHECK(w_.isSymmetric());
+         UTIL_CHECK(isAllocatedBasis_);
       }
       hasCFields_ = false;
       hasFreeEnergy_ = false;
@@ -1015,8 +1014,13 @@ namespace Rpc {
    template <int D>
    void System<D>::sweep()
    {
-      UTIL_CHECK(w_.hasData());
+      UTIL_CHECK(hasIterator());
       UTIL_CHECK(hasSweep());
+      UTIL_CHECK(w_.hasData());
+      if (iterator().isSymmetric()) {
+         UTIL_CHECK(w_.isSymmetric());
+         UTIL_CHECK(isAllocatedBasis_);
+      }
       Log::file() << std::endl;
       Log::file() << std::endl;
 
@@ -1038,6 +1042,8 @@ namespace Rpc {
       simulator().simulate(nStep);
       hasCFields_ = true;
    }
+
+   // Grid and Field Manipulation Commands
 
    /*
    * Expand the number of spatial dimensions of an RField.
@@ -1121,9 +1127,9 @@ namespace Rpc {
             } else {
                length = (double) polymerPtr->nBead();
             }
-            // Recall: mu = ln(phi/q)
             if (phi > 1.0E-08) {
                fIdeal_ += phi*( mu - 1.0 )/length;
+               // Recall: mu = ln(phi/q)
             }
          }
       }
@@ -1293,7 +1299,7 @@ namespace Rpc {
    template <int D>
    void System<D>::writeTimers(std::ostream& out)
    {
-      if (iteratorPtr_) {
+      if (hasIterator()) {
          iterator().outputTimers(Log::file());
          iterator().outputTimers(out);
       }
@@ -1309,7 +1315,7 @@ namespace Rpc {
    template <int D>
    void System<D>::clearTimers()
    {
-      if (iteratorPtr_) {
+      if (hasIterator()) {
          iterator().clearTimers();
       }
       if (hasSimulator()){
@@ -1435,9 +1441,9 @@ namespace Rpc {
    {
       UTIL_CHECK(isAllocatedGrid_);
       UTIL_CHECK(w_.hasData());
-      domain_.fieldIo().writeFieldsRGrid(filename, w_.rgrid(),
-                                         domain().unitCell(),
-                                         w_.isSymmetric());
+      domain().fieldIo().writeFieldsRGrid(filename, w_.rgrid(),
+                                          domain().unitCell(),
+                                          w_.isSymmetric());
    }
 
    /*
@@ -1450,8 +1456,8 @@ namespace Rpc {
       UTIL_CHECK(isAllocatedBasis_);
       UTIL_CHECK(hasCFields_);
       UTIL_CHECK(w_.isSymmetric());
-      domain_.fieldIo().writeFieldsBasis(filename, c_.basis(),
-                                         domain().unitCell());
+      domain().fieldIo().writeFieldsBasis(filename, c_.basis(),
+                                          domain().unitCell());
    }
 
    /*
@@ -1462,9 +1468,9 @@ namespace Rpc {
    {
       UTIL_CHECK(isAllocatedGrid_);
       UTIL_CHECK(hasCFields_);
-      domain_.fieldIo().writeFieldsRGrid(filename, c_.rgrid(),
-                                         domain().unitCell(),
-                                         w_.isSymmetric());
+      domain().fieldIo().writeFieldsRGrid(filename, c_.rgrid(),
+                                          domain().unitCell(),
+                                          w_.isSymmetric());
    }
 
    /*
@@ -1508,7 +1514,7 @@ namespace Rpc {
       UTIL_CHECK(directionId <= 1);
       Propagator<D> const &
            propagator = polymer.propagator(blockId, directionId);
-      RField<D> const& field = propagator.q(segmentId);
+      RField<D> const & field = propagator.q(segmentId);
       domain().fieldIo().writeFieldRGrid(filename, field,
                                          domain().unitCell(),
                                          w_.isSymmetric());
@@ -1551,8 +1557,8 @@ namespace Rpc {
       UTIL_CHECK(blockId < polymer.nBlock());
       UTIL_CHECK(directionId >= 0);
       UTIL_CHECK(directionId <= 1);
-      Propagator<D> const& propagator
-                              = polymer.propagator(blockId, directionId);
+      Propagator<D> const&
+           propagator = polymer.propagator(blockId, directionId);
       int ns = propagator.ns();
 
       // Open file
@@ -1611,6 +1617,7 @@ namespace Rpc {
    template <int D>
    void System<D>::writeStars(std::string const & filename) const
    {
+      UTIL_CHECK(domain_.hasGroup());
       UTIL_CHECK(domain_.basis().isInitialized());
       std::ofstream file;
       fileMaster_.openOutputFile(filename, file);
