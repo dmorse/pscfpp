@@ -11,6 +11,7 @@
 #include "LrAmCompressor.h"
 #include <rpg/System.h>
 #include <rpg/fts/compressor/intra/IntraCorrelation.h>
+#include <prdc/cuda/FFT.h>
 #include <prdc/cuda/resources.h>
 #include <pscf/mesh/MeshIterator.h>
 #include <util/global.h>
@@ -49,11 +50,13 @@ namespace Rpg{
    {  
       const int nMonomer = system().mixture().nMonomer();
       const int meshSize = system().domain().mesh().size();
-      IntVec<D> const & dimensions = system().mesh().dimensions();
+      IntVec<D> const & dimensions = system().domain().mesh().dimensions();
       
       // Allocate memory required by AM algorithm if not done earlier.
       AmIteratorTmpl<Compressor<D>, DeviceArray<cudaReal> >::setup(isContinuation);
-      
+     
+      FFT<D>::computeKMesh(dimensions, kMeshDimensions_, kSize_);
+ 
       // Compute Fourier space kMeshDimensions_
       for (int i = 0; i < D; ++i) {
          if (i < D - 1) {
@@ -179,13 +182,13 @@ namespace Rpg{
       VecOp::eqV(resid_, resTrial);
       
       // Convert residual to Fourier Space
-      system().fft().forwardTransform(resid_, residK_);
+      system().domain().fft().forwardTransform(resid_, residK_);
       
       // Combine with Linear response factor to update second step
       VecOp::divEqVc(residK_, intraCorrelationK_, vMonomer);
       
       // Convert back to real space (destroys residK_)
-      system().fft().inverseTransformUnsafe(residK_, resid_);
+      system().domain().fft().inverseTransformUnsafe(residK_, resid_);
       
       // fieldTrial += resid_ * lambda
       VecOp::addEqVc(fieldTrial, resid_, lambda);

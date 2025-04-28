@@ -10,7 +10,6 @@
 #include <rpg/fts/compressor/Compressor.h>
 #include <rpg/fts/compressor/AmCompressor.h>
 #include <rpg/fts/compressor/LrCompressor.h>
-#include <rpg/fts/compressor/LrAmPreCompressor.h>
 #include <rpg/fts/compressor/LrAmCompressor.h>
 #include <rpg/fts/VecOpFts.h>
 
@@ -222,16 +221,6 @@ public:
                      "out/testLrCompressor.log");
    }
 
-   void testLrAmPreCompressor()
-   {
-      printMethod(TEST_FUNC);
-      System<3> system;
-      LrAmPreCompressor<3> lrAmPreCompressor(system);
-      testCompressor(lrAmPreCompressor, system, 
-                     "in/param_LrAmPreCompressor",
-                     "out/testLrAmPreCompressor.log");
-   }
-   
    void testLrAmCompressor()
    {
       printMethod(TEST_FUNC);
@@ -247,7 +236,6 @@ public:
 TEST_BEGIN(CompressorTest)
 TEST_ADD(CompressorTest, testAmCompressor)
 TEST_ADD(CompressorTest, testLrCompressor)
-TEST_ADD(CompressorTest, testLrAmPreCompressor)
 TEST_ADD(CompressorTest, testLrAmCompressor)
 TEST_END(CompressorTest)
 

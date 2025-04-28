@@ -262,11 +262,11 @@ namespace Rpg {
       // Read the Domain{ ... } block
       readParamComposite(in, domain_);
       UTIL_CHECK(domain_.mesh().size() > 0);
-      UTIL_CHECK(domain_.unitCell().nParameter() > 0);
-      UTIL_CHECK(domain_.unitCell().lattice() != UnitCell<D>::Null);
+      UTIL_CHECK(domain().unitCell().nParameter() > 0);
+      UTIL_CHECK(domain().unitCell().lattice() != UnitCell<D>::Null);
 
       // Setup the mixture
-      mixture_.associate(domain_.mesh(), fft(), 
+      mixture_.associate(domain_.mesh(), domain_.fft(), 
                          domain_.unitCell(), domain_.waveList());
       mixture_.allocate();
       // mixture_.clearUnitCellData();
@@ -1750,7 +1750,8 @@ namespace Rpg {
       FieldIo<D> const & fieldIo = domain().fieldIo();
       fieldIo.readFieldsKGrid(inFileName, tmpFieldsKGrid_, tmpUnitCell);
       for (int i = 0; i < mixture_.nMonomer(); ++i) {
-         fft().inverseTransformUnsafe(tmpFieldsKGrid_[i], tmpFieldsRGrid_[i]);
+         domain().fft().inverseTransformUnsafe(tmpFieldsKGrid_[i], 
+                                               tmpFieldsRGrid_[i]);
       }
       fieldIo.writeFieldsRGrid(outFileName, tmpFieldsRGrid_,
                                  tmpUnitCell);
@@ -1775,7 +1776,8 @@ namespace Rpg {
       fieldIo.readFieldsRGrid(inFileName, tmpFieldsRGrid_,
                                 tmpUnitCell);
       for (int i = 0; i < mixture_.nMonomer(); ++i) {
-         fft().forwardTransform(tmpFieldsRGrid_[i], tmpFieldsKGrid_[i]);
+         domain().fft().forwardTransform(tmpFieldsRGrid_[i], 
+                                         tmpFieldsKGrid_[i]);
       }
       fieldIo.writeFieldsKGrid(outFileName, tmpFieldsKGrid_,
                                  tmpUnitCell);
@@ -2007,7 +2009,7 @@ namespace Rpg {
       UTIL_CHECK(domain_.basis().isInitialized());
       UTIL_CHECK(isAllocatedGrid_);
       UTIL_CHECK(!isAllocatedBasis_);
-      const int nBasis = basis().nBasis();
+      const int nBasis = domain().basis().nBasis();
       UTIL_CHECK(nBasis > 0);
 
       // Allocate basis field containers
@@ -2047,13 +2049,13 @@ namespace Rpg {
       file.close();
 
       // Postconditions
-      UTIL_CHECK(mixture_.nMonomer() == nMonomer);
-      UTIL_CHECK(domain_.unitCell().nParameter() > 0);
-      UTIL_CHECK(domain_.unitCell().lattice() != UnitCell<D>::Null);
-      UTIL_CHECK(domain_.unitCell().isInitialized());
+      UTIL_CHECK(mixture().nMonomer() == nMonomer);
+      UTIL_CHECK(domain().unitCell().nParameter() > 0);
+      UTIL_CHECK(domain().unitCell().lattice() != UnitCell<D>::Null);
+      UTIL_CHECK(domain().unitCell().isInitialized());
       if (domain_.hasGroup()) {
-         UTIL_CHECK(domain_.basis().isInitialized());
-         UTIL_CHECK(domain_.basis().nBasis() > 0);
+         UTIL_CHECK(domain().basis().isInitialized());
+         UTIL_CHECK(domain().basis().nBasis() > 0);
       }
    }
 

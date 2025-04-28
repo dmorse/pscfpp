@@ -908,20 +908,21 @@ namespace Rpg {
       */
       Simulator<D>& simulator();
 
+      #if 0
       /**
       * Get crystal UnitCell by const reference.
       */
       UnitCell<D> const & unitCell() const;
 
       /**
-      * Get spatial discretization Mesh by const reference.
-      */
-      Mesh<D> const & mesh() const;
-
-      /**
       * Get the Basis by reference.
       */
       Basis<D> const & basis() const;
+
+      /**
+      * Get spatial discretization Mesh by const reference.
+      */
+      Mesh<D> const & mesh() const;
 
       /**
       * Get the FieldIo by const reference.
@@ -932,6 +933,7 @@ namespace Rpg {
       * Get the FFT object by const reference.
       */
       FFT<D> const & fft() const ;
+      #endif
 
       /**
       * Get FileMaster by reference.
@@ -1221,9 +1223,15 @@ namespace Rpg {
    inline Domain<D> const & System<D>::domain() const
    {  return domain_; }
 
+   #if 0
    template <int D>
    inline UnitCell<D> const & System<D>::unitCell() const
    {  return domain_.unitCell(); }
+
+   // Get the const FieldIo<D> object by const reference.
+   template <int D>
+   inline FieldIo<D> const & System<D>::fieldIo() const
+   {  return domain_.fieldIo(); }
 
    // Get the Mesh<D> by const reference.
    template <int D>
@@ -1239,13 +1247,8 @@ namespace Rpg {
    template <int D>
    inline FFT<D> const & System<D>::fft() const
    {  return domain_.fft(); }
-
-   #if 0
-   // Get the const FieldIo<D> object by const reference.
-   template <int D>
-   inline FieldIo<D> const & System<D>::fieldIo() const
-   {  return domain_.fieldIo(); }
    #endif
+
 
    // Get the Iterator by non-const reference.
    template <int D>

@@ -61,7 +61,7 @@ namespace Rpg
          fields().allocate(nMonomer);
       }
 
-      int nBasis = system().basis().nBasis();
+      int nBasis = system().domain().basis().nBasis();
       UTIL_CHECK(nBasis > 0);
       for (int i = 0; i < nMonomer; ++i) {
          if (field(i).isAllocated()) {
@@ -101,11 +101,12 @@ namespace Rpg
    void BasisFieldState<D>::getSystemState()
    {
       // Get system unit cell
-      unitCell() = system().unitCell();
+      unitCell() = system().domain().unitCell();
+
       // Get system wFields
       allocate();
       int nMonomer = system().mixture().nMonomer();
-      int nBasis   = system().basis().nBasis();
+      int nBasis   = system().domain().basis().nBasis();
       int i, j;
       for (i = 0; i < nMonomer; ++i) {
          DArray<double>& stateField = field(i);

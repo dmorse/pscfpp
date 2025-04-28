@@ -50,7 +50,7 @@ namespace Rpg {
    {
       // Local copies of data
       const int nMonomer = system().mixture().nMonomer();
-      IntVec<D> const & dimensions = system().mesh().dimensions();
+      IntVec<D> const & dimensions = system().domain().mesh().dimensions();
 
       // Preconditions
       UTIL_CHECK(system().w().hasData());
@@ -88,7 +88,7 @@ namespace Rpg {
 
       // Conver W_(r) to fourier mode W_(k)
       VecOp::eqV(wc0_, simulator().wc(0));
-      system().fft().forwardTransform(wc0_, wK_);
+      system().domain().fft().forwardTransform(wc0_, wK_);
 
       // Comput W_(k)^2
       VecOp::sqNormV(psi, wK_);

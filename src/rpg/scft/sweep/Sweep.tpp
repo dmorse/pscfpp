@@ -90,7 +90,7 @@ namespace Rpg {
       UTIL_CHECK(hasSystem()); 
       state.setSystem(system());
       state.allocate(); 
-      state.unitCell() = system().unitCell();
+      state.unitCell() = system().domain().unitCell();
    }
 
    /*
@@ -143,7 +143,7 @@ namespace Rpg {
          // Set extrapolated trial w fields 
          double coeff;
          int nMonomer = system().mixture().nMonomer();
-         int nBasis = system().basis().nBasis();
+         int nBasis = system().domain().basis().nBasis();
          DArray<double>* newFieldPtr;
          DArray<double>* oldFieldPtr; 
          int i, j, k;
@@ -171,7 +171,7 @@ namespace Rpg {
          // (if we are sweeping in a lattice parameter, then the system
          // parameters will be up-to-date but unitCellParameters_ wont be)
          FSArray<double, 6> oldParameters = unitCellParameters_;
-         unitCellParameters_ = system().unitCell().parameters();
+         unitCellParameters_ = system().domain().unitCell().parameters();
 
          // If isFlexible, then extrapolate the flexible unit cell parameters
          if (isFlexible) {

@@ -184,17 +184,17 @@ namespace Rpg
       UTIL_CHECK(system().hasMask());
       
       // Get the length of the lattice basis vector normal to the walls
-      double nvLength = system().unitCell().parameter(paramId);
+      double nvLength = system().domain().unitCell().parameter(paramId);
 
       // Get the volume fraction of the unit cell occupied by polymers
       double phiTot = system().mask().phiTot();
 
       // Create the derivative field in rgrid format
       RField<D> deriv;
-      deriv.allocate(system().mesh().dimensions());
+      deriv.allocate(system().domain().mesh().dimensions());
       
       // Set D-dimensional GPU configuration
-      ThreadMesh::setConfig(system().mesh().dimensions(), true);
+      ThreadMesh::setConfig(system().domain().mesh().dimensions(), true);
       dim3 gridDims = ThreadMesh::gridDims();
       dim3 blockDims = ThreadMesh::blockDims();
 
@@ -205,7 +205,7 @@ namespace Rpg
       
       // Get xi, the Lagrange multiplier field, in rgrid format
       RField<D> xi;
-      xi.allocate(system().mesh().dimensions());
+      xi.allocate(system().domain().mesh().dimensions());
 
       if (system().hasExternalFields()) {
          VecOp::subVV(xi, system().w().rgrid(0), system().h().rgrid(0));
@@ -260,7 +260,7 @@ namespace Rpg
       double fSys = sysPtr_->fHelmholtz();
 
       // Get the length L of the basis vector normal to the walls
-      double L = system().unitCell().parameter(paramId);
+      double L = system().domain().unitCell().parameter(paramId);
 
       double modifiedStress = (stress * (L - excludedThickness())) 
                               + (fSys - fBulk_);
@@ -274,19 +274,22 @@ namespace Rpg
    template <int D>
    void MaskGenFilm<D>::allocate()
    {
-      UTIL_CHECK(system().unitCell().isInitialized());
+      UTIL_CHECK(system().domain().unitCell().isInitialized());
+
+      Domain<D> const & domain = system().domain();
+      Mask<D> & mask = system().mask();
 
       // Make sure mask has access to a fieldIo
-      system().mask().setFieldIo(system().domain().fieldIo());
+      mask.setFieldIo(domain.fieldIo());
 
       // Allocate the mask containers if needed
       if (!system().mask().isAllocatedRGrid()) {
-         system().mask().allocateRGrid(system().mesh().dimensions());
+         mask.allocateRGrid(domain.mesh().dimensions());
       }
       if (system().iterator().isSymmetric()) {
-         UTIL_CHECK(system().basis().isInitialized());
+         UTIL_CHECK(domain.basis().isInitialized());
          if (!system().mask().isAllocatedBasis()) {
-            system().mask().allocateBasis(system().basis().nBasis());
+            mask.allocateBasis(domain.basis().nBasis());
          }
       }
    }
@@ -306,16 +309,17 @@ namespace Rpg
       }
 
       // Get the length of the lattice basis vector normal to the walls
-      int paramId = convertFullParamIdToReduced<D>(normalVecId(),
-                                                system().domain().lattice());
-      double nvLength = system().unitCell().parameter(paramId);
+      int paramId;
+      paramId = convertFullParamIdToReduced<D>(normalVecId(),
+                                               system().domain().lattice());
+      double nvLength = system().domain().unitCell().parameter(paramId);
 
       // Setup
       RField<D> rGrid;
-      rGrid.allocate(system().mesh().dimensions());
+      rGrid.allocate(system().domain().mesh().dimensions());
 
       // Set D-dimensional GPU configuration
-      ThreadMesh::setConfig(system().mesh().dimensions(), true);
+      ThreadMesh::setConfig(system().domain().mesh().dimensions(), true);
       dim3 gridDims = ThreadMesh::gridDims();
       dim3 blockDims = ThreadMesh::blockDims();
 

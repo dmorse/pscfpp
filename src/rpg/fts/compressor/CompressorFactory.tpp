@@ -5,7 +5,6 @@
 
 // Subclasses of Compressor 
 #include "AmCompressor.h"
-#include "LrAmPreCompressor.h"
 #include "LrCompressor.h"
 #include "LrAmCompressor.h"
 
@@ -38,8 +37,6 @@ namespace Rpg {
       // Try to match classname
       if (className == "Compressor" || className == "AmCompressor") {
          ptr = new AmCompressor<D>(*sysPtr_);
-      } else if (className == "LrAmPreCompressor") {
-         ptr = new LrAmPreCompressor<D>(*sysPtr_);
       } else if (className == "LrCompressor") {
          ptr = new LrCompressor<D>(*sysPtr_);
       } else if (className == "LrAmCompressor") {

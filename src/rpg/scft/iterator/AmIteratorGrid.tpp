@@ -197,7 +197,7 @@ namespace Rpg {
    int AmIteratorGrid<D>::nElements()
    {
       const int nMonomer = system().mixture().nMonomer();
-      const int nMesh = system().mesh().size();
+      const int nMesh = system().domain().mesh().size();
 
       int nEle = nMonomer*nMesh;
 
@@ -213,7 +213,7 @@ namespace Rpg {
    void AmIteratorGrid<D>::getCurrent(FieldCUDA& curr)
    {
       const int nMonomer = system().mixture().nMonomer();
-      const int nMesh = system().mesh().size();
+      const int nMesh = system().domain().mesh().size();
       const int n = nElements();
       UTIL_CHECK(curr.capacity() == n);
 
@@ -224,9 +224,9 @@ namespace Rpg {
 
       // If flexible unit cell, also store unit cell parameters
       if (isFlexible_) {
-         const int nParam = system().unitCell().nParameter();
+         const int nParam = system().domain().unitCell().nParameter();
          FSArray<double,6> const & parameters
-                                  = system().unitCell().parameters();
+                              = system().domain().unitCell().parameters();
 
          // convert into a cudaReal array
          HostDArray<cudaReal> tempH(nFlexibleParams());
@@ -260,7 +260,7 @@ namespace Rpg {
    {
       const int n = nElements();
       const int nMonomer = system().mixture().nMonomer();
-      const int nMesh = system().mesh().size();
+      const int nMesh = system().domain().mesh().size();
 
       // Initialize residuals to zero. Kernel will take care of potential
       // additional elements (n vs nMesh).
@@ -317,7 +317,7 @@ namespace Rpg {
 
       // If variable unit cell, compute stress residuals
       if (isFlexible_) {
-         const int nParam = system().unitCell().nParameter();
+         const int nParam = system().domain().unitCell().nParameter();
          HostDArray<cudaReal> stressH(nFlexibleParams());
 
          int counter = 0;
@@ -347,7 +347,7 @@ namespace Rpg {
    void AmIteratorGrid<D>::update(FieldCUDA& newGuess)
    {
       const int nMonomer = system().mixture().nMonomer();
-      const int nMesh = system().mesh().size();
+      const int nMesh = system().domain().mesh().size();
 
       // If canonical, explicitly set homogeneous field components 
       if (system().mixture().isCanonical()) {
@@ -396,7 +396,7 @@ namespace Rpg {
       if (isFlexible_) {
          FSArray<double,6> parameters;
          parameters = system().domain().unitCell().parameters();
-         const int nParam = system().unitCell().nParameter();
+         const int nParam = system().domain().unitCell().nParameter();
 
          // transfer from device to host
          HostDArray<cudaReal> tempH(nFlexibleParams());
@@ -428,7 +428,7 @@ namespace Rpg {
       if (isFlexible_ && verbose() > 1) {
          const int nParam = system().domain().unitCell().nParameter();
          const int nMonomer = system().mixture().nMonomer();
-         const int nMesh = system().mesh().size();
+         const int nMesh = system().domain().mesh().size();
 
          // transfer stress residuals from device to host
          HostDArray<cudaReal> tempH(nFlexibleParams());
@@ -439,11 +439,11 @@ namespace Rpg {
             if (flexibleParams_[i]) {
                double stress = tempH[counter] / (-1.0 * scaleStress_);
                Log::file() 
-                      << " Cell Param  " << i << " = "
-                      << Dbl(system().domain().unitCell().parameters()[i], 15)
-                      << " , stress = " 
-                      << Dbl(stress, 15)
-                      << "\n";
+                   << " Cell Param  " << i << " = "
+                   << Dbl(system().domain().unitCell().parameters()[i], 15)
+                   << " , stress = " 
+                   << Dbl(stress, 15)
+                   << "\n";
                counter++;
             }
          }

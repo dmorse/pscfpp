@@ -467,7 +467,7 @@ public:
 
       // Read in the mask and external fields from file
       UnitCell<1> unitCell; // UnitCell object to pass to FieldIo functions
-      unitCell = system.unitCell();
+      unitCell = system.domain().unitCell();
       system.mask().setFieldIo(system.domain().fieldIo());
       system.mask().allocateBasis(system.domain().basis().nBasis()); 
       system.mask().allocateRGrid(system.domain().mesh().dimensions());
