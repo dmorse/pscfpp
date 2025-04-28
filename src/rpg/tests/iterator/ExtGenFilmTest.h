@@ -137,7 +137,7 @@ public:
       createSystem(system1, "in/system3D_3");
       system1.mask().allocateBasis(1920);
       system1.mask().allocateRGrid(system1.domain().mesh().dimensions());
-      system1.mask().setFieldIo(system1.fieldIo());
+      system1.mask().setFieldIo(system1.domain().fieldIo());
       UnitCell<3> tmpUnitCell1;
       system1.mask().readBasis("in/maskRef3.bf", tmpUnitCell1);
 
@@ -207,7 +207,7 @@ public:
       system.setUnitCell(UnitCell<1>::Lamellar, parameters);
       system.mask().allocateBasis(37);
       system.mask().allocateRGrid(system.mesh().dimensions());
-      system.mask().setFieldIo(system.fieldIo());
+      system.mask().setFieldIo(system.domain().fieldIo());
       UnitCell<1> tmpUnitCell;
       system.mask().readBasis("in/maskRef1.bf",tmpUnitCell);
 
@@ -226,7 +226,8 @@ public:
       // Check that updated external fields are correct
       UnitCell<1> unitCell; // UnitCell object to pass to FieldIo functions
       DArray<DArray<double> > hFieldsCheck; // Copy of reference field
-      system.fieldIo().readFieldsBasis("in/hRef2.bf", hFieldsCheck, unitCell);
+      system.domain().fieldIo().readFieldsBasis("in/hRef2.bf", hFieldsCheck, 
+		                                unitCell);
       BFieldComparison bComparison(0); // object to compare fields
       bComparison.compare(system.h().basis(), hFieldsCheck);
       if (verbose() > 0) {
@@ -253,7 +254,9 @@ public:
       // Check that updated external fields are is correct
       UnitCell<1> unitCell2; // UnitCell object to pass to FieldIo functions
       DArray<DArray<double> > hFieldsCheck2; // Copy of reference field
-      system.fieldIo().readFieldsBasis("in/hRef3.bf", hFieldsCheck2, unitCell2);
+      system.domain().fieldIo().readFieldsBasis("in/hRef3.bf", 
+		                                hFieldsCheck2, 
+		                                unitCell2);
       BFieldComparison bComparison2(0); // object to compare fields
       bComparison2.compare(system.h().basis(), hFieldsCheck2);
       if (verbose() > 0) {
@@ -280,7 +283,7 @@ public:
       // Set up mask
       system.mask().allocateBasis(561);
       system.mask().allocateRGrid(system.mesh().dimensions());
-      system.mask().setFieldIo(system.fieldIo());
+      system.mask().setFieldIo(system.domain().fieldIo());
       UnitCell<2> tmpUnitCell;
       system.mask().readBasis("in/maskRef2.bf",tmpUnitCell);
 
