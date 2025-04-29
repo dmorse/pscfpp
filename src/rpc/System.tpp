@@ -1879,7 +1879,8 @@ namespace Rpc {
                                 tmpUnitCell);
       fieldIo.scaleFieldsRGrid(tmpFieldsRGrid_, factor);
       fieldIo.writeFieldsRGrid(outFileName, tmpFieldsRGrid_,
-                                            tmpUnitCell);
+                                            tmpUnitCell, 
+                                            w_.isSymmetric());
    }
 
    /*
