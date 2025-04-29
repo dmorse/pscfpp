@@ -223,7 +223,7 @@ namespace Rpg {
       // Output structure factors to one file
       system().fileMaster().openOutputFile(outputFileName(), outputFile_);
       outputFile_ << "\t" << "q";
-      outputFile_ << "\t" <<"\t" <<"S(q)/(\u03C1 N)";
+      outputFile_ << "\t" <<"\t" <<"S(q)";
       outputFile_<< std::endl;
       for (const auto& i : averageSMap_) {
          double q = i.first;
