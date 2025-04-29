@@ -60,8 +60,8 @@ namespace Cpu {
       /**
       * Clear all internal data that depends on lattice parameters.
       * 
-      * Sets hasKSq_ and hasdKSq_ to false, and sets hasMinimumImages_ to
-      * false if hasVariableAngle == true.
+      * Sets hasKSq_ and hasdKSq_ to false. Sets hasMinimumImages_ to
+      * false only if the unit cell type has variable angles.
       */
       void clearUnitCellData();
 
@@ -70,12 +70,11 @@ namespace Cpu {
       *
       * The minimum images may change if a lattice angle in the unit cell 
       * is changed, so this method should be called whenever such changes
-      * occur. The method hasVariableAngle() identifies whether the
-      * minimum images may change under changes in the lattice parameters.
+      * occur. 
       * 
       * In the process of computing the minimum images, the square norm
-      * |k|^2 for all wavevectors is also calculated and stored, so it is
-      * not necessary to call computeKSq after calling this method. 
+      * |k|^2 for all wavevectors is also calculated and stored, so it 
+      * is not necessary to call computeKSq after calling this method. 
       * computeKSq is provided to allow calculation of kSq without 
       * recalculating minimum images.
       */
@@ -122,15 +121,6 @@ namespace Cpu {
       * used to mean any wave that is outside the bounds of the k-grid.
       */
       DArray<bool> const & implicitInverse() const;
-
-      /**
-      * Does this unit cell have an angle that can change?
-      * 
-      * The minimum images can only change if one of the lattice parameters
-      * is an angle that may vary. Therefore, this method checks the crystal
-      * system and returns true if there are any angles that may vary.
-      */ 
-      bool hasVariableAngle() const;
 
       /**
       * Has memory been allocated for arrays?

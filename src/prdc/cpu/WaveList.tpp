@@ -13,6 +13,7 @@
 #include <prdc/cpu/FFT.h>
 #include <prdc/crystal/UnitCell.h>
 #include <prdc/crystal/shiftToMinimum.h>
+#include <prdc/crystal/hasVariableAngle.h>
 
 #include <pscf/mesh/MeshIterator.h>
 #include <pscf/mesh/Mesh.h>
@@ -81,11 +82,11 @@ namespace Cpu {
    template <int D>
    void WaveList<D>::clearUnitCellData()
    {
-      if (hasVariableAngle()) {
-         hasMinimumImages_ = false;
-      }
       hasKSq_ = false;
       hasdKSq_ = false;
+      if (hasVariableAngle<D>(unitCell().lattice())) {
+         hasMinimumImages_ = false;
+      }
    }
 
    template <int D>

@@ -53,7 +53,7 @@ namespace Prdc {
    class UnitCell : public UnitCellBase<D>
    {};
 
-   // Function declations (friends of explicit instantiations)
+   // Function template declarations 
 
    /**
    * istream input extractor for a UnitCell<D>.
