@@ -14,7 +14,9 @@ namespace Prdc {
    using namespace Util;
 
    template <> 
-   IntVec<1> shiftToMinimum(IntVec<1>& v, IntVec<1> d, UnitCell<1> const & cell)
+   IntVec<1> shiftToMinimum(IntVec<1> const & v, 
+                            IntVec<1> const & d, 
+                            UnitCell<1> const & cell)
    {
       IntVec<1> u;
       if (v[0] > d[0]/2) {
@@ -30,7 +32,9 @@ namespace Prdc {
    }
 
    template <>
-   IntVec<2> shiftToMinimum(IntVec<2>& v, IntVec<2> d, UnitCell<2> const & cell)
+   IntVec<2> shiftToMinimum(IntVec<2> const & v, 
+                            IntVec<2> const & d, 
+                            UnitCell<2> const & cell)
    {
       // Initialize minimum to input value
       const double epsilon = 1.0E-8;
@@ -39,8 +43,8 @@ namespace Prdc {
       double Gsq_min_hi = Gsq + epsilon;
 
       // Loop over neighboring images 
-      IntVec<2> r = v;                    // Minimum image of v
-      IntVec<2> u;                        // Vector used in loop
+      IntVec<2> r = v;               // Minimum image of v
+      IntVec<2> u;                   // Vector used in loop
       int s0, s1;
       const int q = 2;
       for (s0 = -q; s0 < q+1; ++s0) { 
@@ -61,7 +65,9 @@ namespace Prdc {
    }
 
    template <>
-   IntVec<3> shiftToMinimum(IntVec<3>& v, IntVec<3> d, UnitCell<3> const & cell)
+   IntVec<3> shiftToMinimum(IntVec<3> const & v, 
+                            IntVec<3> const & d, 
+                            UnitCell<3> const & cell)
    {
       // Initialize minimum to input value
       const double epsilon = 1.0E-8;

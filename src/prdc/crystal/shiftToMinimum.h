@@ -20,23 +20,34 @@ namespace Prdc {
    /**
    * Returns minimum magnitude image of DFT wavevector.
    *
-   * \param v IntVec<D> containing integer indices of wavevector.
-   * \param d dimensions of the discrete Fourier transform grid.
-   * \param cell UnitCell
    * \ingroup Prdc_Crystal_Module
+   *
+   * \param v  IntVec<D> containing integer indices of a wavevector
+   * \param d  dimensions of the discrete Fourier transform grid
+   * \param cell  UnitCell
+   * \return  integer indices of minimum image of v
    */
    template <int D>
-   IntVec<D> shiftToMinimum(IntVec<D>& v, IntVec<D> d, UnitCell<D> const & cell);
+   IntVec<D> shiftToMinimum(IntVec<D> const & v, 
+                            IntVec<D> const & d, 
+                            UnitCell<D> const & cell);
 
-   // Explicit specializations
-   template <> 
-   IntVec<1> shiftToMinimum(IntVec<1>& v, IntVec<1> d, UnitCell<1> const & cell);
-
-   template <> 
-   IntVec<2> shiftToMinimum(IntVec<2>& v, IntVec<2> d, UnitCell<2> const & cell);
+   // Explicit specializations for D=1, 2 and 3
 
    template <> 
-   IntVec<3> shiftToMinimum(IntVec<3>& v, IntVec<3> d, UnitCell<3> const & cell);
+   IntVec<1> shiftToMinimum(IntVec<1> const & v, 
+                            IntVec<1> const & d, 
+                            UnitCell<1> const & cell);
+
+   template <> 
+   IntVec<2> shiftToMinimum(IntVec<2> const & v, 
+                            IntVec<2> const & d, 
+                            UnitCell<2> const & cell);
+
+   template <> 
+   IntVec<3> shiftToMinimum(IntVec<3> const & v, 
+                            IntVec<3> const & d, 
+                            UnitCell<3> const & cell);
 
 }
 }
