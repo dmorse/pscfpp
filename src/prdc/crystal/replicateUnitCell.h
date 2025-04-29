@@ -22,16 +22,41 @@ namespace Prdc {
    * Create a replicated UnitCell<D> (base template).
    *
    * Element i of the IntVec<D> parameter "replicas" contains the number
-   * of unit cell replicas along direction i, for i=0, ..., D-1.
+   * of unit cell replicas along direction i, for i=0, ..., D-1. 
    *
-   * Explicit specializations of this function are used to implement the
-   * REPLICATE_UNIT_CELL command of pscf_pc and pscf_pg, which replicates 
-   * the unit cell and the fields defined within it a specified number of 
-   * times in each of D directions. Explicit specializations of this 
-   * function for D=1, 2, and 3 create a UnitCell<D> object appropriate 
-   * for the replicated system. It is used within the replicateUnitCell 
-   * function defined in file src/prdc/fields/fieldIoUtil.tpp, which 
-   * writes replicated fields to an output file. 
+   * Upon return, parameter "cellOut" is a UnitCell<D> with a lattice
+   * type and lattice parameters appropriate to represent a unit cell
+   * created by replicating "cellIn" the specified number of times in 
+   * each direction. This function attempts to identify symmetries that
+   * are preserved by the choice of values in the "replicas" vector, and
+   * will generally try to use the highest symmetry unit cell type that
+   * is appropriate if more than one choice is possible.  Thus, if a
+   * 3D cubic unit cell cellIn is replicated using a "replicas" vector 
+   * with three equal elements, cellOut will be a cubic cell, whereas 
+   * if a cubic cell replicated using a "replicas" vector in which all 
+   * three elements are unequal, "cellOut" will be orthorhombic. 
+   *
+   * Some types of conversion of unit cells with high symmetry lattice
+   * types that would result in lower-symmetry lattice type have been 
+   * prohibited if the appropriate conversion of lattice parameters has
+   * not yet been worked out. For example, for now, users may not
+   * create a triclinic unit cell by replicating a rhombohedral lattice
+   * using a replicas vector with unequal values for different elements.
+   * An Exception is thrown and an appropriate error message is written 
+   * to standard output if a user attempts any such prohibited type of
+   * replication.
+   *
+   * This base template is declared but not defined. Explicit 
+   * specializations are defined for D=1, 2, and 3.  
+   * 
+   * Explicit specializations of this function template are called 
+   * within the replicateUnitCell function template defined in file 
+   * src/prdc/fields/fieldIoUtil.tpp. This function takes an array of
+   * fields as an input and writes a replicated version of those fields
+   * to an r-grid field file. The header of the resulting file contains a 
+   * description of the unit cell obtained here. That field replication 
+   * function is used to implement the REPLICATE_UNIT_CELL command of
+   * the pscf_pc and pscf_pg programs.
    *
    * \ingroup Prdc_Crystal_Module
    * 
@@ -42,8 +67,7 @@ namespace Prdc {
    template <int D>
    void replicateUnitCell(IntVec<D> const & replicas,
                           UnitCell<D> const & cellIn,
-                          UnitCell<D> & cellOut)
-   {};
+                          UnitCell<D> & cellOut);
 
    // Explicit specializations of replicateUnitCell<D>
 
