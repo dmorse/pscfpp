@@ -50,31 +50,6 @@ namespace Rpc {
       */
       virtual void readParameters(std::istream& in);
 
-      #if 0
-      /**
-      * Load state from an archive.
-      *
-      * \param ar loading (input) archive.
-      */
-      virtual void loadParameters(Serializable::IArchive& ar);
-
-      /**
-      * Save state to archive.
-      *
-      * \param ar saving (output) archive.
-      */
-      virtual void save(Serializable::OArchive& ar);
-
-      /**
-      * Serialize to/from an archive.
-      *
-      * \param ar      saving or loading archive
-      * \param version archive version id
-      */
-      template <class Archive>
-      void serialize(Archive& ar, const unsigned int version);
-      #endif
-
       /**
       * Clear nSample counter.
       */
@@ -92,41 +67,18 @@ namespace Rpc {
       */
       virtual void output();
 
+   protected:
+
       using ParamComposite::read;
       using ParamComposite::setClassName;
       using Analyzer<D>::outputFileName;
       using Analyzer<D>::isAtInterval;
 
-   protected:
-
-      // Output file stream
-      std::ofstream outputFile_;
-
-      // Output filename
-      std::string filename_;
-
-      /// Number of configurations dumped thus far (first dump is zero).
-      long nSample_;
-
-      /// Has readParam been called?
-      long isInitialized_;
-
-      /**
-      * Pointer to parent Simulator
-      */
-      Simulator<D>* simulatorPtr_;
-
-      /**
-      * Pointer to the parent system.
-      */
-      System<D>* systemPtr_;
-
-   protected:
-
       /**
       * Write data that should appear once, at beginning of the file.
       *
-      * Called by sample on first invocation. Default implementation is empty.
+      * Called by sample on first invocation. Default implementation is 
+      * empty.
       *
       * \param out output file stream
       */
@@ -150,20 +102,32 @@ namespace Rpc {
       */
       Simulator<D>& simulator();
 
+   private:
+
+      // Output file stream
+      std::ofstream outputFile_;
+
+      // Output filename
+      std::string filename_;
+
+      /// Number of configurations dumped thus far (first dump is zero).
+      long nSample_;
+
+      /// Has readParam been called?
+      long isInitialized_;
+
+      /**
+      * Pointer to parent Simulator
+      */
+      Simulator<D>* simulatorPtr_;
+
+      /**
+      * Pointer to the parent system.
+      */
+      System<D>* systemPtr_;
+
 
    };
-
-   #if 0
-   /*
-   * Serialize to/from an archive.
-   */
-   template <class Archive>
-   void TrajectoryWriter<D>::serialize(Archive& ar, const unsigned int version)
-   {
-      Analyzer::serialize(ar, version);
-      ar & nSample_;
-   }
-   #endif
 
    // Get the parent system.
    template <int D>

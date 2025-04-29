@@ -26,10 +26,7 @@ namespace Rpc {
    template <int D>
    HamiltonianAnalyzer<D>::HamiltonianAnalyzer(Simulator<D>& simulator, 
                                                System<D>& system)
-    : AverageListAnalyzer<D>(system),
-      simulatorPtr_(&simulator),
-      systemPtr_(&(simulator.system())),
-      hasAnalyzeChi_(false),
+    : AverageListAnalyzer<D>(simulator, system),
       idealId_(-1),
       fieldId_(-1),
       totalId_(-1)
@@ -43,13 +40,13 @@ namespace Rpc {
    {
       AverageListAnalyzer<D>::readParameters(in);
 
-      idealId_ = 0;
-      fieldId_ = 1;
-      totalId_ = 2;
       AverageListAnalyzer<D>::initializeAccumulators(3);
  
+      idealId_ = 0;
       setName(idealId_, "ideal");
+      fieldId_ = 1;
       setName(fieldId_, "field");
+      totalId_ = 2;
       setName(totalId_, "total");
    }
 
@@ -60,28 +57,19 @@ namespace Rpc {
    void HamiltonianAnalyzer<D>::compute() 
    {
       UTIL_CHECK(system().w().hasData());
+
       if (!system().hasCFields()) {
          system().compute();
       }
+      UTIL_CHECK(system().hasCFields());
       if (!simulator().hasWc()){
          simulator().computeWc();
       }
       UTIL_CHECK(simulator().hasWc());
-
-      #if 0
-      if (!simulator().hasWc()){
-         if (!hasAnalyzeChi_){
-            simulator().analyzeChi();
-            hasAnalyzeChi_ = true;
-         }
-         system().compute();
-         simulator().computeWc();
-      }
-      #endif
-
       if (!simulator().hasHamiltonian()) {
          simulator().computeHamiltonian();
       }
+      UTIL_CHECK(simulator().hasHamiltonian());
 
       double ideal = simulator().idealHamiltonian();
       setValue(idealId_, ideal);

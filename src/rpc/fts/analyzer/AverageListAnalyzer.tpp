@@ -26,8 +26,10 @@ namespace Rpc
    * Constructor.
    */
    template <int D>
-   AverageListAnalyzer<D>::AverageListAnalyzer(System<D>& system)
+   AverageListAnalyzer<D>::AverageListAnalyzer(Simulator<D>& simulator,
+                                               System<D>& system)
     : Analyzer<D>(),
+      simulatorPtr_(&simulator),
       systemPtr_(&system),
       nSamplePerOutput_(1),
       nValue_(0),
@@ -58,14 +60,12 @@ namespace Rpc
       // determine nValue and then call initializeAccumulators(nValue).
    }
 
-   /*
-   * Clear accumulators (do nothing on slave processors).
-   */
    template <int D>
-   void AverageListAnalyzer<D>::clear()
+   void AverageListAnalyzer<D>::setName(int i, std::string name)
    {
       UTIL_CHECK(hasAccumulators_);
-      clearAccumulators();
+      UTIL_CHECK(i >= 0 && i < nValue_);
+      names_[i] = name;
    }
 
    /*
@@ -75,7 +75,7 @@ namespace Rpc
    void AverageListAnalyzer<D>::setup()
    {
       UTIL_CHECK(hasAccumulators_);
-      clear();
+      clearAccumulators();
    }
 
    /*
@@ -91,7 +91,7 @@ namespace Rpc
    }
 
    /*
-   * Output results after a system is completed.
+   * Output results after a simulation is completed.
    */
    template <int D>
    void AverageListAnalyzer<D>::output()
@@ -105,7 +105,8 @@ namespace Rpc
 
       #if 0
       // Write parameter (*.prm) file
-      system().fileMaster().openOutputFile(outputFileName(".prm"), outputFile_);
+      std::string filename = outputFileName(".prm");
+      system().fileMaster().openOutputFile(filename, outputFile_);
       ParamComposite::writeParam(outputFile_);
       outputFile_.close();
       #endif
@@ -152,14 +153,6 @@ namespace Rpc
       for (int i = 0; i < nValue_; ++i) {
          accumulators_[i].clear();
       }
-   }
-
-   template <int D>
-   void AverageListAnalyzer<D>::setName(int i, std::string name)
-   {
-      UTIL_CHECK(hasAccumulators_);
-      UTIL_CHECK(i >= 0 && i < nValue_);
-      names_[i] = name;
    }
 
    /*

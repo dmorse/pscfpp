@@ -54,57 +54,21 @@ namespace Rpc {
       */
       virtual void readParameters(std::istream& in);
 
-      #if 0
-      /**
-      * Load parameters from archive when restarting. 
-      *
-      * \param ar loading/input archive
-      */
-      virtual void loadParameters(Serializable::IArchive& ar); 
-   
-      /**
-      * Save internal state to archive.
-      *
-      * \param ar saving/output archive
-      */
-      virtual void save(Serializable::OArchive& ar);
-      #endif
+   protected:
 
-      /**
-      * Pointer to parent Simulator
-      */
-      Simulator<D>* simulatorPtr_;     
-      /**
-      * Pointer to the parent system.
-      */
-      System<D>* systemPtr_; 
-      
       using ParamComposite::setClassName;
       using AverageListAnalyzer<D>::setName;
       using AverageListAnalyzer<D>::setValue;
+      using AverageListAnalyzer<D>::simulator;
+      using AverageListAnalyzer<D>::system;
       
-   protected:
-
       /**
       * Compute and store values of Hamiltonian components.
       */  
       void compute();
-      
-      /** 
-      * Return reference to parent system.
-      */      
-      System<D>& system();
-      
-      /** 
-      * Return reference to parent Simulator.
-      */
-      Simulator<D>& simulator();
- 
+     
    private: 
 
-      /// Has eigenvalue analysis of projected chi matrix been performed?
-      bool hasAnalyzeChi_;
-      
       /// Array index for ideal gas contributions (lnQ) accumulator.
       int idealId_;
 
@@ -115,17 +79,7 @@ namespace Rpc {
       int totalId_;
 
    };
-   
-   // Get the parent system.
-   template <int D>
-   inline System<D>& HamiltonianAnalyzer<D>::system()
-   {  return *systemPtr_; }
-   
-   //Get parent Simulator object.
-   template <int D>
-   inline Simulator<D>& HamiltonianAnalyzer<D>::simulator()
-   {  return *simulatorPtr_; }
-
+  
    #ifndef RPC_HAMILTONIAN_ANALYZER_TPP
    // Suppress implicit instantiation
    extern template class HamiltonianAnalyzer<1>;

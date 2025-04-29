@@ -16,6 +16,7 @@ namespace Rpc
 {
 
    template <int D> class System;
+   template <int D> class Simulator;
 
    using namespace Util;
 
@@ -38,9 +39,10 @@ namespace Rpc
       /**
       * Constructor.
       *
-      * \param system parent SystemType object.
+      * \param simulator  parent simulator object.
+      * \param system  parent system object.
       */
-      AverageListAnalyzer(System<D>& system);
+      AverageListAnalyzer(Simulator<D>& simulator, System<D>& system);
 
       /**
       * Destructor.
@@ -50,34 +52,13 @@ namespace Rpc
       /**
       * Read interval, outputFileName and (optionally) nSamplePerOutput.
       *
-      * The optional variable nSamplePerOutput defaults to 0, which disables
-      * computation and output of block averages. Setting nSamplePerOutput = 1
-      * outputs every sampled value.
+      * The optional variable nSamplePerOutput defaults to 0, which 
+      * disables computation and output of block averages. Setting 
+      * nSamplePerOutput = 1 outputs every sampled value.
       *
       * \param in  input parameter file
       */
       virtual void readParameters(std::istream& in);
-
-      #if 0
-      /**
-      * Load internal state from an input archive.
-      *
-      * \param ar  input/loading archive
-      */
-      virtual void loadParameters(Serializable::IArchive &ar);
-
-      /**
-      * Save internal state to an output archive.
-      *
-      * \param ar  output/saving archive
-      */
-      virtual void save(Serializable::OArchive &ar);
-      #endif
-
-      /**
-      * Clear accumulators.
-      */
-      virtual void clear();
 
       /**
       * Setup before loop.
@@ -128,36 +109,16 @@ namespace Rpc
       */
       const Average& accumulator(int i) const;
 
-      /**
-      * Pointer to the parent system.
-      */
-      System<D>* systemPtr_;
-
       using Analyzer<D>::interval;
       using Analyzer<D>::isAtInterval;
       using Analyzer<D>::outputFileName;
-      using ParamComposite::read;
-      using ParamComposite::readOptional;
 
    protected:
 
+      using ParamComposite::read;
+      using ParamComposite::readOptional;
       using Analyzer<D>::setClassName;
       using Analyzer<D>::readInterval;
-
-      /**
-      * Instantiate Average accumulators and set nSamplePerOutput set nValue.
-      *
-      * \pre hasAccumulator == false
-      * \pre nSamplePerOutput >= 0
-      */
-      void initializeAccumulators(int nValue);
-
-      /**
-      * Clear internal state of the accumulator.
-      *
-      * \pre hasAccumulator == true
-      */
-      void clearAccumulators();
 
       /**
       * Set name of variable.
@@ -170,19 +131,34 @@ namespace Rpc
       void setName(int i, std::string name);
 
       /**
+      * Instantiate Average accumulators and set nValue.
+      *
+      * \pre hasAccumulator == false
+      * \pre nSamplePerOutput >= 0
+      */
+      void initializeAccumulators(int nValue);
+
+      /**
+      * Clear internal state of all accumulators.
+      *
+      * \pre hasAccumulator == true
+      */
+      void clearAccumulators();
+
+      /**
+      * Compute value of sampled quantities.
+      *
+      * Call on all processors.
+      */
+      virtual void compute() = 0;
+
+      /**
       * Set current value, used by compute function.
       *
       * \param i integer index of variable
       * \param value current value of variable
       */
       void setValue(int i, double value);
-
-      /**
-      * Compute value of sampled quantity.
-      *
-      * Call on all processors.
-      */
-      virtual void compute() = 0;
 
       /**
       * Get current value of a specific variable.
@@ -205,12 +181,17 @@ namespace Rpc
       */
       void outputAccumulators();
 
+      /** 
+      * Return reference to parent Simulator.
+      */
+      Simulator<D>& simulator();
+
       /**
       * Return reference to parent system.
       */
       System<D>& system();
 
-      // Output file stream
+      /// Output file stream
       std::ofstream outputFile_;
 
    private:
@@ -224,6 +205,12 @@ namespace Rpc
       /// Array of value names (only allocated on master processor)
       DArray<std::string> names_;
 
+      /// Pointer to parent Simulator
+      Simulator<D>* simulatorPtr_;     
+
+      /// Pointer to the parent system.
+      System<D>* systemPtr_;
+ 
       /// Number of samples per block average output.
       int nSamplePerOutput_;
 
@@ -232,7 +219,6 @@ namespace Rpc
 
       /// Does this processor have accumulators ?
       bool hasAccumulators_;
-
 
    };
 
@@ -303,6 +289,11 @@ namespace Rpc
    template <int D>
    inline System<D>& AverageListAnalyzer<D>::system()
    {  return *systemPtr_; }
+   
+   // Get parent Simulator object.
+   template <int D>
+   inline Simulator<D>& AverageListAnalyzer<D>::simulator()
+   {  return *simulatorPtr_; }
 
    #ifndef RPC_AVERAGE_LIST_ANALYZER_TPP
    // Suppress implicit instantiation

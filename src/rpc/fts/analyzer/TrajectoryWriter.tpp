@@ -45,26 +45,6 @@ namespace Rpc
       isInitialized_ = true;
    }
    
-   #if 0
-   /*
-   * Load state from an archive.
-   */
-   template <int D>
-   void TrajectoryWriter<D>::loadParameters(Serializable::IArchive& ar)
-   {
-      Analyzer::loadParameters(ar);
-      ar & nSample_;
-      isInitialized_ = true;
-   }
-
-   /*
-   * Save state to archive.
-   */
-   template <int D>
-   void TrajectoryWriter<D>::save(Serializable::OArchive& ar)
-   { ar & *this; }
-   #endif
-
    /*
    * Read interval and outputFileName. 
    */

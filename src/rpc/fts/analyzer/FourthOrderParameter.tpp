@@ -71,20 +71,6 @@ namespace Rpc {
 
       FFT<D>::computeKMesh(dimensions, kMeshDimensions_, kSize_);
 
-      #if 0
-      // Compute Fourier space dimension
-      kSize_ = 1;
-      for (int i = 0; i < D; ++i) {
-         if (i < D - 1) {
-            kMeshDimensions_[i] = dimensions[i];
-            kSize_ *= dimensions[i];
-         } else {
-            kMeshDimensions_[i] = dimensions[i]/2 + 1;
-            kSize_ *= (dimensions[i]/2 + 1);
-         }
-      }
-      #endif
-
       // Allocate variables
       if (!isInitialized_){
          wK_.allocate(dimensions);

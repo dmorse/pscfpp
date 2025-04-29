@@ -65,6 +65,19 @@ namespace Rpc {
       */
       virtual void setup();
       
+      using AverageAnalyzer<D>::readParameters;
+      using AverageAnalyzer<D>::nSamplePerOutput;
+      using AverageAnalyzer<D>::setup;
+      using AverageAnalyzer<D>::sample;
+      using AverageAnalyzer<D>::output;
+   
+   protected:
+
+      using ParamComposite::setClassName;
+      using AverageAnalyzer<D>::simulator;
+      using AverageAnalyzer<D>::system;
+      using AverageAnalyzer<D>::outputFile_;
+      
       /**
       * Compute and return the max order parameter.
       */
@@ -78,19 +91,6 @@ namespace Rpc {
       */
       virtual void outputValue(int step, double value);
             
-      using AverageAnalyzer<D>::readParameters;
-      using AverageAnalyzer<D>::nSamplePerOutput;
-      using AverageAnalyzer<D>::setup;
-      using AverageAnalyzer<D>::sample;
-      using AverageAnalyzer<D>::output;
-   
-   protected:
-
-      using AverageAnalyzer<D>::simulator;
-      using AverageAnalyzer<D>::system;
-      using AverageAnalyzer<D>::outputFile_;
-      using ParamComposite::setClassName;
-      
    private:
       
       /// Number of wavevectors in fourier mode.

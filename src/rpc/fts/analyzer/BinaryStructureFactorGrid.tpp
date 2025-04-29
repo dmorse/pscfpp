@@ -15,24 +15,18 @@
 #include <pscf/inter/Interaction.h>
 #include <pscf/mesh/MeshIterator.h>
 #include <pscf/math/IntVec.h>
-#include <pscf/math/RealVec.h>
 
 #include <util/param/ParamComposite.h>
 #include <util/misc/FileMaster.h>
 #include <util/misc/ioUtil.h>
-#include <util/format/Int.h>
 #include <util/format/Dbl.h>
 #include <util/global.h>
-
-//#include <fftw3.h>
 
 #include <iostream>
 #include <complex>
 #include <vector>
 #include <map>
 #include <algorithm>
-
-//#include <unordered_map>
 
 namespace Pscf {
 namespace Rpc {
@@ -82,18 +76,6 @@ namespace Rpc {
 
       // Compute Fourier space kMeshDimensions_ and kSize_
       FFT<D>::computeKMesh(dimensions, kMeshDimensions_, kSize_);
-
-      #if 0
-      kSize_ = 1;
-      for (int i = 0; i < D; ++i) {
-         if (i < D - 1) {
-            kMeshDimensions_[i] = dimensions[i];
-         } else {
-            kMeshDimensions_[i] = dimensions[i]/2 + 1;
-         }
-         kSize_ *= kMeshDimensions_[i];
-      }
-      #endif
 
       if (!isInitialized_){
          wKGrid_.allocate(nMonomer);

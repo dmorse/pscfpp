@@ -75,22 +75,6 @@ namespace Rpc {
       */
       void readParameters(std::istream& in);
       
-      #if 0
-      /**
-      * Load state from an archive.
-      *
-      * \param ar loading (input) archive.
-      */
-      void loadParameters(Serializable::IArchive& ar);
-
-      /**
-      * Save state to archive.
-      *
-      * \param ar saving (output) archive.
-      */
-      void save(Serializable::OArchive& ar);
-      #endif
-
       /** 
       * Clear accumulators.
       */

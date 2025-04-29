@@ -46,23 +46,6 @@ namespace Rpc {
       */
       virtual void readParameters(std::istream &in);
       
-      #if 0
-      /**
-      * Load state from an archive.
-      *
-      * \param ar loading (input) archive.
-      */
-      virtual void loadParameters(Serializable::IArchive& ar);
-
-      /**
-      * Save state to an archive.
-      *
-      * \param ar saving (output) archive.
-      */
-      virtual void save(Serializable::OArchive& ar);
-      
-      #endif
-      
       /**
       * Call initialize method of each Analyzer.
       * 
