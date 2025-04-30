@@ -1,5 +1,4 @@
 rpg_solvers_= \
-     rpg/solvers/WaveList.cu \
      rpg/solvers/Propagator.cu \
      rpg/solvers/Block.cu \
      rpg/solvers/Solvent.cu \

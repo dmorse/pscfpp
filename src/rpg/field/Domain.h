@@ -10,10 +10,10 @@
 
 #include <util/param/ParamComposite.h>     // base class
 
-#include <rpg/solvers/WaveList.h>         // member
-#include <rpg/field/FieldIo.h>            // member
-#include <prdc/cuda/FFT.h>                // member
+#include <rpg/field/FieldIo.h>             // member
 
+#include <prdc/cuda/WaveList.h>            // member
+#include <prdc/cuda/FFT.h>                 // member
 #include <prdc/crystal/Basis.h>            // member
 #include <prdc/crystal/SpaceGroup.h>       // member
 #include <prdc/crystal/UnitCell.h>         // member

@@ -10,6 +10,7 @@
 #include "CudaFieldTest.h"
 #include "CudaFftTest.h"
 #include "CudaComplexTest.h"
+#include "WaveListTest.h"
 
 TEST_COMPOSITE_BEGIN(CudaTestComposite)
 TEST_COMPOSITE_ADD_UNIT(CudaReduceTest);
@@ -18,6 +19,7 @@ TEST_COMPOSITE_ADD_UNIT(CudaFieldTest);
 TEST_COMPOSITE_ADD_UNIT(CudaFieldComparisonTest);
 TEST_COMPOSITE_ADD_UNIT(CudaFftTest);
 TEST_COMPOSITE_ADD_UNIT(CudaComplexTest);
+TEST_COMPOSITE_ADD_UNIT(WaveListTest);
 TEST_COMPOSITE_END
 
 #endif

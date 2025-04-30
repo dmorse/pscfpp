@@ -1,5 +1,5 @@
-#ifndef RPG_WAVE_LIST_TPP
-#define RPG_WAVE_LIST_TPP
+#ifndef PRDC_CUDA_WAVE_LIST_TPP
+#define PRDC_CUDA_WAVE_LIST_TPP
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory
@@ -9,12 +9,14 @@
 */
 
 #include "WaveList.h"
+
 #include <prdc/cuda/resources.h>
+#include <prdc/crystal/hasVariableAngle.h>
 #include <pscf/mesh/MeshIterator.h>
 
 namespace Pscf {
-namespace Rpg
-{
+namespace Prdc {
+namespace Cuda {
 
    // CUDA kernels: 
    // (defined in anonymous namespace, used only in this file)
@@ -478,11 +480,11 @@ namespace Rpg
    template <int D>
    void WaveList<D>::clearUnitCellData()
    {
-      if (hasVariableAngle()) {
-         hasMinimumImages_ = false;
-      }
       hasKSq_ = false;
       hasdKSq_ = false;
+      if (hasVariableAngle<D>(unitCell().lattice())) {
+         hasMinimumImages_ = false;
+      }
    }
 
    template <int D>
@@ -644,6 +646,7 @@ namespace Rpg
       hasdKSq_ = true;
    }
 
-}
-}
+} // Cuda
+} // Prdc
+} // Pscf
 #endif

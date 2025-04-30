@@ -1,5 +1,5 @@
-#ifndef RPG_WAVE_LIST_H
-#define RPG_WAVE_LIST_H
+#ifndef PRDC_CUDA_WAVE_LIST_H
+#define PRDC_CUDA_WAVE_LIST_H
 /*
 * PSCF - Polymer Self-Consistent Field Theory
 *
@@ -17,11 +17,10 @@
 #include <util/containers/DArray.h>
 
 namespace Pscf {
-namespace Rpg {
+namespace Prdc {
+namespace Cuda {
 
    using namespace Util;
-   using namespace Pscf::Prdc;
-   using namespace Pscf::Prdc::Cuda;
 
    /**
    * Class to calculate and store properties of wavevectors.
@@ -134,6 +133,7 @@ namespace Rpg {
       */
       DeviceArray<bool> const & implicitInverse() const;
 
+      #if 0
       /**
       * Does this unit cell have an angle that can change?
       * 
@@ -142,6 +142,7 @@ namespace Rpg {
       * system and returns true if there are any angles that may vary.
       */ 
       bool hasVariableAngle() const;
+      #endif
 
       /**
       * Has memory been allocated for arrays?
@@ -265,14 +266,14 @@ namespace Rpg {
       return implicitInverse_;
    }
 
-   #ifndef RPG_WAVE_LIST_TPP
+   #ifndef PRDC_CUDA_WAVE_LIST_TPP
    // Suppress implicit instantiation
    extern template class WaveList<1>;
    extern template class WaveList<2>;
    extern template class WaveList<3>;
    #endif
 
-}
-}
-//#include "WaveList.tpp"
+} // Cuda
+} // Prdc
+} // Pscf
 #endif

@@ -23,12 +23,10 @@ namespace Pscf {
    namespace Prdc {
       template <int D> class UnitCell; 
       namespace Cuda {
+         template <int D> class WaveList;
          template <int D> class FFT; 
          template <int D> class RField; 
       }
-   }
-   namespace Rpg {
-      template <int D> class WaveList;
    }
 }
  

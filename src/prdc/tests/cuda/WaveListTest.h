@@ -1,5 +1,5 @@
-#ifndef RPG_WAVE_LIST_TEST_H
-#define RPG_WAVE_LIST_TEST_H
+#ifndef PRDC_CUDA_WAVE_LIST_TEST_H
+#define PRDC_CUDA_WAVE_LIST_TEST_H
 
 #include <test/UnitTest.h>
 #include <test/UnitTestRunner.h>

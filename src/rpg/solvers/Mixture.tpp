@@ -10,11 +10,9 @@
 
 #include "Mixture.h"
 
-//#include <rpg/solvers/WaveList.h>
-
-#include <prdc/cuda/resources.h>
 #include <prdc/cuda/FFT.h>
 #include <prdc/cuda/RField.h>
+#include <prdc/cuda/resources.h>
 #include <prdc/crystal/UnitCell.h>
 
 #include <pscf/mesh/Mesh.h>
@@ -74,7 +72,7 @@ namespace Rpg
    */
    template <int D>
    void Mixture<D>::associate(Mesh<D> const & mesh, FFT<D> const & fft, 
-                              UnitCell<D> const & cell, WaveList<D>& wavelist)
+                              UnitCell<D> const & cell, WaveList<D> & wavelist)
    {
       UTIL_CHECK(nMonomer() > 0);
       UTIL_CHECK(nPolymer() + nSolvent() > 0);

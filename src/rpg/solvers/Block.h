@@ -13,7 +13,6 @@
 
 #include <prdc/cuda/RField.h>            // member
 #include <prdc/cuda/RFieldDft.h>         // member
-//#include <prdc/cuda/FFT.h>               // member
 #include <prdc/cuda/FFTBatched.h>        // member
 
 #include <pscf/cuda/DeviceArray.h>       // member
@@ -27,11 +26,9 @@ namespace Pscf {
    namespace Prdc {
       template <int D> class UnitCell;
       namespace Cuda {
+         template <int D> class WaveList;
          template <int D> class FFT;
       }
-   }
-   namespace Rpg {
-      template <int D> class WaveList;
    }
 }
 

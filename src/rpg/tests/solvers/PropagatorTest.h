@@ -6,10 +6,10 @@
 
 #include <rpg/solvers/Block.h>
 #include <rpg/solvers/Propagator.h>
-#include <rpg/solvers/WaveList.h>
 
-#include <prdc/crystal/UnitCell.h>
+#include <prdc/cuda/WaveList.h>
 #include <prdc/cuda/FFT.h>
+#include <prdc/crystal/UnitCell.h>
 #include <prdc/cuda/resources.h>
 
 #include <pscf/chem/PolymerModel.h>
@@ -24,6 +24,7 @@
 using namespace Util;
 using namespace Pscf;
 using namespace Pscf::Prdc;
+using namespace Pscf::Prdc::Cuda;
 using namespace Pscf::Rpg;
 
 class PropagatorTest : public UnitTest

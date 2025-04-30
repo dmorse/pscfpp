@@ -3,13 +3,11 @@
 
 #include <test/CompositeTestRunner.h>
 
-#include "WaveListTest.h"
 #include "BlockTest.h"
 #include "PropagatorTest.h"
 #include "MixtureTest.h"
 
 TEST_COMPOSITE_BEGIN(SolverTestComposite)
-TEST_COMPOSITE_ADD_UNIT(WaveListTest);
 TEST_COMPOSITE_ADD_UNIT(BlockTest);
 TEST_COMPOSITE_ADD_UNIT(PropagatorTest);
 TEST_COMPOSITE_ADD_UNIT(MixtureTest);

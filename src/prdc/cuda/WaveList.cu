@@ -8,11 +8,12 @@
 #include "WaveList.tpp"
 
 namespace Pscf { 
-namespace Rpg 
-{ 
+namespace Prdc { 
+namespace Cuda { 
 
    using namespace Util;
 
+   #if 0
    // Explicit specializations
    template <>
    bool WaveList<1>::hasVariableAngle() const
@@ -42,10 +43,12 @@ namespace Rpg
          return false;
       }
    }
+   #endif
 
    template class WaveList<1>;
    template class WaveList<2>;
    template class WaveList<3>;
 
-}
-}
+} // Cuda
+} // Prdc
+} // Pscf

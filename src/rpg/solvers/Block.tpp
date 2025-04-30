@@ -9,10 +9,10 @@
 */
 
 #include "Block.h"
-#include <rpg/solvers/WaveList.h>
 
-#include <prdc/cuda/resources.h>
+#include <prdc/cuda/WaveList.h>
 #include <prdc/cuda/FFT.h>
+#include <prdc/cuda/resources.h>
 #include <prdc/crystal/UnitCell.h>
 
 #include <pscf/mesh/Mesh.h>

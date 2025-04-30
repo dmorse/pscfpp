@@ -7,6 +7,7 @@ prdc_cuda_= \
   prdc/cuda/CFieldComparison.cu \
   prdc/cuda/FFT.cu \
   prdc/cuda/FFTBatched.cu \
+  prdc/cuda/WaveList.cu \
   prdc/cuda/Reduce.cu \
   prdc/cuda/VecOp.cu \
   prdc/cuda/VecOpMisc.cu
