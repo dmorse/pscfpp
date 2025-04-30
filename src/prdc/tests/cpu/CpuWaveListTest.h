@@ -25,13 +25,7 @@ class CpuWaveListTest : public UnitTest
 private:
 
    // Error tolerance for array equality
-   #ifdef SINGLE_PRECISION
-   constexpr static double tolerance_ = 1E-5;
-   #else
-   #ifdef DOUBLE_PRECISION
    constexpr static double tolerance_ = 1E-10;
-   #endif
-   #endif
 
    Mesh<1> mesh1;
    Mesh<2> mesh2;
@@ -51,13 +45,15 @@ public:
 
    void setUp()
    {
-      // set up 1D, 2D, and 3D meshes
+      // set up 1D mesh
       IntVec<1> meshDims1; 
       meshDims1[0] = 32; 
       mesh1.setDimensions(meshDims1);
-      kMeshDims1[0] = meshDims1[0] / 2 + 1;
+      IntVec<1> kMeshDims1;
+      kMeshDims1[0] = (meshDims1[0] / 2) + 1;
       kSize1 = kMeshDims1[0];
 
+      // Set up 2D meshes
       IntVec<2> meshDims2; 
       meshDims2[0] = 32; 
       meshDims2[1] = 48; 
@@ -66,6 +62,7 @@ public:
       kMeshDims2[1] = meshDims2[1] / 2 + 1;
       kSize2 = kMeshDims2[0] * kMeshDims2[1];
 
+      // Set up 3D meshes
       IntVec<3> meshDims3; 
       meshDims3[0] = 24; 
       meshDims3[1] = 64; 
@@ -114,18 +111,20 @@ public:
    {
       printMethod(TEST_FUNC);
 
+      TEST_ASSERT(mesh1.dimension(0) == 32);
+      TEST_ASSERT(kMeshDims1[0] = 17);
+      TEST_ASSERT(kSize1 = 17);
+
       // set up wavelist object
       WaveList<1> wavelist;
       wavelist.allocate(mesh1, cell1);
 
-      // compute minimum images (and ksq) on device, transfer to host
-      DArray<int> minImages_h;
-      DArray<double> ksq_h;
+      // Compute minimum images (and ksq) on device, transfer to host
       wavelist.computeMinimumImages(); 
-      minImages_h = wavelist.minImages();
-      ksq_h = wavelist.kSq();
+      DArray< IntVec<1> > const & minImages_h = wavelist.minImages();
+      RField<1> const & ksq_h = wavelist.kSq();
 
-      // compute minimum images (and ksq) on host and compare
+      // Compute minimum images (and ksq) on host and compare
       IntVec<1> temp, vec;
       MeshIterator<1> iter;
       double ksq;
@@ -135,25 +134,32 @@ public:
          vec = shiftToMinimum(temp, mesh1.dimensions(), cell1);
          ksq = cell1.ksq(vec);
          
-         TEST_ASSERT(vec[0] == minImages_h[iter.rank()]);
+         TEST_ASSERT(vec == minImages_h[iter.rank()]);
          TEST_ASSERT(abs(ksq - ksq_h[iter.rank()]) < tolerance_);
       }
+
    }
 
    void testComputeMinimumImages2D()
    {
       printMethod(TEST_FUNC);
 
-      // set up wavelist object
+      TEST_ASSERT(mesh2.dimension(0) == 32);
+      TEST_ASSERT(mesh2.dimension(1) == 48);
+      TEST_ASSERT(kMeshDims2[0] == 32);
+      TEST_ASSERT(kMeshDims2[1] == 25);
+      TEST_ASSERT(kSize2 == 32*25);
+
+      // Set up wavelist object
       WaveList<2> wavelist;
       wavelist.allocate(mesh2, cell2);
 
       // compute minimum images (and ksq) on device, transfer to host
-      DArray<int> minImages_h;
-      DArray<double> ksq_h;
       wavelist.computeMinimumImages(); 
-      minImages_h = wavelist.minImages();
-      ksq_h = wavelist.kSq();
+      DArray< IntVec<2> > const & minImages_h = wavelist.minImages();
+      RField<2> ksq_h = wavelist.kSq();
+      TEST_ASSERT(minImages_h.capacity() == kSize2);
+      TEST_ASSERT(ksq_h.capacity() == kSize2);
 
       // compute minimum images (and ksq) on host and compare
       IntVec<2> temp, vec;
@@ -165,8 +171,7 @@ public:
          vec = shiftToMinimum(temp, mesh2.dimensions(), cell2);
          ksq = cell2.ksq(vec);
          
-         TEST_ASSERT(vec[0] == minImages_h[iter.rank()]);
-         TEST_ASSERT(vec[1] == minImages_h[iter.rank() + kSize2]);
+         TEST_ASSERT(vec == minImages_h[iter.rank()]);
          TEST_ASSERT(abs(ksq - ksq_h[iter.rank()]) < tolerance_);
       }
    }
@@ -175,18 +180,24 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      // set up wavelist object
+      TEST_ASSERT(mesh3.dimension(0) == 24);
+      TEST_ASSERT(mesh3.dimension(1) == 64);
+      TEST_ASSERT(mesh3.dimension(2) == 21);
+      TEST_ASSERT(kMeshDims3[0] == 24);
+      TEST_ASSERT(kMeshDims3[1] == 64);
+      TEST_ASSERT(kMeshDims3[2] == 11);
+      TEST_ASSERT(kSize3 == 24*64*11);
+
+      // Set up wavelist object
       WaveList<3> wavelist;
       wavelist.allocate(mesh3, cell3);
 
-      // compute minimum images (and ksq) on device, transfer to host
-      DArray<int> minImages_h;
-      DArray<double> ksq_h;
+      // Compute minimum images (and ksq) on device, transfer to host
       wavelist.computeMinimumImages(); 
-      minImages_h = wavelist.minImages();
-      ksq_h = wavelist.kSq();
+      DArray< IntVec<3> > const & minImages_h = wavelist.minImages();
+      RField<3> const & ksq_h = wavelist.kSq();
 
-      // compute minimum images (and ksq) on host and compare
+      // Compute minimum images (and ksq) on host and compare
       IntVec<3> temp, vec;
       MeshIterator<3> iter;
       double ksq;
@@ -196,9 +207,7 @@ public:
          vec = shiftToMinimum(temp, mesh3.dimensions(), cell3);
          ksq = cell3.ksq(vec);
 
-         TEST_ASSERT(vec[0] == minImages_h[iter.rank()]);
-         TEST_ASSERT(vec[1] == minImages_h[iter.rank() + kSize3]);
-         TEST_ASSERT(vec[2] == minImages_h[iter.rank() + kSize3 + kSize3]);
+         TEST_ASSERT(vec == minImages_h[iter.rank()]);
          TEST_ASSERT(abs(ksq - ksq_h[iter.rank()]) < tolerance_);
       }
    }
@@ -207,19 +216,22 @@ public:
    {
       printMethod(TEST_FUNC);
 
+      TEST_ASSERT(mesh1.dimension(0) == 32);
+      TEST_ASSERT(kMeshDims1[0] = 17);
+      TEST_ASSERT(kSize1 = 17);
+
       // set up wavelist object
       WaveList<1> wavelist;
       wavelist.allocate(mesh1, cell1);
 
-      // compute kSq on device two different ways, transfer to host
-      DArray<double> ksq_h, ksq_h2;
+      // Compute kSq two different ways
       wavelist.computeMinimumImages(); // calculates kSq
-      ksq_h = wavelist.kSq();
+      RField<1> const & ksq_h = wavelist.kSq();
       wavelist.clearUnitCellData(); // resets kSq but not min images
-      wavelist.computeKSq(); // recalculates kSq using a different kernel
-      ksq_h2 = wavelist.kSq();
+      wavelist.computeKSq(); // recalculates kSq 
+      RField<1> const & ksq_h2 = wavelist.kSq();
 
-      // compute kSq on host and compare
+      // Compute kSq on host and compare
       IntVec<1> temp, vec;
       double ksq;
       MeshIterator<1> iter;
@@ -238,7 +250,13 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      // set up unit cell with no flexible angles
+      TEST_ASSERT(mesh2.dimension(0) == 32);
+      TEST_ASSERT(mesh2.dimension(1) == 48);
+      TEST_ASSERT(kMeshDims2[0] == 32);
+      TEST_ASSERT(kMeshDims2[1] == 25);
+      TEST_ASSERT(kSize2 == 32*25);
+
+      // Set up unit cell with no flexible angles
       // (if there are flexible angles, computeKSq never gets to run,
       //  because computeMinimumImages is always called instead.)
       UnitCell<2> cell;
@@ -250,15 +268,14 @@ public:
       WaveList<2> wavelist;
       wavelist.allocate(mesh2, cell);
 
-      // compute kSq on device two different ways, transfer to host
-      DArray<double> ksq_h, ksq_h2;
+      // Compute kSq two different ways
       wavelist.computeMinimumImages(); // calculates kSq
-      ksq_h = wavelist.kSq();
+      RField<2> const & ksq_h = wavelist.kSq();
       wavelist.clearUnitCellData(); // resets kSq but not min images
       wavelist.computeKSq(); // recalculates kSq using a different kernel
-      ksq_h2 = wavelist.kSq();
+      RField<2> const & ksq_h2 = wavelist.kSq();
 
-      // compute kSq on host and compare
+      // Compute kSq on host and compare
       IntVec<2> temp, vec;
       double ksq;
       MeshIterator<2> iter;
@@ -290,12 +307,11 @@ public:
       wavelist.allocate(mesh3, cell);
 
       // Compute kSq on device two different ways, transfer to host
-      DArray<double> ksq_h, ksq_h2;
       wavelist.computeMinimumImages(); // calculates kSq
-      ksq_h = wavelist.kSq();
+      RField<3> const & ksq_h = wavelist.kSq();
       wavelist.clearUnitCellData(); // resets kSq but not min images
       wavelist.computeKSq(); // recalculates kSq using a different kernel
-      ksq_h2 = wavelist.kSq();
+      RField<3> const & ksq_h2 = wavelist.kSq();
 
       // Compute kSq on host and compare
       IntVec<3> temp, vec;
@@ -322,10 +338,9 @@ public:
 
       // Compute dKSq on device, transfer to host
       wavelist.computedKSq();
-      DArray<double> dksq_h;
-      dksq_h = wavelist.dKSq();
+      RField<1> dksq_h = wavelist.dKSq(0);
 
-      // compute dKSq on host and compare
+      // Compute dKSq on host and compare
       IntVec<1> temp, vec;
       double dksq;
       MeshIterator<1> iter;
@@ -334,9 +349,9 @@ public:
          temp = iter.position();
          vec = shiftToMinimum(temp, mesh1.dimensions(), cell1);
          dksq = cell1.dksq(vec, 0);
-         if (mesh1.dimension(0) - temp[0] > mesh1.dimension(0)/2 + 1) {
-            dksq *= 2;
-         }
+         //if (mesh1.dimension(0) - temp[0] > mesh1.dimension(0)/2 + 1) {
+         //   dksq *= 2;
+         //}
          TEST_ASSERT(abs(dksq - dksq_h[iter.rank()]) < tolerance_);
       }
    }
@@ -345,14 +360,9 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      // set up wavelist object
       WaveList<2> wavelist;
       wavelist.allocate(mesh2, cell2);
-
-      // compute dKSq on device, transfer to host
       wavelist.computedKSq();
-      DArray<double> dksq_h;
-      dksq_h = wavelist.dKSq();
 
       // compute dKSq on host and compare
       IntVec<2> temp, vec;
@@ -360,17 +370,17 @@ public:
       MeshIterator<2> iter;
       iter.setDimensions(kMeshDims2);
       for (int n = 0; n < cell2.nParameter() ; ++n) {
+         RField<2> const & dksq_h = wavelist.dKSq(n);
          for (iter.begin(); !iter.atEnd(); ++iter) {
             temp = iter.position();
             vec = shiftToMinimum(temp, mesh2.dimensions(), cell2);
             dksq = cell2.dksq(vec, n);
-            if (temp[1] != 0) {
-               if (mesh2.dimension(1) - temp[1] > mesh2.dimension(1)/2 + 1) {
-                  dksq *= 2;
-               }
-            }
-            int dksq_id = iter.rank() + (n * kSize2);
-            TEST_ASSERT(abs(dksq - dksq_h[dksq_id]) < tolerance_);
+            //if (temp[1] != 0) {
+               //if (mesh2.dimension(1) - temp[1] > mesh2.dimension(1)/2 + 1) {
+               //   dksq *= 2;
+               //}
+            //}
+            TEST_ASSERT(abs(dksq - dksq_h[iter.rank()]) < tolerance_);
          }
       }
    }
@@ -379,35 +389,30 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      // set up wavelist object
       WaveList<3> wavelist;
       wavelist.allocate(mesh3, cell3);
-
-      // compute dKSq on device, transfer to host
       wavelist.computedKSq();
-      DArray<double> dksq_h;
-      dksq_h = wavelist.dKSq();
 
-      // compute dKSq on host and compare
       IntVec<3> temp, vec;
       double dksq;
       MeshIterator<3> iter;
       iter.setDimensions(kMeshDims3);
       for (int n = 0; n < cell3.nParameter() ; ++n) {
+         RField<3> const & dksq_h = wavelist.dKSq(n);
          for (iter.begin(); !iter.atEnd(); ++iter) {
             temp = iter.position();
             vec = shiftToMinimum(temp, mesh3.dimensions(), cell3);
             dksq = cell3.dksq(vec, n);
-            if (temp[2] != 0) {
-               if (mesh3.dimension(2) - temp[2] > mesh3.dimension(2)/2 + 1) {
-                  dksq *= 2;
-               }
-            }
-            int dksq_id = iter.rank() + (n * kSize3);
-            TEST_ASSERT(abs(dksq - dksq_h[dksq_id]) < tolerance_);
+            //if (temp[2] != 0) {
+            //   if (mesh3.dimension(2) - temp[2] > mesh3.dimension(2)/2 + 1) {
+            //      dksq *= 2;
+            //   }
+            //}
+            TEST_ASSERT(abs(dksq - dksq_h[iter.rank()]) < tolerance_);
          }
       }
    }
+
 };
 
 TEST_BEGIN(CpuWaveListTest)
@@ -418,9 +423,9 @@ TEST_ADD(CpuWaveListTest, testComputeMinimumImages3D)
 TEST_ADD(CpuWaveListTest, testComputeKSq1D)
 TEST_ADD(CpuWaveListTest, testComputeKSq2D)
 TEST_ADD(CpuWaveListTest, testComputeKSq3D)
-//TEST_ADD(CpuWaveListTest, testComputedKSq1D)
-//TEST_ADD(CpuWaveListTest, testComputedKSq2D)
-//TEST_ADD(CpuWaveListTest, testComputedKSq3D)
+TEST_ADD(CpuWaveListTest, testComputedKSq1D)
+TEST_ADD(CpuWaveListTest, testComputedKSq2D)
+TEST_ADD(CpuWaveListTest, testComputedKSq3D)
 TEST_END(CpuWaveListTest)
 
 #endif

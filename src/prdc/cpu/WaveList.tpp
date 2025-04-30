@@ -98,7 +98,7 @@ namespace Cpu {
       UTIL_CHECK(isAllocated_);
       UTIL_CHECK(unitCell().lattice() != UnitCell<D>::Null);
       UTIL_CHECK(unitCell().isInitialized());
-      UTIL_CHECK(minImages_.capacity() == kSize_ * D);
+      UTIL_CHECK(minImages_.capacity() == kSize_);
 
       MeshIterator<D> kItr(kMeshDimensions_);
       int rank;
