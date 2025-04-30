@@ -19,7 +19,7 @@ using namespace Pscf;
 using namespace Pscf::Prdc;
 using namespace Pscf::Prdc::Cuda;
 
-class WaveListTest : public UnitTest
+class CudaWaveListTest : public UnitTest
 {
 
 private:
@@ -410,17 +410,17 @@ public:
    }
 };
 
-TEST_BEGIN(WaveListTest)
-TEST_ADD(WaveListTest, testAllocate)
-TEST_ADD(WaveListTest, testComputeMinimumImages1D)
-TEST_ADD(WaveListTest, testComputeMinimumImages2D)
-TEST_ADD(WaveListTest, testComputeMinimumImages3D)
-TEST_ADD(WaveListTest, testComputeKSq1D)
-TEST_ADD(WaveListTest, testComputeKSq2D)
-TEST_ADD(WaveListTest, testComputeKSq3D)
-TEST_ADD(WaveListTest, testComputedKSq1D)
-TEST_ADD(WaveListTest, testComputedKSq2D)
-TEST_ADD(WaveListTest, testComputedKSq3D)
-TEST_END(WaveListTest)
+TEST_BEGIN(CudaWaveListTest)
+TEST_ADD(CudaWaveListTest, testAllocate)
+TEST_ADD(CudaWaveListTest, testComputeMinimumImages1D)
+TEST_ADD(CudaWaveListTest, testComputeMinimumImages2D)
+TEST_ADD(CudaWaveListTest, testComputeMinimumImages3D)
+TEST_ADD(CudaWaveListTest, testComputeKSq1D)
+TEST_ADD(CudaWaveListTest, testComputeKSq2D)
+TEST_ADD(CudaWaveListTest, testComputeKSq3D)
+TEST_ADD(CudaWaveListTest, testComputedKSq1D)
+TEST_ADD(CudaWaveListTest, testComputedKSq2D)
+TEST_ADD(CudaWaveListTest, testComputedKSq3D)
+TEST_END(CudaWaveListTest)
 
 #endif
