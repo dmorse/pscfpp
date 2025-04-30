@@ -23,7 +23,6 @@ namespace Prdc {
 namespace Cuda {
 
    using namespace Util;
-   using namespace Pscf;
 
    /**
    * Fourier transform wrapper for real or complex data.
@@ -177,6 +176,27 @@ namespace Cuda {
                         IntVec<D> & kMeshDimensions,
                         int & kSize );
 
+      /**
+      * Does a wavevector have an implicit inverse in DFT for real data?
+      *
+      * The inverse of a wavevector within the DFT mesh used for a DFT of
+      * real data is "implicit" if its inverse is not equivalent to any
+      * wavevector in this k-mesh.  
+      *
+      * To compute a Fourier sum using the DFT of real r-space data, for
+      * any summand that has inversion symmetry (i.e., the same value
+      * for every vector and its inverse), sum over all vectors in the
+      * k-space mesh and multiply each element for each wavevector that
+      * has an implicit inverse by 2.0, and all others by 1.0. 
+      *
+      * \param wavevector  integer indices of wavevector (in) 
+      * \param meshDimensions  dimensions of real-space mesh (in)
+      * \return true iff inverse is implicit (i.e., not in DFT k-mesh)
+      */
+      static 
+      bool hasImplicitInverse(IntVec<D> const & wavevector,
+                              IntVec<D> const & meshDimensions);
+
    private:
 
       /// Vector containing number of grid points in each direction.
@@ -235,7 +255,24 @@ namespace Cuda {
    */
    template <int D>
    inline bool FFT<D>::isSetup() const
-   { return isSetup_; }
+   {  return isSetup_; }
+
+   /*
+   * Does this wavevector have an implicit inverse?
+   */
+   template <int D>
+   inline
+   bool FFT<D>::hasImplicitInverse(IntVec<D> const & wavevector,
+                                   IntVec<D> const & meshDimensions)
+   {
+      int i = wavevector[D-1];
+      int d = meshDimensions[D-1];
+      if ((i != 0) && (d - i > d/2 + 1)) {
+         return true;
+      } else {
+         return false;
+      }
+   }
 
    #ifndef PRDC_CUDA_FFT_TPP
    // Suppress implicit instantiation
@@ -244,7 +281,7 @@ namespace Cuda {
    extern template class FFT<3>;
    #endif
 
-}
-}
-}
+} // Cuda
+} // Prdc
+} // Pscf
 #endif

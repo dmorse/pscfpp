@@ -163,8 +163,8 @@ namespace Cpu {
       * Compute dimensions and size of k-space mesh for DFT of real data.
       * 
       * A corresponding function is not needed for complex-to-complex
-      * transforms because the real-space and Fourier-space grids have
-      * the same dimensions in this case.
+      * transforms because the real-space and Fourier-space grids for
+      * complex transforms have the same dimensions.
       *
       * \param rMeshDimensions  dimensions of real space grid (real data)
       * \param kMeshDimensions  dimensions of k-space grid (complex data)
@@ -174,6 +174,27 @@ namespace Cpu {
       void computeKMesh(IntVec<D> const & rMeshDimensions,
                         IntVec<D> & kMeshDimensions,
                         int & kSize );
+
+      /**
+      * Does this wavevector have implicit inverse in DFT or real data?
+      *
+      * The inverse of a wavevector within the DFT mesh used for a DFT of
+      * real data is "implicit" if its inverse is not equivalent to any
+      * wavevector in this mesh.  The inverse is not implicit if its 
+      * inverse is equivalent to a wavevector within this mesh. 
+      *
+      * To compute a Fourier sum using the DFT of real r-space data, for
+      * any summand that has inversion symmetry (i.e., the same value
+      * for every vector and its inverse), sum over all vectors in the
+      * k-space mesh and multiply each element for each wavevector that
+      * has an implicit inverse by 2.0, and all others by 1.0. 
+      *
+      * \param wavevector  integer indices of wavevector
+      * \param meshDimensions  dimensions of real-space mesh
+      */
+      static 
+      bool hasImplicitInverse(IntVec<D> const & wavevector,
+                              IntVec<D> const & meshDimensions);
 
    private:
 
@@ -226,6 +247,8 @@ namespace Cpu {
    void FFT<3>::makePlans(RField<3>& rField, RFieldDft<3>& kField,
                           CField<3>& cFieldIn, CField<3>& cFieldOut);
 
+   // Inline member functions
+
    /*
    * Has this object been setup?
    */
@@ -239,6 +262,23 @@ namespace Cpu {
    template <int D>
    inline IntVec<D> const & FFT<D>::meshDimensions() const
    {  return meshDimensions_; }
+
+   /*
+   * Does this wavevector have an implicit inverse?
+   */
+   template <int D>
+   inline
+   bool FFT<D>::hasImplicitInverse(IntVec<D> const & wavevector,
+                                   IntVec<D> const & meshDimensions)
+   {
+      int i = wavevector[D-1];
+      int d = meshDimensions[D-1];
+      if ((i != 0) && (d - i > d/2 + 1)) {
+         return true;
+      } else {
+         return false;
+      }
+   }
 
    #ifndef PRDC_CPU_FFT_TPP
    // Suppress implicit instantiation
