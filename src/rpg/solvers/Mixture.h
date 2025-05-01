@@ -95,10 +95,12 @@ namespace Rpg {
       * \param mesh  Mesh<D> object - spatial discretization mesh
       * \param fft  FFT<D> object - Fourier transforms
       * \param cell  UnitCell<D> object - crystallographic unit cell
-      * \param wavelist  WaveList<D> object - properties of wavevectors
+      * \param waveList  WaveList<D> object - properties of wavevectors
       */
-      void associate(Mesh<D> const & mesh, FFT<D> const & fft, 
-                     UnitCell<D> const & cell, WaveList<D>& wavelist);
+      void associate(Mesh<D> const & mesh, 
+                     FFT<D> const & fft, 
+                     UnitCell<D> const & cell, 
+                     WaveList<D>& waveList);
 
       /**
       * Allocate internal data containers in all solvers. 

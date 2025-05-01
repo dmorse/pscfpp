@@ -8,6 +8,7 @@
 #include <rpc/solvers/Propagator.h>
 
 #include <prdc/cpu/FFT.h>
+#include <prdc/cpu/WaveList.h>
 #include <prdc/crystal/UnitCell.h>
 
 #include <pscf/chem/PolymerModel.h>
@@ -95,8 +96,11 @@ public:
       UnitCell<1> unitCell;
       setupUnitCell<1>(unitCell, "in/Lamellar");
 
+      WaveList<1> waveList;
+      waveList.allocate(mesh, unitCell);
+
       double ds = 0.02;
-      block.associate(mesh, fft, unitCell);
+      block.associate(mesh, fft, unitCell, waveList);
       block.allocate(ds);
 
       TEST_ASSERT(eq(block.length(), 2.0));
@@ -123,7 +127,10 @@ public:
       UnitCell<2> unitCell;
       setupUnitCell<2>(unitCell, "in/Rectangular");
 
-      block.associate(mesh, fft, unitCell);
+      WaveList<2> waveList;
+      waveList.allocate(mesh, unitCell);
+
+      block.associate(mesh, fft, unitCell, waveList);
 
       double ds = 0.26;
       block.allocate(ds);
@@ -152,8 +159,11 @@ public:
       UnitCell<3> unitCell;
       setupUnitCell<3>(unitCell, "in/Hexagonal");
 
+      WaveList<3> waveList;
+      waveList.allocate(mesh, unitCell);
+
       // Associate block
-      block.associate(mesh, fft, unitCell);
+      block.associate(mesh, fft, unitCell, waveList);
 
       // Allocate block
       double ds = 0.3;
@@ -184,8 +194,11 @@ public:
       UnitCell<1> unitCell;
       setupUnitCell<1>(unitCell, "in/Lamellar");
 
+      WaveList<1> waveList;
+      waveList.allocate(mesh, unitCell);
+
       double ds = 0.02;
-      block.associate(mesh, fft, unitCell);
+      block.associate(mesh, fft, unitCell, waveList);
       block.allocate(ds);
 
       TEST_ASSERT(eq(unitCell.rBasis(0)[0], 4.0));
@@ -219,8 +232,11 @@ public:
       UnitCell<2> unitCell;
       setupUnitCell<2>(unitCell, "in/Rectangular");
 
+      WaveList<2> waveList;
+      waveList.allocate(mesh, unitCell);
+
       double ds = 0.02;
-      block.associate(mesh, fft, unitCell);
+      block.associate(mesh, fft, unitCell, waveList);
       block.allocate(ds);
 
       TEST_ASSERT(eq(unitCell.rBasis(0)[0], 3.0));
@@ -257,8 +273,11 @@ public:
       UnitCell<2> unitCell;
       setupUnitCell<2>(unitCell, "in/Rectangular");
 
+      WaveList<2> waveList;
+      waveList.allocate(mesh, unitCell);
+
       double ds = 0.5;
-      block.associate(mesh, fft, unitCell);
+      block.associate(mesh, fft, unitCell, waveList);
       block.allocate(ds);
 
       TEST_ASSERT(eq(unitCell.rBasis(0)[0], 3.0));
@@ -294,8 +313,11 @@ public:
       UnitCell<3> unitCell;
       setupUnitCell<3>(unitCell, "in/Orthorhombic");
 
+      WaveList<3> waveList;
+      waveList.allocate(mesh, unitCell);
+
       double ds = 0.02;
-      block.associate(mesh, fft, unitCell);
+      block.associate(mesh, fft, unitCell, waveList);
       block.allocate(ds);
 
       TEST_ASSERT(eq(unitCell.rBasis(0)[0], 3.0));
@@ -332,8 +354,11 @@ public:
       setupUnitCell<1>(unitCell, "in/Lamellar");
       double a = unitCell.parameter(0);
 
+      WaveList<1> waveList;
+      waveList.allocate(mesh, unitCell);
+
       double ds = 0.02;
-      block.associate(mesh, fft, unitCell);
+      block.associate(mesh, fft, unitCell, waveList);
       block.allocate(ds);
 
       // Setup chemical potential field
@@ -404,8 +429,11 @@ public:
       UnitCell<1> unitCell;
       setupUnitCell<1>(unitCell, "in/Lamellar");
 
+      WaveList<1> waveList;
+      waveList.allocate(mesh, unitCell);
+
       double ds = 1.00;
-      block.associate(mesh, fft, unitCell);
+      block.associate(mesh, fft, unitCell, waveList);
       bool own0 = true;
       bool own1 = true;
       block.setVertexOwnership(own0, own1);
@@ -498,8 +526,11 @@ public:
       UnitCell<2> unitCell;
       setupUnitCell<2>(unitCell, "in/Rectangular");
 
+      WaveList<2> waveList;
+      waveList.allocate(mesh, unitCell);
+
       double ds = 0.02;
-      block.associate(mesh, fft, unitCell);
+      block.associate(mesh, fft, unitCell, waveList);
       block.allocate(ds);
 
       TEST_ASSERT(eq(unitCell.rBasis(0)[0], 3.0));
@@ -584,8 +615,11 @@ public:
       UnitCell<3> unitCell;
       setupUnitCell<3>(unitCell, "in/Orthorhombic");
 
+      WaveList<3> waveList;
+      waveList.allocate(mesh, unitCell);
+
       double ds = 0.02;
-      block.associate(mesh, fft, unitCell);
+      block.associate(mesh, fft, unitCell, waveList);
       block.allocate(ds);
 
       TEST_ASSERT(eq(unitCell.rBasis(0)[0], 3.0));

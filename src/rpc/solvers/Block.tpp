@@ -35,6 +35,8 @@ namespace Rpc {
    Block<D>::Block()
     : meshPtr_(nullptr),
       fftPtr_(nullptr),
+      unitCellPtr_(nullptr),
+      waveListPtr_(nullptr),
       kMeshDimensions_(-1),
       kSize_(-1),
       ds_(-1.0),
@@ -60,7 +62,8 @@ namespace Rpc {
    template <int D>
    void Block<D>::associate(Mesh<D> const & mesh,
                             FFT<D> const& fft,
-                            UnitCell<D> const& cell)
+                            UnitCell<D> const& cell,
+                            WaveList<D>& wavelist)
    {
       // Preconditions
       UTIL_CHECK(!isAllocated_);
@@ -69,6 +72,7 @@ namespace Rpc {
       meshPtr_ = &mesh;
       fftPtr_ = &fft;
       unitCellPtr_ = &cell;
+      waveListPtr_ = &wavelist;
 
       hasExpKsq_ = false;
    }

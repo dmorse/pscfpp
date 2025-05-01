@@ -9,8 +9,9 @@
 #include <rpc/solvers/Block.h>
 #include <rpc/solvers/Propagator.h>
 
-//#include <prdc/cpu/RField.h>
+#include <prdc/cpu/RField.h>
 #include <prdc/cpu/FFT.h>
+#include <prdc/cpu/WaveList.h>
 #include <prdc/crystal/UnitCell.h>
 
 #include <pscf/chem/PolymerModel.h>
@@ -164,7 +165,10 @@ public:
       FFT<1> fft;
       fft.setup(d);
 
-      mixture.associate(mesh, fft, unitCell);
+      WaveList<1> waveList;
+      waveList.allocate(mesh, unitCell);
+
+      mixture.associate(mesh, fft, unitCell, waveList);
       mixture.allocate();
       mixture.clearUnitCellData();
 
@@ -263,7 +267,10 @@ public:
       FFT<1> fft;
       fft.setup(d);
 
-      mixture.associate(mesh, fft, unitCell);
+      WaveList<1> waveList;
+      waveList.allocate(mesh, unitCell);
+
+      mixture.associate(mesh, fft, unitCell, waveList);
       mixture.allocate();
       mixture.clearUnitCellData();
 
@@ -333,7 +340,10 @@ public:
       FFT<2> fft;
       fft.setup(d);
 
-      mixture.associate(mesh, fft, unitCell);
+      WaveList<2> waveList;
+      waveList.allocate(mesh, unitCell);
+
+      mixture.associate(mesh, fft, unitCell, waveList);
       mixture.allocate();
       mixture.clearUnitCellData();
 
@@ -432,7 +442,10 @@ public:
       FFT<2> fft;
       fft.setup(d);
 
-      mixture.associate(mesh, fft, unitCell);
+      WaveList<2> waveList;
+      waveList.allocate(mesh, unitCell);
+
+      mixture.associate(mesh, fft, unitCell, waveList);
       mixture.allocate();
       mixture.clearUnitCellData();
 
@@ -520,7 +533,10 @@ public:
       FFT<3> fft;
       fft.setup(d);
 
-      mixture.associate(mesh, fft, unitCell);
+      WaveList<3> waveList;
+      waveList.allocate(mesh, unitCell);
+
+      mixture.associate(mesh, fft, unitCell, waveList);
       mixture.allocate();
       mixture.clearUnitCellData();
 

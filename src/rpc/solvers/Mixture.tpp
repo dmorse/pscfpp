@@ -65,7 +65,8 @@ namespace Rpc
    template <int D>
    void Mixture<D>::associate(Mesh<D> const & mesh,
                               FFT<D> const & fft,
-                              UnitCell<D> const & cell)
+                              UnitCell<D> const & cell,
+                              WaveList<D> & waveList)
    {
       UTIL_CHECK(nMonomer() > 0);
       UTIL_CHECK(nPolymer()+ nSolvent() > 0);
@@ -78,13 +79,13 @@ namespace Rpc
       meshPtr_ = &mesh;
       nParam_ = cell.nParameter();
 
-      // Create associations for all polymer blocks
+      // Create associations for all blocks, set nParams in Polymer objects
       if (nPolymer() > 0) {
          int i, j;
          for (i = 0; i < nPolymer(); ++i) {
             polymer(i).setNParams(nParam_);
             for (j = 0; j < polymer(i).nBlock(); ++j) {
-               polymer(i).block(j).associate(mesh, fft, cell);
+               polymer(i).block(j).associate(mesh, fft, cell, waveList);
             }
          }
       }

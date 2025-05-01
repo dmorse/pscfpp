@@ -72,7 +72,7 @@ namespace Rpg
    */
    template <int D>
    void Mixture<D>::associate(Mesh<D> const & mesh, FFT<D> const & fft, 
-                              UnitCell<D> const & cell, WaveList<D> & wavelist)
+                              UnitCell<D> const & cell, WaveList<D> & waveList)
    {
       UTIL_CHECK(nMonomer() > 0);
       UTIL_CHECK(nPolymer() + nSolvent() > 0);
@@ -86,11 +86,13 @@ namespace Rpg
       nParams_ = cell.nParameter();
 
       // Create associations for all blocks, set nParams in Polymer objects
-      int i, j;
-      for (i = 0; i < nPolymer(); ++i) {
-         polymer(i).setNParams(nParams_);
-         for (j = 0; j < polymer(i).nBlock(); ++j) {
-            polymer(i).block(j).associate(mesh, fft, cell, wavelist);
+      if (nPolymer() > 0) {
+         int i, j;
+         for (i = 0; i < nPolymer(); ++i) {
+            polymer(i).setNParams(nParams_);
+            for (j = 0; j < polymer(i).nBlock(); ++j) {
+               polymer(i).block(j).associate(mesh, fft, cell, waveList);
+            }
          }
       }
 

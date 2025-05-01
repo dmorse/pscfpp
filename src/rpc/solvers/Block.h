@@ -21,6 +21,7 @@ namespace Pscf {
    namespace Prdc{
      template <int D> class UnitCell;
      namespace Cpu {
+        template <int D> class WaveList;
         template <int D> class FFT;
      }
    }
@@ -65,13 +66,15 @@ namespace Rpc {
       * fft, and unit cell objects by storing the addresses of these
       * objects. It must be called before allocate.
       *
-      * \param mesh  spatial discretization mesh
-      * \param fft  Fast Fourier Transform object
-      * \param cell  unit cell object
+      * \param mesh  Mesh<D> object, spatial discretization meth
+      * \param fft  FFT<D> object, Fast Fourier Transform 
+      * \param cell  UnitCell<D> object, crystallographic unit cell
+      * \param wavelist  WaveList<D>, container for wavevector properties
       */
       void associate(Mesh<D> const& mesh, 
                      FFT<D> const& fft, 
-                     UnitCell<D> const& cell);
+                     UnitCell<D> const& cell,
+                     WaveList<D>& wavelist);
 
       /**
       * Allocate memory and set contour step size.
@@ -327,84 +330,87 @@ namespace Rpc {
 
    private:
 
-      // Matrix to store derivatives of squared wavevectors
+      /// Matrix to store derivatives of squared wavevectors.
       DMatrix<double> dGsq_;
 
-      // Stress arising from this block
+      /// Stress arising from this block.
       FSArray<double, 6> stress_;
 
-      // Array of elements containing exp(-K^2 b^2 ds/6)
+      /// Array of elements containing exp(-K^2 b^2 ds/6)
       RField<D> expKsq_;
 
-      // Array of elements containing exp(-W[i] ds/2) in thread model
-      // or exp(-W[i] ds) in the bead model
+      /// Array containing exp(-W[i] ds/2) (thread) or exp(-W[i] ds) (bead)
       RField<D> expW_;
 
-      // Array of elements containing exp(-K^2 b^2 ds/(6*2)) 
+      /// Array of elements containing exp(-K^2 b^2 ds/(6*2)) 
       RField<D> expKsq2_;
 
-      // Array of elements containing exp(-W[i] (ds/2)*0.5) (thread model)
+      /// Array of elements containing exp(-W[i] (ds/2)*0.5) (thread model)
       RField<D> expW2_;
 
-      // Array of elements containing exp(+W[i] ds) (bead model)
+      /// Array of elements containing exp(+W[i] ds) (bead model)
       RField<D> expWInv_;
 
-      // Work array for real-space field (step size ds)
+      /// Work array for real-space field (step size ds)
       RField<D> qr_;
 
-      // Work array for real-space field (step size ds/2, thread model)
+      /// Work array for real-space field (step size ds/2, thread model)
       RField<D> qr2_;
 
-      // Work array for wavevector space field (step size ds)
+      /// Work array for wavevector space field (step size ds)
       RFieldDft<D> qk_;
 
-      // Work array for wavevector space field (step size ds/2)
+      /// Work array for wavevector space field (step size ds/2)
       RFieldDft<D> qk2_;
 
-      // Pointer to associated Mesh<D> object
+      /// Pointer to associated Mesh<D> object
       Mesh<D> const * meshPtr_;
 
-      // Pointer to associated FFT<D> object
+      /// Pointer to associated FFT<D> object
       FFT<D> const * fftPtr_;
 
-      // Pointer to associated UnitCell<D> object
-      UnitCell<D> const* unitCellPtr_;
+      /// Pointer to associated UnitCell<D> object
+      UnitCell<D> const * unitCellPtr_;
 
-      // Dimensions of wavevector mesh in real-to-complex transform
+      /// Pointer to associated WaveList<D> object (non-const)
+      WaveList<D> * waveListPtr_;
+
+      /// Dimensions of wavevector mesh in real-to-complex transform
       IntVec<D> kMeshDimensions_;
 
-      // Number of wavevectors in wavevector mesh 
+      /// Number of wavevectors in wavevector mesh 
       int kSize_;
 
-      // Contour length step size (actual step size for this block)
+      /// Contour length step size (actual step size for this block)
       double ds_;
 
-      // Contour length step size (value input in param file)
+      /// Contour length step size (value input in param file)
       double dsTarget_;
 
-      // Number of contour grid points = # of contour steps + 1
+      /// Number of contour grid points = # of contour steps + 1
       int ns_;
 
-      // Have arrays been allocated ?
+      /// Have arrays been allocated ?
       bool isAllocated_;
 
-      // Are expKsq_ arrays up to date ? (initialize false)
+      /// Are expKsq_ arrays up to date ? (initialize false)
       bool hasExpKsq_;
 
-      /**
-      * Access associated UnitCell<D> as reference.
-      */
+      /// Get associated UnitCell<D> as const reference.
       UnitCell<D> const & unitCell() const
       {  return *unitCellPtr_; }
 
-      /**
-      * Compute dGsq_ matrix.
-      */
+      /// Get associated WaveList<D> by const reference.
+      WaveList<D> const & wavelist() const
+      {  return *waveListPtr_; }
+
+      /// Number of unit cell parameters.
+      int nParams_;
+
+      /// Compute dGsq_ matrix.
       void computedGsq();
 
-      /**
-      * Compute expKSq_ arrays.
-      */
+      /// Compute expKSq arrays.
       void computeExpKsq();
 
    };

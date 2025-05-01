@@ -267,7 +267,7 @@ namespace Rpc {
 
       // Setup  the mixture
       mixture_.associate(domain().mesh(), domain().fft(),
-                         domain().unitCell());
+                         domain().unitCell(), domain_.waveList());
       mixture_.allocate();
       mixture_.clearUnitCellData();
 

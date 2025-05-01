@@ -24,6 +24,7 @@ namespace Pscf {
    namespace Prdc {
       template <int D> class UnitCell;
       namespace Cpu {
+         template <int D> class WaveList;
          template <int D> class FFT;
          template <int D> class RField;
       }
@@ -97,13 +98,15 @@ namespace Rpc {
       * are known on entry. The FFT<D> object must have been setup with
       * meshDimensions equal to those of the mesh.
       *
-      * \param mesh  associated Mesh<D> object (stores address).
-      * \param fft  associated FFT<D> object (stores address).
-      * \param cell  associated UnitCell<D> object (stores address).
+      * \param mesh  associated Mesh<D> object (stores address)
+      * \param fft  associated FFT<D> object (stores address)
+      * \param cell  associated UnitCell<D> object (stores address)
+      * \param waveList  associated WaveList<D> object (stores address)
       */
       void associate(Mesh<D> const & mesh,
                      FFT<D> const & fft,
-                     UnitCell<D> const & cell);
+                     UnitCell<D> const & cell,
+                     WaveList<D> & waveList);
 
       /**
       * Allocate required internal memory for all solvers.

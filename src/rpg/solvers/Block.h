@@ -402,11 +402,11 @@ namespace Rpg {
       /// Use batched FFTs to compute stress? (faster, but doubles memory use)
       bool useBatchedFFT_;
 
-      /// Get associated UnitCell<D> as const reference.
+      /// Get associated UnitCell<D> by const reference.
       UnitCell<D> const & unitCell() const
       {  return *unitCellPtr_; }
 
-      /// Get the Wavelist as const reference
+      /// Get the WaveList by const reference.
       WaveList<D> const & wavelist() const
       {  return *waveListPtr_; }
 
