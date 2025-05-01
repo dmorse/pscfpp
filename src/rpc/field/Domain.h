@@ -8,22 +8,22 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <util/param/ParamComposite.h>     // base class
+#include <util/param/ParamComposite.h>    // base class
 
 #include <rpc/field/FieldIo.h>            // member
 
-#include <prdc/cpu/FFT.h>                  // member
-#include <prdc/crystal/Basis.h>            // member
-#include <prdc/crystal/SpaceGroup.h>       // member
-#include <prdc/crystal/UnitCell.h>         // member
+#include <prdc/cpu/WaveList.h>            // member
+#include <prdc/cpu/FFT.h>                 // member
+#include <prdc/crystal/Basis.h>           // member
+#include <prdc/crystal/SpaceGroup.h>      // member
+#include <prdc/crystal/UnitCell.h>        // member
 
-#include <pscf/mesh/Mesh.h>                // member
+#include <pscf/mesh/Mesh.h>               // member
 
 #include <string>
 
 namespace Pscf {
-namespace Rpc
-{
+namespace Rpc {
 
    using namespace Util;
    using namespace Pscf::Prdc;
@@ -39,6 +39,7 @@ namespace Rpc
    *    - a Prdc::SpaceGroup crystallographic space group
    *    - a Prdc::Basis symmetry-adapated Fourier basis
    *    - a Prdc::Cpu::FFT Fast Fourier Transform
+   *    - a Prdc::Cpu::WaveList container for wavevector properties
    *    - a Rpc::FieldIo object for field IO and conversion operations
    *    - a lattice system enum (type Prdc::UnitCell\<D\>::LatticeSystem)
    *    - a groupName string
@@ -86,32 +87,33 @@ namespace Rpc
       virtual void readParameters(std::istream& in);
 
       /**
-      * Read header of an r-grid field file to initialize this Domain.
+      * Read initialization data from header of an r-grid field file.
       *
-      * Useful for unit testing.
+      * This is an alternative to reading the parameter file that is only 
+      * used for unit testing.
       *
-      * \param in input parameter stream
-      * \param nMonomer number of monomers in field file (output)
+      * \param in  input parameter stream
+      * \param nMonomer  number of monomers in field file (output)
       */
       void readRGridFieldHeader(std::istream& in, int& nMonomer);
 
       /**
-      * Set unit cell. 
+      * Set unit cell by copying another UnitCell<D> object.
       *
       * The lattice system in the unitCell must match any value that was
-      * read from the parameter file. This function initializes the basis if 
-      * a space group exists and the basis was not initialized previously.
+      * read from the parameter file. This function initializes the basis
+      * if needed.
       *
       * \param unitCell new unit cell
       */
       void setUnitCell(UnitCell<D> const & unitCell);
 
       /**
-      * Set unit cell state.
+      * Set unit cell state, given the lattice system and parameters.
       *
-      * The "lattice" lattice system enumeration match any non-null value that 
-      * was read from the parameter file. This function initializes the basis 
-      * if a space group exists and the basis was not initialized previously.
+      * The "lattice" enumeration value must match any value that was
+      * read from the parameter file. This function initializes the basis 
+      * if needed. 
       *
       * \param lattice  lattice system
       * \param parameters array of unit cell parameters
@@ -122,9 +124,9 @@ namespace Rpc
       /**
       * Set unit cell parameters.
       *
-      * The lattice system must already be set to non-null value on entry.
-      * This function initializes the basis if a space group exists and the
-      * basis was not initialized previously.
+      * The lattice system must be set to non-null value on entry. The
+      * size of the parameters array must match the number expected for
+      * the lattice type. The basis is initialized if needed. 
       *
       * \param parameters array of unit cell parameters
       */
@@ -136,61 +138,71 @@ namespace Rpc
       void makeBasis();
 
       ///@}
-      /// \name Accessors (return by non-const or const reference)
+      /// \name Accessors (return objects by reference)
       ///@{
 
       /**
-      * Get UnitCell (i.e., lattice type and parameters) by reference.
+      * Get the UnitCell by non-const reference.
       */
       UnitCell<D>& unitCell();
 
       /**
-      * Get UnitCell (i.e., lattice type and parameters) by reference.
+      * Get the UnitCell by const reference.
       */
       UnitCell<D> const & unitCell() const;
 
       /**
-      * Get spatial discretization mesh by reference.
+      * Get the Mesh by non-const reference.
       */
       Mesh<D>& mesh();
 
       /**
-      * Get spatial discretization mesh by const reference.
+      * Get the Mesh by const reference.
       */
       Mesh<D> const & mesh() const;
 
       /**
-      * Get associated SpaceGroup object by const reference.
+      * Get the SpaceGroup by const reference.
       */
       SpaceGroup<D> const & group() const ;
 
       /**
-      * Get associated Basis object by reference.
+      * Get the Basis object by non-const reference.
       */
       Basis<D>& basis();
 
       /**
-      * Get associated Basis object by const reference.
+      * Get the Basis by const reference.
       */
       Basis<D> const & basis() const ;
 
       /**
-      * Get associated FFT object.
+      * Get the FFT by non-const reference.
       */
       FFT<D>& fft();
 
       /**
-      * Get associated FFT object by const reference.
+      * Get the FFT object by non-const reference.
       */
       FFT<D> const & fft() const;
 
       /**
-      * Get associated FieldIo object.
+      * Get the WaveList by non-const reference.
+      */
+      WaveList<D>& waveList();
+
+      /**
+      * Get the WaveList by const reference.
+      */
+      WaveList<D> const & waveList() const;
+
+      /**
+      * Get the FieldIo by non-const reference.
       */
       FieldIo<D>& fieldIo();
 
       /**
-      * Get associated FieldIo object by const reference.
+      * Get the FieldIo by const reference.
       */
       FieldIo<D> const & fieldIo() const;
 
@@ -199,12 +211,12 @@ namespace Rpc
       ///@{
 
       /** 
-      * Get lattice system.
+      * Get the lattice system (enumeration value).
       */  
       typename UnitCell<D>::LatticeSystem lattice() const;
 
       /** 
-      * Get group name.
+      * Get the group name.
       */  
       std::string groupName() const;
 
@@ -250,6 +262,11 @@ namespace Rpc
       FFT<D> fft_;
 
       /**
+      * WaveList object.
+      */
+      WaveList<D> waveList_;
+
+      /**
       * FieldIo object for field input/output operations
       */
       FieldIo<D> fieldIo_;
@@ -279,65 +296,71 @@ namespace Rpc
       */
       bool isInitialized_;
 
-      // members of parent class with non-dependent names
-      using ParamComposite::read;
-      using ParamComposite::readOptional;
-
    };
 
    // Inline member functions
 
-   // Get the UnitCell<D> object by non-const reference.
+   // Get the UnitCell by non-const reference.
    template <int D>
    inline UnitCell<D>& Domain<D>::unitCell()
    {  return unitCell_; }
 
-   // Get the UnitCell<D> object by const reference.
+   // Get the UnitCell by const reference.
    template <int D>
    inline UnitCell<D> const & Domain<D>::unitCell() const
    {  return unitCell_; }
 
-   // Get the Mesh<D> object by reference.
+   // Get the Mesh by non-const reference.
    template <int D>
    inline Mesh<D>& Domain<D>::mesh()
    {  return mesh_; }
 
-   // Get the Mesh<D> object by const reference.
+   // Get the Mesh by const reference.
    template <int D>
    inline Mesh<D> const & Domain<D>::mesh() const
    {  return mesh_; }
 
-   // Get the SpaceGroup<D> object by const reference.
+   // Get the SpaceGroup by const reference.
    template <int D>
    inline SpaceGroup<D> const & Domain<D>::group() const
    {  return group_; }
 
-   // Get the Basis<D> object by non-const reference.
+   // Get the Basis by non-const reference.
    template <int D>
    inline Basis<D>& Domain<D>::basis()
    {  return basis_; }
 
-   // Get the Basis<D> object by const reference.
+   // Get the Basis by const reference.
    template <int D>
    inline Basis<D> const & Domain<D>::basis() const
    {  return basis_; }
 
-   // Get the FFT<D> object.
+   // Get the FFT by non-const reference.
    template <int D>
    inline FFT<D>& Domain<D>::fft()
    {  return fft_; }
 
-   // Get the FFT<D> object.
+   // Get the FFT by const reference.
    template <int D>
    inline FFT<D> const & Domain<D>::fft() const
    {  return fft_; }
 
-   // Get the FieldIo<D> object.
+   // Get the WaveList by non-const reference.
+   template <int D>
+   inline WaveList<D>& Domain<D>::waveList()
+   {  return waveList_; }
+
+   // Get the WaveList by const reference.
+   template <int D>
+   inline WaveList<D> const & Domain<D>::waveList() const
+   {  return waveList_; }
+
+   // Get the FieldIo by const reference.
    template <int D>
    inline FieldIo<D>& Domain<D>::fieldIo()
    {  return fieldIo_; }
 
-   // Get the FieldIo<D> object by const reference.
+   // Get the FieldIo by const reference.
    template <int D>
    inline FieldIo<D> const & Domain<D>::fieldIo() const
    {  return fieldIo_; }

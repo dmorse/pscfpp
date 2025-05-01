@@ -48,10 +48,14 @@ namespace Cpu {
       unitCellPtr_ = &c;
       meshPtr_ = &m;
 
+      // Local copies of properties
       int nParams = unitCell().nParameter();
+      IntVec<D> const & meshDimensions = mesh().dimensions();
 
-      FFT<D>::computeKMesh(mesh().dimensions(), kMeshDimensions_, kSize_);
+      // Compute kMeshDimensions_ and kSize_
+      FFT<D>::computeKMesh(meshDimensions, kMeshDimensions_, kSize_);
 
+      // Allocate memory
       minImages_.allocate(kSize_);
       kSq_.allocate(kMeshDimensions_);
       dKSq_.allocate(nParams);
@@ -62,18 +66,11 @@ namespace Cpu {
 
       // Set up implicitInverse_ array (only depends on mesh dimensions)
       MeshIterator<D> kItr(kMeshDimensions_);
-      int inverseId;
+      int rank;
       for (kItr.begin(); !kItr.atEnd(); ++kItr) {
-         if (kItr.position(D-1) == 0) {
-            inverseId = 0;
-         } else {
-            inverseId = mesh().dimension(D-1) - kItr.position(D-1);
-         }
-         if (inverseId > kMeshDimensions_[D-1]) {
-            implicitInverse_[kItr.rank()] = true;
-         } else {
-            implicitInverse_[kItr.rank()] = false;
-         }
+         rank = kItr.rank();
+         implicitInverse_[rank] = 
+              FFT<D>::hasImplicitInverse(kItr.position(), meshDimensions);
       }
 
       isAllocated_ = true;
@@ -159,10 +156,13 @@ namespace Cpu {
       MeshIterator<D> kItr(kMeshDimensions_);
       int i, rank;
       for (i = 0 ; i < unitCell().nParameter(); ++i) {
-         RField<D>& field = dKSq_[i];
+         RField<D>& dksq = dKSq_[i];
          for (kItr.begin(); !kItr.atEnd(); ++kItr) {
             rank = kItr.rank();
-            field[rank] = unitCell().dksq(minImages_[rank], i);
+            dksq[rank] = unitCell().dksq(minImages_[rank], i);
+            if (implicitInverse_[rank]) {
+               dksq[rank] *= 2.0;
+            }
          }
       }
       

@@ -15,6 +15,8 @@ namespace Pscf {
 namespace Rpg {
 
    using namespace Util;
+   using namespace Pscf::Prdc;
+   using namespace Pscf::Prdc::Cuda;
 
    /*
    * Constructor.
@@ -23,18 +25,20 @@ namespace Rpg {
    Domain<D>::Domain()
     : unitCell_(),
       mesh_(),
+      group_(),
       basis_(),
       fft_(),
+      waveList_(),
       fieldIo_(),
       lattice_(UnitCell<D>::Null),
       groupName_(""),
       hasGroup_(false),
       hasFileMaster_(false),
       isInitialized_(false)
-   {  
-      setClassName("Domain"); 
-      fieldIo_.associate(mesh_, fft_,
-                         lattice_, hasGroup_, groupName_, group_, basis_);
+   {
+      setClassName("Domain");
+      fieldIo_.associate(mesh_, fft_, lattice_,
+                         hasGroup_, groupName_, group_, basis_);
    }
 
    /*
@@ -47,9 +51,6 @@ namespace Rpg {
    template <int D>
    void Domain<D>::setFileMaster(FileMaster& fileMaster)
    {
-      //fieldIo_.associate(mesh_, fft_,
-      //                   lattice_, hasGroup_, groupName_, group_, 
-      //                   basis_, waveList_, fileMaster);
       fieldIo_.setFileMaster(fileMaster);
       hasFileMaster_ = true;
    }
@@ -60,29 +61,33 @@ namespace Rpg {
    template <int D>
    void Domain<D>::readParameters(std::istream& in)
    {
+      // Preconditions
+      UTIL_CHECK(!isInitialized_);
       UTIL_CHECK(hasFileMaster_);
 
+      // Read computational mesh dimensions (required)
       read(in, "mesh", mesh_);
-      UTIL_CHECK(mesh().size() > 0);
+      UTIL_CHECK(mesh_.size() > 0);
       fft_.setup(mesh_.dimensions());
 
-      // Read lattice system identifier (enumeration)
+      // Read lattice system enumeration value (required)
       read(in, "lattice", lattice_);
       unitCell_.set(lattice_);
-      UTIL_CHECK(unitCell().lattice() != UnitCell<D>::Null);
-      UTIL_CHECK(unitCell().nParameter() > 0);
+      UTIL_CHECK(unitCell_.lattice() != UnitCell<D>::Null);
+      UTIL_CHECK(unitCell_.nParameter() > 0);
 
       // Allocate memory for WaveList
-      waveList().allocate(mesh(), unitCell());
+      waveList_.allocate(mesh_, unitCell_);
 
-      // Optionally read group name
+      // Optionally read groupName_ (string identifier for space group)
       hasGroup_ = false;
       bool hasGroupName = false;
       hasGroupName = readOptional(in, "groupName", groupName_).isActive();
 
-      // If group name is found, construct the group
+      // If groupName_ exists, construct group_ (space group)
       if (hasGroupName) {
          // Read group symmetry operations from file
+         // An Exception is thrown if groupName_ string is not recognized
          readGroup(groupName_, group_);
          hasGroup_ = true;
       }
@@ -91,7 +96,9 @@ namespace Rpg {
    }
 
    /*
-   * Initialize domain from RGridFieldHeader (alternative to param file)
+   * Read header of r-grid field to initialize the Domain.
+   *
+   * Alternative to parameter file, used only for unit testing.
    */
    template <int D>
    void Domain<D>::readRGridFieldHeader(std::istream& in, int& nMonomer)
@@ -108,7 +115,7 @@ namespace Rpg {
       Pscf::Prdc::readFieldHeader(in, ver1, ver2,
                                   unitCell_, groupName_, nMonomer);
 
-      // Set lattice_
+      // Set lattice_ (lattice system identifier)
       lattice_ = unitCell_.lattice();
       UTIL_CHECK(lattice_ != UnitCell<D>::Null);
       UTIL_CHECK(unitCell_.isInitialized());
@@ -138,7 +145,7 @@ namespace Rpg {
          waveList_.allocate(mesh_, unitCell_);
       }
 
-      // Initialize group and basis
+      // If groupName is present, construct group and basis
       if (groupName_ != "") {
          readGroup(groupName_, group_);
          hasGroup_ = true;
@@ -149,7 +156,7 @@ namespace Rpg {
    }
 
    /*
-   * Set the unit cell, make basis if needed.
+   * Set the unit cell by copying a UnitCell<D>, make basis if needed.
    */
    template <int D>
    void Domain<D>::setUnitCell(UnitCell<D> const & unitCell)
@@ -161,8 +168,8 @@ namespace Rpg {
       }
       unitCell_ = unitCell;
 
-      UTIL_CHECK(waveList().isAllocated());
-      waveList().clearUnitCellData(); // reset wavelist
+      UTIL_CHECK(waveList_.isAllocated());
+      waveList_.clearUnitCellData();
 
       if (hasGroup_ && !basis_.isInitialized()) {
          makeBasis();
@@ -183,8 +190,8 @@ namespace Rpg {
       }
       unitCell_.set(lattice, parameters);
 
-      UTIL_CHECK(waveList().isAllocated());
-      waveList().clearUnitCellData(); // reset wavelist
+      UTIL_CHECK(waveList_.isAllocated());
+      waveList_.clearUnitCellData();
 
       if (hasGroup_ && !basis_.isInitialized()) {
          makeBasis();
@@ -192,7 +199,7 @@ namespace Rpg {
    }
 
    /*
-   * Set parameters of the associated unit cell, make basis if needed.
+   * Set unit cell parameters, make basis if needed.
    */
    template <int D>
    void Domain<D>::setUnitCell(FSArray<double, 6> const & parameters)
@@ -200,29 +207,31 @@ namespace Rpg {
       UTIL_CHECK(unitCell_.lattice() != UnitCell<D>::Null);
       UTIL_CHECK(unitCell_.nParameter() == parameters.size());
       unitCell_.setParameters(parameters);
-      
-      UTIL_CHECK(waveList().isAllocated());
-      waveList().clearUnitCellData(); // reset wavelist
+
+      UTIL_CHECK(waveList_.isAllocated());
+      waveList_.clearUnitCellData();
 
       if (hasGroup_ && !basis_.isInitialized()) {
          makeBasis();
       }
    }
 
+   /*
+   * Make basis if needed.
+   */
    template <int D>
    void Domain<D>::makeBasis()
    {
       UTIL_CHECK(mesh_.size() > 0);
       UTIL_CHECK(unitCell_.lattice() != UnitCell<D>::Null);
-      UTIL_CHECK(unitCell_.nParameter() > 0);
       UTIL_CHECK(unitCell_.isInitialized());
       UTIL_CHECK(hasGroup_);
 
       // Check basis, construct if not initialized
-      if (!basis().isInitialized()) {
+      if (!basis_.isInitialized()) {
          basis_.makeBasis(mesh_, unitCell_, group_);
       }
-      UTIL_CHECK(basis().isInitialized());
+      UTIL_CHECK(basis_.isInitialized());
    }
 
 } // namespace Rpg

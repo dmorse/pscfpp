@@ -778,7 +778,8 @@ namespace Rpc {
       hasCFields_ = false;
       hasFreeEnergy_ = false;
 
-      // Clear unit cell data in Mixture
+      // Clear unit cell data in waveList and mixture
+      domain_.waveList().clearUnitCellData();
       mixture_.clearUnitCellData();
    }
 
@@ -806,7 +807,8 @@ namespace Rpc {
       hasCFields_ = false;
       hasFreeEnergy_ = false;
 
-      // Clear unit cell data in mixture
+      // Clear unit cell data in waveList and mixture
+      domain_.waveList().clearUnitCellData();
       mixture_.clearUnitCellData();
    }
 
@@ -862,7 +864,8 @@ namespace Rpc {
       hasCFields_ = false;
       hasFreeEnergy_ = false;
 
-      // Clear unit cell data from mixture
+      // Clear unit cell data in waveList and mixture
+      domain_.waveList().clearUnitCellData();
       mixture_.clearUnitCellData();
 
    }
@@ -903,9 +906,10 @@ namespace Rpc {
    void System<D>::setUnitCell(UnitCell<D> const & unitCell)
    {
       domain_.setUnitCell(unitCell);
-      // Note: Domain::setUnitCell checks agreement of lattice system
+      // Note: Domain::setUnitCell clears the WaveList unit cell data
       mixture_.clearUnitCellData();
       if (domain().hasGroup() && !isAllocatedBasis_) {
+         UTIL_CHECK(domain_.basis().isInitialized());
          allocateFieldsBasis();
       }
    }
@@ -919,9 +923,10 @@ namespace Rpc {
                           FSArray<double, 6> const & parameters)
    {
       domain_.setUnitCell(lattice, parameters);
-      // Note: Domain::setUnitCell checks agreement of lattice system
+      // Note: Domain::setUnitCell clears WaveList unit cell data
       mixture_.clearUnitCellData();
       if (domain().hasGroup() && !isAllocatedBasis_) {
+         UTIL_CHECK(domain_.basis().isInitialized());
          allocateFieldsBasis();
       }
    }
@@ -934,8 +939,10 @@ namespace Rpc {
    {
       domain_.setUnitCell(parameters);
       // Note: Domain::setUnitCell requires lattice system is set on entry
+      // Note: Domain::setUnitCell clears WaveList unit cell data
       mixture_.clearUnitCellData();
       if (domain().hasGroup() && !isAllocatedBasis_) {
+         UTIL_CHECK(domain_.basis().isInitialized());
          allocateFieldsBasis();
       }
    }

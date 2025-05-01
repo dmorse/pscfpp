@@ -35,6 +35,10 @@ private:
    UnitCell<2> cell2;
    UnitCell<3> cell3;
 
+   IntVec<1> meshDims1;
+   IntVec<2> meshDims2;
+   IntVec<3> meshDims3;
+
    IntVec<1> kMeshDims1;
    IntVec<2> kMeshDims2;
    IntVec<3> kMeshDims3;
@@ -46,7 +50,7 @@ public:
    void setUp()
    {
       // set up 1D mesh
-      IntVec<1> meshDims1; 
+      // IntVec<1> meshDims1; 
       meshDims1[0] = 32; 
       mesh1.setDimensions(meshDims1);
       IntVec<1> kMeshDims1;
@@ -54,7 +58,7 @@ public:
       kSize1 = kMeshDims1[0];
 
       // Set up 2D meshes
-      IntVec<2> meshDims2; 
+      //IntVec<2> meshDims2; 
       meshDims2[0] = 32; 
       meshDims2[1] = 48; 
       mesh2.setDimensions(meshDims2);
@@ -63,7 +67,7 @@ public:
       kSize2 = kMeshDims2[0] * kMeshDims2[1];
 
       // Set up 3D meshes
-      IntVec<3> meshDims3; 
+      //IntVec<3> meshDims3; 
       meshDims3[0] = 24; 
       meshDims3[1] = 64; 
       meshDims3[2] = 21;
@@ -123,19 +127,25 @@ public:
       wavelist.computeMinimumImages(); 
       DArray< IntVec<1> > const & minImages_h = wavelist.minImages();
       RField<1> const & ksq_h = wavelist.kSq();
+      DArray<bool> const & implicit = wavelist.implicitInverse();
 
       // Compute minimum images (and ksq) on host and compare
       IntVec<1> temp, vec;
       MeshIterator<1> iter;
-      double ksq;
+      double val;
+      int rank;
+      bool flag;
       iter.setDimensions(kMeshDims1);
       for (iter.begin(); !iter.atEnd(); ++iter) {
+         rank = iter.rank();
          temp = iter.position();
          vec = shiftToMinimum(temp, mesh1.dimensions(), cell1);
-         ksq = cell1.ksq(vec);
+         flag = implicit[rank];
+         val = cell1.ksq(vec);
          
-         TEST_ASSERT(vec == minImages_h[iter.rank()]);
-         TEST_ASSERT(abs(ksq - ksq_h[iter.rank()]) < tolerance_);
+         TEST_ASSERT(vec == minImages_h[rank]);
+         TEST_ASSERT(abs(val - ksq_h[rank]) < tolerance_);
+         TEST_ASSERT(flag == FFT<1>::hasImplicitInverse(temp, meshDims1));
       }
 
    }
@@ -264,7 +274,7 @@ public:
       openInputFile("in/Rectangular", in);
       in >> cell;
 
-      // set up wavelist object
+      // Set up wavelist object
       WaveList<2> wavelist;
       wavelist.allocate(mesh2, cell);
 
@@ -275,18 +285,18 @@ public:
       wavelist.computeKSq(); // recalculates kSq using a different kernel
       RField<2> const & ksq_h2 = wavelist.kSq();
 
-      // Compute kSq on host and compare
-      IntVec<2> temp, vec;
-      double ksq;
+      // Compute kSq in wavelist and test
+      IntVec<2> pos, vec;
+      double val;
       MeshIterator<2> iter;
       iter.setDimensions(kMeshDims2);
       for (iter.begin(); !iter.atEnd(); ++iter) {
-         temp = iter.position();
-         vec = shiftToMinimum(temp, mesh2.dimensions(), cell);
-         ksq = cell.ksq(vec);
+         pos = iter.position();
+         vec = shiftToMinimum(pos, mesh2.dimensions(), cell);
+         val = cell.ksq(vec);
 
-         TEST_ASSERT(abs(ksq - ksq_h[iter.rank()]) < tolerance_);
-         TEST_ASSERT(abs(ksq - ksq_h2[iter.rank()]) < tolerance_);
+         TEST_ASSERT(abs(val - ksq_h[iter.rank()]) < tolerance_);
+         TEST_ASSERT(abs(val - ksq_h2[iter.rank()]) < tolerance_);
       }
    }
 
@@ -315,16 +325,16 @@ public:
 
       // Compute kSq on host and compare
       IntVec<3> temp, vec;
-      double ksq;
+      double val;
       MeshIterator<3> iter;
       iter.setDimensions(kMeshDims3);
       for (iter.begin(); !iter.atEnd(); ++iter) {
          temp = iter.position();
          vec = shiftToMinimum(temp, mesh3.dimensions(), cell);
-         ksq = cell.ksq(vec);
+         val = cell.ksq(vec);
 
-         TEST_ASSERT(abs(ksq - ksq_h[iter.rank()]) < tolerance_);
-         TEST_ASSERT(abs(ksq - ksq_h2[iter.rank()]) < tolerance_);
+         TEST_ASSERT(abs(val - ksq_h[iter.rank()]) < tolerance_);
+         TEST_ASSERT(abs(val - ksq_h2[iter.rank()]) < tolerance_);
       }
    }
 
@@ -341,18 +351,20 @@ public:
       RField<1> dksq_h = wavelist.dKSq(0);
 
       // Compute dKSq on host and compare
-      IntVec<1> temp, vec;
-      double dksq;
+      IntVec<1> pos, vec;
+      double val;
       MeshIterator<1> iter;
       iter.setDimensions(kMeshDims1);
       for (iter.begin(); !iter.atEnd(); ++iter) {
-         temp = iter.position();
-         vec = shiftToMinimum(temp, mesh1.dimensions(), cell1);
-         dksq = cell1.dksq(vec, 0);
-         //if (mesh1.dimension(0) - temp[0] > mesh1.dimension(0)/2 + 1) {
-         //   dksq *= 2;
-         //}
-         TEST_ASSERT(abs(dksq - dksq_h[iter.rank()]) < tolerance_);
+         pos = iter.position();
+         vec = shiftToMinimum(pos, mesh1.dimensions(), cell1);
+         val = cell1.dksq(vec, 0);
+         if (pos[0] != 0) {
+            if (mesh1.dimension(0) - pos[0] > mesh1.dimension(0)/2 + 1) {
+               val *= 2.0;
+            }
+         }
+         TEST_ASSERT(abs(val - dksq_h[iter.rank()]) < tolerance_);
       }
    }
 
@@ -365,22 +377,22 @@ public:
       wavelist.computedKSq();
 
       // compute dKSq on host and compare
-      IntVec<2> temp, vec;
-      double dksq;
+      IntVec<2> pos, vec;
+      double val;
       MeshIterator<2> iter;
       iter.setDimensions(kMeshDims2);
       for (int n = 0; n < cell2.nParameter() ; ++n) {
          RField<2> const & dksq_h = wavelist.dKSq(n);
          for (iter.begin(); !iter.atEnd(); ++iter) {
-            temp = iter.position();
-            vec = shiftToMinimum(temp, mesh2.dimensions(), cell2);
-            dksq = cell2.dksq(vec, n);
-            //if (temp[1] != 0) {
-               //if (mesh2.dimension(1) - temp[1] > mesh2.dimension(1)/2 + 1) {
-               //   dksq *= 2;
-               //}
-            //}
-            TEST_ASSERT(abs(dksq - dksq_h[iter.rank()]) < tolerance_);
+            pos = iter.position();
+            vec = shiftToMinimum(pos, mesh2.dimensions(), cell2);
+            val = cell2.dksq(vec, n);
+            if (pos[1] != 0) {
+               if (mesh2.dimension(1)-pos[1] > mesh2.dimension(1)/2 + 1){
+                  val *= 2.0;
+               }
+            }
+            TEST_ASSERT(abs(val - dksq_h[iter.rank()]) < tolerance_);
          }
       }
    }
@@ -393,22 +405,22 @@ public:
       wavelist.allocate(mesh3, cell3);
       wavelist.computedKSq();
 
-      IntVec<3> temp, vec;
-      double dksq;
+      IntVec<3> pos, vec;
+      double val;
       MeshIterator<3> iter;
       iter.setDimensions(kMeshDims3);
       for (int n = 0; n < cell3.nParameter() ; ++n) {
          RField<3> const & dksq_h = wavelist.dKSq(n);
          for (iter.begin(); !iter.atEnd(); ++iter) {
-            temp = iter.position();
-            vec = shiftToMinimum(temp, mesh3.dimensions(), cell3);
-            dksq = cell3.dksq(vec, n);
-            //if (temp[2] != 0) {
-            //   if (mesh3.dimension(2) - temp[2] > mesh3.dimension(2)/2 + 1) {
-            //      dksq *= 2;
-            //   }
-            //}
-            TEST_ASSERT(abs(dksq - dksq_h[iter.rank()]) < tolerance_);
+            pos = iter.position();
+            vec = shiftToMinimum(pos, mesh3.dimensions(), cell3);
+            val = cell3.dksq(vec, n);
+            if (pos[2] != 0) {
+               if (mesh3.dimension(2)-pos[2] > mesh3.dimension(2)/2 + 1){
+                  val *= 2.0;
+               }
+            }
+            TEST_ASSERT(abs(val - dksq_h[iter.rank()]) < tolerance_);
          }
       }
    }
