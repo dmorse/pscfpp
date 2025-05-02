@@ -813,7 +813,7 @@ namespace Rpc {
    }
 
    /*
-   * Construct estimate for w fields from c fields, by setting xi=0.
+   * Construct estimate for w fields from c fields.
    *
    * Modifies wFields and wFieldsRGrid.
    */
@@ -915,7 +915,7 @@ namespace Rpc {
    }
 
    /*
-   * Set state of the system unit cell.
+   * Set the system unit cell.
    */
    template <int D>
    void
@@ -938,7 +938,6 @@ namespace Rpc {
    void System<D>::setUnitCell(FSArray<double, 6> const & parameters)
    {
       domain_.setUnitCell(parameters);
-      // Note: Domain::setUnitCell requires lattice system is set on entry
       // Note: Domain::setUnitCell clears WaveList unit cell data
       mixture_.clearUnitCellData();
       if (domain().hasGroup() && !isAllocatedBasis_) {
@@ -975,7 +974,6 @@ namespace Rpc {
       if (needStress) {
          mixture_.computeStress(mask().phiTot());
       }
-
    }
 
    /*
@@ -1016,7 +1014,7 @@ namespace Rpc {
    }
 
    /*
-   * Perform sweep of SCFT calculations along a path in parameter space.
+   * Perform a sweep of SCFT calculations along a path in parameter space.
    */
    template <int D>
    void System<D>::sweep()
@@ -1028,15 +1026,18 @@ namespace Rpc {
          UTIL_CHECK(w_.isSymmetric());
          UTIL_CHECK(isAllocatedBasis_);
       }
+      hasCFields_ = false;
+      hasFreeEnergy_ = false;
+
       Log::file() << std::endl;
       Log::file() << std::endl;
 
-      // Perform SCFT sweep
+      // Perform sweep
       sweepPtr_->sweep();
    }
 
    /*
-   * Perform a stochast field theoretic simulation of nStep steps.
+   * Perform a field theoretic simulation of nStep steps.
    */
    template <int D>
    void System<D>::simulate(int nStep)
@@ -1048,52 +1049,6 @@ namespace Rpc {
 
       simulator().simulate(nStep);
       hasCFields_ = true;
-   }
-
-   // Grid and Field Manipulation Commands
-
-   /*
-   * Expand the number of spatial dimensions of an RField.
-   */
-   template <int D>
-   void System<D>::expandRGridDimension(std::string const & inFileName,
-                                        std::string const & outFileName,
-                                        int d,
-                                        DArray<int> newGridDimensions)
-   {
-      UTIL_CHECK(d > D);
-
-      // Read fields
-      UnitCell<D> tmpUnitCell;
-      domain().fieldIo().readFieldsRGrid(inFileName,
-                                         tmpFieldsRGrid_,
-                                         tmpUnitCell);
-
-      // Expand Fields
-      domain().fieldIo().expandRGridDimension(outFileName,
-                                              tmpFieldsRGrid_,
-                                              tmpUnitCell,
-                                              d, newGridDimensions);
-   }
-
-   /*
-   * Replicate unit cell a specified number of times in each direction.
-   */
-   template <int D>
-   void System<D>::replicateUnitCell(std::string const & inFileName,
-                                     std::string const & outFileName,
-                                     IntVec<D> const & replicas)
-   {
-      // Read fields
-      UnitCell<D> tmpUnitCell;
-      domain().fieldIo().readFieldsRGrid(inFileName, tmpFieldsRGrid_,
-                                         tmpUnitCell);
-
-      // Replicate fields
-      domain().fieldIo().replicateUnitCell(outFileName,
-                                           tmpFieldsRGrid_,
-                                           tmpUnitCell,
-                                           replicas);
    }
 
    // Thermodynamic Properties
@@ -1426,6 +1381,8 @@ namespace Rpc {
       out << std::endl;
    }
 
+   // Field Output
+
    /*
    * Write w-fields in symmetry-adapted basis format.
    */
@@ -1492,9 +1449,13 @@ namespace Rpc {
 
       // Construct array to hold block and solvent c-field data
       DArray< RField<D> > blockCFields;
+      blockCFields.allocate(mixture_.nSolvent() + mixture_.nBlock());
+      int n = blockCFields.capacity();
+      for (int i = 0; i < n; i++) {
+         blockCFields[i].allocate(domain_.mesh().dimensions());
+      }
 
       // Get c-field data from the Mixture
-      // Note: blockCFields container is allocated within this function
       mixture_.createBlockCRGrid(blockCFields);
 
       // Write block and solvent c-field data to file
@@ -1502,6 +1463,8 @@ namespace Rpc {
                                           domain().unitCell(),
                                           w_.isSymmetric());
    }
+
+   // Propagator Output
 
    /*
    * Write the last time slice of the propagator in r-grid format.
@@ -1618,6 +1581,8 @@ namespace Rpc {
       }
    }
 
+   // Crystallography Data Output
+
    /*
    * Write description of symmetry-adapted stars and basis to file.
    */
@@ -1664,7 +1629,7 @@ namespace Rpc {
       Pscf::Prdc::writeGroup(filename, domain_.group());
    }
 
-   // Field format conversion functions
+   // Field File Operations
 
    /*
    * Convert fields from symmetry-adapted basis to real-space grid format.
@@ -1673,12 +1638,15 @@ namespace Rpc {
    void System<D>::basisToRGrid(std::string const & inFileName,
                                 std::string const & outFileName)
    {
+      // Preconditions
+      UTIL_CHECK(isAllocatedGrid_);
       UTIL_CHECK(domain_.hasGroup());
-
-      // If basis fields are not allocated, peek at field file header to
-      // get unit cell parameters, initialize basis and allocate fields.
-      if (!isAllocatedBasis_) {
+      if (!domain_.unitCell().isInitialized()) {
          readFieldHeader(inFileName);
+      }
+      UTIL_CHECK(domain_.unitCell().isInitialized());
+      UTIL_CHECK(domain_.basis().isInitialized());
+      if (!isAllocatedBasis_) {
          allocateFieldsBasis();
       }
 
@@ -1688,7 +1656,7 @@ namespace Rpc {
       fieldIo.readFieldsBasis(inFileName, tmpFieldsBasis_, tmpUnitCell);
       fieldIo.convertBasisToRGrid(tmpFieldsBasis_, tmpFieldsRGrid_);
       fieldIo.writeFieldsRGrid(outFileName, tmpFieldsRGrid_,
-                                 tmpUnitCell);
+                               tmpUnitCell);
    }
 
    /*
@@ -1698,12 +1666,15 @@ namespace Rpc {
    void System<D>::rGridToBasis(std::string const & inFileName,
                                 std::string const & outFileName)
    {
+      // Preconditions
+      UTIL_CHECK(isAllocatedGrid_);
       UTIL_CHECK(domain_.hasGroup());
-
-      // If basis fields are not allocated, peek at field file header to
-      // get unit cell parameters, initialize basis and allocate fields.
-      if (!isAllocatedBasis_) {
+      if (!domain_.unitCell().isInitialized()) {
          readFieldHeader(inFileName);
+      }
+      UTIL_CHECK(domain_.unitCell().isInitialized());
+      UTIL_CHECK(domain_.basis().isInitialized());
+      if (!isAllocatedBasis_) {
          allocateFieldsBasis();
       }
 
@@ -1723,12 +1694,12 @@ namespace Rpc {
    void System<D>::kGridToRGrid(std::string const & inFileName,
                                 std::string const & outFileName)
    {
-      // If basis fields are not allocated, peek at field file header to
-      // get unit cell parameters, initialize basis and allocate fields.
-      if (domain_.hasGroup() && !isAllocatedBasis_) {
+      // Preconditions
+      UTIL_CHECK(isAllocatedGrid_);
+      if (!domain_.unitCell().isInitialized()) {
          readFieldHeader(inFileName);
-         allocateFieldsBasis();
       }
+      UTIL_CHECK(domain_.unitCell().isInitialized());
 
       // Read, convert and write fields
       UnitCell<D> tmpUnitCell;
@@ -1739,7 +1710,7 @@ namespace Rpc {
                                                tmpFieldsRGrid_[i]);
       }
       fieldIo.writeFieldsRGrid(outFileName, tmpFieldsRGrid_,
-                                 tmpUnitCell);
+                               tmpUnitCell);
    }
 
    /*
@@ -1749,24 +1720,24 @@ namespace Rpc {
    void System<D>::rGridToKGrid(std::string const & inFileName,
                                 std::string const & outFileName)
    {
-      // If basis fields are not allocated, peek at field file header to
-      // get unit cell parameters, initialize basis and allocate fields.
-      if (domain_.hasGroup() && !isAllocatedBasis_) {
+      // Preconditions
+      UTIL_CHECK(isAllocatedGrid_);
+      if (!domain_.unitCell().isInitialized()) {
          readFieldHeader(inFileName);
-         allocateFieldsBasis();
       }
+      UTIL_CHECK(domain_.unitCell().isInitialized());
 
       // Read, convert and write fields
       UnitCell<D> tmpUnitCell;
       FieldIo<D> const & fieldIo = domain().fieldIo();
       fieldIo.readFieldsRGrid(inFileName, tmpFieldsRGrid_,
-                                tmpUnitCell);
+                              tmpUnitCell);
       for (int i = 0; i < mixture().nMonomer(); ++i) {
          domain().fft().forwardTransform(tmpFieldsRGrid_[i],
                                         tmpFieldsKGrid_[i]);
       }
       fieldIo.writeFieldsKGrid(outFileName, tmpFieldsKGrid_,
-                                            tmpUnitCell);
+                               tmpUnitCell);
    }
 
    /*
@@ -1776,23 +1747,25 @@ namespace Rpc {
    void System<D>::kGridToBasis(std::string const & inFileName,
                                 std::string const & outFileName)
    {
+      // Preconditions
+      UTIL_CHECK(isAllocatedGrid_);
       UTIL_CHECK(domain_.hasGroup());
-
-      // If basis fields are not allocated, peek at field file header to
-      // get unit cell parameters, initialize basis and allocate fields.
-      if (!isAllocatedBasis_) {
+      if (!domain_.unitCell().isInitialized()) {
          readFieldHeader(inFileName);
+      }
+      UTIL_CHECK(domain_.unitCell().isInitialized());
+      UTIL_CHECK(domain_.basis().isInitialized());
+      if (!isAllocatedBasis_) {
          allocateFieldsBasis();
       }
 
       // Read, convert and write fields
       UnitCell<D> tmpUnitCell;
-      domain_.fieldIo().readFieldsKGrid(inFileName, tmpFieldsKGrid_,
-                                        tmpUnitCell);
-      domain_.fieldIo().convertKGridToBasis(tmpFieldsKGrid_,
-                                            tmpFieldsBasis_);
-      domain_.fieldIo().writeFieldsBasis(outFileName,
-                                         tmpFieldsBasis_, tmpUnitCell);
+      FieldIo<D> const & fieldIo = domain().fieldIo();
+      fieldIo.readFieldsKGrid(inFileName, tmpFieldsKGrid_, tmpUnitCell);
+      fieldIo.convertKGridToBasis(tmpFieldsKGrid_, tmpFieldsBasis_);
+      fieldIo.writeFieldsBasis(outFileName, tmpFieldsBasis_, 
+                               tmpUnitCell);
    }
 
    /*
@@ -1802,23 +1775,25 @@ namespace Rpc {
    void System<D>::basisToKGrid(std::string const & inFileName,
                                 std::string const & outFileName)
    {
+      // Preconditions
+      UTIL_CHECK(isAllocatedGrid_);
       UTIL_CHECK(domain_.hasGroup());
-
-      // If basis fields are not allocated, peek at field file header to
-      // get unit cell parameters, initialize basis and allocate fields.
-      if (!isAllocatedBasis_) {
+      if (!domain_.unitCell().isInitialized()) {
          readFieldHeader(inFileName);
+      }
+      UTIL_CHECK(domain_.unitCell().isInitialized());
+      UTIL_CHECK(domain_.basis().isInitialized());
+      if (!isAllocatedBasis_) {
          allocateFieldsBasis();
       }
 
       // Read, convert and write fields
       UnitCell<D> tmpUnitCell;
-      domain_.fieldIo().readFieldsBasis(inFileName,
-                                        tmpFieldsBasis_, tmpUnitCell);
-      domain_.fieldIo().convertBasisToKGrid(tmpFieldsBasis_,
-                                            tmpFieldsKGrid_);
-      domain_.fieldIo().writeFieldsKGrid(outFileName,
-                                         tmpFieldsKGrid_, tmpUnitCell);
+      FieldIo<D> const & fieldIo = domain().fieldIo();
+      fieldIo.readFieldsBasis(inFileName, tmpFieldsBasis_, tmpUnitCell);
+      fieldIo.convertBasisToKGrid(tmpFieldsBasis_, tmpFieldsKGrid_);
+      fieldIo.writeFieldsKGrid(outFileName, tmpFieldsKGrid_, 
+                               tmpUnitCell);
    }
 
    /*
@@ -1829,14 +1804,18 @@ namespace Rpc {
    System<D>::checkRGridFieldSymmetry(std::string const & inFileName,
                                       double epsilon)
    {
+      // Preconditions
+      UTIL_CHECK(isAllocatedGrid_);
       UTIL_CHECK(domain_.hasGroup());
-
-      // If basis fields are not allocated, peek at field file header to
-      // get unit cell parameters, initialize basis and allocate fields.
-      if (!isAllocatedBasis_) {
+      if (!domain_.unitCell().isInitialized()) {
          readFieldHeader(inFileName);
+      }
+      UTIL_CHECK(domain_.unitCell().isInitialized());
+      UTIL_CHECK(domain_.basis().isInitialized());
+      if (!isAllocatedBasis_) {
          allocateFieldsBasis();
       }
+      UTIL_CHECK(domain_.hasGroup());
 
       // Read fields
       UnitCell<D> tmpUnitCell;
@@ -1855,6 +1834,8 @@ namespace Rpc {
       return true;
 
    }
+
+   // Grid and Field Manipulation Commands
 
    /*
    * Rescale a field by a constant, write rescaled field to a file.
@@ -1895,6 +1876,50 @@ namespace Rpc {
       fieldIo.writeFieldsRGrid(outFileName, tmpFieldsRGrid_,
                                             tmpUnitCell, 
                                             w_.isSymmetric());
+   }
+
+   /*
+   * Expand the number of spatial dimensions of an RField.
+   */
+   template <int D>
+   void System<D>::expandRGridDimension(std::string const & inFileName,
+                                        std::string const & outFileName,
+                                        int d,
+                                        DArray<int> newGridDimensions)
+   {
+      UTIL_CHECK(d > D);
+
+      // Read fields
+      UnitCell<D> tmpUnitCell;
+      domain().fieldIo().readFieldsRGrid(inFileName,
+                                         tmpFieldsRGrid_,
+                                         tmpUnitCell);
+
+      // Expand Fields
+      domain().fieldIo().expandRGridDimension(outFileName,
+                                              tmpFieldsRGrid_,
+                                              tmpUnitCell,
+                                              d, newGridDimensions);
+   }
+
+   /*
+   * Replicate unit cell a specified number of times in each direction.
+   */
+   template <int D>
+   void System<D>::replicateUnitCell(std::string const & inFileName,
+                                     std::string const & outFileName,
+                                     IntVec<D> const & replicas)
+   {
+      // Read fields
+      UnitCell<D> tmpUnitCell;
+      domain().fieldIo().readFieldsRGrid(inFileName, tmpFieldsRGrid_,
+                                         tmpUnitCell);
+
+      // Replicate fields
+      domain().fieldIo().replicateUnitCell(outFileName,
+                                           tmpFieldsRGrid_,
+                                           tmpUnitCell,
+                                           replicas);
    }
 
    /*

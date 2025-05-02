@@ -650,9 +650,9 @@ namespace Rpc {
             increment = 0.0;
             for (m = 0; m < kSize_ ; ++m) {
                prod = (qk2_[m][0] * qk_[m][0]) + (qk2_[m][1] * qk_[m][1]);
-               UTIL_CHECK(std::abs(dGsq_(m,n) - dKSq[m]) < 1.0E-8);
                prod *= dGsq_(m,n);
                //prod *= dKSq[m];
+               UTIL_CHECK(std::abs(dGsq_(m,n) - dKSq[m]) < 1.0E-8);
                increment += prod;
             }
             increment *= bSq * dels;
@@ -713,19 +713,21 @@ namespace Rpc {
 
          // Loop over unit cell parameters
          for (int n = 0; n < nParam ; ++n) {
-            RField<D> dksq = waveListPtr_->dKSq(n);
+            RField<D> dKSq = waveListPtr_->dKSq(n);
 
             // Loop over wavevectors
             increment = 0.0;
             for (int m = 0; m < kSize_ ; ++m) {
                prod = (qk2_[m][0] * qk_[m][0]) + (qk2_[m][1] * qk_[m][1]);
-               //prod *= dGsq_(m, n)*expKsq_[m];
-               prod *= dksq[m]*expKsq_[m];
+               prod *= dGsq_(m, n)*expKsq_[m];
+               //prod *= dKSq[m]*expKsq_[m];
+               UTIL_CHECK(std::abs(dGsq_(m,n) - dKSq[m]) < 1.0E-8);
                increment += prod;
             }
             increment *= bSq;
             dQ[n] = dQ[n] - increment;
          }
+
       }
 
       // Normalize
@@ -736,39 +738,37 @@ namespace Rpc {
    }
 
    /*
-   * Compute dGsq_ array (derivatives of Gsq for all wavevectors)
+   * Compute dGsq_ array (derivatives of Gsq for all wavevectors) if needed.
    */
    template <int D>
    void Block<D>::computedGsq()
    {
       UTIL_CHECK(waveListPtr_);
 
+      // Update associated WaveList
       if (!waveListPtr_->hasdKSq()) {
          waveListPtr_->computedKSq();
       }
 
-      IntVec<D> temp;
-      IntVec<D> vec;
-      IntVec<D> Partner;
+      // Construct dGsq_ locally (has become redundant)
+      IntVec<D> pos, vec;
+      int rank;
       MeshIterator<D> iter;
       iter.setDimensions(kMeshDimensions_);
       for (int n = 0; n < unitCell().nParameter() ; ++n) {
+         RField<D> const & dKSq = waveListPtr_->dKSq(n);
          for (iter.begin(); !iter.atEnd(); ++iter) {
-            temp = iter.position();
-            vec = shiftToMinimum(temp, mesh().dimensions(), unitCell());
-            dGsq_(iter.rank(), n) = unitCell().dksq(vec, n);
-            for (int p = 0; p < D; ++p) {
-               if (temp [p] != 0) {
-                  Partner[p] = mesh().dimensions()[p] - temp[p];
-               } else {
-                  Partner[p] = 0;
-               }
+            rank = iter.rank();
+            pos = iter.position();
+            vec = shiftToMinimum(pos, mesh().dimensions(), unitCell());
+            dGsq_(rank, n) = unitCell().dksq(vec, n);
+            if (FFT<D>::hasImplicitInverse(pos, mesh().dimensions())) {
+               dGsq_(rank, n) *= 2.0;
             }
-            if (Partner[D-1] > kMeshDimensions_[D-1]) {
-               dGsq_(iter.rank(), n) *= 2;
-            }
+            UTIL_CHECK(std::abs(dGsq_(rank, n) - dKSq[rank]) < 1.0E-8);
          }
       }
+
    }
 
 }
