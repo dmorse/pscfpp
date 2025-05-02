@@ -9,13 +9,17 @@
 */
 
 #include "Block.h"
+
+#include <prdc/cpu/WaveList.h>
+#include <prdc/cpu/FFT.h>
 #include <prdc/crystal/UnitCell.h>
 #include <prdc/crystal/shiftToMinimum.h>
-#include <prdc/cpu/FFT.h>
+
 #include <pscf/chem/Edge.h>
 #include <pscf/mesh/Mesh.h>
 #include <pscf/mesh/MeshIterator.h>
 #include <pscf/math/IntVec.h>
+
 #include <util/containers/DMatrix.h>
 #include <util/containers/DArray.h>
 #include <util/containers/FArray.h>
@@ -208,6 +212,7 @@ namespace Rpc {
       UTIL_CHECK(isAllocated_);
       UTIL_CHECK(unitCellPtr_);
       UTIL_CHECK(unitCellPtr_->isInitialized());
+      UTIL_CHECK(waveListPtr_);
 
       bool isThread = PolymerModel::isThread();
       double bSqFactor;
@@ -217,6 +222,11 @@ namespace Rpc {
          bSqFactor = -1.0*kuhn()*kuhn() / 6.0;
       }
 
+      // Calculate KSq if necessary
+      if (!waveListPtr_->hasKSq()) {
+         waveListPtr_->computeKSq();
+      }
+      RField<D> const & kSq = waveListPtr_->kSq();
 
       MeshIterator<D> iter;
       iter.setDimensions(kMeshDimensions_);
@@ -228,6 +238,8 @@ namespace Rpc {
          G = iter.position();
          Gmin = shiftToMinimum(G, mesh().dimensions(), unitCell());
          Gsq = unitCell().ksq(Gmin);
+         //Gsq = kSq[i];
+         UTIL_CHECK(std::abs(Gsq - kSq[i]) < 1.0E-8);
          arg = Gsq*bSqFactor;
          expKsq_[i] = exp(arg);
          if (isThread) {
@@ -632,12 +644,15 @@ namespace Rpc {
 
          // Loop over unit cell parameters
          for (n = 0; n < nParam ; ++n) {
-            increment = 0.0;
+            RField<D> dKSq = waveListPtr_->dKSq(n);
 
             // Loop over wavevectors
+            increment = 0.0;
             for (m = 0; m < kSize_ ; ++m) {
                prod = (qk2_[m][0] * qk_[m][0]) + (qk2_[m][1] * qk_[m][1]);
+               UTIL_CHECK(std::abs(dGsq_(m,n) - dKSq[m]) < 1.0E-8);
                prod *= dGsq_(m,n);
+               //prod *= dKSq[m];
                increment += prod;
             }
             increment *= bSq * dels;
@@ -698,12 +713,14 @@ namespace Rpc {
 
          // Loop over unit cell parameters
          for (int n = 0; n < nParam ; ++n) {
-            increment = 0.0;
+            RField<D> dksq = waveListPtr_->dKSq(n);
 
             // Loop over wavevectors
+            increment = 0.0;
             for (int m = 0; m < kSize_ ; ++m) {
                prod = (qk2_[m][0] * qk_[m][0]) + (qk2_[m][1] * qk_[m][1]);
-               prod *= dGsq_(m, n)*expKsq_[m];
+               //prod *= dGsq_(m, n)*expKsq_[m];
+               prod *= dksq[m]*expKsq_[m];
                increment += prod;
             }
             increment *= bSq;
@@ -724,12 +741,17 @@ namespace Rpc {
    template <int D>
    void Block<D>::computedGsq()
    {
+      UTIL_CHECK(waveListPtr_);
+
+      if (!waveListPtr_->hasdKSq()) {
+         waveListPtr_->computedKSq();
+      }
+
       IntVec<D> temp;
       IntVec<D> vec;
       IntVec<D> Partner;
       MeshIterator<D> iter;
       iter.setDimensions(kMeshDimensions_);
-
       for (int n = 0; n < unitCell().nParameter() ; ++n) {
          for (iter.begin(); !iter.atEnd(); ++iter) {
             temp = iter.position();

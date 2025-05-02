@@ -91,26 +91,44 @@ namespace Cpu {
       void computedKSq();
 
       /**
-      * Get the array of minimum images by reference.
+      * Get the array of minimum image vectors by const reference.
       * 
-      * The array has size kSize * D, where kSize is the number of grid points 
-      * in reciprocal space. The array is unwrapped into a linear array in an
-      * index-by-index manner, in which the first kSize elements of the array 
-      * contain the first index of each minimum image, and so on. 
+      * This function returns an array of size kSize in which each element
+      * element is an IntVec<D> containing the integer coordinates of the 
+      * minimum image of one wavevector in the k-space mesh used for the
+      * DFT of real data. 
       */
       DArray< IntVec<D> > const & minImages() const;
 
       /**
-      * Get the kSq array on the device by reference.
+      * Get the kSq array on the device by const reference.
+      *
+      * This function returns an array of size kSize in which each element
+      * is the square magnitude |k|^2 of a wavevector k in the k-space
+      * mesh used for a DFT of real data.
       */
       RField<D> const & kSq() const;
 
       /**
-      * Get the slice of the dKSq array for parameter i by reference.
-      * 
+      * Get derivatives of kSq with respect to unit cell parameter i.
+      *
+      * Each element contains the derivative of the square-wavevector with
+      * respect to unit cell parameter i, multiplied by a prefactor. The
+      * prefactor is 2.0 for waves that have an implicit inverse and 1.0
+      * otherwise. The choice of prefactor is designed to simplify use
+      * of the array to compute stress.
+      *
       * \param i index of lattice parameter
       */
       RField<D> const & dKSq(int i) const;
+
+      /**
+      * Get all derivatives of kSq with respect to unit cell parameters.
+      * 
+      * Element i of the DArray is the RField<D> that can also be obtained
+      * from member function dKSq(int i). 
+      */
+      DArray< RField<D> > const & dKSq() const;
 
       /**
       * Get the implicitInverse array by reference.
@@ -219,6 +237,15 @@ namespace Cpu {
    {  
       UTIL_CHECK(hasdKSq_);
       return dKSq_[i];
+   }
+
+   // Get entire dKSq container.
+   template <int D>
+   inline 
+   DArray< RField<D> > const & WaveList<D>::dKSq() const
+   {  
+      UTIL_CHECK(hasdKSq_);
+      return dKSq_;
    }
 
    // Get the implicitInverse array by reference.

@@ -98,20 +98,20 @@ namespace Pscf {
       HostDArray<Data>& operator = (DeviceArray<Data> const & other);
 
       /**
-       * Copy a slice of the data from a larger DeviceArray into this array.
-       * 
-       * This method will populate this HostDArray with data from a slice
-       * of a DeviceArray. The size of the slice is the capacity of this
-       * HostDArray (i.e., this entire array will be populated), and the
-       * position of the slice within the DeviceArray is indicated by 
-       * the input parameter beginId. 
-       * 
-       * Therefore, the capacity of the DeviceArray must be >= the 
-       * capacity of this HostDArray plus beginId.
-       * 
-       * \param other DeviceArray<Data> object from which to copy slice
-       * \param beginId  index of other array at which slice begins
-       */
+      * Copy a slice of the data from a larger DeviceArray into this array.
+      * 
+      * This method will populate this HostDArray with data from a slice
+      * of a DeviceArray. The size of the slice is the capacity of this
+      * HostDArray (i.e., this entire array will be populated), and the
+      * position of the slice within the DeviceArray is indicated by 
+      * the input parameter beginId. 
+      * 
+      * Therefore, the capacity of the DeviceArray must be >= the 
+      * capacity of this HostDArray plus beginId.
+      * 
+      * \param other DeviceArray<Data> object from which to copy slice
+      * \param beginId  index of other array at which slice begins
+      */
       void copySlice(DeviceArray<Data> const & other, int beginId);
 
    };
