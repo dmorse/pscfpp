@@ -1765,7 +1765,7 @@ namespace Rpg {
       fieldIo.readFieldsKGrid(inFileName, tmpFieldsKGrid_, tmpUnitCell);
       fieldIo.convertKGridToBasis(tmpFieldsKGrid_, tmpFieldsBasis_);
       fieldIo.writeFieldsBasis(outFileName, tmpFieldsBasis_,
-                                 tmpUnitCell);
+                               tmpUnitCell);
    }
 
    /*
@@ -1838,17 +1838,22 @@ namespace Rpg {
    // Grid and Field Manipulation Commands
 
    /*
-   * Rescale a field by a constant, write rescaled field to a file.
+   * Rescale fields by a constant factor, write rescaled field to a file.
    */
    template <int D>
    void System<D>::scaleFieldsBasis(std::string const & inFileName,
                                     std::string const & outFileName,
                                     double factor)
    {
-      // If basis fields are not allocated, peek at field file header to
-      // get unit cell parameters, initialize basis and allocate fields.
-      if (!isAllocatedBasis_) {
+      // Preconditions
+      UTIL_CHECK(isAllocatedGrid_);
+      UTIL_CHECK(domain_.hasGroup());
+      if (!domain_.unitCell().isInitialized()) {
          readFieldHeader(inFileName);
+      }
+      UTIL_CHECK(domain_.unitCell().isInitialized());
+      UTIL_CHECK(domain_.basis().isInitialized());
+      if (!isAllocatedBasis_) {
          allocateFieldsBasis();
       }
 
@@ -1856,8 +1861,7 @@ namespace Rpg {
       FieldIo<D> const & fieldIo = domain().fieldIo();
       fieldIo.readFieldsBasis(inFileName, tmpFieldsBasis_, tmpUnitCell);
       fieldIo.scaleFieldsBasis(tmpFieldsBasis_, factor);
-      fieldIo.writeFieldsBasis(outFileName, tmpFieldsBasis_,
-                                            tmpUnitCell);
+      fieldIo.writeFieldsBasis(outFileName, tmpFieldsBasis_, tmpUnitCell);
    }
 
    /*
@@ -1868,6 +1872,8 @@ namespace Rpg {
                                     std::string const & outFileName,
                                     double factor) const
    {
+      UTIL_CHECK(isAllocatedGrid_);
+
       UnitCell<D> tmpUnitCell;
       FieldIo<D> const & fieldIo = domain().fieldIo();
       fieldIo.readFieldsRGrid(inFileName, tmpFieldsRGrid_,
@@ -1888,6 +1894,7 @@ namespace Rpg {
                                         DArray<int> newGridDimensions)
    {
       UTIL_CHECK(d > D);
+      UTIL_CHECK(isAllocatedGrid_);
 
       // Read fields
       UnitCell<D> tmpUnitCell;
@@ -1910,6 +1917,8 @@ namespace Rpg {
                                      std::string const & outFileName,
                                      IntVec<D> const & replicas)
    {
+      UTIL_CHECK(isAllocatedGrid_);
+
       // Read fields
       UnitCell<D> tmpUnitCell;
       domain().fieldIo().readFieldsRGrid(inFileName, tmpFieldsRGrid_,
@@ -1922,6 +1931,8 @@ namespace Rpg {
                                            replicas);
    }
 
+   // Field Comparison
+
    /*
    * Compare two fields in basis format, write report to Log file.
    */
@@ -1932,7 +1943,7 @@ namespace Rpg {
       UTIL_CHECK(domain_.hasGroup());
 
       BFieldComparison comparison(1);
-      comparison.compare(field1,field2);
+      comparison.compare(field1, field2);
 
       Log::file() << "\n Basis expansion field comparison results"
                   << std::endl;
@@ -2010,19 +2021,17 @@ namespace Rpg {
       const int nMonomer = mixture_.nMonomer();
       UTIL_CHECK(nMonomer > 0);
       UTIL_CHECK(domain_.unitCell().isInitialized());
-      UTIL_CHECK(domain_.unitCell().nParameter() > 0);
       UTIL_CHECK(domain_.mesh().size() > 0);
+      UTIL_CHECK(domain_.hasGroup());
       UTIL_CHECK(domain_.basis().isInitialized());
-      UTIL_CHECK(isAllocatedGrid_);
-      UTIL_CHECK(!isAllocatedBasis_);
       const int nBasis = domain().basis().nBasis();
       UTIL_CHECK(nBasis > 0);
+      UTIL_CHECK(isAllocatedGrid_);
+      UTIL_CHECK(!isAllocatedBasis_);
 
       // Allocate basis field containers
       w_.allocateBasis(nBasis);
       c_.allocateBasis(nBasis);
-
-      // Temporary work space
       tmpFieldsBasis_.allocate(nMonomer);
       for (int i = 0; i < nMonomer; ++i) {
          tmpFieldsBasis_[i].allocate(nBasis);
@@ -2039,7 +2048,6 @@ namespace Rpg {
    {
       UTIL_CHECK(hasMixture_);
       UTIL_CHECK(mixture_.nMonomer() > 0);
-      UTIL_CHECK(isAllocatedGrid_);
 
       // Open field file
       std::ifstream file;
@@ -2072,6 +2080,9 @@ namespace Rpg {
    void System<D>::readEcho(std::istream& in, std::string& string) const
    {
       in >> string;
+      if (in.fail()) {
+         UTIL_THROW("Unable to read a string parameter.");
+      }
       Log::file() << " " << Str(string, 20) << std::endl;
    }
 

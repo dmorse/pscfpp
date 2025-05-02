@@ -9,22 +9,22 @@
 */
 
 // Header file includes
-#include <util/param/ParamComposite.h>     // base class
+#include <util/param/ParamComposite.h>   // base class
 
-#include <rpg/solvers/Mixture.h>           // member
-#include <rpg/field/Domain.h>              // member
-#include <rpg/field/FieldIo.h>             // member
-#include <rpg/field/WFieldContainer.h>     // member
-#include <rpg/field/CFieldContainer.h>     // member
-#include <rpg/field/Mask.h>                // member
+#include <rpg/solvers/Mixture.h>         // member
+#include <rpg/field/Domain.h>            // member
+#include <rpg/field/FieldIo.h>           // member
+#include <rpg/field/WFieldContainer.h>   // member
+#include <rpg/field/CFieldContainer.h>   // member
+#include <rpg/field/Mask.h>              // member
 
-#include <prdc/cuda/RField.h>              // member (tmpFieldsRGrid))
-#include <prdc/cuda/RFieldDft.h>           // member (tmpFieldsKGrid_)
+#include <prdc/cuda/RField.h>            // member (tmpFieldsRGrid))
+#include <prdc/cuda/RFieldDft.h>         // member (tmpFieldsKGrid_)
 
-#include <pscf/chem/PolymerModel.h>        // member (polymerModel_)
+#include <pscf/chem/PolymerModel.h>      // member (polymerModel_)
 
-#include <util/misc/FileMaster.h>          // member
-#include <util/containers/DArray.h>        // member template
+#include <util/misc/FileMaster.h>        // member
+#include <util/containers/DArray.h>      // member (tmpFields...)
 
 // Forward references
 namespace Util {
@@ -179,7 +179,7 @@ namespace Rpg {
       void readCommands();
 
       ///@}
-      /// \name W Field Modifiers
+      /// \name W Field (Chemical Potential Field) Modifiers
       ///@{
 
       /**
@@ -288,11 +288,12 @@ namespace Rpg {
       * zero. The result is stored in the system w field container.
       *
       * Upon return, w().hasData() and w().isSymmetric() return true,
-      * while hasCFields() and hasFreeEnergy() return false.
+      * while hasCFields() and hasFreeEnergy() return false. Unit cell
+      * parameters are set to those read from the c field file header.
       *
       * \param filename  name of input c-field file (basis format)
       */
-      void estimateWfromC(const std::string& filename);
+      void estimateWfromC(std::string const & filename);
 
       ///@}
       /// \name Unit Cell Modifiers
@@ -316,7 +317,7 @@ namespace Rpg {
       void setUnitCell(UnitCell<D> const & unitCell);
 
       /**
-      * Set state of the associated unit cell.
+      * Set parameters of the associated unit cell.
       *
       * The lattice argument must agree with Domain::lattice() on input
       * if Domain::lattice() is not null, and the size of the parameters
@@ -339,7 +340,7 @@ namespace Rpg {
       void setUnitCell(FSArray<double, 6> const & parameters);
 
       ///@}
-      /// \name Primary SCFT Computations
+      /// \name Primary Field Theory Computations
       ///@{
 
       /**
@@ -364,6 +365,8 @@ namespace Rpg {
       * If argument needStress == true, then this function also calls
       * Mixture<D>::computeStress() to compute the stress.
       *
+      * \pre The w().hasData() flag must be true on entry.
+      *
       * \param needStress  true if stress is needed, false otherwise
       */
       void compute(bool needStress = false);
@@ -382,14 +385,14 @@ namespace Rpg {
       *
       * \pre Function hasIterator() must return true
       *
-      * \pre Function w().hasData() flag must return true, to confirm
-      * that chemical potential fields have been set
+      * \pre Function hasIterator() must return true
+      * \pre Function w().hasData() must return true
+      * \pre Function w().isSymmetric() must return true if the chosen
+      * iterator uses a symmetry adapted basis.
       *
-      * \pre Function w().isSymmetric() flag must return true if the
-      * chosen iterator uses a basis representation, and so requires thi
+      * \return returns 0 for successful convergence, 1 for failure
       *
       * \param isContinuation  true iff a continuation within a sweep
-      * \return returns 0 for successful convergence, 1 for failure
       */
       int iterate(bool isContinuation = false);
 
@@ -408,7 +411,7 @@ namespace Rpg {
       void sweep();
 
       /**
-      * Perform a field theoretic simulation.
+      * Perform a field theoretic simulation (PS-FTS).
       *
       * Perform a field theoretic simulation using the partial saddle-point
       * approximation (PS-FTS). The type of simulation (BD or MC) is
@@ -491,8 +494,8 @@ namespace Rpg {
       /**
       * Write stress properties to a file.
       *
-      * This function outputs derivatives of free energy w/ respect to
-      * each unit cell parameters.
+      * This function outputs derivatives of SCFT free energy w/ respect
+      * to each unit cell parameter.
       *
       * Call writeStress after writeThermo if and only if the iterator
       * is not flexible. If parameter "out" is a file that already exists,
@@ -1075,7 +1078,7 @@ namespace Rpg {
       mutable DArray<RFieldDft<D> > tmpFieldsKGrid_;
 
       // Thermodynamic properties
-      
+
       /**
       * Helmholtz free energy per monomer / kT.
       */
@@ -1109,7 +1112,7 @@ namespace Rpg {
       double pressure_;
 
       // Boolean and enumeration variables
-      
+
       /**
       * Has memory been allocated for fields in FFT grid formats?
       */
