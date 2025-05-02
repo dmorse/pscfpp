@@ -820,12 +820,12 @@ namespace Rpc {
    template <int D>
    void System<D>::estimateWfromC(std::string const & filename)
    {
+      // Preconditions
       UTIL_CHECK(hasMixture_);
       const int nm = mixture().nMonomer();
       UTIL_CHECK(nm > 0);
       UTIL_CHECK(isAllocatedGrid_);
       UTIL_CHECK(domain().hasGroup());
-
       if (!domain().unitCell().isInitialized()) {
          readFieldHeader(filename);
       }

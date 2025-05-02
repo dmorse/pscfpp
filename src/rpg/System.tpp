@@ -826,8 +826,6 @@ namespace Rpg {
       UTIL_CHECK(nm > 0);
       UTIL_CHECK(isAllocatedGrid_);
       UTIL_CHECK(domain_.hasGroup());
-
-      // Check required initializations
       if (!domain_.unitCell().isInitialized()) {
          readFieldHeader(filename);
       }
@@ -839,29 +837,29 @@ namespace Rpg {
          allocateFieldsBasis();
       }
 
-      // Allocate temporary storage
-      DArray< DArray<double> > tmpCFieldsBasis;
-      tmpCFieldsBasis.allocate(nm);
-      for (int i = 0; i < nm; ++i) {
-         tmpCFieldsBasis[i].allocate(nb);
-      }
-
-      // Read c fields from input file
-      domain().fieldIo().readFieldsBasis(filename, tmpCFieldsBasis,
+      // Read c fields into temporary array and set unit cell
+      domain().fieldIo().readFieldsBasis(filename, tmpFieldsBasis_,
                                          domain_.unitCell());
 
-      // Compute w fields from c fields
-      for (int i = 0; i < nb; ++i) {
-         for (int j = 0; j < nm; ++j) {
-            tmpFieldsBasis_[j][i] = 0.0;
-            for (int k = 0; k < nm; ++k) {
-               tmpFieldsBasis_[j][i] += interaction().chi(j,k)
-                                        * tmpCFieldsBasis[k][i];
+      // Allocate work space array
+      DArray<double> wtmp;
+      wtmp.allocate(nm);
+
+      // Compute estimated w fields from c fields
+      int i, j, k;
+      for (i = 0; i < nb; ++i) {
+         for (j = 0; j < nm;  ++j) {
+            wtmp[j] = 0.0;
+            for (k = 0; k < nm; ++k) {
+               wtmp[j] += interaction().chi(j,k)*tmpFieldsBasis_[k][i];
             }
+         }
+         for (j = 0; j < nm;  ++j) {
+            tmpFieldsBasis_[j][i] = wtmp[j];
          }
       }
 
-      // Store estimated w fields in System w container
+      // Set estimated w fields in system w-field container
       w_.setBasis(tmpFieldsBasis_);
       hasCFields_ = false;
       hasFreeEnergy_ = false;
@@ -869,6 +867,7 @@ namespace Rpg {
       // Clear unit cell data in waveList and mixture
       domain_.waveList().clearUnitCellData();
       mixture_.clearUnitCellData();
+
    }
 
    /*
@@ -943,7 +942,7 @@ namespace Rpg {
                           FSArray<double, 6> const & parameters)
    {
       domain_.setUnitCell(lattice, parameters);
-      // Note - Domain::setUnitCell updates the WaveList
+      // Note - Domain::setUnitCell clears WaveList unit cell data
       mixture_.clearUnitCellData();
       if (domain_.hasGroup() && !isAllocatedBasis_) {
          UTIL_CHECK(domain_.basis().isInitialized());
@@ -1037,7 +1036,7 @@ namespace Rpg {
    }
 
    /*
-   * Perform sweep along a line in parameter space.
+   * Perform a sweep of SCFT calculations along a path in parameter space.
    */
    template <int D>
    void System<D>::sweep()
@@ -1060,7 +1059,7 @@ namespace Rpg {
    }
 
    /*
-   * Perform a field theoretic simulation of nStep steps.
+   * Perform a stochastic field theoretic simulation of nStep steps.
    */
    template <int D>
    void System<D>::simulate(int nStep)
@@ -1072,50 +1071,6 @@ namespace Rpg {
 
       simulator().simulate(nStep);
       hasCFields_ = true;
-   }
-
-   /*
-   * Expand the number of spatial dimensions of an RField.
-   */
-   template <int D>
-   void System<D>::expandRGridDimension(std::string const & inFileName,
-                                        std::string const & outFileName,
-                                        int d,
-                                        DArray<int> newGridDimensions)
-   {
-      UTIL_CHECK(d > D);
-
-      // Read fields
-      UnitCell<D> tmpUnitCell;
-      domain().fieldIo().readFieldsRGrid(inFileName,
-                                         tmpFieldsRGrid_,
-                                         tmpUnitCell);
-
-      // Expand Fields
-      domain().fieldIo().expandRGridDimension(outFileName,
-                                              tmpFieldsRGrid_,
-                                              tmpUnitCell,
-                                              d, newGridDimensions);
-   }
-
-   /*
-   * Replicate unit cell a specified number of times in each direction.
-   */
-   template <int D>
-   void System<D>::replicateUnitCell(std::string const & inFileName,
-                                     std::string const & outFileName,
-                                     IntVec<D> const & replicas)
-   {
-      // Read fields
-      UnitCell<D> tmpUnitCell;
-      domain().fieldIo().readFieldsRGrid(inFileName, tmpFieldsRGrid_,
-                                         tmpUnitCell);
-
-      // Replicate fields
-      domain().fieldIo().replicateUnitCell(outFileName,
-                                           tmpFieldsRGrid_,
-                                           tmpUnitCell,
-                                           replicas);
    }
 
    // Thermodynamic Properties
@@ -1259,7 +1214,8 @@ namespace Rpg {
             for (int j = i; j < nm; ++j) {
                const double chi = interaction().chi(i,j);
                if (std::abs(chi) > 1.0E-9) {
-                  double temp = Reduce::innerProduct(c_.rgrid(i), c_.rgrid(j));
+                  double temp;
+                  temp = Reduce::innerProduct(c_.rgrid(i), c_.rgrid(j));
                   if (i == j) {
                      fInter_ += 0.5*chi*temp;
                   } else {
@@ -1314,8 +1270,9 @@ namespace Rpg {
    }
 
    // Output Operations
+
    /*
-   * Write time cost to file.
+   * Write timer values to output stream (computational cost).
    */
    template <int D>
    void System<D>::writeTimers(std::ostream& out)
@@ -1331,7 +1288,7 @@ namespace Rpg {
    }
 
    /*
-   * Clear timers.
+   * Clear state of all timers.
    */
    template <int D>
    void System<D>::clearTimers()
@@ -1343,8 +1300,9 @@ namespace Rpg {
          simulator().clearTimers();
       }
    }
+
    /*
-   * Write parameter file, omitting the sweep block.
+   * Write parameter file for SCFT, omitting any sweep block.
    */
    template <int D>
    void System<D>::writeParamNoSweep(std::ostream& out) const
@@ -1439,6 +1397,8 @@ namespace Rpg {
       out << std::endl;
    }
 
+   // Field Output
+
    /*
    * Write w-fields in symmetry-adapted basis format.
    */
@@ -1510,6 +1470,8 @@ namespace Rpg {
                                           domain().unitCell(),
                                           w_.isSymmetric());
    }
+
+   // Propagator Output
 
    /*
    * Write the last time slice of the propagator in r-grid format.
@@ -1627,6 +1589,8 @@ namespace Rpg {
          }
       }
    }
+
+   // Crystallography Data Output
 
    /*
    * Write description of symmetry-adapted stars and basis to file.
@@ -1878,6 +1842,8 @@ namespace Rpg {
 
    }
 
+   // Grid and Field Manipulation Commands
+
    /*
    * Rescale a field by a constant, write rescaled field to a file.
    */
@@ -1917,6 +1883,50 @@ namespace Rpg {
       fieldIo.writeFieldsRGrid(outFileName, tmpFieldsRGrid_,
                                             tmpUnitCell,
                                             w_.isSymmetric());
+   }
+
+   /*
+   * Expand the number of spatial dimensions of an RField.
+   */
+   template <int D>
+   void System<D>::expandRGridDimension(std::string const & inFileName,
+                                        std::string const & outFileName,
+                                        int d,
+                                        DArray<int> newGridDimensions)
+   {
+      UTIL_CHECK(d > D);
+
+      // Read fields
+      UnitCell<D> tmpUnitCell;
+      domain().fieldIo().readFieldsRGrid(inFileName,
+                                         tmpFieldsRGrid_,
+                                         tmpUnitCell);
+
+      // Expand Fields
+      domain().fieldIo().expandRGridDimension(outFileName,
+                                              tmpFieldsRGrid_,
+                                              tmpUnitCell,
+                                              d, newGridDimensions);
+   }
+
+   /*
+   * Replicate unit cell a specified number of times in each direction.
+   */
+   template <int D>
+   void System<D>::replicateUnitCell(std::string const & inFileName,
+                                     std::string const & outFileName,
+                                     IntVec<D> const & replicas)
+   {
+      // Read fields
+      UnitCell<D> tmpUnitCell;
+      domain().fieldIo().readFieldsRGrid(inFileName, tmpFieldsRGrid_,
+                                         tmpUnitCell);
+
+      // Replicate fields
+      domain().fieldIo().replicateUnitCell(outFileName,
+                                           tmpFieldsRGrid_,
+                                           tmpUnitCell,
+                                           replicas);
    }
 
    /*
@@ -1975,7 +1985,7 @@ namespace Rpg {
       // Alias for mesh dimensions
       IntVec<D> const & dimensions = domain_.mesh().dimensions();
 
-      // Allocate c (chemical potential) fields
+      // Allocate w (chemical potential) fields
       w_.setNMonomer(nMonomer);
       w_.allocateRGrid(dimensions);
 
