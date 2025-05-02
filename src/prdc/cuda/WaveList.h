@@ -61,8 +61,8 @@ namespace Cuda {
       /**
       * Clear all internal data that depends on lattice parameters.
       *
-      * Sets hasKSq_ and hasdKSq_ to false, and sets hasMinimumImages_ to
-      * false if hasVariableAngle == true.
+      * Sets hasKSq_ and hasdKSq_ to false, and sets hasMinImages_ to
+      * false if the crystall lattice type has variable angles.
       */
       void clearUnitCellData();
 
@@ -118,6 +118,7 @@ namespace Cuda {
       */
       RField<D> const & kSq() const;
 
+      #if 0
       /**
       * Get the full dKSq array on the device by reference.
       *
@@ -126,16 +127,27 @@ namespace Cuda {
       * lattice parameters. The array is unwrapped into a linear array in
       * which the * first kSize elements of the array contain dKSq for the
       * first lattice parameter, and so on.
+      *
+      * Each element of the array that is returned is the product of a 
+      * prefactor and the derivative of |k|^2 with respect to a lattice
+      * parameter. The prefactor is 2.0 if the vector has an implicit
+      * inverse and 1.0 otherwise. The prefactors are chosen to simplify
+      * use of this array to compute stress contributions in the Block
+      * class.
       */
       DeviceArray<cudaReal> const & dKSq() const;
+      #endif
 
       /**
       * Get derivatives of |k|^2 with respect to a lattice parameter.
       *
-      * Return value is a constant reference to an array of dervatives of
-      * the square wavevector with respect lattice parameter number i.
-      * Dimensions of mesh used by resulting RField<D> are the dimensions
-      * of the k-space mesh used cufft for DFT of real data.
+      * Return value is a constant reference to an array of size kSize 
+      * in which each element is the derivative of the square wavevector 
+      * with respect lattice parameter i, multiplied by a prefactor. The 
+      * prefactor is 2.0 if the associated wavevector has an implicit 
+      * inverse, and 1.0 otherwise. These prefactors are chosen to simplify
+      * use of this array to compute stress contributions in the Block
+      * class. 
       *
       * \param i index of lattice parameter
       */
@@ -160,8 +172,8 @@ namespace Cuda {
       /**
       * Have minimum images been computed?
       */
-      bool hasMinimumImages() const
-      {  return hasMinimumImages_; }
+      bool hasMinImages() const
+      {  return hasMinImages_; }
 
       /**
       * Has the kSq array been computed?
@@ -219,11 +231,11 @@ namespace Cuda {
       bool isAllocated_;
 
       /// Have minimum images been computed (array minImages_) ?
-      bool hasMinimumImages_;
+      bool hasMinImages_;
 
       /// Have minimum image vectors been re-ordered in minImageVecs_) ?
       mutable
-      bool hasMinimumImages_h_;
+      bool hasMinImages_h_;
 
       /// Has the kSq array been computed?
       bool hasKSq_;
@@ -251,7 +263,7 @@ namespace Cuda {
    template <int D>
    inline DeviceArray<int> const & WaveList<D>::minImages_d() const
    {
-      UTIL_CHECK(hasMinimumImages_);
+      UTIL_CHECK(hasMinImages_);
       return minImages_;
    }
 
@@ -263,6 +275,7 @@ namespace Cuda {
       return kSq_;
    }
 
+   #if 0
    // Get the full dKSq array on the device by reference.
    template <int D>
    inline DeviceArray<cudaReal> const & WaveList<D>::dKSq() const
@@ -270,6 +283,7 @@ namespace Cuda {
       UTIL_CHECK(hasdKSq_);
       return dKSq_;
    }
+   #endif
 
    // Get a slice of the dKSq array on the device by reference.
    template <int D>

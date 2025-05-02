@@ -21,8 +21,7 @@ namespace Prdc {
 namespace Cuda {
 
    // CUDA kernels: 
-   // (defined in anonymous namespace, used only in this file)
-
+   // (defined in an anonymous namespace, used only in this file)
    namespace {
 
       /*
@@ -411,22 +410,31 @@ namespace Cuda {
 
    } // anonymous namespace
 
+   /*
+   * Constructor.
+   */
    template <int D>
    WaveList<D>::WaveList()
     : kSize_(0),
       isAllocated_(false),
-      hasMinimumImages_(false),
-      hasMinimumImages_h_(false),
+      hasMinImages_(false),
+      hasMinImages_h_(false),
       hasKSq_(false),
       hasdKSq_(false),
       unitCellPtr_(nullptr),
       meshPtr_(nullptr)
    {}
 
+   /*
+   * Destructor.
+   */
    template <int D>
    WaveList<D>::~WaveList() 
    {}
 
+   /*
+   * Allocate memory, construct implicitInverse_.
+   */
    template <int D>
    void WaveList<D>::allocate(Mesh<D> const & m, UnitCell<D> const & c) 
    {
@@ -481,21 +489,27 @@ namespace Cuda {
       isAllocated_ = true;
    }
 
+   /*
+   * Clear data that depends on unit cell parameters.
+   */
    template <int D>
    void WaveList<D>::clearUnitCellData()
    {
       hasKSq_ = false;
       hasdKSq_ = false;
       if (hasVariableAngle<D>(unitCell().lattice())) {
-         hasMinimumImages_ = false;
-         hasMinimumImages_h_ = false;
+         hasMinImages_ = false;
+         hasMinImages_h_ = false;
       }
    }
 
+   /*
+   * Compute minimum image vectors and kSq.
+   */
    template <int D>
    void WaveList<D>::computeMinimumImages() 
    {
-      if (hasMinimumImages_) return; // min images already calculated
+      if (hasMinImages_) return; // min images already calculated
 
       // Precondition
       UTIL_CHECK(isAllocated_);
@@ -560,16 +574,19 @@ namespace Cuda {
          (minImages_.cArray(), kSq_.cArray(), kBasis.cArray(), 
           meshDims.cArray(), kSize_);
       
-      hasMinimumImages_ = true;
+      hasMinImages_ = true;
       hasKSq_ = true;
    }
 
+   /*
+   * Compute values of k^2, using existing minImages if possible.
+   */
    template <int D>
    void WaveList<D>::computeKSq() 
    {
       if (hasKSq_) return; // kSq already calculated
 
-      if (!hasMinimumImages_) {
+      if (!hasMinImages_) {
          computeMinimumImages(); // compute both min images and kSq
          return;
       }
@@ -605,13 +622,16 @@ namespace Cuda {
       hasKSq_ = true;
    }
 
+   /*
+   * Compute derivatives of k^2 with respect to unit cell parameters.
+   */
    template <int D>
    void WaveList<D>::computedKSq()
    {
       if (hasdKSq_) return; // dKSq already calculated
 
       // Compute minimum images if needed
-      if (!hasMinimumImages_) {
+      if (!hasMinImages_) {
          computeMinimumImages(); 
       }
 
@@ -652,13 +672,15 @@ namespace Cuda {
    }
 
    /*
-   * Get the array of minimum images on the host by reference.
+   * Get minimum images on the host by reference.
+   *
+   * Gather data from device and re-arrange if necessary.
    */
    template <int D>
    HostDArray< IntVec<D> > const & WaveList<D>::minImages_h() const
    {
-      UTIL_CHECK(hasMinimumImages_);
-      if (!hasMinimumImages_h_) {
+      UTIL_CHECK(hasMinImages_);
+      if (!hasMinImages_h_) {
          HostDArray<int> minImages_temp;
          minImages_temp = minImages_;
          int i, j, k;
@@ -668,7 +690,7 @@ namespace Cuda {
                minImages_h_[i][j] = minImages_temp[i + k];
             }
          }
-         hasMinimumImages_h_ = true;
+         hasMinImages_h_ = true;
       }
       return minImages_h_;
    }
