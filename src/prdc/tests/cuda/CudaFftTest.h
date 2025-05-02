@@ -20,7 +20,9 @@ using namespace Util;
 using namespace Pscf;
 using namespace Pscf::Prdc;
 
-class CudaFftTest : public UnitTest {
+class CudaFftTest : public UnitTest 
+{
+
 
 private:
 

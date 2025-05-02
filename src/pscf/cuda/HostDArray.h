@@ -95,7 +95,7 @@ namespace Pscf {
       * \param other DeviceArray<Data> array on RHS of assignment (input)
       */
       virtual 
-      HostDArray<Data>& operator = (const DeviceArray<Data>& other);
+      HostDArray<Data>& operator = (DeviceArray<Data> const & other);
 
       /**
        * Copy a slice of the data from a larger DeviceArray into this array.
@@ -152,7 +152,7 @@ namespace Pscf {
    */
    template <typename Data>
    HostDArray<Data>& 
-   HostDArray<Data>::operator = (const DeviceArray<Data>& other)
+   HostDArray<Data>::operator = (DeviceArray<Data> const & other)
    {
       // Precondition - RHS array must be allocated
       if (!other.isAllocated()) {

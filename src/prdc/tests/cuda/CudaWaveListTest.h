@@ -18,10 +18,11 @@
 using namespace Util;
 using namespace Pscf;
 using namespace Pscf::Prdc;
-using namespace Pscf::Prdc::Cuda;
 
 class CudaWaveListTest : public UnitTest
 {
+
+//using namespace Pscf::Prdc::Cuda;
 
 private:
 
@@ -95,6 +96,8 @@ public:
    {
       printMethod(TEST_FUNC);
 
+      using namespace Pscf::Prdc::Cuda;
+
       WaveList<1> wavelist1;
       wavelist1.allocate(mesh1, cell1);
       TEST_ASSERT(wavelist1.isAllocated());
@@ -114,6 +117,7 @@ public:
    void testComputeMinimumImages1D()
    {
       printMethod(TEST_FUNC);
+      using namespace Pscf::Prdc::Cuda;
 
       // set up wavelist object
       WaveList<1> wavelist;
@@ -123,7 +127,7 @@ public:
       HostDArray<int> minImages_h;
       HostDArray<cudaReal> ksq_h;
       wavelist.computeMinimumImages(); 
-      minImages_h = wavelist.minImages();
+      minImages_h = wavelist.minImages_d();
       ksq_h = wavelist.kSq();
 
       // compute minimum images (and ksq) on host and compare
@@ -144,6 +148,7 @@ public:
    void testComputeMinimumImages2D()
    {
       printMethod(TEST_FUNC);
+      using namespace Pscf::Prdc::Cuda;
 
       // set up wavelist object
       WaveList<2> wavelist;
@@ -153,7 +158,7 @@ public:
       HostDArray<int> minImages_h;
       HostDArray<cudaReal> ksq_h;
       wavelist.computeMinimumImages(); 
-      minImages_h = wavelist.minImages();
+      minImages_h = wavelist.minImages_d();
       ksq_h = wavelist.kSq();
 
       // compute minimum images (and ksq) on host and compare
@@ -175,6 +180,7 @@ public:
    void testComputeMinimumImages3D()
    {
       printMethod(TEST_FUNC);
+      using namespace Pscf::Prdc::Cuda;
 
       // set up wavelist object
       WaveList<3> wavelist;
@@ -184,7 +190,7 @@ public:
       HostDArray<int> minImages_h;
       HostDArray<cudaReal> ksq_h;
       wavelist.computeMinimumImages(); 
-      minImages_h = wavelist.minImages();
+      minImages_h = wavelist.minImages_d();
       ksq_h = wavelist.kSq();
 
       // compute minimum images (and ksq) on host and compare
@@ -207,6 +213,7 @@ public:
    void testComputeKSq1D()
    {
       printMethod(TEST_FUNC);
+      using namespace Pscf::Prdc::Cuda;
 
       // set up wavelist object
       WaveList<1> wavelist;
@@ -238,6 +245,7 @@ public:
    void testComputeKSq2D()
    {
       printMethod(TEST_FUNC);
+      using namespace Pscf::Prdc::Cuda;
 
       // set up unit cell with no flexible angles
       // (if there are flexible angles, computeKSq never gets to run,
@@ -277,6 +285,7 @@ public:
    void testComputeKSq3D()
    {
       printMethod(TEST_FUNC);
+      using namespace Pscf::Prdc::Cuda;
 
       // set up unit cell with no flexible angles
       // (if there are flexible angles, computeKSq never gets to run,
@@ -316,6 +325,7 @@ public:
    void testComputedKSq1D()
    {
       printMethod(TEST_FUNC);
+      using namespace Pscf::Prdc::Cuda;
 
       // set up wavelist object
       WaveList<1> wavelist;
@@ -345,6 +355,7 @@ public:
    void testComputedKSq2D()
    {
       printMethod(TEST_FUNC);
+      using namespace Pscf::Prdc::Cuda;
 
       // set up wavelist object
       WaveList<2> wavelist;
@@ -379,6 +390,7 @@ public:
    void testComputedKSq3D()
    {
       printMethod(TEST_FUNC);
+      using namespace Pscf::Prdc::Cuda;
 
       // set up wavelist object
       WaveList<3> wavelist;
@@ -409,6 +421,7 @@ public:
          }
       }
    }
+
 };
 
 TEST_BEGIN(CudaWaveListTest)

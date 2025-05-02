@@ -12,7 +12,9 @@
 
 #include <prdc/cuda/resources.h>
 #include <prdc/crystal/hasVariableAngle.h>
+#include <pscf/cuda/HostDArray.h>
 #include <pscf/mesh/MeshIterator.h>
+#include <pscf/math/IntVec.h>
 
 namespace Pscf {
 namespace Prdc {
@@ -406,13 +408,15 @@ namespace Cuda {
             } // kSize
          } // nParams
       }
-   }
+
+   } // anonymous namespace
 
    template <int D>
    WaveList<D>::WaveList()
     : kSize_(0),
       isAllocated_(false),
       hasMinimumImages_(false),
+      hasMinimumImages_h_(false),
       hasKSq_(false),
       hasdKSq_(false),
       unitCellPtr_(nullptr),
@@ -484,6 +488,7 @@ namespace Cuda {
       hasdKSq_ = false;
       if (hasVariableAngle<D>(unitCell().lattice())) {
          hasMinimumImages_ = false;
+         hasMinimumImages_h_ = false;
       }
    }
 
@@ -644,6 +649,28 @@ namespace Cuda {
           implicitInverse_.cArray(), unitCell().nParameter(), kSize_);
       
       hasdKSq_ = true;
+   }
+
+   /*
+   * Get the array of minimum images on the host by reference.
+   */
+   template <int D>
+   HostDArray< IntVec<D> > const & WaveList<D>::minImages_h() const
+   {
+      UTIL_CHECK(hasMinimumImages_);
+      if (!hasMinimumImages_h_) {
+         HostDArray<int> minImages_temp;
+         minImages_temp = minImages_;
+         int i, j, k;
+         for (j = 0; j < D; ++j) {
+            k = D*j;
+            for (i = 0; i < kSize_; ++i) {
+               minImages_h_[i][j] = minImages_temp[i + k];
+            }
+         }
+         hasMinimumImages_h_ = true;
+      }
+      return minImages_h_;
    }
 
 } // Cuda
