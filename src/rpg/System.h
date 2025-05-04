@@ -204,7 +204,7 @@ namespace Rpg {
       *
       * \param filename name of input w-field basis file
       */
-      void readWBasis(const std::string & filename);
+      void readWBasis(std::string const & filename);
 
       /**
       * Read chemical potential fields in real space grid (r-grid) format.
@@ -226,7 +226,7 @@ namespace Rpg {
       *
       * \param filename  name of input w-field basis file
       */
-      void readWRGrid(const std::string & filename);
+      void readWRGrid(std::string const & filename);
 
       /**
       * Set chemical potential fields, in symmetry-adapted basis format.
@@ -515,28 +515,28 @@ namespace Rpg {
       *
       * \param filename name of output file
       */
-      void writeWBasis(const std::string & filename);
+      void writeWBasis(std::string const & filename);
 
       /**
       * Write chemical potential fields in real space grid (r-grid) format.
       *
       * \param filename name of output file
       */
-      void writeWRGrid(const std::string & filename) const;
+      void writeWRGrid(std::string const & filename) const;
 
       /**
       * Write concentrations in symmetry-adapted basis format.
       *
       * \param filename name of output file
       */
-      void writeCBasis(const std::string & filename);
+      void writeCBasis(std::string const & filename);
 
       /**
       * Write concentration fields in real space grid (r-grid) format.
       *
       * \param filename name of output file
       */
-      void writeCRGrid(const std::string & filename) const;
+      void writeCRGrid(std::string const & filename) const;
 
       /**
       * Write c fields for all blocks and solvents in r-grid format.
@@ -548,7 +548,7 @@ namespace Rpg {
       *
       * \param filename name of output file
       */
-      void writeBlockCRGrid(const std::string & filename) const;
+      void writeBlockCRGrid(std::string const & filename) const;
 
       ///@}
       /// \name Propagator Output
@@ -621,7 +621,7 @@ namespace Rpg {
       *
       * \param filename name of output file
       */
-      void writeStars(const std::string & filename) const;
+      void writeStars(std::string const & filename) const;
 
       /**
       * Output information about waves.
@@ -631,7 +631,7 @@ namespace Rpg {
       *
       * \param filename name of output file
       */
-      void writeWaves(const std::string & filename) const;
+      void writeWaves(std::string const & filename) const;
 
       /**
       * Output all elements of the space group.
@@ -654,8 +654,8 @@ namespace Rpg {
       * \param inFileName name of input file
       * \param outFileName name of output file
       */
-      void basisToRGrid(const std::string & inFileName,
-                        const std::string & outFileName);
+      void basisToRGrid(std::string const & inFileName,
+                        std::string const & outFileName);
 
       /**
       * Convert a field from real-space grid to symmetrized basis format.
@@ -670,8 +670,8 @@ namespace Rpg {
       * \param inFileName name of input file
       * \param outFileName name of output file
       */
-      void rGridToBasis(const std::string & inFileName,
-                        const std::string & outFileName);
+      void rGridToBasis(std::string const & inFileName,
+                        std::string const & outFileName);
 
       /**
       * Convert fields from Fourier (k-grid) to real-space (r-grid) format.
@@ -679,8 +679,8 @@ namespace Rpg {
       * \param inFileName name of input file
       * \param outFileName name of output file
       */
-      void kGridToRGrid(const std::string& inFileName,
-                        const std::string& outFileName);
+      void kGridToRGrid(std::string const & inFileName,
+                        std::string const & outFileName);
 
       /**
       * Convert fields from real-space (r-grid) to Fourier (k-grid) format.
@@ -688,8 +688,8 @@ namespace Rpg {
       * \param inFileName name of input file
       * \param outFileName name of output file
       */
-      void rGridToKGrid(const std::string & inFileName,
-                        const std::string & outFileName);
+      void rGridToKGrid(std::string const & inFileName,
+                        std::string const & outFileName);
 
       /**
       * Convert fields from Fourier (k-grid) to symmetrized basis format.
@@ -704,8 +704,8 @@ namespace Rpg {
       * \param inFileName name of input file
       * \param outFileName name of output file
       */
-      void kGridToBasis(const std::string& inFileName,
-                        const std::string& outFileName);
+      void kGridToBasis(std::string const & inFileName,
+                        std::string const & outFileName);
 
       /**
       * Convert fields from symmetrized basis to Fourier (k-grid) format.
@@ -713,8 +713,8 @@ namespace Rpg {
       * \param inFileName name of input file (basis format)
       * \param outFileName name of output file (k-grid format)
       */
-      void basisToKGrid(const std::string & inFileName,
-                        const std::string & outFileName);
+      void basisToKGrid(std::string const & inFileName,
+                        std::string const & outFileName);
 
       /**
       * Compare arrays of fields in basis format, output a report.
@@ -725,8 +725,8 @@ namespace Rpg {
       * \param field1  first array of fields (basis format)
       * \param field2  second array of fields (basis format)
       */
-      void compare(const DArray< DArray<double> > field1,
-                   const DArray< DArray<double> > field2);
+      void compare(DArray< DArray<double> > const & field1,
+                   DArray< DArray<double> > const & field2);
 
       /**
       * Compare two fields in r-grid format, output a report.
@@ -737,8 +737,8 @@ namespace Rpg {
       * \param field1  first array of fields (r-grid format)
       * \param field2  second array of fields (r-grid format)
       */
-      void compare(const DArray< RField<D> > field1,
-                   const DArray< RField<D> > field2);
+      void compare(DArray< RField<D> > const & field1,
+                   DArray< RField<D> > const & field2);
 
       /**
       * Check if r-grid fields have the declared space group symmetry.
@@ -747,7 +747,7 @@ namespace Rpg {
       * \param epsilon error threshold used when testing for symmetry
       * \return true if fields all have symmetry, false otherwise
       */
-      bool checkRGridFieldSymmetry(const std::string & inFileName,
+      bool checkRGridFieldSymmetry(std::string const & inFileName,
                                    double epsilon = 1.0E-8);
 
       /**
@@ -757,8 +757,8 @@ namespace Rpg {
       * \param outFileName  name of file for rescaled output fields
       * \param factor  factor by which to multiply all field elements
       */
-      void scaleFieldsBasis(const std::string & inFileName,
-                            const std::string & outFileName,
+      void scaleFieldsBasis(std::string const & inFileName,
+                            std::string const & & outFileName,
                             double factor);
 
       /**
@@ -768,8 +768,8 @@ namespace Rpg {
       * \param outFileName  name of file for rescaled output fields
       * \param factor  factor by which to multiply all field elements
       */
-      void scaleFieldsRGrid(const std::string & inFileName,
-                            const std::string & outFileName,
+      void scaleFieldsRGrid(std::string const & inFileName,
+                            std::string const & outFileName,
                             double factor) const;
 
       /**
@@ -791,8 +791,8 @@ namespace Rpg {
       * \param d  intended dimensions (d > D)
       * \param newGridDimensions number of grid points in added dimensions
       */
-      void expandRGridDimension(const std::string & inFileName,
-                                const std::string & outFileName,
+      void expandRGridDimension(std::string const & inFileName,
+                                std::string const & outFileName,
                                 int d,
                                 DArray<int> newGridDimensions);
       /**
@@ -808,8 +808,8 @@ namespace Rpg {
       * \param outFileName filename name of output field file
       * \param replicas  the number of replicas in each D direction
       */
-      void replicateUnitCell(const std::string & inFileName,
-                             const std::string & outFileName,
+      void replicateUnitCell(std::string const & inFileName,
+                             std::string const & outFileName,
                              IntVec<D> const & replicas);
 
       ///@}
@@ -1164,7 +1164,7 @@ namespace Rpg {
       *
       * \param filename name of field file
       */
-      void readFieldHeader(std::string filename);
+      void readFieldHeader(std::string const & filename);
 
       /**
       * Read a filename string and echo to log file.

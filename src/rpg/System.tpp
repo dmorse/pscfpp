@@ -262,8 +262,8 @@ namespace Rpg {
       // Read the Domain{ ... } block
       readParamComposite(in, domain_);
       UTIL_CHECK(domain_.mesh().size() > 0);
-      UTIL_CHECK(domain().unitCell().nParameter() > 0);
-      UTIL_CHECK(domain().unitCell().lattice() != UnitCell<D>::Null);
+      UTIL_CHECK(domain_.unitCell().nParameter() > 0);
+      UTIL_CHECK(domain_.unitCell().lattice() != UnitCell<D>::Null);
 
       // Setup the mixture
       mixture_.associate(domain_.mesh(), domain_.fft(),
@@ -285,7 +285,7 @@ namespace Rpg {
       }
 
       // Optionally instantiate a Sweep object (if an iterator exists)
-      if (iteratorPtr_ && !isEnd) {
+      if (hasIterator() && !isEnd) {
          sweepPtr_ =
             sweepFactoryPtr_->readObjectOptional(in, *this, className,
                                                  isEnd);
@@ -430,7 +430,7 @@ namespace Rpg {
             readEcho(in, filename);
             std::ofstream file;
             fileMaster_.openOutputFile(filename, file,
-                                        std::ios_base::app);
+                                       std::ios_base::app);
             writeThermo(file);
             file.close();
          } else
@@ -497,8 +497,9 @@ namespace Rpg {
             in >> blockId;
             in >> directionId;
             Log::file() << Str("polymer ID  ", 21) << polymerId << "\n"
-                      << Str("block ID  ", 21) << blockId << "\n"
-                      << Str("direction ID  ", 21) << directionId << "\n";
+                        << Str("block ID  ", 21) << blockId << "\n"
+                        << Str("direction ID  ", 21) << directionId 
+                        << "\n";
             writeQ(filename, polymerId, blockId, directionId);
          } else
          if (command == "WRITE_Q_ALL") {
@@ -573,9 +574,9 @@ namespace Rpg {
 
             DArray< DArray<double> > Bfield1, Bfield2;
             UnitCell<D> tmpUnitCell;
-            domain().fieldIo().readFieldsBasis(filecompare1, Bfield1,
+            domain_.fieldIo().readFieldsBasis(filecompare1, Bfield1,
                                                tmpUnitCell);
-            domain().fieldIo().readFieldsBasis(filecompare2, Bfield2,
+            domain_.fieldIo().readFieldsBasis(filecompare2, Bfield2,
                                                tmpUnitCell);
             // Note: Bfield1 & Bfield2 are allocated by readFieldsBasis
 
@@ -591,9 +592,9 @@ namespace Rpg {
 
             DArray< RField<D> > Rfield1, Rfield2;
             UnitCell<D> tmpUnitCell;
-            domain().fieldIo().readFieldsRGrid(filecompare1, Rfield1,
+            domain_.fieldIo().readFieldsRGrid(filecompare1, Rfield1,
                                               tmpUnitCell);
-            domain().fieldIo().readFieldsRGrid(filecompare2, Rfield2,
+            domain_.fieldIo().readFieldsRGrid(filecompare2, Rfield2,
                                               tmpUnitCell);
             // Note: Rfield1, Rfield2 will be allocated by readFieldsRGrid
 
@@ -663,10 +664,10 @@ namespace Rpg {
          if (command == "READ_H_BASIS") {
             readEcho(in, filename);
             if (!h_.isAllocatedBasis()) {
-               h_.allocateBasis(domain().basis().nBasis());
+               h_.allocateBasis(domain_.basis().nBasis());
             }
             if (!h_.isAllocatedRGrid()) {
-               h_.allocateRGrid(domain().mesh().dimensions());
+               h_.allocateRGrid(domain_.mesh().dimensions());
             }
             UnitCell<D> tmpUnitCell;
             h_.readBasis(filename, tmpUnitCell);
@@ -674,10 +675,10 @@ namespace Rpg {
          if (command == "READ_H_RGRID") {
             readEcho(in, filename);
             if (!h_.isAllocatedRGrid()) {
-               h_.allocateRGrid(domain().mesh().dimensions());
+               h_.allocateRGrid(domain_.mesh().dimensions());
             }
             if (iterator().isSymmetric() && !h_.isAllocatedBasis()) {
-               mask_.allocateBasis(domain().basis().nBasis());
+               mask_.allocateBasis(domain_.basis().nBasis());
             }
             UnitCell<D> tmpUnitCell;
             h_.readRGrid(filename, tmpUnitCell);
@@ -686,23 +687,23 @@ namespace Rpg {
             readEcho(in, filename);
             UTIL_CHECK(h_.hasData());
             UTIL_CHECK(h_.isSymmetric());
-            domain().fieldIo().writeFieldsBasis(filename, h_.basis(),
-                                                domain().unitCell());
+            domain_.fieldIo().writeFieldsBasis(filename, h_.basis(),
+                                                domain_.unitCell());
          } else
          if (command == "WRITE_H_RGRID") {
             readEcho(in, filename);
             UTIL_CHECK(h_.hasData());
-            domain().fieldIo().writeFieldsRGrid(filename, h_.rgrid(),
-                                                domain().unitCell());
+            domain_.fieldIo().writeFieldsRGrid(filename, h_.rgrid(),
+                                                domain_.unitCell());
          } else
          if (command == "READ_MASK_BASIS") {
             readEcho(in, filename);
-            UTIL_CHECK(domain().basis().isInitialized());
+            UTIL_CHECK(domain_.basis().isInitialized());
             if (!mask_.isAllocatedBasis()) {
-               mask_.allocateBasis(domain().basis().nBasis());
+               mask_.allocateBasis(domain_.basis().nBasis());
             }
             if (!mask_.isAllocatedRGrid()) {
-               mask_.allocateRGrid(domain().mesh().dimensions());
+               mask_.allocateRGrid(domain_.mesh().dimensions());
             }
             UnitCell<D> tmpUnitCell;
             mask_.readBasis(filename, tmpUnitCell);
@@ -710,11 +711,11 @@ namespace Rpg {
          if (command == "READ_MASK_RGRID") {
             readEcho(in, filename);
             if (!mask_.isAllocatedRGrid()) {
-               mask_.allocateRGrid(domain().mesh().dimensions());
+               mask_.allocateRGrid(domain_.mesh().dimensions());
             }
             if (iterator().isSymmetric() && !mask_.isAllocatedBasis()) {
-               UTIL_CHECK(domain().basis().isInitialized());
-               mask_.allocateBasis(domain().basis().nBasis());
+               UTIL_CHECK(domain_.basis().isInitialized());
+               mask_.allocateBasis(domain_.basis().nBasis());
             }
             UnitCell<D> tmpUnitCell;
             mask_.readRGrid(filename, tmpUnitCell);
@@ -723,14 +724,14 @@ namespace Rpg {
             readEcho(in, filename);
             UTIL_CHECK(mask_.hasData());
             UTIL_CHECK(mask_.isSymmetric());
-            domain().fieldIo().writeFieldBasis(filename, mask_.basis(),
-                                               domain().unitCell());
+            domain_.fieldIo().writeFieldBasis(filename, mask_.basis(),
+                                               domain_.unitCell());
          } else
          if (command == "WRITE_MASK_RGRID") {
             readEcho(in, filename);
             UTIL_CHECK(mask_.hasData());
-            domain().fieldIo().writeFieldRGrid(filename, mask_.rgrid(),
-                                               domain().unitCell(),
+            domain_.fieldIo().writeFieldRGrid(filename, mask_.rgrid(),
+                                               domain_.unitCell(),
                                                mask_.isSymmetric());
          } else {
             Log::file() << "Error: Unknown command  "
@@ -758,7 +759,7 @@ namespace Rpg {
    * Read w-field in symmetry adapted basis format.
    */
    template <int D>
-   void System<D>::readWBasis(const std::string & filename)
+   void System<D>::readWBasis(std::string const & filename)
    {
       // Precondition
       UTIL_CHECK(domain_.hasGroup());
@@ -787,7 +788,7 @@ namespace Rpg {
    * Read w-fields in real-space grid (r-grid) format.
    */
    template <int D>
-   void System<D>::readWRGrid(const std::string & filename)
+   void System<D>::readWRGrid(std::string const & filename)
    {
       UTIL_CHECK(isAllocatedGrid_);
 
@@ -838,7 +839,7 @@ namespace Rpg {
       }
 
       // Read c fields into temporary array and set unit cell
-      domain().fieldIo().readFieldsBasis(filename, tmpFieldsBasis_,
+      domain_.fieldIo().readFieldsBasis(filename, tmpFieldsBasis_,
                                          domain_.unitCell());
 
       // Allocate work space array
@@ -966,7 +967,7 @@ namespace Rpg {
       // If w fields are symmetric, convert basis components for c fields
       if (w_.isSymmetric()) {
          UTIL_CHECK(c_.isAllocatedBasis());
-         domain().fieldIo().convertRGridToBasis(c_.rgrid(), c_.basis(),
+         domain_.fieldIo().convertRGridToBasis(c_.rgrid(), c_.basis(),
                                                 false);
       }
 
@@ -1064,9 +1065,9 @@ namespace Rpg {
       UTIL_CHECK(w_.hasData());
       UTIL_CHECK(hasCFields_);
 
-      int nm = mixture().nMonomer();   // number of monomer types
-      int np = mixture().nPolymer();   // number of polymer species
-      int ns = mixture().nSolvent();   // number of solvent species
+      int nm = mixture_.nMonomer();   // number of monomer types
+      int np = mixture_.nPolymer();   // number of polymer species
+      int ns = mixture_.nSolvent();   // number of solvent species
 
       // Initialize all free energy contributions to zero
       fHelmholtz_ = 0.0;
@@ -1135,7 +1136,7 @@ namespace Rpg {
          }
       } else {
          // Use summation over grid points
-         const int meshSize = domain().mesh().size();
+         const int meshSize = domain_.mesh().size();
          for (int i = 0; i < nm; ++i) {
             temp -= Reduce::innerProduct(w_.rgrid(i), c_.rgrid(i));
          }
@@ -1157,7 +1158,7 @@ namespace Rpg {
             }
          } else {
             // Use summation over grid points
-            const int meshSize = domain().mesh().size();
+            const int meshSize = domain_.mesh().size();
             for (int i = 0; i < nm; ++i) {
                fExt_ += Reduce::innerProduct(h_.rgrid(i), c_.rgrid(i));
             }
@@ -1187,7 +1188,7 @@ namespace Rpg {
             }
          }
       } else {
-         const int meshSize = domain().mesh().size();
+         const int meshSize = domain_.mesh().size();
          for (int i = 0; i < nm; ++i) {
             for (int j = i; j < nm; ++j) {
                const double chi = interaction().chi(i,j);
@@ -1372,7 +1373,7 @@ namespace Rpg {
    void System<D>::writeStress(std::ostream& out)
    {
       out << "stress:" << std::endl;
-      for (int i = 0; i < domain().unitCell().nParameter(); ++i) {
+      for (int i = 0; i < domain_.unitCell().nParameter(); ++i) {
          out << Int(i, 5)
              << "  "
              << Dbl(mixture_.stress(i), 18, 11)
@@ -1387,26 +1388,26 @@ namespace Rpg {
    * Write w-fields in symmetry-adapted basis format.
    */
    template <int D>
-   void System<D>::writeWBasis(const std::string & filename)
+   void System<D>::writeWBasis(std::string const & filename)
    {
       UTIL_CHECK(domain_.basis().isInitialized());
       UTIL_CHECK(isAllocatedBasis_);
       UTIL_CHECK(w_.hasData());
       UTIL_CHECK(w_.isSymmetric());
-      domain().fieldIo().writeFieldsBasis(filename, w_.basis(),
-                                          domain().unitCell());
+      domain_.fieldIo().writeFieldsBasis(filename, w_.basis(),
+                                          domain_.unitCell());
    }
 
    /*
    * Write w-fields in real space grid file format.
    */
    template <int D>
-   void System<D>::writeWRGrid(const std::string & filename) const
+   void System<D>::writeWRGrid(std::string const & filename) const
    {
       UTIL_CHECK(isAllocatedGrid_);
       UTIL_CHECK(w_.hasData());
-      domain().fieldIo().writeFieldsRGrid(filename, w_.rgrid(),
-                                          domain().unitCell(),
+      domain_.fieldIo().writeFieldsRGrid(filename, w_.rgrid(),
+                                          domain_.unitCell(),
                                           w_.isSymmetric());
    }
 
@@ -1414,26 +1415,26 @@ namespace Rpg {
    * Write all concentration fields in symmetry-adapted basis format.
    */
    template <int D>
-   void System<D>::writeCBasis(const std::string & filename)
+   void System<D>::writeCBasis(std::string const & filename)
    {
       UTIL_CHECK(domain_.basis().isInitialized());
       UTIL_CHECK(isAllocatedBasis_);
       UTIL_CHECK(hasCFields_);
       UTIL_CHECK(w_.isSymmetric());
-      domain().fieldIo().writeFieldsBasis(filename, c_.basis(),
-                                          domain().unitCell());
+      domain_.fieldIo().writeFieldsBasis(filename, c_.basis(),
+                                          domain_.unitCell());
    }
 
    /*
    * Write all concentration fields in real space (r-grid) format.
    */
    template <int D>
-   void System<D>::writeCRGrid(const std::string & filename) const
+   void System<D>::writeCRGrid(std::string const & filename) const
    {
       UTIL_CHECK(isAllocatedGrid_);
       UTIL_CHECK(hasCFields_);
-      domain().fieldIo().writeFieldsRGrid(filename, c_.rgrid(),
-                                          domain().unitCell(),
+      domain_.fieldIo().writeFieldsRGrid(filename, c_.rgrid(),
+                                          domain_.unitCell(),
                                           w().isSymmetric());
    }
 
@@ -1442,7 +1443,7 @@ namespace Rpg {
    * each block (or solvent) individually rather than for each species.
    */
    template <int D>
-   void System<D>::writeBlockCRGrid(const std::string & filename) const
+   void System<D>::writeBlockCRGrid(std::string const & filename) const
    {
       UTIL_CHECK(isAllocatedGrid_);
       UTIL_CHECK(hasCFields_);
@@ -1459,8 +1460,8 @@ namespace Rpg {
       mixture_.createBlockCRGrid(blockCFields);
 
       // Write block and solvent c-field data to file
-      domain().fieldIo().writeFieldsRGrid(filename, blockCFields,
-                                          domain().unitCell(),
+      domain_.fieldIo().writeFieldsRGrid(filename, blockCFields,
+                                          domain_.unitCell(),
                                           w_.isSymmetric());
    }
 
@@ -1470,7 +1471,7 @@ namespace Rpg {
    * Write the last time slice of the propagator in r-grid format.
    */
    template <int D>
-   void System<D>::writeQSlice(const std::string & filename,
+   void System<D>::writeQSlice(std::string const & filename,
                                int polymerId, int blockId,
                                int directionId, int segmentId)
    const
@@ -1484,9 +1485,9 @@ namespace Rpg {
       UTIL_CHECK(directionId <= 1);
       Propagator<D> const&
           propagator = polymer.propagator(blockId, directionId);
-      domain().fieldIo().writeFieldRGrid(filename,
+      domain_.fieldIo().writeFieldRGrid(filename,
                                          propagator.q(segmentId),
-                                         domain().unitCell(),
+                                         domain_.unitCell(),
                                          w_.isSymmetric());
    }
 
@@ -1494,7 +1495,7 @@ namespace Rpg {
    * Write the last (tail) slice of the propagator in r-grid format.
    */
    template <int D>
-   void System<D>::writeQTail(const std::string & filename,
+   void System<D>::writeQTail(std::string const & filename,
                               int polymerId, int blockId, int directionId)
    const
    {
@@ -1507,8 +1508,8 @@ namespace Rpg {
       UTIL_CHECK(directionId <= 1);
       Propagator<D> const&
           propagator = polymer.propagator(blockId, directionId);
-      domain().fieldIo().writeFieldRGrid(filename, propagator.tail(),
-                                         domain().unitCell(),
+      domain_.fieldIo().writeFieldRGrid(filename, propagator.tail(),
+                                         domain_.unitCell(),
                                          w().isSymmetric());
    }
 
@@ -1516,7 +1517,7 @@ namespace Rpg {
    * Write the propagator for a block and direction.
    */
    template <int D>
-   void System<D>::writeQ(const std::string & filename,
+   void System<D>::writeQ(std::string const & filename,
                           int polymerId, int blockId, int directionId)
    const
    {
@@ -1536,8 +1537,8 @@ namespace Rpg {
       fileMaster_.openOutputFile(filename, file);
 
       // Write header
-      domain().fieldIo().writeFieldHeader(file, 1,
-                                          domain().unitCell(),
+      domain_.fieldIo().writeFieldHeader(file, 1,
+                                          domain_.unitCell(),
                                           w().isSymmetric());
       file << "ngrid" << std::endl
            << "          " << domain_.mesh().dimensions() << std::endl
@@ -1548,8 +1549,8 @@ namespace Rpg {
       bool hasHeader = false;
       for (int i = 0; i < ns; ++i) {
           file << "slice " << i << std::endl;
-          domain().fieldIo().writeFieldRGrid(file, propagator.q(i),
-                                             domain().unitCell(),
+          domain_.fieldIo().writeFieldRGrid(file, propagator.q(i),
+                                             domain_.unitCell(),
                                              hasHeader);
       }
    }
@@ -1587,17 +1588,17 @@ namespace Rpg {
    * Write description of symmetry-adapted stars and basis to file.
    */
    template <int D>
-   void System<D>::writeStars(const std::string & filename) const
+   void System<D>::writeStars(std::string const & filename) const
    {
       UTIL_CHECK(domain_.hasGroup());
       UTIL_CHECK(domain_.basis().isInitialized());
       std::ofstream file;
       fileMaster_.openOutputFile(filename, file);
       bool isSymmetric = true;
-      domain().fieldIo().writeFieldHeader(file, mixture().nMonomer(),
-                                          domain().unitCell(),
+      domain_.fieldIo().writeFieldHeader(file, mixture_.nMonomer(),
+                                          domain_.unitCell(),
                                           isSymmetric);
-      domain().basis().outputStars(file);
+      domain_.basis().outputStars(file);
       file.close();
    }
 
@@ -1605,17 +1606,17 @@ namespace Rpg {
    * Write a list of waves and associated stars to file.
    */
    template <int D>
-   void System<D>::writeWaves(const std::string & filename) const
+   void System<D>::writeWaves(std::string const & filename) const
    {
       UTIL_CHECK(domain_.hasGroup());
       UTIL_CHECK(domain_.basis().isInitialized());
       std::ofstream file;
       fileMaster_.openOutputFile(filename, file);
       bool isSymmetric = true;
-      domain().fieldIo().writeFieldHeader(file, mixture().nMonomer(),
-                                          domain().unitCell(),
+      domain_.fieldIo().writeFieldHeader(file, mixture_.nMonomer(),
+                                          domain_.unitCell(),
                                           isSymmetric);
-      domain().basis().outputWaves(file);
+      domain_.basis().outputWaves(file);
       file.close();
    }
 
@@ -1623,7 +1624,7 @@ namespace Rpg {
    * Write all elements of the space group to a file.
    */
    template <int D>
-   void System<D>::writeGroup(const std::string & filename) const
+   void System<D>::writeGroup(std::string const & filename) const
    {
       UTIL_CHECK(domain_.hasGroup());
       Pscf::Prdc::writeGroup(filename, domain_.group());
@@ -1635,8 +1636,8 @@ namespace Rpg {
    * Convert fields from symmetry-adpated basis to real-space grid format.
    */
    template <int D>
-   void System<D>::basisToRGrid(const std::string & inFileName,
-                                const std::string & outFileName)
+   void System<D>::basisToRGrid(std::string const & inFileName,
+                                std::string const & outFileName)
    {
       // Preconditions
       UTIL_CHECK(isAllocatedGrid_);
@@ -1652,7 +1653,7 @@ namespace Rpg {
 
       // Read, convert and write fields
       UnitCell<D> tmpUnitCell;
-      FieldIo<D> const & fieldIo = domain().fieldIo();
+      FieldIo<D> const & fieldIo = domain_.fieldIo();
       fieldIo.readFieldsBasis(inFileName, tmpFieldsBasis_, tmpUnitCell);
       fieldIo.convertBasisToRGrid(tmpFieldsBasis_, tmpFieldsRGrid_);
       fieldIo.writeFieldsRGrid(outFileName, tmpFieldsRGrid_,
@@ -1663,8 +1664,8 @@ namespace Rpg {
    * Convert fields from real-space grid to symmetry-adapted basis format.
    */
    template <int D>
-   void System<D>::rGridToBasis(const std::string & inFileName,
-                                const std::string & outFileName)
+   void System<D>::rGridToBasis(std::string const & inFileName,
+                                std::string const & outFileName)
    {
       // Preconditions
       UTIL_CHECK(isAllocatedGrid_);
@@ -1680,7 +1681,7 @@ namespace Rpg {
 
       // Read, convert and write fields
       UnitCell<D> tmpUnitCell;
-      FieldIo<D> const & fieldIo = domain().fieldIo();
+      FieldIo<D> const & fieldIo = domain_.fieldIo();
       fieldIo.readFieldsRGrid(inFileName, tmpFieldsRGrid_, tmpUnitCell);
       fieldIo.convertRGridToBasis(tmpFieldsRGrid_, tmpFieldsBasis_);
       fieldIo.writeFieldsBasis(outFileName, tmpFieldsBasis_,
@@ -1691,8 +1692,8 @@ namespace Rpg {
    * Convert fields from Fourier (k-grid) to real-space (r-grid) format.
    */
    template <int D>
-   void System<D>::kGridToRGrid(const std::string & inFileName,
-                                const std::string& outFileName)
+   void System<D>::kGridToRGrid(std::string const & inFileName,
+                                std::string const & outFileName)
    {
       // Preconditions
       UTIL_CHECK(isAllocatedGrid_);
@@ -1703,10 +1704,10 @@ namespace Rpg {
 
       // Read, convert and write fields
       UnitCell<D> tmpUnitCell;
-      FieldIo<D> const & fieldIo = domain().fieldIo();
+      FieldIo<D> const & fieldIo = domain_.fieldIo();
       fieldIo.readFieldsKGrid(inFileName, tmpFieldsKGrid_, tmpUnitCell);
       for (int i = 0; i < mixture_.nMonomer(); ++i) {
-         domain().fft().inverseTransformUnsafe(tmpFieldsKGrid_[i],
+         domain_.fft().inverseTransformUnsafe(tmpFieldsKGrid_[i],
                                                tmpFieldsRGrid_[i]);
       }
       fieldIo.writeFieldsRGrid(outFileName, tmpFieldsRGrid_,
@@ -1717,8 +1718,8 @@ namespace Rpg {
    * Convert fields from real-space (r-grid) to Fourier (k-grid) format.
    */
    template <int D>
-   void System<D>::rGridToKGrid(const std::string & inFileName,
-                                const std::string & outFileName)
+   void System<D>::rGridToKGrid(std::string const & inFileName,
+                                std::string const & outFileName)
    {
       // Preconditions
       UTIL_CHECK(isAllocatedGrid_);
@@ -1729,11 +1730,11 @@ namespace Rpg {
 
       // Read, convert and write fields
       UnitCell<D> tmpUnitCell;
-      FieldIo<D> const & fieldIo = domain().fieldIo();
+      FieldIo<D> const & fieldIo = domain_.fieldIo();
       fieldIo.readFieldsRGrid(inFileName, tmpFieldsRGrid_,
                               tmpUnitCell);
       for (int i = 0; i < mixture_.nMonomer(); ++i) {
-         domain().fft().forwardTransform(tmpFieldsRGrid_[i],
+         domain_.fft().forwardTransform(tmpFieldsRGrid_[i],
                                          tmpFieldsKGrid_[i]);
       }
       fieldIo.writeFieldsKGrid(outFileName, tmpFieldsKGrid_,
@@ -1744,8 +1745,8 @@ namespace Rpg {
    * Convert fields from Fourier (k-grid) to symmetry-adapted basis format.
    */
    template <int D>
-   void System<D>::kGridToBasis(const std::string & inFileName,
-                                const std::string& outFileName)
+   void System<D>::kGridToBasis(std::string const & inFileName,
+                                std::string const & outFileName)
    {
       // Preconditions
       UTIL_CHECK(isAllocatedGrid_);
@@ -1761,7 +1762,7 @@ namespace Rpg {
 
       // Read, convert and write fields
       UnitCell<D> tmpUnitCell;
-      FieldIo<D> const & fieldIo = domain().fieldIo();
+      FieldIo<D> const & fieldIo = domain_.fieldIo();
       fieldIo.readFieldsKGrid(inFileName, tmpFieldsKGrid_, tmpUnitCell);
       fieldIo.convertKGridToBasis(tmpFieldsKGrid_, tmpFieldsBasis_);
       fieldIo.writeFieldsBasis(outFileName, tmpFieldsBasis_,
@@ -1772,8 +1773,8 @@ namespace Rpg {
    * Convert fields from symmetry-adapted basis to Fourier (k-grid) format.
    */
    template <int D>
-   void System<D>::basisToKGrid(const std::string & inFileName,
-                                const std::string & outFileName)
+   void System<D>::basisToKGrid(std::string const & inFileName,
+                                std::string const & outFileName)
    {
       // Preconditions
       UTIL_CHECK(isAllocatedGrid_);
@@ -1789,7 +1790,7 @@ namespace Rpg {
 
       // Read, convert and write fields
       UnitCell<D> tmpUnitCell;
-      FieldIo<D> const & fieldIo = domain().fieldIo();
+      FieldIo<D> const & fieldIo = domain_.fieldIo();
       fieldIo.readFieldsBasis(inFileName, tmpFieldsBasis_, tmpUnitCell);
       fieldIo.convertBasisToKGrid(tmpFieldsBasis_, tmpFieldsKGrid_);
       fieldIo.writeFieldsKGrid(outFileName, tmpFieldsKGrid_,
@@ -1823,7 +1824,7 @@ namespace Rpg {
                                         tmpFieldsRGrid_, tmpUnitCell);
 
       // Check symmetry for all fields
-      for (int i = 0; i < mixture().nMonomer(); ++i) {
+      for (int i = 0; i < mixture_.nMonomer(); ++i) {
          bool symmetric;
          symmetric = domain_.fieldIo().hasSymmetry(tmpFieldsRGrid_[i],
                                                    epsilon);
@@ -1858,14 +1859,14 @@ namespace Rpg {
       }
 
       UnitCell<D> tmpUnitCell;
-      FieldIo<D> const & fieldIo = domain().fieldIo();
+      FieldIo<D> const & fieldIo = domain_.fieldIo();
       fieldIo.readFieldsBasis(inFileName, tmpFieldsBasis_, tmpUnitCell);
       fieldIo.scaleFieldsBasis(tmpFieldsBasis_, factor);
       fieldIo.writeFieldsBasis(outFileName, tmpFieldsBasis_, tmpUnitCell);
    }
 
    /*
-   * Rescale a field by a constant, write rescaled field to a file.
+   * Rescale fields by a constant factor, write rescaled field to a file.
    */
    template <int D>
    void System<D>::scaleFieldsRGrid(std::string const & inFileName,
@@ -1875,7 +1876,7 @@ namespace Rpg {
       UTIL_CHECK(isAllocatedGrid_);
 
       UnitCell<D> tmpUnitCell;
-      FieldIo<D> const & fieldIo = domain().fieldIo();
+      FieldIo<D> const & fieldIo = domain_.fieldIo();
       fieldIo.readFieldsRGrid(inFileName, tmpFieldsRGrid_,
                                 tmpUnitCell);
       fieldIo.scaleFieldsRGrid(tmpFieldsRGrid_, factor);
@@ -1898,12 +1899,12 @@ namespace Rpg {
 
       // Read fields
       UnitCell<D> tmpUnitCell;
-      domain().fieldIo().readFieldsRGrid(inFileName,
+      domain_.fieldIo().readFieldsRGrid(inFileName,
                                          tmpFieldsRGrid_,
                                          tmpUnitCell);
 
       // Expand Fields
-      domain().fieldIo().expandRGridDimension(outFileName,
+      domain_.fieldIo().expandRGridDimension(outFileName,
                                               tmpFieldsRGrid_,
                                               tmpUnitCell,
                                               d, newGridDimensions);
@@ -1921,11 +1922,11 @@ namespace Rpg {
 
       // Read fields
       UnitCell<D> tmpUnitCell;
-      domain().fieldIo().readFieldsRGrid(inFileName, tmpFieldsRGrid_,
+      domain_.fieldIo().readFieldsRGrid(inFileName, tmpFieldsRGrid_,
                                          tmpUnitCell);
 
       // Replicate fields
-      domain().fieldIo().replicateUnitCell(outFileName,
+      domain_.fieldIo().replicateUnitCell(outFileName,
                                            tmpFieldsRGrid_,
                                            tmpUnitCell,
                                            replicas);
@@ -1937,8 +1938,8 @@ namespace Rpg {
    * Compare two fields in basis format, write report to Log file.
    */
    template <int D>
-   void System<D>::compare(const DArray< DArray<double> > field1,
-                           const DArray< DArray<double> > field2)
+   void System<D>::compare(DArray< DArray<double> > const & field1,
+                           DArray< DArray<double> > const & field2)
    {
       UTIL_CHECK(domain_.hasGroup());
 
@@ -1957,8 +1958,8 @@ namespace Rpg {
    * Compare two fields in r-grid format, output report to Log file.
    */
    template <int D>
-   void System<D>::compare(const DArray< RField<D> > field1,
-                           const DArray< RField<D> > field2)
+   void System<D>::compare(DArray< RField<D> > const & field1,
+                           DArray< RField<D> > const & field2)
    {
       RFieldComparison<D> comparison;
       comparison.compare(field1, field2);
@@ -2024,7 +2025,7 @@ namespace Rpg {
       UTIL_CHECK(domain_.mesh().size() > 0);
       UTIL_CHECK(domain_.hasGroup());
       UTIL_CHECK(domain_.basis().isInitialized());
-      const int nBasis = domain().basis().nBasis();
+      const int nBasis = domain_.basis().nBasis();
       UTIL_CHECK(nBasis > 0);
       UTIL_CHECK(isAllocatedGrid_);
       UTIL_CHECK(!isAllocatedBasis_);
@@ -2044,7 +2045,7 @@ namespace Rpg {
    * Peek at field file header, initialize unit cell parameters and basis.
    */
    template <int D>
-   void System<D>::readFieldHeader(std::string filename)
+   void System<D>::readFieldHeader(std::string const & filename)
    {
       UTIL_CHECK(hasMixture_);
       UTIL_CHECK(mixture_.nMonomer() > 0);
@@ -2063,13 +2064,13 @@ namespace Rpg {
       file.close();
 
       // Postconditions
-      UTIL_CHECK(mixture().nMonomer() == nMonomer);
-      UTIL_CHECK(domain().unitCell().nParameter() > 0);
-      UTIL_CHECK(domain().unitCell().lattice() != UnitCell<D>::Null);
-      UTIL_CHECK(domain().unitCell().isInitialized());
+      UTIL_CHECK(mixture_.nMonomer() == nMonomer);
+      UTIL_CHECK(domain_.unitCell().nParameter() > 0);
+      UTIL_CHECK(domain_.unitCell().lattice() != UnitCell<D>::Null);
+      UTIL_CHECK(domain_.unitCell().isInitialized());
       if (domain_.hasGroup()) {
-         UTIL_CHECK(domain().basis().isInitialized());
-         UTIL_CHECK(domain().basis().nBasis() > 0);
+         UTIL_CHECK(domain_.basis().isInitialized());
+         UTIL_CHECK(domain_.basis().nBasis() > 0);
       }
    }
 

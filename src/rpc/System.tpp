@@ -79,9 +79,9 @@ namespace Rpc {
    {
       setClassName("System");
       domain_.setFileMaster(fileMaster_);
-      w_.setFieldIo(domain().fieldIo());
-      h_.setFieldIo(domain().fieldIo());
-      mask_.setFieldIo(domain().fieldIo());
+      w_.setFieldIo(domain_.fieldIo());
+      h_.setFieldIo(domain_.fieldIo());
+      mask_.setFieldIo(domain_.fieldIo());
 
       interactionPtr_ = new Interaction();
       iteratorFactoryPtr_ = new IteratorFactory<D>(*this);
@@ -183,7 +183,7 @@ namespace Rpc {
          Util::ParamComponent::setEcho(true);
       }
 
-      // Check existence and consistency of -d option
+      // Check -d flag
       if (dFlag) {
          UTIL_CHECK(D == dArg);
       } else {
@@ -228,7 +228,7 @@ namespace Rpc {
    template <int D>
    void System<D>::readParameters(std::istream& in)
    {
-      // Optionally read the polymer model enum value, set global value
+      // Optionally read polymerModel_ enum value, set the global value
       if (!PolymerModel::isLocked()) {
          polymerModel_ = PolymerModel::Thread;
          readOptional(in, "polymerModel", polymerModel_);
@@ -239,7 +239,7 @@ namespace Rpc {
 
       // Check number of times the global polymer model has been set.
       // Retain this value so we can check at the end of this function
-      // that it wasn't set again within the function.
+      // that it was not set again within the function.
 
       int nSetPolymerModel = PolymerModel::nSet();
 
@@ -247,9 +247,9 @@ namespace Rpc {
       readParamComposite(in, mixture_);
       hasMixture_ = true;
 
-      int nm = mixture().nMonomer();
-      int np = mixture().nPolymer();
-      int ns = mixture().nSolvent();
+      int nm = mixture_.nMonomer();
+      int np = mixture_.nPolymer();
+      int ns = mixture_.nSolvent();
       UTIL_CHECK(nm > 0);
       UTIL_CHECK(np >= 0);
       UTIL_CHECK(ns >= 0);
@@ -261,15 +261,15 @@ namespace Rpc {
 
       // Read the Domain{ ... } block
       readParamComposite(in, domain_);
-      UTIL_CHECK(domain().mesh().size() > 0);
-      UTIL_CHECK(domain().unitCell().nParameter() > 0);
-      UTIL_CHECK(domain().unitCell().lattice() != UnitCell<D>::Null);
+      UTIL_CHECK(domain_.mesh().size() > 0);
+      UTIL_CHECK(domain_.unitCell().nParameter() > 0);
+      UTIL_CHECK(domain_.unitCell().lattice() != UnitCell<D>::Null);
 
-      // Setup  the mixture
-      mixture_.associate(domain().mesh(), domain().fft(),
-                         domain().unitCell(), domain_.waveList());
+      // Setup the mixture
+      mixture_.associate(domain_.mesh(), domain_.fft(),
+                         domain_.unitCell(), domain_.waveList());
       mixture_.allocate();
-      mixture_.clearUnitCellData();
+      // mixture_.clearUnitCellData();
 
       // Allocate memory for r-grid w and c fields
       allocateFieldsGrid();
@@ -285,7 +285,7 @@ namespace Rpc {
       }
 
       // Optionally instantiate a Sweep object (if an iterator exists)
-      if (iteratorPtr_ && !isEnd) {
+      if (hasIterator() && !isEnd) {
          sweepPtr_ =
             sweepFactoryPtr_->readObjectOptional(in, *this, className,
                                                  isEnd);
@@ -304,7 +304,7 @@ namespace Rpc {
          }
       }
 
-      // Check that polymer model was never reset after initialization
+      // Check that the polymer model was not reset after initialization
       UTIL_CHECK(PolymerModel::nSet() == nSetPolymerModel);
    }
 
@@ -471,7 +471,8 @@ namespace Rpc {
             in >> segmentId;
             Log::file() << Str("polymer ID  ", 21) << polymerId << "\n"
                         << Str("block ID  ", 21) << blockId << "\n"
-                        << Str("direction ID  ", 21) << directionId << "\n"
+                        << Str("direction ID  ", 21) << directionId
+                        << "\n"
                         << Str("segment ID  ", 21) << segmentId
                         << std::endl;
             writeQSlice(filename, polymerId, blockId, directionId,
@@ -573,9 +574,9 @@ namespace Rpc {
 
             DArray< DArray<double> > Bfield1, Bfield2;
             UnitCell<D> tmpUnitCell;
-            domain().fieldIo().readFieldsBasis(filecompare1, Bfield1,
+            domain_.fieldIo().readFieldsBasis(filecompare1, Bfield1,
                                                tmpUnitCell);
-            domain().fieldIo().readFieldsBasis(filecompare2, Bfield2,
+            domain_.fieldIo().readFieldsBasis(filecompare2, Bfield2,
                                                tmpUnitCell);
             // Note: Bfield1 & Bfield2 are allocated by readFieldsBasis
 
@@ -591,9 +592,9 @@ namespace Rpc {
 
             DArray< RField<D> > Rfield1, Rfield2;
             UnitCell<D> tmpUnitCell;
-            domain().fieldIo().readFieldsRGrid(filecompare1, Rfield1,
+            domain_.fieldIo().readFieldsRGrid(filecompare1, Rfield1,
                                               tmpUnitCell);
-            domain().fieldIo().readFieldsRGrid(filecompare2, Rfield2,
+            domain_.fieldIo().readFieldsRGrid(filecompare2, Rfield2,
                                               tmpUnitCell);
             // Note: Rfield1, Rfield2 will be allocated by readFieldsRGrid
 
@@ -663,10 +664,10 @@ namespace Rpc {
          if (command == "READ_H_BASIS") {
             readEcho(in, filename);
             if (!h_.isAllocatedBasis()) {
-               h_.allocateBasis(domain().basis().nBasis());
+               h_.allocateBasis(domain_.basis().nBasis());
             }
             if (!h_.isAllocatedRGrid()) {
-               h_.allocateRGrid(domain().mesh().dimensions());
+               h_.allocateRGrid(domain_.mesh().dimensions());
             }
             UnitCell<D> tmpUnitCell;
             h_.readBasis(filename, tmpUnitCell);
@@ -674,10 +675,10 @@ namespace Rpc {
          if (command == "READ_H_RGRID") {
             readEcho(in, filename);
             if (!h_.isAllocatedRGrid()) {
-               h_.allocateRGrid(domain().mesh().dimensions());
+               h_.allocateRGrid(domain_.mesh().dimensions());
             }
             if (iterator().isSymmetric() && !h_.isAllocatedBasis()) {
-               mask_.allocateBasis(domain().basis().nBasis());
+               mask_.allocateBasis(domain_.basis().nBasis());
             }
             UnitCell<D> tmpUnitCell;
             h_.readRGrid(filename, tmpUnitCell);
@@ -686,23 +687,23 @@ namespace Rpc {
             readEcho(in, filename);
             UTIL_CHECK(h_.hasData());
             UTIL_CHECK(h_.isSymmetric());
-            domain().fieldIo().writeFieldsBasis(filename, h_.basis(),
-                                                domain().unitCell());
+            domain_.fieldIo().writeFieldsBasis(filename, h_.basis(),
+                                                domain_.unitCell());
          } else
          if (command == "WRITE_H_RGRID") {
             readEcho(in, filename);
             UTIL_CHECK(h_.hasData());
-            domain().fieldIo().writeFieldsRGrid(filename, h_.rgrid(),
-                                                domain().unitCell());
+            domain_.fieldIo().writeFieldsRGrid(filename, h_.rgrid(),
+                                                domain_.unitCell());
          } else
          if (command == "READ_MASK_BASIS") {
             readEcho(in, filename);
-            UTIL_CHECK(domain().basis().isInitialized());
+            UTIL_CHECK(domain_.basis().isInitialized());
             if (!mask_.isAllocatedBasis()) {
-               mask_.allocateBasis(domain().basis().nBasis());
+               mask_.allocateBasis(domain_.basis().nBasis());
             }
             if (!mask_.isAllocatedRGrid()) {
-               mask_.allocateRGrid(domain().mesh().dimensions());
+               mask_.allocateRGrid(domain_.mesh().dimensions());
             }
             UnitCell<D> tmpUnitCell;
             mask_.readBasis(filename, tmpUnitCell);
@@ -710,11 +711,11 @@ namespace Rpc {
          if (command == "READ_MASK_RGRID") {
             readEcho(in, filename);
             if (!mask_.isAllocatedRGrid()) {
-               mask_.allocateRGrid(domain().mesh().dimensions());
+               mask_.allocateRGrid(domain_.mesh().dimensions());
             }
             if (iterator().isSymmetric() && !mask_.isAllocatedBasis()) {
-               UTIL_CHECK(domain().basis().isInitialized());
-               mask_.allocateBasis(domain().basis().nBasis());
+               UTIL_CHECK(domain_.basis().isInitialized());
+               mask_.allocateBasis(domain_.basis().nBasis());
             }
             UnitCell<D> tmpUnitCell;
             mask_.readRGrid(filename, tmpUnitCell);
@@ -723,14 +724,14 @@ namespace Rpc {
             readEcho(in, filename);
             UTIL_CHECK(mask_.hasData());
             UTIL_CHECK(mask_.isSymmetric());
-            domain().fieldIo().writeFieldBasis(filename, mask_.basis(),
-                                               domain().unitCell());
+            domain_.fieldIo().writeFieldBasis(filename, mask_.basis(),
+                                               domain_.unitCell());
          } else
          if (command == "WRITE_MASK_RGRID") {
             readEcho(in, filename);
             UTIL_CHECK(mask_.hasData());
-            domain().fieldIo().writeFieldRGrid(filename, mask_.rgrid(),
-                                               domain().unitCell(),
+            domain_.fieldIo().writeFieldRGrid(filename, mask_.rgrid(),
+                                               domain_.unitCell(),
                                                mask_.isSymmetric());
          } else {
             Log::file() << "Error: Unknown command  "
@@ -761,14 +762,14 @@ namespace Rpc {
    void System<D>::readWBasis(std::string const & filename)
    {
       // Precondition
-      UTIL_CHECK(domain().hasGroup());
+      UTIL_CHECK(domain_.hasGroup());
 
-      if (!domain().unitCell().isInitialized()) {
+      if (!domain_.unitCell().isInitialized()) {
          readFieldHeader(filename);
       }
-      UTIL_CHECK(domain().unitCell().isInitialized());
-      UTIL_CHECK(domain().basis().isInitialized());
-      UTIL_CHECK(domain().basis().nBasis() > 0);
+      UTIL_CHECK(domain_.unitCell().isInitialized());
+      UTIL_CHECK(domain_.basis().isInitialized());
+      UTIL_CHECK(domain_.basis().nBasis() > 0);
       if (!isAllocatedBasis_) {
          allocateFieldsBasis();
       }
@@ -792,13 +793,13 @@ namespace Rpc {
       UTIL_CHECK(isAllocatedGrid_);
 
       // If necessary, peek at header to initialize unit cell
-      if (!domain().unitCell().isInitialized()) {
+      if (!domain_.unitCell().isInitialized()) {
          readFieldHeader(filename);
       }
-      UTIL_CHECK(domain().unitCell().isInitialized());
-      if (domain().hasGroup() && !isAllocatedBasis_) {
-         UTIL_CHECK(domain().basis().isInitialized());
-         UTIL_CHECK(domain().basis().nBasis() > 0);
+      UTIL_CHECK(domain_.unitCell().isInitialized());
+      if (domain_.hasGroup() && !isAllocatedBasis_) {
+         UTIL_CHECK(domain_.basis().isInitialized());
+         UTIL_CHECK(domain_.basis().nBasis() > 0);
          allocateFieldsBasis();
       }
 
@@ -822,23 +823,23 @@ namespace Rpc {
    {
       // Preconditions
       UTIL_CHECK(hasMixture_);
-      const int nm = mixture().nMonomer();
+      const int nm = mixture_.nMonomer();
       UTIL_CHECK(nm > 0);
       UTIL_CHECK(isAllocatedGrid_);
-      UTIL_CHECK(domain().hasGroup());
-      if (!domain().unitCell().isInitialized()) {
+      UTIL_CHECK(domain_.hasGroup());
+      if (!domain_.unitCell().isInitialized()) {
          readFieldHeader(filename);
       }
-      UTIL_CHECK(domain().unitCell().isInitialized());
-      UTIL_CHECK(domain().basis().isInitialized());
-      const int nb = domain().basis().nBasis();
+      UTIL_CHECK(domain_.unitCell().isInitialized());
+      UTIL_CHECK(domain_.basis().isInitialized());
+      const int nb = domain_.basis().nBasis();
       UTIL_CHECK(nb > 0);
       if (!isAllocatedBasis_) {
          allocateFieldsBasis();
       }
 
       // Read c fields into temporary array and set unit cell
-      domain().fieldIo().readFieldsBasis(filename, tmpFieldsBasis_,
+      domain_.fieldIo().readFieldsBasis(filename, tmpFieldsBasis_,
                                          domain_.unitCell());
 
       // Allocate work space array
@@ -876,8 +877,8 @@ namespace Rpc {
    template <int D>
    void System<D>::setWBasis(DArray< DArray<double> > const & fields)
    {
-      UTIL_CHECK(domain().hasGroup());
-      UTIL_CHECK(domain().basis().isInitialized());
+      UTIL_CHECK(domain_.hasGroup());
+      UTIL_CHECK(domain_.basis().isInitialized());
       UTIL_CHECK(isAllocatedGrid_);
       UTIL_CHECK(isAllocatedBasis_);
       w_.setBasis(fields);
@@ -908,7 +909,7 @@ namespace Rpc {
       domain_.setUnitCell(unitCell);
       // Note: Domain::setUnitCell clears the WaveList unit cell data
       mixture_.clearUnitCellData();
-      if (domain().hasGroup() && !isAllocatedBasis_) {
+      if (domain_.hasGroup() && !isAllocatedBasis_) {
          UTIL_CHECK(domain_.basis().isInitialized());
          allocateFieldsBasis();
       }
@@ -925,7 +926,7 @@ namespace Rpc {
       domain_.setUnitCell(lattice, parameters);
       // Note: Domain::setUnitCell clears WaveList unit cell data
       mixture_.clearUnitCellData();
-      if (domain().hasGroup() && !isAllocatedBasis_) {
+      if (domain_.hasGroup() && !isAllocatedBasis_) {
          UTIL_CHECK(domain_.basis().isInitialized());
          allocateFieldsBasis();
       }
@@ -940,7 +941,7 @@ namespace Rpc {
       domain_.setUnitCell(parameters);
       // Note: Domain::setUnitCell clears WaveList unit cell data
       mixture_.clearUnitCellData();
-      if (domain().hasGroup() && !isAllocatedBasis_) {
+      if (domain_.hasGroup() && !isAllocatedBasis_) {
          UTIL_CHECK(domain_.basis().isInitialized());
          allocateFieldsBasis();
       }
@@ -966,7 +967,7 @@ namespace Rpc {
       // If w fields are symmetric, compute basis components for c-fields
       if (w_.isSymmetric()) {
          UTIL_CHECK(c_.isAllocatedBasis());
-         domain().fieldIo().convertRGridToBasis(c_.rgrid(), c_.basis(),
+         domain_.fieldIo().convertRGridToBasis(c_.rgrid(), c_.basis(),
                                                 false);
       }
 
@@ -1064,9 +1065,9 @@ namespace Rpc {
       UTIL_CHECK(w_.hasData());
       UTIL_CHECK(hasCFields_);
 
-      int nm = mixture().nMonomer();   // number of monomer types
-      int np = mixture().nPolymer();   // number of polymer species
-      int ns = mixture().nSolvent();   // number of solvent species
+      int nm = mixture_.nMonomer();   // number of monomer types
+      int np = mixture_.nPolymer();   // number of polymer species
+      int ns = mixture_.nSolvent();   // number of solvent species
 
       // Initialize all free energy contributions to zero
       fHelmholtz_ = 0.0;
@@ -1135,7 +1136,7 @@ namespace Rpc {
          }
       } else {
          // Use summation over grid points
-         const int meshSize = domain().mesh().size();
+         const int meshSize = domain_.mesh().size();
          for (int i = 0; i < nm; ++i) {
             for (int k = 0; k < meshSize; ++k) {
                temp -= w_.rgrid(i)[k] * c_.rgrid(i)[k];
@@ -1159,7 +1160,7 @@ namespace Rpc {
             }
          } else {
             // Use summation over grid points
-            const int meshSize = domain().mesh().size();
+            const int meshSize = domain_.mesh().size();
             for (int i = 0; i < nm; ++i) {
                for (int k = 0; k < meshSize; ++k) {
                   fExt_ += h_.rgrid(i)[k] * c_.rgrid(i)[k];
@@ -1191,7 +1192,7 @@ namespace Rpc {
             }
          }
       } else {
-         const int meshSize = domain().mesh().size();
+         const int meshSize = domain_.mesh().size();
          for (int i = 0; i < nm; ++i) {
             for (int j = i; j < nm; ++j) {
                const double chi = interaction().chi(i,j);
@@ -1295,7 +1296,7 @@ namespace Rpc {
       mixture_.writeParam(out);
       interaction().writeParam(out);
       domain_.writeParam(out);
-      if (iteratorPtr_) {
+      if (hasIterator()) {
          iterator().writeParam(out);
       }
       out << "}" << std::endl;
@@ -1322,8 +1323,8 @@ namespace Rpc {
       }
       out << std::endl;
 
-      int np = mixture().nPolymer();
-      int ns = mixture().nSolvent();
+      int np = mixture_.nPolymer();
+      int ns = mixture_.nSolvent();
 
       if (np > 0) {
          out << "polymers:" << std::endl;
@@ -1356,10 +1357,10 @@ namespace Rpc {
       }
 
       out << "cellParams:" << std::endl;
-      for (int i = 0; i < domain().unitCell().nParameter(); ++i) {
+      for (int i = 0; i < domain_.unitCell().nParameter(); ++i) {
          out << Int(i, 5)
              << "  "
-             << Dbl(domain().unitCell().parameter(i), 18, 11)
+             << Dbl(domain_.unitCell().parameter(i), 18, 11)
              << std::endl;
       }
       out << std::endl;
@@ -1372,7 +1373,7 @@ namespace Rpc {
    void System<D>::writeStress(std::ostream& out)
    {
       out << "stress:" << std::endl;
-      for (int i = 0; i < domain().unitCell().nParameter(); ++i) {
+      for (int i = 0; i < domain_.unitCell().nParameter(); ++i) {
          out << Int(i, 5)
              << "  "
              << Dbl(mixture_.stress(i), 18, 11)
@@ -1394,19 +1395,19 @@ namespace Rpc {
       UTIL_CHECK(w_.hasData());
       UTIL_CHECK(w_.isSymmetric());
       domain_.fieldIo().writeFieldsBasis(filename, w_.basis(),
-                                         domain().unitCell());
+                                         domain_.unitCell());
    }
 
    /*
    * Write w-fields in real space grid file format.
    */
    template <int D>
-   void System<D>::writeWRGrid(const std::string & filename) const
+   void System<D>::writeWRGrid(std::string const & filename) const
    {
       UTIL_CHECK(isAllocatedGrid_);
       UTIL_CHECK(w_.hasData());
-      domain().fieldIo().writeFieldsRGrid(filename, w_.rgrid(),
-                                          domain().unitCell(),
+      domain_.fieldIo().writeFieldsRGrid(filename, w_.rgrid(),
+                                          domain_.unitCell(),
                                           w_.isSymmetric());
    }
 
@@ -1414,26 +1415,26 @@ namespace Rpc {
    * Write concentration fields in symmetry-adapted basis format.
    */
    template <int D>
-   void System<D>::writeCBasis(const std::string & filename) const
+   void System<D>::writeCBasis(std::string const & filename) const
    {
       UTIL_CHECK(domain_.basis().isInitialized());
       UTIL_CHECK(isAllocatedBasis_);
       UTIL_CHECK(hasCFields_);
       UTIL_CHECK(w_.isSymmetric());
-      domain().fieldIo().writeFieldsBasis(filename, c_.basis(),
-                                          domain().unitCell());
+      domain_.fieldIo().writeFieldsBasis(filename, c_.basis(),
+                                          domain_.unitCell());
    }
 
    /*
    * Write concentration fields in real space (r-grid) format.
    */
    template <int D>
-   void System<D>::writeCRGrid(const std::string & filename) const
+   void System<D>::writeCRGrid(std::string const & filename) const
    {
       UTIL_CHECK(isAllocatedGrid_);
       UTIL_CHECK(hasCFields_);
-      domain().fieldIo().writeFieldsRGrid(filename, c_.rgrid(),
-                                          domain().unitCell(),
+      domain_.fieldIo().writeFieldsRGrid(filename, c_.rgrid(),
+                                          domain_.unitCell(),
                                           w_.isSymmetric());
    }
 
@@ -1442,7 +1443,7 @@ namespace Rpc {
    * each block and solvent species, rather than for each monomer type.
    */
    template <int D>
-   void System<D>::writeBlockCRGrid(const std::string & filename) const
+   void System<D>::writeBlockCRGrid(std::string const & filename) const
    {
       UTIL_CHECK(isAllocatedGrid_);
       UTIL_CHECK(hasCFields_);
@@ -1459,8 +1460,8 @@ namespace Rpc {
       mixture_.createBlockCRGrid(blockCFields);
 
       // Write block and solvent c-field data to file
-      domain().fieldIo().writeFieldsRGrid(filename, blockCFields,
-                                          domain().unitCell(),
+      domain_.fieldIo().writeFieldsRGrid(filename, blockCFields,
+                                          domain_.unitCell(),
                                           w_.isSymmetric());
    }
 
@@ -1470,13 +1471,13 @@ namespace Rpc {
    * Write the last time slice of the propagator in r-grid format.
    */
    template <int D>
-   void System<D>::writeQSlice(const std::string & filename,
+   void System<D>::writeQSlice(std::string const & filename,
                                int polymerId, int blockId,
                                int directionId, int segmentId)
    const
    {
       UTIL_CHECK(polymerId >= 0);
-      UTIL_CHECK(polymerId < mixture().nPolymer());
+      UTIL_CHECK(polymerId < mixture_.nPolymer());
       Polymer<D> const& polymer = mixture_.polymer(polymerId);
       UTIL_CHECK(blockId >= 0);
       UTIL_CHECK(blockId < polymer.nBlock());
@@ -1485,8 +1486,8 @@ namespace Rpc {
       Propagator<D> const &
            propagator = polymer.propagator(blockId, directionId);
       RField<D> const & field = propagator.q(segmentId);
-      domain().fieldIo().writeFieldRGrid(filename, field,
-                                         domain().unitCell(),
+      domain_.fieldIo().writeFieldRGrid(filename, field,
+                                         domain_.unitCell(),
                                          w_.isSymmetric());
    }
 
@@ -1494,12 +1495,12 @@ namespace Rpc {
    * Write the last (tail) slice of the propagator in r-grid format.
    */
    template <int D>
-   void System<D>::writeQTail(const std::string & filename,
+   void System<D>::writeQTail(std::string const & filename,
                               int polymerId, int blockId, int directionId)
    const
    {
       UTIL_CHECK(polymerId >= 0);
-      UTIL_CHECK(polymerId < mixture().nPolymer());
+      UTIL_CHECK(polymerId < mixture_.nPolymer());
       Polymer<D> const& polymer = mixture_.polymer(polymerId);
       UTIL_CHECK(blockId >= 0);
       UTIL_CHECK(blockId < polymer.nBlock());
@@ -1507,8 +1508,8 @@ namespace Rpc {
       UTIL_CHECK(directionId <= 1);
       RField<D> const&
             field = polymer.propagator(blockId, directionId).tail();
-      domain().fieldIo().writeFieldRGrid(filename, field,
-                                         domain().unitCell(),
+      domain_.fieldIo().writeFieldRGrid(filename, field,
+                                         domain_.unitCell(),
                                          w_.isSymmetric());
    }
 
@@ -1516,12 +1517,12 @@ namespace Rpc {
    * Write the propagator for a block and direction.
    */
    template <int D>
-   void System<D>::writeQ(const std::string & filename,
+   void System<D>::writeQ(std::string const & filename,
                           int polymerId, int blockId, int directionId)
    const
    {
       UTIL_CHECK(polymerId >= 0);
-      UTIL_CHECK(polymerId < mixture().nPolymer());
+      UTIL_CHECK(polymerId < mixture_.nPolymer());
       Polymer<D> const& polymer = mixture_.polymer(polymerId);
       UTIL_CHECK(blockId >= 0);
       UTIL_CHECK(blockId < polymer.nBlock());
@@ -1536,10 +1537,10 @@ namespace Rpc {
       fileMaster_.openOutputFile(filename, file);
 
       // Write header
-      domain().fieldIo().writeFieldHeader(file, 1, domain().unitCell(),
+      domain_.fieldIo().writeFieldHeader(file, 1, domain_.unitCell(),
                                           w_.isSymmetric());
       file << "mesh " << std::endl
-           << "          " << domain().mesh().dimensions() << std::endl
+           << "          " << domain_.mesh().dimensions() << std::endl
            << "nslice"    << std::endl
            << "          " << ns << std::endl;
 
@@ -1547,8 +1548,8 @@ namespace Rpc {
       bool hasHeader = false;
       for (int i = 0; i < ns; ++i) {
           file << "slice " << i << std::endl;
-          domain().fieldIo().writeFieldRGrid(file, propagator.q(i),
-                                             domain().unitCell(),
+          domain_.fieldIo().writeFieldRGrid(file, propagator.q(i),
+                                             domain_.unitCell(),
                                              hasHeader);
       }
       file.close();
@@ -1562,7 +1563,7 @@ namespace Rpc {
    {
       std::string filename;
       int np, nb, ip, ib, id;
-      np = mixture().nPolymer();
+      np = mixture_.nPolymer();
       for (ip = 0; ip < np; ++ip) {
          nb = mixture_.polymer(ip).nBlock();
          for (ib = 0; ib < nb; ++ib) {
@@ -1594,8 +1595,8 @@ namespace Rpc {
       std::ofstream file;
       fileMaster_.openOutputFile(filename, file);
       bool isSymmetric = true;
-      domain().fieldIo().writeFieldHeader(file, mixture().nMonomer(),
-                                          domain().unitCell(),
+      domain_.fieldIo().writeFieldHeader(file, mixture_.nMonomer(),
+                                          domain_.unitCell(),
                                           isSymmetric);
       domain_.basis().outputStars(file);
       file.close();
@@ -1612,8 +1613,8 @@ namespace Rpc {
       std::ofstream file;
       fileMaster_.openOutputFile(filename, file);
       bool isSymmetric = true;
-      domain().fieldIo().writeFieldHeader(file, mixture().nMonomer(),
-                                          domain().unitCell(),
+      domain_.fieldIo().writeFieldHeader(file, mixture_.nMonomer(),
+                                          domain_.unitCell(),
                                           isSymmetric);
       domain_.basis().outputWaves(file);
       file.close();
@@ -1652,7 +1653,7 @@ namespace Rpc {
 
       // Read, convert, and write fields
       UnitCell<D> tmpUnitCell;
-      FieldIo<D> const & fieldIo = domain().fieldIo();
+      FieldIo<D> const & fieldIo = domain_.fieldIo();
       fieldIo.readFieldsBasis(inFileName, tmpFieldsBasis_, tmpUnitCell);
       fieldIo.convertBasisToRGrid(tmpFieldsBasis_, tmpFieldsRGrid_);
       fieldIo.writeFieldsRGrid(outFileName, tmpFieldsRGrid_,
@@ -1680,7 +1681,7 @@ namespace Rpc {
 
       // Read, convert and write fields
       UnitCell<D> tmpUnitCell;
-      FieldIo<D> const & fieldIo = domain().fieldIo();
+      FieldIo<D> const & fieldIo = domain_.fieldIo();
       fieldIo.readFieldsRGrid(inFileName, tmpFieldsRGrid_, tmpUnitCell);
       fieldIo.convertRGridToBasis(tmpFieldsRGrid_, tmpFieldsBasis_);
       fieldIo.writeFieldsBasis(outFileName, tmpFieldsBasis_,
@@ -1703,10 +1704,10 @@ namespace Rpc {
 
       // Read, convert and write fields
       UnitCell<D> tmpUnitCell;
-      FieldIo<D> const & fieldIo = domain().fieldIo();
+      FieldIo<D> const & fieldIo = domain_.fieldIo();
       fieldIo.readFieldsKGrid(inFileName, tmpFieldsKGrid_, tmpUnitCell);
-      for (int i = 0; i < mixture().nMonomer(); ++i) {
-         domain().fft().inverseTransformUnsafe(tmpFieldsKGrid_[i],
+      for (int i = 0; i < mixture_.nMonomer(); ++i) {
+         domain_.fft().inverseTransformUnsafe(tmpFieldsKGrid_[i],
                                                tmpFieldsRGrid_[i]);
       }
       fieldIo.writeFieldsRGrid(outFileName, tmpFieldsRGrid_,
@@ -1729,11 +1730,11 @@ namespace Rpc {
 
       // Read, convert and write fields
       UnitCell<D> tmpUnitCell;
-      FieldIo<D> const & fieldIo = domain().fieldIo();
+      FieldIo<D> const & fieldIo = domain_.fieldIo();
       fieldIo.readFieldsRGrid(inFileName, tmpFieldsRGrid_,
                               tmpUnitCell);
-      for (int i = 0; i < mixture().nMonomer(); ++i) {
-         domain().fft().forwardTransform(tmpFieldsRGrid_[i],
+      for (int i = 0; i < mixture_.nMonomer(); ++i) {
+         domain_.fft().forwardTransform(tmpFieldsRGrid_[i],
                                         tmpFieldsKGrid_[i]);
       }
       fieldIo.writeFieldsKGrid(outFileName, tmpFieldsKGrid_,
@@ -1761,10 +1762,10 @@ namespace Rpc {
 
       // Read, convert and write fields
       UnitCell<D> tmpUnitCell;
-      FieldIo<D> const & fieldIo = domain().fieldIo();
+      FieldIo<D> const & fieldIo = domain_.fieldIo();
       fieldIo.readFieldsKGrid(inFileName, tmpFieldsKGrid_, tmpUnitCell);
       fieldIo.convertKGridToBasis(tmpFieldsKGrid_, tmpFieldsBasis_);
-      fieldIo.writeFieldsBasis(outFileName, tmpFieldsBasis_, 
+      fieldIo.writeFieldsBasis(outFileName, tmpFieldsBasis_,
                                tmpUnitCell);
    }
 
@@ -1789,10 +1790,10 @@ namespace Rpc {
 
       // Read, convert and write fields
       UnitCell<D> tmpUnitCell;
-      FieldIo<D> const & fieldIo = domain().fieldIo();
+      FieldIo<D> const & fieldIo = domain_.fieldIo();
       fieldIo.readFieldsBasis(inFileName, tmpFieldsBasis_, tmpUnitCell);
       fieldIo.convertBasisToKGrid(tmpFieldsBasis_, tmpFieldsKGrid_);
-      fieldIo.writeFieldsKGrid(outFileName, tmpFieldsKGrid_, 
+      fieldIo.writeFieldsKGrid(outFileName, tmpFieldsKGrid_,
                                tmpUnitCell);
    }
 
@@ -1823,7 +1824,7 @@ namespace Rpc {
                                         tmpFieldsRGrid_, tmpUnitCell);
 
       // Check symmetry for all fields
-      for (int i = 0; i < mixture().nMonomer(); ++i) {
+      for (int i = 0; i < mixture_.nMonomer(); ++i) {
          bool symmetric;
          symmetric = domain_.fieldIo().hasSymmetry(tmpFieldsRGrid_[i],
                                                    epsilon);
@@ -1838,26 +1839,30 @@ namespace Rpc {
    // Grid and Field Manipulation Commands
 
    /*
-   * Rescale a field by a constant, write rescaled field to a file.
+   * Rescale fields by a constant factor, write rescaled field to a file.
    */
    template <int D>
    void System<D>::scaleFieldsBasis(std::string const & inFileName,
                                     std::string const & outFileName,
                                     double factor)
    {
-      // If basis fields are not allocated, peek at field file header to
-      // get unit cell parameters, initialize basis and allocate fields.
-      if (!isAllocatedBasis_) {
+      // Preconditions
+      UTIL_CHECK(isAllocatedGrid_);
+      UTIL_CHECK(domain_.hasGroup());
+      if (!domain_.unitCell().isInitialized()) {
          readFieldHeader(inFileName);
+      }
+      UTIL_CHECK(domain_.unitCell().isInitialized());
+      UTIL_CHECK(domain_.basis().isInitialized());
+      if (!isAllocatedBasis_) {
          allocateFieldsBasis();
       }
 
       UnitCell<D> tmpUnitCell;
-      FieldIo<D> const & fieldIo = domain().fieldIo();
+      FieldIo<D> const & fieldIo = domain_.fieldIo();
       fieldIo.readFieldsBasis(inFileName, tmpFieldsBasis_, tmpUnitCell);
       fieldIo.scaleFieldsBasis(tmpFieldsBasis_, factor);
-      fieldIo.writeFieldsBasis(outFileName, tmpFieldsBasis_,
-                                            tmpUnitCell);
+      fieldIo.writeFieldsBasis(outFileName, tmpFieldsBasis_, tmpUnitCell);
    }
 
    /*
@@ -1868,13 +1873,15 @@ namespace Rpc {
                                     std::string const & outFileName,
                                     double factor) const
    {
+      UTIL_CHECK(isAllocatedGrid_);
+
       UnitCell<D> tmpUnitCell;
-      FieldIo<D> const & fieldIo = domain().fieldIo();
+      FieldIo<D> const & fieldIo = domain_.fieldIo();
       fieldIo.readFieldsRGrid(inFileName, tmpFieldsRGrid_,
                                 tmpUnitCell);
       fieldIo.scaleFieldsRGrid(tmpFieldsRGrid_, factor);
       fieldIo.writeFieldsRGrid(outFileName, tmpFieldsRGrid_,
-                                            tmpUnitCell, 
+                                            tmpUnitCell,
                                             w_.isSymmetric());
    }
 
@@ -1888,15 +1895,16 @@ namespace Rpc {
                                         DArray<int> newGridDimensions)
    {
       UTIL_CHECK(d > D);
+      UTIL_CHECK(isAllocatedGrid_);
 
       // Read fields
       UnitCell<D> tmpUnitCell;
-      domain().fieldIo().readFieldsRGrid(inFileName,
+      domain_.fieldIo().readFieldsRGrid(inFileName,
                                          tmpFieldsRGrid_,
                                          tmpUnitCell);
 
       // Expand Fields
-      domain().fieldIo().expandRGridDimension(outFileName,
+      domain_.fieldIo().expandRGridDimension(outFileName,
                                               tmpFieldsRGrid_,
                                               tmpUnitCell,
                                               d, newGridDimensions);
@@ -1910,29 +1918,33 @@ namespace Rpc {
                                      std::string const & outFileName,
                                      IntVec<D> const & replicas)
    {
+      UTIL_CHECK(isAllocatedGrid_);
+
       // Read fields
       UnitCell<D> tmpUnitCell;
-      domain().fieldIo().readFieldsRGrid(inFileName, tmpFieldsRGrid_,
+      domain_.fieldIo().readFieldsRGrid(inFileName, tmpFieldsRGrid_,
                                          tmpUnitCell);
 
       // Replicate fields
-      domain().fieldIo().replicateUnitCell(outFileName,
+      domain_.fieldIo().replicateUnitCell(outFileName,
                                            tmpFieldsRGrid_,
                                            tmpUnitCell,
                                            replicas);
    }
 
+   // Field Comparison
+
    /*
    * Compare two fields in basis format, write report to Log file.
    */
    template <int D>
-   void System<D>::compare(const DArray< DArray<double> > field1,
-                           const DArray< DArray<double> > field2)
+   void System<D>::compare(DArray< DArray<double> > const & field1,
+                           DArray< DArray<double> > const & field2)
    {
       UTIL_CHECK(domain_.hasGroup());
 
       BFieldComparison comparison(1);
-      comparison.compare(field1,field2);
+      comparison.compare(field1, field2);
 
       Log::file() << "\n Basis expansion field comparison results"
                   << std::endl;
@@ -1946,8 +1958,8 @@ namespace Rpc {
    * Compare two fields in r-grid format, output report to Log file.
    */
    template <int D>
-   void System<D>::compare(const DArray< RField<D> > field1,
-                           const DArray< RField<D> > field2)
+   void System<D>::compare(DArray< RField<D> > const & field1,
+                           DArray< RField<D> > const & field2)
    {
       RFieldComparison<D> comparison;
       comparison.compare(field1, field2);
@@ -1970,13 +1982,13 @@ namespace Rpc {
    {
       // Preconditions
       UTIL_CHECK(hasMixture_);
-      int nMonomer = mixture().nMonomer();
+      int nMonomer = mixture_.nMonomer();
       UTIL_CHECK(nMonomer > 0);
-      UTIL_CHECK(domain().mesh().size() > 0);
+      UTIL_CHECK(domain_.mesh().size() > 0);
       UTIL_CHECK(!isAllocatedGrid_);
 
       // Alias for mesh dimensions
-      IntVec<D> const & dimensions = domain().mesh().dimensions();
+      IntVec<D> const & dimensions = domain_.mesh().dimensions();
 
       // Allocate w (chemical potential) fields
       w_.setNMonomer(nMonomer);
@@ -2007,19 +2019,20 @@ namespace Rpc {
    {
       // Preconditions and constants
       UTIL_CHECK(hasMixture_);
-      const int nMonomer = mixture().nMonomer();
+      const int nMonomer = mixture_.nMonomer();
       UTIL_CHECK(nMonomer > 0);
-      UTIL_CHECK(isAllocatedGrid_);
-      UTIL_CHECK(!isAllocatedBasis_);
+      UTIL_CHECK(domain_.unitCell().isInitialized());
+      UTIL_CHECK(domain_.mesh().size() > 0);
       UTIL_CHECK(domain_.hasGroup());
       UTIL_CHECK(domain_.basis().isInitialized());
       const int nBasis = domain_.basis().nBasis();
       UTIL_CHECK(nBasis > 0);
+      UTIL_CHECK(isAllocatedGrid_);
+      UTIL_CHECK(!isAllocatedBasis_);
 
+      // Allocate basis field containers
       w_.allocateBasis(nBasis);
       c_.allocateBasis(nBasis);
-
-      // Temporary work space
       tmpFieldsBasis_.allocate(nMonomer);
       for (int i = 0; i < nMonomer; ++i) {
          tmpFieldsBasis_[i].allocate(nBasis);
@@ -2032,10 +2045,10 @@ namespace Rpc {
    * Peek at field file header, initialize unit cell parameters and basis.
    */
    template <int D>
-   void System<D>::readFieldHeader(std::string filename)
+   void System<D>::readFieldHeader(std::string const & filename)
    {
       UTIL_CHECK(hasMixture_);
-      UTIL_CHECK(mixture().nMonomer() > 0);
+      UTIL_CHECK(mixture_.nMonomer() > 0);
 
       // Open field file
       std::ifstream file;
@@ -2046,22 +2059,19 @@ namespace Rpc {
       bool isSymmetric;
       domain_.fieldIo().readFieldHeader(file, nMonomer,
                                         domain_.unitCell(), isSymmetric);
-      // Function FieldIo::readFieldHeader initializes a basis if
-      // hasGroup is true and the header contains a space group
-
-      // Close field file
+      // Note: FieldIo::readFieldHeader<D> computes WaveList minimum
+      // images and initializes the Basis if needed.
       file.close();
 
       // Postconditions
-      UTIL_CHECK(mixture().nMonomer() == nMonomer);
-      UTIL_CHECK(domain().unitCell().nParameter() > 0);
-      UTIL_CHECK(domain().unitCell().lattice() != UnitCell<D>::Null);
-      UTIL_CHECK(domain().unitCell().isInitialized());
-      if (domain_.hasGroup() && isSymmetric) {
+      UTIL_CHECK(mixture_.nMonomer() == nMonomer);
+      UTIL_CHECK(domain_.unitCell().nParameter() > 0);
+      UTIL_CHECK(domain_.unitCell().lattice() != UnitCell<D>::Null);
+      UTIL_CHECK(domain_.unitCell().isInitialized());
+      if (domain_.hasGroup()) {
          UTIL_CHECK(domain_.basis().isInitialized());
          UTIL_CHECK(domain_.basis().nBasis() > 0);
       }
-
    }
 
    /*
