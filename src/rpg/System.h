@@ -515,7 +515,7 @@ namespace Rpg {
       *
       * \param filename name of output file
       */
-      void writeWBasis(std::string const & filename);
+      void writeWBasis(std::string const & filename) const;
 
       /**
       * Write chemical potential fields in real space grid (r-grid) format.
@@ -529,7 +529,7 @@ namespace Rpg {
       *
       * \param filename name of output file
       */
-      void writeCBasis(std::string const & filename);
+      void writeCBasis(std::string const & filename) const;
 
       /**
       * Write concentration fields in real space grid (r-grid) format.
@@ -758,7 +758,7 @@ namespace Rpg {
       * \param factor  factor by which to multiply all field elements
       */
       void scaleFieldsBasis(std::string const & inFileName,
-                            std::string const & & outFileName,
+                            std::string const & outFileName,
                             double factor);
 
       /**

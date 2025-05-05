@@ -1388,7 +1388,7 @@ namespace Rpg {
    * Write w fields in symmetry-adapted basis format.
    */
    template <int D>
-   void System<D>::writeWBasis(std::string const & filename)
+   void System<D>::writeWBasis(std::string const & filename) const
    {
       UTIL_CHECK(domain_.basis().isInitialized());
       UTIL_CHECK(isAllocatedBasis_);
@@ -1415,7 +1415,7 @@ namespace Rpg {
    * Write all concentration fields in symmetry-adapted basis format.
    */
    template <int D>
-   void System<D>::writeCBasis(std::string const & filename)
+   void System<D>::writeCBasis(std::string const & filename) const
    {
       UTIL_CHECK(domain_.basis().isInitialized());
       UTIL_CHECK(isAllocatedBasis_);
