@@ -9,6 +9,7 @@ prdc_cpu_= \
   prdc/cpu/CFieldComparison.cpp \
   prdc/cpu/FieldBasisConverter.cpp \
   prdc/cpu/WaveList.cpp \
+  prdc/cpu/Reduce.cpp \
   prdc/cpu/complex.cpp
 
 prdc_cpu_OBJS=\

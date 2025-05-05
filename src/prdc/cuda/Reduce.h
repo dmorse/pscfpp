@@ -1,5 +1,5 @@
-#ifndef PRDC_REDUCE_H
-#define PRDC_REDUCE_H
+#ifndef PRDC_CUDA_REDUCE_H
+#define PRDC_CUDA_REDUCE_H
 
 /*
 * PSCF Package 
@@ -103,8 +103,8 @@ cudaReal innerProduct(DeviceArray<cudaReal> const & a,
 
 /** @} */
 
-}
-}
-}
-}
+} // Reduce
+} // Cuda
+} // Prdc
+} // Pscf
 #endif
