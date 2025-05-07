@@ -1654,7 +1654,11 @@ namespace Rpc {
    void System<D>::writeGroup(std::string const & filename) const
    {
       UTIL_CHECK(domain_.hasGroup());
-      Pscf::Prdc::writeGroup(filename, domain_.group());
+      std::ofstream file;
+      fileMaster_.openOutputFile(filename, file);
+      file << domain_.group();
+      //Pscf::Prdc::writeGroup(filename, domain_.group());
+      file.close();
    }
 
    // Field format conversion functions
