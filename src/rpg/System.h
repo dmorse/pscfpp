@@ -432,8 +432,9 @@ namespace Rpg {
       * Compute free energy density and pressure for current fields.
       *
       * This function should be called after a successful call of
-      * iterator().solve(). Resulting values are returned by the
-      * freeEnergy() and pressure() accessor functions.
+      * iterator().solve() or compute(). Resulting values are retrieved 
+      * by the fHelmholtz(), fIdeal(), fInter(), fExt() and pressure() 
+      * accessor functions.
       *
       * \pre w().hasData must return true
       * \pre hasCFields() must return true
@@ -441,18 +442,39 @@ namespace Rpg {
       void computeFreeEnergy();
 
       /**
-      * Get precomputed Helmoltz free energy per monomer / kT.
+      * Get total Helmholtz free energy per monomer / kT.
       *
-      * The value retrieved by this function is pre-computed by the
-      * computeFreeEnergy() function.
+      * This function retrieves a value computed by computeFreeEnergy().
       */
       double fHelmholtz() const;
 
       /**
+      * Get the ideal gas contribution to fHelmholtz per monomer / kT.
+      *
+      * This function retrieves a value computed by computeFreeEnergy().
+      */
+      double fIdeal() const;
+
+      /**
+      * Get the interaction contribution to fHelmholtz per monomer / kT.
+      *
+      * This function retrieves a value computed by computeFreeEnergy().
+      */
+      double fInter() const;
+
+      /**
+      * Get any external field contribution to fHelmholtz per monomer / kT.
+      *
+      * This function retrieves a value computed by computeFreeEnergy().
+      */
+      double fExt() const;
+
+      /**
       * Get precomputed pressure times monomer volume / kT.
       *
-      * The value retrieved by this function is pre-computed by the
-      * computeFreeEnergy() function.
+      * This function retrieves a value computed by computeFreeEnergy().
+      * The value is -1 times the grand-canonical free energy per monomer
+      * divided by kT.
       */
       double pressure() const;
 
@@ -494,10 +516,10 @@ namespace Rpg {
       * This function outputs derivatives of free energy w/ respect to
       * each unit cell parameters.
       *
-      * Call writeStress after writeThermo if and only if the iterator
-      * is not flexible. If parameter "out" is a file that already exists,
-      * this function will append this information to the end of the file,
-      * rather than overwriting that file.
+      * Call writeStress after writeThermo if and only if the iterator is
+      * not flexible. If parameter "out" is a file that already exists,
+      * this function will append this information to the end of that 
+      * file, rather than overwriting the file.
       *
       * \param out output stream
       */
@@ -1311,13 +1333,38 @@ namespace Rpg {
    inline Mask<D> const & System<D>::mask() const
    {  return mask_; }
 
-   // Get precomputed Helmoltz free energy per monomer / kT.
+   // Get the Helmholtz free energy per monomer / kT.
    template <int D>
    inline double System<D>::fHelmholtz() const
    {
       UTIL_CHECK(hasFreeEnergy_);
       return fHelmholtz_;
    }
+
+   // Get the ideal contribution to fHelmholtz per monomer / kT.
+   template <int D>
+   inline double System<D>::fIdeal() const
+   {
+      UTIL_CHECK(hasFreeEnergy_);
+      return fIdeal_;
+   }
+
+   // Get the interaction contribution to fHelmholtz per monomer / kT.
+   template <int D>
+   inline double System<D>::fInter() const
+   {
+      UTIL_CHECK(hasFreeEnergy_);
+      return fInter_;
+   }
+
+   // Get the external field contribution to fHelmholtz per monomer / kT.
+   template <int D>
+   inline double System<D>::fExt() const
+   {
+      UTIL_CHECK(hasFreeEnergy_);
+      return fExt_;
+   }
+
 
    // Get precomputed pressure (units of kT / monomer volume).
    template <int D>
