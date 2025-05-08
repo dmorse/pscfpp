@@ -218,6 +218,37 @@ namespace Rpg
       bool hasBasis() const;
 
       //@}
+      /// \name Crystallographic Data Output
+      ///@{
+
+      /**
+      * Output information about stars and symmetrized basis functions.
+      *
+      * This function opens a file with the specified filename and then
+      * calls Basis::outputStars.
+      *
+      * \param filename name of output file
+      */
+      void writeStars(const std::string & filename) const;
+
+      /**
+      * Output information about waves.
+      *
+      * This function opens a file with the specified filename and then
+      * calls Basis::outputWaves.
+      *
+      * \param filename name of output file
+      */
+      void writeWaves(const std::string & filename) const;
+
+      /**
+      * Output all elements of the space group.
+      *
+      * \param filename name of output file
+      */
+      void writeGroup(std::string const & filename) const;
+
+      ///@}
 
    private:
 
@@ -269,19 +300,28 @@ namespace Rpg
       std::string groupName_;
 
       /**
+      * Pointer to associated FileMaster
+      */ 
+      FileMaster* fileMasterPtr_;
+
+      /**
       * Has a space group been indentified?
       */
       bool hasGroup_;
 
       /**
-      * Has a FileMaster been set?
-      */
-      bool hasFileMaster_;
-
-      /**
       * Has the domain been initialized?
       */
       bool isInitialized_;
+
+      /**
+      * Get the FileMaster by reference (private).
+      */
+      FileMaster const & fileMaster() const
+      {
+         UTIL_CHECK(fileMasterPtr_);
+         return *fileMasterPtr_; 
+      }
 
    };
 

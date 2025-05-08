@@ -432,8 +432,8 @@ namespace Rpg {
       * Compute free energy density and pressure for current fields.
       *
       * This function should be called after a successful call of
-      * iterator().solve() or compute(). Resulting values are retrieved 
-      * by the fHelmholtz(), fIdeal(), fInter(), fExt() and pressure() 
+      * iterator().solve() or compute(). Resulting values are retrieved
+      * by the fHelmholtz(), fIdeal(), fInter(), fExt() and pressure()
       * accessor functions.
       *
       * \pre w().hasData must return true
@@ -518,7 +518,7 @@ namespace Rpg {
       *
       * Call writeStress after writeThermo if and only if the iterator is
       * not flexible. If parameter "out" is a file that already exists,
-      * this function will append this information to the end of that 
+      * this function will append this information to the end of that
       * file, rather than overwriting the file.
       *
       * \param out output stream
@@ -627,37 +627,6 @@ namespace Rpg {
       * \param basename  common prefix for output file names
       */
       void writeQAll(std::string const & basename);
-
-      ///@}
-      /// \name Crystallographic Data Output
-      ///@{
-
-      /**
-      * Output information about stars and symmetrized basis functions.
-      *
-      * This function opens a file with the specified filename and then
-      * calls Basis::outputStars.
-      *
-      * \param filename name of output file
-      */
-      void writeStars(const std::string & filename) const;
-
-      /**
-      * Output information about waves.
-      *
-      * This function opens a file with the specified filename and then
-      * calls Basis::outputWaves.
-      *
-      * \param filename name of output file
-      */
-      void writeWaves(const std::string & filename) const;
-
-      /**
-      * Output all elements of the space group.
-      *
-      * \param filename name of output file
-      */
-      void writeGroup(std::string const & filename) const;
 
       ///@}
       /// \name Field File Operations
@@ -814,6 +783,7 @@ namespace Rpg {
                                 const std::string & outFileName,
                                 int d,
                                 DArray<int> newGridDimensions);
+
       /**
       * Replicate the crystal unit cell to create a larger cell.
       *
@@ -929,33 +899,6 @@ namespace Rpg {
       * Get Simulator for field theoretic simulation.
       */
       Simulator<D>& simulator();
-
-      #if 0
-      /**
-      * Get crystal UnitCell by const reference.
-      */
-      UnitCell<D> const & unitCell() const;
-
-      /**
-      * Get the Basis by reference.
-      */
-      Basis<D> const & basis() const;
-
-      /**
-      * Get spatial discretization Mesh by const reference.
-      */
-      Mesh<D> const & mesh() const;
-
-      /**
-      * Get the FieldIo by const reference.
-      */
-      FieldIo<D> const & fieldIo() const;
-
-      /**
-      * Get the FFT object by const reference.
-      */
-      FFT<D> const & fft() const ;
-      #endif
 
       /**
       * Get FileMaster by reference.
@@ -1097,7 +1040,7 @@ namespace Rpg {
       mutable DArray<RFieldDft<D> > tmpFieldsKGrid_;
 
       // Thermodynamic properties
-      
+
       /**
       * Helmholtz free energy per monomer / kT.
       */
@@ -1131,7 +1074,7 @@ namespace Rpg {
       double pressure_;
 
       // Boolean and enumeration variables
-      
+
       /**
       * Has memory been allocated for fields in FFT grid formats?
       */
@@ -1244,32 +1187,6 @@ namespace Rpg {
    template <int D>
    inline Domain<D> const & System<D>::domain() const
    {  return domain_; }
-
-   #if 0
-   template <int D>
-   inline UnitCell<D> const & System<D>::unitCell() const
-   {  return domain_.unitCell(); }
-
-   // Get the const FieldIo<D> object by const reference.
-   template <int D>
-   inline FieldIo<D> const & System<D>::fieldIo() const
-   {  return domain_.fieldIo(); }
-
-   // Get the Mesh<D> by const reference.
-   template <int D>
-   inline Mesh<D> const & System<D>::mesh() const
-   {  return domain_.mesh(); }
-
-   // Get the Basis<D>  by const reference.
-   template <int D>
-   inline Basis<D> const & System<D>::basis() const
-   {  return domain_.basis(); }
-
-   // Get the FFT<D> object by const reference.
-   template <int D>
-   inline FFT<D> const & System<D>::fft() const
-   {  return domain_.fft(); }
-   #endif
 
 
    // Get the Iterator by non-const reference.
