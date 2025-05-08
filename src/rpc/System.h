@@ -411,11 +411,12 @@ namespace Rpc {
       * Compute free energy density and pressure for current fields.
       *
       * This function should be called after a successful call of
-      * System::iterate() or Iterator::solve(). Resulting values of
-      * Helhmoltz free energy per monomer and non-dimensional pressure
-      * (-1 times grand canonical free energy per monomer) are stored
-      * in private member variables and can be accessed by the
-      * fHelmholtz() and pressure() functions.
+      * System::solve() or System::iterate(). Resulting values of
+      * Helmholtz free energy per monomer, free energy components fIdeal,
+      * fInter, and fExt, and the non-dimensional pressure (-1 times the
+      * grand canonical free energy per monomer) are stored in private
+      * member variables and can be retrieved by the member functions
+      * fHelmholtz(), fIdeal(), fInter(), fExt(), and  pressure().
       */
       void computeFreeEnergy();
 
@@ -426,6 +427,27 @@ namespace Rpc {
       * computeFreeEnergy() function.
       */
       double fHelmholtz() const;
+
+      /**
+      * Get the ideal gas contribution to fHelmholtz(). 
+      *
+      * This function retrieves a value computed by computeFreeEnergy().
+      */
+      double fIdeal() const;
+
+      /**
+      * Get the interaction contribution to fHelmholtz(). 
+      *
+      * This function retrieves a value computed by computeFreeEnergy().
+      */
+      double fInter() const;
+
+      /**
+      * Get the external field contribution to fHelmholtz(). 
+      *
+      * This function retrieves a value computed by computeFreeEnergy().
+      */
+      double fExt() const;
 
       /**
       * Get precomputed pressure x monomer volume / kT.
@@ -586,37 +608,6 @@ namespace Rpc {
       * \param basename  common prefix for output file names
       */
       void writeQAll(std::string const & basename);
-
-      ///@}
-      /// \name Crystallographic Information
-      ///@{
-
-      /**
-      * Output information about waves.
-      *
-      * This function opens a file with the specified filename, calls
-      * Basis<D>::outputWaves, and closes the file before returning.
-      *
-      * \param filename name of output file
-      */
-      void writeWaves(std::string const & filename) const;
-
-      /**
-      * Output information about stars and symmetrized basis functions.
-      *
-      * This function opens a file with the specified filename, calls
-      * Basis<D>::outputStars, and closes the file before returning.
-      *
-      * \param filename name of output file
-      */
-      void writeStars(std::string const & filename) const;
-
-      /**
-      * Output all elements of the space group.
-      *
-      * \param filename name of output file
-      */
-      void writeGroup(std::string const & filename) const;
 
       ///@}
       /// \name Field File Manipulation and Analysis
@@ -891,7 +882,7 @@ namespace Rpc {
       Simulator<D>& simulator();
 
       /**
-      * Get the FileMaster.
+      * Get the FileMaster by non-const references.
       *
       * Access by non-const reference is used in some unit tests.
       */
@@ -1295,7 +1286,31 @@ namespace Rpc {
       return fHelmholtz_;
    }
 
-   // Get the precomputed pressure (units of kT / monomer volume).
+   // Get the ideal gas contribution to fHelmholtz per monomer / kT.
+   template <int D>
+   inline double System<D>::fIdeal() const
+   {
+      UTIL_CHECK(hasFreeEnergy_);
+      return fIdeal_;
+   }
+
+   // Get the interaction contribution to fHelmholtz per monomer / kT.
+   template <int D>
+   inline double System<D>::fInter() const
+   {
+      UTIL_CHECK(hasFreeEnergy_);
+      return fInter_;
+   }
+
+   // Get the external field contribution to fHelmholtz per monomer / kT.
+   template <int D>
+   inline double System<D>::fExt() const
+   {
+      UTIL_CHECK(hasFreeEnergy_);
+      return fExt_;
+   }
+
+   // Get the non-dimensional pressure (units of kT / monomer volume).
    template <int D>
    inline double System<D>::pressure() const
    {

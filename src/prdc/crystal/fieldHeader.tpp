@@ -86,10 +86,20 @@ namespace Prdc {
          out << "group_name" << std::endl 
              << "          " << groupName <<  std::endl;
       }
-
+  
       // Write nMonomer, number of monomer types
-      out << "N_monomer"  << std::endl 
-          << "          " << nMonomer << std::endl;
+      if (nMonomer != 0) {
+         UTIL_CHECK(nMonomer > 0);
+         out << "N_monomer"  << std::endl 
+             << "          " << nMonomer << std::endl;
+      }
+
+      // Note: The option to not write nMonomer when the value is zero
+      // is designed to allow this function to be used in contexts in 
+      // which the value of N_monomer is irrelevant and possibly unknown,
+      // such as files that contain information about stars in a basis 
+      // or group operations.
+
    }
 
 }

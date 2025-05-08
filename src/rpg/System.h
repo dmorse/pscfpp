@@ -435,8 +435,9 @@ namespace Rpg {
       * Compute free energy density and pressure for current fields.
       *
       * This function should be called after a successful call of
-      * iterator().solve(). Resulting values are returned by the
-      * freeEnergy() and pressure() accessor functions.
+      * iterator().solve() or compute(). Resulting values are retrieved
+      * by the fHelmholtz(), fIdeal(), fInter(), fExt() and pressure()
+      * accessor functions.
       *
       * \pre w().hasData must return true
       * \pre hasCFields() must return true
@@ -444,18 +445,39 @@ namespace Rpg {
       void computeFreeEnergy();
 
       /**
-      * Get precomputed Helmoltz free energy per monomer / kT.
+      * Get total Helmholtz free energy per monomer / kT.
       *
-      * The value retrieved by this function is pre-computed by the
-      * computeFreeEnergy() function.
+      * This function retrieves a value computed by computeFreeEnergy().
       */
       double fHelmholtz() const;
 
       /**
+      * Get the ideal gas contribution to fHelmholtz per monomer / kT.
+      *
+      * This function retrieves a value computed by computeFreeEnergy().
+      */
+      double fIdeal() const;
+
+      /**
+      * Get the interaction contribution to fHelmholtz per monomer / kT.
+      *
+      * This function retrieves a value computed by computeFreeEnergy().
+      */
+      double fInter() const;
+
+      /**
+      * Get any external field contribution to fHelmholtz per monomer / kT.
+      *
+      * This function retrieves a value computed by computeFreeEnergy().
+      */
+      double fExt() const;
+
+      /**
       * Get precomputed pressure times monomer volume / kT.
       *
-      * The value retrieved by this function is pre-computed by the
-      * computeFreeEnergy() function.
+      * This function retrieves a value computed by computeFreeEnergy().
+      * The value is -1 times the grand-canonical free energy per monomer
+      * divided by kT.
       */
       double pressure() const;
 
@@ -497,10 +519,10 @@ namespace Rpg {
       * This function outputs derivatives of SCFT free energy w/ respect
       * to each unit cell parameter.
       *
-      * Call writeStress after writeThermo if and only if the iterator
-      * is not flexible. If parameter "out" is a file that already exists,
-      * this function will append this information to the end of the file,
-      * rather than overwriting that file.
+      * Call writeStress after writeThermo if and only if the iterator is
+      * not flexible. If parameter "out" is a file that already exists,
+      * this function will append this information to the end of that
+      * file, rather than overwriting the file.
       *
       * \param out output stream
       */
@@ -608,37 +630,6 @@ namespace Rpg {
       * \param basename  common prefix for output file names
       */
       void writeQAll(std::string const & basename);
-
-      ///@}
-      /// \name Crystallographic Data Output
-      ///@{
-
-      /**
-      * Output information about stars and symmetrized basis functions.
-      *
-      * This function opens a file with the specified filename and then
-      * calls Basis::outputStars.
-      *
-      * \param filename name of output file
-      */
-      void writeStars(std::string const & filename) const;
-
-      /**
-      * Output information about waves.
-      *
-      * This function opens a file with the specified filename and then
-      * calls Basis::outputWaves.
-      *
-      * \param filename name of output file
-      */
-      void writeWaves(std::string const & filename) const;
-
-      /**
-      * Output all elements of the space group.
-      *
-      * \param filename name of output file
-      */
-      void writeGroup(std::string const & filename) const;
 
       ///@}
       /// \name Field File Operations
@@ -795,6 +786,7 @@ namespace Rpg {
                                 std::string const & outFileName,
                                 int d,
                                 DArray<int> newGridDimensions);
+
       /**
       * Replicate the crystal unit cell to create a larger cell.
       *
@@ -910,33 +902,6 @@ namespace Rpg {
       * Get Simulator for field theoretic simulation.
       */
       Simulator<D>& simulator();
-
-      #if 0
-      /**
-      * Get crystal UnitCell by const reference.
-      */
-      UnitCell<D> const & unitCell() const;
-
-      /**
-      * Get the Basis by reference.
-      */
-      Basis<D> const & basis() const;
-
-      /**
-      * Get spatial discretization Mesh by const reference.
-      */
-      Mesh<D> const & mesh() const;
-
-      /**
-      * Get the FieldIo by const reference.
-      */
-      FieldIo<D> const & fieldIo() const;
-
-      /**
-      * Get the FFT object by const reference.
-      */
-      FFT<D> const & fft() const ;
-      #endif
 
       /**
       * Get FileMaster by reference.
@@ -1226,32 +1191,6 @@ namespace Rpg {
    inline Domain<D> const & System<D>::domain() const
    {  return domain_; }
 
-   #if 0
-   template <int D>
-   inline UnitCell<D> const & System<D>::unitCell() const
-   {  return domain_.unitCell(); }
-
-   // Get the const FieldIo<D> object by const reference.
-   template <int D>
-   inline FieldIo<D> const & System<D>::fieldIo() const
-   {  return domain_.fieldIo(); }
-
-   // Get the Mesh<D> by const reference.
-   template <int D>
-   inline Mesh<D> const & System<D>::mesh() const
-   {  return domain_.mesh(); }
-
-   // Get the Basis<D>  by const reference.
-   template <int D>
-   inline Basis<D> const & System<D>::basis() const
-   {  return domain_.basis(); }
-
-   // Get the FFT<D> object by const reference.
-   template <int D>
-   inline FFT<D> const & System<D>::fft() const
-   {  return domain_.fft(); }
-   #endif
-
 
    // Get the Iterator by non-const reference.
    template <int D>
@@ -1314,13 +1253,38 @@ namespace Rpg {
    inline Mask<D> const & System<D>::mask() const
    {  return mask_; }
 
-   // Get precomputed Helmoltz free energy per monomer / kT.
+   // Get the Helmholtz free energy per monomer / kT.
    template <int D>
    inline double System<D>::fHelmholtz() const
    {
       UTIL_CHECK(hasFreeEnergy_);
       return fHelmholtz_;
    }
+
+   // Get the ideal contribution to fHelmholtz per monomer / kT.
+   template <int D>
+   inline double System<D>::fIdeal() const
+   {
+      UTIL_CHECK(hasFreeEnergy_);
+      return fIdeal_;
+   }
+
+   // Get the interaction contribution to fHelmholtz per monomer / kT.
+   template <int D>
+   inline double System<D>::fInter() const
+   {
+      UTIL_CHECK(hasFreeEnergy_);
+      return fInter_;
+   }
+
+   // Get the external field contribution to fHelmholtz per monomer / kT.
+   template <int D>
+   inline double System<D>::fExt() const
+   {
+      UTIL_CHECK(hasFreeEnergy_);
+      return fExt_;
+   }
+
 
    // Get precomputed pressure (units of kT / monomer volume).
    template <int D>

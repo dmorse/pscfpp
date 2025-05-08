@@ -42,6 +42,9 @@ namespace Prdc {
    * If the groupName parameter is an empty string (groupName == ""), 
    * then this function does not write the group_name label or value. 
    *
+   * If nMonomer == 0, then this function does not write the N_monomer
+   * label or value. 
+   *
    * \param out  output stream
    * \param ver1  major file format version number (input)
    * \param ver2  major file format version number (input)

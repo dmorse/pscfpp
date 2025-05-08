@@ -457,27 +457,31 @@ namespace Prdc {
    }
 
    template <int D, class RFRT, class RFKT, class FFTT>
-   void FieldIoReal<D,RFRT,RFKT,FFTT>::readFieldsRGrid(
+   bool FieldIoReal<D,RFRT,RFKT,FFTT>::readFieldsRGrid(
                               std::string filename,
                               DArray< RFRT >& fields,
                               UnitCell<D>& unitCell) const
    {
       std::ifstream file;
       fileMaster().openInputFile(filename, file);
-      readFieldsRGrid(file, fields, unitCell);
+      bool isSymmetric;
+      isSymmetric = readFieldsRGrid(file, fields, unitCell);
       file.close();
+      return isSymmetric;
    }
 
    template <int D, class RFRT, class RFKT, class FFTT>
-   void FieldIoReal<D,RFRT,RFKT,FFTT>::readFieldRGrid(
+   bool FieldIoReal<D,RFRT,RFKT,FFTT>::readFieldRGrid(
                               std::string filename,
                               RFRT & field,
                               UnitCell<D>& unitCell) const
    {
       std::ifstream file;
       fileMaster().openInputFile(filename, file);
-      readFieldRGrid(file, field, unitCell);
+      bool isSymmetric;
+      isSymmetric = readFieldRGrid(file, field, unitCell);
       file.close();
+      return isSymmetric;
    }
 
    template <int D, class RFRT, class RFKT, class FFTT>
@@ -700,11 +704,14 @@ namespace Prdc {
    * Read an array of fields in r-grid format.
    */
    template <int D, class RFRT, class RFKT, class FFTT>
-   void FieldIoReal<D,RFRT,RFKT,FFTT>::readFieldsRGrid(
+   bool FieldIoReal<D,RFRT,RFKT,FFTT>::readFieldsRGrid(
                               std::istream &in,
                               DArray<RFRT >& fields,
                               UnitCell<D>& unitCell) const
-   {  UTIL_THROW("Unimplemented function in FieldIoReal base class"); }
+   {  
+      UTIL_THROW("Unimplemented function in FieldIoReal base class"); 
+      return false;
+   }
 
    /*
    * Read the data section of an array of fields in r-grid format.
@@ -714,20 +721,25 @@ namespace Prdc {
                               std::istream& in,
                               DArray< RFRT >& fields,
                               int nMonomer) const
-   {  UTIL_THROW("Unimplemented function in FieldIoReal base class"); }
+   {  
+      UTIL_THROW("Unimplemented function in FieldIoReal base class"); 
+   }
 
    /*
-   * Read a single fields in r-grid format.
+   * Read a single field in r-grid format.
    */
    template <int D, class RFRT, class RFKT, class FFTT>
-   void FieldIoReal<D,RFRT,RFKT,FFTT>::readFieldRGrid(
+   bool FieldIoReal<D,RFRT,RFKT,FFTT>::readFieldRGrid(
                               std::istream &in,
                               RFRT & field,
                               UnitCell<D>& unitCell) const
-   {  UTIL_THROW("Unimplemented function in FieldIoReal base class"); }
+   {  
+      UTIL_THROW("Unimplemented function in FieldIoReal base class"); 
+      return false;
+   }
 
    /*
-   * Write an array of fields in r-grid format
+   * Write an array of fields in r-grid format.
    */
    template <int D, class RFRT, class RFKT, class FFTT>
    void FieldIoReal<D,RFRT,RFKT,FFTT>::writeFieldsRGrid(

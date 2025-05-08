@@ -253,9 +253,10 @@ namespace Prdc {
       * \param in  input stream (i.e., input file)
       * \param fields  array of RField fields (r-space grid)
       * \param unitCell  associated crystallographic unit cell
+      * \return  true iff header has a space group (isSymmetric flag)
       */
       virtual
-      void readFieldsRGrid(std::istream& in,
+      bool readFieldsRGrid(std::istream& in,
                            DArray<RFRT>& fields,
                            UnitCell<D> & unitCell) const;
 
@@ -272,8 +273,9 @@ namespace Prdc {
       * \param filename  name of input file
       * \param fields  array of RField fields (r-space grid)
       * \param unitCell  associated crystallographic unit cell
+      * \return  true iff header has a space group (isSymmetric flag)
       */
-      void readFieldsRGrid(std::string filename,
+      bool readFieldsRGrid(std::string filename,
                            DArray<RFRT>& fields,
                            UnitCell<D> & unitCell) const;
 
@@ -304,9 +306,10 @@ namespace Prdc {
       * \param in  input stream (i.e., input file)
       * \param field  fields defined on r-space grid
       * \param unitCell  associated crystallographic unit cell
+      * \return  true iff header has a space group (isSymmetric flag)
       */
       virtual
-      void readFieldRGrid(std::istream &in,
+      bool readFieldRGrid(std::istream &in,
                            RFRT & field,
                            UnitCell<D>& unitCell) const;
 
@@ -320,8 +323,9 @@ namespace Prdc {
       * \param filename  name of input file
       * \param field  fields defined on r-space grid
       * \param unitCell  associated crystallographic unit cell
+      * \return  true iff header has a space group (isSymmetric flag)
       */
-      void readFieldRGrid(std::string filename,
+      bool readFieldRGrid(std::string filename,
                            RFRT & field,
                            UnitCell<D>& unitCell) const;
 

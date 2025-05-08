@@ -231,6 +231,37 @@ namespace Rpc {
       bool hasBasis() const;
 
       ///@}
+      /// \name Crystallography Information Output
+      ///@{
+
+      /**
+      * Output information about waves.
+      *
+      * This function opens a file with the specified filename, calls
+      * Basis<D>::outputWaves, and closes the file before returning.
+      *
+      * \param filename name of output file
+      */
+      void writeWaves(std::string const & filename) const;
+
+      /**
+      * Output information about stars and symmetrized basis functions.
+      *
+      * This function opens a file with the specified filename, calls
+      * Basis<D>::outputStars, and closes the file before returning.
+      *
+      * \param filename name of output file
+      */
+      void writeStars(std::string const & filename) const;
+
+      /**
+      * Output all elements of the space group.
+      *
+      * \param filename name of output file
+      */
+      void writeGroup(std::string const & filename) const;
+
+      ///@}
 
    private:
 
@@ -282,19 +313,32 @@ namespace Rpc {
       std::string groupName_;
 
       /**
+      * Pointer to associated FileMaster.
+      */
+      FileMaster* fileMasterPtr_;
+
+      /**
       * Has a space group been indentified?
       */
       bool hasGroup_;
 
       /**
-      * Has a FileMaster been set?
-      */
-      bool hasFileMaster_;
-
-      /**
       * Has this Domain object been initialized?
       */
       bool isInitialized_;
+
+      /*
+      * Get FileMaster as const reference.
+      */
+      FileMaster const & fileMaster() const
+      {
+         UTIL_CHECK(fileMasterPtr_);
+         return * fileMasterPtr_;
+      }
+
+      // Members of parent class with non-dependent names
+      using ParamComposite::read;
+      using ParamComposite::readOptional;
 
    };
 

@@ -87,8 +87,9 @@ namespace Rpc {
       * \param in  input file stream 
       * \param fields  array of RField fields (r-space grid)
       * \param unitCell  associated crystallographic unit cell
+      * \return true iff the header contains a space group (isSymmetric)
       */
-      void readFieldsRGrid(std::istream& in,
+      bool readFieldsRGrid(std::istream& in,
                            DArray< RField<D> >& fields,
                            UnitCell<D> & unitCell) const override;
 
@@ -113,10 +114,11 @@ namespace Rpc {
       * \param in  input file stream 
       * \param field  fields defined on r-space grid
       * \param unitCell  associated crystallographic unit cell
+      * \return true iff the header contains a space group (isSymmetric)
       */
-      void readFieldRGrid(std::istream &in,
-                           RField<D> & field,
-                           UnitCell<D>& unitCell) const override;
+      bool readFieldRGrid(std::istream &in,
+                          RField<D> & field,
+                          UnitCell<D>& unitCell) const override;
 
       /**
       * Write array of RField objects (fields on r-space grid) to a stream.

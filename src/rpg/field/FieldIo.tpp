@@ -56,7 +56,7 @@ namespace Rpg {
    * Read an array of fields in r-grid format.
    */
    template <int D>
-   void FieldIo<D>::readFieldsRGrid(
+   bool FieldIo<D>::readFieldsRGrid(
                               std::istream &in,
                               DArray<RField<D> >& fields,
                               UnitCell<D>& unitCell) const
@@ -77,6 +77,9 @@ namespace Rpg {
 
       // Copy device <- host 
       copyArrays(fields, hostFields);
+
+      // Return true iff the header contains a space group declaration
+      return isSymmetric;
    }
 
    /*
@@ -105,7 +108,7 @@ namespace Rpg {
    * Read a single field in r-grid format.
    */
    template <int D>
-   void FieldIo<D>::readFieldRGrid(
+   bool FieldIo<D>::readFieldRGrid(
                               std::istream &in,
                               RField<D> & field,
                               UnitCell<D>& unitCell) const
@@ -128,6 +131,9 @@ namespace Rpg {
 
       // Copy device <- host 
       field = hostField;
+
+      // Return true iff the header contains a space group declaration
+      return isSymmetric;
    }
 
    /*

@@ -508,15 +508,15 @@ namespace Rpg {
          } else
          if (command == "WRITE_STARS") {
             readEcho(in, filename);
-            writeStars(filename);
+            domain_.writeStars(filename);
          } else
          if (command == "WRITE_WAVES") {
             readEcho(in, filename);
-            writeWaves(filename);
+            domain_.writeWaves(filename);
          } else
          if (command == "WRITE_GROUP") {
             readEcho(in, filename);
-            writeGroup(filename);
+            domain_.writeGroup(filename);
          } else
          if (command == "BASIS_TO_RGRID") {
             readEcho(in, inFileName);
@@ -1580,54 +1580,6 @@ namespace Rpg {
             }
          }
       }
-   }
-
-   // Crystallography Data Output
-
-   /*
-   * Write description of symmetry-adapted stars and basis to file.
-   */
-   template <int D>
-   void System<D>::writeStars(std::string const & filename) const
-   {
-      UTIL_CHECK(domain_.hasGroup());
-      UTIL_CHECK(domain_.basis().isInitialized());
-      std::ofstream file;
-      fileMaster_.openOutputFile(filename, file);
-      bool isSymmetric = true;
-      domain_.fieldIo().writeFieldHeader(file, mixture_.nMonomer(),
-                                         domain_.unitCell(),
-                                         isSymmetric);
-      domain_.basis().outputStars(file);
-      file.close();
-   }
-
-   /*
-   * Write a list of waves and associated stars to file.
-   */
-   template <int D>
-   void System<D>::writeWaves(std::string const & filename) const
-   {
-      UTIL_CHECK(domain_.hasGroup());
-      UTIL_CHECK(domain_.basis().isInitialized());
-      std::ofstream file;
-      fileMaster_.openOutputFile(filename, file);
-      bool isSymmetric = true;
-      domain_.fieldIo().writeFieldHeader(file, mixture_.nMonomer(),
-                                         domain_.unitCell(),
-                                         isSymmetric);
-      domain_.basis().outputWaves(file);
-      file.close();
-   }
-
-   /*
-   * Write all elements of the space group to a file.
-   */
-   template <int D>
-   void System<D>::writeGroup(std::string const & filename) const
-   {
-      UTIL_CHECK(domain_.hasGroup());
-      Pscf::Prdc::writeGroup(filename, domain_.group());
    }
 
    // Field File Operations

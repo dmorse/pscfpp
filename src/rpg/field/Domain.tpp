@@ -10,6 +10,7 @@
 
 #include "Domain.h"
 #include <prdc/crystal/fieldHeader.h>
+#include <util/misc/FileMaster.h>
 
 namespace Pscf {
 namespace Rpg {
@@ -33,7 +34,7 @@ namespace Rpg {
       lattice_(UnitCell<D>::Null),
       groupName_(""),
       hasGroup_(false),
-      hasFileMaster_(false),
+      fileMasterPtr_(nullptr),
       isInitialized_(false)
    {
       setClassName("Domain");
@@ -48,11 +49,14 @@ namespace Rpg {
    Domain<D>::~Domain()
    {}
 
+   /*
+   * Create association with a FileMaster.
+   */
    template <int D>
    void Domain<D>::setFileMaster(FileMaster& fileMaster)
    {
+      fileMasterPtr_ = &fileMaster;
       fieldIo_.setFileMaster(fileMaster);
-      hasFileMaster_ = true;
    }
 
    /*
@@ -63,7 +67,7 @@ namespace Rpg {
    {
       // Preconditions
       UTIL_CHECK(!isInitialized_);
-      UTIL_CHECK(hasFileMaster_);
+      UTIL_CHECK(fileMasterPtr_);
 
       // Read computational mesh dimensions (required)
       read(in, "mesh", mesh_);
@@ -234,6 +238,57 @@ namespace Rpg {
       UTIL_CHECK(basis_.isInitialized());
    }
 
+   // Crystallographic Data Output
+
+   /*
+   * Write description of symmetry-adapted stars and basis to file.
+   */
+   template <int D>
+   void Domain<D>::writeStars(const std::string & filename) const
+   {
+      UTIL_CHECK(hasGroup());
+      UTIL_CHECK(basis_.isInitialized());
+      std::ofstream file;
+      fileMaster().openOutputFile(filename, file);
+      bool isSymmetric = true;
+      int nMonomer = 0;
+      fieldIo_.writeFieldHeader(file, nMonomer, unitCell(), isSymmetric);
+      basis_.outputStars(file);
+      file.close();
+   }
+
+   /*
+   * Write a list of waves and associated stars to file.
+   */
+   template <int D>
+   void Domain<D>::writeWaves(const std::string & filename) const
+   {
+      UTIL_CHECK(hasGroup());
+      UTIL_CHECK(basis_.isInitialized());
+      std::ofstream file;
+      fileMaster().openOutputFile(filename, file);
+      bool isSymmetric = true;
+      int nMonomer = 0;
+      fieldIo_.writeFieldHeader(file, nMonomer, unitCell(), isSymmetric);
+      basis_.outputWaves(file);
+      file.close();
+   }
+
+   /*
+   * Write all elements of the space group to a file.
+   */
+   template <int D>
+   void Domain<D>::writeGroup(const std::string & filename) const
+   {
+      UTIL_CHECK(hasGroup());
+      std::ofstream file;
+      fileMaster().openOutputFile(filename, file);
+      file << group();
+      file.close();
+   }
+
+
 } // namespace Rpg
 } // namespace Pscf
 #endif
+
