@@ -508,17 +508,14 @@ namespace Rpc {
          if (command == "WRITE_STARS") {
             readEcho(in, filename);
             domain_.writeStars(filename);
-            //writeStars(filename);
          } else
          if (command == "WRITE_WAVES") {
             readEcho(in, filename);
             domain_.writeWaves(filename);
-            //writeWaves(filename);
          } else
          if (command == "WRITE_GROUP") {
             readEcho(in, filename);
             domain_.writeGroup(filename);
-            //writeGroup(filename);
          } else
          if (command == "BASIS_TO_RGRID") {
             readEcho(in, inFileName);
@@ -1499,6 +1496,8 @@ namespace Rpc {
                                           w_.isSymmetric());
    }
 
+   // Propagator Output
+
    /*
    * Write the last time slice of the propagator in r-grid format.
    */
@@ -1614,58 +1613,6 @@ namespace Rpc {
       }
    }
 
-   #if 0
-   /*
-   * Write description of symmetry-adapted stars and basis to file.
-   */
-   template <int D>
-   void System<D>::writeStars(std::string const & filename) const
-   {
-      UTIL_CHECK(domain_.hasGroup());
-      UTIL_CHECK(domain_.basis().isInitialized());
-      std::ofstream file;
-      fileMaster_.openOutputFile(filename, file);
-      bool isSymmetric = true;
-      domain().fieldIo().writeFieldHeader(file, mixture().nMonomer(),
-                                          domain().unitCell(),
-                                          isSymmetric);
-      domain_.basis().outputStars(file);
-      file.close();
-   }
-
-   /*
-   * Write a list of waves and associated stars to file.
-   */
-   template <int D>
-   void System<D>::writeWaves(std::string const & filename) const
-   {
-      UTIL_CHECK(domain_.hasGroup());
-      UTIL_CHECK(domain_.basis().isInitialized());
-      std::ofstream file;
-      fileMaster_.openOutputFile(filename, file);
-      bool isSymmetric = true;
-      domain().fieldIo().writeFieldHeader(file, mixture().nMonomer(),
-                                          domain().unitCell(),
-                                          isSymmetric);
-      domain_.basis().outputWaves(file);
-      file.close();
-   }
-
-   /*
-   * Write all elements of the space group to a file.
-   */
-   template <int D>
-   void System<D>::writeGroup(std::string const & filename) const
-   {
-      UTIL_CHECK(domain_.hasGroup());
-      std::ofstream file;
-      fileMaster_.openOutputFile(filename, file);
-      file << domain_.group();
-      //Pscf::Prdc::writeGroup(filename, domain_.group());
-      file.close();
-   }
-   #endif
-
    // Field format conversion functions
 
    /*
@@ -1690,7 +1637,7 @@ namespace Rpc {
       fieldIo.readFieldsBasis(inFileName, tmpFieldsBasis_, tmpUnitCell);
       fieldIo.convertBasisToRGrid(tmpFieldsBasis_, tmpFieldsRGrid_);
       fieldIo.writeFieldsRGrid(outFileName, tmpFieldsRGrid_,
-                                 tmpUnitCell);
+                               tmpUnitCell);
    }
 
    /*
@@ -1891,12 +1838,13 @@ namespace Rpc {
    {
       UnitCell<D> tmpUnitCell;
       FieldIo<D> const & fieldIo = domain().fieldIo();
-      fieldIo.readFieldsRGrid(inFileName, tmpFieldsRGrid_,
-                                tmpUnitCell);
+      bool isSymmetric;
+      isSymmetric = fieldIo.readFieldsRGrid(inFileName, tmpFieldsRGrid_,
+                                            tmpUnitCell);
       fieldIo.scaleFieldsRGrid(tmpFieldsRGrid_, factor);
       fieldIo.writeFieldsRGrid(outFileName, tmpFieldsRGrid_,
                                             tmpUnitCell, 
-                                            w_.isSymmetric());
+                                            isSymmetric);
    }
 
    /*

@@ -48,7 +48,7 @@ namespace Rpc {
    * Read an array of fields in r-grid format.
    */
    template <int D>
-   void FieldIo<D>::readFieldsRGrid(
+   bool FieldIo<D>::readFieldsRGrid(
                               std::istream &in,
                               DArray<RField<D> >& fields,
                               UnitCell<D>& unitCell) const
@@ -65,6 +65,7 @@ namespace Rpc {
       Prdc::readRGridData(in, fields, nMonomer, mesh().dimensions());
       // Rpg:: Copy host -> device
 
+      return isSymmetric;
    }
 
    /*
@@ -86,7 +87,7 @@ namespace Rpc {
    * Read a single field in r-grid format.
    */
    template <int D>
-   void FieldIo<D>::readFieldRGrid(
+   bool FieldIo<D>::readFieldRGrid(
                               std::istream &in,
                               RField<D> & field,
                               UnitCell<D>& unitCell) const
@@ -104,6 +105,8 @@ namespace Rpc {
       checkAllocateField(field, mesh().dimensions());
       Prdc::readRGridData(in, field, mesh().dimensions());
       // Rpg:: Copy host -> device
+
+      return isSymmetric;
    }
 
    /*
