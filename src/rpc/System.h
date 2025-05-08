@@ -612,37 +612,6 @@ namespace Rpc {
       void writeQAll(std::string const & basename);
 
       ///@}
-      /// \name Crystallographic Information
-      ///@{
-
-      /**
-      * Output information about waves.
-      *
-      * This function opens a file with the specified filename, calls
-      * Basis<D>::outputWaves, and closes the file before returning.
-      *
-      * \param filename name of output file
-      */
-      void writeWaves(std::string const & filename) const;
-
-      /**
-      * Output information about stars and symmetrized basis functions.
-      *
-      * This function opens a file with the specified filename, calls
-      * Basis<D>::outputStars, and closes the file before returning.
-      *
-      * \param filename name of output file
-      */
-      void writeStars(std::string const & filename) const;
-
-      /**
-      * Output all elements of the space group.
-      *
-      * \param filename name of output file
-      */
-      void writeGroup(std::string const & filename) const;
-
-      ///@}
       /// \name Field File Manipulation and Analysis
       ///@{
 
@@ -915,7 +884,7 @@ namespace Rpc {
       Simulator<D>& simulator();
 
       /**
-      * Get the FileMaster.
+      * Get the FileMaster by non-const references.
       *
       * Access by non-const reference is used in some unit tests.
       */

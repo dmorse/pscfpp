@@ -507,15 +507,18 @@ namespace Rpc {
          } else
          if (command == "WRITE_STARS") {
             readEcho(in, filename);
-            writeStars(filename);
+            domain_.writeStars(filename);
+            //writeStars(filename);
          } else
          if (command == "WRITE_WAVES") {
             readEcho(in, filename);
-            writeWaves(filename);
+            domain_.writeWaves(filename);
+            //writeWaves(filename);
          } else
          if (command == "WRITE_GROUP") {
             readEcho(in, filename);
-            writeGroup(filename);
+            domain_.writeGroup(filename);
+            //writeGroup(filename);
          } else
          if (command == "BASIS_TO_RGRID") {
             readEcho(in, inFileName);
@@ -1611,6 +1614,7 @@ namespace Rpc {
       }
    }
 
+   #if 0
    /*
    * Write description of symmetry-adapted stars and basis to file.
    */
@@ -1660,6 +1664,7 @@ namespace Rpc {
       //Pscf::Prdc::writeGroup(filename, domain_.group());
       file.close();
    }
+   #endif
 
    // Field format conversion functions
 
