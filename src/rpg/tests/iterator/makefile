@@ -26,6 +26,7 @@ clean-outputs:
 	rm -f log count 
 	rm -f out/*.*
 	rm -f out/sweep/*
+	rm -f out/sweepGrid/*
 
 #find out -type f \( ! -iname ".*" \) -exec rm -f {} \;
 

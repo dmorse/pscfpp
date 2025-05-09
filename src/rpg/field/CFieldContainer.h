@@ -8,8 +8,8 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <util/containers/DArray.h>        // member template
 #include <prdc/cuda/RField.h>             // member template parameter
+#include <util/containers/DArray.h>       // member template
 
 namespace Pscf {
 namespace Rpg {
@@ -108,7 +108,10 @@ namespace Rpg {
       * The array capacity is equal to the number of monomer types.
       */
       DArray< DArray<double> > const & basis() const
-      {  return basis_; }
+      {  
+         UTIL_ASSERT(isAllocatedBasis_);
+         return basis_; 
+      }
 
       /**
       * Get the field for one monomer type in basis format (non-const).
@@ -116,7 +119,10 @@ namespace Rpg {
       * \param monomerId integer monomer type index (0, ... ,nMonomer-1)
       */
       DArray<double> & basis(int monomerId)
-      {  return basis_[monomerId]; }
+      {  
+         UTIL_ASSERT(isAllocatedBasis_);
+         return basis_[monomerId]; 
+      }
 
       /**
       * Get the field for one monomer type in basis format (const)
@@ -124,19 +130,28 @@ namespace Rpg {
       * \param monomerId integer monomer type index (0, ... ,nMonomer-1)
       */
       DArray<double> const & basis(int monomerId) const
-      {  return basis_[monomerId]; }
+      {  
+         UTIL_ASSERT(isAllocatedBasis_);
+         return basis_[monomerId]; 
+      }
 
       /**
       * Get array of all fields in r-grid format (non-const).
       */
       DArray< RField<D> > & rgrid()
-      {  return rgrid_; }
+      {
+         UTIL_ASSERT(isAllocatedRGrid_);
+         return rgrid_; 
+      }
 
       /**
       * Get array of all fields in r-grid format (const).
       */
       DArray< RField<D> > const & rgrid() const
-      {  return rgrid_; }
+      {  
+         UTIL_ASSERT(isAllocatedRGrid_);
+         return rgrid_; 
+      }
 
       /**
       * Get field for one monomer type in r-grid format (non-const)
@@ -144,7 +159,10 @@ namespace Rpg {
       * \param monomerId integer monomer type index (0,..,nMonomer-1)
       */
       RField<D> & rgrid(int monomerId)
-      {  return rgrid_[monomerId]; }
+      {  
+         UTIL_ASSERT(isAllocatedRGrid_);
+         return rgrid_[monomerId]; 
+      }
 
       /**
       * Get field for one monomer type in r-grid format (const).
@@ -152,7 +170,10 @@ namespace Rpg {
       * \param monomerId integer monomer type index (0,..,nMonomer-1)
       */
       RField<D> const & rgrid(int monomerId) const
-      {  return rgrid_[monomerId]; }
+      {  
+         UTIL_ASSERT(isAllocatedRGrid_);
+         return rgrid_[monomerId]; 
+      }
 
       /**
       * Has memory been allocated for fields in r-grid format?

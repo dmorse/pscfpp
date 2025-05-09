@@ -9,18 +9,24 @@
 */
 
 
-
-#include <prdc/cuda/RField.h>              // member template parameter
-#include <prdc/crystal/UnitCell.h>         // function parameter
-#include <pscf/math/IntVec.h>              // function parameter
-#include <pscf/cuda/DeviceArray.h>         // function parameter
 #include <util/param/ParamComposite.h>     // base class
+#include <prdc/cuda/RField.h>              // member template parameter
+#include <pscf/math/IntVec.h>              // function parameter
 #include <util/containers/DArray.h>        // member template
+
+// Forward references
+namespace Pscf {
+   template <class T> class DeviceArray;
+   namespace Prdc {
+      template <int D> class UnitCell;
+   }
+   namespace Rpg {
+      template <int D> class FieldIo;
+   }
+}
 
 namespace Pscf {
 namespace Rpg {
-
-   template <int D> class FieldIo;
 
    using namespace Util;
    using namespace Pscf::Prdc;
@@ -393,26 +399,38 @@ namespace Rpg {
    template <int D>
    inline
    DArray< DArray<double> > const & WFieldContainer<D>::basis() const
-   {  return basis_; }
+   {  
+      UTIL_ASSERT(isAllocatedBasis_);
+      return basis_; 
+   }
 
    // Get one field in basis format (const)
    template <int D>
    inline
    DArray<double> const & WFieldContainer<D>::basis(int id) const
-   {  return basis_[id]; }
+   {  
+      UTIL_ASSERT(isAllocatedBasis_);
+      return basis_[id]; 
+   }
 
    // Get all fields in r-grid format (const)
    template <int D>
    inline
    DArray< RField<D> > const &
    WFieldContainer<D>::rgrid() const
-   {  return rgrid_; }
+   {  
+      UTIL_ASSERT(isAllocatedRGrid_);
+      return rgrid_; 
+   }
 
    // Get one field in r-grid format (const)
    template <int D>
    inline
    RField<D> const & WFieldContainer<D>::rgrid(int id) const
-   {  return rgrid_[id]; }
+   {  
+      UTIL_ASSERT(isAllocatedRGrid_);
+      return rgrid_[id]; 
+   }
 
    // Has memory been allocated for fields in r-grid format?
    template <int D>
