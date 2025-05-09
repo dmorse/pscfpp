@@ -368,6 +368,7 @@ namespace Rpg {
             for (int j = 0; j < nMonomer; j++) {
                // Find average concentration for j monomers
                if (system().w().isSymmetric()) { // c().basis() has data
+                  UTIL_CHECK(system().c().isAllocatedBasis());
                   cAverage = system().c().basis(j)[0];
                } else { // average must be calculated
                   cAverage = findAverage(system().c().rgrid(j));
@@ -378,6 +379,7 @@ namespace Rpg {
             // If system has external fields, include them in homogeneous field
             if (system().hasExternalFields()) {
                if (system().h().isSymmetric()) { // h().basis() has data
+                  UTIL_CHECK(system().h().isAllocatedBasis());
                   wAverage += system().h().basis(i)[0];
                } else { // average must be calculated
                   wAverage += findAverage(system().h().rgrid(i));

@@ -1128,6 +1128,8 @@ namespace Rpg {
       double temp = 0.0;
       if (w_.isSymmetric()) {
          // Use expansion in symmetry-adapted orthonormal basis
+         UTIL_CHECK(w_.isAllocatedBasis());
+         UTIL_CHECK(c_.isAllocatedBasis());
          const int nBasis = domain_.basis().nBasis();
          for (int i = 0; i < nm; ++i) {
             for (int k = 0; k < nBasis; ++k) {
@@ -1148,8 +1150,10 @@ namespace Rpg {
 
       // Compute contribution from external fields, if they exist
       if (hasExternalFields()) {
-         if (w_.isSymmetric()) {
+         if (w_.isSymmetric() && h_.isSymmetric()) {
             // Use expansion in symmetry-adapted orthonormal basis
+            UTIL_CHECK(h_.isAllocatedBasis());
+            UTIL_CHECK(c_.isAllocatedBasis());
             const int nBasis = domain_.basis().nBasis();
             for (int i = 0; i < nm; ++i) {
                for (int k = 0; k < nBasis; ++k) {
@@ -1170,6 +1174,7 @@ namespace Rpg {
 
       // Compute excess interaction free energy [ phi^{T}*chi*phi/2 ]
       if (w_.isSymmetric()) {
+         UTIL_CHECK(c_.isAllocatedBasis());
          const int nBasis = domain_.basis().nBasis();
          for (int i = 0; i < nm; ++i) {
             for (int j = i; j < nm; ++j) {
