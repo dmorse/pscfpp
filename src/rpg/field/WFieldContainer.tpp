@@ -10,7 +10,9 @@
 
 #include "WFieldContainer.h"
 #include <rpg/field/FieldIo.h>
+#include <prdc/crystal/UnitCell.h>
 #include <prdc/cuda/VecOp.h>
+#include <pscf/cuda/DeviceArray.h>
 
 namespace Pscf {
 namespace Rpg
