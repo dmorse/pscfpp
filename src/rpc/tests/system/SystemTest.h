@@ -28,8 +28,8 @@ public:
    {  setVerbose(0); }
 
    void tearDown()
-   {  
-     setVerbose(0); 
+   {
+     setVerbose(0);
      closeLogFile();
    }
 
@@ -94,7 +94,7 @@ public:
    }
 
    /*
-   * Compare system w fields to reference fields from a file. 
+   * Compare system w fields to reference fields from a file.
    */
    template <int D>
    double readCompareWBasis(System<D> const & system,
@@ -108,7 +108,7 @@ public:
    }
 
    /*
-   * Compare system c fields to reference fields from a file. 
+   * Compare system c fields to reference fields from a file.
    */
    template <int D>
    double readCompareCBasis(System<D> const & system,
@@ -143,8 +143,8 @@ public:
    * Template for an iteration test, with regression testing.
    */
    template <int D>
-   void initSystem(System<D>& system, 
-                   std::string paramFileName, 
+   void initSystem(System<D>& system,
+                   std::string paramFileName,
                    std::string wFileName)
    {
       system.fileMaster().setInputPrefix(filePrefix());
@@ -163,8 +163,8 @@ public:
    /*
    * Construct file name prefix + #D_ + outSuffix
    */
-   std::string makeFileRoot(std::string prefix, 
-                            std::string outSuffix, 
+   std::string makeFileRoot(std::string prefix,
+                            std::string outSuffix,
                             int D)
    {
       std::string outFileRoot = "out/testIterate";
@@ -176,10 +176,10 @@ public:
    * Iterate and output final fields.
    */
    template <int D>
-   void iterate(System<D>& system, 
+   void iterate(System<D>& system,
                 std::string const & outFileRoot)
    {
-      // Iterate 
+      // Iterate
       int error = system.iterate();
       if (error) {
          TEST_THROW("Iterator failed to converge.");
@@ -187,11 +187,11 @@ public:
 
       // Write final fields
       FieldIo<D> const & fieldIo = system.domain().fieldIo();
-      fieldIo.writeFieldsBasis(outFileRoot + "_w.bf", 
-                               system.w().basis(), 
+      fieldIo.writeFieldsBasis(outFileRoot + "_w.bf",
+                               system.w().basis(),
                                system.domain().unitCell());
-      fieldIo.writeFieldsBasis(outFileRoot + "_c.bf", 
-                               system.c().basis(), 
+      fieldIo.writeFieldsBasis(outFileRoot + "_c.bf",
+                               system.c().basis(),
                                system.domain().unitCell());
    }
 
@@ -199,9 +199,9 @@ public:
    * Template for an iteration test, with regression testing.
    */
    template <int D>
-   void testIterate(System<D>& system, 
-                    std::string paramFileName, 
-                    std::string wFileName, 
+   void testIterate(System<D>& system,
+                    std::string paramFileName,
+                    std::string wFileName,
                     std::string outSuffix,
                     double& wMaxDiff,
                     double& cMaxDiff,
@@ -216,7 +216,7 @@ public:
 
       iterate(system, outFileRoot);
 
-      std::string refFileRoot; 
+      std::string refFileRoot;
       refFileRoot = makeFileRoot("ref/testIterate", outSuffix, D);
 
       wMaxDiff = readCompareWBasis(system, refFileRoot + "_w.bf");
@@ -524,7 +524,7 @@ public:
       in.close();
 
       system.readWBasis("in/diblock/bcc/omega.in");
-      bool hasSymmetry 
+      bool hasSymmetry
             = system.domain().fieldIo().hasSymmetry(system.w().rgrid(0));
       TEST_ASSERT(hasSymmetry);
 
@@ -721,73 +721,69 @@ public:
       printMethod(TEST_FUNC);
       openLogFile("out/testIterate1D_lam_open_shift.log");
 
-      System<1> system, systemShift;
-      system.fileMaster().setInputPrefix(filePrefix());
-      system.fileMaster().setOutputPrefix(filePrefix());
-      systemShift.fileMaster().setInputPrefix(filePrefix());
-      systemShift.fileMaster().setOutputPrefix(filePrefix());
-      
-      std::ifstream in, inShift;
-      openInputFile("in/solution/lam_open/param", in);
-      system.readParam(in);
-      openInputFile("in/solution/lam_open/param", inShift);
-      systemShift.readParam(inShift);
-      in.close();
+      // Process system
+      System<1> system;
+      initSystem(system,
+                 "in/solution/lam_open/param",
+                 "in/solution/lam_open/w.bf");
+      int error = system.iterate();
+      if (error) {
+         TEST_THROW("Iterator failed to converge.");
+      }
 
-      // Read in comparison result
-      system.readWBasis("in/solution/lam_open/w.ref");
-      DArray< DArray<double> > wFields_check;
-      wFields_check = system.w().basis();
+      // Initialize systemShift
+      System<1> systemShift;
+      initSystem(systemShift,
+                 "in/solution/lam_open/param",
+                 "in/solution/lam_open/w.bf");
 
-      // Read input w-fields, iterate and output solution
-      system.readWBasis("in/solution/lam_open/w.bf");
-      systemShift.readWBasis("in/solution/lam_open/w.bf");
-
-      // Apply shift to input fields.
-      double shift = 2;
+      // Shift w fields in SystemShift
+      double shift = 2.0;
       DArray<DArray <double> > wFields_ = systemShift.w().basis();
       for (int i = 0; i < systemShift.mixture().nMonomer(); ++i) {
          wFields_[i][0] += shift;
       }
       systemShift.setWBasis(wFields_);
 
-      // Apply shift to polymer and solvent chemical potentials.
-      for (int i = 0; i < systemShift.mixture().nSolvent(); ++i) {
-         double L = systemShift.mixture().solvent(i).size();
-         double newMu = systemShift.mixture().solvent(i).mu() + L*shift;
+      // Shift chemical potentials in SystemShift
+      double L, newMu;
+      int nSolvent = systemShift.mixture().nSolvent();
+      for (int i = 0; i < nSolvent; ++i) {
+         L = systemShift.mixture().solvent(i).size();
+         newMu = systemShift.mixture().solvent(i).mu() + L*shift;
          systemShift.mixture().solvent(i).setMu(newMu);
       }
-      for (int i = 0; i < systemShift.mixture().nPolymer(); ++i) {
-         double L = 0;
-         for (int j = 0; j < systemShift.mixture().polymer(i).nBlock(); ++j) {
+      int nPolymer = systemShift.mixture().nPolymer();
+      int nBlock;
+      for (int i = 0; i < nPolymer; ++i) {
+         L = 0.0;
+         nBlock = systemShift.mixture().polymer(i).nBlock();
+         for (int j = 0; j < nBlock; ++j) {
             L += systemShift.mixture().polymer(i).block(j).length();
          }
-         double newMu = systemShift.mixture().polymer(i).mu() + L*shift;
+         newMu = systemShift.mixture().polymer(i).mu() + L*shift;
          systemShift.mixture().polymer(i).setMu(newMu);
       }
 
-      // Iterate
-      int error = system.iterate();
-      if (error) {
-         TEST_THROW("Iterator failed to converge.");
-      }
+      // Iterate systemShift
       int errorShift = systemShift.iterate();
       if (errorShift) {
          TEST_THROW("Shifted iterator failed to converge.");
       }
 
-      // Verify concentration fields, thermo, and pressure
+      // Compare converged concentration fields
       BFieldComparison comparison(1);
-      comparison.compare(system.c().basis(),systemShift.c().basis());
+      comparison.compare(system.c().basis(), systemShift.c().basis());
+      TEST_ASSERT(comparison.maxDiff() < 5.0E-8);
+
+      // Compare free energies and pressures
       double fDiff, pDiff;
       if (!system.hasFreeEnergy()) system.computeFreeEnergy();
       if (!systemShift.hasFreeEnergy()) systemShift.computeFreeEnergy();
       fDiff = std::abs(system.fHelmholtz() - systemShift.fHelmholtz());
       pDiff = std::abs(system.pressure() - systemShift.pressure() + shift);
-      TEST_ASSERT(comparison.maxDiff() < 5.0E-8);
-      TEST_ASSERT(fDiff < 1E-6);
-      TEST_ASSERT(pDiff < 1E-6);
-
+      TEST_ASSERT(fDiff < 1.0E-6);
+      TEST_ASSERT(pDiff < 1.0E-6);
    }
 
    void testIterate2D_hex_rigid()
@@ -965,7 +961,7 @@ public:
       TEST_ASSERT(std::abs(fDiff) < 1.0E-7);
 
       // Compare relaxed unit cell parameters
-      double cellParam = system.domain().unitCell().parameter(0); 
+      double cellParam = system.domain().unitCell().parameter(0);
       double cellParamRef = 2.2348701424;     // from PSCF Fortran
       double cellDiff = cellParam - cellParamRef;
       if (verbose() > 0) {
@@ -1012,24 +1008,16 @@ public:
    {
       printMethod(TEST_FUNC);
       openLogFile("out/testIterateWithMaskAndH.log");
-      
+
       // Set up system
       System<1> system;
-      system.fileMaster().setInputPrefix(filePrefix());
-      system.fileMaster().setOutputPrefix(filePrefix());
-      std::ifstream in;
-      openInputFile("in/maskAndH/param", in);
-      system.readParam(in);
-      in.close();
-
-      // Read initial guess
-      system.readWBasis("in/maskAndH/w.bf");
+      initSystem(system,"in/maskAndH/param", "in/maskAndH/w.bf");
 
       // Read in the mask and external fields from file
       UnitCell<1> unitCell; // UnitCell object to pass to FieldIo functions
       unitCell = system.domain().unitCell();
       system.mask().setFieldIo(system.domain().fieldIo());
-      system.mask().allocateBasis(system.domain().basis().nBasis()); 
+      system.mask().allocateBasis(system.domain().basis().nBasis());
       system.mask().allocateRGrid(system.domain().mesh().dimensions());
       system.mask().readBasis("in/maskAndH/mask.bf", unitCell);
       TEST_ASSERT(eq(system.mask().phiTot(), 8.0951532073e-01));
@@ -1039,24 +1027,12 @@ public:
       system.h().allocateRGrid(system.domain().mesh().dimensions());
       system.h().readBasis("in/maskAndH/h.bf", unitCell);
 
-      // Run the solve function
+      // Iterate to convergence
       system.iterate();
 
-      // Check converged field is correct by comparing to files in in/maskAndH
-      DArray< DArray<double> > wFieldsCheck; // Copy of reference field
-      system.domain().fieldIo().readFieldsBasis("in/maskAndH/w.ref", 
-                                                wFieldsCheck, unitCell);
-      BFieldComparison bComparison(0); // object to compare fields
-      bComparison.compare(system.w().basis(), wFieldsCheck);
-
-      double diff = bComparison.maxDiff();
-      double epsilon = 1.0E-5; 
-      if (verbose() > 0 || diff > epsilon) {
-         std::cout << "\n";
-         std::cout << "diff    = " << diff << "\n";
-         std::cout << "epsilon = " << epsilon << "\n";
-      }
-      TEST_ASSERT(diff < epsilon);
+      // Compare converged field to in/maskAndH/w.ref
+      double diff = readCompareWBasis(system, "in/maskAndH/w.ref");
+      TEST_ASSERT(diff < 1.0E-5);
    }
 
 };
