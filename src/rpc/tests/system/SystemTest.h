@@ -28,12 +28,9 @@ public:
    {  setVerbose(0); }
 
    void tearDown()
-   {  setVerbose(0); }
-
-   void testConstructor1D()
-   {
-      printMethod(TEST_FUNC);
-      System<1> system;
+   {  
+     setVerbose(0); 
+     closeLogFile();
    }
 
    // Utility functions (used in unit tests)
@@ -80,23 +77,24 @@ public:
    }
 
    /*
-   * Read basis fields into an array.
+   * Compare basis fields.
    */
    double compareBasis(DArray< DArray<double> > const & fields1,
-                       DArray< DArray<double> > const & fields2)
+                       DArray< DArray<double> > const & fields2,
+                       std::string message)
    {
       BFieldComparison comparison(1);
       comparison.compare(fields1, fields2);
       double maxDiff = comparison.maxDiff();
       if (verbose() > 0) {
          std::cout << "\n";
-         std::cout << "max error = " << maxDiff;
+         std::cout << message << maxDiff;
       }
       return maxDiff;
    }
 
    /*
-   * Read basis fields into an array.
+   * Compare system w fields to reference fields from a file. 
    */
    template <int D>
    double readCompareWBasis(System<D> const & system,
@@ -105,8 +103,22 @@ public:
       DArray< DArray<double> > fields;
       UnitCell<D> unitCell;
       readBasisFields(system, filename, fields, unitCell);
-      double maxDiff = compareBasis(fields, system.w().basis());
-      return maxDiff;
+      std::string message = "max w field error = ";
+      return compareBasis(fields, system.w().basis(), message);
+   }
+
+   /*
+   * Compare system c fields to reference fields from a file. 
+   */
+   template <int D>
+   double readCompareCBasis(System<D> const & system,
+                            std::string filename)
+   {
+      DArray< DArray<double> > fields;
+      UnitCell<D> unitCell;
+      readBasisFields(system, filename, fields, unitCell);
+      std::string message = "max c field error = ";
+      return compareBasis(fields, system.c().basis(), message);
    }
 
    /*
@@ -131,25 +143,12 @@ public:
    * Template for an iteration test, with regression testing.
    */
    template <int D>
-   void testIterate(System<D>& system, 
-                    std::string paramFileName, 
-                    std::string wFileName, 
-                    std::string outSuffix,
-                    double& wMaxDiff,
-                    double& cMaxDiff,
-                    bool compareCFields = true,
-                    bool compareToInput = false)
+   void initSystem(System<D>& system, 
+                   std::string paramFileName, 
+                   std::string wFileName)
    {
       system.fileMaster().setInputPrefix(filePrefix());
       system.fileMaster().setOutputPrefix(filePrefix());
-
-      std::string outFileRoot = "out/testIterate";
-      outFileRoot += std::to_string(D) + "D_" + outSuffix;
-
-      // Open log file
-      std::string filename;
-      filename = outFileRoot + ".log";
-      openLogFile(filename.c_str());
 
       // Read parameter file
       std::ifstream in;
@@ -159,25 +158,34 @@ public:
 
       // Read w fields
       system.readWBasis(wFileName);
+   }
 
-      // Construct reference fields for comparison
-      DArray< DArray<double> > w_ref;
-      DArray< DArray<double> > c_ref;
-      UnitCell<D> unitCell;
-      if (compareToInput) {
-         w_ref = system.w().basis();
-      } else {
-         filename = "ref/";
-         filename += "testIterate" + std::to_string(D) + "D_" + outSuffix;
-         readBasisFields(system, filename + "_w.bf", w_ref, unitCell);
-         readBasisFields(system, filename + "_c.bf", c_ref, unitCell);
-      }
+   /*
+   * Construct file name prefix + #D_ + outSuffix
+   */
+   std::string makeFileRoot(std::string prefix, 
+                            std::string outSuffix, 
+                            int D)
+   {
+      std::string outFileRoot = "out/testIterate";
+      outFileRoot += std::to_string(D) + "D_" + outSuffix;
+      return outFileRoot;
+   }
 
-      // Iterate and output solution
+   /*
+   * Iterate and output final fields.
+   */
+   template <int D>
+   void iterate(System<D>& system, 
+                std::string const & outFileRoot)
+   {
+      // Iterate 
       int error = system.iterate();
       if (error) {
          TEST_THROW("Iterator failed to converge.");
       }
+
+      // Write final fields
       FieldIo<D> const & fieldIo = system.domain().fieldIo();
       fieldIo.writeFieldsBasis(outFileRoot + "_w.bf", 
                                system.w().basis(), 
@@ -185,29 +193,42 @@ public:
       fieldIo.writeFieldsBasis(outFileRoot + "_c.bf", 
                                system.c().basis(), 
                                system.domain().unitCell());
+   }
 
-      // Compare solution to reference w fields
-      BFieldComparison comparison(1);
-      comparison.compare(w_ref, system.w().basis());
-      wMaxDiff = comparison.maxDiff();
-      if (verbose() > 0) {
-         std::cout << "\n";
-         std::cout << "w field max error = " << wMaxDiff;
-      }
+   /*
+   * Template for an iteration test, with regression testing.
+   */
+   template <int D>
+   void testIterate(System<D>& system, 
+                    std::string paramFileName, 
+                    std::string wFileName, 
+                    std::string outSuffix,
+                    double& wMaxDiff,
+                    double& cMaxDiff,
+                    bool compareCFields = true)
+   {
+      std::string outFileRoot;
+      outFileRoot = makeFileRoot("out/testIterate", outSuffix, D);
 
-      // Compare solution to reference c fields
+      openLogFile(outFileRoot + ".log");
+
+      initSystem(system, paramFileName, wFileName);
+
+      iterate(system, outFileRoot);
+
+      std::string refFileRoot; 
+      refFileRoot = makeFileRoot("ref/testIterate", outSuffix, D);
+
+      wMaxDiff = readCompareWBasis(system, refFileRoot + "_w.bf");
       if (compareCFields) {
-         BFieldComparison comparison(1);
-         comparison.compare(c_ref, system.c().basis());
-         cMaxDiff = comparison.maxDiff();
-         if (verbose() > 0) {
-            std::cout << "\n";
-            std::cout << "c field max error = " << cMaxDiff;
-         }
+         cMaxDiff = readCompareCBasis(system, refFileRoot + "_c.bf");
       }
 
    }
 
+   /*
+   * Compute and return stress.
+   */
    template <int D>
    FSArray<double, 6> computeStress(System<D>& system)
    {
@@ -228,8 +249,13 @@ public:
       return stress;
    }
 
-
    // Unit test functions
+
+   void testConstructor1D()
+   {
+      printMethod(TEST_FUNC);
+      System<1> system;
+   }
 
    void testReadParameters1D()
    {
@@ -971,7 +997,7 @@ public:
       TEST_ASSERT(fHelmholtz < 1.0E-7);
       TEST_ASSERT(pressure < 1.0E-7);
 
-      // Compare to input w.bf
+      // Compare to input reference w_ref.bf
       wMaxDiff = readCompareWBasis(system, "in/diblock/c15_1/w_ref.bf");
       TEST_ASSERT(wMaxDiff < 1.0E-6);
 
