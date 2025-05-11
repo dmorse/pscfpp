@@ -1,0 +1,37 @@
+System{
+  polymerModel  Bead
+  Mixture{
+    nMonomer  2
+    monomers[  
+              0.1
+              0.1
+    ]
+    nPolymer  1
+    Polymer{
+       nBlock  2
+       blocks[
+               0    30
+               1    70
+       ]
+       phi     1.0
+    }
+  }
+  Interaction{
+    chi(  
+         1   0    0.2
+    )
+  }
+  Domain{
+    mesh        32    32
+    lattice     hexagonal
+    groupName   p_6_m_m
+  }
+  AmIterator{
+    epsilon      1.0e-10
+    maxItr       100
+    maxHist      30
+    verbose      1
+    isFlexible   1
+  }
+}
+
