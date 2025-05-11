@@ -8,6 +8,7 @@
 
 #include <prdc/cpu/RFieldComparison.h>
 #include <prdc/crystal/BFieldComparison.h>
+#include <util/format/Dbl.h>
 
 #include <util/tests/LogFileUnitTest.h>
 
@@ -273,19 +274,15 @@ public:
    void testConversion1D_lam()
    {
       printMethod(TEST_FUNC);
+
+      std::string outFileRoot;
+      outFileRoot = makeFileRoot("out/testConversion","lam", 1);
+      openLogFile(outFileRoot + ".log");
+
       System<1> system;
-      system.fileMaster().setInputPrefix(filePrefix());
-      system.fileMaster().setOutputPrefix(filePrefix());
-
-      openLogFile("out/testConversion1D_lam.log");
-
-      std::ifstream in;
-      openInputFile("in/diblock/lam/param.flex", in);
-      system.readParam(in);
-      in.close();
-
-      // Read w-fields (reference solution, solved by Fortran PSCF)
-      system.readWBasis("in/diblock/lam/omega.in");
+      initSystem(system,
+                 "in/diblock/lam/param.flex", 
+                 "in/diblock/lam/omega.in");
 
       // Copy w field components to wFields_check after reading
       DArray< DArray<double> > wFields_check;
@@ -348,20 +345,15 @@ public:
    void testConversion2D_hex()
    {
       printMethod(TEST_FUNC);
+
+      std::string outFileRoot;
+      outFileRoot = makeFileRoot("out/testConversion","hex", 2);
+      openLogFile(outFileRoot + ".log");
+
       System<2> system;
-      system.fileMaster().setInputPrefix(filePrefix());
-      system.fileMaster().setOutputPrefix(filePrefix());
-
-      openLogFile("out/testConversion2D_hex.log");
-
-      // Read parameter file
-      std::ifstream in;
-      openInputFile("in/diblock/hex/param.flex", in);
-      system.readParam(in);
-      in.close();
-
-      // Read w fields
-      system.readWBasis("in/diblock/hex/omega.in");
+      initSystem(system,
+                 "in/diblock/hex/param.flex", 
+                 "in/diblock/hex/omega.in");
 
       // Store components in wFields_check for later comparison
       DArray< DArray<double> > wFields_check;
@@ -582,6 +574,7 @@ public:
    void testIterate1D_lam_flex()
    {
       printMethod(TEST_FUNC);
+      //setVerbose(1);
 
       System<1> system;
       double wMaxDiff, cMaxDiff;
@@ -593,6 +586,13 @@ public:
                   cMaxDiff);
       TEST_ASSERT(wMaxDiff < 5.0E-8);
       TEST_ASSERT(cMaxDiff < 1.0E-8);
+
+      // Unit cell parameter
+      double a  = system.domain().unitCell().parameter(0);
+      if (verbose() > 0) {
+         std::cout << "\na = " << Dbl(a, 20, 12);
+      }
+      TEST_ASSERT(std::abs(a - 1.5161093077) < 1.0E-8);
 
       // Compare free energies to output of modified unit test from v1.1
       double fHelmholtz =  2.42932542391e+00;
@@ -609,7 +609,170 @@ public:
       FSArray<double, 6> stress = computeStress(system);
       TEST_ASSERT(std::abs(stress[0]) < 1.0E-8);
 
+      #if 0
+      system.scaleFieldsBasis("out/testIterate1D_lam_flex_w.bf",
+                              "out/testIterate1D_lam_flex_w_scaled.bf",
+                              0.01);
+      #endif
+
       // v1.1 test used omega.in as input, compared to omega.ref
+   }
+
+   void testIterate1D_lam_stress()
+   {
+      printMethod(TEST_FUNC);
+      //setVerbose(1);
+
+      std::string outFileRoot;
+      outFileRoot = makeFileRoot("out/testIterate", "lam_stress", 1);
+      openLogFile(outFileRoot + ".log");
+
+      // Initialize, read reference solution
+      System<1> system;
+      initSystem(system, 
+                 "in/diblock/lam/param.rigid",
+                 "ref/testIterate1D_lam_flex_w.bf");
+      system.iterate();
+      double ar  = system.domain().unitCell().parameter(0);
+      if (verbose() > 0) {
+         std::cout << "\na = " << Dbl(ar,20, 12);
+      }
+
+      // Unit cell size values
+      double a0  = ar * 1.200;
+      double am  = a0 * 0.995;
+      double ap  = a0 * 1.005;
+
+      FSArray<double, 6> parameters;
+      parameters.clear();
+
+      // Solve for middle unit cell parameter a0 
+      parameters.append(a0);
+      system.setUnitCell(parameters);
+      system.iterate();
+      system.mixture().computeStress();
+      double s0 = system.mixture().stress(0);
+      TEST_ASSERT(std::fabs((s0 - 3.3354925e-01)/s0) < 1.0E-5);
+
+      // Solve for lower unit cell parameter am (minus)
+      parameters.clear();
+      parameters.append(am);
+      system.setUnitCell(parameters);
+      system.iterate();
+      double fm = system.fHelmholtz();
+
+      // Solve for upper unit cell parameter ap (plus)
+      parameters.clear();
+      parameters.append(ap);
+      system.setUnitCell(parameters);
+      system.iterate();
+      double fp = system.fHelmholtz();
+
+      // Numerical stress by finite differences
+      double sn = (fp - fm)/(ap - am);
+      if (verbose() > 0) {
+         std::cout << "\nStress [scft]  = " << Dbl(s0, 20, 12);
+         std::cout << "\nStress [diff]  = " << Dbl(sn, 20, 12);
+         std::cout << "\nError fraction = " << Dbl((s0-sn)/s0, 20, 12);
+      }
+      TEST_ASSERT(std::abs((sn - s0)/s0) < 1.0E-4);
+
+   }
+
+   void testIterate1D_lam_bead_flex()
+   {
+      printMethod(TEST_FUNC);
+      //setVerbose(1);
+
+      System<1> system;
+      double wMaxDiff, cMaxDiff;
+      testIterate(system,
+                  "in/diblock/lam_bead/param.flex",
+                  "in/diblock/lam_bead/w.bf",
+                  "lam_bead_flex",
+                  wMaxDiff,
+                  cMaxDiff);
+      TEST_ASSERT(wMaxDiff < 5.0E-8);
+      TEST_ASSERT(cMaxDiff < 1.0E-8);
+
+      // Unit cell parameter
+      double a  = system.domain().unitCell().parameter(0);
+      if (verbose() > 0) {
+         std::cout << "\na = " << Dbl(a, 20, 12);
+      }
+      TEST_ASSERT(std::abs(a - 1.51567153218) < 1.0E-8);
+
+      // Compare free energies to output of modified unit test from v1.1
+      double fHelmholtz = 2.42834917413e-02;
+      double pressure   = 3.00896311324e-02;
+      compareFreeEnergies(system, fHelmholtz, pressure);
+      TEST_ASSERT(fHelmholtz < 1.0E-8);
+      TEST_ASSERT(pressure < 1.0E-8);
+
+      // Check stress value
+      FSArray<double, 6> stress = computeStress(system);
+      TEST_ASSERT(std::abs(stress[0]) < 1.0E-10);
+   }
+
+   void testIterate1D_lam_bead_stress()
+   {
+      printMethod(TEST_FUNC);
+      //setVerbose(1);
+
+      std::string outFileRoot;
+      outFileRoot = makeFileRoot("out/testIterate", "lam_bead_stress", 1);
+      openLogFile(outFileRoot + ".log");
+
+      // Initialize, read reference solution
+      System<1> system;
+      initSystem(system, 
+                 "in/diblock/lam_bead/param.rigid",
+                 "ref/testIterate1D_lam_bead_flex_w.bf");
+      system.iterate(); 
+      double ar  = system.domain().unitCell().parameter(0);
+      if (verbose() > 0) {
+         std::cout << "\na = " << Dbl(ar,20, 12);
+      }
+
+      // Unit cell size values
+      double a0  = ar * 1.200;
+      double am  = a0 * 0.995;
+      double ap  = a0 * 1.005;
+
+      FSArray<double, 6> parameters;
+      parameters.clear();
+
+      // Solve for middle unit cell parameter a0 
+      parameters.append(a0);
+      system.setUnitCell(parameters);
+      system.iterate();
+      system.mixture().computeStress();
+      double s0 = system.mixture().stress(0);
+      TEST_ASSERT(std::fabs((s0 - 3.3354725E-3)/s0) < 1.0E-4);
+
+      // Solve for lower unit cell parameter am (minus)
+      parameters.clear();
+      parameters.append(am);
+      system.setUnitCell(parameters);
+      system.iterate();
+      double fm = system.fHelmholtz();
+
+      // Solve for upper unit cell parameter ap (plus)
+      parameters.clear();
+      parameters.append(ap);
+      system.setUnitCell(parameters);
+      system.iterate();
+      double fp = system.fHelmholtz();
+
+      // Numerical stress by finite differences
+      double sn = (fp - fm)/(ap - am);
+      if (verbose() > 0) {
+         std::cout << "\nStress [scft]  = " << Dbl(s0, 20, 12);
+         std::cout << "\nStress [diff]  = " << Dbl(sn, 20, 12);
+         std::cout << "\nError fraction = " << Dbl((s0-sn)/s0, 20, 12);
+      }
+      TEST_ASSERT(std::abs((sn - s0)/s0) < 1.0E-4);
+
    }
 
    void testIterate1D_lam_soln()
@@ -624,8 +787,10 @@ public:
                   "lam_soln",
                   wMaxDiff,
                   cMaxDiff);
-      //std::cout << "\n wMaxDiff = " << wMaxDiff;
-      //std::cout << "\n cMaxDiff = " << cMaxDiff;
+      if (verbose() > 0) {
+         std::cout << "\n wMaxDiff = " << wMaxDiff;
+         std::cout << "\n cMaxDiff = " << cMaxDiff;
+      }
       TEST_ASSERT(wMaxDiff < 5.0E-8);
       TEST_ASSERT(cMaxDiff < 1.0E-8);
 
@@ -852,6 +1017,162 @@ public:
       TEST_ASSERT(std::abs(stress[0]) < 1.0E-8);
 
       // v1.1 test used omega.in as input, compared to omega.ref
+
+      system.scaleFieldsBasis("out/testIterate2D_hex_flex_w.bf",
+                              "out/testIterate2D_hex_flex_w_scaled.bf",
+                              0.01);
+   }
+
+   void testIterate2D_hex_stress()
+   {
+      printMethod(TEST_FUNC);
+      //setVerbose(1);
+
+      std::string outFileRoot;
+      outFileRoot = makeFileRoot("out/testIterate", "hex_stress", 2);
+      openLogFile(outFileRoot + ".log");
+
+      // Initialize, read reference solution
+      System<2> system;
+      initSystem(system, 
+                 "in/diblock/hex/param.rigid",
+                 "ref/testIterate2D_hex_flex_w.bf");
+      system.iterate();
+      double ar  = system.domain().unitCell().parameter(0);
+      if (verbose() > 0) {
+         std::cout << "\na = " << Dbl(ar, 20, 12);
+      }
+
+      // Unit cell size values
+      double a0  = ar * 1.100;
+      double am  = a0 * 0.996;
+      double ap  = a0 * 1.004;
+
+      FSArray<double, 6> parameters;
+      parameters.clear();
+
+      // Solve for middle unit cell parameter a0 
+      parameters.append(a0);
+      system.setUnitCell(parameters);
+      system.iterate();
+      system.mixture().computeStress();
+      double s0 = system.mixture().stress(0);
+      TEST_ASSERT(std::fabs((s0 - 1.6546466e-01)/s0) < 1.0E-5);
+
+      // Solve for lower unit cell parameter am (minus)
+      parameters.clear();
+      parameters.append(am);
+      system.setUnitCell(parameters);
+      system.iterate();
+      double fm = system.fHelmholtz();
+
+      // Solve for upper unit cell parameter ap (plus)
+      parameters.clear();
+      parameters.append(ap);
+      system.setUnitCell(parameters);
+      system.iterate();
+      double fp = system.fHelmholtz();
+
+      // Numerical stress by finite differences
+      double sn = (fp - fm)/(ap - am);
+      if (verbose() > 0) {
+         std::cout << "\nStress [scft]  = " << Dbl(s0, 20, 12);
+         std::cout << "\nStress [diff]  = " << Dbl(sn, 20, 12);
+         std::cout << "\nError fraction = " << Dbl((s0-sn)/s0, 20, 12);
+      }
+      TEST_ASSERT(std::abs((sn - s0)/s0) < 1.0E-4);
+      #if 0
+      #endif
+
+   }
+
+   void testIterate2D_hex_bead_flex()
+   {
+      printMethod(TEST_FUNC);
+      //setVerbose(1);
+
+      double wMaxDiff, cMaxDiff;
+      System<2> system;
+      testIterate(system,
+                  "in/diblock/hex_bead/param.flex",
+                  "in/diblock/hex_bead/w.bf",
+                  "hex_bead_flex",
+                  wMaxDiff,
+                  cMaxDiff);
+      TEST_ASSERT(wMaxDiff < 1.0E-7);
+      TEST_ASSERT(cMaxDiff < 1.0E-8);
+
+      // Compare free energies to output of modified unit test from v1.1
+      double fHelmholtz = 2.80048919599e-02;
+      double pressure =  3.19132478045e-02;
+      compareFreeEnergies(system, fHelmholtz, pressure);
+      TEST_ASSERT(fHelmholtz < 1.0E-7);
+      TEST_ASSERT(pressure < 1.0E-7);
+
+      // Check stress value
+      FSArray<double, 6> stress = computeStress(system);
+      TEST_ASSERT(std::abs(stress[0]) < 1.0E-8);
+   }
+
+   void testIterate2D_hex_bead_stress()
+   {
+      printMethod(TEST_FUNC);
+      //setVerbose(1);
+
+      std::string outFileRoot;
+      outFileRoot = makeFileRoot("out/testIterate", "hex_bead_stress", 2);
+      openLogFile(outFileRoot + ".log");
+
+      // Initialize, read reference solution
+      System<2> system;
+      initSystem(system, 
+                 "in/diblock/hex_bead/param.rigid",
+                 "ref/testIterate2D_hex_bead_flex_w.bf");
+      system.iterate(); 
+      double ar  = system.domain().unitCell().parameter(0);
+      if (verbose() > 0) {
+         std::cout << "\na = " << Dbl(ar,20, 12);
+      }
+
+      // Unit cell size values
+      double a0  = ar * 1.100;
+      double am  = a0 * 0.995;
+      double ap  = a0 * 1.005;
+
+      FSArray<double, 6> parameters;
+      parameters.clear();
+
+      // Solve for middle unit cell parameter a0 
+      parameters.append(a0);
+      system.setUnitCell(parameters);
+      system.iterate();
+      system.mixture().computeStress();
+      double s0 = system.mixture().stress(0);
+      TEST_ASSERT(std::fabs((s0 - 1.654755884391e-03)/s0) < 1.0E-5);
+
+      // Solve for lower unit cell parameter am (minus)
+      parameters.clear();
+      parameters.append(am);
+      system.setUnitCell(parameters);
+      system.iterate();
+      double fm = system.fHelmholtz();
+
+      // Solve for upper unit cell parameter ap (plus)
+      parameters.clear();
+      parameters.append(ap);
+      system.setUnitCell(parameters);
+      system.iterate();
+      double fp = system.fHelmholtz();
+
+      // Numerical stress by finite differences
+      double sn = (fp - fm)/(ap - am);
+      if (verbose() > 0) {
+         std::cout << "\nStress [scft]  = " << Dbl(s0, 20, 12);
+         std::cout << "\nStress [diff]  = " << Dbl(sn, 20, 12);
+         std::cout << "\nError fraction = " << Dbl((s0-sn)/s0, 20, 12);
+      }
+      TEST_ASSERT(std::abs((sn - s0)/s0) < 4.0E-4);
+
    }
 
    void testIterate3D_bcc_rigid()
@@ -915,11 +1236,71 @@ public:
       wMaxDiff = readCompareWBasis(system, "in/diblock/bcc/omega.ref");
       TEST_ASSERT(wMaxDiff < 5.0E-7);
 
+      // Compare unit cell value
+      double a = system.domain().unitCell().parameter(0);
+      //std::cout << "a = " << Dbl(a,20,12) << std::endl;
+      TEST_ASSERT(std::abs(a - 1.7593559883) < 1.0E-8);
+
       // Check stress value
       FSArray<double, 6> stress = computeStress(system);
       TEST_ASSERT(std::abs(stress[0]) < 1.0E-8);
 
       // v1.1 test used omega.in as input, compared to omega.ref
+   }
+
+   void testIterate3D_bcc_stress()
+   {
+      printMethod(TEST_FUNC);
+      //setVerbose(1);
+
+      std::string outFileRoot;
+      outFileRoot = makeFileRoot("out/testIterate", "bcc_stress", 3);
+      openLogFile(outFileRoot + ".log");
+
+      System<3> system;
+      initSystem(system,
+                 "in/diblock/bcc/param.rigid",
+                 "in/diblock/bcc/omega.in");
+
+      // Unit cell size values
+      double ar  = system.domain().unitCell().parameter(0);
+      double a0  = ar*1.100;
+      double am  = a0*0.995;
+      double ap  = a0*1.005;
+
+      FSArray<double, 6> parameters;
+
+      // Middle unit cell parameter a0 
+      parameters.append(a0);
+      system.setUnitCell(parameters);
+      system.iterate();
+      system.mixture().computeStress();
+      double s0 = system.mixture().stress(0);
+      TEST_ASSERT(std::fabs(s0 - 8.0561073E-2) < 1.0E-6);
+
+      // Lower unit cell parameter am (minus)
+      parameters.clear();
+      parameters.append(am);
+      system.setUnitCell(parameters);
+      system.iterate();
+      double fm = system.fHelmholtz();
+      
+      // Upper unit cell parameter ap (plus)
+      parameters.clear();
+      parameters.append(ap);
+      system.setUnitCell(parameters);
+      system.iterate();
+      double fp = system.fHelmholtz();
+
+      // Numerical stress by finite differences
+      double sn = (fp - fm)/(ap - am);
+      if (verbose() > 0) {
+         std::cout << "\nStress [scft]  = " << Dbl(s0, 20, 12);
+         std::cout << "\nStress [diff]  = " << Dbl(sn, 20, 12);
+         std::cout << "\nError fraction = " << Dbl((s0-sn)/s0, 20, 12);
+      }
+      TEST_ASSERT(std::abs((sn - s0)/s0) < 1.0E-3);
+
    }
 
    void testIterate3D_altGyr_flex()
@@ -1046,14 +1427,21 @@ TEST_ADD(SystemTest, testConversion3D_bcc)
 TEST_ADD(SystemTest, testCheckSymmetry3D_bcc)
 TEST_ADD(SystemTest, testIterate1D_lam_rigid)
 TEST_ADD(SystemTest, testIterate1D_lam_flex)
+TEST_ADD(SystemTest, testIterate1D_lam_stress)
+TEST_ADD(SystemTest, testIterate1D_lam_bead_flex)
+TEST_ADD(SystemTest, testIterate1D_lam_bead_stress)
 TEST_ADD(SystemTest, testIterate1D_lam_soln)
 TEST_ADD(SystemTest, testIterate1D_lam_open_soln)
 TEST_ADD(SystemTest, testIterate1D_lam_open_blend)
 TEST_ADD(SystemTest, testIterate1D_lam_open_shift)
 TEST_ADD(SystemTest, testIterate2D_hex_rigid)
 TEST_ADD(SystemTest, testIterate2D_hex_flex)
+TEST_ADD(SystemTest, testIterate2D_hex_stress)
+TEST_ADD(SystemTest, testIterate2D_hex_bead_flex)
+TEST_ADD(SystemTest, testIterate2D_hex_bead_stress)
 TEST_ADD(SystemTest, testIterate3D_bcc_rigid)
 TEST_ADD(SystemTest, testIterate3D_bcc_flex)
+TEST_ADD(SystemTest, testIterate3D_bcc_stress)
 TEST_ADD(SystemTest, testIterate3D_altGyr_flex)
 TEST_ADD(SystemTest, testIterate3D_c15_1_flex)
 TEST_ADD(SystemTest, testIterateWithMaskAndH)
