@@ -113,8 +113,10 @@ namespace Rpc {
          expWInv_.allocate(mesh().dimensions());
       }
 
+      #if 0
       // Allocate work array for stress calculation
       dGsq_.allocate(kSize_, 6);
+      #endif
 
       // Allocate block concentration field
       cField().allocate(mesh().dimensions());
@@ -230,17 +232,22 @@ namespace Rpc {
 
       MeshIterator<D> iter;
       iter.setDimensions(kMeshDimensions_);
+      #if 0
       IntVec<D> G, Gmin;
-      double Gsq, arg;
+      double Gsq;
+      #endif
+      double arg;
       int i;
       for (iter.begin(); !iter.atEnd(); ++iter) {
          i = iter.rank();
+         #if 0
          G = iter.position();
          Gmin = shiftToMinimum(G, mesh().dimensions(), unitCell());
          Gsq = unitCell().ksq(Gmin);
-         //Gsq = kSq[i];
          UTIL_CHECK(std::abs(Gsq - kSq[i]) < 1.0E-8);
          arg = Gsq*bSqFactor;
+         #endif
+         arg = kSq[i]*bSqFactor;
          expKsq_[i] = exp(arg);
          if (isThread) {
             expKsq2_[i] = exp(0.5*arg);
@@ -605,11 +612,16 @@ namespace Rpc {
       UTIL_CHECK(propagator(0).isAllocated());
       UTIL_CHECK(propagator(1).isAllocated());
 
-      computedGsq();
-      stress_.clear();
+      // If necessary, update derivatives of |k|^2 in WaveList
+      UTIL_CHECK(waveListPtr_);
+      if (!waveListPtr_->hasdKSq()) {
+         waveListPtr_->computedKSq();
+      }
+      //computedGsq();
 
       // Initialize work array and stress_ to zero at all points
       FSArray<double, 6> dQ;
+      stress_.clear();
       int nParam = unitCell().nParameter();
       for (int i = 0; i < nParam; ++i) {
          stress_.append(0.0);
@@ -645,14 +657,15 @@ namespace Rpc {
          // Loop over unit cell parameters
          for (n = 0; n < nParam ; ++n) {
             RField<D> dKSq = waveListPtr_->dKSq(n);
-
-            // Loop over wavevectors
             increment = 0.0;
+            // Loop over wavevectors
             for (m = 0; m < kSize_ ; ++m) {
                prod = (qk2_[m][0] * qk_[m][0]) + (qk2_[m][1] * qk_[m][1]);
+               prod *= dKSq[m];
+               #if 0
                prod *= dGsq_(m,n);
-               //prod *= dKSq[m];
                UTIL_CHECK(std::abs(dGsq_(m,n) - dKSq[m]) < 1.0E-8);
+               #endif
                increment += prod;
             }
             increment *= bSq * dels;
@@ -684,11 +697,16 @@ namespace Rpc {
       UTIL_CHECK(propagator(0).isAllocated());
       UTIL_CHECK(propagator(1).isAllocated());
 
-      computedGsq();
-      stress_.clear();
+      // If necessary, update derivatives of |k|^2 in WaveList
+      UTIL_CHECK(waveListPtr_);
+      if (!waveListPtr_->hasdKSq()) {
+         waveListPtr_->computedKSq();
+      }
+      //computedGsq();
 
       // Initialize dQ and stress_ to zero at all points
       FSArray<double, 6> dQ;
+      stress_.clear();
       int nParam = unitCell().nParameter();
       for (int i = 0; i < nParam; ++i) {
          dQ.append(0.0);
@@ -714,14 +732,15 @@ namespace Rpc {
          // Loop over unit cell parameters
          for (int n = 0; n < nParam ; ++n) {
             RField<D> dKSq = waveListPtr_->dKSq(n);
-
-            // Loop over wavevectors
             increment = 0.0;
+            // Loop over wavevectors
             for (int m = 0; m < kSize_ ; ++m) {
                prod = (qk2_[m][0] * qk_[m][0]) + (qk2_[m][1] * qk_[m][1]);
+               prod *= dKSq[m]*expKsq_[m];
+               #if 0
                prod *= dGsq_(m, n)*expKsq_[m];
-               //prod *= dKSq[m]*expKsq_[m];
                UTIL_CHECK(std::abs(dGsq_(m,n) - dKSq[m]) < 1.0E-8);
+               #endif
                increment += prod;
             }
             increment *= bSq;
@@ -737,18 +756,13 @@ namespace Rpc {
 
    }
 
+   #if 0
    /*
    * Compute dGsq_ array (derivatives of Gsq for all wavevectors) if needed.
    */
    template <int D>
    void Block<D>::computedGsq()
    {
-      UTIL_CHECK(waveListPtr_);
-
-      // Update associated WaveList
-      if (!waveListPtr_->hasdKSq()) {
-         waveListPtr_->computedKSq();
-      }
 
       // Construct dGsq_ locally (has become redundant)
       IntVec<D> pos, vec;
@@ -770,6 +784,7 @@ namespace Rpc {
       }
 
    }
+   #endif
 
 }
 }

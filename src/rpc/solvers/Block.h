@@ -16,6 +16,7 @@
 #include <util/containers/DMatrix.h>      // member template
 #include <util/containers/FSArray.h>      // member template
 
+// Forward references
 namespace Pscf {
    template <int D> class Mesh;
    namespace Prdc{
@@ -35,10 +36,10 @@ namespace Rpc {
    using namespace Pscf::Prdc::Cpu;
 
    /**
-   * Block within a branched polymer.
+   * Block within a linear or branched block polymer.
    *
    * Derived from BlockTmpl< Propagator<D> >. A BlockTmpl< Propagator<D> >
-   * has two Propagator<D> members and is derived from Edge.
+   * has two Propagator<D> members and is derived from class Pscf::Edge.
    *
    * \ref user_param_block_sec "Manual Page"
    * \ingroup Rpc_Solver_Module
@@ -330,8 +331,10 @@ namespace Rpc {
 
    private:
 
+      #if 0
       /// Matrix to store derivatives of squared wavevectors.
       DMatrix<double> dGsq_;
+      #endif
 
       /// Stress arising from this block.
       FSArray<double, 6> stress_;
@@ -407,8 +410,10 @@ namespace Rpc {
       /// Number of unit cell parameters.
       int nParams_;
 
+      #if 0
       /// Compute dGsq_ matrix.
       void computedGsq();
+      #endif
 
       /// Compute expKSq arrays.
       void computeExpKsq();
