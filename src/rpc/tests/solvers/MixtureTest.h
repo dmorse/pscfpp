@@ -170,7 +170,6 @@ public:
 
       mixture.associate(mesh, fft, unitCell, waveList);
       mixture.allocate();
-      mixture.clearUnitCellData();
 
       #if 0
       std::cout << "\n";
@@ -272,7 +271,6 @@ public:
 
       mixture.associate(mesh, fft, unitCell, waveList);
       mixture.allocate();
-      mixture.clearUnitCellData();
 
       int nMonomer = mixture.nMonomer();
       DArray< RField<1> > wFields;
@@ -345,7 +343,6 @@ public:
 
       mixture.associate(mesh, fft, unitCell, waveList);
       mixture.allocate();
-      mixture.clearUnitCellData();
 
       #if 0
       std::cout << "\n";
@@ -447,7 +444,6 @@ public:
 
       mixture.associate(mesh, fft, unitCell, waveList);
       mixture.allocate();
-      mixture.clearUnitCellData();
 
       #if 0
       std::cout << "\n";
@@ -538,7 +534,6 @@ public:
 
       mixture.associate(mesh, fft, unitCell, waveList);
       mixture.allocate();
-      mixture.clearUnitCellData();
 
       #if 0
       std::cout << "\n";

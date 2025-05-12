@@ -106,9 +106,9 @@ namespace Rpc
    template <int D>
    void Mixture<D>::allocate()
    {
-      UTIL_CHECK(meshPtr_);
       UTIL_CHECK(nMonomer() > 0);
       UTIL_CHECK(nPolymer()+ nSolvent() > 0);
+      UTIL_CHECK(meshPtr_);
       UTIL_CHECK(meshPtr_->size() > 0);
       UTIL_CHECK(ds_ > 0);
 
@@ -129,6 +129,7 @@ namespace Rpc
          }
       }
 
+      clearUnitCellData();
    }
 
    /*

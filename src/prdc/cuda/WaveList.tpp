@@ -486,6 +486,7 @@ namespace Cuda {
       }
       implicitInverse_ = implicitInverse_h; // transfer to device memory
 
+      clearUnitCellData();
       isAllocated_ = true;
    }
 
@@ -509,7 +510,8 @@ namespace Cuda {
    template <int D>
    void WaveList<D>::computeMinimumImages() 
    {
-      if (hasMinImages_) return; // min images already calculated
+      // If min images are valid, return immediately
+      if (hasMinImages_) return; 
 
       // Precondition
       UTIL_CHECK(isAllocated_);
@@ -584,8 +586,10 @@ namespace Cuda {
    template <int D>
    void WaveList<D>::computeKSq() 
    {
-      if (hasKSq_) return; // kSq already calculated
+      // If kSq values are valid, return immediately without recomputing
+      if (hasKSq_) return; 
 
+      // If necessary, compute minimum images
       if (!hasMinImages_) {
          computeMinimumImages(); // compute both min images and kSq
          return;

@@ -269,7 +269,6 @@ namespace Rpc {
       mixture_.associate(domain_.mesh(), domain_.fft(),
                          domain_.unitCell(), domain_.waveList());
       mixture_.allocate();
-      // mixture_.clearUnitCellData();
 
       // Allocate memory for r-grid w and c fields
       allocateFieldsGrid();

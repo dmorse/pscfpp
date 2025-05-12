@@ -22,6 +22,9 @@ namespace Pscf {
 namespace Prdc {
 namespace Cpu {
 
+   /*
+   * Constructor.
+   */
    template <int D>
    WaveList<D>::WaveList()
     : kSize_(0),
@@ -33,10 +36,16 @@ namespace Cpu {
       meshPtr_(nullptr)
    {}
 
+   /*
+   * Destructor.
+   */
    template <int D>
    WaveList<D>::~WaveList() 
    {}
 
+   /*
+   * Allocate memory used by WaveList.
+   */
    template <int D>
    void WaveList<D>::allocate(Mesh<D> const & m, UnitCell<D> const & c) 
    {
@@ -73,9 +82,13 @@ namespace Cpu {
               FFT<D>::hasImplicitInverse(kItr.position(), meshDimensions);
       }
 
+      clearUnitCellData();
       isAllocated_ = true;
    }
 
+   /*
+   * Clear all data that depends on unit cell parameters.
+   */
    template <int D>
    void WaveList<D>::clearUnitCellData()
    {
@@ -86,6 +99,9 @@ namespace Cpu {
       }
    }
 
+   /*
+   * Compute minimum image vectors for all wavevectors.
+   */
    template <int D>
    void WaveList<D>::computeMinimumImages() 
    {
@@ -110,13 +126,18 @@ namespace Cpu {
       hasKSq_ = true;
    }
 
+   /*
+   * Compute array of value of |k|^2
+   */
    template <int D>
    void WaveList<D>::computeKSq() 
    {
-      if (hasKSq_) return; // kSq already calculated
+      // If kSq_ is valid, return immediately without recomputing
+      if (hasKSq_) return; 
 
+      // If necessary, compute minimum images.
       if (!hasMinimumImages_) {
-         computeMinimumImages(); // compute both min images and kSq
+         computeMinimumImages(); // computes both min images and kSq
          return;
       }
 
@@ -137,6 +158,9 @@ namespace Cpu {
       hasKSq_ = true;
    }
 
+   /*
+   * Compute derivatives of |k|^2 w/ respect to unit cell parameters.
+   */
    template <int D>
    void WaveList<D>::computedKSq()
    {
