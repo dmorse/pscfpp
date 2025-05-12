@@ -1595,9 +1595,6 @@ namespace Rpg {
       }
       UTIL_CHECK(domain_.unitCell().isInitialized());
       UTIL_CHECK(domain_.basis().isInitialized());
-      if (!isAllocatedBasis_) {
-         allocateFieldsBasis();
-      }
       UTIL_CHECK(isAllocatedBasis_);
 
       // Read, convert, and write fields
@@ -1624,9 +1621,6 @@ namespace Rpg {
       }
       UTIL_CHECK(domain_.unitCell().isInitialized());
       UTIL_CHECK(domain_.basis().isInitialized());
-      if (!isAllocatedBasis_) {
-         allocateFieldsBasis();
-      }
       UTIL_CHECK(isAllocatedBasis_);
 
       // Read, convert and write fields
@@ -1706,9 +1700,6 @@ namespace Rpg {
       }
       UTIL_CHECK(domain_.unitCell().isInitialized());
       UTIL_CHECK(domain_.basis().isInitialized());
-      if (!isAllocatedBasis_) {
-         allocateFieldsBasis();
-      }
       UTIL_CHECK(isAllocatedBasis_);
 
       // Read, convert and write fields
@@ -1735,9 +1726,6 @@ namespace Rpg {
       }
       UTIL_CHECK(domain_.unitCell().isInitialized());
       UTIL_CHECK(domain_.basis().isInitialized());
-      if (!isAllocatedBasis_) {
-         allocateFieldsBasis();
-      }
       UTIL_CHECK(isAllocatedBasis_);
 
       // Read, convert and write fields
@@ -1765,9 +1753,6 @@ namespace Rpg {
       }
       UTIL_CHECK(domain_.unitCell().isInitialized());
       UTIL_CHECK(domain_.basis().isInitialized());
-      if (!isAllocatedBasis_) {
-         allocateFieldsBasis();
-      }
       UTIL_CHECK(isAllocatedBasis_);
 
       // Read fields
@@ -1806,9 +1791,6 @@ namespace Rpg {
       }
       UTIL_CHECK(domain_.unitCell().isInitialized());
       UTIL_CHECK(domain_.basis().isInitialized());
-      if (!isAllocatedBasis_) {
-         allocateFieldsBasis();
-      }
       UTIL_CHECK(isAllocatedBasis_);
 
       UnitCell<D> tmpUnitCell;

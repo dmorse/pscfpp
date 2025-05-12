@@ -25,6 +25,12 @@ public:
    void setUp()
    {  setVerbose(0); }
 
+   void tearDown()
+   {  
+      setVerbose(0); 
+      closeLogFile(); 
+   }
+
    // Utility functions (used in unit tests)
 
    /*
@@ -72,14 +78,15 @@ public:
    * Read basis fields into an array.
    */
    double compareBasis(DArray< DArray<double> > const & fields1,
-                       DArray< DArray<double> > const & fields2)
+                       DArray< DArray<double> > const & fields2,
+		       std::string message)
    {
       BFieldComparison comparison(1);
       comparison.compare(fields1, fields2);
       double maxDiff = comparison.maxDiff();
       if (verbose() > 0) {
          std::cout << "\n";
-         std::cout << "max error = " << maxDiff;
+         std::cout << message << maxDiff;
       }
       return maxDiff;
    }
@@ -94,8 +101,22 @@ public:
       DArray< DArray<double> > fields;
       UnitCell<D> unitCell;
       readBasisFields(system, filename, fields, unitCell);
-      double maxDiff = compareBasis(fields, system.w().basis());
-      return maxDiff;
+      std::string message = "max w field error = ";
+      return compareBasis(fields, system.w().basis(), message);
+   }
+
+   /*
+   * Compare system c fields to reference fields from a file.
+   */
+   template <int D>
+   double readCompareCBasis(System<D> const & system,
+                            std::string filename)
+   {
+      DArray< DArray<double> > fields;
+      UnitCell<D> unitCell;
+      readBasisFields(system, filename, fields, unitCell);
+      std::string message = "max c field error = ";
+      return compareBasis(fields, system.c().basis(), message);
    }
 
    template <int D>
@@ -108,6 +129,89 @@ public:
       openInputFile(fname, in);
       system.readParam(in);
       in.close();
+   }
+
+   /*
+   * Template for an iteration test, with regression testing.
+   */
+   template <int D>
+   void initSystem(System<D>& system,
+                   std::string paramFileName,
+                   std::string wFileName)
+   {
+      system.fileMaster().setInputPrefix(filePrefix());
+      system.fileMaster().setOutputPrefix(filePrefix());
+
+      // Read parameter file
+      std::ifstream in;
+      openInputFile(paramFileName, in);
+      system.readParam(in);
+      in.close();
+
+      // Read w fields
+      system.readWBasis(wFileName);
+   }
+
+   /*
+   * Construct file name prefix + #D_ + outSuffix
+   */
+   std::string makeFileRoot(std::string prefix,
+                            std::string outSuffix,
+                            int D)
+   {
+      std::string outFileRoot = prefix;
+      outFileRoot += std::to_string(D) + "D_" + outSuffix;
+      return outFileRoot;
+   }
+
+   /*
+   * Iterate and output final fields.
+   */
+   template <int D>
+   void iterate(System<D>& system,
+                std::string const & outFileRoot)
+   {
+      // Iterate
+      int error = system.iterate();
+      if (error) {
+         TEST_THROW("Iterator failed to converge.");
+      }
+
+      // Write final fields
+      system.writeWBasis(outFileRoot + "_w.bf");
+      system.writeCBasis(outFileRoot + "_w.bf");
+   }
+
+   /*
+   * Template for an iteration test, with regression testing.
+   */
+   template <int D>
+   void testIterate(System<D>& system,
+                    std::string paramFileName,
+                    std::string wFileName,
+                    std::string outSuffix,
+                    double& wMaxDiff,
+                    double& cMaxDiff,
+                    bool compareCFields = true)
+   {
+      std::string outFileRoot;
+      outFileRoot = makeFileRoot("out/testIterateBasis", outSuffix, D);
+
+      // Open log file
+      openLogFile(outFileRoot + ".log");
+
+      initSystem(system, paramFileName, wFileName);
+
+      iterate(system, outFileRoot);
+
+      std::string refFileRoot;
+      refFileRoot = makeFileRoot("ref/testIterate", outSuffix, D);
+   
+      wMaxDiff = readCompareWBasis(system, refFileRoot + "_w.bf");
+      if (compareCFields) {
+         cMaxDiff = readCompareCBasis(system, refFileRoot + "_c.bf");
+      }
+
    }
 
    /*
@@ -126,89 +230,6 @@ public:
          std::cout << "\nfHelmholtz diff = " << fHelmholtz;
          std::cout << "\npressure diff   = " << pressure;
       }
-   }
-
-   /*
-   * Template for an iteration test, with regression testing.
-   */
-   template <int D>
-   void testIterate(System<D>& system,
-                    std::string paramFileName,
-                    std::string wFileName,
-                    std::string outSuffix,
-                    double& wMaxDiff,
-                    double& cMaxDiff,
-                    bool compareCFields = true,
-                    bool compareToInput = false)
-   {
-      system.fileMaster().setInputPrefix(filePrefix());
-      system.fileMaster().setOutputPrefix(filePrefix());
-
-      std::string outFileRoot = "out/testIterateBasis";
-      outFileRoot += std::to_string(D) + "D_" + outSuffix;
-
-      // Open log file
-      std::string filename;
-      filename = outFileRoot + ".log";
-      openLogFile(filename.c_str());
-
-      // Read parameter file
-      std::ifstream in;
-      openInputFile(paramFileName, in);
-      system.readParam(in);
-      in.close();
-
-      // Read w fields
-      system.readWBasis(wFileName);
-
-      // Construct reference fields for comparison
-      DArray< DArray<double> > w_ref;
-      DArray< DArray<double> > c_ref;
-      UnitCell<D> unitCell;
-      if (compareToInput) {
-         w_ref = system.w().basis();
-      } else {
-         filename = "ref/";
-         filename += "testIterate" + std::to_string(D) + "D_" + outSuffix;
-         readBasisFields(system, filename + "_w.bf", w_ref, unitCell);
-         readBasisFields(system, filename + "_c.bf", c_ref, unitCell);
-      }
-
-      // Iterate and output solution
-      int error = system.iterate();
-      if (error) {
-         TEST_THROW("Iterator failed to converge.");
-      }
-      system.writeWBasis(outFileRoot + "_w.bf");
-      system.writeCBasis(outFileRoot + "_c.bf");
-      //FieldIo<D> const & fieldIo = system.domain().fieldIo();
-      //fieldIo.writeFieldsBasis(outFileRoot + "_w.bf",
-      //                         system.w().basis(),
-      //                         system.domain().unitCell());
-      //fieldIo.writeFieldsBasis(outFileRoot + "_c.bf",
-      //                         system.c().basis(),
-      //                         system.domain().unitCell());
-
-      // Compare solution to reference w fields
-      BFieldComparison comparison(1);
-      comparison.compare(w_ref, system.w().basis());
-      wMaxDiff = comparison.maxDiff();
-      if (verbose() > 0) {
-         std::cout << "\n";
-         std::cout << "w field max error = " << wMaxDiff;
-      }
-
-      // Compare solution to reference c fields
-      if (compareCFields) {
-         BFieldComparison comparison(1);
-         comparison.compare(c_ref, system.c().basis());
-         cMaxDiff = comparison.maxDiff();
-         if (verbose() > 0) {
-            std::cout << "\n";
-            std::cout << "c field max error = " << cMaxDiff;
-         }
-      }
-
    }
 
    template <int D>
@@ -266,41 +287,6 @@ public:
       // v1.1 test used omega.ref as input, and compared to input
    }
 
-   #if 0
-   void testIterate1D_lam_rigid()
-   {
-      printMethod(TEST_FUNC);
-      openLogFile("out/testIterate1D_lam_rigid.log");
-
-      System<1> system;
-      setupSystem<1>(system,"in/diblock/lam/param.rigid");
-
-      // Read w fields
-      system.readWBasis("in/diblock/lam/omega.ref");
-
-      // Make reference copy of w fields in basis format
-      DArray< DArray<double> > b_wFields_check;
-      b_wFields_check = system.w().basis();
-
-      // Iterate and output solution
-      int error = system.iterate();
-      if (error) {
-         TEST_THROW("Iterator failed to converge.");
-      }
-      system.writeWBasis("out/testIterate1D_lam_rigid_w.bf");
-      system.writeCBasis("out/testIterate1D_lam_rigid_c.bf");
-
-      // Compare result to original in basis format
-      BFieldComparison comparison(1);
-      comparison.compare(b_wFields_check, system.w().basis());
-      if (verbose() > 0) {
-         Log::file() << "\n";
-         Log::file() << "Max error = " << comparison.maxDiff() << "\n";
-      }
-      TEST_ASSERT(comparison.maxDiff() < 5.0E-7);
-   }
-   #endif
-
    void testIterate1D_lam_flex()
    {
       printMethod(TEST_FUNC);
@@ -333,51 +319,6 @@ public:
 
       // v1.1 test used omega.in as input, compared to omega.ref
    }
-
-   #if 0
-   void testIterate1D_lam_flex()
-   {
-      printMethod(TEST_FUNC);
-      openLogFile("out/testIterate1D_lam_flex.log");
-
-      System<1> system;
-      setupSystem<1>(system,"in/diblock/lam/param.flex");
-
-      system.readWBasis("in/diblock/lam/omega.ref");
-
-      // Make reference copy of w fields
-      DArray< DArray<double> > b_wFields_check;
-      b_wFields_check = system.w().basis();
-
-      // Read input w-fields, iterate and output solution
-      system.readWBasis("in/diblock/lam/omega.in");
-      int error = system.iterate();
-      if (error) {
-         TEST_THROW("Iterator failed to converge.");
-      };
-      system.writeWBasis("out/testIterate1D_lam_flex_w.bf");
-      system.writeCBasis("out/testIterate1D_lam_flex_c.bf");
-
-      // Get test result
-      DArray< DArray<double> > b_wFields;
-      b_wFields = system.w().basis();
-
-      // Compare result to original
-      BFieldComparison comparison (1);
-      comparison.compare(b_wFields_check, b_wFields);
-
-      // Compare difference to tolerance epsilon
-      double diff = comparison.maxDiff();
-      double epsilon = 5.0E-7;
-      if (verbose() > 0 || diff > epsilon) {
-         Log::file() << "\n";
-         Log::file() << "Max diff = " << comparison.maxDiff() << "\n";
-         Log::file() << "Rms diff = " << comparison.rmsDiff() << "\n";
-         Log::file() << "epsilon  = " << epsilon << "\n";
-      }
-      TEST_ASSERT(diff < epsilon);
-   }
-   #endif
 
    void testIterate1D_lam_flex_noBatched()
    {
@@ -422,6 +363,163 @@ public:
       TEST_ASSERT(diff < epsilon);
    }
 
+   void testIterate1D_lam_stress()
+   {
+      printMethod(TEST_FUNC);
+      //setVerbose(1);
+
+      std::string outFileRoot;
+      outFileRoot = makeFileRoot("out/testIterateBasis", "lam_stress", 1);
+      openLogFile(outFileRoot + ".log");
+
+      // Initialize, read reference solution
+      System<1> system;
+      initSystem(system, 
+                 "in/diblock/lam/param.rigid",
+                 "ref/testIterate1D_lam_flex_w.bf");
+      system.iterate();
+      double ar  = system.domain().unitCell().parameter(0);
+      if (verbose() > 0) {
+         std::cout << "\na = " << Dbl(ar,20, 12);
+      }
+
+      // Unit cell size values
+      double a0  = ar * 1.200;
+      double am  = a0 * 0.995;
+      double ap  = a0 * 1.005;
+
+      FSArray<double, 6> parameters;
+      parameters.clear();
+
+      // Solve for middle unit cell parameter a0 
+      parameters.append(a0);
+      system.setUnitCell(parameters);
+      system.iterate();
+      system.mixture().computeStress();
+      double s0 = system.mixture().stress(0);
+      TEST_ASSERT(std::fabs((s0 - 3.3354925e-01)/s0) < 1.0E-5);
+
+      // Solve for lower unit cell parameter am (minus)
+      parameters.clear();
+      parameters.append(am);
+      system.setUnitCell(parameters);
+      system.iterate();
+      double fm = system.fHelmholtz();
+
+      // Solve for upper unit cell parameter ap (plus)
+      parameters.clear();
+      parameters.append(ap);
+      system.setUnitCell(parameters);
+      system.iterate();
+      double fp = system.fHelmholtz();
+
+      // Numerical stress by finite differences
+      double sn = (fp - fm)/(ap - am);
+      if (verbose() > 0) {
+         std::cout << "\nStress [scft]  = " << Dbl(s0, 20, 12);
+         std::cout << "\nStress [diff]  = " << Dbl(sn, 20, 12);
+         std::cout << "\nError fraction = " << Dbl((s0-sn)/s0, 20, 12);
+      }
+      TEST_ASSERT(std::abs((sn - s0)/s0) < 1.0E-4);
+
+   }
+
+   void testIterate1D_lam_bead_flex()
+   {
+      printMethod(TEST_FUNC);
+      //setVerbose(1);
+
+      System<1> system;
+      double wMaxDiff, cMaxDiff;
+      testIterate(system,
+                  "in/diblock/lam_bead/param.flex",
+                  "in/diblock/lam_bead/w.bf",
+                  "lam_bead_flex",
+                  wMaxDiff,
+                  cMaxDiff);
+      TEST_ASSERT(wMaxDiff < 5.0E-8);
+      TEST_ASSERT(cMaxDiff < 1.0E-8);
+
+      // Unit cell parameter
+      double a  = system.domain().unitCell().parameter(0);
+      if (verbose() > 0) {
+         std::cout << "\na = " << Dbl(a, 20, 12);
+      }
+      TEST_ASSERT(std::abs(a - 1.51567153218) < 1.0E-8);
+
+      // Compare free energies to output of modified unit test from v1.1
+      double fHelmholtz = 2.42834917413e-02;
+      double pressure   = 3.00896311324e-02;
+      compareFreeEnergies(system, fHelmholtz, pressure);
+      TEST_ASSERT(fHelmholtz < 1.0E-8);
+      TEST_ASSERT(pressure < 1.0E-8);
+
+      // Check stress value
+      FSArray<double, 6> stress = computeStress(system);
+      TEST_ASSERT(std::abs(stress[0]) < 1.0E-10);
+   }
+
+   void testIterate1D_lam_bead_stress()
+   {
+      printMethod(TEST_FUNC);
+      //setVerbose(1);
+
+      std::string outFileRoot;
+      outFileRoot = makeFileRoot("out/testIterateBasis", "lam_bead_stress", 1);
+      openLogFile(outFileRoot + ".log");
+
+      // Initialize, read reference solution
+      System<1> system;
+      initSystem(system, 
+                 "in/diblock/lam_bead/param.rigid",
+                 "ref/testIterate1D_lam_bead_flex_w.bf");
+      system.iterate(); 
+      double ar  = system.domain().unitCell().parameter(0);
+      if (verbose() > 0) {
+         std::cout << "\na = " << Dbl(ar,20, 12);
+      }
+
+      // Unit cell size values
+      double a0  = ar * 1.200;
+      double am  = a0 * 0.995;
+      double ap  = a0 * 1.005;
+
+      FSArray<double, 6> parameters;
+      parameters.clear();
+
+      // Solve for middle unit cell parameter a0 
+      parameters.append(a0);
+      system.setUnitCell(parameters);
+      system.iterate();
+      system.mixture().computeStress();
+      double s0 = system.mixture().stress(0);
+      TEST_ASSERT(std::fabs((s0 - 3.3354725E-3)/s0) < 1.0E-4);
+
+      // Solve for lower unit cell parameter am (minus)
+      parameters.clear();
+      parameters.append(am);
+      system.setUnitCell(parameters);
+      system.iterate();
+      double fm = system.fHelmholtz();
+
+      // Solve for upper unit cell parameter ap (plus)
+      parameters.clear();
+      parameters.append(ap);
+      system.setUnitCell(parameters);
+      system.iterate();
+      double fp = system.fHelmholtz();
+
+      // Numerical stress by finite differences
+      double sn = (fp - fm)/(ap - am);
+      if (verbose() > 0) {
+         std::cout << "\nStress [scft]  = " << Dbl(s0, 20, 12);
+         std::cout << "\nStress [diff]  = " << Dbl(sn, 20, 12);
+         std::cout << "\nError fraction = " << Dbl((s0-sn)/s0, 20, 12);
+      }
+      TEST_ASSERT(std::abs((sn - s0)/s0) < 1.0E-4);
+
+   }
+
    void testIterate1D_lam_soln()
    {
       printMethod(TEST_FUNC);
@@ -457,52 +555,11 @@ public:
       // v1.1 test used w.bf as input, compared to input
    }
 
-   #if 0
-   void testIterate1D_lam_soln()
-   {
-      printMethod(TEST_FUNC);
-      openLogFile("out/testIterate1D_lam_soln.log");
-
-      System<1> system;
-      setupSystem<1>(system,"in/solution/lam/param");
-
-      // Make reference copy of w fields
-      system.readWBasis("in/solution/lam/w.bf");
-      DArray< DArray<double> > b_wFields_check;
-      b_wFields_check = system.w().basis();
-
-      // iterate and output solution
-      int error = system.iterate();
-      if (error) {
-         TEST_THROW("Iterator failed to converge.");
-      };
-      system.writeWBasis("out/testIterate1D_lam_soln_w.bf");
-      system.writeCBasis("out/testIterate1D_lam_soln_c.bf");
-
-      // Get test result
-      DArray< DArray<double> > b_wFields;
-      b_wFields = system.w().basis();
-
-      // Compare result to original
-      BFieldComparison comparison (1);
-      comparison.compare(b_wFields_check, b_wFields);
-
-      // Compare difference to tolerance epsilon
-      double diff = comparison.maxDiff();
-      double epsilon = 2.0E-6;
-      if (verbose() > 0 || diff > epsilon) {
-         Log::file() << "\n";
-         Log::file() << "Max diff = " << comparison.maxDiff() << "\n";
-         Log::file() << "Rms diff = " << comparison.rmsDiff() << "\n";
-         Log::file() << "epsilon  = " << epsilon << "\n";
-      }
-      TEST_ASSERT(diff < epsilon);
-   }
-   #endif
-
    void testIterate1D_lam_blend()
    {
       printMethod(TEST_FUNC);
+      //setVerbose(1);
+        
       openLogFile("out/testIterateBasis1D_lam_blend.log");
 
       System<1> system;
@@ -531,7 +588,6 @@ public:
       comparison.compare(b_wFields_check, b_wFields);
       double diff = comparison.maxDiff();
       double epsilon = 5.0E-7;
-      //setVerbose(1);
       if (verbose() > 0 || diff > epsilon) {
          Log::file() << "\n";
          Log::file() << "Max diff = " << comparison.maxDiff() << "\n";
@@ -568,52 +624,6 @@ public:
 
    }
 
-   #if 0
-   void testIterate1D_lam_open_soln()
-   {
-      printMethod(TEST_FUNC);
-      openLogFile("out/testIterate1D_lam_open_soln.log");
-
-      System<1> system;
-      setupSystem<1>(system,"in/solution/lam_open/param");
-
-      // Make reference copy of w fields
-      system.readWBasis("in/solution/lam_open/w.ref");
-      DArray< DArray<double> > b_wFields_check;
-      b_wFields_check = system.w().basis();
-
-      // Read input w-fields, iterate and output solution
-      system.readWBasis("in/solution/lam_open/w.bf");
-
-      int error = system.iterate();
-      if (error) {
-         TEST_THROW("Iterator failed to converge.");
-      };
-      system.writeWBasis("out/testIterate1D_lam_open_soln_w.bf");
-      system.writeCBasis("out/testIterate1D_lam_open_soln_c.bf");
-
-      // Get test result
-      DArray< DArray<double> > b_wFields;
-      b_wFields = system.w().basis();
-
-      // Compare result to original
-      BFieldComparison comparison (1);
-      comparison.compare(b_wFields_check, b_wFields);
-
-      // Compare difference to tolerance epsilon
-      double diff = comparison.maxDiff();
-      //double epsilon = 5.0E-7;
-      double epsilon = 6.0E-6;
-      if (diff > epsilon) {
-         Log::file() << "\n";
-         Log::file() << "Max diff = " << comparison.maxDiff() << "\n";
-         Log::file() << "Rms diff = " << comparison.rmsDiff() << "\n";
-         Log::file() << "epsilon  = " << epsilon << "\n";
-      }
-      TEST_ASSERT(diff < epsilon);
-   }
-   #endif
-
    void testIterate1D_lam_open_blend()
    {
       printMethod(TEST_FUNC);
@@ -639,50 +649,6 @@ public:
 
       // v1.1 test used w.bf as input, compared to w.ref
    }
-
-   #if 0
-   void testIterate1D_lam_open_blend()
-   {
-      printMethod(TEST_FUNC);
-      openLogFile("out/testIterate1D_lam_open_blend.log");
-
-      System<1> system;
-      setupSystem<1>(system,"in/blend/lam/param.open");
-
-      // Make reference copy of w fields
-      system.readWBasis("in/blend/lam/w.ref");
-      DArray< DArray<double> > b_wFields_check;
-      b_wFields_check = system.w().basis();
-
-      // Read input w-fields, iterate and output solution
-      system.readWBasis("in/blend/lam/w.bf");
-      int error = system.iterate();
-      if (error) {
-         TEST_THROW("Iterator failed to converge.");
-      };
-      system.writeWBasis("out/testIterate1D_lam_open_blend_w.bf");
-      system.writeCBasis("out/testIterate1D_lam_open_blend_c.bf");
-
-      // Get test result
-      DArray< DArray<double> > b_wFields;
-      b_wFields = system.w().basis();
-
-      // Compare result to original
-      BFieldComparison comparison (1);
-      comparison.compare(b_wFields_check, b_wFields);
-
-      // Compare difference to tolerance epsilon
-      double diff = comparison.maxDiff();
-      double epsilon = 5.0E-7;
-      if (diff > epsilon) {
-         Log::file() << "\n";
-         Log::file() << "Max diff = " << comparison.maxDiff() << "\n";
-         Log::file() << "Rms diff = " << comparison.rmsDiff() << "\n";
-         Log::file() << "epsilon  = " << epsilon << "\n";
-      }
-      TEST_ASSERT(diff < epsilon);
-   }
-   #endif
 
    void testIterate2D_hex_rigid()
    {
@@ -716,56 +682,6 @@ public:
       // v1.1 test used w.ref as input, compared to input
    }
 
-   #if 0
-   void testIterate2D_hex_rigid()
-   {
-      printMethod(TEST_FUNC);
-      openLogFile("out/testIterate2D_hex_rigid.log");
-
-      System<2> system;
-      setupSystem<2>(system,"in/diblock/hex/param.rigid");
-
-      // Read reference solution
-      system.readWBasis("in/diblock/hex/omega.ref");
-      TEST_ASSERT(system.domain().basis().isInitialized());
-
-      // Make reference copy of w fields
-      DArray< DArray<double> > b_wFields_check;
-      b_wFields_check = system.w().basis();
-
-      // Read initial guess, iterate, output solution
-      // RPC tests start from the reference solution,
-      // rather than a nearby solution, so I guess do that here too?
-      // system.readWBasis("in/diblock/hex/omega.in");
-      Log::file() << "Beginning iteration \n";
-      int error = system.iterate();
-      if (error) {
-         TEST_THROW("Iterator failed to converge.");
-      };
-      system.writeWBasis("out/testIterate2D_hex_rigid_w.bf");
-      system.writeCBasis("out/testIterate2D_hex_rigid_c.bf");
-
-      // Get test result
-      DArray< DArray<double> > b_wFields;
-      b_wFields = system.w().basis();
-
-      // Compare result to original
-      BFieldComparison comparison (1);
-      comparison.compare(b_wFields_check, b_wFields);
-
-      // Compare difference to tolerance epsilon
-      double diff = comparison.maxDiff();
-      double epsilon = 5.0E-7;
-      if (diff > epsilon) {
-         Log::file() << "\n";
-         Log::file() << "Max diff = " << comparison.maxDiff() << "\n";
-         Log::file() << "Rms diff = " << comparison.rmsDiff() << "\n";
-         Log::file() << "epsilon  = " << epsilon << "\n";
-      }
-      TEST_ASSERT(diff < epsilon);
-   }
-   #endif
-
    void testIterate2D_hex_flex()
    {
       printMethod(TEST_FUNC);
@@ -798,50 +714,166 @@ public:
       // v1.1 test used omega.in as input, compared to omega.ref
    }
 
-   #if 0
-   void testIterate2D_hex_flex()
+
+   void testIterate2D_hex_stress()
    {
       printMethod(TEST_FUNC);
-      openLogFile("out/testIterate2D_hex_flex.log");
+      //setVerbose(1);
 
+      std::string outFileRoot;
+      outFileRoot = makeFileRoot("out/testIterateBasis", "hex_stress", 2);
+      openLogFile(outFileRoot + ".log");
+
+      // Initialize, read reference solution
       System<2> system;
-      setupSystem<2>(system,"in/diblock/hex/param.flex");
-
-      // Read reference solution (produced by Fortran code)
-      system.readWBasis("in/diblock/hex/omega.ref");
-
-      // Make reference copy of w fields
-      DArray< DArray<double> > b_wFields_check;
-      b_wFields_check = system.w().basis();
-
-      system.readWBasis("in/diblock/hex/omega.in");
-      int error = system.iterate();
-      if (error) {
-         TEST_THROW("Iterator failed to converge.");
-      };
-      system.writeWBasis("out/testIterate2D_hex_flex_w.bf");
-      system.writeCBasis("out/testIterate2D_hex_flex_c.bf");
-
-      // Get test result
-      DArray< DArray<double> > b_wFields;
-      b_wFields = system.w().basis();
-
-      // Compare result to original
-      BFieldComparison comparison (1);
-      comparison.compare(b_wFields_check, b_wFields);
-
-      // Compare difference to tolerance epsilon
-      double diff = comparison.maxDiff();
-      double epsilon = 8.0E-7;
-      if (diff > epsilon) {
-         Log::file() << "\n";
-         Log::file() << "Max diff = " << comparison.maxDiff() << "\n";
-         Log::file() << "Rms diff = " << comparison.rmsDiff() << "\n";
-         Log::file() << "epsilon  = " << epsilon << "\n";
+      initSystem(system, 
+                 "in/diblock/hex/param.rigid",
+                 "ref/testIterate2D_hex_flex_w.bf");
+      system.iterate();
+      double ar  = system.domain().unitCell().parameter(0);
+      if (verbose() > 0) {
+         std::cout << "\na = " << Dbl(ar, 20, 12);
       }
-      TEST_ASSERT(diff < epsilon);
+
+      // Unit cell size values
+      double a0  = ar * 1.100;
+      double am  = a0 * 0.996;
+      double ap  = a0 * 1.004;
+
+      FSArray<double, 6> parameters;
+      parameters.clear();
+
+      // Solve for middle unit cell parameter a0 
+      parameters.append(a0);
+      system.setUnitCell(parameters);
+      system.iterate();
+      system.mixture().computeStress();
+      double s0 = system.mixture().stress(0);
+      if (verbose() > 0) {
+         std::cout << "\nstress = " << Dbl(s0, 20, 12);
+      }
+      TEST_ASSERT(std::fabs((s0 - 1.6546466e-01)/s0) < 1.0E-5);
+
+      // Solve for lower unit cell parameter am (minus)
+      parameters.clear();
+      parameters.append(am);
+      system.setUnitCell(parameters);
+      system.iterate();
+      double fm = system.fHelmholtz();
+
+      // Solve for upper unit cell parameter ap (plus)
+      parameters.clear();
+      parameters.append(ap);
+      system.setUnitCell(parameters);
+      system.iterate();
+      double fp = system.fHelmholtz();
+
+      // Numerical stress by finite differences
+      double sn = (fp - fm)/(ap - am);
+      if (verbose() > 0) {
+         std::cout << "\nStress [scft]  = " << Dbl(s0, 20, 12);
+         std::cout << "\nStress [diff]  = " << Dbl(sn, 20, 12);
+         std::cout << "\nError fraction = " << Dbl((s0-sn)/s0, 20, 12);
+      }
+      TEST_ASSERT(std::abs((sn - s0)/s0) < 1.0E-4);
+
    }
-   #endif
+
+   void testIterate2D_hex_bead_flex()
+   {
+      printMethod(TEST_FUNC);
+      //setVerbose(1);
+
+      double wMaxDiff, cMaxDiff;
+      System<2> system;
+      testIterate(system,
+                  "in/diblock/hex_bead/param.flex",
+                  "in/diblock/hex_bead/w.bf",
+                  "hex_bead_flex",
+                  wMaxDiff,
+                  cMaxDiff);
+      TEST_ASSERT(wMaxDiff < 1.0E-7);
+      TEST_ASSERT(cMaxDiff < 1.0E-8);
+
+      // Compare free energies to output of modified unit test from v1.1
+      double fHelmholtz = 2.80048919599e-02;
+      double pressure =  3.19132478045e-02;
+      compareFreeEnergies(system, fHelmholtz, pressure);
+      TEST_ASSERT(fHelmholtz < 1.0E-7);
+      TEST_ASSERT(pressure < 1.0E-7);
+
+      // Check stress value
+      FSArray<double, 6> stress = computeStress(system);
+      TEST_ASSERT(std::abs(stress[0]) < 1.0E-8);
+   }
+
+   void testIterate2D_hex_bead_stress()
+   {
+      printMethod(TEST_FUNC);
+      //setVerbose(1);
+
+      std::string outFileRoot;
+      outFileRoot = makeFileRoot("out/testIterateBasis", 
+                                 "hex_bead_stress", 2);
+      openLogFile(outFileRoot + ".log");
+
+      // Initialize, read reference solution
+      System<2> system;
+      initSystem(system, 
+                 "in/diblock/hex_bead/param.rigid",
+                 "ref/testIterate2D_hex_bead_flex_w.bf");
+      system.iterate(); 
+      double ar  = system.domain().unitCell().parameter(0);
+      if (verbose() > 0) {
+         std::cout << "\na = " << Dbl(ar,20, 12);
+      }
+
+      // Unit cell size values
+      double a0  = ar * 1.100;
+      double am  = a0 * 0.995;
+      double ap  = a0 * 1.005;
+
+      FSArray<double, 6> parameters;
+      parameters.clear();
+
+      // Solve for middle unit cell parameter a0 
+      parameters.append(a0);
+      system.setUnitCell(parameters);
+      system.iterate();
+      system.mixture().computeStress();
+      double s0 = system.mixture().stress(0);
+      double diff = std::fabs((s0 - 1.654755884391e-03)/s0);
+      if (verbose() > 0) {
+         std::cout << "\nstress = " << Dbl(s0, 20, 12);
+         std::cout << "\ndiff   = " << Dbl(diff, 20, 12);
+      }
+      TEST_ASSERT(diff < 1.0E-6);
+
+      // Solve for lower unit cell parameter am (minus)
+      parameters.clear();
+      parameters.append(am);
+      system.setUnitCell(parameters);
+      system.iterate();
+      double fm = system.fHelmholtz();
+
+      // Solve for upper unit cell parameter ap (plus)
+      parameters.clear();
+      parameters.append(ap);
+      system.setUnitCell(parameters);
+      system.iterate();
+      double fp = system.fHelmholtz();
+
+      // Numerical stress by finite differences
+      double sn = (fp - fm)/(ap - am);
+      if (verbose() > 0) {
+         std::cout << "\nStress [scft]  = " << Dbl(s0, 20, 12);
+         std::cout << "\nStress [diff]  = " << Dbl(sn, 20, 12);
+         std::cout << "\nError fraction = " << Dbl((s0-sn)/s0, 20, 12);
+      }
+      TEST_ASSERT(std::abs((sn - s0)/s0) < 4.0E-4);
+
+   }
+
 
    void testIterate2D_hex_flex_noBatched()
    {
@@ -917,50 +949,6 @@ public:
       // v1.1 test used omega.ref as input, compared to input
    }
 
-   #if 0
-   void testIterate3D_bcc_rigid()
-   {
-      printMethod(TEST_FUNC);
-      openLogFile("out/testIterate3D_bcc_rigid.log");
-
-      System<3> system;
-      setupSystem<3>(system,"in/diblock/bcc/param.rigid");
-
-      system.readWBasis("in/diblock/bcc/omega.ref");
-
-      // Make reference copy of w fields
-      DArray< DArray<double> > b_wFields_check;
-      b_wFields_check = system.w().basis();
-
-      system.readWBasis("in/diblock/bcc/omega.in");
-      int error = system.iterate();
-      if (error) {
-         TEST_THROW("Iterator failed to converge.");
-      };
-      system.writeWBasis("out/testIterate3D_bcc_rigid_w.bf");
-      system.writeCBasis("out/testIterate3D_bcc_rigid_c.bf");
-
-      // Get test result
-      DArray< DArray<double> > b_wFields;
-      b_wFields = system.w().basis();
-
-      // Compare result to original
-      BFieldComparison comparison (1);
-      comparison.compare(b_wFields_check, b_wFields);
-
-      // Compare difference to tolerance epsilon
-      double diff = comparison.maxDiff();
-      double epsilon = 7.0E-7;
-      if (diff > epsilon) {
-         Log::file() << "\n";
-         Log::file() << "Max diff = " << comparison.maxDiff() << "\n";
-         Log::file() << "Rms diff = " << comparison.rmsDiff() << "\n";
-         Log::file() << "epsilon  = " << epsilon << "\n";
-      }
-      TEST_ASSERT(diff < epsilon);
-   }
-   #endif
-
    void testIterate3D_bcc_flex()
    {
       printMethod(TEST_FUNC);
@@ -991,50 +979,6 @@ public:
 
       // v1.1 test used omega.in as input, compared to omega.ref
    }
-
-   #if 0
-   void testIterate3D_bcc_flex()
-   {
-      printMethod(TEST_FUNC);
-      openLogFile("out/testIterate3D_bcc_flex.log");
-
-      System<3> system;
-      setupSystem<3>(system,"in/diblock/bcc/param.flex");
-
-      system.readWBasis("in/diblock/bcc/omega.ref");
-
-      // Make reference copy of w fields
-      DArray< DArray<double> > b_wFields_check;
-      b_wFields_check = system.w().basis();
-
-      system.readWBasis("in/diblock/bcc/omega.in");
-      int error = system.iterate();
-      if (error) {
-         TEST_THROW("Iterator failed to converge.");
-      };
-      system.writeWBasis("out/testIterate3D_bcc_flex_w.bf");
-      system.writeCBasis("out/testIterate3D_bcc_flex_c.bf");
-
-      // Get test result
-      DArray< DArray<double> > b_wFields;
-      b_wFields = system.w().basis();
-
-      // Compare result to original
-      BFieldComparison comparison (1);
-      comparison.compare(b_wFields_check, b_wFields);
-
-      // Compare difference to tolerance epsilon
-      double diff = comparison.maxDiff();
-      double epsilon = 5.0E-7;
-      if (diff > epsilon) {
-         Log::file() << "\n";
-         Log::file() << "Max diff = " << comparison.maxDiff() << "\n";
-         Log::file() << "Rms diff = " << comparison.rmsDiff() << "\n";
-         Log::file() << "epsilon  = " << epsilon << "\n";
-      }
-      TEST_ASSERT(diff < epsilon);
-   }
-   #endif
 
    void testIterate3D_bcc_flex_noBatched()
    {
@@ -1076,6 +1020,66 @@ public:
          Log::file() << "epsilon  = " << epsilon << "\n";
       }
       TEST_ASSERT(diff < epsilon);
+   }
+
+   void testIterate3D_bcc_stress()
+   {
+      printMethod(TEST_FUNC);
+      //setVerbose(1);
+
+      std::string outFileRoot;
+      outFileRoot = makeFileRoot("out/testIterateBasis", "bcc_stress", 3);
+      openLogFile(outFileRoot + ".log");
+
+      System<3> system;
+      initSystem(system,
+                 "in/diblock/bcc/param.rigid",
+                 "in/diblock/bcc/omega.in");
+
+      // Unit cell size values
+      double ar  = system.domain().unitCell().parameter(0);
+      double a0  = ar*1.100;
+      double am  = a0*0.995;
+      double ap  = a0*1.005;
+
+      FSArray<double, 6> parameters;
+
+      // Middle unit cell parameter a0 
+      parameters.append(a0);
+      system.setUnitCell(parameters);
+      system.iterate();
+      system.mixture().computeStress();
+      double s0 = system.mixture().stress(0);
+      double diff = std::fabs((s0 - 8.0561073E-2)/s0);
+      if (verbose() > 0) {
+	  std::cout << "\nstress  = " << s0;
+	  std::cout << "\ndiff    = " << s0;
+      }
+      TEST_ASSERT(diff < 1.0E-5);
+
+      // Lower unit cell parameter am (minus)
+      parameters.clear();
+      parameters.append(am);
+      system.setUnitCell(parameters);
+      system.iterate();
+      double fm = system.fHelmholtz();
+      
+      // Upper unit cell parameter ap (plus)
+      parameters.clear();
+      parameters.append(ap);
+      system.setUnitCell(parameters);
+      system.iterate();
+      double fp = system.fHelmholtz();
+
+      // Numerical stress by finite differences
+      double sn = (fp - fm)/(ap - am);
+      if (verbose() > 0) {
+         std::cout << "\nStress [scft]  = " << Dbl(s0, 20, 12);
+         std::cout << "\nStress [diff]  = " << Dbl(sn, 20, 12);
+         std::cout << "\nError fraction = " << Dbl((s0-sn)/s0, 20, 12);
+      }
+      TEST_ASSERT(std::abs((sn - s0)/s0) < 1.0E-3);
+
    }
 
    void testIterate3D_altGyr_flex()
@@ -1217,6 +1221,9 @@ TEST_BEGIN(AmIteratorBasisTest)
 TEST_ADD(AmIteratorBasisTest, testIterate1D_lam_rigid)
 TEST_ADD(AmIteratorBasisTest, testIterate1D_lam_flex)
 TEST_ADD(AmIteratorBasisTest, testIterate1D_lam_flex_noBatched)
+TEST_ADD(AmIteratorBasisTest, testIterate1D_lam_stress)
+TEST_ADD(AmIteratorBasisTest, testIterate1D_lam_bead_flex)
+TEST_ADD(AmIteratorBasisTest, testIterate1D_lam_bead_stress)
 TEST_ADD(AmIteratorBasisTest, testIterate1D_lam_soln)
 TEST_ADD(AmIteratorBasisTest, testIterate1D_lam_blend)
 TEST_ADD(AmIteratorBasisTest, testIterate1D_lam_open_blend)
@@ -1224,9 +1231,13 @@ TEST_ADD(AmIteratorBasisTest, testIterate1D_lam_open_soln)
 TEST_ADD(AmIteratorBasisTest, testIterate2D_hex_rigid)
 TEST_ADD(AmIteratorBasisTest, testIterate2D_hex_flex)
 TEST_ADD(AmIteratorBasisTest, testIterate2D_hex_flex_noBatched)
+TEST_ADD(AmIteratorBasisTest, testIterate2D_hex_stress)
+TEST_ADD(AmIteratorBasisTest, testIterate2D_hex_bead_flex)
+TEST_ADD(AmIteratorBasisTest, testIterate2D_hex_bead_stress)
 TEST_ADD(AmIteratorBasisTest, testIterate3D_bcc_rigid)
 TEST_ADD(AmIteratorBasisTest, testIterate3D_bcc_flex)
 TEST_ADD(AmIteratorBasisTest, testIterate3D_bcc_flex_noBatched)
+TEST_ADD(AmIteratorBasisTest, testIterate3D_bcc_stress)
 TEST_ADD(AmIteratorBasisTest, testIterate3D_altGyr_flex)
 TEST_ADD(AmIteratorBasisTest, testIterate3D_c15_1_flex)
 TEST_ADD(AmIteratorBasisTest, testIterateWithMaskAndH)

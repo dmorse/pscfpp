@@ -168,7 +168,7 @@ public:
                             std::string outSuffix,
                             int D)
    {
-      std::string outFileRoot = "out/testIterate";
+      std::string outFileRoot = prefix;
       outFileRoot += std::to_string(D) + "D_" + outSuffix;
       return outFileRoot;
    }
