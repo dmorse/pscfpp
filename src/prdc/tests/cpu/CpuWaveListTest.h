@@ -97,17 +97,17 @@ public:
       Cpu::WaveList<1> wavelist1;
       wavelist1.allocate(mesh1, cell1);
       TEST_ASSERT(wavelist1.isAllocated());
-      TEST_ASSERT(!wavelist1.hasMinimumImages());
+      TEST_ASSERT(!wavelist1.hasMinImages());
 
       Cpu::WaveList<2> wavelist2;
       wavelist2.allocate(mesh2, cell2);
       TEST_ASSERT(wavelist2.isAllocated());
-      TEST_ASSERT(!wavelist2.hasMinimumImages());
+      TEST_ASSERT(!wavelist2.hasMinImages());
 
       Cpu::WaveList<3> wavelist3;
       wavelist3.allocate(mesh3, cell3);
       TEST_ASSERT(wavelist3.isAllocated());
-      TEST_ASSERT(!wavelist3.hasMinimumImages());
+      TEST_ASSERT(!wavelist3.hasMinImages());
    }
 
    void testComputeMinimumImages1D()
