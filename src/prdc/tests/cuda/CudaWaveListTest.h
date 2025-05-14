@@ -422,6 +422,50 @@ public:
       }
    }
 
+   void testComplex()
+   {
+      printMethod(TEST_FUNC);
+
+      WaveList<3> wavelist(false);
+      wavelist.allocate(mesh3, cell3);
+      wavelist.computedKSq(); // computes min images, ksq, and dksq
+
+      // Transfer results to host
+      HostDArray<int> minImages_h;
+      HostDArray<cudaReal> ksq_h, dksq_h;
+      minImages_h = wavelist.minImages_d();
+      ksq_h = wavelist.kSq();
+      dksq_h = wavelist.dKSq();
+
+      // Check that array sizes are correct
+      int meshSize = mesh3.size();
+      TEST_ASSERT(minImages_h.capacity() == meshSize * 3);
+      TEST_ASSERT(ksq_h.capacity() == meshSize);
+      TEST_ASSERT(dksq_h.capacity() == cell3.nParameter() * meshSize);
+
+      // Compute minimum images, ksq, and dksq on host and compare
+      IntVec<3> temp, vec;
+      MeshIterator<3> iter;
+      double val;
+      iter.setDimensions(mesh3.dimensions());
+      for (iter.begin(); !iter.atEnd(); ++iter) {
+         temp = iter.position();
+         vec = shiftToMinimum(temp, mesh3.dimensions(), cell3);
+         val = cell3.ksq(vec);
+
+         TEST_ASSERT(vec[0] == minImages_h[iter.rank()]);
+         TEST_ASSERT(vec[1] == minImages_h[iter.rank() + meshSize]);
+         TEST_ASSERT(vec[2] == minImages_h[iter.rank() + meshSize + meshSize]);
+         TEST_ASSERT(abs(val - ksq_h[iter.rank()]) < tolerance_);
+
+         for (int i = 0; i < cell3.nParameter(); i++) {
+            val = cell3.dksq(vec, i);
+            int dksq_id = iter.rank() + (i * meshSize);
+            TEST_ASSERT(abs(val - dksq_h[dksq_id]) < tolerance_);
+         }
+      }
+   }
+
 };
 
 TEST_BEGIN(CudaWaveListTest)
@@ -435,6 +479,7 @@ TEST_ADD(CudaWaveListTest, testComputeKSq3D)
 TEST_ADD(CudaWaveListTest, testComputedKSq1D)
 TEST_ADD(CudaWaveListTest, testComputedKSq2D)
 TEST_ADD(CudaWaveListTest, testComputedKSq3D)
+TEST_ADD(CudaWaveListTest, testComplex)
 TEST_END(CudaWaveListTest)
 
 #endif

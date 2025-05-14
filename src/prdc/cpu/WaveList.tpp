@@ -26,7 +26,7 @@ namespace Cpu {
    * Constructor.
    */
    template <int D>
-   WaveList<D>::WaveList()
+   WaveList<D>::WaveList(bool isRealField)
     : kSize_(0),
       isAllocated_(false),
       hasMinimumImages_(false),
@@ -34,7 +34,7 @@ namespace Cpu {
       hasdKSq_(false),
       unitCellPtr_(nullptr),
       meshPtr_(nullptr)
-   {}
+   {  isRealField_ = isRealField; }
 
    /*
    * Destructor.
@@ -62,7 +62,12 @@ namespace Cpu {
       IntVec<D> const & meshDimensions = mesh().dimensions();
 
       // Compute kMeshDimensions_ and kSize_
-      FFT<D>::computeKMesh(meshDimensions, kMeshDimensions_, kSize_);
+      if (isRealField_) {
+         FFT<D>::computeKMesh(meshDimensions, kMeshDimensions_, kSize_);
+      } else {
+         kMeshDimensions_ = meshDimensions;
+         kSize_ = mesh().size();
+      }
 
       // Allocate memory
       minImages_.allocate(kSize_);
@@ -71,15 +76,20 @@ namespace Cpu {
       for (int i = 0; i < nParams; i++) {
          dKSq_[i].allocate(kMeshDimensions_);
       }
-      implicitInverse_.allocate(kSize_);
 
-      // Set up implicitInverse_ array (only depends on mesh dimensions)
-      MeshIterator<D> kItr(kMeshDimensions_);
-      int rank;
-      for (kItr.begin(); !kItr.atEnd(); ++kItr) {
-         rank = kItr.rank();
-         implicitInverse_[rank] = 
-              FFT<D>::hasImplicitInverse(kItr.position(), meshDimensions);
+      // Allocate and set up implicitInverse_ array if isRealField_ == true
+      // (only depends on mesh dimensions, only used for real fields)
+      if (isRealField_) {
+         implicitInverse_.allocate(kSize_);
+
+         MeshIterator<D> kItr(kMeshDimensions_);
+         int rank;
+
+         for (kItr.begin(); !kItr.atEnd(); ++kItr) {
+            rank = kItr.rank();
+            implicitInverse_[rank] = 
+               FFT<D>::hasImplicitInverse(kItr.position(), meshDimensions);
+         }
       }
 
       clearUnitCellData();
@@ -184,8 +194,10 @@ namespace Cpu {
          for (kItr.begin(); !kItr.atEnd(); ++kItr) {
             rank = kItr.rank();
             dksq[rank] = unitCell().dksq(minImages_[rank], i);
-            if (implicitInverse_[rank]) {
-               dksq[rank] *= 2.0;
+            if (isRealField_) {
+               if (implicitInverse_[rank]) {
+                  dksq[rank] *= 2.0;
+               }
             }
          }
       }

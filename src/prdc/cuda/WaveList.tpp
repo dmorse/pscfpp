@@ -359,7 +359,8 @@ namespace Cuda {
       __global__ void _computedKSq(cudaReal* dKSq, int const * waveBz,
                                    cudaReal const * dkkBasis,
                                    bool const * implicitInverse, 
-                                   int const nParams, int const kSize) 
+                                   int const nParams, int const kSize, 
+                                   bool isRealField) 
       {
          // Size of dKSq is kSize * nParams
          // Each thread does nParams calculations
@@ -398,8 +399,11 @@ namespace Cuda {
                   } // D
                } // D
 
-               if (implicitInverse[i]) { // if element i's inverse is implicit
-                  dKSqVal *= 2;
+               if (isRealField) {
+                  if (implicitInverse[i]) { 
+                     // if element i's inverse is implicit
+                     dKSqVal *= 2;
+                  }
                }
 
                dKSq[(param * kSize) + i] = dKSqVal;
@@ -414,7 +418,7 @@ namespace Cuda {
    * Constructor.
    */
    template <int D>
-   WaveList<D>::WaveList()
+   WaveList<D>::WaveList(bool isRealField)
     : kSize_(0),
       isAllocated_(false),
       hasMinImages_(false),
@@ -423,7 +427,7 @@ namespace Cuda {
       hasdKSq_(false),
       unitCellPtr_(nullptr),
       meshPtr_(nullptr)
-   {}
+   {  isRealField_ = isRealField; }
 
    /*
    * Destructor.
@@ -448,15 +452,12 @@ namespace Cuda {
 
       int nParams = unitCell().nParameter();
 
-      // Compute DFT mesh size kSize_ and dimensions kMeshDimensions_
-      kSize_ = 1;
-      for(int i = 0; i < D; ++i) {
-         if (i < D - 1) {
-            kMeshDimensions_[i] = mesh().dimension(i);
-         } else {
-            kMeshDimensions_[i] = mesh().dimension(i) / 2 + 1;
-         }
-         kSize_ *= kMeshDimensions_[i];
+      // Compute kMeshDimensions_ and kSize_
+      if (isRealField_) {
+         FFT<D>::computeKMesh(meshDimensions, kMeshDimensions_, kSize_);
+      } else {
+         kMeshDimensions_ = meshDimensions;
+         kSize_ = mesh().size();
       }
 
       minImages_.allocate(kSize_ * D);
@@ -467,24 +468,27 @@ namespace Cuda {
          dKSqSlices_[i].associate(dKSq_, i*kSize_, kMeshDimensions_);
       }
 
-      // Set up implicitInverse_ array (only depends on mesh dimensions)
-      implicitInverse_.allocate(kSize_);
-      MeshIterator<D> kItr(kMeshDimensions_);
-      HostDArray<bool> implicitInverse_h(kSize_);
-      int inverseId;
-      for (kItr.begin(); !kItr.atEnd(); ++kItr) {
-         if (kItr.position(D-1) == 0) {
-            inverseId = 0;
-         } else {
-            inverseId = mesh().dimension(D-1) - kItr.position(D-1);
+      // Allocate and set up implicitInverse_ array if isRealField_ == true
+      // (only depends on mesh dimensions, only used for real fields)
+      if (isRealField_) {
+         implicitInverse_.allocate(kSize_);
+         MeshIterator<D> kItr(kMeshDimensions_);
+         HostDArray<bool> implicitInverse_h(kSize_);
+         int inverseId;
+         for (kItr.begin(); !kItr.atEnd(); ++kItr) {
+            if (kItr.position(D-1) == 0) {
+               inverseId = 0;
+            } else {
+               inverseId = mesh().dimension(D-1) - kItr.position(D-1);
+            }
+            if (inverseId > kMeshDimensions_[D-1]) {
+               implicitInverse_h[kItr.rank()] = true;
+            } else {
+               implicitInverse_h[kItr.rank()] = false;
+            }
          }
-         if (inverseId > kMeshDimensions_[D-1]) {
-            implicitInverse_h[kItr.rank()] = true;
-         } else {
-            implicitInverse_h[kItr.rank()] = false;
-         }
+         implicitInverse_ = implicitInverse_h; // transfer to device memory
       }
-      implicitInverse_ = implicitInverse_h; // transfer to device memory
 
       clearUnitCellData();
       isAllocated_ = true;
@@ -670,7 +674,8 @@ namespace Cuda {
       size_t sz = sizeof(cudaReal)*dkkBasis.capacity();
       _computedKSq<D><<<nBlocks, nThreads, sz>>>
          (dKSq_.cArray(), minImages_.cArray(), dkkBasis.cArray(), 
-          implicitInverse_.cArray(), unitCell().nParameter(), kSize_);
+          implicitInverse_.cArray(), unitCell().nParameter(), kSize_,
+          isRealField_);
       
       hasdKSq_ = true;
    }

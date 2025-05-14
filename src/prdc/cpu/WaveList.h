@@ -33,6 +33,14 @@ namespace Cpu {
    * should be called, which will effectively reset the WaveList object so
    * that the wavevector properties will need to be recalculated before 
    * being used.
+   * 
+   * This object calculates these wavevector properties for a mesh of grid
+   * points in k-space. If a calculation only requires real-valued fields, 
+   * PSCF uses a reduced-size k-space mesh, as output by FFTW. However, a 
+   * full-sized k-space mesh (the same size as the real-space mesh) is 
+   * necessary when dealing with complex-valued fields. The k-space mesh
+   * used by a WaveList object is determined by the parameter isRealField,
+   * which is assigned in the constructor and cannot later be changed. 
    */
    template <int D>
    class WaveList
@@ -41,8 +49,10 @@ namespace Cpu {
 
       /**
       * Constructor.
+      * 
+      * \param isRealField  Will this WaveList be used for real-valued fields?
       */
-      WaveList();
+      WaveList(bool isRealField = true);
 
       /**
       * Destructor
@@ -137,6 +147,9 @@ namespace Cpu {
       * each gridpoint. The boolean represents whether the inverse of the
       * wave at the given gridpoint is an implicit wave. Implicit here is
       * used to mean any wave that is outside the bounds of the k-grid.
+      * 
+      * This method will throw an error if isRealField == false, because
+      * there are no implicit inverses in such a case.
       */
       DArray<bool> const & implicitInverse() const;
 
@@ -163,6 +176,12 @@ namespace Cpu {
       */ 
       bool hasdKSq() const
       {  return hasdKSq_; }
+
+      /**
+      * Does this WaveList correspond to real-valued fields?
+      */ 
+      bool isRealField() const
+      {  return isRealField_; }
 
    private:
 
@@ -195,6 +214,9 @@ namespace Cpu {
 
       /// Has the dKSq array been computed?
       bool hasdKSq_;
+
+      /// Will this WaveList be used for real-valued fields?
+      bool isRealField_;
 
       /// Pointer to associated UnitCell<D> object
       UnitCell<D> const * unitCellPtr_;
@@ -254,6 +276,7 @@ namespace Cpu {
    DArray<bool> const & WaveList<D>::implicitInverse() const
    {  
       UTIL_CHECK(isAllocated_);
+      UTIL_CHECK(isRealField_);
       return implicitInverse_;
    }
 
