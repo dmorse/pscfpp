@@ -33,6 +33,14 @@ namespace Cpu {
    * should be called, which will effectively reset the WaveList object so
    * that the wavevector properties will need to be recalculated before 
    * being used.
+   * 
+   * This object calculates these wavevector properties for a mesh of grid
+   * points in k-space. If a calculation only requires real-valued fields, 
+   * PSCF uses a reduced-size k-space mesh, as output by FFTW. However, a 
+   * full-sized k-space mesh (the same size as the real-space mesh) is 
+   * necessary when dealing with complex-valued fields. The k-space mesh
+   * used by a WaveList object is determined by the parameter isRealField,
+   * which is assigned in the constructor and cannot later be changed. 
    */
    template <int D>
    class WaveList
@@ -41,8 +49,10 @@ namespace Cpu {
 
       /**
       * Constructor.
+      * 
+      * \param isRealField  Will this WaveList be used for real-valued fields?
       */
-      WaveList();
+      WaveList(bool isRealField = true);
 
       /**
       * Destructor
@@ -60,7 +70,7 @@ namespace Cpu {
       /**
       * Clear all internal data that depends on lattice parameters.
       * 
-      * Sets hasKSq_ and hasdKSq_ to false. Sets hasMinimumImages_ to
+      * Sets hasKSq_ and hasdKSq_ to false. Sets hasMinImages_ to
       * false only if the unit cell type has variable angles.
       */
       void clearUnitCellData();
@@ -93,19 +103,21 @@ namespace Cpu {
       /**
       * Get the array of minimum image vectors by const reference.
       * 
-      * This function returns an array of size kSize in which each element
-      * element is an IntVec<D> containing the integer coordinates of the 
-      * minimum image of one wavevector in the k-space mesh used for the
-      * DFT of real data. 
+      * This function returns an array in which each element is an IntVec<D>
+      * containing the integer coordinates of the minimum image of one 
+      * wavevector in the k-space mesh used for the DFT. If isRealField is
+      * true, this k-space mesh is smaller than the real-space mesh. 
+      * Otherwise, it is the same size.
       */
       DArray< IntVec<D> > const & minImages() const;
 
       /**
       * Get the kSq array on the device by const reference.
       *
-      * This function returns an array of size kSize in which each element
-      * is the square magnitude |k|^2 of a wavevector k in the k-space
-      * mesh used for a DFT of real data.
+      * This function returns an array in which each element is the square
+      * magnitude |k|^2 of a wavevector k in the k-space mesh used for the 
+      * DFT. If isRealField is true, this k-space mesh is smaller than the 
+      * real-space mesh. Otherwise, it is the same size.
       */
       RField<D> const & kSq() const;
 
@@ -117,6 +129,12 @@ namespace Cpu {
       * prefactor is 2.0 for waves that have an implicit inverse and 1.0
       * otherwise. The choice of prefactor is designed to simplify use
       * of the array to compute stress.
+      * 
+      * Each element corresponds to one wavevector k in the k-space mesh 
+      * used for the DFT. If isRealField is true, this k-space mesh is 
+      * smaller than the real-space mesh. Otherwise, it is the same size.
+      * In the latter case, there are no implicit waves, so the prefactor
+      * is always 1.0.
       *
       * \param i index of lattice parameter
       */
@@ -137,6 +155,9 @@ namespace Cpu {
       * each gridpoint. The boolean represents whether the inverse of the
       * wave at the given gridpoint is an implicit wave. Implicit here is
       * used to mean any wave that is outside the bounds of the k-grid.
+      * 
+      * This method will throw an error if isRealField == false, because
+      * there are no implicit inverses in such a case.
       */
       DArray<bool> const & implicitInverse() const;
 
@@ -149,8 +170,8 @@ namespace Cpu {
       /**
       * Have minimum images been computed?
       */ 
-      bool hasMinimumImages() const
-      {  return hasMinimumImages_; }
+      bool hasMinImages() const
+      {  return hasMinImages_; }
 
       /**
       * Has the kSq array been computed?
@@ -163,6 +184,12 @@ namespace Cpu {
       */ 
       bool hasdKSq() const
       {  return hasdKSq_; }
+
+      /**
+      * Does this WaveList correspond to real-valued fields?
+      */ 
+      bool isRealField() const
+      {  return isRealField_; }
 
    private:
 
@@ -178,23 +205,38 @@ namespace Cpu {
       /// Array indicating whether a given gridpoint has an implicit partner
       DArray<bool> implicitInverse_;
 
-      /// Dimensions of the mesh in reciprocal space.
+      /**
+      * Dimensions of the mesh in reciprocal space.
+      * 
+      * If isRealField_, the reciprocal-space grid is smaller than the 
+      * real-space grid, as output by FFTW. Otherwise, the two grids
+      * are the same size.
+      */ 
       IntVec<D> kMeshDimensions_;
 
-      /// Number of grid points in reciprocal space.
+      /**
+      * Number of grid points in reciprocal space.
+      * 
+      * If isRealField_, the reciprocal-space grid is smaller than the 
+      * real-space grid, as output by cuFFT. Otherwise, the two grids
+      * are the same size.
+      */ 
       int kSize_;
 
       /// Has memory been allocated for arrays?
       bool isAllocated_;
 
       /// Have minimum images been computed?
-      bool hasMinimumImages_;
+      bool hasMinImages_;
 
       /// Has the kSq array been computed?
       bool hasKSq_;
 
       /// Has the dKSq array been computed?
       bool hasdKSq_;
+
+      /// Will this WaveList be used for real-valued fields?
+      bool isRealField_;
 
       /// Pointer to associated UnitCell<D> object
       UnitCell<D> const * unitCellPtr_;
@@ -217,7 +259,7 @@ namespace Cpu {
    inline 
    DArray< IntVec<D> > const & WaveList<D>::minImages() const
    {
-      UTIL_CHECK(hasMinimumImages_);
+      UTIL_CHECK(hasMinImages_);
       return minImages_; 
    }
    
@@ -254,6 +296,7 @@ namespace Cpu {
    DArray<bool> const & WaveList<D>::implicitInverse() const
    {  
       UTIL_CHECK(isAllocated_);
+      UTIL_CHECK(isRealField_);
       return implicitInverse_;
    }
 

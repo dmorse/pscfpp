@@ -101,17 +101,17 @@ public:
       WaveList<1> wavelist1;
       wavelist1.allocate(mesh1, cell1);
       TEST_ASSERT(wavelist1.isAllocated());
-      TEST_ASSERT(!wavelist1.hasMinimumImages());
+      TEST_ASSERT(!wavelist1.hasMinImages());
 
       WaveList<2> wavelist2;
       wavelist2.allocate(mesh2, cell2);
       TEST_ASSERT(wavelist2.isAllocated());
-      TEST_ASSERT(!wavelist2.hasMinimumImages());
+      TEST_ASSERT(!wavelist2.hasMinImages());
 
       WaveList<3> wavelist3;
       wavelist3.allocate(mesh3, cell3);
       TEST_ASSERT(wavelist3.isAllocated());
-      TEST_ASSERT(!wavelist3.hasMinimumImages());
+      TEST_ASSERT(!wavelist3.hasMinImages());
    }
 
    void testComputeMinimumImages1D()
@@ -334,7 +334,7 @@ public:
       // compute dKSq on device, transfer to host
       wavelist.computedKSq();
       HostDArray<cudaReal> dksq_h;
-      dksq_h = wavelist.dKSq();
+      dksq_h = wavelist.dKSq(0);
 
       // compute dKSq on host and compare
       IntVec<1> temp, vec;
@@ -363,8 +363,11 @@ public:
 
       // compute dKSq on device, transfer to host
       wavelist.computedKSq();
-      HostDArray<cudaReal> dksq_h;
-      dksq_h = wavelist.dKSq();
+      DArray< HostDArray<cudaReal> > dksq_h;
+      dksq_h.allocate(cell2.nParameter());
+      for (int n = 0; n < cell2.nParameter() ; ++n) {
+        dksq_h[n] = wavelist.dKSq(n);
+      }
 
       // compute dKSq on host and compare
       IntVec<2> temp, vec;
@@ -381,8 +384,7 @@ public:
                   dksq *= 2;
                }
             }
-            int dksq_id = iter.rank() + (n * kSize2);
-            TEST_ASSERT(abs(dksq - dksq_h[dksq_id]) < tolerance_);
+            TEST_ASSERT(abs(dksq - dksq_h[n][iter.rank()]) < tolerance_);
          }
       }
    }
@@ -398,8 +400,11 @@ public:
 
       // compute dKSq on device, transfer to host
       wavelist.computedKSq();
-      HostDArray<cudaReal> dksq_h;
-      dksq_h = wavelist.dKSq();
+      DArray< HostDArray<cudaReal> > dksq_h;
+      dksq_h.allocate(cell3.nParameter());
+      for (int n = 0; n < cell3.nParameter() ; ++n) {
+        dksq_h[n] = wavelist.dKSq(n);
+      }
 
       // compute dKSq on host and compare
       IntVec<3> temp, vec;
@@ -416,8 +421,58 @@ public:
                   dksq *= 2;
                }
             }
-            int dksq_id = iter.rank() + (n * kSize3);
-            TEST_ASSERT(abs(dksq - dksq_h[dksq_id]) < tolerance_);
+            TEST_ASSERT(abs(dksq - dksq_h[n][iter.rank()]) < tolerance_);
+         }
+      }
+   }
+
+   void testComplex()
+   {
+      printMethod(TEST_FUNC);
+
+      WaveList<3> wavelist(false);
+      wavelist.allocate(mesh3, cell3);
+      wavelist.computedKSq(); // computes min images, ksq, and dksq
+
+      // Transfer results to host
+      HostDArray<int> minImages_h;
+      minImages_h = wavelist.minImages_d();
+
+      HostDArray<cudaReal> ksq_h;
+      ksq_h = wavelist.kSq();
+
+      DArray< HostDArray<cudaReal> > dksq_h;
+      dksq_h.allocate(cell3.nParameter());
+      for (int n = 0; n < cell3.nParameter() ; ++n) {
+        dksq_h[n] = wavelist.dKSq(n);
+      }
+
+      // Check that array sizes are correct
+      int meshSize = mesh3.size();
+      TEST_ASSERT(minImages_h.capacity() == meshSize * 3);
+      TEST_ASSERT(ksq_h.capacity() == meshSize);
+      for (int n = 0; n < cell3.nParameter() ; ++n) {
+         TEST_ASSERT(dksq_h[n].capacity() == meshSize);
+      }
+
+      // Compute minimum images, ksq, and dksq on host and compare
+      IntVec<3> temp, vec;
+      MeshIterator<3> iter;
+      double val;
+      iter.setDimensions(mesh3.dimensions());
+      for (iter.begin(); !iter.atEnd(); ++iter) {
+         temp = iter.position();
+         vec = shiftToMinimum(temp, mesh3.dimensions(), cell3);
+         val = cell3.ksq(vec);
+
+         TEST_ASSERT(vec[0] == minImages_h[iter.rank()]);
+         TEST_ASSERT(vec[1] == minImages_h[iter.rank() + meshSize]);
+         TEST_ASSERT(vec[2] == minImages_h[iter.rank() + meshSize + meshSize]);
+         TEST_ASSERT(abs(val - ksq_h[iter.rank()]) < tolerance_);
+
+         for (int n = 0; n < cell3.nParameter(); n++) {
+            val = cell3.dksq(vec, n);
+            TEST_ASSERT(abs(val - dksq_h[n][iter.rank()]) < tolerance_);
          }
       }
    }
@@ -435,6 +490,7 @@ TEST_ADD(CudaWaveListTest, testComputeKSq3D)
 TEST_ADD(CudaWaveListTest, testComputedKSq1D)
 TEST_ADD(CudaWaveListTest, testComputedKSq2D)
 TEST_ADD(CudaWaveListTest, testComputedKSq3D)
+TEST_ADD(CudaWaveListTest, testComplex)
 TEST_END(CudaWaveListTest)
 
 #endif
