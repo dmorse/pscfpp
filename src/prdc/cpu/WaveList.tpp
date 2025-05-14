@@ -29,7 +29,7 @@ namespace Cpu {
    WaveList<D>::WaveList(bool isRealField)
     : kSize_(0),
       isAllocated_(false),
-      hasMinimumImages_(false),
+      hasMinImages_(false),
       hasKSq_(false),
       hasdKSq_(false),
       unitCellPtr_(nullptr),
@@ -105,7 +105,7 @@ namespace Cpu {
       hasKSq_ = false;
       hasdKSq_ = false;
       if (hasVariableAngle<D>(unitCell().lattice())) {
-         hasMinimumImages_ = false;
+         hasMinImages_ = false;
       }
    }
 
@@ -115,7 +115,7 @@ namespace Cpu {
    template <int D>
    void WaveList<D>::computeMinimumImages() 
    {
-      if (hasMinimumImages_) return; // min images already calculated
+      if (hasMinImages_) return; // min images already calculated
 
       // Precondition
       UTIL_CHECK(isAllocated_);
@@ -132,7 +132,7 @@ namespace Cpu {
          kSq_[rank] = unitCell().ksq(minImages_[rank]);
       }
 
-      hasMinimumImages_ = true;
+      hasMinImages_ = true;
       hasKSq_ = true;
    }
 
@@ -146,7 +146,7 @@ namespace Cpu {
       if (hasKSq_) return; 
 
       // If necessary, compute minimum images.
-      if (!hasMinimumImages_) {
+      if (!hasMinImages_) {
          computeMinimumImages(); // computes both min images and kSq
          return;
       }
@@ -177,7 +177,7 @@ namespace Cpu {
       if (hasdKSq_) return; // dKSq already calculated
 
       // Compute minimum images if needed
-      if (!hasMinimumImages_) {
+      if (!hasMinImages_) {
          computeMinimumImages(); 
       }
 

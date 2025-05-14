@@ -70,7 +70,7 @@ namespace Cpu {
       /**
       * Clear all internal data that depends on lattice parameters.
       * 
-      * Sets hasKSq_ and hasdKSq_ to false. Sets hasMinimumImages_ to
+      * Sets hasKSq_ and hasdKSq_ to false. Sets hasMinImages_ to
       * false only if the unit cell type has variable angles.
       */
       void clearUnitCellData();
@@ -103,19 +103,21 @@ namespace Cpu {
       /**
       * Get the array of minimum image vectors by const reference.
       * 
-      * This function returns an array of size kSize in which each element
-      * element is an IntVec<D> containing the integer coordinates of the 
-      * minimum image of one wavevector in the k-space mesh used for the
-      * DFT of real data. 
+      * This function returns an array in which each element is an IntVec<D>
+      * containing the integer coordinates of the minimum image of one 
+      * wavevector in the k-space mesh used for the DFT. If isRealField is
+      * true, this k-space mesh is smaller than the real-space mesh. 
+      * Otherwise, it is the same size.
       */
       DArray< IntVec<D> > const & minImages() const;
 
       /**
       * Get the kSq array on the device by const reference.
       *
-      * This function returns an array of size kSize in which each element
-      * is the square magnitude |k|^2 of a wavevector k in the k-space
-      * mesh used for a DFT of real data.
+      * This function returns an array in which each element is the square
+      * magnitude |k|^2 of a wavevector k in the k-space mesh used for the 
+      * DFT. If isRealField is true, this k-space mesh is smaller than the 
+      * real-space mesh. Otherwise, it is the same size.
       */
       RField<D> const & kSq() const;
 
@@ -127,6 +129,12 @@ namespace Cpu {
       * prefactor is 2.0 for waves that have an implicit inverse and 1.0
       * otherwise. The choice of prefactor is designed to simplify use
       * of the array to compute stress.
+      * 
+      * Each element corresponds to one wavevector k in the k-space mesh 
+      * used for the DFT. If isRealField is true, this k-space mesh is 
+      * smaller than the real-space mesh. Otherwise, it is the same size.
+      * In the latter case, there are no implicit waves, so the prefactor
+      * is always 1.0.
       *
       * \param i index of lattice parameter
       */
@@ -162,8 +170,8 @@ namespace Cpu {
       /**
       * Have minimum images been computed?
       */ 
-      bool hasMinimumImages() const
-      {  return hasMinimumImages_; }
+      bool hasMinImages() const
+      {  return hasMinImages_; }
 
       /**
       * Has the kSq array been computed?
@@ -197,17 +205,29 @@ namespace Cpu {
       /// Array indicating whether a given gridpoint has an implicit partner
       DArray<bool> implicitInverse_;
 
-      /// Dimensions of the mesh in reciprocal space.
+      /**
+      * Dimensions of the mesh in reciprocal space.
+      * 
+      * If isRealField_, the reciprocal-space grid is smaller than the 
+      * real-space grid, as output by FFTW. Otherwise, the two grids
+      * are the same size.
+      */ 
       IntVec<D> kMeshDimensions_;
 
-      /// Number of grid points in reciprocal space.
+      /**
+      * Number of grid points in reciprocal space.
+      * 
+      * If isRealField_, the reciprocal-space grid is smaller than the 
+      * real-space grid, as output by cuFFT. Otherwise, the two grids
+      * are the same size.
+      */ 
       int kSize_;
 
       /// Has memory been allocated for arrays?
       bool isAllocated_;
 
       /// Have minimum images been computed?
-      bool hasMinimumImages_;
+      bool hasMinImages_;
 
       /// Has the kSq array been computed?
       bool hasKSq_;
@@ -239,7 +259,7 @@ namespace Cpu {
    inline 
    DArray< IntVec<D> > const & WaveList<D>::minImages() const
    {
-      UTIL_CHECK(hasMinimumImages_);
+      UTIL_CHECK(hasMinImages_);
       return minImages_; 
    }
    

@@ -38,7 +38,7 @@ namespace Cuda {
    * 
    * This object calculates these wavevector properties for a mesh of grid
    * points in k-space. If a calculation only requires real-valued fields, 
-   * PSCF uses a reduced-size k-space mesh, as output by FFTW. However, a 
+   * PSCF uses a reduced-size k-space mesh, as output by cuFFT. However, a 
    * full-sized k-space mesh (the same size as the real-space mesh) is 
    * necessary when dealing with complex-valued fields. The k-space mesh
    * used by a WaveList object is determined by the parameter isRealField,
@@ -82,14 +82,13 @@ namespace Cuda {
       *
       * The minimum images may change if a lattice angle in the unit cell
       * is changed, so this method should be called whenever such changes
-      * occur. The method hasVariableAngle() identifies whether the
-      * minimum images may change under changes in the lattice parameters.
+      * occur. 
       *
       * In the process of computing the minimum images, the square norm
       * |k|^2 for all wavevectors is also calculated and stored, so it
       * is not necessary to call computeKSq after calling this method.
-      * Function computeKSq() can be used to allow calculation of kSq
-      * without unnecessary recalculation of minimum images.
+      * computeKSq is provided to allow calculation of kSq without 
+      * recalculating minimum images.
       */
       void computeMinimumImages();
 
@@ -113,7 +112,8 @@ namespace Cuda {
       * points in the FFT k-space mesh. The array is unwrapped into a
       * linear array in an index-by-index manner, in which the first kSize
       * elements of the array contain the first index of each minimum
-      * image, and so on.
+      * image, and so on. If isRealField is true, kSize is smaller than 
+      * the size of the real-space mesh. Otherwise, it is equal.
       */
       DeviceArray<int> const & minImages_d() const;
 
@@ -121,44 +121,36 @@ namespace Cuda {
       * Get minimum images as IntVec<D> objects on the host.
       *
       * The array has size kSize, and each element is an IntVec<D>.
+      * If isRealField is true, kSize is smaller than the size of the 
+      * real-space mesh. Otherwise, it is equal.
       */
       HostDArray< IntVec<D> > const & minImages_h() const;
 
       /**
       * Get the kSq array on the device by reference.
+      * 
+      * This method returns an RField in which each element is the square
+      * magnitude |k|^2 of a wavevector k in the k-space mesh used for the 
+      * DFT. If isRealField is true, this k-space mesh is smaller than the 
+      * real-space mesh. Otherwise, it is the same size.
       */
       RField<D> const & kSq() const;
 
-      #if 0
       /**
-      * Get the full dKSq array on the device by reference.
+      * Get derivatives of |k|^2 with respect to lattice parameter i.
       *
-      * The array has size kSize * nParams, where kSize is the number of
-      * grid points in reciprocal space and nParams is the number of
-      * lattice parameters. The array is unwrapped into a linear array in
-      * which the * first kSize elements of the array contain dKSq for the
-      * first lattice parameter, and so on.
-      *
-      * Each element of the array that is returned is the product of a 
-      * prefactor and the derivative of |k|^2 with respect to a lattice
-      * parameter. The prefactor is 2.0 if the vector has an implicit
-      * inverse and 1.0 otherwise. The prefactors are chosen to simplify
-      * use of this array to compute stress contributions in the Block
-      * class.
-      */
-      DeviceArray<cudaReal> const & dKSq() const;
-      #endif
-
-      /**
-      * Get derivatives of |k|^2 with respect to a lattice parameter.
-      *
-      * Return value is a constant reference to an array of size kSize 
-      * in which each element is the derivative of the square wavevector 
-      * with respect lattice parameter i, multiplied by a prefactor. The 
-      * prefactor is 2.0 if the associated wavevector has an implicit 
-      * inverse, and 1.0 otherwise. These prefactors are chosen to simplify
-      * use of this array to compute stress contributions in the Block
-      * class. 
+      * This method returns an RField in which each element is the 
+      * derivative of the square-wavevector with respect to unit cell 
+      * parameter i, multiplied by a prefactor. The prefactor is 2.0 for 
+      * waves that have an implicit inverse and 1.0 otherwise. The choice 
+      * of prefactor is designed to simplify use of the array to compute 
+      * stress.
+      * 
+      * Each element corresponds to one wavevector k in the k-space mesh 
+      * used for the DFT. If isRealField is true, this k-space mesh is 
+      * smaller than the real-space mesh. Otherwise, it is the same size.
+      * In the latter case, there are no implicit waves, so the prefactor
+      * is always 1.0.
       *
       * \param i index of lattice parameter
       */
@@ -215,7 +207,9 @@ namespace Cuda {
       * The array has size kSize * D, where kSize is the number of grid 
       * points in reciprocal space. The array is unwrapped into a linear 
       * array in which the first kSize elements of the array contain the
-      * the first coordinate for all minimum image, and so on.
+      * the first coordinate for all minimum image, and so on. If 
+      * isRealField is true, kSize is smaller than the size of the 
+      * real-space mesh. Otherwise, it is equal.
       */
       DeviceArray<int> minImages_;
 
@@ -224,7 +218,9 @@ namespace Cuda {
       *
       * Each element of minImageVecs_ contains all D coordinates of the
       * minimum image for a single wavevector, stored on the host as an 
-      * IntVec<D>. The array has capacity kSize_.
+      * IntVec<D>. The array has capacity kSize_. If isRealField is true, 
+      * kSize_ is smaller than the size of the real-space mesh. Otherwise, 
+      * it is equal.
       */
       mutable
       HostDArray< IntVec<D> > minImages_h_;
@@ -241,10 +237,22 @@ namespace Cuda {
       /// Array indicating whether a given gridpoint has an implicit partner
       DeviceArray<bool> implicitInverse_;
 
-      /// Dimensions of the mesh in reciprocal space.
+      /**
+      * Dimensions of the mesh in reciprocal space.
+      * 
+      * If isRealField_, the reciprocal-space grid is smaller than the 
+      * real-space grid, as output by cuFFT. Otherwise, the two grids
+      * are the same size.
+      */ 
       IntVec<D> kMeshDimensions_;
 
-      /// Number of grid points in reciprocal space.
+      /**
+      * Number of grid points in reciprocal space.
+      * 
+      * If isRealField_, the reciprocal-space grid is smaller than the 
+      * real-space grid, as output by cuFFT. Otherwise, the two grids
+      * are the same size.
+      */ 
       int kSize_;
 
       /// Has memory been allocated for arrays?
@@ -297,16 +305,6 @@ namespace Cuda {
       UTIL_CHECK(hasKSq_);
       return kSq_;
    }
-
-   #if 0
-   // Get the full dKSq array on the device by reference.
-   template <int D>
-   inline DeviceArray<cudaReal> const & WaveList<D>::dKSq() const
-   {
-      UTIL_CHECK(hasdKSq_);
-      return dKSq_;
-   }
-   #endif
 
    // Get a slice of the dKSq array on the device by reference.
    template <int D>
