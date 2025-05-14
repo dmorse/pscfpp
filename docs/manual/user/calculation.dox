@@ -1,7 +1,7 @@
 /*! \page user_calculation_page Types of Calculation
 
 \ref user_usage_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
-\ref user_param_page (Next)
+\ref user_branched_page (Next)
 <BR>
 
 The PSCF package allows users to perform two primary types of field 
@@ -60,6 +60,6 @@ file sections that are needed only for FTSs are discussed separately.
 <BR>
 \ref user_usage_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
 \ref user_page (Up) &nbsp; &nbsp; &nbsp; &nbsp;
-\ref user_param_page (Next)
+\ref user_branched_page (Next)
 
 */

@@ -32,7 +32,7 @@ example file.  In such a description, the syntax Label{...} is used to
 indicate a nested subblock, for which the format of the subblock must be
 described separately somewhere else.  The appearance of an asterisk (*)
 after any block or parameter label is used to indicate that the element is
-optional (i.e., omittable).  Parameters and subblock labels that are not
+optional (i.e., omittable).  Parameters and block labels that are not
 followed by an asterisk thus indicate required elements. The appearance
 of a "#" symbol after a block label indicate that the block is selectable.
 The above description thus indicates that the Iterator block is selectable
@@ -109,16 +109,16 @@ examples, are used in this type of parameter file format summary:
    \endcode
    where "type" is the data type for a single element.
 
- - <b> Subblocks </b>: The presence of a nested subblock is indicated using
+ - <b> Subblocks </b>: The presence of a nested block is indicated using
    the syntax
    \code
        Label{ ... }
    \endcode
-   where "Label" denote the label string for the subblock. The ...
+   where "Label" denote the label string for the nested block. The ...
    is used to indicate the body of the block, the format of which
    must be described somewhere else in the documentation.
 
- - <b> Optional elements </b>: Optional parameters and subblocks (i.e.,
+ - <b> Optional elements </b>: Optional parameters and blocks (i.e.,
    elements that may be omitted from the file) are indicated by an
    asterisk after the subblock or parameter label. The label for an
    optional simple parameter is thus

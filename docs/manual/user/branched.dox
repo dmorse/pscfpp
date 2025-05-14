@@ -1,0 +1,128 @@
+/*! \page user_branched_page Branched Polymers
+
+\ref user_calculation_page (Prev / Up) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref user_param_page       (Next)
+<BR>
+
+All PSCF programs allow each polymer in a mixture to be either a 
+linear block polymer or an acyclic branch block polymer. A linear
+polymer is a special case of an acyclic branched polymer, so the 
+internal data structure used in PSCF are all designed for the 
+general case of an acyclic branched polymer. Because linear polymers 
+are a common simple case, however, the PSCF parameter file format 
+allows use of a simplified format to describe linear 
+block polymers. 
+
+The remainder of this page discusses the conventions used in PSCF 
+to describe an arbitrary acyclic branched polymer, including a 
+discussion of some features specific to the discrete bead model.
+
+\section user_branched_graph_sec Polymers as Graphs
+
+A branched block polymer is described in PSCF using the language of graph
+theory as a connected acyclic graph consisting of a set of vertices 
+connected by edges.  Each "edge" in this graph corresponds to a block of 
+the polymer, and each vertex corresponds to either a free chain end or a 
+junction at which two or more blocks are connected. A linear or branched 
+block polymer with nBlock blocks is thus described by an acyclic graph
+containing nBlock edges in which each edge (or block) connects a specific
+pair of such vertices.  For example, a linear block polymer with nBlock
+blocks contains two chain ends and nBlock - 1 junctions, giving nBlock + 1 
+vertices.
+
+The number of edges that terminate at a vertex is known as the 
+degree of that vertex. Each chain end is vertex of degree 1. Each 
+junction in a linear block polymer is a vertex of degree 2. Each
+branch point in a branched polymer is a vertex of degree 3 or greater. 
+
+A graph is connected if there is exists a continuous path of edges
+connecting any two vertices. A graph is an "acyclic" graph, or a 
+"tree", if only a single path connecting any two vertices.  A 
+standard theorem of graph theory states that any connected acyclic graph 
+with N edges must have exactly N+1 vertices. As a result, we know that 
+any acyclic block polymer with B blocks has exactly B + 1 vertices.  In 
+the description of polymer structure used by PSCF, each vertex in such
+a polymer is assigned a unique integer vertex index in the range [0, B], 
+and each block is assigned a unique index in the range [0, B-1].
+Each block connects a specific pair of vertices that may be identified
+by their integer vertex indices.
+
+By default, the structure of a linear block polymer of B blocks is stored 
+internally as a graph in which block number i connects vertices i and i+1, 
+for all i from 0 to nBlock - 1.  
+
+\section user_branched_thread_sec Thread Model
+
+In the thread model, the structure of a branched polymer may be 
+specified by giving a list of blocks in order of increasing block 
+index, and providing the following information about each block:
+
+   - monomer type index
+   - block length
+   - vertex indices of the two attached vertices
+
+The block the case of a linear block polymer, the parameter file format 
+used by PSCF allows the vertex indices to be omitted, since they are 
+related to the block index by a simple convention.
+
+\section user_branched_bead_sec Bead Model
+
+Implementation of a bead model for branched polymers requires the 
+introduction of some additional conventions for the monomer type 
+of any bead that we associate with a graph vertex (vertex beads), 
+and for the statistical segment lengths of any bond that connects 
+such a vertex bead to the end of another block (vertex bonds). 
+PSCF was originally designed for the continuous thread model. The 
+conventions used PSCF to define a discrete bead model have been 
+chosen to simplify implementation by avoiding the need to introduce 
+any new monomer types for vertex beads or any new bond types for 
+vertex bonds.
+
+<b> Vertex Beads </b>: In the PSCF, each vertex is associated with 
+a single ""vertex bead". To avoid assigning such beads one or more 
+new bead types, PSCF requires that each vertex bead must be the
+terminal bead of one of the attached blocks, and must have the same
+monomer type as other beads in that block. We sometimes describe 
+this relationship by saying that the vertex bead must be owned by 
+one of the attached blocks.  For a chain end (i.e., a vertex of 
+degree one), the vertex bead must be a terminal bead of the single 
+attached block. For a vertex bead of multiplicity two or greater, 
+the vertex bead must be a terminal bead of exactly one of the 
+attached blocks. 
+
+The file format used by PSCF to describe branched polymers provides 
+a mechanism to specify which block owns each vertex, in addition to 
+the information required to describe a branched polymer in the 
+thread model. 
+
+<b> Vertex Bonds </b>: A bond that connects a vertex bead to a
+terminal bead of a different block is known as a vertex bond.
+Consider a vertex bond that connects a vertex bead that is owned
+by block A to a terminal bead of a different block of a 
+different monomer type, called block B. By convention, such a 
+vertex bond always is taken to have the statistical segment 
+length associated with the monomer type of block B. The bond 
+type of such a vertex bond is thus always that of the block that 
+does **not** own the vertex bead.
+
+The bond that connects any two bonds in the same block has the
+statistical segment length associated with the monomer type for
+that block. This includes a bond that connects a vertex bead 
+that is owned by a block to the next bead in the same block.
+
+<b> Linear Block Polymers </b>: A standard linear block polymer 
+of \f$ B \f$ blocks consists of a sequence of blocks with indices 
+\f$ 0, \ldots, B-1\f$ in which blocks with sequential indices are 
+connected by junctions of multiplicity 2.  By default, the last 
+bead of each block in such a polymer is a vertex bead, as is the
+first bead of the first block. The convention for vertex bonds
+discussed above thus implies that the bond that connects the last 
+bead of block \f$ i \f$ to the first bead of block \f$ i+1 \f$ has 
+the statistical segment length associated with the monomer type of 
+block \f$ i + 1  \f$.
+
+<BR>
+\ref user_calculation_page       (Prev / Up) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref user_param_page (Next)
+
+*/

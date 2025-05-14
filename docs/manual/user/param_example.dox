@@ -132,13 +132,13 @@ algorithms, and the choice of available iteration algorithms is
 different for all three programs. 
 
 Parameter files that are designed to initialize a single SCFT 
-calculation performed with any PSCF program will generally exhibit
-a sequence of top level blocks analogous to that shown in this 
-example. A different sequence of top-level subblocks may be required 
-for other types of calculation.  For example, a parameter file used 
-to setup an SCFT parameter sweep would require an additional block
-"Sweep" block to described the desired sequence of states, as 
-discussed \ref scft_param_sweep_page "elsewhere". 
+calculation performed with any PSCF program will generally exhibit a 
+sequence of top level blocks analogous to that shown in this example. 
+A different sequence of top-level subblocks may be required for other 
+types of calculation.  For example, a parameter file used to setup an 
+SCFT parameter sweep would require an additional block "Sweep" block 
+to described the desired sequence of states, as discussed 
+\ref scft_param_sweep_page "elsewhere". 
 
 \section user_param_example_elements_sec Parameters
 
@@ -178,15 +178,17 @@ given by a symmetric matrix. The distinct nonzero elements of the
 chi matrix are given using a syntax in which each such element is 
 given on a line containing a row index and a column index (defined 
 using a zero-based convention), followed by the real value of the 
-matrix element. The resulting list of nonzero matrix elements is 
-enclosed by opening and closing parentheses. 
+matrix element, which is the value of the associated binary 
+Flory-Huggins interaction parameter.  The resulting list of nonzero 
+matrix elements is enclosed by opening and closing parentheses. 
 
 \section user_param_example_discussion_sec Overview of Example
 
 \anchor user_param_example_mixture
 <b> Mixture  </b>:
 
-The Mixture block of the above example is reproduced below for reference:
+The Mixture block of the above example is reproduced below for 
+reference:
 \code
   Mixture{
      nMonomer   2

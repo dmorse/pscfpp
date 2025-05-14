@@ -1,6 +1,6 @@
 /*! \page user_param_page Parameter Files 
 
-\ref user_calculation_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
+\ref user_branched_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
 \ref user_command_page (Next) 
 <BR>
 
@@ -27,8 +27,8 @@ FTS calculations are given elsewhere.
      <li> \subpage user_param_mixture_page  "Mixture Block" </li>
    </ol>
 <BR>
-\ref user_calculation_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
-\ref user_page  (Up) &nbsp; &nbsp; &nbsp; &nbsp; 
-\ref user_command_page (Next) 
+\ref user_branched_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
+\ref user_page          (Up) &nbsp; &nbsp; &nbsp; &nbsp; 
+\ref user_command_page  (Next) 
 
 */

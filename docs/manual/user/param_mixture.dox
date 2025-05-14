@@ -74,7 +74,7 @@ Mixture{
   ds         real
 }
 \endcode
- The asterisks after the nSolvent and vMonomer labels indicates that 
+The asterisks after the nSolvent and vMonomer labels indicates that 
 these are optional parameters.  The number of Polymer subblocks must 
 equal nPolymer, and the number of Solvent subblocks must equal nSolvent.
 Because the optional parameter nSolvent is set to 0 by default, there 
@@ -89,7 +89,9 @@ table:
   </tr>
   <tr>
     <td> nMonomer </td>
-    <td> Number of distinct monomer types in the mixture (positive int) </td>
+    <td> 
+      Number of distinct monomer types in the mixture (positive int)
+    </td>
   </tr>
   <tr>
     <td> monomers </td>
@@ -307,12 +309,26 @@ is "linear" or "branched".
 If the polymer type is linear, then blocks must be listed in the "blocks"
 array in the order in which they appear along the polymer, starting from
 one end. In this case the data required in each line of the blocks array
-is of the form
+takes a slightly different form when using a thread model or a bead model.
+
+<b> Thread model</b>: For the thread model, each line of the blocks array 
+must have the form
 \code
-      monomerId  length
+    monomerId  length
 \endcode
-where monomerId is an integer and length is a real number. The meanings
-of these variable values are described in the following table:
+where monomerId is the monomer type index for monomers in the block,
+and length is a real number giving the contour length of the block.
+
+<b> Bead model </b>: For the bead model, each line of the block array has 
+the form
+\code
+    monomerId  nBead
+\endcode
+where monomerId is the monomer type index for every bead in the block
+and nBead is the integer number of beads in the block. 
+
+The meanings of these variable values are described in the following 
+table:
 <table>
   <tr>
     <td> <b> Variable </b>  </td>
@@ -327,66 +343,57 @@ of these variable values are described in the following table:
   <tr>
     <td> length </td>
     <td> real </td>
-    <td> length of this block </td>
+    <td> contour length of this block (thread model) </td>
+  </tr>
+  <tr>
+    <td> nBead </td>
+    <td> int </td>
+    <td> number of bead in the block (bead model) </td>
   </tr>
 </table>
-The "length" of a block is defined in PSCF to be proportional to the
-volume occupied by the block within an incompressible mixture.  Monomer
-units must be defined PSCF such that monomers of different types occupy
-the same volume, which we refer to as the monomer reference volume.  The
-length of a block is defined to be the ratio of the volume occupied by
-the block to the monomer reference volume.  This block length is thus
-also equal to the number of monomers in the block.
 
 \subsection user_param_block_branched_sub Branched Polymers
 
 If the polymer type id branched, then the information in the "blocks"
 array of a Polymer block must contain a description of the topology of
 the polymer, as well as the monomer type and length of each block.
-A branched block polymer is described in PSCF using the language of graph
-theory as an acyclic graph consisting of a set of vertices connected by
-edges.  Each "edge" in this graph corresponds to a block of the polymer,
-and each vertex corresponds to either a free chain end or a junction at
-which two or more blocks are connected.  A linear or branched block
-polymer with nBlock blocks is thus described by an acyclic graph
-containing nBlock edges in which each edge (or block) connects a specific
-pair of such vertices.  For example, a linear block polymer with nBlock
-blocks contains two chain ends and nBlock - 1 junctions, giving
-nBlock + 1 vertices.
+As discussed \ref user_branched_page "previously", a branched polymer
+is described in PSCF as an acyclic graph consisting of a set of labelled
+vertices connected by "edges", in which each edge corresponds to a block, 
+and each vertex is a junction or chain end. An acyclic connected polymer
+with nBlock blocks always contains exactly nBlock + 1 vertices. To 
+describe a branched polymer, the user must assign each block a unique
+block index in the range 0, ..., nBlock - 1 and each vertex a unique
+index in the range 0, ..., nBlock. Each block connects a specific pair 
+of vertices that may be identified by their integer vertex indices.
+Slightly different formats are required to describe a branched polymer
+for the thread model or the bead model. 
 
-A standard theorem of graph theory states that any acyclic graph with
-N edges must have exactly N+1 vertices. As a result, we know that any
-acyclic block polymer with nBlock blocks has exactly nBlock + 1 vertices.
-In the description of polymer structure used by PSCF, each vertex is
-assigned a unique integer vertex index in the range [0, nBlock], and
-each block is assigned a unique index in the range [0, nBlock-1].
-Each block connects a specific pair of vertices that may be identified
-by their integer vertex indices, each of which may be either a junction
-or chain end.
-
-The data format for a block in a branched polymer is of the form
+<b> Thread model: </b>: In the thread model, the structure of a 
+branched polymer may be specfied by specifying the monomer type and
+length of each block (as for a linear polymer) and also specifying
+the indices of the two vertices to which that block is connected. 
+Blocks are listed in the "blocks" array in order of increasing block
+index, as for a linear polymer, using the file data format for each
+block:
 \code
     monomerId  length   vertexId0   vertexId1
 \endcode
-Here, monomerId and length have the same meanings as for a linear polymer,
-while vertexId0 and vertexId1 are indices for the two vertices to which
-the block is attached.
+Here, monomerId and length have the same meanings as for a linear 
+polymer, while vertexId0 and vertexId1 are indices for the two 
+vertices to which the block is attached.
 
-In the special case of a linear polymer with nBlock blocks, the structure
-of the polymer is stored internally as a graph in which block number i
-connects vertices i and i+1, for all i from 0 to nBlock - 1.  Because
-the topology is known, information about blocks in a linear polymer may
-use a simpler text representation.
-
-Example: As a simple example of a branched polymer, consider a pure
-melt of pure ABC star terpolymer that contains three chemically distinct
-blocks connected at a central junction, for which nBlock = 3.  For
-simplicity, assume that the three blocks in this polymer have monomer
+<em> Example: </em> As a simple example of a branched polymer, consider a 
+pure melt of pure ABC star terpolymer that contains three chemically 
+distinct blocks connected at a central junction, for which nBlock = 3. 
+For simplicity, assume that the three blocks in this polymer have monomer
 types indices 0, 1 and 2.  Let vertices 0, 1, and 2 represent the free
-ends of the blocks with monomer types 0, 1, and 2, respectively, and
-let vertex 3 be the central junction.  For simplicity, we set the
-lengths of each block to 1.0.  The Polymer block for such a star
-polymer within the parameter file would look like this:
+ends of the blocks with monomer types 0, 1, and 2, respectively, and let 
+vertex 3 be the central junction.  For simplicity, we set the lengths of 
+each block to 1.0.  
+
+The Polymer block for such a star polymer within the parameter file 
+would look like this:
 \code
   Polymer{
     type branched
@@ -404,13 +411,60 @@ because the type is set to linear by default.  We have set phi = 1.0 in
 this example on the assumption that this is a one-component terpolymer
 melt, for which the volume fraction of this species must equal unity.
 
+<b> Bead model: </b> 
+In the bead model, the length of each block must be specfied as an
+integer number of beads, rather than a real number. In addition the
+of such a branched polymer must specify whether each of the two 
+end monomers of each block are vertex beads. When using the bead 
+model, the data format for each block of a branched polymer is of 
+the form
+\code
+    monomerId  nBead  vertexId0   vertexId1 ownsVertex0 ownsVertex1
+\endcode
+Here, monomerId is an integer monomer type index, nBead is the
+number of beads in the block, and vertexId0 and vertexId1 are the
+indices of the two vertices at which the block terminates. The
+additional variables ownsVertex0 and ownsVertex1 are boolean flags
+that can have values 0 or 1, where 1 indicates that end monomer 0
+or 1 is a vertex bead (and thus that this block "owns" the 
+associated vertex bead) while 0 indicates that the end monomer is
+not a vertex.
+
+Example: Consider the representation of an ABC star polymer of the
+type discussed above using a discrete bead model. Suppose we take
+each the three blocks to contain 50 beads and let the block with
+monomer type 0 own the vertex bead associated with the central
+three-fold junction. The resulting parameter file block is shown
+below:
+\code
+  Polymer{
+    type branched
+    nBlock 3
+    blocks[
+             0   50    0   3  1  1
+             1   50    1   3  1  0
+             2   50    2   3  1  0
+    ]
+    phi  1.0
+  }
+\endcode
+Note that each of the vertices that corresponds to a chain end 
+(vertices 0, 1, and 2) is owned by the the single block to which 
+it is attached, while the three-fold vertex (vertex 3) is only 
+owned by the first block. This arrangement satisfies the 
+requirement that the vertex bead associated with each vertex be
+owned by one and only one of the attached blocks. 
+
 <i> Technical comment (for users who examine the source code)</i>:
 A class or class template named Block is also defined in every
-implementation-level namespace. All of the Block classes are subclasses
+implementation-level namespace. Each such Block class is a subclasses
 of a base class named Pscf::BlockDescriptor. The data for each line of
 the "blocks" array is read in using an overloaded insertion (>>)
 operator for a BlockDescriptor, which defines the text representation
-of the data required in a single line of the "blocks" array.
+of the data required in a single line of the "blocks" array. The
+required text representation depends on whether the block is part
+of a linear or branched polymer, and whether the program is using
+the continuous thread or discrete bead model. 
 
 \section user_param_solvent_sec Solvent
 
@@ -443,6 +497,7 @@ monomer reference volume is equal to unity. For each solvent, a
 value must be specified for either the volume fraction phi occupied
 by the species, or its chemical potential mu. It is an error to
 specify both phi and mu or to omit both variables.
+
 
 <i> Technical comment (for users who examine the source code)</i>:
 A Class or class template named Solvent is defined in each
