@@ -11,6 +11,7 @@
 #include "WaveList.h"
 
 #include <prdc/cuda/resources.h>
+#include <prdc/cuda/FFT.h>
 #include <prdc/crystal/hasVariableAngle.h>
 #include <pscf/cuda/HostDArray.h>
 #include <pscf/mesh/MeshIterator.h>
@@ -451,6 +452,7 @@ namespace Cuda {
       meshPtr_ = &m;
 
       int nParams = unitCell().nParameter();
+      IntVec<D> const & meshDimensions = mesh().dimensions();
 
       // Compute kMeshDimensions_ and kSize_
       if (isRealField_) {

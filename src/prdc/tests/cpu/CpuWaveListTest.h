@@ -53,7 +53,6 @@ public:
       // IntVec<1> meshDims1; 
       meshDims1[0] = 32; 
       mesh1.setDimensions(meshDims1);
-      IntVec<1> kMeshDims1;
       kMeshDims1[0] = (meshDims1[0] / 2) + 1;
       kSize1 = kMeshDims1[0];
 
@@ -116,8 +115,8 @@ public:
       printMethod(TEST_FUNC);
 
       TEST_ASSERT(mesh1.dimension(0) == 32);
-      TEST_ASSERT(kMeshDims1[0] = 17);
-      TEST_ASSERT(kSize1 = 17);
+      TEST_ASSERT(kMeshDims1[0] == 17);
+      TEST_ASSERT(kSize1 == 17);
 
       // set up wavelist object
       Cpu::WaveList<1> wavelist;
@@ -227,8 +226,8 @@ public:
       printMethod(TEST_FUNC);
 
       TEST_ASSERT(mesh1.dimension(0) == 32);
-      TEST_ASSERT(kMeshDims1[0] = 17);
-      TEST_ASSERT(kSize1 = 17);
+      TEST_ASSERT(kMeshDims1[0] == 17);
+      TEST_ASSERT(kSize1 == 17);
 
       // set up wavelist object
       Cpu::WaveList<1> wavelist;
