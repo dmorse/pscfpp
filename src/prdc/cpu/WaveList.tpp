@@ -26,15 +26,15 @@ namespace Cpu {
    * Constructor.
    */
    template <int D>
-   WaveList<D>::WaveList()
+   WaveList<D>::WaveList(bool isRealField)
     : kSize_(0),
       isAllocated_(false),
-      hasMinimumImages_(false),
+      hasMinImages_(false),
       hasKSq_(false),
       hasdKSq_(false),
       unitCellPtr_(nullptr),
       meshPtr_(nullptr)
-   {}
+   {  isRealField_ = isRealField; }
 
    /*
    * Destructor.
@@ -62,7 +62,12 @@ namespace Cpu {
       IntVec<D> const & meshDimensions = mesh().dimensions();
 
       // Compute kMeshDimensions_ and kSize_
-      FFT<D>::computeKMesh(meshDimensions, kMeshDimensions_, kSize_);
+      if (isRealField_) {
+         FFT<D>::computeKMesh(meshDimensions, kMeshDimensions_, kSize_);
+      } else {
+         kMeshDimensions_ = meshDimensions;
+         kSize_ = mesh().size();
+      }
 
       // Allocate memory
       minImages_.allocate(kSize_);
@@ -71,15 +76,20 @@ namespace Cpu {
       for (int i = 0; i < nParams; i++) {
          dKSq_[i].allocate(kMeshDimensions_);
       }
-      implicitInverse_.allocate(kSize_);
 
-      // Set up implicitInverse_ array (only depends on mesh dimensions)
-      MeshIterator<D> kItr(kMeshDimensions_);
-      int rank;
-      for (kItr.begin(); !kItr.atEnd(); ++kItr) {
-         rank = kItr.rank();
-         implicitInverse_[rank] = 
-              FFT<D>::hasImplicitInverse(kItr.position(), meshDimensions);
+      // Allocate and set up implicitInverse_ array if isRealField_ == true
+      // (only depends on mesh dimensions, only used for real fields)
+      if (isRealField_) {
+         implicitInverse_.allocate(kSize_);
+
+         MeshIterator<D> kItr(kMeshDimensions_);
+         int rank;
+
+         for (kItr.begin(); !kItr.atEnd(); ++kItr) {
+            rank = kItr.rank();
+            implicitInverse_[rank] = 
+               FFT<D>::hasImplicitInverse(kItr.position(), meshDimensions);
+         }
       }
 
       clearUnitCellData();
@@ -95,7 +105,7 @@ namespace Cpu {
       hasKSq_ = false;
       hasdKSq_ = false;
       if (hasVariableAngle<D>(unitCell().lattice())) {
-         hasMinimumImages_ = false;
+         hasMinImages_ = false;
       }
    }
 
@@ -105,7 +115,7 @@ namespace Cpu {
    template <int D>
    void WaveList<D>::computeMinimumImages() 
    {
-      if (hasMinimumImages_) return; // min images already calculated
+      if (hasMinImages_) return; // min images already calculated
 
       // Precondition
       UTIL_CHECK(isAllocated_);
@@ -122,7 +132,7 @@ namespace Cpu {
          kSq_[rank] = unitCell().ksq(minImages_[rank]);
       }
 
-      hasMinimumImages_ = true;
+      hasMinImages_ = true;
       hasKSq_ = true;
    }
 
@@ -136,7 +146,7 @@ namespace Cpu {
       if (hasKSq_) return; 
 
       // If necessary, compute minimum images.
-      if (!hasMinimumImages_) {
+      if (!hasMinImages_) {
          computeMinimumImages(); // computes both min images and kSq
          return;
       }
@@ -167,7 +177,7 @@ namespace Cpu {
       if (hasdKSq_) return; // dKSq already calculated
 
       // Compute minimum images if needed
-      if (!hasMinimumImages_) {
+      if (!hasMinImages_) {
          computeMinimumImages(); 
       }
 
@@ -184,8 +194,10 @@ namespace Cpu {
          for (kItr.begin(); !kItr.atEnd(); ++kItr) {
             rank = kItr.rank();
             dksq[rank] = unitCell().dksq(minImages_[rank], i);
-            if (implicitInverse_[rank]) {
-               dksq[rank] *= 2.0;
+            if (isRealField_) {
+               if (implicitInverse_[rank]) {
+                  dksq[rank] *= 2.0;
+               }
             }
          }
       }
