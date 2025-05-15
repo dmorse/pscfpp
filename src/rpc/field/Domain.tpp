@@ -55,7 +55,7 @@ namespace Rpc {
    template <int D>
    void Domain<D>::setFileMaster(FileMaster& fileMaster)
    {
-      fileMasterPtr_ =&fileMaster;
+      fileMasterPtr_ = &fileMaster;
       fieldIo_.setFileMaster(fileMaster);
    }
 
@@ -237,6 +237,8 @@ namespace Rpc {
       }
       UTIL_CHECK(basis_.isInitialized());
    }
+
+   // Crystallographic Data Output
 
    /*
    * Write description of symmetry-adapted stars and basis to file.

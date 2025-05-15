@@ -33,8 +33,8 @@ namespace Rpg {
       fieldIo_(),
       lattice_(UnitCell<D>::Null),
       groupName_(""),
-      hasGroup_(false),
       fileMasterPtr_(nullptr),
+      hasGroup_(false),
       isInitialized_(false)
    {
       setClassName("Domain");
@@ -244,7 +244,7 @@ namespace Rpg {
    * Write description of symmetry-adapted stars and basis to file.
    */
    template <int D>
-   void Domain<D>::writeStars(const std::string & filename) const
+   void Domain<D>::writeStars(std::string const & filename) const
    {
       UTIL_CHECK(hasGroup());
       UTIL_CHECK(basis_.isInitialized());
@@ -252,7 +252,7 @@ namespace Rpg {
       fileMaster().openOutputFile(filename, file);
       bool isSymmetric = true;
       int nMonomer = 0;
-      fieldIo_.writeFieldHeader(file, nMonomer, unitCell(), isSymmetric);
+      fieldIo_.writeFieldHeader(file, nMonomer, unitCell_, isSymmetric);
       basis_.outputStars(file);
       file.close();
    }
@@ -261,7 +261,7 @@ namespace Rpg {
    * Write a list of waves and associated stars to file.
    */
    template <int D>
-   void Domain<D>::writeWaves(const std::string & filename) const
+   void Domain<D>::writeWaves(std::string const & filename) const
    {
       UTIL_CHECK(hasGroup());
       UTIL_CHECK(basis_.isInitialized());
@@ -269,7 +269,7 @@ namespace Rpg {
       fileMaster().openOutputFile(filename, file);
       bool isSymmetric = true;
       int nMonomer = 0;
-      fieldIo_.writeFieldHeader(file, nMonomer, unitCell(), isSymmetric);
+      fieldIo_.writeFieldHeader(file, nMonomer, unitCell_, isSymmetric);
       basis_.outputWaves(file);
       file.close();
    }
@@ -278,12 +278,12 @@ namespace Rpg {
    * Write all elements of the space group to a file.
    */
    template <int D>
-   void Domain<D>::writeGroup(const std::string & filename) const
+   void Domain<D>::writeGroup(std::string const & filename) const
    {
       UTIL_CHECK(hasGroup());
       std::ofstream file;
       fileMaster().openOutputFile(filename, file);
-      file << group();
+      file << group_;
       file.close();
    }
 

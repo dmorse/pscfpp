@@ -10,8 +10,6 @@
 
 #include <util/param/ParamComposite.h>    // base class
 
-#include <prdc/cpu/WaveList.h>            // member
-#include <prdc/cpu/FFT.h>                 // member
 #include <prdc/crystal/Basis.h>           // member
 #include <prdc/crystal/SpaceGroup.h>      // member
 #include <prdc/crystal/UnitCell.h>        // member
@@ -25,19 +23,19 @@ namespace Prdc {
 
    using namespace Util;
    using namespace Pscf::Prdc;
-   using namespace Pscf::Prdc::Cpu;
 
    /**
    * Spatial domain and spatial discretization for a periodic structure.
    *
    * A DomainReal has (among other components):
    *
-   *    - a Pscf::Mesh spatial discretization mesh
-   *    - a Prdc::UnitCell crystallographic unit cell
-   *    - a Prdc::SpaceGroup crystallographic space group
-   *    - a Prdc::Basis symmetry-adapated Fourier basis
-   *    - a Prdc::Cpu::FFT Fast Fourier Transform
-   *    - a Prdc::Cpu::WaveList container for wavevector properties
+   *    - a Mesh spatial discretization mesh
+   *    - a UnitCell crystallographic unit cell
+   *    - a SpaceGroup crystallographic space group
+   *    - a Basis symmetry-adapated Fourier basis
+   *    - a FFT Fast Fourier Transform calculator
+   *    - a WaveList container for wavevector properties
+   *    - a FieldIo object for field IO and conversion operations
    *    - a lattice system enum (type Prdc::UnitCell\<D\>::LatticeSystem)
    *    - a groupName string
    *
@@ -45,9 +43,8 @@ namespace Prdc {
    * actually all class templates with a template parameter D. Actual class
    * names are Mesh \<D\>, Prdc::UnitCell \<D\>, etc. with D=1, 2, or 3.
    *
-   * \ingroup Prdc_Field_Module
    */
-   template <int D>
+   template <int D, class FFT, class WaveList, class FieldIo>
    class DomainReal : public ParamComposite
    {
 
@@ -66,6 +63,13 @@ namespace Prdc {
 
       /// \name Initialization and Mutators
       ///@{
+
+      /**
+      * Create association with a FileMaster, needed by FieldIo.
+      *
+      * \param fileMaster associated FileMaster object.
+      */
+      void setFileMaster(FileMaster& fileMaster);
 
       /**
       * Read body of parameter block (without opening and closing lines).
@@ -162,27 +166,37 @@ namespace Prdc {
       /**
       * Get the Basis by const reference.
       */
-      Basis<D> const & basis() const ;
+      Basis<D> const & basis() const;
 
       /**
       * Get the FFT by non-const reference.
       */
-      FFT<D>& fft();
+      FFT& fft();
 
       /**
       * Get the FFT object by non-const reference.
       */
-      FFT<D> const & fft() const;
+      FFT const & fft() const;
 
       /**
       * Get the WaveList by non-const reference.
       */
-      WaveList<D>& waveList();
+      WaveList& waveList();
 
       /**
       * Get the WaveList by const reference.
       */
-      WaveList<D> const & waveList() const;
+      WaveList const & waveList() const;
+
+      /**
+      * Get the FieldIo by non-const reference.
+      */
+      FieldIo& fieldIo();
+
+      /**
+      * Get the FieldIo by const reference.
+      */
+      FieldIo const & fieldIo() const;
 
       ///@}
       /// \name Accessors (return by value)
@@ -207,6 +221,37 @@ namespace Prdc {
       * Has a symmetry-adapted Fourier basis been initialized?
       */ 
       bool hasBasis() const;
+
+      ///@}
+      /// \name Crystallography Information Output
+      ///@{
+
+      /**
+      * Output information about waves.
+      *
+      * This function opens a file with the specified filename, calls
+      * Basis<D>::outputWaves, and closes the file before returning.
+      *
+      * \param filename name of output file
+      */
+      void writeWaves(std::string const & filename) const;
+
+      /**
+      * Output information about stars and symmetrized basis functions.
+      *
+      * This function opens a file with the specified filename, calls
+      * Basis<D>::outputStars, and closes the file before returning.
+      *
+      * \param filename name of output file
+      */
+      void writeStars(std::string const & filename) const;
+
+      /**
+      * Output all elements of the space group.
+      *
+      * \param filename name of output file
+      */
+      void writeGroup(std::string const & filename) const;
 
       ///@}
 
@@ -237,12 +282,17 @@ namespace Prdc {
       /**
       * FFT object to be used by solvers.
       */
-      FFT<D> fft_;
+      FFT fft_;
 
       /**
       * WaveList object.
       */
-      WaveList<D> waveList_;
+      WaveList waveList_;
+
+      /**
+      * FieldIo object for field input/output operations
+      */
+      FieldIo fieldIo_;
 
       /**
       * Lattice system (enumeration value).
@@ -255,6 +305,11 @@ namespace Prdc {
       std::string groupName_;
 
       /**
+      * Pointer to associated FileMaster.
+      */
+      FileMaster* fileMasterPtr_;
+
+      /**
       * Has a space group been indentified?
       */
       bool hasGroup_;
@@ -264,93 +319,109 @@ namespace Prdc {
       */
       bool isInitialized_;
 
+      /*
+      * Get FileMaster as const reference.
+      */
+      FileMaster const & fileMaster() const
+      {
+         UTIL_CHECK(fileMasterPtr_);
+         return * fileMasterPtr_;
+      }
+
+      // Members of parent class with non-dependent names
+      using ParamComposite::read;
+      using ParamComposite::readOptional;
+
    };
 
    // Inline member functions
 
    // Get the UnitCell by non-const reference.
-   template <int D>
+   template <int D, class FFT, class WaveList, class FieldIo>
    inline UnitCell<D>& DomainReal<D>::unitCell()
    {  return unitCell_; }
 
    // Get the UnitCell by const reference.
-   template <int D>
+   template <int D, class FFT, class WaveList, class FieldIo>
    inline UnitCell<D> const & DomainReal<D>::unitCell() const
    {  return unitCell_; }
 
    // Get the Mesh by non-const reference.
-   template <int D>
+   template <int D, class FFT, class WaveList, class FieldIo>
    inline Mesh<D>& DomainReal<D>::mesh()
    {  return mesh_; }
 
    // Get the Mesh by const reference.
-   template <int D>
+   template <int D, class FFT, class WaveList, class FieldIo>
    inline Mesh<D> const & DomainReal<D>::mesh() const
    {  return mesh_; }
 
    // Get the SpaceGroup by const reference.
-   template <int D>
+   template <int D, class FFT, class WaveList, class FieldIo>
    inline SpaceGroup<D> const & DomainReal<D>::group() const
    {  return group_; }
 
    // Get the Basis by non-const reference.
-   template <int D>
+   template <int D, class FFT, class WaveList, class FieldIo>
    inline Basis<D>& DomainReal<D>::basis()
    {  return basis_; }
 
    // Get the Basis by const reference.
-   template <int D>
+   template <int D, class FFT, class WaveList, class FieldIo>
    inline Basis<D> const & DomainReal<D>::basis() const
    {  return basis_; }
 
    // Get the FFT by non-const reference.
-   template <int D>
-   inline FFT<D>& DomainReal<D>::fft()
+   template <int D, class FFT, class WaveList, class FieldIo>
+   inline FFT& DomainReal<D>::fft()
    {  return fft_; }
 
    // Get the FFT by const reference.
-   template <int D>
-   inline FFT<D> const & DomainReal<D>::fft() const
+   template <int D, class FFT, class WaveList, class FieldIo>
+   inline FFT const & DomainReal<D>::fft() const
    {  return fft_; }
 
    // Get the WaveList by non-const reference.
-   template <int D>
-   inline WaveList<D>& DomainReal<D>::waveList()
+   template <int D, class FFT, class WaveList, class FieldIo>
+   inline WaveList& DomainReal<D>::waveList()
    {  return waveList_; }
 
    // Get the WaveList by const reference.
-   template <int D>
-   inline WaveList<D> const & DomainReal<D>::waveList() const
+   template <int D, class FFT, class WaveList, class FieldIo>
+   inline WaveList const & DomainReal<D>::waveList() const
    {  return waveList_; }
 
+   // Get the FieldIo by const reference.
+   template <int D, class FFT, class WaveList, class FieldIo>
+   inline FieldIo& DomainReal<D>::fieldIo()
+   {  return fieldIo_; }
+
+   // Get the FieldIo by const reference.
+   template <int D, class FFT, class WaveList, class FieldIo>
+   inline FieldIo const & DomainReal<D>::fieldIo() const
+   {  return fieldIo_; }
+
    // Get the lattice system enumeration value
-   template <int D>
+   template <int D, class FFT, class WaveList, class FieldIo>
    inline 
    typename UnitCell<D>::LatticeSystem DomainReal<D>::lattice() 
    const
    {  return lattice_; }
 
    // Get the groupName string.
-   template <int D>
+   template <int D, class FFT, class WaveList, class FieldIo>
    inline std::string DomainReal<D>::groupName() const
    {  return groupName_; }
 
    // Has a space group been identified?
-   template <int D>
+   template <int D, class FFT, class WaveList, class FieldIo>
    inline bool DomainReal<D>::hasGroup() const
    {  return hasGroup_; }
 
    // Has a symmetry-adapted Fourier basis been initialized ?
-   template <int D>
+   template <int D, class FFT, class WaveList, class FieldIo>
    inline bool DomainReal<D>::hasBasis() const
    {  return basis_.isInitialized(); }
-
-   #ifndef PRDC_DOMAIN_REAL_TPP
-   // Suppress implicit instantiation
-   extern template class DomainReal<1>;
-   extern template class DomainReal<2>;
-   extern template class DomainReal<3>;
-   #endif
 
 } // namespace Prdc
 } // namespace Pscf

@@ -10,18 +10,17 @@
 
 #include "DomainReal.h"
 #include <prdc/crystal/fieldHeader.h>
+#include <util/misc/FileMaster.h>
 
 namespace Pscf {
 namespace Prdc {
 
    using namespace Util;
-   using namespace Pscf::Prdc;
-   using namespace Pscf::Prdc::Cpu;
 
    /*
    * Constructor.
    */
-   template <int D>
+   template <int D, class FFT, class WaveList, class FieldIo>
    DomainReal<D>::DomainReal()
     : unitCell_(),
       mesh_(),
@@ -29,29 +28,44 @@ namespace Prdc {
       basis_(),
       fft_(),
       waveList_(),
+      fieldIo_(),
       lattice_(UnitCell<D>::Null),
       groupName_(""),
+      fileMasterPtr_(nullptr),
       hasGroup_(false),
       isInitialized_(false)
    {
       setClassName("DomainReal");
+      fieldIo_.associate(mesh_, fft_, lattice_,
+                         hasGroup_, groupName_, group_, basis_);
    }
 
    /*
    * Destructor.
    */
-   template <int D>
+   template <int D, class FFT, class WaveList, class FieldIo>
    DomainReal<D>::~DomainReal()
    {}
 
    /*
+   * Create association with a FileMaster.
+   */
+   template <int D, class FFT, class WaveList, class FieldIo>
+   void DomainReal<D>::setFileMaster(FileMaster& fileMaster)
+   {
+      fileMasterPtr_ = &fileMaster;
+      fieldIo_.setFileMaster(fileMaster);
+   }
+
+   /*
    * Read parameters and initialize.
    */
-   template <int D>
+   template <int D, class FFT, class WaveList, class FieldIo>
    void DomainReal<D>::readParameters(std::istream& in)
    {
       // Preconditions
       UTIL_CHECK(!isInitialized_);
+      UTIL_CHECK(fileMasterPtr_);
 
       // Read computational mesh dimensions (required)
       read(in, "mesh", mesh_);
@@ -88,7 +102,7 @@ namespace Prdc {
    *
    * Alternative to parameter file, used only for unit testing.
    */
-   template <int D>
+   template <int D, class FFT, class WaveList, class FieldIo>
    void DomainReal<D>::readRGridFieldHeader(std::istream& in, int& nMonomer)
    {
       // Preconditions - confirm that nothing is initialized
@@ -143,10 +157,12 @@ namespace Prdc {
       isInitialized_ = true;
    }
 
+   // Modifiers for UnitCell and Basis
+
    /*
    * Set the unit cell by copying a UnitCell<D>, make basis if needed.
    */
-   template <int D>
+   template <int D, class FFT, class WaveList, class FieldIo>
    void DomainReal<D>::setUnitCell(UnitCell<D> const & unitCell)
    {
       if (lattice_ == UnitCell<D>::Null) {
@@ -167,7 +183,7 @@ namespace Prdc {
    /*
    * Set the unit cell, make basis if needed.
    */
-   template <int D>
+   template <int D, class FFT, class WaveList, class FieldIo>
    void DomainReal<D>::setUnitCell(typename UnitCell<D>::LatticeSystem lattice,
                                FSArray<double, 6> const & parameters)
    {
@@ -189,7 +205,7 @@ namespace Prdc {
    /*
    * Set unit cell parameters, make basis if needed.
    */
-   template <int D>
+   template <int D, class FFT, class WaveList, class FieldIo>
    void DomainReal<D>::setUnitCell(FSArray<double, 6> const & parameters)
    {
       UTIL_CHECK(unitCell_.lattice() != UnitCell<D>::Null);
@@ -207,7 +223,7 @@ namespace Prdc {
    /*
    * Make basis if needed.
    */
-   template <int D>
+   template <int D, class FFT, class WaveList, class FieldIo>
    void DomainReal<D>::makeBasis()
    {
       UTIL_CHECK(mesh_.size() > 0);
@@ -220,6 +236,55 @@ namespace Prdc {
          basis_.makeBasis(mesh_, unitCell_, group_);
       }
       UTIL_CHECK(basis_.isInitialized());
+   }
+
+   // Crystallographic Data Output
+
+   /*
+   * Write description of symmetry-adapted stars and basis to file.
+   */
+   template <int D, class FFT, class WaveList, class FieldIo>
+   void DomainReal<D>::writeStars(std::string const & filename) const
+   {
+      UTIL_CHECK(hasGroup());
+      UTIL_CHECK(basis_.isInitialized());
+      std::ofstream file;
+      fileMaster().openOutputFile(filename, file);
+      bool isSymmetric = true;
+      int nMonomer = 0;
+      fieldIo_.writeFieldHeader(file, nMonomer, unitCell_, isSymmetric);
+      basis_.outputStars(file);
+      file.close();
+   }
+
+   /*
+   * Write a list of waves and associated stars to file.
+   */
+   template <int D, class FFT, class WaveList, class FieldIo>
+   void DomainReal<D>::writeWaves(std::string const & filename) const
+   {
+      UTIL_CHECK(hasGroup());
+      UTIL_CHECK(basis_.isInitialized());
+      std::ofstream file;
+      fileMaster().openOutputFile(filename, file);
+      bool isSymmetric = true;
+      int nMonomer = 0;
+      fieldIo_.writeFieldHeader(file, nMonomer, unitCell_, isSymmetric);
+      basis_.outputWaves(file);
+      file.close();
+   }
+
+   /*
+   * Write all elements of the space group to a file.
+   */
+   template <int D, class FFT, class WaveList, class FieldIo>
+   void DomainReal<D>::writeGroup(std::string const & filename) const
+   {
+      UTIL_CHECK(hasGroup());
+      std::ofstream file;
+      fileMaster().openOutputFile(filename, file);
+      file << group_;
+      file.close();
    }
 
 } // namespace Prdc
