@@ -20,8 +20,8 @@ namespace Prdc {
    /*
    * Constructor.
    */
-   template <int D, class FFT, class WaveList, class FieldIo>
-   DomainReal<D>::DomainReal()
+   template <int D, class FFT, class WLT, class FIT>
+   DomainReal<D,FFT,WLT,FIT>::DomainReal()
     : unitCell_(),
       mesh_(),
       group_(),
@@ -43,15 +43,15 @@ namespace Prdc {
    /*
    * Destructor.
    */
-   template <int D, class FFT, class WaveList, class FieldIo>
-   DomainReal<D>::~DomainReal()
+   template <int D, class FFT, class WLT, class FIT>
+   DomainReal<D,FFT,WLT,FIT>::~DomainReal()
    {}
 
    /*
    * Create association with a FileMaster.
    */
-   template <int D, class FFT, class WaveList, class FieldIo>
-   void DomainReal<D>::setFileMaster(FileMaster& fileMaster)
+   template <int D, class FFT, class WLT, class FIT>
+   void DomainReal<D,FFT,WLT,FIT>::setFileMaster(FileMaster& fileMaster)
    {
       fileMasterPtr_ = &fileMaster;
       fieldIo_.setFileMaster(fileMaster);
@@ -60,8 +60,8 @@ namespace Prdc {
    /*
    * Read parameters and initialize.
    */
-   template <int D, class FFT, class WaveList, class FieldIo>
-   void DomainReal<D>::readParameters(std::istream& in)
+   template <int D, class FFT, class WLT, class FIT>
+   void DomainReal<D,FFT,WLT,FIT>::readParameters(std::istream& in)
    {
       // Preconditions
       UTIL_CHECK(!isInitialized_);
@@ -78,7 +78,7 @@ namespace Prdc {
       UTIL_CHECK(unitCell_.lattice() != UnitCell<D>::Null);
       UTIL_CHECK(unitCell_.nParameter() > 0);
 
-      // Allocate memory for WaveList
+      // Allocate memory for WLT
       waveList_.allocate(mesh_, unitCell_);
 
       // Optionally read groupName_ (string identifier for space group)
@@ -102,8 +102,10 @@ namespace Prdc {
    *
    * Alternative to parameter file, used only for unit testing.
    */
-   template <int D, class FFT, class WaveList, class FieldIo>
-   void DomainReal<D>::readRGridFieldHeader(std::istream& in, int& nMonomer)
+   template <int D, class FFT, class WLT, class FIT>
+   void 
+   DomainReal<D,FFT,WLT,FIT>::readRGridFieldHeader(std::istream& in, 
+                                                   int& nMonomer)
    {
       // Preconditions - confirm that nothing is initialized
       UTIL_CHECK(!isInitialized_);
@@ -162,8 +164,9 @@ namespace Prdc {
    /*
    * Set the unit cell by copying a UnitCell<D>, make basis if needed.
    */
-   template <int D, class FFT, class WaveList, class FieldIo>
-   void DomainReal<D>::setUnitCell(UnitCell<D> const & unitCell)
+   template <int D, class FFT, class WLT, class FIT>
+   void 
+   DomainReal<D,FFT,WLT,FIT>::setUnitCell(UnitCell<D> const & unitCell)
    {
       if (lattice_ == UnitCell<D>::Null) {
          lattice_ = unitCell.lattice();
@@ -183,8 +186,10 @@ namespace Prdc {
    /*
    * Set the unit cell, make basis if needed.
    */
-   template <int D, class FFT, class WaveList, class FieldIo>
-   void DomainReal<D>::setUnitCell(typename UnitCell<D>::LatticeSystem lattice,
+   template <int D, class FFT, class WLT, class FIT>
+   void 
+   DomainReal<D,FFT,WLT,FIT>::setUnitCell(
+                               typename UnitCell<D>::LatticeSystem lattice,
                                FSArray<double, 6> const & parameters)
    {
       if (lattice_ == UnitCell<D>::Null) {
@@ -205,8 +210,10 @@ namespace Prdc {
    /*
    * Set unit cell parameters, make basis if needed.
    */
-   template <int D, class FFT, class WaveList, class FieldIo>
-   void DomainReal<D>::setUnitCell(FSArray<double, 6> const & parameters)
+   template <int D, class FFT, class WLT, class FIT>
+   void 
+   DomainReal<D,FFT,WLT,FIT>::setUnitCell(
+                                    FSArray<double, 6> const & parameters)
    {
       UTIL_CHECK(unitCell_.lattice() != UnitCell<D>::Null);
       UTIL_CHECK(unitCell_.nParameter() == parameters.size());
@@ -223,8 +230,8 @@ namespace Prdc {
    /*
    * Make basis if needed.
    */
-   template <int D, class FFT, class WaveList, class FieldIo>
-   void DomainReal<D>::makeBasis()
+   template <int D, class FFT, class WLT, class FIT>
+   void DomainReal<D,FFT,WLT,FIT>::makeBasis()
    {
       UTIL_CHECK(mesh_.size() > 0);
       UTIL_CHECK(unitCell_.lattice() != UnitCell<D>::Null);
@@ -243,8 +250,10 @@ namespace Prdc {
    /*
    * Write description of symmetry-adapted stars and basis to file.
    */
-   template <int D, class FFT, class WaveList, class FieldIo>
-   void DomainReal<D>::writeStars(std::string const & filename) const
+   template <int D, class FFT, class WLT, class FIT>
+   void 
+   DomainReal<D,FFT,WLT,FIT>::writeStars(std::string const & filename) 
+   const
    {
       UTIL_CHECK(hasGroup());
       UTIL_CHECK(basis_.isInitialized());
@@ -260,8 +269,10 @@ namespace Prdc {
    /*
    * Write a list of waves and associated stars to file.
    */
-   template <int D, class FFT, class WaveList, class FieldIo>
-   void DomainReal<D>::writeWaves(std::string const & filename) const
+   template <int D, class FFT, class WLT, class FIT>
+   void 
+   DomainReal<D,FFT,WLT,FIT>::writeWaves(std::string const & filename) 
+   const
    {
       UTIL_CHECK(hasGroup());
       UTIL_CHECK(basis_.isInitialized());
@@ -277,8 +288,10 @@ namespace Prdc {
    /*
    * Write all elements of the space group to a file.
    */
-   template <int D, class FFT, class WaveList, class FieldIo>
-   void DomainReal<D>::writeGroup(std::string const & filename) const
+   template <int D, class FFT, class WLT, class FIT>
+   void 
+   DomainReal<D,FFT,WLT,FIT>::writeGroup(std::string const & filename) 
+   const
    {
       UTIL_CHECK(hasGroup());
       std::ofstream file;
