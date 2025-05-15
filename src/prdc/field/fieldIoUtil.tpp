@@ -137,6 +137,7 @@ namespace Prdc {
       // Read and check input stream mesh dimensions
       std::string label;
       in >> label;
+      UTIL_ASSERT(in.good());
       if (label != "mesh" && label != "ngrid") {
          std::string msg =  "\n";
          msg += "Error reading field file:\n";
@@ -147,6 +148,7 @@ namespace Prdc {
       }
       IntVec<D> meshDimensionsIn;
       in >> meshDimensionsIn;
+      UTIL_CHECK(in.good());
       if (meshDimensionsIn != meshDimensions) {
          Log::file()
            << "Inconsistent mesh dimensions:\n"
@@ -180,7 +182,9 @@ namespace Prdc {
          for (int k = 0; k < nMonomer; ++k) {
             in >> fields[k][rank];
          }
+         UTIL_ASSERT(in.good());
       }
+      UTIL_CHECK(in.good());
    }
 
    template <int D, class ART>
@@ -193,7 +197,9 @@ namespace Prdc {
       for (iter.begin(); !iter.atEnd(); ++iter) {
          rank = iter.rank();
          in >> field[rank];
+         UTIL_ASSERT(in.good());
       }
+      UTIL_CHECK(in.good());
    }
 
    template <int D, class ART>
@@ -256,8 +262,10 @@ namespace Prdc {
             in >> y;
             assign<CT, RT>(fields[j][rank], x, y);
          }
+         UTIL_ASSERT(in.good());
          ++i;
       }
+      UTIL_CHECK(in.good());
    }
 
    template <int D, class ACT>
@@ -277,13 +285,13 @@ namespace Prdc {
          in >> idum;
          UTIL_CHECK(i == idum);
          UTIL_CHECK(i == rank);
-         //in >> field[rank][0];
-         //in >> field[rank][1];
          in >> x;
          in >> y;
+         UTIL_ASSERT(in.good());
          assign<CT, RT>(field[rank], x, y);
          ++i;
       }
+      UTIL_CHECK(in.good());
    }
 
    template <int D, class ACT>
@@ -356,6 +364,7 @@ namespace Prdc {
       // Read the label, which can be N_star or N_basis
       std::string label;
       in >> label;
+      UTIL_ASSERT(in.good());
       if (label != "N_star" && label != "N_basis") {
          std::string msg =  "\n";
          msg += "Error reading field file:\n";
@@ -368,6 +377,7 @@ namespace Prdc {
       // Read the value of nBasis
       int nBasis;
       in >> nBasis;
+      UTIL_CHECK(in.good());
       UTIL_CHECK(nBasis > 0);
 
       return nBasis;
@@ -443,6 +453,7 @@ namespace Prdc {
          }
          in >> waveIn;            // wave of star
          in >> sizeIn;            // # of waves in star
+         UTIL_CHECK(in.good());
          ++i;
 
          sizeMatches = false;
@@ -507,6 +518,7 @@ namespace Prdc {
                }
                in >> waveIn2;              // wave of star
                in >> sizeIn2;              // # of wavevectors in star
+               UTIL_CHECK(in.good());
                ++i;
 
                // Check that waveIn2 is also in the 1st BZ
