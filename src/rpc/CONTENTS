@@ -7,13 +7,17 @@ saddle point approximation (PS-FTS), which allows the use of real fields.
 All code in this directory (src/rpc) is defined in the C++ namespace 
 Pscf::Rpc. The symbol Rpc stands for 'real periodic CPU'. Code defined in
 namespace Pscf::Rpc may use classes and functions defined in namespace 
-Util (directory src/util), parent namespace Pscf (directory src/pscf), and 
-namespace Pscf::Prdc (directory src/prdc).
+Util (directory src/util), parent namespace Pscf (directory src/pscf), 
+namespace Pscf::Prdc (directory src/prdc) and namespace Pscf::Prdc::Cpu
+(directory src/prdc/cpu). Source files in src/rpc contain 
+"using namespace ..." statements that allow names of classes and functions
+defined in namespaces Util, Pscf::Prdc, and Pscf::Prdc::Cpu to be used 
+without explicit namespace qualifiers.
 
 Subdirectories:
 ---------------
 
-field/       - classes to represent or manipulate fields
+field/       - classes related to fields and spatial domain
 fts/         - stochastic field-theoretic simulation (FTS)
 scft/        - self-consistent field theory (SCFT)
 solvers/     - modified diffusion equation (MDE) solvers

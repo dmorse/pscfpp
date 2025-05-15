@@ -1,27 +1,41 @@
-The src/prdc directory contains source code for treating periodic
-crystals and fields with periodic boundary conditions. 
+The src/prdc directory contains source code for treating systems with
+periodic boundary conditions. 
 
 All source code in this directory is defined in namespace Pscf::Prdc, 
 and may use classes and functions defined in namespace Util (directory
-src/util) or parent namespace Pscf (directory src/pscf).  Code in 
-Pscf::Prdc may be used in the pscf_pc and pscf_pg programs for periodic 
-boundry conditions.
-
-Enclosed namespaces:
---------------------
-
-  - Code in prdc/cpu is in sub-namespace Pscf::Prdc::Cpu
-  - Code in prdc/cuda is in sub-namespace Pscf::Prdc::Cuda
+src/util) or parent namespace Pscf (directory src/pscf).  Code in the
+Pscf::Prdc namespace may be used throughout the Pscf::Rpc and Pscf::Rpg 
+namespaces (directories src/rpc and src/rpg) to construct the 
+corresponding pscf_pc and pscf_pg programs for systems with periodic 
+boundary conditions. 
 
 Subdirectories:
 ---------------
 
-   crystal/  - unit cells, space groups, and symmetry adapted basis
-   cpu/      - field containers and related classes, only used in pscf_pc
-   cuda/     - field containers and related classes, only used in pscf_pg
-   field/    - shared base classes and utilities for fields (CPU & GPU)
-   iterator/ - tools and base classes for iterators
-   tests/    - unit tests for code in src/prdc
+  crystal/  - unit cells, space groups, and symmetry adapted basis
+  cpu/      - field containers and related classes, only used in pscf_pc
+  cuda/     - field containers and related classes, only used in pscf_pg
+  field/    - shared base classes and utilities for fields (CPU & GPU)
+  iterator/ - tools and base classes for iterators
+  tests/    - unit tests for code in src/prdc
+
+Enclosed namespaces:
+--------------------
+
+  - Code in prdc/cpu is in enclosed namespace Pscf::Prdc::Cpu
+  - Code in prdc/cuda is in enclosed namespace Pscf::Prdc::Cuda
+
+  Namespaces Pscf::Prdc::Cpu and Pscf::Prdc::Cuda contain analogous
+  definitions of classes that are designed for use on code that runs
+  on a Cpu and for code that uses CUDA to use an NVIDIA GPU, respectively. 
+  Analogous classes in these namespaces generally have the same name.
+  For example, each defines a class template named RField that stores 
+  data for a real-valued field defined on a grid. The memory used by 
+  class Pscf::Prdc::Cpu::RField is allocated on the CPU while memory 
+  used by class Pscf::Prdc::Cuda::RField is allocated on the GPU.  
+  Names defined in Pscf::Prdc::Cpu are used in namespace Pscf::Rpc to 
+  construct program pscf_pc, whereas names defined in Pscf::Prdc::Gpu
+  are used in namespace Pscf::Rpg to construct program pscf_pg.
 
 Makefile and makefile fragments:
 --------------------------------

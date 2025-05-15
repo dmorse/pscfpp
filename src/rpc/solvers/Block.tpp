@@ -28,6 +28,7 @@
 namespace Pscf {
 namespace Rpc {
 
+   // Namespaces from which names may be used without qualification
    using namespace Util;
    using namespace Pscf::Prdc;
    using namespace Pscf::Prdc::Cpu;
@@ -112,11 +113,6 @@ namespace Rpc {
       if (PolymerModel::isBead()) {
          expWInv_.allocate(mesh().dimensions());
       }
-
-      #if 0
-      // Allocate work array for stress calculation
-      dGsq_.allocate(kSize_, 6);
-      #endif
 
       // Allocate block concentration field
       cField().allocate(mesh().dimensions());
@@ -232,21 +228,10 @@ namespace Rpc {
 
       MeshIterator<D> iter;
       iter.setDimensions(kMeshDimensions_);
-      #if 0
-      IntVec<D> G, Gmin;
-      double Gsq;
-      #endif
       double arg;
       int i;
       for (iter.begin(); !iter.atEnd(); ++iter) {
          i = iter.rank();
-         #if 0
-         G = iter.position();
-         Gmin = shiftToMinimum(G, mesh().dimensions(), unitCell());
-         Gsq = unitCell().ksq(Gmin);
-         UTIL_CHECK(std::abs(Gsq - kSq[i]) < 1.0E-8);
-         arg = Gsq*bSqFactor;
-         #endif
          arg = kSq[i]*bSqFactor;
          expKsq_[i] = exp(arg);
          if (isThread) {
@@ -275,7 +260,6 @@ namespace Rpc {
          double c = -0.5*ds_;
          for (int i = 0; i < nx; ++i) {
             arg = c*w[i];
-            // UTIL_CHECK(std::abs(arg) < 0.5);
             expW_[i]  = exp(arg);
             expW2_[i] = exp(0.5*arg);
          }
@@ -283,7 +267,6 @@ namespace Rpc {
       if (PolymerModel::isBead()) {
          for (int i = 0; i < nx; ++i) {
             arg = -w[i];
-            // UTIL_CHECK(std::abs(arg) < 1.0);
             expW_[i]  = exp(arg);
             expWInv_[i] = 1.0/expW_[i];
          }
@@ -350,7 +333,7 @@ namespace Rpc {
          qr2_[i] = qr2_[i]*expW_[i];
       }
 
-      // Above, multiplying qr2_ by expW_ rather than expW2_ combines
+      // Above, multiplying qr2_ by expW_, rather than by expW2_, combines
       // required multiplications by expW2_ at the end of first half-step 
       // and at the beginning of the second.
 
@@ -369,6 +352,7 @@ namespace Rpc {
       for (i = 0; i < nx; ++i) {
          qout[i] = (4.0*qr2_[i] - qr_[i])/3.0;
       }
+
    }
 
    /*
@@ -617,22 +601,18 @@ namespace Rpc {
       if (!waveListPtr_->hasdKSq()) {
          waveListPtr_->computedKSq();
       }
-      //computedGsq();
 
-      // Initialize work array and stress_ to zero at all points
+      // Initialize dQ work array to zero
       FSArray<double, 6> dQ;
-      stress_.clear();
-      int nParam = unitCell().nParameter();
+      const int nParam = unitCell().nParameter();
       for (int i = 0; i < nParam; ++i) {
-         stress_.append(0.0);
          dQ.append(0.0);
       }
 
       Propagator<D> const & p0 = propagator(0);
       Propagator<D> const & p1 = propagator(1);
-
+      const double bSq = kuhn()*kuhn()/6.0;
       double dels, prod, increment;
-      double bSq = kuhn()*kuhn()/6.0;
       int n, m;
 
       // Evaluate unnormalized integral over contour 
@@ -662,10 +642,6 @@ namespace Rpc {
             for (m = 0; m < kSize_ ; ++m) {
                prod = (qk2_[m][0] * qk_[m][0]) + (qk2_[m][1] * qk_[m][1]);
                prod *= dKSq[m];
-               #if 0
-               prod *= dGsq_(m,n);
-               UTIL_CHECK(std::abs(dGsq_(m,n) - dKSq[m]) < 1.0E-8);
-               #endif
                increment += prod;
             }
             increment *= bSq * dels;
@@ -674,9 +650,11 @@ namespace Rpc {
 
       }
 
-      // Normalize
+      // Compute stress_ from dQ
+      stress_.clear();
       for (int i = 0; i < nParam; ++i) {
-         stress_[i] = stress_[i] - (dQ[i] * prefactor);
+         stress_.append(-1.0*prefactor*dQ[i]);
+         // stress_[i] = stress_[i] - (dQ[i] * prefactor);
       }
 
    }
@@ -702,23 +680,20 @@ namespace Rpc {
       if (!waveListPtr_->hasdKSq()) {
          waveListPtr_->computedKSq();
       }
-      //computedGsq();
 
-      // Initialize dQ and stress_ to zero at all points
+      // Initialize dQ work array to zero
       FSArray<double, 6> dQ;
-      stress_.clear();
       int nParam = unitCell().nParameter();
       for (int i = 0; i < nParam; ++i) {
          dQ.append(0.0);
-         stress_.append(0.0);
       }
 
       Propagator<D> const & p0 = propagator(0);
       Propagator<D> const & p1 = propagator(1);
+      const double bSq = kuhn()*kuhn()/6.0;
       double increment, prod;
-      double bSq = kuhn()*kuhn()/6.0;
 
-      // Loop over bonds in block
+      // Loop over all bonds in this block
       for (int j = 0; j < ns_ - 1 ; ++j) {
 
          // Bead j, forward propagator
@@ -737,10 +712,6 @@ namespace Rpc {
             for (int m = 0; m < kSize_ ; ++m) {
                prod = (qk2_[m][0] * qk_[m][0]) + (qk2_[m][1] * qk_[m][1]);
                prod *= dKSq[m]*expKsq_[m];
-               #if 0
-               prod *= dGsq_(m, n)*expKsq_[m];
-               UTIL_CHECK(std::abs(dGsq_(m,n) - dKSq[m]) < 1.0E-8);
-               #endif
                increment += prod;
             }
             increment *= bSq;
@@ -749,42 +720,14 @@ namespace Rpc {
 
       }
 
-      // Normalize
+      // Compute stress_ from dQ
+      stress_.clear();
       for (int i = 0; i < nParam; ++i) {
-         stress_[i] = stress_[i] - (dQ[i] * prefactor);
+         stress_.append(-1.0*prefactor*dQ[i]);
+         //stress_[i] = stress_[i] - (dQ[i] * prefactor);
       }
 
    }
-
-   #if 0
-   /*
-   * Compute dGsq_ array (derivatives of Gsq for all wavevectors) if needed.
-   */
-   template <int D>
-   void Block<D>::computedGsq()
-   {
-
-      // Construct dGsq_ locally (has become redundant)
-      IntVec<D> pos, vec;
-      int rank;
-      MeshIterator<D> iter;
-      iter.setDimensions(kMeshDimensions_);
-      for (int n = 0; n < unitCell().nParameter() ; ++n) {
-         RField<D> const & dKSq = waveListPtr_->dKSq(n);
-         for (iter.begin(); !iter.atEnd(); ++iter) {
-            rank = iter.rank();
-            pos = iter.position();
-            vec = shiftToMinimum(pos, mesh().dimensions(), unitCell());
-            dGsq_(rank, n) = unitCell().dksq(vec, n);
-            if (FFT<D>::hasImplicitInverse(pos, mesh().dimensions())) {
-               dGsq_(rank, n) *= 2.0;
-            }
-            UTIL_CHECK(std::abs(dGsq_(rank, n) - dKSq[rank]) < 1.0E-8);
-         }
-      }
-
-   }
-   #endif
 
 }
 }

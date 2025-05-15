@@ -1,6 +1,6 @@
-The src/pscf directory contains source files in namespace Pscf that can be 
-used by any program in the PSCF package.  All entities defined in files in 
-this directory are defined in the Pscf C++ namespace.
+The src/pscf directory contains source files for classes or functions that
+are defined in top level Pscf C++ namespace and that can be used by any 
+program in the PSCF package.  
 
 Subdirectories:
 ---------------
@@ -8,12 +8,12 @@ Subdirectories:
    chem/        - molecular structure descriptors
    cuda/        - utilities for graphics processing units (GPUs)
    homogeneous/ - spatially homogeneous mixtures
-   inter/       - models of interaction (excess) free energy 
+   inter/       - interaction (excess) free energy 
    iterator/    - utilities for iterator algorithms
    math/        - mathematical utilities
-   mesh/        - spatial mesh
+   mesh/        - spatial mesh and mesh iterators
    solvers/     - templates for modified diffusion eqn (MDE) solvers 
-   sweep/       - template for sweep algorithms
+   sweep/       - utilities for SCFT sweep algorithms
    tests/       - unit tests for code in src/pscf
 
 All classes in subdirectory pscf/homogeneous are defined in a nested 
@@ -22,7 +22,7 @@ namespace Pscf::Homogeneous
 C++ file:
 ---------
 
-paths.h  - directory paths used in C++ (edited by configure script)
+paths.h  - directory paths used by C++ files (installed by configure script)
 
 Makefile and makefile fragments:
 --------------------------------

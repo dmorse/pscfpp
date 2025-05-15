@@ -39,7 +39,7 @@ namespace Rpc {
    * Block within a linear or branched block polymer.
    *
    * Derived from BlockTmpl< Propagator<D> >. A BlockTmpl< Propagator<D> >
-   * has two Propagator<D> members and is derived from class Pscf::Edge.
+   * has two Propagator<D> members, and is derived from class Pscf::Edge.
    *
    * \ref user_param_block_sec "Manual Page"
    * \ingroup Rpc_Solver_Module
@@ -64,8 +64,9 @@ namespace Rpc {
       * Create permanent associations with related objects.
       *
       * This function creates associations of this block with the mesh, 
-      * fft, and unit cell objects by storing the addresses of these
-      * objects. It must be called before allocate.
+      * fft, unit cell and wavelist objects by storing the addresses of 
+      * these objects. This function must be called before the
+      * allocate function.
       *
       * \param mesh  Mesh<D> object, spatial discretization meth
       * \param fft  FFT<D> object, Fast Fourier Transform 
@@ -97,8 +98,10 @@ namespace Rpc {
       * 
       * For the bead model, if PolymerModel::isThread() is true, the
       * value of ns is given by nBead (the number of beads owned by the
-      * block) plus one for each terminal vertex that this block does 
-      * not own. The value of ds is not used for the bead model.
+      * block) plus one for each terminal vertex bead that this block 
+      * does not own. 
+      *
+      * The value of input parameter ds is ignored for the bead model.
       *
       * \param ds desired (optimal) value for contour length step
       */
@@ -107,17 +110,18 @@ namespace Rpc {
       /**
       * Clear all internal data that depends on the unit cell parameters
       *
-      * This function must be called once after every time thr unit cell
-      * parameters change. The function marks all variables that depend 
-      * on the unit cell parameters as being outdated. All such variables
-      * are later recomputed shortly before they are needed.
+      * This function must be called once after every time the unit cell
+      * parameters change. The function marks all class member variables 
+      * that depend on the unit cell parameters as being outdated. All 
+      * such variables are then recomputed just before they are needed.
       */
       void clearUnitCellData();
 
       /**
       * Set or reset block length (only used in thread model).
       *
-      * Precondition: PolymerModel::isThread()
+      * Precondition: PolymerModel::isThread(). An Exception is thrown if
+      * this function is called when PolymerModel::isThread() is false.
       *
       * \param newLength  new block length
       */
@@ -133,8 +137,7 @@ namespace Rpc {
       /**
       * Set up the MDE solver for this block.
       *
-      * This should be called once after every change in w fields, the
-      * unit cell parameters, block length or kuhn length, before
+      * This should be called once after every change in w fields, before
       * entering the loop used to solve the MDE for either propagator.
       * This function is called by Polymer<D>::compute.
       *
@@ -146,9 +149,9 @@ namespace Rpc {
       * Compute one step of solution of MDE for the thread model.
       *
       * This function is called internally by the Propagator::solve
-      * function within a loop over steps. It is implemented in the
-      * Block class because the same private data structures are needed
-      * for the two propagators associated with a Block.
+      * function within a loop over steps. It is implemented in the Block
+      * class because the same private data structures are needed for the
+      * two propagators associated with a Block.
       *
       * \param qin  input slice of q, from step i
       * \param qout  output slice of q, from step i+1
@@ -159,9 +162,9 @@ namespace Rpc {
       * Compute one step of solution of MDE for the bead model.
       *
       * This function is called internally by the Propagator::solve
-      * function within a loop over steps. It is implemented in the
-      * Block class because the same private data structures are needed
-      * for the two propagators associated with a Block.
+      * function within a loop over steps. It is implemented in the Block
+      * class because the same private data structures are needed for the
+      * two propagators associated with a Block.
       *
       * \param qin  input slice of q, from step i
       * \param qout  output slice of q, for step i+1
@@ -183,10 +186,10 @@ namespace Rpc {
       /**
       * Apply the exponential field operator for the bead model. 
       *
-      * This function applies exp( -w(r) ), where w(r) is the
-      * w-field for the monomer type of this block. 
+      * This function applies exp( -w(r) ), where w(r) is the w-field for
+      * the monomer type of this block. 
       *
-      * \param q  slice of propagator q, modified in place.
+      * \param q  slice of propagator q, modified in place
       */
       void stepFieldBead(RField<D> & q);
 
@@ -196,15 +199,21 @@ namespace Rpc {
       * This function is called by Polymer::compute if a thread model is
       * is used.
       *
-      * The "prefactor" parameter must equal phi/(L q), where L is the 
-      * total length of all blocks in the polymer species and q is the 
-      * species partition function.
+      * The "prefactor" parameter must equal \f$ \phi / (L_{tot} Q) \f$, 
+      * where \f$ \phi \f$ is the species volume fraction, \f$ L_{tot} \f$
+      * is the total length of all blocks in this polymer species and Q 
+      * is the species partition function.
       *
-      * Upon return, grid point r of array cField() contains the integal,
-      * int ds q(r,s)q^{*}(r,L-s) times the prefactor parameter, where
-      * q(r,s) and q^{*}(r,s) are propagators associated with different
-      * directions, and the integral is taken over the length of the 
-      * block. Simpson's rule is used for the integral.
+      * Upon return, grid point r of the array returned by the member 
+      * function cField() contains the integal
+      * \f[
+      *      p \int_{0}^{l} ds q_{0}(r,s) q_{1}(r, L - s) 
+      * \f]
+      * where \f$ q_{0}(r,s) \f$ and \f$ q_{1}(r,s) \f$ are propagators
+      * associated with different directions, \f$ p \f$ is the prefactor
+      * parameter, and the integral is taken over the length \f$ L \f$ 
+      * of this block. Simpson's rule is used for the integral with 
+      * respect to s.
       *
       * \param prefactor  constant multiplying integral over s
       */
@@ -216,21 +225,28 @@ namespace Rpc {
       * This function is called by Polymer::compute if a bead model is
       * is used.
       *
-      * The "prefactor" parameter must equal phi/(N q), where N is the 
-      * total number of beads owned by all blocks of the polymer, and 
-      * q is the species partition function.
+      * The "prefactor" parameter must equal \f$ \phi /(N_{tot} Q) \f$, 
+      * where \f$ \phi \f$ is the species volume fraction, \f$ N_{tot} \f$
+      * is the total number of beads in all blocks of the polymer, and 
+      * \f$ Q \f$ is the species partition function.
       *
-      * Upon return, grid point r of array cField() contains the sum
-      * sum_s ds q(r,s) q^{*}(r,N-s) exp(W(r)*ds) over beads owned by 
-      * this block times the "prefactor" parameter, where q(r,s) and 
-      * q^{*}(r,s) are propagators associated with different directions.
+      * Upon return, grid point r of the array returned by member function
+      * cField() contains the sum
+      * \f[
+      *      p \sum_{s} q_{0}(r,s) q_{1}(r, N-s) \exp(W(r)*ds) 
+      * \f]
+      * where \f$ q_{0}(r,s) \f$ and \f$ q_{1}(r, N-s) \f$ denote
+      * complementary propagator slices associated with different  
+      * directions but the same bead, and \f$ p \f$ is the prefactor 
+      * parameter. The sum is taken over all beads that are owned by this 
+      * block. 
       *
       * \param prefactor  constant multiplying sum over beads
       */
       void computeConcentrationBead(double prefactor);
 
       /**
-      * Compute the spatial average of the product used to compute Q.
+      * Compute the spatial average of a product used to compute Q.
       *
       * This function computes the spatial average of the product 
       * q0[i]*q1[i], where q0 and q1 and are complementary propagator 
@@ -239,13 +255,13 @@ namespace Rpc {
       double averageProduct(RField<D> const& q0, RField<D> const& q1);
 
       /**
-      * Compute the spatial average of the product used to compute Q.
+      * Compute the spatial average of a product used by the bead model.
       *
       * This computes the spatial average of the product 
       * q0[i]*q1[i]*exp(W[i]), where q0 and q1 and are complementary 
-      * propagator slices for a bead model, and i is mesh rank. This is
-      * used in the bead model for computation of Q from propagator 
-      * slices associated with a bead that is owned by the propagator.
+      * propagator slices for a bead model, and i is mesh rank. This 
+      * is used in the bead model to compute Q from propagator slices 
+      * associated with a bead that is owned by the propagator.
       */
       double averageProductBead(RField<D> const& q0, RField<D> const& q1);
 
@@ -253,7 +269,8 @@ namespace Rpc {
       * Compute stress contribution for this block, using thread model.
       *
       * This function is called by Polymer<D>::computeStress. The 
-      * prefactor is equal to that passed to computeConcentrationThread.
+      * prefactor parameter must be equal to that passed to function
+      * computeConcentrationThread(double ).
       *
       * \param prefactor  constant multiplying integral over s
       */
@@ -263,31 +280,22 @@ namespace Rpc {
       * Compute stress contribution for this block, using bead model.
       *
       * This function is called by Polymer<D>::computeStress. The 
-      * prefactor is equal to that passed to computeConcentrationBead.
+      * prefactor parameter must be equal to that passed to function
+      * computeConcentrationBead(double ).
       *
-      * \param prefactor constant multiplying sum over beads
+      * \param prefactor  constant multiplying sum over beads
       */
       void computeStressBead(double prefactor);
 
       /**
-      * Get derivative of free energy w/ respect to unit cell parameter n.
+      * Get derivative of free energy w/ respect to a unit cell parameter.
       *
       * This function returns a value computed by a previous call to the
       * computeStress function.
       *
-      * \param n index of unit cell parameter
+      * \param n  index of the unit cell parameter
       */
       double stress(int n) const;
-
-      /**
-      * Get associated spatial Mesh by const reference.
-      */
-      Mesh<D> const & mesh() const;
-
-      /**
-      * Get associated FFT object by const reference.
-      */
-      FFT<D> const & fft() const;
 
       /**
       * Get contour length step size.
@@ -330,11 +338,6 @@ namespace Rpc {
       using Edge::nBead;
 
    private:
-
-      #if 0
-      /// Matrix to store derivatives of squared wavevectors.
-      DMatrix<double> dGsq_;
-      #endif
 
       /// Stress arising from this block.
       FSArray<double, 6> stress_;
@@ -410,12 +413,21 @@ namespace Rpc {
       /// Number of unit cell parameters.
       int nParams_;
 
-      #if 0
-      /// Compute dGsq_ matrix.
-      void computedGsq();
-      #endif
+      // Private member functions
 
-      /// Compute expKSq arrays.
+      /**
+      * Get associated spatial Mesh by const reference.
+      */
+      Mesh<D> const & mesh() const;
+
+      /**
+      * Get associated FFT object by const reference.
+      */
+      FFT<D> const & fft() const;
+
+      /**
+      * Compute expKSq arrays.
+      */
       void computeExpKsq();
 
    };
@@ -437,7 +449,7 @@ namespace Rpc {
    inline double Block<D>::stress(int n) const
    {  return stress_[n]; }
 
-   // Get associated Mesh<D> object by reference.
+   // Get associated Mesh<D> object by const reference.
    template <int D>
    inline Mesh<D> const & Block<D>::mesh() const
    {
@@ -445,7 +457,7 @@ namespace Rpc {
       return *meshPtr_;
    }
 
-   // Get associated FFT<D> object by reference.
+   // Get associated FFT<D> object by const reference.
    template <int D>
    inline FFT<D> const & Block<D>::fft() const
    {

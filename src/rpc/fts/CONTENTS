@@ -14,8 +14,8 @@ ramp/         - continuous change of parameters during a simulation
 
 Makefile and makefile fragments:
 
-sources.mk    - list of source files (makefile fragment)
 makefile      - main makefile for rpc/fts directory tree
+sources.mk    - list of source files (makefile fragment)
 
 Doxygen documentation files:
 

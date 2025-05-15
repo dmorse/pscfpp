@@ -106,7 +106,7 @@ public:
       TEST_ASSERT(eq(block.length(), 2.0));
       TEST_ASSERT(eq(block.ds(), 0.02));
       TEST_ASSERT(block.ns() == 101);
-      TEST_ASSERT(block.mesh().dimensions()[0] == 32);
+      TEST_ASSERT(mesh.dimensions()[0] == 32);
 
    }
 
@@ -138,8 +138,8 @@ public:
       TEST_ASSERT(eq(block.length(), 2.0));
       TEST_ASSERT(eq(block.ds(), 0.25));
       TEST_ASSERT(block.ns() == 9);
-      TEST_ASSERT(block.mesh().dimensions()[0] == 32);
-      TEST_ASSERT(block.mesh().dimensions()[1] == 32);
+      TEST_ASSERT(mesh.dimensions()[0] == 32);
+      TEST_ASSERT(mesh.dimensions()[1] == 32);
    }
 
    void testSetup3D()
@@ -172,9 +172,9 @@ public:
       TEST_ASSERT(eq(block.length(), 2.0));
       TEST_ASSERT(block.ns() == 7);
       TEST_ASSERT(eq(block.ds(), 1.0/3.0));
-      TEST_ASSERT(block.mesh().dimensions()[0] == 32);
-      TEST_ASSERT(block.mesh().dimensions()[1] == 32);
-      TEST_ASSERT(block.mesh().dimensions()[2] == 32);
+      TEST_ASSERT(mesh.dimensions()[0] == 32);
+      TEST_ASSERT(mesh.dimensions()[1] == 32);
+      TEST_ASSERT(mesh.dimensions()[2] == 32);
    }
 
    void testSetupSolver1D()
