@@ -14,8 +14,7 @@
 #include <prdc/crystal/SpaceGroup.h>      // member
 #include <prdc/crystal/UnitCell.h>        // member
 #include <pscf/mesh/Mesh.h>               // member
-
-#include <string>
+#include <string>                         // member (groupName)
 
 // Forward declaration
 namespace Util{
@@ -31,7 +30,17 @@ namespace Prdc {
    /**
    * Spatial domain for a periodic structure with real fields.
    *
-   * A DomainReal instance has (among other components):
+   * Partial specializations of the DomainReal class template are used
+   * as base classes for Rpc::Domain<int D> and Rpg::Domain<int D>.
+   *
+   * Template Parameters:
+   *
+   *   - D    : integer dimension of space (D=1, 2, or 3)
+   *   - FFT  : Fast Fourier transform calculator type, e.g., FFT<D>
+   *   - WLT  : WaveList container type, e.g., WaveList<D>
+   *   - FIT  : FieldIo class for field operations, e.g., FieldIo<D>
+   *
+   * A DomainReal template instance has:
    *
    *  - a Mesh spatial discretization mesh
    *  - a UnitCell crystallographic unit cell
@@ -47,13 +56,7 @@ namespace Prdc {
    * actually class templates with a template parameter D. Actual class 
    * names are Mesh \<D\>, Prdc::UnitCell \<D\>, etc. with D=1, 2, or 3.
    *
-   * Template Parameters:
-   *
-   *   D    - integer dimension of space (D=1, 2, or 3)
-   *   FFT  - Fast Fourier transform calculator (e.g., FFT<D>)
-   *   WLT  - WaveList container (e.g., WaveList<D>)
-   *   FIT  - FieldIo container for field operations (e.g., FieldIo<D>)
-   *
+   * \ingroup Prdc_Field_Module
    */
    template <int D, class FFT, class WLT, class FIT>
    class DomainReal : public ParamComposite
@@ -71,7 +74,7 @@ namespace Prdc {
       */
       ~DomainReal();
 
-      /// \name Initialization and Mutators
+      /// \name Initialization
       ///@{
 
       /**
@@ -98,6 +101,15 @@ namespace Prdc {
       * \param nMonomer  number of monomers in field file (output)
       */
       void readRGridFieldHeader(std::istream& in, int& nMonomer);
+
+      /**
+      * Construct basis if not done already.
+      */
+      void makeBasis();
+
+      ///@}
+      /// \name Unit Cell Modifiers
+      ///@{
 
       /**
       * Set unit cell by copying another UnitCell<D> object.
@@ -134,13 +146,8 @@ namespace Prdc {
       */
       void setUnitCell(FSArray<double, 6> const & parameters);
 
-      /**
-      * Construct basis if not done already.
-      */
-      void makeBasis();
-
       ///@}
-      /// \name Accessors (return objects by reference)
+      /// \name Accessors (return component objects by reference)
       ///@{
 
       /**

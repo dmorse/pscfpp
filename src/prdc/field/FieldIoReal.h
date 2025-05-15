@@ -21,10 +21,6 @@ namespace Pscf {
    namespace Prdc {
       template <int D> class Basis;
       template <int D> class SpaceGroup;
-      namespace Cpu {
-         template <int D> class FFT;
-         template <int D> class RField;
-      }
    }
 }
 
@@ -44,16 +40,16 @@ namespace Prdc {
    * representations. The member functions that implement field IO 
    * operations define the file formats for these field representations.
    *
-   * Template parameters:
+   * <b>Template parameters:</b>
    *
-   *    D     - dimension of space, i.e., 1, 2, or 3
-   *    RFRT  - real field r-grid type, e.g., RField<D> 
-   *    RFKT  - real field k-grid type, e.g., RFieldDft<D> 
-   *    FFT   - fast Fourier transform type, e.g., FFT<D> 
+   *    - D    : dimension of space, i.e., 1, 2, or 3
+   *    - RFRT : real field r-grid type, e.g., RField<D> 
+   *    - FKT  : real field k-grid type, e.g., RFieldDft<D> 
+   *    - FFT  : fast Fourier transform type, e.g., FFT<D> 
    *
-   * Side effect of reading a field file: The member functions that read 
-   * fields from a file may all construct a symmetry adapted basis within
-   * an associated Basis object as a side effect of reading the field 
+   * <b>Side effect of reading a field file:</b> The member functions that
+   * read fields from a file may all construct a symmetry adapted basis 
+   * in an associated Basis object as a side effect of reading the field 
    * header. All of these functions call member function readFieldHeader 
    * member function to read the field file header. If a group has been 
    * declared in the Domain block of the parameter file for the associated 
