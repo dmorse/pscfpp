@@ -8,12 +8,15 @@
 #include "Domain.tpp"
 
 namespace Pscf {
-namespace Rpg
-{
-
-   template class Domain<1>;
-   template class Domain<2>;
-   template class Domain<3>;
-
-} // namespace Rpg
-} // namespace Pscf
+   namespace Prdc {
+      using namespace Cuda;
+      template class DomainReal<1, FFT<1>, WaveList<1>, Rpg::FieldIo<1> >;
+      template class DomainReal<2, FFT<2>, WaveList<2>, Rpg::FieldIo<2> >;
+      template class DomainReal<3, FFT<3>, WaveList<3>, Rpg::FieldIo<3> >;
+   }
+   namespace Rpg {
+      template class Domain<1>;
+      template class Domain<2>;
+      template class Domain<3>;
+   }
+}

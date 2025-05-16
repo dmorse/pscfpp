@@ -41,13 +41,10 @@ namespace Rpc {
 
       /**
       * Constructor.
+      *
+      * Sets the class name used in the parameter file to "Domain".
       */
       Domain();
-
-      /**
-      * Destructor.
-      */
-      ~Domain();
 
       /// Typedef for base class
       typedef DomainReal< D, FFT<D>, WaveList<D>, FieldIo<D> > Base;
@@ -87,17 +84,14 @@ namespace Rpc {
 
 #ifndef RPC_DOMAIN_TPP
 namespace Prdc {
+   // Suppress implicit instantiation of base class template instances
    using namespace Cpu;
-
-   extern 
-   template class DomainReal<1, FFT<1>, WaveList<1>, Rpc::FieldIo<1> >;
-
-   extern 
-   template class DomainReal<2, FFT<2>, WaveList<2>, Rpc::FieldIo<2> >;
-
-   extern 
-   template class DomainReal<3, FFT<3>, WaveList<3>, Rpc::FieldIo<3> >;
-
+   extern template 
+   class DomainReal<1, FFT<1>, WaveList<1>, Rpc::FieldIo<1> >;
+   extern template 
+   class DomainReal<2, FFT<2>, WaveList<2>, Rpc::FieldIo<2> >;
+   extern template 
+   class DomainReal<3, FFT<3>, WaveList<3>, Rpc::FieldIo<3> >;
 } // namespace Prdc
 #endif
 

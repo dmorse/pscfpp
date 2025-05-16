@@ -23,13 +23,6 @@ namespace Rpc {
     : DomainReal<D, FFT<D>, WaveList<D>, FieldIo<D> >()
    {  ParamComposite::setClassName("Domain"); }
 
-   /*
-   * Destructor.
-   */
-   template <int D>
-   Domain<D>::~Domain()
-   {}
-
 } // namespace Rpc
 } // namespace Pscf
 #endif
