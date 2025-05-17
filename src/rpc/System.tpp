@@ -819,6 +819,9 @@ namespace Rpc {
          readFieldHeader(filename);
       }
       UTIL_CHECK(domain_.basis().isInitialized());
+      if (!isAllocatedBasis_) {
+         allocateFieldsBasis();
+      }
       UTIL_CHECK(isAllocatedBasis_);
       const int nm = mixture_.nMonomer();
       const int nb = domain_.basis().nBasis();
@@ -899,7 +902,7 @@ namespace Rpc {
    {
       domain_.setUnitCell(unitCell);
       // Note: Domain::setUnitCell clears WaveList unit cell data
-      // and initializes Basis if needed
+      // and makes Basis if needed
       mixture_.clearUnitCellData();
       if (domain_.hasGroup() && !isAllocatedBasis_) {
          UTIL_CHECK(domain_.basis().isInitialized());
@@ -918,7 +921,7 @@ namespace Rpc {
    {
       domain_.setUnitCell(lattice, parameters);
       // Note: Domain::setUnitCell clears WaveList unit cell data
-      // and initializes Basis if needed
+      // and makes Basis if needed
       mixture_.clearUnitCellData();
       if (domain_.hasGroup() && !isAllocatedBasis_) {
          UTIL_CHECK(domain_.basis().isInitialized());
@@ -935,7 +938,7 @@ namespace Rpc {
    {
       domain_.setUnitCell(parameters);
       // Note: Domain::setUnitCell clears WaveList unit cell data
-      // and initializes Basis if needed
+      // and makes Basis if needed
       mixture_.clearUnitCellData();
       if (domain_.hasGroup() && !isAllocatedBasis_) {
          UTIL_CHECK(domain_.basis().isInitialized());
@@ -1387,6 +1390,7 @@ namespace Rpc {
    template <int D>
    void System<D>::writeWBasis(std::string const & filename) const
    {
+      UTIL_CHECK(domain_.unitCell().isInitialized());
       UTIL_CHECK(domain_.basis().isInitialized());
       UTIL_CHECK(isAllocatedBasis_);
       UTIL_CHECK(w_.hasData());
@@ -1401,6 +1405,7 @@ namespace Rpc {
    template <int D>
    void System<D>::writeWRGrid(std::string const & filename) const
    {
+      UTIL_CHECK(domain_.unitCell().isInitialized());
       UTIL_CHECK(isAllocatedGrid_);
       UTIL_CHECK(w_.hasData());
       domain_.fieldIo().writeFieldsRGrid(filename, w_.rgrid(),
@@ -1414,6 +1419,7 @@ namespace Rpc {
    template <int D>
    void System<D>::writeCBasis(std::string const & filename) const
    {
+      UTIL_CHECK(domain_.unitCell().isInitialized());
       UTIL_CHECK(domain_.basis().isInitialized());
       UTIL_CHECK(isAllocatedBasis_);
       UTIL_CHECK(hasCFields_);
@@ -1428,6 +1434,7 @@ namespace Rpc {
    template <int D>
    void System<D>::writeCRGrid(std::string const & filename) const
    {
+      UTIL_CHECK(domain_.unitCell().isInitialized());
       UTIL_CHECK(isAllocatedGrid_);
       UTIL_CHECK(hasCFields_);
       domain_.fieldIo().writeFieldsRGrid(filename, c_.rgrid(),
@@ -1442,6 +1449,7 @@ namespace Rpc {
    template <int D>
    void System<D>::writeBlockCRGrid(std::string const & filename) const
    {
+      UTIL_CHECK(domain_.unitCell().isInitialized());
       UTIL_CHECK(isAllocatedGrid_);
       UTIL_CHECK(hasCFields_);
 
@@ -1480,6 +1488,7 @@ namespace Rpc {
       UTIL_CHECK(blockId < polymer.nBlock());
       UTIL_CHECK(directionId >= 0);
       UTIL_CHECK(directionId <= 1);
+      UTIL_CHECK(domain_.unitCell().isInitialized());
       Propagator<D> const &
            propagator = polymer.propagator(blockId, directionId);
       RField<D> const & field = propagator.q(segmentId);
@@ -1503,6 +1512,7 @@ namespace Rpc {
       UTIL_CHECK(blockId < polymer.nBlock());
       UTIL_CHECK(directionId >= 0);
       UTIL_CHECK(directionId <= 1);
+      UTIL_CHECK(domain_.unitCell().isInitialized());
       RField<D> const &
             field = polymer.propagator(blockId, directionId).tail();
       domain_.fieldIo().writeFieldRGrid(filename, field,
@@ -1525,6 +1535,7 @@ namespace Rpc {
       UTIL_CHECK(blockId < polymer.nBlock());
       UTIL_CHECK(directionId >= 0);
       UTIL_CHECK(directionId <= 1);
+      UTIL_CHECK(domain_.unitCell().isInitialized());
       Propagator<D> const&
            propagator = polymer.propagator(blockId, directionId);
       int ns = propagator.ns();
@@ -1816,6 +1827,7 @@ namespace Rpc {
                                         int d,
                                         DArray<int> newGridDimensions)
    {
+      // Preconditions
       UTIL_CHECK(d > D);
       UTIL_CHECK(isAllocatedGrid_);
 
@@ -1840,6 +1852,7 @@ namespace Rpc {
                                      std::string const & outFileName,
                                      IntVec<D> const & replicas)
    {
+      // Precondition
       UTIL_CHECK(isAllocatedGrid_);
 
       // Read fields
@@ -1863,8 +1876,6 @@ namespace Rpc {
    void System<D>::compare(DArray< DArray<double> > const & field1,
                            DArray< DArray<double> > const & field2)
    {
-      UTIL_CHECK(domain_.hasGroup());
-
       BFieldComparison comparison(1);
       comparison.compare(field1, field2);
 
@@ -1963,9 +1974,7 @@ namespace Rpc {
    }
 
    /*
-   * Peek at field file header, initialize basis.
-   *
-   * Precondition: The unit cell may not be initialized.
+   * Peek at field file header, initialize basis if needed.
    */
    template <int D>
    void System<D>::readFieldHeader(std::string const & filename)
@@ -1977,20 +1986,19 @@ namespace Rpc {
       std::ifstream file;
       fileMaster_.openInputFile(filename, file);
 
-      // Read file header, initialize unit cell and related Domain data
+      // Read file header, make basis if needed
       int nMonomer;
-      bool isSymmetric;
       UnitCell<D> tmpUnitCell;
+      bool isSymmetric;
       domain_.fieldIo().readFieldHeader(file, nMonomer,
                                         tmpUnitCell, isSymmetric);
       file.close();
-      // Note: FieldIo<D>::readFieldHeader initializes basis if needed
+      // Note: FieldIo<D>::readFieldHeader makes basis if needed
 
       // Postconditions
       UTIL_CHECK(mixture_.nMonomer() == nMonomer);
       if (domain_.hasGroup()) {
          UTIL_CHECK(domain_.basis().isInitialized());
-         UTIL_CHECK(domain_.basis().nBasis() > 0);
          if (!isAllocatedBasis_) {
             allocateFieldsBasis();
          }

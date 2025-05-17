@@ -762,13 +762,10 @@ namespace Rpg {
    {
       // Preconditions
       UTIL_CHECK(domain_.hasGroup());
-
-      if (!domain_.unitCell().isInitialized()) {
+      if (!domain_.basis().isInitialized()) {
          readFieldHeader(filename);
       }
-      UTIL_CHECK(domain_.unitCell().isInitialized());
       UTIL_CHECK(domain_.basis().isInitialized());
-      UTIL_CHECK(domain_.basis().nBasis() > 0);
       if (!isAllocatedBasis_) {
          allocateFieldsBasis();
       }
@@ -790,13 +787,8 @@ namespace Rpg {
    template <int D>
    void System<D>::readWRGrid(std::string const & filename)
    {
+      // Preconditions
       UTIL_CHECK(isAllocatedGrid_);
-
-      // If necessary, peek at header to initialize unit cell
-      if (!domain_.unitCell().isInitialized()) {
-         readFieldHeader(filename);
-      }
-      UTIL_CHECK(domain_.unitCell().isInitialized());
 
       // Read w fields
       w_.readRGrid(filename, domain_.unitCell());
@@ -806,6 +798,9 @@ namespace Rpg {
       // Clear unit cell data in waveList and mixture
       domain_.waveList().clearUnitCellData();
       mixture_.clearUnitCellData();
+
+      // Postcondition
+      UTIL_CHECK(domain_.unitCell().isInitialized());
    }
 
    /*
@@ -820,10 +815,9 @@ namespace Rpg {
       UTIL_CHECK(hasMixture_);
       UTIL_CHECK(isAllocatedGrid_);
       UTIL_CHECK(domain_.hasGroup());
-      if (!domain_.unitCell().isInitialized()) {
+      if (!domain_.basis().isInitialized()) {
          readFieldHeader(filename);
       }
-      UTIL_CHECK(domain_.unitCell().isInitialized());
       UTIL_CHECK(domain_.basis().isInitialized());
       if (!isAllocatedBasis_) {
          allocateFieldsBasis();
@@ -865,6 +859,8 @@ namespace Rpg {
       domain_.waveList().clearUnitCellData();
       mixture_.clearUnitCellData();
 
+      // Postcondition
+      UTIL_CHECK(domain_.unitCell().isInitialized());
    }
 
    /*
@@ -873,6 +869,7 @@ namespace Rpg {
    template <int D>
    void System<D>::setWBasis(DArray< DArray<double> > const & fields)
    {
+      UTIL_CHECK(domain_.unitCell().isInitialized());
       UTIL_CHECK(domain_.hasGroup());
       UTIL_CHECK(domain_.basis().isInitialized());
       UTIL_CHECK(isAllocatedGrid_);
@@ -888,6 +885,7 @@ namespace Rpg {
    template <int D>
    void System<D>::setWRGrid(DArray< RField<D> > const & fields)
    {
+      UTIL_CHECK(domain_.unitCell().isInitialized());
       UTIL_CHECK(isAllocatedGrid_);
       w_.setRGrid(fields);
       hasCFields_ = false;
@@ -904,11 +902,13 @@ namespace Rpg {
    {
       domain_.setUnitCell(unitCell);
       // Note: Domain::setUnitCell clears the WaveList unit cell data
+      // and makes basis if needed
       mixture_.clearUnitCellData();
       if (domain_.hasGroup() && !isAllocatedBasis_) {
          UTIL_CHECK(domain_.basis().isInitialized());
          allocateFieldsBasis();
       }
+      UTIL_CHECK(domain_.unitCell().isInitialized());
    }
 
    /*
@@ -921,11 +921,13 @@ namespace Rpg {
    {
       domain_.setUnitCell(lattice, parameters);
       // Note: Domain::setUnitCell clears WaveList unit cell data
+      // and makes basis if needed
       mixture_.clearUnitCellData();
       if (domain_.hasGroup() && !isAllocatedBasis_) {
          UTIL_CHECK(domain_.basis().isInitialized());
          allocateFieldsBasis();
       }
+      UTIL_CHECK(domain_.unitCell().isInitialized());
    }
 
    /*
@@ -936,11 +938,13 @@ namespace Rpg {
    {
       domain_.setUnitCell(parameters);
       // Note: Domain::setUnitCell clears WaveList unit cell data
+      // and makes basis if needed
       mixture_.clearUnitCellData();
       if (domain_.hasGroup() && !isAllocatedBasis_) {
          UTIL_CHECK(domain_.basis().isInitialized());
          allocateFieldsBasis();
       }
+      UTIL_CHECK(domain_.unitCell().isInitialized());
    }
 
    // Primary Field Theory Computations
@@ -1386,6 +1390,7 @@ namespace Rpg {
    template <int D>
    void System<D>::writeWBasis(std::string const & filename) const
    {
+      UTIL_CHECK(domain_.unitCell().isInitialized());
       UTIL_CHECK(domain_.basis().isInitialized());
       UTIL_CHECK(isAllocatedBasis_);
       UTIL_CHECK(w_.hasData());
@@ -1400,6 +1405,7 @@ namespace Rpg {
    template <int D>
    void System<D>::writeWRGrid(std::string const & filename) const
    {
+      UTIL_CHECK(domain_.unitCell().isInitialized());
       UTIL_CHECK(isAllocatedGrid_);
       UTIL_CHECK(w_.hasData());
       domain_.fieldIo().writeFieldsRGrid(filename, w_.rgrid(),
@@ -1413,6 +1419,7 @@ namespace Rpg {
    template <int D>
    void System<D>::writeCBasis(std::string const & filename) const
    {
+      UTIL_CHECK(domain_.unitCell().isInitialized());
       UTIL_CHECK(domain_.basis().isInitialized());
       UTIL_CHECK(isAllocatedBasis_);
       UTIL_CHECK(hasCFields_);
@@ -1427,6 +1434,7 @@ namespace Rpg {
    template <int D>
    void System<D>::writeCRGrid(std::string const & filename) const
    {
+      UTIL_CHECK(domain_.unitCell().isInitialized());
       UTIL_CHECK(isAllocatedGrid_);
       UTIL_CHECK(hasCFields_);
       domain_.fieldIo().writeFieldsRGrid(filename, c_.rgrid(),
@@ -1441,6 +1449,7 @@ namespace Rpg {
    template <int D>
    void System<D>::writeBlockCRGrid(std::string const & filename) const
    {
+      UTIL_CHECK(domain_.unitCell().isInitialized());
       UTIL_CHECK(isAllocatedGrid_);
       UTIL_CHECK(hasCFields_);
 
@@ -1479,6 +1488,7 @@ namespace Rpg {
       UTIL_CHECK(blockId < polymer.nBlock());
       UTIL_CHECK(directionId >= 0);
       UTIL_CHECK(directionId <= 1);
+      UTIL_CHECK(domain_.unitCell().isInitialized());
       Propagator<D> const&
           propagator = polymer.propagator(blockId, directionId);
       domain_.fieldIo().writeFieldRGrid(filename,
@@ -1502,6 +1512,7 @@ namespace Rpg {
       UTIL_CHECK(blockId < polymer.nBlock());
       UTIL_CHECK(directionId >= 0);
       UTIL_CHECK(directionId <= 1);
+      UTIL_CHECK(domain_.unitCell().isInitialized());
       Propagator<D> const&
            propagator = polymer.propagator(blockId, directionId);
       domain_.fieldIo().writeFieldRGrid(filename, propagator.tail(),
@@ -1524,6 +1535,7 @@ namespace Rpg {
       UTIL_CHECK(blockId < polymer.nBlock());
       UTIL_CHECK(directionId >= 0);
       UTIL_CHECK(directionId <= 1);
+      UTIL_CHECK(domain_.unitCell().isInitialized());
       Propagator<D> const&
            propagator = polymer.propagator(blockId, directionId);
       int ns = propagator.ns();
@@ -1590,10 +1602,9 @@ namespace Rpg {
       // Preconditions
       UTIL_CHECK(isAllocatedGrid_);
       UTIL_CHECK(domain_.hasGroup());
-      if (!domain_.unitCell().isInitialized()) {
+      if (!domain_.basis().isInitialized()) {
          readFieldHeader(inFileName);
       }
-      UTIL_CHECK(domain_.unitCell().isInitialized());
       UTIL_CHECK(domain_.basis().isInitialized());
       UTIL_CHECK(isAllocatedBasis_);
 
@@ -1616,10 +1627,9 @@ namespace Rpg {
       // Preconditions
       UTIL_CHECK(isAllocatedGrid_);
       UTIL_CHECK(domain_.hasGroup());
-      if (!domain_.unitCell().isInitialized()) {
+      if (!domain_.basis().isInitialized()) {
          readFieldHeader(inFileName);
       }
-      UTIL_CHECK(domain_.unitCell().isInitialized());
       UTIL_CHECK(domain_.basis().isInitialized());
       UTIL_CHECK(isAllocatedBasis_);
 
@@ -1641,10 +1651,6 @@ namespace Rpg {
    {
       // Preconditions
       UTIL_CHECK(isAllocatedGrid_);
-      if (!domain_.unitCell().isInitialized()) {
-         readFieldHeader(inFileName);
-      }
-      UTIL_CHECK(domain_.unitCell().isInitialized());
 
       // Read, convert and write fields
       UnitCell<D> tmpUnitCell;
@@ -1667,10 +1673,6 @@ namespace Rpg {
    {
       // Preconditions
       UTIL_CHECK(isAllocatedGrid_);
-      if (!domain_.unitCell().isInitialized()) {
-         readFieldHeader(inFileName);
-      }
-      UTIL_CHECK(domain_.unitCell().isInitialized());
 
       // Read, convert and write fields
       UnitCell<D> tmpUnitCell;
@@ -1695,10 +1697,9 @@ namespace Rpg {
       // Preconditions
       UTIL_CHECK(isAllocatedGrid_);
       UTIL_CHECK(domain_.hasGroup());
-      if (!domain_.unitCell().isInitialized()) {
+      if (!domain_.basis().isInitialized()) {
          readFieldHeader(inFileName);
       }
-      UTIL_CHECK(domain_.unitCell().isInitialized());
       UTIL_CHECK(domain_.basis().isInitialized());
       UTIL_CHECK(isAllocatedBasis_);
 
@@ -1721,10 +1722,9 @@ namespace Rpg {
       // Preconditions
       UTIL_CHECK(isAllocatedGrid_);
       UTIL_CHECK(domain_.hasGroup());
-      if (!domain_.unitCell().isInitialized()) {
+      if (!domain_.basis().isInitialized()) {
          readFieldHeader(inFileName);
       }
-      UTIL_CHECK(domain_.unitCell().isInitialized());
       UTIL_CHECK(domain_.basis().isInitialized());
       UTIL_CHECK(isAllocatedBasis_);
 
@@ -1748,10 +1748,9 @@ namespace Rpg {
       // Preconditions
       UTIL_CHECK(isAllocatedGrid_);
       UTIL_CHECK(domain_.hasGroup());
-      if (!domain_.unitCell().isInitialized()) {
+      if (!domain_.basis().isInitialized()) {
          readFieldHeader(inFileName);
       }
-      UTIL_CHECK(domain_.unitCell().isInitialized());
       UTIL_CHECK(domain_.basis().isInitialized());
       UTIL_CHECK(isAllocatedBasis_);
 
@@ -1786,10 +1785,9 @@ namespace Rpg {
       // Preconditions
       UTIL_CHECK(isAllocatedGrid_);
       UTIL_CHECK(domain_.hasGroup());
-      if (!domain_.unitCell().isInitialized()) {
+      if (!domain_.basis().isInitialized()) {
          readFieldHeader(inFileName);
       }
-      UTIL_CHECK(domain_.unitCell().isInitialized());
       UTIL_CHECK(domain_.basis().isInitialized());
       UTIL_CHECK(isAllocatedBasis_);
 
@@ -1829,6 +1827,7 @@ namespace Rpg {
                                         int d,
                                         DArray<int> newGridDimensions)
    {
+      // Preconditions
       UTIL_CHECK(d > D);
       UTIL_CHECK(isAllocatedGrid_);
 
@@ -1853,6 +1852,7 @@ namespace Rpg {
                                      std::string const & outFileName,
                                      IntVec<D> const & replicas)
    {
+      // Precondition
       UTIL_CHECK(isAllocatedGrid_);
 
       // Read fields
@@ -1876,8 +1876,6 @@ namespace Rpg {
    void System<D>::compare(DArray< DArray<double> > const & field1,
                            DArray< DArray<double> > const & field2)
    {
-      UTIL_CHECK(domain_.hasGroup());
-
       BFieldComparison comparison(1);
       comparison.compare(field1, field2);
 
@@ -1956,7 +1954,6 @@ namespace Rpg {
       UTIL_CHECK(hasMixture_);
       const int nMonomer = mixture_.nMonomer();
       UTIL_CHECK(nMonomer > 0);
-      UTIL_CHECK(domain_.unitCell().isInitialized());
       UTIL_CHECK(domain_.mesh().size() > 0);
       UTIL_CHECK(domain_.hasGroup());
       UTIL_CHECK(domain_.basis().isInitialized());
@@ -1977,43 +1974,31 @@ namespace Rpg {
    }
 
    /*
-   * Peek at field file header, initialize unit cell parameters and basis.
-   *
-   * Precondition: The unit cell may not already be initialized
+   * Peek at field file header, initialize basis if needed.
    */
    template <int D>
    void System<D>::readFieldHeader(std::string const & filename)
    {
       UTIL_CHECK(hasMixture_);
       UTIL_CHECK(mixture_.nMonomer() > 0);
-      UTIL_CHECK(!domain_.unitCell().isInitialized());
 
       // Open field file
       std::ifstream file;
       fileMaster_.openInputFile(filename, file);
 
-      // Read file header, initialize unit cell and related Domain data
+      // Read file header, make basis if needed
       int nMonomer;
+      UnitCell<D> tmpUnitCell;
       bool isSymmetric;
       domain_.fieldIo().readFieldHeader(file, nMonomer,
-                                        domain_.unitCell(),
-                                        isSymmetric);
+                                        tmpUnitCell, isSymmetric);
       file.close();
-      // Note: FieldIo<D>::readFieldHeader computes WaveList minimum
-      // images and initializes the Basis if needed.
-
-      // Clear unit cell data in waveList and mixture
-      domain_.waveList().clearUnitCellData();
-      mixture_.clearUnitCellData();
+      // Note: FieldIo<D>::readFieldHeader makes basis if needed
 
       // Postconditions
       UTIL_CHECK(mixture_.nMonomer() == nMonomer);
-      UTIL_CHECK(domain_.unitCell().nParameter() > 0);
-      UTIL_CHECK(domain_.unitCell().lattice() != UnitCell<D>::Null);
-      UTIL_CHECK(domain_.unitCell().isInitialized());
       if (domain_.hasGroup()) {
          UTIL_CHECK(domain_.basis().isInitialized());
-         UTIL_CHECK(domain_.basis().nBasis() > 0);
          if (!isAllocatedBasis_) {
             allocateFieldsBasis();
          }
