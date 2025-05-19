@@ -18,78 +18,50 @@ Design choices / conventions:
 
    (3) In Pscf::Cpc CPU code, use double and fftw_complex as basic types
 
-   (4) In Pscf::Cpg GPU code use the cudaReal, cudaComplex, hostReal and 
-   hostComplex typedefs defined in the GpuTypes.h file
+   (4) In Pscf::Cpg GPU code use the cudaReal and cudaComplex as defined
+   in the prdc/cuda/types.h file. 
 
-   (5) In Pscf::Cpg namespace, allow "using namespace Pscf::Prdc", so 
-   that Prdc is not needed as a class name qualifier, but use explicit Cpu
-   and Cuda qualifiers for classes defined in Prdc::Cpu and Prdc::Gpu
-   (e.g., RField, RFieldDft, CField, and FFT).
-
-   Rationale:: The complex GPU code may need to use both real and complex 
-   fields defined on the CPU, e.g., for file IO, as well as fields defined 
-   on the GPU for fast computation. Analogous RField, RFieldDft and CField
-   classes with data on CPU and GPU are (or will be) defined in these 
-   subnamespaces, and so these different classes with the same names need 
-   to be distinguished by a namespace qualifier in any code that might 
-   need to use both sets of classes. 
+   (5) In Pscf::Cpg namespace, allow "using namespace Pscf::Prdc" and
+   "using namespace Pscf::Prdc::Cuda", so that classes defined in Prdc::Cuda
+   are used by default (e.g., for RField, RFieldDft, CField, and FFT), but
+   but allow use of explicity Cpu:: qualifier to specify use of classes 
+   defined in Prdc::Cpu.
 
 Programming tasks:
 ==================
 
-In namespaces Pscf::Prdc::Cpu and Pscf::Prdc::Cuda
+In namespaces Prdc::Cpu and Prdc::Cuda :
 
-  - Create class CField 
+  - Create class CField  (Done)
 
-  - Create class CFieldComparison
+  - Create class CFieldComparison (Done)
 
-  - Add complex transform functions to FFT classes in both namespaces
+  - Add complex transform functions to FFT classes (Done)
 
-In namespaces Pscf::Cpc and Pscf::Cpg
+  - Add complex.h files to define functions for basic arithmetic
+    operations for both type so of complex number (done)
 
-  - Create class FieldIo (functions for both complex and real fields).
-    Note: This will be not have any functions involving a basis, which
-    will simplify things considerably.
+In namespace Prdc:
 
-  - Create class Domain (Mesh, UnitCell, FFT, FieldIo, no symmetry).
-    Note: Absence of Basis, SpaceGroup, groupName etc. is a simplification.
+  - In prdc/field create class template FieldIoComplex as base class
+    for FieldIo classes in Pscf::Cpc and Pscf::Cpg
 
-In namespace Pscf, get ready to do complex arithmetic operations:
+  - In prdc/field create class template DomainComplex as base class for
+    for Domain classes in Psf::Cpc and Pscf::Cpg.  These classes will not
+    contain Basis, SpaceGroup, group Name etc. 
 
-  - Overload +, -, *, / operators for fftw_complex as standalone
-    functions defined in Pscf.
+Solvers:
 
-    Note:: fftw_complex is a typdef for double[2]
+  - In pscf/chem, turn Species, SolventSpecies and PolymerSpecies classes 
+    into templates with template type parameter WType (type of w field)
 
-  - Overload +, -, *, / operators for cufftDoubleComplex, cufftComplex.
+  - Modify solver template classes (PropagatorTmpl, BlockTmpl)
 
-    Note:: cuffDoubleComplex is a typdef for a cuComplex, which is a
-    struct { double x; double y}, so these definitions are distinct
-    from those used for fftw_complex
+  - In Cpc and Cpg, create Propagator and Block classes
 
-  - Problem: We can't overload assignment = operator for a non-class
-    type. The complex type is an array type rather than a class.
+  - In Cpc and Cpg, create Polymer and Mixture classes (almost unchanged)
 
-  - Come back to this. I can't tell if inability to do assignment is
-    fatal. Could definition of a Complex class with automatic conversion
-    help?
+  - Create an appropriate Interaction class (nonlocal by default)
 
-In namespaces Pscf:Cpc  and Pscf::Cpg
+  - Create System (Mixture, Interaction, Step) with built-in CL sampling
 
-  - Create solver classes (Propagator, Block, Polymer, Solvent, Mixture)
-
-  - Create and appropriate Interaction class (nonlocal by default)
-
-  - Create System (Mixture, Interaction, Step)
-
-  - Create Complex Langevin Step base class, factory and default class
-
-Possible later extensions:
-
-  - We could later implement SCFT with no symmetry constraints (add 
-    Iterator)
-
-  - We could eventually reimplement perturbation theory in these complex
-    codes. This functionality requires solution of complex MDE, so this
-    would be the natural place for this.
-   

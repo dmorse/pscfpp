@@ -3,78 +3,136 @@ Problem:
 
    How to modify classes in pscf/chem and pscf/solvers to allow
    subclasses to do complex Langevin sampling. This will require
-   introduction of type WType and redefining some variables that
-   are currently double to WType.
+   introduction of type WT or WType and redefining some variables 
+   that are currently double to WType.
 
 Strategy:
 
    Input value of phi or mu should still be real
+
    All internal values of phi or mu should become complex, 
        along with w, c and q fields
 
 Directory pscf/chem:
+=====================
 
-   Monomer (kuhn_ remains real)  - unchanged
+   class Monomer (kuhn_ remains real)  - unchanged
 
-   PolymerType (enumeration) unchanged
+   enumeration PolymerType (enumeration) unchanged
 
-   BlockDescriptor - unchanged
+   class Edge - unchanged
 
-   Species: Make a template of type WT, default to double
+   class Vertex - unchanged
 
-      - q is computed and set by a subclass -> WT
-      - Do we have to convert both mu and phi to type WT
+   class EdgeIterator - unchanged
 
-      Is the input parameter real ?
-      Is it read as a complex or real parameter ?
+   class VertexIterator - unchanged
 
-      Proposal:
+   class Species: Make a template of type WType, default to double
 
-         Define new inputPhiMu_ to be real and private
-         Make phi_, mu_, q_ and ensemble private
-         Protected member function readPhiMu:
-            Read inputPhiMu_, set ensemble and values accordingly
-         Protected member function writePhiMu:
-         Protected member function setQ:
-            Sets private member q_ and variable (phi_ or mu_) 
+      - Make member variables q_, phi_, and mu_ type WType
 
-   SolventDescriptor: 
+      - Create a new private variable double phiMu_, read this
+        in Species::readParameters.
+  
+        bool hasPhi = readOptional(in, "phi", inputPhiMu_).isActive();
+        if (hasPhi) { 
+           ensemble = Species::Closed; 
+           assign(phi_, phiMu_);
+        } else {
+           read(in, "mu", inputPhiMu_);
+           assign(phi_, phiMu_);
+        }
+
+      - Make assign(WType lhs, double rhs) a pure virtual function
+
+      - Change setPhi(double phi) and setMu(double Mu) to set
+        phiMu_ as well as phi_ or mu_, using assign function
+
+      - Add extern template declaration to Species.h for WT=double
+
+      - Compile double type in pscf/chem/SolventSpecies.cpp
+
+      - Compile complex types in cpc and cpg
+
+   class SolventSpecies: 
 
       Make this class a template of type WT, default to double.
-      No need to compile - just inherit this into Solvent, compile that.
+
+      No class member variables need to be changed to complex.
+      No changes to class implementation appear to be necessary.
+
+      - Add extern template declaration to Species.h for WT=double
+
+      - Compile double types in pscf/chem/SolventSpecies.cpp
+
+      - Compile complex types in cpc/ and cpg/
        
+   class PolymerSpecies: 
+
+      Make this class a template of type WT, default to double.
+
+      No class member variables need to be changed to complex.
+      No changes to class implementation appear to be necessary.
+
+      - Add extern template declaration to Species.h for WT=double
+
+      - Compile double types in pscf/chem/SolventSpecies.cpp
+
+      - Compile complex types in cpc/ and cpg/
+
 Directory pscf/solver (templates): 
+==================================
 
-   PropagatorTmpl<TP> : Unchanged code, modified concept
+   template <class TP> class Propagator 
+   ------------------------------------
 
-      Require concrete Propagator class TP to define a typedef WType
-      WType will be a double by default, complex for complex Langevin
+      None of the current private variables of this class template are
+      type double, and none need to be generalized to WType
 
-   template <class TP>
-   class BlockTmpl : public BlockDescriptor
+      Require concrete Propagator class to define a single typedef Field
 
-      Consider removing CField, WField typedefs - not used in template
+
+   template <class TP> class BlockTmpl : public Edge
+   -------------------------------------------------
+
+      Largely unchanged
+
+      Remove CField, WField typedefs - not needed in template
+
       Keep Block::Propagator, however, because this is used in PolymerTmpl
+
+      Private member variable (all unchanged):
+
+          Pair<Propagator> propagators_;
+          typename Propagator::Field cField;
+          double kuhn_;
+
+      typename TP::Field cField_
    
-   template <class Block> 
-   class PolymerTmpl : public Species
+   template <class Block, typename WType = double>
+   class PolymerTmpl : public PolymerSpecies<WType>
+   ---------------------------------------------------
 
-      typedef Propagator::WType WType;
+      Make WT an additional template parameter
 
-      In solve():
-         Call Species<WType>::setQ to set q, phi, mu
-         Change prefactor to WType;
+      typedef WT WType;
 
-   template <class TP, class TS>
-   class MixtureTmpl : public ParamComposite - > unchanged
+      Private member variable:
 
-Plan:
+          DArray<Block> blocks_
 
-   1) Convert Species to more private variables, without changing to template
-      Change all code that accesses phi_, mu_, q_ directly in PolymerTmpl,
-      Polymer, SolventDescriptor and Solvent
+      Proposal:
+      
+           Remove declaration and definition of the solve(double phiTot)
+           function and declare this in subclass.
 
-   2) Convert SolventDescriptor to make it more private, without changing to
-      a template.
+      Rationale: Why not define solve() in this template?
 
-   3) Change Species and SolventDescriptor to templates with default double
+          1) The interface involves a parameter phiTot that I wouldn't 
+          want to include in a complex Langevin sampling code.
+
+          2) The implementation includes a ratio Q = Q/phiTot for which
+          the operator can't be overloaded, forcing different 
+          implementations just for this one operation.
+
