@@ -209,6 +209,13 @@ namespace Pscf
       /// Array of Block objects in this polymer.
       DArray<Block> blocks_;
 
+      /**
+      * Check validity of internal data structures.
+      *
+      * An Exception is thrown if any error is detected.
+      */
+      void isValid();
+
    };
 
    // Inline functions
@@ -292,14 +299,23 @@ namespace Pscf
    PolymerTmpl<Block>::~PolymerTmpl()
    {}
 
+   /*
+   * Allocate blocks array.
+   */
    template <class Block>
    void PolymerTmpl<Block>::allocateBlocks()
    {  blocks_.allocate(nBlock()); }
 
+   /*
+   * Read blocks array from parameter file.
+   */
    template <class Block>
    void PolymerTmpl<Block>::readBlocks(std::istream& in)
    {  readDArray<Block>(in, "blocks", blocks_, nBlock()); }
 
+   /*
+   * Read parameter file block.
+   */
    template <class Block>
    void PolymerTmpl<Block>::readParameters(std::istream& in)
    {
@@ -353,6 +369,37 @@ namespace Pscf
 
          } // end loop over forwardId (propagator direction id)
       } // end loop over blockId 
+
+      // Check validity - throw Exception if error detected
+      isValid();
+   }
+
+   template <class Block>
+   void PolymerTmpl<Block>::isValid()
+   {
+      Vertex const * v0Ptr = nullptr;
+      Vertex const * v1Ptr = nullptr;
+      Propagator const * p0Ptr = nullptr;
+      Propagator const * p1Ptr = nullptr;
+      int bId, v0Id, v1Id;
+
+      // Check propagator context properties
+      for (bId = 0; bId < nBlock(); ++bId) {
+         v0Id = block(bId).vertexId(0);
+         v1Id = block(bId).vertexId(1);
+         UTIL_CHECK(v0Id >= 0 && v0Id < nVertex());
+         UTIL_CHECK(v1Id >= 0 && v1Id < nVertex());
+         UTIL_CHECK(v0Id != v1Id);
+         v0Ptr = &vertex(v0Id);
+         v1Ptr = &vertex(v1Id);
+         p0Ptr = &(block(bId).propagator(0));
+         p1Ptr = &(block(bId).propagator(1));
+         UTIL_CHECK(p0Ptr->nSource() == (v0Ptr->size() - 1));
+         UTIL_CHECK(p1Ptr->nSource() == (v1Ptr->size() - 1));
+         UTIL_CHECK(p0Ptr->isHeadEnd() == p1Ptr->isTailEnd());
+         UTIL_CHECK(p0Ptr->isHeadEnd() == (v0Ptr->size() == 1));
+         UTIL_CHECK(p1Ptr->isHeadEnd() == (v1Ptr->size() == 1));
+      }
 
    }
 

@@ -325,7 +325,7 @@ namespace Pscf
    }
 
    /*
-   * Check consistency of data structures.
+   * Check consistency of internal data structures.
    */
    void PolymerSpecies::isValid()
    {
