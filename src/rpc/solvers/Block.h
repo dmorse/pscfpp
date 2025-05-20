@@ -96,10 +96,9 @@ namespace Rpc {
       * rule for integration with respect to the contour variable s to
       * compute monomer concentration fields and stress contributions.
       * 
-      * For the bead model, if PolymerModel::isThread() is true, the
-      * value of ns is given by nBead (the number of beads owned by the
-      * block) plus one for each terminal vertex bead that this block 
-      * does not own. 
+      * For the bead model, if PolymerModel::isThread() is true, the value
+      * of ns is given by nBead (the number of beads owned by the block)
+      * plus 2 for the two dangling ends.
       *
       * The value of input parameter ds is ignored for the bead model.
       *
@@ -172,6 +171,16 @@ namespace Rpc {
       void stepBead(RField<D> const & qin, RField<D>& qout);
 
       /**
+      * Apply the exponential field operator for the bead model. 
+      *
+      * This function applies exp( -w(r) ), where w(r) is the w-field for
+      * the monomer type of this block. 
+      *
+      * \param q  slice of propagator q, modified in place
+      */
+      void stepFieldBead(RField<D> & q);
+
+      /**
       * Apply a bond operator for the bead model. 
       *
       * This function applies exp( nabla^2 b^2 / 6 ), where nabla^2
@@ -184,14 +193,17 @@ namespace Rpc {
       void stepBondBead(RField<D> const & qin, RField<D>& qout);
 
       /**
-      * Apply the exponential field operator for the bead model. 
+      * Apply a half-bond operator for the bead model. 
       *
-      * This function applies exp( -w(r) ), where w(r) is the w-field for
-      * the monomer type of this block. 
+      * This function applies exp( nabla^2 b^2 / 12 ), where nabla^2
+      * denotes a Laplacian operator with eigenvalues given by -G^2 for
+      * reciprocal lattice vectors. It is used in the Propagator::solve
+      * function to deal with half-bonds at block ends.
       *
-      * \param q  slice of propagator q, modified in place
+      * \param qin  input slice of q, from step i
+      * \param qout  ouptut slice of q, for step i+1
       */
-      void stepFieldBead(RField<D> & q);
+      void stepHalfBondBead(RField<D> const & qin, RField<D>& qout);
 
       /**
       * Compute the concentration for this block, for the thread model.
@@ -238,32 +250,11 @@ namespace Rpc {
       * where \f$ q_{0}(r,s) \f$ and \f$ q_{1}(r, N-s) \f$ denote
       * complementary propagator slices associated with different  
       * directions but the same bead, and \f$ p \f$ is the prefactor 
-      * parameter. The sum is taken over all beads that are owned by this 
-      * block. 
+      * parameter. The sum is taken over all beads in this block. 
       *
       * \param prefactor  constant multiplying sum over beads
       */
       void computeConcentrationBead(double prefactor);
-
-      /**
-      * Compute the spatial average of a product used to compute Q.
-      *
-      * This function computes the spatial average of the product 
-      * q0[i]*q1[i], where q0 and q1 and are complementary propagator 
-      * slices, and i is a spatial mesh rank.
-      */
-      double averageProduct(RField<D> const& q0, RField<D> const& q1);
-
-      /**
-      * Compute the spatial average of a product used by the bead model.
-      *
-      * This computes the spatial average of the product 
-      * q0[i]*q1[i]*exp(W[i]), where q0 and q1 and are complementary 
-      * propagator slices for a bead model, and i is mesh rank. This 
-      * is used in the bead model to compute Q from propagator slices 
-      * associated with a bead that is owned by the propagator.
-      */
-      double averageProductBead(RField<D> const& q0, RField<D> const& q1);
 
       /**
       * Compute stress contribution for this block, using thread model.
@@ -305,16 +296,14 @@ namespace Rpc {
       /**
       * Get the number of contour grid points, including end points.
       *
-      * Bead model: For the bead model, ns is equal to nBead plus the 
-      * number of vertex beads that this block does not own, because the 
-      * end-points of the mesh always correspond to the terminating beads, 
-      * whichever block they are part of.
-      * 
       * Thread mdoel: For the thread model, ns is always an odd number 
-      * ns >= 3 chosen to give an even number of steps of length 
-      * ds = length()/(ns() - 1) as close as possible to the target value 
-      * of ds passed to the allocate function.
+      * ns >= 3 chosen to give an even number ns - 1 of steps of with
+      * a step length ds = length/(ns - 1) as close as possible to the
+      * target value of ds passed to the allocate function.
       *
+      * Bead model: For the bead model, ns is equal to nBead + 2, so as
+      * to include slices for all beads and two dangling ends. Beads are
+      * indexed 1, ..., ns - 2.
       */
       int ns() const;
 
@@ -333,7 +322,6 @@ namespace Rpc {
       using Edge::monomerId;
       using Edge::vertexIds;
       using Edge::vertexId;
-      using Edge::ownsVertex;
       using Edge::length;
       using Edge::nBead;
 

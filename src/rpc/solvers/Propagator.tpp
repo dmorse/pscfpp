@@ -88,50 +88,45 @@ namespace Rpc {
    * Compute initial head QField for the thread model.
    */
    template <int D>
-   void Propagator<D>::computeHeadThread()
+   void Propagator<D>::computeHead()
    {
       UTIL_CHECK(meshPtr_);
+      int nx = meshPtr_->size();
 
       // Reference to head of this propagator
       QField& qh = qFields_[0];
 
       // Initialize qh field to 1.0 at all grid points
-      int ix;
-      int nx = meshPtr_->size();
-      for (ix = 0; ix < nx; ++ix) {
+      for (int ix = 0; ix < nx; ++ix) {
          qh[ix] = 1.0;
       }
 
-      // Pointwise multiply tail QFields of all sources
-      for (int is = 0; is < nSource(); ++is) {
-         if (!source(is).isSolved()) {
-            UTIL_THROW("Source not solved in computeHead");
-         }
-         QField const& qt = source(is).tail();
-         for (ix = 0; ix < nx; ++ix) {
-            qh[ix] *= qt[ix];
+      if (!isHeadEnd()) {
+         // Pointwise multiply tail QFields of all sources
+         for (int is = 0; is < nSource(); ++is) {
+            if (!source(is).isSolved()) {
+               UTIL_THROW("Source not solved in computeHead");
+            }
+            QField const& qt = source(is).tail();
+            for (int ix = 0; ix < nx; ++ix) {
+               qh[ix] *= qt[ix];
+            }
          }
       }
+
    }
 
    /*
    * Compute initial head QField for the bead model.
    */
    template <int D>
-   void Propagator<D>::computeHeadBead()
+   void Propagator<D>::assign(QField& lhs, QField const & rhs)
    {
-      UTIL_CHECK(blockPtr_);
-      UTIL_CHECK(PolymerModel::isBead());
-
-      // Set head slice to product of source tail slices
-      computeHeadThread();
-
-      // If propagator owns the head vertex, apply the bead field weight
-      if (ownsHead()) {
-         QField& qh = qFields_[0]; // Head slice of this propagator
-         block().stepFieldBead(qh);
+      int nx = lhs.capacity();
+      UTIL_CHECK(rhs.capacity() == nx);
+      for (int ix = 0; ix < nx; ++ix) {
+          lhs[ix] = rhs[ix];
       }
-
    }
 
    /*
@@ -142,10 +137,11 @@ namespace Rpc {
    {
       UTIL_CHECK(blockPtr_);
       UTIL_CHECK(isAllocated());
-      if (PolymerModel::isThread()) {
 
-         // Initialize head as pointwise product of source propagators
-         computeHeadThread();
+      // Initialize head as pointwise product of source propagators
+      computeHead();
+
+      if (PolymerModel::isThread()) {
 
          // MDE step loop for thread model
          for (int iStep = 0; iStep < ns_ - 1; ++iStep) {
@@ -155,29 +151,30 @@ namespace Rpc {
       } else 
       if (PolymerModel::isBead()) {
 
-         // Initialize head slice, starting with product of sources
-         computeHeadBead();
+         if (isHeadEnd()) {
+            assign(qFields_[1], qFields_[0]);
+         } else {
+            block().stepHalfBondBead(qFields_[0], qFields_[1]);
+         }
+         block().stepFieldBead(qFields_[1]);
 
          // MDE step loop for bead model (stop before tail vertex)
          int iStep;
-         for (iStep = 0; iStep < ns_ - 2; ++iStep) {
+         for (iStep = 1; iStep < ns_ - 2; ++iStep) {
             block().stepBead(qFields_[iStep], qFields_[iStep + 1]);
          }
 
-         // Compute q for the tail vertex
-         iStep = ns_ - 2;
-         if (ownsTail()) {
-            // Full step, including bead weight for tail vertex
-            block().stepBead(qFields_[iStep], qFields_[iStep + 1]);
+         if (isTailEnd()) {
+            assign(qFields_[ns_-1], qFields_[ns_-2]);
          } else {
-            // Bond operator, excluding bead weight for tail vertex
-            block().stepBondBead(qFields_[iStep], qFields_[iStep + 1]);
+            block().stepHalfBondBead(qFields_[ns_-2], qFields_[ns_-1]);
          }
 
       } else {
          // This should be impossible
          UTIL_THROW("Unexpected PolymerModel type");
       }
+
       setIsSolved(true);
    }
 
@@ -198,7 +195,6 @@ namespace Rpc {
          qh[i] = head[i];
       }
 
-      // Loop over steps to solve
       if (PolymerModel::isThread()) {
 
          // MDE step loop for thread model
@@ -209,20 +205,24 @@ namespace Rpc {
       } else 
       if (PolymerModel::isBead()) {
 
-         // MDE step loop for bead model (step before the tail vertex)
+         // Half-bond for head
+         if (isHeadEnd()) {
+            assign(qFields_[1], qFields_[0]);
+         } else {
+            block().stepHalfBondBead(qFields_[0], qFields_[1]);
+         }
+
+         // MDE step loop for bead model (stop before tail vertex)
          int iStep;
-         for (iStep = 0; iStep < ns_ - 2; ++iStep) {
+         for (iStep = 1; iStep < ns_ - 2; ++iStep) {
             block().stepBead(qFields_[iStep], qFields_[iStep + 1]);
          }
 
-         // Compute q for the tail vertex
-         iStep = ns_ - 2;
-         if (ownsTail()) {
-            // Include bead weight exp(W[i]*ds) for tail vertex
-            block().stepBead(qFields_[iStep], qFields_[iStep + 1]);
+         // Half-bond for tail
+         if (isTailEnd()) {
+            assign(qFields_[ns_-1], qFields_[ns_-2]);
          } else {
-            // Exclude bead weight for tail vertex
-            block().stepBondBead(qFields_[iStep], qFields_[iStep + 1]);
+            block().stepHalfBondBead(qFields_[ns_-2], qFields_[ns_-1]);
          }
 
       } else {
@@ -249,28 +249,26 @@ namespace Rpc {
       if (!partner().isSolved()) {
          UTIL_THROW("Partner propagator is not solved");
       }
-      UTIL_CHECK(blockPtr_);
+      UTIL_CHECK(isHeadEnd() == partner().isTailEnd());
       UTIL_CHECK(meshPtr_);
-
-      QField const& qh = head();
-      QField const& qt = partner().tail();
       int nx = meshPtr_->size();
-      UTIL_CHECK(nx == qh.capacity());
-      UTIL_CHECK(nx == qt.capacity());
 
-      // Compute average product of head slice and partner tail slice
-      double Q = 1.0;
-      if (PolymerModel::isThread()) {
-         Q = block().averageProduct(qh, qt);
+      double Q = 0.0;
+      if (PolymerModel::isBead() && isHeadEnd()) {
+         // Compute average of q for last bead of partner
+         QField const& qt = partner().q(ns_-2);
+         for (int ix = 0; ix < nx; ++ix) {
+            Q += qt[ix];
+         }
       } else {
-         UTIL_CHECK(ownsHead() == partner().ownsTail());
-         if (ownsHead()) {
-            Q = block().averageProductBead(qh, qt);
-         } else {
-            Q = block().averageProduct(qh, qt);
+         // Compute average product of head slice and partner tail slice
+         QField const& qh = head();
+         QField const& qt = partner().tail();
+         for (int ix = 0; ix < nx; ++ix) {
+            Q += qh[ix]*qt[ix];
          }
       }
-
+      Q /= double(nx);
       return Q;
    }
 

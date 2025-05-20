@@ -209,29 +209,8 @@ namespace Rpc {
       using PropagatorTmpl< Propagator<D> >::setIsSolved;
       using PropagatorTmpl< Propagator<D> >::isSolved;
       using PropagatorTmpl< Propagator<D> >::hasPartner;
-      using PropagatorTmpl< Propagator<D> >::ownsHead;
-      using PropagatorTmpl< Propagator<D> >::ownsTail;
-
-   protected:
-
-      /**
-      * Compute initial QField at head for the thread model. 
-      * 
-      * In the thread model, the head slice of each propagator is the 
-      * product of tail slices for incoming propagators from other bonds 
-      * that terminate at the head vertex.
-      */
-      void computeHeadThread();
-
-      /**
-      * Compute initial QField at head for the bead model. 
-      *
-      * In the bond model, the head slice for each propagator is given
-      * by the product of tails slices for source propagators, times an
-      * additional bond weight exp(-W(r)*ds) if this propagator owns the 
-      * head vertex bead.
-      */
-      void computeHeadBead();
+      using PropagatorTmpl< Propagator<D> >::isHeadEnd;
+      using PropagatorTmpl< Propagator<D> >::isTailEnd;
 
    private:
      
@@ -253,6 +232,20 @@ namespace Rpc {
       /// Is this propagator allocated?
       bool isAllocated_;
 
+      /**
+      * Compute initial QField at head.
+      * 
+      * In either model, the head slice of each propagator is the product
+      * of tail slices for incoming propagators from other bonds that
+      * terminate at the head vertex.
+      */
+      void computeHead();
+
+      /**
+      * Assign one slice to another (RHS = LHS).
+      */
+      void assign(QField& lhs, QField const & rhs);
+
    };
 
    // Inline member functions
@@ -266,12 +259,15 @@ namespace Rpc {
    {  return qFields_[0]; }
 
    /*
-   * Return q-field at end of block, after solution.
+   * Return q-field at end of block.
    */
    template <int D>
    inline 
    typename Propagator<D>::QField const& Propagator<D>::tail() const
-   {  return qFields_[ns_-1]; }
+   {
+      UTIL_CHECK(PolymerModel::isThread() || !isTailEnd());
+      return qFields_[ns_-1]; 
+   }
 
    /*
    * Return q-field at specified step.

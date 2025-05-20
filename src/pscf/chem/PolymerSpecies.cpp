@@ -8,7 +8,6 @@
 #include "PolymerSpecies.h"
 
 #include <pscf/chem/Edge.h>  
-
 #include <util/containers/GArray.h>
 #include <util/containers/FArray.h>
 #include <util/containers/DMatrix.h>
@@ -63,28 +62,16 @@ namespace Pscf
          edge(edgeId).setPolymerType(type_);
       }
 
-      // Set all vertex ids
+      // Set sequential ids for all vertices
       for (int vertexId = 0; vertexId < nVertex_; ++vertexId) {
          vertices_[vertexId].setId(vertexId);
       }
 
-      // If polymer is linear polymer, set all block vertex Ids:
+      // If this is a linear polymer, set all block vertex Ids:
       if (type_ == PolymerType::Linear) {
          // In a linear chain, block i connects vertices i and i+1.
          for (int blockId = 0; blockId < nBlock_; ++blockId) {
             edge(blockId).setVertexIds(blockId, blockId + 1);
-         }
-         if (PolymerModel::isBead()) {
-            // For bead model, set vertex ownership. For a linear chain:
-            //    - block i owns vertex i+1.
-            //    - block i owns vertex i iff i == 0.
-            bool own0, own1;
-            for (int blockId = 0; blockId < nBlock_; ++blockId) {
-               own1 = true;
-               own0 = false;
-               if (blockId == 0) own0 = true;
-               edge(blockId).setVertexOwnership(own0, own1);
-            }
          }
       }
 

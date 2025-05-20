@@ -27,7 +27,7 @@ namespace Pscf
    /**
    * Template for an MDE solver and descriptor for a block polymer.
    *
-   * A PolymerTmpl<Block> object has an array of Block objects, as well 
+   * A PolymerTmpl<Block> object has an array of Block objects, as well
    * as an array of Vertex objects inherited from the PolymerSpecies base
    * class.  Each Block has two Propagator MDE solver objects associated
    * with the two directions along each block.
@@ -36,8 +36,8 @@ namespace Pscf
    * (MDE) for all propagators in the molecule (i.e., all blocks, in both
    * directions) in a pre-defined order.
    *
-   * Each implementation-level sub-namespace of Pscf contains a class 
-   * named Block that is derived from Pscf::Edge, and a class named 
+   * Each implementation-level sub-namespace of Pscf contains a class
+   * named Block that is derived from Pscf::Edge, and a class named
    * Polymer that is derived from PolymerTmpl<Block>.
    *
    * \ingroup Pscf_Solver_Module
@@ -90,15 +90,15 @@ namespace Pscf
       * of PolymerTmpl<Block> that is named Polymer by convention. Each
       * such Polymer class defines a function named "compute" that takes
       * an array of chemical fields (w-fields) as an argument, and that
-      * calls PolymerTmpl<Block>::solve internally.  Before calling the 
-      * solve() function declared here, the Polymer::compute() function 
-      * must pass the w-fields and any other required mutable data to all 
-      * Block objects in order to set up the MDE solver for each block. 
-      * After calling the solve() function, the Polymer::compute function 
-      * must also compute monomer concentrations for all blocks, each of 
+      * calls PolymerTmpl<Block>::solve internally.  Before calling the
+      * solve() function declared here, the Polymer::compute() function
+      * must pass the w-fields and any other required mutable data to all
+      * Block objects in order to set up the MDE solver for each block.
+      * After calling the solve() function, the Polymer::compute function
+      * must also compute monomer concentrations for all blocks, each of
       * which is stored in a field container owned by the associated Block.
       *
-      * The optional parameter phiTot is only relevant to problems 
+      * The optional parameter phiTot is only relevant to problems
       * involving a Mask that excludes material from part of the unit
       * cell, as done to define thin film problems.
       *
@@ -304,94 +304,55 @@ namespace Pscf
    void PolymerTmpl<Block>::readParameters(std::istream& in)
    {
 
+      // Call base class method
       PolymerSpecies::readParameters(in);
 
-      // Set sources for all propagators
-      Vertex const * vertexPtr = 0;
-      Propagator const * sourcePtr = 0;
-      Propagator * propagatorPtr = 0;
+      Vertex const * headPtr = nullptr;
+      Vertex const * tailPtr = nullptr;
+      Propagator const * sourcePtr = nullptr;
+      Propagator * propagatorPtr = nullptr;
       Pair<int> propId;
-      int blockId, directionId, vertexId, i;
+      int blockId, forwardId, reverseId, headId, tailId, i;
+      bool isHeadEnd, isTailEnd;
+
+      // Set sources and end flags for all propagators
       for (blockId = 0; blockId < nBlock(); ++blockId) {
-         // Add sources
-         for (directionId = 0; directionId < 2; ++directionId) {
-            vertexId = block(blockId).vertexId(directionId);
-            vertexPtr = &vertex(vertexId);
-            propagatorPtr = &block(blockId).propagator(directionId);
-            for (i = 0; i < vertexPtr->size(); ++i) {
-               propId = vertexPtr->inPropagatorId(i);
+         for (forwardId = 0; forwardId < 2; ++forwardId) {
+
+            propagatorPtr = &block(blockId).propagator(forwardId);
+
+            // Identify head and tail vertices
+            if (forwardId == 0) {
+              reverseId = 1;
+            } else {
+              reverseId = 0;
+            }
+            headId = block(blockId).vertexId(forwardId);
+            tailId = block(blockId).vertexId(reverseId);
+            headPtr = &vertex(headId);
+            tailPtr = &vertex(tailId);
+
+            // Add sources
+            for (i = 0; i < headPtr->size(); ++i) {
+               propId = headPtr->inPropagatorId(i);
                if (propId[0] == blockId) {
-                  UTIL_CHECK(propId[1] != directionId);
+                  UTIL_CHECK(propId[1] != forwardId);
                } else {
                   sourcePtr =
                      &block(propId[0]).propagator(propId[1]);
                   propagatorPtr->addSource(*sourcePtr);
                }
-            } // end loop over inputs to head vertex
-         } // end loop over directionId
-      } // end loop over blockId
-
-      // If using bead model, set propagator vertex ownership
-      Block* blockPtr;
-      if (PolymerModel::isBead()) {
-         bool own0, own1;
-         for (int blockId = 0; blockId < nBlock(); ++blockId) {
-            blockPtr = &(blocks_[blockId]);
-            own0 = blockPtr->ownsVertex(0);
-            own1 = blockPtr->ownsVertex(1);
-            blockPtr->propagator(0).setVertexOwnership(own0, own1);
-            blockPtr->propagator(1).setVertexOwnership(own1, own0);
-         }
-      }
-
-      // If using bead model, check ownership of vertex beads
-      if (PolymerModel::isBead()) {
-         int vSize, ib, id, nOwner;
-         Pair<int> propId;
-
-         // Loop over vertices
-         for (int vertexId = 0; vertexId < nVertex(); ++vertexId) {
-            vSize = vertex(vertexId).size();
-
-            // Incoming propagators
-            nOwner = 0;
-            for (int ip = 0; ip < vSize; ++ip) {
-               propId = vertex(vertexId).inPropagatorId(ip);
-               ib = propId[0];
-               id = propId[1];
-               if (block(ib).propagator(id).ownsTail()) {
-                 ++nOwner;
-               }
             }
-            UTIL_CHECK(nOwner == 1);
 
-            // Outgoing propagators
-            nOwner = 0;
-            for (int i = 0; i < vSize; ++i) {
-               propId = vertex(vertexId).outPropagatorId(i);
-               ib = propId[0];
-               id = propId[1];
-               if (block(ib).propagator(id).ownsHead()) {
-                 ++nOwner;
-               }
-            }
-            UTIL_CHECK(nOwner == 1);
+            // Set vertex end flags
+            isHeadEnd = false;
+            isTailEnd = false;
+            if (headPtr->size() == 1) isHeadEnd = true;
+            if (tailPtr->size() == 1) isTailEnd = true;
+            propagatorPtr->setEndFlags(isHeadEnd, isTailEnd);
 
-         } // end loop over vertices
-
-         // Check consistency of block and propagator ownership flags
-         bool own0, own1;
-         for (int blockId = 0; blockId < nBlock(); ++blockId) {
-            blockPtr = &(block(blockId));
-            own0 = blockPtr->ownsVertex(0);
-            own1 = blockPtr->ownsVertex(1);
-            UTIL_CHECK(blockPtr->propagator(0).ownsHead() == own0);
-            UTIL_CHECK(blockPtr->propagator(1).ownsTail() == own0);
-            UTIL_CHECK(blockPtr->propagator(0).ownsTail() == own1);
-            UTIL_CHECK(blockPtr->propagator(1).ownsHead() == own1);
-         }
-
-      } // end if (PolymerModel::isBead())
+         } // end loop over forwardId (propagator direction id)
+      } // end loop over blockId 
 
    }
 

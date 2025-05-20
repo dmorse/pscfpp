@@ -247,19 +247,15 @@ public:
       TEST_ASSERT(polymer.block(1).nBead() == 30);
       TEST_ASSERT(polymer.nBead() == 50);
 
-      // Vertex ownership for a diblock
-      TEST_ASSERT(polymer.block(0).ownsVertex(0));
-      TEST_ASSERT(polymer.block(0).ownsVertex(1));
-      TEST_ASSERT(!polymer.block(1).ownsVertex(0));
-      TEST_ASSERT(polymer.block(1).ownsVertex(1));
-      TEST_ASSERT(polymer.block(0).propagator(0).ownsHead());
-      TEST_ASSERT(polymer.block(0).propagator(0).ownsTail());
-      TEST_ASSERT(polymer.block(0).propagator(1).ownsTail());
-      TEST_ASSERT(polymer.block(0).propagator(1).ownsHead());
-      TEST_ASSERT(!polymer.block(1).propagator(0).ownsHead());
-      TEST_ASSERT(polymer.block(1).propagator(0).ownsTail());
-      TEST_ASSERT(!polymer.block(1).propagator(1).ownsTail());
-      TEST_ASSERT(polymer.block(1).propagator(1).ownsHead());
+      // End flags for a diblock
+      TEST_ASSERT(polymer.block(0).propagator(0).isHeadEnd());
+      TEST_ASSERT(!polymer.block(0).propagator(0).isTailEnd());
+      TEST_ASSERT(!polymer.block(0).propagator(1).isHeadEnd());
+      TEST_ASSERT(polymer.block(0).propagator(1).isTailEnd());
+      TEST_ASSERT(!polymer.block(1).propagator(0).isHeadEnd());
+      TEST_ASSERT(polymer.block(1).propagator(0).isTailEnd());
+      TEST_ASSERT(polymer.block(1).propagator(1).isHeadEnd());
+      TEST_ASSERT(!polymer.block(1).propagator(1).isTailEnd());
 
       Mesh<1> mesh;
       mesh.setDimensions(d);
