@@ -141,48 +141,42 @@ public:
       printMethod(TEST_FUNC);
       PolymerModel::setModel(PolymerModel::Bead); 
 
-      // Define objects
-      Mixture<1> mixture;
-      Mesh<1> mesh;
-      FFT<1> fft;
-      UnitCell<1> unitCell;
-      WaveList<1> wavelist;
-      IntVec<1> d;
-
       // Read parameter block, unit cell and mesh dimensions
       std::ifstream in;
       openInputFile("in/Mixture1d_bead", in);
+      Mixture<1> mixture;
       mixture.readParam(in);
+      UnitCell<1> unitCell;
       in >> unitCell;
+      IntVec<1> d;
       in >> d;
       in.close();
 
-      // Set up objects
+      // Set up associated objects and allocate
+      Mesh<1> mesh;
       mesh.setDimensions(d);
+      FFT<1> fft;
       fft.setup(d);
+      WaveList<1> wavelist;
       wavelist.allocate(mesh, unitCell);
       mixture.associate(mesh, fft, unitCell, wavelist);
       mixture.allocate();
 
-      // Check polymer blocks sizes
+      // Check polymer block sizes
       Polymer<1>& polymer = mixture.polymer(0);
       TEST_ASSERT(polymer.block(0).nBead() == 20);
       TEST_ASSERT(polymer.block(1).nBead() == 30);
       TEST_ASSERT(polymer.nBead() == 50);
 
-      // Vertex ownership for a diblock
-      TEST_ASSERT(polymer.block(0).ownsVertex(0));
-      TEST_ASSERT(polymer.block(0).ownsVertex(1));
-      TEST_ASSERT(!polymer.block(1).ownsVertex(0));
-      TEST_ASSERT(polymer.block(1).ownsVertex(1));
-      TEST_ASSERT(polymer.block(0).propagator(0).ownsHead());
-      TEST_ASSERT(polymer.block(0).propagator(0).ownsTail());
-      TEST_ASSERT(polymer.block(0).propagator(1).ownsTail());
-      TEST_ASSERT(polymer.block(0).propagator(1).ownsHead());
-      TEST_ASSERT(!polymer.block(1).propagator(0).ownsHead());
-      TEST_ASSERT(polymer.block(1).propagator(0).ownsTail());
-      TEST_ASSERT(!polymer.block(1).propagator(1).ownsTail());
-      TEST_ASSERT(polymer.block(1).propagator(1).ownsHead());
+      // Check end flags for a diblock
+      TEST_ASSERT(polymer.block(0).propagator(0).isHeadEnd());
+      TEST_ASSERT(!polymer.block(0).propagator(0).isTailEnd());
+      TEST_ASSERT(!polymer.block(0).propagator(1).isHeadEnd());
+      TEST_ASSERT(polymer.block(0).propagator(1).isTailEnd());
+      TEST_ASSERT(!polymer.block(1).propagator(0).isHeadEnd());
+      TEST_ASSERT(polymer.block(1).propagator(0).isTailEnd());
+      TEST_ASSERT(polymer.block(1).propagator(1).isHeadEnd());
+      TEST_ASSERT(!polymer.block(1).propagator(1).isTailEnd());
 
       // Allocate w and c field arrays
       int nMonomer = mixture.nMonomer();
@@ -210,9 +204,10 @@ public:
       wFields[0] = wFields_h[0];
       wFields[1] = wFields_h[1];
 
+      // Solve MDE
       mixture.compute(wFields, cFields);
 
-      // Test if same Q is obtained from different methods
+      // Test if same Q is obtained from different vertices
       double Q = mixture.polymer(0).propagator(1, 0).computeQ();
       TEST_ASSERT(eq(Q, mixture.polymer(0).propagator(0, 1).computeQ()));
       TEST_ASSERT(eq(Q, mixture.polymer(0).propagator(0, 0).computeQ()));
