@@ -151,6 +151,7 @@ namespace Rpc {
       } else 
       if (PolymerModel::isBead()) {
 
+         // Half-bond and bead weight for first bead
          if (isHeadEnd()) {
             assign(qFields_[1], qFields_[0]);
          } else {
@@ -164,6 +165,7 @@ namespace Rpc {
             block().stepBead(qFields_[iStep], qFields_[iStep + 1]);
          }
 
+         // Half-bond for tail slice
          if (isTailEnd()) {
             assign(qFields_[ns_-1], qFields_[ns_-2]);
          } else {
@@ -205,12 +207,13 @@ namespace Rpc {
       } else 
       if (PolymerModel::isBead()) {
 
-         // Half-bond for head
+         // Half-bond and bead weight for first bead
          if (isHeadEnd()) {
             assign(qFields_[1], qFields_[0]);
          } else {
             block().stepHalfBondBead(qFields_[0], qFields_[1]);
          }
+         block().stepFieldBead(qFields_[1]);
 
          // MDE step loop for bead model (stop before tail vertex)
          int iStep;

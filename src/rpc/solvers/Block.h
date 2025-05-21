@@ -63,10 +63,9 @@ namespace Rpc {
       /**
       * Create permanent associations with related objects.
       *
-      * This function creates associations of this block with the mesh, 
-      * fft, unit cell and wavelist objects by storing the addresses of 
-      * these objects. This function must be called before the
-      * allocate function.
+      * This function creates associations of this block with the Mesh, 
+      * FFT, UnitCell and WaveList objects by storing their addresses.
+      * It must be called before allocate().
       *
       * \param mesh  Mesh<D> object, spatial discretization meth
       * \param fft  FFT<D> object, Fast Fourier Transform 
@@ -97,8 +96,7 @@ namespace Rpc {
       * compute monomer concentration fields and stress contributions.
       * 
       * For the bead model, if PolymerModel::isThread() is true, the value
-      * of ns is given by nBead (the number of beads owned by the block)
-      * plus 2 for the two dangling ends.
+      * of ns is given by nBead + 2.
       *
       * The value of input parameter ds is ignored for the bead model.
       *

@@ -18,6 +18,7 @@ namespace Pscf { template <int D> class Mesh; }
 namespace Pscf { 
 namespace Rpc { 
 
+   // Forward declaration
    template <int D> class Block;
 
    using namespace Util;
@@ -256,7 +257,9 @@ namespace Rpc {
    template <int D>
    inline 
    typename Propagator<D>::QField const& Propagator<D>::head() const
-   {  return qFields_[0]; }
+   {  
+      UTIL_CHECK(isSolved()); 
+      return qFields_[0]; }
 
    /*
    * Return q-field at end of block.
@@ -265,6 +268,7 @@ namespace Rpc {
    inline 
    typename Propagator<D>::QField const& Propagator<D>::tail() const
    {
+      UTIL_CHECK(isSolved()); 
       UTIL_CHECK(PolymerModel::isThread() || !isTailEnd());
       return qFields_[ns_-1]; 
    }
@@ -275,7 +279,10 @@ namespace Rpc {
    template <int D>
    inline 
    typename Propagator<D>::QField const& Propagator<D>::q(int i) const
-   {  return qFields_[i]; }
+   {  
+      UTIL_CHECK(isSolved()); 
+      return qFields_[i]; 
+   }
 
    /*
    * Get the associated Block object.
@@ -304,9 +311,13 @@ namespace Rpc {
    */
    template <int D>
    inline void Propagator<D>::setBlock(Block<D>& block)
-   {  blockPtr_ = &block; }
+   {
+      assert(blockPtr_);  
+      blockPtr_ = &block; 
+   }
 
    #ifndef RPC_PROPAGATOR_TPP
+   // Suppress implicit instantiation
    extern template class Propagator<1>;
    extern template class Propagator<2>;
    extern template class Propagator<3>;
