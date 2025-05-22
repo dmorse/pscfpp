@@ -197,23 +197,19 @@ end-to-end length given by
     \langle |{\bf R}(s) - {\bf R}(s')|^{2} \rangle_{0}
     =  |s-s'| b_{\alpha}^{2} \quad,
 \f]
-in which \f$ b_{\alpha} \f$ is the statistical segment length parameter
-for monomer type \f$ \alpha \f$. In this model, neighboring beads within
-a block of monomer type $\f$ \alpha \f$ are connected by harmonic springs
-with a spring constant \f$ 3 kT / b_{\alpha}^{2} \f$.
+in which \f$ b_{\alpha} \f$ is the statistical segment length for a 
+bond that connects two monomers of type \f$ \alpha \f$. In this model, 
+neighboring beads within a block of monomer type \f$ \alpha \f$ are 
+connected by harmonic springs with a spring constant 
+\f$ 3 kT / b_{\alpha}^{2} \f$.
 
 In the bead model for an incompressible system, every bead is assumed to 
 occupy a volume given by the monomer volume parameter \f$ v \f$, which 
 has the same value for every type of monomer.
 
-By convention, in a linear block polymer in which blocks are labelled with 
-indices that start from one end of the polymer, the bond that connects the 
-last bead of block \f$ i \f$ to the first bead of block \f$ i + 1 \f$ is 
-taken to have a statistical segment length associated with the monomer 
-type of block \f$ i + 1 \f$. 
-
-The implementation of discrete branched polymers in PSCF is discussed on 
-a separate page. 
+The treatment of bonds that connect terminal beads of different blocks 
+to junctions and branch points is discussed in detail
+\ref user_branched_page "elsewhere".
 
 \subsection user_model_continuous_sub Continuous "thread" model
 
@@ -307,9 +303,9 @@ using larger values for the statistical segment length \f$ b \f$ and the
 volume \f$ v \f$ per monomer in the model with fewer models. 
 
 This freedom to change conventions for block lengths becomes 
-particularly obvious in the thread model, which allows the use of
-block lengths that are not integers and that need not be larger than
-1. In this model, we implicitly assume that the number of elementary 
+particularly obvious in the thread model, which allows the use of block 
+lengths that are not integers and that can be defined so as to be less 
+than 1. In this model, we implicitly assume that the number of elementary 
 chemical repeat units in any chain segment of interest is sufficiently 
 large that we may ignore details of chemical structure and characterize 
 positions along a polymer by a real (rather than integer) contour 
@@ -335,12 +331,12 @@ of convention, chain segments of equal contour length but different
 monomer type correspond to the same volume within an incompressible melt. 
 The steric volume of any chain segment of contour length \f$ L \f$ is
 thus given by \f$ v L \f$ , for segments of any monomer type, using
-the same value for the monomer reference volume \f$ v \f$ for blocks
+the same value for the monomer reference volume \f$ v \f$ for segments
 of any monomer type.  The requirement that the same monomer volume 
-per unit contour length be used for all monomer types does not cause 
-any loss of generality in a coarse-grained model, as long as 
-different values may be assigned for the values of the statistical 
-segment lengths of different monomer types.  
+per unit contour length be used for all monomer types does not lead
+to any loss of generality in a coarse-grained model, as long as 
+different values may be assigned for the statistical segment lengths 
+of different monomer types.  
 
 There are two common types of convention for block contour lengths
 used in the thread model, which we refer to here as "experimentalist" 

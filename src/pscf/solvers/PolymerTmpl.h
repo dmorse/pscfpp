@@ -210,7 +210,7 @@ namespace Pscf
       DArray<Block> blocks_;
 
       /**
-      * Check validity of internal data structures.
+      * Check validity of internal data structures set by readParameters.
       *
       * An Exception is thrown if any error is detected.
       */
@@ -320,13 +320,17 @@ namespace Pscf
    void PolymerTmpl<Block>::readParameters(std::istream& in)
    {
 
-      // Call base class method
+      // Call PoymerSpecies base class member function
+      // Initializes PolymerSpecies, and Edge and Vertex components
       PolymerSpecies::readParameters(in);
 
+      // The remainder of this function sets and validates immutable
+      // information about graph topology that is stored by propagators.
+
+      Propagator * propagatorPtr = nullptr;
+      Propagator const * sourcePtr = nullptr;
       Vertex const * headPtr = nullptr;
       Vertex const * tailPtr = nullptr;
-      Propagator const * sourcePtr = nullptr;
-      Propagator * propagatorPtr = nullptr;
       Pair<int> propId;
       int blockId, forwardId, reverseId, headId, tailId, i;
       bool isHeadEnd, isTailEnd;
@@ -345,10 +349,10 @@ namespace Pscf
             }
             headId = block(blockId).vertexId(forwardId);
             tailId = block(blockId).vertexId(reverseId);
-            headPtr = &vertex(headId);
-            tailPtr = &vertex(tailId);
+            headPtr = &vertex(headId);  // pointer to head vertex
+            tailPtr = &vertex(tailId);  // pointer to tail vertex
 
-            // Add sources
+            // Add pointers to source propagators
             for (i = 0; i < headPtr->size(); ++i) {
                propId = headPtr->inPropagatorId(i);
                if (propId[0] == blockId) {
@@ -361,10 +365,8 @@ namespace Pscf
             }
 
             // Set vertex end flags
-            isHeadEnd = false;
-            isTailEnd = false;
-            if (headPtr->size() == 1) isHeadEnd = true;
-            if (tailPtr->size() == 1) isTailEnd = true;
+            isHeadEnd = (headPtr->size() == 1) ? true : false;
+            isTailEnd = (tailPtr->size() == 1) ? true : false;
             propagatorPtr->setEndFlags(isHeadEnd, isTailEnd);
 
          } // end loop over forwardId (propagator direction id)
@@ -374,6 +376,15 @@ namespace Pscf
       isValid();
    }
 
+   /*
+   * Checks validity of propagator data set in readParameters.
+   *
+   * This function only checks validity of Propagator source and end flag
+   * member data that is set in PolymerTmpl<Block>::readParameters. It 
+   * does not check validity of members of PolymerSpecies, Edge, and Vertex
+   * that are set and validated within the PolymerSpecies::readParameters 
+   * base class member function. 
+   */
    template <class Block>
    void PolymerTmpl<Block>::isValid()
    {
@@ -383,7 +394,7 @@ namespace Pscf
       Propagator const * p1Ptr = nullptr;
       int bId, v0Id, v1Id;
 
-      // Check propagator context properties
+      // Loop over blocks
       for (bId = 0; bId < nBlock(); ++bId) {
          v0Id = block(bId).vertexId(0);
          v1Id = block(bId).vertexId(1);
@@ -404,7 +415,7 @@ namespace Pscf
    }
 
    /*
-   * Solve the MDE for all blocks.
+   * Solve the MDE for all blocks of this polymer.
    */
    template <class Block>
    void PolymerTmpl<Block>::solve(double phiTot)

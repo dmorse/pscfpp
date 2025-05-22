@@ -24,9 +24,9 @@ messages when a syntax error is detected.
 
 Every PSCF parameter file consists of a heirarchy of of nested parameter 
 blocks, each of which is delimited by opening and closing curly braces.  
-Each block begins with a line containing a capitalized label for the 
-block followed immediately by an opening curly bracket, and ends with 
-a closing bracket on a line by itself, giving
+Each block begins with a line containing a capitalized label for the block 
+followed immediately by an opening curly bracket, and ends with a 
+closing bracket on a line by itself, giving
 \code
   Label{
      ....
