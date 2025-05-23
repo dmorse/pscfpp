@@ -24,7 +24,7 @@ offloading some parts of the calculation to a GPU.
 
 \code
 System{
-  polymerModel Thread
+  polymerModel thread
   Mixture{
     nMonomer  2
     monomers[
@@ -73,7 +73,7 @@ The format of a parameter file used by pscf_pc or pscf_pg to perform a
 an SCFT calculation is shown in skeleton from below:
 \code
 System{
-  polymerModel*  [enumeration] (allowed values "Thread" or "Bead")
+  polymerModel*   enumeration  ("thread" or "bead", "thread" by default)
   Mixture{ ...  }
   Interaction{ ...  }
   Domain{ ...  }
@@ -86,7 +86,7 @@ calculations, and excludes optional elements that are only relevant to
 PS-FTS calculations. A complete description of the format for the main 
 System block is given \ref rpc_System_page "here". 
 
-<b> polymerModel <\b>: The polymerModel entry is an optional enumeration
+<b> polymerModel </b>: The polymerModel entry is an optional enumeration
 parameter with allowed values of "Thread" and "Bead" that specify global 
 use of either the continuous thread or discrete bead model.  If this 
 parameter is omitted, the thread model is used by default. 

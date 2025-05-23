@@ -1,21 +1,21 @@
-/*! \page user_param_example_page Parameter File - 1D SCFT Example
+/*! \page user_param_example_page Parameter File - Example
 
 \ref user_param_page    (Up) &nbsp; &nbsp; &nbsp; &nbsp;
 \ref user_param_syntax_page (Next)
 <BR>
 
-To illustrate common elements of PSCF parameter files, we start with
-an example.
+To illustrate common elements of PSCF parameter files, we start with a
+simple example of a parameter file for an SCFT calculation.
 
-\section user_param_example_file Example Parameter File
+\section user_param_example_file Example
 
-The text shown below is a complete parameter file for a simple SCFT
-calculation of the structure and free energy of a 1D lamellar phase that
-could be performed using either the pscf_pc or pscf_pg program:
+The text shown below is a complete parameter file for an SCFT calculation
+of a 3D periodic structure with a specified space group symmetry that could 
+be performed using either the pscf_pc or pscf_pg program:
 
 \code
 System{
-  polymerModel  Thread
+  polymerModel  thread
   Mixture{
      nMonomer   2
      monomers[
@@ -26,29 +26,29 @@ System{
      Polymer{
         nBlock  2
         blocks[
-                0   0.5
-                1   0.5
+                0   0.42
+                1   0.58
         ]
-        phi     0.8
+        phi     0.9
      }
      Polymer{
         nBlock  1
         blocks[
-                0   1.0
+                1   1.0
         ]
-        phi     0.2
+        phi     0.1
      }
      ds   0.01
   }
   Interaction{
      chi(
-           0    1    20.0
+           0    1   20.0
      )
   }
   Domain{
-     mesh        40
-     lattice     lamellar
-     groupName   P-1
+     mesh        48  48  48 
+     lattice     cubic
+     groupName   I_a_-3_d
   }
   Iterator{
      epsilon     1.0E-8
@@ -56,28 +56,31 @@ System{
 }
 \endcode
 
-This particular example gives parameters for a calculation of a binary
-mixture of a symmetric AB diblock copolymer with a homopolymer of type
-A in a one-dimensional planar geometry.
+This particular example gives parameters for a three-dimensional 
+calculation for a binary mixture of an AB diblock copolymer with 
+a homopolymer of type B in a periodic cubic unit cell, using the
+space group appropriate for a double gyroid phase.
 
 \section user_param_example_structure_sec File Structure
 
-Before delving into details, consider the overall structure of this
-example: A PSCF parameter file consists of a set nested blocks that are
-delimited by curly brackets, much like the syntax of a C program. Each
-such block may contain parameter entries, which are given as name/value
-pairs, and nested subblocks.  Each parameter file block begins with a
-line that contains a capitalized label for the block (e.g., "System",
-"Mixture", etc.), followed immediately by an opening curly bracket, "{",
-and ends with a matching closing curly bracket on a line by itself.
+Before delving into details, consider the overall structure visible in 
+this example: This or any other PSCF parameter file consists of a set 
+nested blocks that are delimited by curly brackets, much like the syntax 
+of a C program. Each such parameter file block may contain parameter 
+entries, which are given as name/value pairs, and nested subblocks.  
+Each parameter file block begins with a line that contains a capitalized 
+label for the block (e.g., "System", "Mixture", etc.), followed 
+immediately by an opening curly bracket, "{" (with no intervening white
+space), and ends with a matching closing curly bracket on a line by itself.
 Each parameter entry starts with a parameter name, which is usually a
 lower case identifier, followed by a value or an array of values.
 
 The structure of this example is shown in skeleton form below, with the
-contents of subblocks indicated by ellipses:
+the contents of subblocks and the value of the polymerModel parameter
+shown as ellipses:
 \code
 System{
-  polymerModel  [string]
+  polymerModel   ...
   Mixture{
      ...
   }
@@ -95,46 +98,49 @@ System{
 The main block of a PSCF parameter file, which encloses all the data in
 the file, is always labelled "System".
 
-In this example, the first line of the main System block contains a
-name/value pair for a parameter named "polymerModel" which takes a
-string value. This parameter can take values "Thread" or "Bead" to enable
-global use of the continuous thread or discrete bead model for polymer
-conformations, respectively.  The polymerModel parameter is actually
-optional in parameter files for pscf_pc and pscf_pg, however, and would
-default to the thread model if this line were omitted.
+<b> polymerModel </b>: In this example, the first line of the main System 
+block contains a name/value pair for a parameter named "polymerModel". This 
+parameter is an enumeration with only two possible valid values that are
+represented in the parameter file by string values "thread" or "bead".  
+The "thread" and "bead" values enable global use of the continuous thread 
+or discrete bead models for polymer conformations, respectively.  The 
+polymerModel parameter is an optional element in parameter files for 
+pscf_pc and pscf_pg, however, and would default to the thread model if 
+the line containing this parameter entry were omitted.
 
 The remainder of the System block in this example contains a sequence of
-subblocks.  The purposes of data contained in each of these subblocks
+subblocks. The purposes of data contained in each of these subblocks
 is summarized below:
 <ul>
 <li>
-Mixture: The Mixture block contains a description of the chemical
-composition of a system that may contain one or more polymer species
-and zero or more solvent species. This includes a description of the
-structure and composition of each molecular species and a specification
-of either the volume fraction phi or chemical mu of each such species.
-In this example, the Mixture block contains nested two Polymer{ ... }
-subblocks, each of which contains information about one of the two
-polymer species in a binary copolymer/homopolymer mixture.
+<b>Mixture </b>: The Mixture block contains a description of the chemical
+composition of a system that may contain one or more polymer species and 
+zero or more solvent species. This includes a description of the structure 
+and composition of each molecular species and a specification of either 
+the volume fraction phi or chemical mu of each such species.  In this 
+example, the Mixture block contains nested two Polymer{ ... } subblocks, 
+each of which contains information about one of the two polymer species 
+in a binary copolymer/homopolymer mixture.
 </li>
 
 <li>
-Interaction: This Interaction block contains values for Flory-Huggins chi
-parameters that specify the strength of binary thermodynamic interactions
-between monomers of different types.
+<b> Interaction </b>: This Interaction block contains values for binary
+Flory-Huggins chi parameters that specify the strength of thermodynamic 
+interactions between monomers of different types.
 </li>
 
 <li>
-Domain: The domain block contains information about the periodic unit
-cell used for the SCFT calculation. For an SCFT treatment of an periodic
-structure, this normally includes a description of the grid used to
-discretize the unit cell, the lattice type, and the name a space group
+<b> Domain </b>: The domain block contains information about the periodic 
+unit cell used for the SCFT calculation. For an SCFT treatment of a
+periodic structure, this normally includes a description of the grid used 
+to discretize the unit cell, the lattice type, and the name a space group
 for the desired solution.
 </li>
 
 <li>
-Iterator: The Iterator block contains parameters required by an iteration
-algorithm that is used to iteratively solve the nonlinear SCFT equations.
+<b> Iterator </b>: The Iterator block contains parameters required by an 
+iteration algorithm that is used to iteratively solve the nonlinear SCFT 
+equations.
 </li>
 </ul>
 
@@ -153,48 +159,52 @@ the Iterator block is different for different iteration algorithms, and
 the choice of available iteration algorithms is different for all three
 programs.
 
-The structure of a parameter file that is used for some purpose other
-than initializing a single SCFT calculation would generally be somewhat
-different than that shown in this example.  For example, a parameter file
-used to initialize an SCFT parameter sweep would require an additional
-"Sweep" block after the Iterator block, which describes the desired
-\ref scft_param_sweep_page "sequence of states". A parameter file that
-is used to initialize a PS-FTS simulation would generally not contain an
-Iterator or Sweep block, but and would instead contain a "BdSimulator"
-or "McSimulator" block that provides information needed to initialize a
-Brownian dynamics (BD) or Monte Carlo (MC) simulation, respectively.
-PS-FTS simulations are discussed in a \ref psfts_page "separate chapter"
-of this manual.
+The structure of a parameter file that is used for other type of 
+calculation would generally be somewhat differnt than shown here, and 
+might include additional blocks.  For example, a parameter file used to
+initialize an SCFT parameter sweep (rather than a single SCFT calculation) 
+would contain an additional "Sweep" block after the Iterator block to 
+describe the desired \ref scft_param_sweep_page "sequence of states". 
+A parameter file that is used to initialize a PS-FTS simulation would 
+generally not contain an Iterator or Sweep block, but and would instead 
+have a "BdSimulator" or "McSimulator" block that contains information 
+needed to initialize a Brownian dynamics (BD) or Monte Carlo (MC) 
+simulation, respectively. Parameter file formats for PS-FTS simulations 
+are discussed in a \ref psfts_page "separate chapter" of this manual.
 
 \section user_param_example_elements_sec Parameters
 
-We now consider the form of parameter entries in any PSCF parameter
-file.  Each parameter entry starts with a label that indicates the name
-of the parameter followed by a representation of the parameter value.
+We now consider the form of parameter entries in PSCF parameter file.  
+Each parameter entry starts with a label that indicates the name of the 
+parameter followed by a representation of the parameter value.
 Several types of parameters may be present:
 
 <b> Single Parameters </b>: Each entry for a single parameter is a
-single line containing a label (the name of the parameter) followed
-by the parameter value. The value is often a single integer or floating
-point number or some other compact string representation.  For examples
-of individual parameters, look for the nMonomer and nPolymer parameters
-within the Mixture block.
+single line containing a label (the name of the parameter) followed by
+a text representation of the parameter value. The value is often a 
+single integer or floating point number or some other compact string 
+representation.  For simple examples of individual parameters, look for 
+the nMonomer and nPolymer parameters within the Mixture block.
 
-<b> Array- and Matrix-Valued Parameters </b>: Labels for some other
-parameters refer to names of 1D arrays or 2D matrices of values. In
-these cases, lists of elements of the array or matrix are delimited
-by either matched square brackets (for one-dimensional arrays) or by
-parentheses (for matrices or two-dimensional arrays).  Names of
-array-valued parameters are often given as plural nouns.
+<b> Array- , Vector, and Matrix-Valued Parameters </b>: Labels for some 
+other parameters refer to names of 1D arrays or 2D matrices of values. 
+In these cases, lists of elements of the array or matrix may be 
+delimited by either matched square brackets (for one-dimensional arrays) 
+or by parentheses (for matrices or two-dimensional arrays).  Names of
+array-valued parameters are often plural nouns.
 
 As an example of a one-dimensional array-valued parameter, see the
 "monomers" parameter in the Mixture block, which begins with a line
 containing the string "monomers[" that ends with an opening
 square bracket, and which ends with a closing square bracket ("]")
 on a line by itself.  The value of each element in this particular
-array is a real (i.e., floating point) number that is given on a
-line by itself. Each element in the monomers array gives the
-statistical segment length of a particular type of monomer.
+array is a real (i.e., floating point) number that is given on a line 
+by itself. Each element in the monomers array gives the statistical 
+segment length of a particular type of monomer.
+
+Vector valued parameters provide a one-dimensional sequence of values 
+of the same type on a single line, with no delimiting brackets. The
+value of the "mesh" parameter is a vector of integers.
 
 The value of the parameter "chi" within the Interaction block is
 given by a symmetric matrix. The distinct nonzero elements of the
@@ -223,17 +233,17 @@ reference:
      Polymer{
         nBlock  2
         blocks[
-                0   0.5
-                1   0.5
+                0   0.42
+                1   0.58
         ]
-        phi     0.8
+        phi     0.9
      }
      Polymer{
         nBlock  1
         blocks[
-                0   1.0
+                1   1.0
         ]
-        phi     0.2
+        phi     0.1
      }
      ds   0.01
   }
@@ -278,38 +288,43 @@ The value of the parameter "nBlock" within each Polymer block gives the
 number of blocks in the polymer.  Each line with the array-valued "blocks"
 parameter (or each element of the associated array) contains information
 associated with one block of the polymer.  In the default case of a linear
-polymer that is used for both species in this example, each such block
-description contains an integer monomer type index (the type of monomers
-in the block) followed by a floating point block length.  For linear
-polymers, blocks are listed in the order in which they are connected
-along the chain. A more complicated format is needed to describe each
-block within a branched block polymer, in order to described connectivity
-as well as monomer type and length, as described
+polymer that is used for both species in this example, blocks must be 
+listed in the order that they appear along a chain. When using a 
+continuous thread model, as in this example, the description of each
+block in a linear polymer contains an integer monomer type index (the 
+type of monomers in the block) followed by a floating point block length. 
+When using a bead model, the format for a block in a linear polymer is
+similar, except that it uses an integer that gives the number of beads 
+in the block to specify the length, rather than a floating point value.  
+A more complicated format is needed to specify required information about
+each block in a branched block polymer, in order to described connectivity 
+as well as monomer type and length, as discussed 
 \ref user_param_polymer_sec "here".
 
 In this example, the value of the "phi" parameter in each Polymer block
 specifies the volume fraction of the associated species. It is also
 possible to specify a value for chemical potential (denoted by "mu")
-rather than a volume fraction for some or all of the species in a mixtue,
+rather than a volume fraction for some or all of the species in a mixture,
 but we have specified volume fraction values for both species in this
 example.
 
 In this example, the first polymer species is a diblock copolymer
-(nBlock=2) containing blocks of equal length 0.5 with monomers of
-types 0 and 1. The second polymer species is a homopolymer (nBlock=1)
-of length 1.0 with monomers of type 0. The system is binary mixture
-containing 80% of diblock copolymer by volume (phi = 0.8 in the first
-Polymer block) and 40% homopolymer by volume (phi= 0.2 in the second
+(nBlock=2) containing blocks of equal length 0.42 and 0.58 with monomers 
+of types 0 and 1. The second polymer species is a homopolymer (nBlock=1)
+of length 1.0 with monomers of type 1. The system is binary mixture
+containing 90% of diblock copolymer by volume (phi = 0.9 in the first
+Polymer block) and 10% homopolymer by volume (phi= 0.1 in the second
 block).
 
 The last line in the mixture block in this example contains a value
-for the computational parameter ds, which is the approximate value of
-the contour length step used in the thread model discretize the length
-of each polymer within the numerical solution of the modified diffusion
-equation. In this example, the contour of the homopolymer of length
-1.0 would thus be discretized into 100 steps within this numerical
-solver, while each block of length 0.5 within the symmetric diblock
-copolymer species would be discretized into 50 steps.
+for the computational parameter ds. This parameter, which is only
+meaningful or allowed when using a thread model, gives a desired value
+for the contour length step used in the thread model to discretize the 
+length of each block within the numerical solution of the modified 
+diffusion equation. In this example, in which ds = 0.01, the contour 
+of the homopolymer of length 1.0 would thus be discretized into 100 
+steps within this numerical solver, while the block of length 0.42 
+within the diblock copolymer species would be discretized into 42 steps.
 
 \anchor user_param_example_interaction
 <b> Interaction  </b>:
@@ -336,35 +351,44 @@ explicitly in the parameter file are assumed to be zero, so the diagonal
 elements chi(0,0) and chi(1,1) are implictly set to zero in this
 example.
 
-Values of diagonal elements of the chi matrix are commonly set equal
-to zero by convention, though PSCF does not require this. In a system
-with two types of monomer and vanishing diagonal elements, only one
-nonzero chi parameter value thus needs to be specified in the parameter
-file.
+Values of diagonal elements of the chi matrix are often set equal to 
+zero by convention, though PSCF allows the user to enter nonzero
+values for these elements if desired. In a system with two types of 
+monomer and vanishing diagonal elements, only one nonzero chi parameter 
+value thus needs to be specified in the parameter file. In the example,
+that value chi(0,1) has been set to 20. 
 
 \anchor user_param_example_domain
 <b> Domain </b>:
 
-This Domain block in this example has the format required to used either
-pscf_pc and pscf_pg to simulate a 1D periodic lamellar phase.
+This Domain block in this example has the format required by either
+pscf_pc and pscf_pg to simulate a 3D cubic phase with a specified
+space group symmetry.
 
-The "mesh" parameter takes an integer value that gives the number of
-grid points used to discretize the period domain. The value of this
-for a structure with D-dimensional periodicity is given by a list of
-D integers, each of which specifies the number of grid points along
-one direction.
+The "mesh" parameter takes a vector of integers that gives the number 
+of grid points used to discretize the period domain. The value of this
+for a structure with D-dimensional periodicity is given by a vector 
+of D integers, each of which specifies the number of grid points along
+a coordinate axis that is parallel to one of the Bravais lattice 
+vectors of the unit cell. In this example, the periodic cubic unit cell 
+is discretized into a mesh with 48 points along each of three 
+orthogonal axes.
 
 The value of the "lattice" parameter gives the name of a crystallographic
-lattice system type. The only allowed lattice type for 1D calculation is
-"lamellar", but corresponding values for a 3D crystal could be "cubic",
-"orthorhombic", "triclinic", etc.
+lattice system type. In this example, the lattice system type is "cubic".
+Other allowed values for a 3D system include "orthorhombic", "triclinic",
+etc.
 
 The "spaceGroup" parameter gives the name of the space group that is
-imposed on the solution, if any. The 1D space group P_-1 requires the
-existence of an inversion center at the origin.
+imposed on the solution, if any. The 3D space group I_a_-3_D is a 
+text representation of the international tables space group name
+\f$ Ia\overline{3}d \f$, which is the space group of a double-gyroid
+phase. 
 
 The Domain block of a parameter file for a periodic system does not
-contain unit cell parameters (i.e., lengths and angles) because
+contain unit cell parameters (i.e., lengths and angles) because they
+are instead provided in the header section of a file that contains 
+an initial field configuration.
 
 <b> Iterator </b>:
 
@@ -383,40 +407,17 @@ line of an Iterator block can either be the generic label "Iterator",
 as in this example, which is used to indicate that the user would like
 to use the default choice for the iterator algorithm, or it can be the
 name of the class that implements a specific algorithm.  The default
-iterator algorithm for the pscf_1d program is an Anderson-mixing
+iterator algorithm for the pscf_pc program is an Anderson-mixing
 algorithm that is implemented by a class named AmIterator. This default
 iterator algorithm can thus be invoked either using the generic label
 "Iterator", as in the above example, or, more explicitly, by using the
 class name "AmIterator" as the block label in the first line of the
 block.
 
-Users of pscf_1d program can also choose either of two other iteration
-algorithms. A Newton-Raphson algorithm is implemented by a class named
-NrIterator, while a simple relaxation algorithm for systems with only
-two monomer types is implemented by a class named BinaryRelaxIterator.
-The Newton-Raphson iterator often converges in very few steps but the
-required computational time per step grows quadratically with the
-number of grid points, and becomes inefficient for very large grids.
-To choose the Newton-Raphson iterator, the Iterator block in the above
-example could be replaced by a block such
-as the following:
-\code
-   NrIterator{
-      epsilon 0.00000001
-      maxItr  200
-   }
-\endcode
-Here, the use of NrIterator as a block label indicates the choice of
-a Newton-Raphson algorithm.  In this example, the body of the block
-contain parameters named epsilon and maxItr.
-
 By convention, the first parameter for each iterator algorithm is a
 required parameter named epsilon that represents an error tolerance.
-This is actually the only required parameter for either the AmIterator
-or NrIterator algorithms.  In the above example, we have also included
-an optional second parameter named maxItr for the NrIterator algorithm
-that specifies the maximum number of iterations that should be attempted
-before exiting the iteration loop and giving up.
+This is actually the only required parameter for default AmIterator
+algorithm.
 
 In general, each iteration algorithm may accept a different list of
 required and optional parameters, and thus require a different format
@@ -427,9 +428,9 @@ the parameter file format for each algorithm, including all required
 and optional parameters for each algorithm.
 
 For simplicity, almost all of the examples shown in this user manual
-use the default iterator algorithm. The default iterator classes for
+use the default iterator algorithm. The default iterator classes for 
 all 3 PSCF programs are currently based on an Anderson-mixing algorithm.
-Most examples in this manual thus contain an iterator block that
+Most SCFT examples in this manual thus contain an iterator block that
 starts with the string "Iterator{"  on a line by itself, indicating
 the use of the default iterator.
 

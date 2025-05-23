@@ -164,14 +164,13 @@ Comments:
   - The parameter vMonomer is an optional parameter, and is usually absent
     from parameter files for standard SCFT calculations. The reasons that
     it may be neglected in such calculations have been briefly discussed 
-    \ref user_model_vMonomer_sec "elsewhere".  Users are nonetheless given 
-    the option of providing a value for vMonomer because an input value
-    for vMonomer is required as an input for some optional outputs of the 
-    pscf_1d program (e.g., the total excess free energy of a spherical 
-    micelle). It is also included as an optional parameter because the 
-    value of vMonomer will be a required input parameter for stochastic 
-    field-theoretic simulations that will be implemented in future versions 
-    of PSCF. 
+    \ref user_model_conventions_vMonomer_sec "elsewhere".  Users are 
+    nonetheless given the option of providing a value for vMonomer because 
+    an input value for vMonomer is required as an input for some optional 
+    outputs of the pscf_1d program (such as the total excess free energy 
+    of a spherical micelle). It is also included as an optional parameter 
+    because the value of vMonomer is a required input parameter for 
+    stochastic PS-FTS simulations.
 
 <i> Technical comments (for users who examine the source code) </i>:
 
@@ -185,22 +184,22 @@ Rpc, and each contain code that is only used by one executable program
 
 We refer to the enclosed namespaces R1d, Rpc, and Rpg throughout this
 documentation as implementation-level namespaces, because each contains
-contain associated with a single implementation of SCFT and/or polymer 
-field theory, corresponding to a different executable program. The 
-segregation of code associated with different implementations of field
-theory into corresponding separate namespaces allows a single class 
-name to be used for several analogous classes in different executables
-without causing name clashes or ambiguity.  When possible, identical 
-or similar parameter file formats are used for the parameter blocks 
-associated with analogous classes used by different programs.
+contain associated with a single implementation of polymer field theory,
+corresponding to a different executable program. By convention, code
+defined in any implementation-level namespace may not use names defined
+in a different impelementation level namespace. The segregation of 
+code associated with different executables into separate namespaces
+allows identical names to be used for several analogous classes in 
+different implementation-level namespaces without causing name clashes
+or ambiguity.  
 
 Each implementation-level namespace contains a class or class template 
-named Mixture. The R1d namespace contains a concrete class named Mixture. 
-The Rpc and Rpg namespaces each contain a class template Mixture<int D>, 
-in which the integer dimensionality of space D is a template parameter. 
+named Mixture. The R1d namespace contains a class named Mixture. The
+Rpc and Rpg namespaces each contain a class template Mixture<int D>, in 
+which the integer dimensionality of space D is a template parameter. 
 The Mixture object used by the pscf_pc program to treat a 2D periodic 
-structure is thus an instance of class Pscf::Mixture<2>, where the 
-dimensionality of space is specified by the template parameter D=2.  
+structure is thus an instance of class Pscf::Rpc::Mixture<2>, for which 
+the dimensionality of space is specified by the template parameter D=2.  
 All of the Mixture classes and class templates defined in implementation 
 level namespaces are derived from instances of a base class template 
 named Pscf::MixtureTmpl.  All of these Mixture classes use the same 
@@ -208,8 +207,8 @@ parameter file format, which is described above. Most of this format
 is defined in the member function Pscf::MixtureTmpl::readParameters of 
 the shared base class template. 
 
-The array "monomers" is implemented internally as an array of instances 
-of the class Pscf::Monomer, as discussed \subpage pscf_Monomer_page "here".
+The array "monomers" is implemented internally as an array of instances of 
+the class Pscf::Monomer, as discussed \subpage pscf_Monomer_page "here".
 
 \section user_param_polymer_sec Polymer
 
@@ -217,13 +216,13 @@ The Mixture block always contains one or more Polymer blocks, each of
 which contains information about a specific polymer molecule species.
 The format for a polymer block is
 \code
-    Polymer{
-        type*  enumeration  ("linear" or "branched", linear by default)
-        nBlock int
-        blocks Array [ Block ] (nBlock elements)
-        phi*   real  (in range [0,1])
-        mu     real  (required if and only if phi is absent)
-    }
+  Polymer{
+     type*  enumeration  ("linear" or "branched", linear by default)
+     nBlock int
+     blocks Array [ Block ] (nBlock elements)
+     phi*   real  (in range [0,1])
+     mu     real  (required if and only if phi is absent)
+  }
 \endcode
 The meaning of different parameters is summarized in the table below:
 <table>
@@ -353,20 +352,20 @@ table:
 
 \subsection user_param_block_branched_sub Branched Polymers
 
-If the polymer type is branched, then the information in the "blocks"
-array of a Polymer block must contain a description of the topology of
-the polymer, as well as the monomer type and length of each block.
-As discussed \ref user_branched_page "previously", a branched polymer
-is described in PSCF as an acyclic graph consisting of a set of labelled
-vertices connected by "edges", in which each edge corresponds to a block, 
-and each vertex is a junction or chain end. An acyclic connected polymer
-with nBlock blocks always contains exactly nBlock + 1 vertices. To 
-describe a branched polymer with nBlock blocks, the user must assign 
-each vertex a unique index in the range 0, ..., nBlock. Each block 
-connects a specific pair of vertices that may be identified by their 
-integer vertex indices. The parameter file format for a branched 
-polymer requires that format of data for each block include the indices
-of the two attached vertices.
+If the polymer type is branched, then the information in the "blocks" 
+array of a Polymer block must contain a description of the topology of 
+the polymer, as well as the monomer type and length of each block.  As 
+discussed \ref user_model_polymer_branched_sec "previously", a branched 
+polymer is described in PSCF as an acyclic graph consisting of a set of 
+labelled vertices connected by "edges", in which each edge corresponds 
+to a block, and each vertex is a junction or chain end. An acyclic 
+connected polymer with nBlock blocks always contains exactly nBlock + 1 
+vertices. To describe a branched polymer with nBlock blocks, the user 
+must assign each vertex a unique index in the range 0, ..., nBlock. Each 
+block connects a specific pair of vertices that may be identified by 
+their integer vertex indices. The parameter file format for a branched 
+polymer requires that the data for each block include the indices of 
+the two attached vertices.
 
 <b> Thread model: </b>: In the thread model, the line associated with
 each block in the "blocks" array for a branched polymer must be of the 

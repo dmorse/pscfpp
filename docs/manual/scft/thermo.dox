@@ -55,11 +55,12 @@ system with a total Helmholtz free energy \f$ F \f$ and associated volume
 \f]
 where \f$ v \f$ is the monomer reference volume.
 
-In the special case of a one-component block polymer melt for which the
-input parameters are given using the \ref user_model_thread_theorist
-"theorists convention" that overall chain length is equal to 1.0, the
-monomer reference volume is equal to the volume per chain. In this case,
-the value reported for "fHelmholtz" is also the free energy per chain
+In the special case of a one-component block polymer melt for which 
+the input parameters are given using the 
+\ref user_model_conventions_theorist_sec "theorists convention" that 
+overall chain length is equal to 1.0, the monomer reference volume is 
+equal to the volume per chain. In this case, the value reported for 
+"fHelmholtz" is also the free energy per chain
 in thermal energy units, with \f$ k_{B}T = 1 \f$. More generally, in a
 mixture, one can obtain the free energy associated with the volume
 occupied by a molecular species by multiplying the overall contour length
@@ -136,8 +137,8 @@ lattice parameters values that were used as inputs.  Input values for
 lattice parameters are normally provided within the header block of the
 file used to provide an initial guess for the monomer chemical potential
 fields (the w fields). The lattice parameters are reported in whatever
-\ref user_model_length_sec "length units" were used in the input field
-and parameter files.
+\ref user_model_parameters_length_sec "length units" were used in the 
+input field and parameter files.
 
 \section scft_thermo_state_sec State files
 

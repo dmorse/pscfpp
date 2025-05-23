@@ -13,16 +13,17 @@ by notation to indicate data types of parameter values, and by the use of
 special symbols to indicate syntactical elements such as array-valued
 parameters, optional elements and selectable subblocks.
 
-\section user_format_example1_sec Example 1: pscf_1d
+\section user_format_example1_sec Example 1: SCFT parameter file for pscf_pc
 
 As a simple first example of this sort of description, the overall syntax
-for a pscf_1d parameter file is shown in skeleton form below:
+for a pscf_pc parameter file is shown in skeleton form below:
 \code
 System{
+   polymerModel*  enumeration ("thread" or "bead", "thread" by default)
    Mixture{ ... }
    Interaction{ .... }
    Domain{ ... }
-   Iterator#{ ... }
+   Iterator#*{ ... }
    Sweep#*{ ... }
 }
 \endcode
@@ -35,13 +36,13 @@ after any block or parameter label is used to indicate that the element is
 optional (i.e., omittable).  Parameters and block labels that are not
 followed by an asterisk thus indicate required elements. The appearance
 of a "#" symbol after a block label indicate that the block is selectable.
-The above description thus indicates that the Iterator block is selectable
-but required, and that the Sweep block is both selectable and optional.
+The above description thus indicates that the Iterator and Sweep blocks
+are both optional and selectable. 
 
 \section user_format_example2_sec Example 2: Mixture Block
 
-As a second example, the format for a Mixture block in any PSCF parameter
-file can be given compactly as follows:
+As a second example, consider the format for a Mixture block used in any 
+PSCF parameter. This can described compactly as follows:
 \code
 Mixture{
   nMonomer   int
@@ -65,8 +66,8 @@ a type descriptor is describe an array-value parameter.  Note that default
 values for some optional elements (nSolvent and vMonomer) are given as
 comments enclosed in parentheses.
 
-This sort of compact format description must be generally supplemented by
-a table and/or text that contains an explanation of the the meaning of
+This sort of compact format description is usually supplemented by a table 
+and/or text discussion that contains an explanation of the the meaning of
 each parameter, comments about allowed values for particular parameters,
 values for dimensions of arrays or matrices, relationships among choices
 of parameter values, and any other required supplementary information.
@@ -91,15 +92,32 @@ examples, are used in this type of parameter file format summary:
    are given as 0 for false and 1 for true.  String parameters may not
    contain any whitespace.
 
- - <b> Arrays </b>: Parameters that represent one-dimensional arrays are
-  indicated using the syntax
+   Values for parameters that are represented internally by a enumeration 
+   are indicated by the data type "enumeration", followed by a description
+   of the string representations of all allowed values.
+
+ - <b> Arrays </b>: Array-valued parameters are indicated using the syntax
    \code
        label  Array[ type ]
    \endcode
    where "label" is the name of the array, and "type" is a string that
    identifies the data type of a single element.  For example,
    "monomers Array[real]" indicates that monomers is a one-dimensional
-   array in which each element is a real floating point number.
+   array in which each element is a real floating point number. Arrays
+   are formatted in the parameter file a format in which each element 
+   is on a separate line, delimited by square brackets.
+
+ - <b> Vectors </b>: Vector-valued parameters are indicated using the 
+   syntax
+   \code
+       label  Vector[ type ]
+   \endcode
+   where "label" is the name of the array, and "type" is a string that
+   identifies the data type of a single element.  For example, 
+   "mesh Vector[int]" indicates that the "mesh" parameter is a vector
+   in which each element is an integer. Vectors are similar to arrays,
+   but use a single-line parameter file format with no delimiters, 
+   rather than the mult-line format used for an array. 
 
  - <b> Matrices </b>: Parameters that represent two-dimensional arrays
    or matrices that must be input in element format are indicated using
@@ -115,8 +133,8 @@ examples, are used in this type of parameter file format summary:
        Label{ ... }
    \endcode
    where "Label" denote the label string for the nested block. The ...
-   is used to indicate the body of the block, the format of which
-   must be described somewhere else in the documentation.
+   is used to indicate the body of the block, the format of which must 
+   be described somewhere else in the documentation.
 
  - <b> Optional elements </b>: Optional parameters and blocks (i.e.,
    elements that may be omitted from the file) are indicated by an

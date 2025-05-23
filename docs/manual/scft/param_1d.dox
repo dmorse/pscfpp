@@ -12,7 +12,56 @@ planar geometry, or can treat curved interfaces and a cylindrical or
 spherical micelles by using a cylindrical or spherical coordinate by
 using a cylindrical or spherical geometry.
 
-\section scft_param_1d_example_section Example
+\section scft_param_1d_example_sec Example
+
+The text shown below is a complete parameter file for a simple 1D SCFT 
+calculation performed using the pscf_1d program:
+
+\code
+System{
+  Mixture{
+     nMonomer   2
+     monomers[
+                1.0
+                1.0
+     ]
+     nPolymer   2
+     Polymer{
+        nBlock  2
+        blocks[
+                0   0.5
+                1   0.5
+        ]
+        phi     0.6
+     }
+     Polymer{
+        nBlock  1
+        blocks[
+                0   1.0
+        ]
+        phi     0.4
+     }
+     ds   0.01
+  }
+  Interaction{
+     chi(
+           0    1    10.0
+     )
+  }
+  Domain{
+     mode     planar
+     xMin     0.0
+     xMax     8.0
+     nx       401
+  }
+  Iterator{
+     epsilon   0.00000001
+  }
+}
+\endcode
+This particular example gives parameters for a calculation of a binary
+mixture of a symmetric AB diblock copolymer with a homopolymer of type
+A in a one-dimensional planar geometry.
 
 \section scft_param_1d_format_sec File format
 
@@ -46,7 +95,7 @@ the SCFT equations should be solved, and the mesh used to discretize
 that domain. The parameter file syntax is described in detail 
 \subpage r1d_Domain_page "here", and is also summarized below.
 
-The example parameter file shown \ref user_param_1d_example_sec "above" 
+The example parameter file shown \ref scft_param_1d_example_sec "above" 
 was designed to describe a planar geometry. As another example, here is 
 the Domain block for a simulation of a spherical micelle
 \code
@@ -56,9 +105,9 @@ the Domain block for a simulation of a spherical micelle
     nx     201
   }
 \endcode
-This example omits the optional parameter xMin that, when present, would 
-appear immediately before xMax. When xMin is omitted, it is set to 0.0 
-by default. Omitting the xMin parameter in a calculation that is performed 
+This example omits an optional parameter xMin that, if present, would 
+appear immediately before xMax. When xMin is omitted, it is set to 0.0 by 
+default. Omitting the xMin parameter in a calculation that is performed 
 using a spherical or radial coordinate system creates a spherical or 
 cylindrical domain that includes the origin.
 
@@ -85,15 +134,15 @@ The meanings of the various parameters are given in tabular form below.
   <tr>
     <td> xMin* </td>
     <td> 
-    Lower bound of coordinate domain. Optional and 0.0 by default.  </td>
+    Lower bound of normal coordinate. Optional and 0.0 by default.  </td>
   </tr>
   <tr>
     <td> xMax </td>
-    <td> Upper bound of coordinate domain. </td>
+    <td> Upper bound of normal coordinate. </td>
   </tr>
   <tr>
     <td> nx </td>
-    <td> Number of grid points used to discretize the domain. </td>
+    <td> Number of grid points used to discretize the domain [xMin, xMax]. </td>
   </tr>
 </table>
 

@@ -49,9 +49,9 @@ of sub-elements:
      <b> Individual Parameters </b>:
      Each individual parameter entry appears on a single line that 
      contains a parameter label followed by a text representation of the 
-     parameter value. The first example in the example parameter file 
-     shown on the previous page is the integer parameter nMonomer in the 
-     Mixture block.
+     parameter value. One simple example in example parameter file shown 
+     on the previous page is the integer parameter nMonomer that appears
+     in the Mixture block. 
    </li>
    <li> 
      <b> Array-valued Parameters </b>: The entry for each one-dimensional
@@ -77,6 +77,18 @@ of sub-elements:
      matrix-valued parameter in the example parameter file is the chi 
      matrix given in the Interaction block. 
    </li>
+   <li> 
+     <b> Vector-valued Parameters </b>: The entry for each vector-valued
+     parameter is given in a single line format that begins with a label
+     followed immediately by several elements of the same data type on 
+     the same line. The format of a vector-valued parameter differs from
+     that of an array-valued parameter in that all elements of a vector
+     are placed on a single line (rather than one-per line) and there
+     are no delimiting square brackets. The "mesh" parameter of the 
+     Domain block for a pscf_pc or pscf_pg parameter file is a parameter
+     of type Vector[int] in which the number of elements is equal to the
+     dimension of space.
+   </li>
 </ul>
 Each block within a parameter file has a fixed file format: The order 
 in which elements may appear within each block of a parameter file is 
@@ -84,9 +96,9 @@ predefined by the code that reads the block.
 
 By convention, labels for blocks begin with a capital letter, while 
 parameter labels begin with a lower case letter.  Both types of label 
-use upper- or lower-cased camel convention for labels that are 
+use upper- or lower-cased camel convention for compound names that are 
 constructed by concatenating two or more words, in which the first 
-letter of each word after the first is capitalize.
+letter of each word after the first is capitalized.
 
 <i> Technical comments (for users familiar with C++): </i>
 
@@ -99,14 +111,15 @@ initialize the internal state of an instance of that class.
 The code required to read the parameter file block associated with a 
 particular class is almost always defined in a member function of that 
 class named "readParameters". Users who are comfortable with C++ can 
-thus use knowledge of this convention to easily find the source code 
-that reads a particular block of a parameter file.
+thus easily find the source code that reads a particular block of a 
+parameter file by finding the class source code and looking for the
+implementation of the "readParameters" member function.
 
 The nesting of parameter file blocks in PSCF parameter files directly
-reflects the structure of the underlying C++ code. Nesting of blocks 
-within a parameter file generally reflects parent-child ownership 
-relationships among objects in the corresponding source code: Each 
-subblock corresponds to an object that the parent object "owns", i.e., 
+reflects the structure of object ownership in the underlying C++ code. 
+Nesting of blocks within a parameter file generally reflects parent-child 
+ownership relationships among objects in the corresponding source code: 
+Each subblock corresponds to an object that the parent object "owns", i.e., 
 an object that is either a member of the parent object or a dynamically 
 allocated object that the parent object is responsible for creating and 
 destroying.  The top level object in any PSCF program is an instance of 
@@ -115,14 +128,14 @@ in the parameter file is always labelled "System".
 
 The code that reads each block of a parameter field checks the syntax 
 of the input file while it is being read by checking that the label 
-that begins each subblock or parameter matches an expected value or 
-list of possible values.  If the label does not match any allowed
-value, the program will halts execution after writing an error message 
+that begins each subblock or parameter matches an expected value or is
+in a list of allowed values.  If the label does not match any allowed
+value, the program will halt execution after writing an error message 
 explaining what label it expected and what it found instead. The 
-usefulness of such error messages may be enhanced by echoing of the 
+usefulness of these error messages may be enhanced by echoing of the 
 parameter file, by using "-e" \ref user_usage_page "command line option". 
-The combination of detailed error messages and echoing provides enough
-information for most users to understand and quickly correct most 
+The combination of detailed error messages and echoing usually provides
+enough information to allow users to understand and quickly correct most 
 parameter file syntax errors.
 
 \section user_param_syntax_parameter_sec Individual Parameters
