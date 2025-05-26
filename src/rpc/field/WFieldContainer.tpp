@@ -205,8 +205,8 @@ namespace Rpc
 
       // Update rgrid_ fields
       for (int i = 0; i < nMonomer_; ++i) {
-         UTIL_CHECK(fields.capacity() == meshSize_);
          RField<D> const & f = fields[i];
+         UTIL_CHECK(f.capacity() == meshSize_);
          RField<D>& w = rgrid_[i];
          for (int j = 0; j < meshSize_; ++j) {
             w[j] = f[j];

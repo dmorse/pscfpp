@@ -8,8 +8,6 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-
-#include <util/param/ParamComposite.h>     // base class
 #include <prdc/cpu/RField.h>               // member template parameter
 #include <pscf/math/IntVec.h>              // member
 #include <util/containers/DArray.h>        // member template
@@ -64,7 +62,7 @@ namespace Rpc {
    * \ingroup Rpc_Field_Module
    */
    template <int D>
-   class WFieldContainer : public ParamComposite
+   class WFieldContainer 
    {
 
    public:
