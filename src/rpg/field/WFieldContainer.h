@@ -11,7 +11,7 @@
 
 #include <util/param/ParamComposite.h>     // base class
 #include <prdc/cuda/RField.h>              // member template parameter
-#include <pscf/math/IntVec.h>              // function parameter
+#include <pscf/math/IntVec.h>              // member
 #include <util/containers/DArray.h>        // member template
 
 // Forward references
@@ -33,33 +33,32 @@ namespace Rpg {
    using namespace Pscf::Prdc::Cuda;
 
    /**
-   * A list of fields stored in both basis and r-grid format.
+   * A container of fields stored in both basis and r-grid format.
    *
    * A WFieldContainer<D> contains representations of a list of nMonomer
-   * fields that are associated with different monomer types in two 
-   * different related formats:
-   * 
+   * fields that are associated with different monomer types. Fields may
+   * be stored in two different formats:
+   *
    *  - A DArray of DArray<double> containers holds components of each
-   *    field in a symmetry-adapted Fourier expansion (i.e., in basis 
-   *    format). This is accessed by the basis() and basis(int) 
-   *    member functions.
+   *    field in a symmetry-adapted Fourier expansion (i.e., in basis
+   *    format). This is accessed by the basis() and basis(int) member
+   *    functions.
    *
    *  - A DArray of RField<D> containers holds valus of each field on
    *    the nodes of a regular grid. This is accessed by the rgrid()
    *    and rgrid(int) member functions.
    *
    * A WFieldContainer is designed to automatically update one of these
-   * representations when the other is modified, when appropriate. 
+   * representations when the other is modified, when appropriate.
    * A pointer to an associated FieldIo<D> is used for these conversions.
    * The setBasis function allows the user to input new components in
    * basis format and internally recomputes the values in r-grid format.
-   * The setRgrid function allows the user to reset the fields in 
-   * r-grid format, but recomputes the components in basis format if 
-   * and only if the user declares that the fields are known to be
-   * invariant under all symmetries of the space group. A boolean
-   * flag named isSymmetric is used to keep track of whether the 
-   * current field is symmetric, and thus whether the basis format 
-   * exists.
+   * The setRGrid function allows the user to reset the fields in r-grid
+   * format, but recomputes the components in basis format if and only if
+   * the user declares that the fields are known to be invariant under all
+   * symmetries of the space group. A boolean flag named isSymmetric is
+   * used to keep track of whether the current field is symmetric, and
+   * thus whether the basis format exists.
    *
    * \ingroup Rpg_Field_Module
    */
@@ -79,14 +78,19 @@ namespace Rpg {
       */
       ~WFieldContainer();
 
+      /// \name Initialization and Memory Management
+      ///@{
+
       /**
       * Create association with FieldIo (store pointer).
+      *
+      * \param fieldIo  associated FieldIo object
       */
       void setFieldIo(FieldIo<D> const & fieldIo);
 
       /**
       * Set stored value of nMonomer.
-      * 
+      *
       * May only be called once.
       *
       * \param nMonomer number of monomer types.
@@ -108,7 +112,7 @@ namespace Rpg {
       /**
       * Allocate or re-allocate memory for fields in basis format.
       *
-      * \param nBasis  number of basis functions 
+      * \param nBasis  number of basis functions
       */
       void allocateBasis(int nBasis);
 
@@ -123,17 +127,20 @@ namespace Rpg {
       * This function may only be called once.
       *
       * \param nMonomer  number of monomer types
-      * \param nBasis  number of basis functions 
+      * \param nBasis  number of basis functions
       * \param dimensions  dimensions of spatial mesh
       */
       void allocate(int nMonomer, int nBasis, IntVec<D> const & dimensions);
 
+      ///@}
+      /// \name Field Mutators
+      ///@{
+
       /**
       * Set field component values, in symmetrized Fourier format.
       *
-      * This function also computes and stores the corresponding
-      * r-grid representation. On return, hasData and isSymmetric
-      * are both true.
+      * This function also computes and stores the corresponding r-grid
+      * representation. On return, hasData and isSymmetric are both true.
       *
       * \param fields  array of new fields in basis format
       */
@@ -142,19 +149,19 @@ namespace Rpg {
       /**
       * Set fields values in real-space (r-grid) format.
       *
-      * If the isSymmetric parameter is true, this function assumes that 
+      * If the isSymmetric parameter is true, this function assumes that
       * the fields are known to be symmetric and so computes and stores
       * the corresponding basis components. If isSymmetric is false, it
       * only sets the values in the r-grid format.
-      * 
-      * On return, hasData is true and the persistent isSymmetric flag 
-      * defined by the class is set to the value of the isSymmetric 
+      *
+      * On return, hasData is true and the persistent isSymmetric flag
+      * defined by the class is set to the value of the isSymmetric
       * input parameter.
-      * 
+      *
       * \param fields  array of new fields in r-grid format
       * \param isSymmetric is this field symmetric under the space group?
       */
-      void setRGrid(DArray< RField<D> > const & fields, 
+      void setRGrid(DArray< RField<D> > const & fields,
                     bool isSymmetric = false);
 
       /**
@@ -168,13 +175,13 @@ namespace Rpg {
       void setRGrid(DeviceArray<cudaReal> & fields);
 
       /**
-      * Read field component values from input stream, in symmetrized 
+      * Read field component values from input stream, in symmetrized
       * Fourier format.
       *
       * This function also computes and stores the corresponding
       * r-grid representation. On return, hasData and isSymmetric
       * are both true.
-      * 
+      *
       * This object must already be allocated and associated with
       * a FieldIo object to run this function.
       *
@@ -184,13 +191,13 @@ namespace Rpg {
       void readBasis(std::istream& in, UnitCell<D>& unitCell);
 
       /**
-      * Read field component values from file, in symmetrized 
+      * Read field component values from file, in symmetrized
       * Fourier format.
       *
       * This function also computes and stores the corresponding
       * r-grid representation. On return, hasData and isSymmetric
       * are both true.
-      * 
+      *
       * This object must already be allocated and associated with
       * a FieldIo object to run this function.
       *
@@ -202,18 +209,18 @@ namespace Rpg {
       /**
       * Reads fields from an input stream in real-space (r-grid) format.
       *
-      * If the isSymmetric parameter is true, this function assumes that 
+      * If the isSymmetric parameter is true, this function assumes that
       * the fields are known to be symmetric and so computes and stores
       * the corresponding basis components. If isSymmetric is false, it
       * only sets the values in the r-grid format.
-      * 
-      * On return, hasData is true and the persistent isSymmetric flag 
-      * defined by the class is set to the value of the isSymmetric 
+      *
+      * On return, hasData is true and the persistent isSymmetric flag
+      * defined by the class is set to the value of the isSymmetric
       * input parameter.
-      * 
-      * This object must already be allocated and associated with
-      * a FieldIo object to run this function.
-      * 
+      *
+      * This object must already be allocated and associated with a
+      * FieldIo object to run this function.
+      *
       * \param in  input stream from which to read fields
       * \param unitCell  associated crystallographic unit cell
       * \param isSymmetric  is this field symmetric under the space group?
@@ -224,21 +231,21 @@ namespace Rpg {
       /**
       * Reads fields from a file in real-space (r-grid) format.
       *
-      * If the isSymmetric parameter is true, this function assumes that 
+      * If the isSymmetric parameter is true, this function assumes that
       * the fields are known to be symmetric and so computes and stores
       * the corresponding basis components. If isSymmetric is false, it
       * only sets the values in the r-grid format.
-      * 
-      * On return, hasData is true and the persistent isSymmetric flag 
-      * defined by the class is set to the value of the isSymmetric 
-      * input parameter.
-      * 
-      * This object must already be allocated and associated with
-      * a FieldIo object to run this function.
-      * 
+      *
+      * On return, hasData is true and the persistent isSymmetric flag
+      * defined by the class is set to the value of the isSymmetric input
+      * parameter.
+      *
+      * This object must already be allocated and associated with a
+      * FieldIo object to run this function.
+      *
       * \param filename  file from which to read fields
       * \param unitCell  associated crystallographic unit cell
-      * \param isSymmetric  is this field symmetric under the space group?
+      * \param isSymmetric  Is this field symmetric under the space group?
       */
       void readRGrid(std::string filename, UnitCell<D>& unitCell,
                      bool isSymmetric = false);
@@ -246,24 +253,28 @@ namespace Rpg {
       /**
       * Symmetrize r-grid fields, compute corresponding basis components.
       *
-      * This function may be used after setting or reading w fields in 
-      * r-grid format that are known to be symmetric under the space 
+      * This function may be used after setting or reading w fields in
+      * r-grid format that are known to be symmetric under the space
       * group to remove small deviations from symmetry and generate
       * basis components.
       *
       * The function symmetrizes the fields by converting from r-grid
       * to basis format and then back again, while also storing the
       * resulting basis components and setting isSymmetric() true.
-      * 
+      *
       * This function assumes that the current wFieldsRGrid fields
       * are known by the user to be symmetric, and does NOT check this.
-      * Applying this function to fields that are not symmetric will 
-      * silently corrupt the fields. 
+      * Applying this function to fields that are not symmetric will
+      * silently corrupt the fields.
       *
       * On entry, hasData() must be true and isSymmetric() must be false.
       * On exit, isSymmetric() is true.
       */
       void symmetrize();
+
+      ///@}
+      /// \name Field Accessors (by const reference)
+      ///@{
 
       /**
       * Get array of all fields in basis format.
@@ -295,6 +306,10 @@ namespace Rpg {
       */
       RField<D> const & rgrid(int monomerId) const;
 
+      ///@}
+      /// \name Boolean Queries
+      ///@{
+
       /**
       * Has memory been allocated for fields in r-grid format?
       */
@@ -316,7 +331,7 @@ namespace Rpg {
       * Are fields symmetric under all elements of the space group?
       *
       * A valid basis format exists if and only if isSymmetric is true.
-      * This flat is set true if the fields were input in basis format 
+      * This flat is set true if the fields were input in basis format
       * by the function setBasis, or if they were set in grid format
       * by the function setRGrid but isSymmetric was set true.
       */
@@ -329,14 +344,14 @@ namespace Rpg {
       *
       * Element basis_[i] is an array that contains the components
       * of the field associated with monomer i, in a symmetry-adapted
-      * Fourier expansion. 
+      * Fourier expansion.
       */
       DArray< DArray<double> > basis_;
 
       /*
       * Array of fields in real-space grid (r-grid) format
       *
-      * Element basis_[i] is an RField<D> that contains values of the 
+      * Element basis_[i] is an RField<D> that contains values of the
       * field associated with monomer i on the nodes of a regular mesh.
       */
       DArray< RField<D> > rgrid_;
@@ -399,18 +414,18 @@ namespace Rpg {
    template <int D>
    inline
    DArray< DArray<double> > const & WFieldContainer<D>::basis() const
-   {  
+   {
       UTIL_ASSERT(isAllocatedBasis_);
-      return basis_; 
+      return basis_;
    }
 
    // Get one field in basis format (const)
    template <int D>
    inline
    DArray<double> const & WFieldContainer<D>::basis(int id) const
-   {  
+   {
       UTIL_ASSERT(isAllocatedBasis_);
-      return basis_[id]; 
+      return basis_[id];
    }
 
    // Get all fields in r-grid format (const)
@@ -418,18 +433,18 @@ namespace Rpg {
    inline
    DArray< RField<D> > const &
    WFieldContainer<D>::rgrid() const
-   {  
+   {
       UTIL_ASSERT(isAllocatedRGrid_);
-      return rgrid_; 
+      return rgrid_;
    }
 
    // Get one field in r-grid format (const)
    template <int D>
    inline
    RField<D> const & WFieldContainer<D>::rgrid(int id) const
-   {  
+   {
       UTIL_ASSERT(isAllocatedRGrid_);
-      return rgrid_[id]; 
+      return rgrid_[id];
    }
 
    // Has memory been allocated for fields in r-grid format?

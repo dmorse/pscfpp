@@ -10,9 +10,12 @@
 
 #include "WFieldContainer.h"
 #include <rpc/field/FieldIo.h>
+#include <prdc/crystal/UnitCell.h>
+
+
 
 namespace Pscf {
-namespace Rpc
+namespace Rpc 
 {
 
    using namespace Util;
@@ -169,6 +172,7 @@ namespace Rpc
    void 
    WFieldContainer<D>::setBasis(DArray< DArray<double> > const & fields)
    {
+      UTIL_CHECK(isAllocatedBasis_);
       UTIL_CHECK(fields.capacity() == nMonomer_);
 
       // Update system w fields (array basis_)
@@ -196,14 +200,14 @@ namespace Rpc
    void WFieldContainer<D>::setRGrid(DArray< RField<D> > const & fields,
                                     bool isSymmetric)
    {
+      UTIL_CHECK(isAllocatedRGrid_);
       UTIL_CHECK(fields.capacity() == nMonomer_);
 
-      // Update system grid fields (array rgrid_ )
+      // Update rgrid_ fields
       for (int i = 0; i < nMonomer_; ++i) {
+         UTIL_CHECK(fields.capacity() == meshSize_);
          RField<D> const & f = fields[i];
          RField<D>& w = rgrid_[i];
-         UTIL_CHECK(f.capacity() == meshSize_);
-         UTIL_CHECK(w.capacity() == meshSize_);
          for (int j = 0; j < meshSize_; ++j) {
             w[j] = f[j];
          }
@@ -222,9 +226,8 @@ namespace Rpc
    * Read field component values from input stream, in symmetrized 
    * Fourier format.
    *
-   * This function also computes and stores the corresponding
-   * r-grid representation. On return, hasData and isSymmetric
-   * are both true.
+   * This function also computes and stores the corresponding r-grid
+   * representation. On return, hasData and isSymmetric are both true.
    */
    template <int D>
    void WFieldContainer<D>::readBasis(std::istream& in, 
@@ -233,7 +236,7 @@ namespace Rpc
       UTIL_CHECK(isAllocatedBasis());
       fieldIoPtr_->readFieldsBasis(in, basis_, unitCell);
 
-      // Update system wFieldsRGrid
+      // Convert to r-grid to update rgrid_ fields
       fieldIoPtr_->convertBasisToRGrid(basis_, rgrid_);
 
       hasData_ = true;
@@ -241,12 +244,10 @@ namespace Rpc
    }
 
    /*
-   * Read field component values from file, in symmetrized 
-   * Fourier format.
+   * Read field component values from file, in symmetrized basis format.
    *
-   * This function also computes and stores the corresponding
-   * r-grid representation. On return, hasData and isSymmetric
-   * are both true.
+   * This function also computes and stores the corresponding r-grid
+   * representation. On return, hasData and isSymmetric are both true.
    */
    template <int D>
    void WFieldContainer<D>::readBasis(std::string filename, 
@@ -255,7 +256,7 @@ namespace Rpc
       UTIL_CHECK(isAllocatedBasis());
       fieldIoPtr_->readFieldsBasis(filename, basis_, unitCell);
 
-      // Update system wFieldsRGrid
+      // Convert to r-grid to update rgrid_ fields
       fieldIoPtr_->convertBasisToRGrid(basis_, rgrid_);
 
       hasData_ = true;
@@ -316,6 +317,18 @@ namespace Rpc
 
       hasData_ = true;
       isSymmetric_ = isSymmetric;
+   }
+
+   /*
+   * Symmetrize r-grid fields, convert to basis.
+   */
+   template <int D>
+   void WFieldContainer<D>::symmetrize()
+   {
+      UTIL_CHECK(hasData_);
+      fieldIoPtr_->convertRGridToBasis(rgrid_, basis_);
+      fieldIoPtr_->convertBasisToRGrid(basis_, rgrid_);
+      isSymmetric_ = true;
    }
 
 } // namespace Rpc

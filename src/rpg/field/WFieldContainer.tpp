@@ -203,12 +203,13 @@ namespace Rpg
       UTIL_CHECK(isAllocatedRGrid_);
       UTIL_CHECK(fields.capacity() == nMonomer_);
 
-      // Update system wFieldsRGrid
+      // Update rgrid_ fields
       for (int i = 0; i < nMonomer_; ++i) {
          UTIL_CHECK(fields[i].capacity() == meshSize_);
          VecOp::eqV(rgrid_[i], fields[i]);
       }
 
+      // If field isSymmetric, update basis fields
       if (isSymmetric) {
          fieldIoPtr_->convertRGridToBasis(rgrid_, basis_);
       }
@@ -240,9 +241,8 @@ namespace Rpg
    * Read field component values from input stream, in symmetrized 
    * Fourier format.
    *
-   * This function also computes and stores the corresponding
-   * r-grid representation. On return, hasData and isSymmetric
-   * are both true.
+   * This function also computes and stores the corresponding r-grid
+   * representation. On return, hasData and isSymmetric are both true.
    */
    template <int D>
    void WFieldContainer<D>::readBasis(std::istream& in, 
@@ -251,7 +251,7 @@ namespace Rpg
       UTIL_CHECK(isAllocatedBasis());
       fieldIoPtr_->readFieldsBasis(in, basis_, unitCell);
 
-      // Update system wFieldsRGrid
+      // Convert to r-grid to update rgrid_ fields
       fieldIoPtr_->convertBasisToRGrid(basis_, rgrid_);
 
       hasData_ = true;
@@ -259,12 +259,10 @@ namespace Rpg
    }
 
    /*
-   * Read field component values from file, in symmetrized 
-   * Fourier format.
+   * Read field component values from file, in symmetrized basis format.
    *
-   * This function also computes and stores the corresponding
-   * r-grid representation. On return, hasData and isSymmetric
-   * are both true.
+   * This function also computes and stores the corresponding r-grid
+   * representation. On return, hasData and isSymmetric are both true.
    */
    template <int D>
    void WFieldContainer<D>::readBasis(std::string filename, 
@@ -273,7 +271,7 @@ namespace Rpg
       UTIL_CHECK(isAllocatedBasis());
       fieldIoPtr_->readFieldsBasis(filename, basis_, unitCell);
 
-      // Update system wFieldsRGrid
+      // Convert to r-grid to update rgrid_ fields
       fieldIoPtr_->convertBasisToRGrid(basis_, rgrid_);
 
       hasData_ = true;
@@ -337,7 +335,7 @@ namespace Rpg
    }
 
    /*
-   * Set new w-field values, using array of r-grid fields as input.
+   * Symmetrize r-grid fields, convert to basis.
    */
    template <int D>
    void WFieldContainer<D>::symmetrize()
