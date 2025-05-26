@@ -163,7 +163,7 @@ that have identical or nearly identical user interfaces and implement
 closely analogous algorithms.  The common user interface for these
 classes is described here.
 
-\subsection scft_param_sweep_linear_param_sub Parameter File Format
+\subsection scft_param_sweep_linear_param_sub Parameter file format
 
 The parameter file format for a LinearSweep is summarized below:
 \code
@@ -279,7 +279,7 @@ The "parameters" array must contain exactly nParameter entries, each
 on a separate line. Each entry in this array describes how one input
 parameter should be modified.
 
-\subsection scft_param_sweep_linear_parameters_sec Sweep Parameters
+\subsection scft_param_sweep_linear_parameters_sec Sweep parameters
 
 The file format each line of the "parameters" array (corresponding to
 a single parameter) in a LinearSweep contains an identifier for a specific

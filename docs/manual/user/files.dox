@@ -1,10 +1,10 @@
 /*! \page user_files_page Input Files
 
-\ref user_model_page (Prev)
+\ref user_model_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
 \ref user_usage_page (Next)
 <BR>
 
-\section user_files_types_sec Types of File
+\section user_files_types_sec Types of file
 
 To perform a typical self-consistent field theory (SCFT) calculation, a
 PSCF program generally reads three different types of input file:
@@ -117,7 +117,7 @@ to read and write field fields thus do not contain information needed to
 specify a file format. 
 
 <BR>
-\ref user_model_page (Prev)
+\ref user_model_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
 \ref user_page (Up) &nbsp; &nbsp; &nbsp; &nbsp;
 \ref user_usage_page (Next)
 

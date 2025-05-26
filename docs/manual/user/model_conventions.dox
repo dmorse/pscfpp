@@ -4,44 +4,45 @@
 \ref user_files_page          (Next)
 <BR>
 
-PSCF is based on a coarse-grained picture of polymer statistics that does 
-not attempt to resolve details of chemical structure.  The use of a 
+PSCF is based on a coarse-grained picture of polymer statistics that 
+does not attempt to resolve details of chemical structure.  The use of a 
 coarse-grained model inherently introduces some freedom into the definition 
 of what one means by a "monomer", and thus into the choice of values for
 parameters that depend on this definition, such as the length of a block
-(in a thread model) or the number of monomers in a block (in the bead model).
+(in the thread model) or the number of monomers in a block (in the bead 
+model).
 
 When using a bead model, the most conceptually straightforward convention
-might be choose the number of beads used in PSCF equal to the number of 
+might be to choose the number of beads used in PSCF equal to the number of 
 chemical repeat units within the corresponding block of some real polymer 
-of interest.  Even that definition leaves some ambiguity, however, because 
-one always has the freedom to redefine what one means by a "monomer" by 
-grouping together two or more elementary chemical repeat units into a larger 
-unit.  For example, when describing a long linear alkane (i.e., linear 
-polyethylene) one could treat either a 1-carbon or 2-carbon unit as a 
-"monomer". This regrouping operation changes the value one would obtain 
-for the number of monomers in a given chain segment, and also changes the 
-values of the monomer statistical segment length and volume per monomer. 
-For example, a 100 carbon alkane segment could be described as having a 
-"length" of 100 units using one-carbon monomers or 50 units for two-carbon 
-monomers, using larger values for the statistical segment length \f$ b \f$ 
+of interest. Even that definition leaves some ambiguity, however, because 
+one can always redefine what one means by a "monomer" by grouping together 
+two or more elementary chemical repeat units into a larger unit.  For 
+example, when describing a long linear alkane (i.e., linear polyethylene) 
+one could treat either a 1-carbon or 2-carbon unit as a "monomer". This 
+regrouping operation changes the value one would obtain for the number of 
+monomers in a given chain segment, and also changes the values of the 
+monomer statistical segment length and volume per monomer. For example, 
+a 100 carbon alkane segment could be described as having a "length" of 
+100 units using one-carbon monomers or 50 units for two-carbon monomers, 
+while using larger values for the statistical segment length \f$ b \f$ 
 and the volume \f$ v \f$ per monomer in the model with fewer, larger
 monomers.
 
-This freedom to change conventions for block lengths becomes even more
-obvious in the thread model. This model allows the use of block lengths 
-that are not integers, and that are not required to be greater than 1.
-In the thread model, we implicitly assume that the number of elementary 
-chemical repeat units in any chain segment of interest is sufficiently 
-large that we may ignore details of chemical structure and characterize 
-positions along a polymer by a real (rather than integer) contour 
-coordinate \f$ s \f$.  The contour length \f$ |s-s'| \f$ of a segment 
-between two points in the same block with contour coordinates \f$ s \f$ 
-and \f$ s' \f$ is assumed to be proportional, but generally not equal, 
-to the number of chemical repeat units contained in the chain segment 
-between those points. As a result, the dimensionless contour length of 
-a chemically homogeneous chain segment is also proportional to the 
-molecular weight of that segment.  Values for the constants of 
+This flexibility of the definition of a "monomer" becomes even more
+profound in the thread model. The thread model allows the use of block 
+lengths that are not integers, and that are not required to be greater 
+than 1.  In the thread model, we implicitly assume that the number of 
+elementary chemical repeat units in any chain segment of interest is 
+sufficiently large that we may ignore details of chemical structure and 
+characterize positions along a polymer by a real (rather than integer) 
+contour coordinate \f$ s \f$.  The contour length \f$ |s-s'| \f$ of a 
+segment between two points in the same block with contour coordinates 
+\f$ s \f$ and \f$ s' \f$ is assumed to be proportional, but generally 
+not equal, to the number of chemical repeat units contained in the chain 
+segment between those points. As a result, the dimensionless contour 
+length of a chemically homogeneous chain segment is also proportional 
+to the molecular weight of that segment. Values for the constants of 
 proportionality that determine the number of elementary chemical repeat 
 units and molecular weight per unit contour length for each type of 
 block are not, however, specified by the equations used within PSCF. 
@@ -49,20 +50,21 @@ The software is instead designed to allow users to choose any convention
 they wish for these constants of proportionality. The cost of this 
 flexibility is, of course, that it places responsibility on the user 
 to choose a convention and to make sure that the chosen convention is 
-accurately reflected in the values of all input parameters that are
-provided by the user.
+correctly reflected in the values of all parameters that they provide
+as inputs to the program.
 
 The only restriction that PSCF places on the definition of polymer
 contour lengths in the thread model is a requirement that, as a matter 
 of convention, chain segments of equal contour length but different 
-monomer type correspond to the same volume within an incompressible melt. 
-The steric volume of any chain segment of contour length \f$ L \f$ is
-thus given by \f$ v L \f$ , for segments of any monomer type, using a
-value for the monomer reference volume \f$ v \f$ that is the same for
-all monomer types.  The requirement that the same monomer volume per 
-unit contour length be used for all monomer types does not lead to any 
-loss of generality, as long as different values may be assigned for 
-the statistical segment lengths of different monomer types.  
+monomer type must correspond to the same volume within an incompressible 
+melt.  The steric volume of any chain segment of contour length \f$ L \f$ 
+is thus given by \f$ v L \f$ , for segments of any monomer type, using 
+a value for the monomer reference volume \f$ v \f$ (i.e., the volume
+per unit contour length) that is the same for all monomer types.  The 
+requirement that the same volume per unit contour length be used for 
+all monomer types does not lead to any loss of generality, as long as 
+different values may be assigned for the statistical segment lengths 
+of different monomer types.  
 
 There are two common types of convention for block contour lengths
 used in the thread model, which we refer to here as "experimentalist" 
@@ -75,7 +77,7 @@ parameters, and for studies of phase maps for classes of systems for
 which it is known that predictions of relevant thermodynamic properties 
 can be parameterized by a small set of dimensionless parameters.
 
-\section user_model_conventions_experimentalist_sec Experimentalist" Conventions
+\section user_model_conventions_experimentalist_sec Experimentalist conventions
 
 In the "experimentalist" convention, a monomer (i.e., a unit of contour
 length) is defined for each monomer type so as to correspond to a
@@ -104,9 +106,9 @@ may be expressed as a ratio
    L  = M/m_{\alpha} \quad,
 \f]
 in which \f$ m_{\alpha} \f$ is a molecular weight per unit contour length
-(or per monomer reference volume) for monomers of type \f$ a \f$. The
-quantity \f$ m_{\alpha} \f$ must be defined for each monomer type such 
-that the volume occupied per chain segment of molecular weight
+(or per monomer reference volume) for monomers of type \f$ \alpha \f$. 
+The quantity \f$ m_{\alpha} \f$ must be defined for each monomer type 
+such that the volume occupied per chain segment of molecular weight
 \f$ m_{\alpha} \f$ in a polymer melt corresponds to the value chosen 
 for \f$ v \f$. If a melt of homopolymers containing monomers of type
 \f$ \alpha \f$ exhibits a density \f$ \rho_{\alpha} \f$ in grams per
@@ -139,7 +141,7 @@ statistical segment length for that monomer definition divided by the
 molecular weight per monomer. In experimentalist conventions, Angstrom
 or nanometer units are usually used for all lengths.
 
-\section user_model_conventions_theorist_sec Theorist Conventions
+\section user_model_conventions_theorist_sec Theorist conventions
 
 In a "theorist" convention, contour coordinates are scaled so as to
 define the overall contour length of some reference chain or chain segment

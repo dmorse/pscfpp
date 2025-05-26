@@ -29,7 +29,7 @@ same for all monomer types.  Each small-molecule solvent species is
 assigned a monomer type index and a "size" parameter that determines its 
 steric volume.
 
-\section user_model_parameters_list_sec Input Parameters
+\section user_model_parameters_list_sec Input parameters
 
 The physical parameters required to describe a model for either a SCFT or 
 PS-FTS calculation thus include:

@@ -53,7 +53,7 @@ format, described \ref scft_field_r1d_page "here".  The last line
 in every PSCF command script must be a FINISH command. Anything that
 appears after the FINISH command will be ignored.
 
-\section scft_command_1d_sweep_sec Example: A sweep
+\section scft_command_1d_sweep_sec Example: SCFT sweep
 
 Here is an example of a command file to perform a sweep. The SWEEP 
 command can only be used if the parameter file that was read by pscf_1d 

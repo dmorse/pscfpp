@@ -6,7 +6,7 @@
 
 This page discusses models of polymeric species in more detail.
 
-\section user_model_polymer_model_sec Continuous and Discrete Chain Models
+\section user_model_polymer_model_sec Continuous vs discrete chain models
 
 The pscf_pc and pscf_pg programs can treat polymer conformations using 
 either of two slightly different mathematical models, which we refer to 
@@ -56,7 +56,7 @@ recent work on on PS-FTS calculations. The main advantage of the use
 of a bead model in PS-FTS calculations is that it is somewhat less 
 computationally expensive.
 
-\subsection user_model_polymer_continuous_sub "Thread" Model
+\subsection user_model_polymer_continuous_sub Continuous "thread" model
 
 In the thread model, we imagine that the conformation of a single block 
 of contour length \f$ L \f$ within a block polymer can be characterized 
@@ -116,7 +116,7 @@ In the bead model for an incompressible system, every bead is assumed to
 occupy a volume given by the monomer volume parameter \f$ v \f$, which 
 has the same value for every type of monomer.
 
-\section user_model_polymer_branched_sec Block Connectivity
+\section user_model_polymer_branched_sec Block connectivity
 
 In every PSCF program, each polymer in a mixture may be either a linear 
 block polymer or an acyclic branched block polymer. Hompolymers are
@@ -128,7 +128,7 @@ common special case, however, the PSCF parameter file format allows the
 user to declare each species to be either linear or branched, and allows
 use of simplified file format to describe linear block polymers. 
 
-\subsection user_polymer_branched_graph_sub Polymers as Graphs
+\subsection user_polymer_branched_graph_sub Polymers as graphs
 
 A branched block polymer is described in PSCF using the language of graph
 theory. The connecting of each polymer is described as a connected acyclic 
@@ -171,7 +171,7 @@ The only difference between the information required in the thread
 and bead model is that the polymer length is given as a real number
 in the thread model and as an integer in the bead model.
 
-\subsection user_model_polymer_branched_linear_sub Linear Polymers
+\subsection user_model_polymer_branched_linear_sub Linear polymers
 
 PSCF allows a user to specify declare that a polymer species is a
 linear, and to use this information to determine the relationship
@@ -182,7 +182,7 @@ information about blocks in a linear block copolymer, in which values
 of the indices of the attached vertices do not need to be explicitly
 entered by the user.
 
-\subsection user_model_branched_vertex_sub Vertices in the Bead Model
+\subsection user_model_branched_vertex_sub Vertices in the bead model
 
 Implementation of the bead model requires the introduction of some
 additional conventions to specify the treatment of vertices of degree 
@@ -191,29 +191,28 @@ treats each vertex of degree D > 1 as a "phantom" bead that does not
 interact with any chemical potential field, like a bead with a monomer 
 type that has a vanishing Flory-Huggins chi parameters for interactions 
 with all bead types.  The bond that connect each such vertex to the 
-terminal (first or last) bead of each attached block is also taken 
-to be of a special type. The special bond that connects a vertex to
-the terminal bead of a block containing monomers of type i is taken
-have a statistical segment length, denoted here by \f$ a_{i} \f$, 
-that is related to the statistical segment length of standard bond 
+terminal (first or last) bead of each attached block is also taken to 
+be of a special type: The bond that connects a vertex to the terminal 
+bead of a block containing monomers of type i is taken have a 
+statistical segment length, denoted by \f$ a_{i} \f$, that is related 
+to the statistical segment length of standard bond between two beads
 of type i, denoted by \f$ b_{i} \f$, by the expression
 \f[
    a_{i}^{2} = b_{i}^{2}/2 \quad.
 \f]
-If we think of each standard bond of type i as corresponding to a 
-contour length s = 1 of an underlying continuous chain, then a bond 
-that connects the terminal bead of a block to a vertex is thus taken
-to corresponds to a contour length s = 1/2.  We thus summarize this 
-by referring to a bond that connects the terminal bead of a block to 
-such a vertex as a "half bond". 
+If we think of each standard bond between two beads of type i as 
+corresponding to a contour length s = 1 of an underlying continuous chain, 
+then a bond that connects the terminal bead of a block to a vertex thus 
+corresponds to a contour length s = 1/2.  We may thus summarize this by 
+describing a bond that connects the terminal bead of a block to such a 
+vertex as a "half bond". 
 
 Consider application of this rule to a junction of degree 2 that connects
 two blocks of types A and B within a linear block polymer. A model that 
 connects the terminal beads of the A and B blocks to a shared vertex by 
-two such "half bonds" is easily seen to be equivalent to a model that 
-directly connects these two terminal beads with a bond that has an 
-effective statistical segment length \f$ b_{AB} \f$ that satisfies the
-relation
+two such "half bonds" is equivalent to a model that directly connects 
+these two terminal beads with a bond that has an effective statistical 
+segment length \f$ b_{AB} \f$ that satisfies the relation
 \f[
    b_{AB}^{2} = 
    ( b_{A}^{2} + b_{B}^{2} )/2 \quad,
@@ -224,11 +223,11 @@ symmetric case in which \f$ b_{A} = b_{B} \f$, this yields a connecting
 bond of effective statistical segment length \f$ b_{AB} = b_{A} = b_{B} \f$,
 thus yielding a conformationally homogeneous chain in this case.
 
-This convention was chosen for simplicity, since it yields the desired
-simple behavior for a conformationally homogeneous linear chain, and 
-does not require the user to input any more information to describe a
-polymer using the bead model than that required to describe an analogous 
-polymer using the thread model. 
+This convention was chosen for primarily for simplicity. Its main virtues 
+are that it yields homogeneous behavior in the case of a conformationally 
+homogeneous linear chain, as discussed above, and that it does not require 
+the user to input any more information than that required to describe a
+polymer in the thread model. 
 
 <BR>
 \ref user_model_parameters_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp;

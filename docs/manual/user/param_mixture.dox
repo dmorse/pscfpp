@@ -56,7 +56,7 @@ shown \ref user_param_example_page "previously" :
   }
 \endcode
 
-\section user_param_mixture_format_sec Mixture Block Format 
+\section user_param_mixture_format_sec Format 
 
 The format for the mixture block in any PSCF parameter file is described
 somewhat more generally below:
@@ -302,7 +302,7 @@ The text representation of a block within the "blocks" array in a Polymer
 parameter file block is different depending on whether the polymer type
 is "linear" or "branched".
 
-\subsection user_param_block_linear_sub Linear Polymers
+\subsection user_param_block_linear_sub Linear polymers
 
 If the polymer type is linear, then blocks must be listed in the "blocks"
 array in the order in which they appear along the polymer, starting from
@@ -350,7 +350,7 @@ table:
   </tr>
 </table>
 
-\subsection user_param_block_branched_sub Branched Polymers
+\subsection user_param_block_branched_sub Branched polymers
 
 If the polymer type is branched, then the information in the "blocks" 
 array of a Polymer block must contain a description of the topology of 

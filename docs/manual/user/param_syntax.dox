@@ -138,7 +138,7 @@ The combination of detailed error messages and echoing usually provides
 enough information to allow users to understand and quickly correct most 
 parameter file syntax errors.
 
-\section user_param_syntax_parameter_sec Individual Parameters
+\section user_param_syntax_parameter_sec Individual parameters
 
 The simplest type of element within a parameter file block is an entry
 that represents a value for an individual parameter.  Each such entry 
@@ -198,7 +198,7 @@ or "branched".  The value of the "type" parameter must thus be given
 in the parameter file by a string that must have one of these two 
 allowed values. 
 
-\section user_param_syntax_array_sec Array-Valued Parameters
+\section user_param_syntax_array_sec Array-valued parameters
 
 Values of some parameters are stored as elements of a one-dimensional 
 array. The parameter file entry for such array is given in a multi-line 
@@ -221,9 +221,11 @@ named A with N elements would thus be of the form
      ]
 \endcode
 Here, A[0], ... A[N-1] denote array element values, with zero-based
-indices.  In the example given in the previous page, this syntax is 
-used for the "monomers" array within the Mixture block, and the 
-"blocks" arrays within each Polymer subblock of the Mixture block.  
+indices.  
+
+In the example given in the previous page, this syntax is used for the 
+"monomers" array within the Mixture block, and the "blocks" arrays 
+within each Polymer subblock of the Mixture block.  
 
 The number of expected elements of such an array must always be 
 specified by the value of a parameter that appears before the array 
@@ -233,7 +235,7 @@ this function as a parameter.  For example, the number of monomer
 types is specified by parameter nMonomer that appears just before 
 the "monomers" array.
 
-\section user_param_syntax_matrix_sec Matrix-Valued Parameters 
+\section user_param_syntax_matrix_sec Matrix-valued parameters 
 
 Variables that are stored internally in matrices or two-dimensional 
 arrays can use one of two different multi-line parameter file formats. 
@@ -304,7 +306,7 @@ For example, the row format for elements of 2 x 3 matrix named
 In this example, the value of the matrix element in row 0 and column 
 1 is 23.0, while the value in row 1 and column 2 is 21.3.
 
-\section user_param_syntax_optional_sec Optional Elements
+\section user_param_syntax_optional_sec Optional elements
 
 Each labelled element in a parameter file (i.e, each block or parameter) 
 may be either required or optional. Most elements required. 
@@ -343,7 +345,7 @@ blocks immediately after the Polymer blocks. Solvent blocks may not
 appear, however, if nSolvent is set to zero either explicitly or by 
 default. 
 
-\section user_param_syntax_selectable_sec Selectable Blocks
+\section user_param_syntax_selectable_sec Selectable blocks
 
 Some blocks within a PSCF parameter file are "selectable".  A selectable 
 block is one that may start with the block label for any of a limited 

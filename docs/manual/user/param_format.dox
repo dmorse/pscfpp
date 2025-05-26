@@ -39,7 +39,7 @@ of a "#" symbol after a block label indicate that the block is selectable.
 The above description thus indicates that the Iterator and Sweep blocks
 are both optional and selectable. 
 
-\section user_format_example2_sec Example 2: Mixture Block
+\section user_format_example2_sec Example 2: Mixture block
 
 As a second example, consider the format for a Mixture block used in any 
 PSCF parameter. This can described compactly as follows:

@@ -61,7 +61,7 @@ calculation for a binary mixture of an AB diblock copolymer with
 a homopolymer of type B in a periodic cubic unit cell, using the
 space group appropriate for a double gyroid phase.
 
-\section user_param_example_structure_sec File Structure
+\section user_param_example_structure_sec Parameter file structure
 
 Before delving into details, consider the overall structure visible in 
 this example: This or any other PSCF parameter file consists of a set 
@@ -215,7 +215,7 @@ matrix element, which is the value of the associated binary
 Flory-Huggins interaction parameter.  The resulting list of nonzero
 matrix elements is enclosed by opening and closing parentheses.
 
-\section user_param_example_discussion_sec Overview of Example
+\section user_param_example_discussion_sec Overview of example
 
 \anchor user_param_example_mixture
 <b> Mixture  </b>:
