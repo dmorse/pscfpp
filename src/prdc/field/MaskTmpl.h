@@ -21,42 +21,41 @@ namespace Prdc {
    /**
    * Container for a field to which the total density is constrained.
    * 
-   * MaskTmpl<D, FieldIo, RField> is a base class template for class
-   * templates named Mask<D> that are defined in namespaces Pscf::Rpc and 
-   * Pscf::Rpg. 
+   * Partial specializations of MaskTmpl \<D, FieldIo, RField\> are used 
+   * as base classes for Rpc::Mask \<D \> and Rpg::Mask \<D\>.
    *
    * A system that contains a Mask must satisfy a modified version of the
    * incompressibility constraint, in which the sum of the concentration
    * fields of all monomer types must be equal to the Mask field. The Mask 
    * field takes values in the range [0, 1] everywhere. A system without a 
-   * Mask is equivalent * to a system in which the mask is equal to 1 at all points.
+   * Mask is equivalent to a system in which the mask field is equal to 1 
+   * at all points in the unit cell.
    * 
-   * A Mask<D> contains representations of this field in two formats:
+   * A Mask \<D\> contains representations of this field in two formats:
    * 
-   *  - A DArray<double> that contains components of the field in a
+   *  - A DArray \<double\> that contains components of the field in a
    *    symmetry-adapted Fourier expansion (i.e., in basis format). This 
    *    is accessed by the basis() member function.
    *
-   *  - An RField object (where RField is a template class) contains values 
-   *    of the field on the nodes of a regular mesh. This is accessed by 
-   *    the rgrid() member function.
+   *  - An RField object (where RField is a template parameter) contains 
+   *    values of the field on the nodes of a regular mesh. This is 
+   *    accessed by the rgrid() member function.
    *
    * A Mask is designed to automatically update one of these 
    * representations when the other is modified, when appropriate. 
    * A pointer to an associated FieldIo (another template class) is used 
    * for these conversions. The FieldIo class that is used to instantiate
-   * this template should be a subclass of Prdc::FieldIoReal, and the 
-   * RField class used to instantiate this template should be compatible
-   * with the FieldIo.
+   * this template should be a subclass of Prdc::FieldIoReal.
    * 
    * The setBasis function allows the user to input new components in
    * basis format and internally recomputes the values in r-grid format.
    * The setRgrid function allows the user to reset the field in r-grid
    * format, but recomputes the components in basis format if and only
    * if the user explicitly declares that the field are known to be
-   * invariant under all symmetries of the space group. A boolean flag
-   * named isSymmetric is used to keep track of whether the current
-   * field is symmetric, and thus whether the basis format exists.
+   * invariant under all symmetries of the space group. A boolean member
+   * variable named isSymmetric is used to keep track of whether the 
+   * current mask field is symmetric, and thus whether the basis format 
+   * exists.
    *
    * \ingroup Prdc_Field_Module
    */

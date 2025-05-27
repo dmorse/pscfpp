@@ -24,11 +24,10 @@ namespace Rpc {
    * Spatial domain for a periodic structure with real fields, on a CPU.
    *
    * See the interface of the Prdc::DomainReal base class template for
-   * complete interface documentation. The Rpc::Domain class template is 
+   * complete API documentation. The Rpc::Domain class template is 
    * basically a named partial specialization of the base class template, 
    * defined using template type parameters FFT = Prdc::Cpu::FFT<D>, 
-   * WLT = Prdc::Cpu::WaveList<D>, and FIT = Rpc::FieldIo<D> . The 
-   * public interface is identical to that of the base class.
+   * WLT = Prdc::Cpu::WaveList<D>, and FIT = Rpc::FieldIo<D> . 
    *
    * \ingroup Rpc_Field_Module
    */

@@ -30,16 +30,6 @@ namespace Prdc {
    /**
    * Spatial domain for a periodic structure with real fields.
    *
-   * Partial specializations of the DomainReal class template are used as
-   * base classes for Rpc::Domain<int D> and Rpg::Domain<int D>.
-   *
-   * Template Parameters:
-   *
-   *   - D    : integer dimension of space (D=1, 2, or 3)
-   *   - FFT  : Fast Fourier transform calculator type, e.g., FFT<D>
-   *   - WLT  : WaveList container type, e.g., WaveList<D>
-   *   - FIT  : FieldIo class for field operations, e.g., FieldIo<D>
-   *
    * A DomainReal template instance has:
    *
    *  - a Mesh spatial discretization mesh
@@ -56,6 +46,17 @@ namespace Prdc {
    * actually class templates with an integer template parameter D. Actual 
    * class names are Mesh \<D\>, Prdc::UnitCell \<D\>, etc. with D=1, 2, 
    * or 3.
+   *
+   * <b> Template Parameters </b>:
+   *
+   *   - D    : integer dimension of space (D=1, 2, or 3)
+   *   - FFT  : Fast Fourier transform calculator type, e.g., FFT<D>
+   *   - WLT  : WaveList container type, e.g., WaveList<D>
+   *   - FIT  : FieldIo class for field operations, e.g., FieldIo<D>
+   *
+   * <b> Subclasses </b>: Partial specializations of the DomainReal class 
+   * template are used as base classes for classes Rpc::Domain \<D\> and
+   * Rpg::Domain \<D\>.
    *
    * \ingroup Prdc_Field_Module
    */

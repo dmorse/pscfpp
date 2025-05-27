@@ -26,7 +26,6 @@ namespace Rpc {
    * from the base class template Pscf::Prdc::WContainerReal. See the
    * documentation for that class template for API documentation.
    *
-   * \sa Pscf::Prdc::WContainerReal
    * \ingroup Rpc_Field_Module
    */
    template <int D>
@@ -85,15 +84,15 @@ namespace Rpc {
    #endif
 
 } // namespace Rpc
-namespace Prdc {
 
-   #ifndef RPC_W_FIELD_CONTAINER_TPP
+#ifndef RPC_W_FIELD_CONTAINER_TPP
+namespace Prdc {
    // Suppress implicit instantiation
    extern template class WContainerReal<1, RField<1>, Rpc::FieldIo<1> >;
    extern template class WContainerReal<2, RField<2>, Rpc::FieldIo<2> >;
    extern template class WContainerReal<3, RField<3>, Rpc::FieldIo<3> >;
-   #endif
-
 } // namespace Rpc
+#endif
+
 } // namespace Pscf
 #endif

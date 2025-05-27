@@ -24,7 +24,7 @@ namespace Rpg {
    * Spatial domain for a periodic structure with real fields, on a GPU.
    *
    * See the interface of the Prdc::DomainReal base class template for
-   * complete interface documentation. The Rpg::Domain class template is 
+   * complete API documentation. The Rpg::Domain class template is 
    * basically a named partial specialization of the base class template, 
    * defined using template type parameters FFT = Prdc::Cuda::FFT<D>, 
    * WLT = Prdc::Cuda::WaveList<D>, and FIT = Rpg::FieldIo<D> . The 
