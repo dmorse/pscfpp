@@ -613,7 +613,7 @@ namespace Prdc {
       std::string groupNameIn;
 
       Pscf::Prdc::readFieldHeader(in, ver1, ver2, unitCell,
-                              groupNameIn, nMonomer);
+                                  groupNameIn, nMonomer);
       // Note: Function definition in prdc/crystal/fieldHeader.tpp
 
       // Checks of data from header
@@ -682,7 +682,7 @@ namespace Prdc {
          gName = groupName();
       }
       Pscf::Prdc::writeFieldHeader(out, v1, v2, unitCell,
-                              gName, nMonomer);
+                                   gName, nMonomer);
       // Note: This function is defined in prdc/crystal/fieldHeader.tpp
    }
 
@@ -694,10 +694,11 @@ namespace Prdc {
    * should never be called, and that throws an Exception. Such unusable
    * implementations are provided, rather than declaring all of these 
    * functions to be pure virtual (= 0 suffix), because the absence of 
-   * any pure virtual functions allows this to be a concrete class. This 
-   * allows explicit instances of this template can be compiled for the 
-   * 6 actual use cases, corresponding to D = 1, 2 or 3, with fields 
-   * defined on the Cpu or Gpu). 
+   * any pure virtual functions allows instances of FieldIoReal to be 
+   * concrete class. This allows explicit instances of this template 
+   * to be compiled for the 6 actual use cases, corresponding to values
+   * of D = 1, 2 or 3, with field and FFT classes defined on the Cpu or 
+   * Gpu). 
    */
 
    /*

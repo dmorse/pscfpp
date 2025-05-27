@@ -218,8 +218,7 @@ namespace Prdc {
    }
 
    /*
-   * Read field component values from input stream, in symmetrized
-   * Fourier format.
+   * Read field component values from stream, in symmetrized basis format.
    *
    * This function also computes and stores the corresponding r-grid
    * representation. On return, hasData and isSymmetric are both true.

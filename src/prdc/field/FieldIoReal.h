@@ -44,18 +44,47 @@ namespace Prdc {
    *
    *    - D    : dimension of space, i.e., 1, 2, or 3
    *    - RFRT : real field r-grid type, e.g., RField<D> 
-   *    - FKT  : real field k-grid type, e.g., RFieldDft<D> 
+   *    - RFKT : real field k-grid type, e.g., RFieldDft<D> 
    *    - FFT  : fast Fourier transform type, e.g., FFT<D> 
    *
-   * <b>Side effect of reading a field file:</b> The member functions that
-   * read fields from a file may all construct a symmetry adapted basis 
-   * in an associated Basis object as a side effect of reading the field 
-   * header. All of these functions call member function readFieldHeader 
-   * member function to read the field file header. If a group has been 
-   * declared in the Domain block of the parameter file for the associated 
-   * system but the symmetry adapted basis has not been initialized before 
-   * entry to this function, the readFieldHeader function will construct 
-   * the basis before returning.
+   * The FieldIoReal template is a base class for two class templates
+   * named FieldIo<int D> defined in namespaces Pscf::Rpc and Pscf::Rpg. 
+   * The Pscf::Rpc::FieldIo<int D> template is derived from a partial 
+   * specialization of FieldIoReal with parameters RFRT=RField<D>, 
+   * RFKT=RFieldDft<D>, and FFT=FFT<D> that are all defined in the
+   * Pscf::Cpu namespace, and ll designed use standard CPU hardware. 
+   * The analogous template Rpg::Field<D> in the Pscf::Rpg namespace is 
+   * derived from a partial specialization of FieldIoReal in which these
+   * three parameters are class templates with the same names that are 
+   * defined in the Pscf::Cuda namespace, which all use GPU memory. The
+   * FieldIo template is used as a base class to reduce duplication of
+   * identical or closely analogous code between these two subclasses.
+   *
+   * <b> Unimplmented member functions </b>: This class template defines 
+   * several virtual functions to read and write fields in r-grid and
+   * k-grid formats for which different implementations are required for
+   * Cpu and Cuda code. Cpu and Cuda implementations of these functions 
+   * differ because the Cuda versions require operations to transfer data
+   * between Cpu and Gpu memory spaces.  These virtual functions must all 
+   * be overridden by each subclass. A default implementation is defined 
+   * for for each such function that throws an Exception if the function
+   * is called. These trivial default implementations have beendefined, 
+   * rather than declaring these to all be pure virtual * functions, so 
+   * that each of the few relevant instantiations of the FieldIoReal 
+   * base class template is a concrete (rather than abstract) class that
+   * can be explicitly instantiated and compiled if desired.
+   *
+   * <b>Basis construction as side effect of reading field files:</b> 
+   * Each member functions that read fields from a file may all construct 
+   * a symmetry adapted basis in an associated Basis<D> object as a side 
+   * effect of reading a field header. All of these functions call member 
+   * function readFieldHeader to read the field file header. If an 
+   * associated space group is known but the symmetry adapted basis has 
+   * not be initialized upon entry to the readFieldHeader function, then 
+   * this function will initialize the Basis<D> object before returning.
+   * When a space group is declared in the parameter file, the basis is
+   * thus normally constructed as a side effect of the first command
+   * that reads a field file.
    *
    * \ingroup Prdc_Field_Module
    */
@@ -79,7 +108,7 @@ namespace Prdc {
       virtual ~FieldIoReal();
 
       /**
-      * Create association with other objects in parent Domain.
+      * Create association with other objects in the parent Domain.
       *
       * \param mesh  associated spatial discretization Mesh<D>
       * \param fft   associated FFT object for fast transforms
@@ -109,25 +138,25 @@ namespace Prdc {
       ///@{
 
       /**
-      * Read concentration or chemical potential fields from file.
+      * Read concentration or chemical potential fields from an istream.
       *
-      * This function reads fields in a symmetry adapted basis from input
-      * stream in.
+      * This function reads fields in a symmetry adapted basis format from
+      * input stream in. The header of the field file must declare the 
+      * group name, and this name must agree with that declared in the 
+      * parameter file. 
       *
       * The capacity of DArray fields is equal to nMonomer, and element
-      * fields[i] is a DArray containing components of the field
-      * associated with monomer type i.
-      *
-      * The header of a field file in basis format must declare the group
-      * name, and this name must agree with that declared in the parameter
-      * file. 
+      * fields[i] is a DArray<double> containing components of the field
+      * associated with monomer type i, defined as coefficients of 
+      * symmetry-adapated real basis functions.
       *
       * \param in  input stream (i.e., input file)
       * \param fields  array of fields (symmetry adapted basis components)
       * \param unitCell  associated crystallographic unit cell
       */
       void
-      readFieldsBasis(std::istream& in, DArray< DArray<double> > & fields,
+      readFieldsBasis(std::istream& in, 
+		      DArray< DArray<double> >& fields,
                       UnitCell<D> & unitCell) const;
 
       /**
@@ -136,36 +165,36 @@ namespace Prdc {
       * This function opens an input file with the specified filename, 
       * reads components in symmetry-adapted form from that file, and
       * then closes the file. This function calls the overloaded member
-      * function readFieldsBasis that takes a std::istream parameter 
-      * rather than a filename parameter.
+      * function readFieldsBasis that takes a std::istream parameter to
+      * read the file after it opened.
       *
       * \param filename  name of input file
       * \param fields  array of fields (symmetry adapted basis components)
       * \param unitCell  associated crystallographic unit cell
       */
       void readFieldsBasis(std::string filename,
-                           DArray< DArray<double> > & fields,
+                           DArray< DArray<double> >& fields,
                            UnitCell<D> & unitCell) const;
 
       /**
       * Read single concentration or chemical potential field from file.
       *
       * This function reads a single field in symmetry adapted basis 
-      * format from the input stream in. The corresponding readFieldsBasis 
-      * function is called internally.
+      * format from the input stream in. 
       *
       * \param in  input stream (i.e., input file)
       * \param field  array to store the field (basis format)
       * \param unitCell  associated crystallographic unit cell
       */
-      void readFieldBasis(std::istream& in, DArray<double>& field,
+      void readFieldBasis(std::istream& in, 
+		          DArray<double>& field,
                           UnitCell<D> & unitCell) const;
 
       /**
       * Read single concentration or chemical potential field from file.
       *
       * This function opens an input file with the specified filename,
-      * reads field in symmetry adapted basis format from that file, and
+      * reads a field in symmetry adapted basis format from that file, and
       * and then closes the file. The overloaded readFieldBasis function 
       * that takes a std::istream parameter is called internally. 
       *
@@ -173,7 +202,8 @@ namespace Prdc {
       * \param field  array to store the field (basis format)
       * \param unitCell  associated crystallographic unit cell
       */
-      void readFieldBasis(std::string filename, DArray<double>& field,
+      void readFieldBasis(std::string filename, 
+		          DArray<double>& field,
                           UnitCell<D> & unitCell) const;
 
       /**
@@ -238,7 +268,7 @@ namespace Prdc {
       ///@{
 
       /**
-      * Read array of RField objects (r-grid fields) from an istream.
+      * Read array of RField objects (r-grid format) from an istream.
       *
       * The capacity of array fields is equal to nMonomer, and element
       * fields[i] is the RFRT associated with monomer type i.
@@ -257,14 +287,16 @@ namespace Prdc {
                            UnitCell<D> & unitCell) const;
 
       /**
-      * Read array of RField objects (fields on r-space grid) from file.
-      *
-      * The capacity of array fields is equal to nMonomer, and element
-      * fields[i] is the RFRT associated with monomer type i.
+      * Read array of RField objects (r-grid format) from a file.
       *
       * This function opens an input file with the specified filename,
       * reads fields in RFRT real-space grid format from that file,
-      * and then closes the file.
+      * and then closes the file. The overloaded readFieldsRGrid 
+      * function that takes an std::istream parameter is called to read
+      * the file after it is opened.
+      *
+      * The capacity of array fields is equal to nMonomer, and element
+      * fields[i] is the RFRT associated with monomer type i.
       *
       * \param filename  name of input file
       * \param fields  array of RField fields (r-space grid)
@@ -278,8 +310,8 @@ namespace Prdc {
       /**
       * Read data for array of r-grid fields, with no header section.
       *
-      * This function reads the data section of the rgrid-field format, with
-      * no header.
+      * This function reads the data section of the rgrid-field format, 
+      * without first reading a header.
       *
       * The default version is unimplemented and throws an Exception. An
       * implementation for this function must be defined in each subclass.
@@ -300,33 +332,34 @@ namespace Prdc {
       * implementation for this function must be defined in each subclass.
       * 
       * \param in  input stream (i.e., input file)
-      * \param field  fields defined on r-space grid
+      * \param field  single field defined on r-space grid
       * \param unitCell  associated crystallographic unit cell
       * \return  true iff header has a space group (isSymmetric flag)
       */
       virtual
       bool readFieldRGrid(std::istream &in,
-                           RFRT & field,
-                           UnitCell<D>& unitCell) const;
+                          RFRT & field,
+                          UnitCell<D>& unitCell) const;
 
       /**
       * Read single RField (field on an r-space grid) from named file.
       *
       * This function opens an input file with the specified filename,
-      * reads a field in RFRT real-space grid format, and closes
-      * the file.
+      * reads a field in RFRT real-space grid format, and then closes the
+      * the file. The overloaded readfieldRGrid function that takes a
+      * std::istream parameter is called internally to read the file.
       *
       * \param filename  name of input file
-      * \param field  fields defined on r-space grid
+      * \param field  single field defined on r-space grid
       * \param unitCell  associated crystallographic unit cell
       * \return  true iff header has a space group (isSymmetric flag)
       */
       bool readFieldRGrid(std::string filename,
-                           RFRT & field,
-                           UnitCell<D>& unitCell) const;
+                          RFRT & field,
+                          UnitCell<D>& unitCell) const;
 
       /**
-      * Write array of RField objects (fields on r-space grid) to ostream.
+      * Write array of RField objects (fields on an r-grid) to ostream.
       *
       * The default version is unimplemented and throws an Exception. An
       * implementation for this function must be defined in each subclass.
@@ -351,7 +384,9 @@ namespace Prdc {
       *
       * This function opens an output file with the specified filename,
       * writes fields in RFRT real-space grid format to that file, and
-      * then closes the file.
+      * then closes the file. The overloaded function writeFieldsRGrid
+      * that takes a std::ostream parameter is called internally to read
+      * the file after it is opened.
       *
       * \param filename  name of output file
       * \param fields  array of RFRT objects (fields on r-space grid)
@@ -364,7 +399,7 @@ namespace Prdc {
                             bool isSymmetric = true) const;
 
       /**
-      * Write a single RField (field on an r-space grid) to ostream.
+      * Write a single RField (field on an r-space grid) to an ostream.
       * 
       * The default version is unimplemented and throws an Exception. An
       * implementation for this function must be defined in each subclass.
@@ -386,8 +421,10 @@ namespace Prdc {
       * Write a single RField (fields on an r-space grid) to a file.
       *
       * This function opens an output file with the specified filename,
-      * write a field in RFRT real-space grid format to that file,
-      * and then closes the file.
+      * write a field in RFRT real-space grid format to that file, and
+      * then closes the file. The overloaded function writeFieldRGrid
+      * that takes a std::ostream parameter is called internally to
+      * write the filed after the file is opened.
       *
       * \param filename  name of output file
       * \param field  field defined on r-space grid
