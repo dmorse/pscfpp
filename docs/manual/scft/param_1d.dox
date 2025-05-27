@@ -7,14 +7,61 @@
 The pscf_1d program allows the solution of the SCFT field equations for 
 problems in which all fields depend only on a single coordinate in a 
 planar planar (Cartesian), cylindrical or spherical geometry.  This
-program may be used to treat a flat interface or thin film by using
-a planar geometry, or can treat curved interfaces and a cylindrical or 
+program may be used to treat a flat interface or thin film by using a 
+planar geometry, or can treat curved interfaces and a cylindrical or 
 spherical micelles by using a cylindrical or spherical coordinate by
 using a cylindrical or spherical geometry.
-An example of a parameter file for an pscf_1d program was given 
-\ref user_param_example_page "previously" as an example of the syntax.
-Please consult this example when looking at this discussion of the file
-format.
+
+\section scft_param_1d_example_sec Example
+
+The text shown below is a complete parameter file for a simple 1D SCFT 
+calculation performed using the pscf_1d program:
+
+\code
+System{
+  Mixture{
+     nMonomer   2
+     monomers[
+                1.0
+                1.0
+     ]
+     nPolymer   2
+     Polymer{
+        nBlock  2
+        blocks[
+                0   0.5
+                1   0.5
+        ]
+        phi     0.6
+     }
+     Polymer{
+        nBlock  1
+        blocks[
+                0   1.0
+        ]
+        phi     0.4
+     }
+     ds   0.01
+  }
+  Interaction{
+     chi(
+           0    1    10.0
+     )
+  }
+  Domain{
+     mode     planar
+     xMin     0.0
+     xMax     8.0
+     nx       401
+  }
+  Iterator{
+     epsilon   0.00000001
+  }
+}
+\endcode
+This particular example gives parameters for a calculation of a binary
+mixture of a symmetric AB diblock copolymer with a homopolymer of type
+A in a one-dimensional planar geometry.
 
 \section scft_param_1d_format_sec File format
 
@@ -29,22 +76,28 @@ System{
   Sweepr#*{ ... }
 }
 \endcode
-The purposes of each of these top-level blocks have been discussed 
-previously. The Mixture and Interaction blocks use the same format
-for all PSCF programs, and have also been discussed previously. 
-We thus focus below on the contents of the Domain, Iterator, and 
-Sweep blocks. 
+The overall structure is similar to that of the example pscf_pc parameter 
+file shown \ref user_param_example_page "previously", with one important 
+difference: The System block of a pscf_1d parameter file does not contain 
+a polymerModel parameter because the pscf_1d program does not offer a 
+choice of bead or thread models, and instead always uses a thread model.  
+
+The purposes of each the the top-level sub-blocks of the System block are 
+similar for different PSCF programs, and have been discussed previously. 
+The same formats for the Mixture and Interaction blocks are used by all 
+PSCF programs, and have also been discussed previously.  We thus focus 
+below on the contents of the remaining Domain, Iterator, and Sweep blocks. 
 
 \section scft_param_1d_domain_section Domain block
 
-The domain block describes the spatial domain over which the SCFT equations 
-should be solved. The parameter file syntax is described in detail 
-\subpage r1d_Domain_page "here", and also discussed below.
+The domain block for pscf_1d describes the 1D spatial domain over which 
+the SCFT equations should be solved, and the mesh used to discretize 
+that domain. The parameter file syntax is described in detail 
+\subpage r1d_Domain_page "here", and is also summarized below.
 
-The example parameter file shown \ref user_param_example_page "previously" 
-was designed to describe a planar geometry. As another example, here is
+The example parameter file shown \ref scft_param_1d_example_sec "above" 
+was designed to describe a planar geometry. As another example, here is 
 the Domain block for a simulation of a spherical micelle
-
 \code
   Domain{
     mode   spherical
@@ -52,8 +105,11 @@ the Domain block for a simulation of a spherical micelle
     nx     201
   }
 \endcode
-This example omits an optional parameter xMin that, when present, would
-appear immediately before xMax.
+This example omits an optional parameter xMin that, if present, would 
+appear immediately before xMax. When xMin is omitted, it is set to 0.0 by 
+default. Omitting the xMin parameter in a calculation that is performed 
+using a spherical or radial coordinate system creates a spherical or 
+cylindrical domain that includes the origin.
 
 The full format for the Domain block is
 \code
@@ -64,7 +120,7 @@ The full format for the Domain block is
     nx     int
   }
 \endcode
-The meaning of the various parameters are given in tabular form below 
+The meanings of the various parameters are given in tabular form below.
 <table>
   <tr>
     <td> <b> Label </b>  </td>
@@ -78,15 +134,15 @@ The meaning of the various parameters are given in tabular form below
   <tr>
     <td> xMin* </td>
     <td> 
-    Lower bound of coordinate domain. Optional and 0.0 by default.  </td>
+    Lower bound of normal coordinate. Optional and 0.0 by default.  </td>
   </tr>
   <tr>
     <td> xMax </td>
-    <td> Upper bound of coordinate domain. </td>
+    <td> Upper bound of normal coordinate. </td>
   </tr>
   <tr>
     <td> nx </td>
-    <td> Number of grid points used to discretize the domain. </td>
+    <td> Number of grid points used to discretize the domain [xMin, xMax]. </td>
   </tr>
 </table>
 
@@ -99,7 +155,7 @@ strings "planar", "cylindrical" or "spherical". Mode "planar" indicates a
 Cartesian coordinate system appropriate to membrane or thin film, in which 
 the coordinate is measured normal to the film. Mode "cylindrical" indicates 
 a cylindrical coordinate system for a system with cylindrical rotational
-symmetry, in which the coordinate represents distance from an axis of
+symmetry, in which the 1D coordinate represents distance from an axis of
 rotation. Mode "spherical" indicates a spherical coordinate system for a 
 system with spherical symmetry, in which the coordinate represents distance 
 from the origin. 
@@ -107,35 +163,35 @@ from the origin.
 <b> xMin and xMax </b>:
 The parameters xMin and xMax specify the minimum and maximum values of
 the relevant spatial coordinate. The parameter xMin is optional, and is
-set to 0.0 default when the parameter is omitted.  In "planar" mode, 
+set to 0.0 default when this parameter is omitted.  In "planar" mode, 
 xMin and xMax are the minimum and maximum values of a Cartesian 
 coordinate, defining a slit bounded bounded by constant values of this 
 coordinate. In "cylindrical" and "spherical" mode, these are minimum 
 and maximum values of a radial coordinate. In cylindrical or spherical
 mode, omitting xMin defines a simply connected circular or spherical 
 domain of radius equal to xMax that includes the origin.
-If the parameter xMin is present and is assigned a positive value less
-than xMax, the problem will be solved in a cylindrical or spherical 
-annular region of inner radius xMin and outer radius xMax.
+If the parameter xMin is present and is assigned a positive value, such
+that \f$ 0 < xMin < xMax \f$, the problem will be solved in a cylindrical
+or spherical annular region of inner radius xMin and outer radius xMax.
 
 <b> nx </b>:
-The parameter nx specifies the number of equally spaced grid points 
-that will be used to discretize the spatial domain. Because this 
-includes both end-points, the number of grid points is one greater 
-than the number of spatial steps. The distance between grid points in
-the underlying finite difference discretization, denoteed by dx, is 
-thus given by dx = (xMax - xMin)/(nx-1). 
+The parameter nx specifies the number of equally spaced grid points that 
+will be used to discretize the spatial domain. Because the value of nx
+includes both end-points, the number of grid points is one greater than 
+the number of spatial steps. The distance between grid points in the 
+underlying finite difference discretization, denoteed by dx, is thus 
+given by dx = (xMax - xMin)/(nx-1). 
 
 <b> Boundary Conditions </b>
 
-The pscf_1d program solves the modified diffusion equation subject 
-to von Neumann boundary conditions that require derivatives of the 
-propagators and concentration fields with respect to the relevant 
-Cartesian or radial normal coordinate must vanish at the lower and 
-upper bounds, xMin and xMax. In the special case of a cylindrical 
-or spherical geometry, for which xMin = 0.0, the requirement of a 
-vanishing radial derivative at x=0 is necessary to guarantee that 
-the gradient vector is continuous at the origin. 
+The pscf_1d program solves the modified diffusion equation subject to 
+von Neumann boundary "no flux" conditions that require derivatives of
+the propagators and concentration fields with respect to the relevant 
+Cartesian or radial normal coordinate to vanish at the lower and upper 
+bounds, xMin and xMax. In the special case of a cylindrical or spherical 
+geometry that includes the origin, for which xMin = 0.0, the requirement 
+of a vanishing radial derivative at x=0 is necessary to guarantee that 
+the 3D gradient vector is continuous at the origin.
 
 \section scft_param_1d_iterator_sec Iterators
 
@@ -146,20 +202,20 @@ The default iterator for pscf_1d is an Anderson-mixing algorithm that is
 implemented by a class named AmIterator.  Because this is the default 
 iterator, it may be chosen by including an iterator block in which the 
 first line contains either the generic label "Iterator" or the specific 
-class name "AmIterator".  
+class name "AmIterator".
 
-The NrIterator class implements a Newton-Raphson iterator. Under 
-favorable conditions, this may converge in only a few steps, but the
-cost for step is high, and grows rapidly with increasing number of 
-grid points. This iterator is not efficient for large problems (more
-than approxinately 1000 grid points). 
+The NrIterator class implements a Newton-Raphson iterator. Under favorable 
+conditions, this may converge in only a few steps, but the cost for step 
+is high, and grows rapidly with increasing number of grid points. This 
+iterator is thus not efficient for large problems (more than approximately 
+1000 grid points). 
 
 The BinaryRelaxiterator class implements a simple relaxation iterator for 
 AB systems with only two types of monomer, as described by F. Drolet and 
 G.H. Fredrickson (Phys. Rev. Lett, vol 83, 4317, 1999). 
 
-More detailed documentation of the input format for each available iterator
-is given in the links in the table below:
+More detailed documentation of the input format for each available 
+pscf_1d iterator is given in the links in the table below:
 
 <table>
 <tr>

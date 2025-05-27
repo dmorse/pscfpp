@@ -44,7 +44,7 @@ would direct standard output to a file named "log" in the current working
 directory.  Standard output should normally be redirected to a file when
 a job is run in background or in a queue.
 
-\section user_usage_echo_sec Echoing the Parameter File
+\section user_usage_echo_sec Echoing the parameter file
 
 All PSCF programs accept a command line option "-e" that causes the
 contents of each line of the parameter file to be echoed to standard
@@ -79,7 +79,7 @@ the echoed output may help users more quickly become familiar with the
 full format of each parameter file block, including optional elements 
 that are omitted from some examples.
 
-\section user_usage_options_sec Command Line Options 
+\section user_usage_options_sec Command line options 
 
 The table shown below lists all command line options accepted by PSCF
 programs. The second column, which describes the option parameter, is

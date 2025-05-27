@@ -258,13 +258,6 @@ namespace Pscf
       */
       void makePaths();
 
-      /**
-      * Check validity of the polymer graph.
-      *
-      * An Exception is thrown if the graph is not valid.
-      */
-      void isValid();
-
    private:
 
       /// Array of Vertex objects in this polymer.
@@ -287,6 +280,13 @@ namespace Pscf
 
       /// Polymer type (Branched or Linear)
       PolymerType::Enum type_;
+
+      /**
+      * Check validity of the polymer graph.
+      *
+      * An Exception is thrown if the graph is not valid.
+      */
+      void isValid();
 
    };
 

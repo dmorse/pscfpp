@@ -14,7 +14,6 @@
 #include <prdc/cuda/RField.h>            // member
 #include <prdc/cuda/RFieldDft.h>         // member
 #include <prdc/cuda/FFTBatched.h>        // member
-
 #include <pscf/cuda/DeviceArray.h>       // member
 #include <util/containers/FSArray.h>     // member
 
@@ -76,11 +75,13 @@ namespace Rpg {
       * \param cell  UnitCell<D> object - crystallographic unit cell
       * \param wavelist  WaveList<D> object - properties of wavevectors
       */
-      void associate(Mesh<D> const & mesh, FFT<D> const & fft, 
-                     UnitCell<D> const & cell, WaveList<D>& wavelist);
+      void associate(Mesh<D> const & mesh, 
+                     FFT<D> const & fft, 
+                     UnitCell<D> const & cell, 
+                     WaveList<D>& wavelist);
 
       /**
-      * Allocate internal data containers. 
+      * Allocate memory and set contour step size for thread model. 
       *
       * This function choses a value for the number ns of contour
       * variable grid points for this block, sets the step size, and
@@ -96,10 +97,8 @@ namespace Rpg {
       * rule for integration with respect to the contour variable s to
       * compute monomer concentration fields and stress contributions.
       *
-      * For the bead model, if PolymerModel::isThread() is true, the
-      * value of ns is given by nBead (the number of beads owned by the
-      * block) plus one for each terminal vertex that this block does
-      * not own. The value of ds is not used for the bead model. 
+      * For the bead model, if PolymerModel::isThread() is true, the value
+      * of ns is given by nBead + 2.
       *
       * Precondition: associate() must be called before this function
       *
@@ -159,15 +158,34 @@ namespace Rpg {
       void stepThread(RField<D> const & qin, RField<D>& qout);
 
       /**
-      * Compute step of integration loop, from i to i+1.
+      * Compute one step of solution of MDE for the bead model.
       *
+      * This function is called internally by the Propagator::solve
+      * function within a loop over steps. It is implemented in the
+      * Block class because the same private data structures are needed
+      * for the two propagators associated with a Block.
+      *  
       * \param qin  slice i of propagator q (input)
       * \param qout  slice i+1 of propagator q (output)
       */
       void stepBead(RField<D> const & qin, RField<D>& qout);
 
       /**
-      * Compute step of integration loop, from i to i+1.
+      * Apply the exponential field operator for the bead model.
+      *
+      * This function applies exp( -w(r)) in-place, where w(r) is the w-field
+      * for the monomer type of this block. 
+      *
+      * \param q  slice of propagator q, modified in placde
+      */
+      void stepFieldBead(RField<D> & q);
+
+      /**
+      * Compute a bond operator for the bead model.
+      *
+      * This function applies exp( -|G|^2 b^2 / 6) in Fourier space.
+      * To do so, it peforms a forward FFT, multplication in k-space,
+      * and an inverse FFT.
       *
       * \param qin  slice i of propagator q (input)
       * \param qout  slice i+1 of propagator q (output)
@@ -175,11 +193,16 @@ namespace Rpg {
       void stepBondBead(RField<D> const & qin, RField<D>& qout);
 
       /**
-      * Compute step of integration loop, from i to i+1.
+      * Compute a half-bond operator for the bead model.
       *
-      * \param q  slice of propagator q (input)
-      */
-      void stepFieldBead(RField<D> & q);
+      * This function applies exp( -|G|^2 b^2 / 12) in Fourier space.
+      * To do so, it peforms a forward FFT, multplication in k-space,
+      * and an inverse FFT.
+      *
+      * \param qin  slice i of propagator q (input)
+      * \param qout  slice i+1 of propagator q (output)
+      */ 
+      void stepHalfBondBead(RField<D> const & qin, RField<D>& qout);
 
       /**
       * Compute unnormalized concentration for block by integration.
@@ -300,7 +323,6 @@ namespace Rpg {
       using Edge::monomerId;
       using Edge::vertexIds;
       using Edge::vertexId;
-      using Edge::ownsVertex;
       using Edge::length;
       using Edge::nBead;
 

@@ -171,53 +171,26 @@ namespace Rpc{
                   monomerIdB = edgeB.monomerId();
                   kuhnB = mixture.monomer(monomerIdB).kuhn();
 
-                  // Mean-square end-to-end length of segment between blocks
-                  rsqAB = 0.0;
-                  int edgeId, vertexId;
+                  // Initialize rsqAB
+                  if (PolymerModel::isThread()) {
+                     rsqAB = 0.0;
+                  } else {
+                     rsqAB = 0.5*(kuhnA*kuhnA + kuhnB*kuhnB);
+                  }
+
+                  // Iterate over intermediate blocks, if any
+                  int edgeId;
                   edgeItr.begin(ia, ib);
                   while (edgeItr.notEnd()) {
                      edgeId = edgeItr.currentEdgeId();
                      Edge const & edgeC = polymer.edge(edgeId);
                      monomerIdC = edgeC.monomerId();
                      kuhnC = mixture.monomer(monomerIdC).kuhn();
-                     if (edgeId == ia) {
-                        if (PolymerModel::isBead()) {
-                           vertexId = edgeItr.currentVertexId();
-                           if (vertexId == edgeC.vertexId(0)) {
-                              if (!edgeC.ownsVertex(0)) {
-                                 rsqAB += kuhnC*kuhnC;
-                              }
-                           } else 
-                           if (vertexId == edgeC.vertexId(1)) {
-                              if (!edgeC.ownsVertex(1)) {
-                                 rsqAB += kuhnC*kuhnC;
-                              }
-                           } else {
-                              UTIL_THROW("Error: Edge does not contain vertex");
-                           }
-                        }
-                     } else 
-                     if (edgeId == ib) {
-                        if (PolymerModel::isBead()) {
-                           vertexId = edgeItr.currentVertexId();
-                           if (vertexId == edgeC.vertexId(0)) {
-                              if (!edgeC.ownsVertex(1)) {
-                                 rsqAB += kuhnC*kuhnC;
-                              }
-                           } else 
-                           if (vertexId == edgeC.vertexId(1)) {
-                              if (!edgeC.ownsVertex(0)) {
-                                 rsqAB += kuhnC*kuhnC;
-                              }
-                           } else {
-                              UTIL_THROW("Error: Edge does not contain vertex");
-                           }
-                        }
-                     } else {
+                     if (edgeId != ia && edgeId != ib) {
                         if (PolymerModel::isThread()) {
                            lengthC = edgeC.length();
                         } else {
-                           lengthC = (double)(edgeC.nBead() - 1);
+                           lengthC = double(edgeC.nBead());
                         }
                         rsqAB += lengthC * kuhnC * kuhnC;
                      }

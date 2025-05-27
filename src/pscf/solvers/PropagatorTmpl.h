@@ -136,20 +136,12 @@ namespace Pscf
       void setIsSolved(bool isSolved);
 
       /**
-      * Set whether the propagator owns the head and tail (bead model).
+      * Set flags indicating whether vertices are chain ends.
       *
-      * The concept of "ownership" of an attached vertex is meaningful
-      * in a bead-spring model, in which we require that each vertex
-      * bead be treated as part of exactly one of the attached blocks.
-      * Because it is meaningless in the context of a thread model, it
-      * is an error to call this function when PolymerModel::isThread().
-      *
-      * Precondition: PolymerModel::isBead() must be true.
-      *
-      * \param ownsHead  Does this propagator own the head vertex bead?
-      * \param ownsTail  Does this propagator own the tail vertex bead?
+      * \param isHeadEnd  Does this propagator own the head vertex bead?
+      * \param isTailEnd  Does this propagator own the tail vertex bead?
       */
-      void setVertexOwnership(bool ownsHead, bool ownsTail);
+      void setEndFlags(bool isHeadEnd, bool isTailEnd);
  
       ///@}
       /// \name Accessors
@@ -183,18 +175,18 @@ namespace Pscf
       bool hasPartner() const;
 
       /**
-      * Does this propagator own the attached head vertex bead?
+      * Is the head vertex a chain end?
       *
       * Precondition: PolymerModel::isBead()
       */
-      bool ownsHead() const;
+      bool isHeadEnd() const;
 
       /**
-      * Does this propagator own the attached tail vertex bead?
+      * Is the tail vertex a chain end?
       *
       * Precondition: PolymerModel::isBead()
       */
-      bool ownsTail() const;
+      bool isTailEnd() const;
 
       /**
       * Has the modified diffusion equation been solved?
@@ -219,13 +211,11 @@ namespace Pscf
       /// Pointers to propagators that feed source vertex.
       GArray<TP const *> sourcePtrs_;
 
-      /// Does this propagator own the head vertex bead (bead model)?
-      /// Only used or meaningful for the bead model
-      bool ownsHead_;
+      /// True iff the head vertex is chain end.
+      bool isHeadEnd_;
 
-      /// Does this propagator own the tail vertex bead (bead model)?
-      /// Only used or meaningful for the bead model
-      bool ownsTail_;
+      /// True iff the tail vertex is chain end.
+      bool isTailEnd_;
 
       /// Set true after solving modified diffusion equation.
       bool isSolved_;
@@ -306,14 +296,13 @@ namespace Pscf
    {  sourcePtrs_.append(&source); }
 
    /*
-   * Set vertex ownership.
+   * Set flags indicate whether vertices are are chain ends.
    */
    template <class TP>
-   void PropagatorTmpl<TP>::setVertexOwnership(bool ownsHead, bool ownsTail)
+   void PropagatorTmpl<TP>::setEndFlags(bool isHeadEnd, bool isTailEnd)
    {
-      UTIL_CHECK(PolymerModel::isBead());
-      ownsHead_ = ownsHead;  
-      ownsTail_ = ownsTail;  
+      isHeadEnd_ = isHeadEnd;  
+      isTailEnd_ = isTailEnd;  
    }
 
    // Accessors
@@ -354,20 +343,18 @@ namespace Pscf
    * Does this propagator own the head vertex bead?
    */
    template <class TP>
-   inline bool PropagatorTmpl<TP>::ownsHead() const
+   inline bool PropagatorTmpl<TP>::isHeadEnd() const
    {
-      UTIL_CHECK(PolymerModel::isBead());
-      return ownsHead_; 
+      return isHeadEnd_; 
    }
 
    /*
    * Does this propagator own the tail vertex bead?
    */
    template <class TP>
-   inline bool PropagatorTmpl<TP>::ownsTail() const
+   inline bool PropagatorTmpl<TP>::isTailEnd() const
    {
-      UTIL_CHECK(PolymerModel::isBead());
-      return ownsTail_; 
+      return isTailEnd_; 
    }
 
 }

@@ -16,14 +16,14 @@ available iterators.
 
 The default iterator for pscf_pg, which is implemented by class 
 Rpg::AmIteratorBasis<D>, uses an Anderson-Mixing (AM) algorithm 
-that imposes a prescribed space group symmetry, much like the closely
+that imposes a prescribed space group symmetry, much like the 
 analogous \ref rpc_AmIteratorBasis_page "Rpc::AmIteratorBasis" 
 iterator used by pscf_pc.  This iteration algorithm may be invoked 
 in the parameter file for pscf_pg using either the generic block label 
 "Iterator" or a specific label "AmIteratorBasis".  The parameter 
 file must contain a groupName parameter within the Domain block to 
 enable use of this iterator. The implementation of AmIteratorBasis
-uses expansion of the chemical potential fields and the residual
+uses an expansion of the chemical potential fields and the residual
 as vectors with components that represent coefficients in
 symmetry-adapted Fourier expansions of the corresponding fields.
 

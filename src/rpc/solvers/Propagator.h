@@ -18,6 +18,7 @@ namespace Pscf { template <int D> class Mesh; }
 namespace Pscf { 
 namespace Rpc { 
 
+   // Forward declaration
    template <int D> class Block;
 
    using namespace Util;
@@ -209,29 +210,8 @@ namespace Rpc {
       using PropagatorTmpl< Propagator<D> >::setIsSolved;
       using PropagatorTmpl< Propagator<D> >::isSolved;
       using PropagatorTmpl< Propagator<D> >::hasPartner;
-      using PropagatorTmpl< Propagator<D> >::ownsHead;
-      using PropagatorTmpl< Propagator<D> >::ownsTail;
-
-   protected:
-
-      /**
-      * Compute initial QField at head for the thread model. 
-      * 
-      * In the thread model, the head slice of each propagator is the 
-      * product of tail slices for incoming propagators from other bonds 
-      * that terminate at the head vertex.
-      */
-      void computeHeadThread();
-
-      /**
-      * Compute initial QField at head for the bead model. 
-      *
-      * In the bond model, the head slice for each propagator is given
-      * by the product of tails slices for source propagators, times an
-      * additional bond weight exp(-W(r)*ds) if this propagator owns the 
-      * head vertex bead.
-      */
-      void computeHeadBead();
+      using PropagatorTmpl< Propagator<D> >::isHeadEnd;
+      using PropagatorTmpl< Propagator<D> >::isTailEnd;
 
    private:
      
@@ -253,6 +233,20 @@ namespace Rpc {
       /// Is this propagator allocated?
       bool isAllocated_;
 
+      /**
+      * Compute initial QField at head.
+      * 
+      * In either model, the head slice of each propagator is the product
+      * of tail slices for incoming propagators from other bonds that
+      * terminate at the head vertex.
+      */
+      void computeHead();
+
+      /**
+      * Assign one slice to another (RHS = LHS).
+      */
+      void assign(QField& lhs, QField const & rhs);
+
    };
 
    // Inline member functions
@@ -263,15 +257,21 @@ namespace Rpc {
    template <int D>
    inline 
    typename Propagator<D>::QField const& Propagator<D>::head() const
-   {  return qFields_[0]; }
+   {  
+      UTIL_CHECK(isSolved()); 
+      return qFields_[0]; }
 
    /*
-   * Return q-field at end of block, after solution.
+   * Return q-field at end of block.
    */
    template <int D>
    inline 
    typename Propagator<D>::QField const& Propagator<D>::tail() const
-   {  return qFields_[ns_-1]; }
+   {
+      UTIL_CHECK(isSolved()); 
+      UTIL_CHECK(PolymerModel::isThread() || !isTailEnd());
+      return qFields_[ns_-1]; 
+   }
 
    /*
    * Return q-field at specified step.
@@ -279,7 +279,10 @@ namespace Rpc {
    template <int D>
    inline 
    typename Propagator<D>::QField const& Propagator<D>::q(int i) const
-   {  return qFields_[i]; }
+   {  
+      UTIL_CHECK(isSolved()); 
+      return qFields_[i]; 
+   }
 
    /*
    * Get the associated Block object.
@@ -308,9 +311,13 @@ namespace Rpc {
    */
    template <int D>
    inline void Propagator<D>::setBlock(Block<D>& block)
-   {  blockPtr_ = &block; }
+   {
+      assert(blockPtr_);  
+      blockPtr_ = &block; 
+   }
 
    #ifndef RPC_PROPAGATOR_TPP
+   // Suppress implicit instantiation
    extern template class Propagator<1>;
    extern template class Propagator<2>;
    extern template class Propagator<3>;

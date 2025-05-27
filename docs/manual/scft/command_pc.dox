@@ -49,7 +49,7 @@ for the current system to the file out/data. The command,
 converged solution to the end of the same file.  The FINISH command
 instructs the main program to finish execution and return.
 
-\section scft_command_pc_ex_sweep_sec Example: SCFT parameter sweep
+\section scft_command_pc_ex_sweep_sec Example: SCFT sweep
 
 Here is an example of a minimal command file to perform an SCFT 
 parameter sweep. 

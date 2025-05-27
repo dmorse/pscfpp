@@ -19,7 +19,6 @@ namespace Pscf
       nBead_(-1),
       length_(-1.0),
       vertexIds_(),
-      ownsVertex_(),
       polymerType_(PolymerType::Branched)
    {
       // Initialize vertex ids to null value -1.
@@ -52,15 +51,6 @@ namespace Pscf
    {
       vertexIds_[0] = vertexId0;
       vertexIds_[1] = vertexId1;
-   }
-
-   /*
-   * Set ownership of the two associated vertices.
-   */
-   void Edge::setVertexOwnership(bool own0, bool own1)
-   {
-      ownsVertex_[0] = own0;
-      ownsVertex_[1] = own1;
    }
 
    /*
@@ -107,10 +97,6 @@ namespace Pscf
       if (block.polymerType_ == PolymerType::Branched) {
          in >> block.vertexIds_[0];
          in >> block.vertexIds_[1];
-         if (PolymerModel::isBead()) {
-            in >> block.ownsVertex_[0];
-            in >> block.ownsVertex_[1];
-         }
       }
 
       return in;
@@ -141,10 +127,6 @@ namespace Pscf
       if (block.polymerType_ == PolymerType::Branched) {
          out << "  " << block.vertexIds_[0];
          out << "  " << block.vertexIds_[1];
-         if (PolymerModel::isBead()) {
-            out << "  " << block.ownsVertex_[0];
-            out << "  " << block.ownsVertex_[1];
-         }
       }
 
       return out;

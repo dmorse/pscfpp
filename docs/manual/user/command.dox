@@ -4,32 +4,31 @@
  \ref user_example_page (Next) 
 <BR>
 
-For any PSCF simulation program, the parameter file is read first,
-followed by a command script.  The name of the command file is specified 
-when the program is invoked as an argument of the -c command line option.
-The command file controls the sequence of operations that will be 
-performed after the program is initialized by processing information 
-from the parameter file.  
+For any PSCF simulation program, the parameter file is read first, followed 
+by a command file.  The name of the command file is specified when the 
+program is invoked as an argument of the -c command line option.  
 
 The command file contains a sequence of commands that are read and 
-executed in the order in which they appear. Each command begins with 
-an all upper case label.  Some commands take one or more parameters, 
-which must appear after the upper case label, separated by whitespace. 
-The program stops execution and returns control to the operating system 
-when it encounters the command string 'FINISH' on a line by itself. 
+executed in the order in which they appear in the file. Each command 
+begins with a command name that is given in upper case letters.  Some 
+commands take one or more parameters, which must appear after the 
+command name, separated by whitespace.  The program stops execution 
+and returns control to the operating system when it encounters the 
+command name 'FINISH' on a line by itself. 
 
 Full descriptions of all of the commands recognized by all three PSCF
 programs are given \ref scft_command_page "here". 
 
-\section user_command_example_sec Example: Command file for 1D SCFT
+\section user_command_example_sec Example: SCFT command file 
 
-The following is a minimal command file for using the pscf_1d program 
-to perform an SCFT calculation:
+The following is an example of a minimal command file for using the 
+pscf_pc program to perform an SCFT calculation for a periodic structure
+of known space group symmetry and output the results to file:
 \code
-READ_W          in/w.bf
+READ_W_BASIS    in/w.bf
 ITERATE
-WRITE_W         out/w.bf
-WRITE_C         out/c.rf
+WRITE_W_BASIS   out/w.bf
+WRITE_C_RGRID   out/c.rf
 FINISH
 \endcode
 In this example, we assume that the input chemical potential field 
@@ -38,21 +37,24 @@ of the working directory named in/, and that output files are written
 to a subdirector named out/.  This command file instructs the program 
 to:
 
-- READ_W: Read in a chemical potential fields (w-fields) from a file
-named in/w.rf
+- READ_W_BASIS: Read in a chemical potential fields (w-fields) from 
+  a file named in/w.rf in symmetry-adapted Fourier basis format.
 
 - ITERATE: Iteratively solve the SCFT equation, using the iterator 
-algorithm and parameters that are specified in the parameter file.
+  algorithm and parameters that are specified in the parameter file.
 
-- WRITE_W: Write the converged chemical potential fields (w-fields) 
-to a file out/w.rf
+- WRITE_W_BASIS: Write the converged chemical potential fields 
+  (w-fields) to a file out/w.bf in symmetry-adapted basis format.
 
-- WRITE_C: Write the corresponding monomer concentration fields 
-(c-fields) to a file out/c.rf
+- WRITE_C_RGRID: Write the corresponding monomer concentration fields 
+  (c-fields) to a file out/c.rf in r-grid format, in which field values
+  are given as values of nodes of a real-space grid.
 
 - FINISH: finish execution and halt the main program
 
-The FINISH command is always the last command in a command file. 
+The FINISH command is always the last command that is read in a command 
+file, and causes execution of the program to halt. Anything in a command 
+file that appears after the FINISH command is ignored.
 
 <b> File names as command arguments </b>:
 Many commands take the names of input or output files as arguments.
@@ -63,10 +65,10 @@ of subdirectories of this directory and path separator slash characters.
 This default may be modified by using the "-i" and/or "-o" 
 \ref user_usage_page "command line options" to add prefixes to paths 
 to input and output files, respectively.  The above example is designed 
-for a case in which pscf_1d is invoked without using either of these 
+for a case in which pscf_pc is invoked without using either of these 
 command line options, and in which it is invoked from a directory 
-containing subdirectories named "in" and "out" that are being used 
-for input and output files, respectively.
+containing subdirectories named "in" and "out" that contain input and 
+output files, respectively.
 
  <BR>
  \ref user_param_page   (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 

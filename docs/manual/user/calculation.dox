@@ -1,7 +1,7 @@
 /*! \page user_calculation_page Types of Calculation
 
 \ref user_usage_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
-\ref user_branched_page (Next)
+\ref user_param_page (Next)
 <BR>
 
 The PSCF package allows users to perform two primary types of field 
@@ -9,13 +9,13 @@ theoretic calculation of material properties. These are:
 
   - Self-Consistent Field Theory (SCFT)
 
-  - Field Theoretic Simulation (FTS) 
+  - Partial Saddle-Point Field Theoretic Simulation (PS-FTS) 
 
 All three PSCF programs (pscf_1d, pscf_pc and pscf_pg) can perform 
-SCFT calculations.  Field theoretic simulations that rely on either
-Monte-Carlo or Brownian dynamics sampling can be performed with the 
-pscf_pc and pscf_pg programs for periodic systems, but not with the 
-pscf_1d program.  
+SCFT calculations.  PS-FTS simulations that use either Brownian
+dynamics or Monte-Carlo sampling techniques can be performed with 
+the pscf_pc and pscf_pg programs for periodic systems, but not with 
+the pscf_1d program.  
 
 All three PSCF programs can also perform SCFT parameter sweeps. 
 A \ref scft_param_sweep_page "parameter sweep" is an operations that 
@@ -32,34 +32,34 @@ above:
 
    - SWEEP performs an SCFT parameter sweep 
 
-   - SIMULATE performs an FTS calculation
+   - SIMULATE performs a PS-FTS calculation
 
 The format of a parameter file contains some optional elements that are 
 required for some types of calculations but unnecessary for others. The 
-required format of a parameter file depends to some extent on what type 
-of commands are used in the associated command file.  
+required format of a parameter file thus depends to some extent on what 
+type of commands are going to be used in the associated command file.  
 
-For example, consider a parameter file that is designed to be initialize 
-an SCFT calculation, by using it together with a command file that invokes 
+For example, consider a parameter file that is designed to initialize an 
+SCFT calculation, by using it together with a command file that invokes 
 the ITERATE or SWEEP command. The parameter file for such a calculation 
-must information that specifies a specifies a choice of SCFT iteration 
-algorithm from among several possible algorithms, and that specifies 
-values of parameters required by that algorithm. This information is 
-given in a section of the parameter file that is referred to in what 
-follows as an Iterator block. The Iterator block is an optional component 
-of a PSCF parameter file that is needed for SCFT calculations but is not 
-used in a FTS.  Conversely, a parameter file used to initialize a FTS
-calculation must contain other specialized blocks that specify information 
-MC or BD sampling algorithms, none of which is necessary for SCFT.
+must specifies a choice of SCFT iteration algorithm from among several 
+possible algorithms, and specifies values of any parameters required by 
+that algorithm. This information is given in a section of the parameter 
+file that is referred to in what follows as an Iterator block. The 
+Iterator block is an optional component of a PSCF parameter file that 
+is needed for SCFT calculations but is not used in a PS-FTS calculation. 
+Conversely, a parameter file used to initialize a PS-FTS calculation 
+must contain other specialized blocks that specify information used 
+by a BD or MC sampling algorithm, none of which is necessary for SCFT.
 
-The discussion of parameter files that begins on the 
-\ref user_param_page "following page" focuses on examples that describe
-elements needed for SCFT calculations and SCFT parameter sweeps. Parameter 
-file sections that are needed only for FTSs are discussed separately.
+The discussion of parameter files given in this chapter focuses on
+examples that describe elements needed for SCFT calculations and SCFT 
+parameter sweeps. Parameter file sections that are needed only for 
+PS-FTS calculation are discussed separately.
 
 <BR>
 \ref user_usage_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
 \ref user_page (Up) &nbsp; &nbsp; &nbsp; &nbsp;
-\ref user_branched_page (Next)
+\ref user_param_page (Next)
 
 */
