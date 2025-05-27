@@ -5,7 +5,7 @@ namespace Prdc{
    /**
    * \defgroup Prdc_Field_Module Fields IO
    *
-   * Utilities for field IO operations.
+   * Field IO operations and field containers for periodic systems.
    *
    * \ingroup Pscf_Prdc_Module
    */

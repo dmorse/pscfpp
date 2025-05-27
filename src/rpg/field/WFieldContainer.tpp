@@ -20,13 +20,7 @@ namespace Rpg {
    using namespace Pscf::Prdc;
    using namespace Pscf::Prdc::Cuda;
 
-   template <int D>
-   void WFieldContainer<D>::assignRField(RField<D>& lhs, RField<D> const & rhs) const
-   {
-      int n = rhs.capacity();
-      UTIL_CHECK(lhs.capacity() == n);
-      VecOp::eqV(lhs, rhs);
-   }
+   // Public member function
 
    /*
    * Set new w-field values, using unfolded array of r-grid fields.
@@ -41,6 +35,19 @@ namespace Rpg {
       }
       bool isSymmetric = false;
       Base::setRGrid(tmp, isSymmetric);
+   }
+
+   // Private virtual function
+
+   template <int D>
+   void 
+   WFieldContainer<D>::assignRField(RField<D>& lhs, RField<D> const & rhs) 
+   const
+   {
+      int n = rhs.capacity();
+      UTIL_CHECK(lhs.capacity() == n);
+      UTIL_CHECK(meshSize() == n);
+      VecOp::eqV(lhs, rhs);
    }
 
 } // namespace Rpg

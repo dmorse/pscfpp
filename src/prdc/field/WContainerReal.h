@@ -47,15 +47,22 @@ namespace Prdc {
    * used to keep track of whether the current field is symmetric, and
    * thus whether the basis format exists.
    *
-   * <b> Subclasses </b>: The WContainerReal template is designed as a
-   * base class for subclasses named WFieldContainer that are defined 
-   * in the Pscf::Rpc and Pscf::Rpg implementation-level namespaces. 
-   * Class template Pscf::Rpc::WFieldContainer<int D> is derived from a 
+   * <b> Subclasses </b>: The WContainerReal template was designed as a 
+   * base class for subclasses named WFieldContainer that are defined in
+   * the Pscf::Rpc and Pscf::Rpg implementation-level namespaces. 
+   *
+   * Subclass template Pscf::Rpc::WFieldContainer<int D> is derived from a 
    * partial specialization of Pscf::Prdc::WContainerRead with parameters 
-   * RField = Pscf::Cpu::RField<D> and FieldIo = Pscf::Rpc::FieldIo<D>.
-   * Class template Pscf::Rpc::WFieldContainer<int D> is derived from a 
+   * RField = Pscf::Cpu::RField<D> and FieldIo = Pscf::Rpc::FieldIo<D>, and
+   * is designed for use in the pscf_pc program, using CPU hardware.
+   *
+   * Subclass template Pscf::Rpc::WFieldContainer<int D> is derived from a 
    * partial specialization of Pscf::Prdc::WContainerReal with parameters 
-   * RField = Pscf::Cuda::RField<D> and FieldIo = Pscf::Rpg::FieldIo<D>.
+   * RField = Pscf::Cuda::RField<D> and FieldIo = Pscf::Rpg::FieldIo<D>,
+   * and is designed for use in the pscf_pg GPU accelerated program.
+   *
+   * \sa Pscf::Rpc::WFieldContainer
+   * \sa Pscf::Rpg::WFieldContainer
    *
    * \ingroup Prdc_Field_Module
    */

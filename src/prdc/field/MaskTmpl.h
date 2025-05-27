@@ -21,12 +21,15 @@ namespace Prdc {
    /**
    * Container for a field to which the total density is constrained.
    * 
-   * MaskTmpl<D, FieldIo, RField> is a template class for Mask<D>. A
-   * system that contains a Mask must satisfy a modified version of the
+   * MaskTmpl<D, FieldIo, RField> is a base class template for class
+   * templates named Mask<D> that are defined in namespaces Pscf::Rpc and 
+   * Pscf::Rpg. 
+   *
+   * A system that contains a Mask must satisfy a modified version of the
    * incompressibility constraint, in which the sum of the concentration
-   * fields of all species must be equal to the Mask field. The Mask takes
-   * values from 0 to 1 everywhere. A system without a Mask is equivalent
-   * to a system in which the mask is equal to 1 at all points.
+   * fields of all monomer types must be equal to the Mask field. The Mask 
+   * field takes values in the range [0, 1] everywhere. A system without a 
+   * Mask is equivalent * to a system in which the mask is equal to 1 at all points.
    * 
    * A Mask<D> contains representations of this field in two formats:
    * 

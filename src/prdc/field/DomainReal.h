@@ -30,8 +30,8 @@ namespace Prdc {
    /**
    * Spatial domain for a periodic structure with real fields.
    *
-   * Partial specializations of the DomainReal class template are used
-   * as base classes for Rpc::Domain<int D> and Rpg::Domain<int D>.
+   * Partial specializations of the DomainReal class template are used as
+   * base classes for Rpc::Domain<int D> and Rpg::Domain<int D>.
    *
    * Template Parameters:
    *
@@ -53,8 +53,9 @@ namespace Prdc {
    *  - a groupName string
    *
    * Note: Class names Pscf::Mesh, Prdc::UnitCell, etc. mentioned above are
-   * actually class templates with a template parameter D. Actual class 
-   * names are Mesh \<D\>, Prdc::UnitCell \<D\>, etc. with D=1, 2, or 3.
+   * actually class templates with an integer template parameter D. Actual 
+   * class names are Mesh \<D\>, Prdc::UnitCell \<D\>, etc. with D=1, 2, 
+   * or 3.
    *
    * \ingroup Prdc_Field_Module
    */

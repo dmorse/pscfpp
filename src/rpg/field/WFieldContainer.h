@@ -22,10 +22,16 @@ namespace Rpg {
    /**
    * A container of fields stored in both basis and r-grid format.
    *
+   * Almost all of the implementation of this class is defined by the base
+   * class template Pscf::Prdc::WContainerReal. See documentation of that
+   * template for information.
+   *
+   * \sa Pscf::Prdc::WContainerReal
    * \ingroup Rpg_Field_Module
    */
    template <int D>
-   class WFieldContainer : public WContainerReal<D, RField<D>, FieldIo<D> >
+   class WFieldContainer 
+     : public WContainerReal<D, Prdc::Cuda::RField<D>, Rpg::FieldIo<D> >
    {
 
    public:

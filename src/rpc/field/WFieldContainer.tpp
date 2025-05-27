@@ -19,10 +19,13 @@ namespace Rpc {
    using namespace Pscf::Prdc::Cpu;
 
    template <int D>
-   void WFieldContainer<D>::assignRField(RField<D>& lhs, RField<D> const & rhs) const
+   void 
+   WFieldContainer<D>::assignRField(RField<D>& lhs, RField<D> const & rhs) 
+   const
    {
       int n = rhs.capacity();
       UTIL_CHECK(lhs.capacity() == n);
+      UTIL_CHECK(meshSize() == n);
       for (int i = 0; i < n; ++i) {
          lhs[i] = rhs[i];
       }
