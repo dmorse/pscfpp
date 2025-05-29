@@ -60,20 +60,6 @@ namespace Prdc {
    * FieldIo template is used as a base class to reduce duplication of
    * identical or closely analogous code between these two subclasses.
    *
-   * <b> Unimplmented member functions </b>: This class template defines 
-   * several virtual functions to read and write fields in r-grid and
-   * k-grid formats for which different implementations are required for
-   * Cpu and Cuda code. Cpu and Cuda implementations of these functions 
-   * differ because the Cuda versions require operations to transfer data
-   * between Cpu and Gpu memory spaces.  These virtual functions must all 
-   * be overridden by each subclass. A default implementation is defined 
-   * for for each such function that throws an Exception if the function
-   * is called. These trivial default implementations have beendefined, 
-   * rather than declaring these to all be pure virtual * functions, so 
-   * that each of the few relevant instantiations of the FieldIoReal 
-   * base class template is a concrete (rather than abstract) class that
-   * can be explicitly instantiated and compiled if desired.
-   *
    * <b>Basis construction as side effect of reading field files:</b> 
    * Each member functions that read fields from a file may all construct 
    * a symmetry adapted basis in an associated Basis<D> object as a side 
@@ -85,6 +71,17 @@ namespace Prdc {
    * When a space group is declared in the parameter file, the basis is
    * thus normally constructed as a side effect of the first command
    * that reads a field file.
+   *
+   * <b> Pure virtual member functions </b>: This class template defines 
+   * several pure virtual functions to read and write fields in r-grid and
+   * k-grid formats for which different implementations are required for
+   * Cpu and Cuda code. Cpu and Cuda implementations of these functions 
+   * must differ because the Cuda versions require operations to transfer 
+   * data between Cpu and Gpu memory spaces. Implementations of these
+   * functions in subclasses may use the function templates declared in
+   * file src/prdc/fieldIoUtil.h for core operations of reading and 
+   * writing in specific file formats and conversion between basis and
+   * k-grid field representations.
    *
    * \ingroup Prdc_Field_Module
    */
@@ -284,7 +281,7 @@ namespace Prdc {
       virtual
       bool readFieldsRGrid(std::istream& in,
                            DArray<RFRT>& fields,
-                           UnitCell<D> & unitCell) const;
+                           UnitCell<D> & unitCell) const = 0;
 
       /**
       * Read array of RField objects (r-grid format) from a file.
@@ -323,7 +320,7 @@ namespace Prdc {
       virtual
       void readFieldsRGridData(std::istream& in,
                                DArray<RFRT>& fields,
-                               int nMonomer) const;
+                               int nMonomer) const = 0;
 
       /**
       * Read single RField (field on an r-space grid) from an istream.
@@ -339,7 +336,7 @@ namespace Prdc {
       virtual
       bool readFieldRGrid(std::istream &in,
                           RFRT & field,
-                          UnitCell<D>& unitCell) const;
+                          UnitCell<D>& unitCell) const = 0;
 
       /**
       * Read single RField (field on an r-space grid) from named file.
@@ -377,7 +374,7 @@ namespace Prdc {
                             UnitCell<D> const & unitCell,
                             bool writeHeader = true,
                             bool isSymmetric = true,
-                            bool writeMeshSize = true) const;
+                            bool writeMeshSize = true) const = 0;
 
       /**
       * Write array of RField objects (fields on an r-space grid) to file.
@@ -415,7 +412,7 @@ namespace Prdc {
                            RFRT const & field,
                            UnitCell<D> const & unitCell,
                            bool writeHeader = true,
-                           bool isSymmetric = true) const;
+                           bool isSymmetric = true) const = 0;
 
       /**
       * Write a single RField (fields on an r-space grid) to a file.
@@ -457,7 +454,7 @@ namespace Prdc {
       virtual
       void readFieldsKGrid(std::istream& in,
                            DArray<RFKT>& fields,
-                           UnitCell<D> & unitCell) const;
+                           UnitCell<D> & unitCell) const = 0;
 
       /**
       * Read array of RFieldDft objects (k-space fields) from file.
@@ -497,7 +494,7 @@ namespace Prdc {
       void writeFieldsKGrid(std::ostream& out,
                             DArray<RFKT> const & fields,
                             UnitCell<D> const & unitCell,
-                            bool isSymmetric = true) const;
+                            bool isSymmetric = true) const = 0;
 
       /**
       * Write array of RFieldDft objects (k-space fields) to a file.
@@ -531,7 +528,7 @@ namespace Prdc {
       */
       virtual
       void convertBasisToKGrid(DArray<double> const & components,
-                               RFKT& dft) const;
+                               RFKT& dft) const = 0;
 
       /**
       * Convert fields from symmetrized basis to Fourier grid (k-grid).
@@ -565,7 +562,7 @@ namespace Prdc {
       void convertKGridToBasis(RFKT const & in,
                                DArray<double> & out,
                                bool checkSymmetry = true,
-                               double epsilon = 1.0e-8) const;
+                               double epsilon = 1.0e-8) const = 0;
 
       /**
       * Convert multiple fields from Fourier (k-grid) to symmetrized basis.
@@ -714,7 +711,7 @@ namespace Prdc {
       virtual
       bool hasSymmetry(RFKT const & in, 
                        double epsilon = 1.0e-8,
-                       bool verbose = true) const;
+                       bool verbose = true) const = 0;
 
       /**
       * Check if an r-grid field has the declared space group symmetry.
@@ -751,7 +748,7 @@ namespace Prdc {
       */
       virtual
       void scaleFieldBasis(DArray<double>& field, 
-                           double factor) const;
+                           double factor) const = 0;
 
       /**
       * Multiply an array of fields in basis format by a real scalar.
@@ -778,7 +775,7 @@ namespace Prdc {
       * \param factor  factor by which to multiply every field element
       */
       virtual
-      void scaleFieldRGrid(RFRT& field, double factor) const;
+      void scaleFieldRGrid(RFRT& field, double factor) const = 0;
 
       /**
       * Scale an array of r-grid fields by a real scalar.
@@ -819,7 +816,7 @@ namespace Prdc {
       void replicateUnitCell(std::ostream& out,
                              DArray<RFRT> const & fields,
                              UnitCell<D> const & unitCell,
-                             IntVec<D> const & replicas) const;
+                             IntVec<D> const & replicas) const = 0;
 
       /**
       * Write r-grid fields in a replicated unit cell to named file.
@@ -864,7 +861,7 @@ namespace Prdc {
                                 UnitCell<D> const & unitCell,
                                 int d,
                                 DArray<int> const& newGridDimensions) 
-      const;
+      const = 0;
 
       /**
       * Expand dimensions of array of r-grid fields, write to file.

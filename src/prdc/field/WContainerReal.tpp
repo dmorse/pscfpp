@@ -13,6 +13,7 @@
 #include <prdc/crystal/Basis.h>
 #include <prdc/crystal/UnitCell.h>
 #include <pscf/mesh/Mesh.h>
+#include <util/misc/FileMaster.h>
 
 namespace Pscf {
 namespace Prdc {
@@ -302,10 +303,11 @@ namespace Prdc {
                                                UnitCell<D>& unitCell,
                                                bool isSymmetric)
    {
-      UTIL_CHECK(isAllocatedRGrid());
+      UTIL_CHECK(isAllocatedRGrid_);
       fieldIo().readFieldsRGrid(in, rgrid_, unitCell);
 
       if (isSymmetric) {
+         UTIL_CHECK(isAllocatedBasis_);
          fieldIo().convertRGridToBasis(rgrid_, basis_);
       }
 

@@ -13,6 +13,7 @@
 #include <prdc/crystal/Basis.h> 
 #include <prdc/crystal/UnitCell.h> 
 #include <pscf/mesh/Mesh.h> 
+#include <util/misc/FileMaster.h> 
 
 namespace Pscf {
 namespace Prdc {
@@ -95,10 +96,12 @@ namespace Prdc {
    void MaskTmpl<D, FieldIo, RField>::setBasis(DArray<double> const & field)
    {
       UTIL_CHECK(field.capacity() == nBasis_);
+      UTIL_CHECK(isAllocatedRGrid_);
+      UTIL_CHECK(isAllocatedBasis_);
       for (int j = 0; j < nBasis_; ++j) {
          basis_[j] = field[j];
       }
-      fieldIoPtr_->convertBasisToRGrid(basis_, rgrid_);
+      fieldIo().convertBasisToRGrid(basis_, rgrid_);
       hasData_ = true;
       isSymmetric_ = true;
    }
@@ -110,9 +113,11 @@ namespace Prdc {
    void MaskTmpl<D, FieldIo, RField>::setRGrid(RField const & field,
                                                bool isSymmetric)
    {
+      UTIL_CHECK(isAllocatedRGrid_);
       rgrid_ = field; // deep copy
       if (isSymmetric) {
-         fieldIoPtr_->convertRGridToBasis(rgrid_, basis_);
+         UTIL_CHECK(isAllocatedBasis_);
+         fieldIo().convertRGridToBasis(rgrid_, basis_);
       }
       hasData_ = true;
       isSymmetric_ = isSymmetric;
@@ -129,10 +134,6 @@ namespace Prdc {
    void MaskTmpl<D, FieldIo, RField>::readBasis(std::istream& in, 
                                                 UnitCell<D>& unitCell)
    {
-      #if 0
-      fieldIoPtr_->readFieldBasis(in, basis_, unitCell);
-      #endif
-
       // Read field file header
       int nMonomerIn;
       bool isSymmetricIn;
@@ -161,7 +162,6 @@ namespace Prdc {
       Prdc::readBasisData(in, basis_, unitCell, mesh, basis, nBasisIn);
 
       // Convert basis to r-grid, to update rgrid_ data
-      //fieldIoPtr_->convertBasisToRGrid(basis_, rgrid_);
       fieldIo().convertBasisToRGrid(basis_, rgrid_);
 
       hasData_ = true;
@@ -179,13 +179,10 @@ namespace Prdc {
    void MaskTmpl<D, FieldIo, RField>::readBasis(std::string filename, 
                                                 UnitCell<D>& unitCell)
    {
-      fieldIoPtr_->readFieldBasis(filename, basis_, unitCell);
-
-      // Update system wFieldsRGrid
-      fieldIoPtr_->convertBasisToRGrid(basis_, rgrid_);
-
-      hasData_ = true;
-      isSymmetric_ = true;
+      std::ifstream file;
+      fieldIo().fileMaster().openInputFile(filename, file);
+      readBasis(file, unitCell);
+      file.close();
    }
 
    /*
@@ -232,14 +229,10 @@ namespace Prdc {
                                                 UnitCell<D>& unitCell, 
                                                 bool isSymmetric)
    {
-      fieldIoPtr_->readFieldRGrid(filename, rgrid_, unitCell);
-
-      if (isSymmetric) {
-         fieldIoPtr_->convertRGridToBasis(rgrid_, basis_);
-      }
-
-      hasData_ = true;
-      isSymmetric_ = isSymmetric;
+      std::ifstream file;
+      fieldIo().fileMaster().openInputFile(filename, file);
+      readRGrid(file, unitCell, isSymmetric);
+      file.close();
    }
 
    /*

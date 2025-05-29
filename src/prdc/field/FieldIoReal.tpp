@@ -671,6 +671,14 @@ namespace Prdc {
          }
          UTIL_CHECK(basis().isInitialized());
 
+      } else {
+
+         if (isSymmetric) {
+            Log::file() << std::endl
+               << "Warning: Group name found in a field file header"
+               << "but no group declared in the parameter file.\n";
+         }
+
       }
 
    }
@@ -696,179 +704,6 @@ namespace Prdc {
                                    gName, nMonomer);
       // Note: This function is defined in prdc/crystal/fieldHeader.tpp
    }
-
-   /* %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-   * %%%%%%%  Virtual dummy functions : Not implemented           %%%%%
-   * %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-   *
-   * These virtual functions each have a default implementation that 
-   * throws an Exception, and should never be called. Such unusable
-   * implementations are provided, rather than declaring all of these 
-   * functions to be pure virtual (= 0 suffix), because the absence of 
-   * any pure virtual functions allows instaniations of FieldIoReal to 
-   * be concrete classes. This allows instantiations of this template to
-   * be compiled for the 6 actual use cases, corresponding to values of
-   * D = 1, 2 or 3, with field and FFT template parameters RFRT, RFKT,
-   * and FFTT that all use either CPU or GPU memory.
-   *
-   * All of these functions must be implemented by ecch subclasses. GPU
-   * and CPU implementations differ because GPU implementations include
-   * operations that copy data between host and device memory.
-   */
-
-   /*
-   * Read an array of fields in r-grid format.
-   */
-   template <int D, class RFRT, class RFKT, class FFTT>
-   bool FieldIoReal<D,RFRT,RFKT,FFTT>::readFieldsRGrid(
-                              std::istream &in,
-                              DArray<RFRT >& fields,
-                              UnitCell<D>& unitCell) const
-   {  
-      UTIL_THROW("Unimplemented function in FieldIoReal base class"); 
-      return false;
-   }
-
-   /*
-   * Read the data section of an array of fields in r-grid format.
-   */
-   template <int D, class RFRT, class RFKT, class FFTT>
-   void FieldIoReal<D,RFRT,RFKT,FFTT>::readFieldsRGridData(
-                              std::istream& in,
-                              DArray< RFRT >& fields,
-                              int nMonomer) const
-   {  UTIL_THROW("Unimplemented function in FieldIoReal base class"); }
-
-   /*
-   * Read a single field in r-grid format.
-   */
-   template <int D, class RFRT, class RFKT, class FFTT>
-   bool FieldIoReal<D,RFRT,RFKT,FFTT>::readFieldRGrid(
-                              std::istream &in,
-                              RFRT & field,
-                              UnitCell<D>& unitCell) const
-   {  
-      UTIL_THROW("Unimplemented function in FieldIoReal base class"); 
-      return false;
-   }
-
-   /*
-   * Write an array of fields in r-grid format.
-   */
-   template <int D, class RFRT, class RFKT, class FFTT>
-   void FieldIoReal<D,RFRT,RFKT,FFTT>::writeFieldsRGrid(
-                              std::ostream &out,
-                              DArray<RFRT > const & fields,
-                              UnitCell<D> const & unitCell,
-                              bool writeHeader,
-                              bool isSymmetric,
-                              bool writeMeshSize) const
-   {  UTIL_THROW("Unimplemented function in FieldIoReal base class"); }
-
-   /*
-   * Write a single field in r-grid format
-   */
-   template <int D, class RFRT, class RFKT, class FFTT>
-   void FieldIoReal<D,RFRT,RFKT,FFTT>::writeFieldRGrid(
-                              std::ostream &out,
-                              RFRT const & field,
-                              UnitCell<D> const & unitCell,
-                              bool writeHeader,
-                              bool isSymmetric) const
-   {  UTIL_THROW("Unimplemented function in FieldIoReal base class"); }
-
-   /*
-   * Read an array of fields in k-grid format
-   */
-   template <int D, class RFRT, class RFKT, class FFTT>
-   void FieldIoReal<D,RFRT,RFKT,FFTT>::readFieldsKGrid(
-                              std::istream &in,
-                              DArray<RFKT >& fields,
-                              UnitCell<D>& unitCell) const
-   {  UTIL_THROW("Unimplemented function in FieldIoReal base class"); }
-
-   /*
-   * Write an array of fields in k-grid format
-   */
-   template <int D, class RFRT, class RFKT, class FFTT>
-   void
-   FieldIoReal<D,RFRT,RFKT,FFTT>::writeFieldsKGrid(
-                              std::ostream &out,
-                              DArray<RFKT > const & fields,
-                              UnitCell<D> const & unitCell,
-                              bool isSymmetric) const
-   {  UTIL_THROW("Unimplemented function in FieldIoReal base class"); }
-
-   /*
-   * Convert a single field from basis format to k-grid format.
-   */
-   template <int D, class RFRT, class RFKT, class FFTT>
-   void FieldIoReal<D,RFRT,RFKT,FFTT>::convertBasisToKGrid(
-                              DArray<double> const & in,
-                              RFKT& out) const
-   {  UTIL_THROW("Unimplemented function in FieldIoReal base class"); }
-
-   /*
-   * Convert a single field from k-grid format to basis format.
-   */
-   template <int D, class RFRT, class RFKT, class FFTT>
-   void FieldIoReal<D,RFRT,RFKT,FFTT>::convertKGridToBasis(
-                              RFKT const & in,
-                              DArray<double>& out,
-                              bool checkSymmetry,
-                              double epsilon) const
-   {  UTIL_THROW("Unimplemented function in FieldIoReal base class"); }
-
-   /*
-   * Test if a k-grid field (RFKT) has declared space group symmetry.
-   */
-   template <int D, class RFRT, class RFKT, class FFTT>
-   bool FieldIoReal<D,RFRT,RFKT,FFTT>::hasSymmetry(
-                              RFKT const & in, 
-                              double epsilon,
-                              bool verbose) const
-   {  UTIL_THROW("Unimplemented function in FieldIoReal base class"); }
-
-   /*
-   * In-place multiply a field by a constant in basis format.
-   */
-   template <int D, class RFRT, class RFKT, class FFTT>
-   void FieldIoReal<D,RFRT,RFKT,FFTT>::scaleFieldBasis(
-                              DArray<double>& field,
-                              double factor) const
-   {  UTIL_THROW("Unimplemented function in FieldIoReal base class"); }
-
-   /*
-   * In-place multiply a field by a constant in r-grid format.
-   */
-   template <int D, class RFRT, class RFKT, class FFTT>
-   void FieldIoReal<D,RFRT,RFKT,FFTT>::scaleFieldRGrid(
-                              RFRT & field,
-                              double factor) const
-   {  UTIL_THROW("Unimplemented function in FieldIoReal base class"); }
-
-   /*
-   * Replicate the unit cell of any array of r-grid fields. 
-   */
-   template <int D, class RFRT, class RFKT, class FFTT>
-   void FieldIoReal<D,RFRT,RFKT,FFTT>::replicateUnitCell(
-                              std::ostream &out,
-                              DArray< RFRT > const & fields,
-                              UnitCell<D> const & unitCell,
-                              IntVec<D> const & replicas) const
-   {  UTIL_THROW("Unimplemented function in FieldIoReal base class"); }
-
-   /*
-   * Expand dimension of an array of r-grid fields, write to ostream.
-   */
-   template <int D, class RFRT, class RFKT, class FFTT>
-   void FieldIoReal<D,RFRT,RFKT,FFTT>::expandRGridDimension(
-                              std::ostream &out,
-                              DArray<RFRT> const & fields,
-                              UnitCell<D> const & unitCell,
-                              int d,
-                              DArray<int> const& newGridDimensions) const
-   {  UTIL_THROW("Unimplemented function in FieldIoReal base class"); }
 
 } // namespace Prdc
 } // namespace Pscf
