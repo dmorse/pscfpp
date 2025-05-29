@@ -323,11 +323,11 @@ namespace Rpc {
    protected:
 
       // Inherited protected member functions
-      using Base::fft;
       using Base::lattice;
       using Base::hasGroup;
       using Base::groupName;
       using Base::group;
+      using Base::fft;
 
    };
 
