@@ -9,7 +9,10 @@
 */
 
 #include "WContainerReal.h"
+#include <prdc/field/fieldIoUtil.h>
+#include <prdc/crystal/Basis.h>
 #include <prdc/crystal/UnitCell.h>
+#include <pscf/mesh/Mesh.h>
 
 namespace Pscf {
 namespace Prdc {
@@ -154,9 +157,10 @@ namespace Prdc {
    */
    template <int D, class RField, class FieldIo>
    void
-   WContainerReal<D,RField,FieldIo>::allocate(int nMonomer,
-                                              int nBasis,
-                                              IntVec<D> const & meshDimensions)
+   WContainerReal<D,RField,FieldIo>::allocate(
+                                        int nMonomer,
+                                        int nBasis,
+                                        IntVec<D> const & meshDimensions)
    {
       setNMonomer(nMonomer);
       allocateRGrid(meshDimensions);
@@ -164,12 +168,13 @@ namespace Prdc {
    }
 
    /*
-   * Set new w-field values.
+   * Set new w-field values in symmetry-adapted basis format.
    */
    template <int D, class RField, class FieldIo>
    void
    WContainerReal<D,RField,FieldIo>::setBasis(DArray< DArray<double> > const & fields)
    {
+      UTIL_CHECK(isAllocatedRGrid_);
       UTIL_CHECK(isAllocatedBasis_);
       UTIL_CHECK(fields.capacity() == nMonomer_);
 
@@ -185,14 +190,14 @@ namespace Prdc {
       }
 
       // Update system grid fields (array rgrid_)
-      fieldIoPtr_->convertBasisToRGrid(basis_, rgrid_);
+      fieldIo().convertBasisToRGrid(basis_, rgrid_);
 
       hasData_ = true;
       isSymmetric_ = true;
    }
 
    /*
-   * Set new field values, using r-grid fields as inputs.
+   * Set new field values, in r-grid format.
    */
    template <int D, class RField, class FieldIo>
    void
@@ -210,7 +215,7 @@ namespace Prdc {
 
       // If field isSymmetric, update basis fields
       if (isSymmetric) {
-         fieldIoPtr_->convertRGridToBasis(rgrid_, basis_);
+         fieldIo().convertRGridToBasis(rgrid_, basis_);
       }
 
       hasData_ = true;
@@ -224,14 +229,41 @@ namespace Prdc {
    * representation. On return, hasData and isSymmetric are both true.
    */
    template <int D, class RField, class FieldIo>
-   void WContainerReal<D,RField,FieldIo>::readBasis(std::istream& in,
-                                      UnitCell<D>& unitCell)
+   void 
+   WContainerReal<D,RField,FieldIo>::readBasis(std::istream& in,
+                                               UnitCell<D>& unitCell)
    {
-      UTIL_CHECK(isAllocatedBasis());
-      fieldIoPtr_->readFieldsBasis(in, basis_, unitCell);
+      UTIL_CHECK(nMonomer_ > 0);
 
-      // Convert to r-grid to update rgrid_ fields
-      fieldIoPtr_->convertBasisToRGrid(basis_, rgrid_);
+      // Read field file header
+      int nMonomerIn;
+      bool isSymmetricIn;
+      fieldIo().readFieldHeader(in, nMonomerIn, unitCell, isSymmetricIn);
+      UTIL_CHECK(nMonomerIn == nMonomer_);
+      UTIL_CHECK(isSymmetricIn);
+      UTIL_CHECK(fieldIo().basis().isInitialized());
+      // Note: readFieldHeader will initialize basis if needed
+      int nBasisIn = readNBasis(in);
+
+      // Local references to mesh and basis
+      Mesh<D> const & mesh = fieldIo().mesh();
+      Basis<D> const & basis = fieldIo().basis();
+
+      // Allocate fields as needed
+      if (!isAllocatedRGrid()) {
+         allocateRGrid(mesh.dimensions());
+      }
+      if (!isAllocatedBasis()) {
+         allocateBasis(basis.nBasis());
+      }
+      UTIL_CHECK(isAllocatedRGrid());
+      UTIL_CHECK(isAllocatedBasis());
+
+      // Read field data
+      Prdc::readBasisData(in, basis_, unitCell, mesh, basis, nBasisIn);
+
+      // Convert basis to r-grid, to update rgrid_ data
+      fieldIo().convertBasisToRGrid(basis_, rgrid_);
 
       hasData_ = true;
       isSymmetric_ = true;
@@ -240,35 +272,29 @@ namespace Prdc {
    /*
    * Read field component values from file, in symmetrized basis format.
    *
-   * This function also computes and stores the corresponding r-grid
-   * representation. On return, hasData and isSymmetric are both true.
+   * Calls readBasis(std::ifstream&, UnitCell<D>&) internally.
    */
    template <int D, class RField, class FieldIo>
    void
    WContainerReal<D,RField,FieldIo>::readBasis(std::string filename,
                                                UnitCell<D>& unitCell)
    {
-      UTIL_CHECK(isAllocatedBasis());
-      fieldIoPtr_->readFieldsBasis(filename, basis_, unitCell);
-
-      // Convert to r-grid to update rgrid_ fields
-      fieldIoPtr_->convertBasisToRGrid(basis_, rgrid_);
-
-      hasData_ = true;
-      isSymmetric_ = true;
+      std::ifstream file;
+      fieldIo().fileMaster().openInputFile(filename, file);
+      readBasis(file, unitCell);
+      file.close();
    }
 
    /*
    * Reads fields from an input stream in real-space (r-grid) format.
    *
-   * If the isSymmetric parameter is true, this function assumes that
-   * the fields are known to be symmetric and so computes and stores
+   * If the isSymmetric parameter is true, this function assumes that 
+   * the fields are known to be symmetric and so computes and stores 
    * the corresponding basis components. If isSymmetric is false, it
    * only sets the values in the r-grid format.
    *
-   * On return, hasData is true and the persistent isSymmetric flag
-   * defined by the class is set to the value of the isSymmetric
-   * input parameter.
+   * On return, hasData is true and the bool class member isSymmetric_ 
+   * is set to the value of the isSymmetric function parameter.
    */
    template <int D, class RField, class FieldIo>
    void
@@ -277,10 +303,10 @@ namespace Prdc {
                                                bool isSymmetric)
    {
       UTIL_CHECK(isAllocatedRGrid());
-      fieldIoPtr_->readFieldsRGrid(in, rgrid_, unitCell);
+      fieldIo().readFieldsRGrid(in, rgrid_, unitCell);
 
       if (isSymmetric) {
-         fieldIoPtr_->convertRGridToBasis(rgrid_, basis_);
+         fieldIo().convertRGridToBasis(rgrid_, basis_);
       }
 
       hasData_ = true;
@@ -288,16 +314,7 @@ namespace Prdc {
    }
 
    /*
-   * Reads fields from a file in real-space (r-grid) format.
-   *
-   * If the isSymmetric parameter is true, this function assumes that
-   * the fields are known to be symmetric and so computes and stores
-   * the corresponding basis components. If isSymmetric is false, it
-   * only sets the values in the r-grid format.
-   *
-   * On return, hasData is true and the persistent isSymmetric flag
-   * defined by the class is set to the value of the isSymmetric
-   * input parameter.
+   * Reads fields from a file in r-grid format.
    */
    template <int D, class RField, class FieldIo>
    void
@@ -305,39 +322,38 @@ namespace Prdc {
                                                UnitCell<D>& unitCell,
                                                bool isSymmetric)
    {
-      UTIL_CHECK(isAllocatedRGrid());
-      fieldIoPtr_->readFieldsRGrid(filename, rgrid_, unitCell);
-
-      if (isSymmetric) {
-         fieldIoPtr_->convertRGridToBasis(rgrid_, basis_);
-      }
-
-      hasData_ = true;
-      isSymmetric_ = isSymmetric;
+      std::ifstream file;
+      fieldIo().fileMaster().openInputFile(filename, file);
+      readRGrid(file, unitCell, isSymmetric);
+      file.close();
    }
 
    /*
-   * Symmetrize r-grid fields, convert to basis.
+   * Symmetrize r-grid fields, convert to basis format.
    */
    template <int D, class RField, class FieldIo>
    void WContainerReal<D,RField,FieldIo>::symmetrize()
    {
       UTIL_CHECK(hasData_);
-      fieldIoPtr_->convertRGridToBasis(rgrid_, basis_);
-      fieldIoPtr_->convertBasisToRGrid(basis_, rgrid_);
+      fieldIo().convertRGridToBasis(rgrid_, basis_);
+      fieldIo().convertBasisToRGrid(basis_, rgrid_);
       isSymmetric_ = true;
    }
 
    // Private virtual function
 
    /*
-   * Virtual function - must be overridden by subclasses.
+   * Assignment operation for r-grid fields (RField objects).
+   *
+   * Unimplemented virtual function - must be overridden by subclasses.
    */ 
    template <int D, class RField, class FieldIo>
    void
    WContainerReal<D,RField,FieldIo>::assignRField(RField & lhs,
                                                   RField const & rhs) const
-   {  UTIL_THROW("Unimplemented function WContainerReal::assignRField"); }
+   {  UTIL_THROW("Unimplemented function WContainerReal::assignRField");
+
+}
 
 } // namespace Prdc
 } // namespace Pscf

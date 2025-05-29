@@ -356,43 +356,6 @@ namespace Prdc {
    // Functions for files in symmetry-adapted basis format
 
    /*
-   * Read the number of basis functions from a field file header.
-   */
-   int readNBasis(std::istream& in)
-   {
-   
-      // Read the label, which can be N_star or N_basis
-      std::string label;
-      in >> label;
-      UTIL_ASSERT(in.good());
-      if (label != "N_star" && label != "N_basis") {
-         std::string msg =  "\n";
-         msg += "Error reading field file:\n";
-         msg += "Expected N_basis or N_star, but found [";
-         msg += label;
-         msg += "]";
-         UTIL_THROW(msg.c_str());
-      }
- 
-      // Read the value of nBasis
-      int nBasis;
-      in >> nBasis;
-      UTIL_CHECK(in.good());
-      UTIL_CHECK(nBasis > 0);
-
-      return nBasis;
-   }
-
-   /*
-   * Write the number of basis functions to a field file header.
-   */
-   void writeNBasis(std::ostream& out, int nBasis)
-   {
-      out << "N_basis      " << std::endl
-          << "             " << nBasis << std::endl;
-   }
-
-   /*
    * Read the data section for an array of fields in basis format.
    */
    template <int D>
@@ -459,7 +422,7 @@ namespace Prdc {
          sizeMatches = false;
          waveExists = false;
 
-         // Check if waveIn is in first Brillouin zone (FBZ) for the mesh.
+         // Check if wavevector waveIn is a minimum image
          waveBz = shiftToMinimum(waveIn, mesh.dimensions(), unitCell);
          waveExists = (waveIn == waveBz);
 
@@ -646,6 +609,31 @@ namespace Prdc {
    }
 
    /*
+   * Read the data section for a single field in basis format.
+   */
+   template <int D>
+   void readBasisData(std::istream& in,
+                      DArray<double>& field,
+                      UnitCell<D> const& unitCell,
+                      Mesh<D> const& mesh,
+                      Basis<D> const& basis,
+                      int nBasisIn)
+   {
+      UTIL_CHECK(field.isAllocated());
+
+      // Local array of fields containing only one field
+      DArray< DArray<double> > fields;
+      fields.allocate(1);
+      fields[0].allocate(field.capacity());
+
+      // Call overloaded function that takes an array of fields
+      readBasisData(in, fields, unitCell, mesh, basis, nBasisIn);
+
+      // Copy data from local array fields to function parameter field
+      field = fields[0];
+   }
+
+   /*
    * Write an array of fields in basis format to an output stream.
    */
    template <int D>
@@ -682,6 +670,29 @@ namespace Prdc {
 
    }
 
+   /*
+   * Write data section of a single field in basis format.
+   */
+   template <int D>
+   void writeBasisData(std::ostream &out,
+                       DArray<double> const & field,
+                       Basis<D> const & basis)
+   {
+      UTIL_CHECK(field.isAllocated());
+
+      // Local array of fields containing only one field
+      DArray< DArray<double> > fields;
+      fields.allocate(1);
+      fields[0].allocate(field.capacity());
+      fields[0] = field;
+
+      // Call overloaded function that takes and array of fields 
+      writeBasisData(out, fields, basis);
+   }
+
+   /*
+   * Convert an array of fields from basis to k-grid format.
+   */
    template <int D, class ACT> 
    void convertBasisToKGrid(DArray<double> const & in,
                             ACT& out,
@@ -708,8 +719,6 @@ namespace Prdc {
 
       // Initialize all dft coponents to zero
       for (rank = 0; rank < dftMesh.size(); ++rank) {
-         //out[rank][0] = 0.0;
-         //out[rank][1] = 0.0;
          assign<CT, RT>(out[rank], 0.0, 0.0);
       }
 

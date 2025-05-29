@@ -65,10 +65,15 @@ namespace Rpg {
 
    protected:
 
+      using Base::meshDimensions;
+      using Base::meshSize;
+      using Base::nBasis;
+      using Base::fieldIo;
+
       /**
       * Calculate the average value of the rgrid_ member.
       */
-      double rGridAverage() const;
+      double rGridAverage() const override;
 
    };
 

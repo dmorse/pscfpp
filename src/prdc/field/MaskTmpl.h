@@ -270,6 +270,33 @@ namespace Prdc {
    protected:
 
       /**
+      * Mesh dimensions in each direction, set by allocation.
+      */
+      IntVec<D> const & meshDimensions() const
+      {  return meshDimensions_; }
+
+      /**
+      * Mesh size (number of grid points), set by allocation.
+      */
+      int meshSize() const
+      {  return meshSize_; }
+
+      /**
+      * Number of basis functions, set by allocation.
+      */
+      int nBasis() const
+      {  return nBasis_; }
+
+      /**
+      * Associated FieldIo object (const reference).
+      */
+      FieldIo const & fieldIo() const
+      {
+         UTIL_CHECK(fieldIoPtr_);
+         return *fieldIoPtr_;
+      }
+
+      /**
       * Calculate the average value of the rgrid_ member.
       * 
       * Must be implemented by subclasses, because this calculation
@@ -312,11 +339,6 @@ namespace Prdc {
       int nBasis_;
 
       /**
-      * Number of monomer types (number of field)
-      */
-      int nMonomer_;
-
-      /**
       * Has memory been allocated for field in basis format?
       */
       bool isAllocatedBasis_;
@@ -332,10 +354,10 @@ namespace Prdc {
       bool hasData_;
 
       /**
-      * Are the field symmetric under space group operations?
+      * Is the mask field symmetric under space group operations?
       *
       * Set true when field are set using the symmetry adapted basis
-      * format via function setBasis. False by otherwise.
+      * format via function setBasis. False otherwise.
       */
       bool isSymmetric_;
 

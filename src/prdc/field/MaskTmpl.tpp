@@ -9,6 +9,10 @@
 */
 
 #include "MaskTmpl.h"
+#include <prdc/field/fieldIoUtil.h> 
+#include <prdc/crystal/Basis.h> 
+#include <prdc/crystal/UnitCell.h> 
+#include <pscf/mesh/Mesh.h> 
 
 namespace Pscf {
 namespace Prdc {
@@ -47,7 +51,7 @@ namespace Prdc {
    {  fieldIoPtr_ = &fieldIo; }
 
    /*
-   * Allocate memory for field in basis format.
+   * Allocate memory for a field in basis format.
    */
    template <int D, typename FieldIo, typename RField>
    void MaskTmpl<D, FieldIo, RField>::allocateBasis(int nBasis)
@@ -104,7 +108,7 @@ namespace Prdc {
    */
    template <int D, typename FieldIo, typename RField>
    void MaskTmpl<D, FieldIo, RField>::setRGrid(RField const & field,
-                          bool isSymmetric)
+                                               bool isSymmetric)
    {
       rgrid_ = field; // deep copy
       if (isSymmetric) {
@@ -125,10 +129,40 @@ namespace Prdc {
    void MaskTmpl<D, FieldIo, RField>::readBasis(std::istream& in, 
                                                 UnitCell<D>& unitCell)
    {
+      #if 0
       fieldIoPtr_->readFieldBasis(in, basis_, unitCell);
+      #endif
 
-      // Update system wFieldsRGrid
-      fieldIoPtr_->convertBasisToRGrid(basis_, rgrid_);
+      // Read field file header
+      int nMonomerIn;
+      bool isSymmetricIn;
+      fieldIo().readFieldHeader(in, nMonomerIn, unitCell, isSymmetricIn);
+      UTIL_CHECK(1 == nMonomerIn);
+      UTIL_CHECK(isSymmetricIn);
+      UTIL_CHECK(fieldIo().basis().isInitialized());
+      // Note: FieldIo::readFieldHeader will initialize basis if needed
+      int nBasisIn = readNBasis(in);
+
+      // Local references to mesh and basis
+      Mesh<D> const & mesh = fieldIo().mesh();
+      Basis<D> const & basis = fieldIo().basis();
+
+      // Allocate fields as needed
+      if (!isAllocatedRGrid()) {
+         allocateRGrid(mesh.dimensions());
+      }
+      if (!isAllocatedBasis()) {
+         allocateBasis(basis.nBasis());
+      }
+      UTIL_CHECK(isAllocatedRGrid());
+      UTIL_CHECK(isAllocatedBasis());
+
+      // Read field data
+      Prdc::readBasisData(in, basis_, unitCell, mesh, basis, nBasisIn);
+
+      // Convert basis to r-grid, to update rgrid_ data
+      //fieldIoPtr_->convertBasisToRGrid(basis_, rgrid_);
+      fieldIo().convertBasisToRGrid(basis_, rgrid_);
 
       hasData_ = true;
       isSymmetric_ = true;

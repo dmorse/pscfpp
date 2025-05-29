@@ -708,10 +708,12 @@ namespace Prdc {
       * \param in field in real space grid (r-grid) format
       * \param epsilon error threshold used to test for symmetry
       * \param verbose  if true, write error to Log::file()
+      *
       * \return true if the field is symmetric, false otherwise
       */
       virtual
-      bool hasSymmetry(RFKT const & in, double epsilon = 1.0e-8,
+      bool hasSymmetry(RFKT const & in, 
+                       double epsilon = 1.0e-8,
                        bool verbose = true) const;
 
       /**
@@ -726,9 +728,11 @@ namespace Prdc {
       * \param in field in real space grid (r-grid) format
       * \param epsilon error threshold used to test for symmetry
       * \param verbose  if true, write error to Log::file()
+      *
       * \return true if the field is symmetric, false otherwise
       */
-      bool hasSymmetry(RFRT const & in, double epsilon = 1.0e-8,
+      bool hasSymmetry(RFRT const & in, 
+                       double epsilon = 1.0e-8,
                        bool verbose = true) const;
 
       ///@}
@@ -746,10 +750,11 @@ namespace Prdc {
       * \param factor  factor by which to multiply every field element
       */
       virtual
-      void scaleFieldBasis(DArray<double>& field, double factor) const;
+      void scaleFieldBasis(DArray<double>& field, 
+                           double factor) const;
 
       /**
-      * Scale an array of fields in basis format by a real scalar.
+      * Multiply an array of fields in basis format by a real scalar.
       *
       * This function takes an array of real periodic fields and multiplies
       * all components in place by a common real scalar, thereby modifying 
@@ -758,7 +763,8 @@ namespace Prdc {
       * \param fields  array of fields in basis form to be rescaled
       * \param factor  factor by which to multiply every field element
       */
-      void scaleFieldsBasis(DArray< DArray<double> >& fields, double factor) 
+      void scaleFieldsBasis(DArray< DArray<double> >& fields, 
+                            double factor) 
       const;
 
       /**
@@ -940,6 +946,70 @@ namespace Prdc {
                             bool isSymmetric = true) const;
 
       ///@}
+      /// \name Accessor functions (const refererence)
+      ///@{
+
+      /// Get spatial discretization mesh by const reference
+      Mesh<D> const & mesh() const
+      {
+         UTIL_ASSERT(meshPtr_);
+         return *meshPtr_;
+      }
+
+      /// Get the associated Basis by const reference
+      Basis<D> const & basis() const
+      {
+         UTIL_ASSERT(basisPtr_);
+         return *basisPtr_;
+      }
+
+      /// Get associated FileMaster by const reference
+      FileMaster const & fileMaster() const
+      {
+         UTIL_ASSERT(fileMasterPtr_);
+         return *fileMasterPtr_;
+      }
+
+      ///@}
+
+   protected:
+
+      // Protected accessor functions for associated external data
+
+      /// Get the lattice type enum value by const reference
+      typename UnitCell<D>::LatticeSystem const & lattice() const
+      {
+         UTIL_ASSERT(latticePtr_);
+         return *latticePtr_;
+      }
+
+      /// Has a space group been declared externally ?
+      bool hasGroup() const
+      {
+         UTIL_ASSERT(hasGroupPtr_);
+         return *hasGroupPtr_;
+      }
+
+      /// Get associated group name string by const reference
+      std::string const & groupName() const
+      {
+         UTIL_ASSERT(groupNamePtr_);
+         return *groupNamePtr_;
+      }
+
+      /// Get associated SpaceGroup<D> by const reference
+      SpaceGroup<D> const & group() const
+      {
+         UTIL_ASSERT(groupPtr_);
+         return *groupPtr_;
+      }
+
+      /// Get FFT object by const reference
+      FFTT const & fft() const
+      {
+         UTIL_ASSERT(fftPtr_);
+         return *fftPtr_;
+      }
 
    private:
 
@@ -971,66 +1041,6 @@ namespace Prdc {
 
       /// Pointer to Filemaster (holds paths to associated I/O files)
       FileMaster const * fileMasterPtr_;
-
-   protected:
-
-      // Private accessor functions for associated external data
-
-      /// Get spatial discretization mesh by const reference
-      Mesh<D> const & mesh() const
-      {
-         UTIL_ASSERT(meshPtr_);
-         return *meshPtr_;
-      }
-
-      /// Get FFT object by const reference
-      FFTT const & fft() const
-      {
-         UTIL_ASSERT(fftPtr_);
-         return *fftPtr_;
-      }
-
-      /// Get the lattice type enum value by const reference
-      typename UnitCell<D>::LatticeSystem const & lattice() const
-      {
-         UTIL_ASSERT(latticePtr_);
-         return *latticePtr_;
-      }
-
-      /// Has a space group been declared externally ?
-      bool hasGroup() const
-      {
-         UTIL_ASSERT(hasGroupPtr_);
-         return *hasGroupPtr_;
-      }
-
-      /// Get associated group name string by const reference
-      std::string const & groupName() const
-      {
-         UTIL_ASSERT(groupNamePtr_);
-         return *groupNamePtr_;
-      }
-
-      /// Get associated SpaceGroup<D> by const reference
-      SpaceGroup<D> const & group() const
-      {
-         UTIL_ASSERT(groupPtr_);
-         return *groupPtr_;
-      }
-
-      /// Get the associated Basis by const reference
-      Basis<D> const & basis() const
-      {
-         UTIL_ASSERT(basisPtr_);
-         return *basisPtr_;
-      }
-
-      /// Get associated FileMaster by const reference
-      FileMaster const & fileMaster() const
-      {
-         UTIL_ASSERT(fileMasterPtr_);
-         return *fileMasterPtr_;
-      }
 
    };
 

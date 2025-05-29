@@ -369,7 +369,7 @@ namespace Prdc {
    void writeNBasis(std::ostream& out, int nBasis);
    
    /**
-   * Read a set of fields in basis format.
+   * Read an array of fields in basis format, without a header.
    *
    * The field header should be read before calling this function to 
    * obtain the number of basis functions in the input file, which is
@@ -401,11 +401,35 @@ namespace Prdc {
                       int nStarIn);
 
    /**
-   * Write array of fields in basis format, without a header.
+   * Read data section of a single field in basis format.
+   *
+   * The field header should be read before calling this function to 
+   * obtain the number of basis functions in the input file, which is
+   * passed to this function as parameter nStarIn.
+   *
+   * \ingroup Prdc_Field_Module
+   * 
+   * \param in  input file stream
+   * \param field  components of a single field
+   * \param unitCell associated crystallographic unit cell
+   * \param mesh associated computational mesh
+   * \param basis associated symmetry adapted basis
+   * \param nStarIn number of stars declared in headers
+   */
+   template <int D>
+   void readBasisData(std::istream& in,
+                      DArray<double>& field,
+                      UnitCell<D> const& unitCell,
+                      Mesh<D> const& mesh,
+                      Basis<D> const& basis,
+                      int nStarIn);
+
+   /**
+   * Write data section of an array of fields in basis format.
    *
    * The number of monomer types is given by the capacity of the fields
    * array. On entry, the DArray<double> arrays associated with different 
-   * monomer types must all of the same nonzero capacity, denoted by 
+   * monomer types must have all of the same nonzero capacity, denoted by 
    * fieldCapacity. The number of basis functions written is the 
    * lesser fieldCapacity and the number of uncancelled basis functions
    * in the basis. 
@@ -419,6 +443,20 @@ namespace Prdc {
    template <int D>
    void writeBasisData(std::ostream &out,
                        DArray<DArray<double> > const & fields,
+                       Basis<D> const & basis);
+
+   /**
+   * Write data section of a single field in basis format.
+   *
+   * \ingroup Prdc_Field_Module
+   *
+   * \param out  output file stream
+   * \param field  components of a single field
+   * \param basis associated symmetry adapted basis
+   */
+   template <int D>
+   void writeBasisData(std::ostream &out,
+                       DArray<double> const & field,
                        Basis<D> const & basis);
 
    /**
