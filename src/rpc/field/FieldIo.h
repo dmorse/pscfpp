@@ -316,18 +316,18 @@ namespace Rpc {
       using Base::expandRGridDimension;
       using Base::readFieldHeader;
       using Base::writeFieldHeader;
+      using Base::mesh;
+      using Base::basis;
+      using Base::fileMaster;
 
    protected:
 
       // Inherited protected member functions
-      using Base::mesh;
-      using Base::fft;
       using Base::lattice;
       using Base::hasGroup;
       using Base::groupName;
       using Base::group;
-      using Base::basis;
-      using Base::fileMaster;
+      using Base::fft;
 
    };
 

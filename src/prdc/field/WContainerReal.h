@@ -333,22 +333,33 @@ namespace Prdc {
 
    protected:
 
+      /// Mesh dimensions in each direction, set on allocation.
+      IntVec<D> const & meshDimensions() const
+      {  return meshDimensions_; }
+
+      /// Mesh size (number of grid points), set on allocation.
+      int meshSize() const
+      {  return meshSize_; }
+
+      /// Number of basis functions, set on allocation.
+      int nBasis() const
+      {  return nBasis_; }
+
       /// Number of monomer types.
       int nMonomer() const
       {  return nMonomer_; }
 
-      /// Mesh size (number of grid points).
-      int meshSize() const
-      {  return meshSize_; }
-
-      /// Mesh dimensions (number of grid points in each direction).
-      IntVec<D> const & meshDimensions() const
-      {  return meshDimensions_; }
+      /// Associated FieldIo object (const reference).
+      FieldIo const & fieldIo() const
+      {
+         UTIL_CHECK(fieldIoPtr_);
+         return *fieldIoPtr_;
+      }
 
    private:
 
       /*
-      * Array of fields in symmetry-adapted basis format
+      * Array of fields in symmetry-adapted basis format.
       *
       * Element basis_[i] is an array that contains the components
       * of the field associated with monomer i, in a symmetry-adapted
@@ -357,7 +368,7 @@ namespace Prdc {
       DArray< DArray<double> > basis_;
 
       /*
-      * Array of fields in real-space grid (r-grid) format
+      * Array of fields in real-space grid (r-grid) format.
       *
       * Element basis_[i] is an RField that contains values of the
       * field associated with monomer i on the nodes of a regular mesh.
@@ -365,7 +376,7 @@ namespace Prdc {
       DArray< RField > rgrid_;
 
       /*
-      * Pointer to associated FieldIo object
+      * Pointer to an associated FieldIo object.
       */
       FieldIo const * fieldIoPtr_;
 
@@ -377,17 +388,17 @@ namespace Prdc {
       IntVec<D> meshDimensions_;
 
       /*
-      * Total number grid points (product of mesh dimensions)
+      * Total number grid points (product of mesh dimensions).
       */
       int meshSize_;
 
       /*
-      * Number of basis functions in symmetry-adapted basis
+      * Number of basis functions in symmetry-adapted basis.
       */
       int nBasis_;
 
       /*
-      * Number of monomer types (number of fields)
+      * Number of monomer types (number of fields).
       */
       int nMonomer_;
 

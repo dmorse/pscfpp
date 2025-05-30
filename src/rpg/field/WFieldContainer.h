@@ -70,9 +70,11 @@ namespace Rpg {
 
    protected:
 
-      using Base::nMonomer;
-      using Base::meshSize;
       using Base::meshDimensions;
+      using Base::meshSize;
+      using Base::nBasis;
+      using Base::nMonomer;
+      using Base::fieldIo;
 
    private:
 
@@ -96,16 +98,14 @@ namespace Rpg {
 
 } // namespace Rpg
 
+#ifndef RPG_W_FIELD_CONTAINER_TPP
 namespace Prdc {
-
-   #ifndef RPG_W_FIELD_CONTAINER_TPP
    // Suppress implicit instantiation
    extern template class WContainerReal<1, RField<1>, Rpg::FieldIo<1> >;
    extern template class WContainerReal<2, RField<2>, Rpg::FieldIo<2> >;
    extern template class WContainerReal<3, RField<3>, Rpg::FieldIo<3> >;
-   #endif
-
 } // namespace Prdc
+#endif
 
 } // namespace Pscf
 #endif

@@ -59,9 +59,11 @@ namespace Rpc {
 
    protected:
 
-      using Base::nMonomer;
-      using Base::meshSize;
       using Base::meshDimensions;
+      using Base::meshSize;
+      using Base::nBasis;
+      using Base::nMonomer;
+      using Base::fieldIo;
 
    private:
 
