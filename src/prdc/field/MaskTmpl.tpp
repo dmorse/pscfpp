@@ -95,13 +95,29 @@ namespace Prdc {
    template <int D, typename FieldIo, typename RField>
    void MaskTmpl<D, FieldIo, RField>::setBasis(DArray<double> const & field)
    {
-      UTIL_CHECK(field.capacity() == nBasis_);
+      // Allocate fields as needed
+      if (!isAllocatedRGrid_) {
+         Mesh<D> const & mesh = fieldIo().mesh();
+         UTIL_CHECK(mesh.size() > 0);
+         allocateRGrid(mesh.dimensions());
+      }
+      if (!isAllocatedBasis_) {
+         Basis<D> const & basis = fieldIo().basis();
+         UTIL_CHECK(basis.isInitialized());
+         allocateBasis(basis.nBasis());
+      }
       UTIL_CHECK(isAllocatedRGrid_);
       UTIL_CHECK(isAllocatedBasis_);
+
+      // Set components in basis form
+      UTIL_CHECK(field.capacity() == nBasis_);
       for (int j = 0; j < nBasis_; ++j) {
-         basis_[j] = field[j];
+         basis_[j] = field[j];   // deep copy
       }
+
+      // Convert to r-grid form
       fieldIo().convertBasisToRGrid(basis_, rgrid_);
+
       hasData_ = true;
       isSymmetric_ = true;
    }
@@ -113,22 +129,36 @@ namespace Prdc {
    void MaskTmpl<D, FieldIo, RField>::setRGrid(RField const & field,
                                                bool isSymmetric)
    {
+      // Allocate rgrid_ field if necessary
+      if (!isAllocatedRGrid_) {
+         Mesh<D> const & mesh = fieldIo().mesh();
+         allocateRGrid(mesh.dimensions());
+      }
       UTIL_CHECK(isAllocatedRGrid_);
+   
+      // Copy input field data to member variable rgrid_
       rgrid_ = field; // deep copy
+
+      // Optionally convert to basis form
       if (isSymmetric) {
+         if (!isAllocatedBasis_) {
+            Basis<D> const & basis = fieldIo().basis();
+            UTIL_CHECK(basis.isInitialized());
+            allocateBasis(basis.nBasis());
+         }
          UTIL_CHECK(isAllocatedBasis_);
          fieldIo().convertRGridToBasis(rgrid_, basis_);
       }
+
       hasData_ = true;
       isSymmetric_ = isSymmetric;
    }
 
    /*
-   * Read field from input stream, in symmetrized Fourier format.
+   * Read field from input stream, in symmetrized Fourier basis format.
    *
-   * This function also computes and stores the corresponding
-   * r-grid representation. On return, hasData and isSymmetric
-   * are both true.
+   * This function also computes and stores the corresponding r-grid
+   * representation. On return, hasData and isSymmetric are both true.
    */
    template <int D, typename FieldIo, typename RField>
    void MaskTmpl<D, FieldIo, RField>::readBasis(std::istream& in, 
@@ -148,20 +178,20 @@ namespace Prdc {
       Mesh<D> const & mesh = fieldIo().mesh();
       Basis<D> const & basis = fieldIo().basis();
 
-      // Allocate fields as needed
-      if (!isAllocatedRGrid()) {
+      // If necessary, allocate fields
+      if (!isAllocatedRGrid_) {
          allocateRGrid(mesh.dimensions());
       }
-      if (!isAllocatedBasis()) {
+      if (!isAllocatedBasis_) {
          allocateBasis(basis.nBasis());
       }
-      UTIL_CHECK(isAllocatedRGrid());
-      UTIL_CHECK(isAllocatedBasis());
+      UTIL_CHECK(isAllocatedRGrid_);
+      UTIL_CHECK(isAllocatedBasis_);
 
-      // Read field data
+      // Read field data in basis form
       Prdc::readBasisData(in, basis_, unitCell, mesh, basis, nBasisIn);
 
-      // Convert basis to r-grid, to update rgrid_ data
+      // Convert r-grid form
       fieldIo().convertBasisToRGrid(basis_, rgrid_);
 
       hasData_ = true;
@@ -192,20 +222,31 @@ namespace Prdc {
    * the field is known to be symmetric and so computes and stores
    * the corresponding basis format. If isSymmetric is false, it
    * only sets the values in the r-grid format.
-   * 
-   * On return, hasData is true and the persistent isSymmetric flag 
-   * defined by the class is set to the value of the isSymmetric 
-   * input parameter.
    */
    template <int D, typename FieldIo, typename RField>
    void MaskTmpl<D, FieldIo, RField>::readRGrid(std::istream& in, 
                                                 UnitCell<D>& unitCell, 
                                                 bool isSymmetric)
    {
-      fieldIoPtr_->readFieldRGrid(in, rgrid_, unitCell);
+      // If necessary, allocate rgrid_ fields
+      if (!isAllocatedRGrid_) {
+         Mesh<D> const & mesh = fieldIo().mesh();
+         UTIL_CHECK(mesh.size() > 0);
+         allocateRGrid(mesh.dimensions());
+      }
+      UTIL_CHECK(isAllocatedRGrid_);
+  
+      // Read field file in r-grid format 
+      fieldIo().readFieldRGrid(in, rgrid_, unitCell);
 
+      // Optionally convert to basis format
       if (isSymmetric) {
-         fieldIoPtr_->convertRGridToBasis(rgrid_, basis_);
+         if (!isAllocatedBasis_) {
+            Basis<D> const & basis = fieldIo().basis();
+            UTIL_CHECK(basis.isInitialized());
+            allocateBasis(basis.nBasis());
+         }
+         fieldIo().convertRGridToBasis(rgrid_, basis_);
       }
 
       hasData_ = true;
@@ -213,16 +254,7 @@ namespace Prdc {
    }
 
    /*
-   * Reads field from a file in real-space (r-grid) format.
-   *
-   * If the isSymmetric parameter is true, this function assumes that 
-   * the field is known to be symmetric and so computes and stores
-   * the corresponding basis format. If isSymmetric is false, it
-   * only sets the values in the r-grid format.
-   * 
-   * On return, hasData is true and the persistent isSymmetric flag 
-   * defined by the class is set to the value of the isSymmetric 
-   * input parameter.
+   * Reads field from a file in r-grid format, by filename.
    */
    template <int D, typename FieldIo, typename RField>
    void MaskTmpl<D, FieldIo, RField>::readRGrid(std::string filename, 

@@ -29,7 +29,7 @@ namespace Prdc {
    WContainerReal<D,RField,FieldIo>::WContainerReal()
     : basis_(),
       rgrid_(),
-      fieldIoPtr_(0),
+      fieldIoPtr_(nullptr),
       meshDimensions_(),
       meshSize_(0),
       nBasis_(0),
@@ -175,9 +175,21 @@ namespace Prdc {
    void
    WContainerReal<D,RField,FieldIo>::setBasis(DArray< DArray<double> > const & fields)
    {
+      UTIL_CHECK(fields.capacity() == nMonomer_);
+
+      // Allocate fields if needed
+      if (!isAllocatedRGrid_) {
+         Mesh<D> const & mesh = fieldIo().mesh();
+         UTIL_CHECK(mesh.size() > 0);
+         allocateRGrid(mesh.dimensions());
+      }
+      if (!isAllocatedBasis_) {
+         Basis<D> const & basis = fieldIo().basis();
+         UTIL_CHECK(basis.isInitialized());
+         allocateBasis(basis.nBasis());
+      }
       UTIL_CHECK(isAllocatedRGrid_);
       UTIL_CHECK(isAllocatedBasis_);
-      UTIL_CHECK(fields.capacity() == nMonomer_);
 
       // Update system w fields (array basis_)
       for (int i = 0; i < nMonomer_; ++i) {
@@ -205,10 +217,14 @@ namespace Prdc {
    WContainerReal<D,RField,FieldIo>::setRGrid(DArray<RField> const & fields,
                                               bool isSymmetric)
    {
-      UTIL_CHECK(isAllocatedRGrid_);
-      UTIL_CHECK(fields.capacity() == nMonomer_);
+      if (!isAllocatedRGrid_) {
+         Mesh<D> const & mesh = fieldIo().mesh();
+         UTIL_CHECK(mesh.size() > 0);
+         allocateRGrid(mesh.dimensions());
+      }
 
       // Update rgrid_ fields
+      UTIL_CHECK(fields.capacity() == nMonomer_);
       for (int i = 0; i < nMonomer_; ++i) {
          UTIL_CHECK(fields[i].capacity() == meshSize_);
          assignRField(rgrid_[i], fields[i]);
@@ -216,6 +232,11 @@ namespace Prdc {
 
       // If field isSymmetric, update basis fields
       if (isSymmetric) {
+         if (!isAllocatedBasis_) {
+            Basis<D> const & basis = fieldIo().basis();
+            UTIL_CHECK(basis.isInitialized());
+            allocateBasis(basis.nBasis());
+         }
          fieldIo().convertRGridToBasis(rgrid_, basis_);
       }
 
@@ -240,30 +261,31 @@ namespace Prdc {
       int nMonomerIn;
       bool isSymmetricIn;
       fieldIo().readFieldHeader(in, nMonomerIn, unitCell, isSymmetricIn);
+      // Note: FieldIo::readFieldHeader initializes basis if needed
       UTIL_CHECK(nMonomerIn == nMonomer_);
       UTIL_CHECK(isSymmetricIn);
-      UTIL_CHECK(fieldIo().basis().isInitialized());
-      // Note: readFieldHeader will initialize basis if needed
       int nBasisIn = readNBasis(in);
 
       // Local references to mesh and basis
       Mesh<D> const & mesh = fieldIo().mesh();
       Basis<D> const & basis = fieldIo().basis();
+      UTIL_CHECK(mesh.size() > 0);
+      UTIL_CHECK(basis.isInitialized());
 
-      // Allocate fields as needed
-      if (!isAllocatedRGrid()) {
+      // If necessary, allocate fields 
+      if (!isAllocatedRGrid_) {
          allocateRGrid(mesh.dimensions());
       }
-      if (!isAllocatedBasis()) {
+      if (!isAllocatedBasis_) {
          allocateBasis(basis.nBasis());
       }
-      UTIL_CHECK(isAllocatedRGrid());
-      UTIL_CHECK(isAllocatedBasis());
+      UTIL_CHECK(isAllocatedRGrid_);
+      UTIL_CHECK(isAllocatedBasis_);
 
-      // Read field data
+      // Read data in basis form
       Prdc::readBasisData(in, basis_, unitCell, mesh, basis, nBasisIn);
 
-      // Convert basis to r-grid, to update rgrid_ data
+      // Convert to r-grid form, to update rgrid_ array
       fieldIo().convertBasisToRGrid(basis_, rgrid_);
 
       hasData_ = true;
@@ -303,11 +325,22 @@ namespace Prdc {
                                                UnitCell<D>& unitCell,
                                                bool isSymmetric)
    {
-      UTIL_CHECK(isAllocatedRGrid_);
+      // If necessary, allocate r-grid fields
+      if (!isAllocatedRGrid_) {
+         Mesh<D> const & mesh = fieldIo().mesh();
+         allocateRGrid(mesh.dimensions());
+      }
+
+      // Read field file
       fieldIo().readFieldsRGrid(in, rgrid_, unitCell);
 
+      // Optionally convert to symmetry-adapted basis form
       if (isSymmetric) {
-         UTIL_CHECK(isAllocatedBasis_);
+         Basis<D> const & basis = fieldIo().basis();
+         UTIL_CHECK(basis.isInitialized());
+         if (!isAllocatedBasis_) {
+            allocateBasis(basis.nBasis());
+         }
          fieldIo().convertRGridToBasis(rgrid_, basis_);
       }
 
@@ -316,7 +349,7 @@ namespace Prdc {
    }
 
    /*
-   * Reads fields from a file in r-grid format.
+   * Reads fields from a file in r-grid format, by filename.
    */
    template <int D, class RField, class FieldIo>
    void
