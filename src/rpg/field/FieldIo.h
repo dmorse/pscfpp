@@ -39,21 +39,19 @@ namespace Rpg {
    * reasons discussed below.
    *
    * Class template Rpg::FieldIo<int D> is derived from a partial 
-   * specialization of template Prdc::FieldIoReal<D, RFRT, RFKT, FFFT> 
-   * that is implemented using classes RFRT=RField<D>, RFKT=RFieldDft<D>, 
-   * and FFFT=FFT<D> that are all defined in the Prdc::Cuda subspace, and 
-   * that can use GPU hardware. Rpg::FieldIo is thus a specialization of
+   * specialization of template Prdc::FieldIoReal<D, RFT, KFT, FFT> that
+   * is implemented using classes RFT = RField<D>, KFT = RFieldDft<D>, 
+   * and FFT = FFT<D> that are all defined in the Prdc::Cuda namespace, 
+   * and that use GPU hardware. Rpg::FieldIo is thus a specialization of
    * the FieldIoReal template with GPU acceleration. An analogous class
    * named Rpc::FieldIo that is designed for standard CPU hardware is
    * defined in the Pscf::Rpc namespace 
    *
    * The public interface of Rpg::FieldIo is identical to that of the
    * base class template Prdc::FieldIoReal. All member functions defined 
-   * in this Rpg::FieldIo are reimplemented virtual functions that are 
-   * declared and documented in Prdc::FieldIoReal, but that have trivial
-   * do-nothing implementations in the base class. These are all functions 
-   * for which different implementations are required for the CPU and GPU 
-   * variants, and which are thus also reimplemented in Rpg::FieldIo.
+   * in this Rpg::FieldIo are implementations of pure virtual functions 
+   * declared in Prdc::FieldIoReal. These are all functions for which
+   * different implementations are required for the CPU and GPU variants.
    *
    * \ingroup Rpg_Field_Module
    */

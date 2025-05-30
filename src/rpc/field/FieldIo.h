@@ -42,9 +42,9 @@ namespace Rpc {
    * reasons discussed below.
    *
    * Class template Rpc::FieldIo<int D> is derived from a partial 
-   * specialization of template Prdc::FieldIoReal<D, RFRT, RFKT, FFFT> 
-   * that is implemented using classes RFRT=RField<D>, RFKT=RFieldDft<D>, 
-   * and FFFT=FFT<D> that are all defined in the Prdc::Cpu subspace, and 
+   * specialization of template Prdc::FieldIoReal<D, RFT, KFT, FFT> that
+   * is implemented using classes RFT = RField<D>, KFT = RFieldDft<D>, 
+   * and FFT = FFT<D> that are all defined in the Prdc::Cpu subspace, and 
    * that use only conventional use CPU hardware. Rpc::FieldIo is thus a 
    * specialization of the FieldIoReal template for CPU hardware. An 
    * analogous class template named named Rpg::FieldIo that is designed 
@@ -52,11 +52,9 @@ namespace Rpc {
    *
    * The pubiic interface of Rpc::FieldIo is identical to that of the
    * base class template Prdc::FieldIoReal. All member functions defined 
-   * in this Rpc::FieldIo are reimplemented virtual functions that are 
-   * declared and documented in Prdc::FieldIoReal, but that have trivial
-   * do-nothing implementations in the base class. These are all functions 
-   * for which different implementations are required for the CPU and GPU 
-   * variants, and which are thus also reimplemented in Rpg::FieldIo.
+   * in this Rpc::FieldIo are implementations of pure virtual functions 
+   * declared in Prdc::FieldIoReal.  These are all functions for which 
+   * different implementations are required for the CPU and GPU variants.
    *
    * \ingroup Rpc_Field_Module
    */

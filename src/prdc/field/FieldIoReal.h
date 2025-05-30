@@ -43,20 +43,20 @@ namespace Prdc {
    * <b>Template parameters:</b>
    *
    *    - D    : dimension of space, i.e., 1, 2, or 3
-   *    - RFRT : real field r-grid type, e.g., RField<D> 
-   *    - RFKT : real field k-grid type, e.g., RFieldDft<D> 
+   *    - RFT  : real field r-grid type, e.g., RField<D> 
+   *    - KFT  : real field k-grid type, e.g., RFieldDft<D> 
    *    - FFT  : fast Fourier transform type, e.g., FFT<D> 
    *
    * The FieldIoReal template is a base class for two class templates
    * named FieldIo<int D> defined in namespaces Pscf::Rpc and Pscf::Rpg. 
    * The Pscf::Rpc::FieldIo<int D> template is derived from a partial 
-   * specialization of FieldIoReal with parameters RFRT=RField<D>, 
-   * RFKT=RFieldDft<D>, and FFT=FFT<D> that are all defined in the
-   * Pscf::Cpu namespace, and ll designed use standard CPU hardware. 
+   * specialization of FieldIoReal with parameters RFT = Cpu::RField<D>, 
+   * KFT = Cpu::RFieldDft<D>, and FFT = Cpu::FFT<D> that are all defined 
+   * in the Pscf::Cpu namespace, and all use standard CPU hardware. 
    * The analogous template Rpg::Field<D> in the Pscf::Rpg namespace is 
    * derived from a partial specialization of FieldIoReal in which these
    * three parameters are class templates with the same names that are 
-   * defined in the Pscf::Cuda namespace, which all use GPU memory. The
+   * defined in the Pscf::Cuda namespace, which all use a GPU. The
    * FieldIo template is used as a base class to reduce duplication of
    * identical or closely analogous code between these two subclasses.
    *
@@ -85,7 +85,7 @@ namespace Prdc {
    *
    * \ingroup Prdc_Field_Module
    */
-   template <int D, class RFRT, class RFKT, class FFTT>
+   template <int D, class RFT, class KFT, class FFT>
    class FieldIoReal
    {
 
@@ -116,7 +116,7 @@ namespace Prdc {
       * \param basis  associated Basis object
       */
       void associate(Mesh<D> const & mesh,
-                     FFTT const & fft,
+                     FFT const & fft,
                      typename UnitCell<D>::LatticeSystem const & lattice,
                      bool const & hasGroup,
                      std::string const & groupName,
@@ -268,11 +268,8 @@ namespace Prdc {
       * Read array of RField objects (r-grid format) from an istream.
       *
       * The capacity of array fields is equal to nMonomer, and element
-      * fields[i] is the RFRT associated with monomer type i.
+      * fields[i] is the RFT associated with monomer type i.
       *
-      * The default version is unimplemented and throws an Exception. An
-      * implementation for this function must be defined in each subclass.
-      * 
       * \param in  input stream (i.e., input file)
       * \param fields  array of RField fields (r-space grid)
       * \param unitCell  associated crystallographic unit cell
@@ -280,20 +277,20 @@ namespace Prdc {
       */
       virtual
       bool readFieldsRGrid(std::istream& in,
-                           DArray<RFRT>& fields,
+                           DArray<RFT>& fields,
                            UnitCell<D> & unitCell) const = 0;
 
       /**
       * Read array of RField objects (r-grid format) from a file.
       *
       * This function opens an input file with the specified filename,
-      * reads fields in RFRT real-space grid format from that file,
+      * reads fields in RFT real-space grid format from that file,
       * and then closes the file. The overloaded readFieldsRGrid 
       * function that takes an std::istream parameter is called to read
       * the file after it is opened.
       *
       * The capacity of array fields is equal to nMonomer, and element
-      * fields[i] is the RFRT associated with monomer type i.
+      * fields[i] is the RFT associated with monomer type i.
       *
       * \param filename  name of input file
       * \param fields  array of RField fields (r-space grid)
@@ -301,7 +298,7 @@ namespace Prdc {
       * \return  true iff header has a space group (isSymmetric flag)
       */
       bool readFieldsRGrid(std::string filename,
-                           DArray<RFRT>& fields,
+                           DArray<RFT>& fields,
                            UnitCell<D> & unitCell) const;
 
       /**
@@ -310,24 +307,18 @@ namespace Prdc {
       * This function reads the data section of the rgrid-field format, 
       * without first reading a header.
       *
-      * The default version is unimplemented and throws an Exception. An
-      * implementation for this function must be defined in each subclass.
-      * 
       * \param in  input file stream
       * \param fields  array of RField fields (r-space grid)
       * \param nMonomer  number of monomer types
       */
       virtual
       void readFieldsRGridData(std::istream& in,
-                               DArray<RFRT>& fields,
+                               DArray<RFT>& fields,
                                int nMonomer) const = 0;
 
       /**
       * Read single RField (field on an r-space grid) from an istream.
       *
-      * The default version is unimplemented and throws an Exception. An
-      * implementation for this function must be defined in each subclass.
-      * 
       * \param in  input stream (i.e., input file)
       * \param field  single field defined on r-space grid
       * \param unitCell  associated crystallographic unit cell
@@ -335,14 +326,14 @@ namespace Prdc {
       */
       virtual
       bool readFieldRGrid(std::istream &in,
-                          RFRT & field,
+                          RFT & field,
                           UnitCell<D>& unitCell) const = 0;
 
       /**
       * Read single RField (field on an r-space grid) from named file.
       *
       * This function opens an input file with the specified filename,
-      * reads a field in RFRT real-space grid format, and then closes the
+      * reads a field in RFT real-space grid format, and then closes the
       * the file. The overloaded readfieldRGrid function that takes a
       * std::istream parameter is called internally to read the file.
       *
@@ -352,15 +343,12 @@ namespace Prdc {
       * \return  true iff header has a space group (isSymmetric flag)
       */
       bool readFieldRGrid(std::string filename,
-                          RFRT & field,
+                          RFT & field,
                           UnitCell<D>& unitCell) const;
 
       /**
       * Write array of RField objects (fields on an r-grid) to ostream.
       *
-      * The default version is unimplemented and throws an Exception. An
-      * implementation for this function must be defined in each subclass.
-      * 
       * \param out  output stream (i.e., output file)
       * \param fields  array of RField objects (fields on r-space grid)
       * \param unitCell  associated crystallographic unit cell
@@ -370,7 +358,7 @@ namespace Prdc {
       */
       virtual
       void writeFieldsRGrid(std::ostream& out,
-                            DArray<RFRT> const & fields,
+                            DArray<RFT> const & fields,
                             UnitCell<D> const & unitCell,
                             bool writeHeader = true,
                             bool isSymmetric = true,
@@ -380,26 +368,23 @@ namespace Prdc {
       * Write array of RField objects (fields on an r-space grid) to file.
       *
       * This function opens an output file with the specified filename,
-      * writes fields in RFRT real-space grid format to that file, and
+      * writes fields in RFT real-space grid format to that file, and
       * then closes the file. The overloaded function writeFieldsRGrid
       * that takes a std::ostream parameter is called internally to read
       * the file after it is opened.
       *
       * \param filename  name of output file
-      * \param fields  array of RFRT objects (fields on r-space grid)
+      * \param fields  array of RFT objects (fields on r-space grid)
       * \param unitCell  associated crystallographic unit cell
       * \param isSymmetric Do fields have a space group symmetry ?
       */
       void writeFieldsRGrid(std::string filename,
-                            DArray<RFRT> const & fields,
+                            DArray<RFT> const & fields,
                             UnitCell<D> const & unitCell,
                             bool isSymmetric = true) const;
 
       /**
       * Write a single RField (field on an r-space grid) to an ostream.
-      * 
-      * The default version is unimplemented and throws an Exception. An
-      * implementation for this function must be defined in each subclass.
       * 
       * \param out  output stream
       * \param field  field defined on r-space grid
@@ -409,7 +394,7 @@ namespace Prdc {
       */
       virtual
       void writeFieldRGrid(std::ostream &out,
-                           RFRT const & field,
+                           RFT const & field,
                            UnitCell<D> const & unitCell,
                            bool writeHeader = true,
                            bool isSymmetric = true) const = 0;
@@ -418,7 +403,7 @@ namespace Prdc {
       * Write a single RField (fields on an r-space grid) to a file.
       *
       * This function opens an output file with the specified filename,
-      * write a field in RFRT real-space grid format to that file, and
+      * write a field in RFT real-space grid format to that file, and
       * then closes the file. The overloaded function writeFieldRGrid
       * that takes a std::ostream parameter is called internally to
       * write the filed after the file is opened.
@@ -429,7 +414,7 @@ namespace Prdc {
       * \param isSymmetric  Does the field have a space group symmetry?
       */
       void writeFieldRGrid(std::string filename,
-                           RFRT const & field,
+                           RFT const & field,
                            UnitCell<D> const & unitCell,
                            bool isSymmetric = true) const;
 
@@ -438,26 +423,23 @@ namespace Prdc {
       ///@{
 
       /**
-      * Read array of RFieldDft objects (k-space fields) from istream.
+      * Read array of KFT objects (k-space fields) from istream.
       *
       * The capacity of the array is equal to nMonomer, and element
       * fields[i] is the discrete Fourier transform of the field for
       * monomer type i.
       *
-      * The default version is unimplemented and throws an Exception. An
-      * implementation for this function must be defined in each subclass.
-      * 
       * \param in  input stream (i.e., input file)
-      * \param fields  array of RFieldDft fields (k-space grid)
+      * \param fields  array of KFT fields (k-space grid)
       * \param unitCell  associated crystallographic unit cell
       */
       virtual
       void readFieldsKGrid(std::istream& in,
-                           DArray<RFKT>& fields,
+                           DArray<KFT>& fields,
                            UnitCell<D> & unitCell) const = 0;
 
       /**
-      * Read array of RFieldDft objects (k-space fields) from file.
+      * Read array of KFT objects (k-space fields) from file.
       *
       * This function opens a file with name filename, reads discrete
       * Fourier components (Dft) of fields from that file, and closes
@@ -468,48 +450,45 @@ namespace Prdc {
       * monomer type i.
       *
       * \param filename  name of input file
-      * \param fields  array of RFieldDft fields (k-space grid)
+      * \param fields  array of KFT fields (k-space grid)
       * \param unitCell  associated crystallographic unit cell
       */
       void readFieldsKGrid(std::string filename,
-                           DArray<RFKT>& fields,
+                           DArray<KFT>& fields,
                            UnitCell<D> & unitCell) const;
 
       /**
-      * Write array of RFieldDft objects (k-space fields) to file.
+      * Write array of KFT objects (k-space fields) to file.
       *
       * The capacity of the array fields is equal to nMonomer. Element
       * fields[i] is the discrete Fourier transform of the field for
       * monomer type i.
       *
-      * The default version is unimplemented and throws an Exception. An
-      * implementation for this function must be defined in each subclass.
-      * 
       * \param out  output stream (i.e., output file)
-      * \param fields  array of RFieldDft fields
+      * \param fields  array of KFT fields
       * \param unitCell  associated crystallographic unit cell
       * \param isSymmetric  Does this field have space group symmetry?
       */
       virtual
       void writeFieldsKGrid(std::ostream& out,
-                            DArray<RFKT> const & fields,
+                            DArray<KFT> const & fields,
                             UnitCell<D> const & unitCell,
                             bool isSymmetric = true) const = 0;
 
       /**
-      * Write array of RFieldDft objects (k-space fields) to a file.
+      * Write array of KFT objects (k-space fields) to a file.
       *
       * This function opens a file with name filename, writes discrete
       * Fourier transform components (DFT) components of fields to that
       * file, and closes the file.
       *
       * \param filename  name of output file.
-      * \param fields  array of RFieldDft fields (k-space grid)
+      * \param fields  array of KFT fields (k-space grid)
       * \param unitCell  associated crystallographic unit cell
       * \param isSymmetric  Does this field have space group symmetry?
       */
       void writeFieldsKGrid(std::string filename,
-                           DArray<RFKT> const & fields,
+                           DArray<KFT> const & fields,
                            UnitCell<D> const & unitCell,
                            bool isSymmetric = true) const;
 
@@ -520,15 +499,12 @@ namespace Prdc {
       /**
       * Convert a field from symmetrized basis to Fourier grid (k-grid).
       *
-      * The default version is unimplemented and throws an Exception. An
-      * implementation for this function must be defined in each subclass.
-      * 
       * \param components coefficients of symmetry-adapted basis functions
       * \param dft discrete Fourier transform of a real field
       */
       virtual
       void convertBasisToKGrid(DArray<double> const & components,
-                               RFKT& dft) const = 0;
+                               KFT& dft) const = 0;
 
       /**
       * Convert fields from symmetrized basis to Fourier grid (k-grid).
@@ -540,7 +516,7 @@ namespace Prdc {
       * \param out  fields defined as discrete Fourier transforms (k-grid)
       */
       void convertBasisToKGrid(DArray< DArray<double> > const & in,
-                               DArray<RFKT>& out) const;
+                               DArray<KFT>& out) const;
 
       /**
       * Convert a field from Fourier (k-grid) to symmetrized basis form.
@@ -550,16 +526,13 @@ namespace Prdc {
       * tolerance given by the epsilon parameter, and prints a warning to
       * Log::file() if it does not.
       *
-      * The default version is unimplemented and throws an Exception. An
-      * implementation for this function must be defined in each subclass.
-      * 
       * \param in  discrete Fourier transform (k-grid) of a field
       * \param out  components of field in asymmetry-adapted Fourier basis
       * \param checkSymmetry  flag indicating whether to check symmetry
       * \param epsilon  error tolerance for symmetry test (if any)
       */
       virtual
-      void convertKGridToBasis(RFKT const & in,
+      void convertKGridToBasis(KFT const & in,
                                DArray<double> & out,
                                bool checkSymmetry = true,
                                double epsilon = 1.0e-8) const = 0;
@@ -580,7 +553,7 @@ namespace Prdc {
       * \param checkSymmetry  flag indicate whether to check symmetry
       * \param epsilon  error tolerance for symmetry test (if any)
       */
-      void convertKGridToBasis(DArray<RFKT> const & in,
+      void convertKGridToBasis(DArray<KFT> const & in,
                                DArray< DArray<double> > & out,
                                bool checkSymmetry = true,
                                double epsilon = 1.0e-8) const;
@@ -592,7 +565,7 @@ namespace Prdc {
       * \param out field defined on real-space grid
       */
       void convertBasisToRGrid(DArray<double> const & in,
-                               RFRT & out) const;
+                               RFT & out) const;
 
       /**
       * Convert fields from symmetrized basis to spatial grid (r-grid).
@@ -601,7 +574,7 @@ namespace Prdc {
       * \param out fields defined on real-space grid
       */
       void convertBasisToRGrid(DArray< DArray<double> > const & in,
-                               DArray<RFRT> & out) const ;
+                               DArray<RFT> & out) const ;
 
       /**
       * Convert a field from spatial grid (r-grid) to symmetrized basis.
@@ -617,7 +590,7 @@ namespace Prdc {
       * \param checkSymmetry  if true, check space group symmetry
       * \param epsilon error threshhold for symmetry test
       */
-      void convertRGridToBasis(RFRT const & in,
+      void convertRGridToBasis(RFT const & in,
                                DArray<double> & out,
                                bool checkSymmetry = true,
                                double epsilon = 1.0e-8) const;
@@ -636,7 +609,7 @@ namespace Prdc {
       * \param checkSymmetry  if true, check space group symmetry
       * \param epsilon error threshhold for symmetry test
       */
-      void convertRGridToBasis(DArray<RFRT> const & in,
+      void convertRGridToBasis(DArray<RFT> const & in,
                                DArray< DArray<double> > & out,
                                bool checkSymmetry = true,
                                double epsilon = 1.0e-8) const;
@@ -645,46 +618,46 @@ namespace Prdc {
       * Convert fields from k-grid (DFT) to real space (r-grid) format.
       *
       * This function simply calls the inverse FFT for an array of fields.
-      * The inverse FFT provided by the underlying FFTW library overwrites
-      * its input, which is why field parameter "in" is passed as a
-      * non-const reference.
       *
       * \param in  fields in discrete Fourier format (k-grid)
       * \param out  fields defined on real-space grid (r-grid)
       */
-      void convertKGridToRGrid(DArray<RFKT> const & in,
-                               DArray<RFRT> & out) const;
+      void convertKGridToRGrid(DArray<KFT> const & in,
+                               DArray<RFT> & out) const;
 
       /**
       * Convert a field from k-grid (DFT) to real space (r-grid) format.
       *
       * This function simply calls the inverse FFT for a single field.
-      * The inverse FFT provided by the underlying FFTW library overwrites
-      * its input, which is why argument "in" a non-const reference.
       *
       * \param in  field in discrete Fourier format (k-grid)
       * \param out  field defined on real-space grid (r-grid)
       */
-      void convertKGridToRGrid(RFKT const & in,
-                               RFRT & out) const;
+      void convertKGridToRGrid(KFT const & in,
+                               RFT & out) const;
 
       /**
       * Convert fields from spatial grid (r-grid) to k-grid format.
       *
+      * This function simply calls the forward FFT repeatedly for an 
+      * array of fields.
+      *
       * \param in  fields defined on real-space grid (r-grid)
       * \param out  fields in discrete Fourier format (k-grid)
       */
-      void convertRGridToKGrid(DArray<RFRT> const & in,
-                               DArray<RFKT> & out) const;
+      void convertRGridToKGrid(DArray<RFT> const & in,
+                               DArray<KFT> & out) const;
 
       /**
       * Convert a field from spatial grid (r-grid) to k-grid format.
       *
+      * This function simply calls the forward FFT for a single field.
+      *
       * \param in  field defined on real-space grid (r-grid)
       * \param out  field in discrete Fourier format (k-grid)
       */
-      void convertRGridToKGrid(RFRT const & in,
-                               RFKT & out) const;
+      void convertRGridToKGrid(RFT const & in,
+                               KFT & out) const;
 
       ///@}
       /// \name Test Space Group Symmetry
@@ -699,9 +672,6 @@ namespace Prdc {
       * parameter verbose is true and the deviation from symmetry
       * exceeds the error threshhold, errors are written to Log::file().
       *
-      * The default version is unimplemented and throws an Exception. An
-      * implementation for this function must be defined in each subclass.
-      * 
       * \param in field in real space grid (r-grid) format
       * \param epsilon error threshold used to test for symmetry
       * \param verbose  if true, write error to Log::file()
@@ -709,7 +679,7 @@ namespace Prdc {
       * \return true if the field is symmetric, false otherwise
       */
       virtual
-      bool hasSymmetry(RFKT const & in, 
+      bool hasSymmetry(KFT const & in, 
                        double epsilon = 1.0e-8,
                        bool verbose = true) const = 0;
 
@@ -728,7 +698,7 @@ namespace Prdc {
       *
       * \return true if the field is symmetric, false otherwise
       */
-      bool hasSymmetry(RFRT const & in, 
+      bool hasSymmetry(RFT const & in, 
                        double epsilon = 1.0e-8,
                        bool verbose = true) const;
 
@@ -775,7 +745,7 @@ namespace Prdc {
       * \param factor  factor by which to multiply every field element
       */
       virtual
-      void scaleFieldRGrid(RFRT& field, double factor) const = 0;
+      void scaleFieldRGrid(RFT& field, double factor) const = 0;
 
       /**
       * Scale an array of r-grid fields by a real scalar.
@@ -787,7 +757,7 @@ namespace Prdc {
       * \param fields  array of RField (r-space) fields to be rescaled
       * \param factor  factor by which to multiply every field element
       */
-      void scaleFieldsRGrid(DArray<RFRT> & fields, double factor) const;
+      void scaleFieldsRGrid(DArray<RFT> & fields, double factor) const;
 
       ///@}
       /// \name Grid Manipulation Utilities
@@ -804,9 +774,6 @@ namespace Prdc {
       * Element i of the replicas IntVec<D> parameter contains the number
       * of unit cell replicas along direction i. 
       *
-      * The default version is unimplemented and throws an Exception. An
-      * implementation for this function must be defined in each subclass.
-      * 
       * \param out  output stream (i.e., output file)
       * \param fields  array of RField (r-space) fields to be replicated
       * \param unitCell  original crystallographic unit cell
@@ -814,7 +781,7 @@ namespace Prdc {
       */
       virtual
       void replicateUnitCell(std::ostream& out,
-                             DArray<RFRT> const & fields,
+                             DArray<RFT> const & fields,
                              UnitCell<D> const & unitCell,
                              IntVec<D> const & replicas) const = 0;
 
@@ -832,7 +799,7 @@ namespace Prdc {
       * \param replicas  number of unit cell replicas in each direction
       */
       void replicateUnitCell(std::string filename,
-                             DArray<RFRT> const & fields,
+                             DArray<RFT> const & fields,
                              UnitCell<D> const & unitCell,
                              IntVec<D> const & replicas) const;
 
@@ -846,9 +813,6 @@ namespace Prdc {
       * it can output a lamellar computed with D=1 on a 3D grid (d=3)
       * in a format that can be read by pscf_pc when invoked with D=3.
       *
-      * The default version is unimplemented and throws an Exception. An
-      * implementation for this function must be defined in each subclass.
-      * 
       * \param out  output stream (i.e., output file)
       * \param fields  input array of RField fields (r-space grid)
       * \param unitCell  original crystallographic unit cell
@@ -857,7 +821,7 @@ namespace Prdc {
       */
       virtual
       void expandRGridDimension(std::ostream &out,
-                                DArray<RFRT > const & fields,
+                                DArray<RFT > const & fields,
                                 UnitCell<D> const & unitCell,
                                 int d,
                                 DArray<int> const& newGridDimensions) 
@@ -872,13 +836,13 @@ namespace Prdc {
       * the same name with a std::ostream parameter is called internally.
       *
       * \param filename  name of output file
-      * \param fields  input array of RFRT objects (r-space grid)
+      * \param fields  input array of RFT objects (r-space grid)
       * \param unitCell  original crystallographic unit cell
       * \param d  expanded dimension (greater than D)
       * \param newGridDimensions  number of grid points in added dimensions
       */
       void expandRGridDimension(std::string filename,
-                                DArray<RFRT > const & fields,
+                                DArray<RFT > const & fields,
                                 UnitCell<D> const & unitCell,
                                 int d,
                                 DArray<int> newGridDimensions) const;
@@ -1002,7 +966,7 @@ namespace Prdc {
       }
 
       /// Get FFT object by const reference
-      FFTT const & fft() const
+      FFT const & fft() const
       {
          UTIL_ASSERT(fftPtr_);
          return *fftPtr_;
@@ -1011,7 +975,7 @@ namespace Prdc {
    private:
 
       // DFT work array for conversions basis <-> kgrid <-> r-grid
-      mutable RFKT workDft_;
+      mutable KFT workDft_;
 
       // Pointers to associated external data
 
@@ -1019,7 +983,7 @@ namespace Prdc {
       Mesh<D> const * meshPtr_;
 
       /// Pointer to FFT object
-      FFTT const * fftPtr_;
+      FFT const * fftPtr_;
 
       /// Pointer to lattice system
       typename UnitCell<D>::LatticeSystem const * latticePtr_;
