@@ -264,6 +264,7 @@ namespace Rpc {
       UTIL_CHECK(domain_.mesh().size() > 0);
       UTIL_CHECK(domain_.unitCell().nParameter() > 0);
       UTIL_CHECK(domain_.unitCell().lattice() != UnitCell<D>::Null);
+      domain_.fieldIo().setNMonomer(nm);
 
       // Setup the mixture
       mixture_.associate(domain_.mesh(), domain_.fft(),
@@ -333,6 +334,7 @@ namespace Rpc {
    {
       UTIL_CHECK(isAllocatedGrid_);
       std::string command, filename, inFileName, outFileName;
+      FieldIo<D> const & fieldIo = domain_.fieldIo();
 
       bool readNext = true;
       while (readNext) {
@@ -520,32 +522,38 @@ namespace Rpc {
          if (command == "BASIS_TO_RGRID") {
             readEcho(in, inFileName);
             readEcho(in, outFileName);
-            basisToRGrid(inFileName, outFileName);
+            //basisToRGrid(inFileName, outFileName);
+            fieldIo.convertBasisToRGrid(inFileName, outFileName);
          } else
          if (command == "RGRID_TO_BASIS") {
             readEcho(in, inFileName);
             readEcho(in, outFileName);
-            rGridToBasis(inFileName, outFileName);
+            //rGridToBasis(inFileName, outFileName);
+            fieldIo.convertRGridToBasis(inFileName, outFileName);
          } else
          if (command == "KGRID_TO_RGRID") {
             readEcho(in, inFileName);
             readEcho(in, outFileName);
-            kGridToRGrid(inFileName, outFileName);
+            //kGridToRGrid(inFileName, outFileName);
+            fieldIo.convertKGridToRGrid(inFileName, outFileName);
          } else
          if (command == "RGRID_TO_KGRID") {
             readEcho(in, inFileName);
             readEcho(in, outFileName);
-            rGridToKGrid(inFileName, outFileName);
+            //rGridToKGrid(inFileName, outFileName);
+            fieldIo.convertRGridToKGrid(inFileName, outFileName);
          } else
          if (command == "BASIS_TO_KGRID") {
             readEcho(in, inFileName);
             readEcho(in, outFileName);
-            basisToKGrid(inFileName, outFileName);
+            //basisToKGrid(inFileName, outFileName);
+            fieldIo.convertBasisToKGrid(inFileName, outFileName);
          } else
          if (command == "KGRID_TO_BASIS") {
             readEcho(in, inFileName);
             readEcho(in, outFileName);
-            kGridToBasis(inFileName, outFileName);
+            // kGridToBasis(inFileName, outFileName);
+            fieldIo.convertKGridToBasis(inFileName, outFileName);
          } else
          if (command == "CHECK_RGRID_SYMMETRY") {
             double epsilon;

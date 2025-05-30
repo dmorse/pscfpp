@@ -10,11 +10,11 @@
 
 #include <prdc/crystal/UnitCell.h>     // nested LatticeSystem enum
 #include <pscf/math/IntVec.h>          // template with default
+#include <util/containers/DArray.h>    // member
 
 // Forward declarations for classes used in interfaces
 namespace Util {
    class FileMaster;
-   template <typename T> class DArray;
 }
 namespace Pscf {
    template <int D> class Mesh;
@@ -129,6 +129,13 @@ namespace Prdc {
       * \param fileMaster  associated FileMaster (for file paths)
       */
       void setFileMaster(FileMaster const & fileMaster);
+
+      /**
+      * Set the number of monomers types (used to allocate work space).
+      *
+      * \param nMonomer  number of monomer types
+      */
+      void setNMonomer(int nMonomer);
 
       ///@}
       /// \name Field File IO - Symmetry Adapted Basis Format
@@ -660,6 +667,84 @@ namespace Prdc {
                                KFT & out) const;
 
       ///@}
+      /// \name Field File Format Conversion
+      ///@{
+
+      /**
+      * Convert a field from symmetrized basis format to r-grid format.
+      *
+      * This function reads a field file in basis format, converts the
+      * fields to r-grid format, and writes the fields in r-grid format
+      * to a different file.
+      *
+      * \param inFileName name of input file (basis format)
+      * \param outFileName name of output file (r-grid format)
+      */
+      void convertBasisToRGrid(std::string const & inFileName,
+                               std::string const & outFileName) const;
+
+      /**
+      * Convert a field from real-space grid to symmetrized basis format.
+      *
+      * This function checks if the input fields have the declared space
+      * group symmetry, and prints a warning if it detects deviations
+      * that exceed some small threshhold, but proceeds to attempt the
+      * conversion even if such an error is detected. Converting a field
+      * that does not have the declared space group symmetry to basis
+      * format is a destructive operation that modifies the field in
+      * unpredictable ways.
+      *
+      * \param inFileName name of input file (r-grid format)
+      * \param outFileName name of output file (basis format)
+      */
+      void convertRGridToBasis(std::string const & inFileName,
+                               std::string const & outFileName) const;
+
+      /**
+      * Convert fields from Fourier (k-grid) to real-space (r-grid) format.
+      *
+      * \param inFileName name of input file (k-grid format)
+      * \param outFileName name of output file (r-grid format)
+      */
+      void convertKGridToRGrid(std::string const & inFileName,
+                               std::string const & outFileName) const;
+
+      /**
+      * Convert fields from real-space (r-grid) to Fourier (k-grid) format.
+      *
+      * \param inFileName name of input file (r-grid format)
+      * \param outFileName name of output file (k-grid format)
+      */
+      void convertRGridToKGrid(std::string const & inFileName,
+                               std::string const & outFileName) const;
+
+      /**
+      * Convert fields from Fourier (k-grid) to symmetrized basis format.
+      *
+      * This function checks if the input fields have the declared space
+      * group symmetry, and prints a warning if it detects deviations
+      * that exceed some small threshhold, but proceeds to attempt the
+      * conversion even if such an error is detected. Converting a field
+      * that does not have the declared space group symmetry to basis
+      * format is a destructive operation that modifies the field in
+      * unpredictable ways.
+      *
+      * \param inFileName name of input file (k-grid format)
+      * \param outFileName name of output file (basis format)
+      */
+      void convertKGridToBasis(std::string const & inFileName,
+                               std::string const & outFileName) const;
+
+      /**
+      * Convert fields from symmetrized basis to Fourier (k-grid) format.
+      *
+      * \param inFileName name of input file (basis format)
+      * \param outFileName name of output file (k-grid format)
+      */
+      void convertBasisToKGrid(std::string const & inFileName,
+                               std::string const & outFileName) const;
+
+      ///@}
       /// \name Test Space Group Symmetry
       ///@{
 
@@ -972,12 +1057,30 @@ namespace Prdc {
          return *fftPtr_;
       }
 
+      // Protected
+
+      /**
+      * Check if r-grid workspace is allocated, allocate if necessary.
+      */
+      void checkAllocateRGrid() const;
+
+      /**
+      * Check if k-grid workspace is allocated, allocate if necessary.
+      */
+      void checkAllocateKGrid() const;
+
+      /**
+      * Check if basis workspace is allocated, allocate if necessary.
+      *
+      * If the basis is not initialized, this function peeks at the 
+      * header of the field file to initialize it, and thus obtain the
+      * number of basis functions.
+      *
+      * \param inFileName name of field file 
+      */
+      void checkAllocateBasis(std::string const & inFileName) const;
+
    private:
-
-      // DFT work array for conversions basis <-> kgrid <-> r-grid
-      mutable KFT workDft_;
-
-      // Pointers to associated external data
 
       /// Pointer to spatial discretization mesh
       Mesh<D> const * meshPtr_;
@@ -1002,6 +1105,32 @@ namespace Prdc {
 
       /// Pointer to Filemaster (holds paths to associated I/O files)
       FileMaster const * fileMasterPtr_;
+
+      /// Number of monomer types
+      int nMonomer_;
+
+      // Mutable work space
+
+      /// Work array of field coefficients for all monomer types.
+      mutable DArray< DArray<double> > tmpFieldsBasis_;
+
+      /// Work array of fields on real space grid.
+      mutable DArray<RFT> tmpFieldsRGrid_;
+
+      /// Work array of fields on Fourier grid (k-grid).
+      mutable DArray<KFT> tmpFieldsKGrid_;
+
+      /// K-grid work space (single field)
+      mutable KFT workDft_;
+
+      /// Is tmpFieldsBasis_ allocated?
+      mutable bool isAllocatedBasis_;
+
+      /// Is tmpFieldsRGrid_ allocated?
+      mutable bool isAllocatedRGrid_;
+
+      /// Is tmpFieldsKGrid_ allocated?
+      mutable bool isAllocatedKGrid_;
 
    };
 
