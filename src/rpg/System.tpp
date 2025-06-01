@@ -264,7 +264,7 @@ namespace Rpg {
       UTIL_CHECK(domain_.mesh().size() > 0);
       UTIL_CHECK(domain_.unitCell().nParameter() > 0);
       UTIL_CHECK(domain_.unitCell().lattice() != UnitCell<D>::Null);
-      domain_.fieldIo().setNmonomer(nm);
+      domain_.fieldIo().setNMonomer(nm);
 
       // Setup the mixture
       mixture_.associate(domain_.mesh(), domain_.fft(),
@@ -522,38 +522,38 @@ namespace Rpg {
          if (command == "BASIS_TO_RGRID") {
             readEcho(in, inFileName);
             readEcho(in, outFileName);
-            basisToRGrid(inFileName, outFileName);
-            //fieldIo.convertBasisToRGrid(inFileName, outFileName);
+            //basisToRGrid(inFileName, outFileName);
+            fieldIo.convertBasisToRGrid(inFileName, outFileName);
          } else
          if (command == "RGRID_TO_BASIS") {
             readEcho(in, inFileName);
             readEcho(in, outFileName);
-            rGridToBasis(inFileName, outFileName);
-            //fieldIo.convertRGridToBasis(inFileName, outFileName);
+            //rGridToBasis(inFileName, outFileName);
+            fieldIo.convertRGridToBasis(inFileName, outFileName);
          } else
          if (command == "KGRID_TO_RGRID") {
             readEcho(in, inFileName);
             readEcho(in, outFileName);
-            kGridToRGrid(inFileName, outFileName);
-            //fieldIo.convertKGridToRGrid(inFileName, outFileName);
+            //kGridToRGrid(inFileName, outFileName);
+            fieldIo.convertKGridToRGrid(inFileName, outFileName);
          } else
          if (command == "RGRID_TO_KGRID") {
             readEcho(in, inFileName);
             readEcho(in, outFileName);
-            rGridToKGrid(inFileName, outFileName);
-            //fieldIo.convertRGridToKGrid(inFileName, outFileName);
+            //rGridToKGrid(inFileName, outFileName);
+            fieldIo.convertRGridToKGrid(inFileName, outFileName);
          } else
          if (command == "BASIS_TO_KGRID") {
             readEcho(in, inFileName);
             readEcho(in, outFileName);
-            basisToKGrid(inFileName, outFileName);
-            //fieldIo.convertBasisToKGrid(inFileName, outFileName);
+            //basisToKGrid(inFileName, outFileName);
+            fieldIo.convertBasisToKGrid(inFileName, outFileName);
          } else
          if (command == "KGRID_TO_BASIS") {
             readEcho(in, inFileName);
             readEcho(in, outFileName);
-            kGridToBasis(inFileName, outFileName);
-            //fieldIo.convertKGridToBasis(inFileName, outFileName);
+            //kGridToBasis(inFileName, outFileName);
+            fieldIo.convertKGridToBasis(inFileName, outFileName);
          } else
          if (command == "CHECK_RGRID_SYMMETRY") {
             double epsilon;
@@ -1600,6 +1600,7 @@ namespace Rpg {
 
    // Field File Operations
 
+   #if 0
    /*
    * Convert fields from symmetry-adapted basis to real-space grid format.
    */
@@ -1744,6 +1745,7 @@ namespace Rpg {
       fieldIo.writeFieldsKGrid(outFileName, tmpFieldsKGrid_,
                                tmpUnitCell);
    }
+   #endif
 
    /*
    * Check if r-grid fields have declared space group symmetry.

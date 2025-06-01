@@ -635,6 +635,7 @@ namespace Rpg {
       /// \name Field File Operations
       ///@{
 
+      #if 0
       /**
       * Convert a field from symmetry-adapted basis to r-grid format.
       *
@@ -706,6 +707,7 @@ namespace Rpg {
       */
       void basisToKGrid(std::string const & inFileName,
                         std::string const & outFileName);
+      #endif
 
       /**
       * Compare arrays of fields in basis format, output a report.

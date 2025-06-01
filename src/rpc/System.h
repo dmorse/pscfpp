@@ -613,6 +613,7 @@ namespace Rpc {
       /// \name Field File Manipulation and Analysis
       ///@{
 
+      #if 0
       /**
       * Convert a field from symmetrized basis format to r-grid format.
       *
@@ -690,6 +691,7 @@ namespace Rpc {
       */
       void basisToKGrid(std::string const & inFileName,
                         const std::string & outFileName);
+      #endif
 
       /**
       * Compare arrays of fields in basis format, output a report.

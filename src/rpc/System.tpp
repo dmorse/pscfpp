@@ -1598,6 +1598,7 @@ namespace Rpc {
       }
    }
 
+   #if 0
    // Field File Operations
 
    /*
@@ -1744,6 +1745,7 @@ namespace Rpc {
       fieldIo.writeFieldsKGrid(outFileName, tmpFieldsKGrid_,
                                tmpUnitCell);
    }
+   #endif
 
    /*
    * Check if r-grid fields have declared space group symmetry.
