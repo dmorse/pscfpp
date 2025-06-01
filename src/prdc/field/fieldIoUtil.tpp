@@ -82,6 +82,7 @@ namespace Prdc {
 
       dimensions = fields[0].meshDimensions();
       for (int i = 0; i < nMonomer; ++i) {
+         UTIL_CHECK(fields[i].isAllocated());
          UTIL_CHECK(fields[i].meshDimensions() == dimensions);
       }
    }
@@ -99,6 +100,7 @@ namespace Prdc {
          UTIL_CHECK(nMonomerArrays > 0)
          UTIL_CHECK(nMonomerArrays == nMonomer)
          for (int i = 0; i < nMonomer; ++i) {
+            UTIL_CHECK(arrays[i].isAllocated());
             UTIL_CHECK(arrays[i].capacity() == capacity);
          }
       } else {
@@ -124,6 +126,7 @@ namespace Prdc {
       capacity = arrays[0].capacity();
       UTIL_CHECK(capacity > 0);
       for (int i = 0; i < nMonomer; ++i) {
+         UTIL_CHECK(arrays[i].isAllocated());
          UTIL_CHECK(arrays[i].capacity() == capacity);
       }
    }

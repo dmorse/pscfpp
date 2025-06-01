@@ -44,13 +44,17 @@ namespace Prdc {
    */
    template <int D, class RFT, class KFT, class FFT>
    FieldIoReal<D,RFT,KFT,FFT>::FieldIoReal()
-    : meshPtr_(0),
-      fftPtr_(0),
-      hasGroupPtr_(0),
-      groupNamePtr_(0),
-      groupPtr_(0),
-      basisPtr_(0),
-      fileMasterPtr_()
+    : meshPtr_(nullptr),
+      fftPtr_(nullptr),
+      hasGroupPtr_(nullptr),
+      groupNamePtr_(nullptr),
+      groupPtr_(nullptr),
+      basisPtr_(nullptr),
+      fileMasterPtr_(nullptr),
+      nMonomer_(0),
+      isAllocatedBasis_(false),
+      isAllocatedRGrid_(false),
+      isAllocatedKGrid_(false)
    {}
 
    /*
@@ -849,8 +853,8 @@ namespace Prdc {
    template <int D, class RFT, class KFT, class FFT>
    void FieldIoReal<D,RFT,KFT,FFT>::checkAllocateRGrid() const
    { 
-      if (isAllocatedRGrid_) return;
       UTIL_CHECK(nMonomer_ > 0);
+      if (isAllocatedRGrid_) return;
       UTIL_CHECK(mesh().size() > 0);
       IntVec<D> const & meshDimensions = mesh().dimensions();
       tmpFieldsRGrid_.allocate(nMonomer_);
@@ -866,8 +870,8 @@ namespace Prdc {
    template <int D, class RFT, class KFT, class FFT>
    void FieldIoReal<D,RFT,KFT,FFT>::checkAllocateKGrid() const
    { 
-      if (isAllocatedKGrid_) return;
       UTIL_CHECK(nMonomer_ > 0);
+      if (isAllocatedKGrid_) return;
       UTIL_CHECK(mesh().size() > 0);
       IntVec<D> const & meshDimensions = mesh().dimensions();
       tmpFieldsKGrid_.allocate(nMonomer_); 
@@ -885,8 +889,8 @@ namespace Prdc {
    FieldIoReal<D,RFT,KFT,FFT>::checkAllocateBasis(
                                    std::string const & inFileName) const
    {
-      if (isAllocatedBasis_) return;
       UTIL_CHECK(nMonomer_ > 0);
+      if (isAllocatedBasis_) return;
       UTIL_CHECK(hasGroup());
       if (!basis().isInitialized()) {
          // Peek at field header to initialize basis
