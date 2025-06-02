@@ -42,6 +42,8 @@ namespace Pscf {
       int n = in.capacity();
       UTIL_CHECK(out.capacity() == n);
       for (int i = 0; i < n; ++i) {
+	 UTIL_CHECK(in[i].isAllocated());
+	 UTIL_CHECK(out[i].isAllocated());
 	 UTIL_CHECK(in[i].capacity() == out[i].capacity());
          out[i] = in[i];
       }

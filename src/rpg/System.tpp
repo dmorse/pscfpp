@@ -522,37 +522,31 @@ namespace Rpg {
          if (command == "BASIS_TO_RGRID") {
             readEcho(in, inFileName);
             readEcho(in, outFileName);
-            //basisToRGrid(inFileName, outFileName);
             fieldIo.convertBasisToRGrid(inFileName, outFileName);
          } else
          if (command == "RGRID_TO_BASIS") {
             readEcho(in, inFileName);
             readEcho(in, outFileName);
-            //rGridToBasis(inFileName, outFileName);
             fieldIo.convertRGridToBasis(inFileName, outFileName);
          } else
          if (command == "KGRID_TO_RGRID") {
             readEcho(in, inFileName);
             readEcho(in, outFileName);
-            //kGridToRGrid(inFileName, outFileName);
             fieldIo.convertKGridToRGrid(inFileName, outFileName);
          } else
          if (command == "RGRID_TO_KGRID") {
             readEcho(in, inFileName);
             readEcho(in, outFileName);
-            //rGridToKGrid(inFileName, outFileName);
             fieldIo.convertRGridToKGrid(inFileName, outFileName);
          } else
          if (command == "BASIS_TO_KGRID") {
             readEcho(in, inFileName);
             readEcho(in, outFileName);
-            //basisToKGrid(inFileName, outFileName);
             fieldIo.convertBasisToKGrid(inFileName, outFileName);
          } else
          if (command == "KGRID_TO_BASIS") {
             readEcho(in, inFileName);
             readEcho(in, outFileName);
-            //kGridToBasis(inFileName, outFileName);
             fieldIo.convertKGridToBasis(inFileName, outFileName);
          } else
          if (command == "CHECK_RGRID_SYMMETRY") {
@@ -774,9 +768,6 @@ namespace Rpg {
          readFieldHeader(filename);
       }
       UTIL_CHECK(domain_.basis().isInitialized());
-      if (!isAllocatedBasis_) {
-         allocateFieldsBasis();
-      }
       UTIL_CHECK(isAllocatedBasis_);
 
       // Read w fields
@@ -787,6 +778,9 @@ namespace Rpg {
       // Clear unit cell data in waveList and mixture
       domain_.waveList().clearUnitCellData();
       mixture_.clearUnitCellData();
+
+      // Postcondition
+      UTIL_CHECK(domain_.unitCell().isInitialized());
    }
 
    /*
@@ -1599,153 +1593,6 @@ namespace Rpg {
    }
 
    // Field File Operations
-
-   #if 0
-   /*
-   * Convert fields from symmetry-adapted basis to real-space grid format.
-   */
-   template <int D>
-   void System<D>::basisToRGrid(std::string const & inFileName,
-                                std::string const & outFileName)
-   {
-      // Preconditions
-      UTIL_CHECK(isAllocatedGrid_);
-      UTIL_CHECK(domain_.hasGroup());
-      if (!domain_.basis().isInitialized()) {
-         readFieldHeader(inFileName);
-      }
-      UTIL_CHECK(domain_.basis().isInitialized());
-      UTIL_CHECK(isAllocatedBasis_);
-
-      // Read, convert, and write fields
-      UnitCell<D> tmpUnitCell;
-      FieldIo<D> const & fieldIo = domain_.fieldIo();
-      fieldIo.readFieldsBasis(inFileName, tmpFieldsBasis_, tmpUnitCell);
-      fieldIo.convertBasisToRGrid(tmpFieldsBasis_, tmpFieldsRGrid_);
-      fieldIo.writeFieldsRGrid(outFileName, tmpFieldsRGrid_,
-                               tmpUnitCell);
-   }
-
-   /*
-   * Convert fields from real-space grid to symmetry-adapted basis format.
-   */
-   template <int D>
-   void System<D>::rGridToBasis(std::string const & inFileName,
-                                std::string const & outFileName)
-   {
-      // Preconditions
-      UTIL_CHECK(isAllocatedGrid_);
-      UTIL_CHECK(domain_.hasGroup());
-      if (!domain_.basis().isInitialized()) {
-         readFieldHeader(inFileName);
-      }
-      UTIL_CHECK(domain_.basis().isInitialized());
-      UTIL_CHECK(isAllocatedBasis_);
-
-      // Read, convert and write fields
-      UnitCell<D> tmpUnitCell;
-      FieldIo<D> const & fieldIo = domain_.fieldIo();
-      fieldIo.readFieldsRGrid(inFileName, tmpFieldsRGrid_, tmpUnitCell);
-      fieldIo.convertRGridToBasis(tmpFieldsRGrid_, tmpFieldsBasis_);
-      fieldIo.writeFieldsBasis(outFileName, tmpFieldsBasis_,
-                               tmpUnitCell);
-   }
-
-   /*
-   * Convert fields from Fourier (k-grid) to real-space (r-grid) format.
-   */
-   template <int D>
-   void System<D>::kGridToRGrid(std::string const & inFileName,
-                                std::string const & outFileName)
-   {
-      // Preconditions
-      UTIL_CHECK(isAllocatedGrid_);
-
-      // Read, convert and write fields
-      UnitCell<D> tmpUnitCell;
-      FieldIo<D> const & fieldIo = domain_.fieldIo();
-      fieldIo.readFieldsKGrid(inFileName, tmpFieldsKGrid_, tmpUnitCell);
-      for (int i = 0; i < mixture_.nMonomer(); ++i) {
-         domain_.fft().inverseTransformUnsafe(tmpFieldsKGrid_[i],
-                                              tmpFieldsRGrid_[i]);
-      }
-      fieldIo.writeFieldsRGrid(outFileName, tmpFieldsRGrid_,
-                               tmpUnitCell);
-   }
-
-   /*
-   * Convert fields from real-space (r-grid) to Fourier (k-grid) format.
-   */
-   template <int D>
-   void System<D>::rGridToKGrid(std::string const & inFileName,
-                                std::string const & outFileName)
-   {
-      // Preconditions
-      UTIL_CHECK(isAllocatedGrid_);
-
-      // Read, convert and write fields
-      UnitCell<D> tmpUnitCell;
-      FieldIo<D> const & fieldIo = domain_.fieldIo();
-      fieldIo.readFieldsRGrid(inFileName, tmpFieldsRGrid_,
-                              tmpUnitCell);
-      for (int i = 0; i < mixture_.nMonomer(); ++i) {
-         domain_.fft().forwardTransform(tmpFieldsRGrid_[i],
-                                        tmpFieldsKGrid_[i]);
-      }
-      fieldIo.writeFieldsKGrid(outFileName, tmpFieldsKGrid_,
-                               tmpUnitCell);
-   }
-
-   /*
-   * Convert fields from Fourier (k-grid) to symmetry-adapted basis format.
-   */
-   template <int D>
-   void System<D>::kGridToBasis(std::string const & inFileName,
-                                std::string const & outFileName)
-   {
-      // Preconditions
-      UTIL_CHECK(isAllocatedGrid_);
-      UTIL_CHECK(domain_.hasGroup());
-      if (!domain_.basis().isInitialized()) {
-         readFieldHeader(inFileName);
-      }
-      UTIL_CHECK(domain_.basis().isInitialized());
-      UTIL_CHECK(isAllocatedBasis_);
-
-      // Read, convert and write fields
-      UnitCell<D> tmpUnitCell;
-      FieldIo<D> const & fieldIo = domain_.fieldIo();
-      fieldIo.readFieldsKGrid(inFileName, tmpFieldsKGrid_, tmpUnitCell);
-      fieldIo.convertKGridToBasis(tmpFieldsKGrid_, tmpFieldsBasis_);
-      fieldIo.writeFieldsBasis(outFileName, tmpFieldsBasis_,
-                               tmpUnitCell);
-   }
-
-   /*
-   * Convert fields from symmetry-adapted basis to Fourier (k-grid) format.
-   */
-   template <int D>
-   void System<D>::basisToKGrid(std::string const & inFileName,
-                                std::string const & outFileName)
-   {
-      // Preconditions
-      UTIL_CHECK(isAllocatedGrid_);
-      UTIL_CHECK(domain_.hasGroup());
-      if (!domain_.basis().isInitialized()) {
-         readFieldHeader(inFileName);
-      }
-      UTIL_CHECK(domain_.basis().isInitialized());
-      UTIL_CHECK(isAllocatedBasis_);
-
-      // Read, convert and write fields
-      UnitCell<D> tmpUnitCell;
-      FieldIo<D> const & fieldIo = domain_.fieldIo();
-      fieldIo.readFieldsBasis(inFileName, tmpFieldsBasis_, tmpUnitCell);
-      fieldIo.convertBasisToKGrid(tmpFieldsBasis_, tmpFieldsKGrid_);
-      fieldIo.writeFieldsKGrid(outFileName, tmpFieldsKGrid_,
-                               tmpUnitCell);
-   }
-   #endif
 
    /*
    * Check if r-grid fields have declared space group symmetry.

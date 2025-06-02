@@ -58,6 +58,7 @@ namespace Prdc {
          UTIL_CHECK(nMonomerFields > 0)
          UTIL_CHECK(nMonomerFields == nMonomer)
          for (int i = 0; i < nMonomer; ++i) {
+            UTIL_CHECK(fields[i].isAllocated());
             UTIL_CHECK(fields[i].meshDimensions() == dimensions);
          }
       } else {

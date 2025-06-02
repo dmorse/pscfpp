@@ -49,17 +49,19 @@ public:
 
       // Read w-fields (reference solution, solved by Fortran PSCF)
       system.readWBasis("in/diblock/lam/omega.in");
+      TEST_ASSERT(system.w().basis().isAllocated());
+      TEST_ASSERT(system.domain().unitCell().isInitialized());
 
       // Get reference field
       DArray< DArray<double> > b_wFields_check;
       b_wFields_check = system.w().basis();
 
       // Round trip conversion basis -> rgrid -> basis, read result
-      FieldIo<1> const fieldIo = system.domain().fieldIo();
+      FieldIo<1> const & fieldIo = system.domain().fieldIo();
       fieldIo.convertBasisToRGrid("in/diblock/lam/omega.in",
-                          "out/testConversion1D_lam_w.rf");
+                                  "out/testConversion1D_lam_w.rf");
       fieldIo.convertRGridToBasis("out/testConversion1D_lam_w.rf",
-                          "out/testConversion1D_lam_w.bf");
+                                  "out/testConversion1D_lam_w.bf");
       system.readWBasis("out/testConversion1D_lam_w.bf");
 
       // Get test result
@@ -86,18 +88,20 @@ public:
 
       // Read w fields
       system.readWBasis("in/diblock/hex/omega.in");
+      TEST_ASSERT(system.w().basis().isAllocated());
+      TEST_ASSERT(system.domain().unitCell().isInitialized());
 
       // Get reference field
       DArray< DArray<double> > b_wFields_check;
       b_wFields_check = system.w().basis();
 
       // Round trip basis -> rgrid -> basis, read resulting wField
-      FieldIo<2> const fieldIo = system.domain().fieldIo();
+      FieldIo<2> const & fieldIo = system.domain().fieldIo();
       fieldIo.convertBasisToRGrid("in/diblock/hex/omega.in",
-                          "out/testConversion2D_hex_w.rf");
+                                  "out/testConversion2D_hex_w.rf");
 
       fieldIo.convertRGridToBasis("out/testConversion2D_hex_w.rf",
-                          "out/testConversion2D_hex_w.bf");
+                                  "out/testConversion2D_hex_w.bf");
       system.readWBasis("out/testConversion2D_hex_w.bf");
 
       // Get test result
@@ -122,7 +126,6 @@ public:
       System<3> system;
       setupSystem<3>(system,"in/diblock/bcc/param.flex"); 
 
-
       // Read w fields in system.wFields
       system.readWBasis("in/diblock/bcc/omega.in");
 
@@ -131,11 +134,11 @@ public:
       b_wFields_check = system.w().basis();
 
       // Complete round trip basis -> rgrid -> basis
-      FieldIo<3> const fieldIo = system.domain().fieldIo();
+      FieldIo<3> const & fieldIo = system.domain().fieldIo();
       fieldIo.convertBasisToRGrid("in/diblock/bcc/omega.in",
-                          "out/testConversion3D_bcc_w.rf");
+                                  "out/testConversion3D_bcc_w.rf");
       fieldIo.convertRGridToBasis("out/testConversion3D_bcc_w.rf",
-                          "out/testConversion3D_bcc_w.bf");
+                                  "out/testConversion3D_bcc_w.bf");
       system.readWBasis("out/testConversion3D_bcc_w.bf");
 
       // Get test result

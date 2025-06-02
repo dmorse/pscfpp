@@ -494,6 +494,8 @@ namespace Prdc {
                               DArray<double> const & in,
                               RFT& out) const
    {
+      UTIL_CHECK(in.isAllocated());
+      UTIL_CHECK(out.isAllocated());
       checkAllocateField(workDft_, mesh().dimensions());
       convertBasisToKGrid(in, workDft_);
       fft().inverseTransformUnsafe(workDft_, out);
@@ -507,7 +509,9 @@ namespace Prdc {
                               DArray< DArray <double> > const & in,
                               DArray< RFT >& out) const
    {
-      UTIL_ASSERT(in.capacity() == out.capacity());
+      UTIL_CHECK(in.isAllocated());
+      UTIL_CHECK(out.isAllocated());
+      UTIL_CHECK(in.capacity() == out.capacity());
       checkAllocateField(workDft_, mesh().dimensions());
 
       int n = in.capacity();
@@ -569,6 +573,7 @@ namespace Prdc {
       checkAllocateRGrid();
       checkAllocateBasis(inFileName);
       UnitCell<D> tmpUnitCell;
+
       readFieldsBasis(inFileName, tmpFieldsBasis_, tmpUnitCell);
       convertBasisToRGrid(tmpFieldsBasis_, tmpFieldsRGrid_);
       writeFieldsRGrid(outFileName, tmpFieldsRGrid_, tmpUnitCell);
