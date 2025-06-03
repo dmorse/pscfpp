@@ -18,6 +18,7 @@
 #include <prdc/crystal/Basis.h>
 #include <prdc/crystal/SpaceGroup.h>
 #include <prdc/crystal/UnitCell.h>
+#include <prdc/crystal/BFieldComparison.h>
 
 #include <pscf/mesh/Mesh.h>
 #include <pscf/mesh/MeshIterator.h>
@@ -468,22 +469,6 @@ namespace Prdc {
       writeFieldsKGrid(outFileName, tmpFieldsKGrid_, tmpUnitCell);
    }
 
-   /*
-   * Test if a single r-grid field has declared space group symmetry.
-   * Return true if symmetric, false otherwise. Print error values
-   * if verbose == true and hasSymmetry == false.
-   */
-   template <int D, class RFT, class KFT, class FFT>
-   bool FieldIoReal<D,RFT,KFT,FFT>::hasSymmetry(
-                              RFT const & in, 
-                              double epsilon,
-                              bool verbose) const
-   {
-      checkAllocateField(workDft_, mesh().dimensions());
-      fft().forwardTransform(in, workDft_);
-      return hasSymmetry(workDft_, epsilon, verbose);
-   }
-
    // Field Format Conversion Functions - Basis <-> RGrid
 
    /*
@@ -644,9 +629,7 @@ namespace Prdc {
    void FieldIoReal<D,RFT,KFT,FFT>::convertRGridToKGrid(
                               RFT const & in,
                               KFT& out) const
-   {
-      fft().forwardTransform(in, out);
-   }
+   {  fft().forwardTransform(in, out); }
 
    /*
    * Convert a field file from k-grid to r-grid format.
@@ -683,19 +666,107 @@ namespace Prdc {
       writeFieldsKGrid(outFileName, tmpFieldsKGrid_, tmpUnitCell);
    }
 
-   // Field and Grid Manipulation Utilities
+   // Field Inspection
 
+   /*
+   * Test if a single r-grid field has declared space group symmetry.
+   * Return true if symmetric, false otherwise. Print error values
+   * if verbose == true and hasSymmetry == false.
+   */
+   template <int D, class RFT, class KFT, class FFT>
+   bool FieldIoReal<D,RFT,KFT,FFT>::hasSymmetry(
+                              RFT const & in, 
+                              double epsilon,
+                              bool verbose) const
+   {
+      checkAllocateField(workDft_, mesh().dimensions());
+      fft().forwardTransform(in, workDft_);
+      return hasSymmetry(workDft_, epsilon, verbose);
+   }
+
+   /*
+   * Check if r-grid fields have declared space group symmetry.
+   */
+   template <int D, class RFT, class KFT, class FFT>
+   bool FieldIoReal<D,RFT,KFT,FFT>::hasSymmetry(
+                                  std::string const & inFileName,
+                                  double epsilon) const
+   {
+      checkAllocateRGrid();
+
+      // Read fields
+      UnitCell<D> tmpUnitCell;
+      readFieldsRGrid(inFileName, tmpFieldsRGrid_, tmpUnitCell);
+
+      // Check symmetry for all fields
+      for (int i = 0; i < nMonomer_; ++i) {
+         bool symmetric;
+         symmetric = hasSymmetry(tmpFieldsRGrid_[i], epsilon);
+         if (!symmetric) {
+            return false;
+         }
+      }
+      return true;
+
+   }
+
+   /*
+   * Compare two fields in basis format, write report to Log file.
+   */
+   template <int D, class RFT, class KFT, class FFT>
+   void FieldIoReal<D,RFT,KFT,FFT>::compare(
+                        DArray< DArray<double> > const & field1,
+                        DArray< DArray<double> > const & field2) const
+   {
+      BFieldComparison comparison(1);
+      comparison.compare(field1, field2);
+
+      Log::file() << "\n Basis expansion field comparison results"
+                  << std::endl;
+      Log::file() << "     Maximum Absolute Difference:   "
+                  << comparison.maxDiff() << std::endl;
+      Log::file() << "     Root-Mean-Square Difference:   "
+                  << comparison.rmsDiff() << "\n" << std::endl;
+   }
+
+   // Field Scaling
+
+   /*
+   * Rescale fields in basis format by a constant factor.
+   */
    template <int D, class RFT, class KFT, class FFT>
    void FieldIoReal<D,RFT,KFT,FFT>::scaleFieldsBasis(
                               DArray< DArray<double> >& fields,
                               double factor) const
    { 
       int n = fields.capacity();
+      UTIL_CHECK(n > 0);
+      int m = fields[0].capacity();
       for (int i = 0; i < n; ++i) {
+         UTIL_CHECK(fields[i].capacity() == m);
          scaleFieldBasis(fields[i], factor);
       }
    }
 
+   /*
+   * Rescale fields by a constant factor, read and write to file.
+   */
+   template <int D, class RFT, class KFT, class FFT>
+   void FieldIoReal<D,RFT,KFT,FFT>::scaleFieldsBasis(
+                                std::string const & inFileName,
+                                std::string const & outFileName,
+                                double factor) const
+   {
+      checkAllocateBasis(inFileName);
+      UnitCell<D> tmpUnitCell;
+      readFieldsBasis(inFileName, tmpFieldsBasis_, tmpUnitCell);
+      scaleFieldsBasis(tmpFieldsBasis_, factor);
+      writeFieldsBasis(outFileName, tmpFieldsBasis_, tmpUnitCell);
+   }
+
+   /*
+   * Rescale fields in r-grid format by a constant factor.
+   */
    template <int D, class RFT, class KFT, class FFT>
    void FieldIoReal<D,RFT,KFT,FFT>::scaleFieldsRGrid(
                               DArray< RFT > & fields,
@@ -707,6 +778,30 @@ namespace Prdc {
       }
    }
 
+   /*
+   * Rescale fields by a constant factor, read and write to file.
+   */
+   template <int D, class RFT, class KFT, class FFT>
+   void FieldIoReal<D,RFT,KFT,FFT>::scaleFieldsRGrid(
+                                std::string const & inFileName,
+                                std::string const & outFileName,
+                                double factor) const
+   {
+      checkAllocateRGrid();
+      UnitCell<D> tmpUnitCell;
+      bool isSymmetric;
+      isSymmetric = readFieldsRGrid(inFileName, tmpFieldsRGrid_,
+                                    tmpUnitCell);
+      scaleFieldsRGrid(tmpFieldsRGrid_, factor);
+      writeFieldsRGrid(outFileName, tmpFieldsRGrid_, tmpUnitCell, 
+                       isSymmetric);
+   }
+
+   // Grid manipulation utilities
+
+   /*
+   * Replicate unit cell a specified number of times in each direction.
+   */
    template <int D, class RFT, class KFT, class FFT>
    void FieldIoReal<D,RFT,KFT,FFT>::replicateUnitCell(
                               std::string filename,
@@ -720,6 +815,25 @@ namespace Prdc {
       file.close();
    }
 
+   /*
+   * Replicate unit cell a specified number of times in each direction.
+   */
+   template <int D, class RFT, class KFT, class FFT>
+   void FieldIoReal<D,RFT,KFT,FFT>::replicateUnitCell(
+                                std::string const & inFileName,
+                                std::string const & outFileName,
+                                IntVec<D> const & replicas) const
+   {
+      checkAllocateRGrid();
+      UnitCell<D> tmpUnitCell;
+      readFieldsRGrid(inFileName, tmpFieldsRGrid_, tmpUnitCell);
+      replicateUnitCell(outFileName, tmpFieldsRGrid_, tmpUnitCell, 
+                        replicas);
+   }
+
+   /*
+   * Expand the number of spatial dimensions of an RField.
+   */
    template <int D, class RFT, class KFT, class FFT>
    void FieldIoReal<D,RFT,KFT,FFT>::expandRGridDimension(
                               std::string filename,
@@ -731,6 +845,23 @@ namespace Prdc {
       fileMaster().openOutputFile(filename, file);
       expandRGridDimension(file, fields, unitCell, d, newGridDimensions);
       file.close();
+   }
+
+   /*
+   * Expand the number of spatial dimensions of an RField.
+   */
+   template <int D, class RFT, class KFT, class FFT>
+   void FieldIoReal<D,RFT,KFT,FFT>::expandRGridDimension(
+                                std::string const & inFileName,
+                                std::string const & outFileName,
+                                int d,
+                                DArray<int> newGridDimensions) const
+   {
+      checkAllocateRGrid();
+      UnitCell<D> tmpUnitCell;
+      readFieldsRGrid(inFileName, tmpFieldsRGrid_, tmpUnitCell);
+      expandRGridDimension(outFileName, tmpFieldsRGrid_, tmpUnitCell,
+                           d, newGridDimensions);
    }
 
    // File Header IO Utilities

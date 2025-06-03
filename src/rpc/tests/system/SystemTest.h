@@ -370,8 +370,8 @@ public:
       system.readWBasis("out/testConversion2D_hex_w.bf");
 
       // Check symmetry of rgrid representation
-      bool hasSymmetry
-       = system.checkRGridFieldSymmetry("out/testConversion2D_hex_w.rf");
+      bool hasSymmetry;
+      hasSymmetry = fieldIo.hasSymmetry("out/testConversion2D_hex_w.rf");
       TEST_ASSERT(hasSymmetry);
 
       // Compare result to original
@@ -452,8 +452,8 @@ public:
       system.readWBasis("out/testConversion3D_bcc_w.bf");
 
       // Check symmetry of rgrid representation
-      bool hasSymmetry
-       = system.checkRGridFieldSymmetry("out/testConversion3D_bcc_w.rf");
+      bool hasSymmetry 
+             = fieldIo.hasSymmetry("out/testConversion3D_bcc_w.rf");
       TEST_ASSERT(hasSymmetry);
 
       // Compare result to original
@@ -1021,9 +1021,10 @@ public:
 
       // v1.1 test used omega.in as input, compared to omega.ref
 
-      system.scaleFieldsBasis("out/testIterate2D_hex_flex_w.bf",
+      FieldIo<2> const & fieldIo = system.domain().fieldIo();
+      fieldIo.scaleFieldsBasis("out/testIterate2D_hex_flex_w.bf",
                               "out/testIterate2D_hex_flex_w_scaled.bf",
-                              0.01);
+                               0.01);
    }
 
    void testIterate2D_hex_stress()

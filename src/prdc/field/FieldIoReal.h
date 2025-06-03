@@ -787,6 +787,42 @@ namespace Prdc {
                        double epsilon = 1.0e-8,
                        bool verbose = true) const;
 
+      /**
+      * Check if r-grid fields have the declared space group symmetry.
+      *
+      * \param inFileName name of input r-grid field file
+      * \param epsilon error threshold used when testing for symmetry
+      * \return true if fields all have symmetry, false otherwise
+      */
+      bool hasSymmetry(std::string const & inFileName,
+                       double epsilon = 1.0E-8) const;
+
+      /**
+      * Compare arrays of fields in basis format, output a report.
+      *
+      * Outputs maximum and root-mean-squared differences to the
+      * standard Log file.
+      *
+      * \param field1  first array of fields (basis format)
+      * \param field2  second array of fields (basis format)
+      */
+      void compare(DArray< DArray<double> > const & field1,
+                   DArray< DArray<double> > const & field2) const;
+
+      #if 0
+      /**
+      * Compare two fields in r-grid format, output a report.
+      *
+      * Outputs maximum and root-mean-squared differences to the
+      * standard Log file.
+      *
+      * \param field1  first array of fields (r-grid format)
+      * \param field2  second array of fields (r-grid format)
+      */
+      void compare(DArray< RFT > const & field1,
+                   DArray< RFT > const & field2) const;
+      #endif
+
       ///@}
       /// \name Field Scaling Utilities
       ///@{
@@ -816,8 +852,18 @@ namespace Prdc {
       * \param factor  factor by which to multiply every field element
       */
       void scaleFieldsBasis(DArray< DArray<double> >& fields, 
-                            double factor) 
-      const;
+                            double factor) const;
+
+      /**
+      * Multiply all components of an array of basis fields by a scalar.
+      *
+      * \param inFileName  name of input field file
+      * \param outFileName  name of file for rescaled output fields
+      * \param factor  factor by which to multiply all field elements
+      */
+      void scaleFieldsBasis(std::string const & inFileName,
+                            std::string const & outFileName,
+                            double factor) const;
 
       /**
       * Multiply a single field in r-grid format by a real scalar.
@@ -844,6 +890,20 @@ namespace Prdc {
       */
       void scaleFieldsRGrid(DArray<RFT> & fields, double factor) const;
 
+      /**
+      * Multiply all elements of an array of r-grid fields by a scalar.
+      *
+      * Read a set of fields from a file, rescale by a constant, and
+      * write rescaled fields to a different file. 
+      *
+      * \param inFileName  name of input field file
+      * \param outFileName  name of file for rescaled output fields
+      * \param factor  factor by which to multiply all field elements
+      */
+      void scaleFieldsRGrid(std::string const & inFileName,
+                            const std::string & outFileName,
+                            double factor) const;
+
       ///@}
       /// \name Grid Manipulation Utilities
       ///@{
@@ -852,8 +912,8 @@ namespace Prdc {
       * Write r-grid fields in a replicated unit cell to std::ostream.
       *
       * This function takes an input array of periodic fields and outputs
-      * them within an expanded unit cell in which the original input unit 
-      * cell has been replicated a specified number of times in each 
+      * them within an expanded unit cell in which the original input 
+      * unit cell has been replicated a specified number of times in each 
       * direction. Results are written to an std::ostream output stream.
       *
       * Element i of the replicas IntVec<D> parameter contains the number
@@ -873,7 +933,7 @@ namespace Prdc {
       /**
       * Write r-grid fields in a replicated unit cell to named file.
       *
-      * This function opens output file filename, writes fields within
+      * This function opens output file filename, writes fields within 
       * a replicated unit cell to the file, and closes the file. See
       * documentation of the overloaded function of the same name with 
       * a std::ostream parameter, which is called internally. 
@@ -886,6 +946,20 @@ namespace Prdc {
       void replicateUnitCell(std::string filename,
                              DArray<RFT> const & fields,
                              UnitCell<D> const & unitCell,
+                             IntVec<D> const & replicas) const;
+
+      /**
+      * Write replicated fields read from one file to another.
+      *
+      * This function reads a field file in r-grid format, and writes
+      * replicated fields to another.
+      *
+      * \param inFileName  name of input field file
+      * \param outFileName  name of output field file
+      * \param replicas  the number of replicas in each D direction
+      */
+      void replicateUnitCell(std::string const & inFileName,
+                             std::string const & outFileName,
                              IntVec<D> const & replicas) const;
 
       /**
@@ -918,7 +992,7 @@ namespace Prdc {
       * This function opens an output file with the specified filename,
       * writes expanded fields in RField<d> real-space grid format to 
       * that file, and then closes the file. The overloaded function of 
-      * the same name with a std::ostream parameter is called internally.
+      * the same name with an std::ostream parameter is called internally.
       *
       * \param filename  name of output file
       * \param fields  input array of RFT objects (r-space grid)
@@ -932,6 +1006,21 @@ namespace Prdc {
                                 int d,
                                 DArray<int> newGridDimensions) const;
 
+      /**
+      * Expand the number of spatial dimensions of an r-grid field.
+      *
+      * This function reads fields in D-dimensional space from a file and
+      * writes expanded fields in d-dimensional space to another file.
+      *
+      * \param inFileName filename name of input field file
+      * \param outFileName filename name of output field file
+      * \param d  intended dimensions (d > D)
+      * \param newGridDimensions number of grid points in added dimensions
+      */
+      void expandRGridDimension(std::string const & inFileName,
+                                std::string const & outFileName,
+                                int d,
+                                DArray<int> newGridDimensions) const;
 
       ///@}
       /// \name Field File IO Utilities

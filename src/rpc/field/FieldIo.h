@@ -229,6 +229,18 @@ namespace Rpc {
       const override;
 
       /**
+      * Compare two fields in r-grid format, output a report.
+      *
+      * Outputs maximum and root-mean-squared differences to the
+      * standard Log file.
+      *
+      * \param field1  first array of fields (r-grid format)
+      * \param field2  second array of fields (r-grid format)
+      */
+      void compare(DArray< RField<D> > const & field1,
+                   DArray< RField<D> > const & field2) const;
+
+      /**
       * Rescale a single field in basis format by a scalar factor.
       *
       * See documentation of analogous function in Prdc::FieldIoReal.
@@ -308,6 +320,7 @@ namespace Rpc {
       using Base::convertKGridToRGrid;
       using Base::convertRGridToKGrid;
       using Base::hasSymmetry;
+      using Base::compare;
       using Base::scaleFieldsBasis;
       using Base::scaleFieldsRGrid;
       using Base::replicateUnitCell;
