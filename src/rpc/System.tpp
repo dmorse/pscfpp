@@ -20,14 +20,15 @@
 #include <rpc/solvers/Polymer.h>
 #include <rpc/solvers/Solvent.h>
 
-
 #include <prdc/cpu/RField.h>
+#include <prdc/cpu/RFieldDft.h>
 #include <prdc/cpu/RFieldComparison.h>
 #include <prdc/crystal/BFieldComparison.h>
 
 #include <pscf/inter/Interaction.h>
 #include <pscf/math/IntVec.h>
 
+#include <util/containers/DArray.h>
 #include <util/containers/FSArray.h>
 #include <util/param/BracketPolicy.h>
 #include <util/param/ParamComponent.h>
@@ -70,12 +71,12 @@ namespace Rpc {
       fInter_(0.0),
       fExt_(0.0),
       pressure_(0.0),
+      polymerModel_(PolymerModel::Thread),
       isAllocatedGrid_(false),
       isAllocatedBasis_(false),
       hasMixture_(false),
       hasCFields_(false),
-      hasFreeEnergy_(false),
-      polymerModel_(PolymerModel::Thread)
+      hasFreeEnergy_(false)
    {
       setClassName("System");
       domain_.setFileMaster(fileMaster_);
@@ -88,7 +89,6 @@ namespace Rpc {
       sweepFactoryPtr_ = new SweepFactory<D>(*this);
       simulatorFactoryPtr_ = new SimulatorFactory<D>(*this);
       BracketPolicy::set(BracketPolicy::Optional);
-
    }
 
    /*
@@ -830,8 +830,15 @@ namespace Rpc {
       UTIL_CHECK(nm > 0);
       UTIL_CHECK(nb > 0);
 
+      // Allocate an array of fields
+      DArray< DArray<double> > tmpFieldsBasis;
+      tmpFieldsBasis.allocate(nm);
+      for (int i = 0; i < nm; ++i) {
+         tmpFieldsBasis[i].allocate(nb);
+      }
+
       // Read c fields into temporary array and set unit cell
-      domain_.fieldIo().readFieldsBasis(filename, tmpFieldsBasis_,
+      domain_.fieldIo().readFieldsBasis(filename, tmpFieldsBasis,
                                         domain_.unitCell());
 
       // Allocate work space array
@@ -844,16 +851,16 @@ namespace Rpc {
          for (j = 0; j < nm;  ++j) {
             wtmp[j] = 0.0;
             for (k = 0; k < nm; ++k) {
-               wtmp[j] += interaction().chi(j,k)*tmpFieldsBasis_[k][i];
+               wtmp[j] += interaction().chi(j,k)*tmpFieldsBasis[k][i];
             }
          }
          for (j = 0; j < nm;  ++j) {
-            tmpFieldsBasis_[j][i] = wtmp[j];
+            tmpFieldsBasis[j][i] = wtmp[j];
          }
       }
 
       // Set estimated w fields in system w field container
-      w_.setBasis(tmpFieldsBasis_);
+      w_.setBasis(tmpFieldsBasis);
       hasCFields_ = false;
       hasFreeEnergy_ = false;
 
@@ -1620,6 +1627,7 @@ namespace Rpc {
 
       h_.setNMonomer(nMonomer);
 
+      #if 0
       // Allocate work space field arrays
       tmpFieldsRGrid_.allocate(nMonomer);
       tmpFieldsKGrid_.allocate(nMonomer);
@@ -1627,6 +1635,7 @@ namespace Rpc {
          tmpFieldsRGrid_[i].allocate(dimensions);
          tmpFieldsKGrid_[i].allocate(dimensions);
       }
+      #endif
 
       isAllocatedGrid_ = true;
    }
@@ -1652,10 +1661,13 @@ namespace Rpc {
       // Allocate basis field containers
       w_.allocateBasis(nBasis);
       c_.allocateBasis(nBasis);
+
+      #if 0
       tmpFieldsBasis_.allocate(nMonomer);
       for (int i = 0; i < nMonomer; ++i) {
          tmpFieldsBasis_[i].allocate(nBasis);
       }
+      #endif
 
       isAllocatedBasis_ = true;
    }

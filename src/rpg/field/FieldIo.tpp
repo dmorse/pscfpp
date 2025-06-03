@@ -20,6 +20,7 @@
 #include <prdc/crystal/fieldHeader.h>
 #include <prdc/crystal/Basis.h>
 #include <prdc/crystal/UnitCell.h>
+#include <prdc/cuda/RFieldComparison.h>
 #include <prdc/cuda/types.h>
 #include <prdc/cuda/complex.h>
 #include <prdc/cuda/resources.h>
@@ -342,7 +343,25 @@ namespace Rpg {
    }
 
    /*
-   * Test if an real field DFT has the declared space group symmetry.
+   * Compare two fields in r-grid format, output report to Log file.
+   */
+   template <int D>
+   void FieldIo<D>::compare(DArray< RField<D> > const & field1,
+                            DArray< RField<D> > const & field2) const
+   {
+      RFieldComparison<D> comparison;
+      comparison.compare(field1, field2);
+
+      Log::file() << "\n Real-space field comparison results"
+                  << std::endl;
+      Log::file() << "     Maximum Absolute Difference:   "
+                  << comparison.maxDiff() << std::endl;
+      Log::file() << "     Root-Mean-Square Difference:   "
+                  << comparison.rmsDiff() << "\n" << std::endl;
+   }
+
+   /*
+   * Multiply a field in basis format by a constant factor. 
    */
    template <int D>
    void FieldIo<D>::scaleFieldBasis(
@@ -357,7 +376,7 @@ namespace Rpg {
    }
 
    /*
-   * Test if an real field DFT has the declared space group symmetry.
+   * Multiply a field in r-grid format by a constant factor. 
    */
    template <int D>
    void FieldIo<D>::scaleFieldRGrid(

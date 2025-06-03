@@ -10,29 +10,27 @@
 
 // Header file includes
 #include <util/param/ParamComposite.h>    // base class
-
 #include <rpc/solvers/Mixture.h>          // member
 #include <rpc/field/Domain.h>             // member
 #include <rpc/field/WFieldContainer.h>    // member
 #include <rpc/field/CFieldContainer.h>    // member
 #include <rpc/field/Mask.h>               // member
-
-#include <prdc/cpu/RField.h>              // member (tmpFieldsRGrid_)
-#include <prdc/cpu/RFieldDft.h>           // member (tmpFieldsKGrid_)
-
-#include <pscf/chem/PolymerModel.h>       // member (polymerModel_)
-
+#include <pscf/chem/PolymerModel.h>       // member
 #include <util/misc/FileMaster.h>         // member
-#include <util/containers/DArray.h>       // member (tmpFields...)
 
 // Forward references
 namespace Util {
+   template <typename T> class DArray;
    template <typename T, int N> class FSArray;
 }
 namespace Pscf {
    class Interaction;
    namespace Prdc {
       template <int D> class UnitCell;
+      namespace Cpu {
+         template <int D> class RField;
+         template <int D> class RFieldDft;
+      }
    }
    namespace Rpc {
       template <int D> class Iterator;
@@ -47,7 +45,7 @@ namespace Pscf {
 namespace Pscf {
 namespace Rpc {
 
-   // Namespaces that are implicitly available, without qualification
+   // Namespaces that are used implicitly, without name qualification
    using namespace Util;
    using namespace Pscf;
    using namespace Prdc;
@@ -120,7 +118,7 @@ namespace Rpc {
       ~System();
 
       ///@}
-      /// \name Lifetime (Main Actions)
+      /// \name Lifetime (Actions in Main Program)
       ///@{
 
       /**
@@ -185,17 +183,25 @@ namespace Rpc {
       * in symmetry-adapted basis format. The function sets the system
       * w fields equal to those given in this file, by copying the
       * coefficients of the basis expansion and computing values on a
-      * real-space grid (r-grid format).
-      *
-      * Upon exit, both w().basis() and w().rgrid() are set, w().hasData
+      * real-space grid (r-grid format).  System unit cell parameters
+      * are also set to to values read from the field file header. Upon
+      * exit, both w().basis() and w().rgrid() are set, w().hasData
       * and w().isSymmetric() return true, while hasCFields() and
-      * hasFreeEnergy() return false. Unit cell parameters are set to
-      * values read from the field file header.
+      * hasFreeEnergy() return false.
+      *
+      * If a space group has been set but a basis has not yet been
+      * constructed, then this and every other member function that reads
+      * unit cell parameters from file and/or sets values for unit cell
+      * parameters will construct a symmetry-adapted basis and allocate
+      * memory for fields stored in basis form.  Member functions that
+      * can construct a basis as a side effect include this function,
+      * readWRGrid, estimateWfromC, and all of the overloaded setUnitCell
+      * functions.
       *
       * SCFT calculations that use an iterator that preserves space group
       * symmetry must set an initial field using a function that creates
-      * fields that can be represented in symmetry adapted basis form,
-      * such as this function, setWBasis, or estimateWFromC.
+      * fields in symmetry adapted basis form, such as this function,
+      * setWBasis, or estimateWFromC.
       *
       * \param filename name of input w-field file in basis format
       */
@@ -210,55 +216,55 @@ namespace Rpc {
       * the system w fields in r-grid format. It does not attempt to set
       * field values in symmetry-adapted basis format, because it cannot
       * assume that the r-grid field exhibits the declared space group
-      * symmetry.  On exit, w().rgrid() is reset and w().hasData()
-      * returns true, while w().isSymmetric(), hasCFields() and
-      * hasFreeEnergy() return false. Unit cell parameters are set to
-      * values read from the field file header.
+      * symmetry.  On exit, w().rgrid() is reset and w().hasData() returns
+      * true, while w().isSymmetric(), hasCFields() and hasFreeEnergy()
+      * return false. Unit cell parameters are set to values read from
+      * the field file header.
       *
       * Initial chemical potential fields for field theoretic simulations
-      * are normally initialized using a function that sets the fields
-      * in r-grid format, such as this function or setWRGrid.
+      * are normally initialized using a function that sets the fields in
+      * r-grid format, such as this function or setWRGrid.
       *
-      * \param filename  name of input w-field file in r-grid format
+      * \param filename  name of w-field input file in r-grid format
       */
       void readWRGrid(std::string const & filename);
 
       /**
       * Set chemical potential fields, in symmetry-adapted basis format.
       *
-      * This function sets values for w fields in both symmetry adapted
+      * This function sets values for w fields in both symmetrized basis
       * and r-grid format by copying coefficient values provided in the
       * "fields" container that is passed as an argument, and computing
       * values on a real-space grid. Upon return, values of both
       * w().basis() and w().rgrid() are set, while w().hasData() and
       * w().isSymmetric() return true, and hasCFields() and hasFreeEnergy()
-      * hasFreeEnergy() return false. Unit cell parameters are left
-      * unchanged.
+      * hasFreeEnergy() return false. System unit cell parameters are not
+      * modified.
       *
-      * \param fields  array of new w (chemical potential) fields
+      * \param fields  array of new w fields in basis format
       */
       void setWBasis(DArray< DArray<double> > const & fields);
 
       /**
       * Set new w fields, in real-space (r-grid) format.
       *
-      * This function set values for w fields in r-grid format, but does
-      * not set components the symmetry-adapted basis format. Upon return,
-      * w.rgrid() is reset and w().hasData() returns true, while
+      * This function set values for w fields in r-grid format, but
+      * does not set components the symmetry-adapted basis format. Upon
+      * return, w.rgrid() is reset and w().hasData() returns true, while
       * w().isSymmetric(), hasCFields() and hasFreeEnergy() all return
-      * false.  Unit cell parameters are left unchanged.
+      * false.  System unit cell parameters are not modified.
       *
       * \param fields  array of new w (chemical potential) fields
       */
       void setWRGrid(DArray< RField<D> > const & fields);
 
       /**
-      * Construct trial w-fields from c-fields in symmetry-adapted form.
+      * Construct trial w-fields from c-fields in basis form.
       *
       * This function reads concentration fields in symmetrized basis
       * format and constructs an initial guess for corresponding chemical
-      * potential fields by setting the Lagrange multiplier field xi to
-      * zero. The result is stored in the System w fields container.
+      * potential fields by setting the Lagrange multiplier pressure field
+      * to zero. The result is stored in the System w fields container.
       *
       * Upon return, w().hasData() and w().isSymmetric() return true,
       * while hasCFields() and hasFreeEnergy() return false. Unit cell
@@ -429,21 +435,21 @@ namespace Rpc {
       double fHelmholtz() const;
 
       /**
-      * Get the ideal gas contribution to fHelmholtz(). 
+      * Get the ideal gas contribution to fHelmholtz().
       *
       * This function retrieves a value computed by computeFreeEnergy().
       */
       double fIdeal() const;
 
       /**
-      * Get the interaction contribution to fHelmholtz(). 
+      * Get the interaction contribution to fHelmholtz().
       *
       * This function retrieves a value computed by computeFreeEnergy().
       */
       double fInter() const;
 
       /**
-      * Get the external field contribution to fHelmholtz(). 
+      * Get the external field contribution to fHelmholtz().
       *
       * This function retrieves a value computed by computeFreeEnergy().
       */
@@ -766,16 +772,16 @@ namespace Rpc {
       Mixture<D> mixture_;
 
       /**
-      * Domain object (unit cell, space group, mesh, and basis).
+      * Domain object (unit cell, mesh, fft, space group, and basis).
       */
       Domain<D> domain_;
 
       /**
-      * Filemaster (holds paths to associated I/O files).
+      * Filemaster (holds paths prefixes for input and output files).
       */
       FileMaster fileMaster_;
 
-      // Pointers to objects owned by the System
+      // Pointers to dynamic objects owned by this System
 
       /**
       * Pointer to Interaction (free energy model).
@@ -834,27 +840,6 @@ namespace Rpc {
       */
       Mask<D> mask_;
 
-      /**
-      * Work array of field coefficients for all monomer types.
-      *
-      * Indexed by monomer typeId, size = nMonomer.
-      */
-      mutable DArray< DArray<double> > tmpFieldsBasis_;
-
-      /**
-      * Work array of fields on real space grid.
-      *
-      * Indexed by monomer typeId, size = nMonomer.
-      */
-      mutable DArray< RField<D> > tmpFieldsRGrid_;
-
-      /**
-      * Work array of fields on Fourier grid (k-grid).
-      *
-      * Indexed by monomer typeId, size = nMonomer.
-      */
-      mutable DArray< RFieldDft<D> > tmpFieldsKGrid_;
-
       // Thermodynamic properties
 
       /**
@@ -888,6 +873,11 @@ namespace Rpc {
       * divided by kT.
       */
       double pressure_;
+
+      /**
+      * Value for polymer model (thread or bead) read from file.
+      */
+      PolymerModel::Type polymerModel_;
 
       // Boolean enumerations variables
 
@@ -924,11 +914,6 @@ namespace Rpc {
       * Has fHelmholtz been computed for the current w and c fields?
       */
       bool hasFreeEnergy_;
-
-      /**
-      * Value for polymer model (thread or bead) read from file.
-      */
-      PolymerModel::Type polymerModel_;
 
       // Private member functions
 
