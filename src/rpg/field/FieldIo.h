@@ -312,6 +312,7 @@ namespace Rpg {
       using Base::convertKGridToRGrid;
       using Base::convertRGridToKGrid;
       using Base::hasSymmetry;
+      using Base::compare;
       using Base::scaleFieldsBasis;
       using Base::scaleFieldsRGrid;
       using Base::replicateUnitCell;

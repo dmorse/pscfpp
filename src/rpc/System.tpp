@@ -55,6 +55,10 @@ namespace Rpc {
     : mixture_(),
       domain_(),
       fileMaster_(),
+      w_(),
+      c_(),
+      h_(),
+      mask_(),
       interactionPtr_(nullptr),
       iteratorPtr_(nullptr),
       iteratorFactoryPtr_(nullptr),
@@ -62,10 +66,6 @@ namespace Rpc {
       sweepFactoryPtr_(nullptr),
       simulatorPtr_(nullptr),
       simulatorFactoryPtr_(nullptr),
-      w_(),
-      c_(),
-      h_(),
-      mask_(),
       fHelmholtz_(0.0),
       fIdeal_(0.0),
       fInter_(0.0),
@@ -219,7 +219,6 @@ namespace Rpc {
             UTIL_THROW("Error: Non-positive thread count -t option");
          }
       }
-
    }
 
    /*

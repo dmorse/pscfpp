@@ -10,24 +10,17 @@
 
 // Header file includes
 #include <util/param/ParamComposite.h>   // base class
-
 #include <rpg/solvers/Mixture.h>         // member
 #include <rpg/field/Domain.h>            // member
-#include <rpg/field/FieldIo.h>           // member
 #include <rpg/field/WFieldContainer.h>   // member
 #include <rpg/field/CFieldContainer.h>   // member
 #include <rpg/field/Mask.h>              // member
-
-#include <prdc/cuda/RField.h>            // member (tmpFieldsRGrid))
-#include <prdc/cuda/RFieldDft.h>         // member (tmpFieldsKGrid_)
-
 #include <pscf/chem/PolymerModel.h>      // member (polymerModel_)
-
 #include <util/misc/FileMaster.h>        // member
-#include <util/containers/DArray.h>      // member (tmpFields...)
 
 // Forward references
 namespace Util {
+   template <typename T> class DArray;
    template <typename T, int N> class FSArray;
 }
 namespace Pscf {
@@ -35,6 +28,10 @@ namespace Pscf {
    template <typename Data> class DeviceArray;
    namespace Prdc {
       template <int D> class UnitCell;
+      namespace Cuda {
+         template <int D> class RField;
+         template <int D> class RFieldDft;
+      }
    }
    namespace Rpg {
       template <int D> class Iterator;
@@ -46,11 +43,10 @@ namespace Pscf {
    }
 }
 
-
 namespace Pscf {
 namespace Rpg {
 
-   // Namespaces that are implicitly available, without qualification
+   // Namespaces that are used implicitly, without name qualification
    using namespace Util;
    using namespace Pscf::Prdc;
    using namespace Pscf::Prdc::Cuda;
@@ -92,14 +88,11 @@ namespace Rpg {
    * This is implemented as function template Pscf::Rpg::run in the
    * file src/rpg/pscf_pg.cpp.
    *
-   * Parameter file format is the same as for corresponding object
-   * Pscf::Rpc::System<D> used in the analogous pscf_pc CPU program.
-   *
    * See also:
    * <ul>
    *  <li> \ref scft_param_pc_page   "Parameter File: SCFT" </li>
    *  <li> \ref psfts_param_page     "Parameter File: PS-FTS" </li>
-   *  <li> \ref scft_param_pc_page   "Parameter File: Full Format" </li>
+   *  <li> \ref rpc_System_page      "Parameter File: Full Format" </li>
    *  <li> \ref scft_command_pc_page "Command File Format" </li>
    * </ul>
    *
@@ -125,7 +118,7 @@ namespace Rpg {
       ~System();
 
       ///@}
-      /// \name Lifetime (Main Actions)
+      /// \name Lifetime (Actions in Main Program)
       ///@{
 
       /**
@@ -185,24 +178,32 @@ namespace Rpg {
       /**
       * Read chemical potential fields in symmetry adapted basis format.
       *
-      * This function opens and reads the file with the name given by the
-      * "filename" string, which must contain chemical potential fields
+      * This function opens and reads the file named by the "filename"
+      * string parameter, which must contain chemical potential fields
       * in symmetry-adapted basis format. This function sets the system
       * w fields equal to those given in this file, by copying the
       * coefficients of the basis expansion and computing values on a
-      * real-space grid (r-grid format).
-      *
-      * On exit, both w().basis() and w().rgrid() are set, w().hasData()
+      * real-space grid (r-grid format). System unit cell parameters 
+      * are also set to values read from the field file header. Upon
+      * exit, both w().basis() and w().rgrid() are set, w().hasData()
       * and w(). isSymmetric() return true, while hasCFields() and
-      * hasFreeEnergy() return false. System unit cell parameters are
-      * set to values read from the field file header.
+      * hasFreeEnergy() return false. 
+      *
+      * If a space group has been set but a basis has not yet been
+      * constructed, then this and every other member function that reads
+      * unit cell parameters from file and/or sets values for unit cell
+      * parameters will construct a symmetry-adapted basis and allocate
+      * memory for fields stored in basis form.  Member functions that
+      * can construct a basis as a side effect include this function,
+      * readWRGrid, estimateWfromC, and all of the overloaded setUnitCell
+      * functions.
       *
       * SCFT calculations that use an iterator that preserves space group
       * symmetry must set an initial field using a function that creates
-      * fields that can be represented in symmetry-adapted basis form,
-      * such as this function, setWBasis, or estimateWFromC.
+      * fields in symmetry-adapted basis form, such as this function,
+      * setWBasis, or estimateWFromC.
       *
-      * \param filename name of input w-field basis file
+      * \param filename  name of input w-field file in basis format
       */
       void readWBasis(std::string const & filename);
 
@@ -251,7 +252,7 @@ namespace Rpg {
       * not set components the symmetry-adapted basis format.  Upon return
       * return w.rgrid() is set, w().hasData() returns true, while
       * hasCFields(), hasFreeEnergy(), and w().isSymmetric() all return
-      * false. Unit cell parameters are unchanged.
+      * false. Unit cell parameters are not changed.
       *
       * \param fields  array of new w (chemical potential) fields
       */
@@ -340,7 +341,7 @@ namespace Rpg {
       void setUnitCell(FSArray<double, 6> const & parameters);
 
       ///@}
-      /// \name Primary Field Theory Computations
+      /// \name Field Theory Computations
       ///@{
 
       /**
@@ -432,7 +433,7 @@ namespace Rpg {
       ///@{
 
       /**
-      * Compute free energy density and pressure for current fields.
+      * Compute SCFT free energy density and pressure for current fields.
       *
       * This function should be called after a successful call of
       * iterator().solve() or compute(). Resulting values are retrieved
@@ -632,107 +633,6 @@ namespace Rpg {
       void writeQAll(std::string const & basename);
 
       ///@}
-      /// \name Field File Operations
-      ///@{
-
-      /**
-      * Compare arrays of fields in basis format, output a report.
-      *
-      * Outputs maximum and root-mean-squared differences to the
-      * standard Log file.
-      *
-      * \param field1  first array of fields (basis format)
-      * \param field2  second array of fields (basis format)
-      */
-      void compare(DArray< DArray<double> > const & field1,
-                   DArray< DArray<double> > const & field2);
-
-      /**
-      * Compare two fields in r-grid format, output a report.
-      *
-      * Outputs maximum and root-mean-squared differences to the
-      * standard Log file.
-      *
-      * \param field1  first array of fields (r-grid format)
-      * \param field2  second array of fields (r-grid format)
-      */
-      void compare(DArray< RField<D> > const & field1,
-                   DArray< RField<D> > const & field2);
-
-      /**
-      * Check if r-grid fields have the declared space group symmetry.
-      *
-      * \param inFileName name of input file
-      * \param epsilon error threshold used when testing for symmetry
-      * \return true if fields all have symmetry, false otherwise
-      */
-      bool checkRGridFieldSymmetry(std::string const & inFileName,
-                                   double epsilon = 1.0E-8);
-
-      /**
-      * Multiply all components of an array of basis fields by a scalar.
-      *
-      * \param inFileName  name of input field file
-      * \param outFileName  name of file for rescaled output fields
-      * \param factor  factor by which to multiply all field elements
-      */
-      void scaleFieldsBasis(std::string const & inFileName,
-                            std::string const & outFileName,
-                            double factor);
-
-      /**
-      * Multiply all elements of an array of r-grid fields by a scalar.
-      *
-      * \param inFileName  name of input field file
-      * \param outFileName  name of file for rescaled output fields
-      * \param factor  factor by which to multiply all field elements
-      */
-      void scaleFieldsRGrid(std::string const & inFileName,
-                            std::string const & outFileName,
-                            double factor) const;
-
-      /**
-      * Expand the number of spatial dimensions of an r-grid field.
-      *
-      * This function reads a D-dimensional field and outputs a field
-      * in a format appropriate for d-dimensional space, for d > D, by
-      * assuming that all field values are independent of coordinates
-      * associated with the added dimensions. It can thus create a file
-      * representing a field with lamellar (D=1) or hexagonal (D=2)
-      * symmetry on a 3D (d=3) grid.
-      *
-      * Element i of array newGridDimensions contains the number of
-      * grid points in added dimension D + i. This array must have a
-      * capacity d - D.
-      *
-      * \param inFileName filename name of input field file
-      * \param outFileName filename name of output field file
-      * \param d  intended dimensions (d > D)
-      * \param newGridDimensions number of grid points in added dimensions
-      */
-      void expandRGridDimension(std::string const & inFileName,
-                                std::string const & outFileName,
-                                int d,
-                                DArray<int> newGridDimensions);
-
-      /**
-      * Replicate the crystal unit cell to create a larger cell.
-      *
-      * This function reads a D-dimensional field and replicates the
-      * unit cell a specified number of times in each D direction
-      *
-      * Element i of array replicas contains the number of replication
-      * times in direction i.
-      *
-      * \param inFileName filename name of input field file
-      * \param outFileName filename name of output field file
-      * \param replicas  the number of replicas in each D direction
-      */
-      void replicateUnitCell(std::string const & inFileName,
-                             std::string const & outFileName,
-                             IntVec<D> const & replicas);
-
-      ///@}
       /// \name Timers
       ///@{
 
@@ -879,6 +779,8 @@ namespace Rpg {
 
    private:
 
+      // Component objects
+      
       /**
       * Mixture object (solves MDE for all species).
       */
@@ -894,6 +796,28 @@ namespace Rpg {
       */
       FileMaster fileMaster_;
 
+      /**
+      * Chemical potential fields.
+      */
+      WFieldContainer<D> w_;
+
+      /**
+      * Monomer concentration / volume fraction fields.
+      */
+      CFieldContainer<D> c_;
+
+      /**
+      * External potential fields.
+      */
+      WFieldContainer<D> h_;
+
+      /**
+      * Field to which the total density is constrained.
+      */
+      Mask<D> mask_;
+
+      // Pointers to dynamic objects owned by this System
+      
       /**
       * Pointer to Interaction (excess free energy model).
       */
@@ -929,47 +853,6 @@ namespace Rpg {
       */
       SimulatorFactory<D>* simulatorFactoryPtr_;
 
-      /**
-      * Chemical potential fields.
-      */
-      WFieldContainer<D> w_;
-
-      /**
-      * Monomer concentration / volume fraction fields.
-      */
-      CFieldContainer<D> c_;
-
-      /**
-      * External potential fields.
-      */
-      WFieldContainer<D> h_;
-
-      /**
-      * Field to which the total density is constrained.
-      */
-      Mask<D> mask_;
-
-      /**
-      * Work array of field coefficients for all monomer types.
-      *
-      * Indexed by monomer typeId, size = nMonomer.
-      */
-      mutable DArray< DArray<double> > tmpFieldsBasis_;
-
-      /**
-      * Work array of fields on real space grid.
-      *
-      * Indexed by monomer typeId, size = nMonomer.
-      */
-      mutable DArray< RField<D> > tmpFieldsRGrid_;
-
-      /**
-      * Work array of fields on Fourier grid (k-grid).
-      *
-      * Indexed by monomer typeId, size = nMonomer.
-      */
-      mutable DArray<RFieldDft<D> > tmpFieldsKGrid_;
-
       // Thermodynamic properties
 
       /**
@@ -1004,7 +887,12 @@ namespace Rpg {
       */
       double pressure_;
 
-      // Boolean and enumeration variables
+      /**
+      * Value for polymer model (thread or bead), to be read from file.
+      */
+      PolymerModel::Type polymerModel_;
+
+      // Boolean state variables
 
       /**
       * Has memory been allocated for fields in FFT grid formats?
@@ -1030,11 +918,6 @@ namespace Rpg {
       * Has fHelmholtz been computed for the current w and c fields?
       */
       bool hasFreeEnergy_;
-
-      /**
-      * Value for polymer model (thread or bead), to be read from file.
-      */
-      PolymerModel::Type polymerModel_;
 
       // Private member functions
 

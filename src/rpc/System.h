@@ -327,7 +327,7 @@ namespace Rpc {
       void setUnitCell(FSArray<double, 6> const & parameters);
 
       ///@}
-      /// \name Primary Field Theory Computations
+      /// \name Field Theory Computations
       ///@{
 
       /**
@@ -781,6 +781,26 @@ namespace Rpc {
       */
       FileMaster fileMaster_;
 
+      /**
+      * Chemical potential fields.
+      */
+      WFieldContainer<D> w_;
+
+      /**
+      * Monomer concentration / volume fraction fields.
+      */
+      CFieldContainer<D> c_;
+
+      /**
+      * External potential fields.
+      */
+      WFieldContainer<D> h_;
+
+      /**
+      * Field to which the total density is constrained.
+      */
+      Mask<D> mask_;
+
       // Pointers to dynamic objects owned by this System
 
       /**
@@ -817,28 +837,6 @@ namespace Rpc {
       * Pointer to Simulator factory object
       */
       SimulatorFactory<D>* simulatorFactoryPtr_;
-
-      // Field container objects
-
-      /**
-      * Chemical potential fields.
-      */
-      WFieldContainer<D> w_;
-
-      /**
-      * Monomer concentration / volume fraction fields.
-      */
-      CFieldContainer<D> c_;
-
-      /**
-      * External potential fields.
-      */
-      WFieldContainer<D> h_;
-
-      /**
-      * Field to which the total density is constrained.
-      */
-      Mask<D> mask_;
 
       // Thermodynamic properties
 
@@ -879,7 +877,7 @@ namespace Rpc {
       */
       PolymerModel::Type polymerModel_;
 
-      // Boolean enumerations variables
+      // Boolean state variables
 
       /**
       * Has memory been allocated for fields in grid format?
