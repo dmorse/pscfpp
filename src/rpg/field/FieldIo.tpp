@@ -360,6 +360,7 @@ namespace Rpg {
                   << comparison.rmsDiff() << "\n" << std::endl;
    }
 
+   #if 0
    /*
    * Multiply a field in basis format by a constant factor. 
    */
@@ -374,6 +375,7 @@ namespace Rpg {
          field[i] *= factor;
       }
    }
+   #endif
 
    /*
    * Multiply a field in r-grid format by a constant factor. 

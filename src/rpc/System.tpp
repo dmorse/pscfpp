@@ -566,12 +566,12 @@ namespace Rpc {
             }
          } else
          if (command == "COMPARE_BASIS") {
-
-            // Get two filenames for comparison
             std::string filecompare1, filecompare2;
             readEcho(in, filecompare1);
             readEcho(in, filecompare2);
+            fieldIo.compareFieldsBasis(filecompare1, filecompare2);
 
+            #if 0
             DArray< DArray<double> > Bfield1, Bfield2;
             UnitCell<D> tmpUnitCell;
             domain_.fieldIo().readFieldsBasis(filecompare1, Bfield1,
@@ -582,14 +582,16 @@ namespace Rpc {
 
             // Compare and output report
             fieldIo.compare(Bfield1, Bfield2);
+            #endif
 
          } else
          if (command == "COMPARE_RGRID") {
-            // Get two filenames for comparison
             std::string filecompare1, filecompare2;
             readEcho(in, filecompare1);
             readEcho(in, filecompare2);
+            fieldIo.compareFieldsRGrid(filecompare1, filecompare2);
 
+            #if 0
             DArray< RField<D> > Rfield1, Rfield2;
             UnitCell<D> tmpUnitCell;
             fieldIo.readFieldsRGrid(filecompare1, Rfield1,
@@ -600,6 +602,7 @@ namespace Rpc {
 
             // Compare and output report
             fieldIo.compare(Rfield1, Rfield2);
+            #endif
 
          } else
          if (command == "SCALE_BASIS") {

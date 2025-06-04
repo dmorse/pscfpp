@@ -280,20 +280,6 @@ namespace Rpc {
    }
 
    /*
-   * Multiply a field in basis format by a constant factor.
-   */
-   template <int D>
-   void FieldIo<D>::scaleFieldBasis(
-                              DArray<double> & field, 
-                              double factor) const
-   {
-      int n = field.capacity();
-      for (int i = 0; i < n; ++i) {
-         field[i] *= factor;
-      }
-   }
-
-   /*
    * Multiply a field in r-grid format by a constant factor.
    */
    template <int D>

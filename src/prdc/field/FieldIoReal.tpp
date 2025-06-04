@@ -707,7 +707,6 @@ namespace Prdc {
          }
       }
       return true;
-
    }
 
    /*
@@ -729,10 +728,51 @@ namespace Prdc {
                   << comparison.rmsDiff() << "\n" << std::endl;
    }
 
+   template <int D, class RFT, class KFT, class FFT>
+   void FieldIoReal<D,RFT,KFT,FFT>::compareFieldsBasis(
+                                std::string const & filename1,
+                                std::string const & filename2) const
+   {
+      DArray< DArray<double> > fields1, fields2;
+      UnitCell<D> tmpUnitCell;
+      // Unallocated fields will be allocated in read functions
+      readFieldsBasis(filename1, fields1, tmpUnitCell);
+      readFieldsBasis(filename2, fields2, tmpUnitCell);
+      compare(fields1, fields2);
+   }
+
+   template <int D, class RFT, class KFT, class FFT>
+   void FieldIoReal<D,RFT,KFT,FFT>::compareFieldsRGrid(
+                                std::string const & filename1,
+                                std::string const & filename2) const
+   {
+      DArray< RFT > fields1, fields2;
+      UnitCell<D> tmpUnitCell;
+      // Unallocated fields will be allocatd in read functions
+      readFieldsRGrid(filename1, fields1, tmpUnitCell);
+      readFieldsRGrid(filename2, fields2, tmpUnitCell);
+      compare(fields1, fields2);
+   }
+
    // Field Scaling
 
    /*
-   * Rescale fields in basis format by a constant factor.
+   * Multiply a single field in basis format by a constant factor. 
+   */
+   template <int D, class RFT, class KFT, class FFT>
+   void FieldIoReal<D,RFT,KFT,FFT>::scaleFieldBasis(
+                              DArray<double> & field,
+                              double factor) const
+   {
+      UTIL_CHECK(field.isAllocated());
+      int n = field.capacity();
+      for (int i = 0; i < n; ++i) {
+         field[i] *= factor;
+      }
+   }
+
+   /*
+   * Rescale an array of fields in basis format by a constant factor.
    */
    template <int D, class RFT, class KFT, class FFT>
    void FieldIoReal<D,RFT,KFT,FFT>::scaleFieldsBasis(
@@ -749,7 +789,7 @@ namespace Prdc {
    }
 
    /*
-   * Rescale fields by a constant factor, read and write to file.
+   * Rescale fields in files by a constant factor.
    */
    template <int D, class RFT, class KFT, class FFT>
    void FieldIoReal<D,RFT,KFT,FFT>::scaleFieldsBasis(

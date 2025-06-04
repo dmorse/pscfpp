@@ -84,7 +84,8 @@ namespace Rpg {
       */
       bool readFieldsRGrid(std::istream& in,
                            DArray< RField<D> >& fields,
-                           UnitCell<D> & unitCell) const;
+                           UnitCell<D> & unitCell) 
+      const override;
 
       /**
       * Read data for an array of r-grid fields, with no header section.
@@ -97,7 +98,8 @@ namespace Rpg {
       */
       void readFieldsRGridData(std::istream& in,
                                DArray< RField<D> >& fields,
-                               int nMonomer) const;
+                               int nMonomer) 
+      const override;
 
       /**
       * Read a single RField (field on an r-space grid) from a stream.
@@ -111,7 +113,8 @@ namespace Rpg {
       */
       bool readFieldRGrid(std::istream &in,
                           RField<D> & field,
-                          UnitCell<D>& unitCell) const;
+                          UnitCell<D>& unitCell) 
+      const override;
 
       /**
       * Write array of RField objects (fields on r-space grid) to a stream.
@@ -130,7 +133,8 @@ namespace Rpg {
                             UnitCell<D> const & unitCell,
                             bool writeHeader = true,
                             bool isSymmetric = true,
-                            bool writeMeshSize = true) const;
+                            bool writeMeshSize = true) 
+      const override;
 
       /**
       * Write a single RField (field on an r-space grid) to a stream.
@@ -147,7 +151,8 @@ namespace Rpg {
                            RField<D> const & field,
                            UnitCell<D> const & unitCell,
                            bool writeHeader = true,
-                           bool isSymmetric = true) const;
+                           bool isSymmetric = true) 
+      const override;
 
       /**
       * Read array of RFieldDft objects (k-space fields) from a stream.
@@ -160,7 +165,8 @@ namespace Rpg {
       */
       void readFieldsKGrid(std::istream& in,
                            DArray< RFieldDft<D> >& fields,
-                           UnitCell<D> & unitCell) const;
+                           UnitCell<D> & unitCell) 
+      const override;
 
       /**
       * Write array of RFieldDft objects (k-space fields) to file.
@@ -175,7 +181,8 @@ namespace Rpg {
       void writeFieldsKGrid(std::ostream& out,
                             DArray< RFieldDft<D> > const & fields,
                             UnitCell<D> const & unitCell,
-                            bool isSymmetric = true) const;
+                            bool isSymmetric = true) 
+      const override;
 
       /**
       * Convert a field from symmetrized basis to Fourier grid (k-grid).
@@ -186,7 +193,8 @@ namespace Rpg {
       * \param dft  discrete Fourier transform of a real field
       */
       void convertBasisToKGrid(DArray<double> const & components,
-                               RFieldDft<D>& dft) const;
+                               RFieldDft<D>& dft) 
+      const override;
 
       /**
       * Convert a field from Fourier (k-grid) to symmetrized basis form.
@@ -201,7 +209,8 @@ namespace Rpg {
       void convertKGridToBasis(RFieldDft<D> const & in,
                                DArray<double> & out,
                                bool checkSymmetry = true,
-                               double epsilon = 1.0e-8) const;
+                               double epsilon = 1.0e-8) 
+      const override;
 
       /**
       * Check if a k-grid field has the declared space group symmetry.
@@ -215,7 +224,8 @@ namespace Rpg {
       */
       bool hasSymmetry(RFieldDft<D> const & in, 
                        double epsilon = 1.0e-8,
-                       bool verbose = true) const;
+                       bool verbose = true) 
+      const override;
 
       /**
       * Compare two fields in r-grid format, output a report.
@@ -227,9 +237,11 @@ namespace Rpg {
       * \param field2  second array of fields (r-grid format)
       */
       void compare(DArray< RField<D> > const & field1,
-                   DArray< RField<D> > const & field2) const;
+                   DArray< RField<D> > const & field2) 
+      const override;
 
-      /**
+      #if 0
+      /*
       * Rescale a single field in basis format by a scalar factor.
       *
       * See documentation of analogous function in Prdc::FieldIoReal.
@@ -238,7 +250,9 @@ namespace Rpg {
       * \param field  field in basis format (in-out)
       * \param factor  real scalar by which to multiply all components
       */
-      void scaleFieldBasis(DArray<double>& field, double factor) const;
+      void scaleFieldBasis(DArray<double>& field, double factor) 
+      const override;
+      #endif
 
       /**
       * Rescale a single r-grid field by a scalar factor.
@@ -249,7 +263,8 @@ namespace Rpg {
       * \param field  real space (r-grid) field (in-out)
       * \param factor  real scalar by which to multiply all elements
       */
-      void scaleFieldRGrid(RField<D>& field, double factor) const;
+      void scaleFieldRGrid(RField<D>& field, double factor) 
+      const override;
       
       /**
       * Expand spatial dimension of an array of r-grid fields.
@@ -267,7 +282,8 @@ namespace Rpg {
                           DArray<RField<D> > const & fields,
                           UnitCell<D> const & unitCell,
                           int d,
-                          DArray<int> const& newGridDimensions) const;
+                          DArray<int> const& newGridDimensions) 
+      const override;
 
       /**
       * Write r-grid fields in a replicated unit cell to std::ostream.  
@@ -283,7 +299,8 @@ namespace Rpg {
                           std::ostream& out,
                           DArray< RField<D> > const & fields,
                           UnitCell<D> const & unitCell,
-                          IntVec<D> const & replicas) const;
+                          IntVec<D> const & replicas) 
+      const override;
 
 
       /**

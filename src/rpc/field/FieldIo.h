@@ -37,24 +37,23 @@ namespace Rpc {
    /**
    * File input/output operations and format conversions for fields.
    *
-   * Please refer to the documentation of the base class Prdc::FieldIoReal 
-   * for more complete API documentation for this class template, for 
-   * reasons discussed below.
+   * Please refer to the documentation of the base class template
+   * Prdc::FieldIoReal for complete API documentation for this class 
+   * template. The public interface of this class is identical to that
+   * of the base class.
    *
-   * Class template Rpc::FieldIo<int D> is derived from a partial 
-   * specialization of template Prdc::FieldIoReal<D, RFT, KFT, FFT> that
-   * is implemented using classes RFT = RField<D>, KFT = RFieldDft<D>, 
-   * and FFT = FFT<D> that are all defined in the Prdc::Cpu subspace, and 
-   * that use only conventional use CPU hardware. Rpc::FieldIo is thus a 
-   * specialization of the FieldIoReal template for CPU hardware. An 
-   * analogous class template named named Rpg::FieldIo that is designed 
-   * to use a GPU is defined in the Pscf::Rpg namespace 
+   * This class template is simply a named partial specialization of
+   * template Prdc::FieldIoReal<D, RFT, KFT, FFT> using classes 
+   * RFT = RField<D>, KFT = RFieldDft<D>, and FFT = FFT<D> that are all 
+   * defined in the Prdc::Cpu subspace, and that use conventional use 
+   * CPU hardware.  An analogous class template named Rpg::FieldIo that 
+   * is defined in the Pscf::Rpg namespace instead uses a GPU.
    *
-   * The pubiic interface of Rpc::FieldIo is identical to that of the
-   * base class template Prdc::FieldIoReal. All member functions defined 
-   * in this Rpc::FieldIo are implementations of pure virtual functions 
-   * declared in Prdc::FieldIoReal.  These are all functions for which 
-   * different implementations are required for the CPU and GPU variants.
+   * The member functions defined in this class are all implementations of
+   * pure virtual functions declared in the base class, Prdc::FieldIoReal.
+   * These are all functions for which different implementations are 
+   * required for the CPU and GPU variants, usually because the GPU
+   * implementation requires data transfer between host and device.
    *
    * \ingroup Rpc_Field_Module
    */
@@ -65,6 +64,7 @@ namespace Rpc {
 
    public:
 
+      /// Alias for base class
       typedef FieldIoReal<D, RField<D>, RFieldDft<D>, FFT<D> > Base;
 
       /**
@@ -231,25 +231,14 @@ namespace Rpc {
       /**
       * Compare two fields in r-grid format, output a report.
       *
-      * Outputs maximum and root-mean-squared differences to the
-      * standard Log file.
+      * Outputs maximum and root-mean-squared differences to the standard
+      * Log file.
       *
       * \param field1  first array of fields (r-grid format)
       * \param field2  second array of fields (r-grid format)
       */
       void compare(DArray< RField<D> > const & field1,
-                   DArray< RField<D> > const & field2) const;
-
-      /**
-      * Rescale a single field in basis format by a scalar factor.
-      *
-      * See documentation of analogous function in Prdc::FieldIoReal.
-      * Multiplication is done in-place, and so modifies the input.
-      *
-      * \param field  field in basis format (in-out)
-      * \param factor  real scalar by which to multiply all components
-      */
-      void scaleFieldBasis(DArray<double>& field, double factor) 
+                   DArray< RField<D> > const & field2) 
       const override;
 
       /**
@@ -297,7 +286,8 @@ namespace Rpc {
                           std::ostream& out,
                           DArray< RField<D> > const & fields,
                           UnitCell<D> const & unitCell,
-                          IntVec<D> const & replicas) const override;
+                          IntVec<D> const & replicas) 
+      const override;
 
       // Inherited public member functions
       using Base::associate;
