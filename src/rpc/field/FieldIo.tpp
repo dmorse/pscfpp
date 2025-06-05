@@ -265,8 +265,9 @@ namespace Rpc {
    * Compare two fields in r-grid format, output report to Log file.
    */
    template <int D>
-   void FieldIo<D>::compare(DArray< RField<D> > const & field1,
-                            DArray< RField<D> > const & field2) const
+   void FieldIo<D>::compareFieldsRGrid(DArray< RField<D> > const & field1,
+                                       DArray< RField<D> > const & field2) 
+   const
    {
       RFieldComparison<D> comparison;
       comparison.compare(field1, field2);

@@ -236,23 +236,9 @@ namespace Rpg {
       * \param field1  first array of fields (r-grid format)
       * \param field2  second array of fields (r-grid format)
       */
-      void compare(DArray< RField<D> > const & field1,
-                   DArray< RField<D> > const & field2) 
+      void compareFieldsRGrid(DArray< RField<D> > const & field1,
+                              DArray< RField<D> > const & field2) 
       const override;
-
-      #if 0
-      /*
-      * Rescale a single field in basis format by a scalar factor.
-      *
-      * See documentation of analogous function in Prdc::FieldIoReal.
-      * Multiplication is done in-place, and so modifies the input.
-      *
-      * \param field  field in basis format (in-out)
-      * \param factor  real scalar by which to multiply all components
-      */
-      void scaleFieldBasis(DArray<double>& field, double factor) 
-      const override;
-      #endif
 
       /**
       * Rescale a single r-grid field by a scalar factor.
@@ -329,7 +315,8 @@ namespace Rpg {
       using Base::convertKGridToRGrid;
       using Base::convertRGridToKGrid;
       using Base::hasSymmetry;
-      using Base::compare;
+      using Base::compareFieldsBasis;
+      using Base::compareFieldsRGrid;
       using Base::scaleFieldsBasis;
       using Base::scaleFieldsRGrid;
       using Base::replicateUnitCell;

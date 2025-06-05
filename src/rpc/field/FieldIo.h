@@ -237,8 +237,8 @@ namespace Rpc {
       * \param field1  first array of fields (r-grid format)
       * \param field2  second array of fields (r-grid format)
       */
-      void compare(DArray< RField<D> > const & field1,
-                   DArray< RField<D> > const & field2) 
+      void compareFieldsRGrid(DArray< RField<D> > const & field1,
+                              DArray< RField<D> > const & field2) 
       const override;
 
       /**
@@ -310,7 +310,8 @@ namespace Rpc {
       using Base::convertKGridToRGrid;
       using Base::convertRGridToKGrid;
       using Base::hasSymmetry;
-      using Base::compare;
+      using Base::compareFieldsBasis;
+      using Base::compareFieldsRGrid;
       using Base::scaleFieldsBasis;
       using Base::scaleFieldsRGrid;
       using Base::replicateUnitCell;

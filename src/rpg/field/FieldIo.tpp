@@ -346,8 +346,9 @@ namespace Rpg {
    * Compare two fields in r-grid format, output report to Log file.
    */
    template <int D>
-   void FieldIo<D>::compare(DArray< RField<D> > const & field1,
-                            DArray< RField<D> > const & field2) const
+   void FieldIo<D>::compareFieldsRGrid(DArray< RField<D> > const & field1,
+                                       DArray< RField<D> > const & field2) 
+   const
    {
       RFieldComparison<D> comparison;
       comparison.compare(field1, field2);
@@ -359,23 +360,6 @@ namespace Rpg {
       Log::file() << "     Root-Mean-Square Difference:   "
                   << comparison.rmsDiff() << "\n" << std::endl;
    }
-
-   #if 0
-   /*
-   * Multiply a field in basis format by a constant factor. 
-   */
-   template <int D>
-   void FieldIo<D>::scaleFieldBasis(
-                              DArray<double> & field,
-                              double factor) const
-   {
-      UTIL_CHECK(field.isAllocated());
-      int n = field.capacity();
-      for (int i = 0; i < n; ++i) {
-         field[i] *= factor;
-      }
-   }
-   #endif
 
    /*
    * Multiply a field in r-grid format by a constant factor. 

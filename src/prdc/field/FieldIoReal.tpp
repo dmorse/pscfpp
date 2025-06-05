@@ -713,7 +713,7 @@ namespace Prdc {
    * Compare two fields in basis format, write report to Log file.
    */
    template <int D, class RFT, class KFT, class FFT>
-   void FieldIoReal<D,RFT,KFT,FFT>::compare(
+   void FieldIoReal<D,RFT,KFT,FFT>::compareFieldsBasis(
                         DArray< DArray<double> > const & field1,
                         DArray< DArray<double> > const & field2) const
    {
@@ -735,10 +735,10 @@ namespace Prdc {
    {
       DArray< DArray<double> > fields1, fields2;
       UnitCell<D> tmpUnitCell;
-      // Unallocated fields will be allocated in read functions
+      // Unallocated arrays will be allocated in readFieldsBasis
       readFieldsBasis(filename1, fields1, tmpUnitCell);
       readFieldsBasis(filename2, fields2, tmpUnitCell);
-      compare(fields1, fields2);
+      compareFieldsBasis(fields1, fields2);
    }
 
    template <int D, class RFT, class KFT, class FFT>
@@ -748,10 +748,10 @@ namespace Prdc {
    {
       DArray< RFT > fields1, fields2;
       UnitCell<D> tmpUnitCell;
-      // Unallocated fields will be allocatd in read functions
+      // Unallocated arrays will be allocated in readFieldsRGrid
       readFieldsRGrid(filename1, fields1, tmpUnitCell);
       readFieldsRGrid(filename2, fields2, tmpUnitCell);
-      compare(fields1, fields2);
+      compareFieldsRGrid(fields1, fields2);
    }
 
    // Field Scaling

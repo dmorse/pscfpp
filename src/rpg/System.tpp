@@ -569,41 +569,16 @@ namespace Rpg {
             }
          } else
          if (command == "COMPARE_BASIS") {
-
-            // Get two filenames for comparison
             std::string filecompare1, filecompare2;
             readEcho(in, filecompare1);
             readEcho(in, filecompare2);
-
-            DArray< DArray<double> > Bfield1, Bfield2;
-            UnitCell<D> tmpUnitCell;
-            domain_.fieldIo().readFieldsBasis(filecompare1, Bfield1,
-                                              tmpUnitCell);
-            domain_.fieldIo().readFieldsBasis(filecompare2, Bfield2,
-                                              tmpUnitCell);
-            // Note: Bfield1 & Bfield2 are allocated by readFieldsBasis
-
-            // Compare and output report
-            fieldIo.compare(Bfield1, Bfield2);
-
+            fieldIo.compareFieldsBasis(filecompare1, filecompare2);
          } else
          if (command == "COMPARE_RGRID") {
-            // Get two filenames for comparison
             std::string filecompare1, filecompare2;
             readEcho(in, filecompare1);
             readEcho(in, filecompare2);
-
-            DArray< RField<D> > Rfield1, Rfield2;
-            UnitCell<D> tmpUnitCell;
-            domain_.fieldIo().readFieldsRGrid(filecompare1, Rfield1,
-                                              tmpUnitCell);
-            domain_.fieldIo().readFieldsRGrid(filecompare2, Rfield2,
-                                              tmpUnitCell);
-            // Note: Rfield1, Rfield2 will be allocated by readFieldsRGrid
-
-            // Compare and output report
-            fieldIo.compare(Rfield1, Rfield2);
-
+            fieldIo.compareFieldsRGrid(filecompare1, filecompare2);
          } else
          if (command == "SCALE_BASIS") {
             double factor;

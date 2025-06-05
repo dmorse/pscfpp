@@ -782,8 +782,9 @@ namespace Prdc {
       * \param field1  first array of fields (basis format)
       * \param field2  second array of fields (basis format)
       */
-      void compare(DArray< DArray<double> > const & field1,
-                   DArray< DArray<double> > const & field2) const;
+      void compareFieldsBasis(DArray< DArray<double> > const & field1,
+                              DArray< DArray<double> > const & field2) 
+      const;
 
       /**
       * Compare two r-grid field files, write a report to Log file.
@@ -804,8 +805,8 @@ namespace Prdc {
       * \param field2  second array of fields (r-grid format)
       */
       virtual
-      void compare(DArray< RFT > const & field1,
-                   DArray< RFT > const & field2) const = 0;
+      void compareFieldsRGrid(DArray< RFT > const & field1,
+                              DArray< RFT > const & field2) const = 0;
   
       /**
       * Compare two r-grid field files, write a report to Log file.
