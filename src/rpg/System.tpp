@@ -734,7 +734,7 @@ namespace Rpg {
    // W Field Modifier Functions
 
    /*
-   * Read w field in symmetry adapted basis format.
+   * Read w field in symmetry-adapted basis format.
    */
    template <int D>
    void System<D>::readWBasis(std::string const & filename)
