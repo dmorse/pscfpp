@@ -280,7 +280,7 @@ namespace Prdc {
    * Open-close a file, and write a single field in basis format.
    */
    template <int D, class RFT, class KFT, class FFT>
-   void FieldIoReal<D,RFT,KFT,FFT>::writeFieldBasis( 
+   void FieldIoReal<D,RFT,KFT,FFT>::writeFieldBasis(
                               std::string filename,
                               DArray<double> const & field,
                               UnitCell<D> const & unitCell) const
@@ -644,7 +644,7 @@ namespace Prdc {
       UnitCell<D> tmpUnitCell;
       readFieldsKGrid(inFileName, tmpFieldsKGrid_, tmpUnitCell);
       for (int i = 0; i < nMonomer_; ++i) {
-         fft().inverseTransformUnsafe(tmpFieldsKGrid_[i], 
+         fft().inverseTransformUnsafe(tmpFieldsKGrid_[i],
                                       tmpFieldsRGrid_[i]);
       }
       writeFieldsRGrid(outFileName, tmpFieldsRGrid_, tmpUnitCell);
@@ -675,7 +675,7 @@ namespace Prdc {
    */
    template <int D, class RFT, class KFT, class FFT>
    bool FieldIoReal<D,RFT,KFT,FFT>::hasSymmetry(
-                              RFT const & in, 
+                              RFT const & in,
                               double epsilon,
                               bool verbose) const
    {
@@ -757,7 +757,7 @@ namespace Prdc {
    // Field Scaling
 
    /*
-   * Multiply a single field in basis format by a constant factor. 
+   * Multiply a single field in basis format by a constant factor.
    */
    template <int D, class RFT, class KFT, class FFT>
    void FieldIoReal<D,RFT,KFT,FFT>::scaleFieldBasis(
@@ -778,7 +778,7 @@ namespace Prdc {
    void FieldIoReal<D,RFT,KFT,FFT>::scaleFieldsBasis(
                               DArray< DArray<double> >& fields,
                               double factor) const
-   { 
+   {
       int n = fields.capacity();
       UTIL_CHECK(n > 0);
       int m = fields[0].capacity();
@@ -811,7 +811,7 @@ namespace Prdc {
    void FieldIoReal<D,RFT,KFT,FFT>::scaleFieldsRGrid(
                               DArray< RFT > & fields,
                               double factor) const
-   { 
+   {
       int n = fields.capacity();
       for (int i = 0; i < n; ++i) {
          scaleFieldRGrid(fields[i], factor);
@@ -833,7 +833,7 @@ namespace Prdc {
       isSymmetric = readFieldsRGrid(inFileName, tmpFieldsRGrid_,
                                     tmpUnitCell);
       scaleFieldsRGrid(tmpFieldsRGrid_, factor);
-      writeFieldsRGrid(outFileName, tmpFieldsRGrid_, tmpUnitCell, 
+      writeFieldsRGrid(outFileName, tmpFieldsRGrid_, tmpUnitCell,
                        isSymmetric);
    }
 
@@ -867,7 +867,7 @@ namespace Prdc {
       checkAllocateRGrid();
       UnitCell<D> tmpUnitCell;
       readFieldsRGrid(inFileName, tmpFieldsRGrid_, tmpUnitCell);
-      replicateUnitCell(outFileName, tmpFieldsRGrid_, tmpUnitCell, 
+      replicateUnitCell(outFileName, tmpFieldsRGrid_, tmpUnitCell,
                         replicas);
    }
 
@@ -959,7 +959,7 @@ namespace Prdc {
       }
 
       // Check for presence of group name in the field file header
-      isSymmetric = false; 
+      isSymmetric = false;
       if (groupNameIn != "") {
          isSymmetric = true;
       }
@@ -1021,16 +1021,17 @@ namespace Prdc {
       // Note: This function is defined in prdc/crystal/fieldHeader.tpp
    }
 
-   // Protected functions to check and allocate private workspace
+   // Protected functions to check and allocate private workspace arrays
 
    /*
-   * If necessary, allocate r-grid and k-grid field workspace.
+   * If necessary, allocate r-grid workspace.
    */
    template <int D, class RFT, class KFT, class FFT>
    void FieldIoReal<D,RFT,KFT,FFT>::checkAllocateRGrid() const
-   { 
-      UTIL_CHECK(nMonomer_ > 0);
+   {
       if (isAllocatedRGrid_) return;
+
+      UTIL_CHECK(nMonomer_ > 0);
       UTIL_CHECK(mesh().size() > 0);
       IntVec<D> const & meshDimensions = mesh().dimensions();
       tmpFieldsRGrid_.allocate(nMonomer_);
@@ -1045,12 +1046,13 @@ namespace Prdc {
    */
    template <int D, class RFT, class KFT, class FFT>
    void FieldIoReal<D,RFT,KFT,FFT>::checkAllocateKGrid() const
-   { 
-      UTIL_CHECK(nMonomer_ > 0);
+   {
       if (isAllocatedKGrid_) return;
+
+      UTIL_CHECK(nMonomer_ > 0);
       UTIL_CHECK(mesh().size() > 0);
       IntVec<D> const & meshDimensions = mesh().dimensions();
-      tmpFieldsKGrid_.allocate(nMonomer_); 
+      tmpFieldsKGrid_.allocate(nMonomer_);
       for (int i = 0; i < nMonomer_; ++i) {
          tmpFieldsKGrid_[i].allocate(meshDimensions);
       }
@@ -1061,12 +1063,13 @@ namespace Prdc {
    * If necessary, allocate basis field workspace.
    */
    template <int D, class RFT, class KFT, class FFT>
-   void 
+   void
    FieldIoReal<D,RFT,KFT,FFT>::checkAllocateBasis(
                                    std::string const & inFileName) const
    {
-      UTIL_CHECK(nMonomer_ > 0);
       if (isAllocatedBasis_) return;
+
+      UTIL_CHECK(nMonomer_ > 0);
       UTIL_CHECK(hasGroup());
       if (!basis().isInitialized()) {
          // Peek at field header to initialize basis
@@ -1084,7 +1087,11 @@ namespace Prdc {
       UTIL_CHECK(nBasis > 0);
       tmpFieldsBasis_.allocate(nMonomer_);
       for (int i = 0; i < nMonomer_; ++i) {
-         tmpFieldsBasis_[i].allocate(nBasis);
+         DArray<double>& field = tmpFieldsBasis_[i];
+         field.allocate(nBasis);
+         for (int j = 0; j < nBasis; ++j) {
+            field[j] = 0.0;
+         }
       }
       isAllocatedBasis_ = true;
    }

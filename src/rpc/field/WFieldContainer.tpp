@@ -8,8 +8,8 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "WFieldContainer.h"
-#include <prdc/field/WContainerReal.tpp>
+#include "WFieldContainer.h"              // class header
+#include <prdc/field/WContainerReal.tpp>  // base class implementation
 
 namespace Pscf {
 namespace Rpc {
@@ -19,9 +19,8 @@ namespace Rpc {
    using namespace Pscf::Prdc::Cpu;
 
    template <int D>
-   void 
-   WFieldContainer<D>::assignRField(RField<D>& lhs, RField<D> const & rhs) 
-   const
+   void WFieldContainer<D>::assignRField(RField<D>& lhs, 
+                                         RField<D> const & rhs) const
    {
       int n = rhs.capacity();
       UTIL_CHECK(lhs.capacity() == n);

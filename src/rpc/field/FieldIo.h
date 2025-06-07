@@ -8,15 +8,12 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <prdc/cpu/types.h>
-#include <prdc/cpu/complex.h>
-
 #include <prdc/field/FieldIoReal.h>     // base class template
 #include <prdc/cpu/RField.h>            // template parameter
 #include <prdc/cpu/RFieldDft.h>         // template parameter
 #include <prdc/cpu/FFT.h>               // template parameter
 
-// Forward declarations for classes used only via references or pointers
+// Forward declarations 
 namespace Util {
    class FileMaster;
    template <typename T> class DArray;
@@ -38,14 +35,13 @@ namespace Rpc {
    * File input/output operations and format conversions for fields.
    *
    * Please refer to the documentation of the base class template
-   * Prdc::FieldIoReal for complete API documentation for this class 
-   * template. The public interface of this class is identical to that
-   * of the base class.
+   * Prdc::FieldIoReal for complete API documentation. The public interface 
+   * of this class is identical to that of the base class.
    *
-   * This class template is simply a named partial specialization of
-   * template Prdc::FieldIoReal<D, RFT, KFT, FFT> using classes 
+   * This class template is derived from a partial specialization of
+   * the template Prdc::FieldIoReal<D, RFT, KFT, FFT> using classes 
    * RFT = RField<D>, KFT = RFieldDft<D>, and FFT = FFT<D> that are all 
-   * defined in the Prdc::Cpu subspace, and that use conventional use 
+   * defined in the Prdc::Cpu subspace, and that all use conventional 
    * CPU hardware.  An analogous class template named Rpg::FieldIo that 
    * is defined in the Pscf::Rpg namespace instead uses a GPU.
    *
@@ -63,9 +59,6 @@ namespace Rpc {
    {
 
    public:
-
-      /// Alias for base class
-      typedef FieldIoReal<D, RField<D>, RFieldDft<D>, FFT<D> > Base;
 
       /**
       * Default constructor.
@@ -288,6 +281,9 @@ namespace Rpc {
                           UnitCell<D> const & unitCell,
                           IntVec<D> const & replicas) 
       const override;
+
+      /// Alias for base class
+      typedef FieldIoReal<D, RField<D>, RFieldDft<D>, FFT<D> > Base;
 
       // Inherited public member functions
       using Base::associate;

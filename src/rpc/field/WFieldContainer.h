@@ -22,9 +22,9 @@ namespace Rpc {
    /**
    * A container of fields stored in both basis and r-grid format.
    *
-   * Almost all of the implementation of this class template is inherited
-   * from the base class template Pscf::Prdc::WContainerReal. See the
-   * documentation for that class template for API documentation.
+   * The public interface of this class is identical to that of the base
+   * class template Pscf::Prdc::WContainerReal. Please see documentation
+   * of that base class for API documentation.
    *
    * \ingroup Rpc_Field_Module
    */

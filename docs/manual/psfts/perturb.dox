@@ -59,8 +59,8 @@ work with any type of perturbation (i.e., any subclass of this base class).
 \section psfts_perturb_einstein_sec Einstein Crystal Perturbation
 
 <b> EinsteinCrystalPerturbation </b>:
-The only type of Perturbation that is provided with PSCF v1.2 is a class
-named EinsteinCrystalPerturbation that enables calculation of free 
+The only type of Perturbation that is currently provided with PSCF is a 
+class named EinsteinCrystalPerturbation that enables calculation of free 
 energies by the Einstein crystal method. The resulting perturbation is a 
 functional of the form
 \f[

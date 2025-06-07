@@ -117,13 +117,12 @@ grid, for which the file format does not impose any symmetry.
 The READ_MASK_BASIS command must be used to initialize a mask for any 
 SCFT calculation in which the iterator explicitly imposes a space-group 
 symmetry, by using an internal representation of w-fields using a 
-symmetry-adapated basis.  Because the mask and external field features
-are implemented in the current version of PSCF (v1.2) only for the 
-pscf_pc program (and not yet for pscf_pg), and the only iterator that 
-is currently distributed for use with pscf_pc (the default 
-Rpc::AmIteratorBasis class) does impose a space group symmetry, the 
-READ_MASK_RGRID command thus actually cannot be used to set up an SCFT 
-calculation in the current version of PSCF.
+symmetry-adapated basis. 
+
+Because the only iterator that is currently distributed for use with 
+pscf_pc (the default Rpc::AmIteratorBasis class) does impose a space 
+group symmetry, the READ_MASK_RGRID command thus cannot be used to set 
+up an SCFT calculation performed with pscf_pc.
 
 \section scft_imposed_external_sec External fields
 
@@ -156,7 +155,7 @@ the r-grid format, for which the format does not impose any symmetr.
 External fields for an SCFT calculation in which symmetry is imposed by 
 the iterator must be symmetric, and so must be set using the READ_H_BASIS 
 command.  Because the only pscf_pc iterator that is provided with the 
-current version of PSCF (v1.2) does impose a space-group symmetry, the 
+current version of PSCF does impose a space-group symmetry, the 
 READ_H_RGRID command actually cannot be used to set up an SCFT calculation 
 for this version of PSCF.
 

@@ -2,13 +2,13 @@
 
 PSCF is a software package for field-theoretic simulation of inhomogeneous
 equilibrium structures formed by polymer liquids with components that 
-tend to phase separate. This version of PSCF can be used to perform 
-self-consistent field theory (SCFT) calculations and stochastic field 
-theoretic simulations that are rely on a partial saddle-point 
+tend to phase separate. The current version of PSCF can be used to perform 
+either self-consistent field theory (SCFT) calculations or stochastic 
+field theoretic simulations that are rely on a partial saddle-point 
 approximation (PS-FTS).
 
-PSCF is written primarily in C++, supplemented by CUDA to enable use of 
-a graphics processing unit (GPU) if one is available.  It is distributed 
+PSCF is written primarily in C++, supplemented by CUDA to enable use of a
+graphics processing unit (GPU) when one is available.  It is distributed 
 only in source code form, and so must be compiled by the user. PSCF is 
 designed for a unix-like environment, and is regularly tested on Linux 
 and Mac OS X operating systems.
@@ -24,13 +24,13 @@ Development (CSSI) under Grant No. 2103627.
 
 This web manual is designed to provide both introductory information 
 for users who never look at the source code and programming interface 
-documentation aimed primarily developers. Information for users about 
-how to install and use PSCF is provided through the sequence of web pages 
-that is outlined and linked below.  Information aimed at developers is 
-instead accessible via the "Topics", "Namespaces", "Classes", and "Files" 
-tabs that appear at the top of every web manual page, as well as in the
+documentation those who do. Information for users about how to install 
+and use PSCF is provided through the sequence of web pages that is 
+outlined and linked below.  Additional aimed at developers is instead 
+accessible via the "Topics", "Namespaces", "Classes", and "Files" tabs 
+that appear at the top of every web manual page, as well as in the
 "Developer Information" chapter of the manual.  The web manual for the 
-most recent numbered release of PSCF (currently v1.2) is available 
+most recent numbered release of PSCF (currently v1.3) is available 
 online at: <a ref=https://dmorse.github.io/pscfpp-man/> 
 https://dmorse.github.io/pscfpp-man </a>.
 
