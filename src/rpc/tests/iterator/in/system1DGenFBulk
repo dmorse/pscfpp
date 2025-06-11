@@ -31,7 +31,6 @@ System{
     epsilon      1.0e-12
     maxItr       2000
     maxHist      100 
-    verbose      2
     isFlexible   1
     ImposedFieldsGenerator{
       type               film
