@@ -10,8 +10,8 @@ equilibrium properties of inhomogeneous states in polymer liquids.
 PSCF is designed primarily to predict structures and free energies 
 of inhomogeneous equilibrium states of polymer liquids in which 
 inhomogeneity is driven a tendency of different types of monomer to 
-phase separate.  The current version of PSCF (v1.2) can be used to 
-perform either self-consistent field theory calculations or stochastic 
+phase separate.  The current version of PSCF can be used to perform 
+either self-consistent field theory calculations or stochastic 
 field-theoretic simulations that rely on a partial-saddle point
 approximation, as discussed below. 
 
@@ -122,8 +122,8 @@ yet implemented in PSCF, but are planned for a future release.
 
 <b> Partial saddle-point field theoretic simulation (PS-FTS): </b>
 
-FTS methods that are implemented in v1.2 of PSCF are all based on a 
-so-called "partial saddle-point" approximation to the fully fluctuating 
+FTS methods that are implemented in this version of PSCF are all based on 
+a so-called "partial saddle-point" approximation to the fully fluctuating 
 field theory. This is an approximation in which a field component that 
 enforces the incompressibility constraint, sometimes referred to as a 
 pressure field, is treated at a self-consistent field level, while the
@@ -142,7 +142,7 @@ an expression for the partition function as a functional integral in
 which all of quantities of interest have real (rather than complex)
 values. Simulations that rely on the partial-saddle point approximation
 also seem thus far to be substantially more efficient than complex
-Langevin simulations, at a modest cost in accuracy. PSCF v1.2 implements
+Langevin simulations, at a modest cost in accuracy. PSCF implements
 several Brownian dynamics and Monte-Carlo algorithms for sampling the 
 ensemble defined by the partial saddle-point approximation. The 
 Brownian dynamics method is generally more efficient that Monte-Carlo

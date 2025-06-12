@@ -23,11 +23,15 @@ namespace Rpc {
    /**
    * Spatial domain for a periodic structure with real fields, on a CPU.
    *
-   * See the interface of the Prdc::DomainReal base class template for
-   * complete API documentation. The Rpc::Domain class template is 
-   * basically a named partial specialization of the base class template, 
-   * defined using template type parameters FFT = Prdc::Cpu::FFT<D>, 
-   * WLT = Prdc::Cpu::WaveList<D>, and FIT = Rpc::FieldIo<D> . 
+   * The public interface of this class is identical to that of the 
+   * Prdc::DomainReal base class template. Please see documentation of
+   * that base class for API documentation. 
+   *
+   * The Rpc::Domain\<D\> class template is a named partial specialization
+   * of the base class template Prdc::DomainReal<D, FFT, WLT, FIT> that 
+   * is designed to use standard CPU hardware, defined using template type 
+   * parameters FFT = Prdc::Cpu::FFT\<D\>, WLT = Prdc::Cpu::WaveList\<D\>, 
+   * and FIT = Rpc::FieldIo\<D\> . 
    *
    * \ingroup Rpc_Field_Module
    */
@@ -49,7 +53,6 @@ namespace Rpc {
       typedef DomainReal< D, FFT<D>, WaveList<D>, FieldIo<D> > Base;
 
       // Inherited pubic member functions
-
       using Base::setFileMaster;
       using Base::readParameters;
       using Base::readRGridFieldHeader;
@@ -73,7 +76,7 @@ namespace Rpc {
    };
 
    #ifndef RPC_DOMAIN_TPP
-   // Suppress implicit instantiation
+   // Suppress implicit instantiation of all relevant cases
    extern template class Domain<1>;
    extern template class Domain<2>;
    extern template class Domain<3>;
@@ -83,7 +86,7 @@ namespace Rpc {
 
 #ifndef RPC_DOMAIN_TPP
 namespace Prdc {
-   // Suppress implicit instantiation of base class template instances
+   // Suppress implicit instantiation of base class template
    using namespace Cpu;
    extern template 
    class DomainReal<1, FFT<1>, WaveList<1>, Rpc::FieldIo<1> >;

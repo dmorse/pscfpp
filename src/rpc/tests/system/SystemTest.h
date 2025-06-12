@@ -283,16 +283,17 @@ public:
       initSystem(system,
                  "in/diblock/lam/param.flex", 
                  "in/diblock/lam/omega.in");
+      FieldIo<1> const & fieldIo = system.domain().fieldIo();
 
       // Copy w field components to wFields_check after reading
       DArray< DArray<double> > wFields_check;
       wFields_check = system.w().basis();
 
       // Round trip conversion basis -> rgrid -> basis, read result
-      system.basisToRGrid("in/diblock/lam/omega.in",
-                          "out/testConversion1D_lam_w.rf");
-      system.rGridToBasis("out/testConversion1D_lam_w.rf",
-                          "out/testConversion1D_lam_w.bf");
+      fieldIo.convertBasisToRGrid("in/diblock/lam/omega.in",
+                                  "out/testConversion1D_lam_w.rf");
+      fieldIo.convertRGridToBasis("out/testConversion1D_lam_w.rf",
+                                  "out/testConversion1D_lam_w.bf");
       system.readWBasis("out/testConversion1D_lam_w.bf");
 
       // Compare result to original
@@ -305,10 +306,10 @@ public:
       TEST_ASSERT(comparison1.maxDiff() < 1.0E-10);
 
       // Round trip conversion basis -> kgrid -> basis, read result
-      system.basisToKGrid("in/diblock/lam/omega.in",
-                          "out/testConversion1D_lam_w.kf");
-      system.kGridToBasis("out/testConversion1D_lam_w.kf",
-                          "out/testConversion1D_lam_w_2.bf");
+      fieldIo.convertBasisToKGrid("in/diblock/lam/omega.in",
+                                  "out/testConversion1D_lam_w.kf");
+      fieldIo.convertKGridToBasis("out/testConversion1D_lam_w.kf",
+                                  "out/testConversion1D_lam_w_2.bf");
       system.readWBasis("out/testConversion1D_lam_w_2.bf");
 
       // Compare result to original
@@ -325,10 +326,10 @@ public:
       DArray< RField<1> > wFieldsRGrid_check;
       wFieldsRGrid_check = system.w().rgrid();
 
-      system.rGridToKGrid("out/testConversion1D_lam_w.rf",
-                          "out/testConversion1D_lam_w_2.kf");
-      system.kGridToRGrid("out/testConversion1D_lam_w_2.kf",
-                          "out/testConversion1D_lam_w_2.rf");
+      fieldIo.convertRGridToKGrid("out/testConversion1D_lam_w.rf",
+                                  "out/testConversion1D_lam_w_2.kf");
+      fieldIo.convertKGridToRGrid("out/testConversion1D_lam_w_2.kf",
+                                  "out/testConversion1D_lam_w_2.rf");
       system.readWRGrid("out/testConversion1D_lam_w_2.rf");
 
       // Compare result to original
@@ -354,22 +355,23 @@ public:
       initSystem(system,
                  "in/diblock/hex/param.flex", 
                  "in/diblock/hex/omega.in");
+      FieldIo<2> const & fieldIo = system.domain().fieldIo();
 
       // Store components in wFields_check for later comparison
       DArray< DArray<double> > wFields_check;
       wFields_check = system.w().basis();
 
       // Round trip basis -> rgrid -> basis, read resulting wField
-      system.basisToRGrid("in/diblock/hex/omega.in",
+      fieldIo.convertBasisToRGrid("in/diblock/hex/omega.in",
                           "out/testConversion2D_hex_w.rf");
 
-      system.rGridToBasis("out/testConversion2D_hex_w.rf",
+      fieldIo.convertRGridToBasis("out/testConversion2D_hex_w.rf",
                           "out/testConversion2D_hex_w.bf");
       system.readWBasis("out/testConversion2D_hex_w.bf");
 
       // Check symmetry of rgrid representation
-      bool hasSymmetry
-       = system.checkRGridFieldSymmetry("out/testConversion2D_hex_w.rf");
+      bool hasSymmetry;
+      hasSymmetry = fieldIo.hasSymmetry("out/testConversion2D_hex_w.rf");
       TEST_ASSERT(hasSymmetry);
 
       // Compare result to original
@@ -382,9 +384,9 @@ public:
       TEST_ASSERT(comparison1.maxDiff() < 1.0E-10);
 
       // Round trip conversion basis -> kgrid -> basis, read result
-      system.basisToKGrid("in/diblock/hex/omega.in",
+      fieldIo.convertBasisToKGrid("in/diblock/hex/omega.in",
                           "out/testConversion2D_hex_w.kf");
-      system.kGridToBasis("out/testConversion2D_hex_w.kf",
+      fieldIo.convertKGridToBasis("out/testConversion2D_hex_w.kf",
                           "out/testConversion2D_hex_w_2.bf");
       system.readWBasis("out/testConversion2D_hex_w_2.bf");
 
@@ -402,9 +404,9 @@ public:
       DArray< RField<2> > wFieldsRGrid_check;
       wFieldsRGrid_check = system.w().rgrid();
 
-      system.rGridToKGrid("out/testConversion2D_hex_w.rf",
+      fieldIo.convertRGridToKGrid("out/testConversion2D_hex_w.rf",
                           "out/testConversion2D_hex_w_2.kf");
-      system.kGridToRGrid("out/testConversion2D_hex_w_2.kf",
+      fieldIo.convertKGridToRGrid("out/testConversion2D_hex_w_2.kf",
                           "out/testConversion2D_hex_w_2.rf");
       system.readWRGrid("out/testConversion2D_hex_w_2.rf");
 
@@ -442,15 +444,16 @@ public:
       wFields_check = system.w().basis();
 
       // Complete round trip basis -> rgrid -> basis
-      system.basisToRGrid("in/diblock/bcc/omega.in",
+      FieldIo<3> const & fieldIo = system.domain().fieldIo();
+      fieldIo.convertBasisToRGrid("in/diblock/bcc/omega.in",
                           "out/testConversion3D_bcc_w.rf");
-      system.rGridToBasis("out/testConversion3D_bcc_w.rf",
+      fieldIo.convertRGridToBasis("out/testConversion3D_bcc_w.rf",
                           "out/testConversion3D_bcc_w.bf");
       system.readWBasis("out/testConversion3D_bcc_w.bf");
 
       // Check symmetry of rgrid representation
-      bool hasSymmetry
-       = system.checkRGridFieldSymmetry("out/testConversion3D_bcc_w.rf");
+      bool hasSymmetry 
+             = fieldIo.hasSymmetry("out/testConversion3D_bcc_w.rf");
       TEST_ASSERT(hasSymmetry);
 
       // Compare result to original
@@ -463,9 +466,9 @@ public:
       TEST_ASSERT(comparison1.maxDiff() < 1.0E-10);
 
       // Round trip conversion basis -> kgrid -> basis, read result
-      system.basisToKGrid("in/diblock/bcc/omega.in",
+      fieldIo.convertBasisToKGrid("in/diblock/bcc/omega.in",
                           "out/testConversion3D_bcc_w.kf");
-      system.kGridToBasis("out/testConversion3D_bcc_w.kf",
+      fieldIo.convertKGridToBasis("out/testConversion3D_bcc_w.kf",
                           "out/testConversion3D_bcc_w_2.bf");
       system.readWBasis("out/testConversion3D_bcc_w_2.bf");
 
@@ -483,9 +486,9 @@ public:
       DArray< RField<3> > wFieldsRGrid_check;
       wFieldsRGrid_check = system.w().rgrid();
 
-      system.rGridToKGrid("out/testConversion3D_bcc_w.rf",
+      fieldIo.convertRGridToKGrid("out/testConversion3D_bcc_w.rf",
                           "out/testConversion3D_bcc_w_2.kf");
-      system.kGridToRGrid("out/testConversion3D_bcc_w_2.kf",
+      fieldIo.convertKGridToRGrid("out/testConversion3D_bcc_w_2.kf",
                           "out/testConversion3D_bcc_w_2.rf");
       system.readWRGrid("out/testConversion3D_bcc_w_2.rf");
 
@@ -1018,9 +1021,10 @@ public:
 
       // v1.1 test used omega.in as input, compared to omega.ref
 
-      system.scaleFieldsBasis("out/testIterate2D_hex_flex_w.bf",
+      FieldIo<2> const & fieldIo = system.domain().fieldIo();
+      fieldIo.scaleFieldsBasis("out/testIterate2D_hex_flex_w.bf",
                               "out/testIterate2D_hex_flex_w_scaled.bf",
-                              0.01);
+                               0.01);
    }
 
    void testIterate2D_hex_stress()

@@ -20,14 +20,15 @@
 #include <rpc/solvers/Polymer.h>
 #include <rpc/solvers/Solvent.h>
 
-
 #include <prdc/cpu/RField.h>
+#include <prdc/cpu/RFieldDft.h>
 #include <prdc/cpu/RFieldComparison.h>
 #include <prdc/crystal/BFieldComparison.h>
 
 #include <pscf/inter/Interaction.h>
 #include <pscf/math/IntVec.h>
 
+#include <util/containers/DArray.h>
 #include <util/containers/FSArray.h>
 #include <util/param/BracketPolicy.h>
 #include <util/param/ParamComponent.h>
@@ -54,6 +55,10 @@ namespace Rpc {
     : mixture_(),
       domain_(),
       fileMaster_(),
+      w_(),
+      c_(),
+      h_(),
+      mask_(),
       interactionPtr_(nullptr),
       iteratorPtr_(nullptr),
       iteratorFactoryPtr_(nullptr),
@@ -61,21 +66,17 @@ namespace Rpc {
       sweepFactoryPtr_(nullptr),
       simulatorPtr_(nullptr),
       simulatorFactoryPtr_(nullptr),
-      w_(),
-      c_(),
-      h_(),
-      mask_(),
       fHelmholtz_(0.0),
       fIdeal_(0.0),
       fInter_(0.0),
       fExt_(0.0),
       pressure_(0.0),
+      polymerModel_(PolymerModel::Thread),
       isAllocatedGrid_(false),
       isAllocatedBasis_(false),
       hasMixture_(false),
       hasCFields_(false),
-      hasFreeEnergy_(false),
-      polymerModel_(PolymerModel::Thread)
+      hasFreeEnergy_(false)
    {
       setClassName("System");
       domain_.setFileMaster(fileMaster_);
@@ -88,7 +89,6 @@ namespace Rpc {
       sweepFactoryPtr_ = new SweepFactory<D>(*this);
       simulatorFactoryPtr_ = new SimulatorFactory<D>(*this);
       BracketPolicy::set(BracketPolicy::Optional);
-
    }
 
    /*
@@ -219,7 +219,6 @@ namespace Rpc {
             UTIL_THROW("Error: Non-positive thread count -t option");
          }
       }
-
    }
 
    /*
@@ -264,6 +263,7 @@ namespace Rpc {
       UTIL_CHECK(domain_.mesh().size() > 0);
       UTIL_CHECK(domain_.unitCell().nParameter() > 0);
       UTIL_CHECK(domain_.unitCell().lattice() != UnitCell<D>::Null);
+      domain_.fieldIo().setNMonomer(nm);
 
       // Setup the mixture
       mixture_.associate(domain_.mesh(), domain_.fft(),
@@ -333,6 +333,7 @@ namespace Rpc {
    {
       UTIL_CHECK(isAllocatedGrid_);
       std::string command, filename, inFileName, outFileName;
+      FieldIo<D> const & fieldIo = domain_.fieldIo();
 
       bool readNext = true;
       while (readNext) {
@@ -520,57 +521,57 @@ namespace Rpc {
          if (command == "BASIS_TO_RGRID") {
             readEcho(in, inFileName);
             readEcho(in, outFileName);
-            basisToRGrid(inFileName, outFileName);
+            fieldIo.convertBasisToRGrid(inFileName, outFileName);
          } else
          if (command == "RGRID_TO_BASIS") {
             readEcho(in, inFileName);
             readEcho(in, outFileName);
-            rGridToBasis(inFileName, outFileName);
+            fieldIo.convertRGridToBasis(inFileName, outFileName);
          } else
          if (command == "KGRID_TO_RGRID") {
             readEcho(in, inFileName);
             readEcho(in, outFileName);
-            kGridToRGrid(inFileName, outFileName);
+            fieldIo.convertKGridToRGrid(inFileName, outFileName);
          } else
          if (command == "RGRID_TO_KGRID") {
             readEcho(in, inFileName);
             readEcho(in, outFileName);
-            rGridToKGrid(inFileName, outFileName);
+            fieldIo.convertRGridToKGrid(inFileName, outFileName);
          } else
          if (command == "BASIS_TO_KGRID") {
             readEcho(in, inFileName);
             readEcho(in, outFileName);
-            basisToKGrid(inFileName, outFileName);
+            fieldIo.convertBasisToKGrid(inFileName, outFileName);
          } else
          if (command == "KGRID_TO_BASIS") {
             readEcho(in, inFileName);
             readEcho(in, outFileName);
-            kGridToBasis(inFileName, outFileName);
+            fieldIo.convertKGridToBasis(inFileName, outFileName);
          } else
          if (command == "CHECK_RGRID_SYMMETRY") {
             double epsilon;
             readEcho(in, inFileName);
             readEcho(in, epsilon);
             bool hasSymmetry;
-            hasSymmetry = checkRGridFieldSymmetry(inFileName, epsilon);
+            hasSymmetry = fieldIo.hasSymmetry(inFileName, epsilon);
             if (hasSymmetry) {
                Log::file() << std::endl
-                   << "Symmetry of r-grid file matches this space group."
+                   << "Symmetry of r-grid file matches this space group"
                    << std::endl << std::endl;
             } else {
                Log::file() << std::endl
-                 << "Symmetry of r-grid file does not match this\n"
-                 << "space group to within error threshold of "
-                 << Dbl(epsilon) << " ." << std::endl << std::endl;
+                   << "Symmetry of r-grid file does not match this"
+                   << "space group to within error threshold of "
+                   << Dbl(epsilon) << " ." << std::endl << std::endl;
             }
          } else
          if (command == "COMPARE_BASIS") {
-
-            // Get two filenames for comparison
             std::string filecompare1, filecompare2;
             readEcho(in, filecompare1);
             readEcho(in, filecompare2);
+            fieldIo.compareFieldsBasis(filecompare1, filecompare2);
 
+            #if 0
             DArray< DArray<double> > Bfield1, Bfield2;
             UnitCell<D> tmpUnitCell;
             domain_.fieldIo().readFieldsBasis(filecompare1, Bfield1,
@@ -580,25 +581,28 @@ namespace Rpc {
             // Note: Bfield1 & Bfield2 are allocated by readFieldsBasis
 
             // Compare and output report
-            compare(Bfield1, Bfield2);
+            fieldIo.compare(Bfield1, Bfield2);
+            #endif
 
          } else
          if (command == "COMPARE_RGRID") {
-            // Get two filenames for comparison
             std::string filecompare1, filecompare2;
             readEcho(in, filecompare1);
             readEcho(in, filecompare2);
+            fieldIo.compareFieldsRGrid(filecompare1, filecompare2);
 
+            #if 0
             DArray< RField<D> > Rfield1, Rfield2;
             UnitCell<D> tmpUnitCell;
-            domain_.fieldIo().readFieldsRGrid(filecompare1, Rfield1,
+            fieldIo.readFieldsRGrid(filecompare1, Rfield1,
                                               tmpUnitCell);
-            domain_.fieldIo().readFieldsRGrid(filecompare2, Rfield2,
+            fieldIo.readFieldsRGrid(filecompare2, Rfield2,
                                               tmpUnitCell);
             // Note: Rfield1, Rfield2 will be allocated by readFieldsRGrid
 
             // Compare and output report
-            compare(Rfield1, Rfield2);
+            fieldIo.compare(Rfield1, Rfield2);
+            #endif
 
          } else
          if (command == "SCALE_BASIS") {
@@ -606,14 +610,14 @@ namespace Rpc {
             readEcho(in, inFileName);
             readEcho(in, outFileName);
             readEcho(in, factor);
-            scaleFieldsBasis(inFileName, outFileName, factor);
+            fieldIo.scaleFieldsBasis(inFileName, outFileName, factor);
          } else
          if (command == "SCALE_RGRID") {
             double factor;
             readEcho(in, inFileName);
             readEcho(in, outFileName);
             readEcho(in, factor);
-            scaleFieldsRGrid(inFileName, outFileName, factor);
+            fieldIo.scaleFieldsRGrid(inFileName, outFileName, factor);
          } else
          if (command == "EXPAND_RGRID_DIMENSION") {
             readEcho(in, inFileName);
@@ -638,8 +642,8 @@ namespace Rpc {
             }
             Log::file() << "\n";
 
-            expandRGridDimension(inFileName, outFileName,
-                                 d, newGridDimensions);
+            fieldIo.expandRGridDimension(inFileName, outFileName,
+                                         d, newGridDimensions);
 
          } else
          if (command == "REPLICATE_UNIT_CELL") {
@@ -658,7 +662,7 @@ namespace Rpc {
                Log::file() << "\n";
             }
 
-            replicateUnitCell(inFileName, outFileName, replicas);
+            fieldIo.replicateUnitCell(inFileName, outFileName, replicas);
          } else
          if (command == "READ_H_BASIS") {
             readEcho(in, filename);
@@ -828,8 +832,15 @@ namespace Rpc {
       UTIL_CHECK(nm > 0);
       UTIL_CHECK(nb > 0);
 
+      // Allocate an array of fields
+      DArray< DArray<double> > tmpFieldsBasis;
+      tmpFieldsBasis.allocate(nm);
+      for (int i = 0; i < nm; ++i) {
+         tmpFieldsBasis[i].allocate(nb);
+      }
+
       // Read c fields into temporary array and set unit cell
-      domain_.fieldIo().readFieldsBasis(filename, tmpFieldsBasis_,
+      domain_.fieldIo().readFieldsBasis(filename, tmpFieldsBasis,
                                         domain_.unitCell());
 
       // Allocate work space array
@@ -842,16 +853,16 @@ namespace Rpc {
          for (j = 0; j < nm;  ++j) {
             wtmp[j] = 0.0;
             for (k = 0; k < nm; ++k) {
-               wtmp[j] += interaction().chi(j,k)*tmpFieldsBasis_[k][i];
+               wtmp[j] += interaction().chi(j,k)*tmpFieldsBasis[k][i];
             }
          }
          for (j = 0; j < nm;  ++j) {
-            tmpFieldsBasis_[j][i] = wtmp[j];
+            tmpFieldsBasis[j][i] = wtmp[j];
          }
       }
 
       // Set estimated w fields in system w field container
-      w_.setBasis(tmpFieldsBasis_);
+      w_.setBasis(tmpFieldsBasis);
       hasCFields_ = false;
       hasFreeEnergy_ = false;
 
@@ -1590,321 +1601,6 @@ namespace Rpc {
       }
    }
 
-   // Field File Operations
-
-   /*
-   * Convert fields from symmetry-adapted basis to real-space grid format.
-   */
-   template <int D>
-   void System<D>::basisToRGrid(std::string const & inFileName,
-                                std::string const & outFileName)
-   {
-      // Preconditions
-      UTIL_CHECK(isAllocatedGrid_);
-      UTIL_CHECK(domain_.hasGroup());
-      if (!domain_.basis().isInitialized()) {
-         readFieldHeader(inFileName);
-      }
-      UTIL_CHECK(domain_.basis().isInitialized());
-      UTIL_CHECK(isAllocatedBasis_);
-
-      // Read, convert, and write fields
-      UnitCell<D> tmpUnitCell;
-      FieldIo<D> const & fieldIo = domain_.fieldIo();
-      fieldIo.readFieldsBasis(inFileName, tmpFieldsBasis_, tmpUnitCell);
-      fieldIo.convertBasisToRGrid(tmpFieldsBasis_, tmpFieldsRGrid_);
-      fieldIo.writeFieldsRGrid(outFileName, tmpFieldsRGrid_,
-                               tmpUnitCell);
-   }
-
-   /*
-   * Convert fields from real-space grid to symmetry-adapted basis format.
-   */
-   template <int D>
-   void System<D>::rGridToBasis(std::string const & inFileName,
-                                std::string const & outFileName)
-   {
-      // Preconditions
-      UTIL_CHECK(isAllocatedGrid_);
-      UTIL_CHECK(domain_.hasGroup());
-      if (!domain_.basis().isInitialized()) {
-         readFieldHeader(inFileName);
-      }
-      UTIL_CHECK(domain_.basis().isInitialized());
-      UTIL_CHECK(isAllocatedBasis_);
-
-      // Read, convert and write fields
-      UnitCell<D> tmpUnitCell;
-      FieldIo<D> const & fieldIo = domain_.fieldIo();
-      fieldIo.readFieldsRGrid(inFileName, tmpFieldsRGrid_, tmpUnitCell);
-      fieldIo.convertRGridToBasis(tmpFieldsRGrid_, tmpFieldsBasis_);
-      fieldIo.writeFieldsBasis(outFileName, tmpFieldsBasis_,
-                               tmpUnitCell);
-   }
-
-   /*
-   * Convert fields from Fourier (k-grid) to real-space (r-grid) format.
-   */
-   template <int D>
-   void System<D>::kGridToRGrid(std::string const & inFileName,
-                                std::string const & outFileName)
-   {
-      // Preconditions
-      UTIL_CHECK(isAllocatedGrid_);
-
-      // Read, convert and write fields
-      UnitCell<D> tmpUnitCell;
-      FieldIo<D> const & fieldIo = domain_.fieldIo();
-      fieldIo.readFieldsKGrid(inFileName, tmpFieldsKGrid_, tmpUnitCell);
-      for (int i = 0; i < mixture_.nMonomer(); ++i) {
-         domain_.fft().inverseTransformUnsafe(tmpFieldsKGrid_[i],
-                                              tmpFieldsRGrid_[i]);
-      }
-      fieldIo.writeFieldsRGrid(outFileName, tmpFieldsRGrid_,
-                               tmpUnitCell);
-   }
-
-   /*
-   * Convert fields from real-space (r-grid) to Fourier (k-grid) format.
-   */
-   template <int D>
-   void System<D>::rGridToKGrid(std::string const & inFileName,
-                                std::string const & outFileName)
-   {
-      // Preconditions
-      UTIL_CHECK(isAllocatedGrid_);
-
-      // Read, convert and write fields
-      UnitCell<D> tmpUnitCell;
-      FieldIo<D> const & fieldIo = domain_.fieldIo();
-      fieldIo.readFieldsRGrid(inFileName, tmpFieldsRGrid_,
-                              tmpUnitCell);
-      for (int i = 0; i < mixture_.nMonomer(); ++i) {
-         domain_.fft().forwardTransform(tmpFieldsRGrid_[i],
-                                        tmpFieldsKGrid_[i]);
-      }
-      fieldIo.writeFieldsKGrid(outFileName, tmpFieldsKGrid_,
-                               tmpUnitCell);
-   }
-
-   /*
-   * Convert fields from Fourier (k-grid) to symmetry-adapted basis format.
-   */
-   template <int D>
-   void System<D>::kGridToBasis(std::string const & inFileName,
-                                std::string const & outFileName)
-   {
-      // Preconditions
-      UTIL_CHECK(isAllocatedGrid_);
-      UTIL_CHECK(domain_.hasGroup());
-      if (!domain_.basis().isInitialized()) {
-         readFieldHeader(inFileName);
-      }
-      UTIL_CHECK(domain_.basis().isInitialized());
-      UTIL_CHECK(isAllocatedBasis_);
-
-      // Read, convert and write fields
-      UnitCell<D> tmpUnitCell;
-      FieldIo<D> const & fieldIo = domain_.fieldIo();
-      fieldIo.readFieldsKGrid(inFileName, tmpFieldsKGrid_, tmpUnitCell);
-      fieldIo.convertKGridToBasis(tmpFieldsKGrid_, tmpFieldsBasis_);
-      fieldIo.writeFieldsBasis(outFileName, tmpFieldsBasis_,
-                               tmpUnitCell);
-   }
-
-   /*
-   * Convert fields from symmetry-adapted basis to Fourier (k-grid) format.
-   */
-   template <int D>
-   void System<D>::basisToKGrid(std::string const & inFileName,
-                                std::string const & outFileName)
-   {
-      // Preconditions
-      UTIL_CHECK(isAllocatedGrid_);
-      UTIL_CHECK(domain_.hasGroup());
-      if (!domain_.basis().isInitialized()) {
-         readFieldHeader(inFileName);
-      }
-      UTIL_CHECK(domain_.basis().isInitialized());
-      UTIL_CHECK(isAllocatedBasis_);
-
-      // Read, convert and write fields
-      UnitCell<D> tmpUnitCell;
-      FieldIo<D> const & fieldIo = domain_.fieldIo();
-      fieldIo.readFieldsBasis(inFileName, tmpFieldsBasis_, tmpUnitCell);
-      fieldIo.convertBasisToKGrid(tmpFieldsBasis_, tmpFieldsKGrid_);
-      fieldIo.writeFieldsKGrid(outFileName, tmpFieldsKGrid_,
-                               tmpUnitCell);
-   }
-
-   /*
-   * Check if r-grid fields have declared space group symmetry.
-   */
-   template <int D>
-   bool
-   System<D>::checkRGridFieldSymmetry(std::string const & inFileName,
-                                      double epsilon)
-   {
-      // Preconditions
-      UTIL_CHECK(isAllocatedGrid_);
-      UTIL_CHECK(domain_.hasGroup());
-      if (!domain_.basis().isInitialized()) {
-         readFieldHeader(inFileName);
-      }
-      UTIL_CHECK(domain_.basis().isInitialized());
-      UTIL_CHECK(isAllocatedBasis_);
-
-      // Read fields
-      UnitCell<D> tmpUnitCell;
-      domain_.fieldIo().readFieldsRGrid(inFileName,
-                                        tmpFieldsRGrid_, tmpUnitCell);
-
-      // Check symmetry for all fields
-      for (int i = 0; i < mixture_.nMonomer(); ++i) {
-         bool symmetric;
-         symmetric = domain_.fieldIo().hasSymmetry(tmpFieldsRGrid_[i],
-                                                   epsilon);
-         if (!symmetric) {
-            return false;
-         }
-      }
-      return true;
-
-   }
-
-   // Grid and Field Manipulation Commands
-
-   /*
-   * Rescale fields by a constant factor, write rescaled field to a file.
-   */
-   template <int D>
-   void System<D>::scaleFieldsBasis(std::string const & inFileName,
-                                    std::string const & outFileName,
-                                    double factor)
-   {
-      // Preconditions
-      UTIL_CHECK(isAllocatedGrid_);
-      UTIL_CHECK(domain_.hasGroup());
-      if (!domain_.basis().isInitialized()) {
-         readFieldHeader(inFileName);
-      }
-      UTIL_CHECK(domain_.basis().isInitialized());
-      UTIL_CHECK(isAllocatedBasis_);
-
-      UnitCell<D> tmpUnitCell;
-      FieldIo<D> const & fieldIo = domain_.fieldIo();
-      fieldIo.readFieldsBasis(inFileName, tmpFieldsBasis_, tmpUnitCell);
-      fieldIo.scaleFieldsBasis(tmpFieldsBasis_, factor);
-      fieldIo.writeFieldsBasis(outFileName, tmpFieldsBasis_, tmpUnitCell);
-   }
-
-   /*
-   * Rescale fields by a constant factor, write rescaled field to a file.
-   */
-   template <int D>
-   void System<D>::scaleFieldsRGrid(std::string const & inFileName,
-                                    std::string const & outFileName,
-                                    double factor) const
-   {
-      UTIL_CHECK(isAllocatedGrid_);
-
-      UnitCell<D> tmpUnitCell;
-      FieldIo<D> const & fieldIo = domain_.fieldIo();
-      bool isSymmetric;
-      isSymmetric = fieldIo.readFieldsRGrid(inFileName, tmpFieldsRGrid_,
-                                            tmpUnitCell);
-      fieldIo.scaleFieldsRGrid(tmpFieldsRGrid_, factor);
-      fieldIo.writeFieldsRGrid(outFileName, tmpFieldsRGrid_,
-                               tmpUnitCell, isSymmetric);
-   }
-
-   /*
-   * Expand the number of spatial dimensions of an RField.
-   */
-   template <int D>
-   void System<D>::expandRGridDimension(std::string const & inFileName,
-                                        std::string const & outFileName,
-                                        int d,
-                                        DArray<int> newGridDimensions)
-   {
-      // Preconditions
-      UTIL_CHECK(d > D);
-      UTIL_CHECK(isAllocatedGrid_);
-
-      // Read fields
-      UnitCell<D> tmpUnitCell;
-      domain_.fieldIo().readFieldsRGrid(inFileName,
-                                        tmpFieldsRGrid_,
-                                        tmpUnitCell);
-
-      // Expand Fields
-      domain_.fieldIo().expandRGridDimension(outFileName,
-                                             tmpFieldsRGrid_,
-                                             tmpUnitCell,
-                                             d, newGridDimensions);
-   }
-
-   /*
-   * Replicate unit cell a specified number of times in each direction.
-   */
-   template <int D>
-   void System<D>::replicateUnitCell(std::string const & inFileName,
-                                     std::string const & outFileName,
-                                     IntVec<D> const & replicas)
-   {
-      // Precondition
-      UTIL_CHECK(isAllocatedGrid_);
-
-      // Read fields
-      UnitCell<D> tmpUnitCell;
-      domain_.fieldIo().readFieldsRGrid(inFileName, tmpFieldsRGrid_,
-                                        tmpUnitCell);
-
-      // Replicate fields
-      domain_.fieldIo().replicateUnitCell(outFileName,
-                                          tmpFieldsRGrid_,
-                                          tmpUnitCell,
-                                          replicas);
-   }
-
-   // Field Comparison
-
-   /*
-   * Compare two fields in basis format, write report to Log file.
-   */
-   template <int D>
-   void System<D>::compare(DArray< DArray<double> > const & field1,
-                           DArray< DArray<double> > const & field2)
-   {
-      BFieldComparison comparison(1);
-      comparison.compare(field1, field2);
-
-      Log::file() << "\n Basis expansion field comparison results"
-                  << std::endl;
-      Log::file() << "     Maximum Absolute Difference:   "
-                  << comparison.maxDiff() << std::endl;
-      Log::file() << "     Root-Mean-Square Difference:   "
-                  << comparison.rmsDiff() << "\n" << std::endl;
-   }
-
-   /*
-   * Compare two fields in r-grid format, output report to Log file.
-   */
-   template <int D>
-   void System<D>::compare(DArray< RField<D> > const & field1,
-                           DArray< RField<D> > const & field2)
-   {
-      RFieldComparison<D> comparison;
-      comparison.compare(field1, field2);
-
-      Log::file() << "\n Real-space field comparison results"
-                  << std::endl;
-      Log::file() << "     Maximum Absolute Difference:   "
-                  << comparison.maxDiff() << std::endl;
-      Log::file() << "     Root-Mean-Square Difference:   "
-                  << comparison.rmsDiff() << "\n" << std::endl;
-   }
-
    // Private member functions
 
    /*
@@ -1933,6 +1629,7 @@ namespace Rpc {
 
       h_.setNMonomer(nMonomer);
 
+      #if 0
       // Allocate work space field arrays
       tmpFieldsRGrid_.allocate(nMonomer);
       tmpFieldsKGrid_.allocate(nMonomer);
@@ -1940,6 +1637,7 @@ namespace Rpc {
          tmpFieldsRGrid_[i].allocate(dimensions);
          tmpFieldsKGrid_[i].allocate(dimensions);
       }
+      #endif
 
       isAllocatedGrid_ = true;
    }
@@ -1965,10 +1663,13 @@ namespace Rpc {
       // Allocate basis field containers
       w_.allocateBasis(nBasis);
       c_.allocateBasis(nBasis);
+
+      #if 0
       tmpFieldsBasis_.allocate(nMonomer);
       for (int i = 0; i < nMonomer; ++i) {
          tmpFieldsBasis_[i].allocate(nBasis);
       }
+      #endif
 
       isAllocatedBasis_ = true;
    }

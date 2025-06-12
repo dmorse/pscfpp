@@ -103,8 +103,8 @@ namespace Prdc {
    * Alternative to parameter file, used only for unit testing.
    */
    template <int D, class FFT, class WLT, class FIT>
-   void 
-   DomainReal<D,FFT,WLT,FIT>::readRGridFieldHeader(std::istream& in, 
+   void
+   DomainReal<D,FFT,WLT,FIT>::readRGridFieldHeader(std::istream& in,
                                                    int& nMonomer)
    {
       // Preconditions - confirm that nothing is initialized
@@ -165,7 +165,7 @@ namespace Prdc {
    * Set the unit cell by copying a UnitCell<D>, make basis if needed.
    */
    template <int D, class FFT, class WLT, class FIT>
-   void 
+   void
    DomainReal<D,FFT,WLT,FIT>::setUnitCell(UnitCell<D> const & unitCell)
    {
       if (lattice_ == UnitCell<D>::Null) {
@@ -187,7 +187,7 @@ namespace Prdc {
    * Set the unit cell, make basis if needed.
    */
    template <int D, class FFT, class WLT, class FIT>
-   void 
+   void
    DomainReal<D,FFT,WLT,FIT>::setUnitCell(
                                typename UnitCell<D>::LatticeSystem lattice,
                                FSArray<double, 6> const & parameters)
@@ -211,7 +211,7 @@ namespace Prdc {
    * Set unit cell parameters, make basis if needed.
    */
    template <int D, class FFT, class WLT, class FIT>
-   void 
+   void
    DomainReal<D,FFT,WLT,FIT>::setUnitCell(
                                     FSArray<double, 6> const & parameters)
    {
@@ -251,8 +251,8 @@ namespace Prdc {
    * Write description of symmetry-adapted stars and basis to file.
    */
    template <int D, class FFT, class WLT, class FIT>
-   void 
-   DomainReal<D,FFT,WLT,FIT>::writeStars(std::string const & filename) 
+   void
+   DomainReal<D,FFT,WLT,FIT>::writeStars(std::string const & filename)
    const
    {
       UTIL_CHECK(hasGroup());
@@ -270,8 +270,8 @@ namespace Prdc {
    * Write a list of waves and associated stars to file.
    */
    template <int D, class FFT, class WLT, class FIT>
-   void 
-   DomainReal<D,FFT,WLT,FIT>::writeWaves(std::string const & filename) 
+   void
+   DomainReal<D,FFT,WLT,FIT>::writeWaves(std::string const & filename)
    const
    {
       UTIL_CHECK(hasGroup());
@@ -289,8 +289,8 @@ namespace Prdc {
    * Write all elements of the space group to a file.
    */
    template <int D, class FFT, class WLT, class FIT>
-   void 
-   DomainReal<D,FFT,WLT,FIT>::writeGroup(std::string const & filename) 
+   void
+   DomainReal<D,FFT,WLT,FIT>::writeGroup(std::string const & filename)
    const
    {
       UTIL_CHECK(hasGroup());

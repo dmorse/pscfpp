@@ -1,20 +1,23 @@
 /*! \page user_model_page Model and Parameters
 
-\ref user_page        (Prev / Up) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref user_page         (Prev / Up) &nbsp; &nbsp; &nbsp; &nbsp;
 \ref user_files_page   (Next)
 <BR>
 
-The manual pages linked below discuss the physical model used by PSCF 
-and the input parameters required to describe a physical system.
+The manual pages linked below discuss the physical models used by PSCF 
+for either SCFT or PS-FTS calculations, in order to explain the 
+information that a user must provide to describe a system of interest. 
+Details of input file formats and other aspects of the PSCF user 
+interface are discussed separately in subsequent pages.
 
 <h2> Contents:</h2>
 
-   <ol>
-     <li> \subpage user_model_parameters_page   "Overview" </li>
-     <li> \subpage user_model_polymer_page      "Polymer Species" </li>
-     <li> \subpage user_model_solvent_page      "Solvent Species" </li>
-     <li> \subpage user_model_conventions_page  "Parameter Conventions" </li>
-   </ol>
+  <ol>
+    <li> \subpage user_model_parameters_page  "Overview" </li>
+    <li> \subpage user_model_polymer_page     "Polymer Species" </li>
+    <li> \subpage user_model_solvent_page     "Solvent Species" </li>
+    <li> \subpage user_model_conventions_page "Parameter Conventions" </li>
+  </ol>
 
 <BR>
 \ref user_page       (Prev / Up) &nbsp; &nbsp; &nbsp; &nbsp;

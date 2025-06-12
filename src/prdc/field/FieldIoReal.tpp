@@ -18,6 +18,7 @@
 #include <prdc/crystal/Basis.h>
 #include <prdc/crystal/SpaceGroup.h>
 #include <prdc/crystal/UnitCell.h>
+#include <prdc/crystal/BFieldComparison.h>
 
 #include <pscf/mesh/Mesh.h>
 #include <pscf/mesh/MeshIterator.h>
@@ -42,36 +43,38 @@ namespace Prdc {
    /*
    * Constructor.
    */
-   template <int D, class RFRT, class RFKT, class FFTT>
-   FieldIoReal<D,RFRT,RFKT,FFTT>::FieldIoReal()
-    : meshPtr_(0),
-      fftPtr_(0),
-      hasGroupPtr_(0),
-      groupNamePtr_(0),
-      groupPtr_(0),
-      basisPtr_(0),
-      fileMasterPtr_()
+   template <int D, class RFT, class KFT, class FFT>
+   FieldIoReal<D,RFT,KFT,FFT>::FieldIoReal()
+    : meshPtr_(nullptr),
+      fftPtr_(nullptr),
+      hasGroupPtr_(nullptr),
+      groupNamePtr_(nullptr),
+      groupPtr_(nullptr),
+      basisPtr_(nullptr),
+      fileMasterPtr_(nullptr),
+      nMonomer_(0),
+      isAllocatedBasis_(false),
+      isAllocatedRGrid_(false),
+      isAllocatedKGrid_(false)
    {}
 
    /*
    * Destructor.
    */
-   template <int D, class RFRT, class RFKT, class FFTT>
-   FieldIoReal<D,RFRT,RFKT,FFTT>::~FieldIoReal()
+   template <int D, class RFT, class KFT, class FFT>
+   FieldIoReal<D,RFT,KFT,FFT>::~FieldIoReal()
    {}
 
-   // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-   // %%%% Implemented functions : Implemented in this template %%%%
-   // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+   // Initialization functions
 
    /*
    * Create associations with other members of a Domain<D> object.
    */
-   template <int D, class RFRT, class RFKT, class FFTT>
+   template <int D, class RFT, class KFT, class FFT>
    void
-   FieldIoReal<D,RFRT,RFKT,FFTT>::associate(
+   FieldIoReal<D,RFT,KFT,FFT>::associate(
                     Mesh<D> const & mesh,
-                    FFTT const & fft,
+                    FFT const & fft,
                     typename UnitCell<D>::LatticeSystem const & lattice,
                     bool const & hasGroup,
                     std::string const & groupName,
@@ -90,18 +93,25 @@ namespace Prdc {
    /*
    * Create an association with a FileMaster.
    */
-   template <int D, class RFRT, class RFKT, class FFTT>
-   void FieldIoReal<D,RFRT,RFKT,FFTT>::setFileMaster(
+   template <int D, class RFT, class KFT, class FFT>
+   void FieldIoReal<D,RFT,KFT,FFT>::setFileMaster(
                               FileMaster const & fileMaster)
    {  fileMasterPtr_ = &fileMaster; }
+
+   /*
+   * Set nMonomer, the number of monomer types.
+   */
+   template <int D, class RFT, class KFT, class FFT>
+   void FieldIoReal<D,RFT,KFT,FFT>::setNMonomer(int nMonomer)
+   {  nMonomer_ = nMonomer; }
 
    // Field File IO - Symmetry-Adapted Basis Format
 
    /*
    * Read an array of fields in basis format from an input stream.
    */
-   template <int D, class RFRT, class RFKT, class FFTT>
-   void FieldIoReal<D,RFRT,RFKT,FFTT>::readFieldsBasis(
+   template <int D, class RFT, class KFT, class FFT>
+   void FieldIoReal<D,RFT,KFT,FFT>::readFieldsBasis(
                               std::istream& in,
                               DArray< DArray<double> >& fields,
                               UnitCell<D>& unitCell) const
@@ -137,8 +147,8 @@ namespace Prdc {
    /*
    * Read a single field in basis format from an input stream
    */
-   template <int D, class RFRT, class RFKT, class FFTT>
-   void FieldIoReal<D,RFRT,RFKT,FFTT>::readFieldBasis(
+   template <int D, class RFT, class KFT, class FFT>
+   void FieldIoReal<D,RFT,KFT,FFT>::readFieldBasis(
                               std::istream& in,
                               DArray<double>& field,
                               UnitCell<D>& unitCell) const
@@ -166,8 +176,8 @@ namespace Prdc {
    /*
    * Write an array of fields in basis format to an output stream.
    */
-   template <int D, class RFRT, class RFKT, class FFTT>
-   void FieldIoReal<D,RFRT,RFKT,FFTT>::writeFieldsBasis(
+   template <int D, class RFT, class KFT, class FFT>
+   void FieldIoReal<D,RFT,KFT,FFT>::writeFieldsBasis(
                               std::ostream &out,
                               DArray< DArray<double> > const & fields,
                               UnitCell<D> const & unitCell) const
@@ -194,8 +204,8 @@ namespace Prdc {
    /*
    * Write a single field in basis format to an output stream.
    */
-   template <int D, class RFRT, class RFKT, class FFTT>
-   void FieldIoReal<D,RFRT,RFKT,FFTT>::writeFieldBasis(
+   template <int D, class RFT, class KFT, class FFT>
+   void FieldIoReal<D,RFT,KFT,FFT>::writeFieldBasis(
                               std::ostream& out,
                               DArray<double> const & field,
                               UnitCell<D> const & unitCell) const
@@ -211,15 +221,185 @@ namespace Prdc {
       writeFieldsBasis(out, fields, unitCell);
    }
 
-   // Field Format Conversion Functions - Symmetry Adapted Basis
+   /*
+   * File IO wrapper functions:
+   *
+   * These functions take a file name as an argument, and simply wrap
+   * file open and close operations around a function of the same name
+   * that takes an io stream argument. These functions can use the same
+   * implementation in Rpc and Rpg.
+   */
+
+   /*
+   * Open-close a file and read a set of fields in basis format.
+   */
+   template <int D, class RFT, class KFT, class FFT>
+   void FieldIoReal<D,RFT,KFT,FFT>::readFieldsBasis(
+                              std::string filename,
+                              DArray<DArray<double> >& fields,
+                              UnitCell<D>& unitCell) const
+   {
+
+      std::ifstream file;
+      fileMaster().openInputFile(filename, file);
+      readFieldsBasis(file, fields, unitCell);
+      file.close();
+   }
+
+   /*
+   * Open-close a file and read a single field in basis format.
+   */
+   template <int D, class RFT, class KFT, class FFT>
+   void FieldIoReal<D,RFT,KFT,FFT>::readFieldBasis(
+                              std::string filename,
+                              DArray<double>& field,
+                              UnitCell<D>& unitCell) const
+   {
+      std::ifstream file;
+      fileMaster().openInputFile(filename, file);
+      readFieldBasis(file, field, unitCell);
+      file.close();
+   }
+
+   /*
+   * Open-close a file, and write an array of fields in basis format.
+   */
+   template <int D, class RFT, class KFT, class FFT>
+   void FieldIoReal<D,RFT,KFT,FFT>::writeFieldsBasis(
+                              std::string filename,
+                              DArray<DArray<double> > const & fields,
+                              UnitCell<D> const & unitCell) const
+   {
+       std::ofstream file;
+       fileMaster().openOutputFile(filename, file);
+       writeFieldsBasis(file, fields, unitCell);
+       file.close();
+   }
+
+   /*
+   * Open-close a file, and write a single field in basis format.
+   */
+   template <int D, class RFT, class KFT, class FFT>
+   void FieldIoReal<D,RFT,KFT,FFT>::writeFieldBasis(
+                              std::string filename,
+                              DArray<double> const & field,
+                              UnitCell<D> const & unitCell) const
+   {
+      std::ofstream file;
+      fileMaster().openOutputFile(filename, file);
+      writeFieldBasis(file, field, unitCell);
+      file.close();
+   }
+
+   /*
+   * Open-close a file, and write an array of fields in r-grid format
+   */
+   template <int D, class RFT, class KFT, class FFT>
+   bool FieldIoReal<D,RFT,KFT,FFT>::readFieldsRGrid(
+                              std::string filename,
+                              DArray< RFT >& fields,
+                              UnitCell<D>& unitCell) const
+   {
+      std::ifstream file;
+      fileMaster().openInputFile(filename, file);
+      bool isSymmetric;
+      isSymmetric = readFieldsRGrid(file, fields, unitCell);
+      file.close();
+      return isSymmetric;
+   }
+
+   /*
+   * Open-close a file, and read a single field in r-grid format
+   */
+   template <int D, class RFT, class KFT, class FFT>
+   bool FieldIoReal<D,RFT,KFT,FFT>::readFieldRGrid(
+                              std::string filename,
+                              RFT & field,
+                              UnitCell<D>& unitCell) const
+   {
+      std::ifstream file;
+      fileMaster().openInputFile(filename, file);
+      bool isSymmetric;
+      isSymmetric = readFieldRGrid(file, field, unitCell);
+      file.close();
+      return isSymmetric;
+   }
+
+   /*
+   * Open-close a file, and write an array of fields in r-grid format
+   */
+   template <int D, class RFT, class KFT, class FFT>
+   void FieldIoReal<D,RFT,KFT,FFT>::writeFieldsRGrid(
+                              std::string filename,
+                              DArray< RFT > const & fields,
+                              UnitCell<D> const & unitCell,
+                              bool isSymmetric) const
+   {
+      std::ofstream file;
+      fileMaster().openOutputFile(filename, file);
+      bool writeHeader = true;
+      bool writeMeshSize = true;
+      writeFieldsRGrid(file, fields, unitCell,
+                       writeHeader, isSymmetric, writeMeshSize);
+      file.close();
+   }
+
+   /*
+   * Open-close a file, and write a single field in r-grid format
+   */
+   template <int D, class RFT, class KFT, class FFT>
+   void FieldIoReal<D,RFT,KFT,FFT>::writeFieldRGrid(
+                              std::string filename,
+                              RFT const & field,
+                              UnitCell<D> const & unitCell,
+                              bool isSymmetric) const
+   {
+      std::ofstream file;
+      fileMaster().openOutputFile(filename, file);
+      writeFieldRGrid(file, field, unitCell, isSymmetric);
+      file.close();
+   }
+
+   /*
+   * Open-close a file, and read an array of fields in k-grid format
+   */
+   template <int D, class RFT, class KFT, class FFT>
+   void FieldIoReal<D,RFT,KFT,FFT>::readFieldsKGrid(
+                              std::string filename,
+                              DArray< KFT >& fields,
+                              UnitCell<D>& unitCell) const
+   {
+      std::ifstream file;
+      fileMaster().openInputFile(filename, file);
+      readFieldsKGrid(file, fields, unitCell);
+      file.close();
+   }
+
+   /*
+   * Open-close a file, and read an array of fields in k-grid format
+   */
+   template <int D, class RFT, class KFT, class FFT>
+   void FieldIoReal<D,RFT,KFT,FFT>::writeFieldsKGrid(
+                              std::string filename,
+                              DArray< KFT > const & fields,
+                              UnitCell<D> const & unitCell,
+                              bool isSymmetric) const
+   {
+      std::ofstream file;
+      fileMaster().openOutputFile(filename, file);
+      writeFieldsKGrid(file, fields, unitCell, isSymmetric);
+      file.close();
+   }
+
+   // Field Format Conversion Functions - Basis <-> KGrid
 
    /*
    * Convert array of fields from basis to k-grid format.
    */
-   template <int D, class RFRT, class RFKT, class FFTT>
-   void FieldIoReal<D,RFRT,RFKT,FFTT>::convertBasisToKGrid(
+   template <int D, class RFT, class KFT, class FFT>
+   void FieldIoReal<D,RFT,KFT,FFT>::convertBasisToKGrid(
                               DArray< DArray <double> > const & in,
-                              DArray< RFKT >& out) const
+                              DArray< KFT >& out) const
    {
       // Inspect input and output field containers
       int nMonomer, nMonomerOut, capacity;
@@ -237,9 +417,9 @@ namespace Prdc {
    /*
    * Convert array of fields from k-grid format to basis format.
    */
-   template <int D, class RFRT, class RFKT, class FFTT>
-   void FieldIoReal<D,RFRT,RFKT,FFTT>::convertKGridToBasis(
-                              DArray< RFKT > const & in,
+   template <int D, class RFT, class KFT, class FFT>
+   void FieldIoReal<D,RFT,KFT,FFT>::convertKGridToBasis(
+                              DArray< KFT > const & in,
                               DArray< DArray <double> > & out,
                               bool checkSymmetry,
                               double epsilon) const
@@ -258,37 +438,65 @@ namespace Prdc {
    }
 
    /*
-   * Test if a single r-grid field has declared space group symmetry.
-   * Return true if symmetric, false otherwise. Print error values
-   * if verbose == true and hasSymmetry == false.
+   * Convert a field file from k-grid to basis format.
    */
-   template <int D, class RFRT, class RFKT, class FFTT>
-   bool FieldIoReal<D,RFRT,RFKT,FFTT>::hasSymmetry(
-                              RFRT const & in, 
-                              double epsilon,
-                              bool verbose) const
+   template <int D, class RFT, class KFT, class FFT>
+   void FieldIoReal<D,RFT,KFT,FFT>::convertKGridToBasis(
+                                std::string const & inFileName,
+                                std::string const & outFileName) const
    {
-      checkAllocateField(workDft_, mesh().dimensions());
-      fft().forwardTransform(in, workDft_);
-      return hasSymmetry(workDft_, epsilon, verbose);
+      checkAllocateKGrid();
+      checkAllocateBasis(inFileName);
+      UnitCell<D> tmpUnitCell;
+      readFieldsKGrid(inFileName, tmpFieldsKGrid_, tmpUnitCell);
+      convertKGridToBasis(tmpFieldsKGrid_, tmpFieldsBasis_);
+      writeFieldsBasis(outFileName, tmpFieldsBasis_, tmpUnitCell);
    }
 
-   template <int D, class RFRT, class RFKT, class FFTT>
-   void FieldIoReal<D,RFRT,RFKT,FFTT>::convertBasisToRGrid(
-                              DArray<double> const & in,
-                              RFRT& out) const
+   /*
+   * Convert a field file from basis to k-grid format.
+   */
+   template <int D, class RFT, class KFT, class FFT>
+   void FieldIoReal<D,RFT,KFT,FFT>::convertBasisToKGrid(
+                                std::string const & inFileName,
+                                std::string const & outFileName) const
    {
+      checkAllocateKGrid();
+      checkAllocateBasis(inFileName);
+      UnitCell<D> tmpUnitCell;
+      readFieldsBasis(inFileName, tmpFieldsBasis_, tmpUnitCell);
+      convertBasisToKGrid(tmpFieldsBasis_, tmpFieldsKGrid_);
+      writeFieldsKGrid(outFileName, tmpFieldsKGrid_, tmpUnitCell);
+   }
+
+   // Field Format Conversion Functions - Basis <-> RGrid
+
+   /*
+   * Convert a single field from basis to r-grid format.
+   */
+   template <int D, class RFT, class KFT, class FFT>
+   void FieldIoReal<D,RFT,KFT,FFT>::convertBasisToRGrid(
+                              DArray<double> const & in,
+                              RFT& out) const
+   {
+      UTIL_CHECK(in.isAllocated());
+      UTIL_CHECK(out.isAllocated());
       checkAllocateField(workDft_, mesh().dimensions());
       convertBasisToKGrid(in, workDft_);
       fft().inverseTransformUnsafe(workDft_, out);
    }
 
-   template <int D, class RFRT, class RFKT, class FFTT>
-   void FieldIoReal<D,RFRT,RFKT,FFTT>::convertBasisToRGrid(
+   /*
+   * Convert an array of fields from basis to r-grid format.
+   */
+   template <int D, class RFT, class KFT, class FFT>
+   void FieldIoReal<D,RFT,KFT,FFT>::convertBasisToRGrid(
                               DArray< DArray <double> > const & in,
-                              DArray< RFRT >& out) const
+                              DArray< RFT >& out) const
    {
-      UTIL_ASSERT(in.capacity() == out.capacity());
+      UTIL_CHECK(in.isAllocated());
+      UTIL_CHECK(out.isAllocated());
+      UTIL_CHECK(in.capacity() == out.capacity());
       checkAllocateField(workDft_, mesh().dimensions());
 
       int n = in.capacity();
@@ -298,9 +506,12 @@ namespace Prdc {
       }
    }
 
-   template <int D, class RFRT, class RFKT, class FFTT>
-   void FieldIoReal<D,RFRT,RFKT,FFTT>::convertRGridToBasis(
-                              RFRT const & in,
+   /*
+   * Convert a single field from r-grid to basis format.
+   */
+   template <int D, class RFT, class KFT, class FFT>
+   void FieldIoReal<D,RFT,KFT,FFT>::convertRGridToBasis(
+                              RFT const & in,
                               DArray<double> & out,
                               bool checkSymmetry,
                               double epsilon) const
@@ -310,9 +521,12 @@ namespace Prdc {
       convertKGridToBasis(workDft_, out, checkSymmetry, epsilon);
    }
 
-   template <int D, class RFRT, class RFKT, class FFTT>
-   void FieldIoReal<D,RFRT,RFKT,FFTT>::convertRGridToBasis(
-                              DArray< RFRT > const & in,
+   /*
+   * Convert an array of fields from r-grid to basis format.
+   */
+   template <int D, class RFT, class KFT, class FFT>
+   void FieldIoReal<D,RFT,KFT,FFT>::convertRGridToBasis(
+                              DArray< RFT > const & in,
                               DArray< DArray <double> > & out,
                               bool checkSymmetry,
                               double epsilon) const
@@ -333,15 +547,48 @@ namespace Prdc {
       }
    }
 
+   /*
+   * Convert a field file from basis to r-grid format.
+   */
+   template <int D, class RFT, class KFT, class FFT>
+   void FieldIoReal<D,RFT,KFT,FFT>::convertBasisToRGrid(
+                                std::string const & inFileName,
+                                std::string const & outFileName) const
+   {
+      checkAllocateRGrid();
+      checkAllocateBasis(inFileName);
+      UnitCell<D> tmpUnitCell;
+
+      readFieldsBasis(inFileName, tmpFieldsBasis_, tmpUnitCell);
+      convertBasisToRGrid(tmpFieldsBasis_, tmpFieldsRGrid_);
+      writeFieldsRGrid(outFileName, tmpFieldsRGrid_, tmpUnitCell);
+   }
+
+   /*
+   * Convert a field file from r-grid to basis format.
+   */
+   template <int D, class RFT, class KFT, class FFT>
+   void FieldIoReal<D,RFT,KFT,FFT>::convertRGridToBasis(
+                                std::string const & inFileName,
+                                std::string const & outFileName) const
+   {
+      checkAllocateRGrid();
+      checkAllocateBasis(inFileName);
+      UnitCell<D> tmpUnitCell;
+      readFieldsRGrid(inFileName, tmpFieldsRGrid_, tmpUnitCell);
+      convertRGridToBasis(tmpFieldsRGrid_, tmpFieldsBasis_);
+      writeFieldsBasis(outFileName, tmpFieldsBasis_, tmpUnitCell);
+   }
+
    // FFT conversion functions (KGrid <-> RGrid) [Same in Rpc and Rpg]
 
    /*
-   * Apply inverse FFT to an array of k-grid fields.
+   * Apply inverse FFT to an array of k-grid fields, converting to r-grid.
    */
-   template <int D, class RFRT, class RFKT, class FFTT>
-   void FieldIoReal<D,RFRT,RFKT,FFTT>::convertKGridToRGrid(
-                              DArray< RFKT > const & in,
-                              DArray< RFRT >& out) const
+   template <int D, class RFT, class KFT, class FFT>
+   void FieldIoReal<D,RFT,KFT,FFT>::convertKGridToRGrid(
+                              DArray< KFT > const & in,
+                              DArray< RFT >& out) const
    {
       UTIL_ASSERT(in.capacity() == out.capacity());
       int n = in.capacity();
@@ -351,22 +598,22 @@ namespace Prdc {
    }
 
    /*
-   * Apply inverse FFT to a single k-grid field.
+   * Apply inverse FFT to a single k-grid field, converting to r-grid.
    */
-   template <int D, class RFRT, class RFKT, class FFTT>
-   void FieldIoReal<D,RFRT,RFKT,FFTT>::convertKGridToRGrid(
-                              RFKT const & in, RFRT& out) const
+   template <int D, class RFT, class KFT, class FFT>
+   void FieldIoReal<D,RFT,KFT,FFT>::convertKGridToRGrid(
+                              KFT const & in, RFT& out) const
    {
       fft().inverseTransformSafe(in, out);
    }
 
    /*
-   * Apply forward FFT to an array of r-grid fields.
+   * Apply forward FFT to an array of r-grid fields, converting to k-grid.
    */
-   template <int D, class RFRT, class RFKT, class FFTT>
-   void FieldIoReal<D,RFRT,RFKT,FFTT>::convertRGridToKGrid(
-                              DArray< RFRT > const & in,
-                              DArray< RFKT >& out) const
+   template <int D, class RFT, class KFT, class FFT>
+   void FieldIoReal<D,RFT,KFT,FFT>::convertRGridToKGrid(
+                              DArray< RFT > const & in,
+                              DArray< KFT >& out) const
    {
       UTIL_ASSERT(in.capacity() == out.capacity());
       int n = in.capacity();
@@ -376,196 +623,229 @@ namespace Prdc {
    }
 
    /*
-   * Apply forward FFT to a single r-grid field.
+   * Apply forward FFT to a single r-grid field, converting to k-grid.
    */
-   template <int D, class RFRT, class RFKT, class FFTT>
-   void FieldIoReal<D,RFRT,RFKT,FFTT>::convertRGridToKGrid(
-                              RFRT const & in,
-                              RFKT& out) const
+   template <int D, class RFT, class KFT, class FFT>
+   void FieldIoReal<D,RFT,KFT,FFT>::convertRGridToKGrid(
+                              RFT const & in,
+                              KFT& out) const
+   {  fft().forwardTransform(in, out); }
+
+   /*
+   * Convert a field file from k-grid to r-grid format.
+   */
+   template <int D, class RFT, class KFT, class FFT>
+   void FieldIoReal<D,RFT,KFT,FFT>::convertKGridToRGrid(
+                                std::string const & inFileName,
+                                std::string const & outFileName) const
    {
-      fft().forwardTransform(in, out);
+      checkAllocateKGrid();
+      checkAllocateRGrid();
+      UnitCell<D> tmpUnitCell;
+      readFieldsKGrid(inFileName, tmpFieldsKGrid_, tmpUnitCell);
+      for (int i = 0; i < nMonomer_; ++i) {
+         fft().inverseTransformUnsafe(tmpFieldsKGrid_[i],
+                                      tmpFieldsRGrid_[i]);
+      }
+      writeFieldsRGrid(outFileName, tmpFieldsRGrid_, tmpUnitCell);
    }
 
    /*
-   * File IO wrapper functions:
-   *
-   * These functions take a file name as an argument, and simply wrap
-   * file open and close operations around a function of the same name
-   * that takes an io stream argument. These functions can use the same
-   * implementation in Rpc and Rpg.
+   * Convert a field file from r-grid to k-grid format.
    */
-
-   /*
-   * Open-close a file and read a set of fields in basis format.
-   */
-   template <int D, class RFRT, class RFKT, class FFTT>
-   void FieldIoReal<D,RFRT,RFKT,FFTT>::readFieldsBasis(
-                              std::string filename,
-                              DArray<DArray<double> >& fields,
-                              UnitCell<D>& unitCell) const
+   template <int D, class RFT, class KFT, class FFT>
+   void FieldIoReal<D,RFT,KFT,FFT>::convertRGridToKGrid(
+                                std::string const & inFileName,
+                                std::string const & outFileName) const
    {
-
-      std::ifstream file;
-      fileMaster().openInputFile(filename, file);
-      readFieldsBasis(file, fields, unitCell);
-      file.close();
+      checkAllocateRGrid();
+      checkAllocateKGrid();
+      UnitCell<D> tmpUnitCell;
+      readFieldsRGrid(inFileName, tmpFieldsRGrid_, tmpUnitCell);
+      convertRGridToKGrid(tmpFieldsRGrid_, tmpFieldsKGrid_);
+      writeFieldsKGrid(outFileName, tmpFieldsKGrid_, tmpUnitCell);
    }
 
+   // Field Inspection
+
    /*
-   * Open-close a file and read single fields in basis format.
+   * Test if a single r-grid field has declared space group symmetry.
+   * Return true if symmetric, false otherwise. Print error values
+   * if verbose == true and hasSymmetry == false.
    */
-   template <int D, class RFRT, class RFKT, class FFTT>
-   void FieldIoReal<D,RFRT,RFKT,FFTT>::readFieldBasis(
-                              std::string filename,
-                              DArray<double>& field,
-                              UnitCell<D>& unitCell) const
+   template <int D, class RFT, class KFT, class FFT>
+   bool FieldIoReal<D,RFT,KFT,FFT>::hasSymmetry(
+                              RFT const & in,
+                              double epsilon,
+                              bool verbose) const
    {
-      std::ifstream file;
-      fileMaster().openInputFile(filename, file);
-      readFieldBasis(file, field, unitCell);
-      file.close();
+      checkAllocateField(workDft_, mesh().dimensions());
+      fft().forwardTransform(in, workDft_);
+      return hasSymmetry(workDft_, epsilon, verbose);
    }
 
    /*
-   * Open-close a file, and write an array of fields in basis format.
+   * Check if r-grid fields have declared space group symmetry.
    */
-   template <int D, class RFRT, class RFKT, class FFTT>
-   void FieldIoReal<D,RFRT,RFKT,FFTT>::writeFieldsBasis(
-                              std::string filename,
-                              DArray<DArray<double> > const & fields,
-                              UnitCell<D> const & unitCell) const
+   template <int D, class RFT, class KFT, class FFT>
+   bool FieldIoReal<D,RFT,KFT,FFT>::hasSymmetry(
+                                  std::string const & inFileName,
+                                  double epsilon) const
    {
-       std::ofstream file;
-       fileMaster().openOutputFile(filename, file);
-       writeFieldsBasis(file, fields, unitCell);
-       file.close();
+      checkAllocateRGrid();
+
+      // Read fields
+      UnitCell<D> tmpUnitCell;
+      readFieldsRGrid(inFileName, tmpFieldsRGrid_, tmpUnitCell);
+
+      // Check symmetry for all fields
+      for (int i = 0; i < nMonomer_; ++i) {
+         bool symmetric;
+         symmetric = hasSymmetry(tmpFieldsRGrid_[i], epsilon);
+         if (!symmetric) {
+            return false;
+         }
+      }
+      return true;
    }
 
    /*
-   * Write a single field in basis format, open and close the file.
+   * Compare two fields in basis format, write report to Log file.
    */
-   template <int D, class RFRT, class RFKT, class FFTT>
-   void FieldIoReal<D,RFRT,RFKT,FFTT>::writeFieldBasis( 
-                              std::string filename,
-                              DArray<double> const & field,
-                              UnitCell<D> const & unitCell) const
+   template <int D, class RFT, class KFT, class FFT>
+   void FieldIoReal<D,RFT,KFT,FFT>::compareFieldsBasis(
+                        DArray< DArray<double> > const & field1,
+                        DArray< DArray<double> > const & field2) const
    {
-      std::ofstream file;
-      fileMaster().openOutputFile(filename, file);
-      writeFieldBasis(file, field, unitCell);
-      file.close();
+      BFieldComparison comparison(1);
+      comparison.compare(field1, field2);
+
+      Log::file() << "\n Basis expansion field comparison results"
+                  << std::endl;
+      Log::file() << "     Maximum Absolute Difference:   "
+                  << comparison.maxDiff() << std::endl;
+      Log::file() << "     Root-Mean-Square Difference:   "
+                  << comparison.rmsDiff() << "\n" << std::endl;
    }
 
-   template <int D, class RFRT, class RFKT, class FFTT>
-   bool FieldIoReal<D,RFRT,RFKT,FFTT>::readFieldsRGrid(
-                              std::string filename,
-                              DArray< RFRT >& fields,
-                              UnitCell<D>& unitCell) const
+   template <int D, class RFT, class KFT, class FFT>
+   void FieldIoReal<D,RFT,KFT,FFT>::compareFieldsBasis(
+                                std::string const & filename1,
+                                std::string const & filename2) const
    {
-      std::ifstream file;
-      fileMaster().openInputFile(filename, file);
-      bool isSymmetric;
-      isSymmetric = readFieldsRGrid(file, fields, unitCell);
-      file.close();
-      return isSymmetric;
+      DArray< DArray<double> > fields1, fields2;
+      UnitCell<D> tmpUnitCell;
+      // Unallocated arrays will be allocated in readFieldsBasis
+      readFieldsBasis(filename1, fields1, tmpUnitCell);
+      readFieldsBasis(filename2, fields2, tmpUnitCell);
+      compareFieldsBasis(fields1, fields2);
    }
 
-   template <int D, class RFRT, class RFKT, class FFTT>
-   bool FieldIoReal<D,RFRT,RFKT,FFTT>::readFieldRGrid(
-                              std::string filename,
-                              RFRT & field,
-                              UnitCell<D>& unitCell) const
+   template <int D, class RFT, class KFT, class FFT>
+   void FieldIoReal<D,RFT,KFT,FFT>::compareFieldsRGrid(
+                                std::string const & filename1,
+                                std::string const & filename2) const
    {
-      std::ifstream file;
-      fileMaster().openInputFile(filename, file);
-      bool isSymmetric;
-      isSymmetric = readFieldRGrid(file, field, unitCell);
-      file.close();
-      return isSymmetric;
+      DArray< RFT > fields1, fields2;
+      UnitCell<D> tmpUnitCell;
+      // Unallocated arrays will be allocated in readFieldsRGrid
+      readFieldsRGrid(filename1, fields1, tmpUnitCell);
+      readFieldsRGrid(filename2, fields2, tmpUnitCell);
+      compareFieldsRGrid(fields1, fields2);
    }
 
-   template <int D, class RFRT, class RFKT, class FFTT>
-   void FieldIoReal<D,RFRT,RFKT,FFTT>::writeFieldsRGrid(
-                              std::string filename,
-                              DArray< RFRT > const & fields,
-                              UnitCell<D> const & unitCell,
-                              bool isSymmetric) const
+   // Field Scaling
+
+   /*
+   * Multiply a single field in basis format by a constant factor.
+   */
+   template <int D, class RFT, class KFT, class FFT>
+   void FieldIoReal<D,RFT,KFT,FFT>::scaleFieldBasis(
+                              DArray<double> & field,
+                              double factor) const
    {
-      std::ofstream file;
-      fileMaster().openOutputFile(filename, file);
-      bool writeHeader = true;
-      bool writeMeshSize = true;
-      writeFieldsRGrid(file, fields, unitCell,
-                       writeHeader, isSymmetric, writeMeshSize);
-      file.close();
+      UTIL_CHECK(field.isAllocated());
+      int n = field.capacity();
+      for (int i = 0; i < n; ++i) {
+         field[i] *= factor;
+      }
    }
 
-   template <int D, class RFRT, class RFKT, class FFTT>
-   void FieldIoReal<D,RFRT,RFKT,FFTT>::writeFieldRGrid(
-                              std::string filename,
-                              RFRT const & field,
-                              UnitCell<D> const & unitCell,
-                              bool isSymmetric) const
-   {
-      std::ofstream file;
-      fileMaster().openOutputFile(filename, file);
-      writeFieldRGrid(file, field, unitCell, isSymmetric);
-      file.close();
-   }
-
-   template <int D, class RFRT, class RFKT, class FFTT>
-   void FieldIoReal<D,RFRT,RFKT,FFTT>::readFieldsKGrid(
-                              std::string filename,
-                              DArray< RFKT >& fields,
-                              UnitCell<D>& unitCell) const
-   {
-      std::ifstream file;
-      fileMaster().openInputFile(filename, file);
-      readFieldsKGrid(file, fields, unitCell);
-      file.close();
-   }
-
-   template <int D, class RFRT, class RFKT, class FFTT>
-   void FieldIoReal<D,RFRT,RFKT,FFTT>::writeFieldsKGrid(
-                              std::string filename,
-                              DArray< RFKT > const & fields,
-                              UnitCell<D> const & unitCell,
-                              bool isSymmetric) const
-   {
-      std::ofstream file;
-      fileMaster().openOutputFile(filename, file);
-      writeFieldsKGrid(file, fields, unitCell, isSymmetric);
-      file.close();
-   }
-
-   // Field and Grid Manipulation Utilities
-
-   template <int D, class RFRT, class RFKT, class FFTT>
-   void FieldIoReal<D,RFRT,RFKT,FFTT>::scaleFieldsBasis(
+   /*
+   * Rescale an array of fields in basis format by a constant factor.
+   */
+   template <int D, class RFT, class KFT, class FFT>
+   void FieldIoReal<D,RFT,KFT,FFT>::scaleFieldsBasis(
                               DArray< DArray<double> >& fields,
                               double factor) const
-   { 
+   {
       int n = fields.capacity();
+      UTIL_CHECK(n > 0);
+      int m = fields[0].capacity();
       for (int i = 0; i < n; ++i) {
+         UTIL_CHECK(fields[i].capacity() == m);
          scaleFieldBasis(fields[i], factor);
       }
    }
 
-   template <int D, class RFRT, class RFKT, class FFTT>
-   void FieldIoReal<D,RFRT,RFKT,FFTT>::scaleFieldsRGrid(
-                              DArray< RFRT > & fields,
+   /*
+   * Rescale fields in files by a constant factor.
+   */
+   template <int D, class RFT, class KFT, class FFT>
+   void FieldIoReal<D,RFT,KFT,FFT>::scaleFieldsBasis(
+                                std::string const & inFileName,
+                                std::string const & outFileName,
+                                double factor) const
+   {
+      checkAllocateBasis(inFileName);
+      UnitCell<D> tmpUnitCell;
+      readFieldsBasis(inFileName, tmpFieldsBasis_, tmpUnitCell);
+      scaleFieldsBasis(tmpFieldsBasis_, factor);
+      writeFieldsBasis(outFileName, tmpFieldsBasis_, tmpUnitCell);
+   }
+
+   /*
+   * Rescale fields in r-grid format by a constant factor.
+   */
+   template <int D, class RFT, class KFT, class FFT>
+   void FieldIoReal<D,RFT,KFT,FFT>::scaleFieldsRGrid(
+                              DArray< RFT > & fields,
                               double factor) const
-   { 
+   {
       int n = fields.capacity();
       for (int i = 0; i < n; ++i) {
          scaleFieldRGrid(fields[i], factor);
       }
    }
 
-   template <int D, class RFRT, class RFKT, class FFTT>
-   void FieldIoReal<D,RFRT,RFKT,FFTT>::replicateUnitCell(
+   /*
+   * Rescale fields by a constant factor, read and write to file.
+   */
+   template <int D, class RFT, class KFT, class FFT>
+   void FieldIoReal<D,RFT,KFT,FFT>::scaleFieldsRGrid(
+                                std::string const & inFileName,
+                                std::string const & outFileName,
+                                double factor) const
+   {
+      checkAllocateRGrid();
+      UnitCell<D> tmpUnitCell;
+      bool isSymmetric;
+      isSymmetric = readFieldsRGrid(inFileName, tmpFieldsRGrid_,
+                                    tmpUnitCell);
+      scaleFieldsRGrid(tmpFieldsRGrid_, factor);
+      writeFieldsRGrid(outFileName, tmpFieldsRGrid_, tmpUnitCell,
+                       isSymmetric);
+   }
+
+   // Grid manipulation utilities
+
+   /*
+   * Replicate unit cell a specified number of times in each direction.
+   */
+   template <int D, class RFT, class KFT, class FFT>
+   void FieldIoReal<D,RFT,KFT,FFT>::replicateUnitCell(
                               std::string filename,
-                              DArray<RFRT> const & fields,
+                              DArray<RFT> const & fields,
                               UnitCell<D> const & unitCell,
                               IntVec<D> const & replicas) const
    {
@@ -575,10 +855,29 @@ namespace Prdc {
       file.close();
    }
 
-   template <int D, class RFRT, class RFKT, class FFTT>
-   void FieldIoReal<D,RFRT,RFKT,FFTT>::expandRGridDimension(
+   /*
+   * Replicate unit cell a specified number of times in each direction.
+   */
+   template <int D, class RFT, class KFT, class FFT>
+   void FieldIoReal<D,RFT,KFT,FFT>::replicateUnitCell(
+                                std::string const & inFileName,
+                                std::string const & outFileName,
+                                IntVec<D> const & replicas) const
+   {
+      checkAllocateRGrid();
+      UnitCell<D> tmpUnitCell;
+      readFieldsRGrid(inFileName, tmpFieldsRGrid_, tmpUnitCell);
+      replicateUnitCell(outFileName, tmpFieldsRGrid_, tmpUnitCell,
+                        replicas);
+   }
+
+   /*
+   * Expand the number of spatial dimensions of an RField.
+   */
+   template <int D, class RFT, class KFT, class FFT>
+   void FieldIoReal<D,RFT,KFT,FFT>::expandRGridDimension(
                               std::string filename,
-                              DArray<RFRT> const & fields,
+                              DArray<RFT> const & fields,
                               UnitCell<D> const & unitCell, int d,
                               DArray<int> newGridDimensions) const
    {
@@ -586,6 +885,23 @@ namespace Prdc {
       fileMaster().openOutputFile(filename, file);
       expandRGridDimension(file, fields, unitCell, d, newGridDimensions);
       file.close();
+   }
+
+   /*
+   * Expand the number of spatial dimensions of an RField.
+   */
+   template <int D, class RFT, class KFT, class FFT>
+   void FieldIoReal<D,RFT,KFT,FFT>::expandRGridDimension(
+                                std::string const & inFileName,
+                                std::string const & outFileName,
+                                int d,
+                                DArray<int> newGridDimensions) const
+   {
+      checkAllocateRGrid();
+      UnitCell<D> tmpUnitCell;
+      readFieldsRGrid(inFileName, tmpFieldsRGrid_, tmpUnitCell);
+      expandRGridDimension(outFileName, tmpFieldsRGrid_, tmpUnitCell,
+                           d, newGridDimensions);
    }
 
    // File Header IO Utilities
@@ -600,8 +916,8 @@ namespace Prdc {
    * Also validates lattice type and groupName (if any), and constructs
    * a symmetry-adapted basis if there is a group but no basis.
    */
-   template <int D, class RFRT, class RFKT, class FFTT>
-   void FieldIoReal<D,RFRT,RFKT,FFTT>::readFieldHeader(
+   template <int D, class RFT, class KFT, class FFT>
+   void FieldIoReal<D,RFT,KFT,FFT>::readFieldHeader(
                               std::istream& in,
                               int& nMonomer,
                               UnitCell<D>& unitCell,
@@ -643,7 +959,7 @@ namespace Prdc {
       }
 
       // Check for presence of group name in the field file header
-      isSymmetric = false; 
+      isSymmetric = false;
       if (groupNameIn != "") {
          isSymmetric = true;
       }
@@ -686,8 +1002,8 @@ namespace Prdc {
    /*
    * Write a field file header.
    */
-   template <int D, class RFRT, class RFKT, class FFTT>
-   void FieldIoReal<D,RFRT,RFKT,FFTT>::writeFieldHeader(
+   template <int D, class RFT, class KFT, class FFT>
+   void FieldIoReal<D,RFT,KFT,FFT>::writeFieldHeader(
                               std::ostream &out,
                               int nMonomer,
                               UnitCell<D> const & unitCell,
@@ -703,6 +1019,81 @@ namespace Prdc {
       Pscf::Prdc::writeFieldHeader(out, v1, v2, unitCell,
                                    gName, nMonomer);
       // Note: This function is defined in prdc/crystal/fieldHeader.tpp
+   }
+
+   // Protected functions to check and allocate private workspace arrays
+
+   /*
+   * If necessary, allocate r-grid workspace.
+   */
+   template <int D, class RFT, class KFT, class FFT>
+   void FieldIoReal<D,RFT,KFT,FFT>::checkAllocateRGrid() const
+   {
+      if (isAllocatedRGrid_) return;
+
+      UTIL_CHECK(nMonomer_ > 0);
+      UTIL_CHECK(mesh().size() > 0);
+      IntVec<D> const & meshDimensions = mesh().dimensions();
+      tmpFieldsRGrid_.allocate(nMonomer_);
+      for (int i = 0; i < nMonomer_; ++i) {
+         tmpFieldsRGrid_[i].allocate(meshDimensions);
+      }
+      isAllocatedRGrid_ = true;
+   }
+
+   /*
+   * If necessary, allocate k-grid field workspace.
+   */
+   template <int D, class RFT, class KFT, class FFT>
+   void FieldIoReal<D,RFT,KFT,FFT>::checkAllocateKGrid() const
+   {
+      if (isAllocatedKGrid_) return;
+
+      UTIL_CHECK(nMonomer_ > 0);
+      UTIL_CHECK(mesh().size() > 0);
+      IntVec<D> const & meshDimensions = mesh().dimensions();
+      tmpFieldsKGrid_.allocate(nMonomer_);
+      for (int i = 0; i < nMonomer_; ++i) {
+         tmpFieldsKGrid_[i].allocate(meshDimensions);
+      }
+      isAllocatedKGrid_ = true;
+   }
+
+   /*
+   * If necessary, allocate basis field workspace.
+   */
+   template <int D, class RFT, class KFT, class FFT>
+   void
+   FieldIoReal<D,RFT,KFT,FFT>::checkAllocateBasis(
+                                   std::string const & inFileName) const
+   {
+      if (isAllocatedBasis_) return;
+
+      UTIL_CHECK(nMonomer_ > 0);
+      UTIL_CHECK(hasGroup());
+      if (!basis().isInitialized()) {
+         // Peek at field header to initialize basis
+         std::ifstream file;
+         fileMaster().openInputFile(inFileName, file);
+         int nMonomerIn;
+         bool isSymmetricIn;
+         UnitCell<D> tmpUnitCell;
+         readFieldHeader(file, nMonomerIn, tmpUnitCell, isSymmetricIn);
+         // Note: readFieldHeader can initialize basis if needed
+         file.close();
+      }
+      UTIL_CHECK(basis().isInitialized());
+      int nBasis = basis().nBasis();
+      UTIL_CHECK(nBasis > 0);
+      tmpFieldsBasis_.allocate(nMonomer_);
+      for (int i = 0; i < nMonomer_; ++i) {
+         DArray<double>& field = tmpFieldsBasis_[i];
+         field.allocate(nBasis);
+         for (int j = 0; j < nBasis; ++j) {
+            field[j] = 0.0;
+         }
+      }
+      isAllocatedBasis_ = true;
    }
 
 } // namespace Prdc

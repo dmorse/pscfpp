@@ -66,7 +66,7 @@ by real values for \f$ \ln Z_{\rm id}[w] \f$ and the Hamiltonian
 
 \section psfts_psa_general_sec General Case (\f$ M \geq 2 \f$)
 
-The current version of PSCF (v1.2) allows PS-FTS simulations of some 
+The current version of PSCF allows PS-FTS simulations of some 
 systems with M > 2, subject to a constraint on allowed values of the 
 \f$ \chi \f$ parameters:  The implementation of the PSA in the current 
 version of PSCF is applicable if and only if the nontrivial eigenvalues 
@@ -126,7 +126,7 @@ for the Hamiltonian \f$ H \f$ in all allowed field configurations.
 \anchor psfts_psa_status
 <b> Status of Algorithms for \f$ M > 2 \f$: </b>
 
-The BD and MC algorithms provided in v1.2 of PS-FTS can perform simulations 
+The BD and MC algorithms currently provided PSCF can perform simulations 
 of systems with \f$ M \geq 2 \f$ if and only if the projected chi matrix 
 has no positive eigenvalues. This statement applies both to the actual BD 
 and MC algorithms used to generate random changes in exchange fields and 
@@ -151,8 +151,8 @@ eigenvalues of the projected \f$ \chi \f$ matrix are positive.
 Specificially, they proposed treating the auxiliary fields associated with 
 such eigenvalues in a PSA, in addition to the use of the PSA for the 
 pressure-like field \f$ W_{M} \f$.  This generalized version of the PSA 
-is not implemented in v1.2 of PSCF, in which the PSA is currently only 
-applied to \f$ W_{M} \f$.
+is not implemented in the current version of PSCF, in which the PSA is 
+currently only applied to \f$ W_{M} \f$.
 
 <BR>
 \ref psfts_theory_page         (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 

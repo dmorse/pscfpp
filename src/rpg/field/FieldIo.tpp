@@ -14,12 +14,13 @@
 
 #include <pscf/math/complex.h>
 
-#include <prdc/field/FieldIoReal.tpp>      // base class implementation 
+#include <prdc/field/FieldIoReal.tpp>      // base class implementation
 #include <prdc/field/fieldIoUtil.h>
 #include <prdc/field/fieldArrayUtil.h>
 #include <prdc/crystal/fieldHeader.h>
 #include <prdc/crystal/Basis.h>
 #include <prdc/crystal/UnitCell.h>
+#include <prdc/cuda/RFieldComparison.h>
 #include <prdc/cuda/types.h>
 #include <prdc/cuda/complex.h>
 #include <prdc/cuda/resources.h>
@@ -33,7 +34,6 @@ namespace Pscf {
 namespace Rpg {
 
    using namespace Util;
-   using namespace Pscf;
    using namespace Pscf::Prdc;
    using namespace Pscf::Prdc::Cuda;
 
@@ -42,7 +42,7 @@ namespace Rpg {
    */
    template <int D>
    FieldIo<D>::FieldIo()
-    : FieldIoReal< D, Prdc::Cuda::RField<D>, Prdc::Cuda::RFieldDft<D>, Prdc::Cuda::FFT<D> >()
+    : FieldIoReal<D, RField<D>, RFieldDft<D>, FFT<D> >()
    {}
 
    /*
@@ -51,6 +51,8 @@ namespace Rpg {
    template <int D>
    FieldIo<D>::~FieldIo()
    {}
+
+   // Field Io in r-grid format
 
    /*
    * Read an array of fields in r-grid format.
@@ -61,7 +63,7 @@ namespace Rpg {
                               DArray<RField<D> >& fields,
                               UnitCell<D>& unitCell) const
    {
-      // Read header
+      // Read header and check fields dimensions
       int nMonomer;
       bool isSymmetric;
       readFieldHeader(in, nMonomer, unitCell, isSymmetric);
@@ -75,7 +77,7 @@ namespace Rpg {
       // Read data
       Prdc::readRGridData(in, hostFields, nMonomer, mesh().dimensions());
 
-      // Copy device <- host 
+      // Copy device <- host
       copyArrays(fields, hostFields);
 
       // Return true iff the header contains a space group declaration
@@ -91,6 +93,7 @@ namespace Rpg {
                               DArray< RField<D> >& fields,
                               int nMonomer) const
    {
+      // Precondition: Check dimensions of fields
       checkAllocateFields(fields, nMonomer, mesh().dimensions());
 
       // Allocate host arrays
@@ -100,7 +103,7 @@ namespace Rpg {
       // Read data section of file
       Prdc::readRGridData(in, hostFields, nMonomer, mesh().dimensions());
 
-      // Copy device <- host 
+      // Copy device <- host
       copyArrays(fields, hostFields);
    }
 
@@ -114,7 +117,7 @@ namespace Rpg {
                               UnitCell<D>& unitCell) const
    {
 
-      // Read header
+      // Read header and check field dimensions
       int nMonomer;
       bool isSymmetric;
       readFieldHeader(in, nMonomer, unitCell, isSymmetric);
@@ -129,7 +132,7 @@ namespace Rpg {
       // Read data section with one field
       Prdc::readRGridData(in, hostField, mesh().dimensions());
 
-      // Copy device <- host 
+      // Copy device <- host
       field = hostField;
 
       // Return true iff the header contains a space group declaration
@@ -148,10 +151,13 @@ namespace Rpg {
                               bool isSymmetric,
                               bool writeMeshSize) const
    {
-      // Inspect fields array, infer nMonomer and meshDimensions
+      // Inspect fields array, check field dimensions
       int nMonomer;
       IntVec<D> meshDimensions;
       inspectFields(fields, nMonomer, meshDimensions);
+      UTIL_CHECK(meshDimensions == mesh().dimensions());
+      int meshSize = mesh().size();
+      UTIL_CHECK(fields[0].capacity() == meshSize);
 
       // Write header
       if (writeHeader){
@@ -160,10 +166,10 @@ namespace Rpg {
       if (writeMeshSize){
          writeMeshDimensions(out, meshDimensions);
       }
-      
+
       // Copy field data to host container
       DArray< HostDArray<cudaReal> > hostFields;
-      allocateArrays(hostFields, nMonomer, mesh().size());
+      allocateArrays(hostFields, nMonomer, meshSize);
       copyArrays(hostFields, fields);
 
       // Write data section
@@ -182,6 +188,9 @@ namespace Rpg {
                               bool isSymmetric) const
    {
       IntVec<D> meshDimensions = field.meshDimensions();
+      int meshSize = field.capacity();
+      UTIL_CHECK(meshDimensions == mesh().dimensions());
+      UTIL_CHECK(meshSize == mesh().size());
 
       // Write header
       if (writeHeader) {
@@ -191,12 +200,14 @@ namespace Rpg {
 
       // Copy field (device) to hostField
       HostDArray<cudaReal> hostField;
-      hostField.allocate(mesh().size());
+      hostField.allocate(meshSize);
       hostField = field;
 
       // Write data from hostField
       Prdc::writeRGridData(out, hostField, meshDimensions);
    }
+
+   // Field IO in k-grid format
 
    /*
    * Read an array of fields in k-grid format
@@ -207,7 +218,7 @@ namespace Rpg {
                            DArray<RFieldDft<D> >& fields,
                            UnitCell<D>& unitCell) const
    {
-      // Read header
+      // Read header and validate field mesh dimensions
       int nMonomer;
       bool isSymmetric;
       readFieldHeader(in, nMonomer, unitCell, isSymmetric);
@@ -237,10 +248,11 @@ namespace Rpg {
                               UnitCell<D> const & unitCell,
                               bool isSymmetric) const
    {
-      // Inspect fields array - infer nMonomer and dimensions
+      // Read header and validate field mesh dimensions
       int nMonomer;
       IntVec<D> meshDimensions;
       inspectFields(fields, nMonomer, meshDimensions);
+      UTIL_CHECK(mesh().dimensions() == meshDimensions);
       IntVec<D> dftDimensions = fields[0].dftDimensions();
       int capacity = fields[0].capacity();
 
@@ -258,20 +270,25 @@ namespace Rpg {
    }
 
    /*
-   * Write a fields from basis to k-grid format.
+   * Convert a single field from basis to k-grid format.
    */
    template <int D>
    void FieldIo<D>::convertBasisToKGrid(
                               DArray<double> const & in,
                               RFieldDft<D>& out) const
    {
+      UTIL_CHECK(in.isAllocated());
+      UTIL_CHECK(out.isAllocated());
+      UTIL_CHECK(in.capacity() > 0);
+      UTIL_CHECK(out.meshDimensions() == mesh().dimensions());
+
       // Allocate hostField
       HostDArrayComplex hostField;
       hostField.allocate(out.capacity());
 
       // Convert basis to k-grid on hostField
-      Prdc::convertBasisToKGrid(in, hostField, basis(), 
-                                out.dftDimensions()); 
+      Prdc::convertBasisToKGrid(in, hostField, basis(),
+                                out.dftDimensions());
 
       // Copy out (device) <- host
       out = hostField;
@@ -287,13 +304,18 @@ namespace Rpg {
                               bool checkSymmetry,
                               double epsilon) const
    {
+      UTIL_CHECK(in.isAllocated());
+      UTIL_CHECK(out.isAllocated());
+      UTIL_CHECK(in.meshDimensions() == mesh().dimensions());
+      UTIL_CHECK(out.capacity() > 0);
+
       // Copy k-grid input to hostField
       HostDArrayComplex hostField;
       hostField.allocate(in.capacity());
       hostField = in;
-      
+
       // Convert k-grid host field to basis format
-      Prdc::convertKGridToBasis(hostField, out, basis(), 
+      Prdc::convertKGridToBasis(hostField, out, basis(),
                                 in.dftDimensions(),
                                 checkSymmetry, epsilon);
    }
@@ -303,10 +325,13 @@ namespace Rpg {
    */
    template <int D>
    bool FieldIo<D>::hasSymmetry(
-                              RFieldDft<D> const & in, 
+                              RFieldDft<D> const & in,
                               double epsilon,
                               bool verbose) const
    {
+      UTIL_CHECK(in.isAllocated());
+      UTIL_CHECK(in.meshDimensions() == mesh().dimensions());
+
       // Copy k-grid input to hostField
       HostDArrayComplex hostField;
       hostField.allocate(in.capacity());
@@ -316,29 +341,35 @@ namespace Rpg {
       return Prdc::hasSymmetry(hostField, basis(), in.dftDimensions(),
                                epsilon, verbose);
    }
-   
+
    /*
-   * Test if an real field DFT has the declared space group symmetry.
+   * Compare two fields in r-grid format, output report to Log file.
    */
    template <int D>
-   void FieldIo<D>::scaleFieldBasis(
-                              DArray<double> & field, 
-                              double factor) const
+   void FieldIo<D>::compareFieldsRGrid(DArray< RField<D> > const & field1,
+                                       DArray< RField<D> > const & field2) 
+   const
    {
-      int n = field.capacity();
-      for (int i = 0; i < n; ++i) {
-         field[i] *= factor;
-      }
+      RFieldComparison<D> comparison;
+      comparison.compare(field1, field2);
+
+      Log::file() << "\n Real-space field comparison results"
+                  << std::endl;
+      Log::file() << "     Maximum Absolute Difference:   "
+                  << comparison.maxDiff() << std::endl;
+      Log::file() << "     Root-Mean-Square Difference:   "
+                  << comparison.rmsDiff() << "\n" << std::endl;
    }
 
    /*
-   * Test if an real field DFT has the declared space group symmetry.
+   * Multiply a field in r-grid format by a constant factor. 
    */
    template <int D>
    void FieldIo<D>::scaleFieldRGrid(
-                              RField<D> & field, 
+                              RField<D> & field,
                               double factor) const
    {
+      UTIL_CHECK(field.isAllocated());
       VecOp::mulEqS(field, factor);
    }
 
@@ -357,6 +388,7 @@ namespace Rpg {
       int nMonomer;
       IntVec<D> meshDimensions;
       inspectFields(fields, nMonomer, meshDimensions);
+      UTIL_CHECK(meshDimensions == mesh().dimensions());
       int capacity = fields[0].capacity();
 
       // Copy k-grid input to hostField
@@ -383,6 +415,7 @@ namespace Rpg {
       int nMonomer;
       IntVec<D> meshDimensions;
       inspectFields(fields, nMonomer, meshDimensions);
+      UTIL_CHECK(meshDimensions == mesh().dimensions());
       int capacity = fields[0].capacity();
 
       // Copy k-grid input fields to hostFields
