@@ -624,24 +624,19 @@ class Array:
                s += depth + f'{self.val[i]:>40}\n'
       else:
          # Elements with a list of values
-         if isinstance(self.val[0][0], int) & (len(self.val[0]) == 2):
-            for i in range(len(self.val)):
-               v = f'{self.val[i][1]:.12e}'
-               s += depth + f'{self.val[i][0]:>41}{v:>22}\n'
-         else:
-            for i in range(len(self.val)):
-               s += depth + f'{self.val[i][0]:^20}'
-               for j in range(1, len(self.val[0])):
-                  if j == (len(self.val[0])-1):
-                     if self.val[i][j] < 0:
-                        v = f'{self.val[i][j]:.11e}'
-                     else:
-                        v = f'{self.val[i][j]:.12e}'
-                     s += f'{v:>22}\n'
-                  elif j == 1:
-                     s += f'{self.val[i][j]}'
-                  else:
-                     s += f'{self.val[i][j]:>5}'
+         for i in range(len(self.val)):
+            s += depth
+            s += "          "
+            for j in range(len(self.val[i])):
+               if isinstance(self.val[i][j], int):
+                  s += f'{self.val[i][j]:>8}'
+               elif isinstance(self.val[i][j], float):
+                  v = f'{self.val[i][j]:.11e}'
+                  s += f'{v:>22}'
+               else:
+                  s += f'{self.val[i][j]:>22}'
+            s += '\n'
+
       s += depth + ']\n'
       return s
 

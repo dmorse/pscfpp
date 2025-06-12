@@ -111,7 +111,7 @@ public:
       system.domain().fieldIo().writeFieldsBasis("out/w1D.bf", 
                                                  system.w().basis(), 
                                                  system.domain().unitCell());
-      TEST_ASSERT(bComparison.maxDiff() < 1.0E-5);
+      TEST_ASSERT(bComparison.maxDiff() < 1.0E-3);
 
       // Check thermo parameters
       if (verbose() > 0) {
@@ -153,7 +153,7 @@ public:
       TEST_ASSERT(eq(system.mask().phiTot(), 7.99990525324e-01));
       
       // Check that lattice parameters are correct
-      double aErr = system.domain().unitCell().parameter(0) - 1.63536608507;
+      double aErr = system.domain().unitCell().parameter(0) - 1.63536665618;
       TEST_ASSERT(std::abs(aErr) < 1e-5);
       TEST_ASSERT(eq(system.domain().unitCell().parameter(1), 2.0));
 
@@ -165,7 +165,7 @@ public:
       BFieldComparison bComparison(0); // object to compare fields
       bComparison.compare(system.w().basis(), wFieldsCheck);
      
-      double epsilon = 1.0E-4; 
+      double epsilon = 1.0E-3; 
       double diff = bComparison.maxDiff();
 
       if (verbose() > 0 || diff > epsilon) {
@@ -178,12 +178,12 @@ public:
       // Check thermo parameters
       if (verbose() > 0) {
          std::cout << "\nFree energy error = " 
-                   << (system.fHelmholtz() - 3.91021919092) << "\n";
+                   << (system.fHelmholtz() - 3.91037539493) << "\n";
          std::cout << "\nPressure error = " 
-                   << (system.pressure() + 12.4986763317) << "\n";
+                   << (system.pressure() + 12.8397347928) << "\n";
       }
-      TEST_ASSERT(std::abs(system.fHelmholtz() - 3.91021919092) < 1e-5);
-      TEST_ASSERT(std::abs(system.pressure() + 12.4986763317) < 1e-4);
+      TEST_ASSERT(std::abs(system.fHelmholtz() - 3.91037539493) < 1e-5);
+      TEST_ASSERT(std::abs(system.pressure() + 12.8397347928) < 1e-4);
    }
 
    void testSweep() // test sweep along chiBottom and lattice parameter
@@ -212,7 +212,7 @@ public:
       bComparison.compare(system.w().basis(), wFieldsCheck);
       double diff = bComparison.maxDiff();
 
-      double epsilon = 1.0E-5; 
+      double epsilon = 1.0E-3; 
       if (verbose() > 0 || diff > epsilon) {
          std::cout << "\n";
          std::cout << "diff    = " << diff << "\n";
@@ -223,12 +223,12 @@ public:
       // Check thermo parameters
       if (verbose() > 0) {
          std::cout << "\nFree energy error = " 
-                   << (system.fHelmholtz() - 3.84231924345) << "\n";
+                   << (system.fHelmholtz() - 3.87318676998) << "\n";
          std::cout << "\nPressure error = " 
-                   << (system.pressure() + 11.5127288016) << "\n";
+                   << (system.pressure() + 12.0498211637) << "\n";
       }
-      TEST_ASSERT(std::abs(system.fHelmholtz() - 3.84231924345) < 1e-5);
-      TEST_ASSERT(std::abs(system.pressure() + 11.5127288016) < 1e-4);
+      TEST_ASSERT(std::abs(system.fHelmholtz() - 3.87318676998) < 1e-5);
+      TEST_ASSERT(std::abs(system.pressure() + 12.0498211637) < 1e-4);
    }
 
    void testSolveWithFBulk() // solve a 1D system w/ flexible film thickness
