@@ -174,26 +174,27 @@ class Thermo:
       if l[0] != 'fHelmholtz':
          raise Exception('Not valid Thermo file')
       else:
-         self.fHelmholtz = float(l[1])
+         self.fHelmholtz = float(l[-1])
       line = file.readline()
       l = line.split()
-      self.pressure = float(l[1])
-      line = self.skipEmptyLine(file)
-
-      while line != '\n':
-         l = line.split()
-         if l[0] == 'fIdeal':
-            self.fIdeal = float(l[1])
-         if l[0] == 'fInter':
-            self.fInter = float(l[1])
-         if l[0] == 'fExt':
-            self.fExt = float(l[1])
-         line = file.readline()
+      self.pressure = float(l[-1])
 
       line = self.skipEmptyLine(file)
+      l = line.split()
+      if l[0] == 'fIdeal':
+         while line != '\n':
+            if l[0] == 'fIdeal':
+               self.fIdeal = float(l[-1])
+            if l[0] == 'fInter':
+               self.fInter = float(l[-1])
+            if l[0] == 'fExt':
+               self.fExt = float(l[-1])
+            line = file.readline()
+            l = line.split()
+         line = self.skipEmptyLine(file)
 
       while line != '\n':
-         if line == 'polymers:\n':
+         if line.lower() == 'polymers:\n':
             self.polymers = []
             self.tableLabel = file.readline()
             line = file.readline()
@@ -202,7 +203,7 @@ class Thermo:
                self.polymers.append(Species(l))
                line = file.readline()
 
-         if line == 'solvents:\n':
+         if line.lower == 'solvents:\n':
             self.solvents = []
             line = file.readline()
             line = file.readline()
@@ -433,7 +434,7 @@ class State:
    # \param filename name of the output file (string)
    #
    def write(self, filename):
-      with open(filename) as f:
+      with open(filename, "w") as f:
          f.write(self.__str__())
 
 
