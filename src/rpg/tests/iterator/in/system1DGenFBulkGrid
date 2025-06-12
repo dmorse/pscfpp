@@ -28,9 +28,9 @@ System{
     groupName      P_-1
   }
   AmIteratorGrid{
-    epsilon      1.0e-6
+    epsilon      1.0e-12
     maxItr       2000
-    maxHist      100 
+    maxHist      50 
     isFlexible   1
     ImposedFieldsGenerator{
       type               film
