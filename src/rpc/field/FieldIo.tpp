@@ -9,7 +9,7 @@
 */
 
 #include "FieldIo.h"
-#include <prdc/field/FieldIoReal.tpp>     // base class implementation 
+#include <prdc/field/FieldIoReal.tpp>     // base class implementation
 
 #include <rpc/field/Domain.h>
 
@@ -94,7 +94,6 @@ namespace Rpc {
                               RField<D> & field,
                               UnitCell<D>& unitCell) const
    {
-
       // Read header
       int nMonomer;
       bool isSymmetric;
@@ -135,10 +134,10 @@ namespace Rpc {
       if (writeMeshSize){
          writeMeshDimensions(out, meshDimensions);
       }
-      
+
       // Write data section
       // Rpg:: Allocate host arrays
-      // Rpg:: Copy device -> host 
+      // Rpg:: Copy device -> host
       Prdc::writeRGridData(out, fields, nMonomer, meshDimensions);
    }
 
@@ -225,8 +224,8 @@ namespace Rpc {
                               DArray<double> const & in,
                               RFieldDft<D>& out) const
    {
-      // Rpg: Allocate host array 
-      Prdc::convertBasisToKGrid(in, out, basis(), out.dftDimensions()); 
+      // Rpg: Allocate host array
+      Prdc::convertBasisToKGrid(in, out, basis(), out.dftDimensions());
       // Rpg: Copy host -> device
    }
 
@@ -241,7 +240,7 @@ namespace Rpc {
                               double epsilon) const
    {
       // Rpg: Allocate host arrays
-      // Rpg: Copy device -> host 
+      // Rpg: Copy device -> host
       Prdc::convertKGridToBasis(in, out, basis(), in.dftDimensions(),
                                 checkSymmetry, epsilon);
    }
@@ -251,12 +250,12 @@ namespace Rpc {
    */
    template <int D>
    bool FieldIo<D>::hasSymmetry(
-                              RFieldDft<D> const & in, 
+                              RFieldDft<D> const & in,
                               double epsilon,
                               bool verbose) const
    {
       // Rpg:: Allocate host array
-      // Rpg: Copy device -> host 
+      // Rpg: Copy device -> host
       return Prdc::hasSymmetry(in, basis(), in.dftDimensions(),
                                epsilon, verbose);
    }
@@ -266,7 +265,7 @@ namespace Rpc {
    */
    template <int D>
    void FieldIo<D>::compareFieldsRGrid(DArray< RField<D> > const & field1,
-                                       DArray< RField<D> > const & field2) 
+                                       DArray< RField<D> > const & field2)
    const
    {
       RFieldComparison<D> comparison;
@@ -285,7 +284,7 @@ namespace Rpc {
    */
    template <int D>
    void FieldIo<D>::scaleFieldRGrid(
-                              RField<D> & field, 
+                              RField<D> & field,
                               double factor) const
    {
       int n = field.capacity();

@@ -68,7 +68,7 @@ namespace Prdc {
    // Initialization functions
 
    /*
-   * Create associations with other members of a Domain<D> object.
+   * Create associations with other members of a parent Domain<D> object.
    */
    template <int D, class RFT, class KFT, class FFT>
    void
@@ -103,7 +103,13 @@ namespace Prdc {
    */
    template <int D, class RFT, class KFT, class FFT>
    void FieldIoReal<D,RFT,KFT,FFT>::setNMonomer(int nMonomer)
-   {  nMonomer_ = nMonomer; }
+   {
+      // Preconditions - require that function is only called once
+      UTIL_CHECK(nMonomer_ == 0);
+      UTIL_CHECK(nMonomer > 0);
+
+      nMonomer_ = nMonomer; 
+   }
 
    // Field File IO - Symmetry-Adapted Basis Format
 
@@ -133,6 +139,7 @@ namespace Prdc {
          int nMonomerFields, fieldCapacity;
          inspectArrays(fields, nMonomerFields, fieldCapacity);
          UTIL_CHECK(nMonomerFields == nMonomer);
+         UTIL_CHECK(fieldCapacity == basis().nBasis());
       } else {
          fields.allocate(nMonomer);
          for (int i = 0; i < nMonomer; ++i) {
@@ -153,23 +160,27 @@ namespace Prdc {
                               DArray<double>& field,
                               UnitCell<D>& unitCell) const
    {
-      // Local array container, of type required by readFieldsBasis
+      // Local array of fields, of type required by readFieldsBasis
       DArray< DArray<double> > fields;
 
       // If single field is allocated, allocate local array fields
       if (field.isAllocated()) {
+         int capacity = field.capacity();
+         UTIL_CHECK(basis().nBasis() == capacity);
          fields.allocate(1);
-         fields[0].allocate(field.capacity());
+         fields[0].allocate(capacity);
       }
-      // Otherwise, pass unallocated fields array to readFieldsBasis
+      // Otherwise, pass unallocated fields array to readFieldsBasis,
+      // which will allocate it it necessary.
 
-      // Read file containing a single field, allocate fields if needed.
+      // Read file containing a single field
       readFieldsBasis(in, fields, unitCell);
 
       // Check that only one field was read from file
       UTIL_CHECK(fields.capacity() == 1);
 
-      // Copy data from local array fields to function parameter field
+      // Copy data from local array fields to function parameter field.
+      // The assignment operator will allocate field if necessary.
       field = fields[0];
    }
 
@@ -407,6 +418,8 @@ namespace Prdc {
       IntVec<D> dimensions;
       inspectFields(out, nMonomerOut, dimensions);
       UTIL_CHECK(nMonomer == nMonomerOut);
+      UTIL_CHECK(capacity == basis().nBasis());
+      UTIL_CHECK(dimensions == mesh().dimensions());
 
       // Convert fields for all monomer types
       for (int i = 0; i < nMonomer; ++i) {
