@@ -168,10 +168,8 @@ that command or a group of closely related commands.
   <tr>
     <td> \ref scft_command_pc_stress_sub "WRITE_STRESS" </td>
     <td> filename [string] </td>
-    <td> Write "stress" components, i.e.,derivatives of SCFT free energy
-         with respect to unit cell parameters.
-         See \ref scft_command_pc_thermo_sub "discussion"
-         </td>
+    <td> Write derivatives of SCFT free energy with respect to unit cell 
+         parameters.  </td>
   </tr>
 
   <tr>
@@ -272,49 +270,55 @@ that command or a group of closely related commands.
 
   <tr>
     <td colspan="3" style="text-align:center">
-      \ref scft_command_pc_fieldops_sec "Field File Operations"
+      \ref scft_command_pc_fieldconvert_sec "Field File Format Conversions"
     </td>
   </tr>
   <tr>
     <td>
-    \ref scft_command_pc_conversion_sub "BASIS_TO_RGRID" </td>
+    \ref scft_command_pc_fieldconvert_sec "BASIS_TO_RGRID" </td>
     <td> inFile [string], outFile [string] </td>
     <td> Read fields from file inFile in symmetry-adapted basis format,
          write to file outFile in real-space grid (r-grid) format </td>
   </tr>
   <tr>
     <td>
-    \ref scft_command_pc_conversion_sub "RGRID_TO_BASIS" </td>
+    \ref scft_command_pc_fieldconvert_sec "RGRID_TO_BASIS" </td>
     <td> inFile [string], outFile [string] </td>
     <td> Read fields from file inFile in real-space grid (r-grid) format,
          write to file outFile in symmetry-adapted basis format.  </td>
   </tr>
   <tr>
-    <td> \ref scft_command_pc_conversion_sub "KGRID_TO_RGRID" </td>
+    <td> \ref scft_command_pc_fieldconvert_sec "KGRID_TO_RGRID" </td>
     <td> inFile [string], outFile [string] </td>
     <td> Read fields from file inFile in discrete Fourier transform
          (k-grid) format, write to file outFile in r-grid format </td>
   </tr>
   <tr>
-    <td> \ref scft_command_pc_conversion_sub "RGRID_TO_KGRID" </td>
+    <td> \ref scft_command_pc_fieldconvert_sec "RGRID_TO_KGRID" </td>
     <td> inFile [string], outFile [string] </td>
     <td> Read fields from file inFile in real-space (r-grid) format,
          write to outFile in discrete Fourier expansion (k-grid) format
          </td>
   </tr>
   <tr>
-    <td> \ref scft_command_pc_conversion_sub "BASIS_TO_KGRID" </td>
+    <td> \ref scft_command_pc_fieldconvert_sec "BASIS_TO_KGRID" </td>
     <td> inFile [string], outFile [string] </td>
     <td> Read fields from file inFile in symmetry-adapted basis format,
          write to outFile in discrete Fourier transform (k-grid) format
          </td>
   </tr>
   <tr>
-    <td> \ref scft_command_pc_conversion_sub "KGRID_TO_BASIS" </td>
+    <td> \ref scft_command_pc_fieldconvert_sec "KGRID_TO_BASIS" </td>
     <td> inFile [string], outFile [string] </td>
     <td> Read fields from file inFile in discrete Fourier transform
          (k-grid) format, write to file outFile in symmetry-adapted
          basis format. </td>
+  </tr>
+
+  <tr>
+    <td colspan="3" style="text-align:center">
+      \ref scft_command_pc_fieldanalysis_sec "Field File Analysis"
+    </td>
   </tr>
   <tr>
     <td> \ref scft_command_pc_symmetry_sub "CHECK_RGRID_SYMMETRY" </td>
@@ -338,6 +342,12 @@ that command or a group of closely related commands.
          compare values at all grid nodes and writes a report
          of the magnitude of differences to the log output. </td>
   </tr>
+
+  <tr>
+    <td colspan="3" style="text-align:center">
+      \ref scft_command_pc_fieldmanip_sec "Field File Manipulation"
+    </td>
+  </tr>
   <tr>
     <td> \ref scft_command_pc_scale_sub "SCALE_BASIS" </td>
     <td> inFile [string], outFile [string], factor [real] </td>
@@ -353,7 +363,7 @@ that command or a group of closely related commands.
          the rescaled field to file outFile. </td>
   </tr>
   <tr>
-    <td> \ref scft_command_pc_grid_sub "EXPAND_RGRID_DIMENSION" </td>
+    <td> \ref scft_command_pc_expand_dim_sub "EXPAND_RGRID_DIMENSION" </td>
     <td> 
          inFile [string], outFile [string], 
          d[int], newGridDimensions Array[int] 
@@ -364,7 +374,7 @@ that command or a group of closely related commands.
     </td>
   </tr>
   <tr>
-    <td> \ref scft_command_pc_grid_sub "REPLICATE_UNIT_CELL" </td>
+    <td> \ref scft_command_pc_replicate_sub "REPLICATE_UNIT_CELL" </td>
     <td> inFile [string], outFile [string], replicas Array[int] </td>
     <td> Read r-grid fields from inFile, output in replicated unit cell to
          outFile, with cell replicated replicas[i] times in direction i.
@@ -913,12 +923,7 @@ the command name.
 The format of the file created by this command is discussed
 \ref scft_command_pc_group_page "here" .
 
-\section scft_command_pc_fieldops_sec Field file manipulations
-
-The pscf_pc program accepts several commands that perform manipulations
-on field files, including conversions among different formats.
-
-\subsection scft_command_pc_conversion_sub Field Format Conversions
+\section scft_command_pc_fieldconvert_sec Field File Format Conversions
 
 The 6 commands 
 <b>BASIS_TO_RGRID</b>, <b>RGRID_TO_BASIS</b>, <b>KGRID_TO_RGRID</b>,
@@ -966,8 +971,9 @@ that contains only the identity element (i.e., 1D group P_1, 2D plane
 group p_1, or 3D space group P_1), since this group does no imply
 any nontrivial symmetry constraints.
 
-\subsection scft_command_pc_symmetry_sub Checking Symmetry
+\section scft_command_pc_fieldanalysis_sec Field File Analysis
 
+\anchor scft_command_pc_symmetry_sub 
 The <b>CHECK_RGRID_SYMMETRY</b> command can be used to check whether 
 a field that is represented in r-grid format has a specified space group
 symmetry to within a specified tolerance. The command takes the name
@@ -976,16 +982,16 @@ the file with the specified name, checks if it is invariant under all
 space group operations to within the specified tolerance, and writes
 a report to the log file.
 
-\subsection scft_command_pc_compare_sub Field Comparisons
-
+\anchor scft_command_pc_compare_sub 
 The <b>COMPARE_BASIS</b> and <b>COMPARE_RGRID</b> commands each read 
 a pair of field files in the same format (basis or rgrid format, 
 respectively), computes differences between corresponding fields, 
 and write a report to the log file summarizing several measures of 
 the magnitude of the differences. 
 
-\subsection scft_command_pc_scale_sub Field Rescaling
+\section scft_command_pc_fieldmanip_sec Field File Manipulations
 
+\anchor scft_command_pc_scale_sub 
 The <b>SCALE_BASIS</b> and <b>SCALE_RGRID</b> commands each read 
 an field file (in basis or rgrid format, respectively), generates
 a field by multiplying all components or elements of the fields 
@@ -993,14 +999,7 @@ by a common scalar factor, and writes the resulting re-scaled fields
 to an output file.  The field is multiplied by the value of the 
 command argument "factor" to obtain the re-scaled field. 
 
-\subsection scft_command_pc_grid_sub Field Grid Manipulations
-
-The <b>EXPAND_RGRID_DIMENSION</b> and <b>REPLICATE_UNIT_CELL</b> 
-are utilities for changing or expanding the dimensions of the grid
-on which a field is defined. These commands are intended to be 
-used together to allow users to modify results of SCFT calculations
-to prepare initial field configurations for use in FTS calculations.
-
+\anchor scft_command_pc_expand_dim_sub
 The <b> EXPAND_RGRID_DIMENSION</b> command allows a user to take a
 field that was computed using a reduced dimensionality D=1 or D=2
 and use it to create a field file output in a format appropriate to 
@@ -1019,6 +1018,7 @@ newGridDimensions is an integer array of dimension d-D in which
 element i contains the number of grid points along added direction 
 D+i, for 0 <= i < d-D.
 
+\anchor scft_command_pc_replicate_sub
 The <b> REPLICATE_UNIT_CELL </b> command is instead designed to 
 read in a field file containing one unit cell of a periodic 
 structure and create a corresponding file in which that unit
