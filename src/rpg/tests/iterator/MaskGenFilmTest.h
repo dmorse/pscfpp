@@ -320,10 +320,10 @@ public:
                    << "\nstress expected:   " << 0.0
                    << "\nParameter 1:"
                    << "\nstress calculated: " << stress1
-                   << "\nstress expected:   " << 0.4211629642 << std::endl;
+                   << "\nstress expected:   " << 0.4212395769 << std::endl;
       }
       TEST_ASSERT(eq(stress0,0.0));
-      TEST_ASSERT(std::abs(stress1 - 0.4211629642) < 1e-5);
+      TEST_ASSERT(std::abs(stress1 - 0.4212395769) < 1e-5);
    }
 
    void testModifyStress() // test MaskGenFilm::modifyStress

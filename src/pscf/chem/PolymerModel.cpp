@@ -9,14 +9,20 @@
 #include <util/global.h>
 #include <string>
 
+// Anonymous namespace containing pseudo-private variables.
 namespace {
 
-  // Anonymous namespace containing pseudo-private variable model_.
-  // Note:
-  //    1) model_ and isLocked_ are only accessible in this file. 
-  //    2) If isLocked_ , model_ may never be altered again.
-  //    3) model_ is initialized to PolymerModel::Thread
-  //    4) isLocked_ is initialized to false
+  // Comments:
+  //
+  //  1) Variables model_, nSet_ and isLocked_ defined in this anonmymous
+  //     namespace are only accessible in this file, and are thus 
+  //     pseudo-private
+  //
+  //  2) model_ is initialized to PolymerModel::Thread
+  //  
+  //  3) If isLocked_ , model_ may never be altered again.
+  //
+  //  4) isLocked_ is initialized to false
 
   Pscf::PolymerModel::Type model_ = Pscf::PolymerModel::Thread;
 
@@ -27,65 +33,65 @@ namespace {
 }
 
 namespace Pscf { 
-
+namespace PolymerModel {
+   
    using namespace Util;
 
-   namespace PolymerModel {
+   // Mutators
 
-      // Mutators
+   /*
+   * Set the global polymer model enumeration value.
+   */
+   void setModel(Type model)
+   {  
+      UTIL_CHECK(!isLocked_);
+      model_ = model; 
+      ++nSet_;
+   }
 
-      /*
-      * Set the global polymer model enumeration value.
-      */
-      void setModel(Type model)
-      {  
-         UTIL_CHECK(!isLocked_);
-         model_ = model; 
-         ++nSet_;
-      }
+   /*
+   * Permanently lock the model type.
+   */
+   void lock() 
+   {  isLocked_ = true; }
 
-      /*
-      * Permanently lock the model type.
-      */
-      void lock() 
-      {  isLocked_ = true; }
+   // Accessors
 
-      // Accessors
+   /*
+   * Get the global polymer model enumeration value.
+   */
+   Type model()
+   {  return model_; }
 
-      /*
-      * Get the global polymer model enumeration value.
-      */
-      Type model()
-      {  return model_; }
+   /*
+   * Is the global polymer model a continuous thread model?
+   */
+   bool isThread()
+   {  return (model_ == Type::Thread); }
 
-      /*
-      * Is the global polymer model a continuous thread model?
-      */
-      bool isThread()
-      {  return (model_ == Type::Thread); }
+   /*
+   * Is the global polymer model a discrete bead model?
+   */
+   bool isBead()
+   {  return (model_ == Type::Bead); }
 
-      /*
-      * Is the global polymer model a discrete bead model?
-      */
-      bool isBead()
-      {  return (model_ == Type::Bead); }
+   /*
+   * Is the model type locked?
+   */
+   bool isLocked() 
+   {  return isLocked_; }
 
-      /*
-      * Is the model type locked?
-      */
-      bool isLocked() 
-      {  return isLocked_; }
-
-      /*
-      * How many times has the choice of model been set ? 
-      */
-      int nSet() 
-      {  return nSet_; }
-
+   /*
+   * How many times has the choice of model been set ? 
+   */
+   int nSet() 
+   {  return nSet_; }
+   
    /*
    * Input stream extractor for a PolymerModel::Type enumeration.
    */ 
-   std::istream& operator >> (std::istream& in, PolymerModel::Type& type)
+   std::istream& operator >> (std::istream& in, 
+                              PolymerModel::Type& type)
    {
       std::string buffer;
       in >> buffer;
@@ -105,7 +111,8 @@ namespace Pscf {
    /*
    * Output stream inserter for a PolymerModel::Type enumeration.
    */ 
-   std::ostream& operator << (std::ostream& out, PolymerModel::Type const & type)
+   std::ostream& operator << (std::ostream& out, 
+                              PolymerModel::Type const & type)
    {
       if (type == PolymerModel::Thread) {
          out << "thread";
@@ -118,6 +125,5 @@ namespace Pscf {
       return out;
    }
 
-   } // end namespace 
-
-}
+} // end namespace PolymerModel
+} // end namespace Pscf

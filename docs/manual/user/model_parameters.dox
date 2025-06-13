@@ -1,0 +1,118 @@
+/*! \page user_model_parameters_page Overview
+
+\ref user_model_page   (Prev / Up) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref user_model_polymer_page   (Next)
+<BR>
+
+All of the programs in the PSCF software package are designed to treat an
+incompressible liquid mixture that may contain one or more polymer species
+and any number of small-molecule solvent species.  Each polymer species in 
+such a mixture may be either a linear or branched block polymer.  Solvent 
+species, if present, are treated as structureless point-like particles that 
+occupy a specified volume per particle. Interactions are described using 
+binary Flory-Huggins interaction parameters.
+
+Conformations of individual polymers may bed treated using either a
+continuous "thread" model or a discrete "bead" model of chain 
+conformations. The thread model idealizes linear polymer segments as 
+continuous random walks. The bead model represents each block as a 
+sequence of discrete beads connected by harmonic bonds.
+
+Both polymers and solvent species are constructed from a user-defiend list 
+of monomer types.  Each block within a block polymer has a monomer type 
+(identified by an integer index) and a block length . The block length 
+is given as a real (i.e., floating point) number in the continuous thread 
+model and as an integer number of beads in the discrete bead model.  In 
+either model, the volume occupied by a block within an incompressible 
+liquid is given by the product of its length and a monomer reference 
+volume. By convention, the monomer reference volume must be the same for 
+all monomer types. Each small-molecule solvent species is assigned a 
+monomer type index and a dimensionless "size" parameter. The volume 
+occupied by one molecule of a solvent species is given by the product 
+of the species size parameter and the monomer reference volume.  
+
+\section user_model_parameters_list_sec Input parameters
+
+The physical parameters required to describe a model for either a SCFT or 
+PS-FTS calculation thus include:
+
+  - The number of different monomer types present in the system, and
+    a value for the statistical segment length of each monomer type.
+
+  - A description of each polymer species that includes the monomer
+    type and length of each block, and (for branched polymers) a
+    description of how the blocks are connected.
+
+  - A specification of the monomer type and size (i.e., volume) of each 
+    small-molecule solvent species.
+
+  - A value for either the volume fraction or chemical potential of each 
+    polymer and solvent molecular species.
+
+  - A value for a binary Flory-Huggins interaction parameter
+    \f$ \chi_{ij} \f$ for interactions between monomers of types
+    \f$ i \f$ and \f$ j \f$ for each distinct pair of monomer types.
+
+  - Parameters that describe the unit cell (for periodic structures) or 
+    spatial domain of interest.
+
+To perform a PS-FTS calculation, the user must also input a value for the
+monomer reference volume (i.e., volume per monomer in an incompressible 
+liquid), but this parameter is normally not needed as an input to SCFT 
+calculations. 
+
+In addition to these physical parameters, users of PSCF must provide 
+values for computational parameters required by a variety of numerical 
+algorithms.  Among these are parameters that define a spatial 
+discretization for the unit cell or spatial domain, e.g., by defining 
+the number of grid points along each direction of a computational mesh. 
+Calculations that use the continuous thread model also require a target
+value for a contour length step size ds that is used to discretize the 
+contour of each block in numerical solutions of the modified diffusion 
+equation.  Specific numerical algorithms (such as iteration algorithms 
+used in SCFT or sampling algorithms used for PS-FTS) require a variety 
+of other more specialized parameters and options.
+
+\section user_model_parameters_energy_sec Energy units
+
+PSCF uses "thermal" units for energy in which \f$ k_{B}T = 1\f$ for input 
+and output values of all quantities with units that involve energy. Here,
+\f$ k_{B} \f$ is Boltmann's constant and \f$ T \f$ is absolute temperature.
+For example, chemical potential values are specified as values of the 
+ratio \f$ \mu / k_{B}T \f$. 
+
+\section user_model_parameters_length_sec Length units
+
+PSCF allows the user to use any unit of length they wish, as long as the 
+same choice of unit is used for all input parameters. Users are not asked 
+to explicitly declare their choice of a unit of length, but are instead 
+responsible for providing input parameter values that have been assigned
+using some consistent but unspecified system of units.
+
+The only parameters required for a standard SCFT calculation that have
+units involving length are the values of the monomer statistical segment 
+lengths, and values (or initial guesses) for the dimensions of a spatial
+domain or perioidic unit cell for the system of interest. In addition, 
+PS-FTS calculations require a value for the monomer reference volume, 
+which has units of volume, or length cubed. Users may initialize a 
+calculation using input files in which these parameters are all defined 
+either using some standard microscopic length unit, such as Angstroms 
+or nanometers, or using units in which values for these quantities are 
+specified using some user-defined system of non-dimensional units. 
+Common choices of conventions for non-dimensionalized units are discussed 
+on a \ref user_model_conventions_page "separate page". 
+
+If the user supplies input parameters values that were assigned using 
+some consistent unit of length, output values will automatically be 
+reported using the same units for length.  For example, in SCFT 
+simulations of a periodic microstructures in which one or more dimensions 
+of the crystal unit cell are iteratively ajdusted so as to minimize the 
+free energy density, values for the optimized unit cell parameters will 
+be reported in the same length units as those used to define the monomer 
+statistical segment lengths.
+
+<BR>
+\ref user_model_page         (Prev / Up) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref user_model_polymer_page (Next)
+
+*/

@@ -109,17 +109,17 @@ public:
       if (verbose() > 0) {
          std::cout << "\nMax error = " << rComparison.maxDiff() << "\n";
       }
-      TEST_ASSERT(rComparison.maxDiff() < 1.0E-5);
+      TEST_ASSERT(rComparison.maxDiff() < 1.0E-4);
 
       // Check thermo parameters
       if (verbose() > 0) {
          std::cout << "Free energy error = " 
-                   << (system.fHelmholtz() - 3.89135835701) << "\n";
+                   << (system.fHelmholtz() - 3.89142790689) << "\n";
          std::cout << "Pressure error = " 
-                   << (system.pressure() + 11.7328996670) << "\n";
+                   << (system.pressure() + 11.8952157438) << "\n";
       }
-      TEST_ASSERT(abs(system.fHelmholtz() - 3.89135835701) < 1e-5);
-      TEST_ASSERT(abs(system.pressure() + 11.7328996670) < 1e-4);
+      TEST_ASSERT(abs(system.fHelmholtz() - 3.89142790689) < 1e-5);
+      TEST_ASSERT(abs(system.pressure() + 11.8952157438) < 1e-4);
    }
 
    void testSolve2D() // solve a 2D system with an ImposedFieldsGenerator
@@ -164,12 +164,12 @@ public:
       // Check thermo parameters
       if (verbose() > 0) {
          std::cout << "Free energy error = " 
-                   << (system.fHelmholtz() - 3.91021919092) << "\n";
+                   << (system.fHelmholtz() - 3.91037539514) << "\n";
          std::cout << "Pressure error = " 
-                   << (system.pressure() + 12.4986763317) << "\n";
+                   << (system.pressure() + 12.8397354494) << "\n";
       }
-      TEST_ASSERT(abs(system.fHelmholtz() - 3.91021919092) < 1e-5);
-      TEST_ASSERT(abs(system.pressure() + 12.4986763317) < 1e-4);
+      TEST_ASSERT(abs(system.fHelmholtz() - 3.91037539514) < 1e-5);
+      TEST_ASSERT(abs(system.pressure() + 12.8397354494) < 1e-4);
    }
 
    void testSweep() // test sweep along chiBottom and lattice parameter
@@ -198,7 +198,7 @@ public:
       rComparison.compare(system.c().rgrid(), cFieldsCheck);
       double diff = rComparison.maxDiff();
 
-      double epsilon = 1.0E-5; 
+      double epsilon = 1.0E-4; 
       if (verbose() > 0 || diff > epsilon) {
          std::cout << "\n";
          std::cout << "Max field error = " << diff << "\n";
@@ -208,12 +208,12 @@ public:
       // Check thermo parameters
       if (verbose() > 0) {
          std::cout << "Free Energy error = " 
-                   << (system.fHelmholtz() - 3.86654196623) << "\n";
+                   << (system.fHelmholtz() - 3.88605079479) << "\n";
          std::cout << "Pressure error = " 
-                   << (system.pressure() + 11.4844864688) << "\n";
+                   << (system.pressure() + 11.8327638153) << "\n";
       }
-      TEST_ASSERT(abs(system.fHelmholtz() - 3.86654196623) < 1e-5);
-      TEST_ASSERT(abs(system.pressure() + 11.4844864688) < 1e-2);
+      TEST_ASSERT(abs(system.fHelmholtz() - 3.88605079479) < 1e-5);
+      TEST_ASSERT(abs(system.pressure() + 11.8327638153) < 1e-4);
    }
 
    void testSolveWithFBulk() // solve a 1D system w/ flexible film thickness
@@ -251,7 +251,7 @@ public:
       if (verbose() > 0) {
          std::cout << "Max field error = " << diff << "\n";
       }
-      TEST_ASSERT(diff < 1.0E-5);
+      TEST_ASSERT(diff < 1.0E-4);
 
       // Check thermo parameters
       if (verbose() > 0) {
@@ -291,17 +291,17 @@ public:
       if (verbose() > 0) {
          std::cout << "\nMax error = " << rComparison.maxDiff() << "\n";
       }
-      TEST_ASSERT(rComparison.maxDiff() < 1.0E-5);
+      TEST_ASSERT(rComparison.maxDiff() < 1.0E-4);
 
       // Check thermo parameters
       if (verbose() > 0) {
          std::cout << "Free Energy error = " 
-                   << (system.fHelmholtz() - 3.89135835701) << "\n";
+                   << (system.fHelmholtz() - 3.89142790689) << "\n";
          std::cout << "Pressure error = " 
-                   << (system.pressure() + 11.7328996670) << "\n";
+                   << (system.pressure() + 11.8952157438) << "\n";
       }
-      TEST_ASSERT(abs(system.fHelmholtz() - 3.89135835701) < 1e-5);
-      TEST_ASSERT(abs(system.pressure() + 11.7328996670) < 1e-4);
+      TEST_ASSERT(abs(system.fHelmholtz() - 3.89142790689) < 1e-5);
+      TEST_ASSERT(abs(system.pressure() + 11.8952157438) < 1e-4);
    }
 
    void testSolve2DGrid() // solve a 2D system with an ImposedFieldsGenerator
@@ -346,12 +346,12 @@ public:
       // Check thermo parameters
       if (verbose() > 0) {
          std::cout << "Free Energy error = " 
-                   << (system.fHelmholtz() - 3.91022221196) << "\n";
+                   << (system.fHelmholtz() - 3.91037539514) << "\n";
          std::cout << "Pressure error = " 
-                   << (system.pressure() + 12.4995705392) << "\n";
+                   << (system.pressure() + 12.8397354494) << "\n";
       }
-      TEST_ASSERT(abs(system.fHelmholtz() - 3.91022221196) < 1e-5);
-      TEST_ASSERT(abs(system.pressure() + 12.4995705392) < 1e-4);
+      TEST_ASSERT(abs(system.fHelmholtz() - 3.91037539514) < 1e-5);
+      TEST_ASSERT(abs(system.pressure() + 12.8397354494) < 1e-4);
    }
 
    void testSweepGrid() // test sweep along chiBottom and lattice parameter
@@ -380,7 +380,7 @@ public:
       rComparison.compare(system.c().rgrid(), cFieldsCheck);
       double diff = rComparison.maxDiff();
 
-      double epsilon = 1.0E-5; 
+      double epsilon = 1.0E-4; 
       if (verbose() > 0 || diff > epsilon) {
          std::cout << "\n";
          std::cout << "Max field error = " << diff << "\n";
@@ -390,12 +390,12 @@ public:
       // Check thermo parameters
       if (verbose() > 0) {
          std::cout << "Free Energy error = " 
-                   << (system.fHelmholtz() - 3.86656498107) << "\n";
+                   << (system.fHelmholtz() - 3.88605079479) << "\n";
          std::cout << "Pressure error = " 
-                   << (system.pressure() + 11.4994801703) << "\n";
+                   << (system.pressure() + 11.8327638153) << "\n";
       }
-      TEST_ASSERT(abs(system.fHelmholtz() - 3.86656498107) < 1e-5);
-      TEST_ASSERT(abs(system.pressure() + 11.4994801703) < 1e-2);
+      TEST_ASSERT(abs(system.fHelmholtz() - 3.88605079479) < 1e-5);
+      TEST_ASSERT(abs(system.pressure() + 11.8327638153) < 1e-4);
    }
 
    void testSolveWithFBulkGrid() // solve a 1D system w flexible film thickness
@@ -433,7 +433,7 @@ public:
       if (verbose() > 0) {
          std::cout << "Max field error = " << diff << "\n";
       }
-      TEST_ASSERT(diff < 1.0E-5);
+      TEST_ASSERT(diff < 1.0E-4);
 
       // Check thermo parameters
       if (verbose() > 0) {

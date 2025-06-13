@@ -230,11 +230,12 @@ public:
    void testSolver1D_bead()
    {
       printMethod(TEST_FUNC);
-      Mixture<1> mixture;
       PolymerModel::setModel(PolymerModel::Bead); 
 
+      // Read parameter block, unit cell and mesh dimensions
       std::ifstream in;
       openInputFile("in/Mixture1d_bead", in);
+      Mixture<1> mixture;
       mixture.readParam(in);
       UnitCell<1> unitCell;
       in >> unitCell;
@@ -242,36 +243,33 @@ public:
       in >> d;
       in.close();
 
+      // Setup up associated objects and allocate
+      Mesh<1> mesh;
+      mesh.setDimensions(d);
+      FFT<1> fft;
+      fft.setup(d);
+      WaveList<1> waveList;
+      waveList.allocate(mesh, unitCell);
+      mixture.associate(mesh, fft, unitCell, waveList);
+      mixture.allocate();
+
+      // Check polymer block sizes
       Polymer<1>& polymer = mixture.polymer(0);
       TEST_ASSERT(polymer.block(0).nBead() == 20);
       TEST_ASSERT(polymer.block(1).nBead() == 30);
       TEST_ASSERT(polymer.nBead() == 50);
 
-      // Vertex ownership for a diblock
-      TEST_ASSERT(polymer.block(0).ownsVertex(0));
-      TEST_ASSERT(polymer.block(0).ownsVertex(1));
-      TEST_ASSERT(!polymer.block(1).ownsVertex(0));
-      TEST_ASSERT(polymer.block(1).ownsVertex(1));
-      TEST_ASSERT(polymer.block(0).propagator(0).ownsHead());
-      TEST_ASSERT(polymer.block(0).propagator(0).ownsTail());
-      TEST_ASSERT(polymer.block(0).propagator(1).ownsTail());
-      TEST_ASSERT(polymer.block(0).propagator(1).ownsHead());
-      TEST_ASSERT(!polymer.block(1).propagator(0).ownsHead());
-      TEST_ASSERT(polymer.block(1).propagator(0).ownsTail());
-      TEST_ASSERT(!polymer.block(1).propagator(1).ownsTail());
-      TEST_ASSERT(polymer.block(1).propagator(1).ownsHead());
+      // Check end flags for a diblock
+      TEST_ASSERT(polymer.block(0).propagator(0).isHeadEnd());
+      TEST_ASSERT(!polymer.block(0).propagator(0).isTailEnd());
+      TEST_ASSERT(!polymer.block(0).propagator(1).isHeadEnd());
+      TEST_ASSERT(polymer.block(0).propagator(1).isTailEnd());
+      TEST_ASSERT(!polymer.block(1).propagator(0).isHeadEnd());
+      TEST_ASSERT(polymer.block(1).propagator(0).isTailEnd());
+      TEST_ASSERT(polymer.block(1).propagator(1).isHeadEnd());
+      TEST_ASSERT(!polymer.block(1).propagator(1).isTailEnd());
 
-      Mesh<1> mesh;
-      mesh.setDimensions(d);
-      FFT<1> fft;
-      fft.setup(d);
-
-      WaveList<1> waveList;
-      waveList.allocate(mesh, unitCell);
-
-      mixture.associate(mesh, fft, unitCell, waveList);
-      mixture.allocate();
-
+      // Allocate w and field arrays
       int nMonomer = mixture.nMonomer();
       DArray< RField<1> > wFields;
       DArray< RField<1> > cFields;
@@ -283,6 +281,7 @@ public:
          cFields[i].allocate(d);
       }
 
+      // Initialize w fields
       double cs;
       for (int i = 0; i < nx; ++i) {
          cs = cos(2.0*Constants::Pi*double(i)/double(nx));
@@ -290,32 +289,29 @@ public:
          wFields[1][i] = 0.5 - cs;
       }
 
+      // Solve MDE
       mixture.compute(wFields, cFields);
 
-      // Test if same Q is obtained from different methods
+      // Test if same Q is obtained from different vertices
       double Q = polymer.propagator(1, 0).computeQ();
       TEST_ASSERT(eq(Q, polymer.propagator(0, 1).computeQ()));
       TEST_ASSERT(eq(Q, polymer.propagator(0, 0).computeQ()));
       TEST_ASSERT(eq(Q, polymer.propagator(1, 1).computeQ()));
 
-      #if 0
-      std::cout << "Propagator(0,0), Q = " 
-                << mixture.polymer(0).propagator(0, 0).computeQ() << "\n";
-      std::cout << "Propagator(1,0), Q = " 
-                << mixture.polymer(0).propagator(1, 0).computeQ() << "\n";
-      std::cout << "Propagator(1,1), Q = " 
-                << mixture.polymer(0).propagator(1, 1).computeQ() << "\n";
-      std::cout << "Propagator(0,1), Q = " 
-                << mixture.polymer(0).propagator(0, 1).computeQ() << "\n";
-      #endif
-
-      #if 0
-      // Test spatial integral of block concentration
-      double sum0 = domain.spatialAverage(cFields[0]);
-      double sum1 = domain.spatialAverage(cFields[1]);
-      std::cout << "Volume fraction of block 0 = " << sum0 << "\n";
-      std::cout << "Volume fraction of block 1 = " << sum1 << "\n";
-      #endif
+      if (verbose() > 0) {
+         std::cout << "Propagator(0,0), Q = " 
+                   << mixture.polymer(0).propagator(0, 0).computeQ() 
+                   << "\n";
+         std::cout << "Propagator(1,0), Q = " 
+                   << mixture.polymer(0).propagator(1, 0).computeQ() 
+                   << "\n";
+         std::cout << "Propagator(1,1), Q = " 
+                   << mixture.polymer(0).propagator(1, 1).computeQ() 
+                   << "\n";
+         std::cout << "Propagator(0,1), Q = " 
+                   << mixture.polymer(0).propagator(0, 1).computeQ() 
+                   << "\n";
+      }
       
    }
 
@@ -324,6 +320,7 @@ public:
       printMethod(TEST_FUNC);
       Mixture<2> mixture;
 
+      // Read param file block unit cell and mesh dimensions
       std::ifstream in;
       openInputFile("in/Mixture2d", in);
       mixture.readParam(in);
@@ -333,14 +330,13 @@ public:
       in >> d;
       in.close();
 
+      // Create associated objects and allocate mixture
       Mesh<2> mesh;
       mesh.setDimensions(d);
       FFT<2> fft;
       fft.setup(d);
-
       WaveList<2> waveList;
       waveList.allocate(mesh, unitCell);
-
       mixture.associate(mesh, fft, unitCell, waveList);
       mixture.allocate();
 
@@ -351,6 +347,7 @@ public:
       std::cout << "mesh      " << mesh.dimensions() << std::endl;
       #endif
 
+      // Allocate w and c field arrays
       int nMonomer = mixture.nMonomer();
       DArray< RField<2> > wFields;
       DArray< RField<2> > cFields;
@@ -391,6 +388,7 @@ public:
       }
       TEST_ASSERT(k == nx);
 
+      // Solve MDE
       mixture.compute(wFields, cFields);
 
       // Test if same Q is obtained from different methods
@@ -399,24 +397,20 @@ public:
       TEST_ASSERT(eq(Q, mixture.polymer(0).propagator(0, 0).computeQ()));
       TEST_ASSERT(eq(Q, mixture.polymer(0).propagator(1, 1).computeQ()));
 
-      #if 0
-      std::cout << "Propagator(0,0), Q = " 
-                << mixture.polymer(0).propagator(0, 0).computeQ() << "\n";
-      std::cout << "Propagator(1,0), Q = " 
-                << mixture.polymer(0).propagator(1, 0).computeQ() << "\n";
-      std::cout << "Propagator(1,1), Q = " 
-                << mixture.polymer(0).propagator(1, 1).computeQ() << "\n";
-      std::cout << "Propagator(0,1), Q = " 
-                << mixture.polymer(0).propagator(0, 1).computeQ() << "\n";
-      #endif
-
-      #if 0
-      // Test spatial integral of block concentration
-      double sum0 = domain.spatialAverage(cFields[0]);
-      double sum1 = domain.spatialAverage(cFields[1]);
-      std::cout << "Volume fraction of block 0 = " << sum0 << "\n";
-      std::cout << "Volume fraction of block 1 = " << sum1 << "\n";
-      #endif
+      if (verbose() > 0) {
+         std::cout << "Propagator(0,0), Q = " 
+                   << mixture.polymer(0).propagator(0, 0).computeQ() 
+                   << "\n";
+         std::cout << "Propagator(1,0), Q = " 
+                   << mixture.polymer(0).propagator(1, 0).computeQ() 
+                   << "\n";
+         std::cout << "Propagator(1,1), Q = " 
+                   << mixture.polymer(0).propagator(1, 1).computeQ() 
+                   << "\n";
+         std::cout << "Propagator(0,1), Q = " 
+                   << mixture.polymer(0).propagator(0, 1).computeQ() 
+                   << "\n";
+      }
       
    }
 

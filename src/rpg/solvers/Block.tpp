@@ -276,9 +276,9 @@ namespace Rpg {
       // Allocate work arrays
       expW_.allocate(mesh().dimensions());
       expKsq_.allocate(kMeshDimensions_);
+      expKsq2_.allocate(kMeshDimensions_);
       if (PolymerModel::isThread()) {
          expW2_.allocate(mesh().dimensions());
-         expKsq2_.allocate(kMeshDimensions_);
          qrPair_.allocate(2 * mesh().size());
          qkPair_.allocate(2 * kSize_);
       } else 
@@ -299,7 +299,7 @@ namespace Rpg {
          int tempNs;
          tempNs = floor(length() / (2.0 * ds) + 0.5);
          if (tempNs == 0) {
-            tempNs = 1; // ensure at least 3 contour steps per chain
+            tempNs = 1;          // ensure ns_ >= 3
          }
          ns_ = 2*tempNs + 1;
          ds_ = length()/double(ns_ - 1);
@@ -308,9 +308,7 @@ namespace Rpg {
       if (PolymerModel::isBead()) {
 
          ds_ = ds;
-         ns_ = nBead();
-         if (!ownsVertex(0)) ++ns_;
-         if (!ownsVertex(1)) ++ns_;
+         ns_ = nBead() + 2;
 
       }
 
@@ -331,17 +329,6 @@ namespace Rpg {
       }
 
       isAllocated_ = true;
-      hasExpKsq_ = false;
-   }
-
-   /*
-   * Clear all internal data that depends on lattice parameters.
-   */
-   template <int D>
-   void Block<D>::clearUnitCellData()
-   {
-      UTIL_CHECK(unitCellPtr_);
-      UTIL_CHECK(nParams_ == unitCell().nParameter());
       hasExpKsq_ = false;
    }
 
@@ -399,27 +386,40 @@ namespace Rpg {
       hasExpKsq_ = false;
    }
 
+   /*
+   * Clear all internal data that depends on lattice parameters.
+   */
+   template <int D>
+   void Block<D>::clearUnitCellData()
+   {
+      UTIL_CHECK(unitCellPtr_);
+      UTIL_CHECK(nParams_ == unitCell().nParameter());
+      hasExpKsq_ = false;
+   }
+
+   /*
+   * Compute all elements of expKsq_ and expKsq2_ arrays
+   */
    template <int D>
    void Block<D>::computeExpKsq()
    {
       UTIL_CHECK(isAllocated_);
-      UTIL_CHECK(unitCellPtr_);
-      UTIL_CHECK(unitCellPtr_->isInitialized());
+      UTIL_CHECK(waveListPtr_);
 
       // Calculate kSq if necessary
       if (!waveListPtr_->hasKSq()) {
          waveListPtr_->computeKSq();
       }
 
-      // Calculate expKsq values on device
+      // Compute bSqFactor
+      double bSqFactor = -1.0 * kuhn() * kuhn() / 6.0;
       if (PolymerModel::isThread()) {
-         double bSqFactor = -1.0 * kuhn() * kuhn() * ds_ / 6.0;
-         VecOp::expVc(expKsq_, waveListPtr_->kSq(), bSqFactor);
-         VecOp::expVc(expKsq2_, waveListPtr_->kSq(), bSqFactor / 2.0);
-      } else {
-         double bSqFactor = -1.0 * kuhn() * kuhn() / 6.0;
-         VecOp::expVc(expKsq_, waveListPtr_->kSq(), bSqFactor);
+         bSqFactor *= ds_;
       }
+
+      // Calculate expKsq values on device
+      VecOp::expVc(expKsq_, waveListPtr_->kSq(), bSqFactor);
+      VecOp::expVc(expKsq2_, waveListPtr_->kSq(), bSqFactor / 2.0);
 
       hasExpKsq_ = true;
    }
@@ -461,8 +461,7 @@ namespace Rpg {
       // Preconditions
       UTIL_CHECK(isAllocated_);
       UTIL_CHECK(hasExpKsq_);
-
-      // Check real-space mesh sizes
+      UTIL_CHECK(meshPtr_);
       int nx = mesh().size();
       UTIL_CHECK(nx > 0);
       UTIL_CHECK(fft().isSetup());
@@ -483,10 +482,10 @@ namespace Rpg {
 
       // Apply pseudo-spectral algorithm
       VecOp::mulVVPair(qr, qr2, expW_, expW2_, qin); // qr = expW*q, qr2 = expW2*q
-      fftBatchedPair_.forwardTransform(qrPair_, qkPair_); // to Fourier space
+      fftBatchedPair_.forwardTransform(qrPair_, qkPair_); 
       VecOp::mulEqV(qk, expKsq_); // qk *= expKsq
       VecOp::mulEqV(qk2, expKsq2_); // qk2 *= expKsq2
-      fftBatchedPair_.inverseTransformUnsafe(qkPair_, qrPair_); // to real space
+      fftBatchedPair_.inverseTransformUnsafe(qkPair_, qrPair_); 
       VecOp::mulEqVPair(qr, qr2, expW_); // qr *= expW, qr2 *= expW
       fft().forwardTransform(qr2, qk2); // to Fourier space, only qr2
       VecOp::mulEqV(qk2, expKsq2_); // qk2 *= expKsq2
@@ -505,33 +504,6 @@ namespace Rpg {
    }
 
    /*
-   * Apply the bond operator for the bead model.
-   */
-   template <int D>
-   void Block<D>::stepBondBead(RField<D> const & qin, RField<D>& qout)
-   {
-      // Preconditions
-      UTIL_CHECK(isAllocated_);
-      UTIL_CHECK(hasExpKsq_);
-      UTIL_CHECK(fft().isSetup());
-      UTIL_CHECK(fft().meshDimensions() == mesh().dimensions());
-      UTIL_CHECK(qk_.isAllocated());
-
-      // Check mesh sizes
-      int nx = mesh().size();
-      UTIL_CHECK(nx > 0);
-      UTIL_CHECK(qin.capacity() == nx);
-      UTIL_CHECK(qout.capacity() == nx);
-      UTIL_CHECK(qk_.capacity() == kSize_);
-      UTIL_CHECK(expKsq_.capacity() == kSize_);
-
-      // Set up associated workspace fields slices
-      fft().forwardTransform(qin, qk_);
-      VecOp::mulEqV(qk_, expKsq_); // qk *= expKsq
-      fft().inverseTransformUnsafe(qk_, qout); 
-   }
-
-   /*
    * Apply the field operator for the bead model.
    */
    template <int D>
@@ -546,6 +518,55 @@ namespace Rpg {
    }
 
    /*
+   * Apply the bond operator for the bead model.
+   */
+   template <int D>
+   void Block<D>::stepBondBead(RField<D> const & qin, RField<D>& qout)
+   {
+      // Preconditions
+      UTIL_CHECK(isAllocated_);
+      UTIL_CHECK(hasExpKsq_);
+      UTIL_CHECK(meshPtr_);
+      int nx = mesh().size();
+      UTIL_CHECK(fft().isSetup());
+      UTIL_CHECK(fft().meshDimensions() == mesh().dimensions());
+      UTIL_CHECK(nx > 0);
+      UTIL_CHECK(qin.capacity() == nx);
+      UTIL_CHECK(qout.capacity() == nx);
+      UTIL_CHECK(qk_.isAllocated());
+      UTIL_CHECK(qk_.capacity() == kSize_);
+      UTIL_CHECK(expKsq_.capacity() == kSize_);
+
+      // Apply full bond operator
+      fft().forwardTransform(qin, qk_);
+      VecOp::mulEqV(qk_, expKsq_);                   // qk *= expKsq
+      fft().inverseTransformUnsafe(qk_, qout);       // overwrites qk_
+   }
+
+   /*
+   * Apply the half-bond operator for the bead model.
+   */
+   template <int D>
+   void Block<D>::stepHalfBondBead(RField<D> const & qin, RField<D>& qout)
+   {
+      // Preconditions
+      UTIL_CHECK(isAllocated_);
+      UTIL_CHECK(hasExpKsq_);
+      int nx = mesh().size();
+      UTIL_CHECK(nx > 0);
+      UTIL_CHECK(qin.capacity() == nx);
+      UTIL_CHECK(qout.capacity() == nx);
+      UTIL_CHECK(qk_.isAllocated());
+      UTIL_CHECK(qk_.capacity() == kSize_);
+      UTIL_CHECK(expKsq_.capacity() == kSize_);
+
+      // Apply half-bond operator
+      fft().forwardTransform(qin, qk_);        
+      VecOp::mulEqV(qk_, expKsq2_);                  // qk *= expKsq2
+      fft().inverseTransformUnsafe(qk_, qout);       // overwrites qk_
+   }
+
+   /*
    * Integrate to calculate monomer concentration for this block
    */
    template <int D>
@@ -555,7 +576,6 @@ namespace Rpg {
       int nx = mesh().size();
       UTIL_CHECK(nx > 0);
       UTIL_CHECK(ns_ > 0);
-      UTIL_CHECK(ds_ > 0);
       UTIL_CHECK(propagator(0).isSolved());
       UTIL_CHECK(propagator(1).isSolved());
       UTIL_CHECK(cField().capacity() == nx);
@@ -563,6 +583,7 @@ namespace Rpg {
       // Initialize cField to zero at all points
       VecOp::eqS(cField(), 0.0);
 
+      // References to forward and reverse propagators
       Pscf::Rpg::Propagator<D> const & p0 = propagator(0);
       Pscf::Rpg::Propagator<D> const & p1 = propagator(1);
 
@@ -591,7 +612,6 @@ namespace Rpg {
       int nx = mesh().size();
       UTIL_CHECK(nx > 0);
       UTIL_CHECK(ns_ > 0);
-      UTIL_CHECK(ds_ > 0);
       UTIL_CHECK(propagator(0).isSolved());
       UTIL_CHECK(propagator(1).isSolved());
       UTIL_CHECK(cField().capacity() == nx);
@@ -603,68 +623,13 @@ namespace Rpg {
       Pscf::Rpg::Propagator<D> const & p0 = propagator(0);
       Pscf::Rpg::Propagator<D> const & p1 = propagator(1);
 
-      // Vertex 0 contribution (if owned by block)
-      if (ownsVertex(0)) {
-         addEqMulVVV(cField(), p0.q(0), p1.q(ns_ - 1), expWInv_);
-      }
-
-      // Internal beads
+      // Internal beads (j = 1, ..., nbead, with nbead = ns_ -2)
       for (int j = 1; j < ns_ - 1; ++j) {
          addEqMulVVV(cField(), p0.q(j), p1.q(ns_ - 1 - j), expWInv_);
       }
 
-      // Vertex 0 contribution (if owned by block)
-      if (ownsVertex(1)) {
-         addEqMulVVV(cField(), p0.q(ns_-1), p1.q(0), expWInv_);
-      }
-
       // Scale cField() by prefactor
       VecOp::mulEqS(cField(), prefactor);
-   }
-
-
-   /*
-   * Average of a product of complementary propagator slices.
-   *
-   * This computes the spatial average of q0(r)*q1(r)*exp(+W(r))
-   */
-   template <int D>
-   double
-   Block<D>::averageProduct(RField<D> const& q0, RField<D> const& q1)
-   {
-      const int nx = mesh().size();
-      UTIL_CHECK(q0.capacity() == nx);
-      UTIL_CHECK(q1.capacity() == nx);
-
-      double Q = Reduce::innerProduct(q0, q1);
-      Q /= double(nx);
-      return Q;
-   }
-
-   /*
-   * Spatial integral of a product of complementary propagator slices.
-   *
-   * This computes the spatial average of q0(r)*q1(r)*exp(+W(r))
-   */
-   template <int D>
-   double
-   Block<D>::averageProductBead(RField<D> const& q0, RField<D> const& q1)
-   {
-      const int nx = mesh().size();
-      UTIL_CHECK(q0.capacity() == nx);
-      UTIL_CHECK(q1.capacity() == nx);
-      if (qr_.isAllocated()) {
-         UTIL_CHECK(qr_.capacity() == nx);
-      } else {
-         qr_.allocate(mesh().dimensions());
-      }
-
-      VecOp::mulVV(qr_, q0, q1);
-      VecOp::mulEqV(qr_, expWInv_);
-      double Q = Reduce::sum(qr_);
-      Q /= double(nx);
-      return Q;
-
    }
 
    /*
@@ -673,6 +638,8 @@ namespace Rpg {
    template <int D>
    void Block<D>::computeStressThread(double prefactor)
    {
+      UTIL_CHECK(PolymerModel::isThread());
+      UTIL_CHECK(meshPtr_);
       int nx = mesh().size();
 
       // Preconditions
@@ -683,8 +650,12 @@ namespace Rpg {
       UTIL_CHECK(ds_ > 0);
       UTIL_CHECK(nParams_ > 0);
       UTIL_CHECK(mesh().dimensions() == fft().meshDimensions());
-      UTIL_CHECK(propagator(0).isSolved());
-      UTIL_CHECK(propagator(1).isSolved());
+
+      // References to forward and reverse propagators
+      Pscf::Rpg::Propagator<D>& p0 = propagator(0);
+      Pscf::Rpg::Propagator<D>& p1 = propagator(1);
+      UTIL_CHECK(p0.isSolved());
+      UTIL_CHECK(p1.isSolved());
 
       // Calculate dKSq if necessary
       if (!waveListPtr_->hasdKSq()) {
@@ -694,8 +665,6 @@ namespace Rpg {
       // Workspace variables
       double dels, normal, increment;
       normal = 3.0*6.0;
-      Pscf::Rpg::Propagator<D>& p0 = propagator(0);
-      Pscf::Rpg::Propagator<D>& p1 = propagator(1);
       FSArray<double, 6> dQ;
       int i, j, n;
       RField<D> rTmp(kMeshDimensions_); // array of real values on kgrid
@@ -791,37 +760,23 @@ namespace Rpg {
       UTIL_CHECK(PolymerModel::isBead());
       UTIL_CHECK(isAllocated_);
       int nx = mesh().size();
+      IntVec<D> const & meshDim = mesh().dimensions();
       UTIL_CHECK(nx > 0);
       UTIL_CHECK(kSize_ > 0);
       UTIL_CHECK(nParams_ > 0);
-      UTIL_CHECK(mesh().dimensions() == fft().meshDimensions());
+      UTIL_CHECK(meshDim == fft().meshDimensions());
       UTIL_CHECK(ns_ > 0);
-      UTIL_CHECK(propagator(0).isSolved());
-      UTIL_CHECK(propagator(1).isSolved());
-
-      // Calculate dKSq if necessary
-      if (!waveListPtr_->hasdKSq()) {
-         waveListPtr_->computedKSq();
-      }
-
-      int i, j, n;
-
-      // Initialize dQ and stress to 0
-      FSArray<double, 6> dQ;
-      stress_.clear();
-      for (i = 0; i < nParams_; ++i) {
-         dQ.append(0.0);
-         stress_.append(0.0);
-      }
 
       // References to forward and reverse propagators
       Pscf::Rpg::Propagator<D>& p0 = propagator(0);
       Pscf::Rpg::Propagator<D>& p1 = propagator(1);
+      UTIL_CHECK(p0.isSolved());
+      UTIL_CHECK(p1.isSolved());
 
+      // Compute batched FFTs, or check allocation of work space
       if (useBatchedFFT_) {
-
          UTIL_CHECK(fftBatchedAll_.isSetup());
-         UTIL_CHECK(mesh().dimensions() == fftBatchedAll_.meshDimensions());
+         UTIL_CHECK(meshDim == fftBatchedAll_.meshDimensions());
          UTIL_CHECK(!q0k_.isAllocated());
          UTIL_CHECK(!q1k_.isAllocated());
          // In this case, containers q0k_ and q1k_ will be associated
@@ -830,59 +785,120 @@ namespace Rpg {
          // Computed batched FFT for propagators in both directions
          fftBatchedAll_.forwardTransform(p0.qAll(), q0kBatched_);
          fftBatchedAll_.forwardTransform(p1.qAll(), q1kBatched_);
-
       } else {
-
          if (!q0k_.isAllocated()) {
-            q0k_.allocate(mesh().dimensions());
-            q1k_.allocate(mesh().dimensions());
+            q0k_.allocate(meshDim);
+            q1k_.allocate(meshDim);
          }
-
       }
 
-      double increment = 0.0;
+      // Calculate dKSq if necessary
+      if (!waveListPtr_->hasdKSq()) {
+         waveListPtr_->computedKSq();
+      }
+
+      // Initialize dQ to zero
+      FSArray<double, 6> dQ;
+      dQ.clear();
+      for (int i = 0; i < nParams_; ++i) {
+         dQ.append(0.0);
+      }
+
+      RField<D> rTmp(kMeshDimensions_);   // k-space work space
       double bSq = kuhn()*kuhn()/6.0;
-      RField<D> rTmp(kMeshDimensions_); // array of real values on kgrid
+      double increment;
 
-      // Main loop over contour points
-      for (j = 0; j < ns_ - 1; ++j) {
-
+      // Half bond from head junction to first bead, if not a chain end
+      if (!p0.isHeadEnd()) {
          if (useBatchedFFT_) { 
             // Batched FFTs have already been computed
             // Associate q0k_, q1k_ with slices of q0kBatched_, q1kBatched_
-            q0k_.associate(q0kBatched_, j * kSize_, mesh().dimensions());
-            q1k_.associate(q1kBatched_, (ns_- 2 -j) * kSize_, 
-                           mesh().dimensions());
+            q0k_.associate(q0kBatched_, 0, meshDim);
+            q1k_.associate(q1kBatched_, (ns_- 2) * kSize_, meshDim);
          } else {
             // Compute Fourier transforms at contour grid point j
+            UTIL_CHECK(fft().isSetup());
+            fft().forwardTransform(p0.q(0), q0k_);
+            fft().forwardTransform(p1.q(ns_ - 2), q1k_);
+         }
+         for (int n = 0; n < nParams_ ; ++n) {
+            realMulVConjVV(rTmp, q0k_, q1k_, waveListPtr_->dKSq(n));
+            VecOp::mulEqV(rTmp, expKsq2_);
+            increment = Reduce::sum(rTmp);
+            increment *= 0.5*bSq;
+            dQ[n] -= increment;
+         }
+         if (useBatchedFFT_) {
+            q0k_.dissociate();
+            q1k_.dissociate();
+         }
+      }
+
+      // Loop over all nBead - 1 full bonds within this block
+      for (int j = 1; j < ns_ - 2; ++j) {
+
+         // Retrieve or compute FFTs at two neighboring slices
+         if (useBatchedFFT_) { 
+            // Batched FFTs have already been computed
+            // Associate q0k_, q1k_ with slices of q0kBatched_, q1kBatched_
+            q0k_.associate(q0kBatched_, j * kSize_, meshDim);
+            q1k_.associate(q1kBatched_, (ns_- 2 -j) * kSize_, meshDim);
+         } else {
+            // Compute Fourier transforms of p0, p1 at neighboring beads
             UTIL_CHECK(fft().isSetup());
             fft().forwardTransform(p0.q(j), q0k_);
             fft().forwardTransform(p1.q(ns_ - 2 - j), q1k_);
          }
 
-         // Increment stress contributions for all unit cell parameters
-         for (n = 0; n < nParams_ ; ++n) {
+         // Loop over unit cell parameters
+         for (int n = 0; n < nParams_ ; ++n) {
 
-            // Launch kernel to evaluate dQ at all wavevectors
+            // Compute contributions to dQ at all wavevectors, in rTmp
             realMulVConjVV(rTmp, q0k_, q1k_, waveListPtr_->dKSq(n));
             VecOp::mulEqV(rTmp, expKsq_);
 
-            // Get the sum of all elements
+            // Evaluate sum of over wavevectors
             increment = Reduce::sum(rTmp);
             increment *= bSq;
             dQ[n] -= increment;
+
          }
 
          if (useBatchedFFT_) {
+            // Dissociate to allow re-association
             q0k_.dissociate();
             q1k_.dissociate();
          }
 
       } // end loop over contour points
 
+      // Half bond from last bead to tail, if not a chain end
+      if (!p0.isTailEnd()) {
+         if (useBatchedFFT_) { 
+            q0k_.associate(q0kBatched_, (ns_-2)*kSize_, meshDim);
+            q1k_.associate(q1kBatched_, 0, meshDim);
+         } else {
+            UTIL_CHECK(fft().isSetup());
+            fft().forwardTransform(p0.q(ns_-2), q0k_);
+            fft().forwardTransform(p1.q(0), q1k_);
+         }
+         for (int n = 0; n < nParams_ ; ++n) {
+            realMulVConjVV(rTmp, q0k_, q1k_, waveListPtr_->dKSq(n));
+            VecOp::mulEqV(rTmp, expKsq2_);
+            increment = Reduce::sum(rTmp);
+            increment *= 0.5*bSq;
+            dQ[n] -= increment;
+         }
+         if (useBatchedFFT_) {
+            q0k_.dissociate();
+            q1k_.dissociate();
+         }
+      }
+
       // Normalize total stress values
-      for (i = 0; i < nParams_; ++i) {
-         stress_[i] -= dQ[i] * prefactor;
+      stress_.clear();
+      for (int i = 0; i < nParams_; ++i) {
+         stress_.append(-1.0*prefactor*dQ[i]);
       }
 
    }

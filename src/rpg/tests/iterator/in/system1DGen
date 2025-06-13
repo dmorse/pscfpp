@@ -28,7 +28,7 @@ System{
     groupName      P_-1
   }
   AmIteratorBasis{
-    epsilon      1.0e-6
+    epsilon      1.0e-12
     maxItr       2000
     maxHist      50 
     isFlexible   0
@@ -48,13 +48,13 @@ System{
     }
   }
   LinearSweep{
-    ns            5   
+    ns            1   
     baseFileName  out/sweep/
     nParameter    3   
     parameters[
-                  cell_param  0  +0.05
-                  chi_bottom  0  +1.0
-                  chi_top     0  +1.0
+                  cell_param  0  +0.01
+                  chi_bottom  0  +0.2
+                  chi_top     0  +0.2
     ]
   }
 }

@@ -16,25 +16,28 @@ given \ref rpc_System_page "here".
 
 \section scft_param_pc_example_sec Example
 
-The example show below is a typical parameter file for setting up an SCFT 
-calculation for a perodic structure of known space group symmetry of a 
-diblock copolymer melt using either pscf_pc or pscf_pg.
+The example show below is a typical parameter file for using pscf_pc to 
+perform a SCFT calculation for a 3D perodic structure of known space group 
+symmetry of a diblock copolymer melt. This example would also be accepted 
+by the pscf_pg program, which would perform the same calculation while
+offloading some parts of the calculation to a GPU.
 
 \code
 System{
+  polymerModel thread
   Mixture{
     nMonomer  2
     monomers[
-              A   1.0
-              B   1.0
+              1.0
+              1.0
     ]
     nPolymer  1
     Polymer{
       type    linear
       nBlock  2
       blocks[
-              0  0.25
-              1  0.75
+              0  0.15
+              1  0.85
       ]
       phi     1.0
     }
@@ -42,7 +45,7 @@ System{
   }
   Interaction{
     chi(
-          1   0   20.0
+          1   0   25.0
     )
   }
   Domain{
@@ -58,15 +61,19 @@ System{
   }
 }
 \endcode
+This parameter file is designed to initialize a single SCFT calculation
+for a BCC phase of a single-component diblock copolymer melt.  A parameter 
+file for SCFT calculation of a mixture could contain more than one 
+"Polymer" blocks and/or one or more "Solvent" blocks. A parameter file to 
+initialize a parameter Sweep would contain an additional "Sweep" block. 
 
 \section scft_param_pc_system_sec File format
 
-The main System block of a parameter file for an SCFT calculation
-peformed using pscf_pc or pscf_pg has the same overall structure as 
-that used for pscf_1d. The required elements for an SCFT calculation
-can be described by the format skeleton:
+The format of a parameter file used by pscf_pc or pscf_pg to perform a
+an SCFT calculation is shown in skeleton from below:
 \code
 System{
+  polymerModel*   enumeration  ("thread" or "bead", "thread" by default)
   Mixture{ ...  }
   Interaction{ ...  }
   Domain{ ...  }
@@ -74,12 +81,20 @@ System{
   Sweep#*{ ... }
 }
 \endcode
-As for pscf_1d, the Sweep block is optional, and Iterator and Sweep blocks
-(if present) are both selectable blocks.  The above skeleton includes only
-blocks that are relevant for SCFT calculations, and excludes some optional
-elements that are used for FTS calculations. A complete description of the 
-format for the main System block of pscf_pc parameter file is given 
-\ref rpc_System_page "here". 
+The above skeleton includes only blocks that are relevant for SCFT 
+calculations, and excludes optional elements that are only relevant to 
+PS-FTS calculations. A complete description of the format for the main 
+System block is given \ref rpc_System_page "here". 
+
+<b> polymerModel </b>: The polymerModel entry is an optional enumeration
+parameter with allowed values of "Thread" and "Bead" that specify global 
+use of either the continuous thread or discrete bead model.  If this 
+parameter is omitted, the thread model is used by default. 
+
+<b> Iterator and Sweep </b>: The Iterator and Sweep blocks are both 
+optional and selectable, but an Iterator block must be present in order 
+to perform an SCFT calculation.  The Sweep block is only needed if one 
+intends to peform an SCFT parameter sweep. 
 
 Formats of the Mixture and Interaction blocks are the same for all PSCF 
 programs, and have thus been discussed previously. Below, we discuss the 
@@ -104,33 +119,33 @@ An example of the format of this block is shown below:
 The format for this block is
 \code
 Domain{
-   mesh        Array[int] (D elements)
+   mesh        [int(D)] (D integer elements)
    lattice     string
    groupName*  string
 }
 \endcode
 The groupName parameter is optional, but must be included to enable
 SCFT calculations that seek a solution of specified space group symmetry. 
-The unitCell, mesh and groupName parameter lines are discussed separately 
-below.
+The mesh and groupName parameter lines are discussed separately below.
 
 <b> mesh  </b>
 
-The value of the variable "mesh" is a vector of integers that specifies
-the number of grid points along each direction of the uniform spatial
-mesh used to discretize fields within each unit cell of the crystal.
-The number of integers is equal to the dimensionality D of the periodic
-unit cell.  The format is
+The value of the variable "mesh" is a vector of integers on a single
+line that specify the number of grid points along each direction of the 
+uniform spatial mesh used to discretize fields within each unit cell of 
+the crystal.  The number of integers is equal to the dimensionality D 
+of the periodic unit cell.  The format is
 \code
    mesh   N[0] .... N[D-1]
 \endcode
 where N[i] is the number of grid points along axis number i, for
 i = 0 ,..., D-1.
 
-The dimensions N[0], ... , N[D-1] of the spatial mesh are initialized
-to the values given in the parameter file and cannot be changed during
-the lifetime of a program, except by rerunning the program with a
-modified parameter file.
+The dimensions N[0], ... , N[D-1] of the spatial mesh are initialized to
+in the parameter file and are immutable thereafter. The only way to run
+simulations with different mesh sizes is to run pscf_pc and pscf_pg 
+multiple times using different parameters files with different values 
+for the mesh parameter.
 
 <b> lattice </b>
 
@@ -146,6 +161,9 @@ system for a 1D crystal, which is referred to as  "lamellar". A more
 detailed discussion of each of the possible lattice systems is given in 
 a separate page that documents conventions for
 \ref scft_unitcell_page "unit cells".
+
+The lattice system parameter is initialized by the parameter file and
+is immutable thereafter.
 
 <b> groupName </b>
 
@@ -176,41 +194,48 @@ after the first time unit cell parameters are initialized, e.g., by
 reading the values given in a file that contains a description of a 
 field.
 
+If a groupName parameter is present in the parameter file, it is
+immutable after the parameter file is processed. Simulations of 
+structures with different space groups must be performed separately,
+by running pscf_pc or pscf_pg multiple times with different parameter
+files. 
+
 <b> Unit cell parameters (absence from parameter file) </b>
 
-To completely describe the Bravais lattice for a crystal with a
-known crystal system, one must assign values to a list of parameters 
-that give the lengths of the edges of the unit cell and, for some
-crystal systems, angles between some of these edges.  The number of 
-unit cell parameters required to describe a unit cell is different 
-for different lattice system. For example, a 3D cubic crystal can 
-be described using a single parameter that gives the length of any 
-edge of a cubic unit cell. Three parameters are required to describe 
-an orthorhombic unit cell, to specify lengths of three orthogonal 
-Bravais basis vectors, while 6 parameters are required for a 
-triclinic unit cell, to specify 3 independent unit cell lengths and 
-3 angles. The unit cell parameters for each unit cell type are
-stored in an array that lists the required parameters in some 
-pre-specified order. Conventions for the meaning of the required 
-parameters and the order in which they are listed are described 
-for each crystal system in a separate page of documentation about
-\ref scft_unitcell_page "unit cells".
+To completely describe the Bravais lattice for a crystal with a known 
+crystal system, one must assign values to a list of unit cell parameters 
+that give the lengths of the edges of the unit cell and, for some lattice 
+systems, angles between some of these edges.  The number of unit cell 
+parameters required to describe a unit cell is different for different 
+lattice system. For example, a 3D cubic crystal can be described using 
+a single parameter that gives the length of any edge of a simple cubic 
+unit cell. Three parameters are required to describe an orthorhombic 
+unit cell, to specify lengths of three orthogonal Bravais basis vectors, 
+while 6 parameters are required for a triclinic unit cell, to specify 3 
+independent unit cell lengths and 3 angles. The unit cell parameters for 
+each unit cell type are stored internally in an array that lists the 
+required parameters in some pre-specified order. Conventions for the 
+meaning of the required parameters and the order in which they are 
+listed are described for each crystal system in a separate page of 
+documentation about \ref scft_unitcell_page "unit cells".
 
-Values for unit cell parameters are not specified in the parameter 
-files for pscf_pc or pscf_pg. These parameters values are instead 
-specified within the header section of files that describe periodic
-chemical potential fields (w-fields) or monomer concentration fields 
-(c-cields).  The unit cell parameters are thus normally first
-assigned values during execution of the first command in the command 
-file that causes the program to read such a field from file. There 
-also exists a command named SET_UNIT_CELL that a user can invoke to 
-manually set or reset the unit cell parameter values at any point 
-during processing of a command file. If the Domain block of the 
-parameter file contains a space group name, a symmetry-adapted 
-Fourier basis for that space group is constructed immediately after
-the first time that unit cell parameters are assigned initial values
-by either mechanism (e.g., the first time a field is read from a 
-file or the SET_UNIT_CELL command is invoked). 
+Values for unit cell parameters are specified within the header section 
+of files that describe periodic chemical potential fields (w-fields) or 
+monomer concentration fields (c-cields). Values for these parameters 
+are not, however, provided in the parameter file.  Unit cell parameters 
+are thus normally first assigned values during execution of the first 
+command in the command file that causes the program to set the chemical 
+potential fields for the program, by reading these fields from a file.
+Unit cell parameters can also be set explicitly using a command named
+SET_UNIT_CELL users may invoke to manually set or reset the unit cell 
+parameter values at any point during processing of a command file. 
+
+If the Domain block of the parameter file contains a space group name, 
+a symmetry-adapted Fourier basis for that space group is constructed 
+immediately after the first time that unit cell parameters are assigned 
+initial values by either mechanism, e.g., either the first time that
+the w-fields are set by reading these fields from a file or the 
+SET_UNIT_CELL command is invoked). 
 
 Unit cell parameters for a crystal are changed many times during SCFT 
 calculations for systems with flexible unit cells, in which the unit 

@@ -47,13 +47,6 @@ namespace Pscf
    * a thread model is in use, because these variables are each meaningful 
    * only in the context of a specific model. 
    *
-   * In the case of the bead model, an Edge also stores a pair of boolean
-   * flags to indicate whether the block contains either or both of the
-   * associated terminating vertex beads. It is an error to try to set or
-   * get a value for the vertex ownership flags when the thread model is 
-   * in use (i.e., when PolymerModel::isThread() == true), because these 
-   * variables are only meaningful for a bead model. 
-   *
    * Block objects associated with a polymer are normally stored in 
    * an array that is a private member of the Pscf::PolymerTmpl class 
    * template. The block id for each Edge should be set to the element 
@@ -132,31 +125,13 @@ namespace Pscf
       virtual void setNBead(int nBead);
 
       /**
-      * Set ownership of associated vertices (only valid for bead model).
-      *
-      * The concept of "ownership" of vertex beads is only meaningful in
-      * the context of a bead model, in which we require that each vertex 
-      * be owned by one of the associated blocks. The monomer type of the 
-      * vertex is the same as the type of the block that owns it.
-      *
-      * Precondition: PolymerModel::isBead()
-      *
-      * \param own0  Does this block own vertex 0 ?
-      * \param own1  Does this block own vertex 1 ?
-      */
-      void setVertexOwnership(bool own0, bool own1);
-
-      /**
       * Set the type of the parent polymer (branched or linear).
       *
       * By convention, if the polymer type is PolymerType::Linear, then
       * vertexId(0) = id and vertexId(1) = id + 1 for block number id.
-      * In the case of a bead model for a linear polymer, block id owns 
-      * vertex id+1, while block 0 also owns vertex 0. By using these 
-      * conventions, the stream insertion and extraction operators for 
-      * an Edge can thus use a shorter string representation for linear 
-      * polymers in which vertex ids and (for bead models) vertex 
-      * owhership flags are omitted.
+      * By using this convention, the stream insertion and extraction 
+      * operators for an Edge can thus use a shorter string representation 
+      * for linear polymers in which vertex ids are omitted.
       *
       * \param type  type of polymer (branched or linear)
       */
@@ -187,15 +162,6 @@ namespace Pscf
       * \param i index of vertex (0 or 1)
       */
       int vertexId(int i) const;
-
-      /**
-      * Does this block own an associated vertex (bead model).
-      *
-      * Precondition: PolymerModel::isBead()
-      *
-      * \param i index of vertex (0 or 1)
-      */
-      bool ownsVertex(int i) const;
 
       /**
       * Get the length of this block, in the thread model.
@@ -237,10 +203,6 @@ namespace Pscf
       /// Indexes of associated vertices
       Pair<int> vertexIds_;
 
-      /// Pair of bools to indicate ownership of associated vertices
-      /// Only valid for bead model, if PolymerModel::isBead()
-      Pair<bool> ownsVertex_;
-
       /// Type of polymer that contains this block (branched or linear)
       PolymerType::Enum polymerType_;
 
@@ -281,17 +243,11 @@ namespace Pscf
    * In the bead model, if PolymerModel::isBead(), the text representation 
    * for a branched polymer is:
    * \code
-   *    monomerId nBead vertexId(0) vertexid(1) ownsVertex(0) ownsVertex(1)
+   *    monomerId nBead vertexId(0) vertexid(1) 
    * \endcode
-   * Here, nBead is the integer number of beads in the chain, while 
-   * ownsVertex(0) and ownsVertex(1) are boolean variables (0 or 1) that 
-   * indicate whether the block owns vertex 0 and 1, respecively. The 
+   * where nBead is the integer number of beads in the chain. The
    * corresponding text representation for a bead-spring linear chain 
-   * omits both the vertex ids and the ownsVertex flags, because values of 
-   * these are set by convention.  In a linear bead-spring polymer, 
-   * vertex ids for block number id are id and id+1, ownsVertex(1) == 1, 
-   * while ownsVertex(0) == 1 for the first block (id = 0) and 
-   * ownsVertex(0) = 0 for all other blocks (id > 0).
+   * omits the vertex ids, as for the thread model.
    *
    * \param in  input stream
    * \param block  Edge to be read from stream
@@ -339,15 +295,6 @@ namespace Pscf
    */
    inline int Edge::vertexId(int i) const
    {  return vertexIds_[i]; }
-
-   /*
-   * Get ownsVertex flag for an associated vertex (bead model only).
-   */
-   inline bool Edge::ownsVertex(int i) const
-   {  
-      UTIL_CHECK(PolymerModel::isBead());  
-      return ownsVertex_[i]; 
-   }
 
    /*
    * Get the number of beads in this block (bead model).

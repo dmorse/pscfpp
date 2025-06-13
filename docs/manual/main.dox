@@ -8,10 +8,10 @@ theoretic (FTS) simulations that are rely on a partial saddle-point
 approximation (PS-FTS).
 
 PSCF is written primarily in C++, supplemented by CUDA to enable use of an
-appropriate graphics processing unit (GPU) when one is available.  It is 
-distributed only in source code form, and so must be compiled by the user. 
-PSCF is designed for a unix-like environment, and is regularly tested on 
-Linux and Mac OS X operating systems.
+graphics processing unit (GPU) when an appropriate one is available.  The
+package only distributed in source code form, and so must be compiled by 
+the user.  PSCF is designed for a unix-like environment, and is regularly 
+tested on Linux and Mac OS X operating systems.
 
 PSCF is free, open source software. It is distributed under the terms of 
 the GNU General Public License as (GPL) published by the Free Software 
@@ -61,7 +61,6 @@ manual for the most recent release of PSCF is available online at:
     <li> \ref user_files_page  </li>
     <li> \ref user_usage_page  </li>
     <li> \ref user_calculation_page  </li>
-    <li> \ref user_branched_page  </li>
     <li> \ref user_param_page  </li>
     <li> \ref user_command_page  </li>
     <li> \ref user_example_page  </li>

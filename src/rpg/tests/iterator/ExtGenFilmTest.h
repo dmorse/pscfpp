@@ -298,7 +298,7 @@ public:
 
       // Call stressTerm and check that the result is correct
       TEST_ASSERT(eq(ext.stressTerm(0),0.0));
-      TEST_ASSERT(std::abs(ext.stressTerm(1) + 0.163552445657) < 1e-5);
+      TEST_ASSERT(std::abs(ext.stressTerm(1) + 0.163552584) < 1e-5);
    }
 
    // Read parameter file to create a System object

@@ -7,13 +7,18 @@
 <h2> Contents:</h2>
    <ol>
    <li> \subpage user_model_page       </li>
+     <ul>
+       <li> \ref user_model_parameters_page  "Overview" </li>
+       <li> \ref user_model_polymer_page     "Polymer Species" </li>
+       <li> \ref user_model_solvent_page     "Solvent Species" </li>
+       <li> \ref user_model_conventions_page "Parameter Conventions" </li>
+     </ul>
    <li> \subpage user_files_page       </li>
    <li> \subpage user_usage_page       </li>
    <li> \subpage user_calculation_page </li>
-   <li> \subpage user_branched_page    </li>
    <li> \subpage user_param_page     
      <ul>
-       <li> \ref user_param_example_page  "1D SCFT Example" </li>
+       <li> \ref user_param_example_page  "Example" </li>
        <li> \ref user_param_syntax_page   "Syntax" </li>
        <li> \ref user_param_format_page   "Format Descriptions" </li>
        <li> \ref user_param_mixture_page  "Mixture Block" </li>

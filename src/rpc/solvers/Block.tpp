@@ -92,6 +92,7 @@ namespace Rpc {
       UTIL_CHECK(meshPtr_);
       UTIL_CHECK(fftPtr_);
       UTIL_CHECK(unitCellPtr_);
+      UTIL_CHECK(waveListPtr_);
       UTIL_CHECK(mesh().size() > 1);
       UTIL_CHECK(mesh().dimensions() == fft().meshDimensions());
       UTIL_CHECK(!isAllocated_);
@@ -101,16 +102,15 @@ namespace Rpc {
 
       // Allocate work arrays for MDE solution
       expKsq_.allocate(kMeshDimensions_);
+      expKsq2_.allocate(kMeshDimensions_);
       expW_.allocate(mesh().dimensions());
       qr_.allocate(mesh().dimensions());
       qk_.allocate(mesh().dimensions());
       qr2_.allocate(mesh().dimensions());
       qk2_.allocate(mesh().dimensions());
       if (PolymerModel::isThread()) {
-         expKsq2_.allocate(kMeshDimensions_);
          expW2_.allocate(mesh().dimensions());
-      } else 
-      if (PolymerModel::isBead()) {
+      } else {
          expWInv_.allocate(mesh().dimensions());
       }
 
@@ -121,25 +121,19 @@ namespace Rpc {
 
       // Compute ns_ 
       if (PolymerModel::isThread()) {
-
          // Set contour length discretization for this block
          UTIL_CHECK(length() > 0.0);
          int tempNs;
-         tempNs = floor( length()/(2.0 *ds) + 0.5 );
+         tempNs = floor(length() / (2.0 *ds) + 0.5);
          if (tempNs == 0) {
-            tempNs = 1;
+            tempNs = 1;                     // ensure ns_ >= 3
          }
          ns_ = 2*tempNs + 1;
          ds_ = length()/double(ns_-1);
-
-      } else
+      } else 
       if (PolymerModel::isBead()) {
-
          ds_ = 1.0;
-         ns_ = nBead();
-         if (!ownsVertex(0)) ++ns_;
-         if (!ownsVertex(1)) ++ns_;
-
+         ns_ = nBead() + 2;
       }
 
       // Allocate memory for solutions to MDE (requires ns_)
@@ -173,14 +167,13 @@ namespace Rpc {
          ns_ = 2*tempNs + 1;
          ds_ = length()/double(ns_-1);
 
+         // Reallocate propagators if ns_ has changed
          if (oldNs != ns_) {
-            // If propagators are already allocated and ns_ has changed,
-            // reallocate memory for solutions to MDE
             propagator(0).reallocate(ns_);
             propagator(1).reallocate(ns_);
          }
-      }
 
+      }
       hasExpKsq_ = false;
    }
 
@@ -195,7 +188,7 @@ namespace Rpc {
    }
 
    /*
-   * Mark data that depend on the unit cell parameters as invalid.
+   * Clear all internal data that depends on the unit cell parameters.
    */
    template <int D>
    void Block<D>::clearUnitCellData()
@@ -208,16 +201,12 @@ namespace Rpc {
    void Block<D>::computeExpKsq()
    {
       UTIL_CHECK(isAllocated_);
-      UTIL_CHECK(unitCellPtr_);
-      UTIL_CHECK(unitCellPtr_->isInitialized());
       UTIL_CHECK(waveListPtr_);
 
       bool isThread = PolymerModel::isThread();
-      double bSqFactor;
+      double bSqFactor = -1.0*kuhn()*kuhn() / 6.0;
       if (isThread) {
-         bSqFactor = -1.0*kuhn()*kuhn() * ds_ / 6.0;
-      } else {
-         bSqFactor = -1.0*kuhn()*kuhn() / 6.0;
+         bSqFactor *= ds_;
       }
 
       // Calculate KSq if necessary
@@ -234,9 +223,7 @@ namespace Rpc {
          i = iter.rank();
          arg = kSq[i]*bSqFactor;
          expKsq_[i] = exp(arg);
-         if (isThread) {
-            expKsq2_[i] = exp(0.5*arg);
-         }
+         expKsq2_[i] = exp(0.5*arg);
       }
 
       hasExpKsq_ = true;
@@ -287,7 +274,7 @@ namespace Rpc {
    {
       UTIL_CHECK(PolymerModel::isThread());
 
-      // Prereconditions on mesh and fft
+      // Preconditions on mesh and fft
       int nx = mesh().size();
       UTIL_CHECK(nx > 0);
       UTIL_CHECK(fft().isSetup());
@@ -372,17 +359,13 @@ namespace Rpc {
    template <int D>
    void Block<D>::stepBondBead(RField<D> const & q, RField<D>& qout)
    {
+      // Prereconditions 
       UTIL_CHECK(isAllocated_);
       UTIL_CHECK(hasExpKsq_);
-
-      // Prereconditions on mesh and fft
       int nx = mesh().size();
       UTIL_CHECK(nx > 0);
-      UTIL_CHECK(fft().isSetup());
-      UTIL_CHECK(mesh().dimensions() == fft().meshDimensions());
       UTIL_CHECK(q.capacity() == nx);
       UTIL_CHECK(qout.capacity() == nx);
-
       int nk = qk_.capacity();
       UTIL_CHECK(nk > 0);
       UTIL_CHECK(expKsq_.capacity() == nk);
@@ -394,7 +377,32 @@ namespace Rpc {
          qk_[i][1] *= expKsq_[i];
       }
       fft().inverseTransformUnsafe(qk_, qout); // destroys qk_
+   }
 
+   /*
+   * Apply the half-bond operator for the bead model.
+   */
+   template <int D>
+   void Block<D>::stepHalfBondBead(RField<D> const & q, RField<D>& qout)
+   {
+      // Preconditions 
+      UTIL_CHECK(isAllocated_);
+      UTIL_CHECK(hasExpKsq_);
+      int nx = mesh().size();
+      UTIL_CHECK(nx > 0);
+      UTIL_CHECK(q.capacity() == nx);
+      UTIL_CHECK(qout.capacity() == nx);
+      int nk = qk_.capacity();
+      UTIL_CHECK(nk > 0);
+      UTIL_CHECK(expKsq_.capacity() == nk);
+
+      // Apply bond operator
+      fft().forwardTransform(q, qk_);
+      for (int i = 0; i < nk; ++i) {
+         qk_[i][0] *= expKsq2_[i];
+         qk_[i][1] *= expKsq2_[i];
+      }
+      fft().inverseTransformUnsafe(qk_, qout); // destroys qk_
    }
 
    /*
@@ -426,9 +434,8 @@ namespace Rpc {
       int nx = mesh().size();
       UTIL_CHECK(nx > 0);
       UTIL_CHECK(ns_ > 0);
-      UTIL_CHECK(ds_ > 0);
-      UTIL_CHECK(propagator(0).isAllocated());
-      UTIL_CHECK(propagator(1).isAllocated());
+      UTIL_CHECK(propagator(0).isSolved());
+      UTIL_CHECK(propagator(1).isSolved());
       UTIL_CHECK(cField().capacity() == nx);
 
       // Initialize cField to zero at all points
@@ -489,8 +496,8 @@ namespace Rpc {
       int nx = mesh().size();
       UTIL_CHECK(nx > 0);
       UTIL_CHECK(ns_ > 0);
-      UTIL_CHECK(propagator(0).isAllocated());
-      UTIL_CHECK(propagator(1).isAllocated());
+      UTIL_CHECK(propagator(0).isSolved());
+      UTIL_CHECK(propagator(1).isSolved());
       UTIL_CHECK(cField().capacity() == nx);
 
       // Initialize cField to zero at all points
@@ -503,33 +510,12 @@ namespace Rpc {
       Propagator<D> const & p0 = propagator(0);
       Propagator<D> const & p1 = propagator(1);
 
-      // Vertex 0 contribution (if owned by block)
-      if (ownsVertex(0)) {
-         RField<D> const & qf = p0.q(0);
-         RField<D> const & qr = p1.q(ns_ - 1);
-         for (i = 0; i < nx; ++i) {
-            //cField()[i] += p0.q(0)[i]*p1.q(ns_ - 1)[i]*expWInv_[i];
-            cField()[i] += qf[i] * qr[i] * expWInv_[i];
-         }
-      }
-
-      // Internal beads (j = 1, ... , ns_ -2)
+      // Sum over beads (j = 1, ... , ns_ -2)
       int j;
       for (j = 1; j < (ns_ -1); ++j) {
          RField<D> const & qf = p0.q(j);
          RField<D> const & qr = p1.q(ns_ - 1 - j);
          for (i = 0; i < nx; ++i) {
-            //cField()[i] += p0.q(j)[i] * p1.q(ns_ - 1 - j)[i]*expWInv_[i];
-            cField()[i] += qf[i] * qr[i] * expWInv_[i];
-         }
-      }
-
-      // Vertex 1 contribution (if owned by block)
-      if (ownsVertex(1)) {
-         RField<D> const & qf = p0.q(ns_ - 1);
-         RField<D> const & qr = p1.q(0);
-         for (i = 0; i < nx; ++i) {
-            //cField()[i] += p0.q(ns_ -1)[i]*p1.q(0)[i]*expWInv_[i];
             cField()[i] += qf[i] * qr[i] * expWInv_[i];
          }
       }
@@ -538,49 +524,10 @@ namespace Rpc {
       for (i = 0; i < nx; ++i) {
          cField()[i] *= prefactor;
       }
-
    }
 
    /*
-   * Average of a product of complementary propagator slices.
-   */
-   template <int D>
-   double 
-   Block<D>::averageProduct(RField<D> const& q0, RField<D> const& q1)
-   {
-      int nx = mesh().size();
-      UTIL_CHECK(nx == q0.capacity());
-      UTIL_CHECK(nx == q1.capacity());
-
-      double Q = 0.0; 
-      for (int i = 0; i < nx; ++i) {
-         Q += q0[i] * q1[i];
-      }
-      Q /= double(nx);
-      return Q;
-   }
-
-   /*
-   * Spatial integral of a product of complementary propagator slices.
-   */
-   template <int D>
-   double 
-   Block<D>::averageProductBead(RField<D> const& q0, RField<D> const& q1)
-   {
-      int nx = mesh().size();
-      UTIL_CHECK(nx == q0.capacity());
-      UTIL_CHECK(nx == q1.capacity());
-
-      double Q = 0.0; 
-      for (int i = 0; i < nx; ++i) {
-         Q += q0[i] * q1[i] * expWInv_[i];
-      }
-      Q /= double(nx);
-      return Q;
-   }
-
-   /*
-   * Integrate to Stress exerted by the chain for this block
+   * Integrate to compute stress exerted by this block (thread).
    */
    template <int D>
    void Block<D>::computeStressThread(double prefactor)
@@ -593,8 +540,12 @@ namespace Rpc {
       UTIL_CHECK(mesh().dimensions() == fft().meshDimensions());
       UTIL_CHECK(ns_ > 0);
       UTIL_CHECK(ds_ > 0);
-      UTIL_CHECK(propagator(0).isAllocated());
-      UTIL_CHECK(propagator(1).isAllocated());
+
+      // References to forward and reverse propagators
+      Propagator<D> const & p0 = propagator(0);
+      Propagator<D> const & p1 = propagator(1);
+      UTIL_CHECK(p0.isAllocated());
+      UTIL_CHECK(p1.isAllocated());
 
       // If necessary, update derivatives of |k|^2 in WaveList
       UTIL_CHECK(waveListPtr_);
@@ -609,11 +560,10 @@ namespace Rpc {
          dQ.append(0.0);
       }
 
-      Propagator<D> const & p0 = propagator(0);
-      Propagator<D> const & p1 = propagator(1);
+      // Work variables
       const double bSq = kuhn()*kuhn()/6.0;
       double dels, prod, increment;
-      int n, m;
+      int m, n;
 
       // Evaluate unnormalized integral over contour 
       for (int j = 0; j < ns_ ; ++j) {
@@ -652,9 +602,8 @@ namespace Rpc {
 
       // Compute stress_ from dQ
       stress_.clear();
-      for (int i = 0; i < nParam; ++i) {
-         stress_.append(-1.0*prefactor*dQ[i]);
-         // stress_[i] = stress_[i] - (dQ[i] * prefactor);
+      for (int n = 0; n < nParam; ++n) {
+         stress_.append(-1.0*prefactor*dQ[n]);
       }
 
    }
@@ -672,8 +621,13 @@ namespace Rpc {
       UTIL_CHECK(fft().isSetup());
       UTIL_CHECK(mesh().dimensions() == fft().meshDimensions());
       UTIL_CHECK(ns_ > 0);
-      UTIL_CHECK(propagator(0).isAllocated());
-      UTIL_CHECK(propagator(1).isAllocated());
+
+      // References to forward to reverse propagators
+      Propagator<D> const & p0 = propagator(0);
+      Propagator<D> const & p1 = propagator(1);
+      UTIL_CHECK(p0.isSolved());
+      UTIL_CHECK(p1.isSolved());
+
 
       // If necessary, update derivatives of |k|^2 in WaveList
       UTIL_CHECK(waveListPtr_);
@@ -688,19 +642,43 @@ namespace Rpc {
          dQ.append(0.0);
       }
 
-      Propagator<D> const & p0 = propagator(0);
-      Propagator<D> const & p1 = propagator(1);
       const double bSq = kuhn()*kuhn()/6.0;
       double increment, prod;
 
-      // Loop over all bonds in this block
-      for (int j = 0; j < ns_ - 1 ; ++j) {
+      // Half-bond from head junction to first bead, if not a chain end
+      if (!p0.isHeadEnd()) {
+     
+         // Bead j = 0, forward propagator
+         qr_ = p0.q(0);
+         fft().forwardTransform(qr_, qk_);
+
+         // Next bead (ns_ - 2), reverse propagator
+         qr2_ = p1.q(ns_ - 2);
+         fft().forwardTransform(qr2_, qk2_);
+
+         // Loop over unit cell parameters
+         for (int n = 0; n < nParam ; ++n) {
+            RField<D> dKSq = waveListPtr_->dKSq(n);
+            increment = 0.0;
+            // Loop over wavevectors
+            for (int m = 0; m < kSize_ ; ++m) {
+               prod = (qk2_[m][0] * qk_[m][0]) + (qk2_[m][1] * qk_[m][1]);
+               prod *= dKSq[m]*expKsq2_[m];
+               increment += prod;
+            }
+            increment *= 0.5*bSq;
+            dQ[n] = dQ[n] - increment;
+         }
+      }
+
+      // Loop over nBead - 1 full bonds within this block
+      for (int j = 1; j < ns_ - 2 ; ++j) {
 
          // Bead j, forward propagator
          qr_ = p0.q(j);
          fft().forwardTransform(qr_, qk_);
 
-         // Bead j + 1, reverse propagator
+         // Next bead (ns_- 2 - j), reverse propagator
          qr2_ = p1.q(ns_ - 2 - j);
          fft().forwardTransform(qr2_, qk2_);
 
@@ -720,11 +698,37 @@ namespace Rpc {
 
       }
 
+      // Half-bond from last bead to tail junction, if not a chain end
+      if (!p0.isTailEnd()) {
+     
+         // Second-to-last bead, j = ns_ - 2, forward propagator
+         qr_ = p0.q(ns_-2);
+         fft().forwardTransform(qr_, qk_);
+
+         // Last bead, j=0, reverse propagator
+         qr2_ = p1.q(0);
+         fft().forwardTransform(qr2_, qk2_);
+
+         // Loop over unit cell parameters
+         for (int n = 0; n < nParam ; ++n) {
+            RField<D> dKSq = waveListPtr_->dKSq(n);
+            increment = 0.0;
+            // Loop over wavevectors
+            for (int m = 0; m < kSize_ ; ++m) {
+               prod = (qk2_[m][0] * qk_[m][0]) + (qk2_[m][1] * qk_[m][1]);
+               prod *= dKSq[m]*expKsq2_[m];
+               increment += prod;
+            }
+            increment *= 0.5*bSq;
+            dQ[n] = dQ[n] - increment;
+         }
+
+      }
+
       // Compute stress_ from dQ
       stress_.clear();
       for (int i = 0; i < nParam; ++i) {
          stress_.append(-1.0*prefactor*dQ[i]);
-         //stress_[i] = stress_[i] - (dQ[i] * prefactor);
       }
 
    }

@@ -312,7 +312,7 @@ public:
 
       // Call stressTerm and check that the result is correct
       TEST_ASSERT(eq(mask.stressTerm(0),0.0));
-      TEST_ASSERT(std::abs(mask.stressTerm(1) - 0.4211629642) < 1e-5);
+      TEST_ASSERT(std::abs(mask.stressTerm(1) - 0.4212395769) < 1e-5);
    }
 
    void testModifyStress() // test MaskGenFilm::modifyStress
