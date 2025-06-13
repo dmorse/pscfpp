@@ -9,7 +9,7 @@
 */
 
 #include "DomainReal.h"
-#include <prdc/crystal/fieldHeader.h>
+#include <prdc/field/fieldIoUtil.h>
 #include <util/misc/FileMaster.h>
 
 namespace Pscf {

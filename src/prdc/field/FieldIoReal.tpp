@@ -11,8 +11,6 @@
 #include "FieldIoReal.h"
 
 #include <prdc/field/fieldIoUtil.h>
-#include <prdc/crystal/fieldHeader.h>
-
 #include <prdc/crystal/shiftToMinimum.h>
 #include <prdc/crystal/UnitCell.h>
 #include <prdc/crystal/Basis.h>

@@ -14,7 +14,6 @@
 #include <rpc/field/Domain.h>
 
 #include <prdc/field/fieldIoUtil.h>
-#include <prdc/crystal/fieldHeader.h>
 #include <prdc/crystal/Basis.h>
 #include <prdc/crystal/UnitCell.h>
 #include <prdc/cpu/RFieldComparison.h>
