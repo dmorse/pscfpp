@@ -16,6 +16,19 @@ programs are affected by specific changes:
 Versions before v1.2 use program name pscf_fd and label fd for the 1D
 finite difference SCFT code that is now called pscf_1d.
 
+Version 1.3.0 (6/15/2025)
+=========================================
+
+User-visible features
+---------------------
+* Option to use a discrete bead model for chain conformations
+
+Developer-visible changes
+-------------------------
+* Introduction of WaveList in code for pscf_pc, by analogy to pscf_pg
+* Re-organization to reduce code duplication between Rpc, Rpg namespaces
+* Move file manipulation functions from System to FieldIo in Rpc, Rpg
+
 Version 1.2.0 (4/14/2025)
 =========================================
 

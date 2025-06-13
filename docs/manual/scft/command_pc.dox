@@ -108,18 +108,18 @@ that command or a group of closely related commands.
     </td>
   </tr>
   <tr>
-    <td> \ref scft_command_pc_estimatewc_sub "ESTIMATE_W_FROM_C" </td>
-    <td> filename [string] </td>
-    <td> Read c fields in symmetry-adapted basis format from file 
-         filename, compute estimated w fields as initial guesses for 
-         iteration. </td>
-  </tr>
-  <tr>
     <td> \ref scft_command_pc_readwrgrid_sub "READ_W_RGRID" </td>
     <td> filename [string] </td>
     <td> Read w fields from file filename, in real-space grid (r-grid)
          format. See \ref scft_command_pc_readwrgrid_sub "discussion"
          for constraints on usage. </td>
+  </tr>
+  <tr>
+    <td> \ref scft_command_pc_estimatewc_sub "ESTIMATE_W_FROM_C" </td>
+    <td> filename [string] </td>
+    <td> Read c fields in symmetry-adapted basis format from file 
+         filename, compute estimated w fields as initial guesses for 
+         iteration. </td>
   </tr>
 
   <tr>
@@ -166,6 +166,15 @@ that command or a group of closely related commands.
          </td>
   </tr>
   <tr>
+    <td> \ref scft_command_pc_stress_sub "WRITE_STRESS" </td>
+    <td> filename [string] </td>
+    <td> Write "stress" components, i.e.,derivatives of SCFT free energy
+         with respect to unit cell parameters.
+         See \ref scft_command_pc_thermo_sub "discussion"
+         </td>
+  </tr>
+
+  <tr>
     <td colspan="3" style="text-align:center">
       \ref scft_command_pc_fieldout_sec "Field Output"
     </td>
@@ -185,16 +194,16 @@ that command or a group of closely related commands.
          format </td>
   </tr>
   <tr>
-    <td> \ref scft_command_pc_fieldout_sec "WRITE_C_BASIS" </td>
-    <td> filename [string] </td>
-    <td> Write monomer volume fraction fields (c fields) to file filename,
-         in symmetry adapted basis format  </td>
-  </tr>
-  <tr>
     <td> \ref scft_command_pc_fieldout_sec "WRITE_C_RGRID" </td>
     <td> filename [string] </td>
     <td> Write monomer volume fraction fields (c fields) to file filename,
          in r-grid format  </td>
+  </tr>
+  <tr>
+    <td> \ref scft_command_pc_fieldout_sec "WRITE_C_BASIS" </td>
+    <td> filename [string] </td>
+    <td> Write monomer volume fraction fields (c fields) to file filename,
+         in symmetry adapted basis format  </td>
   </tr>
   <tr>
     <td> \ref scft_command_pc_writeblockc_sub "WRITE_BLOCK_C_RGRID" </td>
@@ -364,6 +373,17 @@ that command or a group of closely related commands.
 
   <tr>
     <td colspan="3" style="text-align:center">
+      \ref scft_command_pc_unitcell_sec "Unit Cell Initialization"
+    </td>
+  </tr>
+  <tr>
+    <td> \ref scft_command_pc_unitcell_sec "SET_UNIT_CELL" </td>
+    <td> lattice [string], parameters Array[double] </td>
+    <td> Set unit parameters to values given as command arguments. </td>
+  </tr>
+
+  <tr>
+    <td colspan="3" style="text-align:center">
     \ref scft_command_pc_external_sec "External Fields"
     </td>
   </tr>
@@ -444,6 +464,7 @@ that command or a group of closely related commands.
          on different operations, by resetting all values to zero.
          </td>
   </tr>
+
 </table>
 
 Further discussion of particular commands and groups of commands is
@@ -570,7 +591,28 @@ development of stochastic field theoretic simulation algorithms in
 which the fluctuating field generally do not exhibit any special
 symmetry.
 
-\section scft_command_pc_compute_sec Computation commands
+\section scft_command_pc_unitcell_sec Unit Cell Initialization
+
+The SET_UNIT_CELL command can be used to set or reset the parameters
+(lengths and angles) of the periodic unit cell.  It is usually not
+necessary, however, to use this command to set unit cell parameters 
+because these parameters are also set to the values given in a field 
+file header whenever the READ_W_BASIS or READ_W_RGRID command is 
+used to read W fields from a file. The SET_UNIT_CELL provides an
+alternate mechanism to set these parameters, in order to manually
+override values that previously been read from a field file, or to
+set initial unit cell parameters prior to reading a field file. 
+
+The SET_UNIT_CELL command take a string argument that must be the name
+name of a lattice type of the appropriate dimension (e.g., cubic, for
+a system with D=3) by a followed by a list of unit cell parameter 
+values (one or more lengths, and sometimes angles). The lattice type 
+string argument must match the lattice parameter given in the Domain 
+section of the parameter file. The number and interpretation of the 
+unit cell parameter values depends on the lattice type, as discussed 
+\ref scft_unitcell_page "elsewhere". 
+
+\section scft_command_pc_compute_sec SCFT Computations
 
 The COMPUTE, ITERATE and SWEEP commands perform the primary computations
 involved in a self-consistent field calculation.  Each performs the
@@ -646,6 +688,20 @@ This is designed to allow users to output a parameter file block
 that contains the input parameters followed by a report of computed
 thermodynamic properties in a single file, if desired, by invoking
 WRITE_PARAM and WRITE_THERMO with the same file name parameter.
+
+\anchor scft_command_pc_stress_sub
+<b> WRITE_STRESS </b>:
+The WRITE_THERMO command outputs a report of values of derivatives
+of the SCFT free energy with respect to unit cell parameters. These
+derivatives should be zero to within numerical error for a converged 
+SCFT solution of a problem with a flexible unit cell, for which the
+unit cell parameters should minimize the free energy, but are
+generally nonzero for the solution of an SCFT problem in a rigid unit 
+cell. Results are derivatives of the Helmholtz free energy per monomer 
+(as output by the WRITE_THERMO command) with respect to unit cell 
+parameters. These derivatives are listed the conventional order of
+the unit cell parameters for the relevant lattice type, as described 
+\ref scft_unitcell_page "here".
 
 \section scft_command_pc_fieldout_sec Field output commands
 

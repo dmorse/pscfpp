@@ -409,16 +409,6 @@ namespace Rpc {
             readEcho(in, filename);
             simulator().analyze(min, max, classname, filename);
          } else
-         if (command == "WRITE_TIMERS") {
-            readEcho(in, filename);
-            std::ofstream file;
-            fileMaster_.openOutputFile(filename, file);
-            writeTimers(file);
-            file.close();
-         } else
-         if (command == "CLEAR_TIMERS") {
-            clearTimers();
-         } else
          if (command == "WRITE_PARAM") {
             readEcho(in, filename);
             std::ofstream file;
@@ -570,40 +560,12 @@ namespace Rpc {
             readEcho(in, filecompare1);
             readEcho(in, filecompare2);
             fieldIo.compareFieldsBasis(filecompare1, filecompare2);
-
-            #if 0
-            DArray< DArray<double> > Bfield1, Bfield2;
-            UnitCell<D> tmpUnitCell;
-            domain_.fieldIo().readFieldsBasis(filecompare1, Bfield1,
-                                              tmpUnitCell);
-            domain_.fieldIo().readFieldsBasis(filecompare2, Bfield2,
-                                              tmpUnitCell);
-            // Note: Bfield1 & Bfield2 are allocated by readFieldsBasis
-
-            // Compare and output report
-            fieldIo.compare(Bfield1, Bfield2);
-            #endif
-
          } else
          if (command == "COMPARE_RGRID") {
             std::string filecompare1, filecompare2;
             readEcho(in, filecompare1);
             readEcho(in, filecompare2);
             fieldIo.compareFieldsRGrid(filecompare1, filecompare2);
-
-            #if 0
-            DArray< RField<D> > Rfield1, Rfield2;
-            UnitCell<D> tmpUnitCell;
-            fieldIo.readFieldsRGrid(filecompare1, Rfield1,
-                                              tmpUnitCell);
-            fieldIo.readFieldsRGrid(filecompare2, Rfield2,
-                                              tmpUnitCell);
-            // Note: Rfield1, Rfield2 will be allocated by readFieldsRGrid
-
-            // Compare and output report
-            fieldIo.compare(Rfield1, Rfield2);
-            #endif
-
          } else
          if (command == "SCALE_BASIS") {
             double factor;
@@ -736,6 +698,16 @@ namespace Rpc {
             domain_.fieldIo().writeFieldRGrid(filename, mask_.rgrid(),
                                               domain_.unitCell(),
                                               mask_.isSymmetric());
+         } else
+         if (command == "WRITE_TIMERS") {
+            readEcho(in, filename);
+            std::ofstream file;
+            fileMaster_.openOutputFile(filename, file);
+            writeTimers(file);
+            file.close();
+         } else
+         if (command == "CLEAR_TIMERS") {
+            clearTimers();
          } else {
             Log::file() << "Error: Unknown command  "
                         << command << std::endl;
@@ -770,9 +742,12 @@ namespace Rpc {
          readFieldHeader(filename);
       }
       UTIL_CHECK(domain_.basis().isInitialized());
+      if (!isAllocatedBasis_) {
+         allocateFieldsBasis();
+      }
       UTIL_CHECK(isAllocatedBasis_);
 
-      // Read w fields
+      // Read w fields and set unit cell parameters
       w_.readBasis(filename, domain_.unitCell());
       hasCFields_ = false;
       hasFreeEnergy_ = false;
@@ -794,7 +769,7 @@ namespace Rpc {
       // Precondition
       UTIL_CHECK(isAllocatedGrid_);
 
-      // Read w fields
+      // Read w fields and set unit cell parameters
       w_.readRGrid(filename, domain_.unitCell());
       hasCFields_ = false;
       hasFreeEnergy_ = false;
@@ -843,7 +818,7 @@ namespace Rpc {
       domain_.fieldIo().readFieldsBasis(filename, tmpFieldsBasis,
                                         domain_.unitCell());
 
-      // Allocate work space array
+      // Allocate work space array (one element per monomer type)
       DArray<double> wtmp;
       wtmp.allocate(nm);
 
@@ -915,9 +890,11 @@ namespace Rpc {
       // Note: Domain::setUnitCell clears WaveList unit cell data
       // and makes Basis if needed
       mixture_.clearUnitCellData();
-      if (domain_.hasGroup() && !isAllocatedBasis_) {
+      if (domain_.hasGroup()) {
          UTIL_CHECK(domain_.basis().isInitialized());
-         allocateFieldsBasis();
+         if (!isAllocatedBasis_) {
+            allocateFieldsBasis();
+         }
       }
       UTIL_CHECK(domain_.unitCell().isInitialized());
    }
@@ -934,9 +911,11 @@ namespace Rpc {
       // Note: Domain::setUnitCell clears WaveList unit cell data
       // and makes Basis if needed
       mixture_.clearUnitCellData();
-      if (domain_.hasGroup() && !isAllocatedBasis_) {
+      if (domain_.hasGroup()) {
          UTIL_CHECK(domain_.basis().isInitialized());
-         allocateFieldsBasis();
+         if (!isAllocatedBasis_) {
+            allocateFieldsBasis();
+         }
       }
       UTIL_CHECK(domain_.unitCell().isInitialized());
    }
@@ -951,9 +930,11 @@ namespace Rpc {
       // Note: Domain::setUnitCell clears WaveList unit cell data
       // and makes Basis if needed
       mixture_.clearUnitCellData();
-      if (domain_.hasGroup() && !isAllocatedBasis_) {
+      if (domain_.hasGroup()) {
          UTIL_CHECK(domain_.basis().isInitialized());
-         allocateFieldsBasis();
+         if (!isAllocatedBasis_) {
+            allocateFieldsBasis();
+         }
       }
       UTIL_CHECK(domain_.unitCell().isInitialized());
    }
@@ -1268,36 +1249,6 @@ namespace Rpc {
    // Output Operations
 
    /*
-   * Write timer values to output stream (computational cost).
-   */
-   template <int D>
-   void System<D>::writeTimers(std::ostream& out)
-   {
-      if (hasIterator()) {
-         iterator().outputTimers(Log::file());
-         iterator().outputTimers(out);
-      }
-      if (hasSimulator()){
-         simulator().outputTimers(Log::file());
-         simulator().outputTimers(out);
-      }
-   }
-
-   /*
-   * Clear state of all timers.
-   */
-   template <int D>
-   void System<D>::clearTimers()
-   {
-      if (hasIterator()) {
-         iterator().clearTimers();
-      }
-      if (hasSimulator()){
-         simulator().clearTimers();
-      }
-   }
-
-   /*
    * Write parameter file for SCFT, omitting any sweep block.
    */
    template <int D>
@@ -1601,6 +1552,38 @@ namespace Rpc {
       }
    }
 
+   // Timer Output Operations
+
+   /*
+   * Write timer values to output stream (computational cost).
+   */
+   template <int D>
+   void System<D>::writeTimers(std::ostream& out)
+   {
+      if (hasIterator()) {
+         iterator().outputTimers(Log::file());
+         iterator().outputTimers(out);
+      }
+      if (hasSimulator()){
+         simulator().outputTimers(Log::file());
+         simulator().outputTimers(out);
+      }
+   }
+
+   /*
+   * Clear state of all timers.
+   */
+   template <int D>
+   void System<D>::clearTimers()
+   {
+      if (hasIterator()) {
+         iterator().clearTimers();
+      }
+      if (hasSimulator()){
+         simulator().clearTimers();
+      }
+   }
+
    // Private member functions
 
    /*
@@ -1629,16 +1612,6 @@ namespace Rpc {
 
       h_.setNMonomer(nMonomer);
 
-      #if 0
-      // Allocate work space field arrays
-      tmpFieldsRGrid_.allocate(nMonomer);
-      tmpFieldsKGrid_.allocate(nMonomer);
-      for (int i = 0; i < nMonomer; ++i) {
-         tmpFieldsRGrid_[i].allocate(dimensions);
-         tmpFieldsKGrid_[i].allocate(dimensions);
-      }
-      #endif
-
       isAllocatedGrid_ = true;
    }
 
@@ -1664,18 +1637,13 @@ namespace Rpc {
       w_.allocateBasis(nBasis);
       c_.allocateBasis(nBasis);
 
-      #if 0
-      tmpFieldsBasis_.allocate(nMonomer);
-      for (int i = 0; i < nMonomer; ++i) {
-         tmpFieldsBasis_[i].allocate(nBasis);
-      }
-      #endif
-
       isAllocatedBasis_ = true;
    }
 
    /*
-   * Peek at field file header, initialize basis if needed.
+   * Peek at field file header to complete initialization.
+   * 
+   * Initializes basis and calls allocateFieldsBasis if necessary.
    */
    template <int D>
    void System<D>::readFieldHeader(std::string const & filename)

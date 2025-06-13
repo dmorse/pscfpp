@@ -1,4 +1,3 @@
-
 Unit Cell Modification
 ----------------------
 
@@ -68,12 +67,15 @@ Observers:
    Domain::WaveList::modifyUnitCell 
        - Mark wave magnitudes and dot products as dirty (invalid)
 
+   We could also consider making Basis::makeBasis() an observer.
+
    General Policy:
 
        - Notification is used to mark associated data as invalid.
        - Data is updated when needed, by checking validity before access
 
        -> Just in time updates, avoids unnecessary or redundant updates.
+
 
 ===========================================================================
 
@@ -82,38 +84,37 @@ Signals to note W Field Modification (?????)
 
 Proposal:
 
-     1) Add a Signal<> to the WFieldContainer.
+   1) Add a Signal<> member to the WFieldContainer.
 
-     2) Make the CFieldContainer an observer of WFieldContainer.
+   2) Add public functions System::clearCFields() and System::clearFreeEnergy()
+       to System that sets hasCFields_ and hasFreeEnergy_ false respectively.
 
-Critiques:
+   3) Add the clear functions to the WFieldContainer Signal<> as observers
 
-     - Access to W and C fields is currently always provided through a pointer
-       or reference to the parent System in ways that already ensure validity.
-       The System::c() and System::w() methods only provide const references, thus 
-       giving read-only access.  The only ways for users or iterator to modify w 
-       fields through a reference to the parent system is through setWBasis,
-       setWRGrid, readWBasis or readWRGrid functions, which all set hasCFields_ 
-       to false.  System::hasCFields() allows users and algorithms to check 
-       consistency between w and c fields.  A good system to ensure validity 
-       is thus already in place.
+   4) Features added to WFieldContainer can be applied to external fields
+      as well as w fields.
 
-     - This would simpl moves ownership of hasCFields from the System to the 
-       CFieldContainer.  Given that access to both is currently controlled by 
-       the System, it doesn't seem like a significant improvement.
+Discussion:
 
-     - The System and Mixture needs a method to declare that C-fields have been
-       updated. Access to whatever flag keeps track of whether C-fields are valid
-       thus needs to be strictly controlled. Having the flag controlled by the
-       System makes sense, since only the System has access to the two relevant
-       data structures, and can thus keep track of the relationship between them.
+   - Retains current system for keeping track of the relationship between 
+     WFields and CFields, just automates the process of marking variables 
+     as dirty.
 
-     - We may want to add a method that restores old values of both W and C
-       fields, to simplify some types of MC moves. This is simpler if 
-       coordinated by the parent System.
+   - Might make the System setWBasis and setWRGrid functions trivial or 
+     unnecssary.  Might not get rid of the need for readWBasis, since we 
+     may still need the code to peek at the header in order to construct 
+     a basis, unless we rely on the FieldIo to do this.
 
+===========================================================================
 Conclusion:
  
-      - Recommend against the use of signals to keep track of the relationship
-        between W and C fields. 
+   - Recommend against the use of signals to keep track of the relationship
+     between W and C fields.  Not worth the effort, and harder to understand
+     because it is less explicit.
 
+   - Leaning against using it for UnitCell as well, since the only thing it
+     would accomplish would be allowing us to all access to Domain::unitCell_
+     via a non-const reference, and I'm not sure we should do that.
+
+   Maybe the current system is not bad. It is more explicit and easier to
+   understand than the hidden use of Signals.
