@@ -20,45 +20,34 @@ files. Several different formats are used for field files.
 
 When any PSCF program is executed, the parameter file is processed first.
 The name of the parameter file is specified as command line argument when 
-a PSCF program is invoked, as a parameter of the required "-p" command 
+a PSCF program is invoked, as the parameter of the required "-p" command 
 line option.  
 
 The parameter file defines the basic parameters of a physical problem of 
-interest, and is used to initialize the state of the program.  This file
-contains physical information about chemical structures (e.g., monomer 
-properties and block polymer chemical structures), the composition of 
-the system of interest (the volume fraction or chemical potential of each 
-species in a mixture), interactions among the constituents (Flory-Huggins
-chi parameters), information about the spatial domain of interest (e.g.,
-the Bravai lattice type of a periodic structure), a description of a 
-spatial discretization of that domain, and a variety of algorithmic 
-parameters. 
+interest, and initializes the state of the program.  This file contains 
+physical information about chemical structures (e.g., monomer properties 
+and block polymer structures), composition (the volume fraction or 
+chemical potential of each species in a mixture), interactions among the 
+constituents (Flory-Huggins chi parameters), information about the spatial 
+domain of interest (e.g., the Bravais lattice type of a periodic 
+structure), a description of a spatial discretization of that domain, 
+and a variety of algorithmic parameters. 
 
-The information that must be provided in a parameter file depends somewhat 
-on what type of calculation are going to be performed, as dictated by the
-commands in the associated command file.  The parameter file for a simple 
-SCFT calculation generally contains the following 4 sections:
-
-- Mixture: Description of the structure of all molecular species and
-  composition of a mixture
-- Interaction: Flory-Huggins interaction parameters
-- Domain: Description of a spatial domain or unit cell, and a spatial
-  discretization.
-- Iterator: Algorithmic parameters used by an iterative SCFT solver
-
-An example of a simple parameter file for the pscf_pc program is shown 
-\ref user_param_example_page "here" .
+An example of a simple parameter file for an SCFT calculation performed
+by the pscf_pc program is shown \ref user_param_example_page "here" .
 
 \section user_files_command_sec Command file
 
 The command file is processed after the parameter file, and controls
-program flow after initialization.  The command file is a script that
-contains a list of commands that are interpreted and executed in the
-order they appear.  Each line of a command file starts with a capitalized 
-command name, followed by zero or more arguments.  The name of the 
-command file that controls a calculation is always specified as a 
-required command line argument, as the parameter of the "-c" command 
-line option.
+program flow after initialization.  The command file contains a list of 
+commands that are interpreted and executed in the order listed.  Each 
+line of a command file starts with a capitalized command name, which
+is sometimes followed by one or more arguments.  The name of the command 
+file that controls a calculation is always specified as a required 
+command line argument, as the parameter of the "-c" command line option.
+
+An example of a simple command file for an SCFT calculation performed
+with the pscf_pc program is shown \ref user_command_example_sec "here" .
 
 Some commands in a command file perform operations that perform file
 input and output operations on field data.  For example, the first 
@@ -66,12 +55,9 @@ command in a command file for a simple SCFT calculation is usually a
 command to read an initial guess for the monomer chemical potential 
 fields from an input field file. The last commands in such a script 
 are often commands that write the converged chemical potential and 
-monomer concentration fields to output files.  The names of these input 
-and output field files and various other data files are specified as 
-parameters of commands within the command file.
-
-An example of a simple command file for an SCFT calculation performed
-with the pscf_pc program is shown \ref user_command_example_sec "here" .
+monomer concentration fields to output files.  The names of these
+input and output field files are specified within the command file as 
+parameters of commands.
 
 \section user_files_field_sec Field files
 
@@ -82,8 +68,8 @@ different monomer types, sometimes referred to as "w-fields", and fields
 that represent mononer concentration or volume fraction, sometimes 
 referred to as "c-fields".  Several different field file formats are 
 used by different PSCF programs. For each program, the same file format 
-or set of available file formats are used for both w-fields and c-cfields.  
-The command file for every SCFT and FTS calculation generally includes a 
+or set of file formats are used for both w-fields and c-cfields.  The 
+command file for every SCFT and PS-FTS calculation generally includes a 
 command that reads an input file containing an initial set of chemical 
 potential fields. 
 
@@ -107,9 +93,9 @@ used for SCFT calculations for periodic structures are usually input and
 output in basis format, since this format automatically imposes the 
 declared space group symmetry.  Files containing w-fields used for 
 PS-FTS simulations are instead normally input and output in r-grid format, 
-since this stochastic simulation technique does not exactly preserve any 
-space group symmetries.  Monomer concentration fields are may be output in 
-either format, and are often output in r-grid format for visualization.
+since stochastic field theoretic simulations do not exactly preserve any 
+space group symmetry.  Monomer concentration fields are may be output in 
+either format, and are usually output in r-grid format for visualization.
 
 The pscf_1d command uses a single format for all fields that lists values 
 of fields on the nodes of a 1D grid. The names of commands used by pscf_1d 

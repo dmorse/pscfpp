@@ -5,19 +5,19 @@
 \ref about_features_page (Next)
 <BR>
 
-The PSCF package provides three executable programs named pscf_1d, 
-pscf_pc and pscf_pg. The intended purpose and basic capabilties of each 
-program are described below;
+The PSCF package contains source code for three executable programs 
+named pscf_1d, pscf_pc and pscf_pg. The purpose and capabilties of 
+each of these programs are described below;
 
 <b>pscf_1d</b>:
 
 The pscf_1d program is designed to performed SCFT calculations on 
 one-dimensional problems in Cartesian, cylindrical or spherical 
-coordinates. A simple finite difference method is used to solve the 
-underlying modified diffusion equation.  This program is useful for 
-SCFT problems involving flat or curved interfaces, and for simulating
-spherical or cylindrical copolymer micelles. This program cannot be
-used for field theoretic simulation.
+coordinates. A simple finite difference spatial discretization is used 
+to solve the underlying modified diffusion equation (MDE). This program 
+is useful for SCFT problems involving flat or curved interfaces, and for 
+simulating spherical or cylindrical copolymer micelles. The pscf_1d 
+program cannot be used for field theoretic simulation.
 
 <b>pscf_pc</b>:
 
@@ -30,14 +30,14 @@ perform PS-FTS calculations.  The suffix "pc" stands for "periodic CPU".
 
 <b>pscf_pg</b>:
 
-The pscf_pg program is a GPU-accelerated variant of pscf_pc that can
-also perform both SCFT and PS-FTS calculations with periodic boundary
-conditions.  The pscf_pc and pscf_pg programs are based on analogous
-algorithms, and provide identical features with identical user 
-interfaces.  The only important difference between pscf_pc and pscf_pg 
-is that pscf_pg uses a GPU accelerator, which provides higher performance 
-for problems involving a sufficiently large number grid points per unit 
-cell. The suffix "pg" stands for "periodic GPU".
+The pscf_pg program is a GPU-accelerated variant of pscf_pc that can also 
+perform SCFT and PS-FTS calculations on systems with periodic boundary 
+conditions.  The pscf_pc and pscf_pg programs use analogous algorithms, 
+and provide identical features with identical user interfaces.  The only 
+important difference between these two programs is that pscf_pg uses a 
+GPU, which provides higher performance for problems involving a 
+sufficiently large number grid points per unit cell. The suffix "pg" 
+stands for "periodic GPU".
 
 <BR>
 \ref about_history_page   (Prev) &nbsp; &nbsp; &nbsp; &nbsp;

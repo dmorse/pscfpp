@@ -4,27 +4,26 @@
 \ref about_programs_page (Next)
 <BR>
 
-The C++/CUDA version of PSCF that is described in this manual was 
-initially designed starting in 2015-2016 as a complete rewrite of an 
-older Fortran program of the same name.  The Fortran version of PSCF
-is an SCFT program for incompressible liquids containing one or more
-species of linear block polymers and (optionally) one or more small 
-molecule solvents.  The acronym PSCF stands for 
-"Polymer Self-Consistent Field", reflecting this origin of the package 
-as an SCFT program. 
+Development of the C++/CUDA version of PSCF that is described in this 
+manual began in 2015 as a project to rewrite an older Fortran program 
+of the same name.  The Fortran version of PSCF is an SCFT program for 
+incompressible liquids containing one or more species of linear block 
+polymers and (optionally) one or more small molecule solvent species. 
+The acronym PSCF stands for "Polymer Self-Consistent Field", reflecting 
+this origin of the package as an SCFT program. 
 
 The Fortran version of PSCF is maintained in a separate github.com 
 repository at
 <a href= https://github.com/dmorse/pscf/>https://github.com/dmorse/pscf</a> ,
-but is no longer being actively developed. The name "pscfpp" that is that 
-is used for the github repository containing the current version was 
+but is no longer being actively developed. The name "pscfpp" that is 
+used for the github repository containing the current version was 
 chosen to avoid a clash with the name "pscf" that is used for the 
 repository containing the older Fortran code.
 
 The current C++/CUDA version of PSCF is intended to supersede the Fortran
 version. The current version provides almost all of the capabilities of
 the Fortran program, and some important new capabilities. New users of 
-PSCF should use the C++/CUDA version documented here, and users of the 
+PSCF should use the current version documented here, and users of the 
 Fortran version should consider switching to the current version
 whenever they can.
 
@@ -71,8 +70,8 @@ These two features are described in more detail below;
 
 The Fortran PSCF program provided a unique quasi-Newton/Broyden SCFT 
 iteration algorithm that was based on a physically motivated initial
-approximation for the inverse Jacobian that is iteratively improved via a 
-Broyden update algorithm.  This was an excellent algorithm for the 
+approximation for the inverse Jacobian that is iteratively improved via 
+a Broyden update algorithm.  This was an excellent algorithm for the 
 problems of moderate size for which it was originally designed. It was 
 abandoned in the new version in favor of a variety of Anderson-mixing 
 algorithms because the amount of memory required by the Newton/Broyden
@@ -80,11 +79,10 @@ algorithm increases as the square of the number of spatial degrees of
 freedom (i.e., number of basis functions), which prevented the algorithm 
 from being applied to larger problems.
 
-The Fortran PSCF program has the ability to perform generalized RPA
-calculations to compute the self-consistent linear response of a periodic 
-structure to an infinitesimal inhomogeneous external field. This algorithm 
-allowed description of limits of stability of ordered phases and of 
-composition fluctuations within such phases. This feature has not been 
+The Fortran PSCF program has the ability to compute the linear response 
+of a periodic structure to an infinitesimal inhomogeneous external field. 
+This algorithm allowed description of limits of stability of ordered phases 
+and of composition fluctuations within such phases. This feature has not been 
 ported to the new C++ version, but will remain available within the legacy 
 Fortran program, via the github repository for that program. The required 
 algorithm and some application are described in the following reference: 

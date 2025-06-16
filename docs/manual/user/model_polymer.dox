@@ -130,7 +130,7 @@ allows the user to declare each species to be either linear or branched,
 and allows use of a simplified file format to describe linear polymer
 species.
 
-\subsection user_polymer_branched_graph_sub Polymers as graphs
+\subsection user_polymer_branched_graph_sub Branched polymers 
 
 A branched block polymer is described in PSCF using the language of graph
 theory. The connectivity of each polymer is described as a connected
@@ -175,9 +175,9 @@ in the thread model and as an integer in the bead model.
 
 \subsection user_model_polymer_branched_linear_sub Linear polymers
 
-PSCF allows a user to specify declare that a polymer species is a
-linear, and can use this information to determine the relationship
-between block and vertex indices. By convention, block i of a linear
+PSCF allows a user to specify declare explicitly that a polymer species 
+is a linear, and can use this information to determine relationships
+among block and vertex indices. By convention, block i of a linear
 block polymer of N blocks terminates at vertices with indices i and
 i+1. This convention allows PSCF to use a simplified format for
 information about blocks in a linear block copolymer, in which values
@@ -186,51 +186,46 @@ entered by the user.
 
 \subsection user_model_branched_vertex_sub Vertices in the bead model
 
-A complete specificiation of a bead model requires the introduction of
-some additional conventions to describe the treatment of bonds that are
-connected to junctions, corresponding to vertices of degree f with f > 1.
+A complete specificiation of a bead model requires the introduction of 
+a convention for the treatment of bonds that are connected to junctions,
+i.e., vertices of degree greater than 1.
 The bead model used by PSCF treats each vertex of degree f > 1 as a
 "phantom" bead that does not interact with any chemical potential field,
-like a bead with a monomer type that has vanishing Flory-Huggins chi
-parameters for interactions with all monomer types.  The bond that
-connects each such vertex to a terminal (first or last) bead of each
-attached block is also taken to be of a special type: A bond that
-connects a vertex to a terminal bead of a block containing monomers
-of type i is taken have a statistical segment length, denoted by
-\f$ a_{i} \f$, that is related to the statistical segment length of
-a standard bond between two beads of type i, denoted by \f$ b_{i} \f$,
-by the expression
+like a bead with a monomer type that has vanishing Flory-Huggins 
+parameters for interactions with all monomer types. A bond that
+connects such a vertex to a terminal (first or last) bead of a block of 
+monomers of type i is taken have a statistical segment length, denoted 
+by \f$ a_{i} \f$, that satisfies
 \f[
-   a_{i}^{2} = b_{i}^{2}/2 \quad.
+   a_{i}^{2} = b_{i}^{2}/2 \quad,
 \f]
-If we think of each standard bond between two beads of type i as
-corresponding to a contour length s = 1 of an underlying continuous chain,
-then a bond that connects the terminal bead of a block to a vertex thus
-corresponds to a contour length s = 1/2.  We may thus summarize this by
-describing a bond that connects the terminal bead of a block to such a
-vertex as a "half bond".
+where \f$ b_{i} \f is the statistical length of a standard bond that 
+connects two beads of type \$i \f$.  If we think of each standard bond 
+between two beads of type i as corresponding to a contour length s = 1 
+of an underlying continuous chain, then a bond that connects the 
+terminal bead of an \f$ i \f$ block to a vertex thus corresponds to a 
+"half bond" of contour length s = 1/2.  
 
 Consider application of this rule to a junction of degree 2 that connects
 two blocks of types A and B within a linear block polymer. A model that
-connects the terminal beads of the A and B blocks to a shared vertex by
-two such "half bonds" is equivalent to a model that directly connects
-these two terminal beads with a bond that has an effective statistical
-segment length \f$ b_{AB} \f$ that satisfies the relation
+connects the terminal beads of the A and B blocks to a shared phantom 
+vertex by two such "half bonds" is equivalent to a model that directly 
+connects these two terminal beads with a bond that has an effective 
+statistical segment length \f$ b_{AB} \f$ for which
 \f[
    b_{AB}^{2} =
    ( b_{A}^{2} + b_{B}^{2} )/2 \quad,
 \f]
-where \f$ b_{A} \f$ and \f$ b_{B} \f$ are statistical segment lengths of
-standard bonds of type A and B, respectively. In the conformationally
-symmetric case in which \f$ b_{A} = b_{B} \f$, this yields a connecting
-bond of effective statistical segment length \f$ b_{AB} = b_{A} = b_{B} \f$,
-thus yielding a conformationally homogeneous chain in this simple case.
+where \f$ b_{A} \f$ and \f$ b_{B} \f$ are statistical segment lengths 
+of standard bonds of type A and B, respectively. In the case of equal 
+statistical segment lengths, \f$ b_{A} = b_{B} \f$, this yields a 
+connecting bond for which \f$ b_{AB} = b_{A} = b_{B} \f$, thus yielding 
+a conformationally homogeneous chain in this simple case.
 
-This convention was chosen primarily for simplicity. Its main virtues
-are that it yields homogeneous behavior in the case of a conformationally
-homogeneous linear chain, as discussed above, and that it does not require
-the user to input any more information than that required to describe a
-polymer in the thread model.
+This convention was chosen primarily for simplicity. Its main virtues are 
+that it yields conformationally homogeneous behavior for the the simple
+case discussed above, and that it does not require the user to input any 
+more information than that required by the thread model.
 
 <BR>
 \ref user_model_parameters_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
