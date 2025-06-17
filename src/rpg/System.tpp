@@ -33,6 +33,7 @@
 #include <util/containers/FSArray.h>
 #include <util/param/BracketPolicy.h>
 #include <util/param/ParamComponent.h>
+#include <util/signal/Signal.h>
 #include <util/format/Str.h>
 #include <util/format/Int.h>
 #include <util/format/Dbl.h>
@@ -79,16 +80,27 @@ namespace Rpg {
       hasCFields_(false),
       hasFreeEnergy_(false)
    {
+      // Set name used as a block label in the parameter file
       setClassName("System");
+
+      // Create associations among class members
       domain_.setFileMaster(fileMaster_);
       w_.setFieldIo(domain_.fieldIo());
       h_.setFieldIo(domain_.fieldIo());
       mask_.setFieldIo(domain_.fieldIo());
 
+      // Create dynamically allocated objects owned by this System
       interactionPtr_ = new Interaction();
       iteratorFactoryPtr_ = new IteratorFactory<D>(*this);
       sweepFactoryPtr_ = new SweepFactory<D>(*this);
       simulatorFactoryPtr_ = new SimulatorFactory<D>(*this);
+
+      // Add observers to signals
+
+      // Signal that notifies observers when a basis is constructed
+      // domain_.basis().signal().addObserver(*this,
+      //                                  &System<D>::allocateFieldsBasis);
+
       BracketPolicy::set(BracketPolicy::Optional);
       ThreadArray::init();
    }
@@ -798,9 +810,6 @@ namespace Rpg {
          readFieldHeader(filename);
       }
       UTIL_CHECK(domain_.basis().isInitialized());
-      if (!isAllocatedBasis_) {
-         allocateFieldsBasis();
-      }
       UTIL_CHECK(isAllocatedBasis_);
       const int nm = mixture_.nMonomer();
       const int nb = domain_.basis().nBasis();
@@ -808,7 +817,7 @@ namespace Rpg {
       UTIL_CHECK(nb > 0);
 
       // Allocate local array of fields in basis format
-      DArray< DArray<double> > tmpFieldsBasis; 
+      DArray< DArray<double> > tmpFieldsBasis;
       tmpFieldsBasis.allocate(nm);
       for (int i = 0; i < nm; ++i) {
          tmpFieldsBasis[i].allocate(nb);
@@ -887,12 +896,18 @@ namespace Rpg {
    void System<D>::setUnitCell(UnitCell<D> const & unitCell)
    {
       domain_.setUnitCell(unitCell);
+      mixture_.clearUnitCellData();
+
       // Note: Domain::setUnitCell clears the WaveList unit cell data
       // and makes basis if needed
-      mixture_.clearUnitCellData();
-      if (domain_.hasGroup() && !isAllocatedBasis_) {
+
+      // Postconditions
+      if (domain_.hasGroup()) {
          UTIL_CHECK(domain_.basis().isInitialized());
-         allocateFieldsBasis();
+         if (!isAllocatedBasis_) {
+            allocateFieldsBasis();
+         }
+         UTIL_CHECK(isAllocatedBasis_);
       }
       UTIL_CHECK(domain_.unitCell().isInitialized());
    }
@@ -906,12 +921,18 @@ namespace Rpg {
                           FSArray<double, 6> const & parameters)
    {
       domain_.setUnitCell(lattice, parameters);
+      mixture_.clearUnitCellData();
+
       // Note: Domain::setUnitCell clears WaveList unit cell data
       // and makes basis if needed
-      mixture_.clearUnitCellData();
-      if (domain_.hasGroup() && !isAllocatedBasis_) {
+
+      // Postconditions
+      if (domain_.hasGroup()) {
          UTIL_CHECK(domain_.basis().isInitialized());
-         allocateFieldsBasis();
+         if (!isAllocatedBasis_) {
+            allocateFieldsBasis();
+         }
+         UTIL_CHECK(isAllocatedBasis_);
       }
       UTIL_CHECK(domain_.unitCell().isInitialized());
    }
@@ -923,12 +944,18 @@ namespace Rpg {
    void System<D>::setUnitCell(FSArray<double, 6> const & parameters)
    {
       domain_.setUnitCell(parameters);
+      mixture_.clearUnitCellData();
+
       // Note: Domain::setUnitCell clears WaveList unit cell data
       // and makes basis if needed
-      mixture_.clearUnitCellData();
-      if (domain_.hasGroup() && !isAllocatedBasis_) {
+
+      // Postconditions
+      if (domain_.hasGroup()) {
          UTIL_CHECK(domain_.basis().isInitialized());
-         allocateFieldsBasis();
+         if (!isAllocatedBasis_) {
+            allocateFieldsBasis();
+         }
+         UTIL_CHECK(isAllocatedBasis_);
       }
       UTIL_CHECK(domain_.unitCell().isInitialized());
    }
@@ -964,7 +991,7 @@ namespace Rpg {
    }
 
    /*
-   * Iteratively solve a SCFT problem for specified parameters.
+   * Iteratively solve a SCFT problem.
    */
    template <int D>
    int System<D>::iterate(bool isContinuation)
@@ -1001,7 +1028,7 @@ namespace Rpg {
    }
 
    /*
-   * Perform a sweep of SCFT calculations along a path in parameter space.
+   * Perform an SCFT sweep along a path in parameter space.
    */
    template <int D>
    void System<D>::sweep()
@@ -1038,10 +1065,10 @@ namespace Rpg {
       hasCFields_ = true;
    }
 
-   // Thermodynamic Properties
+   // SCFT Thermodynamic Properties
 
    /*
-   * Compute Helmholtz free energy and pressure
+   * Compute Helmholtz free energy and pressure.
    */
    template <int D>
    void System<D>::computeFreeEnergy()
@@ -1237,39 +1264,6 @@ namespace Rpg {
       }
 
       hasFreeEnergy_ = true;
-   }
-
-
-   // Output Operations
-
-   /*
-   * Write timer values to output stream (computational cost).
-   */
-   template <int D>
-   void System<D>::writeTimers(std::ostream& out)
-   {
-      if (hasIterator()) {
-         iterator().outputTimers(Log::file());
-         iterator().outputTimers(out);
-      }
-      if (hasSimulator()){
-         simulator().outputTimers(Log::file());
-         simulator().outputTimers(out);
-      }
-   }
-
-   /*
-   * Clear state of all timers.
-   */
-   template <int D>
-   void System<D>::clearTimers()
-   {
-      if (hasIterator()) {
-         iterator().clearTimers();
-      }
-      if (hasSimulator()){
-         simulator().clearTimers();
-      }
    }
 
    /*
@@ -1574,6 +1568,50 @@ namespace Rpg {
             }
          }
       }
+   }
+
+   // Timer Operations
+
+   /*
+   * Write timer values to output stream (computational cost).
+   */
+   template <int D>
+   void System<D>::writeTimers(std::ostream& out)
+   {
+      if (hasIterator()) {
+         iterator().outputTimers(Log::file());
+         iterator().outputTimers(out);
+      }
+      if (hasSimulator()){
+         simulator().outputTimers(Log::file());
+         simulator().outputTimers(out);
+      }
+   }
+
+   /*
+   * Clear state of all timers.
+   */
+   template <int D>
+   void System<D>::clearTimers()
+   {
+      if (hasIterator()) {
+         iterator().clearTimers();
+      }
+      if (hasSimulator()){
+         simulator().clearTimers();
+      }
+   }
+
+   // Miscellaneous public functions
+
+   /*
+   *
+   */
+   template <int D>
+   void System<D>::clearCFields()
+   {
+      hasCFields_ = false;
+      hasFreeEnergy_ = false;
    }
 
    // Private member functions

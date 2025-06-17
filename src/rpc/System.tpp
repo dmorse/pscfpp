@@ -93,13 +93,15 @@ namespace Rpc {
       iteratorFactoryPtr_ = new IteratorFactory<D>(*this);
       sweepFactoryPtr_ = new SweepFactory<D>(*this);
       simulatorFactoryPtr_ = new SimulatorFactory<D>(*this);
-      BracketPolicy::set(BracketPolicy::Optional);
 
       // Add observers to signals
 
       // Signal that notifies observers when a basis is constructed
-      domain_.basis().signal().addObserver(*this, 
-                                           &System<D>::allocateFieldsBasis);
+      domain_.basis().signal().addObserver(*this,
+                                          &System<D>::allocateFieldsBasis);
+
+      BracketPolicy::set(BracketPolicy::Optional);
+
    }
 
    /*
@@ -130,6 +132,8 @@ namespace Rpc {
          delete simulatorFactoryPtr_;
       }
    }
+
+   // Lifetime (called in main program)
 
    /*
    * Process command line options.
@@ -281,7 +285,7 @@ namespace Rpc {
                          domain_.unitCell(), domain_.waveList());
       mixture_.allocate();
 
-      // Allocate memory for r-grid w and c fields
+      // Allocate memory for w and c fields in r-grid form
       allocateFieldsGrid();
 
       // Optionally instantiate an Iterator object
@@ -753,11 +757,6 @@ namespace Rpc {
          readFieldHeader(filename);
       }
       UTIL_CHECK(domain_.basis().isInitialized());
-      #if 0
-      if (!isAllocatedBasis_) {
-         allocateFieldsBasis();
-      }
-      #endif
       UTIL_CHECK(isAllocatedBasis_);
 
       // Read w fields and set unit cell parameters
@@ -811,11 +810,6 @@ namespace Rpc {
          readFieldHeader(filename);
       }
       UTIL_CHECK(domain_.basis().isInitialized());
-      #if 0
-      if (!isAllocatedBasis_) {
-         allocateFieldsBasis();
-      }
-      #endif
       UTIL_CHECK(isAllocatedBasis_);
       const int nm = mixture_.nMonomer();
       const int nb = domain_.basis().nBasis();
@@ -960,6 +954,7 @@ namespace Rpc {
       // and makes Basis if needed
 
       // Postconditions
+      UTIL_CHECK(domain_.unitCell().isInitialized());
       if (domain_.hasGroup()) {
          UTIL_CHECK(domain_.basis().isInitialized());
          #if 0
@@ -969,7 +964,6 @@ namespace Rpc {
          #endif
          UTIL_CHECK(isAllocatedBasis_);
       }
-      UTIL_CHECK(domain_.unitCell().isInitialized());
    }
 
    // Primary Field Theory Computations
@@ -1003,7 +997,7 @@ namespace Rpc {
    }
 
    /*
-   * Iteratively solve a SCFT problem for specified parameters.
+   * Iteratively solve a SCFT problem.
    */
    template <int D>
    int System<D>::iterate(bool isContinuation)
@@ -1063,7 +1057,7 @@ namespace Rpc {
    }
 
    /*
-   * Perform a stochastic field theoretic simulation of nStep steps.
+   * Perform a field theoretic simulation of nStep steps.
    */
    template <int D>
    void System<D>::simulate(int nStep)
@@ -1077,10 +1071,10 @@ namespace Rpc {
       hasCFields_ = true;
    }
 
-   // Thermodynamic Properties
+   // SCFT Thermodynamic Properties
 
    /*
-   * Compute Helmholtz free energy and pressure
+   * Compute Helmholtz free energy and pressure.
    */
    template <int D>
    void System<D>::computeFreeEnergy()
@@ -1278,8 +1272,6 @@ namespace Rpc {
 
       hasFreeEnergy_ = true;
    }
-
-   // Output Operations
 
    /*
    * Write parameter file for SCFT, omitting any sweep block.
@@ -1585,7 +1577,7 @@ namespace Rpc {
       }
    }
 
-   // Timer Output Operations
+   // Timer Operations
 
    /*
    * Write timer values to output stream (computational cost).
@@ -1615,6 +1607,18 @@ namespace Rpc {
       if (hasSimulator()){
          simulator().clearTimers();
       }
+   }
+
+   // Miscellaneous public functions
+
+   /*
+   * Mark c-fields and free energy as outdated/invalid.
+   */
+   template <int D>
+   void System<D>::clearCFields()
+   {
+      hasCFields_ = false;
+      hasFreeEnergy_ = false;
    }
 
    // Private member functions
@@ -1654,7 +1658,7 @@ namespace Rpc {
    template <int D>
    void System<D>::allocateFieldsBasis()
    {
-      // Preconditions 
+      // Preconditions
       UTIL_CHECK(hasMixture_);
       const int nMonomer = mixture_.nMonomer();
       UTIL_CHECK(nMonomer > 0);
@@ -1675,7 +1679,7 @@ namespace Rpc {
 
    /*
    * Peek at field file header to complete initialization.
-   * 
+   *
    * Initializes basis and calls allocateFieldsBasis if necessary.
    */
    template <int D>

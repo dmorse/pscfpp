@@ -747,7 +747,7 @@ namespace Rpg {
       FileMaster const & fileMaster() const;
 
       ///@}
-      /// \name Boolean Queries
+      /// \name Boolean Flags
       ///@{
 
       /**
@@ -776,14 +776,25 @@ namespace Rpg {
       bool hasMask() const;
 
       /**
-      * Have c fields been computed from the current w fields?
+      * Are the c fields current, consistent with current w fields?
       */
       bool hasCFields() const;
 
       /**
-      * Has the SCFT free energy been computed for the current w fields?
+      * Is the SCFT free energy current, consistent with current w fields?
       */
       bool hasFreeEnergy() const;
+
+      /**
+      * Mark c-fields and free energy as outdated or invalid.
+      *
+      * Upon return, hasCfields() and hasFreeEnergy() both return false.
+      * This function should be called by functions that modify any of
+      * inputs to the solution of the modified diffusion equation and
+      * calculation of c-fields and free energy, including the w fields,
+      * unit cell parameters, external fields or mask.
+      */
+      void clearCFields();
 
       ///@}
 
@@ -873,9 +884,8 @@ namespace Rpg {
       /**
       * Ideal gas contribution to fHelmholtz_.
       *
-      * This encompasses the internal energy and entropy of
-      * non-interacting free chains in their corresponding
-      * potential fields defined by w_.
+      * This includes the internal energy and entropy of
+      * non-interacting molecules in the current w fields.
       */
       double fIdeal_;
 
@@ -1023,7 +1033,6 @@ namespace Rpg {
    template <int D>
    inline Domain<D> const & System<D>::domain() const
    {  return domain_; }
-
 
    // Get the Iterator by non-const reference.
    template <int D>
