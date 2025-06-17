@@ -8,7 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "MaskGenFilmBase.h"
+#include "FilmFieldGenMaskBase.h"
 #include "prdc/crystal/SpaceGroup.h"
 #include "util/param/ScalarParam.h"
 #include <cmath>
@@ -23,7 +23,7 @@ namespace Prdc
    * Constructor
    */
    template <int D>
-   MaskGenFilmBase<D>::MaskGenFilmBase()
+   FilmFieldGenMaskBase<D>::FilmFieldGenMaskBase()
     : FieldGenerator::FieldGenerator(),
       normalVecCurrent_(),
       fBulk_(),
@@ -37,14 +37,14 @@ namespace Prdc
    * Destructor
    */
    template <int D>
-   MaskGenFilmBase<D>::~MaskGenFilmBase()
+   FilmFieldGenMaskBase<D>::~FilmFieldGenMaskBase()
    {}
 
    /*
    * Read and initialize.
    */
    template <int D>
-   void MaskGenFilmBase<D>::readParameters(std::istream& in)
+   void FilmFieldGenMaskBase<D>::readParameters(std::istream& in)
    {
       // Read required data defining the walls
       read(in, "normalVecId", normalVecId_);
@@ -71,7 +71,7 @@ namespace Prdc
    * Check that the system is compatible with this field
    */
    template <int D>
-   void MaskGenFilmBase<D>::checkCompatibility()
+   void FilmFieldGenMaskBase<D>::checkCompatibility()
    {
       // If lattice parameters are flexible, determine which parameters
       // are allowed to vary, store them in this object, and pass them
@@ -90,7 +90,7 @@ namespace Prdc
    * Check whether system has changed such that the field needs updating
    */
    template <int D>
-   bool MaskGenFilmBase<D>::updateNeeded() const
+   bool FilmFieldGenMaskBase<D>::updateNeeded() const
    {
       UTIL_CHECK(isGenerated());
       UTIL_CHECK(normalVecId_ >= 0);
@@ -107,7 +107,7 @@ namespace Prdc
    * Check that space group is compatible with the mask.
    */
    template <int D>
-   void MaskGenFilmBase<D>::checkSpaceGroup() const
+   void FilmFieldGenMaskBase<D>::checkSpaceGroup() const
    {
       // Setup
       std::string groupName = systemSpaceGroup();
@@ -140,7 +140,7 @@ namespace Prdc
    }
 
    // Explicit Specializations for checkLatticeVectors are in
-   // MaskGenFilmBase.cpp
+   // FilmFieldGenMaskBase.cpp
 }
 }
 #endif

@@ -1,5 +1,5 @@
-#ifndef PRDC_MASK_GEN_FILM_BASE_H
-#define PRDC_MASK_GEN_FILM_BASE_H
+#ifndef PRDC_FILM_MASK_FG_BASE_H
+#define PRDC_FILM_MASK_FG_BASE_H
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory
@@ -8,9 +8,9 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <prdc/crystal/UnitCell.h>         // Function parameter
-#include <pscf/iterator/FieldGenerator.h>  // Base class
-#include <pscf/math/RealVec.h>             // container
+#include <prdc/crystal/UnitCell.h>            // Function parameter
+#include <pscf/environment/FieldGenerator.h>  // Base class
+#include <pscf/math/RealVec.h>                // container
 #include <iostream>
 #include <string>
 
@@ -20,23 +20,23 @@ namespace Prdc {
    using namespace Util;
 
    /**
-   * Base class defining mask that imposes thin film confinement.
+   * Base class Field Generator for thin-film masks.
    * 
-   * This is a base class for MaskGenFilm that defines all traits of a 
-   * MaskGenFilm that do not require access to the System (System access is
+   * This is a base class for FilmFieldGenMask that defines all traits of a 
+   * FilmFieldGenMask that do not require access to the System (System access is
    * needed, for example, to get the space group and set the mask field).
    * 
-   * If the user chooses a MaskGenFilm object to construct the mask, then 
+   * If the user chooses a FilmFieldGenMask object to construct the mask, then 
    * the system will contain two parallel hard surfaces ("walls"), confining
    * the polymers/solvents to a "thin film" region of the unit cell. The
    * shape of the mask is defined by three input parameters: normalVecId,
    * excludedThickness, and interfaceThickness. See \ref 
    * scft_thin_films_page for more information. 
    * 
-   * \ingroup Prdc_Iterator_Module
+   * \ingroup Prdc_Field_Module
    */
    template <int D>
-   class MaskGenFilmBase : public FieldGenerator
+   class FilmFieldGenMaskBase : public FieldGenerator
    {
 
    public:
@@ -44,12 +44,12 @@ namespace Prdc {
       /**
       * Constructor.
       */
-      MaskGenFilmBase();
+      FilmFieldGenMaskBase();
 
       /**
       * Destructor.
       */
-      ~MaskGenFilmBase();
+      ~FilmFieldGenMaskBase();
 
       /**
       * Read parameter file block and initialize.
@@ -114,12 +114,12 @@ namespace Prdc {
       * 
       * \param paramId  index of the lattice parameter being varied
       */
-      virtual double stressTerm(int paramId) const = 0;
+      virtual double stress(int paramId) const = 0;
 
       /**
       * Modify stress value in direction normal to the film.
       * 
-      * The "stress" calculated by the Mixture object is used to minimize
+      * The "stress" calculated by the System object is used to minimize
       * fHelmholtz with respect to a given lattice parameter. In a thin 
       * film it is useful to instead minimize the excess free energy 
       * per unit area, (fHelmholtz - fRef) * Delta, where fRef is a 
@@ -146,10 +146,46 @@ namespace Prdc {
       void checkSpaceGroup() const;
 
       /**
+      * Check that lattice vectors are compatible with thin film constraint.
+      * 
+      * Check that user-defined lattice basis vectors (stored in the
+      * Domain member of the parent System object) are compatible with 
+      * thin film confinement. The lattice basis vector with index 
+      * normalVecId should be normal to the walls, while any other lattice
+      * basis vectors must be parallel to the walls.
+      */
+      void checkLatticeVectors() const;
+
+      /**
+      * Allocate container necessary to generate and store field.
+      */ 
+      virtual void allocate() = 0;
+
+      /**
+      * Generate the field and store where the System can access.
+      */
+      virtual void generate() = 0;
+
+      /**
+      * Sets iterator's flexibleParams array to be compatible with the mask.
+      * 
+      * If the iterator allows for flexible lattice parameters, this 
+      * method will access the "flexibleParams" array of the iterator
+      * (a FSArray<bool,6> that indicates which parameters are flexible),
+      * create a modified version using modifyFlexibleParams to be 
+      * compatible with this mask, and then update the flexibleParams 
+      * array owned by the iterator to match this modified array.
+      * 
+      * Because this requires access to the iterator, it must be 
+      * implemented by subclasses.
+      */
+      virtual void setFlexibleParams() const = 0;
+
+      /**
       * Modifies a flexibleParams array to be compatible with this mask.
       * 
-      * An iterator that is compatible with a mask should either have a 
-      * strictly rigid unit cell (lattice parameters are fixed), or 
+      * An iterator that is compatible with this mask should either have 
+      * a strictly rigid unit cell (lattice parameters are fixed), or 
       * should allow some lattice parameters to be flexible while others
       * are rigid. In the latter case, an FSArray<bool,6> will be used
       * to keep track of which parameters are flexible and which are not.
@@ -174,42 +210,6 @@ namespace Prdc {
                                            UnitCell<D> const & cell) const;
 
       /**
-      * Check that lattice vectors are compatible with thin film constraint.
-      * 
-      * Check that user-defined lattice basis vectors (stored in the
-      * Domain member of the parent System object) are compatible with 
-      * thin film confinement. The lattice basis vector with index 
-      * normalVecId should be normal to the walls, while any other lattice
-      * basis vectors must be parallel to the walls.
-      */
-      void checkLatticeVectors() const;
-
-      /**
-      * Allocate container necessary to generate and store field.
-      */ 
-      virtual void allocate() = 0;
-
-      /**
-      * Generate the field and store where the Iterator can access.
-      */
-      virtual void generate() = 0;
-
-      /**
-      * Sets flexible lattice parameters to be compatible with the mask.
-      * 
-      * If the iterator allows for flexible lattice parameters, this 
-      * method will access the "flexibleParams" array of the iterator
-      * (a FSArray<bool,6> that indicates which parameters are flexible),
-      * modify it using modifyFlexibleParams to be compatible with this 
-      * mask, and then update the flexibleParams array owned by the 
-      * iterator.
-      * 
-      * Because this requires access to the iterator, it must be 
-      * implemented by subclasses.
-      */
-      virtual void setFlexibleParams() const = 0;
-
-      /**
       * Get the space group name for this system.
       */
       virtual std::string systemSpaceGroup() const = 0;
@@ -225,10 +225,10 @@ namespace Prdc {
       * The lattice vector normal to the film used to generate these fields.
       * 
       * This vector is set to be equal to the system's lattice vector with
-      * index normalVecId_ each time the external fields are generated. The 
-      * system's lattice vectors may then change, and this normalVecCurrent_
-      * vector is used to detect whether they have changed. This is used to 
-      * decide whether a new set of external fields needs to be generated.
+      * index normalVecId_ each time the mask is generated. The system's
+      * lattice vectors may then change, and this normalVecCurrent_ vector
+      * is used to detect whether they have changed. This is used to decide
+      * whether a new mask needs to be generated.
       */
       RealVec<D> normalVecCurrent_;
 
@@ -260,34 +260,34 @@ namespace Prdc {
 
    // Get value of normalVecId.
    template <int D> 
-   inline int MaskGenFilmBase<D>::normalVecId() const
+   inline int FilmFieldGenMaskBase<D>::normalVecId() const
    {  return normalVecId_; }
 
    // Get value of interfaceThickness.
    template <int D> 
-   inline double MaskGenFilmBase<D>::interfaceThickness() const
+   inline double FilmFieldGenMaskBase<D>::interfaceThickness() const
    {  return interfaceThickness_; }
 
    // Get value of excludedThickness.
    template <int D> 
-   inline double MaskGenFilmBase<D>::excludedThickness() const
+   inline double FilmFieldGenMaskBase<D>::excludedThickness() const
    {  return excludedThickness_; }
 
    // Get value of fBulk.
    template <int D> 
-   inline double MaskGenFilmBase<D>::fBulk() const
+   inline double FilmFieldGenMaskBase<D>::fBulk() const
    {  return fBulk_; }
 
    // Check whether a value of fBulk was provided.
    template <int D> 
-   inline bool MaskGenFilmBase<D>::hasFBulk() const
+   inline bool FilmFieldGenMaskBase<D>::hasFBulk() const
    {  return hasFBulk_; }
 
    #ifndef PRDC_MASK_GEN_FILM_BASE_TPP
    // Suppress implicit instantiation
-   extern template class MaskGenFilmBase<1>;
-   extern template class MaskGenFilmBase<2>;
-   extern template class MaskGenFilmBase<3>;
+   extern template class FilmFieldGenMaskBase<1>;
+   extern template class FilmFieldGenMaskBase<2>;
+   extern template class FilmFieldGenMaskBase<3>;
    #endif
 
 }

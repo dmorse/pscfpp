@@ -5,16 +5,15 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "MaskGenFilm.tpp"
-#include "Iterator.h"
+#include "MixAndMatchEnvs.h"
 
 namespace Pscf {
 namespace Rpc {
 
-   // Class declarations
-   template class MaskGenFilm<1>;
-   template class MaskGenFilm<2>;
-   template class MaskGenFilm<3>;
-   
+   // FilmEnvironment instantiation
+   template class FilmEnvironment<1>;
+   template class FilmEnvironment<2>;
+   template class FilmEnvironment<3>;
+
 }
 }

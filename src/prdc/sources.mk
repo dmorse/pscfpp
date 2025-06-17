@@ -6,7 +6,6 @@
 include $(SRC_DIR)/prdc/crystal/sources.mk
 include $(SRC_DIR)/prdc/cpu/sources.mk
 include $(SRC_DIR)/prdc/field/sources.mk
-include $(SRC_DIR)/prdc/iterator/sources.mk
 
 prdc_CPP= \
   $(prdc_crystal_) \

@@ -5,7 +5,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "MaskGenFilmBase.tpp"
+#include "FilmFieldGenMaskBase.tpp"
 #include <prdc/crystal/paramIdConversions.h>
 
 namespace Pscf {
@@ -24,13 +24,13 @@ namespace Prdc
    * all cases.
    */
    template <>
-   void MaskGenFilmBase<1>::checkLatticeVectors() const 
+   void FilmFieldGenMaskBase<1>::checkLatticeVectors() const 
    {} // do nothing
 
    
    // In 2D, we require that gamma = 90°.
    template <>
-   void MaskGenFilmBase<2>::checkLatticeVectors() const 
+   void FilmFieldGenMaskBase<2>::checkLatticeVectors() const 
    {
       RealVec<2> a, b;
       a = systemLatticeVector(0);
@@ -48,7 +48,7 @@ namespace Prdc
    * that are parallel to the walls.
    */
    template <>
-   void MaskGenFilmBase<3>::checkLatticeVectors() const 
+   void FilmFieldGenMaskBase<3>::checkLatticeVectors() const 
    {
       RealVec<3> a, b, c;
       a = systemLatticeVector(0);
@@ -82,7 +82,7 @@ namespace Prdc
    */
    template <>
    FSArray<bool,6> 
-   MaskGenFilmBase<1>::modifyFlexibleParams(FSArray<bool,6> current,
+   FilmFieldGenMaskBase<1>::modifyFlexibleParams(FSArray<bool,6> current,
                                             UnitCell<1> const & cell) const
    {
       UTIL_CHECK(current.size() == cell.nParameter());
@@ -108,7 +108,7 @@ namespace Prdc
    */
    template <>
    FSArray<bool,6> 
-   MaskGenFilmBase<2>::modifyFlexibleParams(FSArray<bool,6> current,
+   FilmFieldGenMaskBase<2>::modifyFlexibleParams(FSArray<bool,6> current,
                                             UnitCell<2> const & cell) const
    {
       UTIL_CHECK(current.size() == cell.nParameter());
@@ -161,7 +161,7 @@ namespace Prdc
    */
    template <>
    FSArray<bool,6> 
-   MaskGenFilmBase<3>::modifyFlexibleParams(FSArray<bool,6> current,
+   FilmFieldGenMaskBase<3>::modifyFlexibleParams(FSArray<bool,6> current,
                                             UnitCell<3> const & cell) const
    {
       UTIL_CHECK(current.size() == cell.nParameter());
@@ -234,8 +234,8 @@ namespace Prdc
    }
 
    // Class declarations
-   template class MaskGenFilmBase<1>;
-   template class MaskGenFilmBase<2>;
-   template class MaskGenFilmBase<3>;
+   template class FilmFieldGenMaskBase<1>;
+   template class FilmFieldGenMaskBase<2>;
+   template class FilmFieldGenMaskBase<3>;
 }
 }

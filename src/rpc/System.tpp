@@ -15,6 +15,7 @@
 #include <rpc/fts/compressor/Compressor.h>
 #include <rpc/scft/sweep/Sweep.h>
 #include <rpc/scft/sweep/SweepFactory.h>
+#include <rpc/field/EnvironmentFactory.h>
 #include <rpc/scft/iterator/Iterator.h>
 #include <rpc/scft/iterator/IteratorFactory.h>
 #include <rpc/solvers/Polymer.h>
@@ -25,6 +26,7 @@
 #include <prdc/cpu/RFieldComparison.h>
 #include <prdc/crystal/BFieldComparison.h>
 
+#include <pscf/environment/Environment.h>
 #include <pscf/inter/Interaction.h>
 #include <pscf/math/IntVec.h>
 
@@ -60,6 +62,8 @@ namespace Rpc {
       h_(),
       mask_(),
       interactionPtr_(nullptr),
+      environmentPtr_(nullptr),
+      environmentFactoryPtr_(nullptr),
       iteratorPtr_(nullptr),
       iteratorFactoryPtr_(nullptr),
       sweepPtr_(nullptr),
@@ -76,7 +80,8 @@ namespace Rpc {
       isAllocatedBasis_(false),
       hasMixture_(false),
       hasCFields_(false),
-      hasFreeEnergy_(false)
+      hasFreeEnergy_(false),
+      hasStress_(false)
    {
       setClassName("System");
       domain_.setFileMaster(fileMaster_);
@@ -85,6 +90,7 @@ namespace Rpc {
       mask_.setFieldIo(domain_.fieldIo());
 
       interactionPtr_ = new Interaction();
+      environmentFactoryPtr_ = new EnvironmentFactory<D>(*this);
       iteratorFactoryPtr_ = new IteratorFactory<D>(*this);
       sweepFactoryPtr_ = new SweepFactory<D>(*this);
       simulatorFactoryPtr_ = new SimulatorFactory<D>(*this);
@@ -99,6 +105,12 @@ namespace Rpc {
    {
       if (interactionPtr_) {
          delete interactionPtr_;
+      }
+      if (environmentPtr_) {
+         delete environmentPtr_;
+      }
+      if (environmentFactoryPtr_) {
+         delete environmentFactoryPtr_;
       }
       if (iteratorPtr_) {
          delete iteratorPtr_;
@@ -273,14 +285,24 @@ namespace Rpc {
       // Allocate memory for r-grid w and c fields
       allocateFieldsGrid();
 
-      // Optionally instantiate an Iterator object
+      // Optionally instantiate an Environment object
       std::string className;
       bool isEnd;
-      iteratorPtr_ =
-         iteratorFactoryPtr_->readObjectOptional(in, *this, className,
-                                                 isEnd);
-      if (!iteratorPtr_ && ParamComponent::echo()) {
-         Log::file() << indent() << "  Iterator{ [absent] }\n";
+      environmentPtr_ =
+         environmentFactoryPtr_->readObjectOptional(in, *this, className,
+                                                    isEnd);
+      if (!environmentPtr_ && ParamComponent::echo()) {
+         Log::file() << indent() << "  Environment{ [absent] }\n";
+      }
+
+      // Optionally instantiate an Iterator object
+      if (!isEnd) {
+         iteratorPtr_ =
+            iteratorFactoryPtr_->readObjectOptional(in, *this, className,
+                                                   isEnd);
+         if (!iteratorPtr_ && ParamComponent::echo()) {
+            Log::file() << indent() << "  Iterator{ [absent] }\n";
+         }
       }
 
       // Optionally instantiate a Sweep object (if an iterator exists)
@@ -751,6 +773,7 @@ namespace Rpc {
       w_.readBasis(filename, domain_.unitCell());
       hasCFields_ = false;
       hasFreeEnergy_ = false;
+      hasStress_ = false;
 
       // Clear unit cell data in waveList and mixture
       domain_.waveList().clearUnitCellData();
@@ -773,6 +796,7 @@ namespace Rpc {
       w_.readRGrid(filename, domain_.unitCell());
       hasCFields_ = false;
       hasFreeEnergy_ = false;
+      hasStress_ = false;
 
       // Clear unit cell data in waveList and mixture
       domain_.waveList().clearUnitCellData();
@@ -840,6 +864,7 @@ namespace Rpc {
       w_.setBasis(tmpFieldsBasis);
       hasCFields_ = false;
       hasFreeEnergy_ = false;
+      hasStress_ = false;
 
       // Clear unit cell data in waveList and mixture
       domain_.waveList().clearUnitCellData();
@@ -863,6 +888,7 @@ namespace Rpc {
       w_.setBasis(fields);
       hasCFields_ = false;
       hasFreeEnergy_ = false;
+      hasStress_ = false;
    }
 
    /*
@@ -876,6 +902,7 @@ namespace Rpc {
       w_.setRGrid(fields);
       hasCFields_ = false;
       hasFreeEnergy_ = false;
+      hasStress_ = false;
    }
 
    // Unit Cell Modifiers
@@ -955,6 +982,7 @@ namespace Rpc {
       mixture_.compute(w_.rgrid(), c_.rgrid(), mask_.phiTot());
       hasCFields_ = true;
       hasFreeEnergy_ = false;
+      hasStress_ = false;
 
       // If w fields are symmetric, compute basis components for c fields
       if (w_.isSymmetric()) {
@@ -965,7 +993,7 @@ namespace Rpc {
 
       // Compute stress if needed
       if (needStress) {
-         mixture_.computeStress(mask().phiTot());
+         computeStress();
       }
    }
 
@@ -983,6 +1011,7 @@ namespace Rpc {
       }
       hasCFields_ = false;
       hasFreeEnergy_ = false;
+      hasStress_ = false;
 
       Log::file() << std::endl;
       Log::file() << std::endl;
@@ -994,11 +1023,9 @@ namespace Rpc {
       // If converged, compute related thermodynamic properties
       if (!error) {
          computeFreeEnergy(); // Sets hasFreeEnergy_ = true
-         if (!iterator().isFlexible()) {
-            mixture_.computeStress(mask().phiTot());
-         }
          writeThermo(Log::file());
-         if (!iterator().isFlexible()) {
+         if (iterator().isFlexible()) {
+            UTIL_CHECK(hasStress_);
             writeStress(Log::file());
          }
       }
@@ -1021,6 +1048,7 @@ namespace Rpc {
       }
       hasCFields_ = false;
       hasFreeEnergy_ = false;
+      hasStress_ = false;
 
       Log::file() << std::endl;
       Log::file() << std::endl;
@@ -1039,6 +1067,7 @@ namespace Rpc {
       UTIL_CHECK(hasSimulator());
       hasCFields_ = false;
       hasFreeEnergy_ = false;
+      hasStress_ = false;
 
       simulator().simulate(nStep);
       hasCFields_ = true;
@@ -1246,6 +1275,36 @@ namespace Rpc {
       hasFreeEnergy_ = true;
    }
 
+   /*
+   * Compute SCFT stress for current fields.
+   */
+   template <int D>
+   void System<D>::computeStress()
+   {
+      if (hasStress_) return;
+
+      stress_.clear();
+
+      // Compute and store stress contribution from Mixture
+      mixture_.computeStress();
+      for (int i = 0; i < domain_.unitCell().nParameter(); ++i) {
+         stress_.append(mixture_.stress(i));
+      }
+
+      if (hasEnvironment()) {
+         for (int i = 0; i < domain_.unitCell().nParameter(); ++i) {
+            // Add stress contributions from Environment
+            stress_[i] += environment().stress(i);
+
+            // Allow Environment to modify stress contributions to
+            // minimize something other than fHelmholtz if desired
+            stress_[i] = environment().modifyStress(i,stress_[i]);
+         }
+      }
+
+      hasStress_ = true;
+   }
+
    // Output Operations
 
    /*
@@ -1258,6 +1317,9 @@ namespace Rpc {
       mixture_.writeParam(out);
       interaction().writeParam(out);
       domain_.writeParam(out);
+      if (hasEnvironment()) {
+         environment().writeParam(out);
+      }
       if (hasIterator()) {
          iterator().writeParam(out);
       }
@@ -1338,7 +1400,7 @@ namespace Rpc {
       for (int i = 0; i < domain_.unitCell().nParameter(); ++i) {
          out << Int(i, 5)
              << "  "
-             << Dbl(mixture_.stress(i), 18, 11)
+             << Dbl(stress_[i], 18, 11)
              << std::endl;
       }
       out << std::endl;

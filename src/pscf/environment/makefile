@@ -3,17 +3,17 @@
 
 SRC_DIR_REL =../..
 include $(SRC_DIR_REL)/config.mk
-include $(SRC_DIR)/prdc/include.mk
+include $(SRC_DIR)/pscf/include.mk
 
 #-----------------------------------------------------------------------
 # Main targets 
 
-all: $(prdc_iterator_OBJS) 
+all: $(pscf_environment_OBJS) 
 
 clean:
-	rm -f $(prdc_iterator_OBJS) $(prdc_iterator_OBJS:.o=.d) 
+	rm -f $(pscf_environment_OBJS) $(pscf_environment_OBJS:.o=.d) 
 
 #-----------------------------------------------------------------------
 # Include dependency files
 
--include $(prdc_OBJS:.o=.d)
+-include $(pscf_OBJS:.o=.d)

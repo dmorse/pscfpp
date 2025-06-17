@@ -9,7 +9,7 @@
 */
 
 #include <rpc/System.h>
-#include <prdc/iterator/ExtGenFilmBase.h>  // Base class
+#include <prdc/field/FilmFieldGenExtBase.h>  // Base class
 
 namespace Pscf {
 namespace Rpc {
@@ -18,13 +18,13 @@ namespace Rpc {
    using namespace Pscf::Prdc;
 
    /**
-   * External field generator for a thin film geometry.
+   * Field Generator for external fields in thin-film systems.
    *
-   * The parent ExtGenFilmBase class template defines all traits of a 
-   * ExtGenFilm that do not require access to the System. This subclass
+   * The parent FilmFieldGenExtBase class template defines all traits of a 
+   * FilmFieldGenExt that do not require access to the System. This subclass
    * defines all methods that need System access.
    * 
-   * If the user chooses an ExtGenFilm object to generate external fields,
+   * If the user chooses an FilmFieldGenExt object to generate external fields,
    * the external fields will have the same shape as the mask, with a 
    * magnitude defined by a Flory--Huggins-like chi parameter. This class
    * is specific to thin-film systems because it also allows for a 
@@ -35,7 +35,7 @@ namespace Rpc {
    * \ingroup Rpc_Scft_Iterator_Module
    */
    template <int D>
-   class ExtGenFilm : public ExtGenFilmBase<D>
+   class FilmFieldGenExt : public FilmFieldGenExtBase<D>
    {
 
    public:
@@ -43,19 +43,19 @@ namespace Rpc {
       /**
       * Default constructor
       */
-      ExtGenFilm();
+      FilmFieldGenExt();
       
       /**
       * Constructor
       * 
       * \param sys  System parent object
       */
-      ExtGenFilm(System<D>& sys);
+      FilmFieldGenExt(System<D>& sys);
 
       /**
       * Destructor
       */
-      ~ExtGenFilm();
+      ~FilmFieldGenExt();
 
       /**
       * Check whether the fields have been generated
@@ -74,14 +74,14 @@ namespace Rpc {
       * 
       * \param paramId  index of the lattice parameter being varied
       */
-      double stressTerm(int paramId) const;
+      double stress(int paramId) const;
 
-      using ExtGenFilmBase<D>::isAthermal;
-      using ExtGenFilmBase<D>::chiBottom;
-      using ExtGenFilmBase<D>::chiTop;
-      using ExtGenFilmBase<D>::normalVecId;
-      using ExtGenFilmBase<D>::interfaceThickness;
-      using ExtGenFilmBase<D>::excludedThickness;
+      using FilmFieldGenExtBase<D>::isAthermal;
+      using FilmFieldGenExtBase<D>::chiBottom;
+      using FilmFieldGenExtBase<D>::chiTop;
+      using FilmFieldGenExtBase<D>::normalVecId;
+      using FilmFieldGenExtBase<D>::interfaceThickness;
+      using FilmFieldGenExtBase<D>::excludedThickness;
 
    protected:
 
@@ -121,9 +121,9 @@ namespace Rpc {
       */
       int systemNMonomer() const;
 
-      using ExtGenFilmBase<D>::normalVecCurrent_;
-      using ExtGenFilmBase<D>::chiBottomCurrent_;
-      using ExtGenFilmBase<D>::chiTopCurrent_;
+      using FilmFieldGenExtBase<D>::normalVecCurrent_;
+      using FilmFieldGenExtBase<D>::chiBottomCurrent_;
+      using FilmFieldGenExtBase<D>::chiTopCurrent_;
       using ParamComposite::setClassName;
 
    private:
@@ -140,12 +140,12 @@ namespace Rpc {
 
    // Check whether the field has been generated
    template <int D>
-   inline bool ExtGenFilm<D>::isGenerated() const
+   inline bool FilmFieldGenExt<D>::isGenerated() const
    {  return system().h().hasData(); }
 
    // Get parent System by non-const reference.
    template <int D>
-   System<D>& ExtGenFilm<D>::system() 
+   System<D>& FilmFieldGenExt<D>::system() 
    {
       UTIL_CHECK(sysPtr_);  
       return *sysPtr_; 
@@ -153,7 +153,7 @@ namespace Rpc {
 
    // Get parent System by const reference.
    template <int D>
-   System<D> const & ExtGenFilm<D>::system() const
+   System<D> const & FilmFieldGenExt<D>::system() const
    {  
       UTIL_CHECK(sysPtr_);  
       return *sysPtr_; 
@@ -161,23 +161,23 @@ namespace Rpc {
 
    // Get space group name for this system.
    template <int D>
-   inline std::string ExtGenFilm<D>::systemSpaceGroup() const
+   inline std::string FilmFieldGenExt<D>::systemSpaceGroup() const
    {  return system().domain().groupName(); }
 
    // Get one of the lattice vectors for this system.
    template <int D>
-   inline RealVec<D> ExtGenFilm<D>::systemLatticeVector(int id) const
+   inline RealVec<D> FilmFieldGenExt<D>::systemLatticeVector(int id) const
    {  return system().domain().unitCell().rBasis(id); }
 
    // Get the number of monomer species for this system.
    template <int D>
-   inline int ExtGenFilm<D>::systemNMonomer() const
+   inline int FilmFieldGenExt<D>::systemNMonomer() const
    {  return system().mixture().nMonomer(); }
    
    #ifndef RPC_EXT_GEN_FILM_TPP
-   extern template class ExtGenFilm<1>;
-   extern template class ExtGenFilm<2>;
-   extern template class ExtGenFilm<3>;
+   extern template class FilmFieldGenExt<1>;
+   extern template class FilmFieldGenExt<2>;
+   extern template class FilmFieldGenExt<3>;
    #endif
 
 } // namespace Rpc

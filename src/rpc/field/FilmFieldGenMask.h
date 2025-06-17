@@ -9,7 +9,7 @@
 */
 
 #include <rpc/System.h>
-#include <prdc/iterator/MaskGenFilmBase.h>  // Base class
+#include <prdc/field/FilmFieldGenMaskBase.h>  // Base class
 
 namespace Pscf {
 namespace Rpc {
@@ -18,20 +18,20 @@ namespace Rpc {
    using namespace Pscf::Prdc;
 
    /**
-   * Mask generator for a thin film geometry.
+   * Field Generator for thin-film masks.
    *
-   * The parent MaskGenFilmBase class template defines all traits of a 
-   * MaskGenFilm that do not require access to the System. This subclass
+   * The parent FilmFieldGenMaskBase class template defines all traits of a 
+   * FilmFieldGenMask that do not require access to the System. This subclass
    * defines all methods that need System access.
    * 
-   * If the user chooses a MaskGenFilm as their mask generator, then the 
-   * system will contain two parallel hard surfaces ("walls"), confining
-   * the polymers/solvents to a "thin film" region of the unit cell.
+   * If a MixAndMatchEnv contains a FilmFieldGenMask, then the system will
+   * contain two parallel hard surfaces ("walls"), confining the
+   * polymers/solvents to a "thin film" region of the unit cell.
    *
    * \ingroup Rpc_Scft_Iterator_Module
    */
    template <int D>
-   class MaskGenFilm : public MaskGenFilmBase<D>
+   class FilmFieldGenMask : public FilmFieldGenMaskBase<D>
    {
 
    public:
@@ -39,19 +39,19 @@ namespace Rpc {
       /**
       * Default constructor
       */
-      MaskGenFilm();
+      FilmFieldGenMask();
       
       /**
       * Constructor
       * 
       * \param sys  System parent object
       */
-      MaskGenFilm(System<D>& sys);
+      FilmFieldGenMask(System<D>& sys);
 
       /**
       * Destructor
       */
-      ~MaskGenFilm();
+      ~FilmFieldGenMask();
 
       /**
       * Check whether the field has been generated
@@ -64,18 +64,18 @@ namespace Rpc {
       * The mask defined by this class changes in a non-affine manner 
       * upon changing the lattice parameter corresponding to normalVecId.
       * Thus, if this lattice parameter is allowed to be flexible, the 
-      * "stress" used to optimize the parameter must contain additional 
-      * terms arising from the mask. This method evaluates these terms
-      * and returns their value. 
+      * "stress" used to optimize the parameter must contain an additional 
+      * contribution arising from the mask. This method evaluates this
+      * contribution and returns its value. 
       * 
       * \param paramId  index of the lattice parameter being varied
       */
-      double stressTerm(int paramId) const;
+      double stress(int paramId) const;
 
       /**
       * Modify stress value in direction normal to the film.
       * 
-      * The "stress" calculated by the Mixture object is used to minimize
+      * The "stress" calculated by the System is used to minimize
       * fHelmholtz with respect to a given lattice parameter. In a thin 
       * film it is useful to instead minimize the excess free energy 
       * per unit area, (fHelmholtz - fRef) * Delta, where fRef is a 
@@ -90,10 +90,10 @@ namespace Rpc {
       */
       double modifyStress(int paramId, double stress) const;
 
-      using MaskGenFilmBase<D>::normalVecId;
-      using MaskGenFilmBase<D>::interfaceThickness;
-      using MaskGenFilmBase<D>::excludedThickness;
-      using MaskGenFilmBase<D>::hasFBulk;
+      using FilmFieldGenMaskBase<D>::normalVecId;
+      using FilmFieldGenMaskBase<D>::interfaceThickness;
+      using FilmFieldGenMaskBase<D>::excludedThickness;
+      using FilmFieldGenMaskBase<D>::hasFBulk;
 
    protected:
 
@@ -133,9 +133,9 @@ namespace Rpc {
       */
       RealVec<D> systemLatticeVector(int id) const;
 
-      using MaskGenFilmBase<D>::modifyFlexibleParams;
-      using MaskGenFilmBase<D>::normalVecCurrent_;
-      using MaskGenFilmBase<D>::fBulk_;
+      using FilmFieldGenMaskBase<D>::modifyFlexibleParams;
+      using FilmFieldGenMaskBase<D>::normalVecCurrent_;
+      using FilmFieldGenMaskBase<D>::fBulk_;
       using ParamComposite::setClassName;
 
    private:
@@ -149,12 +149,12 @@ namespace Rpc {
 
    // Check whether the field has been generated
    template <int D>
-   inline bool MaskGenFilm<D>::isGenerated() const
+   inline bool FilmFieldGenMask<D>::isGenerated() const
    {  return system().mask().hasData(); }
 
    // Get parent System by non-const reference.
    template <int D>
-   System<D>& MaskGenFilm<D>::system() 
+   System<D>& FilmFieldGenMask<D>::system() 
    {
       UTIL_CHECK(sysPtr_);  
       return *sysPtr_; 
@@ -162,7 +162,7 @@ namespace Rpc {
 
    // Get parent System by const reference.
    template <int D>
-   System<D> const & MaskGenFilm<D>::system() const
+   System<D> const & FilmFieldGenMask<D>::system() const
    {  
       UTIL_CHECK(sysPtr_);  
       return *sysPtr_; 
@@ -170,18 +170,18 @@ namespace Rpc {
 
    // Get space group name for this system.
    template <int D>
-   inline std::string MaskGenFilm<D>::systemSpaceGroup() const
+   inline std::string FilmFieldGenMask<D>::systemSpaceGroup() const
    {  return system().domain().groupName(); }
 
    // Get one of the lattice vectors for this system.
    template <int D>
-   inline RealVec<D> MaskGenFilm<D>::systemLatticeVector(int id) const
+   inline RealVec<D> FilmFieldGenMask<D>::systemLatticeVector(int id) const
    {  return system().domain().unitCell().rBasis(id); }
 
    #ifndef RPC_MASK_GEN_FILM_TPP
-   extern template class MaskGenFilm<1>;
-   extern template class MaskGenFilm<2>;
-   extern template class MaskGenFilm<3>;
+   extern template class FilmFieldGenMask<1>;
+   extern template class FilmFieldGenMask<2>;
+   extern template class FilmFieldGenMask<3>;
    #endif
 
 } // namespace Rpc

@@ -5,12 +5,15 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "ImposedFieldsGenerator.tpp"
+#include "FilmFieldGenMask.tpp"
 
 namespace Pscf {
 namespace Rpc {
-   template class ImposedFieldsGenerator<1>;
-   template class ImposedFieldsGenerator<2>;
-   template class ImposedFieldsGenerator<3>;
+
+   // Class declarations
+   template class FilmFieldGenMask<1>;
+   template class FilmFieldGenMask<2>;
+   template class FilmFieldGenMask<3>;
+   
 }
 }

@@ -16,17 +16,17 @@ namespace Pscf {
    using namespace Util;
 
    /**
-   * Abstract base class for objects that generate fields for ImposedFields.
+   * Base class for objects that generate fields for MixAndMatchEnv.
    * 
    * A FieldGenerator subclass will contain code to generate a mask (which
-   * imposes geometric confinement), a set of external fields (one for each
-   * monomer species), or both, based on a set of input parameters defined
+   * imposes geometric confinement) or a set of external fields (one for 
+   * each monomer species), based on a set of input parameters defined
    * by the subclass. The interface for the FieldGenerator to exchange this
    * information with the System object is contained within the class 
-   * ImposedFieldsTmpl, which contains up to two FieldGenerator objects as
+   * MixAndMatchEnv, which contains up to two FieldGenerator objects as
    * members.
    * 
-   * \ingroup Pscf_Iterator_Module
+   * \ingroup Pscf_Environment_Module
    */
    class FieldGenerator : public ParamComposite, 
                           public ParameterModifier
@@ -35,9 +35,9 @@ namespace Pscf {
    public:
 
       /**
-      * Enum representing the type of field (mask, external field, or both).
+      * Enum representing the type of field (mask, external field, or none).
       */
-      enum Type {Mask, External, Both, None};
+      enum Type {Mask, External, None};
       
       /**
       * Constructor
@@ -55,14 +55,14 @@ namespace Pscf {
       void setup();
 
       /**
-      * Check whether system has changed and update the field(s) if necessary
+      * Check whether system has changed, update the field(s) if necessary
       */
       void update();
 
       /**
       * Is this object dependent on the parameters of another FieldGenerator?
       * 
-      * The parent ImposedFieldsGenerator object can contain up to two 
+      * The parent MixAndMatchEnv object can contain up to two 
       * FieldGenerator objects: a mask and an external field. In some cases, 
       * the properties of one may be dependent on the properties of the 
       * other. isDependent allows a FieldGenerator to indicate to the 
@@ -76,10 +76,10 @@ namespace Pscf {
       * followed by its own parameters.
       * 
       * Therefore, a dependent FieldGenerator must be the second of two
-      * FieldGenerators stored in a parent ImposedFieldsGenerator, and 
-      * two FieldGenerators may not be dependent on each other. In
-      * such a circumstance, a single FieldGenerator of type "Both" 
-      * should be used instead. 
+      * FieldGenerators stored in a parent MixAndMatchEnv, and two
+      * FieldGenerators may not be dependent on each other. In such a
+      * circumstance, one should not use a MixAndMatchEnv, and should 
+      * instead use a different subclass of Environment.
       */
       bool isDependent() const;
 
@@ -104,26 +104,29 @@ namespace Pscf {
       virtual bool isGenerated() const = 0;
 
       /**
-      * Get contribution to the stress from this imposed field
+      * Get contribution to the stress from this imposed field.
       * 
-      * If the imposed fields change in a non-affine manner under changes
+      * If the imposed field(s) change in a non-affine manner under changes
       * in the lattice parameters, then the "stress" used to optimize the
       * lattice parameters must contain additional terms arising from the
-      * imposed field(s). A term arises from the presence of external
-      * fields, and two terms arise from the presence of the mask. Thus,
-      * this method may return a nonzero value regardless of the Type of
-      * this object. A return value of zero indicates that the imposed
-      * field(s) stretch affinely under a change in the given lattice 
-      * parameter. The default implementation returns zero; subclasses
-      * should override this method if necessary.
+      * imposed field(s). Thus, this method may return a nonzero value 
+      * regardless of the Type of this object. A return value of zero 
+      * indicates that the imposed field(s) stretch affinely under a change 
+      * in the given lattice parameter. 
+      * 
+      * The default implementation of the method raises an error. If a
+      * FieldGenerator subclass is designed to be used only in a rigid 
+      * box, then the subclass does not need to redefine this method,
+      * as it will not ever be called. But subclasses must define the 
+      * method if they are to be used with non-rigid boxes, or else the
+      * error message in this default implementation will be triggered.
       * 
       * \param paramId  index of the lattice parameter being varied
       */
-      virtual double stressTerm(int paramId) const
-      {  return 0.0; } 
+      virtual double stress(int paramId) const;
 
       /**
-      * Modify stress value if necessary.
+      * Modify stress to minimize a property other than fHelmholtz. 
       * 
       * It may be preferable with certain imposed fields to minimize a  
       * property other than fHelmholtz with respect to the lattice  
@@ -135,26 +138,26 @@ namespace Pscf {
       * this method allows subclasses of FieldGenerator to modify the 
       * stress.
       * 
-      * The method should be called by the ImposedFieldsGenerator object 
-      * that owns this object, and the return value should be used to 
-      * compute error and optimize the lattice parameters. 
+      * The method is called by the MixAndMatchEnv object that owns this
+      * object, and the return value should be used to optimize the 
+      * lattice parameters. 
       * 
       * By default, this method will simply return the value of stress
-      * that is provided as an input, without performing a modification.
+      * that is provided as an input, without performing a modification,
+      * which corresponds to a stress that will be used to minimize 
+      * fHelmholtz.
       * 
       * \param paramId  index of the lattice parameter with this stress
       * \param stress  stress value calculated by Mixture object
       */
-      virtual double modifyStress(int paramId, double stress) const
-      {  return stress; }
+      virtual double modifyStress(int paramId, double stress) const;
 
       /**
       * Return Type enumeration value (Mask, External, or None)
       *
       * This value should be initialized by subclasses during construction.
       */
-      Type type() const
-      {  return type_; }
+      Type type() const;
    
    protected:
 
@@ -164,12 +167,12 @@ namespace Pscf {
       virtual void allocate() = 0;
 
       /**
-      * Generate the field(s) and store where the Iterator can access
+      * Generate the field(s) and store where the System can access
       */
       virtual void generate() = 0;
 
       /**
-      * Type of field (Mask, External, Both, or None)
+      * Type of field (Mask, External, or None)
       * 
       * This parameter should be a private member of subclasses, and should
       * be set in the constructor and left unchanged for the remainder of
@@ -182,9 +185,24 @@ namespace Pscf {
 
    };
 
+   // Inline member functions
+
+   // Get contribution to the stress from this imposed field.
+   inline double FieldGenerator::stress(int paramId) const
+   {  UTIL_THROW("Unimplemented stress() method called."); } 
+
+   // Modify stress to minimize a property other than fHelmholtz. 
+   inline double FieldGenerator::modifyStress(int paramId, double stress) 
+   const
+   {  return stress; }
+
    // Is this object dependent on the parameters of another FieldGenerator?
    inline bool FieldGenerator::isDependent() const
    {  return isDependent_; }
+
+   // Return Type enumeration value (Mask, External, or None)
+   inline FieldGenerator::Type FieldGenerator::type() const
+   {  return type_; }
 
 }
 #endif

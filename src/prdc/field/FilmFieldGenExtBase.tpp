@@ -8,7 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "ExtGenFilmBase.h"
+#include "FilmFieldGenExtBase.h"
 #include "prdc/crystal/SpaceGroup.h"
 #include <util/param/ParamComponent.h>
 
@@ -22,7 +22,7 @@ namespace Prdc
    * Constructor
    */
    template <int D>
-   ExtGenFilmBase<D>::ExtGenFilmBase()
+   FilmFieldGenExtBase<D>::FilmFieldGenExtBase()
     : FieldGenerator::FieldGenerator(),
       normalVecCurrent_(),
       chiBottomCurrent_(),
@@ -41,14 +41,14 @@ namespace Prdc
    * Destructor
    */
    template <int D>
-   ExtGenFilmBase<D>::~ExtGenFilmBase()
+   FilmFieldGenExtBase<D>::~FilmFieldGenExtBase()
    {}
 
    /*
    * Read and initialize.
    */
    template <int D>
-   void ExtGenFilmBase<D>::readParameters(std::istream& in)
+   void FilmFieldGenExtBase<D>::readParameters(std::istream& in)
    {
       // First, read data defining the mask (quietly, with echo = false)
       bool echo = ParamComponent::echo();
@@ -61,7 +61,7 @@ namespace Prdc
       ParamComponent::setEcho(echo);
 
       // Remove all of these parameters from this ParamComposite, since
-      // they are already managed by the MaskGenFilm ParamComposite
+      // they are already managed by the FilmFieldGenMask ParamComposite
       ParamComposite::resetParam();
 
       // Make sure inputs are valid
@@ -89,7 +89,7 @@ namespace Prdc
    * Check that the system is compatible with this field
    */
    template <int D>
-   void ExtGenFilmBase<D>::checkCompatibility()
+   void FilmFieldGenExtBase<D>::checkCompatibility()
    {
       // Ensure that space group symmetry is compatible with the fields
 
@@ -131,7 +131,7 @@ namespace Prdc
    * Check whether system has changed such that the field needs updating
    */
    template <int D>
-   bool ExtGenFilmBase<D>::updateNeeded() const
+   bool FilmFieldGenExtBase<D>::updateNeeded() const
    {
       // First, if fields have not yet been generated, decide whether they
       // need to be generated (if athermal, no need).
@@ -169,7 +169,7 @@ namespace Prdc
    * the chi array.
    */
    template <int D>
-   bool ExtGenFilmBase<D>::hasSymmetricWalls() const 
+   bool FilmFieldGenExtBase<D>::hasSymmetricWalls() const 
    {
       int nm = systemNMonomer();
 
@@ -190,7 +190,7 @@ namespace Prdc
    * in chi array are zero)
    */
    template <int D>
-   bool ExtGenFilmBase<D>::isAthermal() const 
+   bool FilmFieldGenExtBase<D>::isAthermal() const 
    {
       int nm = systemNMonomer();
 
@@ -211,7 +211,7 @@ namespace Prdc
    */
    template <int D>
    GArray<ParameterType> 
-   ExtGenFilmBase<D>::getParameterTypes()
+   FilmFieldGenExtBase<D>::getParameterTypes()
    {
       GArray<ParameterType> pTypes;
       pTypes.append(ParameterType("chi_top", 1, *this));
@@ -223,7 +223,7 @@ namespace Prdc
    * Set the value of a specialized sweep parameter (chi_top or chi_bottom).
    */
    template <int D>
-   void ExtGenFilmBase<D>::setParameter(std::string name, 
+   void FilmFieldGenExtBase<D>::setParameter(std::string name, 
                                         DArray<int> ids, 
                                         double value,
                                         bool& success)
@@ -249,7 +249,7 @@ namespace Prdc
    * Get the value of a specialized sweep parameter (chi_top or chi_bottom).
    */
    template <int D>
-   double ExtGenFilmBase<D>::getParameter(std::string name, 
+   double FilmFieldGenExtBase<D>::getParameter(std::string name, 
                                           DArray<int> ids, 
                                           bool& success) 
    const

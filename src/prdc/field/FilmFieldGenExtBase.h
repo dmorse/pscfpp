@@ -8,10 +8,10 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/sweep/ParameterType.h>      // Return type of method
-#include <pscf/iterator/FieldGenerator.h>  // Base class
-#include <pscf/math/RealVec.h>       // Container
-#include <util/containers/DArray.h>  // Container
+#include <pscf/sweep/ParameterType.h>         // Return type of method
+#include <pscf/environment/FieldGenerator.h>  // Base class
+#include <pscf/math/RealVec.h>                // Container
+#include <util/containers/DArray.h>           // Container
 #include <string>
 
 
@@ -22,13 +22,13 @@ namespace Prdc {
    using namespace Util;
 
    /**
-   * Base class defining external fields for thin film systems.
+   * Base class Field Generator for external fields in thin-film systems.
    * 
-   * This is a base class for ExtGenFilm that defines all traits of an 
-   * ExtGenFilm that do not require access to the System (System access is
+   * This is a base class for FilmFieldGenExt that defines all traits of a 
+   * FilmFieldGenExt that do not require access to the System (System access is
    * needed, for example, to access the mask and set the external fields).
    * 
-   * If the user chooses an ExtGenFilm object to generate external fields,
+   * If the user chooses a FilmFieldGenExt object to generate external fields,
    * the external fields will have the same shape as the mask, with a 
    * magnitude defined by a Flory--Huggins-like chi parameter. This class
    * is specific to thin-film systems because it also allows for a 
@@ -36,10 +36,10 @@ namespace Prdc {
    * the bottom, through user input arrays chi_bottom and chi_top. See 
    * \ref scft_thin_films_page for more information. 
    * 
-   * \ingroup Prdc_Iterator_Module
+   * \ingroup Prdc_Field_Module
    */
    template <int D>
-   class ExtGenFilmBase : public FieldGenerator
+   class FilmFieldGenExtBase : public FieldGenerator
    {
 
    public:
@@ -47,12 +47,12 @@ namespace Prdc {
       /**
       * Constructor
       */
-      ExtGenFilmBase();
+      FilmFieldGenExtBase();
 
       /**
       * Destructor
       */
-      ~ExtGenFilmBase();
+      ~FilmFieldGenExtBase();
 
       /**
       * Read and initialize.
@@ -187,7 +187,7 @@ namespace Prdc {
       * 
       * \param paramId  index of the lattice parameter being varied
       */
-      virtual double stressTerm(int paramId) const = 0;
+      virtual double stress(int paramId) const = 0;
 
       using ParameterModifier::setParameter; // overloaded method
       using ParameterModifier::getParameter; // overloaded method
@@ -200,7 +200,7 @@ namespace Prdc {
       virtual void allocate() = 0;
 
       /**
-      * Generate the fields and store where the Iterator can access.
+      * Generate the fields and store where the System can access.
       */
       virtual void generate() = 0;
 
@@ -288,41 +288,41 @@ namespace Prdc {
 
    // Get chiBottom array by const reference
    template <int D>
-   inline DArray<double> const & ExtGenFilmBase<D>::chiBottom() const
+   inline DArray<double> const & FilmFieldGenExtBase<D>::chiBottom() const
    {  return chiBottom_; }
 
    // Get chiTop array by const reference
    template <int D>
-   inline DArray<double> const & ExtGenFilmBase<D>::chiTop() const
+   inline DArray<double> const & FilmFieldGenExtBase<D>::chiTop() const
    {  return chiTop_; }
 
    // Get the chi parameter between the bottom wall and species s
    template <int D>
-   inline double ExtGenFilmBase<D>::chiBottom(int s) const
+   inline double FilmFieldGenExtBase<D>::chiBottom(int s) const
    {  return chiBottom_[s]; }
 
    // Get the chi parameter between the top wall and species s
    template <int D>
-   inline double ExtGenFilmBase<D>::chiTop(int s) const
+   inline double FilmFieldGenExtBase<D>::chiTop(int s) const
    {  return chiTop_[s]; }
 
    // Get value of normalVecId.
    template <int D> 
-   inline int ExtGenFilmBase<D>::normalVecId() const
+   inline int FilmFieldGenExtBase<D>::normalVecId() const
    {  return normalVecId_; }
 
    // Get value of interfaceThickness.
    template <int D> 
-   inline double ExtGenFilmBase<D>::interfaceThickness() const
+   inline double FilmFieldGenExtBase<D>::interfaceThickness() const
    {  return interfaceThickness_; }
 
    // Get value of excludedThickness.
    template <int D> 
-   inline double ExtGenFilmBase<D>::excludedThickness() const
+   inline double FilmFieldGenExtBase<D>::excludedThickness() const
    {  return excludedThickness_; }
 
 }
 }
 
-#include "ExtGenFilmBase.tpp"
+#include "FilmFieldGenExtBase.tpp"
 #endif

@@ -5,33 +5,38 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "ImposedFieldsTmpl.h"
+#include "MixAndMatchEnv.h"
 #include <util/param/Label.h>
 
 namespace Pscf {
 
    // Constructor
-   ImposedFieldsTmpl::ImposedFieldsTmpl()
+   MixAndMatchEnv::MixAndMatchEnv()
     : fieldGenPtr1_(0),
-      fieldGenPtr2_(0),
-      type_()
-   {}
+      fieldGenPtr2_(0)
+   {  setClassName("MixAndMatchEnv"); }
 
    // Destructor
-   ImposedFieldsTmpl::~ImposedFieldsTmpl()
-   {}
+   MixAndMatchEnv::~MixAndMatchEnv()
+   {
+      if (fieldGenPtr1_) {
+         delete fieldGenPtr1_;
+      }
+      if (fieldGenPtr2_) {
+         delete fieldGenPtr2_;
+      }
+   }
 
    // Read parameters from input stream
-   void ImposedFieldsTmpl::readParameters(std::istream& in)
+   void MixAndMatchEnv::readParameters(std::istream& in)
    {
-      // read type name and use it to create the generator objects
-      read(in, "type", type_);
-      createGenerators();
+      // Before reading parameters, create FieldGenerator objects
+      createGenerators(); 
 
       // Save current istream position
       std::streampos pos = in.tellg();
 
-      // Read first FieldGenerator (optional)
+      // Read first FieldGenerator
       if (fieldGenPtr1_) {
 
          UTIL_CHECK(!fieldGenPtr1_->isDependent());
@@ -44,6 +49,11 @@ namespace Pscf {
 
          // Read parameters for this FieldGenerator
          fieldGenPtr1_->readParameters(in);
+
+      } else {
+
+         UTIL_THROW("Object must contain at least one FieldGenerator.");
+
       }
 
       // Read second FieldGenerator (optional)
@@ -72,47 +82,52 @@ namespace Pscf {
             Label::clear();
          }
          
-         // Read parameters for external fields
+         // Read parameters for this FieldGenerator
          fieldGenPtr2_->readParameters(in);
       }
    }
 
    // Allocate, check compatibility, calculate, and store the field(s)
-   void ImposedFieldsTmpl::setup()
+   void MixAndMatchEnv::setEnvironment()
    {
       if (fieldGenPtr1_) fieldGenPtr1_->setup();
       if (fieldGenPtr2_) fieldGenPtr2_->setup();
    }
 
    // Check whether system has changed and update the field(s) if necessary
-   void ImposedFieldsTmpl::update()
+   void MixAndMatchEnv::update()
    {
       if (fieldGenPtr1_) fieldGenPtr1_->update();
       if (fieldGenPtr2_) fieldGenPtr2_->update();
    }
 
-   // Correct stress value if necessary
-   double ImposedFieldsTmpl::correctedStress(int paramId, double stress) 
-   const
+   // Return the Environment's contribution to the stress
+   double MixAndMatchEnv::stress(int paramId) const
    {
-      // Get stress contributions from non-affine distortions of the 
-      // imposed fields
+      double stress(0.0);
       if (fieldGenPtr1_) {
-         stress += fieldGenPtr1_->stressTerm(paramId);
+         stress += fieldGenPtr1_->stress(paramId);
       }
       if (fieldGenPtr2_) {
-         stress += fieldGenPtr2_->stressTerm(paramId);
+         stress += fieldGenPtr2_->stress(paramId);
       }
-      
-      // Make any additional modifications to stress
-      stress = modifyStress(paramId, stress);
-
       return stress;
    }
 
+   // Modify stress to minimize a property other than fHelmholtz
+   double MixAndMatchEnv::modifyStress(int paramId, double stress) const
+   {  
+      if (fieldGenPtr1_) {
+         stress = fieldGenPtr1_->modifyStress(paramId, stress);
+      }
+      if (fieldGenPtr2_) {
+         stress = fieldGenPtr2_->modifyStress(paramId, stress);
+      }
+      return stress;
+   }
 
    // Return specialized sweep parameter types to add to the Sweep object
-   GArray<ParameterType> ImposedFieldsTmpl::getParameterTypes()
+   GArray<ParameterType> MixAndMatchEnv::getParameterTypes()
    {
       GArray<ParameterType> a1, a2;
 
@@ -127,9 +142,8 @@ namespace Pscf {
    }
 
    // Set the value of a specialized sweep parameter
-   void ImposedFieldsTmpl::setParameter(std::string name, 
-                                                  DArray<int> ids, 
-                                                  double value, bool& success)
+   void MixAndMatchEnv::setParameter(std::string name, DArray<int> ids, 
+                                     double value, bool& success)
    {
       success = false;
       if (fieldGenPtr1_) {
@@ -141,10 +155,8 @@ namespace Pscf {
    }
 
    // Get the value of a specialized sweep parameter
-   double ImposedFieldsTmpl::getParameter(std::string name, 
-                                                    DArray<int> ids, 
-                                                    bool& success)
-   const
+   double MixAndMatchEnv::getParameter(std::string name, DArray<int> ids, 
+                                       bool& success) const
    {
       double val(0);
       success = false;
@@ -157,19 +169,11 @@ namespace Pscf {
       return val;
    }
 
-   // Get the type string associated with this object
-   std::string ImposedFieldsTmpl::type() const
-   {  return type_; }
-
    // Return const references to the FieldGenerator child objects
-   FieldGenerator const & ImposedFieldsTmpl::fieldGenerator1() const
+   FieldGenerator const & MixAndMatchEnv::fieldGenerator1() const
    {  return *fieldGenPtr1_; }
 
-   FieldGenerator const & ImposedFieldsTmpl::fieldGenerator2() const
+   FieldGenerator const & MixAndMatchEnv::fieldGenerator2() const
    {  return *fieldGenPtr2_; }
-
-   // Modify the stress value if necessary
-   double ImposedFieldsTmpl::modifyStress(int paramId, double stress) const
-   {  return stress; }
 
 }

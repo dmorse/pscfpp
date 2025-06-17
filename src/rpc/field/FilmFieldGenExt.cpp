@@ -5,14 +5,14 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "ExtGenFilm.tpp"
+#include "FilmFieldGenExt.tpp"
 
 namespace Pscf {
 namespace Rpc {
 
-   template class ExtGenFilm<1>;
-   template class ExtGenFilm<2>;
-   template class ExtGenFilm<3>;
+   template class FilmFieldGenExt<1>;
+   template class FilmFieldGenExt<2>;
+   template class FilmFieldGenExt<3>;
 
 }
 }

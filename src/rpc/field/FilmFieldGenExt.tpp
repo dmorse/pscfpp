@@ -8,9 +8,9 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "ExtGenFilm.h"
-#include "Iterator.h"
-#include <rpc/field/FieldIo.h>
+#include "FilmFieldGenExt.h"
+#include "FieldIo.h"
+#include <rpc/scft/iterator/Iterator.h>
 #include <prdc/cpu/RField.h>
 #include <prdc/crystal/paramIdConversions.h>
 #include <pscf/math/IntVec.h>
@@ -29,32 +29,32 @@ namespace Rpc
    * Default constructor
    */
    template <int D>
-   ExtGenFilm<D>::ExtGenFilm()
-    : ExtGenFilmBase<D>::ExtGenFilmBase(),
+   FilmFieldGenExt<D>::FilmFieldGenExt()
+    : FilmFieldGenExtBase<D>::FilmFieldGenExtBase(),
       sysPtr_(nullptr)
-   {  setClassName("ExtGenFilm"); }
+   {  setClassName("FilmFieldGenExt"); }
    
    /*
    * Constructor
    */
    template <int D>
-   ExtGenFilm<D>::ExtGenFilm(System<D>& sys)
-    : ExtGenFilmBase<D>::ExtGenFilmBase(),
+   FilmFieldGenExt<D>::FilmFieldGenExt(System<D>& sys)
+    : FilmFieldGenExtBase<D>::FilmFieldGenExtBase(),
       sysPtr_(&sys)
-   {  setClassName("ExtGenFilm"); }
+   {  setClassName("FilmFieldGenExt"); }
 
    /*
    * Destructor
    */
    template <int D>
-   ExtGenFilm<D>::~ExtGenFilm()
+   FilmFieldGenExt<D>::~FilmFieldGenExt()
    {}
 
    /*
    * Get contribution to the stress from these external fields
    */
    template <int D>
-   double ExtGenFilm<D>::stressTerm(int paramId) const
+   double FilmFieldGenExt<D>::stress(int paramId) const
    {
       // If walls are athermal then there is no external field, so no
       // contribution to the stress.
@@ -152,7 +152,7 @@ namespace Rpc
    * Allocate container necessary to generate and store field
    */
    template <int D>
-   void ExtGenFilm<D>::allocate()
+   void FilmFieldGenExt<D>::allocate()
    {
       UTIL_CHECK(system().domain().unitCell().isInitialized());
 
@@ -177,7 +177,7 @@ namespace Rpc
    * Generate the fields and store where the Iterator can access.
    */
    template <int D>
-   void ExtGenFilm<D>::generate()
+   void FilmFieldGenExt<D>::generate()
    {
       // If walls are athermal then there is no external field needed.
       // If an external field already exists in the System, we need to

@@ -8,9 +8,9 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "MaskGenFilm.h"
-#include "Iterator.h"
-#include <rpc/field/FieldIo.h>
+#include "FilmFieldGenMask.h"
+#include "FieldIo.h"
+#include <rpc/scft/iterator/Iterator.h>
 #include <prdc/cpu/RField.h>
 #include <prdc/crystal/UnitCell.h>
 #include <prdc/crystal/paramIdConversions.h>
@@ -30,32 +30,32 @@ namespace Rpc
    * Default constructor
    */
    template <int D>
-   MaskGenFilm<D>::MaskGenFilm()
-    : MaskGenFilmBase<D>::MaskGenFilmBase(),
+   FilmFieldGenMask<D>::FilmFieldGenMask()
+    : FilmFieldGenMaskBase<D>::FilmFieldGenMaskBase(),
       sysPtr_(nullptr)
-   {  setClassName("MaskGenFilm"); }
+   {  setClassName("FilmFieldGenMask"); }
    
    /*
    * Constructor
    */
    template <int D>
-   MaskGenFilm<D>::MaskGenFilm(System<D>& sys)
-    : MaskGenFilmBase<D>::MaskGenFilmBase(),
+   FilmFieldGenMask<D>::FilmFieldGenMask(System<D>& sys)
+    : FilmFieldGenMaskBase<D>::FilmFieldGenMaskBase(),
       sysPtr_(&sys)
-   {  setClassName("MaskGenFilm"); }
+   {  setClassName("FilmFieldGenMask"); }
 
    /*
    * Destructor
    */
    template <int D>
-   MaskGenFilm<D>::~MaskGenFilm()
+   FilmFieldGenMask<D>::~FilmFieldGenMask()
    {}
 
    /*
    * Get contribution to the stress from this mask
    */
    template <int D>
-   double MaskGenFilm<D>::stressTerm(int paramId) const
+   double FilmFieldGenMask<D>::stress(int paramId) const
    {
       UTIL_CHECK(sysPtr_);
       int normalVecParamId = convertFullParamIdToReduced<D>(normalVecId(),
@@ -160,7 +160,7 @@ namespace Rpc
    }
 
    template <int D>
-   double MaskGenFilm<D>::modifyStress(int paramId, double stress) 
+   double FilmFieldGenMask<D>::modifyStress(int paramId, double stress) 
    const
    {
       UTIL_CHECK(sysPtr_);
@@ -195,7 +195,7 @@ namespace Rpc
    * Allocate container necessary to generate and store field
    */
    template <int D>
-   void MaskGenFilm<D>::allocate()
+   void FilmFieldGenMask<D>::allocate()
    {
       UTIL_CHECK(sysPtr_);
       UTIL_CHECK(system().domain().unitCell().isInitialized());
@@ -219,7 +219,7 @@ namespace Rpc
    * Generate the field and store where the Iterator can access
    */
    template <int D>
-   void MaskGenFilm<D>::generate()
+   void FilmFieldGenMask<D>::generate()
    {
       UTIL_CHECK(sysPtr_);
       UTIL_CHECK(interfaceThickness() > 0);
@@ -284,7 +284,7 @@ namespace Rpc
    * Sets flexible lattice parameters to be compatible with the mask.
    */
    template <int D>
-   void MaskGenFilm<D>::setFlexibleParams() const
+   void FilmFieldGenMask<D>::setFlexibleParams() const
    {
       UTIL_CHECK(sysPtr_);
       if (system().iterator().isFlexible()) {

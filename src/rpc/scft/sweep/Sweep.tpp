@@ -9,6 +9,7 @@
 #include "Sweep.h"
 #include <rpc/System.h>
 #include <rpc/scft/iterator/Iterator.h>
+#include <pscf/environment/Environment.h>
 #include <pscf/inter/Interaction.h>
 #include <pscf/sweep/SweepTmpl.tpp>
 #include <util/misc/FileMaster.h>
@@ -45,9 +46,10 @@ namespace Rpc {
       writeWRGrid_(false),
       systemPtr_(&sys)
    {
-      // Get specialized sweep parameters from Iterator
-      if (system().hasIterator()) {
-         addParameterTypes(system().iterator().getParameterTypes());
+      // Get specialized sweep parameters from Environment
+      if (system().hasEnvironment()) {
+#include <rpc/scft/iterator/Iterator.h>
+         addParameterTypes(system().environment().getParameterTypes());
       }
    }
 
