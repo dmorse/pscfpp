@@ -32,6 +32,7 @@
 #include <util/containers/FSArray.h>
 #include <util/param/BracketPolicy.h>
 #include <util/param/ParamComponent.h>
+#include <util/signal/Signal.h>
 #include <util/format/Str.h>
 #include <util/format/Int.h>
 #include <util/format/Dbl.h>
@@ -78,17 +79,27 @@ namespace Rpc {
       hasCFields_(false),
       hasFreeEnergy_(false)
    {
+      // Set name used as a block label in the parameter file
       setClassName("System");
+
+      // Create associations among class members
       domain_.setFileMaster(fileMaster_);
       w_.setFieldIo(domain_.fieldIo());
       h_.setFieldIo(domain_.fieldIo());
       mask_.setFieldIo(domain_.fieldIo());
 
+      // Create dynamically allocated objects owned by this System
       interactionPtr_ = new Interaction();
       iteratorFactoryPtr_ = new IteratorFactory<D>(*this);
       sweepFactoryPtr_ = new SweepFactory<D>(*this);
       simulatorFactoryPtr_ = new SimulatorFactory<D>(*this);
       BracketPolicy::set(BracketPolicy::Optional);
+
+      // Add observers to signals
+
+      // Signal that notifies observers when a basis is constructed
+      domain_.basis().signal().addObserver(*this, 
+                                           &System<D>::allocateFieldsBasis);
    }
 
    /*
@@ -742,9 +753,11 @@ namespace Rpc {
          readFieldHeader(filename);
       }
       UTIL_CHECK(domain_.basis().isInitialized());
+      #if 0
       if (!isAllocatedBasis_) {
          allocateFieldsBasis();
       }
+      #endif
       UTIL_CHECK(isAllocatedBasis_);
 
       // Read w fields and set unit cell parameters
@@ -798,9 +811,11 @@ namespace Rpc {
          readFieldHeader(filename);
       }
       UTIL_CHECK(domain_.basis().isInitialized());
+      #if 0
       if (!isAllocatedBasis_) {
          allocateFieldsBasis();
       }
+      #endif
       UTIL_CHECK(isAllocatedBasis_);
       const int nm = mixture_.nMonomer();
       const int nb = domain_.basis().nBasis();
@@ -887,16 +902,22 @@ namespace Rpc {
    void System<D>::setUnitCell(UnitCell<D> const & unitCell)
    {
       domain_.setUnitCell(unitCell);
-      // Note: Domain::setUnitCell clears WaveList unit cell data
-      // and makes Basis if needed
       mixture_.clearUnitCellData();
+
+      // Note: Domain::setUnitCell clears WaveList unit cell data
+      // and makes Basis if needed.
+
+      // Postconditions
+      UTIL_CHECK(domain_.unitCell().isInitialized());
       if (domain_.hasGroup()) {
          UTIL_CHECK(domain_.basis().isInitialized());
+         #if 0
          if (!isAllocatedBasis_) {
             allocateFieldsBasis();
          }
+         #endif
+         UTIL_CHECK(isAllocatedBasis_);
       }
-      UTIL_CHECK(domain_.unitCell().isInitialized());
    }
 
    /*
@@ -908,16 +929,22 @@ namespace Rpc {
                           FSArray<double, 6> const & parameters)
    {
       domain_.setUnitCell(lattice, parameters);
+      mixture_.clearUnitCellData();
+
       // Note: Domain::setUnitCell clears WaveList unit cell data
       // and makes Basis if needed
-      mixture_.clearUnitCellData();
+
+      // Postconditions
+      UTIL_CHECK(domain_.unitCell().isInitialized());
       if (domain_.hasGroup()) {
          UTIL_CHECK(domain_.basis().isInitialized());
+         #if 0
          if (!isAllocatedBasis_) {
             allocateFieldsBasis();
          }
+         #endif
+         UTIL_CHECK(isAllocatedBasis_);
       }
-      UTIL_CHECK(domain_.unitCell().isInitialized());
    }
 
    /*
@@ -927,14 +954,20 @@ namespace Rpc {
    void System<D>::setUnitCell(FSArray<double, 6> const & parameters)
    {
       domain_.setUnitCell(parameters);
+      mixture_.clearUnitCellData();
+
       // Note: Domain::setUnitCell clears WaveList unit cell data
       // and makes Basis if needed
-      mixture_.clearUnitCellData();
+
+      // Postconditions
       if (domain_.hasGroup()) {
          UTIL_CHECK(domain_.basis().isInitialized());
+         #if 0
          if (!isAllocatedBasis_) {
             allocateFieldsBasis();
          }
+         #endif
+         UTIL_CHECK(isAllocatedBasis_);
       }
       UTIL_CHECK(domain_.unitCell().isInitialized());
    }
@@ -978,8 +1011,8 @@ namespace Rpc {
       UTIL_CHECK(hasIterator());
       UTIL_CHECK(w_.hasData());
       if (iterator().isSymmetric()) {
-         UTIL_CHECK(w_.isSymmetric());
          UTIL_CHECK(isAllocatedBasis_);
+         UTIL_CHECK(w_.isSymmetric());
       }
       hasCFields_ = false;
       hasFreeEnergy_ = false;
@@ -1016,8 +1049,8 @@ namespace Rpc {
       UTIL_CHECK(hasSweep());
       UTIL_CHECK(w_.hasData());
       if (iterator().isSymmetric()) {
-         UTIL_CHECK(w_.isSymmetric());
          UTIL_CHECK(isAllocatedBasis_);
+         UTIL_CHECK(w_.isSymmetric());
       }
       hasCFields_ = false;
       hasFreeEnergy_ = false;
@@ -1621,7 +1654,7 @@ namespace Rpc {
    template <int D>
    void System<D>::allocateFieldsBasis()
    {
-      // Preconditions and constants
+      // Preconditions 
       UTIL_CHECK(hasMixture_);
       const int nMonomer = mixture_.nMonomer();
       UTIL_CHECK(nMonomer > 0);
@@ -1633,7 +1666,7 @@ namespace Rpc {
       UTIL_CHECK(isAllocatedGrid_);
       UTIL_CHECK(!isAllocatedBasis_);
 
-      // Allocate basis field containers
+      // Allocate basis fields in w and c field containers
       w_.allocateBasis(nBasis);
       c_.allocateBasis(nBasis);
 
@@ -1668,9 +1701,11 @@ namespace Rpc {
       UTIL_CHECK(mixture_.nMonomer() == nMonomer);
       if (domain_.hasGroup()) {
          UTIL_CHECK(domain_.basis().isInitialized());
+         #if 0
          if (!isAllocatedBasis_) {
             allocateFieldsBasis();
          }
+         #endif
          UTIL_CHECK(isAllocatedBasis_);
       }
    }

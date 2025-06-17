@@ -11,12 +11,22 @@
 #include <pscf/mesh/Mesh.h>               // inline waveId
 #include <util/containers/DArray.h>       // member
 #include <util/containers/GArray.h>       // member
+#include <util/signal/Signal.h>           // member
+
+// Forward declarations
+namespace Util {
+   template <typename T> class Signal;
+   template <> class Signal<void>;
+}
+namespace Pscf {
+  namespace Prdc {
+     template <int D> class UnitCell;
+     template <int D> class SpaceGroup;
+  }
+}
 
 namespace Pscf {
 namespace Prdc {
-
-   template <int D> class UnitCell;
-   template <int D> class SpaceGroup;
 
    using namespace Util;
 
@@ -584,6 +594,8 @@ namespace Prdc {
       */
       ~Basis();
 
+      // Initialization
+
       /**
       * Construct basis for a specific mesh and space group.
       *
@@ -630,30 +642,34 @@ namespace Prdc {
                      std::string groupName);
 
       /**
+      * Get a Signal that is triggered by basis initialization.
+      *
+      * This function returns a Signal<void> object that notifies all
+      * observers upon successful initialization of this Basis. The
+      * Signal<void>::addObserver function template may be used to 
+      * register an object as an observer and to identify a zero-parameter 
+      * member function of that observer that should be called when this 
+      * Basis is initialized.
+      */
+      Signal<void>& signal();
+
+      // Data Output
+
+      /**
       * Print a list of all waves to an output stream.
       *
-      * \param out output stream to which to write
-      * \param outputAll output cancelled waves only if true
+      * \param out  output stream to which to write
+      * \param outputAll  output cancelled waves only if true
       */
       void outputWaves(std::ostream& out, bool outputAll = false) const;
 
       /**
       * Print a list of all stars to an output stream.
       *
-      * \param out output stream to which to write
-      * \param outputAll output cancelled waves only if true
+      * \param out  output stream to which to write
+      * \param outputAll  output cancelled waves only if true
       */
       void outputStars(std::ostream& out, bool outputAll = false) const;
-
-      /**
-      * Returns true if valid, false otherwise.
-      */
-      bool isValid() const;
-
-      /**
-      * Returns true iff this basis is fully initialized.
-      */
-      bool isInitialized() const;
 
       // Accessors
 
@@ -712,6 +728,16 @@ namespace Prdc {
       * \param vector vector of integer indices of a wave vector.
       */
       int waveId(IntVec<D> vector) const;
+
+      /**
+      * Returns true iff this basis is fully initialized.
+      */
+      bool isInitialized() const;
+
+      /**
+      * Returns true if this basis is valid, false otherwise.
+      */
+      bool isValid() const;
 
    private:
 
@@ -775,6 +801,11 @@ namespace Prdc {
       * Total number of basis functions, or uncancelled stars.
       */
       int nBasis_;
+
+      /**
+      * Pointer to a signal that is triggered when basis is constructed.
+      */
+      Signal<>* signalPtr_;
 
       /**
       * Pointer to an associated UnitCell.

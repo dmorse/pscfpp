@@ -16,6 +16,8 @@
 #include <prdc/crystal/shiftToMinimum.h>
 #include <pscf/mesh/Mesh.h>
 #include <pscf/mesh/MeshIterator.h>
+#include <util/signal/Signal.h>
+
 #include <algorithm>
 #include <vector>
 #include <set>
@@ -37,17 +39,22 @@ namespace Prdc {
       nBasisWave_(0),
       nStar_(0),
       nBasis_(0),
+      signalPtr_(nullptr),
       unitCellPtr_(0),
       meshPtr_(0),
       isInitialized_(false)
-   {}
+   {
+      signalPtr_ = new Signal<void>();
+   }
 
    /*
    * Destructor.
    */
    template <int D>
    Basis<D>::~Basis()
-   {}
+   {
+      delete signalPtr_;
+   }
 
    /*
    * Construct basis for pseudo-spectral scft.
@@ -91,10 +98,14 @@ namespace Prdc {
       // Apply validity test suite
       bool valid = isValid();
       if (!valid) {
-         UTIL_THROW("Basis failed validity check");
+         UTIL_THROW("Basis failed validity test suite");
       }
 
+      // Mark as initialized
       isInitialized_ = true;
+
+      // Notify any observers of successful basis initialization
+      signal().notify();
    }
 
    /*
@@ -1411,6 +1422,16 @@ namespace Prdc {
 
       // The end of this function is reached iff all tests passed.
       return true;
+   }
+
+   /*
+   * Get the associated signal (notifies observers of basis initialization).
+   */
+   template <int D>
+   Signal<void>& Basis<D>::signal()
+   {
+      UTIL_CHECK(signalPtr_); 
+      return *signalPtr_;
    }
 
 }
