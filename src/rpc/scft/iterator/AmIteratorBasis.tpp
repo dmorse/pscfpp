@@ -11,7 +11,6 @@
 #include "AmIteratorBasis.h"
 #include <rpc/System.h>
 #include <pscf/inter/Interaction.h>
-#include <pscf/environment/Environment.h>
 #include <pscf/iterator/NanException.h>
 #include <util/global.h>
 #include <cmath>
@@ -409,11 +408,6 @@ namespace Rpc {
          UTIL_CHECK(counter == nFlexibleParams());
 
          system().setUnitCell(parameters);
-      }
-
-      // Update environment if needed
-      if (system().hasEnvironment()) {
-         system().environment().update();
       }
    }
 

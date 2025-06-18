@@ -80,6 +80,8 @@ namespace Prdc {
          deallocateRGrid();
       }
 
+      UTIL_CHECK(!hasData_);
+
       // Store mesh dimensions
       meshDimensions_ = meshDimensions;
       meshSize_ = 1;
@@ -112,6 +114,7 @@ namespace Prdc {
       meshDimensions_ = 0;
       meshSize_ = 0;
       isAllocatedRGrid_ = false;
+      hasData_ = false;
    }
 
    /*
@@ -127,6 +130,8 @@ namespace Prdc {
       if (isAllocatedBasis_) {
          deallocateBasis();
       }
+
+      UTIL_CHECK(!hasData_);
 
       // Allocate
       nBasis_ = nBasis;
@@ -151,6 +156,7 @@ namespace Prdc {
       basis_.deallocate();
       nBasis_ = 0;
       isAllocatedBasis_ = false;
+      hasData_ = false;
    }
 
    /*

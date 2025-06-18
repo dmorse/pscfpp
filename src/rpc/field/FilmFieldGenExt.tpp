@@ -68,7 +68,6 @@ namespace Rpc
 
       // If this point is reached, calculate the stress contribution
       // from the external fields.
-      UTIL_CHECK(isGenerated());
       UTIL_CHECK(interfaceThickness() > 0); 
       UTIL_CHECK(system().hasMask());
       UTIL_CHECK(system().hasExternalFields());
@@ -179,10 +178,17 @@ namespace Rpc
    template <int D>
    void FilmFieldGenExt<D>::generate()
    {
+      // Set chiBottomCurrent_, chiTopCurrent_, and parametersCurrent_
+      chiBottomCurrent_ = chiBottom();
+      chiTopCurrent_ = chiTop();
+      normalVecCurrent_ = systemLatticeVector(normalVecId());
+      
       // If walls are athermal then there is no external field needed.
-      // If an external field already exists in the System, we need to
-      // overwrite it with a field of all zeros, otherwise do nothing
-      if ((isAthermal()) && (!isGenerated())) return; 
+      // If external fields already exist in System, clear them, then return.
+      if (isAthermal()) {
+         system().h().clear();
+         return;
+      }
 
       // If this point is reached, external field must be generated
       UTIL_CHECK(system().h().isAllocatedRGrid());
@@ -193,11 +199,6 @@ namespace Rpc
       }
 
       UTIL_CHECK(normalVecId() >= 0);
-
-      // Set chiBottomCurrent_, chiTopCurrent_, and parametersCurrent_
-      chiBottomCurrent_ = chiBottom();
-      chiTopCurrent_ = chiTop();
-      normalVecCurrent_ = systemLatticeVector(normalVecId());
 
       int nm = systemNMonomer();
 

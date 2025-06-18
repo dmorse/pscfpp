@@ -75,7 +75,7 @@ namespace Pscf {
       /**
       * Allocate, check compatibility, calculate, and store the field(s).
       */
-      virtual void setEnvironment() = 0;
+      virtual void initialize() = 0;
 
       /**
       * Check whether system has changed, update the field(s) if necessary.
@@ -109,12 +109,23 @@ namespace Pscf {
       */
       virtual double modifyStress(int paramId, double stress) const;
 
+      /**
+      * Has the Environment been initialized?
+      */
+      bool isInitialized() const;
+
+   protected:
+   
+      /// Has the Environment been initialized?
+      bool isInitialized_;
+
    };
 
    // Inline member functions
 
    // Constructor
    inline Environment::Environment()
+    : isInitialized_(false)
    {  setClassName("Environment"); }
 
    // Destructor
@@ -129,6 +140,10 @@ namespace Pscf {
    inline double 
    Environment::modifyStress(int paramId, double stress) const
    {  return stress; }
+
+   // Has the Environment been initialized? 
+   inline bool Environment::isInitialized() const
+   {  return isInitialized_; }
 
 } // namespace Pscf
 #endif

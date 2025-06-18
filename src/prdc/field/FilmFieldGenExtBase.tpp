@@ -24,14 +24,9 @@ namespace Prdc
    template <int D>
    FilmFieldGenExtBase<D>::FilmFieldGenExtBase()
     : FieldGenerator::FieldGenerator(),
-      normalVecCurrent_(),
-      chiBottomCurrent_(),
-      chiTopCurrent_(),
       normalVecId_(-1),
       interfaceThickness_(-1.0),
-      excludedThickness_(-1.0),
-      chiBottom_(),
-      chiTop_()
+      excludedThickness_(-1.0)
    {
       type_ = External; 
       isDependent_ = true;
@@ -133,16 +128,7 @@ namespace Prdc
    template <int D>
    bool FilmFieldGenExtBase<D>::updateNeeded() const
    {
-      // First, if fields have not yet been generated, decide whether they
-      // need to be generated (if athermal, no need).
-      if (!isGenerated()) {
-         if (isAthermal()) {
-            return false; 
-         } else {
-            return true;
-         }
-      }
-
+      UTIL_CHECK(isInitialized());
       UTIL_CHECK(normalVecId_ >= 0);
       
       // Check if chiBottom or chiTop have been changed

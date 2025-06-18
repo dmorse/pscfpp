@@ -13,6 +13,7 @@ namespace Pscf
    // Constructor
    FieldGenerator::FieldGenerator()
     : type_(None),
+      isInitialized_(false),
       isDependent_(false)
    {}
 
@@ -21,15 +22,13 @@ namespace Pscf
    {}
 
    // Allocate, check compatibility, calculate, and store the field(s)
-   void FieldGenerator::setup()
+   void FieldGenerator::initialize()
    {
+      UTIL_CHECK(!isInitialized_);
       allocate();
       checkCompatibility();
-      if (!isGenerated()) {
-         generate();
-      } else {
-         update();
-      }
+      generate();
+      isInitialized_ = true;
    }
 
    // Check whether system has changed and update the field(s) if necessary
@@ -40,6 +39,7 @@ namespace Pscf
          // update not needed, do nothing
          return;
       } else {
+         checkCompatibility();
          generate();
       }
    }   

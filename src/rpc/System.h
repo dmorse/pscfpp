@@ -531,6 +531,14 @@ namespace Rpc {
       * The log output created by an Iterator upon convergence should call
       * writeStress after writeThermo if and only if the iterator is not
       * flexible.
+      * 
+      * If an Environment is present in the system, the definition of 
+      * "stress" may be redefined to minimize a property other than 
+      * fHelmholtz. Furthermore, the redefined stress may not always be
+      * calculable, in which case some or all lattice parameters will be
+      * made rigid. Thus, in systems with an Environment, this method 
+      * will only print the stress for the flexible lattice parameters,
+      * and will print nothing if the entire box is rigid. 
       *
       * \param out  output stream
       */

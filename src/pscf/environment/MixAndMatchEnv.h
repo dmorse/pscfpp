@@ -66,7 +66,7 @@ namespace Pscf {
       /**
       * Allocate, check compatibility, calculate, and store the field(s).
       */
-      void setEnvironment();
+      void initialize();
 
       /**
       * Check whether system has changed, update the field(s) if necessary.
@@ -138,6 +138,8 @@ namespace Pscf {
       using ParameterModifier::getParameter; // overloaded method
 
    protected:
+
+      using Environment::isInitialized_;
 
       /**
       * Create FieldGenerator objects for mask and/or external field.

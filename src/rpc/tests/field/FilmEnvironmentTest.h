@@ -1,15 +1,15 @@
-#ifndef RPC_IMPOSED_FIELDS_GENERATOR_TEST_H
-#define RPC_IMPOSED_FIELDS_GENERATOR_TEST_H
+#ifndef RPC_FILM_ENVIRONMENT_TEST_H
+#define RPC_FILM_ENVIRONMENT_TEST_H
 
 #include <test/UnitTest.h>
 #include <test/UnitTestRunner.h>
 
-#include <rpc/scft/iterator/ImposedFieldsGenerator.h>
+#include <rpc/field/MixAndMatchEnvs.h>
 #include <rpc/System.h>
 
 #include <prdc/crystal/BFieldComparison.h>
 
-#include <pscf/iterator/FieldGenerator.h>
+#include <pscf/environment/FieldGenerator.h>
 
 #include <fstream>
 
@@ -19,7 +19,7 @@ using namespace Pscf::Prdc;
 using namespace Pscf::Prdc::Cpu;
 using namespace Pscf::Rpc;
 
-class ImposedFieldsGeneratorTest : public UnitTest
+class FilmEnvironmentTest : public UnitTest
 {
 
 public:
@@ -48,40 +48,39 @@ public:
    {
       printMethod(TEST_FUNC);
       System<1> system;
-      ImposedFieldsGenerator<1> ext(system);
+      FilmEnvironment<1> ext(system);
    }
 
-   void testReadParameters() // test ExtGenFilmBase::readParameters()
+   void testReadParameters() // test FilmFieldGenExtBase::readParameters()
    {
       printMethod(TEST_FUNC);
 
-      // Set up external field generator from file
+      // Set up film environment from file
       System<1> system;
-      createSystem(system, "in/system1DGen");
-      ImposedFieldsGenerator<1> gen(system);
+      createSystem(system, "in/film/system1DEnv");
+      FilmEnvironment<1> env(system);
 
       std::ifstream in;
-      openInputFile("in/generator1", in);
-      gen.readParam(in);
+      openInputFile("in/film/environment1", in);
+      env.readParam(in);
       in.close();
 
       // Check that the parameters that are publicly accessible were 
       // read correctly
-      TEST_ASSERT(gen.type() == "film");
-      TEST_ASSERT(gen.fieldGenerator1().type() == FieldGenerator::Mask);
-      TEST_ASSERT(gen.fieldGenerator2().type() == FieldGenerator::External);
+      TEST_ASSERT(env.fieldGenerator1().type() == FieldGenerator::Mask);
+      TEST_ASSERT(env.fieldGenerator2().type() == FieldGenerator::External);
       
       DArray<int> ids;
       ids.allocate(1);
       ids[0] = 0;
-      TEST_ASSERT(eq(gen.fieldGenerator2().getParameter("chi_bottom",ids), 5.0));
-      TEST_ASSERT(eq(gen.fieldGenerator2().getParameter("chi_top",ids), 2.0));
+      TEST_ASSERT(eq(env.fieldGenerator2().getParameter("chi_bottom",ids), 5.0));
+      TEST_ASSERT(eq(env.fieldGenerator2().getParameter("chi_top",ids), 2.0));
       ids[0] = 1;
-      TEST_ASSERT(eq(gen.fieldGenerator2().getParameter("chi_bottom",ids), 0.0));
-      TEST_ASSERT(eq(gen.fieldGenerator2().getParameter("chi_top",ids), 10.0));
+      TEST_ASSERT(eq(env.fieldGenerator2().getParameter("chi_bottom",ids), 0.0));
+      TEST_ASSERT(eq(env.fieldGenerator2().getParameter("chi_top",ids), 10.0));
    }
 
-   void testSolve1D() // solve a 1D system with an ImposedFieldsGenerator
+   void testSolve1D() // solve a 1D system with an FilmEnvironment
    {
       printMethod(TEST_FUNC);
       
@@ -89,19 +88,19 @@ public:
       
       // Set up system with some data
       System<1> system;
-      createSystem(system, "in/system1DGen");
+      createSystem(system, "in/film/system1DEnv");
 
       // Read initial guess
-      system.readWBasis("in/wIn1D.bf");
+      system.readWBasis("in/film/wIn1D.bf");
 
       // Iterate to a solution
       system.iterate();
       TEST_ASSERT(eq(system.mask().phiTot(), 8.0951532073e-01));
 
-      // Check converged field is correct by comparing to ref files in in/
+      // Check converged field is correct by comparing to ref files in in/film/
       UnitCell<1> unitCell; // UnitCell object to pass to FieldIo functions
       DArray< DArray<double> > wFieldsCheck; // Copy of reference field
-      system.domain().fieldIo().readFieldsBasis("in/wRef1D.bf", 
+      system.domain().fieldIo().readFieldsBasis("in/film/wRef1D.bf", 
                                                 wFieldsCheck, unitCell);
       BFieldComparison bComparison(0); // object to compare fields
       bComparison.compare(system.w().basis(), wFieldsCheck);
@@ -134,7 +133,7 @@ public:
                                                  system.domain().unitCell());
    }
 
-   void testSolve2D() // solve a 2D system with an ImposedFieldsGenerator
+   void testSolve2D() // solve a 2D system with an FilmEnvironment
    {
       printMethod(TEST_FUNC);
       
@@ -142,10 +141,10 @@ public:
       
       // Set up system with some data
       System<2> system;
-      createSystem(system, "in/system2DGen");
+      createSystem(system, "in/film/system2DEnv");
 
       // Read initial guess
-      system.readWBasis("in/wIn2D.bf");
+      system.readWBasis("in/film/wIn2D.bf");
 
       // Solve
       system.iterate();
@@ -160,7 +159,7 @@ public:
       // Check converged field is correct by comparing to reference
       UnitCell<2> unitCell; // UnitCell object to pass to FieldIo functions
       DArray< DArray<double> > wFieldsCheck; // Copy of reference field
-      system.domain().fieldIo().readFieldsBasis("in/wRef2D.bf", 
+      system.domain().fieldIo().readFieldsBasis("in/film/wRef2D.bf", 
                                                 wFieldsCheck, unitCell);
       BFieldComparison bComparison(0); // object to compare fields
       bComparison.compare(system.w().basis(), wFieldsCheck);
@@ -195,7 +194,7 @@ public:
       
       // Set up system
       System<1> system;
-      createSystem(system, "in/system1DGen");
+      createSystem(system, "in/film/system1DEnv");
 
       // Read initial guess
       system.readWBasis("out/w1D.bf");
@@ -206,7 +205,7 @@ public:
       // Check converged field is correct by comparing to reference
       UnitCell<1> unitCell; // UnitCell object to pass to FieldIo functions
       DArray< DArray<double> > wFieldsCheck; // Copy of reference field
-      system.domain().fieldIo().readFieldsBasis("in/wRefSweep.bf", 
+      system.domain().fieldIo().readFieldsBasis("in/film/wRefSweep.bf", 
                                                 wFieldsCheck, unitCell);
       BFieldComparison bComparison(0); // object to compare fields
       bComparison.compare(system.w().basis(), wFieldsCheck);
@@ -239,10 +238,10 @@ public:
       
       // Set up system with some data
       System<1> system;
-      createSystem(system, "in/system1DGenFBulk");
+      createSystem(system, "in/film/system1DEnvFBulk");
 
       // Read initial guess
-      system.readWBasis("in/wIn1D_3.bf");
+      system.readWBasis("in/film/wIn1D_3.bf");
 
       // Iterate to a solution
       system.iterate();
@@ -252,10 +251,10 @@ public:
       TEST_ASSERT(std::abs(paramErr) < 1e-5);
       TEST_ASSERT(std::abs(system.mask().phiTot() - 0.8059299672) < 1e-5);
 
-      // Check converged field is correct by comparing to ref files in in/
+      // Check converged field is correct by comparing to ref files in in/film/
       UnitCell<1> unitCell; // UnitCell object to pass to FieldIo functions
       DArray< DArray<double> > wFieldsCheck; // Copy of reference field
-      system.domain().fieldIo().readFieldsBasis("in/wRef1D_2.bf", 
+      system.domain().fieldIo().readFieldsBasis("in/film/wRef1D_2.bf", 
                                                 wFieldsCheck, unitCell);
       BFieldComparison bComparison(0); // object to compare fields
       bComparison.compare(system.w().basis(), wFieldsCheck);
@@ -292,13 +291,13 @@ public:
 
 };
 
-TEST_BEGIN(ImposedFieldsGeneratorTest)
-TEST_ADD(ImposedFieldsGeneratorTest, testConstructor)
-TEST_ADD(ImposedFieldsGeneratorTest, testReadParameters)
-TEST_ADD(ImposedFieldsGeneratorTest, testSolve1D)
-TEST_ADD(ImposedFieldsGeneratorTest, testSolve2D)
-TEST_ADD(ImposedFieldsGeneratorTest, testSweep)
-TEST_ADD(ImposedFieldsGeneratorTest, testSolveWithFBulk)
-TEST_END(ExtGenFilmTest)
+TEST_BEGIN(FilmEnvironmentTest)
+TEST_ADD(FilmEnvironmentTest, testConstructor)
+TEST_ADD(FilmEnvironmentTest, testReadParameters)
+TEST_ADD(FilmEnvironmentTest, testSolve1D)
+TEST_ADD(FilmEnvironmentTest, testSolve2D)
+TEST_ADD(FilmEnvironmentTest, testSweep)
+TEST_ADD(FilmEnvironmentTest, testSolveWithFBulk)
+TEST_END(FilmFieldGenExtTest)
 
 #endif

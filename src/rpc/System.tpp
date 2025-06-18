@@ -775,9 +775,14 @@ namespace Rpc {
       hasFreeEnergy_ = false;
       hasStress_ = false;
 
-      // Clear unit cell data in waveList and mixture
+      // Clear unit cell data in waveList, mixture
       domain_.waveList().clearUnitCellData();
       mixture_.clearUnitCellData();
+
+      // Update Environment if needed
+      if (hasEnvironment() && environment().isInitialized()) {
+         environment().update();
+      }
 
       // Postcondition
       UTIL_CHECK(domain_.unitCell().isInitialized());
@@ -801,6 +806,11 @@ namespace Rpc {
       // Clear unit cell data in waveList and mixture
       domain_.waveList().clearUnitCellData();
       mixture_.clearUnitCellData();
+
+      // Update Environment if needed
+      if (hasEnvironment() && environment().isInitialized()) {
+         environment().update();
+      }
 
       // Postcondition
       UTIL_CHECK(domain_.unitCell().isInitialized());
@@ -857,6 +867,62 @@ namespace Rpc {
          }
          for (j = 0; j < nm;  ++j) {
             tmpFieldsBasis[j][i] = wtmp[j];
+         }
+      }
+
+      if (hasEnvironment()) {
+
+         // Ensure Environment is initialized and updated
+         if (!environment().isInitialized()) {
+            environment().initialize();
+         } else {
+            environment().update();
+         }
+
+         // Calculate sumChiInverse
+         double sumChiInverse = 0.0;
+         for (i = 0; i < nm; i++) {
+            for (j = 0; j < nm; j++) {
+               sumChiInverse += interaction().chiInverse(j,i);
+            }
+         }
+
+         // If system has a mask, add component of xi arising from the mask
+         if (hasMask()) {
+            UTIL_CHECK(mask().isSymmetric());
+            for (i = 1; i < nb; i++) { 
+               // note: loop starts at i = 1 since spatial average of xi is 0
+               for (j = 0; j < nm; j++) {
+                  tmpFieldsBasis[j][i] -= mask().basis()[i] / sumChiInverse;
+               }
+            }
+         }
+
+         // Adjust guess to account for external fields
+         if (hasExternalFields()) {
+            UTIL_CHECK(h().isSymmetric());
+
+            // First term: add h().basis(j) to guess for field j
+            for (i = 0; i < nb; i++) {
+               for (j = 0; j < nm; j++) {
+                  tmpFieldsBasis[j][i] += h().basis(j)[i];
+               }
+            }
+
+            // Second term: add the component of xi arising from the h fields
+            double tmp;
+            for (i = 1; i < nb; i++) {
+               // note: loop starts at i = 1 since spatial average of xi is 0
+               tmp = 0.0;
+               for (j = 0; j < nm; j++) {
+                  for (k = 0; k < nm; k++) {
+                     tmp += h().basis(j)[i] * interaction().chiInverse(j,k);
+                  }
+               }
+               for (j = 0; j < nm; j++) {
+                  tmpFieldsBasis[j][i] -= tmp / sumChiInverse;
+               }
+            }
          }
       }
 
@@ -917,6 +983,7 @@ namespace Rpc {
       // Note: Domain::setUnitCell clears WaveList unit cell data
       // and makes Basis if needed
       mixture_.clearUnitCellData();
+
       if (domain_.hasGroup()) {
          UTIL_CHECK(domain_.basis().isInitialized());
          if (!isAllocatedBasis_) {
@@ -924,6 +991,10 @@ namespace Rpc {
          }
       }
       UTIL_CHECK(domain_.unitCell().isInitialized());
+
+      if (hasEnvironment() && environment().isInitialized()) {
+         environment().update();
+      }
    }
 
    /*
@@ -938,6 +1009,7 @@ namespace Rpc {
       // Note: Domain::setUnitCell clears WaveList unit cell data
       // and makes Basis if needed
       mixture_.clearUnitCellData();
+
       if (domain_.hasGroup()) {
          UTIL_CHECK(domain_.basis().isInitialized());
          if (!isAllocatedBasis_) {
@@ -945,6 +1017,10 @@ namespace Rpc {
          }
       }
       UTIL_CHECK(domain_.unitCell().isInitialized());
+
+      if (hasEnvironment() && environment().isInitialized()) {
+         environment().update();
+      }
    }
 
    /*
@@ -957,6 +1033,7 @@ namespace Rpc {
       // Note: Domain::setUnitCell clears WaveList unit cell data
       // and makes Basis if needed
       mixture_.clearUnitCellData();
+
       if (domain_.hasGroup()) {
          UTIL_CHECK(domain_.basis().isInitialized());
          if (!isAllocatedBasis_) {
@@ -964,6 +1041,10 @@ namespace Rpc {
          }
       }
       UTIL_CHECK(domain_.unitCell().isInitialized());
+
+      if (hasEnvironment() && environment().isInitialized()) {
+         environment().update();
+      }
    }
 
    // Primary Field Theory Computations
@@ -977,6 +1058,11 @@ namespace Rpc {
       UTIL_CHECK(w_.isAllocatedRGrid());
       UTIL_CHECK(c_.isAllocatedRGrid());
       UTIL_CHECK(w_.hasData());
+
+      // Initialize Environment if needed
+      if (hasEnvironment() && !environment().isInitialized()) {
+         environment().initialize();
+      }
 
       // Solve the modified diffusion equation (without iteration)
       mixture_.compute(w_.rgrid(), c_.rgrid(), mask_.phiTot());
@@ -1015,6 +1101,11 @@ namespace Rpc {
 
       Log::file() << std::endl;
       Log::file() << std::endl;
+
+      // Initialize Environment if needed
+      if (hasEnvironment() && !environment().isInitialized()) {
+         environment().initialize();
+      }
 
       // Call iterator (return 0 for convergence, 1 for failure)
       int error = iterator().solve(isContinuation);
@@ -1286,19 +1377,22 @@ namespace Rpc {
       stress_.clear();
 
       // Compute and store stress contribution from Mixture
-      mixture_.computeStress();
+      mixture_.computeStress(mask().phiTot());
       for (int i = 0; i < domain_.unitCell().nParameter(); ++i) {
          stress_.append(mixture_.stress(i));
       }
 
       if (hasEnvironment()) {
+         UTIL_CHECK(environment().isInitialized());
          for (int i = 0; i < domain_.unitCell().nParameter(); ++i) {
-            // Add stress contributions from Environment
-            stress_[i] += environment().stress(i);
+            if (iterator().flexibleParams()[i]) {
+               // Add stress contributions from Environment
+               stress_[i] += environment().stress(i);
 
-            // Allow Environment to modify stress contributions to
-            // minimize something other than fHelmholtz if desired
-            stress_[i] = environment().modifyStress(i,stress_[i]);
+               // Allow Environment to modify stress contributions to
+               // minimize something other than fHelmholtz if desired
+               stress_[i] = environment().modifyStress(i,stress_[i]);
+            }
          }
       }
 
@@ -1396,12 +1490,21 @@ namespace Rpc {
    template <int D>
    void System<D>::writeStress(std::ostream& out)
    {
+      // Note: If Environment is present, stress may not be well-defined
+      // for the non-flexible lattice parameters. Therefore, only print
+      // stress for flexible parameters. If no Environment is present, 
+      // print all stresses, even for rigid parameters.
+
+      if (hasEnvironment() && !iterator().isFlexible()) return;
+
       out << "stress:" << std::endl;
       for (int i = 0; i < domain_.unitCell().nParameter(); ++i) {
-         out << Int(i, 5)
-             << "  "
-             << Dbl(stress_[i], 18, 11)
-             << std::endl;
+         if (!hasEnvironment() || iterator().flexibleParams()[i]) {
+            out << Int(i, 5)
+               << "  "
+               << Dbl(stress_[i], 18, 11)
+               << std::endl;
+         }
       }
       out << std::endl;
    }

@@ -52,36 +52,12 @@ namespace Pscf {
       /**
       * Allocate, check compatibility, calculate, and store the field(s)
       */
-      void setup();
+      void initialize();
 
       /**
       * Check whether system has changed, update the field(s) if necessary
       */
       void update();
-
-      /**
-      * Is this object dependent on the parameters of another FieldGenerator?
-      * 
-      * The parent MixAndMatchEnv object can contain up to two 
-      * FieldGenerator objects: a mask and an external field. In some cases, 
-      * the properties of one may be dependent on the properties of the 
-      * other. isDependent allows a FieldGenerator to indicate to the 
-      * parent object that it needs to read the parameters of the other
-      * FieldGenerator in addition to its own. 
-      * 
-      * During readParameters, the parent object will first allow the 
-      * independent FieldGenerator to read its own parameters. It will 
-      * then rewind the istream to allow the dependent FieldGenerator
-      * to read the parameters of the object on which it is dependent,
-      * followed by its own parameters.
-      * 
-      * Therefore, a dependent FieldGenerator must be the second of two
-      * FieldGenerators stored in a parent MixAndMatchEnv, and two
-      * FieldGenerators may not be dependent on each other. In such a
-      * circumstance, one should not use a MixAndMatchEnv, and should 
-      * instead use a different subclass of Environment.
-      */
-      bool isDependent() const;
 
       /**
       * Check that the system is compatible with these fields
@@ -97,11 +73,6 @@ namespace Pscf {
       * Check whether system has changed such that the field(s) need updating
       */
       virtual bool updateNeeded() const = 0;
-
-      /**
-      * Check whether the field(s) have been generated
-      */
-      virtual bool isGenerated() const = 0;
 
       /**
       * Get contribution to the stress from this imposed field.
@@ -158,6 +129,35 @@ namespace Pscf {
       * This value should be initialized by subclasses during construction.
       */
       Type type() const;
+
+      /**
+      * Check whether the field(s) have been initialized
+      */
+      bool isInitialized() const;
+
+      /**
+      * Is this object dependent on the parameters of another FieldGenerator?
+      * 
+      * The parent MixAndMatchEnv object can contain up to two 
+      * FieldGenerator objects: a mask and an external field. In some cases, 
+      * the properties of one may be dependent on the properties of the 
+      * other. isDependent allows a FieldGenerator to indicate to the 
+      * parent object that it needs to read the parameters of the other
+      * FieldGenerator in addition to its own. 
+      * 
+      * During readParameters, the parent object will first allow the 
+      * independent FieldGenerator to read its own parameters. It will 
+      * then rewind the istream to allow the dependent FieldGenerator
+      * to read the parameters of the object on which it is dependent,
+      * followed by its own parameters.
+      * 
+      * Therefore, a dependent FieldGenerator must be the second of two
+      * FieldGenerators stored in a parent MixAndMatchEnv, and two
+      * FieldGenerators may not be dependent on each other. In such a
+      * circumstance, one should not use a MixAndMatchEnv, and should 
+      * instead use a different subclass of Environment.
+      */
+      bool isDependent() const;
    
    protected:
 
@@ -180,6 +180,9 @@ namespace Pscf {
       */
       Type type_;
 
+      /// Have the field(s) been initialized?
+      bool isInitialized_;
+
       /// Is this object dependent on the parameters of another FieldGenerator?
       bool isDependent_;
 
@@ -196,13 +199,17 @@ namespace Pscf {
    const
    {  return stress; }
 
-   // Is this object dependent on the parameters of another FieldGenerator?
-   inline bool FieldGenerator::isDependent() const
-   {  return isDependent_; }
-
    // Return Type enumeration value (Mask, External, or None)
    inline FieldGenerator::Type FieldGenerator::type() const
    {  return type_; }
+
+   // Check whether the field(s) have been initialized
+   inline bool FieldGenerator::isInitialized() const
+   {  return isInitialized_; }
+
+   // Is this object dependent on the parameters of another FieldGenerator?
+   inline bool FieldGenerator::isDependent() const
+   {  return isDependent_; }
 
 }
 #endif

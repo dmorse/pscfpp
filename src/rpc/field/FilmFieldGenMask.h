@@ -54,11 +54,6 @@ namespace Rpc {
       ~FilmFieldGenMask();
 
       /**
-      * Check whether the field has been generated
-      */
-      bool isGenerated() const;
-
-      /**
       * Get contribution to the stress from this mask
       * 
       * The mask defined by this class changes in a non-affine manner 
@@ -146,11 +141,6 @@ namespace Rpc {
    };
 
    // Inline member functions
-
-   // Check whether the field has been generated
-   template <int D>
-   inline bool FilmFieldGenMask<D>::isGenerated() const
-   {  return system().mask().hasData(); }
 
    // Get parent System by non-const reference.
    template <int D>

@@ -88,15 +88,17 @@ namespace Pscf {
    }
 
    // Allocate, check compatibility, calculate, and store the field(s)
-   void MixAndMatchEnv::setEnvironment()
+   void MixAndMatchEnv::initialize()
    {
-      if (fieldGenPtr1_) fieldGenPtr1_->setup();
-      if (fieldGenPtr2_) fieldGenPtr2_->setup();
+      if (fieldGenPtr1_) fieldGenPtr1_->initialize();
+      if (fieldGenPtr2_) fieldGenPtr2_->initialize();
+      isInitialized_ = true;
    }
 
    // Check whether system has changed and update the field(s) if necessary
    void MixAndMatchEnv::update()
    {
+      UTIL_CHECK(isInitialized_);
       if (fieldGenPtr1_) fieldGenPtr1_->update();
       if (fieldGenPtr2_) fieldGenPtr2_->update();
    }
@@ -104,6 +106,8 @@ namespace Pscf {
    // Return the Environment's contribution to the stress
    double MixAndMatchEnv::stress(int paramId) const
    {
+      UTIL_CHECK(isInitialized_);
+
       double stress(0.0);
       if (fieldGenPtr1_) {
          stress += fieldGenPtr1_->stress(paramId);
@@ -116,7 +120,9 @@ namespace Pscf {
 
    // Modify stress to minimize a property other than fHelmholtz
    double MixAndMatchEnv::modifyStress(int paramId, double stress) const
-   {  
+   {
+      UTIL_CHECK(isInitialized_);
+
       if (fieldGenPtr1_) {
          stress = fieldGenPtr1_->modifyStress(paramId, stress);
       }

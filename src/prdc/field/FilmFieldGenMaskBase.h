@@ -97,11 +97,6 @@ namespace Prdc {
       bool hasFBulk() const;
 
       /**
-      * Check whether the field has been generated.
-      */
-      bool isGenerated() const = 0;
-
-      /**
       * Get contribution to the stress from this mask
       * 
       * The mask defined by this class changes in a non-affine manner 

@@ -169,11 +169,6 @@ namespace Prdc {
       double excludedThickness() const;
 
       /**
-      * Check whether the fields have been generated.
-      */
-      bool isGenerated() const = 0;
-
-      /**
       * Get contribution to the stress from these external fields
       * 
       * The external fields defined by this class change in a non-affine 

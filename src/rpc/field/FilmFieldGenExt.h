@@ -58,11 +58,6 @@ namespace Rpc {
       ~FilmFieldGenExt();
 
       /**
-      * Check whether the fields have been generated
-      */
-      bool isGenerated() const;
-
-      /**
       * Get contribution to the stress from the external fields
       * 
       * The external fields defined by this class change in a non-affine 
@@ -137,11 +132,6 @@ namespace Rpc {
    };
 
    // Inline member functions
-
-   // Check whether the field has been generated
-   template <int D>
-   inline bool FilmFieldGenExt<D>::isGenerated() const
-   {  return system().h().hasData(); }
 
    // Get parent System by non-const reference.
    template <int D>

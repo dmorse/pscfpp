@@ -27,25 +27,24 @@ System{
     lattice        rectangular
     groupName      p_2_m_m
   }
+  FilmEnvironment{
+    normalVecId        1
+    interfaceThickness 0.2
+    excludedThickness  0.4
+    chiBottom[
+                        2.0
+                        0.0
+    ]
+    chiTop[
+                        2.0
+                        0.0
+    ]
+  }
   AmIteratorBasis{
     epsilon              1.0e-12
     maxItr               2000
     maxHist              50 
     verbose              1
     isFlexible           1
-    ImposedFieldsGenerator{
-      type               film
-      normalVecId        1
-      interfaceThickness 0.2
-      excludedThickness  0.4
-      chiBottom[
-                          2.0
-                          0.0
-      ]
-      chiTop[
-                          2.0
-                          0.0
-      ]
-    }
   }
 }
