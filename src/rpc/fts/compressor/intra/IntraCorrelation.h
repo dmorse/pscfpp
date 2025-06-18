@@ -10,7 +10,7 @@
 
 #include <pscf/math/IntVec.h>      // memmber variable type
 
-// Forward references
+// Forward declarations
 namespace Pscf {
    namespace Prdc {
       namespace Cpu {

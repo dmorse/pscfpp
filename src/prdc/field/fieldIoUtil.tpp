@@ -24,6 +24,7 @@
 #include <util/misc/Log.h>
 #include <util/format/Int.h>
 #include <util/format/Dbl.h>
+#include <util/math/Constants.h>
 
 #include <string>
 

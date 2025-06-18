@@ -548,6 +548,19 @@ namespace Prdc {
                   const unsigned int version)
    {  serializeEnum(ar, lattice, version); }
 
+   #ifndef PRDC_UNIT_CELL_TPP
+   // Suppress implicit instantiation
+   extern template class UnitCell<1>;
+   extern template class UnitCell<2>;
+   extern template class UnitCell<3>;
+   extern std::ostream& operator << (std::ostream& out, UnitCell<1>::LatticeSystem lattice);
+   extern std::ostream& operator << (std::ostream& out, UnitCell<2>::LatticeSystem lattice);
+   extern std::ostream& operator << (std::ostream& out, UnitCell<3>::LatticeSystem lattice);
+   extern std::istream& operator >> (std::istream& in, UnitCell<1>::LatticeSystem const& lattice);
+   extern std::istream& operator >> (std::istream& in, UnitCell<2>::LatticeSystem const& lattice);
+   extern std::istream& operator >> (std::istream& in, UnitCell<3>::LatticeSystem const& lattice);
+   #endif
+
 }
 }
 #include "UnitCell.tpp"

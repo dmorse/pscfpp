@@ -12,12 +12,12 @@
 #include <pscf/math/IntVec.h>          // interface, with default parameters
 #include <util/containers/FArray.h>    // member
 #include <util/containers/FMatrix.h>   // member
+#include <util/containers/FSArray.h>   // interface
 
-// Forward references
+// Forward declarations
 namespace Util {
    template <typename T> class Signal;
    template <> class Signal<void>;
-   template <typename T, int D> class FSArray;
 }
 
 namespace Pscf {
@@ -297,6 +297,8 @@ namespace Prdc {
 
    };
 
+   // Inline member functions
+
    /*
    * Get the number of Parameters in the unit cell.
    */
@@ -369,7 +371,13 @@ namespace Prdc {
    bool UnitCellBase<D>::isInitialized() const
    {  return isInitialized_; }
 
+   #ifndef PRDC_UNIT_CELL_BASE_TPP
+   // Suppress implicit instantiation of base class
+   extern template class UnitCellBase<1>;
+   extern template class UnitCellBase<2>;
+   extern template class UnitCellBase<3>;
+   #endif
+
 }
 }
-#include "UnitCellBase.tpp"
 #endif

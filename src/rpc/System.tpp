@@ -1004,6 +1004,7 @@ namespace Rpc {
       UTIL_CHECK(w_.isAllocatedRGrid());
       UTIL_CHECK(c_.isAllocatedRGrid());
       UTIL_CHECK(w_.hasData());
+      clearCFields();
 
       // Solve the modified diffusion equation (without iteration)
       mixture_.compute(w_.rgrid(), c_.rgrid(), mask_.phiTot());

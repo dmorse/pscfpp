@@ -17,6 +17,8 @@
 #include <pscf/mesh/Mesh.h>
 #include <pscf/mesh/MeshIterator.h>
 #include <util/signal/Signal.h>
+#include <util/format/Dbl.h>
+#include <util/math/Constants.h>
 
 #include <algorithm>
 #include <vector>

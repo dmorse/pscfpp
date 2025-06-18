@@ -6,12 +6,17 @@
 */
 
 #include "UnitCell.h"
+#include "UnitCellBase.tpp"
+
 #include <util/math/Constants.h>
 
 namespace Pscf {
 namespace Prdc {
 
    using namespace Util;
+
+   // Explicit instantiation of base class
+   template class UnitCellBase<1>;
 
    /*
    * Constructor.

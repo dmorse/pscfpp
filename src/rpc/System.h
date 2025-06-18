@@ -19,7 +19,7 @@
 #include <util/misc/FileMaster.h>        // member
 
 
-// Forward references
+// Forward declarations
 namespace Util {
    template <typename T> class DArray;
    template <typename T, int N> class FSArray;

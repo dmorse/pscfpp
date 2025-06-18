@@ -1075,7 +1075,6 @@ namespace Rpg {
          UTIL_CHECK(w_.isSymmetric());
          UTIL_CHECK(isAllocatedBasis_);
       }
-      clearCFields();
 
       Log::file() << std::endl;
       Log::file() << std::endl;

@@ -9,8 +9,10 @@
 */
 
 #include "UnitCell.h"
+
 #include <util/format/Dbl.h> 
 #include <util/format/Int.h> 
+
 #include <iomanip>
 
 namespace Pscf {

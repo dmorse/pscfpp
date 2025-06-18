@@ -7,6 +7,8 @@
 #include <prdc/crystal/UnitCell.h>
 #include <prdc/crystal/shiftToMinimum.h>
 #include <prdc/crystal/replicateUnitCell.h>
+
+#include <util/signal/Signal.h>
 #include <util/math/Constants.h>
 #include <util/format/Int.h>
 #include <util/format/Dbl.h>
