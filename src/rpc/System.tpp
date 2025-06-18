@@ -79,8 +79,8 @@ namespace Rpc {
       hasCFields_(false),
       hasFreeEnergy_(false)
    {
-      // Set name used as a block label in the parameter file
-      setClassName("System");
+      setClassName("System");  // Set block label in parameter file
+      BracketPolicy::set(BracketPolicy::Optional);
 
       // Create associations among class members
       domain_.setFileMaster(fileMaster_);
@@ -96,14 +96,22 @@ namespace Rpc {
 
       // Add observers to signals
 
-      // Signal that notifies observers when a basis is constructed
-      domain_.basis().signal().addObserver(*this,
-                                          &System<D>::allocateFieldsBasis);
+      // Signal triggered by basis construction
+      Signal<void>& basisSignal = domain_.basis().signal();
+      basisSignal.addObserver(*this, &System<D>::allocateFieldsBasis);
 
-      // Signal that notifies observers when w fields are modified
+      // Signal triggered by unit cell modification
+      Signal<void>& cellSignal = domain_.unitCell().signal();
+      WaveList<D>& waveList = domain_.waveList();
+      cellSignal.addObserver(mixture_, &Mixture<D>::clearUnitCellData);
+      cellSignal.addObserver(waveList, &WaveList<D>::clearUnitCellData);
+      cellSignal.addObserver(*this, &System<D>::clearCFields);
+
+      // Signal triggered by w-field modification
       w_.signal().addObserver(*this, &System<D>::clearCFields);
 
-      BracketPolicy::set(BracketPolicy::Optional);
+      // Signal triggered by h-field modification
+      h_.signal().addObserver(*this, &System<D>::clearCFields);
    }
 
    /*
@@ -760,15 +768,12 @@ namespace Rpc {
       // Read w fields and set unit cell parameters
       w_.readBasis(filename, domain_.unitCell());
 
-      // Synchronization actions
-      domain_.waveList().clearUnitCellData();
-      mixture_.clearUnitCellData();
-      //clearCFields();
-
       // Postconditions
       UTIL_CHECK(domain_.unitCell().isInitialized());
       UTIL_CHECK(domain_.basis().isInitialized());
       UTIL_CHECK(isAllocatedBasis_);
+      UTIL_CHECK(!hasCFields_);
+      UTIL_CHECK(!hasFreeEnergy_);
    }
 
    /*
@@ -783,19 +788,14 @@ namespace Rpc {
       // Read w fields and set unit cell parameters
       w_.readRGrid(filename, domain_.unitCell());
 
-      // Synchronization actions
-      domain_.waveList().clearUnitCellData();
-      mixture_.clearUnitCellData();
-      //clearCFields();
-
       // Postcondition
       UTIL_CHECK(domain_.unitCell().isInitialized());
+      UTIL_CHECK(!hasCFields_);
+      UTIL_CHECK(!hasFreeEnergy_);
    }
 
    /*
    * Construct estimate for w fields from c fields.
-   *
-   * Modifies wFields and wFieldsRGrid.
    */
    template <int D>
    void System<D>::estimateWfromC(std::string const & filename)
@@ -846,13 +846,10 @@ namespace Rpc {
       // Set estimated w fields in system w field container
       w_.setBasis(tmpFieldsBasis);
 
-      // Synchronization actions
-      domain_.waveList().clearUnitCellData();
-      mixture_.clearUnitCellData();
-      //clearCFields();
-
       // Postcondition
       UTIL_CHECK(domain_.unitCell().isInitialized());
+      UTIL_CHECK(!hasCFields_);
+      UTIL_CHECK(!hasFreeEnergy_);
    }
 
    /*
@@ -867,7 +864,6 @@ namespace Rpc {
       UTIL_CHECK(domain_.basis().isInitialized());
       UTIL_CHECK(isAllocatedBasis_);
       w_.setBasis(fields);
-      //clearCFields();
    }
 
    /*
@@ -879,7 +875,6 @@ namespace Rpc {
       UTIL_CHECK(isAllocatedGrid_);
       UTIL_CHECK(domain_.unitCell().isInitialized());
       w_.setRGrid(fields);
-      //clearCFields();
    }
 
    // Unit Cell Modifiers
@@ -890,17 +885,21 @@ namespace Rpc {
    template <int D>
    void System<D>::setUnitCell(UnitCell<D> const & unitCell)
    {
-      domain_.setUnitCell(unitCell);
+      // Preconditions
+      UTIL_CHECK(domain_.lattice() != UnitCell<D>::Null);
+      UTIL_CHECK(domain_.lattice() == unitCell.lattice());
 
-      // Note: Domain::setUnitCell clears WaveList unit cell data
-      // and makes Basis if needed.
+      // Set system unit cell
+      domain_.unitCell() = unitCell;
 
-      // Synchronization actions
-      mixture_.clearUnitCellData();
-      clearCFields();
+      // If necessary, make basis
+      if (domain_.hasGroup() && !domain_.basis().isInitialized()) {
+         domain_.makeBasis();
+      }
 
       // Postconditions
       UTIL_CHECK(domain_.unitCell().isInitialized());
+      UTIL_CHECK(domain_.unitCell().lattice() == domain_.lattice());
       if (domain_.hasGroup()) {
          UTIL_CHECK(domain_.basis().isInitialized());
          UTIL_CHECK(isAllocatedBasis_);
@@ -915,17 +914,25 @@ namespace Rpc {
    System<D>::setUnitCell(typename UnitCell<D>::LatticeSystem lattice,
                           FSArray<double, 6> const & parameters)
    {
-      domain_.setUnitCell(lattice, parameters);
+      // Preconditions
+      UTIL_CHECK(domain_.lattice() != UnitCell<D>::Null);
+      UTIL_CHECK(domain_.lattice() == lattice);
 
-      // Note: Domain::setUnitCell clears WaveList unit cell data
-      // and makes Basis if needed
+      // Set system unit cell
+      if (domain_.unitCell().lattice() == UnitCell<D>::Null) {
+         domain_.unitCell().set(domain_.lattice(), parameters);
+      } else {
+         domain_.unitCell().setParameters(parameters);
+      }
 
-      // Synchronization actions
-      mixture_.clearUnitCellData();
-      clearCFields();
+      // If necessary, make basis
+      if (domain_.hasGroup() && !domain_.basis().isInitialized()) {
+         domain_.makeBasis();
+      }
 
       // Postconditions
       UTIL_CHECK(domain_.unitCell().isInitialized());
+      UTIL_CHECK(domain_.unitCell().lattice() == domain_.lattice());
       if (domain_.hasGroup()) {
          UTIL_CHECK(domain_.basis().isInitialized());
          UTIL_CHECK(isAllocatedBasis_);
@@ -938,17 +945,24 @@ namespace Rpc {
    template <int D>
    void System<D>::setUnitCell(FSArray<double, 6> const & parameters)
    {
-      domain_.setUnitCell(parameters);
+      // Precondition
+      UTIL_CHECK(domain_.lattice() != UnitCell<D>::Null);
 
-      // Note: Domain::setUnitCell clears WaveList unit cell data
-      // and makes Basis if needed
+      // Set system unit cell
+      if (domain_.unitCell().lattice() == UnitCell<D>::Null) {
+         domain_.unitCell().set(domain_.lattice(), parameters);
+      } else {
+         domain_.unitCell().setParameters(parameters);
+      }
 
-      // Synchronization actions
-      mixture_.clearUnitCellData();
-      clearCFields();
+      // If necessary, make basis
+      if (domain_.hasGroup() && !domain_.basis().isInitialized()) {
+         domain_.makeBasis();
+      }
 
       // Postconditions
       UTIL_CHECK(domain_.unitCell().isInitialized());
+      UTIL_CHECK(domain_.unitCell().lattice() == domain_.lattice());
       if (domain_.hasGroup()) {
          UTIL_CHECK(domain_.basis().isInitialized());
          UTIL_CHECK(isAllocatedBasis_);
@@ -963,6 +977,7 @@ namespace Rpc {
    template <int D>
    void System<D>::compute(bool needStress)
    {
+      // Preconditions
       UTIL_CHECK(isAllocatedGrid_);
       UTIL_CHECK(w_.isAllocatedRGrid());
       UTIL_CHECK(c_.isAllocatedRGrid());
@@ -992,6 +1007,7 @@ namespace Rpc {
    template <int D>
    int System<D>::iterate(bool isContinuation)
    {
+      // Preconditions
       UTIL_CHECK(hasIterator());
       UTIL_CHECK(w_.hasData());
       if (iterator().isSymmetric()) {

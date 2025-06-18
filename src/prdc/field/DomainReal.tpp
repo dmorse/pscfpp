@@ -10,6 +10,7 @@
 
 #include "DomainReal.h"
 #include <prdc/field/fieldIoUtil.h>
+#include <util/signal/Signal.h>
 #include <util/misc/FileMaster.h>
 
 namespace Pscf {
@@ -31,6 +32,7 @@ namespace Prdc {
       fieldIo_(),
       lattice_(UnitCell<D>::Null),
       groupName_(""),
+      signalPtr_(nullptr),
       fileMasterPtr_(nullptr),
       hasGroup_(false),
       isInitialized_(false)
@@ -38,6 +40,10 @@ namespace Prdc {
       setClassName("DomainReal");
       fieldIo_.associate(mesh_, fft_, lattice_,
                          hasGroup_, groupName_, group_, basis_);
+
+      // Create Signal triggered by unit cell modification
+      signalPtr_ = new Signal<void>();
+      unitCell_.setSignal(*signalPtr_);
    }
 
    /*
@@ -45,7 +51,9 @@ namespace Prdc {
    */
    template <int D, class FFT, class WLT, class FIT>
    DomainReal<D,FFT,WLT,FIT>::~DomainReal()
-   {}
+   {
+      delete signalPtr_;
+   }
 
    /*
    * Create association with a FileMaster.
@@ -175,9 +183,6 @@ namespace Prdc {
       }
       unitCell_ = unitCell;
 
-      UTIL_CHECK(waveList_.isAllocated());
-      waveList_.clearUnitCellData();
-
       if (hasGroup_ && !basis_.isInitialized()) {
          makeBasis();
       }
@@ -199,9 +204,6 @@ namespace Prdc {
       }
       unitCell_.set(lattice, parameters);
 
-      UTIL_CHECK(waveList_.isAllocated());
-      waveList_.clearUnitCellData();
-
       if (hasGroup_ && !basis_.isInitialized()) {
          makeBasis();
       }
@@ -215,12 +217,7 @@ namespace Prdc {
    DomainReal<D,FFT,WLT,FIT>::setUnitCell(
                                     FSArray<double, 6> const & parameters)
    {
-      UTIL_CHECK(unitCell_.lattice() != UnitCell<D>::Null);
-      UTIL_CHECK(unitCell_.nParameter() == parameters.size());
       unitCell_.setParameters(parameters);
-
-      UTIL_CHECK(waveList_.isAllocated());
-      waveList_.clearUnitCellData();
 
       if (hasGroup_ && !basis_.isInitialized()) {
          makeBasis();

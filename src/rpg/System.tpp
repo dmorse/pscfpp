@@ -83,6 +83,9 @@ namespace Rpg {
       // Set name used as a block label in the parameter file
       setClassName("System");
 
+      BracketPolicy::set(BracketPolicy::Optional);
+      ThreadArray::init();
+
       // Create associations among class members
       domain_.setFileMaster(fileMaster_);
       w_.setFieldIo(domain_.fieldIo());
@@ -101,11 +104,18 @@ namespace Rpg {
       domain_.basis().signal().addObserver(*this,
                                         &System<D>::allocateFieldsBasis);
 
-      // Signal that notifies observers when the w fields are modified
-      // w_.signal().addObserver(*this, &System<D>::clearCFields);
+      // Signal triggered by unit cell modification
+      Signal<void>& cellSignal = domain_.unitCell().signal();
+      WaveList<D>& waveList = domain_.waveList();
+      cellSignal.addObserver(mixture_, &Mixture<D>::clearUnitCellData);
+      cellSignal.addObserver(waveList, &WaveList<D>::clearUnitCellData);
+      cellSignal.addObserver(*this, &System<D>::clearCFields);
 
-      BracketPolicy::set(BracketPolicy::Optional);
-      ThreadArray::init();
+      // Signal triggered by w-field modification
+      w_.signal().addObserver(*this, &System<D>::clearCFields);
+
+      // Signal triggered by h-field modification
+      h_.signal().addObserver(*this, &System<D>::clearCFields);
    }
 
    /*
@@ -763,9 +773,9 @@ namespace Rpg {
       UTIL_CHECK(isAllocatedBasis_);
 
       // Synchronization actions
-      domain_.waveList().clearUnitCellData();
-      mixture_.clearUnitCellData();
-      clearCFields();
+      // domain_.waveList().clearUnitCellData();
+      // mixture_.clearUnitCellData();
+      // clearCFields();
 
       // Postcondition
       UTIL_CHECK(domain_.unitCell().isInitialized());
@@ -784,9 +794,9 @@ namespace Rpg {
       w_.readRGrid(filename, domain_.unitCell());
 
       // Synchronization actions
-      domain_.waveList().clearUnitCellData();
-      mixture_.clearUnitCellData();
-      clearCFields();
+      // domain_.waveList().clearUnitCellData();
+      // mixture_.clearUnitCellData();
+      // clearCFields();
 
       // Postcondition
       UTIL_CHECK(domain_.unitCell().isInitialized());
@@ -847,9 +857,9 @@ namespace Rpg {
       w_.setBasis(tmpFieldsBasis);
 
       // Clear unit cell data in waveList and mixture
-      domain_.waveList().clearUnitCellData();
-      mixture_.clearUnitCellData();
-      clearCFields();
+      // domain_.waveList().clearUnitCellData();
+      // mixture_.clearUnitCellData();
+      // clearCFields();
 
       // Postcondition
       UTIL_CHECK(domain_.unitCell().isInitialized());
@@ -867,7 +877,7 @@ namespace Rpg {
       UTIL_CHECK(isAllocatedGrid_);
       UTIL_CHECK(isAllocatedBasis_);
       w_.setBasis(fields);
-      clearCFields();
+      //clearCFields();
    }
 
    /*
@@ -879,7 +889,7 @@ namespace Rpg {
       UTIL_CHECK(domain_.unitCell().isInitialized());
       UTIL_CHECK(isAllocatedGrid_);
       w_.setRGrid(fields);
-      clearCFields();
+      //clearCFields();
    }
 
    // Unit Cell Modifiers
@@ -890,17 +900,21 @@ namespace Rpg {
    template <int D>
    void System<D>::setUnitCell(UnitCell<D> const & unitCell)
    {
-      domain_.setUnitCell(unitCell);
+      // Preconditions
+      UTIL_CHECK(domain_.lattice() != UnitCell<D>::Null);
+      UTIL_CHECK(domain_.lattice() == unitCell.lattice());
 
-      // Note: Domain::setUnitCell clears the WaveList unit cell data
-      // and makes basis if needed
+      // Set system unit cell
+      domain_.unitCell() = unitCell;
 
-      // Synchronization actions
-      mixture_.clearUnitCellData();
-      clearCFields();
+      // If necessary, make basis
+      if (domain_.hasGroup() && !domain_.basis().isInitialized()) {
+         domain_.makeBasis();
+      }
 
       // Postconditions
       UTIL_CHECK(domain_.unitCell().isInitialized());
+      UTIL_CHECK(domain_.unitCell().lattice() == domain_.lattice());
       if (domain_.hasGroup()) {
          UTIL_CHECK(domain_.basis().isInitialized());
          UTIL_CHECK(isAllocatedBasis_);
@@ -915,17 +929,25 @@ namespace Rpg {
    System<D>::setUnitCell(typename UnitCell<D>::LatticeSystem lattice,
                           FSArray<double, 6> const & parameters)
    {
-      domain_.setUnitCell(lattice, parameters);
+      // Preconditions
+      UTIL_CHECK(domain_.lattice() != UnitCell<D>::Null);
+      UTIL_CHECK(domain_.lattice() == lattice);
 
-      // Note: Domain::setUnitCell clears WaveList unit cell data
-      // and makes basis if needed
+      // Set system unit cell
+      if (domain_.unitCell().lattice() == UnitCell<D>::Null) {
+         domain_.unitCell().set(domain_.lattice(), parameters);
+      } else {
+         domain_.unitCell().setParameters(parameters);
+      }
 
-      // Synchronization actions
-      mixture_.clearUnitCellData();
-      clearCFields();
+      // If necessary, make basis
+      if (domain_.hasGroup() && !domain_.basis().isInitialized()) {
+         domain_.makeBasis();
+      }
 
       // Postconditions
       UTIL_CHECK(domain_.unitCell().isInitialized());
+      UTIL_CHECK(domain_.unitCell().lattice() == domain_.lattice());
       if (domain_.hasGroup()) {
          UTIL_CHECK(domain_.basis().isInitialized());
          UTIL_CHECK(isAllocatedBasis_);
@@ -938,17 +960,24 @@ namespace Rpg {
    template <int D>
    void System<D>::setUnitCell(FSArray<double, 6> const & parameters)
    {
-      domain_.setUnitCell(parameters);
+      // Precondition
+      UTIL_CHECK(domain_.lattice() != UnitCell<D>::Null);
 
-      // Note: Domain::setUnitCell clears WaveList unit cell data
-      // and makes basis if needed
+      // Set system unit cell
+      if (domain_.unitCell().lattice() == UnitCell<D>::Null) {
+         domain_.unitCell().set(domain_.lattice(), parameters);
+      } else {
+         domain_.unitCell().setParameters(parameters);
+      }
 
-      // Synchronization actions
-      mixture_.clearUnitCellData();
-      clearCFields();
+      // If necessary, make basis
+      if (domain_.hasGroup() && !domain_.basis().isInitialized()) {
+         domain_.makeBasis();
+      }
 
       // Postconditions
       UTIL_CHECK(domain_.unitCell().isInitialized());
+      UTIL_CHECK(domain_.unitCell().lattice() == domain_.lattice());
       if (domain_.hasGroup()) {
          UTIL_CHECK(domain_.basis().isInitialized());
          UTIL_CHECK(isAllocatedBasis_);
@@ -1729,7 +1758,7 @@ namespace Rpg {
    {
       UTIL_CHECK(isAllocatedGrid_);
       w_.setRGrid(fields);
-      clearCFields();
+      //clearCFields();
    }
 
    /*

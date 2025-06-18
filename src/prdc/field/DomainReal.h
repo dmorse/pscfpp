@@ -19,6 +19,8 @@
 // Forward declaration
 namespace Util{
    class FileMaster;
+   template <typename T> class Signal;
+   template <> class Signal<void>;
 }
 
 namespace Pscf {
@@ -322,6 +324,11 @@ namespace Prdc {
       * Group name.
       */
       std::string groupName_;
+
+      /**
+      * Pointer to a Signal owned by this DomainReal.
+      */
+      Signal<void>* signalPtr_;
 
       /**
       * Pointer to associated FileMaster.
