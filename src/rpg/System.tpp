@@ -101,6 +101,9 @@ namespace Rpg {
       domain_.basis().signal().addObserver(*this,
                                         &System<D>::allocateFieldsBasis);
 
+      // Signal that notifies observers when the w fields are modified
+      // w_.signal().addObserver(*this, &System<D>::clearCFields);
+
       BracketPolicy::set(BracketPolicy::Optional);
       ThreadArray::init();
    }

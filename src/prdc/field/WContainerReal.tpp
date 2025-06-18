@@ -13,6 +13,7 @@
 #include <prdc/crystal/Basis.h>
 #include <prdc/crystal/UnitCell.h>
 #include <pscf/mesh/Mesh.h>
+#include <util/signal/Signal.h>
 #include <util/misc/FileMaster.h>
 
 namespace Pscf {
@@ -29,16 +30,19 @@ namespace Prdc {
    WContainerReal<D,RField,FieldIo>::WContainerReal()
     : basis_(),
       rgrid_(),
-      fieldIoPtr_(nullptr),
       meshDimensions_(),
       meshSize_(0),
       nBasis_(0),
       nMonomer_(0),
+      signalPtr_(nullptr),
+      fieldIoPtr_(nullptr),
       isAllocatedRGrid_(false),
       isAllocatedBasis_(false),
       hasData_(false),
       isSymmetric_(false)
-   {}
+   {
+      signalPtr_ = new Signal<void>();
+   }
 
    /*
    * Destructor.
@@ -207,6 +211,9 @@ namespace Prdc {
 
       hasData_ = true;
       isSymmetric_ = true;
+
+      // Notify observers of field modification
+      signal().notify();
    }
 
    /*
@@ -242,6 +249,9 @@ namespace Prdc {
 
       hasData_ = true;
       isSymmetric_ =  isSymmetric;
+
+      // Notify observers of field modification
+      signal().notify();
    }
 
    /*
@@ -290,6 +300,9 @@ namespace Prdc {
 
       hasData_ = true;
       isSymmetric_ = true;
+
+      // Notify observers of field modification
+      signal().notify();
    }
 
    /*
@@ -346,6 +359,9 @@ namespace Prdc {
 
       hasData_ = true;
       isSymmetric_ = isSymmetric;
+
+      // Notify observers of field modification
+      signal().notify();
    }
 
    /*
@@ -373,6 +389,19 @@ namespace Prdc {
       fieldIo().convertRGridToBasis(rgrid_, basis_);
       fieldIo().convertBasisToRGrid(basis_, rgrid_);
       isSymmetric_ = true;
+
+      // Notify observers of field modification
+      signal().notify();
+   }
+
+   /*
+   * Get a signal that is triggered by field modification.
+   */
+   template <int D, class RField, class FieldIo>
+   Signal<void>& WContainerReal<D,RField,FieldIo>::signal()
+   {
+      UTIL_CHECK(signalPtr_);
+      return *signalPtr_;
    }
 
    // Private virtual function

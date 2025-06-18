@@ -11,11 +11,20 @@
 #include <pscf/math/IntVec.h>              // member
 #include <util/containers/DArray.h>        // member template
 
+// Forward references
+namespace Util {
+   template <typename T> class Signal;
+   template <> class Signal<void>;
+}
+namespace Pscf {
+   namespace Prdc {
+      template <int D> class UnitCell;
+   }
+}
+
 namespace Pscf {
 namespace Prdc {
 
-   // Forward reference
-   template <int D> class UnitCell;
 
    using namespace Util;
 
@@ -134,7 +143,7 @@ namespace Prdc {
       void allocate(int nMonomer, int nBasis, IntVec<D> const & dimensions);
 
       ///@}
-      /// \name Field Mutators
+      /// \name Field Modifiers
       ///@{
 
       /**
@@ -263,6 +272,11 @@ namespace Prdc {
       */
       void symmetrize();
 
+      /**
+      * Get a signal that notifies observers of field modification.
+      */
+      Signal<void>& signal();
+
       ///@}
       /// \name Field Accessors (by const reference)
       ///@{
@@ -376,11 +390,6 @@ namespace Prdc {
       DArray< RField > rgrid_;
 
       /*
-      * Pointer to an associated FieldIo object.
-      */
-      FieldIo const * fieldIoPtr_;
-
-      /*
       * Integer vector of grid dimensions.
       *
       * Element i is the number of grid points along direction i
@@ -401,6 +410,16 @@ namespace Prdc {
       * Number of monomer types (number of fields).
       */
       int nMonomer_;
+
+      /*
+      * Pointer to a Signal that is triggered by field modification.
+      */
+      Signal<void>* signalPtr_;
+ 
+      /*
+      * Pointer to an associated FieldIo object.
+      */
+      FieldIo const * fieldIoPtr_;
 
       /*
       * Has memory been allocated for fields in r-grid format?

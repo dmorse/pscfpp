@@ -100,8 +100,10 @@ namespace Rpc {
       domain_.basis().signal().addObserver(*this,
                                           &System<D>::allocateFieldsBasis);
 
-      BracketPolicy::set(BracketPolicy::Optional);
+      // Signal that notifies observers when w fields are modified
+      w_.signal().addObserver(*this, &System<D>::clearCFields);
 
+      BracketPolicy::set(BracketPolicy::Optional);
    }
 
    /*
@@ -761,7 +763,7 @@ namespace Rpc {
       // Synchronization actions
       domain_.waveList().clearUnitCellData();
       mixture_.clearUnitCellData();
-      clearCFields();
+      //clearCFields();
 
       // Postconditions
       UTIL_CHECK(domain_.unitCell().isInitialized());
@@ -784,7 +786,7 @@ namespace Rpc {
       // Synchronization actions
       domain_.waveList().clearUnitCellData();
       mixture_.clearUnitCellData();
-      clearCFields();
+      //clearCFields();
 
       // Postcondition
       UTIL_CHECK(domain_.unitCell().isInitialized());
@@ -847,7 +849,7 @@ namespace Rpc {
       // Synchronization actions
       domain_.waveList().clearUnitCellData();
       mixture_.clearUnitCellData();
-      clearCFields();
+      //clearCFields();
 
       // Postcondition
       UTIL_CHECK(domain_.unitCell().isInitialized());
@@ -865,7 +867,7 @@ namespace Rpc {
       UTIL_CHECK(domain_.basis().isInitialized());
       UTIL_CHECK(isAllocatedBasis_);
       w_.setBasis(fields);
-      clearCFields();
+      //clearCFields();
    }
 
    /*
@@ -877,7 +879,7 @@ namespace Rpc {
       UTIL_CHECK(isAllocatedGrid_);
       UTIL_CHECK(domain_.unitCell().isInitialized());
       w_.setRGrid(fields);
-      clearCFields();
+      //clearCFields();
    }
 
    // Unit Cell Modifiers
