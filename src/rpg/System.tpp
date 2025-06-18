@@ -98,8 +98,8 @@ namespace Rpg {
       // Add observers to signals
 
       // Signal that notifies observers when a basis is constructed
-      // domain_.basis().signal().addObserver(*this,
-      //                                  &System<D>::allocateFieldsBasis);
+      domain_.basis().signal().addObserver(*this,
+                                        &System<D>::allocateFieldsBasis);
 
       BracketPolicy::set(BracketPolicy::Optional);
       ThreadArray::init();
@@ -753,20 +753,16 @@ namespace Rpg {
    {
       // Preconditions
       UTIL_CHECK(domain_.hasGroup());
-      if (!domain_.basis().isInitialized()) {
-         readFieldHeader(filename);
-      }
-      UTIL_CHECK(domain_.basis().isInitialized());
-      UTIL_CHECK(isAllocatedBasis_);
 
       // Read w fields
       w_.readBasis(filename, domain_.unitCell());
-      hasCFields_ = false;
-      hasFreeEnergy_ = false;
+      UTIL_CHECK(domain_.basis().isInitialized());
+      UTIL_CHECK(isAllocatedBasis_);
 
-      // Clear unit cell data in waveList and mixture
+      // Synchronization actions
       domain_.waveList().clearUnitCellData();
       mixture_.clearUnitCellData();
+      clearCFields();
 
       // Postcondition
       UTIL_CHECK(domain_.unitCell().isInitialized());
@@ -783,12 +779,11 @@ namespace Rpg {
 
       // Read w fields
       w_.readRGrid(filename, domain_.unitCell());
-      hasCFields_ = false;
-      hasFreeEnergy_ = false;
 
-      // Clear unit cell data in waveList and mixture
+      // Synchronization actions
       domain_.waveList().clearUnitCellData();
       mixture_.clearUnitCellData();
+      clearCFields();
 
       // Postcondition
       UTIL_CHECK(domain_.unitCell().isInitialized());
@@ -847,12 +842,11 @@ namespace Rpg {
 
       // Set estimated w fields in system w field container
       w_.setBasis(tmpFieldsBasis);
-      hasCFields_ = false;
-      hasFreeEnergy_ = false;
 
       // Clear unit cell data in waveList and mixture
       domain_.waveList().clearUnitCellData();
       mixture_.clearUnitCellData();
+      clearCFields();
 
       // Postcondition
       UTIL_CHECK(domain_.unitCell().isInitialized());
@@ -870,8 +864,7 @@ namespace Rpg {
       UTIL_CHECK(isAllocatedGrid_);
       UTIL_CHECK(isAllocatedBasis_);
       w_.setBasis(fields);
-      hasCFields_ = false;
-      hasFreeEnergy_ = false;
+      clearCFields();
    }
 
    /*
@@ -883,8 +876,7 @@ namespace Rpg {
       UTIL_CHECK(domain_.unitCell().isInitialized());
       UTIL_CHECK(isAllocatedGrid_);
       w_.setRGrid(fields);
-      hasCFields_ = false;
-      hasFreeEnergy_ = false;
+      clearCFields();
    }
 
    // Unit Cell Modifiers
@@ -896,20 +888,20 @@ namespace Rpg {
    void System<D>::setUnitCell(UnitCell<D> const & unitCell)
    {
       domain_.setUnitCell(unitCell);
-      mixture_.clearUnitCellData();
 
       // Note: Domain::setUnitCell clears the WaveList unit cell data
       // and makes basis if needed
 
+      // Synchronization actions
+      mixture_.clearUnitCellData();
+      clearCFields();
+
       // Postconditions
+      UTIL_CHECK(domain_.unitCell().isInitialized());
       if (domain_.hasGroup()) {
          UTIL_CHECK(domain_.basis().isInitialized());
-         if (!isAllocatedBasis_) {
-            allocateFieldsBasis();
-         }
          UTIL_CHECK(isAllocatedBasis_);
       }
-      UTIL_CHECK(domain_.unitCell().isInitialized());
    }
 
    /*
@@ -921,20 +913,20 @@ namespace Rpg {
                           FSArray<double, 6> const & parameters)
    {
       domain_.setUnitCell(lattice, parameters);
-      mixture_.clearUnitCellData();
 
       // Note: Domain::setUnitCell clears WaveList unit cell data
       // and makes basis if needed
 
+      // Synchronization actions
+      mixture_.clearUnitCellData();
+      clearCFields();
+
       // Postconditions
+      UTIL_CHECK(domain_.unitCell().isInitialized());
       if (domain_.hasGroup()) {
          UTIL_CHECK(domain_.basis().isInitialized());
-         if (!isAllocatedBasis_) {
-            allocateFieldsBasis();
-         }
          UTIL_CHECK(isAllocatedBasis_);
       }
-      UTIL_CHECK(domain_.unitCell().isInitialized());
    }
 
    /*
@@ -944,20 +936,20 @@ namespace Rpg {
    void System<D>::setUnitCell(FSArray<double, 6> const & parameters)
    {
       domain_.setUnitCell(parameters);
-      mixture_.clearUnitCellData();
 
       // Note: Domain::setUnitCell clears WaveList unit cell data
       // and makes basis if needed
 
+      // Synchronization actions
+      mixture_.clearUnitCellData();
+      clearCFields();
+
       // Postconditions
+      UTIL_CHECK(domain_.unitCell().isInitialized());
       if (domain_.hasGroup()) {
          UTIL_CHECK(domain_.basis().isInitialized());
-         if (!isAllocatedBasis_) {
-            allocateFieldsBasis();
-         }
          UTIL_CHECK(isAllocatedBasis_);
       }
-      UTIL_CHECK(domain_.unitCell().isInitialized());
    }
 
    // Primary Field Theory Computations
@@ -971,6 +963,7 @@ namespace Rpg {
       UTIL_CHECK(w_.isAllocatedRGrid());
       UTIL_CHECK(c_.isAllocatedRGrid());
       UTIL_CHECK(w_.hasData());
+      clearCFields();
 
       // Solve the modified diffusion equation (without iteration)
       mixture_.compute(w_.rgrid(), c_.rgrid(), mask_.phiTot());
@@ -1002,15 +995,14 @@ namespace Rpg {
          UTIL_CHECK(w_.isSymmetric());
          UTIL_CHECK(isAllocatedBasis_);
       }
-      hasCFields_ = false;
-      hasFreeEnergy_ = false;
+      clearCFields();
 
       Log::file() << std::endl;
       Log::file() << std::endl;
 
       // Call iterator (return 0 for convergence, 1 for failure)
       int error = iterator().solve(isContinuation);
-      hasCFields_ = true;
+      UTIL_CHECK(hasCFields_);
 
       // If converged, compute related thermodynamic properties
       if (!error) {
@@ -1040,8 +1032,7 @@ namespace Rpg {
          UTIL_CHECK(w_.isSymmetric());
          UTIL_CHECK(isAllocatedBasis_);
       }
-      hasCFields_ = false;
-      hasFreeEnergy_ = false;
+      clearCFields();
 
       Log::file() << std::endl;
       Log::file() << std::endl;
@@ -1058,11 +1049,9 @@ namespace Rpg {
    {
       UTIL_CHECK(nStep > 0);
       UTIL_CHECK(hasSimulator());
-      hasCFields_ = false;
-      hasFreeEnergy_ = false;
+      clearCFields();
 
       simulator().simulate(nStep);
-      hasCFields_ = true;
    }
 
    // SCFT Thermodynamic Properties
@@ -1399,6 +1388,7 @@ namespace Rpg {
    template <int D>
    void System<D>::writeCBasis(std::string const & filename) const
    {
+      UTIL_CHECK(isAllocatedGrid_);
       UTIL_CHECK(domain_.unitCell().isInitialized());
       UTIL_CHECK(domain_.basis().isInitialized());
       UTIL_CHECK(isAllocatedBasis_);
@@ -1414,8 +1404,8 @@ namespace Rpg {
    template <int D>
    void System<D>::writeCRGrid(std::string const & filename) const
    {
-      UTIL_CHECK(domain_.unitCell().isInitialized());
       UTIL_CHECK(isAllocatedGrid_);
+      UTIL_CHECK(domain_.unitCell().isInitialized());
       UTIL_CHECK(hasCFields_);
       domain_.fieldIo().writeFieldsRGrid(filename, c_.rgrid(),
                                          domain_.unitCell(),
@@ -1429,8 +1419,8 @@ namespace Rpg {
    template <int D>
    void System<D>::writeBlockCRGrid(std::string const & filename) const
    {
-      UTIL_CHECK(domain_.unitCell().isInitialized());
       UTIL_CHECK(isAllocatedGrid_);
+      UTIL_CHECK(domain_.unitCell().isInitialized());
       UTIL_CHECK(hasCFields_);
 
       // Create array to hold block and solvent c field data
@@ -1696,9 +1686,6 @@ namespace Rpg {
       UTIL_CHECK(mixture_.nMonomer() == nMonomer);
       if (domain_.hasGroup()) {
          UTIL_CHECK(domain_.basis().isInitialized());
-         if (!isAllocatedBasis_) {
-            allocateFieldsBasis();
-         }
          UTIL_CHECK(isAllocatedBasis_);
       }
    }
@@ -1739,8 +1726,7 @@ namespace Rpg {
    {
       UTIL_CHECK(isAllocatedGrid_);
       w_.setRGrid(fields);
-      hasCFields_ = false;
-      hasFreeEnergy_ = false;
+      clearCFields();
    }
 
    /*
