@@ -661,6 +661,7 @@ namespace Rpc {
             }
             UnitCell<D> tmpUnitCell;
             h_.readBasis(filename, tmpUnitCell);
+            UTIL_CHECK(!hasCFields_);
          } else
          if (command == "READ_H_RGRID") {
             readEcho(in, filename);
@@ -672,6 +673,7 @@ namespace Rpc {
             }
             UnitCell<D> tmpUnitCell;
             h_.readRGrid(filename, tmpUnitCell);
+            UTIL_CHECK(!hasCFields_);
          } else
          if (command == "WRITE_H_BASIS") {
             readEcho(in, filename);
@@ -771,6 +773,7 @@ namespace Rpc {
       // Postconditions
       UTIL_CHECK(domain_.unitCell().isInitialized());
       UTIL_CHECK(domain_.basis().isInitialized());
+      UTIL_CHECK(!domain_.waveList().hasKSq());
       UTIL_CHECK(isAllocatedBasis_);
       UTIL_CHECK(!hasCFields_);
       UTIL_CHECK(!hasFreeEnergy_);
@@ -790,6 +793,7 @@ namespace Rpc {
 
       // Postcondition
       UTIL_CHECK(domain_.unitCell().isInitialized());
+      UTIL_CHECK(!domain_.waveList().hasKSq());
       UTIL_CHECK(!hasCFields_);
       UTIL_CHECK(!hasFreeEnergy_);
    }
@@ -848,6 +852,7 @@ namespace Rpc {
 
       // Postcondition
       UTIL_CHECK(domain_.unitCell().isInitialized());
+      UTIL_CHECK(!domain_.waveList().hasKSq());
       UTIL_CHECK(!hasCFields_);
       UTIL_CHECK(!hasFreeEnergy_);
    }
@@ -858,12 +863,18 @@ namespace Rpc {
    template <int D>
    void System<D>::setWBasis(DArray< DArray<double> > const & fields)
    {
+      // Preconditions
       UTIL_CHECK(isAllocatedGrid_);
       UTIL_CHECK(domain_.unitCell().isInitialized());
       UTIL_CHECK(domain_.hasGroup());
       UTIL_CHECK(domain_.basis().isInitialized());
       UTIL_CHECK(isAllocatedBasis_);
+
       w_.setBasis(fields);
+
+      // Postconditions
+      UTIL_CHECK(!hasCFields_);
+      UTIL_CHECK(!hasFreeEnergy_);
    }
 
    /*
@@ -872,9 +883,15 @@ namespace Rpc {
    template <int D>
    void System<D>::setWRGrid(DArray< RField<D> > const & fields)
    {
+      // Preconditions
       UTIL_CHECK(isAllocatedGrid_);
       UTIL_CHECK(domain_.unitCell().isInitialized());
+
       w_.setRGrid(fields);
+
+      // Postconditions
+      UTIL_CHECK(!hasCFields_);
+      UTIL_CHECK(!hasFreeEnergy_);
    }
 
    // Unit Cell Modifiers
@@ -904,8 +921,10 @@ namespace Rpc {
          UTIL_CHECK(domain_.basis().isInitialized());
          UTIL_CHECK(isAllocatedBasis_);
       }
+      UTIL_CHECK(!domain_.waveList().hasKSq());
    }
 
+   #if 0
    /*
    * Set the system unit cell.
    */
@@ -937,7 +956,9 @@ namespace Rpc {
          UTIL_CHECK(domain_.basis().isInitialized());
          UTIL_CHECK(isAllocatedBasis_);
       }
+      UTIL_CHECK(!domain_.waveList().hasKSq());
    }
+   #endif
 
    /*
    * Set parameters of the system unit cell.
@@ -967,6 +988,7 @@ namespace Rpc {
          UTIL_CHECK(domain_.basis().isInitialized());
          UTIL_CHECK(isAllocatedBasis_);
       }
+      UTIL_CHECK(!domain_.waveList().hasKSq());
    }
 
    // Primary Field Theory Computations

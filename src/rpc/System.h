@@ -293,6 +293,7 @@ namespace Rpc {
       */
       void setUnitCell(UnitCell<D> const & unitCell);
 
+      #if 0
       /**
       * Set parameters of the associated unit cell.
       *
@@ -309,6 +310,7 @@ namespace Rpc {
       */
       void setUnitCell(typename UnitCell<D>::LatticeSystem lattice,
                        FSArray<double, 6> const & parameters);
+      #endif
 
       /**
       * Set parameters of the associated unit cell.

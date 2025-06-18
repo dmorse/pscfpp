@@ -674,6 +674,7 @@ namespace Rpg {
             }
             UnitCell<D> tmpUnitCell;
             h_.readBasis(filename, tmpUnitCell);
+            UTIL_CHECK(!hasCFields_);
          } else
          if (command == "READ_H_RGRID") {
             readEcho(in, filename);
@@ -685,6 +686,7 @@ namespace Rpg {
             }
             UnitCell<D> tmpUnitCell;
             h_.readRGrid(filename, tmpUnitCell);
+            UTIL_CHECK(!hasCFields_);
          } else
          if (command == "WRITE_H_BASIS") {
             readEcho(in, filename);
@@ -769,16 +771,14 @@ namespace Rpg {
 
       // Read w fields
       w_.readBasis(filename, domain_.unitCell());
-      UTIL_CHECK(domain_.basis().isInitialized());
-      UTIL_CHECK(isAllocatedBasis_);
 
-      // Synchronization actions
-      // domain_.waveList().clearUnitCellData();
-      // mixture_.clearUnitCellData();
-      // clearCFields();
-
-      // Postcondition
+      // Postconditions
       UTIL_CHECK(domain_.unitCell().isInitialized());
+      UTIL_CHECK(domain_.basis().isInitialized());
+      UTIL_CHECK(!domain_.waveList().hasKSq());
+      UTIL_CHECK(isAllocatedBasis_);
+      UTIL_CHECK(!hasCFields_)
+      UTIL_CHECK(!hasFreeEnergy_)
    }
 
    /*
@@ -793,13 +793,11 @@ namespace Rpg {
       // Read w fields
       w_.readRGrid(filename, domain_.unitCell());
 
-      // Synchronization actions
-      // domain_.waveList().clearUnitCellData();
-      // mixture_.clearUnitCellData();
-      // clearCFields();
-
-      // Postcondition
+      // Postconditions
       UTIL_CHECK(domain_.unitCell().isInitialized());
+      UTIL_CHECK(!domain_.waveList().hasKSq());
+      UTIL_CHECK(!hasCFields_)
+      UTIL_CHECK(!hasFreeEnergy_)
    }
 
    /*
@@ -856,13 +854,13 @@ namespace Rpg {
       // Set estimated w fields in system w field container
       w_.setBasis(tmpFieldsBasis);
 
-      // Clear unit cell data in waveList and mixture
-      // domain_.waveList().clearUnitCellData();
-      // mixture_.clearUnitCellData();
-      // clearCFields();
-
-      // Postcondition
+      // Postconditions
       UTIL_CHECK(domain_.unitCell().isInitialized());
+      UTIL_CHECK(domain_.basis().isInitialized());
+      UTIL_CHECK(!domain_.waveList().hasKSq());
+      UTIL_CHECK(isAllocatedBasis_);
+      UTIL_CHECK(!hasCFields_)
+      UTIL_CHECK(!hasFreeEnergy_)
    }
 
    /*
@@ -871,13 +869,18 @@ namespace Rpg {
    template <int D>
    void System<D>::setWBasis(DArray< DArray<double> > const & fields)
    {
+      // Preconditions
       UTIL_CHECK(domain_.unitCell().isInitialized());
       UTIL_CHECK(domain_.hasGroup());
       UTIL_CHECK(domain_.basis().isInitialized());
       UTIL_CHECK(isAllocatedGrid_);
       UTIL_CHECK(isAllocatedBasis_);
+
       w_.setBasis(fields);
-      //clearCFields();
+
+      // Postconditions
+      UTIL_CHECK(!hasCFields_)
+      UTIL_CHECK(!hasFreeEnergy_)
    }
 
    /*
@@ -886,10 +889,15 @@ namespace Rpg {
    template <int D>
    void System<D>::setWRGrid(DArray< RField<D> > const & fields)
    {
+      // Preconditions
       UTIL_CHECK(domain_.unitCell().isInitialized());
       UTIL_CHECK(isAllocatedGrid_);
+
       w_.setRGrid(fields);
-      //clearCFields();
+
+      // Postconditions
+      UTIL_CHECK(!hasCFields_)
+      UTIL_CHECK(!hasFreeEnergy_)
    }
 
    // Unit Cell Modifiers
@@ -919,6 +927,7 @@ namespace Rpg {
          UTIL_CHECK(domain_.basis().isInitialized());
          UTIL_CHECK(isAllocatedBasis_);
       }
+      UTIL_CHECK(!domain_.waveList().hasKSq());
    }
 
    /*
@@ -952,6 +961,7 @@ namespace Rpg {
          UTIL_CHECK(domain_.basis().isInitialized());
          UTIL_CHECK(isAllocatedBasis_);
       }
+      UTIL_CHECK(!domain_.waveList().hasKSq());
    }
 
    /*
@@ -982,6 +992,7 @@ namespace Rpg {
          UTIL_CHECK(domain_.basis().isInitialized());
          UTIL_CHECK(isAllocatedBasis_);
       }
+      UTIL_CHECK(!domain_.waveList().hasKSq());
    }
 
    // Primary Field Theory Computations
@@ -1758,7 +1769,8 @@ namespace Rpg {
    {
       UTIL_CHECK(isAllocatedGrid_);
       w_.setRGrid(fields);
-      //clearCFields();
+      UTIL_CHECK(!hasCFields_)
+      UTIL_CHECK(!hasFreeEnergy_)
    }
 
    /*

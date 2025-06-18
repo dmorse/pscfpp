@@ -41,7 +41,7 @@ namespace Prdc {
       fieldIo_.associate(mesh_, fft_, lattice_,
                          hasGroup_, groupName_, group_, basis_);
 
-      // Create Signal triggered by unit cell modification
+      // Create Signal used by UnitCell, triggered by modification
       signalPtr_ = new Signal<void>();
       unitCell_.setSignal(*signalPtr_);
    }
@@ -165,63 +165,6 @@ namespace Prdc {
       }
 
       isInitialized_ = true;
-   }
-
-   // Modifiers for UnitCell and Basis
-
-   /*
-   * Set the unit cell by copying a UnitCell<D>, make basis if needed.
-   */
-   template <int D, class FFT, class WLT, class FIT>
-   void
-   DomainReal<D,FFT,WLT,FIT>::setUnitCell(UnitCell<D> const & unitCell)
-   {
-      if (lattice_ == UnitCell<D>::Null) {
-         lattice_ = unitCell.lattice();
-      } else {
-         UTIL_CHECK(lattice_ == unitCell.lattice());
-      }
-      unitCell_ = unitCell;
-
-      if (hasGroup_ && !basis_.isInitialized()) {
-         makeBasis();
-      }
-   }
-
-   /*
-   * Set the unit cell, make basis if needed.
-   */
-   template <int D, class FFT, class WLT, class FIT>
-   void
-   DomainReal<D,FFT,WLT,FIT>::setUnitCell(
-                               typename UnitCell<D>::LatticeSystem lattice,
-                               FSArray<double, 6> const & parameters)
-   {
-      if (lattice_ == UnitCell<D>::Null) {
-         lattice_ = lattice;
-      } else {
-         UTIL_CHECK(lattice_ == lattice);
-      }
-      unitCell_.set(lattice, parameters);
-
-      if (hasGroup_ && !basis_.isInitialized()) {
-         makeBasis();
-      }
-   }
-
-   /*
-   * Set unit cell parameters, make basis if needed.
-   */
-   template <int D, class FFT, class WLT, class FIT>
-   void
-   DomainReal<D,FFT,WLT,FIT>::setUnitCell(
-                                    FSArray<double, 6> const & parameters)
-   {
-      unitCell_.setParameters(parameters);
-
-      if (hasGroup_ && !basis_.isInitialized()) {
-         makeBasis();
-      }
    }
 
    /*
