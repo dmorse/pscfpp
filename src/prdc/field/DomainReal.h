@@ -116,16 +116,6 @@ namespace Prdc {
       ///@{
 
       /**
-      * Get the UnitCell by non-const reference.
-      */
-      UnitCell<D>& unitCell();
-
-      /**
-      * Get the UnitCell by const reference.
-      */
-      UnitCell<D> const & unitCell() const;
-
-      /**
       * Get the Mesh by non-const reference.
       */
       Mesh<D>& mesh();
@@ -134,6 +124,16 @@ namespace Prdc {
       * Get the Mesh by const reference.
       */
       Mesh<D> const & mesh() const;
+
+      /**
+      * Get the UnitCell by non-const reference.
+      */
+      UnitCell<D>& unitCell();
+
+      /**
+      * Get the UnitCell by const reference.
+      */
+      UnitCell<D> const & unitCell() const;
 
       /**
       * Get the SpaceGroup by const reference.
@@ -242,14 +242,14 @@ namespace Prdc {
       // Private member variables
 
       /**
-      * Crystallographic unit cell (crystal system and cell parameters).
-      */
-      UnitCell<D> unitCell_;
-
-      /**
       * Spatial discretization mesh.
       */
       Mesh<D> mesh_;
+
+      /**
+      * Crystallographic unit cell (crystal system and cell parameters).
+      */
+      UnitCell<D> unitCell_;
 
       /**
       * SpaceGroup object

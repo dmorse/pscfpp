@@ -347,28 +347,20 @@ namespace Prdc {
 
    protected:
 
-      /// Mesh dimensions in each direction, set on allocation.
-      IntVec<D> const & meshDimensions() const
-      {  return meshDimensions_; }
+      /// Get mesh dimensions in each direction, set on r-grid allocation.
+      IntVec<D> const & meshDimensions() const;
 
-      /// Mesh size (number of grid points), set on allocation.
-      int meshSize() const
-      {  return meshSize_; }
+      /// Get mesh size (number of grid points), set on r-grid allocation.
+      int meshSize() const;
 
-      /// Number of basis functions, set on allocation.
-      int nBasis() const
-      {  return nBasis_; }
+      /// Get number of basis functions, set on basis allocation.
+      int nBasis() const;
 
-      /// Number of monomer types.
-      int nMonomer() const
-      {  return nMonomer_; }
+      /// Get number of monomer types.
+      int nMonomer() const;
 
-      /// Associated FieldIo object (const reference).
-      FieldIo const & fieldIo() const
-      {
-         UTIL_CHECK(fieldIoPtr_);
-         return *fieldIoPtr_;
-      }
+      /// Get associated FieldIo object (const reference).
+      FieldIo const & fieldIo() const;
 
    private:
 
@@ -518,6 +510,42 @@ namespace Prdc {
    inline 
    bool WContainerReal<D,RField,FieldIo>::isSymmetric() const
    {  return isSymmetric_; }
+
+   // Protected inline member functions
+   
+   // Get mesh dimensions in each direction, set on r-grid allocation.
+   template <int D, class RField, class FieldIo>
+   inline 
+   IntVec<D> const & 
+   WContainerReal<D,RField,FieldIo>::meshDimensions() const
+   {  return meshDimensions_; }
+
+   // Get mesh size (number of grid points), set on r-grid allocation.
+   template <int D, class RField, class FieldIo>
+   inline 
+   int WContainerReal<D,RField,FieldIo>::meshSize() const
+   {  return meshSize_; }
+
+   // Get number of basis functions, set on basis allocation.
+   template <int D, class RField, class FieldIo>
+   inline 
+   int WContainerReal<D,RField,FieldIo>::nBasis() const
+   {  return nBasis_; }
+
+   // Get number of monomer types.
+   template <int D, class RField, class FieldIo>
+   inline 
+   int WContainerReal<D,RField,FieldIo>::nMonomer() const
+   {  return nMonomer_; }
+
+   // Associated FieldIo object (const reference).
+   template <int D, class RField, class FieldIo>
+   inline 
+   FieldIo const & WContainerReal<D,RField,FieldIo>::fieldIo() const
+   {
+      UTIL_CHECK(fieldIoPtr_);
+      return *fieldIoPtr_;
+   }
 
 } // namespace Prdc
 } // namespace Pscf

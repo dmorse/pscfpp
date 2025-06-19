@@ -302,46 +302,24 @@ namespace Rpg {
       /**
       * Set parameters of the associated unit cell.
       *
-      * The lattice (i.e., lattice system type) set in the UnitCell<D>
-      * unitCell input parameter must agree with any lattice enum value
-      * that was set previously in the parameter file.
+      * The lattice system type set in the unitCell input parameter must
+      * be equal to that set in the parameter file. 
       *
-      * If a space group has been set but a basis has not yet been
-      * constructed, then this and the other setUnitCell member functions
-      * will all construct a symmetry-adapted basis and then allocate
-      * memory for fields stored in a symmetry-adapted basis format.
+      * If a space group has been declared but a basis has not yet been
+      * initialized, then the symmetry-adapted basis will be initialized.
       *
-      * \param unitCell  new UnitCell<D> (i.e., new parameters)
+      * \param unitCell  new UnitCell<D> (with new parameters)
       */
       void setUnitCell(UnitCell<D> const & unitCell);
 
       /**
       * Set parameters of the associated unit cell.
       *
-      * The "lattice" (lattice system) enumeration parameter must agree
-      * with any lattice value that was set previously in the parameter
-      * file. The logical size of the "parameters" array must agree with
-      * the expected number of lattice parameters for this lattice type.
+      * The number of parameters must be consistent with that appropriate
+      * to the lattice system declared in the parameter file. 
       *
-      * See documentation of setUnitCell(UnitCell<D> const &) regarding
-      * possible construction of a basis as a side effect.
-      *
-      * \param lattice  lattice system
-      * \param parameters  array of new unit cell parameters
-      */
-      void setUnitCell(typename UnitCell<D>::LatticeSystem lattice,
-                       FSArray<double, 6> const & parameters);
-
-      /**
-      * Set parameters of the associated unit cell.
-      *
-      * The lattice type must have been set before this function is
-      * called. The logical size of the FSArray<double, 6> "parameters"
-      * array must match the expected number of parameters for the
-      * current lattice type.
-      *
-      * See documentation of setUnitCell(UnitCell<D> const &) regarding
-      * possible construction of a basis as a side effect.
+      * If a space group has been declared but a basis has not yet been
+      * initialized, then the symmetry-adapted basis will be initialized.
       *
       * \param parameters  array of new unit cell parameters
       */
@@ -708,11 +686,6 @@ namespace Rpg {
       * Get the Interaction (excess free energy) by const reference.
       */
       Interaction const & interaction() const;
-	
-      /**
-      * Get the Domain by non-const reference.
-      */
-      Domain<D>& domain();
 
       /**
       * Get the Domain by const reference.
@@ -1023,11 +996,6 @@ namespace Rpg {
       UTIL_ASSERT(interactionPtr_);
       return *interactionPtr_;
    }
-
-   // Get the Domain by non-const reference.
-   template <int D>
-   inline Domain<D>& System<D>::domain()
-   {  return domain_; }
 
    // Get the Domain by const reference.
    template <int D>

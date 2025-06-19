@@ -926,42 +926,6 @@ namespace Rpg {
       UTIL_CHECK(!domain_.waveList().hasKSq());
    }
 
-   #if 1
-   /*
-   * Set the system unit cell.
-   */
-   template <int D>
-   void
-   System<D>::setUnitCell(typename UnitCell<D>::LatticeSystem lattice,
-                          FSArray<double, 6> const & parameters)
-   {
-      // Preconditions
-      UTIL_CHECK(domain_.lattice() != UnitCell<D>::Null);
-      UTIL_CHECK(domain_.lattice() == lattice);
-
-      // Set system unit cell
-      if (domain_.unitCell().lattice() == UnitCell<D>::Null) {
-         domain_.unitCell().set(domain_.lattice(), parameters);
-      } else {
-         domain_.unitCell().setParameters(parameters);
-      }
-
-      // If necessary, make basis
-      if (domain_.hasGroup() && !domain_.basis().isInitialized()) {
-         domain_.makeBasis();
-      }
-
-      // Postconditions
-      UTIL_CHECK(domain_.unitCell().isInitialized());
-      UTIL_CHECK(domain_.unitCell().lattice() == domain_.lattice());
-      if (domain_.hasGroup()) {
-         UTIL_CHECK(domain_.basis().isInitialized());
-         UTIL_CHECK(isAllocatedBasis_);
-      }
-      UTIL_CHECK(!domain_.waveList().hasKSq());
-   }
-   #endif
-
    /*
    * Set parameters of the system unit cell.
    */

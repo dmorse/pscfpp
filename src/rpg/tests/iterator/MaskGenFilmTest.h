@@ -98,7 +98,8 @@ public:
       // Set unit cell parameter
       FSArray<double, 6> parameters;
       parameters.append(2.9);
-      system1.setUnitCell(UnitCell<1>::Lamellar, parameters);
+      //system1.setUnitCell(UnitCell<1>::Lamellar, parameters);
+      system1.setUnitCell(parameters);
       
       MaskGenFilm<1> mask1(system1);
       createMaskGenFilm(mask1, "in/filmMask1");
@@ -119,7 +120,8 @@ public:
       parameters.clear();
       parameters.append(2.0);
       parameters.append(3.0);
-      system2.setUnitCell(UnitCell<2>::Rectangular, parameters);
+      //system2.setUnitCell(UnitCell<2>::Rectangular, parameters);
+      system2.setUnitCell(parameters);
 
       MaskGenFilm<2> mask2(system2);
       createMaskGenFilm(mask2, "in/filmMask2");
@@ -138,7 +140,8 @@ public:
       // Set unit cell parameters
       parameters.clear();
       parameters.append(2.0);
-      system3.setUnitCell(UnitCell<2>::Square, parameters);
+      //system3.setUnitCell(UnitCell<2>::Square, parameters);
+      system3.setUnitCell(parameters);
 
       MaskGenFilm<2> mask3(system3);
       createMaskGenFilm(mask3, "in/filmMask2");
@@ -155,7 +158,8 @@ public:
       parameters.clear();
       parameters.append(2.0);
       parameters.append(4.2);
-      system4.setUnitCell(UnitCell<3>::Tetragonal, parameters);
+      //system4.setUnitCell(UnitCell<3>::Tetragonal, parameters);
+      system4.setUnitCell(parameters);
 
       MaskGenFilm<3> mask4(system4);
       createMaskGenFilm(mask4, "in/filmMask3");
@@ -178,7 +182,8 @@ public:
       parameters.append(3.0);
       parameters.append(4.0);
       parameters.append(1.57079632679489662); // pi/2
-      system5.setUnitCell(UnitCell<3>::Monoclinic, parameters);
+      //system5.setUnitCell(UnitCell<3>::Monoclinic, parameters);
+      system5.setUnitCell(parameters);
 
       MaskGenFilm<3> mask5(system5);
       createMaskGenFilm(mask5, "in/filmMask3");
@@ -195,7 +200,8 @@ public:
 
       // Change beta, making the lattice vectors incompatible
       parameters[3] = 1.0;
-      system5.setUnitCell(UnitCell<3>::Monoclinic, parameters);
+      //system5.setUnitCell(UnitCell<3>::Monoclinic, parameters);
+      system5.setUnitCell(parameters);
       Log::file() << "Testing system 6:" << std::endl;
       TEST_ASSERT(checkCheckCompatibility(mask5,true));
 
@@ -221,7 +227,8 @@ public:
       FSArray<double, 6> parameters;
       parameters.append(1.6353661975);
       parameters.append(2.0);
-      system.setUnitCell(UnitCell<2>::Rectangular, parameters);
+      //system.setUnitCell(UnitCell<2>::Rectangular, parameters);
+      system.setUnitCell(parameters);
 
       // Set up mask
       MaskGenFilm<2> mask(system);
@@ -260,7 +267,8 @@ public:
       // Set unit cell parameter
       FSArray<double, 6> parameters;
       parameters.append(2.9);
-      system.setUnitCell(UnitCell<1>::Lamellar, parameters);
+      //system.setUnitCell(UnitCell<1>::Lamellar, parameters);
+      system.setUnitCell(parameters);
 
       // Set up mask
       MaskGenFilm<1> mask(system);
@@ -270,7 +278,8 @@ public:
 
       // Change lattice parameter and update
       parameters[0] = 3.0;
-      system.setUnitCell(UnitCell<1>::Lamellar, parameters);
+      //system.setUnitCell(UnitCell<1>::Lamellar, parameters);
+      system.setUnitCell(parameters);
       TEST_ASSERT(mask.updateNeeded());
       mask.update();
 
@@ -300,7 +309,8 @@ public:
       FSArray<double, 6> parameters;
       parameters.append(1.6353661975);
       parameters.append(2.0);
-      system.setUnitCell(UnitCell<2>::Rectangular, parameters);
+      //system.setUnitCell(UnitCell<2>::Rectangular, parameters);
+      system.setUnitCell(parameters);
 
       // Set up mask
       MaskGenFilm<2> mask(system);
@@ -338,7 +348,8 @@ public:
       // Set unit cell parameter
       FSArray<double, 6> parameters;
       parameters.append(2.0);
-      system.setUnitCell(UnitCell<1>::Lamellar, parameters);
+      // system.setUnitCell(UnitCell<1>::Lamellar, parameters);
+      system.setUnitCell(parameters);
 
       // Set up mask
       MaskGenFilm<1> mask(system);

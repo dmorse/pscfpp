@@ -23,8 +23,8 @@ namespace Prdc {
    */
    template <int D, class FFT, class WLT, class FIT>
    DomainReal<D,FFT,WLT,FIT>::DomainReal()
-    : unitCell_(),
-      mesh_(),
+    : mesh_(),
+      unitCell_(),
       group_(),
       basis_(),
       fft_(),
@@ -86,7 +86,7 @@ namespace Prdc {
       UTIL_CHECK(unitCell_.lattice() != UnitCell<D>::Null);
       UTIL_CHECK(unitCell_.nParameter() > 0);
 
-      // Allocate memory for WLT
+      // Allocate memory for WaveList
       waveList_.allocate(mesh_, unitCell_);
 
       // Optionally read groupName_ (string identifier for space group)
@@ -94,7 +94,7 @@ namespace Prdc {
       bool hasGroupName = false;
       hasGroupName = readOptional(in, "groupName", groupName_).isActive();
 
-      // If groupName_ exists, construct group_ (space group)
+      // If groupName_ exists, read and construct group_ (space group)
       if (hasGroupName) {
          // Read group symmetry operations from file
          // An Exception is thrown if groupName_ string is not recognized

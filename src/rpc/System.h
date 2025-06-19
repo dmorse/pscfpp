@@ -293,25 +293,6 @@ namespace Rpc {
       */
       void setUnitCell(UnitCell<D> const & unitCell);
 
-      #if 0
-      /**
-      * Set parameters of the associated unit cell.
-      *
-      * The "lattice" (lattice system) enumeration parameter must agree
-      * with any lattice value that was set previously in the parameter
-      * file. The logical size of the "parameters" array must agree with
-      * the expected number of lattice parameters for this lattice type.
-      *
-      * See documentation of setUnitCell(UnitCell<D> const &) regarding
-      * possible construction of a basis as a side effect.
-      *
-      * \param lattice  lattice system
-      * \param parameters  array of new unit cell parameters
-      */
-      void setUnitCell(typename UnitCell<D>::LatticeSystem lattice,
-                       FSArray<double, 6> const & parameters);
-      #endif
-
       /**
       * Set parameters of the associated unit cell.
       *
