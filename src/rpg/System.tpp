@@ -508,8 +508,8 @@ namespace Rpg {
             writeQTail(filename, polymerId, blockId, directionId);
          } else
          if (command == "WRITE_Q") {
-            int polymerId, blockId, directionId;
             readEcho(in, filename);
+            int polymerId, blockId, directionId;
             in >> polymerId;
             in >> blockId;
             in >> directionId;
@@ -573,7 +573,7 @@ namespace Rpg {
             hasSymmetry = fieldIo.hasSymmetry(inFileName, epsilon);
             if (hasSymmetry) {
                Log::file() << std::endl
-                   << "Symmetry of r-grid file matches this space group."
+                   << "Symmetry of r-grid file matches this space group"
                    << std::endl << std::endl;
             } else {
                Log::file() << std::endl
@@ -886,8 +886,8 @@ namespace Rpg {
    void System<D>::setWRGrid(DArray< RField<D> > const & fields)
    {
       // Preconditions
-      UTIL_CHECK(domain_.unitCell().isInitialized());
       UTIL_CHECK(isAllocatedGrid_);
+      UTIL_CHECK(domain_.unitCell().isInitialized());
 
       w_.setRGrid(fields);
 
@@ -1000,8 +1000,8 @@ namespace Rpg {
       UTIL_CHECK(hasIterator());
       UTIL_CHECK(w_.hasData());
       if (iterator().isSymmetric()) {
-         UTIL_CHECK(w_.isSymmetric());
          UTIL_CHECK(isAllocatedBasis_);
+         UTIL_CHECK(w_.isSymmetric());
       }
       clearCFields();
 
@@ -1014,12 +1014,10 @@ namespace Rpg {
 
       // If converged, compute related thermodynamic properties
       if (!error) {
-         if (!iterator().isFlexible()) {
-            mixture_.computeStress(mask().phiTot());
-         }
          computeFreeEnergy(); // Sets hasFreeEnergy_ = true
          writeThermo(Log::file());
          if (!iterator().isFlexible()) {
+            mixture_.computeStress(mask().phiTot());
             writeStress(Log::file());
          }
       }
@@ -1038,8 +1036,8 @@ namespace Rpg {
       UTIL_CHECK(hasSweep());
       UTIL_CHECK(w_.hasData());
       if (iterator().isSymmetric()) {
-         UTIL_CHECK(w_.isSymmetric());
          UTIL_CHECK(isAllocatedBasis_);
+         UTIL_CHECK(w_.isSymmetric());
       }
 
       Log::file() << std::endl;

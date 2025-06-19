@@ -681,14 +681,14 @@ namespace Rpc {
             readEcho(in, filename);
             UTIL_CHECK(h_.hasData());
             UTIL_CHECK(h_.isSymmetric());
-            domain_.fieldIo().writeFieldsBasis(filename, h_.basis(),
-                                               domain_.unitCell());
+            fieldIo.writeFieldsBasis(filename, h_.basis(),
+                                     domain_.unitCell());
          } else
          if (command == "WRITE_H_RGRID") {
             readEcho(in, filename);
             UTIL_CHECK(h_.hasData());
-            domain_.fieldIo().writeFieldsRGrid(filename, h_.rgrid(),
-                                               domain_.unitCell());
+            fieldIo.writeFieldsRGrid(filename, h_.rgrid(),
+                                     domain_.unitCell());
          } else
          if (command == "READ_MASK_BASIS") {
             readEcho(in, filename);
@@ -718,15 +718,15 @@ namespace Rpc {
             readEcho(in, filename);
             UTIL_CHECK(mask_.hasData());
             UTIL_CHECK(mask_.isSymmetric());
-            domain_.fieldIo().writeFieldBasis(filename, mask_.basis(),
-                                              domain_.unitCell());
+            fieldIo.writeFieldBasis(filename, mask_.basis(),
+                                    domain_.unitCell());
          } else
          if (command == "WRITE_MASK_RGRID") {
             readEcho(in, filename);
             UTIL_CHECK(mask_.hasData());
-            domain_.fieldIo().writeFieldRGrid(filename, mask_.rgrid(),
-                                              domain_.unitCell(),
-                                              mask_.isSymmetric());
+            fieldIo.writeFieldRGrid(filename, mask_.rgrid(),
+                                    domain_.unitCell(),
+                                    mask_.isSymmetric());
          } else
          if (command == "WRITE_TIMERS") {
             readEcho(in, filename);
@@ -1015,11 +1015,9 @@ namespace Rpc {
       // If converged, compute related thermodynamic properties
       if (!error) {
          computeFreeEnergy(); // Sets hasFreeEnergy_ = true
-         if (!iterator().isFlexible()) {
-            mixture_.computeStress(mask().phiTot());
-         }
          writeThermo(Log::file());
          if (!iterator().isFlexible()) {
+            mixture_.computeStress(mask().phiTot());
             writeStress(Log::file());
          }
       }
@@ -1162,8 +1160,10 @@ namespace Rpc {
 
       // Compute contribution from external fields, if they exist
       if (hasExternalFields()) {
-         if (w_.isSymmetric()) {
+         if (w_.isSymmetric() && h_.isSymmetric()) {
             // Use expansion in symmetry-adapted orthonormal basis
+            UTIL_CHECK(h_.isAllocatedBasis());
+            UTIL_CHECK(c_.isAllocatedBasis());
             const int nBasis = domain_.basis().nBasis();
             for (int i = 0; i < nm; ++i) {
                for (int k = 0; k < nBasis; ++k) {

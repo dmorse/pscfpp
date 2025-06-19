@@ -27,6 +27,7 @@ Developer-visible changes
 -------------------------
 * Introduction of WaveList in code for pscf_pc, by analogy to pscf_pg
 * Re-organization to reduce code duplication between Rpc, Rpg namespaces
+* Introduce use of signals (Util::Signal) to coordinate object states
 * Move file manipulation functions from System to FieldIo in Rpc, Rpg
 
 Version 1.2.0 (4/14/2025)

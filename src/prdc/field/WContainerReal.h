@@ -70,6 +70,14 @@ namespace Prdc {
    *    RField = Cuda::RField \<D\> and FieldIo = Rpg::FieldIo \<D\> ,
    *    and is use in the pscf_pg GPU accelerated program.
    *
+   * <b> Signal </b>: A WContainerReal owns an instance of class
+   * Util::Signal<void> that notifies all observers whenever the fields
+   * owned by the WContainerReal are modified. The signal object may be 
+   * accessed by reference using the signal() member function, and the
+   * Util::Signal<void>::addObserver function may used to add observer 
+   * objects and indicate a zero-parameter member function of each 
+   * observer that will be called whenever the fields are modified.
+   *
    * \ingroup Prdc_Field_Module
    */
    template <int D, class RField, class FieldIo>
@@ -151,6 +159,9 @@ namespace Prdc {
       *
       * This function also computes and stores the corresponding r-grid
       * representation. On return, hasData and isSymmetric are both true.
+      * 
+      * The associated basis be initialized on entry.  As needed, r-grid
+      * and/or basis fields may be allocated within this function.
       *
       * \param fields  array of new fields in basis format
       */
@@ -168,6 +179,10 @@ namespace Prdc {
       * defined by the class is set to the value of the isSymmetric
       * input parameter.
       *
+      * As needed, r-grid and/or basis fields may be allocated within this 
+      * function. If isSymmetric is true, a basis must be initialized on 
+      * entry.
+      *
       * \param fields  array of new fields in r-grid format
       * \param isSymmetric is this field symmetric under the space group?
       */
@@ -175,15 +190,14 @@ namespace Prdc {
                     bool isSymmetric = false);
 
       /**
-      * Read field component values from input stream, in symmetrized
-      * Fourier format.
+      * Read fields from an input stream in symmetrized basis format.
       *
-      * This function also computes and stores the corresponding
-      * r-grid representation. On return, hasData and isSymmetric
-      * are both true.
+      * This function also computes and stores the corresponding r-grid
+      * representation. On return, hasData and isSymmetric are both true.
       *
-      * This object must already be allocated and associated with
-      * a FieldIo object to run this function.
+      * As needed, r-grid and/or basis fields can be allocated within
+      * this function, if not allocated on entry. An associated basis 
+      * will be initialized if not initialized on entry.
       *
       * \param in  input stream from which to read fields
       * \param unitCell  associated crystallographic unit cell
@@ -191,15 +205,15 @@ namespace Prdc {
       void readBasis(std::istream& in, UnitCell<D>& unitCell);
 
       /**
-      * Read field component values from file, in symmetrized
-      * Fourier format.
+      * Read fields from a named file, in symmetrized basis format.
       *
       * This function also computes and stores the corresponding
       * r-grid representation. On return, hasData and isSymmetric
       * are both true.
       *
-      * This object must already be allocated and associated with
-      * a FieldIo object to run this function.
+      * As needed, r-grid and/or basis fields may be allocated within
+      * this function, if not allocated on entry. An associated basis
+      * will be initialized if not initialized on entry.
       *
       * \param filename  file from which to read fields
       * \param unitCell  associated crystallographic unit cell
@@ -218,8 +232,9 @@ namespace Prdc {
       * defined by the class is set to the value of the isSymmetric
       * input parameter.
       *
-      * This object must already be allocated and associated with a
-      * FieldIo object to run this function.
+      * As needed, r-grid and/or basis fields may be allocated within
+      * this function, if not allocated on entry. An associated basis
+      * will be initialized if not initialized on entry.
       *
       * \param in  input stream from which to read fields
       * \param unitCell  associated crystallographic unit cell
@@ -229,7 +244,7 @@ namespace Prdc {
                      bool isSymmetric = false);
 
       /**
-      * Reads fields from a file in real-space (r-grid) format.
+      * Reads fields from a named file in real-space (r-grid) format.
       *
       * If the isSymmetric parameter is true, this function assumes that
       * the fields are known to be symmetric and so computes and stores
@@ -240,8 +255,9 @@ namespace Prdc {
       * defined by the class is set to the value of the isSymmetric input
       * parameter.
       *
-      * This object must already be allocated and associated with a
-      * FieldIo object to run this function.
+      * As needed, r-grid and/or basis fields may be allocated within
+      * this function, if not allocated on entry. An associated basis
+      * will be initialized if not initialized on entry.
       *
       * \param filename  file from which to read fields
       * \param unitCell  associated crystallographic unit cell
