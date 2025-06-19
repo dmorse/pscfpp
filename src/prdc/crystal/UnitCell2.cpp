@@ -6,8 +6,6 @@
 */
 
 #include "UnitCell.h"
-#include "UnitCellBase.tpp"
-
 #include <util/math/Constants.h>
 
 namespace Pscf {
@@ -15,8 +13,7 @@ namespace Prdc {
 
    using namespace Util;
 
-   // Explicit instantiation of base class
-   template class UnitCellBase<2>;
+   // Member functions of UnitCell<2>
 
    /*
    * Constructor.
@@ -157,64 +154,6 @@ namespace Prdc {
    }
 
    /*
-   * Extract a UnitCell<2>::LatticeSystem from an istream as a string.
-   */
-   std::istream& operator >> (std::istream& in,
-                              UnitCell<2>::LatticeSystem& lattice)
-   {
-
-      std::string buffer;
-      in >> buffer;
-      if (buffer == "Square" || buffer == "square") {
-         lattice = UnitCell<2>::Square;
-      } else
-      if (buffer == "Rectangular" || buffer == "rectangular") {
-         lattice = UnitCell<2>::Rectangular;
-      } else
-      if (buffer == "Rhombic" || buffer == "rhombic") {
-         lattice = UnitCell<2>::Rhombic;
-      } else
-      if (buffer == "Hexagonal" || buffer == "hexagonal") {
-         lattice = UnitCell<2>::Hexagonal;
-      } else
-      if (buffer == "Oblique" || buffer == "oblique") {
-         lattice = UnitCell<2>::Oblique;
-      } else {
-         UTIL_THROW("Invalid UnitCell<2>::LatticeSystem value input");
-      }
-      return in;
-   }
-
-   /*
-   * Insert a UnitCell<2>::LatticeSystem to an ostream as a string.
-   */
-   std::ostream& operator << (std::ostream& out,
-                              UnitCell<2>::LatticeSystem lattice)
-   {
-      if (lattice == UnitCell<2>::Square) {
-         out << "square";
-      } else
-      if (lattice == UnitCell<2>::Rectangular) {
-         out << "rectangular";
-      } else
-      if (lattice == UnitCell<2>::Rhombic) {
-         out << "rhombic";
-      } else
-      if (lattice == UnitCell<2>::Hexagonal) {
-         out << "hexagonal";
-      } else
-      if (lattice == UnitCell<2>::Oblique) {
-         out << "oblique";
-      } else
-      if (lattice == UnitCell<2>::Null) {
-         out << "Null";
-      } else {
-         UTIL_THROW("This should never happen");
-      }
-      return out;
-   }
-
-   /*
    * Assignment operator.
    */
    UnitCell<2>& UnitCell<2>::operator = (const UnitCell<2>& other)
@@ -272,6 +211,65 @@ namespace Prdc {
       return a;
    }
 
+   // UnitCell<2>::LatticeSystem stream IO operators
+
+   /*
+   * Extract a UnitCell<2>::LatticeSystem from an istream as a string.
+   */
+   std::istream& operator >> (std::istream& in,
+                              UnitCell<2>::LatticeSystem& lattice)
+   {
+
+      std::string buffer;
+      in >> buffer;
+      if (buffer == "Square" || buffer == "square") {
+         lattice = UnitCell<2>::Square;
+      } else
+      if (buffer == "Rectangular" || buffer == "rectangular") {
+         lattice = UnitCell<2>::Rectangular;
+      } else
+      if (buffer == "Rhombic" || buffer == "rhombic") {
+         lattice = UnitCell<2>::Rhombic;
+      } else
+      if (buffer == "Hexagonal" || buffer == "hexagonal") {
+         lattice = UnitCell<2>::Hexagonal;
+      } else
+      if (buffer == "Oblique" || buffer == "oblique") {
+         lattice = UnitCell<2>::Oblique;
+      } else {
+         UTIL_THROW("Invalid UnitCell<2>::LatticeSystem value input");
+      }
+      return in;
+   }
+
+   /*
+   * Insert a UnitCell<2>::LatticeSystem to an ostream as a string.
+   */
+   std::ostream& operator << (std::ostream& out,
+                              UnitCell<2>::LatticeSystem lattice)
+   {
+      if (lattice == UnitCell<2>::Square) {
+         out << "square";
+      } else
+      if (lattice == UnitCell<2>::Rectangular) {
+         out << "rectangular";
+      } else
+      if (lattice == UnitCell<2>::Rhombic) {
+         out << "rhombic";
+      } else
+      if (lattice == UnitCell<2>::Hexagonal) {
+         out << "hexagonal";
+      } else
+      if (lattice == UnitCell<2>::Oblique) {
+         out << "oblique";
+      } else
+      if (lattice == UnitCell<2>::Null) {
+         out << "Null";
+      } else {
+         UTIL_THROW("This should never happen");
+      }
+      return out;
+   }
 
 }
 }

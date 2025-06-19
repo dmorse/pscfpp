@@ -6,8 +6,6 @@
 */
 
 #include "UnitCell.h"
-#include "UnitCellBase.tpp"
-
 #include <util/math/Constants.h>
 
 namespace Pscf {
@@ -15,8 +13,7 @@ namespace Prdc {
 
    using namespace Util;
 
-   // Explicit instantiation of base class
-   template class UnitCellBase<1>;
+   // Member functions of UnitCell<1>
 
    /*
    * Constructor.
@@ -49,40 +46,6 @@ namespace Prdc {
       rBasis_[0][0] = parameters_[0];
       kBasis_[0][0] = 2.0*Constants::Pi/parameters_[0];
       drBasis_[0](0,0) = 1.0;
-   }
-
-   /*
-   * Extract a UnitCell<1>::LatticeSystem from an istream as a string.
-   */
-   std::istream& operator >> (std::istream& in,
-                              UnitCell<1>::LatticeSystem& lattice)
-   {
-
-      std::string buffer;
-      in >> buffer;
-      if (buffer == "Lamellar" || buffer == "lamellar") {
-         lattice = UnitCell<1>::Lamellar;
-      } else {
-         UTIL_THROW("Invalid UnitCell<1>::LatticeSystem value input");
-      }
-      return in;
-   }
-
-   /*
-   * Insert a UnitCell<1>::LatticeSystem to an ostream as a string.
-   */
-   std::ostream& operator << (std::ostream& out,
-                              UnitCell<1>::LatticeSystem lattice)
-   {
-      if (lattice == UnitCell<1>::Lamellar) {
-         out << "lamellar";
-      } else 
-      if (lattice == UnitCell<1>::Null) {
-         out << "Null";
-      } else {
-         UTIL_THROW("Invalid value of UnitCell<1>::Lamellar");
-      }
-      return out;
    }
 
    /*
@@ -138,6 +101,42 @@ namespace Prdc {
    double UnitCell<1>::volume() const
    {
       return rBasis_[0][0];
+   }
+
+   // UnitCell<1>::LatticeSystem stream IO operators
+
+   /*
+   * Extract a UnitCell<1>::LatticeSystem from an istream as a string.
+   */
+   std::istream& operator >> (std::istream& in,
+                              UnitCell<1>::LatticeSystem& lattice)
+   {
+
+      std::string buffer;
+      in >> buffer;
+      if (buffer == "Lamellar" || buffer == "lamellar") {
+         lattice = UnitCell<1>::Lamellar;
+      } else {
+         UTIL_THROW("Invalid UnitCell<1>::LatticeSystem value input");
+      }
+      return in;
+   }
+
+   /*
+   * Insert a UnitCell<1>::LatticeSystem to an ostream as a string.
+   */
+   std::ostream& operator << (std::ostream& out,
+                              UnitCell<1>::LatticeSystem lattice)
+   {
+      if (lattice == UnitCell<1>::Lamellar) {
+         out << "lamellar";
+      } else 
+      if (lattice == UnitCell<1>::Null) {
+         out << "Null";
+      } else {
+         UTIL_THROW("Invalid value of UnitCell<1>::Lamellar");
+      }
+      return out;
    }
 
 }

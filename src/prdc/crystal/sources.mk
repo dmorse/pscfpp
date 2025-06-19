@@ -1,4 +1,5 @@
 prdc_crystal_= \
+  prdc/crystal/UnitCellBase.cpp \
   prdc/crystal/UnitCell1.cpp \
   prdc/crystal/UnitCell2.cpp \
   prdc/crystal/UnitCell3.cpp \

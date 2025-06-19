@@ -10,6 +10,7 @@
 
 #include <prdc/crystal/Basis.h>
 #include <prdc/crystal/UnitCell.h>
+#include <prdc/crystal/unitCellHeader.h>
 #include <prdc/crystal/replicateUnitCell.h>
 #include <prdc/crystal/shiftToMinimum.h>
 

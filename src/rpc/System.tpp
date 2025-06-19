@@ -20,6 +20,7 @@
 #include <rpc/solvers/Polymer.h>
 #include <rpc/solvers/Solvent.h>
 
+
 #include <prdc/cpu/RField.h>
 #include <prdc/cpu/RFieldDft.h>
 #include <prdc/cpu/RFieldComparison.h>
@@ -81,6 +82,7 @@ namespace Rpc {
    {
       setClassName("System");  // Set block label in parameter file
       BracketPolicy::set(BracketPolicy::Optional);
+
 
       // Create associations among class members
       domain_.setFileMaster(fileMaster_);
@@ -193,7 +195,7 @@ namespace Rpc {
             oFlag = true;
             oArg  = optarg;
             break;
-         case 't':
+         case 't': // number of threads, user set
             tFlag = true;
             tArg = atoi(optarg);
             break;
@@ -298,7 +300,7 @@ namespace Rpc {
       // Allocate memory for w and c fields in r-grid form
       allocateFieldsGrid();
 
-      // Optionally instantiate an Iterator object
+      // Optionally construct an Iterator object
       std::string className;
       bool isEnd;
       iteratorPtr_ =
@@ -308,7 +310,7 @@ namespace Rpc {
          Log::file() << indent() << "  Iterator{ [absent] }\n";
       }
 
-      // Optionally instantiate a Sweep object (if an iterator exists)
+      // Optionally construct a Sweep object (if an iterator exists)
       if (hasIterator() && !isEnd) {
          sweepPtr_ =
             sweepFactoryPtr_->readObjectOptional(in, *this, className,
@@ -318,7 +320,7 @@ namespace Rpc {
          }
       }
 
-      // Optionally instantiate a Simulator object
+      // Optionally construct a Simulator object
       if (!isEnd) {
          simulatorPtr_ =
             simulatorFactoryPtr_->readObjectOptional(in, *this,
@@ -575,7 +577,7 @@ namespace Rpc {
                    << std::endl << std::endl;
             } else {
                Log::file() << std::endl
-                   << "Symmetry of r-grid file does not match this"
+                   << "Symmetry of r-grid file does not match this\n"
                    << "space group to within error threshold of "
                    << Dbl(epsilon) << " ." << std::endl << std::endl;
             }
@@ -640,7 +642,7 @@ namespace Rpc {
             // Read numbers of replicas along each direction
             IntVec<D> replicas;
             for (int i = 0; i < D; i++){
-              in >> replicas[i];
+               in >> replicas[i];
             }
             for (int i = 0; i < D; i++){
                Log::file() << "Replicate unit cell in direction "
@@ -648,8 +650,8 @@ namespace Rpc {
                Log::file() << replicas[i] << " times ";
                Log::file() << "\n";
             }
-
             fieldIo.replicateUnitCell(inFileName, outFileName, replicas);
+
          } else
          if (command == "READ_H_BASIS") {
             readEcho(in, filename);
@@ -758,7 +760,7 @@ namespace Rpc {
    // W Field Modifier Functions
 
    /*
-   * Read w field in symmetry adapted basis format.
+   * Read w field in symmetry-adapted basis format.
    */
    template <int D>
    void System<D>::readWBasis(std::string const & filename)
@@ -791,7 +793,7 @@ namespace Rpc {
       // Read w fields and set unit cell parameters
       w_.readRGrid(filename, domain_.unitCell());
 
-      // Postcondition
+      // Postconditions
       UTIL_CHECK(domain_.unitCell().isInitialized());
       UTIL_CHECK(!domain_.waveList().hasKSq());
       UTIL_CHECK(!hasCFields_);
@@ -818,7 +820,7 @@ namespace Rpc {
       UTIL_CHECK(nm > 0);
       UTIL_CHECK(nb > 0);
 
-      // Allocate an array of fields
+      // Allocate local array of fields in basis format
       DArray< DArray<double> > tmpFieldsBasis;
       tmpFieldsBasis.allocate(nm);
       for (int i = 0; i < nm; ++i) {
@@ -850,7 +852,7 @@ namespace Rpc {
       // Set estimated w fields in system w field container
       w_.setBasis(tmpFieldsBasis);
 
-      // Postcondition
+      // Postconditions
       UTIL_CHECK(domain_.unitCell().isInitialized());
       UTIL_CHECK(!domain_.waveList().hasKSq());
       UTIL_CHECK(!hasCFields_);
@@ -858,7 +860,7 @@ namespace Rpc {
    }
 
    /*
-   * Set new w field values.
+   * Set new w field values in basis form.
    */
    template <int D>
    void System<D>::setWBasis(DArray< DArray<double> > const & fields)
@@ -1067,13 +1069,14 @@ namespace Rpc {
    template <int D>
    void System<D>::sweep()
    {
+      // Preconditions
       UTIL_CHECK(hasIterator());
+      UTIL_CHECK(hasSweep());
       UTIL_CHECK(w_.hasData());
       if (iterator().isSymmetric()) {
          UTIL_CHECK(isAllocatedBasis_);
          UTIL_CHECK(w_.isSymmetric());
       }
-      UTIL_CHECK(hasSweep());
 
       Log::file() << std::endl;
       Log::file() << std::endl;
@@ -1171,6 +1174,8 @@ namespace Rpc {
       double temp = 0.0;
       if (w_.isSymmetric()) {
          // Use expansion in symmetry-adapted orthonormal basis
+         UTIL_CHECK(w_.isAllocatedBasis());
+         UTIL_CHECK(c_.isAllocatedBasis());
          const int nBasis = domain_.basis().nBasis();
          for (int i = 0; i < nm; ++i) {
             for (int k = 0; k < nBasis; ++k) {
@@ -1217,6 +1222,7 @@ namespace Rpc {
 
       // Compute excess interaction free energy [ phi^{T}*chi*phi/2 ]
       if (w_.isSymmetric()) {
+         UTIL_CHECK(c_.isAllocatedBasis());
          const int nBasis = domain_.basis().nBasis();
          for (int i = 0; i < nm; ++i) {
             for (int j = i; j < nm; ++j) {
@@ -1401,11 +1407,13 @@ namespace Rpc {
    template <int D>
    void System<D>::writeWBasis(std::string const & filename) const
    {
+      // Preconditions
       UTIL_CHECK(domain_.unitCell().isInitialized());
       UTIL_CHECK(domain_.basis().isInitialized());
       UTIL_CHECK(isAllocatedBasis_);
       UTIL_CHECK(w_.hasData());
       UTIL_CHECK(w_.isSymmetric());
+
       domain_.fieldIo().writeFieldsBasis(filename, w_.basis(),
                                          domain_.unitCell());
    }
@@ -1416,9 +1424,11 @@ namespace Rpc {
    template <int D>
    void System<D>::writeWRGrid(std::string const & filename) const
    {
+      // Preconditions
       UTIL_CHECK(isAllocatedGrid_);
       UTIL_CHECK(domain_.unitCell().isInitialized());
       UTIL_CHECK(w_.hasData());
+
       domain_.fieldIo().writeFieldsRGrid(filename, w_.rgrid(),
                                          domain_.unitCell(),
                                          w_.isSymmetric());
@@ -1430,11 +1440,14 @@ namespace Rpc {
    template <int D>
    void System<D>::writeCBasis(std::string const & filename) const
    {
+      // Preconditions
+      UTIL_CHECK(isAllocatedGrid_);
       UTIL_CHECK(domain_.unitCell().isInitialized());
       UTIL_CHECK(domain_.basis().isInitialized());
       UTIL_CHECK(isAllocatedBasis_);
       UTIL_CHECK(hasCFields_);
       UTIL_CHECK(w_.isSymmetric());
+
       domain_.fieldIo().writeFieldsBasis(filename, c_.basis(),
                                          domain_.unitCell());
    }
@@ -1445,9 +1458,11 @@ namespace Rpc {
    template <int D>
    void System<D>::writeCRGrid(std::string const & filename) const
    {
+      // Preconditions
       UTIL_CHECK(isAllocatedGrid_);
       UTIL_CHECK(domain_.unitCell().isInitialized());
       UTIL_CHECK(hasCFields_);
+
       domain_.fieldIo().writeFieldsRGrid(filename, c_.rgrid(),
                                          domain_.unitCell(),
                                          w_.isSymmetric());
@@ -1460,6 +1475,7 @@ namespace Rpc {
    template <int D>
    void System<D>::writeBlockCRGrid(std::string const & filename) const
    {
+      // Preconditions
       UTIL_CHECK(isAllocatedGrid_);
       UTIL_CHECK(domain_.unitCell().isInitialized());
       UTIL_CHECK(hasCFields_);
@@ -1527,8 +1543,8 @@ namespace Rpc {
       RField<D> const &
             field = polymer.propagator(blockId, directionId).tail();
       domain_.fieldIo().writeFieldRGrid(filename, field,
-                                         domain_.unitCell(),
-                                         w_.isSymmetric());
+                                        domain_.unitCell(),
+                                        w_.isSymmetric());
    }
 
    /*
@@ -1682,7 +1698,7 @@ namespace Rpc {
    template <int D>
    void System<D>::allocateFieldsBasis()
    {
-      // Preconditions
+      // Preconditions and constants
       UTIL_CHECK(hasMixture_);
       const int nMonomer = mixture_.nMonomer();
       UTIL_CHECK(nMonomer > 0);
@@ -1702,9 +1718,7 @@ namespace Rpc {
    }
 
    /*
-   * Peek at field file header to complete initialization.
-   *
-   * Initializes basis and calls allocateFieldsBasis if necessary.
+   * Peek at field file header, initialize basis if needed.
    */
    template <int D>
    void System<D>::readFieldHeader(std::string const & filename)

@@ -6,8 +6,6 @@
 */
 
 #include "UnitCell.h"
-#include "UnitCellBase.tpp"
-
 #include <util/math/Constants.h>
 
 namespace Pscf {
@@ -15,8 +13,7 @@ namespace Prdc {
 
    using namespace Util;
 
-   // Explicit instantiation of base class
-   template class UnitCellBase<3>;
+   // Member functions of UnitCell<3>
 
    /*
    * Constructor.
@@ -24,6 +21,25 @@ namespace Prdc {
    UnitCell<3>::UnitCell()
     : lattice_(Null)
    {}
+
+   /*
+   * Assignment operator.
+   */
+   UnitCell<3>& UnitCell<3>::operator = (UnitCell<3> const & other)
+   {
+      if (lattice_ != UnitCell<3>::Null) {
+         UTIL_CHECK(other.lattice_ == lattice_);
+      }
+      isInitialized_ = false;
+      lattice_ = other.lattice_;
+      setNParameter();
+      UTIL_CHECK(nParameter_ == other.nParameter_);
+      for (int i = 0; i < nParameter_; ++i) {
+         parameters_[i] = other.parameters_[i];
+      }
+      setLattice();
+      return *this;
+   }
 
    /*
    * Read the lattice system and set nParameter.
@@ -326,6 +342,51 @@ namespace Prdc {
    }
 
    /*
+   * Set lattice system of the unit cell (but not the parameters).
+   */
+   void UnitCell<3>::set(UnitCell<3>::LatticeSystem lattice)
+   {
+      UTIL_CHECK(lattice != UnitCell<3>::Null);
+      if (lattice_ != UnitCell<3>::Null) {
+         UTIL_CHECK(lattice == lattice_);
+      }
+      isInitialized_ = false;
+      lattice_ = lattice;
+      setNParameter();
+   }
+
+   /*
+   * Set state of the unit cell. 
+   */
+   void UnitCell<3>::set(UnitCell<3>::LatticeSystem lattice,
+                         FSArray<double, 6> const & parameters)
+   {
+      set(lattice);
+      UTIL_CHECK(parameters.size() == nParameter_);
+      for (int i = 0; i < nParameter_; ++i) {
+         parameters_[i] = parameters[i];
+      }   
+      setLattice();
+   }
+
+   /*
+   * Get the length of the unit cell. 
+   */
+   double UnitCell<3>::volume() const
+   {
+      double v = 0.0;
+      v += rBasis_[0][0]*rBasis_[1][1]*rBasis_[2][2];
+      v -= rBasis_[0][0]*rBasis_[1][2]*rBasis_[2][1];
+      v += rBasis_[0][1]*rBasis_[1][2]*rBasis_[2][0];
+      v -= rBasis_[0][1]*rBasis_[1][0]*rBasis_[2][2];
+      v += rBasis_[0][2]*rBasis_[1][0]*rBasis_[2][1];
+      v -= rBasis_[0][2]*rBasis_[1][1]*rBasis_[2][0];
+      return v;
+   }
+
+   // UnitCell<3>::LatticeSystem stream IO operators
+
+   /*
    * Extract a UnitCell<3>::LatticeSystem from an istream as a string.
    */
    std::istream& operator >> (std::istream& in,
@@ -393,68 +454,6 @@ namespace Prdc {
          UTIL_THROW("This should never happen");
       }
       return out;
-   }
-
-   /*
-   * Assignment operator.
-   */
-   UnitCell<3>& UnitCell<3>::operator = (UnitCell<3> const & other)
-   {
-      if (lattice_ != UnitCell<3>::Null) {
-         UTIL_CHECK(other.lattice_ == lattice_);
-      }
-      isInitialized_ = false;
-      lattice_ = other.lattice_;
-      setNParameter();
-      UTIL_CHECK(nParameter_ == other.nParameter_);
-      for (int i = 0; i < nParameter_; ++i) {
-         parameters_[i] = other.parameters_[i];
-      }
-      setLattice();
-      return *this;
-   }
-
-   /*
-   * Set lattice system of the unit cell (but not the parameters).
-   */
-   void UnitCell<3>::set(UnitCell<3>::LatticeSystem lattice)
-   {
-      UTIL_CHECK(lattice != UnitCell<3>::Null);
-      if (lattice_ != UnitCell<3>::Null) {
-         UTIL_CHECK(lattice == lattice_);
-      }
-      isInitialized_ = false;
-      lattice_ = lattice;
-      setNParameter();
-   }
-
-   /*
-   * Set state of the unit cell. 
-   */
-   void UnitCell<3>::set(UnitCell<3>::LatticeSystem lattice,
-                         FSArray<double, 6> const & parameters)
-   {
-      set(lattice);
-      UTIL_CHECK(parameters.size() == nParameter_);
-      for (int i = 0; i < nParameter_; ++i) {
-         parameters_[i] = parameters[i];
-      }   
-      setLattice();
-   }
-
-   /*
-   * Get the length of the unit cell. 
-   */
-   double UnitCell<3>::volume() const
-   {
-      double v = 0.0;
-      v += rBasis_[0][0]*rBasis_[1][1]*rBasis_[2][2];
-      v -= rBasis_[0][0]*rBasis_[1][2]*rBasis_[2][1];
-      v += rBasis_[0][1]*rBasis_[1][2]*rBasis_[2][0];
-      v -= rBasis_[0][1]*rBasis_[1][0]*rBasis_[2][2];
-      v += rBasis_[0][2]*rBasis_[1][0]*rBasis_[2][1];
-      v -= rBasis_[0][2]*rBasis_[1][1]*rBasis_[2][0];
-      return v;
    }
 
 }

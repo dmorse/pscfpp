@@ -20,44 +20,32 @@ namespace Prdc {
 
    using namespace Util;
 
-   template <int D>
-   std::istream& operator >> (std::istream& in,
-                              UnitCell<D>& cell)
-   {
-      typename UnitCell<D>::LatticeSystem lattice;
-      in >> lattice;
-      cell.set(lattice);
-      for (int i = 0; i < cell.nParameter_; ++i) {
-         in >> cell.parameters_[i];
-      }
-      cell.setLattice();
-      return in;
-   }
-
-   template <int D>
-   std::ostream& operator << (std::ostream& out,
-                              UnitCell<D> const & cell)
-   {
-      out << cell.lattice_;
-      for (int i = 0; i < cell.nParameter_; ++i) {
-         out << Dbl(cell.parameters_[i], 18, 10);
-      }
-      return out;
-   }
-
-   /*
-   * Serialize to/from an archive.
+   /**
+   * Read UnitCell<D> from a field file header (fortran PSCF format).
+   *
+   * If the unit cell has a non-null lattice system on entry, the
+   * value read from file must match this existing value, or this
+   * function throws an exception. If the lattice system is null on
+   * entry, the lattice system value is read from file. In either case,
+   * unit cell parameters (dimensions and angles) are updated using
+   * values read from file.
+   *
+   * \param  in  input stream
+   * \param  cell  UnitCell<D> to be read
+   * \ingroup Prdc_Crystal_Module
    */
-   template <class Archive, int D>
-   void serialize(Archive& ar, UnitCell<D>& cell, 
-                  const unsigned int version)
-   {
-      serializeEnum(ar, cell.lattice_, version);
-      ar & cell.nParameter_;
-      for (int i = 0; i < cell.nParameter_; ++i) {
-         ar & cell.parameters_[i];
-      }
-   }
+   template <int D>
+   void readUnitCellHeader(std::istream& in, UnitCell<D>& cell);
+
+   /**
+   * Write UnitCell<D> to a field file header (fortran PSCF format).
+   *
+   * \param out  output stream
+   * \param  cell  UnitCell<D> to be written
+   * \ingroup Prdc_Crystal_Module
+   */
+   template <int D>
+   void writeUnitCellHeader(std::ostream& out, UnitCell<D> const& cell);
 
    template <int D>
    void readUnitCellHeader(std::istream& in, UnitCell<D>& cell)
@@ -90,7 +78,7 @@ namespace Prdc {
    }
 
    template <int D>
-   void writeUnitCellHeader(std::ostream& out, UnitCell<D> const& cell)
+   void writeUnitCellHeader(std::ostream& out, UnitCell<D> const & cell)
    {
       out << "crystal_system" << std::endl 
           << "              " << cell.lattice_<< std::endl;
