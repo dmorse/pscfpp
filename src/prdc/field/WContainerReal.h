@@ -11,7 +11,7 @@
 #include <pscf/math/IntVec.h>              // member
 #include <util/containers/DArray.h>        // member template
 
-// Forward references
+// Forward declarations
 namespace Util {
    template <typename T> class Signal;
    template <> class Signal<void>;
@@ -30,31 +30,33 @@ namespace Prdc {
 
    /**
    * A container of fields stored in both basis and r-grid format.
+   * 
+   * <b> Field Representations </b>: A WContainerReal contains a list of
+   * nMonomer fields that are each associated with a monomer type. The
+   * fields may be stored in two different formats:
    *
-   * A WContainerReal contains representations of a list of nMonomer
-   * fields that are associated with different monomer types. Fields may
-   * be stored in two different formats:
+   *  - A DArray of RField containers holds valus of each field on
+   *    the nodes of a regular grid. This is accessed by the rgrid()
+   *    and rgrid(int) member functions.
    *
    *  - A DArray of DArray<double> containers holds components of each
    *    field in a symmetry-adapted Fourier expansion (i.e., in basis
    *    format). This is accessed by the basis() and basis(int) member
    *    functions.
    *
-   *  - A DArray of RField containers holds valus of each field on
-   *    the nodes of a regular grid. This is accessed by the rgrid()
-   *    and rgrid(int) member functions.
-   *
    * A WContainerReal is designed to automatically update one of 
    * these representations when the other is modified, when appropriate.
    * A pointer to an associated FieldIo is used for these conversions.
-   * The setBasis function allows the user to input new components in
-   * basis format and internally recomputes the values in r-grid format.
-   * The setRGrid function allows the user to reset the fields in r-grid
-   * format, but recomputes the components in basis format if and only if
-   * the user declares that the fields are known to be invariant under all
-   * symmetries of the space group. A boolean flag named isSymmetric is
-   * used to keep track of whether the current field is symmetric, and
-   * thus whether the basis format exists.
+   *
+   * The setBasis and readBasis functions allow the user to input new 
+   * components in basis format, and both internally recompute the values 
+   * in r-grid format.  The setRGrid and readRGrid functions allow the 
+   * user to input the fields in r-grid format, and compute corresponding
+   * components in basis format if and only if the user declares that the 
+   * fields are known to be invariant under all symmetries of the space 
+   * group. A boolean flag named isSymmetric is used to keep track of 
+   * whether the current field is symmetric, and thus whether the basis 
+   * format exists.
    *
    * <b> Subclasses </b>: Partial specializations of WContainerReal are
    * used as base classes for classes Rpc::WFieldContainer \<D \> and 
@@ -73,8 +75,8 @@ namespace Prdc {
    * <b> Signal </b>: A WContainerReal owns an instance of class
    * Util::Signal<void> that notifies all observers whenever the fields
    * owned by the WContainerReal are modified. The signal object may be 
-   * accessed by reference using the signal() member function, and the
-   * Util::Signal<void>::addObserver function may used to add observer 
+   * accessed by reference using the signal() member function. The
+   * Util::Signal<void>::addObserver function may used to add "observer"
    * objects and indicate a zero-parameter member function of each 
    * observer that will be called whenever the fields are modified.
    *
@@ -160,8 +162,8 @@ namespace Prdc {
       * This function also computes and stores the corresponding r-grid
       * representation. On return, hasData and isSymmetric are both true.
       * 
-      * The associated basis be initialized on entry.  As needed, r-grid
-      * and/or basis fields may be allocated within this function.
+      * The associated basis must be initialized on entry.  As needed, 
+      * r-grid and/or basis fields may be allocated within this function.
       *
       * \param fields  array of new fields in basis format
       */
@@ -180,8 +182,8 @@ namespace Prdc {
       * input parameter.
       *
       * As needed, r-grid and/or basis fields may be allocated within this 
-      * function. If isSymmetric is true, a basis must be initialized on 
-      * entry.
+      * function. If the isSymmetric parameter is true, the a basis must 
+      * be initialized prior to entry.
       *
       * \param fields  array of new fields in r-grid format
       * \param isSymmetric is this field symmetric under the space group?
@@ -363,19 +365,29 @@ namespace Prdc {
 
    protected:
 
-      /// Get mesh dimensions in each direction, set on r-grid allocation.
+      /**
+      * Get mesh dimensions in each direction, set on r-grid allocation.
+      */
       IntVec<D> const & meshDimensions() const;
 
-      /// Get mesh size (number of grid points), set on r-grid allocation.
+      /**
+      * Get mesh size (number of grid points), set on r-grid allocation.
+      */
       int meshSize() const;
 
-      /// Get number of basis functions, set on basis allocation.
+      /**
+      * Get number of basis functions, set on basis allocation.
+      */
       int nBasis() const;
 
-      /// Get number of monomer types.
+      /**
+      * Get number of monomer types.
+      */
       int nMonomer() const;
 
-      /// Get associated FieldIo object (const reference).
+      /**
+      * Get associated FieldIo object (const reference).
+      */
       FieldIo const & fieldIo() const;
 
    private:

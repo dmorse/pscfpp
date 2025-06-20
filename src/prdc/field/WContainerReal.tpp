@@ -49,7 +49,9 @@ namespace Prdc {
    */
    template <int D, class RField, class FieldIo>
    WContainerReal<D,RField,FieldIo>::~WContainerReal()
-   {}
+   {
+      delete signalPtr_;
+   }
 
    /*
    * Create an association with a FieldIo object.
@@ -173,7 +175,7 @@ namespace Prdc {
    }
 
    /*
-   * Set new w-field values in symmetry-adapted basis format.
+   * Set new field values, in basis form.
    */
    template <int D, class RField, class FieldIo>
    void
@@ -195,7 +197,7 @@ namespace Prdc {
       UTIL_CHECK(isAllocatedRGrid_);
       UTIL_CHECK(isAllocatedBasis_);
 
-      // Update system w fields (array basis_)
+      // Set components in basis form (array basis_)
       for (int i = 0; i < nMonomer_; ++i) {
          DArray<double> const & f = fields[i];
          DArray<double> &  w = basis_[i];
@@ -206,7 +208,7 @@ namespace Prdc {
          }
       }
 
-      // Update system grid fields (array rgrid_)
+      // Convert to r-grid form (update array rgrid_)
       fieldIo().convertBasisToRGrid(basis_, rgrid_);
 
       hasData_ = true;
@@ -217,18 +219,20 @@ namespace Prdc {
    }
 
    /*
-   * Set new field values, in r-grid format.
+   * Set new field values, in r-grid form.
    */
    template <int D, class RField, class FieldIo>
    void
    WContainerReal<D,RField,FieldIo>::setRGrid(DArray<RField> const & fields,
                                               bool isSymmetric)
    {
+      // Allocate r-grid fields as needed
       if (!isAllocatedRGrid_) {
          Mesh<D> const & mesh = fieldIo().mesh();
          UTIL_CHECK(mesh.size() > 0);
          allocateRGrid(mesh.dimensions());
       }
+      UTIL_CHECK(isAllocatedRGrid_);
 
       // Update rgrid_ fields
       UTIL_CHECK(fields.capacity() == nMonomer_);
@@ -237,7 +241,7 @@ namespace Prdc {
          assignRField(rgrid_[i], fields[i]);
       }
 
-      // If field isSymmetric, update basis fields
+      // Optionally convert to basis form
       if (isSymmetric) {
          if (!isAllocatedBasis_) {
             Basis<D> const & basis = fieldIo().basis();
@@ -255,7 +259,7 @@ namespace Prdc {
    }
 
    /*
-   * Read field component values from stream, in symmetrized basis format.
+   * Read fields from an input stream in basis format.
    *
    * This function also computes and stores the corresponding r-grid
    * representation. On return, hasData and isSymmetric are both true.
@@ -292,10 +296,10 @@ namespace Prdc {
       UTIL_CHECK(isAllocatedRGrid_);
       UTIL_CHECK(isAllocatedBasis_);
 
-      // Read data in basis form
+      // Read data in basis form (array basis_)
       Prdc::readBasisData(in, basis_, unitCell, mesh, basis, nBasisIn);
 
-      // Convert to r-grid form, to update rgrid_ array
+      // Convert to r-grid form (array rgrid_)
       fieldIo().convertBasisToRGrid(basis_, rgrid_);
 
       hasData_ = true;
@@ -306,7 +310,7 @@ namespace Prdc {
    }
 
    /*
-   * Read field component values from file, in symmetrized basis format.
+   * Read fields from a file in basis format, by filename.
    *
    * Calls readBasis(std::ifstream&, UnitCell<D>&) internally.
    */
@@ -322,7 +326,7 @@ namespace Prdc {
    }
 
    /*
-   * Reads fields from an input stream in real-space (r-grid) format.
+   * Read fields from an input stream in real-space (r-grid) format.
    *
    * If the isSymmetric parameter is true, this function assumes that 
    * the fields are known to be symmetric and so computes and stores 
@@ -344,10 +348,10 @@ namespace Prdc {
          allocateRGrid(mesh.dimensions());
       }
 
-      // Read field file
+      // Read field file in r-grid format (array rgrid_)
       fieldIo().readFieldsRGrid(in, rgrid_, unitCell);
 
-      // Optionally convert to symmetry-adapted basis form
+      // Optionally convert to basis form
       if (isSymmetric) {
          Basis<D> const & basis = fieldIo().basis();
          UTIL_CHECK(basis.isInitialized());
@@ -365,7 +369,7 @@ namespace Prdc {
    }
 
    /*
-   * Reads fields from a file in r-grid format, by filename.
+   * Read fields from a file in r-grid format, by filename.
    */
    template <int D, class RField, class FieldIo>
    void
