@@ -13,6 +13,12 @@
 #include <util/containers/DArray.h>        // member template
 #include <util/param/ParamComposite.h>     // base class
 
+// Forward references
+namespace Util {
+   template <typename T> class Signal;
+   template <> class Signal<void>;
+}
+ 
 namespace Pscf {
 namespace Prdc {
 
@@ -57,6 +63,14 @@ namespace Prdc {
    * current mask field is symmetric, and thus whether the basis format 
    * exists.
    *
+   * <b> Signal </b>: A WContainerReal owns an instance of class
+   * Util::Signal<void> that notifies all observers whenever the fields
+   * owned by the WContainerReal are modified. The signal object may be 
+   * accessed by reference using the signal() member function, and the
+   * Util::Signal<void>::addObserver function may used to add observer 
+   * objects and indicate a zero-parameter member function of each 
+   * observer that will be called whenever the fields are modified.
+
    * \ingroup Prdc_Field_Module
    */
    template <int D, typename FieldIo, typename RField>
@@ -234,6 +248,11 @@ namespace Prdc {
       */
       double phiTot() const;
 
+      /**
+      * Get a signal that notifies observers of field modification.
+      */
+      Signal<void>& signal();
+
       ///@}
       /// \name Boolean Queries
       ///@{
@@ -337,6 +356,11 @@ namespace Prdc {
       * Number of basis functions in symmetry-adapted basis
       */
       int nBasis_;
+
+      /*
+      * Pointer to a Signal that is triggered by field modification.
+      */
+      Signal<void>* signalPtr_;
 
       /**
       * Has memory been allocated for field in basis format?

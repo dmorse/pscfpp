@@ -114,6 +114,9 @@ namespace Rpc {
 
       // Signal triggered by h-field modification
       h_.signal().addObserver(*this, &System<D>::clearCFields);
+
+      // Signal triggered by mask modification
+      mask_.signal().addObserver(*this, &System<D>::clearCFields);
    }
 
    /*
