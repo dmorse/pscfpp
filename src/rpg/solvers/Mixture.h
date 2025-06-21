@@ -206,6 +206,11 @@ namespace Rpg {
       */
       bool isCanonical();
 	 
+      /**
+      * Has the stress been computed?
+      */
+      bool hasStress() const;
+
       // Public members from MixtureTmpl with non-dependent names 
       using MixtureTmpl< Polymer<D>, Solvent<D> >::nMonomer;
       using MixtureTmpl< Polymer<D>, Solvent<D> >::nPolymer;
@@ -269,6 +274,15 @@ namespace Rpg {
    {
       UTIL_CHECK(hasStress_);  
       return stress_[parameterId]; 
+   }
+
+   /*
+   * Has the stress been computed?
+   */
+   template <int D>
+   inline bool Mixture<D>::hasStress() const
+   {
+      return hasStress_;
    }
 
    #ifndef RPG_MIXTURE_TPP

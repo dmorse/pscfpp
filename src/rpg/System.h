@@ -25,6 +25,7 @@ namespace Util {
 }
 namespace Pscf {
    class Interaction;
+   class Environment;
    template <typename Data> class DeviceArray;
    namespace Prdc {
       template <int D> class UnitCell;
@@ -34,6 +35,7 @@ namespace Pscf {
       }
    }
    namespace Rpg {
+      template <int D> class EnvironmentFactory;
       template <int D> class Iterator;
       template <int D> class IteratorFactory;
       template <int D> class Sweep;
@@ -367,7 +369,7 @@ namespace Rpg {
       * return, hasCFields() is true.
       *
       * If argument needStress is true, then this function also calls
-      * Mixture<D>::computeStress() to compute the stress.
+      * computeStress() to compute the stress.
       *
       * \pre The w().hasData() flag must be true on entry.
       *
@@ -480,6 +482,31 @@ namespace Rpg {
       */
       double pressure() const;
 
+      /**
+      * Compute SCFT stress for current fields.
+      * 
+      * The stress contains contributions from the Mixture object and the
+      * Environment object (if one exists), and may also be modified by 
+      * the Environment object so that a property other than fHelmholtz
+      * will be minimized during iteration, which depends on the type of
+      * Environment.
+      *
+      * \pre w().hasData() must return true
+      * \pre hasCFields() must return true
+      */
+      void computeStress();
+
+      /**
+      * Get the stress for a single lattice parameter.
+      *
+      * This function retrieves a value computed by computeStress().
+      * If computeStress() has not been called for the current set of 
+      * fields, an error will be raised. 
+      * 
+      * \param paramId  lattice parameter index
+      */
+      double stress(int paramId) const;
+
       ///@}
       /// \name SCFT Thermodynamic Data Output
       ///@{
@@ -488,11 +515,11 @@ namespace Rpg {
       * Write partial parameter file to an ostream.
       *
       * This function writes the Mixture, Interaction, and Domain blocks
-      * of a parameter file, as well as any Iterator block, but omits any
-      * Sweep or Simulator blocks. The intent is to produce an output
-      * during an SCFT sweep that only refers to parameters relevant to a
-      * single state point, in a form that could be used as a parameter
-      * file for a single SCFT calculation.
+      * of a parameter file, as well as any Environment and Iterator block, 
+      * but omits any Sweep or Simulator blocks. The intent is to produce 
+      * an output during an SCFT sweep that only refers to parameters 
+      * relevant to a single state point, in a form that could be used as 
+      * a parameter file for a single SCFT calculation.
       *
       * \param out  output stream
       */
@@ -526,6 +553,13 @@ namespace Rpg {
       * The log output created by an Iterator upon convergence should call
       * writeStress after writeThermo if and only if the iterator is not
       * flexible.
+      * 
+      * If an Environment is present in the system, it will, in general,
+      * contribute to the stress. However, the stress values written by 
+      * this method do not take the Environment into account, and only 
+      * represent contributions from the Mixture (terms which are the 
+      * functional derivatives of ln(Q) with respect to each lattice 
+      * parameter).
       *
       * \param out  output stream
       */
@@ -720,6 +754,16 @@ namespace Rpg {
       Domain<D> const & domain() const;
 
       /**
+      * Get the Environment by non-const reference.
+      */
+      Environment& environment();
+
+      /**
+      * Get the Environment by const reference.
+      */
+      Environment const & environment() const;
+
+      /**
       * Get the Iterator by non-const reference.
       */
       Iterator<D>& iterator();
@@ -749,6 +793,11 @@ namespace Rpg {
       ///@}
       /// \name Boolean Queries
       ///@{
+
+      /**
+      * Does this system have an Environment?
+      */
+      bool hasEnvironment() const;
 
       /**
       * Does this system have an Iterator?
@@ -784,6 +833,11 @@ namespace Rpg {
       * Has the SCFT free energy been computed for the current w fields?
       */
       bool hasFreeEnergy() const;
+
+      /**
+      * Has the SCFT stress been computed for the current w fields?
+      */
+      bool hasStress() const;
 
       ///@}
 
@@ -832,6 +886,16 @@ namespace Rpg {
       * Pointer to Interaction (excess free energy model).
       */
       Interaction* interactionPtr_;
+
+      /**
+      * Pointer to an Environment.
+      */
+      Environment* environmentPtr_;
+
+      /**
+      * Pointer to an Environment factory object.
+      */
+      EnvironmentFactory<D>* environmentFactoryPtr_;
 	
       /**
       * Pointer to an iterator.
@@ -898,6 +962,13 @@ namespace Rpg {
       double pressure_;
 
       /**
+      * Array of stress values for this set of w fields.
+      *
+      * The array contains one value per lattice parameter.
+      */
+      FSArray<double, 6> stress_;
+
+      /**
       * Polymer model enumeration (thread or bead), read from file.
       */
       PolymerModel::Type polymerModel_;
@@ -941,6 +1012,15 @@ namespace Rpg {
       * system unit cell parameters are modified.
       */
       bool hasFreeEnergy_;
+
+      /**
+      * Has SCFT stress been computed for the current w and c fields?
+      *
+      * This is set true in the computeStress function, and is set false
+      * false whenever the system w fields, mask or external fields, or
+      * system unit cell parameters are modified.
+      */
+      bool hasStress_;
 
       // Private member functions
 
@@ -1024,6 +1104,21 @@ namespace Rpg {
    inline Domain<D> const & System<D>::domain() const
    {  return domain_; }
 
+   // Get the Environment by non-const reference.
+   template <int D>
+   inline Environment & System<D>::environment()
+   {
+      UTIL_ASSERT(environmentPtr_);
+      return *environmentPtr_;
+   }
+
+   // Get the Environment by const reference.
+   template <int D>
+   inline Environment const & System<D>::environment() const
+   {
+      UTIL_ASSERT(environmentPtr_);
+      return *environmentPtr_;
+   }
 
    // Get the Iterator by non-const reference.
    template <int D>
@@ -1131,6 +1226,19 @@ namespace Rpg {
       return pressure_;
    }
 
+   // Get the precomputed stress for one lattice parameter.
+   template <int D>
+   inline double System<D>::stress(int paramId) const
+   {
+      UTIL_CHECK(hasStress_);
+      return stress_[paramId];
+   }
+
+   // Does this system have an Environment?
+   template <int D>
+   inline bool System<D>::hasEnvironment() const
+   {  return (environmentPtr_); }
+
    // Does this system have an Iterator?
    template <int D>
    inline bool System<D>::hasIterator() const
@@ -1165,6 +1273,11 @@ namespace Rpg {
    template <int D>
    inline bool System<D>::hasFreeEnergy() const
    {  return hasFreeEnergy_; }
+
+   // Has the stress been computed for the current w fields?
+   template <int D>
+   inline bool System<D>::hasStress() const
+   {  return hasStress_; }
 
    #ifndef RPG_SYSTEM_TPP
    // Suppress implicit instantiation

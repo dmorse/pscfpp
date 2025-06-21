@@ -10,6 +10,7 @@
 #include <pscf/sweep/SweepTmpl.tpp>
 #include <rpg/System.h>
 #include <rpg/scft/iterator/Iterator.h>
+#include <pscf/environment/Environment.h>
 #include <pscf/inter/Interaction.h>
 
 #include <util/misc/FileMaster.h>
@@ -47,8 +48,8 @@ namespace Rpg {
       systemPtr_(&sys)
    {
       // Get specialized sweep parameters from Iterator
-      if (system().hasIterator()) {
-         addParameterTypes(system().iterator().getParameterTypes());
+      if (system().hasEnvironment()) {
+         addParameterTypes(system().environment().getParameterTypes());
       }
    }
 

@@ -28,7 +28,7 @@ namespace Rpc {
    * contain two parallel hard surfaces ("walls"), confining the
    * polymers/solvents to a "thin film" region of the unit cell.
    *
-   * \ingroup Rpc_Scft_Iterator_Module
+   * \ingroup Rpc_Field_Module
    */
    template <int D>
    class FilmFieldGenMask : public FilmFieldGenMaskBase<D>
@@ -98,7 +98,7 @@ namespace Rpc {
       void allocate();
 
       /**
-      * Generate the field and store where the Iterator can access.
+      * Generate the field and store where the System can access.
       */
       void generate();
 

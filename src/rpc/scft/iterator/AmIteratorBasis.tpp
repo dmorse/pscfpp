@@ -327,6 +327,7 @@ namespace Rpc {
 
       // If variable unit cell, compute stress residuals
       if (isFlexible()) {
+         UTIL_CHECK(system().hasStress());
          const int nParam = system().domain().unitCell().nParameter();
 
          // Combined -1 factor and stress scaling here. This is okay:

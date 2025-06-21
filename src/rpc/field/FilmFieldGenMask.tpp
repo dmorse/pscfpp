@@ -216,7 +216,7 @@ namespace Rpc
    }
 
    /*
-   * Generate the field and store where the Iterator can access
+   * Generate the field and store where the System can access
    */
    template <int D>
    void FilmFieldGenMask<D>::generate()

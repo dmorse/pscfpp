@@ -89,7 +89,7 @@ public:
       // are compatible.
 
       printMethod(TEST_FUNC);
-      openLogFile("out/maskTestCheckCompatibilityLog");
+      openLogFile("out/maskTestCheckCompatibility.log");
 
       // Set up 1D mask with a compatible system and check compatibility
       System<1> system1;
@@ -211,7 +211,7 @@ public:
    void testInitialize() // test FieldGenerator::initialize()
    {
       printMethod(TEST_FUNC);
-      openLogFile("out/maskTestInitializeLog");
+      openLogFile("out/maskTestInitialize.log");
 
       // Set up 2D mask with a compatible system
       System<2> system;
@@ -250,7 +250,7 @@ public:
    void testUpdate() // test FieldGenerator::update()
    {
       printMethod(TEST_FUNC);
-      openLogFile("out/maskTestUpdateLog");
+      openLogFile("out/maskTestUpdate.log");
 
       // Set up 1D mask with a compatible system
       System<1> system;
@@ -289,7 +289,7 @@ public:
    void testStress() // test FilmFieldGenMask::stress
    {
       printMethod(TEST_FUNC);
-      openLogFile("out/maskTestStressLog");
+      openLogFile("out/maskTestStress.log");
 
       // Set up 2D mask with a compatible system
       System<2> system;
@@ -318,7 +318,7 @@ public:
    void testModifyStress() // test FilmFieldGenMask::modifyStress
    {
       printMethod(TEST_FUNC);
-      openLogFile("out/maskTestModifyStressLog");
+      openLogFile("out/maskTestModifyStress.log");
 
       // Set up 1D mask with a compatible system
       System<1> system;

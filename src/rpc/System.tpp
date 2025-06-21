@@ -1115,8 +1115,10 @@ namespace Rpc {
       if (!error) {
          computeFreeEnergy(); // Sets hasFreeEnergy_ = true
          writeThermo(Log::file());
-         if (iterator().isFlexible()) {
-            UTIL_CHECK(hasStress_);
+         if (!iterator().isFlexible()) {
+            if (!mixture_.hasStress()) {
+               mixture_.computeStress(mask().phiTot());
+            }
             writeStress(Log::file());
          }
       }
@@ -1377,7 +1379,9 @@ namespace Rpc {
       stress_.clear();
 
       // Compute and store stress contribution from Mixture
-      mixture_.computeStress(mask().phiTot());
+      if (!mixture_.hasStress()) {
+         mixture_.computeStress(mask().phiTot());
+      }
       for (int i = 0; i < domain_.unitCell().nParameter(); ++i) {
          stress_.append(mixture_.stress(i));
       }
@@ -1490,21 +1494,19 @@ namespace Rpc {
    template <int D>
    void System<D>::writeStress(std::ostream& out)
    {
-      // Note: If Environment is present, stress may not be well-defined
-      // for the non-flexible lattice parameters. Therefore, only print
-      // stress for flexible parameters. If no Environment is present, 
-      // print all stresses, even for rigid parameters.
+      UTIL_CHECK(mixture_.hasStress()); // ensure stress has been calculated
 
-      if (hasEnvironment() && !iterator().isFlexible()) return;
-
-      out << "stress:" << std::endl;
+      out << "stress:";
+      if (hasEnvironment()) {
+         out << " (Environment contributions not included)";
+      }
+      out << std::endl;
+      
       for (int i = 0; i < domain_.unitCell().nParameter(); ++i) {
-         if (!hasEnvironment() || iterator().flexibleParams()[i]) {
-            out << Int(i, 5)
-               << "  "
-               << Dbl(stress_[i], 18, 11)
-               << std::endl;
-         }
+         out << Int(i, 5)
+            << "  "
+            << Dbl(mixture_.stress(i), 18, 11)
+            << std::endl;
       }
       out << std::endl;
    }

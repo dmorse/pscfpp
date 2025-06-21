@@ -173,7 +173,7 @@ namespace Rpc
    }
 
    /**
-   * Generate the fields and store where the Iterator can access.
+   * Generate the fields and store where the System can access.
    */
    template <int D>
    void FilmFieldGenExt<D>::generate()

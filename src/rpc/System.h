@@ -532,13 +532,12 @@ namespace Rpc {
       * writeStress after writeThermo if and only if the iterator is not
       * flexible.
       * 
-      * If an Environment is present in the system, the definition of 
-      * "stress" may be redefined to minimize a property other than 
-      * fHelmholtz. Furthermore, the redefined stress may not always be
-      * calculable, in which case some or all lattice parameters will be
-      * made rigid. Thus, in systems with an Environment, this method 
-      * will only print the stress for the flexible lattice parameters,
-      * and will print nothing if the entire box is rigid. 
+      * If an Environment is present in the system, it will, in general,
+      * contribute to the stress. However, the stress values written by 
+      * this method do not take the Environment into account, and only 
+      * represent contributions from the Mixture (terms which are the 
+      * functional derivatives of ln(Q) with respect to each lattice 
+      * parameter). 
       *
       * \param out  output stream
       */

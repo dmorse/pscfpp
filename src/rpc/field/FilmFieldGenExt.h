@@ -32,7 +32,7 @@ namespace Rpc {
    * the bottom, through user input arrays chi_bottom and chi_top. See 
    * \ref scft_thin_films_page for more information. 
    *
-   * \ingroup Rpc_Scft_Iterator_Module
+   * \ingroup Rpc_Field_Module
    */
    template <int D>
    class FilmFieldGenExt : public FilmFieldGenExtBase<D>
@@ -86,7 +86,7 @@ namespace Rpc {
       void allocate();
 
       /**
-      * Generate the fields and store where the Iterator can access.
+      * Generate the fields and store where the System can access.
       */
       void generate();
 

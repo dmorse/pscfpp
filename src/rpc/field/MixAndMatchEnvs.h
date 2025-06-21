@@ -20,7 +20,6 @@
 
 #include "FilmFieldGenMask.h"
 #include "FilmFieldGenExt.h"
-#include <rpc/scft/iterator/Iterator.h>
 #include <pscf/environment/MixAndMatchEnv.h>
 
 namespace Pscf {

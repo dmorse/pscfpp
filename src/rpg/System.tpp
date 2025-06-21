@@ -15,6 +15,7 @@
 #include <rpg/fts/compressor/Compressor.h>
 #include <rpg/scft/sweep/Sweep.h>
 #include <rpg/scft/sweep/SweepFactory.h>
+#include <rpg/field/EnvironmentFactory.h>
 #include <rpg/scft/iterator/Iterator.h>
 #include <rpg/scft/iterator/IteratorFactory.h>
 #include <rpg/solvers/Polymer.h>
@@ -26,6 +27,7 @@
 #include <prdc/cuda/RFieldComparison.h>
 #include <prdc/crystal/BFieldComparison.h>
 
+#include <pscf/environment/Environment.h>
 #include <pscf/inter/Interaction.h>
 #include <pscf/math/IntVec.h>
 
@@ -61,6 +63,8 @@ namespace Rpg {
       h_(),
       mask_(),
       interactionPtr_(nullptr),
+      environmentPtr_(nullptr),
+      environmentFactoryPtr_(nullptr),
       iteratorPtr_(nullptr),
       iteratorFactoryPtr_(nullptr),
       sweepPtr_(nullptr),
@@ -77,7 +81,8 @@ namespace Rpg {
       isAllocatedBasis_(false),
       hasMixture_(false),
       hasCFields_(false),
-      hasFreeEnergy_(false)
+      hasFreeEnergy_(false),
+      hasStress_(false)
    {
       setClassName("System");
       domain_.setFileMaster(fileMaster_);
@@ -86,6 +91,7 @@ namespace Rpg {
       mask_.setFieldIo(domain_.fieldIo());
 
       interactionPtr_ = new Interaction();
+      environmentFactoryPtr_ = new EnvironmentFactory<D>(*this);
       iteratorFactoryPtr_ = new IteratorFactory<D>(*this);
       sweepFactoryPtr_ = new SweepFactory<D>(*this);
       simulatorFactoryPtr_ = new SimulatorFactory<D>(*this);
@@ -101,6 +107,12 @@ namespace Rpg {
    {
       if (interactionPtr_) {
          delete interactionPtr_;
+      }
+      if (environmentPtr_) {
+         delete environmentPtr_;
+      }
+      if (environmentFactoryPtr_) {
+         delete environmentFactoryPtr_;
       }
       if (iteratorPtr_) {
          delete iteratorPtr_;
@@ -276,14 +288,24 @@ namespace Rpg {
       // Allocate memory for r-grid w and c fields
       allocateFieldsGrid();
 
-      // Optionally instantiate an Iterator object
+      // Optionally instantiate an Environment object
       std::string className;
       bool isEnd;
-      iteratorPtr_ =
-         iteratorFactoryPtr_->readObjectOptional(in, *this, className,
-                                                 isEnd);
-      if (!iteratorPtr_ && ParamComponent::echo()) {
-         Log::file() << indent() << "  Iterator{ [absent] }\n";
+      environmentPtr_ =
+         environmentFactoryPtr_->readObjectOptional(in, *this, className,
+                                                    isEnd);
+      if (!environmentPtr_ && ParamComponent::echo()) {
+         Log::file() << indent() << "  Environment{ [absent] }\n";
+      }
+
+      // Optionally instantiate an Iterator object
+      if (!isEnd) {
+         iteratorPtr_ =
+            iteratorFactoryPtr_->readObjectOptional(in, *this, className,
+                                                   isEnd);
+         if (!iteratorPtr_ && ParamComponent::echo()) {
+            Log::file() << indent() << "  Iterator{ [absent] }\n";
+         }
       }
 
       // Optionally instantiate a Sweep object (if an iterator exists)
@@ -751,10 +773,16 @@ namespace Rpg {
       w_.readBasis(filename, domain_.unitCell());
       hasCFields_ = false;
       hasFreeEnergy_ = false;
+      hasStress_ = false;
 
       // Clear unit cell data in waveList and mixture
       domain_.waveList().clearUnitCellData();
       mixture_.clearUnitCellData();
+
+      // Update Environment if needed
+      if (hasEnvironment() && environment().isInitialized()) {
+         environment().update();
+      }
 
       // Postcondition
       UTIL_CHECK(domain_.unitCell().isInitialized());
@@ -773,10 +801,16 @@ namespace Rpg {
       w_.readRGrid(filename, domain_.unitCell());
       hasCFields_ = false;
       hasFreeEnergy_ = false;
+      hasStress_ = false;
 
       // Clear unit cell data in waveList and mixture
       domain_.waveList().clearUnitCellData();
       mixture_.clearUnitCellData();
+
+      // Update Environment if needed
+      if (hasEnvironment() && environment().isInitialized()) {
+         environment().update();
+      }
 
       // Postcondition
       UTIL_CHECK(domain_.unitCell().isInitialized());
@@ -836,10 +870,67 @@ namespace Rpg {
          }
       }
 
+      if (hasEnvironment()) {
+
+         // Ensure Environment is initialized and updated
+         if (!environment().isInitialized()) {
+            environment().initialize();
+         } else {
+            environment().update();
+         }
+
+         // Calculate sumChiInverse
+         double sumChiInverse = 0.0;
+         for (i = 0; i < nm; i++) {
+            for (j = 0; j < nm; j++) {
+               sumChiInverse += interaction().chiInverse(j,i);
+            }
+         }
+
+         // If system has a mask, add component of xi arising from the mask
+         if (hasMask()) {
+            UTIL_CHECK(mask().isSymmetric());
+            for (i = 1; i < nb; i++) { 
+               // note: loop starts at i = 1 since spatial average of xi is 0
+               for (j = 0; j < nm; j++) {
+                  tmpFieldsBasis[j][i] -= mask().basis()[i] / sumChiInverse;
+               }
+            }
+         }
+
+         // Adjust guess to account for external fields
+         if (hasExternalFields()) {
+            UTIL_CHECK(h().isSymmetric());
+
+            // First term: add h().basis(j) to guess for field j
+            for (i = 0; i < nb; i++) {
+               for (j = 0; j < nm; j++) {
+                  tmpFieldsBasis[j][i] += h().basis(j)[i];
+               }
+            }
+
+            // Second term: add the component of xi arising from the h fields
+            double tmp;
+            for (i = 1; i < nb; i++) {
+               // note: loop starts at i = 1 since spatial average of xi is 0
+               tmp = 0.0;
+               for (j = 0; j < nm; j++) {
+                  for (k = 0; k < nm; k++) {
+                     tmp += h().basis(j)[i] * interaction().chiInverse(j,k);
+                  }
+               }
+               for (j = 0; j < nm; j++) {
+                  tmpFieldsBasis[j][i] -= tmp / sumChiInverse;
+               }
+            }
+         }
+      }
+
       // Set estimated w fields in system w field container
       w_.setBasis(tmpFieldsBasis);
       hasCFields_ = false;
       hasFreeEnergy_ = false;
+      hasStress_ = false;
 
       // Clear unit cell data in waveList and mixture
       domain_.waveList().clearUnitCellData();
@@ -863,6 +954,7 @@ namespace Rpg {
       w_.setBasis(fields);
       hasCFields_ = false;
       hasFreeEnergy_ = false;
+      hasStress_ = false;
    }
 
    /*
@@ -876,6 +968,7 @@ namespace Rpg {
       w_.setRGrid(fields);
       hasCFields_ = false;
       hasFreeEnergy_ = false;
+      hasStress_ = false;
    }
 
    // Unit Cell Modifiers
@@ -890,11 +983,16 @@ namespace Rpg {
       // Note: Domain::setUnitCell clears the WaveList unit cell data
       // and makes basis if needed
       mixture_.clearUnitCellData();
+
       if (domain_.hasGroup() && !isAllocatedBasis_) {
          UTIL_CHECK(domain_.basis().isInitialized());
          allocateFieldsBasis();
       }
       UTIL_CHECK(domain_.unitCell().isInitialized());
+
+      if (hasEnvironment() && environment().isInitialized()) {
+         environment().update();
+      }
    }
 
    /*
@@ -909,11 +1007,16 @@ namespace Rpg {
       // Note: Domain::setUnitCell clears WaveList unit cell data
       // and makes basis if needed
       mixture_.clearUnitCellData();
+
       if (domain_.hasGroup() && !isAllocatedBasis_) {
          UTIL_CHECK(domain_.basis().isInitialized());
          allocateFieldsBasis();
       }
       UTIL_CHECK(domain_.unitCell().isInitialized());
+
+      if (hasEnvironment() && environment().isInitialized()) {
+         environment().update();
+      }
    }
 
    /*
@@ -926,11 +1029,16 @@ namespace Rpg {
       // Note: Domain::setUnitCell clears WaveList unit cell data
       // and makes basis if needed
       mixture_.clearUnitCellData();
+
       if (domain_.hasGroup() && !isAllocatedBasis_) {
          UTIL_CHECK(domain_.basis().isInitialized());
          allocateFieldsBasis();
       }
       UTIL_CHECK(domain_.unitCell().isInitialized());
+
+      if (hasEnvironment() && environment().isInitialized()) {
+         environment().update();
+      }
    }
 
    // Primary Field Theory Computations
@@ -945,10 +1053,16 @@ namespace Rpg {
       UTIL_CHECK(c_.isAllocatedRGrid());
       UTIL_CHECK(w_.hasData());
 
+      // Initialize Environment if needed
+      if (hasEnvironment() && !environment().isInitialized()) {
+         environment().initialize();
+      }
+
       // Solve the modified diffusion equation (without iteration)
       mixture_.compute(w_.rgrid(), c_.rgrid(), mask_.phiTot());
       hasCFields_ = true;
       hasFreeEnergy_ = false;
+      hasStress_ = false;
 
       // If w fields are symmetric, compute basis components for c fields
       if (w_.isSymmetric()) {
@@ -959,7 +1073,7 @@ namespace Rpg {
 
       // Compute stress if needed
       if (needStress) {
-         mixture_.computeStress(mask().phiTot());
+         computeStress();
       }
    }
 
@@ -977,9 +1091,15 @@ namespace Rpg {
       }
       hasCFields_ = false;
       hasFreeEnergy_ = false;
+      hasStress_ = false;
 
       Log::file() << std::endl;
       Log::file() << std::endl;
+
+      // Initialize Environment if needed
+      if (hasEnvironment() && !environment().isInitialized()) {
+         environment().initialize();
+      }
 
       // Call iterator (return 0 for convergence, 1 for failure)
       int error = iterator().solve(isContinuation);
@@ -987,12 +1107,12 @@ namespace Rpg {
 
       // If converged, compute related thermodynamic properties
       if (!error) {
-         if (!iterator().isFlexible()) {
-            mixture_.computeStress(mask().phiTot());
-         }
          computeFreeEnergy(); // Sets hasFreeEnergy_ = true
          writeThermo(Log::file());
          if (!iterator().isFlexible()) {
+            if (!mixture_.hasStress()) {
+               mixture_.computeStress(mask().phiTot());
+            }
             writeStress(Log::file());
          }
       }
@@ -1015,6 +1135,7 @@ namespace Rpg {
       }
       hasCFields_ = false;
       hasFreeEnergy_ = false;
+      hasStress_ = false;
 
       Log::file() << std::endl;
       Log::file() << std::endl;
@@ -1033,6 +1154,7 @@ namespace Rpg {
       UTIL_CHECK(hasSimulator());
       hasCFields_ = false;
       hasFreeEnergy_ = false;
+      hasStress_ = false;
 
       simulator().simulate(nStep);
       hasCFields_ = true;
@@ -1239,6 +1361,40 @@ namespace Rpg {
       hasFreeEnergy_ = true;
    }
 
+   /*
+   * Compute SCFT stress for current fields.
+   */
+   template <int D>
+   void System<D>::computeStress()
+   {
+      if (hasStress_) return;
+
+      stress_.clear();
+
+      // Compute and store stress contribution from Mixture
+      if (!mixture_.hasStress()) {
+         mixture_.computeStress(mask().phiTot());
+      }
+      for (int i = 0; i < domain_.unitCell().nParameter(); ++i) {
+         stress_.append(mixture_.stress(i));
+      }
+
+      if (hasEnvironment()) {
+         UTIL_CHECK(environment().isInitialized());
+         for (int i = 0; i < domain_.unitCell().nParameter(); ++i) {
+            if (iterator().flexibleParams()[i]) {
+               // Add stress contributions from Environment
+               stress_[i] += environment().stress(i);
+
+               // Allow Environment to modify stress contributions to
+               // minimize something other than fHelmholtz if desired
+               stress_[i] = environment().modifyStress(i,stress_[i]);
+            }
+         }
+      }
+
+      hasStress_ = true;
+   }
 
    // Output Operations
 
@@ -1282,6 +1438,9 @@ namespace Rpg {
       mixture_.writeParam(out);
       interaction().writeParam(out);
       domain_.writeParam(out);
+      if (hasEnvironment()) {
+         environment().writeParam(out);
+      }
       if (hasIterator()) {
          iterator().writeParam(out);
       }
@@ -1358,7 +1517,13 @@ namespace Rpg {
    template <int D>
    void System<D>::writeStress(std::ostream& out)
    {
-      out << "stress:" << std::endl;
+      UTIL_CHECK(mixture_.hasStress()); // ensure stress has been calculated
+
+      out << "stress:";
+      if (hasEnvironment()) {
+         out << " (Environment contributions not included)";
+      }
+
       for (int i = 0; i < domain_.unitCell().nParameter(); ++i) {
          out << Int(i, 5)
              << "  "

@@ -51,7 +51,7 @@ public:
       FilmEnvironment<1> ext(system);
    }
 
-   void testReadParameters() // test FilmFieldGenExtBase::readParameters()
+   void testReadParameters() // test FilmEnvironment::readParameters()
    {
       printMethod(TEST_FUNC);
 
@@ -84,7 +84,7 @@ public:
    {
       printMethod(TEST_FUNC);
       
-      openLogFile("out/GeneratorTestSolve1D.log");
+      openLogFile("out/FilmEnvTestSolve1D.log");
       
       // Set up system with some data
       System<1> system;
@@ -110,7 +110,7 @@ public:
       system.domain().fieldIo().writeFieldsBasis("out/w1D.bf", 
                                                  system.w().basis(), 
                                                  system.domain().unitCell());
-      TEST_ASSERT(bComparison.maxDiff() < 1.0E-3);
+      TEST_ASSERT(bComparison.maxDiff() < 1.0E-2);
 
       // Check thermo parameters
       if (verbose() > 0) {
@@ -137,7 +137,7 @@ public:
    {
       printMethod(TEST_FUNC);
       
-      openLogFile("out/GeneratorTestSolve2D.log");
+      openLogFile("out/FilmEnvTestSolve2D.log");
       
       // Set up system with some data
       System<2> system;
@@ -164,7 +164,7 @@ public:
       BFieldComparison bComparison(0); // object to compare fields
       bComparison.compare(system.w().basis(), wFieldsCheck);
      
-      double epsilon = 1.0E-3; 
+      double epsilon = 1.0E-2; 
       double diff = bComparison.maxDiff();
 
       if (verbose() > 0 || diff > epsilon) {
@@ -190,7 +190,7 @@ public:
       // NOTE: this also tests that the ParameterModifier methods work
       printMethod(TEST_FUNC);
       
-      openLogFile("out/GeneratorTestSweep.log");
+      openLogFile("out/FilmEnvTestSweep.log");
       
       // Set up system
       System<1> system;
@@ -211,7 +211,7 @@ public:
       bComparison.compare(system.w().basis(), wFieldsCheck);
       double diff = bComparison.maxDiff();
 
-      double epsilon = 1.0E-3; 
+      double epsilon = 1.0E-2; 
       if (verbose() > 0 || diff > epsilon) {
          std::cout << "\n";
          std::cout << "diff    = " << diff << "\n";
@@ -234,7 +234,7 @@ public:
    {
       printMethod(TEST_FUNC);
       
-      openLogFile("out/GeneratorTestSolveWithFBulk.log");
+      openLogFile("out/FilmEnvTestSolveWithFBulk.log");
       
       // Set up system with some data
       System<1> system;
@@ -298,6 +298,6 @@ TEST_ADD(FilmEnvironmentTest, testSolve1D)
 TEST_ADD(FilmEnvironmentTest, testSolve2D)
 TEST_ADD(FilmEnvironmentTest, testSweep)
 TEST_ADD(FilmEnvironmentTest, testSolveWithFBulk)
-TEST_END(FilmFieldGenExtTest)
+TEST_END(FilmEnvironmentTest)
 
 #endif

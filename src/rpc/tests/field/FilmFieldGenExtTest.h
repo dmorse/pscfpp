@@ -87,7 +87,7 @@ public:
       // by checkCompatibility: hasSymmetricWalls and maskNormalVecId.
 
       printMethod(TEST_FUNC);
-      openLogFile("out/extTestCheckCompatibilityLog");
+      openLogFile("out/extTestCheckCompatibility.log");
 
       // Set up 1D external field with symmetric walls
       System<1> system1;
@@ -141,7 +141,7 @@ public:
    void testInitialize() // test FieldGenerator::initialize()
    {
       printMethod(TEST_FUNC);
-      openLogFile("out/extTestInitializeLog");
+      openLogFile("out/extTestInitialize.log");
 
       // Set up 3D external field with a compatible system
       System<3> system1;
@@ -205,7 +205,7 @@ public:
       // and chiTop.
 
       printMethod(TEST_FUNC);
-      openLogFile("out/extTestUpdateLog");
+      openLogFile("out/extTestUpdate.log");
 
       // Set up 1D external field with a compatible system
       System<1> system;
@@ -276,7 +276,7 @@ public:
    void testStress() // test FilmFieldGenExt::stress
    {
       printMethod(TEST_FUNC);
-      openLogFile("out/extTestStressLog");
+      openLogFile("out/extTestStress.log");
 
       // Set up 2D field generator with a compatible system
       System<2> system;

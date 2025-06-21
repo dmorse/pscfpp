@@ -43,7 +43,7 @@ System{
   AmIteratorBasis{
     epsilon      1.0e-12
     maxItr       2000
-    maxHist      100 
+    maxHist      150
     isFlexible   0
   }
   LinearSweep{

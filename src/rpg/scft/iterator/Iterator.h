@@ -10,7 +10,6 @@
 
 #include <rpg/scft/sweep/Sweep.h>
 #include <pscf/cuda/DeviceArray.h>
-#include <pscf/sweep/ParameterModifier.h> // base class
 #include <util/param/ParamComposite.h>    // base class
 #include <util/global.h>                  
 
@@ -31,7 +30,7 @@ namespace Rpg
    * \ingroup Rpg_Scft_Iterator_Module
    */
    template <int D>
-   class Iterator : public ParamComposite, public ParameterModifier
+   class Iterator : public ParamComposite
    {
 
    public:

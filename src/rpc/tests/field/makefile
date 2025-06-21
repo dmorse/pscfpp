@@ -28,7 +28,8 @@ run-quiet: $(rpc_tests_field_OBJS) $(BLD_DIR)/$(TEST)
 	@cat count
 
 clean-outputs:
-	rm -f log count out/*
+	rm -f log count out/*.*
+	rm -f out/sweep/*
 
 clean:
 	rm -f $(BLD_DIR)/$(TEST)

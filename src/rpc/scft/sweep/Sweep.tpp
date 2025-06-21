@@ -48,7 +48,6 @@ namespace Rpc {
    {
       // Get specialized sweep parameters from Environment
       if (system().hasEnvironment()) {
-#include <rpc/scft/iterator/Iterator.h>
          addParameterTypes(system().environment().getParameterTypes());
       }
    }

@@ -377,7 +377,7 @@ public:
       readHeader("in/w_altG.rf", domain);
 
       std::ofstream  out;
-      openOutputFile("out/stars_altG", out);
+      openOutputFile("out/altG.stars", out);
       domain.basis().outputStars(out);
       out.close();
 
