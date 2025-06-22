@@ -12,7 +12,7 @@
 
 namespace Pscf { 
 
-   // Forward reference
+   // Forward declaration
    class PolymerSpecies;
 
    using namespace Util;
