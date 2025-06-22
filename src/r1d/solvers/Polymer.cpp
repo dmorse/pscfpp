@@ -26,7 +26,7 @@ namespace R1d
    /*
    * Compute solution to MDE and concentrations.
    */ 
-   void Polymer::compute(DArray<Block::WField> const & wFields)
+   void Polymer::compute(DArray< DArray<double> > const & wFields)
    {
 
       // Setup solvers for all blocks

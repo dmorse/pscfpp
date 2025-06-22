@@ -49,12 +49,12 @@ namespace R1d
       /**
       * Monomer chemical potential field type.
       */
-      typedef Propagator::WField WField;
+      typedef Propagator::WFieldT WFieldT;
 
       /**
       * Monomer concentration or volume fraction field type.
       */
-      typedef Propagator::CField CField;
+      typedef Propagator::CFieldT CFieldT;
 
       // Public member functions
 
@@ -122,7 +122,7 @@ namespace R1d
       * \param cFields array of monomer concentration fields (output)
       */
       void 
-      compute(DArray<WField> const & wFields, DArray<CField>& cFields);
+      compute(DArray<WFieldT> const & wFields, DArray<CFieldT>& cFields);
 
 
       // Inherited public member functions with non-dependent names

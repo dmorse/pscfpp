@@ -22,7 +22,7 @@ namespace Pscf
    *
    * \ingroup Pscf_Solver_Module
    */
-   template <class TP, class TS>
+   template <class PT, class ST>
    class MixtureTmpl : public MixtureBase, public ParamComposite
    {
    public:
@@ -32,12 +32,22 @@ namespace Pscf
       /**
       * Polymer species solver typename.
       */
-      typedef TP Polymer;
+      typedef PT PolymerT;
 
       /**
       * Solvent species solver typename.
       */
-      typedef TS Solvent;
+      typedef ST SolventT;
+
+      /**
+      * Polymer block type.
+      */
+      typedef typename PT::BlockT BlockT;
+
+      /**
+      * Polymer propagator type.
+      */
+      typedef typename PT::BlockT::PropagatorT PropagatorT;
 
       // Public member functions
 
@@ -75,18 +85,18 @@ namespace Pscf
       */
 
       /**
-      * Get a Polymer solver object.
+      * Get a polymer solver object.
       *
       * \param id  integer polymer species index (0 <= id < nPolymer)
       */
-      Polymer& polymer(int id);
+      PolymerT& polymer(int id);
 
       /**
-      * Get a Polymer solver by const reference.
+      * Get a polymer solver by const reference.
       *
       * \param id  integer polymer species index (0 <= id < nPolymer)
       */
-      Polymer const & polymer(int id) const;
+      PolymerT const & polymer(int id) const;
 
       /**
       * Get a PolymerSpecies descriptor by const reference.
@@ -98,18 +108,18 @@ namespace Pscf
       PolymerSpecies const & polymerSpecies(int id) const final;
 
       /**
-      * Set a Solvent solver object.
+      * Get a solvent solver object.
       *
       * \param id  integer solvent species index (0 <= id < nSolvent)
       */
-      Solvent& solvent(int id);
+      SolventT& solvent(int id);
 
       /**
-      * Set a Solvent solver object by constant reference.
+      * Get a solvent solver object by constant reference.
       *
       * \param id  integer solvent species index (0 <= id < nSolvent)
       */
-      Solvent const & solvent(int id) const;
+      SolventT const & solvent(int id) const;
 
       /**
       * Set a SolventSpecies descriptor object by const reference.
@@ -127,14 +137,14 @@ namespace Pscf
       *
       * Array capacity = nPolymer.
       */
-      DArray<Polymer> polymers_;
+      DArray<PolymerT> polymers_;
 
       /**
       * Array of solvent species objects.
       *
       * Array capacity = nSolvent.
       */
-      DArray<Solvent> solvents_;
+      DArray<SolventT> solvents_;
 
       // Restrict access to inherited protected data
       using MixtureBase::monomers_;
@@ -148,29 +158,29 @@ namespace Pscf
 
    // Inline member functions
 
-   template <class TP, class TS>
-   inline TP& MixtureTmpl<TP,TS>::polymer(int id)
+   template <class PT, class ST>
+   inline PT& MixtureTmpl<PT,ST>::polymer(int id)
    {  
       UTIL_CHECK(id < nPolymer_);
       return polymers_[id];
    }
 
-   template <class TP, class TS>
-   inline TP const & MixtureTmpl<TP,TS>::polymer(int id) const
+   template <class PT, class ST>
+   inline PT const & MixtureTmpl<PT,ST>::polymer(int id) const
    {  
       UTIL_CHECK(id < nPolymer_);
       return polymers_[id];
    }
 
-   template <class TP, class TS>
-   inline TS& MixtureTmpl<TP,TS>::solvent(int id)
+   template <class PT, class ST>
+   inline ST& MixtureTmpl<PT,ST>::solvent(int id)
    {  
       UTIL_CHECK(id < nSolvent_);
       return solvents_[id]; 
    }
 
-   template <class TP, class TS>
-   inline TS const & MixtureTmpl<TP,TS>::solvent(int id) const
+   template <class PT, class ST>
+   inline ST const & MixtureTmpl<PT,ST>::solvent(int id) const
    {  
       UTIL_CHECK(id < nSolvent_);
       return solvents_[id]; 
@@ -181,8 +191,8 @@ namespace Pscf
    /*
    * Constructor.
    */
-   template <class TP, class TS>
-   MixtureTmpl<TP,TS>::MixtureTmpl()
+   template <class PT, class ST>
+   MixtureTmpl<PT,ST>::MixtureTmpl()
     : MixtureBase(),
       ParamComposite(),
       polymers_(),
@@ -192,19 +202,25 @@ namespace Pscf
    /*
    * Destructor.
    */
-   template <class TP, class TS>
-   MixtureTmpl<TP,TS>::~MixtureTmpl()
+   template <class PT, class ST>
+   MixtureTmpl<PT,ST>::~MixtureTmpl()
    {}
 
-   template <class TP, class TS>
-   PolymerSpecies const & MixtureTmpl<TP,TS>::polymerSpecies(int id) const
+   /*
+   * Get a PolymerSpecies descriptor by non-const reference.
+   */
+   template <class PT, class ST>
+   PolymerSpecies const & MixtureTmpl<PT,ST>::polymerSpecies(int id) const
    {  
       UTIL_CHECK(id < nPolymer_);
       return polymers_[id];
    }
 
-   template <class TP, class TS>
-   SolventSpecies const & MixtureTmpl<TP,TS>::solventSpecies(int id) const
+   /*
+   * Get a SolventSpecies descriptor by const reference.
+   */
+   template <class PT, class ST>
+   SolventSpecies const & MixtureTmpl<PT,ST>::solventSpecies(int id) const
    {  
       UTIL_CHECK(id < nSolvent_);
       return solvents_[id]; 
@@ -213,8 +229,8 @@ namespace Pscf
    /*
    * Read all parameters and initialize.
    */
-   template <class TP, class TS>
-   void MixtureTmpl<TP,TS>::readParameters(std::istream& in)
+   template <class PT, class ST>
+   void MixtureTmpl<PT,ST>::readParameters(std::istream& in)
    {
       // Read nMonomer and monomers array
       read<int>(in, "nMonomer", nMonomer_);

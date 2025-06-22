@@ -19,8 +19,8 @@ namespace Pscf
    /**
    * Template for propagator classes.
    *
-   * The template argument TP should be a concrete propagator class that 
-   * is derived from the template PropagatorTmpl<TP>. By convention, each
+   * The template argument QT should be a concrete propagator class that 
+   * is derived from the template PropagatorTmpl<QT>. By convention, each
    * implementation of field theory is defined in a different sub-namespace
    * of namespace Pscf. For each such implementation, there is a concrete
    * propagator class, named Propagator by convention, that is a subclass
@@ -35,17 +35,17 @@ namespace Pscf
    *
    * \endcode
    * This usage is an example of the so-called "curiously recurring 
-   * template pattern" (CRTP). It is used here to allow the template 
+   * template pattern" (CRQT). It is used here to allow the template 
    * PropagatorTmpl<Propagator> to have member variables that store 
-   * pointers to other instances of the derived class Propagator (or TP).
+   * pointers to other instances of the derived class Propagator (or QT).
    *
    * The concrete Propagator class is used in templates BlockTmpl, 
    * PolymerTmpl and MixtureTmpl. The usage in those templates require 
-   * that the Propagator class define typedefs named WField and CField.
+   * that the Propagator class define typedefs named WFieldT and CFieldT.
    * Propagator must also provide member functions named solve() and 
    * computeQ(), neither of which takes any arguments.
    * 
-   * The typedefs WField and CField must be aliases for the type of 
+   * The typedefs WFieldT and CFieldT must be aliases for the type of 
    * containers used to a single chemical potential or concentration 
    * field, respectively.
    * 
@@ -66,10 +66,10 @@ namespace Pscf
    *    public:
    * 
    *        // Chemical potential field type.
-   *        typedef DArray<double> WField;
+   *        typedef DArray<double> WFieldT;
    *
    *        // Monomer concentration field type.
-   *        typedef DArray<double> CField;
+   *        typedef DArray<double> CFieldT;
    *
    *        // Solve the modified diffusion equation for this direction.
    *        void solve();
@@ -81,14 +81,14 @@ namespace Pscf
    *
    * \endcode
    *
-   * In the above example, the field container typenames WField and 
-   * CField are defined to be synonyms for DArrray<double>, i.e., for 
+   * In the above example, the field container typenames WFieldT and 
+   * CFieldT are defined to be synonyms for DArrray<double>, i.e., for 
    * dynamically allocated arrays of double precision floating point 
    * numbers. Other implementations may use more specialized types.
    *
    * \ingroup Pscf_Solver_Module
    */
-   template <class TP>
+   template <class QT>
    class PropagatorTmpl
    {
 
@@ -117,7 +117,7 @@ namespace Pscf
       *
       * \param partner reference to partner propagator
       */
-      void setPartner(const TP& partner);
+      void setPartner(const QT& partner);
 
       /**
       * Add a propagator to the list of sources for this one.
@@ -128,7 +128,7 @@ namespace Pscf
       * 
       * \param source reference to source propagator
       */
-      void addSource(const TP& source);
+      void addSource(const QT& source);
 
       /**
       * Set the isSolved flag to true or false.
@@ -152,12 +152,12 @@ namespace Pscf
       * 
       * \param id index of source propagator, < nSource
       */
-      const TP& source(int id) const;
+      const QT& source(int id) const;
 
       /**
       * Get partner propagator.
       */
-      const TP& partner() const;
+      const QT& partner() const;
 
       /**
       * Get direction index for this propagator.
@@ -206,10 +206,10 @@ namespace Pscf
       int directionId_;
 
       /// Pointer to partner - same block,opposite direction.
-      TP const * partnerPtr_;
+      QT const * partnerPtr_;
 
       /// Pointers to propagators that feed source vertex.
-      GArray<TP const *> sourcePtrs_;
+      GArray<QT const *> sourcePtrs_;
 
       /// True iff the head vertex is chain end.
       bool isHeadEnd_;
@@ -227,38 +227,38 @@ namespace Pscf
    /*
    * Get the direction index.
    */
-   template <class TP>
-   inline int PropagatorTmpl<TP>::directionId() const
+   template <class QT>
+   inline int PropagatorTmpl<QT>::directionId() const
    {  return directionId_; }
 
    /*
    * Get the number of source propagators.
    */
-   template <class TP>
-   inline int PropagatorTmpl<TP>::nSource() const
+   template <class QT>
+   inline int PropagatorTmpl<QT>::nSource() const
    {  return sourcePtrs_.size(); }
 
    /*
    * Get a source propagator.
    */
-   template <class TP>
-   inline const TP& 
-   PropagatorTmpl<TP>::source(int id) const
+   template <class QT>
+   inline const QT& 
+   PropagatorTmpl<QT>::source(int id) const
    {  return *(sourcePtrs_[id]); }
 
    /**
    * Does this have a partner propagator?
    */
-   template <class TP>
+   template <class QT>
    inline
-   bool PropagatorTmpl<TP>::hasPartner() const
+   bool PropagatorTmpl<QT>::hasPartner() const
    {  return partnerPtr_; }
 
    /*
    * Is the computation of this propagator completed?
    */
-   template <class TP>
-   inline bool PropagatorTmpl<TP>::isSolved() const
+   template <class QT>
+   inline bool PropagatorTmpl<QT>::isSolved() const
    {  return isSolved_; }
 
    // Noninline member functions
@@ -266,8 +266,8 @@ namespace Pscf
    /*
    * Constructor.
    */
-   template <class TP>
-   PropagatorTmpl<TP>::PropagatorTmpl()
+   template <class QT>
+   PropagatorTmpl<QT>::PropagatorTmpl()
     : directionId_(-1),
       partnerPtr_(0),
       sourcePtrs_(),
@@ -277,29 +277,29 @@ namespace Pscf
    /*
    * Set the directionId.
    */
-   template <class TP>
-   void PropagatorTmpl<TP>::setDirectionId(int directionId)
+   template <class QT>
+   void PropagatorTmpl<QT>::setDirectionId(int directionId)
    {  directionId_ = directionId; }
 
    /*
    * Set the partner propagator.
    */
-   template <class TP>
-   void PropagatorTmpl<TP>::setPartner(const TP& partner)
+   template <class QT>
+   void PropagatorTmpl<QT>::setPartner(const QT& partner)
    {  partnerPtr_ = &partner; }
 
    /*
    * Add a source propagator to the list.
    */
-   template <class TP>
-   void PropagatorTmpl<TP>::addSource(const TP& source)
+   template <class QT>
+   void PropagatorTmpl<QT>::addSource(const QT& source)
    {  sourcePtrs_.append(&source); }
 
    /*
    * Set flags indicate whether vertices are are chain ends.
    */
-   template <class TP>
-   void PropagatorTmpl<TP>::setEndFlags(bool isHeadEnd, bool isTailEnd)
+   template <class QT>
+   void PropagatorTmpl<QT>::setEndFlags(bool isHeadEnd, bool isTailEnd)
    {
       isHeadEnd_ = isHeadEnd;  
       isTailEnd_ = isTailEnd;  
@@ -310,8 +310,8 @@ namespace Pscf
    /*
    * Get partner propagator.
    */
-   template <class TP>
-   const TP& PropagatorTmpl<TP>::partner() 
+   template <class QT>
+   const QT& PropagatorTmpl<QT>::partner() 
    const
    {
       UTIL_CHECK(partnerPtr_);
@@ -321,15 +321,15 @@ namespace Pscf
    /*
    * Mark this propagator as solved (true) or not (false).
    */
-   template <class TP>
-   void PropagatorTmpl<TP>::setIsSolved(bool isSolved)
+   template <class QT>
+   void PropagatorTmpl<QT>::setIsSolved(bool isSolved)
    {  isSolved_ = isSolved; }
 
    /*
    * Check if all source propagators are marked completed.
    */
-   template <class TP>
-   bool PropagatorTmpl<TP>::isReady() const
+   template <class QT>
+   bool PropagatorTmpl<QT>::isReady() const
    {
       for (int i=0; i < sourcePtrs_.size(); ++i) {
          if (!sourcePtrs_[i]->isSolved()) {
@@ -342,8 +342,8 @@ namespace Pscf
    /*
    * Does this propagator own the head vertex bead?
    */
-   template <class TP>
-   inline bool PropagatorTmpl<TP>::isHeadEnd() const
+   template <class QT>
+   inline bool PropagatorTmpl<QT>::isHeadEnd() const
    {
       return isHeadEnd_; 
    }
@@ -351,8 +351,8 @@ namespace Pscf
    /*
    * Does this propagator own the tail vertex bead?
    */
-   template <class TP>
-   inline bool PropagatorTmpl<TP>::isTailEnd() const
+   template <class QT>
+   inline bool PropagatorTmpl<QT>::isTailEnd() const
    {
       return isTailEnd_; 
    }

@@ -15,11 +15,17 @@
 namespace Pscf {
 namespace Rpg { 
 
+   /*
+   * Constructor.
+   */
    template <int D>
    Solvent<D>::Solvent()
     : meshPtr_(nullptr)
    {  setClassName("Solvent"); }
 
+   /*
+   * Destructor.
+   */
    template <int D>
    Solvent<D>::~Solvent()
    {}

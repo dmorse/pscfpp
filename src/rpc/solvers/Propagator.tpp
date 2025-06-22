@@ -67,7 +67,7 @@ namespace Rpc {
       // Deallocate all memory previously used by this propagator.
       qFields_.deallocate();
 
-      // NOTE: The qFields_ container is a DArray<QField>, where QField
+      // NOTE: The qFields_ container is a DArray<QFieldT>, where QFieldT
       // is a typedef for RField<D>. The DArray::deallocate() function
       // calls "delete [] ptr", where ptr is a pointer to the underlying
       // C array. The C++ delete [] command calls the destructor for each
@@ -85,7 +85,7 @@ namespace Rpc {
    }
 
    /*
-   * Compute initial head QField for the thread model.
+   * Compute initial head q-field for the thread model.
    */
    template <int D>
    void Propagator<D>::computeHead()
@@ -94,7 +94,7 @@ namespace Rpc {
       int nx = meshPtr_->size();
 
       // Reference to head of this propagator
-      QField& qh = qFields_[0];
+      QFieldT& qh = qFields_[0];
 
       // Initialize qh field to 1.0 at all grid points
       for (int ix = 0; ix < nx; ++ix) {
@@ -102,12 +102,12 @@ namespace Rpc {
       }
 
       if (!isHeadEnd()) {
-         // Pointwise multiply tail QFields of all sources
+         // Pointwise multiply tail q-fields of all sources
          for (int is = 0; is < nSource(); ++is) {
             if (!source(is).isSolved()) {
                UTIL_THROW("Source not solved in computeHead");
             }
-            QField const& qt = source(is).tail();
+            QFieldT const& qt = source(is).tail();
             for (int ix = 0; ix < nx; ++ix) {
                qh[ix] *= qt[ix];
             }
@@ -117,10 +117,10 @@ namespace Rpc {
    }
 
    /*
-   * Compute initial head QField for the bead model.
+   * Compute initial head q-field for the bead model.
    */
    template <int D>
-   void Propagator<D>::assign(QField& lhs, QField const & rhs)
+   void Propagator<D>::assign(QFieldT& lhs, QFieldT const & rhs)
    {
       int nx = lhs.capacity();
       UTIL_CHECK(rhs.capacity() == nx);
@@ -184,7 +184,7 @@ namespace Rpc {
    * Solve the MDE with a specified initial condition at the head.
    */
    template <int D>
-   void Propagator<D>::solve(QField const & head)
+   void Propagator<D>::solve(QFieldT const & head)
    {
       UTIL_CHECK(blockPtr_);
       UTIL_CHECK(meshPtr_);
@@ -192,7 +192,7 @@ namespace Rpc {
       UTIL_CHECK(head.capacity() == nx);
 
       // Initialize initial (head) field
-      QField& qh = qFields_[0];
+      QFieldT& qh = qFields_[0];
       for (int i = 0; i < nx; ++i) {
          qh[i] = head[i];
       }
@@ -259,14 +259,14 @@ namespace Rpc {
       double Q = 0.0;
       if (PolymerModel::isBead() && isHeadEnd()) {
          // Compute average of q for last bead of partner
-         QField const& qt = partner().q(ns_-2);
+         QFieldT const& qt = partner().q(ns_-2);
          for (int ix = 0; ix < nx; ++ix) {
             Q += qt[ix];
          }
       } else {
          // Compute average product of head slice and partner tail slice
-         QField const& qh = head();
-         QField const& qt = partner().tail();
+         QFieldT const& qh = head();
+         QFieldT const& qt = partner().tail();
          for (int ix = 0; ix < nx; ++ix) {
             Q += qh[ix]*qt[ix];
          }

@@ -58,7 +58,7 @@ namespace R1d {
       *
       * \param wFields  array of chemica potential fields.
       */ 
-      void compute(DArray<Block::WField> const & wFields);
+      void compute(DArray< DArray<double> > const & wFields);
 
    private:
 

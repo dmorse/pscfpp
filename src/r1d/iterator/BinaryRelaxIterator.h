@@ -42,12 +42,12 @@ namespace R1d
       /**
       * Monomer chemical potential field.
       */
-      typedef Mixture::WField WField;
+      typedef Mixture::WFieldT WFieldT;
     
       /**
       * Monomer concentration / volume fraction field.
       */
-      typedef Mixture::CField CField;
+      typedef Mixture::CFieldT CFieldT;
    
       /**
       * Constructor.
@@ -80,10 +80,10 @@ namespace R1d
     
     
       /// Perturbed chemical potential fields (work space).
-      DArray<WField> wFieldsNew_;
+      DArray<WFieldT> wFieldsNew_;
     
       /// Perturbed monomer concentration fields (work space).
-      DArray<WField> cFieldsNew_;
+      DArray<WFieldT> cFieldsNew_;
       
       
       /// Concentrations at one point (work space).
@@ -99,9 +99,9 @@ namespace R1d
       DArray<double> residualNew_;
       
       /// Perturbed DW
-      DArray<WField> dW_;
+      DArray<WFieldT> dW_;
       
-      DArray<WField> dWNew_;
+      DArray<WFieldT> dWNew_;
       
       /// Norm of change field
       double dWNorm_;
@@ -139,9 +139,9 @@ namespace R1d
       * \param dW  change of w fields (output)
       * \param dWNorm scalar residual (output)
       */
-      void computeDW(Array<WField> const & wOld, 
-                     Array<CField> const & cFields,
-                     Array<WField> & dW,
+      void computeDW(Array<WFieldT> const & wOld, 
+                     Array<CFieldT> const & cFields,
+                     Array<WFieldT> & dW,
                      double & dWNorm);
      
       /**
@@ -151,9 +151,9 @@ namespace R1d
       * \param dW_ array of increment of chemical potential fields (input)
       * \param wNew array of new chemical potential fields (output)
       */
-      void updateWFields(Array<WField> const & wOld,
-                         Array<WField> const & dW_,
-                         Array<WField> & wNew);
+      void updateWFields(Array<WFieldT> const & wOld,
+                         Array<WFieldT> const & dW_,
+                         Array<WFieldT> & wNew);
                          
    };
 

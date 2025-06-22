@@ -9,8 +9,9 @@
 */
 
 #include <pscf/chem/SolventSpecies.h>   // base class
-#include <rpc/solvers/Propagator.h>       // typedefs
+#include <prdc/cpu/RField.h>            // member
 
+// Forward declarations
 namespace Pscf {
    template <int D> class Mesh;
 }
@@ -19,6 +20,8 @@ namespace Pscf {
 namespace Rpc { 
 
    using namespace Util;
+   using namespace Prdc;
+   using namespace Prdc::Cpu;
 
    /**
    * Solver and descriptor for a solvent species.
