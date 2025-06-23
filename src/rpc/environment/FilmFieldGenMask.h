@@ -9,7 +9,7 @@
 */
 
 #include <rpc/System.h>
-#include <prdc/field/FilmFieldGenMaskBase.h>  // Base class
+#include <prdc/environment/FilmFieldGenMaskBase.h>  // Base class
 
 namespace Pscf {
 namespace Rpc {

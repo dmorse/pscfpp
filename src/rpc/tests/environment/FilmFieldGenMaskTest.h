@@ -4,7 +4,7 @@
 #include <test/UnitTest.h>
 #include <test/UnitTestRunner.h>
 
-#include <rpc/field/FilmFieldGenMask.h>
+#include <rpc/environment/FilmFieldGenMask.h>
 #include <rpc/scft/iterator/Iterator.h>
 #include <rpc/System.h>
 
@@ -64,7 +64,7 @@ public:
       FilmFieldGenMask<2> mask(system);
 
       std::ifstream in;
-      openInputFile("in/film/filmMask1", in);
+      openInputFile("in/filmMask1", in);
       mask.readParameters(in);
       in.close();
 
@@ -93,7 +93,7 @@ public:
 
       // Set up 1D mask with a compatible system and check compatibility
       System<1> system1;
-      createSystem(system1, "in/film/system1D");
+      createSystem(system1, "in/system1D");
 
       // Set unit cell parameter
       FSArray<double, 6> parameters;
@@ -102,7 +102,7 @@ public:
       system1.setUnitCell(parameters);
       
       FilmFieldGenMask<1> mask1(system1);
-      createFilmFieldGenMask(mask1, "in/film/filmMask1");
+      createFilmFieldGenMask(mask1, "in/filmMask1");
       
       Log::file() << "Testing system 1:" << std::endl;
       TEST_ASSERT(checkCheckCompatibility(mask1,false));
@@ -114,7 +114,7 @@ public:
 
       // Set up 2D mask with a compatible system and check compatibility
       System<2> system2;
-      createSystem(system2, "in/film/system2D_1");
+      createSystem(system2, "in/system2D_1");
 
       // Set unit cell parameters
       parameters.clear();
@@ -124,7 +124,7 @@ public:
       system2.setUnitCell(parameters);
 
       FilmFieldGenMask<2> mask2(system2);
-      createFilmFieldGenMask(mask2, "in/film/filmMask2");
+      createFilmFieldGenMask(mask2, "in/filmMask2");
 
       Log::file() << "Testing system 2:" << std::endl;
       TEST_ASSERT(checkCheckCompatibility(mask2,false));
@@ -135,7 +135,7 @@ public:
 
       // Set up 2D mask with an incompatible system and check compatibility
       System<2> system3;
-      createSystem(system3, "in/film/system2D_2");
+      createSystem(system3, "in/system2D_2");
 
       // Set unit cell parameters
       parameters.clear();
@@ -144,7 +144,7 @@ public:
       system3.setUnitCell(parameters);
 
       FilmFieldGenMask<2> mask3(system3);
-      createFilmFieldGenMask(mask3, "in/film/filmMask2");
+      createFilmFieldGenMask(mask3, "in/filmMask2");
 
       Log::file() << "Testing system 3:" << std::endl;
       TEST_ASSERT(checkCheckCompatibility(mask3,true));
@@ -152,7 +152,7 @@ public:
 
       // Set up 3D mask with a compatible system and check compatibility
       System<3> system4;
-      createSystem(system4, "in/film/system3D_1");
+      createSystem(system4, "in/system3D_1");
 
       // Set unit cell parameters
       parameters.clear();
@@ -162,7 +162,7 @@ public:
       system4.setUnitCell(parameters);
 
       FilmFieldGenMask<3> mask4(system4);
-      createFilmFieldGenMask(mask4, "in/film/filmMask3");
+      createFilmFieldGenMask(mask4, "in/filmMask3");
 
       Log::file() << "Testing system 4:" << std::endl;
       TEST_ASSERT(checkCheckCompatibility(mask4,false));
@@ -174,7 +174,7 @@ public:
 
       // Set up another 3D mask with a compatible system
       System<3> system5;
-      createSystem(system5, "in/film/system3D_2");
+      createSystem(system5, "in/system3D_2");
 
       // Set unit cell parameters
       parameters.clear();
@@ -186,7 +186,7 @@ public:
       system5.setUnitCell(parameters);
 
       FilmFieldGenMask<3> mask5(system5);
-      createFilmFieldGenMask(mask5, "in/film/filmMask3");
+      createFilmFieldGenMask(mask5, "in/filmMask3");
 
       // Test compatibility
       Log::file() << "Testing system 5:" << std::endl;
@@ -208,7 +208,7 @@ public:
       // Try a different mask with normalVecId == 1, which is incompatible
       // due to the space group
       FilmFieldGenMask<3> mask6(system5);
-      createFilmFieldGenMask(mask6, "in/film/filmMask2");
+      createFilmFieldGenMask(mask6, "in/filmMask2");
       Log::file() << "Testing system 7:" << std::endl;
       TEST_ASSERT(checkCheckCompatibility(mask6,true));
 
@@ -221,7 +221,7 @@ public:
 
       // Set up 2D mask with a compatible system
       System<2> system;
-      createSystem(system, "in/film/system2D_1");
+      createSystem(system, "in/system2D_1");
 
       // Set unit cell parameter
       FSArray<double, 6> parameters;
@@ -232,7 +232,7 @@ public:
 
       // Set up mask
       FilmFieldGenMask<2> mask(system);
-      createFilmFieldGenMask(mask, "in/film/filmMask2");
+      createFilmFieldGenMask(mask, "in/filmMask2");
       mask.initialize();
       TEST_ASSERT(mask.isInitialized());
       TEST_ASSERT(system.mask().isAllocatedBasis());
@@ -244,7 +244,7 @@ public:
       // Check that the generated mask is correct
       UnitCell<2> unitCell; // UnitCell object to pass to FieldIo functions
       DArray<double> maskCheck; // Copy of reference field
-      system.domain().fieldIo().readFieldBasis("in/film/maskRef2.bf", 
+      system.domain().fieldIo().readFieldBasis("in/maskRef2.bf", 
                                                maskCheck, unitCell);
       BFieldComparison bComparison(0); // object to compare fields
       bComparison.compare(system.mask().basis(), maskCheck);
@@ -261,7 +261,7 @@ public:
 
       // Set up 1D mask with a compatible system
       System<1> system;
-      createSystem(system, "in/film/system1D");
+      createSystem(system, "in/system1D");
 
       // Set unit cell parameter
       FSArray<double, 6> parameters;
@@ -271,7 +271,7 @@ public:
 
       // Set up mask
       FilmFieldGenMask<1> mask(system);
-      createFilmFieldGenMask(mask, "in/film/filmMask1");
+      createFilmFieldGenMask(mask, "in/filmMask1");
       mask.initialize();
       TEST_ASSERT(!mask.updateNeeded());
 
@@ -285,7 +285,7 @@ public:
       // Check that updated mask is correct
       UnitCell<1> unitCell; // UnitCell object to pass to FieldIo functions
       DArray<double> wFieldsCheck; // Copy of reference field
-      system.domain().fieldIo().readFieldBasis("in/film/maskRef1.bf", 
+      system.domain().fieldIo().readFieldBasis("in/maskRef1.bf", 
                                        wFieldsCheck, unitCell);
       BFieldComparison bComparison(0); // object to compare fields
       bComparison.compare(system.mask().basis(), wFieldsCheck);
@@ -302,7 +302,7 @@ public:
 
       // Set up 2D mask with a compatible system
       System<2> system;
-      createSystem(system, "in/film/system2D_1");
+      createSystem(system, "in/system2D_1");
 
       // Set unit cell parameter
       FSArray<double, 6> parameters;
@@ -313,11 +313,11 @@ public:
 
       // Set up mask
       FilmFieldGenMask<2> mask(system);
-      createFilmFieldGenMask(mask, "in/film/filmMask2");
+      createFilmFieldGenMask(mask, "in/filmMask2");
       mask.initialize();
 
       // Read w field and solve MDEs, so system can calculate fHelmholtz
-      system.readWBasis("in/film/wIn2D.bf");
+      system.readWBasis("in/wIn2D.bf");
       system.compute();
 
       // Call stress and check that the result is correct
@@ -332,7 +332,7 @@ public:
 
       // Set up 1D mask with a compatible system
       System<1> system;
-      createSystem(system, "in/film/system1D");
+      createSystem(system, "in/system1D");
 
       // Set unit cell parameter
       FSArray<double, 6> parameters;
@@ -342,11 +342,11 @@ public:
 
       // Set up mask
       FilmFieldGenMask<1> mask(system);
-      createFilmFieldGenMask(mask, "in/film/filmMask1");
+      createFilmFieldGenMask(mask, "in/filmMask1");
       mask.initialize();
 
       // Read w field and solve MDEs, so system can calculate fHelmholtz
-      system.readWBasis("in/film/wIn1D_2.bf");
+      system.readWBasis("in/wIn1D_2.bf");
       system.compute();
 
       // Call modifyStress with an arbitrary input stress value 

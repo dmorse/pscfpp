@@ -4,7 +4,7 @@
 #include <test/UnitTest.h>
 #include <test/UnitTestRunner.h>
 
-#include <rpg/field/MixAndMatchEnvs.h>
+#include <rpg/environment/MixAndMatchEnvs.h>
 #include <rpg/System.h>
 
 #include <prdc/cuda/RField.h>
@@ -58,11 +58,11 @@ public:
 
       // Set up film environment from file
       System<1> system;
-      createSystem(system, "in/film/system1DEnv");
+      createSystem(system, "in/system1DEnv");
       FilmEnvironment<1> env(system);
 
       std::ifstream in;
-      openInputFile("in/film/environment1", in);
+      openInputFile("in/environment1", in);
       env.readParam(in);
       in.close();
 
@@ -89,20 +89,20 @@ public:
       
       // Set up system with some data
       System<1> system;
-      createSystem(system, "in/film/system1DEnv");
+      createSystem(system, "in/system1DEnv");
 
       // Read initial guess
-      system.readWBasis("in/film/wIn1D.bf");
+      system.readWBasis("in/wIn1D.bf");
 
       // Iterate to a solution
       system.iterate();
       Log::file() << system.mask().phiTot() << std::endl;
       TEST_ASSERT(eq(system.mask().phiTot(), 8.0951532073e-01));
 
-      // Check converged field is correct by comparing to ref files in in/film/
+      // Check converged field is correct by comparing to ref files in in/
       UnitCell<1> unitCell; // UnitCell object to pass to FieldIo functions
       DArray< RField<1> > cFieldsCheck; // reference fields
-      system.domain().fieldIo().readFieldsRGrid("in/film/cRef1D.rf", 
+      system.domain().fieldIo().readFieldsRGrid("in/cRef1D.rf", 
                                                 cFieldsCheck, unitCell);
       RFieldComparison<1> rComparison; // object to compare fields
       rComparison.compare(system.c().rgrid(), cFieldsCheck);
@@ -130,10 +130,10 @@ public:
       
       // Set up system with some data
       System<2> system;
-      createSystem(system, "in/film/system2DEnv");
+      createSystem(system, "in/system2DEnv");
 
       // Read initial guess
-      system.readWBasis("in/film/wIn2D.bf");
+      system.readWBasis("in/wIn2D.bf");
 
       // Solve
       system.iterate();
@@ -147,7 +147,7 @@ public:
       // Check converged field is correct by comparing to reference
       UnitCell<2> unitCell; // UnitCell object to pass to FieldIo functions
       DArray< RField<2> > cFieldsCheck; // reference fields
-      system.domain().fieldIo().readFieldsRGrid("in/film/cRef2D.rf", 
+      system.domain().fieldIo().readFieldsRGrid("in/cRef2D.rf", 
                                                 cFieldsCheck, unitCell);
       RFieldComparison<2> rComparison; // object to compare fields
       rComparison.compare(system.c().rgrid(), cFieldsCheck);
@@ -181,10 +181,10 @@ public:
       
       // Set up system
       System<1> system;
-      createSystem(system, "in/film/system1DEnv");
+      createSystem(system, "in/system1DEnv");
 
       // Read initial guess
-      system.readWBasis("in/film/wIn1D.bf");
+      system.readWBasis("in/wIn1D.bf");
 
       // Run the sweep function
       system.sweep();
@@ -192,7 +192,7 @@ public:
       // Check converged field is correct by comparing to reference
       UnitCell<1> unitCell; // UnitCell object to pass to FieldIo functions
       DArray< RField<1> > cFieldsCheck; // reference fields
-      system.domain().fieldIo().readFieldsRGrid("in/film/cRefSweep.rf", 
+      system.domain().fieldIo().readFieldsRGrid("in/cRefSweep.rf", 
                                                 cFieldsCheck, unitCell);
       RFieldComparison<1> rComparison; // object to compare fields
       rComparison.compare(system.c().rgrid(), cFieldsCheck);
@@ -224,10 +224,10 @@ public:
       
       // Set up system with some data
       System<1> system;
-      createSystem(system, "in/film/system1DEnvFBulk");
+      createSystem(system, "in/system1DEnvFBulk");
 
       // Read initial guess
-      system.readWBasis("in/film/wIn1D_3.bf");
+      system.readWBasis("in/wIn1D_3.bf");
 
       // Iterate to a solution
       system.iterate();
@@ -240,10 +240,10 @@ public:
       TEST_ASSERT(abs(paramErr) < 1e-5);
       TEST_ASSERT(abs(system.mask().phiTot() - 0.8059299672) < 1e-5);
 
-      // Check converged field is correct by comparing to ref files in in/film/
+      // Check converged field is correct by comparing to ref files in in/
       UnitCell<1> unitCell; // UnitCell object to pass to FieldIo functions
       DArray< RField<1> > cFieldsCheck; // reference fields
-      system.domain().fieldIo().readFieldsRGrid("in/film/cRef1DFBulk.rf", 
+      system.domain().fieldIo().readFieldsRGrid("in/cRef1DFBulk.rf", 
                                                 cFieldsCheck, unitCell);
       RFieldComparison<1> rComparison; // object to compare fields
       rComparison.compare(system.c().rgrid(), cFieldsCheck);
@@ -272,19 +272,19 @@ public:
       
       // Set up system with some data
       System<1> system;
-      createSystem(system, "in/film/system1DEnvGrid");
+      createSystem(system, "in/system1DEnvGrid");
 
       // Read initial guess
-      system.readWBasis("in/film/wIn1D.bf");
+      system.readWBasis("in/wIn1D.bf");
 
       // Iterate to a solution
       system.iterate();
       TEST_ASSERT(eq(system.mask().phiTot(), 8.0951532073e-01));
 
-      // Check converged field is correct by comparing to ref files in in/film/
+      // Check converged field is correct by comparing to ref files in in/
       UnitCell<1> unitCell; // UnitCell object to pass to FieldIo functions
       DArray< RField<1> > cFieldsCheck; // reference fields
-      system.domain().fieldIo().readFieldsRGrid("in/film/cRef1D.rf", 
+      system.domain().fieldIo().readFieldsRGrid("in/cRef1D.rf", 
                                                 cFieldsCheck, unitCell);
       RFieldComparison<1> rComparison; // object to compare fields
       rComparison.compare(system.c().rgrid(), cFieldsCheck);
@@ -312,10 +312,10 @@ public:
       
       // Set up system with some data
       System<2> system;
-      createSystem(system, "in/film/system2DEnvGrid");
+      createSystem(system, "in/system2DEnvGrid");
 
       // Read initial guess
-      system.readWBasis("in/film/wIn2D.bf");
+      system.readWBasis("in/wIn2D.bf");
 
       // Solve
       system.iterate();
@@ -329,7 +329,7 @@ public:
       // Check converged field is correct by comparing to reference
       UnitCell<2> unitCell; // UnitCell object to pass to FieldIo functions
       DArray< RField<2> > cFieldsCheck; // reference fields
-      system.domain().fieldIo().readFieldsRGrid("in/film/cRef2D.rf", 
+      system.domain().fieldIo().readFieldsRGrid("in/cRef2D.rf", 
                                                 cFieldsCheck, unitCell);
       RFieldComparison<2> rComparison; // object to compare fields
       rComparison.compare(system.c().rgrid(), cFieldsCheck);
@@ -363,10 +363,10 @@ public:
       
       // Set up system
       System<1> system;
-      createSystem(system, "in/film/system1DEnvGrid");
+      createSystem(system, "in/system1DEnvGrid");
 
       // Read initial guess
-      system.readWBasis("in/film/wIn1D.bf");
+      system.readWBasis("in/wIn1D.bf");
 
       // Run the sweep function
       system.sweep();
@@ -374,7 +374,7 @@ public:
       // Check converged field is correct by comparing to reference
       UnitCell<1> unitCell; // UnitCell object to pass to FieldIo functions
       DArray< RField<1> > cFieldsCheck; // reference fields
-      system.domain().fieldIo().readFieldsRGrid("in/film/cRefSweep.rf", 
+      system.domain().fieldIo().readFieldsRGrid("in/cRefSweep.rf", 
                                                 cFieldsCheck, unitCell);
       RFieldComparison<1> rComparison; // object to compare fields
       rComparison.compare(system.c().rgrid(), cFieldsCheck);
@@ -406,10 +406,10 @@ public:
       
       // Set up system with some data
       System<1> system;
-      createSystem(system, "in/film/system1DEnvFBulkGrid");
+      createSystem(system, "in/system1DEnvFBulkGrid");
 
       // Read initial guess
-      system.readWBasis("in/film/wIn1D_3.bf");
+      system.readWBasis("in/wIn1D_3.bf");
 
       // Iterate to a solution
       system.iterate();
@@ -422,10 +422,10 @@ public:
       TEST_ASSERT(abs(paramErr) < 1e-5);
       TEST_ASSERT(abs(system.mask().phiTot() - 0.8059299672) < 1e-5);
 
-      // Check converged field is correct by comparing to ref files in in/film/
+      // Check converged field is correct by comparing to ref files in in/
       UnitCell<1> unitCell; // UnitCell object to pass to FieldIo functions
       DArray< RField<1> > cFieldsCheck; // reference fields
-      system.domain().fieldIo().readFieldsRGrid("in/film/cRef1DFBulk.rf", 
+      system.domain().fieldIo().readFieldsRGrid("in/cRef1DFBulk.rf", 
                                                 cFieldsCheck, unitCell);
       RFieldComparison<1> rComparison; // object to compare fields
       rComparison.compare(system.c().rgrid(), cFieldsCheck);

@@ -1,6 +1,7 @@
 #-----------------------------------------------------------------------
 # Source files in src/rpg and corresponding object file targets
 
+include $(SRC_DIR)/rpg/environment/sources.mk
 include $(SRC_DIR)/rpg/field/sources.mk
 include $(SRC_DIR)/rpg/solvers/sources.mk
 include $(SRC_DIR)/rpg/scft/sources.mk
@@ -8,6 +9,7 @@ include $(SRC_DIR)/rpg/fts/sources.mk
 
 # List of source files in src/rpg
 rpg_= \
+  $(rpg_environment_) \
   $(rpg_field_) \
   $(rpg_solvers_) \
   $(rpg_scft_) \

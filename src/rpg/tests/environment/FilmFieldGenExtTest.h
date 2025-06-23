@@ -1,11 +1,11 @@
-#ifndef RPC_FILM_FIELD_GEN_EXT_TEST_H
-#define RPC_FILM_FIELD_GEN_EXT_TEST_H
+#ifndef RPG_FILM_FIELD_GEN_EXT_TEST_H
+#define RPG_FILM_FIELD_GEN_EXT_TEST_H
 
 #include <test/UnitTest.h>
 #include <test/UnitTestRunner.h>
 
-#include <rpc/field/FilmFieldGenExt.h>
-#include <rpc/System.h>
+#include <rpg/environment/FilmFieldGenExt.h>
+#include <rpg/System.h>
 
 #include <prdc/crystal/UnitCell.h>
 #include <prdc/crystal/BFieldComparison.h>
@@ -19,8 +19,8 @@
 using namespace Util;
 using namespace Pscf;
 using namespace Pscf::Prdc;
-using namespace Pscf::Prdc::Cpu;
-using namespace Pscf::Rpc;
+using namespace Pscf::Prdc::Cuda;
+using namespace Pscf::Rpg;
 
 class FilmFieldGenExtTest : public UnitTest
 {
@@ -60,11 +60,11 @@ public:
 
       // Set up external field generator from file
       System<1> system;
-      createSystem(system, "in/film/system1D");
+      createSystem(system, "in/system1D");
       FilmFieldGenExt<1> ext(system);
 
       std::ifstream in;
-      openInputFile("in/film/filmExt1Asym", in);
+      openInputFile("in/filmExt1Asym", in);
       ext.readParameters(in);
       in.close();
 
@@ -83,18 +83,15 @@ public:
 
    void testCheckCompatibility() // test FieldGenerator::checkCompatibility()
    {
-      // Note: this test indirectly tests two other methods that are used
-      // by checkCompatibility: hasSymmetricWalls and maskNormalVecId.
-
       printMethod(TEST_FUNC);
       openLogFile("out/extTestCheckCompatibility.log");
 
       // Set up 1D external field with symmetric walls
       System<1> system1;
-      createSystem(system1, "in/film/system1D");
+      createSystem(system1, "in/system1D");
       
       FilmFieldGenExt<1> ext1(system1);
-      createFilmFieldGenExt(ext1, "in/film/filmExt1Sym");
+      createFilmFieldGenExt(ext1, "in/filmExt1Sym");
       
       Log::file() << "Testing system 1:" << std::endl;
       TEST_ASSERT(checkCheckCompatibility(ext1,false));
@@ -105,14 +102,10 @@ public:
       // Set up 2D external field with asymmetric walls and an 
       // incompatible space group
       System<2> system2;
-      createSystem(system2, "in/film/system2D_1");
-      system2.mask().allocateBasis(1225);
-      system2.mask().allocateRGrid(system2.domain().mesh().dimensions());
-      UnitCell<2> tmpUnitCell;
-      system2.mask().readBasis("in/film/maskRef2.bf",tmpUnitCell);
+      createSystem(system2, "in/system2D_1");
 
       FilmFieldGenExt<2> ext2(system2);
-      createFilmFieldGenExt(ext2, "in/film/filmExt2Asym");
+      createFilmFieldGenExt(ext2, "in/filmExt2Asym");
 
       Log::file() << "Testing system 2:" << std::endl;
       TEST_ASSERT(checkCheckCompatibility(ext2,true));
@@ -121,14 +114,10 @@ public:
       // Set up 3D external field with asymmetric walls and a compatible
       // space group
       System<3> system3;
-      createSystem(system3, "in/film/system3D_3");
-      system3.mask().allocateBasis(1920);
-      system3.mask().allocateRGrid(system3.domain().mesh().dimensions());
-      UnitCell<3> tmpUnitCell2;
-      system3.mask().readBasis("in/film/maskRef3.bf",tmpUnitCell2);
+      createSystem(system3, "in/system3D_3");
 
       FilmFieldGenExt<3> ext3(system3);
-      createFilmFieldGenExt(ext3, "in/film/filmExt3Asym");
+      createFilmFieldGenExt(ext3, "in/filmExt3Asym");
 
       Log::file() << "Testing system 3:" << std::endl;
       TEST_ASSERT(checkCheckCompatibility(ext3,false));
@@ -145,11 +134,12 @@ public:
 
       // Set up 3D external field with a compatible system
       System<3> system1;
-      createSystem(system1, "in/film/system3D_3");
+      createSystem(system1, "in/system3D_3");
       system1.mask().allocateBasis(1920);
       system1.mask().allocateRGrid(system1.domain().mesh().dimensions());
+      system1.mask().setFieldIo(system1.domain().fieldIo());
       UnitCell<3> tmpUnitCell1;
-      system1.mask().readBasis("in/film/maskRef3.bf",tmpUnitCell1);
+      system1.mask().readBasis("in/maskRef3.bf", tmpUnitCell1);
 
       // Set unit cell parameter
       FSArray<double, 6> parameters;
@@ -160,7 +150,7 @@ public:
 
       // Set up external field
       FilmFieldGenExt<3> ext1(system1);
-      createFilmFieldGenExt(ext1, "in/film/filmExt3Asym");
+      createFilmFieldGenExt(ext1, "in/filmExt3Asym");
       ext1.initialize();
       TEST_ASSERT(ext1.isInitialized());
       TEST_ASSERT(system1.h().isAllocatedRGrid());
@@ -171,7 +161,7 @@ public:
       // Check that the generated external fields are correct
       UnitCell<3> unitCell; // UnitCell object to pass to FieldIo functions
       DArray<DArray<double> > hFieldsCheck; // Copy of reference field
-      system1.domain().fieldIo().readFieldsBasis("in/film/hRef1.bf", 
+      system1.domain().fieldIo().readFieldsBasis("in/hRef1.bf", 
                                        hFieldsCheck, unitCell);
       BFieldComparison bComparison(0); // object to compare fields
       bComparison.compare(system1.h().basis(), hFieldsCheck);
@@ -183,7 +173,7 @@ public:
 
       // Set up 3D system with athermal walls
       System<3> system2;
-      createSystem(system2, "in/film/system3D_3");
+      createSystem(system2, "in/system3D_3");
       system2.mask().allocateBasis(1920);
       system2.mask().allocateRGrid(system2.domain().mesh().dimensions());
       //system2.setUnitCell(UnitCell<3>::Hexagonal, parameters);
@@ -191,7 +181,7 @@ public:
 
       // Set up external field
       FilmFieldGenExt<3> ext2(system2);
-      createFilmFieldGenExt(ext2, "in/film/filmExt3Athermal");
+      createFilmFieldGenExt(ext2, "in/filmExt3Athermal");
       ext2.initialize();
 
       TEST_ASSERT(ext2.isInitialized());
@@ -211,7 +201,7 @@ public:
 
       // Set up 1D external field with a compatible system
       System<1> system;
-      createSystem(system, "in/film/system1D");
+      createSystem(system, "in/system1D");
 
       // Set unit cell parameter
       FSArray<double, 6> parameters;
@@ -220,12 +210,13 @@ public:
       system.setUnitCell(parameters);
       system.mask().allocateBasis(37);
       system.mask().allocateRGrid(system.domain().mesh().dimensions());
+      system.mask().setFieldIo(system.domain().fieldIo());
       UnitCell<1> tmpUnitCell;
-      system.mask().readBasis("in/film/maskRef1.bf",tmpUnitCell);
+      system.mask().readBasis("in/maskRef1.bf",tmpUnitCell);
 
       // Set up external field generator
       FilmFieldGenExt<1> ext(system);
-      createFilmFieldGenExt(ext, "in/film/filmExt1Sym");
+      createFilmFieldGenExt(ext, "in/filmExt1Sym");
       ext.initialize();
 
       // Change lattice parameter and update
@@ -239,8 +230,8 @@ public:
       // Check that updated external fields are correct
       UnitCell<1> unitCell; // UnitCell object to pass to FieldIo functions
       DArray<DArray<double> > hFieldsCheck; // Copy of reference field
-      system.domain().fieldIo().readFieldsBasis("in/film/hRef2.bf", 
-                                       hFieldsCheck, unitCell);
+      system.domain().fieldIo().readFieldsBasis("in/hRef2.bf", hFieldsCheck, 
+		                                unitCell);
       BFieldComparison bComparison(0); // object to compare fields
       bComparison.compare(system.h().basis(), hFieldsCheck);
       if (verbose() > 0) {
@@ -267,8 +258,9 @@ public:
       // Check that updated external fields are is correct
       UnitCell<1> unitCell2; // UnitCell object to pass to FieldIo functions
       DArray<DArray<double> > hFieldsCheck2; // Copy of reference field
-      system.domain().fieldIo().readFieldsBasis("in/film/hRef3.bf", 
-                                       hFieldsCheck2, unitCell2);
+      system.domain().fieldIo().readFieldsBasis("in/hRef3.bf", 
+		                                hFieldsCheck2, 
+		                                unitCell2);
       BFieldComparison bComparison2(0); // object to compare fields
       bComparison2.compare(system.h().basis(), hFieldsCheck2);
       if (verbose() > 0) {
@@ -284,7 +276,7 @@ public:
 
       // Set up 2D field generator with a compatible system
       System<2> system;
-      createSystem(system, "in/film/system2D_1");
+      createSystem(system, "in/system2D_1");
 
       // Set unit cell parameter
       FSArray<double, 6> parameters;
@@ -294,20 +286,19 @@ public:
       system.setUnitCell(parameters);
 
       // Set up mask
-      FilmFieldGenMask<2> mask(system);
-      std::ifstream in;
-      openInputFile("in/film/filmMask2", in);
-      mask.readParameters(in);
-      in.close();
-      mask.initialize();
+      system.mask().allocateBasis(561);
+      system.mask().allocateRGrid(system.domain().mesh().dimensions());
+      system.mask().setFieldIo(system.domain().fieldIo());
+      UnitCell<2> tmpUnitCell;
+      system.mask().readBasis("in/maskRef2.bf",tmpUnitCell);
 
       // Set up external field generator
       FilmFieldGenExt<2> ext(system);
-      createFilmFieldGenExt(ext, "in/film/filmExt2Sym");
+      createFilmFieldGenExt(ext, "in/filmExt2Sym");
       ext.initialize();
 
       // Read w field and solve MDEs, so system can calculate fHelmholtz
-      system.readWBasis("in/film/wIn2D.bf");
+      system.readWBasis("in/wIn2D.bf");
       system.compute();
 
       // Call stress and check that the result is correct

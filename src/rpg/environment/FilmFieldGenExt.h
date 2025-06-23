@@ -9,7 +9,7 @@
 */
 
 #include <rpg/System.h>
-#include <prdc/field/FilmFieldGenExtBase.h>  // Base class
+#include <prdc/environment/FilmFieldGenExtBase.h>  // Base class
 
 namespace Pscf {
 namespace Rpg {

@@ -15,9 +15,9 @@
 #include <rpc/fts/compressor/Compressor.h>
 #include <rpc/scft/sweep/Sweep.h>
 #include <rpc/scft/sweep/SweepFactory.h>
-#include <rpc/field/EnvironmentFactory.h>
 #include <rpc/scft/iterator/Iterator.h>
 #include <rpc/scft/iterator/IteratorFactory.h>
+#include <rpc/environment/EnvironmentFactory.h>
 #include <rpc/solvers/Polymer.h>
 #include <rpc/solvers/Solvent.h>
 

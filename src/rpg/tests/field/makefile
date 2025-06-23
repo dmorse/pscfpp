@@ -23,8 +23,7 @@ run-quiet: $(rpg_tests_field_OBJS) $(BLD_DIR)/$(TEST)
 	@cat count
 
 clean-outputs:
-	rm -f log count out/*.*
-	rm -f out/sweep/*
+	rm -f log count out/*
 
 clean:
 	rm -f $(rpg_tests_field_OBJS) $(rpg_tests_field_OBJS:.o=.d)

@@ -22,6 +22,7 @@ run-quiet: $(rpg_tests_OBJS) $(BLD_DIR)/$(TEST)
 clean-outputs:
 	rm -f log count 
 	-cd $(SRC_DIR)/rpg/tests/field; $(MAKE) clean-outputs
+	-cd $(SRC_DIR)/rpg/tests/environment; $(MAKE) clean-outputs
 	-cd $(SRC_DIR)/rpg/tests/solvers; $(MAKE) clean-outputs
 	-cd $(SRC_DIR)/rpg/tests/system; $(MAKE) clean-outputs
 	-cd $(SRC_DIR)/rpg/tests/sweep; $(MAKE) clean-outputs
@@ -32,6 +33,7 @@ clean:
 	rm -f $(BLD_DIR)/$(TEST) $(BLD_DIR)/$(TEST).d
 	rm -f log count 
 	-cd $(SRC_DIR)/rpg/tests/field; $(MAKE) clean
+	-cd $(SRC_DIR)/rpg/tests/environment; $(MAKE) clean
 	-cd $(SRC_DIR)/rpg/tests/solvers; $(MAKE) clean
 	-cd $(SRC_DIR)/rpg/tests/system; $(MAKE) clean
 	-cd $(SRC_DIR)/rpg/tests/sweep; $(MAKE) clean

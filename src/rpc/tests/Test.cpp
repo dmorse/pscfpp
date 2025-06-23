@@ -5,6 +5,7 @@
 #include <test/CompositeTestRunner.h>
 
 #include "field/FieldTestComposite.h"
+#include "environment/EnvironmentTestComposite.h"
 #include "solvers/SolverTestComposite.h"
 #include "system/SystemTestComposite.h"
 #include "sweep/SweepTestComposite.h"
@@ -15,6 +16,7 @@
 
 TEST_COMPOSITE_BEGIN(RpcNsTestComposite)
 addChild(new FieldTestComposite, "field/");
+addChild(new EnvironmentTestComposite, "environment/");
 addChild(new SolverTestComposite, "solvers/");
 addChild(new SystemTestComposite, "system/");
 addChild(new SweepTestComposite, "sweep/");

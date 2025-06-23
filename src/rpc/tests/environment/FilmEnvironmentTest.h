@@ -4,7 +4,7 @@
 #include <test/UnitTest.h>
 #include <test/UnitTestRunner.h>
 
-#include <rpc/field/MixAndMatchEnvs.h>
+#include <rpc/environment/MixAndMatchEnvs.h>
 #include <rpc/System.h>
 
 #include <prdc/crystal/BFieldComparison.h>
@@ -57,11 +57,11 @@ public:
 
       // Set up film environment from file
       System<1> system;
-      createSystem(system, "in/film/system1DEnv");
+      createSystem(system, "in/system1DEnv");
       FilmEnvironment<1> env(system);
 
       std::ifstream in;
-      openInputFile("in/film/environment1", in);
+      openInputFile("in/environment1", in);
       env.readParam(in);
       in.close();
 
@@ -88,19 +88,19 @@ public:
       
       // Set up system with some data
       System<1> system;
-      createSystem(system, "in/film/system1DEnv");
+      createSystem(system, "in/system1DEnv");
 
       // Read initial guess
-      system.readWBasis("in/film/wIn1D.bf");
+      system.readWBasis("in/wIn1D.bf");
 
       // Iterate to a solution
       system.iterate();
       TEST_ASSERT(eq(system.mask().phiTot(), 8.0951532073e-01));
 
-      // Check converged field is correct by comparing to ref files in in/film/
+      // Check converged field is correct by comparing to ref files in in/
       UnitCell<1> unitCell; // UnitCell object to pass to FieldIo functions
       DArray< DArray<double> > wFieldsCheck; // Copy of reference field
-      system.domain().fieldIo().readFieldsBasis("in/film/wRef1D.bf", 
+      system.domain().fieldIo().readFieldsBasis("in/wRef1D.bf", 
                                                 wFieldsCheck, unitCell);
       BFieldComparison bComparison(0); // object to compare fields
       bComparison.compare(system.w().basis(), wFieldsCheck);
@@ -141,10 +141,10 @@ public:
       
       // Set up system with some data
       System<2> system;
-      createSystem(system, "in/film/system2DEnv");
+      createSystem(system, "in/system2DEnv");
 
       // Read initial guess
-      system.readWBasis("in/film/wIn2D.bf");
+      system.readWBasis("in/wIn2D.bf");
 
       // Solve
       system.iterate();
@@ -159,7 +159,7 @@ public:
       // Check converged field is correct by comparing to reference
       UnitCell<2> unitCell; // UnitCell object to pass to FieldIo functions
       DArray< DArray<double> > wFieldsCheck; // Copy of reference field
-      system.domain().fieldIo().readFieldsBasis("in/film/wRef2D.bf", 
+      system.domain().fieldIo().readFieldsBasis("in/wRef2D.bf", 
                                                 wFieldsCheck, unitCell);
       BFieldComparison bComparison(0); // object to compare fields
       bComparison.compare(system.w().basis(), wFieldsCheck);
@@ -194,7 +194,7 @@ public:
       
       // Set up system
       System<1> system;
-      createSystem(system, "in/film/system1DEnv");
+      createSystem(system, "in/system1DEnv");
 
       // Read initial guess
       system.readWBasis("out/w1D.bf");
@@ -205,7 +205,7 @@ public:
       // Check converged field is correct by comparing to reference
       UnitCell<1> unitCell; // UnitCell object to pass to FieldIo functions
       DArray< DArray<double> > wFieldsCheck; // Copy of reference field
-      system.domain().fieldIo().readFieldsBasis("in/film/wRefSweep.bf", 
+      system.domain().fieldIo().readFieldsBasis("in/wRefSweep.bf", 
                                                 wFieldsCheck, unitCell);
       BFieldComparison bComparison(0); // object to compare fields
       bComparison.compare(system.w().basis(), wFieldsCheck);
@@ -238,10 +238,10 @@ public:
       
       // Set up system with some data
       System<1> system;
-      createSystem(system, "in/film/system1DEnvFBulk");
+      createSystem(system, "in/system1DEnvFBulk");
 
       // Read initial guess
-      system.readWBasis("in/film/wIn1D_3.bf");
+      system.readWBasis("in/wIn1D_3.bf");
 
       // Iterate to a solution
       system.iterate();
@@ -251,10 +251,10 @@ public:
       TEST_ASSERT(std::abs(paramErr) < 1e-5);
       TEST_ASSERT(std::abs(system.mask().phiTot() - 0.8059299672) < 1e-5);
 
-      // Check converged field is correct by comparing to ref files in in/film/
+      // Check converged field is correct by comparing to ref files in in/
       UnitCell<1> unitCell; // UnitCell object to pass to FieldIo functions
       DArray< DArray<double> > wFieldsCheck; // Copy of reference field
-      system.domain().fieldIo().readFieldsBasis("in/film/wRef1D_2.bf", 
+      system.domain().fieldIo().readFieldsBasis("in/wRef1D_2.bf", 
                                                 wFieldsCheck, unitCell);
       BFieldComparison bComparison(0); // object to compare fields
       bComparison.compare(system.w().basis(), wFieldsCheck);

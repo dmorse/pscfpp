@@ -1,6 +1,7 @@
 #-----------------------------------------------------------------------
 # Source files in src/rpc and corresponding object files
 
+include $(SRC_DIR)/rpc/environment/sources.mk
 include $(SRC_DIR)/rpc/field/sources.mk
 include $(SRC_DIR)/rpc/solvers/sources.mk
 include $(SRC_DIR)/rpc/scft/sources.mk
@@ -8,6 +9,7 @@ include $(SRC_DIR)/rpc/fts/sources.mk
 
 # List of source files in src/rpc
 rpc_= \
+  $(rpc_environment_) \
   $(rpc_field_) \
   $(rpc_solvers_) \
   $(rpc_scft_) \
